@@ -3,6 +3,7 @@
 // 2) Multijugador: Mundo de Guerra global autoritativo (LOBBY -> REINFORCE -> WAR -> ENDED).
 // Corre con: bun --hot index.ts  (desde mini-services/game-service)
 import { Server, type Socket } from "socket.io";
+import { createServer } from "node:http";
 import {
   ROOMS, BOTS, AMBIENT, REPLIES,
   MP_TERRITORIES, MP_CONTINENTS, MP_BOTS, PLAYER_COLORS,
@@ -389,9 +390,20 @@ const lastMpChatAt = new WeakMap<Socket, number>();
 // mapa socket -> jugador multijugador (para autorizar acciones)
 const mpPlayersBySocket = new Map<string, { id: string }>();
 
-const io = new Server(PORT, {
+// v30 PASO PRO: servidor HTTP propio para exponer /health (Render y VPS
+// comprueban salud con un GET); engine.io atiende /socket.io y delega el resto.
+const httpServer = createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("VANGUARD game-service OK");
+});
+
+const io = new Server(httpServer, {
   cors: { origin: "*" },
   transports: ["websocket", "polling"],
+});
+
+httpServer.listen(PORT, () => {
+  console.log(`[VANGUARD-GAMES] escuchando en :${PORT} (health: /health)`);
 });
 
 // Vanguard v11 — ARCHIVOS NACION: detective multijugador por salas (enganos y pistas)

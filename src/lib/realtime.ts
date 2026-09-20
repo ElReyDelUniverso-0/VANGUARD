@@ -6,13 +6,17 @@ import { io, type Socket } from "socket.io-client";
 
 let _socket: Socket | null = null;
 
+// v30 PASO PRO: si NEXT_PUBLIC_REALTIME_URL está definida (p.ej. el servicio
+// de Render), el cliente conecta allí; si no, usa el gateway local del sandbox.
+const REALTIME_URL = (process.env.NEXT_PUBLIC_REALTIME_URL || "").trim();
+
 export function getRealtime(): Socket {
   if (typeof window === "undefined") {
     // nunca debe pasar en cliente; fallback inofensivo
     return null as unknown as Socket;
   }
   if (!_socket) {
-    _socket = io("/?XTransformPort=3003", {
+    _socket = io(REALTIME_URL || "/?XTransformPort=3003", {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionDelay: 1500,
