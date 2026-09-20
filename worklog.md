@@ -531,3 +531,18 @@ Work Log:
 Stage Summary:
 - Paquete de publicación ENTREGADO: vanguard-v29-publicar.zip + guía completa de 2 caminos
 - Ofrecidos como siguiente paso: Paso PRO Vercel (Supabase+Render), Telegram con token real, Search Console
+---
+Task ID: 33
+Agent: Super Z (main)
+Task: Conexión con GitHub del usuario (token PAT facilitado en el chat) y publicación del código
+
+Work Log:
+- Token PAT verificado vía API (scope repo, cuenta ElReyDelUniverso-0)
+- Limpieza del repo local: historial viejo descartado (3 auto-commits con 185MB de artefactos); .gitignore ampliado (/download/, /upload/, /tool-results/, scripts/*.png|mp4, imgsearch, log*.txt, db WAL/SHM); .env NUNCA subido (verificado); commit único limpio de 443 archivos (~45MB) con identidad noreply del usuario
+- Repo "VANGUARD" ya existía en la cuenta (creado por el usuario, vacío, sin ramas) → push directo a main sin conflicto; token eliminado del remote tras el push
+- Verificado vía API: árbol raíz completo (src, public, prisma, db con datos demo, mini-services, scripts con vps-bootstrap.sh, LEEME-COMO-PUBLICAR.md, vercel.json, .env.example)
+
+Stage Summary:
+- Código publicado en https://github.com/ElReyDelUniverso-0/VANGUARD (rama main, 443 archivos)
+- Listo para: Vercel Import (3 clics) o bootstrap VPS de 1 línea con raw.githubusercontent
+- Recomendada al usuario la revocación del token tras finalizar (práctica segura); anotado que NUNCA se persiste el token en el repo/worklog
