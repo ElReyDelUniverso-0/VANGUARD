@@ -1,0 +1,627 @@
+// Vanguard — Geopolitical Intelligence Gamified Platform
+// Prisma schema (SQLite)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ====== Game / Progression ======
+
+model Player {
+  id            String   @id @default(cuid())
+  alias         String   @unique
+  avatarSeed    String   @default("vanguard-agent")
+  coins         Int      @default(250)
+  gems          Int      @default(5)
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  rank          String   @default("RECLUTA")
+  streak        Int      @default(0)
+  lastLogin     DateTime?
+  lastWeeklyClaim DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  missionProgress  MissionProgress[]
+  quizResults      QuizResult[]
+  predictions      Prediction[]
+  coinTransactions CoinTransaction[]
+  unlockedBriefings UnlockedBriefing[]
+}
+
+model Mission {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  title        String
+  description  String
+  category     String   // DAILY, WEEKLY, SPECIAL, STORY
+  difficulty   String   @default("NORMAL") // EASY, NORMAL, HARD, EXTREME
+  xpReward     Int      @default(50)
+  coinReward   Int      @default(25)
+  gemReward    Int      @default(0)
+  target       Int      @default(1) // cuántas veces hay que completar la acción
+  action       String   // READ_BRIEFING, VIEW_NEWS, VIEW_PHOTO, QUIZ_CORRECT, PREDICT, OPEN_MAP, LOGIN, FUSION
+  region       String?
+  conflictTag  String?
+  expiresAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  progress MissionProgress[]
+}
+
+model MissionProgress {
+  id        String   @id @default(cuid())
+  playerId  String
+  missionId String
+  progress  Int      @default(0)
+  completed Boolean  @default(false)
+  claimed   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  player  Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, missionId])
+}
+
+// ====== Quizzes ======
+
+model QuizQuestion {
+  id         String   @id @default(cuid())
+  category   String   // GEOGRAFIA, CONFLICTOS, HISTORIA, ACTUALIDAD, ECONOMIA
+  difficulty String   @default("NORMAL")
+  question   String
+  options    String   // JSON array de strings
+  answerIdx  Int
+  explanation String?
+  xpReward   Int      @default(15)
+  coinReward Int      @default(10)
+  createdAt  DateTime @default(now())
+
+  results QuizResult[]
+}
+
+model QuizResult {
+  id          String   @id @default(cuid())
+  playerId    String
+  questionId  String
+  correct     Boolean
+  earnedXp    Int      @default(0)
+  earnedCoins Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  player   Player       @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+// ====== Predictions ======
+
+model Prediction {
+  id          String   @id @default(cuid())
+  playerId    String
+  market      String   // p.ej. "TREGUA_GAZA_30D"
+  outcome     String   // "YES" / "NO"
+  stake       Int      // monedas apostadas
+  odds        Float    @default(2.0)
+  status      String   @default("OPEN") // OPEN, WON, LOST, VOID
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}
+
+// ====== Economy ======
+
+model CoinTransaction {
+  id        String   @id @default(cuid())
+  playerId  String
+  amount    Int      // positivo = ganancia, negativo = gasto
+  reason    String   // MISSION, QUIZ, PREDICTION, DAILY, WEEKLY, SHOP, FUSION
+  note      String?
+  createdAt DateTime @default(now())
+
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}
+
+model UnlockedBriefing {
+  id          String   @id @default(cuid())
+  playerId    String
+  briefingId  String
+  createdAt   DateTime @default(now())
+
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, briefingId])
+}
+
+// ====== Live News Cache (GDELT 2.0) ======
+
+model NewsItem {
+  id          String   @id @default(cuid())
+  externalId  String   @unique
+  title       String
+  url         String
+  source      String
+  imageUrl    String?
+  publishedAt DateTime
+  language    String   @default("es")
+  conflictTag String?
+  tacticalTag String?  // ALERTA, DIPLOMACIA, ECONOMIA, HUMANITARIO, ANALISIS
+  sourceCountry String? // v20: código ISO del país del conflicto (bandera real)
+  summary     String?
+  createdAt   DateTime @default(now())
+}
+
+// ====== Dron Strike 3D — Ranking global ======
+
+model DroneScore {
+  id         String   @id @default(cuid())
+  alias      String
+  score      Int
+  hits       Int      @default(0)
+  difficulty String   @default("VETERANO") // RECLUTA, VETERANO, ELITE, LEYENDA
+  createdAt  DateTime @default(now())
+
+  @@index([score])
+}
+
+// ====== Weekly Rewards config ======
+
+model WeeklyReward {
+  id          String   @id @default(cuid())
+  weekKey     String   @unique // p.ej. "2025-W36"
+  day         Int      // 0..6 (Lun..Dom)
+  title       String
+  description String
+  coinReward  Int
+  gemReward   Int      @default(0)
+  xpReward    Int
+  claimedBy   String   @default("") // playerAlias que ya reclamó (csv simple para demo)
+  createdAt   DateTime @default(now())
+}
+
+// ====== v15 LANZAMIENTO — Cuentas con guardado en la nube ======
+
+model Account {
+  id          String    @id @default(cuid())
+  username    String    @unique
+  passHash    String
+  isOwner     Boolean   @default(false)
+  saveJson    String    @default("")
+  savedAt     DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  lastLoginAt DateTime?
+}
+
+// ====== v17 MULTIJUGADOR TERMINADO — ranking ELO global persistido ======
+
+model MpProfile {
+  id              String   @id @default(cuid())
+  username        String   @unique
+  elo             Int      @default(1000)
+  wins            Int      @default(0)
+  losses          Int      @default(0)
+  draws           Int      @default(0)
+  captures        Int      @default(0)
+  duelsWon        Int      @default(0)
+  duelsLost       Int      @default(0)
+  duelsPlayed     Int      @default(0)
+  mpGames         Int      @default(0)
+  detectiveSolved Int      @default(0)
+  bestDuelStreak  Int      @default(0)
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([elo])
+}
+
+// ====== v23 EN VIVO MUNDIAL — streaming real con base de datos ======
+
+model LiveStream {
+  id            String    @id @default(cuid())
+  title         String
+  category      String // analisis | debate | noticias | historia | simulacion
+  streamerName  String
+  country       String    @default("us") // countryball del streamer
+  status        String    @default("live") // live | ended
+  viewers       Int       @default(0)
+  peakViewers   Int       @default(0)
+  totalViews    Int       @default(0)
+  pollQuestion  String    @default("")
+  pollOptions   String    @default("[]") // JSON [{k:"A",t:"..."}]
+  pollVotes     String    @default("{}") // JSON {"A":["alias",...]}
+  startedAt     DateTime  @default(now())
+  endedAt       DateTime?
+  durationMin   Int       @default(0)
+  earnedCoins   Int       @default(0) // bonus por espectadores calculado al terminar
+  chat          LiveChatMessage[]
+  donations     StreamDonation[]
+
+  @@index([status])
+}
+
+model LiveChatMessage {
+  id        String     @id @default(cuid())
+  streamId  String
+  author    String
+  country   String     @default("us")
+  content   String
+  kind      String     @default("chat") // chat | donation | reaction | system
+  amount    Int        @default(0)
+  createdAt DateTime   @default(now())
+  stream    LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@index([streamId, createdAt])
+}
+
+model StreamDonation {
+  id        String     @id @default(cuid())
+  streamId  String
+  from      String
+  to        String
+  amount    Int
+  message   String     @default("")
+  createdAt DateTime   @default(now())
+  stream    LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@index([streamId])
+}
+
+model StreamSchedule {
+  id          String   @id @default(cuid())
+  title       String
+  host        String
+  category    String
+  description String   @default("")
+  scheduledAt DateTime
+  createdAt   DateTime @default(now())
+}
+
+model StreamReplay {
+  id           String   @id @default(cuid())
+  title        String
+  streamerName String
+  category     String
+  durationMin  Int      @default(0)
+  peakViewers  Int      @default(0)
+  views        Int      @default(0)
+  recordedAt   DateTime @default(now())
+}
+
+// ====== v23 COMUNIDAD DE CONTRIBUIDORES ======
+
+model Contribution {
+  id           String             @id @default(cuid())
+  type         String // reporte | ficha | analisis | traduccion | prediccion
+  title        String
+  content      String             @default("")
+  author       String
+  country      String             @default("us")
+  status       String             @default("pendiente") // pendiente | aprobado | rechazado
+  eventType    String             @default("") // conflicto | protesta | crisis | desastre | militar
+  location     String             @default("")
+  sourceUrl    String             @default("")
+  countries    String             @default("") // "ua,ru"
+  startDate    String             @default("")
+  cause        String             @default("")
+  originalText String             @default("")
+  targetLang   String             @default("es")
+  options      String             @default("") // JSON opciones de prediccion
+  resolveDate  String             @default("")
+  analysisType String             @default("")
+  likes        Int                @default(0)
+  views        Int                @default(0)
+  rewardCoins  Int                @default(0)
+  reviewedBy   String             @default("")
+  rejectReason String             @default("")
+  bonus        Int                @default(0) // bonus manual del admin
+  createdAt    DateTime           @default(now())
+  votes        ContributionVote[]
+
+  @@index([type, status])
+  @@index([author])
+}
+
+model ContributionVote {
+  id             String       @id @default(cuid())
+  contributionId String
+  voter          String
+  verdict        String // confirmo | niego | like
+  createdAt      DateTime     @default(now())
+  contribution   Contribution @relation(fields: [contributionId], references: [id], onDelete: Cascade)
+
+  @@unique([contributionId, voter])
+}
+
+model NewsVerify {
+  id          String           @id @default(cuid())
+  headline    String
+  source      String
+  publishedAt String
+  truth       String           @default("") // real | falsa | dudosa | "" sin resolver
+  resolved    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  votes       NewsVerifyVote[]
+
+  @@index([resolved])
+}
+
+model NewsVerifyVote {
+  id        String     @id @default(cuid())
+  newsId    String
+  voter     String
+  verdict   String // real | falsa | dudosa | nose
+  createdAt DateTime   @default(now())
+  news      NewsVerify @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@unique([newsId, voter])
+}
+
+model ContributorProfile {
+  id             String    @id @default(cuid())
+  alias          String    @unique
+  country        String    @default("us")
+  approved       Int       @default(0)
+  rejected       Int       @default(0)
+  pending        Int       @default(0)
+  coinsEarned    Int       @default(0)
+  verifHits      Int       @default(0)
+  verifTotal     Int       @default(0)
+  streamMinutes  Int       @default(0)
+  streamEarnings Int       @default(0) // monedas de directos en espera de reclamar
+  badges         String    @default("") // csv: elite,moderador,reportero10,...
+  lastSubmitAt   DateTime?
+  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime  @default(now())
+
+  @@index([approved])
+}
+
+model ContribNotification {
+  id        String   @id @default(cuid())
+  alias     String
+  title     String
+  body      String   @default("")
+  icon      String   @default("🔔")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([alias, read])
+}
+
+// ====== v24 VERDAD CRUDA — Embajadores por país ======
+
+model AmbassadorCandidate {
+  id          String   @id @default(cuid())
+  alias       String
+  country     String   // ISO2 del país defendido
+  cycle       String   // nº de ciclo de elecciones
+  slogan      String   @default("")
+  platform    String   @default("") // plan de defensa del país
+  votes       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  votesRel AmbassadorVote[]
+
+  @@unique([alias, country, cycle])
+  @@index([country, cycle, votes])
+}
+
+model AmbassadorVote {
+  id          String              @id @default(cuid())
+  candidateId String
+  voter       String
+  country     String
+  cycle       String
+  createdAt   DateTime            @default(now())
+  candidate   AmbassadorCandidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, voter])
+  @@index([country, cycle, voter])
+}
+
+// ====== v24 — Denuncias verificables (foros mejorados) ======
+
+model Denuncia {
+  id          String   @id @default(cuid())
+  author      String
+  country     String   @default("us")
+  category    String // ABUSO | DESINFORMACION | CUENTA_FALSA | CONTENIDO_INVALIDO | CRIMEN_GUERRA | OTRO
+  title       String
+  detail      String
+  evidenceUrl String   @default("")
+  location    String   @default("")
+  status      String   @default("RECIBIDA") // RECIBIDA | INVESTIGACION | VERIFICADA | DESCARTADA
+  upvotes     Int      @default(0)
+  sentTelegram Boolean @default(false)
+  createdAt   DateTime @default(now())
+
+  votes DenunciaVote[]
+
+  @@index([status, createdAt])
+}
+
+model DenunciaVote {
+  id         String   @id @default(cuid())
+  denunciaId String
+  voter      String
+  createdAt  DateTime @default(now())
+  denuncia   Denuncia @relation(fields: [denunciaId], references: [id], onDelete: Cascade)
+
+  @@unique([denunciaId, voter])
+}
+
+// ====== v25 — Memes geopolíticos (galería comunitaria) ======
+
+model Meme {
+  id          String     @id @default(cuid())
+  author      String
+  template    String     @default("libre")
+  caption     String     @default("")
+  composition String // JSON de capas {bg, layers[]} — la galería re-renderiza en vivo
+  likes       Int        @default(0)
+  createdAt   DateTime   @default(now())
+  memeLikes   MemeLike[]
+
+  @@index([createdAt])
+  @@index([likes])
+}
+
+model MemeLike {
+  id        String   @id @default(cuid())
+  memeId    String
+  voter     String
+  createdAt DateTime @default(now())
+  meme      Meme     @relation(fields: [memeId], references: [id], onDelete: Cascade)
+
+  @@unique([memeId, voter])
+}
+
+// ====== v26 — COMUNIDAD CREADORA: todo lo sube la gente ======
+// Un solo modelo para los 7 tipos de contenido del usuario:
+// personaje | arma | juego | musica | noticia | encuesta | video
+// El AGENTE IA (z-ai-web-dev-sdk) analiza cada envío y lo aprueba,
+// manda a revisión o lo elimina automáticamente.
+
+model UgcItem {
+  id          String   @id @default(cuid())
+  kind        String // personaje | arma | juego | musica | noticia | encuesta | video
+  author      String
+  authorBall  String   @default("us") // país ISO2 del autor (countryball)
+  title       String
+  summary     String   @default("")
+  body        String   @default("") // la información la CREA el usuario
+  photos      String   @default("[]") // JSON [{src, credit}] — data URLs comprimidas
+  country     String   @default("") // país asociado al contenido
+  specs       String   @default("{}") // JSON specs de arma {origen, calibre, peso, alcance, usuarios}
+  assembly    String   @default("[]") // JSON pasos de armado [{pieza, desc}]
+  gameUrl     String   @default("") // URL del juego (iframe)
+  gameHtml    String   @default("") // HTML propio (sandbox srcdoc, máx 60KB)
+  gamePlatform String  @default("pc") // pc | movil | ambos
+  audioData   String   @default("") // data URL de audio subido (máx ~3MB)
+  audioGenre  String   @default("")
+  pollOptions String   @default("[]") // JSON [{label, votes}]
+  videoUrl    String   @default("")
+  sensitive   Boolean  @default(false) // marca 18+ → respeta el modo estricto global
+  status      String   @default("APROBADO") // PENDIENTE | APROBADO | ELIMINADO
+  aiVerdict   String   @default("") // LIMPIO | SOSPECHOSO | INAPROPIADO
+  aiReason    String   @default("")
+  aiModerated Boolean  @default(false) // false = fallback heurístico, true = agente IA
+  plays       Int      @default(0)
+  likes       Int      @default(0)
+  ratingSum   Int      @default(0)
+  ratingCount Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  ugcVotes UgcVote[]
+  comments UgcComment[]
+
+  @@index([kind, status, createdAt])
+  @@index([kind, likes])
+  @@index([author, kind])
+}
+
+model UgcVote {
+  id        String   @id @default(cuid())
+  itemId    String
+  voter     String
+  kind      String   @default("like") // like | rating | genre | poll
+  value     Int      @default(0) // rating 1-5 o índice de opción de encuesta
+  label     String   @default("") // clasificación libre (género musical, etc.)
+  createdAt DateTime @default(now())
+  item      UgcItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, voter, kind])
+}
+
+// ====== v27 ESTUDIOS CREADORES ======
+
+// Comentarios de la comunidad en CUALQUIER contenido UGC (noticias, posts,
+// memes, armas…) — también pasan por el agente moderador.
+model UgcComment {
+  id         String   @id @default(cuid())
+  itemId     String
+  author     String
+  authorBall String   @default("us")
+  text       String
+  status     String   @default("APROBADO") // APROBADO | ELIMINADO
+  aiVerdict  String   @default("")
+  aiReason   String   @default("")
+  createdAt  DateTime @default(now())
+  item       UgcItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId, createdAt])
+}
+
+// Monedas comunitarias — cada jugador/facción crea SU PROPIA moneda
+// (nombre, símbolo, país) y el mercado la cotiza en monedas Vanguard.
+model CommunityCurrency {
+  id          String   @id @default(cuid())
+  code        String   // ticker único, ej "QUIM"
+  name        String
+  symbol      String   @default("🪙")
+  country     String   @default("")
+  creator     String
+  description String   @default("")
+  supply      Int      @default(1000000)
+  price       Float    @default(10) // precio en monedas Vanguard
+  basePrice   Float    @default(10)
+  volume      Int      @default(0) // monedas negociadas
+  trades      Int      @default(0)
+  holders     Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  tradesList CurrencyTrade[]
+
+  @@unique([code])
+  @@index([volume])
+}
+
+model CurrencyTrade {
+  id         String            @id @default(cuid())
+  currencyId String
+  user       String
+  side       String            // BUY | SELL
+  amount     Int
+  price      Float
+  createdAt  DateTime          @default(now())
+  currency   CommunityCurrency @relation(fields: [currencyId], references: [id], onDelete: Cascade)
+
+  @@index([currencyId, createdAt])
+  @@index([user])
+}
+
+// GOBIERNO — roles políticos por país. El embajador electo puede TOMAR EL
+// PODER como PRESIDENTE, nombrar ministros y reclutar jugadores a su nación.
+model GovRole {
+  id          String   @id @default(cuid())
+  country     String   // ISO2
+  role        String   // PRESIDENTE | CANCILLER | GENERAL | MINISTRO_PRENSA
+  alias       String
+  appointedBy String   @default("")
+  cycle       String   @default("")
+  createdAt   DateTime @default(now())
+
+  @@unique([country, role])
+  @@index([country])
+}
+
+// Roster de reclutados por país (cuartel general)
+model GovRecruit {
+  id        String   @id @default(cuid())
+  country   String
+  alias     String
+  dept      String   @default("MILITAR") // MILITAR | DIPLOMACIA | INTELIGENCIA | PRENSA
+  createdAt DateTime @default(now())
+
+  @@unique([country, alias])
+  @@index([country])
+}

@@ -1,0 +1,79 @@
+{
+  "success": true,
+  "query": "Anas al-Sharif Al Jazeera journalist Gaza portrait",
+  "count": 10,
+  "ranked": false,
+  "captioned_count": 0,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/19565a556945.jpg",
+      "caption": "",
+      "source": "The Guardian",
+      "original_width": "1200px",
+      "original_height": "1200px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/463095b2a177.jpeg",
+      "caption": "",
+      "source": "Axios",
+      "original_width": "1366px",
+      "original_height": "1024px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/ae0dcaac1bfe.png",
+      "caption": "",
+      "source": "Palestinian Centre for Human Rights",
+      "original_width": "2560px",
+      "original_height": "1512px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/5a735916df54.jpg",
+      "caption": "",
+      "source": "YouTube",
+      "original_width": "1280px",
+      "original_height": "720px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/ac769b5bc841.jpg",
+      "caption": "",
+      "source": "Sky News",
+      "original_width": "1600px",
+      "original_height": "900px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/89b9c28eff9a.jpg",
+      "caption": "",
+      "source": "CNN",
+      "original_width": "1600px",
+      "original_height": "900px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/3d0e4823f8a1.jpg",
+      "caption": "",
+      "source": "Haaretz",
+      "original_width": "1200px",
+      "original_height": "1200px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/92cbf891cccb.jpg",
+      "caption": "",
+      "source": "YouTube",
+      "original_width": "1280px",
+      "original_height": "720px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/36d682343ac8.png",
+      "caption": "",
+      "source": "The New York War Crimes | “All the Consent That's Fit to Manufacture”",
+      "original_width": "2438px",
+      "original_height": "1626px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/62630d5db876.jpg",
+      "caption": "",
+      "source": "Cleveland Jewish News",
+      "original_width": "1320px",
+      "original_height": "743px"
+    }
+  ]
+}

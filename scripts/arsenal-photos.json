@@ -1,0 +1,20 @@
+{
+  "ak47": "https://upload.wikimedia.org/wikipedia/commons/6/65/AK-47_type_II_noBG.png",
+  "m4": "https://upload.wikimedia.org/wikipedia/commons/6/68/PEO_M4_Carbine_RAS_M68_CCO.png",
+  "fpv": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/REN_6515.jpg/3840px-REN_6515.jpg",
+  "shahed": "https://upload.wikimedia.org/wikipedia/commons/3/37/2023_IRGC_Aerospace_Force_achievements_Exhibition_in_Qom_%2833%29.jpg",
+  "bayraktar": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Bayraktar_TB2_Runway.jpg",
+  "javelin": "https://upload.wikimedia.org/wikipedia/commons/7/76/Javelin_with_checkout_equipment.jpg",
+  "himars": "https://upload.wikimedia.org/wikipedia/commons/8/83/HIMARS_-_missile_launched.jpg",
+  "lancet": "https://upload.wikimedia.org/wikipedia/commons/8/8f/ZALA_Lancet_1.jpg",
+  "t90": "https://upload.wikimedia.org/wikipedia/commons/d/d9/T-90M.jpg",
+  "leopard2": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Leopard_2_A7V_313_Bad_Frankenhausen_2024.JPG",
+  "rpg7": "https://upload.wikimedia.org/wikipedia/commons/3/33/RPG-7_detached.jpg",
+  "m777": "https://upload.wikimedia.org/wikipedia/commons/a/ac/M777_howitzer_rear.jpg",
+  "ak_parts": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/AK-47_Disassembled.JPG/960px-AK-47_Disassembled.JPG",
+  "m4_parts": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/U.S._Air_Force_Staff_Sgt._Julius_Taylor%2C_a_combat_arms_training_and_maintenance_instructor_with_the_628th_Security_Forces_Squadron%2C_disassembles_an_M4_carbine_July_30%2C_2013%2C_at_Joint_Base_Charleston%2C_S.C_130730-F-LR006-010.jpg/960px-thumbnail.jpg",
+  "fpv_parts": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Remote_Control_FPV_drone_FPV_Goggles.jpg/960px-Remote_Control_FPV_drone_FPV_Goggles.jpg",
+  "bayraktar_ops": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Bayraktar_TB2_Runway.jpg/960px-Bayraktar_TB2_Runway.jpg",
+  "t90_ops": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/T-90_firing.jpg/960px-T-90_firing.jpg",
+  "himars_ops": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/180614-A-IY962-102_-_M142_High_Mobility_Artillery_Rocket_System_%28HIMARS%29_firing_during_Saber_Strike_18_%28Image_4_of_7%29.jpg/960px-180614-A-IY962-102_-_M142_High_Mobility_Artillery_Rocket_System_%28HIMARS%29_firing_during_Saber_Strike_18_%28Image_4_of_7%29.jpg"
+}

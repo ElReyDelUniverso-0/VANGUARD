@@ -1,0 +1,24 @@
+# VANGUARD — indexación total para buscadores y redes sociales
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: *
+Allow: /
+
+# Mapa del sitio para rastreo diario de la portada en vivo
+Sitemap: https://vanguard.world/sitemap.xml

@@ -1,0 +1,79 @@
+{
+  "success": true,
+  "query": "Pierre Zakrzewski Fox News cameraman Ukraine",
+  "count": 10,
+  "ranked": false,
+  "captioned_count": 0,
+  "results": [
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/d92f2717d12b.jpg",
+      "caption": "",
+      "source": "Nexttv",
+      "original_width": "1635px",
+      "original_height": "2453px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/b509b8c51a7d.jpg",
+      "caption": "",
+      "source": "CNN",
+      "original_width": "1600px",
+      "original_height": "903px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/d8cda77620e4.jpg",
+      "caption": "",
+      "source": "Irish Examiner",
+      "original_width": "1200px",
+      "original_height": "656px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/b0a2fc69da03.jpg",
+      "caption": "",
+      "source": "The Sun",
+      "original_width": "1024px",
+      "original_height": "1024px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/40b859edc8b0.jpg",
+      "caption": "",
+      "source": "Newstalk",
+      "original_width": "1054px",
+      "original_height": "1167px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/582990590e07.jpg",
+      "caption": "",
+      "source": "The Irish Sun",
+      "original_width": "1280px",
+      "original_height": "720px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/9cd70782fac1.jpg",
+      "caption": "",
+      "source": "Axios",
+      "original_width": "1920px",
+      "original_height": "1080px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/fa67698a6cc1.jpg",
+      "caption": "",
+      "source": "Al Jazeera",
+      "original_width": "1280px",
+      "original_height": "720px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/05ff6ead00c0.jpg",
+      "caption": "",
+      "source": "The Hollywood Reporter",
+      "original_width": "1296px",
+      "original_height": "730px"
+    },
+    {
+      "original_url": "https://z-cdn.chatglm.cn/image-search-mcp/images-ppt/a4d1b840f0d0.jpg",
+      "caption": "",
+      "source": "Mirror",
+      "original_width": "1200px",
+      "original_height": "1783px"
+    }
+  ]
+}
