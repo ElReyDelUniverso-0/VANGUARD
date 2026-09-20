@@ -546,3 +546,22 @@ Stage Summary:
 - Código publicado en https://github.com/ElReyDelUniverso-0/VANGUARD (rama main, 443 archivos)
 - Listo para: Vercel Import (3 clics) o bootstrap VPS de 1 línea con raw.githubusercontent
 - Recomendada al usuario la revocación del token tras finalizar (práctica segura); anotado que NUNCA se persiste el token en el repo/worklog
+---
+Task ID: 34
+Agent: Super Z (main)
+Task: Paso PRO 1/2 — token fine-grained + preparación Supabase/Render (la conexión string llegó incompleta)
+
+Work Log:
+- Token fine-grained verificado: lectura OK (200), pero PUSH → 403 (permiso Contents quedó en Read-only; el usuario debe editarlo a Read and write)
+- El usuario YA corrigió él mismo el cron de vercel.json en GitHub (0 12 * * *) — rebase local limpio sobre su commit
+- BUG REAL detectado y corregido: 3 paneles (galería, estudio, videos) hacían POST a /api/upload pero la ruta NO EXISTÍA → 404 al publicar fotos/videos. Creada src/app/api/upload/route.ts (contrato: FormData file+kind → {ok,url}; ext whitelist; límites 6/3/60MB; nombre generado en servidor)
+- src/lib/realtime.ts: soporte NEXT_PUBLIC_REALTIME_URL (Render) con fallback al gateway del sandbox
+- game-service: HTTP server propio con /health (verificado en vivo: health OK + handshake socket.io con sid) — requisito para que Render lo marque "live"
+- render.yaml Blueprint (runtime bun, plan free, rootDir mini-services/game-service, healthCheckPath /health)
+- Lint 0 errores; build verde con /api/upload listada; commit local 99a2954 PENDIENTE de push hasta tener permiso de escritura
+- Connection string de Supabase recibida SIN contraseña ([YOUR-PASSWORD] sin reemplazar) → migración DB pendiente
+
+Stage Summary:
+- Vercel desbloqueado (el usuario deploya ya en modo vitrina)
+- v30 1/2 compilado y probado, esperando permiso de escritura del token para publicar
+- Falta del usuario: (1) editar Contents→Read and write del token, (2) connection string con la contraseña real de la BD
