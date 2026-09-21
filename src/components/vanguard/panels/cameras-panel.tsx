@@ -10,7 +10,7 @@ import { useGameStore } from "@/lib/game-store";
 import { CAMERA_MODELS, CCTV_SCENES, getCameraModel, ELITE_PASS, type CameraModel } from "@/lib/camera-data";
 import type { PlacedCamera, CapturedCameraEvent } from "@/lib/game-store";
 import { CoordChip } from "../world-map-svg";
-import type { Globe3DMarker } from "@/components/vanguard/globe-map-3d";
+import type { Globe3DMarker, GlobeViewMode, GlobeFlyTo } from "@/components/vanguard/globe-map-3d";
 import { FlagBadge } from "../flag-badge";
 import { VIcon } from "../vanguard-icon";
 import { CONFLICTS, type ConflictRegion } from "@/lib/game-data";
@@ -44,7 +44,7 @@ const LEVEL_HEX_CCTV: Record<string, string> = {
 };
 
 function CamerasGlobe3D({
-  conflicts, cameras, selectedCamera, onSelectCamera, pendingSpot, onGlobeClick,
+  conflicts, cameras, selectedCamera, onSelectCamera, pendingSpot, onGlobeClick, viewMode, flyTo,
 }: {
   conflicts: ConflictRegion[];
   cameras: PlacedCamera[];
@@ -52,6 +52,8 @@ function CamerasGlobe3D({
   onSelectCamera: (id: string) => void;
   pendingSpot: { lat: number; lng: number } | null;
   onGlobeClick: (lat: number, lng: number) => void;
+  viewMode: GlobeViewMode;
+  flyTo: GlobeFlyTo | null;
 }) {
   const markers = useMemo(() => {
     const arr: Globe3DMarker[] = [];
@@ -106,6 +108,8 @@ function CamerasGlobe3D({
       height="min(56vh, 520px)"
       minHeight={300}
       autoRotate={false}
+      viewMode={viewMode}
+      flyTo={flyTo}
       ariaLabel="Globo 3D de despliegue de cámaras de vigilancia"
     />
   );
@@ -341,6 +345,8 @@ export function CamerasPanel() {
   const [pendingSpot, setPendingSpot] = useState<{ lat: number; lng: number } | null>(null);
   const [camName, setCamName] = useState("");
   const [liveCamId, setLiveCamId] = useState<string | null>(null);
+  const [cctvView, setCctvView] = useState<GlobeViewMode>("oscuridad"); // v31
+  const [camFlyTo, setCamFlyTo] = useState<GlobeFlyTo | null>(null); // v31
   const [pendingTotal, setPendingTotal] = useState(0);
   const [tickT, setTickT] = useState(0);
 
@@ -543,20 +549,41 @@ export function CamerasPanel() {
                 : "Tus cámaras aparecen en cian · pulsa una para verla"}
             </div>
           </div>
-          {deployModel && (
-            <button onClick={() => { setDeployModel(null); setPendingSpot(null); }} className="text-[10px] font-mono px-2 py-1 border border-red-hud/50 text-red-hud rounded-sm flex-shrink-0">
-              CANCELAR
-            </button>
-          )}
+          <div className="flex items-center gap-1 flex-shrink-0">
+            {(["oscuridad", "satelite", "noche"] as GlobeViewMode[]).map((vm) => (
+              <button
+                key={vm}
+                onClick={() => setCctvView(vm)}
+                className={cn(
+                  "text-[9px] font-mono uppercase px-2 py-1 border rounded-sm transition-colors",
+                  cctvView === vm ? "border-cyan-hud bg-cyan-hud/30 text-cyan-hud" : "border-border/60 text-muted-foreground hover:text-cyan-hud"
+                )}
+              >
+                {vm}
+              </button>
+            ))}
+            {deployModel && (
+              <button onClick={() => { setDeployModel(null); setPendingSpot(null); }} className="text-[10px] font-mono px-2 py-1 border border-red-hud/50 text-red-hud rounded-sm ml-1">
+                CANCELAR
+              </button>
+            )}
+          </div>
         </div>
         <div className="p-2">
           <CamerasGlobe3D
             conflicts={CONFLICTS}
             cameras={cameras}
             selectedCamera={liveCamId}
-            onSelectCamera={(id) => setLiveCamId(id)}
+            onSelectCamera={(id) => {
+              setLiveCamId(id);
+              // v31: al pulsar una camara, la vista vuela hasta su posicion
+              const cam = cameras.find((x) => x.id === id);
+              if (cam) setCamFlyTo({ lat: cam.lat, lng: cam.lng, altitude: 1.25, nonce: Date.now() });
+            }}
             pendingSpot={pendingSpot}
             onGlobeClick={handleMapClick}
+            viewMode={cctvView}
+            flyTo={camFlyTo}
           />
         </div>
       </div>

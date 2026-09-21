@@ -451,6 +451,16 @@ export function MemeStudioPanel() {
         toast.error(data.error || "No se pudo publicar el meme");
         return;
       }
+      // v31: veredictos del AGENTE MODERADOR IA (HTTP 202 con flags)
+      if (data.deleted) {
+        toast.error("🤖 El agente moderador eliminó el meme", { description: data.reason || "Contenido inapropiado" });
+        return;
+      }
+      if (data.pending) {
+        toast.warning("🤖 Tu meme pasó a revisión del agente", { description: data.reason || "Contenido sospechoso — no aparece en la galería hasta revisarse" });
+        setView("galeria");
+        return;
+      }
       addCoins(25, "Meme publicado en la galería");
       toast.success("+25 monedas — meme publicado en la galería");
       await cargarGaleria(sort);

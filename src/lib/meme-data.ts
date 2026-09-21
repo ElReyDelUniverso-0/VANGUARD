@@ -151,6 +151,60 @@ export const MEME_TEMPLATES: MemeTemplate[] = [
     ],
   },
   {
+    id: "estreno", label: "Gran estreno mundial", title: "GRAN ESTRENO MUNDIAL", accent: "#FFD34D",
+    caption: (a, b) => `${a} y ${b} llegan a la alfombra roja del estreno mundial`,
+    layers: [
+      B("A", 32, 52, 135), B("B", 68, 52, 135), E("🎬", 50, 22, 66),
+      T("GRAN ESTRENO MUNDIAL", 50, 10, 38, "#FFD34D"),
+      T("{{A}} y {{B}} llegan a la alfombra roja", 50, 87, 18, "#FFFFFF"),
+    ],
+  },
+  {
+    id: "bolsa", label: "Se cae la bolsa", title: "LA BOLSA DE...", accent: "#00FF87",
+    caption: (a, b) => `la bolsa de ${b} después de lo que hizo ${a}`,
+    layers: [
+      B("A", 26, 44, 120), B("B", 74, 44, 120, -10), E("📉", 50, 62, 84),
+      T("LA BOLSA DE {{B}}", 50, 10, 40, "#00FF87"),
+      T("después de lo que hizo {{A}} 💀", 50, 88, 18, "#FFFFFF"),
+    ],
+  },
+  {
+    id: "espia", label: "Operación espía", title: "OPERACIÓN ESPIA", accent: "#A855F7",
+    caption: (a, b) => `el espía de ${a} infiltrado en ${b}`,
+    layers: [
+      B("A", 30, 50, 120), B("B", 72, 50, 120), E("🕵️", 50, 26, 72),
+      T("OPERACIÓN ESPIA", 50, 9, 40, "#A855F7"),
+      T("agente de {{A}} infiltrado en {{B}} 🎩", 50, 88, 17, "#FFFFFF"),
+    ],
+  },
+  {
+    id: "apagon", label: "Apagón mundial", title: "APAGÓN MUNDIAL", accent: "#FF6B4D",
+    caption: (a, b) => `${a} corta la luz de ${b} en plena final`,
+    layers: [
+      B("A", 34, 50, 125), B("B", 68, 50, 125), E("🕯️", 50, 26, 60),
+      T("APAGÓN MUNDIAL", 50, 10, 42, "#FF6B4D"),
+      T("{{A}} corta la luz de {{B}} 🕯️", 50, 88, 18, "#FFFFFF"),
+    ],
+  },
+  {
+    id: "podio", label: "Podio mundial", title: "PODIO MUNDIAL", accent: "#38BDF8",
+    caption: (a, b) => `${a} gana el podio y ${b} exige repetición`,
+    layers: [
+      B("A", 36, 40, 135), B("B", 70, 46, 110, -8), E("🏆", 50, 16, 60),
+      T("PODIO MUNDIAL", 50, 9, 42, "#38BDF8"),
+      T("{{A}} al podio · {{B}} exige repetición", 50, 88, 17, "#FFFFFF"),
+    ],
+  },
+  {
+    id: "mañana", label: "Cuenta atrás", title: "MAÑANA SE ESTRENA...", accent: "#FF3B30",
+    caption: (a, b) => `cuenta atrás: ${a} y ${b} preparan el choque del año`,
+    layers: [
+      B("A", 30, 48, 125), B("B", 70, 48, 125), E("⏳", 50, 24, 62),
+      T("MAÑANA SE ESTRENA…", 50, 10, 38, "#FF3B30"),
+      T("{{A}} vs {{B}} · el choque del año", 50, 87, 18, "#FFD34D"),
+    ],
+  },
+  {
     id: "libre", label: "Meme libre", title: "MEME LIBRE", accent: "#A855F7",
     caption: (a, b) => `${a} y ${b} protagonizan tu meme`,
     layers: [],
@@ -187,6 +241,7 @@ export const MEME_BACKGROUNDS: MemeBg[] = [
 export const MEME_STICKERS = [
   "💥", "🔥", "⚔️", "🕊️", "🛢️", "🚀", "💰", "📡", "🍿", "👀",
   "💯", "🤝", "☢️", "🛡️", "📉", "📈", "🤫", "🎯", "🗺️", "⚖️",
+  "🎬", "🕵️", "🛰️", "🪙", "🏆", "⏳", "🕯️", "🧨", "⚽", "🥇",
   "⚠️", "🚫", "✈️", "🪖",
 ];
 

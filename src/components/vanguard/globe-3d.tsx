@@ -17,6 +17,21 @@ const LEVEL_HEX: Record<string, string> = {
   VIGILANCIA: "#22d3ee",
 };
 
+// v31 — texturas por modo de vista: tactico oscuro, satelite real (NASA
+// Blue Marble) o planeta de noche con luces de ciudades.
+export type GlobeViewMode = "oscuridad" | "satelite" | "noche";
+export interface GlobeFlyTo {
+  lat: number;
+  lng: number;
+  altitude?: number;
+  nonce: number;
+}
+const VIEW_TEXTURES: Record<GlobeViewMode, string> = {
+  oscuridad: "/assets/globe/earth-dark.jpg",
+  satelite: "/assets/globe/earth-blue-marble.jpg",
+  noche: "/assets/globe/earth-night.jpg",
+};
+
 interface GlobePoint {
   id: string;
   lat: number;
@@ -74,6 +89,8 @@ export function Globe3D({
   routes,
   customColors,
   showCameras,
+  viewMode = "oscuridad",
+  flyTo = null,
 }: {
   conflicts: ConflictRegion[];
   selected: string | null;
@@ -82,6 +99,8 @@ export function Globe3D({
   routes: MapRoute[];
   customColors?: Record<string, string>;
   showCameras: boolean;
+  viewMode?: GlobeViewMode;
+  flyTo?: GlobeFlyTo | null;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeInstance | null>(null);
@@ -101,7 +120,7 @@ export function Globe3D({
       .width(W)
       .height(H)
       .backgroundColor("rgba(0,0,0,0)")
-      .globeImageUrl("/assets/globe/earth-dark.jpg")
+      .globeImageUrl(VIEW_TEXTURES[viewMode])
       .bumpImageUrl("/assets/globe/earth-topology.png")
       .showAtmosphere(true)
       .atmosphereColor("#f5a623")
@@ -129,6 +148,30 @@ export function Globe3D({
       globeRef.current = null;
     };
   }, []);
+
+  // ===== v31 textura en caliente + vuelo de camara =====
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    try {
+      globe.globeImageUrl(VIEW_TEXTURES[viewMode]);
+    } catch {
+      /* noop */
+    }
+  }, [viewMode]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe || !flyTo) return;
+    try {
+      globe.pointOfView(
+        { lat: flyTo.lat, lng: flyTo.lng, altitude: flyTo.altitude ?? 1.4 },
+        950,
+      );
+    } catch {
+      /* noop */
+    }
+  }, [flyTo]);
 
   // ===== datos: puntos (frentes + camaras) =====
   useEffect(() => {

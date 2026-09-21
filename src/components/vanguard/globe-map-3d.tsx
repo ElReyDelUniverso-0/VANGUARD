@@ -36,6 +36,21 @@ interface PolyDatum extends CountryFeature {
   __tid?: string | null;
 }
 
+// v31 — modos de vista del planeta: mapa oscuro tactico, imagen satelital
+// real (NASA Blue Marble) o la noche con luces de ciudades.
+export type GlobeViewMode = "oscuridad" | "satelite" | "noche";
+export interface GlobeFlyTo {
+  lat: number;
+  lng: number;
+  altitude?: number;
+  nonce: number;
+}
+const VIEW_TEXTURES: Record<GlobeViewMode, string> = {
+  oscuridad: "/assets/globe/earth-dark.jpg",
+  satelite: "/assets/globe/earth-blue-marble.jpg",
+  noche: "/assets/globe/earth-night.jpg",
+};
+
 interface GlobePolygonsLike {
   polygonsData: (d: PolyDatum[]) => GlobePolygonsLike;
   polygonCapColor: (a: (d: object) => string) => GlobePolygonsLike;
@@ -99,6 +114,10 @@ export interface GlobeMap3DProps {
   onGlobeClick?: (lat: number, lng: number) => void;
   /** color de los paises sin territorio (fondo) */
   dimColor?: string;
+  /** v31 textura del planeta (cambia en caliente sin recrear el globo) */
+  viewMode?: GlobeViewMode;
+  /** v31 vuelo de camara: cambia nonce -> animacion pointOfView */
+  flyTo?: GlobeFlyTo | null;
   className?: string;
   ariaLabel?: string;
 }
@@ -120,6 +139,8 @@ export function GlobeMap3D({
   pov,
   onGlobeClick,
   dimColor = DEFAULT_DIM,
+  viewMode = "oscuridad",
+  flyTo = null,
   className,
   ariaLabel = "Globo 3D interactivo",
 }: GlobeMap3DProps) {
@@ -144,7 +165,7 @@ export function GlobeMap3D({
       .width(W)
       .height(H)
       .backgroundColor("rgba(0,0,0,0)")
-      .globeImageUrl("/assets/globe/earth-dark.jpg")
+      .globeImageUrl(VIEW_TEXTURES[viewMode])
       .bumpImageUrl("/assets/globe/earth-topology.png")
       .showAtmosphere(true)
       .atmosphereColor(atmosphereColor)
@@ -205,6 +226,31 @@ export function GlobeMap3D({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ===== v31 cambio de textura en caliente (oscuridad/satelite/noche) =====
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    try {
+      globe.globeImageUrl(VIEW_TEXTURES[viewMode]);
+    } catch {
+      /* noop */
+    }
+  }, [viewMode]);
+
+  // ===== v31 vuelo de camara (vistas rapidas / conflicto seleccionado) =====
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe || !flyTo) return;
+    try {
+      globe.pointOfView(
+        { lat: flyTo.lat, lng: flyTo.lng, altitude: flyTo.altitude ?? 1.4 },
+        950,
+      );
+    } catch {
+      /* noop */
+    }
+  }, [flyTo]);
 
   // ===== poligonos de paises / territorios =====
   useEffect(() => {

@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { moderateUgc } from "@/lib/ai-moderate";
 
 // v25 — Galería de memes geopolíticos.
 // GET  ?sort=recent|top  → lista + stats + meme del día
 // POST → publicar (anti-spam: 8/día y 60s entre envíos por autor)
+// v31  → AGENTE MODERADOR IA integrado: los memes son texto libre del usuario,
+//        así que ahora pasan por el mismo filtro que el resto de la comunidad.
 
 export const dynamic = "force-dynamic";
 
@@ -19,23 +22,24 @@ export async function GET(req: Request) {
 
     const [memes, total, today, likesAgg] = await Promise.all([
       db.meme.findMany({
+        where: { status: "APROBADO" },
         orderBy: sort === "top" ? [{ likes: "desc" }, { createdAt: "desc" }] : { createdAt: "desc" },
         take: limit,
       }),
-      db.meme.count(),
+      db.meme.count({ where: { status: "APROBADO" } }),
       db.meme.count({
-        where: { createdAt: { gte: new Date(Date.now() - 24 * 3600_000) } },
+        where: { status: "APROBADO", createdAt: { gte: new Date(Date.now() - 24 * 3600_000) } },
       }),
       db.memeLike.count(),
     ]);
 
     // Meme del día: el más gustado de las últimas 24h; si no hay, el más gustado global.
     let memeOfDay = await db.meme.findFirst({
-      where: { createdAt: { gte: new Date(Date.now() - 24 * 3600_000) }, likes: { gt: 0 } },
+      where: { status: "APROBADO", createdAt: { gte: new Date(Date.now() - 24 * 3600_000) }, likes: { gt: 0 } },
       orderBy: { likes: "desc" },
     });
     if (!memeOfDay) {
-      memeOfDay = await db.meme.findFirst({ where: { likes: { gt: 0 } }, orderBy: [{ likes: "desc" }, { createdAt: "desc" }] });
+      memeOfDay = await db.meme.findFirst({ where: { status: "APROBADO", likes: { gt: 0 } }, orderBy: [{ likes: "desc" }, { createdAt: "desc" }] });
     }
     if (!memeOfDay) memeOfDay = memes[0] ?? null;
 
@@ -66,7 +70,52 @@ export async function POST(req: Request) {
     if (dayCount >= MAX_PER_DAY)
       return NextResponse.json({ error: "Límite de 8 memes por día alcanzado — mañana más" }, { status: 429 });
 
-    const meme = await db.meme.create({ data: { author, template, caption, composition } });
+    // v31 — AGENTE MODERADOR IA: analiza el texto libre del meme (caption + capas)
+    let textLayers = "";
+    try {
+      const parsed = JSON.parse(composition) as { layers?: { kind?: string; text?: string }[] };
+      textLayers = (parsed.layers || [])
+        .map((l) => (l?.kind === "text" || l?.kind === "emoji" ? String(l.text || "") : ""))
+        .filter(Boolean)
+        .join(" \n ");
+    } catch {
+      /* composición no parseable — se modera igual con caption/template */
+    }
+    const moderation = await moderateUgc({
+      kind: "meme",
+      title: template,
+      summary: caption,
+      body: textLayers,
+    });
+
+    if (moderation.verdict === "INAPROPIADO") {
+      // eliminado antes de nacer — igual que el resto de contenido de la comunidad
+      return NextResponse.json(
+        { deleted: true, verdict: moderation.verdict, reason: moderation.reason, ai: moderation.ai },
+        { status: 202 },
+      );
+    }
+
+    const meme = await db.meme.create({
+      data: {
+        author,
+        template,
+        caption,
+        composition,
+        status: moderation.verdict === "SOSPECHOSO" ? "PENDIENTE" : "APROBADO",
+        aiVerdict: moderation.verdict,
+        aiReason: moderation.reason.slice(0, 180),
+      },
+    });
+
+    if (moderation.verdict === "SOSPECHOSO") {
+      // pasa a revisión: no aparece en la galería hasta revisarse (sin recompensa)
+      return NextResponse.json(
+        { pending: true, verdict: moderation.verdict, reason: moderation.reason, ai: moderation.ai },
+        { status: 202 },
+      );
+    }
+
     return NextResponse.json({ meme, reward: 25 }, { status: 201 });
   } catch (e) {
     console.error("memes POST error", e);

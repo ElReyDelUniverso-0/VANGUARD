@@ -92,18 +92,6 @@ const ES: Dict = {
   "sec.sistema": "SISTEMA",
   "sec.oscsuro": "VERDAD CRUDA",
   "sec.oscsuro.desc": "Abusos documentados, incidentes, memorial y material fuerte con advertencia",
-  "sec.creadores": "创作者",
-  "sec.creadores.desc": "一切由用户上传：社区工作室、真实武器图库和无延迟谷歌地图",
-  "sec.creadores": "CREATORI",
-  "sec.creadores.desc": "Tutto lo carano le persone: studio comunitario, armeria reale e Google Maps senza lag",
-  "sec.creadores": "CREATOREN",
-  "sec.creadores.desc": "Alles kommt von den Leuten: Community-Studio, echte Waffengalerie und Google Maps ohne Lag",
-  "sec.creadores": "CRÉATEURS",
-  "sec.creadores.desc": "Tout est envoyé par les gens : studio communautaire, armurerie réelle et Google Maps sans lag",
-  "sec.creadores": "CRIADORES",
-  "sec.creadores.desc": "Tudo é enviado pela gente: estúdio comunitário, armaria real com fotos e Google Maps sem lag",
-  "sec.creadores": "CREATORS",
-  "sec.creadores.desc": "The people upload everything: community studio, real-weapon gallery and lag-free Google Maps",
   "sec.creadores": "CREADORES",
   "sec.creadores.desc": "Todo lo sube la gente: estudios para cada sección (noticias, banderas, mapas, música, stickers), gobierno mundial, bolsa de monedas y armería real",
   "sec.inicio.desc": "Portada con noticias en vivo y menú de mundos",
@@ -193,6 +181,9 @@ const ES: Dict = {
 
 const EN: Dict = {
   "common.loading": "Loading module...",
+  "common.live": "LIVE",
+  "sec.creadores": "CREATORS",
+  "sec.creadores.desc": "The people upload everything: community studio, real-weapon gallery and lag-free Google Maps",
   "common.retry": "Retry now",
   "common.close": "Close",
   "common.save": "Save",
@@ -313,6 +304,9 @@ const EN: Dict = {
 
 const PT: Dict = {
   "common.loading": "Carregando módulo...",
+  "common.live": "AO VIVO",
+  "sec.creadores": "CRIADORES",
+  "sec.creadores.desc": "Tudo é enviado pela gente: estúdio comunitário, armaria real com fotos e Google Maps sem lag",
   "common.retry": "Tentar agora",
   "common.close": "Fechar",
   "common.save": "Salvar",
@@ -416,6 +410,9 @@ const PT: Dict = {
 
 const FR: Dict = {
   "common.loading": "Chargement du module...",
+  "common.live": "EN DIRECT",
+  "sec.creadores": "CRÉATEURS",
+  "sec.creadores.desc": "Tout est envoyé par les gens : studio communautaire, armurerie réelle et Google Maps sans lag",
   "common.retry": "Réessayer",
   "common.close": "Fermer",
   "common.save": "Enregistrer",
@@ -519,6 +516,9 @@ const FR: Dict = {
 
 const DE: Dict = {
   "common.loading": "Modul wird geladen...",
+  "common.live": "LIVE",
+  "sec.creadores": "CREATOREN",
+  "sec.creadores.desc": "Alles kommt von den Leuten: Community-Studio, echte Waffengalerie und Google Maps ohne Lag",
   "common.retry": "Jetzt wiederholen",
   "common.close": "Schließen",
   "common.save": "Speichern",
@@ -611,7 +611,7 @@ const DE: Dict = {
   "mp.chatPh": "Sprich mit deinen Verbündeten...",
   "mp.warChat": "KRIEGS-CHAT",
   "mp.log": "LOGBUCH",
-  "mp.standings": "KOMMAN DANTEN".replace(" ", ""),
+  "mp.standings": "TABELLE",
   "mp.worldConquered": "hat die Welt erobert",
   "mp.you": "DU",
   "mp.youTag": "ist dein Imperium",
@@ -622,6 +622,9 @@ const DE: Dict = {
 
 const IT: Dict = {
   "common.loading": "Caricamento modulo...",
+  "common.live": "IN DIRETTA",
+  "sec.creadores": "CREATORI",
+  "sec.creadores.desc": "Tutto lo crea la gente: studio comunitario, armeria reale e Google Maps senza lag",
   "common.retry": "Riprova ora",
   "common.close": "Chiudi",
   "common.save": "Salva",
@@ -725,6 +728,9 @@ const IT: Dict = {
 
 const ZH: Dict = {
   "common.loading": "模块加载中...",
+  "common.live": "直播",
+  "sec.creadores": "创作者",
+  "sec.creadores.desc": "一切由用户上传：社区工作室、真实武器图库和无延迟谷歌地图",
   "common.retry": "立即重试",
   "common.close": "关闭",
   "common.save": "保存",

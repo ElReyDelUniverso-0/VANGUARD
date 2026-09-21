@@ -7,7 +7,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Map as MapIcon, Crosshair, Layers, AlertTriangle, X, Users, HeartPulse, Flag, Video,
-  Bomb, Pill, Skull, Route, Globe2,
+  Bomb, Pill, Skull, Route, Globe2, Satellite, Moon, LocateFixed, ScanEye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
@@ -25,6 +25,7 @@ const Globe3D = dynamic(
 );
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getCameraModel } from "@/lib/camera-data";
+import type { GlobeViewMode, GlobeFlyTo } from "@/components/vanguard/globe-3d";
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud bg-red-hud border-red-hud",
@@ -129,6 +130,13 @@ const MODE_ICON: Record<MapMode, React.ReactNode> = {
   BANDAS: <Skull className="w-3 h-3" />,
 };
 
+// v31 — modos de textura del globo 3D
+const VIEW_MODES: { id: GlobeViewMode; label: string; icon: React.ReactNode; color: "amber" | "cyan" | "violet" }[] = [
+  { id: "oscuridad", label: "Táctico", icon: <Crosshair className="w-3 h-3" />, color: "amber" },
+  { id: "satelite", label: "Satélite", icon: <Satellite className="w-3 h-3" />, color: "cyan" },
+  { id: "noche", label: "Noche", icon: <Moon className="w-3 h-3" />, color: "violet" },
+];
+
 export function MapPanel() {
   const [mode, setMode] = useState<MapMode>("GLOBAL");
   const [selected, setSelected] = useState<string | null>(null);
@@ -137,6 +145,8 @@ export function MapPanel() {
   const [showCameras, setShowCameras] = useState(true);
   const [selectedCam, setSelectedCam] = useState<string | null>(null);
   const [view3d, setView3d] = useState(true); // v14: el globo 3D es la vista por defecto
+  const [viewMode, setViewMode] = useState<GlobeViewMode>("oscuridad"); // v31
+  const [flyTo, setFlyTo] = useState<GlobeFlyTo | null>(null); // v31 vuelos de camara
   const recordOpenMap = useGameStore((s) => s.recordOpenMap);
   const cameras = useGameStore((s) => s.cameras);
 
@@ -160,6 +170,9 @@ export function MapPanel() {
   const handleSelect = (id: string) => {
     setSelected(id);
     recordOpenMap(id);
+    // v31: al elegir un frente, la camara vuela hasta el
+    const c = CONFLICTS.find((x) => x.id === id);
+    if (c) setFlyTo({ lat: c.lat, lng: c.lng, altitude: 1.55, nonce: Date.now() });
   };
 
   return (
@@ -170,10 +183,15 @@ export function MapPanel() {
         icon={<MapIcon className="w-4 h-4 text-amber" />}
         color="amber"
         right={
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
             <ToggleChip active={view3d} onClick={() => setView3d(!view3d)} color="amber" icon={<Globe2 className="w-3 h-3" />}>
               Globo 3D
             </ToggleChip>
+            {view3d && VIEW_MODES.map((v) => (
+              <ToggleChip key={v.id} active={viewMode === v.id} onClick={() => setViewMode(v.id)} color={v.color} icon={v.icon}>
+                {v.label}
+              </ToggleChip>
+            ))}
             {mode === "GLOBAL" && !view3d && (
               <>
                 <ToggleChip active={showFronts} onClick={() => setShowFronts(!showFronts)} color="amber" icon={<Crosshair className="w-3 h-3" />}>
@@ -235,6 +253,8 @@ export function MapPanel() {
               routes={modeDef.routes}
               customColors={customColors}
               showCameras={mode === "GLOBAL" && showCameras}
+              viewMode={viewMode}
+              flyTo={flyTo}
             />
           ) : (
             <WorldMapSVG
@@ -251,8 +271,29 @@ export function MapPanel() {
             />
           )}
           <div className="absolute top-2 left-2 text-[10px] font-mono text-muted-foreground bg-background/80 px-2 py-1 hud-corner border-amber-hud">
-            {view3d ? "GLOBO 3D · WEBGL · ARRASTRA PARA ROTAR" : "LAT/LNG · MERCATOR · NE-110M"} · {mode}
+            {view3d ? (viewMode === "satelite" ? "SATELITE · NASA BLUE MARBLE" : viewMode === "noche" ? "ORBITA NOCTURNA · LUCES DE CIUDADES" : "GLOBO 3D · WEBGL · ARRASTRA PARA ROTAR") : "LAT/LNG · MERCATOR · NE-110M"} · {mode}
           </div>
+          {/* v31 vistas rapidas: vuelo de camara a los frentes mas calientes */}
+          {view3d && visibleConflicts.length > 0 && (
+            <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+              <button
+                onClick={() => setFlyTo({ lat: 22, lng: 12, altitude: 2.1, nonce: Date.now() })}
+                className="flex items-center gap-1 text-[9px] font-mono uppercase px-2 py-1 bg-background/85 border border-amber-hud/60 text-amber hover:bg-amber-hud/20 transition-colors"
+              >
+                <LocateFixed className="w-3 h-3" /> vista global
+              </button>
+              {[...visibleConflicts].sort((a, b) => b.intensity - a.intensity).slice(0, 3).map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => handleSelect(c.id)}
+                  className="flex items-center gap-1 text-[9px] font-mono uppercase px-2 py-1 bg-background/85 border border-white/15 text-muted-foreground hover:text-amber hover:border-amber-hud/60 transition-colors max-w-[170px]"
+                >
+                  <ScanEye className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">volar: {c.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
           <div className={cn("absolute bottom-2 right-2 text-[10px] font-mono bg-background/80 px-2 py-1 hud-corner", modeDef.textClass)} style={{ borderColor: `${modeDef.hex}66` }}>
             {stats.zonas} ZONAS · {stats.crit} CRITICAS
           </div>

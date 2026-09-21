@@ -633,3 +633,35 @@
 
 /* Transiciones suaves de sección (300ms) — utilidad genérica */
 .vg-transition { transition: all 300ms ease; }
+
+/* ===== v31 LANZAMIENTO MUNDIAL — aire fresco ===== */
+/* Selección de texto con el acento de la marca */
+::selection {
+  background: rgba(30, 144, 255, 0.35);
+  color: #ffffff;
+}
+/* Foco visible accesible y elegante */
+:focus-visible {
+  outline: 2px solid rgba(62, 166, 255, 0.7);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* Scrollbar global refinada (webkit) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(10, 12, 20, 0.6); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(62, 166, 255, 0.45), rgba(168, 85, 247, 0.4));
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(62, 166, 255, 0.7), rgba(168, 85, 247, 0.6));
+}
+/* Sombra de marca en paneles HUD existentes (sin tocar su estructura) */
+.hud-panel {
+  box-shadow: 0 10px 34px -18px rgba(30, 144, 255, 0.28), 0 2px 10px -4px rgba(0, 0, 0, 0.6);
+}
+/* Acento vivo para títulos con .text-gradient (degradado un pelo más rico) */
+.text-gradient {
+  background-image: linear-gradient(100deg, #3EA6FF 0%, #7DD3FC 35%, #A855F7 70%, #FFD34D 100%);
+}

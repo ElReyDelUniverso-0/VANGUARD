@@ -388,7 +388,7 @@ export default function Home() {
             <kbd className="px-1 py-0.5 border border-amber-hud/30 rounded text-amber">1-0</kbd>
             <span>{t("footer.navKeys")}</span>
             <span className="text-amber-hud/30">·</span>
-            <span>v16 → {APP_VERSION}.0</span>
+            <span>v16 → {APP_VERSION_LABEL}</span>
           </div>
         </div>
       </footer>

@@ -1,4 +1,5 @@
 // Vanguard — Sound system using Web Audio API (no external assets)
+import { resumeMusicIfWanted } from "@/lib/conflict-music";
 
 let ctx: AudioContext | null = null;
 let muted = false;
@@ -165,6 +166,8 @@ export function initSound() {
   const resume = () => {
     const c = getCtx();
     if (c && c.state === "suspended") c.resume();
+    // v31: si el usuario dejó RADIO VANGUARD encendida, suena al primer gesto
+    resumeMusicIfWanted();
   };
   window.addEventListener("click", resume, { once: true });
   window.addEventListener("keydown", resume, { once: true });

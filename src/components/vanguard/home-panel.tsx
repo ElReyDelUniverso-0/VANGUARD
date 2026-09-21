@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_VERSION_LABEL } from "@/lib/version";
+import { LaunchCountdown } from "@/components/vanguard/launch-countdown";
 import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";
 import { CONFLICTS } from "@/lib/game-data";
@@ -209,6 +210,9 @@ export function HomePanel() {
 
   return (
     <div className="space-y-5">
+      {/* v31: cuenta atrás al GRAN ESTRENO MUNDIAL */}
+      <LaunchCountdown />
+
       {/* ====== HERO: identidad + estado (v16: anillo aurora giratorio) ====== */}
       <div className="hero-ring">
         <div className="hud-panel hud-corner p-5 sm:p-7 section-gradient relative overflow-hidden">

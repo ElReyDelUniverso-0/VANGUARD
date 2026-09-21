@@ -9,6 +9,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+import { CommunityGames } from "@/components/vanguard/community-games";
 import { Gamepad2, RotateCcw, Clock, Brain, Flag, Hourglass, Camera, Zap, KeyRound, Handshake, Lightbulb, Rocket, Swords, Shield, Crosshair } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -724,6 +725,8 @@ export function ArcadePanel() {
   return (
     <div className="space-y-3">
       <PanelHeader title="ARCADE PACK" subtitle="10 minijuegos rapidos · monedas y XP al ganar" icon={<Gamepad2 className="w-4 h-4" />} color="red" />
+
+      {!game && <CommunityGames />}
 
       {!game && (
         <div className="grid sm:grid-cols-2 gap-2">

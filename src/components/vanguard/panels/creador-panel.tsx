@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { WORLD_FLAGS } from "@/lib/world-data";
+import { GAME_TEMPLATES } from "@/lib/game-templates";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Countryball } from "@/components/vanguard/countryball";
 import {
@@ -528,6 +529,27 @@ export function CreadorPanel() {
 
             {kind === "juego" && (
               <div className="space-y-2">
+                {/* v31: plantillas de juego listas para publicar */}
+                <div className="hud-corner border border-green-hud/40 bg-green-hud/5 p-2">
+                  <div className="text-[10px] font-mono font-bold uppercase text-green-hud mb-1.5">
+                    🎮 Plantillas listas — pulsa una y publícala tal cual o edítala
+                  </div>
+                  <div className="grid sm:grid-cols-3 gap-1.5">
+                    {GAME_TEMPLATES.map((tpl) => (
+                      <button
+                        key={tpl.id}
+                        onClick={() => {
+                          setGameHtml(tpl.html);
+                          toast.success(`Plantilla "${tpl.name}" cargada en el editor`, { description: "Publícala así o edita el HTML a tu gusto" });
+                        }}
+                        className="text-left border border-green-hud/40 bg-background/60 p-2 hover:border-green-hud hover:bg-green-hud/10 transition-colors"
+                      >
+                        <div className="text-[11px] font-mono font-bold text-foreground">{tpl.name}</div>
+                        <div className="text-[9px] font-mono text-muted-foreground leading-snug">{tpl.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-[10px] font-mono uppercase text-amber">URL del juego (PC/móvil)</label>

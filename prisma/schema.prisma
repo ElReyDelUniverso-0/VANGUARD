@@ -469,6 +469,9 @@ model Meme {
   template    String     @default("libre")
   caption     String     @default("")
   composition String // JSON de capas {bg, layers[]} — la galería re-renderiza en vivo
+  status      String     @default("APROBADO") // v31: moderación IA (APROBADO | PENDIENTE)
+  aiVerdict   String? // LIMPIO | SOSPECHOSO | INAPROPIADO
+  aiReason    String?
   likes       Int        @default(0)
   createdAt   DateTime   @default(now())
   memeLikes   MemeLike[]

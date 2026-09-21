@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { APP_VERSION_LABEL } from "@/lib/version";
 
 const BOOT_LINES = [
   "Conectando con fuentes globales...",
@@ -77,7 +78,7 @@ export function BootScreen() {
             </div>
             <div className="mt-2 inline-flex items-center gap-2">
               <span className="text-gradient font-mono text-[9px] font-bold uppercase tracking-[0.3em]">
-                Multijugador Terminado · v17.0
+                {APP_VERSION_LABEL}
               </span>
             </div>
           </div>
