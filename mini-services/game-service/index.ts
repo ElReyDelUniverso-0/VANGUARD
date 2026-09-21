@@ -12,7 +12,8 @@ import {
 import { setupDetective } from "./detective";
 import { setupDuel } from "./duel";
 
-const PORT = 3003;
+// v30 PASO PRO: Render asigna su propio puerto via env PORT; en local/VPS usa 3003.
+const PORT = Number(process.env.PORT) || 3003;
 
 // ==================================================================
 // UTILIDADES

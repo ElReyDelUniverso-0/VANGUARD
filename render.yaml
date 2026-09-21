@@ -1,13 +1,15 @@
-# VANGUARD — Blueprint de Render (multijugador en tiempo real, plan FREE)
-# Uso: render.com → New + → Blueprint → selecciona este repo → Apply
-# Después copia la URL pública del servicio (https://…onrender.com) y ponla
-# en Vercel como variable NEXT_PUBLIC_REALTIME_URL.
+# VANGUARD — Blueprint de Render (plan GRATIS, sin tarjeta)
+# Crea el servidor multijugador (Socket.io) con 1 clic:
+#   Render > New + > Blueprint > selecciona el repo VANGUARD > Apply.
 services:
   - type: web
-    name: vanguard-multijugador
-    runtime: bun
+    name: vanguard-games
+    runtime: node
     plan: free
     rootDir: mini-services/game-service
-    buildCommand: bun install
-    startCommand: bun index.ts
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

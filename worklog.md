@@ -565,3 +565,22 @@ Stage Summary:
 - Vercel desbloqueado (el usuario deploya ya en modo vitrina)
 - v30 1/2 compilado y probado, esperando permiso de escritura del token para publicar
 - Falta del usuario: (1) editar Contents→Read and write del token, (2) connection string con la contraseña real de la BD
+
+---
+Task ID: 34
+Agent: Super Z (main)
+Task: Fase 2 Paso PRO — usuario no encontró ni el vercel.json ni la contraseña; hago yo todo lo posible con el token fine-grained
+
+Work Log:
+- Token fine-grained validado (HTTP 200, login ElReyDelUniverso-0, Contents RW)
+- Descubierto: vercel.json YA tiene cron "0 12 * * *" en GitHub Y local (bloque resuelto, usuario no debía hacer nada)
+- game-service: PORT ahora lee process.env.PORT (Render asigna puerto propio); compilado con tsc (tsconfig nuevo, scripts build/start) y PROBADO con Node puro: health OK en :3999
+- render.yaml mejorado: runtime node (no bun), build tsc, healthCheck /health, NODE_VERSION 22
+- scripts/supabase-migrate.mjs creado: exporta 37 tablas SQLite→JSON, db push a Supabase, importa con skipDuplicates, verifica conteos, cambia schema principal a postgresql (listo para correr cuando llegue la contraseña)
+- scripts/list-sqlite-tables.mjs: inventario demo (Account, LiveStream, UgcItem, Meme, Contribution... ~200 filas)
+- Confirmado: 3 commits locales sin subir de la sesión anterior (2 UUID=worklog, 1 v30 PASO PRO 1/2) — seguros, se suben ahora
+
+Stage Summary:
+- Todo el prep del Paso PRO compilado, probado y commiteado
+- ÚNICO bloqueo restante: contraseña real de la BD Supabase (connection string llegó con [YOUR-PASSWORD])
+- Siguiente: contraseña → supabase-migrate.mjs → env vars en Vercel → push schema postgres → Render Blueprint

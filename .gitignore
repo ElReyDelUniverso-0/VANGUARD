@@ -63,3 +63,6 @@ server.log
 /log*.txt
 db/custom.db-wal
 db/custom.db-shm
+
+# build game-service
+mini-services/game-service/dist/
