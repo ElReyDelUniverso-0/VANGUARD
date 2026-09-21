@@ -62,6 +62,29 @@ function pushMsg(roomId: string, msg: ChatMsg) {
   const h = history[roomId] ?? (history[roomId] = []);
   h.push(msg);
   if (h.length > 80) h.splice(0, h.length - 80);
+  // v30 VISTA DIOS: feed global (todas las salas) para el panel Ojo de Dios
+  godFeed.push({ room: roomId, author: msg.author, country: msg.country, body: msg.body, ts: msg.ts, bot: msg.bot });
+  if (godFeed.length > 16) godFeed.splice(0, godFeed.length - 16);
+}
+
+// v30 VISTA DIOS — snapshot omnisciente: guerra + presencia + feed de TODAS las salas
+const godFeed: { room: string; author: string; country: string; body: string; ts: number; bot?: boolean }[] = [];
+function godSnapshot() {
+  const players = Object.values(mp.players);
+  return {
+    ts: Date.now(),
+    war: {
+      phase: mp.phase, round: mp.round,
+      humans: players.filter((p) => !p.isBot).length,
+      bots: players.filter((p) => p.isBot).length,
+      battles: battleSeq,
+      claimed: Object.values(mp.territories).filter((t) => t.owner).length,
+      total: MP_TERRITORIES.length,
+      lastBattle: mp.lastBattle,
+    },
+    online: onlineSnapshot(),
+    feed: godFeed.slice(-14).reverse(),
+  };
 }
 
 // presencia real por socket
@@ -646,6 +669,7 @@ setInterval(() => {
 setInterval(() => {
   mpTick();
   io.emit("mp:state", mp);
+  io.emit("god:state", godSnapshot()); // v30 VISTA DIOS
 }, 1000);
 
 io.emit("chat:online", onlineSnapshot());

@@ -605,3 +605,24 @@ Stage Summary:
 - BD EN LA NUBE operativa: Supabase us-west-2 con todos los datos demo migrados
 - Falta: (1) DATABASE_URL en Vercel (valor 6543 pgbouncer) — usuario o token Vercel; (2) Render Blueprint para :3003
 - NEXT_PUBLIC_REALTIME_URL en Vercel cuando exista el servicio de Render
+
+---
+Task ID: 36
+Agent: Super Z (main)
+Task: Feature VISTA DIOS (Ojo de Dios) — idea del usuario implementada en esta ronda de actualización
+
+Work Log:
+- Explore agent mapeó arquitectura de paneles (registro triple: tab-nav + page.tsx + i18n)
+- game-service: godFeed global + godSnapshot() + broadcast god:state cada 1s (guerra + presencia + feed de todas las salas)
+- Panel nuevo ojo-dios-panel.tsx: mapa omnisciente equirectangular (lat/lng real de los 24 territorios, puntos por dueño/tropas, anillo de última batalla, tooltip), 6 contadores globales, feed global con FlagBadge, escáner GDELT + directos observados
+- Registrado: TabKey ojodios + TABS + sección INTELIGENCIA + dynamic import + render + TAB_ORDER teclado
+- i18n: god.* ×27 claves ES/EN completas + core en pt/fr/de/it/zh; TAB_LABELS + TAB_SHORTS ×7 idiomas (zh: 天眼)
+- version.ts → v30.0 · OJO DE DIOS
+- E2E: god:state fluyendo cada 1s verificado con socket.io-client (tras matar proceso viejo con EADDRINUSE en :3003)
+- Lint verde (fix react-hooks/set-state-in-effect con inicializador perezoso) · bun run improve ejecutado (idea #15: push contextuales)
+- Build de validación final VERDE
+
+Stage Summary:
+- v30.0 OJO DE DIOS lista: observación omnisciente total (guerra mundial + salas + planeta)
+- Enseña: MultiEdit aplica secuencialmente (no atómico) — verificar estado tras cada fallo
+- Pendiente de rondas previas: DATABASE_URL en Vercel + Render Blueprint (usuario)

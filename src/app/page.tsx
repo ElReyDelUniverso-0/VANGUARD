@@ -110,6 +110,8 @@ const WarsimPanel = dynamic(() => import("@/components/vanguard/panels/warsim-pa
 const EspionagePanel = dynamic(() => import("@/components/vanguard/panels/espionaje-panel").then((m) => m.EspionagePanel), { ssr: false, loading: PanelSkeleton });
 const CrisisPanel = dynamic(() => import("@/components/vanguard/panels/crisis-panel").then((m) => m.CrisisPanel), { ssr: false, loading: PanelSkeleton });
 const RadarPanel = dynamic(() => import("@/components/vanguard/panels/radar-panel").then((m) => m.RadarPanel), { ssr: false, loading: PanelSkeleton });
+// v30 VISTA DIOS: observación omnisciente del sistema (guerra + salas + planeta)
+const OjoDiosPanel = dynamic(() => import("@/components/vanguard/panels/ojo-dios-panel").then((m) => m.OjoDiosPanel), { ssr: false, loading: PanelSkeleton });
 const BibliotecaPanel = dynamic(() => import("@/components/vanguard/panels/biblioteca-panel").then((m) => m.SecretLibraryPanel), { ssr: false, loading: PanelSkeleton });
 const TribunalPanel = dynamic(() => import("@/components/vanguard/panels/tribunal-panel").then((m) => m.TribunalPanel), { ssr: false, loading: PanelSkeleton });
 const AlianzasPanel = dynamic(() => import("@/components/vanguard/panels/alianzas-panel").then((m) => m.AlianzasPanel), { ssr: false, loading: PanelSkeleton });
@@ -173,7 +175,7 @@ export default function Home() {
   // Keyboard shortcuts: number keys 1-9 to switch tabs, ArrowLeft/Right to navigate
   useEffect(() => {
     const TAB_ORDER: TabKey[] = [
-      "inicio", "mundo", "bolsa", "bookmaker", "osint", "detective",
+      "inicio", "mundo", "bolsa", "bookmaker", "osint", "ojodios", "detective",
       "dron", "warsim", "arcade", "noticias",
     ];
     const handleKey = (e: KeyboardEvent) => {
@@ -329,6 +331,7 @@ export default function Home() {
         {tab === "espionaje" && <EspionagePanel />}
         {tab === "crisis" && <CrisisPanel />}
         {tab === "radar" && <RadarPanel />}
+        {tab === "ojodios" && <OjoDiosPanel />}
         {tab === "biblioteca" && <BibliotecaPanel />}
         {tab === "tribunal" && <TribunalPanel />}
         {tab === "alianzas" && <AlianzasPanel />}

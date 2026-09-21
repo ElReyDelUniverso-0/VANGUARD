@@ -1,0 +1,344 @@
+"use client";
+
+// VANGUARD v30 — VISTA DIOS (Ojo de Dios): observación omnisciente del sistema.
+// Un solo panel donde NO se esconde nada:
+//  · Mapa mundial omnisciente del Mundo de Guerra (todos los territorios, tropas y dueños)
+//  · Feed global de TODAS las salas sociales (vía god:state del :3003)
+//  · Escáner planetario de conflictos reales (GDELT) + directos observados
+// Datos: socket god:state + mp:state (1s) · APIs /api/news y /api/live/streams.
+
+import { useEffect, useMemo, useState } from "react";
+import { Eye, Radio, Swords, Globe2, Users, MessageSquare, Zap, MapPin, MonitorPlay, Radar as RadarIcon } from "lucide-react";
+import { PanelHeader } from "@/components/vanguard/panel-header";
+import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
+import { getRealtime, peekRealtime } from "@/lib/realtime";
+import { FlagBadge } from "@/components/vanguard/flag-badge";
+
+// ===== tipos del snapshot god:state =====
+interface GodFeedItem { room: string; author: string; country: string; body: string; ts: number; bot?: boolean }
+interface GodLastBattle {
+  seq: number; from: string; to: string; attacker: string; attackerName: string; defenderName: string;
+  atkRoll: number; defRoll: number; atkLosses: number; defLosses: number; captured: boolean;
+  attackerColor: string; defenderColor: string;
+}
+interface GodState {
+  ts: number;
+  war: {
+    phase: string; round: number; humans: number; bots: number; battles: number;
+    claimed: number; total: number; lastBattle: GodLastBattle | null;
+  };
+  online: Record<string, number>;
+  feed: GodFeedItem[];
+}
+interface TerrMeta { id: string; name: string; continent: string; lat: number; lng: number; adj: string[] }
+interface MpPlayerInfo { id: string; name: string; color: string; isBot: boolean; connected: boolean; captures: number; reserves: number }
+interface MpWarState {
+  phase: string; round: number;
+  territories: Record<string, { owner: string | null; troops: number }>;
+  players: Record<string, MpPlayerInfo>;
+  lastBattle: GodLastBattle | null;
+  territoryMeta: TerrMeta[];
+}
+interface NewsItem { id: string; title: string; sourceCountry?: string | null; tacticalTag?: string | null; source: string }
+interface LiveStreamItem { id: string; title: string; streamerName: string; viewers: number; country: string }
+
+const TAG_COLOR: Record<string, string> = {
+  ALERTA: "border-red-hud text-red-hud bg-red-hud/15",
+  DIPLOMACIA: "border-cyan-hud text-cyan-hud bg-cyan-hud/15",
+  ECONOMIA: "border-amber-hud text-amber-hud bg-amber-hud/15",
+  HUMANITARIO: "border-violet-hud text-violet-hud bg-violet-hud/15",
+  ANALISIS: "border-green-hud text-green-hud bg-green-hud/15",
+};
+
+export function OjoDiosPanel() {
+  const { t } = useT();
+  // v30: inicializador perezoso (patrón useMpConnected) — evita setState directo en effect
+  const [connected, setConnected] = useState(() => !!peekRealtime()?.connected);
+  const [god, setGod] = useState<GodState | null>(null);
+  const [war, setWar] = useState<MpWarState | null>(null);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [streams, setStreams] = useState<LiveStreamItem[]>([]);
+
+  // ===== socket: god:state + mp:state (patrón home-panel) =====
+  useEffect(() => {
+    const socket = getRealtime();
+    if (!socket) return;
+    const onConnect = () => setConnected(true);
+    const onDisconnect = () => setConnected(false);
+    const onGod = (s: GodState) => setGod(s);
+    const onWar = (s: MpWarState) => setWar({
+      phase: s.phase, round: s.round, territories: s.territories,
+      players: s.players, lastBattle: s.lastBattle, territoryMeta: s.territoryMeta,
+    });
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("god:state", onGod);
+    socket.on("mp:state", onWar);
+    if (socket.connected) onConnect();
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("god:state", onGod);
+      socket.off("mp:state", onWar);
+    };
+  }, []);
+
+  // ===== escáner planetario: conflictos reales (GDELT) =====
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const r = await fetch("/api/news", { cache: "no-store" });
+        const j = await r.json();
+        if (alive && Array.isArray(j.items)) setNews(j.items.slice(0, 7));
+      } catch { /* sin señal: el panel sigue vivo con lo local */ }
+      try {
+        const r = await fetch("/api/live/streams?status=live", { cache: "no-store" });
+        const j = await r.json();
+        if (alive && Array.isArray(j.streams)) {
+          setStreams([...j.streams].sort((a: LiveStreamItem, b: LiveStreamItem) => b.viewers - a.viewers).slice(0, 3));
+        }
+      } catch { /* idem */ }
+    };
+    load();
+    const iv = setInterval(load, 60_000);
+    return () => { alive = false; clearInterval(iv); };
+  }, []);
+
+  const totalOnline = useMemo(
+    () => (god ? Object.values(god.online).reduce((a, b) => a + b, 0) : 0),
+    [god]
+  );
+
+  // territorios con dueño para el mapa omnisciente
+  const terrs = useMemo(() => {
+    if (!war?.territoryMeta) return [];
+    return war.territoryMeta.map((tm) => {
+      const st = war.territories[tm.id] ?? { owner: null, troops: 0 };
+      const owner = st.owner ? war.players[st.owner] : null;
+      return { ...tm, troops: st.troops, owner: owner ?? null };
+    });
+  }, [war]);
+
+  const playersList = useMemo(
+    () => (war ? Object.values(war.players).filter((p) => p.captures > 0 || p.isBot).slice(0, 8) : []),
+    [war]
+  );
+
+  const phaseKey = (p: string | undefined) =>
+    p === "WAR" ? "god.fase.WAR" : p === "REINFORCE" ? "god.fase.REINFORCE" : p === "ENDED" ? "god.fase.ENDED" : "god.fase.LOBBY";
+
+  const lastB = war?.lastBattle ?? null;
+
+  return (
+    <div className="space-y-3">
+      <PanelHeader
+        title={t("god.title")}
+        subtitle={t("god.subtitle")}
+        icon={<Eye className="w-4 h-4 text-cyan-hud" />}
+        color="cyan"
+        right={
+          <span className={cn(
+            "flex items-center gap-1.5 text-[9px] font-mono px-2 py-1 border uppercase tracking-widest",
+            connected ? "border-green-hud text-green-hud bg-green-hud/20" : "border-red-hud text-red-hud bg-red-hud/20"
+          )}>
+            <Radio className="w-3 h-3" /> {connected ? t("god.live") : t("god.offline")}
+          </span>
+        }
+      />
+
+      {/* ===== franja de contadores globales ===== */}
+      <div className="grid grid-cols-3 lg:grid-cols-6 gap-2">
+        {([
+          { icon: <Swords className="w-3 h-3" />, label: t("god.stat.fase"), value: t(phaseKey(god?.war.phase)), accent: god?.war.phase === "WAR" ? "text-red-hud" : "text-cyan-hud" },
+          { icon: <Zap className="w-3 h-3" />, label: t("god.stat.ronda"), value: god ? `${god.war.round}` : "—", accent: "text-amber-hud" },
+          { icon: <Users className="w-3 h-3" />, label: t("god.stat.operadores"), value: god ? `${god.war.humans}` : "—", accent: "text-green-hud" },
+          { icon: <Eye className="w-3 h-3" />, label: t("god.stat.bots"), value: god ? `${god.war.bots}` : "—", accent: "text-violet-hud" },
+          { icon: <Swords className="w-3 h-3" />, label: t("god.stat.batallas"), value: god ? `${god.war.battles}` : "—", accent: "text-red-hud" },
+          { icon: <Globe2 className="w-3 h-3" />, label: t("god.stat.conectados"), value: `${totalOnline}`, accent: "text-cyan-hud" },
+        ] as const).map((s, i) => (
+          <div key={i} className="hud-panel p-2">
+            <div className="flex items-center gap-1 text-[8px] font-mono uppercase tracking-widest text-muted-foreground">
+              {s.icon} {s.label}
+            </div>
+            <div className={cn("font-display text-sm font-bold mt-0.5", s.accent)}>{s.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-5 gap-3">
+        {/* ===== MAPA OMNISCIENTE ===== */}
+        <div className="lg:col-span-3 hud-panel p-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-cyan-hud flex items-center gap-1.5">
+              <MapPin className="w-3 h-3" /> {t("god.map.title")}
+            </span>
+            <span className="text-[8px] font-mono text-muted-foreground uppercase">
+              {god ? `${god.war.claimed}/${god.war.total} ${t("god.stat.mapa")}` : "…"}
+            </span>
+          </div>
+
+          {/* proyección equirectangular: cada territorio es un punto en su lat/lng real */}
+          <div
+            className="relative w-full rounded-sm border border-cyan-hud/30 bg-black/40 overflow-hidden"
+            style={{
+              aspectRatio: "2 / 1",
+              backgroundImage:
+                "linear-gradient(rgba(34,211,238,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.08) 1px, transparent 1px)",
+              backgroundSize: "10% 10%",
+            }}
+          >
+            {/* línea del ecuador */}
+            <div className="absolute left-0 right-0 top-1/2 h-px bg-cyan-hud/20" />
+            {terrs.map((tr) => {
+              const x = ((tr.lng + 180) / 360) * 100;
+              const y = ((90 - tr.lat) / 180) * 100;
+              const isLastAtk = lastB && (lastB.from === tr.id || lastB.to === tr.id);
+              return (
+                <div
+                  key={tr.id}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group"
+                  style={{ left: `${x}%`, top: `${y}%` }}
+                >
+                  <div
+                    className={cn("rounded-full border", isLastAtk && "blink-soft")}
+                    style={{
+                      width: `${Math.min(20, 6 + tr.troops)}px`,
+                      height: `${Math.min(20, 6 + tr.troops)}px`,
+                      backgroundColor: tr.owner ? `${tr.owner.color}66` : "rgba(120,130,140,0.25)",
+                      borderColor: tr.owner ? tr.owner.color : "rgba(150,160,170,0.5)",
+                    }}
+                  />
+                  {tr.troops > 0 && (
+                    <span
+                      className="absolute left-1/2 -translate-x-1/2 top-full mt-0.5 text-[7px] font-mono font-bold"
+                      style={{ color: tr.owner ? tr.owner.color : "#9aa3ad" }}
+                    >
+                      {tr.troops}
+                    </span>
+                  )}
+                  {/* tooltip omnisciente */}
+                  <div className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
+                    <div className="hud-panel px-2 py-1 whitespace-nowrap text-[8px] font-mono uppercase tracking-wider">
+                      <span className="text-foreground">{tr.name}</span>
+                      <span className="text-muted-foreground"> · {tr.owner ? tr.owner.name : t("god.map.neutral")} · {tr.troops}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {/* anillo de la última batalla */}
+            {lastB && (() => {
+              const mt = war?.territoryMeta.find((x) => x.id === lastB.to);
+              if (!mt) return null;
+              return (
+                <div
+                  className="absolute -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-red-hud blink-soft pointer-events-none"
+                  style={{ left: `${((mt.lng + 180) / 360) * 100}%`, top: `${((90 - mt.lat) / 180) * 100}%` }}
+                />
+              );
+            })()}
+          </div>
+
+          {/* leyenda de facciones + última batalla */}
+          <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+            {playersList.map((p) => (
+              <span key={p.id} className="flex items-center gap-1 text-[8px] font-mono uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: p.color }} />
+                <span className={cn(p.connected ? "text-foreground" : "text-muted-foreground line-through")}>{p.name}</span>
+                {p.isBot && <span className="text-violet-hud">·SIM</span>}
+                <span className="text-muted-foreground">·{p.captures}</span>
+              </span>
+            ))}
+          </div>
+          {lastB && (
+            <div className="mt-2 text-[9px] font-mono uppercase tracking-wider hud-panel px-2 py-1.5">
+              <span className="text-red-hud font-bold">⚡ {t("god.map.batalla")}:</span>{" "}
+              <span style={{ color: lastB.attackerColor }}>{lastB.attackerName}</span>
+              <span className="text-muted-foreground"> {lastB.atkRoll}vs{lastB.defRoll} </span>
+              <span style={{ color: lastB.defenderColor }}>{lastB.defenderName}</span>
+              {lastB.captured && <span className="text-amber-hud"> · {t("god.map.capturado")}</span>}
+            </div>
+          )}
+        </div>
+
+        {/* ===== FEED GLOBAL — TODAS LAS SALAS ===== */}
+        <div className="lg:col-span-2 hud-panel p-3 flex flex-col">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-violet-hud flex items-center gap-1.5">
+              <MessageSquare className="w-3 h-3" /> {t("god.feed.title")}
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-hud blink-soft" />
+          </div>
+          <div className="flex-1 space-y-1.5 overflow-y-auto thin-scroll max-h-[280px] lg:max-h-[340px]">
+            {!god?.feed.length && (
+              <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground py-6 text-center">
+                {t("god.feed.vacio")}
+              </div>
+            )}
+            {god?.feed.map((m, i) => (
+              <div key={`${m.ts}-${i}`} className="text-[10px] leading-snug border-l-2 pl-2 py-0.5"
+                style={{ borderColor: m.bot ? "rgba(139,92,246,0.5)" : "rgba(34,211,238,0.6)" }}>
+                <span className="font-mono text-[7px] uppercase px-1 border border-border text-muted-foreground mr-1">{m.room}</span>
+                <FlagBadge code={m.country} className="inline-block w-3.5 h-2.5 mr-1 align-middle" />
+                <span className={cn("font-bold", m.bot ? "text-violet-hud" : "text-cyan-hud")}>{m.author}</span>
+                {m.bot && <span className="text-[7px] text-violet-hud font-mono ml-0.5">{t("god.feed.sim")}</span>}
+                <span className="text-foreground/90">: {m.body}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-3">
+        {/* ===== ESCÁNER PLANETARIO — CONFLICTOS REALES ===== */}
+        <div className="hud-panel p-3">
+          <div className="flex items-center gap-1.5 mb-2 text-[9px] font-mono uppercase tracking-widest text-red-hud">
+            <RadarIcon className="w-3 h-3" /> {t("god.scan.title")}
+          </div>
+          <div className="space-y-1.5">
+            {!news.length && (
+              <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground py-4 text-center">{t("god.scan.vacio")}</div>
+            )}
+            {news.map((n) => (
+              <div key={n.id} className="flex items-start gap-2 text-[10px] leading-snug">
+                <FlagBadge code={n.sourceCountry ?? undefined} className="w-4 h-3 mt-0.5 shrink-0" />
+                <span className="text-foreground/90 flex-1">{n.title}</span>
+                {n.tacticalTag && (
+                  <span className={cn("text-[7px] font-mono px-1 border uppercase shrink-0 mt-0.5", TAG_COLOR[n.tacticalTag] ?? "border-border text-muted-foreground")}>
+                    {n.tacticalTag}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ===== DIRECTOS OBSERVADOS ===== */}
+        <div className="hud-panel p-3">
+          <div className="flex items-center gap-1.5 mb-2 text-[9px] font-mono uppercase tracking-widest text-amber-hud">
+            <MonitorPlay className="w-3 h-3" /> {t("god.streams.title")}
+          </div>
+          <div className="space-y-1.5">
+            {!streams.length && (
+              <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground py-4 text-center">{t("god.scan.vacio")}</div>
+            )}
+            {streams.map((s) => (
+              <div key={s.id} className="flex items-center gap-2 text-[10px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-hud blink-soft shrink-0" />
+                <FlagBadge code={s.country} className="w-4 h-3 shrink-0" />
+                <span className="flex-1 truncate text-foreground/90">{s.title}</span>
+                <span className="text-[8px] font-mono text-red-hud shrink-0">{s.viewers} 👁</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center text-[8px] font-mono uppercase tracking-widest text-muted-foreground">
+        {t("god.note")}
+      </div>
+    </div>
+  );
+}

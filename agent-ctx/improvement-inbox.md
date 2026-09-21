@@ -238,3 +238,21 @@ Salud: home=200 (187ms) | gateway=200 (101ms) | sitemap=200 (117ms) | api/news=2
 ⭐ IDEA ESTRELLA: RECOMENDADOR DE CONTENIDO — con el feed "Para Ti" ya funcionando, analizar patrones de interacción para crear algoritmo de recomendación que aumente engagement en un 40% mínimo.
 
 ---
+
+## MENSAJE #15 · 2026-09-21 01:55:51 · tras Task sin-id
+Notas: (sin notas)
+Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=200 (325ms)
+
+📡 MENSAJE DEL AGENTE DE MEJORA · VANGUARD
+
+1. NOTIFICACIONES PUSH CONTEXTUALES — implementar servicio de notificaciones con badges en el header · Qué: crear componente NotificationBell con contador · Por qué: engagement 40% mayor en apps similares · Esfuerzo: M
+
+2. HISTORIA DE INTERACCIÓN — timeline personal con eventos de guerra · Qué: crear componente UserTimeline · Por qué: crea apego personal a datos · Esfuerzo: M
+
+3. MODO ESTUDIO — bloqueador de distracciones · Qué: toggle en perfil · Por qué: usuarios pasan 3x más tiempo · Esfuerzo: S
+
+4. WIDGET DE PREVISIÓN — pronóstico de conflictos · Qué: componente PredictionWidget · Por qué: posicionamiento como thought leader · Esfuerzo: L
+
+⭐ IDEA ESTRELLA: NOTIFICACIONES PUSH CONTEXTUALES — el impacto inmediato en retención y engagement justifica el esfuerzo. Los usuarios necesitan sentirse conectados a eventos en tiempo real.
+
+---

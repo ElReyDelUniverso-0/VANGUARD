@@ -13,7 +13,7 @@ import {
   Joystick, Flag, Coins, BookOpen, Sparkles, Hourglass, Earth, Activity, VenetianMask,
   Siren, BookLock, Gavel, BrainCircuit, ShieldAlert, Home, LayoutGrid,
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
-  Crosshair, UserCheck, Send, Laugh, Palette, Satellite,
+  Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
   Wand2, Landmark,
 } from "lucide-react";
 
@@ -47,7 +47,9 @@ export type TabKey =
   // v27 estudios creadores: un estudio para cada sección + gobierno + bolsa
   | "studios" | "gobierno" | "bolsamonedas"
   // v28 para ti: feed vertical estilo TikTok/YouTube con el contenido de la comunidad
-  | "foryou";
+  | "foryou"
+  // v30 vista dios: observación omnisciente del sistema
+  | "ojodios";
 
 interface TabDef {
   key: TabKey;
@@ -121,6 +123,8 @@ const TABS: Record<TabKey, TabDef> = {
   bolsamonedas:  { key: "bolsamonedas",  label: "Bolsa de Monedas (crea tu propia moneda)", short: "MONEDAS", icon: <Coins className="w-3.5 h-3.5" />, color: "green" },
   // v28 para ti
   foryou:        { key: "foryou",        label: "Para Ti (feed de la comunidad)", short: "PARA TI", icon: <Flame className="w-3.5 h-3.5" />, color: "red" },
+  // v30 vista dios
+  ojodios:       { key: "ojodios",       label: "Vista Dios (Ojo de Dios)", short: "OJO", icon: <Eye className="w-3.5 h-3.5" />, color: "cyan" },
   divisas:       { key: "divisas",       label: "Divisas del Mundo", short: "DIVISAS", icon: <Banknote className="w-3.5 h-3.5" />, color: "green" },
   perfil:        { key: "perfil",        label: "Personalizar Perfil", short: "PERFIL", icon: <UserCog className="w-3.5 h-3.5" />, color: "violet" },
   radar:         { key: "radar",         label: "Radar Desinfo + Conexiones", short: "RADAR", icon: <ShieldAlert className="w-3.5 h-3.5" />, color: "green" },
@@ -201,7 +205,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "Sala OSINT, mapa, cables, radar y vigilancia",
-    tabs: [TABS.osint, TABS.mapa, TABS.radar, TABS.galeria, TABS.briefings, TABS.camaras],
+    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     key: "emisora", label: "EMISORA", short: "EMISORA", icon: <Signal className="w-4 h-4" />, color: "red",
