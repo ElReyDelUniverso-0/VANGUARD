@@ -1,12 +1,14 @@
 // Vanguard — Geopolitical Intelligence Gamified Platform
-// Prisma schema (SQLite)
+// v30 PASO PRO — Supabase Postgres (la BD vive en la nube)
+// Local/VPS: DATABASE_URL apunta al pooler session :5432
+// Vercel:    DATABASE_URL apunta al pooler transaction :6543 con pgbouncer=true
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

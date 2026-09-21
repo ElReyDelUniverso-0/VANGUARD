@@ -584,3 +584,24 @@ Stage Summary:
 - Todo el prep del Paso PRO compilado, probado y commiteado
 - ÚNICO bloqueo restante: contraseña real de la BD Supabase (connection string llegó con [YOUR-PASSWORD])
 - Siguiente: contraseña → supabase-migrate.mjs → env vars en Vercel → push schema postgres → Render Blueprint
+
+---
+Task ID: 35
+Agent: Super Z (main)
+Task: Migración completa SQLite → Supabase Postgres con la contraseña del usuario
+
+Work Log:
+- Contraseña recibida; db.<ref>.supabase.co :5432 es IPv6-only (sin registro A) → sandbox sin IPv6
+- scripts/supabase-find-region.mjs: sondeo de 16 regiones vía handshake Postgres → región us-west-2, proyecto ACTIVO
+- Pooler session :5432 para DDL/import; pooler transaction :6543 (pgbouncer) probado OK para Vercel
+- BUG corregido en migrate script: await import("@prisma/client") devolvía el cliente SQLite cacheado en el mismo proceso → dividido en supabase-import.mjs (proceso fresco tras generate)
+- db push: 37 tablas creadas en Supabase ("database already in sync")
+- Import: 26 tablas con datos, verificación 1:1 (Account 4, LiveStream 7, UgcItem 20, Contribution 13, Meme 6, ContributorProfile 20...)
+- schema.prisma → postgresql (schema.supabase.prisma y schema.postgres.prisma eliminados)
+- .env local con pooler session; bun run build VERDE (solo rutas API usan db, todas dinámicas)
+- Smoke test producción: /api/live/streams y /api/contrib/leaderboard devuelven datos REALES de Supabase
+
+Stage Summary:
+- BD EN LA NUBE operativa: Supabase us-west-2 con todos los datos demo migrados
+- Falta: (1) DATABASE_URL en Vercel (valor 6543 pgbouncer) — usuario o token Vercel; (2) Render Blueprint para :3003
+- NEXT_PUBLIC_REALTIME_URL en Vercel cuando exista el servicio de Render
