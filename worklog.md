@@ -626,3 +626,26 @@ Stage Summary:
 - v30.0 OJO DE DIOS lista: observación omnisciente total (guerra mundial + salas + planeta)
 - Enseña: MultiEdit aplica secuencialmente (no atómico) — verificar estado tras cada fallo
 - Pendiente de rondas previas: DATABASE_URL en Vercel + Render Blueprint (usuario)
+
+---
+Task ID: 37
+Agent: Super Z (main)
+Task: Ronda de actualización v31 LANZAMIENTO MUNDIAL (pedido del usuario antes del estreno oficial: satélite, cámaras, música nueva, idiomas, publicar juegos, memes, aire fresco)
+
+Work Log:
+- GLOBO SATELITAL: texturas NASA Blue Marble (earth-blue-marble.jpg 1.4MB) + luces nocturnas (earth-night.jpg 715KB) en public/assets/globe/; Globe3D y GlobeMap3D con props nuevas viewMode (oscuridad|satelite|noche, cambio de textura en caliente) y flyTo (pointOfView animado 950ms)
+- MAPA: toggle Táctico/Satélite/Noche + botones "vista global" y "volar: [frente]" (3 más calientes); clicar un conflicto en la lista vuela la cámara hasta él
+- CÁMARAS CCTV: mismo sistema (oscuridad/satelite/noche) + al pulsar una cámara propia la vista vuela a su posición
+- MÚSICA v2: conflict-music.ts reescrito entero (misma API + resumeMusicIfWanted): arreglo de 4 compases con progresiones de acordes reales por pista (12 pistas re-sonorizadas), pad cinematográfico (sawtooth detune ±5 cents + lowpass 780 + reverb), arpegio melódico con delay con feedback (corchea con puntillo), reverb sintética (impulso 2.1s), compresor master, kick con sub y click filtrado, fill de batería en compás 4; AUTOPLAY: initSound llama resumeMusicIfWanted en el primer gesto (si la radio quedó ON, suena sola)
+- I18N: eliminados 7 duplicados basura de sec.creadores en ES y 6 de creador/armeria/maps en i18n-tabs ES; sec.creadores + common.live añadidos a EN/PT/FR/DE/IT/ZH; TAB_SHORTS completados en 7 idiomas (abuses, incidentes, memorial, sala18, dronguerra, recluta, embajadores, telegram, memes; zh + creador/armeria/maps); ojodios shorts traducidos (GOD/DEUS/DIEU/GOTT/DIO); hack "KOMMAN DANTEN" DE arreglado a TABELLE
+- JUEGOS PUBLICABLES: community-games.tsx nuevo montado arriba del Arcade (feed /api/ugc?kind=juego, sorts plays/top/recent, modal sandbox con allow="fullscreen; pointer-lock", contador de jugadas PATCH); game-templates.ts con 3 juegos completos (Quiz de Conflictos, Reflejo Nuclear, Caza-Drones 30s) que el Creador carga de un clic para publicar sin saber programar
+- MEMES: moderación IA integrada en POST /api/memes (moderateUgc sobre caption+capas de texto; INAPROPIADO→202 deleted, SOSPECHOSO→PENDIENTE oculto, LIMPIO→APROBADO +25 mon); schema Meme +status/aiVerdict/aiReason con db push a Supabase (backfill APROBADO); panel maneja veredictos; 6 plantillas nuevas (estreno, bolsa, espia, apagon, podio, cuenta atrás) + 10 stickers nuevos
+- AIRE FRESCO: version.ts v31.0 LANZAMIENTO MUNDIAL; boot-screen ya no hardcodea v17 (usa APP_VERSION_LABEL); footer arreglado (v16 → v31.0 · LANZAMIENTO MUNDIAL); launch-countdown.tsx (cuenta atrás al 2026-09-22 00:00 UTC-4, luego "YA EN VIVO" 7 días y desaparece) montado en la portada; globals.css: ::selection, :focus-visible, scrollbar degradada, sombra de marca en .hud-panel, .text-gradient más rico
+- INFRA: prisma db push OK a Supabase (la shell pisa DATABASE_URL con sqlite viejo → hay que exportar el pooler explícito al correr prisma); eslint ignores += mini-services dist, scripts, db
+- Lint 0 errores (34 warnings preexistentes) · build verde · smoke test producción :3311: / 200, /api/memes y /api/ugc?kind=juego leyendo de Supabase (ya existe juego "CAZA DEL DRON" de Quimbaya)
+- Push 85d1108 a main con token clásico → Vercel despliega solo
+
+Stage Summary:
+- v31 LANZAMIENTO MUNDIAL publicada: satélite/noche en globos, vuelos de cámara, radio v2 cinematográfica con autoplay, juegos de la comunidad jugables, memes moderados por IA con plantillas nuevas, 7 idiomas pulidos, cuenta atrás al estreno
+- Pendiente del usuario (sin cambios): DATABASE_URL en Vercel (pooler :6543 pgbouncer) + Render Blueprint + URL del servicio para NEXT_PUBLIC_REALTIME_URL
+- Recordatorio: revocar el token clásico de GitHub cuando se cierre el Paso PRO
