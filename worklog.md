@@ -770,3 +770,23 @@ Stage Summary:
 - El usuario puede vigilar cuánta gente llega abriendo https://vanguard-kq9r.vercel.app/api/visits
 - VERIFICACIÓN PRODUCCIÓN: health {"ok":true,"db":"up","version":"v34.0"}; POST /api/visits incrementa (total:1); canonical+og:url+og:image → vercel.app (previews WhatsApp/X reparadas); sitemap.xml con URL real; robots.txt actualizado; key IndexNow 200
 - INDEXACIÓN: IndexNow HTTP 202 (Bing/Yandex aceptaron portada+sitemap); bing ping 410 (endpoint deprecado, IndexNow lo sustituye); Render health OK
+
+---
+Task ID: 44
+Agent: Super Z (main)
+Task: Usuario: "sigue promocionándola en todos los lugares, que la página brille y resalte, mucha gente entre" — ronda IMPACTO TOTAL
+
+Work Log:
+- OG DINÁMICA /api/og (ImageResponse, 1200x630): tarjeta compartida VIVA con agentes totales (site_counter) + noticias 24h; marco táctico ámbar, métricas verde/cian; layout.tsx og:image + twitter:image → /api/og (WhatsApp/X muestran cifras actualizadas al compartir)
+- PÁGINA SEO /guerra-hoy (server component, force-dynamic): 24 noticias reales SSR + badges sociales + JSON-LD ItemList(NewsArticle) + CTA "ENTRAR AL MANDO"; metadata propia con canonical; enlazada desde SeoFaq (enlace interno rastreable) y sitemap (2 URLs)
+- RSS /feed.xml (revalidate, application/rss+xml): canal sindicable de los conflictos
+- BUG CRÍTICO DESCUBIERTO: refresco GDELT era fire-and-forget → el lambda de Vercel se congela al responder → NUNCA completaba → noticias 14 días viejas. FIX: after() de next/server + maxDuration 60 + timeout GDELT 2.5s→8s
+- BUG 2: GDELT rate-limita la IP compartida de Vercel (1 req/5s por IP) → refrescos concurrentes volvían vacíos. FIX: candado site_counter 'gdelt:refresh' (1 refresh cada 5 min, CREATE TABLE IF NOT EXISTS idempotente)
+- BUG 3/PLAN B: GDELT puede seguir bloqueado por IP → fetchRssFallback() con BBC Mundo/France24 ES/DW ES (regex RSS con CDATA + dc:date), upsert como NewsItem reales con url externa clicables
+- RESULTADO: /guerra-hoy pasó de "hace 14-17 d" (curadas) a "hace 55 min - 3 h" (42 noticias reales de medios); /api/news devuelve 14 BBC + 14 DW + 14 France24 + 6 curadas
+- version v35.0 IMPACTO TOTAL (fixes 35.1-35.3 bajo mismo release); builds verdes ×4; pushes 53998b1/53c3e52/366440d/0a8efa1
+- VERIFICACIÓN PROD: health v35.0 db:up; /api/og 200 image/png 143KB; /guerra-hoy 200 con title/canonical/12+ artículos SSR; /feed.xml 200 content-type correcto; IndexNow HTTP 200 (/, /guerra-hoy, /feed.xml)
+
+Stage Summary:
+- v35.0 IMPACTO TOTAL EN VIVO: la página RESALTA al compartir (OG viva con datos), Google tiene una página real que indexar (/guerra-hoy con noticias frescas de medios internacionales), canal RSS operativo, y el pipeline de noticias quedó reparado de raíz (after + candado + plan B RSS)
+- La cadena de crecimiento quedó completa: llegar (SEO/IndexNow) → resaltar (OG viva) → convertir (CTA + referidos) → retener (app estable)
