@@ -730,3 +730,22 @@ Work Log:
 Stage Summary:
 - v32.0 CIELO DE ACERO publicada: conexión blindada (polling-first + recovery + despertador + badge global + watchdog sereno) y Ojo de Dios con globo 3D de unidades militares sobre textura satelital NASA
 - Pendiente usuario (opcional): dominio vanguard.world, revocar tokens GitHub/Vercel
+
+---
+Task ID: 42
+Agent: Super Z (main)
+Task: Usuario: "pon el mapa 3D donde están los otros mapas informativos; la conexión solo dura 5 min; que no se bugee; agrega el ruso y termina los otros idiomas; un tutorial que te enseñe todo"
+
+Work Log:
+- MAPA MILITAR 3D EN EL MAPA INFORMATIVO: map-panel.tsx añade ToggleChip "MILITAR 3D" (cyan, Plane) → GlobeMap3D ssr:false con textura satelital NASA, territorios coloreados por dueño, flota buildMilitaryUnits (aviones/tanques/infantería) desde mp:state global, click en unidad = vuelo de cámara, overlay EN VIVO/SIN SEÑAL + contador de flota, leyenda de flota i18n; los chips Globo 3D/Frentes/Camaras/Satelite se ocultan en modo militar
+- CONEXIÓN PERMANENTE (mata el "dura 5 minutos"): realtime.ts startLifeline() triple defensa — guardián 10s visible-only fuerza socket.connect() si murió; keep-alive 4 min fetch /health mantiene contenedor Render despierto (4min << 15min spin-down); resurrección instantánea en visibilitychange→visible y window online
+- WATCHDOG SERENO v33: connection-watchdog resetea fails y NO overlay/recarga si peekRealtime()?.connected (adiós recargas fantasma que "buggeaban" la app)
+- IDIOMAS: ruso COMPLETO (8º idioma) — i18n.ts RU dict ~140 claves + Lang/LANGS(РУ)/detectLang/DICTS + footer.build "8 idiomas" ×8 idiomas; i18n-tabs.ts TAB_LABELS.ru + TAB_SHORTS.ru (62 claves c/u); claves nuevas god.militar + tutorial.* (27 claves) traducidas ×8 (es/en/pt/fr/de/it/ru/zh)
+- TUTORIAL: tutorial-modal.tsx NUEVO — 10 pasos (bienvenida, navegación, mapa militar 3D, guerra mundial, monedas, juegos, creadores, comunidad, idiomas, conexión) con iconos, botón IR ALLÁ que navega al panel real, barra progreso %, dots clicables, teclado ←/→/Esc, auto-apertura 1ª visita (localStorage vanguard-tutorial-v33, delay 2.4s post-boot) y rejugable vía evento vanguard:open-tutorial; montado en page.tsx (dynamic ssr:false) + botón VER TUTORIAL en help-panel quick-start (useT añadido)
+- version.ts → v33.0 ESCUELA DE GUERRA
+- lint 0 errores (ningún warning de archivos nuevos) + build verde 1er intento
+- Push 49889fd → Vercel READY: /api/health {"ok":true,"db":"up","version":"v33.0"}; portada "v33.0 · ESCUELA DE GUERRA"; Render health OK; memes con datos reales
+
+Stage Summary:
+- v33.0 ESCUELA DE GUERRA EN VIVO: el mapa 3D militar ya está dentro de INTELIGENCIA → Mapa mundial (junto a radar/OSINT/cámaras), conexión blindada contra spin-down de Render y móviles, ruso añadido y todo el chrome 100% traducido en 8 idiomas, y el manual del comandante enseña la plataforma entera en 10 pasos
+- Nota: TAB_LABELS ya tenía fr/de/it/zh (solo faltaba ru); los cuerpos de paneles siguen en español (traducción progresiva de contenido, no de chrome)
