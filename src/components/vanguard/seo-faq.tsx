@@ -58,6 +58,13 @@ export function SeoFaq() {
           </details>
         ))}
       </div>
+      {/* v35: enlace interno rastreable al canal SEO de noticias */}
+      <a
+        href="/guerra-hoy"
+        className="mt-3 inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-widest text-electric hover:text-amber transition-colors"
+      >
+        <Radar className="w-3.5 h-3.5" /> Últimas noticias de guerra → Guerra Hoy
+      </a>
     </section>
   );
 }

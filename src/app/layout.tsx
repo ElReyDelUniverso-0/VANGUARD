@@ -116,7 +116,9 @@ export const metadata: Metadata = {
     description: SITE_DESC,
     images: [
       {
-        url: "/og-image.png",
+        // v35: OG DINÁMICA — imagen viva con agentes totales + noticias 24h.
+        // Cada compartida en WhatsApp/X/Telegram muestra cifras actualizadas.
+        url: "/api/og",
         width: 1200,
         height: 630,
         alt: "VANGUARD — La plataforma de conflictos mundiales en tiempo real",
@@ -127,7 +129,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VANGUARD · El Mundo en Tiempo Real",
     description: SITE_DESC,
-    images: ["/og-image.png"],
+    images: ["/api/og"],
   },
   appleWebApp: {
     capable: true,

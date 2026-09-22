@@ -14,5 +14,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "hourly",
       priority: 1,
     },
+    {
+      // v35: página SEO server-rendered con noticias en vivo — imán de Google
+      url: `${SITE_URL}/guerra-hoy`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    },
   ];
 }

@@ -1,0 +1,205 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { db } from "@/lib/db";
+
+// v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
+// La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
+// Esta página se renderiza EN EL SERVIDOR con noticias reales de la BD:
+// Google la indexa por búsquedas tipo "guerra hoy", "noticias de guerra",
+// "conflictos mundiales" y desde aquí el visitante entra al mando ("/").
+
+export const dynamic = "force-dynamic";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+
+const FALLBACK_IMGS = [
+  "/assets/real/drone-1.jpg",
+  "/assets/real/city-1.jpg",
+  "/assets/real/ship-1.jpg",
+  "/assets/real/fire-1.jpg",
+  "/assets/real/jet-1.jpg",
+  "/assets/real/tanks-1.jpg",
+];
+
+type NewsRow = {
+  id: string;
+  title: string;
+  url: string;
+  source: string;
+  imageUrl: string | null;
+  publishedAt: Date;
+  tacticalTag: string | null;
+  summary: string | null;
+};
+
+async function getNews(): Promise<{ items: NewsRow[]; agents: number }> {
+  try {
+    const [items, counter] = await Promise.all([
+      db.newsItem.findMany({ orderBy: { publishedAt: "desc" }, take: 24 }),
+      db.$queryRaw<{ n: bigint | number }[]>(
+        // tabla creada por /api/visits (idempotente); puede no existir aún
+        `SELECT COALESCE((SELECT n FROM site_counter WHERE k = 'total'), 0) AS n`
+      ).catch(() => [{ n: 0 }] as { n: bigint | number }[]),
+    ]);
+    const agents = counter[0] ? Number(counter[0].n) : 0;
+    return { items, agents };
+  } catch {
+    return { items: [], agents: 0 };
+  }
+}
+
+export const metadata: Metadata = {
+  title: "Guerra hoy en vivo — Últimas noticias de conflictos mundiales",
+  description:
+    "Todas las guerras y conflictos del mundo HOY, actualizados en vivo: ataques, diplomacia, economía de la guerra y análisis. Sigue el pulso del planeta en VANGUARD, gratis y en español.",
+  alternates: { canonical: "/guerra-hoy" },
+  openGraph: {
+    title: "Guerra hoy en vivo · VANGUARD",
+    description:
+      "Los conflictos del mundo actualizados en vivo + mapa 3D militar y guerra global multijugador. Gratis, en español.",
+    url: `${SITE_URL}/guerra-hoy`,
+    images: ["/api/og"],
+  },
+};
+
+function hace(date: Date): string {
+  const mins = Math.max(1, Math.round((Date.now() - date.getTime()) / 60000));
+  if (mins < 60) return `hace ${mins} min`;
+  const h = Math.round(mins / 60);
+  if (h < 24) return `hace ${h} h`;
+  const d = Math.round(h / 24);
+  return `hace ${d} d`;
+}
+
+const TAG_COLOR: Record<string, string> = {
+  ALERTA: "text-red-400 border-red-400/40 bg-red-400/10",
+  DIPLOMACIA: "text-sky-300 border-sky-300/40 bg-sky-300/10",
+  ECONOMIA: "text-amber-300 border-amber-300/40 bg-amber-300/10",
+  HUMANITARIO: "text-emerald-300 border-emerald-300/40 bg-emerald-300/10",
+  ANALISIS: "text-violet-300 border-violet-300/40 bg-violet-300/10",
+  INFO: "text-zinc-300 border-zinc-300/40 bg-zinc-300/10",
+};
+
+export default async function GuerraHoyPage() {
+  const { items, agents } = await getNews();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Noticias de guerra y conflictos mundiales en vivo",
+    numberOfItems: items.length,
+    itemListElement: items.slice(0, 20).map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "NewsArticle",
+        headline: it.title,
+        datePublished: new Date(it.publishedAt).toISOString(),
+        sourceOrganization: it.source,
+        url: it.url && it.url !== "#" ? it.url : `${SITE_URL}/guerra-hoy`,
+      },
+    })),
+  };
+
+  return (
+    <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <header className="border-b border-amber-500/30 bg-black/40 px-5 py-6 max-w-5xl mx-auto">
+        <p className="font-mono text-[11px] tracking-[0.3em] text-amber-400 uppercase">
+          VANGUARD · Canal abierto de inteligencia
+        </p>
+        <h1 className="font-orbitron text-3xl sm:text-4xl font-black mt-2 tracking-wide">
+          GUERRA HOY <span className="text-red-400">· EN VIVO</span>
+        </h1>
+        <p className="mt-3 text-sm text-zinc-400 leading-relaxed max-w-2xl">
+          Todos los conflictos del planeta, actualizados sin parar: frentes, ataques,
+          diplomacia y análisis. Si el mundo hace ruido, aquí se escucha primero.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3 text-[11px] font-mono">
+          <span className="border border-emerald-400/40 bg-emerald-400/10 text-emerald-300 rounded px-2.5 py-1">
+            {agents > 0 ? `${agents.toLocaleString("es")} agentes ya dentro` : "Comunidad activa"}
+          </span>
+          <span className="border border-sky-300/40 bg-sky-300/10 text-sky-300 rounded px-2.5 py-1">
+            {items.length} historias en seguimiento
+          </span>
+          <span className="border border-amber-400/40 bg-amber-400/10 text-amber-300 rounded px-2.5 py-1">
+            100% gratis · sin registro
+          </span>
+        </div>
+      </header>
+
+      <section className="max-w-5xl mx-auto px-5 py-8 grid gap-4">
+        {items.length === 0 && (
+          <div className="border border-border rounded-md p-8 text-center text-sm text-zinc-400">
+            El canal se está sincronizando con los frentes del mundo. Entra al mando
+            mientras tanto — el mapa 3D ya está operativo.
+          </div>
+        )}
+        {items.map((it, i) => {
+          const img = it.imageUrl || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+          const tag = (it.tacticalTag || "INFO").toUpperCase();
+          const inner = (
+            <article className="flex gap-4 border border-zinc-800 hover:border-amber-500/50 rounded-md overflow-hidden bg-zinc-900/40 transition-colors">
+              {/* imagen directa (next/image no aporta aquí: dominios externos variables) */}
+              <img
+                src={img}
+                alt={it.title}
+                width={220}
+                height={140}
+                className="hidden sm:block object-cover w-[220px] h-[140px] shrink-0"
+              />
+              <div className="p-4 flex flex-col gap-1.5 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`font-mono text-[10px] uppercase tracking-widest border rounded px-1.5 py-0.5 ${TAG_COLOR[tag] || TAG_COLOR.INFO}`}>
+                    {tag}
+                  </span>
+                  <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                    {it.source} · {hace(new Date(it.publishedAt))}
+                  </span>
+                </div>
+                <h2 className="text-sm sm:text-base font-bold leading-snug">{it.title}</h2>
+                {it.summary && (
+                  <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{it.summary}</p>
+                )}
+              </div>
+            </article>
+          );
+          return it.url && it.url !== "#" ? (
+            <a key={it.id} href={it.url} target="_blank" rel="noopener noreferrer nofollow">
+              {inner}
+            </a>
+          ) : (
+            <div key={it.id}>{inner}</div>
+          );
+        })}
+      </section>
+
+      <section className="max-w-5xl mx-auto px-5 pb-14">
+        <div className="border border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-transparent rounded-lg p-7 text-center">
+          <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-amber-300">
+            ¿SOLO LEER? ENTRA AL MANDO
+          </h2>
+          <p className="mt-2 text-sm text-zinc-300 max-w-xl mx-auto leading-relaxed">
+            En VANGUARD no solo ves la guerra: la juegas. Mapa 3D militar en vivo,
+            guerra global multijugador por rondas, duelos con ranking ELO y misiones
+            diarias. Gratis, sin instalar nada.
+          </p>
+          <Link
+            href="/"
+            className="inline-block mt-5 bg-amber-400 hover:bg-amber-300 text-black font-black font-mono uppercase tracking-widest text-sm rounded px-8 py-3.5 transition-colors"
+          >
+            Entrar al mando ahora →
+          </Link>
+          <p className="mt-3 text-[11px] text-zinc-500 font-mono">
+            8 idiomas · PWA instalable · comunidad global
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+}
