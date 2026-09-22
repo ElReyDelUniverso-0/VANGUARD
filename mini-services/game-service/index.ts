@@ -424,6 +424,14 @@ const httpServer = createServer((req, res) => {
 const io = new Server(httpServer, {
   cors: { origin: "*" },
   transports: ["websocket", "polling"],
+  // v32 CIELO DE ACERO — estabilidad: recuperación de estado tras cortes
+  // breves (<=2 min, sin refetch) + pings más tolerantes con redes móviles.
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 2 * 60 * 1000,
+    skipMiddlewares: true,
+  },
+  pingInterval: 20000,
+  pingTimeout: 25000,
 });
 
 httpServer.listen(PORT, () => {

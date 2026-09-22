@@ -8,12 +8,26 @@
 // Datos: socket god:state + mp:state (1s) · APIs /api/news y /api/live/streams.
 
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Radio, Swords, Globe2, Users, MessageSquare, Zap, MapPin, MonitorPlay, Radar as RadarIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Eye, Radio, Swords, Globe2, Users, MessageSquare, Zap, MapPin, MonitorPlay, Radar as RadarIcon, Plane, Shield } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
+// v32 CIELO DE ACERO — globo 3D con unidades militares reales (aviones/tanques/infantería)
+import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnitCache, type UnitKind } from "@/lib/military-units";
+import type { Globe3DArc, Globe3DUnit, Globe3DMarker, GlobeFlyTo } from "@/components/vanguard/globe-map-3d";
+
+const GlobeMap3D = dynamic(
+  () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full rounded-sm border border-cyan-hud/30 bg-black/40 animate-pulse" style={{ height: "min(54vh, 500px)" }} />
+    ),
+  }
+);
 
 // ===== tipos del snapshot god:state =====
 interface GodFeedItem { room: string; author: string; country: string; body: string; ts: number; bot?: boolean }
@@ -59,6 +73,11 @@ export function OjoDiosPanel() {
   const [war, setWar] = useState<MpWarState | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [streams, setStreams] = useState<LiveStreamItem[]>([]);
+  // v32 CIELO DE ACERO — vista globo 3D con unidades militares (por defecto ON)
+  const [vista3d, setVista3d] = useState(true);
+  const [flyTo, setFlyTo] = useState<GlobeFlyTo | null>(null);
+  // cache de objetos THREE como estado perezoso (estable entre renders, sin refs en render)
+  const [unitCache] = useState<MilUnitCache>(() => newMilUnitCache());
 
   // ===== socket: god:state + mp:state (patrón home-panel) =====
   useEffect(() => {
@@ -131,6 +150,88 @@ export function OjoDiosPanel() {
 
   const lastB = war?.lastBattle ?? null;
 
+  // ===== v32: datos del globo 3D =====
+  const territoryColors3d = useMemo(() => {
+    const acc: Record<string, string> = {};
+    for (const tr of terrs) if (tr.owner) acc[tr.id] = tr.owner.color;
+    return acc;
+  }, [terrs]);
+
+  const territoryNames3d = useMemo(() => {
+    const acc: Record<string, string> = {};
+    for (const tr of terrs) acc[tr.id] = tr.name;
+    return acc;
+  }, [terrs]);
+
+  const units3d = useMemo(() => {
+    if (!vista3d || !war?.territoryMeta) return [] as Globe3DUnit[];
+    const built = buildMilitaryUnits(
+      war.territoryMeta,
+      war.territories,
+      war.players,
+      unitCache,
+      (k: UnitKind) => t(UNIT_KIND_KEY[k])
+    );
+    // volar a la unidad al tocarla
+    return built.map((u) => ({
+      ...u,
+      onClick: () => setFlyTo({ lat: u.lat, lng: u.lng, altitude: 1.1, nonce: Date.now() }),
+    }));
+  }, [vista3d, war, t, unitCache]);
+
+  const unitCounts = useMemo(() => {
+    const c = { jet: 0, tank: 0, inf: 0 };
+    for (const u of units3d) c[u.kind] += 1;
+    return c;
+  }, [units3d]);
+
+  // arco + anillo del último frente activo
+  const battleGeo = useMemo(() => {
+    if (!lastB || !war?.territoryMeta) return null;
+    const from = war.territoryMeta.find((x) => x.id === lastB.from);
+    const to = war.territoryMeta.find((x) => x.id === lastB.to);
+    if (!from || !to) return null;
+    return { from, to, color: lastB.attackerColor };
+  }, [war, lastB]);
+
+  const battleArcs = useMemo<Globe3DArc[]>(() => {
+    if (!battleGeo) return [];
+    return [
+      {
+        startLat: battleGeo.from.lat,
+        startLng: battleGeo.from.lng,
+        endLat: battleGeo.to.lat,
+        endLng: battleGeo.to.lng,
+        color: [battleGeo.color, "#ff2d55"],
+        stroke: 0.9,
+        dashTime: 1600,
+      },
+    ];
+  }, [battleGeo]);
+
+  const battleMarkers = useMemo<Globe3DMarker[]>(() => {
+    if (!battleGeo) return [];
+    return [
+      {
+        id: `battle-${lastB?.seq ?? 0}`,
+        lat: battleGeo.to.lat,
+        lng: battleGeo.to.lng,
+        color: "#ff3355",
+        size: 0.55,
+        alt: 0.03,
+        ring: true,
+        ringMax: 6,
+        labelTag: `⚔ ${lastB?.attackerName ?? ""}`,
+        label: `${lastB?.atkRoll ?? ""} vs ${lastB?.defRoll ?? ""} · ${lastB?.defenderName ?? ""}`,
+      },
+    ];
+  }, [battleGeo, lastB]);
+
+  const flyToFront = () => {
+    if (!battleGeo) return;
+    setFlyTo({ lat: battleGeo.to.lat, lng: battleGeo.to.lng, altitude: 1.45, nonce: Date.now() });
+  };
+
   return (
     <div className="space-y-3">
       <PanelHeader
@@ -172,13 +273,78 @@ export function OjoDiosPanel() {
         <div className="lg:col-span-3 hud-panel p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[9px] font-mono uppercase tracking-widest text-cyan-hud flex items-center gap-1.5">
-              <MapPin className="w-3 h-3" /> {t("god.map.title")}
+              {vista3d ? <Globe2 className="w-3 h-3" /> : <MapPin className="w-3 h-3" />}
+              {vista3d ? t("god.map3d.title") : t("god.map.title")}
             </span>
-            <span className="text-[8px] font-mono text-muted-foreground uppercase">
-              {god ? `${god.war.claimed}/${god.war.total} ${t("god.stat.mapa")}` : "…"}
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[8px] font-mono text-muted-foreground uppercase mr-1">
+                {god ? `${god.war.claimed}/${god.war.total} ${t("god.stat.mapa")}` : "…"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setVista3d(false)}
+                className={cn(
+                  "px-1.5 py-0.5 text-[8px] font-mono uppercase tracking-widest border active:scale-95",
+                  !vista3d ? "border-cyan-hud text-cyan-hud bg-cyan-hud/15" : "border-border text-muted-foreground"
+                )}
+              >
+                {t("god.vista.mapa")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setVista3d(true)}
+                className={cn(
+                  "px-1.5 py-0.5 text-[8px] font-mono uppercase tracking-widest border active:scale-95",
+                  vista3d ? "border-cyan-hud text-cyan-hud bg-cyan-hud/15" : "border-border text-muted-foreground"
+                )}
+              >
+                {t("god.vista.globo")}
+              </button>
+            </div>
           </div>
 
+          {/* v32: vista conmutable — GLOBO 3D con unidades militares o mapa 2D táctico */}
+          {vista3d ? (
+            <>
+              <div className="rounded-sm border border-cyan-hud/30 overflow-hidden bg-black/40">
+                <GlobeMap3D
+                  territoryColors={territoryColors3d}
+                  territoryNames={territoryNames3d}
+                  markers={battleMarkers}
+                  arcs={battleArcs}
+                  units3d={units3d}
+                  viewMode="satelite"
+                  autoRotate
+                  rotateSpeed={0.28}
+                  atmosphereColor="#38bdf8"
+                  height="min(54vh, 500px)"
+                  flyTo={flyTo}
+                  onTerritoryClick={(tid) => {
+                    const mt = terrs.find((x) => x.id === tid);
+                    if (mt) setFlyTo({ lat: mt.lat, lng: mt.lng, altitude: 1.3, nonce: Date.now() });
+                  }}
+                  ariaLabel={t("god.map3d.title")}
+                />
+              </div>
+              {/* leyenda de unidades + vuela al frente */}
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[8px] font-mono uppercase tracking-wider">
+                <span className="flex items-center gap-1 text-cyan-hud"><Plane className="w-3 h-3" /> {t("god.unidad.avion")} ×{unitCounts.jet}</span>
+                <span className="flex items-center gap-1 text-amber-hud"><Shield className="w-3 h-3" /> {t("god.unidad.tanque")} ×{unitCounts.tank}</span>
+                <span className="flex items-center gap-1 text-green-hud"><Users className="w-3 h-3" /> {t("god.unidad.soldado")} ×{unitCounts.inf}</span>
+                {battleGeo && (
+                  <button
+                    type="button"
+                    onClick={flyToFront}
+                    className="ml-auto px-1.5 py-0.5 border border-red-hud/60 text-red-hud active:scale-95"
+                  >
+                    ⚔ {t("god.volar.frente")}
+                  </button>
+                )}
+                <span className="text-muted-foreground w-full sm:w-auto">{t("god.unidades.hint")}</span>
+              </div>
+            </>
+          ) : (
+          <>
           {/* proyección equirectangular: cada territorio es un punto en su lat/lng real */}
           <div
             className="relative w-full rounded-sm border border-cyan-hud/30 bg-black/40 overflow-hidden"
@@ -240,6 +406,8 @@ export function OjoDiosPanel() {
               );
             })()}
           </div>
+          </>
+          )}
 
           {/* leyenda de facciones + última batalla */}
           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">

@@ -32,6 +32,21 @@ export interface Globe3DArc {
   dashTime?: number;
 }
 
+// v32 CIELO DE ACERO — objetos 3D reales (modelos Three.js: aviones, tanques,
+// infantería) posicionados por lat/lng/altitud. El objeto viaja construido
+// (objectThreeObject) y el cache vive en el llamador.
+export interface Globe3DUnit {
+  id: string;
+  lat: number;
+  lng: number;
+  alt: number;
+  color?: string;
+  object: unknown;
+  labelTag?: string;
+  label?: string;
+  onClick?: () => void;
+}
+
 interface PolyDatum extends CountryFeature {
   __tid?: string | null;
 }
@@ -94,6 +109,16 @@ interface GlobeArcsLike {
   arcAltitudeAutoScale: (a: number) => GlobeArcsLike;
 }
 
+interface GlobeObjectsLike {
+  objectsData: (d: Globe3DUnit[]) => GlobeObjectsLike;
+  objectLat: (a: (d: object) => number) => GlobeObjectsLike;
+  objectLng: (a: (d: object) => number) => GlobeObjectsLike;
+  objectAltitude: (a: (d: object) => number) => GlobeObjectsLike;
+  objectThreeObject: (a: (d: object) => unknown) => GlobeObjectsLike;
+  objectLabel: (a: (d: object) => string) => GlobeObjectsLike;
+  onObjectClick: (a: (d: object) => void) => GlobeObjectsLike;
+}
+
 export interface GlobeMap3DProps {
   /** territoryId -> color hex; null/undefined = solo paises de fondo */
   territoryColors?: Record<string, string> | null;
@@ -105,6 +130,8 @@ export interface GlobeMap3DProps {
   onTerritoryClick?: (territoryId: string | null, countryName: string) => void;
   markers?: Globe3DMarker[];
   arcs?: Globe3DArc[];
+  /** v32 unidades militares 3D (aviones/tanques/infantería) */
+  units3d?: Globe3DUnit[];
   height?: string;
   minHeight?: number;
   autoRotate?: boolean;
@@ -131,6 +158,7 @@ export function GlobeMap3D({
   onTerritoryClick,
   markers = [],
   arcs = [],
+  units3d = [],
   height = "min(60vh, 600px)",
   minHeight = 340,
   autoRotate = true,
@@ -145,8 +173,7 @@ export function GlobeMap3D({
   ariaLabel = "Globo 3D interactivo",
 }: GlobeMap3DProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const globeRef = useRef<any>(null);
+  const globeRef = useRef<any>(null); // tipado laxo del API fluido de globe.gl
   const clickRef = useRef(onTerritoryClick);
   const globeClickRef = useRef(onGlobeClick);
   useEffect(() => {
@@ -224,8 +251,7 @@ export function GlobeMap3D({
       el.innerHTML = "";
       globeRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // init una sola vez: los props cambian por efectos separados
 
   // ===== v31 cambio de textura en caliente (oscuridad/satelite/noche) =====
   useEffect(() => {
@@ -359,6 +385,40 @@ export function GlobeMap3D({
       .arcStroke((d) => (d as Globe3DArc).stroke ?? 0.5)
       .arcAltitudeAutoScale(0.4);
   }, [arcs]);
+
+  // ===== v32 unidades militares 3D (objetos Three.js reales) =====
+  useEffect(() => {
+    const globe = globeRef.current as unknown as GlobeObjectsLike | null;
+    if (!globe || !units3d) return;
+    if (!units3d.length) {
+      try {
+        globe.objectsData([]);
+      } catch {
+        /* noop */
+      }
+      return;
+    }
+    try {
+      globe
+        .objectsData(units3d)
+        .objectLat((d) => (d as Globe3DUnit).lat)
+        .objectLng((d) => (d as Globe3DUnit).lng)
+        .objectAltitude((d) => (d as Globe3DUnit).alt)
+        .objectThreeObject((d) => (d as Globe3DUnit).object)
+        .objectLabel((d) => {
+          const u = d as Globe3DUnit;
+          const c = u.color ?? "#3EA6FF";
+          return `<div style="font-family:monospace;background:#0A0A0Fee;border:1px solid ${c};padding:6px 9px;border-radius:2px">${
+            u.labelTag ? `<b style="color:${c}">${u.labelTag}</b><br/>` : ""
+          }<span style="color:#F0F0F0">${u.label ?? u.id}</span></div>`;
+        })
+        .onObjectClick((d) => {
+          (d as Globe3DUnit).onClick?.();
+        });
+    } catch {
+      /* noop: sin unidades no pasa nada */
+    }
+  }, [units3d]);
 
   return (
     <div

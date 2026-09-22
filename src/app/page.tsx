@@ -31,6 +31,8 @@ import { GrowthShare } from "@/components/vanguard/growth-share";
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
 const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").then((m) => m.MusicPlayer), { ssr: false });
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
+// v32 CIELO DE ACERO: badge global del estado del socket multijugador
+const RealtimeStatus = dynamic(() => import("@/components/realtime-status").then((m) => m.RealtimeStatus), { ssr: false });
 
 // ============ MOTOR DE CARGA PEREZOSA v17 ============
 function PanelSkeleton() {
@@ -399,6 +401,7 @@ export default function Home() {
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} />
       <MusicPlayer />
+      <RealtimeStatus />
       <ConnectionWatchdog />
     </div>
   );
