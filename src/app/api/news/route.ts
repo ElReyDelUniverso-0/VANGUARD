@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { db } from "@/lib/db";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
 
@@ -195,7 +195,10 @@ export async function GET() {
     if (cached.length > 0) {
       // Refresh in background if stale (best-effort, don't await)
       if (!hasFresh) {
-        refreshGdeltInBackground().catch(() => {});
+        // v35 FIX: after() garantiza que el refresco corra COMPLETO después de la
+        // respuesta. El fire-and-forget anterior moría congelado con el lambda de
+        // Vercel → las noticias llevaban días sin actualizarse.
+        after(() => refreshGdeltInBackground());
       }
       return NextResponse.json({
         items: cached.slice(0, 48).map((it) => ({
@@ -215,7 +218,8 @@ export async function GET() {
         query + " sourcelang:spa"
       )}&format=json&maxrecords=25&sort=datedesc&mode=ArtList`;
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 2500);
+      // v35: 2.5s era insuficiente para GDELT en serverless frío → casi siempre abortaba
+      const timeout = setTimeout(() => controller.abort(), 8000);
       const res = await fetch(url, {
         headers: { "User-Agent": "Vanguard/2.0" },
         signal: controller.signal,
@@ -283,7 +287,8 @@ async function refreshGdeltInBackground() {
       query + " sourcelang:spa"
     )}&format=json&maxrecords=25&sort=datedesc&mode=ArtList`;
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2500);
+    // v35: ídem — 8s para que GDELT responda incluso en lambda frío
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(url, {
       headers: { "User-Agent": "Vanguard/2.0" },
       signal: controller.signal,
