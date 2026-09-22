@@ -5,6 +5,9 @@ import { WORLD_FLAG_MAP } from "@/lib/world-data";
 // GDELT 2.0 Doc API - free, no key
 const GDELT_URL = "https://api.gdeltproject.org/api/v2/doc/doc";
 
+// v35: dar tiempo a after(refreshGdeltInBackground) en Hobby (default 10s lo mata a medias)
+export const maxDuration = 60;
+
 interface GdeltArticle {
   url: string;
   url_mobile?: string;
@@ -280,6 +283,24 @@ export async function GET() {
 // Background refresh: fetch GDELT and upsert without blocking the response.
 // v16: el relleno curado (con fotos reales) se ejecuta SIEMPRE, aunque GDELT falle.
 async function refreshGdeltInBackground() {
+  // v35: candado anti rate-limit — todos los lambdas de Vercel comparten IP y
+  // GDELT admite ~1 petición cada 5s: si N visitas disparan N refrescos, todos
+  // vuelven vacíos. Con el candado solo UNO corre cada 5 minutos.
+  try {
+    await db.$executeRawUnsafe(
+      "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
+    );
+    await db.$executeRawUnsafe(
+      "INSERT INTO site_counter (k, n) VALUES ('gdelt:refresh', 0) ON CONFLICT (k) DO NOTHING"
+    );
+    const fiveMinAgo = Date.now() - 5 * 60 * 1000;
+    const locked = await db.$executeRaw`
+      UPDATE site_counter SET n = ${Date.now()}
+      WHERE k = 'gdelt:refresh' AND n < ${fiveMinAgo}`;
+    if (locked === 0) return; // otro lambda refrescó hace menos de 5 min
+  } catch {
+    /* si el candado falla, intentamos igual */
+  }
   let articles: GdeltArticle[] = [];
   try {
     const query = QUERIES[Math.floor(Math.random() * QUERIES.length)];
