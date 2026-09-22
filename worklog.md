@@ -668,3 +668,22 @@ Stage Summary:
 - SERVIDOR RENDER LISTO Y VERIFICADO — no falta nada en Render
 - Para el lanzamiento el usuario solo necesita: (1) NEXT_PUBLIC_REALTIME_URL en Vercel o esperar push de v31.1; (2) DATABASE_URL en Vercel (string de Supabase Connect); (3) re-pegar token GitHub para push v31.1
 - Plan gratis Render: cold start ~50s tras 15 min inactivo (comunicarlo al usuario)
+
+---
+Task ID: 39
+Agent: Super Z (main)
+Task: Usuario entregó credenciales (password BD + token Vercel vcp_... + token GitHub ghp_...) para cerrar el despliegue
+
+Work Log:
+- TOKEN GITHUB VÁLIDO: push 85d1108..ab9c5d6 a main (incluye v31.1 CONEXIÓN TOTAL a6bb6f3 + auto-commit sandbox ab9c5d6)
+- TOKEN VERCEL VÁLIDO (prefijo vcp_): proyecto vanguard-kq9r (id team_EArs4ZlwXY1UjeLpb2HSF8SM); NEXT_PUBLIC_REALTIME_URL=https://vanguard-games.onrender.com creada vía API (upsert, production+preview, encrypted)
+- DEPLOY v31.1 EN PRODUCCIÓN VERIFICADO: portada https://vanguard-kq9r.vercel.app muestra "v31.1 · CONEXIÓN TOTAL" → el cliente de producción ahora conecta directo a vanguard-games.onrender.com (baked en código)
+- BD EN PRODUCCIÓN ROTA (confirmado): /api/health → {"ok":false,"db":"down"} 503; /api/contrib/leaderboard y /api/live/streams → 500; /api/memes y /api/ugc devuelven vacío con 200 PORQUE la ruta traga errores (route.ts:47-49) — no fiarse de 200 vacíos
+- DATABASE_URL YA EXISTÍA en Vercel (production+preview, valor ilegible) pero está roto/stale
+- PASSWORD DEL USUARIO (S6YA9XujPqPNAmkH) INVALIDO: probado 3x (6543 pgbouncer, 5432 session, retry) → "Authentication failed" limpio; servidor vivo (responde TLS + rechaza credenciales); DNS/TCP OK; probables causas: reset en otro proyecto de Supabase, o copió password de su cuenta, o reset incompleto
+- NOTA TÉCNICA: el pooler tarda >5s en el handshake desde este sandbox → toda prueba de BD necesita connect_timeout>=15 en la URL (script scripts/test-db-v31.mjs)
+- Seguirdad: tokens usados inline en bash, NO persistidos en disco/worklog/repo
+
+Stage Summary:
+- Multijugador RESUELTO y en vivo (Render verificado + v31.1 desplegada + env var de respaldo)
+- ÚNICO BLOQUEO: obtener el password REAL de la BD del proyecto tqtdsrnrwpknggcznkgw → al recibirlo: upsert DATABASE_URL en Vercel (valor pooler :6543 + pgbouncer + connection_limit=1 + connect_timeout=15) y verificar /api/health db:up + memes/ugc con datos
