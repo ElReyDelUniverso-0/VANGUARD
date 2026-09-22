@@ -356,6 +356,35 @@ async function refreshGdeltInBackground() {
     // best-effort
   }
 
+  // v35 PLAN B: la IP compartida de Vercel suele estar rate-limited por GDELT.
+  // Si GDELT no trajo nada, tiramos de RSS de medios internacionales reales:
+  // BBC Mundo, France24 español y DW español — frescos, gratis y sin límites.
+  if (articles.length === 0) {
+    const rss = await fetchRssFallback();
+    for (const a of rss) {
+      try {
+        await db.newsItem.upsert({
+          where: { externalId: a.link },
+          update: {},
+          create: {
+            externalId: a.link,
+            title: a.title,
+            url: a.link,
+            source: a.source,
+            imageUrl: null,
+            publishedAt: a.pubDate,
+            language: "es",
+            conflictTag: conflictTag(a.title),
+            tacticalTag: classifyTag(a.title),
+            sourceCountry: guessCountry(a.title, ""),
+          },
+        });
+      } catch {
+        // skip
+      }
+    }
+  }
+
   // si GDELT trajo articulos, upsert normal (sin pisar nada)
   for (const a of articles) {
     try {
@@ -379,4 +408,56 @@ async function refreshGdeltInBackground() {
       // skip
     }
   }
+}
+
+// ===== v35: RESPALDO RSS — medios reales cuando GDELT está bloqueado =====
+
+const RSS_SOURCES = [
+  { url: "https://feeds.bbci.co.uk/mundo/rss.xml", source: "BBC Mundo" },
+  { url: "https://www.france24.com/es/rss", source: "France 24" },
+  { url: "https://rss.dw.com/rdf/rss-sp-all", source: "DW Español" },
+];
+
+interface RssArticle {
+  title: string;
+  link: string;
+  pubDate: Date;
+  source: string;
+}
+
+function decodeCdata(s: string): string {
+  return s.replace(/^\s*<!\[CDATA\[/, "").replace(/\]\]>\s*$/, "").trim();
+}
+
+async function fetchRssFallback(): Promise<RssArticle[]> {
+  const out: RssArticle[] = [];
+  for (const src of RSS_SOURCES) {
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch(src.url, {
+        headers: { "User-Agent": "Vanguard/2.0" },
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      clearTimeout(t);
+      if (!res.ok) continue;
+      const xml = await res.text();
+      const chunks = xml.split(/<item[\s>]/).slice(1);
+      for (const raw of chunks.slice(0, 14)) {
+        const title = decodeCdata(raw.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? "");
+        const link = decodeCdata(raw.match(/<link>([\s\S]*?)<\/link>/)?.[1] ?? "");
+        if (!title || !link.startsWith("http")) continue;
+        const dateRaw =
+          raw.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ??
+          raw.match(/<dc:date>([\s\S]*?)<\/dc:date>/)?.[1] ?? "";
+        const pubDate = dateRaw ? new Date(dateRaw) : new Date();
+        if (Number.isNaN(pubDate.getTime())) continue;
+        out.push({ title, link, pubDate, source: src.source });
+      }
+    } catch {
+      continue; // un medio caído no tumba el canal
+    }
+  }
+  return out;
 }
