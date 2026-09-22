@@ -687,3 +687,23 @@ Work Log:
 Stage Summary:
 - Multijugador RESUELTO y en vivo (Render verificado + v31.1 desplegada + env var de respaldo)
 - ÚNICO BLOQUEO: obtener el password REAL de la BD del proyecto tqtdsrnrwpknggcznkgw → al recibirlo: upsert DATABASE_URL en Vercel (valor pooler :6543 + pgbouncer + connection_limit=1 + connect_timeout=15) y verificar /api/health db:up + memes/ugc con datos
+
+---
+Task ID: 40
+Agent: Super Z (main)
+Task: Usuario pegó password BD correcta (10DP254ZvT5LlNZa) — cerrar el ciclo completo del lanzamiento
+
+Work Log:
+- PASSWORD VÁLIDO: test con pooler :6543 + pgbouncer + connect_timeout=15 → DB_OK (memes 6, juegos 20)
+- DATABASE_URL actualizada en Vercel vía API (upsert, production+preview, encrypted, valor pooler :6543 + pgbouncer=true&connection_limit=1&connect_timeout=15)
+- Push vacío d8f203d → deploy READY 13:43 → PERO /api/health seguía db:down
+- DIAGNÓSTICO CON ENDPOINT TEMPORAL /api/db-debug (revela esquema/host + error saneado, sin secretos): env CORRECTA en producción (postgresql + pooler:6543) PERO error "the URL must start with the protocol file: → schema.prisma provider sqlite" → el build de Vercel usaba cliente Prisma CACHEADO de la era v29 (package.json nunca ejecutaba prisma generate)
+- FIX CRÍTICO: package.json build += "prisma generate &&" y postinstall += "prisma generate" → push 4110d20 → deploy → /api/db-debug {"db":"up"} y /api/health {"ok":true,"db":"up",ms:375,version:v31.1} HTTP 200
+- VERIFICACIÓN FINAL PRODUCCIÓN: /api/memes total 6; /api/ugc?kind=juego total 20 ("CAZA DEL DRON" de Quimbaya); /api/live/streams 200 con streams reales; Render health "VANGUARD game-service OK"
+- Limpieza: db-debug eliminado, push final 8e0005c
+- Nota: build local con postgres schema + .env sqlite local emite prisma:error NO fatal en build-time (rutas dinámicas) — normal, en Vercel la URL es postgres
+
+Stage Summary:
+- LANZAMIENTO COMPLETADO: web v31.1 en Vercel + BD Supabase conectada (datos reales) + multijugador Render (URL baked en v31.1) + env NEXT_PUBLIC_REALTIME_URL de respaldo
+- La cadena completa web→BD y web→multijugador verificada end-to-end en producción
+- Pendiente opcional: dominio vanguard.world (DNS NXDOMAIN, sin comprar/apuntar), revocar tokens GitHub/Vercel cuando el usuario decida, cleanup auto-commits del sandbox (no urgente)
