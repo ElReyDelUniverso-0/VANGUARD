@@ -707,3 +707,26 @@ Stage Summary:
 - LANZAMIENTO COMPLETADO: web v31.1 en Vercel + BD Supabase conectada (datos reales) + multijugador Render (URL baked en v31.1) + env NEXT_PUBLIC_REALTIME_URL de respaldo
 - La cadena completa web→BD y web→multijugador verificada end-to-end en producción
 - Pendiente opcional: dominio vanguard.world (DNS NXDOMAIN, sin comprar/apuntar), revocar tokens GitHub/Vercel cuando el usuario decida, cleanup auto-commits del sandbox (no urgente)
+
+---
+Task ID: 41
+Agent: Super Z (main)
+Task: Usuario: "Mejora la conexión de VANGUARD, es muy inestable. Mejora el Ojo de Dios: quiero un mapa 3D como Google Maps donde se vean aviones militares, tanques, soldados etc."
+
+Work Log:
+- Explore agent mapeó: consumidores de realtime (5 paneles), watchdog (connection-watchdog.tsx 30s/6s/2 fails → overlay+reload), ojo-dios-panel (mapa 2D divs equirectangular, coords por mp:state.territoryMeta), GlobeMap3D (props markers/arcs/viewMode/flyTo, texturas NASA), game-service socket config (4.8.3, cors *, sin recovery), montaje global page.tsx:401, i18n god.* ×7 idiomas
+- CONEXIÓN v32 (realtime.ts reescrito): transports polling-first (websocket upgrade solo — más estable en móviles), timeout 20s, reconnectionDelay 1s→6s con randomizationFactor 0.5, connectionStateRecovery 2min (cliente+server), despertador: en connect_error/reconnect_attempt hace fetch a /health de Render (throttle 3s) para despertar el contenedor dormido
+- BADGE GLOBAL realtime-status.tsx (page.tsx junto a MusicPlayer): ok→punto verde que colapsa a los 4s, conectando/recuperando (ámbar)/despertando (cian "~1 MIN", cold start Render); tap = reintento manual; i18n rt.* ×7
+- WATCHDOG anti-nervios: timeout 6s→10s, fallos 2→3, pestaña oculta no pinguea ni cuenta fallo (los cold starts de Vercel Hobby ya no disparan overlay+reload)
+- GAME-SERVICE: connectionStateRecovery {maxDisconnectionDuration:2min, skipMiddlewares} + pingInterval 20s/pingTimeout 25s → push lo redespliega en Render automáticamente
+- OJO DE DIOS 3D: src/lib/military-units.ts — flota determinista (mulberry32 hash territorio|dueño): jets (≤2/terr, alt .062), tanques (≤2, .012), infantería clusters (1, .008), cap 150 unidades; modelos low-poly Three.js con geometrías compartidas + material cache por color; orientación superficie (quaternion up→normal, convención three-globe theta=90-lng) + rumbo rotateY; cache id+sig → ticks 1s NO reconstruyen geometría
+- GlobeMap3D extendido con units3d (Globe3DUnit: objectsData/objectThreeObject/objectLabel/onObjectClick) — resto de consumidores intactos
+- ojo-dios-panel: toggle MAPA 2D / GLOBO 3D (3D por defecto), textura satélite NASA, territorios coloreados por dueño, arco animado del último frente (atacante→rojo), anillo pulsante de batalla, leyenda de unidades con conteos, botón "VOLAR AL FRENTE", click en unidad/territorio → vuelo de cámara
+- i18n: god.vista.*, god.map3d.title, god.unidad.*, god.unidades.hint, god.volar.frente, rt.* — 12 claves ×7 idiomas
+- React 19 lint estricto: ref en render → useState perezoso (cache), setState en effect → callbacks de suscripción; version.ts → v32.0 CIELO DE ACERO
+- Build verde (1er intento falló con hipo transitorio Turbopack next/font "exactly one entry" — retry OK sin cambios)
+- Push 0925517 → Vercel v32.0 EN VIVO (health db:up 200) + Render redeploy; E2E socket (scripts/verify-socket-v32.mjs): CONECTADO vía polling, god:state + mp:state ×8 en 8s → FLUJO_OK
+
+Stage Summary:
+- v32.0 CIELO DE ACERO publicada: conexión blindada (polling-first + recovery + despertador + badge global + watchdog sereno) y Ojo de Dios con globo 3D de unidades militares sobre textura satelital NASA
+- Pendiente usuario (opcional): dominio vanguard.world, revocar tokens GitHub/Vercel
