@@ -1,9 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Orbitron, Inter, Rajdhani, JetBrains_Mono } from "next/font/google";
 
-// v18 SEO GLOBAL: URL canonica configurable por entorno. Cambia NEXT_PUBLIC_SITE_URL
-// al dominio definitivo para que Google indexe la direccion correcta.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard.world";
+// v34 SEO GLOBAL: la URL canónica DEBE apuntar a un dominio real. vanguard.world
+// aún no tiene DNS (NXDOMAIN): si el canonical apuntara ahí, Google no podría
+// indexar y las vistas previas de WhatsApp/X saldrían sin imagen. Orden:
+// 1) NEXT_PUBLIC_SITE_URL si está definida  2) URL de producción actual.
+// NOTA: cuando se conecte vanguard.world, añadir la env en Vercel y prioriza esa.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 const SITE_NAME = "VANGUARD — Conflictos Mundiales en Tiempo Real";
 const SITE_DESC =
   "La plataforma de conflictos mundiales #1: noticias de guerra en vivo, mapa OSINT 3D con 15 capas de inteligencia, guerra global multijugador, duelos 1v1 con ranking ELO, simulador de guerras, detective por país, apuestas y economía de gemas. Gratis, en español.";
@@ -189,6 +193,46 @@ const jsonLd = {
       name: "Vanguard Command",
       url: SITE_URL,
       logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+    },
+    {
+      // v34: FAQPage — preguntas frecuentes visibles en la portada (SeoFaq).
+      // Google puede mostrar estas respuestas directamente en resultados.
+      "@type": "FAQPage",
+      "@id": `${SITE_URL}/#faq`,
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "¿Qué es VANGUARD?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "VANGUARD es la plataforma de conflictos mundiales en tiempo real: reúne noticias de guerras en vivo, un mapa OSINT 3D con capas de inteligencia, tensión global por país y un juego de guerra global multijugador. Todo en un solo lugar, en español y gratis.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Cuánto cuesta? ¿Hay que pagar algo?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Nada. VANGUARD es 100% gratis: no pide tarjeta, no tiene suscripción y funciona directamente en el navegador del celular o la computadora.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Necesito instalar una app?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No es obligatorio: entra y juega directo desde el navegador. Opcionalmente puedes instalarla como app para abrirla en un toque desde tu pantalla de inicio.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿En qué idiomas está disponible?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "VANGUARD está en 8 idiomas: español, inglés, portugués, francés, alemán, italiano, ruso y chino.",
+          },
+        },
+      ],
     },
   ],
 };

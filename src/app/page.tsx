@@ -28,6 +28,10 @@ import { useT } from "@/lib/i18n";
 import { initSound, sfx } from "@/lib/sound";
 // v18 CRECIMIENTO: modulo viral en la portada (compartir + referidos + PWA)
 import { GrowthShare } from "@/components/vanguard/growth-share";
+// v34 LLAMADO A LAS ARMAS: recepción de invitados ?ref=, kit de reclutamiento y FAQ SEO
+import { ReferralLanding } from "@/components/vanguard/referral-landing";
+import { PromoKit } from "@/components/vanguard/promo-kit";
+import { SeoFaq } from "@/components/vanguard/seo-faq";
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
 const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").then((m) => m.MusicPlayer), { ssr: false });
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
@@ -284,6 +288,9 @@ export default function Home() {
             <HomePanel />
             {/* v18: sección de crecimiento bajo la portada — conversión de visitantes a embajadores */}
             <GrowthShare />
+            {/* v34: kit de reclutamiento (mensajes para copiar + medidor de agentes) y FAQ SEO */}
+            <PromoKit />
+            <SeoFaq />
           </>
         )}
         {tab === "briefing" && <DailyBriefingPanel />}
@@ -405,6 +412,8 @@ export default function Home() {
       <MusicPlayer />
       <RealtimeStatus />
       <ConnectionWatchdog />
+      {/* v34 — recepción del recluta: procesa ?ref= y da bono de bienvenida */}
+      <ReferralLanding />
       {/* v33 ESCUELA DE GUERRA — manual del comandante (auto en 1ª visita) */}
       <TutorialModal />
     </div>
