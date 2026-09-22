@@ -749,3 +749,24 @@ Work Log:
 Stage Summary:
 - v33.0 ESCUELA DE GUERRA EN VIVO: el mapa 3D militar ya está dentro de INTELIGENCIA → Mapa mundial (junto a radar/OSINT/cámaras), conexión blindada contra spin-down de Render y móviles, ruso añadido y todo el chrome 100% traducido en 8 idiomas, y el manual del comandante enseña la plataforma entera en 10 pasos
 - Nota: TAB_LABELS ya tenía fr/de/it/zh (solo faltaba ru); los cuerpos de paneles siguen en español (traducción progresiva de contenido, no de chrome)
+
+---
+Task ID: 43
+Agent: Super Z (main)
+Task: Usuario: "ahora ayuda a que lleguen personas a la página, haz todo lo posible" — ronda de crecimiento/adquisición $0
+
+Work Log:
+- AUDITORÍA: v18 ya tenía GrowthShare (share WA/X/TG/FB + código referido VGD-XXX + PWA install + ViralCard memes) pero: (a) ?ref= NO se procesaba al llegar, (b) canonical/sitemap/JSON-LD/robots apuntaban a vanguard.world que es NXDOMAIN (Google no puede indexar + previews de WhatsApp sin imagen)
+- CANONICAL FIX (crítico): layout.tsx + sitemap.ts + robots.txt → fallback SITE_URL = https://vanguard-kq9r.vercel.app (env NEXT_PUBLIC_SITE_URL tiene prioridad para cuando se conecte vanguard.world)
+- FAQPage JSON-LD en layout + FAQ VISIBLE (seo-faq.tsx, 6 detalles/summary) montada en tab inicio — contenido indexable real
+- referral-landing.tsx: procesa ?ref= → sanitiza → localStorage vanguard_ref → bono +50 monedas + toast → history.replaceState limpia URL; guard sessionStorage anti-toast-repetido; montado global en page.tsx
+- promo-kit.tsx: kit de reclutamiento colapsable — 7 mensajes copy-paste (WA grupos, WA estado, Facebook, X, Discord, Reddit, bio TikTok/IG) con enlace ?ref= propio + hashtags + PLAN DE GUERRA 7 DÍAS + VisitMeter
+- /api/visits (GET/POST): contador real de agentes hoy/totales vía CREATE TABLE IF NOT EXISTS site_counter (sin migración Prisma, riesgo cero); POST se llama 1 vez por sesión (sessionStorage)
+- IndexNow: public/074b8db50cc83f0689a2211e3ff94db1.txt + submit a api.indexnow.org tras deploy
+- version.ts → v34.0 LLAMADO A LAS ARMAS; lint 0 errores (ninguno de archivos nuevos); build verde; push 55d90cd
+
+Stage Summary:
+- v34.0 LLAMADO A LAS ARMAS en camino a producción: SEO canonical arreglado (precondición para Google), FAQ+JSON-LD, referidos funcionales con bono, kit de reclutamiento con plan 7 días y medidor de agentes en vivo
+- El usuario puede vigilar cuánta gente llega abriendo https://vanguard-kq9r.vercel.app/api/visits
+- VERIFICACIÓN PRODUCCIÓN: health {"ok":true,"db":"up","version":"v34.0"}; POST /api/visits incrementa (total:1); canonical+og:url+og:image → vercel.app (previews WhatsApp/X reparadas); sitemap.xml con URL real; robots.txt actualizado; key IndexNow 200
+- INDEXACIÓN: IndexNow HTTP 202 (Bing/Yandex aceptaron portada+sitemap); bing ping 410 (endpoint deprecado, IndexNow lo sustituye); Render health OK
