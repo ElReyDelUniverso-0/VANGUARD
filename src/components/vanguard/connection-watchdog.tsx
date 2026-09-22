@@ -8,8 +8,12 @@
 // v32 CIELO DE ACERO — anti-nervios: los cold starts de Vercel Hobby (~2-5s)
 // hacían parpadear el overlay y recargar la página; ahora timeout 10s,
 // 3 fallos seguidos, y las pestañas ocultas no cuentan como fallo.
+// v33 ESCUELA DE GUERRA — anti-falsos-positivos: si el socket realtime está
+// CONECTADO la experiencia es correcta aunque /api/health tarde: no overlay,
+// no recarga (adiós a las recargas fantasma que "buggeaban" la app).
 
 import { useEffect, useState } from "react";
+import { peekRealtime } from "@/lib/realtime";
 
 export function ConnectionWatchdog() {
   const [down, setDown] = useState(false);
@@ -23,6 +27,11 @@ export function ConnectionWatchdog() {
       // pestaña oculta: el navegador congela timers y las peticiones vuelven raras;
       // no pinguear ni contar fallo (evita falsos "caído" al volver a la pestaña)
       if (typeof document !== "undefined" && document.hidden) return;
+      // v33: el multijugador en directo es la señal que de verdad importa
+      if (peekRealtime()?.connected) {
+        fails = 0;
+        return;
+      }
       try {
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), 10000);

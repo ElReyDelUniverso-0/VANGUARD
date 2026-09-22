@@ -103,9 +103,57 @@ export function getRealtime(): Socket {
       wakeService();
     });
 
+    startLifeline();
     setState(_socket.connected ? "ok" : "conectando");
   }
   return _socket;
+}
+
+// v33 ESCUELA DE GUERRA — LÍNEA DE VIDA PERMANENTE.
+// El plan gratis de Render duerme el contenedor a los 15 min sin tráfico y en
+// móvil el navegador congela los timers al ocultar la pestaña: el socket moría
+// y no volvía solo ("solo dura 5 minutos"). Triple defensa, todo en cliente:
+//  1) GUARDIÁN (10s, pestaña visible): si el socket no está conectado y no hay
+//     intento de reconexión en marcha, fuerza socket.connect() + despertador.
+//  2) KEEP-ALIVE (4 min): un fetch a /health mantiene el contenedor de Render
+//     DESPIERTO mientras haya alguien con la web abierta (4 min << 15 min).
+//  3) RESURRECCIÓN instantánea: al volver a la pestaña o recuperar la red,
+//     despierta + reconecta al momento (sin esperar el siguiente retry).
+let _lifelineStarted = false;
+
+function healSocket() {
+  const s = _socket;
+  if (!s || s.connected) return;
+  wakeService();
+  try {
+    // connect() es seguro incluso si ya está reconectando: reintenta al instante
+    s.connect();
+  } catch {
+    /* el motor ya está en marcha */
+  }
+}
+
+function startLifeline() {
+  if (_lifelineStarted || typeof window === "undefined") return;
+  _lifelineStarted = true;
+
+  // 1) guardián de pulso
+  setInterval(() => {
+    if (document.hidden) return; // oculta: el navegador congela red/timers
+    healSocket();
+  }, 10_000);
+
+  // 2) keep-alive del contenedor de Render
+  setInterval(() => {
+    if (document.hidden) return;
+    wakeService();
+  }, 4 * 60_000);
+
+  // 3) resurrección al volver a la pestaña / recuperar red
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) healSocket();
+  });
+  window.addEventListener("online", () => healSocket());
 }
 
 // v21 PULIDO: lee el socket existente SIN crearlo (para inicializadores perezosos

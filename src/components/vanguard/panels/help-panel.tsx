@@ -5,6 +5,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Newspaper, Map, Brain, Layers, Zap, Users, Bell, Flame, ChevronRight, ChevronDown, Lightbulb, Rocket, Award, Video, Castle, TrendingUp, Bomb, MessageCircle, Crosshair, Fingerprint } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useT } from "@/lib/i18n";
 
 interface GuideSection {
   id: string;
@@ -280,6 +281,7 @@ const SECTIONS: GuideSection[] = [
 
 export function HelpPanel() {
   const [expandedId, setExpandedId] = useState<string | null>("getting-started");
+  const { t } = useT();
 
   return (
     <div className="space-y-3">
@@ -301,11 +303,18 @@ export function HelpPanel() {
           <div className="w-10 h-10 hud-corner flex items-center justify-center bg-amber-hud glow-amber flex-shrink-0">
             <Rocket className="w-5 h-5 text-amber" />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="text-sm font-mono font-bold text-amber mb-1">Inicio rapido</div>
             <p className="text-xs text-muted-foreground">
               Eres nuevo aqui? Sigue estos 3 pasos: 1) Reclama tu bono diario en el modal de reconexion. 2) Visita el Briefing diario para ver el resumen global. 3) Completa misiones diarias para ganar tus primeras monedas.
             </p>
+            {/* v33: relanzar el manual del comandante en cualquier momento */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("vanguard:open-tutorial"))}
+              className="mt-2.5 flex items-center gap-1.5 px-3 py-1.5 border border-amber-hud bg-amber-hud/20 text-amber text-[10px] font-mono font-bold uppercase tracking-widest hover:bg-amber-hud/40 active:scale-95 transition-all"
+            >
+              <Rocket className="w-3 h-3" /> {t("tutorial.replay")}
+            </button>
           </div>
         </div>
       </div>

@@ -142,6 +142,31 @@ export const TAB_LABELS: Record<string, TabDict> = {
     abuses: "Crimini e abusi", incidentes: "Mappa degli incidenti", memorial: "Memoriale †", sala18: "Sala Rossa (18+)", dronguerra: "Guerra dei droni", recluta: "Come si recluta (3D)", embajadores: "Ambasciatori per paese", telegram: "Bot Telegram", memes: "Studio dei Memi",    studios: "Studi dei Creatori — notizie, bandiere, mappe e musica", gobierno: "Governo Mondiale — presidente, decreti e reclutamento", bolsamonedas: "Borsa delle Monete — crea la tua moneta",
 
   },
+  // v33 ESCUELA DE GUERRA — etiquetas en ruso
+  ru: {
+    inicio: "Главная (Новости)", briefing: "Брифинг дня", misiones: "Миссии",
+    retos: "Ежедневные испытания", gancho: "Центр заработка", conquista: "Завоевание",
+    mundo: "Мир Войны", multijugador: "Мультиплеер", detective: "Досье Наций (Детектив)",
+    edad: "Age of Nations", arcade: "Аркада-пак", bookmaker: "BetNация (Тотализатор)",
+    enciclopedia: "Мировая энциклопедия", curiosidades: "Факты", epocas: "Древние эпохи",
+    conquistas3d: "3D-завоевания", contadores: "Мировые счётчики", carteles: "Картели",
+    osint: "Зал OSINT (15 слоёв)", ojodios: "Око Бога", warsim: "Симулятор войн", espionaje: "Сеть шпионажа",
+    crisis: "Мировой кризис", frente: "Линии фронта вживую", estudio: "Видеостудия", directos: "Прямые эфиры", envivo: "В ЭФИРЕ · Мир", contribuidores: "Контрибьюторы",
+    divisas: "Валюты мира", perfil: "Настроить профиль", radar: "Радар дезинформации",
+    biblioteca: "Тайная библиотека", tribunal: "Исторический трибунал", alianzas: "Альянсы",
+    agente: "Профиль агента (IQ)", mapa: "Мировая карта", noticias: "Новости",
+    galeria: "Галерея OSINT", briefings: "Секретные брифинги", camaras: "CCTV-камеры",
+    videos: "GlobalVision", combate: "Симулятор боя", historia: "Исторические войны",
+    muertes: "Личности и потери", quiz: "Гео-квиз", bolsa: "Георынок",
+    predicciones: "Прогнозы", apuestas: "Военные ставки", estadisticas: "Статистика",
+    logros: "Достижения", recompensas: "Награды", ranking: "Глобальный рейтинг", racha: "Серия",
+    fusion: "Fusion", registro: "Журнал", foros: "Форумы", salas: "Соц-комнаты",
+    encuestas: "Опросы", amigos: "Друзья", torneos: "Турниры", notificaciones: "Оповещения",
+    tienda: "Магазин", minijuego: "Мини-игры", dron: "Удар дронов 3D", ayuda: "Помощь",
+    abuses: "Преступления и злоупотребления", incidentes: "Карта инцидентов", memorial: "Мемориал †", sala18: "Красная комната (18+)", dronguerra: "Война дронов", recluta: "Как вербуют солдат (3D)", embajadores: "Послы по странам", telegram: "Telegram-бот", memes: "Мем-студия",
+    creador: "Студия сообщества", armeria: "Реальный арсенал", maps: "Google Maps конфликтов",    studios: "Студии создателей — новости, флаги, карты и музыка", gobierno: "Мировое правительство — президент, указы и вербовка", bolsamonedas: "Биржа монет — создай свою валюту",
+
+  },
   zh: {
     inicio: "首页（新闻）", briefing: "每日简报", misiones: "任务",
     retos: "每日挑战", gancho: "收益中心", conquista: "征服",
@@ -294,6 +319,28 @@ export const TAB_SHORTS: Record<string, TabDict> = {
     ayuda: "AIUTO",
     abuses: "ABUSI", incidentes: "INCIDENT", memorial: "MEMORIA", sala18: "SALA18", dronguerra: "DRONI", recluta: "RECLUT.", embajadores: "AMBASC.", telegram: "TELEGRAM", memes: "MEMI",
     creador: "CREATORI", armeria: "ARMERIA", maps: "G.MAPS",    studios: "STUDI", gobierno: "GOVERNO", bolsamonedas: "MONETE",
+
+  },
+  // v33 ESCUELA DE GUERRA — shorts en ruso
+  ru: {
+    inicio: "ГЛАВНАЯ", briefing: "БРИФИНГ", misiones: "МИССИИ", retos: "ИСПЫТ.",
+    gancho: "ЗАРАБОК", conquista: "ЗАВОЕВ.", mundo: "ВОЙНА", multijugador: "МУЛЬТИ",
+    detective: "ДЕТЕКТИВ", edad: "AOF", arcade: "АРКАДА", bookmaker: "БЕТНАЦ",
+    enciclopedia: "ЭНЦИКЛ", curiosidades: "ФАКТЫ", epocas: "ЭПОХИ", conquistas3d: "ЗАВ.3D",
+    contadores: "СЧЁТЧИК", carteles: "КАРТЕЛИ", osint: "OSINT", ojodios: "ОКО", warsim: "WARSIM",
+    espionaje: "ШПИОН", crisis: "КРИЗИС", frente: "ФРОНТЫ", estudio: "СТУДИЯ", directos: "ЭФИРЫ", envivo: "ЭФИР", contribuidores: "КОНТРИБ",
+    divisas: "ВАЛЮТЫ", perfil: "ПРОФИЛЬ", radar: "РАДАР", biblioteca: "БИБЛИО",
+    tribunal: "ТРИБУНАЛ", alianzas: "АЛЬЯНСЫ", agente: "АГЕНТ", mapa: "КАРТА",
+    noticias: "НОВОСТИ", galeria: "ГАЛЕРЕЯ", briefings: "СЕКРЕТ", camaras: "КАМЕРЫ",
+    videos: "ВИДЕО", combate: "БОЙ", historia: "ВОЙНЫ", muertes: "ПОТЕРИ",
+    quiz: "КВИЗ", bolsa: "РЫНОК", predicciones: "ПРОГНОЗ", apuestas: "СТАВКИ",
+    estadisticas: "СТАТИСТ", logros: "ДОСТИЖ.", recompensas: "НАГРАДЫ", ranking: "РЕЙТИНГ",
+    racha: "СЕРИЯ", fusion: "FUSION", registro: "ЖУРНАЛ", foros: "ФОРУМЫ",
+    salas: "КОМНАТЫ", encuestas: "ОПРОСЫ", amigos: "ДРУЗЬЯ", torneos: "ТУРНИРЫ",
+    notificaciones: "ОПОВЕЩ.", tienda: "МАГАЗИН", minijuego: "МИНИ", dron: "ДРОН",
+    ayuda: "ПОМОЩЬ",
+    abuses: "ПРЕСТУП.", incidentes: "ИНЦИД.", memorial: "ПАМЯТЬ", sala18: "18+", dronguerra: "ДРОНЫ", recluta: "ВЕРБОВ.", embajadores: "ПОСЛЫ", telegram: "ТГ-БОТ", memes: "МЕМЫ",
+    creador: "ТВОРЦЫ", armeria: "АРСЕНАЛ", maps: "G.MAPS",    studios: "СТУДИИ", gobierno: "ПРАВИТ.", bolsamonedas: "МОНЕТЫ",
 
   },
   zh: {

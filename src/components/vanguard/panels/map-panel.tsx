@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CONFLICTS, type AlertLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Map as MapIcon, Crosshair, Layers, AlertTriangle, X, Users, HeartPulse, Flag, Video,
-  Bomb, Pill, Skull, Route, Globe2, Satellite, Moon, LocateFixed, ScanEye,
+  Bomb, Pill, Skull, Route, Globe2, Satellite, Moon, LocateFixed, ScanEye, Plane,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
@@ -25,7 +25,31 @@ const Globe3D = dynamic(
 );
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getCameraModel } from "@/lib/camera-data";
-import type { GlobeViewMode, GlobeFlyTo } from "@/components/vanguard/globe-3d";
+import { useT } from "@/lib/i18n";
+import { getRealtime, peekRealtime } from "@/lib/realtime";
+// v33 ESCUELA DE GUERRA — vista MILITAR 3D dentro del mapa informativo:
+// el mismo globo satelital del Ojo de Dios con aviones/tanques/infantería.
+import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnitCache, type UnitKind } from "@/lib/military-units";
+import type { Globe3DUnit, GlobeFlyTo as GlobeMapFlyTo } from "@/components/vanguard/globe-map-3d";
+
+const GlobeMap3D = dynamic(
+  () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full rounded-sm border border-amber-hud/30 bg-black/40 animate-pulse" style={{ height: "min(62vh, 620px)", minHeight: 380 }} />
+    ),
+  }
+);
+
+// estado mínimo del Mundo de Guerra para pintar unidades (mp:state)
+interface MilTerrMeta { id: string; name: string; lat: number; lng: number }
+interface MilPlayer { id: string; name: string; color: string }
+interface MilWarState {
+  territoryMeta: MilTerrMeta[];
+  territories: Record<string, { owner: string | null; troops: number }>;
+  players: Record<string, MilPlayer>;
+}
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud bg-red-hud border-red-hud",
@@ -138,6 +162,7 @@ const VIEW_MODES: { id: GlobeViewMode; label: string; icon: React.ReactNode; col
 ];
 
 export function MapPanel() {
+  const { t } = useT();
   const [mode, setMode] = useState<MapMode>("GLOBAL");
   const [selected, setSelected] = useState<string | null>(null);
   const [showSat, setShowSat] = useState(false);
@@ -147,8 +172,81 @@ export function MapPanel() {
   const [view3d, setView3d] = useState(true); // v14: el globo 3D es la vista por defecto
   const [viewMode, setViewMode] = useState<GlobeViewMode>("oscuridad"); // v31
   const [flyTo, setFlyTo] = useState<GlobeFlyTo | null>(null); // v31 vuelos de camara
+  // v33 ESCUELA DE GUERRA — vista MILITAR 3D: unidades en vivo sobre el globo satelital
+  const [milView, setMilView] = useState(false);
+  const [milFlyTo, setMilFlyTo] = useState<GlobeMapFlyTo | null>(null);
+  const [milWar, setMilWar] = useState<MilWarState | null>(null);
+  const [milConnected, setMilConnected] = useState(() => !!peekRealtime()?.connected);
+  const [unitCache] = useState<MilUnitCache>(() => newMilUnitCache());
   const recordOpenMap = useGameStore((s) => s.recordOpenMap);
   const cameras = useGameStore((s) => s.cameras);
+
+  // v33: suscripción ligera al mp:state global (misma fuente que Vista Dios)
+  useEffect(() => {
+    const socket = getRealtime();
+    if (!socket) return;
+    const onConnect = () => setMilConnected(true);
+    const onDisconnect = () => setMilConnected(false);
+    const onWar = (s: {
+      territoryMeta?: MilTerrMeta[];
+      territories?: MilWarState["territories"];
+      players?: MilWarState["players"];
+    }) => {
+      if (!s?.territoryMeta?.length) return;
+      setMilWar({
+        territoryMeta: s.territoryMeta,
+        territories: s.territories ?? {},
+        players: s.players ?? {},
+      });
+    };
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("mp:state", onWar);
+    if (socket.connected) onConnect();
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("mp:state", onWar);
+    };
+  }, []);
+
+  // datos del globo militar: colores por dueño + flota de unidades
+  const milColors = useMemo(() => {
+    if (!milWar) return {} as Record<string, string>;
+    const acc: Record<string, string> = {};
+    for (const tm of milWar.territoryMeta) {
+      const st = milWar.territories[tm.id];
+      const owner = st?.owner ? milWar.players[st.owner] : null;
+      if (owner) acc[tm.id] = owner.color;
+    }
+    return acc;
+  }, [milWar]);
+
+  const milNames = useMemo(() => {
+    if (!milWar) return {} as Record<string, string>;
+    return Object.fromEntries(milWar.territoryMeta.map((tm) => [tm.id, tm.name]));
+  }, [milWar]);
+
+  const milUnits = useMemo(() => {
+    if (!milWar) return [] as Globe3DUnit[];
+    const built = buildMilitaryUnits(
+      milWar.territoryMeta,
+      milWar.territories,
+      milWar.players,
+      unitCache,
+      (k: UnitKind) => t(UNIT_KIND_KEY[k])
+    );
+    return built.map((u) => ({
+      ...u,
+      onClick: () => setMilFlyTo({ lat: u.lat, lng: u.lng, altitude: 1.1, nonce: Date.now() }),
+    }));
+  }, [milWar, t, unitCache]);
+
+  const milCounts = useMemo(() => {
+    const c = { jet: 0, tank: 0, inf: 0 };
+    for (const u of milUnits) c[u.kind] += 1;
+    return c;
+  }, [milUnits]);
 
   const modeDef = MODES[mode];
   const visibleConflicts = useMemo(() => CONFLICTS.filter((c) => modeDef.match(c.tags)), [modeDef]);
@@ -184,15 +282,23 @@ export function MapPanel() {
         color="amber"
         right={
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
-            <ToggleChip active={view3d} onClick={() => setView3d(!view3d)} color="amber" icon={<Globe2 className="w-3 h-3" />}>
-              Globo 3D
+            {/* v33: MILITAR 3D — el mapa estilo Google con aviones/tanques/soldados */}
+            <ToggleChip active={milView} onClick={() => setMilView(!milView)} color="cyan" icon={<Plane className="w-3 h-3" />}>
+              {t("god.militar")}
             </ToggleChip>
-            {view3d && VIEW_MODES.map((v) => (
-              <ToggleChip key={v.id} active={viewMode === v.id} onClick={() => setViewMode(v.id)} color={v.color} icon={v.icon}>
-                {v.label}
-              </ToggleChip>
-            ))}
-            {mode === "GLOBAL" && !view3d && (
+            {!milView && (
+              <>
+                <ToggleChip active={view3d} onClick={() => setView3d(!view3d)} color="amber" icon={<Globe2 className="w-3 h-3" />}>
+                  Globo 3D
+                </ToggleChip>
+                {view3d && VIEW_MODES.map((v) => (
+                  <ToggleChip key={v.id} active={viewMode === v.id} onClick={() => setViewMode(v.id)} color={v.color} icon={v.icon}>
+                    {v.label}
+                  </ToggleChip>
+                ))}
+              </>
+            )}
+            {mode === "GLOBAL" && !view3d && !milView && (
               <>
                 <ToggleChip active={showFronts} onClick={() => setShowFronts(!showFronts)} color="amber" icon={<Crosshair className="w-3 h-3" />}>
                   Frentes
@@ -202,7 +308,7 @@ export function MapPanel() {
                 </ToggleChip>
               </>
             )}
-            {!view3d && (
+            {!view3d && !milView && (
               <ToggleChip active={showSat} onClick={() => setShowSat(!showSat)} color="green" icon={<Layers className="w-3 h-3" />}>
                 Satelite
               </ToggleChip>
@@ -244,7 +350,20 @@ export function MapPanel() {
       <div className="grid lg:grid-cols-3 gap-4">
         {/* MAP */}
         <div className="lg:col-span-2 hud-corner relative overflow-hidden">
-          {view3d ? (
+          {milView ? (
+            /* v33 GLOBO MILITAR 3D: satélite + flota en vivo */
+            <GlobeMap3D
+              territoryColors={milColors}
+              territoryNames={milNames}
+              units3d={milUnits}
+              viewMode="satelite"
+              flyTo={milFlyTo}
+              autoRotate={milUnits.length === 0}
+              height="min(62vh, 620px)"
+              minHeight={380}
+              atmosphereColor="#2563eb"
+            />
+          ) : view3d ? (
             <Globe3D
               conflicts={visibleConflicts}
               selected={selected}
@@ -271,8 +390,29 @@ export function MapPanel() {
             />
           )}
           <div className="absolute top-2 left-2 text-[10px] font-mono text-muted-foreground bg-background/80 px-2 py-1 hud-corner border-amber-hud">
-            {view3d ? (viewMode === "satelite" ? "SATELITE · NASA BLUE MARBLE" : viewMode === "noche" ? "ORBITA NOCTURNA · LUCES DE CIUDADES" : "GLOBO 3D · WEBGL · ARRASTRA PARA ROTAR") : "LAT/LNG · MERCATOR · NE-110M"} · {mode}
+            {milView
+              ? "GLOBO MILITAR 3D · UNIDADES EN VIVO"
+              : view3d ? (viewMode === "satelite" ? "SATELITE · NASA BLUE MARBLE" : viewMode === "noche" ? "ORBITA NOCTURNA · LUCES DE CIUDADES" : "GLOBO 3D · WEBGL · ARRASTRA PARA ROTAR") : "LAT/LNG · MERCATOR · NE-110M"} · {mode}
           </div>
+          {/* v33 overlay del globo militar: contador de flota + estado de señal */}
+          {milView && (
+            <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+              <span className={cn(
+                "flex items-center gap-1 text-[9px] font-mono uppercase px-2 py-1 bg-background/85 border",
+                milConnected ? "border-green-hud/60 text-green-hud" : "border-red-hud/60 text-red-hud"
+              )}>
+                <RadioDot live={milConnected} /> {milConnected ? "EN VIVO" : "SIN SEÑAL MP"}
+              </span>
+              <span className="flex items-center gap-2 text-[9px] font-mono uppercase px-2 py-1 bg-background/85 border border-cyan-hud/50 text-cyan-hud">
+                <Plane className="w-3 h-3" /> {milCounts.jet} · <span className="text-amber">{milCounts.tank} ■</span> · <span className="text-violet-hud">{milCounts.inf} ⬤</span>
+              </span>
+              {milUnits.length === 0 && (
+                <span className="text-[9px] font-mono uppercase px-2 py-1 bg-background/85 border border-amber-hud/50 text-amber max-w-[210px] text-right">
+                  sin unidades — entra a Mundo de Guerra para desplegar flota
+                </span>
+              )}
+            </div>
+          )}
           {/* v31 vistas rapidas: vuelo de camara a los frentes mas calientes */}
           {view3d && visibleConflicts.length > 0 && (
             <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
@@ -299,13 +439,26 @@ export function MapPanel() {
           </div>
           {/* Legend */}
           <div className="absolute bottom-2 left-2 bg-background/85 px-2 py-1.5 hud-corner border-amber-hud">
-            <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Leyenda · {modeDef.label}</div>
-            <div className="flex flex-col gap-0.5">
-              {modeDef.legend.map((l) => (
-                <LegendRow key={l.label} color={l.color} label={l.label} />
-              ))}
-              {mode === "GLOBAL" && <LegendRow color="#22d3ee" label="TU CAMARA" hollow />}
-            </div>
+            {milView ? (
+              <>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Flota del Mundo de Guerra</div>
+                <div className="flex flex-col gap-0.5">
+                  <LegendRow color="#38bdf8" label={`${t("god.unidad.avion")} · ${milCounts.jet}`} />
+                  <LegendRow color="#f59e0b" label={`${t("god.unidad.tanque")} · ${milCounts.tank}`} />
+                  <LegendRow color="#a855f7" label={`${t("god.unidad.soldado")} · ${milCounts.inf}`} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Leyenda · {modeDef.label}</div>
+                <div className="flex flex-col gap-0.5">
+                  {modeDef.legend.map((l) => (
+                    <LegendRow key={l.label} color={l.color} label={l.label} />
+                  ))}
+                  {mode === "GLOBAL" && <LegendRow color="#22d3ee" label="TU CAMARA" hollow />}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -512,6 +665,16 @@ function LegendRow({ color, label, hollow = false }: { color: string; label: str
       />
       <span className="text-muted-foreground uppercase">{label}</span>
     </div>
+  );
+}
+
+// v33 puntito de señal del globo militar
+function RadioDot({ live }: { live: boolean }) {
+  return (
+    <span className={cn(
+      "w-1.5 h-1.5 rounded-full",
+      live ? "bg-green-hud animate-pulse" : "bg-red-hud"
+    )} />
   );
 }
 
