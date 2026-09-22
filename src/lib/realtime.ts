@@ -8,7 +8,15 @@ let _socket: Socket | null = null;
 
 // v30 PASO PRO: si NEXT_PUBLIC_REALTIME_URL está definida (p.ej. el servicio
 // de Render), el cliente conecta allí; si no, usa el gateway local del sandbox.
-const REALTIME_URL = (process.env.NEXT_PUBLIC_REALTIME_URL || "").trim();
+// v31.1 CONEXIÓN TOTAL: en producción (Vercel/dominio propio) el cliente conecta
+// DIRECTO al servidor multijugador de Render sin configurar ninguna variable;
+// en localhost se conserva el gateway local del sandbox.
+const ENV_REALTIME_URL = (process.env.NEXT_PUBLIC_REALTIME_URL || "").trim();
+const RENDER_REALTIME_URL = "https://vanguard-games.onrender.com";
+const IS_LOCALHOST =
+  typeof window !== "undefined" &&
+  /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+const REALTIME_URL = ENV_REALTIME_URL || (IS_LOCALHOST ? "" : RENDER_REALTIME_URL);
 
 export function getRealtime(): Socket {
   if (typeof window === "undefined") {
