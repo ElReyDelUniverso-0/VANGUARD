@@ -293,6 +293,13 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           <LiveCounter />
           <span className="text-[10px] text-muted-foreground">ahora mismo en el mando (latidos de 30s)</span>
         </div>
+        {/* v42.2 AGENTE AUTOMÁTICO: pings de promoción cada 12h sin nadie tocando nada */}
+        <div className="mt-1.5 flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1 border border-sky-300/40 bg-sky-300/10 text-sky-300 px-1.5 py-0.5 rounded-sm font-bold">
+            <Radio className="w-3 h-3 animate-pulse" /> AGENTE AUTO ACTIVO
+          </span>
+          <span>pings de promoción cada 12h (GitHub Actions) + rondas manuales</span>
+        </div>
         <div className="mt-2 h-4 rounded-full bg-border/40 overflow-hidden border border-border" role="progressbar" aria-valuenow={playersPct} aria-valuemin={0} aria-valuemax={100}>
           <div
             className={`h-full rounded-full transition-all duration-700 ${playersDone ? "bg-green-hud/80" : "bg-gradient-to-r from-electric via-green-hud to-amber"}`}
