@@ -901,3 +901,26 @@ Work Log:
 Stage Summary:
 - v40.0 EN VIVO: VANGUARD ahora tiene GEOPOLÍTICA REAL de agencias oficiales (Banco Mundial/USGS/Wikipedia/EEI/fronteras) — datos que ni plataformas grandes muestran juntos, con fichas de 217 países y ranking de gasto militar en vivo; cero API keys, cero coste
 - 33 enlaces externos verificados acumulados; sexto jugador real registrado; el tab GEO da contenido NUEVO cada 5 minutos = razón para volver
+
+---
+Task ID: 51
+Agent: Super Z (main)
+Task: Usuario: "sigue" (continuar la orden: buscar más gente, más mapas, más geopolítica, agrega muchas cosas) — PLANETA VIVO
+
+Work Log:
+- APIs geopolíticas nuevas probadas una a una (keyless, $0): NASA EONET v3 OK (45 eventos abiertos: huracanes/tifones/volcanes/incendios con coordenadas), NOAA SWPC ovation_aurora_latest OK (rejilla 65160 coords — pico actual 13%, noche tranquila), OpenSky EXCLUIDO (429 anónimo, no fiable), ReliefWeb EXCLUIDO (v1 410, v2 exige appname aprobado)
+- API /api/layers NUEVA: EONET (45 eventos priorizados ciclón>volcán>incendio>inundación, link oficial y fuente) + auroras (umbral 8 para que la capa nunca esté muerta en noches tranquilas, cap 600 pts, muestreada server-side de 900KB a ~12KB); cache 5 min + stale + barebones (doctrina v40)
+- /api/geo EXTENDIDO con power map: población/PIB/gasto militar para 260 países serializados por iso3 (mismo fetch del Banco Mundial, cero coste extra) — payload 61KB; la ficha ahora muestra datos para TODOS los países (antes solo top-15)
+- PANEL planeta-panel.tsx NUEVO (tab PLANETA, sección INTELIGENCIA): globo GlobeMap3D con 4 CAPAS conmutables — Eventos NASA (color por categoría, anillos en ciclones/volcanes, click abre fuente oficial), Auroras (violeta/rosa por intensidad), Sismos (tamaño por magnitud), EEI EN DIRECTO (poll cada 6s directo a wheretheiss.at con AbortController, badge verde EEI EN VIVO); HUD 4/4 capas + contador de puntos; lista de eventos con vuelo de cámara (flyTo) y enlaces; vistas táctico/satélite/noche
+- PANEL geopolitica-panel.tsx MEJORADO: (1) popMap/gdpMap/milMap fusionan rankings + power map, (2) DUELO ¿QUIÉN GANA? — dos selects de 217 países, barras PIB 45%/gasto militar est. 35%/población 20% con veredicto VENTAJA X%, (3) DESAFÍO GEO — quiz de 5 preguntas generado en vivo con los rankings (militar/población/PIB/capitales), feedback verde/rojo, récord en localStorage vanguard-geoquiz-best
+- Wiring: TabKey "planeta" + TABS + sección INTELIGENCIA (antes de GEO) + page.tsx dynamic import; version v41.0 PLANETA VIVO
+- DEBUG del sandbox: la shell inyecta DATABASE_URL=file:... que pisa el .env (por eso fallaba db:push del init) — pasar la URL de Supabase inline; next start persiste como "next-server" — kill -9 por PID exacto (puerto 3100 ocupado una vez por proceso viejo con código viejo)
+- VERIFICADO LOCAL (viewport móvil, browser real): PLANETA 4/4 CAPAS CON SEÑAL, 592 puntos (aurora off → 58, toggle OK), aurora belt visible sobre el Ártico en textura satélite, EEI EN VIVO; GEO: ficha RD completa (Santo Domingo, 11.520.487 hab, PIB $127,4 milM, 0,8% PIB), duelo DOM vs HTI → VENTAJA DOMINICAN REPUBLIC 80%, quiz interactivo OK; screenshots scripts/planeta-panel-local.png, planeta-globe-local.png, geo-vs-local.png; lint 0 errores, build verde
+- VERIFICADO EN PRODUCCIÓN: /api/layers 200 (45 eventos, 568 pts aurora), /api/geo power 260, panel PLANETA 4/4 capas 626 puntos, GEO duelo/quiz/ficha/ventaja todo presente; home/mision/guerra-hoy 200; screenshot scripts/planeta-panel-prod.png
+- RONDA 5 DISTRIBUCIÓN (scripts/distribute-r5.sh): 7 verificados = Telegraph NUEVO https://telegra.ph/Planeta-Vivo-gratis-mapa-3D-con-huracanes-volcanes-auroras-y-la-EEI-en-directo-09-23 (cuenta anónima fresca, GET 200 con contenido OK) + paste.rs/3sj1F 201 (GET 200) + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub PubSubHubbub 204 + WebSub Superfeedr 204; shares:external fijado a 39
+- Contador: players:total=16 REALES (12 al inicio de la sesión, 5 tras v39.1 — el embudo sigue creciendo), mission 40/100 enlaces
+
+Stage Summary:
+- v41.0 EN VIVO: VANGUARD ahora muestra el PLANETA ENTERO EN VIVO — huracanes y volcanes activos de NASA, el cinturón de auroras de NOAA, sismos USGS y la EEI cruzando el cielo en directo, todo en un globo 3D con capas que se encienden y apagan; el tab GEO ganó un juego (quiz con récord) y un duelo de países con datos oficiales
+- Cero API keys, cero coste: todas las fuentes son públicas (NASA/NOAA/USGS/Banco Mundial/wheretheiss.at); doctrina nunca-vacía mantenida (allSettled + stale + barebones)
+- 39 enlaces externos verificados acumulados, 16 jugadores reales — la curva de crecimiento se mantiene

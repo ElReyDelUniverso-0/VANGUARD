@@ -56,3 +56,13 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [WebSub-r4] 204
 === FIN RONDA 4 ===
 [Telegraph-geopolitica] 200 -> https://telegra.ph/Geopolítica-en-vivo-gratis-gasto-militar-sismos-y-mapa-de-guerra-3D-09-23 (creado con createAccount anonimo, verificado 200 publico)
+=== RONDA 5 2026-09-23T20:44:50Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-planeta] 200 -> https://telegra.ph/Planeta-Vivo-gratis-mapa-3D-con-huracanes-volcanes-auroras-y-la-EEI-en-directo-09-23
+[paste.rs-planeta] 201 -> https://paste.rs/3sj1F
+[IndexNow-r5] 200
+[PingOMatic-r5] 200
+[Twingly-r5] 200
+[WebSub-PubSubHubbub-r5] 204
+[WebSub-Superfeedr-r5] 204
+=== FIN RONDA 5 ===
