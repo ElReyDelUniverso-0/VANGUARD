@@ -28,3 +28,22 @@
 201 telegraph-page
 000 mojeek
 200 indexnow-r2
+=== RONDA 3 2026-09-23T04:04:52Z ===
+[IndexNow-POST-r3] 200
+[WebSub-PubSubHubbub] 204
+[WebSub-Superfeedr] 204
+[Bing-SitemapPing] 410
+[Google-SitemapPing] 404
+[ExactSeek] 404
+[WhatUseek-GET] 200
+[SonicRun] 404
+[EntireWeb] 403
+[W3C-FeedCheck] 200
+[1abc-mision] 200
+[Twingly-r3] 200
+[PingOMatic-r3] 200
+=== FIN RONDA 3 ===
+--- VEREDICTOS HONESTOS RONDA 3 (2026-09-23T04:0xZ) ---
+VERIFICADOS (6): IndexNow-POST-r3=200 (3 URLs) | WebSub-PubSubHubbub=204 (feed publicado al hub) | WebSub-Superfeedr=204 (feed publicado al hub) | 1abc-mision=200 | Twingly-r3=200 | PingOMatic-r3=200 (sindicado ~15 servicios)
+QA no-cuenta: W3C-FeedCheck=200 (feed VALIDO — validación, no distribución)
+EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) | ExactSeek=404 | SonicRun=404 | EntireWeb=403 | WhatUseek=200-pero-embudo-de-pago-sin-confirmacion-gratuita

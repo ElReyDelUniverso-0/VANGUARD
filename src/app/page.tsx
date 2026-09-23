@@ -34,6 +34,7 @@ import { PromoKit } from "@/components/vanguard/promo-kit";
 import { Mission100 } from "@/components/vanguard/mission-100";
 import { SeoFaq } from "@/components/vanguard/seo-faq";
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
+import { ensurePlayerCounted } from "@/lib/realtime";
 const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").then((m) => m.MusicPlayer), { ssr: false });
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
 // v32 CIELO DE ACERO: badge global del estado del socket multijugador
@@ -177,6 +178,10 @@ export default function Home() {
     initSound();
     initPlayer();
     authRefresh();
+    // v39.1 CADA VISITA CUENTA: el visitante se cuenta como jugador en el
+    // montaje de la página — SIN esperar al socket (Render puede tardar 30-50s
+    // en despertar; antes esos móviles se iban sin contar). Idempotente.
+    ensurePlayerCounted();
     const t = setInterval(() => checkAchievements(), 5000);
     return () => clearInterval(t);
   }, [checkAchievements, initPlayer, authRefresh]);

@@ -141,6 +141,33 @@ function healSocket() {
   }
 }
 
+// v39.1 — CONTEO DE JUGADOR INDEPENDIENTE DEL SOCKET.
+// Antes el POST action:"player" solo disparaba tras "connect" del socket: si el
+// plan gratis de Render dormía (cold start 30-50s), el visitante móvil se iba
+// SIN SER CONTADO — el comandante lo vio: "ningún jugador ha entrado ni una
+// sola vez". Ahora el conteo corre en el MONTAJE de la página, sin depender de
+// ninguna conexión. Gate por sessionStorage + dedupe server-side por UID.
+export function ensurePlayerCounted() {
+  if (typeof window === "undefined") return;
+  try {
+    if (sessionStorage.getItem("vanguard_player_counted") === "1") return;
+    sessionStorage.setItem("vanguard_player_counted", "1");
+    let id = localStorage.getItem("vanguard-mp-uid");
+    if (!id) {
+      id = `mp-${crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
+      localStorage.setItem("vanguard-mp-uid", id);
+    }
+    window.dispatchEvent(new CustomEvent("vanguard:player"));
+    fetch("/api/visits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "player", uid: id }),
+    }).catch(() => {});
+  } catch {
+    /* el conteo jamás tumba la página */
+  }
+}
+
 // v36 — AUTO-RECLUTAMIENTO AL LOBBY DE GUERRA GLOBAL.
 // Usa EXACTAMENTE las mismas claves que multiplayer-panel (vanguard-mp-uid)
 // para que sea el MISMO jugador, no un fantasma duplicado. El alias se lee del
@@ -164,19 +191,10 @@ function autoJoinMp() {
     }
     _socket?.emit("mp:join", { playerId: id, name }, () => {});
 
-    // v38 OPERACIÓN 100 JUGADORES — reto extremo del mando: conseguir 100 jugadores.
-    // Cada agente que entra a la guerra suma al contador GLOBAL de jugadores únicos:
-    // dedupe por UID en la BD (player:UID) y gate de sesión para que las
-    // reconexiones no re-cuenten. Dispara el evento para la barra en vivo.
-    if (sessionStorage.getItem("vanguard_player_counted") !== "1") {
-      sessionStorage.setItem("vanguard_player_counted", "1");
-      window.dispatchEvent(new CustomEvent("vanguard:player"));
-      fetch("/api/visits", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "player", uid: id }),
-      }).catch(() => {});
-    }
+    // v38+v39.1 — el conteo ya no vive aquí: ahora lo garantiza
+    // ensurePlayerCounted() en el montaje de la página (sin socket). Esta
+    // llamada queda como red de seguridad idempotente (gate de sesión).
+    ensurePlayerCounted();
   } catch {
     /* el auto-join jamás tumba la conexión */
   }

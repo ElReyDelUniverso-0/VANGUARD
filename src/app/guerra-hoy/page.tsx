@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { PlayerPing } from "@/components/vanguard/player-ping";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -200,6 +201,8 @@ export default async function GuerraHoyPage() {
           </p>
         </div>
       </section>
+      {/* v39.1: el visitante cuenta como jugador sin esperar al socket */}
+      <PlayerPing />
     </main>
   );
 }

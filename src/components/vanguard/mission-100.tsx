@@ -436,6 +436,28 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
         </div>
       </div>
 
+      {/* ===== v39.1 PÓSTERES DE RECLUTAMIENTO — imagen lista para reenviar ===== */}
+      <div className="mt-3 border border-border rounded-md p-4">
+        <h3 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+          Pósteres listos para reenviar — rastreados VGD-POSTER
+        </h3>
+        <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed">
+          Descarga, reenvía o publica: imagen militar con el QR dentro. Todo el que la escanee aterriza en el mando y suma como jugador. Funciona en estados, grupos y salas de espera.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <a href="/posters/vanguard-poster-historia.png" download="vanguard-poster.png" className="inline-flex">
+            <Button size="sm" variant="outline" className="h-8 font-mono text-[10px] uppercase tracking-wider border-electric/40 text-electric hover:bg-electric/10">
+              Descargar póster ESTADO (9:16)
+            </Button>
+          </a>
+          <a href="/posters/vanguard-poster-cuadrado.png" download="vanguard-poster-chat.png" className="inline-flex">
+            <Button size="sm" variant="outline" className="h-8 font-mono text-[10px] uppercase tracking-wider border-electric/40 text-electric hover:bg-electric/10">
+              Descargar póster CHAT (cuadrado)
+            </Button>
+          </a>
+        </div>
+      </div>
+
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] font-mono text-muted-foreground">
         <span className="inline-flex items-center gap-1.5"><Flame className="w-3 h-3 text-amber" /> Cada visitante que entra por tu enlace recibe +50 monedas de bienvenida</span>
         {!standalone && (
