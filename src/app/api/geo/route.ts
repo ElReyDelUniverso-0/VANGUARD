@@ -20,6 +20,8 @@ type CountryRow = {
   iso3: string; name: string; capital: string; region: string;
   income: string; lat: number; lng: number; borders: string[];
 };
+// v41 PLANETA VIVO — indicadores por país para TODOS los países (ficha + VS + quiz)
+type PowerCell = { pop: number | null; gdp: number | null; mil: number | null };
 type GeoPayload = {
   ok: boolean;
   ts: string;
@@ -30,6 +32,7 @@ type GeoPayload = {
   population: RankRow[];
   gdp: RankRow[];
   countries: CountryRow[];
+  power: Record<string, PowerCell>;
   sources: Record<string, boolean>;
 };
 
@@ -163,6 +166,20 @@ async function buildPayload(): Promise<GeoPayload> {
 
   const issOk = iss.status === "fulfilled" && iss.value ? iss.value : null;
 
+  // v41 power map: unión de los 3 indicadores para todos los países con dato
+  const power: Record<string, PowerCell> = {};
+  if (mil.status === "fulfilled" && pop.status === "fulfilled" && gdp.status === "fulfilled") {
+    const milM = mil.value.byIso, popM = pop.value.byIso, gdpM = gdp.value.byIso;
+    const isos = new Set([...milM.keys(), ...popM.keys(), ...gdpM.keys()]);
+    for (const iso of isos) {
+      power[iso] = {
+        pop: popM.get(iso)?.value ?? null,
+        gdp: gdpM.get(iso)?.value ?? null,
+        mil: milM.get(iso)?.value ?? null,
+      };
+    }
+  }
+
   return {
     ok: true,
     ts: new Date().toISOString(),
@@ -175,6 +192,7 @@ async function buildPayload(): Promise<GeoPayload> {
     population: pop.status === "fulfilled" ? topOf(pop.value.byIso, 15) : [],
     gdp: gdp.status === "fulfilled" ? topOf(gdp.value.byIso, 15) : [],
     countries,
+    power,
     sources: {
       worldbank: countries.length > 0,
       usgs: quakes.length > 0,
@@ -210,6 +228,7 @@ function barebones(): GeoPayload {
       { iso3: "CHN", name: "China", value: 18_273_410_000_000, year: "2024" },
     ],
     countries: [],
+    power: {},
     sources: { worldbank: false, usgs: false, wikipedia: false, iss: false, borders: false },
   };
 }

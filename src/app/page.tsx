@@ -41,6 +41,8 @@ const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connectio
 const RealtimeStatus = dynamic(() => import("@/components/realtime-status").then((m) => m.RealtimeStatus), { ssr: false });
 // v40 GEOPOLÍTICA EN VIVO: el tablón del planeta con datos reales (Banco Mundial/USGS/Wikipedia)
 const GeopoliticaPanel = dynamic(() => import("@/components/vanguard/panels/geopolitica-panel").then((m) => m.GeopoliticaPanel), { ssr: false, loading: PanelSkeleton });
+// v41 PLANETA VIVO: globo con capas NASA EONET + auroras NOAA + sismos + EEI en directo
+const PlanetaPanel = dynamic(() => import("@/components/vanguard/panels/planeta-panel").then((m) => m.PlanetaPanel), { ssr: false, loading: PanelSkeleton });
 // v33 ESCUELA DE GUERRA — manual del comandante
 const TutorialModal = dynamic(() => import("@/components/vanguard/tutorial-modal").then((m) => m.TutorialModal), { ssr: false });
 
@@ -354,6 +356,7 @@ export default function Home() {
         {tab === "radar" && <RadarPanel />}
         {tab === "ojodios" && <OjoDiosPanel />}
         {tab === "geopolitica" && <GeopoliticaPanel />}
+        {tab === "planeta" && <PlanetaPanel />}
         {tab === "biblioteca" && <BibliotecaPanel />}
         {tab === "tribunal" && <TribunalPanel />}
         {tab === "alianzas" && <AlianzasPanel />}

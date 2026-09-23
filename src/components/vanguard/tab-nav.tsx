@@ -14,7 +14,7 @@ import {
   Siren, BookLock, Gavel, BrainCircuit, ShieldAlert, Home, LayoutGrid,
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
-  Wand2, Landmark,
+  Wand2, Landmark, Orbit,
 } from "lucide-react";
 
 export type TabKey =
@@ -51,7 +51,9 @@ export type TabKey =
   // v30 vista dios: observación omnisciente del sistema
   | "ojodios"
   // v40 GEOPOLÍTICA EN VIVO: datos reales del planeta (Banco Mundial/USGS/Wikipedia/EEI)
-  | "geopolitica";
+  | "geopolitica"
+  // v41 PLANETA VIVO: globo con capas NASA EONET + auroras NOAA + sismos + EEI en directo
+  | "planeta";
 
 interface TabDef {
   key: TabKey;
@@ -100,6 +102,8 @@ const TABS: Record<TabKey, TabDef> = {
   crisis:        { key: "crisis",        label: "Crisis Mundial",    short: "CRISIS", icon: <Siren className="w-3.5 h-3.5" />, color: "red" },
   // v40
   geopolitica:   { key: "geopolitica",   label: "Geopolítica en Vivo (ONU/USGS)", short: "GEO", icon: <Landmark className="w-3.5 h-3.5" />, color: "cyan" },
+  // v41
+  planeta:       { key: "planeta",       label: "Planeta Vivo (NASA/auroras/EEI)", short: "PLANETA", icon: <Orbit className="w-3.5 h-3.5" />, color: "cyan" },
   // v19
   frente:        { key: "frente",        label: "Líneas de Frente en Vivo", short: "FRENTE", icon: <Bomb className="w-3.5 h-3.5" />, color: "red" },
   estudio:       { key: "estudio",       label: "Estudio de Video",  short: "ESTUDIO", icon: <Clapperboard className="w-3.5 h-3.5" />, color: "red" },
@@ -208,8 +212,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, cables, radar, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa, cables, radar, planeta en vivo, geopolítica real y vigilancia",
+    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     key: "emisora", label: "EMISORA", short: "EMISORA", icon: <Signal className="w-4 h-4" />, color: "red",
