@@ -1002,3 +1002,25 @@ Stage Summary:
 - v42.3 en producción: la guerra ahora se ve viva hasta en la pestaña del navegador — prueba social que aparece en capturas de pantalla compartidas
 - Misión 69/100 (68 externos + 1 comunidad); jugadores 19 REALES; visitas 23
 - El agente auto (Task 54) sigue programado: próxima corrida 09:00 UTC (05:00 Santo Domingo)
+
+---
+Task ID: 56
+Agent: Super Z (main)
+Task: Usuario: "La ronda10 mas promociones mejora buca mas estrategias para encontrar jugadores ect" — v42.4 CÓDIGO DE GUERRA + RONDA 10 multi-idioma
+
+Work Log:
+- ESTRATEGIA NUEVA #1 (v42.4 — cada jugador es un reclutador): "TU CÓDIGO DE GUERRA" en /mision — código personal VGD-Uxxxxx derivado estable del UID (FNV-1a, localStorage vanguard-mycode), tarjeta con enlace personal + botón COPIAR (reusa copy() → bumpShare → suma misión), +50 monedas ya existentes para el invitado vía ReferralLanding. El ranking "Top enlaces" (LIKE ref:VGD%) muestra el código personal automáticamente cuando traiga visitas.
+- Fix lint: setState síncrono en effect (regla cascading renders) → diferido con setTimeout(0). Lint 0 errores, build verde.
+- VERIFICACIÓN E2E EN PRODUCCIÓN (agent-browser sobre /mision): localStorage vanguard-mycode = "VGD-U1NKX1", tarjeta "TU CÓDIGO DE GUERRA — ENLACE PERSONAL" visible, click en COPIAR MI ENLACE → estado "COPIADO" confirmado dentro de la ventana de 1.6s. Captura scripts/v424-mycode-prod.png. Honestidad: mis 2 clicks de prueba inflaron shares:total 1→3 → corregido a 1 (solo la compartida real de la comunidad).
+- RONDA 10 (scripts/distribute-r10.sh) — ESTRATEGIA NUEVA #2: multi-idioma. Telegraph EN "Free War Game in Your Browser — 6 Games in One, No Signup, Any Phone" (200, GET 200+5 matches) + Telegraph PT-BR "Jogo de guerra grátis no navegador — sem cadastro" (200, GET 200+14 matches) → mercados EN global y Brasil.
+- CANAL NUEVO verificado: rentry.co (GET homepage → cookie+CSRF → POST /api/new form-encoded, JSON API) → https://rentry.co/so9kto4q (200, 6 matches). paste.rs r10 (201, GET 200+6 matches).
+- Núcleo OK: IndexNow 200, PingOMatic 200, Twingly 200, WebSub PubSubHubbub 204, WebSub Superfeedr 204, TotalPing(-L) 200 = 10 verificados en la ronda.
+- CANALES NUEVOS MUERTOS (honestos, no reintentar): dpaste.com 400 (IP del sandbox bloqueada por ToS, 15 días), dpaste.org 405 (POST no aceptado en /api/, probado JSON y form), 0x0.st 000 (egress bloqueado). rentry variante que NO funciona: POST /api/new/form 404 — la correcta es /api/new form-encoded con CSRF+Referer.
+- shares:external 68 → 78 (68+10); misión 79/100
+- version v42.4; push 61d25d5; deploy verificado por /api/health (v42.3 → v42.4 a las 23:07 UTC)
+- CRECIMIENTO REAL: players:total 18 → 21 durante la sesión (+3 hoy), visitas totales 23, presencia reciente con visitantes en (×4) y es (×1)
+
+Stage Summary:
+- v42.4 en producción: el arsenal de reclutamiento ahora incluye el ENLACE PERSONAL de cada jugador con ranking en vivo — el loop viral que faltaba, a coste cero
+- La promoción ahora ataca en 3 idiomas (ES + EN + PT-BR) con contenido nativo, no traducido a medias
+- Misión 79/100; 21 jugadores reales; la curva de crecimiento sigue subiendo día a día
