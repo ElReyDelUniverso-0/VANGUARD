@@ -27,6 +27,8 @@ const MESSAGES = [
   "Mapa 3D con aviones militares, tanques y tropas en tiempo real + noticias reales de conflictos. En español y gratis:",
   "Guerra global multijugador: conquista territorios, sube tu ELO y mira el mundo arder en directo. Pasa y entra:",
   "Conflictos mundiales EN DIRECTO: data OSINT, noticias de medios internacionales y simulador táctico. 100% gratis:",
+  "VANGUARD te detecta el idioma al entrar (8 idiomas) y el HUD verde muestra cuánta gente está EN LÍNEA ahora mismo. Guerra global multijugador gratis:",
+  "¿Cuántos guerreros hay conectados AHORA? Míralo en el contador verde del mando: presencia real, no bots. Huracanes NASA, sismos USGS, EEI en directo y guerra por rondas. Entra:",
 ];
 
 type Intent = "whatsapp" | "x" | "telegram" | "facebook";
