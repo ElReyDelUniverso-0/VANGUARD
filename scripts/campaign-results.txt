@@ -76,3 +76,24 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [WebSub-PubSubHubbub-r6] 204
 [WebSub-Superfeedr-r6] 204
 === FIN RONDA 6 ===
+=== RONDA 7 2026-09-23T22:15:30Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r7] 200 -> https://telegra.ph/VANGUARD-busca-comandantes-guerra-multijugador-gratis-por-rondas-móvil-sin-registro-09-23
+[paste.rs-r7] 201 -> https://paste.rs/LJLH9
+[IndexNow-api-r7] 200
+[IndexNow-bing-r7] 000
+[IndexNow-yandex-r7] 000
+[IndexNow-seznam-r7] 000
+[IndexNow-naver-r7] 000
+[PingOMatic-r7] 200
+[Twingly-r7] 200
+[WebSub-PubSubHubbub-r7] 204
+[WebSub-Superfeedr-r7] 204
+[Pingler-r7] 404
+[Blogshares-r7] 000
+[TotalPing-r7] 200
+=== FIN RONDA 7 ===
+[IndexNow-bing-r7-retry] 000
+[IndexNow-yandex-r7-retry] 000
+[IndexNow-seznam-r7-retry] 000
+[IndexNow-naver-r7-retry] 000
