@@ -36,7 +36,7 @@ import { SeoFaq } from "@/components/vanguard/seo-faq";
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
 import { ensurePlayerCounted } from "@/lib/realtime";
 import { ensureLangDetected } from "@/lib/i18n";
-import { startPresenceHeartbeat } from "@/components/vanguard/presence-ping";
+import { startPresenceHeartbeat, LiveTitle } from "@/components/vanguard/presence-ping";
 const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").then((m) => m.MusicPlayer), { ssr: false });
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
 // v32 CIELO DE ACERO: badge global del estado del socket multijugador
@@ -287,6 +287,8 @@ export default function Home() {
         onOpenAccount={() => setAccountOpen(true)}
       />
       <TabNav active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} />
+      {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
+      <LiveTitle />
       <StatsTicker />
 
       <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20">

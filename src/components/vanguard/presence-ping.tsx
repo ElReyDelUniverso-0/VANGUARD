@@ -10,11 +10,15 @@
 //  · LiveCounter — badge visible "N EN LÍNEA" con punto verde pulsante.
 //    Suscripción al bus local: los latidos de PresencePing actualizan el
 //    número en todas las instancias sin polling extra.
+//  · LiveTitle (v42.3) — prueba social en la PESTAÑA: con 2+ guerreros en
+//    línea el título pasa a "(N EN LÍNEA) <página>" en el idioma del visitante;
+//    se ve incluso en una captura de pantalla compartida. Respeta el título
+//    SEO de cada página y lo restaura al desmontar.
 // Al no depender del socket de Render, la presencia funciona incluso mientras
 // el contenedor multijugador despierta (cold start 30-50s).
 
 import { useEffect, useState } from "react";
-import { useLangStore, ensureLangDetected, useT } from "@/lib/i18n";
+import { useLangStore, ensureLangDetected, useT, translate } from "@/lib/i18n";
 
 const BEAT_MS = 30_000; // latido cada 30s
 
@@ -109,6 +113,30 @@ export function PresencePing() {
     // eligió uno a mano) — mismo punto de montaje, cero coste extra.
     ensureLangDetected();
     startPresenceHeartbeat();
+  }, []);
+  return null;
+}
+
+/** v42.3 Título de pestaña EN VIVO: con 2+ en línea anteponer "(N EN LÍNEA)". */
+export function LiveTitle() {
+  useEffect(() => {
+    const base = document.title;
+    const apply = () => {
+      try {
+        const label = translate(useLangStore.getState().lang, "live.online");
+        document.title = _online >= 2 ? `(${_online} ${label}) ${base}` : base;
+      } catch {
+        /* el título de la pestaña nunca tumba la guerra */
+      }
+    };
+    const unsubOnline = subscribeOnline(apply);
+    const unsubLang = useLangStore.subscribe(apply);
+    return () => {
+      unsubOnline();
+      unsubLang();
+      // restaurar solo si nuestro prefijo sigue puesto (no pisar a otra página)
+      if (document.title.startsWith("(")) document.title = base;
+    };
   }, []);
   return null;
 }

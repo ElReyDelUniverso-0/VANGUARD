@@ -108,3 +108,14 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [WebSub-Superfeedr-r8] 204
 [TotalPing-r8] 200
 === FIN RONDA 8 ===
+=== RONDA 9 2026-09-23T22:44:29Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r9] 200 -> https://telegra.ph/Informe-del-frente-los-números-reales-de-VANGUARD-la-guerra-no-duerme-09-23
+[paste.rs-r9] 201 -> https://paste.rs/COJBF
+[IndexNow-r9] 200
+[PingOMatic-r9] 200
+[Twingly-r9] 200
+[WebSub-PubSubHubbub-r9] 204
+[WebSub-Superfeedr-r9] 204
+[TotalPing-r9] 200
+=== FIN RONDA 9 ===

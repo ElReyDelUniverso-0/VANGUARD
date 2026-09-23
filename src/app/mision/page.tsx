@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Mission100 } from "@/components/vanguard/mission-100";
 import { NewsStrip } from "@/components/vanguard/news-strip";
 import { PlayerPing } from "@/components/vanguard/player-ping";
-import { PresencePing } from "@/components/vanguard/presence-ping";
+import { PresencePing, LiveTitle } from "@/components/vanguard/presence-ping";
 
 // v37 MISIÓN 100 — centro de mando directo para la campaña de enlaces.
 // El comandante la abre en el móvil: https://vanguard-kq9r.vercel.app/mision
@@ -23,6 +23,8 @@ export default function MisionPage() {
         <PlayerPing />
         {/* v42: latido de presencia EN VIVO + auto-idioma */}
         <PresencePing />
+        {/* v42.3: título de pestaña EN VIVO */}
+        <LiveTitle />
         {/* v39: strip de noticias en vivo — toda página de mando muestra el frente */}
         <NewsStrip />
         <Mission100 standalone />

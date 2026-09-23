@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { PlayerPing } from "@/components/vanguard/player-ping";
-import { PresencePing, LiveCounter } from "@/components/vanguard/presence-ping";
+import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/presence-ping";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -208,6 +208,8 @@ export default async function GuerraHoyPage() {
       <PlayerPing />
       {/* v42: latido de presencia EN VIVO + auto-idioma */}
       <PresencePing />
+      {/* v42.3: título de pestaña EN VIVO */}
+      <LiveTitle />
     </main>
   );
 }
