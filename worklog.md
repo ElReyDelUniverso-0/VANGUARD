@@ -881,3 +881,23 @@ Stage Summary:
 - v39.1 EN VIVO: ya es FÍSICAMENTE IMPOSIBLE que un visitante no cuente como jugador (montaje de página, sin socket) — el cuello de botella del contador está eliminado de raíz
 - El comandante tiene ahora pósteres visuales con QR rastreado para reenviar (descargables desde /mision y entregados como PNG), y la misión sube a 28/100 enlaces con 6 canales nuevos verificados incluyendo publicación real del feed RSS a 2 hubs WebSub
 - Jugadores reales: 5 (y contando) — el embudo enlaces→visitas→jugadores quedó blindado punta a punta
+
+---
+Task ID: 50
+Agent: Super Z (main)
+Task: Usuario: "sigue buscando gente, agrega geopolítica, mapas de todo, no tengas miedo, agrega muchas cosas" — GEOPOLÍTICA EN VIVO
+
+Work Log:
+- APIs geopolíticas probadas una a una (solo keyless para presupuesto $0): World Bank OK (mrnev=1), USGS 4.5_day OK, Wikimedia pageviews OK (403 hasta usar UA formato "NAME/ver (url; email)" — política 2025), wheretheiss.at OK, mledoze borders OK (dist/countries.json — el .min.json NO existe, fue un 404 silencioso), UCDP 401 exige token (excluido), REST Countries v3 y v5 deprecadas (excluidas), GDELT GEO 404 (excluido)
+- API /api/geo nueva: Promise.allSettled de 8 fuentes, filtro de agregados del Banco Mundial (region.value==="Aggregates" — NO region.id NAG), top 15 de gasto militar %PIB / población / PIB, 12 sismos, 10 tendencias humanizadas, 217 fichas de país con capital/región/ingreso/vecinos; cache 15 min en memoria + stale + barebones (doctrina nunca vacía); 44KB JSON
+- PANEL geopolitica-panel.tsx: EEI en vivo (posición/velocidad/altitud), rankings con barras y switch militar/población/PIB, sismos M4.5+ con color por magnitud y link USGS, FICHA DE PAÍS (select 217 países → capital, región, ingreso, población, PIB, gasto militar, vecinos clicables), Wikipedia top 10; caché local vanguard-geo-cache + poll 5 min
+- Wiring: TabKey "geopolitica" + TABS.geo + sección INTELIGENCIA (OSINT/OJO/MAPA/RADAR/GEO/GALERÍA/BRIEFINGS/CÁMARAS) + page.tsx dynamic import
+- DEBUG local: next start persiste como "next-server" — pkill por nombre no mata, hay que kill -9 por PID; el cache del route handler sirvió datos viejos 2 veces durante la verificación
+- VERIFICADO EN PRODUCCIÓN con navegador real (viewport móvil): menú > INTELIGENCIA > GEO renderiza "GEOPOLÍTICA EN VIVO · FUENTES 5/5 · EEI sobre 51.8°N 166.7°O · ranking Ucrania 34.5%/Eritrea 20.9%/Israel 8.8%"; 0 errores JS; screenshot scripts/geo-panel-prod.png; /api/geo 200 en prod
+- RONDA 4 DISTRIBUCIÓN (scripts/distribute-r4.sh): 6 verificados = Telegraph nuevo artículo público https://telegra.ph/Geopolítica-en-vivo-gratis-gasto-militar-sismos-y-mapa-de-guerra-3D-09-23 (createAccount anónimo; el token hardcodeado estaba muerto) + paste.rs/8cJPR 201 + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub 204
+- shares:external fijado a 33 (27 + 6 verificados ronda 4); players:total llegó a 6 reales
+- version v40.0 GEOPOLITICA EN VIVO; lint 0; build verde; push 91eb508; health v40.0 db:up
+
+Stage Summary:
+- v40.0 EN VIVO: VANGUARD ahora tiene GEOPOLÍTICA REAL de agencias oficiales (Banco Mundial/USGS/Wikipedia/EEI/fronteras) — datos que ni plataformas grandes muestran juntos, con fichas de 217 países y ranking de gasto militar en vivo; cero API keys, cero coste
+- 33 enlaces externos verificados acumulados; sexto jugador real registrado; el tab GEO da contenido NUEVO cada 5 minutos = razón para volver
