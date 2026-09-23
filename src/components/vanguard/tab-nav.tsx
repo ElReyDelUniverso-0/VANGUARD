@@ -49,7 +49,9 @@ export type TabKey =
   // v28 para ti: feed vertical estilo TikTok/YouTube con el contenido de la comunidad
   | "foryou"
   // v30 vista dios: observación omnisciente del sistema
-  | "ojodios";
+  | "ojodios"
+  // v40 GEOPOLÍTICA EN VIVO: datos reales del planeta (Banco Mundial/USGS/Wikipedia/EEI)
+  | "geopolitica";
 
 interface TabDef {
   key: TabKey;
@@ -96,6 +98,8 @@ const TABS: Record<TabKey, TabDef> = {
   warsim:        { key: "warsim",        label: "Simulador de Guerras", short: "WARSIM", icon: <Swords className="w-3.5 h-3.5" />, color: "red" },
   espionaje:     { key: "espionaje",     label: "Red de Espionaje",  short: "ESPIONAJE", icon: <VenetianMask className="w-3.5 h-3.5" />, color: "violet" },
   crisis:        { key: "crisis",        label: "Crisis Mundial",    short: "CRISIS", icon: <Siren className="w-3.5 h-3.5" />, color: "red" },
+  // v40
+  geopolitica:   { key: "geopolitica",   label: "Geopolítica en Vivo (ONU/USGS)", short: "GEO", icon: <Landmark className="w-3.5 h-3.5" />, color: "cyan" },
   // v19
   frente:        { key: "frente",        label: "Líneas de Frente en Vivo", short: "FRENTE", icon: <Bomb className="w-3.5 h-3.5" />, color: "red" },
   estudio:       { key: "estudio",       label: "Estudio de Video",  short: "ESTUDIO", icon: <Clapperboard className="w-3.5 h-3.5" />, color: "red" },
@@ -204,8 +208,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, cables, radar y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa, cables, radar, geopolítica real y vigilancia",
+    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     key: "emisora", label: "EMISORA", short: "EMISORA", icon: <Signal className="w-4 h-4" />, color: "red",

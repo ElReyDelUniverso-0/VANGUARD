@@ -39,6 +39,8 @@ const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").t
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
 // v32 CIELO DE ACERO: badge global del estado del socket multijugador
 const RealtimeStatus = dynamic(() => import("@/components/realtime-status").then((m) => m.RealtimeStatus), { ssr: false });
+// v40 GEOPOLÍTICA EN VIVO: el tablón del planeta con datos reales (Banco Mundial/USGS/Wikipedia)
+const GeopoliticaPanel = dynamic(() => import("@/components/vanguard/panels/geopolitica-panel").then((m) => m.GeopoliticaPanel), { ssr: false, loading: PanelSkeleton });
 // v33 ESCUELA DE GUERRA — manual del comandante
 const TutorialModal = dynamic(() => import("@/components/vanguard/tutorial-modal").then((m) => m.TutorialModal), { ssr: false });
 
@@ -351,6 +353,7 @@ export default function Home() {
         {tab === "crisis" && <CrisisPanel />}
         {tab === "radar" && <RadarPanel />}
         {tab === "ojodios" && <OjoDiosPanel />}
+        {tab === "geopolitica" && <GeopoliticaPanel />}
         {tab === "biblioteca" && <BibliotecaPanel />}
         {tab === "tribunal" && <TribunalPanel />}
         {tab === "alianzas" && <AlianzasPanel />}
