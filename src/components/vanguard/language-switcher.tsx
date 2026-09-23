@@ -10,6 +10,8 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
   const { t } = useT();
   const lang = useLangStore((s) => s.lang);
   const setLang = useLangStore((s) => s.setLang);
+  // v42: el idioma fue detectado del navegador (el usuario nunca eligió a mano)
+  const autoDetected = useLangStore((s) => s.autoDetected);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -46,6 +48,11 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
         >
           <div className="px-2.5 py-1.5 border-b border-amber-hud/30 text-[9px] font-mono font-bold text-amber uppercase tracking-widest">
             {t("hud.language")} · {LANGS.length}
+            {autoDetected && (
+              <span className="ml-1 text-green-hud" title="Idioma detectado del navegador">
+                · AUTO
+              </span>
+            )}
           </div>
           {LANGS.map((l) => (
             <button

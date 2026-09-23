@@ -5,6 +5,7 @@ import { getRankForLevel, xpForLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
+import { LiveCounter } from "@/components/vanguard/presence-ping";
 import { Coins, Gem, Flame, Shield, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -97,6 +98,8 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               />
             </div>
             {/* Action buttons - compact on mobile */}
+            {/* v42: guerreros EN VIVO ahora mismo (presencia HTTP, no socket) */}
+            <LiveCounter />
             {/* v21: selector de idioma (7 idiomas) */}
             <LanguageSwitcher />
             <button

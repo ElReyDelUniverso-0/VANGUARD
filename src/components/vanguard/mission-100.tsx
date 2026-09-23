@@ -14,6 +14,7 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { LiveCounter } from "@/components/vanguard/presence-ping";
 import {
   Target, Copy, Check, Trophy, ChevronDown, ExternalLink, Flame,
   Link2, MessageCircle, Send, Globe2, Share2, Hash, MessageSquare,
@@ -284,6 +285,11 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
             <Swords className="w-3 h-3 text-green-hud animate-pulse" /> agentes únicos dentro de la guerra
           </span>
+        </div>
+        {/* v42: guerreros conectados AHORA MISMO — presencia real, no visitas acumuladas */}
+        <div className="mt-2 flex items-center gap-2 font-mono text-[11px] text-green-hud">
+          <LiveCounter />
+          <span className="text-[10px] text-muted-foreground">ahora mismo en el mando (latidos de 30s)</span>
         </div>
         <div className="mt-2 h-4 rounded-full bg-border/40 overflow-hidden border border-border" role="progressbar" aria-valuenow={playersPct} aria-valuemin={0} aria-valuemax={100}>
           <div

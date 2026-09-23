@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { PlayerPing } from "@/components/vanguard/player-ping";
+import { PresencePing, LiveCounter } from "@/components/vanguard/presence-ping";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -122,6 +123,8 @@ export default async function GuerraHoyPage() {
           diplomacia y análisis. Si el mundo hace ruido, aquí se escucha primero.
         </p>
         <div className="mt-4 flex flex-wrap gap-3 text-[11px] font-mono">
+          {/* v42: guerreros conectados AHORA (presencia real, no visitas) */}
+          <LiveCounter />
           <span className="border border-emerald-400/40 bg-emerald-400/10 text-emerald-300 rounded px-2.5 py-1">
             {agents > 0 ? `${agents.toLocaleString("es")} agentes ya dentro` : "Comunidad activa"}
           </span>
@@ -203,6 +206,8 @@ export default async function GuerraHoyPage() {
       </section>
       {/* v39.1: el visitante cuenta como jugador sin esperar al socket */}
       <PlayerPing />
+      {/* v42: latido de presencia EN VIVO + auto-idioma */}
+      <PresencePing />
     </main>
   );
 }
