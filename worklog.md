@@ -1024,3 +1024,21 @@ Stage Summary:
 - v42.4 en producción: el arsenal de reclutamiento ahora incluye el ENLACE PERSONAL de cada jugador con ranking en vivo — el loop viral que faltaba, a coste cero
 - La promoción ahora ataca en 3 idiomas (ES + EN + PT-BR) con contenido nativo, no traducido a medias
 - Misión 79/100; 21 jugadores reales; la curva de crecimiento sigue subiendo día a día
+
+---
+Task ID: 57
+Agent: Super Z (main)
+Task: Usuario: "Ronda 11" — RONDA 11 ángulo FAQ sin humo
+
+Work Log:
+- RONDA 11 (scripts/distribute-r11.sh) — ángulo NUEVO: FAQ / objeciones ("Preguntas que todos hacen antes de entrar — respondidas sin humo": ¿es gratis? sí, ¿registro? no, ¿móvil? sí, ¿hay gente? contador EN VIVO con latidos reales, ¿qué hay dentro? 6 juegos, ¿idioma? 8 automáticos). Es el formato que mejor convierte curiosos en jugadores y no se había usado.
+- 9/9 verificados: Telegraph ES https://telegra.ph/Preguntas-que-todos-hacen-antes-de-entrar-a-VANGUARD--respondidas-sin-humo-09-23 (200, GET 200+12 matches) + paste.rs/ZXEWW (201, GET 200+3) + rentry.co/2nsrg7u7 EN (200, GET 200+10 — SEGUNDO uso del canal conquistado en r10, patrón CSRF+form /api/new repetido sin fallo) + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub PubSubHubbub 204 + WebSub Superfeedr 204 + TotalPing(-L) 200
+- shares:external 78 → 87 (78+9); misión 88/100
+- Sin cambios de código esta ronda (v42.4 sigue en producción) — ronda pura de distribución
+- Contadores al cierre: players:total=21, visitas 23, online en el momento del chequeo: 0 (noche UTC)
+- Nota de patrón rentry: el CSRF se extrae del HTML de la homepage (name="csrfmiddlewaretoken") + cookie de sesión + header Referer: https://rentry.co — POST form-encoded a /api/new (NO /api/new/form, ese da 404)
+
+Stage Summary:
+- Misión 88/100 con 3 idiomas de contenido activos (ES/EN/PT-BR) y 2 artículos de ángulo distinto por idioma
+- El arsenal estable de distribución queda: Telegraph, paste.rs, rentry.co, IndexNow central, PingOMatic, Twingly, WebSub×2, TotalPing = 9 canales por ronda
+- 21 jugadores reales; siguiente hito: la ronda 12 apunta a 100/100 (faltan 12 enlaces)
