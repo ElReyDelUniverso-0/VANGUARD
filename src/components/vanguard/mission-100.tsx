@@ -291,8 +291,14 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
             style={{ width: `${Math.max(3, playersPct)}%` }}
           />
         </div>
-        {data.playersToday > 0 && (
-          <p className="mt-2 font-mono text-[10px] text-green-hud">+{data.playersToday} reclutados hoy</p>
+        {data.players === 0 ? (
+          <p className="mt-2 font-mono text-[10px] text-muted-foreground leading-relaxed">
+            Reclutando la primera ola: cada QR escaneado y cada enlace pegado trae al siguiente jugador. El contador sube en vivo — aquí mismo.
+          </p>
+        ) : (
+          data.playersToday > 0 && (
+            <p className="mt-2 font-mono text-[10px] text-green-hud">+{data.playersToday} reclutados hoy</p>
+          )
         )}
         {playersDone && (
           <div className="mt-3 border border-green-hud/50 bg-green-hud/10 rounded-md px-4 py-3 flex items-center gap-3">
