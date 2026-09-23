@@ -983,3 +983,22 @@ Work Log:
 Stage Summary:
 - VANGUARD tiene ahora un AGENTE DE PROMOCIÓN AUTÓNOMO y verificado: corre solo 2×/día desde la propia BD (pg_cron→pg_net→/api/agent-ping), con backup diario de Vercel Cron, se auto-registra (agent:runs) y su letrero verde-azulado se ve en /mision — el comandante ya no necesita pedir "sigue": la promoción base nunca se detiene
 - Misión 62/100 (61 externos + 1 de la comunidad); jugadores 18; las rondas manuales siguen añadiendo ángulos nuevos (r7 reclutamiento, r8 lista)
+
+---
+Task ID: 55
+Agent: Super Z (main)
+Task: Usuario: "Okey sigue mejorando la pagina y los liks" — MEJORA v42.3 (LiveTitle) + RONDA 9
+
+Work Log:
+- MEJORA DE PÁGINA v42.3 — LiveTitle (título de pestaña EN VIVO): nuevo export en presence-ping.tsx. Con 2+ guerreros en línea, document.title pasa a "(N EN LÍNEA) <título SEO de la página>" en el idioma del visitante (usa translate(lang,"live.online") y se re-suscribe al cambio de idioma con useLangStore.subscribe). Captura el título base al montar (respeta el SEO de cada página) y lo restaura al desmontar solo si su prefijo sigue puesto. Montado en /, /mision y /guerra-hoy.
+- VERIFICACIÓN E2E EN PRODUCCIÓN (agent-browser): 1) abrí / — título SEO limpio; 2) POST a /api/presence con uid de verificación → online=2; 3) en el siguiente latido (30s) la pestaña pasó a "(2 ONLINE) VANGUARD · Conflictos Mundiales en Vivo..." (navegador en EN — auto-idioma activo); 4) al expirar el uid de prueba (90s) el título VOLVIÓ al SEO limpio con online=1. Ciclo completo sube/baja verificado. Sin errores JS. Captura: scripts/v423-livetitle-prod.png
+- RONDA 9 (scripts/distribute-r9.sh, ángulo INFORME DEL FRENTE con números reales: 18 comandantes, agente automático 2x/día, contador EN VIVO, 6 juegos en uno): 7/7 servicios verificados = Telegraph https://telegra.ph/Informe-del-frente-los-números-reales-de-VANGUARD-la-guerra-no-duerme-09-23 (200, GET 200 + 12 matches) + paste.rs/COJBF (201, GET 200 + 4 matches) + IndexNow central 200 + PingOMatic 200 + Twingly 200 + WebSub PubSubHubbub 204 + WebSub Superfeedr 204 + TotalPing(-L) 200
+- shares:external 61 → 68 (61+7 servicios, misma regla honesta: solo rondas manuales con contenido nuevo; las corridas del agente NO suman)
+- scripts/check-counters.js NUEVO: chequeo reutilizable de contadores (aprendido: site_counter usa columnas k/n, no key/value)
+- version v42.3; lint 0 errores; build verde; push bed86e2; deploy verificado por /api/health (v42.2 → v42.3 a las 22:46 UTC); fila de prueba v423verify1 borrada de site_presence
+- CRECIMIENTO REAL DURANTE LA SESIÓN: players:total 18 → 19, visitas totales 21 → 23, presencia reciente incluye visitante con lang=es
+
+Stage Summary:
+- v42.3 en producción: la guerra ahora se ve viva hasta en la pestaña del navegador — prueba social que aparece en capturas de pantalla compartidas
+- Misión 69/100 (68 externos + 1 comunidad); jugadores 19 REALES; visitas 23
+- El agente auto (Task 54) sigue programado: próxima corrida 09:00 UTC (05:00 Santo Domingo)
