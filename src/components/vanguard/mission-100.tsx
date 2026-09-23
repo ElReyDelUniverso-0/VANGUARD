@@ -18,7 +18,7 @@ import { LiveCounter } from "@/components/vanguard/presence-ping";
 import {
   Target, Copy, Check, Trophy, ChevronDown, ExternalLink, Flame,
   Link2, MessageCircle, Send, Globe2, Share2, Hash, MessageSquare,
-  Camera, Music2, Youtube, Radio, TrendingUp, Swords,
+  Camera, Music2, Youtube, Radio, TrendingUp, Swords, UserPlus,
 } from "lucide-react";
 
 // ===== mensajes de reclutamiento (rotan entre enlaces para que no parezca spam) =====
@@ -91,6 +91,34 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
   const [used, setUsed] = useState<string[]>([]);
   const [open, setOpen] = useState<string | null>("wa-grupos");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  // v42.4 CÓDIGO DE GUERRA: enlace personal por jugador (derivado estable del UID)
+  const [myCode, setMyCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    // diferido un tick: evita setState síncrono en el effect (cascada de renders)
+    const t = setTimeout(() => {
+      try {
+        let c = localStorage.getItem("vanguard-mycode");
+        if (!c) {
+          const uid =
+            localStorage.getItem("vanguard-mp-uid") ||
+            `mp-${Math.random().toString(36).slice(2)}`;
+          // FNV-1a: mismo uid = mismo código, para siempre
+          let h = 2166136261;
+          for (let i = 0; i < uid.length; i++) {
+            h ^= uid.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+          }
+          c = `VGD-U${(h >>> 0).toString(36).toUpperCase().padStart(5, "0").slice(0, 5)}`;
+          localStorage.setItem("vanguard-mycode", c);
+        }
+        setMyCode(c);
+      } catch {
+        /* sin localStorage la página sigue — solo se pierde el código personal */
+      }
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
 
   const refresh = useCallback(async () => {
     try {
@@ -330,6 +358,44 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           <Trophy className="w-6 h-6 text-green-hud shrink-0" />
           <p className="text-xs font-mono text-green-hud tracking-wide">
             MISIÓN CUMPLIDA — 100 ENLACES SUPERADOS. La red de reclutamiento sigue activa: nueva meta 250.
+          </p>
+        </div>
+      )}
+
+      {/* ===== v42.4 TU CÓDIGO DE GUERRA — enlace personal ===== */}
+      {myCode && (
+        <div className="mt-5 border border-electric/50 bg-electric/5 rounded-md p-4">
+          <div className="flex items-center gap-2">
+            <UserPlus className="w-4 h-4 text-electric" />
+            <h3 className="font-mono text-[11px] uppercase tracking-widest text-electric">
+              Tu código de guerra — enlace personal
+            </h3>
+          </div>
+          <p className="mt-2 text-[11px] text-muted-foreground font-mono leading-relaxed">
+            Cada visitante que llegue con TU enlace suma con tu código y aparece en el ranking de abajo. Recluta, sube puestos y conquista. Bonus de +50 monedas para todo el que entre con tu enlace.
+          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <code className="flex-1 min-w-0 truncate border border-border rounded-sm bg-background px-2 py-1.5 font-mono text-[11px] text-foreground">
+              {absoluteUrl(myCode)}
+            </code>
+            <Button
+              size="sm"
+              onClick={() => copy(
+                `Estoy en VANGUARD — guerra mundial gratis desde el móvil, sin registro. Entra con mi enlace y +50 monedas: ${absoluteUrl(myCode)}`,
+                "mine",
+                myCode
+              )}
+              className="shrink-0 font-mono tracking-wide"
+            >
+              {copiedKey === "mine" ? (
+                <><Check className="w-3.5 h-3.5 mr-1" /> COPIADO</>
+              ) : (
+                <><Copy className="w-3.5 h-3.5 mr-1" /> COPIAR MI ENLACE</>
+              )}
+            </Button>
+          </div>
+          <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+            Pégalo en estados de WhatsApp, grupos, bios de TikTok — donde quieras.
           </p>
         </div>
       )}
