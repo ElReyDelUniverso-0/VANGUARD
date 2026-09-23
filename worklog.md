@@ -825,3 +825,21 @@ Work Log:
 Stage Summary:
 - v37.0 EN VIVO: la orden "100 enlaces" es ahora un SISTEMA medible — 18 enlaces ya distribuidos y verificados (motores Bing/Yandex/Seznam/Naver, ping sindicado, directorios, artículo público en Telegraph), 100 enlaces rastreados listos para copiar en /mision y en la portada, y cada visita que llega por un enlace se contabiliza en el ranking en vivo
 - El contador no para: la comunidad suma (cada copia/compartir) y el ranking muestra QUÉ enlace trae gente de verdad
+
+---
+Task ID: 47
+Agent: Super Z (main)
+Task: Usuario: "te reto algo extremo: consigue 100 jugadores cueste lo que cueste" — OPERACIÓN 100 JUGADORES
+
+Work Log:
+- Contador HONESTO de jugadores únicos: cada visitante ya entra auto al lobby (mp:join de v36); ahora realtime.ts autoJoinMp() POSTea action:"player" con SU UID persistente (vanguard-mp-uid) — dedupe server-side por fila player:UID (INSERT ON CONFLICT DO NOTHING; solo si es nuevo sube players:total + day:players) y gate de sesión para reconexiones
+- API /api/visits v38: GET devuelve {players, playersToday, playerGoal:100} además de todo lo anterior
+- Mission100 → barra GEMELA: ENLACES 19/100 + JUGADORES X/100 (gradiente eléctrico), "+N reclutados hoy", banner RETO CUMPLIDO a los 100 con meta 250; header "Misión 100 — enlaces y jugadores"; evento vanguard:player refresca en vivo
+- QR DE RECLUTAMIENTO (qrcode.react): canvas con URL rastreada ?ref=VGD-QRCODE + botón DESCARGAR QR (PNG) — para estados de WhatsApp, imprimir, móvil a móvil; el usuario es móvil-puro y esto convierte alcance físico
+- Ronda 2 distribución: IndexNow re-submit 200 (v38 fresco); Mojeek 000 (bloqueado) — 19 envíos verificados acumulados en campaign-results.txt
+- SMOKE TEST producción: POST player uid nuevo → players:1 ✓; mismo uid → sigue 1 (dedupe OK) ✓; cleanup del uid de prueba ✓; /mision 200 con QR ✓; portada SSR "enlaces y jugadores" ✓; health v38.0 db:up
+- version v38.0 OPERACIÓN 100 JUGADORES; lint 0; build verde; push 28fefd1
+
+Stage Summary:
+- v38.0 EN VIVO: el reto "100 jugadores" es medible y en vivo — barra JUGADORES X/100 en portada y /mision, contador de jugadores únicos a prueba de duplicados, QR rastreado descargable para reclutar fuera de la red, y el ranking de enlaces muestra qué canal trae jugadores
+- 19 enlaces verificados distribuidos hasta la fecha; el sistema suma solo: cada visitante nuevo entra ya como jugador y cuenta

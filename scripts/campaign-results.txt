@@ -26,3 +26,5 @@
 200 1abc-retry
 000 archive-today
 201 telegraph-page
+000 mojeek
+200 indexnow-r2

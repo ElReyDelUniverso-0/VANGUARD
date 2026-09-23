@@ -163,6 +163,20 @@ function autoJoinMp() {
       /* alias ilegible: seguimos como OPERADOR */
     }
     _socket?.emit("mp:join", { playerId: id, name }, () => {});
+
+    // v38 OPERACIÓN 100 JUGADORES — reto extremo del mando: conseguir 100 jugadores.
+    // Cada agente que entra a la guerra suma al contador GLOBAL de jugadores únicos:
+    // dedupe por UID en la BD (player:UID) y gate de sesión para que las
+    // reconexiones no re-cuenten. Dispara el evento para la barra en vivo.
+    if (sessionStorage.getItem("vanguard_player_counted") !== "1") {
+      sessionStorage.setItem("vanguard_player_counted", "1");
+      window.dispatchEvent(new CustomEvent("vanguard:player"));
+      fetch("/api/visits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "player", uid: id }),
+      }).catch(() => {});
+    }
   } catch {
     /* el auto-join jamás tumba la conexión */
   }

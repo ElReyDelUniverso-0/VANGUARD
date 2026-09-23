@@ -10,13 +10,14 @@
 //      así se sabe QUÉ enlace trae gente de verdad.
 // Sin emojis (regla del proyecto); iconos lucide + tipografía monoespaciada HUD.
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { QRCodeCanvas } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
   Target, Copy, Check, Trophy, ChevronDown, ExternalLink, Flame,
   Link2, MessageCircle, Send, Globe2, Share2, Hash, MessageSquare,
-  Camera, Music2, Youtube, Radio, TrendingUp,
+  Camera, Music2, Youtube, Radio, TrendingUp, Swords,
 } from "lucide-react";
 
 // ===== mensajes de reclutamiento (rotan entre enlaces para que no parezca spam) =====
@@ -54,6 +55,8 @@ const PLATFORMS: Platform[] = [
 
 const LINKS_PER_PLATFORM = 10;
 const USED_KEY = "vanguard_m100_used";
+// QR de reclutamiento — URL canónica de producción (determinista, sin mismatch SSR)
+const QR_URL = "https://vanguard-kq9r.vercel.app/?ref=VGD-QRCODE";
 
 interface MissionData {
   mission: number;
@@ -62,10 +65,13 @@ interface MissionData {
   external: number;
   refVisits: number;
   sharesToday: number;
+  players: number;
+  playersToday: number;
+  playerGoal: number;
   topLinks: { code: string; visits: number }[];
 }
 
-const EMPTY: MissionData = { mission: 0, goal: 100, shares: 0, external: 0, refVisits: 0, sharesToday: 0, topLinks: [] };
+const EMPTY: MissionData = { mission: 0, goal: 100, shares: 0, external: 0, refVisits: 0, sharesToday: 0, players: 0, playersToday: 0, playerGoal: 100, topLinks: [] };
 
 function readUsed(): string[] {
   if (typeof window === "undefined") return [];
@@ -95,6 +101,9 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           external: json.external || 0,
           refVisits: json.refVisits || 0,
           sharesToday: json.sharesToday || 0,
+          players: json.players || 0,
+          playersToday: json.playersToday || 0,
+          playerGoal: json.playerGoal || 100,
           topLinks: Array.isArray(json.topLinks) ? json.topLinks : [],
         });
       }
@@ -112,11 +121,14 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
     }, 0);
     const t = setInterval(refresh, 25000);
     const onShare = () => refresh();
+    const onPlayer = () => refresh();
     window.addEventListener("vanguard:share", onShare);
+    window.addEventListener("vanguard:player", onPlayer);
     return () => {
       clearTimeout(t0);
       clearInterval(t);
       window.removeEventListener("vanguard:share", onShare);
+      window.removeEventListener("vanguard:player", onPlayer);
     };
   }, [refresh]);
 
@@ -195,7 +207,20 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
 
   const pct = Math.min(100, Math.round((data.mission / data.goal) * 100));
   const done = data.mission >= data.goal;
+  const playersPct = Math.min(100, Math.round((data.players / data.playerGoal) * 100));
+  const playersDone = data.players >= data.playerGoal;
   const maxTop = Math.max(1, ...data.topLinks.map((t) => t.visits));
+  const qrWrapRef = useRef<HTMLDivElement>(null);
+
+  const downloadQr = () => {
+    const c = qrWrapRef.current?.querySelector("canvas") as HTMLCanvasElement | null;
+    if (!c) return;
+    const a = document.createElement("a");
+    a.href = c.toDataURL("image/png");
+    a.download = "vanguard-qr.png";
+    a.click();
+    toast.success("QR descargado — pégalo en tu estado o compártelo de móvil a móvil");
+  };
 
   return (
     <section className="hud-panel p-5 md:p-6 mt-6 relative overflow-hidden" aria-label="Misión 100 enlaces">
@@ -203,7 +228,7 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
       <div className="flex flex-wrap items-center gap-3">
         <Target className="w-6 h-6 text-amber" />
         <h2 className="font-orbitron text-base md:text-lg tracking-widest uppercase text-gradient">
-          Misión 100 enlaces
+          Misión 100 — enlaces y jugadores
         </h2>
         <span
           className={`ml-auto font-mono text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full border ${
@@ -217,7 +242,7 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
       <p className="mt-3 text-xs text-muted-foreground leading-relaxed">
         {done
           ? "Los 100 enlaces están repartidos y la red sigue creciendo. Nueva meta: 250 — cada enlace nuevo multiplica el alcance."
-          : "Orden del mando: repartir 100 enlaces de la página. Cada copia del arsenal suma al contador global en vivo — el tuyo y el de toda la comunidad."}
+          : "Orden doble del mando: repartir 100 enlaces Y reclutar 100 jugadores. Cada copia del arsenal suma enlaces; cada visitante que entra a la guerra suma jugadores — todo se ve aquí en vivo."}
       </p>
 
       {/* ===== barra de progreso global ===== */}
@@ -243,8 +268,40 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           <span><span className="text-amber font-bold">{data.shares}</span> comunidad</span>
           <span><span className="text-electric font-bold">{data.external}</span> motores y directorios</span>
           <span><span className="text-green-hud font-bold">{data.refVisits}</span> visitas traídas</span>
-          <span><span className="text-foreground font-bold">{data.sharesToday}</span> hoy</span>
+          <span><span className="text-foreground font-bold">{data.sharesToday}</span> enlaces hoy</span>
         </div>
+      </div>
+
+      {/* ===== barra gemela: JUGADORES EN LA GUERRA (reto extremo del mando) ===== */}
+      <div className="mt-4 border-t border-border pt-4">
+        <div className="flex items-end justify-between font-mono">
+          <div className="flex items-baseline gap-2">
+            <span className={`text-3xl font-bold tabular-nums ${playersDone ? "text-green-hud" : "text-electric"}`}>
+              {data.players}
+            </span>
+            <span className="text-sm text-muted-foreground">/ {data.playerGoal} jugadores</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+            <Swords className="w-3 h-3 text-green-hud animate-pulse" /> agentes únicos dentro de la guerra
+          </span>
+        </div>
+        <div className="mt-2 h-4 rounded-full bg-border/40 overflow-hidden border border-border" role="progressbar" aria-valuenow={playersPct} aria-valuemin={0} aria-valuemax={100}>
+          <div
+            className={`h-full rounded-full transition-all duration-700 ${playersDone ? "bg-green-hud/80" : "bg-gradient-to-r from-electric via-green-hud to-amber"}`}
+            style={{ width: `${Math.max(3, playersPct)}%` }}
+          />
+        </div>
+        {data.playersToday > 0 && (
+          <p className="mt-2 font-mono text-[10px] text-green-hud">+{data.playersToday} reclutados hoy</p>
+        )}
+        {playersDone && (
+          <div className="mt-3 border border-green-hud/50 bg-green-hud/10 rounded-md px-4 py-3 flex items-center gap-3">
+            <Trophy className="w-6 h-6 text-green-hud shrink-0" />
+            <p className="text-xs font-mono text-green-hud tracking-wide">
+              RETO CUMPLIDO — 100 JUGADORES EN LA GUERRA. La sala sigue abierta: a por 250.
+            </p>
+          </div>
+        )}
       </div>
 
       {done && (
@@ -352,6 +409,24 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* ===== QR de reclutamiento — para reclutar fuera de la red ===== */}
+      <div className="mt-5 border border-border rounded-md p-4 flex items-center gap-4">
+        <div ref={qrWrapRef} className="shrink-0 rounded-md overflow-hidden bg-[#f5f4ee] p-1.5" aria-label="Código QR de reclutamiento">
+          <QRCodeCanvas value={QR_URL} size={104} bgColor="#f5f4ee" fgColor="#11150f" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+            QR de reclutamiento — rastreado VGD-QRCODE
+          </h3>
+          <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed">
+            Pégalo en tu estado de WhatsApp, imprímelo o muéstralo de móvil a móvil. Todo el que lo escanee entra directo a la guerra y suma como jugador.
+          </p>
+          <Button size="sm" variant="outline" onClick={downloadQr} className="mt-2 h-8 font-mono text-[10px] uppercase tracking-wider border-electric/40 text-electric hover:bg-electric/10">
+            Descargar QR
+          </Button>
         </div>
       </div>
 

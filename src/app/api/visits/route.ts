@@ -12,6 +12,11 @@ import { db } from "@/lib/db";
 //   'day:shares:...'  → compartidos de hoy
 //   'ref:CODIGO'      → visitas que LLEGARON por cada enlace repartido (ranking en vivo)
 //   'ref:total'       → total de visitas traídas por enlaces
+//
+// v38 OPERACIÓN 100 JUGADORES:
+//   'player:UID'      → jugadores ÚNICOS que entraron a la guerra (1 fila por agente)
+//   'players:total'   → meta del reto extremo: 100 jugadores
+//   'day:players:...' → jugadores nuevos de hoy
 
 export const dynamic = "force-dynamic";
 
@@ -37,21 +42,26 @@ async function readCounts() {
     WHERE k = 'total'
        OR k = ${"day:" + todayKey()}
        OR k = ${"day:shares:" + todayKey()}
-       OR k IN ('shares:total', 'shares:external', 'ref:total')`;
+       OR k = ${"day:players:" + todayKey()}
+       OR k IN ('shares:total', 'shares:external', 'ref:total', 'players:total')`;
   let total = 0;
   let today = 0;
   let shares = 0;
   let external = 0;
   let refVisits = 0;
   let sharesToday = 0;
+  let players = 0;
+  let playersToday = 0;
   for (const r of rows) {
     const n = toNum(r.n);
     if (r.k === "total") total = n;
     else if (r.k === "shares:total") shares = n;
     else if (r.k === "shares:external") external = n;
     else if (r.k === "ref:total") refVisits = n;
+    else if (r.k === "players:total") players = n;
     else if (r.k === "day:" + todayKey()) today = n;
     else if (r.k === "day:shares:" + todayKey()) sharesToday = n;
+    else if (r.k === "day:players:" + todayKey()) playersToday = n;
   }
   return {
     total,
@@ -60,8 +70,11 @@ async function readCounts() {
     external,
     refVisits,
     sharesToday,
+    players,
+    playersToday,
     mission: shares + external,
     goal: 100,
+    playerGoal: 100,
   };
 }
 
@@ -100,6 +113,18 @@ export async function POST(req: Request) {
         await bump(`ref:${code}`);
         await bump("ref:total");
       }
+    } else if (action === "player") {
+      // v38: un agente entró a la guerra — cuenta solo si es ÚNICO (player:UID nuevo)
+      const uid = (body?.uid || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
+      if (uid.length >= 8) {
+        const inserted = await db.$executeRaw`
+          INSERT INTO site_counter (k, n) VALUES (${"player:" + uid}, 1)
+          ON CONFLICT (k) DO NOTHING`;
+        if (inserted > 0) {
+          await bump("players:total");
+          await bump(`day:players:${todayKey()}`);
+        }
+      }
     } else {
       // visita normal
       await bump("total");
@@ -110,7 +135,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, ...counts });
   } catch {
     return NextResponse.json(
-      { ok: false, total: 0, today: 0, shares: 0, external: 0, refVisits: 0, mission: 0, goal: 100 },
+      { ok: false, total: 0, today: 0, shares: 0, external: 0, refVisits: 0, sharesToday: 0, players: 0, playersToday: 0, mission: 0, goal: 100, playerGoal: 100 },
       { status: 200 }
     );
   }
@@ -130,7 +155,7 @@ export async function GET() {
     return NextResponse.json({ ok: true, ...counts, topLinks });
   } catch {
     return NextResponse.json(
-      { ok: false, total: 0, today: 0, shares: 0, external: 0, refVisits: 0, mission: 0, goal: 100, topLinks: [] },
+      { ok: false, total: 0, today: 0, shares: 0, external: 0, refVisits: 0, sharesToday: 0, players: 0, playersToday: 0, mission: 0, goal: 100, playerGoal: 100, topLinks: [] },
       { status: 200 }
     );
   }
