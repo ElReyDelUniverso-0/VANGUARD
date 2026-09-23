@@ -89,7 +89,15 @@ export function getRealtime(): Socket {
       },
     });
 
-    _socket.on("connect", () => setState("ok"));
+    _socket.on("connect", () => {
+      setState("ok");
+      // v36 BLINDAJE TOTAL — AUTO-RECLUTAMIENTO: cada visitante entra al lobby
+      // de la guerra global en cuanto el socket vive (también en reconexiones),
+      // con SU identidad persistente (la misma clave que usa multiplayer-panel).
+      // Así la partida mundial nunca luce vacía (0/24) y al abrir el panel el
+      // comandante ya está dentro y puede reclamar territorio al instante.
+      autoJoinMp();
+    });
     _socket.io.on("reconnect", () => setState("ok"));
     _socket.io.on("reconnect_attempt", () => {
       setState("recuperando");
@@ -130,6 +138,33 @@ function healSocket() {
     s.connect();
   } catch {
     /* el motor ya está en marcha */
+  }
+}
+
+// v36 — AUTO-RECLUTAMIENTO AL LOBBY DE GUERRA GLOBAL.
+// Usa EXACTAMENTE las mismas claves que multiplayer-panel (vanguard-mp-uid)
+// para que sea el MISMO jugador, no un fantasma duplicado. El alias se lee del
+// persist de game-store (sin importarlo: evitaría una dependencia circular).
+function autoJoinMp() {
+  try {
+    let id = localStorage.getItem("vanguard-mp-uid");
+    if (!id) {
+      id = `mp-${crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
+      localStorage.setItem("vanguard-mp-uid", id);
+    }
+    let name = "OPERADOR";
+    try {
+      const raw = localStorage.getItem("vanguard-game-state-v1");
+      if (raw) {
+        const al = String(JSON.parse(raw)?.state?.alias || "").trim();
+        if (al) name = al.slice(0, 18);
+      }
+    } catch {
+      /* alias ilegible: seguimos como OPERADOR */
+    }
+    _socket?.emit("mp:join", { playerId: id, name }, () => {});
+  } catch {
+    /* el auto-join jamás tumba la conexión */
   }
 }
 

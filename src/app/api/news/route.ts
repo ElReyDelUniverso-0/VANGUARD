@@ -42,6 +42,24 @@ function withCuratedImage<T extends { externalId: string; imageUrl: string | nul
   return img ? { ...item, imageUrl: img } : item;
 }
 
+// v36: ciclo de fotos locales — TODA noticia sin imagen (GDELT/RSS) recibe una
+// foto real del archivo: la portada y el hero lucen llenos siempre.
+const CURATED_IMGS = Object.values(CURATED_IMG);
+function withFallbackImage<T extends { imageUrl: string | null }>(item: T, i: number): T {
+  if (item.imageUrl) return item;
+  return { ...item, imageUrl: CURATED_IMGS[i % CURATED_IMGS.length] ?? null };
+}
+
+// v36: los RSS traen entidades XML (&amp; etc.) — se decodifican para título y link
+function unescapeXml(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+}
+
 interface GdeltResponse {
   articles?: GdeltArticle[];
 }
@@ -204,11 +222,16 @@ export async function GET() {
         after(() => refreshGdeltInBackground());
       }
       return NextResponse.json({
-        items: cached.slice(0, 48).map((it) => ({
-          ...withCuratedImage(it),
-          // v20: bandera del país deducida también para filas cacheadas sin sourceCountry
-          sourceCountry: it.sourceCountry ?? guessCountry(it.title),
-        })),
+        items: cached.slice(0, 48).map((it, i) =>
+          withFallbackImage(
+            {
+              ...withCuratedImage(it),
+              // v20: bandera del país deducible también para filas cacheadas sin sourceCountry
+              sourceCountry: it.sourceCountry ?? guessCountry(it.title),
+            },
+            i
+          )
+        ),
         source: "CACHE",
       });
     }
@@ -271,7 +294,7 @@ export async function GET() {
 
     items.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
     return NextResponse.json({
-      items: items.slice(0, 30).map(withCuratedImage),
+      items: items.slice(0, 30).map((it, i) => withFallbackImage(withCuratedImage(it), i)),
       source: articles.length > 0 ? "GDELT" : "CURATED",
     });
   } catch (e) {
@@ -445,8 +468,8 @@ async function fetchRssFallback(): Promise<RssArticle[]> {
       const xml = await res.text();
       const chunks = xml.split(/<item[\s>]/).slice(1);
       for (const raw of chunks.slice(0, 14)) {
-        const title = decodeCdata(raw.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? "");
-        const link = decodeCdata(raw.match(/<link>([\s\S]*?)<\/link>/)?.[1] ?? "");
+        const title = unescapeXml(decodeCdata(raw.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? ""));
+        const link = unescapeXml(decodeCdata(raw.match(/<link>([\s\S]*?)<\/link>/)?.[1] ?? ""));
         if (!title || !link.startsWith("http")) continue;
         const dateRaw =
           raw.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ??

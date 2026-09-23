@@ -53,7 +53,16 @@ const VOTE_KEY = "vanguard-news-votes-v13";
 type VoteMap = Record<string, "REAL" | "FAKE">;
 
 export function NewsPanel() {
-  const [items, setItems] = useState<NewsItem[]>([]);
+  const [items, setItems] = useState<NewsItem[]>(() => {
+    // v36: caché local — el panel abre con las últimas buenas aunque la red falle
+    if (typeof window === "undefined") return [];
+    try {
+      const arr = JSON.parse(localStorage.getItem("vanguard-news-cache") || "[]");
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  });
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState("");
   const [filter, setFilter] = useState<string>("ALL");
@@ -87,16 +96,28 @@ export function NewsPanel() {
     else toast("Veredicto registrado — la IA discrepa de ti");
   };
 
-  const load = async () => {
-    setLoading(true);
+  const load = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const res = await fetch("/api/news", { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setItems(data.items ?? []);
+      const list = Array.isArray(data.items) ? data.items : [];
+      if (list.length === 0) throw new Error("empty");
+      setItems(list);
       setSource(data.source ?? "");
       setLastUpdated(new Date());
-    } catch (e) {
-      toast.error("Error al cargar noticias");
+      try {
+        localStorage.setItem("vanguard-news-cache", JSON.stringify(list.slice(0, 12)));
+      } catch {
+        /* noop */
+      }
+    } catch {
+      // v36: con caché ya visible no asustamos con toast en cada reintento;
+      // solo avisamos si el panel seguiría totalmente vacío.
+      if (!silent && items.length === 0) {
+        toast.error("Radar sin señal — mostrando últimas guardadas");
+      }
     } finally {
       setLoading(false);
     }
@@ -104,8 +125,8 @@ export function NewsPanel() {
 
   useEffect(() => {
     load();
-    // auto-refresh every 60s
-    const t = setInterval(load, 60_000);
+    // auto-refresh every 60s (silent: sin spinner ni toasts si la red parpadea)
+    const t = setInterval(() => load(true), 60_000);
     return () => clearInterval(t);
   }, []);
 

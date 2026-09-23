@@ -103,7 +103,19 @@ export function HomePanel() {
   const launchPackClaimed = useGameStore((s) => s.launchPackClaimed);
   const claimLaunchPack = useGameStore((s) => s.claimLaunchPack);
 
-  const [items, setItems] = useState<NewsItem[]>([]);
+  const [items, setItems] = useState<NewsItem[]>(() => {
+    // v36: caché local — si la API tarda o falla, la portada NUNCA queda sin
+    // noticias: muestra las últimas buenas al instante.
+    if (typeof window === "undefined") return [];
+    try {
+      const arr = JSON.parse(localStorage.getItem("vanguard-news-cache") || "[]");
+      return Array.isArray(arr) ? arr.slice(0, 12) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [newsOffline, setNewsOffline] = useState(false);
+  const [reloadTick, setReloadTick] = useState(0);
   const [clock, setClock] = useState("");
   const [typed, setTyped] = useState("");
   const [crisisIn, setCrisisIn] = useState("");
@@ -115,28 +127,52 @@ export function HomePanel() {
   );
   const tensionColor = tension >= 80 ? "#FF3B30" : tension >= 60 ? "#FF8A3B" : tension >= 40 ? "#3EA6FF" : "#00FF87";
 
-  // noticias (la primera página es la de noticias)
+  // noticias (la primera página es la de noticias) — v36: con caché, reintentos
+  // (5s/15s/30s) y estado SIN SEÑAL con botón REINTENTAR. Nunca más "sin noticias".
   useEffect(() => {
     let alive = true;
-    fetch("/api/news", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data) => {
-        if (alive && Array.isArray(data.items)) setItems(data.items.slice(0, 12));
-      })
-      .catch(() => {});
-    const t = setInterval(() => {
+    let retry: ReturnType<typeof setTimeout> | null = null;
+    const load = (attempt: number) => {
       fetch("/api/news", { cache: "no-store" })
-        .then((r) => r.json())
-        .then((data) => {
-          if (alive && Array.isArray(data.items)) setItems(data.items.slice(0, 12));
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
         })
-        .catch(() => {});
-    }, 60_000);
+        .then((data) => {
+          if (!alive) return;
+          if (Array.isArray(data.items) && data.items.length > 0) {
+            const top = data.items.slice(0, 12);
+            setItems(top);
+            setNewsOffline(false);
+            try {
+              localStorage.setItem("vanguard-news-cache", JSON.stringify(top));
+            } catch {
+              /* storage lleno: no pasa nada */
+            }
+          } else {
+            throw new Error("empty");
+          }
+        })
+        .catch(() => {
+          if (!alive) return;
+          if (attempt < 3) {
+            retry = setTimeout(
+              () => load(attempt + 1),
+              attempt === 0 ? 5_000 : attempt === 1 ? 15_000 : 30_000
+            );
+          } else {
+            setNewsOffline(true); // con caché visible si la hay
+          }
+        });
+    };
+    load(0);
+    const t = setInterval(() => load(0), 60_000);
     return () => {
       alive = false;
       clearInterval(t);
+      if (retry) clearTimeout(retry);
     };
-  }, []);
+  }, [reloadTick]);
 
   // reloj vivo
   useEffect(() => {
@@ -431,8 +467,23 @@ export function HomePanel() {
             </div>
           </div>
         ) : (
-          <div className="hud-panel p-6 text-center text-[11px] font-mono text-muted-foreground uppercase tracking-widest">
-            Conectando con la red de noticias…
+          <div className="hud-panel p-6 text-center text-[11px] font-mono uppercase tracking-widest">
+            {newsOffline ? (
+              <>
+                <div className="text-red-400 font-bold mb-2">SIN SEÑAL DEL RADAR DE NOTICIAS</div>
+                <button
+                  onClick={() => {
+                    setNewsOffline(false);
+                    setReloadTick((v) => v + 1);
+                  }}
+                  className="border border-amber-hud rounded px-3 py-1.5 text-amber hover:bg-amber-hud/20 transition-colors"
+                >
+                  REINTENTAR CONEXIÓN
+                </button>
+              </>
+            ) : (
+              <span className="text-muted-foreground">Conectando con la red de noticias…</span>
+            )}
           </div>
         )}
       </div>
