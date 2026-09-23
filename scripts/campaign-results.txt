@@ -47,3 +47,12 @@
 VERIFICADOS (6): IndexNow-POST-r3=200 (3 URLs) | WebSub-PubSubHubbub=204 (feed publicado al hub) | WebSub-Superfeedr=204 (feed publicado al hub) | 1abc-mision=200 | Twingly-r3=200 | PingOMatic-r3=200 (sindicado ~15 servicios)
 QA no-cuenta: W3C-FeedCheck=200 (feed VALIDO — validación, no distribución)
 EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) | ExactSeek=404 | SonicRun=404 | EntireWeb=403 | WhatUseek=200-pero-embudo-de-pago-sin-confirmacion-gratuita
+=== RONDA 4 2026-09-23T04:32:13Z ===
+[Telegraph-geopolitica] 200 -> 
+[paste.rs-geo] 201 -> https://paste.rs/8cJPR
+[IndexNow-r4] 200
+[PingOMatic-r4] 200
+[Twingly-r4] 200
+[WebSub-r4] 204
+=== FIN RONDA 4 ===
+[Telegraph-geopolitica] 200 -> https://telegra.ph/Geopolítica-en-vivo-gratis-gasto-militar-sismos-y-mapa-de-guerra-3D-09-23 (creado con createAccount anonimo, verificado 200 publico)
