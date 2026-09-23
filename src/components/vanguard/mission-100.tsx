@@ -298,7 +298,7 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           <span className="inline-flex items-center gap-1 border border-sky-300/40 bg-sky-300/10 text-sky-300 px-1.5 py-0.5 rounded-sm font-bold">
             <Radio className="w-3 h-3 animate-pulse" /> AGENTE AUTO ACTIVO
           </span>
-          <span>pings de promoción cada 12h (GitHub Actions) + rondas manuales</span>
+          <span>pings automáticos 2×/día (agente programado) + rondas manuales</span>
         </div>
         <div className="mt-2 h-4 rounded-full bg-border/40 overflow-hidden border border-border" role="progressbar" aria-valuenow={playersPct} aria-valuemin={0} aria-valuemax={100}>
           <div
