@@ -31,6 +31,7 @@ import { GrowthShare } from "@/components/vanguard/growth-share";
 // v34 LLAMADO A LAS ARMAS: recepción de invitados ?ref=, kit de reclutamiento y FAQ SEO
 import { ReferralLanding } from "@/components/vanguard/referral-landing";
 import { PromoKit } from "@/components/vanguard/promo-kit";
+import { Mission100 } from "@/components/vanguard/mission-100";
 import { SeoFaq } from "@/components/vanguard/seo-faq";
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
 const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").then((m) => m.MusicPlayer), { ssr: false });
@@ -290,6 +291,8 @@ export default function Home() {
             <GrowthShare />
             {/* v34: kit de reclutamiento (mensajes para copiar + medidor de agentes) y FAQ SEO */}
             <PromoKit />
+            {/* v37 MISIÓN 100: arsenal de 100 enlaces + contador global en vivo */}
+            <Mission100 />
             <SeoFaq />
           </>
         )}

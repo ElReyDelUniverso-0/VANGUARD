@@ -84,6 +84,13 @@ export function GrowthShare() {
     const n = invited + 1;
     setInvited(n);
     localStorage.setItem("vanguard_shares", String(n));
+    // v37 MISIÓN 100: cada compartir también suma al contador GLOBAL de la campaña
+    window.dispatchEvent(new CustomEvent("vanguard:share"));
+    fetch("/api/visits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "share" }),
+    }).catch(() => {});
     // recompensa cada 3 compartidas: reclutador de élite
     if (n % 3 === 0) {
       addCoins(100, "Mision viral: 3 invitaciones compartidas");

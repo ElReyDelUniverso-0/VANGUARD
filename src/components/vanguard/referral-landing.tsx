@@ -21,6 +21,17 @@ export function ReferralLanding() {
       const code = raw.replace(/[^A-Za-z0-9-]/g, "").slice(0, 16).toUpperCase();
       if (!code) return;
 
+      // v37 MISIÓN 100: cuenta la visita traída por el enlace (ranking global).
+      // Se cuenta 1 vez por sesión para que refrescar no infle el ranking.
+      if (sessionStorage.getItem("vanguard_ref_counted") !== code) {
+        sessionStorage.setItem("vanguard_ref_counted", code);
+        fetch("/api/visits", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "ref", code }),
+        }).catch(() => {});
+      }
+
       const prev = localStorage.getItem("vanguard_ref");
       const alreadyToasted = sessionStorage.getItem("vanguard_ref_toasted") === code;
 
