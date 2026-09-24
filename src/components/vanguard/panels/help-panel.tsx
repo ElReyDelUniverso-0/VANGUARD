@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Newspaper, Map, Brain, Layers, Zap, Users, Bell, Flame, ChevronRight, ChevronDown, Lightbulb, Rocket, Award, Video, Castle, TrendingUp, Bomb, MessageCircle, Crosshair, Fingerprint } from "lucide-react";
+import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Newspaper, Map, Brain, Layers, Zap, Users, Bell, Flame, ChevronRight, ChevronDown, Lightbulb, Rocket, Award, Video, Castle, TrendingUp, Bomb, MessageCircle, Crosshair, Fingerprint, Satellite } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useT } from "@/lib/i18n";
@@ -275,6 +275,20 @@ const SECTIONS: GuideSection[] = [
       "Busqueda en Briefings y Galeria: filtra por titulo, contenido o pais",
       "Exporta tu progreso desde Ajustes → Copia de seguridad (backup JSON)",
       "Click en el icono de sonido en el header para silenciar/activar efectos",
+    ],
+  },
+  {
+    id: "pulso",
+    title: "Pulso Mundial (intel real)",
+    icon: <Satellite className="w-4 h-4 text-cyan" />,
+    color: "cyan",
+    description: "Datos REALES en vivo sin registro: satélite ISS, aviones sobre zonas de conflicto y señales espaciales.",
+    tips: [
+      "ESCANEA +5 monedas cada 60s: actualiza satélite, radar aéreo y señales a la vez",
+      "La ISS se mueve ~27500 km/h: mira su posición en el mini mapa mundial",
+      "Los aviones con sello MILITAR (RCH, FORTE, NATO...) se destacan en rojo",
+      "Radar aéreo en 3 zonas calientes: Ucrania/Mar Negro, Oriente Medio y Mar de China",
+      "Las señales espaciales enlazan a fuentes reales (abiertas en pestaña nueva)",
     ],
   },
 ];

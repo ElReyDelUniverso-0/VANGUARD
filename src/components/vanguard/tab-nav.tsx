@@ -61,7 +61,9 @@ export type TabKey =
   // v40 GEOPOLÍTICA EN VIVO: datos reales del planeta (Banco Mundial/USGS/Wikipedia/EEI)
   | "geopolitica"
   // v41 PLANETA VIVO: globo con capas NASA EONET + auroras NOAA + sismos + EEI en directo
-  | "planeta";
+  | "planeta"
+  // v51.0 PULSO MUNDIAL: intel REAL sin API key (ISS + OpenSky + Spaceflight News)
+  | "pulso";
 
 interface TabDef {
   key: TabKey;
@@ -154,6 +156,8 @@ const TABS: Record<TabKey, TabDef> = {
   galeria:       { key: "galeria",       label: "Galería OSINT",     short: "GALERÍA", icon: <Images className="w-3.5 h-3.5" />, color: "violet" },
   briefings:     { key: "briefings",     label: "Briefings clasificados", short: "BRIEFINGS", icon: <FileText className="w-3.5 h-3.5" />, color: "cyan" },
   camaras:       { key: "camaras",       label: "Cámaras CCTV",      short: "CÁMARAS", icon: <Video className="w-3.5 h-3.5" />, color: "cyan" },
+  // v51.0 pulso mundial: intel REAL sin API key (ISS + OpenSky + Spaceflight News)
+  pulso:         { key: "pulso",         label: "Pulso Mundial (satélite + radar aéreo)", short: "PULSO", icon: <Activity className="w-3.5 h-3.5" />, color: "cyan" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
   combate:       { key: "combate",       label: "Simulador de combate", short: "COMBATE", icon: <Swords className="w-3.5 h-3.5" />, color: "red" },
@@ -223,7 +227,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "Sala OSINT, mapa, cables, radar, planeta en vivo, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

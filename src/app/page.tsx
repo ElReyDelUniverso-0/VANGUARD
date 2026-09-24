@@ -138,6 +138,8 @@ const TribunalPanel = dynamic(() => import("@/components/vanguard/panels/tribuna
 const AlianzasPanel = dynamic(() => import("@/components/vanguard/panels/alianzas-panel").then((m) => m.AlianzasPanel), { ssr: false, loading: PanelSkeleton });
 const AgentePanel = dynamic(() => import("@/components/vanguard/panels/agente-panel").then((m) => m.AgentePanel), { ssr: false, loading: PanelSkeleton });
 const CamerasPanel = dynamic(() => import("@/components/vanguard/panels/cameras-panel").then((m) => m.CamerasPanel), { ssr: false, loading: PanelSkeleton });
+// v51.0 PULSO MUNDIAL — intel REAL en vivo: ISS + OpenSky + Spaceflight News (sin API key)
+const PulsoPanel = dynamic(() => import("@/components/vanguard/panels/pulso-panel").then((m) => m.PulsoPanel), { ssr: false, loading: PanelSkeleton });
 
 // ARCHIVO MUNDIAL
 const EncyclopediaPanel = dynamic(() => import("@/components/vanguard/panels/encyclopedia-panel").then((m) => m.EncyclopediaPanel), { ssr: false, loading: PanelSkeleton });
@@ -359,6 +361,7 @@ export default function Home() {
         {tab === "registro" && <ActivityLogPanel />}
         {tab === "ayuda" && <HelpPanel />}
         {tab === "camaras" && <CamerasPanel />}
+        {tab === "pulso" && <PulsoPanel />}
         {tab === "combate" && <CombatSimulatorPanel />}
         {tab === "historia" && <HistoricalWarsPanel />}
         {tab === "muertes" && <FamousDeathsPanel />}
