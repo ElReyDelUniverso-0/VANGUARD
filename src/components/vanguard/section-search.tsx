@@ -7,6 +7,7 @@
 // sección en 2 toques, con recientes persistentes y flechas del teclado.
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { SECTIONS } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { Search, CornerDownLeft, Clock, X } from "lucide-react";
@@ -40,6 +41,9 @@ export function SectionSearch({
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
   const [recent, setRecent] = useState<string[]>([]);
+  // v47.1: la paleta va en PORTAL a <body> — el wrapper raíz (.z-10) atrapaba
+  // el z-index en su contexto de apilamiento y los modales Radix la tapaban.
+  const [portalReady, setPortalReady] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -60,6 +64,12 @@ export function SectionSearch({
     // eslint-disable-line react-hooks/exhaustive-deps
     []
   );
+
+  // montaje del portal (solo cliente)
+  useEffect(() => {
+    const t = setTimeout(() => setPortalReady(true), 0);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -122,9 +132,9 @@ export function SectionSearch({
     onClose();
   };
 
-  if (!open) return null;
+  if (!open || !portalReady) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 flex items-start justify-center bg-black/80 backdrop-blur-sm px-3 pt-[8vh]"
       style={{ zIndex: 150 }}
@@ -203,6 +213,7 @@ export function SectionSearch({
           <span className="ml-auto">{results.length} / {all.length} secciones</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
