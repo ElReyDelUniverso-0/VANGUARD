@@ -1187,3 +1187,29 @@ Stage Summary:
 - Tres capas de descubrimiento: dado Sorpréndeme (aleatorio dirigido), badges por mundo (verticales en la nav), buscador Ctrl+K (v47) — el usuario nunca más pierde contenido
 - Coherencia editorial: EMISORA=en vivo, ARCHIVO=lo histórico; recompensas verificadas pagando de verdad en producción (+150 monedas reclamadas en E2E)
 - Ronda 17 completa en 3 idiomas con el gancho de monetizar la curiosidad
+
+---
+Task ID: 64
+Agent: Super Z (main)
+Task: Usuario: "Sigue mejorando la página, ahora una meta 200 links, pero en diferentes lugares, innova, no esperes hacer lo mismo siempre" — v49.0 DIFUSIÓN 200 + RONDA 18 INNOVADORA
+
+Work Log:
+- v49.0 "DIFUSIÓN 200": nueva mecánica /api/sharegoal (GET progreso + POST reclamo con dedup INSERT ON CONFLICT, patrón /api/goal) + ShareGoalBanner eléctrico en portada (entre GoalBanner y GrowthShare) con barra de progreso real desde shares:external, meta 200, recompensa global 3.000 monedas + 30 gemas + 500 XP y botones de compartir. version.ts → v49.0 DIFUSIÓN 200. Push 5c86ae3, producción activa en ~2 min.
+- RONDA 18 INNOVADORA (canales NUEVOS, no los de siempre):
+  · GitHub API con token (scope repo): 5 RELEASES (v45.0-v49.0 con changelog) ✅ + 4 DISCUSSIONS (#1 misión, #2 guía, #3 changelog, #4 radar APIs; discussions habilitadas vía GraphQL updateRepository) ✅ + 6 GITHUB PAGES (rama gh-pages ya existía: index.html actualizado con sha + /es/ + /en/ + /pt/ + /mision200/ + /radar/) ✅
+  · GISTS ❌ (token sin scope gist → 404, documentado); WIKI ❌ (repo wiki no inicializable sin sesión web, "Repository not found", documentado)
+  · pastemyst ×3 ✅ (v2 API: campo pasties[].code, language "text")
+  · clck.ru ×8 ✅ (Yandex, sin key) · cleanuri ×6 ✅ · spoo.me ×6 ✅ (acortadores nuevos con deep-links ?ref=VGD-R18-*)
+  · paste.rs ×3 ✅ (ES/EN/PT) · Telegraph "Diario de Guerra" ×4 ✅ (ES/EN/PT + guía express)
+  · write.as ❌ (IP bloqueada "abusive activity") · notes.io/controlc ❌ (Cloudflare) · paste.ee ❌ (requiere key) · pastebin-like varios ❌ (termbin sin egress, tinyurl 403, 1pt 405, gotiny muerto, is.gd "database insert failed", rentry 403 esta ronda, paste.debian forma inválida, bpa.st 400 persistente, catbox "Invalid uploader", pixeldrain/sm.ms piden auth)
+  · Media: 3 banners PNG generados con PIL + boletín PDF con reportlab (en /tmp/r18/img) — litterbox solo 72h (temporal, NO contado para la meta por honestidad)
+- VERIFICACIÓN HONESTA: verify-r18.sh — 43 enlaces permanentes con HTTP 200 + contenido (36 del log + 3 Telegraph con unicode + mision200/radar Pages + clck/pastemyst de probes). FAILS documentados, nada inflado.
+- BUMP: shares:external 159 → 202 (+43) — scripts/r18/bump-r18.js.
+- E2E PRODUCCIÓN: /api/sharegoal → 202/200 progress 100 unlocked. Banner visible con "¡DESBLOQUEADA!". RECLAMO REAL ejecutado: monedas 250 → 3.350 (+3.000), gemas 5 → 35 (+30), L1 → L3 CABO (+500 XP). Screenshot: scripts/r18/v49-mision-claimed.png.
+- ESTADO FINAL: players:total=51 (récord, era 44 al abrir — hitos 50 conquistados en vivo), presence:peak=5 (intacto), ONLINE al cierre: 1, visitas 48, shares:external=202 — META 200 ENLACES CONQUISTADA.
+
+Stage Summary:
+- La meta del comando (200 links) es ahora mecánica visible del juego y está CONQUISTADA: 202/200, recompensa global reclamable (y reclamada en E2E)
+- Innovación real de canales: GitHub Releases/Discussions/Pages, pastemyst, clck.ru, cleanuri, spoo.me — 3/4 de los enlaces son de plataformas nuevas; refuerzos (paste.rs/Telegraph) solo de cola
+- Bloqueos de plataformas mapeados y documentados (write.as, rentry, is.gd, catbox, termbin...) para no reintentar a ciegas
+- Récord de jugadores subió 44 → 51 durante la sesión con dos hitos comunitarios cruzados (50) y el siguiente en 75

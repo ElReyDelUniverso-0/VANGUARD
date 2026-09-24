@@ -3025,3 +3025,160 @@ REAL MILITARY POWER: <a class="external" href="https://vanguard-kq9r.vercel.app/
 [verify-rentry-ES] OK http=200 matches=8 https://rentry.co/hthv2fn3
 [verify-rentry-EN] OK http=200 matches=8 https://rentry.co/36fzvu65
 === FIN VERIFICACIÓN 17 ===
+=== R18 WAVE A (GitHub) 2026-09-24T17:20:55Z ===
+[Gist] VANGUARD-difusion-200-es.md → ERR:Bad credentials
+[Gist] VANGUARD-200-links-en.md → ERR:Bad credentials
+[Gist] VANGUARD-missao-200-pt.md → ERR:Bad credentials
+[Gist] VANGUARD-guia-rapida-es.md → ERR:Bad credentials
+[Gist] VANGUARD-guia-rapida-pt.md → ERR:Bad credentials
+[Gist] VANGUARD-changelog-v46-v49.md → ERR:Bad credentials
+[Release] v49.0 → ERR:Bad credentials
+[Release] v48.0 → ERR:Bad credentials
+[Release] v47.0 → ERR:Bad credentials
+[Release] v46.0 → ERR:Bad credentials
+[Wiki] Home → 302
+[Wiki] Como-jugar → 302
+[Wiki] Explorador-y-busqueda → 302
+[Wiki] Radar-de-APIs → 302
+[Wiki] Mision-Difusion-200 → 302
+=== R18 WAVE A FIN ===
+=== R18 WAVE A (GitHub) 2026-09-24T17:22:06Z ===
+[Gist] VANGUARD-difusion-200-es.md → ERR:Not Found
+[Gist] VANGUARD-200-links-en.md → ERR:Not Found
+[Gist] VANGUARD-missao-200-pt.md → ERR:Not Found
+[Gist] VANGUARD-guia-rapida-es.md → ERR:Not Found
+[Gist] VANGUARD-guia-rapida-pt.md → ERR:Not Found
+[Gist] VANGUARD-changelog-v46-v49.md → ERR:Not Found
+[Release] v49.0 → https://github.com/ElReyDelUniverso-0/VANGUARD/releases/tag/v49.0
+[Release] v48.0 → https://github.com/ElReyDelUniverso-0/VANGUARD/releases/tag/v48.0
+[Release] v47.0 → https://github.com/ElReyDelUniverso-0/VANGUARD/releases/tag/v47.0
+[Release] v46.0 → https://github.com/ElReyDelUniverso-0/VANGUARD/releases/tag/v46.0
+[Wiki-enable] 200
+[Wiki] Home → 302
+[Wiki] Como-jugar → 302
+[Wiki] Explorador-y-busqueda → 302
+[Wiki] Radar-de-APIs → 302
+[Wiki] Mision-Difusion-200 → 302
+=== R18 WAVE A FIN ===
+[Gist] VANGUARD-difusion-200-es.md → ERR:Not Found
+[Gist] VANGUARD-200-links-en.md → ERR:Not Found
+[Gist] VANGUARD-missao-200-pt.md → ERR:Not Found
+[Gist] VANGUARD-guia-rapida-es.md → ERR:Not Found
+[Gist] VANGUARD-guia-rapida-pt.md → ERR:Not Found
+[Gist] VANGUARD-changelog-v46-v49.md → ERR:Not Found
+=== R18 WAVE A2 (Pages+Disc) 2026-09-24T17:25:18Z ===
+[Pages-branch] main sha=5c86ae3aa07765d2dfb34031ef0edaa8cef69222
+[Pages-branch] crear refs gh-pages → 422 Reference already exists
+[Page] index.html → 422
+[Page] es/index.html → 201
+[Page] en/index.html → 201
+[Page] pt/index.html → 201
+[Pages-enable] 409 GitHub Pages is already enabled.
+[Disc-enable] { "message": "Problems parsing JSON", "documentation_url": "https://docs.github.com/graphql", "status": "400" }
+[Discussion] ERR no category id
+=== R18 WAVE A2 FIN ===
+[Discussion] https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/1
+[Page] https://elreydeluniverso-0.github.io/VANGUARD/ → 200 matches:2
+[Page] https://elreydeluniverso-0.github.io/VANGUARD/es/ → 200 matches:2
+[Page] https://elreydeluniverso-0.github.io/VANGUARD/en/ → 200 matches:2
+[Page] https://elreydeluniverso-0.github.io/VANGUARD/pt/ → 200 matches:2
+=== R18 WAVE B (publishers) ===
+[write.as-ES] https://write.as/contentisblocked
+[write.as-EN] ERR:403 {"code":403,"error_msg":"We've detected abusive activity on your IP address."}
+[write.as-PT] ERR:429 {}
+[write.as-ES2] ERR:429 {}
+[bpa.st] ERR:400 loc=null <!doctype html>
+<html>
+<head>
+<title>error</title>
+<link rel
+[paste.debian] ERR:200 <?xml version="1.0" encoding="UTF-8"?>  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML
+[pastemyst] ERR:400 {"statusMessage":"Missing non-optional body_ parameter 'pasties'."}
+[notes.io] ERR:403 loc=null <!DOCTYPE html><html lang="en-US"><head><title>Just a moment
+[anotepad] ERR:404 
+[justpaste] ERR:fetch failed
+[controlc] ERR:403 <!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title
+[paste.ee] ERR:200 {"status":"error","errorcode":1,"error":"error_no_key"}
+[pastelink] pastelink.net/assets
+[pastes.io] ERR:405 loc=null {"type":"error","error":{"message":"Method Not Allowed"}}
+[hackmd] ERR:504 <html>
+<head><title>504 Gateway Time-out</title></head>
+<b
+=== R18 WAVE B FIN ===
+=== R18 WAVE D (shorteners) 2026-09-24T17:34:23Z ===
+[is.gd] ES juego → 
+[is.gd] EN war → 
+[is.gd] ES mision200 → 
+[is.gd] NASA en vivo → 
+[is.gd] guerra hoy → 
+[v.gd] vanguardpt → 
+[v.gd] vanguardfrente → 
+[tny.im] → 
+[tny.im] → 
+[tinyurl] 403 → sin-url
+=== R18 WAVE E (reintentos) 2026-09-24T17:34:26Z ===
+[paste.debian] lang=plaintext ERR 200
+[paste.debian] lang=text ERR 200
+[termbin] → ERR-egress-bloqueado
+[paste.centos] 200 Invalid API key
+[justpaste] 404 → no-url
+=== R18 WAVE D+E FIN ===
+[is.gd] es → 
+[is.gd] en → 
+[is.gd] pt → 
+[is.gd] guia → 
+[is.gd] nasa → 
+[is.gd] mision → 
+[v.gd] war → 
+[v.gd] frente → 
+=== R18 WAVE D2 (otros acortadores) ===
+=== R18 WAVE D2 2026-09-24T17:36:52Z ===
+[clck.ru] mision200 → https://clck.ru/3W5UYk
+[clck.ru] es → https://clck.ru/3W5UYp
+[clck.ru] en → https://clck.ru/3W5UYr
+[clck.ru] pt → https://clck.ru/3W5UYv
+[cleanuri] /guerra-hoy/?ref=VGD-R18-cu2 → https://cleanuri.com/nmdPp1
+[cleanuri] /?ref=VGD-R18-cu3 → https://cleanuri.com/rEVMA1
+[cleanuri] /mision/?ref=VGD-R18-cu4 → https://cleanuri.com/PlzA5w
+[spoo.me] /?ref=VGD-R18-sp2 → http://spoo.me/VtKoLQ
+[spoo.me] /guerra-hoy/?ref=VGD-R18-sp3 → http://spoo.me/saggdZ
+[spoo.me] /mision/?ref=VGD-R18-sp4 → http://spoo.me/kgvG6Z
+=== R18 WAVE D2 FIN ===
+=== R18 WAVE C (catbox media) ===
+[catbox] vg-mision200.png → ERR:Invalid uploader
+[catbox] vg-planeta.png → ERR:Invalid uploader
+[catbox] vg-83.png → ERR:Invalid uploader
+[catbox] vg-boletin.pdf → ERR:Invalid uploader
+=== R18 WAVE C FIN ===
+=== R18 WAVE F (GitHub perm.) 2026-09-24T17:40:27Z ===
+[Discussion] 🕹️ Guía rápida para nuevos comandantes → https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/2
+[Discussion] 📜 Changelog v46.0 → v49.0 → https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/3
+[Discussion] 🛰️ El radar de APIs — datos reales integrados → https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/4
+[Release] v45.0 → https://github.com/ElReyDelUniverso-0/VANGUARD/releases/tag/v45.0
+[Page] mision200/index.html → 201
+[Page] radar/index.html → 201
+=== R18 WAVE F FIN ===
+=== R18 WAVE G 2026-09-24T17:41:42Z ===
+[pastemyst] ES → https://paste.myst.rs/9brbfn6y
+[pastemyst] PT → https://paste.myst.rs/gk048npn
+[rentry] ES anuncio → ERR
+[rentry] EN anuncio → ERR
+[rentry] PT anuncio → ERR
+[rentry] ES guía → ERR
+[paste.rs] EN → https://paste.rs/oFp03 (201)
+[paste.rs] ES → https://paste.rs/cRn6z (201)
+[Telegraph-account] token:60
+[Telegraph] Diario-ES → https://telegra.ph/Diario-de-Guerra-1-nace-la-Misión-de-Difusión-200-09-24
+[Telegraph] Diario-EN → https://telegra.ph/War-Diary-1-the-200-Link-Spread-Mission-begins-09-24
+[Telegraph] Diario-PT → https://telegra.ph/Diário-de-Guerra-1-começa-a-Missão-de-Difusão-200-09-24
+[Telegraph] Diario-ES2 → https://telegra.ph/Diario-de-Guerra-2-guía-express-de-las-83-secciones-09-24
+=== R18 WAVE G FIN ===
+=== R18 WAVE H (cierre) 2026-09-24T17:42:32Z ===
+[clck.ru] radar → https://clck.ru/3W5UmT
+[clck.ru] archivo → https://clck.ru/3W5UmV
+[clck.ru] mision → https://clck.ru/3W5UmY
+[cleanuri] /?ref=VGD-R18-cu5 → https://cleanuri.com/Mr1ANR
+[cleanuri] /guerra-hoy/?ref=VGD-R18-cu6 → https://cleanuri.com/zEe8Jb
+[spoo.me] /?ref=VGD-R18-sp5 → http://spoo.me/2sZJJL
+[spoo.me] /guerra-hoy/?ref=VGD-R18-sp6 → http://spoo.me/MioMiv
+[paste.rs] PT → https://paste.rs/i7gfr (201)

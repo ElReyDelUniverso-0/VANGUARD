@@ -66,3 +66,4 @@ db/custom.db-shm
 
 # build game-service
 mini-services/game-service/dist/
+.ghtoken
