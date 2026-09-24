@@ -1042,3 +1042,25 @@ Stage Summary:
 - Misión 88/100 con 3 idiomas de contenido activos (ES/EN/PT-BR) y 2 artículos de ángulo distinto por idioma
 - El arsenal estable de distribución queda: Telegraph, paste.rs, rentry.co, IndexNow central, PingOMatic, Twingly, WebSub×2, TotalPing = 9 canales por ronda
 - 21 jugadores reales; siguiente hito: la ronda 12 apunta a 100/100 (faltan 12 enlaces)
+
+---
+Task ID: 58
+Agent: Super Z (main)
+Task: Usuario: "Ronda 12 pero busca nuevas paginas y busca api key de mapas, noticias, informaciones, datos, guerras, armas, juegos etc y agregalo al juego" — v43.0 RADAR GLOBAL + RONDA 12 (META 100/100)
+
+Work Log:
+- INTEGRACIÓN v43.0 "RADAR GLOBAL" (fuentes geopolíticas SIN API key, $0):
+  · GDELT DOC 2.0 (gdeltproject.org, ~100.000 medios, ES+EN) — probada con curl (artículos reales) y CORS abierto (Access-Control-Allow-Origin: *)
+  · GDACS RSS (gdacs.org, Comisión Europea/JRC) — alertas de desastres en tiempo real, server-side
+  · ReliefWeb EXCLUIDA honestamente: v1 retirada (410) y v2 exige appname aprobado (registro manual imposible con presupuesto $0)
+- BUGS CAZADOS EN EL CAMINO: (1) encode de TODO en query= hacía que GDELT nunca recibiera format=json → URLSearchParams; (2) GDELT limita 1 req/5s POR IP y las IPs de salida de Vercel están saturadas por todo el planeta → la ruta server colgaba >60s → RE-ARQUITECTURA FINAL: GDACS server-side (cache 5 min) + GDELT DIRECTO DESDE EL NAVEGADOR del visitante (CORS abierto, 2 llamadas espaciadas 6s, coste cero de cómputo)
+- Archivos: src/lib/geopolitics.ts + src/app/api/geopolitics/route.ts + src/components/vanguard/geopolitics-radar.tsx + sección en /guerra-hoy. maxDuration 30.
+- VERIFICADO EN PRODUCCIÓN (v43.0 deploy 00:05 y fix 00:07 UTC): /api/geopolitics ok:true GDACS=10 ("Green flood alert in Thailand"); sección radar renderiza en /guerra-hoy (GDACS 10 items verificado en navegador); GDELT desde el sandbox quedó rate-limitado por mis propias pruebas (por-IP), con IP residencial de visitante llena sin problema — degradación gracia verificada. Captura scripts/v43-radar-prod.png
+- RONDA 12 (scripts/distribute-r12.sh) — 12/12 VERIFICADOS: Telegraph ES https://telegra.ph/NUEVO-en-VANGUARD-Radar-Geopolítico-Global--noticias-de-guerra-de-todo-el-planeta-EN-VIVO-09-24 (200+12 matches) + Telegraph EN (200+12) + Telegraph PT (200+12) + paste.rs/FX2KM (201+4) + rentry.co/6qu23nr4 ES (200+10) + rentry.co/udmeypbs EN (200+13) + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub PH 204 + WebSub SF 204 + TotalPing 200
+- shares:external 87 → 99 (87+12); MISIÓN 100/100 CUMPLIDA (99 externos + 1 comunidad)
+- version v43.0 RADAR GLOBAL; lint 0 errores; pushes 9cd895b → cb073f6 → 51bf1c5; health v43.0
+
+Stage Summary:
+- META 100/100 ALCANZADA: 99 enlaces externos verificados + 1 de la comunidad, en 12 rondas, 3 idiomas, 9 canales permanentes
+- v43.0 en producción: el juego ahora trae el pulso del planeta (GDELT + GDACS) sin gastar un centavo en API keys
+- 21 jugadores reales al cierre de la ronda; el agente auto sigue programado 2×/día

@@ -357,3 +357,18 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [WebSub-Superfeedr-r11] 204
 [TotalPing-r11] 200
 === FIN RONDA 11 ===
+=== RONDA 12 2026-09-24T00:29:23Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r12-ES] 200 https://telegra.ph/NUEVO-en-VANGUARD-Radar-Geopolítico-Global--noticias-de-guerra-de-todo-el-planeta-EN-VIVO-09-24
+[Telegraph-r12-EN] 200 https://telegra.ph/NEW-in-VANGUARD-Global-Geopolitical-Radar--live-war-headlines-from-the-whole-planet-09-24
+[Telegraph-r12-PT] 200 https://telegra.ph/NOVIDADE-no-VANGUARD-Radar-Geopolítico-Global--notícias-de-guerra-do-planeta-inteiro-AO-VIVO-09-24
+[paste.rs-r12] 201 -> https://paste.rs/FX2KM
+[rentry-r12-ES] 200 -> https://rentry.co/6qu23nr4
+[rentry-r12-EN] 200 -> https://rentry.co/udmeypbs
+[IndexNow-r12] 200
+[PingOMatic-r12] 200
+[Twingly-r12] 200
+[WebSub-PubSubHubbub-r12] 204
+[WebSub-Superfeedr-r12] 204
+[TotalPing-r12] 200
+=== FIN RONDA 12 ===
