@@ -372,3 +372,25 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [WebSub-Superfeedr-r12] 204
 [TotalPing-r12] 200
 === FIN RONDA 12 ===
+=== RONDA 13 2026-09-24T00:51:59Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r13-ES] 200 https://telegra.ph/Los-ejércitos-del-planeta-en-cifras-REALES--ahora-dentro-de-VANGUARD-09-24
+[Telegraph-r13-EN] 200 https://telegra.ph/Who-really-pays-for-war-Real-World-Bank-data-now-inside-VANGUARD-09-24
+[Telegraph-r13-PT] 200 https://telegra.ph/Quem-gasta-mais-com-guerra-Dados-REAIS-do-Banco-Mundial-dentro-do-VANGUARD-09-24
+[paste.rs-r13] 201 -> https://paste.rs/CLta5
+[rentry-r13-ES] 200 -> https://rentry.co/sdi3ggyx
+[rentry-r13-EN] 200 -> https://rentry.co/hhc9e7y3
+[IndexNow-r13] 200
+[PingOMatic-r13] 200
+[Twingly-r13] 200
+[WebSub-PubSubHubbub-r13] 204
+[WebSub-Superfeedr-r13] 204
+[TotalPing-r13] 200
+=== FIN RONDA 13 ===
+--- VERIFICACION R13 00:52:25Z ---
+[verify tele13-ES] HTTP 200 matches 12 OK
+[verify tele13-EN] HTTP 200 matches 12 OK
+[verify tele13-PT] HTTP 200 matches 12 OK
+[verify paste13] HTTP 200 matches 2 OK
+[verify rentry13-ES] HTTP 200 matches 12 OK
+[verify rentry13-EN] HTTP 200 matches 12 OK
