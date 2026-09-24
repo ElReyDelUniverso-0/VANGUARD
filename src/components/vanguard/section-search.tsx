@@ -126,7 +126,8 @@ export function SectionSearch({
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-start justify-center bg-black/80 backdrop-blur-sm px-3 pt-[8vh]"
+      className="fixed inset-0 flex items-start justify-center bg-black/80 backdrop-blur-sm px-3 pt-[8vh]"
+      style={{ zIndex: 150 }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
