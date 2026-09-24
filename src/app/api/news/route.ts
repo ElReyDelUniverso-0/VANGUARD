@@ -442,6 +442,9 @@ const RSS_SOURCES = [
   // v48.0 MÁS NOTICIAS: cobertura de conflictos líder mundial + medio español
   { url: "https://www.aljazeera.com/xml/rss/all.xml", source: "Al Jazeera" },
   { url: "https://www.abc.es/rss/2.0/internacional/", source: "ABC Internacional" },
+  // v50.1 RED GLOBAL+: The Guardian World + WSJ World News (verificados 200/45 y 200/20)
+  { url: "https://www.theguardian.com/world/rss", source: "The Guardian" },
+  { url: "https://feeds.a.dj.com/rss/RSSWorldNews.xml", source: "WSJ World" },
 ];
 
 interface RssArticle {
