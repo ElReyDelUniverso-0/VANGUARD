@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { execFile } from "child_process";
 
 // v51.0 PULSO MUNDIAL — 3 fuentes REALES sin API key:
-// 1. wheretheiss.at  -> ISS en vivo (satélite espía)
-// 2. OpenSky Network -> aviones en vivo sobre zonas de conflicto
-// 3. Spaceflight News-> lanzamientos y satélites (apoyo a inteligencia)
+// 1. wheretheiss.at -> ISS en vivo (satélite espía)
+// 2. adsb.lol       -> aviones en vivo (ADS-B abierto) sobre 3 zonas calientes
+// 3. Spaceflight News -> lanzamientos y satélites (apoyo a inteligencia)
 // Nota: curl-first (mismo patrón que /api/wiki) porque el sandbox/Vercel
 // a veces bloquea la huella TLS de node. Cache 45s.
+// NOTA v51.0.1: OpenSky descartado (bloquea IPs de nube: "Too many requests").
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -18,7 +19,7 @@ interface IssState {
   visibility: string; footprintKm: number; ts: number;
 }
 interface Plane {
-  icao: string; callsign: string; country: string;
+  icao: string; callsign: string; type: string; reg: string;
   altM: number | null; velKmh: number | null; heading: number | null; mil: boolean;
 }
 interface Zone {
@@ -60,16 +61,24 @@ const MIL_PREFIXES = [
   "DRAGON", "CONDOR", "PREDATOR", "SWA", "GRZ", "MMF", "VVMS", "CACTUS",
   "LAGR", "EVAA", "IRON", "SPAR", "UVIR", "MMFA", "GAF", "AMBER", "MAGIC",
 ];
+const MIL_TYPES = new Set([
+  "F16", "F35", "F15", "F22", "C17", "C130", "A400", "KC135", "KC46", "E3",
+  "P8", "RC135", "U2", "B52", "B1", "B2", "A10", "EUFI", "TOR", "C27",
+  "CN295", "E6", "E2", "P3", "KC10", "CL30", "BE20", "C560", "GLEX",
+]);
 
+// OJO real: el espacio aéreo de Ucrania está CERRADO desde 2022 (guerra real) —
+// elegimos 3 zonas con tráfico ADS-B visible y valor de inteligencia:
 const ZONES_DEF = [
-  { id: "ucrania", label: "Ucrania · Mar Negro", lamin: 44, lomin: 20, lamax: 54, lomax: 42 },
-  { id: "orientemedio", label: "Oriente Medio", lamin: 27, lomin: 32, lamax: 37, lomax: 46 },
-  { id: "marchina", label: "Mar de China Meridional", lamin: 8, lomin: 105, lamax: 24, lomax: 122 },
+  { id: "marNegro", label: "Mar Negro · frontera de la guerra", lat: 44.2, lon: 28.6, radius: 200 },
+  { id: "orientemedio", label: "Oriente Medio · Tel Aviv", lat: 32.08, lon: 34.78, radius: 200 },
+  { id: "taiwan", label: "Estrecho de Taiwán", lat: 24.5, lon: 120.5, radius: 200 },
 ];
 
-interface OpenSkyState {
-  states: Array<Array<string | number | boolean | number[] | null> | null> | null;
-  time: number;
+interface AdsblolResp {
+  ac: Array<Record<string, string | number | boolean | null>> | null;
+  total: number;
+  now: number;
 }
 
 async function fetchIss(): Promise<IssState | null> {
@@ -90,30 +99,31 @@ async function fetchIss(): Promise<IssState | null> {
 }
 
 async function fetchZone(z: (typeof ZONES_DEF)[number]): Promise<Zone> {
-  const url = `https://opensky-network.org/api/states/all?lamin=${z.lamin}&lomin=${z.lomin}&lamax=${z.lamax}&lomax=${z.lomax}`;
-  const j = await curlJson<OpenSkyState>(url, 11000);
+  const url = `https://api.adsb.lol/v2/lat/${z.lat}/lon/${z.lon}/dist/${z.radius}`;
+  const j = await curlJson<AdsblolResp>(url, 11000);
   const base: Zone = { id: z.id, label: z.label, total: 0, planes: [] };
-  if (!j || !Array.isArray(j.states)) return base;
-  const rows = j.states.filter((s): s is Array<string | number | boolean | null> => Array.isArray(s));
-  base.total = rows.length;
+  if (!j || !Array.isArray(j.ac)) return base;
+  base.total = j.ac.length;
   const planes: Plane[] = [];
-  for (const s of rows) {
-    const callsign = String(s[1] ?? "").trim();
-    const onGround = Boolean(s[8]);
-    if (onGround || !callsign) continue;
-    const velMs = typeof s[9] === "number" ? (s[9] as number) : null;
-    const alt = typeof s[13] === "number" ? (s[13] as number) : typeof s[7] === "number" ? (s[7] as number) : null;
+  for (const a of j.ac) {
+    const callsign = String(a.flight ?? "").trim();
+    if (!callsign) continue;
+    const type = String(a.t ?? "").trim();
+    const altRaw = a.alt_baro;
+    const altFt = typeof altRaw === "number" ? altRaw : null;
+    const gsKt = typeof a.gs === "number" ? (a.gs as number) : null;
     planes.push({
-      icao: String(s[0] ?? ""),
+      icao: String(a.hex ?? ""),
       callsign,
-      country: String(s[2] ?? ""),
-      altM: alt !== null ? Math.round(alt) : null,
-      velKmh: velMs !== null ? Math.round(velMs * 3.6) : null,
-      heading: typeof s[10] === "number" ? (s[10] as number) : null,
-      mil: MIL_PREFIXES.some((p) => callsign.startsWith(p)),
+      type: type || "?",
+      reg: String(a.r ?? "").trim(),
+      altM: altFt !== null ? Math.round(altFt * 0.3048) : null,
+      velKmh: gsKt !== null ? Math.round(gsKt * 1.852) : null,
+      heading: typeof a.track === "number" ? (a.track as number) : null,
+      mil: MIL_PREFIXES.some((p) => callsign.startsWith(p)) || MIL_TYPES.has(type.toUpperCase()),
     });
   }
-  planes.sort((a, b) => Number(b.mil) - Number(a.mil) || (b.velKmh ?? 0) - (a.velKmh ?? 0));
+  planes.sort((x, y) => Number(y.mil) - Number(x.mil) || (y.velKmh ?? 0) - (x.velKmh ?? 0));
   base.planes = planes.slice(0, 7);
   return base;
 }

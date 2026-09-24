@@ -17,7 +17,7 @@ interface IssState {
   visibility: string; footprintKm: number;
 }
 interface Plane {
-  icao: string; callsign: string; country: string;
+  icao: string; callsign: string; type: string; reg: string;
   altM: number | null; velKmh: number | null; heading: number | null; mil: boolean;
 }
 interface Zone { id: string; label: string; total: number; planes: Plane[]; }
@@ -173,7 +173,7 @@ export function PulsoPanel() {
                 <div key={p.icao} className={cn("flex items-center gap-2 rounded px-2 py-1.5 font-mono text-[11px]", p.mil ? "bg-red-500/10 border border-red-500/30" : "bg-muted/30")}>
                   <span className={cn("font-bold tracking-wider", p.mil ? "text-red-400" : "text-foreground")}>{p.callsign}</span>
                   {p.mil && <span className="px-1 rounded bg-red-500/20 text-red-300 text-[9px] font-bold">MILITAR</span>}
-                  <span className="text-muted-foreground truncate hidden sm:inline">{p.country}</span>
+                  <span className="text-muted-foreground truncate hidden sm:inline">{p.type}{p.reg ? ` · ${p.reg}` : ""}</span>
                   <span className="ml-auto text-muted-foreground">{p.altM ? `${p.altM.toLocaleString("es")} m` : "—"}</span>
                   <span className="text-muted-foreground w-20 text-right">{p.velKmh ? `${p.velKmh.toLocaleString("es")} km/h` : "—"}</span>
                 </div>
@@ -205,7 +205,7 @@ export function PulsoPanel() {
       </div>
 
       <p className="font-mono text-[9px] text-muted-foreground text-center">
-        Fuentes públicas reales: wheretheiss.at · opensky-network.org · spaceflightnewsapi.net — datos en vivo, sin claves
+        Fuentes públicas reales: wheretheiss.at · adsb.lol · spaceflightnewsapi.net — datos en vivo, sin claves
       </p>
     </div>
   );
