@@ -97,18 +97,17 @@ export async function getWorldPower(): Promise<{
 
   try {
     // 2) lista de países reales (excluye agregados regionales)
+    // OJO: el endpoint /country devuelve el ISO3 en el campo `id` (no iso3Code)
     const cj = (await wbFetch("/country?format=json&per_page=400")) as [
       unknown,
-      { iso3Code?: string; region?: { value?: string } }[]
+      { id?: string; region?: { value?: string } }[]
     ] | null;
     const real = new Set<string>();
-    const names = new Map<string, string>();
     const crows = Array.isArray(cj) ? cj[1] : [];
     if (Array.isArray(crows)) {
       for (const c of crows) {
-        if (c?.iso3Code && c.region?.value !== "Aggregates") {
-          real.add(c.iso3Code);
-          if (c.region?.value) names.set(c.iso3Code, "");
+        if (c?.id && c.region?.value !== "Aggregates") {
+          real.add(c.id);
         }
       }
     }
