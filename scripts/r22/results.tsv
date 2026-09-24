@@ -1,8 +1,26 @@
-rentry	fail			rentry.co/static rentry.co/static 
-notehub	fail			HTTP/2 522 
-date: Thu, 24 Sep 2026 21:45:30 GMT
-content-type: text/plain; char
-cl1p	page	https://cl1p.net/vanguard-ronda22	https://cl1p.net/vanguard-ronda22	post
-ubuntu-paste	fail			
-ghpages-pulso	page	https://elreydeluniverso-0.github.io/VANGUARD/pulso.html	https://elreydeluniverso-0.github.io/VANGUARD/pulso.html	put-api
-gh-discussion-r22	page	https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/11	https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/11	graphql
+ghpages-ronda22	page	https://elreydeluniverso-0.github.io/VANGUARD/ronda22.html	https://elreydeluniverso-0.github.io/VANGUARD/ronda22.html	put-api
+ghpages-radar	page	https://elreydeluniverso-0.github.io/VANGUARD/radar-militar.html	https://elreydeluniverso-0.github.io/VANGUARD/radar-militar.html	put-api
+gh-issue-r22	page	https://github.com/ElReyDelUniverso-0/VANGUARD/issues/13	https://github.com/ElReyDelUniverso-0/VANGUARD/issues/13	rest
+gh-discussion-r22	page	https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/14	https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/14	graphql
+hedgedoc-envs	page	https://hedgedoc.envs.net/9UDvhGqjS9SAFwKJwro_Sg	https://hedgedoc.envs.net/9UDvhGqjS9SAFwKJwro_Sgdownload	
+nixnet-pad	page	https://pad.nixnet.services/94TZKtVrQ8-MbosNWKS96g	https://pad.nixnet.services/94TZKtVrQ8-MbosNWKS96gdownload	
+x0.at	page	https://x0.at/OUFD.txt	https://x0.at/OUFD.txt	
+paste.rs	page	https://paste.rs/xwVJY	https://paste.rs/xwVJY	
+hst.sh	page	https://hst.sh/lirutecuqe	https://hst.sh/raw/lirutecuqe	
+clck.ru	short	https://clck.ru/3W5aqt	https://clck.ru/3W5aqt	
+spoo.me	short	https://spoo.me/QMlnHU	https://spoo.me/QMlnHU	
+indexnow-generic	api	https://api.indexnow.org/indexnow?url=https%3A%2F%2Fvanguard.world&key=074b8db50cc83f0689a2211e3ff94db1		http-202
+indexnow-seozoom	fail			http-000
+bashupload	fail			
+tmpsend	page	https://tmpsend.com/promo	https://tmpsend.com/promo	
+temp.sh	fail			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"> <title>404 Not Found</ti
+p.ip.fi	fail			<h1>InternalServerError</h1>
+kpaste	page	https://kpaste.net/rss	https://kpaste.net/rss	
+ctrl-v	fail			
+shorl	fail			<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="content-type" content=
+1km.de	fail			
+ghpages-iss	page	https://elreydeluniverso-0.github.io/VANGUARD/senal-iss.html	https://elreydeluniverso-0.github.io/VANGUARD/senal-iss.html	put-api
+dpaste.de	fail			<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <meta name="viewp
+tpaste.us	fail			400 No data received.
+pastes.io	fail			csrf-complejo-skip
+sudopaste	fail			
