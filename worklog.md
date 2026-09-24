@@ -1111,3 +1111,25 @@ Stage Summary:
 - v45.0 en producción: el récord en vivo convierte el contador en un juego ("sé parte del récord") y el botín real conecta el gameplay con el dinero real de la guerra
 - Nuevo protocolo de reporting: cada informe incluye gente activa AHORA + récord histórico para empujar a superarlo
 - 27 jugadores reales; 123 enlaces externos; el agente auto sigue su curso
+
+---
+Task ID: 61
+Agent: Super Z (main)
+Task: Usuario: "Sigue" — v46.0 OBJETIVO MUNDIAL (meta comunitaria que paga a todos) + RONDA 15
+
+Work Log:
+- CONTINUIDAD: worklog mostró Task 60 (v45.0 + Ronda 14) ya cerrado. Contadores al arrancar: players:total=27, shares:external=123, presence:peak=3, producción v45.0 healthy.
+- v46.0 "OBJETIVO MUNDIAL": nueva API src/app/api/goal/route.ts — hitos comunitarios 30→40→50→75→100→150→200→300→500 con recompensas crecientes (1000→50000 monedas + gemas + XP); lee players:total REAL de site_counter; reclamo con dedup server-side por alias (k=goal:claim:<hito>:<alias>, INSERT ON CONFLICT DO NOTHING → la PK impide doble cobro); 'goal:claim:<hito>' cuenta cobradores.
+- Componente src/components/vanguard/goal-banner.tsx en la portada (encima de GrowthShare): barra dorada de progreso en vivo (X/Y jugadores, % real), texto "faltan N", botones WhatsApp/Telegram/X/Copiar con el código de referido del jugador pegado en el mensaje, botón RECLAMAR cuando se desbloquea, LS_CLAIMED guard, patrón setTimeout(0) en effects (lint verde a la primera).
+- SORPRENDENTE: durante la verificación E2E la meta de 30 ya se había CONQUISTADO sola (27→33 jugadores reales entraron; day:players:2026-09-24 = 13) — el banner automáticamente pasó a mostrar 33/40, "faltan 7", y "metas ya conquistadas: 30". Los UIDs nuevos son mp-* (sesiones reales), ninguno e2e-*.
+- RÉCORD ROTO EN VIVO DURANTE LA VERIFICACIÓN: presence:peak 3 → 5 con toast "NEW ONLINE RECORD! 5 ONLINE" en producción (captura scripts/v46-goal-prod.png — banner dorado + "33 / 40 jugadores" + "faltan 7").
+- VERIFICADO E2E: health v46.0; GET /api/goal → {total:34, goal:40, remaining:6, progress:85, unlocked:false}; POST con meta no alcanzada → 409 correcto; POST alias inválido → 400; browser: banner objetivo:true, wa:1, tg:1, x:1, copiar:true, referral VGD- visible.
+- RONDA 15 (distribute-r15.sh + verify-r15.sh) — gancho "FALTAN 6 para que TODOS cobren 1.500 monedas": Telegraph ES https://telegra.ph/Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24 (200, 14 matches) + EN (200, 14) + PT (200, 14) + paste.rs/F3fl8 (201→GET 3) + rentry.co/vho9bfa3 ES (200, 48) + rentry.co/qutyxaio EN (200, 10) + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub 204×2 + TotalPing 200 = 12/12.
+- BUG DEL VERIFICADOR CAZADO: rev|cut -d'|' -f1|rev se rompe cuando el HTML contiene '|'; reemplazado por python rsplit('|',1) — verify-r15.sh v2.
+- shares:external 123 → 135 (+12 honesto); version v46.0 OBJETIVO MUNDIAL; push 812522c
+- ESTADO FINAL: players:total=34 (récord, era 27), presence:peak=5 (récord, era 3), ONLINE al cierre: 0 (noche UTC), visitas totales 32
+
+Stage Summary:
+- v46.0 en producción: la meta comunitaria convierte el CRECIMIENTO en un juego cooperativo — cada jugador gana si trae amigos, con recompensa para TODOS al alcanzar cada hito
+- Doble récord en una sola sesión: jugadores (27→34) y pico en línea (3→5), la meta 30 se conquistó sola durante la verificación
+- Nuevo protocolo de reporting aplicado por 2ª vez: informe con gente activa AHORA + récords + comparación contra el límite anterior

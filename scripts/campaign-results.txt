@@ -416,3 +416,2566 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [verify paste14] HTTP 200 matches 5 OK
 [verify rentry14-ES] HTTP 200 matches 17 OK
 [verify rentry14-EN] HTTP 200 matches 17 OK
+=== RONDA 15 2026-09-24T01:38:46Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r15-ES] 200 https://telegra.ph/Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24
+[Telegraph-r15-EN] 200 https://telegra.ph/6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24
+[Telegraph-r15-PT] 200 https://telegra.ph/Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunitária-do-VANGUARD-09-24
+[paste.rs-r15] 201 -> https://paste.rs/F3fl8
+[rentry-r15-ES] 200 -> https://rentry.co/vho9bfa3
+[rentry-r15-EN] 200 -> https://rentry.co/qutyxaio
+[IndexNow-r15] 200
+[PingOMatic-r15] 200
+[Twingly-r15] 200
+[WebSub-PubSubHubbub-r15] 204
+[WebSub-Superfeedr-r15] 204
+[TotalPing-r15] 200
+=== FIN RONDA 15 ===
+=== VERIFICACIÓN RONDA 15 2026-09-24T01:39:19Z ===
+[verify-Telegraph-ES] FAIL(code <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD – Telegraph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD">
+    <meta property="og:description" content="VANGUARD estrenó el OBJETIVO MUNDIAL: una meta comunitaria que lee jugadores REALES de la base de datos — sin bots, sin humo. Cuando la comunidad llega al hito, TODOS los que están dentro cobran la recompensa: monedas + gemas + XP de una sola vez.
+El estado AHORA: ya conquistamos la meta de 30 (1.000 monedas para todos) y somos 34 agentes. La meta de 40 paga 1.500 monedas + 15 gemas + 400 XP. FALTAN 6 JUGADORES. Cada amigo que entra con tu código suma para todos — y tu código de referido además te paga recompensas…">
+    <meta property="og:image" content="">
+    <meta property="og:site_name" content="Telegraph">
+    <meta property="article:published_time" content="2026-09-24T01:38:49+0000">
+    <meta property="article:modified_time" content="2026-09-24T01:38:49+0000">
+    <meta property="article:author" content="VANGUARD">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD">
+    <meta name="twitter:description" content="VANGUARD estrenó el OBJETIVO MUNDIAL: una meta comunitaria que lee jugadores REALES de la base de datos — sin bots, sin humo. Cuando la comunidad llega al hito, TODOS los que están dentro cobran la recompensa: monedas + gemas + XP de una sola vez.
+El estado AHORA: ya conquistamos la meta de 30 (1.000 monedas para todos) y somos 34 agentes. La meta de 40 paga 1.500 monedas + 15 gemas + 400 XP. FALTAN 6 JUGADORES. Cada amigo que entra con tu código suma para todos — y tu código de referido además te paga recompensas…">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://telegra.ph/Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24" />
+    <link rel="shortcut icon" href="/favicon.ico?1" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/images/favicon.png?1" sizes="16x16">
+    <link rel="icon" type="image/png" href="/images/favicon_2x.png?1" sizes="32x32">
+    <link href="/css/quill.core.min.css" rel="stylesheet">
+    <link href="/css/core.min.css?47" rel="stylesheet">
+  </head>
+  <body>
+    <div class="tl_page_wrap">
+      <div class="tl_page">
+        <main class="tl_article">
+          <header class="tl_article_header" dir="auto">
+            <h1>Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD</h1>
+            <address>
+              <a rel="author" href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><!--
+           --><time datetime="2026-09-24T01:38:49+0000">September 24, 2026</time>
+            </address>
+          </header>
+          <article id="_tl_editor" class="tl_article_content"><h1>Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD<br></h1><address><a href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><br></address><p>VANGUARD estrenó el OBJETIVO MUNDIAL: una meta comunitaria que lee jugadores REALES de la base de datos — sin bots, sin humo. Cuando la comunidad llega al hito, TODOS los que están dentro cobran la recompensa: monedas + gemas + XP de una sola vez.</p><p>El estado AHORA: ya conquistamos la meta de 30 (1.000 monedas para todos) y somos 34 agentes. La meta de 40 paga 1.500 monedas + 15 gemas + 400 XP. FALTAN 6 JUGADORES. Cada amigo que entra con tu código suma para todos — y tu código de referido además te paga recompensas propias.</p><p>Y dentro del juego: guerra global multijugador por rondas, duelos 1v1 con ELO, globo 3D con 15 capas OSINT, radar geopolítico en vivo (GDELT + GDACS), botín real con presupuestos militares del Banco Mundial (Ucrania +65), quiz, bolsa de países y 8 idiomas.</p><p>100% gratis, sin registro, desde cualquier móvil. Entra, asegura tu recompensa y trae a tu escuadrón:</p><a href="https://vanguard-kq9r.vercel.app/?ref=VGD-TELE15" target="_blank" rel="nofollow">vanguard-kq9r.vercel.app — asegura tu recompensa →</a><a href="https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-TELE15" target="_blank" rel="nofollow">Ver el poder militar real + radar en vivo</a></article>
+          <div id="_tl_link_tooltip" class="tl_link_tooltip"></div>
+          <div id="_tl_tooltip" class="tl_tooltip">
+            <div class="buttons">
+              <span class="button_hover"></span>
+              <span class="button_group"><!--
+             --><button id="_bold_button"></button><!--
+             --><button id="_italic_button"></button><!--
+             --><button id="_link_button"></button><!--
+           --></span><!--
+           --><span class="button_group"><!--
+             --><button id="_header_button"></button><!--
+             --><button id="_subheader_button"></button><!--
+             --><button id="_quote_button"></button><!--
+           --></span>
+            </div>
+            <div class="prompt">
+              <span class="close"></span>
+              <div class="prompt_input_wrap"><input type="url" class="prompt_input" /></div>
+            </div>
+          </div>
+          <div id="_tl_blocks" class="tl_blocks">
+            <div class="buttons">
+              <button id="_image_button"></button><!--
+           --><button id="_embed_button"></button>
+            </div>
+          </div>
+          <aside class="tl_article_buttons">
+            <div class="account account_top"></div>
+            <button id="_edit_button" class="button edit_button">Edit</button><!--
+         --><button id="_publish_button" class="button publish_button">Publish</button>
+            <div class="account account_bottom"></div>
+            <div id="_error_msg" class="error_msg"></div>
+          </aside>
+        </main>
+      </div>
+          <div class="tl_page_footer">
+      <div id="_report_button" class="tl_footer_button">Report content on this page</div>
+    </div>
+    </div>
+      <div class="tl_popup tl_popup_hidden" id="_report_popup">
+    <main class="tl_popup_body tl_report_popup">
+      <form id="_report_form" method="post">
+        <section>
+          <h2 class="tl_popup_header">Report Page</h2>
+          <div class="tl_radio_items">
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="violence">
+              <span class="tl_radio_item_label">Violence</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="childabuse">
+              <span class="tl_radio_item_label">Child Abuse</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="copyright">
+              <span class="tl_radio_item_label">Copyright</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="illegal_drugs">
+              <span class="tl_radio_item_label">Illegal Drugs</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="personal_details">
+              <span class="tl_radio_item_label">Personal Details</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="other">
+              <span class="tl_radio_item_label">Other</span>
+            </label>
+          </div>
+          <div class="tl_textfield_item tl_comment_field">
+            <input type="text" class="tl_textfield" name="comment" value="" placeholder="Add Comment…">
+          </div>
+          <div class="tl_copyright_field">
+            Please submit your DMCA takedown request to <a href="mailto:dmca@telegram.org?subject=Report%20to%20Telegraph%20page%20%22Faltan%206%20jugadores%20para%20que%20TODOS%20cobren%201.500%20monedas%3A%20la%20meta%20comunitaria%20de%20VANGUARD%22&body=Reported%20page%3A%20https%3A%2F%2Ftelegra.ph%2FFaltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24%0A%0A%0A" target="_blank">dmca@telegram.org</a>
+          </div>
+        </section>
+        <aside class="tl_popup_buttons">
+          <button type="reset" class="button" id="_report_cancel">Cancel</button>
+          <button type="submit" class="button submit_button">Report</button>
+        </aside>
+      </form>
+    </main>
+  </div>
+    
+    <script>var T={"apiUrl":"https:\/\/edit.telegra.ph","uploadEnabled":false,"datetime":1790213929,"pageId":"45758c7c3546a7c28f1c7","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3*T.datetime),d='January February March April May June July August September October November December'.split(' ')[a.getMonth()],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();</script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.selection.min.js"></script>
+    <script src="/js/autosize.min.js"></script>
+    <script src="/js/load-image.all.min.js?1"></script>
+    <script src="/js/quill.min.js?10"></script>
+    <script src="/js/core.min.js?67"></script>
+    <script async src="https://t.me/_websync_?path=Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24&hash=4ce6a8684558f31d67"></script>
+  </body>
+200) http=<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD – Telegraph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD">
+    <meta property="og:description" content="VANGUARD estrenó el OBJETIVO MUNDIAL: una meta comunitaria que lee jugadores REALES de la base de datos — sin bots, sin humo. Cuando la comunidad llega al hito, TODOS los que están dentro cobran la recompensa: monedas + gemas + XP de una sola vez.
+El estado AHORA: ya conquistamos la meta de 30 (1.000 monedas para todos) y somos 34 agentes. La meta de 40 paga 1.500 monedas + 15 gemas + 400 XP. FALTAN 6 JUGADORES. Cada amigo que entra con tu código suma para todos — y tu código de referido además te paga recompensas…">
+    <meta property="og:image" content="">
+    <meta property="og:site_name" content="Telegraph">
+    <meta property="article:published_time" content="2026-09-24T01:38:49+0000">
+    <meta property="article:modified_time" content="2026-09-24T01:38:49+0000">
+    <meta property="article:author" content="VANGUARD">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD">
+    <meta name="twitter:description" content="VANGUARD estrenó el OBJETIVO MUNDIAL: una meta comunitaria que lee jugadores REALES de la base de datos — sin bots, sin humo. Cuando la comunidad llega al hito, TODOS los que están dentro cobran la recompensa: monedas + gemas + XP de una sola vez.
+El estado AHORA: ya conquistamos la meta de 30 (1.000 monedas para todos) y somos 34 agentes. La meta de 40 paga 1.500 monedas + 15 gemas + 400 XP. FALTAN 6 JUGADORES. Cada amigo que entra con tu código suma para todos — y tu código de referido además te paga recompensas…">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://telegra.ph/Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24" />
+    <link rel="shortcut icon" href="/favicon.ico?1" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/images/favicon.png?1" sizes="16x16">
+    <link rel="icon" type="image/png" href="/images/favicon_2x.png?1" sizes="32x32">
+    <link href="/css/quill.core.min.css" rel="stylesheet">
+    <link href="/css/core.min.css?47" rel="stylesheet">
+  </head>
+  <body>
+    <div class="tl_page_wrap">
+      <div class="tl_page">
+        <main class="tl_article">
+          <header class="tl_article_header" dir="auto">
+            <h1>Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD</h1>
+            <address>
+              <a rel="author" href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><!--
+           --><time datetime="2026-09-24T01:38:49+0000">September 24, 2026</time>
+            </address>
+          </header>
+          <article id="_tl_editor" class="tl_article_content"><h1>Faltan 6 jugadores para que TODOS cobren 1.500 monedas: la meta comunitaria de VANGUARD<br></h1><address><a href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><br></address><p>VANGUARD estrenó el OBJETIVO MUNDIAL: una meta comunitaria que lee jugadores REALES de la base de datos — sin bots, sin humo. Cuando la comunidad llega al hito, TODOS los que están dentro cobran la recompensa: monedas + gemas + XP de una sola vez.</p><p>El estado AHORA: ya conquistamos la meta de 30 (1.000 monedas para todos) y somos 34 agentes. La meta de 40 paga 1.500 monedas + 15 gemas + 400 XP. FALTAN 6 JUGADORES. Cada amigo que entra con tu código suma para todos — y tu código de referido además te paga recompensas propias.</p><p>Y dentro del juego: guerra global multijugador por rondas, duelos 1v1 con ELO, globo 3D con 15 capas OSINT, radar geopolítico en vivo (GDELT + GDACS), botín real con presupuestos militares del Banco Mundial (Ucrania +65), quiz, bolsa de países y 8 idiomas.</p><p>100% gratis, sin registro, desde cualquier móvil. Entra, asegura tu recompensa y trae a tu escuadrón:</p><a href="https://vanguard-kq9r.vercel.app/?ref=VGD-TELE15" target="_blank" rel="nofollow">vanguard-kq9r.vercel.app — asegura tu recompensa →</a><a href="https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-TELE15" target="_blank" rel="nofollow">Ver el poder militar real + radar en vivo</a></article>
+          <div id="_tl_link_tooltip" class="tl_link_tooltip"></div>
+          <div id="_tl_tooltip" class="tl_tooltip">
+            <div class="buttons">
+              <span class="button_hover"></span>
+              <span class="button_group"><!--
+             --><button id="_bold_button"></button><!--
+             --><button id="_italic_button"></button><!--
+             --><button id="_link_button"></button><!--
+           --></span><!--
+           --><span class="button_group"><!--
+             --><button id="_header_button"></button><!--
+             --><button id="_subheader_button"></button><!--
+             --><button id="_quote_button"></button><!--
+           --></span>
+            </div>
+            <div class="prompt">
+              <span class="close"></span>
+              <div class="prompt_input_wrap"><input type="url" class="prompt_input" /></div>
+            </div>
+          </div>
+          <div id="_tl_blocks" class="tl_blocks">
+            <div class="buttons">
+              <button id="_image_button"></button><!--
+           --><button id="_embed_button"></button>
+            </div>
+          </div>
+          <aside class="tl_article_buttons">
+            <div class="account account_top"></div>
+            <button id="_edit_button" class="button edit_button">Edit</button><!--
+         --><button id="_publish_button" class="button publish_button">Publish</button>
+            <div class="account account_bottom"></div>
+            <div id="_error_msg" class="error_msg"></div>
+          </aside>
+        </main>
+      </div>
+          <div class="tl_page_footer">
+      <div id="_report_button" class="tl_footer_button">Report content on this page</div>
+    </div>
+    </div>
+      <div class="tl_popup tl_popup_hidden" id="_report_popup">
+    <main class="tl_popup_body tl_report_popup">
+      <form id="_report_form" method="post">
+        <section>
+          <h2 class="tl_popup_header">Report Page</h2>
+          <div class="tl_radio_items">
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="violence">
+              <span class="tl_radio_item_label">Violence</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="childabuse">
+              <span class="tl_radio_item_label">Child Abuse</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="copyright">
+              <span class="tl_radio_item_label">Copyright</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="illegal_drugs">
+              <span class="tl_radio_item_label">Illegal Drugs</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="personal_details">
+              <span class="tl_radio_item_label">Personal Details</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="other">
+              <span class="tl_radio_item_label">Other</span>
+            </label>
+          </div>
+          <div class="tl_textfield_item tl_comment_field">
+            <input type="text" class="tl_textfield" name="comment" value="" placeholder="Add Comment…">
+          </div>
+          <div class="tl_copyright_field">
+            Please submit your DMCA takedown request to <a href="mailto:dmca@telegram.org?subject=Report%20to%20Telegraph%20page%20%22Faltan%206%20jugadores%20para%20que%20TODOS%20cobren%201.500%20monedas%3A%20la%20meta%20comunitaria%20de%20VANGUARD%22&body=Reported%20page%3A%20https%3A%2F%2Ftelegra.ph%2FFaltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24%0A%0A%0A" target="_blank">dmca@telegram.org</a>
+          </div>
+        </section>
+        <aside class="tl_popup_buttons">
+          <button type="reset" class="button" id="_report_cancel">Cancel</button>
+          <button type="submit" class="button submit_button">Report</button>
+        </aside>
+      </form>
+    </main>
+  </div>
+    
+    <script>var T={"apiUrl":"https:\/\/edit.telegra.ph","uploadEnabled":false,"datetime":1790213929,"pageId":"45758c7c3546a7c28f1c7","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3*T.datetime),d='January February March April May June July August September October November December'.split(' ')[a.getMonth()],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();</script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.selection.min.js"></script>
+    <script src="/js/autosize.min.js"></script>
+    <script src="/js/load-image.all.min.js?1"></script>
+    <script src="/js/quill.min.js?10"></script>
+    <script src="/js/core.min.js?67"></script>
+    <script async src="https://t.me/_websync_?path=Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24&hash=4ce6a8684558f31d67"></script>
+  </body>
+200 matches=14 https://telegra.ph/Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24
+[verify-Telegraph-EN] FAIL(code <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal – Telegraph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal">
+    <meta property="og:description" content="VANGUARD just launched the COMMUNITY GOAL: a milestone meter fed by REAL players straight from the database — no bots, no fake numbers. When the community reaches the goal, EVERYONE inside claims the reward: coins + gems + XP.
+Status RIGHT NOW: the 30-player goal is already conquered (1,000 coins for everyone) and we are 34 agents strong. The 40 goal pays 1,500 coins + 15 gems + 400 XP. ONLY 6 PLAYERS MISSING. Every friend who joins with your code pushes it for everybody — and your referral code pays you extra…">
+    <meta property="og:image" content="">
+    <meta property="og:site_name" content="Telegraph">
+    <meta property="article:published_time" content="2026-09-24T01:38:50+0000">
+    <meta property="article:modified_time" content="2026-09-24T01:38:50+0000">
+    <meta property="article:author" content="VANGUARD">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal">
+    <meta name="twitter:description" content="VANGUARD just launched the COMMUNITY GOAL: a milestone meter fed by REAL players straight from the database — no bots, no fake numbers. When the community reaches the goal, EVERYONE inside claims the reward: coins + gems + XP.
+Status RIGHT NOW: the 30-player goal is already conquered (1,000 coins for everyone) and we are 34 agents strong. The 40 goal pays 1,500 coins + 15 gems + 400 XP. ONLY 6 PLAYERS MISSING. Every friend who joins with your code pushes it for everybody — and your referral code pays you extra…">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://telegra.ph/6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24" />
+    <link rel="shortcut icon" href="/favicon.ico?1" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/images/favicon.png?1" sizes="16x16">
+    <link rel="icon" type="image/png" href="/images/favicon_2x.png?1" sizes="32x32">
+    <link href="/css/quill.core.min.css" rel="stylesheet">
+    <link href="/css/core.min.css?47" rel="stylesheet">
+  </head>
+  <body>
+    <div class="tl_page_wrap">
+      <div class="tl_page">
+        <main class="tl_article">
+          <header class="tl_article_header" dir="auto">
+            <h1>6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal</h1>
+            <address>
+              <a rel="author" href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><!--
+           --><time datetime="2026-09-24T01:38:50+0000">September 24, 2026</time>
+            </address>
+          </header>
+          <article id="_tl_editor" class="tl_article_content"><h1>6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal<br></h1><address><a href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><br></address><p>VANGUARD just launched the COMMUNITY GOAL: a milestone meter fed by REAL players straight from the database — no bots, no fake numbers. When the community reaches the goal, EVERYONE inside claims the reward: coins + gems + XP.</p><p>Status RIGHT NOW: the 30-player goal is already conquered (1,000 coins for everyone) and we are 34 agents strong. The 40 goal pays 1,500 coins + 15 gems + 400 XP. ONLY 6 PLAYERS MISSING. Every friend who joins with your code pushes it for everybody — and your referral code pays you extra too.</p><p>Inside: round-based global multiplayer war, 1v1 ELO duels, 3D OSINT globe with 15 layers, live geopolitical radar (GDELT + GDACS), real World Bank military loot (Ukraine +65), quiz, country stock market, 8 languages.</p><p>100% free, no signup, any phone. Lock your reward and bring your squad:</p><a href="https://vanguard-kq9r.vercel.app/?ref=VGD-TELE15EN" target="_blank" rel="nofollow">vanguard-kq9r.vercel.app — claim your reward →</a></article>
+          <div id="_tl_link_tooltip" class="tl_link_tooltip"></div>
+          <div id="_tl_tooltip" class="tl_tooltip">
+            <div class="buttons">
+              <span class="button_hover"></span>
+              <span class="button_group"><!--
+             --><button id="_bold_button"></button><!--
+             --><button id="_italic_button"></button><!--
+             --><button id="_link_button"></button><!--
+           --></span><!--
+           --><span class="button_group"><!--
+             --><button id="_header_button"></button><!--
+             --><button id="_subheader_button"></button><!--
+             --><button id="_quote_button"></button><!--
+           --></span>
+            </div>
+            <div class="prompt">
+              <span class="close"></span>
+              <div class="prompt_input_wrap"><input type="url" class="prompt_input" /></div>
+            </div>
+          </div>
+          <div id="_tl_blocks" class="tl_blocks">
+            <div class="buttons">
+              <button id="_image_button"></button><!--
+           --><button id="_embed_button"></button>
+            </div>
+          </div>
+          <aside class="tl_article_buttons">
+            <div class="account account_top"></div>
+            <button id="_edit_button" class="button edit_button">Edit</button><!--
+         --><button id="_publish_button" class="button publish_button">Publish</button>
+            <div class="account account_bottom"></div>
+            <div id="_error_msg" class="error_msg"></div>
+          </aside>
+        </main>
+      </div>
+          <div class="tl_page_footer">
+      <div id="_report_button" class="tl_footer_button">Report content on this page</div>
+    </div>
+    </div>
+      <div class="tl_popup tl_popup_hidden" id="_report_popup">
+    <main class="tl_popup_body tl_report_popup">
+      <form id="_report_form" method="post">
+        <section>
+          <h2 class="tl_popup_header">Report Page</h2>
+          <div class="tl_radio_items">
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="violence">
+              <span class="tl_radio_item_label">Violence</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="childabuse">
+              <span class="tl_radio_item_label">Child Abuse</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="copyright">
+              <span class="tl_radio_item_label">Copyright</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="illegal_drugs">
+              <span class="tl_radio_item_label">Illegal Drugs</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="personal_details">
+              <span class="tl_radio_item_label">Personal Details</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="other">
+              <span class="tl_radio_item_label">Other</span>
+            </label>
+          </div>
+          <div class="tl_textfield_item tl_comment_field">
+            <input type="text" class="tl_textfield" name="comment" value="" placeholder="Add Comment…">
+          </div>
+          <div class="tl_copyright_field">
+            Please submit your DMCA takedown request to <a href="mailto:dmca@telegram.org?subject=Report%20to%20Telegraph%20page%20%226%20players%20away%20from%20EVERYONE%20getting%201%2C500%20coins%3A%20VANGUARD%20community%20goal%22&body=Reported%20page%3A%20https%3A%2F%2Ftelegra.ph%2F6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24%0A%0A%0A" target="_blank">dmca@telegram.org</a>
+          </div>
+        </section>
+        <aside class="tl_popup_buttons">
+          <button type="reset" class="button" id="_report_cancel">Cancel</button>
+          <button type="submit" class="button submit_button">Report</button>
+        </aside>
+      </form>
+    </main>
+  </div>
+    
+    <script>var T={"apiUrl":"https:\/\/edit.telegra.ph","uploadEnabled":false,"datetime":1790213930,"pageId":"268b6aaff39d085f591fc","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3*T.datetime),d='January February March April May June July August September October November December'.split(' ')[a.getMonth()],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();</script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.selection.min.js"></script>
+    <script src="/js/autosize.min.js"></script>
+    <script src="/js/load-image.all.min.js?1"></script>
+    <script src="/js/quill.min.js?10"></script>
+    <script src="/js/core.min.js?67"></script>
+    <script async src="https://t.me/_websync_?path=6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24&hash=058312300905673d6f"></script>
+  </body>
+200) http=<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal – Telegraph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal">
+    <meta property="og:description" content="VANGUARD just launched the COMMUNITY GOAL: a milestone meter fed by REAL players straight from the database — no bots, no fake numbers. When the community reaches the goal, EVERYONE inside claims the reward: coins + gems + XP.
+Status RIGHT NOW: the 30-player goal is already conquered (1,000 coins for everyone) and we are 34 agents strong. The 40 goal pays 1,500 coins + 15 gems + 400 XP. ONLY 6 PLAYERS MISSING. Every friend who joins with your code pushes it for everybody — and your referral code pays you extra…">
+    <meta property="og:image" content="">
+    <meta property="og:site_name" content="Telegraph">
+    <meta property="article:published_time" content="2026-09-24T01:38:50+0000">
+    <meta property="article:modified_time" content="2026-09-24T01:38:50+0000">
+    <meta property="article:author" content="VANGUARD">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal">
+    <meta name="twitter:description" content="VANGUARD just launched the COMMUNITY GOAL: a milestone meter fed by REAL players straight from the database — no bots, no fake numbers. When the community reaches the goal, EVERYONE inside claims the reward: coins + gems + XP.
+Status RIGHT NOW: the 30-player goal is already conquered (1,000 coins for everyone) and we are 34 agents strong. The 40 goal pays 1,500 coins + 15 gems + 400 XP. ONLY 6 PLAYERS MISSING. Every friend who joins with your code pushes it for everybody — and your referral code pays you extra…">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://telegra.ph/6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24" />
+    <link rel="shortcut icon" href="/favicon.ico?1" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/images/favicon.png?1" sizes="16x16">
+    <link rel="icon" type="image/png" href="/images/favicon_2x.png?1" sizes="32x32">
+    <link href="/css/quill.core.min.css" rel="stylesheet">
+    <link href="/css/core.min.css?47" rel="stylesheet">
+  </head>
+  <body>
+    <div class="tl_page_wrap">
+      <div class="tl_page">
+        <main class="tl_article">
+          <header class="tl_article_header" dir="auto">
+            <h1>6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal</h1>
+            <address>
+              <a rel="author" href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><!--
+           --><time datetime="2026-09-24T01:38:50+0000">September 24, 2026</time>
+            </address>
+          </header>
+          <article id="_tl_editor" class="tl_article_content"><h1>6 players away from EVERYONE getting 1,500 coins: VANGUARD community goal<br></h1><address><a href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><br></address><p>VANGUARD just launched the COMMUNITY GOAL: a milestone meter fed by REAL players straight from the database — no bots, no fake numbers. When the community reaches the goal, EVERYONE inside claims the reward: coins + gems + XP.</p><p>Status RIGHT NOW: the 30-player goal is already conquered (1,000 coins for everyone) and we are 34 agents strong. The 40 goal pays 1,500 coins + 15 gems + 400 XP. ONLY 6 PLAYERS MISSING. Every friend who joins with your code pushes it for everybody — and your referral code pays you extra too.</p><p>Inside: round-based global multiplayer war, 1v1 ELO duels, 3D OSINT globe with 15 layers, live geopolitical radar (GDELT + GDACS), real World Bank military loot (Ukraine +65), quiz, country stock market, 8 languages.</p><p>100% free, no signup, any phone. Lock your reward and bring your squad:</p><a href="https://vanguard-kq9r.vercel.app/?ref=VGD-TELE15EN" target="_blank" rel="nofollow">vanguard-kq9r.vercel.app — claim your reward →</a></article>
+          <div id="_tl_link_tooltip" class="tl_link_tooltip"></div>
+          <div id="_tl_tooltip" class="tl_tooltip">
+            <div class="buttons">
+              <span class="button_hover"></span>
+              <span class="button_group"><!--
+             --><button id="_bold_button"></button><!--
+             --><button id="_italic_button"></button><!--
+             --><button id="_link_button"></button><!--
+           --></span><!--
+           --><span class="button_group"><!--
+             --><button id="_header_button"></button><!--
+             --><button id="_subheader_button"></button><!--
+             --><button id="_quote_button"></button><!--
+           --></span>
+            </div>
+            <div class="prompt">
+              <span class="close"></span>
+              <div class="prompt_input_wrap"><input type="url" class="prompt_input" /></div>
+            </div>
+          </div>
+          <div id="_tl_blocks" class="tl_blocks">
+            <div class="buttons">
+              <button id="_image_button"></button><!--
+           --><button id="_embed_button"></button>
+            </div>
+          </div>
+          <aside class="tl_article_buttons">
+            <div class="account account_top"></div>
+            <button id="_edit_button" class="button edit_button">Edit</button><!--
+         --><button id="_publish_button" class="button publish_button">Publish</button>
+            <div class="account account_bottom"></div>
+            <div id="_error_msg" class="error_msg"></div>
+          </aside>
+        </main>
+      </div>
+          <div class="tl_page_footer">
+      <div id="_report_button" class="tl_footer_button">Report content on this page</div>
+    </div>
+    </div>
+      <div class="tl_popup tl_popup_hidden" id="_report_popup">
+    <main class="tl_popup_body tl_report_popup">
+      <form id="_report_form" method="post">
+        <section>
+          <h2 class="tl_popup_header">Report Page</h2>
+          <div class="tl_radio_items">
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="violence">
+              <span class="tl_radio_item_label">Violence</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="childabuse">
+              <span class="tl_radio_item_label">Child Abuse</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="copyright">
+              <span class="tl_radio_item_label">Copyright</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="illegal_drugs">
+              <span class="tl_radio_item_label">Illegal Drugs</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="personal_details">
+              <span class="tl_radio_item_label">Personal Details</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="other">
+              <span class="tl_radio_item_label">Other</span>
+            </label>
+          </div>
+          <div class="tl_textfield_item tl_comment_field">
+            <input type="text" class="tl_textfield" name="comment" value="" placeholder="Add Comment…">
+          </div>
+          <div class="tl_copyright_field">
+            Please submit your DMCA takedown request to <a href="mailto:dmca@telegram.org?subject=Report%20to%20Telegraph%20page%20%226%20players%20away%20from%20EVERYONE%20getting%201%2C500%20coins%3A%20VANGUARD%20community%20goal%22&body=Reported%20page%3A%20https%3A%2F%2Ftelegra.ph%2F6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24%0A%0A%0A" target="_blank">dmca@telegram.org</a>
+          </div>
+        </section>
+        <aside class="tl_popup_buttons">
+          <button type="reset" class="button" id="_report_cancel">Cancel</button>
+          <button type="submit" class="button submit_button">Report</button>
+        </aside>
+      </form>
+    </main>
+  </div>
+    
+    <script>var T={"apiUrl":"https:\/\/edit.telegra.ph","uploadEnabled":false,"datetime":1790213930,"pageId":"268b6aaff39d085f591fc","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3*T.datetime),d='January February March April May June July August September October November December'.split(' ')[a.getMonth()],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();</script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.selection.min.js"></script>
+    <script src="/js/autosize.min.js"></script>
+    <script src="/js/load-image.all.min.js?1"></script>
+    <script src="/js/quill.min.js?10"></script>
+    <script src="/js/core.min.js?67"></script>
+    <script async src="https://t.me/_websync_?path=6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24&hash=058312300905673d6f"></script>
+  </body>
+200 matches=14 https://telegra.ph/6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24
+[verify-Telegraph-PT] FAIL(code <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD – Telegraph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD">
+    <meta property="og:description" content="O VANGUARD estreou o OBJETIVO MUNDIAL: uma meta comunitária alimentada por jogadores REAIS direto do banco de dados — sem bots, sem números falsos. Quando a comunidade chega à meta, TODOS os que estão dentro recebem a recompensa: moedas + gemas + XP.
+Status AGORA: a meta de 30 já foi conquistada (1.000 moedas para todos) e somos 34 agentes. A meta de 40 paga 1.500 moedas + 15 gemas + 400 XP. FALTAM 6 JOGADORES. Cada amigo que entra com seu código empurra a meta — e seu código de indicação também te paga.
+Guerra…">
+    <meta property="og:image" content="">
+    <meta property="og:site_name" content="Telegraph">
+    <meta property="article:published_time" content="2026-09-24T01:38:51+0000">
+    <meta property="article:modified_time" content="2026-09-24T01:38:51+0000">
+    <meta property="article:author" content="VANGUARD">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD">
+    <meta name="twitter:description" content="O VANGUARD estreou o OBJETIVO MUNDIAL: uma meta comunitária alimentada por jogadores REAIS direto do banco de dados — sem bots, sem números falsos. Quando a comunidade chega à meta, TODOS os que estão dentro recebem a recompensa: moedas + gemas + XP.
+Status AGORA: a meta de 30 já foi conquistada (1.000 moedas para todos) e somos 34 agentes. A meta de 40 paga 1.500 moedas + 15 gemas + 400 XP. FALTAM 6 JOGADORES. Cada amigo que entra com seu código empurra a meta — e seu código de indicação também te paga.
+Guerra…">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://telegra.ph/Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunitária-do-VANGUARD-09-24" />
+    <link rel="shortcut icon" href="/favicon.ico?1" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/images/favicon.png?1" sizes="16x16">
+    <link rel="icon" type="image/png" href="/images/favicon_2x.png?1" sizes="32x32">
+    <link href="/css/quill.core.min.css" rel="stylesheet">
+    <link href="/css/core.min.css?47" rel="stylesheet">
+  </head>
+  <body>
+    <div class="tl_page_wrap">
+      <div class="tl_page">
+        <main class="tl_article">
+          <header class="tl_article_header" dir="auto">
+            <h1>Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD</h1>
+            <address>
+              <a rel="author" href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><!--
+           --><time datetime="2026-09-24T01:38:51+0000">September 24, 2026</time>
+            </address>
+          </header>
+          <article id="_tl_editor" class="tl_article_content"><h1>Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD<br></h1><address><a href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><br></address><p>O VANGUARD estreou o OBJETIVO MUNDIAL: uma meta comunitária alimentada por jogadores REAIS direto do banco de dados — sem bots, sem números falsos. Quando a comunidade chega à meta, TODOS os que estão dentro recebem a recompensa: moedas + gemas + XP.</p><p>Status AGORA: a meta de 30 já foi conquistada (1.000 moedas para todos) e somos 34 agentes. A meta de 40 paga 1.500 moedas + 15 gemas + 400 XP. FALTAM 6 JOGADORES. Cada amigo que entra com seu código empurra a meta — e seu código de indicação também te paga.</p><p>Guerra global multiplayer por rodadas, duelos 1v1 com ELO, globo 3D com 15 camadas OSINT, radar geopolítico ao vivo, butim real do Banco Mundial, quiz e 8 idiomas. 100% grátis, sem cadastro, direto do celular.</p><a href="https://vanguard-kq9r.vercel.app/?ref=VGD-TELE15PT" target="_blank" rel="nofollow">vanguard-kq9r.vercel.app — garanta sua recompensa →</a></article>
+          <div id="_tl_link_tooltip" class="tl_link_tooltip"></div>
+          <div id="_tl_tooltip" class="tl_tooltip">
+            <div class="buttons">
+              <span class="button_hover"></span>
+              <span class="button_group"><!--
+             --><button id="_bold_button"></button><!--
+             --><button id="_italic_button"></button><!--
+             --><button id="_link_button"></button><!--
+           --></span><!--
+           --><span class="button_group"><!--
+             --><button id="_header_button"></button><!--
+             --><button id="_subheader_button"></button><!--
+             --><button id="_quote_button"></button><!--
+           --></span>
+            </div>
+            <div class="prompt">
+              <span class="close"></span>
+              <div class="prompt_input_wrap"><input type="url" class="prompt_input" /></div>
+            </div>
+          </div>
+          <div id="_tl_blocks" class="tl_blocks">
+            <div class="buttons">
+              <button id="_image_button"></button><!--
+           --><button id="_embed_button"></button>
+            </div>
+          </div>
+          <aside class="tl_article_buttons">
+            <div class="account account_top"></div>
+            <button id="_edit_button" class="button edit_button">Edit</button><!--
+         --><button id="_publish_button" class="button publish_button">Publish</button>
+            <div class="account account_bottom"></div>
+            <div id="_error_msg" class="error_msg"></div>
+          </aside>
+        </main>
+      </div>
+          <div class="tl_page_footer">
+      <div id="_report_button" class="tl_footer_button">Report content on this page</div>
+    </div>
+    </div>
+      <div class="tl_popup tl_popup_hidden" id="_report_popup">
+    <main class="tl_popup_body tl_report_popup">
+      <form id="_report_form" method="post">
+        <section>
+          <h2 class="tl_popup_header">Report Page</h2>
+          <div class="tl_radio_items">
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="violence">
+              <span class="tl_radio_item_label">Violence</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="childabuse">
+              <span class="tl_radio_item_label">Child Abuse</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="copyright">
+              <span class="tl_radio_item_label">Copyright</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="illegal_drugs">
+              <span class="tl_radio_item_label">Illegal Drugs</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="personal_details">
+              <span class="tl_radio_item_label">Personal Details</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="other">
+              <span class="tl_radio_item_label">Other</span>
+            </label>
+          </div>
+          <div class="tl_textfield_item tl_comment_field">
+            <input type="text" class="tl_textfield" name="comment" value="" placeholder="Add Comment…">
+          </div>
+          <div class="tl_copyright_field">
+            Please submit your DMCA takedown request to <a href="mailto:dmca@telegram.org?subject=Report%20to%20Telegraph%20page%20%22Faltam%206%20jogadores%20para%20TODOS%20ganharem%201.500%20moedas%3A%20meta%20comunit%C3%A1ria%20do%20VANGUARD%22&body=Reported%20page%3A%20https%3A%2F%2Ftelegra.ph%2FFaltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunit%C3%A1ria-do-VANGUARD-09-24%0A%0A%0A" target="_blank">dmca@telegram.org</a>
+          </div>
+        </section>
+        <aside class="tl_popup_buttons">
+          <button type="reset" class="button" id="_report_cancel">Cancel</button>
+          <button type="submit" class="button submit_button">Report</button>
+        </aside>
+      </form>
+    </main>
+  </div>
+    
+    <script>var T={"apiUrl":"https:\/\/edit.telegra.ph","uploadEnabled":false,"datetime":1790213931,"pageId":"896050a7ea063b73ddd77","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3*T.datetime),d='January February March April May June July August September October November December'.split(' ')[a.getMonth()],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();</script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.selection.min.js"></script>
+    <script src="/js/autosize.min.js"></script>
+    <script src="/js/load-image.all.min.js?1"></script>
+    <script src="/js/quill.min.js?10"></script>
+    <script src="/js/core.min.js?67"></script>
+    <script async src="https://t.me/_websync_?path=Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunit%C3%A1ria-do-VANGUARD-09-24&hash=f46bc8d79ea92d5227"></script>
+  </body>
+200) http=<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD – Telegraph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD">
+    <meta property="og:description" content="O VANGUARD estreou o OBJETIVO MUNDIAL: uma meta comunitária alimentada por jogadores REAIS direto do banco de dados — sem bots, sem números falsos. Quando a comunidade chega à meta, TODOS os que estão dentro recebem a recompensa: moedas + gemas + XP.
+Status AGORA: a meta de 30 já foi conquistada (1.000 moedas para todos) e somos 34 agentes. A meta de 40 paga 1.500 moedas + 15 gemas + 400 XP. FALTAM 6 JOGADORES. Cada amigo que entra com seu código empurra a meta — e seu código de indicação também te paga.
+Guerra…">
+    <meta property="og:image" content="">
+    <meta property="og:site_name" content="Telegraph">
+    <meta property="article:published_time" content="2026-09-24T01:38:51+0000">
+    <meta property="article:modified_time" content="2026-09-24T01:38:51+0000">
+    <meta property="article:author" content="VANGUARD">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD">
+    <meta name="twitter:description" content="O VANGUARD estreou o OBJETIVO MUNDIAL: uma meta comunitária alimentada por jogadores REAIS direto do banco de dados — sem bots, sem números falsos. Quando a comunidade chega à meta, TODOS os que estão dentro recebem a recompensa: moedas + gemas + XP.
+Status AGORA: a meta de 30 já foi conquistada (1.000 moedas para todos) e somos 34 agentes. A meta de 40 paga 1.500 moedas + 15 gemas + 400 XP. FALTAM 6 JOGADORES. Cada amigo que entra com seu código empurra a meta — e seu código de indicação também te paga.
+Guerra…">
+    <meta name="twitter:image" content="">
+    <link rel="canonical" href="https://telegra.ph/Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunitária-do-VANGUARD-09-24" />
+    <link rel="shortcut icon" href="/favicon.ico?1" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/images/favicon.png?1" sizes="16x16">
+    <link rel="icon" type="image/png" href="/images/favicon_2x.png?1" sizes="32x32">
+    <link href="/css/quill.core.min.css" rel="stylesheet">
+    <link href="/css/core.min.css?47" rel="stylesheet">
+  </head>
+  <body>
+    <div class="tl_page_wrap">
+      <div class="tl_page">
+        <main class="tl_article">
+          <header class="tl_article_header" dir="auto">
+            <h1>Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD</h1>
+            <address>
+              <a rel="author" href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><!--
+           --><time datetime="2026-09-24T01:38:51+0000">September 24, 2026</time>
+            </address>
+          </header>
+          <article id="_tl_editor" class="tl_article_content"><h1>Faltam 6 jogadores para TODOS ganharem 1.500 moedas: meta comunitária do VANGUARD<br></h1><address><a href="https://vanguard-kq9r.vercel.app/" target="_blank">VANGUARD</a><br></address><p>O VANGUARD estreou o OBJETIVO MUNDIAL: uma meta comunitária alimentada por jogadores REAIS direto do banco de dados — sem bots, sem números falsos. Quando a comunidade chega à meta, TODOS os que estão dentro recebem a recompensa: moedas + gemas + XP.</p><p>Status AGORA: a meta de 30 já foi conquistada (1.000 moedas para todos) e somos 34 agentes. A meta de 40 paga 1.500 moedas + 15 gemas + 400 XP. FALTAM 6 JOGADORES. Cada amigo que entra com seu código empurra a meta — e seu código de indicação também te paga.</p><p>Guerra global multiplayer por rodadas, duelos 1v1 com ELO, globo 3D com 15 camadas OSINT, radar geopolítico ao vivo, butim real do Banco Mundial, quiz e 8 idiomas. 100% grátis, sem cadastro, direto do celular.</p><a href="https://vanguard-kq9r.vercel.app/?ref=VGD-TELE15PT" target="_blank" rel="nofollow">vanguard-kq9r.vercel.app — garanta sua recompensa →</a></article>
+          <div id="_tl_link_tooltip" class="tl_link_tooltip"></div>
+          <div id="_tl_tooltip" class="tl_tooltip">
+            <div class="buttons">
+              <span class="button_hover"></span>
+              <span class="button_group"><!--
+             --><button id="_bold_button"></button><!--
+             --><button id="_italic_button"></button><!--
+             --><button id="_link_button"></button><!--
+           --></span><!--
+           --><span class="button_group"><!--
+             --><button id="_header_button"></button><!--
+             --><button id="_subheader_button"></button><!--
+             --><button id="_quote_button"></button><!--
+           --></span>
+            </div>
+            <div class="prompt">
+              <span class="close"></span>
+              <div class="prompt_input_wrap"><input type="url" class="prompt_input" /></div>
+            </div>
+          </div>
+          <div id="_tl_blocks" class="tl_blocks">
+            <div class="buttons">
+              <button id="_image_button"></button><!--
+           --><button id="_embed_button"></button>
+            </div>
+          </div>
+          <aside class="tl_article_buttons">
+            <div class="account account_top"></div>
+            <button id="_edit_button" class="button edit_button">Edit</button><!--
+         --><button id="_publish_button" class="button publish_button">Publish</button>
+            <div class="account account_bottom"></div>
+            <div id="_error_msg" class="error_msg"></div>
+          </aside>
+        </main>
+      </div>
+          <div class="tl_page_footer">
+      <div id="_report_button" class="tl_footer_button">Report content on this page</div>
+    </div>
+    </div>
+      <div class="tl_popup tl_popup_hidden" id="_report_popup">
+    <main class="tl_popup_body tl_report_popup">
+      <form id="_report_form" method="post">
+        <section>
+          <h2 class="tl_popup_header">Report Page</h2>
+          <div class="tl_radio_items">
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="violence">
+              <span class="tl_radio_item_label">Violence</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="childabuse">
+              <span class="tl_radio_item_label">Child Abuse</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="copyright">
+              <span class="tl_radio_item_label">Copyright</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="illegal_drugs">
+              <span class="tl_radio_item_label">Illegal Drugs</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="personal_details">
+              <span class="tl_radio_item_label">Personal Details</span>
+            </label>
+            <label class="tl_radio_item">
+              <input type="radio" class="radio" name="reason" value="other">
+              <span class="tl_radio_item_label">Other</span>
+            </label>
+          </div>
+          <div class="tl_textfield_item tl_comment_field">
+            <input type="text" class="tl_textfield" name="comment" value="" placeholder="Add Comment…">
+          </div>
+          <div class="tl_copyright_field">
+            Please submit your DMCA takedown request to <a href="mailto:dmca@telegram.org?subject=Report%20to%20Telegraph%20page%20%22Faltam%206%20jogadores%20para%20TODOS%20ganharem%201.500%20moedas%3A%20meta%20comunit%C3%A1ria%20do%20VANGUARD%22&body=Reported%20page%3A%20https%3A%2F%2Ftelegra.ph%2FFaltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunit%C3%A1ria-do-VANGUARD-09-24%0A%0A%0A" target="_blank">dmca@telegram.org</a>
+          </div>
+        </section>
+        <aside class="tl_popup_buttons">
+          <button type="reset" class="button" id="_report_cancel">Cancel</button>
+          <button type="submit" class="button submit_button">Report</button>
+        </aside>
+      </form>
+    </main>
+  </div>
+    
+    <script>var T={"apiUrl":"https:\/\/edit.telegra.ph","uploadEnabled":false,"datetime":1790213931,"pageId":"896050a7ea063b73ddd77","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3*T.datetime),d='January February March April May June July August September October November December'.split(' ')[a.getMonth()],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();</script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.selection.min.js"></script>
+    <script src="/js/autosize.min.js"></script>
+    <script src="/js/load-image.all.min.js?1"></script>
+    <script src="/js/quill.min.js?10"></script>
+    <script src="/js/core.min.js?67"></script>
+    <script async src="https://t.me/_websync_?path=Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunit%C3%A1ria-do-VANGUARD-09-24&hash=f46bc8d79ea92d5227"></script>
+  </body>
+200 matches=14 https://telegra.ph/Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunitária-do-VANGUARD-09-24
+[verify-paste.rs] FAIL(code VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS
+
+· META COMUNITARIA con jugadores REALES de la base de datos (sin bots).
+· Meta de 30 ya conquistada. Somos 34 agentes.
+· Meta de 40: 1.500 monedas + 15 gemas + 400 XP para TODOS. FALTAN 6.
+· Tu código de referido suma para la meta Y te paga recompensas propias.
+· Guerra multijugador, ELO, globo 3D OSINT, radar GDELT+GDACS en vivo,
+  botín real del Banco Mundial (Ucrania +65). Gratis, sin registro, 8 idiomas.
+
+ASEGURA TU RECOMPENSA: https://vanguard-kq9r.vercel.app/?ref=VGD-PASTE15
+DATOS REALES: https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-PASTE15
+200) http=VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS
+
+· META COMUNITARIA con jugadores REALES de la base de datos (sin bots).
+· Meta de 30 ya conquistada. Somos 34 agentes.
+· Meta de 40: 1.500 monedas + 15 gemas + 400 XP para TODOS. FALTAN 6.
+· Tu código de referido suma para la meta Y te paga recompensas propias.
+· Guerra multijugador, ELO, globo 3D OSINT, radar GDELT+GDACS en vivo,
+  botín real del Banco Mundial (Ucrania +65). Gratis, sin registro, 8 idiomas.
+
+ASEGURA TU RECOMPENSA: https://vanguard-kq9r.vercel.app/?ref=VGD-PASTE15
+DATOS REALES: https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-PASTE15
+200 matches=3 https://paste.rs/F3fl8
+[verify-rentry-ES] FAIL(code <!DOCTYPE html>
+
+
+    <html>
+
+
+
+<head>
+    <meta charset="utf-8">
+    
+
+<title>VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS</title>
+
+<link rel="canonical" href="https://rentry.co/vho9bfa3" />
+
+
+<meta name="robots" content="noindex">
+
+
+
+    
+
+<meta name="description" content="El juego de guerra gratis del navegador estrenó la mecánica que más
+conviene a la comunidad:
+META COMUNITARIA HONESTA
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,
+   TODOS los que están dentro recl...">
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="El juego de guerra gratis del navegador estrenó la mecánica que más
+conviene a la comunidad:
+META COMUNITARIA HONESTA
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,
+   TODOS los que están dentro recl..." />
+<meta name="twitter:title" content="VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS" />
+<meta name="twitter:site" content="@rentry_co" />
+
+<meta property="og:url" content="https://rentry.co/vho9bfa3" />
+<meta property="og:description" content="El juego de guerra gratis del navegador estrenó la mecánica que más
+conviene a la comunidad:
+META COMUNITARIA HONESTA
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,
+   TODOS los que están dentro recl..." />
+<meta property="og:title" content="VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS" />
+<meta property="og:type" content="article" />
+
+<meta name="twitter:image" content="https://rentry.co/static/icons/512.png" />
+<meta property="og:image" content="https://rentry.co/static/icons/512.png" />
+
+
+
+
+
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=1" />
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css?v=1789749961">
+    <link rel="manifest" href="/static/manifest.json?v=1789749960">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLFSDKZXET"></script>
+    <script>
+ [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LLFSDKZXET');
+    </script>
+
+ localStorage.getItem("dark-mode") == "true"));</script>-->
+ 'rentry.co'; script.defer = true; script.setAttribute('data-domain', hn + ',rentry'); document.head.appendChild(script);</script>
+
+    
+
+    
+    
+
+</head>
+
+<body class="m-0 p-0 " >
+    
+    
+    
+        <!--
+        <div class="f3fsf">
+            <a class="asd_1" href="https://www.privateinternetaccess.com/offer/Gen_3t4ppiv">
+                <div class="inner">
+                    <span class="title">Rentry Recommends</span>
+                    <div class="image" ></div>
+                </div>
+                <p>High quality VPN with cheap 3 year deal</p>
+            </a>
+        -->
+        
+        <div class="donate">
+            <a class="fdsfa" target="_blank" href="https://ko-fi.com/rentry_official">
+                <div class="inner">
+                    <div class="image" ></div>
+                    <span class="title">Enjoying Rentry? Please donate and help keep us alive!</span>
+                    <button type="button"><span class="kofi-icon"></span>Donate on KoFi</button>
+                </div>
+            </a>
+        </div>
+        
+            
+        
+            
+        
+        
+        </div>
+    
+    <div class="body render-metadata">
+
+
+    <div class="sub-body">
+        <div class="container container-smooth">
+            <div class="row no-gutters">
+                
+
+
+
+<div class="col-12">
+
+<style>
+
+
+    .render-metadata .entry-text {
+        
+        
+        
+        
+
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text {
+        
+        
+    }
+    .render-metadata .foreground-container {
+        
+    }
+    .dark-mode .render-metadata  .foreground-container {
+        
+    }
+
+    .render-metadata .entry-text p {
+        
+        
+    }
+    .render-metadata .entry-text h1 {
+        
+    }
+    .render-metadata .entry-text h2 {
+        
+    }
+    .render-metadata .entry-text h3 {
+        
+    }
+    .render-metadata .entry-text h4 {
+        
+    }
+    .render-metadata .entry-text h5 {
+        
+    }
+    .render-metadata .entry-text h6 {
+        
+    }
+    .render-metadata .entry-text li {
+        
+    }
+    .render-metadata .entry-text li::marker {
+        
+    }
+    .dark-mode .render-metadata  .entry-text li::marker {
+        
+    }
+    .render-metadata .entry-text a {
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text a {
+        
+    }
+    .render-metadata .entry-text blockquote {
+        
+    }
+    .render-metadata .entry-text pre {
+        
+    }
+
+    .render-metadata .entry-text article {
+        
+        
+        
+    }
+    .render-metadata .entry-text {
+        
+        
+
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text-container {
+
+    }
+
+
+    .render-metadata.body {
+        
+        
+        
+        
+        
+    }
+
+    .dark-mode .render-metadata.body {
+        
+    }
+
+    .render-metadata h1, .render-metadata h2, .render-metadata h3, .render-metadata h4, .render-metadata h5, .render-metadata h6 {
+        
+        
+    }
+
+
+    .body > .sub-body {
+        
+    }
+    .dark-mode .body > .sub-body {
+        
+    }
+
+
+ 
+</style>
+
+
+
+    <div class="row no-gutters sub-body">
+        <div class="col-12 long-words">
+            
+
+            <div class="actions">
+                <div class="container">
+                    <div class="item full-contrast" title="High Contrast Mode">
+                        <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C10.4633 18 9.06151 17.4223 8 16.4722C6.7725 15.3736 6 13.777 6 12C6 10.223 6.7725 8.62643 8 7.52779C9.06151 6.57771 10.4633 6 12 6V18Z" fill="#83898e"/><path clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="#83898e" fill-rule="evenodd"/></svg>
+                    </div>
+                    
+                    <div class="item report" title="Report URL">
+                        <a href="/report-url?url=vho9bfa3 "/>
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="5" height="80" fill="#83898e" />
+                            <rect x="15" y="10" width="50" height="40" fill="rgb(189, 192, 194)" />
+                          </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="entry-text-container
+            
+
+            
+            ">
+                <div class="entry-text">
+                    <section class="foreground-container"></section>
+                    <article>
+                        
+                        <div><p>VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS</p>
+<p>El juego de guerra gratis del navegador estrenó la mecánica que más<br>
+conviene a la comunidad:</p>
+<ol>
+<li class="mb-3 mb-p-0">META COMUNITARIA HONESTA<br>
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.<br>
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,<br>
+   TODOS los que están dentro reclaman monedas + gemas + XP.</li>
+<li class="mb-3 mb-p-0">ESTADO EN VIVO<br>
+   · Meta de 30: CONQUISTADA (1.000 monedas cobrables por todos)<br>
+   · Ahora: 34 agentes — meta de 40: 1.500 monedas + 15 gemas + 400 XP<br>
+   · FALTAN 6 JUGADORES. Cada amigo que entra suma para todos.<br>
+   · Tu código de referido (VGD-XXXXXX) además te da recompensas propias.</li>
+<li>TODO LO DEMÁS SIGUE<br>
+   Guerra global multijugador por rondas, duelos 1v1 con ELO, globo 3D<br>
+   con 15 capas OSINT, radar geopolítico en vivo (GDELT + GDACS),<br>
+   botín real del Banco Mundial (Ucrania +65 monedas), quiz, bolsa de<br>
+   países, récord global de gente en línea y 8 idiomas automáticos.</li>
+</ol>
+<p>Gratis, sin registro, desde cualquier móvil.</p>
+<p>ASEGURA TU RECOMPENSA: <a class="external" href="https://vanguard-kq9r.vercel.app/?ref=VGD-REN15" rel="" target="_blank">https://vanguard-kq9r.vercel.app/?ref=VGD-REN15</a><br>
+PODER MILITAR REAL: <a class="external" href="https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15" rel="" target="_blank">https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15</a></p></div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="templates none">
+        <div class="template-modal">
+
+        </div>
+        <div class="template-link-warning">
+            <div class="my-2 px-sm-4 warning-container">
+                <article class="warning-inner-container">
+                    <div class="warning-box">
+                        <h1 class="h3">Warning</h1>
+                        <div class="warning-types">
+                            
+                        </div>
+                        <p class="link-to-visit">LINK</p>
+                        
+                            <p>You are about to visit a link which has been flagged with the above content warnings. Do you wish to continue?</p>
+                        
+                        <div class="warning-options">
+                            <button type="button" class="warning-button warning-first">Continue</button>
+                            <a href="#"  class="warning-button warning-second">Cancel</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="row no-gutters">
+    <div class="col-12 px-0">
+        <div class="text-muted">
+            <div class="text-left action-bar">
+                <a role="button" class="btn btn-light float-left squared" href="/vho9bfa3/edit">Edit</a>
+                <div class="dropdown d-inline-block position-relative">
+                    <button id="dropdownButton" class="btn btn-light squared dropdown-toggle" type="button">Export</button>
+                    <div class="dropdown-content">
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/raw">Raw</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=pdf">PDF</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=png">PNG</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=webp">WebP</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=jpg">JPG</a>
+                    </div>
+                </div>
+            </div>
+            <div class="page-info float-right text-right pr-2 pr-sm-0">
+                
+                
+                <p>
+                    Pub: 24 Sep 2026 01:38 <span class="d-none d-sm-inline">UTC</span><br>
+                </p>
+                
+                
+                
+                <p>
+                Views: 0
+                </p>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+                
+                <div class="text-center w-100 mb-3">
+                    <hr class="my-2 basement-hr">
+                    <div class="bottom-links">
+    <div class="link-container">
+        <a class="mr-1" href="/">new</a>&middot;
+        <a class="mx-1" href="/what">what</a>&middot;
+        <a class="mx-1" href="/how">how</a>&middot;
+        <a class="mx-1" href="/langs">langs</a>&middot;
+        <a class="mx-1" href="/what#contacts">contacts</a>&middot;
+        
+        <a class="ml-1" href="/request-login">login</a>
+        
+    </div>
+    <div class="link-icon-container">
+        <span style="right: 0; bottom: -9px; background:transparent!important" class="position-absolute btn squared mr-2 mr-sm-0" id="darkModeBtn" title="Dark/light mode"></span>
+    </div>
+</div>
+
+                </div>
+                
+                
+
+            </div>
+        </div>
+
+        <script src="/static/js/jquery.min.js?v=1789749960"></script>
+        <script src="/static/js/custom-common.min.js?v=1789749960"></script>
+        <script src="/static/js/bootstrap.min.js?v=1789749960"></script>
+        
+    </div>
+</div>
+</body>
+
+</html>
+200) http=<!DOCTYPE html>
+
+
+    <html>
+
+
+
+<head>
+    <meta charset="utf-8">
+    
+
+<title>VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS</title>
+
+<link rel="canonical" href="https://rentry.co/vho9bfa3" />
+
+
+<meta name="robots" content="noindex">
+
+
+
+    
+
+<meta name="description" content="El juego de guerra gratis del navegador estrenó la mecánica que más
+conviene a la comunidad:
+META COMUNITARIA HONESTA
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,
+   TODOS los que están dentro recl...">
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="El juego de guerra gratis del navegador estrenó la mecánica que más
+conviene a la comunidad:
+META COMUNITARIA HONESTA
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,
+   TODOS los que están dentro recl..." />
+<meta name="twitter:title" content="VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS" />
+<meta name="twitter:site" content="@rentry_co" />
+
+<meta property="og:url" content="https://rentry.co/vho9bfa3" />
+<meta property="og:description" content="El juego de guerra gratis del navegador estrenó la mecánica que más
+conviene a la comunidad:
+META COMUNITARIA HONESTA
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,
+   TODOS los que están dentro recl..." />
+<meta property="og:title" content="VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS" />
+<meta property="og:type" content="article" />
+
+<meta name="twitter:image" content="https://rentry.co/static/icons/512.png" />
+<meta property="og:image" content="https://rentry.co/static/icons/512.png" />
+
+
+
+
+
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=1" />
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css?v=1789749961">
+    <link rel="manifest" href="/static/manifest.json?v=1789749960">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLFSDKZXET"></script>
+    <script>
+ [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LLFSDKZXET');
+    </script>
+
+ localStorage.getItem("dark-mode") == "true"));</script>-->
+ 'rentry.co'; script.defer = true; script.setAttribute('data-domain', hn + ',rentry'); document.head.appendChild(script);</script>
+
+    
+
+    
+    
+
+</head>
+
+<body class="m-0 p-0 " >
+    
+    
+    
+        <!--
+        <div class="f3fsf">
+            <a class="asd_1" href="https://www.privateinternetaccess.com/offer/Gen_3t4ppiv">
+                <div class="inner">
+                    <span class="title">Rentry Recommends</span>
+                    <div class="image" ></div>
+                </div>
+                <p>High quality VPN with cheap 3 year deal</p>
+            </a>
+        -->
+        
+        <div class="donate">
+            <a class="fdsfa" target="_blank" href="https://ko-fi.com/rentry_official">
+                <div class="inner">
+                    <div class="image" ></div>
+                    <span class="title">Enjoying Rentry? Please donate and help keep us alive!</span>
+                    <button type="button"><span class="kofi-icon"></span>Donate on KoFi</button>
+                </div>
+            </a>
+        </div>
+        
+            
+        
+            
+        
+        
+        </div>
+    
+    <div class="body render-metadata">
+
+
+    <div class="sub-body">
+        <div class="container container-smooth">
+            <div class="row no-gutters">
+                
+
+
+
+<div class="col-12">
+
+<style>
+
+
+    .render-metadata .entry-text {
+        
+        
+        
+        
+
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text {
+        
+        
+    }
+    .render-metadata .foreground-container {
+        
+    }
+    .dark-mode .render-metadata  .foreground-container {
+        
+    }
+
+    .render-metadata .entry-text p {
+        
+        
+    }
+    .render-metadata .entry-text h1 {
+        
+    }
+    .render-metadata .entry-text h2 {
+        
+    }
+    .render-metadata .entry-text h3 {
+        
+    }
+    .render-metadata .entry-text h4 {
+        
+    }
+    .render-metadata .entry-text h5 {
+        
+    }
+    .render-metadata .entry-text h6 {
+        
+    }
+    .render-metadata .entry-text li {
+        
+    }
+    .render-metadata .entry-text li::marker {
+        
+    }
+    .dark-mode .render-metadata  .entry-text li::marker {
+        
+    }
+    .render-metadata .entry-text a {
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text a {
+        
+    }
+    .render-metadata .entry-text blockquote {
+        
+    }
+    .render-metadata .entry-text pre {
+        
+    }
+
+    .render-metadata .entry-text article {
+        
+        
+        
+    }
+    .render-metadata .entry-text {
+        
+        
+
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text-container {
+
+    }
+
+
+    .render-metadata.body {
+        
+        
+        
+        
+        
+    }
+
+    .dark-mode .render-metadata.body {
+        
+    }
+
+    .render-metadata h1, .render-metadata h2, .render-metadata h3, .render-metadata h4, .render-metadata h5, .render-metadata h6 {
+        
+        
+    }
+
+
+    .body > .sub-body {
+        
+    }
+    .dark-mode .body > .sub-body {
+        
+    }
+
+
+ 
+</style>
+
+
+
+    <div class="row no-gutters sub-body">
+        <div class="col-12 long-words">
+            
+
+            <div class="actions">
+                <div class="container">
+                    <div class="item full-contrast" title="High Contrast Mode">
+                        <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C10.4633 18 9.06151 17.4223 8 16.4722C6.7725 15.3736 6 13.777 6 12C6 10.223 6.7725 8.62643 8 7.52779C9.06151 6.57771 10.4633 6 12 6V18Z" fill="#83898e"/><path clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="#83898e" fill-rule="evenodd"/></svg>
+                    </div>
+                    
+                    <div class="item report" title="Report URL">
+                        <a href="/report-url?url=vho9bfa3 "/>
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="5" height="80" fill="#83898e" />
+                            <rect x="15" y="10" width="50" height="40" fill="rgb(189, 192, 194)" />
+                          </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="entry-text-container
+            
+
+            
+            ">
+                <div class="entry-text">
+                    <section class="foreground-container"></section>
+                    <article>
+                        
+                        <div><p>VANGUARD v46.0 — OBJETIVO MUNDIAL: LA META QUE NOS PAGA A TODOS</p>
+<p>El juego de guerra gratis del navegador estrenó la mecánica que más<br>
+conviene a la comunidad:</p>
+<ol>
+<li class="mb-3 mb-p-0">META COMUNITARIA HONESTA<br>
+   La barra de progreso lee jugadores ÚNICOS reales de la base de datos.<br>
+   Nada de bots ni números inflados: cuando la comunidad llega al hito,<br>
+   TODOS los que están dentro reclaman monedas + gemas + XP.</li>
+<li class="mb-3 mb-p-0">ESTADO EN VIVO<br>
+   · Meta de 30: CONQUISTADA (1.000 monedas cobrables por todos)<br>
+   · Ahora: 34 agentes — meta de 40: 1.500 monedas + 15 gemas + 400 XP<br>
+   · FALTAN 6 JUGADORES. Cada amigo que entra suma para todos.<br>
+   · Tu código de referido (VGD-XXXXXX) además te da recompensas propias.</li>
+<li>TODO LO DEMÁS SIGUE<br>
+   Guerra global multijugador por rondas, duelos 1v1 con ELO, globo 3D<br>
+   con 15 capas OSINT, radar geopolítico en vivo (GDELT + GDACS),<br>
+   botín real del Banco Mundial (Ucrania +65 monedas), quiz, bolsa de<br>
+   países, récord global de gente en línea y 8 idiomas automáticos.</li>
+</ol>
+<p>Gratis, sin registro, desde cualquier móvil.</p>
+<p>ASEGURA TU RECOMPENSA: <a class="external" href="https://vanguard-kq9r.vercel.app/?ref=VGD-REN15" rel="" target="_blank">https://vanguard-kq9r.vercel.app/?ref=VGD-REN15</a><br>
+PODER MILITAR REAL: <a class="external" href="https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15" rel="" target="_blank">https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15</a></p></div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="templates none">
+        <div class="template-modal">
+
+        </div>
+        <div class="template-link-warning">
+            <div class="my-2 px-sm-4 warning-container">
+                <article class="warning-inner-container">
+                    <div class="warning-box">
+                        <h1 class="h3">Warning</h1>
+                        <div class="warning-types">
+                            
+                        </div>
+                        <p class="link-to-visit">LINK</p>
+                        
+                            <p>You are about to visit a link which has been flagged with the above content warnings. Do you wish to continue?</p>
+                        
+                        <div class="warning-options">
+                            <button type="button" class="warning-button warning-first">Continue</button>
+                            <a href="#"  class="warning-button warning-second">Cancel</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="row no-gutters">
+    <div class="col-12 px-0">
+        <div class="text-muted">
+            <div class="text-left action-bar">
+                <a role="button" class="btn btn-light float-left squared" href="/vho9bfa3/edit">Edit</a>
+                <div class="dropdown d-inline-block position-relative">
+                    <button id="dropdownButton" class="btn btn-light squared dropdown-toggle" type="button">Export</button>
+                    <div class="dropdown-content">
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/raw">Raw</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=pdf">PDF</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=png">PNG</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=webp">WebP</a>
+                        <a role="button" class="btn btn-light squared" href="/vho9bfa3/export-page?format=jpg">JPG</a>
+                    </div>
+                </div>
+            </div>
+            <div class="page-info float-right text-right pr-2 pr-sm-0">
+                
+                
+                <p>
+                    Pub: 24 Sep 2026 01:38 <span class="d-none d-sm-inline">UTC</span><br>
+                </p>
+                
+                
+                
+                <p>
+                Views: 0
+                </p>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+                
+                <div class="text-center w-100 mb-3">
+                    <hr class="my-2 basement-hr">
+                    <div class="bottom-links">
+    <div class="link-container">
+        <a class="mr-1" href="/">new</a>&middot;
+        <a class="mx-1" href="/what">what</a>&middot;
+        <a class="mx-1" href="/how">how</a>&middot;
+        <a class="mx-1" href="/langs">langs</a>&middot;
+        <a class="mx-1" href="/what#contacts">contacts</a>&middot;
+        
+        <a class="ml-1" href="/request-login">login</a>
+        
+    </div>
+    <div class="link-icon-container">
+        <span style="right: 0; bottom: -9px; background:transparent!important" class="position-absolute btn squared mr-2 mr-sm-0" id="darkModeBtn" title="Dark/light mode"></span>
+    </div>
+</div>
+
+                </div>
+                
+                
+
+            </div>
+        </div>
+
+        <script src="/static/js/jquery.min.js?v=1789749960"></script>
+        <script src="/static/js/custom-common.min.js?v=1789749960"></script>
+        <script src="/static/js/bootstrap.min.js?v=1789749960"></script>
+        
+    </div>
+</div>
+</body>
+
+</html>
+200 matches=48 https://rentry.co/vho9bfa3
+[verify-rentry-EN] FAIL(code <!DOCTYPE html>
+
+
+    <html>
+
+
+
+<head>
+    <meta charset="utf-8">
+    
+
+<title>VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE</title>
+
+<link rel="canonical" href="https://rentry.co/qutyxaio" />
+
+
+<meta name="robots" content="noindex">
+
+
+
+    
+
+<meta name="description" content="The free browser war game just shipped the mechanic that benefits
+the whole community:
+HONEST COMMUNITY GOAL
+   The progress bar reads REAL unique players from the database.
+   No bots, no inflated numbers: when the community hits the goal,
+   EVERYONE inside claims coins + gems + XP.
+LIVE STATUS...">
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="The free browser war game just shipped the mechanic that benefits
+the whole community:
+HONEST COMMUNITY GOAL
+   The progress bar reads REAL unique players from the database.
+   No bots, no inflated numbers: when the community hits the goal,
+   EVERYONE inside claims coins + gems + XP.
+LIVE STATUS..." />
+<meta name="twitter:title" content="VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE" />
+<meta name="twitter:site" content="@rentry_co" />
+
+<meta property="og:url" content="https://rentry.co/qutyxaio" />
+<meta property="og:description" content="The free browser war game just shipped the mechanic that benefits
+the whole community:
+HONEST COMMUNITY GOAL
+   The progress bar reads REAL unique players from the database.
+   No bots, no inflated numbers: when the community hits the goal,
+   EVERYONE inside claims coins + gems + XP.
+LIVE STATUS..." />
+<meta property="og:title" content="VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE" />
+<meta property="og:type" content="article" />
+
+<meta name="twitter:image" content="https://rentry.co/static/icons/512.png" />
+<meta property="og:image" content="https://rentry.co/static/icons/512.png" />
+
+
+
+
+
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=1" />
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css?v=1789749961">
+    <link rel="manifest" href="/static/manifest.json?v=1789749960">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLFSDKZXET"></script>
+    <script>
+ [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LLFSDKZXET');
+    </script>
+
+ localStorage.getItem("dark-mode") == "true"));</script>-->
+ 'rentry.co'; script.defer = true; script.setAttribute('data-domain', hn + ',rentry'); document.head.appendChild(script);</script>
+
+    
+
+    
+    
+
+</head>
+
+<body class="m-0 p-0 " >
+    
+    
+    
+        <!--
+        <div class="f3fsf">
+            <a class="asd_1" href="https://www.privateinternetaccess.com/offer/Gen_3t4ppiv">
+                <div class="inner">
+                    <span class="title">Rentry Recommends</span>
+                    <div class="image" ></div>
+                </div>
+                <p>High quality VPN with cheap 3 year deal</p>
+            </a>
+        -->
+        
+        <div class="donate">
+            <a class="fdsfa" target="_blank" href="https://ko-fi.com/rentry_official">
+                <div class="inner">
+                    <div class="image" ></div>
+                    <span class="title">Enjoying Rentry? Please donate and help keep us alive!</span>
+                    <button type="button"><span class="kofi-icon"></span>Donate on KoFi</button>
+                </div>
+            </a>
+        </div>
+        
+            
+        
+            
+        
+        
+        </div>
+    
+    <div class="body render-metadata">
+
+
+    <div class="sub-body">
+        <div class="container container-smooth">
+            <div class="row no-gutters">
+                
+
+
+
+<div class="col-12">
+
+<style>
+
+
+    .render-metadata .entry-text {
+        
+        
+        
+        
+
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text {
+        
+        
+    }
+    .render-metadata .foreground-container {
+        
+    }
+    .dark-mode .render-metadata  .foreground-container {
+        
+    }
+
+    .render-metadata .entry-text p {
+        
+        
+    }
+    .render-metadata .entry-text h1 {
+        
+    }
+    .render-metadata .entry-text h2 {
+        
+    }
+    .render-metadata .entry-text h3 {
+        
+    }
+    .render-metadata .entry-text h4 {
+        
+    }
+    .render-metadata .entry-text h5 {
+        
+    }
+    .render-metadata .entry-text h6 {
+        
+    }
+    .render-metadata .entry-text li {
+        
+    }
+    .render-metadata .entry-text li::marker {
+        
+    }
+    .dark-mode .render-metadata  .entry-text li::marker {
+        
+    }
+    .render-metadata .entry-text a {
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text a {
+        
+    }
+    .render-metadata .entry-text blockquote {
+        
+    }
+    .render-metadata .entry-text pre {
+        
+    }
+
+    .render-metadata .entry-text article {
+        
+        
+        
+    }
+    .render-metadata .entry-text {
+        
+        
+
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text-container {
+
+    }
+
+
+    .render-metadata.body {
+        
+        
+        
+        
+        
+    }
+
+    .dark-mode .render-metadata.body {
+        
+    }
+
+    .render-metadata h1, .render-metadata h2, .render-metadata h3, .render-metadata h4, .render-metadata h5, .render-metadata h6 {
+        
+        
+    }
+
+
+    .body > .sub-body {
+        
+    }
+    .dark-mode .body > .sub-body {
+        
+    }
+
+
+ 
+</style>
+
+
+
+    <div class="row no-gutters sub-body">
+        <div class="col-12 long-words">
+            
+
+            <div class="actions">
+                <div class="container">
+                    <div class="item full-contrast" title="High Contrast Mode">
+                        <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C10.4633 18 9.06151 17.4223 8 16.4722C6.7725 15.3736 6 13.777 6 12C6 10.223 6.7725 8.62643 8 7.52779C9.06151 6.57771 10.4633 6 12 6V18Z" fill="#83898e"/><path clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="#83898e" fill-rule="evenodd"/></svg>
+                    </div>
+                    
+                    <div class="item report" title="Report URL">
+                        <a href="/report-url?url=qutyxaio "/>
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="5" height="80" fill="#83898e" />
+                            <rect x="15" y="10" width="50" height="40" fill="rgb(189, 192, 194)" />
+                          </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="entry-text-container
+            
+
+            
+            ">
+                <div class="entry-text">
+                    <section class="foreground-container"></section>
+                    <article>
+                        
+                        <div><p>VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE</p>
+<p>The free browser war game just shipped the mechanic that benefits<br>
+the whole community:</p>
+<ol>
+<li class="mb-3 mb-p-0">HONEST COMMUNITY GOAL<br>
+   The progress bar reads REAL unique players from the database.<br>
+   No bots, no inflated numbers: when the community hits the goal,<br>
+   EVERYONE inside claims coins + gems + XP.</li>
+<li class="mb-3 mb-p-0">LIVE STATUS<br>
+   · 30-player goal: CONQUERED (1,000 coins claimable by all)<br>
+   · Now: 34 agents — 40 goal pays 1,500 coins + 15 gems + 400 XP<br>
+   · ONLY 6 PLAYERS MISSING. Every friend who joins pushes it.<br>
+   · Your referral code (VGD-XXXXXX) also pays you personal rewards.</li>
+<li>EVERYTHING ELSE REMAINS<br>
+   Round-based global multiplayer war, 1v1 ELO duels, 3D OSINT globe<br>
+   with 15 layers, live GDELT+GDACS geopolitical radar, real World<br>
+   Bank loot (Ukraine +65 coins), quiz, country stock market, online<br>
+   record chip and 8 automatic languages.</li>
+</ol>
+<p>Free, no signup, any phone.</p>
+<p>CLAIM YOUR REWARD: <a class="external" href="https://vanguard-kq9r.vercel.app/?ref=VGD-REN15EN" rel="" target="_blank">https://vanguard-kq9r.vercel.app/?ref=VGD-REN15EN</a><br>
+REAL MILITARY POWER: <a class="external" href="https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15EN" rel="" target="_blank">https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15EN</a></p></div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="templates none">
+        <div class="template-modal">
+
+        </div>
+        <div class="template-link-warning">
+            <div class="my-2 px-sm-4 warning-container">
+                <article class="warning-inner-container">
+                    <div class="warning-box">
+                        <h1 class="h3">Warning</h1>
+                        <div class="warning-types">
+                            
+                        </div>
+                        <p class="link-to-visit">LINK</p>
+                        
+                            <p>You are about to visit a link which has been flagged with the above content warnings. Do you wish to continue?</p>
+                        
+                        <div class="warning-options">
+                            <button type="button" class="warning-button warning-first">Continue</button>
+                            <a href="#"  class="warning-button warning-second">Cancel</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="row no-gutters">
+    <div class="col-12 px-0">
+        <div class="text-muted">
+            <div class="text-left action-bar">
+                <a role="button" class="btn btn-light float-left squared" href="/qutyxaio/edit">Edit</a>
+                <div class="dropdown d-inline-block position-relative">
+                    <button id="dropdownButton" class="btn btn-light squared dropdown-toggle" type="button">Export</button>
+                    <div class="dropdown-content">
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/raw">Raw</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=pdf">PDF</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=png">PNG</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=webp">WebP</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=jpg">JPG</a>
+                    </div>
+                </div>
+            </div>
+            <div class="page-info float-right text-right pr-2 pr-sm-0">
+                
+                
+                <p>
+                    Pub: 24 Sep 2026 01:38 <span class="d-none d-sm-inline">UTC</span><br>
+                </p>
+                
+                
+                
+                <p>
+                Views: 0
+                </p>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+                
+                <div class="text-center w-100 mb-3">
+                    <hr class="my-2 basement-hr">
+                    <div class="bottom-links">
+    <div class="link-container">
+        <a class="mr-1" href="/">new</a>&middot;
+        <a class="mx-1" href="/what">what</a>&middot;
+        <a class="mx-1" href="/how">how</a>&middot;
+        <a class="mx-1" href="/langs">langs</a>&middot;
+        <a class="mx-1" href="/what#contacts">contacts</a>&middot;
+        
+        <a class="ml-1" href="/request-login">login</a>
+        
+    </div>
+    <div class="link-icon-container">
+        <span style="right: 0; bottom: -9px; background:transparent!important" class="position-absolute btn squared mr-2 mr-sm-0" id="darkModeBtn" title="Dark/light mode"></span>
+    </div>
+</div>
+
+                </div>
+                
+                
+
+            </div>
+        </div>
+
+        <script src="/static/js/jquery.min.js?v=1789749960"></script>
+        <script src="/static/js/custom-common.min.js?v=1789749960"></script>
+        <script src="/static/js/bootstrap.min.js?v=1789749960"></script>
+        
+    </div>
+</div>
+</body>
+
+</html>
+200) http=<!DOCTYPE html>
+
+
+    <html>
+
+
+
+<head>
+    <meta charset="utf-8">
+    
+
+<title>VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE</title>
+
+<link rel="canonical" href="https://rentry.co/qutyxaio" />
+
+
+<meta name="robots" content="noindex">
+
+
+
+    
+
+<meta name="description" content="The free browser war game just shipped the mechanic that benefits
+the whole community:
+HONEST COMMUNITY GOAL
+   The progress bar reads REAL unique players from the database.
+   No bots, no inflated numbers: when the community hits the goal,
+   EVERYONE inside claims coins + gems + XP.
+LIVE STATUS...">
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="The free browser war game just shipped the mechanic that benefits
+the whole community:
+HONEST COMMUNITY GOAL
+   The progress bar reads REAL unique players from the database.
+   No bots, no inflated numbers: when the community hits the goal,
+   EVERYONE inside claims coins + gems + XP.
+LIVE STATUS..." />
+<meta name="twitter:title" content="VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE" />
+<meta name="twitter:site" content="@rentry_co" />
+
+<meta property="og:url" content="https://rentry.co/qutyxaio" />
+<meta property="og:description" content="The free browser war game just shipped the mechanic that benefits
+the whole community:
+HONEST COMMUNITY GOAL
+   The progress bar reads REAL unique players from the database.
+   No bots, no inflated numbers: when the community hits the goal,
+   EVERYONE inside claims coins + gems + XP.
+LIVE STATUS..." />
+<meta property="og:title" content="VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE" />
+<meta property="og:type" content="article" />
+
+<meta name="twitter:image" content="https://rentry.co/static/icons/512.png" />
+<meta property="og:image" content="https://rentry.co/static/icons/512.png" />
+
+
+
+
+
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=1" />
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css?v=1789749961">
+    <link rel="manifest" href="/static/manifest.json?v=1789749960">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LLFSDKZXET"></script>
+    <script>
+ [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LLFSDKZXET');
+    </script>
+
+ localStorage.getItem("dark-mode") == "true"));</script>-->
+ 'rentry.co'; script.defer = true; script.setAttribute('data-domain', hn + ',rentry'); document.head.appendChild(script);</script>
+
+    
+
+    
+    
+
+</head>
+
+<body class="m-0 p-0 " >
+    
+    
+    
+        <!--
+        <div class="f3fsf">
+            <a class="asd_1" href="https://www.privateinternetaccess.com/offer/Gen_3t4ppiv">
+                <div class="inner">
+                    <span class="title">Rentry Recommends</span>
+                    <div class="image" ></div>
+                </div>
+                <p>High quality VPN with cheap 3 year deal</p>
+            </a>
+        -->
+        
+        <div class="donate">
+            <a class="fdsfa" target="_blank" href="https://ko-fi.com/rentry_official">
+                <div class="inner">
+                    <div class="image" ></div>
+                    <span class="title">Enjoying Rentry? Please donate and help keep us alive!</span>
+                    <button type="button"><span class="kofi-icon"></span>Donate on KoFi</button>
+                </div>
+            </a>
+        </div>
+        
+            
+        
+            
+        
+        
+        </div>
+    
+    <div class="body render-metadata">
+
+
+    <div class="sub-body">
+        <div class="container container-smooth">
+            <div class="row no-gutters">
+                
+
+
+
+<div class="col-12">
+
+<style>
+
+
+    .render-metadata .entry-text {
+        
+        
+        
+        
+
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text {
+        
+        
+    }
+    .render-metadata .foreground-container {
+        
+    }
+    .dark-mode .render-metadata  .foreground-container {
+        
+    }
+
+    .render-metadata .entry-text p {
+        
+        
+    }
+    .render-metadata .entry-text h1 {
+        
+    }
+    .render-metadata .entry-text h2 {
+        
+    }
+    .render-metadata .entry-text h3 {
+        
+    }
+    .render-metadata .entry-text h4 {
+        
+    }
+    .render-metadata .entry-text h5 {
+        
+    }
+    .render-metadata .entry-text h6 {
+        
+    }
+    .render-metadata .entry-text li {
+        
+    }
+    .render-metadata .entry-text li::marker {
+        
+    }
+    .dark-mode .render-metadata  .entry-text li::marker {
+        
+    }
+    .render-metadata .entry-text a {
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text a {
+        
+    }
+    .render-metadata .entry-text blockquote {
+        
+    }
+    .render-metadata .entry-text pre {
+        
+    }
+
+    .render-metadata .entry-text article {
+        
+        
+        
+    }
+    .render-metadata .entry-text {
+        
+        
+
+        
+        
+    }
+    .dark-mode .render-metadata  .entry-text-container {
+
+    }
+
+
+    .render-metadata.body {
+        
+        
+        
+        
+        
+    }
+
+    .dark-mode .render-metadata.body {
+        
+    }
+
+    .render-metadata h1, .render-metadata h2, .render-metadata h3, .render-metadata h4, .render-metadata h5, .render-metadata h6 {
+        
+        
+    }
+
+
+    .body > .sub-body {
+        
+    }
+    .dark-mode .body > .sub-body {
+        
+    }
+
+
+ 
+</style>
+
+
+
+    <div class="row no-gutters sub-body">
+        <div class="col-12 long-words">
+            
+
+            <div class="actions">
+                <div class="container">
+                    <div class="item full-contrast" title="High Contrast Mode">
+                        <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18C10.4633 18 9.06151 17.4223 8 16.4722C6.7725 15.3736 6 13.777 6 12C6 10.223 6.7725 8.62643 8 7.52779C9.06151 6.57771 10.4633 6 12 6V18Z" fill="#83898e"/><path clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="#83898e" fill-rule="evenodd"/></svg>
+                    </div>
+                    
+                    <div class="item report" title="Report URL">
+                        <a href="/report-url?url=qutyxaio "/>
+                        <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="5" height="80" fill="#83898e" />
+                            <rect x="15" y="10" width="50" height="40" fill="rgb(189, 192, 194)" />
+                          </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="entry-text-container
+            
+
+            
+            ">
+                <div class="entry-text">
+                    <section class="foreground-container"></section>
+                    <article>
+                        
+                        <div><p>VANGUARD v46.0 — COMMUNITY GOAL: THE MILESTONE THAT PAYS EVERYONE</p>
+<p>The free browser war game just shipped the mechanic that benefits<br>
+the whole community:</p>
+<ol>
+<li class="mb-3 mb-p-0">HONEST COMMUNITY GOAL<br>
+   The progress bar reads REAL unique players from the database.<br>
+   No bots, no inflated numbers: when the community hits the goal,<br>
+   EVERYONE inside claims coins + gems + XP.</li>
+<li class="mb-3 mb-p-0">LIVE STATUS<br>
+   · 30-player goal: CONQUERED (1,000 coins claimable by all)<br>
+   · Now: 34 agents — 40 goal pays 1,500 coins + 15 gems + 400 XP<br>
+   · ONLY 6 PLAYERS MISSING. Every friend who joins pushes it.<br>
+   · Your referral code (VGD-XXXXXX) also pays you personal rewards.</li>
+<li>EVERYTHING ELSE REMAINS<br>
+   Round-based global multiplayer war, 1v1 ELO duels, 3D OSINT globe<br>
+   with 15 layers, live GDELT+GDACS geopolitical radar, real World<br>
+   Bank loot (Ukraine +65 coins), quiz, country stock market, online<br>
+   record chip and 8 automatic languages.</li>
+</ol>
+<p>Free, no signup, any phone.</p>
+<p>CLAIM YOUR REWARD: <a class="external" href="https://vanguard-kq9r.vercel.app/?ref=VGD-REN15EN" rel="" target="_blank">https://vanguard-kq9r.vercel.app/?ref=VGD-REN15EN</a><br>
+REAL MILITARY POWER: <a class="external" href="https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15EN" rel="" target="_blank">https://vanguard-kq9r.vercel.app/guerra-hoy?ref=VGD-REN15EN</a></p></div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="templates none">
+        <div class="template-modal">
+
+        </div>
+        <div class="template-link-warning">
+            <div class="my-2 px-sm-4 warning-container">
+                <article class="warning-inner-container">
+                    <div class="warning-box">
+                        <h1 class="h3">Warning</h1>
+                        <div class="warning-types">
+                            
+                        </div>
+                        <p class="link-to-visit">LINK</p>
+                        
+                            <p>You are about to visit a link which has been flagged with the above content warnings. Do you wish to continue?</p>
+                        
+                        <div class="warning-options">
+                            <button type="button" class="warning-button warning-first">Continue</button>
+                            <a href="#"  class="warning-button warning-second">Cancel</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="row no-gutters">
+    <div class="col-12 px-0">
+        <div class="text-muted">
+            <div class="text-left action-bar">
+                <a role="button" class="btn btn-light float-left squared" href="/qutyxaio/edit">Edit</a>
+                <div class="dropdown d-inline-block position-relative">
+                    <button id="dropdownButton" class="btn btn-light squared dropdown-toggle" type="button">Export</button>
+                    <div class="dropdown-content">
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/raw">Raw</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=pdf">PDF</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=png">PNG</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=webp">WebP</a>
+                        <a role="button" class="btn btn-light squared" href="/qutyxaio/export-page?format=jpg">JPG</a>
+                    </div>
+                </div>
+            </div>
+            <div class="page-info float-right text-right pr-2 pr-sm-0">
+                
+                
+                <p>
+                    Pub: 24 Sep 2026 01:38 <span class="d-none d-sm-inline">UTC</span><br>
+                </p>
+                
+                
+                
+                <p>
+                Views: 0
+                </p>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+                
+                <div class="text-center w-100 mb-3">
+                    <hr class="my-2 basement-hr">
+                    <div class="bottom-links">
+    <div class="link-container">
+        <a class="mr-1" href="/">new</a>&middot;
+        <a class="mx-1" href="/what">what</a>&middot;
+        <a class="mx-1" href="/how">how</a>&middot;
+        <a class="mx-1" href="/langs">langs</a>&middot;
+        <a class="mx-1" href="/what#contacts">contacts</a>&middot;
+        
+        <a class="ml-1" href="/request-login">login</a>
+        
+    </div>
+    <div class="link-icon-container">
+        <span style="right: 0; bottom: -9px; background:transparent!important" class="position-absolute btn squared mr-2 mr-sm-0" id="darkModeBtn" title="Dark/light mode"></span>
+    </div>
+</div>
+
+                </div>
+                
+                
+
+            </div>
+        </div>
+
+        <script src="/static/js/jquery.min.js?v=1789749960"></script>
+        <script src="/static/js/custom-common.min.js?v=1789749960"></script>
+        <script src="/static/js/bootstrap.min.js?v=1789749960"></script>
+        
+    </div>
+</div>
+</body>
+
+</html>
+200 matches=10 https://rentry.co/qutyxaio
+=== FIN VERIFICACIÓN 15 ===
+=== VERIFICACIÓN RONDA 15b 2026-09-24T01:40:21Z ===
+[verify-Telegraph-ES] OK http=200 matches=14 https://telegra.ph/Faltan-6-jugadores-para-que-TODOS-cobren-1500-monedas-la-meta-comunitaria-de-VANGUARD-09-24
+[verify-Telegraph-EN] OK http=200 matches=14 https://telegra.ph/6-players-away-from-EVERYONE-getting-1500-coins-VANGUARD-community-goal-09-24
+[verify-Telegraph-PT] OK http=200 matches=14 https://telegra.ph/Faltam-6-jogadores-para-TODOS-ganharem-1500-moedas-meta-comunitária-do-VANGUARD-09-24
+[verify-paste.rs] OK http=200 matches=3 https://paste.rs/F3fl8
+[verify-rentry-ES] OK http=200 matches=48 https://rentry.co/vho9bfa3
+[verify-rentry-EN] OK http=200 matches=10 https://rentry.co/qutyxaio
+=== FIN VERIFICACIÓN 15b ===
