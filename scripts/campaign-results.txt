@@ -3002,3 +3002,26 @@ REAL MILITARY POWER: <a class="external" href="https://vanguard-kq9r.vercel.app/
 [verify-rentry-ES] OK http=200 matches=12 https://rentry.co/4of38nmv
 [verify-rentry-EN] OK http=200 matches=14 https://rentry.co/b8w3o8cq
 === FIN VERIFICACIÓN 16 ===
+=== RONDA 17 2026-09-24T16:40:45Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r17-ES] 200 https://telegra.ph/VANGUARD-ahora-te-PAGA-por-explorar-nueva-mecánica-Explorador-con-monedas-por-conocer-las-83-secciones-09-24
+[Telegraph-r17-EN] 200 https://telegra.ph/VANGUARD-now-PAYS-you-to-explore-new-Explorer-mechanic-with-coins-for-visiting-all-83-sections-09-24
+[Telegraph-r17-PT] 200 https://telegra.ph/VANGUARD-agora-PAGA-para-explorar-mecânica-Explorador-com-moedas-por-conhecer-as-83-seções-09-24
+[paste.rs-r17] 201 -> https://paste.rs/CyUwX
+[rentry-r17-ES] 200 -> https://rentry.co/hthv2fn3
+[rentry-r17-EN] 200 -> https://rentry.co/36fzvu65
+[IndexNow-r17] 200
+[PingOMatic-r17] 200
+[Twingly-r17] 200
+[WebSub-PubSubHubbub-r17] 204
+[WebSub-Superfeedr-r17] 204
+[TotalPing-r17] 200
+=== FIN RONDA 17 ===
+=== VERIFICACIÓN RONDA 17 2026-09-24T16:41:06Z ===
+[verify-Telegraph-ES] OK http=200 matches=16 https://telegra.ph/VANGUARD-ahora-te-PAGA-por-explorar-nueva-mecánica-Explorador-con-monedas-por-conocer-las-83-secciones-09-24
+[verify-Telegraph-EN] OK http=200 matches=14 https://telegra.ph/VANGUARD-now-PAYS-you-to-explore-new-Explorer-mechanic-with-coins-for-visiting-all-83-sections-09-24
+[verify-Telegraph-PT] OK http=200 matches=14 https://telegra.ph/VANGUARD-agora-PAGA-para-explorar-mecânica-Explorador-com-moedas-por-conhecer-as-83-seções-09-24
+[verify-paste.rs] OK http=200 matches=4 https://paste.rs/CyUwX
+[verify-rentry-ES] OK http=200 matches=8 https://rentry.co/hthv2fn3
+[verify-rentry-EN] OK http=200 matches=8 https://rentry.co/36fzvu65
+=== FIN VERIFICACIÓN 17 ===

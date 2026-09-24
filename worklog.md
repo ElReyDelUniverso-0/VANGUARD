@@ -1159,3 +1159,31 @@ Stage Summary:
 - v47.0 en producción: VANGUARD ahora trae NASA en vivo + divisas reales de países en guerra + buscador universal de 83 secciones — la plataforma más completa sin gastar un centavo
 - La meta comunitaria se autogobierna: 2 hitos conquistados (30, 40) sin intervención; el sistema avanza solo al 50
 - Diagnóstico profundo de stacking contexts documentado en worklog (wrapper .z-10 atrapaba overlays fuera de portal) — lección arquitectónica para futuros overlays
+
+---
+Task ID: 63
+Agent: Super Z (main)
+Task: Usuario: "Sigue, busca más, que sea más fácil navegar y descubrir, contenido coherente y en su lugar, busca bugs como experto de marketing digital, más hermosa, más mecánicas nuevas, más noticias, mejor desarrollada" — v48.0 BRÚJULA + RONDA 17
+
+Work Log:
+- AUDITORÍA EXPERTA MARKETING: SEO endpoints en producción todos 200 (robots.txt 465B, sitemap.xml, manifest 498B, /api/og 144KB dinámica, icon.svg). Navegación mapeada: 11 secciones / 83 subtabs en 2 filas con scroll — la fila 1 (secciones) NO tenía flechas ni degradados → en móvil las secciones del final quedaban invisibles ("opacadas", queja original del usuario).
+- FALSA ALARMA DOCUMENTADA: sed/rg mostraban "const enuOpen," en page.tsx:177 (parecía sintaxis rota) — od -c reveló que era el escape ANSI `[m` tragado por la terminal. Código real siempre estuvo bien. Lección: verificar con od -c antes de "arreglar".
+- v48.0 "BRÚJULA" — MECÁNICA EXPLORADOR (lo pedido: mecánica nueva + descubrimiento):
+  1) src/lib/explore.ts: hitos 10/25/50/83, recompensas 150/400/1000/2500 monedas, LS_EXPLORE_CLAIMED anti-doble-cobro.
+  2) tab-nav.tsx: botón SORPRÉNDEME (dado verde) salta a sección NUNCA visitada; badges ámbar por mundo con contador de secciones sin descubrir; punto eléctrico parpadeante en cada subtab no visitado; barra de progreso 3px degradada al pie de la nav (role=progressbar, title con X/83 + %); efecto de recompensa SOLO cuando el progreso crece en vivo (sin retro-pago, sin spam de toasts, paga el hito más alto pendiente).
+  3) mega-menu.tsx: cabecera "EXPLORADOR DE MUNDOS — X/83 secciones descubiertas" con barra + botón Sorpréndeme; tarjetas de mundo con chip "+N sin descubrir".
+- NAVEGACIÓN: flechas chevron + degradados de borde en la fila de SECCIONES (replicando la fila 2) — los mundos del final ahora visibles y alcanzables en móvil.
+- COHERENCIA (lo pedido: "todo en su lugar"): historia (Guerras históricas) + muertes (Figuras y bajas) movidas de EMISORA → ARCHIVO MUNDIAL; EMISORA queda 100% media en vivo (foryou/envivo/videos/directos/estudio/memes); descs de ambas secciones reescritas en los 9 idiomas (es/en/pt/fr/de/it/zh/ru); tecla 0 ahora lleva a la ÚLTIMA pestaña de TAB_ORDER (antes la 11ª era inaccesible por teclado).
+- MÁS NOTICIAS: RSS_SOURCES suma Al Jazeera (xml/rss/all.xml, probado 200/16.9KB) + ABC Internacional (rss/2.0/internacional, probado 200/172KB). PRODUCCIÓN: /api/news sirve 48 items de 5 fuentes — Al Jazeera 14, ABC 14, France24 11, DW 5, BBC 4.
+- BUG REAL CAZADO (lint): section-search.tsx useMemo con t() dentro pero deps [] + eslint-disable obsoleto → error react-hooks/preserve-manual-memoization. Fix: deps [t] — además corrige bug latente: las etiquetas del buscador NO se re-traducían al cambiar idioma.
+- VERIFICADO E2E PRODUCCIÓN (browser + eval simplificado): Sorpréndeme 1 ✓; progressbar con title "Explorador: 0/83" ✓; 13 badges en nav ✓; clic Sorpréndeme → salta a osint, progreso 0/83→1/83 EN VIVO ✓; 3 clics → 3/83 ✓; ARCHIVO subtabs = enciclopedia,curiosidades,epocas,historia,muertes,conquistas3d,contadores,carteles,biblioteca,tribunal ✓; EMISORA = foryou,envivo,videos,directos,estudio,memes ✓; MegaMenú "5 / 83 secciones descubiertas · recompensas al llegar a 10, 25, 50 y 83" ✓; loop por las 11 secciones → 14/83 (17%) ✓; HITO 10 COBRADO: localStorage vanguard_explore_claimed_v1=[10] y coins 250→400 (+150 exactos) ✓; news-cache ya contiene aljazeera.com ✓. Capturas: scripts/v48-nav-explorador.png (badges BROADCAST·5/SOCIAL·11/SYSTEM·12 + flechas), v48-portada.png, v48-explorador-14.png.
+- Deploy: lint 0 errores (33 warnings preexistentes, 0 en archivos nuevos), push c40248c, producción v48.0 activa tras ~2.5 min.
+- RONDA 17 (distribute-r17.sh + verify-r17.sh) — gancho "VANGUARD AHORA TE PAGA POR EXPLORAR": Telegraph ES https://telegra.ph/VANGUARD-ahora-te-PAGA-por-explorar-nueva-mecánica-Explorador-con-monedas-por-conocer-las-83-secciones-09-24 (200, 16 matches) + EN (200, 14) + PT (200, 14) + paste.rs/CyUwX (201, 4) + rentry.co/hthv2fn3 ES (200, 8) + rentry.co/36fzvu65 EN (200, 8) + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub 204×2 + TotalPing 200 = 12/12.
+- shares:external 147 → 159 (+12 honesto); version v48.0 BRÚJULA
+- ESTADO FINAL: players:total=44 (récord, era 42 al abrir la sesión), presence:peak=5 (intacto), ONLINE al cierre: 1 (sesión de verificación real mp-*), visitas 42
+
+Stage Summary:
+- v48.0 en producción: la navegación es ahora una mecánica de juego — cada una de las 83 secciones tiene un motivo económico para ser visitada (hito final: MAPA COMPLETO = 2.500 monedas), matando de raíz el problema de secciones enterradas
+- Tres capas de descubrimiento: dado Sorpréndeme (aleatorio dirigido), badges por mundo (verticales en la nav), buscador Ctrl+K (v47) — el usuario nunca más pierde contenido
+- Coherencia editorial: EMISORA=en vivo, ARCHIVO=lo histórico; recompensas verificadas pagando de verdad en producción (+150 monedas reclamadas en E2E)
+- Ronda 17 completa en 3 idiomas con el gancho de monetizar la curiosidad
