@@ -379,10 +379,10 @@ async function refreshGdeltInBackground() {
     // best-effort
   }
 
-  // v35 PLAN B: la IP compartida de Vercel suele estar rate-limited por GDELT.
-  // Si GDELT no trajo nada, tiramos de RSS de medios internacionales reales:
-  // BBC Mundo, France24 español y DW español — frescos, gratis y sin límites.
-  if (articles.length === 0) {
+  // v50.1 PLAN B+: RSS SIEMPRE — GDELT es intermitente en Vercel y los 7 medios
+  // (BBC Mundo, France24, DW, Al Jazeera, ABC, The Guardian, WSJ) deben estar
+  // garantizados en CADA refresco. El upsert no duplica filas.
+  {
     const rss = await fetchRssFallback();
     for (const a of rss) {
       try {
