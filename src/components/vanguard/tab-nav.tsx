@@ -14,7 +14,7 @@ import {
   Siren, BookLock, Gavel, BrainCircuit, ShieldAlert, Home, LayoutGrid,
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
-  Wand2, Landmark, Orbit,
+  Wand2, Landmark, Orbit, Search,
 } from "lucide-react";
 
 export type TabKey =
@@ -258,10 +258,12 @@ export function TabNav({
   active,
   onChange,
   onOpenMenu,
+  onOpenSearch,
 }: {
   active: TabKey;
   onChange: (k: TabKey) => void;
   onOpenMenu?: () => void;
+  onOpenSearch?: () => void;
 }) {
   // v21 MULTIIDIOMA: traducción de secciones/subtemas (es hasta montar → sin mismatch)
   const { t, lang } = useT();
@@ -354,6 +356,18 @@ export function TabNav({
                 </button>
               );
             })}
+            {/* v47.0 BUSCADOR DE SECCIONES — salta a cualquiera de las 81 en 2 toques */}
+            {onOpenSearch && (
+              <button
+                onClick={onOpenSearch}
+                title="Buscador de secciones (Ctrl+K o /)"
+                aria-label="Buscar sección"
+                className="mr-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-amber-hud text-amber bg-amber-hud/20 hover:bg-amber-hud/50 transition-colors"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Buscar</span>
+              </button>
+            )}
             {/* MENÚ llamativo a pantalla completa */}
             {onOpenMenu && (
               <button

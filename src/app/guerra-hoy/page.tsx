@@ -6,6 +6,8 @@ import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/pres
 import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getWorldPower, fmtUsd, fmtPersonas } from "@/lib/worldpower";
+import { getEonet, haceEonet, catColor } from "@/lib/eonet";
+import { getFx, fmtFx } from "@/lib/fx";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -90,6 +92,9 @@ export default async function GuerraHoyPage() {
   const { items, agents } = await getNews();
   // v44.0 PODER MUNDIAL — gasto militar y personal armado REALES (Banco Mundial)
   const power = await getWorldPower();
+  // v47.0 RADAR TOTAL — eventos naturales en vivo (NASA) + divisas en crisis (FX real)
+  const eonet = await getEonet();
+  const fx = await getFx();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -244,6 +249,77 @@ export default async function GuerraHoyPage() {
             </div>
             <p className="mt-2 font-mono text-[9px] text-zinc-600">
               Fuente: Banco Mundial · MS.MIL.XPND.CD + MS.MIL.TOTL.P1 + MS.MIL.XPND.GD.ZS
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* v47.0 RADAR TOTAL — eventos naturales EN VIVO de la NASA (EONET) */}
+      {eonet && eonet.rows.length > 0 && (
+        <section className="max-w-5xl mx-auto px-5 pb-6">
+          <div className="border border-orange-400/30 rounded-md p-4">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-orange-300">
+              El planeta en llamas — eventos naturales en vivo
+            </h2>
+            <p className="mt-2 text-[11px] font-mono text-zinc-500 leading-relaxed">
+              Volcanes, incendios, tormentas, inundaciones y sismos activos ahora
+              mismo, con coordenadas y hora del último avistamiento. Fuente de
+              satélites abierta de la NASA.
+            </p>
+            <ul className="mt-3 grid gap-1.5">
+              {eonet.rows.map((ev) => (
+                <li key={ev.id}>
+                  <a
+                    href={ev.link}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="flex items-center gap-2.5 rounded border border-transparent px-2 py-1.5 text-[12px] hover:border-orange-400/40 hover:bg-zinc-900/40 transition-colors"
+                  >
+                    <span className={`shrink-0 font-mono text-[9px] uppercase tracking-widest border rounded px-1.5 py-0.5 ${catColor(ev.catEs)}`}>
+                      {ev.catEs}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-zinc-200">{ev.title}</span>
+                    <span className="shrink-0 font-mono text-[10px] text-zinc-500">
+                      {haceEonet(ev.date)}{ev.lat != null && ev.lng != null ? ` · ${ev.lat.toFixed(1)}, ${ev.lng.toFixed(1)}` : ""}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 font-mono text-[9px] text-zinc-600">
+              Fuente: NASA EONET v3 · eventos abiertos de los últimos 30 días
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* v47.0 RADAR TOTAL — divisas en crisis con cambio REAL (open.er-api.com) */}
+      {fx && fx.rows.length > 0 && (
+        <section className="max-w-5xl mx-auto px-5 pb-6">
+          <div className="border border-emerald-400/30 rounded-md p-4">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-emerald-300">
+              Divisas en crisis — cuánto vale el dinero donde estalla la guerra
+            </h2>
+            <p className="mt-2 text-[11px] font-mono text-zinc-500 leading-relaxed">
+              Tipo de cambio real contra el dólar, actualizado a diario. Las
+              monedas de los países en conflicto, sancionados o en crisis son el
+              termómetro silencioso de cada guerra.
+            </p>
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {fx.rows.map((r) => (
+                <div key={r.code} className="rounded border border-zinc-800 bg-zinc-900/40 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <FlagBadge code={r.flag} />
+                    <span className="text-[12px] font-bold text-zinc-200 truncate">{r.name}</span>
+                  </div>
+                  <p className="mt-1 font-mono text-[13px] text-emerald-300 whitespace-nowrap">
+                    1 US$ = {fmtFx(r.perUsd)} <span className="text-[10px] text-zinc-500">{r.code}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 font-mono text-[9px] text-zinc-600">
+              Fuente: open.er-api.com · {fx.rows.length} monedas de países en crisis · base USD
             </p>
           </div>
         </section>

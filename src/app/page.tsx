@@ -22,6 +22,8 @@ import { motion, AnimatePresence } from "framer-motion";
 // v14: reestructuración — portada INICIO con noticias primero + menú llamativo
 import { HomePanel } from "@/components/vanguard/home-panel";
 import { MegaMenu } from "@/components/vanguard/mega-menu";
+// v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
+import { SectionSearch } from "@/components/vanguard/section-search";
 import { AccountModal } from "@/components/vanguard/account-modal";
 import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
@@ -173,6 +175,8 @@ export default function Home() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // v47.0 BUSCADOR DE SECCIONES (paleta de comandos) — nada queda enterrado
+  const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const authRefresh = useGameStore((s) => s.authRefresh);
   const alias = useGameStore((s) => s.alias);
@@ -212,6 +216,17 @@ export default function Home() {
       // M abre el menú completo
       if (e.key.toLowerCase() === "m") {
         setMenuOpen((v) => !v);
+        return;
+      }
+      // v47.0: Ctrl+K / Cmd+K o «/» abren el buscador de secciones
+      if (e.key.toLowerCase() === "k" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+        return;
+      }
+      if (e.key === "/") {
+        e.preventDefault();
+        setSearchOpen(true);
         return;
       }
       // Number keys 1-9 (and 0 for 10th)
@@ -288,7 +303,7 @@ export default function Home() {
         onOpenLog={() => setLogOpen(true)}
         onOpenAccount={() => setAccountOpen(true)}
       />
-      <TabNav active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} />
+      <TabNav active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
       <LiveTitle />
       <StatsTicker />
@@ -431,6 +446,8 @@ export default function Home() {
       </footer>
 
       <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} />
+      {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
+      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={handleTabChange} />
       <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
       <DailyLoginModal />
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
