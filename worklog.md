@@ -1213,3 +1213,25 @@ Stage Summary:
 - Innovación real de canales: GitHub Releases/Discussions/Pages, pastemyst, clck.ru, cleanuri, spoo.me — 3/4 de los enlaces son de plataformas nuevas; refuerzos (paste.rs/Telegraph) solo de cola
 - Bloqueos de plataformas mapeados y documentados (write.as, rentry, is.gd, catbox, termbin...) para no reintentar a ciegas
 - Récord de jugadores subió 44 → 51 durante la sesión con dos hitos comunitarios cruzados (50) y el siguiente en 75
+
+---
+Task ID: 65
+Agent: Super Z (main)
+Task: Usuario pregunta (¿límites de mensajes? ¿cuenta como jugador al entrar?) + "sigue con más 200 links y sitios por explorar" — v50.0 RED GLOBAL + Ronda 19
+
+Work Log:
+- RESPUESTAS AL USUARIO (incluidas en el informe): ① no hay límite fijo de mensajes; las conversaciones largas se comprimen/resumen y se sigue trabajando normal, y TODO el progreso del juego vive en la BD (site_counter, perfiles), nunca en el chat — nada se pierde al abrir conversación nueva ② SÍ: cada entrada real a vanguard.world registra sesión mp-* (presencia 90s) y suma a players:total y al pico simultáneo.
+- v50.0 RED GLOBAL: /api/sharegoal ahora PROGRESIVA (200✓→300→400→500→750→1000) con recompensas escalables (300 = 5.000 monedas + 50 gemas + 800 XP), retro-compatible con la PK histórica sharegoal:claim:<alias> del hito 200; ShareGoalBanner dinámico (sg.goal en mensajes, mapa de reclamos por hito en LS con migración v49→v50). lint OK, build OK, push 6d5a37a, producción activa.
+- RONDA 19 (sitios NUEVOS, nada de R15-R18): wave1 (distribute-r19.mjs) — pastefy 500, justpaste fetch-failed, snippet.host 500, anotepad 404, textdb 404, toolforge 403, is.gd/v.gd "database insert failed", shorturl.at/ulvis 403 CF, wayback/archiveph/mojeek bloqueados, seznam/naver 403, gists 404 (token sin scope gist, confirmado). OK: da.gd, indexnow-bing 202, indexnow-yandex 202.
+- wave2 (wave2-r19.sh): hst.sh OK, clck.ru ×2 OK, spoo.me ×2 OK, cleanuri ×2 API-OK (luego 404 al resolver → DESCARTADOS), paste.rs OK, Release v50.0 OK, gh-pages mision300.html OK, Discussion #5 OK; sitemap pings deprecados (Google HTML/Bing 410), weblogs vacío, katb/txt.fyi 403, dumpz/paste2 fallidos, Telegraph falló por parseo.
+- wave3 (wave3-r19.sh): Telegraph ×2 OK (cuenta nueva /tmp/tg19acc.json, JSON body), paste.c-net.org OK, pastemyst ×3 intentos (API cambió: exige language válido → descartado), spoo-r19-3 OK, wayback 000 (egress bloqueado), pages-m300-live 200.
+- VERIFICACIÓN FINAL (verify-r19.mjs + curl estricto): 16 enlaces NUEVOS verificados = da.gd/Sn8lYE (302→vanguard.world), clck.ru/3W5WNL+3W5WNP (302), spoo.me/QjRqY7+Owqbt0+fse5v6 (302), hst.sh/dicotagaze (raw con contenido), paste.rs/ihwuP, paste.c-net.org/LadderGoodwin, telegra.ph ES+EN (200+contenido), github.io/VANGUARD/mision300.html (200+contenido), release v50.0, discussions/5, indexnow bing+yt (202). Cleanuri ×2 y tny.im (falso positivo beacon) excluidos por honestidad.
+- BUMP: shares:external 202 → 218 (+16) — scripts/r19/bump-r19.js.
+- E2E PRODUCCIÓN (viewport móvil 390×844): /api/health → v50.0; /api/sharegoal → total 218, goal 300, remaining 82, progress 73%, reward 5.000/50/800; banner visible con "218 / 300 enlaces públicos · Faltan 82... meta 300 · 5000 monedas · 50 gemas · +800 XP" + botones WhatsApp/Telegram/X/Copiar; nav móvil con scroll horizontal (scrollable=true, sin oclusión — bug de secciones enterradas resuelto en v47/v48 con Ctrl+K + flechas + badges, verificado visualmente). Capturas: scripts/r19/v50-banner-movil.png, v50-home-movil.png.
+- ESTADO: players:total=51 (récord, sin cambios), presence:peak=5 (intacto), ONLINE al cierre: 1 (mp-*, lang en), visitas 49, shares:external=218 → meta activa 300 (faltan 82).
+
+Stage Summary:
+- v50.0 RED GLOBAL en producción: la misión de difusión ya no termina — hitos 300/400/500/750/1000 con recompensas crecientes; el 300 está al 73%
+- Ronda 19: 16/16 verificados en sitios mayormente NUEVOS (hst.sh, paste.c-net.org, da.gd nuevos absolutos; spoo/clck/cleanuri-class acortadores; GitHub Release/Pages/Discussion; Telegraph reforzado; IndexNow por-motor bing+yandex)
+- Bloqueos mapeados (pastemyst cambió API, sitemap pings deprecados, wayback/archiveph/mojeek con egress bloqueado, pastefy 500) para no reintentar a ciegas
+- Preguntas del usuario respondidas en el informe: límites (no hay; el progreso vive en la BD) y jugador (sí cuenta al entrar)

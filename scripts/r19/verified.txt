@@ -1,0 +1,96 @@
+{
+  "ok": [
+    [
+      "pasters",
+      "https://paste.rs/ihwuP",
+      "HTTP 200 + contenido"
+    ],
+    [
+      "cnet",
+      "https://paste.c-net.org/LadderGoodwin",
+      "HTTP 200 + contenido"
+    ],
+    [
+      "telegraph-es",
+      "https://telegra.ph/VANGUARD-v50-RED-GLOBAL--misión-300-enlaces-ES-09-24-2",
+      "HTTP 200 + contenido"
+    ],
+    [
+      "telegraph-en",
+      "https://telegra.ph/VANGUARD-v50-GLOBAL-NETWORK--300-link-mission-EN-09-24-2",
+      "HTTP 200 + contenido"
+    ],
+    [
+      "pages-m300",
+      "https://elreydeluniverso-0.github.io/VANGUARD/mision300.html",
+      "HTTP 200 + contenido"
+    ],
+    [
+      "release-v50",
+      "https://github.com/ElReyDelUniverso-0/VANGUARD/releases/tag/v50.0",
+      "HTTP 200 + contenido"
+    ],
+    [
+      "discussion-5",
+      "https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/5",
+      "HTTP 200 + contenido"
+    ]
+  ],
+  "fail": [
+    [
+      "dagd-page",
+      "https://da.gd/Sn8lYE",
+      "fetch failed"
+    ],
+    [
+      "hstsh",
+      "https://hst.sh/dicotagaze",
+      "HTTP 200 sin-mencion"
+    ],
+    [
+      "clck-1",
+      "https://clck.ru/3W5WNL",
+      "fetch failed"
+    ],
+    [
+      "clck-2",
+      "https://clck.ru/3W5WNP",
+      "fetch failed"
+    ],
+    [
+      "cleanuri-1",
+      "https://cleanuri.com/LrpG4A",
+      "fetch failed"
+    ],
+    [
+      "cleanuri-2",
+      "https://cleanuri.com/7djRzQ",
+      "fetch failed"
+    ],
+    [
+      "spoo-1",
+      "https://spoo.me/QjRqY7",
+      "fetch failed"
+    ],
+    [
+      "spoo-2",
+      "https://spoo.me/Owqbt0",
+      "fetch failed"
+    ],
+    [
+      "spoo-3",
+      "https://spoo.me/fse5v6",
+      "fetch failed"
+    ]
+  ],
+  "submissions": [
+    [
+      "indexnow-bing",
+      "HTTP 202"
+    ],
+    [
+      "indexnow-yandex",
+      "HTTP 202"
+    ]
+  ]
+}

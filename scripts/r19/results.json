@@ -1,0 +1,247 @@
+[
+  {
+    "kind": "paste",
+    "name": "pastefy-es",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 500"
+  },
+  {
+    "kind": "paste",
+    "name": "pastefy-en",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 500"
+  },
+  {
+    "kind": "paste",
+    "name": "pastefy-pt",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 500"
+  },
+  {
+    "kind": "paste",
+    "name": "justpaste-es",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "kind": "paste",
+    "name": "justpaste-en",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "kind": "paste",
+    "name": "snippethost-mision300",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 500 <!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf"
+  },
+  {
+    "kind": "paste",
+    "name": "snippethost-warmap",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 500 <!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf"
+  },
+  {
+    "kind": "paste",
+    "name": "centos",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 200 <!DOCTYPE html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta http-equiv="
+  },
+  {
+    "kind": "paste",
+    "name": "anotepad-es",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 "
+  },
+  {
+    "kind": "paste",
+    "name": "anotepad-en",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 "
+  },
+  {
+    "kind": "paste",
+    "name": "pastesio",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 405 {\"type\":\"error\",\"error\":{\"message\":\"Method Not Allowed\"}}"
+  },
+  {
+    "kind": "paste",
+    "name": "shrib",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 200"
+  },
+  {
+    "kind": "paste",
+    "name": "textdb",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404"
+  },
+  {
+    "kind": "paste",
+    "name": "mddhr",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403"
+  },
+  {
+    "kind": "paste",
+    "name": "toolforge",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403 <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8"
+  },
+  {
+    "kind": "short",
+    "name": "isgd",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 200 Error, database insert failed"
+  },
+  {
+    "kind": "short",
+    "name": "vgd",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 200 Error, database insert failed"
+  },
+  {
+    "kind": "short",
+    "name": "dagd",
+    "ok": true,
+    "url": "https://da.gd/Sn8lYE",
+    "note": ""
+  },
+  {
+    "kind": "short",
+    "name": "tnyim",
+    "ok": true,
+    "url": "https://static.cloudflareinsights.com/beacon",
+    "note": ""
+  },
+  {
+    "kind": "short",
+    "name": "shorturlat",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403 <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment"
+  },
+  {
+    "kind": "short",
+    "name": "gg",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 200 <!DOCTYPE html>\n<html lang=\"ru\">\n<head>\n  <meta charset=\"UTF"
+  },
+  {
+    "kind": "short",
+    "name": "ulvis",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403 <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment"
+  },
+  {
+    "kind": "short",
+    "name": "osdb",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 <h1> 404 Not found</h1></br>Entered URL not found in DB"
+  },
+  {
+    "kind": "archive",
+    "name": "wayback-https://vanguard.world",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "kind": "archive",
+    "name": "wayback-https://vanguard.world/guerra-hoy",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "kind": "archive",
+    "name": "archiveph",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "kind": "submit",
+    "name": "mojeek",
+    "ok": false,
+    "url": "",
+    "note": "The operation was aborted due to timeout"
+  },
+  {
+    "kind": "submit",
+    "name": "wiby",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 <html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<"
+  },
+  {
+    "kind": "indexnow",
+    "name": "bing",
+    "ok": true,
+    "url": "https://www.bing.com/indexnow",
+    "note": "HTTP 202"
+  },
+  {
+    "kind": "indexnow",
+    "name": "yandex",
+    "ok": true,
+    "url": "https://yandex.com/indexnow",
+    "note": "HTTP 202"
+  },
+  {
+    "kind": "indexnow",
+    "name": "seznam",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403"
+  },
+  {
+    "kind": "indexnow",
+    "name": "naver",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403"
+  },
+  {
+    "kind": "ping",
+    "name": "pingler",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404"
+  },
+  {
+    "kind": "ping",
+    "name": "feedshark",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 200"
+  },
+  {
+    "kind": "github",
+    "name": "gist-probe",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 Not Found"
+  }
+]
