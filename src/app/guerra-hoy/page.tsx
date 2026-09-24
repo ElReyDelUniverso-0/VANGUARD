@@ -3,6 +3,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { PlayerPing } from "@/components/vanguard/player-ping";
 import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/presence-ping";
+import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -204,6 +205,8 @@ export default async function GuerraHoyPage() {
           </p>
         </div>
       </section>
+      {/* v43.0 RADAR GEOPOLÍTICO GLOBAL: GDELT (100k medios) + GDACS (UE) */}
+      <GeopoliticsRadar />
       {/* v39.1: el visitante cuenta como jugador sin esperar al socket */}
       <PlayerPing />
       {/* v42: latido de presencia EN VIVO + auto-idioma */}
