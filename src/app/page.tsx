@@ -32,6 +32,7 @@ import { initSound, sfx } from "@/lib/sound";
 import { GrowthShare } from "@/components/vanguard/growth-share";
 // v46.0 OBJETIVO MUNDIAL: meta comunitaria con recompensa para todos (motor de reclutamiento)
 import { GoalBanner } from "@/components/vanguard/goal-banner";
+import { ShareGoalBanner } from "@/components/vanguard/share-goal";
 // v34 LLAMADO A LAS ARMAS: recepción de invitados ?ref=, kit de reclutamiento y FAQ SEO
 import { ReferralLanding } from "@/components/vanguard/referral-landing";
 import { PromoKit } from "@/components/vanguard/promo-kit";
@@ -324,6 +325,8 @@ export default function Home() {
             <HomePanel />
             {/* v46.0: la meta comunitaria encima de todo — cada visitante ve el objetivo y su recompensa */}
             <GoalBanner />
+            {/* v49.0: misión de difusión 200 enlaces — progreso real desde la BD, recompensa global al llegar */}
+            <ShareGoalBanner />
             {/* v18: sección de crecimiento bajo la portada — conversión de visitantes a embajadores */}
             <GrowthShare />
             {/* v34: kit de reclutamiento (mensajes para copiar + medidor de agentes) y FAQ SEO */}
