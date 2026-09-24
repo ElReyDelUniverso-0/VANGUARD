@@ -238,7 +238,8 @@ export default function Home() {
         }
       }
       if (e.key === "0") {
-        setTab(TAB_ORDER[9]);
+        // v48.0: el 0 lleva a la ÚLTIMA pestaña del orden (antes quedaba inaccesible)
+        setTab(TAB_ORDER[TAB_ORDER.length - 1]);
         sfx.tab();
       }
       if (e.key === "ArrowRight" || e.key === "ArrowLeft") {

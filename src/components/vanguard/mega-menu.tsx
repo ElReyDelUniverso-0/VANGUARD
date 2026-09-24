@@ -4,11 +4,12 @@
 // con tarjetas gigantes por sección y acceso directo a los 57 subtemas.
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Home } from "lucide-react";
+import { X, Home, Dices } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
+import { SECTIONS, ALL_TABS, TOTAL_TABS, type TabKey } from "@/components/vanguard/tab-nav";
 import { sfx } from "@/lib/sound";
 import { useT, TAB_SHORTS } from "@/lib/i18n";
+import { useGameStore } from "@/lib/game-store";
 
 const HEX: Record<string, string> = {
   red: "#FF3B30",
@@ -28,6 +29,19 @@ export function MegaMenu({
   onClose: () => void;
 }) {
   const { t, lang } = useT();
+  // v48.0 EXPLORADOR: progreso de descubrimiento en el corazón del menú
+  const visited = useGameStore((s) => s.visitedTabs);
+  const visitedSet = new Set(visited);
+  const explorePct = Math.min(100, Math.round((visited.length / TOTAL_TABS) * 100));
+  const sinDescubrir = TOTAL_TABS - visited.length;
+  const surprise = () => {
+    const unvisited = ALL_TABS.filter((k) => !visitedSet.has(k));
+    const pool = unvisited.length > 0 ? unvisited : ALL_TABS;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    sfx.tab();
+    onChange(pick);
+    onClose();
+  };
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -75,6 +89,38 @@ export function MegaMenu({
               </button>
             </div>
 
+            {/* v48.0 EXPLORADOR DE MUNDOS — progreso + descubrimiento en un toque */}
+            <div className="hud-panel p-4 mb-5" style={{ borderColor: "#3EA6FF55" }}>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-amber">
+                    Explorador de mundos
+                  </div>
+                  <div className="font-display text-lg sm:text-xl font-black tracking-wider text-soft">
+                    {visited.length} / {TOTAL_TABS} secciones descubiertas
+                  </div>
+                  <p className="text-[10px] font-mono text-muted-foreground mt-1">
+                    {sinDescubrir > 0
+                      ? `Te quedan ${sinDescubrir} por descubrir — recompensas al llegar a 10, 25, 50 y ${TOTAL_TABS}`
+                      : "MAPA COMPLETO conquistado — eres leyenda"}
+                  </p>
+                </div>
+                <button
+                  onClick={surprise}
+                  className="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-sm border border-green-hud text-green-hud bg-green-hud/15 hover:bg-green-hud/40 transition-colors font-mono text-[11px] font-bold uppercase tracking-widest"
+                >
+                  <Dices className="w-4 h-4" />
+                  Sorpréndeme
+                </button>
+              </div>
+              <div className="mt-3 h-2 bg-secondary/40 overflow-hidden rounded-sm">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-hud via-electric-hud to-green-hud transition-[width] duration-500"
+                  style={{ width: `${Math.max(2, explorePct)}%` }}
+                />
+              </div>
+            </div>
+
             {/* tarjetas de secciones */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-8">
               {/* atajo directo a INICIO */}
@@ -116,6 +162,15 @@ export function MegaMenu({
                       <span className="font-display text-sm font-bold tracking-widest" style={{ color: hex }}>
                         {t(`sec.${s.key}`)}
                       </span>
+                      {(() => {
+                        const sinVer = s.tabs.filter((tb) => !visitedSet.has(tb.key)).length;
+                        if (sinVer <= 0) return null;
+                        return (
+                          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-black text-[9px] font-bold flex items-center justify-center">
+                            +{sinVer}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <p className="text-[11px] text-muted-foreground mb-3 min-h-[2.2em]">{t(`sec.${s.key}.desc`)}</p>
                     <div className="flex flex-wrap gap-1.5">

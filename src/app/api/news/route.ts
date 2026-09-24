@@ -439,6 +439,9 @@ const RSS_SOURCES = [
   { url: "https://feeds.bbci.co.uk/mundo/rss.xml", source: "BBC Mundo" },
   { url: "https://www.france24.com/es/rss", source: "France 24" },
   { url: "https://rss.dw.com/rdf/rss-sp-all", source: "DW Español" },
+  // v48.0 MÁS NOTICIAS: cobertura de conflictos líder mundial + medio español
+  { url: "https://www.aljazeera.com/xml/rss/all.xml", source: "Al Jazeera" },
+  { url: "https://www.abc.es/rss/2.0/internacional/", source: "ABC Internacional" },
 ];
 
 interface RssArticle {

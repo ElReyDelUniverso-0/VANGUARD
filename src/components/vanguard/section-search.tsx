@@ -48,6 +48,8 @@ export function SectionSearch({
   const listRef = useRef<HTMLDivElement>(null);
 
   // índice plano de TODAS las secciones de TODOS los grupos
+  // v48.0: deps [t] — el compilador exige coherencia y además las etiquetas
+  // ahora SÍ se re-traducen cuando el comandante cambia de idioma
   const all: Item[] = useMemo(
     () =>
       SECTIONS.flatMap((s) =>
@@ -61,8 +63,7 @@ export function SectionSearch({
           icon_color: tab.color,
         }))
       ),
-    // eslint-disable-line react-hooks/exhaustive-deps
-    []
+    [t]
   );
 
   // montaje del portal (solo cliente)

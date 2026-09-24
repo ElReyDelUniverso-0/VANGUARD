@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { useT, tabLabel, TAB_SHORTS } from "@/lib/i18n";
 import {
   Map, Target, Newspaper, Images, Brain, ShoppingBag, Trophy, BarChart3, Layers,
@@ -14,8 +14,16 @@ import {
   Siren, BookLock, Gavel, BrainCircuit, ShieldAlert, Home, LayoutGrid,
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
-  Wand2, Landmark, Orbit, Search,
+  Wand2, Landmark, Orbit, Search, Dices,
 } from "lucide-react";
+import { useGameStore } from "@/lib/game-store";
+import { toast } from "sonner";
+import {
+  EXPLORE_STEPS,
+  exploreRewardFor,
+  claimedMilestones,
+  markMilestoneClaimed,
+} from "@/lib/explore";
 
 export type TabKey =
   | "inicio"
@@ -201,9 +209,11 @@ export const SECTIONS: SectionDef[] = [
     tabs: [TABS.bolsa, TABS.divisas, TABS.bookmaker, TABS.apuestas, TABS.predicciones, TABS.espionaje, TABS.gancho],
   },
   {
+    // v48.0 COHERENCIA: Guerras históricas y Figuras y bajas viven aquí — son
+    // ARCHIVO, no emisión en vivo. Todo lo histórico queda en un solo lugar.
     key: "archivo", label: "ARCHIVO MUNDIAL", short: "ARCHIVO", icon: <BookOpen className="w-4 h-4" />, color: "cyan",
-    desc: "Enciclopedia, épocas, 3D, contadores, biblioteca y tribunal",
-    tabs: [TABS.enciclopedia, TABS.curiosidades, TABS.epocas, TABS.conquistas3d, TABS.contadores, TABS.carteles, TABS.biblioteca, TABS.tribunal],
+    desc: "Enciclopedia, épocas, guerras históricas, figuras, biblioteca y tribunal",
+    tabs: [TABS.enciclopedia, TABS.curiosidades, TABS.epocas, TABS.historia, TABS.muertes, TABS.conquistas3d, TABS.contadores, TABS.carteles, TABS.biblioteca, TABS.tribunal],
   },
   {
     key: "comando", label: "COMANDO", short: "COMANDO", icon: <Command className="w-4 h-4" />, color: "amber",
@@ -216,9 +226,10 @@ export const SECTIONS: SectionDef[] = [
     tabs: [TABS.osint, TABS.ojodios, TABS.mapa, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
+    // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO
     key: "emisora", label: "EMISORA", short: "EMISORA", icon: <Signal className="w-4 h-4" />, color: "red",
-    desc: "EN VIVO mundial, Para Ti, GlobalVision, directos con donaciones, estudio de video, memes y contenido de guerra",
-    tabs: [TABS.foryou, TABS.envivo, TABS.videos, TABS.directos, TABS.estudio, TABS.memes, TABS.historia, TABS.muertes],
+    desc: "EN VIVO mundial, Para Ti, GlobalVision, directos, estudio de video y memes",
+    tabs: [TABS.foryou, TABS.envivo, TABS.videos, TABS.directos, TABS.estudio, TABS.memes],
   },
   {
     key: "oscsuro", label: "VERDAD CRUDA", short: "VERDAD", icon: <Skull className="w-4 h-4" />, color: "red",
@@ -246,6 +257,10 @@ export function sectionOfTab(tab: TabKey): SectionDef {
   return SECTIONS.find((s) => s.tabs.some((t) => t.key === tab)) ?? SECTIONS[0];
 }
 
+// v48.0 BRÚJULA: índice plano de TODAS las secciones — motor del Explorador
+export const ALL_TABS: TabKey[] = SECTIONS.flatMap((s) => s.tabs.map((t) => t.key));
+export const TOTAL_TABS = ALL_TABS.length;
+
 const SECTION_COLOR: Record<string, { active: string; dot: string }> = {
   amber: { active: "text-amber bg-amber-hud border-amber-hud", dot: "bg-amber" },
   cyan: { active: "text-cyan-hud bg-cyan-hud border-cyan-hud", dot: "bg-cyan-hud" },
@@ -272,22 +287,74 @@ export function TabNav({
   const tabScroll = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(true);
+  // v48.0 BRÚJULA: la fila de SECCIONES también necesita flechas — antes en
+  // móvil las secciones del final quedaban invisibles ("opacadas")
+  const [secCanLeft, setSecCanLeft] = useState(false);
+  const [secCanRight, setSecCanRight] = useState(true);
+
+  // v48.0 EXPLORADOR: qué secciones ha descubierto el comandante (persistido)
+  const visited = useGameStore((s) => s.visitedTabs);
+  const addCoins = useGameStore((s) => s.addCoins);
+  const visitedSet = useMemo(() => new Set(visited), [visited]);
+  const explorePct = Math.min(100, Math.round((visited.length / TOTAL_TABS) * 100));
+
+  // Recompensas del Explorador: solo cuando el progreso CRECE en vivo
+  // (no retro-pagamos al montar para evitar lluvia de toasts)
+  const prevVisited = useRef<number | null>(null);
+  useEffect(() => {
+    if (prevVisited.current === null) {
+      prevVisited.current = visited.length;
+      return;
+    }
+    if (visited.length <= prevVisited.current) return;
+    prevVisited.current = visited.length;
+    const timer = setTimeout(() => {
+      const claimed = new Set(claimedMilestones());
+      const steps = [...EXPLORE_STEPS, TOTAL_TABS];
+      // pagamos solo el hito más alto alcanzado sin cobrar (1 toast, sin spam)
+      let highest = -1;
+      for (const step of steps) {
+        if (visited.length >= step && !claimed.has(step)) highest = Math.max(highest, step);
+      }
+      if (highest >= 0) {
+        const reward = exploreRewardFor(highest, TOTAL_TABS);
+        markMilestoneClaimed(highest);
+        addCoins(reward, "explorador");
+        toast.success(
+          highest >= TOTAL_TABS
+            ? `🏅 MAPA COMPLETO: las ${TOTAL_TABS} secciones descubiertas — +${reward} monedas`
+            : `🧭 EXPLORADOR: ${highest} secciones descubiertas — +${reward} monedas`,
+          { description: "Sigue explorando: cada rincón de VANGUARD paga" }
+        );
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [visited.length, addCoins]);
 
   const updateArrows = () => {
     const el = tabScroll.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 4);
-    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    if (el) {
+      setCanLeft(el.scrollLeft > 4);
+      setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    }
+    const se = sectionScroll.current;
+    if (se) {
+      setSecCanLeft(se.scrollLeft > 4);
+      setSecCanRight(se.scrollLeft < se.scrollWidth - se.clientWidth - 4);
+    }
   };
 
   useEffect(() => {
     updateArrows();
     const el = tabScroll.current;
-    if (!el) return;
-    el.addEventListener("scroll", updateArrows, { passive: true });
+    const se = sectionScroll.current;
+    const onScroll = () => updateArrows();
+    el?.addEventListener("scroll", onScroll, { passive: true });
+    se?.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", updateArrows);
     return () => {
-      el.removeEventListener("scroll", updateArrows);
+      el?.removeEventListener("scroll", onScroll);
+      se?.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", updateArrows);
     };
   }, [active]);
@@ -315,10 +382,49 @@ export function TabNav({
     el.scrollBy({ left: dir * 220, behavior: "smooth" });
   };
 
+  const scrollSectionBy = (dir: number) => {
+    const el = sectionScroll.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * 180, behavior: "smooth" });
+  };
+
+  // v48.0 SORPRÉNDEME: salta a una sección SIN descubrir (o cualquiera si ya
+  // viste todo) — descubrimiento en un toque
+  const surprise = () => {
+    const unvisited = ALL_TABS.filter((k) => !visitedSet.has(k) && k !== active);
+    const pool = unvisited.length > 0 ? unvisited : ALL_TABS.filter((k) => k !== active);
+    if (pool.length === 0) return;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    onChange(pick);
+  };
+
   return (
     <nav className="sticky top-[78px] sm:top-[109px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
       {/* Fila 1: secciones principales */}
       <div className="border-b border-amber-hud/20 relative">
+        {/* v48.0: degradados + flechas — las secciones del final YA SON visibles en móvil */}
+        <div
+          className={cn(
+            "absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none transition-opacity",
+            secCanLeft ? "opacity-100" : "opacity-0"
+          )}
+        />
+        <div
+          className={cn(
+            "absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none transition-opacity",
+            secCanRight ? "opacity-100" : "opacity-0"
+          )}
+        />
+        {secCanLeft && (
+          <button onClick={() => scrollSectionBy(-1)} className="absolute left-0 top-0 bottom-0 z-20 px-0.5 flex items-center bg-background/80 hover:bg-amber-hud/30" aria-label="Secciones anteriores">
+            <ChevronLeft className="w-3.5 h-3.5 text-amber" />
+          </button>
+        )}
+        {secCanRight && (
+          <button onClick={() => scrollSectionBy(1)} className="absolute right-0 top-0 bottom-0 z-20 px-0.5 flex items-center bg-background/80 hover:bg-amber-hud/30" aria-label="Más secciones">
+            <ChevronRight className="w-3.5 h-3.5 text-amber" />
+          </button>
+        )}
         <div
           ref={sectionScroll}
           className="overflow-x-auto thin-scroll"
@@ -328,6 +434,8 @@ export function TabNav({
             {SECTIONS.map((s) => {
               const isActive = s.key === section.key;
               const c = SECTION_COLOR[s.color] ?? SECTION_COLOR.amber;
+              // v48.0 EXPLORADOR: contador de secciones sin descubrir por mundo
+              const sinVer = s.tabs.filter((tb) => !visitedSet.has(tb.key)).length;
               return (
                 <button
                   key={s.key}
@@ -352,10 +460,28 @@ export function TabNav({
                     <span className="hidden sm:inline">{t(`sec.${s.key}`)}</span>
                     <span className="sm:hidden">{t(`sec.${s.key}`)}</span>
                     <span className={cn("w-1 h-1 rounded-full ml-0.5", c.dot)} />
+                    {sinVer > 0 && (
+                      <span
+                        className="min-w-[14px] h-[14px] px-1 rounded-full bg-amber text-black text-[8px] font-bold flex items-center justify-center leading-none"
+                        title={`${sinVer} secciones sin descubrir aquí`}
+                      >
+                        {sinVer}
+                      </span>
+                    )}
                   </span>
                 </button>
               );
             })}
+            {/* v48.0 SORPRÉNDEME — descubrimiento en un toque */}
+            <button
+              onClick={surprise}
+              title="Sorpréndeme: llévame a una sección que nunca has visto"
+              aria-label="Sorpréndeme con una sección al azar"
+              className="mr-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-green-hud text-green-hud bg-green-hud/15 hover:bg-green-hud/40 transition-colors"
+            >
+              <Dices className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sorpréndeme</span>
+            </button>
             {/* v47.0 BUSCADOR DE SECCIONES — salta a cualquiera de las 81 en 2 toques */}
             {onOpenSearch && (
               <button
@@ -432,6 +558,10 @@ export function TabNav({
                     {t.icon}
                     <span className="hidden sm:inline">{tabLabel(lang, t.key, t.label)}</span>
                     <span className="sm:hidden">{TAB_SHORTS[lang]?.[t.key] ?? t.short}</span>
+                    {/* v48.0: punto “sin descubrir” — brilla hasta que lo visitas */}
+                    {!visitedSet.has(t.key) && !isActive && (
+                      <span className="w-1 h-1 rounded-full bg-electric blink-soft" aria-hidden />
+                    )}
                   </span>
                 </button>
               );
@@ -442,6 +572,22 @@ export function TabNav({
             </span>
           </div>
         </div>
+      </div>
+
+      {/* v48.0 BRÚJULA: barra de progreso del Explorador — X/83 secciones descubiertas */}
+      <div
+        className="h-[3px] bg-secondary/40 relative overflow-hidden"
+        role="progressbar"
+        aria-label="Progreso del Explorador"
+        aria-valuemin={0}
+        aria-valuemax={TOTAL_TABS}
+        aria-valuenow={visited.length}
+        title={`Explorador: ${visited.length}/${TOTAL_TABS} secciones descubiertas (${explorePct}%) — pulsa SORPRÉNDEME para descubrir más`}
+      >
+        <div
+          className="h-full bg-gradient-to-r from-amber-hud via-electric-hud to-green-hud transition-[width] duration-500"
+          style={{ width: `${Math.max(2, explorePct)}%` }}
+        />
       </div>
     </nav>
   );
