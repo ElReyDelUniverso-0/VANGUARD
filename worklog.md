@@ -1302,3 +1302,22 @@ Stage Summary:
 - v51.0 PULSO MUNDIAL en producción: primera integración de intel REAL en vivo sin API keys (ISS + ADS-B militar + lanzamientos), con recompensa propia (+5 mon/60s). 3 enlaces nuevos verificados (247/300, faltan 53).
 - bpa.st añadido a canales bloqueados; OpenSky descartado (nube); adsb.lol es el reemplazo fiable.
 - Pendiente Ronda 22: gh-pages tercera página + más Discussions/Issues por cada versión, y pegado manual del usuario en plataformas JS (tmpfiles/shrib) donde curl no puede verificar.
+
+---
+Task ID: 68 (Ronda 22 — HITO 250/300 + 80→81 jugadores + paste-kit para el usuario)
+Agent: main
+Task: Usuario: "Sigue" → Ronda 22 rumbo a 300 + récord + kit de pegado manual.
+
+Work Log:
+- BASELINE SORPRESA: players:total 70→80 (+10 orgánicos del usuario en 24h), online 1 hispanohablante. shares 247, peak 6.
+- WAVE R22 (6 intentos): rentry.co (respuesta sigue solo "rentry.co/static" → BLOQUEADO definitivo, JS/CSRF), notehub.org (522 CF origin muerto), cl1p.net (POST guarda por JS → excluido por honestidad tras probar fields content/text), paste.ubuntu.com (jsonrpc sin respuesta, lodgeit muerto), gh-pages pulso.html (PUT OK; 404→200 tras build de Pages ~45s, verificado 200+vanguard.world), GitHub Discussion #11 (mutation CreateDiscussionInput! OK).
+- Issue #12 "Ronda 22 — 250 enlaces" creado y verificado (200+link).
+- VERIFICADOS R22 (3): elreydeluniverso-0.github.io/VANGUARD/pulso.html · github.com/ElReyDelUniverso-0/VANGUARD/discussions/11 · /issues/12.
+- BUMP +3: shares:external 247→250. API producción: 250/300, 83%, faltan 50. HITO REDONDO 250.
+- E2E (v51-banner-250-movil.png): banner "250/300 — Faltan 50" visible con botones WA/TG/X y recompensa 5000mon+50gem+800XP. Modal reconexión se cierra con Escape (click X bloqueado por overlay radix). Visita fresca: players:total 80→81 NUEVO RÉCORD. Online 1 al cerrar.
+- Paste-kit para el usuario preparado (texto corto para WhatsApp/X + lista de sitios donde puede pegar manualmente: tmpfiles.org, shrib.com, justpaste.it, telegra.ph desde navegador).
+
+Stage Summary:
+- Ronda 22: +3 honestos → 250/300 (83%). Récord jugadores 81 (era 51 hace 2 rondas). peak 6.
+- Canales muertos confirmados: rentry, notehub, cl1p (JS), paste.ubuntu. GitHub sigue siendo la mina fiable (Pages/Discussions/Issues nuevos por ronda).
+- Siguiente (Ronda 23): GH una vez más si el usuario lo aprueba + empujar al usuario a pegar el kit manual (3-5 enlaces por ronda potenciales) + probar cutt.ly con key gratuita si él la crea.
