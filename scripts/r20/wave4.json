@@ -1,0 +1,56 @@
+[
+  {
+    "name": "cnet-en",
+    "ok": true,
+    "url": "https://paste.c-net.org/AppendixNeglect",
+    "note": "HTTP 200"
+  },
+  {
+    "name": "hstsh-en",
+    "ok": true,
+    "url": "https://hst.sh/ocapiximob",
+    "note": "HTTP 200"
+  },
+  {
+    "name": "clck-1",
+    "ok": true,
+    "url": "https://clck.ru/3W5XgG",
+    "note": "HTTP 200"
+  },
+  {
+    "name": "clck-2",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "spoo-1",
+    "ok": true,
+    "url": "http://spoo.me/bTc8rl",
+    "note": "HTTP 200"
+  },
+  {
+    "name": "spoo-2",
+    "ok": true,
+    "url": "http://spoo.me/CMQpHN",
+    "note": "HTTP 200"
+  },
+  {
+    "name": "dagd-1",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "dagd-2",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "pasters-pt",
+    "ok": true,
+    "url": "https://paste.rs/q9XLG",
+    "note": "HTTP 201"
+  }
+]

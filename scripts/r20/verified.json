@@ -1,0 +1,93 @@
+{
+  "ok": [
+    [
+      "telegraph-es",
+      "https://telegra.ph/VANGUARD-v501--7-medios-de-noticias-en-vivo-ES-09-24",
+      "200+contenido"
+    ],
+    [
+      "telegraph-pt",
+      "https://telegra.ph/VANGUARD-v501--7-live-news-sources-PT-09-24",
+      "200+contenido"
+    ],
+    [
+      "pasters-r20",
+      "https://paste.rs/gM4Pn",
+      "200+contenido"
+    ],
+    [
+      "pasters-pt",
+      "https://paste.rs/q9XLG",
+      "200+contenido"
+    ],
+    [
+      "gh-issue-6",
+      "https://github.com/ElReyDelUniverso-0/VANGUARD/issues/6",
+      "200+contenido"
+    ],
+    [
+      "gh-discussion-7",
+      "https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/7",
+      "200+contenido"
+    ],
+    [
+      "pages-explorador",
+      "https://elreydeluniverso-0.github.io/VANGUARD/explorador.html",
+      "200+contenido"
+    ],
+    [
+      "cnet-es",
+      "https://paste.c-net.org/MuralBreeding",
+      "200+contenido"
+    ],
+    [
+      "cnet-pt",
+      "https://paste.c-net.org/JewishFemale",
+      "200+contenido"
+    ],
+    [
+      "cnet-en",
+      "https://paste.c-net.org/AppendixNeglect",
+      "200+contenido"
+    ]
+  ],
+  "fail": [
+    [
+      "sourcebin",
+      "https://sourceb.in/96MJFdmJBe",
+      "HTTP 200 sin-mencion"
+    ],
+    [
+      "hstsh-pt",
+      "https://hst.sh/udehohufay",
+      "HTTP 200 sin-mencion"
+    ],
+    [
+      "hstsh-en",
+      "https://hst.sh/ocapiximob",
+      "HTTP 200 sin-mencion"
+    ],
+    [
+      "clck-1",
+      "https://clck.ru/3W5XgG",
+      "fetch failed"
+    ],
+    [
+      "spoo-1",
+      "https://spoo.me/bTc8rl",
+      "fetch failed"
+    ],
+    [
+      "spoo-2",
+      "https://spoo.me/CMQpHN",
+      "fetch failed"
+    ]
+  ],
+  "submissions": [
+    [
+      "pubsubhubbub-google",
+      "HTTP 204"
+    ]
+  ],
+  "total": 11
+}

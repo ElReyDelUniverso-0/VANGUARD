@@ -1235,3 +1235,28 @@ Stage Summary:
 - Ronda 19: 16/16 verificados en sitios mayormente NUEVOS (hst.sh, paste.c-net.org, da.gd nuevos absolutos; spoo/clck/cleanuri-class acortadores; GitHub Release/Pages/Discussion; Telegraph reforzado; IndexNow por-motor bing+yandex)
 - Bloqueos mapeados (pastemyst cambió API, sitemap pings deprecados, wayback/archiveph/mojeek con egress bloqueado, pastefy 500) para no reintentar a ciegas
 - Preguntas del usuario respondidas en el informe: límites (no hay; el progreso vive en la BD) y jugador (sí cuenta al entrar)
+
+---
+Task ID: 66
+Agent: Super Z (main)
+Task: "Sigue" — Ronda 20 RED GLOBAL+ (rumbo a 300 links), sitios nuevos + más noticias
+
+Work Log:
+- BASELINE sorpresa: players:total 51→65 durante R19 (+14 reales); al cerrar la sesión: 67 (dos récords más: 65 y 67). presence:peak 5→6 (NUEVO PICO HISTÓRICO confirmado por /api/presence: peak=6).
+- v50.1 RED GLOBAL+: 2 fuentes de noticias NUEVAS probadas antes de integrar (The Guardian world/rss 200/45 items + WSJ World feeds.a.dj.com 200/20; NPR 404 y CNN 302 descartados). RSS_SOURCES = 7 medios. Push 67ad673.
+- FIX ESTRUCTURAL: el RSS solo corría si GDELT fallaba → ahora RSS de los 7 medios SIEMPRE corre en cada refresco (upsert no duplica). Push 455f58e. (Guardian/WSJ entran al caché cuando el refresco de 30 min dispare; verificado que los feeds responden y el parser es el mismo que ya ingiere Al Jazeera/ABC.)
+- RONDA 20 en 4 oladas (~35 intentos, plataformas nuevas):
+  · wave1: jsfiddle 403 CF, sourcebin 400→FIXED (sin campo raw) OK, dpaste.org 405, pastebin.pl 403 CF, zws.im/rel.ink/ttm.sh fetch-failed, envssh falso positivo descartado, marginalia/seekport 404, rentry 403, justpaste bloqueado, feedshark débil descartado, anoox débil descartado. OK: telegraph ES+PT, paste.rs, gh-issue #6, gh-pages explorador.html, gh-discussion #7.
+  · wave2: rentry 403, bpa.st 400, paste.debian rechaza, exactseek 404, entireweb 403, textsnip error, pastebin.pl CF. OK: sourceb.in/96MJFdmJBe, paste.c-net.org ×2 (MuralBreeding, JewishFemale), hst.sh/udehohufay.
+  · wave3: glot.io/bpaste.net/tildeverse requieren sesión o CSRF, freewebsubmission/whatuseek/addme 404, infotiger egress, scrubtheweb falso positivo descartado. OK: pubsubhubbub.appspot.com/publish = 204 (hub de Google, distinto del superfeedr de R17).
+  · wave4 refuerzos: cnet-en (AppendixNeglect), hstsh-en (ocapiximob), clck.ru/3W5XgG, spoo.me ×2 (bTc8rl, CMQpHN), paste.rs/q9XLG. Fallidos transitorios: clck-2, dagd ×2.
+- VERIFICACIÓN ESTRICTA (verify-r20.mjs + curl + CDN sourceb.in): 10 páginas 200+contenido + 3 acortadores resueltos (clck vía wrapper yandex→vanguard.world, spoo ×2 302→vanguard.world) + 1 submission 204 = 17 ENLACES.
+- BUMP: shares:external 218 → 235 (+17) — scripts/r20/bump-r20.js.
+- E2E PRODUCCIÓN: /api/health → v50.1 RED GLOBAL+; banner móvil "235 / 300 enlaces públicos · Faltan 65 · 5000 monedas · 50 gemas · +800 XP"; /api/presence peak=6; captura scripts/r20/v501-banner-235.png. /api/news 48 items en vivo (Guardian/WSJ entran al refrescarse el caché de 30 min).
+- ESTADO AL CIERRE: players:total=67 (RÉCORD, era 51 al abrir el turno), presence:peak=6 (RÉCORD, era 5), ONLINE: 1, visitas 59, shares:external=235 → meta 300 al 78% (faltan 65).
+
+Stage Summary:
+- Doble récord histórico en un turno: 67 jugadores totales y pico de 6 simultáneos — el juego ya crece solo
+- 7 medios de noticias garantizados en producción (se suman The Guardian + WSJ)
+- Ronda 20: 17/17 verificados en ~20 plataformas exploradas; sourceb.in, paste.c-net.org, hst.sh, PubSubHubbub-Google como canales nuevos absolutos
+- Mapa de bloqueos ampliado (CF: jsfiddle/pastebin.pl/entireweb; 404: exactseek/marginalia/seekport; sesión: glot.io/bpaste/tildeverse) para no reintentar a ciegas

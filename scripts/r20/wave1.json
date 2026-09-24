@@ -1,0 +1,122 @@
+[
+  {
+    "name": "jsfiddle",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403 <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment"
+  },
+  {
+    "name": "sourcebin",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 400 {\"message\":\"\\\"files[0].raw\\\" is not allowed\"}"
+  },
+  {
+    "name": "dpasteorg",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 405 "
+  },
+  {
+    "name": "pastebinpl",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 403 <!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment"
+  },
+  {
+    "name": "zwsim",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "zwsim",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "relink",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "marginalia",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 "
+  },
+  {
+    "name": "seekport",
+    "ok": false,
+    "url": "",
+    "note": "HTTP 404 <!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><he"
+  },
+  {
+    "name": "ttmsh",
+    "ok": false,
+    "url": "",
+    "note": "fetch failed"
+  },
+  {
+    "name": "envssh",
+    "ok": true,
+    "url": "https://assets.abovedomains.com/javascript",
+    "note": ""
+  },
+  {
+    "name": "rentry",
+    "ok": false,
+    "url": "",
+    "note": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
+  },
+  {
+    "name": "justpaste",
+    "ok": false,
+    "url": "",
+    "note": "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+  },
+  {
+    "name": "feedshark",
+    "ok": true,
+    "url": "https://feedshark.brainbliss.com",
+    "note": "HTTP 200 "
+  },
+  {
+    "name": "telegraph-es-r20",
+    "ok": true,
+    "url": "https://telegra.ph/VANGUARD-v501--7-medios-de-noticias-en-vivo-ES-09-24",
+    "note": ""
+  },
+  {
+    "name": "telegraph-pt-r20",
+    "ok": true,
+    "url": "https://telegra.ph/VANGUARD-v501--7-live-news-sources-PT-09-24",
+    "note": ""
+  },
+  {
+    "name": "pasters-r20",
+    "ok": true,
+    "url": "https://paste.rs/gM4Pn",
+    "note": ""
+  },
+  {
+    "name": "gh-issue",
+    "ok": true,
+    "url": "https://github.com/ElReyDelUniverso-0/VANGUARD/issues/6",
+    "note": "HTTP 201"
+  },
+  {
+    "name": "gh-pages-explorador",
+    "ok": true,
+    "url": "https://github.com/ElReyDelUniverso-0/VANGUARD/blob/gh-pages/explorador.html",
+    "note": "HTTP 201"
+  },
+  {
+    "name": "gh-discussion-r20",
+    "ok": true,
+    "url": "https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/7",
+    "note": "\"\""
+  }
+]
