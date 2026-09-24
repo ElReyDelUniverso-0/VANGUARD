@@ -1,0 +1,9 @@
+gh-discussion-r21	fail			{"errors":[{"message":"A query attribute must be specified and must be a string."}]}
+ghpages-ronda21	page	https://elreydeluniverso-0.github.io/VANGUARD/ronda21.html	https://elreydeluniverso-0.github.io/VANGUARD/ronda21.html	put-api
+bpa.st	fail			sin-csrf
+shorl	fail			<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="co
+t2mio	fail			<!DOCTYPE html><html lang="en-US"><head><title>Just a moment
+gh-discussion-r21	fail			{"errors":[{"path":["mutation","createDiscussion","input"],"extensions":{"code":"variableMismatch","variableName":"input","typeName":"CreateDiscussion
+bpa.st	fail			sin-cookie-csrf
+gh-discussion-r21	page	https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/9	https://github.com/ElReyDelUniverso-0/VANGUARD/discussions/9	graphql
+bpa.st	fail			sin-cookie-csrf

@@ -1282,3 +1282,23 @@ Stage Summary:
 - Ronda 20: +9 enlaces externos honestos en 8 sitios NUEVOS (IndexNow genérico, GitHub Issues, HedgeDoc ×2 instancias, x0.at, paste.rs, hst.sh, clck.ru, spoo.me) tras ~40 intentos en 30+ plataformas (la mitad bloqueadas por IP del datacenter/CF/egress).
 - Meta 300: faltan 56 (81%). Récords rotos: 70 jugadores (era 51) y pico 6 (era 5).
 - Lecciones para Ronda 21: telegra.ph/rentry/hedge-demás caídos por egress — probar desde otra vía (gh-pages segunda página, más issues/discussions de GitHub, cutt.ly con key gratuita si el usuario la crea, o plataformas JS donde el usuario mismo pegue manualmente).
+
+---
+Task ID: 67 (v51.0 PULSO MUNDIAL — APIs reales sin key + Ronda 21: +3 honestos → 247)
+Agent: main
+Task: Usuario: "Sigue busca apkey actualiza la pagina mas liks" → buscar APIs nuevas, actualizar la página (v51.0) y más enlaces (Ronda 21).
+
+Work Log:
+- APIs PROBADAS desde sandbox (regla: gratis, sin key): wheretheiss.at ✅, OpenSky ✅(200)→ luego "Too many requests" desde Vercel (bloquea IPs nube), Spaceflight News ✅, frankfurter (301), open-meteo (cuota IP compartida agotada), ReliefWeb (403 exige appname aprobado), GDELT ya integrado en api/news (v35), planeta-panel ya usa World Bank/USGS/NOAA/EEI (v40/41) → descartados duplicados.
+- v51.0 "PULSO MUNDIAL" (commit 9dd2546): API /api/pulso (curl-first patrón wiki, cache 45s, maxDuration 60) + panels/pulso-panel.tsx: 🛰️ ISS en vivo (lat/lon/alt/vel + mini mapa SVG con punto pulsante + huella + día/noche) · ✈️ radar aéreo por zonas con badge MILITAR (prefijos RCH/FORTE/NATO/ASCOT... + tipos F16/C17/E3...) · 🚀 señales espaciales Spaceflight News (6 títulos enlazados). Botón ESCANEAR +5 mon/60s (cooldown localStorage) + 2 XP. Tab "pulso" en INTELIGENCIA (TabKey + TABS + sección), i18n-tabs pulso en 8 idiomas (LABELS+SHORTS), guía nueva en help-panel, version.ts v51.0.
+- FIX v51.0.1 (commit 8edf0a7): OpenSky → adsb.lol (ADS-B abierto sin key; OpenSky "Too many requests" para IPs de nube incluso en Vercel). Zonas REALES: Mar Negro (frontera de la guerra — espacio aéreo ucraniano CERRADO desde 2022, dato real), Oriente Medio/Tel Aviv, Estrecho de Taiwán. Plane {callsign,type,reg,altM(×0.3048),velKmh(×1.852),heading,mil}. tsc: 0 errores en archivos nuevos (29 líneas preexistentes intactas). build ✓.
+- PRODUCCIÓN VERIFICADA: /api/health version v51.0 · /api/pulso → ISS true + Mar Negro 49 aeronaves (N542AP GA5C 989 km/h, CLX7334 B748...) + Oriente Medio 35 + 6 noticias NASA/SpaceNews (Taiwán 0 según cobertura de receptores, degrada elegante).
+- E2E MÓVIL (v51-pulso-movil.png): tab PULSO accesible via mega-menú (i18n EN "WORLD PULSE"), ISS EN VIVO con SEÑAL verde (27.588 km/h NOCHE), Mar Negro 48 aeronaves, ESCANEO LISTO EN 52s (cooldown OK), ESCANEAR cobró +5 (250→255 monedas visibles en HUD), overlay del mega-menú se cierra con Escape.
+- RONDA 21: gh-pages ronda21.html (PUT contents, rama gh-pages) ✅ · Discussion #9 (fix mutation: $input: CreateDiscussionInput!) ✅ · Issue #10 v51.0 ✅ — 3/3 verificados con curl (200 + vanguard.world). Fallidos: bpa.st (sin csrf por cookie ni form → BLOQUEADO), shorl/t2m.io (CF). NameError inicial del heredoc (TEXTO no definida en python) corregido.
+- BUMP honesto +3: shares:external 244→247. API: 247/300, 82%, faltan 53. Sin récord de players esta ronda (70 se mantiene; peak 6).
+- worklog Tasks 66 (Ronda 20: +9 → 244, récords 70 jugadores/peak 6) y 67 registrados.
+
+Stage Summary:
+- v51.0 PULSO MUNDIAL en producción: primera integración de intel REAL en vivo sin API keys (ISS + ADS-B militar + lanzamientos), con recompensa propia (+5 mon/60s). 3 enlaces nuevos verificados (247/300, faltan 53).
+- bpa.st añadido a canales bloqueados; OpenSky descartado (nube); adsb.lol es el reemplazo fiable.
+- Pendiente Ronda 22: gh-pages tercera página + más Discussions/Issues por cada versión, y pegado manual del usuario en plataformas JS (tmpfiles/shrib) donde curl no puede verificar.
