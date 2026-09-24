@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
-import { CONQUERABLE_COUNTRIES, type ConquerableCountry } from "@/lib/game-data";
+import { CONQUERABLE_COUNTRIES, realLoot, fmtBudget, type ConquerableCountry } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Globe2, Swords, Shield, Coins, Star, Check, Lock, Trophy, Zap } from "lucide-react";
@@ -42,15 +42,19 @@ export function CountryControlPanel() {
       setDefenseLeft(remaining);
       if (remaining <= 0) {
         clearInterval(interval);
-        // Victory
-        const reward = country.reward + Math.floor(Math.random() * 30);
+        // Victory — v45.0: botín REAL = presupuesto militar del país (Banco Mundial)
+        const loot = realLoot(country);
+        const reward = country.reward + loot + Math.floor(Math.random() * 30);
         addCoins(reward, `Conquista de ${country.name}`);
         addXp(60);
         sfx.success();
         setConquered((prev) => new Set([...prev, country.id]));
         setAttacking(null);
         toast.success(`¡${country.name} conquistado!`, {
-          description: `+${reward} monedas · +60 XP`,
+          description:
+            loot > 0 && country.realBudgetB != null
+              ? `+${reward} monedas · +${loot} botín real (${fmtBudget(country.realBudgetB)}) · +60 XP`
+              : `+${reward} monedas · +60 XP`,
         });
       }
     }, 300);
@@ -149,11 +153,20 @@ export function CountryControlPanel() {
                 </div>
               </div>
 
-              {/* Reward */}
-              <div className="flex items-center justify-between text-[9px] font-mono mb-2">
+              {/* Reward + v45.0 botín real (Banco Mundial) */}
+              <div className="flex items-center justify-between text-[9px] font-mono mb-1">
                 <span className="text-amber flex items-center gap-0.5"><Coins className="w-2.5 h-2.5" /> {country.reward}</span>
                 <span className="text-muted-foreground">Costo: {cost}</span>
               </div>
+              {country.realBudgetB != null && (
+                <div
+                  className="mb-2 inline-flex items-center gap-1 rounded-sm border border-amber-hud/50 bg-amber-hud/10 px-1 py-0.5 text-[8px] font-mono font-bold text-amber uppercase tracking-wider"
+                  title={`Presupuesto militar real: ${fmtBudget(country.realBudgetB)} (Banco Mundial ${country.realBudgetYear ?? ""}) — se paga como botín al conquistar`}
+                >
+                  <Coins className="w-2 h-2" />
+                  Botín real +{realLoot(country)}
+                </div>
+              )}
 
               {/* Action button */}
               {isConquered ? (
@@ -186,6 +199,7 @@ export function CountryControlPanel() {
           <span className="text-amber uppercase">Como funciona</span>
         </div>
         Cada pais tiene un nivel de defensa. El costo de ataque es defensa x 2 monedas. La batalla reduce la defensa gradualmente. Al conquistar, recibes recompensas en monedas + XP + bonus por dominio.
+        v45.0: los paises con presupuesto militar real (Banco Mundial) pagan BOTIN REAL extra — Ucrania (US$ 64,7 mil M/año) es el premio gordo: +65 monedas.
       </div>
     </div>
   );

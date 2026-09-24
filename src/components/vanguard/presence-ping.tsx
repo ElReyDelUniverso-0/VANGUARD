@@ -17,14 +17,19 @@
 // Al no depender del socket de Render, la presencia funciona incluso mientras
 // el contenedor multijugador despierta (cold start 30-50s).
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Trophy } from "lucide-react";
+import { toast } from "sonner";
 import { useLangStore, ensureLangDetected, useT, translate } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 const BEAT_MS = 30_000; // latido cada 30s
 
 // ---------- bus local del contador en vivo ----------
 let _online = 0;
+let _peak = 0; // v45.0 RÉCORD GLOBAL: pico histórico de guerreros en línea
 const _subs = new Set<(n: number) => void>();
+const _subsPeak = new Set<(peak: number) => void>();
 
 function setOnline(n: number) {
   if (n === _online) return;
@@ -38,12 +43,33 @@ function setOnline(n: number) {
   });
 }
 
+function setPeak(p: number) {
+  if (p <= _peak) return;
+  _peak = p;
+  _subsPeak.forEach((cb) => {
+    try {
+      cb(p);
+    } catch {
+      /* un suscriptor roto no tumba el bus */
+    }
+  });
+}
+
 /** Suscripción al número de guerreros en línea; entrega el valor actual al irse. */
 export function subscribeOnline(cb: (n: number) => void): () => void {
   _subs.add(cb);
   cb(_online);
   return () => {
     _subs.delete(cb);
+  };
+}
+
+/** v45.0 — suscripción al pico histórico en línea. */
+export function subscribePeak(cb: (peak: number) => void): () => void {
+  _subsPeak.add(cb);
+  cb(_peak);
+  return () => {
+    _subsPeak.delete(cb);
   };
 }
 
@@ -72,8 +98,26 @@ async function beat() {
       cache: "no-store",
       body: JSON.stringify({ uid: getUid(), lang }),
     });
-    const j = (await r.json().catch(() => null)) as { online?: number } | null;
-    if (j && typeof j.online === "number") setOnline(j.online);
+    const j = (await r.json().catch(() => null)) as {
+      online?: number;
+      peak?: number;
+      newRecord?: boolean;
+    } | null;
+    if (j && typeof j.online === "number") {
+      const wasRecord = _online > 0 && j.online > _online;
+      setOnline(j.online);
+      if (typeof j.peak === "number") setPeak(j.peak);
+      // v45.0: celebración cuando la subida real cruza el pico guardado
+      if (j.newRecord === true && wasRecord) {
+        try {
+          toast.success(translate(useLangStore.getState().lang, "live.newrecord"), {
+            description: `${j.online} ${translate(useLangStore.getState().lang, "live.online")}`,
+          });
+        } catch {
+          /* la fiesta nunca tumba la guerra */
+        }
+      }
+    }
   } catch {
     /* un latido perdido no tumba la guerra: el servidor tolera 3 */
   }
@@ -83,8 +127,12 @@ async function beat() {
 export async function refreshOnline() {
   try {
     const r = await fetch("/api/presence", { cache: "no-store" });
-    const j = (await r.json().catch(() => null)) as { online?: number } | null;
+    const j = (await r.json().catch(() => null)) as {
+      online?: number;
+      peak?: number;
+    } | null;
     if (j && typeof j.online === "number") setOnline(j.online);
+    if (j && typeof j.peak === "number") setPeak(j.peak);
   } catch {
     /* sin señal: el badge conserva el último valor */
   }
@@ -141,24 +189,62 @@ export function LiveTitle() {
   return null;
 }
 
-/** Badge "N EN LÍNEA": punto verde pulsante + contador compartido por bus. */
+/** Badge "N EN LÍNEA": punto verde pulsante + contador compartido por bus.
+ *  v45.0 RÉCORD GLOBAL: chip dorado con el pico histórico; pulsa cuando el
+ *  número actual iguala o supera el récord, y lo celebra con toast. */
 export function LiveCounter({ showLabel = true }: { showLabel?: boolean }) {
   const [n, setN] = useState(0);
+  const [peak, setPeakState] = useState(0);
+  const firedRef = useRef(false);
   const { t } = useT();
   useEffect(() => subscribeOnline(setN), []);
+  useEffect(
+    () =>
+      subscribePeak((p) => {
+        setPeakState(p);
+        // el primer pico que llega >1 tras montar implica récord reciente:
+        // se celebra una sola vez por sesión para no cansar
+        if (p > 1 && !firedRef.current && p >= _online) {
+          firedRef.current = true;
+          try {
+            toast.success(translate(useLangStore.getState().lang, "live.newrecord"), {
+              description: `${p} ${translate(useLangStore.getState().lang, "live.online")}`,
+            });
+          } catch {
+            /* nada */
+          }
+        }
+      }),
+    []
+  );
   useEffect(() => {
     refreshOnline();
   }, []);
+  const atRecord = peak > 0 && n >= peak;
   return (
     <span
       className="inline-flex items-center gap-1 sm:gap-1.5 px-1 sm:px-1.5 py-0.5 rounded-sm border border-green-hud/60 bg-green-hud/10 text-green-hud font-mono font-bold text-[10px] sm:text-xs tabular-nums flex-shrink-0"
-      title={`${n} ${t("live.online")}`}
+      title={`${n} ${t("live.online")}${peak > 0 ? ` · ${t("live.record")}: ${peak}` : ""}`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-green-hud animate-pulse flex-shrink-0" />
       <span>{n}</span>
       {showLabel && (
         <span className="hidden md:inline text-[9px] tracking-widest uppercase">
           {t("live.online")}
+        </span>
+      )}
+      {peak > 1 && (
+        <span
+          className={cn(
+            "inline-flex items-center gap-0.5 rounded-sm border px-1 text-[9px] tracking-widest uppercase",
+            atRecord
+              ? "border-amber-hud bg-amber-hud/20 text-amber animate-pulse"
+              : "border-amber-hud/50 bg-amber-hud/10 text-amber/80"
+          )}
+          title={`${t("live.record")}: ${peak}`}
+        >
+          <Trophy className="h-2.5 w-2.5" />
+          {peak}
         </span>
       )}
     </span>

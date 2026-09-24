@@ -1770,19 +1770,38 @@ export interface ConquerableCountry {
   defense: number;
   reward: number;
   emoji: string;
+  // v45.0 BOTÍN REAL — presupuesto militar anual REAL del Banco Mundial
+  // (indicador MS.MIL.XPND.CD, último año disponible). Sin dato = undefined
+  // (Gaza/Taiwán/Venezuela no reportan al Banco Mundial) → botín clásico.
+  realBudgetB?: number;
+  realBudgetYear?: number;
 }
 
 export const CONQUERABLE_COUNTRIES: ConquerableCountry[] = [
-  { id: "CC1", name: "Ucrania", flag: "UA", region: "Europa Oriental", defense: 60, reward: 100, emoji: "shield" },
+  { id: "CC1", name: "Ucrania", flag: "UA", region: "Europa Oriental", defense: 60, reward: 100, emoji: "shield", realBudgetB: 64.7, realBudgetYear: 2024 },
   { id: "CC2", name: "Gaza", flag: "PS", region: "Oriente Medio", defense: 40, reward: 80, emoji: "swords" },
   { id: "CC3", name: "Taiwán", flag: "TW", region: "Indo-Pacífico", defense: 55, reward: 90, emoji: "palmtree" },
-  { id: "CC4", name: "Sudán", flag: "SD", region: "África", defense: 35, reward: 70, emoji: "mountain" },
-  { id: "CC5", name: "Afganistan", flag: "AF", region: "Asia Central", defense: 45, reward: 75, emoji: "mountain" },
-  { id: "CC6", name: "Mexico (Sinaloa)", flag: "MX", region: "America Latina", defense: 50, reward: 85, emoji: "pill" },
-  { id: "CC7", name: "R.D. Congo", flag: "CD", region: "África Central", defense: 30, reward: 60, emoji: "gem" },
-  { id: "CC8", name: "Libano", flag: "LB", region: "Oriente Medio", defense: 38, reward: 65, emoji: "tree" },
-  { id: "CC9", name: "Haití", flag: "HT", region: "Caribe", defense: 25, reward: 50, emoji: "flame" },
-  { id: "CC10", name: "Myanmar", flag: "MM", region: "Sudeste Asiático", defense: 42, reward: 78, emoji: "castle" },
-  { id: "CC11", name: "Somalia", flag: "SO", region: "Cuerno de África", defense: 28, reward: 55, emoji: "swords" },
+  { id: "CC4", name: "Sudán", flag: "SD", region: "África", defense: 35, reward: 70, emoji: "mountain", realBudgetB: 0.4, realBudgetYear: 2021 },
+  { id: "CC5", name: "Afganistan", flag: "AF", region: "Asia Central", defense: 45, reward: 75, emoji: "mountain", realBudgetB: 0.3, realBudgetYear: 2021 },
+  { id: "CC6", name: "Mexico (Sinaloa)", flag: "MX", region: "America Latina", defense: 50, reward: 85, emoji: "pill", realBudgetB: 16.7, realBudgetYear: 2024 },
+  { id: "CC7", name: "R.D. Congo", flag: "CD", region: "África Central", defense: 30, reward: 60, emoji: "gem", realBudgetB: 0.9, realBudgetYear: 2024 },
+  { id: "CC8", name: "Libano", flag: "LB", region: "Oriente Medio", defense: 38, reward: 65, emoji: "tree", realBudgetB: 0.6, realBudgetYear: 2024 },
+  { id: "CC9", name: "Haití", flag: "HT", region: "Caribe", defense: 25, reward: 50, emoji: "flame", realBudgetB: 0.02, realBudgetYear: 2024 },
+  { id: "CC10", name: "Myanmar", flag: "MM", region: "Sudeste Asiático", defense: 42, reward: 78, emoji: "castle", realBudgetB: 5.0, realBudgetYear: 2024 },
+  { id: "CC11", name: "Somalia", flag: "SO", region: "Cuerno de África", defense: 28, reward: 55, emoji: "swords", realBudgetB: 0.2, realBudgetYear: 2024 },
   { id: "CC12", name: "Venezuela", flag: "VE", region: "America Latina", defense: 48, reward: 82, emoji: "fuel" },
 ];
+
+// v45.0 — botín REAL en monedas: el presupuesto militar anual del país
+// (Banco Mundial) se convierte en monedas extra al conquistarlo.
+// Ucrania (US$ 64.7 mil M/año) es el premio gordo: +65 monedas de botín real.
+export function realLoot(c: ConquerableCountry): number {
+  if (c.realBudgetB == null) return 0;
+  return Math.max(5, Math.round(c.realBudgetB));
+}
+
+export function fmtBudget(b: number): string {
+  if (b >= 1) return `US$ ${Math.round(b)} mil M/año`;
+  if (b >= 0.1) return `US$ ${b.toFixed(1).replace(".", ",")} mil M/año`;
+  return "US$ <0,1 mil M/año";
+}

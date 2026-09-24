@@ -17,6 +17,33 @@ export const dynamic = "force-dynamic";
 const WINDOW_MS = 90_000; // en línea si latió hace < 90s
 const GC_MS = 7_200_000;  // borra muertos con más de 2h
 
+// v45.0 RÉCORD GLOBAL — pico histórico de guerreros en línea (site_counter).
+// Si el online actual supera el pico, se guarda y la respuesta avisa newRecord
+// para que el badge lo celebre. Nunca tumba la presencia: todo en try/catch.
+async function ensureCounterTable() {
+  await db.$executeRawUnsafe(
+    "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
+  );
+}
+
+async function peakState(online: number): Promise<{ peak: number; newRecord: boolean }> {
+  try {
+    await ensureCounterTable();
+    const rows = await db.$queryRaw<{ n: bigint | number }[]>`
+      SELECT n FROM site_counter WHERE k = 'presence:peak'`;
+    const prev = rows[0] ? Number(rows[0].n) : 0;
+    const newRecord = online > prev && online >= 1;
+    if (newRecord) {
+      await db.$executeRaw`
+        INSERT INTO site_counter (k, n) VALUES ('presence:peak', ${online})
+        ON CONFLICT (k) DO UPDATE SET n = GREATEST(site_counter.n, ${online})`;
+    }
+    return { peak: Math.max(prev, online), newRecord };
+  } catch {
+    return { peak: online, newRecord: false };
+  }
+}
+
 async function ensureTable() {
   await db.$executeRawUnsafe(
     "CREATE TABLE IF NOT EXISTS site_presence (uid TEXT PRIMARY KEY, last_seen BIGINT NOT NULL, lang TEXT NOT NULL DEFAULT '')"
@@ -58,18 +85,19 @@ export async function POST(req: Request) {
       );
     }
     const online = await countOnline();
-    return NextResponse.json({ ok: true, online });
+    const { peak, newRecord } = await peakState(online);
+    return NextResponse.json({ ok: true, online, peak, newRecord });
   } catch {
     return NextResponse.json({ ok: false, online: 0 }, { status: 200 });
   }
 }
 
-// GET /api/presence — { ok, online, langs } para el badge EN VIVO
+// GET /api/presence — { ok, online, peak, langs } para el badge EN VIVO
 export async function GET() {
   try {
     await ensureTable();
-    const [online, langs] = await Promise.all([countOnline(), langBreakdown()]);
-    return NextResponse.json({ ok: true, online, langs });
+    const [online, langs, peak] = await Promise.all([countOnline(), langBreakdown(), peakState(0).then((p) => p.peak)]);
+    return NextResponse.json({ ok: true, online, peak, newRecord: false, langs });
   } catch {
     return NextResponse.json({ ok: false, online: 0, langs: [] }, { status: 200 });
   }
