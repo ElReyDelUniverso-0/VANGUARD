@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { getRadar } from "@/lib/geopolitics";
 
-// v43.0 RADAR GLOBAL — titulares de conflicto del mundo entero (GDELT) +
-// alertas de desastres en vivo (GDACS). Fuentes abiertas, SIN API key.
-// Cache interno de 5 min (ver lib/geopolitics.ts); las fuentes caídas
-// degradan a [] con ok:true para que el cliente nunca se rompa.
+// v43.0 RADAR GLOBAL — alertas de desastres (GDACS, Comisión Europea) aquí;
+// titulares de conflicto GDELT se consumen DIRECTO desde el navegador del
+// visitante (CORS abierto, ver geopolitics-radar.tsx): la IP compartida de
+// Vercel está rate-limitada 1 req/5s por todo el mundo y GDELT la bloquea.
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -14,20 +14,14 @@ export async function GET() {
     const radar = await getRadar();
     return NextResponse.json({
       ok: true,
-      ...radar,
+      gdacs: radar.gdacs,
+      cachedAt: radar.cachedAt,
       sources: {
-        news: "GDELT Project — gdeltproject.org (open data)",
         alerts: "GDACS — European Commission JRC (public feed)",
+        news: "GDELT Project — consumido desde el navegador (CORS abierto)",
       },
     });
   } catch {
-    // imposible llegar aquí sin que getRadar degrade, pero por si acaso
-    return NextResponse.json({
-      ok: false,
-      gdeltEs: [],
-      gdeltEn: [],
-      gdacs: [],
-      cachedAt: null,
-    });
+    return NextResponse.json({ ok: false, gdacs: [], cachedAt: null });
   }
 }
