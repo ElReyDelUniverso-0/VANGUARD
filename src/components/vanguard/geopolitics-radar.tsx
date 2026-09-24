@@ -143,7 +143,12 @@ export function GeopoliticsRadar() {
   }, [gdacs, gdeltEs]);
 
   useEffect(() => {
-    load();
+    // setTimeout(0): evita setState síncrono dentro del effect (cascading renders)
+    const t = setTimeout(() => {
+      void load();
+    }, 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

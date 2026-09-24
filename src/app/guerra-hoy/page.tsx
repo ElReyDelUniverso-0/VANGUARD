@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { PlayerPing } from "@/components/vanguard/player-ping";
 import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/presence-ping";
 import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
+import { FlagBadge } from "@/components/vanguard/flag-badge";
+import { getWorldPower, fmtUsd, fmtPersonas } from "@/lib/worldpower";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -86,6 +88,8 @@ const TAG_COLOR: Record<string, string> = {
 
 export default async function GuerraHoyPage() {
   const { items, agents } = await getNews();
+  // v44.0 PODER MUNDIAL — gasto militar y personal armado REALES (Banco Mundial)
+  const power = await getWorldPower();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -183,6 +187,67 @@ export default async function GuerraHoyPage() {
           );
         })}
       </section>
+
+      {/* v44.0 PODER MUNDIAL — datos reales del Banco Mundial (server-rendered) */}
+      {power && power.rows.length > 0 && (
+        <section className="max-w-5xl mx-auto px-5 pb-6">
+          <div className="border border-red-400/30 rounded-md p-4">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-red-300">
+              Poder militar real — quién gasta y quién moviliza
+            </h2>
+            <p className="mt-2 text-[11px] font-mono text-zinc-500 leading-relaxed">
+              Gasto militar en dólares y personas en servicio activo, país por país,
+              con los indicadores abiertos del Banco Mundial (último año disponible).
+              El dinero y la gente detrás de las guerras que lees arriba.
+            </p>
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="font-mono text-[9px] uppercase tracking-widest text-zinc-500 border-b border-zinc-800">
+                    <th className="py-1.5 pr-2 font-normal">País</th>
+                    <th className="py-1.5 pr-2 font-normal text-right">Gasto militar</th>
+                    <th className="py-1.5 pr-2 font-normal text-right">Personal armado</th>
+                    <th className="py-1.5 pr-2 font-normal text-right">% del PIB</th>
+                    <th className="py-1.5 font-normal text-right">Año</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {power.rows.map((row) => (
+                    <tr
+                      key={row.iso3}
+                      className="border-b border-zinc-900 text-[12px] hover:bg-zinc-900/40"
+                    >
+                      <td className="py-1.5 pr-2">
+                        <span className="flex items-center gap-2 min-w-0">
+                          <FlagBadge code={row.iso2 || "??"} />
+                          <span className="font-bold text-zinc-200 truncate max-w-[140px]">
+                            {row.name}
+                          </span>
+                        </span>
+                      </td>
+                      <td className="py-1.5 pr-2 text-right font-mono text-amber-300 whitespace-nowrap">
+                        {fmtUsd(row.spending)}
+                      </td>
+                      <td className="py-1.5 pr-2 text-right font-mono text-zinc-300 whitespace-nowrap">
+                        {fmtPersonas(row.personnel)}
+                      </td>
+                      <td className="py-1.5 pr-2 text-right font-mono text-zinc-400 whitespace-nowrap">
+                        {row.gdpPct != null ? `${row.gdpPct.toFixed(1)}%` : "—"}
+                      </td>
+                      <td className="py-1.5 text-right font-mono text-[10px] text-zinc-600">
+                        {row.year ?? "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2 font-mono text-[9px] text-zinc-600">
+              Fuente: Banco Mundial · MS.MIL.XPND.CD + MS.MIL.TOTL.P1 + MS.MIL.XPND.GD.ZS
+            </p>
+          </div>
+        </section>
+      )}
 
       <section className="max-w-5xl mx-auto px-5 pb-14">
         <div className="border border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-transparent rounded-lg p-7 text-center">
