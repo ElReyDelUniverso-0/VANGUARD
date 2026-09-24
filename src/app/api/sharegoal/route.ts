@@ -1,22 +1,34 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// v49.0 DIFUSIÓN 200 — la meta del comando hecha mecánica.
-// "Ahora una meta: 200 links, en diferentes lugares, innova."
-// Cada enlace público verificado (blogs, pastes, wikis, gists, páginas,
-// acortadores, imágenes) suma a 'shares:external' en site_counter. Esta
-// ruta expone el progreso de la MISIÓN DE DIFUSIÓN y, cuando la comunidad
-// + el equipo de difusión alcanzan 200 enlaces, TODOS pueden reclamar.
+// v50.0 RED GLOBAL — la misión de difusión ya no termina en 200: ahora es
+// progresiva. Cada hito alcanzado abre el siguiente, con recompensas mayores:
 //
-//   · Server lee 'shares:external' (solo enlaces verificados a mano, v36)
-//   · Meta: 200 enlaces → 3.000 monedas + 30 gemas + 500 XP para cada agente
-//   · Dedup idéntico a /api/goal: PK site_counter (k=sharegoal:claim:<alias>)
-//   · Transparencia: 'sharegoal:claim' cuenta cuántos han reclamado
+//   200 → 3.000 monedas + 30 gemas + 500 XP   (conquistada, Ronda 18)
+//   300 → 5.000 monedas + 50 gemas + 800 XP
+//   400 → 8.000 monedas + 80 gemas + 1.200 XP
+//   500 → 12.000 monedas + 120 gemas + 2.000 XP
+//   750 → 20.000 monedas + 200 gemas + 3.000 XP
+//   1000 → 35.000 monedas + 350 gemas + 5.000 XP
+//
+// El server lee 'shares:external' (solo enlaces verificados a mano, v36),
+// calcula el hito activo y, al alcanzarlo, cada agente reclama UNA vez
+// (dedup server-side con PK site_counter, patrón /api/goal).
+// Retro-compatible: los reclamos del hito 200 usan la PK histórica
+// 'sharegoal:claim:<alias>'; los nuevos usan 'sharegoal:claim:<meta>:<alias>'.
 
 export const dynamic = "force-dynamic";
 
-const LINK_GOAL = 200;
-const REWARD = { coins: 3000, gems: 30, xp: 500 };
+const MILESTONES = [200, 300, 400, 500, 750, 1000] as const;
+
+const REWARDS: Record<number, { coins: number; gems: number; xp: number }> = {
+  200: { coins: 3000, gems: 30, xp: 500 },
+  300: { coins: 5000, gems: 50, xp: 800 },
+  400: { coins: 8000, gems: 80, xp: 1200 },
+  500: { coins: 12000, gems: 120, xp: 2000 },
+  750: { coins: 20000, gems: 200, xp: 3000 },
+  1000: { coins: 35000, gems: 350, xp: 5000 },
+};
 
 async function ensureTable() {
   await db.$executeRawUnsafe(
@@ -32,31 +44,39 @@ async function readKey(key: string): Promise<number> {
   return rows[0] ? toNum(rows[0].n) : 0;
 }
 
-// GET /api/sharegoal — progreso de la misión de difusión
+function nextGoal(total: number): number {
+  for (const m of MILESTONES) if (total < m) return m;
+  return MILESTONES[MILESTONES.length - 1];
+}
+
+// GET /api/sharegoal — progreso de la misión de difusión (hito activo)
 export async function GET() {
   try {
     await ensureTable();
     const total = await readKey("shares:external");
+    const goal = nextGoal(total);
+    const reward = REWARDS[goal];
     const claimed = await readKey("sharegoal:claim");
     return NextResponse.json({
       ok: true,
       total,
-      goal: LINK_GOAL,
-      remaining: Math.max(0, LINK_GOAL - total),
-      progress: Math.min(100, Math.round((total / LINK_GOAL) * 100)),
-      reward: REWARD,
+      goal,
+      remaining: Math.max(0, goal - total),
+      progress: Math.min(100, Math.round((total / goal) * 100)),
+      reward,
       claimed,
-      unlocked: total >= LINK_GOAL,
+      unlocked: total >= goal,
+      milestones: MILESTONES,
     });
   } catch {
     return NextResponse.json(
-      { ok: false, total: 0, goal: LINK_GOAL, remaining: LINK_GOAL, progress: 0, reward: REWARD, claimed: 0, unlocked: false },
+      { ok: false, total: 0, goal: 300, remaining: 300, progress: 0, reward: REWARDS[300], claimed: 0, unlocked: false },
       { status: 200 }
     );
   }
 }
 
-// POST /api/sharegoal — reclamar la recompensa por 200 enlaces
+// POST /api/sharegoal — reclamar la recompensa del hito activo
 // body: { alias } → dedup server-side por PK de site_counter
 export async function POST(req: Request) {
   try {
@@ -67,14 +87,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Alias inválido" }, { status: 400 });
     }
     const total = await readKey("shares:external");
-    if (total < LINK_GOAL) {
+    const goal = nextGoal(total);
+    if (total < goal) {
       return NextResponse.json(
-        { error: "Aún no llegamos a 200 enlaces", remaining: LINK_GOAL - total },
+        { error: `Aún no llegamos a ${goal} enlaces`, remaining: goal - total },
         { status: 409 }
       );
     }
+    // Retro-compat: el hito 200 mantiene su clave histórica de Ronda 18.
+    const dedupKey = goal === 200 ? `sharegoal:claim:${alias}` : `sharegoal:claim:${goal}:${alias}`;
     const ins = await db.$executeRaw`
-      INSERT INTO site_counter (k, n) VALUES (${`sharegoal:claim:${alias}`}, 1)
+      INSERT INTO site_counter (k, n) VALUES (${dedupKey}, 1)
       ON CONFLICT (k) DO NOTHING`;
     if (ins === 0) {
       return NextResponse.json({ error: "Ya reclamaste esta misión" }, { status: 409 });
@@ -85,8 +108,8 @@ export async function POST(req: Request) {
     const claimed = await readKey("sharegoal:claim");
     return NextResponse.json({
       ok: true,
-      goal: LINK_GOAL,
-      reward: REWARD,
+      goal,
+      reward: REWARDS[goal],
       claimed,
       total,
     });

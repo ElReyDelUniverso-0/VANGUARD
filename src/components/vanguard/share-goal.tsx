@@ -1,10 +1,10 @@
 "use client";
 
-// v49.0 DIFUSIÓN 200 — el objetivo del comando hecho visible para la comunidad.
-// Meta: 200 enlaces públicos en lugares DIFERENTES (blogs, wikis, gists,
-// pastes, imágenes, acortadores...). Cada agente ve el progreso real desde
-// la BD y, al llegar a 200, TODOS reclaman 3.000 monedas + 30 gemas + 500 XP.
-// Estilo eléctrico (azul) para distinguirse de la meta dorada de jugadores.
+// v50.0 RED GLOBAL — la misión de difusión hecha progresiva: 200 ✓ → 300 →
+// 400 → 500 → 750 → 1000 enlaces. Cada hito alcanzado abre una recompensa
+// global mayor y TODOS pueden reclamarla una vez. El progreso es real desde
+// la BD (solo enlaces verificados a mano). Estilo eléctrico (azul) para
+// distinguirse de la meta dorada de jugadores.
 
 import { useEffect, useState } from "react";
 import { useGameStore } from "@/lib/game-store";
@@ -23,7 +23,18 @@ interface ShareGoalState {
   unlocked: boolean;
 }
 
-const LS_CLAIMED = "vanguard_sharegoal_claimed_v1";
+// Mapa de reclamos por hito: {"200": true, "300": true, ...}
+const LS_CLAIM_MAP = "vanguard_sharegoal_claim_map_v1";
+const LS_CLAIMED_LEGACY = "vanguard_sharegoal_claimed_v1";
+
+function readClaimMap(): Record<string, boolean> {
+  try {
+    const map = JSON.parse(localStorage.getItem(LS_CLAIM_MAP) || "{}") as Record<string, boolean>;
+    // migración v49 → v50: quien reclamó el hito 200 lo conserva
+    if (localStorage.getItem(LS_CLAIMED_LEGACY) === "1") map["200"] = true;
+    return map;
+  } catch { return {}; }
+}
 
 export function ShareGoalBanner() {
   const alias = useGameStore((s) => s.alias);
@@ -36,9 +47,7 @@ export function ShareGoalBanner() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    try {
-      setClaimedHere(localStorage.getItem(LS_CLAIMED) === "1");
-    } catch { /* sin historial */ }
+    try { setClaimedHere(!!readClaimMap()["200"]); } catch { /* sin historial */ }
   }, []);
 
   // patrón verificado: setState síncrono en effect → setTimeout(0)
@@ -49,6 +58,8 @@ export function ShareGoalBanner() {
           const r = await fetch("/api/sharegoal", { cache: "no-store" });
           const j = (await r.json()) as ShareGoalState;
           setSg(j);
+          // al conocer el hito activo, refresca si ya se reclamó ESTE hito
+          try { setClaimedHere(!!readClaimMap()[String(j.goal)]); } catch { /* noop */ }
         } catch { /* degradación: banner oculto */ }
       })();
     }, 0);
@@ -57,7 +68,7 @@ export function ShareGoalBanner() {
 
   const referral = `VGD-${(alias || "AGENTE").replace(/[^A-Z0-9]/gi, "").slice(0, 6).toUpperCase() || "AGENTE"}`;
   const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/?ref=${referral}` : `/?ref=${referral}`;
-  const shareMsg = `MISIÓN DE DIFUSIÓN: ${sg ? sg.total : 0}/200 enlaces para desbloquear 3.000 monedas GRATIS para todos en VANGUARD. Publica, comparte y entra con mi código:`;
+  const shareMsg = `MISIÓN DE DIFUSIÓN: ${sg ? sg.total : 0}/${sg ? sg.goal : 300} enlaces para desbloquear ${(sg?.reward.coins ?? 5000).toLocaleString("es")} monedas GRATIS para todos en VANGUARD. Publica, comparte y entra con mi código:`;
   const waHref = `https://wa.me/?text=${encodeURIComponent(`${shareMsg} ${shareUrl}`)}`;
   const tgHref = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMsg)}`;
   const xHref = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMsg)}&url=${encodeURIComponent(shareUrl)}`;
@@ -85,13 +96,21 @@ export function ShareGoalBanner() {
         addCoins(j.reward.coins, `Misión difusión ${j.goal} enlaces`);
         addGems(j.reward.gems, `Misión difusión ${j.goal} enlaces`);
         addXp(j.reward.xp);
-        localStorage.setItem(LS_CLAIMED, "1");
+        try {
+          const map = readClaimMap();
+          map[String(j.goal)] = true;
+          localStorage.setItem(LS_CLAIM_MAP, JSON.stringify(map));
+        } catch { /* sin historial */ }
         setClaimedHere(true);
-        toast.success(`¡MISIÓN 200 ENLACES RECLAMADA! +${j.reward.coins} monedas, +${j.reward.gems} gemas`);
+        toast.success(`¡MISIÓN ${j.goal} ENLACES RECLAMADA! +${j.reward.coins} monedas, +${j.reward.gems} gemas`);
       } else {
         toast.error(j.error || "No se pudo reclamar");
         if (r.status === 409 && /Ya reclamaste/i.test(String(j.error || ""))) {
-          localStorage.setItem(LS_CLAIMED, "1");
+          try {
+            const map = readClaimMap();
+            map[String(sg.goal)] = true;
+            localStorage.setItem(LS_CLAIM_MAP, JSON.stringify(map));
+          } catch { /* sin historial */ }
           setClaimedHere(true);
         }
       }
@@ -107,7 +126,7 @@ export function ShareGoalBanner() {
   return (
     <section
       className="mt-6 hud-panel p-5 relative overflow-hidden border-electric/40"
-      aria-label="Misión de difusión — meta 200 enlaces"
+      aria-label={`Misión de difusión — meta ${sg.goal} enlaces`}
       data-testid="share-goal-banner"
     >
       <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
@@ -144,8 +163,8 @@ export function ShareGoalBanner() {
       <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-muted-foreground">
         <span>
           {sg.unlocked
-            ? "META CONQUISTADA — la recompensa espera para todos"
-            : `Faltan ${sg.remaining} enlaces — cada publicación en un sitio nuevo cuenta`}
+            ? `META ${sg.goal} CONQUISTADA — la recompensa espera para todos`
+            : `Faltan ${sg.remaining} enlaces para la meta ${sg.goal} — cada publicación en un sitio nuevo cuenta`}
         </span>
         <span className="flex items-center gap-2">
           <span className="flex items-center gap-1 text-amber"><Coins className="w-3 h-3" aria-hidden />{sg.reward.coins.toLocaleString("es")}</span>
