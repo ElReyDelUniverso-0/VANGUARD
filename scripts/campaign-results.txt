@@ -2979,3 +2979,26 @@ REAL MILITARY POWER: <a class="external" href="https://vanguard-kq9r.vercel.app/
 [verify-rentry-ES] OK http=200 matches=48 https://rentry.co/vho9bfa3
 [verify-rentry-EN] OK http=200 matches=10 https://rentry.co/qutyxaio
 === FIN VERIFICACIÓN 15b ===
+=== RONDA 16 2026-09-24T10:06:15Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r16-ES] 200 https://telegra.ph/La-página-de-guerra-más-completa-del-planeta-NASA-en-vivo-divisas-en-crisis-y-83-secciones-09-24
+[Telegraph-r16-EN] 200 https://telegra.ph/The-most-complete-war-page-on-the-planet-NASA-live-crisis-currencies-and-83-sections-09-24
+[Telegraph-r16-PT] 200 https://telegra.ph/A-página-de-guerra-mais-completa-do-planeta-NASA-ao-vivo-moedas-em-crise-e-83-seções-09-24
+[paste.rs-r16] 201 -> https://paste.rs/PfKXa
+[rentry-r16-ES] 200 -> https://rentry.co/4of38nmv
+[rentry-r16-EN] 200 -> https://rentry.co/b8w3o8cq
+[IndexNow-r16] 200
+[PingOMatic-r16] 200
+[Twingly-r16] 200
+[WebSub-PubSubHubbub-r16] 204
+[WebSub-Superfeedr-r16] 204
+[TotalPing-r16] 200
+=== FIN RONDA 16 ===
+=== VERIFICACIÓN RONDA 16 2026-09-24T10:06:49Z ===
+[verify-Telegraph-ES] OK http=200 matches=14 https://telegra.ph/La-página-de-guerra-más-completa-del-planeta-NASA-en-vivo-divisas-en-crisis-y-83-secciones-09-24
+[verify-Telegraph-EN] OK http=200 matches=16 https://telegra.ph/The-most-complete-war-page-on-the-planet-NASA-live-crisis-currencies-and-83-sections-09-24
+[verify-Telegraph-PT] OK http=200 matches=12 https://telegra.ph/A-página-de-guerra-mais-completa-do-planeta-NASA-ao-vivo-moedas-em-crise-e-83-seções-09-24
+[verify-paste.rs] OK http=200 matches=5 https://paste.rs/PfKXa
+[verify-rentry-ES] OK http=200 matches=12 https://rentry.co/4of38nmv
+[verify-rentry-EN] OK http=200 matches=14 https://rentry.co/b8w3o8cq
+=== FIN VERIFICACIÓN 16 ===

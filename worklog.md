@@ -1133,3 +1133,29 @@ Stage Summary:
 - v46.0 en producción: la meta comunitaria convierte el CRECIMIENTO en un juego cooperativo — cada jugador gana si trae amigos, con recompensa para TODOS al alcanzar cada hito
 - Doble récord en una sola sesión: jugadores (27→34) y pico en línea (3→5), la meta 30 se conquistó sola durante la verificación
 - Nuevo protocolo de reporting aplicado por 2ª vez: informe con gente activa AHORA + récords + comparación contra el límite anterior
+
+---
+Task ID: 62
+Agent: Super Z (main)
+Task: Usuario: "Sigue... busca apikes de todo que la pagina sea la mas completa... los botones hay muchas secciones y algunas pueden quedar opacadas porque están muy detrás — soluciona eso" — v47.0 RADAR TOTAL + RONDA 16
+
+Work Log:
+- CONTINUIDAD: Task 61 (v46.0 + Ronda 15) ya cerrado en worklog. Arranque: players=27 (Task 61 abrió con 27, subió a 34 durante esa sesión), shares=123, peak=5.
+- APIS PROBADAS CON CURL (honestidad ante todo): NASA EONET v3 ✅ (eventos naturales en vivo, sin key); open.er-api.com ✅ (166 monedas, sin key); ReliefWeb ❌ (403 — exige appname aprobado, imposible con $0); WB SM.POP.REFG/refugiados ❌ (indicador archivado). USGS ya estaba integrado (v41).
+- v47.0 "RADAR TOTAL" — TRES ESTRENOS:
+  1) src/lib/eonet.ts + sección "El planeta en llamas" en /guerra-hoy: 14 eventos activos (volcanes/incendios/tormentas/inundaciones/sismos) con chip de categoría traducida, coordenadas GeoJSON [lng,lat] (orden invertido documentado) y haceEonet(); cache 30 min + degradación a snapshot.
+  2) src/lib/fx.ts + sección "Divisas en crisis": 16 monedas de países en conflicto (RUB/UAH/ILS/IRR/SYP/SDG/LBP/MMK/AFN/BYN/ETB/HTG/VES/ARS/TRY/EUR) con FlagBadge + "1 US$ = X"; fmtFx() con miles españoles; cache 1 h. En producción: 1 US$ = 1.443.238 rials iraníes visible.
+  3) BUSCADOR DE SECCIONES (queja del usuario: 81 secciones enterradas en scroll horizontal): src/components/vanguard/section-search.tsx — paleta de comandos con filtrado sin acentos, recientes en localStorage (6), teclado ↑↓/⏎/Esc, contador "N / 83 secciones"; botón Buscar en tab-nav (junto a MENÚ) + atajos globales Ctrl+K/Cmd+K y tecla /; índice plano generado de SECTIONS.
+- BUGS CAZADOS Y CORREGIDOS:
+  1) Build roto: el parámetro .map((t) => ... sombreaba la función traductora t() → "b is not a function" en prerender. Renombrado a tab.
+  2) Lint: 2× setState síncrono en effect → patrón setTimeout(0) verificado.
+  3) Z-INDEX PROFUNDO: la paleta quedaba DEBAJO del modal de reconexión diaria. Diagnóstico con elementFromPoint + cadena de stacking: el wrapper raíz de la app (div.min-h-screen.relative.z-10) crea contexto de apilamiento → el z-150 de la paleta estaba atrapado y el portal Radix (z-50 a nivel body) ganaba. FIX FINAL: createPortal(document.body) — verificado en producción con screenshot (paleta encima del modal, "2 / 83 secciones", modal aplastado debajo).
+- VERIFICADO E2E PRODUCCIÓN: health v47.0; /guerra-hoy con eonet:true fx:true nasa_src:true erapi_src:true poder:true (18 eventos NASA renderizando; tasas reales 84.20/44.86/3.026/1.443.238); paleta: abre, filtra "dron"→2 resultados, footer "2 / 83 secciones", por ENCIMA del modal. Capturas: scripts/v47-search-final.png, v47-search-clean.png.
+- RONDA 16 (distribute-r16.sh + verify-r16.sh) — gancho "la página de guerra más completa del planeta": Telegraph ES https://telegra.ph/La-página-de-guerra-más-completa-del-planeta-NASA-en-vivo-divisas-en-crisis-y-83-secciones-09-24 (200, 14) + EN (200, 16) + PT (200, 12) + paste.rs/PfKXa (201, 5) + rentry.co/4of38nmv ES (200, 12) + rentry.co/b8w3o8cq EN (200, 14) + IndexNow 200 + PingOMatic 200 + Twingly 200 + WebSub 204×2 + TotalPing 200 = 12/12.
+- shares:external 135 → 147 (+12 honesto); version v47.0 RADAR TOTAL; pushes 1a104bc, dd69e01, b9c4d92
+- ESTADO FINAL: players:total=42 (¡la meta de 40 también CONQUISTADA sola! → siguiente: 50, faltan 8, recompensa 2.500 monedas + 25 gemas); passedGoals=[30,40]; presence:peak=5; ONLINE al cierre: 0 (noche UTC); visitas 40
+
+Stage Summary:
+- v47.0 en producción: VANGUARD ahora trae NASA en vivo + divisas reales de países en guerra + buscador universal de 83 secciones — la plataforma más completa sin gastar un centavo
+- La meta comunitaria se autogobierna: 2 hitos conquistados (30, 40) sin intervención; el sistema avanza solo al 50
+- Diagnóstico profundo de stacking contexts documentado en worklog (wrapper .z-10 atrapaba overlays fuera de portal) — lección arquitectónica para futuros overlays
