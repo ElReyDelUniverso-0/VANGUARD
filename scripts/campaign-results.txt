@@ -394,3 +394,25 @@ EXCLUIDOS: Bing-SitemapPing=410 (retirado) | Google-SitemapPing=404 (retirado) |
 [verify paste13] HTTP 200 matches 2 OK
 [verify rentry13-ES] HTTP 200 matches 12 OK
 [verify rentry13-EN] HTTP 200 matches 12 OK
+=== RONDA 14 2026-09-24T01:09:54Z ===
+[Telegraph-account] 200 token:60chars
+[Telegraph-r14-ES] 200 https://telegra.ph/El-contador-lleva-tu-nombre-entra-ahora-y-sé-parte-del-RÉCORD-de-VANGUARD-09-24
+[Telegraph-r14-EN] 200 https://telegra.ph/The-counter-has-your-name-in-it-join-now-and-be-part-of-the-VANGUARD-RECORD-09-24
+[Telegraph-r14-PT] 200 https://telegra.ph/O-contador-tem-o-seu-nome-entre-agora-e-faça-parte-do-RECORDE-do-VANGUARD-09-24
+[paste.rs-r14] 201 -> https://paste.rs/CGXJk
+[rentry-r14-ES] 200 -> https://rentry.co/vxaoeu86
+[rentry-r14-EN] 200 -> https://rentry.co/efinop9c
+[IndexNow-r14] 200
+[PingOMatic-r14] 200
+[Twingly-r14] 200
+[WebSub-PubSubHubbub-r14] 204
+[WebSub-Superfeedr-r14] 204
+[TotalPing-r14] 200
+=== FIN RONDA 14 ===
+--- VERIFICACION R14 01:10:18Z ---
+[verify tele14-ES] HTTP 200 matches 14 OK
+[verify tele14-EN] HTTP 200 matches 14 OK
+[verify tele14-PT] HTTP 200 matches 14 OK
+[verify paste14] HTTP 200 matches 5 OK
+[verify rentry14-ES] HTTP 200 matches 17 OK
+[verify rentry14-EN] HTTP 200 matches 17 OK
