@@ -454,7 +454,7 @@ export default function Home() {
 
       <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
-      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={handleTabChange} />
+      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
       <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
       <DailyLoginModal />
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />

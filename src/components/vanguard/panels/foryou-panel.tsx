@@ -280,7 +280,7 @@ export function ForYouPanel() {
                       />
                     ) : s.media === "video" ? (
                       <button
-                        onClick={() => setActive(i + 1) || scrollerRef.current?.scrollTo({ top: (i + 1) * (scrollerRef.current?.clientHeight ?? 0), behavior: "smooth" })}
+                        onClick={() => { setActive(i + 1); scrollerRef.current?.scrollTo({ top: (i + 1) * (scrollerRef.current?.clientHeight ?? 0), behavior: "smooth" }); }}
                         className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-amber"
                         aria-label="Reproducir"
                       >

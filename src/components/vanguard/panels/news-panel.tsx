@@ -162,7 +162,7 @@ export function NewsPanel() {
         right={
           <Button
             size="sm"
-            onClick={load}
+            onClick={() => void load()}
             disabled={loading}
             variant="outline"
             className="h-8 font-mono text-[10px] uppercase border-amber-hud text-amber hover:bg-amber-hud"

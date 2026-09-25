@@ -228,7 +228,7 @@ export function DivisasPanel() {
           <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest mb-2">Countryballs con bandera real · stickers</div>
           <div className="grid grid-cols-8 gap-1">
             {STICKER_CODES.slice(0, 24).map((c) => (
-              <Countryball key={c.code} code={c.code} size={22} className="mx-auto" />
+              <Countryball key={c} code={c} size={22} className="mx-auto" />
             ))}
           </div>
         </div>

@@ -96,6 +96,7 @@ export async function POST(req: Request) {
     const body = (await req.json().catch(() => ({}))) as {
       action?: string;
       code?: string;
+      uid?: string;
     };
     const action = body?.action || "visit";
 

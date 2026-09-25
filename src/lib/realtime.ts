@@ -2,7 +2,7 @@
 
 // Vanguard v7 — Conexion de TIEMPO REAL al mini-servicio socket.io (:3003 via gateway).
 // El gateway exige la query XTransformPort y rutas relativas (nunca URL absoluta).
-import { io, type Socket } from "socket.io-client";
+import { io, type Socket, type ManagerOptions, type SocketOptions } from "socket.io-client";
 
 let _socket: Socket | null = null;
 
@@ -76,7 +76,11 @@ export function getRealtime(): Socket {
     return null as unknown as Socket;
   }
   if (!_socket) {
-    _socket = io(REALTIME_URL || "/?XTransformPort=3003", {
+    // v51.2 — connectionStateRecovery existe en runtime (socket.io 4.6+) pero
+    // los tipos del cliente aún no lo declaran: tipado ampliado en lugar de any.
+    const opts: Partial<ManagerOptions & SocketOptions> & {
+      connectionStateRecovery?: { maxDisconnectionDuration: number; skipMiddlewares: boolean };
+    } = {
       transports: ["polling", "websocket"],
       reconnection: true,
       reconnectionDelay: 1000,
@@ -87,7 +91,8 @@ export function getRealtime(): Socket {
         maxDisconnectionDuration: 2 * 60 * 1000,
         skipMiddlewares: true,
       },
-    });
+    };
+    _socket = io(REALTIME_URL || "/?XTransformPort=3003", opts);
 
     _socket.on("connect", () => {
       setState("ok");

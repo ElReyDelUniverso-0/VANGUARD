@@ -44,7 +44,7 @@ async function getNews(): Promise<{ items: NewsRow[]; agents: number }> {
   try {
     const [items, counter] = await Promise.all([
       db.newsItem.findMany({ orderBy: { publishedAt: "desc" }, take: 24 }),
-      db.$queryRaw<{ n: bigint | number }[]>(
+      db.$queryRawUnsafe<{ n: bigint | number }[]>(
         // tabla creada por /api/visits (idempotente); puede no existir aún
         `SELECT COALESCE((SELECT n FROM site_counter WHERE k = 'total'), 0) AS n`
       ).catch(() => [{ n: 0 }] as { n: bigint | number }[]),

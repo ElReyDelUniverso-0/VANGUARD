@@ -630,3 +630,16 @@ model GovRecruit {
   @@unique([country, alias])
   @@index([country])
 }
+
+// v51.2 — archivos subidos por la comunidad (fotos galeria OSINT, videos del
+// estudio y miniaturas). En Vercel el disco es de solo lectura: los bytes viven
+// en Postgres y se sirven via GET /api/media/[id] con cache inmutable.
+model MediaFile {
+  id        String   @id @default(cuid())
+  kind      String   // photo | video | thumb
+  mime      String   // image/jpeg | image/png | image/webp | video/webm | video/mp4
+  ext       String   // jpg | png | webp | webm | mp4
+  bytes     Int      // tamano en bytes (techo duro 4 MB)
+  data      Bytes
+  createdAt DateTime @default(now())
+}

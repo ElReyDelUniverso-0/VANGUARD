@@ -18,13 +18,24 @@ import {
 interface FrontDef {
   id: string;
   name: string;
-  sideA: { name: string; colors: [string, string]; code?: string };
-  sideB: { name: string; colors: [string, string]; code?: string };
+  // v51.2 — string[] en vez de tupla fija: Rusia/India/Gaza pasan 3 colores de bandera
+  sideA: { name: string; colors: string[]; code?: string };
+  sideB: { name: string; colors: string[]; code?: string };
   intensity: number; // 0-100
   casualties: number; // base estimada
   unitsA: number;
   unitsB: number;
   note: string;
+}
+
+// v51.2 — METEO OPERATIVA (viene de /api/meteo, Open-Meteo sin key)
+interface MeteoEntry {
+  id: string;
+  name: string;
+  temp: number | null;
+  wind: number | null;
+  cond: string;
+  drone: "OK" | "RIESGO" | "NO";
 }
 
 const FRONTS: FrontDef[] = [
@@ -111,6 +122,17 @@ export function FrentePanel() {
   const [log, setLog] = useState<string[]>([]);
   const [casualties, setCasualties] = useState(front.casualties);
   const [control, setControl] = useState(52); // % lado A
+  // v51.2 — METEO OPERATIVA: condiciones en vivo por frente (una sola petición)
+  const [meteo, setMeteo] = useState<MeteoEntry[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/meteo")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (alive && j?.ok) setMeteo(j.zones as MeteoEntry[]); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  const frontMeteo = meteo?.find((m) => m.id === front.id) ?? null;
   const addCoins = useGameStore((s) => s.addCoins);
   const spendCoins = useGameStore((s) => s.spendCoins);
 
@@ -465,6 +487,22 @@ export function FrentePanel() {
                 <div className="text-red-hud font-bold font-mono text-sm tabular-nums">{casualties.toLocaleString("es")}</div>
               </div>
             </div>
+            {/* v51.2 — meteo operativa del frente (Open-Meteo, sin key) */}
+            {frontMeteo && (
+              <div className="border border-electric/30 rounded p-2 bg-electric/5 space-y-1">
+                <div className="flex items-center justify-between text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
+                  <span>METEO OPERATIVA · {frontMeteo.name}</span>
+                  <span className={frontMeteo.drone === "OK" ? "text-green-hud" : frontMeteo.drone === "RIESGO" ? "text-amber" : "text-red-hud"}>
+                    DRON FPV: {frontMeteo.drone === "OK" ? "VUELA" : frontMeteo.drone === "RIESGO" ? "RIESGO" : "EN TIERRA"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-[11px] font-mono">
+                  <span className="font-bold">{frontMeteo.temp !== null ? `${frontMeteo.temp}°C` : "—"}</span>
+                  <span className="text-muted-foreground">{frontMeteo.cond}</span>
+                  <span className="text-muted-foreground">viento {frontMeteo.wind !== null ? `${frontMeteo.wind} m/s` : "—"}</span>
+                </div>
+              </div>
+            )}
             <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground">
               <span className="flex items-center gap-1"><Coins className="w-3.5 h-3.5 text-amber" /> saldo: {cb.toLocaleString("es")} ◉</span>
               <span className="flex items-center gap-1"><ShieldAlert className="w-3.5 h-3.5 text-electric" /> momentum aliado: {(stateRef.current.momentum * 100).toFixed(0)}%</span>

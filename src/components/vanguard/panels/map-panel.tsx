@@ -29,8 +29,10 @@ import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
 // v33 ESCUELA DE GUERRA — vista MILITAR 3D dentro del mapa informativo:
 // el mismo globo satelital del Ojo de Dios con aviones/tanques/infantería.
-import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnitCache, type UnitKind } from "@/lib/military-units";
-import type { Globe3DUnit, GlobeFlyTo as GlobeMapFlyTo } from "@/components/vanguard/globe-map-3d";
+import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type MilUnitCache, type UnitKind } from "@/lib/military-units";
+// v51.2 — se importan GlobeViewMode y GlobeFlyTo (se usaban sin importar) y MilUnit
+// para tipar milUnits (el campo kind se consume en milCounts).
+import type { GlobeFlyTo, GlobeViewMode } from "@/components/vanguard/globe-map-3d";
 
 const GlobeMap3D = dynamic(
   () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
@@ -174,7 +176,7 @@ export function MapPanel() {
   const [flyTo, setFlyTo] = useState<GlobeFlyTo | null>(null); // v31 vuelos de camara
   // v33 ESCUELA DE GUERRA — vista MILITAR 3D: unidades en vivo sobre el globo satelital
   const [milView, setMilView] = useState(false);
-  const [milFlyTo, setMilFlyTo] = useState<GlobeMapFlyTo | null>(null);
+  const [milFlyTo, setMilFlyTo] = useState<GlobeFlyTo | null>(null);
   const [milWar, setMilWar] = useState<MilWarState | null>(null);
   const [milConnected, setMilConnected] = useState(() => !!peekRealtime()?.connected);
   const [unitCache] = useState<MilUnitCache>(() => newMilUnitCache());
@@ -228,7 +230,7 @@ export function MapPanel() {
   }, [milWar]);
 
   const milUnits = useMemo(() => {
-    if (!milWar) return [] as Globe3DUnit[];
+    if (!milWar) return [] as MilUnit[];
     const built = buildMilitaryUnits(
       milWar.territoryMeta,
       milWar.territories,

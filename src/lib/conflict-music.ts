@@ -567,8 +567,8 @@ function scheduler() {
     const swingOffset = t.swing && i % 2 === 1 ? stepDur * 0.16 : 0;
     const time = nextTime + swingOffset;
 
-    // batería + fill en el último compás del ciclo
-    const filling = t.fill && bar === 3 && i >= 12;
+    // batería + fill en el último compás del ciclo (t.fill es opcional → !! para boolean estricto)
+    const filling = !!t.fill && bar === 3 && i >= 12;
     if (t.kick[i] === "x" || t.kick[i] === "o") playKick(c, time, t.kick[i] === "o");
     if (t.snare[i] === "x" || t.snare[i] === "o" || (filling && i % 2 === 0)) playSnare(c, time, t.snare[i] === "o" || filling);
     if (t.hat[i] === "x" || t.hat[i] === "o" || (filling && i % 2 === 1)) playHat(c, time, t.hat[i] === "o" || filling);
