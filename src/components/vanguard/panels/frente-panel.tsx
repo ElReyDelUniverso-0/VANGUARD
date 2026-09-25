@@ -69,12 +69,52 @@ const FRONTS: FrontDef[] = [
     intensity: 47, casualties: 38000, unitsA: 16, unitsB: 15,
     note: "Intercambio de fuego de mortero a lo largo de la Línea de Control.",
   },
+  // v51.4 ACTUALIZACIÓN MORBOSA — 4 frentes nuevos (10 en total)
+  {
+    id: "rdc", name: "RDC Este (M23)", sideA: { name: "FARDC (Congo)", colors: ["#007FFF", "#F7D618", "#CE1021"], code: "cd" }, sideB: { name: "M23 / AFC", colors: ["#4a5d23", "#2b2b2b"] },
+    intensity: 81, casualties: 45000, unitsA: 17, unitsB: 23,
+    note: "Ofensiva sobre Goma y Bukavu; montañas, minas y desplazados en masa.",
+  },
+  {
+    id: "marrojo", name: "Mar Rojo (Antibuque)", sideA: { name: "Coalición naval", colors: ["#3C3B6E", "#B22234"], code: "us" }, sideB: { name: "Houtíes", colors: ["#007A3D", "#FFFFFF", "#CE1126"], code: "ye" },
+    intensity: 58, casualties: 9000, unitsA: 11, unitsB: 16,
+    note: "Drones y misiles antibuque contra el tráfico comercial del Babel-Mandeb.",
+  },
+  {
+    id: "somalia", name: "Somalia (Al-Shabaab)", sideA: { name: "SNA / Ejército", colors: ["#4189DD", "#FFFFFF"], code: "so" }, sideB: { name: "Al-Shabaab", colors: ["#1a1a1a", "#f5f5f5"] },
+    intensity: 66, casualties: 38000, unitsA: 13, unitsB: 21,
+    note: "IED en las rutas de Mogadiscio y asaltos con técnicas al sur del país.",
+  },
+  {
+    id: "haiti", name: "Haití (Puerto Príncipe)", sideA: { name: "PNH / Misión", colors: ["#00209F", "#D21034"], code: "ht" }, sideB: { name: "Viv Ansanm", colors: ["#111111", "#8B0000"] },
+    intensity: 72, casualties: 14000, unitsA: 10, unitsB: 24,
+    note: "Bandas armadas disputan el puerto y el aeropuerto; país sin ejército.",
+  },
 ];
 
 interface Unit { x: number; y: number; side: 0 | 1; type: "tank" | "soldier"; vx: number; hp: number; cool: number; }
 interface Boom { x: number; y: number; r: number; max: number; }
 interface Tracer { x1: number; y1: number; x2: number; y2: number; life: number; }
 interface Smoke { x: number; y: number; r: number; vx: number; life: number; }
+// v51.4 ACTUALIZACIÓN MORBOSA — jets, helicópteros, marcas del terreno y bengalas
+interface Jet { x: number; y: number; vx: number; side: 0 | 1; dropped: boolean; }
+interface Hco { x: number; y: number; vx: number; side: 0 | 1; cool: number; burst: number; }
+interface Dec { x: number; y: number; tank: boolean; burn: number; age: number; }
+interface Flare { x: number; y: number; life: number; }
+
+// v51.4 — bitácora del combate real: lo que se escucha cuando el fuego para
+const MORBID_LOGS = [
+  "Cargador vacío: el soldado se pega al suelo y recarga bajo el silbido",
+  "El tanque de vanguardia pisó una mina: torreta al aire, chasis ardiendo",
+  "Dron FPV persigue al soldado dentro de la trinchera",
+  "Columna de suministros ardiendo en la ruta de acceso al frente",
+  "El mortero cae sin que nadie lo escuche llegar",
+  "Radio capta las últimas órdenes del oficial y luego, estática",
+  "Evacuación nocturna: dos camillas que no llegaron a tiempo",
+  "El francotirador cambia de nido y nadie lo vio moverse",
+  "Fuego de 30 segundos sobre el alambre, y otra vez el silencio espeso",
+  "La artillería registra el bosque metro por metro",
+];
 
 function drawSoldier(ctx: CanvasRenderingContext2D, u: Unit, t: number, colors: string[]) {
   const bob = Math.sin(t * 6 + u.x) * 1.2;
@@ -114,9 +154,40 @@ function drawTank(ctx: CanvasRenderingContext2D, u: Unit, dir: 1 | -1, colors: s
   ctx.restore();
 }
 
+// v51.4 — jet de combate: cruza el cielo y suelta bomba sobre la línea
+function drawJet(ctx: CanvasRenderingContext2D, x: number, y: number, dir: 1 | -1, color: string, color2: string) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(dir, 1);
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.moveTo(16, 0); ctx.lineTo(-10, -4); ctx.lineTo(-6, 0); ctx.lineTo(-10, 4); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = color2;
+  ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(-9, -8); ctx.lineTo(-4, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "rgba(200,210,230,0.22)";
+  ctx.fillRect(-26, -1, 14, 1.4);
+  ctx.restore();
+}
+
+// v51.4 — helicóptero de ataque: orbita y dispara ráfagas a la trinchera
+function drawHco(ctx: CanvasRenderingContext2D, x: number, y: number, color: string, t: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = color;
+  ctx.fillRect(-14, -5, 28, 8);
+  ctx.fillRect(-2, -9, 14, 4);
+  ctx.fillStyle = "#0b0e15";
+  ctx.fillRect(8, -8, 7, 3);
+  const bl = t * 0.9;
+  ctx.strokeStyle = "rgba(180,190,210,0.5)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(-16, -7); ctx.lineTo(16, -7); ctx.moveTo(0, -7); ctx.lineTo(0, -13); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(Math.cos(bl) * 16, -7 + Math.sin(bl) * 3); ctx.lineTo(-Math.cos(bl) * 16, -7 - Math.sin(bl) * 3); ctx.stroke();
+  ctx.restore();
+}
+
 export function FrentePanel() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const stateRef = useRef({ units: [] as Unit[], booms: [] as Boom[], tracers: [] as Tracer[], smokes: [] as Smoke[], front: FRONTS[0], momentum: 0, lastSpawn: 0 });
+  const stateRef = useRef({ units: [] as Unit[], booms: [] as Boom[], tracers: [] as Tracer[], smokes: [] as Smoke[], front: FRONTS[0], momentum: 0, lastSpawn: 0, jets: [] as Jet[], hcos: [] as Hco[], decs: [] as Dec[], flares: [] as Flare[], shake: 0, lastJet: -999, lastHc: -999 });
   const [frontIdx, setFrontIdx] = useState(0);
   const front = FRONTS[frontIdx];
   const [log, setLog] = useState<string[]>([]);
@@ -145,6 +216,7 @@ export function FrentePanel() {
     const s = stateRef.current;
     s.front = FRONTS[frontIdx];
     s.units = []; s.booms = []; s.tracers = []; s.smokes = [];
+    s.jets = []; s.hcos = []; s.decs = []; s.flares = []; s.shake = 0;
     s.momentum = 0;
     setCasualties(FRONTS[frontIdx].casualties);
     setControl(52);
@@ -184,6 +256,11 @@ export function FrentePanel() {
       const W = cv.width, H = cv.height;
       const ground = H * 0.72;
       const f = s.front;
+
+      // v51.4 — temblor de cámara en impactos potentes
+      ctx.save();
+      if (s.shake > 0) ctx.translate((Math.random() - 0.5) * s.shake, (Math.random() - 0.5) * s.shake);
+      s.shake = s.shake > 0.4 ? s.shake * 0.86 : 0;
 
       // cielo nocturno + horizonada
       const sky = ctx.createLinearGradient(0, 0, 0, H);
@@ -234,6 +311,23 @@ export function FrentePanel() {
       ctx.fillStyle = "#171b24";
       for (const tx of [frontX - 70, frontX + 70]) ctx.fillRect(tx - 20, ground + 6, 40, 6);
 
+      // v51.4 — MARCAS DEL TERRENO: cráteres, restos ardiendo y silencio
+      for (const d of s.decs) {
+        d.age++;
+        if (d.burn > 0) {
+          d.burn--;
+          if (t % 3 === 0) s.smokes.push({ x: d.x, y: d.y - 8, r: 2.5, vx: 0.1, life: 60 });
+          if (Math.random() < 0.03) s.booms.push({ x: d.x + (Math.random() - 0.5) * 10, y: d.y - 6, r: 2, max: 6 });
+        }
+        ctx.fillStyle = "rgba(10,12,16,0.65)";
+        ctx.beginPath(); ctx.ellipse(d.x, d.y + 3, d.tank ? 15 : 8, 3, 0, 0, Math.PI * 2); ctx.fill();
+        if (!d.tank) {
+          ctx.fillStyle = "rgba(120,10,14,0.45)";
+          ctx.beginPath(); ctx.ellipse(d.x + 3, d.y + 4, 6, 2, 0, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      if (s.decs.length > 46) s.decs = s.decs.slice(-46);
+
       spawn();
 
       // unidades
@@ -283,6 +377,67 @@ export function FrentePanel() {
       flag(24, f.sideA.colors, f.sideA.name.toUpperCase(), 1);
       flag(W - 26, f.sideB.colors, f.sideB.name.toUpperCase(), -1);
 
+      // v51.4 — SUPERIORIDAD AÉREA: jets cruzan y bombardean
+      if (t - s.lastJet > 420 && s.jets.length < 3) {
+        s.lastJet = t;
+        const side = Math.random() < 0.5 ? 0 : 1;
+        s.jets.push({
+          x: side === 0 ? -0.06 : 1.06,
+          y: 0.10 + Math.random() * 0.18,
+          vx: (side === 0 ? 1 : -1) * (0.0016 + Math.random() * 0.001),
+          side: side as 0 | 1,
+          dropped: false,
+        });
+      }
+      for (const j of s.jets) {
+        j.x += j.vx;
+        const jx = j.x * W, jy = j.y * H;
+        const dir = j.vx > 0 ? 1 : -1;
+        if (!j.dropped && jx > W * 0.3 && jx < W * 0.7) {
+          j.dropped = true;
+          s.booms.push({ x: jx, y: ground + Math.random() * 18, r: 2, max: 26 });
+          s.smokes.push({ x: jx, y: ground + 10, r: 6, vx: 0.25, life: 110 });
+          s.shake = Math.min(14, s.shake + 9);
+          setCasualties((c) => c + 3 + Math.floor(Math.random() * 5));
+          pushLog(`JET de ${j.side === 0 ? f.sideA.name : f.sideB.name} suelta bomba sobre la línea de contacto`);
+        }
+        const jc = j.side === 0 ? f.sideA.colors : f.sideB.colors;
+        drawJet(ctx, jx, jy, dir as 1 | -1, jc[0], jc[1] ?? "#fff");
+      }
+      s.jets = s.jets.filter((j) => j.x > -0.1 && j.x < 1.1);
+
+      // v51.4 — HELICÓPTEROS de ataque: orbitan y barren la trinchera
+      if (t - s.lastHc > 650 && s.hcos.length < 2) {
+        s.lastHc = t;
+        const side = Math.random() < 0.5 ? 0 : 1;
+        s.hcos.push({
+          x: side === 0 ? 0.10 + Math.random() * 0.2 : 0.70 + Math.random() * 0.2,
+          y: 0.36 + Math.random() * 0.08,
+          vx: (Math.random() - 0.5) * 0.0008,
+          side: side as 0 | 1,
+          cool: 0, burst: 0,
+        });
+      }
+      for (const h of s.hcos) {
+        h.x += h.vx;
+        if (h.x < 0.06 || h.x > 0.94) h.vx *= -1;
+        const hx = h.x * W, hy = h.y * H;
+        h.cool--;
+        if (h.cool <= 0) {
+          h.cool = 2; h.burst++;
+          if (h.burst % 26 > 18) { h.burst = 0; h.cool = 120; }
+          else {
+            s.tracers.push({ x1: hx, y1: hy + 4, x2: hx + (h.side === 0 ? 40 : -40) + (Math.random() - 0.5) * 16, y2: ground + Math.random() * 30, life: 8 });
+            if (Math.random() < 0.06) {
+              s.booms.push({ x: hx + (h.side === 0 ? 40 : -40), y: ground + 10, r: 2, max: 14 });
+              setCasualties((c) => c + 1);
+            }
+          }
+        }
+        drawHco(ctx, hx, hy + Math.sin(t * 0.08) * 2, (h.side === 0 ? f.sideA.colors : f.sideB.colors)[0], t);
+      }
+      if (s.hcos.length && t % 1400 === 0) s.hcos.pop();
+
       // trazadoras
       for (const tr of s.tracers) {
         tr.life--;
@@ -321,10 +476,20 @@ export function FrentePanel() {
         setControl((c) => Math.max(22, Math.min(78, c + (Math.random() - 0.5) * 1.4 + s.momentum * 0.3)));
       }
       if (t % 240 === 0) {
-        pushLog(Math.random() < 0.5
-          ? `Artillería de ${f.sideA.name} impacta en posiciones de ${f.sideB.name}`
-          : `Drones FPV de ${f.sideB.name} interceptados sobre la línea de contacto`);
+        pushLog(MORBID_LOGS[Math.floor(Math.random() * MORBID_LOGS.length)]);
       }
+
+      // v51.4 — bengalas de iluminación nocturna
+      if (Math.random() < 0.006) s.flares.push({ x: 0.15 + Math.random() * 0.7, y: 0.06 + Math.random() * 0.14, life: 26 });
+      for (const fl of s.flares) {
+        fl.life--;
+        const fg = ctx.createRadialGradient(fl.x * W, fl.y * H, 2, fl.x * W, fl.y * H, 130);
+        fg.addColorStop(0, `rgba(255,255,240,${(fl.life / 26) * 0.5})`);
+        fg.addColorStop(1, "transparent");
+        ctx.fillStyle = fg;
+        ctx.beginPath(); ctx.arc(fl.x * W, fl.y * H, 130, 0, Math.PI * 2); ctx.fill();
+      }
+      s.flares = s.flares.filter((fl) => fl.life > 0);
 
       // HUD del canvas
       ctx.fillStyle = "#7a8194"; ctx.font = "10px monospace"; ctx.textAlign = "left";
@@ -332,6 +497,9 @@ export function FrentePanel() {
       ctx.fillStyle = "#FF3B30";
       ctx.beginPath(); ctx.arc(W - 60, H - 12, 3.5, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#7a8194"; ctx.fillText("EN VIVO", W - 50, H - 8);
+
+      // v51.4 — fin del temblor de cámara
+      ctx.restore();
 
       raf = requestAnimationFrame(frame);
     };
@@ -367,8 +535,15 @@ export function FrentePanel() {
     void ground2;
     addCoins(reward, `Strike efectivo (${hits} impactos)`);
     if (hits > 0) {
+      // v51.4 — las bajas del strike dejan su marca en el terreno
+      for (const u of s.units) {
+        if (u.side === 1 && Math.abs(u.x * cv.width - x) < 55) {
+          s.decs.push({ x: u.x * cv.width, y: ground + (u.type === "tank" ? 10 : 22), tank: u.type === "tank", burn: u.type === "tank" ? 900 : 0, age: 0 });
+        }
+      }
       s.units = s.units.filter((u) => !(u.side === 1 && Math.abs(u.x * cv.width - x) < 55));
       s.momentum = Math.max(1, s.momentum + 0.12);
+      s.shake = Math.min(14, s.shake + 6);
       setControl((c) => Math.min(78, c + 1.2));
     }
     pushLog(`STRIKE del operador → ${hits} blancos destruidos · +${reward} ◉`);
@@ -390,10 +565,12 @@ export function FrentePanel() {
       if (u) {
         s.booms.push({ x: u.x * cv.width, y: cv.height * 0.72 + 14, r: 2, max: 22 });
         s.smokes.push({ x: u.x * cv.width, y: cv.height * 0.72 + 14, r: 6, vx: 0.25, life: 100 });
+        s.decs.push({ x: u.x * cv.width, y: cv.height * 0.72 + (u.type === "tank" ? 10 : 22), tank: u.type === "tank", burn: u.type === "tank" ? 900 : 0, age: 0 });
       }
     }
     s.units = s.units.filter((u) => !enemies.includes(u));
     s.momentum = Math.max(1, s.momentum + 0.2);
+    s.shake = Math.min(14, s.shake + 8);
     const reward = 20 + kill * 25;
     addCoins(reward, "Dron táctico: columna aniquilada");
     setControl((c) => Math.min(78, c + 2));
