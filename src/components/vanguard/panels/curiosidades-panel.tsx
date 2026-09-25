@@ -3,9 +3,9 @@
 // Vanguard v12 — CURIOSIDADES: tarjetas "Sabias que?" por categoria con
 // rotacion diaria, dado aleatorio y recompensa de monedas por lectura nueva.
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Sparkles, Dices, Coins, Brain, Landmark, Church, Landmark as Landmark2, Wallet, Radar } from "lucide-react";
+import { Sparkles, Dices, Coins, Brain, Landmark, Church, Landmark as Landmark2, Wallet, Radar, CalendarDays, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -67,6 +67,22 @@ export function CuriosidadesPanel() {
   const daily = CURIOSITIES[dailyIndex()];
   const featured = CURIOSITIES[card];
 
+  // v51.3 EFEMÉRIDES DE HOY — datos reales de la API de Wikimedia (gratuita, sin key).
+  interface Efem { year: number; text: string; link: string | null; }
+  const [efems, setEfems] = useState<Efem[]>([]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      void (async () => {
+        try {
+          const r = await fetch("/api/efemerides", { cache: "no-store" });
+          const j = (await r.json()) as { ok: boolean; efemerides?: Efem[] };
+          if (j.ok && Array.isArray(j.efemerides)) setEfems(j.efemerides.slice(0, 6));
+        } catch { /* degradación: la tira no se muestra */ }
+      })();
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="space-y-3">
       <PanelHeader
@@ -75,6 +91,30 @@ export function CuriosidadesPanel() {
         icon={<Sparkles className="w-4 h-4" />} color="amber"
         right={<span className="text-[10px] font-mono text-muted-foreground">{readCount}/{CURIOSITIES.length} LEIDAS</span>}
       />
+
+      {/* v51.3 EFEMÉRIDES DE HOY — historia real, tal día como hoy */}
+      {efems.length > 0 && (
+        <div className="hud-corner border border-cyan-hud bg-cyan-hud/10 p-4">
+          <div className="text-[9px] font-mono font-bold uppercase tracking-widest text-cyan-hud mb-2 flex items-center gap-1.5">
+            <CalendarDays className="w-3 h-3" /> Efemérides de hoy · datos reales de Wikipedia
+          </div>
+          <ul className="space-y-1.5">
+            {efems.map((e, i) => (
+              <li key={`${e.year}-${i}`} className="text-[11px] leading-relaxed text-foreground/85 flex gap-2">
+                <span className="shrink-0 font-mono font-bold text-amber">{e.year}</span>
+                <span className="min-w-0">
+                  {e.text}{" "}
+                  {e.link && (
+                    <a href={e.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-cyan-hud hover:underline">
+                      wiki<ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* tarjeta diaria */}
       <div className="hud-corner border border-amber-hud bg-amber-hud/10 p-4">

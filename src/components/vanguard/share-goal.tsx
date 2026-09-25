@@ -12,7 +12,18 @@ import { useEffect, useState } from "react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Link2, Coins, Gem, Copy, Check, Globe2, TrendingUp } from "lucide-react";
+import { Link2, Coins, Gem, Copy, Check, Globe2, TrendingUp, Flag } from "lucide-react";
+
+// v51.3 VIAJE DE HITOS — espejo del servidor (route.ts). Si cambian allí, cambian aquí.
+const MILESTONES_LOCAL = [200, 300, 400, 500, 750, 1000] as const;
+const REWARDS_LOCAL: Record<number, { coins: number; gems: number; xp: number }> = {
+  200: { coins: 3000, gems: 30, xp: 500 },
+  300: { coins: 5000, gems: 50, xp: 800 },
+  400: { coins: 8000, gems: 80, xp: 1200 },
+  500: { coins: 12000, gems: 120, xp: 2000 },
+  750: { coins: 20000, gems: 200, xp: 3000 },
+  1000: { coins: 35000, gems: 350, xp: 5000 },
+};
 
 interface ShareGoalState {
   ok: boolean;
@@ -179,6 +190,38 @@ export function ShareGoalBanner() {
           style={{ width: `${Math.max(3, sg.progress)}%` }}
         />
       </div>
+
+      {/* v51.3 VIAJE DE HITOS — la campaña hecha visible: conquistado ✓ · activo · futuro */}
+      <div className="mt-3 flex flex-wrap items-center gap-1.5" aria-label="Hitos de la campaña">
+        {MILESTONES_LOCAL.map((m) => {
+          const reachedM = (sg.reached ?? []).includes(m) || sg.total >= m;
+          const activeM = m === sg.goal;
+          const rw = REWARDS_LOCAL[m];
+          return (
+            <span
+              key={m}
+              title={reachedM ? `Hito ${m} conquistado — recompensa reclamable` : `Hito ${m}: ${rw.coins.toLocaleString("es")} mon + ${rw.gems} gemas + ${rw.xp} XP`}
+              className={[
+                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider transition-colors",
+                reachedM
+                  ? "border-green-hud/60 bg-green-hud/15 text-green-hud"
+                  : activeM
+                    ? "border-amber/70 bg-amber/15 text-amber animate-pulse"
+                    : "border-border text-muted-foreground/70",
+              ].join(" ")}
+            >
+              {reachedM ? <Check className="w-3 h-3" aria-hidden /> : activeM ? <Flag className="w-3 h-3" aria-hidden /> : null}
+              {m}
+              {activeM && !reachedM && (
+                <span className="hidden sm:inline-flex items-center gap-0.5 text-amber/80">
+                  <Coins className="w-2.5 h-2.5" aria-hidden />{rw.coins.toLocaleString("es")}
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </div>
+
       <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-muted-foreground">
         <span>
           {sg.unlocked

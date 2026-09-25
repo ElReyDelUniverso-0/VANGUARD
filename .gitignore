@@ -67,3 +67,9 @@ db/custom.db-shm
 # build game-service
 mini-services/game-service/dist/
 .ghtoken
+
+# credenciales y artefactos internos del workspace — NUNCA en el repo
+scripts/
+.ghtoken
+agent-ctx/
+worklog.md

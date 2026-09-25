@@ -45,6 +45,23 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* v51.3 QA FIX — colores HUD como colores Tailwind REALES.
+   Antes: 827 usos tipo bg-red-hud/20 · border-electric/40 · text-amber/80 eran
+   clases MUERTAS (los nombres solo existían como CSS plano sin soporte alpha),
+   así que cientos de fondos/bordes no se pintaban. En Tailwind v4 el namespace
+   es plano: --color-amber añade el tono base SIN tocar la escala por defecto
+   amber-50…amber-950, y los modificadores /NN compilan con color-mix. */
+@theme {
+  --color-electric: #1E90FF;
+  --color-crisis: #FF3B30;
+  --color-neon: #00FF87;
+  --color-amber: #3EA6FF;
+  --color-green-hud: #00FF87;
+  --color-red-hud: #FF3B30;
+  --color-cyan-hud: #38BDF8;
+  --color-violet-hud: #A855F7;
+}
+
 /* ====== Vanguard v14 — tema NEON GLOBAL (aliento fresco) ======
    Paleta v13: negro profundo #0A0A0F · azul eléctrico #1E90FF · rojo crisis #FF3B30
    verde neón #00FF87 · blanco suave #F0F0F0 · panel #1A1A2E.
