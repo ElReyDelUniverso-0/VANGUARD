@@ -16,6 +16,11 @@ import { db } from "@/lib/db";
 // (dedup server-side con PK site_counter, patrón /api/goal).
 // Retro-compatible: los reclamos del hito 200 usan la PK histórica
 // 'sharegoal:claim:<alias>'; los nuevos usan 'sharegoal:claim:<meta>:<alias>'.
+// v51.1 HITO 300 — FIX: al cruzar un hito, la meta activa salta al siguiente
+// y la ventana de reclamo del hito conquistado se cerraba (ej. 305 → meta 400,
+// recompensa del 300 inalcanzable). Ahora GET expone 'reached' (hitos ya
+// conquistados) y POST acepta { goal } para reclamar CUALQUIER hito alcanzado,
+// con el mismo dedup por agente.
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +62,7 @@ export async function GET() {
     const goal = nextGoal(total);
     const reward = REWARDS[goal];
     const claimed = await readKey("sharegoal:claim");
+    const reached = MILESTONES.filter((m) => total >= m);
     return NextResponse.json({
       ok: true,
       total,
@@ -66,6 +72,7 @@ export async function GET() {
       reward,
       claimed,
       unlocked: total >= goal,
+      reached,
       milestones: MILESTONES,
     });
   } catch {
@@ -87,7 +94,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Alias inválido" }, { status: 400 });
     }
     const total = await readKey("shares:external");
-    const goal = nextGoal(total);
+    // v51.1: body.goal opcional — permite reclamar cualquier hito YA alcanzado
+    // (ej. 300 aunque la meta activa sea 400). Sin goal, comportamiento previo.
+    const goalParam = Number(body.goal);
+    const goal =
+      Number.isInteger(goalParam) && goalParam > 0 ? goalParam : nextGoal(total);
+    if (!(MILESTONES as readonly number[]).includes(goal)) {
+      return NextResponse.json({ error: "Hito inválido" }, { status: 400 });
+    }
     if (total < goal) {
       return NextResponse.json(
         { error: `Aún no llegamos a ${goal} enlaces`, remaining: goal - total },

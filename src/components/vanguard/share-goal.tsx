@@ -5,6 +5,8 @@
 // global mayor y TODOS pueden reclamarla una vez. El progreso es real desde
 // la BD (solo enlaces verificados a mano). Estilo eléctrico (azul) para
 // distinguirse de la meta dorada de jugadores.
+// v51.1 HITO 300 — FIX: muestra y reclama hitos YA conquistados aunque la
+// meta activa haya avanzado (reached de la API + goal en el POST).
 
 import { useEffect, useState } from "react";
 import { useGameStore } from "@/lib/game-store";
@@ -21,6 +23,7 @@ interface ShareGoalState {
   reward: { coins: number; gems: number; xp: number };
   claimed: number;
   unlocked: boolean;
+  reached?: number[];
 }
 
 // Mapa de reclamos por hito: {"200": true, "300": true, ...}
@@ -36,6 +39,16 @@ function readClaimMap(): Record<string, boolean> {
   } catch { return {}; }
 }
 
+// v51.1: hito conquistado más alto aún NO reclamado en este dispositivo
+function computePendingGoal(reached: number[] | undefined): number | null {
+  if (!reached || reached.length === 0) return null;
+  try {
+    const map = readClaimMap();
+    const pending = reached.filter((m) => !map[String(m)]);
+    return pending.length ? pending[pending.length - 1] : null;
+  } catch { return null; }
+}
+
 export function ShareGoalBanner() {
   const alias = useGameStore((s) => s.alias);
   const addCoins = useGameStore((s) => s.addCoins);
@@ -44,6 +57,7 @@ export function ShareGoalBanner() {
   const [sg, setSg] = useState<ShareGoalState | null>(null);
   const [claiming, setClaiming] = useState(false);
   const [claimedHere, setClaimedHere] = useState(false);
+  const [pendingGoal, setPendingGoal] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -58,8 +72,10 @@ export function ShareGoalBanner() {
           const r = await fetch("/api/sharegoal", { cache: "no-store" });
           const j = (await r.json()) as ShareGoalState;
           setSg(j);
-          // al conocer el hito activo, refresca si ya se reclamó ESTE hito
-          try { setClaimedHere(!!readClaimMap()[String(j.goal)]); } catch { /* noop */ }
+          // v51.1: prioriza hitos conquistados pendientes de reclamo (ej. 300)
+          const pend = computePendingGoal(j.reached);
+          setPendingGoal(pend);
+          try { setClaimedHere(pend === null && !!readClaimMap()[String(j.goal)]); } catch { /* noop */ }
         } catch { /* degradación: banner oculto */ }
       })();
     }, 0);
@@ -84,12 +100,13 @@ export function ShareGoalBanner() {
 
   const claim = async () => {
     if (!sg || claiming) return;
+    const goalToClaim = pendingGoal ?? sg.goal;
     setClaiming(true);
     try {
       const r = await fetch("/api/sharegoal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ alias: alias || "AGENTE" }),
+        body: JSON.stringify({ alias: alias || "AGENTE", goal: goalToClaim }),
       });
       const j = await r.json();
       if (r.ok && j.ok) {
@@ -101,17 +118,19 @@ export function ShareGoalBanner() {
           map[String(j.goal)] = true;
           localStorage.setItem(LS_CLAIM_MAP, JSON.stringify(map));
         } catch { /* sin historial */ }
-        setClaimedHere(true);
+        setClaimedHere(computePendingGoal(sg.reached) === null);
+        setPendingGoal(computePendingGoal(sg.reached));
         toast.success(`¡MISIÓN ${j.goal} ENLACES RECLAMADA! +${j.reward.coins} monedas, +${j.reward.gems} gemas`);
       } else {
         toast.error(j.error || "No se pudo reclamar");
         if (r.status === 409 && /Ya reclamaste/i.test(String(j.error || ""))) {
           try {
             const map = readClaimMap();
-            map[String(sg.goal)] = true;
+            map[String(goalToClaim)] = true;
             localStorage.setItem(LS_CLAIM_MAP, JSON.stringify(map));
           } catch { /* sin historial */ }
-          setClaimedHere(true);
+          setClaimedHere(computePendingGoal(sg.reached) === null);
+          setPendingGoal(computePendingGoal(sg.reached));
         }
       }
     } catch {
@@ -137,7 +156,7 @@ export function ShareGoalBanner() {
             Misión de difusión mundial
           </h2>
           <span className="font-mono text-[10px] text-muted-foreground border border-border rounded px-1.5 py-0.5 uppercase">
-            {sg.unlocked ? "¡Desbloqueada!" : "En curso"}
+            {pendingGoal !== null ? "¡Recompensa lista!" : sg.unlocked ? "¡Desbloqueada!" : "En curso"}
           </span>
         </div>
         <div className="font-mono text-xs text-muted-foreground flex items-center gap-2">
@@ -174,7 +193,11 @@ export function ShareGoalBanner() {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        {sg.unlocked && !claimedHere ? (
+        {pendingGoal !== null ? (
+          <Button onClick={claim} disabled={claiming} size="sm" className="gap-2 font-mono text-xs uppercase tracking-widest bg-electric/15 border border-electric/50 hover:bg-electric/25 text-electric" variant="outline">
+            <Globe2 className="w-4 h-4" aria-hidden /> Reclamar recompensa del hito {pendingGoal} enlaces
+          </Button>
+        ) : sg.unlocked && !claimedHere ? (
           <Button onClick={claim} disabled={claiming} size="sm" className="gap-2 font-mono text-xs uppercase tracking-widest bg-electric/15 border border-electric/50 hover:bg-electric/25 text-electric" variant="outline">
             <Globe2 className="w-4 h-4" aria-hidden /> Reclamar recompensa global
           </Button>
