@@ -13,6 +13,7 @@ import {
   Wand2, Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { APP_VERSION_LABEL } from "@/lib/version";
 import { LaunchCountdown } from "@/components/vanguard/launch-countdown";
 import { useGameStore } from "@/lib/game-store";
@@ -246,6 +247,30 @@ export function HomePanel() {
 
   return (
     <div className="space-y-5">
+      {/* v52.0 ZONA CERO — la ciudad que cae en vivo */}
+      <Link
+        href="/zona-cero"
+        className="group block border border-red-500/40 bg-gradient-to-r from-red-950/60 via-zinc-950/40 to-transparent rounded-md p-4 hover:border-red-400/80 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-red-300 border border-red-500/50 bg-red-500/10 rounded px-2 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+            En vivo
+          </span>
+          <span className="font-display text-lg sm:text-xl font-black tracking-wide text-soft group-hover:text-red-200 transition-colors">
+            ZONA CERO — la ciudad que cae
+          </span>
+        </div>
+        <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
+          Soldados, tanques, jets y drones peleando sin parar sobre una ciudad
+          que se destruye de verdad y recuerda tu última visita. Las noticias
+          reales de guerra disparan las operaciones.
+        </p>
+        <p className="mt-1.5 font-mono text-[10px] text-amber uppercase tracking-widest">
+          Entrar al teatro de guerra →
+        </p>
+      </Link>
+
       {/* v31: cuenta atrás al GRAN ESTRENO MUNDIAL */}
       <LaunchCountdown />
 

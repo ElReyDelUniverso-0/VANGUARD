@@ -21,5 +21,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "hourly",
       priority: 0.9,
     },
+    {
+      // v52: ZONA CERO — la ciudad que cae en vivo (espectáculo único)
+      url: `${SITE_URL}/zona-cero`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    },
   ];
 }
