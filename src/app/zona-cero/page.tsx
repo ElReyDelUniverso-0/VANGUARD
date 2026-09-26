@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ZonaCeroSim } from "@/components/vanguard/zona-cero-sim";
+import { ZonaCeroGeo } from "@/components/vanguard/zona-cero-geo";
 
-// v52.0 ZONA CERO — la ciudad que cae en vivo. El espectáculo de guerra que
+// v52.1 ZONA CERO — la ciudad que cae en vivo. El espectáculo de guerra que
 // ninguna página de conflictos ha mostrado: un teatro completo que se destruye
 // en directo, con fusión de noticias reales (GDELT), director cinematográfico
 // automático, sonido sintetizado y destrucción persistente entre visitas.
+// v52.1: FIX pantalla negra (bucle de realimentación de resize) + TABLERO
+// GEOPOLÍTICO en vivo (GDELT por región + ADS-B militar + USGS + NOAA Kp).
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -59,6 +62,10 @@ export default function ZonaCeroPage() {
 
       <section className="max-w-6xl mx-auto px-3 sm:px-5 pt-6">
         <ZonaCeroSim />
+      </section>
+
+      <section className="max-w-6xl mx-auto px-3 sm:px-5 pt-6">
+        <ZonaCeroGeo />
       </section>
 
       <section className="max-w-6xl mx-auto px-5 py-8 grid md:grid-cols-3 gap-4">

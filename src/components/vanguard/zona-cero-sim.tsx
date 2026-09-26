@@ -1210,14 +1210,20 @@ export function ZonaCeroSim() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // v52.1 FIX pantalla negra: se mide con clientWidth/clientHeight (EXCLUYEN el
+    // borde del contenedor). Antes se usaba getBoundingClientRect() y se escribía
+    // canvas.style.height con ese valor (que incluía los 2px de borde) → el canvas
+    // crecía +2px en cada disparo del ResizeObserver → bucle de realimentación que
+    // lo hinchaba hasta ~5000px → la escena se dibujaba a 5.5× y solo se veía el
+    // cielo negro ampliado. Ahora el tamaño de layout lo gobierna el CSS
+    // (h-[64vh] min-h-[420px]) y aquí SOLO se ajusta el bitmap interno.
     const resize = () => {
-      const r = wrap.getBoundingClientRect();
+      const w = Math.max(280, wrap.clientWidth);
+      const h = Math.max(280, wrap.clientHeight);
       const dpr = Math.min(1.75, window.devicePixelRatio || 1);
-      viewRef.current = { w: r.width, h: r.height };
-      canvas.width = Math.max(320, Math.floor(r.width * dpr));
-      canvas.height = Math.max(240, Math.floor(r.height * dpr));
-      canvas.style.width = `${r.width}px`;
-      canvas.style.height = `${r.height}px`;
+      viewRef.current = { w, h };
+      canvas.width = Math.max(320, Math.floor(w * dpr));
+      canvas.height = Math.max(240, Math.floor(h * dpr));
     };
     resize();
     const ro = new ResizeObserver(resize);
@@ -1226,25 +1232,33 @@ export function ZonaCeroSim() {
     let raf = 0;
     let last = performance.now();
     let hudT = 0;
+    // v52.1 FIX sim obsoleto: el bucle ahora lee simRef.current en CADA frame.
+    // Antes capturaba `sim` por clausura, así que "Reconstruir ciudad" sustituía
+    // simRef.current pero el bucle seguía pintando el mundo viejo.
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (document.hidden) return;
-      stepSim(sim, dt, audio.on ? audio : null);
-      drawWorld(ctx, sim, viewRef.current, Math.min(1.75, window.devicePixelRatio || 1));
+      const s = simRef.current;
+      if (!s) return;
+      try {
+        stepSim(s, dt, audio.on ? audio : null);
+        drawWorld(ctx, s, viewRef.current, Math.min(1.75, window.devicePixelRatio || 1));
+      } catch { /* un frame defectuoso nunca debe dejar la pantalla negra */ }
       hudT += dt;
       if (hudT > 0.3) {
         hudT = 0;
-        setHud({ ...sim.stats });
-        setFeed(sim.kills.slice(-6).reverse());
-        setCaption(sim.caption?.text ?? null);
+        setHud({ ...s.stats });
+        setFeed(s.kills.slice(-6).reverse());
+        setCaption(s.caption?.text ?? null);
         if (awayText) { setAwayMsg(awayText); awayText = null; }
       }
     };
     raf = requestAnimationFrame(loop);
 
-    const save = () => saveState(sim);
+    // v52.1: guardar SIEMPRE el sim vigente (no el capturado al montar)
+    const save = () => { const cur = simRef.current; if (cur) saveState(cur); };
     const iv = window.setInterval(save, 20000);
     const onVis = () => { if (document.hidden) save(); };
     document.addEventListener("visibilitychange", onVis);
@@ -1376,7 +1390,7 @@ export function ZonaCeroSim() {
     sim.audioRef = audioRef.current;
     sim.manual = !director;
     simRef.current = sim;
-    // el bucle sigue leyendo simRef — reenganchamos audio y callback
+    // v52.1: el bucle lee simRef cada frame — solo reenganchamos el callback real
     opCbRef.current = (title, url) => realOperation(sim, title, url);
     setHud({ ...sim.stats });
     setAwayMsg(null);
@@ -1405,12 +1419,13 @@ export function ZonaCeroSim() {
       </div>
 
       {/* cabecera */}
-      <div className="absolute top-2.5 left-3 flex items-center gap-2 pointer-events-none">
-        <span className="flex items-center gap-1.5 bg-black/70 border border-red-500/50 rounded px-2.5 py-1 font-mono text-[10px] tracking-[0.2em] text-red-300 uppercase">
+      <div className="absolute top-2.5 left-3 flex items-center gap-2 pointer-events-none max-w-[calc(100%-176px)] sm:max-w-[60%]">
+        <span className="flex items-center gap-1.5 bg-black/70 border border-red-500/50 rounded px-2 py-1 sm:px-2.5 font-mono text-[10px] tracking-[0.2em] text-red-300 uppercase whitespace-nowrap">
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-          Zona Cero · en vivo
+          <span className="sm:hidden">En vivo</span>
+          <span className="hidden sm:inline">Zona Cero · en vivo</span>
         </span>
-        <span className="hidden sm:inline-block bg-black/60 border border-zinc-700 rounded px-2 py-1 font-mono text-[10px] text-zinc-300">
+        <span className="hidden sm:inline-block bg-black/60 border border-zinc-700 rounded px-2 py-1 font-mono text-[10px] text-zinc-300 whitespace-nowrap">
           Devastación {hud.dev.toFixed(1)}% · récord del teatro {DEV_MAX}%
         </span>
       </div>
@@ -1419,7 +1434,7 @@ export function ZonaCeroSim() {
       <div className="absolute top-2.5 right-3 flex gap-1.5">
         <button
           onClick={toggleSound}
-          className="min-w-11 h-11 flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-amber-400/70 rounded text-zinc-300 transition-colors"
+          className="min-w-10 h-10 sm:min-w-11 sm:h-11 flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-amber-400/70 rounded text-zinc-300 transition-colors"
           aria-label={sound ? "Silenciar" : "Activar sonido"}
           title={sound ? "Silenciar" : "Activar sonido de guerra"}
         >
@@ -1427,7 +1442,7 @@ export function ZonaCeroSim() {
         </button>
         <button
           onClick={toggleDirector}
-          className={`min-w-11 h-11 flex items-center justify-center border rounded transition-colors ${director ? "bg-amber-500/20 border-amber-400/70 text-amber-300" : "bg-black/70 border-zinc-700 text-zinc-300 hover:border-amber-400/70"}`}
+          className={`min-w-10 h-10 sm:min-w-11 sm:h-11 flex items-center justify-center border rounded transition-colors ${director ? "bg-amber-500/20 border-amber-400/70 text-amber-300" : "bg-black/70 border-zinc-700 text-zinc-300 hover:border-amber-400/70"}`}
           aria-label="Director automático"
           title="Director cinematográfico automático"
         >
@@ -1435,19 +1450,19 @@ export function ZonaCeroSim() {
         </button>
         <button
           onClick={toggleStrike}
-          className={`min-w-11 h-11 flex items-center justify-center border rounded transition-colors ${strike ? "bg-red-500/25 border-red-400/80 text-red-300" : "bg-black/70 border-zinc-700 text-zinc-300 hover:border-red-400/70"}`}
+          className={`min-w-10 h-10 sm:min-w-11 sm:h-11 flex items-center justify-center border rounded transition-colors ${strike ? "bg-red-500/25 border-red-400/80 text-red-300" : "bg-black/70 border-zinc-700 text-zinc-300 hover:border-red-400/70"}`}
           aria-label="Modo ataque: toca el mapa para lanzar"
           title="Modo ataque: toca la ciudad para llamar fuego"
         >
           <Crosshair className="w-4.5 h-4.5" />
         </button>
-        <button onClick={() => zoom(1.25)} className="min-w-11 h-11 flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-amber-400/70 rounded text-zinc-300" aria-label="Acercar" title="Acercar">
+        <button onClick={() => zoom(1.25)} className="min-w-10 h-10 sm:min-w-11 sm:h-11 flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-amber-400/70 rounded text-zinc-300" aria-label="Acercar" title="Acercar">
           <ZoomIn className="w-4.5 h-4.5" />
         </button>
-        <button onClick={() => zoom(0.8)} className="min-w-11 h-11 flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-amber-400/70 rounded text-zinc-300" aria-label="Alejar" title="Alejar">
+        <button onClick={() => zoom(0.8)} className="hidden min-w-10 h-10 sm:flex sm:min-w-11 sm:h-11 items-center justify-center bg-black/70 border border-zinc-700 hover:border-amber-400/70 rounded text-zinc-300" aria-label="Alejar" title="Alejar">
           <ZoomOut className="w-4.5 h-4.5" />
         </button>
-        <button onClick={resetCity} className="min-w-11 h-11 hidden sm:flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-red-400/70 rounded text-zinc-400" aria-label="Reconstruir ciudad" title="Reconstruir la ciudad (borra el historial de destrucción)">
+        <button onClick={resetCity} className="min-w-10 h-10 sm:min-w-11 sm:h-11 hidden sm:flex items-center justify-center bg-black/70 border border-zinc-700 hover:border-red-400/70 rounded text-zinc-400" aria-label="Reconstruir ciudad" title="Reconstruir la ciudad (borra el historial de destrucción)">
           <RotateCcw className="w-4.5 h-4.5" />
         </button>
       </div>
@@ -1482,8 +1497,8 @@ export function ZonaCeroSim() {
 
       {/* rótulo del director */}
       {caption && (
-        <div className="absolute bottom-16 inset-x-0 flex justify-center pointer-events-none px-6">
-          <span className="bg-black/75 border border-zinc-700 rounded px-3 py-1.5 font-mono text-[11px] tracking-[0.14em] text-zinc-100 uppercase text-center">
+        <div className="absolute bottom-40 sm:bottom-16 inset-x-0 flex justify-center pointer-events-none px-6">
+          <span className="bg-black/75 border border-zinc-700 rounded px-3 py-1.5 font-mono text-[10px] sm:text-[11px] tracking-[0.14em] text-zinc-100 uppercase text-center">
             {caption}
           </span>
         </div>
@@ -1506,8 +1521,8 @@ export function ZonaCeroSim() {
             </p>
           )}
           <ul className="flex flex-col gap-1">
-            {dispatches.slice(0, 3).map((d) => (
-              <li key={d.url}>
+            {dispatches.slice(0, 3).map((d, i) => (
+              <li key={d.url} className={i === 2 ? "hidden sm:block" : ""}>
                 <a
                   href={d.url}
                   target="_blank"
