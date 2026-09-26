@@ -64,7 +64,13 @@ async function gdeltRegion(idx: number): Promise<{ name: string; arts: Art[]; li
   if (fresh) return { name: reg.name, arts: fresh as Art[], live: true };
 
   const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(reg.q)}&mode=artlist&maxrecords=8&format=json&sort=datedesc`;
-  const d = (await jfetch(url)) as { articles?: { url?: string; title?: string; domain?: string; sourcecountry?: string }[] } | null;
+  let d = (await jfetch(url)) as { articles?: { url?: string; title?: string; domain?: string; sourcecountry?: string }[] } | null;
+  // GDELT admite ~1 req/5 s: si el primer intento viene vacío/limitado, UN reintento
+  // tras 6 s salva el arranque en frío (queda dentro del maxDuration de la ruta)
+  if (!d || !Array.isArray(d.articles) || !d.articles.length) {
+    await new Promise((res) => setTimeout(res, 6000));
+    d = (await jfetch(url)) as typeof d;
+  }
   if (d && Array.isArray(d.articles)) {
     const arts: Art[] = d.articles
       .filter((a) => a.url && a.title)
