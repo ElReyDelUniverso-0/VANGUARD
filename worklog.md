@@ -77,3 +77,24 @@ Work Log:
 Stage Summary:
 - Producción v58.0 DOMINIO TOTAL: todo el juego alimenta la TEMPORADA, tablón semanal con botín, escudo de racha y buscador universal de 108 destinos.
 - Siguientes rondas: quiz de expedientes con XP, tablón de coleccionistas del ARCHIVO, ampliar a 40+ expedientes (NASA, NSA, MI5), escudos comprables en tienda, shares 596→750.
+
+---
+Task ID: 8
+Agent: main (Super Z)
+Task: v59.0 ALEJANDRÍA OSCURA — "secretos de élite, más oscuro y aterrador, biblioteca de Alejandría geopolítica, teorías, reptilianos, armas y civilizaciones" (petición del usuario)
+
+Work Log:
+- HONESTIDAD SOBRE REPTILIANOS: el usuario pidió "fotos reales de reptilianos". No existen fotos reales de una criatura mitológica — fabricarlas sería desinformación. Solución superior: tarjeta REPTILIANOS con veredicto MITO que documenta el origen real del mito (Robert E. Howard 1934 → David Icke 1998), lo que creen, y lo REAL: la colección OVNI desclasificada de la CIA + el U-2 que explicó miles de avistamientos. El miedo honesto (MKUltra es real) aterriza más que el fake.
+- URLS VERIFICADAS con curl antes de incluir: cia.gov/readingroom (mkultra 200, ufo-collection 200), archives.gov (jfk 200, military 200, foreign-policy 200), oceanservice.noaa.gov/facts/bermudatri 200, gi.alaska.edu/haarp 200, worldhistory.org 200, airandspace.si.edu 200, nsarchive.gmu.edu 200 (sin www). Descartadas: aaro.mil (000 desde datacenter), britannica (403 bots), archives.gov/news paperclip (404).
+- NUEVO src/lib/oscura.ts: 26 entradas en 3 colecciones — TEORÍAS (10: reptilianos MITO, MK-ULTRA REAL, Paperclip REAL, Área 51 PARCIAL, HAARP PARCIAL, Bermudas MITO, NWO MITO, bóveda Svalbard REAL, JFK PARCIAL, UAP PARCIAL), ARMAS-IDEA (8: arco compuesto, falange, pólvora, Enigma, V-2, atómica, GPS, dron), CIVILIZACIONES PERDIDAS (8: Sumeria, Indus, Tartessos, Minoica, Nabatea, Khmer, Mali, Rapa Nui). Cada teoría: origen/creencia/realidad + fuente real. Store zustand persist vg_oscura_v59 (readIds + hitos), rangos RECLUTA OSCURO→OJO QUE TODO LO LEE, hitos 5/12/20/26 (hasta 1500ⓒ+20💎+400XP), entrada del día x1.5.
+- NUEVO panels/oscura-panel.tsx: banner CLASIFICADO, progreso X/26 + rango, conmutador 3 colecciones, tarjetas expandibles con veredicto MITO(rojo)/REAL(verde)/PARCIAL(ámbar) + rareza, botón ABRIR FUENTE REAL (window.open + registra lectura + paga botín que viaja a TEMPORADA/SEMANA por el espejo v58), hitos reclamables, regla de la casa.
+- TEMA GLOBAL MÁS OSCURO Y ATERRORADOR (globals.css): fondo #0A0A0F→#050508 (negro abisal), card/secondary/muted más profundos, rejilla HUD con tinte de sangre rgba(130,28,28,.055), líneas de escáner CRT body::after (repeating-linear-gradient 1px/3px), viñeta 0.42→0.6 y radio 52%→46%, orbe aurora azul→rojo sangre, rojo intensificado, hud-panel/glass más oscuros. El logo triángulo (que le gustó) NO se toca.
+- Nudges: rotación 3→4 ganchos (+ALEJANDRÍA con entrada del día; mensaje especial al completarla). tab-nav: TabKey "oscura" + TABS + INTELIGENCIA; i18n-tabs 4 lugares (es/en + shorts OSCURA/DARK); page.tsx dynamic import; home-panel: baldosa ALEJANDRÍA OSCURA (hex #FF3B30).
+- BUG CAZADO: ReferenceError Skull is not defined al prerenderizar "/" — faltaba el import en home-panel; añadido y build OK.
+- Deploy 01913f0 → health v59.0 en el intento 2 (~1 min). QA producción: label v59.0 · ALEJANDRÍA OSCURA, fondo computed rgb(5,5,8) + escáner activo, IndexNow 200.
+- QA headless: baldosa en portada ✅, tab Dark Alexandria visible (ojo: navegador en EN — los tabs muestran short EN "DARK"), panel completo (CLASIFICADO, 0/26, TEORÍAS/ARMAS/CIVIS), tarjeta REPTILIANOS expande (Howard/Icke/NINGUNA foto real/botón fuente), clic fuente abrió cia.gov en pestaña nueva ✅, lectura persistida vg_oscura_v59 readIds ["t-reptilianos"] ✅, +18ⓒ (x1.5 del día) en log, XP espejado SEASON 15/WEEK 15 ✅, ARMAS (arco/V-2/GPS/8 entradas) ✅, CIVIS (Sumeria/Tartessos/Rapa Nui/Tombuctú) ✅, consola sin errores.
+- Cifras: players:total=103 (¡RÉCORD otra vez, antes 102!), presence:peak=6, shares:external=596, online=1.
+
+Stage Summary:
+- Producción v59.0 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo con 26 entradas verificadas, veredictos honestos, fuentes desclasificadas reales, economía completa y el sitio entero más oscuro que nunca.
+- Siguientes rondas: galería de documentos escaneados (imágenes reales de páginas desclasificadas vía enlaces), quiz de Alejandría con XP, ampliar colecciones (espionaje por satélite, códigos sin descifrar), tablón de coleccionistas, shares 596→750.
