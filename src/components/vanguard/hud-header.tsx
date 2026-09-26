@@ -6,7 +6,7 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Shield, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound } from "lucide-react";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,9 +43,25 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
           <div className="flex items-center gap-1.5 sm:gap-2 mr-auto min-w-0">
             <div
               className="w-7 h-7 sm:w-10 sm:h-10 hud-corner flex-shrink-0 flex items-center justify-center glow-amber"
-              style={{ background: "linear-gradient(135deg, #1E90FF 0%, #0b4fa0 70%, #06101f 100%)" }}
+              style={{ background: "radial-gradient(circle at 50% 42%, #43100d 0%, #1b0506 55%, #070208 100%)" }}
+              title="VANGUARD · Ojo de Dios"
             >
-              <Shield className="w-3.5 h-3.5 sm:w-6 sm:h-6 text-soft" />
+              {/* v57.0 OJO DE DIOS: ojo reptil en triángulo omnisciente */}
+              <svg viewBox="0 0 64 64" className="w-full h-full" aria-label="Ojo de Dios" role="img">
+                <defs>
+                  <radialGradient id="hud-iris" cx="50%" cy="46%" r="55%">
+                    <stop offset="0%" stopColor="#ffe08a" />
+                    <stop offset="45%" stopColor="#ffa41e" />
+                    <stop offset="80%" stopColor="#c23a05" />
+                    <stop offset="100%" stopColor="#5c0b00" />
+                  </radialGradient>
+                </defs>
+                <path d="M32 8 L56 48 H8 Z" fill="none" stroke="#c8741c" strokeWidth="2.5" opacity="0.5" />
+                <path d="M13 35 Q32 18 51 35 Q32 48 13 35 Z" fill="#0d0304" stroke="#ffb347" strokeWidth="2.2" />
+                <circle cx="32" cy="33.5" r="10" fill="url(#hud-iris)" />
+                <ellipse cx="32" cy="33.5" rx="2.7" ry="8.2" fill="#050001" />
+                <circle cx="28.4" cy="29.6" r="1.7" fill="#fff6e0" opacity="0.9" />
+              </svg>
             </div>
             <div className="leading-tight min-w-0">
               <div

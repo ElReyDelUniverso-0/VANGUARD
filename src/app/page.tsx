@@ -132,6 +132,7 @@ const CrisisPanel = dynamic(() => import("@/components/vanguard/panels/crisis-pa
 const RadarPanel = dynamic(() => import("@/components/vanguard/panels/radar-panel").then((m) => m.RadarPanel), { ssr: false, loading: PanelSkeleton });
 // v30 VISTA DIOS: observación omnisciente del sistema (guerra + salas + planeta)
 const OjoDiosPanel = dynamic(() => import("@/components/vanguard/panels/ojo-dios-panel").then((m) => m.OjoDiosPanel), { ssr: false, loading: PanelSkeleton });
+const ExpedientesPanel = dynamic(() => import("@/components/vanguard/panels/expedientes-panel").then((m) => m.ExpedientesPanel), { ssr: false, loading: PanelSkeleton });
 const BibliotecaPanel = dynamic(() => import("@/components/vanguard/panels/biblioteca-panel").then((m) => m.SecretLibraryPanel), { ssr: false, loading: PanelSkeleton });
 const TribunalPanel = dynamic(() => import("@/components/vanguard/panels/tribunal-panel").then((m) => m.TribunalPanel), { ssr: false, loading: PanelSkeleton });
 const AlianzasPanel = dynamic(() => import("@/components/vanguard/panels/alianzas-panel").then((m) => m.AlianzasPanel), { ssr: false, loading: PanelSkeleton });
@@ -388,6 +389,8 @@ export default function Home() {
         {tab === "crisis" && <CrisisPanel />}
         {tab === "radar" && <RadarPanel />}
         {tab === "ojodios" && <OjoDiosPanel />}
+        {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
+        {tab === "expedientes" && <ExpedientesPanel />}
         {tab === "geopolitica" && <GeopoliticaPanel />}
         {tab === "planeta" && <PlanetaPanel />}
         {tab === "biblioteca" && <BibliotecaPanel />}

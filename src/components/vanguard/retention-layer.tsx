@@ -22,6 +22,8 @@ import {
   type ChestReward,
 } from "@/lib/retention";
 import { useGameStore } from "@/lib/game-store";
+// v57 ARCHIVO SECRETO: los avisos ahora empujan también la colección
+import { EXPEDIENTES, expedienteDelDia, useExpedientes } from "@/lib/expedientes";
 import { DailyLoginModal } from "@/components/vanguard/daily-login-modal";
 import { Flame, Gift, Star, Timer, TrendingUp, Radar, Plane, MapPin, X } from "lucide-react";
 
@@ -177,6 +179,20 @@ export function RetentionLayer() {
       if (ret.seasonDaysLeft() <= 3) {
         lastNudge.current = t;
         toast(`⏳ Solo quedan ${ret.seasonDaysLeft()} días de TEMPORADA CERO`, { description: "Última oportunidad para subir de nivel." });
+      } else {
+        // v57: enganche del ARCHIVO SECRETO — el expediente del día paga x1.5
+        lastNudge.current = t;
+        const reads = useExpedientes.getState().readIds.length;
+        if (reads < EXPEDIENTES.length) {
+          const exp = expedienteDelDia();
+          toast(`🗂️ ARCHIVO SECRETO: ${reads}/${EXPEDIENTES.length} expedientes`, {
+            description: `Hoy paga x1.5: «${exp.titulo.slice(0, 58)}${exp.titulo.length > 58 ? "…" : ""}» — en INTELIGENCIA.`,
+          });
+        } else {
+          toast(`👁️ ARCHIVO COMPLETO: ${reads}/${EXPEDIENTES.length}`, {
+            description: "Eres el OJO DE DIOS del archivo, agente.",
+          });
+        }
       }
     }, 90000);
     return () => clearInterval(iv);

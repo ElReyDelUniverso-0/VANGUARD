@@ -10,7 +10,7 @@ import {
   Castle, Radar, Rocket, Swords, Joystick, Fingerprint, Coins, TrendingUp,
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair,
-  Wand2, Landmark,
+  Wand2, Landmark, FolderOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -57,6 +57,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },
   { tab: "bolsa", title: "BOLSA GEOPOLÍTICA", desc: "Invierte en monedas de países: gana o pierde al instante", icon: <TrendingUp className="w-6 h-6" />, hex: "#3EA6FF" },
   { tab: "osint", title: "SALA OSINT 3D", desc: "15 capas de inteligencia sobre un globo interactivo", icon: <Radar className="w-6 h-6" />, hex: "#38BDF8" },
+  // v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables
+  { tab: "expedientes", title: "ARCHIVO SECRETO", desc: "Expedientes desclasificados del FBI, CIA y NARA: ábrelos todos y súbele al rango OJO DE DIOS", icon: <FolderOpen className="w-6 h-6" />, hex: "#A855F7" },
   { tab: "detective", title: "ARCHIVOS NACIÓN", desc: "Resuelve casos históricos con pistas y engaños", icon: <Fingerprint className="w-6 h-6" />, hex: "#A855F7" },
   { tab: "dron", title: "DRON STRIKE 3D", desc: "Vuela el dron, marca objetivos y multiplica combos", icon: <Rocket className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "warsim", title: "SIMULADOR DE GUERRAS", desc: "Cualquier país contra cualquier país, en segundos", icon: <Swords className="w-6 h-6" />, hex: "#FF6B4A" },

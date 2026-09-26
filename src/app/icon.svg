@@ -1,13 +1,36 @@
 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#12122a"/>
-      <stop offset="100%" stop-color="#0A0A0F"/>
-    </linearGradient>
+    <radialGradient id="bg" cx="50%" cy="42%" r="72%">
+      <stop offset="0%" stop-color="#43100d"/>
+      <stop offset="55%" stop-color="#1b0506"/>
+      <stop offset="100%" stop-color="#070208"/>
+    </radialGradient>
+    <radialGradient id="iris" cx="50%" cy="46%" r="55%">
+      <stop offset="0%" stop-color="#ffe08a"/>
+      <stop offset="45%" stop-color="#ffa41e"/>
+      <stop offset="80%" stop-color="#c23a05"/>
+      <stop offset="100%" stop-color="#5c0b00"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <rect width="64" height="64" rx="14" fill="url(#g)"/>
-  <path d="M32 8 L52 15 V31 C52 44 42 52 32 56 C22 52 12 44 12 31 V15 Z"
-        fill="#0A0A0F" stroke="#1E90FF" stroke-width="3"/>
-  <path d="M22 30 L29 38 L43 22" stroke="#00FF87" stroke-width="5"
-        fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <path d="M32 8 L56 48 H8 Z" fill="none" stroke="#c8741c" stroke-width="2" opacity="0.5"/>
+  <g stroke="#ff9d1c" opacity="0.4" stroke-width="1.4" stroke-linecap="round">
+    <line x1="32" y1="2.5" x2="32" y2="7"/>
+    <line x1="13" y1="10" x2="16" y2="14"/>
+    <line x1="51" y1="10" x2="48" y2="14"/>
+    <line x1="7" y1="54" x2="11" y2="51"/>
+    <line x1="57" y1="54" x2="53" y2="51"/>
+  </g>
+  <g filter="url(#glow)">
+    <path d="M13 35 Q32 18 51 35 Q32 48 13 35 Z" fill="#0d0304" stroke="#ffb347" stroke-width="2.2"/>
+    <circle cx="32" cy="33.5" r="10" fill="url(#iris)"/>
+    <ellipse cx="32" cy="33.5" rx="2.7" ry="8.2" fill="#050001"/>
+    <circle cx="28.4" cy="29.6" r="1.7" fill="#fff6e0" opacity="0.9"/>
+    <circle cx="35.5" cy="37" r="0.9" fill="#ffd9a0" opacity="0.5"/>
+  </g>
+  <rect x="1.2" y="1.2" width="61.6" height="61.6" rx="12.8" fill="none" stroke="#ff8c1a" stroke-opacity="0.4" stroke-width="1.6"/>
 </svg>
