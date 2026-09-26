@@ -25,6 +25,8 @@ import {
 import { useGameStore } from "@/lib/game-store";
 // v57 ARCHIVO SECRETO: los avisos ahora empujan también la colección
 import { EXPEDIENTES, expedienteDelDia, useExpedientes } from "@/lib/expedientes";
+// v59 ALEJANDRÍA OSCURA: la biblioteca geopolítica entra en los avisos
+import { OSCURA_TOTAL, entradaDelDia, useOscura } from "@/lib/oscura";
 import { DailyLoginModal } from "@/components/vanguard/daily-login-modal";
 import { Flame, Gift, Star, Timer, TrendingUp, Radar, Plane, MapPin, X } from "lucide-react";
 
@@ -182,10 +184,11 @@ export function RetentionLayer() {
         lastNudge.current = t;
         toast(`⏳ Solo quedan ${ret.seasonDaysLeft()} días de TEMPORADA CERO`, { description: "Última oportunidad para subir de nivel." });
       } else {
-        // v58.0: rotación de ganchos — ARCHIVO SECRETO / TABLÓN SEMANAL / XP GLOBAL
+        // v58/v59: rotación de ganchos — ARCHIVO / TABLÓN / XP GLOBAL / ALEJANDRÍA
         lastNudge.current = t;
         const reads = useExpedientes.getState().readIds.length;
-        const rot = nudgeRot.current++ % 3;
+        const oscuraReads = useOscura.getState().readIds.length;
+        const rot = nudgeRot.current++ % 4;
         if (rot === 0) {
           if (reads < EXPEDIENTES.length) {
             const exp = expedienteDelDia();
@@ -202,9 +205,18 @@ export function RetentionLayer() {
           toast(`🗓️ TABLÓN SEMANAL: ${wk.weekXp} XP esta semana`, {
             description: `Cierra en ${weekDaysLeft()} día(s). Top-3 gana 300ⓒ + 5💎 + 150XP — todo XP suma.`,
           });
-        } else {
+        } else if (rot === 2) {
           toast("⚡ XP TEMPORADA GLOBAL activa", {
             description: "Misiones, quiz, arcade, apuestas, foros, multijugador… TODO suma para tu pase ahora.",
+          });
+        } else if (oscuraReads < OSCURA_TOTAL) {
+          const od = entradaDelDia();
+          toast(`📚 ALEJANDRÍA OSCURA: ${oscuraReads}/${OSCURA_TOTAL} entradas`, {
+            description: `Del día x1.5: «${od.titulo.slice(0, 54)}${od.titulo.length > 54 ? "…" : ""}» — en INTELIGENCIA.`,
+          });
+        } else {
+          toast(`💀 ALEJANDRÍA COMPLETA: ${oscuraReads}/${OSCURA_TOTAL}`, {
+            description: "OJO QUE TODO LO LEE: ningún secreto te queda. Difunde el miedo.",
           });
         }
       }

@@ -60,6 +60,8 @@ export type TabKey =
   | "ojodios"
   // v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables
   | "expedientes"
+  // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo
+  | "oscura"
   // v40 GEOPOLÍTICA EN VIVO: datos reales del planeta (Banco Mundial/USGS/Wikipedia/EEI)
   | "geopolitica"
   // v41 PLANETA VIVO: globo con capas NASA EONET + auroras NOAA + sismos + EEI en directo
@@ -146,6 +148,7 @@ const TABS: Record<TabKey, TabDef> = {
   // v30 vista dios
   ojodios:       { key: "ojodios",       label: "Vista Dios (Ojo de Dios)", short: "OJO", icon: <Eye className="w-3.5 h-3.5" />, color: "cyan" },
   expedientes:   { key: "expedientes",   label: "Archivo Secreto (expedientes desclasificados)", short: "ARCHIVO.S", icon: <FolderOpen className="w-3.5 h-3.5" />, color: "violet" },
+  oscura:        { key: "oscura",        label: "Alejandría Oscura (teorías, armas y civilizaciones)", short: "OSCURA", icon: <Skull className="w-3.5 h-3.5" />, color: "red" },
   divisas:       { key: "divisas",       label: "Divisas del Mundo", short: "DIVISAS", icon: <Banknote className="w-3.5 h-3.5" />, color: "green" },
   perfil:        { key: "perfil",        label: "Personalizar Perfil", short: "PERFIL", icon: <UserCog className="w-3.5 h-3.5" />, color: "violet" },
   radar:         { key: "radar",         label: "Radar Desinfo + Conexiones", short: "RADAR", icon: <ShieldAlert className="w-3.5 h-3.5" />, color: "green" },
@@ -230,7 +233,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "Sala OSINT, mapa, cables, radar, planeta en vivo, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.mapa, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

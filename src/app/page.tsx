@@ -133,6 +133,8 @@ const RadarPanel = dynamic(() => import("@/components/vanguard/panels/radar-pane
 // v30 VISTA DIOS: observación omnisciente del sistema (guerra + salas + planeta)
 const OjoDiosPanel = dynamic(() => import("@/components/vanguard/panels/ojo-dios-panel").then((m) => m.OjoDiosPanel), { ssr: false, loading: PanelSkeleton });
 const ExpedientesPanel = dynamic(() => import("@/components/vanguard/panels/expedientes-panel").then((m) => m.ExpedientesPanel), { ssr: false, loading: PanelSkeleton });
+// v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo
+const OscuraPanel = dynamic(() => import("@/components/vanguard/panels/oscura-panel").then((m) => m.OscuraPanel), { ssr: false, loading: PanelSkeleton });
 const BibliotecaPanel = dynamic(() => import("@/components/vanguard/panels/biblioteca-panel").then((m) => m.SecretLibraryPanel), { ssr: false, loading: PanelSkeleton });
 const TribunalPanel = dynamic(() => import("@/components/vanguard/panels/tribunal-panel").then((m) => m.TribunalPanel), { ssr: false, loading: PanelSkeleton });
 const AlianzasPanel = dynamic(() => import("@/components/vanguard/panels/alianzas-panel").then((m) => m.AlianzasPanel), { ssr: false, loading: PanelSkeleton });
@@ -391,6 +393,8 @@ export default function Home() {
         {tab === "ojodios" && <OjoDiosPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}
+        {/* v59 ALEJANDRÍA OSCURA: teorías, armas y civilizaciones */}
+        {tab === "oscura" && <OscuraPanel />}
         {tab === "geopolitica" && <GeopoliticaPanel />}
         {tab === "planeta" && <PlanetaPanel />}
         {tab === "biblioteca" && <BibliotecaPanel />}
