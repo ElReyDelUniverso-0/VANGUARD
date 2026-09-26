@@ -619,6 +619,13 @@ export function FrentePanel() {
               <Target className="w-3.5 h-3.5" /> STRIKE CON DRON · 30 ◉
             </Button>
           </div>
+          {/* v53.0 FRENTE TOTAL: puente al mural del planeta en guerra en directo */}
+          <a
+            href={`/ver-guerra?f=${front.id}`}
+            className="block px-3 py-2 border-t border-amber-500/30 bg-amber-500/5 text-[10px] font-mono text-amber-300 hover:bg-amber-500/10 transition-colors"
+          >
+            ⚡ VER ESTE FRENTE EN FRENTE TOTAL — el mural del planeta con los 10 teatros ardiendo a la vez →
+          </a>
         </div>
 
         {/* PANEL DE INFORMACIÓN */}

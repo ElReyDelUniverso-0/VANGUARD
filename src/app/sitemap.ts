@@ -28,5 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "hourly",
       priority: 0.9,
     },
+    {
+      // v53: FRENTE TOTAL — el planeta en guerra en directo (10 frentes a la vez)
+      url: `${SITE_URL}/ver-guerra`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    },
   ];
 }
