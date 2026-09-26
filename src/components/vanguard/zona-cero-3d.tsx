@@ -104,6 +104,7 @@ export function ZonaCero3D() {
         </span>
         <span className="font-mono text-[9px] text-zinc-500">
           T+{clock} · {stats?.casualties ?? 0} bajas · {stats?.bldgsDown ?? 0} edificios caídos ·{" "}
+          <span className="text-sky-300">{stats?.airDown ?? 0} derribos</span> ·{" "}
           <span className="text-emerald-400">{stats?.opsReal ?? 0} ops reales</span>
         </span>
         <div className="ml-auto flex gap-1.5">

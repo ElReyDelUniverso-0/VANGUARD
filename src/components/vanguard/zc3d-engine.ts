@@ -25,6 +25,7 @@ export interface ZC3DStats {
   bldgsDown: number;
   craters: number;
   opsReal: number;
+  airDown: number; // aeronaves derribadas por fuego antiaéreo
   clock: number; // segundos de guerra simulada
   fps: number;
 }
@@ -291,17 +292,53 @@ interface TankU {
 interface JetU {
   g: THREE.Group; side: 0 | 1; dir: 1 | -1; x: number; y: number; z: number;
   drops: number; bombT: number; alive: boolean; trailT: number;
+  falling: boolean; fallT: number;
 }
 interface HeliU {
   g: THREE.Group; rotor: THREE.Object3D; side: 0 | 1; x: number; z: number;
-  y: number; cd: number; bob: number; alive: boolean;
+  y: number; cd: number; bob: number; alive: boolean; falling: boolean; fallT: number;
 }
 interface DroneU {
   g: THREE.Group; side: 0 | 1; cx: number; cz: number; ang: number; cd: number; alive: boolean;
+  falling: boolean; fallT: number;
 }
 interface ShellP {
   m: THREE.Mesh; vx: number; vy: number; vz: number; fromSide: 0 | 1 | 2;
-  big: boolean; t: number; whistle: boolean;
+  big: boolean; t: number; whistle: boolean; trail: boolean;
+}
+interface MortarU {
+  g: THREE.Group; tube: THREE.Mesh; side: 0 | 1; front: number; cd: number;
+  x: number; z: number; alive: boolean; shadow: THREE.Mesh;
+}
+interface SniperU {
+  g: THREE.Group; side: 0 | 1; front: number; cd: number;
+  x: number; z: number; alive: boolean; shadow: THREE.Mesh;
+}
+interface TruckT {
+  g: THREE.Group; hp: number; x: number; z: number; alive: boolean; shadow: THREE.Mesh;
+}
+interface ConvoyT {
+  g: THREE.Group; trucks: TruckT[]; dir: 1 | -1; speed: number; side: 0 | 1; ambushed: boolean;
+}
+interface APCU {
+  g: THREE.Group; side: 0 | 1; front: number; hp: number; unloadT: number;
+  x: number; z: number; alive: boolean; shadow: THREE.Mesh; unloaded: boolean;
+}
+interface MLRSU {
+  g: THREE.Group; side: 0 | 1; front: number; cd: number; salvo: number;
+  x: number; z: number; alive: boolean; shadow: THREE.Mesh;
+}
+interface AAU {
+  g: THREE.Group; barrel: THREE.Group; side: 0 | 1; cd: number; burst: number;
+  x: number; z: number; alive: boolean; shadow: THREE.Mesh;
+}
+interface ParaU {
+  g: THREE.Group; side: 0 | 1; front: number; x: number; y: number; z: number;
+  vx: number; vz: number; t: number; chute: THREE.Mesh; landed: boolean;
+}
+interface TransportU {
+  g: THREE.Group; side: 0 | 1; dir: 1 | -1; x: number; y: number; z: number;
+  dropX: number; dropped: boolean; front: number;
 }
 interface TracerP { m: THREE.Mesh; vx: number; vy: number; vz: number; life: number; fromSide: 0 | 1 }
 interface BoomP { s: THREE.Sprite; t: number; dur: number; max: number }
@@ -337,6 +374,17 @@ export class ZC3DEngine {
   private jets: JetU[] = [];
   private helis: HeliU[] = [];
   private drones: DroneU[] = [];
+  private mortars: MortarU[] = [];
+  private snipers: SniperU[] = [];
+  private convoys: ConvoyT[] = [];
+  private apcs: APCU[] = [];
+  private mlrs: MLRSU[] = [];
+  private aaGuns: AAU[] = [];
+  private paras: ParaU[] = [];
+  private transports: TransportU[] = [];
+  private airDown = 0;
+  private nextConvoy = 30;
+  private nextAirAssault = 75;
 
   // pools
   private shells: ShellP[] = [];
@@ -508,6 +556,20 @@ export class ZC3DEngine {
     this.spawnHeli(1);
     this.spawnDrone(0);
     this.spawnDrone(1);
+    // despliegue inicial de las nuevas unidades: morteros y tiradores en cada
+    // frente, lanzamisiles y antiaéreos por bando (v54 — simulador completo)
+    for (let i = 0; i < 4; i++) {
+      for (let s = 0 as 0 | 1; s <= 1; s = (s + 1) as 0 | 1) {
+        this.spawnMortar(this.fronts[i], s);
+        this.spawnSniper(this.fronts[i], s);
+      }
+    }
+    for (let s = 0 as 0 | 1; s <= 1; s = (s + 1) as 0 | 1) {
+      this.spawnMLRS(this.fronts[0], s);
+      this.spawnMLRS(this.fronts[3], s);
+      this.spawnAA(s);
+      this.spawnAA(s);
+    }
   }
 
   private buildTerrain() {
@@ -763,6 +825,7 @@ private spawnJet(side: 0 | 1) {
     x: dir === 1 ? -MAP_X - 20 : MAP_X + 20,
     y: R2(38, 58), z: pick(FRONT_Z) + R2(-10, 10),
     drops: RI(2, 4), bombT: R2(4, 9), alive: true, trailT: 0,
+    falling: false, fallT: 0,
   });
 }
 
@@ -785,7 +848,7 @@ private spawnHeli(side: 0 | 1) {
   this.scene.add(g);
   this.helis.push({
     g, rotor, side, x: R2(-60, 60), z: pick(FRONT_Z) + (side === 0 ? -14 : 14),
-    y: R2(13, 19), cd: R2(2, 5), bob: R2(0, 6), alive: true,
+    y: R2(13, 19), cd: R2(2, 5), bob: R2(0, 6), alive: true, falling: false, fallT: 0,
   });
 }
 
@@ -799,7 +862,250 @@ private spawnDrone(side: 0 | 1) {
   g.add(wing, body, tailB);
   this.scene.add(g);
   const f = pick(this.fronts);
-  this.drones.push({ g, side, cx: f.x, cz: f.z, ang: R2(0, Math.PI * 2), cd: R2(6, 16), alive: true });
+  this.drones.push({ g, side, cx: f.x, cz: f.z, ang: R2(0, Math.PI * 2), cd: R2(6, 16), alive: true, falling: false, fallT: 0 });
+}
+
+private spawnMortar(f: FrontF, side: 0 | 1) {
+  const g = new THREE.Group();
+  const uniform = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x6e3a30 : 0x2f5a63 });
+  const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.55, 0.14, 10), new THREE.MeshLambertMaterial({ color: 0x23241f }));
+  plate.position.y = 0.08;
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.15, 8), new THREE.MeshLambertMaterial({ color: 0x1c1d1a }));
+  tube.position.set(0, 0.62, 0);
+  tube.rotation.x = -0.5;
+  const gunner = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.36, 3, 7), uniform);
+  gunner.position.set(0.42, 0.44, 0.1);
+  const loader = gunner.clone();
+  loader.position.set(-0.4, 0.44, -0.08);
+  const shadow = new THREE.Mesh(this.blobGeo, SHADOW_MAT);
+  shadow.scale.setScalar(0.8);
+  g.add(plate, tube, gunner, loader);
+  const dir = side === 0 ? 1 : -1;
+  const x = f.x - dir * R2(14, 22);
+  const z = f.z + R2(-14, 14);
+  g.position.set(x, terrainH(x, z), z);
+  this.scene.add(g);
+  shadow.position.set(x, terrainH(x, z) + 0.04, z);
+  this.scene.add(shadow);
+  this.mortars.push({ g, tube, side, front: f.idx, cd: R2(3, 10), x, z, alive: true, shadow });
+}
+
+private spawnSniper(f: FrontF, side: 0 | 1) {
+  const g = new THREE.Group();
+  const uniform = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x51392c : 0x274650 });
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.16, 0.7, 3, 7), uniform);
+  body.rotation.z = Math.PI / 2 - 0.06;
+  body.position.y = 0.26;
+  const helm = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 6), uniform);
+  helm.position.set(0.52, 0.3, 0);
+  const rifle = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.05, 0.05), new THREE.MeshLambertMaterial({ color: 0x141414 }));
+  rifle.position.set(0.5, 0.36, 0.1);
+  const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.2, 6), new THREE.MeshLambertMaterial({ color: 0x0a0a0a }));
+  scope.rotation.z = Math.PI / 2;
+  scope.position.set(0.45, 0.43, 0.1);
+  const shadow = new THREE.Mesh(this.blobGeo, SHADOW_MAT);
+  shadow.scale.setScalar(0.6);
+  g.add(body, helm, rifle, scope);
+  const dir = side === 0 ? 1 : -1;
+  const x = f.x - dir * R2(2.5, 5.5);
+  const z = f.z + R2(-9, 9);
+  g.position.set(x, terrainH(x, z), z);
+  g.rotation.y = side === 0 ? Math.PI / 2 : -Math.PI / 2;
+  this.scene.add(g);
+  shadow.position.set(x, terrainH(x, z) + 0.04, z);
+  this.scene.add(shadow);
+  this.snipers.push({ g, side, front: f.idx, cd: R2(6, 14), x, z, alive: true, shadow });
+}
+
+private spawnConvoy(side: 0 | 1) {
+  const g = new THREE.Group();
+  const trucks: TruckT[] = [];
+  const dir: 1 | -1 = side === 0 ? 1 : -1;
+  for (let k = 0; k < 3; k++) {
+    const t = new THREE.Group();
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.85, 1.15), new THREE.MeshLambertMaterial({ color: side === 0 ? 0x5d4a38 : 0x44584a }));
+    cab.position.set(0.55, 0.85, 0);
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.75, 1.25), new THREE.MeshLambertMaterial({ color: 0x3c4238 }));
+    bed.position.set(-0.55, 0.8, 0);
+    const lona = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 1.7, 8, 1, false, 0, Math.PI), new THREE.MeshLambertMaterial({ color: 0x51492f }));
+    lona.rotation.z = Math.PI / 2;
+    lona.position.set(-0.55, 1.18, 0);
+    const wheelG = new THREE.CylinderGeometry(0.3, 0.3, 0.18, 8);
+    wheelG.rotateX(Math.PI / 2);
+    const wMat = new THREE.MeshLambertMaterial({ color: 0x141412 });
+    for (const [wx, wz] of [[0.75, 0.62], [0.75, -0.62], [-0.45, 0.62], [-0.45, -0.62], [-1.35, 0.62], [-1.35, -0.62]] as const) {
+      const w = new THREE.Mesh(wheelG, wMat);
+      w.position.set(wx, 0.3, wz);
+      t.add(w);
+    }
+    t.add(cab, bed, lona);
+    const tx = dir === 1 ? -MAP_X - 12 - k * 4.4 : MAP_X + 12 + k * 4.4;
+    const tz = -16.5 + (k % 2 === 0 ? 1.0 : -1.0);
+    t.position.set(tx, terrainH(tx, tz), tz);
+    t.rotation.y = dir === 1 ? Math.PI / 2 : -Math.PI / 2;
+    this.scene.add(t);
+    const sh = new THREE.Mesh(this.blobGeo, SHADOW_MAT);
+    sh.scale.set(1.6, 1, 0.9);
+    sh.position.set(tx, terrainH(tx, tz) + 0.05, tz);
+    this.scene.add(sh);
+    trucks.push({ g: t, hp: 2, x: tx, z: tz, alive: true, shadow: sh });
+  }
+  void g;
+  this.convoys.push({ g, trucks, dir, speed: R2(6.5, 8.5), side, ambushed: false });
+  this.opts.onEvent?.({
+    text: `Convoy logístico de ${SIDE[side].name} cruzando la carretera del frente`, side,
+  });
+}
+
+private spawnAPC(f: FrontF, side: 0 | 1) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x554636 : 0x3c5548 });
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(3.1, 0.95, 1.7), mat);
+  hull.position.y = 0.8;
+  const glacis = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.6, 1.6), mat);
+  glacis.position.set(1.85, 0.62, 0);
+  glacis.rotation.z = side === 0 ? -0.5 : 0.5;
+  const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.5, 0.4, 8), mat);
+  turret.position.y = 1.45;
+  const canon = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.3, 6), new THREE.MeshLambertMaterial({ color: 0x1c1d1a }));
+  canon.rotation.z = Math.PI / 2;
+  canon.position.set(0.75, 1.5, 0);
+  const wheelG = new THREE.CylinderGeometry(0.34, 0.34, 0.22, 8);
+  wheelG.rotateX(Math.PI / 2);
+  const wMat = new THREE.MeshLambertMaterial({ color: 0x15150f });
+  for (const [wx, wz] of [[1.3, 0.95], [1.3, -0.95], [0, 0.98], [0, -0.98], [-1.3, 0.95], [-1.3, -0.95]] as const) {
+    const w = new THREE.Mesh(wheelG, wMat);
+    w.position.set(wx, 0.34, wz);
+    g.add(w);
+  }
+  const shadow = new THREE.Mesh(this.blobGeo, SHADOW_MAT);
+  shadow.scale.set(2.0, 1, 1.2);
+  g.add(hull, glacis, turret, canon);
+  const dir = side === 0 ? 1 : -1;
+  const x = f.x - dir * R2(16, 24);
+  const z = f.z + R2(-7, 7);
+  g.position.set(x, terrainH(x, z), z);
+  g.rotation.y = side === 0 ? 0 : Math.PI;
+  this.scene.add(g);
+  shadow.position.set(x, terrainH(x, z) + 0.05, z);
+  this.scene.add(shadow);
+  this.apcs.push({ g, side, front: f.idx, hp: 4, unloadT: 0, x, z, alive: true, shadow, unloaded: false });
+}
+
+private spawnMLRS(f: FrontF, side: 0 | 1) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x5d4a38 : 0x44584a });
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.8, 1.3), mat);
+  cab.position.set(1.35, 0.9, 0);
+  const chassis = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.5, 1.6), new THREE.MeshLambertMaterial({ color: 0x31352c }));
+  chassis.position.y = 0.62;
+  const pod = new THREE.Group();
+  for (let k = 0; k < 4; k++) {
+    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1.9, 7), new THREE.MeshLambertMaterial({ color: 0x1e1f1b }));
+    tube.rotation.z = side === 0 ? -1.05 : 1.05;
+    tube.position.set(-0.3 + (k % 2) * 0.2, 1.05 + Math.floor(k / 2) * 0.22, k % 2 === 0 ? -0.18 : 0.18);
+    pod.add(tube);
+  }
+  pod.position.y = 0.55;
+  const shadow = new THREE.Mesh(this.blobGeo, SHADOW_MAT);
+  shadow.scale.set(2.4, 1, 1.2);
+  g.add(cab, chassis, pod);
+  const dir = side === 0 ? 1 : -1;
+  const x = f.x - dir * R2(20, 30);
+  const z = f.z + R2(-12, 12);
+  g.position.set(x, terrainH(x, z), z);
+  g.rotation.y = side === 0 ? 0 : Math.PI;
+  this.scene.add(g);
+  shadow.position.set(x, terrainH(x, z) + 0.05, z);
+  this.scene.add(shadow);
+  this.mlrs.push({ g, side, front: f.idx, cd: R2(18, 40), salvo: 0, x, z, alive: true, shadow });
+}
+
+private spawnAA(side: 0 | 1) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x4e3f30 : 0x3a4f45 });
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.95, 0.4, 10), mat);
+  base.position.y = 0.2;
+  const mount = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.5, 0.9), mat);
+  mount.position.y = 0.6;
+  const barrel = new THREE.Group();
+  const twin = new THREE.Group();
+  for (const off of [-0.14, 0.14]) {
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 1.9, 7), new THREE.MeshLambertMaterial({ color: 0x1b1c19 }));
+    b.rotation.x = Math.PI / 2 - 0.5;
+    b.position.set(off, 0.35, 0.7);
+    twin.add(b);
+  }
+  barrel.add(twin);
+  barrel.position.y = 0.85;
+  const shadow = new THREE.Mesh(this.blobGeo, SHADOW_MAT);
+  shadow.scale.setScalar(1.1);
+  g.add(base, mount, barrel);
+  const x = (side === 0 ? -1 : 1) * R2(30, 52);
+  const z = R2(-52, 58);
+  g.position.set(x, terrainH(x, z), z);
+  this.scene.add(g);
+  shadow.position.set(x, terrainH(x, z) + 0.04, z);
+  this.scene.add(shadow);
+  this.aaGuns.push({ g, barrel, side, cd: R2(2, 5), burst: 0, x, z, alive: true, shadow });
+}
+
+private spawnAirAssault(f: FrontF, side: 0 | 1) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x4a4038 : 0x3d4c54 });
+  const fus = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.95, 9.5, 8), mat);
+  fus.rotation.z = Math.PI / 2;
+  const wingH = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.14, 8.5), mat);
+  wingH.position.set(-0.5, 0, 0);
+  const wingT = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.1, 3.4), mat);
+  wingT.position.set(-4.4, 0.5, 0);
+  const fin = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.6, 0.1), mat);
+  fin.position.set(-4.4, 1.1, 0);
+  const nacelle = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 2.6, 7), new THREE.MeshLambertMaterial({ color: 0x2a2d28 }));
+  nacelle.rotation.z = Math.PI / 2;
+  nacelle.position.set(0.6, 0.55, 0);
+  g.add(fus, wingH, wingT, fin, nacelle);
+  const dir: 1 | -1 = side === 0 ? 1 : -1;
+  g.rotation.y = dir === 1 ? 0 : Math.PI;
+  this.scene.add(g);
+  this.transports.push({
+    g, side, dir,
+    x: dir === 1 ? -MAP_X - 30 : MAP_X + 30,
+    y: 40, z: clamp(f.z + R2(-6, 6), -60, 60),
+    dropX: clamp(f.x + dir * R2(-4, 8), -70, 70),
+    dropped: false, front: f.idx,
+  });
+  this.opts.onEvent?.({
+    text: `Avión de transporte de ${SIDE[side].name} en aproximación de asalto aéreo sobre ${FRONT_NAMES[f.idx]}`, side,
+  });
+}
+
+private spawnParatrooper(f: FrontF, side: 0 | 1, x: number, z: number) {
+  const g = new THREE.Group();
+  const uniform = new THREE.MeshLambertMaterial({ color: side === 0 ? 0x6e3a30 : 0x2f5a63 });
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.16, 0.4, 3, 7), uniform);
+  body.position.y = -0.4;
+  const chute = new THREE.Mesh(
+    new THREE.SphereGeometry(1.15, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.MeshLambertMaterial({ color: side === 0 ? 0x8a6a4a : 0x4a7078, side: THREE.DoubleSide })
+  );
+  chute.position.y = 0.9;
+  g.add(body, chute);
+  g.position.set(x, 40, z);
+  this.scene.add(g);
+  this.paras.push({
+    g, side, front: f.idx, x, y: 40, z,
+    vx: R2(-0.6, 0.6), vz: R2(-0.5, 0.5), t: R2(0, 1), chute, landed: false,
+  });
+}
+
+private spawnSoldierAt(f: FrontF, side: 0 | 1, atX: number, atZ: number) {
+  this.spawnSoldier(f, side);
+  const s = this.soldiers[this.soldiers.length - 1];
+  if (!s) return;
+  s.x = atX; s.z = atZ;
+  s.g.position.set(atX, terrainH(atX, atZ), atZ);
+  s.shadow.position.set(atX, terrainH(atX, atZ) + 0.04, atZ);
 }
 
 // -------------------------------------------------------- estado guardado ----
@@ -945,7 +1251,7 @@ private addCrater(x: number, z: number, r: number) {
   }
 }
 
-private fireShell(from: THREE.Vector3, to: THREE.Vector3, fromSide: 0 | 1 | 2, big: boolean, whistle: boolean) {
+private fireShell(from: THREE.Vector3, to: THREE.Vector3, fromSide: 0 | 1 | 2, big: boolean, whistle: boolean, trail = false) {
   const g = 20;
   const T = clamp(from.distanceTo(to) / 26, 1.6, 4.6);
   const vx = (to.x - from.x) / T;
@@ -959,7 +1265,7 @@ private fireShell(from: THREE.Vector3, to: THREE.Vector3, fromSide: 0 | 1 | 2, b
   }));
   glow.scale.setScalar(big ? 1.6 : 1.0);
   m.add(glow);
-  this.shells.push({ m, vx, vy, vz, fromSide, big, t: 0, whistle });
+  this.shells.push({ m, vx, vy, vz, fromSide, big, t: 0, whistle, trail });
   if (whistle) this.audio.whistle(T * 0.8);
 }
 
@@ -1104,10 +1410,34 @@ triggerOp(frontIdx: number, headline: string, url?: string) {
   const idx = clamp(frontIdx, 0, 3);
   const f = this.fronts[idx];
   this.opsReal++;
-  this.callBarrage(f.x + R2(-6, 6), f.z, RI(6, 9), f.attacker, true);
-  const cap = 92;
-  for (let i = 0; i < 4 && this.soldiers.length < cap; i++) this.spawnSoldier(f, f.attacker);
-  const jet = this.jets.find((j) => j.side === f.attacker);
+  const roll = Math.random();
+  if (roll < 0.22) {
+    // ASALTO AÉREO: transporte + paracaidistas + bombardeo de preparación
+    this.spawnAirAssault(f, f.attacker);
+    this.callBarrage(f.x + R2(-6, 6), f.z, RI(4, 6), f.attacker, true);
+  } else if (roll < 0.42) {
+    // ATAQUE CON MISILES: salvo balístico con estelas desde el borde del mapa
+    const fromX = f.attacker === 0 ? -104 : 104;
+    for (let i = 0; i < 4; i++) {
+      window.setTimeout(() => {
+        if (this.disposed) return;
+        const tx = clamp(f.x + R2(-8, 8), -60, 60);
+        const tz = clamp(f.z + R2(-8, 8), -60, 60);
+        this.fireShell(new THREE.Vector3(fromX, 6, f.z + R2(-30, 30)), new THREE.Vector3(tx, terrainH(tx, tz), tz), f.attacker, true, true, true);
+      }, i * R2(500, 1100));
+    }
+  } else if (roll < 0.58) {
+    // ASALTO MECANIZADO: transporte de tropas + blindado de refuerzo
+    this.spawnAPC(f, f.attacker);
+    if (this.tanks.length < 26) this.spawnTank(f, f.attacker);
+    this.callBarrage(f.x + R2(-5, 5), f.z, RI(3, 5), f.attacker, false);
+  } else {
+    // OFENSIVA TOTAL clásica: martilleo de artillería + oleadas de infantería
+    this.callBarrage(f.x + R2(-6, 6), f.z, RI(6, 9), f.attacker, true);
+    const cap = 92;
+    for (let i = 0; i < 4 && this.soldiers.length < cap; i++) this.spawnSoldier(f, f.attacker);
+  }
+  const jet = this.jets.find((j) => j.side === f.attacker && !j.falling);
   if (jet) {
     jet.z = f.z + R2(-4, 4);
     jet.drops = RI(2, 3);
@@ -1132,6 +1462,7 @@ getStats(): ZC3DStats {
     bldgsDown: this.bldgs.filter((b) => b.destroyed).length,
     craters: this.craterTotal,
     opsReal: this.opsReal,
+    airDown: this.airDown,
     clock: Math.floor(this.t),
     fps: this.fpsRoll.length
       ? Math.round(this.fpsRoll.reduce((a, b) => a + b, 0) / this.fpsRoll.length)
@@ -1284,6 +1615,28 @@ private updateTanks(dt: number) {
 
 private updateJets(dt: number) {
   for (const j of this.jets) {
+    if (j.falling) {
+      j.fallT += dt;
+      j.y -= 26 * dt;
+      j.x += j.dir * 9 * dt;
+      j.g.position.set(j.x, j.y, j.z);
+      j.g.rotation.z += 2.6 * dt;
+      if (Math.random() < 0.55 && this.smokes.length < 70) this.spawnSmoke(j.x, j.y, j.z, 2.0);
+      const gh = terrainH(j.x, j.z);
+      if (j.y <= gh + 1) {
+        this.boomAt(j.x, gh + 2, j.z, true);
+        this.addCrater(j.x, j.z, R2(1.6, 3));
+        j.falling = false;
+        j.fallT = 0;
+        j.g.rotation.z = 0;
+        j.x = j.dir === 1 ? -MAP_X - 22 : MAP_X + 22;
+        j.y = R2(38, 58);
+        j.z = pick(FRONT_Z) + R2(-10, 10);
+        j.drops = RI(2, 4);
+        j.bombT = R2(4, 9);
+      }
+      continue;
+    }
     j.x += j.dir * 30 * dt;
     j.bombT -= dt;
     j.g.position.set(j.x, j.y, j.z);
@@ -1315,6 +1668,26 @@ private updateJets(dt: number) {
 
 private updateHelis(dt: number) {
   for (const h of this.helis) {
+    if (h.falling) {
+      h.fallT += dt;
+      h.y -= 13 * dt;
+      h.x += R2(-2, 2) * dt * 6;
+      h.z += R2(-2, 2) * dt * 6;
+      h.g.position.set(h.x, h.y, h.z);
+      h.g.rotation.z += 1.8 * dt;
+      if (Math.random() < 0.5 && this.smokes.length < 70) this.spawnSmoke(h.x, h.y, h.z, 1.7);
+      const gh = terrainH(h.x, h.z);
+      if (h.y <= gh + 0.8) {
+        this.boomAt(h.x, gh + 2, h.z, true);
+        h.falling = false;
+        h.fallT = 0;
+        h.g.rotation.z = 0;
+        h.x = R2(-60, 60);
+        h.z = pick(FRONT_Z) + (h.side === 0 ? -14 : 14);
+        h.y = R2(13, 19);
+      }
+      continue;
+    }
     h.bob += dt;
     h.cd -= dt;
     h.rotor.rotation.y += 26 * dt;
@@ -1346,6 +1719,24 @@ private updateDrones(dt: number) {
   let hot = this.fronts[0];
   for (const f of this.fronts) if (f.intensity > hot.intensity) hot = f;
   for (const d of this.drones) {
+    if (d.falling) {
+      d.fallT += dt;
+      const y = 27 - d.fallT * 16;
+      d.g.rotation.z += 3.2 * dt;
+      d.g.position.set(d.g.position.x, y, d.g.position.z);
+      if (Math.random() < 0.4 && this.smokes.length < 70) this.spawnSmoke(d.g.position.x, y, d.g.position.z, 1.2);
+      const gh = terrainH(d.g.position.x, d.g.position.z);
+      if (y <= gh + 0.4) {
+        this.boomAt(d.g.position.x, gh + 1.5, d.g.position.z, false);
+        d.falling = false;
+        d.fallT = 0;
+        d.g.rotation.z = 0;
+        d.cx = hot.x + R2(-8, 8);
+        d.cz = hot.z + R2(-8, 8);
+        d.ang = R2(0, Math.PI * 2);
+      }
+      continue;
+    }
     d.ang += dt * 0.3;
     d.cx += (hot.x + (d.side === 0 ? -9 : 9) - d.cx) * dt * 0.12;
     d.cz += (hot.z - d.cz) * dt * 0.12;
@@ -1363,6 +1754,240 @@ private updateDrones(dt: number) {
   }
 }
 
+private updateMortars(dt: number) {
+  for (const m of this.mortars) {
+    const f = this.fronts[m.front];
+    m.cd -= dt;
+    m.tube.rotation.x = -0.5 + Math.sin(this.t * 0.7 + m.x) * 0.06;
+    if (m.cd <= 0) {
+      m.cd = R2(7, 16);
+      const dir = m.side === 0 ? 1 : -1;
+      const tx = clamp(f.x + dir * R2(-4, 6), -60, 60);
+      const tz = clamp(f.z + R2(-9, 9), -60, 60);
+      this.fireShell(
+        new THREE.Vector3(m.x, terrainH(m.x, m.z) + 1.1, m.z),
+        new THREE.Vector3(tx, terrainH(tx, tz), tz), m.side, false, false
+      );
+      this.audio.rattle(Math.abs(m.g.position.distanceTo(this.cam.position)));
+    }
+  }
+}
+
+private updateSnipers(dt: number) {
+  for (const s of this.snipers) {
+    const f = this.fronts[s.front];
+    s.cd -= dt;
+    if (s.cd <= 0) {
+      s.cd = R2(5.5, 12);
+      let best: SoldierU | null = null;
+      let bd = 1e9;
+      for (const e of this.soldiers) {
+        if (e.side === s.side || !e.alive || e.front !== s.front) continue;
+        const d = Math.hypot(e.x - s.x, e.z - s.z);
+        if (d < bd) { bd = d; best = e; }
+      }
+      if (best && bd < 46) {
+        this.fireTracer(s.x, s.g.position.y + 0.42, s.z, best.x, best.g.position.y + 1.0, best.z, s.side);
+        if (Math.random() < 0.55) this.killSoldier(best);
+        if (bd < 40) this.audio.rattle(bd * 1.4);
+      }
+    }
+  }
+}
+
+private updateConvoys(dt: number) {
+  for (let i = this.convoys.length - 1; i >= 0; i--) {
+    const c = this.convoys[i];
+    let aliveCount = 0;
+    for (const t of c.trucks) {
+      if (!t.alive) continue;
+      aliveCount++;
+      t.x += c.dir * c.speed * dt;
+      t.g.position.set(t.x, terrainH(t.x, t.z), t.z);
+      t.shadow.position.set(t.x, terrainH(t.x, t.z) + 0.05, t.z);
+      const roadFront = this.fronts[1];
+      if (!c.ambushed && Math.abs(t.x - roadFront.x) < 14 && Math.random() < 0.02) {
+        c.ambushed = true;
+        this.callBarrage(t.x, t.z + R2(-3, 3), RI(3, 5), (1 - c.side) as 0 | 1, false);
+        this.opts.onEvent?.({ text: `¡Convoy de ${SIDE[c.side].name} emboscado cerca del frente de la carretera!`, side: c.side });
+      }
+      if (Math.random() < 0.006) {
+        this.fireTracer(t.x, terrainH(t.x, t.z) + 1.4, t.z, t.x + c.dir * 30 + R2(-8, 8), terrainH(t.x + c.dir * 30, t.z) + 1, t.z + R2(-6, 6), c.side);
+      }
+      if ((c.dir === 1 && t.x > MAP_X + 14) || (c.dir === -1 && t.x < -MAP_X - 14)) {
+        this.scene.remove(t.g);
+        this.scene.remove(t.shadow);
+        t.alive = false;
+      }
+    }
+    if (aliveCount === 0) this.convoys.splice(i, 1);
+  }
+  if (this.t > this.nextConvoy) {
+    this.nextConvoy = this.t + R2(42, 80);
+    this.spawnConvoy(Math.random() < 0.5 ? 0 : 1);
+  }
+  if (this.t > this.nextAirAssault) {
+    this.nextAirAssault = this.t + R2(80, 150);
+    this.spawnAirAssault(pick(this.fronts), Math.random() < 0.5 ? 0 : 1);
+  }
+}
+
+private updateAPCs(dt: number) {
+  for (const a of this.apcs) {
+    if (!a.alive) continue;
+    const f = this.fronts[a.front];
+    const dir = a.side === 0 ? 1 : -1;
+    if (!a.unloaded) {
+      a.x += dir * 2.4 * dt;
+      const goal = f.x - dir * 3.5;
+      if ((dir === 1 && a.x >= goal) || (dir === -1 && a.x <= goal)) {
+        a.unloaded = true;
+        a.unloadT = 3;
+        for (let k = 0; k < 3; k++) {
+          window.setTimeout(() => {
+            if (this.disposed || this.soldiers.length >= 96) return;
+            this.spawnSoldierAt(f, a.side, a.x - dir * R2(1, 3), a.z + R2(-2.5, 2.5));
+          }, k * 700);
+        }
+        this.opts.onEvent?.({ text: `Infantería mecanizada de ${SIDE[a.side].name} desembarcó en ${FRONT_NAMES[a.front]}`, side: a.side });
+      }
+    } else {
+      a.unloadT -= dt;
+      if (a.unloadT < -14) {
+        a.x -= dir * 3.2 * dt;
+        if (Math.abs(a.x) > MAP_X + 10) {
+          this.scene.remove(a.g);
+          this.scene.remove(a.shadow);
+          a.alive = false;
+        }
+      }
+    }
+    if (!a.alive) continue;
+    a.g.position.set(a.x, terrainH(a.x, a.z), a.z);
+    a.shadow.position.set(a.x, terrainH(a.x, a.z) + 0.05, a.z);
+  }
+}
+
+private updateMLRS(dt: number) {
+  for (const r of this.mlrs) {
+    const f = this.fronts[r.front];
+    r.cd -= dt;
+    if (r.salvo > 0) {
+      r.salvo--;
+      const dir = r.side === 0 ? 1 : -1;
+      const tx = clamp(f.x + dir * R2(-5, 7), -60, 60);
+      const tz = clamp(f.z + R2(-10, 10), -60, 60);
+      this.fireShell(
+        new THREE.Vector3(r.x, terrainH(r.x, r.z) + 1.7, r.z),
+        new THREE.Vector3(tx, terrainH(tx, tz), tz), r.side, false, false, true
+      );
+      this.audio.rattle(Math.abs(r.g.position.distanceTo(this.cam.position)));
+      r.cd = 0.55;
+    } else if (r.cd <= 0) {
+      r.salvo = RI(4, 6);
+      r.cd = 99;
+      const ff = this.fronts[r.front];
+      ff.intensity = clamp(ff.intensity + 0.3, 0, 1.4);
+      ff.lastEvent = `salvo de lanzamisiles de ${SIDE[r.side].name}`;
+    }
+  }
+}
+
+private updateAAGuns(dt: number) {
+  for (const a of this.aaGuns) {
+    let tx = 0, ty = 0, tz = 0, has = false, bd = 1e9;
+    let target: JetU | HeliU | DroneU | null = null;
+    let kind: "jet" | "heli" | "drone" = "jet";
+    for (const j of this.jets) {
+      if (j.side === a.side || j.falling) continue;
+      const d = Math.hypot(j.x - a.x, j.z - a.z);
+      if (d < bd) { bd = d; tx = j.x; ty = j.y; tz = j.z; has = true; target = j; kind = "jet"; }
+    }
+    for (const h of this.helis) {
+      if (h.side === a.side || h.falling) continue;
+      const d = Math.hypot(h.x - a.x, h.z - a.z);
+      if (d < bd) { bd = d; tx = h.x; ty = h.y; tz = h.z; has = true; target = h; kind = "heli"; }
+    }
+    for (const dr of this.drones) {
+      if (dr.side === a.side || dr.falling) continue;
+      const dx = dr.cx + Math.cos(dr.ang) * 11 - a.x;
+      const dz = dr.cz + Math.sin(dr.ang) * 11 - a.z;
+      const d = Math.hypot(dx, dz);
+      if (d < bd) { bd = d; tx = dx + a.x; ty = 27; tz = dz + a.z; has = true; target = dr; kind = "drone"; }
+    }
+    if (has && bd < 90) {
+      a.barrel.rotation.y = Math.atan2(tz - a.z, tx - a.x);
+      a.barrel.rotation.x = Math.PI / 2 - clamp(Math.atan2(ty - a.g.position.y - 0.9, Math.max(bd, 1)), 0.05, 1.35);
+      a.cd -= dt;
+      if (a.cd <= 0) {
+        if (a.burst <= 0) a.burst = RI(3, 6);
+        a.burst--;
+        a.cd = a.burst > 0 ? 0.09 : R2(1.2, 2.6);
+        this.fireTracer(a.x, a.g.position.y + 1.2, a.z, tx + R2(-2.4, 2.4), ty + R2(-1.6, 1.6), tz + R2(-2.4, 2.4), a.side);
+        if (a.burst <= 0 && Math.random() < 0.34 && target) {
+          if (kind === "jet") {
+            const j = target as JetU;
+            j.falling = true;
+            this.airDown++;
+            this.opts.onEvent?.({ text: `¡Caza de ${SIDE[j.side].name} derribado por las defensas antiaéreas de ${SIDE[a.side].name}!`, side: a.side });
+          } else if (kind === "heli") {
+            const h = target as HeliU;
+            h.falling = true;
+            this.airDown++;
+            this.opts.onEvent?.({ text: `¡Helicóptero de ${SIDE[h.side].name} abatido sobre el frente!`, side: a.side });
+          } else {
+            const dr = target as DroneU;
+            dr.falling = true;
+            this.airDown++;
+            this.opts.onEvent?.({ text: `Dron de reconocimiento de ${SIDE[dr.side].name} derribado en vuelo`, side: a.side });
+          }
+          this.audio.boom(bd, false);
+        }
+      }
+    }
+  }
+}
+
+private updateTransports(dt: number) {
+  for (let i = this.transports.length - 1; i >= 0; i--) {
+    const tr = this.transports[i];
+    tr.x += tr.dir * 17 * dt;
+    tr.g.position.set(tr.x, tr.y, tr.z);
+    if (!tr.dropped && (tr.dir === 1 ? tr.x >= tr.dropX : tr.x <= tr.dropX)) {
+      tr.dropped = true;
+      const f = this.fronts[tr.front];
+      for (let k = 0; k < 5; k++) this.spawnParatrooper(f, tr.side, tr.x - tr.dir * k * 2.4, tr.z + R2(-3, 3));
+      this.opts.onEvent?.({ text: `Paracaidistas de ${SIDE[tr.side].name} saltando sobre ${FRONT_NAMES[tr.front]}`, side: tr.side });
+    }
+    if (Math.abs(tr.x) > MAP_X + 34) {
+      this.scene.remove(tr.g);
+      this.transports.splice(i, 1);
+    }
+  }
+}
+
+private updateParas(dt: number) {
+  for (let i = this.paras.length - 1; i >= 0; i--) {
+    const p = this.paras[i];
+    p.t += dt;
+    p.y -= 3.4 * dt;
+    p.x += (p.vx + Math.sin(p.t * 1.4) * 0.5) * dt;
+    p.z += p.vz * dt;
+    const gh = terrainH(p.x, p.z);
+    p.g.position.set(p.x, p.y, p.z);
+    p.g.rotation.z = Math.sin(p.t * 1.1) * 0.08;
+    if (p.y <= gh) {
+      this.scene.remove(p.g);
+      p.chute.geometry.dispose();
+      if (this.soldiers.length < 100) {
+        this.spawnSoldierAt(this.fronts[p.front], p.side, p.x, p.z);
+        if (Math.random() < 0.4) this.spawnSmoke(p.x, gh + 0.5, p.z, 1.2);
+      }
+      this.paras.splice(i, 1);
+    }
+  }
+}
+
 private updateShells(dt: number) {
   for (let i = this.shells.length - 1; i >= 0; i--) {
     const sh = this.shells[i];
@@ -1371,6 +1996,9 @@ private updateShells(dt: number) {
     sh.m.position.x += sh.vx * dt;
     sh.m.position.y += sh.vy * dt;
     sh.m.position.z += sh.vz * dt;
+    if (sh.trail && Math.random() < 0.65 && this.smokes.length < 80) {
+      this.spawnSmoke(sh.m.position.x, sh.m.position.y, sh.m.position.z, 0.55);
+    }
     const gh = terrainH(sh.m.position.x, sh.m.position.z);
     if (sh.m.position.y <= gh + 0.2 || sh.t > 9) {
       const big = sh.big;
@@ -1393,6 +2021,37 @@ private updateShells(dt: number) {
               if (o instanceof THREE.Mesh) o.material = WRECK_MAT;
             });
             this.opts.onEvent?.({ text: `Blindado de ${SIDE[tk.side].name} destruido en ${FRONT_NAMES[tk.front]}`, side: tk.side });
+          }
+        }
+      }
+      // camiones de convoys y vehículos nuevos también sufren el impacto
+      for (const c of this.convoys) {
+        for (const t of c.trucks) {
+          if (!t.alive) continue;
+          if (Math.hypot(t.x - px, t.z - pz) < (big ? 5 : 3)) {
+            t.hp -= big ? 2 : 1;
+            if (t.hp <= 0) {
+              t.alive = false;
+              this.boomAt(t.x, terrainH(t.x, t.z) + 1.2, t.z, true);
+              t.g.traverse((o) => {
+                if (o instanceof THREE.Mesh) o.material = WRECK_MAT;
+              });
+              this.opts.onEvent?.({ text: `Camión de suministros de ${SIDE[c.side].name} destruido en la carretera`, side: c.side });
+            }
+          }
+        }
+      }
+      for (const a of this.apcs) {
+        if (!a.alive) continue;
+        if (Math.hypot(a.x - px, a.z - pz) < (big ? 5 : 3.2)) {
+          a.hp -= big ? 2 : 1;
+          if (a.hp <= 0) {
+            a.alive = false;
+            this.boomAt(a.x, terrainH(a.x, a.z) + 1.4, a.z, true);
+            a.g.traverse((o) => {
+              if (o instanceof THREE.Mesh) o.material = WRECK_MAT;
+            });
+            this.opts.onEvent?.({ text: `Transporte blindado de ${SIDE[a.side].name} alcanzado y destruido`, side: a.side });
           }
         }
       }
@@ -1522,6 +2181,7 @@ private updateFronts(dt: number) {
         text: `${SIDE[f.attacker].name} lanza asalto de infantería en ${FRONT_NAMES[f.idx]}`,
         side: f.attacker,
       });
+      if (Math.random() < 0.3 && this.apcs.filter((a) => a.alive).length < 4) this.spawnAPC(f, f.attacker);
       if (Math.random() < 0.35) this.audio.siren();
     }
     // avance de línea según presión local
@@ -1582,6 +2242,14 @@ private loop = () => {
   this.updateJets(dt);
   this.updateHelis(dt);
   this.updateDrones(dt);
+  this.updateMortars(dt);
+  this.updateSnipers(dt);
+  this.updateMLRS(dt);
+  this.updateAAGuns(dt);
+  this.updateConvoys(dt);
+  this.updateAPCs(dt);
+  this.updateTransports(dt);
+  this.updateParas(dt);
   this.updateShells(dt);
   this.updateTracers(dt);
   this.updateEffects(dt);

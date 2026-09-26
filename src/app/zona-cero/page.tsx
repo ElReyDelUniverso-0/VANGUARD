@@ -3,28 +3,34 @@ import Link from "next/link";
 import { ZonaCeroTabs } from "@/components/vanguard/zona-cero-tabs";
 import { ZonaCeroGeo } from "@/components/vanguard/zona-cero-geo";
 
-// v53.0 ZONA CERO 3D — EL SIMULADOR DE GUERRA REALISTA. Lo que pidió la
-// comunidad: mapa TRIDIMENSIONAL con relieve, río y carretera; DOS PAÍSES en
-// guerra (Eje del Norte vs Coalición Sur) con banderas propias; CUATRO
-// FRENTES simultáneos visibles (bosque, carretera, río y ciudad); TRINCHERAS
-// zigzag con sacos terreros; soldados animados que avanzan, disparan y caen;
-// tanques con torreta y retroceso de cañón; jets, helicópteros, drones y
-// baterías de artillería lejanas; ciudad destructible piso a piso; director
-// de cámara; fusión con noticias reales (GDELT) y destrucción persistente.
-// v52.1: FIX pantalla negra + tablero geopolítico (se conserva como pestaña 2D).
+// v54.0 ZONA CERO — TEATRO GLOBAL. Tres simuladores en una página:
+// · TEATRO GLOBAL 3D (nuevo): mesa de guerra MUNDIAL a nivel de PAÍSES —
+//   mapa-mundo tridimensional con los 5 teatros reales de conflicto pulsando
+//   (Europa del Este, Medio Oriente, África, Asia-Pacífico, América Latina),
+//   marcadores OTAN de infantería y blindados orbitando, fogonazos de
+//   artillería, arcos de misiles y AERONAVES MILITARES REALES en vuelo
+//   (ADS-B) sobre su posición geográfica verdadera. Titulares reales de
+//   GDELT por teatro con enlace directo.
+// · FRENTE TÁCTICO 3D: el simulador de trincheras ampliado v54 — morteros,
+//   francotiradores, convoyes logísticos emboscados, APC con desembarco,
+//   lanzamisiles MLRS con salvos y defensas antiaéreas que DERIBAN cazas,
+//   helicópteros y drones con caída en llamas. Operaciones reales con 4
+//   variantes: asalto aéreo con paracaidistas, ataque de misiles balísticos
+//   con estela, asalto mecanizado y ofensiva total.
+// · CIUDAD 2D CLÁSICA: el lienzo original de la ciudad que cae.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "ZONA CERO 3D — simulador de guerra en vivo con frentes y trincheras | VANGUARD",
+  title: "TEATRO GLOBAL 3D — mesa de guerra mundial con países, frentes y trincheras | VANGUARD",
   description:
-    "El simulador de guerra 3D que nunca antes viste en una página de conflictos: dos países en guerra sobre un mapa tridimensional con trincheras, río y ciudad; cuatro frentes en directo con soldados, tanques, jets y drones; noticias reales disparan las ofensivas. Gratis, en español, sin instalar nada.",
+    "El simulador de guerra completo: mesa 3D del mundo con los 5 teatros reales de conflicto, aeronaves militares reales en vuelo, marcadores de países y arcos de misiles; más el frente táctico 3D con trincheras, morteros, francotiradores, convoyes, paracaidistas y derribos antiaéreos. Gratis, en español, sin instalar nada.",
   alternates: { canonical: "/zona-cero" },
   openGraph: {
-    title: "ZONA CERO 3D — el simulador de guerra en vivo · VANGUARD",
+    title: "TEATRO GLOBAL 3D — la mesa de guerra mundial · VANGUARD",
     description:
-      "Mapa 3D con trincheras y cuatro frentes simultáneos, países en guerra, destrucción persistente y ofensivas disparadas por noticias reales del mundo.",
+      "Mira el mundo entero en guerra: teatros reales pulsando, aviones militares en vivo sobre el mapa y el frente táctico con trincheras, tanques y paracaidistas.",
     url: `${SITE_URL}/zona-cero`,
     images: ["/api/og"],
   },
@@ -33,9 +39,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  name: "Zona Cero 3D — simulador de guerra en vivo con frentes y trincheras",
+  name: "Teatro Global 3D — mesa de guerra mundial con países, frentes y trincheras",
   description:
-    "Simulación de guerra tridimensional en directo: dos países, cuatro frentes, trincheras, soldados, tanques y aviación sobre un mapa 3D que recuerda cada visita. Fusión de despachos reales vía GDELT.",
+    "Mesa de guerra mundial tridimensional con los teatros de conflicto reales, aeronaves militares en vuelo y frente táctico 3D con trincheras, tanques, paracaidistas y antiaéreos. Fusión de despachos reales vía GDELT y ADS-B.",
   url: `${SITE_URL}/zona-cero`,
   isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
 };
@@ -53,15 +59,16 @@ export default function ZonaCeroPage() {
           VANGUARD · Simulador de guerra en directo
         </p>
         <h1 className="font-orbitron text-3xl sm:text-5xl font-black mt-2 tracking-wide">
-          ZONA <span className="text-red-500">CERO</span> <span className="text-amber-300">3D</span>
+          TEATRO <span className="text-red-500">GLOBAL</span> <span className="text-amber-300">3D</span>
         </h1>
         <p className="mt-3 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl">
-          El simulador que ninguna página de conflictos se atrevió a montar: dos
-          países enteros en guerra sobre un mapa tridimensional con relieve, río
-          y carretera. Cuatro frentes abiertos a la vez —bosque, carretera, río y
-          ciudad— con trincheras zigzag, soldados que avanzan y caen, tanques que
-          empujan la línea, jets que silban a baja cota y artillería que no
-          descansa. Cada edificio que cae, se queda caído.
+          El simulador completo de países en guerra: una mesa de operaciones
+          mundial en 3D donde ves TODOS los frentes del planeta a la vez —
+          Europa del Este, Medio Oriente, África, Asia-Pacífico y América
+          Latina— con aeronaves militares reales cruzando el mapa en vivo. Y
+          cuando quieras el detalle de trinchera: morteros, francotiradores,
+          convoyes emboscados, paracaidistas, lanzamisiles y antiaéreos que
+          derriban cazas en llamas. Todo en un navegador, gratis.
         </p>
       </header>
 
@@ -120,7 +127,7 @@ export default function ZonaCeroPage() {
       <section className="max-w-6xl mx-auto px-5 pb-4">
         <div className="border border-zinc-800 rounded-md p-5 bg-zinc-900/40">
           <h2 className="font-mono text-[11px] uppercase tracking-widest text-zinc-300">
-            Todo lo que hay en una guerra — los seis niveles del simulador
+            Todo lo que hay en una guerra — los ocho niveles del simulador
           </h2>
           <div className="mt-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-2 text-[12px] text-zinc-400">
             <p className="border border-zinc-800 rounded p-3 leading-relaxed">
@@ -158,13 +165,37 @@ export default function ZonaCeroPage() {
               de humo y colapso total al segundo. Los edificios caídos siguen en
               ruinas tu próxima visita.
             </p>
+            <p className="border border-zinc-800 rounded p-3 leading-relaxed">
+              <strong className="text-amber-300">Armas de apoyo v54:</strong>{" "}
+              equipos de mortero que bombardean en arco, francotiradores
+              emboscados que cazan a 40 metros, lanzamisiles MLRS que descargan
+              salvas de cohetes con estela y convoyes logísticos que cruzan la
+              carretera y pueden caer en una emboscada.
+            </p>
+            <p className="border border-zinc-800 rounded p-3 leading-relaxed">
+              <strong className="text-amber-300">Cielo en disputa v54:</strong>{" "}
+              cañones antiaéreos que siguen cada caza con sus tubos gemelos y
+              los DERIBAN: cazas y helicópteros caen en barrena dejando humo
+              hasta explotar contra el suelo, y los drones son abatidos en
+              vuelo. Paracaidistas que saltan de un transporte y se suman al
+              asalto al tocar tierra.
+            </p>
+            <p className="border border-emerald-700/50 rounded p-3 leading-relaxed">
+              <strong className="text-emerald-300">Teatro global v54:</strong> la
+              mesa de guerra MUNDIAL con los teatros reales del planeta
+              pulsando, marcadores de países, arcos de misiles entre
+              posiciones y aeronaves militares REALES en vuelo sobre su
+              posición geográfica verdadera, con su matrícula. Toca un teatro
+              y la cámara vuela hasta él con sus despachos reales.
+            </p>
           </div>
           <p className="mt-3 font-mono text-[9px] text-zinc-600 leading-relaxed">
-            Zona Cero 3D es una simulación artística sobre un teatro ficticio (Eje
+            Zona Cero es una simulación artística sobre un teatro ficticio (Eje
             del Norte contra Coalición Sur): no representa a ningún ejército real
             ni muestra imágenes reales de víctimas. Los despachos del radio y las
             operaciones marcadas como REALES sí provienen de titulares verificados
-            enlazados a sus medios originales vía GDELT.
+            enlazados a sus medios originales vía GDELT; las aeronaves del teatro
+            global provienen del feed público ADS-B de adsb.lol.
           </p>
         </div>
       </section>
