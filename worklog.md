@@ -56,3 +56,24 @@ Work Log:
 Stage Summary:
 - Producción v57.0 ARCHIVO SECRETO: 23 dossiers desclasificados coleccionables con economía completa, logo aterrador del Ojo de Dios en favicon+HUD, y nudges de retención integrados.
 - Siguientes rondas: ampliar a 40+ expedientes (NASA, NSA, MI5), quiz de expedientes con XP, tablón de coleccionistas, conectar XP de misiones a la Temporada (pendiente de R36), shares 596→750.
+
+---
+Task ID: 7
+Agent: main (Super Z)
+Task: v58.0 DOMINIO TOTAL — "actualiza cada lugar de vanguard, mega actualización" (petición del usuario)
+
+Work Log:
+- XP TEMPORADA GLOBAL (el gancho que lo toca TODO): game-store.addXp ahora espeja CADA punto de XP ganado en CUALQUIER panel (misiones, quiz, arcade, apuestas, foros, encuestas, multijugador, ruleta, cajas, staking…) al motor de retención vía useRetention.getState().addSeasonXp(finalXp), solo si persist.hasHydrated() y con try/catch para no bloquear nunca la economía. Un cambio quirúrgico → 80+ paneles alimentan la TEMPORADA.
+- retention.ts v58.0: semana ISO (weekKeyOf "2026-W39"), weekXp + weekKey + weekRewardClaimed persistidos en vg_retention_v55, addSeasonXp hace rollover semanal, claimWeekReward() idempotente por semana. weekDaysLeft() cuenta atrás. WEEK_TOP3_REWARD=300ⓒ+5💎+150XP.
+- TABLÓN SEMANAL en ranking-panel: bloque destacado arriba de las 3 tablas de carrera — player vs 7 rivales deterministas por semana (seed rival+semana, escala ligada al XP del jugador para que SIEMPRE haya alguien a 1 puesto), cuenta atrás "CIERRA EN X DÍAS", botín top-3 reclamable con botón que muestra cuántos XP faltan para el top-3.
+- ESCUDO DE RACHA en daily-login-modal: si lastLoginDate no es ayer y streak>=3 → alerta roja "¡RACHA EN PELIGRO!" + botón "Usar escudo de racha — 150ⓒ" (spendCoins; deshabilitado si no hay saldo). Al comprar: racha continúa (streak+1) en vez de resetear a 1, log marcado "(escudo)".
+- BUSCADOR TOTAL v2 (section-search): el índice pasa de 81 secciones a 108 destinos — +23 expedientes del ARCHIVO SECRETO (búsqueda por título/agencia/año/año/rareza salta a la pestaña expedientes) + 4 páginas globales (/ver-guerra, /zona-cero, /guerra-hoy, /mision) que navegan directo. Placeholder y contadores actualizados.
+- Nudges de 90s ahora rotan 3 ganchos: ARCHIVO SECRETO (x1.5 del día) → TABLÓN SEMANAL (XP de la semana + cierre) → XP GLOBAL ("TODO suma"). version.ts → v58.0 DOMINIO TOTAL (footer/hero/health automáticos).
+- Deploy 84b7974 → health v58.0 en el intento 2 (~1 min, SIN fallo transitorio esta vez).
+- QA producción: portada/ver-guerra/zona-cero/api/news 200, meta Google intacta, label v58.0 · DOMINIO TOTAL servido, IndexNow 200.
+- QA headless (agent-browser): branding OK, chips OK; TABLÓN SEMANAL renderiza (tablero+countdown+botín+XP semanal); buscador: "stargate" encuentra el expediente CIA del ARCHIVO SECRETO (índice "en el índice" OK); ESCUDO end-to-end: simulada racha 5 + falta de 3 días + 500ⓒ → alerta visible → escudo comprado (500−150) → claim → racha 6, log "Login diario dia 6 (escudo)", saldo 440ⓒ; XP GLOBAL verificada en storage: seasonXp=43, weekXp=43, weekKey=2026-W39 (40 del claim + 3 del goteo espejados). Consola sin errores.
+- Cifras: players:total=102 (¡RÉCORD de nuevo, antes 101!), presence:peak=6, shares:external=596, online=1.
+
+Stage Summary:
+- Producción v58.0 DOMINIO TOTAL: todo el juego alimenta la TEMPORADA, tablón semanal con botín, escudo de racha y buscador universal de 108 destinos.
+- Siguientes rondas: quiz de expedientes con XP, tablón de coleccionistas del ARCHIVO, ampliar a 40+ expedientes (NASA, NSA, MI5), escudos comprables en tienda, shares 596→750.
