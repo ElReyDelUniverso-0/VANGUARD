@@ -1299,13 +1299,27 @@ export function ZonaCeroSim() {
           if (d.articles && d.articles.length) { arts = d.articles; break; }
         } catch { /* sin señal: se reintenta en el siguiente ciclo */ }
       }
+      // v52.1 respaldo: si el GDELT directo no da nada (rate-limit por IP), sirve el
+      // radar del tablero server-side (/api/geo-tablero: GDELT con reintento + Google
+      // Noticias en español cacheado) — la transmisión NUNCA se queda sin señal
+      if (!arts.length) {
+        try {
+          const r2 = await fetch(`/api/geo-tablero?r=${ri(0, 4)}`, { cache: "no-store" });
+          if (r2.ok) {
+            const j = (await r2.json()) as { region?: { arts?: { url: string; title: string; domain: string }[] } };
+            if (j.region?.arts?.length) {
+              arts = j.region.arts.map((a) => ({ url: a.url, title: a.title, domain: a.domain }));
+            }
+          }
+        } catch { /* se reintenta en el próximo ciclo */ }
+      }
       if (!alive) return;
       const fresh: Dispatch[] = [];
       let ops = 0;
       for (const a of arts) {
         if (!a.url || !a.title || seenRef.current.has(a.url)) continue;
         seenRef.current.add(a.url);
-        fresh.push({ url: a.url, title: a.title, domain: a.domain ?? "GDELT", country: a.sourcecountry ?? "" });
+        fresh.push({ url: a.url, title: a.title, domain: a.domain ?? "GDELT", country: (a as { sourcecountry?: string }).sourcecountry ?? "" });
         if (ops < 2) { ops++; opCbRef.current?.(a.title, a.url); }
       }
       if (fresh.length) {
