@@ -19,6 +19,7 @@ import {
   COMBO_MAX,
   COMBO_IDLE_RESET_S,
   tierReward,
+  weekDaysLeft,
   type ChestReward,
 } from "@/lib/retention";
 import { useGameStore } from "@/lib/game-store";
@@ -68,6 +69,7 @@ export function RetentionLayer() {
   const lastActivity = useRef(Date.now());
   const lastComboToast = useRef(0);
   const lastNudge = useRef(0);
+  const nudgeRot = useRef(0);
   const chestBase = useRef(0);
 
   const ret = useRetention();
@@ -180,17 +182,29 @@ export function RetentionLayer() {
         lastNudge.current = t;
         toast(`⏳ Solo quedan ${ret.seasonDaysLeft()} días de TEMPORADA CERO`, { description: "Última oportunidad para subir de nivel." });
       } else {
-        // v57: enganche del ARCHIVO SECRETO — el expediente del día paga x1.5
+        // v58.0: rotación de ganchos — ARCHIVO SECRETO / TABLÓN SEMANAL / XP GLOBAL
         lastNudge.current = t;
         const reads = useExpedientes.getState().readIds.length;
-        if (reads < EXPEDIENTES.length) {
-          const exp = expedienteDelDia();
-          toast(`🗂️ ARCHIVO SECRETO: ${reads}/${EXPEDIENTES.length} expedientes`, {
-            description: `Hoy paga x1.5: «${exp.titulo.slice(0, 58)}${exp.titulo.length > 58 ? "…" : ""}» — en INTELIGENCIA.`,
+        const rot = nudgeRot.current++ % 3;
+        if (rot === 0) {
+          if (reads < EXPEDIENTES.length) {
+            const exp = expedienteDelDia();
+            toast(`🗂️ ARCHIVO SECRETO: ${reads}/${EXPEDIENTES.length} expedientes`, {
+              description: `Hoy paga x1.5: «${exp.titulo.slice(0, 58)}${exp.titulo.length > 58 ? "…" : ""}» — en INTELIGENCIA.`,
+            });
+          } else {
+            toast(`👁️ ARCHIVO COMPLETO: ${reads}/${EXPEDIENTES.length}`, {
+              description: "Eres el OJO DE DIOS del archivo, agente.",
+            });
+          }
+        } else if (rot === 1) {
+          const wk = useRetention.getState();
+          toast(`🗓️ TABLÓN SEMANAL: ${wk.weekXp} XP esta semana`, {
+            description: `Cierra en ${weekDaysLeft()} día(s). Top-3 gana 300ⓒ + 5💎 + 150XP — todo XP suma.`,
           });
         } else {
-          toast(`👁️ ARCHIVO COMPLETO: ${reads}/${EXPEDIENTES.length}`, {
-            description: "Eres el OJO DE DIOS del archivo, agente.",
+          toast("⚡ XP TEMPORADA GLOBAL activa", {
+            description: "Misiones, quiz, arcade, apuestas, foros, multijugador… TODO suma para tu pase ahora.",
           });
         }
       }

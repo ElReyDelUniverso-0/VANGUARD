@@ -2,6 +2,8 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage, type StateStorage } from "zustand/middleware";
+// v58.0 DOMINIO TOTAL — espejo de XP al motor de TEMPORADA (retention)
+import { useRetention } from "@/lib/retention";
 // v26: sonido especial de recompensa en cada moneda ganada
 import { sfx } from "@/lib/sound";
 import {
@@ -909,9 +911,21 @@ export const useGameStore = create<GameState>()(
         return true;
       },
       addXp: (amount) => {
+        const s0 = get();
+        const boost = s0.boosts.xpUntil && s0.boosts.xpUntil > Date.now() ? 2 : 1;
+        const finalXp = amount * boost;
+        // v58.0 DOMINIO TOTAL — XP TEMPORADA GLOBAL: CADA punto de XP ganado en
+        // CUALQUIER panel (misiones, quiz, arcade, apuestas, foros, encuestas,
+        // multijugador, ruleta, cajas, staking…) alimenta también el pase de
+        // TEMPORADA y el TABLÓN SEMANAL. Solo si el motor ya se hidrató.
+        try {
+          if (useRetention.persist.hasHydrated()) {
+            useRetention.getState().addSeasonXp(finalXp);
+          }
+        } catch {
+          // la economía del juego nunca se bloquea por la capa de retención
+        }
         set((s) => {
-          const boost = s.boosts.xpUntil && s.boosts.xpUntil > Date.now() ? 2 : 1;
-          const finalXp = amount * boost;
           const base = { ...s, xp: s.xp + finalXp };
           const leveled = levelUp(base);
           return { ...leveled };

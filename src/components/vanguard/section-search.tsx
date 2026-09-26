@@ -10,7 +10,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SECTIONS } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
-import { Search, CornerDownLeft, Clock, X } from "lucide-react";
+import { EXPEDIENTES } from "@/lib/expedientes";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -26,6 +27,9 @@ interface Item {
   sectionKey: string;
   sectionLabel: string;
   icon_color: string;
+  // v58.0 BUSCADOR TOTAL: pestaña | página global | expediente secreto
+  kind: "tab" | "page" | "exp";
+  href?: string;
 }
 
 export function SectionSearch({
@@ -61,10 +65,53 @@ export function SectionSearch({
           sectionKey: s.key,
           sectionLabel: t(`sec.${s.key}`) || s.label,
           icon_color: tab.color,
+          kind: "tab" as const,
         }))
       ),
     [t]
   );
+
+  // v58.0 BUSCADOR TOTAL — el índice ya no son solo las 81 secciones:
+  // también las 4 páginas globales y los 23 EXPEDIENTES del ARCHIVO SECRETO.
+  const totalIndex: Item[] = useMemo(() => {
+    const pages: Item[] = [
+      {
+        key: "pg:ver-guerra", label: "VER GUERRA — frente en vivo 3D", short: "guerra 3d",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · simulador 3D", icon_color: "text-red-hud",
+        kind: "page", href: "/ver-guerra",
+      },
+      {
+        key: "pg:zona-cero", label: "ZONA CERO — pulso mundial en directo", short: "zona cero pulso",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · OSINT en vivo", icon_color: "text-red-hud",
+        kind: "page", href: "/zona-cero",
+      },
+      {
+        key: "pg:guerra-hoy", label: "GUERRA HOY — conflictos del día", short: "guerra hoy conflictos",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · frentes activos", icon_color: "text-red-hud",
+        kind: "page", href: "/guerra-hoy",
+      },
+      {
+        key: "pg:mision", label: "MISIÓN — briefing de agente", short: "mision briefing",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · misión diaria", icon_color: "text-red-hud",
+        kind: "page", href: "/mision",
+      },
+    ];
+    const exps: Item[] = EXPEDIENTES.map((e) => ({
+      key: `exp:${e.id}`,
+      label: e.titulo,
+      short: `${e.agencia} ${e.cat} ${e.rareza}`,
+      icon: <FolderOpen className="w-4 h-4" />,
+      sectionKey: "expedientes",
+      sectionLabel: `ARCHIVO SECRETO · ${e.agencia} · ${e.year} · ${e.rareza}`,
+      icon_color: "text-amber",
+      kind: "exp" as const,
+    }));
+    return [...pages, ...exps, ...all];
+  }, [all]);
 
   // montaje del portal (solo cliente)
   useEffect(() => {
@@ -92,16 +139,16 @@ export function SectionSearch({
     const query = norm(q.trim());
     if (!query) {
       const recItems = recent
-        .map((k) => all.find((a) => a.key === k))
+        .map((k) => totalIndex.find((a) => a.key === k))
         .filter((x): x is Item => Boolean(x));
-      return recItems.length > 0 ? recItems : all.slice(0, 12);
+      return recItems.length > 0 ? recItems : totalIndex.slice(0, 12);
     }
-    return all
+    return totalIndex
       .filter((a) =>
         norm(`${a.label} ${a.short} ${a.sectionLabel} ${a.key}`).includes(query)
       )
       .slice(0, 20);
-  }, [q, all, recent]);
+  }, [q, totalIndex, recent]);
 
   // reset del cursor al filtrar (patrón setTimeout(0) para lint)
   useEffect(() => {
@@ -124,12 +171,19 @@ export function SectionSearch({
   }, [idx, open]);
 
   const pick = (item: Item) => {
+    // v58.0: las páginas globales navegan directamente
+    if (item.kind === "page" && item.href) {
+      window.location.href = item.href;
+      onClose();
+      return;
+    }
     try {
       const arr = JSON.parse(localStorage.getItem(LS_RECENT) || "[]");
-      const next = [item.key, ...arr.filter((k: string) => k !== item.key)].slice(0, 8);
+      const target = item.kind === "exp" ? "expedientes" : item.key;
+      const next = [target, ...arr.filter((k: string) => k !== target)].slice(0, 8);
       localStorage.setItem(LS_RECENT, JSON.stringify(next));
     } catch { /* sin storage */ }
-    onChange(item.key);
+    onChange(item.kind === "exp" ? "expedientes" : item.key);
     onClose();
   };
 
@@ -156,7 +210,7 @@ export function SectionSearch({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Busca una sección… (ej. drones, apuestas, mapa)"
+            placeholder="Busca TODO… secciones, expedientes secretos, páginas globales"
             className="flex-1 bg-transparent outline-none text-sm font-mono placeholder:text-zinc-600"
             aria-label="Buscar sección"
           />
@@ -174,7 +228,7 @@ export function SectionSearch({
           )}
           {q.trim() === "" && recent.length === 0 && (
             <p className="px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-              {results.length} secciones — escribe para filtrar
+              {totalIndex.length} destinos — secciones, expedientes y páginas
             </p>
           )}
           {results.map((a, i) => (
@@ -202,7 +256,7 @@ export function SectionSearch({
           ))}
           {results.length === 0 && (
             <p className="px-3 py-6 text-center text-sm text-zinc-500">
-              Nada con «{q}». Prueba con otra palabra.
+              Nada con «{q}» en el índice. Prueba con otra palabra.
             </p>
           )}
         </div>
@@ -211,7 +265,7 @@ export function SectionSearch({
           <span>↑↓ navegar</span>
           <span>⏎ abrir</span>
           <span>esc cerrar</span>
-          <span className="ml-auto">{results.length} / {all.length} secciones</span>
+          <span className="ml-auto">{results.length} / {totalIndex.length} en el índice</span>
         </div>
       </div>
     </div>,

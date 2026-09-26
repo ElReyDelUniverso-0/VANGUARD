@@ -4,14 +4,16 @@
 // Traders por P/L) con rivales simulados deterministas que derivan cada dia.
 // El objetivo es que siempre haya alguien a 1 posicion de distancia — gancho clasico.
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Swords, TrendingUp, Crown, Medal } from "lucide-react";
+import { Trophy, Swords, TrendingUp, Crown, Medal, CalendarDays, ShieldCheck, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { useGameStore } from "@/lib/game-store";
-import { rivalScores, type RivalScore } from "@/lib/hooks-data";
+import { rivalScores, RANK_RIVALS, type RivalScore } from "@/lib/hooks-data";
+import { useRetention, weekKeyOf, weekDaysLeft, WEEK_TOP3_REWARD } from "@/lib/retention";
 
 type Discipline = "XP" | "CONQ" | "TRADER";
 
@@ -20,6 +22,126 @@ interface Row {
   tag: string;
   score: number;
   isPlayer: boolean;
+}
+
+// v58.0 DOMINIO TOTAL — rivales del TABLÓN SEMANAL: deterministas por semana
+// ISO y SIEMPRE cerca del jugador (gancho clásico: alguien a 1 puesto).
+function weeklyRivals(playerXp: number, wk: string): Row[] {
+  const weekNum = parseInt(wk.slice(6), 10) || 1;
+  const scale = playerXp > 0 ? playerXp : 260; // semana sin actividad: base jugable
+  return RANK_RIVALS.slice(0, 7).map((r, i) => {
+    const h = Math.abs(Math.sin(r.seed * 12.9898 + weekNum * 78.233)) * 43758.5453;
+    const rnd = h - Math.floor(h); // 0..1 determinista por (rival, semana)
+    const factor = 0.35 + rnd * 1.15 + i * 0.04;
+    const score = Math.max(30, Math.round(scale * factor));
+    return { name: r.name, tag: r.tag, score, isPlayer: false };
+  });
+}
+
+function WeekBoard() {
+  const alias = useGameStore((s) => s.alias);
+  const addCoins = useGameStore((s) => s.addCoins);
+  const addGems = useGameStore((s) => s.addGems);
+  const addXp = useGameStore((s) => s.addXp);
+  const weekXp = useRetention((s) => s.weekXp);
+  const weekKey = useRetention((s) => s.weekKey);
+  const weekRewardClaimed = useRetention((s) => s.weekRewardClaimed);
+  const claimWeekReward = useRetention((s) => s.claimWeekReward);
+  const [claiming, setClaiming] = useState(false);
+
+  const wk = weekKey || weekKeyOf();
+  const daysLeft = weekDaysLeft();
+  const rows = useMemo(() => {
+    const all = [
+      ...weeklyRivals(weekXp, wk),
+      { name: alias || "TU", tag: "AG", score: weekXp, isPlayer: true },
+    ];
+    return all.sort((a, b) => b.score - a.score);
+  }, [alias, weekXp, wk]);
+  const pos = rows.findIndex((r) => r.isPlayer) + 1;
+  const inTop3 = pos <= 3 && weekXp > 0;
+  const claimed = weekRewardClaimed === wk;
+
+  const handleClaim = () => {
+    if (claiming) return;
+    setClaiming(true);
+    const rw = claimWeekReward();
+    if (rw) {
+      addCoins(rw.coins, `TABLÓN SEMANAL top-3 (${wk})`);
+      addGems(rw.gems, `TABLÓN SEMANAL top-3 (${wk})`);
+      addXp(80);
+      toast.success(`BOTÍN SEMANAL: +${rw.coins}ⓒ +${rw.gems}💎 +80XP`, {
+        description: `Puesto #${pos} de la semana ${wk} — sigues en el OJO DE DIOS`,
+      });
+    }
+    setClaiming(false);
+  };
+
+  return (
+    <div className="hud-corner bg-gradient-to-br from-amber-hud/15 via-secondary/40 to-red-hud/10 border border-amber-hud/40">
+      <div className="p-3 border-b border-amber-hud/30 flex items-center gap-2 flex-wrap">
+        <CalendarDays className="w-4 h-4 text-amber" />
+        <div className="text-xs font-mono font-bold uppercase text-foreground">TABLÓN SEMANAL</div>
+        <span className="text-[9px] font-mono px-1.5 py-0.5 bg-amber-hud/20 text-amber rounded">{wk}</span>
+        <span className="ml-auto text-[9px] font-mono text-red-hud font-bold animate-pulse">
+          CIERRA EN {daysLeft} {daysLeft === 1 ? "DÍA" : "DÍAS"}
+        </span>
+      </div>
+      <div className="p-3 grid md:grid-cols-[1fr_220px] gap-3">
+        <div className="max-h-[190px] overflow-y-auto thin-scroll divide-y divide-border/30">
+          {rows.map((r, i) => (
+            <div
+              key={r.name + i}
+              className={cn(
+                "px-2 py-1.5 flex items-center gap-2 text-[10px] font-mono",
+                r.isPlayer ? "bg-amber-hud/15 border-l-2 border-amber-hud" : ""
+              )}
+            >
+              <span className={cn("w-6", medalClass(i + 1))}>#{i + 1}</span>
+              <FlagBadge country={r.tag} size={12} />
+              <span className={cn("flex-1 truncate", r.isPlayer ? "text-amber font-bold" : "text-muted-foreground")}>
+                {r.name}{r.isPlayer ? " ← TÚ" : ""}
+              </span>
+              <span className="text-foreground font-bold">{r.score} XP</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="hud-panel p-2 text-[10px] font-mono space-y-1">
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Zap className="w-3 h-3 text-amber" /> TU XP SEMANAL: <span className="text-amber font-bold">{weekXp}</span>
+            </div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Crown className="w-3 h-3 text-amber" /> PUESTO: <span className="text-amber font-bold">#{pos}</span> / 8
+            </div>
+          </div>
+          <div className="hud-panel p-2 text-[9px] font-mono text-muted-foreground">
+            BOTÍN TOP-3: <span className="text-amber">{WEEK_TOP3_REWARD.coins}ⓒ</span> +
+            <span className="text-cyan-hud"> {WEEK_TOP3_REWARD.gems}💎</span> +
+            <span className="text-green-hud"> {WEEK_TOP3_REWARD.seasonXp}XP temporada</span>
+          </div>
+          {claimed ? (
+            <div className="text-[9px] font-mono text-green-hud flex items-center gap-1 justify-center py-1">
+              <ShieldCheck className="w-3.5 h-3.5" /> BOTÍN RECLAMADO
+            </div>
+          ) : (
+            <button
+              onClick={handleClaim}
+              disabled={!inTop3 || claiming}
+              className={cn(
+                "text-[10px] font-mono font-bold py-1.5 px-2 rounded border transition-colors",
+                inTop3
+                  ? "bg-amber-hud/20 border-amber-hud text-amber hover:bg-amber-hud/30 animate-pulse"
+                  : "bg-secondary/40 border-border text-muted-foreground cursor-not-allowed"
+              )}
+            >
+              {inTop3 ? "★ RECLAMAR BOTÍN TOP-3" : `LLEGA AL TOP-3 (${pos <= 3 ? "SIN XP" : `FALTAN ${(rows[2]?.score ?? weekXp) - weekXp + 1} XP`})`}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function medalClass(pos: number): string {
@@ -61,7 +183,7 @@ export function RankingPanel() {
     <div className="space-y-4">
       <PanelHeader
         title="Ranking global"
-        subtitle="Operadores · Conquistadores · Traders — nuevas posiciones cada dia, defiende tu plaza"
+        subtitle="Semana · Operadores · Conquistadores · Traders — nuevas posiciones cada dia, defiende tu plaza"
         icon={<Trophy className="w-4 h-4 text-amber" />}
         color="amber"
         right={
@@ -70,6 +192,9 @@ export function RankingPanel() {
           </div>
         }
       />
+
+      {/* v58.0 DOMINIO TOTAL — TABLÓN SEMANAL con botín reclamable */}
+      <WeekBoard />
 
       <div className="grid lg:grid-cols-3 gap-3">
         <Board
@@ -101,7 +226,7 @@ export function RankingPanel() {
       <div className="hud-corner p-3 bg-secondary/30 text-[10px] font-mono text-muted-foreground flex items-start gap-2">
         <Crown className="w-3.5 h-3.5 text-amber flex-shrink-0 mt-0.5" />
         <span>
-          Los rivales operan a diario: la tabla vive incluso mientras duermes. Sube XP con misiones y quiz, conquista territorios
+          v58.0: cada XP que ganas en CUALQUIER panel (misiones, quiz, arcade, apuestas, foros, multijugador…) suma para la TEMPORADA y para el TABLÓN SEMANAL. Los rivales operan a diario: la tabla vive incluso mientras duermes. Sube XP con misiones y quiz, conquista territorios
           en MUNDO DE GUERRA y acumula P/L realizado en el mercado para escalar posiciones. Tu plaza exacta se recalcula cada dia.
         </span>
       </div>

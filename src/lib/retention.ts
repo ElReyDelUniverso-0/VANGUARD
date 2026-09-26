@@ -26,6 +26,26 @@ export interface ChestReward {
   seasonXp: number;
 }
 
+// v58.0 DOMINIO TOTAL — TABLÓN SEMANAL: key ISO de semana (2026-W39)
+export function weekKeyOf(d = new Date()): string {
+  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const dayNum = date.getUTCDay() || 7; // lunes=1..domingo=7
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum); // jueves de esta semana ISO
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${date.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+// Días que quedan hasta que cierre la semana (domingo 23:59)
+export function weekDaysLeft(): number {
+  const now = new Date();
+  const dow = now.getUTCDay() || 7;
+  return 8 - dow; // lunes→7 … domingo→1
+}
+
+export const WEEK_TOP3_REWARD = { coins: 300, gems: 5, seasonXp: 150 };
+export const WEEK_SHIELD_COST = 150;
+
 export interface RetentionState {
   seasonStart: string; // ISO del primer día de temporada
   seasonXp: number;
@@ -35,10 +55,15 @@ export interface RetentionState {
   visitCount: number;
   absenceSeen: number; // epoch ms del último informe de ausencia mostrado
   nudgesMuted: boolean;
+  // v58.0: progreso semanal para el TABLÓN SEMANAL
+  weekXp: number;
+  weekKey: string;
+  weekRewardClaimed: string; // weekKey del último botín top-3 reclamado
 
   // acciones
   touchVisit: () => { returned: boolean; awayHours: number };
   addSeasonXp: (amount: number) => void;
+  claimWeekReward: () => ChestReward | null;
   claimTier: (tier: number) => ChestReward | null;
   seasonDay: () => number;
   seasonDaysLeft: () => number;
@@ -89,6 +114,9 @@ export const useRetention = create<RetentionState>()(
       visitCount: 0,
       absenceSeen: 0,
       nudgesMuted: false,
+      weekXp: 0,
+      weekKey: "",
+      weekRewardClaimed: "",
 
       touchVisit: () => {
         const now = Date.now();
@@ -110,8 +138,27 @@ export const useRetention = create<RetentionState>()(
         return { returned, awayHours };
       },
 
+      // v58.0: TODA XP de temporada también alimenta el TABLÓN SEMANAL.
+      // game-store.addXp espeja aquí → misiones, quiz, arcade, apuestas,
+      // foros, multijugador… absolutamente todo suma para la semana.
       addSeasonXp: (amount) => {
-        set({ seasonXp: Math.min(get().seasonXp + amount, MAX_TIER * TIER_XP + TIER_XP - 1) });
+        const wk = weekKeyOf();
+        const s = get();
+        const rollover = s.weekKey !== wk;
+        set({
+          seasonXp: Math.min(s.seasonXp + amount, MAX_TIER * TIER_XP + TIER_XP - 1),
+          weekXp: rollover ? amount : s.weekXp + amount,
+          weekKey: wk,
+        });
+      },
+
+      claimWeekReward: () => {
+        const wk = weekKeyOf();
+        const s = get();
+        if (s.weekRewardClaimed === wk) return null;
+        if (s.weekXp <= 0) return null;
+        set({ weekRewardClaimed: wk });
+        return { rarity: "EPICO" as Rarity, ...WEEK_TOP3_REWARD };
       },
 
       claimTier: (tier) => {

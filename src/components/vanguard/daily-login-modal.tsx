@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useGameStore } from "@/lib/game-store";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Coins, Flame, Gift, Check, Play } from "lucide-react";
+import { Coins, Flame, Gift, Check, Play, ShieldAlert, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 function todayKey() {
@@ -14,7 +14,10 @@ function todayKey() {
 export function DailyLoginModal() {
   const [open, setOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const { lastLoginDate, addCoins, addGems, addXp, streak, progressMission } = useGameStore();
+  // v58.0 DOMINIO TOTAL — ESCUDO DE RACHA: salva la racha con 150ⓒ si faltaste
+  const [shieldSaved, setShieldSaved] = useState(false);
+  const { lastLoginDate, addCoins, addGems, addXp, streak, progressMission, coins, spendCoins } = useGameStore();
+  const streakAtRisk = !!lastLoginDate && !isYesterday(lastLoginDate) && streak >= 3;
 
   useEffect(() => {
     const today = todayKey();
@@ -25,11 +28,25 @@ export function DailyLoginModal() {
     }
   }, [lastLoginDate, dismissed]);
 
+  const handleShield = () => {
+    const ok = spendCoins(150, "ESCUDO DE RACHA — racha protegida");
+    if (ok) {
+      setShieldSaved(true);
+      toast.success(`🛡️ RACHA PROTEGIDA — ${streak} días siguen vivos`, {
+        description: "Reclama tu bono diario para continuar la racha (v58.0).",
+      });
+    } else {
+      toast.error("Monedas insuficientes", {
+        description: "El escudo cuesta 150ⓒ. Gana monedas en misiones, arcade o leyendo expedientes.",
+      });
+    }
+  };
+
   const handleClaim = () => {
     const today = todayKey();
-    const newStreak = lastLoginDate && isYesterday(lastLoginDate) ? streak + 1 : 1;
+    const newStreak = lastLoginDate && (isYesterday(lastLoginDate) || shieldSaved) ? streak + 1 : 1;
     const reward = 30 + newStreak * 10;
-    addCoins(reward, `Login diario dia ${newStreak}`);
+    addCoins(reward, `Login diario dia ${newStreak}${shieldSaved ? " (escudo)" : ""}`);
     if (newStreak % 7 === 0) {
       addGems(2, "Bonus racha 7 dias");
     }
@@ -44,7 +61,7 @@ export function DailyLoginModal() {
     progressMission("D_LOGIN");
     if (newStreak >= 7) progressMission("S_STREAK_7", 7);
     toast.success(`+${reward} monedas · racha ${newStreak} dias`, {
-      description: "Recompensa de conexion diaria reclamada",
+      description: shieldSaved ? "Escudo de racha usado — la racha continua" : "Recompensa de conexion diaria reclamada",
     });
     setOpen(false);
   };
@@ -110,16 +127,38 @@ export function DailyLoginModal() {
               <div>
                 <div className="text-xs font-mono text-muted-foreground">Recompensa hoy</div>
                 <div className="text-lg font-bold text-amber font-mono">
-                  +{30 + (isYesterday(lastLoginDate) ? streak + 1 : 1) * 10}
+                  +{30 + (isYesterday(lastLoginDate) || shieldSaved ? streak + 1 : 1) * 10}
                 </div>
               </div>
             </div>
           </div>
+          {streakAtRisk && !shieldSaved && (
+            <div className="hud-corner p-3 bg-red-hud/10 border border-red-hud/50 space-y-2">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-red-hud font-bold uppercase">
+                <ShieldAlert className="w-4 h-4 animate-pulse" /> ¡Racha en peligro! {streak} dias se reinician hoy
+              </div>
+              <Button
+                onClick={handleShield}
+                disabled={coins < 150}
+                className="w-full bg-red-hud/20 border border-red-hud text-red-hud hover:bg-red-hud/30 font-mono text-xs uppercase"
+              >
+                🛡️ Usar escudo de racha — 150ⓒ
+              </Button>
+              <p className="text-[9px] font-mono text-muted-foreground">
+                v58.0: el escudo mantiene tu racha como si no hubieras faltado. Sin escudo, la racha vuelve a 1.
+              </p>
+            </div>
+          )}
+          {shieldSaved && (
+            <div className="hud-corner p-2 bg-green-hud/10 border border-green-hud/50 text-[10px] font-mono text-green-hud flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4" /> ESCUDO ACTIVO — la racha continuara en {streak + 1} dias al reclamar
+            </div>
+          )}
           <Button
             onClick={handleClaim}
             className="w-full bg-amber-hud text-amber hover:bg-amber-hud/80 font-mono uppercase tracking-wider"
           >
-            Reclamar bono diario
+            {shieldSaved ? "Reclamar bono (racha salvada)" : "Reclamar bono diario"}
           </Button>
         </div>
       </DialogContent>
