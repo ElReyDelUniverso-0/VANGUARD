@@ -56,17 +56,66 @@ async function jfetch(url: string, timeoutMs = 8000): Promise<unknown | null> {
 }
 
 // ---------------------------------------------------------------- GDELT ----
-async function gdeltRegion(idx: number): Promise<{ name: string; arts: Art[]; live: boolean } | null> {
+// Fuente primaria: GDELT (metadatos de país). Respaldo automático: Google News
+// RSS en español (público, sin key) cuando GDELT está en rate-limit. Ambas se
+// cachean 5 min; si las dos fallan se sirve la última copia buena (stale).
+
+function splitRssTitle(t: string): { title: string; domain: string } {
+  // Google News añade " - Medios" al final del título: separamos la fuente
+  const i = t.lastIndexOf(" - ");
+  if (i > 20) return { title: t.slice(0, i), domain: t.slice(i + 3) };
+  return { title: t, domain: "Google Noticias" };
+}
+
+async function googleNewsRegion(idx: number): Promise<Art[]> {
+  const GQ = [
+    "bombardeo OR ataque aéreo Ucrania Rusia",
+    "Gaza OR Israel OR Irán OR Líbano ataques",
+    "Sudán OR Sahel OR Mali OR Somalia milicias ataques",
+    "Taiwán OR \"Corea del Norte\" OR Myanmar misiles militar",
+    "Venezuela OR Colombia OR Haití OR Ecuador militar crisis",
+  ];
+  const q = encodeURIComponent(GQ[idx] ?? "guerra");
+  const url = `https://news.google.com/rss/search?q=${q}&hl=es-419&gl=US&ceid=US:es-419`;
+  try {
+    const r = await fetch(url, {
+      signal: AbortSignal.timeout(8000),
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; VANGUARD-OSINT/1.0)" },
+      cache: "no-store",
+    });
+    if (!r.ok) return [];
+    const xml = await r.text();
+    const items = xml.split("<item>").slice(1, 8);
+    const arts: Art[] = [];
+    for (const it of items) {
+      const tm = it.match(/<title>([\s\S]*?)<\/title>/);
+      const lm = it.match(/<link>([\s\S]*?)<\/link>/);
+      if (!tm || !lm) continue;
+      const { title, domain } = splitRssTitle(
+        tm[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim(),
+      );
+      if (!title || !lm[1]) continue;
+      arts.push({ title: title.slice(0, 180), url: lm[1].trim(), domain, country: "" });
+    }
+    return arts;
+  } catch {
+    return [];
+  }
+}
+
+async function gdeltRegion(idx: number): Promise<{ name: string; arts: Art[]; live: boolean; src: string } | null> {
   const reg = REGIONS[idx];
   if (!reg) return null;
   const key = `gdelt:${reg.id}`;
   const fresh = getCached(key, TTL.gdelt);
-  if (fresh) return { name: reg.name, arts: fresh as Art[], live: true };
+  if (fresh) {
+    const arts = fresh as Art[];
+    return { name: reg.name, arts, live: true, src: arts.some((a) => a.url.includes("news.google.com")) ? "Google Noticias" : "GDELT" };
+  }
 
+  // 1) GDELT (metadatos ricos). admite ~1 req/5 s: UN reintento tras 6 s
   const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(reg.q)}&mode=artlist&maxrecords=8&format=json&sort=datedesc`;
   let d = (await jfetch(url)) as { articles?: { url?: string; title?: string; domain?: string; sourcecountry?: string }[] } | null;
-  // GDELT admite ~1 req/5 s: si el primer intento viene vacío/limitado, UN reintento
-  // tras 6 s salva el arranque en frío (queda dentro del maxDuration de la ruta)
   if (!d || !Array.isArray(d.articles) || !d.articles.length) {
     await new Promise((res) => setTimeout(res, 6000));
     d = (await jfetch(url)) as typeof d;
@@ -83,13 +132,24 @@ async function gdeltRegion(idx: number): Promise<{ name: string; arts: Art[]; li
       }));
     if (arts.length) {
       setCached(key, arts);
-      return { name: reg.name, arts, live: true };
+      return { name: reg.name, arts, live: true, src: "GDELT" };
     }
   }
-  // sin respuesta (rate-limit 429 o vacío): sirve lo último que se tenga
+
+  // 2) respaldo: Google News RSS en español (fiable, sin key, sin rate-limit duro)
+  const gn = await googleNewsRegion(idx);
+  if (gn.length) {
+    setCached(key, gn);
+    return { name: reg.name, arts: gn, live: true, src: "Google Noticias" };
+  }
+
+  // 3) sin respuesta: sirve lo último que se tenga
   const stale = cache.get(key);
-  if (stale) return { name: reg.name, arts: stale.data as Art[], live: false };
-  return { name: reg.name, arts: [], live: false };
+  if (stale) {
+    const arts = stale.data as Art[];
+    return { name: reg.name, arts, live: false, src: arts.some((a) => a.url.includes("news.google.com")) ? "Google Noticias" : "GDELT" };
+  }
+  return { name: reg.name, arts: [], live: false, src: "—" };
 }
 
 // ------------------------------------------------------- aéreo militar ----

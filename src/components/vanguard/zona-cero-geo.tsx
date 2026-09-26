@@ -18,7 +18,7 @@ interface Quake { mag: number; place: string; url: string; ago: string }
 interface Payload {
   ts: number;
   regionIdx: number;
-  region: { name: string; arts: Art[]; live: boolean } | null;
+  region: { name: string; arts: Art[]; live: boolean; src: string } | null;
   mil: MilData | null;
   quakes: Quake[] | null;
   kp: { kp: number; storm: string } | null;
@@ -110,6 +110,9 @@ export function ZonaCeroGeo() {
         <div className="px-4 py-3 border-t border-zinc-800 min-h-[190px]">
           <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-500 mb-2">
             Radar de medios · {REGION_TABS[tab]}
+            {data?.regionIdx === tab && data.region && data.region.src !== "—" && (
+              <span className="text-emerald-400 normal-case tracking-normal"> · vía {data.region.src}</span>
+            )}
             {data?.regionIdx === tab && data.region && !data.region.live && (
               <span className="text-amber-400 normal-case tracking-normal"> · reintentando señal</span>
             )}
@@ -199,9 +202,9 @@ export function ZonaCeroGeo() {
       </div>
 
       <p className="border-t border-zinc-800 bg-black/30 px-4 py-2 font-mono text-[9px] text-zinc-600 leading-relaxed">
-        Fuentes abiertas: GDELT Project (despachos), red ADS-B de adsb.lol (aéreo militar),
-        USGS (sismos), NOAA SWPC (clima espacial). Titulares enlazados a sus medios
-        originales — VANGUARD no edita ni interpeta la noticia.
+        Fuentes abiertas: GDELT Project + Google Noticias en español (despachos), red ADS-B de
+        adsb.lol (aéreo militar), USGS (sismos), NOAA SWPC (clima espacial). Titulares enlazados
+        a sus medios originales — VANGUARD no edita ni interpreta la noticia.
       </p>
     </div>
   );
