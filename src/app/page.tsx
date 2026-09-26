@@ -14,7 +14,6 @@ import { TabNav, type TabKey } from "@/components/vanguard/tab-nav";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
 import { BootScreen } from "@/components/vanguard/boot-screen";
-import { DailyLoginModal } from "@/components/vanguard/daily-login-modal";
 import { SettingsModal } from "@/components/vanguard/settings-modal";
 import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
 import { StatsTicker } from "@/components/vanguard/stats-ticker";
@@ -456,7 +455,7 @@ export default function Home() {
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
       <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
       <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
-      <DailyLoginModal />
+      {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} />
       <MusicPlayer />

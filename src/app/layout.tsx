@@ -14,6 +14,7 @@ const SITE_DESC =
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { RetentionLayer } from "@/components/vanguard/retention-layer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -261,6 +262,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
+        <RetentionLayer />
         <Toaster />
         <Sonner />
       </body>
