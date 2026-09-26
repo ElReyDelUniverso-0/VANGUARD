@@ -7,9 +7,9 @@
 //  · Escáner planetario de conflictos reales (GDELT) + directos observados
 // Datos: socket god:state + mp:state (1s) · APIs /api/news y /api/live/streams.
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Eye, Radio, Swords, Globe2, Users, MessageSquare, Zap, MapPin, MonitorPlay, Radar as RadarIcon, Plane, Shield } from "lucide-react";
+import { Eye, Radio, Swords, Globe2, Users, MessageSquare, Zap, MapPin, MonitorPlay, Radar as RadarIcon, Plane, Shield, Infinity as InfinityIcon } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
@@ -54,7 +54,24 @@ interface MpWarState {
   lastBattle: GodLastBattle | null;
   territoryMeta: TerrMeta[];
 }
-interface NewsItem { id: string; title: string; sourceCountry?: string | null; tacticalTag?: string | null; source: string }
+interface NewsItem { id: string; title: string; sourceCountry?: string | null; tacticalTag?: string | null; source: string; url?: string | null; publishedAt?: string | null }
+
+// v56.0: antigüedad legible + detección de última hora (<2h)
+function newsAge(iso?: string | null): string {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  if (Number.isNaN(diff) || diff < 0) return "";
+  const m = Math.floor(diff / 60000);
+  if (m < 60) return `hace ${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `hace ${h} h`;
+  return `hace ${Math.floor(h / 24)} d`;
+}
+function isBreaking(iso?: string | null): boolean {
+  if (!iso) return false;
+  const diff = Date.now() - new Date(iso).getTime();
+  return !Number.isNaN(diff) && diff >= 0 && diff < 2 * 3600000;
+}
 interface LiveStreamItem { id: string; title: string; streamerName: string; viewers: number; country: string }
 
 const TAG_COLOR: Record<string, string> = {
@@ -72,6 +89,12 @@ export function OjoDiosPanel() {
   const [god, setGod] = useState<GodState | null>(null);
   const [war, setWar] = useState<MpWarState | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
+  // v56.0 MURO INFINITO: archivo completo paginado con scroll infinito
+  const [wall, setWall] = useState<NewsItem[]>([]);
+  const [wallPage, setWallPage] = useState(0);
+  const [wallMore, setWallMore] = useState(true);
+  const [wallLoading, setWallLoading] = useState(false);
+  const wallSentinel = useRef<HTMLDivElement | null>(null);
   const [streams, setStreams] = useState<LiveStreamItem[]>([]);
   // v32 CIELO DE ACERO — vista globo 3D con unidades militares (por defecto ON)
   const [vista3d, setVista3d] = useState(true);
@@ -129,6 +152,43 @@ export function OjoDiosPanel() {
     () => (god ? Object.values(god.online).reduce((a, b) => a + b, 0) : 0),
     [god]
   );
+
+  // v56.0 MURO INFINITO: carga por lotes del archivo histórico completo
+  const loadWall = useCallback(async () => {
+    if (wallLoading || !wallMore) return;
+    setWallLoading(true);
+    try {
+      const next = wallPage + 1;
+      const r = await fetch(`/api/news?page=${next}&limit=15`, { cache: "no-store" });
+      const j = await r.json();
+      if (Array.isArray(j.items)) {
+        setWall((prev) => {
+          const seen = new Set(prev.map((p) => p.id));
+          return [...prev, ...(j.items as NewsItem[]).filter((it) => !seen.has(it.id))];
+        });
+        setWallPage(next);
+        setWallMore(Boolean(j.hasMore));
+      } else {
+        setWallMore(false);
+      }
+    } catch {
+      setWallMore(false);
+    }
+    setWallLoading(false);
+  }, [wallLoading, wallMore, wallPage]);
+
+  useEffect(() => {
+    const el = wallSentinel.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadWall();
+      },
+      { rootMargin: "250px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loadWall]);
 
   // territorios con dueño para el mapa omnisciente
   const terrs = useMemo(() => {
@@ -501,6 +561,55 @@ export function OjoDiosPanel() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* ===== v56.0 MURO INFINITO — TODO el archivo de inteligencia, sin límite ===== */}
+      <div className="hud-panel p-3">
+        <div className="flex items-center gap-1.5 mb-2 text-[9px] font-mono uppercase tracking-widest text-amber-hud">
+          <InfinityIcon className="w-3 h-3" /> MURO INFINITO · TODO LO DETECTADO
+          <span className="ml-auto text-[8px] text-muted-foreground">{wall.length} informes cargados</span>
+        </div>
+        <div className="space-y-1">
+          {wall.map((n) => (
+            <div key={n.id} className="flex items-start gap-2 text-[10px] leading-snug border-b border-border/40 pb-1">
+              <FlagBadge code={n.sourceCountry ?? undefined} className="w-4 h-3 mt-0.5 shrink-0" />
+              {n.url && n.url.startsWith("http") ? (
+                <a href={n.url} target="_blank" rel="noopener noreferrer" className="flex-1 text-foreground/90 hover:text-amber-hud transition-colors">
+                  {n.title}
+                </a>
+              ) : (
+                <span className="flex-1 text-foreground/90">{n.title}</span>
+              )}
+              {isBreaking(n.publishedAt) && (
+                <span className="text-[7px] font-mono px-1 border border-red-hud text-red-hud bg-red-hud/15 uppercase shrink-0 mt-0.5 blink-soft">
+                  ÚLTIMA HORA
+                </span>
+              )}
+              {n.tacticalTag && (
+                <span className={cn("text-[7px] font-mono px-1 border uppercase shrink-0 mt-0.5", TAG_COLOR[n.tacticalTag] ?? "border-border text-muted-foreground")}>
+                  {n.tacticalTag}
+                </span>
+              )}
+              <span className="text-[8px] font-mono text-muted-foreground shrink-0 mt-0.5 w-16 text-right truncate" title={n.source}>
+                {newsAge(n.publishedAt) || n.source}
+              </span>
+            </div>
+          ))}
+          {!wall.length && !wallLoading && (
+            <div className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground py-3 text-center">
+              desliza para activar el muro…
+            </div>
+          )}
+        </div>
+        <div ref={wallSentinel} className="h-6 flex items-center justify-center">
+          {wallLoading ? (
+            <span className="text-[9px] font-mono uppercase tracking-widest text-amber-hud animate-pulse">descifrando más informes…</span>
+          ) : wallMore ? (
+            <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">↓ sigue bajando: hay más</span>
+          ) : (
+            <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">fin del archivo · {wall.length} informes descifrados</span>
+          )}
         </div>
       </div>
 

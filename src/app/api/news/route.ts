@@ -202,7 +202,34 @@ async function getCuratedFallback(): Promise<GdeltArticle[]> {
   return list.map((a, i) => ({ ...a, sourcecountry: CURATED_COUNTRY[i] ?? a.sourcecountry }));
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  // v56.0 OJO DE DIOS TOTAL: paginación del archivo histórico para el MURO
+  // INFINITO. ?page=1,2,3... sirve el archivo completo de la BD por lotes;
+  // sin ?page (o page=0) se conserva el comportamiento original (portada).
+  const url = new URL(req.url);
+  const page = Math.max(0, parseInt(url.searchParams.get("page") || "0", 10) || 0);
+  const limit = Math.min(30, Math.max(5, parseInt(url.searchParams.get("limit") || "15", 10) || 15));
+  if (page > 0) {
+    try {
+      const rows = await db.newsItem.findMany({
+        orderBy: { publishedAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit + 1,
+      });
+      const hasMore = rows.length > limit;
+      return NextResponse.json({
+        items: rows.slice(0, limit).map((it, i) =>
+          withFallbackImage(withCuratedImage({ ...it, sourceCountry: it.sourceCountry ?? guessCountry(it.title) }), i)
+        ),
+        page,
+        hasMore,
+        source: "ARCHIVO",
+      });
+    } catch (e) {
+      console.error("news archive page error", e);
+      return NextResponse.json({ items: [], page, hasMore: false, source: "ERROR" }, { status: 200 });
+    }
+  }
   try {
     // 1) Cache-first: return cached news immediately if any cache exists
     const cached = await db.newsItem.findMany({
@@ -242,7 +269,7 @@ export async function GET() {
       const query = QUERIES[Math.floor(Math.random() * QUERIES.length)];
       const url = `${GDELT_URL}?query=${encodeURIComponent(
         query + " sourcelang:spa"
-      )}&format=json&maxrecords=25&sort=datedesc&mode=ArtList`;
+      )}&format=json&maxrecords=40&sort=datedesc&mode=ArtList`;
       const controller = new AbortController();
       // v35: 2.5s era insuficiente para GDELT en serverless frío → casi siempre abortaba
       const timeout = setTimeout(() => controller.abort(), 8000);
@@ -445,6 +472,11 @@ const RSS_SOURCES = [
   // v50.1 RED GLOBAL+: The Guardian World + WSJ World News (verificados 200/45 y 200/20)
   { url: "https://www.theguardian.com/world/rss", source: "The Guardian" },
   { url: "https://feeds.a.dj.com/rss/RSSWorldNews.xml", source: "WSJ World" },
+  // v56.0 OJO DE DIOS TOTAL: red mundial ampliada — la agenda completa del planeta
+  { url: "https://news.google.com/rss?hl=es-419&gl=US&ceid=US:es-419", source: "Google News" },
+  { url: "https://es.euronews.com/rss", source: "Euronews" },
+  { url: "https://news.un.org/feed/subscribe/es/news/all/rss.xml", source: "ONU Noticias" },
+  { url: "https://feeds.skynews.com/feeds/rss/world.xml", source: "Sky News" },
 ];
 
 interface RssArticle {
