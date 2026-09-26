@@ -5,6 +5,7 @@
 export interface FrenteDef {
   id: string;
   name: string;
+  code: string; // rótulo corto para la vista planeta en pantallas estrechas
   sideA: { name: string; colors: string[] };
   sideB: { name: string; colors: string[] };
   intensity: number; // 0-100 (estimación pública)
@@ -16,7 +17,7 @@ export interface FrenteDef {
 
 export const FRENTES: FrenteDef[] = [
   {
-    id: "donbas", name: "DONBÁS",
+    id: "donbas", name: "DONBÁS", code: "DON",
     sideA: { name: "Ucrania", colors: ["#0057B7", "#FFD700"] },
     sideB: { name: "Rusia", colors: ["#FFFFFF", "#D52B1E"] },
     intensity: 92, casualties: "~812.000 bajas estimadas (ambos bandos)",
@@ -24,7 +25,7 @@ export const FRENTES: FrenteDef[] = [
     note: "La guerra convencional más grande desde 1945: artillería masiva, drones FPV y guerra electrónica metro a metro.",
   },
   {
-    id: "gaza", name: "GAZA · LEVANTE",
+    id: "gaza", name: "GAZA · LEVANTE", code: "GAZ",
     sideA: { name: "Israel", colors: ["#0038B8", "#FFFFFF"] },
     sideB: { name: "Hamás · Hezbolá", colors: ["#007A3D", "#000000"] },
     intensity: 78, casualties: "~128.000 bajas estimadas",
@@ -32,7 +33,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Combate urbano túnel a túnel, misiles balísticos y dos frentes solapados (Gaza y frontera norte).",
   },
   {
-    id: "marrojo", name: "MAR ROJO",
+    id: "marrojo", name: "MAR ROJO", code: "MRO",
     sideA: { name: "Coalición naval", colors: ["#3C3B6E", "#B22234"] },
     sideB: { name: "Houtíes", colors: ["#007A3D", "#CE1126"] },
     intensity: 58, casualties: "~9.000 afectados · tráfico naval -60%",
@@ -40,7 +41,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Drones antibuque y misiles balísticos contra el Babel-Mandeb: el 12% del comercio mundial ha cambiado de ruta.",
   },
   {
-    id: "sudan", name: "SUDÁN",
+    id: "sudan", name: "SUDÁN", code: "SUD",
     sideA: { name: "SAF (Ejército)", colors: ["#D21034", "#FFFFFF"] },
     sideB: { name: "RSF (Rápidas)", colors: ["#000000", "#D21034"] },
     intensity: 85, casualties: "~150.000 muertos · 10M desplazados",
@@ -48,7 +49,7 @@ export const FRENTES: FrenteDef[] = [
     note: "La mayor crisis de desplazados del planeta: dos ejércitos disputando Jartum casa por casa.",
   },
   {
-    id: "sahel", name: "SAHEL",
+    id: "sahel", name: "SAHEL", code: "SAH",
     sideA: { name: "Juntas (FAMa · AES)", colors: ["#002A8F", "#FFD700"] },
     sideB: { name: "JNIM · EIGS", colors: ["#000000", "#3a7d44"] },
     intensity: 64, casualties: "~46.000 muertos desde 2012",
@@ -56,7 +57,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Emboscadas con IED, motos y el triángulo del mal: la zona de combate más letal por habitante.",
   },
   {
-    id: "somalia", name: "SOMALIA",
+    id: "somalia", name: "SOMALIA", code: "SOM",
     sideA: { name: "SNA · ATMIS", colors: ["#4189DD", "#FFFFFF"] },
     sideB: { name: "Al-Shabaab", colors: ["#1a1a1a", "#f5f5f5"] },
     intensity: 66, casualties: "~38.000 muertos desde 2006",
@@ -64,7 +65,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Ofensivas del government en el Hiiraan y asaltos con vehículos suicida en Mogadiscio.",
   },
   {
-    id: "rdc", name: "RDC ESTE",
+    id: "rdc", name: "RDC ESTE", code: "RDC",
     sideA: { name: "FARDC · Wazalendo", colors: ["#007FFF", "#F7D618"] },
     sideB: { name: "M23 · AFC", colors: ["#4a5d23", "#2b2b2b"] },
     intensity: 81, casualties: "~45.000 muertos · 7M desplazados",
@@ -72,7 +73,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Ofensiva sobre Goma con artillería en los volcanes: minerales de guerra y desplazados en masa.",
   },
   {
-    id: "myanmar", name: "MYANMAR",
+    id: "myanmar", name: "MYANMAR", code: "MYA",
     sideA: { name: "Junta (Tatmadaw)", colors: ["#CE1126", "#FFFFFF"] },
     sideB: { name: "PDF · EAOs", colors: ["#000000", "#FCD116"] },
     intensity: 71, casualties: "~74.000 muertos desde el golpe",
@@ -80,7 +81,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Operación 1027 y sucesoras: guerrilla capturando puestos fronterizos y bases aéreas completas.",
   },
   {
-    id: "kashmir", name: "CACHEMIRA · LoC",
+    id: "kashmir", name: "CACHEMIRA · LoC", code: "CAQ",
     sideA: { name: "India", colors: ["#FF9933", "#138808"] },
     sideB: { name: "Pakistán", colors: ["#01411C", "#FFFFFF"] },
     intensity: 47, casualties: "~38.000 desde 1989",
@@ -88,7 +89,7 @@ export const FRENTES: FrenteDef[] = [
     note: "Dos potencias nucleares intercambiando fuego de mortero sobre la Línea de Control, a 5.000 m de altitud.",
   },
   {
-    id: "haiti", name: "HAITÍ",
+    id: "haiti", name: "HAITÍ", code: "HAI",
     sideA: { name: "PNH · Misión (MSS)", colors: ["#00209F", "#D21034"] },
     sideB: { name: "Viv Ansanm", colors: ["#111111", "#8B0000"] },
     intensity: 72, casualties: "~14.000 muertos · 700k desplazados",

@@ -672,7 +672,9 @@ export default function FrenteTotalSim() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const worldRef = useRef<World | null>(null);
-  const camRef = useRef<Cam>({ x: WORLD_W / 2, z: 0.04, tx: WORLD_W / 2, tz: 0.04 });
+  // tz inicial -1: el loop calcula el zoom planeta real con el ancho del canvas
+  // (FIX desktop: con tz=0.04 fijo el mural nacía comprimido en pantallas anchas)
+  const camRef = useRef<Cam>({ x: WORLD_W / 2, z: 0.04, tx: WORLD_W / 2, tz: -1 });
   const focusRef = useRef(-1);
   const dirRef = useRef({ last: 0, lastUser: 0 });
 
@@ -837,15 +839,20 @@ export default function FrenteTotalSim() {
           const [sx1] = toS((fi + 1) * SECTOR_W, 0);
           drawStrategic(ctx, world, fi, Math.min(sx0, sx1), Math.abs(sx1 - sx0), groundY, world.t);
         }
-        // etiquetas
-        ctx.font = "600 9px ui-monospace, monospace";
+        // rótulos por teatro: en la franja de suelo (sin chocar con el HUD)
         ctx.textAlign = "center";
         for (let fi = fi0; fi <= fi1; fi++) {
           const [mx] = toS(fi * SECTOR_W + SECTOR_W / 2, 0);
-          ctx.fillStyle = "rgba(255,255,255,0.82)";
-          ctx.fillText(FRENTES[fi].name.slice(0, 14), mx, 14);
-          ctx.fillStyle = "rgba(255,140,60,0.9)";
-          ctx.fillText(`I${FRENTES[fi].intensity}`, mx, 26);
+          const [bw0] = toS(fi * SECTOR_W, 0);
+          const [bw1] = toS((fi + 1) * SECTOR_W, 0);
+          const bw = Math.abs(bw1 - bw0);
+          const label = bw >= 62 ? FRENTES[fi].name.slice(0, 15) : FRENTES[fi].code;
+          ctx.font = bw >= 62 ? "600 10px ui-monospace, monospace" : "600 8px ui-monospace, monospace";
+          ctx.fillStyle = "rgba(255,255,255,0.9)";
+          ctx.fillText(label, mx, groundY + 14);
+          ctx.fillStyle = "rgba(255,140,60,0.95)";
+          ctx.font = "600 8px ui-monospace, monospace";
+          ctx.fillText(`I${FRENTES[fi].intensity}`, mx, groundY + 26);
         }
         ctx.textAlign = "left";
       } else {
@@ -1040,7 +1047,7 @@ export default function FrenteTotalSim() {
         {/* HUD derecho */}
         <div className="absolute top-2 right-2 flex flex-col items-end gap-1.5 pointer-events-none">
           <span className="flex items-center gap-1 bg-black/70 rounded px-2 py-1 font-mono text-[10px] text-amber-300">
-            <Flame className="w-3 h-3" /> {Math.max(opsSum, opsTotal)} operaciones
+            <Flame className="w-3 h-3" /> op. en vivo · {Math.max(opsSum, opsTotal)}
           </span>
           <span className="flex items-center gap-1 bg-black/70 rounded px-2 py-1 font-mono text-[10px] text-sky-300">
             <Satellite className="w-3 h-3" /> {mil ? `${mil.total} naves mil. en el aire` : "aéreo militar…"}
