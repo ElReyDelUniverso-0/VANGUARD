@@ -101,6 +101,13 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+  // v54.1 GOOGLE SEARCH CONSOLE: meta de verificación de propiedad.
+  // Google exige encontrar esta etiqueta exacta en el <head> de la portada
+  // para confirmar que somos dueños del sitio y poder pedir indexación,
+  // enviar sitemap y ver búsquedas desde Search Console.
+  verification: {
+    google: "0ZwaEFYOrfzU-l1mpA9H5Ze-j8fgNUFhBjdkYBKvuZ4",
+  },
   icons: {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
     apple: [{ url: "/icon.svg" }],
