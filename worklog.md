@@ -224,3 +224,23 @@ Work Log:
 Stage Summary:
 - Producción v65.0 ACERO Y FUEGO: el frente en vivo pasó de demo interactiva a JUEGO de combate con peligro real (el enemigo contraataca tu puesto), recompensas de habilidad (combo ×5, fiebre gratis, cajas, récord) y teatros visuales únicos por frente con luz real según la hora.
 - Siguientes rondas: sonido de combate (Web Audio, sin assets), FRENTE TOTAL 3D (/ver-guerra) con la misma capa de acción, simulador 3D de países (R31), ola de difusión ronda 40 para shares 618→750.
+
+---
+Task ID: 15
+Agent: main (Super Z)
+Task: v66.0 TERCERA DIMENSIÓN — "Mejora el juego de frente en vivo 3D mapas 2D ect" (ronda 2: el salto 3D + sonido)
+
+Work Log:
+- Descubrimiento al abrir sesión: v65.0 ACERO Y FUEGO YA estaba desplegada (commit cfa6927 + balance 88a44a5 + worklog Task 14) — el resumen de sesión estaba desactualizado. La petición pendiente real era la capa 3D + sonido que el propio Task 14 dejó como "siguientes rondas".
+- VISTA 3D DEL COMBATE (src/components/vanguard/frente-3d.tsx, NUEVO ~740 líneas): espejo Three.js que lee el MISMO stateRef del canvas 2D (cero lógica/economía duplicada) — unidades low-poly con color de bando (soldado/tanque/APC/artillería con torreta y cañón), obuses con el MISMO arco paramétrico del 2D, explosiones/humo/bengalas como sprites aditivos, trazadoras en un LineSegments con buffer dinámico, jets/helicópteros (rotor girando), cajas con paracaídas, restos ardiendo, línea de frente desplazada por momentum, banderas de ambos ejércitos, puesto de mando con luz verde/roja según HP y REPLEGÁNDOSE, utilería por teatro (urbano con ventanas ardiendo, bosque con pinos, desierto con dunas y árboles secos, montaña con picos nevados, costa con mar/barcos/faro parpadeante), cielo/niebla/sol por ciclo día-noche UTC.
+- CÁMARA ORBITAL (OrbitControls, ya en el proyecto): arrastrar = orbitar, rueda/pellizco = zoom, con límites para no atravesar el suelo. CLIC = raycast al terreno → mismo strikeAt(x,y) en px del lienzo → MISMA economía (15◉, combo ×5, fiebre, XP temporada). Raycast también contra cajas para recogerlas en 3D.
+- SONIDO DE COMBATE (src/lib/combat-audio.ts, NUEVO): sintetizador Web Audio SIN assets — 12 sonidos (shot, boom, bigboom, cp-hit, siren, online, coin, pickup, fever, drone, mlrs, fanfare) con ráfagas de ruido filtrado y barridos de oscilador; ganchos en lanzamiento, impactos, bajas, contrafuego al puesto, caja recogida/destruida, fiebre cargada, récord (fanfare); toggle 🔊 persistente en localStorage (vanguard_frente_snd) y ctx perezoso tras primer gesto.
+- INTEGRACIÓN en frente-panel: strikeAt extraído de handleStrike (ya no depende del canvas → el clic 3D usa el mismo camino), toggle COMBATE 3D/VER EN 2D con Frente3D cargado por dynamic() (Three.js solo entra en el chunk del tab FRENTE), canvas 2D desmonta en 3D y la simulación sigue viva en stateRef (al volver, el combate continúa donde estaba).
+- FIX de pago ciego: droneStrike y mlrsBarrage cobraban ANTES de comprobar canvasRef (en 3D el canvas no existe → cobro sin efecto). Ahora MLRS no toca el canvas y el dron verifica blanco ANTES de cobrar ("Sin blancos enemigos para el dron ahora mismo").
+- FIX visual post-deploy (chunk verificado con marcador emissiveIntensity en producción): el temblor de cámara se aplicaba sumando a cam.position ANTES de controls.update() → caminaba aleatoriamente y el frente salía en diagonal; ahora jitter solo durante el render y restaurado después. Noche legible (hemi 0.38→0.68, sol 0.25→0.5), unidades con emissive del color de bando, soldados ×2.0, vehículos ×1.18, línea de frente más fina (0.35, opacidad 0.42).
+- QA: tsc limpio en los 3 archivos (errores vistos = legado en skills/, ranking-panel, zc3d-engine), eslint 0, build OK, CJK 0 en tocados, deploy 62797a3 (health v66.0 en ~60s) + fix 05fb5a6.
+- E2E producción (agent-browser): COMBATE 3D → 1 canvas WebGL 930x454, host+chip OK; CLIC al terreno 62%/72% → coins 250→290 (+40 = (25+1×15)×1, 1 blanco REAL pagado); MLRS en 3D → 290-45=245 exacto (fix del cobro ciego confirmado); VER EN 2D → canvas 880 vuelve; consola y page errors limpios; screenshots scripts/r36/frente-3d-v66*.png (la b muestra la deriva pre-fix, la c el frente vertical corregido).
+
+Stage Summary:
+- Producción v66.0 TERCERA DIMENSIÓN: el frente en vivo es ahora un juego DOBLE — misma guerra, misma economía, dos cámaras: la cámara táctica 2D clásica y la cámara 3D orbitable con sonido de combate. Cambiar de cámara no pausa nada.
+- Siguientes rondas candidatas: FRENTE TOTAL 3D en /ver-guerra con esta misma capa, ola de difusión ronda 40 (shares 618→750), sim 3D de países R31.
