@@ -673,7 +673,9 @@ export function FrentePanel() {
           }
           if (sh.dmg && sh.side === 0) {
             // impacto MLRS: destruye enemigos cerca del punto de caída
-            const kills = s.units.filter((u) => u.side === 1 && Math.abs(u.x * W - ix) < 46);
+            // v65.1 BALANCE: tope de 3 bajas por impacto (el enemigo se agrupa y una
+            // sola salva llegó a pagar +480ⓒ — ROI x10 rompía la economía del frente)
+            const kills = s.units.filter((u) => u.side === 1 && Math.abs(u.x * W - ix) < 46).slice(0, 3);
             for (const k of kills) {
               s.decs.push({ x: k.x * W, y: ground + (k.type === "tank" || k.type === "art" ? 10 : 22), tank: k.type !== "soldier", burn: k.type !== "soldier" ? 900 : 0, age: 0 });
               s.score += KILL_POINTS[k.type];
@@ -682,7 +684,7 @@ export function FrentePanel() {
             }
             if (kills.length) {
               s.units = s.units.filter((u) => !kills.includes(u));
-              const mlrsReward = kills.length * 20;
+              const mlrsReward = kills.length * 15;
               addCoins(mlrsReward, `MLRS: ${kills.length} blancos`);
               toast.success(`MLRS: ${kills.length} blancos · +${mlrsReward} monedas`);
             }
