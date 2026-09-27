@@ -5,13 +5,16 @@
 // SALA DE DOCUMENTOS con bóvedas y PDFs desclasificados reales) + QUIZ DE
 // ALEJANDRÍA: 6 preguntas diarias con botín (XP que viaja a TEMPORADA/SEMANA
 // por el espejo global v58). Cada entrada abre su fuente real desclasificada.
+// v61.0 ERUDITOS DEL ABISMO: banco 48 preguntas, RACHA DEL EXAMEN con hitos
+// (3/7/14/30 días) e INTERROGATORIO: contrarreloj de 60 s contra el banco
+// completo con récord personal persistente.
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, ChevronDown, ExternalLink, Skull, Swords, Landmark,
   Sparkles, ShieldCheck, AlertTriangle, Eye, FileText, GraduationCap,
-  CheckCircle2, XCircle, Gift,
+  CheckCircle2, XCircle, Gift, Timer, Flame, Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -20,7 +23,8 @@ import { useGameStore } from "@/lib/game-store";
 import {
   TEORIAS, ARMAS, CIVILIZACIONES, DOCS, OSCURA_TOTAL, OSCURA_MILESTONES,
   oscuraRank, entradaDelDia, isEntradaDelDia, lecturaOscuraReward,
-  QUIZ_BANK, QUIZ_REWARD, QUIZ_DAILY_BONUS, quizSetOfDay, dayKeyUtc,
+  QUIZ_BANK, QUIZ_REWARD, QUIZ_DAILY_BONUS, QUIZ_STREAK_MILESTONES,
+  INTERRO_SECONDS, INTERRO_REWARD, quizSetOfDay, dayKeyUtc,
   useOscura, type Veredicto, type OscuraRarity, type QuizQuestion,
 } from "@/lib/oscura";
 
@@ -49,6 +53,7 @@ export function OscuraPanel() {
   const quizSolvedToday = useOscura((s) => s.quizSolvedToday);
   const quizBonusDay = useOscura((s) => s.quizBonusDay);
   const quizSolved = useOscura((s) => s.quizSolved);
+  const quizStreak = useOscura((s) => s.quizStreak);
   const solveQuiz = useOscura((s) => s.solveQuiz);
   const claimQuizBonus = useOscura((s) => s.claimQuizBonus);
 
@@ -115,7 +120,6 @@ export function OscuraPanel() {
     ? false // ya cobrado hoy
     : quizSolvedToday.length >= quizSet.length;
   const bonusClaimed = quizBonusDay === dayKeyUtc();
-
   return (
     <div className="space-y-4">
       <PanelHeader
@@ -272,17 +276,36 @@ export function OscuraPanel() {
                 Banco de {QUIZ_BANK.length} preguntas extraídas de la biblioteca · 6 nuevas cada día UTC ·
                 acierto: +{QUIZ_REWARD.coins}ⓒ +{QUIZ_REWARD.xp}XP · aciertos históricos: {quizSolved.length}
               </div>
+              <div className="flex items-center gap-1.5 flex-wrap text-[9px] font-mono">
+                <span className="px-1.5 py-0.5 bg-red-hud/15 text-red-hud border border-red-hud/40 rounded flex items-center gap-1">
+                  <Flame className="w-3 h-3" /> RACHA DEL EXAMEN: {quizStreak} día{quizStreak === 1 ? "" : "s"}
+                </span>
+                {QUIZ_STREAK_MILESTONES.filter((m) => m.at > quizStreak).slice(0, 1).map((m) => (
+                  <span key={m.at} className="text-muted-foreground">próximo hito: {m.at} días → +{m.coins}ⓒ +{m.gems}💎 +{m.xp}XP</span>
+                ))}
+                {quizStreak >= 30 && <span className="text-amber">racha máxima conseguida 👑</span>}
+              </div>
             </div>
 
-            {/* botín del día */}
+            {/* botín del día (v61: al cobrar crece la RACHA del examen) */}
             <button
               disabled={!bonusReady && !bonusClaimed}
               onClick={() => {
-                if (claimQuizBonus()) {
+                const r = claimQuizBonus();
+                if (r.ok) {
                   addCoins(QUIZ_DAILY_BONUS.coins, "Quiz Alejandría: set diario completo");
                   addXp(QUIZ_DAILY_BONUS.xp);
                   if (QUIZ_DAILY_BONUS.gems > 0) useGameStore.getState().addGems(QUIZ_DAILY_BONUS.gems, "Quiz Alejandría: botín del día");
-                  toast.success(`🎁 BOTÍN DEL DÍA: +${QUIZ_DAILY_BONUS.coins}ⓒ +${QUIZ_DAILY_BONUS.gems}💎 +${QUIZ_DAILY_BONUS.xp}XP`, { description: "Examen completo. El archivo confía en ti… por hoy." });
+                  toast.success(`🎁 BOTÍN DEL DÍA: +${QUIZ_DAILY_BONUS.coins}ⓒ +${QUIZ_DAILY_BONUS.gems}💎 +${QUIZ_DAILY_BONUS.xp}XP`, { description: `Examen completo. Racha del examen: ${r.streak} día${r.streak === 1 ? "" : "s"} 🔥` });
+                }
+                if (r.milestone > 0) {
+                  const m = QUIZ_STREAK_MILESTONES.find((x) => x.at === r.milestone);
+                  if (m) {
+                    addCoins(m.coins, `Racha del examen: ${m.at} días`);
+                    addXp(m.xp);
+                    if (m.gems > 0) useGameStore.getState().addGems(m.gems, "Racha del examen");
+                    setTimeout(() => toast.success(`🔥 RACHA ${m.at} DÍAS: +${m.coins}ⓒ +${m.gems}💎 +${m.xp}XP`, { description: "El archivo premia a los que vuelven. Mañana, otra vez." }), 600);
+                  }
                 }
               }}
               className={cn(
@@ -297,6 +320,9 @@ export function OscuraPanel() {
                 : bonusReady ? `Reclamar botín del día · +${QUIZ_DAILY_BONUS.coins}ⓒ +${QUIZ_DAILY_BONUS.gems}💎 +${QUIZ_DAILY_BONUS.xp}XP`
                 : `Completa el set (${quizSolvedToday.length}/${quizSet.length}) para liberar el botín del día`}
             </button>
+
+            {/* v61.0 INTERROGATORIO: contrarreloj 60 s contra el banco completo */}
+            <Interrogatorio />
 
             {/* preguntas */}
             {quizSet.map((q, i) => (
@@ -483,6 +509,194 @@ function QuizCard({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+// v61.0 ERUDITOS DEL ABISMO — INTERROGATORIO: contrarreloj de 60 segundos
+// contra el banco completo (48 preguntas barajadas al azar). Cada acierto
+// paga botín menor que el set diario (+8ⓒ +5XP) que viaja a TEMPORADA/SEMANA
+// por el espejo global. El récord personal (aciertos en una sesión) queda
+// guardado para siempre en vg_oscura_v59. Sin penalización por fallo: el
+// reloj es el castigo.
+function Interrogatorio() {
+  const addCoins = useGameStore((s) => s.addCoins);
+  const addXp = useGameStore((s) => s.addXp);
+  const best = useOscura((s) => s.bestInterrogatorio);
+  const setBest = useOscura((s) => s.setBestInterrogatorio);
+
+  const [phase, setPhase] = useState<"idle" | "run" | "done">("idle");
+  const [timeLeft, setTimeLeft] = useState(INTERRO_SECONDS);
+  const [hits, setHits] = useState(0);
+  const [answered, setAnswered] = useState(0);
+  const [cur, setCur] = useState<QuizQuestion | null>(null);
+  const [picked, setPicked] = useState<number | null>(null);
+  const queueRef = useRef<QuizQuestion[]>([]);
+  const qIdxRef = useRef(0);
+
+  // reloj de la sesión: 1 tick por segundo, a 0 → fin y récord
+  useEffect(() => {
+    if (phase !== "run") return;
+    const t = setInterval(() => {
+      setTimeLeft((s) => {
+        if (s <= 1) {
+          clearInterval(t);
+          finishRun();
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
+
+  const startRun = () => {
+    // barajado Fisher-Yates del banco completo (variedad total entre sesiones)
+    const pool = [...QUIZ_BANK];
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    queueRef.current = pool;
+    qIdxRef.current = 0;
+    setHits(0);
+    setAnswered(0);
+    setTimeLeft(INTERRO_SECONDS);
+    setCur(pool[0]);
+    setPicked(null);
+    setPhase("run");
+  };
+
+  const finishRun = () => {
+    setPhase("done");
+    setCur(null);
+    setPicked(null);
+  };
+
+  // al terminar: si hay récord, se persiste y se anuncia
+  useEffect(() => {
+    if (phase !== "done") return;
+    if (setBest(hits)) {
+      setTimeout(() => toast.success(`👑 RÉCORD PERSONAL: ${hits} aciertos en ${INTERRO_SECONDS}s`, { description: "El archivo te vigila… y se impresiona." }), 250);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
+
+  const answer = (optIdx: number) => {
+    if (!cur || picked !== null) return;
+    setPicked(optIdx);
+    setAnswered((a) => a + 1);
+    const ok = optIdx === cur.correct;
+    if (ok) {
+      setHits((h) => h + 1);
+      addCoins(INTERRO_REWARD.coins, `Interrogatorio: ${cur.id}`);
+      addXp(INTERRO_REWARD.xp); // v58: TEMPORADA + TABLÓN SEMANAL
+    }
+    // siguiente pregunta tras mostrar el color de la respuesta
+    setTimeout(() => {
+      qIdxRef.current += 1;
+      const next = queueRef.current[qIdxRef.current % queueRef.current.length];
+      if (next) setCur(next);
+      setPicked(null);
+    }, ok ? 550 : 900); // el fallo se marca un poco más: el archivo quiere que lo recuerdes
+  };
+
+  const nextIn = queueRef.current.length ? `${(qIdxRef.current % queueRef.current.length) + 1}/${QUIZ_BANK.length}` : "—";
+
+  return (
+    <div className="hud-corner bg-gradient-to-br from-red-hud/10 via-secondary/40 to-secondary/40 border border-red-hud/40 p-3 space-y-2.5">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Timer className="w-3.5 h-3.5 text-red-hud" />
+        <span className="text-xs font-mono font-bold uppercase text-foreground">INTERROGATORIO · {INTERRO_SECONDS}s sin piedad</span>
+        <span className="ml-auto text-[9px] font-mono px-1.5 py-0.5 bg-amber-hud/20 text-amber rounded flex items-center gap-1">
+          <Trophy className="w-3 h-3" /> RÉCORD: {best} aciertos
+        </span>
+      </div>
+
+      {phase === "idle" && (
+        <>
+          <p className="text-[10px] font-mono text-muted-foreground leading-relaxed">
+            El banco entero ({QUIZ_BANK.length} preguntas) contra tu reloj: barajadas al azar, sin pausa y sin segunda
+            oportunidad. Cada acierto paga +{INTERRO_REWARD.coins}ⓒ +{INTERRO_REWARD.xp}XP. Fallar no resta — el reloj ya es el castigo.
+          </p>
+          <button
+            onClick={startRun}
+            className="w-full flex items-center justify-center gap-2 bg-red-hud/20 border border-red-hud/60 text-red-hud hover:bg-red-hud/30 text-[11px] font-mono font-bold uppercase py-2.5 rounded transition-colors animate-pulse"
+          >
+            <Timer className="w-4 h-4" /> Iniciar interrogatorio
+          </button>
+        </>
+      )}
+
+      {phase === "run" && cur && (
+        <>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className={cn(
+              "text-lg font-mono font-black leading-none tabular-nums",
+              timeLeft <= 10 ? "text-red-hud animate-pulse" : "text-amber",
+            )}>{timeLeft}s</span>
+            <div className="flex-1 h-1.5 bg-secondary rounded overflow-hidden min-w-[80px]">
+              <div
+                className={cn("h-full transition-all duration-1000", timeLeft <= 10 ? "bg-red-hud" : "bg-amber-hud")}
+                style={{ width: `${(timeLeft / INTERRO_SECONDS) * 100}%` }}
+              />
+            </div>
+            <span className="text-[10px] font-mono text-green-hud font-bold">✓ {hits}</span>
+            <span className="text-[10px] font-mono text-muted-foreground">· {answered} contestadas · banco {nextIn}</span>
+          </div>
+          <p className="text-[11px] font-mono font-bold text-foreground leading-snug">{cur.q}</p>
+          <div className="grid sm:grid-cols-3 gap-1.5">
+            {cur.opts.map((opt, i) => {
+              const isCorrect = i === cur.correct;
+              const isPicked = picked === i;
+              return (
+                <button
+                  key={i}
+                  disabled={picked !== null}
+                  onClick={() => answer(i)}
+                  className={cn(
+                    "text-left text-[9px] font-mono px-2 py-1.5 rounded border transition-colors leading-snug",
+                    picked !== null && isCorrect ? "bg-green-hud/15 border-green-hud/60 text-green-hud"
+                      : picked !== null && isPicked && !isCorrect ? "bg-red-hud/15 border-red-hud/60 text-red-hud"
+                      : "bg-secondary/60 border-border text-foreground/90 hover:border-amber-hud/60 hover:text-foreground"
+                  )}
+                >
+                  {String.fromCharCode(65 + i)}. {opt}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {phase === "done" && (
+        <>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="hud-panel p-2">
+              <div className="text-lg font-mono font-black text-green-hud leading-none">{hits}</div>
+              <div className="text-[8px] font-mono text-muted-foreground uppercase mt-1">aciertos</div>
+            </div>
+            <div className="hud-panel p-2">
+              <div className="text-lg font-mono font-black text-amber leading-none">{answered}</div>
+              <div className="text-[8px] font-mono text-muted-foreground uppercase mt-1">contestadas</div>
+            </div>
+            <div className="hud-panel p-2">
+              <div className="text-lg font-mono font-black text-red-hud leading-none">{Math.max(0, answered - hits)}</div>
+              <div className="text-[8px] font-mono text-muted-foreground uppercase mt-1">fallos</div>
+            </div>
+          </div>
+          <div className="text-[9px] font-mono text-muted-foreground">
+            Botín de la sesión: +{hits * INTERRO_REWARD.coins}ⓒ +{hits * INTERRO_REWARD.xp}XP · récord vigente: {best} aciertos
+          </div>
+          <button
+            onClick={startRun}
+            className="w-full flex items-center justify-center gap-2 bg-red-hud/20 border border-red-hud/60 text-red-hud hover:bg-red-hud/30 text-[11px] font-mono font-bold uppercase py-2.5 rounded transition-colors"
+          >
+            <Timer className="w-4 h-4" /> Otra vez · el reloj no perdona
+          </button>
+        </>
+      )}
     </div>
   );
 }

@@ -6,6 +6,9 @@
 // +GÖBEKLI TEPE, +ETRUSCOS) y nueva colección SALA DE DOCUMENTOS: enlaces
 // directos a los archivos desclasificados reales (PDFs y bóvedas de la CIA,
 // NARA y el National Security Archive). + QUIZ DE ALEJANDRÍA con XP.
+// v61.0 ERUDITOS DEL ABISMO — banco de quiz 24 → 48 preguntas, RACHA DEL
+// EXAMEN (días consecutivos con hitos pagados) e INTERROGATORIO: contrarreloj
+// de 60 segundos contra TODO el banco con récord personal guardado.
 // Regla de oro: cada teoría lleva veredicto MITO / REAL / PARCIAL y fuente
 // real desclasificada. Nada inventado: el miedo real está en los documentos.
 
@@ -544,12 +547,15 @@ export function lecturaOscuraReward(isDaily: boolean): { coins: number; xp: numb
     : base;
 }
 
-// ====== v60.0 QUIZ DE ALEJANDRÍA ======
-// 24 preguntas extraídas de las propias entradas de la biblioteca.
+// ====== v60.0 QUIZ DE ALEJANDRÍA (ampliado en v61.0) ======
+// 48 preguntas extraídas de las propias entradas de la biblioteca.
 // Cada día el archivo elige 6 (determinista por seed UTC). Acierto = botín
 // que viaja a TEMPORADA/SEMANA por el espejo XP global. Completar el set
-// diario libera el BOTÍN DEL DÍA. Solo se paga la primera vez por pregunta
+// diario libera el BOTÍN DEL DÍA y mantiene la RACHA DEL EXAMEN (hitos en
+// 3/7/14/30 días consecutivos). Solo se paga la primera vez por pregunta
 // y por día: el conocimiento no se cobra dos veces.
+// v61.0 INTERROGATORIO: contrarreloj de 60 s contra TODO el banco —
+// recompensa menor por acierto, récord personal guardado para siempre.
 
 export interface QuizQuestion {
   id: string;
@@ -583,11 +589,51 @@ export const QUIZ_BANK: QuizQuestion[] = [
   { id: "q-indus-escritura", q: "Del Valle del Indus NO se ha podido descifrar en 100 años…", opts: ["su escritura", "su calendario", "su moneda"], correct: 0 },
   { id: "q-mali-oro", q: "Mansá Musa devaluó el oro de una ciudad al gastar: ¿cuál?", opts: ["Tombuctú", "El Cairo", "Fez"], correct: 1 },
   { id: "q-rapanui-escritura", q: "¿Cómo se llama la escritura aún sin descifrar de Rapa Nui?", opts: ["rongorongo", "cuneiforme", "lineal A"], correct: 0 },
+  // v61.0 ERUDITOS DEL ABISMO — segunda hornada: 24 preguntas más (banco 48)
+  { id: "q-venona-agencia", q: "VENONA: ¿qué agencia descifró en secreto miles de cables soviéticos?", opts: ["La NSA", "El FBI", "La KGB"], correct: 0 },
+  { id: "q-venona-anio", q: "¿En qué año desclasificó la NSA los cables VENONA completos?", opts: ["1975", "1995", "2013"], correct: 1 },
+  { id: "q-cointelpro-robo", q: "¿Cómo se destapó COINTELPRO ante la prensa?", opts: ["Una filtración del Senado", "Un grupo activista robó 1.000 documentos en Media (Pensilvania)", "Una confesión de Hoover"], correct: 1 },
+  { id: "q-cointelpro-hoover", q: "¿Qué director del FBI dirigió COINTELPRO de 1956 a 1971?", opts: ["J. Edgar Hoover", "Allen Dulles", "William Casey"], correct: 0 },
+  { id: "q-gateway-anio", q: "¿De qué año es el informe GATEWAY que la CIA archivó?", opts: ["1963", "1983", "1999"], correct: 1 },
+  { id: "q-stargate-lugar", q: "Los psíquicos de STARGATE tuvieron laboratorios en…", opts: ["Stanford y Fort Meade", "West Point y Langley", "MIT y Los Álamos"], correct: 0 },
+  { id: "q-stargate-veredicto", q: "¿Qué concluyó la evaluación final de 1995 sobre STARGATE?", opts: ["Que funcionaba al 80%", "Que nunca produjo inteligencia utilizable", "Que había que ampliarlo"], correct: 1 },
+  { id: "q-radar-batalla", q: "¿Qué batalla se ganó con torres de radar y no con aviones?", opts: ["Midway", "La Batalla de Bretaña", "El Alamein"], correct: 1 },
+  { id: "q-radar-estaciones", q: "¿Cuántas estaciones de radar detectaban la Luftwaffe a 160 km?", opts: ["5", "21", "120"], correct: 1 },
+  { id: "q-tanque-debut", q: "¿En qué batalla debutó el tanque en 1916?", opts: ["Verdún", "El Somme", "Gallípoli"], correct: 1 },
+  { id: "q-fuego-agua", q: "¿Qué hacía de aterradora al fuego griego?", opts: ["Arde incluso sobre el mar", "Explota bajo la arena", "Convierte en piedra"], correct: 0 },
+  { id: "q-fuego-perdido", q: "¿Qué pasó con la fórmula del fuego griego?", opts: ["La heredó Venecia", "Se perdió para siempre", "Napoleón la recuperó"], correct: 1 },
+  { id: "q-gobekli-piramides", q: "GÖBEKLI TEPE es 7.000 años más antiguo que…", opts: ["las pirámides", "Stonehenge", "la Gran Muralla"], correct: 0 },
+  { id: "q-gobekli-entierro", q: "¿Qué hicieron sus constructores con GÖBEKLI TEPE?", opts: ["Lo vendieron a Roma", "Lo enterraron todo con cuidado, nadie sabe por qué", "Lo dejaron caer en ruinas"], correct: 1 },
+  { id: "q-etruscos-palabras", q: "Del idioma etrusco solo sabemos leer unas…", opts: ["20 palabras", "200 palabras", "2.000 palabras"], correct: 1 },
+  { id: "q-tartessos-rio", q: "¿Bajo qué río se busca a Tartessos desde hace siglos?", opts: ["El Tajo", "El Ebro", "El Guadalquivir"], correct: 2 },
+  { id: "q-minoica-volcan", q: "¿Qué erupción quebró la civilización minoica?", opts: ["El Vesubio", "Santorini (4× Krakatoa)", "El Krakatoa"], correct: 1 },
+  { id: "q-nabateos-anio", q: "¿En qué año redescubrió Occidente Petra?", opts: ["1666", "1812", "1912"], correct: 1 },
+  { id: "q-khmer-hidra", q: "¿Cuántos km² regaba el sistema hidráulico de Angkor?", opts: ["100", "1.000", "10.000"], correct: 1 },
+  { id: "q-indus-armas", q: "¿Qué es rarísimo en las ciudades del Valle del Indus?", opts: ["Casi cero armas encontradas", "Sin alcantarillado", "Sin edificios"], correct: 0 },
+  { id: "q-sumeria-gilgamesh", q: "Las tablillas de Ur contienen un diluvio anterior al bíblico en la epopeya de…", opts: ["Gilgamesh", "Hammurabi", "Nabucodonosor"], correct: 0 },
+  { id: "q-enigma-claves", q: "¿Cuántas claves posibles al día tenía la máquina Enigma?", opts: ["158 quintillones", "158 millones", "1.58 billones"], correct: 0 },
+  { id: "q-gps-satelites", q: "El GPS militar original usaba 24 satélites con…", opts: ["relojes atómicos", "espejos solares", "cámaras espía"], correct: 0 },
+  { id: "q-atomic-alerta", q: "¿Cuántas armas nucleares siguen en alerta hoy según la biblioteca?", opts: ["~1.200", "~12.000", "~120.000"], correct: 1 },
+  { id: "q-pdb-que", q: "¿Qué era el PDB que Kennedy leía cada mañana?", opts: ["El informe diario de inteligencia del presidente", "La agenda diplomática", "El boletín de bolsa"], correct: 0 },
 ];
 
 export const QUIZ_PER_DAY = 6;
 export const QUIZ_REWARD = { coins: 10, xp: 6 };           // por acierto
 export const QUIZ_DAILY_BONUS = { coins: 50, gems: 2, xp: 30 }; // set completo
+
+// v61.0 RACHA DEL EXAMEN: días consecutivos completando el set. Al cobrar el
+// botín del día, si ayer también se cobró, la racha crece; si no, vuelve a 1.
+export interface QuizStreakMilestone { at: number; coins: number; gems: number; xp: number }
+export const QUIZ_STREAK_MILESTONES: QuizStreakMilestone[] = [
+  { at: 3,  coins: 100,  gems: 1,  xp: 50 },
+  { at: 7,  coins: 250,  gems: 3,  xp: 120 },
+  { at: 14, coins: 500,  gems: 5,  xp: 250 },
+  { at: 30, coins: 1500, gems: 15, xp: 600 },
+];
+
+// v61.0 INTERROGATORIO: contrarreloj contra el banco completo.
+export const INTERRO_SECONDS = 60;
+export const INTERRO_REWARD = { coins: 8, xp: 5 }; // por acierto (menor que el set diario)
 
 export function dayKeyUtc(d = new Date()): string {
   return d.toISOString().slice(0, 10); // "2026-09-27"
@@ -611,10 +657,15 @@ interface OscuraState {
   quizDayKey: string;         // día del set actual
   quizSolvedToday: string[];  // aciertos del set de HOY
   quizBonusDay: string;       // día en que se cobró el botín del set completo
+  // v61.0 racha + interrogatorio
+  quizStreak: number;         // días consecutivos completando el examen
+  quizLastClaim: string;      // último día UTC en que se cobró el botín
+  bestInterrogatorio: number; // récord personal de aciertos en 60 s
   registerRead: (id: string) => boolean; // true si es nueva
   claimMilestone: (at: number) => boolean;
   solveQuiz: (id: string) => boolean;    // true si es nuevo acierto de HOY
-  claimQuizBonus: () => boolean;         // true si el botín del día es cobrable
+  claimQuizBonus: () => { ok: boolean; streak: number; milestone: number }; // v61: paga y devuelve racha
+  setBestInterrogatorio: (n: number) => boolean; // true si hay récord nuevo
   resetProgress: () => void;
 }
 
@@ -627,6 +678,9 @@ export const useOscura = create<OscuraState>()(
       quizDayKey: "",
       quizSolvedToday: [],
       quizBonusDay: "",
+      quizStreak: 0,
+      quizLastClaim: "",
+      bestInterrogatorio: 0,
 
       registerRead: (id) => {
         if (get().readIds.includes(id)) return false;
@@ -658,17 +712,30 @@ export const useOscura = create<OscuraState>()(
         return true;
       },
 
-      // v60.0: botín por completar el set diario (idempotente por día UTC)
+      // v60.0: botín por completar el set diario (idempotente por día UTC).
+      // v61.0: además actualiza la RACHA (ayer cobrado → +1; si no → 1) y
+      // devuelve el hito de racha alcanzado (3/7/14/30) para que el panel pague.
       claimQuizBonus: () => {
         const today = dayKeyUtc();
         const st = get();
-        if (st.quizBonusDay === today) return false;
-        if (st.quizDayKey !== today || st.quizSolvedToday.length < QUIZ_PER_DAY) return false;
-        set({ quizBonusDay: today });
+        if (st.quizBonusDay === today) return { ok: false, streak: st.quizStreak, milestone: 0 };
+        if (st.quizDayKey !== today || st.quizSolvedToday.length < QUIZ_PER_DAY)
+          return { ok: false, streak: st.quizStreak, milestone: 0 };
+        const yesterday = dayKeyUtc(new Date(Date.now() - 86400000));
+        const streak = st.quizLastClaim === yesterday ? st.quizStreak + 1 : 1;
+        const milestone = QUIZ_STREAK_MILESTONES.some((m) => m.at === streak) ? streak : 0;
+        set({ quizBonusDay: today, quizStreak: streak, quizLastClaim: today });
+        return { ok: true, streak, milestone };
+      },
+
+      // v61.0: récord personal del INTERROGATORIO (aciertos en 60 s)
+      setBestInterrogatorio: (n) => {
+        if (n <= get().bestInterrogatorio) return false;
+        set({ bestInterrogatorio: n });
         return true;
       },
 
-      resetProgress: () => set({ readIds: [], claimedMilestones: [], quizSolved: [], quizDayKey: "", quizSolvedToday: [], quizBonusDay: "" }),
+      resetProgress: () => set({ readIds: [], claimedMilestones: [], quizSolved: [], quizDayKey: "", quizSolvedToday: [], quizBonusDay: "", quizStreak: 0, quizLastClaim: "", bestInterrogatorio: 0 }),
     }),
     {
       name: "vg_oscura_v59",

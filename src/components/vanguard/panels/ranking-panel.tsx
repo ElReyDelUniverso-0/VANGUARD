@@ -6,7 +6,7 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Swords, TrendingUp, Crown, Medal, CalendarDays, ShieldCheck, Zap } from "lucide-react";
+import { Trophy, Swords, TrendingUp, Crown, Medal, CalendarDays, ShieldCheck, Zap, BookOpen, Flame, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -14,6 +14,8 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { useGameStore } from "@/lib/game-store";
 import { rivalScores, RANK_RIVALS, type RivalScore } from "@/lib/hooks-data";
 import { useRetention, weekKeyOf, weekDaysLeft, WEEK_TOP3_REWARD } from "@/lib/retention";
+import { useOscura, OSCURA_TOTAL } from "@/lib/oscura";
+import { useExpedientes, EXPEDIENTES } from "@/lib/expedientes";
 
 type Discipline = "XP" | "CONQ" | "TRADER";
 
@@ -151,6 +153,88 @@ function medalClass(pos: number): string {
   return "text-muted-foreground";
 }
 
+// v61.0 ERUDITOS DEL ABISMO — TABLÓN DE ERUDITOS: la gloria de los que leen.
+// Puntuación = biblioteca absorbida (25/entrada) + ARCHIVO SECRETO (30/expediente)
+// + aciertos históricos del examen (10) + racha del examen (15/día).
+// Rivales deterministas por semana ISO: SIEMPRE hay un erudito a 1 puesto.
+// Tabla de gloria (sin botín): el botín vive en los hitos de cada colección.
+function ScholarsBoard() {
+  const alias = useGameStore((s) => s.alias);
+  const oscuraReads = useOscura((s) => s.readIds.length);
+  const quizSolved = useOscura((s) => s.quizSolved.length);
+  const quizStreak = useOscura((s) => s.quizStreak);
+  const expReads = useExpedientes((s) => s.readIds.length);
+
+  const weekNum = parseInt(weekKeyOf().slice(6), 10) || 1;
+  const score = oscuraReads * 25 + expReads * 30 + quizSolved * 10 + quizStreak * 15;
+  const rows = useMemo(() => {
+    const scale = score > 0 ? score : 420; // base jugable si aún no lees nada
+    const rivals = RANK_RIVALS.slice(0, 7).map((r, i) => {
+      const h = Math.abs(Math.sin(r.seed * 12.9898 + weekNum * 78.233 + 4127)) * 43758.5453;
+      const rnd = h - Math.floor(h);
+      const factor = 0.3 + rnd * 1.2 + i * 0.045;
+      return { name: r.name, tag: r.tag, score: Math.max(120, Math.round(scale * factor)), isPlayer: false };
+    });
+    return [...rivals, { name: alias || "TU", tag: "AG", score, isPlayer: true }].sort((a, b) => b.score - a.score);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [alias, score, weekNum]);
+  const pos = rows.findIndex((r) => r.isPlayer) + 1;
+
+  return (
+    <div className="hud-corner bg-gradient-to-br from-red-hud/12 via-secondary/40 to-amber-hud/10 border border-red-hud/40">
+      <div className="p-3 border-b border-red-hud/30 flex items-center gap-2 flex-wrap">
+        <BookOpen className="w-4 h-4 text-red-hud" />
+        <div className="text-xs font-mono font-bold uppercase text-foreground">TABLÓN DE ERUDITOS</div>
+        <span className="text-[9px] font-mono px-1.5 py-0.5 bg-red-hud/15 text-red-hud rounded">semana {weekNum}</span>
+        <span className="ml-auto text-[9px] font-mono text-muted-foreground">tabla de gloria · se recalcula cada semana</span>
+      </div>
+      <div className="p-3 grid md:grid-cols-[1fr_240px] gap-3">
+        <div className="max-h-[210px] overflow-y-auto thin-scroll divide-y divide-border/30">
+          {rows.map((r, i) => (
+            <div
+              key={r.name + i}
+              className={cn(
+                "px-2 py-1.5 flex items-center gap-2 text-[10px] font-mono",
+                r.isPlayer ? "bg-red-hud/15 border-l-2 border-red-hud" : ""
+              )}
+            >
+              <span className={cn("w-6", medalClass(i + 1))}>#{i + 1}</span>
+              <FlagBadge country={r.tag} size={12} />
+              <span className={cn("flex-1 truncate", r.isPlayer ? "text-red-hud font-bold" : "text-muted-foreground")}>
+                {r.name}{r.isPlayer ? " ← TÚ" : ""}
+              </span>
+              <span className="text-foreground font-bold">{r.score} pts</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="hud-panel p-2 text-[10px] font-mono space-y-1">
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Crown className="w-3 h-3 text-red-hud" /> ERUDITO: <span className="text-red-hud font-bold">#{pos}</span> / 8
+            </div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <BookOpen className="w-3 h-3 text-amber" /> Biblioteca: <span className="text-amber font-bold">{oscuraReads}/{OSCURA_TOTAL}</span>
+            </div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Zap className="w-3 h-3 text-cyan-hud" /> Archivo: <span className="text-cyan-hud font-bold">{expReads}/{EXPEDIENTES.length}</span>
+            </div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <GraduationCap className="w-3 h-3 text-green-hud" /> Examen: <span className="text-green-hud font-bold">{quizSolved}</span> aciertos
+            </div>
+            <div className="text-muted-foreground flex items-center gap-1">
+              <Flame className="w-3 h-3 text-red-hud" /> Racha: <span className="text-red-hud font-bold">{quizStreak}</span> días
+            </div>
+          </div>
+          <div className="hud-panel p-2 text-[9px] font-mono text-muted-foreground">
+            Vale: 25 pts/entrada de biblioteca · 30 pts/expediente · 10 pts/acierto histórico · 15 pts/día de racha.
+            Lee, abre expedientes y sobrevive al examen para escalar.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function RankingPanel() {
   const alias = useGameStore((s) => s.alias);
   const xp = useGameStore((s) => s.xp);
@@ -195,6 +279,9 @@ export function RankingPanel() {
 
       {/* v58.0 DOMINIO TOTAL — TABLÓN SEMANAL con botín reclamable */}
       <WeekBoard />
+
+      {/* v61.0 ERUDITOS DEL ABISMO — TABLÓN DE ERUDITOS (gloria de los que leen) */}
+      <ScholarsBoard />
 
       <div className="grid lg:grid-cols-3 gap-3">
         <Board
