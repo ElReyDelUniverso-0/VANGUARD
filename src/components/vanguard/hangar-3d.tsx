@@ -491,6 +491,9 @@ export function HangarPanel() {
     let raf = 0;
     const camTarget = new THREE.Vector3();
     let walkPhase = 0;
+    // v67.1: la cámara NACE en su posición de seguimiento (sin lerp desde el origen)
+    cam.position.set(agent.position.x * 0.7, 6.4, agent.position.z + 9.2);
+    cam.lookAt(agent.position.x * 0.55, 1.6, agent.position.z * 0.55 + 3.5);
 
     const tick = () => {
       raf = requestAnimationFrame(tick);

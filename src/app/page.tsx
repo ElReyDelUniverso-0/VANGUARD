@@ -256,6 +256,8 @@ export default function Home() {
         sfx.tab();
       }
       if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        // v67.0: en EL HANGAR las flechas mueven al agente — no cambian de pestaña
+        if (tab === "hangar") return;
         const curIdx = TAB_ORDER.indexOf(tab);
         if (curIdx >= 0) {
           const dir = e.key === "ArrowRight" ? 1 : -1;
