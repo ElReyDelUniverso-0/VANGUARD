@@ -160,3 +160,24 @@ Work Log:
 Stage Summary:
 - Producción v62.0 ESCUDOS DEL ABISMO: 65 preguntas, escudo de racha comprable en tienda que se consume gratis, y ola 39 con 22 enlaces verificados.
 - Siguientes rondas: shares 618→750 (faltan 132; el bump exige enlaces verificados a mano), escudo también comprable con gemas, R31 simulador 3D de guerra de países, ampliar biblioteca a 50+ entradas.
+
+---
+Task ID: 12
+Agent: main (Super Z)
+Task: v63.0 PRIMERA PÁGINA — "Vamos con google search": ronda SEO para indexación real en Google
+
+Work Log:
+- DIAGNÓSTICO con web_search: site:vanguard-kq9r.vercel.app → SOLO 1 resultado (la portada). /guerra-hoy, /zona-cero, /ver-guerra y /mision NO indexadas. Búsqueda por marca → VANGUARD no aparece. La app es SPA cliente: Google no tiene texto que masticar.
+- DESCUBRIMIENTO CRÍTICO: vanguard.world es NXDOMAIN (nunca se registró). TODOS los CTAs de las 4 landings gh-pages apuntaban a un dominio muerto (curioso: los jugadores entraban igual — por el link directo del IM). Fix: los 4 CTAs ahora apuntan a https://vanguard-kq9r.vercel.app (commit 38f9059 en gh-pages, Pages 200 verificado por landing).
+- Seguridad / git: en gh-pages NO existe .gitignore → `git add -A` stageó .ghtoken y scripts/escudo-de-racha.html; GitHub PUSH PROTECTION bloqueó el push (GH013, el token NUNCA salió de la máquina). Lección grabada: en gh-pages SIEMPRE git add con nombres de archivo explícitos, jamás -A. Commit rehecho limpio (solo 4 html).
+- oscura.ts SPLIT: los datos estáticos (TEORIAS/ARMAS/CIVILIZACIONES/DOCS + tipos, 27.370 chars) movidos a src/lib/oscura-data.ts SIN "use client" → importables desde componentes SERVIDOR. oscura.ts re-exporta: los 4 consumers existentes (oscura-panel, section-search, ranking-panel, retention-layer) sin tocar. Verificado con tsx por ambas vías (14/11/10/8 + quiz 65).
+- /guerra-hoy (página SEO SSR): nueva sección "La Biblioteca Oscura — 43 secretos con veredicto real" renderizada EN SERVIDOR: 43 tarjetas con veredicto coloreado (REAL verde/MITO rojo/PARCIAL ámbar), realidad/legado/misterio/desc completo y fuente. ~6.500 chars de texto real indexable con long-tail (MK-ULTRA, Tartessos, GATEWAY, Göbekli Tepe...). Verificado en producción: curl contiene MK-ULTRA/Tartessos/GATEWAY/CIA Reading Room; agent-browser renderiza 4 veredictos MITO visibles.
+- layout.tsx JSON-LD: QUITADO el aggregateRating FALSO (4.8/1240 votos) — reseñas auto-servidas son spam de datos estructurados para Google y arriesgan penalización de resultados enriquecidos. featureList ampliada con la biblioteca. Nodos: WebSite + WebApplication + Organization + FAQPage.
+- sitemap.ts: +/mision (0.6, weekly) → 5 URLs. IndexNow re-ping 200 con las 5. Google sitemap ping devuelve 404 (endpoint deprecado desde 2023 — Google descubre por sitemap en GSC, ver meta de verificación v54.1 ya en producción).
+- version.ts → v63.0 PRIMERA PÁGINA. Deploy 2d0b4bc → health v63.0 intento 4 (~2 min). QA: build OK, CJK 0 en tocados, eslint 0 errores, home label v63.0 OK, consola 0 errores.
+- Cifras: players:total=110 (récord vigente), presence:peak=6, shares:external=618, online=0 (hora valle).
+
+Stage Summary:
+- Producción v63.0 PRIMERA PÁGINA: Google ahora tiene 5 URLs en sitemap, JSON-LD sin spam, CTAs de landings vivos y ~6.500 chars de contenido SSR indexable en /guerra-hoy.
+- Pendiente para el jefe (única parte que NO puedo hacer yo): entrar a Search Console con la cuenta Google que creó la verificación (meta 0ZwaEFYOrfzU-l1mpA9H5Ze-j8fgNUFhBjdkYBKvuZ4 ya servida), verificar la propiedad, enviar el sitemap y pedir indexación de las 5 URLs. Si quiere vanguard.world de verdad: registrar el dominio (~10-14 USD/año) y conectarlo en Vercel.
+- Siguientes rondas: contenido SEO adicional (páginas por expediente), shares 618→750, R31 simulador 3D.
