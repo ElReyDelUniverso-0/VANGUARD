@@ -26,6 +26,8 @@ interface FrontDef {
   unitsA: number;
   unitsB: number;
   note: string;
+  // v65.0 ACERO Y FUEGO — tipo de teatro: cambia el horizonte pintado en el canvas
+  terrain: "urbano" | "bosque" | "desierto" | "montaña" | "costa";
 }
 
 // v51.2 — METEO OPERATIVA (viene de /api/meteo, Open-Meteo sin key)
@@ -42,57 +44,57 @@ const FRONTS: FrontDef[] = [
   {
     id: "donbas", name: "Frente de Donbás", sideA: { name: "Ucrania", colors: ["#0057B7", "#FFD700"], code: "ua" }, sideB: { name: "Rusia", colors: ["#FFFFFF", "#0039A6", "#D52B1E"], code: "ru" },
     intensity: 92, casualties: 812000, unitsA: 34, unitsB: 41,
-    note: "Artillería pesada y drones FPV dominan la línea de contacto.",
+    note: "Artillería pesada y drones FPV dominan la línea de contacto.", terrain: "bosque",
   },
   {
     id: "gaza", name: "Franja de Gaza", sideA: { name: "Israel", colors: ["#FFFFFF", "#0038B8"], code: "il" }, sideB: { name: "Hamás", colors: ["#000000", "#FFFFFF", "#007A3D"], code: "ps" },
     intensity: 78, casualties: 128000, unitsA: 22, unitsB: 17,
-    note: "Combate urbano túnel a túnel; potencia de fuego desigual.",
+    note: "Combate urbano túnel a túnel; potencia de fuego desigual.", terrain: "urbano",
   },
   {
     id: "sahel", name: "Frente del Sahel", sideA: { name: "Juntas / FAMa", colors: ["#002A8F", "#FFD700"], code: "ml" }, sideB: { name: "JNIM / EIGS", colors: ["#000000", "#3a7d44"] },
     intensity: 64, casualties: 46000, unitsA: 12, unitsB: 19,
-    note: "Emboscadas con IED y motos en el triángulo Liptako-Gourma.",
+    note: "Emboscadas con IED y motos en el triángulo Liptako-Gourma.", terrain: "desierto",
   },
   {
     id: "sudan", name: "Guerra Civil de Sudán", sideA: { name: "SAF (Ejército)", colors: ["#D21034", "#FFFFFF"], code: "sd" }, sideB: { name: "RSF (Rapid Forces)", colors: ["#000000", "#D21034"] },
     intensity: 85, casualties: 150000, unitsA: 18, unitsB: 24,
-    note: "Batalla urbana en Jartum; crisis de refugiados récord.",
+    note: "Batalla urbana en Jartum; crisis de refugiados récord.", terrain: "urbano",
   },
   {
     id: "myanmar", name: "Resistencia de Myanmar", sideA: { name: "Junta (Tatmadaw)", colors: ["#CE1126", "#FFFFFF"], code: "mm" }, sideB: { name: "PDF / EAOs", colors: ["#000000", "#FCD116"] },
     intensity: 71, casualties: 74000, unitsA: 14, unitsB: 27,
-    note: "Ofensiva 1024: guerrilla captura puestos fronterizos.",
+    note: "Ofensiva 1024: guerrilla captura puestos fronterizos.", terrain: "bosque",
   },
   {
     id: "kashmir", name: "Cachemira (LoC)", sideA: { name: "India", colors: ["#FF9933", "#FFFFFF", "#138808"], code: "in" }, sideB: { name: "Pakistán", colors: ["#01411C", "#FFFFFF"], code: "pk" },
     intensity: 47, casualties: 38000, unitsA: 16, unitsB: 15,
-    note: "Intercambio de fuego de mortero a lo largo de la Línea de Control.",
+    note: "Intercambio de fuego de mortero a lo largo de la Línea de Control.", terrain: "montaña",
   },
   // v51.4 ACTUALIZACIÓN MORBOSA — 4 frentes nuevos (10 en total)
   {
     id: "rdc", name: "RDC Este (M23)", sideA: { name: "FARDC (Congo)", colors: ["#007FFF", "#F7D618", "#CE1021"], code: "cd" }, sideB: { name: "M23 / AFC", colors: ["#4a5d23", "#2b2b2b"] },
     intensity: 81, casualties: 45000, unitsA: 17, unitsB: 23,
-    note: "Ofensiva sobre Goma y Bukavu; montañas, minas y desplazados en masa.",
+    note: "Ofensiva sobre Goma y Bukavu; montañas, minas y desplazados en masa.", terrain: "bosque",
   },
   {
     id: "marrojo", name: "Mar Rojo (Antibuque)", sideA: { name: "Coalición naval", colors: ["#3C3B6E", "#B22234"], code: "us" }, sideB: { name: "Houtíes", colors: ["#007A3D", "#FFFFFF", "#CE1126"], code: "ye" },
     intensity: 58, casualties: 9000, unitsA: 11, unitsB: 16,
-    note: "Drones y misiles antibuque contra el tráfico comercial del Babel-Mandeb.",
+    note: "Drones y misiles antibuque contra el tráfico comercial del Babel-Mandeb.", terrain: "costa",
   },
   {
     id: "somalia", name: "Somalia (Al-Shabaab)", sideA: { name: "SNA / Ejército", colors: ["#4189DD", "#FFFFFF"], code: "so" }, sideB: { name: "Al-Shabaab", colors: ["#1a1a1a", "#f5f5f5"] },
     intensity: 66, casualties: 38000, unitsA: 13, unitsB: 21,
-    note: "IED en las rutas de Mogadiscio y asaltos con técnicas al sur del país.",
+    note: "IED en las rutas de Mogadiscio y asaltos con técnicas al sur del país.", terrain: "desierto",
   },
   {
     id: "haiti", name: "Haití (Puerto Príncipe)", sideA: { name: "PNH / Misión", colors: ["#00209F", "#D21034"], code: "ht" }, sideB: { name: "Viv Ansanm", colors: ["#111111", "#8B0000"] },
     intensity: 72, casualties: 14000, unitsA: 10, unitsB: 24,
-    note: "Bandas armadas disputan el puerto y el aeropuerto; país sin ejército.",
+    note: "Bandas armadas disputan el puerto y el aeropuerto; país sin ejército.", terrain: "urbano",
   },
 ];
 
-interface Unit { x: number; y: number; side: 0 | 1; type: "tank" | "soldier"; vx: number; hp: number; cool: number; }
+interface Unit { x: number; y: number; side: 0 | 1; type: "tank" | "soldier" | "apc" | "art"; vx: number; hp: number; cool: number; }
 interface Boom { x: number; y: number; r: number; max: number; }
 interface Tracer { x1: number; y1: number; x2: number; y2: number; life: number; }
 interface Smoke { x: number; y: number; r: number; vx: number; life: number; }
@@ -101,6 +103,9 @@ interface Jet { x: number; y: number; vx: number; side: 0 | 1; dropped: boolean;
 interface Hco { x: number; y: number; vx: number; side: 0 | 1; cool: number; burst: number; }
 interface Dec { x: number; y: number; tank: boolean; burn: number; age: number; }
 interface Flare { x: number; y: number; life: number; }
+// v65.0 ACERO Y FUEGO — proyectiles balísticos, cajas de suministro
+interface Shell { x0: number; x1: number; y0: number; y1: number; p: number; sp: number; side: 0 | 1; dmg: boolean; }
+interface Crate { x: number; y: number; vy: number; land: number; life: number; }
 
 // v51.4 — bitácora del combate real: lo que se escucha cuando el fuego para
 const MORBID_LOGS = [
@@ -115,6 +120,33 @@ const MORBID_LOGS = [
   "Fuego de 30 segundos sobre el alambre, y otra vez el silencio espeso",
   "La artillería registra el bosque metro por metro",
 ];
+
+// v65.0 ACERO Y FUEGO — bitácora de acción: contrafuego, suministros y fiebre
+const ACTION_LOGS = [
+  "Contrafuego enemigo: la tierra levanta a metros del búnker",
+  "Caja de munición en paracaídas — recógela antes de que la cubran",
+  "MLRS vaciando los tubos: cielo lleno de cohetes en fila",
+  "Los impactos encadenados traen el siguiente objetivo",
+  "El contrabatería enemigo busca nuestra posición: muévete o cubre",
+];
+
+// v65.0 — ciclo día/noche con la HORA UTC REAL del navegador: el teatro cambia de luz
+function dayPhase(d = new Date()): "noche" | "amanecer" | "día" | "ocaso" {
+  const h = d.getUTCHours();
+  if (h >= 5 && h < 8) return "amanecer";
+  if (h >= 8 && h < 17) return "día";
+  if (h >= 17 && h < 21) return "ocaso";
+  return "noche";
+}
+const SKY: Record<string, [string, string, string]> = {
+  noche: ["#05070d", "#0d1220", "#070a12"],
+  amanecer: ["#241f2e", "#6e4433", "#181320"],
+  día: ["#1f2c42", "#3d4f68", "#232935"],
+  ocaso: ["#311c26", "#7c422a", "#1c1116"],
+};
+
+// v65.0 — valor en puntos de cada baja (récord de combate)
+const KILL_POINTS: Record<Unit["type"], number> = { tank: 25, apc: 18, soldier: 10, art: 30 };
 
 function drawSoldier(ctx: CanvasRenderingContext2D, u: Unit, t: number, colors: string[]) {
   const bob = Math.sin(t * 6 + u.x) * 1.2;
@@ -185,14 +217,147 @@ function drawHco(ctx: CanvasRenderingContext2D, x: number, y: number, color: str
   ctx.restore();
 }
 
+// v65.0 — APC con ruedas: infantería mecanizada, más rápida
+function drawAPC(ctx: CanvasRenderingContext2D, u: Unit, colors: string[]) {
+  ctx.save();
+  ctx.translate(u.x, u.y);
+  ctx.fillStyle = "#14161c";
+  ctx.fillRect(-16, -4, 32, 5);
+  for (const wx of [-12, -4, 4, 12]) { ctx.beginPath(); ctx.arc(wx, 1, 2.8, 0, Math.PI * 2); ctx.fill(); }
+  ctx.fillStyle = colors[0];
+  ctx.fillRect(-14, -11, 28, 7);
+  ctx.beginPath(); ctx.moveTo(-14, -11); ctx.lineTo(-7, -16); ctx.lineTo(14, -16); ctx.lineTo(14, -11); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = colors[1] ?? "#fff";
+  ctx.fillRect(-2, -18, 6, 3);
+  ctx.restore();
+}
+
+// v65.0 — pieza de artillería: estática, dispara proyectiles con ARCO balístico
+function drawArt(ctx: CanvasRenderingContext2D, u: Unit, colors: string[]) {
+  const dir = u.side === 0 ? 1 : -1;
+  ctx.save();
+  ctx.translate(u.x, u.y);
+  ctx.fillStyle = "#14161c";
+  ctx.fillRect(-10, -3, 20, 5);
+  ctx.fillStyle = colors[0];
+  ctx.fillRect(-6, -8, 12, 6);
+  ctx.strokeStyle = colors[0]; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(dir * 20, -20); ctx.stroke();
+  ctx.fillStyle = colors[1] ?? "#fff";
+  ctx.fillRect(-2, -11, 5, 6);
+  ctx.restore();
+}
+
+// v65.0 — horizontes por tipo de terreno: cada frente tiene su teatro reconocible
+function drawTerrain(ctx: CanvasRenderingContext2D, f: FrontDef, W: number, ground: number, t: number) {
+  const rnd = (n: number) => ((Math.sin(n * 127.1) * 43758.5453) % 1 + 1) % 1; // pseudo-aleatorio determinista
+  switch (f.terrain) {
+    case "urbano": {
+      // silueta de ciudad con ventanas, algunas ardiendo
+      let bx = 0;
+      let bi = 0;
+      while (bx < W) {
+        const bw = 26 + rnd(bi) * 44;
+        const bh = 26 + rnd(bi + 9) * 74;
+        ctx.fillStyle = "#0e1218";
+        ctx.fillRect(bx, ground - bh, bw, bh);
+        ctx.fillStyle = "#0a0d12";
+        ctx.fillRect(bx, ground - bh, bw, 3);
+        for (let wy = ground - bh + 6; wy < ground - 8; wy += 9) {
+          for (let wx = bx + 4; wx < bx + bw - 5; wx += 8) {
+            const r = rnd(wx * 3.7 + wy * 1.3 + bi);
+            if (r < 0.16) ctx.fillStyle = Math.sin(t * 0.09 + wx) > 0.4 ? "rgba(255,110,40,0.9)" : "rgba(255,59,48,0.55)"; // ardiendo
+            else if (r < 0.4) ctx.fillStyle = "rgba(255,220,140,0.22)";
+            else ctx.fillStyle = "rgba(20,24,32,0.9)";
+            ctx.fillRect(wx, wy, 3.5, 4.5);
+          }
+        }
+        bx += bw + 6 + rnd(bi + 3) * 18;
+        bi++;
+      }
+      break;
+    }
+    case "bosque": {
+      // dos hileras de pinos
+      for (let x = 6; x < W; x += 17) {
+        const h = 20 + rnd(x) * 26;
+        ctx.fillStyle = "#0c1410";
+        ctx.beginPath(); ctx.moveTo(x, ground - h); ctx.lineTo(x - 7, ground); ctx.lineTo(x + 7, ground); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "#0a100d";
+        ctx.beginPath(); ctx.moveTo(x + 9, ground - h * 0.6); ctx.lineTo(x + 3, ground); ctx.lineTo(x + 15, ground); ctx.closePath(); ctx.fill();
+      }
+      break;
+    }
+    case "desierto": {
+      // dunas suaves y un árbol seco
+      ctx.fillStyle = "#151312";
+      ctx.beginPath(); ctx.moveTo(0, ground);
+      for (let x = 0; x <= W; x += 30) ctx.lineTo(x, ground - 10 - Math.sin(x * 0.012) * 12 - Math.sin(x * 0.031 + 1) * 7);
+      ctx.lineTo(W, H0(ground)); ctx.lineTo(0, H0(ground)); ctx.fill();
+      for (const dx of [0.18, 0.62, 0.86]) {
+        const tx = dx * W;
+        ctx.strokeStyle = "#241d16"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(tx, ground - 2); ctx.lineTo(tx, ground - 18);
+        ctx.moveTo(tx, ground - 12); ctx.lineTo(tx + 7, ground - 20);
+        ctx.moveTo(tx, ground - 9); ctx.lineTo(tx - 6, ground - 16); ctx.stroke();
+      }
+      break;
+    }
+    case "montaña": {
+      // picos afilados con nieve en las cumbres
+      for (let i = 0; i < 6; i++) {
+        const px = (i / 5) * W + rnd(i) * 60 - 30;
+        const ph = 60 + rnd(i + 5) * 90;
+        ctx.fillStyle = "#0d1118";
+        ctx.beginPath(); ctx.moveTo(px - 70, ground); ctx.lineTo(px, ground - ph); ctx.lineTo(px + 70, ground); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "rgba(220,228,240,0.25)";
+        ctx.beginPath(); ctx.moveTo(px, ground - ph); ctx.lineTo(px - 12, ground - ph + 16); ctx.lineTo(px + 12, ground - ph + 16); ctx.closePath(); ctx.fill();
+      }
+      break;
+    }
+    case "costa": {
+      // banda de mar con barcos y faro parpadeante
+      ctx.fillStyle = "#0a1522";
+      ctx.fillRect(0, ground - 16, W, 16);
+      ctx.fillStyle = "#0d1b2c";
+      ctx.fillRect(0, ground - 16, W, 3);
+      for (const sx of [0.2, 0.55, 0.83]) {
+        const bx2 = sx * W;
+        ctx.fillStyle = "#060b12";
+        ctx.fillRect(bx2 - 12, ground - 20, 24, 5);
+        ctx.fillRect(bx2 - 4, ground - 26, 8, 6);
+      }
+      const lx = 0.94 * W;
+      ctx.strokeStyle = "#141a24"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(lx, ground - 16); ctx.lineTo(lx, ground - 44); ctx.stroke();
+      ctx.fillStyle = Math.floor(t / 40) % 2 ? "rgba(255,230,150,0.95)" : "rgba(255,230,150,0.15)";
+      ctx.beginPath(); ctx.arc(lx, ground - 46, 2.5, 0, Math.PI * 2); ctx.fill();
+      break;
+    }
+  }
+}
+// helper del caso desierto (profundidad del bloque)
+function H0(ground: number) { return ground + 40; }
+
 export function FrentePanel() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const stateRef = useRef({ units: [] as Unit[], booms: [] as Boom[], tracers: [] as Tracer[], smokes: [] as Smoke[], front: FRONTS[0], momentum: 0, lastSpawn: 0, jets: [] as Jet[], hcos: [] as Hco[], decs: [] as Dec[], flares: [] as Flare[], shake: 0, lastJet: -999, lastHc: -999 });
+  // v65.0 ACERO Y FUEGO — estado de combate ampliado: proyectiles balísticos, cajas,
+  // combo, fiebre, puesto de mando con HP, puntuación y flash de pantalla
+  const stateRef = useRef({ units: [] as Unit[], booms: [] as Boom[], tracers: [] as Tracer[], smokes: [] as Smoke[], front: FRONTS[0], momentum: 0, lastSpawn: 0, jets: [] as Jet[], hcos: [] as Hco[], decs: [] as Dec[], flares: [] as Flare[], shake: 0, lastJet: -999, lastHc: -999, shells: [] as Shell[], crates: [] as Crate[], lastCrate: -999, lastCounter: 220, combo: 0, comboT: 0, fever: 0, feverArmed: false, cpHp: 100, cpDown: 0, score: 0, t: 0, flash: 0 });
   const [frontIdx, setFrontIdx] = useState(0);
   const front = FRONTS[frontIdx];
   const [log, setLog] = useState<string[]>([]);
   const [casualties, setCasualties] = useState(front.casualties);
   const [control, setControl] = useState(52); // % lado A
+  // v65.0 — HUD de combate sincronizado a baja frecuencia (cada 30 frames)
+  const [hud, setHud] = useState({ combo: 0, fever: 0, armed: false, score: 0, cp: 100, down: 0, best: 0 });
+  const bestRef = useRef(0);
+  const recordToastRef = useRef(false);
+  useEffect(() => {
+    bestRef.current = parseInt(localStorage.getItem("vanguard_frente_best") || "0", 10) || 0;
+    setHud((h) => ({ ...h, best: bestRef.current }));
+  }, []);
+  const addXp = useGameStore((s) => s.addXp);
   // v51.2 — METEO OPERATIVA: condiciones en vivo por frente (una sola petición)
   const [meteo, setMeteo] = useState<MeteoEntry[] | null>(null);
   useEffect(() => {
@@ -217,10 +382,15 @@ export function FrentePanel() {
     s.front = FRONTS[frontIdx];
     s.units = []; s.booms = []; s.tracers = []; s.smokes = [];
     s.jets = []; s.hcos = []; s.decs = []; s.flares = []; s.shake = 0;
+    s.shells = []; s.crates = []; s.combo = 0; s.fever = 0; s.feverArmed = false;
+    s.cpHp = 100; s.cpDown = 0; s.score = 0; s.flash = 0; s.lastCrate = -999; s.lastCounter = 220;
+    // v65.0 — baterías de artillería desplegadas de partida en ambos flancos
+    s.units.push({ x: 0.05, y: 0, side: 0, type: "art", vx: 0, hp: 1, cool: 160 });
+    s.units.push({ x: 0.95, y: 0, side: 1, type: "art", vx: 0, hp: 1, cool: 220 });
     s.momentum = 0;
     setCasualties(FRONTS[frontIdx].casualties);
     setControl(52);
-    setLog([`${new Date().toLocaleTimeString("es", { hour12: false })} — ENLACE TÁCTICO establecido: ${FRONTS[frontIdx].name}`]);
+    setLog([`${new Date().toLocaleTimeString("es", { hour12: false })} — ENLACE TÁCTICO establecido: ${FRONTS[frontIdx].name} · teatro ${FRONTS[frontIdx].terrain.toUpperCase()}`]);
   }, [frontIdx]);
 
   // bucle de animación + simulación
@@ -234,16 +404,21 @@ export function FrentePanel() {
 
     const spawn = () => {
       const s = stateRef.current;
-      if (s.units.length < 46 && t - s.lastSpawn > 22) {
+      // v65.0 — MÁS ACCIÓN: cadencia 22→13, tope 46→62 y nuevas clases (APC/artillería)
+      if (s.units.length < 62 && t - s.lastSpawn > 13) {
         s.lastSpawn = t;
         const side = Math.random() < 0.5 ? 0 : 1;
-        const type = Math.random() < 0.42 ? "tank" : "soldier";
+        const roll = Math.random();
+        const type = roll < 0.14 ? "art" : roll < 0.34 ? "apc" : roll < 0.6 ? "tank" : "soldier";
+        const x = type === "art"
+          ? (side === 0 ? 0.03 + Math.random() * 0.09 : 0.88 + Math.random() * 0.09)
+          : side === 0 ? Math.random() * 0.34 : 0.66 + Math.random() * 0.34;
         s.units.push({
-          x: side === 0 ? Math.random() * 0.34 : 0.66 + Math.random() * 0.34,
+          x,
           y: 0,
           side: side as 0 | 1,
-          type: type as "tank" | "soldier",
-          vx: (Math.random() - 0.5) * 0.0012,
+          type: type as Unit["type"],
+          vx: type === "art" ? 0 : (Math.random() - 0.5) * (type === "apc" ? 0.0022 : 0.0012),
           hp: 1,
           cool: Math.random() * 100,
         });
@@ -253,6 +428,7 @@ export function FrentePanel() {
     const frame = () => {
       t++;
       const s = stateRef.current;
+      s.t = t;
       const W = cv.width, H = cv.height;
       const ground = H * 0.72;
       const f = s.front;
@@ -262,9 +438,10 @@ export function FrentePanel() {
       if (s.shake > 0) ctx.translate((Math.random() - 0.5) * s.shake, (Math.random() - 0.5) * s.shake);
       s.shake = s.shake > 0.4 ? s.shake * 0.86 : 0;
 
-      // cielo nocturno + horizonada
+      // v65.0 — cielo según la HORA UTC REAL: noche, amanecer, día u ocaso
+      const pal = SKY[dayPhase()];
       const sky = ctx.createLinearGradient(0, 0, 0, H);
-      sky.addColorStop(0, "#0a0d16"); sky.addColorStop(0.65, "#131a2a"); sky.addColorStop(1, "#0b0e15");
+      sky.addColorStop(0, pal[0]); sky.addColorStop(0.65, pal[1]); sky.addColorStop(1, pal[2]);
       ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
 
       // resplandor del frente según intensidad
@@ -278,6 +455,9 @@ export function FrentePanel() {
       ctx.beginPath(); ctx.moveTo(0, ground);
       for (let x = 0; x <= W; x += 24) ctx.lineTo(x, ground - 18 - Math.sin(x * 0.01 + 2) * 14);
       ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.fill();
+
+      // v65.0 — horizonte del teatro según terreno (ciudad ardiendo, pinos, dunas, picos, mar)
+      drawTerrain(ctx, f, W, ground, t);
 
       // terreno
       ctx.fillStyle = "#11151d";
@@ -344,14 +524,23 @@ export function FrentePanel() {
       }
 
       for (const u of s.units) {
-        u.x += u.vx + (u.side === 0 ? 0.0004 : -0.0004) * (s.momentum === 0 ? 1 : s.momentum * -u.side * 2);
-        u.x = Math.max(0.03, Math.min(0.97, u.x));
+        // v65.0 — la artillería es estática y dispara con ARCO balístico
+        if (u.type !== "art") {
+          u.x += u.vx + (u.side === 0 ? 0.0004 : -0.0004) * (s.momentum === 0 ? 1 : s.momentum * -u.side * 2);
+          u.x = Math.max(0.03, Math.min(0.97, u.x));
+        }
         const ux = u.x * W;
-        const uy = ground + (u.type === "tank" ? 10 : 22) + ((u.x * 997) % 3) * 6;
+        const uy = ground + (u.type === "tank" ? 10 : u.type === "apc" ? 12 : u.type === "art" ? 8 : 22) + ((u.x * 997) % 3) * 6;
         const colors = u.side === 0 ? f.sideA.colors : f.sideB.colors;
         u.cool--;
-        if (u.cool <= 0 && Math.abs(u.x - 0.5) > 0.12) {
-          u.cool = 60 + Math.random() * 160;
+        if (u.type === "art") {
+          if (u.cool <= 0 && s.units.length > 4) {
+            u.cool = 200 + Math.random() * 260;
+            s.shells.push({ x0: ux / W, y0: uy / H, x1: u.side === 0 ? 0.45 + Math.random() * 0.4 : 0.15 + Math.random() * 0.4, y1: 0.74 + Math.random() * 0.05, p: 0, sp: 0.012, side: u.side, dmg: false });
+            s.smokes.push({ x: ux + (u.side === 0 ? 14 : -14), y: uy - 16, r: 3, vx: u.side === 0 ? 0.12 : -0.12, life: 46 });
+          }
+        } else if (u.cool <= 0 && Math.abs(u.x - 0.5) > 0.12) {
+          u.cool = 40 + Math.random() * 110; // v65.0 — cadencia de fuego más rápida (antes 60-220)
           // dispara hacia el otro lado
           const ex = (u.side === 0 ? 0.52 + Math.random() * 0.3 : 0.18 + Math.random() * 0.3) * W;
           const ey = ground + Math.random() * 20;
@@ -360,6 +549,8 @@ export function FrentePanel() {
           if (Math.random() < 0.5) s.smokes.push({ x: ex, y: ey, r: 4, vx: 0.15, life: 90 });
         }
         if (u.type === "tank") drawTank(ctx, u, u.side === 0 ? 1 : -1, colors);
+        else if (u.type === "apc") drawAPC(ctx, u, colors);
+        else if (u.type === "art") drawArt(ctx, u, colors);
         else drawSoldier(ctx, u, t, colors);
       }
       // banderas de ambos ejércitos
@@ -377,8 +568,8 @@ export function FrentePanel() {
       flag(24, f.sideA.colors, f.sideA.name.toUpperCase(), 1);
       flag(W - 26, f.sideB.colors, f.sideB.name.toUpperCase(), -1);
 
-      // v51.4 — SUPERIORIDAD AÉREA: jets cruzan y bombardean
-      if (t - s.lastJet > 420 && s.jets.length < 3) {
+      // v51.4 — SUPERIORIDAD AÉREA: jets cruzan y bombardean (v65: más frecuentes)
+      if (t - s.lastJet > 300 && s.jets.length < 3) {
         s.lastJet = t;
         const side = Math.random() < 0.5 ? 0 : 1;
         s.jets.push({
@@ -406,8 +597,8 @@ export function FrentePanel() {
       }
       s.jets = s.jets.filter((j) => j.x > -0.1 && j.x < 1.1);
 
-      // v51.4 — HELICÓPTEROS de ataque: orbitan y barren la trinchera
-      if (t - s.lastHc > 650 && s.hcos.length < 2) {
+      // v51.4 — HELICÓPTEROS de ataque: orbitan y barren la trinchera (v65: más frecuentes)
+      if (t - s.lastHc > 520 && s.hcos.length < 2) {
         s.lastHc = t;
         const side = Math.random() < 0.5 ? 0 : 1;
         s.hcos.push({
@@ -437,6 +628,134 @@ export function FrentePanel() {
         drawHco(ctx, hx, hy + Math.sin(t * 0.08) * 2, (h.side === 0 ? f.sideA.colors : f.sideB.colors)[0], t);
       }
       if (s.hcos.length && t % 1400 === 0) s.hcos.pop();
+
+      // ============ v65.0 ACERO Y FUEGO ============
+      // CONTRAFUEGO ENEMIGO: morteros del lado B buscan el PUESTO DE MANDO del operador
+      const cfInterval = Math.max(150, 340 - f.intensity - s.momentum * 60);
+      if (!s.cpDown && t - s.lastCounter > cfInterval) {
+        s.lastCounter = t;
+        const n = f.intensity > 75 ? 2 : 1;
+        for (let i = 0; i < n; i++) {
+          s.shells.push({ x0: 0.5 + Math.random() * 0.42, y0: 0.70, x1: 0.035 + Math.random() * 0.10, y1: 0.735 + Math.random() * 0.04, p: -i * 0.3, sp: 0.013, side: 1, dmg: true });
+        }
+        if (Math.random() < 0.45) pushLog(ACTION_LOGS[0]);
+      }
+
+      // PROYECTILES BALÍSTICOS en vuelo (artillería, MLRS y contrafuego)
+      for (const sh of s.shells) {
+        sh.p += sh.sp;
+        if (sh.p < 0) continue; // retardo de salva
+        const q = Math.max(0, Math.min(1, sh.p));
+        const sx = (sh.x0 + (sh.x1 - sh.x0) * q) * W;
+        const peak = Math.min(0.34, Math.abs(sh.x1 - sh.x0) * 0.42);
+        const sy = (sh.y0 + (sh.y1 - sh.y0) * q) * H - Math.sin(Math.PI * q) * peak * H;
+        // estela del proyectil
+        const pq = Math.max(0, q - 0.05);
+        const sx2 = (sh.x0 + (sh.x1 - sh.x0) * pq) * W;
+        const sy2 = (sh.y0 + (sh.y1 - sh.y0) * pq) * H - Math.sin(Math.PI * pq) * peak * H;
+        ctx.strokeStyle = sh.side === 0 ? "rgba(255,200,90,0.75)" : "rgba(255,90,60,0.8)";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(sx2, sy2); ctx.lineTo(sx, sy); ctx.stroke();
+        if (sh.p >= 1) {
+          const ix = sh.x1 * W, iy = sh.y1 * H;
+          s.booms.push({ x: ix, y: iy, r: 2, max: 20 });
+          s.smokes.push({ x: ix, y: iy, r: 5, vx: 0.18, life: 85 });
+          s.shake = Math.min(14, s.shake + 4);
+          if (sh.dmg && sh.side === 1) {
+            // impacto sobre NUESTRO puesto de mando
+            s.cpHp = Math.max(0, s.cpHp - (8 + Math.floor(Math.random() * 7)));
+            s.flash = Math.min(1, s.flash + 0.55);
+            if (s.cpHp <= 0 && !s.cpDown) {
+              s.cpDown = 900; // 15s a 60fps replegándose
+              pushLog("PUESTO DE MANDO ALCANZADO: replegándose 15s — sin fuego disponible");
+              toast.error("Puesto de mando fuera de línea: 15s sin poder llamar fuego");
+            }
+          }
+          if (sh.dmg && sh.side === 0) {
+            // impacto MLRS: destruye enemigos cerca del punto de caída
+            const kills = s.units.filter((u) => u.side === 1 && Math.abs(u.x * W - ix) < 46);
+            for (const k of kills) {
+              s.decs.push({ x: k.x * W, y: ground + (k.type === "tank" || k.type === "art" ? 10 : 22), tank: k.type !== "soldier", burn: k.type !== "soldier" ? 900 : 0, age: 0 });
+              s.score += KILL_POINTS[k.type];
+              s.fever = Math.min(100, s.fever + (k.type === "soldier" ? 5 : 9));
+              setCasualties((c) => c + 2);
+            }
+            if (kills.length) {
+              s.units = s.units.filter((u) => !kills.includes(u));
+              const mlrsReward = kills.length * 20;
+              addCoins(mlrsReward, `MLRS: ${kills.length} blancos`);
+              toast.success(`MLRS: ${kills.length} blancos · +${mlrsReward} monedas`);
+            }
+          }
+        }
+      }
+      s.shells = s.shells.filter((sh) => sh.p < 1);
+
+      // PUESTO DE MANDO del operador (borde izquierdo): sacos, antena y HP
+      if (s.cpDown > 0) {
+        s.cpDown--;
+        if (s.cpDown === 0) {
+          s.cpHp = 100;
+          pushLog("PUESTO DE MANDO EN LÍNEA — fuego disponible");
+          toast.success("Puesto de mando en línea: fuego autorizado");
+        }
+      }
+      {
+        const cxp = 36, cyp = ground + 8;
+        ctx.fillStyle = s.cpDown > 0 ? "#3a3f4a" : "#5a5340";
+        for (let i = 0; i < 3; i++) ctx.fillRect(cxp - 24 + i * 16, cyp - 8, 14, 7);
+        for (let i = 0; i < 3; i++) ctx.fillRect(cxp - 20 + i * 16, cyp - 15, 14, 7);
+        ctx.strokeStyle = "#2a2f3a"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(cxp - 28, cyp); ctx.lineTo(cxp - 28, cyp - 36); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cxp + 16, cyp); ctx.lineTo(cxp + 21, cyp - 30); ctx.stroke();
+        if (s.cpDown > 0) {
+          ctx.fillStyle = "#FF3B30"; ctx.font = "8px monospace"; ctx.textAlign = "left";
+          ctx.fillText("REPLEGÁNDOSE", cxp - 26, cyp - 42);
+        } else if (Math.floor(t / 30) % 2 === 0) {
+          ctx.fillStyle = "#00FF87";
+          ctx.beginPath(); ctx.arc(cxp - 28, cyp - 38, 2.2, 0, Math.PI * 2); ctx.fill();
+        }
+        const hpr = Math.max(0, s.cpHp) / 100;
+        ctx.fillStyle = "rgba(0,0,0,0.55)"; ctx.fillRect(cxp - 26, cyp - 26, 52, 4);
+        ctx.fillStyle = hpr > 0.5 ? "#00FF87" : hpr > 0.25 ? "#FFB800" : "#FF3B30";
+        ctx.fillRect(cxp - 26, cyp - 26, 52 * hpr, 4);
+      }
+
+      // CAJAS DE SUMINISTRO en paracaídas: recógelas con un clic antes de que las cubran
+      if (t - s.lastCrate > 2400) {
+        s.lastCrate = t;
+        s.crates.push({ x: 0.24 + Math.random() * 0.5, y: 0.04, vy: 0.0011, land: 0.755, life: 760 });
+        pushLog(ACTION_LOGS[1]);
+      }
+      for (const cr of s.crates) {
+        if (cr.y < cr.land) cr.y += cr.vy;
+        else cr.life--;
+        const cxr = cr.x * W, cyr = cr.y * H;
+        if (cr.y < cr.land) {
+          ctx.strokeStyle = "rgba(220,225,235,0.55)"; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(cxr, cyr - 28, 14, Math.PI, 0); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(cxr - 14, cyr - 28); ctx.lineTo(cxr - 4, cyr - 9); ctx.moveTo(cxr + 14, cyr - 28); ctx.lineTo(cxr + 4, cyr - 9); ctx.stroke();
+        }
+        ctx.fillStyle = "#6b5322"; ctx.fillRect(cxr - 8, cyr - 8, 16, 12);
+        ctx.fillStyle = "#FFB800"; ctx.fillRect(cxr - 8, cyr - 3, 16, 2);
+        const gg = ctx.createRadialGradient(cxr, cyr, 2, cxr, cyr, 30);
+        gg.addColorStop(0, `rgba(255,184,0,${0.22 + Math.sin(t * 0.15) * 0.14})`);
+        gg.addColorStop(1, "transparent");
+        ctx.fillStyle = gg;
+        ctx.beginPath(); ctx.arc(cxr, cyr, 30, 0, Math.PI * 2); ctx.fill();
+        if (cr.y >= cr.land && cr.life < 220 && Math.floor(t / 7) % 2 === 0) {
+          ctx.fillStyle = "rgba(255,59,48,0.9)"; ctx.font = "8px monospace"; ctx.textAlign = "center";
+          ctx.fillText("¡BAJO FUEGO!", cxr, cyr - 14);
+        }
+        if (cr.life <= 0) {
+          s.booms.push({ x: cxr, y: cyr, r: 2, max: 18 });
+          s.smokes.push({ x: cxr, y: cyr, r: 5, vx: 0.2, life: 80 });
+        }
+      }
+      s.crates = s.crates.filter((cr) => cr.life > 0);
+
+      // COMBO: se rompe si pasan 3s sin bajas del operador
+      if (s.combo > 0 && t - s.comboT > 180) s.combo = 0;
 
       // trazadoras
       for (const tr of s.tracers) {
@@ -493,10 +812,41 @@ export function FrentePanel() {
 
       // HUD del canvas
       ctx.fillStyle = "#7a8194"; ctx.font = "10px monospace"; ctx.textAlign = "left";
-      ctx.fillText(`CÁM. TÁCTICA · ${f.name.toUpperCase()} · ${new Date().toUTCString().slice(17, 25)} UTC`, 10, H - 8);
+      ctx.fillText(`CÁM. TÁCTICA · ${f.name.toUpperCase()} · ${new Date().toUTCString().slice(17, 25)} UTC · ${dayPhase().toUpperCase()}`, 10, H - 8);
       ctx.fillStyle = "#FF3B30";
       ctx.beginPath(); ctx.arc(W - 60, H - 12, 3.5, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "#7a8194"; ctx.fillText("EN VIVO", W - 50, H - 8);
+
+      // v65.0 — marcador de combate arriba: puntos, combo y barra de fiebre
+      ctx.font = "bold 11px monospace"; ctx.textAlign = "left";
+      ctx.fillStyle = "#FFB800";
+      ctx.fillText(`PUNTOS ${s.score}${bestRef.current ? ` · RÉCORD ${bestRef.current}` : ""}`, 10, 16);
+      if (s.combo > 1) {
+        const mult = Math.min(5, 1 + Math.floor(s.combo / 4));
+        ctx.fillStyle = s.combo >= 8 ? "#FF3B30" : "#00FF87";
+        ctx.font = "bold 13px monospace";
+        ctx.fillText(`COMBO x${s.combo} (×${mult} PAGO)`, 10, 32);
+      }
+      // barra de fiebre (arriba derecha)
+      const fw = 110;
+      ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(W - fw - 14, 10, fw, 7);
+      ctx.fillStyle = s.feverArmed ? "#FF3B30" : "#FFB800";
+      ctx.fillRect(W - fw - 14, 10, fw * Math.min(1, s.fever / 100), 7);
+      ctx.font = "7px monospace"; ctx.textAlign = "right";
+      ctx.fillStyle = s.feverArmed ? "#FF3B30" : "#8A93A6";
+      ctx.fillText(s.feverArmed ? "FIEBRE: BARRAJA GRATIS CARGADA" : "FIEBRE DE COMBATE", W - 16, 26);
+
+      // v65.0 — flash de impacto (pantalla brilla un instante)
+      if (s.flash > 0.01) {
+        ctx.fillStyle = `rgba(255,235,200,${s.flash * 0.28})`;
+        ctx.fillRect(0, 0, W, H);
+        s.flash *= 0.82;
+      }
+
+      // v65.0 — sincroniza el HUD de React cada 30 frames
+      if (t % 30 === 0) {
+        setHud((h) => ({ ...h, combo: s.combo, fever: s.fever, armed: s.feverArmed, score: s.score, cp: s.cpHp, down: s.cpDown }));
+      }
 
       // v51.4 — fin del temblor de cámara
       ctx.restore();
@@ -507,48 +857,99 @@ export function FrentePanel() {
     return () => cancelAnimationFrame(raf);
   }, [pushLog]);
 
-  // STRIKE JUGABLE: artillería donde el operador haga clic
+  // STRIKE JUGABLE: artillería donde el operador haga clic (v65.0: combo, fiebre, cajas, XP)
   const handleStrike = useCallback(async (e: React.MouseEvent<HTMLCanvasElement>) => {
     const cv = canvasRef.current;
     if (!cv) return;
-    if (!spendCoins(15, "Strike de artillería")) {
-      toast.error("Monedas insuficientes para llamar fuego (15 ◉)");
-      return;
-    }
     const rect = cv.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * cv.width;
     const y = ((e.clientY - rect.top) / rect.height) * cv.height;
     const s = stateRef.current;
     const ground = cv.height * 0.72;
-    // ráfaga de 3 impactos
-    for (let i = 0; i < 3; i++) {
+
+    // 1) ¿clic sobre una CAJA DE SUMINISTRO? recogida gratis (+40ⓒ +12XP)
+    const crate = s.crates.find((cr) => Math.abs(cr.x * cv.width - x) < 36 && Math.abs(cr.y * cv.height - y) < 44);
+    if (crate) {
+      crate.life = 0;
+      s.crates = s.crates.filter((cr) => cr !== crate);
+      for (let i = 0; i < 5; i++) s.booms.push({ x: crate.x * cv.width + (Math.random() - 0.5) * 26, y: crate.y * cv.height + (Math.random() - 0.5) * 16, r: 2, max: 9 });
+      addCoins(40, "Caja de suministro recogida");
+      addXp(12);
+      pushLog("CAJA DE SUMINISTRO recogida: +40 monedas, +12 XP");
+      toast.success("Caja recogida: +40 monedas, +12 XP");
+      return;
+    }
+
+    // 2) puesto de mando replegándose: sin fuego
+    if (s.cpDown > 0) {
+      toast.error(`Puesto de mando replegándose… ${Math.ceil(s.cpDown / 60)}s sin fuego`);
+      return;
+    }
+
+    // 3) coste — la FIEBRE DE COMBATE carga la barraja GRATIS de 9 proyectiles
+    const free = s.feverArmed;
+    if (free) {
+      s.feverArmed = false;
+      s.fever = 0;
+      pushLog("FIEBRE DE COMBATE: barraja gratuita de 9 proyectiles");
+    } else if (!spendCoins(15, "Strike de artillería")) {
+      toast.error("Monedas insuficientes para llamar fuego (15 ◉)");
+      return;
+    }
+
+    const nShells = free ? 9 : 3;
+    const spread = free ? 90 : 46;
+    for (let i = 0; i < nShells; i++) {
       setTimeout(() => {
-        s.booms.push({ x: x + (Math.random() - 0.5) * 46, y: y + (Math.random() - 0.5) * 20, r: 2, max: 18 });
+        s.booms.push({ x: x + (Math.random() - 0.5) * spread, y: y + (Math.random() - 0.5) * 20, r: 2, max: 18 });
         s.smokes.push({ x, y, r: 5, vx: 0.2, life: 80 });
-      }, i * 130);
+      }, i * (free ? 90 : 130));
     }
     // efectividad: impactos cerca de unidades enemigas del lado B
-    const enemies = s.units.filter((u) => u.side === 1);
-    const hits = enemies.filter((u) => Math.abs(u.x * cv.width - x) < 55).length;
-    const reward = hits > 0 ? 25 + hits * 15 : 5;
-    const ground2 = ground; // (evita warning unused)
-    void ground2;
-    addCoins(reward, `Strike efectivo (${hits} impactos)`);
-    if (hits > 0) {
-      // v51.4 — las bajas del strike dejan su marca en el terreno
-      for (const u of s.units) {
-        if (u.side === 1 && Math.abs(u.x * cv.width - x) < 55) {
-          s.decs.push({ x: u.x * cv.width, y: ground + (u.type === "tank" ? 10 : 22), tank: u.type === "tank", burn: u.type === "tank" ? 900 : 0, age: 0 });
-        }
+    const hits = s.units.filter((u) => u.side === 1 && Math.abs(u.x * cv.width - x) < (free ? 70 : 55));
+    const hitCount = hits.length;
+    // v65.0 — COMBO: bajas encadenadas multiplican el pago (hasta ×5)
+    if (hitCount > 0) {
+      s.combo += hitCount;
+      s.comboT = s.t;
+    }
+    const mult = Math.min(5, 1 + Math.floor(s.combo / 4));
+    const reward = hitCount > 0 ? (25 + hitCount * 15) * mult : 5;
+    addCoins(reward, `Strike efectivo (${hitCount} impactos${mult > 1 ? ` · combo ×${mult}` : ""})`);
+    // v65.0 — XP de combate (alimenta la TEMPORADA vía espejo v58)
+    addXp(4 + hitCount * 2);
+    if (hitCount > 0) {
+      // bajas: puntos, fiebre, marcas en el terreno
+      for (const u of hits) {
+        s.decs.push({ x: u.x * cv.width, y: ground + (u.type === "tank" || u.type === "art" ? 10 : 22), tank: u.type !== "soldier", burn: u.type !== "soldier" ? 900 : 0, age: 0 });
+        s.score += KILL_POINTS[u.type];
+        s.fever = Math.min(100, s.fever + (u.type === "soldier" ? 5 : 10));
       }
-      s.units = s.units.filter((u) => !(u.side === 1 && Math.abs(u.x * cv.width - x) < 55));
+      s.units = s.units.filter((u) => !hits.includes(u));
       s.momentum = Math.max(1, s.momentum + 0.12);
       s.shake = Math.min(14, s.shake + 6);
       setControl((c) => Math.min(78, c + 1.2));
+      s.flash = Math.min(1, s.flash + 0.3);
+      if (s.fever >= 100 && !free) {
+        s.fever = 100;
+        s.feverArmed = true;
+        pushLog(ACTION_LOGS[4]);
+        toast.success("🔥 FIEBRE DE COMBATE: próxima barraja de 9 es GRATIS");
+      }
+      // récord de combate
+      if (s.score > bestRef.current) {
+        bestRef.current = s.score;
+        try { localStorage.setItem("vanguard_frente_best", String(s.score)); } catch { /* sin storage */ }
+        setHud((h) => ({ ...h, best: s.score }));
+        if (!recordToastRef.current) {
+          recordToastRef.current = true;
+          toast.success("¡NUEVO RÉCORD DE COMBATE!");
+        }
+      }
     }
-    pushLog(`STRIKE del operador → ${hits} blancos destruidos · +${reward} ◉`);
-    toast.success(hits > 0 ? `¡${hits} blancos destruidos! +${reward} monedas` : `Impacto registrado · +${reward} monedas`);
-  }, [addCoins, spendCoins, pushLog]);
+    pushLog(`STRIKE del operador → ${hitCount} blancos · ×${mult} pago · +${reward} ◉`);
+    toast.success(hitCount > 0 ? `¡${hitCount} blancos! ×${mult} pago · +${reward} monedas` : `Impacto registrado · +${reward} monedas`);
+  }, [addCoins, addXp, spendCoins, pushLog]);
 
   const droneStrike = useCallback(() => {
     if (!spendCoins(30, "Strike con dron")) {
@@ -558,25 +959,71 @@ export function FrentePanel() {
     const s = stateRef.current;
     const cv = canvasRef.current;
     if (!cv) return;
+    const ground = cv.height * 0.72;
     const enemies = s.units.filter((u) => u.side === 1);
     const kill = Math.min(4, enemies.length);
+    const killed: Unit[] = [];
     for (let i = 0; i < kill; i++) {
       const u = enemies[i * Math.max(1, Math.floor(enemies.length / 4))];
-      if (u) {
-        s.booms.push({ x: u.x * cv.width, y: cv.height * 0.72 + 14, r: 2, max: 22 });
-        s.smokes.push({ x: u.x * cv.width, y: cv.height * 0.72 + 14, r: 6, vx: 0.25, life: 100 });
-        s.decs.push({ x: u.x * cv.width, y: cv.height * 0.72 + (u.type === "tank" ? 10 : 22), tank: u.type === "tank", burn: u.type === "tank" ? 900 : 0, age: 0 });
+      if (u && !killed.includes(u)) {
+        killed.push(u);
+        s.booms.push({ x: u.x * cv.width, y: ground + 14, r: 2, max: 22 });
+        s.smokes.push({ x: u.x * cv.width, y: ground + 14, r: 6, vx: 0.25, life: 100 });
+        s.decs.push({ x: u.x * cv.width, y: ground + (u.type === "tank" || u.type === "art" ? 10 : 22), tank: u.type !== "soldier", burn: u.type !== "soldier" ? 900 : 0, age: 0 });
+        // v65.0 — el dron también puntúa y calienta la fiebre
+        s.score += KILL_POINTS[u.type];
+        s.fever = Math.min(100, s.fever + (u.type === "soldier" ? 6 : 11));
+        s.combo += 1;
       }
     }
-    s.units = s.units.filter((u) => !enemies.includes(u));
+    // FIX v65: antes eliminaba a TODOS los side-1 aunque solo matara a 4 — ahora solo los objetivos
+    s.units = s.units.filter((u) => !killed.includes(u));
     s.momentum = Math.max(1, s.momentum + 0.2);
     s.shake = Math.min(14, s.shake + 8);
+    s.flash = Math.min(1, s.flash + 0.35);
+    if (s.combo > 0) s.comboT = s.t;
     const reward = 20 + kill * 25;
     addCoins(reward, "Dron táctico: columna aniquilada");
+    addXp(8 + kill * 3);
     setControl((c) => Math.min(78, c + 2));
-    pushLog(`DRON FPV en acción → ${kill} vehículos destruidos · +${reward} ◉`);
+    if (s.fever >= 100 && !s.feverArmed) {
+      s.fever = 100;
+      s.feverArmed = true;
+      toast.success("🔥 FIEBRE DE COMBATE: próxima barraja de 9 es GRATIS");
+    }
+    if (s.score > bestRef.current) {
+      bestRef.current = s.score;
+      try { localStorage.setItem("vanguard_frente_best", String(s.score)); } catch { /* sin storage */ }
+      setHud((h) => ({ ...h, best: s.score }));
+      if (!recordToastRef.current) {
+        recordToastRef.current = true;
+        toast.success("¡NUEVO RÉCORD DE COMBATE!");
+      }
+    }
+    pushLog(`DRON FPV en acción → ${kill} blancos destruidos · +${reward} ◉`);
     toast.success(`Dron: ${kill} blancos destruidos · +${reward} monedas`);
-  }, [addCoins, spendCoins, pushLog]);
+  }, [addCoins, addXp, spendCoins, pushLog]);
+
+  // v65.0 — NUEVA ARMA: salva MLRS de 6 cohetes con arco balístico real (45 ◉)
+  const mlrsBarrage = useCallback(() => {
+    if (!spendCoins(45, "Salva MLRS")) {
+      toast.error("Monedas insuficientes para el MLRS (45 ◉)");
+      return;
+    }
+    const s = stateRef.current;
+    const cv = canvasRef.current;
+    if (!cv) return;
+    const enemies = s.units.filter((u) => u.side === 1);
+    for (let i = 0; i < 6; i++) {
+      const target = enemies.length && Math.random() < 0.75
+        ? enemies[Math.floor(Math.random() * enemies.length)].x
+        : 0.5 + Math.random() * 0.4;
+      s.shells.push({ x0: 0.045, y0: 0.70, x1: target, y1: 0.745 + Math.random() * 0.04, p: -i * 0.14, sp: 0.02, side: 0, dmg: true });
+    }
+    s.shake = Math.min(14, s.shake + 5);
+    pushLog(ACTION_LOGS[2]);
+    toast.success("MLRS: 6 cohetes en el aire — buscan blancos al caer");
+  }, [spendCoins, pushLog]);
 
   const cb = useGameStore((s) => s.coins);
 
@@ -602,7 +1049,8 @@ export function FrentePanel() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
-        {/* CANVAS TÁCTICO */}
+        {/* COLUMNA TÁCTICA: canvas + panel de combate */}
+        <div className="space-y-3">
         <div className="hud-panel overflow-hidden">
           <canvas
             ref={canvasRef}
@@ -614,9 +1062,12 @@ export function FrentePanel() {
           />
           <div className="px-3 py-2 border-t border-border flex flex-wrap items-center gap-2 text-[10px] font-mono text-muted-foreground">
             <Crosshair className="w-3.5 h-3.5 text-red-hud" />
-            CLIC EN EL MAPA = strike de artillería (15 ◉) · recompensa por blancos destruidos
+            CLIC = artillería (15 ◉) · cajas de suministro +40ⓒ · ojo con el contrafuego
             <Button size="sm" variant="outline" onClick={droneStrike} className="ml-auto h-7 font-mono text-[10px] gap-1.5 border-red-hud/40 text-red-hud hover:bg-red-hud/10">
-              <Target className="w-3.5 h-3.5" /> STRIKE CON DRON · 30 ◉
+              <Target className="w-3.5 h-3.5" /> DRON · 30 ◉
+            </Button>
+            <Button size="sm" variant="outline" onClick={mlrsBarrage} className="h-7 font-mono text-[10px] gap-1.5 border-amber/50 text-amber hover:bg-amber/10">
+              <Crosshair className="w-3.5 h-3.5" /> MLRS ×6 · 45 ◉
             </Button>
           </div>
           {/* v53.0 FRENTE TOTAL: puente al mural del planeta en guerra en directo */}
@@ -626,6 +1077,44 @@ export function FrentePanel() {
           >
             ⚡ VER ESTE FRENTE EN FRENTE TOTAL — el mural del planeta con los 10 teatros ardiendo a la vez →
           </a>
+        </div>
+
+        {/* v65.0 — PANEL DE COMBATE: puntos, récord, combo, fiebre y puesto de mando */}
+        <div className="hud-panel p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
+          <div className="border border-border rounded p-2">
+            <div className="text-muted-foreground">PUNTOS</div>
+            <div className="text-amber font-bold text-sm">{hud.score}</div>
+          </div>
+          <div className="border border-border rounded p-2">
+            <div className="text-muted-foreground">RÉCORD</div>
+            <div className="text-green-hud font-bold text-sm">{hud.best}</div>
+          </div>
+          <div className="border border-border rounded p-2">
+            <div className="text-muted-foreground">COMBO</div>
+            <div className={`font-bold text-sm ${hud.combo >= 8 ? "text-red-hud" : "text-electric"}`}>
+              x{hud.combo}{hud.combo > 1 ? ` (×${Math.min(5, 1 + Math.floor(hud.combo / 4))})` : ""}
+            </div>
+          </div>
+          <div className="border border-border rounded p-2">
+            <div className="text-muted-foreground">PUESTO MANDO</div>
+            {hud.down > 0 ? (
+              <div className="text-red-hud font-bold text-sm blink-soft">FUERA {Math.ceil(hud.down / 60)}s</div>
+            ) : (
+              <div className="text-green-hud font-bold text-sm">{Math.round(hud.cp)}%</div>
+            )}
+          </div>
+          <div className="col-span-2 sm:col-span-4">
+            <div className="flex justify-between text-[9px] text-muted-foreground mb-0.5">
+              <span className={hud.armed ? "text-red-hud font-bold" : ""}>
+                FIEBRE DE COMBATE{hud.armed ? " — BARRAJA DE 9 GRATIS CARGADA" : ""}
+              </span>
+              <span>{Math.round(hud.fever)}%</span>
+            </div>
+            <div className="h-2 rounded-full bg-black/60 overflow-hidden">
+              <div className={`h-full transition-all duration-300 ${hud.armed ? "bg-red-hud blink-soft" : "bg-amber"}`} style={{ width: `${Math.min(100, hud.fever)}%` }} />
+            </div>
+          </div>
+        </div>
         </div>
 
         {/* PANEL DE INFORMACIÓN */}
