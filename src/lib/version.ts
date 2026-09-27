@@ -1,5 +1,5 @@
 // v31 — FUENTE ÚNICA DE VERSIÓN: el footer, el hero y /api/health leen de aquí.
 // Al cerrar cada Task solo se actualiza este archivo.
-export const APP_VERSION = "v65.0";
-export const APP_CODENAME = "ACERO Y FUEGO";
+export const APP_VERSION = "v66.0";
+export const APP_CODENAME = "TERCERA DIMENSIÓN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

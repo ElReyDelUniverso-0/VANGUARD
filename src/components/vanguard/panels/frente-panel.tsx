@@ -7,13 +7,19 @@
 // recompensa por efectividad). Datos de frente + bajas en vivo + bitácora.
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Flag } from "@/lib/flags";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
+import { combatAudio } from "@/lib/combat-audio";
 import {
-  Flame, Crosshair, Skull, Activity, Radio, Target, ShieldAlert, Coins,
+  Flame, Crosshair, Skull, Activity, Radio, Target, ShieldAlert, Coins, Box, Volume2, VolumeX,
 } from "lucide-react";
+
+// v66.0 TERCERA DIMENSIÓN — vista 3D orbitable del combate (Three.js, carga diferida:
+// lee el MISMO stateRef del canvas 2D, sin lógica ni economía duplicada)
+const Frente3D = dynamic(() => import("../frente-3d").then((m) => m.Frente3D), { ssr: false });
 
 interface FrontDef {
   id: string;
@@ -147,6 +153,12 @@ const SKY: Record<string, [string, string, string]> = {
 
 // v65.0 — valor en puntos de cada baja (récord de combate)
 const KILL_POINTS: Record<Unit["type"], number> = { tank: 25, apc: 18, soldier: 10, art: 30 };
+
+// v66.0 — dimensiones fijas del lienzo táctico: strikeAt ya NO depende del canvas,
+// así el clic en la VISTA 3D usa exactamente el mismo camino de fuego y economía
+const VW = 880;
+const VH = 430;
+const GROUND_PX = VH * 0.72;
 
 function drawSoldier(ctx: CanvasRenderingContext2D, u: Unit, t: number, colors: string[]) {
   const bob = Math.sin(t * 6 + u.x) * 1.2;
@@ -347,6 +359,20 @@ export function FrentePanel() {
   const [frontIdx, setFrontIdx] = useState(0);
   const front = FRONTS[frontIdx];
   const [log, setLog] = useState<string[]>([]);
+  // v66.0 — vista 3D orbitable y sonido de combate
+  const [vista3d, setVista3d] = useState(false);
+  const [snd, setSnd] = useState(true);
+  useEffect(() => {
+    combatAudio.restore();
+    setSnd(combatAudio.isEnabled());
+  }, []);
+  const toggleSnd = useCallback(() => {
+    setSnd((v) => {
+      combatAudio.setEnabled(!v);
+      if (!v) combatAudio.play("online"); // confirmación audible al activar
+      return !v;
+    });
+  }, []);
   const [casualties, setCasualties] = useState(front.casualties);
   const [control, setControl] = useState(52); // % lado A
   // v65.0 — HUD de combate sincronizado a baja frecuencia (cada 30 frames)
@@ -590,6 +616,7 @@ export function FrentePanel() {
           s.smokes.push({ x: jx, y: ground + 10, r: 6, vx: 0.25, life: 110 });
           s.shake = Math.min(14, s.shake + 9);
           setCasualties((c) => c + 3 + Math.floor(Math.random() * 5));
+          combatAudio.play("bigboom");
           pushLog(`JET de ${j.side === 0 ? f.sideA.name : f.sideB.name} suelta bomba sobre la línea de contacto`);
         }
         const jc = j.side === 0 ? f.sideA.colors : f.sideB.colors;
@@ -661,12 +688,15 @@ export function FrentePanel() {
           s.booms.push({ x: ix, y: iy, r: 2, max: 20 });
           s.smokes.push({ x: ix, y: iy, r: 5, vx: 0.18, life: 85 });
           s.shake = Math.min(14, s.shake + 4);
+          combatAudio.play("boom");
           if (sh.dmg && sh.side === 1) {
             // impacto sobre NUESTRO puesto de mando
             s.cpHp = Math.max(0, s.cpHp - (8 + Math.floor(Math.random() * 7)));
             s.flash = Math.min(1, s.flash + 0.55);
+            combatAudio.play("cp-hit");
             if (s.cpHp <= 0 && !s.cpDown) {
               s.cpDown = 900; // 15s a 60fps replegándose
+              combatAudio.play("siren");
               pushLog("PUESTO DE MANDO ALCANZADO: replegándose 15s — sin fuego disponible");
               toast.error("Puesto de mando fuera de línea: 15s sin poder llamar fuego");
             }
@@ -686,6 +716,7 @@ export function FrentePanel() {
               s.units = s.units.filter((u) => !kills.includes(u));
               const mlrsReward = kills.length * 15;
               addCoins(mlrsReward, `MLRS: ${kills.length} blancos`);
+              combatAudio.play("coin");
               toast.success(`MLRS: ${kills.length} blancos · +${mlrsReward} monedas`);
             }
           }
@@ -698,6 +729,7 @@ export function FrentePanel() {
         s.cpDown--;
         if (s.cpDown === 0) {
           s.cpHp = 100;
+          combatAudio.play("online");
           pushLog("PUESTO DE MANDO EN LÍNEA — fuego disponible");
           toast.success("Puesto de mando en línea: fuego autorizado");
         }
@@ -752,6 +784,7 @@ export function FrentePanel() {
         if (cr.life <= 0) {
           s.booms.push({ x: cxr, y: cyr, r: 2, max: 18 });
           s.smokes.push({ x: cxr, y: cyr, r: 5, vx: 0.2, life: 80 });
+          combatAudio.play("bigboom");
         }
       }
       s.crates = s.crates.filter((cr) => cr.life > 0);
@@ -859,22 +892,19 @@ export function FrentePanel() {
     return () => cancelAnimationFrame(raf);
   }, [pushLog]);
 
-  // STRIKE JUGABLE: artillería donde el operador haga clic (v65.0: combo, fiebre, cajas, XP)
-  const handleStrike = useCallback(async (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const cv = canvasRef.current;
-    if (!cv) return;
-    const rect = cv.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * cv.width;
-    const y = ((e.clientY - rect.top) / rect.height) * cv.height;
+  // STRIKE JUGABLE: artillería donde el operador apunte (v66.0: recibe px del canvas 2D
+  // O del raycast 3D — mismo coste, mismas bajas, mismo combo y fiebre)
+  const strikeAt = useCallback(async (x: number, y: number) => {
     const s = stateRef.current;
-    const ground = cv.height * 0.72;
+    const ground = GROUND_PX;
 
     // 1) ¿clic sobre una CAJA DE SUMINISTRO? recogida gratis (+40ⓒ +12XP)
-    const crate = s.crates.find((cr) => Math.abs(cr.x * cv.width - x) < 36 && Math.abs(cr.y * cv.height - y) < 44);
+    const crate = s.crates.find((cr) => Math.abs(cr.x * VW - x) < 36 && Math.abs(cr.y * VH - y) < 44);
     if (crate) {
       crate.life = 0;
       s.crates = s.crates.filter((cr) => cr !== crate);
-      for (let i = 0; i < 5; i++) s.booms.push({ x: crate.x * cv.width + (Math.random() - 0.5) * 26, y: crate.y * cv.height + (Math.random() - 0.5) * 16, r: 2, max: 9 });
+      for (let i = 0; i < 5; i++) s.booms.push({ x: crate.x * VW + (Math.random() - 0.5) * 26, y: crate.y * VH + (Math.random() - 0.5) * 16, r: 2, max: 9 });
+      combatAudio.play("pickup");
       addCoins(40, "Caja de suministro recogida");
       addXp(12);
       pushLog("CAJA DE SUMINISTRO recogida: +40 monedas, +12 XP");
@@ -901,6 +931,7 @@ export function FrentePanel() {
 
     const nShells = free ? 9 : 3;
     const spread = free ? 90 : 46;
+    combatAudio.play("shot");
     for (let i = 0; i < nShells; i++) {
       setTimeout(() => {
         s.booms.push({ x: x + (Math.random() - 0.5) * spread, y: y + (Math.random() - 0.5) * 20, r: 2, max: 18 });
@@ -908,7 +939,7 @@ export function FrentePanel() {
       }, i * (free ? 90 : 130));
     }
     // efectividad: impactos cerca de unidades enemigas del lado B
-    const hits = s.units.filter((u) => u.side === 1 && Math.abs(u.x * cv.width - x) < (free ? 70 : 55));
+    const hits = s.units.filter((u) => u.side === 1 && Math.abs(u.x * VW - x) < (free ? 70 : 55));
     const hitCount = hits.length;
     // v65.0 — COMBO: bajas encadenadas multiplican el pago (hasta ×5)
     if (hitCount > 0) {
@@ -918,12 +949,13 @@ export function FrentePanel() {
     const mult = Math.min(5, 1 + Math.floor(s.combo / 4));
     const reward = hitCount > 0 ? (25 + hitCount * 15) * mult : 5;
     addCoins(reward, `Strike efectivo (${hitCount} impactos${mult > 1 ? ` · combo ×${mult}` : ""})`);
+    combatAudio.play(hitCount > 0 ? "coin" : "boom");
     // v65.0 — XP de combate (alimenta la TEMPORADA vía espejo v58)
     addXp(4 + hitCount * 2);
     if (hitCount > 0) {
       // bajas: puntos, fiebre, marcas en el terreno
       for (const u of hits) {
-        s.decs.push({ x: u.x * cv.width, y: ground + (u.type === "tank" || u.type === "art" ? 10 : 22), tank: u.type !== "soldier", burn: u.type !== "soldier" ? 900 : 0, age: 0 });
+        s.decs.push({ x: u.x * VW, y: ground + (u.type === "tank" || u.type === "art" ? 10 : 22), tank: u.type !== "soldier", burn: u.type !== "soldier" ? 900 : 0, age: 0 });
         s.score += KILL_POINTS[u.type];
         s.fever = Math.min(100, s.fever + (u.type === "soldier" ? 5 : 10));
       }
@@ -935,6 +967,7 @@ export function FrentePanel() {
       if (s.fever >= 100 && !free) {
         s.fever = 100;
         s.feverArmed = true;
+        combatAudio.play("fever");
         pushLog(ACTION_LOGS[4]);
         toast.success("🔥 FIEBRE DE COMBATE: próxima barraja de 9 es GRATIS");
       }
@@ -945,6 +978,7 @@ export function FrentePanel() {
         setHud((h) => ({ ...h, best: s.score }));
         if (!recordToastRef.current) {
           recordToastRef.current = true;
+          combatAudio.play("fanfare");
           toast.success("¡NUEVO RÉCORD DE COMBATE!");
         }
       }
@@ -953,25 +987,40 @@ export function FrentePanel() {
     toast.success(hitCount > 0 ? `¡${hitCount} blancos! ×${mult} pago · +${reward} monedas` : `Impacto registrado · +${reward} monedas`);
   }, [addCoins, addXp, spendCoins, pushLog]);
 
+  // envoltorio para el canvas 2D: traduce el clic a coordenadas y dispara
+  const handleStrike = useCallback(async (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const cv = canvasRef.current;
+    if (!cv) return;
+    const rect = cv.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * cv.width;
+    const y = ((e.clientY - rect.top) / rect.height) * cv.height;
+    await strikeAt(x, y);
+  }, [strikeAt]);
+
   const droneStrike = useCallback(() => {
+    const s = stateRef.current;
+    const ground = GROUND_PX;
+    const enemies = s.units.filter((u) => u.side === 1);
+    const kill = Math.min(4, enemies.length);
+    // v66.0 — sin canvas NO hay cobro ciego: se verifica blanco antes de cobrar
+    if (kill === 0) {
+      toast.error("Sin blancos enemigos para el dron ahora mismo");
+      return;
+    }
     if (!spendCoins(30, "Strike con dron")) {
       toast.error("Monedas insuficientes para el dron (30 ◉)");
       return;
     }
-    const s = stateRef.current;
-    const cv = canvasRef.current;
-    if (!cv) return;
-    const ground = cv.height * 0.72;
-    const enemies = s.units.filter((u) => u.side === 1);
-    const kill = Math.min(4, enemies.length);
+    combatAudio.play("drone");
     const killed: Unit[] = [];
     for (let i = 0; i < kill; i++) {
       const u = enemies[i * Math.max(1, Math.floor(enemies.length / 4))];
       if (u && !killed.includes(u)) {
         killed.push(u);
-        s.booms.push({ x: u.x * cv.width, y: ground + 14, r: 2, max: 22 });
-        s.smokes.push({ x: u.x * cv.width, y: ground + 14, r: 6, vx: 0.25, life: 100 });
-        s.decs.push({ x: u.x * cv.width, y: ground + (u.type === "tank" || u.type === "art" ? 10 : 22), tank: u.type !== "soldier", burn: u.type !== "soldier" ? 900 : 0, age: 0 });
+        s.booms.push({ x: u.x * VW, y: ground + 14, r: 2, max: 22 });
+        s.smokes.push({ x: u.x * VW, y: ground + 14, r: 6, vx: 0.25, life: 100 });
+        s.decs.push({ x: u.x * VW, y: ground + (u.type === "tank" || u.type === "art" ? 10 : 22), tank: u.type !== "soldier", burn: u.type !== "soldier" ? 900 : 0, age: 0 });
+        combatAudio.play("boom");
         // v65.0 — el dron también puntúa y calienta la fiebre
         s.score += KILL_POINTS[u.type];
         s.fever = Math.min(100, s.fever + (u.type === "soldier" ? 6 : 11));
@@ -986,6 +1035,7 @@ export function FrentePanel() {
     if (s.combo > 0) s.comboT = s.t;
     const reward = 20 + kill * 25;
     addCoins(reward, "Dron táctico: columna aniquilada");
+    combatAudio.play("coin");
     addXp(8 + kill * 3);
     setControl((c) => Math.min(78, c + 2));
     if (s.fever >= 100 && !s.feverArmed) {
@@ -1007,14 +1057,14 @@ export function FrentePanel() {
   }, [addCoins, addXp, spendCoins, pushLog]);
 
   // v65.0 — NUEVA ARMA: salva MLRS de 6 cohetes con arco balístico real (45 ◉)
+  // v66.0 — ya no toca el canvas: funciona idéntico en vista 2D y 3D
   const mlrsBarrage = useCallback(() => {
     if (!spendCoins(45, "Salva MLRS")) {
       toast.error("Monedas insuficientes para el MLRS (45 ◉)");
       return;
     }
+    combatAudio.play("mlrs");
     const s = stateRef.current;
-    const cv = canvasRef.current;
-    if (!cv) return;
     const enemies = s.units.filter((u) => u.side === 1);
     for (let i = 0; i < 6; i++) {
       const target = enemies.length && Math.random() < 0.75
@@ -1054,17 +1104,49 @@ export function FrentePanel() {
         {/* COLUMNA TÁCTICA: canvas + panel de combate */}
         <div className="space-y-3">
         <div className="hud-panel overflow-hidden">
-          <canvas
-            ref={canvasRef}
-            width={880}
-            height={430}
-            onClick={handleStrike}
-            className="w-full h-auto block cursor-crosshair"
-            aria-label={`Vista táctica en vivo de ${front.name}. Haz clic para llamar artillería.`}
-          />
+          {/* v66.0 TERCERA DIMENSIÓN: la vista 3D lee el MISMO stateRef — la simulación,
+              la economía y el sonido no se detienen al alternar entre 2D y 3D */}
+          {vista3d ? (
+            <div className="relative aspect-[880/430] w-full bg-black">
+              <Frente3D stateRef={stateRef} front={front} onStrike={strikeAt} />
+              <div className="pointer-events-none absolute left-2 top-2 rounded border border-electric/40 bg-black/70 px-2 py-1 font-mono text-[9px] text-electric">
+                VISTA 3D · ARRASTRA = ORBITAR · RUEDA/PELLIZCO = ZOOM · CLIC = FUEGO
+              </div>
+            </div>
+          ) : (
+            <canvas
+              ref={canvasRef}
+              width={880}
+              height={430}
+              onClick={handleStrike}
+              className="w-full h-auto block cursor-crosshair"
+              aria-label={`Vista táctica en vivo de ${front.name}. Haz clic para llamar artillería.`}
+            />
+          )}
           <div className="px-3 py-2 border-t border-border flex flex-wrap items-center gap-2 text-[10px] font-mono text-muted-foreground">
             <Crosshair className="w-3.5 h-3.5 text-red-hud" />
-            CLIC = artillería (15 ◉) · cajas de suministro +40ⓒ · ojo con el contrafuego
+            {vista3d ? "CLIC en el terreno = artillería (15 ◉) · cajas +40ⓒ · ojo con el contrafuego" : "CLIC = artillería (15 ◉) · cajas de suministro +40ⓒ · ojo con el contrafuego"}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setVista3d((v) => !v)}
+              aria-pressed={vista3d}
+              className="ml-auto h-7 font-mono text-[10px] gap-1.5 border-electric/50 text-electric hover:bg-electric/10"
+            >
+              <Box className="w-3.5 h-3.5" /> {vista3d ? "VER EN 2D" : "COMBATE 3D"}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={toggleSnd}
+              aria-label={snd ? "Silenciar sonido de combate" : "Activar sonido de combate"}
+              className="h-7 w-8 p-0"
+            >
+              {snd ? <Volume2 className="w-3.5 h-3.5 text-green-hud" /> : <VolumeX className="w-3.5 h-3.5 text-muted-foreground" />}
+            </Button>
+          </div>
+          <div className="px-3 py-2 border-t border-border flex flex-wrap items-center gap-2 text-[10px] font-mono text-muted-foreground">
+            <span className="text-muted-foreground">ARMAS DEL OPERADOR:</span>
             <Button size="sm" variant="outline" onClick={droneStrike} className="ml-auto h-7 font-mono text-[10px] gap-1.5 border-red-hud/40 text-red-hud hover:bg-red-hud/10">
               <Target className="w-3.5 h-3.5" /> DRON · 30 ◉
             </Button>
