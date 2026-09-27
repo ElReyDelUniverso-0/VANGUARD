@@ -962,6 +962,17 @@ export const useGameStore = create<GameState>()(
         // actualizar estados completados se hace al consultar misiones con target
       },
       claimMission: (code, rewards) => {
+        // v64.0 GLORIA COMPARTIDA — el XP reclamado TAMBIÉN alimenta la TEMPORADA:
+        // el espejo v58 vive en addXp() pero claimMission sumaba xp directo con set()
+        // sin espejar (los reclamos de misiones nunca llegaban al pase de temporada).
+        try {
+          const bx0 = get().boosts.xpUntil && get().boosts.xpUntil > Date.now() ? 2 : 1;
+          if (useRetention.persist.hasHydrated()) {
+            useRetention.getState().addSeasonXp(rewards.xp * bx0);
+          }
+        } catch {
+          // la economía del juego nunca se bloquea por la capa de retención
+        }
         set((s) => {
           const cur = s.missionProgress[code];
           if (!cur || cur.claimed) return s;
