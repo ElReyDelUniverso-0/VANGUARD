@@ -35,5 +35,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "hourly",
       priority: 0.9,
     },
+    {
+      // v63.0 PRIMERA PÁGINA: la misión comunitaria es contenido real y estable
+      url: `${SITE_URL}/mision`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
   ];
 }

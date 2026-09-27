@@ -188,14 +188,11 @@ const jsonLd = {
         "Modo detective por país",
         "Bolsa geopolítica y apuestas",
         "Enciclopedia y épocas históricas",
+        "Biblioteca oscura con 43 entradas verificadas y documentos desclasificados",
       ],
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.8",
-        ratingCount: "1240",
-        bestRating: "5",
-        worstRating: "1",
-      },
+      // v63.0 PRIMERA PÁGINA: el aggregateRating falso (4.8/1240) se QUITA —
+      // Google lo marca como spam de datos estructurados (reseñas auto-servidas)
+      // y puede penalizar los resultados enriquecidos de todo el sitio.
     },
     {
       "@type": "Organization",

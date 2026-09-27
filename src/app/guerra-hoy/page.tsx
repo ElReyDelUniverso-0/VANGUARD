@@ -8,6 +8,8 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getWorldPower, fmtUsd, fmtPersonas } from "@/lib/worldpower";
 import { getEonet, haceEonet, catColor } from "@/lib/eonet";
 import { getFx, fmtFx } from "@/lib/fx";
+// v63.0 PRIMERA PÁGINA — datos estáticos de la biblioteca (server-safe)
+import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 
 // v35 IMPACTO TOTAL — PÁGINA SEO /guerra-hoy
 // La app vive en "/" (SPA cliente): poco contenido rastreable para Google.
@@ -350,6 +352,81 @@ export default async function GuerraHoyPage() {
           </div>
         </section>
       )}
+
+      {/* v63.0 PRIMERA PÁGINA — LA BIBLIOTECA OSCURA en texto SSR: contenido
+          real e indexable (43 entradas con veredicto y fuentes desclasificadas).
+          Google indexa esta página por long-tail: "MK-ULTRA", "Tartessos",
+          "documento GATEWAY CIA", etc. Cada entrada enlaza al mando. */}
+      <section className="max-w-5xl mx-auto px-5 pb-6">
+        <div className="border border-red-500/30 rounded-md p-4">
+          <h2 className="font-mono text-[11px] uppercase tracking-widest text-red-400">
+            La Biblioteca Oscura — 43 secretos con veredicto real, no leyendas sin etiqueta
+          </h2>
+          <p className="mt-2 text-[11px] font-mono text-zinc-500 leading-relaxed">
+            Teorías con veredicto MITO/REAL/PARCIAL, las ideas que crearon las
+            armas y civilizaciones que desaparecieron — cada entrada abre su
+            documento desclasificado original (CIA, FBI, NSA, NARA). Dentro del
+            juego, cada lectura paga y la biblioteca completa otorga el rango
+            «Ojo que todo lo lee».
+          </p>
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {TEORIAS.map((t) => (
+              <div key={t.id} className="rounded border border-zinc-800 bg-zinc-900/40 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <span className={`font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border ${
+                    t.veredicto === "REAL" ? "text-emerald-400 border-emerald-500/40 bg-emerald-500/10"
+                    : t.veredicto === "MITO" ? "text-red-400 border-red-500/40 bg-red-500/10"
+                    : "text-amber-400 border-amber-500/40 bg-amber-500/10"}`}>
+                    {t.veredicto}
+                  </span>
+                  <span className="text-[12px] font-bold text-zinc-200 truncate">{t.titulo}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-zinc-400 leading-relaxed">{t.realidad}</p>
+                <p className="mt-1 font-mono text-[9px] text-zinc-600">Fuente: {t.fuente}</p>
+              </div>
+            ))}
+            {ARMAS.map((a) => (
+              <div key={a.id} className="rounded border border-zinc-800 bg-zinc-900/40 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border text-orange-400 border-orange-500/40 bg-orange-500/10">
+                    Arma-idea
+                  </span>
+                  <span className="text-[12px] font-bold text-zinc-200 truncate">{a.titulo}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-zinc-400 leading-relaxed">{a.legado}</p>
+                <p className="mt-1 font-mono text-[9px] text-zinc-600">{a.epoca} · Fuente: {a.fuente}</p>
+              </div>
+            ))}
+            {CIVILIZACIONES.map((c) => (
+              <div key={c.id} className="rounded border border-zinc-800 bg-zinc-900/40 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border text-sky-400 border-sky-500/40 bg-sky-500/10">
+                    Civilización perdida
+                  </span>
+                  <span className="text-[12px] font-bold text-zinc-200 truncate">{c.titulo}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-zinc-400 leading-relaxed">{c.misterio}</p>
+                <p className="mt-1 font-mono text-[9px] text-zinc-600">{c.epoca} · Fuente: {c.fuente}</p>
+              </div>
+            ))}
+            {DOCS.map((d) => (
+              <div key={d.id} className="rounded border border-zinc-800 bg-zinc-900/40 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[9px] uppercase tracking-widest rounded px-1.5 py-0.5 border text-violet-400 border-violet-500/40 bg-violet-500/10">
+                    Documento real
+                  </span>
+                  <span className="text-[12px] font-bold text-zinc-200 truncate">{d.titulo}</span>
+                </div>
+                <p className="mt-1 text-[11px] text-zinc-400 leading-relaxed">{d.desc}</p>
+                <p className="mt-1 font-mono text-[9px] text-zinc-600">{d.tag} · {d.fuente}</p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-2 font-mono text-[9px] text-zinc-600">
+            {TEORIAS.length} teorías · {ARMAS.length} armas-idea · {CIVILIZACIONES.length} civilizaciones · {DOCS.length} documentos desclasificados — se leen gratis dentro de VANGUARD
+          </p>
+        </div>
+      </section>
 
       <section className="max-w-5xl mx-auto px-5 pb-14">
         <div className="border border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-transparent rounded-lg p-7 text-center">
