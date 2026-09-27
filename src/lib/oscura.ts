@@ -6,7 +6,7 @@
 // +GÖBEKLI TEPE, +ETRUSCOS) y nueva colección SALA DE DOCUMENTOS: enlaces
 // directos a los archivos desclasificados reales (PDFs y bóvedas de la CIA,
 // NARA y el National Security Archive). + QUIZ DE ALEJANDRÍA con XP.
-// v61.0 ERUDITOS DEL ABISMO — banco de quiz 24 → 48 preguntas, RACHA DEL
+// v61.0 ERUDITOS DEL ABISMO — banco de quiz 24 → 49 preguntas, RACHA DEL
 // EXAMEN (días consecutivos con hitos pagados) e INTERROGATORIO: contrarreloj
 // de 60 segundos contra TODO el banco con récord personal guardado.
 // Regla de oro: cada teoría lleva veredicto MITO / REAL / PARCIAL y fuente
@@ -548,7 +548,7 @@ export function lecturaOscuraReward(isDaily: boolean): { coins: number; xp: numb
 }
 
 // ====== v60.0 QUIZ DE ALEJANDRÍA (ampliado en v61.0) ======
-// 48 preguntas extraídas de las propias entradas de la biblioteca.
+// 49 preguntas extraídas de las propias entradas de la biblioteca.
 // Cada día el archivo elige 6 (determinista por seed UTC). Acierto = botín
 // que viaja a TEMPORADA/SEMANA por el espejo XP global. Completar el set
 // diario libera el BOTÍN DEL DÍA y mantiene la RACHA DEL EXAMEN (hitos en
@@ -589,7 +589,7 @@ export const QUIZ_BANK: QuizQuestion[] = [
   { id: "q-indus-escritura", q: "Del Valle del Indus NO se ha podido descifrar en 100 años…", opts: ["su escritura", "su calendario", "su moneda"], correct: 0 },
   { id: "q-mali-oro", q: "Mansá Musa devaluó el oro de una ciudad al gastar: ¿cuál?", opts: ["Tombuctú", "El Cairo", "Fez"], correct: 1 },
   { id: "q-rapanui-escritura", q: "¿Cómo se llama la escritura aún sin descifrar de Rapa Nui?", opts: ["rongorongo", "cuneiforme", "lineal A"], correct: 0 },
-  // v61.0 ERUDITOS DEL ABISMO — segunda hornada: 24 preguntas más (banco 48)
+  // v61.0 ERUDITOS DEL ABISMO — segunda hornada: 25 preguntas más (banco 49)
   { id: "q-venona-agencia", q: "VENONA: ¿qué agencia descifró en secreto miles de cables soviéticos?", opts: ["La NSA", "El FBI", "La KGB"], correct: 0 },
   { id: "q-venona-anio", q: "¿En qué año desclasificó la NSA los cables VENONA completos?", opts: ["1975", "1995", "2013"], correct: 1 },
   { id: "q-cointelpro-robo", q: "¿Cómo se destapó COINTELPRO ante la prensa?", opts: ["Una filtración del Senado", "Un grupo activista robó 1.000 documentos en Media (Pensilvania)", "Una confesión de Hoover"], correct: 1 },

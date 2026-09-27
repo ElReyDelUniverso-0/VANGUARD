@@ -59,7 +59,7 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "osint", title: "SALA OSINT 3D", desc: "15 capas de inteligencia sobre un globo interactivo", icon: <Radar className="w-6 h-6" />, hex: "#38BDF8" },
   // v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables
   { tab: "expedientes", title: "ARCHIVO SECRETO", desc: "Expedientes desclasificados del FBI, CIA y NARA: ábrelos todos y súbele al rango OJO DE DIOS", icon: <FolderOpen className="w-6 h-6" />, hex: "#A855F7" },
-  // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo · v60: 43 entradas + QUIZ · v61: 48 preguntas, interrogatorio 60s y tablón de eruditos
+  // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo · v60: 43 entradas + QUIZ · v61: 49 preguntas, interrogatorio 60s y tablón de eruditos
   { tab: "oscura", title: "ALEJANDRÍA OSCURA", desc: "43 entradas prohibidas: teorías con veredicto real, armas, civilizaciones, documentos desclasificados, QUIZ diario, interrogatorio de 60s y racha con botín", icon: <Skull className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "detective", title: "ARCHIVOS NACIÓN", desc: "Resuelve casos históricos con pistas y engaños", icon: <Fingerprint className="w-6 h-6" />, hex: "#A855F7" },
   { tab: "dron", title: "DRON STRIKE 3D", desc: "Vuela el dron, marca objetivos y multiplica combos", icon: <Rocket className="w-6 h-6" />, hex: "#FF3B30" },

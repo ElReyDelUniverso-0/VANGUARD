@@ -5,7 +5,7 @@
 // SALA DE DOCUMENTOS con bóvedas y PDFs desclasificados reales) + QUIZ DE
 // ALEJANDRÍA: 6 preguntas diarias con botín (XP que viaja a TEMPORADA/SEMANA
 // por el espejo global v58). Cada entrada abre su fuente real desclasificada.
-// v61.0 ERUDITOS DEL ABISMO: banco 48 preguntas, RACHA DEL EXAMEN con hitos
+// v61.0 ERUDITOS DEL ABISMO: banco 49 preguntas, RACHA DEL EXAMEN con hitos
 // (3/7/14/30 días) e INTERROGATORIO: contrarreloj de 60 s contra el banco
 // completo con récord personal persistente.
 
@@ -514,7 +514,7 @@ function QuizCard({
 }
 
 // v61.0 ERUDITOS DEL ABISMO — INTERROGATORIO: contrarreloj de 60 segundos
-// contra el banco completo (48 preguntas barajadas al azar). Cada acierto
+// contra el banco completo (49 preguntas barajadas al azar). Cada acierto
 // paga botín menor que el set diario (+8ⓒ +5XP) que viaja a TEMPORADA/SEMANA
 // por el espejo global. El récord personal (aciertos en una sesión) queda
 // guardado para siempre en vg_oscura_v59. Sin penalización por fallo: el
