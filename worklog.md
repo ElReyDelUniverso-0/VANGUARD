@@ -98,3 +98,25 @@ Work Log:
 Stage Summary:
 - Producción v59.0 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo con 26 entradas verificadas, veredictos honestos, fuentes desclasificadas reales, economía completa y el sitio entero más oscuro que nunca.
 - Siguientes rondas: galería de documentos escaneados (imágenes reales de páginas desclasificadas vía enlaces), quiz de Alejandría con XP, ampliar colecciones (espionaje por satélite, códigos sin descifrar), tablón de coleccionistas, shares 596→750.
+
+---
+Task ID: 9
+Agent: main (Super Z)
+Task: v60.0 CONOCIMIENTO PROHIBIDO — "Sigue": ampliar la biblioteca (26→43 entradas), sala de documentos desclasificados reales, quiz diario con XP y ola de difusión para shares
+
+Work Log:
+- URLs nuevas verificadas con curl ANTES de escribir código: cia.gov stargate/GATEWAY PDF/PDB/german-foreign-intelligence/secret-writing/cold-war-era 200; worldhistory.org Tank/Greek_Fire/Gobekli_Tepe/Etruscan 200; nps.gov/meve 200. Descartadas por 403 a bots: NSA VENONA (403, incluida igual por precedente FBI Vault v57 — funciona en móviles reales), FBI COINTELPRO (403, mismo criterio), CDC Tuskegee (403, descartada), IWM (403, radar va a Smithsonian).
+- oscura.ts 26→43: TEORÍAS 10→14 (+STARGATE REAL 22M$, +GATEWAY PARCIAL PDF 1983, +COINTELPRO REAL, +VENONA REAL), ARMAS 8→11 (+RADAR, +TANQUE, +FUEGO GRIEGO), CIVIS 8→10 (+GÖBEKLI TEPE, +ETRUSCOS), y nueva colección 4 SALA DE DOCUMENTOS (8): DOCS con interfaz DocumentoOscura — enlaces directos a bóvedas/PDFs reales (GATEWAY PDF, PDB 1961-69, Archivo STARGATE, OVNI CIA, red Gehlen, SECRET WRITING, Guerra Fría, Bóveda Nuclear NSArchive).
+- QUIZ DE ALEJANDRÍA: banco de 24 preguntas extraídas de las entradas, quizSetOfDay() determinista 6/día UTC (seed day*7%24), QUIZ_REWARD 10ⓒ+6XP por acierto, QUIZ_DAILY_BONUS 50ⓒ+2💎+30XP. Store ampliado: quizSolved/quizDayKey/quizSolvedToday/quizBonusDay + solveQuiz()/claimQuizBonus() idempotentes por día (persist vg_oscura_v59 intacto, migración por defaults). Recompensas viajan a TEMPORADA/SEMANA por el espejo addXp v58.
+- oscura-panel: conmutador 3→5 (grid-cols-5), vista DOCS (OscuraCard reutilizado con tag MATERIAL/AVISO), vista QUIZ (banner de set, barra de progreso, botón de botín con 3 estados, QuizCard con respuesta coloreada verde/roja tras contestar, acierto pagado marcado). Entrada del día ahora incluye DOCUMENTOS.
+- Hitos ampliados 5/15/28/40/43 (hasta 2000ⓒ+25💎+500XP), rango nuevo ERUDITO PROHIBIDO (30). RANKS escalados (GUARDIÁN 19→20).
+- Buscador TOTAL: las 43 entradas oscuras indexadas (kind "osc") — índice 108→151 destinos; pick() navega a oscura.
+- home-panel: tile actualizado a "43 entradas prohibidas… QUIZ diario". version.ts → v60.0 CONOCIMIENTO PROHIBIDO.
+- Deploy 47e53ad (tras pull --rebase; push rechazado 1ª vez por 2 commits remotos) → health v60.0 en intento 3 (~2 min).
+- QA: build OK; CJK 0; eslint 0 errores (2 warnings preexistentes); IndexNow 200; consola sin errores.
+- QA headless end-to-end: buscador "stargate" → 3 resultados (1 expediente + 2 oscura) ✅; panel con 5 conmutadores (TEORÍAS 14/ARMAS 11/CIVIS 10/DOCS 8/QUIZ 6) ✅; DOCS: 5 tarjetas verificadas + lectura d-gateway → coins 250→262 y readIds persistido ✅; QUIZ 6 preguntas ✅ → 6/6 aciertos → coins +60, seasonXp 17→56 (36 quiz + 3 goteo), weekXp espejado ✅ → BOTÍN DEL DÍA cobrado (+50ⓒ+2💎+30XP, bonusDay 2026-09-27 idempotente) ✅.
+- Cifras: players:total=103 (récord vigente), presence:peak=6, shares:external=596.
+
+Stage Summary:
+- Producción v60.0 CONOCIMIENTO PROHIBIDO: biblioteca de 43 entradas en 4 colecciones con sala de documentos desclasificados reales y examen diario recompensado.
+- Siguientes rondas: ola de difusión pendiente (3 gh-pages + Issue + Discussion + pastes + shorts) para shares 596→750; ampliar banco de quiz a 40+; tablón de coleccionistas.
