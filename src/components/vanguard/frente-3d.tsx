@@ -22,10 +22,10 @@ function dayPhase(d = new Date()): Phase {
   return "noche";
 }
 const PAL3D: Record<Phase, { bg: number; fog: number; sun: number; sunI: number; hemi: number; ground: number }> = {
-  noche: { bg: 0x0d1220, fog: 0x05070d, sun: 0x8fa8ff, sunI: 0.25, hemi: 0.38, ground: 0x0a0d14 },
-  amanecer: { bg: 0x6e4433, fog: 0x241f2e, sun: 0xffb070, sunI: 0.85, hemi: 0.55, ground: 0x1a1410 },
-  día: { bg: 0x3d4f68, fog: 0x1f2c42, sun: 0xfff2dd, sunI: 1.15, hemi: 0.75, ground: 0x141922 },
-  ocaso: { bg: 0x7c422a, fog: 0x311c26, sun: 0xff8050, sunI: 0.9, hemi: 0.55, ground: 0x1c1210 },
+  noche: { bg: 0x0d1220, fog: 0x05070d, sun: 0x8fa8ff, sunI: 0.5, hemi: 0.68, ground: 0x0a0d14 },
+  amanecer: { bg: 0x6e4433, fog: 0x241f2e, sun: 0xffb070, sunI: 0.9, hemi: 0.72, ground: 0x1a1410 },
+  día: { bg: 0x3d4f68, fog: 0x1f2c42, sun: 0xfff2dd, sunI: 1.15, hemi: 0.85, ground: 0x141922 },
+  ocaso: { bg: 0x7c422a, fog: 0x311c26, sun: 0xff8050, sunI: 0.95, hemi: 0.72, ground: 0x1c1210 },
 };
 const TERRAIN_COLOR: Record<string, number> = {
   urbano: 0x191c22, bosque: 0x101a12, desierto: 0x5a4b2c, "montaña": 0x232a22, costa: 0x3d3a28,
@@ -73,9 +73,14 @@ function lam(color: number) {
   return new THREE.MeshLambertMaterial({ color });
 }
 
+// material de unidad: emisión leve del color del bando para VER los ejércitos de noche
+function unitMat(color: number) {
+  return new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(color), emissiveIntensity: 0.3 });
+}
+
 function buildSoldier(main: number) {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.28, 0.9, 6), lam(main));
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.28, 0.9, 6), unitMat(main));
   body.position.y = 0.5;
   g.add(body);
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.19, 6, 5), lam(0x20242c));
@@ -92,13 +97,13 @@ function buildTank(main: number) {
   const tracks = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.4, 1.1), lam(0x14161c));
   tracks.position.y = 0.24;
   g.add(tracks);
-  const hull = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.52, 0.95), lam(main));
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.52, 0.95), unitMat(main));
   hull.position.y = 0.68;
   g.add(hull);
-  const turret = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.38, 0.78), lam(main));
+  const turret = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.38, 0.78), unitMat(main));
   turret.position.set(-0.1, 1.08, 0);
   g.add(turret);
-  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.7, 6), lam(main));
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.7, 6), unitMat(main));
   barrel.rotation.z = Math.PI / 2;
   barrel.position.set(0.95, 1.1, 0);
   g.add(barrel);
@@ -107,10 +112,10 @@ function buildTank(main: number) {
 
 function buildAPC(main: number) {
   const g = new THREE.Group();
-  const hull = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.6, 1.0), lam(main));
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.6, 1.0), unitMat(main));
   hull.position.y = 0.62;
   g.add(hull);
-  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.45, 0.95), lam(main));
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.45, 0.95), unitMat(main));
   cabin.position.set(-0.4, 1.1, 0);
   cabin.rotation.z = -0.18;
   g.add(cabin);
@@ -131,10 +136,10 @@ function buildArt(main: number) {
   const base = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.35, 0.9), lam(0x14161c));
   base.position.y = 0.2;
   g.add(base);
-  const mount = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.8), lam(main));
+  const mount = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.8), unitMat(main));
   mount.position.y = 0.6;
   g.add(mount);
-  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 2.2, 6), lam(main));
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.11, 2.2, 6), unitMat(main));
   barrel.rotation.z = Math.PI / 2 - 0.65;
   barrel.position.set(0.62, 1.15, 0);
   g.add(barrel);
@@ -143,11 +148,11 @@ function buildArt(main: number) {
 
 function buildJet(color: number) {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.ConeGeometry(0.32, 2.8, 6), lam(color));
+  const body = new THREE.Mesh(new THREE.ConeGeometry(0.32, 2.8, 6), unitMat(color));
   body.rotation.z = -Math.PI / 2;
   body.position.y = 0.2;
   g.add(body);
-  const wings = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.06, 2.1), lam(color));
+  const wings = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.06, 2.1), unitMat(color));
   wings.position.set(-0.25, 0.12, 0);
   g.add(wings);
   const fin = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.06), lam(color));
@@ -338,8 +343,8 @@ export function Frente3D({ stateRef, front, onStrike }: {
     }
 
     // ---- LÍNEA DE FRENTE + trincheras + banderas + puesto de mando
-    const lineMat = track(new THREE.MeshBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.55 }));
-    const frontLine = mesh(new THREE.BoxGeometry(0.5, 2.2, 30), lineMat);
+    const lineMat = track(new THREE.MeshBasicMaterial({ color: 0xff3b30, transparent: true, opacity: 0.42 }));
+    const frontLine = mesh(new THREE.BoxGeometry(0.35, 2.2, 30), lineMat);
     scene.add(frontLine);
     const trenchMat = track(new THREE.MeshLambertMaterial({ color: 0x171b24 }));
     const tr1 = mesh(new THREE.BoxGeometry(4.6, 0.5, 1.4), trenchMat);
@@ -563,7 +568,12 @@ export function Frente3D({ stateRef, front, onStrike }: {
         const g = arr[i];
         g.visible = true;
         g.position.set(nx2wx(u.x), 0, 1.6 + ((u.x * 997) % 3) * 2.6);
-        if (u.type === "soldier") g.position.y = Math.abs(Math.sin(t * 6 + u.x * 40)) * 0.09;
+        if (u.type === "soldier") {
+          g.scale.setScalar(2.0);
+          g.position.y = Math.abs(Math.sin(t * 6 + u.x * 40)) * 0.11;
+        } else {
+          g.scale.setScalar(1.18);
+        }
       }
 
       // obuses en vuelo (mismo arco paramétrico que el 2D)
@@ -692,15 +702,18 @@ export function Frente3D({ stateRef, front, onStrike }: {
         blinkers[i].material.opacity = 0.5 + Math.sin(t * (2.2 + i * 0.7)) * 0.4;
       }
 
-      // temblor de cámara + flash DOM
+      // temblor de cámara SIN contaminar el estado de OrbitControls: el jitter se
+      // aplica solo para el render y se restaura después (antes derivaba la cámara)
       controls.update();
+      const bx = cam.position.x, by = cam.position.y, bz = cam.position.z;
       if (s.shake > 0.4) {
-        cam.position.x += (Math.random() - 0.5) * s.shake * 0.045;
-        cam.position.y += (Math.random() - 0.5) * s.shake * 0.045;
+        cam.position.x = bx + (Math.random() - 0.5) * s.shake * 0.05;
+        cam.position.y = by + (Math.random() - 0.5) * s.shake * 0.05;
       }
       if (flashRef.current) flashRef.current.style.opacity = String(Math.min(0.5, s.flash * 0.28));
 
       renderer.render(scene, cam);
+      cam.position.set(bx, by, bz);
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
