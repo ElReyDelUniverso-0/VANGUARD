@@ -11,7 +11,8 @@ import { createPortal } from "react-dom";
 import { SECTIONS } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen } from "lucide-react";
+import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -27,8 +28,8 @@ interface Item {
   sectionKey: string;
   sectionLabel: string;
   icon_color: string;
-  // v58.0 BUSCADOR TOTAL: pestaña | página global | expediente secreto
-  kind: "tab" | "page" | "exp";
+  // v58.0 BUSCADOR TOTAL: pestaña | página global | expediente secreto | v60 entrada oscura
+  kind: "tab" | "page" | "exp" | "osc";
   href?: string;
 }
 
@@ -110,7 +111,25 @@ export function SectionSearch({
       icon_color: "text-amber",
       kind: "exp" as const,
     }));
-    return [...pages, ...exps, ...all];
+    // v60.0 CONOCIMIENTO PROHIBIDO — las 43 entradas de ALEJANDRÍA OSCURA
+    // (teorías, armas, civilizaciones y la sala de documentos) son buscables:
+    // buscan por título + fuente y saltan a la pestaña oscura.
+    const oscs: Item[] = [
+      ...TEORIAS.map((x) => ({ id: x.id, label: x.titulo, meta: x.fuente })),
+      ...ARMAS.map((x) => ({ id: x.id, label: x.titulo, meta: x.fuente })),
+      ...CIVILIZACIONES.map((x) => ({ id: x.id, label: x.titulo, meta: x.fuente })),
+      ...DOCS.map((x) => ({ id: x.id, label: x.titulo, meta: x.fuente })),
+    ].map((x) => ({
+      key: `osc:${x.id}`,
+      label: x.label,
+      short: x.meta,
+      icon: <BookOpen className="w-4 h-4" />,
+      sectionKey: "oscura",
+      sectionLabel: `ALEJANDRÍA OSCURA · ${x.meta}`,
+      icon_color: "text-red-hud",
+      kind: "osc" as const,
+    }));
+    return [...pages, ...exps, ...oscs, ...all];
   }, [all]);
 
   // montaje del portal (solo cliente)
@@ -179,11 +198,11 @@ export function SectionSearch({
     }
     try {
       const arr = JSON.parse(localStorage.getItem(LS_RECENT) || "[]");
-      const target = item.kind === "exp" ? "expedientes" : item.key;
+      const target = item.kind === "exp" ? "expedientes" : item.kind === "osc" ? "oscura" : item.key;
       const next = [target, ...arr.filter((k: string) => k !== target)].slice(0, 8);
       localStorage.setItem(LS_RECENT, JSON.stringify(next));
     } catch { /* sin storage */ }
-    onChange(item.kind === "exp" ? "expedientes" : item.key);
+    onChange(item.kind === "exp" ? "expedientes" : item.kind === "osc" ? "oscura" : item.key);
     onClose();
   };
 

@@ -1,28 +1,30 @@
 "use client";
 
 // v59.0 ALEJANDRÍA OSCURA — LA BIBLIOTECA DE ALEJANDRÍA GEOPOLÍTICA
-// Tres colecciones de conocimiento militar/geopolítico: teorías oscuras con
-// veredicto honesto (MITO/REAL/PARCIAL), las ideas que crearon armas históricas
-// y civilizaciones perdidas. Cada entrada abre su fuente real desclasificada y
-// paga botín (que viaja a la TEMPORADA por el espejo XP global de v58.0).
+// v60.0 CONOCIMIENTO PROHIBIDO: 4 colecciones (TEORÍAS/ARMAS/CIVIS + nueva
+// SALA DE DOCUMENTOS con bóvedas y PDFs desclasificados reales) + QUIZ DE
+// ALEJANDRÍA: 6 preguntas diarias con botín (XP que viaja a TEMPORADA/SEMANA
+// por el espejo global v58). Cada entrada abre su fuente real desclasificada.
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, ChevronDown, ExternalLink, Skull, Swords, Landmark,
-  Sparkles, ShieldCheck, AlertTriangle, Eye,
+  Sparkles, ShieldCheck, AlertTriangle, Eye, FileText, GraduationCap,
+  CheckCircle2, XCircle, Gift,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { useGameStore } from "@/lib/game-store";
 import {
-  TEORIAS, ARMAS, CIVILIZACIONES, OSCURA_TOTAL, OSCURA_MILESTONES,
+  TEORIAS, ARMAS, CIVILIZACIONES, DOCS, OSCURA_TOTAL, OSCURA_MILESTONES,
   oscuraRank, entradaDelDia, isEntradaDelDia, lecturaOscuraReward,
-  useOscura, type Veredicto, type OscuraRarity,
+  QUIZ_BANK, QUIZ_REWARD, QUIZ_DAILY_BONUS, quizSetOfDay, dayKeyUtc,
+  useOscura, type Veredicto, type OscuraRarity, type QuizQuestion,
 } from "@/lib/oscura";
 
-type Coleccion = "TEORIAS" | "ARMAS" | "CIVIS";
+type Coleccion = "TEORIAS" | "ARMAS" | "CIVIS" | "DOCS" | "QUIZ";
 
 const VEREDICTO_CLS: Record<Veredicto, string> = {
   MITO: "bg-red-hud/20 text-red-hud border-red-hud/50",
@@ -44,14 +46,24 @@ export function OscuraPanel() {
   const claimed = useOscura((s) => s.claimedMilestones);
   const registerRead = useOscura((s) => s.registerRead);
   const claimMilestone = useOscura((s) => s.claimMilestone);
+  const quizSolvedToday = useOscura((s) => s.quizSolvedToday);
+  const quizBonusDay = useOscura((s) => s.quizBonusDay);
+  const quizSolved = useOscura((s) => s.quizSolved);
+  const solveQuiz = useOscura((s) => s.solveQuiz);
+  const claimQuizBonus = useOscura((s) => s.claimQuizBonus);
 
   const [col, setCol] = useState<Coleccion>("TEORIAS");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [quizDay, setQuizDay] = useState(() => dayKeyUtc());
+  const quizSet = useMemo(() => quizSetOfDay(), []);
 
   const reads = readIds.length;
   const rank = useMemo(() => oscuraRank(reads), [reads]);
   const daily = useMemo(() => entradaDelDia(), []);
   const pct = Math.round((reads / OSCURA_TOTAL) * 100);
+
+  // si cambia el día UTC mientras el panel está abierto, resetea el estado visual
+  if (quizDay !== dayKeyUtc()) setQuizDay(dayKeyUtc());
 
   const openEntry = (id: string) => {
     const isNew = registerRead(id);
@@ -84,11 +96,31 @@ export function OscuraPanel() {
     toast("🔓 Fuente real abierta", { description: titulo.slice(0, 70) });
   };
 
+  // v60.0 QUIZ: resolver una pregunta del set diario
+  const answerQuiz = (q: QuizQuestion, optIdx: number) => {
+    const ok = optIdx === q.correct;
+    if (ok && solveQuiz(q.id)) {
+      addCoins(QUIZ_REWARD.coins, `Quiz Alejandría: ${q.id}`);
+      addXp(QUIZ_REWARD.xp); // v58: TEMPORADA + TABLÓN SEMANAL
+      toast.success(`+${QUIZ_REWARD.coins}ⓒ +${QUIZ_REWARD.xp}XP · acierto archivado`, {
+        description: `Set de hoy: ${quizSolvedToday.length + 1}/6`,
+      });
+    } else if (!ok) {
+      toast.error("Respuesta errónea", { description: "El archivo no paga errores. Relee la biblioteca." });
+    }
+    return ok;
+  };
+
+  const bonusReady = quizBonusDay === dayKeyUtc()
+    ? false // ya cobrado hoy
+    : quizSolvedToday.length >= quizSet.length;
+  const bonusClaimed = quizBonusDay === dayKeyUtc();
+
   return (
     <div className="space-y-4">
       <PanelHeader
         title="Alejandría Oscura"
-        subtitle="La biblioteca de los secretos: teorías, armas y civilizaciones que dan miedo de verdad"
+        subtitle="La biblioteca de los secretos: teorías, armas, civilizaciones, documentos reales y examen diario"
         icon={<BookOpen className="w-4 h-4 text-red-hud" />}
         color="red"
         right={<span className="text-[10px] font-mono text-muted-foreground hidden sm:block">{reads}/{OSCURA_TOTAL} · {rank}</span>}
@@ -122,12 +154,14 @@ export function OscuraPanel() {
         </div>
       </div>
 
-      {/* conmutador de colecciones */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* conmutador de colecciones (v60: 4 colecciones + QUIZ) */}
+      <div className="grid grid-cols-5 gap-1.5">
         {([
-          { key: "TEORIAS" as Coleccion, label: "TEORÍAS OSCURAS", n: TEORIAS.length, icon: <Skull className="w-3.5 h-3.5" /> },
-          { key: "ARMAS" as Coleccion, label: "ARMAS E IDEAS", n: ARMAS.length, icon: <Swords className="w-3.5 h-3.5" /> },
-          { key: "CIVIS" as Coleccion, label: "CIVILIZACIONES", n: CIVILIZACIONES.length, icon: <Landmark className="w-3.5 h-3.5" /> },
+          { key: "TEORIAS" as Coleccion, label: "TEORÍAS", n: TEORIAS.length, icon: <Skull className="w-3.5 h-3.5" /> },
+          { key: "ARMAS" as Coleccion, label: "ARMAS", n: ARMAS.length, icon: <Swords className="w-3.5 h-3.5" /> },
+          { key: "CIVIS" as Coleccion, label: "CIVIS", n: CIVILIZACIONES.length, icon: <Landmark className="w-3.5 h-3.5" /> },
+          { key: "DOCS" as Coleccion, label: "DOCS", n: DOCS.length, icon: <FileText className="w-3.5 h-3.5" /> },
+          { key: "QUIZ" as Coleccion, label: "QUIZ", n: quizSet.length, icon: <GraduationCap className="w-3.5 h-3.5" /> },
         ]).map((c) => (
           <button
             key={c.key}
@@ -203,6 +237,73 @@ export function OscuraPanel() {
             ]}
           />
         ))}
+        {col === "DOCS" && DOCS.map((d) => (
+          <OscuraCard
+            key={d.id}
+            id={d.id}
+            titulo={d.titulo}
+            veredicto="REAL"
+            rareza="RARO"
+            resumen={d.desc}
+            open={openId === d.id}
+            onToggle={() => setOpenId(openId === d.id ? null : d.id)}
+            onOpenSource={() => abrirFuente(d.id, d.url, d.titulo)}
+            fuente={d.fuente}
+            detalle={[
+              { k: "MATERIAL", v: d.tag },
+              { k: "QUÉ HAY DENTRO", v: d.desc },
+              { k: "AVISO", v: "Documento original escaneado: sellos, tinta y clasificación incluidos. Lo que leas ahí, lo escribió el gobierno — no nosotros." },
+            ]}
+          />
+        ))}
+        {col === "QUIZ" && (
+          <div className="md:col-span-2 space-y-2.5">
+            {/* banner del set diario */}
+            <div className="hud-corner bg-secondary/40 p-3 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <GraduationCap className="w-3.5 h-3.5 text-amber" />
+                <span className="text-xs font-mono font-bold text-foreground">EXAMEN DEL ARCHIVO · set de HOY</span>
+                <span className="ml-auto text-[10px] font-mono text-amber">{quizSolvedToday.length}/{quizSet.length} resueltas</span>
+              </div>
+              <div className="h-1.5 bg-secondary rounded overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-amber-hud via-red-hud to-amber-hud transition-all" style={{ width: `${(quizSolvedToday.length / quizSet.length) * 100}%` }} />
+              </div>
+              <div className="text-[9px] font-mono text-muted-foreground">
+                Banco de {QUIZ_BANK.length} preguntas extraídas de la biblioteca · 6 nuevas cada día UTC ·
+                acierto: +{QUIZ_REWARD.coins}ⓒ +{QUIZ_REWARD.xp}XP · aciertos históricos: {quizSolved.length}
+              </div>
+            </div>
+
+            {/* botín del día */}
+            <button
+              disabled={!bonusReady && !bonusClaimed}
+              onClick={() => {
+                if (claimQuizBonus()) {
+                  addCoins(QUIZ_DAILY_BONUS.coins, "Quiz Alejandría: set diario completo");
+                  addXp(QUIZ_DAILY_BONUS.xp);
+                  if (QUIZ_DAILY_BONUS.gems > 0) useGameStore.getState().addGems(QUIZ_DAILY_BONUS.gems, "Quiz Alejandría: botín del día");
+                  toast.success(`🎁 BOTÍN DEL DÍA: +${QUIZ_DAILY_BONUS.coins}ⓒ +${QUIZ_DAILY_BONUS.gems}💎 +${QUIZ_DAILY_BONUS.xp}XP`, { description: "Examen completo. El archivo confía en ti… por hoy." });
+                }
+              }}
+              className={cn(
+                "w-full flex items-center justify-center gap-2 text-[10px] font-mono font-bold uppercase py-2.5 rounded border transition-colors",
+                bonusClaimed ? "bg-green-hud/10 border-green-hud/40 text-green-hud"
+                  : bonusReady ? "bg-amber-hud/20 border-amber-hud/70 text-amber animate-pulse"
+                  : "bg-secondary/40 border-border text-muted-foreground"
+              )}
+            >
+              <Gift className="w-3.5 h-3.5" />
+              {bonusClaimed ? "BOTÍN DEL DÍA RECLAMADO"
+                : bonusReady ? `Reclamar botín del día · +${QUIZ_DAILY_BONUS.coins}ⓒ +${QUIZ_DAILY_BONUS.gems}💎 +${QUIZ_DAILY_BONUS.xp}XP`
+                : `Completa el set (${quizSolvedToday.length}/${quizSet.length}) para liberar el botín del día`}
+            </button>
+
+            {/* preguntas */}
+            {quizSet.map((q, i) => (
+              <QuizCard key={q.id} q={q} idx={i} onAnswer={answerQuiz} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* hitos */}
@@ -316,6 +417,72 @@ function OscuraCard({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+// v60.0 — tarjeta de pregunta del examen diario.
+// Estado local: pending (sin responder) → correct | wrong. El acierto paga
+// una sola vez por pregunta/día (store solveQuiz es idempotente).
+function QuizCard({
+  q, idx, onAnswer,
+}: {
+  q: QuizQuestion;
+  idx: number;
+  onAnswer: (q: QuizQuestion, optIdx: number) => boolean;
+}) {
+  const solvedToday = useOscura((s) => s.quizSolvedToday.includes(q.id));
+  const solvedEver = useOscura((s) => s.quizSolved.includes(q.id));
+  const [picked, setPicked] = useState<number | null>(null);
+  const answered = picked !== null;
+  const wasRight = answered && picked === q.correct;
+
+  return (
+    <div className={cn(
+      "hud-corner bg-secondary/40 border p-3 space-y-2",
+      solvedToday || wasRight ? "border-green-hud/40" : answered ? "border-red-hud/50" : "border-border",
+    )}>
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className="text-[8px] font-mono font-bold px-1 py-0.5 bg-red-hud/15 text-red-hud border border-red-hud/40 rounded">
+          PREGUNTA {idx + 1}
+        </span>
+        {(solvedToday || wasRight) && (
+          <span className="text-[8px] font-mono text-green-hud flex items-center gap-0.5">
+            <CheckCircle2 className="w-3 h-3" /> ACIERTO · PAGADO
+          </span>
+        )}
+        {!solvedToday && !wasRight && answered && (
+          <span className="text-[8px] font-mono text-red-hud flex items-center gap-0.5">
+            <XCircle className="w-3 h-3" /> FALLO · sin botín
+          </span>
+        )}
+        {solvedEver && !solvedToday && !wasRight && (
+          <span className="text-[8px] font-mono text-muted-foreground">acertada otro día</span>
+        )}
+      </div>
+      <p className="text-[11px] font-mono font-bold text-foreground leading-snug">{q.q}</p>
+      <div className="grid sm:grid-cols-3 gap-1.5">
+        {q.opts.map((opt, i) => {
+          const isCorrect = i === q.correct;
+          const isPicked = picked === i;
+          return (
+            <button
+              key={i}
+              disabled={answered && (wasRight || isPicked) || solvedToday}
+              onClick={() => { setPicked(i); onAnswer(q, i); }}
+              className={cn(
+                "text-left text-[9px] font-mono px-2 py-1.5 rounded border transition-colors leading-snug",
+                // tras responder: pinta la correcta en verde y el fallo en rojo
+                answered && isCorrect ? "bg-green-hud/15 border-green-hud/60 text-green-hud"
+                  : answered && isPicked && !isCorrect ? "bg-red-hud/15 border-red-hud/60 text-red-hud"
+                  : "bg-secondary/60 border-border text-foreground/90 hover:border-amber-hud/60 hover:text-foreground"
+              )}
+            >
+              {String.fromCharCode(65 + i)}. {opt}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

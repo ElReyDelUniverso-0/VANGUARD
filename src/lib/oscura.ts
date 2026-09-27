@@ -1,9 +1,11 @@
 "use client";
 
 // v59.0 ALEJANDRÍA OSCURA — LA BIBLIOTECA DE ALEJANDRÍA GEOPOLÍTICA
-// Tres colecciones: TEORÍAS OSCURAS (mito vs realidad, honestidad total),
-// ARMAS (las ideas que crearon las armas que cambiaron el mundo) y
-// CIVILIZACIONES PERDIDAS (imperios que desaparecieron y aterraron).
+// v60.0 CONOCIMIENTO PROHIBIDO — ampliación: 26 → 43 entradas en 4 colecciones
+// (+STARGATE, +GATEWAY, +COINTELPRO, +VENONA, +RADAR, +TANQUE, +FUEGO GRIEGO,
+// +GÖBEKLI TEPE, +ETRUSCOS) y nueva colección SALA DE DOCUMENTOS: enlaces
+// directos a los archivos desclasificados reales (PDFs y bóvedas de la CIA,
+// NARA y el National Security Archive). + QUIZ DE ALEJANDRÍA con XP.
 // Regla de oro: cada teoría lleva veredicto MITO / REAL / PARCIAL y fuente
 // real desclasificada. Nada inventado: el miedo real está en los documentos.
 
@@ -157,9 +159,53 @@ export const TEORIAS: TeoriaOscura[] = [
     url: "https://www.theblackvault.com",
     fuente: "The Black Vault · Archivo UAP/OVNI",
   },
+  {
+    id: "t-stargate",
+    titulo: "PROYECTO STARGATE: los psíquicos del ejército",
+    veredicto: "REAL",
+    rareza: "EPICO",
+    origen: "Años 70, EE.UU. El gobierno gastó más de 20 millones de dólares durante dos décadas en un programa secreto de «visión remota».",
+    creencia: "Que soldados con poderes mentales espiaban bases soviéticas, submarinos y rehenes usando solo la mente desde una sala cerrada.",
+    realidad: "Existió de verdad: 22 millones de dólares, laboratorios en Stanford y Fort Meade. La CIA desclasificó TODO el archivo: memorandos, sesiones y el informe final de 1995 que lo cerró al concluir que nunca produjo inteligencia utilizable. Los documentos son delirantes… y 100% auténticos.",
+    url: "https://www.cia.gov/readingroom/collection/stargate",
+    fuente: "CIA Reading Room · Colección STARGATE",
+  },
+  {
+    id: "t-gateway",
+    titulo: "GATEWAY: el documento CIA de la «salida del cuerpo»",
+    veredicto: "PARCIAL",
+    rareza: "RARO",
+    origen: "1983, un informe técnico que la CIA archivó y que internet redescubrió décadas después convirtiéndolo en objeto de culto.",
+    creencia: "Que el gobierno estudió cómo sacar la conciencia del cuerpo, viajar fuera del tiempo y contactar con otras dimensiones.",
+    realidad: "El PDF original está en el archivo público de la CIA y puedes leerlo entero: es real como documento, con su análisis de ondas cerebrales Hemi-Sync. Lo que NO es real: sus conclusiones místicas. La CIA evaluó una técnica; internet escribió el resto de la historia.",
+    url: "https://www.cia.gov/readingroom/docs/CIA-RDP96-00788R001900760001-9.pdf",
+    fuente: "CIA Reading Room · Documento GATEWAY (PDF)",
+  },
+  {
+    id: "t-cointelpro",
+    titulo: "COINTELPRO: el FBI contra sus propios ciudadanos",
+    veredicto: "REAL",
+    rareza: "EPICO",
+    origen: "1956-1971, el FBI de Hoover. Sobrevivió porque un grupo activista asaltó una oficina en Media (Pensilvania) y robó 1.000 documentos que envió a la prensa.",
+    creencia: "Que el FBI espió, infiltró y destruyó movimientos civiles dentro de EE.UU. usando cartas falsas, delatores y acoso coordinado.",
+    realidad: "Confirmado hasta la saciedad: el propio FBI reconoce el programa y el Senado (comité Church) documentó cartas anónimas diseñadas para romper matrimonios y provocar despidos. Las bóvedas FBI están públicas: lee las cartas falsas con tu propia firma.",
+    url: "https://vault.fbi.gov/cointelpro",
+    fuente: "FBI Vault · Bóveda COINTELPRO",
+  },
+  {
+    id: "t-venona",
+    titulo: "VENONA: 3.500 espías atrapados en mensajes rotos",
+    veredicto: "REAL",
+    rareza: "LEGENDARIO",
+    origen: "1943-1980. La NSA descifró en secreto miles de cables soviéticos y lo mantuvo en secreto durante DÉCADAS — ni siquiera el presidente estaba al tanto del alcance.",
+    creencia: "Que la Guerra Fría fue un nido de espías dobles en los laboratorios atómicos y el Departamento de Estado.",
+    realidad: "Verdadero y demostrado por cables: los mensajes descifrados identificaron a los filtradores de secretos atómicos y a espías en la SSRAN y EE.UU. La NSA desclasificó los cables VENONA completos en 1995. La espía en tu cabeza siempre fue peor que la ficción.",
+    url: "https://www.nsa.gov/News-Features/Declassified-VENONA/",
+    fuente: "NSA · VENONA desclasificado",
+  },
 ];
 
-// ============ COLECCIÓN 2: ARMAS — IDEAS QUE CREARON MONSTRUOS (8) ============
+// ============ COLECCIÓN 2: ARMAS — IDEAS QUE CREARON MONSTRUOS (11) ============
 export const ARMAS: ArmaOscura[] = [
   {
     id: "a-arco",
@@ -233,9 +279,36 @@ export const ARMAS: ArmaOscura[] = [
     url: "https://www.archives.gov/research/foreign-policy",
     fuente: "NARA · Política exterior",
   },
+  {
+    id: "a-radar",
+    titulo: "EL RADAR: los ojos que vieron venir la noche",
+    epoca: "1935-1940, Reino Unido",
+    idea: "Un pulso de radio rebota en el metal: midiendo el eco sabes dónde está el enemigo antes de verlo, de noche, entre nubes.",
+    legado: "La Batalla de Bretaña se ganó con torres, no con aviones: una red de 21 estaciones detectaba la Luftwaffe a 160 km. Desde entonces TODA guerra moderna es una guerra de sensores — y tu coche y tu microondas usan la misma idea.",
+    url: "https://airandspace.si.edu",
+    fuente: "Smithsonian · Air & Space",
+  },
+  {
+    id: "a-tanque",
+    titulo: "EL TANQUE: un acorazado que aprendió a caminar",
+    epoca: "1916, Somme (Primera Guerra Mundial)",
+    idea: "Poner un barco de guerra sobre orugas: blindaje, cañones y un motor que avanza sobre alambre de espino y trincheras.",
+    legado: "Los primeros modelos eran tan lentos que la infantería los superaba caminando — y aun así aterrorizaron a Alemania. En 1940 ya dictaban el mapa entero: la Blitzkrieg fue la idea del tanque corriendo a 40 km/h.",
+    url: "https://www.worldhistory.org/Tank/",
+    fuente: "World History Encyclopedia",
+  },
+  {
+    id: "a-fuego-griego",
+    titulo: "EL FUEGO GRIEGO: el arma secreta que se quemaba en el agua",
+    epoca: "Siglo VII d.C., Bizancio",
+    idea: "Un líquido que arde incluso sobre el mar, lanzado a presión desde proas de bronce como un dragón escupiendo fuego.",
+    legado: "Salvó Constantinopla de dos asedios navales colosales. Su fórmula era secreto de Estado ABSOLUTO — se perdió para siempre cuando el imperio cayó. 1.500 años después, nadie sabe exactamente qué llevaba.",
+    url: "https://www.worldhistory.org/Greek_Fire/",
+    fuente: "World History Encyclopedia",
+  },
 ];
 
-// ============ COLECCIÓN 3: CIVILIZACIONES PERDIDAS (8) ============
+// ============ COLECCIÓN 3: CIVILIZACIONES PERDIDAS (10) ============
 export const CIVILIZACIONES: CivilizacionOscura[] = [
   {
     id: "c-sumeria",
@@ -309,10 +382,107 @@ export const CIVILIZACIONES: CivilizacionOscura[] = [
     url: "https://www.worldhistory.org",
     fuente: "World History Encyclopedia",
   },
+  {
+    id: "c-gobekli",
+    titulo: "GOBEKLI TEPE: el templo más antiguo lo enterraron a propósito",
+    epoca: "~9500-8000 a.C., Turquía",
+    que: "Pilares de 16 toneladas con serpientes, zorros y escorpiones tallados — levantados por CAZADORES pre-agrícolas, 7.000 años antes que las pirámides.",
+    misterio: "Rompió la teoría oficial: la religión pudo nacer ANTES que la agricultura, no al revés. Y lo más inquietante: sus propios constructores lo enterraron todo con cuidado, montículo por montículo. Nadie sabe por qué.",
+    url: "https://www.worldhistory.org/Gobekli_Tepe/",
+    fuente: "World History Encyclopedia",
+  },
+  {
+    id: "c-etruscos",
+    titulo: "ETRUSCOS: el pueblo que enseñó a Roma y fue borrado",
+    epoca: "Siglo VIII-III a.C., Toscana",
+    que: "Dominaron Italia antes de Roma: ciudades con planificación ortogonal, arte funerario refinado, mujeres con estatus propio y drenaje que aún funciona.",
+    misterio: "Roma los absorbió, copió su ejército, su arquitectura y hasta sus gladiadores… y luego borró su historia. Su idioma sigue sin descifrarse por completo: solo sabemos leer unas 200 palabras. El maestro enterrado bajo su alumno.",
+    url: "https://www.worldhistory.org/Etruscan/",
+    fuente: "World History Encyclopedia",
+  },
+];
+
+// ====== v60.0 COLECCIÓN 4: SALA DE DOCUMENTOS (8) ======
+// Enlaces directos a bóvedas y PDFs desclasificados reales. Nada de resúmenes:
+// aquí se lee el documento original, con sus sellos y su miedo en bruto.
+export interface DocumentoOscura {
+  id: string;
+  titulo: string;
+  tag: string;    // tipo de material
+  desc: string;   // qué contiene y por qué aterrora
+  url: string;
+  fuente: string;
+}
+
+export const DOCS: DocumentoOscura[] = [
+  {
+    id: "d-gateway",
+    titulo: "ANÁLISIS Y EVALUACIÓN DEL GATEWAY EXPERIENCE",
+    tag: "PDF · CIA · 1983",
+    desc: "El documento completo que la CIA dedicó a estudiar si la conciencia puede salir del cuerpo. Tinta, sellos y física cuántica aplicada al alma — leído por agentes, guardado 20 años y ahora en tu pantalla.",
+    url: "https://www.cia.gov/readingroom/docs/CIA-RDP96-00788R001900760001-9.pdf",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-pdb",
+    titulo: "PDB: los informes diarios que vio Kennedy",
+    tag: "Bóveda · CIA · 1961-1969",
+    desc: "El Presidente's Daily Brief real: qué sabía EE.UU. cada mañana durante la crisis de los misiles y Vietnam. Historia del mundo escrita en tiempo presente, con la tensión aún caliente en cada página.",
+    url: "https://www.cia.gov/readingroom/collection/presidents-daily-brief-1961-1969",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-stargate",
+    titulo: "ARCHIVO STARGATE COMPLETO",
+    tag: "Bóveda · CIA · 1970-1995",
+    desc: "Miles de páginas de los psíquicos oficiales: sesiones de visión remota con coordenadas, dibujos de bases soviéticas hechos «con la mente» y la evaluación final que mató el programa.",
+    url: "https://www.cia.gov/readingroom/collection/stargate",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-ufo",
+    titulo: "COLECCIÓN OVNI OFICIAL DE LA CIA",
+    tag: "Bóveda · CIA · 1940-hoy",
+    desc: "Los expedientes que explican medio siglo de avistamientos: pilotos militares reportando objetos, el U-2 cubierto por «platillos» y fotografías que el propio gobierno analizó con seriedad inquietante.",
+    url: "https://www.cia.gov/readingroom/collection/ufo-collection",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-german",
+    titulo: "INTELIGENCIA EXTRANJERA ALEMANA: la red Gehlen",
+    tag: "Bóveda · CIA · 1945-hoy",
+    desc: "Cómo EE.UU. reconstruyó el servicio secreto alemán con material humano del Tercer Reich. La Guerra Fría vista desde el archivo: todos los compromisos, ninguno inventado.",
+    url: "https://www.cia.gov/readingroom/collection/german-foreign-intelligence",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-escritura",
+    titulo: "SECRET WRITING: la ciencia de escribir invisible",
+    tag: "Bóveda · CIA · 1917-hoy",
+    desc: "Tintas simpáticas, mensajes bajo sellos postales y química del espionaje: los manuales reales para esconder un secreto a plena vista. Manual de paranoico hecho por profesionales.",
+    url: "https://www.cia.gov/readingroom/collection/secret-writing",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-coldwar",
+    titulo: "ERA DE GUERRA FRÍA: la bóveda del borde del abismo",
+    tag: "Bóveda · CIA · 1945-1991",
+    desc: "Crisis de misiles, teléfonos rojos, golpes y espías: la colección de documentos que muestra cuántas veces el mundo estuvo a UNA decisión del fin. Escalofrío documental garantizado.",
+    url: "https://www.cia.gov/readingroom/collection/cold-war-era",
+    fuente: "CIA Reading Room",
+  },
+  {
+    id: "d-nuclear",
+    titulo: "BÓVEDA NUCLEAR: los minutos que faltaron para el fin",
+    tag: "Bóveda · NSArchive · 1945-hoy",
+    desc: "Documentos desclasificados sobre accidentes nucleares, falsas alarmas y oficiales que desobedecieron órdenes — probablemente salvando el mundo sin que nadie se enterara. El archivo más escalofriante que existe.",
+    url: "https://nsarchive.gmu.edu",
+    fuente: "National Security Archive",
+  },
 ];
 
 // ====== PROGRESO Y RANGOS ======
-export const OSCURA_TOTAL = TEORIAS.length + ARMAS.length + CIVILIZACIONES.length; // 26
+export const OSCURA_TOTAL = TEORIAS.length + ARMAS.length + CIVILIZACIONES.length + DOCS.length; // 43
 
 export interface OscuraMilestone {
   at: number;
@@ -324,9 +494,10 @@ export interface OscuraMilestone {
 
 export const OSCURA_MILESTONES: OscuraMilestone[] = [
   { at: 5, coins: 150, gems: 2, xp: 60, label: "LECTOR DE SOMBRAS: 5 entradas absorbidas" },
-  { at: 12, coins: 400, gems: 5, xp: 150, label: "ANALISTA DEL ABISMO: 12 entradas" },
-  { at: 20, coins: 800, gems: 10, xp: 250, label: "GUARDIÁN DEL ARCHIVO: 20 entradas" },
-  { at: OSCURA_TOTAL, coins: 1500, gems: 20, xp: 400, label: "ALEJANDRÍA COMPLETA: lo sabes TODO" },
+  { at: 15, coins: 450, gems: 6, xp: 180, label: "ANALISTA DEL ABISMO: 15 entradas" },
+  { at: 28, coins: 900, gems: 12, xp: 300, label: "GUARDIÁN DEL ARCHIVO: 28 entradas" },
+  { at: 40, coins: 1400, gems: 18, xp: 400, label: "ERUDITO PROHIBIDO: 40 entradas" },
+  { at: OSCURA_TOTAL, coins: 2000, gems: 25, xp: 500, label: "ALEJANDRÍA COMPLETA: lo sabes TODO" },
 ];
 
 const RANKS_OSCURA: { at: number; name: string }[] = [
@@ -334,7 +505,8 @@ const RANKS_OSCURA: { at: number; name: string }[] = [
   { at: 2, name: "LECTOR DE SOMBRAS" },
   { at: 6, name: "ANALISTA DEL ABISMO" },
   { at: 12, name: "ARCHIVISTA DE ALEJANDRÍA" },
-  { at: 19, name: "GUARDIÁN DEL ARCHIVO" },
+  { at: 20, name: "GUARDIÁN DEL ARCHIVO" },
+  { at: 30, name: "ERUDITO PROHIBIDO" },
   { at: OSCURA_TOTAL, name: "OJO QUE TODO LO LEE" },
 ];
 
@@ -356,6 +528,7 @@ export function entradaDelDia(): { titulo: string; coleccion: string; id: string
     ...TEORIAS.map((t) => ({ id: t.id, titulo: t.titulo, coleccion: "TEORÍAS" })),
     ...ARMAS.map((a) => ({ id: a.id, titulo: a.titulo, coleccion: "ARMAS" })),
     ...CIVILIZACIONES.map((c) => ({ id: c.id, titulo: c.titulo, coleccion: "CIVILIZACIONES" })),
+    ...DOCS.map((d) => ({ id: d.id, titulo: d.titulo, coleccion: "DOCUMENTOS" })),
   ];
   return pool[day % pool.length];
 }
@@ -371,12 +544,77 @@ export function lecturaOscuraReward(isDaily: boolean): { coins: number; xp: numb
     : base;
 }
 
+// ====== v60.0 QUIZ DE ALEJANDRÍA ======
+// 24 preguntas extraídas de las propias entradas de la biblioteca.
+// Cada día el archivo elige 6 (determinista por seed UTC). Acierto = botín
+// que viaja a TEMPORADA/SEMANA por el espejo XP global. Completar el set
+// diario libera el BOTÍN DEL DÍA. Solo se paga la primera vez por pregunta
+// y por día: el conocimiento no se cobra dos veces.
+
+export interface QuizQuestion {
+  id: string;
+  q: string;
+  opts: [string, string, string];
+  correct: 0 | 1 | 2;
+}
+
+export const QUIZ_BANK: QuizQuestion[] = [
+  { id: "q-rept-veredicto", q: "Según la biblioteca, ¿qué veredicto tiene la tarjeta REPTILIANOS?", opts: ["MITO — nunca existió una sola foto real", "REAL — hay evidencia oficial", "PARCIAL — sigue en estudio"], correct: 0 },
+  { id: "q-rept-icke", q: "¿Quién relanzó el mito reptiliano en 1998 ante miles de personas?", opts: ["Erich von Däniken", "David Icke", "Zecharia Sitchin"], correct: 1 },
+  { id: "q-u2", q: "¿Qué avión espía explicó miles de avistamientos OVNI de los años 50?", opts: ["El SR-71", "El B-2 Spirit", "El U-2"], correct: 2 },
+  { id: "q-mkultra-pct", q: "MK-ULTRA: ¿qué porcentaje de archivos destruyó el director Helms en 1973?", opts: ["~90%", "~50%", "~25%"], correct: 0 },
+  { id: "q-mkultra-church", q: "¿Qué comité del Senado de EE.UU. confirmó MK-ULTRA en 1975?", opts: ["Comité McCarthy", "Comité Church", "Comité Warren"], correct: 1 },
+  { id: "q-paperclip-n", q: "Operación Paperclip: ¿cuántos científicos alemanes llegó a EE.UU.?", opts: ["~160", "~1.600", "~16.000"], correct: 1 },
+  { id: "q-vonbraun", q: "¿Qué científico de Paperclip era oficial de las SS y acabó llevando al hombre a la Luna?", opts: ["Wernher von Braun", "Kurt Blome", "Hubertus Strughold"], correct: 0 },
+  { id: "q-area51-year", q: "¿En qué año desclasificó el Gobierno de EE.UU. la existencia del Área 51?", opts: ["1991", "2001", "2013"], correct: 2 },
+  { id: "q-haarp-antenas", q: "HAARP: ¿cuántas antenas de 22 metros hay en Alaska?", opts: ["18", "180", "1.800"], correct: 1 },
+  { id: "q-bermudas-quien", q: "¿Qué agencia cerró científicamente el mito del Triángulo de las Bermudas?", opts: ["La NASA", "La NOAA", "La ESA"], correct: 1 },
+  { id: "q-nwo-quien", q: "¿Quién pronunció el discurso del «Nuevo Orden Mundial» en 1990?", opts: ["Ronald Reagan", "George H. W. Bush", "Mijaíl Gorbachov"], correct: 1 },
+  { id: "q-svalbard", q: "¿Qué guarda la bóveda de Svalbard (Ártico)?", opts: ["Más de 1,2 millones de semillas", "Oro del FMI", "Servidores de la NSA"], correct: 0 },
+  { id: "q-northwoods", q: "¿Qué proponía el plan Northwoods (rechazado)?", opts: ["Atentados falsos como pretexto para invadir Cuba", "Invadir México", "Bombardear Vietnam"], correct: 0 },
+  { id: "q-uap-veredicto", q: "¿Qué dijo oficialmente el Pentágono sobre los videos UAP filtrados?", opts: ["Que son falsificaciones", "Que son auténticos y «no sabemos qué son»", "Que son drones chinos"], correct: 1 },
+  { id: "q-stargate-coste", q: "Proyecto STARGATE: ¿cuánto gastó el gobierno en psíquicos?", opts: ["~2 millones $", "~22 millones $", "~2.200 millones $"], correct: 1 },
+  { id: "q-stargate-cierre", q: "¿Por qué se cerró el proyecto STARGATE en 1995?", opts: ["Filtración a la prensa", "Nunca produjo inteligencia utilizable", "Falta de presupuesto militar"], correct: 1 },
+  { id: "q-polvora-elixir", q: "La pólvora nació cuando alquimistas chinos buscaban…", opts: ["el elixir de la inmortalidad", "pintura impermeable", "medicina para caballos"], correct: 0 },
+  { id: "q-enigma-turing", q: "¿Quién quebró el código Enigma en Bletchley Park?", opts: ["Alan Turing", "Claude Shannon", "John von Neumann"], correct: 0 },
+  { id: "q-v2-ciudad", q: "El V-2 caía más rápido que el sonido: no había sirena posible. ¿Qué ciudad sufrió sus impactos?", opts: ["París", "Londres", "Moscú"], correct: 1 },
+  { id: "q-gps-origen", q: "El GPS nació militar para…", opts: ["apuntar misiles", "guiar barcos mercantes", "mapas turísticos"], correct: 0 },
+  { id: "q-falange-clave", q: "La falange griega demostró que vale más que el valor individual…", opts: ["la disciplina", "la caballería", "la numería"], correct: 0 },
+  { id: "q-indus-escritura", q: "Del Valle del Indus NO se ha podido descifrar en 100 años…", opts: ["su escritura", "su calendario", "su moneda"], correct: 0 },
+  { id: "q-mali-oro", q: "Mansá Musa devaluó el oro de una ciudad al gastar: ¿cuál?", opts: ["Tombuctú", "El Cairo", "Fez"], correct: 1 },
+  { id: "q-rapanui-escritura", q: "¿Cómo se llama la escritura aún sin descifrar de Rapa Nui?", opts: ["rongorongo", "cuneiforme", "lineal A"], correct: 0 },
+];
+
+export const QUIZ_PER_DAY = 6;
+export const QUIZ_REWARD = { coins: 10, xp: 6 };           // por acierto
+export const QUIZ_DAILY_BONUS = { coins: 50, gems: 2, xp: 30 }; // set completo
+
+export function dayKeyUtc(d = new Date()): string {
+  return d.toISOString().slice(0, 10); // "2026-09-27"
+}
+
+// Set diario determinista: 6 preguntas distintas cada día (seed UTC estable)
+export function quizSetOfDay(): QuizQuestion[] {
+  const day = Math.floor(Date.now() / 86400000);
+  const start = (day * 7) % QUIZ_BANK.length;
+  const out: QuizQuestion[] = [];
+  for (let i = 0; i < QUIZ_PER_DAY; i++) out.push(QUIZ_BANK[(start + i) % QUIZ_BANK.length]);
+  return out;
+}
+
 // ====== STORE PERSISTENTE ======
 interface OscuraState {
   readIds: string[];
   claimedMilestones: number[];
+  // v60.0 QUIZ
+  quizSolved: string[];       // aciertos históricos (ids de pregunta, nunca repetibles)
+  quizDayKey: string;         // día del set actual
+  quizSolvedToday: string[];  // aciertos del set de HOY
+  quizBonusDay: string;       // día en que se cobró el botín del set completo
   registerRead: (id: string) => boolean; // true si es nueva
   claimMilestone: (at: number) => boolean;
+  solveQuiz: (id: string) => boolean;    // true si es nuevo acierto de HOY
+  claimQuizBonus: () => boolean;         // true si el botín del día es cobrable
   resetProgress: () => void;
 }
 
@@ -385,6 +623,10 @@ export const useOscura = create<OscuraState>()(
     (set, get) => ({
       readIds: [],
       claimedMilestones: [],
+      quizSolved: [],
+      quizDayKey: "",
+      quizSolvedToday: [],
+      quizBonusDay: "",
 
       registerRead: (id) => {
         if (get().readIds.includes(id)) return false;
@@ -398,7 +640,35 @@ export const useOscura = create<OscuraState>()(
         return true;
       },
 
-      resetProgress: () => set({ readIds: [], claimedMilestones: [] }),
+      // v60.0: marca un acierto del set diario. Si cambia el día UTC,
+      // rota el set (quizSolvedToday se vacía). Devuelve true si el acierto
+      // es NUEVO hoy (paga botín una sola vez por pregunta/día).
+      solveQuiz: (id) => {
+        const today = dayKeyUtc();
+        if (get().quizDayKey !== today) {
+          set({ quizDayKey: today, quizSolvedToday: [] });
+        }
+        if (get().quizSolvedToday.includes(id)) return false;
+        set({
+          quizSolvedToday: [...get().quizSolvedToday, id],
+          quizSolved: get().quizSolved.includes(id)
+            ? get().quizSolved
+            : [...get().quizSolved, id],
+        });
+        return true;
+      },
+
+      // v60.0: botín por completar el set diario (idempotente por día UTC)
+      claimQuizBonus: () => {
+        const today = dayKeyUtc();
+        const st = get();
+        if (st.quizBonusDay === today) return false;
+        if (st.quizDayKey !== today || st.quizSolvedToday.length < QUIZ_PER_DAY) return false;
+        set({ quizBonusDay: today });
+        return true;
+      },
+
+      resetProgress: () => set({ readIds: [], claimedMilestones: [], quizSolved: [], quizDayKey: "", quizSolvedToday: [], quizBonusDay: "" }),
     }),
     {
       name: "vg_oscura_v59",
