@@ -202,3 +202,25 @@ Work Log:
 Stage Summary:
 - Producción v64.0 GLORIA COMPARTIDA: dos misiones virales que premian COMPARTIR IMAGEN SIN ENLACES (la tarjeta de guerra es el trofeo y la invitación a la vez), bucle diario real (rollover D_*) y el XP de reclamos ya alimenta la TEMPORADA.
 - Siguientes rondas: ola de difusión ronda 40 para shares 618→750 (faltan 132), escudo comprable con gemas, R31 simulador 3D de guerra de países, biblioteca 43→50+ entradas, SEO por expediente (páginas individuales).
+
+---
+Task ID: 14
+Agent: main (Super Z)
+Task: v65.0 ACERO Y FUEGO — "Mejora el juego de frente en vivo 3D mapas 2D ect mas realista divertidos y mucha mas accion"
+
+Work Log:
+- Baseline: players:total=119 (récord vigente), presence:peak=6, shares:external=618, online=1. Target: panels/frente-panel.tsx (Líneas de Frente en Vivo, el juego táctico 2D jugable del tab FRENTE — 10 frentes reales con strikes de artillería y dron).
+- CONTRAFUEGO ENEMIGO (peligro real): morteros del lado B caen en ARCO balístico sobre el PUESTO DE MANDO del operador (nuevo, borde izquierdo: sacos, antena, luz de radio y barra HP). Cada impacto -8..14 HP + flash de pantalla; al llegar a 0 → REPLEGÁNDOSE 15s sin poder llamar fuego (toast+log), luego vuelve al 100%. Frecuencia escala con intensidad del frente y momentum.
+- COMBO + FIEBRE DE COMBATE: bajas encadenadas (<3s) suben el combo → multiplicador de pago ×2..×5; cada baja llena la barra de FIEBRE (soldado +5, vehículo +9/10); al 100% → próxima artillería GRATIS con barraja de 9 proyectiles en abanico. Verificado en vivo: strike gratis con 5 impactos pagó +200ⓒ con combo ×2 SIN cobrar los 15ⓒ.
+- CAJAS DE SUMINISTRO: cada ~40s cae una caja en paracaídas; clic para recogerla (+40ⓒ +12XP) antes de 12s o el enemigo la cubre con fuego (explosión + aviso ¡BAJO FUEGO! parpadeante).
+- NUEVA ARMA MLRS ×6 (45ⓒ): salva de 6 cohetes con arco balístico REAL (vuelo paramétrico con estela) que buscan unidades enemigas y destruyen al impactar. BALANCE v65.1: una salva llegó a matar 24 agrupados y pagar +480ⓒ (ROI ×10) → tope de 3 bajas/impacto y 15ⓒ/baja. Verificado post-fix: impactos a +15/+45 máximo.
+- REALISMO: terreno por teatro (5 pintores nuevos: URBANO con edificios y ventanas ardiendo, BOSQUE con pinos, DESIERTO con dunas y árboles secos, MONTAÑA con picos nevados, COSTA con mar, barcos y faro parpadeante) + CICLO DÍA/NOCHE con la hora UTC REAL del navegador (4 paletas: noche/amanecer/día/ocaso) + APCs con ruedas + piezas de artillería estáticas que disparan en arco + baterías desplegadas de partida en ambos flancos + flash de pantalla en impactos.
+- ADICCIÓN: puntuación de combate (soldado 10/apc 18/tanque 25/art 30 pts) con RÉCORD PERSONAL persistente (vanguard_frente_best, toast ¡NUEVO RÉCORD! primera vez por sesión) + XP de combate (strikes/cajas/dron) que alimenta la TEMPORADA vía espejo v58 + cadencia de fuego ×2 (tracer 60-220→40-110 frames), jets 420→300, helis 650→520, tope de unidades 46→62, spawn 22→13 frames.
+- FIX colateral: el dron eliminaba a TODOS los enemigos del mapa aunque solo matara a 4 (filter sobre la lista completa) → ahora solo los objetivos reales.
+- HUD doble: canvas (puntos+récord, combo ×N, barra fiebre, puesto de mando) + panel React de combate bajo el canvas (PUNTOS/RÉCORD/COMBO/PUESTO MANDO/FIEBRE) sincronizado cada 30 frames. version.ts → v65.0 ACERO Y FUEGO.
+- Deploy cfa6927 → health v65.0 intento 2 (~60s). Balance fix 88a44a5 → redeploy (lección: el check "ACERO Y FUEGO" en HTML da falso positivo porque la v65.0 vieja ya lo contiene — verificar con el CONTENIDO nuevo, no con strings compartidos). QA: lint 0 errores, build OK, tsc sin errores en el frente, CJK 0.
+- QA headless E2E (producción): canvas + panel combate + botón MLRS ✓; 2 strikes → +40ⓒ por blanco real ✓; contrafuego: puesto 100→60→79% en vivo ✓; MLRS: 6 cohetes, -45ⓒ, impactos pagados ✓; fiebre 100% → strike gratis +200ⓒ combo ×2 SIN coste ✓; consola sin errores; screenshot de la escena (scripts/r36/frente-v65.png) con PUNTOS 290 · RÉCORD 18 y cielo de ocaso real.
+
+Stage Summary:
+- Producción v65.0 ACERO Y FUEGO: el frente en vivo pasó de demo interactiva a JUEGO de combate con peligro real (el enemigo contraataca tu puesto), recompensas de habilidad (combo ×5, fiebre gratis, cajas, récord) y teatros visuales únicos por frente con luz real según la hora.
+- Siguientes rondas: sonido de combate (Web Audio, sin assets), FRENTE TOTAL 3D (/ver-guerra) con la misma capa de acción, simulador 3D de países (R31), ola de difusión ronda 40 para shares 618→750.
