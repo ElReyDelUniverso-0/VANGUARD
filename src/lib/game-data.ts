@@ -955,6 +955,7 @@ export const SHOP_ITEMS: ShopItem[] = [
   { id: "COSMETIC_CYANHUD", title: "Tema HUD Cian", description: "Cambia tu HUD a tema cian tecnológico.", cost: 6, currency: "GEMS", category: "COSMETIC", icon: "palette" },
   { id: "CONSUMABLE_MEDKIT", title: "Kit medico de campo", description: "Restaura 50 HP en combate (un solo uso).", cost: 50, currency: "COINS", category: "CONSUMABLE", icon: "cross" },
   { id: "CONSUMABLE_AMMO", title: "Municion extra", description: "Duplica el ataque de tu proximo item en combate.", cost: 40, currency: "COINS", category: "CONSUMABLE", icon: "crosshair" },
+  { id: "CONSUMABLE_SHIELD", title: "Escudo de racha", description: "Guarda un escudo: si faltas un dia, protege tu racha automaticamente. Cuesta menos que la emergencia (150) y se usa gratis cuando haga falta.", cost: 120, currency: "COINS", category: "CONSUMABLE", icon: "shield" },
   { id: "CAM_BASIC", title: "Camara GUARD-100", description: "Vigilancia estandar. Coloca donde quieras: capta eventos y genera intel 24/7.", cost: 350, currency: "COINS", category: "CAMERA", icon: "camera" },
   { id: "CAM_THERMAL", title: "Camara TERMICA 300", description: "Vision termica nocturna, radio ampliado y mayor recaudacion de intel.", cost: 850, currency: "COINS", category: "CAMERA", icon: "cctv" },
   { id: "CAM_TACTIC", title: "Camara 4K TACTICA", description: "Unidad de reconocimiento 4K con analisis automatico. Alta rentabilidad.", cost: 1600, currency: "COINS", category: "CAMERA", icon: "cctv" },

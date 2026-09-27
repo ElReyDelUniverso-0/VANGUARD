@@ -1,5 +1,5 @@
 // v31 — FUENTE ÚNICA DE VERSIÓN: el footer, el hero y /api/health leen de aquí.
 // Al cerrar cada Task solo se actualiza este archivo.
-export const APP_VERSION = "v61.0";
-export const APP_CODENAME = "ERUDITOS DEL ABISMO";
+export const APP_VERSION = "v62.0";
+export const APP_CODENAME = "ESCUDOS DEL ABISMO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

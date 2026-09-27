@@ -9,6 +9,9 @@
 // v61.0 ERUDITOS DEL ABISMO — banco de quiz 24 → 49 preguntas, RACHA DEL
 // EXAMEN (días consecutivos con hitos pagados) e INTERROGATORIO: contrarreloj
 // de 60 segundos contra TODO el banco con récord personal guardado.
+// v62.0 ESCUDOS DEL ABISMO — tercera hornada: 16 preguntas más (49 → 65),
+// todas extraídas de las entradas con datos verificados. Y el ESCUDO DE
+// RACHA pasa a ser comprable en la TIENDA (más barato que la emergencia).
 // Regla de oro: cada teoría lleva veredicto MITO / REAL / PARCIAL y fuente
 // real desclasificada. Nada inventado: el miedo real está en los documentos.
 
@@ -547,8 +550,8 @@ export function lecturaOscuraReward(isDaily: boolean): { coins: number; xp: numb
     : base;
 }
 
-// ====== v60.0 QUIZ DE ALEJANDRÍA (ampliado en v61.0) ======
-// 49 preguntas extraídas de las propias entradas de la biblioteca.
+// ====== v60.0 QUIZ DE ALEJANDRÍA (ampliado en v61.0 y v62.0) ======
+// 65 preguntas extraídas de las propias entradas de la biblioteca.
 // Cada día el archivo elige 6 (determinista por seed UTC). Acierto = botín
 // que viaja a TEMPORADA/SEMANA por el espejo XP global. Completar el set
 // diario libera el BOTÍN DEL DÍA y mantiene la RACHA DEL EXAMEN (hitos en
@@ -615,6 +618,24 @@ export const QUIZ_BANK: QuizQuestion[] = [
   { id: "q-gps-satelites", q: "El GPS militar original usaba 24 satélites con…", opts: ["relojes atómicos", "espejos solares", "cámaras espía"], correct: 0 },
   { id: "q-atomic-alerta", q: "¿Cuántas armas nucleares siguen en alerta hoy según la biblioteca?", opts: ["~1.200", "~12.000", "~120.000"], correct: 1 },
   { id: "q-pdb-que", q: "¿Qué era el PDB que Kennedy leía cada mañana?", opts: ["El informe diario de inteligencia del presidente", "La agenda diplomática", "El boletín de bolsa"], correct: 0 },
+  // v62.0 ESCUDOS DEL ABISMO — tercera hornada: 16 preguntas más (banco 65),
+  // todas verificadas contra el texto de las 43 entradas.
+  { id: "q-mkultra-lsd", q: "MK-ULTRA: ¿qué droga administró la CIA a ciudadanos sin que lo supieran?", opts: ["Adrenalina", "LSD", "Cafeína pura"], correct: 1 },
+  { id: "q-area51-lago", q: "¿Cómo se llama el lago seco donde nació el Área 51?", opts: ["Groom Lake", "Lago Powell", "Badwater"], correct: 0 },
+  { id: "q-haarp-megavatios", q: "¿Con cuánta potencia calienta HAARP la ionosfera?", opts: ["36 megavatios", "0,36 megavatios", "3,6 megavatios"], correct: 2 },
+  { id: "q-bermudas-lloyd", q: "Además de la NOAA, ¿quién cerró el mito del Triángulo de las Bermudas?", opts: ["Lloyd's de Londres", "Lloyd's de Nassau", "Allianz Marítima"], correct: 0 },
+  { id: "q-jfk-millones", q: "¿Cuántos documentos federales guarda el caso JFK?", opts: ["50.000", "500", "5 millones"], correct: 2 },
+  { id: "q-gateway-hemisync", q: "¿Qué técnica de ondas cerebrales analiza el informe GATEWAY?", opts: ["Electroshock profundo", "Hemi-Sync", "Luz estroboscópica"], correct: 1 },
+  { id: "q-arco-mongoles", q: "¿Qué pueblo conquistó el mayor imperio terrestre de la historia con el arco compuesto?", opts: ["Los mongoles", "Los romanos", "Los vikingos"], correct: 0 },
+  { id: "q-polvora-mezcla", q: "¿Qué mezcla produce la pólvora?", opts: ["Sal y petróleo", "Cal y agua", "Salitre, azufre y carbón"], correct: 2 },
+  { id: "q-tanque-blitz", q: "En 1940 la Blitzkrieg fue la idea del tanque corriendo a…", opts: ["4 km/h", "40 km/h", "400 km/h"], correct: 1 },
+  { id: "q-fuego-asedios", q: "¿De cuántos asedios navales colosales salvó Constantinopla el fuego griego?", opts: ["Dos", "Ninguno: la ciudad cayó", "Veinte"], correct: 0 },
+  { id: "q-sumeria-invento", q: "Además de la escritura, los sumerios inventaron…", opts: ["El papel", "La brújula", "La rueda"], correct: 2 },
+  { id: "q-minoica-isla", q: "¿En qué isla floreció la primera potencia naval europea?", opts: ["Creta", "Chipre", "Sicilia"], correct: 0 },
+  { id: "q-tartessos-rey", q: "Según Heródoto, ¿cómo se llamaba el rey de Tartessos que vivió 120 años?", opts: ["Viriate", "Argantonio", "Aníbal"], correct: 1 },
+  { id: "q-rapanui-moais", q: "¿Cuántos moáis levantó Rapa Nui?", opts: ["850", "85", "8.500"], correct: 0 },
+  { id: "q-gobekli-pilares", q: "¿Cuánto pesan los pilares de Göbekli Tepe?", opts: ["1,6 toneladas", "160 toneladas", "16 toneladas"], correct: 2 },
+  { id: "q-venona-secreto", q: "VENONA: ¿cuánto tiempo se mantuvo en secreto el descifrado?", opts: ["Décadas — ni el presidente conocía el alcance", "Solo 5 años", "Nunca fue secreto"], correct: 0 },
 ];
 
 export const QUIZ_PER_DAY = 6;
