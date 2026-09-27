@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MISSION_TEMPLATES, type MissionTemplate } from "@/lib/game-data";
+import { TarjetaGuerra } from "../tarjeta-guerra";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,10 @@ export function MissionsPanel() {
         icon={<Target className="w-4 h-4 text-amber" />}
         color="red"
       />
+
+      {/* v64.0 GLORIA COMPARTIDA — el generador vive DENTRO del centro de misiones:
+          la misión PREGONERO manda aquí y la tarjeta está a un toque. Bucle cerrado. */}
+      <TarjetaGuerra compact />
 
       {/* Search + status filter */}
       <div className="flex flex-col sm:flex-row gap-2">

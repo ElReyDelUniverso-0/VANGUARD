@@ -16,6 +16,7 @@ import {
   MessageCircle, Send, Link2, Check, Globe2, Radar, Swords,
 } from "lucide-react";
 import { ViralCard } from "./viral-card";
+import { TarjetaGuerra } from "./tarjeta-guerra";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -233,6 +234,7 @@ export function GrowthShare() {
         </div>
       </div>
     </section>
+    <TarjetaGuerra />
     <ViralCard />
     </>
   );

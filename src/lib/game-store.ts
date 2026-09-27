@@ -200,6 +200,8 @@ export interface GameState {
 
   // Misiones
   missionProgress: Record<string, { progress: number; completed: boolean; claimed: boolean }>;
+  // v64.0 GLORIA COMPARTIDA — día (UTC) del último rollover de misiones DAILY
+  missionDay: string | null;
 
   // Inventario
   inventory: InventoryEntry[];
@@ -555,6 +557,7 @@ export const useGameStore = create<GameState>()(
       claimedWeeklyDays: [],
 
       missionProgress: {},
+      missionDay: null,
       inventory: [
         { id: "raw_cable", label: "Cable bruto", emoji: "radio", rarity: "COMUN", quantity: 5 },
         { id: "raw_photo", label: "Foto OSINT", emoji: "image", rarity: "COMUN", quantity: 3 },
@@ -933,6 +936,19 @@ export const useGameStore = create<GameState>()(
       },
 
       progressMission: (code, by = 1) => {
+        // v64.0 GLORIA COMPARTIDA — ROLLOVER DIARIO real: las misiones D_* (código
+        // prefijo "D_") se limpian al cambiar el día UTC. Antes de esta versión las
+        // diarias eran de un solo uso (el progreso vivía para siempre) — el bucle de
+        // retorno diario no existía. Idempotente: solo corre cuando missionDay ≠ hoy.
+        const today = new Date().toISOString().slice(0, 10);
+        const st0 = get();
+        if (st0.missionDay !== today) {
+          const kept: Record<string, { progress: number; completed: boolean; claimed: boolean }> = {};
+          for (const [c, v] of Object.entries(st0.missionProgress)) {
+            if (!c.startsWith("D_")) kept[c] = v; // semanales/especiales/historia persisten
+          }
+          set({ missionProgress: kept, missionDay: today });
+        }
         set((s) => {
           const cur = s.missionProgress[code] ?? { progress: 0, completed: false, claimed: false };
           const next = Math.min(cur.progress + by, 9999);
@@ -2069,6 +2085,7 @@ export const useGameStore = create<GameState>()(
           rank: "RECLUTA",
           streak: 0,
           missionProgress: {},
+      missionDay: null,
           inventory: [
             { id: "raw_cable", label: "Cable bruto", emoji: "radio", rarity: "COMUN", quantity: 5 },
             { id: "raw_photo", label: "Foto OSINT", emoji: "image", rarity: "COMUN", quantity: 3 },

@@ -643,12 +643,16 @@ export const MISSION_TEMPLATES: MissionTemplate[] = [
   { code: "D_MAP_1", title: "Reconocimiento del mapa", description: "Abre el mapa global y observa un frente.", category: "DAILY", difficulty: "EASY", xpReward: 15, coinReward: 10, gemReward: 0, target: 1, action: "OPEN_MAP" },
   { code: "D_PREDICT_1", title: "Analista predictivo", description: "Realiza una predicción en el mercado.", category: "DAILY", difficulty: "NORMAL", xpReward: 35, coinReward: 30, gemReward: 0, target: 1, action: "PREDICT" },
   { code: "D_FUSION_1", title: "Fusion de inteligencia", description: "Fusiona 1 vez informes en la sala de fusión.", category: "DAILY", difficulty: "NORMAL", xpReward: 50, coinReward: 40, gemReward: 1, target: 1, action: "FUSION" },
+  // v64.0 GLORIA COMPARTIDA — misión viral SIN enlaces: la tarjeta de guerra viaja como imagen
+  { code: "D_PREGON_1", title: "Pregonero de guerra", description: "Difunde tu tarjeta de guerra 1 vez (imagen directa, sin enlaces).", category: "DAILY", difficulty: "EASY", xpReward: 50, coinReward: 80, gemReward: 0, target: 1, action: "SHARE_CARD" },
 
   // WEEKLY
   { code: "W_BRIEF_15", title: "Operacion semana", description: "Lee 15 informes durante la semana.", category: "WEEKLY", difficulty: "HARD", xpReward: 200, coinReward: 180, gemReward: 2, target: 15, action: "READ_BRIEFING" },
   { code: "W_NEWS_30", title: "Centinela de cables", description: "Revisa 30 noticias en vivo.", category: "WEEKLY", difficulty: "HARD", xpReward: 220, coinReward: 200, gemReward: 2, target: 30, action: "VIEW_NEWS" },
   { code: "W_QUIZ_15", title: "Estratega certificado", description: "Acerta 15 preguntas del quiz.", category: "WEEKLY", difficulty: "HARD", xpReward: 250, coinReward: 220, gemReward: 3, target: 15, action: "QUIZ_CORRECT" },
   { code: "W_PREDICT_5", title: "Vidente táctico", description: "Realiza 5 predicciones.", category: "WEEKLY", difficulty: "EXTREME", xpReward: 300, coinReward: 250, gemReward: 3, target: 5, action: "PREDICT" },
+  // v64.0 GLORIA COMPARTIDA — eco semanal: 3 tarjetas de guerra difundidas como imagen
+  { code: "W_CARD_3", title: "Eco del abismo", description: "Difunde 3 tarjetas de guerra esta semana (imagen directa, sin enlaces).", category: "WEEKLY", difficulty: "NORMAL", xpReward: 150, coinReward: 250, gemReward: 2, target: 3, action: "SHARE_CARD" },
 
   // SPECIAL
   { code: "S_FUSION_5", title: "Maestro de fusion", description: "Realiza 5 fusiones de inteligencia.", category: "SPECIAL", difficulty: "EXTREME", xpReward: 350, coinReward: 300, gemReward: 5, target: 5, action: "FUSION" },
