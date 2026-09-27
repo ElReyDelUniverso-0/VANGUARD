@@ -4,6 +4,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage, type StateStorage } from "zustand/middleware";
 // v58.0 DOMINIO TOTAL — espejo de XP al motor de TEMPORADA (retention)
 import { useRetention } from "@/lib/retention";
+// v67.0 EL HANGAR — PROTOCOLO ROJO: multiplicador global de monedas
+import { protocoloMultiplier, trackProtocoloEarnings } from "@/lib/tension";
 // v26: sonido especial de recompensa en cada moneda ganada
 import { sfx } from "@/lib/sound";
 import {
@@ -849,13 +851,31 @@ export const useGameStore = create<GameState>()(
       },
 
       addCoins: (amount, reason) => {
+        // v67.0 EL HANGAR — PROTOCOLO ROJO: x2 monedas global mientras dura el
+        // protocolo y cómputo de la misión global (300ⓒ → +500ⓒ). Cero riesgo:
+        // todo en try/catch y sin recursión (el bonus entra en el mismo set()).
+        let protoMult = 1;
+        let protoBonus = 0;
+        if (amount > 0 && typeof window !== "undefined") {
+          try {
+            protoMult = protocoloMultiplier();
+            if (protoMult > 1) protoBonus = trackProtocoloEarnings(amount);
+          } catch {
+            protoMult = 1;
+          }
+        }
         set((s) => {
           const boost = s.boosts.coinUntil && s.boosts.coinUntil > Date.now() ? 2 : 1;
           // v15: el propietario mantiene su fortuna infinita
-          const final = s.account?.isOwner ? Math.max(s.coins + amount, OWNER_COINS) : s.coins + amount * boost;
+          const base = amount * boost * (amount > 0 ? Math.max(1, protoMult) : 1);
+          const final = s.account?.isOwner ? Math.max(s.coins + amount, OWNER_COINS) : s.coins + base;
           return {
-            coins: final,
-            log: [{ ts: Date.now(), msg: `+${amount * boost} monedas — ${reason}`, delta: amount * boost }, ...s.log].slice(0, 50),
+            coins: final + protoBonus,
+            log: [
+              { ts: Date.now(), msg: `+${base} monedas — ${reason}`, delta: base },
+              ...(protoBonus > 0 ? [{ ts: Date.now(), msg: `+${protoBonus} monedas — PROTOCOLO ROJO: misión global cumplida`, delta: protoBonus }] : []),
+              ...s.log,
+            ].slice(0, 50),
           };
         });
         // v26: SONIDO ESPECIAL por cada recompensa ganada (throttle 900ms
@@ -944,7 +964,7 @@ export const useGameStore = create<GameState>()(
         const st0 = get();
         if (st0.missionDay !== today) {
           const kept: Record<string, { progress: number; completed: boolean; claimed: boolean }> = {};
-          for (const [c, v] of Object.entries(st0.missionProgress)) {
+          for (const [c, v] of Object.entries(st0.missionProgress) as [string, { progress: number; completed: boolean; claimed: boolean }][]) {
             if (!c.startsWith("D_")) kept[c] = v; // semanales/especiales/historia persisten
           }
           set({ missionProgress: kept, missionDay: today });

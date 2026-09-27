@@ -14,7 +14,7 @@ import {
   Siren, BookLock, Gavel, BrainCircuit, ShieldAlert, Home, LayoutGrid,
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
-  Wand2, Landmark, Orbit, Search, Dices, FolderOpen,
+  Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -67,7 +67,9 @@ export type TabKey =
   // v41 PLANETA VIVO: globo con capas NASA EONET + auroras NOAA + sismos + EEI en directo
   | "planeta"
   // v51.0 PULSO MUNDIAL: intel REAL sin API key (ISS + OpenSky + Spaceflight News)
-  | "pulso";
+  | "pulso"
+  // v67.0 EL HANGAR: hub 3D con agente, puertas holográficas y estaciones
+  | "hangar";
 
 interface TabDef {
   key: TabKey;
@@ -164,6 +166,8 @@ const TABS: Record<TabKey, TabDef> = {
   camaras:       { key: "camaras",       label: "Cámaras CCTV",      short: "CÁMARAS", icon: <Video className="w-3.5 h-3.5" />, color: "cyan" },
   // v51.0 pulso mundial: intel REAL sin API key (ISS + OpenSky + Spaceflight News)
   pulso:         { key: "pulso",         label: "Pulso Mundial (satélite + radar aéreo)", short: "PULSO", icon: <Activity className="w-3.5 h-3.5" />, color: "cyan" },
+  // v67.0 EL HANGAR: el hub 3D del agente
+  hangar:        { key: "hangar",        label: "EL HANGAR (Base 3D)", short: "HANGAR", icon: <Warehouse className="w-3.5 h-3.5" />, color: "cyan" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
   combate:       { key: "combate",       label: "Simulador de combate", short: "COMBATE", icon: <Swords className="w-3.5 h-3.5" />, color: "red" },
@@ -203,6 +207,12 @@ const TABS: Record<TabKey, TabDef> = {
 // v13: WARSIM y ESPIONAJE entran en juego/mercado; OSINT y RADAR lideran
 // inteligencia; CRISIS y ALIANZAS encabezan social; AGENTE abre sistema.
 export const SECTIONS: SectionDef[] = [
+  {
+    // v67.0 EL HANGAR: la base 3D del agente es la primera sección del nav
+    key: "hangar", label: "HANGAR", short: "HANGAR", icon: <Warehouse className="w-4 h-4" />, color: "cyan",
+    desc: "Tu base 3D: camina entre puertas holográficas, tarot, detector de propaganda y diario",
+    tabs: [TABS.hangar],
+  },
   {
     key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
     desc: "Portada con noticias en vivo y menú de mundos",

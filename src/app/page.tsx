@@ -13,7 +13,8 @@ import { HudHeader } from "@/components/vanguard/hud-header";
 import { TabNav, type TabKey } from "@/components/vanguard/tab-nav";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
-import { BootScreen } from "@/components/vanguard/boot-screen";
+// v67.0 EL HANGAR: intro cinematográfica de 8s sustituye a la pantalla de carga
+import { IntroCinematica } from "@/components/vanguard/intro-cinematica";
 import { SettingsModal } from "@/components/vanguard/settings-modal";
 import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
 import { StatsTicker } from "@/components/vanguard/stats-ticker";
@@ -41,6 +42,13 @@ import { SeoFaq } from "@/components/vanguard/seo-faq";
 import { ensurePlayerCounted } from "@/lib/realtime";
 import { ensureLangDetected } from "@/lib/i18n";
 import { startPresenceHeartbeat, LiveTitle } from "@/components/vanguard/presence-ping";
+// v67.0 EL HANGAR — capa global de crisis/PROTOCOLO ROJO + easter eggs + contador de guerra + rival
+const ProtocoloRojo = dynamic(() => import("@/components/vanguard/protocolo-rojo").then((m) => m.ProtocoloRojo), { ssr: false });
+const EasterEggs = dynamic(() => import("@/components/vanguard/easter-eggs").then((m) => m.EasterEggs), { ssr: false });
+const CostoGuerra = dynamic(() => import("@/components/vanguard/costo-guerra").then((m) => m.CostoGuerra), { ssr: false });
+const RivalStrip = dynamic(() => import("@/components/vanguard/rival-strip").then((m) => m.RivalStrip), { ssr: false });
+// v67.0 EL HANGAR — el hub 3D del agente
+const HangarPanel = dynamic(() => import("@/components/vanguard/hangar-3d").then((m) => m.HangarPanel), { ssr: false, loading: PanelSkeleton });
 const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").then((m) => m.MusicPlayer), { ssr: false });
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
 // v32 CIELO DE ACERO: badge global del estado del socket multijugador
@@ -210,7 +218,7 @@ export default function Home() {
   // Keyboard shortcuts: number keys 1-9 to switch tabs, ArrowLeft/Right to navigate
   useEffect(() => {
     const TAB_ORDER: TabKey[] = [
-      "inicio", "mundo", "bolsa", "bookmaker", "osint", "ojodios", "detective",
+      "inicio", "hangar", "mundo", "bolsa", "bookmaker", "osint", "ojodios", "detective",
       "dron", "warsim", "arcade", "noticias",
     ];
     const handleKey = (e: KeyboardEvent) => {
@@ -303,7 +311,7 @@ export default function Home() {
       </div>
       <div className="vignette-layer" aria-hidden />
       <div className="particles-layer" aria-hidden />
-      <BootScreen />
+      <IntroCinematica />
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -313,6 +321,9 @@ export default function Home() {
       {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
       <LiveTitle />
       <StatsTicker />
+      {/* v67.0 EL HANGAR: capa de crisis global + easter eggs vivos en toda la app */}
+      <ProtocoloRojo />
+      <EasterEggs />
 
       <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20">
         <AnimatePresence mode="wait" initial={false}>
@@ -326,6 +337,9 @@ export default function Home() {
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (
           <>
+            {/* v67.0 EL HANGAR: el costo del mundo y tu rival, siempre a la vista */}
+            <CostoGuerra />
+            <RivalStrip />
             <HomePanel />
             {/* v46.0: la meta comunitaria encima de todo — cada visitante ve el objetivo y su recompensa */}
             <GoalBanner />
@@ -364,6 +378,8 @@ export default function Home() {
         {tab === "ayuda" && <HelpPanel />}
         {tab === "camaras" && <CamerasPanel />}
         {tab === "pulso" && <PulsoPanel />}
+        {/* v67.0 EL HANGAR: base 3D del agente */}
+        {tab === "hangar" && <HangarPanel />}
         {tab === "combate" && <CombatSimulatorPanel />}
         {tab === "historia" && <HistoricalWarsPanel />}
         {tab === "muertes" && <FamousDeathsPanel />}

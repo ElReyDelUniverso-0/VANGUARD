@@ -14,6 +14,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+// v67.0 EL HANGAR — rival personal + near-miss exacto + tensión global viva
+import { RivalStrip } from "@/components/vanguard/rival-strip";
+import { addMyRivalPoints } from "@/lib/rival";
+import { bumpTension } from "@/lib/tension";
 
 type Horizon = "RAPIDA" | "SEMANAL" | "MENSUAL" | "PROFECIA";
 
@@ -88,11 +92,27 @@ export function PredictionsPanel() {
         const payout = Math.round(amount * odds * mult);
         useGameStore.getState().addCoins(payout, `Prediccion acertada ${marketId} (${meta.label})`);
         useGameStore.getState().addXp(30);
+        addMyRivalPoints(Math.round(payout / 2));
+        bumpTension(-0.8); // acertar calma al planeta
         toast.success(`Prediccion acertada! +${payout} monedas`, {
           description: `${outcome} × ${odds} × ${mult} (${meta.label}) = ${payout} monedas`,
         });
       } else {
-        toast.error("Prediccion fallida", { description: `Perdiste ${amount} monedas` });
+        // v67 NEAR-MISS EXACTO: el cerebro engancha más con el "casi" que con la derrota limpia
+        const myPct = Math.round((outcome === "YES" ? yesProb : 1 - yesProb) * 100);
+        const missed = Math.max(1, Math.round(amount * odds * mult - amount));
+        const nearMiss = myPct >= 42 || Math.random() < 0.35;
+        addMyRivalPoints(Math.round(amount / 4));
+        bumpTension(1.4); // fallar calienta al planeta
+        toast.error(
+          nearMiss ? `¡CASI LO LOGRAS! Te faltó un ${Math.max(1, 50 - myPct)}% de probabilidad` : "Predicción fallida",
+          {
+            description: nearMiss
+              ? `El mercado cerró al ${myPct}% para ${outcome} — perdiste ${amount}ⓒ que podían ser +${missed}ⓒ. Revancha inmediata sugerida.`
+              : `Perdiste ${amount} monedas — el rival suma mientras tanto.`,
+            duration: 7000,
+          }
+        );
       }
       setResolved((r) => {
         const next = { ...r };
@@ -116,6 +136,9 @@ export function PredictionsPanel() {
           </div>
         }
       />
+
+      {/* v67 RIVAL PERSONAL: nadie quiere ver a otro arriba sin intentarlo */}
+      <RivalStrip />
 
       {/* SELECTOR DE HORIZONTE */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">

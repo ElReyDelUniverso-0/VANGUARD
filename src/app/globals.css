@@ -697,3 +697,30 @@
 .text-gradient {
   background-image: linear-gradient(100deg, #3EA6FF 0%, #7DD3FC 35%, #A855F7 70%, #FFD34D 100%);
 }
+
+/* ===== v67.0 EL HANGAR — capas de crisis, protocolo rojo y arcade ===== */
+@keyframes vg-crisis-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes vg-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(calc(100vw)); }
+}
+@keyframes vg-news-slide {
+  0% { transform: translateX(100vw); }
+  100% { transform: translateX(-120%); }
+}
+.vg-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 135, 0.05) 0px,
+    rgba(0, 255, 135, 0.05) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode: overlay;
+}
+.vg-crisis-vignette {
+  mix-blend-mode: screen;
+}
