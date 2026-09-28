@@ -331,3 +331,23 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v69.0 FUSIÓN TOTAL (health ok, db up): la fusión del hangar clásico con el control directo, sin sala congelada, sin zoom a nivel de tierra, con color+ilustración única por sección y el Archivo Clasificado de imágenes primero.
 - Presencia al cerrar: online 1 (QA), récord histórico 6, objetivo de difusión sigue siendo shares 618→750.
 - Siguientes rondas: editor de personaje 3D del agente, duelo PVP de predicciones en arena, capa 3D en /ver-guerra, ola de difusión para batir el récord de presencia (6).
+
+---
+Task ID: 18
+Agent: main (Super Z)
+Task: v70.0 CLASICO PURO — "el de las salas eliminao todo dame el vanguard clasico la pagina igualita solo qietate con la presentacion del planeta y ya"
+
+Work Log:
+- ELIMINADO el nexo completo (v68/v69): public/nexo.html (404 en produccion), nexo-src/ (15 partes), scripts/build_nexo.py y src/proxy.ts (el rewrite "/" -> /nexo.html de Next 16); quitado el rewrite beforeFiles de next.config.ts.
+- La portada "/" vuelve a servir la app clasica completa (page.tsx, v67.1 EL HANGAR y todo lo anterior) — la pagina igualita. /clasico queda como alias identico para links viejos.
+- SIN PRESENTACION DEL PLANETA: quitados el import y el render de IntroCinematica en page.tsx (el componente se conserva en el repo sin usarse por si se pide devolver; no entra al bundle). Entrada directa al juego: la pantalla de reconexion diaria aparece al instante.
+- ANTI-FREEZE portado al hangar CLASICO (hangar-3d.tsx, el freeze real que reporto el jefe vivia aqui porque los fixes de v69 fueron al nexo): pixelRatio 2.0 -> 1 movil / 1.25 desktop, antialias solo desktop, 9 MeshStandardMaterial -> MeshLambertMaterial (suelo, podio, muros, pedestales, nucleos, agente, fantasmas, isla), camGoal vector reutilizado (0 allocations/frame), calidad adaptativa: FPS medio cada 1.6s, si <38 baja ratio en pasos 1.25->1->0.72 (verificado en headless: el canvas degrada solo).
+- CLAMP DE ZOOM en los 2 globos globe.gl del clasico (globe-3d.tsx y globe-map-3d.tsx): controls.minDistance=210 / maxDistance=800 (radio globo 100 -> altitud minima ~1.1 radios, jamas ras de tierra; el otro bug reportado en v68).
+- version.ts -> v70.0 CLASICO PUERO (typo en commit, codename correcto: CLASICO PURO).
+- QA local: build limpio tras 2 lecciones (EADDRINUSE de un next-server viejo en el puerto 3000 envenenaba el QA con chunks del build anterior -> fuser -k 3000/tcp y rebuild limpio; y caché HTTP del navegador de QA -> cache-buster). tsc 0 errores, hangar 3D renderiza agente+fantasmas+puertas+isla, consola limpia.
+- Deploy 940f7b2 -> produccion v70.0 health ok/db up en el primer intento (~45s). QA produccion: / sirve clasico (v70.0 en HTML), nexo.html 404, portada directa con bono diario +40, 1 ONLINE en header, hangar 3D completo sin errores, canvas 1560x518 (ratio 1.25 sin degradar en desktop).
+- Cifras al cerrar: players:122, visitas:124, presence peak record:6, online:1 (QA), shares external:618.
+
+Stage Summary:
+- Produccion https://vanguard-kq9r.vercel.app = v70.0 CLASICO PURO: solo existe el Vanguard Clasico, igualito, sin presentacion del planeta, con hangar sin freeze y globos sin zoom a ras de tierra.
+- Siguientes rondas: ola de difusion (shares 618->750), editor de personaje 3D, PVP de predicciones.
