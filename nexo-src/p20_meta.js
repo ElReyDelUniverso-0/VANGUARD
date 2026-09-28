@@ -11,6 +11,8 @@
     +'<div class="navCell hot" data-go="hack"><div class="ic">&#9099;</div><div class="nm">TERMINAL DE HACKEO</div><div class="ds">scan \u00B7 trace \u00B7 block \u00B7 decrypt</div></div>'
     +'<div class="navCell" data-go="detector"><div class="ic">&#9878;</div><div class="nm">DETECTOR DE MENTIRAS</div><div class="ds">VERITAS-9 analiza el feed</div></div>'
     +'<div class="navCell" data-go="morse"><div class="ic">&#8942;&#8942;&#8942;</div><div class="nm">CANAL MORSE</div><div class="ds">sincroniza tus toques con la luz</div></div>'
+    +'<div class="navCell" data-go="archivo" style="border-color:#7CFC00"><div class="ic" style="color:#7CFC00">&#9788;</div><div class="nm">ARCHIVO CLASIFICADO</div><div class="ds">imágenes primero: mitos y documentos reales</div></div>'
+    +'<a class="navCell" href="/clasico" style="text-decoration:none;color:inherit;display:block"><div class="ic">&#9635;</div><div class="nm">VANGUARD CLÁSICO v67</div><div class="ds">el hangar original de la presentación 10/10</div></a>'
     +'</div>';
     $('#cb3').onclick=()=>go('hangar');
     $$('#scr-comm .navCell').forEach(c=>c.onclick=()=>go(c.dataset.go));
@@ -207,6 +209,7 @@ function showMenu(){
     ['hangar','HANGAR','centro de operaciones'],
     ['globo','SALA DE MAPAS','globo vivo: llamas, aviones, sismos'],
     ['misiones','MISIONES','dossiers con noticias reales'],
+    ['archivo','ARCHIVO CLASIFICADO','mitos y documentos: im\u00E1genes primero'],
     ['biblio','BIBLIOTECA SECRETA','excava documentos hist\u00F3ricos'],
     ['sim','SIMULADOR','5 entrenamientos de combate'],
     ['comm','COMUNICACIONES','radio \u00B7 hackeo \u00B7 verdad \u00B7 morse'],
@@ -214,7 +217,7 @@ function showMenu(){
     ['album','\u00C1LBUM','tu colecci\u00F3n de cartas']
   ];
   const proto=protocoloActive();
-  openModal('CENTRO DE MANDO \u00B7 v68 CONTROL DIRECTO',
+  openModal('CENTRO DE MANDO \u00B7 v69 FUSI\u00D3N TOTAL',
    '<div class="navGrid">'
    +rooms.map(r=>'<div class="navCell" data-nav="'+r[0]+'"><div class="nm">'+r[1]+'</div><div class="ds">'+r[2]+'</div></div>').join('')
    +'</div><div class="sep"></div>'
@@ -351,7 +354,7 @@ finishIntro=function(){
 
 /* arranque */
 (function boot(){
-  $('#verTag').textContent='v68';
+  $('#verTag').textContent='v69';
   $('#introSkip').addEventListener('click',finishIntro);
   $('#modalX').addEventListener('click',closeModal);
   $('#modalWrap').addEventListener('pointerdown',e=>{if(e.target.id==='modalWrap')closeModal();});

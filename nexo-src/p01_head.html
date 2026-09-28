@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0A0A0F">
-<title>VANGUARD v68 · CONTROL DIRECTO</title>
-<meta name="description" content="VANGUARD v68 CONTROL DIRECTO — mueve, agarra, lanza, pilota, espía, hackea y descubre el mundo con tus propias manos virtuales.">
+<title>VANGUARD v69 · FUSIÓN TOTAL</title>
+<meta name="description" content="VANGUARD v69 FUSIÓN TOTAL — el hangar 3D y las 25 salas de control directo unidos, con color e ilustración únicos por sección. Mueve, agarra, lanza, pilota, espía, hackea y descubre el mundo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;800&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
   --bg:#0A0A0F; --blue:#1E90FF; --red:#FF3B30; --green:#00FF87; --txt:#F0F0F0;
   --dim:#8A93A6; --panel:rgba(14,18,30,.86); --panel2:rgba(20,26,42,.92);
   --line:rgba(30,144,255,.28); --gold:#FFC24B; --purple:#B26BFF;
-  --vh:1vh;
+  --acc:#1E90FF; --vh:1vh;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);
@@ -55,7 +55,7 @@ body.glitchRed{animation:glitchShake .4s infinite}
 #hud .chip{pointer-events:auto}
 .chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel);
   border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
-  backdrop-filter:blur(8px);vertical-align:top}
+  backdrop-filter:blur(5px);vertical-align:top}
 .chip .lab{font-size:9px;color:var(--dim);letter-spacing:.12em;font-family:Orbitron,sans-serif}
 .chip b{font-family:Rajdhani,sans-serif;font-size:15px}
 #hudTop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
@@ -108,8 +108,38 @@ body.glitchRed{animation:glitchShake .4s infinite}
 .grid{display:grid;gap:10px}
 .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
 @media(max-width:640px){.g3{grid-template-columns:1fr 1fr}}
-h2.pt{font-family:Orbitron,sans-serif;font-size:16px;color:var(--blue);letter-spacing:.12em;margin-bottom:4px}
+h2.pt{font-family:Orbitron,sans-serif;font-size:16px;color:var(--acc);letter-spacing:.12em;margin-bottom:4px;text-shadow:0 0 18px}
 h3.ps{font-family:Orbitron,sans-serif;font-size:11px;color:var(--dim);letter-spacing:.16em;margin:10px 0 6px}
+/* ---- REGLA DE ORO: cada sala con su color y su ilustración ---- */
+.roomHero{flex-shrink:0;display:flex;align-items:center;gap:12px;margin:0 0 10px;padding:10px 14px;border-radius:14px;
+  border:1px solid;position:relative;overflow:hidden;animation:heroIn .5s}
+@keyframes heroIn{from{transform:translateY(-10px);opacity:0}to{transform:none;opacity:1}}
+.roomHero .rhIc{width:44px;height:44px;flex-shrink:0}
+.roomHero .rhIc svg{width:100%;height:100%;display:block}
+.roomHero .rhT{font-family:Orbitron,sans-serif;font-size:14px;letter-spacing:.12em;line-height:1.25}
+.roomHero .rhS{font-size:10px;color:var(--dim);letter-spacing:.04em;margin-top:2px}
+.back{border-color:var(--acc)}
+.verd-g{color:#00FF87;border-color:#00FF87;background:rgba(0,255,135,.14)}
+.verd-r{color:#FF5B50;border-color:#FF5B50;background:rgba(255,59,48,.16)}
+.verd-y{color:#FFC24B;border-color:#FFC24B;background:rgba(255,194,75,.14)}
+.arcGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:700px){.arcGrid{grid-template-columns:repeat(3,1fr)}}
+.arcCard{position:relative;border:1px solid var(--ac,#1E90FF);border-radius:14px;overflow:hidden;
+  background:var(--panel);cursor:pointer;transition:transform .1s;animation:heroIn .4s}
+.arcCard:active{transform:scale(.95)}
+.arcCard .imw{position:relative;height:98px;overflow:hidden;border-bottom:1px solid var(--ac,#1E90FF)}
+.arcCard .imw img{width:100%;height:100%;object-fit:cover;display:block}
+.arcCard .imw svg{width:100%;height:100%;display:block}
+.arcCard .tt{font-family:Orbitron,sans-serif;font-size:10px;letter-spacing:.05em;margin:8px 10px 2px;color:var(--txt)}
+.arcCard .tx{font-size:9.5px;color:var(--dim);margin:0 10px 9px;line-height:1.5}
+.arcBadge{display:inline-block;font-family:Orbitron,sans-serif;font-size:8px;letter-spacing:.08em;
+  padding:2px 6px;border-radius:6px;border:1px solid;backdrop-filter:blur(2px)}
+.arcCard .arcBadge{position:absolute;top:6px;left:6px}
+.arcCard.read .tt{color:var(--dim)}
+.arcCard .rw{position:absolute;top:6px;right:6px;font-size:9px;color:var(--gold);font-family:Rajdhani,sans-serif;font-weight:700}
+.imwBig{border-radius:12px;overflow:hidden;border:1px solid var(--acc);max-height:38vh}
+.imwBig img{width:100%;display:block;object-fit:cover}
+.imwBig svg{width:100%;height:auto;display:block}
 .tag{display:inline-block;font-size:9px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);
   color:var(--dim);font-family:Orbitron,sans-serif;letter-spacing:.1em}
 .tag.b{color:var(--blue);border-color:var(--blue)}.tag.g{color:var(--green);border-color:var(--green)}
@@ -246,6 +276,11 @@ body.t-rojo .chip{border-color:rgba(255,59,48,.55)}
   #xpBar{width:64px}#thermo{width:60px}
   .chip{padding:5px 8px;font-size:11px}
   .mktRow{grid-template-columns:1fr 64px 60px 52px 70px}
+  .arcGrid{gap:8px}
+  .arcCard .imw{height:78px}
+  .roomHero{padding:8px 10px;gap:9px}
+  .roomHero .rhIc{width:36px;height:36px}
+  .roomHero .rhT{font-size:12px}
 }
 </style>
 </head>

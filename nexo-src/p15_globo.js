@@ -44,7 +44,7 @@ const Globo=(function(){
     scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0x9db8ff,size:.35,transparent:true,opacity:.8})));
     const eMat=new THREE.MeshStandardMaterial({color:0x1a3a6a,roughness:.85,metalness:.15});
     earth=new THREE.Mesh(new THREE.SphereGeometry(R,64,64),eMat);gGroup.add(earth);
-    new THREE.TextureLoader().load('/assets/globe/earth-blue-marble.jpg',t=>{eMat.map=t;eMat.color.set(0xffffff);eMat.needsUpdate=true;},undefined,()=>{});
+    new THREE.TextureLoader().load('/assets/globe/earth-blue-marble.jpg',t=>{t.anisotropy=4;eMat.map=t;eMat.color.set(0xffffff);eMat.needsUpdate=true;},undefined,()=>{});
     const grat=new THREE.Mesh(new THREE.SphereGeometry(R*1.001,36,24),
       new THREE.MeshBasicMaterial({color:0x1E90FF,wireframe:true,transparent:true,opacity:.07}));
     gGroup.add(grat);
@@ -79,7 +79,11 @@ const Globo=(function(){
       const glow=new THREE.Mesh(new THREE.SphereGeometry(.09*zn.i+.05,10,10),
         new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.5,blending:THREE.AdditiveBlending}));
       glow.position.copy(base);gGroup.add(glow);
-      flames.push({zn,pts,seed,base,up,glow});
+      /* PERF v69: tangentes precalculadas UNA vez — antes se clonaban 2 vectores por partícula por frame (miles de allocs = congelación) */
+      const t1=V3(0,1,0).cross(up);
+      if(t1.lengthSq()<1e-6)t1.set(1,0,0);t1.normalize();
+      const t2=up.clone().cross(t1).normalize();
+      flames.push({zn,pts,seed,base,up,glow,t1,t2});
     });
   }
   function buildPlanes(){
@@ -171,7 +175,9 @@ const Globo=(function(){
   function onWheel(dy){
     const cam=ThreeEng.camera();
     cam.position.multiplyScalar(1+clamp(dy,-1,1)*.08);
-    cam.position.clampLength(R*1.5,R*6.5);
+    /* FIX v69: nunca bajar al "nivel de tierra" — la textura se ve mal pegado al suelo.
+       Mínimo R*2.05 (altura segura sobre la superficie). */
+    cam.position.clampLength(R*2.05,R*6.5);
   }
   let moveMode=null;
   function tapGlobe(e){
@@ -339,20 +345,21 @@ const Globo=(function(){
       checkOmega();
     }catch(e){}
   }
-  /* clima */
+  /* clima — PERF v69: vectores reutilizados, sin new por partícula */
+  const _cp=V3(0,0,0),_cn=V3(0,0,0),_ct=V3(0,0,0);
   function updateClouds(dt){
     cloudPts.forEach(cl=>{
       const pos=cl.g.attributes.position;
       const wind=Wind.level;
       for(let i=0;i<pos.count;i++){
         const v=cl.vel[i];
-        const p=V3(pos.getX(i),pos.getY(i),pos.getZ(i));
-        const n=p.clone().normalize();
-        const tangent=V3(-n.z,0,n.x).normalize();
-        p.addScaledVector(tangent,(v.x+wind*1.6)*dt);
-        p.addScaledVector(n,Math.sin(performance.now()/900+i)*.0006);
-        if(p.length()>R*1.16)p.multiplyScalar(R*1.06/p.length());
-        pos.setXYZ(i,p.x,p.y,p.z);
+        _cp.set(pos.getX(i),pos.getY(i),pos.getZ(i));
+        _cn.copy(_cp).normalize();
+        _ct.set(-_cn.z,0,_cn.x).normalize();
+        _cp.addScaledVector(_ct,(v.x+wind*1.6)*dt);
+        _cp.addScaledVector(_cn,Math.sin(performance.now()/900+i)*.0006);
+        if(_cp.length()>R*1.16)_cp.multiplyScalar(R*1.06/_cp.length());
+        pos.setXYZ(i,_cp.x,_cp.y,_cp.z);
       }
       pos.needsUpdate=true;
     });
@@ -443,22 +450,24 @@ const Globo=(function(){
       gGroup.rotation.y+=rotVY;gGroup.rotation.x=clamp(gGroup.rotation.x+rotVX,-1.1,1.1);
       rotVX*=Math.pow(.06,dt);rotVY*=Math.pow(.06,dt);
     }
-    /* llamas con viento */
+    /* llamas con viento — PERF v69: aritmética directa, cero allocs por partícula */
     const t=performance.now()/1000;
     flames.forEach(f=>{
       const pos=f.pts.geometry.attributes.position;
       const wx=clamp(Wind.x*.9,-1,1)*.6,wy=clamp(-Wind.y*.9,-1,1)*.3;
-      const w=f.up;
-      const t1=V3(0,1,0).cross(w).normalize();
-      const t2=w.clone().cross(t1).normalize();
+      const w=f.up,t1=f.t1,t2=f.t2;
+      const bx=f.base.x,by=f.base.y,bz=f.base.z;
       for(let i=0;i<f.seed.length;i++){
         const s=f.seed[i];
         s.t+=dt*s.s*(1+Wind.level*2.2);if(s.t>1)s.t-=1;
         const h=s.t*1.15*f.zn.i+.05;
         const r=(1-s.t)*.16*f.zn.i+.015;
         const px=Math.cos(s.a)*r+wx*h,py=h,pz=Math.sin(s.a)*r;
-        const p=f.base.clone().addScaledVector(w,py).addScaledVector(t1,px+wx*h*1.4).addScaledVector(t2,pz);
-        pos.setXYZ(i,p.x,p.y,p.z);
+        const a1=px+wx*h*1.4;
+        pos.setXYZ(i,
+          bx+w.x*py+t1.x*a1+t2.x*pz,
+          by+w.y*py+t1.y*a1+t2.y*pz,
+          bz+w.z*py+t1.z*a1+t2.z*pz);
       }
       pos.needsUpdate=true;
       f.glow.scale.setScalar(1+Math.sin(t*5+f.base.x*9)*.25+Wind.level*.5);
@@ -490,7 +499,9 @@ const Globo=(function(){
     }else{
       const d=cam.position.length();
       cam.position.set(0,0,d);
-      if(Pinch.active){cam.position.multiplyScalar(clamp(1/Pinch.delta,.96,1.04));cam.position.clampLength(R*1.5,R*6.5);}
+      if(Pinch.active){cam.position.multiplyScalar(clamp(1/Pinch.delta,.96,1.04));}
+      /* FIX v69: clamp SIEMPRE — ni rueda ni pellizco pueden acercarte al nivel del suelo */
+      cam.position.clampLength(R*2.05,R*6.5);
       cam.lookAt(0,0,0);
     }
     const wl=$('#windLvl');if(wl)wl.textContent=Math.round((Wind.level+Mic.level)/1.4*100)+'%';

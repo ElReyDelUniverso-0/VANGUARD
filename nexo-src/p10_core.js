@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-/* ================= VANGUARD v68 CONTROL DIRECTO — NÚCLEO ================= */
+/* ================= VANGUARD v69 FUSIÓN TOTAL — NÚCLEO ================= */
 const $=(s,r)=> (r||document).querySelector(s);
 const $$=(s,r)=> Array.from((r||document).querySelectorAll(s));
 const clamp=(v,a,b)=>v<a?a:(v>b?b:v);
@@ -177,7 +177,7 @@ async function loadPresence(){
     const pt=$('#peakTag');pt.style.display='';pt.textContent='R\u00C9CORD '+DATA.peak;
   }
   const h=await jget('/api/health');
-  if(h&&h.ok){DATA.health=h;$('#verTag').textContent=h.version||'v68';}
+  if(h&&h.ok){DATA.health=h;$('#verTag').textContent=h.version||'v69';}
 }
 function simNews(){
   const T=['Escalada militar en el mar Rojo: los portaaviones cambian de posici\u00F3n','Cumbre de emergencia por la crisis energ\u00E9tica europea','Ciberataque masivo derriba servidores de una agencia gubernamental','Nuevas sanciones comerciales entraron en vigor esta madrugada','Cese el fuego fr\u00E1gil: observadores reportan disparos aislados','R\u00E9cord de refugiados cruzando la frontera sur','Maniobras navales sin precedentes cerca de aguas disputadas','Filtraci\u00F3n: documento clasificado describe un programa satelital secreto'];
@@ -261,9 +261,82 @@ function go(name,arg){
   if(sec)sec.classList.add('on');
   activeRoom=def;activeRoomName=name;
   if(def.enter)try{def.enter(arg);}catch(e){console.error(e);}
+  try{applyTheme(name);}catch(e){}
   refreshHUD();
 }
 function roomName(){return activeRoomName;}
+
+/* ---------- REGLA DE ORO: COLOR + ILUSTRACIÓN ÚNICA POR SECCIÓN ---------- */
+/* Cada sala tiene su tono vibrante propio y su ilustración SVG: nada aburrido, todo distinto. */
+const ROOM_ICONS={
+  badge:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="32" height="32" rx="4"/><circle cx="19" cy="20" r="4"/><path d="M13 32c1-4 4-6 6-6s5 2 6 6"/><path d="M29 16h8M29 22h8M29 28h5"/></svg>',
+  hangar:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 40V20l18-12 18 12v20"/><path d="M18 40V27h12v13"/><path d="M2 40h44"/><path d="M24 8v6"/></svg>',
+  globo:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="24" r="16"/><ellipse cx="24" cy="24" rx="7" ry="16"/><path d="M8 24h32M11 15h26M11 33h26"/></svg>',
+  folder:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h14l4 5h18v21H6z"/><path d="M24 22l1.8 3.8 4.2.6-3 3 .7 4.1-3.7-2-3.7 2 .7-4.1-3-3 4.2-.6z"/></svg>',
+  book:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-9-4-16-4v28c7 0 12 1 16 4 4-3 9-4 16-4V8c-7 0-12 1-16 4z"/><path d="M24 12v28"/></svg>',
+  eye:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 24s8-10 20-10 20 10 20 10-8 10-20 10S4 24 4 24z"/><circle cx="24" cy="24" r="5"/><path d="M24 12v-4M24 40v-4" opacity=".6"/></svg>',
+  tank:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30h26l6-4"/><rect x="4" y="30" width="34" height="8" rx="4"/><rect x="14" y="22" width="14" height="8" rx="2"/><path d="M28 24h16"/></svg>',
+  cross:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="24" r="14"/><path d="M24 4v10M24 34v10M4 24h10M34 24h10"/><circle cx="24" cy="24" r="3" fill="currentColor"/></svg>',
+  map:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10l12 4 12-4 8 4v24l-8-4-12 4-12-4z"/><path d="M20 14v24M32 10v24"/></svg>',
+  mtn:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 38L18 14l8 13 4-6 14 17z"/><circle cx="36" cy="10" r="4"/></svg>',
+  quiz:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="32" height="32" rx="6"/><path d="M18 19a6 6 0 1 1 8 5.7c-1.6.6-2 1.8-2 3.3"/><circle cx="24" cy="33" r="1.6" fill="currentColor"/></svg>',
+  turret:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 38a10 10 0 0 1 20 0"/><path d="M24 28v-8"/><path d="M24 20L38 8"/><circle cx="24" cy="26" r="4"/><path d="M8 38h32"/></svg>',
+  radio:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42L14 6M24 42L34 6M17 18h14M14 30h20"/><path d="M38 10a8 8 0 0 1 0 12M42 6a13 13 0 0 1 0 20" opacity=".65"/></svg>',
+  code:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12L6 24l10 12M32 12l10 12-10 12M27 8l-6 32"/></svg>',
+  scale:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6v34M12 12h24M12 12l-5 10a5 5 0 0 0 10 0zM36 12l-5 10a5 5 0 0 0 10 0z"/><path d="M16 40h16"/></svg>',
+  chart:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 40h36"/><path d="M8 34l10-10 6 5 12-14"/><path d="M30 15h6v6"/><circle cx="36" cy="10" r="3" fill="currentColor"/></svg>',
+  dove:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22c6-8 16-10 24-6l8-6-4 10c2 8-4 16-14 16-6 0-10-3-12-8z"/><path d="M16 24c3 1 6 1 9-1"/><circle cx="14" cy="20" r="1.4" fill="currentColor"/></svg>',
+  cards:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="12" width="18" height="26" rx="3" transform="rotate(-8 15 25)"/><rect x="22" y="10" width="18" height="26" rx="3" transform="rotate(8 31 23)"/><path d="M31 19l1.5 3 3 .5-2.2 2.2.5 3.3-2.8-1.5-2.8 1.5.5-3.3-2.2-2.2 3-.5z" fill="currentColor" stroke="none"/></svg>',
+  dron:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="5"/><path d="M24 19V9M24 29v10M19 24H9M29 24h10"/><circle cx="9" cy="9" r="5"/><circle cx="39" cy="9" r="5"/><circle cx="9" cy="39" r="5"/><circle cx="39" cy="39" r="5"/></svg>',
+  dish:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 36a16 16 0 0 1 8-26l10 10a16 16 0 0 1-18 16z"/><path d="M20 20l-6 16"/><circle cx="27" cy="13" r="2.4"/><path d="M34 20l4 4M38 12l4 4" opacity=".65"/></svg>',
+  morse:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="24" cy="20" r="10"/><path d="M10 40h28" opacity=".4"/><circle cx="14" cy="40" r="1.6" fill="currentColor"/><circle cx="21" cy="40" r="1.6" fill="currentColor"/><path d="M28 40h8" stroke-width="2.6"/><path d="M24 10v-4" opacity=".6"/></svg>',
+  reptil:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="24" rx="19" ry="10"/><ellipse cx="24" cy="24" rx="3.2" ry="8" fill="currentColor" stroke="none"/><path d="M6 20q6-6 12-2M42 20q-6-6-12-2" opacity=".6"/><path d="M4 34q8 4 20 4t20-4" opacity=".45"/></svg>',
+  retro:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="16" width="36" height="20" rx="4"/><circle cx="17" cy="26" r="5"/><path d="M31 21v6M28 24h6"/><path d="M10 12l4 4M38 12l-4 4" opacity=".6"/></svg>'
+};
+const ROOM_THEMES={
+  intro:{c:'#1E90FF'},
+  onboarding:{c:'#1E90FF',t:'NUEVO AGENTE DETECTADO',s:'sin registro \u00B7 sin muros \u00B7 solo tu nombre en clave',svg:ROOM_ICONS.badge},
+  hangar:{c:'#3E8EFF'},
+  globo:{c:'#00D4FF'},
+  misiones:{c:'#00FF87',t:'SALA DE MISIONES',s:'dossiers con noticias reales \u00B7 arrastra la ficha a la mesa',svg:ROOM_ICONS.folder},
+  biblio:{c:'#B26BFF',t:'BIBLIOTECA SECRETA',s:'excava capa por capa \u00B7 documentos hist\u00F3ricos reales',svg:ROOM_ICONS.book},
+  interrog:{c:'#5CE1E6',t:'SALA DE INTERROGACI\u00D3N',s:'holograma inestable \u00B7 arranca el secreto con preguntas',svg:ROOM_ICONS.eye},
+  sim:{c:'#FF3B30',t:'SIMULADOR DE COMBATE',s:'5 entrenamientos \u00B7 tu r\u00E9cord te espera',svg:ROOM_ICONS.tank},
+  sniper:{c:'#FF7A2A',t:'FRANCOTIRADOR OSINT',s:'dispara solo a la desinformaci\u00F3n \u00B7 la verdad NO se toca',svg:ROOM_ICONS.cross},
+  tactica:{c:'#FFE066',t:'MESA T\u00C1CTICA',s:'arrastre por peso \u00B7 victoria en vivo',svg:ROOM_ICONS.map},
+  builder:{c:'#8AFFC1',t:'CONSTRUCTOR DE MUNDOS',s:'esculpe monta\u00F1as, oc\u00E9anos y fronteras',svg:ROOM_ICONS.mtn},
+  quiz:{c:'#FF5CA8',t:'QUIZ GEOPOL\u00CDTICO',s:'bloques caen del techo \u00B7 responde antes del impacto',svg:ROOM_ICONS.quiz},
+  td:{c:'#A8FF3E',t:'DEFENSA PERIMETRAL',s:'oleadas que aprenden de ti',svg:ROOM_ICONS.turret},
+  radio:{c:'#FF8A5C',t:'RADIO GEOPOL\u00CDTICA',s:'dial anal\u00F3gico \u00B7 noticias reales al aire',svg:ROOM_ICONS.radio},
+  hack:{c:'#00FFC8',t:'TERMINAL DE HACKEO',s:'scan \u00B7 trace \u00B7 block \u00B7 decrypt',svg:ROOM_ICONS.code},
+  detector:{c:'#FF4655',t:'DETECTOR DE MENTIRAS',s:'VERITAS-9 analiza el feed en vivo',svg:ROOM_ICONS.scale},
+  mercado:{c:'#FFD700',t:'MERCADO DE INTELIGENCIA',s:'12 activos \u00B7 tus an\u00E1lisis mueven el precio',svg:ROOM_ICONS.chart},
+  negocia:{c:'#7EC8FF',t:'SALA DE NEGOCIACI\u00D3N',s:'guerra \u2194 paz en 90 segundos',svg:ROOM_ICONS.dove},
+  album:{c:'#FF9ED2',t:'\u00C1LBUM DEL AGENTE',s:'cartas f\u00EDsicas \u00B7 l\u00E1nzalas a otros agentes',svg:ROOM_ICONS.cards},
+  dron:{c:'#9AB0D8',t:'PILOTAJE DE DRON',s:'vista satelital real \u00B7 recoge la intel al 100%',svg:ROOM_ICONS.dron},
+  comm:{c:'#FFB347',t:'SALA DE COMUNICACIONES',s:'radio \u00B7 hackeo \u00B7 verdad \u00B7 morse',svg:ROOM_ICONS.dish},
+  morse:{c:'#FFE082',t:'CANAL MORSE SECRETO',s:'sincroniza tus toques con la l\u00E1mpara',svg:ROOM_ICONS.morse},
+  archivo:{c:'#7CFC00',t:'ARCHIVO CLASIFICADO',s:'im\u00E1genes primero \u00B7 luego la verdad: REAL, MITO o PARCIAL',svg:ROOM_ICONS.reptil}
+};
+function applyTheme(name){
+  const T=ROOM_THEMES[name];
+  document.documentElement.style.setProperty('--acc',(T&&T.c)||'#1E90FF');
+  $$('.roomHero').forEach(h=>h.remove());
+  const def=Rooms[name];
+  const sec=def&&def.section?$('#'+def.section):null;
+  if(!sec)return;
+  if(T&&T.svg){
+    sec.style.background='radial-gradient(1100px 460px at 50% -60px,'+T.c+'26,transparent 70%)';
+    const h=document.createElement('div');h.className='roomHero holo';
+    h.style.borderColor=T.c;h.style.background='linear-gradient(100deg,'+T.c+'2e,transparent 62%)';
+    h.innerHTML='<div class="rhIc" style="color:'+T.c+';filter:drop-shadow(0 0 9px '+T.c+')">'+T.svg+'</div>'
+      +'<div style="min-width:0"><div class="rhT" style="color:'+T.c+'">'+esc(T.t)+'</div>'
+      +(T.s?'<div class="rhS">'+esc(T.s)+'</div>':'')+'</div>';
+    sec.prepend(h);
+  }else{
+    sec.style.background='';
+  }
+}
 
 /* ---------- BUCLE MAESTRO + FPS ---------- */
 const Loop={

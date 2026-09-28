@@ -5,7 +5,8 @@ const ThreeEng=(function(){
     if(!window.THREE)return false;
     try{
       renderer=new THREE.WebGLRenderer({canvas:$('#gl3d'),antialias:!IS_MOBILE,powerPreference:'high-performance',alpha:true});
-      renderer.setPixelRatio(Math.min(devicePixelRatio||1,IS_MOBILE?1.5:2));
+      /* PERF v69: pixelRatio contenido (1 móvil / 1.25 desktop) — antes 1.5/2 congelaba el hangar */
+      renderer.setPixelRatio(Math.min(devicePixelRatio||1,IS_MOBILE?1:1.25));
       renderer.setSize(innerWidth,innerHeight);
       renderer.setClearColor(0x0A0A0F,1);
       camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,400);
@@ -19,7 +20,9 @@ const ThreeEng=(function(){
   function reg(name,obj){scenes[name]=obj;}
   function show(name){active=name;$('#gl3d').style.display=ok?'block':'none';}
   function hide(){active=null;$('#gl3d').style.display='none';}
-  function lowQuality(){if(ok)renderer.setPixelRatio(1);}
+  /* PERF v69: calidad progresiva — 1º ratio 1, luego 0.72 (el bucle llama 2 veces máx) */
+  let _qStep=0;
+  function lowQuality(){_qStep=Math.min(2,_qStep+1);if(ok)renderer.setPixelRatio(_qStep===1?1:.72);}
   return{init,reg,show,hide,lowQuality,ready:()=>ok,camera:()=>camera,renderer:()=>renderer};
 })();
 if(!ThreeEng.init())console.error('WebGL no disponible: modo degradado');
@@ -91,7 +94,7 @@ if(window.THREE){
   const earth=new THREE.Mesh(new THREE.SphereGeometry(2.2,48,48),earthMat);
   earthGroup.add(earth);
   const loader=new THREE.TextureLoader();
-  loader.load('/assets/globe/earth-blue-marble.jpg',t=>{earthMat.map=t;earthMat.color.set(0xffffff);earthMat.needsUpdate=true;},undefined,()=>{});
+  loader.load('/assets/globe/earth-blue-marble.jpg',t=>{t.anisotropy=4;earthMat.map=t;earthMat.color.set(0xffffff);earthMat.needsUpdate=true;},undefined,()=>{});
   const atm=new THREE.Mesh(new THREE.SphereGeometry(2.38,48,48),
     new THREE.MeshBasicMaterial({color:0x1E90FF,transparent:true,opacity:.16,side:THREE.BackSide,blending:THREE.AdditiveBlending}));
   earthGroup.add(atm);
@@ -116,11 +119,11 @@ if(window.THREE){
       if(k<3){camera.position.set(0,0,15-k*.8);camera.lookAt(0,0,0);}
       else if(k<6.5){const u=(k-3)/3.5;camera.position.set(0,1.2*u,15-3.8-9.4*u*u);camera.lookAt(0,0,0);}
       else if(k<8.2){const u=(k-6.5)/1.7;earth.rotation.y=lerp(earth.rotation.y,2.4,.04);
-        camera.position.set(Math.sin(k*2)*.4,1.2,5.6-1.4*u);camera.lookAt(0,.4,2.1);
+        camera.position.set(Math.sin(k*2)*.4,1.2,5.9-1.2*u);camera.lookAt(0,.4,2.1);
         boom.material.opacity=Math.min(1,u*1.5)* (u<.85?1:(1-(u-.85)/.15)*.4);
         for(let i=0;i<260;i++){const v=bv[i];bp[i*3]+=v.x*dt;bp[i*3+1]+=v.y*dt;bp[i*3+2]+=v.z*dt;}
         boomGeo.attributes.position.needsUpdate=true;
-      }else{camera.position.z=4.2;}
+      }else{camera.position.z=4.7;}
       if(!obj._s1&&k>2.2){obj._s1=1;SFX.whoosh();}
       if(!obj._s2&&k>6.5){obj._s2=1;SFX.alarm();Flash.red(.28,200);Shake.add(5,500);vibrate(80);}
       if(!obj._s3&&k>8.6){obj._s3=1;Flash.white(.9,240);SFX.explosion();}
@@ -151,8 +154,8 @@ const Hangar=(function(){
   const dir=new THREE.DirectionalLight(0xfff2df,.85);dir.position.set(6,12,4);scene.add(dir);
   const FXW=44,FXD=30,WALL_H=6,R_AGENT=.45;
   const obstacles=[]; /* {x,z,w,d} */
-  /* suelo por zonas */
-  function floorMat(c1,rough,op){return new THREE.MeshStandardMaterial({color:c1,roughness:rough,metalness:.35,transparent:!!op,opacity:op||1});}
+  /* suelo por zonas — PERF v69: Lambert en vez de Standard (PBR caro con muchas luces) */
+  function floorMat(c1,rough,op){return new THREE.MeshLambertMaterial({color:c1,transparent:!!op,opacity:op||1});}
   const carpet=new THREE.Mesh(new THREE.PlaneGeometry(14,FXD),floorMat(0x141423,.98));
   carpet.rotation.x=-Math.PI/2;carpet.position.set(-15,0,0);scene.add(carpet);
   const metal=new THREE.Mesh(new THREE.PlaneGeometry(16,FXD),floorMat(0x1a2233,.55));
@@ -160,12 +163,12 @@ const Hangar=(function(){
   const glassBase=new THREE.Mesh(new THREE.PlaneGeometry(14,FXD),floorMat(0x101828,.5));
   glassBase.rotation.x=-Math.PI/2;glassBase.position.set(15,0,0);scene.add(glassBase);
   const glass=new THREE.Mesh(new THREE.PlaneGeometry(13.4,FXD-1),
-    new THREE.MeshPhysicalMaterial({color:0x1E90FF,transparent:true,opacity:.16,roughness:.05,metalness:.1}));
+    new THREE.MeshBasicMaterial({color:0x1E90FF,transparent:true,opacity:.14,blending:THREE.AdditiveBlending,depthWrite:false}));
   glass.rotation.x=-Math.PI/2;glass.position.set(15,.02,0);scene.add(glass);
   const grid=new THREE.GridHelper(46,23,0x1E90FF,0x13203a);
   grid.material.transparent=true;grid.material.opacity=.24;grid.position.y=.01;scene.add(grid);
   /* paredes */
-  const wallMat=new THREE.MeshStandardMaterial({color:0x11162a,roughness:.8,metalness:.3});
+  const wallMat=new THREE.MeshLambertMaterial({color:0x11162a});
   [[0,-FXD/2-.5,FXW+2,1],[0,FXD/2+.5,FXW+2,1],[-FXW/2-.5,0,1,FXD+2],[FXW/2+.5,0,1,FXD+2]].forEach(w=>{
     const m=new THREE.Mesh(new THREE.BoxGeometry(w[2],WALL_H,w[3]),wallMat);
     m.position.set(w[0],WALL_H/2,w[1]);scene.add(m);
@@ -189,8 +192,11 @@ const Hangar=(function(){
     const m=new THREE.Mesh(new THREE.PlaneGeometry(3.2,4.8),
       new THREE.MeshBasicMaterial({map:t,transparent:true,side:THREE.DoubleSide}));
     m.position.set(d.x,2.4,-FXD/2+.06);scene.add(m);
-    const glow=new THREE.PointLight(new THREE.Color(d.col),.9,9);
-    glow.position.set(d.x,3,-FXD/2+1.2);scene.add(glow);
+    /* PERF v69: sin PointLight por puerta (eran 7 luces puntuales = congelación).
+       Un plano aditivo da el mismo resplandor a coste cero. */
+    const glow=new THREE.Mesh(new THREE.PlaneGeometry(4.6,5.8),
+      new THREE.MeshBasicMaterial({color:new THREE.Color(d.col),transparent:true,opacity:.15,blending:THREE.AdditiveBlending,depthWrite:false}));
+    glow.position.set(d.x,2.5,-FXD/2+.14);scene.add(glow);
     doorMeshes.push(m);
   });
   /* estaciones: terminal hack + detector + isla */
@@ -205,17 +211,18 @@ const Hangar=(function(){
   }
   const hackPed=pedestal(20.6,-6,'#00FF87');
   const detPed=pedestal(-20.6,2,'#FF3B30');
+  const arcPed=pedestal(-20.6,-8,'#7CFC00');
   const islMat=new THREE.MeshBasicMaterial({color:0xFFC24B,transparent:true,opacity:.5});
   const island=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.6,.18,24),islMat);
   island.position.set(19.5,.09,-12.6);scene.add(island);
-  const islLight=new THREE.PointLight(0xFFC24B,1.3,10);islLight.position.set(19.5,2,-12.6);scene.add(islLight);
+  const islLight=new THREE.PointLight(0xFFC24B,1,8);islLight.position.set(19.5,2,-12.6);scene.add(islLight);
   const islLbl=makeLabelSprite('ISLA DEL OR\u00C1CULO','#FFC24B',3.4);islLbl.position.set(19.5,2.6,-12.6);scene.add(islLbl);
   /* bancas + NPC reclutas */
   const SPECS=[{spec:'ECO',name:'R. Vasquez',col:'#00FF87',d:'economista'},{spec:'MIL',name:'T. Okoye',col:'#FF3B30',d:'militar'},{spec:'DIP',name:'L. Fontaine',col:'#1E90FF',d:'diplom\u00E1tica'}];
   const benches=[];
   SPECS.forEach((sp,i)=>{
     const bz=12.2,bx=-8+i*8;
-    const bench=new THREE.Mesh(new THREE.BoxGeometry(3,.5,.9),new THREE.MeshStandardMaterial({color:0x1c2440,metalness:.5,roughness:.5}));
+    const bench=new THREE.Mesh(new THREE.BoxGeometry(3,.5,.9),new THREE.MeshLambertMaterial({color:0x1c2440}));
     bench.position.set(bx,.45,bz);scene.add(bench);obstacles.push({x:bx,z:bz,w:3,d:.9});
     const npc=new THREE.Group();
     const body=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.7,4,10),new THREE.MeshStandardMaterial({color:0x2a3552,roughness:.7}));
@@ -435,11 +442,13 @@ const Hangar=(function(){
     nearStation=null;nearBench=null;
     if(agent.pos.distanceTo(V3(20.6,0,-6))<2.2)nearStation='hack';
     else if(agent.pos.distanceTo(V3(-20.6,0,2))<2.2)nearStation='detector';
+    else if(agent.pos.distanceTo(V3(-20.6,0,-8))<2.2)nearStation='archivo';
     else for(const b of benches){if(Math.hypot(agent.pos.x-b.x,agent.pos.z-b.z)<2.4){nearBench=b;break;}}
     nearIsland=Math.hypot(agent.pos.x-19.5,agent.pos.z+12.6)<1.7;
     const sb=$('#stationBar');
     if(nearStation==='hack'){sb.className='stationBar on';sb.innerHTML='<button class="btn green sm" data-act="hack">TERMINAL DE HACKEO &raquo;</button>';}
     else if(nearStation==='detector'){sb.className='stationBar on';sb.innerHTML='<button class="btn red sm" data-act="detector">DETECTOR DE MENTIRAS &raquo;</button>';}
+    else if(nearStation==='archivo'){sb.className='stationBar on';sb.innerHTML='<button class="btn gold sm" data-act="archivo">ARCHIVO CLASIFICADO &raquo;</button>';}
     else if(nearBench&&!nearBench.recruited()){sb.className='stationBar on';sb.innerHTML='<button class="btn sm" data-act="interview">ENTREVISTAR A '+nearBench.spec.name.toUpperCase()+' ['+nearBench.spec.spec+'] &raquo;</button>';}
     else sb.classList.remove('on');
     /* isla */
@@ -539,7 +548,7 @@ const Hangar=(function(){
       const near=Math.abs(agent.pos.x-DOORS[i].x)<3&&agent.pos.z<-10;
       m.scale.setScalar(lerp(m.scale.x,near?1.12:1+Math.sin(t*2+i)*.02,.1));
     });
-    [hackPed,detPed].forEach(p=>{p.userData.core.rotation.y+=dt*2;p.userData.core.rotation.x+=dt;});
+    [hackPed,detPed,arcPed].forEach(p=>{p.userData.core.rotation.y+=dt*2;p.userData.core.rotation.x+=dt;});
   }
   function celebrate(){agent.jumpV=5;FX.confetti(50);SFX.fanfare();}
   function dance(){agent.danceT=2;}
@@ -555,6 +564,7 @@ const Hangar=(function(){
       if(nearDoor)go(nearDoor.room);
       else if(nearStation==='hack')go('hack');
       else if(nearStation==='detector')go('detector');
+      else if(nearStation==='archivo')go('archivo');
       else if(nearBench)Recruit.interview(nearBench.spec);
       else if(nearIsland&&P.knownIsland)toast('ISLA DEL OR\u00C1CULO',P.island?'La isla ya te dio su secreto.':'Algo dorado late bajo la arena...','gold');
     }
