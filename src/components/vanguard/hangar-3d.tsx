@@ -9,6 +9,9 @@
 // v70.1 ANTI-FREEZE: pixelRatio limitado (1 móvil / 1.25 desktop, antes 2.0),
 // materiales PBR → Lambert (el 70% del coste GPU), calidad adaptativa en 3 pasos
 // si el FPS medio cae de 38, y cero allocations Vector3 dentro del bucle.
+// v71.1 LUNA LLENA: sombras reales PCFSoft proyectadas por el sol bajo (solo
+// desktop, se apagan solas si el GPU no aguanta), brasas flotando en el aire
+// cálido del hangar y viñeta cinematográfica sobre el lienzo. Nada plano.
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
@@ -178,6 +181,11 @@ export function HangarPanel() {
     let fpsTime = 0;
     const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
     renderer.setPixelRatio(QUALITY_STEPS[0]);
+    // v71.1: sombras reales — el sol bajo proyecta al agente, pedestales y podio
+    if (!isMobile) {
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    }
     renderer.setSize(mount.clientWidth, Math.max(320, mount.clientHeight));
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = "none";
@@ -186,6 +194,18 @@ export function HangarPanel() {
     scene.add(new THREE.HemisphereLight(0xff9f5a, 0x140a06, 0.8));
     const key = new THREE.DirectionalLight(0xffc890, 1.3);
     key.position.set(-18, 7, -14); // sol bajo, tocando el horizonte
+    if (!isMobile) {
+      key.castShadow = true;
+      key.shadow.mapSize.set(1024, 1024);
+      key.shadow.camera.left = -30;
+      key.shadow.camera.right = 30;
+      key.shadow.camera.top = 26;
+      key.shadow.camera.bottom = -26;
+      key.shadow.camera.near = 2;
+      key.shadow.camera.far = 80;
+      key.shadow.bias = -0.002;
+      key.shadow.radius = 4;
+    }
     scene.add(key);
     const rim = new THREE.DirectionalLight(0xff6b35, 0.55); // contraluz de brasa
     rim.position.set(20, 5, 16);
@@ -199,6 +219,7 @@ export function HangarPanel() {
     const floorMat = new THREE.MeshLambertMaterial({ color: 0x17100c });
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALF_W * 2, HALF_D * 2), floorMat);
     floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = !isMobile;
     scene.add(floor);
     const grid = new THREE.GridHelper(HALF_W * 2, 26, 0x6b3a1c, 0x33210f);
     (grid.material as THREE.Material).transparent = true;
@@ -211,6 +232,8 @@ export function HangarPanel() {
       new THREE.MeshLambertMaterial({ color: 0x2a1c12, emissive: 0x4a2410, emissiveIntensity: 0.5 })
     );
     podium.position.set(0, 0.11, 4);
+    podium.castShadow = !isMobile;
+    podium.receiveShadow = !isMobile;
     scene.add(podium);
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(2.75, 0.05, 10, 60),
@@ -226,6 +249,7 @@ export function HangarPanel() {
       const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.4), wallMat);
       m.position.set(x, y, z);
       m.rotation.y = ry;
+      m.receiveShadow = !isMobile;
       scene.add(m);
     };
     mkWall(HALF_W * 2, WALL_H, 0, WALL_H / 2, -HALF_D, 0);
@@ -274,6 +298,8 @@ export function HangarPanel() {
         new THREE.MeshLambertMaterial({ color: 0x141a26 })
       );
       pedestal.position.y = 0.5;
+      pedestal.castShadow = !isMobile;
+      pedestal.receiveShadow = !isMobile;
       const core = new THREE.Mesh(
         new THREE.IcosahedronGeometry(0.42, 0),
         new THREE.MeshLambertMaterial({ color: s.hex, emissive: s.hex, emissiveIntensity: 1.4 })
@@ -317,13 +343,17 @@ export function HangarPanel() {
     const skinMat = new THREE.MeshLambertMaterial({ color: 0xd8a77a });
     const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 0.62, 4, 12), bodyMat);
     torso.position.y = 1.18;
+    torso.castShadow = !isMobile;
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 16), skinMat);
     head.position.y = 1.92;
+    head.castShadow = !isMobile;
     const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.5, 4, 8), bodyMat);
     armL.position.set(-0.47, 1.22, 0);
+    armL.castShadow = !isMobile; // armR/legR heredan al clonar
     const armR = armL.clone(); armR.position.x = 0.47;
     const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.5, 4, 8), new THREE.MeshLambertMaterial({ color: 0x1a1d26 }));
     legL.position.set(-0.18, 0.42, 0);
+    legL.castShadow = !isMobile;
     const legR = legL.clone(); legR.position.x = 0.18;
     agent.add(torso, head, armL, armR, legL, legR);
     // insignia de rango en el pecho
@@ -434,6 +464,38 @@ export function HangarPanel() {
     moonGlow.position.copy(moon.position);
     moonGlow.position.z -= 0.15;
     scene.add(moonGlow);
+
+    // ---- v71.1 LUNA LLENA: brasas flotando en el aire cálido del hangar ----
+    // (ceniza encendida que sube lenta desde el suelo del ocaso eterno)
+    const EMBERS = 120;
+    const emberPos = new Float32Array(EMBERS * 3);
+    const emberSeed = new Float32Array(EMBERS);
+    for (let i = 0; i < EMBERS; i++) {
+      emberPos[i * 3] = (Math.random() - 0.5) * (HALF_W * 2 - 4);
+      emberPos[i * 3 + 1] = Math.random() * 8.4;
+      emberPos[i * 3 + 2] = (Math.random() - 0.5) * (HALF_D * 2 - 4);
+      emberSeed[i] = Math.random() * 100;
+    }
+    const emberGeo = new THREE.BufferGeometry();
+    emberGeo.setAttribute("position", new THREE.BufferAttribute(emberPos, 3));
+    const emberTex = (() => {
+      const c = document.createElement("canvas");
+      c.width = c.height = 64;
+      const ctx = c.getContext("2d")!;
+      const g = ctx.createRadialGradient(32, 32, 2, 32, 32, 30);
+      g.addColorStop(0, "rgba(255,230,180,1)");
+      g.addColorStop(0.4, "rgba(255,150,60,0.55)");
+      g.addColorStop(1, "rgba(255,110,40,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 64, 64);
+      return new THREE.CanvasTexture(c);
+    })();
+    const embers = new THREE.Points(emberGeo, new THREE.PointsMaterial({
+      map: emberTex, color: 0xffa050, size: 0.17, transparent: true, opacity: 0.8,
+      blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, fog: false,
+    }));
+    embers.frustumCulled = false;
+    scene.add(embers);
 
     // ---- movimiento ----
     const keys = new Set<string>();
@@ -642,6 +704,17 @@ export function HangarPanel() {
       moonGlowMat.opacity = 0.5 + Math.sin(t * 0.7) * 0.12;
       moon.rotation.z = Math.sin(t * 0.05) * 0.06;
 
+      // v71.1: las brasas suben y ondulan (120 puntos, cero allocations)
+      const pa = embers.geometry.attributes.position;
+      for (let i = 0; i < EMBERS; i++) {
+        const sd = emberSeed[i];
+        let y = pa.getY(i) + dt * (0.22 + (sd % 0.14));
+        if (y > 8.6) y = 0.15;
+        pa.setY(i, y);
+        pa.setX(i, pa.getX(i) + Math.sin(t * 0.55 + sd) * dt * 0.2);
+      }
+      pa.needsUpdate = true;
+
       // descubrimiento por proximidad
       if (!islandHintShown && agent.position.x > 21 && agent.position.z < -15) {
         islandHintShown = true;
@@ -666,6 +739,15 @@ export function HangarPanel() {
           qStep++;
           renderer.setPixelRatio(QUALITY_STEPS[qStep]);
           renderer.setSize(mount.clientWidth, Math.max(320, mount.clientHeight));
+          // v71.1: último recurso antes que congelar — apagar las sombras
+          if (!isMobile && qStep === QUALITY_STEPS.length - 1 && renderer.shadowMap.enabled) {
+            renderer.shadowMap.enabled = false;
+            scene.traverse((o) => {
+              const mm = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+              if (Array.isArray(mm)) mm.forEach((x) => { x.needsUpdate = true; });
+              else if (mm) mm.needsUpdate = true;
+            });
+          }
         }
       }
 
@@ -692,6 +774,7 @@ export function HangarPanel() {
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
       joyEl?.removeEventListener("pointerdown", onJoyStart);
+      emberTex.dispose();
       scene.traverse((o) => {
         const mesh = o as THREE.Mesh;
         if (mesh.geometry) mesh.geometry.dispose();
@@ -730,6 +813,8 @@ export function HangarPanel() {
 
       <div className="relative hud-corner overflow-hidden" style={{ height: "min(72vh, 620px)", background: "#07070d" }}>
         <div ref={mountRef} className="absolute inset-0" />
+        {/* v71.1: viñeta cinematográfica — el hangar nunca se ve plano */}
+        <div className="pointer-events-none absolute inset-0 oc-vignette" />
 
         {/* HUD del agente */}
         <div className="absolute top-2 left-2 font-mono text-[9px] uppercase tracking-widest pointer-events-none select-none">

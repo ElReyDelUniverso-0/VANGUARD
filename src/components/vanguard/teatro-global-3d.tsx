@@ -254,8 +254,8 @@ class TeatroGlobalEngine {
     this.host.appendChild(r.domElement);
 
     const S = this.scene = new THREE.Scene();
-    S.fog = new THREE.Fog(0x05070c, 180, 560);
-    S.background = new THREE.Color(0x05070c);
+    S.fog = new THREE.Fog(0x080709, 180, 560);
+    S.background = new THREE.Color(0x080709);
 
     this.cam = new THREE.PerspectiveCamera(
       50, (this.host.clientWidth || 640) / (this.host.clientHeight || 360), 0.5, 900
@@ -276,10 +276,15 @@ class TeatroGlobalEngine {
       window.setTimeout(() => { if (!this.disposed) this.controls.autoRotate = true; }, 12000);
     });
 
-    S.add(new THREE.HemisphereLight(0x8aa4c8, 0x0a0d12, 1.1));
-    const key = new THREE.DirectionalLight(0xcfe0ff, 0.9);
+    // v71.1 LUNA LLENA: sala de guerra al ocaso — hemisferio cálido + lámpara de bronce
+    S.add(new THREE.HemisphereLight(0xc79a72, 0x120c08, 1.05));
+    const key = new THREE.DirectionalLight(0xffd9b0, 0.95);
     key.position.set(-80, 120, 60);
     S.add(key);
+    // lámpara de guerra: charco de luz cálida sobre la mesa
+    const lamp = new THREE.PointLight(0xffb347, 70, 130, 1.7);
+    lamp.position.set(0, 58, 0);
+    S.add(lamp);
 
     // mesa de guerra: mapa mundial
     this.mapTex = buildMapTexture();

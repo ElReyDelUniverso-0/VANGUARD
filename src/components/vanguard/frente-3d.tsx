@@ -7,6 +7,8 @@
 // tridimensional orbitable. Toda la economía, strikes y sonido siguen viviendo
 // en frente-panel.tsx; aquí solo se renderiza y se traducen los clics a strikes.
 // Optimizado para móvil: Lambert sin sombras, pools de objetos, pixelRatio tope 2.
+// v71.1 LUNA LLENA: contraluz de brasa eterno, luna llena sobre el horizonte del
+// frente (noche/amanecer/ocaso), viñeta cinematográfica y pixelRatio controlado.
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
@@ -223,7 +225,9 @@ export function Frente3D({ stateRef, front, onStrike }: {
     const W0 = host.clientWidth || 640;
     const H0 = host.clientHeight || 380;
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // v71.1: tope de resolución controlado (antes 2.0 — regla anti-freeze del hangar)
+    const fIsMobile = window.matchMedia("(pointer: coarse)").matches;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, fIsMobile ? 1 : 1.25));
     renderer.setSize(W0, H0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     host.appendChild(renderer.domElement);
@@ -253,6 +257,10 @@ export function Frente3D({ stateRef, front, onStrike }: {
     const frontGlow = new THREE.PointLight(0xff5030, 0.35 + front.intensity / 150, 60, 1.6);
     frontGlow.position.set(0, 5, 2);
     scene.add(frontGlow);
+    // v71.1: contraluz de brasa — la puesta de sol eterna recorta las siluetas
+    const emberRim = new THREE.DirectionalLight(0xff6b35, 0.45);
+    emberRim.position.set(-35, 9, 32);
+    scene.add(emberRim);
 
     const disposables: { dispose(): void }[] = [];
     const track = <T extends { dispose(): void }>(d: T): T => { disposables.push(d); return d; };
@@ -288,6 +296,14 @@ export function Frente3D({ stateRef, front, onStrike }: {
       scene.add(sp);
       return sp;
     };
+
+    // v71.1 LUNA LLENA: la luna domina el cielo del frente (si no es pleno día)
+    if (P.sunI < 1.1) {
+      const halo = addSprite("rgba(255,214,140,0.30)", "rgba(255,150,60,0)", 46, 27, -96, 48);
+      halo.material.fog = false;
+      const disc = addSprite("rgba(255,246,224,0.98)", "rgba(255,236,190,0)", 46, 27, -96, 15, false);
+      disc.material.fog = false;
+    }
     if (front.terrain === "urbano") {
       for (let i = 0; i < 13; i++) {
         const bw = 2.2 + (i % 3) * 1.1;
@@ -724,6 +740,11 @@ export function Frente3D({ stateRef, front, onStrike }: {
     host.appendChild(flashEl);
     flashRef.current = flashEl;
 
+    // v71.1: viñeta cinematográfica permanente sobre el frente
+    const vig = document.createElement("div");
+    vig.style.cssText = "position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 92% at 50% 42%, transparent 54%, rgba(5,3,2,0.34) 86%, rgba(3,2,2,0.56) 100%), linear-gradient(to top, rgba(255,122,46,0.05) 0%, transparent 20%);";
+    host.appendChild(vig);
+
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
@@ -745,6 +766,7 @@ export function Frente3D({ stateRef, front, onStrike }: {
       renderer.dispose();
       host.removeChild(renderer.domElement);
       if (flashEl.parentNode === host) host.removeChild(flashEl);
+      vig.remove();
     };
   }, [front, onStrike, stateRef]);
 

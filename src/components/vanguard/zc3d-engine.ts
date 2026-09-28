@@ -472,7 +472,7 @@ export class ZC3DEngine {
 
   private buildWorld() {
     const S = this.scene = new THREE.Scene();
-    S.fog = new THREE.Fog(0x11151f, 110, 340);
+    S.fog = new THREE.Fog(0x151219, 110, 340);
 
     // cielo de crepúsculo
     const skyC = document.createElement("canvas");
@@ -503,8 +503,39 @@ export class ZC3DEngine {
     starGeo.setAttribute("position", new THREE.Float32BufferAttribute(starPos, 3));
     S.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xcdd6ff, size: 1.4, sizeAttenuation: false, fog: false })));
 
-    // luces de crepúsculo
-    S.add(new THREE.HemisphereLight(0x9aa6c4, 0x322c22, 1.35));
+    // v71.1 LUNA LLENA: la luna preside el cielo del teatro — con cráteres pintados
+    const moonC = document.createElement("canvas");
+    moonC.width = moonC.height = 256;
+    const mc = moonC.getContext("2d")!;
+    const mg = mc.createRadialGradient(112, 100, 24, 128, 128, 122);
+    mg.addColorStop(0, "rgba(255,253,244,1)");
+    mg.addColorStop(0.55, "rgba(255,240,200,0.95)");
+    mg.addColorStop(0.78, "rgba(255,214,140,0.30)");
+    mg.addColorStop(1, "rgba(255,190,110,0)");
+    mc.fillStyle = mg;
+    mc.fillRect(0, 0, 256, 256);
+    const crater2 = (x: number, y: number, r: number, a: number) => {
+      const cg = mc.createRadialGradient(x, y, 1, x, y, r);
+      cg.addColorStop(0, `rgba(150,110,60,${a})`);
+      cg.addColorStop(1, "rgba(150,110,60,0)");
+      mc.fillStyle = cg;
+      mc.beginPath();
+      mc.arc(x, y, r, 0, Math.PI * 2);
+      mc.fill();
+    };
+    crater2(96, 92, 18, 0.28);
+    crater2(158, 148, 13, 0.24);
+    crater2(122, 168, 10, 0.2);
+    crater2(170, 100, 8, 0.18);
+    const moonT = new THREE.CanvasTexture(moonC);
+    moonT.colorSpace = THREE.SRGBColorSpace;
+    const zcMoon = new THREE.Sprite(new THREE.SpriteMaterial({ map: moonT, transparent: true, opacity: 0.95, fog: false, depthWrite: false }));
+    zcMoon.position.set(150, 205, -330);
+    zcMoon.scale.set(70, 70, 1);
+    S.add(zcMoon);
+
+    // luces de crepúsculo (v71.1: hemisferio cálido de ocaso eterno)
+    S.add(new THREE.HemisphereLight(0xb59a80, 0x32271c, 1.35));
     const sun = new THREE.DirectionalLight(0xffa25a, 1.5);
     sun.position.set(-120, 46, -30);
     S.add(sun);

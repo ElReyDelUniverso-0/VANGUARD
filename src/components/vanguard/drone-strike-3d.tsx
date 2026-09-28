@@ -278,6 +278,8 @@ function DroneStrike3D({ onFinish }: { onFinish: (score: number, hits: number, d
   return (
     <div className="hud-corner relative overflow-hidden select-none" style={{ height: "min(62vh, 560px)" }}>
       <div ref={containerRef} className="absolute inset-0" />
+      {/* v71.1: viñeta cinematográfica — la ciudad nunca se ve plana */}
+      <div className="pointer-events-none absolute inset-0 oc-vignette" />
       {/* crosshair */}
       <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
         <div className="relative w-10 h-10 opacity-70">
@@ -438,18 +440,38 @@ function GameEngine({
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x05070c);
-    scene.fog = new THREE.Fog(0x05070c, 190, 780);
+    scene.background = new THREE.Color(0x0a080f);
+    scene.fog = new THREE.Fog(0x0a080f, 190, 780);
 
     const camera = new THREE.PerspectiveCamera(64, container.clientWidth / container.clientHeight, 0.5, 900);
 
-    scene.add(new THREE.HemisphereLight(0x9ab4d4, 0x2a2018, 1.6));
+    // v71.1 LUNA LLENA: hemisferio cálido de crepúsculo eterno
+    scene.add(new THREE.HemisphereLight(0xc79a72, 0x2a2018, 1.55));
     const dir = new THREE.DirectionalLight(0xffd9a0, 1.35);
     dir.position.set(-60, 90, 40);
     scene.add(dir);
 
+    // v71.1: la luna llena preside la ciudad en ruinas
     const geoms: THREE.BufferGeometry[] = [];
     const mats: THREE.Material[] = [];
+    const moonCv = document.createElement("canvas");
+    moonCv.width = moonCv.height = 256;
+    const mctx = moonCv.getContext("2d")!;
+    const mgr = mctx.createRadialGradient(112, 100, 24, 128, 128, 122);
+    mgr.addColorStop(0, "rgba(255,253,244,1)");
+    mgr.addColorStop(0.55, "rgba(255,240,200,0.95)");
+    mgr.addColorStop(0.78, "rgba(255,214,140,0.30)");
+    mgr.addColorStop(1, "rgba(255,190,110,0)");
+    mctx.fillStyle = mgr;
+    mctx.fillRect(0, 0, 256, 256);
+    const moonTexDr = new THREE.CanvasTexture(moonCv);
+    moonTexDr.colorSpace = THREE.SRGBColorSpace;
+    const moonMatDr = new THREE.SpriteMaterial({ map: moonTexDr, transparent: true, opacity: 0.96, fog: false, depthWrite: false });
+    mats.push(moonMatDr);
+    const moonSpr = new THREE.Sprite(moonMatDr);
+    moonSpr.position.set(-170, 155, -700);
+    moonSpr.scale.set(140, 140, 1);
+    scene.add(moonSpr);
     const box = () => { const g = new THREE.BoxGeometry(1, 1, 1); geoms.push(g); return g; };
     const lam = (c: number) => { const m = new THREE.MeshLambertMaterial({ color: c }); mats.push(m); return m; };
     const bas = (c: number, o = 1) => { const m = new THREE.MeshBasicMaterial({ color: c, transparent: o < 1, opacity: o }); mats.push(m); return m; };
