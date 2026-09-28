@@ -351,3 +351,23 @@ Work Log:
 Stage Summary:
 - Produccion https://vanguard-kq9r.vercel.app = v70.0 CLASICO PURO: solo existe el Vanguard Clasico, igualito, sin presentacion del planeta, con hangar sin freeze y globos sin zoom a ras de tierra.
 - Siguientes rondas: ola de difusion (shares 618->750), editor de personaje 3D, PVP de predicciones.
+
+---
+Task ID: 19
+Agent: main (Super Z)
+Task: v71.0 OCASO — "cada accion tenga animacion, mega actualizacion de graficos, sombras, iluminacion, nada plano, calido como puesta de sol, negro, una luna llena"
+
+Work Log:
+- BANNER OCASO (src/components/vanguard/ocaso-banner.tsx, NUEVO, SVG puro + CSS): cielo degradado negro→violeta crepusculo→brasa naranja, LUNA LLENA con halo y crateres, 16 estrellas titilando (deterministas, delay escalonado), sol hundiéndose en el horizonte con resplandor, silueta de 13 rascacielos con ventanas ámbar encendidas (algunas parpadean), niebla cálida baja y título VANGUARD con glow. Abre la portada INICIO antes de CostoGuerra. prefers-reduced-motion respetado.
+- CIELO DE LA APP: html::before = luna llena fija (top-right, 130px, crateres por radial-gradients, halo doble por box-shadow, latido 7s); html::after = horizonte en brasa eterno (radial + lineal cálido desde abajo). Rejilla HUD retintada a brasa rgba(200,110,40,0.05).
+- AURORAS → CREPÚSCULO: los 4 orbes aurora ahora son brasa (255,110,40), violeta ocaso (150,70,200), oro (255,180,60) y carmesí (255,70,60).
+- MICRO-ANIMACIÓN EN CADA ACCIÓN: button/[role=button] global (hover brightness 1.1, active scale 0.96 + flash 1.18); main .hud-panel/.glass con entrada en cascada ocElevacion (delays nth-child 1-7) y hover lift -2px + borde brasa + glow cálido; títulos h2/h3 con text-shadow brasa; scrollbar con gradiente de fuego; selección y focus ring ámbar; main img con sombra cálida + clase .img-cine (hover scale + glow).
+- HANGAR 3D BAJO EL OCASO (hangar-3d.tsx): hemisferio brasa 0xff9f5a, sol bajo direccional cálido 0xffc890 desde el horizonte (-18,7,-14), RIM light naranja 0xff6b35 nuevo, spot ámbar 0xffb347; fondo/niebla cálidos 0x0b0709/0x120a08; suelo y rejilla color brasa; podio emissive 0x4a2410; anillo y franjas de muro 0xffa050; LUNA LLENA gigante sobre el muro norte: CircleGeometry 2.4 con textura canvas (degradado lunar + 5 cráteres), fog:false, + glow sprite aditivo 15u que LATe (opacity 0.5±0.12, sin alloc). Puertas conservan colores funcionales.
+- GLOBOS: atmósfera cálida #ff9f45 en globe-3d y globe-map-3d (antes azul #1E90FF).
+- version.ts → v71.0 OCASO. Perf: todo CSS transform/opacity GPU; 3D = 2 objetos nuevos y cero allocations/frame; tsc 0, build OK.
+- QA local + producción (agent-browser): banner cinematográfico visible con luna/ciudad/estrellas ✓, hangar con ambiente brasa + anillo naranja + luna 3D ✓, consola limpia ✓, deploy 54069bb → health v71.0/db up en intento 3 (~2.5 min) ✓.
+- Cifras al cerrar: online 1 (QA), récord presencia 6, players 122, shares external 618.
+
+Stage Summary:
+- Produccion https://vanguard-kq9r.vercel.app = v71.0 OCASO: puesta de sol eterna sobre noche negra con luna llena en portada, cielo de la app, hangar 3D y globos; micro-animación en cada botón y panel; nada plano.
+- Siguientes rondas: sombras reales (shadowMaps) en hangar si el GPU del jefe lo aguanta, iluminación de ocaso en frente-3d y zona-cero, ola de difusión shares 618→750.
