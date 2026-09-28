@@ -15,6 +15,7 @@ import {
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
   Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
+  Infinity as InfinityIcon,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -69,7 +70,11 @@ export type TabKey =
   // v51.0 PULSO MUNDIAL: intel REAL sin API key (ISS + OpenSky + Spaceflight News)
   | "pulso"
   // v67.0 EL HANGAR: hub 3D con agente, puertas holográficas y estaciones
-  | "hangar";
+  | "hangar"
+  // v72.0 INFINITA VERDADES: el mayor centro de noticias del mundo
+  | "verdades"
+  // v72.0 MI PAÍS: simulador de nación + uniones + reclutamiento aleatorio
+  | "mipais";
 
 interface TabDef {
   key: TabKey;
@@ -168,6 +173,9 @@ const TABS: Record<TabKey, TabDef> = {
   pulso:         { key: "pulso",         label: "Pulso Mundial (satélite + radar aéreo)", short: "PULSO", icon: <Activity className="w-3.5 h-3.5" />, color: "cyan" },
   // v67.0 EL HANGAR: el hub 3D del agente
   hangar:        { key: "hangar",        label: "EL HANGAR (Base 3D)", short: "HANGAR", icon: <Warehouse className="w-3.5 h-3.5" />, color: "cyan" },
+  // v72.0 INFINITA VERDADES + MI PAÍS
+  verdades:      { key: "verdades",      label: "INFINITA VERDADES (el mayor centro de noticias)", short: "VERDADES", icon: <InfinityIcon className="w-3.5 h-3.5" />, color: "amber" },
+  mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
   combate:       { key: "combate",       label: "Simulador de combate", short: "COMBATE", icon: <Swords className="w-3.5 h-3.5" />, color: "red" },
@@ -215,13 +223,13 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
-    desc: "Portada con noticias en vivo y menú de mundos",
-    tabs: [TABS.inicio, TABS.noticias],
+    desc: "Portada con noticias en vivo, muro infinito de verdades y menú de mundos",
+    tabs: [TABS.inicio, TABS.verdades, TABS.noticias],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
-    desc: "Guerra, detective, Warsim, Age of Nations y Arcade",
-    tabs: [TABS.mundo, TABS.multijugador, TABS.frente, TABS.detective, TABS.edad, TABS.arcade, TABS.dron, TABS.minijuego, TABS.combate, TABS.warsim, TABS.conquista],
+    desc: "Guerra, detective, Warsim, Age of Nations, MI PAÍS y Arcade",
+    tabs: [TABS.mundo, TABS.multijugador, TABS.frente, TABS.detective, TABS.edad, TABS.mipais, TABS.arcade, TABS.dron, TABS.minijuego, TABS.combate, TABS.warsim, TABS.conquista],
   },
   {
     key: "mercado", label: "MERCADO", short: "MERCADO", icon: <CircleDollarSign className="w-4 h-4" />, color: "green",

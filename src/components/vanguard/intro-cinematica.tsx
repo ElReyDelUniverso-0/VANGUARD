@@ -1,11 +1,14 @@
 "use client";
 
-// v67.0 EL HANGAR — INTRO CINEMATOGRÁFICA DE 8 SEGUNDOS (canvas 2D, cero assets).
+// v72.0 INFINITA VERDADES — INTRO CINEMATOGRÁFICA (canvas 2D, cero assets).
 // Secuencia: viaje warp por estrellas y nebulosas → la Tierra gira con atmósfera
 // azul → zoom a una zona de conflicto con explosión de partículas naranjas/rojas
-// → alarma de emergencia → VANGUARD letra a letra con glitch y separación
-// cromática → la pantalla se rompe como cristal y los fragmentos caen con
+// → alarma de emergencia → VANGUARD letra a letra con LETRAS 3D REALISTAS
+// (extrusión profunda, degradado blanco→oro→brasa, rim de luz de luna, glitch
+// cromático) sobre un CIELO DE OCASO con LUNA LLENA con cráteres y BRASAS
+// flotando → la pantalla se rompe como cristal y los fragmentos caen con
 // gravedad real. Clic/tap = saltar. Una vez por sesión. Reduced-motion = sin intro.
+// v70 la desmontó; el comandante pidió intro de vuelta con letras realistas.
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,11 +40,17 @@ export function IntroCinematica() {
       } catch {
         shown = false;
       }
-      if (!shown && !reduced) setVisible(true);
-      try {
-        sessionStorage.setItem(BOOT_KEY, "1");
-      } catch {
-        /* noop */
+      if (!shown && !reduced) {
+        // v72.0: va a jugar la intro — la llave se marca AL TERMINAR (en finish()),
+        // así el bono/tutorial saben que deben esperar a que el cine termine.
+        setVisible(true);
+      } else {
+        // no jugará: marca ya para que el bono/tutorial salgan sin esperar
+        try {
+          sessionStorage.setItem(BOOT_KEY, "1");
+        } catch {
+          /* noop */
+        }
       }
     }, 0);
     return () => clearTimeout(t0);
@@ -121,40 +130,152 @@ export function IntroCinematica() {
     let explosion: { x: number; y: number; vx: number; vy: number; life: number; hue: number }[] = [];
     let explosionAt = -1;
 
+    // v72.0 — LUNA LLENA con cráteres + halo (se dibuja en el cielo del título)
+    const drawMoon = () => {
+      const mr = Math.min(W, H) * 0.085;
+      const mx = W * 0.79;
+      const my = H * 0.2;
+      const halo = ctx.createRadialGradient(mx, my, mr * 0.6, mx, my, mr * 3.4);
+      halo.addColorStop(0, "rgba(226,236,255,0.30)");
+      halo.addColorStop(0.4, "rgba(180,200,255,0.10)");
+      halo.addColorStop(1, "transparent");
+      ctx.fillStyle = halo;
+      ctx.fillRect(mx - mr * 3.5, my - mr * 3.5, mr * 7, mr * 7);
+      const face = ctx.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, mr * 0.15, mx, my, mr);
+      face.addColorStop(0, "#fff7e8");
+      face.addColorStop(0.65, "#e8e2d2");
+      face.addColorStop(1, "#b7b3a6");
+      ctx.beginPath();
+      ctx.arc(mx, my, mr, 0, Math.PI * 2);
+      ctx.fillStyle = face;
+      ctx.fill();
+      // cráteres deterministas
+      const craters = [
+        { d: 0.42, a: 0.5, r: 0.2 }, { d: 1.9, a: 2.2, r: 0.13 },
+        { d: 0.9, a: 3.4, r: 0.17 }, { d: 2.6, a: 4.3, r: 0.09 },
+        { d: 1.4, a: 5.4, r: 0.11 }, { d: 2.1, a: 1.3, r: 0.08 },
+      ];
+      for (const c of craters) {
+        const cx2 = mx + Math.cos(c.a) * c.d * mr * 0.42;
+        const cy2 = my + Math.sin(c.a) * c.d * mr * 0.42;
+        ctx.beginPath();
+        ctx.arc(cx2, cy2, c.r * mr, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(120,116,104,0.35)";
+        ctx.fill();
+      }
+    };
+
+    // BRASAS flotantes del ocaso (entran con el título)
+    let embers: { x: number; y: number; v: number; s: number; ph: number }[] = [];
+    const drawOcaso = (dt: number) => {
+      // horizonte cálido bajo + luna arriba: la puesta de sol del comandante
+      const hor = ctx.createLinearGradient(0, H * 0.62, 0, H);
+      hor.addColorStop(0, "transparent");
+      hor.addColorStop(0.55, "rgba(255,110,40,0.10)");
+      hor.addColorStop(1, "rgba(255,138,42,0.22)");
+      ctx.fillStyle = hor;
+      ctx.fillRect(0, H * 0.62, W, H * 0.38);
+      drawMoon();
+      if (embers.length === 0) {
+        embers = Array.from({ length: 46 }, () => ({
+          x: Math.random() * W,
+          y: H * 0.55 + Math.random() * H * 0.5,
+          v: 0.25 + Math.random() * 0.85,
+          s: 0.8 + Math.random() * 2.1,
+          ph: Math.random() * Math.PI * 2,
+        }));
+      }
+      for (const e of embers) {
+        e.y -= e.v * dt * 0.06;
+        e.ph += 0.03;
+        if (e.y < H * 0.12) { e.y = H + 8; e.x = Math.random() * W; }
+        const a = 0.35 + 0.3 * Math.sin(e.ph * 2);
+        ctx.beginPath();
+        ctx.arc(e.x + Math.sin(e.ph) * 7, e.y, e.s, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,${150 + Math.floor(40 * Math.sin(e.ph))},60,${a})`;
+        ctx.fill();
+      }
+    };
+
+    // v72.0 — LETRAS 3D REALISTAS: extrusión, degradado blanco→oro→brasa,
+    // rim de luz de luna y glitch cromático al aterrizar cada letra.
     const drawTitle = (t: number) => {
-      // 0..1 progreso de letras + glitch cromático
-      const letters = "VANGUARD".split("");
-      const shown = Math.floor((t / 1100) * letters.length + 1);
-      const fs = Math.min(64, Math.max(34, W / 12));
+      const word = "VANGUARD";
+      const letters = word.split("");
+      const fs = Math.min(72, Math.max(36, W / 11));
       ctx.save();
       ctx.translate(W / 2, H * 0.42);
-      ctx.font = `900 ${fs}px Orbitron, sans-serif`;
-      ctx.textAlign = "center";
+      ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      const g = t < 1100 ? 1 : Math.max(0, 1 - (t - 1100) / 500);
-      const jitter = g * (Math.random() - 0.5) * 14;
-      // separación cromática
-      ctx.globalAlpha = 0.85;
-      ctx.fillStyle = "#FF3B30";
-      ctx.fillText("VANGUARD".slice(0, shown), jitter - 4 * g, (Math.random() - 0.5) * 3 * g);
-      ctx.fillStyle = "#00FF87";
-      ctx.fillText("VANGUARD".slice(0, shown), jitter + 4 * g, (Math.random() - 0.5) * 3 * g);
-      ctx.fillStyle = "#F0F0F0";
+      ctx.font = `900 ${fs}px Orbitron, sans-serif`;
+      // medir anchos letra a letra (con tracking)
+      const track = fs * 0.06;
+      const widths = letters.map((l) => ctx.measureText(l).width + track);
+      const total = widths.reduce((s, w2) => s + w2, 0) - track;
+      let x = -total / 2;
+      const g = t < 1150 ? 1 : Math.max(0, 1 - (t - 1150) / 500);
+      const jitter = g * (Math.random() - 0.5) * 10;
+      for (let i = 0; i < letters.length; i++) {
+        const lp = Math.min(1, Math.max(0, (t - i * 95) / 240)); // entrada por letra
+        const ease = 1 - Math.pow(1 - lp, 3);
+        const lx = x + jitter;
+        const ly = (1 - ease) * -fs * 0.55;
+        ctx.save();
+        ctx.translate(lx, ly);
+        ctx.globalAlpha = 0.12 + 0.88 * ease;
+        // EXTRUSIÓN 3D: capas oscuras hacia abajo-derecha
+        const depth = Math.round(fs / 11);
+        for (let k = depth; k >= 1; k--) {
+          ctx.fillStyle = k > depth * 0.5 ? "#20100a" : "#3a1c0c";
+          ctx.fillText(letters[i], k * 1.25, k * 1.5);
+        }
+        // CARA: degradado luz de luna → oro → brasa
+        const face = ctx.createLinearGradient(0, -fs * 0.62, 0, fs * 0.62);
+        face.addColorStop(0, "#ffffff");
+        face.addColorStop(0.42, "#ffe9c0");
+        face.addColorStop(0.78, "#ffb35c");
+        face.addColorStop(1, "#ff7a1e");
+        ctx.shadowColor = "rgba(255,150,60,0.55)";
+        ctx.shadowBlur = 18 + 14 * ease;
+        ctx.fillStyle = face;
+        ctx.fillText(letters[i], 0, 0);
+        ctx.shadowBlur = 0;
+        // RIM de luna: trazo frío arriba-izquierda
+        ctx.strokeStyle = `rgba(196,220,255,${0.5 * ease})`;
+        ctx.lineWidth = Math.max(1, fs / 48);
+        ctx.strokeText(letters[i], -0.8, -0.8);
+        // GLITCH cromático al aterrizar
+        if (g > 0 && lp >= 1 && Math.random() < 0.34) {
+          ctx.globalAlpha = 0.55 * g;
+          ctx.fillStyle = "#FF3B30";
+          ctx.fillText(letters[i], -3.5 * g, (Math.random() - 0.5) * 3);
+          ctx.fillStyle = "#00FF87";
+          ctx.fillText(letters[i], 3.5 * g, (Math.random() - 0.5) * 3);
+        }
+        ctx.restore();
+        x += widths[i];
+      }
       ctx.globalAlpha = 1;
-      ctx.fillText("VANGUARD".slice(0, shown), jitter, 0);
-      // subtítulo
-      if (t > 900) {
-        ctx.font = `600 ${Math.max(9, fs / 7)}px "JetBrains Mono", monospace`;
-        ctx.fillStyle = "#1E90FF";
-        ctx.globalAlpha = Math.min(1, (t - 900) / 400);
-        ctx.fillText("C E N T R O   D E   M A N D O   G L O B A L", 0, fs * 0.85);
+      ctx.textAlign = "center";
+      // subtítulo INFINITA VERDADES
+      if (t > 760) {
+        ctx.font = `600 ${Math.max(10, fs / 6.4)}px "JetBrains Mono", monospace`;
+        ctx.fillStyle = "#ffb35c";
+        ctx.globalAlpha = Math.min(1, (t - 760) / 420);
+        ctx.shadowColor = "rgba(255,138,42,0.6)";
+        ctx.shadowBlur = 12;
+        ctx.fillText("I N F I N I T A   V E R D A D E S", 0, fs * 0.95);
+        ctx.shadowBlur = 0;
       }
       ctx.restore();
     };
 
+    let lastT = start;
     const frame = (now: number) => {
       if (doneRef.current) return;
       const t = now - start;
+      const dt = Math.min(48, Math.max(4, now - lastT)); // delta ms acotado
+      lastT = now;
       let phase: Phase = "warp";
       if (t < 2600) phase = "warp";
       else if (t < 4400) phase = "earth";
@@ -307,7 +428,8 @@ export function IntroCinematica() {
         ctx.restore();
       }
 
-      // TÍTULO GLITCH
+      // TÍTULO GLITCH sobre cielo de ocaso con luna llena y brasas
+      if (phase === "title" || phase === "shatter") drawOcaso(dt);
       if (phase === "title") drawTitle(t - 5900);
       if (phase === "shatter") drawTitle(1200 + Math.random() * 40);
 
@@ -379,6 +501,12 @@ export function IntroCinematica() {
       if (doneRef.current) return;
       doneRef.current = true;
       cancelAnimationFrame(rafRef.current);
+      // v72.0: la intro queda marcada SOLO al terminar o saltarse
+      try {
+        sessionStorage.setItem(BOOT_KEY, "1");
+      } catch {
+        /* noop */
+      }
       setVisible(false);
     }
     const skip = () => finish();

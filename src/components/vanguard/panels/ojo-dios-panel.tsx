@@ -11,6 +11,9 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Eye, Radio, Swords, Globe2, Users, MessageSquare, Zap, MapPin, MonitorPlay, Radar as RadarIcon, Plane, Shield, Infinity as InfinityIcon } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v72.0 INFINITA VERDADES: título épico + CÁMARAS PÚBLICAS DEL MUNDO
+import { TituloEpico } from "@/components/vanguard/titulo-epico";
+import { CamarasMundo } from "@/components/vanguard/camaras-mundo";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
@@ -308,6 +311,19 @@ export function OjoDiosPanel() {
           </span>
         }
       />
+
+      {/* v72.0 REGLA DE ORO: título grande + ilustración + texto fácil */}
+      <TituloEpico
+        titulo="EL OJO DE DIOS"
+        volanta="Observación omnisciente del planeta"
+        imagen="/ilustraciones/ojo-dios.jpg"
+        texto="Todo lo que pasa en el mundo, visto desde arriba: el globo 3D en vivo con unidades militares reales, cámaras públicas de cada país, escáner de conflictos y el pulso del planeta. Nada escapa al Ojo."
+        altura={250}
+        tinte="luna"
+      />
+
+      {/* v72.0 CÁMARAS PÚBLICAS DEL MUNDO */}
+      <CamarasMundo />
 
       {/* ===== franja de contadores globales ===== */}
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-2">

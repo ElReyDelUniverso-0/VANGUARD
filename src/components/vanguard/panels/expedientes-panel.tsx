@@ -11,6 +11,8 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Eye, FolderOpen, FileLock2, Star, ExternalLink, Award, ShieldAlert, Landmark, Building2, Vault, Hourglass } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v72.0 REGLA DE ORO: título grande + imagen + texto fácil también en el archivo
+import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { useRetention } from "@/lib/retention";
@@ -101,6 +103,16 @@ export function ExpedientesPanel() {
         subtitle="Expedientes desclasificados · FBI · CIA · NARA · NSArchive · Black Vault"
         icon={<FolderOpen className="w-4 h-4" />}
         color="violet"
+      />
+
+      {/* v72.0 REGLA DE ORO: imagen primero, texto fácil después */}
+      <TituloEpico
+        titulo="ARCHIVO SECRETO"
+        volanta="Expedientes desclasificados"
+        imagen="/assets/real/radar-1.jpg"
+        texto="Documentos que los gobiernos mantuvieron ocultos y hoy son públicos: FBI, CIA, NARA, NSArchive y Black Vault. Colecciónalos, léalos rápido y descubre lo que pasaba entre bambalinas."
+        altura={220}
+        tinte="luna"
       />
 
       {/* ===== BANNER DE CLASIFICACIÓN (estética de dossier) ===== */}

@@ -47,13 +47,21 @@ export function TutorialModal() {
     try {
       seen = localStorage.getItem(STORE_KEY) === "1";
     } catch { /* modo privado */ }
+    // v72.0: si la intro va a correr esta sesión, el tutorial espera a que acabe
+    const fireDelay = () => {
+      try {
+        return sessionStorage.getItem("vanguard-booted") === "1" ? 2400 : 9800;
+      } catch {
+        return 2400;
+      }
+    };
     const fire = () => {
       if (!seen) {
         setOpen(true);
         try { localStorage.setItem(STORE_KEY, "1"); } catch { /* noop */ }
       }
     };
-    const tm = setTimeout(fire, 2400);
+    const tm = setTimeout(fire, fireDelay());
     // MANUAL: evento global (Centro de ayuda, HUD, etc.)
     const onOpen = () => {
       clearTimeout(tm);

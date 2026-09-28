@@ -12,6 +12,9 @@ import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
 import { TabNav, type TabKey } from "@/components/vanguard/tab-nav";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
+// v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
+// luna llena y ocaso cálido). Una vez por sesión, saltable, reduced-motion off.
+const IntroCinematica = dynamic(() => import("@/components/vanguard/intro-cinematica").then((m) => m.IntroCinematica), { ssr: false });
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
 import { SettingsModal } from "@/components/vanguard/settings-modal";
 import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
@@ -140,6 +143,9 @@ const CrisisPanel = dynamic(() => import("@/components/vanguard/panels/crisis-pa
 const RadarPanel = dynamic(() => import("@/components/vanguard/panels/radar-panel").then((m) => m.RadarPanel), { ssr: false, loading: PanelSkeleton });
 // v30 VISTA DIOS: observación omnisciente del sistema (guerra + salas + planeta)
 const OjoDiosPanel = dynamic(() => import("@/components/vanguard/panels/ojo-dios-panel").then((m) => m.OjoDiosPanel), { ssr: false, loading: PanelSkeleton });
+// v72.0 INFINITA VERDADES + MI PAÍS
+const InfinitaPanel = dynamic(() => import("@/components/vanguard/panels/infinita-panel").then((m) => m.InfinitaPanel), { ssr: false, loading: PanelSkeleton });
+const MiPaisPanel = dynamic(() => import("@/components/vanguard/panels/mi-pais-panel").then((m) => m.MiPaisPanel), { ssr: false, loading: PanelSkeleton });
 const ExpedientesPanel = dynamic(() => import("@/components/vanguard/panels/expedientes-panel").then((m) => m.ExpedientesPanel), { ssr: false, loading: PanelSkeleton });
 // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo
 const OscuraPanel = dynamic(() => import("@/components/vanguard/panels/oscura-panel").then((m) => m.OscuraPanel), { ssr: false, loading: PanelSkeleton });
@@ -313,7 +319,8 @@ export default function Home() {
       </div>
       <div className="vignette-layer" aria-hidden />
       <div className="particles-layer" aria-hidden />
-      {/* v70.0 CLASICO PURO: sin presentación del planeta — entrada directa al juego */}
+      {/* v72.0: intro cinematográfica de vuelta — letras realistas + luna llena */}
+      <IntroCinematica />
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -411,6 +418,8 @@ export default function Home() {
         {tab === "crisis" && <CrisisPanel />}
         {tab === "radar" && <RadarPanel />}
         {tab === "ojodios" && <OjoDiosPanel />}
+        {tab === "verdades" && <InfinitaPanel />}
+        {tab === "mipais" && <MiPaisPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}
         {/* v59 ALEJANDRÍA OSCURA: teorías, armas y civilizaciones */}

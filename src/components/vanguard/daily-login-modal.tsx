@@ -31,7 +31,13 @@ export function DailyLoginModal() {
     const today = todayKey();
     if (lastLoginDate !== today && !dismissed) {
       // pequeño delay para que cargue el HUD
-      const t = setTimeout(() => setOpen(true), 400);
+      // v72.0: si la intro cinematográfica va a correr esta sesión, el bono
+      // ESPERA a que termine (8.3s de intro + margen) — primero la intro, luego el premio.
+      let delay = 400;
+      try {
+        if (sessionStorage.getItem("vanguard-booted") !== "1") delay = 9400;
+      } catch { /* noop */ }
+      const t = setTimeout(() => setOpen(true), delay);
       return () => clearTimeout(t);
     }
   }, [lastLoginDate, dismissed]);
