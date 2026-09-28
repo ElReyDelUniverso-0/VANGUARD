@@ -413,3 +413,21 @@ Work Log:
 Stage Summary:
 - v72.0 INFINITA VERDADES: 2 tabs nuevos (VERDADES, MI PAÍS), 2 APIs nuevas, intro remontada con letras 3D, cámaras públicas del mundo en el Ojo, regla de oro en 4 secciones.
 - Cifras al cerrar v71.1 (base de comparación): players 134, visitas 137, presence pico 6, shares external 618, goal 134/150 (89%).
+
+---
+Task ID: 21-cierre
+Agent: main (Super Z)
+Task: Cierre de producción v72.0 INFINITA VERDADES
+
+Work Log:
+- Commit 0c2de0f pusheado a main (b8ae17e..0c2de0f). Vercel desplegó en el intento 10 de polling (~2.5 min): /api/health → {"ok":true,"db":"up","version":"v72.0"}.
+- QA PRODUCCIÓN (agent-browser, sesión fresca): INTRO cinematográfica completa en vivo — VANGUARD 3D con degradado oro/brasa + extrusión + glitch cromático, subtítulo INFINITA VERDADES, LUNA LLENA con cráteres y halo, brasas, shatter de cristal, TOCA PARA SALTAR. Bono diario salió DESPUÉS del cine (fix BOOT_KEY funciona).
+- INFINITA VERDADES en producción: MURO INFINITO REAL — 18 verdades al abrir, "CARGAR MÁS VERDADES" → 32 verdades (página 2 del archivo), cards IMAGEN PRIMERO con fotos reales (drón, Big Ben, buque), headlines reales (León XIV en Francia, visas EEUU a Bolivia/Colombia/Perú), chips dinámicos de países presentes en el muro, relojes mundiales vivos, sismos USGS.
+- EL OJO DE DIOS en producción: título épico + ilustración del ojo gigante, ISS NASA bajo demanda (botón CONECTAR SEÑAL, canal oficial UCLA_DiR1FfKNvjuUpBHmylQ verificado), intel de país con hora local viva (Roma) + clima Open-Meteo + enlaces verificados 200, extras Times Square/Windy/Opentopia.
+- MI PAÍS en producción — FLUJO COMPLETO PROBADO: wizard 4 pasos llenado (AURORA DORADA · aurorino · Puerto Luna · "Ni un paso bajo la luna" · bandera roja/amarilla 🔥 · REPÚBLICA · América del Sur · presidente Comandante Selena Vargas + gabinete generado) → PROCLAMAR → toast "¡AURORA DORADA proclamado! Ya figura en el mapa de naciones" → tarjeta con stats servidor: pob 61,9M / PIB 566M USD / ejército 585,4K + figuras públicas persistidas → CARTEL "LIGA LUNAR" fundado ("Bajo la misma luna", 1 miembro) verificado por GET /api/naciones → POST /api/reclutar responde error amable correcto al ser el único online (la exclusión de uno mismo funciona).
+- Cifras al cerrar v72.0: players 135 (RÉCORD; +1 desde v71.1), visitas 138, presence pico 6, shares external 618/750 (82%), goal 135/150 (90%) — la meta 150 paga 9000Ⓒ + 90💎 + 1800XP. Online al cierre: 1 (QA).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v72.0 INFINITA VERDADES estable (db up, 0 errores de consola en QA).
+- Nuevas features vivas: muro infinito de noticias, cámaras públicas del mundo, intro cinematográfica, MI PAÍS con uniones y reclutamiento aleatorio, regla de oro título+ilustración+texto.
+- Siguientes rondas: ola de difusión 618→750 shares (meta 150 players al 90%), editor de personaje 3D, PVP de predicciones.
