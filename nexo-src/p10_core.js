@@ -50,7 +50,7 @@ function addCoins(n,why){
     if(P.recruits.some(r=>r.spec==='ECO'))m*=1.05;
     n=Math.round(n*m);
     P.totalEarned+=n;
-    if(m>1&&why)toast('MULTIPLICADOR','+'+n+' C\u20AC2 (x'+m.toFixed(1)+' activo)','gold');
+    if(m>1&&why)toast('MULTIPLICADOR','+'+n+' \u24B8 (x'+m.toFixed(1)+' activo)','gold');
   }
   P.coins=Math.max(0,Math.round(P.coins+n));
   $('#coinsN').textContent=fmt(P.coins);
@@ -63,7 +63,7 @@ function addXP(n){
   while(P.rank<9&&P.xp>=RANK_XP[P.rank+1]){P.rank++;up=true;}
   if(up){
     const bonus=100*P.rank;P.coins+=bonus;
-    toast('ASCENSO','\u00A1'+RANKS[P.rank]+'! Bonus +'+bonus+' C\u20AC2','gold',5200);
+    toast('ASCENSO','\u00A1'+RANKS[P.rank]+'! Bonus +'+bonus+' \u24B8','gold',5200);
     SFX.fanfare();Flash.ring();
     Hangar.celebrate&&Hangar.celebrate();
     pushFeed('HAS SIDO ASCENDIDO A '+RANKS[P.rank],'y');
@@ -90,7 +90,7 @@ function refreshHUD(){
   const hb=World.heartbeatMs();
   $('#hbIcon').style.setProperty('--hb',hb+'ms');
 }
-const IC='\u20AC2'; /* símbolo moneda ⓒ */
+const IC= '\u24B8'; /* símbolo moneda ⓒ */
 
 /* ---------- TOASTS / MODAL / FLASH ---------- */
 function toast(t1,t2,kind,ms){
@@ -222,7 +222,7 @@ async function wikiSummary(title){
 
 /* ---------- FEED SOCIAL + TICKER ---------- */
 const AGENT_NAMES=['Ana L\u00F3pez','K. Voss','Marelys P.','El C\u00F3ndor','Nadia R.','J. O\u2019Hara','La Viuda','Tango-7','R. M\u00E9ndez','Sombra-9','Camila F.','El Dan\u00E9s','P. Okonkwo','Vig\u00EDa-2','D. Kowalski','Halc\u00F3n-3'];
-const FEED_ACTS=['acaba de resolver el caso del Mar Rojo','desbloque\u00F3 el Expediente Omega','intercept\u00F3 un mensaje morse',' gan\u00F3 un duelo de predicciones','encontr\u00F3 un documento quemado en la Biblioteca','atrap\u00F3 a un esp\u00EDa doble','complet\u00F3 un reconocimiento con dron al 100%','descifr\u00F3 el c\u00F3digo de la sala de hackeo','gan\u00F3 +500 C\u20AC2 en el Mercado de Inteligencia','fotografi\u00F3 una zona de conflicto desde el sat\u00E9lite','reclut\u00F3 a un economista para su equipo','sobrevivi\u00F3 al Protocolo Rojo'];
+const FEED_ACTS=['acaba de resolver el caso del Mar Rojo','desbloque\u00F3 el Expediente Omega','intercept\u00F3 un mensaje morse',' gan\u00F3 un duelo de predicciones','encontr\u00F3 un documento quemado en la Biblioteca','atrap\u00F3 a un esp\u00EDa doble','complet\u00F3 un reconocimiento con dron al 100%','descifr\u00F3 el c\u00F3digo de la sala de hackeo','gan\u00F3 +500 \u24B8 en el Mercado de Inteligencia','fotografi\u00F3 una zona de conflicto desde el sat\u00E9lite','reclut\u00F3 a un economista para su equipo','sobrevivi\u00F3 al Protocolo Rojo'];
 const feedItems=[];
 function pushFeed(txt,cls){feedItems.unshift({txt,cls:cls||'',t:now()});if(feedItems.length>40)feedItems.pop();buildTicker();}
 function randomFeedEvent(){

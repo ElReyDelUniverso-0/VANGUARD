@@ -49,7 +49,7 @@
     const read=P['arc_'+f.id];
     return '<div class="arcCard'+(read?' read':'')+'" data-i="'+i+'" style="--ac:'+(f.c||'#1E90FF')+'">'
      +'<div class="imw">'+im+'<span class="arcBadge '+vd[1]+'">'+vd[0]+'</span>'
-     +(read?'':'<span class="rw">+30 \u20AC2</span>')+'</div>'
+     +(read?'':'<span class="rw">+30 \u24B8</span>')+'</div>'
      +'<div class="tt">'+esc(f.t)+'</div>'
      +'<div class="tx">'+esc(f.yr)+' \u00B7 '+esc(f.txt.slice(0,78))+'\u2026</div></div>';
   }

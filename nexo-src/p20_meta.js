@@ -257,6 +257,7 @@ $('#stationBar').addEventListener('click',e=>{
   const act=e.target.dataset&&e.target.dataset.act;
   if(act==='hack')go('hack');
   else if(act==='detector')go('detector');
+  else if(act==='archivo')go('archivo');
   else if(act==='interview'&&HangarNearBench())HangarInterview();
 });
 function HangarNearBench(){return true;}
