@@ -163,7 +163,7 @@ export function GlobeMap3D({
   minHeight = 340,
   autoRotate = true,
   rotateSpeed = 0.42,
-  atmosphereColor = "#1E90FF",
+  atmosphereColor = "#FF9F45",
   pov,
   onGlobeClick,
   dimColor = DEFAULT_DIM,

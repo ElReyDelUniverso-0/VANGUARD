@@ -180,11 +180,11 @@
     );
   }
   ::selection {
-    background: rgba(30, 144, 255, 0.4);
-    color: #ffffff;
+    background: rgba(255, 160, 70, 0.45);
+    color: #1a0d02;
   }
   :focus-visible {
-    outline: 1.5px solid rgba(62, 166, 255, 0.75);
+    outline: 1.5px solid rgba(255, 179, 71, 0.8);
     outline-offset: 2px;
   }
 }
@@ -204,24 +204,26 @@
   will-change: transform;
 }
 .aurora-orb { position: absolute; border-radius: 50%; }
+/* v71.0 OCASO: los orbes aurora son ahora nubes de crepúsculo — brasa, violeta
+   de ocaso, oro y carmesí — derivando lento detrás de todo el sistema */
 .aurora-orb-1 {
   width: 46vw; height: 46vw; left: -6%; top: -10%;
-  background: radial-gradient(circle, rgba(160, 26, 26, 0.3) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(255, 110, 40, 0.17) 0%, transparent 66%);
   animation: auroraA 28s ease-in-out infinite alternate;
 }
 .aurora-orb-2 {
   width: 40vw; height: 40vw; right: -8%; top: 24%;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(150, 70, 200, 0.15) 0%, transparent 66%);
   animation: auroraB 34s ease-in-out infinite alternate;
 }
 .aurora-orb-3 {
   width: 44vw; height: 44vw; left: 24%; bottom: -16%;
-  background: radial-gradient(circle, rgba(255, 59, 48, 0.22) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(255, 180, 60, 0.15) 0%, transparent 66%);
   animation: auroraC 40s ease-in-out infinite alternate;
 }
 .aurora-orb-4 {
   width: 30vw; height: 30vw; left: 40%; top: 8%;
-  background: radial-gradient(circle, rgba(0, 255, 135, 0.12) 0%, transparent 66%);
+  background: radial-gradient(circle, rgba(255, 70, 60, 0.11) 0%, transparent 66%);
   animation: auroraB 44s ease-in-out infinite alternate-reverse;
 }
 @keyframes auroraA {
@@ -466,6 +468,14 @@
   --vg-neon: #00FF87;
   --vg-soft: #F0F0F0;
   --vg-panel: #1A1A2E;
+
+  /* v71.0 OCASO — paleta cálida de puesta de sol sobre noche negra */
+  --oc-ember: #FF7A2E;      /* brasa del horizonte */
+  --oc-gold: #FFB347;       /* oro de la luna baja */
+  --oc-amber: #FFD98E;      /* ámbar de ventana encendida */
+  --oc-moon: #FFF6E0;       /* blanco luna */
+  --oc-dusk: #4A1630;       /* violeta del crepúsculo */
+  --hud-grid: rgba(200, 110, 40, 0.05); /* rejilla con tinte de brasa */
 }
 
 .font-display { font-family: var(--font-orbitron), var(--font-geist-sans), sans-serif; }
@@ -723,4 +733,131 @@
 }
 .vg-crisis-vignette {
   mix-blend-mode: screen;
+}
+
+/* ============================================================
+   v71.0 OCASO — MEGA ACTUALIZACIÓN GRÁFICA
+   "Un Vanguard cálido como puesta de sol, negro, una luna llena"
+   Luna llena fija (html::before) + resplandor de horizonte eterno
+   (html::after) + micro-animación en CADA botón y CADA panel.
+   Todo transform/opacity en GPU · sin JS · respeta reduced-motion.
+   ============================================================ */
+@media (min-width: 1px) {
+  html::before {
+    content: "";
+    position: fixed;
+    top: 30px;
+    right: 5vw;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(circle at 34% 32%, rgba(120, 90, 40, 0.10) 0 11%, transparent 12%),
+      radial-gradient(circle at 62% 58%, rgba(120, 90, 40, 0.09) 0 8%, transparent 9%),
+      radial-gradient(circle at 45% 66%, rgba(120, 90, 40, 0.08) 0 6%, transparent 7%),
+      radial-gradient(circle at 58% 30%, rgba(120, 90, 40, 0.07) 0 5%, transparent 6%),
+      radial-gradient(circle, #FFF6E0 0 56%, rgba(255, 232, 170, 0.28) 62%, rgba(255, 200, 120, 0.10) 72%, transparent 76%);
+    box-shadow: 0 0 60px 22px rgba(255, 214, 140, 0.17), 0 0 160px 70px rgba(255, 170, 80, 0.07);
+    animation: ocLatido 7s ease-in-out infinite;
+  }
+  html::after {
+    /* horizonte en brasa: la puesta de sol nunca termina */
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 90% 26% at 50% 104%, rgba(255, 122, 46, 0.14) 0%, rgba(255, 110, 40, 0.05) 48%, transparent 72%),
+      linear-gradient(to top, rgba(255, 140, 60, 0.055) 0%, transparent 16%);
+  }
+}
+@keyframes ocLatido {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.88; }
+}
+
+/* — cada botón respira: levanta al posar, late al pulsar — */
+button, [role="button"] {
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease, border-color 0.16s ease;
+}
+button:hover { filter: brightness(1.1); }
+button:active { transform: scale(0.96); filter: brightness(1.18); }
+
+/* — cada panel: entrada en cascada + hover con profundidad cálida. Nada plano — */
+main .hud-panel, main .glass {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  animation: ocElevacion 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+main .hud-panel:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 179, 71, 0.30);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.55),
+    0 0 26px rgba(255, 150, 60, 0.10),
+    inset 0 1px 0 rgba(255, 246, 224, 0.05);
+}
+main .hud-panel:nth-child(1) { animation-delay: 0.02s; }
+main .hud-panel:nth-child(2) { animation-delay: 0.07s; }
+main .hud-panel:nth-child(3) { animation-delay: 0.12s; }
+main .hud-panel:nth-child(4) { animation-delay: 0.17s; }
+main .hud-panel:nth-child(5) { animation-delay: 0.22s; }
+main .hud-panel:nth-child(6) { animation-delay: 0.27s; }
+main .hud-panel:nth-child(7) { animation-delay: 0.32s; }
+@keyframes ocElevacion {
+  from { opacity: 0; transform: translateY(14px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* — títulos con brillo de brasa y gradiente dorado animado — */
+main h2, main h3 {
+  text-shadow: 0 2px 20px rgba(255, 140, 50, 0.14);
+}
+.text-gradient-ocaso {
+  background: linear-gradient(92deg, #FFE29A 0%, #FFB347 32%, #FF7A3D 64%, #FFD98E 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradientFlow 8s linear infinite;
+}
+
+/* — fotos con marco cinematográfico cálido — */
+main img {
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45), 0 0 14px rgba(255, 150, 60, 0.06);
+}
+.img-cine {
+  border: 1px solid rgba(255, 179, 71, 0.24);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease;
+}
+.img-cine:hover {
+  transform: scale(1.02);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 26px rgba(255, 150, 60, 0.16);
+}
+
+/* — scrollbar con brasa — */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(10, 8, 6, 0.6); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255, 150, 60, 0.55), rgba(255, 110, 40, 0.30));
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(255, 190, 110, 0.85), rgba(255, 140, 60, 0.55));
+}
+
+/* — keyframes del banner OCASO — */
+@keyframes ocTitilar {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes ocVentana {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html::before { animation: none !important; }
+  main .hud-panel, main .glass { animation: none !important; }
 }

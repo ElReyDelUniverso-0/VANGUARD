@@ -20,6 +20,8 @@ import { motion, AnimatePresence } from "framer-motion";
 // v14: reestructuración — portada INICIO con noticias primero + menú llamativo
 import { HomePanel } from "@/components/vanguard/home-panel";
 import { MegaMenu } from "@/components/vanguard/mega-menu";
+// v71.0 OCASO: banner cinematográfico — puesta de sol eterna + luna llena
+import { OcasoBanner } from "@/components/vanguard/ocaso-banner";
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 import { SectionSearch } from "@/components/vanguard/section-search";
 import { AccountModal } from "@/components/vanguard/account-modal";
@@ -337,6 +339,8 @@ export default function Home() {
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (
           <>
+            {/* v71.0 OCASO: la puesta de sol eterna abre la portada — nada plano */}
+            <OcasoBanner />
             {/* v67.0 EL HANGAR: el costo del mundo y tu rival, siempre a la vista */}
             <CostoGuerra />
             <RivalStrip />

@@ -123,7 +123,7 @@ export function Globe3D({
       .globeImageUrl(VIEW_TEXTURES[viewMode])
       .bumpImageUrl("/assets/globe/earth-topology.png")
       .showAtmosphere(true)
-      .atmosphereColor("#f5a623")
+      .atmosphereColor("#ff9f45")
       .atmosphereAltitude(0.18)
       .showGraticules(true);
 

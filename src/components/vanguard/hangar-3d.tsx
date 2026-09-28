@@ -165,8 +165,9 @@ export function HangarPanel() {
     if (!mount) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x07070d);
-    scene.fog = new THREE.Fog(0x07070d, 30, 80);
+    // v71.0 OCASO: noche cálida — el hangar vive bajo una puesta de sol eterna
+    scene.background = new THREE.Color(0x0b0709);
+    scene.fog = new THREE.Fog(0x120a08, 30, 80);
 
     const cam = new THREE.PerspectiveCamera(58, mount.clientWidth / Math.max(1, mount.clientHeight), 0.1, 220);
     // v70.1 ANTI-FREEZE: resolución controlada + AA solo desktop + degradación adaptativa
@@ -181,22 +182,25 @@ export function HangarPanel() {
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = "none";
 
-    // ---- luces dramáticas ----
-    scene.add(new THREE.HemisphereLight(0x334466, 0x0a0a12, 0.85));
-    const key = new THREE.DirectionalLight(0xbfd8ff, 1.1);
-    key.position.set(6, 14, 8);
+    // ---- luces del ocaso (v71.0): sol bajo cálido + hemisferio brasa + rim naranja ----
+    scene.add(new THREE.HemisphereLight(0xff9f5a, 0x140a06, 0.8));
+    const key = new THREE.DirectionalLight(0xffc890, 1.3);
+    key.position.set(-18, 7, -14); // sol bajo, tocando el horizonte
     scene.add(key);
-    const spot = new THREE.SpotLight(0x1e90ff, 90, 40, 0.5, 0.5);
+    const rim = new THREE.DirectionalLight(0xff6b35, 0.55); // contraluz de brasa
+    rim.position.set(20, 5, 16);
+    scene.add(rim);
+    const spot = new THREE.SpotLight(0xffb347, 80, 40, 0.5, 0.5);
     spot.position.set(0, WALL_H - 0.5, 4);
     spot.target.position.set(0, 0, 4);
     scene.add(spot, spot.target);
 
     // ---- suelo militar con rejilla ----
-    const floorMat = new THREE.MeshLambertMaterial({ color: 0x10131c });
+    const floorMat = new THREE.MeshLambertMaterial({ color: 0x17100c });
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALF_W * 2, HALF_D * 2), floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
-    const grid = new THREE.GridHelper(HALF_W * 2, 26, 0x1e3a5f, 0x14202f);
+    const grid = new THREE.GridHelper(HALF_W * 2, 26, 0x6b3a1c, 0x33210f);
     (grid.material as THREE.Material).transparent = true;
     (grid.material as THREE.Material).opacity = 0.5;
     grid.position.y = 0.01;
@@ -204,20 +208,20 @@ export function HangarPanel() {
     // plataforma iluminada central
     const podium = new THREE.Mesh(
       new THREE.CylinderGeometry(2.6, 2.9, 0.22, 36),
-      new THREE.MeshLambertMaterial({ color: 0x16202e, emissive: 0x0a2a4a, emissiveIntensity: 0.5 })
+      new THREE.MeshLambertMaterial({ color: 0x2a1c12, emissive: 0x4a2410, emissiveIntensity: 0.5 })
     );
     podium.position.set(0, 0.11, 4);
     scene.add(podium);
     const ring = new THREE.Mesh(
       new THREE.TorusGeometry(2.75, 0.05, 10, 60),
-      new THREE.MeshBasicMaterial({ color: 0x1e90ff, transparent: true, opacity: 0.8 })
+      new THREE.MeshBasicMaterial({ color: 0xffa050, transparent: true, opacity: 0.8 })
     );
     ring.rotation.x = Math.PI / 2;
     ring.position.y = 0.24;
     scene.add(ring);
 
     // ---- muros con paneles ----
-    const wallMat = new THREE.MeshLambertMaterial({ color: 0x0d1018 });
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x120c0a });
     const mkWall = (w: number, h: number, x: number, y: number, z: number, ry: number) => {
       const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.4), wallMat);
       m.position.set(x, y, z);
@@ -230,7 +234,7 @@ export function HangarPanel() {
     mkWall(HALF_D * 2, WALL_H, HALF_W, WALL_H / 2, 0, Math.PI / 2);
     // luces de pared (franjas de neón)
     for (const z of [-HALF_D + 0.3, HALF_D - 0.3]) {
-      const strip = new THREE.Mesh(new THREE.BoxGeometry(HALF_W * 2 - 2, 0.08, 0.06), new THREE.MeshBasicMaterial({ color: 0x1e90ff }));
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(HALF_W * 2 - 2, 0.08, 0.06), new THREE.MeshBasicMaterial({ color: 0xffa050 }));
       strip.position.set(0, WALL_H - 0.8, z + (z < 0 ? 0.3 : -0.3));
       scene.add(strip);
     }
@@ -383,6 +387,53 @@ export function HangarPanel() {
     const islandLabel = makeNameSprite("··· ¿ISLA? ···", "#ffd60a");
     islandLabel.position.set(24.5, 2.6, -18.5);
     scene.add(islandLabel);
+
+    // ---- v71.0 OCASO: LUNA LLENA gigante sobre el muro norte (textura canvas con cráteres) ----
+    const moonTex = (() => {
+      const c = document.createElement("canvas");
+      c.width = 256; c.height = 256;
+      const ctx = c.getContext("2d")!;
+      const g = ctx.createRadialGradient(108, 98, 30, 128, 128, 126);
+      g.addColorStop(0, "#fffdf4");
+      g.addColorStop(0.55, "#ffefc9");
+      g.addColorStop(0.88, "#f0d7a0");
+      g.addColorStop(1, "rgba(240,210,150,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(128, 128, 124, 0, Math.PI * 2);
+      ctx.fill();
+      // cráteres
+      const crater = (x: number, y: number, r: number, a: number) => {
+        const cg = ctx.createRadialGradient(x, y, 1, x, y, r);
+        cg.addColorStop(0, `rgba(150,110,60,${a})`);
+        cg.addColorStop(1, "rgba(150,110,60,0)");
+        ctx.fillStyle = cg;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      };
+      crater(96, 88, 20, 0.30);
+      crater(160, 150, 15, 0.26);
+      crater(120, 170, 11, 0.22);
+      crater(172, 96, 9, 0.20);
+      crater(88, 140, 7, 0.20);
+      return new THREE.CanvasTexture(c);
+    })();
+    const moon = new THREE.Mesh(
+      new THREE.CircleGeometry(2.4, 40),
+      new THREE.MeshBasicMaterial({ map: moonTex, transparent: true, fog: false })
+    );
+    moon.position.set(16, 7.4, -HALF_D + 0.4);
+    scene.add(moon);
+    const moonGlowMat = new THREE.SpriteMaterial({
+      map: moonTex, transparent: true, opacity: 0.55, depthWrite: false,
+      blending: THREE.AdditiveBlending, fog: false,
+    });
+    const moonGlow = new THREE.Sprite(moonGlowMat);
+    moonGlow.scale.set(15, 15, 1);
+    moonGlow.position.copy(moon.position);
+    moonGlow.position.z -= 0.15;
+    scene.add(moonGlow);
 
     // ---- movimiento ----
     const keys = new Set<string>();
@@ -586,6 +637,10 @@ export function HangarPanel() {
       // isla: latido
       islandCore.rotation.y = t * 1.4;
       islandGlow.intensity = 18 + Math.sin(t * 3) * 8;
+
+      // v71.0 OCASO: la luna llena respira — halo que late lento
+      moonGlowMat.opacity = 0.5 + Math.sin(t * 0.7) * 0.12;
+      moon.rotation.z = Math.sin(t * 0.05) * 0.06;
 
       // descubrimiento por proximidad
       if (!islandHintShown && agent.position.x > 21 && agent.position.z < -15) {
