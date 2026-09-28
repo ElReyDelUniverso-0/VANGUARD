@@ -371,3 +371,24 @@ Work Log:
 Stage Summary:
 - Produccion https://vanguard-kq9r.vercel.app = v71.0 OCASO: puesta de sol eterna sobre noche negra con luna llena en portada, cielo de la app, hangar 3D y globos; micro-animación en cada botón y panel; nada plano.
 - Siguientes rondas: sombras reales (shadowMaps) en hangar si el GPU del jefe lo aguanta, iluminación de ocaso en frente-3d y zona-cero, ola de difusión shares 618→750.
+
+---
+Task ID: 20
+Agent: main (Super Z)
+Task: v71.1 LUNA LLENA — segunda ronda del mega upgrade gráfico: sombras reales, atmósfera y luz de luna en TODAS las escenas 3D
+
+Work Log:
+- HANGAR 3D (hangar-3d.tsx): shadowMap PCFSoft SOLO desktop (móvil intacto), sol bajo castShadow con cámara orto ±30/±26 (1024px, bias -0.002); castShadow en torso/cabeza/brazos/piernas del agente, pedestales y podio; receiveShadow en suelo/podio/muros. 120 BRASAS flotando (Points aditivos con textura canvas, suben y ondulan con cero allocations/frame). Si la calidad adaptativa llega al último paso (0.72) las sombras SE APAGAN SOLAS antes que congelar (shadowMap.enabled=false + needsUpdate).
+- FRENTE-3D: rim de brasa eterno (0xff6b35 desde el horizonte), LUNA LLENA con halo en noche/amanecer/ocaso (no en pleno día), viñeta cinematográfica DOM, pixelRatio 2.0 → 1 móvil / 1.25 desktop (regla anti-freeze heredada).
+- ZC3D-ENGINE (Zona Cero /zona-cero → Frente Táctico 3D): luna llena pintada con cráteres (sprite 70u a 410u), hemisferio 0x9aa6c4 frío → 0xb59a80 crepúsculo, niebla retintada 0x151219.
+- TEATRO-GLOBAL-3D: retinte ocaso completo (hemisferio 0xc79a72, key 0xffd9b0) + LÁMPARA DE GUERRA: PointLight brasa 0xffb347 sobre la mesa (charco de luz cálida), fondo 0x080709.
+- DRONE-STRIKE-3D: hemisferio cálido + LUNA GIGANTE 140u sobre la ciudad en ruinas + viñeta. FIX propio: material de la luna se registra en mats[] para dispose correcto.
+- CSS v71.1 (globals.css): clase .oc-vignette (viñeta radial + brasa baja) aplicada a hangar y dron; [role=dialog] entra con animación de búnker (scale+fade+glow) y REFLEJO DE LUNA en la esquina (::before radial); pestañas activas [aria-selected=true] arden con text-shadow brasa; reduced-motion respetado.
+- version.ts → v71.1 LUNA LLENA. tsc: 0 errores nuevos (los 6 pre-existentes en skills/ y ranking-panel/zc3d 413/1213 siguen ajenos). Build limpio tras fuser -k 3000/tcp.
+- QA local: hangar con sombras ACTIVAS (warning PCFSoft→PCF en consola lo confirma), brasas, luna, viñeta; /zona-cero con cielo cálido y tabs ardiendo; consola limpia (2 warnings de deprecación Three.js, inofensivos). El overlay "RECONECTANDO" local es solo por la DB file: local — en producción no ocurre.
+- Deploy b8ae17e: producción v71.1 LUNA LLENA en el intento 10 de polling (~4 min). QA producción: portada v71.1, hangar con sombra del agente en el podio + 1 ONLINE real + fantasmas AGT-CÓNDOR/NAVAJO, VISTA 3D del frente de Donbás con LUNA LLENA sobre el horizonte y trazas de obús, 0 errores de página.
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v71.1 LUNA LLENA (health ok, db up): ninguna escena 3D queda plana — hangar con sombras reales y brasas, frente con luna y contraluz, zona cero con luna con cráteres, teatro global bajo lámpara de guerra, dron bajo luna gigante; modales y pestañas con luz cálida.
+- Cifras al cerrar: players 134 (récord; +12 desde v70.0), visitas 137, presence pico 6, online 1 (QA), shares external 618. Goal 134/150 (89%) — la próxima meta 150 paga 9000Ⓒ + 90💎 + 1800XP.
+- Siguientes rondas: ola de difusión shares 618→750 (meta 150 players al 89%), editor de personaje 3D, PVP de predicciones.
