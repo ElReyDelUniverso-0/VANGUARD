@@ -13,8 +13,6 @@ import { HudHeader } from "@/components/vanguard/hud-header";
 import { TabNav, type TabKey } from "@/components/vanguard/tab-nav";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
-// v67.0 EL HANGAR: intro cinematográfica de 8s sustituye a la pantalla de carga
-import { IntroCinematica } from "@/components/vanguard/intro-cinematica";
 import { SettingsModal } from "@/components/vanguard/settings-modal";
 import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
 import { StatsTicker } from "@/components/vanguard/stats-ticker";
@@ -313,7 +311,7 @@ export default function Home() {
       </div>
       <div className="vignette-layer" aria-hidden />
       <div className="particles-layer" aria-hidden />
-      <IntroCinematica />
+      {/* v70.0 CLASICO PURO: sin presentación del planeta — entrada directa al juego */}
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}

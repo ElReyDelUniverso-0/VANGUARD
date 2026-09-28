@@ -203,6 +203,9 @@ export function GlobeMap3D({
     globe.controls().autoRotate = autoRotate;
     globe.controls().autoRotateSpeed = rotateSpeed;
     globe.controls().enableDamping = true;
+    // v70.1 CLAMP DE ZOOM: sin acercamientos a ras de tierra (fix del comandante)
+    globe.controls().minDistance = 210;
+    globe.controls().maxDistance = 800;
     globe.pointOfView(pov ?? { lat: 24, lng: 10, altitude: 2.15 });
 
     // click en el oceano/globo (para colocar objetos, ej. camaras)

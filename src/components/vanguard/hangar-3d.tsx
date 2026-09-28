@@ -6,6 +6,9 @@
 // agentes conectados visibles como avatares de luz con nombre flotante, aura
 // por rango, fichas de misión flotantes y la Isla del Oráculo escondida en el
 // extremo norte. Render Three.js puro, sin assets externos, 60fps móvil.
+// v70.1 ANTI-FREEZE: pixelRatio limitado (1 móvil / 1.25 desktop, antes 2.0),
+// materiales PBR → Lambert (el 70% del coste GPU), calidad adaptativa en 3 pasos
+// si el FPS medio cae de 38, y cero allocations Vector3 dentro del bucle.
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
@@ -166,8 +169,14 @@ export function HangarPanel() {
     scene.fog = new THREE.Fog(0x07070d, 30, 80);
 
     const cam = new THREE.PerspectiveCamera(58, mount.clientWidth / Math.max(1, mount.clientHeight), 0.1, 220);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    // v70.1 ANTI-FREEZE: resolución controlada + AA solo desktop + degradación adaptativa
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+    const QUALITY_STEPS: number[] = isMobile ? [1, 0.72] : [1.25, 1, 0.72];
+    let qStep = 0;
+    let fpsFrames = 0;
+    let fpsTime = 0;
+    const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
+    renderer.setPixelRatio(QUALITY_STEPS[0]);
     renderer.setSize(mount.clientWidth, Math.max(320, mount.clientHeight));
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.touchAction = "none";
@@ -183,7 +192,7 @@ export function HangarPanel() {
     scene.add(spot, spot.target);
 
     // ---- suelo militar con rejilla ----
-    const floorMat = new THREE.MeshStandardMaterial({ color: 0x10131c, roughness: 0.9, metalness: 0.25 });
+    const floorMat = new THREE.MeshLambertMaterial({ color: 0x10131c });
     const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALF_W * 2, HALF_D * 2), floorMat);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
@@ -195,7 +204,7 @@ export function HangarPanel() {
     // plataforma iluminada central
     const podium = new THREE.Mesh(
       new THREE.CylinderGeometry(2.6, 2.9, 0.22, 36),
-      new THREE.MeshStandardMaterial({ color: 0x16202e, roughness: 0.5, metalness: 0.6, emissive: 0x0a2a4a, emissiveIntensity: 0.5 })
+      new THREE.MeshLambertMaterial({ color: 0x16202e, emissive: 0x0a2a4a, emissiveIntensity: 0.5 })
     );
     podium.position.set(0, 0.11, 4);
     scene.add(podium);
@@ -208,7 +217,7 @@ export function HangarPanel() {
     scene.add(ring);
 
     // ---- muros con paneles ----
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x0d1018, roughness: 0.85, metalness: 0.3 });
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x0d1018 });
     const mkWall = (w: number, h: number, x: number, y: number, z: number, ry: number) => {
       const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.4), wallMat);
       m.position.set(x, y, z);
@@ -258,12 +267,12 @@ export function HangarPanel() {
       const g = new THREE.Group();
       const pedestal = new THREE.Mesh(
         new THREE.CylinderGeometry(0.9, 1.1, 1.0, 24),
-        new THREE.MeshStandardMaterial({ color: 0x141a26, roughness: 0.6, metalness: 0.5 })
+        new THREE.MeshLambertMaterial({ color: 0x141a26 })
       );
       pedestal.position.y = 0.5;
       const core = new THREE.Mesh(
         new THREE.IcosahedronGeometry(0.42, 0),
-        new THREE.MeshStandardMaterial({ color: s.hex, emissive: s.hex, emissiveIntensity: 1.4, roughness: 0.2 })
+        new THREE.MeshLambertMaterial({ color: s.hex, emissive: s.hex, emissiveIntensity: 1.4 })
       );
       core.position.y = 1.6;
       const halo = new THREE.Mesh(
@@ -300,8 +309,8 @@ export function HangarPanel() {
     // ---- agente del jugador (low-poly, uniforme por rango) ----
     const uniformColor = level >= 25 ? 0x8a1420 : level >= 16 ? 0x7a5a10 : level >= 8 ? 0x0e4a5a : level >= 3 ? 0x14401e : 0x3a3f4a;
     const agent = new THREE.Group();
-    const bodyMat = new THREE.MeshStandardMaterial({ color: uniformColor, roughness: 0.7, metalness: 0.25 });
-    const skinMat = new THREE.MeshStandardMaterial({ color: 0xd8a77a, roughness: 0.8 });
+    const bodyMat = new THREE.MeshLambertMaterial({ color: uniformColor });
+    const skinMat = new THREE.MeshLambertMaterial({ color: 0xd8a77a });
     const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 0.62, 4, 12), bodyMat);
     torso.position.y = 1.18;
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 16), skinMat);
@@ -309,7 +318,7 @@ export function HangarPanel() {
     const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.5, 4, 8), bodyMat);
     armL.position.set(-0.47, 1.22, 0);
     const armR = armL.clone(); armR.position.x = 0.47;
-    const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.5, 4, 8), new THREE.MeshStandardMaterial({ color: 0x1a1d26, roughness: 0.9 }));
+    const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.5, 4, 8), new THREE.MeshLambertMaterial({ color: 0x1a1d26 }));
     legL.position.set(-0.18, 0.42, 0);
     const legR = legL.clone(); legR.position.x = 0.18;
     agent.add(torso, head, armL, armR, legL, legR);
@@ -341,7 +350,7 @@ export function HangarPanel() {
       const col = isHigh ? 0xffd60a : i % 3 === 0 ? 0x9b5cff : 0x1e90ff;
       const phantom = new THREE.Mesh(
         new THREE.CapsuleGeometry(0.3, 0.75, 4, 10),
-        new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.1, transparent: true, opacity: 0.75 })
+        new THREE.MeshLambertMaterial({ color: col, emissive: col, emissiveIntensity: 1.1, transparent: true, opacity: 0.75 })
       );
       phantom.position.y = 1.0;
       const haloG = new THREE.Mesh(
@@ -367,7 +376,7 @@ export function HangarPanel() {
     scene.add(islandGlow);
     const islandCore = new THREE.Mesh(
       new THREE.OctahedronGeometry(0.5, 0),
-      new THREE.MeshStandardMaterial({ color: 0xffd60a, emissive: 0xffd60a, emissiveIntensity: 2, transparent: true, opacity: oraculoClaimed() ? 0.4 : 0.95 })
+      new THREE.MeshLambertMaterial({ color: 0xffd60a, emissive: 0xffd60a, emissiveIntensity: 2, transparent: true, opacity: oraculoClaimed() ? 0.4 : 0.95 })
     );
     islandCore.position.copy(islandGlow.position);
     scene.add(islandCore);
@@ -490,6 +499,7 @@ export function HangarPanel() {
     let islandHintShown = false;
     let raf = 0;
     const camTarget = new THREE.Vector3();
+    const camGoal = new THREE.Vector3(); // v70.1: vector reutilizable (antes 60 allocations/seg)
     let walkPhase = 0;
     // v67.1: la cámara NACE en su posición de seguimiento (sin lerp desde el origen)
     cam.position.set(agent.position.x * 0.7, 6.4, agent.position.z + 9.2);
@@ -535,7 +545,8 @@ export function HangarPanel() {
 
       // cámara tercera persona suave
       camTarget.set(agent.position.x * 0.55, 0, agent.position.z * 0.55 + 3.5);
-      cam.position.lerp(new THREE.Vector3(agent.position.x * 0.7, 6.4, agent.position.z + 9.2), 0.06);
+      camGoal.set(agent.position.x * 0.7, 6.4, agent.position.z + 9.2);
+      cam.position.lerp(camGoal, 0.06);
       cam.lookAt(camTarget.x, 1.6, camTarget.z);
 
       // puertas: proximidad las enciende
@@ -588,6 +599,20 @@ export function HangarPanel() {
       const nst = nearestStation();
       const nextHint = nst ? `TOCA EL NÚCLEO para abrir ${nst.label}` : nd ? `TOCA LA PUERTA para entrar en ${nd.label}` : "WASD / joystick para caminar · E para interactuar";
       setHint((h) => (h === nextHint ? h : nextHint));
+
+      // v70.1 calidad adaptativa: FPS medio cada 1.6s → baja la resolución un paso
+      fpsFrames++;
+      fpsTime += dt;
+      if (fpsTime >= 1.6) {
+        const fps = fpsFrames / fpsTime;
+        fpsFrames = 0;
+        fpsTime = 0;
+        if (fps < 38 && qStep < QUALITY_STEPS.length - 1) {
+          qStep++;
+          renderer.setPixelRatio(QUALITY_STEPS[qStep]);
+          renderer.setSize(mount.clientWidth, Math.max(320, mount.clientHeight));
+        }
+      }
 
       renderer.render(scene, cam);
     };

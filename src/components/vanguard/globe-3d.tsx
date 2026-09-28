@@ -131,6 +131,10 @@ export function Globe3D({
     globe.controls().autoRotate = true;
     globe.controls().autoRotateSpeed = 0.55;
     globe.controls().enableDamping = true;
+    // v70.1 CLAMP DE ZOOM: la cámara jamás baja a ras de tierra (el bug que
+    // reportó el comandante en v68). Altitud mínima ~1.1 radios del globo.
+    globe.controls().minDistance = 210;
+    globe.controls().maxDistance = 800;
     globe.pointOfView({ lat: 22, lng: 12, altitude: 2.1 });
 
     // click en el vacio no deselecciona (OrbitControls drag-safe)
