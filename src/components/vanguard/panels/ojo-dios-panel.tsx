@@ -14,6 +14,8 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 // v72.0 INFINITA VERDADES: título épico + CÁMARAS PÚBLICAS DEL MUNDO
 import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { CamarasMundo } from "@/components/vanguard/camaras-mundo";
+// v75.0 PLANETA VIVO — TODA la información del planeta Tierra en este lugar
+import { PlanetaVivo } from "@/components/vanguard/planeta-vivo";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
@@ -315,15 +317,19 @@ export function OjoDiosPanel() {
       {/* v72.0 REGLA DE ORO: título grande + ilustración + texto fácil */}
       <TituloEpico
         titulo="EL OJO DE DIOS"
-        volanta="Observación omnisciente del planeta"
+        volanta="TODA la información del planeta Tierra en este lugar"
         imagen="/ilustraciones/ojo-dios.jpg"
-        texto="Todo lo que pasa en el mundo, visto desde arriba: el globo 3D en vivo con unidades militares reales, cámaras públicas de cada país, escáner de conflictos y el pulso del planeta. Nada escapa al Ojo."
+        texto="Todo lo que pasa en el mundo, visto desde arriba: el globo 3D en vivo con unidades militares reales, cámaras públicas de cada país, clima, divisas, sismos, eventos naturales de la NASA, la ISS y el escáner de conflictos. Nada escapa al Ojo."
         altura={250}
         tinte="luna"
       />
 
       {/* v72.0 CÁMARAS PÚBLICAS DEL MUNDO */}
       <CamarasMundo />
+
+      {/* v75.0 PLANETA VIVO — toda la información de la Tierra: población viva, ISS,
+          fase lunar, eventos naturales NASA, clima de capitales, divisas y sismos */}
+      <PlanetaVivo />
 
       {/* ===== franja de contadores globales ===== */}
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-2">

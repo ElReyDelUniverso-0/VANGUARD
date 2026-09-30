@@ -477,6 +477,11 @@ const RSS_SOURCES = [
   { url: "https://es.euronews.com/rss", source: "Euronews" },
   { url: "https://news.un.org/feed/subscribe/es/news/all/rss.xml", source: "ONU Noticias" },
   { url: "https://feeds.skynews.com/feeds/rss/world.xml", source: "Sky News" },
+  // v75.0 PLANETA VIVO: red de 15 medios — noticias ilimitadas de verdad
+  { url: "https://actualidad.rt.com/rss", source: "RT en Español" },
+  { url: "https://feeds.npr.org/1004/rss.xml", source: "NPR World" },
+  { url: "https://www.elmundo.es/rss/internacional.xml", source: "El Mundo" },
+  { url: "https://feeds.foxnews.com/foxnews/world", source: "Fox News World" },
 ];
 
 interface RssArticle {

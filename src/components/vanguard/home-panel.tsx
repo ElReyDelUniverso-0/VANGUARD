@@ -77,6 +77,32 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "arcade", title: "ARCADE", desc: "10 minijuegos con premios en monedas y récords — nuevo RADAR FURIA", icon: <Joystick className="w-6 h-6" />, hex: "#FFD166" },
 ];
 
+// v75 PLANETA VIVO: portada cinematográfica única por tile — imagen primero,
+// con movimiento Ken Burns y colores fuertes (regla de oro del comandante).
+const TILE_IMG: Record<string, string> = {
+  foryou: "/ilustraciones/foryou.jpg",
+  mundo: "/ilustraciones/mundo.jpg",
+  bookmaker: "/ilustraciones/bookmaker.jpg",
+  bolsa: "/ilustraciones/bolsa.jpg",
+  osint: "/ilustraciones/osint.jpg",
+  expedientes: "/ilustraciones/expedientes.jpg",
+  oscura: "/ilustraciones/oscura.jpg",
+  detective: "/ilustraciones/detective.jpg",
+  dron: "/ilustraciones/dronguerra.jpg",
+  warsim: "/ilustraciones/warsim.jpg",
+  envivo: "/ilustraciones/envivo.jpg",
+  contribuidores: "/ilustraciones/contribuidores.jpg",
+  memes: "/ilustraciones/memes.jpg",
+  creador: "/ilustraciones/creador.jpg",
+  studios: "/ilustraciones/studios.jpg",
+  gobierno: "/ilustraciones/gobierno.jpg",
+  bolsamonedas: "/ilustraciones/bolsamonedas.jpg",
+  armeria: "/ilustraciones/armeria.jpg",
+  abusos: "/ilustraciones/abusos.jpg",
+  memorial: "/ilustraciones/memorial.jpg",
+  arcade: "/ilustraciones/arcade.jpg",
+};
+
 function timeAgo(iso: string): string {
   const d = new Date(iso).getTime();
   if (!Number.isFinite(d)) return "";
@@ -576,35 +602,55 @@ export function HomePanel() {
               key={t.tab}
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: Math.min(i * 0.04, 0.4) }}
               whileHover={{ y: -4 }}
               onClick={() => navigateTo(t.tab)}
-              className="hud-corner card-shine relative overflow-hidden p-4 text-left group border"
+              className="hud-corner group relative overflow-hidden text-left border rounded-md"
               style={{
                 borderColor: `${t.hex}55`,
-                background: `linear-gradient(140deg, ${t.hex}1f 0%, rgba(10,10,15,0.9) 55%)`,
+                background: "rgba(7,7,11,0.92)",
+                boxShadow: "0 6px 22px rgba(0,0,0,0.45)",
               }}
+              aria-label={`${t.title}: ${t.desc}`}
             >
-              <div
-                className="absolute -right-6 -top-6 w-20 h-20 rounded-full blur-2xl opacity-40 group-hover:opacity-70 transition-opacity"
-                style={{ background: t.hex }}
-                aria-hidden
-              />
-              <div className="relative z-10">
+              {/* v75 PORTADA VIVA — la ilustración primero, moviéndose sola (Ken Burns) */}
+              <div className="portada-media relative h-28 sm:h-32 w-full">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={TILE_IMG[t.tab] ?? "/ilustraciones/planeta.jpg"}
+                  alt=""
+                  loading={i < 4 ? "eager" : "lazy"}
+                  className={`ken-burns absolute inset-0 w-full h-full object-cover ${i % 2 ? "ken-burns-alt" : ""}`}
+                />
+                {/* velo del color fuerte de la sección + fundido al cuerpo */}
                 <div
-                  className="w-11 h-11 rounded-md flex items-center justify-center border mb-3"
-                  style={{ borderColor: `${t.hex}66`, color: t.hex, background: `${t.hex}1a`, boxShadow: `0 0 18px ${t.hex}33` }}
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ background: `linear-gradient(180deg, ${t.hex}33 0%, ${t.hex}14 34%, rgba(6,6,10,0.72) 72%, rgba(6,6,10,0.97) 100%)` }}
+                  aria-hidden
+                />
+                <div className="portada-destello" aria-hidden />
+              </div>
+
+              <div className="relative z-10 px-4 pb-4 -mt-9">
+                <div
+                  className="w-11 h-11 rounded-md flex items-center justify-center border mb-2.5 backdrop-blur-sm"
+                  style={{
+                    borderColor: `${t.hex}88`,
+                    color: t.hex,
+                    background: `linear-gradient(150deg, ${t.hex}33, rgba(6,6,10,0.9))`,
+                    boxShadow: `0 0 20px ${t.hex}44`,
+                  }}
                 >
                   {t.icon}
                 </div>
-                <div className="font-display text-xs font-bold tracking-wider text-foreground">
+                <div className="font-display text-xs font-bold tracking-wider text-foreground" style={{ textShadow: `0 0 16px ${t.hex}55` }}>
                   {t.title}
                 </div>
                 <div className="mt-1 text-[11px] leading-snug text-muted-foreground">
                   {t.desc}
                 </div>
-                <div className="mt-3 flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest" style={{ color: t.hex }}>
-                  Entrar <ChevronRight className="w-3 h-3" />
+                <div className="mt-3 flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest font-bold" style={{ color: t.hex }}>
+                  Entrar <ChevronRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
             </motion.button>

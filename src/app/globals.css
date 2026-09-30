@@ -1022,3 +1022,80 @@ main img {
   .radar-sweep::after { animation: none !important; opacity: 0.35; }
   .misil-v74, .explosion-v74, .borde-oro { animation: none !important; }
 }
+
+/* ============================================================
+   v75.0 PLANETA VIVO — portadas que respiran
+   ============================================================ */
+
+/* — Ken Burns: la ilustración de la portada se mueve sola, lenta y viva — */
+.ken-burns {
+  animation: kenBurns 26s ease-in-out infinite alternate;
+  will-change: transform;
+  transform-origin: 52% 42%;
+}
+.ken-burns-alt { animation-name: kenBurnsAlt; transform-origin: 45% 58%; animation-duration: 31s; }
+@keyframes kenBurns {
+  from { transform: scale(1.02) translate(0, 0); }
+  to { transform: scale(1.14) translate(-2.4%, 1.8%); }
+}
+@keyframes kenBurnsAlt {
+  from { transform: scale(1.12) translate(2%, -1.6%); }
+  to { transform: scale(1.02) translate(0, 0); }
+}
+
+/* — al pasar el cursor la portada despierta: zoom rápido + luz cálida — */
+.portada-media { overflow: hidden; }
+.portada-media .ken-burns { transition: filter 0.4s ease; }
+.group:hover .portada-media .ken-burns {
+  animation-play-state: paused;
+  transform: scale(1.16);
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  filter: saturate(1.25) brightness(1.08);
+}
+
+/* — destello que cruza la portada al pasar el cursor — */
+.portada-destello {
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 210, 140, 0.16) 50%, transparent 58%);
+  transform: translateX(-70%);
+  transition: transform 0.9s ease;
+  pointer-events: none;
+}
+.group:hover .portada-destello { transform: translateX(70%); }
+
+/* — cinta de ÚLTIMA HORA: marquesina continua — */
+.marquee-pista {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 46s linear infinite;
+  will-change: transform;
+}
+.marquee-contenedor:hover .marquee-pista { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* — pulso NUEVO para verdades recién llegadas al muro — */
+.nuevo-pulse {
+  animation: nuevoPulso 1.6s ease-in-out infinite;
+}
+@keyframes nuevoPulso {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 179, 71, 0.55); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 179, 71, 0); }
+}
+
+/* — contador vivo del planeta: dígito que respira — */
+.vivo-num { animation: vivoNum 2.4s ease-in-out infinite; }
+@keyframes vivoNum {
+  0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 135, 0.35); }
+  50% { text-shadow: 0 0 22px rgba(0, 255, 135, 0.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns, .ken-burns-alt { animation: none !important; }
+  .marquee-pista { animation: none !important; }
+  .nuevo-pulse { animation: none !important; }
+  .vivo-num { animation: none !important; }
+}

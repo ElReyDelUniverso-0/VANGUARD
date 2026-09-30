@@ -9,10 +9,14 @@
 //  · EL PLANETA EN VIVO: relojes mundiales con segundos + terremotos USGS
 //    (siempre algo moviéndose, nada plano).
 //  · REGLA DE ORO: título grande → ilustración → texto fácil de leer.
+// v75.0 PLANETA VIVO:
+//  · CINTA DE ÚLTIMA HORA en movimiento continuo (marquesina, pausa al hover).
+//  · AUTO-REFRESCO cada 90s: las verdades recién nacidas entran solas al muro
+//    con badge NUEVO pulsante — el muro respira solo, ilimitado.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Eye, Loader2, Search, Activity, ArrowUpRight, Globe2, Clock3, Mountain } from "lucide-react";
+import { Eye, Loader2, Search, Activity, ArrowUpRight, Globe2, Clock3, Mountain, Zap } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
@@ -76,6 +80,8 @@ export function InfinitaPanel() {
   const [quakes, setQuakes] = useState<Quake[]>([]);
   const [hora, setHora] = useState(() => new Date());
   const vivoRef = useRef(true);
+  // v75: verdades recién nacidas del auto-refresco (id -> ts de llegada)
+  const [nuevosIds, setNuevosIds] = useState<Map<string, number>>(new Map());
 
   // carga del muro infinito (página a página del archivo)
   const cargar = useCallback(async (pag: number) => {
@@ -108,6 +114,44 @@ export function InfinitaPanel() {
     return () => { vivoRef.current = false; clearInterval(t); };
   }, [cargar]);
 
+  // v75 AUTO-REFRESCO: cada 90s sondea la página 1 y las verdades recién
+  // nacidas entran SOLAS arriba del muro con badge NUEVO (ilimitado de verdad).
+  useEffect(() => {
+    const sondear = async () => {
+      try {
+        const r = await fetch("/api/news?page=1&limit=18", { cache: "no-store" });
+        const d = await r.json();
+        if (!vivoRef.current || !Array.isArray(d?.items)) return;
+        const frescos: Noticia[] = d.items;
+        setItems((prev) => {
+          const vistos = new Set(prev.map((p) => p.id));
+          const llegan = frescos.filter((n) => !vistos.has(n.id));
+          if (llegan.length === 0) return prev;
+          const marca = new Map(nuevosIds);
+          const ahora = Date.now();
+          for (const n of llegan) marca.set(n.id, ahora);
+          setNuevosIds(marca);
+          return [...llegan, ...prev];
+        });
+      } catch { /* el muro aguanta: reintenta en el próximo ciclo */ }
+    };
+    const t = setInterval(sondear, 90_000);
+    return () => clearInterval(t);
+    // nuevosIds leído una vez: se muta dentro de setItems via closure — OK
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // expira el badge NUEVO a los 3 minutos
+  useEffect(() => {
+    if (nuevosIds.size === 0) return;
+    const t = setInterval(() => {
+      const ahora = Date.now();
+      const vivo = new Map([...nuevosIds.entries()].filter(([, ts]) => ahora - ts < 180_000));
+      if (vivo.size !== nuevosIds.size) setNuevosIds(vivo);
+    }, 20_000);
+    return () => clearInterval(t);
+  }, [nuevosIds]);
+
   // países presentes en el muro + fijos (orden por cantidad)
   const chips = useMemo(() => {
     const cuenta = new Map<string, number>();
@@ -128,6 +172,13 @@ export function InfinitaPanel() {
     });
   }, [items, pais, q]);
 
+  // v75 CINTA DE ÚLTIMA HORA: lo publicado hace menos de 2h (o lo último si no hay)
+  const cinta = useMemo(() => {
+    const recientes = items.filter((n) => n.publishedAt && Date.now() - new Date(n.publishedAt).getTime() < 2 * 3_600_000);
+    const base = recientes.length >= 3 ? recientes : items.slice(0, 6);
+    return base.slice(0, 8).map((n) => n.title);
+  }, [items]);
+
   return (
     <div className="space-y-4">
       <PanelHeader title="INFINITA VERDADES" subtitle="El mayor centro de noticias del mundo" />
@@ -141,6 +192,31 @@ export function InfinitaPanel() {
         texto="Todas las verdades del planeta en un solo muro que nunca se acaba: noticia a noticia, país por país, minuto a minuto. Filtra por bandera, busca por palabra y desciende tan profundo como quieras. Aquí nada se esconde."
         altura={280}
       />
+
+      {/* v75 CINTA DE ÚLTIMA HORA — marquesina continua, se pausa al tocar */}
+      {cinta.length > 0 && (
+        <div
+          className="marquee-contenedor relative overflow-hidden rounded-sm border border-red-hud/40 bg-gradient-to-r from-red-950/50 via-black/60 to-black/40 py-2"
+          aria-label="Cinta de última hora"
+        >
+          <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center gap-1.5 bg-gradient-to-r from-[#0a0a0f] via-[#0a0a0f]/95 to-transparent pr-6 pl-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-hud blink-soft" />
+            <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-red-hud whitespace-nowrap">Última hora</span>
+          </div>
+          <div className="marquee-pista pl-40">
+            {[0, 1].map((rep) => (
+              <span key={rep} className="flex items-center" aria-hidden={rep === 1}>
+                {cinta.map((t, i) => (
+                  <span key={i} className="flex items-center text-[11px] text-foreground/85">
+                    <Zap className="w-3 h-3 mx-3 text-amber shrink-0" aria-hidden />
+                    {t}
+                  </span>
+                ))}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* EL PLANETA EN VIVO: relojes + sismos */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-3" aria-label="El planeta en vivo">
@@ -262,6 +338,7 @@ export function InfinitaPanel() {
             <div className="p-3.5">
               <h3 className="text-[13px] font-semibold leading-snug text-foreground group-hover:text-amber transition-colors line-clamp-3">
                 <a href={n.url?.startsWith("http") ? n.url : "#"} target="_blank" rel="noopener noreferrer">
+                  {nuevosIds.has(n.id) ? <span className="nuevo-pulse inline-block mr-1.5 px-1 py-0.5 text-[8px] font-mono font-bold uppercase tracking-widest rounded-sm bg-amber text-black align-middle">NUEVO</span> : null}
                   {n.title}
                 </a>
               </h3>
