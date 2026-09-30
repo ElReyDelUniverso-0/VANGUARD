@@ -494,3 +494,28 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v74.0 GRAN OCASO (health ok, db up, 0 errores).
 - Los 10 minijuegos del arcade tienen récords con bonus, arte propio y las arenas nocturnas; el hangar y todos los globos viven bajo el mismo cielo de estrellas y luna.
 - Siguientes rondas: ola de difusión 618→750 (goal 150 al 93%), ilustraciones para los 10 juegos del arcade (fotos reales), sonidos nuevos por récord, PVP por salas/campeonato de duelos.
+
+---
+Task ID: 24
+Agent: main (Super Z)
+Task: v75.0 PLANETA VIVO — "mejora las portadas, hazlas más hermosas y realistas; la sección de inteligencia con TODA la información del planeta Tierra; noticias nuevas ilimitadas; imágenes de colores fuertes que se muevan e interactivas"
+
+Work Log:
+- ILUSTRACIONES: 12 portadas nuevas generadas (scripts/gen_ilustraciones_v75.mjs, estilo ocaso+luna unificado, 1408x704): bolsa, expedientes, oscura, envivo, contribuidores, memes, creador, studios, bolsamonedas, armeria, abusos, memorial. NOTA: nohup+& muere silencioso en este entorno — relanzar en primer plano con timeout 600s (11/12 cupieron en la primera pasada; memorial en la segunda).
+- PORTADAS VIVAS (home-panel): los 21 tiles de "Elige tu campo de batalla" pasan de gradiente+icono a PORTADA CINEMATOGRÁFICA image-first — capa .portada-media con la ilustración en Ken Burns (26s/31s alternos), velo del color hex de la sección, destello que cruza al hover, icono-badge con glow, título con textShadow del acento y ENTRAR con flecha que se desliza. Mapa TILE_IMG (fallback planeta.jpg). aria-label completo por tile.
+- CSS v75 (globals.css): .ken-burns/.ken-burns-alt (2 direcciones), .portada-media (pausa el Ken Burns + zoom rápido + saturación al hover del .group), .portada-destello, .marquee-pista/.marquee-contenedor (pausa al hover), .nuevo-pulse, .vivo-num; reduced-motion apaga todo.
+- API /api/planeta NUEVA: Promise.allSettled de 5 sondas sin clave (NASA EONET v3 16 eventos, open.er-api 14 divisas contra USD con delta % vs sondeo anterior, Open-Meteo multilocalidad 10 capitales, wheretheiss ISS, USGS all_day top 6) + caché en memoria 5 min + maxDuration 30.
+- PLANETA VIVO (planeta-vivo.tsx NUEVO, montado en ojo-dios-panel tras CamarasMundo): "EL PLANETA ENTERO EN ESTE LUGAR" — 4 latidos: POBLACIÓN MUNDIAL en vivo (base ONU 8.22B + 2.42/s, latido 1s con .vivo-num), ISS en vivo vía /api/pulso cada 45s, FASE LUNAR calculada (sinódico 29.53d desde 6-ene-2000; disco CSS con sombra según iluminación %), eventos abiertos N. Debajo: NASA EONET con color por categoría (CAT_COLOR/CAT_ES) + enlace, CLIMA DE 10 CAPITALES con tinte por temperatura y descripción por weather_code, DIVISAS con flecha ▲▼, SISMOS top con nivel de color. Botón RE-SONDEAR.
+- OJO DE DIOS: volanta ahora "TODA la información del planeta Tierra en este lugar" y texto épico actualizado (clima, divisas, sismos, EONET, ISS).
+- INFINITA VERDADES v2: CINTA DE ÚLTIMA HORA — marquesina continua (2 repeticiones, 46s, pausa al hover) con lo publicado hace <2h (fallback últimos 6) y badge rojo fijo; AUTO-REFRESCO cada 90s que PREPENDE las verdades recién nacidas con badge NUEVO pulsante (expira en 3 min; expirador cada 20s).
+- RSS 11→15 medios: RT en Español, NPR World, El Mundo Internacional, Fox News World (verificados con curl: 200/10 items, 200/10, 200 RSS válido, 200 RSS válido; descartados Infobae 404, CBC 000, ToI 403, CNNes 404, P12 404, AlArabiya bloqueada, Telegraph bloqueada).
+- version.ts → v75.0 PLANETA VIVO. tsc: solo los 4 errores pre-existentes (ranking ×2, zc3d ×2). Build limpio tras fuser/pkill.
+- QA LOCAL (agent-browser): 21 .ken-burns (0 imágenes rotas tras scroll), portadas espectaculares con luna; cinta verificada con mock de /api/news (route mock) → marquee animationName "marquee" + 2 pistas; PlanetaVivo con datos reales (población 8.226.079.086→8226.079.257, ISS -13.9°·94.0° 27.552 km/h, gibosa menguante 87%, 6 eventos EONET, clima real de 10 capitales); overlay RECONECTANDO retirado por JS (artefacto solo-local DB file); 0 errores de consola.
+- Deploy b23c812 → health v75.0 en el intento 3 (~1.5 min), db up, SIN fallo transitorio.
+- QA PRODUCCIÓN: /api/planeta 16 eventos+14 divisas+10 climas+6 sismos+ISS real; /api/news hasMore=true (muro infinito vivo); portadas 21/21 cargadas (0 rotas); cinta con noticias REALES desfilando (Manchester City, Cuba-EE.UU.); PlanetaVivo: población 8.226.080.100 latiendo, ISS 2.9°·106.1° (se movió respecto al sondeo local — vuela de verdad), gibosa menguante 87%, clima de 9 capitales visible; buscador universal navegó a INFINITA (índice 159); 0 errores de página.
+- Cifras al cerrar v75.0: players 141 (RÉCORD; +1 desde v74.0), visitas 144 (+1), presence pico 6, online 1 (QA), shares external 618/750 (82%), goal 141/150 (94%, faltan 9).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v75.0 PLANETA VIVO (health ok, db up, 0 errores).
+- Las portadas de la página principal son ahora ilustraciones cinematográficas que se mueven (Ken Burns) con colores fuertes y hover interactivo; el Ojo de Dios concentra TODA la información del planeta (población viva, ISS, luna, eventos NASA, clima, divisas, sismos, cámaras, muro infinito); Infinita Verdades respira sola (cinta de última hora + auto-refresco + 15 medios).
+- Siguientes rondas: ola de difusión 618→750 (goal 150 al 94%), ilustraciones para el mega-menú y paneles internos, sonidos por récord, PVP por salas/campeonato de duelos.
