@@ -62,6 +62,35 @@ const TRIVIA_POOL: TriviaQ[] = [
 
 function shuffle<T>(arr: T[]): T[] { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
+// ============ v74.0 GRAN OCASO: RÉCORDS POR JUEGO ============
+// cada minijuego guarda su mejor marca en localStorage y la tarjeta la exhibe
+// con brillo de oro; superarla paga +30 mon de bonus.
+const REC_KEY = "vg_arcade_records_v74";
+type GameRec = Exclude<GameId, null>;
+const REC_DIR: Record<GameRec, "high" | "low"> = {
+  memoria: "low", historia: "high", quien: "high", trivia: "high", codigo: "high",
+  negociador: "high", banderas: "high", antimisil: "high", duelo: "high", radar: "high",
+};
+const REC_LABEL: Record<GameRec, string> = {
+  memoria: "menos jugadas", historia: "cronologías", quien: "aciertos /6", trivia: "aciertos /8",
+  codigo: "aciertos", negociador: "mejor apoyo", banderas: "aciertos /10", antimisil: "puntos",
+  duelo: "victorias /5", radar: "derribos",
+};
+
+function getRecords(): Partial<Record<GameRec, number>> {
+  try { return JSON.parse(localStorage.getItem(REC_KEY) || "{}") as Partial<Record<GameRec, number>>; } catch { return {}; }
+}
+/** registra una marca; devuelve true si es RÉCORD NUEVO (y la persiste) */
+function submitRecord(id: GameRec, score: number): boolean {
+  try {
+    const recs = getRecords();
+    const prev = recs[id];
+    const better = prev === undefined || (REC_DIR[id] === "high" ? score > prev : score < prev);
+    if (better) { recs[id] = score; localStorage.setItem(REC_KEY, JSON.stringify(recs)); }
+    return better;
+  } catch { return false; }
+}
+
 // ====== v13: DATOS DE LOS 3 NUEVOS MINIJUEGOS ======
 interface CipherQ { type: "MORSE" | "ENIGMA" | "NAVAJO"; prompt: string; code: string; options: string[]; a: number; fact: string; }
 const CIPHER_POOL: CipherQ[] = [
@@ -92,12 +121,132 @@ const FLAG_POOL = [
   { code: "FR", name: "Francia" }, { code: "GB", name: "Reino Unido" }, { code: "ES", name: "España" }, { code: "IT", name: "Italia" },
 ];
 
+// ============ v74.0 GRAN OCASO: ARTE CSS POR JUEGO ============
+// mini-escena única por minijuego (regla de oro: imagen primero) — cero imágenes,
+// cero peticiones: gradientes y formas puras con el acento de cada juego.
+function GameArt({ id }: { id: GameId }) {
+  const sky = "linear-gradient(to bottom, #0b0812 0%, #16101c 52%, #2b160e 100%)";
+  const wrap = "relative h-16 w-full overflow-hidden rounded-sm";
+  const base = { background: sky };
+  switch (id) {
+    case "memoria":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute left-[18%] top-1/2 h-10 w-7 -translate-y-1/2 rotate-[-10deg] rounded-[3px] border border-cyan-hud/70 bg-cyan-hud/20" />
+          <div className="absolute left-[40%] top-1/2 h-10 w-7 -translate-y-1/2 rotate-[8deg] rounded-[3px] border border-cyan-hud/40 bg-black/50" />
+          <div className="absolute left-[58%] top-1/2 h-10 w-7 -translate-y-1/2 rotate-[-4deg] rounded-[3px] border border-cyan-hud/40 bg-black/50" />
+          <div className="absolute right-[16%] top-1/2 h-10 w-7 -translate-y-1/2 rotate-[12deg] rounded-[3px] border border-amber-hud/70 bg-amber/25" />
+          <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 120%, rgba(255,150,60,0.28), transparent 60%)" }} />
+        </div>
+      );
+    case "historia":
+      return (
+        <div className={wrap} style={base}>
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="absolute h-1.5 rounded-full bg-amber/70" style={{ left: `${8 + i * 9}%`, top: `${22 + i * 18}%`, width: `${68 - i * 12}%`, boxShadow: i === 3 ? "0 0 10px rgba(255,179,71,0.6)" : undefined }} />
+          ))}
+          <div className="absolute right-[10%] top-1/2 h-12 w-2 -translate-y-1/2 rounded bg-amber-hud/50" />
+          <div className="absolute right-[7%] top-1/2 h-12 w-2 -translate-y-1/2 rotate-[24deg] rounded bg-amber-hud/30" />
+        </div>
+      );
+    case "quien":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute left-1/2 top-[54%] h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-hud/60 bg-violet-hud/15" />
+          <div className="absolute left-1/2 top-[38%] h-5 w-5 -translate-x-1/2 rounded-full bg-violet-hud/50" />
+          <div className="absolute left-1/2 top-[62%] h-6 w-10 -translate-x-1/2 rounded-t-full bg-violet-hud/40" />
+          <span className="absolute right-[20%] top-2 font-display text-xl font-black text-amber oro-glow">?</span>
+        </div>
+      );
+    case "trivia":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute left-1/2 top-1/2 h-14 w-8 -translate-x-1/2 -translate-y-1/2 bg-red-hud/80" style={{ clipPath: "polygon(60% 0, 20% 55%, 45% 55%, 40% 100%, 85% 40%, 55% 40%)", filter: "drop-shadow(0 0 12px rgba(255,59,48,0.7))" }} />
+          <div className="absolute inset-x-6 bottom-2 h-px bg-gradient-to-r from-transparent via-red-hud/70 to-transparent" />
+        </div>
+      );
+    case "codigo":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-center gap-1.5">
+            {["dot", "dot", "dash", "dot", "dash", "dash", "dot"].map((k, i) => (
+              <span key={i} className={cn("rounded-full", k === "dot" ? "h-1.5 w-1.5 bg-neon" : "h-1.5 w-5 bg-neon/80")} style={{ boxShadow: "0 0 8px rgba(0,255,135,0.55)" }} />
+            ))}
+          </div>
+          <div className="absolute inset-x-8 bottom-2 h-px bg-gradient-to-r from-transparent via-neon/60 to-transparent" />
+        </div>
+      );
+    case "negociador":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute left-[14%] top-1/2 h-8 w-14 -translate-y-1/2 rounded-sm border border-electric-hud/70 bg-electric/20" />
+          <div className="absolute right-[14%] top-1/2 h-8 w-14 -translate-y-1/2 rounded-sm border border-green-hud/70 bg-green-hud/20" />
+          <div className="absolute left-1/2 top-1/2 h-2 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber" style={{ boxShadow: "0 0 14px rgba(255,179,71,0.8)" }} />
+        </div>
+      );
+    case "banderas":
+      return (
+        <div className={wrap} style={base}>
+          {["#FF3B30", "#1E90FF", "#00FF87"].map((c, i) => (
+            <div key={c} className="absolute top-3 w-8 border-t-2 border-b-2" style={{ left: `${18 + i * 26}%`, height: 26, borderColor: `${c}aa`, background: `linear-gradient(180deg, ${c}55, transparent)` }} />
+          ))}
+          <div className="absolute inset-x-0 bottom-1 text-center font-mono text-[8px] tracking-[0.3em] text-amber/80">+5s ×10</div>
+        </div>
+      );
+    case "antimisil":
+      return (
+        <div className={wrap} style={base}>
+          <div className="estrellas-v74 absolute inset-0 opacity-80" />
+          <div className="absolute left-[62%] top-1 h-8 w-1 rounded-full bg-gradient-to-b from-[#fff6e0] via-[#ffb347] to-transparent" style={{ boxShadow: "0 0 12px 3px rgba(255,150,60,0.8)" }} />
+          <div className="absolute left-[38%] top-3 h-5 w-1 rounded-full bg-gradient-to-b from-[#fff6e0] via-[#ff6b35] to-transparent" style={{ boxShadow: "0 0 10px 2px rgba(255,90,30,0.7)" }} />
+          <div className="absolute bottom-0 inset-x-0 h-3 bg-black/70 border-t border-green-hud/40" />
+          <div className="absolute bottom-3 left-1/2 h-2.5 w-6 -translate-x-1/2 rounded-t-sm bg-green-hud/60" />
+        </div>
+      );
+    case "duelo":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute left-[32%] top-1/2 h-12 w-1.5 -translate-y-1/2 rotate-[30deg] rounded bg-green-hud/70" style={{ boxShadow: "0 0 10px rgba(0,255,135,0.5)" }} />
+          <div className="absolute right-[32%] top-1/2 h-12 w-1.5 -translate-y-1/2 rotate-[-30deg] rounded bg-green-hud/70" style={{ boxShadow: "0 0 10px rgba(0,255,135,0.5)" }} />
+          <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border border-amber bg-amber/40" />
+        </div>
+      );
+    case "radar":
+      return (
+        <div className={wrap} style={base}>
+          <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border border-amber-hud/60">
+            <div className="absolute inset-0 rounded-full bg-amber/10" />
+            <div className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(from 0deg, rgba(255,179,71,0.75) 0deg, transparent 80deg)", animation: "barridoRadar 2.2s linear infinite" }} />
+            <span className="absolute left-[30%] top-[38%] h-1 w-1 rounded-full bg-red-hud" style={{ boxShadow: "0 0 6px rgba(255,59,48,0.9)" }} />
+            <span className="absolute left-[64%] top-[62%] h-1 w-1 rounded-full bg-green-hud" style={{ boxShadow: "0 0 6px rgba(0,255,135,0.9)" }} />
+          </div>
+        </div>
+      );
+    default:
+      return null;
+  }
+}
+
 export function ArcadePanel() {
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
   const spendCoins = useGameStore((s) => s.spendCoins);
   // FIX B1: recordMinigameStats ya no se usa aquí (solo Threat Assessment y Dron)
   const [game, setGame] = useState<GameId>(null);
+  // v74.0: marcas por juego + highlight de récord recién batido
+  const [records, setRecords] = useState<Partial<Record<GameRec, number>>>({});
+  const [newRec, setNewRec] = useState<GameRec | null>(null);
+  useEffect(() => { setRecords(getRecords()); }, []);
+
+  const registrarRec = (id: GameRec, score: number) => {
+    if (submitRecord(id, score)) {
+      setNewRec(id);
+      setRecords(getRecords());
+      addCoins(30, "ARCADE: récord nuevo");
+      sfx.achievement();
+      toast.success("¡RÉCORD NUEVO!", { description: `+30 mon por superar tu marca de ${REC_LABEL[id]}` });
+    }
+  };
 
   const reward = (coins: number, xp: number, label: string) => {
     if (coins > 0) addCoins(coins, label);
@@ -155,6 +304,7 @@ export function ArcadePanel() {
       const prize = Math.max(20, 140 - memMoves * 6);
       reward(prize, 30, "ARCADE: memoria de banderas");
       sfx.success();
+      registrarRec("memoria", memMoves);
       toast.success(`Memoria completada en ${memMoves} jugadas`, { description: `+${prize} mon · +30 xp` });
       setGame(null);
     }
@@ -186,6 +336,7 @@ export function ArcadePanel() {
         tlTimer.current = setTimeout(() => {
           reward(Math.max(10, prize), 25, "ARCADE: ordena la historia");
           sfx.success();
+          registrarRec("historia", tlRound);
           toast.success(`Cronologia correcta! +${Math.max(10, prize)} mon`, { description: `Fallos: ${tlFails}` });
           if (tlRound >= 3) { setGame(null); }
           else {
@@ -227,7 +378,7 @@ export function ArcadePanel() {
     if (qfN + 1 >= 6) {
       // FIX B2: el premio NO contaba el último acierto (usaba qfScore stale → -30 mon sistemáticas)
       const prize = (qfScore + (title === qfTarget.title ? 1 : 0)) * 30 + 20;
-      qfTimer.current = setTimeout(() => { reward(prize, 35, "ARCADE: quien fue"); toast.success(`Ronda terminada: ${qfScore + (title === qfTarget.title ? 1 : 0)}/6`, { description: `+${prize} mon` }); setGame(null); }, 600);
+      qfTimer.current = setTimeout(() => { const fin = qfScore + (title === qfTarget.title ? 1 : 0); reward(prize, 35, "ARCADE: quien fue"); registrarRec("quien", fin); toast.success(`Ronda terminada: ${fin}/6`, { description: `+${prize} mon` }); setGame(null); }, 600);
     } else { setQfN((n) => n + 1); qfTimer.current = setTimeout(nextQuien, 500); }
   };
 
@@ -257,7 +408,7 @@ export function ArcadePanel() {
     if (tvN + 1 >= 8) {
       const prize = (tvScore + (ok ? 1 : 0)) * 25 + 20;
       setTvQ(null); // FIX B3: cierra la pregunta YA — sin ventana donde re-clic duplica la recompensa
-      setTimeout(() => { reward(prize, 40, "ARCADE: trivia relampago"); toast.success(`Trivia: ${tvScore + (ok ? 1 : 0)}/8 aciertos`, { description: `+${prize} mon` }); setGame(null); }, 500);
+      setTimeout(() => { const fin = tvScore + (ok ? 1 : 0); reward(prize, 40, "ARCADE: trivia relampago"); registrarRec("trivia", fin); toast.success(`Trivia: ${fin}/8 aciertos`, { description: `+${prize} mon` }); setGame(null); }, 500);
     } else { setTvN((n) => n + 1); setTvQ(shuffle(TRIVIA_POOL.filter((x) => x !== tvQ))[0]); }
   };
   // FIX B5: deteccion de tiempo agotado FUERA del updater
@@ -306,6 +457,7 @@ export function ArcadePanel() {
       const prize = cpScore * 40 + 20;
       setTimeout(() => {
         reward(prize, 45, "ARCADE: descifra el código");
+        registrarRec("codigo", cpScore);
         toast.success(`Máquina descifrada: ${cpScore} aciertos`, { description: `+${prize} mon · +45 xp` });
       }, 100);
     }
@@ -359,6 +511,7 @@ export function ArcadePanel() {
     const prize = ok ? 100 : 30;
     setTimeout(() => {
       reward(prize, 40, "ARCADE: negociador de paz");
+      registrarRec("negociador", ngApproval);
       if (ok) { sfx.success(); toast.success(`PROPUESTA APROBADA (${ngApproval}%) · +${prize} mon`, { description: "La comunidad apoya tu salida diplomática" }); }
       else { toast(`Propuesta rechazada (${ngApproval}%) · +${prize} mon por intentarlo`, { description: "Se necesita 70% de aprobación" }); }
     }, 100);
@@ -410,7 +563,7 @@ export function ArcadePanel() {
     if (fbN + 1 >= 10) {
       const prize = (fbScore + (ok ? 1 : 0)) * 22 + 15;
       setFbTarget(null); // FIX B3: cierra la pregunta YA (sin re-clics que dupliquen recompensa)
-      setTimeout(() => { reward(prize, 35, "ARCADE: quiz de banderas"); toast.success(`Banderas: ${fbScore + (ok ? 1 : 0)}/10`, { description: `+${prize} mon` }); setGame(null); }, 500);
+      setTimeout(() => { const fin = fbScore + (ok ? 1 : 0); reward(prize, 35, "ARCADE: quiz de banderas"); registrarRec("banderas", fin); toast.success(`Banderas: ${fin}/10`, { description: `+${prize} mon` }); setGame(null); }, 500);
     } else { setFbN((n) => n + 1); fbTimerQ.current = setTimeout(nextFlag, 450); }
   };
   // FIX B5: timeout detectado fuera del updater
@@ -443,6 +596,15 @@ export function ArcadePanel() {
   const amSpawn = useRef<ReturnType<typeof setInterval> | null>(null);
   const amTick = useRef<ReturnType<typeof setInterval> | null>(null);
   const amClock = useRef<ReturnType<typeof setInterval> | null>(null);
+  // v74.0: explosiones interceptadas + flash de golpe en la base
+  const [amBooms, setAmBooms] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [amFlash, setAmFlash] = useState(0);
+  const boomId = useRef(0);
+  const boom = (x: number, y: number) => {
+    const bid = boomId.current++;
+    setAmBooms((b) => [...b.slice(-8), { id: bid, x, y }]);
+    setTimeout(() => setAmBooms((b) => b.filter((x2) => x2.id !== bid)), 470);
+  };
 
   const stopAm = () => {
     [amSpawn, amTick, amClock].forEach((t) => { if (t.current) clearInterval(t.current); t.current = null; });
@@ -451,6 +613,7 @@ export function ArcadePanel() {
   const startAntimisil = () => {
     stopAm(); // FIX patrón B7: nada de timers huerfanos entre partidas
     setAmMissiles([]); setAmScore(0); setAmLives(3); setAmLeft(45); setAmOver(false);
+    setAmBooms([]); setAmFlash(0);
     amRef.current = []; amId.current = 0;
     setGame("antimisil");
     // spawn de misiles (dificultad sube con la puntuación)
@@ -465,6 +628,8 @@ export function ArcadePanel() {
       const landed = now.filter((m) => m.y >= 88);
       if (landed.length > 0) {
         sfx.beep();
+        setAmFlash((f) => f + 1);
+        landed.forEach((m) => boom(m.x, 90));
         setAmLives((l) => l - landed.length);
         setAmScore((s) => Math.max(0, s - landed.length * 5));
       }
@@ -481,6 +646,7 @@ export function ArcadePanel() {
     amRef.current = amRef.current.filter((x) => x.id !== m.id);
     setAmMissiles(amRef.current);
     setAmScore((s) => s + 10);
+    boom(m.x, m.y);
     sfx.coin();
   };
 
@@ -493,6 +659,7 @@ export function ArcadePanel() {
       const prize = amScore * 2 + 15;
       setTimeout(() => {
         reward(prize, 25, "ARCADE: antimisil");
+        registrarRec("antimisil", amScore);
         sfx.success();
         toast.success(`Defensa terminada · ${amScore} pts`, { description: amLives <= 0 ? "Base destruida — resistencia heroica" : `Base intacta x${Math.max(0, amLives)} · +${prize} mon · +25 xp` });
       }, 150);
@@ -537,6 +704,7 @@ export function ArcadePanel() {
         const prize = dWinsRef.current * 40 + 10;
         setTimeout(() => {
           reward(prize, 30, "ARCADE: duelo relampago");
+          registrarRec("duelo", dWinsRef.current);
           sfx.success();
           toast.success(`Duelo finalizado: ${dWinsRef.current}/5 rondas`, { description: `+${prize} mon · +30 xp` });
         }, 150);
@@ -661,6 +829,7 @@ export function ArcadePanel() {
     const coins = Math.min(160, Math.floor(rfBest / 4)) + bonus;
     const xp = Math.min(55, Math.floor(rfBest / 3));
     reward(coins, xp, `Radar Furia: ${rfBest} derribos`);
+    registrarRec("radar", rfBest);
     sfx.droneEnd();
     if (rfFeverBestRef.current >= 8) toast.success("MODO FIEBRE dominado", { description: `Racha máxima: ${rfBest}` });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -732,13 +901,34 @@ export function ArcadePanel() {
 
       {!game && (
         <div className="grid sm:grid-cols-2 gap-2">
-          {GAMES.map((g) => (
-            <button key={g.id} onClick={() => startGame(g.id)}
-              className={cn("hud-corner border p-4 text-left transition-colors", g.color)}>
-              <div className="flex items-center gap-2 mb-1">{g.icon}<span className="font-mono font-bold text-sm uppercase tracking-wider">{g.name}</span></div>
-              <p className="text-[10px] font-mono text-muted-foreground">{g.desc}</p>
-            </button>
-          ))}
+          {GAMES.map((g) => {
+            const rec = records[g.id];
+            const isFresh = newRec === g.id;
+            return (
+              <button key={g.id} onClick={() => startGame(g.id)}
+                className={cn(
+                  "hud-corner border p-0 text-left vg-transition group overflow-hidden hover:-translate-y-0.5 hover:shadow-[0_10px_30px_-12px_rgba(255,150,60,0.45)]",
+                  g.color,
+                  isFresh && "borde-oro"
+                )}>
+                <GameArt id={g.id} />
+                <div className="p-3">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <div className="flex items-center gap-2 min-w-0">
+                      {g.icon}
+                      <span className="font-mono font-bold text-sm uppercase tracking-wider truncate">{g.name}</span>
+                    </div>
+                    {rec !== undefined && (
+                      <span className={cn("font-mono text-[9px] whitespace-nowrap oro-glow", isFresh ? "text-amber font-bold" : "text-amber/70")}>
+                        ★ {rec}{isFresh && " ¡NUEVO!"}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] font-mono text-muted-foreground">{g.desc}</p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -759,7 +949,7 @@ export function ArcadePanel() {
             </div>
             {!rfOver ? (
               <>
-                <div className="grid grid-cols-4 gap-1.5">
+                <div className="radar-sweep rejilla-radar relative overflow-hidden grid grid-cols-4 gap-1.5 rounded-sm" style={{ background: "radial-gradient(circle at 50% 50%, rgba(255,179,71,0.05), rgba(0,0,0,0.55))" }}>
                   {[...Array(12).keys()].map((c) => {
                     const d = rfDrones.find((x) => x.cell === c);
                     return (
@@ -767,9 +957,9 @@ export function ArcadePanel() {
                         key={c}
                         onClick={() => d && rfHit(d.id, c, d.hostile)}
                         className={cn(
-                          "h-14 sm:h-16 border rounded-sm font-mono font-bold flex items-center justify-center text-xl transition-all duration-100",
-                          !d && "border-border/60 bg-black/30 hover:border-amber-hud/40",
-                          d && d.hostile && "border-red-hud bg-red-hud/25 text-red-hud",
+                          "relative z-10 h-14 sm:h-16 border rounded-sm font-mono font-bold flex items-center justify-center text-xl transition-all duration-100",
+                          !d && "border-border/40 bg-black/20 hover:border-amber-hud/60 hover:bg-amber/5",
+                          d && d.hostile && "border-red-hud bg-red-hud/25 text-red-hud shadow-[0_0_14px_rgba(255,59,48,0.35)]",
                           d && !d.hostile && "border-green-hud bg-green-hud/25 text-green-hud"
                         )}
                       >
@@ -1009,30 +1199,45 @@ export function ArcadePanel() {
             {!amOver ? (
               <div
                 className="relative overflow-hidden scanline hud-corner select-none"
-                style={{ aspectRatio: "16/9", minHeight: 240 }}
+                style={{ aspectRatio: "16/9", minHeight: 240, background: "linear-gradient(to bottom, #04040a 0%, #0a0816 45%, #170d10 100%)" }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/20 to-green-hud/10" />
+                {/* v74.0 GRAN OCASO: cielo en vivo — estrellas, luna y horizonte encendido */}
+                <div className="estrellas-v74 absolute inset-0 opacity-90" />
+                <div className="absolute right-[10%] top-[8%]">
+                  <div className="luna-v74 h-5 w-5" />
+                </div>
+                <div className="absolute inset-x-0 bottom-0 h-1/4" style={{ background: "linear-gradient(to top, rgba(255,122,46,0.16), transparent)" }} />
                 {/* skyline de la base */}
-                <div className="absolute bottom-0 inset-x-0 h-[12%] bg-black/50 border-t border-green-hud/30" />
+                <div className="absolute bottom-0 inset-x-0 h-[12%] bg-black/60 border-t border-green-hud/30" />
+                <div className="absolute bottom-[12%] inset-x-0 flex justify-center items-end gap-2 opacity-70">
+                  {[14, 22, 10, 28, 16, 24, 12].map((h, i) => (
+                    <div key={i} className="w-4 bg-black/80" style={{ height: h }} />
+                  ))}
+                </div>
                 {/* ciudades: 3 vidas */}
                 <div className="absolute bottom-1 inset-x-0 flex justify-center gap-6">
                   {[0, 1, 2].map((i) => (
                     <div key={i} className={cn("w-8 h-5 border", i < Math.max(0, amLives) ? "border-green-hud/70 bg-green-hud/30" : "border-red-hud/40 bg-red-hud/10 opacity-40")} />
                   ))}
                 </div>
-                {/* misiles */}
+                {/* misiles: estela encendida + explosión al interceptar */}
                 {amMissiles.map((m) => (
                   <button
                     key={m.id}
                     onClick={(e) => amShoot(m, e)}
-                    className="absolute w-8 h-8 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center hover:scale-125 transition-transform z-10"
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-transform hover:scale-125"
                     style={{ left: `${m.x}%`, top: `${m.y}%` }}
                     aria-label="interceptar misil"
                   >
-                    <span className="block w-2.5 h-2.5 rounded-full bg-red-hud glow-red" />
+                    <span className="misil-v74 block" />
                     <span className="absolute inset-0 rounded-full border border-red-hud/40 animate-ping" />
                   </button>
                 ))}
+                {amBooms.map((b) => (
+                  <span key={b.id} className="explosion-v74" style={{ left: `${b.x}%`, top: `${b.y}%` }} />
+                ))}
+                {/* flash de impacto cuando la base recibe un golpe */}
+                {amFlash > 0 && <div className="flash-golpe absolute inset-0 pointer-events-none" key={amFlash} />}
                 {/* retícula central decorativa */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
                   <Crosshair className="w-24 h-24 text-red-hud" />

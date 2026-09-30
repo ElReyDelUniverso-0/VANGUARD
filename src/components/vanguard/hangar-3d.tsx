@@ -500,6 +500,148 @@ export function HangarPanel() {
     moonGlow.position.z -= 0.15;
     scene.add(moonGlow);
 
+    // ---- v74.0 GRAN OCASO: cúpula de estrellas — la noche entra por el techo abierto
+    const skyTex = (() => {
+      const c = document.createElement("canvas");
+      c.width = 1024; c.height = 512;
+      const ctx = c.getContext("2d")!;
+      const g = ctx.createLinearGradient(0, 0, 0, 512);
+      g.addColorStop(0, "#030308");
+      g.addColorStop(0.62, "#0a0712");
+      g.addColorStop(1, "#1a0d0a");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 1024, 512);
+      for (let i = 0; i < 430; i++) {
+        const x = Math.random() * 1024;
+        const y = Math.random() * 310; // concentradas en lo alto
+        const r = Math.random() * 1.25 + 0.3;
+        const a = 0.3 + Math.random() * 0.65;
+        ctx.fillStyle = `rgba(255,244,214,${a})`;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    })();
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(150, 24, 16),
+      new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false })
+    );
+    sky.position.y = -18;
+    scene.add(sky);
+
+    // ---- v74.0: lámparas industriales colgando con vaivén (pivote en el techo)
+    const lamps: THREE.Group[] = [];
+    const LAMP_X = [-12, 0, 12];
+    for (let i = 0; i < LAMP_X.length; i++) {
+      const lamp = new THREE.Group();
+      lamp.position.set(LAMP_X[i], WALL_H, -2 + (i % 2) * 8);
+      const cord = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.025, 0.025, 1.5, 6),
+        new THREE.MeshLambertMaterial({ color: 0x14100c })
+      );
+      cord.position.y = -0.75;
+      const shade = new THREE.Mesh(
+        new THREE.ConeGeometry(0.85, 0.6, 20, 1, true),
+        new THREE.MeshLambertMaterial({ color: 0x2b1c10, emissive: 0x38200c, emissiveIntensity: 0.7, side: THREE.DoubleSide })
+      );
+      shade.position.y = -1.65;
+      const bulb = new THREE.Mesh(
+        new THREE.SphereGeometry(0.17, 12, 10),
+        new THREE.MeshBasicMaterial({ color: 0xffd9a0 })
+      );
+      bulb.position.y = -1.85;
+      lamp.add(cord, shade, bulb);
+      scene.add(lamp);
+      lamps.push(lamp);
+    }
+
+    // ---- v74.0: cajas de suministro y bidones en las esquinas (con sombra)
+    const crateMat = new THREE.MeshLambertMaterial({ color: 0x2b1d10 });
+    const crateMat2 = new THREE.MeshLambertMaterial({ color: 0x362512 });
+    const barrelMat = new THREE.MeshLambertMaterial({ color: 0x38220f });
+    const crateAt = (x: number, z: number, s: number, mat: THREE.MeshLambertMaterial, ry = 0) => {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(s, s, s), mat);
+      m.position.set(x, s / 2, z);
+      m.rotation.y = ry;
+      m.castShadow = !isMobile;
+      m.receiveShadow = !isMobile;
+      scene.add(m);
+    };
+    crateAt(-HALF_W + 2.6, HALF_D - 2.6, 1.3, crateMat, 0.3);
+    crateAt(-HALF_W + 4.1, HALF_D - 2.4, 0.95, crateMat2, -0.2);
+    crateAt(-HALF_W + 3.3, HALF_D - 4.2, 1.1, crateMat, 0.8);
+    crateAt(HALF_W - 2.7, HALF_D - 2.9, 1.25, crateMat2, 0.5);
+    crateAt(HALF_W - 4.2, HALF_D - 3.4, 0.9, crateMat, -0.4);
+    crateAt(HALF_W - 2.5, -HALF_D + 2.8, 1.15, crateMat, 0.15);
+    for (const [bx, bz] of [[-HALF_W + 5.6, HALF_D - 2.7], [HALF_W - 5.5, HALF_D - 2.6], [HALF_W - 4.1, -HALF_D + 2.7]] as const) {
+      const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 1.45, 14), barrelMat);
+      barrel.position.set(bx, 0.725, bz);
+      barrel.castShadow = !isMobile;
+      barrel.receiveShadow = !isMobile;
+      scene.add(barrel);
+    }
+
+    // ---- v74.0: banderas VANGUARD colgadas del techo (lienzo con el ojo)
+    const bannerTex = (() => {
+      const c = document.createElement("canvas");
+      c.width = 512; c.height = 320;
+      const ctx = c.getContext("2d")!;
+      ctx.fillStyle = "#0a0810";
+      ctx.fillRect(0, 0, 512, 320);
+      ctx.strokeStyle = "#ffb347";
+      ctx.lineWidth = 8;
+      ctx.strokeRect(14, 14, 484, 292);
+      // ojo reptil simplificado
+      ctx.fillStyle = "#ffb347";
+      ctx.beginPath();
+      ctx.moveTo(256, 70);
+      ctx.lineTo(330, 190);
+      ctx.lineTo(182, 190);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "#0a0810";
+      ctx.beginPath();
+      ctx.ellipse(256, 152, 40, 24, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ff5a1f";
+      ctx.beginPath();
+      ctx.ellipse(256, 152, 16, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#fff6e0";
+      ctx.font = "900 54px Orbitron, sans-serif";
+      ctx.fillText("VANGUARD", 256, 262);
+      return new THREE.CanvasTexture(c);
+    })();
+    const banners: THREE.Mesh[] = [];
+    for (const bx of [-8, 8]) {
+      const banner = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.4, 2.1),
+        new THREE.MeshBasicMaterial({ map: bannerTex, transparent: false, side: THREE.DoubleSide })
+      );
+      banner.position.set(bx, 6.6, -HALF_D + 2.2);
+      scene.add(banner);
+      banners.push(banner);
+    }
+
+    // ---- v74.0: antena radar girando en el muro norte (vigilancia eterna)
+    const dish = new THREE.Group();
+    const dishBowl = new THREE.Mesh(
+      new THREE.ConeGeometry(0.85, 0.5, 18, 1, true),
+      new THREE.MeshLambertMaterial({ color: 0x5a4a30, emissive: 0x1f1608, emissiveIntensity: 0.6, side: THREE.DoubleSide })
+    );
+    dishBowl.rotation.x = Math.PI / 2.4;
+    dishBowl.position.y = 0.3;
+    const dishRod = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.035, 1.1, 6),
+      new THREE.MeshLambertMaterial({ color: 0x8a7a50 })
+    );
+    dishRod.position.y = 0.75;
+    dish.add(dishBowl, dishRod);
+    dish.position.set(-16, 7.6, -HALF_D + 0.7);
+    scene.add(dish);
+
     // ---- v71.1 LUNA LLENA: brasas flotando en el aire cálido del hangar ----
     // (ceniza encendida que sube lenta desde el suelo del ocaso eterno)
     const EMBERS = 120;
@@ -734,6 +876,11 @@ export function HangarPanel() {
       // isla: latido
       islandCore.rotation.y = t * 1.4;
       islandGlow.intensity = 18 + Math.sin(t * 3) * 8;
+
+      // v74.0 GRAN OCASO: lámparas con vaivén, banderas ondeando, antena explorando
+      for (let i = 0; i < lamps.length; i++) lamps[i].rotation.z = Math.sin(t * 0.7 + i * 2.1) * 0.05;
+      for (let i = 0; i < banners.length; i++) banners[i].rotation.y = Math.sin(t * 1.1 + i * 1.7) * 0.15;
+      dish.rotation.y = t * 0.42;
 
       // v71.0 OCASO: la luna llena respira — halo que late lento
       moonGlowMat.opacity = 0.5 + Math.sin(t * 0.7) * 0.12;

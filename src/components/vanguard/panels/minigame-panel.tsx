@@ -322,10 +322,15 @@ export function MiniGamePanel() {
           {/* Game arena */}
           <div
             className="hud-corner relative overflow-hidden scanline"
-            style={{ aspectRatio: "16/10", minHeight: 280, maxHeight: "60vh" }}
+            style={{ aspectRatio: "16/10", minHeight: 280, maxHeight: "60vh", background: "linear-gradient(to bottom, #05050c 0%, #0d0a18 55%, #1a0f10 100%)" }}
             onClick={handleMiss}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-background via-secondary/30 to-background" />
+            {/* v74.0 GRAN OCASO: cielo nocturno + barrido de radar en la arena */}
+            <div className="estrellas-v74 absolute inset-0 opacity-80" />
+            <div className="absolute right-[6%] top-[8%]">
+              <div className="luna-v74 h-4 w-4" />
+            </div>
+            <div className="radar-sweep absolute inset-0 pointer-events-none" />
             {/* Crosshair */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
               <Crosshair className="w-32 h-32 text-red-hud" />

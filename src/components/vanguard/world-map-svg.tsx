@@ -103,13 +103,15 @@ export function WorldMapSVG({
       onClick={handleClick}
     >
       <defs>
-        <radialGradient id="wm-ocean" cx="50%" cy="50%" r="80%">
-          <stop offset="0%" stopColor={showSat ? "#0a1a14" : "#0a0f1a"} />
-          <stop offset="100%" stopColor={showSat ? "#040806" : "#05060c"} />
+        {/* v74.0 GRAN OCASO: océano nocturno con horizonte de brasa al sur */}
+        <radialGradient id="wm-ocean" cx="50%" cy="34%" r="95%">
+          <stop offset="0%" stopColor={showSat ? "#0c1e17" : "#0d1120"} />
+          <stop offset="62%" stopColor={showSat ? "#060c08" : "#070912"} />
+          <stop offset="100%" stopColor={showSat ? "#160d06" : "#180d0a"} />
         </radialGradient>
         <linearGradient id="wm-land" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={showSat ? "#12241a" : "#141a2c"} />
-          <stop offset="100%" stopColor={showSat ? "#081209" : "#0b0f1c"} />
+          <stop offset="0%" stopColor={showSat ? "#14261b" : "#171d30"} />
+          <stop offset="100%" stopColor={showSat ? "#0a1409" : "#0d1120"} />
         </linearGradient>
         <pattern id="wm-grid" width="25" height="25" patternUnits="userSpaceOnUse">
           <path d="M 25 0 L 0 0 0 25" fill="none" stroke="rgba(217,167,32,0.05)" strokeWidth="0.5" />

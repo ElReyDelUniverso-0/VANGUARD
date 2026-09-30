@@ -900,3 +900,125 @@ main img {
 @media (prefers-reduced-motion: reduce) {
   [role="dialog"] { animation: none !important; }
 }
+
+/* ============================================================
+   v74.0 GRAN OCASO — los JUEGOS y los MAPAS bajo el mismo cielo:
+   campos de estrellas CSS puros, barrido de radar, misiles con
+   estela, explosiones y bordes de oro ardiente. Todo GPU.
+   ============================================================ */
+
+/* — cielo nocturno reutilizable: detrás de cada globo y cada arena — */
+.cielo-ocaso {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(255, 246, 224, 0.16) 0%, rgba(255, 214, 140, 0.07) 7%, transparent 16%),
+    radial-gradient(ellipse 130% 60% at 50% 108%, rgba(255, 122, 46, 0.13) 0%, transparent 55%),
+    linear-gradient(to bottom, #050509 0%, #0a0810 46%, #140b0c 100%);
+}
+
+/* estrellas: puntitos deterministas dibujados con radial-gradients (cero DOM) */
+.estrellas-v74 {
+  background-image:
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(255,255,255,0.9) 45%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 28% 68%, rgba(255,244,214,0.75) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 44% 14%, rgba(255,255,255,0.85) 45%, transparent 55%),
+    radial-gradient(1px 1px at 58% 42%, rgba(255,236,190,0.7) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 71% 76%, rgba(255,255,255,0.8) 45%, transparent 55%),
+    radial-gradient(1px 1px at 84% 30%, rgba(255,244,214,0.75) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 92% 58%, rgba(255,255,255,0.85) 45%, transparent 55%),
+    radial-gradient(1px 1px at 8% 82%, rgba(255,236,190,0.65) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 36% 88%, rgba(255,255,255,0.7) 45%, transparent 55%),
+    radial-gradient(1px 1px at 64% 8%, rgba(255,244,214,0.7) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 18% 46%, rgba(255,255,255,0.6) 45%, transparent 55%),
+    radial-gradient(1px 1px at 50% 62%, rgba(255,236,190,0.6) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 78% 90%, rgba(255,255,255,0.65) 45%, transparent 55%),
+    radial-gradient(1px 1px at 96% 16%, rgba(255,244,214,0.6) 45%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 3% 8%, rgba(255,255,255,0.7) 45%, transparent 55%);
+  animation: titilar 5.5s ease-in-out infinite alternate;
+}
+@keyframes titilar { from { opacity: 0.55; } to { opacity: 1; } }
+
+/* — barrido de radar para RADAR FURIA y campos de amenazas — */
+.radar-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: conic-gradient(from 0deg at 50% 50%, rgba(255, 179, 71, 0.22) 0deg, rgba(255, 179, 71, 0.05) 38deg, transparent 70deg, transparent 360deg);
+  animation: barridoRadar 2.8s linear infinite;
+}
+@keyframes barridoRadar { to { transform: rotate(360deg); } }
+.rejilla-radar {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 179, 71, 0.07) 0 1px, transparent 1px 25%),
+    repeating-linear-gradient(90deg, rgba(255, 179, 71, 0.07) 0 1px, transparent 1px 16.66%);
+}
+
+/* — ANTIMISIL: misil con estela encendida + explosión en anillo — */
+.misil-v74 {
+  width: 7px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, #fff6e0 0%, #ffb347 42%, #ff5a1f 78%, transparent 100%);
+  box-shadow: 0 0 10px 2px rgba(255, 150, 60, 0.85), 0 0 26px 8px rgba(255, 90, 30, 0.35);
+  animation: vibrarMisil 0.22s linear infinite alternate;
+}
+@keyframes vibrarMisil { from { filter: brightness(0.92); } to { filter: brightness(1.18); } }
+.explosion-v74 {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 220, 150, 0.95);
+  box-shadow: 0 0 18px 6px rgba(255, 150, 60, 0.55), inset 0 0 10px 4px rgba(255, 200, 110, 0.8);
+  animation: estallar 0.45s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes estallar {
+  from { transform: scale(0.6); opacity: 1; }
+  to { transform: scale(3.4); opacity: 0; }
+}
+.flash-golpe { animation: flashGolpe 0.35s ease-out; }
+@keyframes flashGolpe { from { background: rgba(255, 59, 48, 0.28); } to { background: transparent; } }
+
+/* — borde de oro ardiente para tarjetas destacadas (récords, jugado del día) — */
+.borde-oro {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card, #0b0b12), var(--card, #0b0b12)) padding-box,
+    conic-gradient(from var(--oroAng, 0deg), #ffb347, #ff5a1f, #ffd60a, #ffb347) border-box;
+  animation: girarOro 6s linear infinite;
+}
+@property --oroAng { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes girarOro { to { --oroAng: 360deg; } }
+
+/* — brillo de oro para textos y números de récord — */
+.oro-glow { text-shadow: 0 0 14px rgba(255, 179, 71, 0.55), 0 0 34px rgba(255, 122, 46, 0.25); }
+
+/* — lámpara colgante del hangar: vaivén lento — */
+@keyframes vaivenLampara { from { transform: rotate(-1.4deg); } to { transform: rotate(1.4deg); } }
+
+/* — luna creciente CSS para esquinas de arena — */
+.luna-v74 {
+  border-radius: 999px;
+  box-shadow: inset -7px 4px 0 0 #fff6e0, 0 0 22px 6px rgba(255, 246, 224, 0.28);
+  transform: rotate(-18deg);
+}
+
+/* — barra de scroll y selección en oro del ocaso — */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #08070b; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#3a2a18, #6b3a1c);
+  border-radius: 8px;
+  border: 2px solid #08070b;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(#6b4a24, #a05a28); }
+::selection { background: rgba(255, 179, 71, 0.32); color: #fff6e0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .estrellas-v74 { animation: none !important; }
+  .radar-sweep::after { animation: none !important; opacity: 0.35; }
+  .misil-v74, .explosion-v74, .borde-oro { animation: none !important; }
+}

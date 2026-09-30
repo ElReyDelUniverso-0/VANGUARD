@@ -9,6 +9,7 @@ import Globe, { type GlobeInstance } from "globe.gl";
 import type { ConflictRegion } from "@/lib/game-data";
 import type { PlacedCamera } from "@/lib/game-store";
 import type { MapRoute } from "@/components/vanguard/world-map-svg";
+import { CieloOcaso } from "@/components/vanguard/cielo-ocaso";
 
 const LEVEL_HEX: Record<string, string> = {
   CRITICO: "#ef4444",
@@ -264,11 +265,14 @@ export function Globe3D({
   }, [routes]);
 
   return (
+    // v74.0 GRAN OCASO: cielo nocturno con luna detrás del globo del Ojo de Dios
     <div
-      ref={wrapRef}
       className="w-full relative"
       style={{ height: "min(62vh, 620px)", minHeight: 380 }}
       aria-label="Globo 3D interactivo de conflictos"
-    />
+    >
+      <CieloOcaso />
+      <div ref={wrapRef} className="absolute inset-0" />
+    </div>
   );
 }

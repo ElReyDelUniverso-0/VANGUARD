@@ -216,7 +216,14 @@ export function CombatSimulatorPanel() {
       </div>
 
       {phase === "idle" && (
-        <div className="hud-corner p-6 text-center">
+        <div className="hud-corner p-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(to bottom, #06060e 0%, #100b18 55%, #1c100f 100%)" }}>
+          {/* v74.0 GRAN OCASO: el simulador lucha bajo la luna */}
+          <div className="estrellas-v74 absolute inset-0 opacity-70 pointer-events-none" />
+          <div className="absolute right-[10%] top-[12%] pointer-events-none">
+            <div className="luna-v74 h-4 w-4" />
+          </div>
+          <div className="absolute inset-x-0 bottom-0 h-16 pointer-events-none" style={{ background: "linear-gradient(to top, rgba(255,122,46,0.12), transparent)" }} />
+          <div className="relative">
           <Swords className="w-12 h-12 mx-auto text-red-hud mb-3" />
           <div className="text-base font-mono font-bold text-foreground mb-2">Simulador de combate tactico</div>
           <p className="text-xs text-muted-foreground mb-4 max-w-md mx-auto">
@@ -243,6 +250,7 @@ export function CombatSimulatorPanel() {
           >
             <Swords className="w-4 h-4 mr-1" /> Iniciar combate
           </Button>
+          </div>
         </div>
       )}
 
@@ -254,9 +262,11 @@ export function CombatSimulatorPanel() {
             key={enemy.id}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="hud-corner p-4 bg-red-hud/10 border-red-hud/50"
+            className="hud-corner p-4 bg-red-hud/10 border-red-hud/50 relative overflow-hidden"
+            style={{ background: "linear-gradient(135deg, rgba(255,59,48,0.10) 0%, rgba(26,15,16,0.6) 60%)" }}
           >
-            <div className="flex items-center gap-3 mb-2">
+            <div className="estrellas-v74 absolute inset-0 opacity-50 pointer-events-none" />
+            <div className="relative flex items-center gap-3 mb-2">
               <VIcon k={enemy.emoji} className="w-10 h-10 text-red-hud" />
               <div className="flex-1">
                 <div className="flex items-center justify-between">

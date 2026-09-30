@@ -7,6 +7,7 @@
 import { useEffect, useRef } from "react";
 import GlobeFactory from "globe.gl";
 import { GLOBE_COUNTRY_POLYS, hexA, type CountryFeature } from "@/lib/world-geo";
+import { CieloOcaso } from "@/components/vanguard/cielo-ocaso";
 
 export interface Globe3DMarker {
   id: string;
@@ -423,12 +424,16 @@ export function GlobeMap3D({
     }
   }, [units3d]);
 
+  // v74.0 GRAN OCASO: cielo nocturno con luna detrás del globo (el canvas de
+  // globe.gl es transparente — las estrellas se ven entre continentes y marco)
   return (
     <div
-      ref={wrapRef}
-      className={className ?? "w-full relative"}
+      className={`relative ${className ?? "w-full"}`}
       style={{ height, minHeight }}
       aria-label={ariaLabel}
-    />
+    >
+      <CieloOcaso />
+      <div ref={wrapRef} className="absolute inset-0" />
+    </div>
   );
 }
