@@ -144,13 +144,20 @@ export async function POST(req: Request) {
       const apuesta = [50, 100, 200, 500].includes(apuestaRaw) ? apuestaRaw : 100;
 
       // rival al azar entre los en línea ahora, excluyéndome
-      const online = await db.$queryRaw<{ uid: string; alias: string }[]>`
-        SELECT uid, alias FROM site_presence
+      // (site_presence NO tiene alias: uid/last_seen/lang — alias desde site_naciones)
+      const online = await db.$queryRaw<{ uid: string }[]>`
+        SELECT uid FROM site_presence
         WHERE last_seen > ${Date.now() - VENTANA_MS} AND uid <> ${uid}
         ORDER BY random() LIMIT 1`;
       if (!online[0]) {
         return NextResponse.json({ ok: false, error: "No hay otros guerreros en línea ahora — vuelve pronto" });
       }
+      let aliasRival = "Guerrero";
+      try {
+        const nac = await db.$queryRaw<{ nombre: string }[]>`
+          SELECT nombre FROM site_naciones WHERE uid = ${online[0].uid} LIMIT 1`;
+        if (nac[0]?.nombre) aliasRival = nac[0].nombre;
+      } catch { /* site_naciones aún no existe: alias genérico */ }
       // anti-spam: nada de retar al mismo rival dos veces en <3 min
       const dup = await db.$queryRaw<{ id: bigint | number }[]>`
         SELECT id FROM site_duelos WHERE from_uid = ${uid} AND to_uid = ${online[0].uid} AND ts > ${Date.now() - 180_000} LIMIT 1`;
@@ -160,9 +167,9 @@ export async function POST(req: Request) {
       const q = BANCO[Math.floor(Math.random() * BANCO.length)];
       await db.$executeRaw`
         INSERT INTO site_duelos (from_uid, from_alias, to_uid, to_alias, pregunta, opciones, correcta, apuesta, ts)
-        VALUES (${uid}, ${alias}, ${online[0].uid}, ${online[0].alias || "Guerrero"}, ${q.p}, ${JSON.stringify(q.o)}, ${q.c}, ${apuesta}, ${Date.now()})`;
+        VALUES (${uid}, ${alias}, ${online[0].uid}, ${aliasRival}, ${q.p}, ${JSON.stringify(q.o)}, ${q.c}, ${apuesta}, ${Date.now()})`;
       await db.$executeRawUnsafe(`DELETE FROM site_duelos WHERE ts < ${Date.now() - 40 * 60_000}`).catch(() => {});
-      return NextResponse.json({ ok: true, rival: online[0].alias || "Guerrero" });
+      return NextResponse.json({ ok: true, rival: aliasRival });
     }
 
     if (action === "responder") {
