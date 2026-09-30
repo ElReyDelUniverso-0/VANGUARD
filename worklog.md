@@ -469,3 +469,28 @@ Stage Summary:
 - La regla de oro del comandante vive ahora en 28 secciones (24 nuevas con 24 ilustraciones cinematográficas + 4 de v72), cada una con acento vibrante único.
 - Editor del Agente 3D en vivo + Duelo PVP de predicciones operativos contra guerreros reales en línea.
 - Siguientes rondas: ola de difusión 618→750 (goal 150 players al 93%), PVP por salas/campeonato de duelos, ilustraciones para paneles largos del mega-menú, editor de personaje 3D avanzado (sombreros/armas).
+
+---
+Task ID: 23
+Agent: main (Super Z)
+Task: v74.0 GRAN OCASO — "Mejora haora los juegos todo lo mapas del juego y el estilo artisitico de vanguard"
+
+Work Log:
+- ARCADE (10 juegos): RÉCORDS POR JUEGO en vg_arcade_records_v74 (high/low por juego, memoria=menos jugadas) — insignia ★ oro en cada tarjeta, bonus +30ⓒ al batir marca, flag ¡NUEVO! persistente. registrarRec conectado a los 10 fines de partida (memoria/historia/quien/trivia/codigo/negociador/banderas/antimisil/duelo/radar).
+- TARJETAS ARCADE: GameArt — mini-escena CSS única por juego (regla de oro: imagen primero, cero peticiones): cartas rotadas, cronología, retrato?, rayo, morse, pacto, banderas, misiles, sables, radar con barrido. Hover con elevación + sombra de brasa.
+- ANTIMISIL CINEMATOGRÁFICO: cielo nocturno con estrellas + luna creciente CSS + skyline, misiles con estela encendida (.misil-v74 con glow), explosiones en anillo (.explosion-v74) al interceptar y al caer, flash rojo de impacto en la base, horizonte de brasa.
+- RADAR FURIA + THREAT ASSESSMENT: barrido de radar cónico (.radar-sweep) + rejilla táctica sobre la arena; Threat con estrellas+luna propias.
+- HANGAR 3D (mapa insignia): cúpula de estrellas (esfera canvas 430 estrellas, fog:false), 3 lámparas industriales colgando con vaivén (cable+pantalla+bulbo), 6 cajas de suministro + 3 bidones con sombra, 2 banderas VANGUARD ondeando (lienzo con el ojo reptil), antena radar girando en el muro norte.
+- GLOBOS: CieloOcaso (nuevo componente, CSS puro: estrellas titilantes + luna con halo + horizonte encendido + silueta de ciudad) colocado DETRÁS del canvas transparente en globe-map-3d y globe-3d → TODOS los mapas de globo (Sala de Mapas, Conquista, Geopolítica, Warsim, Ojo de Dios) amanecen con cielo nocturno.
+- MAPA SVG: océano nocturno con horizonte de brasa al sur (radialGradient 3 paradas).
+- SIMULADOR DE COMBATE: pantalla de inicio y ficha de enemigo bajo la luna (estrellas + luna + brasa inferior).
+- globals.css v74: .cielo-ocaso, .estrellas-v74 (15 radial-gradients, titileo), .radar-sweep, .rejilla-radar, .misil-v74, .explosion-v74, .flash-golpe, .borde-oro (@property conic animado), .oro-glow, .luna-v74, scrollbar y selección en oro, reduced-motion respetado.
+- QA LOCAL: build limpio ×1 (los 4 tsc pre-existentes ranking/zc3d ajenos); headless: 10/10 juegos, antimisil con cielo+luna+9 misiles en vuelo, récord persistido por flujo real, badge ★ 0 ¡NUEVO!, mapa con cielo+luna detrás del globo, hangar canvas 1560x518 sin degradar con lámpara cálida, RECONECTANDO retirado por JS (artefacto solo-local), 0 errores de consola (solo warnings pre-existentes THREE).
+- Deploy fea466c → health v74.0 en el intento 4 (~80s), db up, SIN fallo transitorio.
+- QA PRODUCCIÓN: intro (no salió en sesión caché), buscador→Arcade 5/5 juegos + arte en tarjetas, footer v74.0 · GRAN OCASO, MAPA MUNDIAL con volanta "CADA FRONTERA BAJO LA LUNA".
+- Cifras al cerrar v74.0: players 140 (RÉCORD; +1 desde v73.0), visitas 143, presence pico 6, online 1 (QA), shares external 618/750 (82%), goal 140/150 (93%, faltan 10).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v74.0 GRAN OCASO (health ok, db up, 0 errores).
+- Los 10 minijuegos del arcade tienen récords con bonus, arte propio y las arenas nocturnas; el hangar y todos los globos viven bajo el mismo cielo de estrellas y luna.
+- Siguientes rondas: ola de difusión 618→750 (goal 150 al 93%), ilustraciones para los 10 juegos del arcade (fotos reales), sonidos nuevos por récord, PVP por salas/campeonato de duelos.
