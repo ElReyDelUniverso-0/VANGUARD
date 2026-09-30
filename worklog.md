@@ -519,3 +519,24 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v75.0 PLANETA VIVO (health ok, db up, 0 errores).
 - Las portadas de la página principal son ahora ilustraciones cinematográficas que se mueven (Ken Burns) con colores fuertes y hover interactivo; el Ojo de Dios concentra TODA la información del planeta (población viva, ISS, luna, eventos NASA, clima, divisas, sismos, cámaras, muro infinito); Infinita Verdades respira sola (cinta de última hora + auto-refresco + 15 medios).
 - Siguientes rondas: ola de difusión 618→750 (goal 150 al 94%), ilustraciones para el mega-menú y paneles internos, sonidos por récord, PVP por salas/campeonato de duelos.
+
+---
+Task ID: 25
+Agent: main (Super Z)
+Task: v76.0 OLA DE ORO — "Sigue con la ilustraciones" (segunda ola de la regla de oro: paneles internos)
+
+Work Log:
+- INVENTARIO: 28 paneles con cabecera de regla de oro (24 HeroOro + 3 TituloEpico custom + expedientes) de 89 paneles; 12 ilustraciones v75 (bolsa, expedientes, oscura, envivo, contribuidores, memes, creador, studios, bolsamonedas, armeria, abusos, memorial) SIN entrada en REGLA_ORO ni HeroOro en su panel.
+- REGLA DE ORO: regla-oro.ts pasa de 24 a 46 entradas (+22): 12 de Wave A con ilustraciones v75 existentes y 10 de Wave B nuevas (predicciones #FFB35C, salas #8C7FFF, radar #2EE6C8, logros #FFE14D, recompensas #FFAA33, tienda #5CE1E6, camaras #00E5A0, pulso #00D4FF, tribunal #E6C86E, recluta #7DFFB2). Cada una con titulo grande + volanta + texto facil + acento vibrante unico.
+- GENERACION: scripts/gen_ilustraciones_v76.mjs — 10 ilustraciones nuevas 1408x704 estilo unificado v75 (ocaso ambar + noche + luna llena + colores fuertes, "no text"). Leccion NUEVA: la API rechaza 1440x720 (error 1214: dimensiones deben ser multiplo de 32 y <=2^22 px) — 1408x704 es el tamano valido (el de v75). 5+5 en primer plano, 10/10 OK al primer intento tras el fix de tamano.
+- INSERCION: scripts/insert_hero_oro_v76.py — 21 paneles con ancla <PanelHeader (inserta <HeroOro panel="X"/> justo antes + import tras el cierre real del bloque de imports). Leccion recordada de v73: "use client"; rompia el detector de imports (fixed). Casos especiales: meme-studio-panel (sin PanelHeader → ancla aria-label="Estudio de memes geopoliticos"; ojo: quedo como HERMANO del <section> raiz y tsc dio TS2657 → movido a primer hijo dentro del section); expedientes-panel ya tenia TituloEpico propio pero con /assets/real/radar-1.jpg → swap a /ilustraciones/expedientes.jpg + acento #C77DFF.
+- tsc: solo los 4 pre-existentes (ranking x2, zc3d x2) + skills/ (ajenos al build). Build limpio tras fuser -k 3000/tcp + rm -rf .next.
+- QA LOCAL: servidor standalone (db down esperado local), navegador: intro/modales cerrados; navegacion por evento window.dispatchEvent(new CustomEvent('vanguard:navigate',{detail:'TAB'})) — MUCHO mas rapido que el buscador; barrido 22/22 paneles OK (img naturalWidth>0 con src decodificado — ojo: next/image codifica /ilustraciones/ como %2F, el selector necesita decodeURIComponent). 0 errores de consola.
+- DEPLOY: push 6d2da63 → deployment FALLO en 2s (failure en GitHub deployment status, no error de build; build local pasaba). Fix: commit vacio a6adcb6 → deployment success en ~1 min. Leccion: si health no cambia version en ~5 min, mirar /deployments/{id}/statuses via API de GitHub con el token del remote URL (.ghtoken ya no existe; extraer del remote get-url).
+- QA PRODUCCION: health v76.0 db up; footer "v76.0 · OLA DE ORO"; 10/10 nuevas .jpg → 200; home 21 portadas Ken Burns 0 rotas; prod nav: predicciones/camaras/tribunal/salas/tienda OK (imgOk true); 0 errores de pagina.
+- Cifras al cerrar v76.0: players 142 (RÉCORD; +1 desde v75.0), visitas 146 (+2), presence pico 6, online 1 (QA), shares external 618/750 (82%), goal 142/150 (95%, faltan 8).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v76.0 OLA DE ORO (health ok, db up, 0 errores).
+- La regla del comandante (título grande → ilustración → texto fácil) vive ahora en 50 secciones: 28 previas + 22 nuevas (12 con ilustraciones v75 conectadas a sus paneles + 10 ilustraciones cinematográficas recién generadas).
+- Siguientes rondas: ilustraciones para las ~30 secciones restantes del mega-menú (foros, encuestas, amigos, torneos, galería, historia, combate, muertes, epocas, enciclopedia, curiosidades, carteles, edad, conquistas3d, contadores, maps, embajadores, telegram, estudio, directos, divisas, incidentes, sala18, perfil, racha, fusion, registro, notificaciones, minijuego, retos, gancho, ayuda), ola de difusión 618→750, PVP por salas.
