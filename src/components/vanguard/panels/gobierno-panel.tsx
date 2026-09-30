@@ -19,6 +19,7 @@ import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/components/vanguard/creador-parts";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface GovRole { id: string; country: string; role: string; alias: string; appointedBy: string }
 interface GovRecruit { id: string; alias: string; dept: string }
@@ -127,6 +128,7 @@ export function GobiernoPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="gobierno" />
       <PanelHeader
         title="GOBIERNO MUNDIAL"
         subtitle="El embajador electo toma el poder, nombra ministros, recluta jugadores y publica decretos — el poder político se pelea país por país"

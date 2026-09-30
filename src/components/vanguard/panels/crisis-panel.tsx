@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Siren, Timer, Vote, Trophy, History, Zap, Users } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface CrisisOption { label: string; desc: string; }
 interface Crisis { id: string; title: string; region: string; brief: string; options: CrisisOption[]; }
@@ -204,6 +205,7 @@ export function CrisisPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="crisis" />
       <PanelHeader
         title="Crisis Mundial Semanal"
         subtitle="Domingo 20:00 · toda la comunidad vota y la opción más votada resuelve"

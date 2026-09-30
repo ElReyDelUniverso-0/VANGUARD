@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Flag, Swords, Send, Users, Crown, Trophy, LogOut } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface Member { name: string; level: number; coins: number; online: boolean; }
 interface Alliance {
@@ -184,6 +185,7 @@ export function AlianzasPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="alianzas" />
       <PanelHeader
         title="Alianzas"
         subtitle="Clanes de hasta 50 agentes · guerras de predicciones · ranking global"

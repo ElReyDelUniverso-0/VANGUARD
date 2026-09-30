@@ -16,6 +16,7 @@ import { rivalScores, RANK_RIVALS, type RivalScore } from "@/lib/hooks-data";
 import { useRetention, weekKeyOf, weekDaysLeft, WEEK_TOP3_REWARD } from "@/lib/retention";
 import { useOscura, OSCURA_TOTAL } from "@/lib/oscura";
 import { useExpedientes, EXPEDIENTES } from "@/lib/expedientes";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type Discipline = "XP" | "CONQ" | "TRADER";
 
@@ -265,6 +266,7 @@ export function RankingPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="ranking" />
       <PanelHeader
         title="Ranking global"
         subtitle="Semana · Operadores · Conquistadores · Traders — nuevas posiciones cada dia, defiende tu plaza"

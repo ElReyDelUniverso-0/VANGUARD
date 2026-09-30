@@ -12,6 +12,7 @@ import { DRONE_MODELS, DRONE_CASUALTY_FACTS, type DroneModel } from "@/lib/dark-
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, Skull, Radio, AlertTriangle, ChevronRight } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ---------- planos SVG por modelo (vista lateral, estilo museo) ----------
 function DroneDiagram({ model, activePart }: { model: DroneModel; activePart: number | null }) {
@@ -135,6 +136,7 @@ export function DronGuerraPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="dronguerra" />
       <PanelHeader
         title="Guerra de drones · Miles mueren desde el cielo"
         subtitle={`${DRONE_MODELS.length} sistemas con plano técnico · cifras documentadas de víctimas`}

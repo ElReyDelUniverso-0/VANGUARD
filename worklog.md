@@ -431,3 +431,22 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v72.0 INFINITA VERDADES estable (db up, 0 errores de consola en QA).
 - Nuevas features vivas: muro infinito de noticias, cámaras públicas del mundo, intro cinematográfica, MI PAÍS con uniones y reclutamiento aleatorio, regla de oro título+ilustración+texto.
 - Siguientes rondas: ola de difusión 618→750 shares (meta 150 players al 90%), editor de personaje 3D, PVP de predicciones.
+
+---
+Task ID: 22
+Agent: main (Super Z)
+Task: v73.0 REGLA DE ORO — regla de oro UNIVERSAL (título→ilustración→texto) en 24 paneles, Editor del Agente 3D y Duelo PVP de predicciones
+
+Work Log:
+- ILUSTRACIONES: 24 ilustraciones nuevas generadas (scripts/gen_ilustraciones_v73.mjs, estilo unificado ocaso ámbar + noche negra + luna llena, 1408x704 — el API exige múltiplos de 32; 1440x720 falla). Archivos en public/ilustraciones/: noticias, mapa, misiones, briefing, osint, mundo, multijugador, arcade, bookmaker, espionaje, biblioteca, foryou, ranking, agente, alianzas, gobierno, quiz, dronguerra, frente, warsim, crisis, planeta, geopolitica, detective.
+- REGLA DE ORO CENTRAL: src/lib/regla-oro.ts (24 entradas: titulo/volanta/imagen/texto/acento hex único por sección). src/components/vanguard/hero-oro.tsx = wrapper de una línea. titulo-epico.tsx extendido con prop `acento` (hex) que tiñe glow/volanta/borde/textShadow de la ilustración; `tinte` queda como fallback.
+- PATCH MASIVO: scripts/patch_hero_oro.py insertó <HeroOro panel="X"/> + import en 24 paneles (news, map, missions, daily-briefing, osint, world-conquest, multiplayer, arcade, bookmaker, espionaje, biblioteca, ranking, agente, alianzas, gobierno, quiz, dronguerra, warsim, crisis, planeta, geopolitica, detective, foryou, frente). Lección: el script insertaba el import tras la última línea que EMPIEZA por "import " y partió 3 imports multilinea (world-conquest, bookmaker, frente) — corregido con fix_hero_imports.py; regla nueva: buscar el cierre `} from`.
+- EDITOR DEL AGENTE 3D: src/lib/agente-look.ts (zustand persist vg_agente_look_v73: skin/uniforme("rango"|hex)/pantalón/visor/visorColor + emitirLook() por evento + leerLook() tolerante). hangar-3d.tsx aplica el look al construir la escena y escucha "vanguard:agente-look" para cambio EN VIVO (dispose correcto del visor). Editor UI en agente-panel.tsx: preview SVG en vivo (aura, piernas, torso, brazos, insignia, cabeza, visor con glow) + 6 tonos de piel + 12 uniformes + botón POR RANGO + 6 pantalones + visor ON/OFF con 5 colores + VER EN EL HANGAR + RESTAURAR.
+- DUELO PVP: /api/duelo (site_duelos on-demand: pregunta/opciones/correcta/respuestas/ms/estado/ganador/apuesta; banco de 30 preguntas tácticas SOLO servidor — la clave no viaja; retar = rival aleatorio de site_presence <90s con anti-spam 3min; responder = registra resp+ms y resuelve: acierto gana, doble acierto gana el MÁS RÁPIDO, caducidad 10min = paseo para quien respondió). src/components/vanguard/duelo-pvp.tsx en PREDICCIONES: bote 50/100/200/500, buzones con sondeo 12s, liquidación idempotente (vg_duelos_cobrados_v73; gane=2x, paseo=1.5x, empate=devolución, cancelado=nada — fix anti-inflación), récord V/D/E.
+- version.ts → v73.0 REGLA DE ORO. tsc 0 nuevos. Build limpio (fuser -k 3000/tcp + pkill standalone antes). /api/duelo en el build.
+- QA LOCAL (agent-browser, sesión fresca): intro + cierre de modales OK; HeroOro verificado en noticias/misiones/agente (título aria-label correcto, next/image cargada, texto fácil); editor: clic uniforme #1E90FF persistido en vg_agente_look_v73; hangar canvas 1560x518 (ratio 1.25 sin degradar); Duelo visible con botón RETAR; API duelo degrada amable con DB local SQLite (esperado — SQL PostgreSQL solo en producción, patrón idéntico a reclutar); regresión v72: VERDADES/OJO/MI PAÍS siguen con su título épico; 0 errores de consola.
+- Deploy y QA producción: PENDIENTE en el momento de escribir esto (siguiente paso).
+
+Stage Summary:
+- v73.0 REGLA DE ORO: la regla del comandante (título grande → ilustración → texto fácil) vive ahora en 28 secciones (24 nuevas + 4 de v72), cada una con acento vibrante único; Editor del Agente 3D en vivo en el hangar; Duelo PVP de predicciones contra guerreros en línea.
+- Cifras base de comparación (cierre v72.0): players 135, visitas 138, presence pico 6, shares external 618/750 (82%), goal 135/150 (90%).

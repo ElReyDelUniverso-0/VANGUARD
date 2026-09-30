@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Target, CheckCircle2, Lock, Trophy, Coins, Gem, Star, Zap, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const difficultyColor: Record<string, string> = {
   EASY: "text-green-hud border-green-hud",
@@ -65,6 +66,7 @@ export function MissionsPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="misiones" />
       <PanelHeader
         title="Centro de misiones"
         subtitle="Completa objetivos · gana monedas y XP"

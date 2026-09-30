@@ -27,6 +27,8 @@ interface TituloEpicoProps {
   prioritaria?: boolean;
   /** Tinte del resplandor: "brasa" (ámbar) | "luna" (frío) */
   tinte?: "brasa" | "luna";
+  /** v73.0: acento vibrante ÚNICO de la sección (hex) — tiñe glow, borde y volanta */
+  acento?: string;
   className?: string;
 }
 
@@ -38,22 +40,23 @@ export function TituloEpico({
   altura = 260,
   prioritaria = false,
   tinte = "brasa",
+  acento,
   className,
 }: TituloEpicoProps) {
   const reduced = useReducedMotion();
   const letras = Array.from(titulo);
+  // v73.0 REGLA DE ORO: acento hex por sección (si no hay, usa el tinte clásico)
+  const acc = acento && /^#[0-9a-fA-F]{6}$/.test(acento) ? acento : tinte === "luna" ? "#A8C7FF" : "#FF8A2A";
+  const accSuave = `${acc}2E`; // ~18% alpha para glows
+  const accMedio = `${acc}47`; // ~28% alpha para bordes
 
   return (
     <section className={cn("relative overflow-hidden", className)} aria-label={titulo}>
-      {/* resplandor atmosférico detrás del título */}
+      {/* resplandor atmosférico detrás del título (acento de la sección) */}
       <div
         aria-hidden
-        className={cn(
-          "pointer-events-none absolute -top-24 left-1/2 h-64 w-[130%] -translate-x-1/2 blur-3xl",
-          tinte === "brasa"
-            ? "bg-[radial-gradient(ellipse_at_center,rgba(255,138,42,0.16),transparent_65%)]"
-            : "bg-[radial-gradient(ellipse_at_center,rgba(168,199,255,0.14),transparent_65%)]"
-        )}
+        className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[130%] -translate-x-1/2 blur-3xl"
+        style={{ background: `radial-gradient(ellipse at center, ${accSuave}, transparent 65%)` }}
       />
 
       <div className="relative text-center px-2 pt-4 pb-2">
@@ -62,10 +65,8 @@ export function TituloEpico({
             initial={reduced ? false : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className={cn(
-              "font-mono text-[10px] md:text-[11px] uppercase tracking-[0.35em]",
-              tinte === "brasa" ? "text-amber" : "text-cyan-hud"
-            )}
+            className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.35em]"
+            style={{ color: acc, textShadow: `0 0 14px ${accMedio}` }}
           >
             {volanta}
           </motion.p>
@@ -94,8 +95,7 @@ export function TituloEpico({
               }}
               className="inline-block whitespace-pre bg-gradient-to-b from-white via-[#ffe9c4] via-45% to-[#ff8a2a] bg-clip-text text-transparent"
               style={{
-                textShadow:
-                  "0 0 22px rgba(255,150,60,0.35), 0 2px 0 rgba(0,0,0,0.85), 0 10px 28px rgba(0,0,0,0.6)",
+                textShadow: `0 0 22px ${accMedio}, 0 2px 0 rgba(0,0,0,0.85), 0 10px 28px rgba(0,0,0,0.6)`,
                 transformStyle: "preserve-3d",
               }}
             >
@@ -110,8 +110,12 @@ export function TituloEpico({
         initial={reduced ? false : { opacity: 0, scale: 1.04, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
-        className="relative rounded-md overflow-hidden border border-amber-hud/25 shadow-[0_18px_50px_rgba(0,0,0,0.65),0_0_38px_rgba(255,138,42,0.13)]"
-        style={{ height: `min(${altura}px, 46vw)` }}
+        className="relative rounded-md overflow-hidden"
+        style={{
+          height: `min(${altura}px, 46vw)`,
+          border: `1px solid ${accMedio}`,
+          boxShadow: `0 18px 50px rgba(0,0,0,0.65), 0 0 38px ${accSuave}`,
+        }}
       >
         <Image
           src={imagen}

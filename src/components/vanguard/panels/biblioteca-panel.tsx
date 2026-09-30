@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookLock, Lock, LockOpen, ShieldAlert, FileKey2, Crown } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type Level = "PUBLICO" | "RESTRINGIDO" | "CONFIDENCIAL" | "SECRETO" | "ULTRA";
 
@@ -167,6 +168,7 @@ export function SecretLibraryPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="biblioteca" />
       <PanelHeader
         title="Biblioteca Secreta"
         subtitle="Documentos desclasificados por nivel de acceso"

@@ -18,6 +18,7 @@ import { useGameStore } from "@/lib/game-store";
 import { Countryball } from "@/components/vanguard/countryball";
 import { SensitiveMedia, UgcComments, parseJSON, type UgcItem } from "@/components/vanguard/creador-parts";
 import { NEWS_CHANNELS } from "@/lib/rewards";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface UgcPhoto { src: string; credit?: string }
 
@@ -211,6 +212,7 @@ export function ForYouPanel() {
 
   return (
     <div className="space-y-2">
+      <HeroOro panel="foryou" />
       {/* cabecera TikTok-style */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">

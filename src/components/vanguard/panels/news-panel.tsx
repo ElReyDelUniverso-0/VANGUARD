@@ -13,6 +13,7 @@ import { countryName } from "@/lib/world-data";
 import { renderWithStickers } from "@/components/vanguard/countryball";
 import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface NewsItem {
   id: string;
@@ -154,6 +155,7 @@ export function NewsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="noticias" />
       <PanelHeader
         title="Noticias en vivo"
         subtitle={`Cables automaticos · fuente: ${source || "..."}`}

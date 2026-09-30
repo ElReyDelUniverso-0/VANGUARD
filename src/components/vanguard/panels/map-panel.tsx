@@ -33,6 +33,7 @@ import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type 
 // v51.2 — se importan GlobeViewMode y GlobeFlyTo (se usaban sin importar) y MilUnit
 // para tipar milUnits (el campo kind se consume en milCounts).
 import type { GlobeFlyTo, GlobeViewMode } from "@/components/vanguard/globe-map-3d";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const GlobeMap3D = dynamic(
   () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
@@ -277,6 +278,7 @@ export function MapPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="mapa" />
       <PanelHeader
         title="Mapa global de conflictos"
         subtitle={`${modeDef.desc} · ${visibleConflicts.length} zonas en este modo · ${cameras.length} camaras propias`}

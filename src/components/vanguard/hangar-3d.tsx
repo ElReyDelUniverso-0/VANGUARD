@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { getTension } from "@/lib/tension";
 import { claimOraculo, oraculoClaimed, ORACULO_DOCS, ORACULO_SECRET } from "@/lib/oraculo";
 import { TarotModal, PropagandaModal, DiarioModal } from "@/components/vanguard/hangar-modals";
+import { leerLook, type AgenteLook } from "@/lib/agente-look";
 import { Warehouse, Flame, Coins, Users, Thermometer, Compass } from "lucide-react";
 
 // ---- geometría del hangar ----
@@ -374,6 +375,40 @@ export function HangarPanel() {
     aura.rotation.x = Math.PI / 2;
     aura.position.y = 0.05;
     agent.add(aura);
+
+    // ---- v73.0 EDITOR DEL AGENTE: look persistido + actualización EN VIVO ----
+    const legMat = legL.material as THREE.MeshLambertMaterial;
+    let visorMesh: THREE.Mesh | null = null;
+    const buildVisor = (color: string) => {
+      const v = new THREE.Mesh(
+        new THREE.BoxGeometry(0.44, 0.13, 0.14),
+        new THREE.MeshBasicMaterial({ color })
+      );
+      v.position.set(0, 1.98, 0.21);
+      return v;
+    };
+    const aplicarLook = (l: AgenteLook) => {
+      if (l.uniforme !== "rango" && /^#[0-9a-fA-F]{6}$/.test(l.uniforme)) bodyMat.color.set(l.uniforme);
+      else bodyMat.color.set(uniformColor);
+      if (/^#[0-9a-fA-F]{6}$/.test(l.skin)) skinMat.color.set(l.skin);
+      if (/^#[0-9a-fA-F]{6}$/.test(l.pantalon)) legMat.color.set(l.pantalon);
+      if (l.visor) {
+        if (!visorMesh) {
+          visorMesh = buildVisor(l.visorColor);
+          agent.add(visorMesh);
+        } else {
+          (visorMesh.material as THREE.MeshBasicMaterial).color.set(l.visorColor);
+        }
+      } else if (visorMesh) {
+        agent.remove(visorMesh);
+        visorMesh.geometry.dispose();
+        (visorMesh.material as THREE.MeshBasicMaterial).dispose();
+        visorMesh = null;
+      }
+    };
+    aplicarLook(leerLook());
+    const onAgenteLook = (e: Event) => aplicarLook((e as CustomEvent).detail as AgenteLook);
+    window.addEventListener("vanguard:agente-look", onAgenteLook);
 
     // ---- otros agentes conectados (avatares de luz) ----
     const ghosts: { group: THREE.Group; t: number; from: THREE.Vector3; to: THREE.Vector3; speed: number }[] = [];
@@ -765,6 +800,7 @@ export function HangarPanel() {
 
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener("vanguard:agente-look", onAgenteLook);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);

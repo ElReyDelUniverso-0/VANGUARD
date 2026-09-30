@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type RankRow = { iso3: string; name: string; value: number; year: string };
 type Quake = { mag: number; place: string; time: number; url: string; lat: number; lng: number; depth: number };
@@ -146,6 +147,7 @@ export function GeopoliticaPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="geopolitica" />
       <PanelHeader
         title="Geopolítica en vivo"
         subtitle="Datos reales: Banco Mundial · USGS · Wikipedia"

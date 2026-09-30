@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 export function QuizPanel() {
   const { quizAnswered, quizCorrect, recordQuiz } = useGameStore();
@@ -59,6 +60,7 @@ export function QuizPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="quiz" />
       <PanelHeader
         title="Quiz geopolitico"
         subtitle="Pon a prueba tu conocimiento · gana recompensas"

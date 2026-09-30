@@ -16,6 +16,7 @@ import { combatAudio } from "@/lib/combat-audio";
 import {
   Flame, Crosshair, Skull, Activity, Radio, Target, ShieldAlert, Coins, Box, Volume2, VolumeX,
 } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // v66.0 TERCERA DIMENSIÓN — vista 3D orbitable del combate (Three.js, carga diferida:
 // lee el MISMO stateRef del canvas 2D, sin lógica ni economía duplicada)
@@ -1081,6 +1082,7 @@ export function FrentePanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="frente" />
       {/* selector de frentes */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {FRONTS.map((f, i) => (

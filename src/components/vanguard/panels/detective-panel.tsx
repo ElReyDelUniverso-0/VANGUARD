@@ -21,6 +21,7 @@ import { getRealtime } from "@/lib/realtime";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ================= tipos espejo del servidor =================
 interface DetSuspect { arch: string; name: string; desc: string; motive: string }
@@ -293,6 +294,7 @@ export function DetectivePanel() {
   if (!selected) {
     return (
       <div className="space-y-3">
+        <HeroOro panel="detective" />
         <PanelHeader
           title="Archivos Nacion — Detective"
           subtitle="Deduccion social multijugador · un caso por pais · engaño, pistas y juicio final"

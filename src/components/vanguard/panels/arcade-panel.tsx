@@ -19,6 +19,7 @@ import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { WIKI_ENTRIES } from "@/lib/wiki-data";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type GameId = "memoria" | "historia" | "quien" | "trivia" | "codigo" | "negociador" | "banderas" | "antimisil" | "duelo" | "radar" | null;
 
@@ -724,6 +725,7 @@ export function ArcadePanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="arcade" />
       <PanelHeader title="ARCADE PACK" subtitle="10 minijuegos rapidos · monedas y XP al ganar" icon={<Gamepad2 className="w-4 h-4" />} color="red" />
 
       {!game && <CommunityGames />}

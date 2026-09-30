@@ -20,6 +20,7 @@ import {
   cashoutValue, loadTickets, saveTickets, loadEvents, saveEvents,
   type BkEvent, type BkLeg, type BkTicket,
 } from "@/lib/bookmaker-sim";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const STAKE_CHIPS = [50, 100, 250, 500];
 
@@ -297,6 +298,7 @@ export function BookmakerPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="bookmaker" />
       <PanelHeader
         title="BETNACION"
         subtitle="Casa de apuestas · cuotas en vivo · mercados definidos"

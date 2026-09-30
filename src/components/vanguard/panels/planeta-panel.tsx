@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import type { Globe3DMarker, GlobeFlyTo, GlobeViewMode } from "@/components/vanguard/globe-map-3d";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const GlobeMap3D = dynamic(
   () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
@@ -216,6 +217,7 @@ export function PlanetaPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="planeta" />
       <PanelHeader
         title="Planeta Vivo — el mapa de todo"
         subtitle="NASA · NOAA · USGS en directo — enciende y apaga las capas del planeta"

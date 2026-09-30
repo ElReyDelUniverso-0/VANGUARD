@@ -26,6 +26,7 @@ import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-3d";
 import { motion, AnimatePresence } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // v14 — MAPA MULTIJUGADOR EN 3D: globo real en lugar del SVG plano
 const GlobeMap3D = dynamic(
@@ -171,6 +172,7 @@ export function MultiplayerPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="multijugador" />
       <PanelHeader
         title={t("mp.title")}
         subtitle="Mundo de Guerra GLOBAL + Duelos 1v1 + Ranking ELO mundial · tiempo real contra operadores reales"

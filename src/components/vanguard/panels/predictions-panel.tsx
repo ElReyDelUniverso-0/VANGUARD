@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 // v67.0 EL HANGAR — rival personal + near-miss exacto + tensión global viva
 import { RivalStrip } from "@/components/vanguard/rival-strip";
+// v73.0 DUELO PVP: predicción rápida contra guerreros en línea
+import { DueloPvp } from "@/components/vanguard/duelo-pvp";
 import { addMyRivalPoints } from "@/lib/rival";
 import { bumpTension } from "@/lib/tension";
 
@@ -126,7 +128,7 @@ export function PredictionsPanel() {
     <div className="space-y-3">
       <PanelHeader
         title="Mercado de predicciones"
-        subtitle="4 horizontes · odds dinámicos · pozo de profecías"
+        subtitle="4 horizontes · odds dinámicos · pozo de profecías · DUELO PVP"
         icon={<BarChart3 className="w-4 h-4 text-amber" />}
         color="amber"
         right={
@@ -139,6 +141,9 @@ export function PredictionsPanel() {
 
       {/* v67 RIVAL PERSONAL: nadie quiere ver a otro arriba sin intentarlo */}
       <RivalStrip />
+
+      {/* v73.0 DUELO PVP: predicción rápida contra guerreros en línea */}
+      <DueloPvp />
 
       {/* SELECTOR DE HORIZONTE */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">

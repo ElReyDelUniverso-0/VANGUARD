@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { VenetianMask, Eye, Copy, Ghost, Bomb, ShieldOff, Skull, Coins } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { PREDICTION_MARKETS } from "@/lib/game-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const SPY_COST = 20;
 const UNDERCOVER_COST = 75;
@@ -203,6 +204,7 @@ export function EspionagePanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="espionaje" />
       <PanelHeader
         title="Red de Espionaje"
         subtitle="Espía, copia, ocúltate y enreda — el juego sucio de las predicciones"

@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Swords, Play, RotateCcw, Share2, Shuffle, Users, Plane, Ship, Rocket, Radiation, Banknote, ShieldHalf, Mountain, BrainCircuit, Dice5 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface WarPower {
   id: string;
@@ -216,6 +217,7 @@ export function WarsimPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="warsim" />
       <PanelHeader
         title="Simulador de Guerras"
         subtitle="Enfrenta potencias con datos reales y descubre el desenlace"

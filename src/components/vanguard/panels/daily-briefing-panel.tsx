@@ -10,6 +10,7 @@ import { Newspaper, AlertTriangle, Flame, TrendingUp, Globe, Clock, Zap, Eye, Ch
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud border-red-hud bg-red-hud/30",
@@ -87,6 +88,7 @@ export function DailyBriefingPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="briefing" />
       <PanelHeader
         title="Briefing diario"
         subtitle="Resumen automatico · situacion global"

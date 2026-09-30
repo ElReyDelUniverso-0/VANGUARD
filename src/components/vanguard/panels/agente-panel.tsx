@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { BrainCircuit, Flame, Coins, Gem, Trophy, TrendingUp, Target, Globe2, Award, Swords, Newspaper, Images, Gamepad2 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { getRankForLevel, xpForLevel } from "@/lib/game-data";
+import { useAgenteLook, PIEL_TONOS, UNIFORME_COLORES, PANTALON_COLORES, VISOR_COLORES } from "@/lib/agente-look";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_IQ = "vanguard-iq-history";
 
@@ -113,6 +115,7 @@ export function AgentePanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="agente" />
       <PanelHeader
         title="Perfil del Agente"
         subtitle="IQ geopolítico · especialidades · análisis personal"
@@ -166,6 +169,9 @@ export function AgentePanel() {
           </div>
         </div>
       </div>
+
+      {/* v73.0 EDITOR DEL AGENTE 3D — tu avatar, tu uniforme */}
+      <EditorAgente3D />
 
       {/* ANALYTICS PERSONAL */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
@@ -257,6 +263,136 @@ export function AgentePanel() {
 
 function aliasSafe(a: string) {
   return a?.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 3);
+}
+
+// ---- v73.0 EDITOR DEL AGENTE 3D ----
+const IR_AL_HANGAR = () =>
+  window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "hangar" }));
+
+function EditorAgente3D() {
+  const look = useAgenteLook();
+  const setLook = useAgenteLook((s) => s.setLook);
+  const reset = useAgenteLook((s) => s.reset);
+
+  return (
+    <div className="hud-panel neon-border p-4">
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div>
+          <h3 className="font-display font-black uppercase tracking-wide text-lg">
+            Editor del Agente <span className="text-electric">3D</span>
+          </h3>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+            Piel · uniforme · visor — se ve en vivo en el hangar
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={IR_AL_HANGAR}
+            className="px-3 py-1.5 border border-electric-hud text-electric font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-electric/10 active:scale-95 transition"
+          >
+            Ver en el Hangar
+          </button>
+          <button
+            onClick={reset}
+            className="px-3 py-1.5 border border-border text-muted-foreground font-mono text-[10px] font-bold uppercase tracking-widest hover:text-foreground active:scale-95 transition"
+          >
+            Restaurar
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* PREVIEW SVG del agente (vista frontal) */}
+        <div className="flex-shrink-0 mx-auto sm:mx-0">
+          <svg viewBox="0 0 120 190" className="w-[120px] h-[190px]" role="img" aria-label="Vista previa del agente">
+            {/* aura de suelo */}
+            <ellipse cx="60" cy="178" rx="42" ry="8" fill="none" stroke={look.uniforme === "rango" ? "#1E90FF" : look.uniforme} strokeOpacity="0.7" strokeWidth="2.5" />
+            {/* piernas */}
+            <rect x="47" y="118" width="11" height="54" rx="5.5" fill={look.pantalon} />
+            <rect x="62" y="118" width="11" height="54" rx="5.5" fill={look.pantalon} />
+            {/* torso */}
+            <rect x="40" y="62" width="40" height="62" rx="16" fill={look.uniforme === "rango" ? "#3a3f4a" : look.uniforme} />
+            {/* brazos */}
+            <rect x="26" y="66" width="12" height="52" rx="6" fill={look.uniforme === "rango" ? "#3a3f4a" : look.uniforme} />
+            <rect x="82" y="66" width="12" height="52" rx="6" fill={look.uniforme === "rango" ? "#3a3f4a" : look.uniforme} />
+            {/* insignia */}
+            <circle cx="78" cy="80" r="4" fill="#FFD60A" />
+            {/* cabeza */}
+            <circle cx="60" cy="38" r="17" fill={look.skin} />
+            {/* visor */}
+            {look.visor && <rect x="43" y="31" width="34" height="9" rx="4.5" fill={look.visorColor} style={{ filter: `drop-shadow(0 0 5px ${look.visorColor})` }} />}
+          </svg>
+          <div className="text-center font-mono text-[8px] uppercase tracking-widest text-muted-foreground mt-1">Vista previa</div>
+        </div>
+
+        {/* CONTROLES */}
+        <div className="flex-1 min-w-0 space-y-3">
+          <Fila label="Piel">
+            {PIEL_TONOS.map((c) => (
+              <Swatch key={c} color={c} activo={look.skin === c} onClick={() => setLook({ skin: c })} aria={`Piel ${c}`} />
+            ))}
+          </Fila>
+          <Fila label="Uniforme">
+            <button
+              onClick={() => setLook({ uniforme: "rango" })}
+              aria-label="Uniforme por rango"
+              className={cn(
+                "w-7 h-7 border font-mono text-[7px] font-black leading-none flex items-center justify-center transition active:scale-90",
+                look.uniforme === "rango" ? "border-electric text-electric bg-electric/15" : "border-border text-muted-foreground"
+              )}
+            >
+              RNG
+            </button>
+            {UNIFORME_COLORES.map((c) => (
+              <Swatch key={c} color={c} activo={look.uniforme === c} onClick={() => setLook({ uniforme: c })} aria={`Uniforme ${c}`} />
+            ))}
+          </Fila>
+          <Fila label="Pantalón">
+            {PANTALON_COLORES.map((c) => (
+              <Swatch key={c} color={c} activo={look.pantalon === c} onClick={() => setLook({ pantalon: c })} aria={`Pantalón ${c}`} />
+            ))}
+          </Fila>
+          <Fila label="Visor">
+            <button
+              onClick={() => setLook({ visor: !look.visor })}
+              className={cn(
+                "px-2.5 h-7 border font-mono text-[9px] font-black uppercase tracking-wider transition active:scale-90",
+                look.visor ? "border-neon text-neon bg-neon/15" : "border-border text-muted-foreground"
+              )}
+            >
+              {look.visor ? "ON" : "OFF"}
+            </button>
+            {VISOR_COLORES.map((c) => (
+              <Swatch key={c} color={c} activo={look.visor && look.visorColor === c} onClick={() => setLook({ visor: true, visorColor: c })} aria={`Visor ${c}`} />
+            ))}
+          </Fila>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Fila({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="font-mono text-[8px] uppercase tracking-widest text-muted-foreground mb-1">{label}</div>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
+    </div>
+  );
+}
+
+function Swatch({ color, activo, onClick, aria }: { color: string; activo: boolean; onClick: () => void; aria: string }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={aria}
+      className={cn(
+        "w-7 h-7 border transition active:scale-90",
+        activo ? "border-white ring-2 ring-white/40 scale-110" : "border-black/50 hover:scale-105"
+      )}
+      style={{ background: color }}
+    />
+  );
 }
 
 function Chip({ icon, value, cls }: { icon: React.ReactNode; value: string; cls: string }) {

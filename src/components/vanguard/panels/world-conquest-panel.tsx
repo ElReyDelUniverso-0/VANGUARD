@@ -19,6 +19,7 @@ import {
   createInitialSnapshot, CAPTURE_REWARD, COMMANDERS, getCommander,
   type ConquestSnapshot, type FactionId,
 } from "@/lib/conquest-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // v14 — MAPA DE GUERRA EN 3D: globo real (globe.gl) en lugar del SVG plano
 const GlobeMap3D = dynamic(
@@ -327,6 +328,7 @@ export function WorldConquestPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="mundo" />
       <PanelHeader
         title="Mundo de Guerra"
         subtitle={`Ronda ${snap.turn} · ${TERRITORIES.length} territorios · comandante ${getCommander(snap.commander)?.name ?? "SIN ASIGNAR"}`}
