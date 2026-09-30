@@ -213,6 +213,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Acción desconocida" }, { status: 400 });
   } catch (e) {
     console.error("duelo POST error", e);
-    return NextResponse.json({ ok: false, error: "Error del servidor de duelos" }, { status: 200 });
+    const detail = body.debug ? String(e).slice(0, 400) : undefined;
+    return NextResponse.json({ ok: false, error: "Error del servidor de duelos", detail }, { status: 200 });
   }
 }
