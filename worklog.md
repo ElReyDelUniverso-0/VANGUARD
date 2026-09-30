@@ -450,3 +450,22 @@ Work Log:
 Stage Summary:
 - v73.0 REGLA DE ORO: la regla del comandante (título grande → ilustración → texto fácil) vive ahora en 28 secciones (24 nuevas + 4 de v72), cada una con acento vibrante único; Editor del Agente 3D en vivo en el hangar; Duelo PVP de predicciones contra guerreros en línea.
 - Cifras base de comparación (cierre v72.0): players 135, visitas 138, presence pico 6, shares external 618/750 (82%), goal 135/150 (90%).
+
+---
+Task ID: 22-cierre
+Agent: main (Super Z)
+Task: Cierre de producción v73.0/v73.1 REGLA DE ORO
+
+Work Log:
+- Deploy 1: 14d2e61 (v73.0 completo) → health v73.0 en el intento 3 (~75s), db up.
+- QA producción encontró POST /api/duelo caído: site_presence NO tiene columna alias (uid/last_seen/lang) y la consulta SELECT uid, alias fallaba → FIX b435159: SELECT uid solo + alias del rival desde site_naciones (fallback "Guerrero").
+- Lección de deploy: la health no cambia de versión entre fix (sigue "v73.0") → el poll de health da falso positivo; el uptime sí denota instancia nueva. Tras el push del fix, probar SIEMPRE el endpoint cambiado, no fiarse del match de versión.
+- Diagnóstico con flag debug (temporal) confirmó la cadena OK → endpoint real: "No hay otros guerreros en línea ahora" con 1 en línea. DUELO VERIFICADO END-TO-END EN PRODUCCIÓN simulando 2 guerreros vía /api/presence: retar (id 1, rival Guerrero, clave NO viaja) → buzones correctos → responder ambos → estado acabada + ganador=AGT-QARIVAL-9999 (respondió bien: idx 1) + correcta revelada solo al terminar + miMs/rivalMs para el desempate por velocidad. Diag retirado (commit final).
+- QA producción (agent-browser): portada v73.0, hero NOTICIAS con título "Noticias Globales" + ilustración cargada (imgOk true), MISSIONS con volanta acento rojo + título gigante degradado + ilustración de expedientes (captura), EDITOR DEL AGENTE: clic Piel #8c5a34 → persistido en vg_agente_look_v73 → hangar muestra al agente con piel personalizada (captura) canvas 1560x518 sin degradar, Duelo PVP visible con botes y botón RETAR, 0 errores de consola.
+- Cifras al cerrar v73.0: players 139 (RÉCORD; +4 desde v72.0), visitas 142, presence pico 6, online 1 (QA), shares external 618/750 (82%, faltan 132), goal 139/150 (93%).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v73.0 REGLA DE ORO (health ok, db up, 0 errores).
+- La regla de oro del comandante vive ahora en 28 secciones (24 nuevas con 24 ilustraciones cinematográficas + 4 de v72), cada una con acento vibrante único.
+- Editor del Agente 3D en vivo + Duelo PVP de predicciones operativos contra guerreros reales en línea.
+- Siguientes rondas: ola de difusión 618→750 (goal 150 players al 93%), PVP por salas/campeonato de duelos, ilustraciones para paneles largos del mega-menú, editor de personaje 3D avanzado (sombreros/armas).
