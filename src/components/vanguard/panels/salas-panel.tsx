@@ -15,6 +15,7 @@ import { getRealtime } from "@/lib/realtime";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface RoomDef { id: string; name: string; desc: string; color: string; }
 interface ChatMsg {
@@ -201,6 +202,7 @@ export function SalasPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="salas" />
       <PanelHeader
         title="Salas sociales"
         subtitle="Chat en vivo de la comunidad · tiempo real multijugador · 8 salas tematicas"

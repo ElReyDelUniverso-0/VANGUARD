@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, ExternalLink, ShieldCheck, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_CANDLES = "vanguard_memorial_candles_v1";
 
@@ -124,6 +125,7 @@ export function MemorialPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="memorial" />
       <PanelHeader
         title="Memorial † · Los que documentaron y cayeron"
         subtitle={`${MEMORIAL_FALLEN.length} homenajes · ${totalCandles} velas encendidas por la comunidad`}

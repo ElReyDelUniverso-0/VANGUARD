@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import { sfx } from "@/lib/sound";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const rarityColor: Record<string, string> = {
   COMUN: "text-muted-foreground border-border",
@@ -110,6 +111,7 @@ export function AchievementsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="logros" />
       <PanelHeader
         title="Centro de logros"
         subtitle="Hitos a largo plazo · recompensas permanentes"

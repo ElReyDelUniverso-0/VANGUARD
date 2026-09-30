@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, ShieldAlert, BadgeCheck, Link2, BrainCircuit, TrendingUp, Vote, Coins } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ====== DATOS ======
 interface NewsVeracity {
@@ -155,6 +156,7 @@ export function RadarPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="radar" />
       <PanelHeader
         title="Radar de Desinformación"
         subtitle="Veracidad por IA + veredicto de la comunidad + patrones ocultos"

@@ -26,6 +26,7 @@ import { Countryball, STICKER_CODES } from "@/components/vanguard/countryball";
 import {
   CONTRIB_REWARDS, RANKS, rankOf, MOD_REWARD, VERIFY_REWARD, VERIFY_DUDA_REWARD, VERIFY_NOSE_REWARD,
 } from "@/lib/rewards";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ============ TIPOS ============
 interface ContributionRow {
@@ -119,6 +120,7 @@ export function ContribuidoresPanel() {
 
   return (
     <div className="space-y-4" id="contribuidores">
+      <HeroOro panel="contribuidores" />
       <PanelHeader
         title="COMUNIDAD DE CONTRIBUIDORES"
         subtitle="Construye VANGUARD y gana monedas — 7 trabajos disponibles"

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 export function ShopPanel() {
   const { coins, gems, ownedAvatars, ownedCosmetics, activeAvatar, hudTheme, buyAvatar, buyCosmetic, buyBoost, unlockBriefing, readBriefings, spendCoins, addToInventory, activateElite, isElite } = useGameStore();
@@ -101,6 +102,7 @@ export function ShopPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="tienda" />
       <PanelHeader
         title="Tienda de comando"
         subtitle="Gasta tus monedas y gemas"

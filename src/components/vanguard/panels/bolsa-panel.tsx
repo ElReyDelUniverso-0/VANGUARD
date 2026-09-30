@@ -18,6 +18,7 @@ import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/components/vanguard/creador-parts";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface Currency {
   id: string; code: string; name: string; symbol: string; country: string; creator: string;
@@ -138,6 +139,7 @@ export function BolsaPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="bolsamonedas" />
       <PanelHeader
         title="BOLSA DE MONEDAS"
         subtitle="Crea tu propia moneda, cítala en monedas Vanguard y specula con las monedas de la comunidad — el precio lo mueven las operaciones reales"

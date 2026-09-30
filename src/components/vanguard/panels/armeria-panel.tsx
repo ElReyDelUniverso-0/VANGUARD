@@ -18,6 +18,7 @@ import {
 import { ARSENAL, type ArsenalWeapon } from "@/lib/arsenal-data";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 function SpecIcon({ k }: { k: string }) {
   if (k.includes("calibre") || k.includes("ogiva")) return <Ruler className="w-3 h-3" />;
@@ -48,6 +49,7 @@ export function ArmeriaPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="armeria" />
       <PanelHeader
         title="ARMERÍA REAL"
         subtitle="Fotos REALES de las armas de los conflictos actuales — función, ficha técnica y cómo se arma pieza por pieza. Nada de polígonos."

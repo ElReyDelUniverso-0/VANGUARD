@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const DAYS = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
 
@@ -52,6 +53,7 @@ export function RewardsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="recompensas" />
       <PanelHeader
         title="Recompensas semanales"
         subtitle={`Semana ${weekKey} · racha ${streak} dias`}

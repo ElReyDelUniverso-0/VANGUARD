@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_ABUSE_DOC = "vanguard_abuse_doc_cd"; // cooldown de recompensa por documentar
 
@@ -111,6 +112,7 @@ export function AbusosPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="abusos" />
       <PanelHeader
         title="Crímenes y abusos · Lo que prefieren que no veas"
         subtitle={`${WAR_ABUSES.length} casos documentados con fuente primaria · ${filtered.length} en vista`}

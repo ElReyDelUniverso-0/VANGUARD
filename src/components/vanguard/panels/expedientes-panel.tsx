@@ -109,10 +109,11 @@ export function ExpedientesPanel() {
       <TituloEpico
         titulo="ARCHIVO SECRETO"
         volanta="Expedientes desclasificados"
-        imagen="/assets/real/radar-1.jpg"
+        imagen="/ilustraciones/expedientes.jpg"
         texto="Documentos que los gobiernos mantuvieron ocultos y hoy son públicos: FBI, CIA, NARA, NSArchive y Black Vault. Colecciónalos, léalos rápido y descubre lo que pasaba entre bambalinas."
         altura={220}
         tinte="luna"
+      acento="#C77DFF"
       />
 
       {/* ===== BANNER DE CLASIFICACIÓN (estética de dossier) ===== */}

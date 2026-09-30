@@ -24,6 +24,7 @@ import {
   type CountryAsset, type AssetState, type Candle, type BookLevel, type TimeframeKey,
 } from "@/lib/market-sim";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const FEE = 0.005; // comision taker 0.5%
 const UP = "#4ade80";
@@ -128,6 +129,7 @@ export function MarketsPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="bolsa" />
       <PanelHeader
         title="Bolsa geopolítica"
         subtitle="Exchange de países · velas en vivo · 34 activos soberanos · comisión taker 0.5%"

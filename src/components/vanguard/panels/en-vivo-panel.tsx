@@ -29,6 +29,7 @@ import {
   NEWS_CHANNELS, LIVE_CATEGORIES, LIVE_RULES, VIEWER_REWARDS, REACTIONS,
   MIN_LEVEL_LIVE, rankOf,
 } from "@/lib/rewards";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ============ TIPOS ============
 interface LiveStreamRow {
@@ -107,6 +108,7 @@ export function EnVivoPanel() {
 
   return (
     <div className="space-y-4" id="en-vivo">
+      <HeroOro panel="envivo" />
       <PanelHeader
         title="EN VIVO MUNDIAL"
         subtitle="Noticias reales + comunidad transmitiendo ahora"

@@ -13,6 +13,7 @@ import { GlobeMap3D, type Globe3DMarker, type Globe3DArc } from "@/components/va
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, MapPin, GraduationCap, Banknote, Route, ExternalLink } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const KIND_COLOR: Record<string, string> = {
   CENTRO: "#38bdf8",
@@ -55,6 +56,7 @@ export function ReclutamientoPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="recluta" />
       <PanelHeader
         title="Cómo se recluta · Mapa 3D por bandos"
         subtitle={`${RECRUIT_SIDES.length} bandos · edades, pagos reales, fases y centros en el globo`}

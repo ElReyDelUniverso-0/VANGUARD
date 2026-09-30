@@ -26,6 +26,7 @@ import {
   parseJSON, timeAgo,
   type UgcItem, type UgcPhoto, type AssemblyStep,
 } from "@/components/vanguard/creador-parts";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type Section = "crear" | "galeria" | "mios";
 type Kind = "personaje" | "arma" | "juego" | "musica" | "noticia" | "encuesta" | "video";
@@ -342,6 +343,7 @@ export function CreadorPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="creador" />
       <PanelHeader
         title="ESTUDIO COMUNITARIO"
         subtitle="TODO LO SUBE LA GENTE — personajes, armas, juegos, música, noticias, encuestas y videos con tus fotos y tu información"

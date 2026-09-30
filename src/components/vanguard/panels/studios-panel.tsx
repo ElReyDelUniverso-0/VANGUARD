@@ -28,6 +28,7 @@ import {
 import {
   STUDIO_GENRES, emptyPattern, playPreview, stopPreview, renderToWav, type StudioPattern,
 } from "@/lib/music-studio";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type StudioTab = "noticias" | "banderas" | "mapas" | "musica" | "stickers" | "comunidad";
 
@@ -962,6 +963,7 @@ export function StudiosPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="studios" />
       <PanelHeader
         title="ESTUDIOS CREADORES"
         subtitle="Un estudio completo para cada sección: noticias, banderas, mapas, música, stickers y comunidad — todo lo sube la gente y el agente IA lo modera"

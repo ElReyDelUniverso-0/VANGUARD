@@ -24,6 +24,7 @@ import {
   Video, Coins, Zap, Radar, Crosshair, X, Trash2, Radio, Moon,
   Sun, Crown, Download, MapPin, Activity, PackageOpen, ShieldCheck, Gem,
 } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ---------- utilidades CCTV ----------
 // v14 — GLOBO 3D de cámaras: reemplaza el mapa plano de despliegue
@@ -388,6 +389,7 @@ export function CamerasPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="camaras" />
       <PanelHeader
         title="Red de cámaras de vigilancia"
         subtitle="Compra, despliega donde quieras en el globo 3D y cobra intel 24/7 · mira devastaciones en vivo"

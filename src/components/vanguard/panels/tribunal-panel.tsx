@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gavel, Scale, FileSearch, Users, Check, X } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface Evidence { title: string; detail: string; source: string; weight: "FAVORABLE" | "CARGO" | "NEUTRA"; }
 interface Case {
@@ -142,6 +143,7 @@ export function TribunalPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="tribunal" />
       <PanelHeader
         title="Juicio Histórico"
         subtitle="La comunidad como jurado · evidencias con fuentes reales"

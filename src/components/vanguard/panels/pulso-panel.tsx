@@ -11,6 +11,7 @@ import { Satellite, Plane as PlaneIcon, Rocket, RefreshCw, Radar, ScanLine, Radi
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface IssState {
   lat: number; lon: number; altKm: number; velKmh: number;
@@ -80,6 +81,7 @@ export function PulsoPanel() {
 
   return (
     <div className="flex flex-col gap-3">
+      <HeroOro panel="pulso" />
       <PanelHeader
         title="PULSO MUNDIAL"
         subtitle="Satélite espía · radar aéreo en vivo · señales espaciales — datos REALES, sin API key"

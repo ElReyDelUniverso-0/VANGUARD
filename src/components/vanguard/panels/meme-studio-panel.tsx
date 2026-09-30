@@ -23,6 +23,7 @@ import {
   Download, Share2, Upload, Laugh, Trash2, Sparkles, Trophy, Heart,
   Layers, Palette, Type as TypeIcon, Sticker, Search, Crown, Move,
 } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ====== CONSTANTES DE DISEÑO ======
 
@@ -517,6 +518,7 @@ export function MemeStudioPanel() {
 
   return (
     <section className="mt-4 space-y-4" aria-label="Estudio de memes geopolíticos">
+      <HeroOro panel="memes" />
       {/* ===== ENCABEZADO ===== */}
       <div className="hud-panel p-5 relative overflow-hidden">
         <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-60" aria-hidden />

@@ -20,6 +20,7 @@ import { RivalStrip } from "@/components/vanguard/rival-strip";
 import { DueloPvp } from "@/components/vanguard/duelo-pvp";
 import { addMyRivalPoints } from "@/lib/rival";
 import { bumpTension } from "@/lib/tension";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type Horizon = "RAPIDA" | "SEMANAL" | "MENSUAL" | "PROFECIA";
 
@@ -126,6 +127,7 @@ export function PredictionsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="predicciones" />
       <PanelHeader
         title="Mercado de predicciones"
         subtitle="4 horizontes · odds dinámicos · pozo de profecías · DUELO PVP"

@@ -27,6 +27,7 @@ import {
   INTERRO_SECONDS, INTERRO_REWARD, quizSetOfDay, dayKeyUtc,
   useOscura, type Veredicto, type OscuraRarity, type QuizQuestion,
 } from "@/lib/oscura";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type Coleccion = "TEORIAS" | "ARMAS" | "CIVIS" | "DOCS" | "QUIZ";
 
@@ -122,6 +123,7 @@ export function OscuraPanel() {
   const bonusClaimed = quizBonusDay === dayKeyUtc();
   return (
     <div className="space-y-4">
+      <HeroOro panel="oscura" />
       <PanelHeader
         title="Alejandría Oscura"
         subtitle="La biblioteca de los secretos: teorías, armas, civilizaciones, documentos reales y examen diario"
