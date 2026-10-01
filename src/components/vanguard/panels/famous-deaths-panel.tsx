@@ -7,6 +7,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skull, MapPin, Calendar, ChevronRight, ChevronDown, Crosshair } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 function formatYear(year: number): string {
   if (year < 0) return `${Math.abs(year)} a.C.`;
@@ -21,6 +22,7 @@ export function FamousDeathsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="muertes" />
       <PanelHeader
         title="Muertes famosas en guerra"
         subtitle="Figuras historicas · como murieron"

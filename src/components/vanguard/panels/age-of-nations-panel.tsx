@@ -24,6 +24,7 @@ import {
   AON_NATION_DEFS, AON_COSTS, AON_RELIGIONS,
   type AoNMode, type AoNState,
 } from "@/lib/age-engine";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // v14 — AGE OF NATIONS EN 3D: el tablero SVG se sustituye por el globo real
 const GlobeMap3D = dynamic(
@@ -129,6 +130,7 @@ export function AgeOfNationsPanel() {
   if (!state) {
     return (
       <div className="space-y-3">
+        <HeroOro panel="edad" />
         <PanelHeader title="AGE OF NATIONS" subtitle="Estrategia por turnos · conquista y guerras de religion" icon={<Castle className="w-4 h-4" />} color="red" />
         <div className="grid md:grid-cols-2 gap-2">
           {(["CONQUISTA", "CRUZADA"] as AoNMode[]).map((m) => (

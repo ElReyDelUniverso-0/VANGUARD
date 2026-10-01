@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const classColor: Record<string, string> = {
   PUBLICO: "text-green-hud border-green-hud bg-green-hud/30",
@@ -64,6 +65,7 @@ export function BriefingsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="briefings" />
       <PanelHeader
         title="Briefings de inteligencia"
         subtitle="Informes clasificados · analisis estrategico"

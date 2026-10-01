@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Send, Bot, CircleCheck, CircleAlert, Copy, ExternalLink, Bell, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface TgStatus {
   configured: boolean;
@@ -83,6 +84,7 @@ export function TelegramPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="telegram" />
       <PanelHeader
         title="Bot de Telegram · Alertas de guerra en tu grupo"
         subtitle={status ? (ok ? `bot @${status.botName ?? "?"} conectado` : "bot en modo configuración") : "consultando estado..."}

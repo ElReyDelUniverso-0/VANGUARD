@@ -9,6 +9,7 @@ import { Trophy, Crown, Medal, Clock, Coins, Gem, Star, ChevronRight } from "luc
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const rankColor: Record<number, string> = {
   1: "text-amber border-amber-hud bg-amber-hud/30",
@@ -48,6 +49,7 @@ export function TournamentsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="torneos" />
       <PanelHeader
         title="Torneos semanales"
         subtitle="Compite con otros operadores · premios en monedas y gemas"

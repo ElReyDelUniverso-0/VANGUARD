@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud border-red-hud bg-red-hud/50",
@@ -121,6 +122,7 @@ export function GalleryPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="galeria" />
       <PanelHeader
         title="Galeria OSINT"
         subtitle="Fotogramas verificados · publica tus fotos de campo (+15 monedas)"

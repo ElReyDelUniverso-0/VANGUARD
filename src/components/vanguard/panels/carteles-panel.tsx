@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { CARTELS, type CartelItem } from "@/lib/archive-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // v14 — mapa de presencia en 3D
 const GlobeMap3D = dynamic(
@@ -30,6 +31,7 @@ export function CartelesPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="carteles" />
       <PanelHeader
         title="CARTELES & CRIMEN ORGANIZADO"
         subtitle="Archivos históricos · estructura, rutas y caída"

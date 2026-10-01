@@ -19,6 +19,7 @@ import { useGameStore, type UserPoll } from "@/lib/game-store";
 import { POLLS, FORUM_CAT_COLOR } from "@/lib/social-data";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface UserPollWithVotes extends UserPoll {
   votes: number[];
@@ -203,6 +204,7 @@ export function PollsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="encuestas" />
       <PanelHeader
         title="Encuestas tacticas"
         subtitle={`${stats.voted}/${stats.total} votadas · +5 monedas por voto · CREA las tuyas (+1 gema)`}

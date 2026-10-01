@@ -21,6 +21,7 @@ import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { useProfileStore } from "@/lib/profile-store";
 import { Countryball, STICKER_CODES } from "@/components/vanguard/countryball";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ============ DATOS ============
 interface LiveChannel {
@@ -298,6 +299,7 @@ export function DirectosPanel() {
   // ===== RENDER =====
   return (
     <div className="space-y-3">
+      <HeroOro panel="directos" />
       <PanelHeader
         title="Directos En Vivo"
         subtitle="Streaming con donaciones · tus monedas mueven la escena"

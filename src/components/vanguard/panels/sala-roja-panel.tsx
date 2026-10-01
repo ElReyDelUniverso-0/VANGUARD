@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { AlertTriangle, ShieldCheck, Eye, EyeOff, X, ExternalLink, Lock, HeartHandshake } from "lucide-react";
 import { isStrict18, subscribeStrict18 } from "@/lib/safety";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_SALA18 = "vanguard_sala18_ok";
 
@@ -125,6 +126,7 @@ export function SalaRojaPanel() {
   // ---------- SALA ABIERTA ----------
   return (
     <div className="space-y-3">
+      <HeroOro panel="sala18" />
       <PanelHeader
         title="Sala Roja · Material documental verificado"
         subtitle={`${SALA_ROJA_ITEMS.length} cintas · acceso 18+ activo · doble confirmación por cinta`}

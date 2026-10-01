@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { WIKI_ENTRIES, WIKI_CATS, type WikiEntry, type WikiCat } from "@/lib/wiki-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface WikiExtract { title: string; extract: string; thumbnail?: string; url?: string; }
 
@@ -68,6 +69,7 @@ export function EncyclopediaPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="enciclopedia" />
       <PanelHeader title="ENCICLOPEDIA MUNDIAL" subtitle="Guerras · politica · lideres · partidos · religiones" icon={<BookOpen className="w-4 h-4" />} color="cyan" />
 
       {/* buscador + categorias */}

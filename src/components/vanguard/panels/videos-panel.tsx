@@ -29,6 +29,7 @@ import { toast } from "sonner";
 // v19 STICKERS: countryballs en comentarios
 import { Countryball, COUNTRYBALLS, renderWithStickers } from "@/components/vanguard/countryball";
 import { SmilePlus } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const CAT_COLOR: Record<string, string> = {
   COMBATE: "text-red-hud border-red-hud bg-red-hud/20",
@@ -399,6 +400,7 @@ export function VideosPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="videos" />
       <PanelHeader
         title="GlobalVision"
         subtitle="La emisora de los paises · reproduccion real · publica tus emisiones y gana gemas"

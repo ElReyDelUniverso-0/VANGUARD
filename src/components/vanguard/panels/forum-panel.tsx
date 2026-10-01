@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useGameStore } from "@/lib/game-store";
 import { FORUM_SEED, FORUM_CATEGORIES, FORUM_CAT_COLOR, hoursAgoToText, formatViews } from "@/lib/social-data";
 import { toast } from "sonner";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface ThreadView {
   id: string;
@@ -406,6 +407,7 @@ export function ForumPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="foros" />
       <PanelHeader
         title="Foros de la red"
         subtitle={`${threads.length} hilos · ${totalReplies} respuestas · operador: ${alias || "SIN REGISTRO"}`}

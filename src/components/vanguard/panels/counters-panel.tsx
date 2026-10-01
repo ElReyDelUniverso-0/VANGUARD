@@ -10,6 +10,7 @@ import { Skull, Activity, Baby, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { WAR_DEATHS, LIVE_RATES, GLOBAL_CRIME } from "@/lib/archive-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 function fmt(n: number): string {
   return Math.floor(n).toLocaleString("en-US").replace(/,/g, " ");
@@ -28,6 +29,7 @@ export function CountersPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="contadores" />
       <PanelHeader
         title="CONTADORES MUNDIALES"
         subtitle="Cada segundo cuenta · datos de ONU/WHO y registros historicos"

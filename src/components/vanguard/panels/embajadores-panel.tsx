@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_MY_COUNTRY = "vanguard_mypais_v1"; // cuenta dedicada a un país
 const LS_MY_COUNTRY_SINCE = "vanguard_mypais_since";
@@ -170,6 +171,7 @@ export function EmbajadoresPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="embajadores" />
       <PanelHeader
         title="Embajadores · Elige quién defiende a tu país"
         subtitle={`ciclo ${cyc.cycle} · ${cyc.daysLeft} días restantes · elecciones cada ${Math.round(ELECTION_CYCLE_MS / 86400000)} días`}

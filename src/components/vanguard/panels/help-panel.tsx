@@ -6,6 +6,7 @@ import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Newspaper, Map, 
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useT } from "@/lib/i18n";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface GuideSection {
   id: string;
@@ -299,6 +300,7 @@ export function HelpPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="ayuda" />
       <PanelHeader
         title="Centro de ayuda"
         subtitle="Guia completa de features y tips"

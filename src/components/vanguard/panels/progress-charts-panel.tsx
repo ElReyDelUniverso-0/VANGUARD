@@ -6,6 +6,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { BarChart3, TrendingUp, Coins, Star, Activity, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { INITIAL_HISTORY } from "@/lib/game-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 export function ProgressChartsPanel() {
   const { xp, coins, level, streak, fusionCount, quizCorrect, minigameBestScore, viewedNews, viewedPhotos, predictions } = useGameStore();
@@ -63,6 +64,7 @@ export function ProgressChartsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="estadisticas" />
       <PanelHeader
         title="Estadisticas y progreso"
         subtitle="Evolucion de tu operador · 7 dias"

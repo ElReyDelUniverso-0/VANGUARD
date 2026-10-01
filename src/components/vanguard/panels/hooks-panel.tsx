@@ -27,6 +27,7 @@ import {
   type CrateLootResult,
   type WheelPrize,
 } from "@/lib/hooks-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const SEG = 360 / WHEEL_PRIZES.length;
 const SEG_COLORS = ["#f5a623", "#1f2937", "#22d3ee", "#1f2937", "#ef4444", "#1f2937", "#a855f7", "#facc15"];
@@ -40,6 +41,7 @@ export function HooksPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="gancho" />
       <PanelHeader
         title="Centro de Ganancias"
         subtitle="Ruleta diaria · cajones de suministros · airdrop horario · Pase Vanguard de temporada"

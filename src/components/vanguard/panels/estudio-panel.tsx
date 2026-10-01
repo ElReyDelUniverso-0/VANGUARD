@@ -22,6 +22,7 @@ import {
   Clapperboard, Circle, Square, Download, Palette, Type, Sparkles,
   Scissors, Trash2, Film, Play, Pause, UploadCloud, Upload, Move, SlidersHorizontal,
 } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ================= ENGINE: countryballs de bandera real en canvas =================
 
@@ -757,6 +758,7 @@ export function EstudioPanel() {
   // ================= INTERFAZ =================
   return (
     <div className="space-y-3">
+      <HeroOro panel="estudio" />
       {/* selector de modo */}
       <div className="grid grid-cols-2 gap-2 max-w-md" role="tablist" aria-label="Modo del estudio">
         <Button

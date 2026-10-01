@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { ERAS, type EraItem } from "@/lib/archive-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 export function ErasPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
@@ -41,6 +42,7 @@ export function ErasPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="epocas" />
       <PanelHeader
         title="EPOCAS DE LA ANTIGUEDAD"
         subtitle="De la cueva al imperio colonial · quiz con recompensa"

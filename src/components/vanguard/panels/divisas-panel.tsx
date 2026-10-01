@@ -14,6 +14,7 @@ import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
 import { Banknote, TrendingUp, TrendingDown, Search, Wallet, ArrowLeftRight, LayoutGrid, List } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface Live extends WorldCurrency { live: number; dir: 1 | -1 | 0; }
 
@@ -82,6 +83,7 @@ export function DivisasPanel() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="lg:col-span-2"><HeroOro panel="divisas" /></div>
       {/* LISTADO MUNDIAL */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">

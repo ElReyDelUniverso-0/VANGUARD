@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { sfx } from "@/lib/sound";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
@@ -55,6 +56,7 @@ export function DailyChallengesPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="retos" />
       <PanelHeader
         title="Retos diarios"
         subtitle="Mini-objetivos rotativos · reinicio cada 24h"

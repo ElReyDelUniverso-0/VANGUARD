@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface EnemyUnit {
   id: number;
@@ -173,6 +174,7 @@ export function CombatSimulatorPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="combate" />
       <PanelHeader
         title="Simulador de combate"
         subtitle="Usa items del inventario · combate tactico por turnos"

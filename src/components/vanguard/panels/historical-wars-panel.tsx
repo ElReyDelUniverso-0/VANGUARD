@@ -7,6 +7,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { ScrollText, MapPin, Calendar, Swords, ChevronRight, ChevronDown, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const eraColor: Record<string, string> = {
   ANTIGUA: "text-amber border-amber-hud bg-amber-hud/30",
@@ -36,6 +37,7 @@ export function HistoricalWarsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="historia" />
       <PanelHeader
         title="Guerras historicas"
         subtitle="Antiguedad · Edad Media · Moderna · Contemporanea"

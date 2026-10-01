@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const rarityColor: Record<string, string> = {
   COMUN: "text-muted-foreground border-border",
@@ -73,6 +74,7 @@ export function FusionPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="fusion" />
       <PanelHeader
         title="Sala de fusion"
         subtitle="Sintetiza inteligencia · crea objetos superiores"

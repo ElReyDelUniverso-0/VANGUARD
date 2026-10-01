@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { dayKey } from "@/lib/hooks-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const PARLEY_MARGEN = 0.95; // margen de la casa sobre el producto de cuotas
 
@@ -138,6 +139,7 @@ export function WarBettingPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="apuestas" />
       <PanelHeader
         title="Apuestas de guerra"
         subtitle="Guerras historicas · parley militar de hasta 4 selecciones · apuesta gratis diaria"

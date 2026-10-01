@@ -13,6 +13,7 @@ import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useProfileStore, BANNERS, FRAMES, FACTIONS, type BannerStyle, type FrameStyle } from "@/lib/profile-store";
 import { toast } from "sonner";
 import { UserCog, Check, Swords, ScrollText, Search } from "lucide-react";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 export function PerfilPanel() {
   const {
@@ -42,6 +43,7 @@ export function PerfilPanel() {
 
   return (
     <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
+    <div className="lg:col-span-2"><HeroOro panel="perfil" /></div>
       {/* VISTA PREVIA EN VIVO */}
       <div className="space-y-3">
         <div className="hud-panel overflow-hidden">

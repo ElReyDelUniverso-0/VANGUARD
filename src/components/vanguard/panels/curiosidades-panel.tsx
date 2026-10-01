@@ -14,6 +14,7 @@ import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { CURIOSITIES, type CurioCat } from "@/lib/archive-data";
 import { dayKey } from "@/lib/hooks-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const CAT_META: Record<CurioCat, { label: string; icon: React.ReactNode; color: string }> = {
   GUERRA: { label: "Guerra", icon: <Brain className="w-3 h-3" />, color: "text-red-hud border-red-hud/60" },
@@ -85,6 +86,7 @@ export function CuriosidadesPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="curiosidades" />
       <PanelHeader
         title="CURIOSIDADES"
         subtitle="El archivo de lo improbable · +5 mon por lectura nueva"

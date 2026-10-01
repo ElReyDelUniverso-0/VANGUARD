@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Camera, EyeOff, Eye, X, Radio, AlertTriangle, MapPin, Skull, ExternalLink } from "lucide-react";
 
 import { isStrict18 } from "@/lib/safety";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_SALA18 = "vanguard_sala18_ok";
 
@@ -120,6 +121,7 @@ export function IncidentesPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="incidentes" />
       <PanelHeader
         title="Mapa de incidentes · Qué está pasando ahora"
         subtitle={`${INCIDENTS.length} incidentes documentados · ${INCIDENTS.filter((i) => i.status === "ACTIVO").length} activos · con cámaras`}

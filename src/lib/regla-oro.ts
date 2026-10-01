@@ -388,6 +388,295 @@ export const REGLA_ORO = {
       "Cómo se entra en Vanguard: la vía 3D paso a paso. Míralo una vez y entenderás todo el juego.",
     acento: "#7DFFB2",
   },
+  // ===== v77.0 ORO TOTAL — el mega-menú completo iluminado: 36 secciones =====
+  registro: {
+    titulo: "Registro de Actividad",
+    volanta: "Tu historial de guerra",
+    imagen: "/ilustraciones/registro.jpg",
+    texto:
+      "Cada acción que tomas queda escrita aquí: misiones, batallas, monedas y logros. Tu carrera, línea a línea.",
+    acento: "#9AA8FF",
+  },
+  edad: {
+    titulo: "Age of Nations",
+    volanta: "Evoluciona tu nación",
+    imagen: "/ilustraciones/edad.jpg",
+    texto:
+      "Desde la aldea antigua hasta la superpotencia moderna: haz crecer tu civilización era por era.",
+    acento: "#FF9E7A",
+  },
+  briefings: {
+    titulo: "Briefings Clasificados",
+    volanta: "Solo lectura autorizada",
+    imagen: "/ilustraciones/briefings.jpg",
+    texto:
+      "Informes reservados con lo que casi nadie sabe todavía. Léelos antes de que el mundo los descubra.",
+    acento: "#6FD6FF",
+  },
+  carteles: {
+    titulo: "Carteles",
+    volanta: "El imperio invisible",
+    imagen: "/ilustraciones/carteles.jpg",
+    texto:
+      "Carteles y organizaciones que mueven el dinero y el miedo del planeta. Conoce su mapa y su historia.",
+    acento: "#B54FFF",
+  },
+  combate: {
+    titulo: "Simulador de Combate",
+    volanta: "Enfrenta al enemigo",
+    imagen: "/ilustraciones/combate.jpg",
+    texto:
+      "Elige tu oponente, estudia su ficha y lucha bajo la luna. Reflejos, táctica y un dedo firme.",
+    acento: "#FF4655",
+  },
+  conquistas3d: {
+    titulo: "Conquistas 3D",
+    volanta: "Tu imperio en pantalla",
+    imagen: "/ilustraciones/conquistas3d.jpg",
+    texto:
+      "Revive tus conquistas en escenas 3D: cada territorio tomado, cada batalla ganada, tu historia.",
+    acento: "#FFD98E",
+  },
+  contadores: {
+    titulo: "Contadores Mundiales",
+    volanta: "El mundo en números",
+    imagen: "/ilustraciones/contadores.jpg",
+    texto:
+      "Población, nacimientos, conflictos y más, contando en vivo. El planeta nunca deja de moverse.",
+    acento: "#FF7BAC",
+  },
+  curiosidades: {
+    titulo: "Curiosidades",
+    volanta: "Datos que sorprenden",
+    imagen: "/ilustraciones/curiosidades.jpg",
+    texto:
+      "Historias reales y datos increíbles del mundo que no salen en las noticias. Aprende algo nuevo cada día.",
+    acento: "#F5E960",
+  },
+  retos: {
+    titulo: "Retos Diarios",
+    volanta: "Ponte a prueba",
+    imagen: "/ilustraciones/retos.jpg",
+    texto:
+      "Desafíos nuevos cada día con premios en monedas y gemas. Complétalos todos y mantén tu racha.",
+    acento: "#FFDA47",
+  },
+  directos: {
+    titulo: "Directos en Vivo",
+    volanta: "La comunidad al aire",
+    imagen: "/ilustraciones/directos.jpg",
+    texto:
+      "Streams de los jugadores en tiempo real: guerra, análisis y entretenimiento. Súbete al aire.",
+    acento: "#FF3D68",
+  },
+  divisas: {
+    titulo: "Divisas del Mundo",
+    volanta: "El valor de cada nación",
+    imagen: "/ilustraciones/divisas.jpg",
+    texto:
+      "El precio de las monedas del planeta en vivo, con cambios al instante. Entiende la economía mundial.",
+    acento: "#4ADE80",
+  },
+  embajadores: {
+    titulo: "Embajadores por País",
+    volanta: "La voz de cada nación",
+    imagen: "/ilustraciones/embajadores.jpg",
+    texto:
+      "Un representante por país: los jugadores elegidos para hablar por su nación. Postúlate y vota.",
+    acento: "#86EFAC",
+  },
+  enciclopedia: {
+    titulo: "Enciclopedia Mundial",
+    volanta: "Saber de A a Z",
+    imagen: "/ilustraciones/enciclopedia.jpg",
+    texto:
+      "Países, banderas, historias y datos de los 251 territorios del planeta. La biblioteca del analista.",
+    acento: "#93C5FD",
+  },
+  epocas: {
+    titulo: "Épocas Antiguas",
+    volanta: "Viaja en el tiempo",
+    imagen: "/ilustraciones/epocas.jpg",
+    texto:
+      "Imperios, guerras y civilizaciones que hicieron el mundo de hoy. La historia que repite sus lecciones.",
+    acento: "#D8B4FE",
+  },
+  estudio: {
+    titulo: "Estudio de Video",
+    volanta: "Crea y publica",
+    imagen: "/ilustraciones/estudio.jpg",
+    texto:
+      "Monta tus videos con la herramienta del estudio: corta, arma y publica para toda la comunidad.",
+    acento: "#F472B6",
+  },
+  muertes: {
+    titulo: "Figuras y Bajas",
+    volanta: "Los que marcaron la historia",
+    imagen: "/ilustraciones/muertes.jpg",
+    texto:
+      "Fallecimientos de figuras del mundo en tiempo real y las bajas históricas que cambiaron el rumbo.",
+    acento: "#B8B8C4",
+  },
+  foros: {
+    titulo: "Foros",
+    volanta: "El debate de la comunidad",
+    imagen: "/ilustraciones/foros.jpg",
+    texto:
+      "Hilos por temas y países donde los guerreros discuten el mundo. Opina con argumentos, gana respeto.",
+    acento: "#67E8F9",
+  },
+  amigos: {
+    titulo: "Amigos",
+    volanta: "Tu escuadrón",
+    imagen: "/ilustraciones/amigos.jpg",
+    texto:
+      "Añade guerreros, mira quién está en línea y comparte batallas. Nadie gana una guerra en solitario.",
+    acento: "#5EEAD4",
+  },
+  fusion: {
+    titulo: "Fusion",
+    volanta: "Combina y descubre",
+    imagen: "/ilustraciones/fusion.jpg",
+    texto:
+      "Mezcla elementos y descubre combinaciones únicas. El laboratorio secreto de Vanguard.",
+    acento: "#A78BFA",
+  },
+  galeria: {
+    titulo: "Galería OSINT",
+    volanta: "Imágenes de la guerra",
+    imagen: "/ilustraciones/galeria.jpg",
+    texto:
+      "Fotos y capturas del mundo en conflicto, curadas por la comunidad. Cada imagen cuenta una historia.",
+    acento: "#E879F9",
+  },
+  maps: {
+    titulo: "Mapas de Conflictos",
+    volanta: "La vista de calle",
+    imagen: "/ilustraciones/maps.jpg",
+    texto:
+      "Explora las zonas calientes del planeta en el mapa satelital. Del espacio a la esquina exacta.",
+    acento: "#34D399",
+  },
+  ayuda: {
+    titulo: "Ayuda",
+    volanta: "Todo explicado",
+    imagen: "/ilustraciones/ayuda.jpg",
+    texto:
+      "Guías rápidas de cada sección, preguntas frecuentes y contacto. Nunca estás perdido en Vanguard.",
+    acento: "#FCD34D",
+  },
+  historia: {
+    titulo: "Guerras Históricas",
+    volanta: "Lecciones de acero",
+    imagen: "/ilustraciones/historia.jpg",
+    texto:
+      "Los conflictos que dibujaron las fronteras de hoy: causas, fechas y consecuencias. Comprende el pasado.",
+    acento: "#D9A05B",
+  },
+  gancho: {
+    titulo: "Centro de Ganancias",
+    volanta: "Todo lo que puedes ganar",
+    imagen: "/ilustraciones/gancho.jpg",
+    texto:
+      "Bonos, referidos, retos y recompensas en un solo lugar. Tu camino rápido a la fortuna.",
+    acento: "#FBBF24",
+  },
+  incidentes: {
+    titulo: "Mapa de Incidentes",
+    volanta: "Donde algo está pasando",
+    imagen: "/ilustraciones/incidentes.jpg",
+    texto:
+      "Incidencias reportadas en el mapa en vivo: alertas, sucesos y señales de la comunidad.",
+    acento: "#FB7185",
+  },
+  minijuego: {
+    titulo: "Minijuegos",
+    volanta: "Pausa táctica",
+    imagen: "/ilustraciones/minijuego.jpg",
+    texto:
+      "Juegos rápidos para ganar monedas entre batallas. Diversión que también entrena tu mente.",
+    acento: "#F97316",
+  },
+  notificaciones: {
+    titulo: "Alertas",
+    volanta: "No te pierdas nada",
+    imagen: "/ilustraciones/notificaciones.jpg",
+    texto:
+      "Tus notificaciones en un solo lugar: logros, eventos, ataques y noticias que te afectan.",
+    acento: "#EAB308",
+  },
+  perfil: {
+    titulo: "Personaliza tu Perfil",
+    volanta: "Tu cara ante el mundo",
+    imagen: "/ilustraciones/perfil.jpg",
+    texto:
+      "Bandera, apodo, colores y estilo: haz que tu perfil grite quién eres antes de que hables.",
+    acento: "#C084FC",
+  },
+  encuestas: {
+    titulo: "Encuestas",
+    volanta: "Tu voto cuenta",
+    imagen: "/ilustraciones/encuestas.jpg",
+    texto:
+      "Vota los temas del mundo y compara con la comunidad. La opinión global, en tiempo real.",
+    acento: "#2DD4BF",
+  },
+  estadisticas: {
+    titulo: "Estadísticas",
+    volanta: "Tu progreso en gráficas",
+    imagen: "/ilustraciones/estadisticas.jpg",
+    texto:
+      "Tu evolución día a día: XP, monedas, victorias y rachas. Los números de tu carrera.",
+    acento: "#60A5FA",
+  },
+  sala18: {
+    titulo: "Sala Roja",
+    volanta: "Contenido documental 18+",
+    imagen: "/ilustraciones/sala18.jpg",
+    texto:
+      "Lo crudo del conflicto: material documental verificado, solo para mayores de 18 años. Entra con criterio.",
+    acento: "#DC2626",
+  },
+  racha: {
+    titulo: "Racha",
+    volanta: "Cada día cuenta",
+    imagen: "/ilustraciones/racha.jpg",
+    texto:
+      "Tu calendario de constancia: entra, marca el día y multiplica tu botín. No rompas la cadena.",
+    acento: "#FB923C",
+  },
+  telegram: {
+    titulo: "Bot de Telegram",
+    volanta: "Vanguard en tu bolsillo",
+    imagen: "/ilustraciones/telegram.jpg",
+    texto:
+      "Conecta el bot y recibe alertas, noticias y retos directo en tu chat. El cuartel en tu bolsillo.",
+    acento: "#29B6F6",
+  },
+  torneos: {
+    titulo: "Torneos",
+    volanta: "Compite por la gloria",
+    imagen: "/ilustraciones/torneos.jpg",
+    texto:
+      "Competiciones por temporadas con premios grandes. Inscríbete, sube la tabla y sé leyenda.",
+    acento: "#FACC15",
+  },
+  apuestas: {
+    titulo: "Apuestas de Guerra",
+    volanta: "Predice el conflicto",
+    imagen: "/ilustraciones/apuestas.jpg",
+    texto:
+      "Apuesta por los frentes y eventos del mundo real con cuotas vivas. Gana si lees la guerra mejor.",
+    acento: "#3BFF6F",
+  },
+  videos: {
+    titulo: "GlobalVision",
+    volanta: "La TV de la comunidad",
+    imagen: "/ilustraciones/videos.jpg",
+    texto:
+      "Videos de la comunidad sobre el mundo real: reportajes, análisis y entretenimiento. Publica el tuyo.",
+    acento: "#FF5E5B",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

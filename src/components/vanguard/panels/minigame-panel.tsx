@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface ThreatTarget {
   id: number;
@@ -223,6 +224,7 @@ export function MiniGamePanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="minijuego" />
       <PanelHeader
         title="Threat Assessment"
         subtitle="Mini-game · clasifica amenazas en tiempo real"

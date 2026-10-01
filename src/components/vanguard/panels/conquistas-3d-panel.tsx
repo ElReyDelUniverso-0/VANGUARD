@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { sfx } from "@/lib/sound";
 import GlobeFactory from "globe.gl";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface Step {
   year: string;
@@ -166,6 +167,7 @@ export function Conquistas3DPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="conquistas3d" />
       <PanelHeader title="CONQUISTAS 3D EXPLICADAS" subtitle="Campañas historicas paso a paso sobre el globo" icon={<Globe2 className="w-4 h-4" />} color="cyan" />
 
       <div className="flex gap-1.5 flex-wrap">

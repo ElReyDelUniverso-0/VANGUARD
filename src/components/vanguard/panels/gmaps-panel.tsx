@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Maximize2, ExternalLink, MapPin, Satellite } from "lucide-react";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface Zone {
   id: string;
@@ -91,6 +92,7 @@ export function GMapsPanel() {
 
   return (
     <div className="space-y-4">
+      <HeroOro panel="maps" />
       <PanelHeader
         title="GOOGLE MAPS DE CONFLICTOS"
         subtitle="Vista satelital REAL de cada zona caliente — ligera, sin lag, sin globos 3D pesados"

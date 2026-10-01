@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const typeColor: Record<string, string> = {
   ACHIEVEMENT: "text-green-hud border-green-hud bg-green-hud/30",
@@ -92,6 +93,7 @@ export function NotificationsPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="notificaciones" />
       <PanelHeader
         title="Centro de notificaciones"
         subtitle="Alertas · logros · eventos del sistema"

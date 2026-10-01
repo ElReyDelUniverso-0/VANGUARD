@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const iconForMsg = (msg: string) => {
   if (msg.includes("monedas") && msg.startsWith("+")) return <Coins className="w-3.5 h-3.5 text-amber" />;
@@ -37,6 +38,7 @@ export function ActivityLogPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="registro" />
       <PanelHeader
         title="Registro de actividad"
         subtitle="Historial cronologico · bitacora de comando"

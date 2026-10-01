@@ -7,6 +7,7 @@ import { Flame, Calendar, TrendingUp, Award, ChevronLeft, ChevronRight, Check, L
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { HeroOro } from "@/components/vanguard/hero-oro";
 
 export function StreakCalendarPanel() {
   const { streak, lastLoginDate, coins, addCoins, addXp } = useGameStore();
@@ -54,6 +55,7 @@ export function StreakCalendarPanel() {
 
   return (
     <div className="space-y-3">
+      <HeroOro panel="racha" />
       <PanelHeader
         title="Calendario de racha"
         subtitle="Mantén tu racha activa · recompensas crecientes"
