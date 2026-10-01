@@ -540,3 +540,24 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v76.0 OLA DE ORO (health ok, db up, 0 errores).
 - La regla del comandante (título grande → ilustración → texto fácil) vive ahora en 50 secciones: 28 previas + 22 nuevas (12 con ilustraciones v75 conectadas a sus paneles + 10 ilustraciones cinematográficas recién generadas).
 - Siguientes rondas: ilustraciones para las ~30 secciones restantes del mega-menú (foros, encuestas, amigos, torneos, galería, historia, combate, muertes, epocas, enciclopedia, curiosidades, carteles, edad, conquistas3d, contadores, maps, embajadores, telegram, estudio, directos, divisas, incidentes, sala18, perfil, racha, fusion, registro, notificaciones, minijuego, retos, gancho, ayuda), ola de difusión 618→750, PVP por salas.
+
+---
+Task ID: 26
+Agent: main (Super Z)
+Task: v77.0 ORO TOTAL — "Sigue mejorando vanguard" (tercera ola: el mega-menú completo iluminado)
+
+Work Log:
+- INVENTARIO: 36 paneles aún en plano tras v76 (31 con <PanelHeader> único + 5 especiales: divisas y perfil con raíz grid de 2 columnas, estudio con raíz space-y-3, sala-roja con 3 <PanelHeader> (puerta 18+ / estricta / sala abierta), age-of-nations con 2 (setup y partida)).
+- GENERACIÓN: scripts/gen_ilustraciones_v77.mjs — 36 ilustraciones nuevas 1408x704 estilo unificado (ocaso ámbar + luna llena + colores fuertes, sin texto), 6 lotes de 6 en primer plano. 36/36 OK (1 reintento por filtro de contenido en perfil.jpg, transparente).
+- REGLA DE ORO: regla-oro.ts pasa de 46 a 82 entradas (+36), cada una con acento vibrante único (registro #9AA8FF, edad #FF9E7A, briefings #6FD6FF, carteles #B54FFF, combate #FF4655, conquistas3d #FFD98E, contadores #FF7BAC, curiosidades #F5E960, retos #FFDA47, directos #FF3D68, divisas #4ADE80, embajadores #86EFAC, enciclopedia #93C5FD, epocas #D8B4FE, estudio #F472B6, muertes #B8B8C4, foros #67E8F9, amigos #5EEAD4, fusion #A78BFA, galeria #E879F9, maps #34D399, ayuda #FCD34D, historia #D9A05B, gancho #FBBF24, incidentes #FB7185, minijuego #F97316, notificaciones #EAB308, perfil #C084FC, encuestas #2DD4BF, estadisticas #60A5FA, sala18 #DC2626, racha #FB923C, telegram #29B6F6, torneos #FACC15, apuestas #3BFF6F, videos #FF5E5B).
+- INSERCIÓN: scripts/insert_hero_oro_v77.py — 31 estándar + 5 modos: "grid" (wrapper <div className="lg:col-span-2"><HeroOro/></div> tras el grid raíz), "child" (primer hijo tras comentario interno), "panelheader-back" (ancla por título → retrocede a la línea <PanelHeader correcta). 36/36 OK a la primera.
+- tsc: solo los 4 pre-existentes. Build limpio (Compiled successfully 20.8s).
+- QA LOCAL: barrido por vanguard:navigate de los 36: 35 OK a la vista; incidentes dio FALLO falso (chequeo corrió antes de terminar de cargar la imagen; re-chequeo: naturalWidth 900 OK); sala18 SIN-IMG esperado — el panel muestra la puerta 18+ ANTES de la sala abierta, el HeroOro vive en la rama SALA ABIERTA (código línea 129, correcto por diseño). 0 errores de página.
+- DEPLOY: push 27551f9 → deployment success a la primera (lección v76 aplicada: revisar /deployments/{id}/statuses si health no cambia). Health v77.0 en ~3 min.
+- QA PRODUCCIÓN: footer "v77.0 · ORO TOTAL"; 36/36 .jpg → 200; navegador: combate/foros/torneos/apuestas OK con imagen cargada, 0 img rotas en la sesión, 0 errores de página. Captura qa-v77-torneos-prod.png.
+- Cifras al cerrar v77.0: players 143 (RÉCORD; +1 desde v76.0), visitas 150 (+4), presence pico 6, online 1 (QA), shares external 618/750 (82%), goal 143/150 (95%, faltan 7).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v77.0 ORO TOTAL (health ok, db up, 0 errores).
+- La regla del comandante vive ahora en 82 secciones (24 de v73 + 3 custom + 22 de v76 + 36 de v77 + expedientes con ilustración v75): TODA la plataforma tiene título grande → ilustración cinematográfica → texto fácil, con acento vibrante único por sección (90 ilustraciones propias en /public/ilustraciones).
+- Siguientes rondas: mini-ilustraciones en el mega-menú (thumbs por grupo), ola de difusión 618→750 (faltan 7 players para goal 150), sonidos por récord, PVP por salas/campeonato de duelos.
