@@ -158,13 +158,29 @@ export function ConsejoIaPanel() {
 
   const salaRef = useRef<HTMLDivElement>(null);
 
-  // v79 SOCIAL: prefill desde los foros ("Llevar al Consejo")
+  // v79 SOCIAL: prefill desde los foros ("Llevar al Consejo") + sesión
+  // superviviente: si la página se recarga a mitad de deliberación (watchdog),
+  // la sala se restaura y el show se repite en vez de perderse.
   useEffect(() => {
     try {
       const pre = sessionStorage.getItem("vanguard:consejo-tema");
       if (pre) {
         setTema(pre.slice(0, 280));
         sessionStorage.removeItem("vanguard:consejo-tema");
+        return;
+      }
+      const raw = sessionStorage.getItem("vanguard:consejo-sesion");
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s?.intervenciones?.length && Date.now() - (s.ts ?? 0) < 30 * 60_000) {
+          setTema(s.tema ?? "");
+          setIntervenciones(s.intervenciones);
+          setVotos(s.votos ?? []);
+          setDecreto(s.decreto ?? null);
+          setIaViva(s.ia !== false);
+          setOrden(0);
+          setFase("deliberando");
+        }
       }
     } catch {}
   }, []);
@@ -228,6 +244,12 @@ export function ConsejoIaPanel() {
       setIntervenciones(data.intervenciones ?? []);
       setVotos(data.votos ?? []);
       setDecreto(data.decreto ?? null);
+      try {
+        sessionStorage.setItem(
+          "vanguard:consejo-sesion",
+          JSON.stringify({ tema: t, intervenciones: data.intervenciones ?? [], votos: data.votos ?? [], decreto: data.decreto ?? null, ia: data.ia !== false, ts: Date.now() }),
+        );
+      } catch {}
     } catch {
       setError("Señal perdida con la sala. Reintenta.");
       setFase("sala");

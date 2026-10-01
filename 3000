@@ -3,8 +3,8 @@
 - Network:       http://0.0.0.0:3000
 
 ✓ Starting...
-[VANGUARD-BOOT] 2026-10-01T19:09:07.631Z cwd=/home/z/my-project/.next/standalone
-✓ Ready in 129ms
+[VANGUARD-BOOT] 2026-10-01T19:18:49.681Z cwd=/home/z/my-project/.next/standalone
+✓ Ready in 265ms
 prisma:error 
 Invalid `prisma.$queryRawUnsafe()` invocation:
 
@@ -29,7 +29,882 @@ error: Error validating datasource `db`: the URL must start with the protocol `p
    | 
 
 Validation Error Count: 1
-consejo error núcleo local forzado
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+news route error Error [PrismaClientInitializationError]: 
+Invalid `prisma.newsItem.findMany()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at <unknown> (-->  schema.prisma:12)
+    at processTicksAndRejections (null) {
+  clientVersion: '6.19.2',
+  errorCode: undefined,
+  retryable: undefined
+}
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+prisma:error 
+Invalid `prisma.$executeRawUnsafe()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `postgresql://` or `postgres://`.
+  -->  schema.prisma:12
+   | 
+11 |   provider = "postgresql"
+12 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
 prisma:error 
 Invalid `prisma.$queryRaw()` invocation:
 
