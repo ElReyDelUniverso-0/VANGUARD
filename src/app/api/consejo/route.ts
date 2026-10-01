@@ -127,8 +127,8 @@ export async function POST(req: Request) {
   const modo = body?.modo === "dialogo" ? "dialogo" : "deliberacion";
 
   try {
-    const { default: ZAI } = await import("z-ai-web-dev-sdk");
-    const zai = await ZAI.create();
+    const { createZAI } = await import("@/lib/zai-server");
+    const zai = await createZAI();
 
     if (modo === "deliberacion") {
       const tema = clean(body?.tema, 280);
