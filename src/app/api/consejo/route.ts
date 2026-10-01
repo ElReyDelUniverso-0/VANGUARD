@@ -88,27 +88,102 @@ function extractJson(raw: string): Record<string, unknown> | null {
   }
 }
 
-function fallbackDeliberacion(tema: string) {
+// ---- NÚCLEO LOCAL: generador procedural cuando el gateway de IA no es alcanzable ----
+// Variedad real: palabras clave del tema + plantillas múltiples + azar por consejero.
+const STOP = new Set(["de","la","el","los","las","un","una","unos","unas","y","o","en","con","para","por","que","al","del","lo","su","sus","es","son","se","sobre","entre","hacia","sin","mas","más","ya","frente","cayo","caída"]);
+function keywords(tema: string): string[] {
+  const ws = tema.toLowerCase().replace(/[^a-záéíóúñü0-9\s]/g, " ").split(/\s+/).filter((w) => w.length > 2 && !STOP.has(w));
+  return [...new Set(ws)].slice(0, 3);
+}
+const pick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+const rnd = (a: number, b: number) => Math.floor(a + Math.random() * (b - a));
+
+const NUCLEO_VOZ: Record<ConsejeroId, ((k: string[]) => string)[]> = {
+  estratega: [
+    (k) => `La geografía manda: alrededor de ${k[0] ?? "el objetivo"} hay tres ejes y solo dos son defendibles. Aseguro suministros y me posiciono antes de mover una pieza visible.`,
+    (k) => `${k[0] ?? "El escenario"} es una partida de segundo orden: quien mueve primero cede la iniciativa. Recomiendo preparar posiciones ocultas y dejar que el rival se exponga.`,
+    (k) => `En ${k[0] ?? "esta crisis"} la logística decide: sin rutas seguras, toda medida sobre ${k[1] ?? "el terreno"} es teatro. Fijaría tres líneas de abastecimiento antes de cualquier gesto público.`,
+    (k) => `Mapa en mano: ${k[0] ?? "el punto crítico"} no se defiende desde su frontera, se defiende a dos pasos atrás. Reordenaría el despliegue y guardaría la reserva.`,
+  ],
+  canciller: [
+    (k) => `Antes de que ${k[0] ?? "esta crisis"} escale en la prensa, abriría un canal discreto. Una mesa callada vale más que diez discursos y protege la cara de todos.`,
+    (k) => `Hay margen diplomático en ${k[0] ?? "el asunto"}: tercero neutral, plazo corto y agenda mínima. Si falla, la coalición queda legitimada para el paso siguiente.`,
+    (k) => `Las sanciones que duelen son las coordinadas: sin ${k[1] ?? "los socios"} dentro, la medida es un anuncio. Ofrecería una salida presentable a la otra parte.`,
+    (k) => `Opinión pública primero: si el mundo entiende ${k[0] ?? "el conflicto"} como defensa y no como apuesta, ganamos la votación antes de que empiece.`,
+  ],
+  general: [
+    (k) => `La disuasión se demuestra, no se anuncia. Visibilidad de capacidades respecto a ${k[0] ?? "el objetivo"} y nada más: el ruido estratégico solo invita a pruebas.`,
+    (k) => `Pregunto lo incómodo: ¿qué pasa el día después en ${k[0] ?? "la zona"}? Sin respuesta operativa, toda escalada es un cheque en blanco sin fondos.`,
+    (k) => `Movilidad, comunicaciones, municiones. Si alguna de las tres falla frente a ${k[0] ?? "el escenario"}, no se entra. La valentía sin logística es obituario.`,
+    (k) => `El adversario cuenta con que dudemos. Una demostración corta, clara y limitada alrededor de ${k[0] ?? "el frente"} reordena su cálculo en 72 horas.`,
+  ],
+  analista: [
+    (k) => `Modelo rápido sobre ${k[0] ?? "el tema"}: ${rnd(45, 60)}% congelamiento esta semana, ${rnd(25, 35)}% escalada retórica, ${rnd(10, 20)}% incidente físico. Intervalos anchos: faltan datos duros.`,
+    (k) => `Tres señales que vigilaría en ${k[0] ?? "el frente"}: tráficos logísticos, discursos internos y reservas de ${k[1] ?? "recursos"}. Si dos se mueven juntas, el modelo cambia.`,
+    (k) => `El sesgo del momento es sobre-reaccionar a ${k[0] ?? "el titular"}. Base rate histórico: ${rnd(60, 75)}% de estas crisis se negocian antes de ${rnd(2, 6)} semanas.`,
+    (k) => `Dato incómodo: los indicadores públicos sobre ${k[0] ?? "el caso"} llevan ${rnd(4, 11)} días de retraso. Recomiendo contrastar con dos fuentes independientes antes de votar.`,
+  ],
+};
+
+const VEREDICTOS = ["PROCEDER", "CONTENER", "NEGOCIAR", "ESPERAR"] as const;
+const ACCIONES: Record<string, string[]> = {
+  PROCEDER: ["Consulta la Sala OSINT antes de actuar", "Marca el objetivo en el Mapa Mundial", "Vuelve al consejo con pruebas nuevas"],
+  CONTENER: ["Refuerza la vigilancia en Pulso Mundial", "Documenta el caso en Archivo Secreto", "Reevalúa en 24 horas con datos frescos"],
+  NEGOCIAR: ["Abre expediente diplomático en Alianzas", "Consulta a los Embajadores por país", "Prepara tu propuesta para el tribunal"],
+  ESPERAR: ["Vigila el Pulso Mundial cada 6 horas", "Abre expediente en el Archivo Secreto", "Trae el tema de vuelta al consejo"],
+};
+const TITULOS = ["VIGILANCIA ACTIVA", "CONTENCIÓN FIRMÉ", "MESA ANTES QUE FRENTE", "ORDEN DE ESPERA", "DECISIÓN DEL ACERO"];
+
+function nucleoLocalDeliberacion(tema: string) {
+  const k = keywords(tema);
+  const veredicto = pick([...VEREDICTOS]);
+  const conf = () => rnd(42, 92);
+  const votos = (["estratega", "canciller", "general", "analista"] as ConsejeroId[]).map((id) => ({
+    id,
+    voto: pick(["A FAVOR", "EN CONTRA", "ABSTENCIÓN"]),
+    confianza: conf(),
+  }));
   return {
-    intervenciones: [
-      { id: "estratega", texto: `Sin datos de satélite suficientes sobre "${tema}", mi recomendación es asegurar las líneas de suministro antes de mover una sola pieza visible.` },
-      { id: "canciller", texto: `Abriría un canal discreto con las partes antes de que "${tema}" escale en la prensa. Una mesa callada vale más que diez discursos.` },
-      { id: "general", texto: `La disuasión se demuestra, no se anuncia: visibilidad de capacidades y nada más. El ruido estratégico solo invita a pruebas ajenas.` },
-      { id: "analista", texto: `Modelo rápido: 55% de que el tema se congela esta semana, 30% escalada retórica, 15% incidente físico. Faltan datos duros para afinar.` },
-    ],
-    votos: [
-      { id: "estratega", voto: "ABSTENCIÓN", confianza: 50 },
-      { id: "canciller", voto: "A FAVOR", confianza: 60 },
-      { id: "general", voto: "EN CONTRA", confianza: 55 },
-      { id: "analista", voto: "ABSTENCIÓN", confianza: 48 },
-    ],
+    intervenciones: (["estratega", "canciller", "general", "analista"] as ConsejeroId[]).map((id) => ({
+      id,
+      texto: pick(NUCLEO_VOZ[id])(k),
+    })),
+    votos,
     decreto: {
-      titulo: "DECRETO: VIGILANCIA ACTIVA",
-      veredicto: "ESPERAR",
-      texto: `El consejo ordena vigilar "${tema}" con las tres capas de inteligencia y reconvenir en 24 horas con datos frescos.`,
-      acciones: ["Revisa la Sala OSINT cada 6 horas", "Abre expediente en el Archivo Secreto", "Trae el tema de vuelta al consejo"],
+      titulo: `DECRETO: ${pick(TITULOS)}`,
+      veredicto,
+      texto: `El consejo analiza "${tema}" y ordena: ${veredicto === "PROCEDER" ? "actuar con pasos acotados y prueba en la mano" : veredicto === "CONTENER" ? "frenar la escalada sin ceder terreno" : veredicto === "NEGOCIAR" ? "forzar la mesa antes que el frente" : "mantener la mirada fija y no mover ficha hasta tener datos"}.`,
+      acciones: [...ACCIONES[veredicto]].sort(() => Math.random() - 0.5).slice(0, 3),
     },
   };
+}
+
+const NUCLEO_REPLICA: Record<ConsejeroId, ((m: string) => string)[]> = {
+  estratega: [
+    (m) => `Interesante contraargumento. Ajusto el plan: lo que propones sobre "${m.slice(0, 60)}" solo funciona con suministros asegurados. ¿Tienes las rutas?`,
+    (m) => `Anoto tu punto. Pero el terreno no perdona la improvisación: sin mapa fresco de la zona, tu opción cuesta el doble y rinde la mitad.`,
+    (m) => `Hablemos de sequencias: primero posiciones, después señales, y solo al final tu medida. Saltarte pasos es regalar la iniciativa.`,
+  ],
+  canciller: [
+    (m) => `Tu propuesta tiene una puerta diplomática: si la presentas como respuesta y no como amenaza, el coste político cae a la mitad.`,
+    (m) => `Creo en tu instinto, pero los aliados necesitan una excusa presentable. Déjame construirles el relatorio antes de mover ficha.`,
+    (m) => `Detrás de cada posición dura hay una audiencia interna. Habla a esa audiencia y la posición se suaviza sola.`,
+  ],
+  general: [
+    (m) => `Respuesta seca: la duda no detiene tanques. Si vas a hacer "${m.slice(0, 60)}", hazlo rápido, corto y con salida preparada.`,
+    (m) => `Estoy dispuesto a escuchar. Pero cada día de vacío lo llena el adversario, y su relleno nunca nos favorece.`,
+    (m) => `Tu plan tiene una debilidad logística y una ventana. Resuelve la primera y te doy la segunda.`,
+  ],
+  analista: [
+    (m) => `Cuantifico tu idea: probabilidad de éxito estimada ${rnd(35, 75)}%, con un margen de error del ${rnd(8, 20)}%. Necesito dos datos más para afinar.`,
+    (m) => `Tu razonamiento coincide con el base rate en casos parecidos, pero la muestra es pequeña. Vigilaría las señales que ya te dije.`,
+    (m) => `Dato que cambia el debate: los indicadores llevan días de retraso. Tu medida, aplicada hoy, se evaluaría con datos de la semana pasada.`,
+  ],
+};
+
+function nucleoLocalDialogo(consejero: ConsejeroId, mensaje: string) {
+  const voces = NUCLEO_REPLICA[consejero] ?? NUCLEO_REPLICA.analista;
+  return pick(voces)(mensaje);
 }
 
 export async function POST(req: Request) {
@@ -125,8 +200,11 @@ export async function POST(req: Request) {
   }
 
   const modo = body?.modo === "dialogo" ? "dialogo" : "deliberacion";
+  // ?nucleo=1 fuerza el núcleo local (QA del comportamiento de producción)
+  const forzarNucleo = new URL(req.url).searchParams.get("nucleo") === "1";
 
   try {
+    if (forzarNucleo) throw new Error("núcleo local forzado");
     const { createZAI } = await import("@/lib/zai-server");
     const zai = await createZAI();
 
@@ -145,7 +223,7 @@ export async function POST(req: Request) {
       const raw = completion.choices[0]?.message?.content ?? "";
       const parsed = extractJson(raw) as any;
       if (!parsed?.intervenciones || !parsed?.decreto) {
-        return NextResponse.json({ ok: true, ...fallbackDeliberacion(tema), ia: false });
+        return NextResponse.json({ ok: true, ...nucleoLocalDeliberacion(tema), ia: false });
       }
       const ids: ConsejeroId[] = ["estratega", "canciller", "general", "analista"];
       const lista: any[] = Array.isArray(parsed.intervenciones) ? parsed.intervenciones : [];
@@ -159,7 +237,7 @@ export async function POST(req: Request) {
         })
         .filter((x) => x.texto.length > 0);
       if (intervenciones.length < 2) {
-        return NextResponse.json({ ok: true, ...fallbackDeliberacion(tema), ia: false });
+        return NextResponse.json({ ok: true, ...nucleoLocalDeliberacion(tema), ia: false });
       }
       const votos = ids.map((id, i) => {
         const vlista: any[] = Array.isArray(parsed.votos) ? parsed.votos : [];
@@ -214,7 +292,7 @@ export async function POST(req: Request) {
     const parsed = extractJson(raw) as any;
     const respuesta = clean(parsed?.respuesta, 420);
     if (!respuesta) {
-      return NextResponse.json({ ok: true, ia: false, respuesta: "Sigue hablando, comandante: la sala te escucha, aunque la señal con el núcleo de IA está intermitente." });
+      return NextResponse.json({ ok: true, ia: false, respuesta: nucleoLocalDialogo(id, mensaje) });
     }
     return NextResponse.json({ ok: true, ia: true, respuesta });
   } catch (e: unknown) {
@@ -225,8 +303,8 @@ export async function POST(req: Request) {
     const debug = url.searchParams.get("debug") === "1";
     return NextResponse.json(
       modo === "deliberacion"
-        ? { ok: true, ia: false, ...(tema ? fallbackDeliberacion(tema) : fallbackDeliberacion("la crisis abierta")), ...(debug ? { err: errMsg } : {}) }
-        : { ok: true, ia: false, respuesta: "La conexión con el núcleo falló. Repite la orden, comandante: la sala sigue abierta.", ...(debug ? { err: errMsg } : {}) },
+        ? { ok: true, ia: false, ...nucleoLocalDeliberacion(tema), ...(debug ? { err: errMsg } : {}) }
+        : { ok: true, ia: false, respuesta: nucleoLocalDialogo((modo === "dialogo" ? String(body?.consejero) : "general") as ConsejeroId, String(body?.mensaje ?? tema)), ...(debug ? { err: errMsg } : {}) },
       { status: 200 },
     );
   }
