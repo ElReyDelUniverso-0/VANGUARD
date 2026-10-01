@@ -218,12 +218,15 @@ export async function POST(req: Request) {
     }
     return NextResponse.json({ ok: true, ia: true, respuesta });
   } catch (e: unknown) {
-    console.error("consejo error", e instanceof Error ? e.message : e);
+    const errMsg = e instanceof Error ? e.message : String(e);
+    console.error("consejo error", errMsg);
     const tema = clean(body?.tema, 60) || "la crisis abierta";
+    const url = new URL(req.url);
+    const debug = url.searchParams.get("debug") === "1";
     return NextResponse.json(
       modo === "deliberacion"
-        ? { ok: true, ia: false, ...fallbackDeliberacion(tema) }
-        : { ok: true, ia: false, respuesta: "La conexión con el núcleo falló. Repite la orden, comandante: la sala sigue abierta." },
+        ? { ok: true, ia: false, ...(tema ? fallbackDeliberacion(tema) : fallbackDeliberacion("la crisis abierta")), ...(debug ? { err: errMsg } : {}) }
+        : { ok: true, ia: false, respuesta: "La conexión con el núcleo falló. Repite la orden, comandante: la sala sigue abierta.", ...(debug ? { err: errMsg } : {}) },
       { status: 200 },
     );
   }
