@@ -15,7 +15,7 @@ import {
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
   Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
-  Infinity as InfinityIcon,
+  Infinity as InfinityIcon, Bot,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -34,6 +34,8 @@ export type TabKey =
   | "notificaciones" | "racha" | "ayuda" | "camaras" | "combate" | "historia"
   | "muertes" | "apuestas" | "conquista" | "foros" | "encuestas" | "videos"
   | "mundo" | "bolsa" | "salas" | "multijugador" | "gancho" | "ranking"
+  // v79 IA: el Consejo de Acero entra en SOCIAL
+  | "consejoia"
   | "dron" | "detective"
   // v12 expansion x100
   | "edad" | "arcade" | "bookmaker" | "enciclopedia" | "curiosidades"
@@ -196,6 +198,7 @@ const TABS: Record<TabKey, TabDef> = {
   registro:      { key: "registro",      label: "Registro",          short: "REGISTRO", icon: <ScrollText className="w-3.5 h-3.5" />, color: "cyan" },
 
   foros:         { key: "foros",         label: "Foros",             short: "FOROS", icon: <MessagesSquare className="w-3.5 h-3.5" />, color: "cyan" },
+  consejoia:     { key: "consejoia",     label: "Consejo de Acero (IA)", short: "CONSEJO", icon: <Bot className="w-3.5 h-3.5" />, color: "cyan" },
   salas:         { key: "salas",         label: "Salas sociales",    short: "SALAS", icon: <MessageCircle className="w-3.5 h-3.5" />, color: "violet" },
   encuestas:     { key: "encuestas",     label: "Encuestas",         short: "ENCUESTAS", icon: <Vote className="w-3.5 h-3.5" />, color: "green" },
   amigos:        { key: "amigos",        label: "Amigos",            short: "AMIGOS", icon: <Users className="w-3.5 h-3.5" />, color: "cyan" },
@@ -272,7 +275,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",
     desc: "Crisis mundial, contribuidores, embajadores, alianzas, salas, perfil y comunidad",
-    tabs: [TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.amigos, TABS.torneos, TABS.perfil],
+    tabs: [TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.amigos, TABS.torneos, TABS.perfil],
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",

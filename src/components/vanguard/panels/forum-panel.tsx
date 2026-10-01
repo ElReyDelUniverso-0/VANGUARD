@@ -9,9 +9,10 @@ import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
   MessagesSquare, Pin, Eye, ThumbsUp, MessageSquarePlus, CornerDownRight, Hash,
-  Flame, Trophy, Clock, Search, Award, Scale, ShieldAlert, MapPin, Gavel,
+  Flame, Trophy, Clock, Search, Award, Scale, ShieldAlert, MapPin, Gavel, Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sfx } from "@/lib/sound";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -405,9 +406,53 @@ export function ForumPanel() {
 
   const isLiked = (t: ThreadView) => !t.own && forumLikedIds.includes(t.id);
 
+  // v79 SOCIAL: puente directo hacia el Consejo de Acero (IA)
+  const [ctaTema, setCtaTema] = useState("");
+  const llevarAlConsejo = () => {
+    const t = ctaTema.trim();
+    if (t.length < 4) {
+      toast.error("Escribe el tema para el consejo (mínimo 4 caracteres)");
+      return;
+    }
+    try {
+      sessionStorage.setItem("vanguard:consejo-tema", t.slice(0, 280));
+    } catch {}
+    sfx?.tab?.();
+    window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "consejoia" }));
+  };
+
   return (
     <div className="space-y-3">
       <HeroOro panel="foros" />
+      {/* v79 — CTA al CONSEJO DE ACERO: la IA deliberada lo que la comunidad discute */}
+      <div className="hud-panel p-3" style={{ borderColor: "#00E5FF44" }}>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="w-8 h-8 shrink-0 rounded-sm flex items-center justify-center border" style={{ borderColor: "#00E5FF88", color: "#00E5FF", background: "#00E5FF14", boxShadow: "0 0 16px #00E5FF44" }}>
+            <Bot className="w-4 h-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="font-display text-[11px] font-black tracking-widest" style={{ color: "#00E5FF", textShadow: "0 0 14px #00E5FF66" }}>
+              EL CONSEJO DE ACERO ESCUCHA
+            </div>
+            <p className="text-[10px] text-muted-foreground">Lleva cualquier debate a la IA: 4 consejeros deliberan, votan y firman un decreto.</p>
+          </div>
+          <input
+            value={ctaTema}
+            onChange={(e) => setCtaTema(e.target.value.slice(0, 280))}
+            onKeyDown={(e) => e.key === "Enter" && llevarAlConsejo()}
+            placeholder="Tema para el consejo…"
+            className="flex-1 min-w-[180px] bg-secondary/40 border border-border rounded-sm px-2.5 py-2 text-[12px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-cyan-hud"
+            aria-label="Tema para el Consejo de Acero"
+          />
+          <button
+            onClick={llevarAlConsejo}
+            className="px-3 py-2 rounded-sm border font-mono text-[10px] font-black uppercase tracking-widest transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            style={{ borderColor: "#00E5FF88", color: "#04121A", background: "linear-gradient(120deg, #00E5FF, #7DF3FF)", boxShadow: "0 0 22px #00E5FF55" }}
+          >
+            Llevar al consejo
+          </button>
+        </div>
+      </div>
       <PanelHeader
         title="Foros de la red"
         subtitle={`${threads.length} hilos · ${totalReplies} respuestas · operador: ${alias || "SIN REGISTRO"}`}

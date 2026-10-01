@@ -582,3 +582,21 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v78.0 MENÚ DE CINE (health ok, db up, 0 errores).
 - El mega-menú ya cumple la regla del comandante: cada una de sus 13 tarjetas abre con ilustración cinematográfica viva (Ken Burns) teñida con el color de su mundo, destello al hover y badge de descubrimiento. La sección HANGAR quedó traducida en los 8 idiomas.
 - Siguientes rondas: ola de difusión 618→750 (faltan 6 players para goal 150), sonidos por récord, PVP por salas/campeonato de duelos, hangar-3d con iluminación de luna/ocaso.
+
+---
+Task ID: 28
+Agent: main (Super Z)
+Task: v79.0 CONSEJO DE ACERO — "Agrega una IA y haz algo nunca visto + mejora el social"
+
+Work Log:
+- NUEVA FEATURE (nunca vista): EL CONSEJO DE ACERO — primera sala de deliberación con IA en vivo del juego. API /api/consejo (solo servidor, z-ai-web-dev-sdk ya estaba en deps): modo "deliberacion" (1 llamada LLM → JSON estricto con 4 intervenciones + 4 votos con confianza + decreto con veredicto y 3 acciones jugables) y modo "dialogo" (multi-turno cara a cara con 1 consejero, historial de sala hasta 12 turnos). Rate-limit en memoria 14 req/min/IP, validación y limpieza de inputs, stripFences + mapeo TOLERANTE por id o por posición (lección: el LLM envuelve el JSON en ```json y a veces RENOMBRA los consejeros, p.ej. "diplomático" → se remapea a la voz canónica). Fallback heurístico con voces escritas a mano: la sala NUNCA queda en silencio ni falla duro.
+- LECCIÓN QA: el LLM necesita prompt con "ids EXACTOS y en este orden... nunca los renombres" + mapeo posicional de respaldo. Debug con scripts/debug_consejo.mjs (SDK funciona en local; primero daba fallback por ids renombrados).
+- PANEL consejo-ia-panel.tsx: HeroOro (consejoia, ilustración nueva consejo.jpg, acento #00E5FF), textarea + 5 temas sugeridos, botón CONVOCAR con estado DELIBERA, 4 tarjetas holográficas (EL ESTRATEGA #38BDF8 / LA CANCILLER #FFC94D / EL GENERAL #FF5A3C / EL ANALISTA #00FF87) que intervienen por turnos con máquina de escribir + badge "deliberando…", chips de VOTO (A FAVOR/EN CONTRA/ABSTENCIÓN + % confianza), DECRETO cinematográfico (veredicto + 3 acciones + botón CUMPLIR → +150 monedas +60 XP vía game-store con sfx.coin), y cara a cara con cualquier consejero (respuestas con memoria de sala). Chip NÚCLEO IA EN VIVO / LOCAL según respuesta.
+- REGISTRO: TabKey + TABS.consejoia (icono Bot, cyan), primer tab de SECTIONS social, i18n-tabs labels+shorts en 8 idiomas, page.tsx dynamic import + render, regla-oro.ts → 83 entradas.
+- SOCIAL MEJORADO: foros-panel con CTA "EL CONSEJO DE ACERO ESCUCHA" (input + Llevar al consejo → sessionStorage vanguard:consejo-tema + vanguard:navigate consejoia; el panel lo lee y prellena el tema). El Consejo vive en la sección SOCIAL como bandera.
+- QA LOCAL: API real IA (ia:true, votos 85/78/92/65%, decreto con 3 acciones; diálogo del General con voz militar seca), panel: hero img OK, prefill desde foros OK, deliberación completa con decreto, CUMPLIR x2 → log "+150 monedas — Decreto del Consejo de Acero cumplido" x2. 0 errores de página.
+- TRAMPA DEL ENTORNO (recurrente): npm run start = bun standalone; matar con kill -9 <PID de bun> (pid via ss -ltnp), NUNCA pkill next-server; y si el arranque dice "Failed to start server", el puerto seguía ocupado por el server anterior.
+- Cifras: se reportan al cierre en producción.
+
+Stage Summary:
+- Vanguard tiene IA propia en producción: /api/consejo (LLM server-side) + sala de deliberación con 4 personalidades, votos, decreto jugable y diálogo multi-turno; integrada en SOCIAL y enlazada desde FOROS.

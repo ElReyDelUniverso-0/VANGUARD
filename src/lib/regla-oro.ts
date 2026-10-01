@@ -677,6 +677,14 @@ export const REGLA_ORO = {
       "Videos de la comunidad sobre el mundo real: reportajes, análisis y entretenimiento. Publica el tuyo.",
     acento: "#FF5E5B",
   },
+  consejoia: {
+    titulo: "Consejo de Acero",
+    volanta: "IA en vivo: 4 mentes, un decreto",
+    imagen: "/ilustraciones/consejo.jpg",
+    texto:
+      "Plantea tu crisis y cuatro consejeros de IA deliberan en vivo, votan y firman un decreto. Luego contéstales cara a cara: cada mente recuerda lo que le dijiste.",
+    acento: "#00E5FF",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

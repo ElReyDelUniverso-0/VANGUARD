@@ -184,6 +184,7 @@ const StreakCalendarPanel = dynamic(() => import("@/components/vanguard/panels/s
 const HelpPanel = dynamic(() => import("@/components/vanguard/panels/help-panel").then((m) => m.HelpPanel), { ssr: false, loading: PanelSkeleton });
 const RankingPanel = dynamic(() => import("@/components/vanguard/panels/ranking-panel").then((m) => m.RankingPanel), { ssr: false, loading: PanelSkeleton });
 const ForumPanel = dynamic(() => import("@/components/vanguard/panels/forum-panel").then((m) => m.ForumPanel), { ssr: false, loading: PanelSkeleton });
+const ConsejoIaPanel = dynamic(() => import("@/components/vanguard/panels/consejo-ia-panel").then((m) => m.ConsejoIaPanel), { ssr: false, loading: PanelSkeleton });
 const SalasPanel = dynamic(() => import("@/components/vanguard/panels/salas-panel").then((m) => m.SalasPanel), { ssr: false, loading: PanelSkeleton });
 const PollsPanel = dynamic(() => import("@/components/vanguard/panels/polls-panel").then((m) => m.PollsPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
@@ -433,6 +434,7 @@ export default function Home() {
         {tab === "gancho" && <HooksPanel />}
         {tab === "ranking" && <RankingPanel />}
         {tab === "foros" && <ForumPanel />}
+        {tab === "consejoia" && <ConsejoIaPanel />}
         {tab === "salas" && <SalasPanel />}
         {tab === "encuestas" && <PollsPanel />}
         {tab === "videos" && <VideosPanel />}
