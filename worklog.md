@@ -561,3 +561,24 @@ Stage Summary:
 - PRODUCCIÓN https://vanguard-kq9r.vercel.app = v77.0 ORO TOTAL (health ok, db up, 0 errores).
 - La regla del comandante vive ahora en 82 secciones (24 de v73 + 3 custom + 22 de v76 + 36 de v77 + expedientes con ilustración v75): TODA la plataforma tiene título grande → ilustración cinematográfica → texto fácil, con acento vibrante único por sección (90 ilustraciones propias en /public/ilustraciones).
 - Siguientes rondas: mini-ilustraciones en el mega-menú (thumbs por grupo), ola de difusión 618→750 (faltan 7 players para goal 150), sonidos por récord, PVP por salas/campeonato de duelos.
+
+---
+Task ID: 27
+Agent: main (Super Z)
+Task: v78.0 MENÚ DE CINE — "Sigue" (cuarta ola: el mega-menú con portadas cinematográficas)
+
+Work Log:
+- ESTADO INICIAL: v77.0 ORO TOTAL ya desplegada (commit 27551f9 + auto-commit 0fe4672 sin push). Limpieza: 36 jpg "modified" eran ruido de metadatos (mismo tamaño byte a byte) → git restore; push del auto-commit pendiente.
+- INVENTARIO: el mega-menú (mega-menu.tsx) seguía plano: icono + chips de texto. Lección nueva del entorno: los scripts gen_ilustraciones_v7x.mjs fueron limpiados; el campo de la API de imágenes es data[0].base64 (no b64_json) según skills/image-generation.
+- GENERACIÓN: scripts/gen_ilustraciones_v78.mjs — 1 sola ilustración faltante: hangar.jpg (1408x704, estilo unificado ocaso+luna, primer plano). La API devolvió "sin b64" con b64_json; fijado a base64 → OK al primer reintento. Banco total: 91 ilustraciones.
+- MEGA-MENÚ DE CINE: reescritas las 13 tarjetas (12 secciones + atajo PORTADA) con el patrón portada de home-panel v75: strip superior h-24 con la ilustración en .ken-burns, velo gradiente del hex de la sección (SECTION_COVER map: hangar→hangar, inicio→verdades, juego→mundo, mercado→bolsa, archivo→enciclopedia, comando→briefing, inteligencia→osint, emisora→envivo, oscsuro→abusos, creadores→creador, social→crisis, sistema→agente), .portada-destello al hover (clase group), icono-badge con glow solapado (-mt-7), título con textShadow del acento y badge +N de secciones sin descubrir movido a la esquina de la portada. De paso: eliminado el shadowing de t (useT) por tb en el map de tabs.
+- BUG DE I18N DETECTADO EN QA: la tarjeta HANGAR mostraba "sec.hangar"/"sec.hangar.desc" crudos — la sección (v67) nunca tuvo claves i18n. Añadidas en los 8 diccionarios (es/en/pt/fr/de/it/zh/ru).
+- TRAMPA DEL ENTORNO: tras rebuild, el SSR seguía sirviendo el build viejo — npm run start corre bun .next/standalone/server.js y pkill -f next-server NO lo mata (proceso "bun"); el PID 1744 del 17:56 seguía en el 3000. Fix: kill -9 por PID (los PIDs los dio ss -ltnp/ps). Lección: en este proyecto, matar servidor = kill por PID de bun, no pkill next-server.
+- QA LOCAL: 13 portadas, 0 rotas tras scroll (lazy incluidas), rawKeys false, 0 errores de página. Capturas qa-v78-megamenu-top/mid.png.
+- DEPLOY: push 27f1df7 → health v78.0 en ~2.5 min (db up). QA PRODUCCIÓN: 13/13 .jpg → 200; navegador: portadas 13, rotas 0, sin claves crudas, 0 errores (modal de bono + manual del comandante cerrados por JS). Captura qa-v78-prod.png.
+- Cifras al cerrar v78.0: players 144 (RÉCORD; +1 desde v77.0), visitas 152 (+2), presence pico 6, online 1 (QA), shares external 618/750 (82%), goal 144/150 (96%, faltan 6).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v78.0 MENÚ DE CINE (health ok, db up, 0 errores).
+- El mega-menú ya cumple la regla del comandante: cada una de sus 13 tarjetas abre con ilustración cinematográfica viva (Ken Burns) teñida con el color de su mundo, destello al hover y badge de descubrimiento. La sección HANGAR quedó traducida en los 8 idiomas.
+- Siguientes rondas: ola de difusión 618→750 (faltan 6 players para goal 150), sonidos por récord, PVP por salas/campeonato de duelos, hangar-3d con iluminación de luna/ocaso.
