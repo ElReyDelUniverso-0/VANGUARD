@@ -600,3 +600,20 @@ Work Log:
 
 Stage Summary:
 - Vanguard tiene IA propia en producción: /api/consejo (LLM server-side) + sala de deliberación con 4 personalidades, votos, decreto jugable y diálogo multi-turno; integrada en SOCIAL y enlazada desde FOROS.
+
+---
+Task ID: 29 (cierre v79)
+Agent: main (Super Z)
+Task: v79.0→v79.3 CONSEJO DE ACERO — estabilización y despliegue final
+
+Work Log:
+- v79.1: wrapper src/lib/zai-server.ts — ZAI.create() falla en serverless (no viaja .z-ai-config); wrapper con instancia directa (constructor público en runtime, d.ts lo marca privado → cast). tsc OK.
+- DIAGNÓSTICO PRODUCCIÓN: /api/consejo?debug=1 reveló "fetch failed" — el gateway internal-api.z.ai solo es alcanzable desde la red interna de este entorno; Vercel no puede conectar (el dominio resuelve pero las conexiones externas fallan; curl directo desde el sandbox con headers del SDK da 403 — solo el SDK local del sandbox pasa). Conclusión: NO existe endpoint LLM público disponible.
+- v79.2: NÚCLEO LOCAL procedural rico y variado — keywords del tema (sin stopwords) tejidas en cada voz, 4 plantillas por consejero, % aleatorios, veredicto ponderado, títulos y acciones variables por veredicto. Chip honesto: NÚCLEO IA EN VIVO (ia:true, cuando el gateway es alcanzable, p.ej. local) vs NÚCLEO LOCAL (ia:false, producción). ?nucleo=1 fuerza el local para QA.
+- BUG DE UX DESCUBIERTO EN QA PROD: la página se recarga a mitad de deliberación (watchdog: 503 transitorio → location.reload) y key={tab} remonta el panel → deliberación perdida. v79.3: sesión superviviente en sessionStorage (vanguard:consejo-sesion, 30 min) — al volver al consejo, la sala se restaura y el show se repite. Verificado con reload real: restaurado:true → decreto completo.
+- QA PRODUCCIÓN v79.3: deliberación completa (golpe de estado en un país productor de petróleo): 4 intervenciones con keywords del tema, votos ABSTENCIÓN 61% / A FAVOR 73%, DECRETO: MESA ANTES QUE FRENTE con VEREDICTO PROCEDER, 3 acciones y CUMPLIR (+150ⓒ +60XP). Captura qa-v79-prod-decreto.png. 0 errores.
+- Deuda conocida: IA real solo en redes con acceso al gateway interno. Si se desea IA real en producción, hacer pública una API de LLM con clave y sustituir baseUrl en zai-server.ts (una línea).
+
+Stage Summary:
+- PRODUCCIÓN https://vanguard-kq9r.vercel.app = v79.3 CONSEJO DE ACERO (health ok, db up).
+- Vanguard tiene sala de deliberación con IA: 4 personalidades, votos con confianza, decretos jugables con recompensa, diálogo cara a cara con memoria, puente desde FOROS y sesión que sobrevive recargas. En producción corre con núcleo local (gateway IA inaccesible desde Vercel); el chip siempre dice la verdad.
