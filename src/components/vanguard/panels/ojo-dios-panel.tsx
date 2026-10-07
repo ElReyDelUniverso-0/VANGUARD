@@ -16,6 +16,10 @@ import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { CamarasMundo } from "@/components/vanguard/camaras-mundo";
 // v75.0 PLANETA VIVO — TODA la información del planeta Tierra en este lugar
 import { PlanetaVivo } from "@/components/vanguard/planeta-vivo";
+// v82.0 TODO EL MUNDO — ATLAS SECRETO (lugares secretos con RECON + registro mundial)
+import { AtlasSecreto } from "@/components/vanguard/atlas-secreto";
+// v82.0 TODO EL MUNDO — teletipo de mensajes en vivo constantes
+import { TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
@@ -324,8 +328,14 @@ export function OjoDiosPanel() {
         tinte="luna"
       />
 
-      {/* v72.0 CÁMARAS PÚBLICAS DEL MUNDO */}
+      {/* v82.0 TELETIPO — mensajes en vivo constantes del sistema Vanguard */}
+      <TeletipoFeed max={10} intervaloMs={5200} titulo="EL MUNDO AHORA MISMO" />
+
+      {/* v72.0 CÁMARAS PÚBLICAS DEL MUNDO (con mosaico de vigilancia v82) */}
       <CamarasMundo />
+
+      {/* v82.0 ATLAS SECRETO — 24 lugares secretos con RECON jugable + registro mundial de ubicaciones */}
+      <AtlasSecreto />
 
       {/* v75.0 PLANETA VIVO — toda la información de la Tierra: población viva, ISS,
           fase lunar, eventos naturales NASA, clima de capitales, divisas y sismos */}

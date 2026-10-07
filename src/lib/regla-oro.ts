@@ -44,6 +44,15 @@ export const REGLA_ORO = {
       "Cuatro misiones militares esperan tu orden: pulsa EJECUTAR y mira los jets cruzar el tablero, las fases avanzar y el misil volar. Cuando el objetivo cae, cobras.",
     acento: "#FF4D00",
   },
+  // v82.0 TODO EL MUNDO — el dinero del guerrero, con techo y con bóveda
+  hacienda: {
+    titulo: "BANCO CENTRAL",
+    volanta: "Tu dinero ahora trabaja contigo",
+    imagen: "/ilustraciones/banco.jpg",
+    texto:
+      "Sueldo de operativo que acumula cada minuto, bóvedas con interés al 9-30%, tesorería de verdad y bonos por información certificada. La información es dinero — y aquí se cobra.",
+    acento: "#F7C948",
+  },
   misiones: {
     titulo: "Misiones",
     volanta: "Tu camino de comandante",

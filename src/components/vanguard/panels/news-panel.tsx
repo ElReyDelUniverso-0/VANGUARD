@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Newspaper, ExternalLink, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert } from "lucide-react";
+import { Newspaper, ExternalLink, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import { renderWithStickers } from "@/components/vanguard/countryball";
 import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v82.0 TODO EL MUNDO — teletipo en vivo: cinta de última hora + mensajes constantes
+import { TeletipoCinta, TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
 
 interface NewsItem {
   id: string;
@@ -152,6 +154,8 @@ export function NewsPanel() {
 
   const filtered = filter === "ALL" ? items : items.filter((i) => i.tacticalTag === filter);
   const tags = ["ALL", "ALERTA", "DIPLOMACIA", "ECONOMIA", "HUMANITARIO", "ANALISIS"];
+  // v82.0: cables de las últimas 2h = ÚLTIMA HORA (borde rojo pulsante)
+  const esUltimaHora = (iso: string) => Date.now() - new Date(iso).getTime() < 2 * 3600_000;
 
   return (
     <div className="space-y-3">
@@ -173,6 +177,9 @@ export function NewsPanel() {
           </Button>
         }
       />
+
+      {/* v82.0 TELETIPO EN VIVO — cinta de última hora con cables reales + interceptos */}
+      <TeletipoCinta />
 
       {/* Status bar */}
       <div className="hud-corner p-2 flex items-center gap-3 text-[10px] font-mono">
@@ -215,8 +222,11 @@ export function NewsPanel() {
         </div>
       </div>
 
-      {/* List */}
-      <div className="grid gap-2">
+      {/* v82.0: cable de mensajes en vivo (columna izquierda) + lista de cables */}
+      <div className="grid lg:grid-cols-[320px_1fr] gap-3 items-start">
+        <TeletipoFeed max={12} intervaloMs={4800} className="lg:sticky lg:top-2" titulo="MENSAJES EN VIVO" />
+
+        <div className="grid gap-2">
         {loading && items.length === 0
           ? Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="hud-corner p-3">
@@ -228,7 +238,10 @@ export function NewsPanel() {
           : filtered.map((item, idx) => (
               <article
                 key={item.id}
-                className="hud-corner p-3 hover:bg-secondary/40 transition-colors cursor-pointer group"
+                className={cn(
+                  "hud-corner p-3 hover:bg-secondary/40 transition-colors cursor-pointer group relative",
+                  esUltimaHora(item.publishedAt) && "border-l-2 border-l-crisis shadow-[inset_2px_0_0_rgba(255,59,48,0.35)]"
+                )}
                 onClick={() => handleOpen(item)}
               >
                 <div className="flex items-start gap-3">
@@ -250,6 +263,11 @@ export function NewsPanel() {
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                      {esUltimaHora(item.publishedAt) && (
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 border border-crisis-hud text-crisis bg-crisis-hud/30 uppercase font-bold flex items-center gap-1 blink-soft">
+                          <Zap className="w-3 h-3" /> última hora
+                        </span>
+                      )}
                       {(() => {
                         const v = veracityOf(item.source);
                         return v >= 80 ? (
@@ -387,6 +405,7 @@ export function NewsPanel() {
                 </div>
               </article>
             ))}
+        </div>
       </div>
 
       {!loading && filtered.length === 0 && (

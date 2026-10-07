@@ -131,6 +131,8 @@ const PerfilPanel = dynamic(() => import("@/components/vanguard/panels/perfil-pa
 
 // MERCADO
 const MarketsPanel = dynamic(() => import("@/components/vanguard/panels/markets-panel").then((m) => m.MarketsPanel), { ssr: false, loading: PanelSkeleton });
+// v82.0 TODO EL MUNDO — Banco Central de Vanguard
+const HaciendaPanel = dynamic(() => import("@/components/vanguard/panels/hacienda-panel").then((m) => m.HaciendaPanel), { ssr: false, loading: PanelSkeleton });
 const BookmakerPanel = dynamic(() => import("@/components/vanguard/panels/bookmaker-panel").then((m) => m.BookmakerPanel), { ssr: false, loading: PanelSkeleton });
 const WarBettingPanel = dynamic(() => import("@/components/vanguard/panels/war-betting-panel").then((m) => m.WarBettingPanel), { ssr: false, loading: PanelSkeleton });
 const PredictionsPanel = dynamic(() => import("@/components/vanguard/panels/predictions-panel").then((m) => m.PredictionsPanel), { ssr: false, loading: PanelSkeleton });
@@ -414,6 +416,7 @@ export default function Home() {
         {tab === "contadores" && <CountersPanel />}
         {tab === "carteles" && <CartelesPanel />}
         {tab === "bolsa" && <MarketsPanel />}
+        {tab === "hacienda" && <HaciendaPanel />}
         {tab === "divisas" && <DivisasPanel />}
         {/* v13 — centro de mando global */}
         {tab === "osint" && <OsintPanel />}

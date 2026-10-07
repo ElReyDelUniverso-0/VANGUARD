@@ -15,7 +15,7 @@ import {
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
   Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
-  Infinity as InfinityIcon, Bot,
+  Infinity as InfinityIcon, Bot, Vault,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -61,6 +61,8 @@ export type TabKey =
   | "foryou"
   // v30 vista dios: observación omnisciente del sistema
   | "ojodios"
+  // v82 TODO EL MUNDO: Banco Central de la economía del guerrero
+  | "hacienda"
   // v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables
   | "expedientes"
   // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo
@@ -154,6 +156,8 @@ const TABS: Record<TabKey, TabDef> = {
   studios:       { key: "studios",       label: "Estudios Creadores (noticias, banderas, mapas, música)", short: "ESTUDIOS", icon: <Wand2 className="w-3.5 h-3.5" />, color: "violet" },
   gobierno:      { key: "gobierno",      label: "Gobierno Mundial (presidente, decretos, reclutar)", short: "GOBIERNO", icon: <Landmark className="w-3.5 h-3.5" />, color: "amber" },
   bolsamonedas:  { key: "bolsamonedas",  label: "Bolsa de Monedas (crea tu propia moneda)", short: "MONEDAS", icon: <Coins className="w-3.5 h-3.5" />, color: "green" },
+  // v82 TODO EL MUNDO — Banco Central
+  hacienda:      { key: "hacienda",      label: "Banco Central (sueldo, bóvedas, tesorería)", short: "BANCO", icon: <Vault className="w-3.5 h-3.5" />, color: "amber" },
   // v28 para ti
   foryou:        { key: "foryou",        label: "Para Ti (feed de la comunidad)", short: "PARA TI", icon: <Flame className="w-3.5 h-3.5" />, color: "red" },
   // v30 vista dios
@@ -240,7 +244,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "mercado", label: "MERCADO", short: "MERCADO", icon: <CircleDollarSign className="w-4 h-4" />, color: "green",
     desc: "Exchange, apuestas, predicciones y espionaje — gana o pierde monedas",
-    tabs: [TABS.bolsa, TABS.divisas, TABS.bookmaker, TABS.apuestas, TABS.predicciones, TABS.espionaje, TABS.gancho],
+    tabs: [TABS.bolsa, TABS.hacienda, TABS.divisas, TABS.bookmaker, TABS.apuestas, TABS.predicciones, TABS.espionaje, TABS.gancho],
   },
   {
     // v48.0 COHERENCIA: Guerras históricas y Figuras y bajas viven aquí — son

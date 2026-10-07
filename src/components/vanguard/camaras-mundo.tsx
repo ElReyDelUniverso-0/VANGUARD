@@ -10,8 +10,8 @@
 //  · INTEL DE PAÍS: al elegir país se muestra hora local en vivo + clima actual de
 //    su capital (Open-Meteo, gratis y sin clave) + atajo a sus verdades.
 
-import { useEffect, useState } from "react";
-import { Video, ExternalLink, Clock3, CloudSun, Eye, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Video, ExternalLink, Clock3, CloudSun, Eye, Loader2, Grid3x3, CircleDot } from "lucide-react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { countryName } from "@/lib/world-data";
 import { cn } from "@/lib/utils";
@@ -99,6 +99,24 @@ export function CamarasMundo() {
   }, [pais]);
 
   const cap = pais ? CAPITALES[pais] : null;
+  // v82.0 MODO VIGILANCIA — mosaico CCTV global con barrido, REC y relojes en vivo
+  const [mosaico, setMosaico] = useState(false);
+  const [focoMosaico, setFocoMosaico] = useState(0);
+  const [horaMosaico, setHoraMosaico] = useState(() => new Date());
+  useEffect(() => {
+    if (!mosaico) return;
+    const a = window.setInterval(() => setFocoMosaico((f) => (f + 1) % (FUENTES.length + 1)), 4800);
+    const b = window.setInterval(() => setHoraMosaico(new Date()), 1000);
+    return () => { window.clearInterval(a); window.clearInterval(b); };
+  }, [mosaico]);
+  const celdas = useMemo(() => [
+    { id: "ISS", iso: "", tz: "UTC", lat: 0, lng: 0, nombre: "ISS · Órbita baja" },
+    ...FUENTES.map((f) => ({
+      id: f.pais, iso: f.pais, tz: CAPITALES[f.pais]?.tz ?? "UTC",
+      lat: CAPITALES[f.pais]?.lat ?? 0, lng: CAPITALES[f.pais]?.lng ?? 0,
+      nombre: NOMBRE_PAIS[f.pais] ?? countryName(f.pais),
+    })),
+  ], []);
 
   return (
     <section className="space-y-3" aria-label="Cámaras públicas del mundo">
@@ -153,6 +171,57 @@ export function CamarasMundo() {
               </span>
             </div>
           </button>
+        )}
+      </div>
+
+      {/* v82.0 MODO VIGILANCIA — interruptor del mosaico CCTV */}
+      <div className="hud-panel p-3">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            {mosaico ? "mosaico de vigilancia activo — la señal recorre la red cada pocos segundos" : "activa el mosaico de vigilancia para patrullar la red de cámaras"}
+          </p>
+          <button onClick={() => setMosaico((m) => !m)}
+            className={cn("inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] border rounded-sm text-[10px] font-mono uppercase font-bold tracking-widest transition-all active:scale-95",
+              mosaico ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20 shadow-[0_0_18px_rgba(30,144,255,0.35)]" : "border-cyan-hud/50 text-cyan-hud hover:bg-cyan-hud/10")}>
+            <Grid3x3 className="w-3.5 h-3.5" /> {mosaico ? "cerrar mosaico" : "modo vigilancia"}
+          </button>
+        </div>
+
+        {mosaico && (
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-1.5">
+            {celdas.map((c, i) => {
+              const hora = new Intl.DateTimeFormat("es", { timeZone: c.tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(horaMosaico);
+              const esIss = c.id === "ISS";
+              const enFoco = focoMosaico === i;
+              return (
+                <button key={c.id}
+                  onClick={() => (esIss ? setSenalISS(true) : setPais(c.id))}
+                  title={`${c.nombre} — abrir señal`}
+                  className={cn("cctv-tile cctv-tile-ciclo group relative rounded-sm border bg-[#04070c] p-2 h-24 text-left transition-all hover:-translate-y-0.5 active:scale-[0.97]",
+                    enFoco ? "border-cyan-hud" : "border-white/10 hover:border-cyan-hud/50")}>
+                  {/* fósforo de la pantalla */}
+                  <div className="absolute inset-0 opacity-70 pointer-events-none bg-[radial-gradient(ellipse_at_50%_30%,rgba(56,189,248,0.10),transparent_65%)]" aria-hidden />
+                  <div className="relative z-[4] flex items-center justify-between">
+                    <span className="flex items-center gap-1 font-mono text-[7px] tracking-widest text-crisis">
+                      <CircleDot className={cn("w-2 h-2", enFoco && "animate-pulse")} /> REC
+                    </span>
+                    <span className="font-mono text-[7px] text-cyan-hud tracking-widest">CAM-{String(i + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div className="relative z-[4] mt-2">
+                    <p className="text-[10px] font-bold text-foreground/95 leading-tight truncate">{c.nombre}</p>
+                    <p className="font-mono text-[8px] text-cyan-hud/80 tabular-nums">{hora}</p>
+                    <p className="font-mono text-[7px] text-muted-foreground tabular-nums">{c.lat.toFixed(1)}° · {c.lng.toFixed(1)}°</p>
+                  </div>
+                  <div className="absolute bottom-1 left-2 right-2 z-[4] flex items-center justify-between">
+                    {c.iso ? <FlagBadge code={c.iso} /> : <span className="font-mono text-[7px] text-amber tracking-widest">NASA</span>}
+                    <span className={cn("font-mono text-[7px] tracking-widest", enFoco ? "text-cyan-hud" : "text-muted-foreground")}>
+                      {enFoco ? "EN FOCO" : "ver señal"}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         )}
       </div>
 
