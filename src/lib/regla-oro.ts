@@ -90,7 +90,7 @@ export const REGLA_ORO = {
     volanta: "Otros guerreros, tu nivel",
     imagen: "/ilustraciones/multijugador.jpg",
     texto:
-      "Duelas, salas y retos contra jugadores reales en línea. Aquí no se gana solo: se gana mejor.",
+      "Guerra global, duelos 1v1, ranking ELO y ahora DESAFÍOS POR CÓDIGO: reta a cualquiera sin importar su horario — ambos jugáis la misma semilla y el bote espera al mejor.",
     acento: "#FF7A45",
   },
   arcade: {
@@ -98,7 +98,7 @@ export const REGLA_ORO = {
     volanta: "Joyas retro de guerra",
     imagen: "/ilustraciones/arcade.jpg",
     texto:
-      "Minijuegos clásicos con sabor a 1986 y récords que defender. La pausa táctica entre batallas.",
+      "12 minijuegos con récords que defender: sobrevive al CONVOY BAJO FUEGO bajo luna llena, rompe el CIFRADO SIMON y persigue el JUEGO DEL DÍA, que paga doble.",
     acento: "#FF9F1C",
   },
   bookmaker: {
@@ -339,7 +339,7 @@ export const REGLA_ORO = {
     volanta: "La tertulia de los guerreros",
     imagen: "/ilustraciones/salas.jpg",
     texto:
-      "Charlas en vivo por temas y países, con gente real de todo el mundo. Entra, opina y haz aliados — o rivales.",
+      "Chat en vivo con GRITO DEL DÍA para encender el debate, emotes rápidos y tarjetas de operador con rango y firma de guerra. Entra, opina y haz aliados — o rivales.",
     acento: "#8C7FFF",
   },
   radar: {

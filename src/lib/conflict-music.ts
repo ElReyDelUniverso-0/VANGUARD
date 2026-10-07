@@ -265,12 +265,70 @@ export const MUSIC_TRACKS: TrackDef[] = [
     droneGain: 0,
     padLevel: 0.06,
   },
+  // ====== v83.0 ESTADIO GLOBAL — 3 pistas nuevas (15 en total) ======
+  {
+    id: "ocaso",
+    name: "Ocaso en el Frente",
+    desc: "El sol cae ámbar sobre las trincheras — la banda sonora del atardecer de Vanguard",
+    bpm: 64,
+    root: st(-24, 98), // G0 cálido
+    chords: [maj(0), maj(7), min(4), maj(5)], // G - D - Em - C
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1, -1, 7, -1],
+    arp: [3, -1, -1, 4, -1, -1, 5, -1, -1, -1, 6, -1, -1, 4, -1, -1],
+    arpType: "triangle",
+    bassType: "sine",
+    kick: "x.......x.......",
+    snare: "................",
+    hat: "....x.......x...",
+    drone: 0.5,
+    droneGain: 0.04,
+    padLevel: 0.075,
+  },
+  {
+    id: "blitz",
+    name: "Blitz Total",
+    desc: "Columnas mecánicas a 150 BPM — asalto relámpago sin cuartel",
+    bpm: 148,
+    root: st(-24, 92.5), // F#0 agresivo
+    chords: [min(0), min(0), maj(-5), maj(-2)], // F#m - F#m - B - A
+    bass: [0, 0, 12, 0, 0, 10, 0, 0, 0, 0, 12, 0, 7, 0, 10, 0],
+    arp: [6, -1, 8, -1, 6, -1, 8, 9, 6, -1, 8, -1, 10, -1, 8, 6],
+    arpType: "square",
+    bassType: "sawtooth",
+    kick: "x...x...x...x..o",
+    snare: "....x..o....x...",
+    hat: "x.xxx.xxx.xxx.xx",
+    drone: 1,
+    droneGain: 0.06,
+    padLevel: 0.035,
+    fill: true,
+  },
+  {
+    id: "himno",
+    name: "Himno de Vanguardia",
+    desc: "Marcha épica de la agencia — trompetas sintéticas al atardecer",
+    bpm: 100,
+    root: st(-24, 110), // A0
+    chords: [min(0), maj(3), maj(5), maj(-2)], // Am - C - D - G
+    bass: [0, -1, 0, -1, 7, -1, 0, -1, 0, -1, 0, -1, 5, -1, 7, -1],
+    arp: [3, -1, 4, 5, -1, 6, -1, 5, 3, -1, 4, -1, 6, 8, -1, -1],
+    arpType: "sawtooth",
+    bassType: "sawtooth",
+    kick: "x...x...x...x...",
+    snare: "....x.......x.o.",
+    hat: "..x...x...x...x.",
+    drone: 0.5,
+    droneGain: 0.05,
+    padLevel: 0.06,
+    fill: true,
+  },
 ];
 
 // ================== motor v2 ==================
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null; // volumen general
 let comp: DynamicsCompressorNode | null = null; // compresor master
+let analyser: AnalyserNode | null = null; // v83.0 espectro para el visualizador
 let reverbBus: GainNode | null = null; // envío a reverb
 let delayBus: GainNode | null = null; // envío a delay
 let delayNode: DelayNode | null = null;
@@ -318,7 +376,12 @@ function getCtx(): AudioContext | null {
       comp.ratio.value = 4;
       comp.attack.value = 0.004;
       comp.release.value = 0.24;
-      comp.connect(ctx.destination);
+      // v83.0 ESTADIO GLOBAL: analizador para el visualizador de la Radio
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 128; // 64 bins — suficiente para 24 barras
+      analyser.smoothingTimeConstant = 0.78;
+      comp.connect(analyser);
+      analyser.connect(ctx.destination);
 
       master = ctx.createGain();
       master.gain.value = volume * 0.55;
@@ -636,6 +699,29 @@ export function setMusicVolume(v: number) {
 
 export function getMusicVolume(): number {
   return volume;
+}
+
+// v83.0 ESTADIO GLOBAL — espectro en vivo para el visualizador de la Radio.
+// Devuelve `bars` niveles normalizados 0..1 (o null si no hay audio activo).
+export function getMusicSpectrum(bars = 24): number[] | null {
+  if (!analyser || !isMusicPlaying()) return null;
+  try {
+    const bins = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(bins);
+    const out: number[] = [];
+    const usable = Math.floor(bins.length * 0.72); // los agudos altos casi siempre en silencio
+    const per = usable / bars;
+    for (let b = 0; b < bars; b++) {
+      let sum = 0;
+      const from = Math.floor(b * per);
+      const to = Math.max(from + 1, Math.floor((b + 1) * per));
+      for (let i = from; i < to; i++) sum += bins[i];
+      out.push(Math.min(1, (sum / (to - from) / 255) * 1.35));
+    }
+    return out;
+  } catch {
+    return null;
+  }
 }
 
 export function subscribeMusic(cb: () => void): () => void {

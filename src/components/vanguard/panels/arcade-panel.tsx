@@ -6,11 +6,15 @@
 // v22: 8) ANTIMISIL  9) DUELO RELAMPAGO. Todo client-side, premios en monedas y XP.
 // v26: 10) RADAR FURIA — reflejos de radar con combo x3 y MODO FIEBRE (el usuario
 // pidió minijuegos menos aburridos: azúcar puro con multiplicadores y fiebre).
+// v83: 11) CONVOY BAJO FUEGO (canvas 60fps, luna llena, drones en picado)
+// 12) CIFRADO SIMON (secuencia con tonos) + JUEGO DEL DÍA con recompensa DOBLE.
 
 import { useState, useEffect, useRef } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { CommunityGames } from "@/components/vanguard/community-games";
-import { Gamepad2, RotateCcw, Clock, Brain, Flag, Hourglass, Camera, Zap, KeyRound, Handshake, Lightbulb, Rocket, Swords, Shield, Crosshair } from "lucide-react";
+import { Gamepad2, RotateCcw, Clock, Brain, Flag, Hourglass, Camera, Zap, KeyRound, Handshake, Lightbulb, Rocket, Swords, Shield, Crosshair, Truck, AudioLines } from "lucide-react";
+import { ArcadeConvoy } from "@/components/vanguard/arcade-convoy";
+import { ArcadeSimon } from "@/components/vanguard/arcade-simon";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,7 +25,7 @@ import { WIKI_ENTRIES } from "@/lib/wiki-data";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
-type GameId = "memoria" | "historia" | "quien" | "trivia" | "codigo" | "negociador" | "banderas" | "antimisil" | "duelo" | "radar" | null;
+type GameId = "memoria" | "historia" | "quien" | "trivia" | "codigo" | "negociador" | "banderas" | "antimisil" | "duelo" | "radar" | "convoy" | "simon" | null;
 
 // ====== DATOS DE JUEGOS ======
 const MEMORY_FLAGS = ["US", "GB", "FR", "DE", "RU", "CN", "JP", "BR", "MX", "IT", "ES", "IN"];
@@ -70,12 +74,20 @@ type GameRec = Exclude<GameId, null>;
 const REC_DIR: Record<GameRec, "high" | "low"> = {
   memoria: "low", historia: "high", quien: "high", trivia: "high", codigo: "high",
   negociador: "high", banderas: "high", antimisil: "high", duelo: "high", radar: "high",
+  convoy: "high", simon: "high",
 };
 const REC_LABEL: Record<GameRec, string> = {
   memoria: "menos jugadas", historia: "cronologías", quien: "aciertos /6", trivia: "aciertos /8",
   codigo: "aciertos", negociador: "mejor apoyo", banderas: "aciertos /10", antimisil: "puntos",
-  duelo: "victorias /5", radar: "derribos",
+  duelo: "victorias /5", radar: "derribos", convoy: "puntos", simon: "eslabones",
 };
+
+// v83 JUEGO DEL DÍA: un minijuego distinto cada día paga DOBLE (determinista por fecha)
+const GAME_IDS: Exclude<GameId, null>[] = ["memoria", "historia", "quien", "trivia", "codigo", "negociador", "banderas", "antimisil", "duelo", "radar", "convoy", "simon"];
+function juegoDelDia(): Exclude<GameId, null> {
+  const dia = Math.floor(Date.now() / 86400000); // epoch-day UTC
+  return GAME_IDS[dia % GAME_IDS.length];
+}
 
 function getRecords(): Partial<Record<GameRec, number>> {
   try { return JSON.parse(localStorage.getItem(REC_KEY) || "{}") as Partial<Record<GameRec, number>>; } catch { return {}; }
@@ -222,6 +234,37 @@ function GameArt({ id }: { id: GameId }) {
           </div>
         </div>
       );
+    case "convoy":
+      return (
+        <div className={wrap} style={base}>
+          <div className="estrellas-v74 absolute inset-0 opacity-70" />
+          <div className="absolute right-[10%] top-1.5 h-5 w-5 rounded-full bg-[#ffeec2]" style={{ boxShadow: "0 0 18px 6px rgba(255,214,140,0.5)" }} />
+          <div className="absolute top-3 left-[30%] text-red-hud text-sm font-black" style={{ textShadow: "0 0 10px rgba(255,59,48,0.9)" }}>▼</div>
+          <div className="absolute top-2 left-[58%] text-red-hud/70 text-[10px] font-black" style={{ textShadow: "0 0 8px rgba(255,59,48,0.7)" }}>▼</div>
+          <div className="absolute bottom-2 left-[12%] h-4 w-14 rounded-sm bg-[#6f4a24] border border-black/60" />
+          <div className="absolute bottom-2 left-[40%] h-4 w-14 rounded-sm bg-[#8a5a2b] border border-black/60" />
+          <div className="absolute bottom-2 left-[68%] h-4 w-14 rounded-sm bg-[#6f4a24] border border-black/60" />
+          <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-hud/70 to-transparent" />
+        </div>
+      );
+    case "simon":
+      return (
+        <div className={wrap} style={base}>
+          {["▲", "●", "■", "✦"].map((g, i) => (
+            <div
+              key={i}
+              className={cn(
+                "absolute top-1/2 flex h-8 w-14 -translate-y-1/2 items-center justify-center rounded-sm border-2 font-display text-sm font-black",
+                ["border-cyan-hud/70 text-cyan-hud", "border-amber-hud/70 text-amber", "border-violet-hud/70 text-violet-hud", "border-red-hud/70 text-red-hud"][i]
+              )}
+              style={{ left: `${9 + i * 21}%` }}
+            >
+              {g}
+            </div>
+          ))}
+          <div className="absolute inset-x-6 bottom-1.5 h-px bg-gradient-to-r from-transparent via-neon/60 to-transparent" />
+        </div>
+      );
     default:
       return null;
   }
@@ -238,6 +281,11 @@ export function ArcadePanel() {
   const [newRec, setNewRec] = useState<GameRec | null>(null);
   useEffect(() => { setRecords(getRecords()); }, []);
 
+  // v83 ESTADIO GLOBAL: JUEGO DEL DÍA — el minijuego destacado paga DOBLE
+  const [juegoHoy] = useState(() => juegoDelDia());
+  const currentGameRef = useRef<Exclude<GameId, null> | null>(null);
+  const dobleToastRef = useRef(false);
+
   const registrarRec = (id: GameRec, score: number) => {
     if (submitRecord(id, score)) {
       setNewRec(id);
@@ -249,7 +297,13 @@ export function ArcadePanel() {
   };
 
   const reward = (coins: number, xp: number, label: string) => {
-    if (coins > 0) addCoins(coins, label);
+    // v83 JUEGO DEL DÍA: recompensa doble en el minijuego destacado
+    const doble = currentGameRef.current === juegoHoy && coins > 0;
+    if (coins > 0) addCoins(doble ? coins * 2 : coins, doble ? `${label} · JUEGO DEL DÍA x2` : label);
+    if (doble && !dobleToastRef.current) {
+      dobleToastRef.current = true;
+      toast.info("JUEGO DEL DÍA ×2", { description: "Hoy el minijuego destacado paga doble — aprovecha" });
+    }
     if (xp > 0) addXp(xp);
     // FIX B1: el arcade NO toca recordMinigameStats — esa metrica (score/hits reales)
     // es de Threat Assessment y Dron Strike; antes contaminaba el reto DC-2, el logro
@@ -876,10 +930,14 @@ export function ArcadePanel() {
     { id: "antimisil" as const, name: "ANTIMISIL", desc: "Intercepta misiles antes de que caigan · base con 3 vidas · 45s", icon: <Rocket className="w-5 h-5" />, color: "text-red-hud border-red-hud/60" },
     { id: "duelo" as const, name: "DUELO RELAMPAGO", desc: "5 rondas de reflejos contra el bot · toca solo en verde", icon: <Swords className="w-5 h-5" />, color: "text-green-hud border-green-hud/60" },
     { id: "radar" as const, name: "RADAR FURIA v26", desc: "Derriba drones en 45s · combo x3 y MODO FIEBRE · no toques aliados", icon: <Crosshair className="w-5 h-5" />, color: "text-amber border-amber-hud/60" },
+    { id: "convoy" as const, name: "CONVOY BAJO FUEGO", desc: "Drones caen sobre tu convoy en la noche · 45s · combo x2 · salva los 3 camiones", icon: <Truck className="w-5 h-5" />, color: "text-green-hud border-green-hud/60" },
+    { id: "simon" as const, name: "CIFRADO SIMON", desc: "Escucha el código que crece un glifo por ronda y repítelo · +15 mon por eslabón", icon: <AudioLines className="w-5 h-5" />, color: "text-neon border-neon-hud/60" },
   ];
 
   const startGame = (id: Exclude<GameId, null>) => {
     sfx.levelUp();
+    currentGameRef.current = id; // v83: marca el juego activo para el doble del día
+    dobleToastRef.current = false;
     if (id === "memoria") startMemoria();
     else if (id === "historia") startHistoria();
     else if (id === "quien") startQuien();
@@ -890,6 +948,8 @@ export function ArcadePanel() {
     else if (id === "antimisil") startAntimisil();
     else if (id === "duelo") startDuelo();
     else if (id === "radar") startRadar();
+    else if (id === "convoy") setGame("convoy");
+    else if (id === "simon") setGame("simon");
   };
 
   return (
@@ -911,7 +971,14 @@ export function ArcadePanel() {
                   g.color,
                   isFresh && "borde-oro"
                 )}>
-                <GameArt id={g.id} />
+                <div className="relative">
+                  <GameArt id={g.id} />
+                  {g.id === juegoHoy && (
+                    <span className="absolute top-1 right-1 border border-red-hud bg-red-hud/85 px-1.5 py-0.5 font-mono text-[7px] font-bold uppercase tracking-[0.15em] text-black">
+                      JUEGO DEL DÍA · x2
+                    </span>
+                  )}
+                </div>
                 <div className="p-3">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2 min-w-0">
@@ -984,6 +1051,34 @@ export function ArcadePanel() {
                 </Button>
               </div>
             )}
+          </motion.div>
+        )}
+
+        {game === "convoy" && (
+          <motion.div key="convoy" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hud-corner border bg-secondary/20 p-3">
+            <ArcadeConvoy
+              onEnd={(s) => {
+                registrarRec("convoy", s);
+                reward(25 + s * 2, 40, "ARCADE: convoy");
+                toast.success(`CONVOY A TRAVÉS: ${s} puntos`, { description: s >= 200 ? "El convoy llega entero — pago de estrella" : "Recompensa enviada a tu cuenta" });
+                setGame(null);
+              }}
+              onExit={() => setGame(null)}
+            />
+          </motion.div>
+        )}
+
+        {game === "simon" && (
+          <motion.div key="simon" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hud-corner border bg-secondary/20 p-3">
+            <ArcadeSimon
+              onEnd={(s) => {
+                registrarRec("simon", s);
+                reward(10 + s * 15, 35, "ARCADE: simon");
+                toast.success(`CIFRADO ROTO: ${s} eslabones`, { description: "Recompensa enviada a tu cuenta" });
+                setGame(null);
+              }}
+              onExit={() => setGame(null)}
+            />
           </motion.div>
         )}
 

@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
-  MessagesSquare, Send, Users, Hash, Lock, Signal,
+  MessagesSquare, Send, Users, Hash, Lock, Signal, Megaphone, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -51,6 +51,40 @@ function timeAgo(ts: number) {
   return `hace ${Math.floor(s / 3600)}h`;
 }
 
+// ====== v83 ESTADIO GLOBAL — vida social ======
+const EMOTES = ["🫡", "⚔️", "🔥", "🎯", "💀", "🛰️", "📡", "☕"];
+
+const GRITOS = [
+  "¿Qué frente va a mover el tablero esta semana? Argumenta tu apuesta.",
+  "Un pacto histórico que se repitiera hoy — ¿cuál propones y por qué?",
+  "Si fueras analista de la agencia, ¿qué zona vigilarías TODA la noche?",
+  "¿Cuál fue el error diplomático más caro de la historia reciente?",
+  "Un arma, un satélite o una idea: ¿qué decide hoy una guerra?",
+  "¿Qué país está contando una historia que los datos no apoyan?",
+  "La portada de mañana del teletipo — escríbela en una frase.",
+  "¿Qué invención militar cambió más el mundo: el radar, el GPS o el códigoNavajo?",
+  "Un estrecho, un canal o un paso de montaña: ¿cuál vale más hoy?",
+  "¿El sanción más efectiva que recuerdas? ¿Por qué funcionó?",
+];
+
+function hashNombre(s: string): number {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+const RANGOS = ["RECLUTA", "CABO", "SARGENTO", "TENIENTE", "CAPITÁN", "COMANDANTE", "CORONEL", "GENERAL", "MARISCAL"];
+const ESPECIALIDADES = ["INTELIGENCIA DE SEÑALES", "GEOPOLÍTICA", "CRIPTOANÁLISIS", "RECONOCIMIENTO", "INGENIERÍA DE COMBATE", "CIBERGUERRA", "LOGÍSTICA PROFUNDA", "ANÁLISIS DE IMAGEN", "NEGOCIACIÓN", "ARTILLERÍA"];
+
+function firmaDe(nombre: string) {
+  const h = hashNombre(nombre.toUpperCase());
+  return {
+    rango: RANGOS[h % RANGOS.length],
+    especialidad: ESPECIALIDADES[(h >> 3) % ESPECIALIDADES.length],
+    firma: `VG-${String((h >> 5) % 100).padStart(2, "0")}-${((h >> 7) % 900 + 100)}`,
+  };
+}
+
 export function SalasPanel() {
   const alias = useGameStore((s) => s.alias);
   const [rooms, setRooms] = useState<RoomDef[]>([]);
@@ -61,6 +95,8 @@ export function SalasPanel() {
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
+  // v83 ESTADIO GLOBAL: tarjeta de operador (clic en un nombre) + grito del día
+  const [cardUser, setCardUser] = useState<{ name: string; country: string; bot?: boolean } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSent = useRef(0);
@@ -166,9 +202,7 @@ export function SalasPanel() {
     }
   }, [connected, rooms.length]);
 
-  const send = () => {
-    const body = input.trim();
-    if (!body) return;
+  const enviar = (body: string) => {
     const now = Date.now();
     if (now - lastSent.current < 600) {
       toast.error("Vas muy rapido, operador — espera un momento");
@@ -177,7 +211,6 @@ export function SalasPanel() {
     lastSent.current = now;
     const socket = getRealtime();
     socket.emit("chat:msg", { room: activeRef.current, body });
-    setInput("");
     sfx.success();
     // recompensa de actividad: +2 monedas cada 10 mensajes en salas
     const total = countChatMsg();
@@ -187,6 +220,15 @@ export function SalasPanel() {
       sfx.unlock();
     }
   };
+
+  const send = () => {
+    const body = input.trim();
+    if (!body) return;
+    enviar(body);
+    setInput("");
+  };
+
+  const sendEmote = (emote: string) => enviar(emote);
 
   // auto-scroll al ultimo mensaje
   useEffect(() => {
@@ -199,6 +241,15 @@ export function SalasPanel() {
     [online]
   );
   const activeRoom = rooms.find((r) => r.id === active);
+
+  // v83: grito del día — determinista por fecha + sala
+  const gritoHoy = useMemo(() => {
+    const dia = Math.floor(Date.now() / 86400000);
+    return GRITOS[(dia + hashNombre(active) * 7) % GRITOS.length];
+  }, [active]);
+
+  const cardFirma = cardUser ? firmaDe(cardUser.name) : null;
+  const cardMensajes = cardUser ? msgs.filter((m) => m.author === cardUser.name).length : 0;
 
   return (
     <div className="space-y-3">
@@ -296,6 +347,17 @@ export function SalasPanel() {
             </span>
           </div>
 
+          {/* v83: GRITO DEL DÍA — tema fijado para encender la sala */}
+          <div className="mx-2.5 mt-2 border border-violet-hud/40 bg-violet-hud/10 px-2.5 py-1.5 flex items-center gap-2 rounded-sm">
+            <Megaphone className="w-3.5 h-3.5 text-violet-hud shrink-0" />
+            <div className="min-w-0">
+              <span className="block text-[8px] font-mono uppercase tracking-[0.25em] text-violet-hud">
+                grito del día · debate abierto
+              </span>
+              <p className="text-[10px] font-mono text-foreground/90 leading-snug">{gritoHoy}</p>
+            </div>
+          </div>
+
           {/* mensajes */}
           <div
             ref={scrollRef}
@@ -323,12 +385,16 @@ export function SalasPanel() {
                       "flex items-center gap-1.5 mb-0.5",
                       mine && "flex-row-reverse"
                     )}>
-                      <span className={cn(
-                        "text-[9px] font-mono font-bold uppercase",
-                        mine ? "text-amber" : m.bot ? "text-cyan-hud" : "text-green-hud"
-                      )}>
+                      <button
+                        onClick={() => setCardUser({ name: m.author, country: m.country || "??", bot: m.bot })}
+                        className={cn(
+                          "text-[9px] font-mono font-bold uppercase hover:underline decoration-dotted underline-offset-2 transition-colors",
+                          mine ? "text-amber" : m.bot ? "text-cyan-hud" : "text-green-hud"
+                        )}
+                        aria-label={`Ver tarjeta de ${m.author}`}
+                      >
                         {m.author}
-                      </span>
+                      </button>
                       {m.bot && (
                         <span className="text-[7px] font-mono px-1 border border-cyan-hud/40 text-cyan-hud/80 uppercase">
                           COMUNIDAD
@@ -360,6 +426,22 @@ export function SalasPanel() {
             )}
           </div>
 
+          {/* v83: barra de emotes rápidos */}
+          <div className="px-2.5 pt-2 border-t border-amber-hud/30 flex items-center gap-1 flex-wrap">
+            <span className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground mr-1">quick</span>
+            {EMOTES.map((em) => (
+              <button
+                key={em}
+                onClick={() => sendEmote(em)}
+                aria-label={`Enviar ${em}`}
+                className="w-7 h-7 flex items-center justify-center border border-border/50 rounded-sm hover:border-amber-hud hover:bg-amber-hud/15 active:scale-90 transition-transform text-sm"
+              >
+                {em}
+              </button>
+            ))}
+            <span className="ml-auto text-[8px] font-mono text-muted-foreground/60">toca un nombre → tarjeta de operador</span>
+          </div>
+
           {/* entrada */}
           <div className="p-2.5 border-t border-amber-hud/30 flex gap-2">
             <Input
@@ -388,6 +470,55 @@ export function SalasPanel() {
           </div>
         </div>
       </div>
+
+      {/* v83: TARJETA DE OPERADOR — firma de guerra determinista */}
+      {cardUser && cardFirma && (
+        <div
+          className="fixed bottom-24 right-3 z-50 w-64 hud-panel border-violet-hud/80 p-3 space-y-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.9)]"
+          role="dialog"
+          aria-label={`Tarjeta de operador ${cardUser.name}`}
+        >
+          <div className="flex items-center gap-2">
+            <FlagBadge code={cardUser.country} size="sm" />
+            <span className="text-xs font-mono font-bold text-violet-hud uppercase tracking-wider truncate flex-1">
+              {cardUser.name}
+            </span>
+            <button
+              onClick={() => setCardUser(null)}
+              className="text-muted-foreground hover:text-red-hud"
+              aria-label="Cerrar tarjeta"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[8px] font-mono px-1.5 py-0.5 border border-violet-hud/50 text-violet-hud/90 uppercase">
+              {cardUser.bot ? "COMUNIDAD" : "EN VIVO"}
+            </span>
+            {cardUser.name === (alias || "OPERADOR") && (
+              <span className="text-[8px] font-mono px-1.5 py-0.5 border border-amber-hud/60 text-amber uppercase">es tú</span>
+            )}
+          </div>
+          <div className="border-t border-violet-hud/30 pt-1.5 space-y-1">
+            <p className="text-[10px] font-mono text-foreground">
+              <span className="text-muted-foreground">RANGO:</span> {cardFirma.rango}
+            </p>
+            <p className="text-[10px] font-mono text-foreground">
+              <span className="text-muted-foreground">ARMA:</span> {cardFirma.especialidad}
+            </p>
+            <p className="text-[10px] font-mono text-foreground">
+              <span className="text-muted-foreground">FIRMA:</span>{" "}
+              <span className="text-violet-hud">{cardFirma.firma}</span>
+            </p>
+            <p className="text-[10px] font-mono text-foreground">
+              <span className="text-muted-foreground">EN ESTA SALA:</span> {cardMensajes} mensajes
+            </p>
+          </div>
+          <p className="text-[8px] font-mono text-muted-foreground/70 leading-snug border-t border-violet-hud/20 pt-1.5">
+            La firma de guerra la sella el alias: mismo nombre, mismo rango en todo Vanguard.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

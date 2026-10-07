@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
   Users, Timer, Crosshair, Swords, Trophy, Crown, Gem, LogIn, RefreshCw,
-  MessageSquare, Zap, Send, Radio, Medal, ShieldAlert, ChevronRight, Target, WifiOff, UserRound,
+  MessageSquare, Zap, Send, Radio, Medal, ShieldAlert, ChevronRight, Target, WifiOff, UserRound, QrCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-3d";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { DesafioCodigo } from "@/components/vanguard/desafio-codigo";
 
 // v14 — MAPA MULTIJUGADOR EN 3D: globo real en lugar del SVG plano
 const GlobeMap3D = dynamic(
@@ -85,7 +86,7 @@ interface RankRow {
   mpGames: number; detectiveSolved: number; bestDuelStreak: number;
 }
 
-type Mode = "guerra" | "duelo" | "ranking";
+type Mode = "guerra" | "duelo" | "ranking" | "desafio";
 
 const CONTINENTS = ["NORTEAMÉRICA", "SUDAMÉRICA", "EUROPA", "ÁFRICA", "ASIA", "OCEANÍA"];
 
@@ -168,6 +169,7 @@ export function MultiplayerPanel() {
     { id: "guerra", label: t("mp.war"), icon: <Swords className="w-3.5 h-3.5" /> },
     { id: "duelo", label: t("mp.duel"), icon: <Zap className="w-3.5 h-3.5" /> },
     { id: "ranking", label: t("mp.ranking"), icon: <Medal className="w-3.5 h-3.5" /> },
+    { id: "desafio", label: "DESAFÍO", icon: <QrCode className="w-3.5 h-3.5" /> },
   ];
 
   return (
@@ -175,7 +177,7 @@ export function MultiplayerPanel() {
       <HeroOro panel="multijugador" />
       <PanelHeader
         title={t("mp.title")}
-        subtitle="Mundo de Guerra GLOBAL + Duelos 1v1 + Ranking ELO mundial · tiempo real contra operadores reales"
+        subtitle="Mundo de Guerra GLOBAL + Duelos 1v1 + Ranking ELO + DESAFÍO POR CÓDIGO asíncrono · contra operadores reales"
         icon={<Users className="w-4 h-4 text-red-hud" />}
         color="red"
         right={<ConnectionBadge />}
@@ -210,6 +212,7 @@ export function MultiplayerPanel() {
           {mode === "guerra" && <GuerraMode alias={alias} />}
           {mode === "duelo" && <DueloMode alias={alias} />}
           {mode === "ranking" && <RankingMode alias={alias} />}
+          {mode === "desafio" && <DesafioCodigo alias={alias} />}
         </motion.div>
       </AnimatePresence>
     </div>
