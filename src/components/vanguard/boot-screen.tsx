@@ -11,6 +11,7 @@ const BOOT_LINES = [
   "Conectando con fuentes globales...",
   "Cargando datos de conflictos...",
   "Sincronizando inteligencia mundial...",
+  "EL MUNDO ESTÁ DENTRO DE VANGUARD",
   "Sistema listo — Bienvenido Agente",
 ];
 

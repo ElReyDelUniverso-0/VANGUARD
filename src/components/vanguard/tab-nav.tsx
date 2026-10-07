@@ -15,7 +15,7 @@ import {
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
   Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
-  Infinity as InfinityIcon, Bot, Vault,
+  Infinity as InfinityIcon, Bot, Vault, Briefcase, ScanLine, PenTool,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -80,7 +80,9 @@ export type TabKey =
   // v72.0 MI PAÍS: simulador de nación + uniones + reclutamiento aleatorio
   | "mipais"
   // v81.0 MAPAS DE GUERRA: sala de operaciones con tablero táctico animado
-  | "operaciones";
+  | "operaciones"
+  // v85.0 EL MUNDO DENTRO: empleos con sueldos, AR y constructor de mapas
+  | "empleos" | "armodo" | "mapascrea";
 
 interface TabDef {
   key: TabKey;
@@ -168,6 +170,10 @@ const TABS: Record<TabKey, TabDef> = {
   perfil:        { key: "perfil",        label: "Personalizar Perfil", short: "PERFIL", icon: <UserCog className="w-3.5 h-3.5" />, color: "violet" },
   radar:         { key: "radar",         label: "Radar Desinfo + Conexiones", short: "RADAR", icon: <ShieldAlert className="w-3.5 h-3.5" />, color: "green" },
   operaciones:   { key: "operaciones",   label: "Sala de Operaciones",        short: "OPERACIONES", icon: <Crosshair className="w-3.5 h-3.5" />, color: "amber" },
+  // v85.0 EL MUNDO DENTRO
+  empleos:       { key: "empleos",       label: "Empleos de Vanguard (trabaja por sueldos)", short: "EMPLEOS", icon: <Briefcase className="w-3.5 h-3.5" />, color: "amber" },
+  armodo:        { key: "armodo",        label: "MODO AR (conflictos en tu cámara)", short: "AR", icon: <ScanLine className="w-3.5 h-3.5" />, color: "cyan" },
+  mapascrea:     { key: "mapascrea",     label: "Constructor de Mapas", short: "MAPAS.C", icon: <PenTool className="w-3.5 h-3.5" />, color: "violet" },
   biblioteca:    { key: "biblioteca",    label: "Biblioteca Secreta", short: "BIBLIO", icon: <BookLock className="w-3.5 h-3.5" />, color: "amber" },
   tribunal:      { key: "tribunal",      label: "Juicio Histórico",  short: "TRIBUNAL", icon: <Gavel className="w-3.5 h-3.5" />, color: "amber" },
   alianzas:      { key: "alianzas",      label: "Alianzas",          short: "ALIANZAS", icon: <Flag className="w-3.5 h-3.5" />, color: "violet" },
@@ -261,7 +267,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "Sala OSINT, mapa, cables, radar, planeta en vivo, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO
@@ -276,13 +282,13 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "creadores", label: "CREADORES", short: "CREADORES", icon: <Palette className="w-4 h-4" />, color: "violet",
-    desc: "Todo lo sube la gente: estudio comunitario, armería real con fotos y mapas de Google sin lag",
-    tabs: [TABS.creador, TABS.studios, TABS.armeria, TABS.maps, TABS.bolsamonedas],
+    desc: "Todo lo sube la gente: estudio comunitario, constructor de mapas, armería real y mapas de Google sin lag",
+    tabs: [TABS.creador, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
   },
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",
-    desc: "Crisis mundial, contribuidores, embajadores, alianzas, salas, perfil y comunidad",
-    tabs: [TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.amigos, TABS.torneos, TABS.perfil],
+    desc: "Empleos con sueldos reales, crisis mundial, embajadores, salas, encuestas del mundo y comunidad",
+    tabs: [TABS.empleos, TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.amigos, TABS.torneos, TABS.perfil],
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",

@@ -703,6 +703,31 @@ export const REGLA_ORO = {
       "Plantea tu crisis y cuatro consejeros de IA deliberan en vivo, votan y firman un decreto. Activa el Núcleo Embebido y la IA corre dentro de tu navegador, con memoria de tus sesiones.",
     acento: "#00E5FF",
   },
+  // v85.0 EL MUNDO DENTRO
+  empleos: {
+    titulo: "EMPLEOS DE VANGUARD",
+    volanta: "Aquí no se juega: se trabaja",
+    imagen: "/ilustraciones/empleos.jpg",
+    texto:
+      "Pasa la entrevista de ingreso y Vanguard te contrata: Estado Mayor, Cartografía, Escucha SIGINT o Cancillería. Sueldo por minuto, turnos pagados, ascensos y una nómina que corre aunque cierres la app.",
+    acento: "#D4E157",
+  },
+  armodo: {
+    titulo: "MODO AR",
+    volanta: "El mundo, flotando en tu calle",
+    imagen: "/ilustraciones/modoar.jpg",
+    texto:
+      "Abre la cámara y mira los conflictos del planeta flotando sobre TU mundo, con giroscopio y capa de guerra en vivo. Toca un marcador y lee el frente como si estuviera frente a ti.",
+    acento: "#7DF9FF",
+  },
+  mapascrea: {
+    titulo: "CONSTRUCTOR DE MAPAS",
+    volanta: "Tu guerra, tu cartografía",
+    imagen: "/ilustraciones/constructor.jpg",
+    texto:
+      "Pinta zonas por facción, traza frentes punto a punto, coloca HQ, batallas y flotas sobre el mapa real. Guarda tu cartoteca, exporta PNG y comparte tu mundo en un código VGMAP85.",
+    acento: "#FFD1DC",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

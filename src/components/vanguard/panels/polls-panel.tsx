@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
-  Vote, Clock, CheckCircle2, Coins, BarChart3, Plus, Loader2, Users,
+  Vote, Clock, CheckCircle2, Coins, BarChart3, Plus, Loader2, Users, Globe2, Flame,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -206,8 +206,8 @@ export function PollsPanel() {
     <div className="space-y-3">
       <HeroOro panel="encuestas" />
       <PanelHeader
-        title="Encuestas tacticas"
-        subtitle={`${stats.voted}/${stats.total} votadas · +5 monedas por voto · CREA las tuyas (+1 gema)`}
+        title="Encuestas del mundo"
+        subtitle={`${stats.voted}/${stats.total} votadas · ENCUESTA DEL MUNDO +25ⓒ/día · crea las tuyas (+1 gema)`}
         icon={<Vote className="w-4 h-4 text-green-hud" />}
         color="green"
         right={
@@ -255,6 +255,9 @@ export function PollsPanel() {
           ))}
         </div>
       </div>
+
+      {/* ===== LA ENCUESTA DEL MUNDO (v85) — la más importante del planeta ===== */}
+      <EncuestaDelMundo />
 
       {/* ===== TUS ENCUESTAS (v7) ===== */}
       {myPolls.length > 0 && (filter === "TODAS" || filter === "COMUNIDAD") && (
@@ -323,6 +326,200 @@ export function PollsPanel() {
         }}
       />
     </div>
+  );
+}
+
+// ===== v85.0 LA ENCUESTA DEL MUNDO — la encuesta que mueve el planeta =====
+// Una gran pregunta cada día, paga el doble, con racha de voto y un termómetro
+// que reacciona: el mundo está dentro de Vanguard y opina.
+const LS_ENC_MUNDO = "vanguard-polls-mundo-v85";
+
+interface EncMundoState {
+  day: number;
+  choice: number | null;
+  streak: number;
+  lastDay: number;
+}
+
+function loadEncMundo(): EncMundoState {
+  try {
+    const raw = localStorage.getItem(LS_ENC_MUNDO);
+    if (raw) return JSON.parse(raw) as EncMundoState;
+  } catch { /* noop */ }
+  return { day: -1, choice: null, streak: 0, lastDay: -1 };
+}
+
+const PREGUNTAS_MUNDO: { q: string; opts: string[] }[] = [
+  { q: "¿Qué decide la próxima década mundial: las chips o los estrechos?", opts: ["Semiconductores: quien fabrica, manda", "Estrechos: quien bloquea, negocia", "La energía: petróleo y gas otra vez", "La demografía: país vacío no hace guerra"] },
+  { q: "Si estalla una crisis en el Ártico, el detonante será...", opts: ["Rutas marítimas libres de hielo", "Gas y petróleo bajo el permafrost", "Militarización de islas del norte", "Pesca en aguas en disputa"] },
+  { q: "¿Qué alianza se verá sometida a la prueba más dura este año?", opts: ["La OTAN y sus compromisos del este", "El eje económico entre gigantes asiáticos", "Las alianzas regionales del Sahel", "Los tratados del Pacífico sur"] },
+  { q: "Un país se queda sin agua dulce y su vecino la tiene. ¿Qué pasa primero?", opts: ["Tratado de aguas con inspección conjunta", "Migración masiva hacia la frontera", "Escaramuzas en el río fronterizo", "Mediación internacional inmediata"] },
+  { q: "El arma más decisiva del próximo conflicto será...", opts: ["Drones autónomos en enjambre", "Ciberataques a infraestructura", "Artillería de largo alcance", "Satélites y su vigilancia total"] },
+  { q: "¿Qué espanta más a los mercados globales hoy?", opts: ["Un estrecho bloqueado siete días", "Un banco sistémico al borde del colapso", "Una escalada nuclear verbal", "La escasez de chips estratégicas"] },
+  { q: "La próxima gran ciudad en riesgo de conflicto urbano está en...", opts: ["El frente del este europeo", "El Sahel y su cinturón de golpes", "El sudeste asiático marítimo", "El Levante, otra vez"] },
+  { q: "Un estado fracasa y armas nucleares quedan sin control. ¿Quién actúa?", opts: ["Coalición multinacional con mandato", "El vecino regional más fuerte", "Nadie: parálisis del Consejo", "Contratistas privados por delegación"] },
+  { q: "¿Qué frontera volverá a cambiar en tu vida?", opts: ["La del mar Negro", "La de Corea: congelada 70 años", "La del Cáucaso", "La de un archipiélago del Pacífico"] },
+  { q: "La inteligencia del futuro la harán...", opts: ["Satélites que leen patentes y sombras", "IA que junta millones de cables", "Humanos infiltrados, como siempre", "Ciudadanos con móviles: OSINT total"] },
+  { q: "Una superpotencia cae económicamente sin guerra. ¿Qué gana su rival?", opts: ["Influencia sin disparar", "La obligación de rescatarlo", "Un socio comercial inestable", "Fronteras imposibles de vigilar"] },
+  { q: "¿Cuál es el recurso que provocará el próximo bloqueo naval?", opts: ["Gas natural licuado", "Granos y trigo", "Tierras raras y litio", "Componentes para semiconductores"] },
+  { q: "¿Qué golpe derrumba la moral de un ejército moderno más rápido?", opts: ["Perder a sus oficiales en una emboscada", "Que hackeen sus pagos y comunicaciones", "Ver su capital en televisión bajo ataque", "Un motín de unidades aliadas"] },
+  { q: "El mundo empieza a regular la IA militar. ¿La cláusula imposible de verificar será...", opts: ["La autonomía letal total", "El entrenamiento con datos de guerra", "Los enjambres indistinguibles", "La IA en comando nuclear"] },
+];
+
+function diaActual(): number {
+  return Math.floor(Date.now() / 86400000);
+}
+
+function EncuestaDelMundo() {
+  const addCoins = useGameStore((s) => s.addCoins);
+  const addXp = useGameStore((s) => s.addXp);
+  const [st, setSt] = useState<EncMundoState>(() => loadEncMundo());
+  const [tick, setTick] = useState(0);
+
+  const dia = diaActual();
+  const preg = PREGUNTAS_MUNDO[dia % PREGUNTAS_MUNDO.length];
+  const votada = st.day === dia && st.choice !== null;
+
+  useEffect(() => {
+    if (st.day !== dia) {
+      // nuevo día: resetea elección pero conserva racha si votó ayer
+      const ayer = dia - 1;
+      const racha = st.lastDay === ayer ? st.streak : 0;
+      const next: EncMundoState = { day: dia, choice: null, streak: racha, lastDay: st.lastDay };
+      setSt(next);
+      try { localStorage.setItem(LS_ENC_MUNDO, JSON.stringify(next)); } catch { /* noop */ }
+    }
+  }, [dia, st.day, st.lastDay, st.streak]);
+
+  // votos de la comunidad en vivo (determinista por día+opción+slot de 10 s)
+  useEffect(() => {
+    const t = setInterval(() => setTick((x) => x + 1), 5000);
+    return () => clearInterval(t);
+  }, []);
+
+  const votosComunidad = useMemo(() => {
+    void tick;
+    const elapsedSlots = Math.floor((Date.now() % 86400000) / 10000);
+    const votes = preg.opts.map((_, i) => {
+      let v = 0;
+      for (let s = Math.max(0, elapsedSlots - 60); s <= elapsedSlots; s++) {
+        const r = hash01(`mundo:${dia}:${i}:${s}`);
+        const p = 0.5 / preg.opts.length * (i === 0 ? 1.25 : 1);
+        if (r < p) v += 1;
+      }
+      return 1800 + v * 4; // base masiva: el mundo entero vota
+    });
+    return votes;
+  }, [dia, preg, tick]);
+
+  const votar = (idx: number) => {
+    if (votada) return;
+    const ayer = dia - 1;
+    const racha = st.lastDay === ayer ? st.streak + 1 : 1;
+    const next: EncMundoState = { day: dia, choice: idx, streak: racha, lastDay: dia };
+    setSt(next);
+    try { localStorage.setItem(LS_ENC_MUNDO, JSON.stringify(next)); } catch { /* noop */ }
+    addCoins(25, "ENCUESTA DEL MUNDO · voto del día");
+    addXp(25);
+    sfx.success();
+    if (racha > 0 && racha % 3 === 0) {
+      addCoins(50, `Racha de voto ${racha} días en la Encuesta del Mundo`);
+      toast.success(`Racha de ${racha} días: bonus +50 monedas`);
+    } else {
+      toast.success("Voto registrado en la Encuesta del Mundo (+25 monedas, +25 XP)");
+    }
+  };
+
+  // el mundo reacciona: delta de tensión determinista por (día, elección)
+  const delta = votada ? ((hash01(`delta:${dia}:${st.choice}`) * 3.2 - 1.1)) : 0;
+  const totalVotos = votosComunidad.reduce((a, b) => a + b, 0) + (votada ? 1 : 0);
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative border-2 border-amber-hud p-4 overflow-hidden"
+    >
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-amber-hud/10 via-transparent to-amber-hud/5 pointer-events-none"
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className="relative z-10">
+        <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+          <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-amber flex items-center gap-1.5">
+            <Globe2 className="w-3.5 h-3.5" /> LA ENCUESTA DEL MUNDO · EDICIÓN DE HOY
+          </p>
+          <span className="text-[9px] font-mono uppercase border border-amber-hud text-amber px-1.5 py-0.5 flex items-center gap-1">
+            <Flame className="w-3 h-3" /> racha {st.streak} d
+          </span>
+        </div>
+        <h2 className="text-base sm:text-lg font-black text-foreground leading-snug mb-1">{preg.q}</h2>
+        <p className="text-[10px] font-mono text-muted-foreground mb-3 flex items-center gap-1.5 flex-wrap">
+          <Users className="w-3 h-3 text-green-hud" />
+          {(totalVotos / 1000).toFixed(1)}M operadores votando en todo el planeta
+          <span>·</span>
+          <span className="text-amber font-bold">paga el DOBLE: +25ⓒ +25 XP</span>
+        </p>
+
+        <div className="space-y-1.5">
+          {preg.opts.map((opt, idx) => {
+            const v = votosComunidad[idx] + (votada && st.choice === idx ? 1 : 0);
+            const pct = Math.round((v / totalVotos) * 100);
+            const esMiVoto = votada && st.choice === idx;
+            return (
+              <button
+                key={idx}
+                disabled={votada}
+                onClick={() => votar(idx)}
+                className={cn(
+                  "relative w-full text-left border transition-colors overflow-hidden group",
+                  votada ? "cursor-default border-border/60" : "border-border hover:border-amber-hud cursor-pointer",
+                  esMiVoto && "border-green-hud"
+                )}
+              >
+                {votada && (
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 1, ease: "easeOut", delay: 0.12 * idx }}
+                    className={cn("absolute inset-y-0 left-0", esMiVoto ? "bg-green-hud/30" : "bg-secondary")}
+                  />
+                )}
+                <span className="relative z-10 flex items-center justify-between px-2.5 py-2">
+                  <span className={cn("text-xs font-mono", esMiVoto ? "text-green-hud font-bold" : "text-foreground/90")}>
+                    {opt}{esMiVoto && " · TU VOTO"}
+                  </span>
+                  {votada && <span className="text-[10px] font-mono text-muted-foreground ml-2 flex-shrink-0">{pct}%</span>}
+                  {!votada && (
+                    <span className="text-[9px] font-mono text-amber uppercase opacity-0 group-hover:opacity-100 transition-opacity">
+                      votar +25
+                    </span>
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {votada ? (
+          <div className="mt-3 border border-amber-hud/50 bg-amber-hud/10 p-2.5 flex items-start gap-2">
+            <BarChart3 className="w-4 h-4 text-amber mt-0.5 flex-shrink-0" />
+            <p className="text-[11px] text-foreground/90 leading-relaxed">
+              <span className="text-amber font-bold">El mundo reacciona a tu voto:</span> el termómetro
+              de tensión de Vanguard se mueve <span className={cn("font-mono font-bold", delta >= 0 ? "text-red-hud" : "text-green-hud")}>
+                {delta >= 0 ? "+" : ""}{delta.toFixed(1)}
+              </span> puntos.
+              La encuesta de mañana se decide a medianoche.
+            </p>
+          </div>
+        ) : (
+          <p className="text-[9px] font-mono text-muted-foreground mt-2 uppercase">
+            un voto por día · racha cada 3 días paga bonus +50ⓒ · tu voto empuja el termómetro del mundo
+          </p>
+        )}
+      </div>
+    </motion.article>
   );
 }
 

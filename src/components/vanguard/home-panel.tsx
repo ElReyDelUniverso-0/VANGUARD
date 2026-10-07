@@ -20,6 +20,7 @@ import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";
 import { CONFLICTS } from "@/lib/game-data";
 import { navigateTo, openMainMenu } from "@/lib/nav";
+import { ManifiestoMundo } from "@/components/vanguard/panels/empleos-panel";
 import type { TabKey } from "@/components/vanguard/tab-nav";
 
 interface NewsItem {
@@ -277,6 +278,9 @@ export function HomePanel() {
 
   return (
     <div className="space-y-5">
+      {/* v85.0 EL MUNDO DENTRO — manifiesto de identidad */}
+      <ManifiestoMundo />
+
       {/* v52.0 ZONA CERO — la ciudad que cae en vivo */}
       <Link
         href="/zona-cero"
