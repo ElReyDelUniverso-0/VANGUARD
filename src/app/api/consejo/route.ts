@@ -132,7 +132,7 @@ const ACCIONES: Record<string, string[]> = {
   NEGOCIAR: ["Abre expediente diplomático en Alianzas", "Consulta a los Embajadores por país", "Prepara tu propuesta para el tribunal"],
   ESPERAR: ["Vigila el Pulso Mundial cada 6 horas", "Abre expediente en el Archivo Secreto", "Trae el tema de vuelta al consejo"],
 };
-const TITULOS = ["VIGILANCIA ACTIVA", "CONTENCIÓN FIRMÉ", "MESA ANTES QUE FRENTE", "ORDEN DE ESPERA", "DECISIÓN DEL ACERO"];
+const TITULOS = ["VIGILANCIA ACTIVA", "CONTENCIÓN FIRME", "MESA ANTES QUE FRENTE", "ORDEN DE ESPERA", "DECISIÓN DEL ACERO"];
 
 function nucleoLocalDeliberacion(tema: string) {
   const k = keywords(tema);
