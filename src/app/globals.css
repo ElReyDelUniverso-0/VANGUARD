@@ -1099,3 +1099,143 @@ main img {
   .nuevo-pulse { animation: none !important; }
   .vivo-num { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   v81.0 MAPAS DE GUERRA — ARSENAL DE ANIMACIÓN MILITAR
+   Doctrina 60fps: todo se anima con transform/opacity (compositor),
+   nada repinta layout. Cada clase es un instrumento de la sala de guerra.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* — RETÍCULA DE OBJETIVO: corchetes que se cierran sobre el blanco — */
+.reticula-objetivo { position: absolute; inset: 0; pointer-events: none; }
+.reticula-objetivo::before,
+.reticula-objetivo::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  animation: reticulaCierra 2.8s cubic-bezier(0.3, 0.9, 0.3, 1) infinite;
+}
+.reticula-objetivo::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.reticula-objetivo::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+@keyframes reticulaCierra {
+  0%   { transform: translate(9px, 9px); opacity: 0.15; }
+  38%  { transform: translate(0, 0); opacity: 1; }
+  78%  { transform: translate(0, 0); opacity: 1; }
+  100% { transform: translate(9px, 9px); opacity: 0.15; }
+}
+
+/* — corona giratoria del objetivo (anillo punteado tipo diseñoación) — */
+.corona-blanco {
+  animation: coronaGira 7s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+@keyframes coronaGira { to { transform: rotate(360deg); } }
+
+/* — PING DE SONAR: anillos que nacen del contacto y mueren en el mar — */
+.ping-sonar { transform-origin: center; animation: sonarNace 2.6s ease-out infinite; will-change: transform, opacity; }
+.ping-sonar:nth-child(2) { animation-delay: 0.85s; }
+.ping-sonar:nth-child(3) { animation-delay: 1.7s; }
+@keyframes sonarNace {
+  0%   { transform: scale(0.25); opacity: 0.85; }
+  70%  { opacity: 0.18; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* — FRENTE EN MARCHA: guiones que avanzan como hormigas de guerra — */
+.frente-marcha {
+  stroke-dasharray: 7 5;
+  animation: frenteAvanza 1.4s linear infinite;
+}
+@keyframes frenteAvanza { to { stroke-dashoffset: -24; } }
+
+/* — BARRIDO DE ESCANEO: línea que peina el mapa de norte a sur — */
+.barrido-map {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 34%;
+  top: -34%;
+  background: linear-gradient(180deg, transparent, rgba(245, 166, 35, 0.07) 78%, rgba(245, 166, 35, 0.14) 99%, transparent);
+  border-bottom: 1px solid rgba(245, 166, 35, 0.35);
+  animation: barreMundo 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  pointer-events: none;
+  will-change: transform;
+}
+@keyframes barreMundo { 0% { transform: translateY(0); } 100% { transform: translateY(430%); } }
+
+/* — variante vertical para paneles (columna que cruza) — */
+.barrido-map-vert {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 26%;
+  left: -26%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 135, 0.05) 70%, rgba(0, 255, 135, 0.12) 99%, transparent);
+  border-right: 1px solid rgba(0, 255, 135, 0.3);
+  animation: barrePanel 7.5s linear infinite;
+  pointer-events: none;
+  will-change: transform;
+}
+@keyframes barrePanel { 0% { transform: translateX(0); } 100% { transform: translateX(500%); } }
+
+/* — BALIZA MORSE: punto que transmite (3 cortos, pausa) — */
+.beacon {
+  animation: transmiteBeacon 2.1s steps(1, end) infinite;
+}
+@keyframes transmiteBeacon {
+  0%, 12% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+  16%, 28% { opacity: 0.25; box-shadow: none; }
+  32%, 44% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+  48%, 100% { opacity: 0.3; box-shadow: none; }
+}
+
+/* — HOLOGRAMA: parpadeo de proyección táctica — */
+.holo-flicker { animation: holoProyecta 4.2s steps(1, end) infinite; }
+@keyframes holoProyecta {
+  0%, 91%, 95%, 100% { opacity: 1; }
+  92%, 96% { opacity: 0.55; }
+  93.5% { opacity: 0.85; }
+}
+
+/* — MEDIDOR DEFCON: barras de amenaza que respiran por segmento — */
+.defcon-seg { transform-origin: bottom; animation: defconRespira 1.9s ease-in-out infinite; will-change: transform, opacity; }
+.defcon-seg:nth-child(2n) { animation-delay: 0.4s; }
+.defcon-seg:nth-child(3n) { animation-delay: 0.8s; }
+@keyframes defconRespira {
+  0%, 100% { transform: scaleY(0.72); opacity: 0.6; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* — ESCANE HOVER: carta militar que se peina al pasar el cursor — */
+.escaneo-carta { position: relative; overflow: hidden; }
+.escaneo-carta::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(115deg, transparent 44%, rgba(255, 210, 140, 0.1) 50%, transparent 56%);
+  transform: translateX(-110%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.escaneo-carta:hover::after { transform: translateX(110%); }
+
+/* — TRAYECTORIA DE MISIL: arco que se dibuja y se dispara — */
+.traza-misil {
+  stroke-dasharray: 3 6;
+  animation: trazaAvanza 0.9s linear infinite;
+}
+@keyframes trazaAvanza { to { stroke-dashoffset: -18; } }
+
+/* — CHEVRONES DE AVANCE: columna que marcha hacia el frente — */
+.marcha-chevron { animation: chevronAvanza 1.15s linear infinite; }
+@keyframes chevronAvanza { to { stroke-dashoffset: -14; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reticula-objetivo::before, .reticula-objetivo::after, .corona-blanco,
+  .ping-sonar, .frente-marcha, .barrido-map, .barrido-map-vert, .beacon,
+  .holo-flicker, .defcon-seg, .traza-misil, .marcha-chevron { animation: none !important; }
+  .barrido-map, .barrido-map-vert { display: none; }
+}

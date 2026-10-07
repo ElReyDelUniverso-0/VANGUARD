@@ -76,7 +76,9 @@ export type TabKey =
   // v72.0 INFINITA VERDADES: el mayor centro de noticias del mundo
   | "verdades"
   // v72.0 MI PAÍS: simulador de nación + uniones + reclutamiento aleatorio
-  | "mipais";
+  | "mipais"
+  // v81.0 MAPAS DE GUERRA: sala de operaciones con tablero táctico animado
+  | "operaciones";
 
 interface TabDef {
   key: TabKey;
@@ -161,6 +163,7 @@ const TABS: Record<TabKey, TabDef> = {
   divisas:       { key: "divisas",       label: "Divisas del Mundo", short: "DIVISAS", icon: <Banknote className="w-3.5 h-3.5" />, color: "green" },
   perfil:        { key: "perfil",        label: "Personalizar Perfil", short: "PERFIL", icon: <UserCog className="w-3.5 h-3.5" />, color: "violet" },
   radar:         { key: "radar",         label: "Radar Desinfo + Conexiones", short: "RADAR", icon: <ShieldAlert className="w-3.5 h-3.5" />, color: "green" },
+  operaciones:   { key: "operaciones",   label: "Sala de Operaciones",        short: "OPERACIONES", icon: <Crosshair className="w-3.5 h-3.5" />, color: "amber" },
   biblioteca:    { key: "biblioteca",    label: "Biblioteca Secreta", short: "BIBLIO", icon: <BookLock className="w-3.5 h-3.5" />, color: "amber" },
   tribunal:      { key: "tribunal",      label: "Juicio Histórico",  short: "TRIBUNAL", icon: <Gavel className="w-3.5 h-3.5" />, color: "amber" },
   alianzas:      { key: "alianzas",      label: "Alianzas",          short: "ALIANZAS", icon: <Flag className="w-3.5 h-3.5" />, color: "violet" },
@@ -254,7 +257,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "Sala OSINT, mapa, cables, radar, planeta en vivo, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

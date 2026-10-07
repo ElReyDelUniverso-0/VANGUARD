@@ -232,7 +232,34 @@ export function RadarPanel() {
               })}
             </div>
 
-            {/* RANKING DE MEDIOS */}
+            {/* v81: PPI DEL RADAR — el barrido de siempre, ahora visible */}
+            <div className="hud-panel p-3 h-max lg:sticky lg:top-32">
+              <div className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase mb-2 flex items-center gap-1.5">
+                <ShieldCheck className="w-3 h-3" /> PPI · Barrido en vivo
+              </div>
+              <div className="radar-zone rounded-full border border-neon-hud/60 mx-auto" style={{ width: 168, height: 168, background: "radial-gradient(circle, rgba(0,255,135,0.05) 0%, rgba(0,10,6,0.9) 70%)" }}>
+                {/* anillos de alcance */}
+                {[112, 84, 56, 28].map((r) => (
+                  <span key={r} className="absolute rounded-full border border-neon-hud/25" style={{ width: r, height: r, left: "50%", top: "50%", transform: "translate(-50%, -50%)" }} />
+                ))}
+                {/* cruz de rumbo */}
+                <span className="absolute left-1/2 top-0 bottom-0 w-px bg-neon-hud/20" />
+                <span className="absolute top-1/2 left-0 right-0 h-px bg-neon-hud/20" />
+                {/* barrido rotatorio */}
+                <div className="radar-sweep rounded-full" />
+                {/* contactos: señales de desinfo detectadas */}
+                <span className="absolute w-1.5 h-1.5 rounded-full bg-neon ping-sonar" style={{ left: "30%", top: "38%" }} />
+                <span className="absolute w-1.5 h-1.5 rounded-full bg-amber ping-sonar" style={{ left: "62%", top: "30%", animationDelay: "0.9s" }} />
+                <span className="absolute w-1.5 h-1.5 rounded-full bg-crisis ping-sonar" style={{ left: "55%", top: "66%", animationDelay: "1.7s" }} />
+                <span className="absolute w-1.5 h-1.5 rounded-full bg-electric" style={{ left: "24%", top: "64%" }} />
+              </div>
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 font-mono text-[8px] text-muted-foreground uppercase">
+                <span className="text-neon">● verificados</span>
+                <span className="text-amber">● dudosos</span>
+                <span className="text-crisis">● fake</span>
+              </div>
+            </div>
+
             <div className="hud-panel p-3 h-max lg:sticky lg:top-32">
               <div className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase mb-2 flex items-center gap-1.5">
                 <TrendingUp className="w-3 h-3" /> Ranking de medios

@@ -35,6 +35,15 @@ export const REGLA_ORO = {
       "El planeta entero en una sola vista: conflictos, sismos y movimientos en vivo. Toca cualquier zona para ver qué pasa ahora mismo.",
     acento: "#FFC94D",
   },
+  // v81.0 MAPAS DE GUERRA — la sala donde se decide la guerra
+  operaciones: {
+    titulo: "SALA DE OPERACIONES",
+    volanta: "El tablero donde se decide la guerra",
+    imagen: "/ilustraciones/operaciones.jpg",
+    texto:
+      "Cuatro misiones militares esperan tu orden: pulsa EJECUTAR y mira los jets cruzar el tablero, las fases avanzar y el misil volar. Cuando el objetivo cae, cobras.",
+    acento: "#FF4D00",
+  },
   misiones: {
     titulo: "Misiones",
     volanta: "Tu camino de comandante",

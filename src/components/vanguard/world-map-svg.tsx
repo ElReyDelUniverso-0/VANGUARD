@@ -133,7 +133,7 @@ export function WorldMapSVG({
       <path d={land} fill="url(#wm-land)" stroke={showSat ? "#1f4030" : "rgba(217,167,32,0.4)"} strokeWidth="0.7" />
       <path d={borders} fill="none" stroke="rgba(150,150,170,0.14)" strokeWidth="0.4" />
 
-      {/* Rutas de red (narcotrafico / afiliaciones) */}
+      {/* Rutas de red (narcotrafico / afiliaciones) — v81: balizas vivas + convoy que viaja */}
       {routes.length > 0 && (
         <g fill="none">
           {routes.map((r) => {
@@ -146,8 +146,15 @@ export function WorldMapSVG({
               <g key={`rt-${r.id}`}>
                 <path d={d} stroke={r.color} strokeWidth="1.1" opacity="0.22" strokeDasharray="5 4" />
                 <path d={d} stroke={r.color} strokeWidth="1.6" opacity="0.75" strokeDasharray="10 90" className="route-flow" />
+                {/* v81: el convoy viaja por la ruta (SVG nativo, sin JS) */}
+                <circle r="2.1" fill={r.color} opacity="0.95" filter="url(#wm-glow)">
+                  <animateMotion dur="6s" repeatCount="indefinite" path={d} />
+                </circle>
                 <circle cx={a.x} cy={a.y} r="2.6" fill={r.color} opacity="0.9" />
                 <circle cx={b.x} cy={b.y} r="2.6" fill={r.color} opacity="0.9" />
+                {/* v81: baliza morse en cada extremo de la ruta */}
+                <circle cx={a.x} cy={a.y} r="5" fill="none" stroke={r.color} strokeWidth="0.8" className="beacon" style={{ color: r.color }} />
+                <circle cx={b.x} cy={b.y} r="5" fill="none" stroke={r.color} strokeWidth="0.8" className="beacon" style={{ color: r.color, animationDelay: "0.7s" }} />
                 {r.label && (
                   <text x={mx} y={my - 4} fill={r.color} fontSize="8.5" fontFamily="monospace" opacity="0.85" textAnchor="middle">
                     {r.label}
@@ -159,12 +166,12 @@ export function WorldMapSVG({
         </g>
       )}
 
-      {/* Frentes (lineas) */}
+      {/* Frentes (lineas) — v81: guiones en marcha, la línea vive */}
       {showFronts && conflicts.length > 0 && (
-        <g fill="none" stroke="rgba(255,80,80,0.35)" strokeWidth="1" strokeDasharray="3 2">
+        <g fill="none" stroke="rgba(255,80,80,0.4)" strokeWidth="1">
           {conflicts.slice(0, 8).map((c) => {
             const p = projectLatLng(c.lat, c.lng);
-            return <circle key={`f-${c.id}`} cx={p.x} cy={p.y} r={6 + (c.intensity / 100) * 10} opacity={0.25} />;
+            return <circle key={`f-${c.id}`} cx={p.x} cy={p.y} r={6 + (c.intensity / 100) * 10} opacity={0.3} className="frente-marcha" />;
           })}
         </g>
       )}
@@ -214,13 +221,14 @@ export function WorldMapSVG({
         })}
       </g>
 
-      {/* Marcadores de conflicto */}
+      {/* Marcadores de conflicto — v81: sonar + retícula de designación */}
       <g>
         {conflicts.map((c) => {
           const p = projectLatLng(c.lat, c.lng);
           const isSel = selected === c.id;
           const color = levelColor(c);
           const radius = 3.5 + (c.intensity / 100) * 5;
+          const esCaliente = c.level === "CRITICO" || isSel;
           return (
             <g
               key={c.id}
@@ -234,6 +242,14 @@ export function WorldMapSVG({
               filter={isSel ? "url(#wm-glow)" : undefined}
             >
               <circle cx={p.x} cy={p.y} r={radius * 2.6} fill={color} opacity={0.1} />
+              {/* v81: pings de sonar en zonas calientes — el mapa emite señal */}
+              {esCaliente && (
+                <g>
+                  <circle cx={p.x} cy={p.y} r={radius * 3.4} fill="none" stroke={color} strokeWidth="1" className="ping-sonar" />
+                  <circle cx={p.x} cy={p.y} r={radius * 3.4} fill="none" stroke={color} strokeWidth="1" className="ping-sonar" />
+                  <circle cx={p.x} cy={p.y} r={radius * 3.4} fill="none" stroke={color} strokeWidth="1" className="ping-sonar" />
+                </g>
+              )}
               <circle cx={p.x} cy={p.y} r={radius} fill={color} opacity={0.9} stroke="#fff" strokeWidth={isSel ? 1.4 : 0.5} />
               <circle
                 cx={p.x}
@@ -245,6 +261,38 @@ export function WorldMapSVG({
                 opacity={0.55}
                 className={isSel ? "blink-soft" : undefined}
               />
+              {/* v81: retícula de objetivo sobre el conflicto seleccionado — corona giratoria + corchetes */}
+              {isSel && (
+                <g transform={`translate(${p.x}, ${p.y})`}>
+                  <g className="corona-blanco">
+                    <circle r={radius * 4.2} fill="none" stroke={color} strokeWidth="1" strokeDasharray="10 7" opacity="0.8" />
+                    {[0, 90, 180, 270].map((ang) => (
+                      <line
+                        key={ang}
+                        x1={0}
+                        y1={-radius * 4.9}
+                        x2={0}
+                        y2={-radius * 3.6}
+                        stroke={color}
+                        strokeWidth="1.4"
+                        transform={`rotate(${ang})`}
+                        opacity="0.9"
+                      />
+                    ))}
+                  </g>
+                  <rect
+                    x={-radius * 2.6}
+                    y={-radius * 2.6}
+                    width={radius * 5.2}
+                    height={radius * 5.2}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth="0.8"
+                    strokeDasharray="6 4"
+                    opacity="0.5"
+                  />
+                </g>
+              )}
               {isSel && (
                 <g transform={`translate(${p.x + radius + 4}, ${p.y + 4})`}>
                   <text fill={color} fontSize="11" fontFamily="monospace" fontWeight="bold">
@@ -256,6 +304,7 @@ export function WorldMapSVG({
           );
         })}
       </g>
+
     </svg>
   );
 }

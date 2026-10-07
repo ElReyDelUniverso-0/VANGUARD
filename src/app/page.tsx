@@ -83,6 +83,8 @@ function PanelSkeleton() {
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
 const DailyBriefingPanel = dynamic(() => import("@/components/vanguard/panels/daily-briefing-panel").then((m) => m.DailyBriefingPanel), { ssr: false, loading: PanelSkeleton });
 const MapPanel = dynamic(() => import("@/components/vanguard/panels/map-panel").then((m) => m.MapPanel), { ssr: false, loading: PanelSkeleton });
+// v81.0 MAPAS DE GUERRA — sala de operaciones táctica
+const OpsPanel = dynamic(() => import("@/components/vanguard/panels/ops-panel").then((m) => m.OpsPanel), { ssr: false, loading: PanelSkeleton });
 const MissionsPanel = dynamic(() => import("@/components/vanguard/panels/missions-panel").then((m) => m.MissionsPanel), { ssr: false, loading: PanelSkeleton });
 
 // JUEGO
@@ -368,6 +370,7 @@ export default function Home() {
         )}
         {tab === "briefing" && <DailyBriefingPanel />}
         {tab === "mapa" && <MapPanel />}
+        {tab === "operaciones" && <OpsPanel />}
         {tab === "misiones" && <MissionsPanel />}
         {tab === "noticias" && <NewsPanel />}
         {tab === "galeria" && <GalleryPanel />}

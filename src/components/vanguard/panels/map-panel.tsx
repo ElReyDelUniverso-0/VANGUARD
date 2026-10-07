@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Map as MapIcon, Crosshair, Layers, AlertTriangle, X, Users, HeartPulse, Flag, Video,
   Bomb, Pill, Skull, Route, Globe2, Satellite, Moon, LocateFixed, ScanEye, Plane,
+  Ship, Radiation,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
@@ -68,8 +69,8 @@ const levelDot: Record<AlertLevel, string> = {
   VIGILANCIA: "bg-cyan-hud",
 };
 
-// ====== MODOS DE MAPA (v6): mas mapas = amenazas dedicadas ======
-type MapMode = "GLOBAL" | "TERRORISMO" | "CARTELES" | "BANDAS";
+// ====== MODOS DE MAPA (v6 → v81): 6 mapas de amenaza ======
+type MapMode = "GLOBAL" | "TERRORISMO" | "CARTELES" | "BANDAS" | "MARITIMO" | "NUCLEAR";
 
 interface ModeDef {
   label: string;
@@ -148,6 +149,43 @@ const MODES: Record<MapMode, ModeDef> = {
       { label: "RED DE CRIMEN", color: "#c084fc" },
     ],
   },
+  // v81: MARÍTIMO — los puntos de estrangulamiento del comercio mundial
+  MARITIMO: {
+    label: "Marítimo",
+    desc: "Guerra naval y comercio: estrechos, puntos de estrangulamiento y flotas en tensión",
+    hex: "#38bdf8",
+    textClass: "text-cyan-hud",
+    borderClass: "border-cyan-hud",
+    match: (tags) => tags.includes("naval") || tags.includes("marítimo") || tags.includes("comercio"),
+    routes: [
+      { id: "m1", from: [2.5, 101.4], to: [25.0, 57.0], color: "#38bdf8", label: "MALACA → ORMUZ" },
+      { id: "m2", from: [25.0, 57.0], to: [29.9, 32.5], color: "#22d3ee", label: "ORMUZ → MAR ROJO" },
+      { id: "m3", from: [12.5, 43.3], to: [31.2, 32.3], color: "#7dd3fc", label: "BAB EL-MANDEB → SUEZ" },
+      { id: "m4", from: [23.0, 118.0], to: [25.0, 121.5], color: "#38bdf8", label: "PRIMERA CADENA" },
+    ],
+    legend: [
+      { label: "TENSIÓN NAVAL", color: "#38bdf8" },
+      { label: "RUTA COMERCIAL EN RIESGO", color: "#22d3ee" },
+    ],
+  },
+  // v81: NUCLEAR — disuasión, corredores y potencias
+  NUCLEAR: {
+    label: "Nuclear",
+    desc: "Disuasión y misiles: potencias armadas, corredores de lanzamiento y pruebas",
+    hex: "#a3e635",
+    textClass: "text-neon",
+    borderClass: "border-neon-hud",
+    match: (tags) => tags.includes("nuclear") || tags.includes("disuasión") || tags.includes("misiles"),
+    routes: [
+      { id: "n1", from: [66.5, 30.0], to: [66.5, -45.0], color: "#a3e635", label: "CORREDOR POLAR DE DISUASIÓN" },
+      { id: "n2", from: [32.0, 53.0], to: [25.3, 55.3], color: "#bef264", label: "ARCO DEL GOLFO" },
+      { id: "n3", from: [40.0, 128.0], to: [33.0, 128.0], color: "#a3e635", label: "MAR DE JAPÓN · PRUEBAS" },
+    ],
+    legend: [
+      { label: "PODER NUCLEAR / DISUASIÓN", color: "#a3e635" },
+      { label: "CORREDOR DE LANZAMIENTO", color: "#bef264" },
+    ],
+  },
 };
 
 const MODE_ICON: Record<MapMode, React.ReactNode> = {
@@ -155,6 +193,8 @@ const MODE_ICON: Record<MapMode, React.ReactNode> = {
   TERRORISMO: <Bomb className="w-3 h-3" />,
   CARTELES: <Pill className="w-3 h-3" />,
   BANDAS: <Skull className="w-3 h-3" />,
+  MARITIMO: <Ship className="w-3 h-3" />,
+  NUCLEAR: <Radiation className="w-3 h-3" />,
 };
 
 // v31 — modos de textura del globo 3D
@@ -259,6 +299,17 @@ export function MapPanel() {
     return Object.fromEntries(visibleConflicts.map((c) => [c.id, modeDef.hex]));
   }, [mode, modeDef, visibleConflicts]);
 
+  // v81: DEFCON táctico — el termómetro de guerra del planeta, calculado en vivo
+  const defcon = useMemo(() => {
+    const crit = visibleConflicts.filter((c) => c.level === "CRITICO").length;
+    const ten = visibleConflicts.filter((c) => c.level === "TENSION").length;
+    if (crit >= 4) return { n: 1, label: "GUERRA TOTAL", color: "#FF3B30" };
+    if (crit >= 2) return { n: 2, label: "ALERTA ROJA", color: "#FF6B35" };
+    if (crit >= 1 || ten >= 3) return { n: 3, label: "MOVILIZACIÓN", color: "#FFD60A" };
+    if (ten >= 1) return { n: 4, label: "VIGILANCIA", color: "#38BDF8" };
+    return { n: 5, label: "CALMA TENSA", color: "#00FF87" };
+  }, [visibleConflicts]);
+
   const stats = useMemo(() => {
     const avg = visibleConflicts.length
       ? Math.round(visibleConflicts.reduce((a, c) => a + c.intensity, 0) / visibleConflicts.length)
@@ -321,8 +372,8 @@ export function MapPanel() {
         }
       />
 
-      {/* selector de mapas de amenaza */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+      {/* selector de mapas de amenaza — v81: 6 mapas, escaneo al pasar el cursor */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
         {(Object.keys(MODES) as MapMode[]).map((m) => {
           const d = MODES[m];
           const count = CONFLICTS.filter((c) => d.match(c.tags)).length;
@@ -332,12 +383,13 @@ export function MapPanel() {
               key={m}
               onClick={() => { setMode(m); setSelected(null); }}
               className={cn(
-                "hud-corner p-2.5 text-left border transition-all",
+                "escaneo-carta hud-corner p-2.5 text-left border transition-all",
                 active ? cn(d.borderClass, "bg-secondary/60 ring-1 ring-white/20") : "border-border/50 bg-secondary/20 hover:border-amber-hud/40"
               )}
+              style={active ? { boxShadow: `0 0 18px ${d.hex}30, inset 0 0 12px ${d.hex}14` } : undefined}
             >
               <div className="flex items-center gap-1.5 mb-0.5">
-                <span style={{ color: d.hex }}>{MODE_ICON[m]}</span>
+                <span style={{ color: d.hex }} className={active ? "beacon" : undefined}>{MODE_ICON[m]}</span>
                 <span className={cn("text-[11px] font-mono font-bold uppercase tracking-wider", active ? d.textClass : "text-muted-foreground")}>
                   {d.label}
                 </span>
@@ -351,9 +403,37 @@ export function MapPanel() {
         })}
       </div>
 
+      {/* v81: BARRA DEFCON — termómetro de guerra vivo con baliza y segmentos que respiran */}
+      <div className="hud-corner relative overflow-hidden p-2.5 border" style={{ borderColor: `${defcon.color}55`, background: `linear-gradient(90deg, ${defcon.color}0d, transparent 60%)` }}>
+        <div className="flex items-center gap-3">
+          <span className="beacon w-2 h-2 rounded-full flex-shrink-0" style={{ background: defcon.color, color: defcon.color }} />
+          <span className="holo-flicker text-[10px] font-mono font-bold uppercase tracking-widest flex-shrink-0" style={{ color: defcon.color }}>
+            DEFCON {defcon.n} · {defcon.label}
+          </span>
+          <div className="flex items-end gap-1 flex-1 max-w-[220px]">
+            {[5, 4, 3, 2, 1].map((n) => {
+              const encendido = n <= defcon.n;
+              const segColor = n >= 2 ? "#FF3B30" : n === 3 ? "#FFD60A" : "#00FF87";
+              return (
+                <span
+                  key={n}
+                  className={cn("flex-1 defcon-seg", !encendido && "opacity-15")}
+                  style={{ height: 8 + (5 - n) * 1.6, background: encendido ? segColor : "#3a3f4a" }}
+                />
+              );
+            })}
+          </div>
+          <span className="ml-auto text-[9px] font-mono text-muted-foreground uppercase truncate hidden sm:block">
+            {stats.crit} críticas · {stats.zonas} zonas monitorizadas
+          </span>
+        </div>
+      </div>
+
       <div className="grid lg:grid-cols-3 gap-4">
         {/* MAP */}
         <div className="lg:col-span-2 hud-corner relative overflow-hidden">
+          {/* v81: barrido satelital — el sensor peina el mapa de norte a sur */}
+          <div className="barrido-map z-10" />
           {milView ? (
             /* v33 GLOBO MILITAR 3D: satélite + flota en vivo */
             <GlobeMap3D
@@ -470,10 +550,10 @@ export function MapPanel() {
         <div className="space-y-3">
           {/* stats de amenaza */}
           <div className="grid grid-cols-2 gap-2">
-            <ThreatStat label="Zonas activas" value={String(stats.zonas)} hex={modeDef.hex} />
-            <ThreatStat label="Intensidad media" value={`${stats.avg}%`} hex={modeDef.hex} />
-            <ThreatStat label="Facciones implicadas" value={String(stats.factions)} hex={modeDef.hex} />
-            <ThreatStat label="Nivel critico" value={String(stats.crit)} hex={modeDef.hex} />
+            <ThreatStat label="Zonas activas" value={String(stats.zonas)} hex={modeDef.hex} pct={Math.min(100, stats.zonas * 6)} />
+            <ThreatStat label="Intensidad media" value={`${stats.avg}%`} hex={modeDef.hex} pct={stats.avg} />
+            <ThreatStat label="Facciones implicadas" value={String(stats.factions)} hex={modeDef.hex} pct={Math.min(100, stats.factions * 5)} />
+            <ThreatStat label="Nivel critico" value={String(stats.crit)} hex={modeDef.hex} pct={stats.zonas ? (stats.crit / stats.zonas) * 100 : 0} />
           </div>
 
           {mode !== "GLOBAL" && (
@@ -639,11 +719,17 @@ export function MapPanel() {
   );
 }
 
-function ThreatStat({ label, value, hex }: { label: string; value: string; hex: string }) {
+function ThreatStat({ label, value, hex, pct }: { label: string; value: string; hex: string; pct?: number }) {
   return (
     <div className="hud-corner p-2.5 bg-secondary/40">
       <div className="text-[9px] font-mono text-muted-foreground uppercase truncate">{label}</div>
       <div className="text-lg font-mono font-bold" style={{ color: hex }}>{value}</div>
+      {/* v81: barra de amenaza que respira — el dato se siente, no solo se lee */}
+      {typeof pct === "number" && (
+        <div className="mt-1 h-0.5 bg-secondary/80 overflow-hidden">
+          <div className="h-full" style={{ width: `${Math.max(4, Math.min(100, pct))}%`, background: hex, boxShadow: `0 0 6px ${hex}88` }} />
+        </div>
+      )}
     </div>
   );
 }
