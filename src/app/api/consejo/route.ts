@@ -213,10 +213,12 @@ export async function POST(req: Request) {
       if (tema.length < 4) {
         return NextResponse.json({ ok: false, error: "Plantea el tema con al menos 4 caracteres." }, { status: 400 });
       }
+      // v80: memoria persistente del comandante (enviada por el cliente)
+      const memoria = clean(body?.memoria, 400);
       const completion = await zai.chat.completions.create({
         messages: [
           { role: "assistant", content: SYSTEM_DELIBERACION },
-          { role: "user", content: `CRISIS PLANTEADA POR EL COMANDANTE: "${tema}". Deliberen AHORA y emitan el decreto. Responde solo el JSON.` },
+          { role: "user", content: `${memoria ? `MEMORIA DEL COMANDANTE: ${memoria}\n` : ""}CRISIS PLANTEADA POR EL COMANDANTE: "${tema}". Deliberen AHORA y emitan el decreto. Responde solo el JSON.` },
         ],
         thinking: { type: "disabled" },
       });
@@ -279,12 +281,14 @@ export async function POST(req: Request) {
       .map((h: Record<string, unknown>) => `${clean(h?.consejero, 20)}: ${clean(h?.texto, 400)}`)
       .filter((l: string) => l.length > 3)
       .join("\n");
+    // v80: memoria persistente del comandante (enviada por el cliente)
+    const memoriaD = clean(body?.memoria, 400);
 
     const completion = await zai.chat.completions.create({
       messages: [
         { role: "assistant", content: systemDialogo(id) },
         ...(hist ? [{ role: "user" as const, content: `TRANSCRIPCIÓN PREVIA DE LA SALA:\n${hist}` }] : []),
-        { role: "user", content: `EL COMANDANTE TE CONTESTA: "${mensaje}". Responde solo el JSON.` },
+        { role: "user", content: `${memoriaD ? `MEMORIA DEL COMANDANTE: ${memoriaD}\n` : ""}EL COMANDANTE TE CONTESTA: "${mensaje}". Responde solo el JSON.` },
       ],
       thinking: { type: "disabled" },
     });

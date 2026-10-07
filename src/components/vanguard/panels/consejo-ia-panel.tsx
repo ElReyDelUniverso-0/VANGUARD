@@ -5,14 +5,18 @@
 // escribir → votan → firman un DECRETO que paga monedas al cumplirlo.
 // Después puedes contestarles cara a cara: cada consejero mantiene memoria
 // de la sala mientras viva la sesión. Todo animado, todo con acento propio.
+// v80.0 — NÚCLEO EMBEBIDO: la IA neuronal (LLM real) vive DENTRO del navegador
+// del comandante (WebGPU/WASM) y los consejeros recuerdan tus sesiones previas.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Gavel, Send, Swords, Landmark, Crosshair, LineChart, Sparkles, Check, X, MinusCircle, Hourglass, ScrollText, Coins } from "lucide-react";
+import { Gavel, Send, Swords, Landmark, Crosshair, LineChart, Sparkles, Check, X, MinusCircle, Hourglass, ScrollText, Coins, Brain, Cpu, TriangleAlert } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
+import { activarNucleo, nucleoListo, razonado, estadoNucleo, suscribirNucleo, type NucleoEstado } from "@/lib/nucleo-navegador";
+import { intervenirNucleo, dialogarNucleo, decretoNucleo, intervencionFinta, decretoFinta, cargarMemoria, guardarRecuerdo, textoMemoria, type Recuerdo } from "@/lib/consejo-nucleo";
 
 type ConsejeroId = "estratega" | "canciller" | "general" | "analista";
 
@@ -137,6 +141,118 @@ function ConsejoCard({
   );
 }
 
+// NÚCLEO EMBEBIDO (v80): banda de activación y estado de la IA neuronal local.
+// Es la pieza "nunca vista": un LLM de verdad que corre en el dispositivo del
+// jugador, sin claves ni servidores, y con memoria persistente de sesiones.
+function NucleoBanner({ onListo }: { onListo: () => void }) {
+  const [estado, setEstado] = useState<NucleoEstado>(() => estadoNucleo());
+  const [tokens, setTokens] = useState(0);
+  const [memoriaN, setMemoriaN] = useState(0);
+  const [memoriaUlt, setMemoriaUlt] = useState<Recuerdo | null>(null);
+
+  useEffect(() => {
+    const uns = suscribirNucleo((e) => setEstado({ ...e }));
+    setEstado({ ...estadoNucleo() });
+    return () => {
+      uns();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (estado.fase === "listo") {
+      setTokens(razonado());
+      const m = cargarMemoria();
+      setMemoriaN(m.length);
+      setMemoriaUlt(m[0] ?? null);
+      onListo();
+    }
+  }, [estado.fase, onListo]);
+
+  const activar = useCallback(async () => {
+    sfx.click();
+    await activarNucleo();
+  }, []);
+
+  return (
+    <div
+      className="hud-panel p-3.5"
+      style={{ borderColor: `${ACERO}33`, background: `linear-gradient(150deg, ${ACERO}0D, rgba(6,6,10,0.9) 60%)` }}
+    >
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <span
+          className="relative flex items-center justify-center w-8 h-8 shrink-0 rounded-sm border"
+          style={{ borderColor: `${ACERO}66`, background: `${ACERO}12`, boxShadow: `0 0 16px ${ACERO}33` }}
+        >
+          <Brain className={cn("w-4 h-4", (estado.fase === "descargando" || estado.fase === "compilando") && "animate-pulse")} style={{ color: ACERO }} />
+          {estado.fase === "listo" && (
+            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full animate-pulse" style={{ background: "#00FF87", boxShadow: "0 0 8px #00FF87" }} />
+          )}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="font-display text-[11px] font-black tracking-widest leading-none" style={{ color: ACERO, textShadow: `0 0 14px ${ACERO}55` }}>
+            NÚCLEO EMBEBIDO · IA EN TU NAVEGADOR
+          </div>
+          <div className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-1">
+            {estado.fase === "inactivo" && "IA neuronal de verdad, dentro de tu dispositivo · sin claves · sin servidores"}
+            {estado.fase === "descargando" && `Descargando pesos neuronales · ${estado.progreso}%`}
+            {estado.fase === "compilando" && "Compilando kernels de inferencia… primer arranque"}
+            {estado.fase === "listo" && `IA VIVA · ${tokens.toLocaleString("es-ES")} tokens razonados en tu dispositivo · ${memoriaN} crisis en memoria`}
+            {estado.fase === "error" && "No pudo activarse aquí — la sala sigue en pie con el núcleo de reserva"}
+          </div>
+        </div>
+        {estado.fase === "inactivo" && (
+          <button
+            onClick={activar}
+            className="px-3 py-2 rounded-sm border font-display text-[9px] font-black tracking-[0.2em] uppercase transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            style={{ borderColor: `${ACERO}88`, color: "#04121A", background: `linear-gradient(120deg, ${ACERO}, #7DF3FF)`, boxShadow: `0 0 22px ${ACERO}44` }}
+          >
+            ACTIVAR IA EN MI NAVEGADOR
+          </button>
+        )}
+        {estado.fase === "error" && (
+          <button
+            onClick={activar}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-sm border text-[9px] font-mono font-bold uppercase tracking-widest"
+            style={{ borderColor: `${ACERO}77`, color: ACERO, background: `${ACERO}14` }}
+          >
+            <TriangleAlert className="w-3 h-3" /> Reintentar
+          </button>
+        )}
+        {estado.fase === "listo" && (
+          <span
+            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border text-[8px] font-mono font-black uppercase tracking-widest"
+            style={{ borderColor: "#00FF8755", color: "#00FF87", background: "#00FF8710" }}
+          >
+            <Cpu className="w-3 h-3" /> {estado.dispositivo === "webgpu" ? "WEBGPU · TU GPU" : "WASM · TU CPU"}
+          </span>
+        )}
+      </div>
+      {estado.fase === "descargando" && (
+        <div className="mt-2.5 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+          <div
+            className="h-full transition-all duration-300"
+            style={{ width: `${Math.max(2, estado.progreso)}%`, background: `linear-gradient(90deg, ${ACERO}, #7DF3FF)`, boxShadow: `0 0 12px ${ACERO}` }}
+          />
+        </div>
+      )}
+      {estado.fase === "inactivo" && (
+        <p className="mt-2.5 text-[9px] font-mono text-muted-foreground/70 leading-relaxed">
+          Qwen2.5-0.5B · ~480 MB · se descarga UNA sola vez y queda cacheada en el navegador · corre en tu GPU (WebGPU) o CPU (WASM) ·
+          activándola, EL GENERAL y los demás consejeros ganan una IA de verdad y MEMORIA de tus sesiones
+        </p>
+      )}
+      {estado.fase === "listo" && memoriaUlt && (
+        <p className="mt-1.5 text-[9px] font-mono text-muted-foreground/70 truncate">
+          MEMORIA ACTIVA · última deliberación recordada: "{memoriaUlt.tema}" ({memoriaUlt.veredicto})
+        </p>
+      )}
+      {estado.fase === "error" && estado.error && (
+        <p className="mt-1.5 text-[9px] font-mono text-red-400/80 break-words">{estado.error.slice(0, 140)}</p>
+      )}
+    </div>
+  );
+}
+
 export function ConsejoIaPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
@@ -148,7 +264,9 @@ export function ConsejoIaPanel() {
   const [decreto, setDecreto] = useState<Decreto | null>(null);
   const [orden, setOrden] = useState(0); // cuántas intervenciones ya se escribieron
   const [error, setError] = useState("");
-  const [iaViva, setIaViva] = useState(true);
+  const [origen, setOrigen] = useState<"embebida" | "ia" | "local">("ia");
+  const [generando, setGenerando] = useState(false); // núcleo embebido aún generando contenido
+  const generandoRef = useRef(false);
 
   // diálogo directo
   const [hablandoCon, setHablandoCon] = useState<ConsejeroId | null>(null);
@@ -177,7 +295,7 @@ export function ConsejoIaPanel() {
           setIntervenciones(s.intervenciones);
           setVotos(s.votos ?? []);
           setDecreto(s.decreto ?? null);
-          setIaViva(s.ia !== false);
+          setOrigen(s.ia !== false ? "ia" : "local");
           setOrden(0);
           setFase("deliberando");
         }
@@ -202,6 +320,9 @@ export function ConsejoIaPanel() {
     if (!textoActual) return;
     const dur = Math.min(5200, Math.max(1400, textoActual.length * 18));
     const t = setTimeout(() => {
+      // con el núcleo embebido el contenido llega EN VIVO: si ya se reveló la
+      // última intervención recibida y el núcleo sigue generando, espera
+      if (generandoRef.current && orden + 1 >= intervenciones.length) return;
       if (orden + 1 < intervenciones.length) {
         setOrden((o) => o + 1);
       } else {
@@ -210,7 +331,7 @@ export function ConsejoIaPanel() {
       }
     }, dur);
     return () => clearTimeout(t);
-  }, [fase, orden, intervenciones]);
+  }, [fase, orden, intervenciones, generando]);
 
   const deliberar = useCallback(async () => {
     const t = tema.trim();
@@ -227,11 +348,45 @@ export function ConsejoIaPanel() {
     setRespuestas({});
     setFase("deliberando");
     sfx.click();
+
+    // v80 RUTA NÚCLEO EMBEBIDO: la IA neuronal del navegador delibera en vivo —
+    // cada consejero genera SU intervención de verdad y el show crece en directo.
+    if (nucleoListo()) {
+      setGenerando(true);
+      generandoRef.current = true;
+      setOrigen("embebida");
+      (async () => {
+        try {
+          const ints: Intervencion[] = [];
+          for (const c of CONSEJEROS) {
+            const texto = (await intervenirNucleo(c.id, t)) ?? intervencionFinta(c.id, t);
+            ints.push({ id: c.id, texto });
+            setIntervenciones([...ints]);
+          }
+          const dec = (await decretoNucleo(t, ints.map((i) => i.texto))) ?? decretoFinta(t);
+          setVotos(dec.votos);
+          setDecreto(dec.decreto);
+          guardarRecuerdo({ tema: t.slice(0, 100), veredicto: dec.decreto.veredicto, fecha: Date.now() });
+          try {
+            sessionStorage.setItem(
+              "vanguard:consejo-sesion",
+              JSON.stringify({ tema: t, intervenciones: ints, votos: dec.votos, decreto: dec.decreto, ia: true, ts: Date.now() }),
+            );
+          } catch {}
+        } finally {
+          setGenerando(false);
+          generandoRef.current = false;
+        }
+      })();
+      return;
+    }
+
+    // RUTA SERVIDOR: gateway interno (dev) o núcleo de reserva (producción)
     try {
       const res = await fetch("/api/consejo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "deliberacion", tema: t }),
+        body: JSON.stringify({ modo: "deliberacion", tema: t, memoria: textoMemoria() }),
       });
       const data = await res.json();
       if (!data?.ok) {
@@ -240,10 +395,15 @@ export function ConsejoIaPanel() {
         sfx.error();
         return;
       }
-      setIaViva(data.ia !== false);
+      setOrigen(data.ia !== false ? "ia" : "local");
       setIntervenciones(data.intervenciones ?? []);
       setVotos(data.votos ?? []);
       setDecreto(data.decreto ?? null);
+      guardarRecuerdo({
+        tema: t.slice(0, 100),
+        veredicto: String(data.decreto?.veredicto ?? "SIN VEREDICTO"),
+        fecha: Date.now(),
+      });
       try {
         sessionStorage.setItem(
           "vanguard:consejo-sesion",
@@ -267,11 +427,23 @@ export function ConsejoIaPanel() {
       ...intervenciones.filter((i) => i.id === id).map((i) => ({ consejero: id, texto: i.texto })),
       ...(respuestas[id] ?? []).map((r, i) => ({ consejero: i % 2 ? id : "comandante", texto: r })),
     ];
+
+    // v80: cara a cara con IA embebida (memoria de sala + memoria persistente)
+    if (nucleoListo()) {
+      const respuesta =
+        (await dialogarNucleo(id, tema, replica.trim(), historial.map((h) => `${h.consejero}: ${h.texto}`))) ??
+        "Señal débil en el núcleo embebido. Repite la orden.";
+      setRespuestas((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), replica, respuesta] }));
+      setReplica("");
+      setPensando(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/consejo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "dialogo", consejero: id, mensaje: replica, historial }),
+        body: JSON.stringify({ modo: "dialogo", consejero: id, mensaje: replica, historial, memoria: textoMemoria() }),
       });
       const data = await res.json();
       const respuesta = data?.respuesta ?? "…";
@@ -294,9 +466,17 @@ export function ConsejoIaPanel() {
 
   const enVivo = useMemo(() => fase === "deliberando" || fase === "decreto", [fase]);
 
+  // v80: cuando el núcleo embebido queda listo, la sala pasa a modo embebido
+  const onNucleoListo = useCallback(() => {
+    setOrigen((o) => (o === "embebida" ? o : "embebida"));
+  }, []);
+
   return (
     <section className="mt-4 space-y-4" aria-label="Consejo de Acero: deliberación con IA en vivo">
       <HeroOro panel="consejoia" />
+
+      {/* v80 NÚCLEO EMBEBIDO: activación de la IA neuronal local + memoria */}
+      <NucleoBanner onListo={onNucleoListo} />
 
       {/* SALA DE DELIBERACIÓN */}
       <div className="hud-panel p-4" style={{ borderColor: `${ACERO}44` }}>
@@ -311,8 +491,8 @@ export function ConsejoIaPanel() {
             className={cn("inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border text-[8px] font-mono font-bold uppercase tracking-widest", enVivo && "animate-pulse")}
             style={{ borderColor: `${ACERO}55`, color: ACERO, background: `${ACERO}10` }}
           >
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: iaViva ? "#00FF87" : "#FFB020" }} />
-            {iaViva ? "NÚCLEO IA EN VIVO" : "NÚCLEO LOCAL (SIN IA)"}
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: origen === "local" ? "#FFB020" : "#00FF87" }} />
+            {origen === "embebida" ? "IA NEURONAL EMBEBIDA" : origen === "ia" ? "NÚCLEO IA EN VIVO" : "NÚCLEO DE RESERVA (SIN IA)"}
           </span>
         </div>
 
@@ -480,8 +660,8 @@ export function ConsejoIaPanel() {
         )}
       </AnimatePresence>
 
-      <p className="text-center text-[9px] font-mono uppercase tracking-widest text-muted-foreground/60 flex items-center justify-center gap-1.5">
-        <Sparkles className="w-3 h-3" /> El Consejo de Acero es IA en vivo: cada deliberación es única e irrepetible
+      <p className="text-center text-[9px] font-mono uppercase tracking-widest text-muted-foreground/60 flex flex-wrap items-center justify-center gap-1.5 px-4">
+        <Sparkles className="w-3 h-3 shrink-0" /> Cada deliberación es única e irrepetible · activa el Núcleo Embebido y la IA vive en tu navegador, con memoria de tus sesiones
       </p>
     </section>
   );

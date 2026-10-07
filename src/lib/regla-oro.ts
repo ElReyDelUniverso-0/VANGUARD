@@ -682,7 +682,7 @@ export const REGLA_ORO = {
     volanta: "IA en vivo: 4 mentes, un decreto",
     imagen: "/ilustraciones/consejo.jpg",
     texto:
-      "Plantea tu crisis y cuatro consejeros de IA deliberan en vivo, votan y firman un decreto. Luego contéstales cara a cara: cada mente recuerda lo que le dijiste.",
+      "Plantea tu crisis y cuatro consejeros de IA deliberan en vivo, votan y firman un decreto. Activa el Núcleo Embebido y la IA corre dentro de tu navegador, con memoria de tus sesiones.",
     acento: "#00E5FF",
   },
 } satisfies Record<string, ReglaOroEntry>;
