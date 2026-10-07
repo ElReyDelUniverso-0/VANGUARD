@@ -728,6 +728,31 @@ export const REGLA_ORO = {
       "Pinta zonas por facción, traza frentes punto a punto, coloca HQ, batallas y flotas sobre el mapa real. Guarda tu cartoteca, exporta PNG y comparte tu mundo en un código VGMAP85.",
     acento: "#FFD1DC",
   },
+  // v86.0 CENTINELA GLOBAL
+  verifica: {
+    titulo: "MESA DE VERIFICACIÓN",
+    volanta: "Primero se verifica. Después se publica",
+    imagen: "/ilustraciones/verifica.jpg",
+    texto:
+      "La sala OSINT donde cada noticia pasa por 5 cheques: metadatos, geolocalización, satélite, contraste de fuentes y detector de deepfake. Sellos de confianza, las DOS orillas de cada conflicto, filtro de contenido sensible y fichas técnicas de armas y actores al tocar.",
+    acento: "#00E5A8",
+  },
+  centinela: {
+    titulo: "CENTINELA · ALERTA TEMPRANA",
+    volanta: "Lee el mundo antes de que sea titular",
+    imagen: "/ilustraciones/centinela.jpg",
+    texto:
+      "Índice de riesgo por región con la aguja del planeta en vivo: movimientos de tropas, actividad diplomática, propaganda estatal, flujo de refugiados y ciberactividad. La guerra casi nunca estalla sin avisar — aquí el aviso llega primero.",
+    acento: "#FF6B6B",
+  },
+  espectro: {
+    titulo: "ESPECTRO EN VIVO",
+    volanta: "El cielo y el mar también hablan",
+    imagen: "/ilustraciones/espectro.jpg",
+    texto:
+      "Tráfico aéreo REAL (ADS-B) sobre 5 zonas calientes, los 6 canales marítimos que sostienen el comercio del planeta y el pulso del espectro de radio con jamming de GPS. Los buques de guerra se ven antes de que los nombres salgan en las agencias.",
+    acento: "#22D3EE",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

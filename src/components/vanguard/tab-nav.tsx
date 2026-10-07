@@ -16,6 +16,7 @@ import {
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
   Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
   Infinity as InfinityIcon, Bot, Vault, Briefcase, ScanLine, PenTool,
+  FileSearch, Gauge, Ship,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -82,7 +83,9 @@ export type TabKey =
   // v81.0 MAPAS DE GUERRA: sala de operaciones con tablero táctico animado
   | "operaciones"
   // v85.0 EL MUNDO DENTRO: empleos con sueldos, AR y constructor de mapas
-  | "empleos" | "armodo" | "mapascrea";
+  | "empleos" | "armodo" | "mapascrea"
+  // v86.0 CENTINELA GLOBAL: mesa de verificación, alerta temprana y espectro
+  | "verifica" | "centinela" | "espectro";
 
 interface TabDef {
   key: TabKey;
@@ -190,6 +193,10 @@ const TABS: Record<TabKey, TabDef> = {
   hangar:        { key: "hangar",        label: "EL HANGAR (Base 3D)", short: "HANGAR", icon: <Warehouse className="w-3.5 h-3.5" />, color: "cyan" },
   // v72.0 INFINITA VERDADES + MI PAÍS
   verdades:      { key: "verdades",      label: "INFINITA VERDADES (el mayor centro de noticias)", short: "VERDADES", icon: <InfinityIcon className="w-3.5 h-3.5" />, color: "amber" },
+  // v86.0 CENTINELA GLOBAL
+  verifica:      { key: "verifica",      label: "Mesa de Verificación (OSINT: sellos + las dos orillas)", short: "VERIFICA", icon: <FileSearch className="w-3.5 h-3.5" />, color: "amber" },
+  centinela:     { key: "centinela",     label: "Centinela (alerta temprana del planeta)", short: "CENTINELA", icon: <Gauge className="w-3.5 h-3.5" />, color: "cyan" },
+  espectro:      { key: "espectro",      label: "Espectro en Vivo (tráfico aéreo y marítimo)", short: "ESPECTRO", icon: <Ship className="w-3.5 h-3.5" />, color: "cyan" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -240,7 +247,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
     desc: "Portada con noticias en vivo, muro infinito de verdades y menú de mundos",
-    tabs: [TABS.inicio, TABS.verdades, TABS.noticias],
+    tabs: [TABS.inicio, TABS.verdades, TABS.verifica, TABS.noticias],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
@@ -266,8 +273,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, cables, radar, planeta en vivo, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa con capas, centinela, espectro en vivo, radar, planeta en vivo, geopolítica real y vigilancia",
+    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

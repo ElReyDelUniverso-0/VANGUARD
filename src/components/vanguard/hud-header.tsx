@@ -6,9 +6,10 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound } from "lucide-react";
-import { useState } from "react";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, SignalLow } from "lucide-react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { suscribirModoGuerra, toggleModoGuerra } from "@/lib/modo-guerra";
 
 interface HudHeaderProps {
   onOpenSettings?: () => void;
@@ -20,6 +21,9 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
   const { coins, gems, xp, level, rank, streak, alias, boosts, muted, setMuted, account } = useGameStore();
   const { t } = useT();
   const [menuOpen, setMenuOpen] = useState(false);
+  // v86.0 MODO GUERRA: versión ligera para redes saturadas (2G/satélite)
+  const [modoGuerra, setModoGuerra] = useState(false);
+  useEffect(() => suscribirModoGuerra(setModoGuerra), []);
   const rankInfo = getRankForLevel(level);
   const needed = xpForLevel(level);
   const pct = Math.min(100, Math.round((xp / needed) * 100));
@@ -118,6 +122,21 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             <LiveCounter />
             {/* v21: selector de idioma (7 idiomas) */}
             <LanguageSwitcher />
+            {/* v86.0 MODO GUERRA: protocolo de ancho de banda ultra-bajo */}
+            <button
+              onClick={() => {
+                const activo = toggleModoGuerra();
+                import("@/lib/sound").then(({ sfx }) => sfx.click());
+              }}
+              title={modoGuerra ? "MODO GUERRA activo: versión de puro texto para redes saturadas — toca para volver" : "MODO GUERRA: versión ligera de puro texto para 2G / satélite / batería baja"}
+              aria-pressed={modoGuerra}
+              className={cn(
+                "w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center transition-colors",
+                modoGuerra ? "border-red-hud text-red-hud bg-red-hud/25 blink-soft" : "border-amber-hud text-amber hover:bg-amber-hud"
+              )}
+            >
+              <SignalLow className="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
             <button
               onClick={toggleMute}
               title={muted ? t("hud.soundOn") : t("hud.soundOff")}

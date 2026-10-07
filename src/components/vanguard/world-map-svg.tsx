@@ -56,7 +56,30 @@ export interface WorldMapProps {
   routes?: MapRoute[];
   // color personalizado por id de conflicto (modos de amenaza)
   customColors?: Record<string, string>;
+  // v86.0 CENTINELA: pings genéricos (aviones/buques del espectro en vivo)
+  pings?: MapPing[];
+  // v86.0 CENTINELA: capas tácticas conmutables (bases, energía, exclusiones…)
+  capas?: CapaTactica[];
   className?: string;
+}
+
+export interface MapPing {
+  id: string;
+  lat: number;
+  lng: number;
+  color: string;
+  tipo: "AVION_MIL" | "AVION_CIVIL" | "BUQUE_GUERRA" | "BUQUE_CIVIL";
+  etiqueta?: string;
+}
+
+export interface CapaTactica {
+  id: string;
+  tipo: "BASE" | "ENERGIA" | "EXCLUSION" | "BLOQUEO" | "POBLACION" | "SUMINISTRO";
+  nombre: string;
+  lat?: number;
+  lng?: number;
+  puntos?: [number, number][]; // secuencia [lat,lng] para trazos (oleoductos, rutas)
+  color?: string;
 }
 
 export function WorldMapSVG({
@@ -72,6 +95,8 @@ export function WorldMapSVG({
   showSat = false,
   showGrid = true,
   routes = [],
+  pings = [],
+  capas = [],
   customColors,
   className,
 }: WorldMapProps) {
@@ -304,6 +329,89 @@ export function WorldMapSVG({
           );
         })}
       </g>
+
+      {/* v86.0 CAPAS TÁCTICAS conmutables — bajo los marcadores vivos */}
+      {capas.length > 0 && (
+        <g>
+          {capas.map((c) => {
+            const color = c.color ?? "#00FF87";
+            if (c.tipo === "BASE" && c.lat != null && c.lng != null) {
+              const p = projectLatLng(c.lat, c.lng);
+              return (
+                <g key={`cp-${c.id}`}>
+                  <rect x={p.x - 5} y={p.y - 3.4} width={10} height={6.8} fill={`${color}2e`} stroke={color} strokeWidth="0.9" />
+                  <text x={p.x + 7.5} y={p.y + 2.4} fill={color} fontSize="6.2" fontFamily="monospace" opacity="0.85">{c.nombre}</text>
+                </g>
+              );
+            }
+            if ((c.tipo === "ENERGIA" || c.tipo === "SUMINISTRO") && c.puntos && c.puntos.length >= 2) {
+              const d = c.puntos.map(([la, lo], i) => {
+                const p = projectLatLng(la, lo);
+                return `${i === 0 ? "M" : "L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
+              }).join(" ");
+              return (
+                <g key={`cp-${c.id}`}>
+                  <path d={d} fill="none" stroke={color} strokeWidth="1.6" opacity="0.55" strokeDasharray={c.tipo === "ENERGIA" ? "7 4" : "2 5"} strokeLinecap="round" />
+                  <text x={projectLatLng(c.puntos[0][0], c.puntos[0][1]).x} y={projectLatLng(c.puntos[0][0], c.puntos[0][1]).y - 6} fill={color} fontSize="6.4" fontFamily="monospace" opacity="0.9">{c.nombre}</text>
+                </g>
+              );
+            }
+            if (c.tipo === "EXCLUSION" && c.lat != null && c.lng != null) {
+              const p = projectLatLng(c.lat, c.lng);
+              return (
+                <g key={`cp-${c.id}`}>
+                  <circle cx={p.x} cy={p.y} r={26} fill="rgba(255,70,85,0.07)" stroke="rgba(255,70,85,0.55)" strokeWidth="0.9" strokeDasharray="6 4" />
+                  <line x1={p.x - 8} y1={p.y - 8} x2={p.x + 8} y2={p.y + 8} stroke="rgba(255,70,85,0.7)" strokeWidth="1" />
+                  <line x1={p.x - 8} y1={p.y + 8} x2={p.x + 8} y2={p.y - 8} stroke="rgba(255,70,85,0.7)" strokeWidth="1" />
+                  <text x={p.x} y={p.y + 38} fill="rgba(255,70,85,0.85)" fontSize="6.2" fontFamily="monospace" textAnchor="middle">{c.nombre}</text>
+                </g>
+              );
+            }
+            if (c.tipo === "BLOQUEO" && c.lat != null && c.lng != null) {
+              const p = projectLatLng(c.lat, c.lng);
+              return (
+                <g key={`cp-${c.id}`}>
+                  <circle cx={p.x} cy={p.y} r={5.5} fill="none" stroke={color} strokeWidth="1.1" />
+                  <path d={`M ${p.x - 3.4} ${p.y + 1} h 6.8 M ${p.x - 3.4} ${p.y + 3.4} h 4.4`} stroke={color} strokeWidth="1.1" />
+                  <text x={p.x + 8} y={p.y + 3} fill={color} fontSize="6.2" fontFamily="monospace" opacity="0.85">{c.nombre}</text>
+                </g>
+              );
+            }
+            if (c.tipo === "POBLACION" && c.lat != null && c.lng != null) {
+              const p = projectLatLng(c.lat, c.lng);
+              return (
+                <g key={`cp-${c.id}`}>
+                  <circle cx={p.x} cy={p.y} r={3.4} fill={color} opacity="0.22" />
+                  <circle cx={p.x} cy={p.y} r={1.6} fill={color} opacity="0.85" />
+                </g>
+              );
+            }
+            return null;
+          })}
+        </g>
+      )}
+
+      {/* v86.0 PINGS del espectro en vivo (aviones y buques) — encima de todo */}
+      {pings.length > 0 && (
+        <g>
+          {pings.map((p) => {
+            const pt = projectLatLng(p.lat, p.lng);
+            const glifo =
+              p.tipo === "AVION_MIL" || p.tipo === "AVION_CIVIL"
+                ? "M 0 -3 L 2.4 2.6 L 0 1.2 L -2.4 2.6 Z"
+                : "M -2.6 2.2 L -2.6 -0.4 L 0 -2.4 L 2.6 -0.4 L 2.6 2.2 Z";
+            return (
+              <g key={p.id} filter={p.tipo === "AVION_MIL" || p.tipo === "BUQUE_GUERRA" ? "url(#wm-glow)" : undefined}>
+                <circle cx={pt.x} cy={pt.y} r={4.6} fill={p.color} opacity="0.12" />
+                <path d={glifo} fill={p.color} transform={`translate(${pt.x}, ${pt.y})`} opacity="0.95" />
+                {p.etiqueta && (
+                  <text x={pt.x + 6} y={pt.y - 3} fill={p.color} fontSize="5.6" fontFamily="monospace" opacity="0.75">{p.etiqueta}</text>
+                )}
+              </g>
+            );
+          })}
+        </g>
+      )}
 
     </svg>
   );

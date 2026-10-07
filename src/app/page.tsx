@@ -197,6 +197,10 @@ const PollsPanel = dynamic(() => import("@/components/vanguard/panels/polls-pane
 const EmpleosPanel = dynamic(() => import("@/components/vanguard/panels/empleos-panel").then((m) => m.EmpleosPanel), { ssr: false, loading: PanelSkeleton });
 const ModoArPanel = dynamic(() => import("@/components/vanguard/panels/modo-ar-panel").then((m) => m.ModoArPanel), { ssr: false, loading: PanelSkeleton });
 const CreadorMapasPanel = dynamic(() => import("@/components/vanguard/panels/creador-mapas-panel").then((m) => m.CreadorMapasPanel), { ssr: false, loading: PanelSkeleton });
+// v86.0 CENTINELA GLOBAL — la plataforma definitiva de información de guerra
+const VerificaPanel = dynamic(() => import("@/components/vanguard/panels/verifica-panel").then((m) => m.VerificaPanel), { ssr: false, loading: PanelSkeleton });
+const CentinelaPanel = dynamic(() => import("@/components/vanguard/panels/centinela-panel").then((m) => m.CentinelaPanel), { ssr: false, loading: PanelSkeleton });
+const EspectroPanel = dynamic(() => import("@/components/vanguard/panels/espectro-panel").then((m) => m.EspectroPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
 export default function Home() {
@@ -432,6 +436,9 @@ export default function Home() {
         {tab === "radar" && <RadarPanel />}
         {tab === "ojodios" && <OjoDiosPanel />}
         {tab === "verdades" && <InfinitaPanel />}
+        {tab === "verifica" && <VerificaPanel />}
+        {tab === "centinela" && <CentinelaPanel />}
+        {tab === "espectro" && <EspectroPanel />}
         {tab === "mipais" && <MiPaisPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}

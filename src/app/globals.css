@@ -1303,3 +1303,47 @@ main img {
 @media (prefers-reduced-motion: reduce) {
   .nomina-pulso { animation: none !important; }
 }
+
+/* — v86.0 CENTINELA GLOBAL · MODO GUERRA —
+   Protocolo de ancho de banda ultra-bajo: la versión de puro texto de Vanguard
+   para 2G, satélite saturado o batería al límite. Congela animaciones, apaga
+   brillos/sombras y atenúa imágenes: la verdad sin adorno. */
+html.modo-guerra *,
+html.modo-guerra *::before,
+html.modo-guerra *::after {
+  animation-play-state: paused !important;
+  transition-duration: 0.001s !important;
+}
+html.modo-guerra img,
+html.modo-guerra video {
+  filter: grayscale(1) brightness(0.45) contrast(1.15);
+}
+html.modo-guerra * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+html.modo-guerra [class*="glow-"],
+html.modo-guerra [class*="holo"],
+html.modo-guerra .ken-burns,
+html.modo-guerra .barrido-map,
+html.modo-guerra .glitch::before,
+html.modo-guerra .glitch::after {
+  display: none !important;
+}
+html.modo-guerra body::after {
+  content: "MODO GUERRA · VERSIÓN LIGERA DE PURA VERDAD · SIN IMÁGENES PESADAS NI ANIMACIONES";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(20, 9, 4, 0.94);
+  color: #ffb020;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-align: center;
+  padding: 4px 8px;
+  pointer-events: none;
+  border-top: 1px solid rgba(255, 176, 32, 0.4);
+}

@@ -28,6 +28,8 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getCameraModel } from "@/lib/camera-data";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
+// v86.0 CENTINELA: capas tácticas conmutables (bases, energía, exclusiones, bloqueos, población)
+import { CAPAS_TACTICAS, capasActivas } from "@/lib/capas-tacticas";
 // v33 ESCUELA DE GUERRA — vista MILITAR 3D dentro del mapa informativo:
 // el mismo globo satelital del Ojo de Dios con aviones/tanques/infantería.
 import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type MilUnitCache, type UnitKind } from "@/lib/military-units";
@@ -208,6 +210,8 @@ export function MapPanel() {
   const { t } = useT();
   const [mode, setMode] = useState<MapMode>("GLOBAL");
   const [selected, setSelected] = useState<string | null>(null);
+  // v86.0 CAPAS TÁCTICAS: qué capas tiene encendidas el comandante
+  const [capasOn, setCapasOn] = useState<Set<string>>(() => new Set());
   const [showSat, setShowSat] = useState(false);
   const [showFronts, setShowFronts] = useState(true);
   const [showCameras, setShowCameras] = useState(true);
@@ -429,6 +433,50 @@ export function MapPanel() {
         </div>
       </div>
 
+      {/* v86.0 CAPAS TÁCTICAS conmutables — infraestructura crítica sobre el tablero */}
+      {!view3d && !milView && (
+        <div className="hud-panel p-2.5">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-1 mr-1">
+              <Layers className="w-3 h-3 text-amber" /> Capas tácticas
+            </span>
+            {CAPAS_TACTICAS.map((c) => {
+              const on = capasOn.has(c.id);
+              return (
+                <button
+                  key={c.id}
+                  title={`${c.desc} · ${c.items.length} puntos`}
+                  onClick={() => {
+                    const next = new Set(capasOn);
+                    if (on) next.delete(c.id);
+                    else next.add(c.id);
+                    setCapasOn(next);
+                  }}
+                  className={cn(
+                    "px-2 py-1 text-[9.5px] font-mono uppercase tracking-widest border rounded-sm transition-all active:scale-95",
+                    on ? "shadow-[0_0_12px_rgba(255,176,32,0.25)]" : "opacity-70 hover:opacity-100"
+                  )}
+                  style={{ borderColor: on ? `${c.color}88` : "rgba(120,120,140,0.3)", color: on ? c.color : "#8b93a7", background: on ? `${c.color}14` : "transparent" }}
+                >
+                  {on ? "▣ " : "▢ "}{c.nombre}
+                </button>
+              );
+            })}
+            {capasOn.size > 0 && (
+              <button
+                onClick={() => setCapasOn(new Set())}
+                className="px-2 py-1 text-[9.5px] font-mono uppercase tracking-widest border border-white/15 text-muted-foreground hover:text-foreground rounded-sm transition-colors"
+              >
+                Limpiar
+              </button>
+            )}
+            <span className="ml-auto text-[9px] font-mono text-muted-foreground hidden sm:block">
+              {capasActivas(capasOn).length} elementos en el tablero
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-4">
         {/* MAP */}
         <div className="lg:col-span-2 hud-corner relative overflow-hidden">
@@ -471,6 +519,7 @@ export function MapPanel() {
               showFronts={showFronts}
               routes={modeDef.routes}
               customColors={customColors}
+              capas={capasActivas(capasOn)}
             />
           )}
           <div className="absolute top-2 left-2 text-[10px] font-mono text-muted-foreground bg-background/80 px-2 py-1 hud-corner border-amber-hud">
