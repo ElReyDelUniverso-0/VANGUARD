@@ -6,6 +6,8 @@ import { persist, createJSONStorage, type StateStorage } from "zustand/middlewar
 import { useRetention } from "@/lib/retention";
 // v67.0 EL HANGAR — PROTOCOLO ROJO: multiplicador global de monedas
 import { protocoloMultiplier, trackProtocoloEarnings } from "@/lib/tension";
+// v84.0 FORTUNA DE GUERRA — golpe de fortuna ×2/×3/×5 + prima de guerra en TODO pago
+import { rollFortuna, emitirFortuna } from "@/lib/fortuna";
 // v26: sonido especial de recompensa en cada moneda ganada
 import { sfx } from "@/lib/sound";
 import {
@@ -864,20 +866,45 @@ export const useGameStore = create<GameState>()(
             protoMult = 1;
           }
         }
+        // v84.0 FORTUNA DE GUERRA — todo pago puede traer GOLPE DE FORTUNA
+        // (×2/×3/×5 con enfriamiento) o PRIMA DE GUERRA (+15% si tensión ≥ 75).
+        let fortunaExtra = 0;
+        let fortunaMult = 1;
+        let fortunaMotivo = "";
+        if (amount > 0 && typeof window !== "undefined") {
+          try {
+            const f = rollFortuna(amount);
+            fortunaExtra = f.extra;
+            fortunaMult = f.mult;
+            fortunaMotivo = f.motivo;
+          } catch {
+            /* la fortuna jamás tumba el pago */
+          }
+        }
         set((s) => {
           const boost = s.boosts.coinUntil && s.boosts.coinUntil > Date.now() ? 2 : 1;
           // v15: el propietario mantiene su fortuna infinita
           const base = amount * boost * (amount > 0 ? Math.max(1, protoMult) : 1);
           const final = s.account?.isOwner ? Math.max(s.coins + amount, OWNER_COINS) : s.coins + base;
           return {
-            coins: final + protoBonus,
+            coins: final + protoBonus + fortunaExtra,
             log: [
               { ts: Date.now(), msg: `+${base} monedas — ${reason}`, delta: base },
+              ...(fortunaExtra > 0 ? [{ ts: Date.now(), msg: `+${fortunaExtra} monedas — ${fortunaMotivo}`, delta: fortunaExtra }] : []),
               ...(protoBonus > 0 ? [{ ts: Date.now(), msg: `+${protoBonus} monedas — PROTOCOLO ROJO: misión global cumplida`, delta: protoBonus }] : []),
               ...s.log,
             ].slice(0, 50),
           };
         });
+        // v84.0: celebración cinematográfica del golpe (lluvia de monedas global)
+        if (fortunaExtra > 0) {
+          emitirFortuna({ mult: fortunaMult, extra: fortunaExtra, motivo: fortunaMotivo, base: amount });
+          try {
+            sfx.achievement();
+          } catch {
+            /* noop */
+          }
+        }
         // v26: SONIDO ESPECIAL por cada recompensa ganada (throttle 900ms
         // para que las rachas rápidas no se conviertan en ruido)
         if (amount > 0 && typeof window !== "undefined") {

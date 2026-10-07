@@ -86,7 +86,8 @@ function preguntasDe(seed: string): DesafioQ[] {
 }
 
 // ====== códigos ======
-const APUESTAS = [50, 100, 250] as const;
+// v84 FORTUNA: botes altos para duelos de alto riesgo — 500 y 1000ⓒ
+const APUESTAS = [50, 100, 250, 500, 1000] as const;
 type Apuesta = (typeof APUESTAS)[number];
 
 function codigoDesafio(seed: string, apuesta: number): string {

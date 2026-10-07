@@ -11,6 +11,14 @@
 // v33 ESCUELA DE GUERRA — anti-falsos-positivos: si el socket realtime está
 // CONECTADO la experiencia es correcta aunque /api/health tarde: no overlay,
 // no recarga (adiós a las recargas fantasma que "buggeaban" la app).
+// v84.0 FORTUNA DE GUERRA — ANTI "SIEMPRE DICE QUE SE CAYÓ":
+//   · el umbral necesita CONFIRMACIÓN: al llegar a 3 fallos se lanza un ping
+//     extra de confirmación (2.5s) y solo entonces se tapa la pantalla. Un
+//     microcorte ya nunca muestra el overlay.
+//   · al volver a la pestaña (visibilitychange) el contador de fallos se
+//     resetea: el navegador congeló los timers, no hubo caída real.
+//   · /api/health ahora responde 200 mientras el proceso Next viva (la BD va
+//     en el payload), así que el overlay solo aparece con el server MUERTO.
 
 import { useEffect, useState } from "react";
 import { peekRealtime } from "@/lib/realtime";
@@ -22,46 +30,77 @@ export function ConnectionWatchdog() {
     let alive = true;
     let fails = 0;
     let reloaded = false;
+    let confirming = false;
 
-    const ping = async () => {
-      // pestaña oculta: el navegador congela timers y las peticiones vuelven raras;
-      // no pinguear ni contar fallo (evita falsos "caído" al volver a la pestaña)
-      if (typeof document !== "undefined" && document.hidden) return;
-      // v33: el multijugador en directo es la señal que de verdad importa
-      if (peekRealtime()?.connected) {
-        fails = 0;
-        return;
-      }
+    // sonda única: true si el server o el socket responden
+    const probe = async (): Promise<boolean> => {
+      if (peekRealtime()?.connected) return true;
       try {
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), 10000);
         const res = await fetch("/api/health", { cache: "no-store", signal: ctrl.signal });
         clearTimeout(t);
-        fails = res.ok ? 0 : fails + 1;
+        return res.ok;
       } catch {
-        fails += 1;
+        return false;
       }
+    };
+
+    const ping = async () => {
+      // pestaña oculta: el navegador congela timers y las peticiones vuelven raras;
+      // no pinguear ni contar fallo (evita falsos "caído" al volver a la pestaña)
+      if (typeof document !== "undefined" && document.hidden) return;
+      const ok = await probe();
       if (!alive) return;
-      const isDown = fails >= 3;
-      setDown((prev) => {
-        // recarga solo cuando pasamos de caído → arriba y no acabamos de recargar
-        if (prev && !isDown && !reloaded) {
-          reloaded = true;
-          setTimeout(() => window.location.reload(), 1200);
-        }
-        return isDown;
-      });
+      if (ok) {
+        fails = 0;
+        setDown((prev) => {
+          // recarga solo cuando pasamos de caído → arriba y no acabamos de recargar
+          if (prev && !reloaded) {
+            reloaded = true;
+            setTimeout(() => window.location.reload(), 1200);
+          }
+          return false;
+        });
+        return;
+      }
+      fails += 1;
+      if (fails < 3) return;
+      // v84: umbral alcanzado → ping de CONFIRMACIÓN antes de tapar la pantalla
+      if (!confirming) {
+        confirming = true;
+        setTimeout(async () => {
+          confirming = false;
+          if (!alive) return;
+          const ok2 = await probe();
+          if (ok2) {
+            fails = 0;
+            setDown(false);
+            return;
+          }
+          if (alive && fails >= 3) setDown(true);
+        }, 2500);
+      }
     };
 
     const iv = setInterval(ping, 30_000);
     const onOnline = () => void ping();
+    // v84: volver a la pestaña NO es una caída — resetea el contador y sondea
+    const onVisible = () => {
+      if (document.hidden) return;
+      fails = 0;
+      setDown(false);
+      void ping();
+    };
     window.addEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onVisible);
     void ping();
 
     return () => {
       alive = false;
       clearInterval(iv);
       window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 

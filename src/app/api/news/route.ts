@@ -122,6 +122,22 @@ function parseGdeltDate(seendate?: string): Date {
   return new Date(seendate);
 }
 
+// v84.0 FORTUNA DE GUERRA — ANTI REPETIDAS: dos medios que cubren la misma
+// historia generan titulares casi idénticos (agencias, Google News…). Se
+// normaliza el título y se considera DUPLICADO si la huella ya apareció en
+// este refresco o entre las 90 noticias más recientes de la BD.
+function huellaTitulo(t: string): string {
+  return (t || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .split(" ")
+    .slice(0, 9)
+    .join(" ");
+}
+
 // v20 BANDERAS VERDADERAS: deduce el país del conflicto desde el titular
 // (más fiable que sourcecountry de GDELT, que es el país del MEDIADOR publicador).
 const COUNTRY_KEYWORDS: [string, string[]][] = [
@@ -294,9 +310,18 @@ export async function GET(req: Request) {
     const allArticles = articles.length > 0 ? articles : curated;
 
     // upsert cache (only when no cache existed)
+    // v84: dedupe de titulares también en el primer arranque (mismo suceso
+    // desde dos medios no entra dos veces)
+    const huellasPrimera = new Set<string>();
     const items: Awaited<ReturnType<typeof db.newsItem.upsert>>[] = [];
     for (const a of allArticles) {
       try {
+        const h = huellaTitulo(a.title);
+        if (h && !huellasPrimera.has(h)) {
+          huellasPrimera.add(h);
+        } else if (h) {
+          continue;
+        }
         const item = await db.newsItem.upsert({
           where: { externalId: a.url },
           update: {},
@@ -335,7 +360,9 @@ export async function GET(req: Request) {
 async function refreshGdeltInBackground() {
   // v35: candado anti rate-limit — todos los lambdas de Vercel comparten IP y
   // GDELT admite ~1 petición cada 5s: si N visitas disparan N refrescos, todos
-  // vuelven vacíos. Con el candado solo UNO corre cada 5 minutos.
+  // vuelven vacíos. Con el candado solo UNO corre cada periodo.
+  // v84.0: el candado baja de 5 min a 3 min — más refrescos/hora = más noticia
+  // nueva por visita, y el RSS paralelo completa en segundos (ver abajo).
   try {
     await db.$executeRawUnsafe(
       "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
@@ -343,55 +370,90 @@ async function refreshGdeltInBackground() {
     await db.$executeRawUnsafe(
       "INSERT INTO site_counter (k, n) VALUES ('gdelt:refresh', 0) ON CONFLICT (k) DO NOTHING"
     );
-    const fiveMinAgo = Date.now() - 5 * 60 * 1000;
+    const tresMinAgo = Date.now() - 3 * 60 * 1000;
     const locked = await db.$executeRaw`
       UPDATE site_counter SET n = ${Date.now()}
-      WHERE k = 'gdelt:refresh' AND n < ${fiveMinAgo}`;
-    if (locked === 0) return; // otro lambda refrescó hace menos de 5 min
+      WHERE k = 'gdelt:refresh' AND n < ${tresMinAgo}`;
+    if (locked === 0) return; // otro lambda refrescó hace menos de 3 min
   } catch {
     /* si el candado falla, intentamos igual */
   }
-  let articles: GdeltArticle[] = [];
+
+  // v84.0: huellas de titulares ya vistos — la BD primero (últimas 90) y luego
+  // todo lo insertado en este refresco, para NO duplicar la misma historia
+  const huellas = new Set<string>();
   try {
-    const query = QUERIES[Math.floor(Math.random() * QUERIES.length)];
-    const url = `${GDELT_URL}?query=${encodeURIComponent(
-      query + " sourcelang:spa"
-    )}&format=json&maxrecords=25&sort=datedesc&mode=ArtList`;
-    const controller = new AbortController();
-    // v35: ídem — 8s para que GDELT responda incluso en lambda frío
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Vanguard/2.0" },
-      signal: controller.signal,
-      next: { revalidate: 300 },
+    const recientes = await db.newsItem.findMany({
+      orderBy: { publishedAt: "desc" },
+      take: 90,
+      select: { title: true },
     });
-    clearTimeout(timeout);
-    if (res.ok) {
-      const ct = res.headers.get("content-type") || "";
-      if (ct.includes("application/json")) {
-        const data: GdeltResponse = await res.json();
-        articles = data.articles ?? [];
+    for (const r of recientes) huellas.add(huellaTitulo(r.title));
+  } catch {
+    /* sin semilla: dedupe solo intra-refresco */
+  }
+  const esNueva = (title: string): boolean => {
+    const h = huellaTitulo(title);
+    if (!h || huellas.has(h)) return false;
+    huellas.add(h);
+    return true;
+  };
+
+  // v84.0: DOS consultas GDELT distintas por refresco (doble entrante) + dedupe por url
+  let articles: GdeltArticle[] = [];
+  {
+    const urls = new Set<string>();
+    const qs = new Set<number>();
+    while (qs.size < 2) qs.add(Math.floor(Math.random() * QUERIES.length));
+    for (const qi of qs) {
+      try {
+        const url = `${GDELT_URL}?query=${encodeURIComponent(
+          QUERIES[qi] + " sourcelang:spa"
+        )}&format=json&maxrecords=25&sort=datedesc&mode=ArtList`;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(url, {
+          headers: { "User-Agent": "Vanguard/2.0" },
+          signal: controller.signal,
+          next: { revalidate: 300 },
+        });
+        clearTimeout(timeout);
+        if (res.ok) {
+          const ct = res.headers.get("content-type") || "";
+          if (ct.includes("application/json")) {
+            const data: GdeltResponse = await res.json();
+            for (const a of data.articles ?? []) {
+              if (!urls.has(a.url)) {
+                urls.add(a.url);
+                articles.push(a);
+              }
+            }
+          }
+        }
+      } catch {
+        // GDELT no responde a esta consulta: seguimos
       }
     }
-  } catch {
-    // GDELT no responde: seguimos con las curadas
   }
 
-  // upsert de las curadas: crea 9-12, refresca imagen de 1-8 — siempre vivo
+  // v84.0: las curadas YA NO SE PROMOCIONAN — se re-anclan 2-13 horas atrás y
+  // debajo de la noticia real. Con la red RSS paralela llena de fresco, las 12
+  // curadas de siempre dejan de encabezar la portada (además no son "nuevas").
   try {
     const curated = await getCuratedFallback();
-    for (const a of curated) {
+    for (let i = 0; i < curated.length; i++) {
+      const a = curated[i];
       try {
         await db.newsItem.upsert({
           where: { externalId: a.url },
-          update: { imageUrl: a.socialimage ?? null },
+          update: { imageUrl: a.socialimage ?? null, publishedAt: new Date(Date.now() - (i + 2) * 3600_000) },
           create: {
             externalId: a.url,
             title: a.title,
             url: "#",
             source: a.domain ?? "vanguard-cmd",
             imageUrl: a.socialimage ?? null,
-            publishedAt: parseGdeltDate(a.seendate),
+            publishedAt: new Date(Date.now() - (i + 2) * 3600_000),
             language: a.language ?? "es",
             conflictTag: conflictTag(a.title),
             tacticalTag: classifyTag(a.title),
@@ -406,13 +468,15 @@ async function refreshGdeltInBackground() {
     // best-effort
   }
 
-  // v50.1 PLAN B+: RSS SIEMPRE — GDELT es intermitente en Vercel y los 7 medios
-  // (BBC Mundo, France24, DW, Al Jazeera, ABC, The Guardian, WSJ) deben estar
-  // garantizados en CADA refresco. El upsert no duplica filas.
+  // v50.1 PLAN B+ → v84.0 PARALELO: los 15 medios se piden EN PARALELO
+  // (Promise.allSettled) y completan en ~5-6s en total. Antes iban en serie
+  // (15 × 6s ≈ 90s) y el lambda de Vercel (maxDuration 60) los mataba a
+  // mitad: por eso "casi nunca hay noticias nuevas". El upsert no duplica.
   {
     const rss = await fetchRssFallback();
     for (const a of rss) {
       try {
+        if (!esNueva(a.title)) continue; // misma historia desde otro medio: fuera
         await db.newsItem.upsert({
           where: { externalId: a.link },
           update: {},
@@ -438,6 +502,7 @@ async function refreshGdeltInBackground() {
   // si GDELT trajo articulos, upsert normal (sin pisar nada)
   for (const a of articles) {
     try {
+      if (!esNueva(a.title)) continue; // v84: sin repetidas
       await db.newsItem.upsert({
         where: { externalId: a.url },
         update: {},
@@ -457,6 +522,17 @@ async function refreshGdeltInBackground() {
     } catch {
       // skip
     }
+  }
+
+  // v84.0: PODA — la noticia de más de 6 días sale del archivo (salvo curadas,
+  // que son el respaldo evergreen). La BD queda pequeña y siempre reciente.
+  try {
+    const limite = new Date(Date.now() - 6 * 24 * 3600_000);
+    await db.newsItem.deleteMany({
+      where: { publishedAt: { lt: limite }, externalId: { not: { startsWith: "curated-" } } },
+    });
+  } catch {
+    /* la poda es best-effort */
   }
 }
 
@@ -495,35 +571,47 @@ function decodeCdata(s: string): string {
   return s.replace(/^\s*<!\[CDATA\[/, "").replace(/\]\]>\s*$/, "").trim();
 }
 
-async function fetchRssFallback(): Promise<RssArticle[]> {
+async function fetchRssSource(src: { url: string; source: string }): Promise<RssArticle[]> {
   const out: RssArticle[] = [];
-  for (const src of RSS_SOURCES) {
-    try {
-      const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), 6000);
-      const res = await fetch(src.url, {
-        headers: { "User-Agent": "Vanguard/2.0" },
-        signal: controller.signal,
-        cache: "no-store",
-      });
-      clearTimeout(t);
-      if (!res.ok) continue;
-      const xml = await res.text();
-      const chunks = xml.split(/<item[\s>]/).slice(1);
-      for (const raw of chunks.slice(0, 14)) {
-        const title = unescapeXml(decodeCdata(raw.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? ""));
-        const link = unescapeXml(decodeCdata(raw.match(/<link>([\s\S]*?)<\/link>/)?.[1] ?? ""));
-        if (!title || !link.startsWith("http")) continue;
-        const dateRaw =
-          raw.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ??
-          raw.match(/<dc:date>([\s\S]*?)<\/dc:date>/)?.[1] ?? "";
-        const pubDate = dateRaw ? new Date(dateRaw) : new Date();
-        if (Number.isNaN(pubDate.getTime())) continue;
-        out.push({ title, link, pubDate, source: src.source });
-      }
-    } catch {
-      continue; // un medio caído no tumba el canal
+  try {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(src.url, {
+      headers: { "User-Agent": "Vanguard/2.0" },
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    clearTimeout(t);
+    if (!res.ok) return out;
+    const xml = await res.text();
+    const chunks = xml.split(/<item[\s>]/).slice(1);
+    for (const raw of chunks.slice(0, 14)) {
+      const title = unescapeXml(decodeCdata(raw.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? ""));
+      const link = unescapeXml(decodeCdata(raw.match(/<link>([\s\S]*?)<\/link>/)?.[1] ?? ""));
+      if (!title || !link.startsWith("http")) continue;
+      const dateRaw =
+        raw.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ??
+        raw.match(/<dc:date>([\s\S]*?)<\/dc:date>/)?.[1] ?? "";
+      const pubDate = dateRaw ? new Date(dateRaw) : new Date();
+      if (Number.isNaN(pubDate.getTime())) continue;
+      out.push({ title, link, pubDate, source: src.source });
     }
+  } catch {
+    // un medio caído no tumba el canal
+  }
+  return out;
+}
+
+// v84.0 — RED RSS EN PARALELO: los 15 medios se piden a la vez
+// (Promise.allSettled) y el total tarda ~6s aunque haya medios lentos o
+// caídos. Antes iban en SERIE (15 × 6s = 90s máx.) y el lambda de Vercel
+// (maxDuration 60) mataba el refresco a mitad — la raíz de "casi nunca hay
+// noticias nuevas".
+async function fetchRssFallback(): Promise<RssArticle[]> {
+  const resultados = await Promise.allSettled(RSS_SOURCES.map((src) => fetchRssSource(src)));
+  const out: RssArticle[] = [];
+  for (const r of resultados) {
+    if (r.status === "fulfilled") out.push(...r.value);
   }
   return out;
 }

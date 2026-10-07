@@ -56,6 +56,8 @@ const MusicPlayer = dynamic(() => import("@/components/vanguard/music-player").t
 const ConnectionWatchdog = dynamic(() => import("@/components/vanguard/connection-watchdog").then((m) => m.ConnectionWatchdog), { ssr: false });
 // v32 CIELO DE ACERO: badge global del estado del socket multijugador
 const RealtimeStatus = dynamic(() => import("@/components/realtime-status").then((m) => m.RealtimeStatus), { ssr: false });
+// v84.0 FORTUNA DE GUERRA: lluvia de monedas del GOLPE DE FORTUNA (global)
+const FortunaLluvia = dynamic(() => import("@/components/vanguard/fortuna-lluvia").then((m) => m.FortunaLluvia), { ssr: false });
 // v40 GEOPOLÍTICA EN VIVO: el tablón del planeta con datos reales (Banco Mundial/USGS/Wikipedia)
 const GeopoliticaPanel = dynamic(() => import("@/components/vanguard/panels/geopolitica-panel").then((m) => m.GeopoliticaPanel), { ssr: false, loading: PanelSkeleton });
 // v41 PLANETA VIVO: globo con capas NASA EONET + auroras NOAA + sismos + EEI en directo
@@ -505,6 +507,7 @@ export default function Home() {
       <MusicPlayer />
       <RealtimeStatus />
       <ConnectionWatchdog />
+      <FortunaLluvia />
       {/* v34 — recepción del recluta: procesa ?ref= y da bono de bienvenida */}
       <ReferralLanding />
       {/* v33 ESCUELA DE GUERRA — manual del comandante (auto en 1ª visita) */}

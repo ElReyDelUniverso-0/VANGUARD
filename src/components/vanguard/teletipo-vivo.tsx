@@ -52,11 +52,15 @@ function cargarTitulares(): Promise<string[]> {
 }
 
 // ————— generador de interceptos (mensajes en vivo constantes) —————
+// v84.0: 30 LUGARES y 13 FUENTES — el mundo entero emite señal
 const LUGARES = [
   "el Báltico", "el Mar Rojo", "el estrecho de Taiwán", "el Sahel", "el Donbás",
   "el Golfo Pérsico", "el Cáucaso", "el mar de China Meridional", "el Ártico",
   "la frontera sur", "el estrecho de Ormuz", "el mar Negro", "Kashmir", "el Sinaí",
   "el canal de Suez", "el estrecho de Malaca", "la península de Corea", "el Sahel occidental",
+  "el Bósforo", "el golfo de Adén", "el mar de Barents", "el canal de Panamá",
+  "la península de Crimea", "el estrecho de Gibraltar", "el mar de Java", "el lago Chad",
+  "el estrecho de Bering", "el valle del Nilo", "el mar de Andamán", "la meseta del Decán",
 ];
 const NUMS = [3, 4, 5, 6, 7, 8, 9, 12, 14, 17, 21, 24, 32, 48];
 
@@ -121,6 +125,44 @@ const PLANTILLAS: { fuente: string; prioridad: CableVivo["prioridad"]; textos: s
       "Ala fija no identificada ronda el perímetro de {lugar} durante {num} minutos.",
       "Enjambre de {num} aparatos detectado a baja cota cruzando {lugar}.",
       "Dron de vigilancia propio transmite: hangar secundario abierto de madrugada en {lugar}.",
+      "Contramedidas activadas: un dron hostil derribado sobre {lugar}, restos en recuperación.",
+    ],
+  },
+  {
+    fuente: "HUMINT", prioridad: "CRITICO", textos: [
+      "Contacto con el activo BRECHA-{num}: «los convoyes de {lugar} ya no viajan de día».",
+      "Red local de {lugar} reporta oficiales comprando todos los mapas de la zona.",
+      "Llamada interceptada en {lugar}: se piden {num} camiones de combustible para esta semana.",
+      "El activo confirma: en {lugar} pagan en efectivo por silencio — algo grande se mueve.",
+    ],
+  },
+  {
+    fuente: "CIBER", prioridad: "URGENTE", textos: [
+      "Anomalía en el tráfico: {num} GB salen de {lugar} hacia un destino sin registro.",
+      "Intrusión contenida en la red eléctrica de {lugar} — firma de grupo conocido.",
+      "Botón de pánico digital: {num} cuentas oficiales de {lugar} borran su historial a la vez.",
+      "Secuestro de señal GPS en {lugar}: las naves reportan posiciones imposibles.",
+    ],
+  },
+  {
+    fuente: "ARMADA", prioridad: "INFO", textos: [
+      "Flotilla de {num} buques avistada a 30 millas de {lugar} — rumbo de colisión.",
+      "Reabastecimiento en alta mar cerca de {lugar}: nadie debería estar ahí.",
+      "Aviso a la navegación: maniobras de minado simulado notificadas en {lugar}.",
+    ],
+  },
+  {
+    fuente: "ADUANA", prioridad: "INFO", textos: [
+      "Manifiesto de carga falsificado detectado: {num} contenedores «de fruta» hacia {lugar}.",
+      "Alto el tráfico aéreo de carga hacia {lugar}: {num} vuelos cancelados en una noche.",
+      "Precinto violado en vagón procedente de {lugar} — revisión en zona aislada.",
+    ],
+  },
+  {
+    fuente: "GEODATO", prioridad: "INFO", textos: [
+      "Cambios de terreno por satélite: nuevas trincheras en {lugar} desde el último pase.",
+      "Calor nocturno anómalo en {lugar}: {num} focos donde ayer no había nada.",
+      "El tráfico de barcos alrededor de {lugar} cae {num}% — bloqueo silencioso en curso.",
     ],
   },
 ];
@@ -140,9 +182,26 @@ function rellenar(t: string): string {
     .replace(/ a el /g, " al ");
 }
 let __seq = 0;
-function interceptoAleatorio(): CableVivo {
-  const cat = elegir(PLANTILLAS);
-  const plantilla = elegir(cat.textos);
+
+// v84.0 — BARAJA SIN REPETICIONES: se baraja el mazo completo de plantillas
+// (fuente,texto) y se reparten una a una; SOLO cuando el mazo entero se ha
+// jugado se vuelve a barajar. Antes el reparto era aleatorio puro y con 31
+// plantillas a un cable cada ~5s la misma frase repetía cada ~2.5 minutos.
+interface CartaMazo { ci: number; ti: number; }
+function barajarMazo(): CartaMazo[] {
+  const mazo: CartaMazo[] = [];
+  for (let ci = 0; ci < PLANTILLAS.length; ci++) {
+    for (let ti = 0; ti < PLANTILLAS[ci].textos.length; ti++) mazo.push({ ci, ti });
+  }
+  for (let i = mazo.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
+  }
+  return mazo;
+}
+function interceptoDeCarta(carta: CartaMazo): CableVivo {
+  const cat = PLANTILLAS[carta.ci];
+  const plantilla = cat.textos[carta.ti];
   return {
     id: `w${Date.now()}-${__seq++}`,
     ts: Date.now(),
@@ -188,6 +247,7 @@ function useFlujoVivo(max: number, intervaloMs: number, activo: boolean) {
   const [cables, setCables] = useState<CableVivo[]>([]);
   const colaRef = useRef<CableVivo[]>([]);
   const usadoRef = useRef<Set<string>>(new Set());
+  const mazoRef = useRef<CartaMazo[]>([]);
   const intervaloRef = useRef<number | null>(null);
 
   // 1) el emisor vive SIEMPRE (interceptos procedurales); los cables reales
@@ -195,24 +255,50 @@ function useFlujoVivo(max: number, intervaloMs: number, activo: boolean) {
   useEffect(() => {
     if (!activo) return;
     let vivo = true;
+    if (mazoRef.current.length === 0) mazoRef.current = barajarMazo();
     const emitir = () => {
       const cola = colaRef.current;
-      const nuevo = cola.length > 0 && Math.random() < 0.45 ? cola.shift()! : interceptoAleatorio();
+      let nuevo: CableVivo;
+      if (cola.length > 0 && Math.random() < 0.45) {
+        nuevo = cola.shift()!;
+      } else {
+        // v84: mazo sin repeticiones — baraja de nuevo solo al agotar
+        if (mazoRef.current.length === 0) mazoRef.current = barajarMazo();
+        nuevo = interceptoDeCarta(mazoRef.current.pop()!);
+      }
       if (usadoRef.current.has(nuevo.texto) && nuevo.fuente === "AGENCIAS") {
         usadoRef.current.delete(nuevo.texto); // recircula titulares viejos tras agotar pool
       }
       usadoRef.current.add(nuevo.texto);
+      if (usadoRef.current.size > 60) {
+        // poda del registro de vistos: conserva los más recientes (los primeros añadidos)
+        const it = usadoRef.current.values();
+        for (let k = 0; k < 20; k++) {
+          const v = it.next();
+          if (v.done) break;
+          usadoRef.current.delete(v.value);
+        }
+      }
       setCables((prev) => [nuevo, ...prev].slice(0, max));
     };
     emitir();
     emitir();
     intervaloRef.current = window.setInterval(emitir, intervaloMs);
     // 2) sembrar titulares reales (la cola los mezcla con la proporción 0.45)
+    //    v84: titulares DEDUPLICADOS entre sí — el mismo suceso desde dos
+    //    medios solo entra una vez a la cola
     cargarTitulares().then((titulares) => {
       if (!vivo || titulares.length === 0) return;
       const ahora = Date.now();
+      const vistas = new Set<string>();
+      const limpio = titulares.filter((t) => {
+        const h = t.toLowerCase().split(/[,:·—-]/)[0].split(" ").slice(0, 8).join(" ").trim();
+        if (!h || vistas.has(h)) return false;
+        vistas.add(h);
+        return true;
+      });
       colaRef.current.push(
-        ...titulares.slice(0, 10).map((t) => cableDeTitular(t, ahora - Math.floor(Math.random() * 5 * 3600_000)))
+        ...limpio.slice(0, 14).map((t) => cableDeTitular(t, ahora - Math.floor(Math.random() * 5 * 3600_000)))
       );
     });
     return () => {

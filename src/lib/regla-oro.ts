@@ -98,7 +98,7 @@ export const REGLA_ORO = {
     volanta: "Joyas retro de guerra",
     imagen: "/ilustraciones/arcade.jpg",
     texto:
-      "12 minijuegos con récords que defender: sobrevive al CONVOY BAJO FUEGO bajo luna llena, rompe el CIFRADO SIMON y persigue el JUEGO DEL DÍA, que paga doble.",
+      "12 minijuegos con récords que defender: sobrevive al CONVOY BAJO FUEGO bajo luna llena, rompe el CIFRADO SIMON y persigue el JUEGO DEL DÍA, que paga doble. Y ojo: cada recompensa puede traer el GOLPE DE FORTUNA (×2, ×3 o ×5) — con tensión global alta, todos los pagos llevan PRIMA DE GUERRA +15%.",
     acento: "#FF9F1C",
   },
   bookmaker: {
@@ -106,7 +106,7 @@ export const REGLA_ORO = {
     volanta: "La casa de apuestas",
     imagen: "/ilustraciones/bookmaker.jpg",
     texto:
-      "Apuesta monedas por eventos reales del mundo. Cuotas vivas, adrenalina pura — y si aciertas, la casa paga.",
+      "Apuesta monedas por eventos reales del mundo: cuotas vivas, mercados de GUERRA con la tensión real del planeta y JACKPOT progresivo que engorda con cada boleto. La primera apuesta del día la paga la casa — y las combinadas de 3+ aciertos suman bonus hasta +12%.",
     acento: "#00FF87",
   },
   espionaje: {

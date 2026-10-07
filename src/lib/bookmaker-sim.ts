@@ -142,7 +142,19 @@ function winnerMarkets(sides: { label: string; prob: number }[]): BkMarket[] {
 }
 
 // ====== GENERADOR DE JORNADA ======
-export function generateEvents(now = Date.now()): BkEvent[] {
+// v84.0 FORTUNA DE GUERRA — generateEvents acepta la TENSIÓN GLOBAL viva de
+// Vanguard (getTension, 0-100) para derivar la probabilidad de escalada de los
+// mercados de guerra: cuanto más caliente el mundo, más paga CONTENCIÓN.
+const FRENTES_GUERRA = [
+  { comp: "FRENTE ORIENTAL", title: "Escalada en el Donbás" },
+  { comp: "MAR ROJO", title: "Nuevo ataque a buques en el Mar Rojo" },
+  { comp: "INDOPACIFICO", title: "Incidente en el estrecho de Taiwán" },
+  { comp: "SAHEL", title: "Ofensiva relámpago en el Sahel central" },
+  { comp: "CAUCASO", title: "Choque de frontera en el Cáucaso" },
+  { comp: "KASHMIR", title: "Intercambio de fuego en la Línea de Control" },
+];
+
+export function generateEvents(now = Date.now(), tension = 62): BkEvent[] {
   const events: BkEvent[] = [];
   const mkFutbol = (tA: BkTeam, tB: BkTeam, comp: string, startAt: number, liveAt: number): BkEvent => {
     const homeAdv = 0.32;
@@ -189,18 +201,29 @@ export function generateEvents(now = Date.now()): BkEvent[] {
       { label: "MOVIMIENTO VERDE", prob: 0.20 },
     ]),
   });
-  // FRENTE DE GUERRA
-  events.push({
-    id: `BK-WAR-${Math.floor(Math.random() * 1e6)}`, kind: "GUERRA",
-    comp: "FRENTE ORIENTAL", title: "Caida de la ciudad fortificada",
-    sides: ["ATAQUE BLINDADO", "DEFENSA URBANA"],
-    startAt: now + 240_000, status: "PROXIMO", minute: 0, hs: 0, as: 0,
-    corners: [0, 0], cards: [0, 0], xg: [0, 0], events: ["Artilleria bombardeando perimetro"],
-    markets: winnerMarkets([
-      { label: "ATAQUE BLINDADO", prob: 0.58 },
-      { label: "DEFENSA URBANA", prob: 0.42 },
-    ]),
-  });
+  // v84: MERCADO DE GUERRA REAL — 2 frentes elegidos al azar, probabilidad de
+  // ESCALADA derivada de la tensión global en vivo del planeta Vanguard
+  const pEsc = Math.min(0.85, Math.max(0.15, (tension - 25) / 80));
+  const frentes = [...FRENTES_GUERRA];
+  for (let i = frentes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [frentes[i], frentes[j]] = [frentes[j], frentes[i]];
+  }
+  for (let i = 0; i < 2; i++) {
+    const f = frentes[i];
+    events.push({
+      id: `BK-WAR-${Math.floor(Math.random() * 1e6)}`, kind: "GUERRA",
+      comp: f.comp, title: f.title,
+      sides: ["ESCALADA", "CONTENCIÓN"],
+      startAt: now + (150_000 + i * 180_000), status: "PROXIMO", minute: 0, hs: 0, as: 0,
+      corners: [0, 0], cards: [0, 0], xg: [0, 0],
+      events: [`Tensión global ${Math.round(tension)}/100 — analistas midiendo el pulso del frente`],
+      markets: winnerMarkets([
+        { label: "ESCALADA", prob: pEsc },
+        { label: "CONTENCIÓN", prob: 1 - pEsc },
+      ]),
+    });
+  }
   return events;
 }
 
@@ -340,4 +363,32 @@ export function loadEvents(): BkEvent[] | null {
 }
 export function saveEvents(events: BkEvent[]) {
   try { localStorage.setItem("vanguard-bk-events", JSON.stringify(events)); } catch {}
+}
+
+// ====== v84.0 FORTUNA: JUEGO GRATIS DIARIO + JACKPOT PROGRESIVO ======
+export const BK_FREEBET_MONTO = 75;
+export const BK_JACKPOT_BASE = 5000;
+
+export interface BkFreebet { date: string; used: boolean; }
+export function loadFreebet(): BkFreebet {
+  try {
+    const j = JSON.parse(localStorage.getItem("vanguard-bk-freebet") ?? "") as BkFreebet;
+    if (j && typeof j.date === "string") return j;
+  } catch { /* nuevo día */ }
+  return { date: "", used: false };
+}
+export function saveFreebet(f: BkFreebet) {
+  try { localStorage.setItem("vanguard-bk-freebet", JSON.stringify(f)); } catch {}
+}
+export function bkHoy(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+export function loadJackpot(): number {
+  try {
+    const v = Number(localStorage.getItem("vanguard-bk-jackpot"));
+    return Number.isFinite(v) && v >= BK_JACKPOT_BASE ? Math.floor(v) : BK_JACKPOT_BASE;
+  } catch { return BK_JACKPOT_BASE; }
+}
+export function saveJackpot(v: number) {
+  try { localStorage.setItem("vanguard-bk-jackpot", String(Math.floor(v))); } catch {}
 }

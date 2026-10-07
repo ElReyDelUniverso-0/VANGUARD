@@ -8,21 +8,23 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
-import { Dice5, Coins, Radio, Clock, Ticket, TrendingUp, Ban, Flame, Zap } from "lucide-react";
+import { Dice5, Coins, Radio, Clock, Ticket, TrendingUp, Ban, Flame, Zap, Gift, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
+import { getTension } from "@/lib/tension";
 import {
   generateEvents, advanceEvent, refreshOdds, choiceWon, settleWinnerEvent,
   cashoutValue, loadTickets, saveTickets, loadEvents, saveEvents,
+  BK_FREEBET_MONTO, BK_JACKPOT_BASE, loadFreebet, saveFreebet, bkHoy, loadJackpot, saveJackpot,
   type BkEvent, type BkLeg, type BkTicket,
 } from "@/lib/bookmaker-sim";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
-const STAKE_CHIPS = [50, 100, 250, 500];
+const STAKE_CHIPS = [50, 100, 250, 500, 1000];
 
 interface BkStats { staked: number; payout: number; bets: number; wins: number; }
 function loadStats(): BkStats {
@@ -52,6 +54,16 @@ export function BookmakerPanel() {
   const [stats, setStats] = useState<BkStats>({ staked: 0, payout: 0, bets: 0, wins: 0 });
   const [flash, setFlash] = useState<string | null>(null); // evento con gol reciente
 
+  // ====== v84.0 FORTUNA: apuesta gratis diaria + JACKPOT progresivo ======
+  const hoyStr = bkHoy();
+  const [freebet, setFreebet] = useState(() => {
+    const f = loadFreebet();
+    return f.date === bkHoy() ? f : { date: bkHoy(), used: false };
+  });
+  const [jackpot, setJackpot] = useState<number>(() => loadJackpot());
+  const jackpotRef = useRef(jackpot);
+  useEffect(() => { jackpotRef.current = jackpot; }, [jackpot]);
+
   const eventsRef = useRef<BkEvent[]>([]);
   const ticketsRef = useRef<BkTicket[]>([]);
   const tick = useRef(0);
@@ -59,8 +71,9 @@ export function BookmakerPanel() {
 
   // ====== INIT: cargar o generar jornada ======
   useEffect(() => {
+    // v84: los mercados de GUERRA nacen con la tensión global real del planeta
     let evs = loadEvents();
-    if (!evs) evs = generateEvents();
+    if (!evs) evs = generateEvents(Date.now(), getTension());
     // reembolsar tickets abiertos de una jornada anterior (evento inexistente)
     const tks = loadTickets();
     const ids = new Set(evs.map((e) => e.id));
@@ -122,13 +135,27 @@ export function BookmakerPanel() {
       changed = true;
       const won = t.legs.every((l) => choiceWon(map[l.eventId], l) === true);
       if (won) {
-        payoutDelta += t.potential; winsDelta += 1;
-        addCoins(t.potential, `Apuesta GANADA BETNACION x${t.legs.length}`);
+        // v84 FORTUNA: BONUS DE COMBINADA — más piernas, más premio (x3 +6% · x5 +12%)
+        const bonus = t.legs.length >= 5 ? 0.12 : t.legs.length >= 3 ? 0.06 : 0;
+        const pago = Math.round(t.potential * (1 + bonus));
+        payoutDelta += pago; winsDelta += 1;
+        addCoins(pago, `Apuesta GANADA BETNACION x${t.legs.length}${bonus > 0 ? ` · BONUS +${Math.round(bonus * 100)}%` : ""}`);
         addXp(35);
-        recordBet(t.stake, true, t.potential);
+        recordBet(t.stake, true, pago);
         sfx.coin();
-        toast.success(`¡APUESTA GANADA! +${t.potential} mon`, { description: t.legs.map((l) => `${l.choiceLabel} @${l.odd}`).join(" · ") });
-        return { ...t, status: "GANADA" as const, payout: t.potential, settledAt: Date.now() };
+        toast.success(`¡APUESTA GANADA! +${pago} mon`, { description: `${t.legs.map((l) => `${l.choiceLabel} @${l.odd}`).join(" · ")}${bonus > 0 ? ` · BONUS COMBINADA +${Math.round(bonus * 100)}%` : ""}` });
+        // v84 FORTUNA: JACKPOT — combinada de 3+ con cuota total ≥ 8.0 tiene un
+        // 6% de llevarse el bote progresivo (se alimenta con el 4% de cada apuesta)
+        const cuotaTotal = t.stake > 0 ? t.potential / t.stake : 0;
+        if (t.legs.length >= 3 && cuotaTotal >= 8 && Math.random() < 0.06) {
+          const bote = jackpotRef.current;
+          addCoins(bote, "★ JACKPOT FORTUNA BETNACION ★");
+          saveJackpot(BK_JACKPOT_BASE);
+          setJackpot(BK_JACKPOT_BASE);
+          sfx.achievement();
+          toast.success(`★ ¡JACKPOT DE LA FORTUNA! +${bote.toLocaleString()} mon ★`, { description: "La combinada perfecta se lleva el bote progresivo — el bote se reinicia a 5.000" });
+        }
+        return { ...t, status: "GANADA" as const, payout: pago, settledAt: Date.now() };
       }
       recordBet(t.stake, false, 0);
       sfx.error();
@@ -159,8 +186,17 @@ export function BookmakerPanel() {
   const placeBet = () => {
     if (!slip.length) return;
     if (stake < 10) { toast.error("Apuesta minima: 10 mon"); return; }
-    if (coins < stake) { toast.error("Monedas insuficientes"); return; }
-    spendCoins(stake, `Apuesta BETNACION x${slip.length}`);
+    // v84 FORTUNA: APUESTA GRATIS DIARIA — la primera apuesta del día de hasta
+    // 75ⓒ la paga la casa: cero riesgo para el comandante
+    const gratis = !freebet.used && stake <= BK_FREEBET_MONTO;
+    if (gratis) {
+      const nf = { date: hoyStr, used: true };
+      saveFreebet(nf);
+      setFreebet(nf);
+    } else {
+      if (coins < stake) { toast.error("Monedas insuficientes"); return; }
+      spendCoins(stake, `Apuesta BETNACION x${slip.length}`);
+    }
     const t: BkTicket = {
       id: `T-${Date.now()}-${Math.floor(Math.random() * 1e4)}`,
       placedAt: Date.now(), legs: [...slip], stake,
@@ -169,8 +205,12 @@ export function BookmakerPanel() {
     const next = [t, ...loadTickets()];
     saveTickets(next); setTickets(next); setSlip([]);
     setStats((s) => { const ns = { ...s, staked: s.staked + stake, bets: s.bets + 1 }; localStorage.setItem("vanguard-bk-stats", JSON.stringify(ns)); return ns; });
+    // v84: el 4% de cada apuesta engorda el JACKPOT progresivo
+    const nj = jackpotRef.current + Math.round(stake * 0.04);
+    saveJackpot(nj);
+    setJackpot(nj);
     sfx.coin();
-    toast.success(`Apuesta colocada · cuota ${totalOdd.toFixed(2)}`, { description: `Pago potencial: ${t.potential} mon` });
+    toast.success(`Apuesta colocada · cuota ${totalOdd.toFixed(2)}${gratis ? " · ¡GRATIS!" : ""}`, { description: `Pago potencial: ${t.potential} mon` });
   };
 
   // ====== CASHOUT ======
@@ -304,8 +344,27 @@ export function BookmakerPanel() {
         subtitle="Casa de apuestas · cuotas en vivo · mercados definidos"
         icon={<Dice5 className="w-4 h-4" />}
         color="green"
-        right={<div className="flex items-center gap-1.5 font-mono text-xs text-amber"><VIcon k="M" className="w-3.5 h-3.5" />{coins.toLocaleString()}</div>}
+        right={
+          <div className="flex items-center gap-2">
+            {/* v84: JACKPOT progresivo visible siempre */}
+            <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full border border-amber-hud/70 bg-amber-hud/10 font-mono text-[10px] font-bold text-amber">
+              <Star className="w-3 h-3 blink-soft" /> JACKPOT {jackpot.toLocaleString()}
+            </span>
+            <div className="flex items-center gap-1.5 font-mono text-xs text-amber"><VIcon k="M" className="w-3.5 h-3.5" />{coins.toLocaleString()}</div>
+          </div>
+        }
       />
+
+      {/* v84 FORTUNA: banner de la apuesta gratis diaria */}
+      {!freebet.used && (
+        <div className="hud-corner border border-amber-hud bg-amber-hud/10 px-3 py-2 flex items-center gap-2.5">
+          <Gift className="w-4 h-4 text-amber shrink-0" />
+          <div className="min-w-0">
+            <div className="font-mono text-[11px] font-bold text-amber uppercase tracking-widest">APUESTA GRATIS DE HOY · {BK_FREEBET_MONTO} MON</div>
+            <div className="text-[10px] text-muted-foreground">La casa pone el dinero: apuesta hasta {BK_FREEBET_MONTO}ⓒ sin riesgo, vale hasta medianoche.</div>
+          </div>
+        </div>
+      )}
 
       {/* stats de la casa */}
       <div className="grid grid-cols-4 gap-2">
