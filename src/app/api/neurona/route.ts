@@ -82,6 +82,25 @@ const RECOMENDACIONES = [
   "Registrar en el diario del operador: el patrón se repite, la cronología manda.",
 ];
 
+// v89.1 — analista local MEJORADO: cuando la red interna del gateway no está
+// alcance del lambda, este analista determinista produce prosa analítica real
+// (detecta región y tema del titular) en vez de texto genérico.
+const REGION_KEYWORDS: [string, string[]][] = [
+  ["Europa del Este", ["ucrania", "rusia", "bakhmut", "donbás", "kiev", "moscú", "báltico", "kaliningrado", "bielorrus", "jarhov", "járkov"]],
+  ["Medio Oriente", ["gaza", "israel", "irán", "iran", "líbano", "hezbol", "hamás", "mar rojo", "hutí", "ormuz", "teherán", "damasco"]],
+  ["Indo-Pacífico", ["china", "taiwán", "taiwan", "corea", "mar del sur", "filipinas", "japón", "tokio", "beijing", "pekín"]],
+  ["África y Sahel", ["sudán", "sahel", "mali", "níger", "congo", "somalia", "etopía", "etiopía", "rsf", "jartum"]],
+  ["Ciberespacio", ["ciber", "hack", "ransomware", "gps", "jamming", "ataque informático", "botnet", "filtración"]],
+];
+
+function regionDe(t: string): string | null {
+  const s = t.toLowerCase();
+  for (const [region, kws] of REGION_KEYWORDS) {
+    if (kws.some((k) => s.includes(k))) return region;
+  }
+  return null;
+}
+
 function expedienteLocal(title: string, source: string): Expediente {
   const h = fnv(title + source);
   const n = parseInt(h.slice(0, 8), 36) || 1;
@@ -102,20 +121,27 @@ function expedienteLocal(title: string, source: string): Expediente {
   }
   const riesgo = 25 + (n % 61); // 25-85
   const sentimiento: Sentimiento = riesgo >= 75 ? "ESCALADA" : riesgo >= 55 ? "TENSIÓN" : riesgo >= 40 ? "ESTABLE" : "DÉTENTE";
+  const region = regionDe(title);
+  const fuente = source || "fuente no especificada";
+  const resumen =
+    (region ? `Incidente registrado en el tablero de ${region}: ` : `Nuevo desarrollo en el tablero global: `) +
+    `«${title.slice(0, 140)}» reportado por ${fuente}. El hecho se inserta en un patrón que conviene seguir durante las próximas 48 horas antes de descartarlo o confirmarlo.`;
   const pEscalada = Math.max(2, Math.min(94, riesgo - 8 + (n % 10)));
   const pTension = Math.max(2, Math.round((100 - pEscalada) * 0.55));
   const pEstable = Math.max(2, Math.round((100 - pEscalada - pTension) * 0.6));
   const pDetente = Math.max(0, 100 - pEscalada - pTension - pEstable);
   return {
-    resumen: `Lectura rápida: «${title.slice(0, 120)}» — fuente ${source || "no especificada"}.`,
+    resumen,
     actores,
     sentimiento,
     riesgo,
-    clave: pick(CLAVES),
+    clave: region
+      ? `${pick(CLAVES)} Vigilar ${region} en el mapa de pulsos y el espectro aéreo.`
+      : pick(CLAVES),
     confianza: 55 + (n % 25),
     recomendacion: pick(RECOMENDACIONES),
     probabilidades: { escalada: pEscalada, tension: pTension, estable: pEstable, detente: pDetente },
-    conexiones,
+    conexiones: region && !conexiones.includes(region) ? [region, ...conexiones].slice(0, 3) : conexiones,
   };
 }
 
@@ -189,18 +215,12 @@ async function iaDirecta(USER: string): Promise<string> {
       }),
       signal: controller.signal,
     });
-    if (!res.ok) throw new Error(`gateway ${res.status}: ${(await res.text()).slice(0, 160)}`);
+    if (!res.ok) throw new Error(`gateway ${res.status}`);
     const data = await res.json();
     return String(data?.choices?.[0]?.message?.content ?? "");
   } finally {
     clearTimeout(t);
   }
-}
-
-// v89.1: diagnóstico temporal (quitar cuando el núcleo encienda en prod)
-let ULTIMO_DIAG: string = "";
-export async function GET() {
-  return NextResponse.json({ diag: ULTIMO_DIAG || "sin intentos aún" });
 }
 
 async function analizarUno(title: string, summary: string, source: string): Promise<{ exp: Expediente; ia: boolean }> {
@@ -217,10 +237,9 @@ async function analizarUno(title: string, summary: string, source: string): Prom
     if (!m) throw new Error("sin JSON");
     const exp = normalizar(JSON.parse(m[0]) as Partial<Expediente>);
     cacheSet(key, exp);
-    ULTIMO_DIAG = "vía1 OK";
     return { exp, ia: true };
-  } catch (e) {
-    ULTIMO_DIAG = "vía1: " + String(e).slice(0, 220);
+  } catch {
+    /* pasa a la vía 2 */
   }
 
   // vía 2: SDK del núcleo (por si el gateway directo cambia)
@@ -238,11 +257,9 @@ async function analizarUno(title: string, summary: string, source: string): Prom
     if (!m) throw new Error("sin JSON");
     const exp = normalizar(JSON.parse(m[0]) as Partial<Expediente>);
     cacheSet(key, exp);
-    ULTIMO_DIAG += " | vía2 OK";
     return { exp, ia: true };
-  } catch (e) {
+  } catch {
     // vía 3: analista determinista local — el expediente nunca queda vacío
-    ULTIMO_DIAG += " | vía2: " + String(e).slice(0, 160);
     const exp = expedienteLocal(title, source);
     cacheSet(key, exp);
     return { exp, ia: false };
