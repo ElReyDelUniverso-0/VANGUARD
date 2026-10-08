@@ -189,12 +189,18 @@ async function iaDirecta(USER: string): Promise<string> {
       }),
       signal: controller.signal,
     });
-    if (!res.ok) throw new Error(`gateway ${res.status}`);
+    if (!res.ok) throw new Error(`gateway ${res.status}: ${(await res.text()).slice(0, 160)}`);
     const data = await res.json();
     return String(data?.choices?.[0]?.message?.content ?? "");
   } finally {
     clearTimeout(t);
   }
+}
+
+// v89.1: diagnóstico temporal (quitar cuando el núcleo encienda en prod)
+let ULTIMO_DIAG: string = "";
+export async function GET() {
+  return NextResponse.json({ diag: ULTIMO_DIAG || "sin intentos aún" });
 }
 
 async function analizarUno(title: string, summary: string, source: string): Promise<{ exp: Expediente; ia: boolean }> {
@@ -211,9 +217,10 @@ async function analizarUno(title: string, summary: string, source: string): Prom
     if (!m) throw new Error("sin JSON");
     const exp = normalizar(JSON.parse(m[0]) as Partial<Expediente>);
     cacheSet(key, exp);
+    ULTIMO_DIAG = "vía1 OK";
     return { exp, ia: true };
-  } catch {
-    /* pasa a la vía 2 */
+  } catch (e) {
+    ULTIMO_DIAG = "vía1: " + String(e).slice(0, 220);
   }
 
   // vía 2: SDK del núcleo (por si el gateway directo cambia)
@@ -231,9 +238,11 @@ async function analizarUno(title: string, summary: string, source: string): Prom
     if (!m) throw new Error("sin JSON");
     const exp = normalizar(JSON.parse(m[0]) as Partial<Expediente>);
     cacheSet(key, exp);
+    ULTIMO_DIAG += " | vía2 OK";
     return { exp, ia: true };
-  } catch {
+  } catch (e) {
     // vía 3: analista determinista local — el expediente nunca queda vacío
+    ULTIMO_DIAG += " | vía2: " + String(e).slice(0, 160);
     const exp = expedienteLocal(title, source);
     cacheSet(key, exp);
     return { exp, ia: false };
