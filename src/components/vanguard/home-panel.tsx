@@ -10,7 +10,7 @@ import {
   Castle, Radar, Rocket, Swords, Joystick, Fingerprint, Coins, TrendingUp,
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair,
-  Wand2, Landmark, FolderOpen, Skull,
+  Wand2, Landmark, FolderOpen, Skull, Earth,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -58,6 +58,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },
   { tab: "bolsa", title: "BOLSA GEOPOLÍTICA", desc: "Invierte en monedas de países: gana o pierde al instante", icon: <TrendingUp className="w-6 h-6" />, hex: "#3EA6FF" },
   { tab: "osint", title: "SALA OSINT 3D", desc: "15 capas de inteligencia sobre un globo interactivo", icon: <Radar className="w-6 h-6" />, hex: "#38BDF8" },
+  // v93.0 VANGUARD EARTH: el googles de Vanguard
+  { tab: "tierra", title: "VANGUARD EARTH", desc: "El googles de Vanguard: satélite espía con contactos en vivo, sensores 1-7, cockpit y vuelo cinematográfico por todo el planeta", icon: <Earth className="w-6 h-6" />, hex: "#FFB347" },
   // v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables
   { tab: "expedientes", title: "ARCHIVO SECRETO", desc: "Expedientes desclasificados del FBI, CIA y NARA: ábrelos todos y súbele al rango OJO DE DIOS", icon: <FolderOpen className="w-6 h-6" />, hex: "#A855F7" },
   // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo · v60: 43 entradas + QUIZ · v61: 49 preguntas, interrogatorio 60s y tablón de eruditos
@@ -102,6 +104,7 @@ const TILE_IMG: Record<string, string> = {
   abusos: "/ilustraciones/abusos.jpg",
   memorial: "/ilustraciones/memorial.jpg",
   arcade: "/ilustraciones/arcade.jpg",
+  tierra: "/ilustraciones/planeta.jpg",
 };
 
 function timeAgo(iso: string): string {

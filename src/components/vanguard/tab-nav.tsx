@@ -97,7 +97,9 @@ export type TabKey =
   | "imperio"
   // v92.0 OJO DEL MUNDO: la tercera hornada del espejo — pronósticos, explicadores,
   // revista, GEOINT, monitor global, canal de briefing y escuela de estrategia
-  | "pronosticos" | "enclaves" | "extranjera" | "geoint" | "monitorglobal" | "canalbrief" | "estrategia";
+  | "pronosticos" | "enclaves" | "extranjera" | "geoint" | "monitorglobal" | "canalbrief" | "estrategia"
+  // v93.0 VANGUARD EARTH: el googles de Vanguard — simulador de satélite espía
+  | "tierra";
 
 interface TabDef {
   key: TabKey;
@@ -233,6 +235,8 @@ const TABS: Record<TabKey, TabDef> = {
   monitorglobal: { key: "monitorglobal", label: "Monitor Global (índices del núcleo neuronal)", short: "MONITOR", icon: <RadioTower className="w-3.5 h-3.5" />, color: "green" },
   canalbrief:    { key: "canalbrief",    label: "Canal Brief (briefing en vídeo con capítulos)", short: "BRIEF.TV", icon: <MonitorPlay className="w-3.5 h-3.5" />, color: "red" },
   estrategia:    { key: "estrategia",    label: "Estrategia Global (doctrinas y wargames)", short: "ESTRAT", icon: <GraduationCap className="w-3.5 h-3.5" />, color: "violet" },
+  // v93.0 VANGUARD EARTH — el googles de Vanguard (simulador de satélite espía)
+  tierra:        { key: "tierra",        label: "VANGUARD EARTH (el googles de Vanguard)", short: "EARTH", icon: <Earth className="w-3.5 h-3.5" />, color: "amber" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -309,8 +313,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, centinela, espectro y los 20 espejos de los grandes portales de conflicto del mundo — incluidos el RTS IMPERIO, la revista, los pronósticos y el OJO-GEOINT",
-    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.pronosticos, TABS.enclaves, TABS.extranjera, TABS.geoint, TABS.monitorglobal, TABS.canalbrief, TABS.estrategia, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "VANGUARD EARTH (el googles de Vanguard), sala OSINT, mapa, centinela, espectro y los 21 espejos de los grandes portales de conflicto del mundo — incluidos el RTS IMPERIO, la revista, los pronósticos y el OJO-GEOINT",
+    tabs: [TABS.tierra, TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.pronosticos, TABS.enclaves, TABS.extranjera, TABS.geoint, TABS.monitorglobal, TABS.canalbrief, TABS.estrategia, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

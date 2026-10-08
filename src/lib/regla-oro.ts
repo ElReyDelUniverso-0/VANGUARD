@@ -915,6 +915,14 @@ export const REGLA_ORO = {
       "La escuela del mando dentro de Vanguard: 4 doctrinas con árbol de mejora y contra-doctrina histórica, mesa de wargames con fuerzas, objetivos y regla especial por escenario, ciclo OODA animado en marcha perpetua, lecciones del aula y tabla de generales donde TU figura por mérito. Gana wargames y sube al ranking.",
     acento: "#C89AFF",
   },
+  tierra: {
+    titulo: "VANGUARD EARTH",
+    volanta: "El googles de Vanguard: el planeta entero bajo tu operador",
+    imagen: "/ilustraciones/planeta.jpg",
+    texto:
+      "El simulador de satélite espía de Vanguard: globo 3D fotorrealista con contactos en vivo (aviones, buques, satélites, drones, sismos y cámaras públicas), rastreo con estela, modo cockpit, 7 vistas de sensor (CRT, NVG, FLIR, térmico…), HUD militar con cajas de detección, analista por texto con el núcleo neuronal, capas de vientos, crónicas guiadas por los seis estrechos y director de escenas. Arrastra, rastrea, pregunta: ningún rincón del planeta queda sin mirar.",
+    acento: "#FFB347",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

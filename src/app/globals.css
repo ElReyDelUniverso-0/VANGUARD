@@ -1694,3 +1694,104 @@ html.modo-guerra body::after {
     animation: none !important;
   }
 }
+
+/* ===================== v93.0 VANGUARD EARTH ===================== */
+
+/* HUD militar: esquinas de encuadre + cruz central */
+.ve-esquina {
+  width: 26px; height: 26px;
+  border-top: 1.5px solid rgba(255, 179, 71, 0.75);
+  border-left: 1.5px solid rgba(255, 179, 71, 0.75);
+}
+.ve-cruz { width: 34px; height: 34px; opacity: 0.55; }
+.ve-cruz::before, .ve-cruz::after {
+  content: ""; position: absolute; background: rgba(255, 179, 71, 0.8);
+}
+.ve-cruz::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%); }
+.ve-cruz::after { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-50%); }
+
+/* punto REC parpadeante */
+@keyframes ve-rec {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
+.ve-rec {
+  width: 7px; height: 7px; border-radius: 9999px; background: #ff4d4d;
+  display: inline-block; animation: ve-rec 1.1s ease-in-out infinite;
+}
+
+/* cajas de detección sobre contactos (estilo etiqueta militar) */
+.ve-det {
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--det-col, #ffd27a);
+  background: rgba(5, 7, 12, 0.55);
+  padding: 1px 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 8px; letter-spacing: 0.08em;
+  color: var(--det-col, #ffd27a);
+  cursor: pointer; pointer-events: auto;
+  position: relative; user-select: none;
+}
+.ve-det::before, .ve-det::after {
+  content: ""; position: absolute; width: 5px; height: 5px;
+  border-color: var(--det-col, #ffd27a); border-style: solid;
+}
+.ve-det::before { top: -2px; left: -2px; border-width: 1.5px 0 0 1.5px; }
+.ve-det::after { bottom: -2px; right: -2px; border-width: 0 1.5px 1.5px 0; }
+.ve-det-rastro { box-shadow: 0 0 8px var(--det-col, #ffc94d); }
+
+/* botones circulares de control del planeta */
+.ve-btn {
+  width: 30px; height: 30px; border-radius: 9999px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 179, 71, 0.5);
+  color: #ffb347; transition: all 0.15s ease;
+}
+.ve-btn:hover { border-color: #ffb347; transform: scale(1.08); }
+.ve-btn-on { background: rgba(255, 179, 71, 0.25); border-color: #ffb347; }
+
+/* chips de la consola inferior */
+.ve-chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 8px; font-weight: 800; letter-spacing: 0.1em;
+  padding: 3px 6px; border: 1px solid rgba(255, 179, 71, 0.3);
+  color: rgba(230, 220, 200, 0.75); background: rgba(0, 0, 0, 0.5);
+  white-space: nowrap; transition: all 0.15s ease;
+}
+.ve-chip:hover { border-color: #ffb347; color: #ffb347; }
+.ve-chip-on { border-color: #ffb347; color: #ffb347; background: rgba(255, 179, 71, 0.14); }
+
+/* etiqueta RASTREO latiendo */
+@keyframes ve-lateja { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.ve-lateja { animation: ve-lateja 1.2s ease-in-out infinite; }
+
+/* overlays de sensor sobre el globo */
+.ve-ov-crt {
+  background: repeating-linear-gradient(0deg, rgba(0, 255, 120, 0.05) 0 1px, transparent 1px 3px);
+  mix-blend-mode: screen;
+}
+.ve-ov-nvg {
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(20, 80, 20, 0.5) 100%),
+    repeating-linear-gradient(0deg, rgba(120, 255, 120, 0.035) 0 1px, transparent 1px 2px);
+  mix-blend-mode: screen;
+}
+.ve-ov-flir {
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(60, 10, 60, 0.35) 100%);
+  mix-blend-mode: screen;
+}
+.ve-ov-espectral {
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(40, 10, 80, 0.4) 100%);
+  mix-blend-mode: screen;
+}
+.ve-crt-soft {
+  filter: saturate(1.3) contrast(1.15);
+  box-shadow: inset 0 0 14px rgba(0, 255, 120, 0.12);
+}
+
+/* scroll fino de la lista de contactos */
+.ve-scroll::-webkit-scrollbar { width: 4px; }
+.ve-scroll::-webkit-scrollbar-thumb { background: rgba(255, 179, 71, 0.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ve-rec, .ve-lateja { animation: none !important; }
+}
