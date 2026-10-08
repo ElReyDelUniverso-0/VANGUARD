@@ -18,6 +18,7 @@ import {
   Infinity as InfinityIcon, Bot, Vault, Briefcase, ScanLine, PenTool,
   FileSearch, Gauge, Ship,
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
+  BookMarked, FileStack, Plane, Bug, Waves, LineChart,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -88,7 +89,9 @@ export type TabKey =
   // v86.0 CENTINELA GLOBAL: mesa de verificación, alerta temprana y espectro
   | "verifica" | "centinela" | "espectro"
   // v89.0 OPERACIÓN ESPEJO: los grandes portales de conflicto del mundo, clonados
-  | "pulsos" | "evaluacion" | "perdidas" | "frentes" | "simulador" | "canales";
+  | "pulsos" | "evaluacion" | "perdidas" | "frentes" | "simulador" | "canales"
+  // v90.0 ESPEJOS SIN FIN: la segunda hornada del espejo infinito
+  | "mundial" | "wikiguerra" | "cielos" | "ciber" | "sismo" | "mercados";
 
 interface TabDef {
   key: TabKey;
@@ -207,6 +210,13 @@ const TABS: Record<TabKey, TabDef> = {
   frentes:       { key: "frentes",       label: "Línea del Frente (zonas de control)", short: "FRENTES", icon: <Waypoints className="w-3.5 h-3.5" />, color: "cyan" },
   simulador:     { key: "simulador",     label: "Simulador de Detonación", short: "SIMULADOR", icon: <Radiation className="w-3.5 h-3.5" />, color: "red" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
+  // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
+  mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
+  wikiguerra:    { key: "wikiguerra",    label: "WIKIGUERRA (enciclopedia del conflicto)", short: "WIKI", icon: <FileStack className="w-3.5 h-3.5" />, color: "cyan" },
+  cielos:        { key: "cielos",        label: "CIELOS (vuelos militares en vivo)", short: "CIELOS", icon: <Plane className="w-3.5 h-3.5" />, color: "violet" },
+  ciber:         { key: "ciber",         label: "CIBER (mapa de amenazas en vivo)", short: "CIBER", icon: <Bug className="w-3.5 h-3.5" />, color: "green" },
+  sismo:         { key: "sismo",         label: "SISMO (red sismológica global)", short: "SISMO", icon: <Waves className="w-3.5 h-3.5" />, color: "red" },
+  mercados:      { key: "mercados",      label: "Mercados de Guerra", short: "MERCADOS", icon: <LineChart className="w-3.5 h-3.5" />, color: "green" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -283,8 +293,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, centinela, espectro y los 6 espejos de los grandes portales de conflicto del mundo",
-    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa, centinela, espectro y los 12 espejos de los grandes portales de conflicto del mundo",
+    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

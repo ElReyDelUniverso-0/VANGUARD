@@ -1551,3 +1551,102 @@ html.modo-guerra body::after {
     animation: none !important;
   }
 }
+
+/* ===== v90.0 ESPEJOS SIN FIN — keyframes de la segunda hornada de espejos ===== */
+
+/* cinta de cotizaciones corriendo (MERCADOS) */
+@keyframes v90-cinta {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.v90-cinta { animation: v90-cinta 38s linear infinite; }
+
+/* barra que crece con brillo (barras de ranking / miedo / comparador) */
+@keyframes v90-brilla {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.35); }
+}
+.v90-barra { animation: v90-brilla 2.6s ease-in-out infinite; }
+
+/* sparkline con línea que se recorre (MERCADOS) */
+@keyframes v90-spark {
+  0% { stroke-dashoffset: 260; }
+  100% { stroke-dashoffset: 0; }
+}
+.v90-spark { stroke-dasharray: 260; animation: v90-spark 2.4s ease-out 1 both; }
+
+/* punto vivo al final del sparkline */
+@keyframes v90-punto {
+  0%, 100% { r: 2.2; opacity: 1; }
+  50% { r: 3.2; opacity: 0.65; }
+}
+.v90-punto { animation: v90-punto 1.6s ease-in-out infinite; }
+
+/* sismógrafo dibujando el trazo (SISMO) */
+@keyframes v90-sismo {
+  0% { stroke-dashoffset: 900; }
+  100% { stroke-dashoffset: 0; }
+}
+.v90-sismo { stroke-dasharray: 900; animation: v90-sismo 2.8s linear infinite; }
+.v90-papel {
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 12px);
+}
+
+/* escaneo de línea (cabecera del dossier y subrayado de título wiki) */
+@keyframes v90-escaneo {
+  0% { transform: translateX(-100%); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+.v90-escaneo { animation: v90-escaneo 3.2s ease-in-out infinite; }
+
+/* bandera que flota suave (MUNDIAL) */
+@keyframes v90-flota {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-3px) rotate(1.5deg); }
+}
+.v90-flota { animation: v90-flota 3.4s ease-in-out infinite; display: inline-block; }
+
+/* número que entra con destello (contadores y riesgo) */
+@keyframes v90-entra {
+  0% { opacity: 0; transform: translateY(6px) scale(0.92); text-shadow: 0 0 14px currentColor; }
+  100% { opacity: 1; transform: translateY(0) scale(1); text-shadow: 0 0 0 currentColor; }
+}
+.v90-entra { animation: v90-entra 0.5s ease-out both; }
+
+/* avión "sin señal" parpadeando (CIELOS) */
+@keyframes v90-parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.v90-parpadeo { animation: v90-parpadeo 1.15s steps(2, end) infinite; }
+
+/* barra de ciclo de patrulla del vuelo */
+.v90-ciclo { transition: width 1.8s linear; }
+
+/* contador ciber con flash */
+@keyframes v90-num {
+  0% { text-shadow: 0 0 16px currentColor; }
+  100% { text-shadow: 0 0 2px currentColor; }
+}
+.v90-num { animation: v90-num 0.6s ease-out both; }
+
+/* alerta doble: detonación sospechosa / DEFCON alto */
+@keyframes v90-lateja2 {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.v90-lateja2 { animation: v90-lateja2 1.3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v90-cinta, .v90-barra, .v90-spark, .v90-punto, .v90-sismo,
+  .v90-escaneo, .v90-flota, .v90-entra, .v90-parpadeo, .v90-num,
+  .v90-lateja2 {
+    animation: none !important;
+  }
+  .v90-spark { stroke-dasharray: none; }
+  .v90-sismo { stroke-dasharray: none; }
+}

@@ -802,6 +802,55 @@ export const REGLA_ORO = {
       "Ocho canales con personalidad propia fluyendo mensajes cada minuto, con vistas, reenvíos y sellos: cuando un mensaje coincide con un cable verificado del mundo, se estampa el visto bueno; lo que no coincide, se marca para tomarlo con pinzas.",
     acento: "#B48CFF",
   },
+  // v90.0 ESPEJOS SIN FIN — la segunda hornada del espejo infinito
+  mundial: {
+    titulo: "DOSSIER MUNDIAL DE NACIONES",
+    volanta: "La ficha institucional de cada actor del tablero",
+    imagen: "/ilustraciones/mundial.jpg",
+    texto:
+      "El dossier de país que todo analista consulta antes de opinar: trasfondo, geografía, gente, gobierno, economía y militar, con índice de riesgo Vanguard y comparador cara a cara de dos naciones. Se actualiza a diario y todo se lee en un minuto.",
+    acento: "#FFC94D",
+  },
+  wikiguerra: {
+    titulo: "WIKIGUERRA",
+    volanta: "La enciclopedia del conflicto que la comunidad corrige cada hora",
+    imagen: "/ilustraciones/wikiguerra.jpg",
+    texto:
+      "Artículos abiertos con caja de información, índice, bandos, comandantes, referencias y página de discusión: la memoria colectiva de la guerra, editada por operadores y verificada por la Mesa. Historial de ediciones incluido — aquí la verdad se construye a empujones.",
+    acento: "#3DDCFF",
+  },
+  cielos: {
+    titulo: "CIELOS — VUELOS MILITARES",
+    volanta: "Cada señal en el aire, con las que deciden no hablar",
+    imagen: "/ilustraciones/cielos.jpg",
+    texto:
+      "El rastreador de vuelos militares del juego: llamadas, altitud, velocidad y rumbo en vivo, patrullas orbitando zonas calientes y la lista de transpondedores que se apagan al entrar en misión. Lo que el ADS-B no muestra, la lista lo sospecha.",
+    acento: "#B48CFF",
+  },
+  ciber: {
+    titulo: "CIBER — MAPA DE AMENAZAS",
+    volanta: "La guerra que no hace ruido, arco por arco",
+    imagen: "/ilustraciones/ciber.jpg",
+    texto:
+      "Arcos de intrusión volando entre naciones en tiempo real, con contadores que ruedan, ranking de orígenes y objetivos, sectores atacados y un DEFCON ciber que late con la tensión del tablero. El frente invisible tiene su mapa — y ahora lo tienes abierto.",
+    acento: "#4DFFC4",
+  },
+  sismo: {
+    titulo: "SISMO — RED SISMOLÓGICA GLOBAL",
+    volanta: "La tierra habla primero: aprende a escucharla",
+    imagen: "/ilustraciones/sismo.jpg",
+    texto:
+      "Feed sísmico por magnitud y profundidad, anillos sobre el mapa, sismógrafo dibujando en vivo y detección educativa de detonaciones sospechosas: señales someras en sitios de prueba documentadas con perfil de explosión, no de falla. La vigilancia que mantiene a los tratados honestos.",
+    acento: "#FF8A3D",
+  },
+  mercados: {
+    titulo: "MERCADOS DE GUERRA",
+    volanta: "El dinero opina primero: cada frente mueve un precio",
+    imagen: "/ilustraciones/mercados.jpg",
+    texto:
+      "Terminal de economía de guerra con cinta corriendo, sparklines en vivo, crudo, gas, trigo, oro, uranio, fletes y el índice de defensa — empujados por la tensión real del tablero, con índice de miedo de guerra y contador de sanciones. Los contratos son ficticios; la lección es real.",
+    acento: "#9AE04D",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

@@ -208,6 +208,13 @@ const PerdidasPanel = dynamic(() => import("@/components/vanguard/panels/perdida
 const FrentesPanel = dynamic(() => import("@/components/vanguard/panels/frentes-panel").then((m) => m.FrentesPanel), { ssr: false, loading: PanelSkeleton });
 const SimuladorPanel = dynamic(() => import("@/components/vanguard/panels/simulador-panel").then((m) => m.SimuladorPanel), { ssr: false, loading: PanelSkeleton });
 const CanalesPanel = dynamic(() => import("@/components/vanguard/panels/canales-panel").then((m) => m.CanalesPanel), { ssr: false, loading: PanelSkeleton });
+// v90.0 ESPEJOS SIN FIN — la segunda hornada de espejos
+const MundialPanel = dynamic(() => import("@/components/vanguard/panels/mundial-panel").then((m) => m.MundialPanel), { ssr: false, loading: PanelSkeleton });
+const WikiguerraPanel = dynamic(() => import("@/components/vanguard/panels/wikiguerra-panel").then((m) => m.WikiguerraPanel), { ssr: false, loading: PanelSkeleton });
+const CielosPanel = dynamic(() => import("@/components/vanguard/panels/cielos-panel").then((m) => m.CielosPanel), { ssr: false, loading: PanelSkeleton });
+const CiberPanel = dynamic(() => import("@/components/vanguard/panels/ciber-panel").then((m) => m.CiberPanel), { ssr: false, loading: PanelSkeleton });
+const SismoPanel = dynamic(() => import("@/components/vanguard/panels/sismo-panel").then((m) => m.SismoPanel), { ssr: false, loading: PanelSkeleton });
+const MercadosPanel = dynamic(() => import("@/components/vanguard/panels/mercados-panel").then((m) => m.MercadosPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
 export default function Home() {
@@ -453,6 +460,12 @@ export default function Home() {
         {tab === "frentes" && <FrentesPanel />}
         {tab === "simulador" && <SimuladorPanel />}
         {tab === "canales" && <CanalesPanel />}
+        {tab === "mundial" && <MundialPanel />}
+        {tab === "wikiguerra" && <WikiguerraPanel />}
+        {tab === "cielos" && <CielosPanel />}
+        {tab === "ciber" && <CiberPanel />}
+        {tab === "sismo" && <SismoPanel />}
+        {tab === "mercados" && <MercadosPanel />}
         {tab === "mipais" && <MiPaisPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}
