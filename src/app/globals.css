@@ -1347,3 +1347,139 @@ html.modo-guerra body::after {
   pointer-events: none;
   border-top: 1px solid rgba(255, 176, 32, 0.4);
 }
+
+/* ============================================================
+   v87.0 EL DESPERTAR — el tablero respira, la arena tiembla
+   ============================================================ */
+
+/* TERMINADOR SOLAR: la línea del crepúsculo late suave */
+@keyframes v87-terminador {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.28; }
+}
+.terminador-latido {
+  animation: v87-terminador 6s ease-in-out infinite;
+}
+
+/* ONDA DE CHOQUE: el pulso sísico de las zonas críticas */
+@keyframes v87-onda {
+  0% { transform: scale(0.25); opacity: 0.85; stroke-width: 2.4; }
+  70% { opacity: 0.35; }
+  100% { transform: scale(2.6); opacity: 0; stroke-width: 0.4; }
+}
+.onda-choque {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: v87-onda 4.5s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+}
+
+/* SATÉLITE EN PASO: un espía cruza el tablero cada 18s */
+@keyframes v87-sat {
+  0% { transform: translate(-60px, 40px); opacity: 0; }
+  4% { opacity: 0.9; }
+  22% { transform: translate(480px, -50px); opacity: 0.9; }
+  27% { transform: translate(560px, -90px); opacity: 0; }
+  100% { transform: translate(1060px, -90px); opacity: 0; }
+}
+.sat-paso {
+  animation: v87-sat 18s linear infinite;
+  animation-delay: 3s;
+}
+
+/* EKG PLANETARIO: la línea de vida corre sin descanso */
+@keyframes v87-ekg {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -300; }
+}
+.ekg-corre {
+  stroke-dasharray: 60 240;
+  animation: v87-ekg 2.6s linear infinite;
+}
+
+/* LATIDO SOCIAL: barras del ecualizador respirando */
+@keyframes v87-latido-barra {
+  0%, 100% { height: 22%; opacity: 0.55; }
+  30% { height: 95%; opacity: 1; }
+  60% { height: 40%; opacity: 0.7; }
+}
+.latido-barra {
+  animation: v87-latido-barra 1.15s ease-in-out infinite;
+}
+
+/* MINIJUEGO — objetivos que vagan por la arena */
+@keyframes v87-vaga {
+  0% { translate: 0 0; }
+  25% { translate: 7px -9px; }
+  50% { translate: -8px 6px; }
+  75% { translate: 5px 8px; }
+  100% { translate: 0 0; }
+}
+.vaga-viva {
+  animation: v87-vaga 3s ease-in-out infinite;
+}
+
+/* MINIJUEGO — temblor de la arena al herir a un civil */
+@keyframes v87-tiembla {
+  0%, 100% { transform: translate(0, 0); }
+  15% { transform: translate(-7px, 4px); }
+  30% { transform: translate(6px, -5px); }
+  45% { transform: translate(-5px, -3px); }
+  60% { transform: translate(4px, 4px); }
+  80% { transform: translate(-2px, 1px); }
+}
+.arena-tiembla {
+  animation: v87-tiembla 0.38s linear;
+}
+
+/* MINIJUEGO — vignette roja en los últimos 10 segundos */
+.arena-roja::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(255, 30, 40, 0.22) 100%);
+  animation: v87-roja 1s ease-in-out infinite alternate;
+  z-index: 5;
+}
+@keyframes v87-roja {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
+
+/* MINIJUEGO — explosión de partículas en el punto del impacto */
+.boom-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 15;
+  transform: translate(-50%, -50%);
+}
+.boom-chispa {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--boom-c, #ffb020);
+  box-shadow: 0 0 8px 2px color-mix(in srgb, var(--boom-c, #ffb020) 60%, transparent);
+  animation: v87-chispa 0.6s ease-out forwards;
+}
+@keyframes v87-chispa {
+  0% { transform: translate(0, 0) scale(1.1); opacity: 1; }
+  100% {
+    transform: translate(
+      calc(cos(calc(var(--i) * 45deg)) * 34px),
+      calc(sin(calc(var(--i) * 45deg)) * 34px)
+    ) scale(0.15);
+    opacity: 0;
+  }
+}
+
+/* respetar a quien pide calma: el despertar también descansa */
+@media (prefers-reduced-motion: reduce) {
+  .terminador-latido, .onda-choque, .sat-paso, .ekg-corre,
+  .latido-barra, .vaga-viva, .arena-tiembla {
+    animation: none !important;
+  }
+}

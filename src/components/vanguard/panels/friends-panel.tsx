@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
+import { LatidoSocial } from "@/components/vanguard/latido-social";
 
 export function FriendsPanel() {
   const [search, setSearch] = useState("");
@@ -39,6 +41,7 @@ export function FriendsPanel() {
   return (
     <div className="space-y-3">
       <HeroOro panel="amigos" />
+      <LatidoSocial tono="green" />
       <PanelHeader
         title="Aliados y comandos"
         subtitle="Red de operadores · comparativa y seguimiento"

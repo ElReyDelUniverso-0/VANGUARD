@@ -3,6 +3,9 @@
 // v13 — RADAR DE DESINFORMACION: % de veracidad por noticia, voto comunitario
 // REAL/FAKE, ranking de medios; y CONEXIONES OCULTAS: la IA detecta patrones
 // entre eventos y la comunidad apuesta monedas a si estan relacionados.
+// v87.0 EL DESPERTAR: el feed ya no es una vitrina congelada — caza titulares
+// REALES de /api/news, les calcula veracidad determinista (FNV + ventaja a
+// agencias primarias) y los pinta EN VIVO sobre el PPI del radar.
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -10,9 +13,28 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, ShieldAlert, BadgeCheck, Link2, BrainCircuit, TrendingUp, Vote, Coins } from "lucide-react";
+import { ShieldCheck, ShieldAlert, BadgeCheck, Link2, BrainCircuit, TrendingUp, Vote, Coins, Zap } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+
+// ---------- Determinismo (mismo FNV que la Mesa de Verificación) ----------
+function hash(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+const BANDERAS_FAKES = [
+  "Sin fuente primaria", "Sin evidencia visual", "Exagera magnitud", "Geolocalización falsa",
+  "Metraje reciclado", "Sin fecha verificable", "Narrativa de desinformación", "Cadena anónima",
+];
+const BANDERAS_REALES = [
+  "Fuente agencia primaria", "Foto consistente", "2+ agencias confirman", "Documento oficial",
+  "Datos de aviación civil", "Imágenes satelitales", "Confirmación parcial",
+];
 
 // ====== DATOS ======
 interface NewsVeracity {
@@ -64,6 +86,38 @@ interface Connection {
   betAmount?: number;
 }
 
+// v87.0: noticias reales → veracidad determinista + banderas + antigüedad
+interface RealNews {
+  id: string;
+  title: string;
+  source: string;
+  publishedAt?: string | null;
+}
+
+function veracidadDe(titulo: string, source: string): { veracity: number; flags: string[] } {
+  const h = hash(`${titulo}|${source}`);
+  const h2 = hash(`${source}|${titulo}`);
+  const primaria = /reuters|\bap\b|afp|bbc|associated|al jazeera|cnn|\bdw\b|le monde|guardian|nytimes|bloomberg/i.test(`${source} ${titulo}`);
+  const viral = /tiktok|telegram|whatsapp|viral|blog/i.test(source);
+  let score = ((h % 100) / 100) * 72 + (primaria ? 20 : 0) + ((h2 % 100) / 100) * 10;
+  if (viral) score -= 30;
+  const veracity = Math.round(Math.min(97, Math.max(5, score)));
+  const pool = veracity >= 55 ? BANDERAS_REALES : BANDERAS_FAKES;
+  const nFlags = 2 + (h % 2);
+  const flags = Array.from({ length: nFlags }, (_, i) => pool[(h + i * 7) % pool.length]);
+  return { veracity, flags };
+}
+
+function agoDe(iso?: string | null): string {
+  if (!iso) return "ahora";
+  const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (Number.isNaN(m) || m < 0) return "ahora";
+  if (m < 60) return `hace ${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `hace ${h}h`;
+  return `hace ${Math.floor(h / 24)}d`;
+}
+
 const CONNECTION_POOL: Omit<Connection, "betsRelated" | "betsNot" | "resolvesAt">[] = [
   { id: "cx-1", a: "Corte del cable C-Lion1 en el Báltico", b: "Aumento de la flota sombra rusa de petroleros", similarity: 87, why: "Los 4 cortes de cables recientes coinciden con rutas de buques sombra con anclas arrastradas. Patrón de navegación anómala en 3 de 4 casos." },
   { id: "cx-2", a: "Jamming GPS en el Báltico", b: "Incidentes de drones no identificados sobre bases", similarity: 78, why: "Correlación temporal: cada episodio de jamming se sigue de avistamientos de drones en un radio de 200km en 72h." },
@@ -86,6 +140,44 @@ export function RadarPanel() {
   const [save, setSave] = useState<RadarSave>({ votes: {} });
   const [connections, setConnections] = useState<Connection[]>([]);
   const resolvedRef = useRef<Set<string>>(new Set());
+  // v87.0 EL DESPERTAR: caza de titulares reales para el feed de desinfo
+  const [enVivo, setEnVivo] = useState<NewsVeracity[]>([]);
+
+  useEffect(() => {
+    let alive = true;
+    const cazar = async () => {
+      try {
+        const r = await fetch("/api/news", { cache: "no-store" });
+        const j = await r.json();
+        if (!alive || !Array.isArray(j.items)) return;
+        const viva: NewsVeracity[] = (j.items as RealNews[])
+          .slice(0, 10)
+          .map((n) => {
+            const { veracity, flags } = veracidadDe(n.title, n.source);
+            return {
+              id: `v-${n.id}`,
+              title: n.title,
+              source: n.source,
+              veracity,
+              ago: agoDe(n.publishedAt),
+              flags,
+            };
+          });
+        setEnVivo(viva);
+      } catch { /* el radar nunca se rompe */ }
+    };
+    cazar();
+    const iv = setInterval(cazar, 90_000);
+    return () => { alive = false; clearInterval(iv); };
+  }, []);
+
+  // feed final: lo EN VIVO primero (máx 8) + 3 semillas evergreen de siempre
+  const feed = useMemo<NewsVeracity[]>(() => {
+    const vivas = enVivo.slice(0, 8).map((n) => ({ ...n, id: n.id }));
+    const vistas = new Set(vivas.map((v) => v.title.toLowerCase().slice(0, 40)));
+    const semillas = NEWS_FEED.filter((s) => !vistas.has(s.title.toLowerCase().slice(0, 40))).slice(0, 3);
+    return [...vivas, ...semillas];
+  }, [enVivo]);
 
   useEffect(() => setSave(loadSave()), []);
   useEffect(() => {
@@ -177,21 +269,33 @@ export function RadarPanel() {
       <AnimatePresence mode="wait">
         {tab === "desinfo" ? (
           <motion.div key="d" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-3">
-            {/* FEED */}
+            {/* FEED — v87.0: titulares reales en vivo + semillas */}
             <div className="space-y-2">
-              {NEWS_FEED.map((n) => {
+              {feed.map((n, idx) => {
                 const my = save.votes[n.id];
+                const esViva = n.id.startsWith("v-");
                 const badge = n.veracity >= 70
                   ? { cls: "text-neon border-neon-hud bg-neon-hud", icon: <BadgeCheck className="w-3 h-3" />, label: "VERIFICADA" }
                   : n.veracity >= 40
                   ? { cls: "text-amber border-amber-hud bg-amber-hud", icon: <ShieldAlert className="w-3 h-3" />, label: "DUDOSA" }
                   : { cls: "text-crisis border-crisis-hud bg-crisis-hud", icon: <ShieldAlert className="w-3 h-3" />, label: "NO VERIFICADA" };
                 return (
-                  <div key={n.id} className={cn("hud-panel p-3", n.veracity >= 70 ? "" : n.veracity < 40 ? "sombra-crisis border-crisis-hud" : "")}>
+                  <motion.div
+                    key={n.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: Math.min(idx * 0.05, 0.5), duration: 0.35 }}
+                    className={cn("hud-panel p-3", n.veracity >= 70 ? "" : n.veracity < 40 ? "sombra-crisis border-crisis-hud" : "")}
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="text-xs font-semibold leading-snug mb-1">{n.title}</div>
                         <div className="flex flex-wrap items-center gap-1.5 font-mono text-[8px] text-muted-foreground uppercase tracking-wide">
+                          {esViva && (
+                            <span className="px-1 py-0.5 border border-red-hud/60 text-red-hud flex items-center gap-0.5">
+                              <Zap className="w-2.5 h-2.5" /> en vivo
+                            </span>
+                          )}
                           <span className={cn("px-1 py-0.5 border", n.veracity >= 70 ? "text-neon border-neon-hud" : "text-amber border-amber-hud")}>{n.source}</span>
                           <span>{n.ago}</span>
                         </div>
@@ -227,9 +331,14 @@ export function RadarPanel() {
                         </>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
+              {enVivo.length === 0 && (
+                <div className="hud-panel p-3 text-center font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
+                  adquiriendo señales del mundo — las semillas de siempre sostienen el radar
+                </div>
+              )}
             </div>
 
             {/* v81: PPI DEL RADAR — el barrido de siempre, ahora visible */}
@@ -247,11 +356,21 @@ export function RadarPanel() {
                 <span className="absolute top-1/2 left-0 right-0 h-px bg-neon-hud/20" />
                 {/* barrido rotatorio */}
                 <div className="radar-sweep rounded-full" />
-                {/* contactos: señales de desinfo detectadas */}
-                <span className="absolute w-1.5 h-1.5 rounded-full bg-neon ping-sonar" style={{ left: "30%", top: "38%" }} />
-                <span className="absolute w-1.5 h-1.5 rounded-full bg-amber ping-sonar" style={{ left: "62%", top: "30%", animationDelay: "0.9s" }} />
-                <span className="absolute w-1.5 h-1.5 rounded-full bg-crisis ping-sonar" style={{ left: "55%", top: "66%", animationDelay: "1.7s" }} />
-                <span className="absolute w-1.5 h-1.5 rounded-full bg-electric" style={{ left: "24%", top: "64%" }} />
+                {/* contactos: derivados del feed vivo — el radar refleja el mundo */}
+                {feed.slice(0, 4).map((n, i) => {
+                  const h = hash(n.id);
+                  const color = n.veracity >= 70 ? "bg-neon" : n.veracity >= 40 ? "bg-amber" : "bg-crisis";
+                  const left = 22 + (h % 56);
+                  const top = 24 + ((h >> 5) % 52);
+                  return (
+                    <span
+                      key={n.id}
+                      title={`${n.veracity}% · ${n.title.slice(0, 80)}`}
+                      className={cn("absolute w-1.5 h-1.5 rounded-full", color, i < 3 && "ping-sonar")}
+                      style={{ left: `${left}%`, top: `${top}%`, animationDelay: `${(h % 18) / 10}s` }}
+                    />
+                  );
+                })}
               </div>
               <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 font-mono text-[8px] text-muted-foreground uppercase">
                 <span className="text-neon">● verificados</span>

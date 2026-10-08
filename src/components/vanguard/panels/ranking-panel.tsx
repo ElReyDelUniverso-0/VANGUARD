@@ -101,7 +101,7 @@ function WeekBoard() {
               )}
             >
               <span className={cn("w-6", medalClass(i + 1))}>#{i + 1}</span>
-              <FlagBadge country={r.tag} size={12} />
+              <FlagBadge code={r.tag} size="sm" />
               <span className={cn("flex-1 truncate", r.isPlayer ? "text-amber font-bold" : "text-muted-foreground")}>
                 {r.name}{r.isPlayer ? " ← TÚ" : ""}
               </span>
@@ -200,7 +200,7 @@ function ScholarsBoard() {
               )}
             >
               <span className={cn("w-6", medalClass(i + 1))}>#{i + 1}</span>
-              <FlagBadge country={r.tag} size={12} />
+              <FlagBadge code={r.tag} size="sm" />
               <span className={cn("flex-1 truncate", r.isPlayer ? "text-red-hud font-bold" : "text-muted-foreground")}>
                 {r.name}{r.isPlayer ? " ← TÚ" : ""}
               </span>

@@ -3,9 +3,13 @@
 // Mapa mundial detallado (geografia real Natural Earth via world-paths.json)
 // Soporta: marcadores de conflicto, camaras del jugador con radio de vision,
 // y modo despliegue (click en cualquier punto del mundo -> lat/lng).
-import { useMemo, useCallback } from "react";
+// v87.0 EL DESPERTAR: el tablero respira — patrullas militares reales con estela,
+// terminador solar (la noche avanza por el planeta), ondas de choque en zonas
+// críticas y un satélite que cruza el mapa en cada pasada.
+import { useMemo, useCallback, useState } from "react";
 import worldPaths from "@/lib/world-paths.json";
 import { geoMercator } from "d3-geo";
+import type { MapPatrulla } from "@/lib/patrullas";
 import type { ConflictRegion } from "@/lib/game-data";
 import type { PlacedCamera } from "@/lib/game-store";
 import { getCameraModel } from "@/lib/camera-data";
@@ -60,6 +64,10 @@ export interface WorldMapProps {
   pings?: MapPing[];
   // v86.0 CENTINELA: capas tácticas conmutables (bases, energía, exclusiones…)
   capas?: CapaTactica[];
+  // v87.0 EL DESPERTAR: patrullas militares en vivo (naval/aérea/dron)
+  patrullas?: MapPatrulla[];
+  // v87.0: apaga el terminador solar (por defecto el planeta gira)
+  noTerminador?: boolean;
   className?: string;
 }
 
@@ -97,12 +105,24 @@ export function WorldMapSVG({
   routes = [],
   pings = [],
   capas = [],
+  patrullas = [],
+  noTerminador = false,
   customColors,
   className,
 }: WorldMapProps) {
   const land = useMemo(() => worldPaths.landPath, []);
   const borders = useMemo(() => worldPaths.borderPath, []);
   const graticule = useMemo(() => worldPaths.graticulePath, []);
+
+  // v87.0 TERMINADOR SOLAR: el centro de la noche avanza con la hora UTC.
+  // El sol culmina a las 12:00 locales → su antípoda es el corazón de la noche.
+  const [noche] = useState(() => {
+    const now = new Date();
+    const utcH = now.getUTCHours() + now.getUTCMinutes() / 60;
+    const nocheLng = ((12 - utcH) * 15 + 180) % 360 - 180; // centro de la noche
+    const p = projection([nocheLng, 10]);
+    return { x: p?.[0] ?? WIDTH / 2, y: p?.[1] ?? HEIGHT / 2 };
+  });
 
   const handleClick = useCallback(
     (e: React.MouseEvent<SVGSVGElement>) => {
@@ -148,6 +168,12 @@ export function WorldMapSVG({
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        {/* v87.0: noche del terminador solar */}
+        <radialGradient id="wm-noche" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#03040a" stopOpacity="0.95" />
+          <stop offset="55%" stopColor="#05070f" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#0a1020" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       <rect width={WIDTH} height={HEIGHT} fill="url(#wm-ocean)" />
@@ -157,6 +183,37 @@ export function WorldMapSVG({
       {/* Continentes reales */}
       <path d={land} fill="url(#wm-land)" stroke={showSat ? "#1f4030" : "rgba(217,167,32,0.4)"} strokeWidth="0.7" />
       <path d={borders} fill="none" stroke="rgba(150,150,170,0.14)" strokeWidth="0.4" />
+
+      {/* v87.0 TERMINADOR SOLAR — la noche cae sobre la mitad del planeta que
+          corresponde según la hora UTC real. El mapa deja de ser eterno: hay
+          orillas en la oscuridad y orillas al sol, como la Tierra de verdad. */}
+      {!noTerminador && (
+        <g pointerEvents="none">
+          <ellipse
+            cx={noche.x}
+            cy={noche.y}
+            rx={WIDTH * 0.27}
+            ry={HEIGHT * 0.62}
+            fill="url(#wm-noche)"
+            opacity="0.5"
+          />
+          {/* banda del crepúsculo — la línea donde el mundo se apaga */}
+          <ellipse
+            cx={noche.x}
+            cy={noche.y}
+            rx={WIDTH * 0.27}
+            ry={HEIGHT * 0.62}
+            fill="none"
+            stroke="rgba(120,150,220,0.14)"
+            strokeWidth="3"
+            strokeDasharray="14 10"
+            className="terminador-latido"
+          />
+          <text x={noche.x} y={HEIGHT - 10} fill="rgba(150,170,230,0.4)" fontSize="7.5" fontFamily="monospace" textAnchor="middle" letterSpacing="2">
+            NOCHE SOBRE ESTE HEMISFERIO · {new Date().getUTCHours().toString().padStart(2, "0")}:{new Date().getUTCMinutes().toString().padStart(2, "0")} UTC
+          </text>
+        </g>
+      )}
 
       {/* Rutas de red (narcotrafico / afiliaciones) — v81: balizas vivas + convoy que viaja */}
       {routes.length > 0 && (
@@ -185,6 +242,44 @@ export function WorldMapSVG({
                     {r.label}
                   </text>
                 )}
+              </g>
+            );
+          })}
+        </g>
+      )}
+
+      {/* v87.0 PATRULLAS MILITARES EN VIVO — convoy con estela por rutas reales */}
+      {patrullas.length > 0 && (
+        <g fill="none">
+          {patrullas.map((p) => {
+            const a = projectLatLng(p.from[0], p.from[1]);
+            const b = projectLatLng(p.to[0], p.to[1]);
+            const mx = (a.x + b.x) / 2;
+            const my = (a.y + b.y) / 2 - Math.abs(b.x - a.x) * 0.14 - 10;
+            const d = `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`;
+            const esAereo = p.kind === "AEREA" || p.kind === "DRON";
+            return (
+              <g key={`pt-${p.id}`}>
+                {/* estela del convoy */}
+                <path d={d} stroke={p.color} strokeWidth="0.9" opacity="0.16" strokeDasharray="3 5" />
+                <path d={d} stroke={p.color} strokeWidth="1.5" opacity="0.7" strokeDasharray="14 86" className="route-flow" />
+                {/* la unidad viaja: los barcos no giran con la ruta, los aviones sí */}
+                <g filter="url(#wm-glow)">
+                  <g>
+                    <animateMotion dur={`${p.dur}s`} repeatCount="indefinite" path={d} rotate={esAereo ? "auto" : undefined} />
+                    {esAereo ? (
+                      <path d="M 0 -4 L 3.4 3.4 L 0 1.6 L -3.4 3.4 Z" fill={p.color} opacity="0.95" />
+                    ) : (
+                      <path d="M -3.4 2.8 L -3.4 -0.6 L 0 -3 L 3.4 -0.6 L 3.4 2.8 Z" fill={p.color} opacity="0.95" />
+                    )}
+                  </g>
+                </g>
+                <circle cx={a.x} cy={a.y} r="2.2" fill={p.color} opacity="0.8" />
+                <circle cx={b.x} cy={b.y} r="2.2" fill={p.color} opacity="0.8" />
+                <circle cx={a.x} cy={a.y} r="4.6" fill="none" stroke={p.color} strokeWidth="0.7" className="beacon" style={{ color: p.color }} />
+                <text x={mx} y={my - 3} fill={p.color} fontSize="6.8" fontFamily="monospace" opacity="0.8" textAnchor="middle">
+                  {p.label}
+                </text>
               </g>
             );
           })}
@@ -267,6 +362,11 @@ export function WorldMapSVG({
               filter={isSel ? "url(#wm-glow)" : undefined}
             >
               <circle cx={p.x} cy={p.y} r={radius * 2.6} fill={color} opacity={0.1} />
+              {/* v87.0 ONDA DE CHOQUE — el pulso sísico de una zona crítica: cada 4.5s
+                  una onda expansiva nace del conflicto y estremece el tablero */}
+              {c.level === "CRITICO" && (
+                <circle cx={p.x} cy={p.y} r={radius * 3.2} fill="none" stroke={color} strokeWidth="1.6" className="onda-choque" />
+              )}
               {/* v81: pings de sonar en zonas calientes — el mapa emite señal */}
               {esCaliente && (
                 <g>
@@ -410,6 +510,19 @@ export function WorldMapSVG({
               </g>
             );
           })}
+        </g>
+      )}
+
+      {/* v87.0 SATÉLITE EN PASO — cada ~18s un satélite espía cruza el tablero
+          con su línea de escaneo: el mundo está siendo mirado ahora mismo */}
+      {!noTerminador && (
+        <g pointerEvents="none" className="sat-paso" opacity="0">
+          <g transform="translate(0, 70)">
+            <path d="M 0 0 L 8 -3 L 16 0 L 8 3 Z" fill="#9fd6ff" opacity="0.9" />
+            <rect x="-9" y="-7" width="7" height="14" fill="#9fd6ff" opacity="0.45" transform="rotate(-20 0 0)" />
+            <rect x="17" y="-7" width="7" height="14" fill="#9fd6ff" opacity="0.45" transform="rotate(-20 0 0)" />
+            <line x1="10" y1="-16" x2="10" y2="16" stroke="#9fd6ff" strokeWidth="0.7" opacity="0.5" strokeDasharray="4 3" />
+          </g>
         </g>
       )}
 

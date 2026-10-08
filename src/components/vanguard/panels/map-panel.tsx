@@ -30,6 +30,8 @@ import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
 // v86.0 CENTINELA: capas tácticas conmutables (bases, energía, exclusiones, bloqueos, población)
 import { CAPAS_TACTICAS, capasActivas } from "@/lib/capas-tacticas";
+// v87.0 EL DESPERTAR: patrullas militares reales recorriendo el tablero
+import { PATRULLAS } from "@/lib/patrullas";
 // v33 ESCUELA DE GUERRA — vista MILITAR 3D dentro del mapa informativo:
 // el mismo globo satelital del Ojo de Dios con aviones/tanques/infantería.
 import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type MilUnitCache, type UnitKind } from "@/lib/military-units";
@@ -227,6 +229,21 @@ export function MapPanel() {
   const [unitCache] = useState<MilUnitCache>(() => newMilUnitCache());
   const recordOpenMap = useGameStore((s) => s.recordOpenMap);
   const cameras = useGameStore((s) => s.cameras);
+
+  // v87.0 DESPERTAR DEL TEATRO: arranque cinemático "ADQUIRIENDO SEÑAL SATELITAL"
+  // una vez por sesión — el mapa se levanta como se levanta un cuartel general
+  const [boot, setBoot] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !sessionStorage.getItem("vanguard-mapa-despertar");
+  });
+  useEffect(() => {
+    if (!boot) return;
+    const t1 = setTimeout(() => {
+      setBoot(false);
+      try { sessionStorage.setItem("vanguard-mapa-despertar", "1"); } catch {}
+    }, 2400);
+    return () => clearTimeout(t1);
+  }, [boot]);
 
   // v33: suscripción ligera al mp:state global (misma fuente que Vista Dios)
   useEffect(() => {
@@ -482,6 +499,50 @@ export function MapPanel() {
         <div className="lg:col-span-2 hud-corner relative overflow-hidden">
           {/* v81: barrido satelital — el sensor peina el mapa de norte a sur */}
           <div className="barrido-map z-10" />
+          {/* v87.0 ARRANQUE CINEMÁTICO: adquisición de señal satelital */}
+          <AnimatePresence>
+            {boot && (
+              <motion.div
+                key="despertar"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.7 } }}
+                className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-3 bg-[#04050b]/95 pointer-events-none"
+              >
+                <motion.div
+                  initial={{ scale: 1.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.9, ease: "easeOut" }}
+                  className="relative w-16 h-16"
+                >
+                  <span className="absolute inset-0 rounded-full border-2 border-amber-hud/70 animate-ping" />
+                  <span className="absolute inset-2 rounded-full border border-amber-hud/50" />
+                  <Satellite className="absolute inset-0 m-auto w-6 h-6 text-amber" />
+                </motion.div>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.35 }}
+                  className="font-mono text-[11px] uppercase tracking-[0.35em] text-amber"
+                >
+                  adquiriendo señal satelital
+                </motion.p>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: 200 }}
+                  transition={{ duration: 1.9, ease: "easeInOut" }}
+                  className="h-0.5 bg-gradient-to-r from-transparent via-amber-hud to-transparent"
+                />
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.1 }}
+                  className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground"
+                >
+                  patrullas en el aire · flotas en el mar · la noche avanza
+                </motion.p>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {milView ? (
             /* v33 GLOBO MILITAR 3D: satélite + flota en vivo */
             <GlobeMap3D
@@ -520,6 +581,7 @@ export function MapPanel() {
               routes={modeDef.routes}
               customColors={customColors}
               capas={capasActivas(capasOn)}
+              patrullas={PATRULLAS}
             />
           )}
           <div className="absolute top-2 left-2 text-[10px] font-mono text-muted-foreground bg-background/80 px-2 py-1 hud-corner border-amber-hud">
@@ -527,6 +589,12 @@ export function MapPanel() {
               ? "GLOBO MILITAR 3D · UNIDADES EN VIVO"
               : view3d ? (viewMode === "satelite" ? "SATELITE · NASA BLUE MARBLE" : viewMode === "noche" ? "ORBITA NOCTURNA · LUCES DE CIUDADES" : "GLOBO 3D · WEBGL · ARRASTRA PARA ROTAR") : "LAT/LNG · MERCATOR · NE-110M"} · {mode}
           </div>
+          {!milView && !view3d && (
+            <div className="absolute top-2 right-2 text-[9px] font-mono bg-background/80 px-2 py-1 border border-cyan-hud/40 text-cyan-hud flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-hud animate-pulse" />
+              {PATRULLAS.length} PATRULLAS EN EL TABLERO
+            </div>
+          )}
           {/* v33 overlay del globo militar: contador de flota + estado de señal */}
           {milView && (
             <div className="absolute top-2 right-2 flex flex-col items-end gap-1">

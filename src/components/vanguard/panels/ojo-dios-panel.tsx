@@ -20,6 +20,8 @@ import { PlanetaVivo } from "@/components/vanguard/planeta-vivo";
 import { AtlasSecreto } from "@/components/vanguard/atlas-secreto";
 // v82.0 TODO EL MUNDO — teletipo de mensajes en vivo constantes
 import { TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
+// v87.0 EL DESPERTAR — signos vitales del planeta: el Ojo toma el pulso del mundo
+import { SignosVitales } from "@/components/vanguard/signos-vitales";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
@@ -327,6 +329,10 @@ export function OjoDiosPanel() {
         altura={250}
         tinte="luna"
       />
+
+      {/* v87.0 SIGNOS VITALES DEL PLANETA — población que nace, tensiones que
+          respiran y un electrocardiograma que nunca deja de correr */}
+      <SignosVitales online={totalOnline} />
 
       {/* v82.0 TELETIPO — mensajes en vivo constantes del sistema Vanguard */}
       <TeletipoFeed max={10} intervaloMs={5200} titulo="EL MUNDO AHORA MISMO" />

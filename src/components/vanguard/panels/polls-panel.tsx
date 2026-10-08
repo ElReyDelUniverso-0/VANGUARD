@@ -20,6 +20,8 @@ import { POLLS, FORUM_CAT_COLOR } from "@/lib/social-data";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
+import { LatidoSocial } from "@/components/vanguard/latido-social";
 
 interface UserPollWithVotes extends UserPoll {
   votes: number[];
@@ -205,6 +207,7 @@ export function PollsPanel() {
   return (
     <div className="space-y-3">
       <HeroOro panel="encuestas" />
+      <LatidoSocial tono="amber" />
       <PanelHeader
         title="Encuestas del mundo"
         subtitle={`${stats.voted}/${stats.total} votadas · ENCUESTA DEL MUNDO +25ⓒ/día · crea las tuyas (+1 gema)`}

@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
+import { LatidoSocial } from "@/components/vanguard/latido-social";
 
 const LS_MY_COUNTRY = "vanguard_mypais_v1"; // cuenta dedicada a un país
 const LS_MY_COUNTRY_SINCE = "vanguard_mypais_since";
@@ -172,6 +174,7 @@ export function EmbajadoresPanel() {
   return (
     <div className="space-y-3">
       <HeroOro panel="embajadores" />
+      <LatidoSocial tono="cyan" />
       <PanelHeader
         title="Embajadores · Elige quién defiende a tu país"
         subtitle={`ciclo ${cyc.cycle} · ${cyc.daysLeft} días restantes · elecciones cada ${Math.round(ELECTION_CYCLE_MS / 86400000)} días`}

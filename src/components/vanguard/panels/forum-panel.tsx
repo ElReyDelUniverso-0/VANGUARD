@@ -21,6 +21,8 @@ import { useGameStore } from "@/lib/game-store";
 import { FORUM_SEED, FORUM_CATEGORIES, FORUM_CAT_COLOR, hoursAgoToText, formatViews } from "@/lib/social-data";
 import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
+import { LatidoSocial } from "@/components/vanguard/latido-social";
 
 interface ThreadView {
   id: string;
@@ -424,6 +426,7 @@ export function ForumPanel() {
   return (
     <div className="space-y-3">
       <HeroOro panel="foros" />
+      <LatidoSocial tono="violet" />
       {/* v79 — CTA al CONSEJO DE ACERO: la IA deliberada lo que la comunidad discute */}
       <div className="hud-panel p-3" style={{ borderColor: "#00E5FF44" }}>
         <div className="flex items-center gap-2.5 flex-wrap">

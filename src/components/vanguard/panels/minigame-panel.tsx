@@ -1,5 +1,10 @@
 "use client";
 
+// Threat Assessment — minijuego de clasificación de amenazas.
+// v87.0 EL DESPERTAR: JUGO DE VERDAD — números flotantes que nacen del impacto,
+// explosiones de partículas, la arena tiembla cuando fallas, los objetivos se
+// mueven por el tablero y el aire se tiñe de rojo en el tramo final.
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -20,7 +25,12 @@ interface ThreatTarget {
   emoji: string;
   spawnTime: number;
   ttl: number; // ms to disappear
+  driftDur: number; // v87.0: duración de la deriva — ningún objetivo está quieto
 }
+
+// v87.0: números flotantes del impacto (+10 ×2) y partículas de explosión
+interface Floater { id: number; x: number; y: number; texto: string; color: string; }
+interface Boom { id: number; x: number; y: number; color: string; }
 
 const TARGET_TYPES = [
   { type: "HOSTIL" as const, emoji: "bomb", points: 10, penalty: 0 },
@@ -45,6 +55,11 @@ export function MiniGamePanel() {
   const [combo, setCombo] = useState(1);
   const [gameOver, setGameOver] = useState(false);
   const [highScore, setHighScore] = useState(0);
+  // v87.0 jugo: floaters + booms + shake de la arena
+  const [floaters, setFloaters] = useState<Floater[]>([]);
+  const [booms, setBooms] = useState<Boom[]>([]);
+  const [shake, setShake] = useState(false);
+  const juiceId = useRef(0);
 
   const nextId = useRef(0);
   const spawnTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -111,6 +126,7 @@ export function MiniGamePanel() {
         emoji: type.emoji,
         spawnTime: Date.now(),
         ttl: type.type === "HOSTIL" ? 1800 : 1500,
+        driftDur: 2.2 + Math.random() * 2.6, // v87.0: cada objetivo vaga a su ritmo
       };
       setTargets((t) => [...t, newTarget].slice(-12));
     }, SPAWN_INTERVAL);
@@ -179,6 +195,19 @@ export function MiniGamePanel() {
   // cleanup on unmount
   useEffect(() => stopTimers, [stopTimers]);
 
+  // v87.0: número flotante + explosión + (opcional) temblor
+  const juice = (x: number, y: number, texto: string, color: string, tiembla: boolean) => {
+    const id = juiceId.current++;
+    setFloaters((f) => [...f, { id, x, y, texto, color }].slice(-10));
+    setBooms((b) => [...b, { id, x, y, color }].slice(-8));
+    setTimeout(() => setFloaters((f) => f.filter((fl) => fl.id !== id)), 850);
+    setTimeout(() => setBooms((b) => b.filter((bo) => bo.id !== id)), 620);
+    if (tiembla) {
+      setShake(true);
+      setTimeout(() => setShake(false), 380);
+    }
+  };
+
   const handleHit = (target: ThreatTarget, e: React.MouseEvent) => {
     e.stopPropagation();
     // FIX A5: guard anti doble-clic — un objetivo ya procesado no vuelve a puntuar
@@ -192,6 +221,7 @@ export function MiniGamePanel() {
       setStreak(0);
       setCombo(1);
       sfx.error();
+      juice(target.x, target.y, `${type.points}`, "#FF3B30", true); // v87.0: la arena tiembla por el civil
     } else {
       const newStreak = streak + 1;
       // FIX A3: orden corregido (>=10 capturaba todo >=5 y el x3 era código muerto)
@@ -200,7 +230,9 @@ export function MiniGamePanel() {
       setCombo(newCombo);
       setBestStreak((b) => Math.max(b, newStreak));
       setHits((h) => h + 1);
-      setScore((s) => s + type.points * newCombo);
+      const gained = type.points * newCombo;
+      setScore((s) => s + gained);
+      juice(target.x, target.y, `+${gained}${newCombo > 1 ? ` ×${newCombo}` : ""}`, type.type === "HOSTIL" ? "#FFB020" : "#22D3EE", false);
       if (newCombo > 1) sfx.streak();
       else sfx.coin();
     }
@@ -323,7 +355,11 @@ export function MiniGamePanel() {
 
           {/* Game arena */}
           <div
-            className="hud-corner relative overflow-hidden scanline"
+            className={cn(
+              "hud-corner relative overflow-hidden scanline",
+              shake && "arena-tiembla", // v87.0: temblor por civil
+              timeLeft <= 10 && playing && "arena-roja" // v87.0: el aire se tiñe al final
+            )}
             style={{ aspectRatio: "16/10", minHeight: 280, maxHeight: "60vh", background: "linear-gradient(to bottom, #05050c 0%, #0d0a18 55%, #1a0f10 100%)" }}
             onClick={handleMiss}
           >
@@ -355,11 +391,13 @@ export function MiniGamePanel() {
                     exit={{ scale: 0.5, opacity: 0 }}
                     onClick={(e) => handleHit(t, e)}
                     className={cn(
-                      "relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-2xl sm:text-3xl hud-corner transition-transform hover:scale-110",
+                      "relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-2xl sm:text-3xl hud-corner transition-transform hover:scale-110 vaga-viva",
                       t.type === "HOSTIL" && "border-red-hud bg-red-hud/30 glow-red",
                       t.type === "NEUTRAL" && "border-cyan-hud bg-cyan-hud/30",
                       t.type === "CIVIL" && "border-green-hud bg-green-hud/30"
                     )}
+                    // v87.0: cada objetivo deriva a su propio ritmo — la arena respira
+                    style={{ animationDuration: `${t.driftDur}s` }}
                   >
                     <VIcon k={t.emoji} className="w-6 h-6 sm:w-7 sm:h-7 text-foreground" />
                     {/* TTL ring */}
@@ -376,6 +414,44 @@ export function MiniGamePanel() {
                     </svg>
                   </motion.button>
                 </div>
+              ))}
+            </AnimatePresence>
+
+            {/* v87.0 EXPLOSIONES — 8 partículas que nacen del impacto */}
+            <AnimatePresence>
+              {booms.map((b) => (
+                <div
+                  key={`boom-${b.id}`}
+                  className="boom-burst pointer-events-none"
+                  style={{ left: `${b.x}%`, top: `${b.y}%`, ["--boom-c" as string]: b.color }}
+                >
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <span key={i} className="boom-chispa" style={{ ["--i" as string]: i }} />
+                  ))}
+                </div>
+              ))}
+            </AnimatePresence>
+
+            {/* v87.0 NÚMEROS FLOTANTES — la puntuación nace del punto exacto del impacto */}
+            <AnimatePresence>
+              {floaters.map((f) => (
+                <motion.span
+                  key={`fl-${f.id}`}
+                  initial={{ opacity: 0, y: 0, scale: 0.6 }}
+                  animate={{ opacity: [0, 1, 1, 0], y: -46, scale: 1.25 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.85, ease: "easeOut" }}
+                  className="pointer-events-none absolute z-20 font-mono font-bold text-lg select-none"
+                  style={{
+                    left: `${f.x}%`,
+                    top: `${f.y}%`,
+                    transform: "translate(-50%, -50%)",
+                    color: f.color,
+                    textShadow: `0 0 12px ${f.color}88, 0 2px 4px rgba(0,0,0,0.8)`,
+                  }}
+                >
+                  {f.texto}
+                </motion.span>
               ))}
             </AnimatePresence>
 

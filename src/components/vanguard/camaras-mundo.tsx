@@ -11,7 +11,7 @@
 //    su capital (Open-Meteo, gratis y sin clave) + atajo a sus verdades.
 
 import { useEffect, useMemo, useState } from "react";
-import { Video, ExternalLink, Clock3, CloudSun, Eye, Loader2, Grid3x3, CircleDot } from "lucide-react";
+import { Video, ExternalLink, Clock3, CloudSun, Eye, Loader2, Grid3x3, CircleDot, RefreshCw, Satellite } from "lucide-react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { countryName } from "@/lib/world-data";
 import { cn } from "@/lib/utils";
@@ -69,12 +69,22 @@ interface Clima {
   codigo: number;
 }
 
+// v87.0 EL DESPERTAR — LA SEÑAL VUELVE A VIVIR: el embed por canal de NASA
+// quedó muerto ("This video is unavailable") y el Ojo se quedó ciego. Ahora hay
+// RED DE 3 SEÑALES con rotación manual: si una muere, se cambia en un toque.
+const SENALES_ISS: { url: string; nombre: string }[] = [
+  { url: "https://www.youtube.com/embed/xAieE-QtOeM?autoplay=1", nombre: "ISS · NASA oficial en vivo" },
+  { url: "https://www.youtube.com/embed/DDU-rZs-Ic4?autoplay=1", nombre: "ISS · Vistas de la Tierra (SPACE)" },
+  { url: "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&autoplay=1", nombre: "ISS · Canal NASA auto-live" },
+];
+
 export function CamarasMundo() {
   const [pais, setPais] = useState<string | null>(null);
   const [clima, setClima] = useState<Clima | null>(null);
   const [cargandoClima, setCargandoClima] = useState(false);
   const [hora, setHora] = useState(() => new Date());
-  const [senalISS, setSenalISS] = useState(false); // v72.0: el iframe solo se monta si el guerrero pide la señal
+  // v87.0: null = señal apagada · 0..2 = índice de la señal activa (rotación manual)
+  const [senalISS, setSenalISS] = useState<number | null>(null);
 
   useEffect(() => {
     const t = setInterval(() => setHora(new Date()), 1000);
@@ -136,19 +146,32 @@ export function CamarasMundo() {
             nasa tv <ExternalLink className="w-3 h-3" />
           </a>
         </div>
-        {senalISS ? (
+        {senalISS !== null ? (
           <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
             <iframe
-              src="https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&autoplay=1"
-              title="ISS NASA en vivo"
+              key={senalISS}
+              src={SENALES_ISS[senalISS].url}
+              title={SENALES_ISS[senalISS].nombre}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="absolute inset-0 w-full h-full"
             />
+            {/* v87.0: rotación de señal — si una fuente muere, se cambia en un toque */}
+            <button
+              onClick={() => setSenalISS((s) => ((s ?? 0) + 1) % SENALES_ISS.length)}
+              className="absolute top-2 right-2 z-10 inline-flex items-center gap-1.5 px-2.5 py-2 min-h-[36px] rounded-sm border border-cyan-hud/60 bg-black/75 text-cyan-hud font-mono text-[9px] uppercase tracking-widest font-bold hover:bg-cyan-hud/20 hover:text-foreground transition-all active:scale-95"
+              title="Cambiar a otra señal de la ISS"
+            >
+              <RefreshCw className="w-3 h-3" /> cambiar señal · {senalISS + 1}/{SENALES_ISS.length}
+            </button>
+            <div className="absolute bottom-2 left-2 z-10 inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-black/70 border border-white/10">
+              <Satellite className="w-3 h-3 text-cyan-hud" aria-hidden />
+              <span className="font-mono text-[8px] uppercase tracking-widest text-cyan-hud">{SENALES_ISS[senalISS].nombre}</span>
+            </div>
           </div>
         ) : (
           <button
-            onClick={() => setSenalISS(true)}
+            onClick={() => setSenalISS(0)}
             className="relative w-full group text-left"
             style={{ aspectRatio: "21/9" }}
             aria-label="Conectar la señal en vivo de la ISS"
@@ -195,7 +218,7 @@ export function CamarasMundo() {
               const enFoco = focoMosaico === i;
               return (
                 <button key={c.id}
-                  onClick={() => (esIss ? setSenalISS(true) : setPais(c.id))}
+                  onClick={() => (esIss ? setSenalISS((s) => (s === null ? 0 : s)) : setPais(c.id))}
                   title={`${c.nombre} — abrir señal`}
                   className={cn("cctv-tile cctv-tile-ciclo group relative rounded-sm border bg-[#04070c] p-2 h-24 text-left transition-all hover:-translate-y-0.5 active:scale-[0.97]",
                     enFoco ? "border-cyan-hud" : "border-white/10 hover:border-cyan-hud/50")}>

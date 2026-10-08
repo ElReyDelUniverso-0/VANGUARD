@@ -12,6 +12,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Gavel, Send, Swords, Landmark, Crosshair, LineChart, Sparkles, Check, X, MinusCircle, Hourglass, ScrollText, Coins, Brain, Cpu, TriangleAlert } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
+import { LatidoSocial } from "@/components/vanguard/latido-social";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
@@ -474,6 +476,7 @@ export function ConsejoIaPanel() {
   return (
     <section className="mt-4 space-y-4" aria-label="Consejo de Acero: deliberación con IA en vivo">
       <HeroOro panel="consejoia" />
+      <LatidoSocial tono="cyan" />
 
       {/* v80 NÚCLEO EMBEBIDO: activación de la IA neuronal local + memoria */}
       <NucleoBanner onListo={onNucleoListo} />
