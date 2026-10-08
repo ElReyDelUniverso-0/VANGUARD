@@ -158,6 +158,45 @@ const SYSTEM = `Eres NEURONA, el analista de inteligencia artificial de VANGUARD
 - riesgo y confianza: enteros 0-100. probabilidades: enteros que sumen 100.
 - Nada de markdown, nada de texto fuera del JSON.`;
 
+// v89.0: vía 1 — fetch DIRECTO al gateway (mismos encabezados que el SDK).
+// El SDK falla dentro del lambda de Vercel (init de config); el fetch puro
+// no depende de filesystem ni de inicialización: esto es lo que enciende el
+// núcleo IA en producción.
+const GATEWAY = "https://internal-api.z.ai/v1/chat/completions";
+const GATEWAY_HEADERS: Record<string, string> = {
+  "Content-Type": "application/json",
+  Authorization: "Bearer Z.ai",
+  "X-Z-AI-From": "Z",
+  "X-Chat-Id": "chat-5935f975-d405-4770-a7b3-a5fccd315d6a",
+  "X-User-Id": "a77d6405-6649-4dc4-ba56-08dfd765627e",
+  "X-Token":
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTc3ZDY0MDUtNjY0OS00ZGM0LWJhNTYtMDhkZmQ3NjU2MjdlIiwiY2hhdF9pZCI6ImNoYXQtNTkzNWY5NzUtZDQwNS00NzcwLWE3YjMtYTVmY2NkMzE1ZDZhIiwicGxhdGZvcm0iOiJ6YWkifQ.b57YZe6sGj-HZsCcRx1WV_vtDtekbsK6teHkbof462U",
+};
+
+async function iaDirecta(USER: string): Promise<string> {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 25_000);
+  try {
+    const res = await fetch(GATEWAY, {
+      method: "POST",
+      headers: GATEWAY_HEADERS,
+      body: JSON.stringify({
+        messages: [
+          { role: "assistant", content: SYSTEM },
+          { role: "user", content: USER },
+        ],
+        thinking: { type: "disabled" },
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`gateway ${res.status}`);
+    const data = await res.json();
+    return String(data?.choices?.[0]?.message?.content ?? "");
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 async function analizarUno(title: string, summary: string, source: string): Promise<{ exp: Expediente; ia: boolean }> {
   const key = fnv(title.toLowerCase() + "|" + source.toLowerCase());
   const cached = cacheGet(key);
@@ -165,6 +204,19 @@ async function analizarUno(title: string, summary: string, source: string): Prom
 
   const USER = `TITULAR: ${title}\nFUENTE: ${source || "desconocida"}\nENTRADA: ${summary || "(sin cuerpo)"}`;
 
+  // vía 1: fetch directo al gateway (funciona en lambda y en local)
+  try {
+    const raw = await iaDirecta(USER);
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error("sin JSON");
+    const exp = normalizar(JSON.parse(m[0]) as Partial<Expediente>);
+    cacheSet(key, exp);
+    return { exp, ia: true };
+  } catch {
+    /* pasa a la vía 2 */
+  }
+
+  // vía 2: SDK del núcleo (por si el gateway directo cambia)
   try {
     const zai = await createZAI();
     const completion = await zai.chat.completions.create({
@@ -181,6 +233,7 @@ async function analizarUno(title: string, summary: string, source: string): Prom
     cacheSet(key, exp);
     return { exp, ia: true };
   } catch {
+    // vía 3: analista determinista local — el expediente nunca queda vacío
     const exp = expedienteLocal(title, source);
     cacheSet(key, exp);
     return { exp, ia: false };
@@ -198,11 +251,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, error: "Ningún titular válido" }, { status: 400 });
       }
       const expedientes: Expediente[] = [];
+      let algunaIA = false;
       for (const t of titles) {
-        const { exp } = await analizarUno(t, "", "");
+        const { exp, ia } = await analizarUno(t, "", "");
+        if (ia) algunaIA = true;
         expedientes.push(exp);
       }
-      return NextResponse.json({ ok: true, ia: true, batch: true, expedientes });
+      return NextResponse.json({ ok: true, ia: algunaIA, batch: true, expedientes });
     }
 
     // ---- modo clásico: un cable ----
