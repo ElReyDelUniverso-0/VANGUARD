@@ -18,7 +18,7 @@ import {
   Infinity as InfinityIcon, Bot, Vault, Briefcase, ScanLine, PenTool,
   FileSearch, Gauge, Ship,
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
-  BookMarked, FileStack, Plane, Bug, Waves, LineChart,
+  BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -91,7 +91,9 @@ export type TabKey =
   // v89.0 OPERACIÓN ESPEJO: los grandes portales de conflicto del mundo, clonados
   | "pulsos" | "evaluacion" | "perdidas" | "frentes" | "simulador" | "canales"
   // v90.0 ESPEJOS SIN FIN: la segunda hornada del espejo infinito
-  | "mundial" | "wikiguerra" | "cielos" | "ciber" | "sismo" | "mercados";
+  | "mundial" | "wikiguerra" | "cielos" | "ciber" | "sismo" | "mercados"
+  // v91.0 AUGE Y CAÍDA: RTS territorial jugable — el trono se toma
+  | "imperio";
 
 interface TabDef {
   key: TabKey;
@@ -217,6 +219,8 @@ const TABS: Record<TabKey, TabDef> = {
   ciber:         { key: "ciber",         label: "CIBER (mapa de amenazas en vivo)", short: "CIBER", icon: <Bug className="w-3.5 h-3.5" />, color: "green" },
   sismo:         { key: "sismo",         label: "SISMO (red sismológica global)", short: "SISMO", icon: <Waves className="w-3.5 h-3.5" />, color: "red" },
   mercados:      { key: "mercados",      label: "Mercados de Guerra", short: "MERCADOS", icon: <LineChart className="w-3.5 h-3.5" />, color: "green" },
+  // v91.0 AUGE Y CAÍDA — RTS territorial jugable del espejo infinito
+  imperio:       { key: "imperio",       label: "IMPERIO (auge y caída del continente)", short: "IMPERIO", icon: <Crown className="w-3.5 h-3.5" />, color: "amber" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -293,8 +297,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, centinela, espectro y los 12 espejos de los grandes portales de conflicto del mundo",
-    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa, centinela, espectro y los 13 espejos de los grandes portales de conflicto del mundo — incluido el RTS IMPERIO",
+    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

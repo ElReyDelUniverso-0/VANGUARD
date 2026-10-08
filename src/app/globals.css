@@ -1650,3 +1650,47 @@ html.modo-guerra body::after {
   .v90-spark { stroke-dasharray: none; }
   .v90-sismo { stroke-dasharray: none; }
 }
+
+/* ═══════════ v91.0 AUGE Y CAÍDA — RTS territorial ═══════════ */
+
+/* insignia de frente activo: latido + rotación del cerco */
+@keyframes v91-frente {
+  0%, 100% { opacity: 0.55; transform: scale(0.92) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.08) rotate(180deg); }
+}
+.v91-frente { animation: v91-frente 1.4s ease-in-out infinite; }
+
+/* onda de conquista: la bandera se expande al tomar la celda */
+@keyframes v91-onda {
+  0% { transform: scale(0.3); opacity: 0.95; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.v91-onda { animation: v91-onda 0.9s ease-out 1 both; }
+
+/* cañonazo: bola de fuego que respira y muere */
+@keyframes v91-boom {
+  0% { transform: scale(0.15); opacity: 1; }
+  55% { opacity: 0.85; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+.v91-boom { animation: v91-boom 0.7s ease-out 1 both; }
+
+/* estrella de capital: ondea como bandera al viento */
+@keyframes v91-bandera {
+  0%, 100% { transform: skewY(-6deg) scale(1); }
+  50% { transform: skewY(6deg) scale(1.12); }
+}
+.v91-bandera { animation: v91-bandera 2.2s ease-in-out infinite; }
+
+/* barra de dominio 75% con brillo de atardecer */
+@keyframes v91-brilla {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+.v91-barra { animation: v91-brilla 2.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v91-frente, .v91-onda, .v91-boom, .v91-bandera, .v91-barra {
+    animation: none !important;
+  }
+}

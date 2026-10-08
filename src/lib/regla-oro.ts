@@ -851,6 +851,14 @@ export const REGLA_ORO = {
       "Terminal de economía de guerra con cinta corriendo, sparklines en vivo, crudo, gas, trigo, oro, uranio, fletes y el índice de defensa — empujados por la tensión real del tablero, con índice de miedo de guerra y contador de sanciones. Los contratos son ficticios; la lección es real.",
     acento: "#9AE04D",
   },
+  imperio: {
+    titulo: "IMPERIO · AUGE Y CAÍDA",
+    volanta: "El trono no se hereda: se toma",
+    imagen: "/ilustraciones/operaciones.jpg",
+    texto:
+      "RTS territorial jugable dentro de Vanguard: funda tu imperio sobre un continente hexagonal que nace distinto cada partida, elige facción con bonos propios (acero, oro, ciencia o muro) y compite contra 7 bots con personalidad. Ciudades que empujan la frontera, mercados, laboratorios, cuarteles, fortalezas, puertos para desembarcos navales y cañones que golpean a AMBOS bandos. Asalta con el porcentaje de reserva que elijas, sostén frentes con MANTENER o CONTRAATACAR, investiga mejoras y conquista el 75% del terreno — o sé el último en pie cuando el reloj de 15 minutos se apague.",
+    acento: "#FFC94D",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

@@ -215,6 +215,8 @@ const CielosPanel = dynamic(() => import("@/components/vanguard/panels/cielos-pa
 const CiberPanel = dynamic(() => import("@/components/vanguard/panels/ciber-panel").then((m) => m.CiberPanel), { ssr: false, loading: PanelSkeleton });
 const SismoPanel = dynamic(() => import("@/components/vanguard/panels/sismo-panel").then((m) => m.SismoPanel), { ssr: false, loading: PanelSkeleton });
 const MercadosPanel = dynamic(() => import("@/components/vanguard/panels/mercados-panel").then((m) => m.MercadosPanel), { ssr: false, loading: PanelSkeleton });
+// v91.0 AUGE Y CAÍDA — el RTS territorial del espejo infinito
+const ImperioPanel = dynamic(() => import("@/components/vanguard/panels/imperio-panel").then((m) => m.ImperioPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
 export default function Home() {
@@ -466,6 +468,8 @@ export default function Home() {
         {tab === "ciber" && <CiberPanel />}
         {tab === "sismo" && <SismoPanel />}
         {tab === "mercados" && <MercadosPanel />}
+        {/* v91.0 AUGE Y CAÍDA: RTS territorial jugable */}
+        {tab === "imperio" && <ImperioPanel />}
         {tab === "mipais" && <MiPaisPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}
