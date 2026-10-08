@@ -24,7 +24,7 @@ export const REGLA_ORO = {
     volanta: "El mundo en tiempo real, ahora con IA que lee contigo",
     imagen: "/ilustraciones/noticias.jpg",
     texto:
-      "Titulares verificados de todo el planeta con credibilidad por fuente. Vota si es REAL o FAKE y pulsa NEURONA: el analista IA de Vanguard firma un expediente al vuelo — resumen, actores detectados, sentimiento (ESCALADA a DÉTENTE), riesgo 0-100 y la clave estratégica.",
+      "Titulares verificados de todo el planeta con credibilidad por fuente. Vota si es REAL o FAKE y pulsa NEURONA: el analista IA firma el expediente — resumen, actores, riesgo, confianza y recomendación — y cada expediente alimenta la RED NEURONAL, la tecnología nativa de Vanguard que crece mientras lees.",
     acento: "#FFB020",
   },
   mapa: {
@@ -752,6 +752,55 @@ export const REGLA_ORO = {
     texto:
       "Tráfico aéreo REAL (ADS-B) sobre 5 zonas calientes, los 6 canales marítimos que sostienen el comercio del planeta y el pulso del espectro de radio con jamming de GPS. Los buques de guerra se ven antes de que los nombres salgan en las agencias.",
     acento: "#22D3EE",
+  },
+  // v89.0 OPERACIÓN ESPEJO — los grandes portales de conflicto del mundo, clonados y adaptados
+  pulsos: {
+    titulo: "MAPA DE PULSOS EN VIVO",
+    volanta: "Cada incidente del planeta, por categoría, al minuto",
+    imagen: "/ilustraciones/pulsos.jpg",
+    texto:
+      "El gran mapa de incidentes que todo analista tiene abierto: 8 categorías con color propio, pines que laten sobre zonas calientes reales, banner de ÚLTIMA HORA y feed cronológico con fuente y hora. Filtra la guerra como quien cambia de canal.",
+    acento: "#FF4D4D",
+  },
+  evaluacion: {
+    titulo: "EVALUACIÓN DE CAMPAÑA",
+    volanta: "La guerra evaluada con método, todos los días",
+    imagen: "/ilustraciones/evaluacion.jpg",
+    texto:
+      "Hallazgos clave numerados, secciones por teatro de operaciones y evaluación del terreno controlado: el formato de los grandes institutos de estudios de guerra, con archivo de 14 días y la incertidumbre declarada siempre. Hechos primero, interpretación después.",
+    acento: "#FFC94D",
+  },
+  perdidas: {
+    titulo: "PÉRDIDAS CONFIRMADAS",
+    volanta: "Solo se cuenta lo documentado con evidencia",
+    imagen: "/ilustraciones/perdidas.jpg",
+    texto:
+      "El libro contable de la guerra: tanques, blindados, artillería, aviación, drones y buques con sus cuatro estados — destruido, dañado, abandonado, capturado — por lado y por modelo. Contadores que ruedan y la regla de oro del registro visual: sin evidencia no hay número.",
+    acento: "#FF8A3D",
+  },
+  frentes: {
+    titulo: "LÍNEA DEL FRENTE",
+    volanta: "El mapa que la guerra reescribe cada día",
+    imagen: "/ilustraciones/frentes.jpg",
+    texto:
+      "Zonas controladas, franja disputada rayada, territorio ocupado y flechas de presión: el mapa de control que la vanguardia consulta cada mañana, con variación diaria en km², localidades que cambian de mano y reproducción histórica de 14 días.",
+    acento: "#3DDCFF",
+  },
+  simulador: {
+    titulo: "SIMULADOR DE DETONACIÓN",
+    volanta: "Educativo: el costo real de un arma que no debería existir",
+    imagen: "/ilustraciones/simulador.jpg",
+    texto:
+      "Elige el arma, elige el objetivo, pulsa DETONAR: bola de fuego, onda de 5 psi, quemaduras de tercer grado, radiación letal y estimación de bajas con física de escala cúbica. No es un juego — es la lección que el mundo aprendió en 1945 y no puede olvidar.",
+    acento: "#FF4D6D",
+  },
+  canales: {
+    titulo: "CANALES OSINT EN VIVO",
+    volanta: "La escucha abierta del planeta, contrastada",
+    imagen: "/ilustraciones/canales.jpg",
+    texto:
+      "Ocho canales con personalidad propia fluyendo mensajes cada minuto, con vistas, reenvíos y sellos: cuando un mensaje coincide con un cable verificado del mundo, se estampa el visto bueno; lo que no coincide, se marca para tomarlo con pinzas.",
+    acento: "#B48CFF",
   },
 } satisfies Record<string, ReglaOroEntry>;
 

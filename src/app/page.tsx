@@ -201,6 +201,13 @@ const CreadorMapasPanel = dynamic(() => import("@/components/vanguard/panels/cre
 const VerificaPanel = dynamic(() => import("@/components/vanguard/panels/verifica-panel").then((m) => m.VerificaPanel), { ssr: false, loading: PanelSkeleton });
 const CentinelaPanel = dynamic(() => import("@/components/vanguard/panels/centinela-panel").then((m) => m.CentinelaPanel), { ssr: false, loading: PanelSkeleton });
 const EspectroPanel = dynamic(() => import("@/components/vanguard/panels/espectro-panel").then((m) => m.EspectroPanel), { ssr: false, loading: PanelSkeleton });
+// v89.0 OPERACIÓN ESPEJO — los 6 espejos de los grandes portales de conflicto
+const PulsosPanel = dynamic(() => import("@/components/vanguard/panels/pulsos-panel").then((m) => m.PulsosPanel), { ssr: false, loading: PanelSkeleton });
+const EvaluacionPanel = dynamic(() => import("@/components/vanguard/panels/evaluacion-panel").then((m) => m.EvaluacionPanel), { ssr: false, loading: PanelSkeleton });
+const PerdidasPanel = dynamic(() => import("@/components/vanguard/panels/perdidas-panel").then((m) => m.PerdidasPanel), { ssr: false, loading: PanelSkeleton });
+const FrentesPanel = dynamic(() => import("@/components/vanguard/panels/frentes-panel").then((m) => m.FrentesPanel), { ssr: false, loading: PanelSkeleton });
+const SimuladorPanel = dynamic(() => import("@/components/vanguard/panels/simulador-panel").then((m) => m.SimuladorPanel), { ssr: false, loading: PanelSkeleton });
+const CanalesPanel = dynamic(() => import("@/components/vanguard/panels/canales-panel").then((m) => m.CanalesPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
 export default function Home() {
@@ -439,6 +446,13 @@ export default function Home() {
         {tab === "verifica" && <VerificaPanel />}
         {tab === "centinela" && <CentinelaPanel />}
         {tab === "espectro" && <EspectroPanel />}
+        {/* v89.0 OPERACIÓN ESPEJO */}
+        {tab === "pulsos" && <PulsosPanel />}
+        {tab === "evaluacion" && <EvaluacionPanel />}
+        {tab === "perdidas" && <PerdidasPanel />}
+        {tab === "frentes" && <FrentesPanel />}
+        {tab === "simulador" && <SimuladorPanel />}
+        {tab === "canales" && <CanalesPanel />}
         {tab === "mipais" && <MiPaisPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}

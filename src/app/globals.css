@@ -1483,3 +1483,71 @@ html.modo-guerra body::after {
     animation: none !important;
   }
 }
+
+/* ============================================================
+   v89.0 OPERACIÓN ESPEJO — animaciones de los 6 espejos + red neuronal
+   ============================================================ */
+
+/* etiqueta ÚLTIMA HORA que late */
+@keyframes v89-lateja {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.v89-lateja { animation: v89-lateja 1.1s ease-in-out infinite; }
+
+/* pines y neuronas que respiran con glow */
+@keyframes v89-pin {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.28); }
+}
+.v89-pin { animation: v89-pin 2.1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+/* flujo sobre la línea del frente (dash que corre) */
+@keyframes v89-flujo {
+  to { stroke-dashoffset: -32; }
+}
+.v89-flujo { animation: v89-flujo 1.2s linear infinite; }
+
+/* pulso de presión (flechas, botones en modo click) */
+@keyframes v89-pulsa {
+  0%, 100% { filter: drop-shadow(0 0 2px currentColor); opacity: 0.85; }
+  50% { filter: drop-shadow(0 0 7px currentColor); opacity: 1; }
+}
+.v89-pulsa { animation: v89-pulsa 1.8s ease-in-out infinite; }
+
+/* sinapsis: la línea que transmite el impulso */
+@keyframes v89-sinapsis {
+  0%, 100% { stroke-dashoffset: 0; opacity: 0.25; }
+  50% { stroke-dashoffset: -12; opacity: 0.7; }
+}
+.v89-sinapsis { animation: v89-sinapsis 2.4s linear infinite; stroke-dasharray: 3 9; }
+
+/* fondo sináptico: red latente bajo la red neuronal */
+.v89-synapse-bg {
+  background-image:
+    radial-gradient(circle at 12% 20%, #b48cff14 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 30%, #b48cff12 0 2px, transparent 3px),
+    radial-gradient(circle at 35% 75%, #b48cff10 0 2px, transparent 3px),
+    radial-gradient(circle at 65% 85%, #b48cff14 0 2px, transparent 3px);
+  animation: v89-lateja 3.4s ease-in-out infinite;
+}
+
+/* detonación: el tablero tiembla */
+@keyframes v89-tiembla-nuke {
+  0% { transform: translate(0, 0); }
+  15% { transform: translate(-7px, 4px); }
+  30% { transform: translate(6px, -5px); }
+  45% { transform: translate(-5px, -3px); }
+  60% { transform: translate(4px, 4px); }
+  75% { transform: translate(-3px, 2px); }
+  90% { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+.v89-tiembla-nuke { animation: v89-tiembla-nuke 0.7s linear 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v89-lateja, .v89-pin, .v89-flujo, .v89-pulsa, .v89-sinapsis,
+  .v89-synapse-bg, .v89-tiembla-nuke {
+    animation: none !important;
+  }
+}

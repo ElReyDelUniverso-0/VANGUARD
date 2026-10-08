@@ -17,6 +17,7 @@ import {
   Wand2, Landmark, Orbit, Search, Dices, FolderOpen, Warehouse,
   Infinity as InfinityIcon, Bot, Vault, Briefcase, ScanLine, PenTool,
   FileSearch, Gauge, Ship,
+  TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -85,7 +86,9 @@ export type TabKey =
   // v85.0 EL MUNDO DENTRO: empleos con sueldos, AR y constructor de mapas
   | "empleos" | "armodo" | "mapascrea"
   // v86.0 CENTINELA GLOBAL: mesa de verificación, alerta temprana y espectro
-  | "verifica" | "centinela" | "espectro";
+  | "verifica" | "centinela" | "espectro"
+  // v89.0 OPERACIÓN ESPEJO: los grandes portales de conflicto del mundo, clonados
+  | "pulsos" | "evaluacion" | "perdidas" | "frentes" | "simulador" | "canales";
 
 interface TabDef {
   key: TabKey;
@@ -197,6 +200,13 @@ const TABS: Record<TabKey, TabDef> = {
   verifica:      { key: "verifica",      label: "Mesa de Verificación (OSINT: sellos + las dos orillas)", short: "VERIFICA", icon: <FileSearch className="w-3.5 h-3.5" />, color: "amber" },
   centinela:     { key: "centinela",     label: "Centinela (alerta temprana del planeta)", short: "CENTINELA", icon: <Gauge className="w-3.5 h-3.5" />, color: "cyan" },
   espectro:      { key: "espectro",      label: "Espectro en Vivo (tráfico aéreo y marítimo)", short: "ESPECTRO", icon: <Ship className="w-3.5 h-3.5" />, color: "cyan" },
+  // v89.0 OPERACIÓN ESPEJO — clones de los portales de conflicto más usados del mundo
+  pulsos:        { key: "pulsos",        label: "Mapa de Pulsos en Vivo", short: "PULSOS", icon: <TowerControl className="w-3.5 h-3.5" />, color: "red" },
+  evaluacion:    { key: "evaluacion",    label: "Evaluación de Campaña diaria", short: "EVAL", icon: <NotebookPen className="w-3.5 h-3.5" />, color: "amber" },
+  perdidas:      { key: "perdidas",      label: "Pérdidas Confirmadas (registro visual)", short: "PÉRDIDAS", icon: <Truck className="w-3.5 h-3.5" />, color: "red" },
+  frentes:       { key: "frentes",       label: "Línea del Frente (zonas de control)", short: "FRENTES", icon: <Waypoints className="w-3.5 h-3.5" />, color: "cyan" },
+  simulador:     { key: "simulador",     label: "Simulador de Detonación", short: "SIMULADOR", icon: <Radiation className="w-3.5 h-3.5" />, color: "red" },
+  canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -273,8 +283,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa con capas, centinela, espectro en vivo, radar, planeta en vivo, geopolítica real y vigilancia",
-    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa, centinela, espectro y los 6 espejos de los grandes portales de conflicto del mundo",
+    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

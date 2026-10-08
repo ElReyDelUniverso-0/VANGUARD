@@ -56,6 +56,8 @@ const VOTE_KEY = "vanguard-news-votes-v13";
 type VoteMap = Record<string, "REAL" | "FAKE">;
 
 // v88.0 NEURONA — expediente del analista IA por cable
+// v89.0 NEURONAS v2 — expediente enriquecido: confianza, recomendación,
+// probabilidades por sentimiento y conexiones temáticas para la red.
 interface NeuronaExp {
   resumen: string;
   actores: string[];
@@ -63,6 +65,10 @@ interface NeuronaExp {
   riesgo: number;
   clave: string;
   ia: boolean;
+  confianza?: number;
+  recomendacion?: string;
+  probabilidades?: { escalada: number; tension: number; estable: number; detente: number };
+  conexiones?: string[];
 }
 const NEURONA_SENT_COLOR: Record<NeuronaExp["sentimiento"], string> = {
   ESCALADA: "text-crisis border-crisis-hud bg-crisis-hud/30",
@@ -70,6 +76,44 @@ const NEURONA_SENT_COLOR: Record<NeuronaExp["sentimiento"], string> = {
   ESTABLE: "text-cyan-hud border-cyan-hud/60 bg-cyan-hud/20",
   "DÉTENTE": "text-neon border-neon-hud bg-neon-hud/30",
 };
+
+// v89.0 RED NEURONAL — nodos = cables analizados, aristas = actores compartidos
+interface NeuronaNodo {
+  id: string;
+  titulo: string;
+  riesgo: number;
+  sentimiento: NeuronaExp["sentimiento"];
+  actores: string[];
+  ts: number;
+}
+const RED_KEY = "vanguard-neurona-red-v1";
+const RED_SENT_HEX: Record<NeuronaExp["sentimiento"], string> = {
+  ESCALADA: "#FF3B30",
+  "TENSIÓN": "#FFD60A",
+  ESTABLE: "#3DDCFF",
+  "DÉTENTE": "#00FF87",
+};
+
+function cargarRed(): NeuronaNodo[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const arr = JSON.parse(localStorage.getItem(RED_KEY) || "[]");
+    return Array.isArray(arr) ? arr.slice(0, 18) : [];
+  } catch {
+    return [];
+  }
+}
+
+function guardarNodo(n: NeuronaNodo): NeuronaNodo[] {
+  const red = cargarRed().filter((x) => x.titulo !== n.titulo);
+  const nueva = [n, ...red].slice(0, 18);
+  try {
+    localStorage.setItem(RED_KEY, JSON.stringify(nueva));
+  } catch {
+    /* noop */
+  }
+  return nueva;
+}
 
 export function NewsPanel() {
   const [items, setItems] = useState<NewsItem[]>(() => {
@@ -90,6 +134,10 @@ export function NewsPanel() {
   // v88.0 NEURONA: expedientes por cable (undefined = sin pedir, "loading" = cargando)
   const [neuronaOpen, setNeuronaOpen] = useState<string | null>(null);
   const [neurona, setNeurona] = useState<Record<string, NeuronaExp | "loading">>({});
+  // v89.0 RED NEURONAL
+  const [red, setRed] = useState<NeuronaNodo[]>([]);
+  const [redAbierta, setRedAbierta] = useState(false);
+  const [entrenando, setEntrenando] = useState(false);
   const recordViewNews = useGameStore((s) => s.recordViewNews);
   const addCoins = useGameStore((s) => s.addCoins);
   const comments = useGameStore((s) => s.comments);
@@ -105,6 +153,7 @@ export function NewsPanel() {
     } catch {
       setVotes({});
     }
+    setRed(cargarRed());
   }, []);
 
   const voteVerdict = (id: string, v: "REAL" | "FAKE", veracity: number) => {
@@ -188,14 +237,29 @@ export function NewsPanel() {
       });
       const data = await res.json();
       if (data?.ok) {
-        setNeurona((m) => ({
-          ...m,
-          [item.id]: {
-            resumen: data.resumen, actores: data.actores || [],
-            sentimiento: data.sentimiento, riesgo: data.riesgo,
-            clave: data.clave, ia: data.ia === true,
-          },
-        }));
+        const exp: NeuronaExp = {
+          resumen: data.resumen, actores: data.actores || [],
+          sentimiento: data.sentimiento, riesgo: data.riesgo,
+          clave: data.clave, ia: data.ia === true,
+          confianza: typeof data.confianza === "number" ? data.confianza : undefined,
+          recomendacion: typeof data.recomendacion === "string" ? data.recomendacion : undefined,
+          probabilidades: data.probabilidades ?? undefined,
+          conexiones: Array.isArray(data.conexiones) ? data.conexiones : undefined,
+        };
+        setNeurona((m) => ({ ...m, [item.id]: exp }));
+        // v89.0: la red crece con cada expediente — nodo + sinapsis nuevas
+        const previa = cargarRed();
+        const nueva = guardarNodo({
+          id: item.id,
+          titulo: item.title,
+          riesgo: exp.riesgo,
+          sentimiento: exp.sentimiento,
+          actores: exp.actores,
+          ts: Date.now(),
+        });
+        setRed(nueva);
+        const sinapsisNuevas = contarSinapsis(nueva) - contarSinapsis(previa);
+        if (sinapsisNuevas > 0) toast.success(`NEURONA firmó el expediente · +${sinapsisNuevas} sinapsis en la red`);
       } else {
         setNeurona((m) => ({ ...m, [item.id]: undefined as unknown as NeuronaExp }));
         toast.error("NEURONA no pudo procesar el cable");
@@ -203,6 +267,51 @@ export function NewsPanel() {
     } catch {
       setNeurona((m) => ({ ...m, [item.id]: undefined as unknown as NeuronaExp }));
       toast.error("Sin conexión con NEURONA");
+    }
+  };
+
+  // v89.0 ENTRENAR RED: analiza en batch los 3 cables superiores sin expediente
+  const entrenarRed = async () => {
+    if (entrenando) return;
+    const pendientes = items.filter((i) => !neurona[i.id]).slice(0, 3);
+    if (pendientes.length === 0) {
+      toast("La red ya leyó todos los cables disponibles");
+      return;
+    }
+    setEntrenando(true);
+    try {
+      const res = await fetch("/api/neurona", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ titles: pendientes.map((p) => p.title) }),
+      });
+      const data = await res.json();
+      if (data?.ok && Array.isArray(data.expedientes)) {
+        const mm = { ...neurona };
+        let nueva = cargarRed();
+        const previaSin = contarSinapsis(nueva);
+        pendientes.forEach((p: NewsItem, i: number) => {
+          const e = data.expedientes[i];
+          if (!e) return;
+          mm[p.id] = {
+            resumen: e.resumen, actores: e.actores || [], sentimiento: e.sentimiento,
+            riesgo: e.riesgo, clave: e.clave, ia: true,
+            confianza: e.confianza, recomendacion: e.recomendacion,
+            probabilidades: e.probabilidades, conexiones: e.conexiones,
+          };
+          nueva = guardarNodo({ id: p.id, titulo: p.title, riesgo: e.riesgo, sentimiento: e.sentimiento, actores: e.actores || [], ts: Date.now() });
+        });
+        setNeurona(mm);
+        setRed(nueva);
+        const nuevasSin = contarSinapsis(nueva) - previaSin;
+        toast.success(`Entrenamiento completo · ${pendientes.length} neuronas nuevas · +${nuevasSin} sinapsis`);
+      } else {
+        toast.error("El núcleo no respondió al entrenamiento");
+      }
+    } catch {
+      toast.error("Sin conexión con NEURONA");
+    } finally {
+      setEntrenando(false);
     }
   };
 
@@ -234,6 +343,15 @@ export function NewsPanel() {
 
       {/* v82.0 TELETIPO EN VIVO — cinta de última hora con cables reales + interceptos */}
       <TeletipoCinta />
+
+      {/* v89.0 RED NEURONAL DE VANGUARD — la tecnología nativa, ahora visible */}
+      <RedNeuronal
+        red={red}
+        abierta={redAbierta}
+        onToggle={() => setRedAbierta((v) => !v)}
+        entrenando={entrenando}
+        onEntrenar={() => void entrenarRed()}
+      />
 
       {/* Status bar */}
       <div className="hud-corner p-2 flex items-center gap-3 text-[10px] font-mono">
@@ -474,6 +592,43 @@ export function NewsPanel() {
                               <div className="p-1.5 bg-violet-hud/10 border border-violet-hud/30 text-[10px] text-foreground/90 leading-snug">
                                 <span className="font-mono text-[8px] uppercase text-violet-hud font-black">clave: </span>{exp.clave}
                               </div>
+                              {/* v89.0 NEURONAS v2 — capa de decisión del operador */}
+                              {typeof exp.confianza === "number" && (
+                                <div>
+                                  <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground mb-0.5">
+                                    <span>confianza del análisis</span>
+                                    <span className="text-violet-hud font-bold">{exp.confianza}%</span>
+                                  </div>
+                                  <div className="h-1 bg-secondary overflow-hidden">
+                                    <div className="h-full bg-violet-hud transition-all" style={{ width: `${exp.confianza}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                              {exp.probabilidades && (
+                                <div className="grid grid-cols-4 gap-1">
+                                  {([["escalada", exp.probabilidades.escalada, "#FF3B30"], ["tensión", exp.probabilidades.tension, "#FFD60A"], ["estable", exp.probabilidades.estable, "#3DDCFF"], ["détente", exp.probabilidades.detente, "#00FF87"]] as const).map(([k, v, c]) => (
+                                    <div key={k} className="border border-border/60 p-1">
+                                      <p className="text-[7px] font-mono uppercase text-muted-foreground text-center leading-none mb-0.5">{k}</p>
+                                      <p className="text-[10px] font-mono font-bold text-center" style={{ color: c }}>{v}%</p>
+                                      <div className="h-0.5 bg-secondary mt-0.5">
+                                        <div className="h-full transition-all" style={{ width: `${v}%`, background: c }} />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              {exp.recomendacion && (
+                                <div className="p-1.5 border-l-2 border-violet-hud bg-background/60 text-[10px] text-foreground/85 leading-snug">
+                                  <span className="font-mono text-[8px] uppercase text-violet-hud font-black">acción del operador: </span>{exp.recomendacion}
+                                </div>
+                              )}
+                              {exp.conexiones && exp.conexiones.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {exp.conexiones.map((c) => (
+                                    <span key={c} className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-border text-muted-foreground">↳ {c}</span>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           );
 })()}
@@ -543,4 +698,146 @@ function timeAgo(iso: string) {
   if (h < 24) return `${h}h`;
   const d = Math.floor(h / 24);
   return `${d}d`;
+}
+
+// ---------- v89.0 RED NEURONAL DE VANGUARD ----------
+// El cerebro de la plataforma hecho visible: cada cable que NEURONA firmó es
+// una neurona; dos neuronas comparten sinapsis cuando detectan al mismo
+// actor. Los impulsos viajan por las aristas y la red CRECE mientras lees.
+
+function contarSinapsis(red: NeuronaNodo[]): number {
+  let n = 0;
+  for (let i = 0; i < red.length; i++) {
+    for (let j = i + 1; j < red.length; j++) {
+      if (red[i].actores.some((a) => red[j].actores.includes(a))) n++;
+    }
+  }
+  return n;
+}
+
+function layoutRed(red: NeuronaNodo[]): { x: number; y: number }[] {
+  // espiral de ángulo áureo — orgánica, nunca en fila
+  return red.map((_, i) => {
+    const r = 30 + 36 * Math.sqrt(i);
+    const th = i * 2.39996323;
+    return { x: 190 + r * Math.cos(th), y: 112 + r * Math.sin(th) * 0.72 };
+  });
+}
+
+function RedNeuronal({
+  red,
+  abierta,
+  onToggle,
+  entrenando,
+  onEntrenar,
+}: {
+  red: NeuronaNodo[];
+  abierta: boolean;
+  onToggle: () => void;
+  entrenando: boolean;
+  onEntrenar: () => void;
+}) {
+  const sinapsis = contarSinapsis(red);
+  const riesgoMedio = red.length > 0 ? Math.round(red.reduce((s, n) => s + n.riesgo, 0) / red.length) : 0;
+  const pos = layoutRed(red);
+
+  const aristas: { i: number; j: number; actor: string }[] = [];
+  for (let i = 0; i < red.length; i++) {
+    for (let j = i + 1; j < red.length; j++) {
+      const actor = red[i].actores.find((a) => red[j].actores.includes(a));
+      if (actor) aristas.push({ i, j, actor });
+    }
+  }
+
+  return (
+    <div className="hud-corner border border-violet-hud/50 bg-violet-hud/5 overflow-hidden">
+      <button onClick={onToggle} className="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-violet-hud/10 transition-colors">
+        <BrainCircuit className={cn("w-4 h-4 text-violet-hud", (abierta || entrenando) && "v89-pulsa")} />
+        <div className="text-left flex-1 min-w-0">
+          <p className="text-[11px] font-mono font-black uppercase tracking-widest text-violet-hud leading-none">
+            red neuronal de vanguard <span className="text-[8px] font-normal text-muted-foreground normal-case">· tecnología nativa v89</span>
+          </p>
+          <p className="text-[9px] font-mono text-muted-foreground mt-0.5 truncate">
+            {red.length} neuronas · {sinapsis} sinapsis · riesgo medio {riesgoMedio} — cada expediente que firmas hace crecer el cerebro
+          </p>
+        </div>
+        <span className="text-[9px] font-mono uppercase px-2 py-1 border border-violet-hud/60 text-violet-hud">
+          {abierta ? "ocultar" : "abrir red"}
+        </span>
+      </button>
+
+      {abierta && (
+        <div className="px-3 pb-3">
+          <div className="relative border border-violet-hud/30 bg-background/70 overflow-hidden">
+            {/* fondo sináptico */}
+            <div className="absolute inset-0 v89-synapse-bg pointer-events-none" aria-hidden />
+            {red.length === 0 ? (
+              <div className="p-6 text-center">
+                <BrainCircuit className="w-8 h-8 mx-auto text-violet-hud/50 mb-2 v89-pulsa" />
+                <p className="text-[11px] font-mono uppercase text-muted-foreground mb-3">
+                  la red está en blanco — entrénala con los cables de hoy
+                </p>
+                <button
+                  onClick={onEntrenar}
+                  disabled={entrenando}
+                  className="text-[10px] font-mono uppercase px-3 py-1.5 border border-violet-hud text-violet-hud hover:bg-violet-hud/20 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {entrenando ? "leyendo cables…" : "⚡ entrenar red con 3 cables"}
+                </button>
+              </div>
+            ) : (
+              <>
+                <svg viewBox="0 0 380 224" className="w-full h-auto max-h-[280px]">
+                  {/* aristas */}
+                  {aristas.map((e, idx) => {
+                    const a = pos[e.i];
+                    const b = pos[e.j];
+                    const id = `ne89-${idx}`;
+                    return (
+                      <g key={id}>
+                        <path id={id} d={`M ${a.x} ${a.y} L ${b.x} ${b.y}`} stroke="#B48CFF" strokeWidth="0.7" opacity="0.4" className="v89-sinapsis" />
+                        <circle r="2" fill="#E4D4FF">
+                          <animateMotion dur={`${1.4 + (idx % 5) * 0.35}s`} repeatCount="indefinite" path={`M ${a.x} ${a.y} L ${b.x} ${b.y}`} />
+                        </circle>
+                      </g>
+                    );
+                  })}
+                  {/* neuronas */}
+                  {red.map((n, i) => {
+                    const p = pos[i];
+                    const r = 7 + (n.riesgo / 100) * 9;
+                    const c = RED_SENT_HEX[n.sentimiento];
+                    return (
+                      <g key={n.id + i}>
+                        <circle cx={p.x} cy={p.y} r={r + 3} fill={c} opacity="0.12" />
+                        <circle cx={p.x} cy={p.y} r={r} fill={`${c}33`} stroke={c} strokeWidth="1.4" className="v89-pin" />
+                        <text x={p.x} y={p.y + 2.5} textAnchor="middle" fontSize="7.5" fill={c} fontFamily="monospace" fontWeight="bold">
+                          {n.riesgo}
+                        </text>
+                        <text x={p.x} y={p.y + r + 9} textAnchor="middle" fontSize="6" fill="#9aa0a6" fontFamily="monospace">
+                          {n.titulo.slice(0, 24)}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+                <div className="flex items-center gap-2 flex-wrap px-1 pt-1.5 border-t border-violet-hud/20">
+                  <span className="text-[8px] font-mono uppercase text-muted-foreground">
+                    tamaño = riesgo · color = sentimiento · línea = actor compartido
+                  </span>
+                  <button
+                    onClick={onEntrenar}
+                    disabled={entrenando}
+                    className="ml-auto text-[9px] font-mono uppercase px-2 py-1 border border-violet-hud text-violet-hud hover:bg-violet-hud/20 active:scale-95 transition-all disabled:opacity-50"
+                  >
+                    {entrenando ? "entrenando…" : "⚡ entrenar +3"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
