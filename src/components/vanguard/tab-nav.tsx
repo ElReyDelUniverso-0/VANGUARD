@@ -19,6 +19,7 @@ import {
   FileSearch, Gauge, Ship,
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
+  Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -93,7 +94,10 @@ export type TabKey =
   // v90.0 ESPEJOS SIN FIN: la segunda hornada del espejo infinito
   | "mundial" | "wikiguerra" | "cielos" | "ciber" | "sismo" | "mercados"
   // v91.0 AUGE Y CAÍDA: RTS territorial jugable — el trono se toma
-  | "imperio";
+  | "imperio"
+  // v92.0 OJO DEL MUNDO: la tercera hornada del espejo — pronósticos, explicadores,
+  // revista, GEOINT, monitor global, canal de briefing y escuela de estrategia
+  | "pronosticos" | "enclaves" | "extranjera" | "geoint" | "monitorglobal" | "canalbrief" | "estrategia";
 
 interface TabDef {
   key: TabKey;
@@ -221,6 +225,14 @@ const TABS: Record<TabKey, TabDef> = {
   mercados:      { key: "mercados",      label: "Mercados de Guerra", short: "MERCADOS", icon: <LineChart className="w-3.5 h-3.5" />, color: "green" },
   // v91.0 AUGE Y CAÍDA — RTS territorial jugable del espejo infinito
   imperio:       { key: "imperio",       label: "IMPERIO (auge y caída del continente)", short: "IMPERIO", icon: <Crown className="w-3.5 h-3.5" />, color: "amber" },
+  // v92.0 OJO DEL MUNDO — tercera hornada de espejos (7 nuevos)
+  pronosticos:   { key: "pronosticos",   label: "Pronósticos de Inteligencia (escenarios + riesgo)", short: "PRONÓST", icon: <Telescope className="w-3.5 h-3.5" />, color: "green" },
+  enclaves:      { key: "enclaves",      label: "El Mundo en Clave (explicador en 5 claves)", short: "EN CLAVE", icon: <KeyRound className="w-3.5 h-3.5" />, color: "red" },
+  extranjera:    { key: "extranjera",    label: "Asuntos Exteriores (revista de ensayos)", short: "REVISTA", icon: <Feather className="w-3.5 h-3.5" />, color: "amber" },
+  geoint:        { key: "geoint",        label: "OJO-GEOINT (capas, detecciones IA y pases)", short: "GEOINT", icon: <ScanEye className="w-3.5 h-3.5" />, color: "cyan" },
+  monitorglobal: { key: "monitorglobal", label: "Monitor Global (índices del núcleo neuronal)", short: "MONITOR", icon: <RadioTower className="w-3.5 h-3.5" />, color: "green" },
+  canalbrief:    { key: "canalbrief",    label: "Canal Brief (briefing en vídeo con capítulos)", short: "BRIEF.TV", icon: <MonitorPlay className="w-3.5 h-3.5" />, color: "red" },
+  estrategia:    { key: "estrategia",    label: "Estrategia Global (doctrinas y wargames)", short: "ESTRAT", icon: <GraduationCap className="w-3.5 h-3.5" />, color: "violet" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -297,8 +309,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "Sala OSINT, mapa, centinela, espectro y los 13 espejos de los grandes portales de conflicto del mundo — incluido el RTS IMPERIO",
-    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "Sala OSINT, mapa, centinela, espectro y los 20 espejos de los grandes portales de conflicto del mundo — incluidos el RTS IMPERIO, la revista, los pronósticos y el OJO-GEOINT",
+    tabs: [TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.pronosticos, TABS.enclaves, TABS.extranjera, TABS.geoint, TABS.monitorglobal, TABS.canalbrief, TABS.estrategia, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

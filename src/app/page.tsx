@@ -217,6 +217,14 @@ const SismoPanel = dynamic(() => import("@/components/vanguard/panels/sismo-pane
 const MercadosPanel = dynamic(() => import("@/components/vanguard/panels/mercados-panel").then((m) => m.MercadosPanel), { ssr: false, loading: PanelSkeleton });
 // v91.0 AUGE Y CAÍDA — el RTS territorial del espejo infinito
 const ImperioPanel = dynamic(() => import("@/components/vanguard/panels/imperio-panel").then((m) => m.ImperioPanel), { ssr: false, loading: PanelSkeleton });
+// v92.0 OJO DEL MUNDO — la tercera hornada del espejo: 7 portales nuevos
+const PronosticosPanel = dynamic(() => import("@/components/vanguard/panels/pronosticos-panel").then((m) => m.PronosticosPanel), { ssr: false, loading: PanelSkeleton });
+const EnClavePanel = dynamic(() => import("@/components/vanguard/panels/enclaves-panel").then((m) => m.EnClavePanel), { ssr: false, loading: PanelSkeleton });
+const ExtranjeraPanel = dynamic(() => import("@/components/vanguard/panels/extranjera-panel").then((m) => m.ExtranjeraPanel), { ssr: false, loading: PanelSkeleton });
+const GeointPanel = dynamic(() => import("@/components/vanguard/panels/geoint-panel").then((m) => m.GeointPanel), { ssr: false, loading: PanelSkeleton });
+const MonitorGlobalPanel = dynamic(() => import("@/components/vanguard/panels/monitorglobal-panel").then((m) => m.MonitorGlobalPanel), { ssr: false, loading: PanelSkeleton });
+const CanalBriefPanel = dynamic(() => import("@/components/vanguard/panels/canalbrief-panel").then((m) => m.CanalBriefPanel), { ssr: false, loading: PanelSkeleton });
+const EstrategiaGlobalPanel = dynamic(() => import("@/components/vanguard/panels/estrategia-panel").then((m) => m.EstrategiaGlobalPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
 export default function Home() {
@@ -470,6 +478,14 @@ export default function Home() {
         {tab === "mercados" && <MercadosPanel />}
         {/* v91.0 AUGE Y CAÍDA: RTS territorial jugable */}
         {tab === "imperio" && <ImperioPanel />}
+        {/* v92.0 OJO DEL MUNDO: tercera hornada de espejos */}
+        {tab === "pronosticos" && <PronosticosPanel />}
+        {tab === "enclaves" && <EnClavePanel />}
+        {tab === "extranjera" && <ExtranjeraPanel />}
+        {tab === "geoint" && <GeointPanel />}
+        {tab === "monitorglobal" && <MonitorGlobalPanel />}
+        {tab === "canalbrief" && <CanalBriefPanel />}
+        {tab === "estrategia" && <EstrategiaGlobalPanel />}
         {tab === "mipais" && <MiPaisPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}

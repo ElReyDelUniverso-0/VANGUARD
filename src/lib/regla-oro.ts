@@ -859,6 +859,62 @@ export const REGLA_ORO = {
       "RTS territorial jugable dentro de Vanguard: funda tu imperio sobre un continente hexagonal que nace distinto cada partida, elige facción con bonos propios (acero, oro, ciencia o muro) y compite contra 7 bots con personalidad. Ciudades que empujan la frontera, mercados, laboratorios, cuarteles, fortalezas, puertos para desembarcos navales y cañones que golpean a AMBOS bandos. Asalta con el porcentaje de reserva que elijas, sostén frentes con MANTENER o CONTRAATACAR, investiga mejoras y conquista el 75% del terreno — o sé el último en pie cuando el reloj de 15 minutos se apague.",
     acento: "#FFC94D",
   },
+  pronosticos: {
+    titulo: "PRONÓSTICOS DE INTELIGENCIA",
+    volanta: "El futuro se estima, no se adivina",
+    imagen: "/ilustraciones/geopolitica.jpg",
+    texto:
+      "Notas de pronóstico con horizonte de 3 a 12 meses, escenarios base/escalada/distensión con probabilidades, indicadores observados y confianza declarada por el núcleo neuronal. Además: ratings de riesgo por país desglosados en cuatro ejes (armado, político, económico, social) con tendencia al alza o a la baja. El archivo crece cada día — la mesa que firma es tuya.",
+    acento: "#9AE04D",
+  },
+  enclaves: {
+    titulo: "EL MUNDO EN CLAVE",
+    volanta: "Nadie nace sabiendo de dónde viene un conflicto",
+    imagen: "/ilustraciones/mapa.jpg",
+    texto:
+      "El explicador que el planeta merecía: cada caso se abre en 5 claves numeradas —cómo empezó, por qué importa, quién manda en el terreno, qué dice la economía y hasta dónde puede escalar— con mapa esquemático del área, actores con veto y escenarios con probabilidades. El veredicto lo firma el núcleo neuronal v3. Entender también es jugar.",
+    acento: "#FF8A3D",
+  },
+  extranjera: {
+    titulo: "ASUNTOS EXTERIORES",
+    volanta: "La revista del analista paciente",
+    imagen: "/ilustraciones/noticias.jpg",
+    texto:
+      "Edición bimestral con lema propio: ensayos largos de autores ficticios con cargo y tesis, índice de fricción por texto, debate a dos voces (a favor / en contra), cita para enmarcar y hemeroteca de números atrasados. La lectura continua que los titulares del día no pueden dar — porque la guerra se decide en el detalle administrativo.",
+    acento: "#FFC94D",
+  },
+  geoint: {
+    titulo: "OJO-GEOINT",
+    volanta: "El planeta visto desde arriba, capa por capa",
+    imagen: "/ilustraciones/osint.jpg",
+    texto:
+      "Dashboard de inteligencia geoespacial asistida por IA: 6 capas conmutables (óptica, radar SAR, térmica, ADS-B, AIS y luces nocturnas), detecciones del núcleo neuronal con huella de píxeles y cruz de geolocalización, agenda de pases satelitales con cuenta atrás y cola de verificación humana. El ojo que todo lo ve también firma lo que ve.",
+    acento: "#4DD8FF",
+  },
+  monitorglobal: {
+    titulo: "MONITOR GLOBAL",
+    volanta: "El pulso del planeta, computado por neuronas",
+    imagen: "/ilustraciones/radar.jpg",
+    texto:
+      "El núcleo neuronal v3 calcula en directo el índice de tensión global con gauge semicircular, 6 teatros, 4 dominios (energía, ciber, desinformación, marítimo), sparkline de 24 tramos, feed de alertas con severidad y cinta de precios de guerra ficticia. Cada 30 segundos el mundo vuelve a opinar — y el tablero escucha.",
+    acento: "#9AE04D",
+  },
+  canalbrief: {
+    titulo: "CANAL BRIEF",
+    volanta: "El briefing que se ve, no se lee",
+    imagen: "/ilustraciones/operaciones.jpg",
+    texto:
+      "Canal de análisis en vídeo con player simulado y osciloscopio de voz, línea de tiempo con capítulos clicables, transcripción sincronizada que se ilumina al ritmo del audio, comentarios del cinturón y fila de siguiente episodio. Miniaturas de atardecer generadas por matiz. Sin algoritmo de dice: la mesa elige, tú miras.",
+    acento: "#FF6B4D",
+  },
+  estrategia: {
+    titulo: "ESTRATEGIA GLOBAL",
+    volanta: "El mando se aprende: aula, mesa y tabla",
+    imagen: "/ilustraciones/mundo.jpg",
+    texto:
+      "La escuela del mando dentro de Vanguard: 4 doctrinas con árbol de mejora y contra-doctrina histórica, mesa de wargames con fuerzas, objetivos y regla especial por escenario, ciclo OODA animado en marcha perpetua, lecciones del aula y tabla de generales donde TU figura por mérito. Gana wargames y sube al ranking.",
+    acento: "#C89AFF",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;
