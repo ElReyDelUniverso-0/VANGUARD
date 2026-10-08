@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Newspaper, ExternalLink, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap } from "lucide-react";
+import { Newspaper, ExternalLink, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +55,22 @@ const tagColor: Record<string, string> = {
 const VOTE_KEY = "vanguard-news-votes-v13";
 type VoteMap = Record<string, "REAL" | "FAKE">;
 
+// v88.0 NEURONA — expediente del analista IA por cable
+interface NeuronaExp {
+  resumen: string;
+  actores: string[];
+  sentimiento: "ESCALADA" | "TENSIÓN" | "ESTABLE" | "DÉTENTE";
+  riesgo: number;
+  clave: string;
+  ia: boolean;
+}
+const NEURONA_SENT_COLOR: Record<NeuronaExp["sentimiento"], string> = {
+  ESCALADA: "text-crisis border-crisis-hud bg-crisis-hud/30",
+  "TENSIÓN": "text-amber border-amber-hud bg-amber-hud/30",
+  ESTABLE: "text-cyan-hud border-cyan-hud/60 bg-cyan-hud/20",
+  "DÉTENTE": "text-neon border-neon-hud bg-neon-hud/30",
+};
+
 export function NewsPanel() {
   const [items, setItems] = useState<NewsItem[]>(() => {
     // v36: caché local — el panel abre con las últimas buenas aunque la red falle
@@ -71,6 +87,9 @@ export function NewsPanel() {
   const [filter, setFilter] = useState<string>("ALL");
   const [commentOpen, setCommentOpen] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
+  // v88.0 NEURONA: expedientes por cable (undefined = sin pedir, "loading" = cargando)
+  const [neuronaOpen, setNeuronaOpen] = useState<string | null>(null);
+  const [neurona, setNeurona] = useState<Record<string, NeuronaExp | "loading">>({});
   const recordViewNews = useGameStore((s) => s.recordViewNews);
   const addCoins = useGameStore((s) => s.addCoins);
   const comments = useGameStore((s) => s.comments);
@@ -151,6 +170,41 @@ export function NewsPanel() {
   };
 
   const commentsFor = (id: string) => comments[`news:${id}`] ?? [];
+
+  // v88.0 NEURONA: pedir el expediente del analista IA (con caché del servidor)
+  const analizarNeurona = async (item: NewsItem) => {
+    if (neuronaOpen === item.id) {
+      setNeuronaOpen(null);
+      return;
+    }
+    setNeuronaOpen(item.id);
+    if (neurona[item.id] && neurona[item.id] !== "loading") return;
+    setNeurona((m) => ({ ...m, [item.id]: "loading" }));
+    try {
+      const res = await fetch("/api/neurona", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: item.title, source: item.source }),
+      });
+      const data = await res.json();
+      if (data?.ok) {
+        setNeurona((m) => ({
+          ...m,
+          [item.id]: {
+            resumen: data.resumen, actores: data.actores || [],
+            sentimiento: data.sentimiento, riesgo: data.riesgo,
+            clave: data.clave, ia: data.ia === true,
+          },
+        }));
+      } else {
+        setNeurona((m) => ({ ...m, [item.id]: undefined as unknown as NeuronaExp }));
+        toast.error("NEURONA no pudo procesar el cable");
+      }
+    } catch {
+      setNeurona((m) => ({ ...m, [item.id]: undefined as unknown as NeuronaExp }));
+      toast.error("Sin conexión con NEURONA");
+    }
+  };
 
   const filtered = filter === "ALL" ? items : items.filter((i) => i.tacticalTag === filter);
   const tags = ["ALL", "ALERTA", "DIPLOMACIA", "ECONOMIA", "HUMANITARIO", "ANALISIS"];
@@ -349,6 +403,15 @@ export function NewsPanel() {
                       </span>
                       <div className="flex items-center gap-2">
                         <button
+                          onClick={(e) => { e.stopPropagation(); void analizarNeurona(item); }}
+                          className={cn(
+                            "flex items-center gap-1 text-[10px] font-mono uppercase transition-colors border px-1.5 py-0.5",
+                            neuronaOpen === item.id ? "border-violet-hud text-violet-hud bg-violet-hud/20" : "border-violet-hud/50 text-violet-hud hover:bg-violet-hud/20"
+                          )}
+                        >
+                          <BrainCircuit className="w-3 h-3" /> neurona
+                        </button>
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setCommentOpen(commentOpen === item.id ? null : item.id);
@@ -364,6 +427,58 @@ export function NewsPanel() {
                         <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-amber" />
                       </div>
                     </div>
+
+                    {/* v88.0 NEURONA: expediente del analista IA */}
+                    {neuronaOpen === item.id && (
+                      <div className="mt-2 pt-2 border-t border-violet-hud/30" onClick={(e) => e.stopPropagation()}>
+                        {neurona[item.id] === "loading" && (
+                          <div className="flex items-center gap-2 text-[10px] font-mono uppercase text-violet-hud">
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> neurona analizando el cable…
+                          </div>
+                        )}
+                        {neurona[item.id] && neurona[item.id] !== "loading" && (() => {
+                          const exp = neurona[item.id] as NeuronaExp;
+                          return (
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-[8px] font-mono font-black uppercase tracking-widest text-violet-hud flex items-center gap-1">
+                                  <BrainCircuit className="w-3 h-3" /> expediente neurona
+                                </span>
+                                <span className={cn("text-[8px] font-mono uppercase px-1.5 py-0.5 border", NEURONA_SENT_COLOR[exp.sentimiento])}>
+                                  {exp.sentimiento}
+                                </span>
+                                <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-border text-muted-foreground">
+                                  {exp.ia ? "núcleo IA" : "analista local"}
+                                </span>
+                              </div>
+                              <p className="text-[11px] leading-snug text-foreground/90">{exp.resumen}</p>
+                              <div>
+                                <div className="flex justify-between text-[8px] font-mono uppercase text-muted-foreground mb-0.5">
+                                  <span>riesgo de escalada</span>
+                                  <span className={exp.riesgo >= 70 ? "text-crisis font-bold" : exp.riesgo >= 45 ? "text-amber" : "text-neon"}>{exp.riesgo}/100</span>
+                                </div>
+                                <div className="h-1.5 bg-secondary overflow-hidden">
+                                  <div
+                                    className="h-full transition-all"
+                                    style={{ width: `${exp.riesgo}%`, background: exp.riesgo >= 70 ? "#FF3B30" : exp.riesgo >= 45 ? "#FFD60A" : "#00FF87" }}
+                                  />
+                                </div>
+                              </div>
+                              {exp.actores.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {exp.actores.map((a) => (
+                                    <span key={a} className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-violet-hud/50 text-violet-hud">{a}</span>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="p-1.5 bg-violet-hud/10 border border-violet-hud/30 text-[10px] text-foreground/90 leading-snug">
+                                <span className="font-mono text-[8px] uppercase text-violet-hud font-black">clave: </span>{exp.clave}
+                              </div>
+                            </div>
+                          );
+})()}
+                      </div>
+                    )}
 
                     {/* Comentarios del cable */}
                     {commentOpen === item.id && (

@@ -69,6 +69,7 @@ export const KIND_META: Record<string, { label: string; emoji: string; accent: s
   sticker: { label: "Sticker", emoji: "🌟", accent: "violet" },
   bandera: { label: "Bandera", emoji: "🏳️", accent: "green" },
   mapa: { label: "Mapa", emoji: "🗺️", accent: "amber" },
+  periodico: { label: "Periódico", emoji: "🗞️", accent: "amber" },
   decreto: { label: "Decreto", emoji: "📜", accent: "amber" },
 };
 

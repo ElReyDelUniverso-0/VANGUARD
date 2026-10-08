@@ -8,10 +8,10 @@ import { useEffect, useMemo } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { BrainCircuit, Flame, Coins, Gem, Trophy, TrendingUp, Target, Globe2, Award, Swords, Newspaper, Images, Gamepad2 } from "lucide-react";
+import { BrainCircuit, Flame, Coins, Gem, Trophy, TrendingUp, Target, Globe2, Award, Swords, Newspaper, Images, Gamepad2, Medal } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { getRankForLevel, xpForLevel } from "@/lib/game-data";
-import { useAgenteLook, PIEL_TONOS, UNIFORME_COLORES, PANTALON_COLORES, VISOR_COLORES } from "@/lib/agente-look";
+import { useAgenteLook, PIEL_TONOS, UNIFORME_COLORES, PANTALON_COLORES, VISOR_COLORES, HEADGEAR_COLORES, MOCHILA_COLORES, PARCHE_COLORES, MEDALLAS, RELIQUIAS, medallasGanadas, reliquiaDesbloqueada, type AgenteLook, type MedalStats } from "@/lib/agente-look";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_IQ = "vanguard-iq-history";
@@ -265,24 +265,44 @@ function aliasSafe(a: string) {
   return a?.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 3);
 }
 
-// ---- v73.0 EDITOR DEL AGENTE 3D ----
+// ---- v73 EDITOR + v88 EQUIPO COMPLETO DEL AGENTE 3D ----
 const IR_AL_HANGAR = () =>
   window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "hangar" }));
+
+const HEADGEAR_OPCIONES: { id: AgenteLook["headgear"]; label: string }[] = [
+  { id: "none", label: "— " },
+  { id: "casco", label: "CASCO" },
+  { id: "boina", label: "BOINA" },
+];
+const COMPANERO_OPCIONES: { id: AgenteLook["companero"]; label: string; desc: string }[] = [
+  { id: "none", label: "NINGUNO", desc: "Operador en solitario" },
+  { id: "aguila", label: "AGUILA", desc: "Vuela a tu lado batiendo alas" },
+  { id: "dron", label: "DRON", desc: "Reconocimiento con luz de escaneo" },
+  { id: "orbital", label: "ORBITAL", desc: "Satélite personal en órbita" },
+];
 
 function EditorAgente3D() {
   const look = useAgenteLook();
   const setLook = useAgenteLook((s) => s.setLook);
   const reset = useAgenteLook((s) => s.reset);
+  const s = useGameStore();
+
+  const stats: MedalStats = useMemo(() => ({
+    level: s.level, streak: s.streak, achievements: s.unlockedAchievements,
+    mpWins: s.mpStats.wins, conquestWins: s.conquestWins, quizCorrect: s.quizCorrect,
+    coins: s.coins, minigameBestScore: s.minigameBestScore, viewedNews: s.viewedNews.length,
+  }), [s.level, s.streak, s.unlockedAchievements, s.mpStats.wins, s.conquestWins, s.quizCorrect, s.coins, s.minigameBestScore, s.viewedNews.length]);
+  const ganadas = useMemo(() => medallasGanadas(stats), [stats]);
 
   return (
     <div className="hud-panel neon-border p-4">
       <div className="flex items-center justify-between gap-2 mb-3">
         <div>
           <h3 className="font-display font-black uppercase tracking-wide text-lg">
-            Editor del Agente <span className="text-electric">3D</span>
+            Editor del Operador <span className="text-electric">3D</span>
           </h3>
           <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-            Piel · uniforme · visor — se ve en vivo en el hangar
+            Equipo · compañero · reliquias — se ve en vivo en el hangar
           </p>
         </div>
         <div className="flex gap-2">
@@ -302,23 +322,51 @@ function EditorAgente3D() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        {/* PREVIEW SVG del agente (vista frontal) */}
+        {/* PREVIEW SVG del operador con todo el equipo */}
         <div className="flex-shrink-0 mx-auto sm:mx-0">
-          <svg viewBox="0 0 120 190" className="w-[120px] h-[190px]" role="img" aria-label="Vista previa del agente">
+          <svg viewBox="0 0 120 190" className="w-[120px] h-[190px]" role="img" aria-label="Vista previa del operador">
             {/* aura de suelo */}
             <ellipse cx="60" cy="178" rx="42" ry="8" fill="none" stroke={look.uniforme === "rango" ? "#1E90FF" : look.uniforme} strokeOpacity="0.7" strokeWidth="2.5" />
+            {/* mochila (detrás del torso) */}
+            {look.mochila && <rect x="38" y="70" width="44" height="34" rx="4" fill={look.mochilaColor} stroke="#000" strokeOpacity="0.4" />}
             {/* piernas */}
             <rect x="47" y="118" width="11" height="54" rx="5.5" fill={look.pantalon} />
             <rect x="62" y="118" width="11" height="54" rx="5.5" fill={look.pantalon} />
+            {/* botas */}
+            <rect x="45" y="166" width="15" height="8" rx="2" fill="#171a21" />
+            <rect x="60" y="166" width="15" height="8" rx="2" fill="#171a21" />
             {/* torso */}
             <rect x="40" y="62" width="40" height="62" rx="16" fill={look.uniforme === "rango" ? "#3a3f4a" : look.uniforme} />
-            {/* brazos */}
+            {/* chaleco táctico + cargadores */}
+            <rect x="43" y="70" width="34" height="38" rx="6" fill="#171a21" fillOpacity="0.85" />
+            <rect x="49" y="92" width="6" height="11" rx="1.5" fill="#22262f" />
+            <rect x="57" y="92" width="6" height="11" rx="1.5" fill="#22262f" />
+            <rect x="65" y="92" width="6" height="11" rx="1.5" fill="#22262f" />
+            {/* brazos + guantes + parche */}
             <rect x="26" y="66" width="12" height="52" rx="6" fill={look.uniforme === "rango" ? "#3a3f4a" : look.uniforme} />
             <rect x="82" y="66" width="12" height="52" rx="6" fill={look.uniforme === "rango" ? "#3a3f4a" : look.uniforme} />
-            {/* insignia */}
-            <circle cx="78" cy="80" r="4" fill="#FFD60A" />
-            {/* cabeza */}
+            <circle cx="32" cy="118" r="4" fill="#171a21" />
+            <circle cx="88" cy="118" r="4" fill="#171a21" />
+            <circle cx="30" cy="80" r="4" fill={look.parche} />
+            {/* medallas ganadas (hasta 5 en el pecho) */}
+            {medallasGanadas(stats).slice(0, 5).map((m, i) => (
+              <g key={m.id}>
+                <rect x={66 + i * 5} y="72" width="4" height="7" fill={m.cinta[0]} />
+                <circle cx={68 + i * 5} cy="81" r="1.8" fill={m.cinta[m.cinta.length - 1]} />
+              </g>
+            ))}
+            {/* cabeza + mandíbula */}
             <circle cx="60" cy="38" r="17" fill={look.skin} />
+            {/* casco o boina */}
+            {look.headgear === "casco" && (
+              <>
+                <path d="M42 36 a18 18 0 0 1 36 0 l0 1 -36 0 z" fill={look.headgearColor} />
+                <rect x="55" y="24" width="10" height="6" rx="1.5" fill="#171a21" />
+              </>
+            )}
+            {look.headgear === "boina" && (
+              <path d="M43 30 a17 9 0 0 1 34 -2 l0 3 -34 0 z" fill={look.headgearColor} transform="rotate(-6 60 30)" />
+            )}
             {/* visor */}
             {look.visor && <rect x="43" y="31" width="34" height="9" rx="4.5" fill={look.visorColor} style={{ filter: `drop-shadow(0 0 5px ${look.visorColor})` }} />}
           </svg>
@@ -366,6 +414,125 @@ function EditorAgente3D() {
               <Swatch key={c} color={c} activo={look.visor && look.visorColor === c} onClick={() => setLook({ visor: true, visorColor: c })} aria={`Visor ${c}`} />
             ))}
           </Fila>
+          <Fila label="Cabeza">
+            {HEADGEAR_OPCIONES.map((o) => (
+              <button
+                key={o.id}
+                onClick={() => setLook({ headgear: o.id })}
+                className={cn(
+                  "px-2 h-7 border font-mono text-[8px] font-black uppercase tracking-wider transition active:scale-90",
+                  look.headgear === o.id ? "border-electric text-electric bg-electric/15" : "border-border text-muted-foreground"
+                )}
+              >
+                {o.label}
+              </button>
+            ))}
+            {look.headgear !== "none" && HEADGEAR_COLORES.map((c) => (
+              <Swatch key={c} color={c} activo={look.headgearColor === c} onClick={() => setLook({ headgearColor: c })} aria={`Cabeza ${c}`} />
+            ))}
+          </Fila>
+          <Fila label="Mochila">
+            <button
+              onClick={() => setLook({ mochila: !look.mochila })}
+              className={cn(
+                "px-2.5 h-7 border font-mono text-[9px] font-black uppercase tracking-wider transition active:scale-90",
+                look.mochila ? "border-amber text-amber bg-amber/15" : "border-border text-muted-foreground"
+              )}
+            >
+              {look.mochila ? "ON" : "OFF"}
+            </button>
+            {look.mochila && MOCHILA_COLORES.map((c) => (
+              <Swatch key={c} color={c} activo={look.mochilaColor === c} onClick={() => setLook({ mochilaColor: c })} aria={`Mochila ${c}`} />
+            ))}
+          </Fila>
+          <Fila label="Parche">
+            {PARCHE_COLORES.map((c) => (
+              <Swatch key={c} color={c} activo={look.parche === c} onClick={() => setLook({ parche: c })} aria={`Parche ${c}`} />
+            ))}
+          </Fila>
+          <Fila label="Compañero">
+            {COMPANERO_OPCIONES.map((o) => (
+              <button
+                key={o.id}
+                onClick={() => setLook({ companero: o.id })}
+                title={o.desc}
+                className={cn(
+                  "px-2 h-7 border font-mono text-[8px] font-black uppercase tracking-wider transition active:scale-90",
+                  look.companero === o.id ? "border-neon text-neon bg-neon/15" : "border-border text-muted-foreground"
+                )}
+              >
+                {o.label}
+              </button>
+            ))}
+          </Fila>
+          <Fila label="Reliquia (solo con proeza)">
+            {RELIQUIAS.map((r) => {
+              const unlocked = reliquiaDesbloqueada(r.id, stats);
+              return (
+                <button
+                  key={r.id}
+                  disabled={!unlocked}
+                  title={unlocked ? r.nombre : `${r.nombre} — ${r.proeza}`}
+                  onClick={() => setLook({ reliquia: r.id })}
+                  className={cn(
+                    "px-2 h-7 border font-mono text-[8px] font-black uppercase tracking-wider transition active:scale-90",
+                    look.reliquia === r.id ? "border-amber text-amber bg-amber/15" : unlocked ? "border-border text-muted-foreground" : "border-border/40 text-muted-foreground/40 line-through"
+                  )}
+                >
+                  {r.id === "none" ? "—" : r.nombre.split(" ")[0]}
+                </button>
+              );
+            })}
+          </Fila>
+        </div>
+      </div>
+
+      {/* VITRINA DE MEDALLAS — se ganan, no se compran */}
+      <div className="mt-4 pt-3 border-t border-border/60">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h4 className="font-display font-black uppercase tracking-wide text-sm flex items-center gap-1.5">
+              <Medal className="w-4 h-4 text-amber" /> Vitrina de Medallas
+            </h4>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              {ganadas.length} de {MEDALLAS.length} conquistadas — se lucen en el pecho del operador 3D
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          {MEDALLAS.map((m) => {
+            const got = ganadas.some((g) => g.id === m.id);
+            return (
+              <motion.div
+                key={m.id}
+                whileHover={got ? { scale: 1.04, rotate: -0.5 } : {}}
+                className={cn(
+                  "hud-corner border p-2 flex items-center gap-2 transition",
+                  got ? "border-amber/60 bg-amber/5" : "border-border/50 opacity-60"
+                )}
+              >
+                {/* cinta + medalla SVG */}
+                <svg viewBox="0 0 24 34" className="w-6 h-8 flex-shrink-0" aria-hidden>
+                  <rect x="4" y="2" width="16" height="14" fill={m.cinta[0]} />
+                  {m.cinta[1] && <rect x="4" y="5" width="16" height="4" fill={m.cinta[1]} />}
+                  {m.cinta[2] && <rect x="4" y="9" width="16" height="4" fill={m.cinta[2]} />}
+                  {got ? (
+                    <>
+                      <circle cx="12" cy="24" r="7.5" fill={m.cinta[m.cinta.length - 1]} />
+                      <circle cx="12" cy="24" r="5" fill="none" stroke="#00000055" strokeWidth="1" />
+                      <path d="M9 24 l2.2 2.4 L15 21.5" stroke="#ffffffcc" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+                    </>
+                  ) : (
+                    <circle cx="12" cy="24" r="7.5" fill="none" stroke="#555" strokeWidth="1.5" strokeDasharray="2 2" />
+                  )}
+                </svg>
+                <div className="min-w-0">
+                  <div className={cn("font-mono text-[9px] font-black uppercase leading-tight", got ? "text-amber" : "text-muted-foreground")}>{m.nombre}</div>
+                  <div className="font-mono text-[8px] text-muted-foreground leading-tight">{m.descripcion}</div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </div>

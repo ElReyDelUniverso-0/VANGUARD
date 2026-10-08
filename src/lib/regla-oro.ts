@@ -20,11 +20,11 @@ export interface ReglaOroEntry {
 
 export const REGLA_ORO = {
   noticias: {
-    titulo: "Noticias Globales",
-    volanta: "El mundo en tiempo real",
+    titulo: "Noticias + NEURONA",
+    volanta: "El mundo en tiempo real, ahora con IA que lee contigo",
     imagen: "/ilustraciones/noticias.jpg",
     texto:
-      "Titulares verificados de todo el planeta, con credibilidad por fuente. Lee, vota si es REAL o FAKE y sube tu IQ de analista.",
+      "Titulares verificados de todo el planeta con credibilidad por fuente. Vota si es REAL o FAKE y pulsa NEURONA: el analista IA de Vanguard firma un expediente al vuelo — resumen, actores detectados, sentimiento (ESCALADA a DÉTENTE), riesgo 0-100 y la clave estratégica.",
     acento: "#FFB020",
   },
   mapa: {
@@ -142,11 +142,11 @@ export const REGLA_ORO = {
     acento: "#FFD60A",
   },
   agente: {
-    titulo: "Perfil del Agente",
-    volanta: "Tu identidad en la sombra",
+    titulo: "OPERADOR LEGENDARIO",
+    volanta: "Tu agente ahora luce TODAS sus proezas",
     imagen: "/ilustraciones/agente.jpg",
     texto:
-      "Tu IQ geopolítico, tu equipo y tu look de combate. Edita tu agente 3D y hazlo único en el hangar.",
+      "Editor 3D con equipo completo: casco con montura NVG, boina, mochila táctica con antena, parche, guantes y botas. Las MEDALLAS se GANAN con logros reales y se lucen en el pecho; elige compañero — águila, dron o satélite orbital — y desbloquea RELIQUIAS únicas que orbitan a tu operador. Todos las ven en el hangar.",
     acento: "#38C6FF",
   },
   alianzas: {
@@ -287,11 +287,11 @@ export const REGLA_ORO = {
     acento: "#FF66C4",
   },
   studios: {
-    titulo: "Estudios Creadores",
-    volanta: "Una fábrica por sección",
+    titulo: "PRENSA LIBRE",
+    volanta: "Funda tu propio periódico dentro de Vanguard",
     imagen: "/ilustraciones/studios.jpg",
     texto:
-      "Noticias con fotos, banderas propias, mapas con flechas, música compuesta al momento y stickers. Cada estudio, una obra maestra.",
+      "Además de noticias, banderas, mapas, música y stickers: ahora cada operador puede FUNDAR un periódico — nombre, lema, logotipo, color de marca y artículos categorizados. La comunidad lo lee en el KIOSCO, lo comenta y lo puntúa. La información también se escribe aquí.",
     acento: "#22D3EE",
   },
   bolsamonedas: {
@@ -568,11 +568,11 @@ export const REGLA_ORO = {
     acento: "#E879F9",
   },
   maps: {
-    titulo: "Mapas de Conflictos",
-    volanta: "La vista de calle",
+    titulo: "TERRA 3D",
+    volanta: "El planeta como maqueta: relieve satelital real",
     imagen: "/ilustraciones/maps.jpg",
     texto:
-      "Explora las zonas calientes del planeta en el mapa satelital. Del espacio a la esquina exacta.",
+      "El mapa satelital ahora tiene modo 3D REAL: imagen de Esri sobre terreno en relieve con inclinación, rotación y vuelos cinemáticos a 10 zonas calientes — del Donbás a Ormuz, de Taiwán a Bab el-Mandeb. Del espacio a la esquina exacta, y ahora también al valle exacto.",
     acento: "#34D399",
   },
   ayuda: {

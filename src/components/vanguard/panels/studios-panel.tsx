@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Newspaper, Flag as FlagIcon, Map as MapIcon, Music4, Sticker, MessagesSquare,
-  Send, Plus, Minus, Play, Square, Loader2, Trash2, Wand2, Users, ShieldCheck,
+  Send, Plus, Minus, Play, Square, Loader2, Trash2, Wand2, Users, ShieldCheck, Library,
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Countryball } from "@/components/vanguard/countryball";
@@ -30,7 +30,7 @@ import {
 } from "@/lib/music-studio";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
-type StudioTab = "noticias" | "banderas" | "mapas" | "musica" | "stickers" | "comunidad";
+type StudioTab = "noticias" | "prensa" | "banderas" | "mapas" | "musica" | "stickers" | "comunidad";
 
 const LS_STUDIO_LIKES = "vanguard_studio_likes";
 const LS_STUDIO_RATES = "vanguard_studio_rates";
@@ -948,9 +948,314 @@ function ComunidadStudio() {
   );
 }
 
+// ============ v88 PRENSA LIBRE — PERIÓDICOS DEL OPERADOR ============
+// Cada jugador puede FUNDAR su propio periódico dentro de Vanguard: nombre,
+// lema, logotipo, acento de marca y artículos con tono periodístico. La
+// comunidad lo lee en el KIOSCO, lo comenta, lo gusta y lo denuncia. Todo
+// pasa por el agente moderador IA como el resto del contenido.
+
+interface PaperArticle { t: string; c: string; tone: string; b: string; }
+interface PaperData { logo: string; accent: string; articles: PaperArticle[]; }
+
+const PAPER_LOGOS = ["📰", "🗞️", "📡", "🌍", "⚡", "🛰️", "🔥", "🦅", "☕", "🎖️"];
+const PAPER_ACCENTS = ["#d4af37", "#FF3B30", "#1E90FF", "#00FF87", "#9B5CFF", "#FF8A2A", "#38bdf8", "#F0F0F0"];
+const PAPER_CATS = ["MUNDO", "GUERRA", "OSINT", "POLÍTICA", "ECONOMÍA", "TECNOLOGÍA", "OPINIÓN", "CULTURA"];
+const PAPER_TONES = ["INFORMATIVO", "ANÁLISIS", "INVESTIGACIÓN", "CRÓNICA"];
+const PAPER_BODY_MAX = 480;
+const PAPER_JSON_MAX = 5600;
+
+function parsePaper(raw: string): PaperData | null {
+  try {
+    const j = JSON.parse(raw) as PaperData;
+    if (!j || !Array.isArray(j.articles)) return null;
+    return { logo: String(j.logo || "📰"), accent: String(j.accent || "#d4af37"), articles: j.articles };
+  } catch {
+    return null;
+  }
+}
+
+function PrensaStudio() {
+  const alias = useGameStore((s) => s.alias);
+  const feed = useUgcFeed("periodico");
+  const [name, setName] = useState("");
+  const [motto, setMotto] = useState("");
+  const [logo, setLogo] = useState(PAPER_LOGOS[0]);
+  const [accent, setAccent] = useState(PAPER_ACCENTS[0]);
+  const [articles, setArticles] = useState<PaperArticle[]>([{ t: "", c: "MUNDO", tone: "INFORMATIVO", b: "" }]);
+  const [busy, setBusy] = useState(false);
+  const [leyendo, setLeyendo] = useState<UgcItem | null>(null);
+
+  const jsonLen = (() => {
+    try { return JSON.stringify({ logo, accent, articles }).length; } catch { return 0; }
+  })();
+  const articlesOk = articles.filter((a) => a.t.trim().length >= 4 && a.b.trim().length >= 40);
+  const canPost = name.trim().length >= 3 && motto.trim().length >= 4 && articlesOk.length >= 1 && jsonLen <= PAPER_JSON_MAX && !busy;
+
+  const setArticle = (i: number, patch: Partial<PaperArticle>) =>
+    setArticles((arr) => arr.map((a, j) => (j === i ? { ...a, ...patch } : a)));
+
+  const publish = async () => {
+    if (!canPost) return;
+    setBusy(true);
+    const paper: PaperData = { logo, accent, articles: articlesOk };
+    const ok = await publishUgc({
+      kind: "periodico", author: alias || "ANÓNIMO",
+      title: name.trim(), summary: motto.trim().slice(0, 300),
+      body: JSON.stringify(paper),
+    });
+    setBusy(false);
+    if (ok) {
+      setArticles([{ t: "", c: "MUNDO", tone: "INFORMATIVO", b: "" }]);
+      void feed.reload();
+    }
+  };
+
+  return (
+    <div className="grid lg:grid-cols-[400px_1fr] gap-4">
+      {/* ---- REDACCIÓN ---- */}
+      <div className="space-y-2.5 hud-panel p-3 border-amber-hud/40">
+        <div className="flex items-center gap-2">
+          <Library className="w-4 h-4 text-amber" />
+          <h3 className="text-[12px] font-bold uppercase text-amber tracking-wide">Fundar un Periódico</h3>
+        </div>
+        <p className="text-[10px] text-muted-foreground leading-snug">
+          Funda TU periódico dentro de Vanguard: elige nombre, lema, logotipo y color de marca,
+          escribe los artículos con su tono y publícalo. Los demás operadores lo leen en el KIOSCO,
+          lo comentan y lo puntúan. El agente IA modera cada edición.
+        </p>
+        <input
+          value={name} onChange={(e) => setName(e.target.value)} maxLength={60}
+          placeholder="Nombre del periódico… (ej. EL CENTINELA DEL SUR)"
+          className="w-full bg-secondary border border-amber-hud/30 rounded-sm px-2 py-1.5 text-[11px] font-mono font-bold"
+        />
+        <input
+          value={motto} onChange={(e) => setMotto(e.target.value)} maxLength={120}
+          placeholder="Lema de la cabecera… (ej. La verdad desde el frente sur)"
+          className="w-full bg-secondary border border-amber-hud/30 rounded-sm px-2 py-1.5 text-[10px] font-mono italic"
+        />
+        <div>
+          <div className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Logotipo</div>
+          <div className="flex flex-wrap gap-1">
+            {PAPER_LOGOS.map((l) => (
+              <button key={l} onClick={() => setLogo(l)}
+                className={cn("w-8 h-8 text-base border rounded-sm transition-colors flex items-center justify-center",
+                  logo === l ? "border-amber bg-amber/20" : "border-amber-hud/25 hover:border-amber-hud/60")}>
+                {l}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mb-1">Color de marca</div>
+          <div className="flex flex-wrap gap-1.5">
+            {PAPER_ACCENTS.map((c) => (
+              <button key={c} onClick={() => setAccent(c)} aria-label={`Color ${c}`}
+                className={cn("w-7 h-7 border transition-transform", accent === c ? "border-white ring-2 ring-white/40 scale-110" : "border-black/50")}
+                style={{ background: c }} />
+            ))}
+          </div>
+        </div>
+
+        {/* artículos */}
+        <div className="pt-1 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
+              Artículos de la edición ({articlesOk.length} válidos · {articles.length}/12)
+            </div>
+            <button
+              onClick={() => articles.length < 12 && setArticles((arr) => [...arr, { t: "", c: "MUNDO", tone: "INFORMATIVO", b: "" }])}
+              disabled={articles.length >= 12}
+              className="px-2 py-0.5 border border-amber-hud/40 text-amber text-[9px] font-mono uppercase rounded-sm hover:bg-amber/10 disabled:opacity-40 flex items-center gap-1"
+            >
+              <Plus className="w-3 h-3" /> añadir
+            </button>
+          </div>
+          {articles.map((a, i) => (
+            <div key={i} className="border border-border/60 rounded-sm p-2 space-y-1.5 bg-secondary/30">
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-[8px] text-muted-foreground">#{i + 1}</span>
+                <input
+                  value={a.t} onChange={(e) => setArticle(i, { t: e.target.value })} maxLength={100}
+                  placeholder="Titular…"
+                  className="flex-1 bg-secondary border border-border rounded-sm px-2 py-1 text-[10px] font-bold"
+                />
+                {articles.length > 1 && (
+                  <button onClick={() => setArticles((arr) => arr.filter((_, j) => j !== i))}
+                    className="p-1 text-crisis/70 hover:text-crisis" aria-label="Quitar artículo">
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {PAPER_CATS.map((c) => (
+                  <button key={c} onClick={() => setArticle(i, { c })}
+                    className={cn("px-1 py-0.5 text-[8px] font-mono border rounded-sm",
+                      a.c === c ? "bg-amber/20 border-amber text-amber" : "border-border text-muted-foreground")}>
+                    {c}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {PAPER_TONES.map((tn) => (
+                  <button key={tn} onClick={() => setArticle(i, { tone: tn })}
+                    className={cn("px-1 py-0.5 text-[8px] font-mono border rounded-sm",
+                      a.tone === tn ? "bg-cyan-hud/20 border-cyan-hud text-cyan-hud" : "border-border text-muted-foreground")}>
+                    {tn}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={a.b} onChange={(e) => setArticle(i, { b: e.target.value.slice(0, PAPER_BODY_MAX) })} rows={3}
+                placeholder="Cuerpo del artículo… (mínimo 40 caracteres)"
+                className="w-full bg-secondary border border-border rounded-sm px-2 py-1 text-[10px] leading-snug"
+              />
+              <div className={cn("text-[8px] font-mono", a.b.trim().length >= 40 ? "text-green-hud" : "text-muted-foreground")}>
+                {a.b.length}/{PAPER_BODY_MAX} · {a.b.trim().length >= 40 ? "válido" : "mínimo 40"}
+              </div>
+            </div>
+          ))}
+          <div className={cn("text-[9px] font-mono", jsonLen > PAPER_JSON_MAX ? "text-crisis" : "text-muted-foreground")}>
+            tamaño de la edición: {jsonLen}/{PAPER_JSON_MAX} bytes
+          </div>
+        </div>
+
+        <button
+          onClick={() => void publish()} disabled={!canPost}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-amber-hud/40 border border-amber-hud text-amber rounded-sm text-[11px] font-mono uppercase font-bold hover:bg-amber-hud/70 disabled:opacity-40 transition-colors"
+        >
+          {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+          Publicar edición (+40 monedas)
+        </button>
+      </div>
+
+      {/* ---- KIOSCO ---- */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-[11px] font-mono uppercase text-amber flex items-center gap-1.5">
+            <Library className="w-3.5 h-3.5" /> KIOSCO — periódicos de los operadores
+          </h3>
+          <button onClick={() => void feed.reload()} className="text-[9px] font-mono uppercase text-muted-foreground hover:text-amber">
+            actualizar
+          </button>
+        </div>
+        {feed.loading && <div className="text-[10px] font-mono text-muted-foreground">cargando kiosco…</div>}
+        {!feed.loading && feed.items.length === 0 && (
+          <div className="hud-panel p-4 text-center text-[11px] text-muted-foreground">
+            El kiosco está vacío — funda el primer periódico de Vanguard.
+          </div>
+        )}
+        <div className="grid md:grid-cols-2 gap-2">
+          {feed.items.map((it) => (
+            <PaperCard key={it.id} item={it} myVote={feed.myLikes.has(it.id)}
+              onLike={feed.toggleLike} onReport={feed.report} onDelete={feed.remove}
+              onRead={() => { sfx.click(); setLeyendo(it); }} />
+          ))}
+        </div>
+      </div>
+
+      {leyendo && <PaperReader item={leyendo} onClose={() => setLeyendo(null)} onLike={() => feed.toggleLike(leyendo)} liked={feed.myLikes.has(leyendo.id)} />}
+    </div>
+  );
+}
+
+function PaperCard({ item, myVote, onLike, onReport, onDelete, onRead }: {
+  item: UgcItem; myVote: boolean; onLike: (i: UgcItem) => void; onReport: (i: UgcItem) => void; onDelete: (i: UgcItem) => void; onRead: () => void;
+}) {
+  const alias = useGameStore((s) => s.alias);
+  const paper = parsePaper(item.body);
+  const accent = paper?.accent || "#d4af37";
+  return (
+    <div className="hud-panel overflow-hidden flex flex-col" style={{ borderTop: `3px solid ${accent}` }}>
+      <button onClick={onRead} className="text-left p-3 hover:bg-secondary/40 transition-colors group flex-1">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-xl">{paper?.logo || "📰"}</span>
+          <div className="min-w-0">
+            <div className="text-[12px] font-black font-display uppercase tracking-wide truncate group-hover:text-amber transition-colors" style={{ color: undefined }}>
+              {item.title}
+            </div>
+            <div className="text-[9px] font-mono italic text-muted-foreground truncate">“{item.summary}”</div>
+          </div>
+        </div>
+        <div className="text-[9px] font-mono uppercase text-muted-foreground space-y-0.5">
+          {paper?.articles?.slice(0, 3).map((a, i) => (
+            <div key={i} className="truncate">· [{a.c}] {a.t}</div>
+          ))}
+          {(paper?.articles?.length || 0) > 3 && <div className="text-amber/80">+ {(paper?.articles?.length || 0) - 3} artículos más…</div>}
+        </div>
+      </button>
+      <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-t border-border/50 bg-secondary/30">
+        <Countryball code={item.authorBall} className="w-4 h-4" />
+        <span className="text-[9px] font-mono text-muted-foreground truncate flex-1">{item.author}</span>
+        <button onClick={() => onRead()} className="px-1.5 py-0.5 border text-[8px] font-mono uppercase rounded-sm border-amber/50 text-amber hover:bg-amber/10">leer</button>
+        <button onClick={() => onLike(item)} className={cn("flex items-center gap-0.5 text-[9px] font-mono px-1", myVote ? "text-crisis" : "text-muted-foreground hover:text-crisis")}>
+          ♥ {item.likes}
+        </button>
+        {item.author === alias ? (
+          <button onClick={() => onDelete(item)} className="text-[9px] font-mono text-muted-foreground hover:text-crisis" title="Eliminar mi periódico">
+            <Trash2 className="w-3 h-3" />
+          </button>
+        ) : (
+          <button onClick={() => onReport(item)} className="text-[9px] font-mono text-muted-foreground hover:text-crisis" title="Reportar">
+            ⚑
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PaperReader({ item, onClose, onLike, liked }: { item: UgcItem; onClose: () => void; onLike: () => void; liked: boolean }) {
+  const paper = parsePaper(item.body);
+  const accent = paper?.accent || "#d4af37";
+  const fecha = new Date(item.createdAt).toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return (
+    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm overflow-y-auto thin-scroll" role="dialog" aria-modal="true" aria-label={`Leyendo ${item.title}`}>
+      <div className="max-w-3xl mx-auto p-4 pb-16">
+        <div className="flex justify-between items-center mb-3">
+          <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">KIOSCO VANGUARD · LECTURA</span>
+          <button onClick={onClose} className="px-3 py-1 border border-border font-mono text-[10px] uppercase hover:text-crisis transition-colors">cerrar ✕</button>
+        </div>
+        <div className="hud-panel p-5" style={{ borderTop: `4px solid ${accent}` }}>
+          {/* cabecera del periódico */}
+          <div className="text-center border-b pb-3 mb-4" style={{ borderColor: `${accent}55` }}>
+            <div className="text-4xl mb-1">{paper?.logo || "📰"}</div>
+            <h1 className="font-display text-2xl sm:text-3xl font-black uppercase tracking-wide" style={{ color: accent }}>{item.title}</h1>
+            <div className="font-mono text-[10px] italic text-muted-foreground mt-1">“{item.summary}”</div>
+            <div className="font-mono text-[8px] uppercase tracking-widest text-muted-foreground mt-2">
+              edición de {item.author} · {fecha} · {(paper?.articles?.length || 0)} artículos
+            </div>
+          </div>
+          {/* artículos */}
+          <div className="space-y-5">
+            {paper?.articles?.map((a, i) => (
+              <article key={i} className={cn(i > 0 && "pt-4", i > 0 && "border-t border-border/40")}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-1.5 py-0.5 text-[8px] font-mono font-black uppercase border" style={{ borderColor: accent, color: accent }}>[{a.c}]</span>
+                  <span className="px-1.5 py-0.5 text-[8px] font-mono uppercase text-muted-foreground border border-border">{a.tone}</span>
+                </div>
+                <h2 className="font-display text-lg font-black leading-tight mb-1.5">{a.t}</h2>
+                {a.b.split(/\n+/).map((p, j) => (
+                  <p key={j} className="text-[12px] leading-relaxed text-foreground/90 mb-1.5 text-left">{p}</p>
+                ))}
+              </article>
+            ))}
+          </div>
+          <div className="flex items-center justify-between border-t mt-5 pt-3" style={{ borderColor: `${accent}55` }}>
+            <span className="font-mono text-[9px] text-muted-foreground">VEREDICTO IA: {item.aiVerdict || "—"}</span>
+            <button onClick={onLike} className={cn("px-3 py-1 border text-[10px] font-mono uppercase transition-colors", liked ? "border-crisis text-crisis" : "border-border hover:text-crisis")}>
+              ♥ {item.likes} {liked ? "· te gusta" : ""}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ============ PANEL PRINCIPAL ============
 const STUDIO_TABS: { id: StudioTab; label: string }[] = [
   { id: "noticias", label: "Noticias" },
+  { id: "prensa", label: "Periódicos" },
   { id: "banderas", label: "Banderas" },
   { id: "mapas", label: "Mapas" },
   { id: "musica", label: "Música" },
@@ -981,6 +1286,7 @@ export function StudiosPanel() {
         ))}
       </div>
       {tab === "noticias" && <NoticiasStudio />}
+      {tab === "prensa" && <PrensaStudio />}
       {tab === "banderas" && <BanderasStudio />}
       {tab === "mapas" && <MapasStudio />}
       {tab === "musica" && <MusicaStudio />}

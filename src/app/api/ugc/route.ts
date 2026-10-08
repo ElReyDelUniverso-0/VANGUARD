@@ -10,10 +10,11 @@ import { moderateUgc } from "@/lib/ai-moderate";
 
 export const dynamic = "force-dynamic";
 
-// v27 ESTUDIOS CREADORES: + post (comunidad), sticker, bandera, mapa
+// v27 ESTUDIOS CREADORES: + post, sticker, bandera, mapa
+// v88 PRENSA LIBRE: + periodico (los operadores fundan SUS PROPIOS periódicos)
 const KINDS = [
   "personaje", "arma", "juego", "musica", "noticia", "encuesta", "video",
-  "post", "sticker", "bandera", "mapa",
+  "post", "sticker", "bandera", "mapa", "periodico",
 ];
 const COMPO_KINDS = ["bandera", "mapa"]; // composición JSON re-renderizable
 const MAX_COMPO = 12_000; // JSON de composición de bandera/mapa
@@ -127,6 +128,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pega la URL del juego o el HTML del juego propio" }, { status: 400 });
     if (kind === "noticia" && info.length < 80)
       return NextResponse.json({ error: "Una noticia necesita al menos 80 caracteres de información" }, { status: 400 });
+    // v88: un periódico llega como JSON {logo, accent, articles:[{t,c,tone,b}]}
+    if (kind === "periodico") {
+      try {
+        const paper = JSON.parse(info) as { articles?: { t?: unknown; b?: unknown }[] };
+        const arts = Array.isArray(paper.articles) ? paper.articles : [];
+        const validas = arts.filter((a) => typeof a.t === "string" && String(a.t).trim().length >= 4 && typeof a.b === "string" && String(a.b).trim().length >= 40);
+        if (!paper || validas.length < 1)
+          return NextResponse.json({ error: "Un periódico necesita al menos 1 artículo (titular + 40 caracteres)" }, { status: 400 });
+      } catch {
+        return NextResponse.json({ error: "La edición llegó corrupta — publica de nuevo" }, { status: 400 });
+      }
+    }
 
     const sensitive = body.sensitive === true;
 
@@ -181,7 +194,8 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ item, verdict: mod.verdict, reason: mod.reason, ai: mod.ai, reward: 30 }, { status: 201 });
+    const reward = kind === "periodico" ? 40 : 30;
+    return NextResponse.json({ item, verdict: mod.verdict, reason: mod.reason, ai: mod.ai, reward }, { status: 201 });
   } catch (e) {
     console.error("ugc POST error", e);
     return NextResponse.json({ error: "El estudio no pudo procesar el envío" }, { status: 500 });

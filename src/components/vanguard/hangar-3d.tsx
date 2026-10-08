@@ -25,7 +25,7 @@ import { toast } from "sonner";
 import { getTension } from "@/lib/tension";
 import { claimOraculo, oraculoClaimed, ORACULO_DOCS, ORACULO_SECRET } from "@/lib/oraculo";
 import { TarotModal, PropagandaModal, DiarioModal } from "@/components/vanguard/hangar-modals";
-import { leerLook, type AgenteLook } from "@/lib/agente-look";
+import { leerLook, medallasGanadas, reliquiaDesbloqueada, RELIQUIAS, type AgenteLook, type MedalStats } from "@/lib/agente-look";
 import { Warehouse, Flame, Coins, Users, Thermometer, Compass } from "lucide-react";
 
 // ---- geometría del hangar ----
@@ -337,25 +337,51 @@ export function HangarPanel() {
       missionCards.push(card);
     }
 
-    // ---- agente del jugador (low-poly, uniforme por rango) ----
+    // ---- v88.0 agente REALISTA del jugador (uniforme por rango + equipo) ----
     const uniformColor = level >= 25 ? 0x8a1420 : level >= 16 ? 0x7a5a10 : level >= 8 ? 0x0e4a5a : level >= 3 ? 0x14401e : 0x3a3f4a;
     const agent = new THREE.Group();
     const bodyMat = new THREE.MeshLambertMaterial({ color: uniformColor });
     const skinMat = new THREE.MeshLambertMaterial({ color: 0xd8a77a });
+    const gearDarkMat = new THREE.MeshLambertMaterial({ color: 0x171a21 });
     const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 0.62, 4, 12), bodyMat);
     torso.position.y = 1.18;
     torso.castShadow = !isMobile;
+    // CHALECO TÁCTICO (placas + porta cargadores) sobre el torso
+    const vest = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.62, 0.5), gearDarkMat);
+    vest.position.y = 1.2; vest.castShadow = !isMobile;
+    agent.add(vest);
+    for (let p = 0; p < 3; p++) { // 3 cargadores en el porta
+      const mag = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.16, 0.1), new THREE.MeshLambertMaterial({ color: 0x22262f }));
+      mag.position.set(-0.15 + p * 0.15, 1.06, 0.27);
+      agent.add(mag);
+    }
+    // cuello
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 8), skinMat);
+    neck.position.y = 1.78;
+    agent.add(neck);
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 20, 16), skinMat);
     head.position.y = 1.92;
     head.castShadow = !isMobile;
+    // mandíbula sutil (la cabeza deja de ser una pelota lisa)
+    const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.2, 14, 10), skinMat);
+    jaw.scale.set(1, 0.72, 1.05); jaw.position.set(0, -0.1, 0.06);
+    head.add(jaw);
     const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.5, 4, 8), bodyMat);
     armL.position.set(-0.47, 1.22, 0);
     armL.castShadow = !isMobile; // armR/legR heredan al clonar
     const armR = armL.clone(); armR.position.x = 0.47;
+    // guantes
+    const gloveL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), gearDarkMat);
+    gloveL.position.y = -0.32; armL.add(gloveL);
+    const gloveR = gloveL.clone(); armR.add(gloveR);
     const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.5, 4, 8), new THREE.MeshLambertMaterial({ color: 0x1a1d26 }));
     legL.position.set(-0.18, 0.42, 0);
     legL.castShadow = !isMobile;
     const legR = legL.clone(); legR.position.x = 0.18;
+    // BOTAS de combate (hijas de las piernas: oscilan al caminar)
+    const bootL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.14, 0.32), gearDarkMat);
+    bootL.position.set(0, -0.4, 0.04); legL.add(bootL);
+    const bootR = bootL.clone(); legR.add(bootR);
     agent.add(torso, head, armL, armR, legL, legR);
     // insignia de rango en el pecho
     const badge = new THREE.Mesh(
@@ -364,6 +390,31 @@ export function HangarPanel() {
     );
     badge.position.set(0.2, 1.36, 0.3);
     agent.add(badge);
+    // v88 GRADUACIÓN DE MEDALLAS (pecho izquierdo): se GANAN con logros reales
+    const gs = useGameStore.getState();
+    const medalStatsFromStore: MedalStats = {
+      level: gs.level, streak: gs.streak, achievements: gs.unlockedAchievements,
+      mpWins: gs.mpStats.wins, conquestWins: gs.conquestWins, quizCorrect: gs.quizCorrect,
+      coins: gs.coins, minigameBestScore: gs.minigameBestScore, viewedNews: gs.viewedNews.length,
+    };
+    const ganadas = medallasGanadas(medalStatsFromStore);
+    const medalRack = new THREE.Group();
+    ganadas.slice(0, 5).forEach((m, i) => {
+      const ribbon = new THREE.Mesh(
+        new THREE.BoxGeometry(0.09, 0.05, 0.02),
+        new THREE.MeshBasicMaterial({ color: new THREE.Color(m.cinta[0]) })
+      );
+      ribbon.position.set(-0.16 + i * 0.1, 1.4, 0.33);
+      medalRack.add(ribbon);
+      const medal = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.025, 0.025, 0.008, 8),
+        new THREE.MeshBasicMaterial({ color: new THREE.Color(m.cinta[m.cinta.length - 1]) })
+      );
+      medal.rotation.x = Math.PI / 2;
+      medal.position.set(-0.16 + i * 0.1, 1.355, 0.335);
+      medalRack.add(medal);
+    });
+    agent.add(medalRack);
     agent.position.set(0, 0.22, 4);
     scene.add(agent);
     // aura por rango (anillo en el suelo)
@@ -376,9 +427,15 @@ export function HangarPanel() {
     aura.position.y = 0.05;
     agent.add(aura);
 
-    // ---- v73.0 EDITOR DEL AGENTE: look persistido + actualización EN VIVO ----
+    // ---- v73 EDITOR + v88 EQUIPO COMPLETO: look persistido + actualización EN VIVO ----
     const legMat = legL.material as THREE.MeshLambertMaterial;
+    const skinHexOk = (c: string) => /^#[0-9a-fA-F]{6}$/.test(c);
     let visorMesh: THREE.Mesh | null = null;
+    let headgearMesh: THREE.Group | null = null;
+    let mochilaMesh: THREE.Group | null = null;
+    let parcheMesh: THREE.Mesh | null = null;
+    let companeroMesh: THREE.Group | null = null;
+    let reliquiaMesh: THREE.Group | null = null;
     const buildVisor = (color: string) => {
       const v = new THREE.Mesh(
         new THREE.BoxGeometry(0.44, 0.13, 0.14),
@@ -387,11 +444,191 @@ export function HangarPanel() {
       v.position.set(0, 1.98, 0.21);
       return v;
     };
+    // CASCO DE COMBATE con montura NVG / BOINA
+    const buildHeadgear = (tipo: "casco" | "boina", color: string): THREE.Group => {
+      const g = new THREE.Group();
+      const mat = new THREE.MeshLambertMaterial({ color: skinHexOk(color) ? color : 0x3a3f4a });
+      if (tipo === "casco") {
+        const domo = new THREE.Mesh(new THREE.SphereGeometry(0.3, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.62), mat);
+        domo.position.y = 1.97;
+        domo.castShadow = !isMobile;
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.035, 18), mat);
+        brim.position.y = 1.885;
+        const nvg = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.09, 0.1), gearDarkMat); // montura de visión nocturna
+        nvg.position.set(0, 2.0, 0.27);
+        g.add(domo, brim, nvg);
+      } else {
+        const copa = new THREE.Mesh(new THREE.SphereGeometry(0.28, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.5), mat);
+        copa.scale.set(1, 0.62, 1);
+        copa.position.y = 2.06;
+        copa.rotation.z = 0.12; // boina caída a un lado
+        g.add(copa);
+      }
+      return g;
+    };
+    // MOCHILA TÁCTICA con antena y esterilla
+    const buildMochila = (color: string): THREE.Group => {
+      const g = new THREE.Group();
+      const mat = new THREE.MeshLambertMaterial({ color: skinHexOk(color) ? color : 0x2b2f3a });
+      const cuerpo = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.28), mat);
+      cuerpo.position.set(0, 1.24, -0.38);
+      cuerpo.castShadow = !isMobile;
+      const tapa = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.16, 0.3), gearDarkMat);
+      tapa.position.set(0, 1.5, -0.38);
+      const antena = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.7, 6), gearDarkMat);
+      antena.position.set(0.18, 1.85, -0.44);
+      antena.rotation.z = 0.12;
+      const esterilla = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.56, 8), new THREE.MeshLambertMaterial({ color: 0x4a4a35 }));
+      esterilla.rotation.z = Math.PI / 2;
+      esterilla.position.set(-0.05, 1.62, -0.36);
+      g.add(cuerpo, tapa, antena, esterilla);
+      return g;
+    };
+    // COMPAÑEROS: águila / dron de reconocimiento / satélite orbital
+    const buildCompanero = (tipo: "aguila" | "dron" | "orbital"): THREE.Group => {
+      const g = new THREE.Group();
+      if (tipo === "aguila") {
+        const cuerpo = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.3, 4, 8), new THREE.MeshLambertMaterial({ color: 0x4a3520 }));
+        cuerpo.rotation.z = Math.PI / 2;
+        const cabeza = new THREE.Mesh(new THREE.SphereGeometry(0.085, 10, 8), new THREE.MeshLambertMaterial({ color: 0xf0ead8 }));
+        cabeza.position.x = 0.24;
+        const pico = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 6), new THREE.MeshBasicMaterial({ color: 0xffa000 }));
+        pico.rotation.z = -Math.PI / 2;
+        pico.position.x = 0.34;
+        const alaL = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.02, 0.14), new THREE.MeshLambertMaterial({ color: 0x3a2a18 }));
+        alaL.position.set(0, 0.05, 0);
+        const alaR = alaL.clone();
+        alaL.name = "alaL"; alaR.name = "alaR";
+        g.add(cuerpo, cabeza, pico, alaL, alaR);
+        g.userData.tipo = "aguila";
+      } else if (tipo === "dron") {
+        const cuerpo = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.3), gearDarkMat);
+        const camara = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), new THREE.MeshBasicMaterial({ color: 0x00ff87 }));
+        camara.position.set(0, -0.05, 0.14);
+        g.add(cuerpo, camara);
+        const brazos: [number, number][] = [[0.2, 0.2], [-0.2, 0.2], [0.2, -0.2], [-0.2, -0.2]];
+        brazos.forEach(([bx, bz], i) => {
+          const brazo = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.02, 0.04), gearDarkMat);
+          brazo.position.set(bx * 0.5, 0, bz * 0.5);
+          brazo.rotation.y = i < 2 ? -Math.PI / 4 : Math.PI / 4;
+          g.add(brazo);
+          const rotor = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.008, 12), new THREE.MeshBasicMaterial({ color: 0x2a2e38, transparent: true, opacity: 0.85 }));
+          rotor.position.set(bx, 0.06, bz);
+          rotor.name = `rotor${i}`;
+          g.add(rotor);
+        });
+        const luz = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshBasicMaterial({ color: 0xff3b30 }));
+        luz.position.set(0, -0.08, -0.12);
+        const haz = new THREE.Mesh(new THREE.ConeGeometry(0.3, 1.1, 10, 1, true), new THREE.MeshBasicMaterial({ color: 0x00ff87, transparent: true, opacity: 0.08, side: THREE.DoubleSide }));
+        haz.position.y = -0.6;
+        g.add(luz, haz);
+        g.userData.tipo = "dron";
+      } else {
+        const nucleo = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 0), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+        const anillo = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.02, 8, 32), new THREE.MeshBasicMaterial({ color: 0x9be7ff, transparent: true, opacity: 0.8 }));
+        anillo.rotation.x = Math.PI / 2.4;
+        anillo.name = "anillo";
+        g.add(nucleo, anillo);
+        g.userData.tipo = "orbital";
+      }
+      return g;
+    };
+    // RELIQUIAS: objetos ÚNICOS que solo se ganan con proezas
+    const buildReliquia = (forma: "espada" | "corona" | "globo" | "estrella" | "corazon", hex: number): THREE.Group => {
+      const g = new THREE.Group();
+      const mat = new THREE.MeshBasicMaterial({ color: hex });
+      if (forma === "espada") {
+        const hoja = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.55, 0.015), mat);
+        const guarda = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.04, 0.04), mat);
+        guarda.position.y = -0.3;
+        const mango = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.14, 6), mat);
+        mango.position.y = -0.39;
+        g.add(hoja, guarda, mango);
+      } else if (forma === "corona") {
+        const aro = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 8, 20), mat);
+        aro.rotation.x = Math.PI / 2;
+        g.add(aro);
+        for (let i = 0; i < 5; i++) {
+          const pico = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 5), mat);
+          pico.position.set(Math.cos((i / 5) * Math.PI * 2) * 0.14, 0.08, Math.sin((i / 5) * Math.PI * 2) * 0.14);
+          g.add(pico);
+        }
+      } else if (forma === "globo") {
+        const esfera = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 10), new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.85 }));
+        const meridiano = new THREE.Mesh(new THREE.TorusGeometry(0.155, 0.008, 6, 24), new THREE.MeshBasicMaterial({ color: 0x9bd4ff }));
+        const ecuador = meridiano.clone();
+        ecuador.rotation.x = Math.PI / 2;
+        g.add(esfera, meridiano, ecuador);
+      } else if (forma === "corazon") {
+        const corazonShape = new THREE.Shape();
+        corazonShape.moveTo(0, 0.12);
+        corazonShape.bezierCurveTo(0, 0.2, -0.16, 0.2, -0.16, 0.06);
+        corazonShape.bezierCurveTo(-0.16, -0.06, 0, -0.1, 0, -0.18);
+        corazonShape.bezierCurveTo(0, -0.1, 0.16, -0.06, 0.16, 0.06);
+        corazonShape.bezierCurveTo(0.16, 0.2, 0, 0.2, 0, 0.12);
+        const corazon = new THREE.Mesh(new THREE.ExtrudeGeometry(corazonShape, { depth: 0.06, bevelEnabled: false }), mat);
+        corazon.position.z = -0.03;
+        g.add(corazon);
+      } else {
+        const nucleo = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 0), mat);
+        nucleo.scale.y = 1.5;
+        const nucleo2 = nucleo.clone();
+        nucleo2.scale.set(1.5, 1, 1);
+        nucleo2.rotation.y = Math.PI / 2;
+        nucleo2.scale.y = 1.5 / 1.5;
+        nucleo2.scale.y = 0.7;
+        g.add(nucleo, nucleo2);
+      }
+      return g;
+    };
+    const disposeGroup = (g: THREE.Group) => {
+      g.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (m.geometry) m.geometry.dispose();
+        const mm = m.material as THREE.Material | undefined;
+        if (mm && "dispose" in mm) mm.dispose();
+      });
+    };
+    const setHeadgear = (l: AgenteLook) => {
+      if (headgearMesh) { agent.remove(headgearMesh); disposeGroup(headgearMesh); headgearMesh = null; }
+      if (l.headgear === "none") return;
+      headgearMesh = buildHeadgear(l.headgear, l.headgearColor);
+      agent.add(headgearMesh);
+    };
+    const setMochila = (l: AgenteLook) => {
+      if (mochilaMesh) { agent.remove(mochilaMesh); disposeGroup(mochilaMesh); mochilaMesh = null; }
+      if (!l.mochila) return;
+      mochilaMesh = buildMochila(l.mochilaColor);
+      agent.add(mochilaMesh);
+    };
+    const setParche = (color: string) => {
+      if (!parcheMesh) {
+        parcheMesh = new THREE.Mesh(new THREE.CircleGeometry(0.07, 12), new THREE.MeshBasicMaterial({ color: 0x1e90ff }));
+        parcheMesh.position.set(-0.42, 1.42, 0.08);
+        parcheMesh.rotation.y = Math.PI / 2.6;
+        agent.add(parcheMesh);
+      }
+      (parcheMesh.material as THREE.MeshBasicMaterial).color.set(skinHexOk(color) ? color : "#1E90FF");
+    };
+    const setCompanero = (tipo: AgenteLook["companero"]) => {
+      if (companeroMesh) { scene.remove(companeroMesh); disposeGroup(companeroMesh); companeroMesh = null; }
+      if (tipo === "none") return;
+      companeroMesh = buildCompanero(tipo);
+      scene.add(companeroMesh);
+    };
+    const setReliquia = (id: AgenteLook["reliquia"]) => {
+      if (reliquiaMesh) { scene.remove(reliquiaMesh); disposeGroup(reliquiaMesh); reliquiaMesh = null; }
+      if (id === "none") return;
+      const def = RELIQUIAS.find((r) => r.id === id);
+      if (!def || !reliquiaDesbloqueada(id, medalStatsFromStore)) return; // sin proeza, sin reliquia
+      reliquiaMesh = buildReliquia(def.forma, def.hex);
+      scene.add(reliquiaMesh);
+    };
     const aplicarLook = (l: AgenteLook) => {
-      if (l.uniforme !== "rango" && /^#[0-9a-fA-F]{6}$/.test(l.uniforme)) bodyMat.color.set(l.uniforme);
+      if (l.uniforme !== "rango" && skinHexOk(l.uniforme)) bodyMat.color.set(l.uniforme);
       else bodyMat.color.set(uniformColor);
-      if (/^#[0-9a-fA-F]{6}$/.test(l.skin)) skinMat.color.set(l.skin);
-      if (/^#[0-9a-fA-F]{6}$/.test(l.pantalon)) legMat.color.set(l.pantalon);
+      if (skinHexOk(l.skin)) skinMat.color.set(l.skin);
+      if (skinHexOk(l.pantalon)) legMat.color.set(l.pantalon);
       if (l.visor) {
         if (!visorMesh) {
           visorMesh = buildVisor(l.visorColor);
@@ -405,10 +642,18 @@ export function HangarPanel() {
         (visorMesh.material as THREE.MeshBasicMaterial).dispose();
         visorMesh = null;
       }
+      setHeadgear(l);
+      setMochila(l);
+      setParche(l.parche);
+      setCompanero(l.companero);
+      setReliquia(l.reliquia);
     };
     aplicarLook(leerLook());
     const onAgenteLook = (e: Event) => aplicarLook((e as CustomEvent).detail as AgenteLook);
     window.addEventListener("vanguard:agente-look", onAgenteLook);
+    // v88: si las proezas cambian (nueva medalla/reliquia), refresca la vitrina viva
+    const onProezas = () => { setReliquia(leerLook().reliquia); };
+    window.addEventListener("vanguard:proezas", onProezas);
 
     // ---- otros agentes conectados (avatares de luz) ----
     const ghosts: { group: THREE.Group; t: number; from: THREE.Vector3; to: THREE.Vector3; speed: number }[] = [];
@@ -429,6 +674,14 @@ export function HangarPanel() {
       haloG.rotation.x = Math.PI / 2;
       haloG.position.y = 0.06;
       g.add(phantom, haloG);
+      // v88: destello de medalla orbitando al avatar ajeno — todos lucen proezas
+      const glint = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1, 0.05, 0.02),
+        new THREE.MeshBasicMaterial({ color: isHigh ? 0xffd60a : 0xc0c0c0 })
+      );
+      glint.name = "medallaGlint";
+      glint.position.y = 1.25;
+      g.add(glint);
       const name = isHigh ? "ORÁCULO" : GHOST_NAMES[i % GHOST_NAMES.length];
       const label = makeNameSprite(name, isHigh ? "#ffd60a" : "#8ab4ff");
       label.position.y = 2.1;
@@ -833,6 +1086,48 @@ export function HangarPanel() {
       head.position.y = 1.92 + Math.sin(t * 1.7) * 0.012;
       aura.rotation.z = t * 0.8;
 
+      // v88 COMPAÑERO: orbita al operador con vida propia
+      if (companeroMesh) {
+        const tipo = companeroMesh.userData.tipo as string;
+        const orbitR = tipo === "orbital" ? 1.5 : 1.15;
+        const orbitY = tipo === "orbital" ? 2.75 : tipo === "dron" ? 2.25 : 2.45;
+        const ang = t * (tipo === "orbital" ? 0.45 : 0.9);
+        companeroMesh.position.set(
+          agent.position.x + Math.cos(ang) * orbitR,
+          orbitY + Math.sin(t * 2.1) * 0.12,
+          agent.position.z + Math.sin(ang) * orbitR
+        );
+        companeroMesh.rotation.y = -ang + Math.PI / 2; // mira hacia donde vuela
+        if (tipo === "aguila") {
+          const flap = Math.sin(t * 11) * 0.55;
+          const aL = companeroMesh.getObjectByName("alaL");
+          const aR = companeroMesh.getObjectByName("alaR");
+          if (aL) aL.rotation.x = flap;
+          if (aR) aR.rotation.x = -flap;
+        } else if (tipo === "dron") {
+          for (let r = 0; r < 4; r++) {
+            const rot = companeroMesh.getObjectByName(`rotor${r}`);
+            if (rot) rot.rotation.y += dt * 42;
+          }
+        } else {
+          const an = companeroMesh.getObjectByName("anillo");
+          if (an) an.rotation.z = t * 1.4;
+          companeroMesh.rotation.y = t * 0.8;
+        }
+      }
+
+      // v88 RELIQUIA: orbita lento detrás del operador, girando sobre sí misma
+      if (reliquiaMesh) {
+        const angR = t * 0.55 + Math.PI; // detrás
+        reliquiaMesh.position.set(
+          agent.position.x + Math.cos(angR) * 0.95,
+          1.55 + Math.sin(t * 1.4) * 0.1,
+          agent.position.z + Math.sin(angR) * 0.95
+        );
+        reliquiaMesh.rotation.y = t * 1.6;
+        reliquiaMesh.rotation.x = Math.sin(t * 0.9) * 0.2;
+      }
+
       // cámara tercera persona suave
       camTarget.set(agent.position.x * 0.55, 0, agent.position.z * 0.55 + 3.5);
       camGoal.set(agent.position.x * 0.7, 6.4, agent.position.z + 9.2);
@@ -871,6 +1166,8 @@ export function HangarPanel() {
         }
         g.group.position.lerpVectors(g.from, g.to, g.t);
         g.group.position.y = Math.abs(Math.sin(g.t * Math.PI)) * 0.18;
+        const gl = g.group.getObjectByName("medallaGlint");
+        if (gl) { gl.rotation.y = t * 2.2; gl.position.x = Math.cos(t * 2.6) * 0.32; }
       }
 
       // isla: latido
@@ -948,6 +1245,7 @@ export function HangarPanel() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("vanguard:agente-look", onAgenteLook);
+      window.removeEventListener("vanguard:proezas", onProezas);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);

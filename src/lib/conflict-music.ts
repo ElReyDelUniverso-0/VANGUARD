@@ -11,6 +11,9 @@
 //   · Autoplay: resumeMusicIfWanted() arranca la radio en el primer gesto si
 //     el usuario la dejó encendida (los navegadores exigen un gesto).
 // UI: MusicPlayer (widget global). Persistencia: localStorage vanguard_music.
+// v88.0 OPERADOR LEGENDARIO: 5 pistas nuevas (20 en total) — Operación Amanecer,
+// Fuego Cruzado, Neón de Damasco, Sintetizador del Abismo y Aurora. La pista
+// por defecto de la radio ahora es "amanecer" y el MODO CINE abre con ella.
 
 type Pattern = string; // "x...x..." — x = golpe, . = silencio, o = acento
 
@@ -321,6 +324,99 @@ export const MUSIC_TRACKS: TrackDef[] = [
     droneGain: 0.05,
     padLevel: 0.06,
     fill: true,
+  },
+  // ============ v88.0 OPERADOR LEGENDARIO — nueva sesión de estudio ============
+  {
+    id: "amanecer",
+    name: "Operación Amanecer",
+    desc: "Primera luz sobre la base — cuerdas cálidas y esperanza táctica",
+    bpm: 78,
+    root: st(-24, 130.81), // C0 luminoso
+    chords: [maj(0), min(-3), maj(-7), maj(-5)], // C - Am - F - G
+    bass: [0, -1, -1, 7, -1, -1, 0, -1, -1, -1, 5, -1, -1, -1, 7, -1],
+    arp: [0, -1, 4, -1, 6, -1, 8, -1, 6, -1, 4, -1, 6, -1, 8, 9],
+    arpType: "triangle",
+    bassType: "sine",
+    kick: "x.......x.......",
+    snare: "........x.......",
+    hat: "..x...x...x...x.",
+    drone: 0.5,
+    droneGain: 0.035,
+    padLevel: 0.08,
+  },
+  {
+    id: "fuego",
+    name: "Fuego Cruzado",
+    desc: "Posiciones enfrentadas a 132 BPM — industrial, metálico, sin tregua",
+    bpm: 132,
+    root: st(-24, 87.31), // F0
+    chords: [min(0), maj(-4), min(-2), maj(-5)], // Fm - Db - Cm - Bb
+    bass: [0, 0, -1, 0, 12, -1, 0, 0, -1, 0, 10, 0, 0, 12, -1, 0],
+    arp: [8, -1, 6, 8, -1, 11, -1, 8, 6, -1, 8, -1, 13, 11, 8, -1],
+    arpType: "square",
+    bassType: "square",
+    kick: "x..ox..ox..ox..o",
+    snare: "....x.x.....x.x.",
+    hat: "x.xxx.xxx.xxx.xo",
+    drone: 1,
+    droneGain: 0.055,
+    padLevel: 0.04,
+    fill: true,
+  },
+  {
+    id: "damasco",
+    name: "Neón de Damasco",
+    desc: "Escala oriental bajo luces de bazar — espías en la ciudad vieja",
+    bpm: 92,
+    root: st(-24, 82.41), // E0
+    chords: [min(0), maj(1), maj(-4), maj(5)], // Em - F - C - B
+    bass: [0, -1, 1, -1, 0, -1, -1, 1, 0, -1, 5, -1, 7, -1, 5, 1],
+    arp: [0, 1, 4, 5, 7, 5, 4, 1, 0, 1, 4, 5, 8, 7, 5, 4],
+    arpType: "sawtooth",
+    bassType: "triangle",
+    kick: "x.....x.x.......",
+    snare: "....x.......x...",
+    hat: "..x.x.x...x.x.x.",
+    drone: 0.5,
+    droneGain: 0.05,
+    padLevel: 0.05,
+  },
+  {
+    id: "abismo",
+    name: "Sintetizador del Abismo",
+    desc: "Synthwave de sala de servidores — la verdad a las 3 de la mañana",
+    bpm: 84,
+    root: st(-24, 69.30), // C#0
+    chords: [min(0), maj(-4), maj(-2), maj(-7)], // C#m - A - B - E
+    bass: [0, 0, -1, 0, -1, 0, 12, -1, 0, 0, -1, 10, -1, 12, -1, 0],
+    arp: [6, -1, 9, -1, 11, -1, 9, 6, -1, 8, -1, 6, -1, 9, 11, -1],
+    arpType: "sawtooth",
+    bassType: "sawtooth",
+    kick: "x...x...x...x...",
+    snare: "........x.......",
+    hat: "..x.x.x.x.x.x.xo",
+    drone: 1,
+    droneGain: 0.06,
+    padLevel: 0.055,
+    swing: true,
+  },
+  {
+    id: "aurora",
+    name: "Aurora",
+    desc: "Luces del norte sobre el cuartel dormido — la calma después del protocolo",
+    bpm: 56,
+    root: st(-24, 87.31), // F0
+    chords: [maj(0), maj(-5), min(2), maj(-7)], // F - C - Dm - Bb
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 7, -1, -1, -1],
+    arp: [3, -1, -1, 6, -1, -1, 8, -1, -1, 6, -1, -1, 3, -1, -1, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x...............",
+    snare: "................",
+    hat: "........x.......",
+    drone: 0.5,
+    droneGain: 0.045,
+    padLevel: 0.09,
   },
 ];
 

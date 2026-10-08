@@ -30,12 +30,12 @@ function readSaved(): { on: boolean; vol: number; track: string; auto: boolean }
       return {
         on: p.on === true,
         vol: typeof p.vol === "number" ? p.vol : 0.5,
-        track: p.track || "marcha",
+        track: p.track || "amanecer",
         auto: p.auto === true,
       };
     }
   } catch { /* noop */ }
-  return { on: false, vol: 0.5, track: "marcha", auto: false };
+  return { on: false, vol: 0.5, track: "amanecer", auto: false };
 }
 
 function useMusicSnapshot() {
@@ -46,8 +46,9 @@ function useMusicSnapshot() {
 }
 
 // ====== MODO CINE: pista por nivel de tensión ======
-const AUTO_TRACKS = ["ocaso", "marcha", "cerco", "blitz"] as const;
-const AUTO_NAMES = ["Ocaso en el Frente", "Marcha de Acero", "Cerco Urbano", "Blitz Total"];
+// v88: la calma ahora abre con "amanecer" (nueva sesión) — el ocaso queda a un clic
+const AUTO_TRACKS = ["amanecer", "marcha", "cerco", "blitz"] as const;
+const AUTO_NAMES = ["Operación Amanecer", "Marcha de Acero", "Cerco Urbano", "Blitz Total"];
 function tierOf(tension: number): 0 | 1 | 2 | 3 {
   if (tension >= 85) return 3; // PROTOCOLO ROJO
   if (tension >= 70) return 2; // CRISIS
@@ -127,7 +128,7 @@ export function MusicPlayer() {
       setWantOn(false);
       persist(false, vol, selTrack);
     } else {
-      const t = selTrack || "marcha";
+      const t = selTrack || "amanecer";
       setSelTrack(t);
       setMusicVolume(vol);
       startMusic(t);
@@ -284,7 +285,7 @@ export function MusicPlayer() {
           </button>
         </div>
 
-        {/* expansión: espectro grande + MODO CINE + 15 pistas */}
+        {/* expansión: espectro grande + MODO CINE + 20 pistas */}
         {expanded && (
           <div className="border-t border-amber-hud/30 max-h-[300px] overflow-y-auto thin-scroll">
             {/* visualizador grande */}
@@ -353,7 +354,7 @@ export function MusicPlayer() {
               <Volume2 className="w-3 h-3 text-amber shrink-0" />
             </div>
             <p className="px-3 py-1.5 text-[8px] font-mono text-muted-foreground/70 uppercase tracking-widest">
-              15 pistas sintetizadas en vivo · sin descargas
+              20 pistas sintetizadas en vivo · sin descargas · sesión v88
             </p>
           </div>
         )}

@@ -6,13 +6,16 @@
 // requieren API key, cargan ligero y muestran el terreno REAL satelital de
 // cada zona de conflicto. El globo 3D (globe.gl) queda para vista panorámica;
 // aquí está la vista rápida sin lag.
+// v88.0 TERRA 3D: tercer modo con relieve satelital TRIDIMENSIONAL real
+// (MapLibre + Esri World Imagery + AWS Terrain DEM) y vuelos cinemáticos.
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Maximize2, ExternalLink, MapPin, Satellite } from "lucide-react";
+import { Maximize2, ExternalLink, MapPin, Satellite, Mountain } from "lucide-react";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { Terra3D } from "@/components/vanguard/terra-3d";
 
 interface Zone {
   id: string;
@@ -87,15 +90,16 @@ function extUrl(z: Zone): string {
 
 export function GMapsPanel() {
   const [active, setActive] = useState<Zone>(ZONES[0]);
-  const [sat, setSat] = useState(true);
   const [full, setFull] = useState(false);
+  // v88: modo de vista — satélite google / mapa google / TERRA 3D (relieve real)
+  const [modo, setModo] = useState<"sat" | "mapa" | "terra">("sat");
 
   return (
     <div className="space-y-4">
       <HeroOro panel="maps" />
       <PanelHeader
         title="GOOGLE MAPS DE CONFLICTOS"
-        subtitle="Vista satelital REAL de cada zona caliente — ligera, sin lag, sin globos 3D pesados"
+        subtitle="Vista satelital REAL de cada zona caliente — ahora también en 3D con relieve"
         icon={<Satellite className="w-5 h-5 text-cyan-hud" />}
         color="cyan"
       />
@@ -138,10 +142,22 @@ export function GMapsPanel() {
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <button
-                  onClick={() => setSat((v) => !v)}
-                  className={cn("px-2 py-1 text-[9px] font-mono uppercase rounded-sm border", sat ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20" : "border-border text-muted-foreground")}
+                  onClick={() => setModo("sat")}
+                  className={cn("px-2 py-1 text-[9px] font-mono uppercase rounded-sm border", modo === "sat" ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20" : "border-border text-muted-foreground")}
                 >
-                  {sat ? "Satélite" : "Mapa"}
+                  Satélite
+                </button>
+                <button
+                  onClick={() => setModo("mapa")}
+                  className={cn("px-2 py-1 text-[9px] font-mono uppercase rounded-sm border", modo === "mapa" ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20" : "border-border text-muted-foreground")}
+                >
+                  Mapa
+                </button>
+                <button
+                  onClick={() => setModo("terra")}
+                  className={cn("px-2 py-1 text-[9px] font-mono uppercase rounded-sm border flex items-center gap-1", modo === "terra" ? "border-amber text-amber bg-amber/15" : "border-border text-muted-foreground hover:text-amber")}
+                >
+                  <Mountain className="w-3 h-3" /> 3D
                 </button>
                 <button
                   onClick={() => setFull((v) => !v)}
@@ -160,14 +176,18 @@ export function GMapsPanel() {
                 </a>
               </div>
             </div>
-            <iframe
-              key={`${active.id}-${sat}`}
-              title={`Mapa de ${active.name}`}
-              src={embedUrl(active, sat)}
-              className={cn("w-full", full ? "h-[calc(100vh-140px)]" : "h-[300px] sm:h-[420px]")}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+            {modo === "terra" ? (
+              <Terra3D className="border-0" />
+            ) : (
+              <iframe
+                key={`${active.id}-${modo}`}
+                title={`Mapa de ${active.name}`}
+                src={embedUrl(active, modo === "sat")}
+                className={cn("w-full", full ? "h-[calc(100vh-140px)]" : "h-[300px] sm:h-[420px]")}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            )}
           </div>
 
           <div className="hud-panel p-3">
