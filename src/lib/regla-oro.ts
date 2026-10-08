@@ -923,6 +923,14 @@ export const REGLA_ORO = {
       "El simulador de satélite espía de Vanguard: globo 3D fotorrealista con contactos en vivo (aviones, buques, satélites, drones, sismos y cámaras públicas), rastreo con estela, modo cockpit, 7 vistas de sensor (CRT, NVG, FLIR, térmico…), HUD militar con cajas de detección, analista por texto con el núcleo neuronal, capas de vientos, crónicas guiadas por los seis estrechos y director de escenas. Arrastra, rastrea, pregunta: ningún rincón del planeta queda sin mirar.",
     acento: "#FFB347",
   },
+  googles: {
+    titulo: "GOOGLES DE VANGUARD",
+    volanta: "El Google de los problemas geopolíticos",
+    imagen: "/ilustraciones/planeta.jpg",
+    texto:
+      "La suite definitiva: un buscador que indexa TODO el mundo Vanguard (lugares, expedientes desclasificados, teorías, armas, civilizaciones, wiki, papers y tendencias) con fichas de conocimiento y veredicto neuronal, Tendencias con interés por hora y sparklines, Traductor de 8 idiomas con el núcleo IA, Noticias en edición de portada, Académico con citas APA/MLA y Alertas que vigilan un término por ti. Busca, pregunta, cobra: el mundo entero responde.",
+    acento: "#FFC94D",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

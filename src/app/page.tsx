@@ -226,6 +226,8 @@ const MonitorGlobalPanel = dynamic(() => import("@/components/vanguard/panels/mo
 const CanalBriefPanel = dynamic(() => import("@/components/vanguard/panels/canalbrief-panel").then((m) => m.CanalBriefPanel), { ssr: false, loading: PanelSkeleton });
 // v93.0 VANGUARD EARTH: el googles de Vanguard (simulador de satélite espía)
 const TierraPanel = dynamic(() => import("@/components/vanguard/panels/tierra-panel").then((m) => m.TierraPanel), { ssr: false, loading: PanelSkeleton });
+// v94.0 GOOGLES TOTAL: Vanguard como el Google de los problemas geopolíticos
+const GooglesPanel = dynamic(() => import("@/components/vanguard/panels/googles-panel").then((m) => m.GooglesPanel), { ssr: false, loading: PanelSkeleton });
 const EstrategiaGlobalPanel = dynamic(() => import("@/components/vanguard/panels/estrategia-panel").then((m) => m.EstrategiaGlobalPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
@@ -488,6 +490,8 @@ export default function Home() {
         {tab === "monitorglobal" && <MonitorGlobalPanel />}
         {tab === "canalbrief" && <CanalBriefPanel />}
         {tab === "estrategia" && <EstrategiaGlobalPanel />}
+        {/* v94.0 GOOGLES TOTAL: el Google de los problemas geopolíticos */}
+        {tab === "googles" && <GooglesPanel />}
         {/* v93.0 VANGUARD EARTH: el googles de Vanguard */}
         {tab === "tierra" && <TierraPanel />}
         {tab === "mipais" && <MiPaisPanel />}

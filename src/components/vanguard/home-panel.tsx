@@ -10,7 +10,7 @@ import {
   Castle, Radar, Rocket, Swords, Joystick, Fingerprint, Coins, TrendingUp,
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair,
-  Wand2, Landmark, FolderOpen, Skull, Earth,
+  Wand2, Landmark, FolderOpen, Skull, Earth, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -58,6 +58,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },
   { tab: "bolsa", title: "BOLSA GEOPOLÍTICA", desc: "Invierte en monedas de países: gana o pierde al instante", icon: <TrendingUp className="w-6 h-6" />, hex: "#3EA6FF" },
   { tab: "osint", title: "SALA OSINT 3D", desc: "15 capas de inteligencia sobre un globo interactivo", icon: <Radar className="w-6 h-6" />, hex: "#38BDF8" },
+  // v94.0 GOOGLES TOTAL: Vanguard como el Google de los problemas geopolíticos
+  { tab: "googles", title: "GOOGLES DE VANGUARD", desc: "El Google de los problemas geopolíticos: buscador de todo el mundo Vanguard, tendencias, traductor de 8 idiomas, noticias, académico y alertas", icon: <Search className="w-6 h-6" />, hex: "#FFC94D" },
   // v93.0 VANGUARD EARTH: el googles de Vanguard
   { tab: "tierra", title: "VANGUARD EARTH", desc: "El googles de Vanguard: satélite espía con contactos en vivo, sensores 1-7, cockpit y vuelo cinematográfico por todo el planeta", icon: <Earth className="w-6 h-6" />, hex: "#FFB347" },
   // v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables
