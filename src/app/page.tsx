@@ -123,6 +123,8 @@ const GobiernoPanel = dynamic(() => import("@/components/vanguard/panels/gobiern
 const BolsaPanel = dynamic(() => import("@/components/vanguard/panels/bolsa-panel").then((m) => m.BolsaPanel), { ssr: false, loading: PanelSkeleton });
 // v28 PARA TI — feed vertical estilo TikTok con el contenido de la comunidad
 const ForYouPanel = dynamic(() => import("@/components/vanguard/panels/foryou-panel").then((m) => m.ForYouPanel), { ssr: false, loading: PanelSkeleton });
+// v97.0 PANTALLA TOTAL: la plataforma de video de Vanguard (feed vertical + sala de proyección)
+const PantallaPanel = dynamic(() => import("@/components/vanguard/panels/pantalla-panel").then((m) => m.PantallaPanel), { ssr: false, loading: PanelSkeleton });
 // v24 VERDAD CRUDA — el lado oscuro de los conflictos
 const AbusosPanel = dynamic(() => import("@/components/vanguard/panels/abusos-panel").then((m) => m.AbusosPanel), { ssr: false, loading: PanelSkeleton });
 const IncidentesPanel = dynamic(() => import("@/components/vanguard/panels/incidentes-panel").then((m) => m.IncidentesPanel), { ssr: false, loading: PanelSkeleton });
@@ -516,6 +518,8 @@ export default function Home() {
         {/* v93.0 VANGUARD EARTH: el googles de Vanguard */}
         {tab === "tierra" && <TierraPanel />}
         {tab === "mipais" && <MiPaisPanel />}
+        {/* v97.0 PANTALLA TOTAL: VANGUARD TV — feed vertical + sala de proyección */}
+        {tab === "pantalla" && <PantallaPanel />}
         {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
         {tab === "expedientes" && <ExpedientesPanel />}
         {/* v59 ALEJANDRÍA OSCURA: teorías, armas y civilizaciones */}

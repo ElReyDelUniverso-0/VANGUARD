@@ -65,6 +65,7 @@ export type TabKey =
   | "studios" | "gobierno" | "bolsamonedas"
   // v28 para ti: feed vertical estilo TikTok/YouTube con el contenido de la comunidad
   | "foryou"
+  | "pantalla"
   // v30 vista dios: observación omnisciente del sistema
   | "ojodios"
   // v82 TODO EL MUNDO: Banco Central de la economía del guerrero
@@ -183,6 +184,7 @@ const TABS: Record<TabKey, TabDef> = {
   hacienda:      { key: "hacienda",      label: "Banco Central (sueldo, bóvedas, tesorería)", short: "BANCO", icon: <Vault className="w-3.5 h-3.5" />, color: "amber" },
   // v28 para ti
   foryou:        { key: "foryou",        label: "Para Ti (feed de la comunidad)", short: "PARA TI", icon: <Flame className="w-3.5 h-3.5" />, color: "red" },
+  pantalla:      { key: "pantalla",      label: "Vanguard TV (feed vertical + sala de proyección)", short: "V.TV", icon: <MonitorPlay className="w-3.5 h-3.5" />, color: "amber" },
   // v30 vista dios
   ojodios:       { key: "ojodios",       label: "Vista Dios (Ojo de Dios)", short: "OJO", icon: <Eye className="w-3.5 h-3.5" />, color: "cyan" },
   expedientes:   { key: "expedientes",   label: "Archivo Secreto (expedientes desclasificados)", short: "ARCHIVO.S", icon: <FolderOpen className="w-3.5 h-3.5" />, color: "violet" },
@@ -344,8 +346,8 @@ export const SECTIONS: SectionDef[] = [
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO
     key: "emisora", label: "EMISORA", short: "EMISORA", icon: <Signal className="w-4 h-4" />, color: "red",
-    desc: "EN VIVO mundial, Para Ti, GlobalVision, directos, estudio de video y memes",
-    tabs: [TABS.foryou, TABS.envivo, TABS.videos, TABS.directos, TABS.estudio, TABS.memes],
+    desc: "VANGUARD TV (feed vertical + sala de proyección), Para Ti, EN VIVO mundial, GlobalVision, directos, estudio de video y memes",
+    tabs: [TABS.pantalla, TABS.foryou, TABS.envivo, TABS.videos, TABS.directos, TABS.estudio, TABS.memes],
   },
   {
     key: "oscsuro", label: "VERDAD CRUDA", short: "VERDAD", icon: <Skull className="w-4 h-4" />, color: "red",
@@ -515,7 +517,7 @@ export function TabNav({
   };
 
   return (
-    <nav className="sticky top-[124px] sm:top-[158px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
+    <nav className="sticky top-[126px] sm:top-[158px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
       {/* Fila 1: secciones principales */}
       <div className="border-b border-amber-hud/20 relative">
         {/* v48.0: degradados + flechas — las secciones del final YA SON visibles en móvil */}

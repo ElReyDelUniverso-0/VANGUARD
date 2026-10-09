@@ -955,6 +955,14 @@ export const REGLA_ORO = {
       "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (14 días, reproducción automática, área ocupada y localidades que cambian de mano), Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE y PAPERCLIP con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
     acento: "#FFC94D",
   },
+  pantalla: {
+    titulo: "VANGUARD TV",
+    volanta: "El mundo en pases verticales",
+    imagen: "/ilustraciones/camaras.jpg",
+    texto:
+      "La plataforma de video de Vanguard: un feed vertical de pases cortos que mezcla las cámaras del mundo en vivo, los informes de las ocho salas OSINT, explicadores de 60 segundos de cada lugar del mapa, las crónicas guiadas y los desclasificados del archivo — todo con doble tap de corazón, suscripciones, comentarios y una sala de proyección con reproductor, related y tu propio expediente de espectador. Desliza el planeta: cada pase enlaza su sala para cruzar el video con el dato.",
+    acento: "#FFC94D",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

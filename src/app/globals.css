@@ -263,9 +263,14 @@
   }
   /* v29 FIX CRÍTICO de navegación: .hud-panel forzaba position:relative y anulaba
      .sticky en la cabecera y en la barra de secciones (por eso la nav "se iba" con el
-     scroll y tapaba textos). Mayores especificidad gana sin tocar el resto de paneles. */
+     scroll y tapaba textos). Mayores especificidad gana sin tocar el resto de paneles.
+     v97 FIX DEL COMANDANTE: la GOOGLE BAR (div.sticky.hud-panel de v96) quedó fuera
+     de este rescate — .hud-panel la devolvía a relative y su top-[78px] relativo la
+     empujaba 78px hacia abajo, montándola ENCIMA del menú normal (dos páginas
+     mezcladas). Cualquier elemento sticky con hud-panel recupera su sticky. */
   header.sticky.hud-panel,
-  nav.sticky.hud-panel {
+  nav.sticky.hud-panel,
+  div.sticky.hud-panel {
     position: sticky;
   }
   .glass {
@@ -2034,4 +2039,24 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
   .rv-clip { clip-path: none !important; transition: none !important; }
   .btn-cine::after, .btn-cine:hover { transform: none !important; }
   .app-tile:hover { transform: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   v97.0 PANTALLA TOTAL — VANGUARD TV
+   Barra de progreso de los pases + detalles del feed vertical.
+   Todo transform/opacity a 60fps + reduced-motion respetado.
+   ════════════════════════════════════════════════════════════════════ */
+@keyframes tvProgreso {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes tvLatido {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+.tv-live-dot { animation: tvLatido 1.2s ease-in-out infinite; }
+
+/* ── ACCESIBILIDAD v97: con movimiento reducido, la TV queda estática ── */
+@media (prefers-reduced-motion: reduce) {
+  .tv-live-dot { animation: none !important; }
 }
