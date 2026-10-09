@@ -1900,3 +1900,138 @@ html.modo-guerra body::after {
   .vg-nodo-anillo, .vg-pin-late, .vg-lateja { animation: none !important; }
   .vg-curva { animation: none !important; stroke-dasharray: none !important; }
 }
+
+/* ============================================================
+   v96.0 GOOGLE VIVO — letras vivas, reveals épicos, barrido de
+   transición, lanzador de apps y stagger de paneles. Solo
+   transform/opacity/filter a 60fps + prefers-reduced-motion.
+   ============================================================ */
+
+/* ── LETRAS VIVAS: entrada en cascada + flotación + latido + salto al hover ── */
+@keyframes lvEntra {
+  from { opacity: 0; transform: translateY(-26px) rotate(-8deg) scale(1.3); filter: blur(6px); }
+  60%  { opacity: 1; transform: translateY(3px) rotate(1deg) scale(0.97); filter: blur(0); }
+  to   { opacity: 1; transform: translateY(0) rotate(0) scale(1); filter: blur(0); }
+}
+@keyframes lvFlota {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-3.5px); }
+}
+@keyframes lvBrilla {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.35); }
+}
+.gbar-logo .lv-letra {
+  display: inline-block;
+  animation:
+    lvEntra 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
+    lvFlota 1.9s ease-in-out calc(0.7s + var(--i) * 0.12s) infinite alternate,
+    lvBrilla 2.6s ease-in-out calc(var(--i) * 0.28s) infinite alternate;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.gbar-logo:hover .lv-letra { transform: translateY(-5px) scale(1.12); }
+.gbar-logo:active .lv-letra { transform: translateY(1px) scale(0.94); }
+
+/* ── BARRA DE BÚSQUEDA estilo Google con aura del atardecer ── */
+.gbar-search {
+  background: rgba(9, 11, 16, 0.85);
+  border-color: rgba(255, 179, 71, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 10px -4px rgba(0, 0, 0, 0.8);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.gbar-search:hover { border-color: rgba(255, 179, 71, 0.6); }
+.gbar-search-on {
+  border-color: rgba(255, 201, 77, 0.9);
+  background: rgba(13, 15, 22, 0.95);
+  box-shadow: 0 0 0 1px rgba(255, 201, 77, 0.35), 0 0 22px -2px rgba(255, 179, 71, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ── BOTÓN CINE: brillo que barre + presión táctil ── */
+.btn-cine { position: relative; overflow: hidden; transition: transform 0.16s ease, box-shadow 0.25s ease; }
+.btn-cine::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 224, 160, 0.22) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-cine:hover::after { transform: translateX(120%); }
+.btn-cine:hover { transform: translateY(-1px); box-shadow: 0 4px 18px -6px rgba(255, 179, 71, 0.5); }
+.btn-cine:active { transform: translateY(1px) scale(0.96); }
+
+/* ── LANZADOR DE APPS: fichas que se elevan y destellan ── */
+.app-tile { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease, background 0.2s ease; }
+.app-tile:hover { transform: translateY(-3px) scale(1.04); }
+.app-tile:active { transform: translateY(0) scale(0.95); }
+
+/* ── TRANSICIÓN DE CINE: barrido del atardecer al cambiar de mundo ── */
+.transicion-cine { position: fixed; inset: 0; z-index: 90; pointer-events: none; overflow: hidden; }
+@keyframes tcBanda {
+  from { transform: translateX(-110%) skewX(-12deg); }
+  to   { transform: translateX(240%) skewX(-12deg); }
+}
+.tc-banda { position: absolute; top: -12%; bottom: -12%; width: 42%; will-change: transform; }
+.tc-banda-1 { left: 0; background: linear-gradient(90deg, transparent, rgba(255, 138, 42, 0.16), transparent); animation: tcBanda 0.62s cubic-bezier(0.5, 0, 0.3, 1) both; }
+.tc-banda-2 { left: 0; background: linear-gradient(90deg, transparent, rgba(255, 201, 77, 0.12), transparent); animation: tcBanda 0.62s cubic-bezier(0.5, 0, 0.3, 1) 0.07s both; }
+.tc-banda-3 { left: 0; background: linear-gradient(90deg, transparent, rgba(255, 240, 200, 0.07), transparent); animation: tcBanda 0.62s cubic-bezier(0.5, 0, 0.3, 1) 0.14s both; }
+@keyframes tcScan { from { transform: translateX(-100%); } to { transform: translateX(100vw); } }
+.tc-scan {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 2px; will-change: transform;
+  background: linear-gradient(180deg, transparent, rgba(255, 201, 77, 0.75) 30%, rgba(255, 154, 60, 0.9) 50%, rgba(255, 201, 77, 0.75) 70%, transparent);
+  box-shadow: 0 0 18px 2px rgba(255, 179, 71, 0.5);
+  animation: tcScan 0.58s cubic-bezier(0.6, 0, 0.35, 1) both;
+}
+@keyframes tcSello {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); letter-spacing: 0.6em; }
+  25% { opacity: 0.85; }
+  80% { opacity: 0.85; letter-spacing: 0.3em; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.04); }
+}
+.tc-sello {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  font-size: 11px; font-weight: 700; text-transform: uppercase; white-space: nowrap;
+  color: rgba(255, 224, 160, 0.9); text-shadow: 0 0 16px rgba(255, 179, 71, 0.6);
+  animation: tcSello 0.62s ease both;
+}
+
+/* ── IMÁGENES ÉPICAS: toda imagen estrena con escala + desenfoque + luz ── */
+@keyframes imgEpica {
+  from { opacity: 0; transform: scale(1.12) translateY(10px); filter: blur(10px) saturate(1.4) brightness(1.25); }
+  60%  { opacity: 1; filter: blur(0) saturate(1.08) brightness(1.04); }
+  to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0) saturate(1) brightness(1); }
+}
+main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ── REVEALS por scroll: fade-up / lateral / zoom / clip cinematográfico ── */
+.rv, .rv-l, .rv-r, .rv-z, .rv-clip { will-change: transform, opacity; }
+.rv { opacity: 0; transform: translateY(26px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); transition-delay: var(--rvd, 0s); }
+.rv-l { opacity: 0; transform: translateX(-34px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); transition-delay: var(--rvd, 0s); }
+.rv-r { opacity: 0; transform: translateX(34px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); transition-delay: var(--rvd, 0s); }
+.rv-z { opacity: 0; transform: scale(0.9); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); transition-delay: var(--rvd, 0s); }
+.rv-clip { clip-path: inset(0 100% 0 0); transition: clip-path 0.9s cubic-bezier(0.22,1,0.36,1); transition-delay: var(--rvd, 0s); }
+.rv.in, .rv-l.in, .rv-r.in, .rv-z.in { opacity: 1; transform: none; }
+.rv-clip.in { clip-path: inset(0 0 0 0); }
+
+/* ── STAGGER DE PANELES: cada bloque del mundo entra en cascada al cambiar ── */
+@keyframes panelUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.panel-stagger > * { animation: panelUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.panel-stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.panel-stagger > *:nth-child(2) { animation-delay: 0.09s; }
+.panel-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.panel-stagger > *:nth-child(4) { animation-delay: 0.21s; }
+.panel-stagger > *:nth-child(5) { animation-delay: 0.27s; }
+.panel-stagger > *:nth-child(6) { animation-delay: 0.33s; }
+.panel-stagger > *:nth-child(7) { animation-delay: 0.39s; }
+.panel-stagger > *:nth-child(n+8) { animation-delay: 0.45s; }
+
+/* ── ACCESIBILIDAD: con movimiento reducido, todo v96 queda estático ── */
+@media (prefers-reduced-motion: reduce) {
+  .gbar-logo .lv-letra, .tc-banda, .tc-scan, .tc-sello,
+  .panel-stagger > *, main img.img-in { animation: none !important; }
+  .rv, .rv-l, .rv-r, .rv-z { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .rv-clip { clip-path: none !important; transition: none !important; }
+  .btn-cine::after, .btn-cine:hover { transform: none !important; }
+  .app-tile:hover { transform: none !important; }
+}

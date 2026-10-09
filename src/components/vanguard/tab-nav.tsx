@@ -299,6 +299,14 @@ export const SECTIONS: SectionDef[] = [
     tabs: [TABS.inicio, TABS.verdades, TABS.verifica, TABS.noticias],
   },
   {
+    // v96.0 GOOGLE VIVO: INTELIGENCIA deja de estar sobrecargada — quedan solo
+    // las 12 salas de conocimiento; los espejos pasan a OBSERVATORIO y las
+    // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
+    key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
+    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
+    tabs: [TABS.googles, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+  },
+  {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
     desc: "Guerra, detective, Warsim, Age of Nations, MI PAÍS y Arcade",
     tabs: [TABS.mundo, TABS.multijugador, TABS.frente, TABS.detective, TABS.edad, TABS.mipais, TABS.arcade, TABS.dron, TABS.minijuego, TABS.combate, TABS.warsim, TABS.conquista],
@@ -312,8 +320,8 @@ export const SECTIONS: SectionDef[] = [
     // v48.0 COHERENCIA: Guerras históricas y Figuras y bajas viven aquí — son
     // ARCHIVO, no emisión en vivo. Todo lo histórico queda en un solo lugar.
     key: "archivo", label: "ARCHIVO MUNDIAL", short: "ARCHIVO", icon: <BookOpen className="w-4 h-4" />, color: "cyan",
-    desc: "Enciclopedia, épocas, guerras históricas, figuras, biblioteca y tribunal",
-    tabs: [TABS.enciclopedia, TABS.curiosidades, TABS.epocas, TABS.historia, TABS.muertes, TABS.conquistas3d, TABS.contadores, TABS.carteles, TABS.biblioteca, TABS.tribunal],
+    desc: "Enciclopedia, épocas, guerras históricas, figuras, biblioteca, tribunal y el ARCHIVO SECRETO",
+    tabs: [TABS.enciclopedia, TABS.curiosidades, TABS.epocas, TABS.historia, TABS.muertes, TABS.conquistas3d, TABS.contadores, TABS.carteles, TABS.biblioteca, TABS.tribunal, TABS.oscura],
   },
   {
     key: "comando", label: "COMANDO", short: "COMANDO", icon: <Command className="w-4 h-4" />, color: "amber",
@@ -321,9 +329,17 @@ export const SECTIONS: SectionDef[] = [
     tabs: [TABS.briefing, TABS.misiones, TABS.retos, TABS.quiz],
   },
   {
-    key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), VANGUARD EARTH, el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas) y la MÁQUINA DEL TIEMPO — más la sala OSINT, el mapa, el centinela, el espectro y los 21 espejos de los grandes portales de conflicto del mundo, incluidos el RTS IMPERIO, la revista, los pronósticos y el OJO-GEOINT",
-    tabs: [TABS.googles, TABS.tierra, TABS.grafo, TABS.espejo, TABS.maquina, TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.pronosticos, TABS.enclaves, TABS.extranjera, TABS.geoint, TABS.monitorglobal, TABS.canalbrief, TABS.estrategia, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    // v96.0 GOOGLE VIVO: nueva sala de VIGILANCIA TOTAL — los espejos y monitores
+    // salen de INTELIGENCIA para que respire (17 pestañas propias)
+    key: "observatorio", label: "OBSERVATORIO", short: "OBSERV", icon: <Telescope className="w-4 h-4" />, color: "cyan",
+    desc: "La sala de vigilancia total del planeta: el centinela, el espectro, pulsos, evaluación, pérdidas, frentes, GEOINT, monitor global, cámaras del mundo, cielos, sismos, ciber, el pulso, radar, planeta vivo, geopolítica y la galería",
+    tabs: [TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.geoint, TABS.monitorglobal, TABS.camaras, TABS.cielos, TABS.sismo, TABS.ciber, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria],
+  },
+  {
+    // v96.0 GOOGLE VIVO: gran estrategia y simulación en su propia sala
+    key: "estrategia", label: "ESTRATEGIA", short: "ESTRAT", icon: <Crosshair className="w-4 h-4" />, color: "violet",
+    desc: "Simuladores y gran estrategia: el simulador de guerra, RTS IMPERIO, enclaves, guerra exterior, canal de briefing, análisis estratégico, mercados, pronósticos, armería, operaciones y el archivo de briefings",
+    tabs: [TABS.simulador, TABS.imperio, TABS.enclaves, TABS.extranjera, TABS.canalbrief, TABS.estrategia, TABS.mercados, TABS.pronosticos, TABS.armodo, TABS.operaciones, TABS.briefings],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO
@@ -499,7 +515,7 @@ export function TabNav({
   };
 
   return (
-    <nav className="sticky top-[78px] sm:top-[109px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
+    <nav className="sticky top-[124px] sm:top-[158px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
       {/* Fila 1: secciones principales */}
       <div className="border-b border-amber-hud/20 relative">
         {/* v48.0: degradados + flechas — las secciones del final YA SON visibles en móvil */}

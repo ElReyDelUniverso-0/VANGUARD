@@ -30,8 +30,9 @@ const EDIFICIOS: { x: number; w: number; h: number; ventanas: number }[] = [
 export function OcasoBanner() {
   return (
     <div
-      className="hud-panel card-shine relative overflow-hidden mb-4"
+      className="hud-panel card-shine relative overflow-hidden mb-4 will-change-transform"
       style={{ padding: 0 }}
+      data-parallax="0.12"
       aria-label="VANGUARD · ocaso eterno sobre el mundo en guerra"
     >
       <svg viewBox="0 0 100 42" className="block w-full" role="img" preserveAspectRatio="xMidYMid slice">

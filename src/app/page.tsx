@@ -23,6 +23,10 @@ import { motion, AnimatePresence } from "framer-motion";
 // v14: reestructuración — portada INICIO con noticias primero + menú llamativo
 import { HomePanel } from "@/components/vanguard/home-panel";
 import { MegaMenu } from "@/components/vanguard/mega-menu";
+// v96.0 GOOGLE VIVO: barra estructura Google + transición de cine + motor CineVivo
+import { GoogleBar } from "@/components/vanguard/google-bar";
+import { TransicionCine } from "@/components/vanguard/transicion-cine";
+import { CineVivo } from "@/components/vanguard/cine-vivo";
 // v71.0 OCASO: banner cinematográfico — puesta de sol eterna + luna llena
 import { OcasoBanner } from "@/components/vanguard/ocaso-banner";
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
@@ -374,6 +378,9 @@ export default function Home() {
         onOpenLog={() => setLogOpen(true)}
         onOpenAccount={() => setAccountOpen(true)}
       />
+      {/* v96.0 GOOGLE VIVO: la estructura de las webs más usadas del mundo —
+          letras vivas + buscador central + INVESTIGAR + rejilla de apps */}
+      <GoogleBar active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} />
       <TabNav active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
       <LiveTitle />
@@ -382,14 +389,19 @@ export default function Home() {
       <ProtocoloRojo />
       <EasterEggs />
 
+      {/* v96.0 GOOGLE VIVO: barrido cinematográfico al cambiar de mundo + motor de animación global */}
+      <TransicionCine tabKey={tab} label={APP_VERSION_LABEL} />
+      <CineVivo />
+
       <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={tab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.16, ease: "easeOut" }}
+            className="panel-stagger"
+            initial={{ opacity: 0, y: 18, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.995 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           >
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (

@@ -30,6 +30,8 @@ const SECTION_COVER: Record<string, string> = {
   archivo: "/ilustraciones/enciclopedia.jpg",
   comando: "/ilustraciones/briefing.jpg",
   inteligencia: "/ilustraciones/osint.jpg",
+  observatorio: "/ilustraciones/radar.jpg",
+  estrategia: "/ilustraciones/briefings.jpg",
   emisora: "/ilustraciones/envivo.jpg",
   oscsuro: "/ilustraciones/abusos.jpg",
   creadores: "/ilustraciones/creador.jpg",
@@ -40,7 +42,6 @@ const SECTION_COVER: Record<string, string> = {
 function Portada({ src, hex, alt }: { src: string; hex: string; alt: string }) {
   return (
     <div className="portada-media relative h-24 w-full">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
         alt=""

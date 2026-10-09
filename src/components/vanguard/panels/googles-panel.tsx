@@ -1040,6 +1040,27 @@ export function GooglesPanel() {
     }
   };
 
+  // v96.0 GOOGLE VIVO: la barra central de estructura Google dispara búsquedas aquí.
+  // Dos vías: evento vanguard:buscar (panel ya montado) o sessionStorage (primer montaje).
+  const buscarRef = useRef(buscar);
+  buscarRef.current = buscar;
+  useEffect(() => {
+    const onBuscar = (e: Event) => {
+      const q = (e as CustomEvent<{ q?: string }>).detail?.q;
+      if (q) buscarRef.current(q);
+    };
+    window.addEventListener("vanguard:buscar", onBuscar);
+    let pendiente: string | null = null;
+    try {
+      pendiente = sessionStorage.getItem("vg-gbar-q");
+      if (pendiente) sessionStorage.removeItem("vg-gbar-q");
+    } catch {
+      /* sin almacenamiento */
+    }
+    if (pendiente) buscarRef.current(pendiente);
+    return () => window.removeEventListener("vanguard:buscar", onBuscar);
+  }, []);
+
   const suerte = () => {
     const doc = suerteGoogles();
     toast(`Suerte de Vanguard: ${doc.titulo}`);
