@@ -10,7 +10,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
-import { TabNav, type TabKey } from "@/components/vanguard/tab-nav";
+import { TabNav, sectionOfTab, accentOfSection, type TabKey } from "@/components/vanguard/tab-nav";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 // v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
 // luna llena y ocaso cálido). Una vez por sesión, saltable, reduced-motion off.
@@ -234,6 +234,8 @@ const CanalBriefPanel = dynamic(() => import("@/components/vanguard/panels/canal
 const TierraPanel = dynamic(() => import("@/components/vanguard/panels/tierra-panel").then((m) => m.TierraPanel), { ssr: false, loading: PanelSkeleton });
 // v94.0 GOOGLES TOTAL: Vanguard como el Google de los problemas geopolíticos
 const GooglesPanel = dynamic(() => import("@/components/vanguard/panels/googles-panel").then((m) => m.GooglesPanel), { ssr: false, loading: PanelSkeleton });
+// v98.0 ORO TOTAL: IMÁGENES DE VANGUARD — búsqueda visual de fotos reales
+const ImagenesPanel = dynamic(() => import("@/components/vanguard/panels/imagenes-panel").then((m) => m.ImagenesPanel), { ssr: false, loading: PanelSkeleton });
 
 // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
 const GrafoPanel = dynamic(() => import("@/components/vanguard/panels/grafo-panel").then((m) => m.GrafoPanel), { ssr: false, loading: PanelSkeleton });
@@ -336,9 +338,19 @@ export default function Home() {
     sfx.tab();
     setTab(k);
     recordTabVisit(k);
+    // v98.0 MODO ESCENA: la radio sigue tu posición (el MusicPlayer escucha esto)
+    window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(k).key }));
     // v29 FIX: cada sección abre desde arriba — la barra sticky nunca tapa el inicio del panel
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   };
+
+  // v98.0 COLOR ÚNICO POR SECCIÓN — publica el acento del mundo activo como CSS
+  // var: la transición de cine, el buscador y los detalles del chrome se tiñen
+  // del color de la sección (el oro de INICIO es la identidad de Vanguard).
+  useEffect(() => {
+    const acc = accentOfSection(sectionOfTab(tab).key);
+    document.documentElement.style.setProperty("--vg-acc", acc);
+  }, [tab]);
 
   // navegacion programatica desde otros paneles (ej: tienda -> camaras)
   useEffect(() => {
@@ -347,6 +359,8 @@ export default function Home() {
       if (target) {
         setTab(target);
         recordTabVisit(target);
+        // v98.0 MODO ESCENA también en la navegación programática
+        window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(target).key }));
         window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       }
     };
@@ -511,6 +525,8 @@ export default function Home() {
         {tab === "estrategia" && <EstrategiaGlobalPanel />}
         {/* v94.0 GOOGLES TOTAL: el Google de los problemas geopolíticos */}
         {tab === "googles" && <GooglesPanel />}
+        {/* v98.0 ORO TOTAL: la búsqueda visual de Vanguard */}
+        {tab === "imagenes" && <ImagenesPanel />}
         {/* v95.0 EXPEDIENTE TOTAL: la red, el espejo y la máquina del tiempo */}
         {tab === "grafo" && <GrafoPanel />}
         {tab === "espejo" && <EspejoPanel />}

@@ -7,22 +7,28 @@
 //      · MODO CINE: la radio elige la pista según el TERMÓMETRO DE TENSIÓN
 //        (getTension) — calma → ocaso · tensión → marcha · crisis → cerco ·
 //        PROTOCOLO ROJO → Blitz Total. Persistencia: vanguard_music {on,vol,track,auto}.
+// v98.0 ORO TOTAL: · 24 pistas (oro / grafo / neon / bóveda nuevas, motor v3 con
+//        variación diaria y ensanche estéreo)
+//      · MODO ESCENA: la radio cambia de pista sola según la SECCIÓN donde estás
+//        (escucha el evento vanguard:escena que dispara la app al cambiar de
+//        mundo), con fundido cruzado — tu banda sonora te sigue.
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import {
-  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard,
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   MUSIC_TRACKS, startMusic, stopMusic, isMusicPlaying, currentTrackId,
   setMusicVolume, getMusicVolume, subscribeMusic, getMusicSpectrum,
+  aplicarEscena, setEscenaActiva, getEscenaActiva, type EscenaKey,
 } from "@/lib/conflict-music";
 import { getTension } from "@/lib/tension";
 
 const LS_MUSIC = "vanguard_music";
 
-function readSaved(): { on: boolean; vol: number; track: string; auto: boolean } {
+function readSaved(): { on: boolean; vol: number; track: string; auto: boolean; escena: boolean } {
   try {
     const raw = localStorage.getItem(LS_MUSIC);
     if (raw) {
@@ -32,10 +38,11 @@ function readSaved(): { on: boolean; vol: number; track: string; auto: boolean }
         vol: typeof p.vol === "number" ? p.vol : 0.5,
         track: p.track || "amanecer",
         auto: p.auto === true,
+        escena: p.escena === true,
       };
     }
   } catch { /* noop */ }
-  return { on: false, vol: 0.5, track: "amanecer", auto: false };
+  return { on: false, vol: 0.5, track: "amanecer", auto: false, escena: false };
 }
 
 function useMusicSnapshot() {
@@ -114,11 +121,12 @@ export function MusicPlayer() {
   const [vol, setVol] = useState(saved.vol);
   const [selTrack, setSelTrack] = useState(saved.track);
   const [auto, setAuto] = useState(saved.auto); // MODO CINE
+  const [escena, setEscena] = useState(saved.escena); // v98.0 MODO ESCENA
   const tierRef = useRef<number>(tierOf(getTension()));
 
-  const persist = (on: boolean, v: number, track: string, autoFlag = auto) => {
+  const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena) => {
     try {
-      localStorage.setItem(LS_MUSIC, JSON.stringify({ on, vol: v, track, auto: autoFlag }));
+      localStorage.setItem(LS_MUSIC, JSON.stringify({ on, vol: v, track, auto: autoFlag, escena: escenaFlag }));
     } catch { /* noop */ }
   };
 
@@ -139,13 +147,14 @@ export function MusicPlayer() {
 
   const switchTrack = (id: string, autoplay = true) => {
     setSelTrack(id);
-    // elegir pista a mano apaga el MODO CINE (el DJ eres tú)
-    if (auto) {
+    // elegir pista a mano apaga el MODO CINE y el MODO ESCENA (el DJ eres tú)
+    if (auto || escena) {
       setAuto(false);
-      persist(playing || wantOn, vol, id, false);
-      toast.info("MODO CINE apagado", { description: "Elegiste la pista a mano — la radio ya no cambia sola" });
+      setEscena(false);
+      persist(playing || wantOn, vol, id, false, false);
+      toast.info("DJ manual", { description: "Elegiste la pista a mano — la radio ya no cambia sola" });
     } else {
-      persist(playing || wantOn, vol, id, false);
+      persist(playing || wantOn, vol, id, false, false);
     }
     if (autoplay && (playing || wantOn)) startMusic(id);
   };
@@ -178,6 +187,52 @@ export function MusicPlayer() {
     persist(true, vol, track, true);
     toast.success(`MODO CINE · tensión ${Math.round(getTension())}`, {
       description: `Suena ${AUTO_NAMES[tier]} — la radio sigue el termómetro del mundo`,
+    });
+  };
+
+  // v98.0 MODO ESCENA — cambia de pista al escuchar vanguard:escena (lo dispara
+  // la app al cambiar de sección; el motor hace el fundido cruzado)
+  useEffect(() => {
+    const onEscena = (e: Event) => {
+      const key = (e as CustomEvent).detail as EscenaKey;
+      if (!key) return;
+      setEscenaActiva(key);
+      if (escena && (playing || wantOn)) aplicarEscena(key);
+    };
+    window.addEventListener("vanguard:escena", onEscena);
+    // si la escena ya estaba activa al montar (o arranque en frío tras recargar),
+    // sincroniza con la sección actual — la radio nunca empieza desorientada
+    if (escena && (playing || wantOn)) {
+      const act = getEscenaActiva();
+      aplicarEscena(act ?? "inicio");
+    }
+    return () => window.removeEventListener("vanguard:escena", onEscena);
+  }, [escena, playing, wantOn]);
+
+  const toggleEscena = () => {
+    if (escena) {
+      setEscena(false);
+      persist(playing || wantOn, vol, selTrack || "amanecer", auto, false);
+      toast.info("MODO ESCENA apagado");
+      return;
+    }
+    // activar escena apaga el modo cine (una sola inteligencia musical a la vez)
+    setAuto(false);
+    const act = getEscenaActiva();
+    setEscena(true);
+    if (!playing && !wantOn) {
+      setWantOn(true);
+      setMusicVolume(vol);
+    }
+    if (act) {
+      aplicarEscena(act); // arranca (o funde a) la pista de la sección actual
+      setSelTrack("");
+    } else {
+      startMusic("oro");
+    }
+    persist(true, vol, act ? "oro" : "oro", false, true);
+    toast.success("MODO ESCENA · activo", {
+      description: "La radio cambia de pista sola según la sección de Vanguard donde estés",
     });
   };
 
@@ -322,6 +377,29 @@ export function MusicPlayer() {
               {auto && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-red-hud blink-soft shrink-0" />}
             </button>
 
+            {/* v98.0 MODO ESCENA — la banda sonora sigue tu posición en Vanguard */}
+            <button
+              onClick={toggleEscena}
+              className={cn(
+                "mx-3 mb-2 w-[calc(100%-24px)] flex items-center gap-2 px-2.5 py-2 border rounded-sm transition-colors text-left",
+                escena
+                  ? "border-amber-hud bg-amber-hud/20"
+                  : "border-border/60 hover:border-amber-hud/60 hover:bg-amber-hud/10"
+              )}
+              aria-pressed={escena}
+            >
+              <Orbit className={cn("w-3.5 h-3.5 shrink-0", escena ? "text-amber" : "text-muted-foreground")} />
+              <span className="min-w-0">
+                <span className={cn("block text-[10px] font-mono font-bold uppercase tracking-wider", escena ? "text-amber" : "text-foreground")}>
+                  MODO ESCENA {escena ? "· ACTIVO" : ""}
+                </span>
+                <span className="block text-[8px] font-mono text-muted-foreground leading-snug">
+                  La banda sonora te sigue: INICIO→Oro · INTELIGENCIA→Pulso del Grafo · EMISORA→Neón Vertical · ARCHIVO→Bóveda Secreta
+                </span>
+              </span>
+              {escena && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-amber blink-soft shrink-0" />}
+            </button>
+
             {MUSIC_TRACKS.map((t) => (
               <button
                 key={t.id}
@@ -354,7 +432,7 @@ export function MusicPlayer() {
               <Volume2 className="w-3 h-3 text-amber shrink-0" />
             </div>
             <p className="px-3 py-1.5 text-[8px] font-mono text-muted-foreground/70 uppercase tracking-widest">
-              20 pistas sintetizadas en vivo · sin descargas · sesión v88
+              24 pistas sintetizadas en vivo · variación diaria única · sin descargas · sesión v98
             </p>
           </div>
         )}

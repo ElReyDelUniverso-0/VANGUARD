@@ -2060,3 +2060,45 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .tv-live-dot { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   v98.0 ORO TOTAL — COLOR ÚNICO POR SECCIÓN
+   Vanguard dorado (#FFC94D) es la identidad; cada mundo publica su
+   acento propio en --vg-acc (page.tsx) y el chrome se tiñe con él:
+   transición de cine, aura del buscador, punto de sección y detalles.
+   Solo transform/opacity/color — 60fps + reduced-motion respetado.
+   ════════════════════════════════════════════════════════════════════ */
+:root { --vg-acc: #FFC94D; }
+
+/* transición de cine: el barrido lleva el color del mundo de destino */
+.tc-banda-1 { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--vg-acc) 16%, transparent), transparent); }
+.tc-banda-2 { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--vg-acc) 12%, transparent), transparent); }
+.tc-banda-3 { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--vg-acc) 7%, transparent), transparent); }
+.tc-scan {
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--vg-acc) 75%, transparent) 30%, var(--vg-acc) 50%, color-mix(in srgb, var(--vg-acc) 75%, transparent) 70%, transparent);
+  box-shadow: 0 0 18px 2px color-mix(in srgb, var(--vg-acc) 50%, transparent);
+}
+.tc-sello { color: color-mix(in srgb, var(--vg-acc) 88%, white); text-shadow: 0 0 16px color-mix(in srgb, var(--vg-acc) 60%, transparent); }
+
+/* buscador central: el aura al enfocar lleva el acento del mundo activo */
+.gbar-search-on {
+  border-color: color-mix(in srgb, var(--vg-acc) 90%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vg-acc) 35%, transparent), 0 0 22px -2px color-mix(in srgb, var(--vg-acc) 35%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.gbar-search:hover { border-color: color-mix(in srgb, var(--vg-acc) 60%, transparent); }
+
+/* punto de sección activo: latido con el acento propio */
+@keyframes vgAccDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.45); opacity: 0.75; }
+}
+.vg-acc-dot { animation: vgAccDot 1.8s ease-in-out infinite; }
+
+/* barra de progreso del explorador y scrollbars heredan acento sutil */
+.thin-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--vg-acc) 38%, #1a1d24); }
+.thin-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--vg-acc) 60%, #1a1d24); }
+
+/* ── ACCESIBILIDAD v98: con movimiento reducido, el latido del acento para ── */
+@media (prefers-reduced-motion: reduce) {
+  .vg-acc-dot { animation: none !important; }
+}

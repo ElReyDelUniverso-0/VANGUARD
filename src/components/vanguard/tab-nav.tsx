@@ -104,7 +104,9 @@ export type TabKey =
   // v93.0 VANGUARD EARTH: el googles de Vanguard — simulador de satélite espía
   | "tierra"
   // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
-  | "grafo" | "espejo" | "maquina";
+  | "grafo" | "espejo" | "maquina"
+  // v98.0 ORO TOTAL: IMÁGENES — búsqueda visual de fotos reales
+  | "imagenes";
 
 interface TabDef {
   key: TabKey;
@@ -245,6 +247,9 @@ const TABS: Record<TabKey, TabDef> = {
   tierra:        { key: "tierra",        label: "VANGUARD EARTH (el googles de Vanguard)", short: "EARTH", icon: <Earth className="w-3.5 h-3.5" />, color: "amber" },
   // v94.0 GOOGLES TOTAL — Vanguard como el Google de los problemas geopolíticos
   googles:       { key: "googles",       label: "GOOGLES DE VANGUARD (buscador, tendencias, traductor, académico, noticias y alertas)", short: "GOOGLES", icon: <Search className="w-3.5 h-3.5" />, color: "amber" },
+  // v98.0 ORO TOTAL: IMÁGENES — la búsqueda visual de fotos REALES (estructura
+  // del buscador de imágenes más usado del mundo, contenido 100% Vanguard)
+  imagenes:      { key: "imagenes",      label: "IMÁGENES DE VANGUARD (búsqueda visual de fotos reales: lugares, poder, archivo, armas y civilizaciones)", short: "IMAGENES", icon: <Images className="w-3.5 h-3.5" />, color: "cyan" },
   grafo:         { key: "grafo",         label: "GRAFO MUNDIAL (la red del conocimiento geopolítico de Vanguard)", short: "GRAFO", icon: <Network className="w-3.5 h-3.5" />, color: "cyan" },
   espejo:        { key: "espejo",        label: "EL ESPEJO (una crisis, todas las perspectivas: confirmado, omitido y en disputa)", short: "ESPEJO", icon: <FlipHorizontal2 className="w-3.5 h-3.5" />, color: "red" },
   maquina:       { key: "maquina",       label: "MÁQUINA DEL TIEMPO (viaja por la historia de cada crisis, teatro del Karsk en vivo)", short: "TIEMPO", icon: <History className="w-3.5 h-3.5" />, color: "amber" },
@@ -306,7 +311,7 @@ export const SECTIONS: SectionDef[] = [
     // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
-    tabs: [TABS.googles, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+    tabs: [TABS.googles, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
@@ -386,6 +391,34 @@ const SECTION_COLOR: Record<string, { active: string; dot: string }> = {
   green: { active: "text-green-hud bg-green-hud border-green-hud", dot: "bg-green-hud" },
   violet: { active: "text-violet-hud bg-violet-hud border-violet-hud", dot: "bg-violet-hud" },
 };
+
+// v98.0 ORO TOTAL — COLOR ÚNICO POR SECCIÓN (mandato del comandante: Vanguard
+// dorado se queda como identidad y cada sección importante recibe su color
+// propio). 14 acentos distintos, todos compatibles con el cielo nocturno y el
+// ocaso: el oro de INICIO es la firma de la plataforma y los demás orbitan a su
+// alrededor sin chocar. El acento activo también se publica como CSS var
+// --vg-acc (page.tsx) para teñir la barra Google, la transición de cine y el
+// buscador con el color del mundo donde estás.
+export const SECTION_ACCENT: Record<string, string> = {
+  hangar:        "#52D5E0", // turquesa metálico — tu base 3D
+  inicio:        "#FFC94D", // ORO — la identidad dorada de Vanguard
+  inteligencia:  "#7FE3FF", // cian inteligente — conocimiento
+  juego:         "#FF6B5A", // rojo batalla — guerra
+  mercado:       "#4ADE80", // verde mercado — dinero
+  archivo:       "#C9A85C", // bronce de archivo — historia
+  comando:       "#FFA030", // ámbar operativo — mando diario
+  observatorio:  "#5EEAD4", // teal de telescopio — vigilancia
+  estrategia:    "#B48CFF", // violeta táctico — simulación
+  emisora:       "#FF7EB6", // rosa neón — TV y feeds
+  oscsuro:       "#FF3B30", // rojo crudo — verdad cruda
+  creadores:     "#E879F9", // fucsia — creadores
+  social:        "#A78BFA", // lavanda — comunidad
+  sistema:       "#34D399", // esmeralda — sistema
+};
+
+export function accentOfSection(sectionKey: string): string {
+  return SECTION_ACCENT[sectionKey] ?? "#FFC94D";
+}
 
 export function TabNav({
   active,
@@ -517,7 +550,7 @@ export function TabNav({
   };
 
   return (
-    <nav className="sticky top-[126px] sm:top-[158px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
+    <nav className="sticky top-[126px] sm:top-[160px] z-20 hud-panel border-y border-amber-hud shadow-[0_8px_24px_-12px_rgba(0,0,0,0.8)]">
       {/* Fila 1: secciones principales */}
       <div className="border-b border-amber-hud/20 relative">
         {/* v48.0: degradados + flechas — las secciones del final YA SON visibles en móvil */}
@@ -551,7 +584,9 @@ export function TabNav({
           <div className="flex gap-1 px-2 sm:px-4 py-1.5 min-w-max items-center">
             {SECTIONS.map((s) => {
               const isActive = s.key === section.key;
-              const c = SECTION_COLOR[s.color] ?? SECTION_COLOR.amber;
+              // v98.0 COLOR ÚNICO: cada sección lleva su acento propio (el oro de
+              // INICIO es la firma). La activa se tiñe con él y la píldora viaja.
+              const acc = accentOfSection(s.key);
               // v48.0 EXPLORADOR: contador de secciones sin descubrir por mundo
               const sinVer = s.tabs.filter((tb) => !visitedSet.has(tb.key)).length;
               return (
@@ -562,14 +597,15 @@ export function TabNav({
                   title={s.desc}
                   className={cn(
                     "relative flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest whitespace-nowrap border transition-colors",
-                    isActive ? c.active : "border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                    isActive ? "" : "border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                   )}
+                  style={isActive ? { color: acc, borderColor: `${acc}66`, backgroundColor: `${acc}1a` } : undefined}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="section-bg"
                       className="absolute inset-0 border rounded-sm"
-                      style={{ backdropFilter: "blur(2px)" }}
+                      style={{ backdropFilter: "blur(2px)", borderColor: `${acc}55`, backgroundColor: `${acc}12`, boxShadow: `0 0 18px -6px ${acc}55` }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -577,7 +613,10 @@ export function TabNav({
                     {s.icon}
                     <span className="hidden sm:inline">{t(`sec.${s.key}`)}</span>
                     <span className="sm:hidden">{t(`sec.${s.key}`)}</span>
-                    <span className={cn("w-1 h-1 rounded-full ml-0.5", c.dot)} />
+                    <span
+                      className={cn("w-1.5 h-1.5 rounded-full ml-0.5 transition-shadow", isActive && "vg-acc-dot")}
+                      style={{ backgroundColor: acc, boxShadow: isActive ? `0 0 8px ${acc}` : undefined }}
+                    />
                     {sinVer > 0 && (
                       <span
                         className="min-w-[14px] h-[14px] px-1 rounded-full bg-amber text-black text-[8px] font-bold flex items-center justify-center leading-none"
@@ -660,6 +699,9 @@ export function TabNav({
           <div className="flex gap-1 px-2 sm:px-4 py-1.5 min-w-max">
             {section.tabs.map((t) => {
               const isActive = active === t.key;
+              // v98.0: los subtemas heredan el COLOR ÚNICO de su sección y la
+              // píldora deslizante viaja entre ellos (más dinámico al cambiar)
+              const acc = accentOfSection(section.key);
               return (
                 <button
                   key={t.key}
@@ -668,11 +710,19 @@ export function TabNav({
                   className={cn(
                     "relative flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-sm font-mono text-[9px] sm:text-[11px] font-bold uppercase tracking-wide transition-colors whitespace-nowrap border",
                     isActive
-                      ? "text-amber border-amber-hud bg-amber-hud/30"
+                      ? "border-transparent"
                       : "border-border/60 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
                   )}
                 >
-                  <span className="relative z-10 flex items-center gap-1">
+                  {isActive && (
+                    <motion.div
+                      layoutId="tab-bg"
+                      className="absolute inset-0 rounded-sm"
+                      style={{ backgroundColor: `${acc}26`, boxShadow: `inset 0 0 0 1px ${acc}66, 0 0 12px -4px ${acc}88` }}
+                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                    />
+                  )}
+                  <span className="relative z-10 flex items-center gap-1" style={isActive ? { color: acc } : undefined}>
                     {t.icon}
                     <span className="hidden sm:inline">{tabLabel(lang, t.key, t.label)}</span>
                     <span className="sm:hidden">{TAB_SHORTS[lang]?.[t.key] ?? t.short}</span>
@@ -703,8 +753,11 @@ export function TabNav({
         title={`Explorador: ${visited.length}/${TOTAL_TABS} secciones descubiertas (${explorePct}%) — pulsa SORPRÉNDEME para descubrir más`}
       >
         <div
-          className="h-full bg-gradient-to-r from-amber-hud via-electric-hud to-green-hud transition-[width] duration-500"
-          style={{ width: `${Math.max(2, explorePct)}%` }}
+          className="h-full transition-[width] duration-500"
+          style={{
+            width: `${Math.max(2, explorePct)}%`,
+            background: `linear-gradient(90deg, #FFC94D, ${accentOfSection(section.key)}, #4ADE80)`,
+          }}
         />
       </div>
     </nav>

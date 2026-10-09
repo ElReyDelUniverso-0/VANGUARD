@@ -14,6 +14,17 @@
 // v88.0 OPERADOR LEGENDARIO: 5 pistas nuevas (20 en total) — Operación Amanecer,
 // Fuego Cruzado, Neón de Damasco, Sintetizador del Abismo y Aurora. La pista
 // por defecto de la radio ahora es "amanecer" y el MODO CINE abre con ella.
+// v98.0 ORO TOTAL — SONIDO VANGUARD v3, la radio ya no es un loop que se repite:
+//   · 4 PISTAS PROPIAS de la plataforma (24 en total): Oro de Vanguard (tema
+//     insignia dorado), Pulso del Grafo, Neón Vertical y Bóveda Secreta.
+//   · VARIACIÓN DIARIA — cada día UTC la progresión rota, el arpegio se
+//     transpone y el hi-hat acentúa distinto: determinista por fecha, así la
+//     radio de Vanguard suena ÚNICA cada día y distinta de cualquier otra.
+//   · MODO ESCENA — la radio cambia de pista sola según la SECCIÓN donde estás
+//     (INTELIGENCIA → Pulso del Grafo, EMISORA → Neón Vertical, ARCHIVO →
+//     Bóveda Secreta…), con fundido cruzado suave al cambiar de mundo.
+//   · ENSANCHE ESTÉREO — el arpegio y el pad paneen en el campo estéreo
+//     (StereoPannerNode) para una escena tridimensional.
 
 type Pattern = string; // "x...x..." — x = golpe, . = silencio, o = acento
 
@@ -418,7 +429,124 @@ export const MUSIC_TRACKS: TrackDef[] = [
     droneGain: 0.045,
     padLevel: 0.09,
   },
+
+  // ====== v98.0 ORO TOTAL — las 4 pistas propias de Vanguard ======
+  {
+    id: "oro",
+    name: "Oro de Vanguard",
+    desc: "El tema insignia de la plataforma: cuerdas doradas sobre el ocaso",
+    bpm: 76,
+    root: st(-24, 98), // G0
+    chords: [min(0), maj(-4), maj(-2), maj(3)], // Gm - Eb - F - C
+    bass: [0, -1, -1, 0, -1, -1, 0, -1, -1, 0, -1, -1, 0, -1, 7, -1],
+    arp: [0, -1, 2, -1, 3, -1, 2, -1, 4, -1, 2, -1, 1, -1, 2, -1],
+    arpType: "triangle",
+    bassType: "sawtooth",
+    kick: "x.......x.......",
+    snare: "....x.......x...",
+    hat: "..x...x...x...x.",
+    drone: 0.5,
+    droneGain: 0.05,
+    padLevel: 0.1,
+    swing: true,
+    fill: true,
+  },
+  {
+    id: "grafo",
+    name: "Pulso del Grafo",
+    desc: "La red del conocimiento latiendo: nodos y aristas en secuencia",
+    bpm: 122,
+    root: st(-24, 82.41), // E0
+    chords: [min(0), maj(5), min(3), maj(-4)], // Em - A - G - C
+    bass: [0, -1, 0, -1, 0, 0, -1, -1, 0, -1, 0, -1, 0, -1, 10, -1],
+    arp: [3, 4, -1, 3, 5, -1, 4, 3, -1, 4, 6, -1, 5, 4, -1, 3],
+    arpType: "square",
+    bassType: "sawtooth",
+    kick: "x...x...x...x...",
+    snare: "....x.......x..x",
+    hat: "x.x.x.x.x.x.x.x.",
+    drone: 0.25,
+    droneGain: 0.04,
+    padLevel: 0.05,
+  },
+  {
+    id: "neon",
+    name: "Neón Vertical",
+    desc: "La emisora de noche: synth del feed infinito de Vanguard TV",
+    bpm: 108,
+    root: st(-24, 87.31), // F0
+    chords: [min(0), maj(-4), maj(2), min(-7)], // Fm - Db - G - Cm
+    bass: [0, 0, -1, 0, -1, 0, -1, 0, 0, 0, -1, 0, -1, 0, 7, -1],
+    arp: [0, 2, 3, 4, 3, 2, 0, 2, 3, 4, 5, 4, 3, 2, 1, -1],
+    arpType: "sawtooth",
+    bassType: "square",
+    kick: "x...x...x...x...",
+    snare: "....x.......x...",
+    hat: "..x...x...x...xx",
+    drone: 0,
+    droneGain: 0,
+    padLevel: 0.06,
+  },
+  {
+    id: "boveda",
+    name: "Bóveda Secreta",
+    desc: "Dentro del archivo desclasificado: hormigón, luz roja y espera",
+    bpm: 64,
+    root: st(-24, 65.41), // C0
+    chords: [min(0), min(-5), maj(-8), maj(-3)], // Cm - Gm - Ab - Bb
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1],
+    arp: [-1, -1, -1, 3, -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, 6, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x.......x.......",
+    snare: "................",
+    hat: "................",
+    drone: 1,
+    droneGain: 0.09,
+    padLevel: 0.08,
+  },
 ];
+
+// ====== v98.0 VARIACIÓN DIARIA — la radio suena ÚNICA cada día ======
+// Determinista por fecha UTC: mismo día = misma versión en todo el planeta.
+// rot: rota el orden de la progresión · arpShift: transpone el arpegio una
+// octava · hatAcc: mueve el acento del hi-hat. Tres capas = 4x4x3 = 48 formas
+// distintas por pista, suficientes para semanas sin repetir.
+function variacionDiaria(): { rot: number; arpShift: number; hatAcc: number } {
+  const day = Math.floor(Date.now() / 86_400_000); // días UTC
+  return {
+    rot: day % 4,
+    arpShift: [0, 0, 12, -12][day % 4],
+    hatAcc: day % 3, // 0, 1 o 2 → acento en pasos distintos del semicompás
+  };
+}
+
+// ====== v98.0 MODO ESCENA — la radio sigue tu posición en Vanguard ======
+export type EscenaKey =
+  | "hangar" | "inicio" | "inteligencia" | "juego" | "mercado"
+  | "archivo" | "comando" | "observatorio" | "estrategia" | "emisora"
+  | "oscsuro" | "creadores" | "social" | "sistema";
+
+export const ESCENA_TRACKS: Record<EscenaKey, string> = {
+  hangar: "drones",       // tu base 3D: zumbido de espera
+  inicio: "oro",          // portada: el tema insignia dorado
+  inteligencia: "grafo",  // conocimiento: la red latiendo
+  juego: "marcha",        // guerra: tambores de acero
+  mercado: "ciber",       // dinero: Ciberataque
+  archivo: "boveda",      // archivo: Bóveda Secreta
+  comando: "radio",       // operaciones diarias: Radio Guerra
+  observatorio: "frente", // vigilancia: Tensión de Frente
+  estrategia: "cerco",    // gran estrategia: Cerco Urbano
+  emisora: "neon",        // TV y feeds: Neón Vertical
+  oscsuro: "invierno",    // verdad cruda: Invierno Atómico
+  creadores: "damasco",   // creadores: Neón de Damasco
+  social: "tregua",       // comunidad: Tregua al Amanecer
+  sistema: "himno",       // sistema: Himno de Vanguardia
+};
+
+let escenaActiva: EscenaKey | null = null;
+export function setEscenaActiva(e: EscenaKey) { escenaActiva = e; }
+export function getEscenaActiva(): EscenaKey | null { return escenaActiva; }
 
 // ================== motor v2 ==================
 let ctx: AudioContext | null = null;
@@ -614,7 +742,7 @@ function playNote(
   dur: number,
   type: OscillatorType,
   gain: number,
-  opts?: { reverb?: number; delay?: number; cutoff?: number },
+  opts?: { reverb?: number; delay?: number; cutoff?: number; pan?: number },
 ) {
   const osc = c.createOscillator();
   const g = c.createGain();
@@ -628,7 +756,15 @@ function playNote(
   g.gain.exponentialRampToValueAtTime(0.001, t + dur);
   osc.connect(f);
   f.connect(g);
-  g.connect(master!);
+  // v98.0 ENSANCHE ESTÉREO: si hay paneo, la nota entra al campo estéreo
+  if (opts?.pan && typeof c.createStereoPanner === "function") {
+    const p = c.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, opts.pan));
+    g.connect(p);
+    p.connect(master!);
+  } else {
+    g.connect(master!);
+  }
   if (opts?.reverb && reverbBus) {
     const rs = c.createGain();
     rs.gain.value = opts.reverb;
@@ -720,6 +856,7 @@ function scheduler() {
   if (!c || !t || !master) return;
   const stepDur = 60 / t.bpm / 4; // semicorcheas
   const barDur = stepDur * 16;
+  const vari = variacionDiaria(); // v98.0 la variación diaria se lee en vivo
   while (nextTime < c.currentTime + 0.16) {
     const i = step % 16;
     const bar = Math.floor(step / 16) % 4;
@@ -730,23 +867,26 @@ function scheduler() {
     const filling = !!t.fill && bar === 3 && i >= 12;
     if (t.kick[i] === "x" || t.kick[i] === "o") playKick(c, time, t.kick[i] === "o");
     if (t.snare[i] === "x" || t.snare[i] === "o" || (filling && i % 2 === 0)) playSnare(c, time, t.snare[i] === "o" || filling);
-    if (t.hat[i] === "x" || t.hat[i] === "o" || (filling && i % 2 === 1)) playHat(c, time, t.hat[i] === "o" || filling);
+    // v98.0: el acento del hi-hat rota según el día (variación diaria)
+    const hatAcent = t.hat[i] === "o" || (filling && i % 2 === 1) || (t.hat[i] === "x" && i % 4 === vari.hatAcc);
+    if (t.hat[i] === "x" || t.hat[i] === "o" || (filling && i % 2 === 1)) playHat(c, time, hatAcent);
 
-    // bajo: sigue la fundamental del acorde del compás
-    const chord = t.chords[bar];
+    // bajo: sigue la fundamental del acorde del compás (v98: progresión rotada por día)
+    const chord = t.chords[(bar + vari.rot) % 4];
     const b = t.bass[i];
     if (b >= 0) {
       playNote(c, time, st(chord[0] + b, t.root), stepDur * 2.2, t.bassType, 0.17, { cutoff: 480 });
     }
-    // arpegio melódico con eco
+    // arpegio melódico con eco (v98: transpuesto por día + paneo estéreo alternante)
     const a = t.arp[i];
     if (a >= 0) {
       const oct = Math.floor(a / 3);
-      const tone = chord[a % 3] + 12 * oct;
+      const tone = chord[a % 3] + 12 * oct + vari.arpShift;
       playNote(c, time, st(tone, t.root * 4), stepDur * 2.6, t.arpType, 0.05, {
         reverb: 0.35,
         delay: 0.4,
         cutoff: t.arpType === "square" ? 1500 : 3200,
+        pan: i % 4 === 0 ? -0.32 : i % 4 === 2 ? 0.32 : i % 2 === 1 ? 0.16 : -0.16,
       });
     }
     // pad al inicio de cada compás
@@ -758,18 +898,47 @@ function scheduler() {
 }
 
 // ================== API pública ==================
-export function startMusic(trackId?: string) {
-  const c = getCtx();
-  if (!c) return;
-  const def = MUSIC_TRACKS.find((t) => t.id === trackId) || current || MUSIC_TRACKS[0];
-  stopMusic();
+function arranque(c: AudioContext, def: TrackDef) {
   current = def;
   step = 0;
   nextTime = c.currentTime + 0.08;
   if (delayNode) delayNode.delayTime.value = Math.min(1.4, (60 / def.bpm) * 0.75); // corchea con puntillo
   startDrone(def);
   timer = setInterval(scheduler, 40);
+}
+
+export function startMusic(trackId?: string) {
+  const c = getCtx();
+  if (!c) return;
+  const def = MUSIC_TRACKS.find((t) => t.id === trackId) || current || MUSIC_TRACKS[0];
+  // v98.0 FUNDIDO CRUZADO: si la radio ya sonaba, la nueva pista entra con un
+  // dip de volumen (180ms) en vez de cortar en seco — el cambio de escena se siente de cine.
+  const yaSonaba = timer !== null;
+  if (yaSonaba && master) {
+    master.gain.setTargetAtTime(0, c.currentTime, 0.06);
+    setTimeout(() => {
+      const cc = getCtx();
+      if (!cc || !master) return;
+      stopMusic();
+      arranque(cc, def);
+      master.gain.setTargetAtTime(volume * 0.55, cc.currentTime, 0.12);
+      notify();
+    }, 180);
+    notify();
+    return;
+  }
+  stopMusic();
+  arranque(c, def);
   notify();
+}
+
+// v98.0 MODO ESCENA — cambia la pista según la sección de Vanguard actual.
+// Lo llama el MusicPlayer cuando la escena automática está activa.
+export function aplicarEscena(escena: EscenaKey) {
+  escenaActiva = escena;
+  const track = ESCENA_TRACKS[escena];
+  if (!track || current?.id === track) return;
+  startMusic(track);
 }
 
 export function stopMusic() {

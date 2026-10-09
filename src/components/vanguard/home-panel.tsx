@@ -10,7 +10,7 @@ import {
   Castle, Radar, Rocket, Swords, Joystick, Fingerprint, Coins, TrendingUp,
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
-  Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History,
+  Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -55,6 +55,8 @@ interface WorldTile {
 const WORLD_TILES: WorldTile[] = [
   // v97.0 PANTALLA TOTAL: la plataforma de video de Vanguard abre el muro
   { tab: "pantalla", title: "VANGUARD TV", desc: "El mundo en pases verticales: cámaras en vivo, informes OSINT, explicadores y crónicas — doble tap, suscripciones y sala de proyección", icon: <MonitorPlay className="w-6 h-6" />, hex: "#FFC94D" },
+  // v98.0 ORO TOTAL: la búsqueda visual de fotos reales
+  { tab: "imagenes", title: "IMÁGENES DE VANGUARD", desc: "La búsqueda visual de la plataforma: fotos reales de lugares estratégicos, sedes del poder, archivo desclasificado, armas históricas y civilizaciones perdidas", icon: <Images className="w-6 h-6" />, hex: "#7FE3FF" },
   { tab: "foryou", title: "PARA TI", desc: "El feed de la comunidad: videos, música y stickers de los jugadores en scroll infinito — como TikTok, pero de guerra", icon: <Flame className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "mundo", title: "MUNDO DE GUERRA", desc: "Conquista los 24 territorios en el globo 3D contra 3 IA", icon: <Castle className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },

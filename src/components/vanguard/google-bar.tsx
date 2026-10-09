@@ -5,14 +5,21 @@
 //   [ LETRAS VIVAS ]  [ barra de búsqueda central con autocompletado ]  [ INVESTIGAR ] [ rejilla de apps ]
 // Buscar = investigar: Enter lleva a GOOGLES DE VANGUARD con la consulta cargada.
 // La rejilla abre el LANZADOR (launcher) con los 14 mundos + el MENÚ DE CINE.
+// v98.0 ORO TOTAL — BÚSQUEDA UNIVERSAL ("buscar mucho más cosas"): el
+// autocompletado ahora busca en TODO Vanguard y agrupa por tipo:
+//   · PESTAÑAS — salta directo al mundo
+//   · IMÁGENES — abre el lightbox de la foto real en IMÁGENES DE VANGUARD
+//   · CONOCIMIENTO — términos del índice de GOOGLES (entidades, crisis,
+//     expedientes, teorías, armas, civilizaciones, papers, medios)
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Dices, Fingerprint, X, Clapperboard, CornerDownLeft } from "lucide-react";
+import { Search, Dices, Fingerprint, X, Clapperboard, CornerDownLeft, Images, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
 import { sugerenciasGoogles } from "@/lib/googles";
+import { buscarImagenes } from "@/lib/imagenes-data";
+import { tabLabel, useT } from "@/lib/i18n";
 import { sfx } from "@/lib/sound";
-import { useT } from "@/lib/i18n";
 
 // paleta atardecer de Vanguard para las letras vivas
 const LETRA_HEX = ["#FFE3A0", "#FFD07A", "#FFC94D", "#FFB347", "#FF9A3C", "#FF8A2A", "#FFC94D", "#FFE3A0"];
@@ -73,12 +80,45 @@ export function GoogleBar({
   const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // sugerencias en vivo del índice de conocimiento (derivadas en render, sin efectos)
-  const sugs = useMemo(() => {
+  // v98.0 BÚSQUEDA UNIVERSAL: el índice de pestañas de TODOS los mundos
+  const tabsIdx = useMemo(
+    () =>
+      SECTIONS.flatMap((s) =>
+        s.tabs.map((tb) => ({
+          tab: tb.key,
+          label: tabLabel(lang, tb.key, tb.label),
+          sec: s.key,
+        }))
+      ),
+    [lang]
+  );
+
+  // sugerencias universales agrupadas: pestañas → imágenes → conocimiento
+  interface Sug {
+    kind: "tab" | "img" | "goog";
+    text: string;
+    sub?: string;
+    tab?: TabKey;
+    imgId?: string;
+  }
+  const sugs = useMemo<Sug[]>(() => {
     const v = q.trim();
     if (!focus || v.length < 2) return [];
-    return sugerenciasGoogles(v, 7).filter((s) => s.toLowerCase() !== v.toLowerCase());
-  }, [q, focus]);
+    const vl = v.toLowerCase();
+    const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+    const vn = norm(v);
+    const out: Sug[] = [];
+    // 1) PESTAÑAS: saltar directo al mundo
+    const tabs = tabsIdx.filter((tb) => norm(tb.label).includes(vn)).slice(0, 4);
+    for (const tb of tabs) out.push({ kind: "tab", text: tb.label, sub: t(`sec.${tb.sec}`), tab: tb.tab });
+    // 2) IMÁGENES: la foto real coincide
+    const imgs = buscarImagenes(v).slice(0, 3);
+    for (const im of imgs) out.push({ kind: "img", text: im.label, sub: t("img.title"), imgId: im.id });
+    // 3) CONOCIMIENTO: el índice de GOOGLES (entidades del mundo incluidas)
+    const goog = sugerenciasGoogles(v, 6).filter((s) => s.toLowerCase() !== vl);
+    for (const s of goog) out.push({ kind: "goog", text: s, sub: t("gbar.grupoGoog") });
+    return out.slice(0, 11);
+  }, [q, focus, tabsIdx, t]);
   const idxOk = idx >= 0 && idx < sugs.length ? idx : -1;
 
   // cerrar lanzador y sugerencias con Escape / clic fuera
@@ -116,6 +156,30 @@ export function GoogleBar({
     [onChange]
   );
 
+  // v98.0: selección de una sugerencia universal — cada tipo viaja a su sala
+  const elegir = useCallback(
+    (s: Sug) => {
+      sfx.tab();
+      setFocus(false);
+      setLauncher(false);
+      if (s.kind === "tab" && s.tab) {
+        onChange(s.tab);
+        return;
+      }
+      if (s.kind === "img" && s.imgId) {
+        try {
+          sessionStorage.setItem("vg-imagenes-sel", s.imgId);
+        } catch { /* noop */ }
+        // si la sala IMÁGENES ya está montada, el evento abre el lightbox al vuelo
+        window.dispatchEvent(new CustomEvent("vanguard:abrir-imagen", { detail: s.imgId }));
+        onChange("imagenes");
+        return;
+      }
+      buscar(s.text);
+    },
+    [onChange, buscar]
+  );
+
   const suerte = () => {
     // dado del atardecer: una búsqueda al azar del mundo — siempre hay hallazgo
     const pool = ["Valle del Karsk", "Emirato de Sarn", "Ojo de Dios", "Estrecho de Vand", "MK-ULTRA", "República de Zenit", "Grafo Mundial", "VANGUARD EARTH", "Alejandría Oscura", "Operación PAPERCLIP"];
@@ -140,7 +204,8 @@ export function GoogleBar({
       setIdx((i) => (i <= 0 ? sugs.length - 1 : i - 1));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      buscar(idxOk >= 0 ? sugs[idxOk] : q);
+      if (idxOk >= 0) elegir(sugs[idxOk]);
+      else buscar(q);
     }
   };
 
@@ -185,7 +250,7 @@ export function GoogleBar({
             </button>
           </div>
 
-          {/* autocompletado — la lista viva del índice */}
+          {/* autocompletado UNIVERSAL — pestañas, imágenes reales y conocimiento */}
           <AnimatePresence>
             {focus && sugs.length > 0 && (
               <motion.ul
@@ -196,24 +261,33 @@ export function GoogleBar({
                 className="absolute left-0 right-0 top-[42px] z-50 rounded-2xl border border-amber-hud/40 bg-[#0B0E14]/97 backdrop-blur-md overflow-hidden shadow-[0_18px_50px_-12px_rgba(0,0,0,0.9)]"
                 role="listbox"
               >
-                {sugs.map((s, i) => (
-                  <li key={s}>
-                    <button
-                      onMouseDown={(e) => { e.preventDefault(); buscar(s); }}
-                      onMouseEnter={() => setIdx(i)}
-                      className={cn(
-                        "w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-[12px] sm:text-sm font-mono transition-colors",
-                        i === idxOk ? "bg-amber-hud/20 text-amber" : "text-muted-foreground hover:text-foreground"
-                      )}
-                      role="option"
-                      aria-selected={i === idxOk}
-                    >
-                      <Search className="w-3.5 h-3.5 shrink-0 opacity-60" />
-                      <span className="truncate">{s}</span>
-                      {i === idxOk && <CornerDownLeft className="w-3 h-3 ml-auto shrink-0 opacity-70" />}
-                    </button>
-                  </li>
-                ))}
+                {sugs.map((s, i) => {
+                  const Icono = s.kind === "tab" ? Globe2 : s.kind === "img" ? Images : Search;
+                  const esSel = i === idxOk;
+                  return (
+                    <li key={`${s.kind}-${s.text}-${i}`}>
+                      <button
+                        onMouseDown={(e) => { e.preventDefault(); elegir(s); }}
+                        onMouseEnter={() => setIdx(i)}
+                        className={cn(
+                          "w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-[12px] sm:text-sm font-mono transition-colors",
+                          esSel ? "bg-amber-hud/20 text-amber" : "text-muted-foreground hover:text-foreground"
+                        )}
+                        role="option"
+                        aria-selected={esSel}
+                      >
+                        <Icono className={cn("w-3.5 h-3.5 shrink-0", s.kind === "img" && "text-cyan-hud", s.kind === "tab" && "text-electric", s.kind === "goog" && "opacity-60")} />
+                        <span className="truncate flex-1">{s.text}</span>
+                        {s.sub && (
+                          <span className="hidden sm:block shrink-0 text-[8px] font-mono uppercase tracking-widest opacity-50">
+                            {s.sub}
+                          </span>
+                        )}
+                        {esSel && <CornerDownLeft className="w-3 h-3 ml-1 shrink-0 opacity-70" />}
+                      </button>
+                    </li>
+                  );
+                })}
               </motion.ul>
             )}
           </AnimatePresence>

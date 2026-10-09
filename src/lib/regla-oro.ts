@@ -963,6 +963,14 @@ export const REGLA_ORO = {
       "La plataforma de video de Vanguard: un feed vertical de pases cortos que mezcla las cámaras del mundo en vivo, los informes de las ocho salas OSINT, explicadores de 60 segundos de cada lugar del mapa, las crónicas guiadas y los desclasificados del archivo — todo con doble tap de corazón, suscripciones, comentarios y una sala de proyección con reproductor, related y tu propio expediente de espectador. Desliza el planeta: cada pase enlaza su sala para cruzar el video con el dato.",
     acento: "#FFC94D",
   },
+  imagenes: {
+    titulo: "IMÁGENES DE VANGUARD",
+    volanta: "La búsqueda visual de fotos reales",
+    imagen: "/ilustraciones/galeria.jpg",
+    texto:
+      "El ojo fotográfico de la plataforma: un mosaico de fotos reales de la capa REAL del mundo — los 16 lugares estratégicos que mueven el comercio, las sedes del poder, el archivo desclasificado (el U-2, el Enigma, el Área 51, HAARP, Svalbard), las armas que cambiaron la historia y las civilizaciones perdidas de la antigüedad. Cada foto lleva su nota editorial original, su fuente, y salta al expediente o a VANGUARD EARTH para cruzar la imagen con el dato. La capa SIM del juego usa las ilustraciones declaradas de Vanguard: aquí, solo mundo real.",
+    acento: "#7FE3FF",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;
