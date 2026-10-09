@@ -1859,3 +1859,44 @@ html.modo-guerra body::after {
   .vg-dial-0, .vg-dial-1, .vg-dial-2, .vg-dial-3, .vg-dial-4, .vg-dial-5, .vg-dial-6,
   .vg-dispara, .vg-dot, .vg-lateja { animation: none !important; }
 }
+
+/* ============================================================
+   v95.0 EXPEDIENTE TOTAL — grafo, espejo y máquina del tiempo
+   ============================================================ */
+
+/* anillo de selección de nodo (Karsk cambiado de mano, nodo enfocado) */
+@keyframes vg-nodo-anillo-k { 0% { opacity: 0.9; transform: scale(0.9); } 70% { opacity: 0; transform: scale(1.5); } 100% { opacity: 0; transform: scale(1.5); } }
+.vg-nodo-anillo { animation: vg-nodo-anillo-k 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+
+/* pin latiendo en teatros esquemáticos */
+@keyframes vg-pin-late-k { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.vg-pin-late { animation: vg-pin-late-k 1.4s ease-in-out infinite; }
+
+/* curva de tensión dibujándose */
+@keyframes vg-curva-k { from { stroke-dashoffset: 260; } to { stroke-dashoffset: 0; } }
+.vg-curva { stroke-dasharray: 260; animation: vg-curva-k 1.4s ease-out forwards; }
+
+/* slider de la máquina del tiempo */
+.vg-slider { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(255,201,77,0.75), rgba(255,107,74,0.75), rgba(255,59,48,0.75));
+  outline: none; cursor: pointer; }
+.vg-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+  border-radius: 50%; background: #FFC94D; border: 2px solid #000;
+  box-shadow: 0 0 10px rgba(255,201,77,0.8); cursor: grab; transition: transform 0.15s ease; }
+.vg-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.vg-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #FFC94D;
+  border: 2px solid #000; box-shadow: 0 0 10px rgba(255,201,77,0.8); cursor: grab; }
+
+/* scroll del drawer de expediente */
+.vg-ex-scroll::-webkit-scrollbar { width: 5px; }
+.vg-ex-scroll::-webkit-scrollbar-thumb { background: rgba(255,201,77,0.3); border-radius: 9999px; }
+.vg-ex-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* campana de vigilancia */
+@keyframes vg-lateja-k { 0%, 100% { transform: rotate(0deg); } 12% { transform: rotate(-12deg); } 24% { transform: rotate(10deg); } 36% { transform: rotate(-7deg); } 48% { transform: rotate(0deg); } }
+.vg-lateja { animation: vg-lateja-k 2.2s ease-in-out infinite; transform-origin: top center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vg-nodo-anillo, .vg-pin-late, .vg-lateja { animation: none !important; }
+  .vg-curva { animation: none !important; stroke-dasharray: none !important; }
+}

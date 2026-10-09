@@ -20,6 +20,7 @@ import {
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
+  History, FlipHorizontal2,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -100,7 +101,9 @@ export type TabKey =
   // revista, GEOINT, monitor global, canal de briefing y escuela de estrategia
   | "pronosticos" | "enclaves" | "extranjera" | "geoint" | "monitorglobal" | "canalbrief" | "estrategia"
   // v93.0 VANGUARD EARTH: el googles de Vanguard — simulador de satélite espía
-  | "tierra";
+  | "tierra"
+  // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
+  | "grafo" | "espejo" | "maquina";
 
 interface TabDef {
   key: TabKey;
@@ -240,6 +243,9 @@ const TABS: Record<TabKey, TabDef> = {
   tierra:        { key: "tierra",        label: "VANGUARD EARTH (el googles de Vanguard)", short: "EARTH", icon: <Earth className="w-3.5 h-3.5" />, color: "amber" },
   // v94.0 GOOGLES TOTAL — Vanguard como el Google de los problemas geopolíticos
   googles:       { key: "googles",       label: "GOOGLES DE VANGUARD (buscador, tendencias, traductor, académico, noticias y alertas)", short: "GOOGLES", icon: <Search className="w-3.5 h-3.5" />, color: "amber" },
+  grafo:         { key: "grafo",         label: "GRAFO MUNDIAL (la red del conocimiento geopolítico de Vanguard)", short: "GRAFO", icon: <Network className="w-3.5 h-3.5" />, color: "cyan" },
+  espejo:        { key: "espejo",        label: "EL ESPEJO (una crisis, todas las perspectivas: confirmado, omitido y en disputa)", short: "ESPEJO", icon: <FlipHorizontal2 className="w-3.5 h-3.5" />, color: "red" },
+  maquina:       { key: "maquina",       label: "MÁQUINA DEL TIEMPO (viaja por la historia de cada crisis, teatro del Karsk en vivo)", short: "TIEMPO", icon: <History className="w-3.5 h-3.5" />, color: "amber" },
   mipais:        { key: "mipais",        label: "MI PAÍS (simulador de nación)", short: "MI PAÍS", icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
 
   videos:        { key: "videos",        label: "GlobalVision",      short: "VIDEOS", icon: <Signal className="w-3.5 h-3.5" />, color: "red" },
@@ -316,8 +322,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), VANGUARD EARTH, sala OSINT, mapa, centinela, espectro y los 21 espejos de los grandes portales de conflicto del mundo — incluidos el RTS IMPERIO, la revista, los pronósticos y el OJO-GEOINT",
-    tabs: [TABS.googles, TABS.tierra, TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.pronosticos, TABS.enclaves, TABS.extranjera, TABS.geoint, TABS.monitorglobal, TABS.canalbrief, TABS.estrategia, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
+    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), VANGUARD EARTH, el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas) y la MÁQUINA DEL TIEMPO — más la sala OSINT, el mapa, el centinela, el espectro y los 21 espejos de los grandes portales de conflicto del mundo, incluidos el RTS IMPERIO, la revista, los pronósticos y el OJO-GEOINT",
+    tabs: [TABS.googles, TABS.tierra, TABS.grafo, TABS.espejo, TABS.maquina, TABS.osint, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.simulador, TABS.canales, TABS.mundial, TABS.wikiguerra, TABS.cielos, TABS.ciber, TABS.sismo, TABS.mercados, TABS.imperio, TABS.pronosticos, TABS.enclaves, TABS.extranjera, TABS.geoint, TABS.monitorglobal, TABS.canalbrief, TABS.estrategia, TABS.ojodios, TABS.expedientes, TABS.oscura, TABS.mapa, TABS.operaciones, TABS.armodo, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria, TABS.briefings, TABS.camaras],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO

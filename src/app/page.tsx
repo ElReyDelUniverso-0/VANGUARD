@@ -228,6 +228,11 @@ const CanalBriefPanel = dynamic(() => import("@/components/vanguard/panels/canal
 const TierraPanel = dynamic(() => import("@/components/vanguard/panels/tierra-panel").then((m) => m.TierraPanel), { ssr: false, loading: PanelSkeleton });
 // v94.0 GOOGLES TOTAL: Vanguard como el Google de los problemas geopolíticos
 const GooglesPanel = dynamic(() => import("@/components/vanguard/panels/googles-panel").then((m) => m.GooglesPanel), { ssr: false, loading: PanelSkeleton });
+
+// v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
+const GrafoPanel = dynamic(() => import("@/components/vanguard/panels/grafo-panel").then((m) => m.GrafoPanel), { ssr: false, loading: PanelSkeleton });
+const EspejoPanel = dynamic(() => import("@/components/vanguard/panels/espejo-panel").then((m) => m.EspejoPanel), { ssr: false, loading: PanelSkeleton });
+const MaquinaPanel = dynamic(() => import("@/components/vanguard/panels/maquina-panel").then((m) => m.MaquinaPanel), { ssr: false, loading: PanelSkeleton });
 const EstrategiaGlobalPanel = dynamic(() => import("@/components/vanguard/panels/estrategia-panel").then((m) => m.EstrategiaGlobalPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
@@ -492,6 +497,10 @@ export default function Home() {
         {tab === "estrategia" && <EstrategiaGlobalPanel />}
         {/* v94.0 GOOGLES TOTAL: el Google de los problemas geopolíticos */}
         {tab === "googles" && <GooglesPanel />}
+        {/* v95.0 EXPEDIENTE TOTAL: la red, el espejo y la máquina del tiempo */}
+        {tab === "grafo" && <GrafoPanel />}
+        {tab === "espejo" && <EspejoPanel />}
+        {tab === "maquina" && <MaquinaPanel />}
         {/* v93.0 VANGUARD EARTH: el googles de Vanguard */}
         {tab === "tierra" && <TierraPanel />}
         {tab === "mipais" && <MiPaisPanel />}

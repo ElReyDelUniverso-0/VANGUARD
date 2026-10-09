@@ -931,6 +931,30 @@ export const REGLA_ORO = {
       "La suite definitiva: un buscador que indexa TODO el mundo Vanguard (lugares, expedientes desclasificados, teorías, armas, civilizaciones, wiki, papers y tendencias) con fichas de conocimiento y veredicto neuronal, Tendencias con interés por hora y sparklines, Traductor de 8 idiomas con el núcleo IA, Noticias en edición de portada, Académico con citas APA/MLA y Alertas que vigilan un término por ti. Busca, pregunta, cobra: el mundo entero responde.",
     acento: "#FFC94D",
   },
+  grafo: {
+    titulo: "GRAFO MUNDIAL",
+    volanta: "La red del conocimiento geopolítico",
+    imagen: "/ilustraciones/osint.jpg",
+    texto:
+      "Buscas una crisis, una nación, un lugar o un expediente y aparece la red: quién está en conflicto con quién, qué ruta conecta qué estrechos, qué medio cubre qué crisis, qué paper estudia qué frente. Más de 150 entidades del mundo Vanguard unidas por conexiones tipadas — conflicto, tensión, alianza, comercio, ruta, sede — con física viva, impulsos viajando por las aristas y una ficha de expediente con veredicto neuronal para cada nodo. Arrastra el mundo y entiende cómo está tejido.",
+    acento: "#3DDCFF",
+  },
+  espejo: {
+    titulo: "EL ESPEJO DE VANGUARD",
+    volanta: "Una misma noticia, todas las perspectivas",
+    imagen: "/ilustraciones/canales.jpg",
+    texto:
+      "Elige una crisis y mira cómo la cuentan las seis salas del ecosistema OSINT: lo que cada medio pone en portada, lo que omite y lo que cuestiona abiertamente. La matriz de verificación muestra cuántas salas convergen en cada hecho, qué está confirmado, qué está disputado y qué sigue en investigación, con nota editorial de la Mesa y síntesis del núcleo neuronal. El método de los verifiers, convertido en sala de juego.",
+    acento: "#B48CFF",
+  },
+  maquina: {
+    titulo: "MÁQUINA DEL TIEMPO",
+    volanta: "Viaja por la historia de cada crisis",
+    imagen: "/ilustraciones/historia.jpg",
+    texto:
+      "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (14 días, reproducción automática, área ocupada y localidades que cambian de mano), Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE y PAPERCLIP con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
+    acento: "#FFC94D",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;
