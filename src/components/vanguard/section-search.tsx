@@ -17,6 +17,33 @@ import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
 
+// v102: cabecera de cada grupo en los resultados (pestañas / páginas / expedientes / oscura)
+const GRUPO_LABEL: Record<Item["kind"], string> = {
+  page: "PÁGINAS GLOBALES",
+  tab: "PESTAÑAS DE VANGUARD",
+  exp: "EXPEDIENTES SECRETOS",
+  osc: "ALEJANDRÍA OSCURA",
+};
+
+/** v102: resalta la coincidencia en el resultado (como los buscadores de verdad) */
+function Resaltar({ texto, q }: { texto: string; q: string }) {
+  const query = q.trim();
+  if (!query) return <>{texto}</>;
+  const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  const nTexto = norm(texto);
+  const nQ = norm(query);
+  const i = nTexto.indexOf(nQ);
+  if (i < 0 || !nQ) return <>{texto}</>;
+  // el recorte se mapea sobre el texto ORIGINAL (los acentos no alteran longitud en NFD→drop)
+  return (
+    <>
+      {texto.slice(0, i)}
+      <mark className="bg-amber-hud/40 text-foreground rounded-[2px] px-0.5">{texto.slice(i, i + query.length)}</mark>
+      {texto.slice(i + query.length)}
+    </>
+  );
+}
+
 const norm = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 
@@ -129,7 +156,7 @@ export function SectionSearch({
       icon_color: "text-red-hud",
       kind: "osc" as const,
     }));
-    return [...pages, ...exps, ...oscs, ...all];
+    return [...pages, ...all, ...exps, ...oscs];
   }, [all]);
 
   // montaje del portal (solo cliente)
@@ -250,9 +277,16 @@ export function SectionSearch({
               {totalIndex.length} destinos — secciones, expedientes y páginas
             </p>
           )}
-          {results.map((a, i) => (
+          {results.map((a, i) => {
+            const nuevoGrupo = i === 0 || results[i - 1].kind !== a.kind;
+            return (
+              <div key={a.key}>
+                {q.trim() !== "" && nuevoGrupo && (
+                  <p className="px-2.5 pt-2 pb-1 font-mono text-[9px] uppercase tracking-[0.2em] text-amber/70">
+                    — {GRUPO_LABEL[a.kind]}
+                  </p>
+                )}
             <button
-              key={a.key}
               data-i={i}
               onClick={() => pick(a)}
               onMouseEnter={() => setIdx(i)}
@@ -264,7 +298,7 @@ export function SectionSearch({
               <span className="shrink-0 text-amber">{a.icon}</span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13px] font-bold text-zinc-100">
-                  {tabLabel(lang, a.key, a.label)}
+                  <Resaltar texto={tabLabel(lang, a.key, a.label)} q={q} />
                 </span>
                 <span className="block truncate font-mono text-[10px] uppercase tracking-widest text-zinc-500">
                   {a.sectionLabel}
@@ -272,7 +306,9 @@ export function SectionSearch({
               </span>
               {i === idx && <CornerDownLeft className="w-3.5 h-3.5 shrink-0 text-amber" aria-hidden />}
             </button>
-          ))}
+              </div>
+            );
+          })}
           {results.length === 0 && (
             <p className="px-3 py-6 text-center text-sm text-zinc-500">
               Nada con «{q}» en el índice. Prueba con otra palabra.

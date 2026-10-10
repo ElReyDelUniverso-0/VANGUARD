@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { useT, tabLabel, TAB_SHORTS } from "@/lib/i18n";
 import {
@@ -21,6 +21,7 @@ import {
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
   History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
+  Hammer, ShieldCheck, LayoutPanelLeft,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -90,6 +91,8 @@ export type TabKey =
   | "operaciones"
   // v85.0 EL MUNDO DENTRO: empleos con sueldos, AR y constructor de mapas
   | "empleos" | "armodo" | "mapascrea"
+  // v102.0 LA CIUDADELA: taller de juegos de la comunidad + fortaleza de acero
+  | "taller" | "fortaleza"
   // v86.0 CENTINELA GLOBAL: mesa de verificación, alerta temprana y espectro
   | "verifica" | "centinela" | "espectro"
   // v89.0 OPERACIÓN ESPEJO: los grandes portales de conflicto del mundo, clonados
@@ -148,6 +151,8 @@ const TABS: Record<TabKey, TabDef> = {
   // ====== v12: expansion x100 ======
   edad:          { key: "edad",          label: "Age of Nations",    short: "AOF",     icon: <Flag className="w-3.5 h-3.5" />, color: "red" },
   arcade:        { key: "arcade",        label: "Arcade Pack",       short: "ARCADE",  icon: <Joystick className="w-3.5 h-3.5" />, color: "red" },
+  // v102.0 LA CIUDADELA — TALLER DE JUEGOS: crea, publica y juega juegos de la comunidad
+  taller:        { key: "taller",        label: "TALLER DE JUEGOS (crea, publica y juega juegos de la comunidad — sin código)", short: "TALLER", icon: <Hammer className="w-3.5 h-3.5" />, color: "amber" },
   bookmaker:     { key: "bookmaker",     label: "BetNación (Casa de Apuestas)", short: "BETNACIÓN", icon: <Coins className="w-3.5 h-3.5" />, color: "green" },
   enciclopedia:  { key: "enciclopedia",  label: "Enciclopedia mundial", short: "ENCICLO", icon: <BookOpen className="w-3.5 h-3.5" />, color: "cyan" },
   curiosidades:  { key: "curiosidades",  label: "Curiosidades",      short: "CURIOSO", icon: <Sparkles className="w-3.5 h-3.5" />, color: "amber" },
@@ -238,6 +243,8 @@ const TABS: Record<TabKey, TabDef> = {
   // v101.0 EL REGRESO — los tres pilares de retención
   cambios:       { key: "cambios",       label: "EL MUNDO CAMBIA (informe de regreso: qué cambió desde tu última visita, con fechas y fuentes verificables)", short: "CAMBIOS", icon: <RefreshCw className="w-3.5 h-3.5" />, color: "amber" },
   analista:      { key: "analista",      label: "PERFIL DE ANALISTA (nivel, insignias, retos semanales de investigación y ELO)", short: "ANALISTA", icon: <GraduationCap className="w-3.5 h-3.5" />, color: "amber" },
+  // v102.0 LA CIUDADELA — FORTALEZA: la seguridad de acero, visible
+  fortaleza:     { key: "fortaleza",     label: "FORTALEZA DE ACERO (sellos de seguridad, muros y blindajes de la Ciudadela)", short: "FORTALEZA", icon: <ShieldCheck className="w-3.5 h-3.5" />, color: "green" },
   escenarios:    { key: "escenarios",    label: "GALERÍA DEL DESTINO (escenarios ¿Y SI...? de la comunidad: explóralos, coméntalos y mejóralos)", short: "ESCENARIOS", icon: <Share2 className="w-3.5 h-3.5" />, color: "violet" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
@@ -332,8 +339,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
-    desc: "Guerra, detective, Warsim, Age of Nations, MI PAÍS y Arcade",
-    tabs: [TABS.mundo, TABS.multijugador, TABS.frente, TABS.detective, TABS.edad, TABS.mipais, TABS.arcade, TABS.dron, TABS.minijuego, TABS.combate, TABS.warsim, TABS.conquista],
+    desc: "Guerra, detective, Warsim, Age of Nations, MI PAÍS, Arcade y el TALLER DE JUEGOS de la comunidad",
+    tabs: [TABS.mundo, TABS.multijugador, TABS.frente, TABS.detective, TABS.edad, TABS.mipais, TABS.arcade, TABS.taller, TABS.dron, TABS.minijuego, TABS.combate, TABS.warsim, TABS.conquista],
   },
   {
     key: "mercado", label: "MERCADO", short: "MERCADO", icon: <CircleDollarSign className="w-4 h-4" />, color: "green",
@@ -388,8 +395,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",
-    desc: "PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), perfil, progreso, logros, tienda, telegram y ayuda",
-    tabs: [TABS.agente, TABS.analista, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
+    desc: "PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
+    tabs: [TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
   },
 ];
 
@@ -466,6 +473,15 @@ export function TabNav({
   const addCoins = useGameStore((s) => s.addCoins);
   const visitedSet = useMemo(() => new Set(visited), [visited]);
   const explorePct = Math.min(100, Math.round((visited.length / TOTAL_TABS) * 100));
+
+  // v102.0 LA CIUDADELA — DRAWER DE SECCIÓN estilo Google: un segundo toque
+  // sobre la sección activa despliega TODAS sus pestañas en chips grandes
+  // (como la rejilla de apps de las portadas más usadas del mundo).
+  const [drawer, setDrawer] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setDrawer(false), 0);
+    return () => clearTimeout(t);
+  }, [section.key, active]);
 
   // Recompensas del Explorador: solo cuando el progreso CRECE en vivo
   // (no retro-pagamos al montar para evitar lluvia de toasts)
@@ -557,6 +573,14 @@ export function TabNav({
     el.scrollBy({ left: dir * 180, behavior: "smooth" });
   };
 
+  // v102: variantes del stagger — los subtemas ENTRAN en cascada al cambiar de
+  // sección (más dinámico, como las rejillas de las portadas más usadas)
+  const filaVariant = { oculto: {}, visible: { transition: { staggerChildren: 0.025 } } };
+  const chipVariant = {
+    oculto: { opacity: 0, y: 8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.18 } },
+  };
+
   // v48.0 SORPRÉNDEME: salta a una sección SIN descubrir (o cualquiera si ya
   // viste todo) — descubrimiento en un toque
   const surprise = () => {
@@ -611,7 +635,11 @@ export function TabNav({
                 <button
                   key={s.key}
                   data-section={s.key}
-                  onClick={() => onChange(s.tabs[0].key)}
+                  onClick={() => {
+                    // v102: 1er toque activa · 2º toque sobre la ACTIVA abre el drawer
+                    if (isActive) setDrawer((v) => !v);
+                    else onChange(s.tabs[0].key);
+                  }}
                   title={s.desc}
                   className={cn(
                     "relative flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest whitespace-nowrap border transition-colors",
@@ -635,6 +663,12 @@ export function TabNav({
                       className={cn("w-1.5 h-1.5 rounded-full ml-0.5 transition-shadow", isActive && "vg-acc-dot")}
                       style={{ backgroundColor: acc, boxShadow: isActive ? `0 0 8px ${acc}` : undefined }}
                     />
+                    {/* v102: chevron del drawer — la sección activa se puede desplegar */}
+                    {isActive && (
+                      <motion.span animate={{ rotate: drawer ? 180 : 0 }} transition={{ duration: 0.2 }} className="inline-flex">
+                        <ChevronRight className="w-3 h-3 rotate-90 opacity-70" />
+                      </motion.span>
+                    )}
                     {sinVer > 0 && (
                       <span
                         className="min-w-[14px] h-[14px] px-1 rounded-full bg-amber text-black text-[8px] font-bold flex items-center justify-center leading-none"
@@ -685,6 +719,64 @@ export function TabNav({
         </div>
       </div>
 
+      {/* v102.0 DRAWER DE SECCIÓN — rejilla estilo Google con TODAS las pestañas
+          de la sección activa: un toque más sobre la sección la despliega */}
+      <AnimatePresence>
+        {drawer && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="overflow-hidden border-b border-amber-hud/20"
+          >
+            <div className="px-3 sm:px-4 py-3">
+              <div className="flex items-center gap-2 mb-2.5">
+                <LayoutPanelLeft className="w-3.5 h-3.5" style={{ color: accentOfSection(section.key) }} />
+                <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                  {section.label} · {section.tabs.length} destinos · toca para saltar
+                </span>
+                <button onClick={() => setDrawer(false)} className="ml-auto font-mono text-[9px] uppercase tracking-widest text-electric hover:text-foreground transition-colors">
+                  cerrar ▲
+                </button>
+              </div>
+              <motion.div variants={filaVariant} initial="oculto" animate="visible" className="flex flex-wrap gap-1.5">
+                {section.tabs.map((tb) => {
+                  const acc = accentOfSection(section.key);
+                  const esActiva = active === tb.key;
+                  return (
+                    <motion.button
+                      key={tb.key}
+                      variants={chipVariant}
+                      onClick={() => onChange(tb.key)}
+                      title={tabLabel(lang, tb.key, tb.label)}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 rounded-md border text-left max-w-full transition-colors",
+                        esActiva ? "border-transparent" : "border-border/60 hover:border-amber-hud/50 hover:bg-secondary/40"
+                      )}
+                      style={esActiva ? { backgroundColor: `${acc}1f`, boxShadow: `inset 0 0 0 1px ${acc}66` } : undefined}
+                    >
+                      <span style={{ color: acc }} className="shrink-0">{tb.icon}</span>
+                      <span className="min-w-0">
+                        <span className={cn("block text-[11px] font-bold uppercase tracking-wide truncate", esActiva ? "" : "text-foreground/90")} style={esActiva ? { color: acc } : undefined}>
+                          {tabLabel(lang, tb.key, tb.label).split(" (")[0]}
+                        </span>
+                        <span className="block font-mono text-[8px] uppercase tracking-widest text-muted-foreground/70">
+                          {TAB_SHORTS[lang]?.[tb.key] ?? tb.short}
+                        </span>
+                      </span>
+                      {!visitedSet.has(tb.key) && !esActiva && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-electric blink-soft shrink-0" aria-hidden />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Fila 2: subtemas de la seccion activa */}
       <div className="relative">
         <div
@@ -714,15 +806,22 @@ export function TabNav({
           className="overflow-x-auto thin-scroll"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          <div className="flex gap-1 px-2 sm:px-4 py-1.5 min-w-max">
+          <motion.div
+            key={section.key}
+            variants={filaVariant}
+            initial="oculto"
+            animate="visible"
+            className="flex gap-1 px-2 sm:px-4 py-1.5 min-w-max"
+          >
             {section.tabs.map((t) => {
               const isActive = active === t.key;
               // v98.0: los subtemas heredan el COLOR ÚNICO de su sección y la
               // píldora deslizante viaja entre ellos (más dinámico al cambiar)
               const acc = accentOfSection(section.key);
               return (
-                <button
+                <motion.button
                   key={t.key}
+                  variants={chipVariant}
                   data-tab={t.key}
                   onClick={() => onChange(t.key)}
                   className={cn(
@@ -749,14 +848,14 @@ export function TabNav({
                       <span className="w-1 h-1 rounded-full bg-electric blink-soft" aria-hidden />
                     )}
                   </span>
-                </button>
+                </motion.button>
               );
             })}
             {/* contador de subtemas */}
             <span className="self-center ml-2 text-[8px] font-mono text-muted-foreground/60 uppercase tracking-widest whitespace-nowrap hidden md:inline">
               {t(`sec.${section.key}.desc`)} · {section.tabs.length} {t("nav.subtopics")}
             </span>
-          </div>
+          </motion.div>
         </div>
       </div>
 

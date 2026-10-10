@@ -12,11 +12,14 @@ import { useProfileStore } from "@/lib/profile-store";
 import { Countryball } from "@/components/vanguard/countryball";
 import { countryName } from "@/lib/world-data";
 import { toast } from "sonner";
-import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, Gem, Trophy, Swords } from "lucide-react";
+import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, Gem, Trophy, Swords, ShieldCheck } from "lucide-react";
 
 type Mode = "LOGIN" | "REGISTER" | "PROFILE";
 
-export function AccountModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function AccountModal({ open, onClose, gate }: { open: boolean; onClose: () => void; gate?: string | null }) {
+  // v102.0 LA CIUDADELA — modo GATE: el modal se abre PIDIENDO pasaporte
+  // (lo dispara cualquier panel que necesite cuenta para publicar). Con gate
+  // activo y sin sesión, la pestaña REGISTER sale primero con el motivo.
   const account = useGameStore((s) => s.account);
   const coins = useGameStore((s) => s.coins);
   const gems = useGameStore((s) => s.gems);
@@ -37,7 +40,8 @@ export function AccountModal({ open, onClose }: { open: boolean; onClose: () => 
   const [showPass, setShowPass] = useState(false); // v21: visibilidad de contraseña
   const [confirmLogout, setConfirmLogout] = useState(false); // v21: cierre en 2 pasos
   // modo derivado: perfil si hay sesión; si no, login. modeOverride permite alternar.
-  const mode: Mode = modeOverride ?? (account ? "PROFILE" : "LOGIN");
+  // v102: con gate activo y sin sesión, el registro sale primero.
+  const mode: Mode = modeOverride ?? (account ? "PROFILE" : gate ? "REGISTER" : "LOGIN");
 
   const authLogin = useGameStore((s) => s.authLogin);
   const authRegister = useGameStore((s) => s.authRegister);
@@ -98,14 +102,28 @@ export function AccountModal({ open, onClose }: { open: boolean; onClose: () => 
       <DialogContent className="hud-panel border-amber-hud max-w-sm" aria-describedby="acc-desc">
         <DialogHeader>
           <DialogTitle className="font-display tracking-widest uppercase text-sm text-soft">
-            {mode === "PROFILE" ? "Mi cuenta" : mode === "LOGIN" ? "Iniciar sesión" : "Crear cuenta"}
+            {gate && !account ? "PASAPORTE DE LA CIUDADELA" : mode === "PROFILE" ? "Mi cuenta" : mode === "LOGIN" ? "Iniciar sesión" : "Crear cuenta"}
           </DialogTitle>
           <DialogDescription id="acc-desc" className="text-[11px] text-muted-foreground">
-            {mode === "PROFILE"
-              ? "Tu progreso se guarda automáticamente en la nube."
-              : "Cuentas con guardado en la nube: tu progreso te sigue a cualquier dispositivo."}
+            {gate && !account ? (
+              gate
+            ) : mode === "PROFILE" ? (
+              "Tu progreso se guarda automáticamente en la nube."
+            ) : (
+              "Cuentas con guardado en la nube: tu progreso te sigue a cualquier dispositivo."
+            )}
           </DialogDescription>
         </DialogHeader>
+
+        {gate && !account && (
+          <div className="flex items-start gap-2 border border-amber-hud/50 bg-amber-hud/10 px-3 py-2 rounded-sm">
+            <ShieldCheck className="w-4 h-4 text-amber shrink-0 mt-0.5" />
+            <p className="text-[10px] font-mono text-amber leading-relaxed">
+              LA CIUDADELA: los muros de acero protegen el arcade y la comunidad. Con pasaporte publicas juegos firmados,
+              guardas tu progreso en la nube y nadie puede suplantarte.
+            </p>
+          </div>
+        )}
 
         {mode !== "PROFILE" ? (
           <div className="space-y-3">

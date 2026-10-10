@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
+import { muro, claveCliente } from "@/lib/fortaleza";
+import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth-server";
+import { validarJuego, esJuegoTaller } from "@/lib/juegos";
 
 // v26 — COMUNIDAD CREADORA: todo lo sube la gente.
 // GET  ?kind=&sort=recent|top|rating&author=&limit=   → lista + stats
 // POST → crear contenido con AGENTE MODERADOR IA integrado:
 //        LIMPIO→APROBADO · SOSPECHOSO→PENDIENTE · INAPROPIADO→ELIMINADO
 // Anti-spam: 12 envíos/día por autor, 45s entre envíos, límites por tipo.
+// v102.0 LA CIUDADELA: muro por IP (30 envíos/h) + los JUEGOS solo los
+// publica una CUENTA FIRMADA (pasaporte) — así se llena el arcade de
+// creadores verificables y no de anonimos.
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +31,7 @@ const LAB_PERTURBACIONES = [
   "alto-fuego", "golpe-retaguardia", "movilizacion-total", "sanciones-totales",
 ];
 const MAX_COMPO = 12_000; // JSON de composición de bandera/mapa
+const MAX_JUEGO_SPECS = 24_000; // JSON del motor de juego del Taller (v102)
 const MAX_PER_DAY = 12;
 const GAP_MS = 45_000;
 const MAX_PHOTOS = 6;
@@ -73,9 +80,35 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    // v102 MURO DE ACERO — 30 envíos por IP y hora (además del anti-spam por autor)
+    const veredictoMuro = muro(`ugc:${claveCliente(req)}`, 30, 3600_000);
+    if (!veredictoMuro.permitido) {
+      return NextResponse.json(
+        { error: `Muro de la Ciudadela: demasiados envíos desde tu conexión — vuelve en ${Math.ceil(veredictoMuro.espera / 60)} min.` },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
-    const author = String(body.author || "ANÓNIMO").slice(0, 24);
     const kind = String(body.kind || "");
+
+    // v102 PASAPORTE OBLIGATORIO para publicar JUEGOS: la sesión firma al autor
+    let sesion: string | null = null;
+    try {
+      sesion = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+    } catch {
+      sesion = null;
+    }
+    if (kind === "juego" && !sesion) {
+      return NextResponse.json(
+        { error: "Necesitas un PASAPORTE para publicar juegos — crea tu cuenta en la Ciudadela (es gratis).", necesitaPasaporte: true },
+        { status: 401 }
+      );
+    }
+
+    const author = kind === "juego" && sesion
+      ? sesion // el autor de un juego ES la cuenta firmada — nada de suplantaciones
+      : String(body.author || "ANÓNIMO").slice(0, 24);
     const title = String(body.title || "").trim().slice(0, 120);
     if (!KINDS.includes(kind)) return NextResponse.json({ error: "Tipo de contenido inválido" }, { status: 400 });
     if (!title || title.length < 3) return NextResponse.json({ error: "Ponle un título de al menos 3 letras" }, { status: 400 });
@@ -95,7 +128,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Una foto pesa demasiado — usa una imagen más pequeña" }, { status: 413 });
 
     // v27: bandera/mapa guardan su composición JSON en `specs` (cap mayor)
-    const specCap = COMPO_KINDS.includes(kind) ? MAX_COMPO : 1200;
+    // v102: los juegos del Taller viajan en `specs` (motor quiz/ordena/vof)
+    const specCap = kind === "juego" ? MAX_JUEGO_SPECS : COMPO_KINDS.includes(kind) ? MAX_COMPO : 1200;
     let specs = typeof body.specs === "string" ? body.specs : JSON.stringify(body.specs ?? {});
     if (specs.length > specCap) specs = COMPO_KINDS.includes(kind) ? "{}" : "{}";
 
@@ -131,8 +165,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Una encuesta necesita al menos 2 opciones" }, { status: 400 });
     if (kind === "musica" && !audioData)
       return NextResponse.json({ error: "Sube el archivo de música (MP3/WAV/OGG hasta 3MB)" }, { status: 400 });
-    if (kind === "juego" && !gameUrl && !gameHtml)
-      return NextResponse.json({ error: "Pega la URL del juego o el HTML del juego propio" }, { status: 400 });
+    if (kind === "juego" && !gameUrl && !gameHtml && !esJuegoTaller(specs))
+      return NextResponse.json({ error: "Elige un motor del Taller, pega la URL del juego o escribe el HTML del juego propio" }, { status: 400 });
+    // v102: si es un juego del Taller, el motor debe pasar la validación de acero
+    if (kind === "juego" && esJuegoTaller(specs)) {
+      const check = validarJuego(specs);
+      if (!check.ok) return NextResponse.json({ error: check.error }, { status: 400 });
+      specs = check.json; // normalizado y recortado por la Ciudadela
+    }
     if (kind === "noticia" && info.length < 80)
       return NextResponse.json({ error: "Una noticia necesita al menos 80 caracteres de información" }, { status: 400 });
     // v101: un escenario del Laboratorio llega en specs {crisisId, crisis,
@@ -224,7 +264,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const reward = kind === "escenario" ? 35 : kind === "periodico" ? 40 : 30;
+    const reward = kind === "juego" ? 50 : kind === "escenario" ? 35 : kind === "periodico" ? 40 : 30;
     return NextResponse.json({ item, verdict: mod.verdict, reason: mod.reason, ai: mod.ai, reward }, { status: 201 });
   } catch (e) {
     console.error("ugc POST error", e);

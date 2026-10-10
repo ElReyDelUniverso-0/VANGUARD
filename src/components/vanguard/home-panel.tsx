@@ -11,7 +11,7 @@ import {
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain, FlaskConical, RefreshCw, GraduationCap, Share2,
+  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -66,6 +66,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "cambios", title: "EL MUNDO CAMBIA", desc: "Tu informe de regreso: qué cambió desde tu última visita — pulsos del mundo, noticias reales con su fuente y fecha, y todo lo que rotó hoy. Que nunca sea la misma página de ayer", icon: <RefreshCw className="w-6 h-6" />, hex: "#F5C542" },
   { tab: "analista", title: "PERFIL DE ANALISTA", desc: "Tu progresión con sentido: nivel de analista, 14 insignias que cuentan lo que hiciste, retos semanales de investigación y ELO. Todo computado de acciones reales", icon: <GraduationCap className="w-6 h-6" />, hex: "#FFD166" },
   { tab: "escenarios", title: "GALERÍA DEL DESTINO", desc: "La comunidad comparte sus escenarios ¿Y SI...? del Laboratorio: explóralos corriendo la simulación, coméntalos y MEJÓRALOS con un remix — la gente crea y participa", icon: <Share2 className="w-6 h-6" />, hex: "#FFC94D" },
+  // v102.0 LA CIUDADELA — el taller de juegos abre en el muro
+  { tab: "taller", title: "TALLER DE JUEGOS", desc: "Crea juegos SIN código con tres motores (quiz, ordena la historia, verdad o mentira), publícalos firmados con tu pasaporte y juega a los de la comunidad en el arcade de la Ciudadela", icon: <Hammer className="w-6 h-6" />, hex: "#FFC94D" },
   { tab: "foryou", title: "PARA TI", desc: "El feed de la comunidad: videos, música y stickers de los jugadores en scroll infinito — como TikTok, pero de guerra", icon: <Flame className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "mundo", title: "MUNDO DE GUERRA", desc: "Conquista los 24 territorios en el globo 3D contra 3 IA", icon: <Castle className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },

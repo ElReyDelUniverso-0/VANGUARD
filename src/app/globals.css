@@ -2249,3 +2249,64 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .v101-logo, .v101-panel, .v101-brillo, .v101-entra, .v101-cta, .v101-listo { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   v102.0 LA CIUDADELA — animaciones del Taller de Juegos y la Fortaleza
+   Todo transform/opacity/box-shadow — 60 FPS. reduced-motion apaga todo.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* latido del emblema del taller/fortaleza */
+@keyframes v102Latido {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 197, 66, 0.0); }
+  50%      { transform: scale(1.06); box-shadow: 0 0 16px 2px rgba(245, 197, 66, 0.25); }
+}
+.v102-latido { animation: v102Latido 2.6s ease-in-out infinite; }
+
+/* CTA del arcade: el botón JUGAR respira */
+@keyframes v102Cta {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+.v102-cta { animation: v102Cta 2.2s ease-in-out infinite; }
+
+/* feedback correcto: flash verde */
+@keyframes v102FlashOk {
+  0% { transform: scale(0.97); }
+  45% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.v102-flash-ok { animation: v102FlashOk 0.35s ease-out; }
+
+/* feedback incorrecto: sacudida roja */
+@keyframes v102FlashKo {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.v102-flash-ko { animation: v102FlashKo 0.4s ease-out; }
+
+/* corona dorada de la pantalla final — halo que late detrás de la medalla */
+@keyframes v102Corona {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+  50%      { transform: translate(-50%, -50%) scale(1.15); opacity: 0.9; }
+}
+.v102-corona {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 220px; height: 220px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 209, 102, 0.18) 0%, transparent 65%);
+  animation: v102Corona 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* tarjetas del arcade: brillo al pasar (solo borde/sombra) */
+.v102-tarjeta { transition: border-color 0.25s ease, box-shadow 0.25s ease; }
+.v102-tarjeta:hover { box-shadow: 0 0 22px -8px rgba(245, 197, 66, 0.4); }
+
+/* ── ACCESIBILIDAD v102: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v102-latido, .v102-cta, .v102-flash-ok, .v102-flash-ko, .v102-corona { animation: none !important; }
+}

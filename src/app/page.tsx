@@ -103,6 +103,9 @@ const CombatSimulatorPanel = dynamic(() => import("@/components/vanguard/panels/
 const CountryControlPanel = dynamic(() => import("@/components/vanguard/panels/country-control-panel").then((m) => m.CountryControlPanel), { ssr: false, loading: PanelSkeleton });
 const AgeOfNationsPanel = dynamic(() => import("@/components/vanguard/panels/age-of-nations-panel").then((m) => m.AgeOfNationsPanel), { ssr: false, loading: PanelSkeleton });
 const ArcadePanel = dynamic(() => import("@/components/vanguard/panels/arcade-panel").then((m) => m.ArcadePanel), { ssr: false, loading: PanelSkeleton });
+// v102.0 LA CIUDADELA — TALLER DE JUEGOS (crear/publicar/jugar) + FORTALEZA
+const TallerJuegosPanel = dynamic(() => import("@/components/vanguard/panels/taller-juegos-panel").then((m) => m.TallerJuegosPanel), { ssr: false, loading: PanelSkeleton });
+const FortalezaPanel = dynamic(() => import("@/components/vanguard/panels/fortaleza-panel").then((m) => m.FortalezaPanel), { ssr: false, loading: PanelSkeleton });
 
 // v19 MUNDO EXPANDIDO: frentes tácticos, estudio de video, divisas mundiales, perfil
 const FrentePanel = dynamic(() => import("@/components/vanguard/panels/frente-panel").then((m) => m.FrentePanel), { ssr: false, loading: PanelSkeleton });
@@ -261,6 +264,9 @@ export default function Home() {
   // v47.0 BUSCADOR DE SECCIONES (paleta de comandos) — nada queda enterrado
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
+  // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
+  const [gatePasaporte, setGatePasaporte] = useState<string | null>(null);
   const authRefresh = useGameStore((s) => s.authRefresh);
   const alias = useGameStore((s) => s.alias);
   const { t } = useT();
@@ -374,13 +380,22 @@ export default function Home() {
     };
     const openMenu = () => setMenuOpen(true);
     const openAccount = () => setAccountOpen(true);
+    // v102: el pasaporte se pide desde cualquier panel del taller/estudio
+    const pedirPasaporte = (e: Event) => {
+      const motivo = (e as CustomEvent<{ motivo?: string }>).detail?.motivo ??
+        "Necesitas un pasaporte de la Ciudadela para esto — créalo gratis en 10 segundos.";
+      setGatePasaporte(motivo);
+      setAccountOpen(true);
+    };
     window.addEventListener("vanguard:navigate", handler);
     window.addEventListener("vanguard:open-menu", openMenu);
     window.addEventListener("vanguard:open-account", openAccount);
+    window.addEventListener("vanguard:pasaporte", pedirPasaporte);
     return () => {
       window.removeEventListener("vanguard:navigate", handler);
       window.removeEventListener("vanguard:open-menu", openMenu);
       window.removeEventListener("vanguard:open-account", openAccount);
+      window.removeEventListener("vanguard:pasaporte", pedirPasaporte);
     };
   }, [recordTabVisit]);
 
@@ -487,6 +502,8 @@ export default function Home() {
         {tab === "detective" && <DetectivePanel />}
         {tab === "edad" && <AgeOfNationsPanel />}
         {tab === "arcade" && <ArcadePanel />}
+        {/* v102.0 LA CIUDADELA — taller de juegos de la comunidad */}
+        {tab === "taller" && <TallerJuegosPanel />}
         {tab === "bookmaker" && <BookmakerPanel />}
         {tab === "enciclopedia" && <EncyclopediaPanel />}
         {tab === "curiosidades" && <CuriosidadesPanel />}
@@ -504,6 +521,8 @@ export default function Home() {
         {tab === "laboratorio" && <LaboratorioPanel />}
         {tab === "cambios" && <CambiosPanel />}
         {tab === "analista" && <AnalistaPanel />}
+        {/* v102.0 LA CIUDADELA — fortaleza de acero (seguridad visible) */}
+        {tab === "fortaleza" && <FortalezaPanel />}
         {tab === "escenarios" && <EscenariosPanel />}
         {tab === "espionaje" && <EspionagePanel />}
         {tab === "crisis" && <CrisisPanel />}
@@ -625,7 +644,7 @@ export default function Home() {
       <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
       <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
-      <AccountModal open={accountOpen} onClose={() => setAccountOpen(false)} />
+      <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} />
       {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} />

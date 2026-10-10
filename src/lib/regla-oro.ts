@@ -657,6 +657,23 @@ export const REGLA_ORO = {
       "Los escenarios que la comunidad comparte desde el LABORATORIO DEL DESTINO. Explora cualquier contrafactual corriendo la simulación al instante (el motor es determinista: todos ven la misma guerra), coméntalo con otros analistas y MEJÓRALO con un remix: se abre en el Laboratorio con la misma crisis, la misma perturbación y la misma dosis, listas para que las ajustes y publiques tu versión. Etiqueta siempre visible: SIMULACIÓN · NO ES PREDICCIÓN.",
     acento: "#FFC94D",
   },
+  // v102.0 LA CIUDADELA — el taller de juegos y la fortaleza de acero
+  taller: {
+    titulo: "TALLER DE JUEGOS",
+    volanta: "Crea, publica y juega — sin escribir una línea de código",
+    imagen: "/ilustraciones/creador.jpg",
+    texto:
+      "La Ciudadela tiene taller: elige uno de los tres motores (QUIZ DEL MUNDO, ORDENA LA HISTORIA o VERDAD O MENTIRA), rellena el formulario, pruébalo en la vista previa como lo vivirá la comunidad y publícalo en el arcade. Cada juego sale firmado con tu pasaporte de la Ciudadela, pasa por el agente moderador IA y paga 50 monedas y 25 XP al publicar. Y la otra mitad del taller es el arcade: los juegos de los demás se juegan en vivo, con medallas (OJO DE ÁGUILA, ANALISTA DE ORO…) y XP diario honesto por jugar.",
+    acento: "#FFC94D",
+  },
+  fortaleza: {
+    titulo: "FORTALEZA DE ACERO",
+    volanta: "La seguridad no se esconde — se enseña",
+    imagen: "/ilustraciones/perfil.jpg",
+    texto:
+      "Los muros de Vanguard a la vista: contraseñas con scrypt y salt de 128 bits, sesiones firmadas con HMAC-SHA256 en cookie httpOnly, muros de frecuencia por IP en registro, login y publicaciones, blindaje de 15 minutos tras 5 fallos de login, sanitización de entradas, cabeceras anti-clickjacking y el agente moderador IA revisando cada envío. Los juegos del taller solo los publica una cuenta firmada: nadie puede suplantar a un creador. Y lo prometido: sin notificaciones engañosas, sin recompensas que desaparezcan y sin castigos si faltas un día.",
+    acento: "#34D399",
+  },
   encuestas: {
     titulo: "Encuestas",
     volanta: "Tu voto cuenta",
