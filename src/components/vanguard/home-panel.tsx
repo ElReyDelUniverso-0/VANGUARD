@@ -11,7 +11,7 @@ import {
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain,
+  Brain, FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -60,6 +60,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "imagenes", title: "IMÁGENES DE VANGUARD", desc: "La búsqueda visual de la plataforma: fotos reales de lugares estratégicos, sedes del poder, archivo desclasificado, armas históricas y civilizaciones perdidas", icon: <Images className="w-6 h-6" />, hex: "#7FE3FF" },
   // v99.0 MENTE VIVA: el cerebro central — Vanguard se actualiza sola
   { tab: "mente", title: "LA MENTE DE VANGUARD", desc: "El cerebro central de IA: el mundo avanza en pulsos de 5 minutos y ella lo cuenta — habla con ella, pégale un titular y te firma el expediente con proyección", icon: <Brain className="w-6 h-6" />, hex: "#BEF264" },
+  // v100.0 LABORATORIO DEL DESTINO: ¿y si...? conectado al Espejo
+  { tab: "laboratorio", title: "LABORATORIO DEL DESTINO", desc: "¿Y SI...? Elige una crisis del Espejo, aplica la perturbación con su dosis y mira la guerra moverse día a día: logística, moral, escalada y Monte Carlo de 24 mundos — simulación, no predicción", icon: <FlaskConical className="w-6 h-6" />, hex: "#38BDF8" },
   { tab: "foryou", title: "PARA TI", desc: "El feed de la comunidad: videos, música y stickers de los jugadores en scroll infinito — como TikTok, pero de guerra", icon: <Flame className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "mundo", title: "MUNDO DE GUERRA", desc: "Conquista los 24 territorios en el globo 3D contra 3 IA", icon: <Castle className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },
@@ -122,6 +124,7 @@ const TILE_IMG: Record<string, string> = {
   grafo: "/ilustraciones/osint.jpg",
   maquina: "/ilustraciones/historia.jpg",
   espejo: "/ilustraciones/canales.jpg",
+  laboratorio: "/ilustraciones/simulador.jpg",
 };
 
 function timeAgo(iso: string): string {

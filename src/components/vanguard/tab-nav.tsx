@@ -20,7 +20,7 @@ import {
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
-  History, FlipHorizontal2,
+  History, FlipHorizontal2, FlaskConical,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -108,7 +108,10 @@ export type TabKey =
   // v98.0 ORO TOTAL: IMÁGENES — búsqueda visual de fotos reales
   | "imagenes"
   // v99.0 MENTE VIVA: el cerebro central de la plataforma
-  | "mente";
+  | "mente"
+  // v100.0 LABORATORIO DEL DESTINO: WHAT IF? LAB — simulación contrafactual
+  // conectada a EL ESPEJO (sus crisis + la geometría real del frente del Karsk)
+  | "laboratorio";
 
 interface TabDef {
   key: TabKey;
@@ -227,6 +230,8 @@ const TABS: Record<TabKey, TabDef> = {
   perdidas:      { key: "perdidas",      label: "Pérdidas Confirmadas (registro visual)", short: "PÉRDIDAS", icon: <Truck className="w-3.5 h-3.5" />, color: "red" },
   frentes:       { key: "frentes",       label: "Línea del Frente (zonas de control)", short: "FRENTES", icon: <Waypoints className="w-3.5 h-3.5" />, color: "cyan" },
   simulador:     { key: "simulador",     label: "Simulador de Detonación", short: "SIMULADOR", icon: <Radiation className="w-3.5 h-3.5" />, color: "red" },
+  // v100.0 LABORATORIO DEL DESTINO — WHAT IF? LAB conectado a EL ESPEJO
+  laboratorio:   { key: "laboratorio",   label: "LABORATORIO DEL DESTINO (¿y si...? simulación contrafactual conectada al Espejo)", short: "LAB", icon: <FlaskConical className="w-3.5 h-3.5" />, color: "sky" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
   mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
@@ -348,8 +353,8 @@ export const SECTIONS: SectionDef[] = [
   {
     // v96.0 GOOGLE VIVO: gran estrategia y simulación en su propia sala
     key: "estrategia", label: "ESTRATEGIA", short: "ESTRAT", icon: <Crosshair className="w-4 h-4" />, color: "violet",
-    desc: "Simuladores y gran estrategia: el simulador de guerra, RTS IMPERIO, enclaves, guerra exterior, canal de briefing, análisis estratégico, mercados, pronósticos, armería, operaciones y el archivo de briefings",
-    tabs: [TABS.simulador, TABS.imperio, TABS.enclaves, TABS.extranjera, TABS.canalbrief, TABS.estrategia, TABS.mercados, TABS.pronosticos, TABS.armodo, TABS.operaciones, TABS.briefings],
+    desc: "Simuladores y gran estrategia: el LABORATORIO DEL DESTINO (¿y si...? conectado al Espejo), el simulador de guerra, RTS IMPERIO, enclaves, guerra exterior, canal de briefing, análisis estratégico, mercados, pronósticos, armería, operaciones y el archivo de briefings",
+    tabs: [TABS.laboratorio, TABS.simulador, TABS.imperio, TABS.enclaves, TABS.extranjera, TABS.canalbrief, TABS.estrategia, TABS.mercados, TABS.pronosticos, TABS.armodo, TABS.operaciones, TABS.briefings],
   },
   {
     // v48.0 COHERENCIA: solo emisión/media en vivo — lo histórico se fue a ARCHIVO
@@ -412,6 +417,7 @@ export const SECTION_ACCENT: Record<string, string> = {
   comando:       "#FFA030", // ámbar operativo — mando diario
   observatorio:  "#5EEAD4", // teal de telescopio — vigilancia
   estrategia:    "#B48CFF", // violeta táctico — simulación
+  laboratorio:   "#38BDF8", // cielo de posibilidades — WHAT IF? LAB (v100)
   emisora:       "#FF7EB6", // rosa neón — TV y feeds
   oscsuro:       "#FF3B30", // rojo crudo — verdad cruda
   creadores:     "#E879F9", // fucsia — creadores

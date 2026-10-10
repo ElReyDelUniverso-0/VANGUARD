@@ -979,6 +979,14 @@ export const REGLA_ORO = {
       "La sala donde la IA de Vanguard ya no es una herramienta: es la anfitriona. La MENTE vigila el planeta en pulsos de 5 minutos — piensa en voz alta sobre lo que ve, conversa contigo cuando le hablas, y firma expedientes completos de cualquier titular que le pongas delante: actores, riesgo, confianza, recomendación y una proyección de escenarios con su razonamiento explicable, paso a paso, con las 8 neuronas del núcleo al descubierto. Vanguard se actualiza sola aquí: si la abandonas un rato, cuando vuelvas ella te cuenta lo que el mundo hizo mientras no mirabas.",
     acento: "#BEF264",
   },
+  laboratorio: {
+    titulo: "LABORATORIO DEL DESTINO",
+    volanta: "¿Y SI...? — la pregunta que mueve frentes enteros",
+    imagen: "/ilustraciones/simulador.jpg",
+    texto:
+      "El laboratorio contrafactual conectado a EL ESPEJO: elige una crisis del mundo Vanguard, aplícale una perturbación con dosis ajustable —la capital al borde, el estrecho cerrado, el proxy que cambia de bando— y mira la guerra moverse día a día con el motor de factores múltiples: fuerza, logística, moral, terreno, economía, clima, escalera de escalada y Monte Carlo de 24 mundos. Cada resultado llega con su desglose explicable y su etiqueta: SIMULACIÓN, no predicción. Entender cómo un solo cambio desplaza un frente entero: eso es el destino en el laboratorio.",
+    acento: "#38BDF8",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

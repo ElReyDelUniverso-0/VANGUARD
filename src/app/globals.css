@@ -2150,3 +2150,40 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .v99-latido, .v99-sinapsis, .v99-entra, .v99-msg, .v99-pulso, .v99-crea { animation: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   v100.0 LABORATORIO DEL DESTINO — animaciones del WHAT IF? LAB
+   Todo transform/opacity/box-shadow a 60fps + reduced-motion respetado.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* el botón SIMULAR respira con acento cielo (teñido por --vg-acc del lab) */
+@keyframes v100Run {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.45); }
+  50%      { transform: scale(1.03); box-shadow: 0 0 26px 4px rgba(56, 189, 248, 0.35); }
+}
+.v100-run { animation: v100Run 2.2s ease-in-out infinite; }
+
+/* barrido de la línea del frente: el guion dorado fluye mientras corre el día */
+@keyframes v100Barrido {
+  to { stroke-dashoffset: -32; }
+}
+.v100-frente { animation: v100Barrido 1.4s linear infinite; }
+
+/* eventos que entran a la línea temporal desde la izquierda */
+@keyframes v100Flujo {
+  from { transform: translateX(-8px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.v100-flujo { animation: v100Flujo 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* la línea temporal respira con un halo cielo sutil */
+.v100-timeline {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.05), transparent 60%),
+    transparent;
+}
+
+/* ── ACCESIBILIDAD v100: con movimiento reducido, el laboratorio queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v100-run, .v100-frente, .v100-flujo { animation: none !important; }
+}

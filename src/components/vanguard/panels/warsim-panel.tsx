@@ -11,9 +11,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swords, Play, RotateCcw, Share2, Shuffle, Users, Plane, Ship, Rocket, Radiation, Banknote, ShieldHalf, Mountain, BrainCircuit, Dice5 } from "lucide-react";
+import { Swords, Play, RotateCcw, Share2, Shuffle, Users, Plane, Ship, Rocket, Radiation, Banknote, ShieldHalf, Mountain, BrainCircuit, Dice5, FlaskConical } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { navigateTo } from "@/lib/nav";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { NIVELES_ESCALADA } from "@/lib/whatif";
 
 interface WarPower {
   id: string;
@@ -64,6 +66,10 @@ interface SimState {
   events: string[];
   winner: "A" | "B" | null;
   winProb: number; // % del ganador
+  // v100 FACTORES DE PRECISIÓN (beben del motor del LABORATORIO)
+  moralA: number; moralB: number; // 0.25-1
+  sumiA: number; sumiB: number; // 0.3-1
+  escalada: number; // 1-6
 }
 
 interface WildcardEvent { text: string; bias: number; }
@@ -143,7 +149,7 @@ export function WarsimPanel() {
 
   const startSim = () => {
     if (!a || !b) { toast.error("Elige dos países para simular"); return; }
-    setSim({ day: 0, front: 0, casualtiesA: 0, casualtiesB: 0, cost: 0, events: [], winner: null, winProb: probA });
+    setSim({ day: 0, front: 0, casualtiesA: 0, casualtiesB: 0, cost: 0, events: [], winner: null, winProb: probA, moralA: 0.75, moralB: 0.75, sumiA: 1, sumiB: 1, escalada: 1 });
   };
 
   const simRunning = !!sim && sim.winner === null;
@@ -158,6 +164,19 @@ export function WarsimPanel() {
         const day = prev.day + (warType === "NUCLEAR" ? 3 : 8);
         let drift = (probA - 50) * 0.035 + (Math.random() * 8 - 4);
         let events = prev.events;
+        let { moralA, moralB, sumiA, sumiB, escalada } = prev;
+        // v100 LOGÍSTICA: quien avanza gasta suministro; cada ~24 días llegan convoyes
+        if (prev.front > 6) sumiA = Math.max(0.35, sumiA - 0.012);
+        if (prev.front < -6) sumiB = Math.max(0.35, sumiB - 0.012);
+        if (day % 24 < 8) { sumiA = Math.min(1, sumiA + 0.02); sumiB = Math.min(1, sumiB + 0.02); }
+        // v100 MORAL: el bando que gana terreno se infiltra, el que pierde se erosion
+        if (drift > 0) { moralA = Math.min(1, moralA + 0.004); moralB = Math.max(0.25, moralB - 0.005); }
+        if (drift < 0) { moralB = Math.min(1, moralB + 0.004); moralA = Math.max(0.25, moralA - 0.005); }
+        // v100 ESCALADA: sube con el tiempo, el tipo de guerra y los golpes salvajes
+        escalada = Math.min(6, Math.max(1, escalada + (Math.random() < (warType === "NUCLEAR" ? 0.06 : 0.025) ? 1 : 0)));
+        // el avance real se amortigua por el suministro del que empuja
+        const friccion = drift > 0 ? sumiA * 0.55 + 0.45 : sumiB * 0.55 + 0.45;
+        drift *= friccion * (escalada >= 4 ? 1.15 : 1);
         if (wildcards && Math.random() < 0.22) {
           const w = WILDCARDS[Math.floor(Math.random() * WILDCARDS.length)];
           drift += w.bias * (Math.random() < 0.5 ? 1 : -1) * 0.45;
@@ -169,12 +188,15 @@ export function WarsimPanel() {
         }
         const front = Math.max(-100, Math.min(100, prev.front + drift));
         const scale = warType === "TOTAL" || warType === "NUCLEAR" ? 3.4 : 1;
-        const casA = prev.casualtiesA + Math.round(Math.max(0, -drift) * 120 * scale + Math.random() * 90 * scale);
-        const casB = prev.casualtiesB + Math.round(Math.max(0, drift) * 120 * scale + Math.random() * 90 * scale);
-        const cost = prev.cost + (a.budget + b.budget) * 0.0018 * scale;
+        // suministro bajo = la retaguardia sufre: más bajas por disfunción logística
+        const penalA = sumiA < 0.6 ? 1.25 : 1;
+        const penalB = sumiB < 0.6 ? 1.25 : 1;
+        const casA = prev.casualtiesA + Math.round(Math.max(0, -drift) * 120 * scale * penalA + Math.random() * 90 * scale);
+        const casB = prev.casualtiesB + Math.round(Math.max(0, drift) * 120 * scale * penalB + Math.random() * 90 * scale);
+        const cost = prev.cost + (a.budget + b.budget) * 0.0018 * scale * (1 + escalada * 0.06);
         const over = Math.abs(front) >= 88 || day > 1400;
         const winner: "A" | "B" | null = over ? (front > 0 ? "A" : front < 0 ? "B" : Math.random() < probA / 100 ? "A" : "B") : null;
-        return { day, front, casualtiesA: casA, casualtiesB: casB, cost, events, winner, winProb: probA };
+        return { day, front, casualtiesA: casA, casualtiesB: casB, cost, events, winner, winProb: probA, moralA, moralB, sumiA, sumiB, escalada };
       });
     }, tickMs);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
@@ -365,6 +387,37 @@ export function WarsimPanel() {
                 </div>
               </div>
 
+              {/* v100 FACTORES DE PRECISIÓN — beben del motor del LABORATORIO */}
+              <div className="mt-2 border border-border/70 bg-secondary/40 p-2">
+                <div className="font-mono text-[8px] tracking-widest text-muted-foreground uppercase mb-1.5">Factores de precisión v100 · logística · moral · escalada</div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                  {[{ l: `moral ${a.code}`, v: sim.moralA, c: "#1E90FF" }, { l: `moral ${b.code}`, v: sim.moralB, c: "#FF3B30" }, { l: `suministro ${a.code}`, v: sim.sumiA, c: "#4DFFC4" }, { l: `suministro ${b.code}`, v: sim.sumiB, c: "#FFD166" }].map((f) => (
+                    <div key={f.l} className="flex items-center gap-1.5">
+                      <span className="font-mono text-[8px] uppercase text-muted-foreground w-24 shrink-0">{f.l}</span>
+                      <div className="h-1.5 flex-1 overflow-hidden bg-secondary">
+                        <motion.div className="h-full" style={{ background: f.c }} animate={{ width: `${Math.round(f.v * 100)}%` }} transition={{ duration: 0.3 }} />
+                      </div>
+                      <span className="font-mono text-[8px] tabular-nums" style={{ color: f.c }}>{Math.round(f.v * 100)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-1.5 flex gap-1">
+                  {NIVELES_ESCALADA.map((n) => (
+                    <div
+                      key={n.n}
+                      className="flex-1 border text-center font-mono text-[7px] font-bold uppercase leading-tight py-0.5"
+                      style={{
+                        borderColor: n.n <= sim.escalada ? n.color : "rgba(255,255,255,0.12)",
+                        background: n.n <= sim.escalada ? `${n.color}22` : "transparent",
+                        color: n.n <= sim.escalada ? n.color : "rgba(255,255,255,0.3)",
+                      }}
+                    >
+                      {n.n}·{n.nombre.split(" ")[0]}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* eventos emergentes */}
               <div className="mt-2 max-h-24 overflow-y-auto thin-scroll space-y-0.5">
                 {sim.events.map((e, i) => (
@@ -402,12 +455,16 @@ export function WarsimPanel() {
                   ))}
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button variant="outline" size="sm" onClick={share} className="font-mono text-[10px] uppercase tracking-widest border-neon-hud text-neon">
                     <Share2 className="w-3.5 h-3.5 mr-1" /> Compartir resultado
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => { setSim(null); setRandomSeed((s) => s + 1); }} className="font-mono text-[10px] uppercase tracking-widest">
                     <RotateCcw className="w-3.5 h-3.5 mr-1" /> Nueva simulación
+                  </Button>
+                  {/* v100: puente con el LABORATORIO DEL DESTINO */}
+                  <Button variant="outline" size="sm" onClick={() => navigateTo("laboratorio" as never)} className="font-mono text-[10px] uppercase tracking-widest border-sky-400/50 text-sky-300">
+                    <FlaskConical className="w-3.5 h-3.5 mr-1" /> LABORATORIO ¿Y SI...?
                   </Button>
                 </div>
               </motion.div>

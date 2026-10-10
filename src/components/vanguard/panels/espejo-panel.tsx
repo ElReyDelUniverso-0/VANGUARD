@@ -12,7 +12,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FlipHorizontal2, CheckCircle2, EyeOff, HelpCircle, ChevronDown, Hourglass,
-  ShieldCheck, Bell, BellRing, Newspaper,
+  ShieldCheck, Bell, BellRing, Newspaper, FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { ExpedienteDrawer } from "@/components/vanguard/expediente-drawer";
 import { CRISIS, convergenciaDe, medioPorId, type CrisisVG } from "@/lib/expediente-data";
 import { useExpediente } from "@/lib/expediente-store";
-import { evaluarNeuronal, fnvHash } from "@/lib/neurona-core";
+import { evaluarNeuronal, fnvHash, predecir, bucketMinutos } from "@/lib/neurona-core";
 import { dayKeyUtc } from "@/lib/googles";
 
 const ESTADO_META = {
@@ -168,6 +168,11 @@ export function EspejoPanel() {
     () => evaluarNeuronal(`${crisis.nombre} ${crisis.resumen} ${crisis.hechos.map((h) => h.texto).join(" ")}`, 3),
     [crisis],
   );
+  // v100: proyección v4 del Espejo — la misma crisis alimenta el LABORATORIO
+  const proyeccion = useMemo(
+    () => predecir(`${crisis.nombre} ${crisis.resumen} ${crisis.hechos.map((h) => h.texto).join(" ")}`, bucketMinutos(240)),
+    [crisis],
+  );
   const [abierto, setAbierto] = useState<string | null>(crisis.perspectivas[0]?.medio ?? null);
 
   const vigila = vigilados.some((v) => v.toLowerCase() === crisis.nombre.toLowerCase());
@@ -235,6 +240,17 @@ export function EspejoPanel() {
             className="flex items-center gap-1.5 rounded-xl border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 text-[11px] font-black text-amber-300 transition hover:bg-amber-400/20 active:scale-95"
           >
             <Hourglass className="h-3.5 w-3.5" /> VER CRONOLOGÍA
+          </button>
+          {/* v100: EL ESPEJO → LABORATORIO DEL DESTINO */}
+          <button
+            onClick={() => {
+              try { sessionStorage.setItem("vg-whatif-crisis", crisis.id); } catch { /* noop */ }
+              toast(`¿Y SI...? llevando ${crisis.nombre} al laboratorio`, { duration: 2600, icon: "🧪" });
+              navigateTo("laboratorio" as never);
+            }}
+            className="flex items-center gap-1.5 rounded-xl border border-sky-400/50 bg-sky-400/15 px-3 py-1.5 text-[11px] font-black text-sky-300 transition hover:bg-sky-400/25 active:scale-95"
+          >
+            <FlaskConical className="h-3.5 w-3.5" /> ¿Y SI...?
           </button>
           <button
             onClick={() => {
@@ -354,6 +370,23 @@ export function EspejoPanel() {
               </div>
             </div>
           ))}
+        </div>
+        {/* v100: proyección v4 de la crisis — puente con el LABORATORIO */}
+        <div className="mt-2.5 flex flex-wrap items-center gap-2 rounded-xl border border-violet-400/20 bg-black/30 px-2.5 py-1.5">
+          <span className="text-[9px] font-black uppercase tracking-widest text-violet-300">proyección v4 · {proyeccion.horizonte}</span>
+          <span className="text-[10.5px] font-bold text-violet-100/80">
+            {proyeccion.escenarios[0]?.nombre} {proyeccion.escenarios[0]?.probabilidad}%
+          </span>
+          <span className="hidden text-[9.5px] font-semibold text-white/40 sm:inline">señal: {proyeccion.escenarios[0]?.señal}</span>
+          <button
+            onClick={() => {
+              try { sessionStorage.setItem("vg-whatif-crisis", crisis.id); } catch { /* noop */ }
+              navigateTo("laboratorio" as never);
+            }}
+            className="ml-auto text-[10px] font-black text-sky-300 underline decoration-sky-400/40 underline-offset-2 transition hover:text-sky-200"
+          >
+            SIMULAR ESTO →
+          </button>
         </div>
         <button
           onClick={() => navigateTo("verifica" as never)}
