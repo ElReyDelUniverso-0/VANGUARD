@@ -178,7 +178,7 @@ export async function POST(req: Request) {
       let ia = false;
       let canalMuerto = false;
       try {
-        const raw = await conDeadline(iaDirecta(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`, DEADLINE_IA), DEADLINE_IA + 1500);
+        const raw = await conDeadline(iaDirecta(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`, DEADLINE_IA + 500), DEADLINE_IA);
         const json = raw ? primerJSON(raw) : null;
         if (json) {
           exp = normalizarExp(json, texto);
@@ -229,7 +229,7 @@ export async function POST(req: Request) {
       ];
       let canalMuerto = false;
       try {
-        const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA), DEADLINE_IA + 1500);
+        const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA + 500), DEADLINE_IA);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.respuesta === "string" && json.respuesta) {
           respuesta = clean(json.respuesta, 480);
@@ -265,7 +265,7 @@ export async function POST(req: Request) {
       let ia = false;
       let canalMuerto = false;
       try {
-        const raw = await conDeadline(iaDirecta(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`, DEADLINE_IA), DEADLINE_IA + 1500);
+        const raw = await conDeadline(iaDirecta(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`, DEADLINE_IA + 500), DEADLINE_IA);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.titulo === "string" && typeof json.cuerpo === "string") {
           bor = { titulo: clean(json.titulo, 120), resumen: clean(json.resumen, 300), cuerpo: String(json.cuerpo).slice(0, 1200) };
