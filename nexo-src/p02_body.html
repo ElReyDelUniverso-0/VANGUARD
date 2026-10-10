@@ -1,0 +1,85 @@
+<canvas id="gl3d"></canvas>
+<canvas id="game2d"></canvas>
+<div id="vig"></div>
+<canvas id="fx2d"></canvas>
+<div id="flash"></div>
+<video id="arcam" playsinline style="position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;display:none"></video>
+
+<div id="hud">
+  <div id="hudTop">
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+      <div class="chip" id="chipBrand" style="cursor:pointer">
+        <span class="ttl" style="font-size:11px;color:var(--blue)">VANGUARD</span>
+        <span class="tag b" id="verTag">v69</span>
+        <span class="dot" id="netDot"></span>
+      </div>
+      <div class="chip" id="chipPresence" style="cursor:pointer">
+        <span class="dot"></span><b id="onlineN">1</b><span class="lab">EN L&#205;NEA</span>
+        <span class="tag y" id="peakTag" style="display:none"></span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <div class="chip">
+        <span class="lab">TENSI&#211;N MUNDIAL</span>
+        <div class="bar" id="thermo"><i style="width:40%"></i></div>
+        <b id="thermoN" class="num">40</b>
+        <span class="heart" id="hbIcon" style="color:var(--red);font-size:14px">&#10084;</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <div class="chip" id="chipMute" style="cursor:pointer"><span class="lab">SONIDO</span><b id="muteN">ON</b></div>
+        <div class="chip" id="chipMenu" style="cursor:pointer"><span class="ttl" style="font-size:11px">MEN&#218;</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="hudBot">
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+      <div class="chip">
+        <span style="color:var(--gold);font-size:15px">&#67;&#8419;</span><b id="coinsN" class="num">0</b>
+        <span class="tag b" id="rankTag">CIVIL</span>
+        <div class="bar" id="xpBar"><i style="width:0%"></i></div>
+        <span class="lab" id="xpLab">XP 0</span>
+      </div>
+      <div class="chip" id="chipRacha" style="cursor:pointer">
+        <span style="color:var(--gold)">&#9650;</span><span class="lab">RACHA</span><b id="rachaN">0</b>
+        <span class="lab" id="rachaExp"></span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <div class="chip" id="envelopeChip" style="cursor:pointer;display:none">
+        <span class="lab">SOBRE DIARIO</span><span style="color:var(--gold)">&#9993;</span>
+      </div>
+      <div class="chip" id="chipRival" style="cursor:pointer;display:none">
+        <span class="tag r" id="rivalName">AGT</span><span class="lab" id="rivalScore">0</span>
+        <span class="lab">VS</span><b id="rivalYou">0</b>
+      </div>
+    </div>
+  </div>
+  <div class="doorHint" id="doorHint"></div>
+  <div class="stationBar" id="stationBar"></div>
+</div>
+
+<div id="joy"><div id="joyKnob"></div></div>
+
+<section class="scr" id="scr-intro" style="padding:0;z-index:14">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px" id="introStage">
+    <div id="introTitle" style="text-align:center"></div>
+    <div class="small mono" id="introSub" style="opacity:0;transition:opacity 1s">SISTEMA DE CONTROL DIRECTO &middot; INICIALIZANDO</div>
+  </div>
+  <button class="btn sm" id="introSkip">SALTAR &raquo;</button>
+</section>
+
+<section class="scr" id="scr-ono"></section>
+<section class="scr" id="scr-hangarui" style="pointer-events:none"></section>
+<section class="scr" id="scr-globo"></section>
+<section class="scr" id="scr-misiones"></section>
+<section class="scr" id="scr-biblio"></section>
+<section class="scr" id="scr-sim"></section>
+<section class="scr" id="scr-comm"></section>
+<section class="scr" id="scr-mercado"></section>
+<section class="scr" id="scr-room"></section>
+<section class="scr" id="scr-room2"></section>
+<section class="scr" id="scr-album"></section>
+
+<div id="ticker"><div id="tickerIn"></div></div>
+<div id="toasts"></div>
+<div id="modalWrap"><div id="modalBox"><div id="modalHead"><span class="ttl" id="modalTitle"></span><span class="x" id="modalX">&times;</span></div><div id="modalBody"></div></div></div>
