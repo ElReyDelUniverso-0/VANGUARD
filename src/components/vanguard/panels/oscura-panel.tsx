@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { useGameStore } from "@/lib/game-store";
+// v101.0 EL REGRESO — PILAR 2: la lectura alimenta el PERFIL DE ANALISTA
+import { useAnalista } from "@/lib/analista";
 import {
   TEORIAS, ARMAS, CIVILIZACIONES, DOCS, OSCURA_TOTAL, OSCURA_MILESTONES,
   oscuraRank, entradaDelDia, isEntradaDelDia, lecturaOscuraReward,
@@ -74,6 +76,7 @@ export function OscuraPanel() {
   const openEntry = (id: string) => {
     const isNew = registerRead(id);
     if (isNew) {
+      useAnalista.getState().registrar("oscura"); // v101.0 PILAR 2
       const rw = lecturaOscuraReward(isEntradaDelDia(id));
       addCoins(rw.coins, `Alejandría Oscura: ${id}`);
       addXp(rw.xp); // v58: viaja a TEMPORADA + TABLÓN SEMANAL automáticamente

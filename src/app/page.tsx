@@ -152,6 +152,10 @@ const OsintPanel = dynamic(() => import("@/components/vanguard/panels/osint-pane
 const WarsimPanel = dynamic(() => import("@/components/vanguard/panels/warsim-panel").then((m) => m.WarsimPanel), { ssr: false, loading: PanelSkeleton });
 // v100.0 LABORATORIO DEL DESTINO: WHAT IF? LAB — simulación contrafactual conectada al Espejo
 const LaboratorioPanel = dynamic(() => import("@/components/vanguard/panels/laboratorio-panel").then((m) => m.LaboratorioPanel), { ssr: false, loading: PanelSkeleton });
+// v101.0 EL REGRESO — los tres pilares de retención
+const CambiosPanel = dynamic(() => import("@/components/vanguard/panels/cambios-panel").then((m) => m.CambiosPanel), { ssr: false, loading: PanelSkeleton });
+const AnalistaPanel = dynamic(() => import("@/components/vanguard/panels/analista-panel").then((m) => m.AnalistaPanel), { ssr: false, loading: PanelSkeleton });
+const EscenariosPanel = dynamic(() => import("@/components/vanguard/panels/escenarios-panel").then((m) => m.EscenariosPanel), { ssr: false, loading: PanelSkeleton });
 const EspionagePanel = dynamic(() => import("@/components/vanguard/panels/espionaje-panel").then((m) => m.EspionagePanel), { ssr: false, loading: PanelSkeleton });
 const CrisisPanel = dynamic(() => import("@/components/vanguard/panels/crisis-panel").then((m) => m.CrisisPanel), { ssr: false, loading: PanelSkeleton });
 const RadarPanel = dynamic(() => import("@/components/vanguard/panels/radar-panel").then((m) => m.RadarPanel), { ssr: false, loading: PanelSkeleton });
@@ -498,6 +502,9 @@ export default function Home() {
         {tab === "warsim" && <WarsimPanel />}
         {/* v100.0 LABORATORIO DEL DESTINO: ¿y si...? */}
         {tab === "laboratorio" && <LaboratorioPanel />}
+        {tab === "cambios" && <CambiosPanel />}
+        {tab === "analista" && <AnalistaPanel />}
+        {tab === "escenarios" && <EscenariosPanel />}
         {tab === "espionaje" && <EspionagePanel />}
         {tab === "crisis" && <CrisisPanel />}
         {tab === "radar" && <RadarPanel />}

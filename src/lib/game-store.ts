@@ -4,6 +4,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage, type StateStorage } from "zustand/middleware";
 // v58.0 DOMINIO TOTAL — espejo de XP al motor de TEMPORADA (retention)
 import { useRetention } from "@/lib/retention";
+// v101.0 EL REGRESO — PILAR 2: todo XP ganado también alimenta el PERFIL DE ANALISTA
+import { espejoXpa } from "@/lib/analista";
 // v67.0 EL HANGAR — PROTOCOLO ROJO: multiplicador global de monedas
 import { protocoloMultiplier, trackProtocoloEarnings } from "@/lib/tension";
 // v84.0 FORTUNA DE GUERRA — golpe de fortuna ×2/×3/×5 + prima de guerra en TODO pago
@@ -974,6 +976,12 @@ export const useGameStore = create<GameState>()(
           }
         } catch {
           // la economía del juego nunca se bloquea por la capa de retención
+        }
+        // v101.0: espejo al PERFIL DE ANALISTA (nivel de analista con sentido)
+        try {
+          espejoXpa(finalXp);
+        } catch {
+          // la progresión de analista nunca bloquea la economía
         }
         set((s) => {
           const base = { ...s, xp: s.xp + finalXp };

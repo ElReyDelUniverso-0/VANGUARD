@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { QUIZ_QUESTIONS, type QuizQ } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
+// v101.0 EL REGRESO — PILAR 2: los aciertos alimentan el PERFIL DE ANALISTA
+import { useAnalista } from "@/lib/analista";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Brain, CheckCircle2, XCircle, Trophy, Coins, Star, RotateCw } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,6 +34,7 @@ export function QuizPanel() {
     setLockedQ(current); // congela la pregunta mientras se muestra la explicación
     const correct = i === current.answerIdx;
     recordQuiz(current.id, correct, current.xpReward, current.coinReward);
+    useAnalista.getState().registrar(correct ? "quiz_ok" : "quiz_ko"); // v101.0 PILAR 2 (ELO)
     if (correct) {
       setStreak((s) => s + 1);
       toast.success(`Correcto! +${current.coinReward} monedas · +${current.xpReward} XP`, {

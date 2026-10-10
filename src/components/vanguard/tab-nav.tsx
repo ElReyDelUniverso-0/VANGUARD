@@ -20,7 +20,7 @@ import {
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
-  History, FlipHorizontal2, FlaskConical,
+  History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -111,7 +111,10 @@ export type TabKey =
   | "mente"
   // v100.0 LABORATORIO DEL DESTINO: WHAT IF? LAB — simulación contrafactual
   // conectada a EL ESPEJO (sus crisis + la geometría real del frente del Karsk)
-  | "laboratorio";
+  | "laboratorio"
+  // v101.0 EL REGRESO: los tres pilares de retención — el mundo cambia,
+  // el usuario progresa y la gente crea y participa
+  | "cambios" | "analista" | "escenarios";
 
 interface TabDef {
   key: TabKey;
@@ -232,6 +235,10 @@ const TABS: Record<TabKey, TabDef> = {
   simulador:     { key: "simulador",     label: "Simulador de Detonación", short: "SIMULADOR", icon: <Radiation className="w-3.5 h-3.5" />, color: "red" },
   // v100.0 LABORATORIO DEL DESTINO — WHAT IF? LAB conectado a EL ESPEJO
   laboratorio:   { key: "laboratorio",   label: "LABORATORIO DEL DESTINO (¿y si...? simulación contrafactual conectada al Espejo)", short: "LAB", icon: <FlaskConical className="w-3.5 h-3.5" />, color: "sky" },
+  // v101.0 EL REGRESO — los tres pilares de retención
+  cambios:       { key: "cambios",       label: "EL MUNDO CAMBIA (informe de regreso: qué cambió desde tu última visita, con fechas y fuentes verificables)", short: "CAMBIOS", icon: <RefreshCw className="w-3.5 h-3.5" />, color: "amber" },
+  analista:      { key: "analista",      label: "PERFIL DE ANALISTA (nivel, insignias, retos semanales de investigación y ELO)", short: "ANALISTA", icon: <GraduationCap className="w-3.5 h-3.5" />, color: "amber" },
+  escenarios:    { key: "escenarios",    label: "GALERÍA DEL DESTINO (escenarios ¿Y SI...? de la comunidad: explóralos, coméntalos y mejóralos)", short: "ESCENARIOS", icon: <Share2 className="w-3.5 h-3.5" />, color: "violet" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
   mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
@@ -309,17 +316,19 @@ export const SECTIONS: SectionDef[] = [
     tabs: [TABS.hangar],
   },
   {
-    key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
-    desc: "Portada con noticias en vivo, muro infinito de verdades y menú de mundos",
-    tabs: [TABS.inicio, TABS.verdades, TABS.verifica, TABS.noticias],
-  },
-  {
     // v96.0 GOOGLE VIVO: INTELIGENCIA deja de estar sobrecargada — quedan solo
     // las 12 salas de conocimiento; los espejos pasan a OBSERVATORIO y las
     // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
     tabs: [TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+  },
+  {
+    // v101.0 EL REGRESO — PILAR 1: EL MUNDO CAMBIA. La segunda pestaña de INICIO:
+    // qué cambió desde la última visita, con fechas y fuentes verificables.
+    key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
+    desc: "Portada con noticias en vivo, EL MUNDO CAMBIA (informe de regreso con fechas y fuentes), muro infinito de verdades y menú de mundos",
+    tabs: [TABS.inicio, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
@@ -369,8 +378,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "creadores", label: "CREADORES", short: "CREADORES", icon: <Palette className="w-4 h-4" />, color: "violet",
-    desc: "Todo lo sube la gente: estudio comunitario, constructor de mapas, armería real y mapas de Google sin lag",
-    tabs: [TABS.creador, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
+    desc: "Todo lo sube la gente: estudio comunitario, GALERÍA DEL DESTINO (escenarios ¿Y SI...? que se exploran, comentan y mejoran), constructor de mapas, armería real y mapas de Google sin lag",
+    tabs: [TABS.creador, TABS.escenarios, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
   },
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",
@@ -379,8 +388,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",
-    desc: "Perfil, progreso, logros, tienda, telegram y ayuda",
-    tabs: [TABS.agente, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
+    desc: "PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), perfil, progreso, logros, tienda, telegram y ayuda",
+    tabs: [TABS.agente, TABS.analista, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
   },
 ];
 

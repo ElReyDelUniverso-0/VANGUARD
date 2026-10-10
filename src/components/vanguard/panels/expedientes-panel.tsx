@@ -16,6 +16,8 @@ import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { useRetention } from "@/lib/retention";
+// v101.0 EL REGRESO — PILAR 2: la lectura alimenta el PERFIL DE ANALISTA
+import { useAnalista } from "@/lib/analista";
 import {
   EXPEDIENTES, SEC_MILESTONES, AGENCIA_STYLE, RARITY_STYLE,
   useExpedientes, intelRank, nextRankAt, expedienteDelDia,
@@ -79,6 +81,7 @@ export function ExpedientesPanel() {
     const isDaily = isExpedienteDelDia(id);
     const { already } = markRead(id);
     if (!already) {
+      useAnalista.getState().registrar("expediente"); // v101.0 PILAR 2
       const rw = lecturaReward(exp, isDaily);
       addCoins(rw.coins, "Archivo Secreto: expediente abierto");
       if (rw.gems > 0) addGems(rw.gems, "Archivo Secreto: expediente raro");

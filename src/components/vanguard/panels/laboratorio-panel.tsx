@@ -11,13 +11,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FlaskConical, Play, Pause, Gauge, SkipForward, RotateCcw, Copy, ArrowRight,
   ArrowLeft, ArrowDownRight, ArrowUpRight, BrainCircuit, GitCompareArrows,
-  Scale, Radio, ChevronDown, Sparkles, Link2, Swords, Landmark, Wallet, Users2,
+  Scale, Radio, ChevronDown, Sparkles, Link2, Swords, Landmark, Wallet, Users2, Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { navigateTo } from "@/lib/nav";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useGameStore } from "@/lib/game-store";
+// v101.0 EL REGRESO — PILAR 2: cada simulación alimenta el PERFIL DE ANALISTA
+import { useAnalista } from "@/lib/analista";
 import { puntosFrente, TEATRO_W } from "@/lib/frente-zonas-data";
 import {
   simular, escenarioPorId, LAB_ESCENARIOS, PERTURBACIONES, NIVELES_ESCALADA,
@@ -82,6 +84,21 @@ function ContadorBar({ label, valor, color, max = 1, pct }: { label: string; val
 export function LaboratorioPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
+  const alias = useGameStore((s) => s.alias);
+
+  // v101.0 PILAR 3 — REMIX: un escenario de la GALERÍA DEL DESTINO llega aquí
+  // listo para MEJORAR (misma crisis, misma perturbación, misma dosis)
+  const [remixDe] = useState(() => {
+    try {
+      const v = sessionStorage.getItem("vg-whatif-remix");
+      sessionStorage.removeItem("vg-whatif-remix");
+      if (v) {
+        const r = JSON.parse(v) as { crisisId?: string; perturbacion?: string; dosis?: number; horizonte?: number; autor?: string };
+        if (r && LAB_ESCENARIOS.some((e) => e.id === r.crisisId)) return r;
+      }
+    } catch { /* sin sessionStorage */ }
+    return null;
+  });
 
   // importar crisis desde EL ESPEJO — inicializador perezoso (patrón del proyecto)
   const [importado] = useState(() => {
@@ -92,17 +109,23 @@ export function LaboratorioPanel() {
     } catch { /* sin sessionStorage */ }
     return null;
   });
-  const [crisisId, setCrisisId] = useState(() => importado ?? LAB_ESCENARIOS[0].id);
+  const [crisisId, setCrisisId] = useState(() => remixDe?.crisisId ?? importado ?? LAB_ESCENARIOS[0].id);
   const [vengoDelEspejo, setVengoDelEspejo] = useState(() => !!importado);
   useEffect(() => {
     if (importado) toast(`Escenario importado de EL ESPEJO: ${escenarioPorId(importado).nombre}`, { duration: 3200, icon: "🔗" });
   }, [importado]);
+  useEffect(() => {
+    if (remixDe) toast(`REMIX del escenario de @${remixDe.autor || "comunidad"}: ajústalo y comparte tu versión`, { duration: 3600, icon: "🌿" });
+  }, [remixDe]);
 
-  const [perturbacion, setPerturbacion] = useState<string | null>(null);
-  const [dosis, setDosis] = useState(3);
-  const [horizonte, setHorizonte] = useState<90 | 180 | 240>(180);
+  const [perturbacion, setPerturbacion] = useState<string | null>(remixDe?.perturbacion ?? null);
+  const [dosis, setDosis] = useState(() => Math.max(1, Math.min(5, Number(remixDe?.dosis) || 3)));
+  const [horizonte, setHorizonte] = useState<90 | 180 | 240>(
+    () => (remixDe?.horizonte === 90 || remixDe?.horizonte === 240 ? remixDe.horizonte : 180)
+  );
   const [resultado, setResultado] = useState<ResultadoLab | null>(null);
   const [calculando, setCalculando] = useState(false);
+  const [compartiendo, setCompartiendo] = useState(false);
   const [reproduciendo, setReproduciendo] = useState(false);
   const [diaIdx, setDiaIdx] = useState(0);
   const [velocidad, setVelocidad] = useState<1 | 4 | 12>(4);
@@ -143,6 +166,7 @@ export function LaboratorioPanel() {
       const cfg: ConfigLab = { crisisId, perturbacion: perturbacion as ConfigLab["perturbacion"], dosis, horizonte };
       const r = simular(cfg);
       setResultado(r);
+      useAnalista.getState().registrar("lab"); // v101.0 PILAR 2
       setDiaIdx(0);
       setCalculando(false);
       window.setTimeout(() => setReproduciendo(true), 350);
@@ -170,6 +194,49 @@ export function LaboratorioPanel() {
       () => toast("Informe copiado al portapapeles", { duration: 2200 }),
       () => toast("No se pudo copiar", { duration: 2200 }),
     );
+  };
+
+  // v101.0 PILAR 3 — COMPARTIR CON LA COMUNIDAD: el escenario viaja a la
+  // GALERÍA DEL DESTINO donde cualquiera lo explora, lo comenta y lo mejora.
+  const compartir = async () => {
+    if (!resultado || !perturbacion || compartiendo) return;
+    setCompartiendo(true);
+    try {
+      const nombreP = PERTURBACIONES.find((p) => p.id === perturbacion)?.nombre ?? perturbacion;
+      const res = await fetch("/api/ugc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "escenario",
+          author: alias || "ANÓNIMO",
+          authorBall: "un",
+          title: `¿Y SI...? ${esc.nombre} · ${nombreP} (dosis ${dosis})`.slice(0, 120),
+          summary: `Mi contrafactual de ${esc.nombre}: ${resultado.fin.nombre} en el día ${resultado.fin.dia}. ${resultado.fin.detalle}`.slice(0, 300),
+          specs: JSON.stringify({
+            crisisId,
+            crisis: esc.nombre,
+            perturbacion,
+            dosis,
+            horizonte,
+            final: resultado.fin.nombre,
+            diaFin: resultado.fin.dia,
+            ganador: resultado.fin.ganador,
+            mc: resultado.monteCarlo.slice(0, 3).map((m) => ({ nombre: m.nombre, probabilidad: m.probabilidad })),
+            frente: Math.round(resultado.serie[resultado.serie.length - 1].frente),
+          }),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error || "No se pudo compartir el escenario"); return; }
+      if (data.eliminated) { toast.error(`El agente IA lo rechazó: ${data.reason}`); return; }
+      useAnalista.getState().registrar("escenario"); // PILAR 2: insignia ESCENÓGRAFO
+      addCoins(data.reward ?? 35, "LABORATORIO: escenario compartido con la comunidad");
+      toast.success(`Escenario publicado en la GALERÍA DEL DESTINO · +${data.reward ?? 35}ⓒ`, { duration: 3600, icon: "🌍" });
+    } catch {
+      toast.error("Error de red al compartir el escenario");
+    } finally {
+      setCompartiendo(false);
+    }
   };
 
   return (
@@ -625,7 +692,7 @@ export function LaboratorioPanel() {
             </div>
 
             {/* acciones */}
-            <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
               <button
                 onClick={() => navigateTo("espejo" as never)}
                 className="flex items-center justify-center gap-1.5 rounded-xl border border-red-400/40 bg-red-400/10 px-3 py-2.5 text-[11px] font-black text-red-200 transition hover:bg-red-400/20 active:scale-95"
@@ -643,6 +710,13 @@ export function LaboratorioPanel() {
                 className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2.5 text-[11px] font-black text-white/70 transition hover:bg-white/10 active:scale-95"
               >
                 <Copy className="h-3.5 w-3.5" /> COPIAR INFORME
+              </button>
+              <button
+                onClick={compartir}
+                disabled={compartiendo}
+                className="v101-cta flex items-center justify-center gap-1.5 rounded-xl border border-[#FFC94D]/50 bg-[#FFC94D]/12 px-3 py-2.5 text-[11px] font-black text-[#FFC94D] transition hover:bg-[#FFC94D]/22 active:scale-95 disabled:opacity-50"
+              >
+                <Share2 className="h-3.5 w-3.5" /> {compartiendo ? "PUBLICANDO…" : "COMPARTIR CON LA COMUNIDAD"}
               </button>
               <button
                 onClick={() => { setResultado(null); setDiaIdx(0); setPerturbacion(null); }}

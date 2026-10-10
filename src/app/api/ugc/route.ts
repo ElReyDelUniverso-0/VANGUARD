@@ -12,11 +12,18 @@ export const dynamic = "force-dynamic";
 
 // v27 ESTUDIOS CREADORES: + post, sticker, bandera, mapa
 // v88 PRENSA LIBRE: + periodico (los operadores fundan SUS PROPIOS periódicos)
+// v101 EL REGRESO — PILAR 3: + escenario (¿Y SI...? compartido del Laboratorio:
+//      cualquiera lo explora, lo comenta y lo MEJORA con un remix en el Lab)
 const KINDS = [
   "personaje", "arma", "juego", "musica", "noticia", "encuesta", "video",
-  "post", "sticker", "bandera", "mapa", "periodico",
+  "post", "sticker", "bandera", "mapa", "periodico", "escenario",
 ];
 const COMPO_KINDS = ["bandera", "mapa"]; // composición JSON re-renderizable
+const LAB_CRISES_IDS = ["karsk", "vand", "zenit", "sarn"]; // crisis del Espejo
+const LAB_PERTURBACIONES = [
+  "capital-amenazada", "refuerzos-externos", "clave-cerrada", "proxy-cambia",
+  "alto-fuego", "golpe-retaguardia", "movilizacion-total", "sanciones-totales",
+];
 const MAX_COMPO = 12_000; // JSON de composición de bandera/mapa
 const MAX_PER_DAY = 12;
 const GAP_MS = 45_000;
@@ -128,6 +135,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pega la URL del juego o el HTML del juego propio" }, { status: 400 });
     if (kind === "noticia" && info.length < 80)
       return NextResponse.json({ error: "Una noticia necesita al menos 80 caracteres de información" }, { status: 400 });
+    // v101: un escenario del Laboratorio llega en specs {crisisId, crisis,
+    // perturbacion, dosis, horizonte, final, diaFin, ganador, mc[], frente}
+    if (kind === "escenario") {
+      try {
+        const lab = JSON.parse(specs) as {
+          crisisId?: unknown; perturbacion?: unknown; dosis?: unknown; horizonte?: unknown;
+        };
+        if (!LAB_CRISES_IDS.includes(String(lab.crisisId)))
+          return NextResponse.json({ error: "Crisis desconocida — comparte desde el Laboratorio" }, { status: 400 });
+        if (!LAB_PERTURBACIONES.includes(String(lab.perturbacion)))
+          return NextResponse.json({ error: "Perturbación inválida" }, { status: 400 });
+        const d = Number(lab.dosis);
+        const h = Number(lab.horizonte);
+        if (!Number.isFinite(d) || d < 1 || d > 5)
+          return NextResponse.json({ error: "La dosis debe ir de 1 a 5" }, { status: 400 });
+        if (![90, 180, 240].includes(h))
+          return NextResponse.json({ error: "Horizonte inválido" }, { status: 400 });
+        if (summary.length < 10)
+          return NextResponse.json({ error: "Cuenta en el resumen qué pasa si... (10+ caracteres)" }, { status: 400 });
+      } catch {
+        return NextResponse.json({ error: "El escenario llegó corrupto — comparte de nuevo desde el Lab" }, { status: 400 });
+      }
+    }
     // v88: un periódico llega como JSON {logo, accent, articles:[{t,c,tone,b}]}
     if (kind === "periodico") {
       try {
@@ -194,7 +224,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const reward = kind === "periodico" ? 40 : 30;
+    const reward = kind === "escenario" ? 35 : kind === "periodico" ? 40 : 30;
     return NextResponse.json({ item, verdict: mod.verdict, reason: mod.reason, ai: mod.ai, reward }, { status: 201 });
   } catch (e) {
     console.error("ugc POST error", e);

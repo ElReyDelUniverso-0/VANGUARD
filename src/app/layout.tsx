@@ -17,6 +17,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { RetentionLayer } from "@/components/vanguard/retention-layer";
 // v99.0 MENTE VIVA: el pulso autónomo global (el mundo se actualiza solo)
 import { PulsoAuto } from "@/components/vanguard/pulso-auto";
+// v101.0 EL REGRESO — PILAR 1: banner global "el mundo cambió" en todas las páginas
+import { RegresoBanner } from "@/components/vanguard/regreso-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -265,6 +267,8 @@ export default function RootLayout({
         <RetentionLayer />
         {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}
         <PulsoAuto />
+        {/* v101.0 EL REGRESO — PILAR 1: el mundo cambió mientras no mirabas (banner de regreso) */}
+        <RegresoBanner />
         <Toaster />
         <Sonner />
       </body>

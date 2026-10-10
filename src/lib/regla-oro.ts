@@ -631,6 +631,32 @@ export const REGLA_ORO = {
       "Bandera, apodo, colores y estilo: haz que tu perfil grite quién eres antes de que hables.",
     acento: "#C084FC",
   },
+
+  // ====== v101.0 EL REGRESO — los tres pilares de retención ======
+  cambios: {
+    titulo: "EL MUNDO CAMBIA",
+    volanta: "Tu informe de regreso — nunca la misma página de ayer",
+    imagen: "/ilustraciones/mundo.jpg",
+    texto:
+      "Cada vez que vuelves, Vanguard te cuenta qué cambió desde tu última visita: los pulsos del mundo con su hora y su riesgo, las noticias reales con su fuente y su fecha (verificables, con enlace a la fuente original), el expediente del día y todo lo que rotó mientras no mirabas. Cada elemento lleva su etiqueta: FUENTE REAL o MUNDO VANGUARD · SIM. Sin urgencia falsa: si no cambió nada, te lo decimos igual de claro.",
+    acento: "#F5C542",
+  },
+  analista: {
+    titulo: "PERFIL DE ANALISTA",
+    volanta: "El progreso con sentido — no solo números",
+    imagen: "/ilustraciones/perfil.jpg",
+    texto:
+      "Tu carrera de analista en una sola sala: nivel y rango (de RECLUTA INTEL a OJO DEL MUNDO), un ELO que sube con lo que sabes hacer, 14 insignias que cuentan exactamente lo que hiciste — cuántos expedientes abriste, cuántas simulaciones corriste, cuántas obras publicaste — y 3 retos semanales de investigación que te mandan a lugares concretos del mundo Vanguard. Cada número es real: nada se infla.",
+    acento: "#FFD166",
+  },
+  escenarios: {
+    titulo: "GALERÍA DEL DESTINO",
+    volanta: "La gente crea, la gente participa — la comunidad ¿Y SI...?",
+    imagen: "/ilustraciones/creador.jpg",
+    texto:
+      "Los escenarios que la comunidad comparte desde el LABORATORIO DEL DESTINO. Explora cualquier contrafactual corriendo la simulación al instante (el motor es determinista: todos ven la misma guerra), coméntalo con otros analistas y MEJÓRALO con un remix: se abre en el Laboratorio con la misma crisis, la misma perturbación y la misma dosis, listas para que las ajustes y publiques tu versión. Etiqueta siempre visible: SIMULACIÓN · NO ES PREDICCIÓN.",
+    acento: "#FFC94D",
+  },
   encuestas: {
     titulo: "Encuestas",
     volanta: "Tu voto cuenta",

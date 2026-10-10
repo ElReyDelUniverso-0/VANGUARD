@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
+// v101.0 EL REGRESO — PILAR 2/3: publicar alimenta el PERFIL DE ANALISTA
+import { useAnalista } from "@/lib/analista";
 import { WORLD_FLAGS } from "@/lib/world-data";
 import { GAME_TEMPLATES } from "@/lib/game-templates";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -284,6 +286,7 @@ export function CreadorPanel() {
       sfx.reward();
       addCoins(30, "Contenido comunitario publicado");
       addXp?.(15);
+      useAnalista.getState().registrar("creacion"); // v101.0 PILAR 2
       cobrarRetoSiAplica();
       if (data.verdict === "SOSPECHOSO") {
         setVerdict({ kind: "review", title: "EN REVISIÓN (PENDIENTE)", reason: data.reason, ai: data.ai });

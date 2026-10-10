@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { Brain, Send, Loader2, Eye, Timer, MessageSquare, ScanSearch, Sparkles, Zap, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
+// v101.0 EL REGRESO — PILAR 2: cada análisis alimenta el PERFIL DE ANALISTA
+import { useAnalista } from "@/lib/analista";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import {
@@ -223,6 +225,7 @@ export function MentePanel() {
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || "sin análisis");
       setExp(data);
+      useAnalista.getState().registrar("mente"); // v101.0 PILAR 2: PERFIL DE ANALISTA
       // recompensa OPERADOR NEURONAL: análisis distinto, máx 5/día
       const m = leerMente();
       const dia = new Date().toISOString().slice(0, 10);

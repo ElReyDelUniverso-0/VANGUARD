@@ -2187,3 +2187,65 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .v100-run, .v100-frente, .v100-flujo { animation: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   v101.0 EL REGRESO — animaciones de los tres pilares de retención
+   El logo que representa todo, el informe de regreso, el perfil de
+   analista y la galería del destino. Todo transform/opacity en GPU.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* EL EMBLEMA: revelación de cine al entrar + brillo dorado que recorre
+   el anillo como una corona. Una vez por carga (fill-mode both). */
+@keyframes v101LogoEntra {
+  0%   { transform: scale(0.4) rotate(-14deg); opacity: 0; }
+  60%  { transform: scale(1.12) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.v101-logo {
+  animation: v101LogoEntra 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes v101Corona {
+  0%, 100% { box-shadow: 0 0 6px 1px rgba(245, 197, 66, 0.25), inset 0 0 4px rgba(245, 197, 66, 0.12); }
+  50%      { box-shadow: 0 0 18px 3px rgba(245, 197, 66, 0.45), inset 0 0 8px rgba(245, 197, 66, 0.22); }
+}
+.v101-logo { animation: v101LogoEntra 0.85s cubic-bezier(0.22, 1, 0.36, 1) both, v101Corona 3.6s ease-in-out 0.9s infinite; }
+
+/* panel de informe: latido dorado sutil del borde */
+.v101-panel { animation: v101Corona 4.2s ease-in-out infinite; }
+
+/* línea de brillo superior de los paneles v101 */
+@keyframes v101Brillo {
+  0%   { transform: translateX(-100%); opacity: 0.9; }
+  55%  { transform: translateX(100%); opacity: 0.5; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+.v101-brillo {
+  background: linear-gradient(90deg, transparent, rgba(255, 224, 138, 0.75), transparent);
+  animation: v101Brillo 3.2s ease-in-out infinite;
+}
+
+/* entradas escalonadas de los elementos del informe y la galería */
+@keyframes v101Entra {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.v101-entra { animation: v101Entra 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* CTA dorado: el botón que invita a volver */
+@keyframes v101Cta {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+.v101-cta { animation: v101Cta 2.4s ease-in-out infinite; }
+
+/* reto semanal listo para reclamar: pulso dorado */
+@keyframes v101Listo {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 209, 102, 0.0); }
+  50%      { box-shadow: 0 0 18px 3px rgba(255, 209, 102, 0.28); }
+}
+.v101-listo { animation: v101Listo 2s ease-in-out infinite; }
+
+/* ── ACCESIBILIDAD v101: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v101-logo, .v101-panel, .v101-brillo, .v101-entra, .v101-cta, .v101-listo { animation: none !important; }
+}
