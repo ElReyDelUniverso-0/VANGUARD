@@ -236,6 +236,8 @@ const TierraPanel = dynamic(() => import("@/components/vanguard/panels/tierra-pa
 const GooglesPanel = dynamic(() => import("@/components/vanguard/panels/googles-panel").then((m) => m.GooglesPanel), { ssr: false, loading: PanelSkeleton });
 // v98.0 ORO TOTAL: IMÁGENES DE VANGUARD — búsqueda visual de fotos reales
 const ImagenesPanel = dynamic(() => import("@/components/vanguard/panels/imagenes-panel").then((m) => m.ImagenesPanel), { ssr: false, loading: PanelSkeleton });
+// v99.0 MENTE VIVA: LA MENTE — el cerebro central (pulso autónomo + charla + expedientes)
+const MentePanel = dynamic(() => import("@/components/vanguard/panels/mente-panel").then((m) => m.MentePanel), { ssr: false, loading: PanelSkeleton });
 
 // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
 const GrafoPanel = dynamic(() => import("@/components/vanguard/panels/grafo-panel").then((m) => m.GrafoPanel), { ssr: false, loading: PanelSkeleton });
@@ -527,6 +529,7 @@ export default function Home() {
         {tab === "googles" && <GooglesPanel />}
         {/* v98.0 ORO TOTAL: la búsqueda visual de Vanguard */}
         {tab === "imagenes" && <ImagenesPanel />}
+        {tab === "mente" && <MentePanel />}
         {/* v95.0 EXPEDIENTE TOTAL: la red, el espejo y la máquina del tiempo */}
         {tab === "grafo" && <GrafoPanel />}
         {tab === "espejo" && <EspejoPanel />}

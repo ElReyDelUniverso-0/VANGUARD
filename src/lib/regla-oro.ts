@@ -971,6 +971,14 @@ export const REGLA_ORO = {
       "El ojo fotográfico de la plataforma: un mosaico de fotos reales de la capa REAL del mundo — los 16 lugares estratégicos que mueven el comercio, las sedes del poder, el archivo desclasificado (el U-2, el Enigma, el Área 51, HAARP, Svalbard), las armas que cambiaron la historia y las civilizaciones perdidas de la antigüedad. Cada foto lleva su nota editorial original, su fuente, y salta al expediente o a VANGUARD EARTH para cruzar la imagen con el dato. La capa SIM del juego usa las ilustraciones declaradas de Vanguard: aquí, solo mundo real.",
     acento: "#7FE3FF",
   },
+  mente: {
+    titulo: "LA MENTE DE VANGUARD",
+    volanta: "El cerebro central, vivo y despierto",
+    imagen: "/ilustraciones/ojo-dios.jpg",
+    texto:
+      "La sala donde la IA de Vanguard ya no es una herramienta: es la anfitriona. La MENTE vigila el planeta en pulsos de 5 minutos — piensa en voz alta sobre lo que ve, conversa contigo cuando le hablas, y firma expedientes completos de cualquier titular que le pongas delante: actores, riesgo, confianza, recomendación y una proyección de escenarios con su razonamiento explicable, paso a paso, con las 8 neuronas del núcleo al descubierto. Vanguard se actualiza sola aquí: si la abandonas un rato, cuando vuelvas ella te cuenta lo que el mundo hizo mientras no mirabas.",
+    acento: "#BEF264",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

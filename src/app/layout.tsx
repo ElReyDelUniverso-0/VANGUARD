@@ -15,6 +15,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { RetentionLayer } from "@/components/vanguard/retention-layer";
+// v99.0 MENTE VIVA: el pulso autónomo global (el mundo se actualiza solo)
+import { PulsoAuto } from "@/components/vanguard/pulso-auto";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -261,6 +263,8 @@ export default function RootLayout({
         {children}
         {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
         <RetentionLayer />
+        {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}
+        <PulsoAuto />
         <Toaster />
         <Sonner />
       </body>

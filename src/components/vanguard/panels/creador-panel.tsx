@@ -27,6 +27,19 @@ import {
   type UgcItem, type UgcPhoto, type AssemblyStep,
 } from "@/components/vanguard/creador-parts";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { retoCreadorDelDia } from "@/lib/mente-data"; // v99.0 MENTE VIVA
+
+// v99.0 MENTE VIVA — RANGOS DEL TALLER: la progresión del creador
+const RANGOS_CREADOR = [
+  { min: 0, nombre: "AFICIONADO" },
+  { min: 1, nombre: "APRENDIZ" },
+  { min: 3, nombre: "ARTESANO" },
+  { min: 6, nombre: "ESTUDIO PROPIO" },
+  { min: 12, nombre: "MAESTRO CREADOR" },
+  { min: 25, nombre: "LEYENDA DEL TALLER" },
+  { min: 40, nombre: "DIRECTOR DEL TALLER" },
+];
+const LS_RETO = "vg-creador-v99";
 
 type Section = "crear" | "galeria" | "mios";
 type Kind = "personaje" | "arma" | "juego" | "musica" | "noticia" | "encuesta" | "video";
@@ -94,6 +107,85 @@ export function CreadorPanel() {
   const [audioName, setAudioName] = useState("");
   const [pollOptions, setPollOptions] = useState<string[]>(["", ""]);
   const [videoUrl, setVideoUrl] = useState("");
+
+  // ---- v99.0 MENTE VIVA: co-creador IA + reto del día + rango ----
+  const reto = useMemo(() => retoCreadorDelDia(), []);
+  const [idea, setIdea] = useState("");
+  const [borrador, setBorrador] = useState(false);
+  const [retoCobrado, setRetoCobrado] = useState(false);
+  const [misObras, setMisObras] = useState(0);
+  const rangoActual = useMemo(() => {
+    let idx = 0;
+    for (let i = 0; i < RANGOS_CREADOR.length; i++) if (misObras >= RANGOS_CREADOR[i].min) idx = i;
+    return idx;
+  }, [misObras]);
+  const rangoSiguiente = RANGOS_CREADOR[rangoActual + 1];
+
+  useEffect(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem(LS_RETO) || "{}") as { dia?: string; cobrado?: boolean };
+      setRetoCobrado(raw.dia === reto.dia && raw.cobrado === true);
+    } catch { /* reto fresco */ }
+  }, [reto.dia]);
+
+  const cargarMisObras = useCallback(async (a: string) => {
+    if (!a) return;
+    try {
+      const params = new URLSearchParams({ mine: "1", author: a, limit: "80" });
+      const res = await fetch(`/api/ugc?${params.toString()}`);
+      const data = await res.json();
+      setMisObras(Array.isArray(data.items) ? data.items.length : 0);
+    } catch { /* silencio: el rango no es crítico */ }
+  }, []);
+
+  useEffect(() => {
+    cargarMisObras(alias || "");
+  }, [alias, cargarMisObras]);
+
+  const coCrear = async () => {
+    const laIdea = idea.trim();
+    if (laIdea.length < 4 || borrador) return;
+    setBorrador(true);
+    try {
+      const res = await fetch("/api/mente", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modo: "borrador", tipo: kind, idea: laIdea }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "LA MENTE no pudo escribir");
+      const b = data.borrador as { titulo: string; resumen: string; cuerpo: string };
+      setTitle(b.titulo);
+      setSummary(b.resumen);
+      if (kind === "encuesta") {
+        try {
+          const opts = JSON.parse(b.cuerpo) as { opciones?: { label?: string }[] };
+          const labels = Array.isArray(opts.opciones) ? opts.opciones.map((o) => String(o.label || "")).filter(Boolean).slice(0, 6) : [];
+          if (labels.length >= 2) setPollOptions(labels);
+          else setBody(b.cuerpo);
+        } catch { setBody(b.cuerpo); }
+      } else {
+        setBody(b.cuerpo);
+      }
+      sfx.click();
+      toast.success(data.ia ? "LA MENTE escribió tu borrador — edítalo y fírmalo con tu nombre" : "La red neuronal local escribió el borrador — edítalo y fírmalo");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "El borrador no llegó");
+    } finally {
+      setBorrador(false);
+    }
+  };
+
+  const cobrarRetoSiAplica = () => {
+    if (retoCobrado || reto.kind !== kind) return;
+    try {
+      localStorage.setItem(LS_RETO, JSON.stringify({ dia: reto.dia, cobrado: true }));
+    } catch { /* noop */ }
+    setRetoCobrado(true);
+    addCoins(reto.bonusCoins, "Reto del día del taller cumplido");
+    addXp?.(reto.bonusXp);
+    toast.success(`RETO DEL DÍA CUMPLIDO: +${reto.bonusCoins}ⓒ +${reto.bonusXp} XP`);
+  };
 
   const loadItems = useCallback(async (k: string, s: string, mine: boolean) => {
     setLoading(true);
@@ -192,6 +284,7 @@ export function CreadorPanel() {
       sfx.reward();
       addCoins(30, "Contenido comunitario publicado");
       addXp?.(15);
+      cobrarRetoSiAplica();
       if (data.verdict === "SOSPECHOSO") {
         setVerdict({ kind: "review", title: "EN REVISIÓN (PENDIENTE)", reason: data.reason, ai: data.ai });
         toast.warning("Tu envío pasa a revisión", { description: data.reason });
@@ -200,7 +293,9 @@ export function CreadorPanel() {
         toast.success("+30 monedas — publicación aprobada por el agente IA");
       }
       resetForm();
+      setIdea("");
       loadItems(filterKind, sort, false);
+      cargarMisObras(alias || "");
     } catch {
       toast.error("Error de red al publicar");
     } finally {
@@ -413,6 +508,72 @@ export function CreadorPanel() {
       {/* ============ CREAR ============ */}
       {section === "crear" && (
         <div className="space-y-3">
+          {/* ===== v99.0 MENTE VIVA: RANGO DEL CREADOR + RETO DEL DÍA ===== */}
+          <div className="grid sm:grid-cols-2 gap-2">
+            <div className="hud-panel p-3 flex items-center gap-3">
+              <Palette className="w-6 h-6 text-violet-hud shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-mono font-bold uppercase text-violet-hud">{RANGOS_CREADOR[rangoActual].nombre}</span>
+                  <span className="text-[9px] font-mono text-muted-foreground">{misObras} obras publicadas</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-white/10 overflow-hidden mt-1.5">
+                  <div
+                    className="h-full rounded-full bg-violet-hud origin-left transition-transform duration-700"
+                    style={{ width: "100%", transform: `scaleX(${rangoSiguiente ? Math.min(1, (misObras - RANGOS_CREADOR[rangoActual].min) / (rangoSiguiente.min - RANGOS_CREADOR[rangoActual].min)) : 1})` }}
+                  />
+                </div>
+                <p className="text-[9px] font-mono text-muted-foreground mt-1">
+                  {rangoSiguiente ? `siguiente: ${rangoSiguiente.nombre} a las ${rangoSiguiente.min} obras` : "rango máximo: todo el taller mira hacia ti"}
+                </p>
+              </div>
+            </div>
+
+            <div className="hud-panel p-3 flex items-center gap-3 border-amber-hud/40">
+              <Sparkles className={cn("w-6 h-6 shrink-0 text-amber-hud", !retoCobrado && reto.kind === kind && "v99-crea")} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-mono font-bold uppercase text-amber-hud">RETO DEL DÍA · {reto.kind.toUpperCase()}</span>
+                  <span className="text-[9px] font-mono text-amber-hud">+{reto.bonusCoins}ⓒ +{reto.bonusXp}XP</span>
+                </div>
+                <p className="text-[11px] text-foreground/90 leading-snug mt-0.5">{reto.reto}</p>
+                <p className="text-[9px] font-mono text-muted-foreground mt-0.5 truncate">
+                  {retoCobrado ? "cumplido hoy — vuelve mañana por otro" : `pista: ${reto.pista}`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ===== v99.0 MENTE VIVA: CO-CREADOR IA ===== */}
+          <div className="hud-panel p-3 space-y-2" style={{ borderColor: "#BEF26444" }}>
+            <div className="flex items-center gap-2">
+              <BrainCircuit className="w-4 h-4 shrink-0" style={{ color: "#BEF264" }} />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest" style={{ color: "#BEF264" }}>CO-CREADOR IA · LA MENTE</span>
+              <span className="text-[9px] font-mono text-muted-foreground ml-auto hidden sm:inline">te escribe el borrador, tú lo firmas</span>
+            </div>
+            <div className="flex gap-2">
+              <input
+                value={idea}
+                onChange={(e) => setIdea(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") coCrear(); }}
+                maxLength={200}
+                placeholder="Tu idea en una frase — ej.: un contrabandista de mapas viejos en el Darién"
+                className="flex-1 bg-secondary border border-white/15 rounded-sm px-2 py-2 text-sm focus:border-amber-hud/60 outline-none"
+              />
+              <button
+                onClick={coCrear}
+                disabled={borrador || idea.trim().length < 4}
+                className="rounded-sm px-3 py-2 font-mono text-[11px] font-bold text-black transition-transform active:scale-95 disabled:opacity-40 flex items-center gap-1.5 whitespace-nowrap"
+                style={{ background: "#BEF264" }}
+              >
+                {borrador ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> escribiendo…</> : <><Sparkles className="w-3.5 h-3.5" /> GENERAR</>}
+              </button>
+            </div>
+            <p className="text-[9px] font-mono text-muted-foreground">
+              Rellena título, resumen y cuerpo para «{KIND_META[kind].label}». Después edita, añade tus fotos y firma.
+            </p>
+          </div>
+
           {/* selector de tipo */}
           <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
             {KINDS.map((k) => {

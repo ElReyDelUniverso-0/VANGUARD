@@ -106,7 +106,9 @@ export type TabKey =
   // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
   | "grafo" | "espejo" | "maquina"
   // v98.0 ORO TOTAL: IMÁGENES — búsqueda visual de fotos reales
-  | "imagenes";
+  | "imagenes"
+  // v99.0 MENTE VIVA: el cerebro central de la plataforma
+  | "mente";
 
 interface TabDef {
   key: TabKey;
@@ -250,6 +252,7 @@ const TABS: Record<TabKey, TabDef> = {
   // v98.0 ORO TOTAL: IMÁGENES — la búsqueda visual de fotos REALES (estructura
   // del buscador de imágenes más usado del mundo, contenido 100% Vanguard)
   imagenes:      { key: "imagenes",      label: "IMÁGENES DE VANGUARD (búsqueda visual de fotos reales: lugares, poder, archivo, armas y civilizaciones)", short: "IMAGENES", icon: <Images className="w-3.5 h-3.5" />, color: "cyan" },
+  mente:         { key: "mente",         label: "LA MENTE DE VANGUARD (IA central: pulso autónomo del mundo, charla y expedientes neuronales)", short: "MENTE", icon: <Brain className="w-3.5 h-3.5" />, color: "cyan" },
   grafo:         { key: "grafo",         label: "GRAFO MUNDIAL (la red del conocimiento geopolítico de Vanguard)", short: "GRAFO", icon: <Network className="w-3.5 h-3.5" />, color: "cyan" },
   espejo:        { key: "espejo",        label: "EL ESPEJO (una crisis, todas las perspectivas: confirmado, omitido y en disputa)", short: "ESPEJO", icon: <FlipHorizontal2 className="w-3.5 h-3.5" />, color: "red" },
   maquina:       { key: "maquina",       label: "MÁQUINA DEL TIEMPO (viaja por la historia de cada crisis, teatro del Karsk en vivo)", short: "TIEMPO", icon: <History className="w-3.5 h-3.5" />, color: "amber" },
@@ -310,8 +313,8 @@ export const SECTIONS: SectionDef[] = [
     // las 12 salas de conocimiento; los espejos pasan a OBSERVATORIO y las
     // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
-    tabs: [TABS.googles, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
+    tabs: [TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",

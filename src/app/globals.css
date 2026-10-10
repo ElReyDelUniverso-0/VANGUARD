@@ -2102,3 +2102,51 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .vg-acc-dot { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   v99.0 MENTE VIVA — LA MENTE + PULSO AUTÓNOMO
+   El cerebro central respira (nodos que laten, sinapsis que parpadea),
+   las entradas de la sala y el banner de actualización autónoma.
+   Solo transform/opacity — 60fps + reduced-motion respetado.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* nodos de la red neuronal decorativa */
+@keyframes v99Latido {
+  0%, 100% { transform: scale(1); opacity: 0.75; }
+  50%      { transform: scale(1.6); opacity: 1; }
+}
+.v99-latido { animation: v99Latido 2.4s ease-in-out infinite; }
+
+/* sinapsis: parpadeo lento de las líneas */
+@keyframes v99Sinapsis {
+  0%, 100% { opacity: 0.18; }
+  50%      { opacity: 0.85; }
+}
+.v99-sinapsis { animation: v99Sinapsis 3.2s ease-in-out infinite; }
+
+/* entrada de tarjetas/mensajes de las salas de LA MENTE */
+@keyframes v99Entra {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+.v99-entra  { animation: v99Entra 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v99-msg    { animation: v99Entra 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* banner del pulso autónomo: entra deslizando desde abajo */
+@keyframes v99Pulso {
+  from { transform: translateY(14px) scale(0.97); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.v99-pulso { animation: v99Pulso 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* co-creador IA: el botón respira mientras la MENTE escribe */
+@keyframes v99Crea {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+.v99-crea { animation: v99Crea 1.6s ease-in-out infinite; }
+
+/* ── ACCESIBILIDAD v99: con movimiento reducido, la MENTE queda quieta ── */
+@media (prefers-reduced-motion: reduce) {
+  .v99-latido, .v99-sinapsis, .v99-entra, .v99-msg, .v99-pulso, .v99-crea { animation: none !important; }
+}

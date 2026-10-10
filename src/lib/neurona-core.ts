@@ -1,9 +1,11 @@
-// v92.0 OJO DEL MUNDO — NÚCLEO NEURONAL v3 (motor compartido)
+// v99.0 MENTE VIVA — NÚCLEO NEURONAL v4 (motor compartido)
 // La red neuronal de Vanguard ya no solo firma expedientes de cables (v89):
 // ahora COMPUTA todo el planeta. Este motor determinista alimenta los índices
 // del MONITOR GLOBAL, la confianza de los PRONÓSTICOS, las detecciones del
 // OJO-GEOINT y el sentimiento de la REVISTA. Misma receta en todas partes:
 // rasgos → pesos → sigmoide → veredicto. Reproducible, explicable, sin fin.
+// v99: DOS NEURONAS NUEVAS (espacio, social) y PREDECIR() — la MENTE proyecta
+// escenarios con horizonte y pasos de razonamiento para el panel MENTE VIVA.
 
 // ---------- PRNG determinista (FNV-1a + mulberry32) ----------
 export function fnvHash(str: string): number {
@@ -42,6 +44,9 @@ const LEXICON: Record<string, string[]> = {
   ciber: ["ransomware", "botnet", "phishing", "infiltración", "ciber", "servidor", "denegación", "malware"],
   humanitario: ["refugiados", "ayuda humanitaria", "hospital", "evacuación", "escasez", "cólera", "hambre"],
   nuclear: ["uranio", "enriquecimiento", "disuasión", "ogiva", "ensayo subterráneo", "silos"],
+  // v99.0 — dos neuronas nuevas
+  espacio: ["satélite", "órbita", "lanzamiento", "anti-satélite", "cohete", "constelación", "gps", "baja órbita", "estación espacial"],
+  social: ["protestas", "movilización", "huelga general", "elecciones", "referéndum", "disturbios", "censura", "desinformación", "opinión pública"],
 };
 
 export type Rasgos = {
@@ -51,6 +56,8 @@ export type Rasgos = {
   ciber: number;
   humanitario: number;
   nuclear: number;
+  espacio: number; // v99
+  social: number; // v99
 };
 
 export function extraerRasgos(texto: string): Rasgos {
@@ -66,10 +73,10 @@ export function extraerRasgos(texto: string): Rasgos {
 
 // Pesos del núcleo (v3): cada neurona temática pesa distinto en el veredicto
 export const PESOS_V3 = {
-  riesgo: { militar: 14, diplomacia: -8, economia: 6, ciber: 9, humanitario: 10, nuclear: 22 },
-  tension: { militar: 16, diplomacia: -10, economia: 7, ciber: 8, humanitario: 9, nuclear: 24 },
+  riesgo: { militar: 14, diplomacia: -8, economia: 6, ciber: 9, humanitario: 10, nuclear: 22, espacio: 7, social: 11 },
+  tension: { militar: 16, diplomacia: -10, economia: 7, ciber: 8, humanitario: 9, nuclear: 24, espacio: 6, social: 13 },
   // neurona de confianza: fuentes cruzadas suben, rumores bajan
-  confianza: { militar: -3, diplomacia: 5, economia: 4, ciber: -6, humanitario: 2, nuclear: -8 },
+  confianza: { militar: -3, diplomacia: 5, economia: 4, ciber: -6, humanitario: 2, nuclear: -8, espacio: 1, social: -7 },
 } as const;
 
 export type Sentimiento = "ESCALADA" | "TENSIÓN" | "ESTABLE" | "DÉTENTE";
@@ -113,6 +120,58 @@ export function evaluarNeuronal(texto: string, cruceFuentes = 2): Veredicto {
     sentimiento: clasificarSentimiento(riesgo),
     neuronasActivas,
     interpolacion: clamp(riesgo / 100 * 2 - 1, -1, 1),
+  };
+}
+
+// ---------- v99.0 PREDECIR: la MENTE proyecta escenarios ----------
+export type Prediccion = {
+  horizonte: string; // "72 h" | "2 semanas" | "6 meses"
+  escenarios: { nombre: string; probabilidad: number; señal: string }[]; // suman ~100
+  pasos: string[]; // razonamiento explicable de la red
+  confianzaRed: number; // 0-100
+};
+
+const HORIZONTES = ["72 h", "2 semanas", "6 meses"];
+const NOMBRES_ESCENARIO = ["CONTENCIÓN", "ESCALADA CONTROLADA", "DÉTENTE", "RUPTURA", "CONGELACIÓN"];
+const SEÑALES = [
+  "movimiento de convoyes sin rotación", "cruce de notas diplomáticas en 48 h",
+  "volumen anómalo en puertos clave", "tráfico de botnet apuntando a grids",
+  "canales de desinformación calentando la plaza", "pases de satélite sobre el mismo punto",
+  "cólera/carestía presionando la retaguardia", "silencio radio en ejercicios anunciados",
+];
+
+/** v99: proyección determinista de escenarios con razonamiento explicable. */
+export function predecir(texto: string, bucket = bucketMinutos(5)): Prediccion {
+  const v = evaluarNeuronal(texto);
+  const rng = mulberry32(fnvHash(texto) ^ bucket);
+  const hz = HORIZONTES[bucket % HORIZONTES.length];
+
+  // pesos base según sentimiento + jitter determinista, normalizados a 100
+  const base =
+    v.sentimiento === "ESCALADA" ? [30, 38, 10, 16, 6]
+    : v.sentimiento === "TENSIÓN" ? [36, 28, 14, 12, 10]
+    : v.sentimiento === "ESTABLE" ? [44, 14, 20, 8, 14]
+    : [52, 8, 24, 4, 12];
+  const jitter = base.map((b) => Math.max(3, b + Math.floor(rng() * 9) - 4));
+  const suma = jitter.reduce((a, b) => a + b, 0);
+  const escenarios = NOMBRES_ESCENARIO.map((nombre, i) => ({
+    nombre,
+    probabilidad: Math.round((jitter[i] / suma) * 100),
+    señal: SEÑALES[Math.floor(rng() * SEÑALES.length)],
+  }));
+
+  const pasos = [
+    `8 neuronas lectores: ${v.neuronasActivas.length > 0 ? v.neuronasActivas.join(", ") : "sin señales fuertes"}.`,
+    `riesgo ${v.riesgo}/100 · tensión ${v.tension}/100 · confianza ${v.confianza}/100.`,
+    `sentimiento de la red: ${v.sentimiento} (interpolación ${v.interpolacion.toFixed(2)}).`,
+    `proyección ${hz} con jitter determinista por pulso de 5 minutos.`,
+  ];
+
+  return {
+    horizonte: hz,
+    escenarios: escenarios.sort((a, b) => b.probabilidad - a.probabilidad),
+    pasos,
+    confianzaRed: v.confianza,
   };
 }
 
