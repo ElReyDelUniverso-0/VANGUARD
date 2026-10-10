@@ -127,7 +127,7 @@ log_step_end "bun install"
 
 log_step_start "bun run db:push"
 echo "[BUN] Setting up database..."
-bun run db:push
+bun run db:push || echo "[DEV] db:push falló (sin Postgres local) — se continúa sin DB"
 log_step_end "bun run db:push"
 
 log_step_start "Starting Next.js dev server"
