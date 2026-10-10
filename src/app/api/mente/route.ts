@@ -176,6 +176,7 @@ export async function POST(req: Request) {
       const bucket = pulsoActual();
       let exp: ExpBase | null = null;
       let ia = false;
+      let canalMuerto = false;
       try {
         const raw = await conDeadline(iaDirecta(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
@@ -183,8 +184,11 @@ export async function POST(req: Request) {
           exp = normalizarExp(json, texto);
           ia = true;
         }
-      } catch { /* vía 2 */ }
-      if (!exp) {
+      } catch (e) {
+        // si la vía 1 se colgó hasta el deadline, la vía 2 usa la misma red: no insistir
+        canalMuerto = e instanceof Error && e.message === "deadline";
+      }
+      if (!exp && !canalMuerto) {
         try {
           const zai = await createZAI();
           const completion = await conDeadline(zai.chat.completions.create({
@@ -223,6 +227,7 @@ export async function POST(req: Request) {
         ...historial,
         { role: "user", content: contexto },
       ];
+      let canalMuerto = false;
       try {
         const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
@@ -230,8 +235,10 @@ export async function POST(req: Request) {
           respuesta = clean(json.respuesta, 480);
           ia = true;
         }
-      } catch { /* vía 2 */ }
-      if (!respuesta) {
+      } catch (e) {
+        canalMuerto = e instanceof Error && e.message === "deadline";
+      }
+      if (!respuesta && !canalMuerto) {
         try {
           const zai = await createZAI();
           const completion = await conDeadline(zai.chat.completions.create({ messages: msgs, thinking: { type: "disabled" } }), DEADLINE_IA);
@@ -256,6 +263,7 @@ export async function POST(req: Request) {
       }
       let bor: { titulo: string; resumen: string; cuerpo: string } | null = null;
       let ia = false;
+      let canalMuerto = false;
       try {
         const raw = await conDeadline(iaDirecta(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
@@ -263,8 +271,10 @@ export async function POST(req: Request) {
           bor = { titulo: clean(json.titulo, 120), resumen: clean(json.resumen, 300), cuerpo: String(json.cuerpo).slice(0, 1200) };
           ia = true;
         }
-      } catch { /* vía 2 */ }
-      if (!bor) {
+      } catch (e) {
+        canalMuerto = e instanceof Error && e.message === "deadline";
+      }
+      if (!bor && !canalMuerto) {
         try {
           const zai = await createZAI();
           const completion = await conDeadline(zai.chat.completions.create({
