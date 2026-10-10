@@ -149,6 +149,16 @@ export async function GET() {
   });
 }
 
+// carrera con deadline: si el núcleo IA no responde en X ms, seguimos (la red
+// neuronal local firma SIEMPRE — el operador no espera 50s a un canal muerto)
+function conDeadline<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, rej) => setTimeout(() => rej(new Error("deadline")), ms)),
+  ]);
+}
+const DEADLINE_IA = 9_000;
+
 export async function POST(req: Request) {
   if (limited(ipDe(req))) {
     return NextResponse.json({ ok: false, error: "Demasiadas consultas — espera un momento, la MENTE también respira" }, { status: 429 });
@@ -167,7 +177,7 @@ export async function POST(req: Request) {
       let exp: ExpBase | null = null;
       let ia = false;
       try {
-        const raw = await iaDirecta(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`);
+        const raw = await conDeadline(iaDirecta(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
         if (json) {
           exp = normalizarExp(json, texto);
@@ -177,13 +187,13 @@ export async function POST(req: Request) {
       if (!exp) {
         try {
           const zai = await createZAI();
-          const completion = await zai.chat.completions.create({
+          const completion = await conDeadline(zai.chat.completions.create({
             messages: [
               { role: "assistant", content: SYSTEM_EXPEDIENTE },
               { role: "user", content: `TEXTO A ANALIZAR:\n${texto}` },
             ],
             thinking: { type: "disabled" },
-          });
+          }), DEADLINE_IA);
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json) {
@@ -214,7 +224,7 @@ export async function POST(req: Request) {
         { role: "user", content: contexto },
       ];
       try {
-        const raw = await iaConversa(msgs);
+        const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.respuesta === "string" && json.respuesta) {
           respuesta = clean(json.respuesta, 480);
@@ -224,7 +234,7 @@ export async function POST(req: Request) {
       if (!respuesta) {
         try {
           const zai = await createZAI();
-          const completion = await zai.chat.completions.create({ messages: msgs, thinking: { type: "disabled" } });
+          const completion = await conDeadline(zai.chat.completions.create({ messages: msgs, thinking: { type: "disabled" } }), DEADLINE_IA);
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json && typeof json.respuesta === "string" && json.respuesta) {
@@ -247,7 +257,7 @@ export async function POST(req: Request) {
       let bor: { titulo: string; resumen: string; cuerpo: string } | null = null;
       let ia = false;
       try {
-        const raw = await iaDirecta(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`);
+        const raw = await conDeadline(iaDirecta(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.titulo === "string" && typeof json.cuerpo === "string") {
           bor = { titulo: clean(json.titulo, 120), resumen: clean(json.resumen, 300), cuerpo: String(json.cuerpo).slice(0, 1200) };
@@ -257,13 +267,13 @@ export async function POST(req: Request) {
       if (!bor) {
         try {
           const zai = await createZAI();
-          const completion = await zai.chat.completions.create({
+          const completion = await conDeadline(zai.chat.completions.create({
             messages: [
               { role: "assistant", content: SYSTEM_BORRADOR },
               { role: "user", content: `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}` },
             ],
             thinking: { type: "disabled" },
-          });
+          }), DEADLINE_IA);
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json && typeof json.titulo === "string" && typeof json.cuerpo === "string") {
