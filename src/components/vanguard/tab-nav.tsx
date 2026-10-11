@@ -22,6 +22,7 @@ import {
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
   History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
   Hammer, ShieldCheck, LayoutPanelLeft,
+  LayoutDashboard,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -117,7 +118,9 @@ export type TabKey =
   | "laboratorio"
   // v101.0 EL REGRESO: los tres pilares de retención — el mundo cambia,
   // el usuario progresa y la gente crea y participa
-  | "cambios" | "analista" | "escenarios";
+  | "cambios" | "analista" | "escenarios"
+  // v104.0 LA VITRINA: el muro unificado de TODAS las obras de la comunidad
+  | "obras";
 
 interface TabDef {
   key: TabKey;
@@ -248,6 +251,8 @@ const TABS: Record<TabKey, TabDef> = {
   // v102.0 LA CIUDADELA — FORTALEZA: la seguridad de acero, visible
   fortaleza:     { key: "fortaleza",     label: "FORTALEZA DE ACERO (sellos de seguridad, muros y blindajes de la Ciudadela)", short: "FORTALEZA", icon: <ShieldCheck className="w-3.5 h-3.5" />, color: "green" },
   escenarios:    { key: "escenarios",    label: "GALERÍA DEL DESTINO (escenarios ¿Y SI...? de la comunidad: explóralos, coméntalos y mejóralos)", short: "ESCENARIOS", icon: <Share2 className="w-3.5 h-3.5" />, color: "violet" },
+  // v104.0 LA VITRINA — el muro unificado de todas las obras de la comunidad
+  obras:         { key: "obras",         label: "MURO DE OBRAS (la vitrina de la comunidad: juega, simula, remezcla y expón — con Paseo de la Fama y el agente que evalúa)", short: "OBRAS", icon: <LayoutDashboard className="w-3.5 h-3.5" />, color: "violet" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
   mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
@@ -387,8 +392,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "creadores", label: "CREADORES", short: "CREADORES", icon: <Palette className="w-4 h-4" />, color: "violet",
-    desc: "Crear dentro de Vanguard: el MODO AGENTE (la IA que crea juegos, escenarios e informes y los publica firmados), estudio comunitario, GALERÍA DEL DESTINO (escenarios ¿Y SI...? que se exploran, comentan y mejoran), constructor de mapas, armería real y mapas de Google sin lag",
-    tabs: [TABS.agenteia, TABS.creador, TABS.escenarios, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
+    desc: "Crear dentro de Vanguard: el MURO DE OBRAS (la vitrina de la comunidad con Paseo de la Fama), el MODO AGENTE (la IA que crea juegos, escenarios e informes y los publica firmados), estudio comunitario, GALERÍA DEL DESTINO (escenarios ¿Y SI...? que se exploran, comentan y mejoran), constructor de mapas, armería real y mapas de Google sin lag",
+    tabs: [TABS.agenteia, TABS.obras, TABS.creador, TABS.escenarios, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
   },
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",

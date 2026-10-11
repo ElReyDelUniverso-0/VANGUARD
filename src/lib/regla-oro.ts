@@ -1030,6 +1030,14 @@ export const REGLA_ORO = {
       "El salto definitivo de la IA de Vanguard: deja de responder y empieza a CREAR dentro de la plataforma. El agente acepta una misión —un quiz, una cronología clasificada, un verdad o mentira, un escenario ¿Y SI...?, un informe neuronal— y la ejecuta EN DIRECTO ante ti: investiga el frente del Karsk que se mueve cada noche, abre expedientes REALES desclasificados por la CIA y el FBI, corre el motor del Laboratorio con sus 24 mundos, se somete a la auditoría de acero y publica su obra firmada: juegos al arcade, escenarios a la Galería del Destino, informes con fuentes citadas. Con pasaporte, la obra sale a tu nombre y la recompensa es tuya; sin pasaporte, firma MENTE·VANGUARD. Misma semilla, misma obra: todo el planeta ve lo que el agente creó hoy.",
     acento: "#BEF264",
   },
+  obras: {
+    titulo: "MURO DE OBRAS",
+    volanta: "La vitrina de la comunidad — todo lo que la gente crea",
+    imagen: "/ilustraciones/creador.jpg",
+    texto:
+      "Un solo muro con TODO lo que la comunidad crea dentro de Vanguard: juegos del Taller, escenarios ¿Y SI...?, encuestas, música, periódicos, noticias, posts, banderas, mapas, personajes, armas, stickers y videos. Cada obra se juega, se simula, se comenta y se REMEZCLA —y la vitrina devuelve fama: el Paseo de la Fama sube a los creadores que la comunidad más celebra (me gusta ×3 + jugadas ×2 + obras ×5, fórmula explicable), las SEÑALES te cuentan qué pasó con tus obras mientras no mirabas, y EL AGENTE EVALÚA deja su crítica firmada con una fortaleza concreta y una mejora accionable. Crear aquí no es gritar al vacío: es exponer en la vitrina.",
+    acento: "#FFC94D",
+  },
   laboratorio: {
     titulo: "LABORATORIO DEL DESTINO",
     volanta: "¿Y SI...? — la pregunta que mueve frentes enteros",

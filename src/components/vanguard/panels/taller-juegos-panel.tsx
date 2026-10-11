@@ -87,6 +87,39 @@ export function TallerJuegosPanel() {
     return () => { vivo = false; };
   }, [ordenar, cargar]);
 
+  // v104.0 LA VITRINA — REMEZCLAR un juego de la comunidad: el Muro entrega el
+  // def aquí y el Taller abre EN MODO CREAR con todo precargado. El remix es
+  // una obra nueva del operador: título firmado como REMIX y sin límites.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("vg-taller-remix");
+      if (!raw) return;
+      sessionStorage.removeItem("vg-taller-remix");
+      const r = JSON.parse(raw) as { def: JuegoDef; titulo?: string; resumen?: string; autor?: string };
+      if (!r?.def?.engine) return;
+      const motorR = r.def.engine as MotorJuego;
+      const datos = (r.def.data || {}) as {
+        quiz?: { preguntas?: PreguntaQuiz[] };
+        ordena?: { pasos?: { t: string }[] };
+        vof?: { afirmaciones?: { t: string; v: boolean }[] };
+      };
+      if (motorR === "quiz" && Array.isArray(datos.quiz?.preguntas)) {
+        setPreguntas(datos.quiz!.preguntas!.map((p) => ({ q: p.q || "", o: (p.o || ["", "", "", ""]).slice(0, 4), a: Math.max(0, Math.min(3, Number(p.a) || 0)) })));
+      }
+      if (motorR === "ordena" && Array.isArray(datos.ordena?.pasos)) {
+        setPasos(datos.ordena!.pasos!.slice(0, 8).map((p) => String(p.t || "")));
+      }
+      if (motorR === "vof" && Array.isArray(datos.vof?.afirmaciones)) {
+        setAfirmaciones(datos.vof!.afirmaciones!.slice(0, 10).map((a) => ({ t: String(a.t || ""), v: a.v === true })));
+      }
+      setMotor(motorR);
+      setTitulo(r.titulo ? `REMIX de "${r.titulo}"` : "");
+      setResumen(r.resumen ? `${r.resumen} (REMIX del original de @${r.autor || "creador"})` : "");
+      setModo("crear");
+      toast(`REMIX del juego de @${r.autor || "creador"} — el Taller está listo: ajusta y publica tu versión`, { duration: 4200, icon: "🔧" });
+    } catch { /* remix corrupto: se ignora en silencio */ }
+  }, []);
+
   const pedirPasaporte = (motivo: string) => {
     window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }));
   };

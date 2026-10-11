@@ -250,6 +250,9 @@ const MentePanel = dynamic(() => import("@/components/vanguard/panels/mente-pane
 // v103.0 MODO AGENTE: la IA superpotente que CREA dentro de Vanguard (juegos, escenarios, informes)
 const AgenteIaPanel = dynamic(() => import("@/components/vanguard/panels/agente-ia-panel").then((m) => m.AgenteIaPanel), { ssr: false, loading: PanelSkeleton });
 
+// v104.0 LA VITRINA: el muro unificado de TODAS las obras de la comunidad
+const MuroObrasPanel = dynamic(() => import("@/components/vanguard/panels/muro-obras-panel").then((m) => m.MuroObrasPanel), { ssr: false, loading: PanelSkeleton });
+
 // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
 const GrafoPanel = dynamic(() => import("@/components/vanguard/panels/grafo-panel").then((m) => m.GrafoPanel), { ssr: false, loading: PanelSkeleton });
 const EspejoPanel = dynamic(() => import("@/components/vanguard/panels/espejo-panel").then((m) => m.EspejoPanel), { ssr: false, loading: PanelSkeleton });
@@ -582,6 +585,7 @@ export default function Home() {
         {tab === "alianzas" && <AlianzasPanel />}
         {tab === "agente" && <AgentePanel />}
         {tab === "agenteia" && <AgenteIaPanel />}
+        {tab === "obras" && <MuroObrasPanel />}
         {tab === "gancho" && <HooksPanel />}
         {tab === "ranking" && <RankingPanel />}
         {tab === "foros" && <ForumPanel />}

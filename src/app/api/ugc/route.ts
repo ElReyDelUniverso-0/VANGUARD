@@ -71,7 +71,20 @@ export async function GET(req: Request) {
     const kinds: Record<string, number> = {};
     byKind.forEach((g) => (kinds[g.kind] = g._count.kind));
 
-    return NextResponse.json({ items, stats: { total, today, pending, kinds } });
+    // v104.0 LA VITRINA — la tarjeta muestra cuántos comentarios tiene la obra
+    // (una consulta grupal sobre SOLO los ids devueltos: barata siempre)
+    let comentarios: Record<string, number> = {};
+    if (items.length > 0) {
+      const ids = items.map((i) => i.id);
+      const grupos = await db.ugcComment.groupBy({
+        by: ["itemId"],
+        where: { itemId: { in: ids }, status: "APROBADO" },
+        _count: { itemId: true },
+      });
+      grupos.forEach((g) => (comentarios[g.itemId] = g._count.itemId));
+    }
+
+    return NextResponse.json({ items, stats: { total, today, pending, kinds }, comentarios });
   } catch (e) {
     console.error("ugc GET error", e);
     return NextResponse.json({ items: [], stats: { total: 0, today: 0, pending: 0, kinds: {} } }, { status: 200 });

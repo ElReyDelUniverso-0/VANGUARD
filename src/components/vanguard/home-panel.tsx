@@ -11,7 +11,7 @@ import {
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot,
+  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -70,6 +70,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "taller", title: "TALLER DE JUEGOS", desc: "Crea juegos SIN código con tres motores (quiz, ordena la historia, verdad o mentira), publícalos firmados con tu pasaporte y juega a los de la comunidad en el arcade de la Ciudadela", icon: <Hammer className="w-6 h-6" />, hex: "#FFC94D" },
   // v103.0 MODO AGENTE — la IA que crea dentro de Vanguard
   { tab: "agenteia", title: "MODO AGENTE", desc: "La mente de Vanguard, superpotente: acepta una misión y la ejecuta EN DIRECTO — investiga el frente, abre expedientes reales desclasificados, corre el motor del Laboratorio y PUBLICA su obra firmada: juegos al arcade, escenarios a la Galería, informes con fuentes", icon: <Bot className="w-6 h-6" />, hex: "#BEF264" },
+  // v104.0 LA VITRINA — el muro de obras de la comunidad
+  { tab: "obras", title: "MURO DE OBRAS", desc: "La vitrina de la comunidad: un muro con TODO lo que la gente crea — juegos, escenarios, encuestas, música, periódicos — con Paseo de la Fama, señales de tus obras y el agente que evalúa cada pieza", icon: <Crown className="w-6 h-6" />, hex: "#FFC94D" },
   { tab: "foryou", title: "PARA TI", desc: "El feed de la comunidad: videos, música y stickers de los jugadores en scroll infinito — como TikTok, pero de guerra", icon: <Flame className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "mundo", title: "MUNDO DE GUERRA", desc: "Conquista los 24 territorios en el globo 3D contra 3 IA", icon: <Castle className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },
@@ -134,6 +136,7 @@ const TILE_IMG: Record<string, string> = {
   espejo: "/ilustraciones/canales.jpg",
   laboratorio: "/ilustraciones/simulador.jpg",
   agenteia: "/ilustraciones/agente.jpg",
+  obras: "/ilustraciones/creador.jpg",
 };
 
 function timeAgo(iso: string): string {

@@ -2374,3 +2374,46 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .v103-latido, .v103-onda, .v103-barra, .v103-cursor, .v103-cta, .v103-listo { animation: none !important; }
 }
+
+/* ══════════ v104.0 LA VITRINA — MURO DE OBRAS ══════════
+   La vitrina de la comunidad: podio de fama, señales y evaluación del agente.
+   Solo transform/opacity/box-shadow — 60 FPS. reduced-motion apaga todo. */
+
+/* panel de la vitrina con brillo dorado de exposición */
+.v104-panel {
+  box-shadow: 0 0 0 1px rgba(255, 201, 77, 0.04), 0 10px 34px -18px rgba(255, 201, 77, 0.28);
+}
+
+/* podio: el card del ranking respira un brillo de vitrina */
+@keyframes v104Podio {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 201, 77, 0); }
+  50%      { box-shadow: 0 0 18px 2px rgba(255, 201, 77, 0.16); }
+}
+.v104-podio { animation: v104Podio 4.2s ease-in-out infinite; }
+
+/* rango 1/2/3: placa con latido sutil */
+@keyframes v104Rango {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+.v104-rango { animation: v104Rango 3.4s ease-in-out infinite; }
+
+/* campana de señales nuevas */
+@keyframes v104Latido {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50%      { transform: scale(1.18); opacity: 1; }
+}
+.v104-latido { animation: v104Latido 1.6s ease-in-out infinite; }
+
+/* me gusta: pulso al dar corazón */
+@keyframes v104Pulso {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+.v104-pulso { animation: v104Pulso 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ── ACCESIBILIDAD v104: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v104-podio, .v104-rango, .v104-latido, .v104-pulso { animation: none !important; }
+}
