@@ -49,7 +49,7 @@ export type TabKey =
   | "epocas" | "conquistas3d" | "contadores" | "carteles"
   // v13 centro de mando global
   | "osint" | "warsim" | "espionaje" | "crisis" | "radar"
-  | "biblioteca" | "tribunal" | "alianzas" | "agente"
+  | "biblioteca" | "tribunal" | "alianzas" | "agente" | "agenteia"
   // v19 mundo expandido: frentes en vivo, estudio de video, divisas, perfil
   | "frente" | "estudio" | "divisas" | "perfil"
   // v22 directos en vivo con donaciones
@@ -216,6 +216,8 @@ const TABS: Record<TabKey, TabDef> = {
   tribunal:      { key: "tribunal",      label: "Juicio Histórico",  short: "TRIBUNAL", icon: <Gavel className="w-3.5 h-3.5" />, color: "amber" },
   alianzas:      { key: "alianzas",      label: "Alianzas",          short: "ALIANZAS", icon: <Flag className="w-3.5 h-3.5" />, color: "violet" },
   agente:        { key: "agente",        label: "Perfil del Agente (IQ)", short: "AGENTE", icon: <BrainCircuit className="w-3.5 h-3.5" />, color: "cyan" },
+  // v103.0 MODO AGENTE — la IA que crea dentro de Vanguard (juegos, escenarios, informes)
+  agenteia:      { key: "agenteia",      label: "MODO AGENTE (la IA superpotente que crea dentro de Vanguard)", short: "M.AGENTE", icon: <Bot className="w-3.5 h-3.5" />, color: "cyan" },
 
   mapa:          { key: "mapa",          label: "Mapa mundial",      short: "MAPA", icon: <Map className="w-3.5 h-3.5" />, color: "amber" },
   noticias:      { key: "noticias",      label: "Noticias",          short: "NOTICIAS", icon: <Newspaper className="w-3.5 h-3.5" />, color: "amber" },
@@ -385,8 +387,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "creadores", label: "CREADORES", short: "CREADORES", icon: <Palette className="w-4 h-4" />, color: "violet",
-    desc: "Todo lo sube la gente: estudio comunitario, GALERÍA DEL DESTINO (escenarios ¿Y SI...? que se exploran, comentan y mejoran), constructor de mapas, armería real y mapas de Google sin lag",
-    tabs: [TABS.creador, TABS.escenarios, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
+    desc: "Crear dentro de Vanguard: el MODO AGENTE (la IA que crea juegos, escenarios e informes y los publica firmados), estudio comunitario, GALERÍA DEL DESTINO (escenarios ¿Y SI...? que se exploran, comentan y mejoran), constructor de mapas, armería real y mapas de Google sin lag",
+    tabs: [TABS.agenteia, TABS.creador, TABS.escenarios, TABS.studios, TABS.mapascrea, TABS.armeria, TABS.maps, TABS.bolsamonedas],
   },
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",

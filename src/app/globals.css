@@ -60,6 +60,8 @@
   --color-red-hud: #FF3B30;
   --color-cyan-hud: #38BDF8;
   --color-violet-hud: #A855F7;
+  /* v103.0 MODO AGENTE — color propio del agente (lima de LA MENTE, #BEF264) */
+  --color-lime-hud: #BEF264;
 }
 
 /* ====== Vanguard v14 — tema NEON GLOBAL (aliento fresco) ======
@@ -2309,4 +2311,66 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 /* ── ACCESIBILIDAD v102: con movimiento reducido, todo queda quieto ── */
 @media (prefers-reduced-motion: reduce) {
   .v102-latido, .v102-cta, .v102-flash-ok, .v102-flash-ko, .v102-corona { animation: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   v103.0 MODO AGENTE — la consola de la IA que crea dentro de Vanguard
+   (avatar latiendo, onda pensante, log en directo, cursor, CTA)
+   Solo transform/opacity/box-shadow — 60 FPS.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* avatar del agente: el anillo respira y el núcleo late */
+@keyframes v103Latido {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(190, 242, 100, 0.25); }
+  50%      { transform: scale(1.05); box-shadow: 0 0 18px 2px rgba(190, 242, 100, 0.18); }
+}
+.v103-latido { animation: v103Latido 2.6s ease-in-out infinite; }
+
+/* onda del radio "AGENTE EN VIVO" */
+@keyframes v103Onda {
+  0%, 100% { opacity: 0.45; transform: scale(0.92); }
+  50%      { opacity: 1; transform: scale(1.08); }
+}
+.v103-onda { animation: v103Onda 1.6s ease-in-out infinite; }
+
+/* barras del pensamiento (igual que la waveform de los asistentes de IA) */
+@keyframes v103Barra {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.5; }
+  50%      { transform: scaleY(1); opacity: 1; }
+}
+.v103-barra {
+  height: 100%;
+  transform-origin: bottom;
+  animation: v103Barra 0.9s ease-in-out infinite;
+}
+
+/* cursor de la consola */
+@keyframes v103Cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.v103-cursor { animation: v103Cursor 1s steps(1) infinite; }
+
+/* CTA de publicación: la llamada a la acción respira */
+@keyframes v103Cta {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(190, 242, 100, 0.22); }
+  50%      { box-shadow: 0 0 16px 3px rgba(190, 242, 100, 0.16); }
+}
+.v103-cta { animation: v103Cta 2.2s ease-in-out infinite; }
+
+/* la obra del agente entra con revelación (cuando la auditoría termina) */
+@keyframes v103Listo {
+  0%   { transform: translateY(10px) scale(0.985); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.v103-listo { animation: v103Listo 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* scrollbar de la consola (log) — discreta, lima */
+.v103-scroll::-webkit-scrollbar { width: 6px; }
+.v103-scroll::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.35); }
+.v103-scroll::-webkit-scrollbar-thumb { background: rgba(190, 242, 100, 0.3); border-radius: 3px; }
+
+/* ── ACCESIBILIDAD v103: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v103-latido, .v103-onda, .v103-barra, .v103-cursor, .v103-cta, .v103-listo { animation: none !important; }
 }

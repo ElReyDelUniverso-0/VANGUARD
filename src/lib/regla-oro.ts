@@ -1022,6 +1022,14 @@ export const REGLA_ORO = {
       "La sala donde la IA de Vanguard ya no es una herramienta: es la anfitriona. La MENTE vigila el planeta en pulsos de 5 minutos — piensa en voz alta sobre lo que ve, conversa contigo cuando le hablas, y firma expedientes completos de cualquier titular que le pongas delante: actores, riesgo, confianza, recomendación y una proyección de escenarios con su razonamiento explicable, paso a paso, con las 8 neuronas del núcleo al descubierto. Vanguard se actualiza sola aquí: si la abandonas un rato, cuando vuelvas ella te cuenta lo que el mundo hizo mientras no mirabas.",
     acento: "#BEF264",
   },
+  agenteia: {
+    titulo: "MODO AGENTE",
+    volanta: "La mente, superpotente — y creadora",
+    imagen: "/ilustraciones/agente.jpg",
+    texto:
+      "El salto definitivo de la IA de Vanguard: deja de responder y empieza a CREAR dentro de la plataforma. El agente acepta una misión —un quiz, una cronología clasificada, un verdad o mentira, un escenario ¿Y SI...?, un informe neuronal— y la ejecuta EN DIRECTO ante ti: investiga el frente del Karsk que se mueve cada noche, abre expedientes REALES desclasificados por la CIA y el FBI, corre el motor del Laboratorio con sus 24 mundos, se somete a la auditoría de acero y publica su obra firmada: juegos al arcade, escenarios a la Galería del Destino, informes con fuentes citadas. Con pasaporte, la obra sale a tu nombre y la recompensa es tuya; sin pasaporte, firma MENTE·VANGUARD. Misma semilla, misma obra: todo el planeta ve lo que el agente creó hoy.",
+    acento: "#BEF264",
+  },
   laboratorio: {
     titulo: "LABORATORIO DEL DESTINO",
     volanta: "¿Y SI...? — la pregunta que mueve frentes enteros",

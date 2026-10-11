@@ -12,7 +12,7 @@ import { SECTIONS } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -210,6 +210,18 @@ export function SectionSearch({
     else if (e.key === "Enter" && results[idx]) { e.preventDefault(); pick(results[idx]); }
   };
 
+  // v103.0 VOY A TENER SUERTE (copiado exacto del botón de Google, honesto):
+  // un destino determinista del día del índice total — el mismo para todo el
+  // planeta, cambia a medianoche UTC. Nada random por click: es el sitio del día.
+  const suerte = useMemo(() => {
+    const tabs = totalIndex.filter((it) => it.kind === "tab");
+    if (tabs.length === 0) return null;
+    const hoy = new Date().toISOString().slice(0, 10);
+    let h = 2166136261;
+    for (let i = 0; i < hoy.length; i++) { h ^= hoy.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return { destino: tabs[Math.abs(h) % tabs.length], fecha: hoy };
+  }, [totalIndex]);
+
   useEffect(() => {
     if (!open) return;
     const el = listRef.current?.querySelector(`[data-i="${idx}"]`);
@@ -313,6 +325,21 @@ export function SectionSearch({
             <p className="px-3 py-6 text-center text-sm text-zinc-500">
               Nada con «{q}» en el índice. Prueba con otra palabra.
             </p>
+          )}
+
+          {/* v103.0: los dos botones de la portada de Google, en la paleta */}
+          {q.trim() === "" && suerte && (
+            <div className="flex items-center justify-center gap-2 px-3 pb-2 pt-1">
+              <button
+                onClick={() => pick(suerte.destino)}
+                className="px-3 py-1.5 rounded-md border border-zinc-700 bg-zinc-900 text-[11px] font-mono uppercase tracking-widest text-zinc-300 hover:border-amber-hud hover:text-amber transition-colors flex items-center gap-1.5"
+              >
+                <Dices className="w-3.5 h-3.5" aria-hidden /> Voy a tener suerte
+              </button>
+              <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-600 max-w-40 truncate">
+                hoy: {suerte.destino.short} · cambia a 00:00 UTC
+              </span>
+            </div>
           )}
         </div>
 

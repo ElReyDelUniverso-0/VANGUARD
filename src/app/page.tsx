@@ -247,6 +247,8 @@ const GooglesPanel = dynamic(() => import("@/components/vanguard/panels/googles-
 const ImagenesPanel = dynamic(() => import("@/components/vanguard/panels/imagenes-panel").then((m) => m.ImagenesPanel), { ssr: false, loading: PanelSkeleton });
 // v99.0 MENTE VIVA: LA MENTE — el cerebro central (pulso autónomo + charla + expedientes)
 const MentePanel = dynamic(() => import("@/components/vanguard/panels/mente-panel").then((m) => m.MentePanel), { ssr: false, loading: PanelSkeleton });
+// v103.0 MODO AGENTE: la IA superpotente que CREA dentro de Vanguard (juegos, escenarios, informes)
+const AgenteIaPanel = dynamic(() => import("@/components/vanguard/panels/agente-ia-panel").then((m) => m.AgenteIaPanel), { ssr: false, loading: PanelSkeleton });
 
 // v95.0 EXPEDIENTE TOTAL: grafo mundial, espejo y máquina del tiempo
 const GrafoPanel = dynamic(() => import("@/components/vanguard/panels/grafo-panel").then((m) => m.GrafoPanel), { ssr: false, loading: PanelSkeleton });
@@ -579,6 +581,7 @@ export default function Home() {
         {tab === "tribunal" && <TribunalPanel />}
         {tab === "alianzas" && <AlianzasPanel />}
         {tab === "agente" && <AgentePanel />}
+        {tab === "agenteia" && <AgenteIaPanel />}
         {tab === "gancho" && <HooksPanel />}
         {tab === "ranking" && <RankingPanel />}
         {tab === "foros" && <ForumPanel />}
