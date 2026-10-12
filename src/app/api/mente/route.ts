@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { iaParalela, primerJSON, type Msg } from "@/lib/ia-gateway";
+import { iaParalela, primerJSON, gatewaySospechosoCaido, type Msg } from "@/lib/ia-gateway";
 import { busquedaAlternativa } from "@/lib/investiga-rss";
 import { createZAI } from "@/lib/zai-server";
 import { evaluarNeuronal, predecir } from "@/lib/neurona-core";
@@ -238,7 +238,7 @@ export async function POST(req: Request) {
       ];
       // v105.0 CARRERA 1∥3 — la mente responde de verdad en sandbox Y en producción
       try {
-        const raw = await conDeadline(iaParalela(SYSTEM_DIALOGO, contexto, DEADLINE_IA), DEADLINE_IA + 1500);
+        const raw = await conDeadline(iaParalela(SYSTEM_DIALOGO, contexto, 24_000), 25_500);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.respuesta === "string" && json.respuesta) {
           respuesta = clean(json.respuesta, 900);
@@ -269,24 +269,28 @@ export async function POST(req: Request) {
       }
       const bucket = pulsoActual();
       let hallazgos: { titulo: string; medio: string; fecha: string; fragmento: string }[] = [];
-      try {
-        const zai = await createZAI();
-        const res = (await conDeadline(
-          zai.functions.invoke("web_search", { query: pregunta, num: 8, recency_days: 45 }),
-          15_000
-        )) as { name?: string; snippet?: string; host_name?: string; date?: string }[];
-        if (Array.isArray(res)) {
-          hallazgos = res
-            .filter((r) => r && (r.name || r.snippet))
-            .slice(0, 8)
-            .map((r) => ({
-              titulo: clean(r.name, 200),
-              medio: clean(r.host_name, 80).replace(/^www\./, ""),
-              fecha: clean(r.date, 40),
-              fragmento: clean(r.snippet, 400),
-            }));
-        }
-      } catch { /* la red no respondió: seguimos con honestidad */ }
+      // v105.0: si el gateway ya está marcado caído, su web_search también lo está —
+      // directo al RSS real de medios (ahorra 9-15s en producción)
+      if (!gatewaySospechosoCaido()) {
+        try {
+          const zai = await createZAI();
+          const res = (await conDeadline(
+            zai.functions.invoke("web_search", { query: pregunta, num: 8, recency_days: 45 }),
+            9_000
+          )) as { name?: string; snippet?: string; host_name?: string; date?: string }[];
+          if (Array.isArray(res)) {
+            hallazgos = res
+              .filter((r) => r && (r.name || r.snippet))
+              .slice(0, 8)
+              .map((r) => ({
+                titulo: clean(r.name, 200),
+                medio: clean(r.host_name, 80).replace(/^www\./, ""),
+                fecha: clean(r.date, 40),
+                fragmento: clean(r.snippet, 400),
+              }));
+          }
+        } catch { /* la red no respondió: seguimos con honestidad */ }
+      }
       // v105.0 vía 3 de hallazgos: Google News RSS — alcanzable desde producción
       if (hallazgos.length === 0) {
         const alt = await busquedaAlternativa(pregunta, 8);
@@ -304,9 +308,9 @@ export async function POST(req: Request) {
       let confianza = 0;
       const user = `PREGUNTA DEL OPERADOR: ${pregunta}\n\nHALLAZGOS WEB:\n${material}`;
       let json: Record<string, unknown> | null = null;
-      // v105.0 CARRERA 1∥3 — síntesis con el primer núcleo que responda
+      // v105.0 CARRERA 1∥3 — síntesis con el primer núcleo que responda (26s)
       try {
-        const raw = await conDeadline(iaParalela(SYSTEM_INVESTIGA, user, DEADLINE_IA), DEADLINE_IA + 1500);
+        const raw = await conDeadline(iaParalela(SYSTEM_INVESTIGA, user, 26_000), 27_500);
         json = raw ? primerJSON(raw) : null;
       } catch { /* vías 1+3 colapsadas */ }
       if (!json) {

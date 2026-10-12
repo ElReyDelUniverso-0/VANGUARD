@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createZAI } from "@/lib/zai-server";
-import { iaParalela, primerJSON } from "@/lib/ia-gateway";
+import { iaParalela, primerJSON, gatewaySospechosoCaido } from "@/lib/ia-gateway";
 import { busquedaAlternativa } from "@/lib/investiga-rss";
 
 // v105.0 LA REDACCIÓN — la sala de lectura de Vanguard.
@@ -107,12 +107,12 @@ function conDeadline<T>(p: Promise<T>, ms: number): Promise<T> {
 }
 const DEADLINE_IA = 20_000;
 
-async function llmJSON(system: string, user: string): Promise<Record<string, unknown> | null> {
+async function llmJSON(system: string, user: string, ms = 24_000): Promise<Record<string, unknown> | null> {
   // v105.0 CARRERA 1∥3: gateway privado y núcleo público a la vez; si ambos
   // colapsan (raro), el SDK lo intenta 8s. Nunca más 40s de cuelgues muertos.
   let raw = "";
   try {
-    raw = await conDeadline(iaParalela(system, user, DEADLINE_IA), DEADLINE_IA + 1500);
+    raw = await conDeadline(iaParalela(system, user, ms), ms + 1500);
   } catch { /* vía 2 */ }
   if (!raw) {
     try {
@@ -199,24 +199,28 @@ export async function GET(req: Request) {
       return NextResponse.json({ ok: true, cache: true, ...cache });
     }
     let hallazgos: { name: string; snippet: string; host: string; date: string }[] = [];
-    try {
-      const zai = await createZAI();
-      const res = (await conDeadline(
-        zai.functions.invoke("web_search", { query: q, num: 8, recency_days: 45 }),
-        14_000
-      )) as { name?: string; snippet?: string; host_name?: string; date?: string }[];
-      if (Array.isArray(res)) {
-        hallazgos = res
-          .filter((r) => r && (r.name || r.snippet))
-          .slice(0, 8)
-          .map((r) => ({
-            name: clean(r.name, 200),
-            snippet: clean(r.snippet, 400),
-            host: clean(r.host_name, 80).replace(/^www\./, ""),
-            date: clean(r.date, 40),
-          }));
-      }
-    } catch { /* la red no respondió: seguimos */ }
+    // v105.0: si el gateway ya está marcado caído en esta instancia, su búsqueda
+    // web también está bloqueada — vamos directo al RSS real (ahorra 9-15s)
+    if (!gatewaySospechosoCaido()) {
+      try {
+        const zai = await createZAI();
+        const res = (await conDeadline(
+          zai.functions.invoke("web_search", { query: q, num: 8, recency_days: 45 }),
+          9_000
+        )) as { name?: string; snippet?: string; host_name?: string; date?: string }[];
+        if (Array.isArray(res)) {
+          hallazgos = res
+            .filter((r) => r && (r.name || r.snippet))
+            .slice(0, 8)
+            .map((r) => ({
+              name: clean(r.name, 200),
+              snippet: clean(r.snippet, 400),
+              host: clean(r.host_name, 80).replace(/^www\./, ""),
+              date: clean(r.date, 40),
+            }));
+        }
+      } catch { /* la red no respondió: seguimos */ }
+    }
     // v105.0 vía 3 de hallazgos: Google News RSS — alcanzable desde producción
     if (hallazgos.length === 0) {
       const alt = await busquedaAlternativa(q, 8);
@@ -227,7 +231,7 @@ export async function GET(req: Request) {
       ? hallazgos.map((h, i) => `[${i + 1}] ${h.name}\nMEDIO: ${h.host}\nFECHA: ${h.date || "sin fecha"}\nFRAGMENTO: ${h.snippet}`).join("\n\n")
       : "(la búsqueda web no devolvió hallazgos en este pulso)";
 
-    const json = await llmJSON(SYSTEM_INVESTIGA, `PREGUNTA DEL OPERADOR: ${q}\n\nHALLAZGOS WEB:\n${material}`);
+    const json = await llmJSON(SYSTEM_INVESTIGA, `PREGUNTA DEL OPERADOR: ${q}\n\nHALLAZGOS WEB:\n${material}`, 26_000);
     if (json && typeof json.respuesta === "string" && json.respuesta) {
       const out = {
         ia: true,
