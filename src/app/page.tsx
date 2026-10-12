@@ -280,6 +280,10 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   // v47.0 BUSCADOR DE SECCIONES (paleta de comandos) — nada queda enterrado
   const [searchOpen, setSearchOpen] = useState(false);
+  // v108.0 MODO INMERSIÓN — pantalla completa para VER TODO: el menú de arriba
+  // se aparta (mandato: "un modo pantalla completa, que el menú de arriba opaque")
+  const [inmersion, setInmersion] = useState(false);
+  const inmersionRef = useRef(false);
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
@@ -521,6 +525,80 @@ export default function Home() {
     };
   }, [handleTabChange]);
 
+  // ===== v108.0 MODO INMERSIÓN + TECLA F + DUPLICAR PESTAÑA =====
+  // El fullscreen nativo es el mejor esfuerzo (algunos navegadores lo bloquean
+  // en iframes); el MODO INMERSIÓN siempre funciona: aparta la cabecera, la
+  // barra Google y la franja, y deja el contenido solo en pantalla.
+  const alternarInmersion = useCallback(() => {
+    const next = !inmersionRef.current;
+    inmersionRef.current = next;
+    setInmersion(next);
+    try {
+      if (next && !document.fullscreenElement) {
+        const p = document.documentElement.requestFullscreen?.();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      } else if (!next && document.fullscreenElement) {
+        const p = document.exitFullscreen?.();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      }
+    } catch {}
+    if (next) toast(t("inmi.entrar"), { description: t("inmi.hint") });
+    sfx.tab();
+  }, [t]);
+
+  // Esc sale de la inmersión; si el usuario sale del fullscreen nativo con Esc,
+  // fullscreenchange mantiene el estado coherente.
+  useEffect(() => {
+    if (!inmersion) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        inmersionRef.current = false;
+        setInmersion(false);
+      }
+    };
+    const onFs = () => {
+      if (!document.fullscreenElement && inmersionRef.current) {
+        inmersionRef.current = false;
+        setInmersion(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("fullscreenchange", onFs);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("fullscreenchange", onFs);
+    };
+  }, [inmersion]);
+
+  // Tecla F (fuera de campos de texto): entrar/salir de pantalla completa
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "f" || e.ctrlKey || e.metaKey || e.altKey) return;
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      alternarInmersion();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [alternarInmersion]);
+
+  // v108: duplicar pestaña como el navegador (respeta el tope honesto de 9)
+  const duplicarPestana = useCallback(
+    (k: TabKey) => {
+      if (pestanas.length >= MAX_PESTANAS) {
+        toast(t("cromo.tope"), { description: `${MAX_PESTANAS} ${t("cromo.topeDesc")}` });
+        return;
+      }
+      const i = pestanas.indexOf(k);
+      if (i < 0) return;
+      const n = [...pestanas];
+      n.splice(i + 1, 0, k);
+      setPestanas(n);
+      sfx.tab();
+    },
+    [pestanas, t]
+  );
+
   return (
     <div className="min-h-screen flex flex-col relative z-10">
       {/* v16 HERMOSA: aurora cinematográfica + partículas + viñeta */}
@@ -534,6 +612,10 @@ export default function Home() {
       <div className="particles-layer" aria-hidden />
       {/* v72.0: intro cinematográfica de vuelta — letras realistas + luna llena */}
       <IntroCinematica />
+      {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
+          apartan (display:contents cuando no — cero cajas fantasma) para que
+          el contenido mande y se vea TODO */}
+      <div className={inmersion ? "hidden" : "contents"}>
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -554,6 +636,8 @@ export default function Home() {
         onNueva={abrirNueva}
         onOpenMenu={() => setMenuOpen(true)}
         onOpenSearch={() => setSearchOpen(true)}
+        onDuplicar={duplicarPestana}
+        onInmersion={alternarInmersion}
       />
       {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
       <LiveTitle />
@@ -561,6 +645,33 @@ export default function Home() {
       {/* v67.0 EL HANGAR: capa de crisis global + easter eggs vivos en toda la app */}
       <ProtocoloRojo />
       <EasterEggs />
+      </div>
+
+      {/* v108: píldora flotante para salir de la inmersión — siempre a mano */}
+      {inmersion && (
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed top-2 left-1/2 -translate-x-1/2 z-[70]"
+        >
+          <button
+            onClick={alternarInmersion}
+            data-salir-inmi108
+            title={t("inmi.salir")}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-full border border-green-hud/60 bg-[#0B0B12]/92 backdrop-blur-md text-green-hud font-mono text-[10px] font-bold uppercase tracking-widest shadow-[0_12px_40px_-12px_rgba(0,0,0,0.9)] hover:bg-green-hud/20 transition-colors"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <polyline points="4 14 10 14 10 20" />
+              <polyline points="20 10 14 10 14 4" />
+              <line x1="14" y1="10" x2="21" y2="3" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            {t("inmi.salir")}
+            <span className="opacity-50 normal-case tracking-normal">Esc</span>
+          </button>
+        </motion.div>
+      )}
 
       {/* v96.0 GOOGLE VIVO: barrido cinematográfico al cambiar de mundo + motor de animación global */}
       <TransicionCine tabKey={tab} label={APP_VERSION_LABEL} />
@@ -782,7 +893,7 @@ export default function Home() {
         </div>
       </footer>
 
-      <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} />
+      <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
       <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
       <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} />

@@ -24,6 +24,7 @@ import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { APP_VERSION_LABEL } from "@/lib/version";
+import { PortadaMundo, VitrinaSala } from "@/components/vanguard/portadas";
 
 // Atajos de cortesía para el operador recién llegado (el mundo de Vanguard en 8)
 const ATAJOS_INICIALES: TabKey[] = [
@@ -197,17 +198,15 @@ export function NuevaPanel() {
           {descubiertos.map((k) => {
             const def = TABS[k];
             if (!def) return null;
-            const acc = accentOfSection(sectionOfTab(k).key);
             return (
               <button
                 key={k}
                 onClick={() => irA(k)}
-                className="group flex items-center gap-2 px-3 py-2 rounded-lg border border-border/60 bg-secondary/30 hover:bg-secondary/60 hover:border-amber-hud/50 transition-colors"
+                title={tabLabel(lang, k, def.label)}
+                className="transition-transform duration-200 hover:scale-[1.04]"
               >
-                <span style={{ color: acc }} className="shrink-0">{def.icon}</span>
-                <span className="text-[11px] font-bold uppercase tracking-wide text-foreground/90 group-hover:text-foreground">
-                  {tabLabel(lang, k, def.label).split(" (")[0]}
-                </span>
+                {/* v108: los recientes se ven — mini-portada real de cada sala */}
+                <VitrinaSala tab={k} modo="card" className="h-16 w-24" />
               </button>
             );
           })}
@@ -235,6 +234,8 @@ export function NuevaPanel() {
                 className="group text-left p-3 rounded-xl border bg-[#0b0b12]/70 hover:bg-[#101018]/90 transition-colors v106-mundo"
                 style={{ borderColor: `${acc}33` }}
               >
+                {/* v108: cada mundo se muestra — portada real del lugar en CSS */}
+                <PortadaMundo mundo={s.key} className="h-16 w-full rounded-lg border mb-2" />
                 <div className="flex items-center gap-2">
                   <span
                     className="w-8 h-8 rounded-lg flex items-center justify-center border shrink-0"

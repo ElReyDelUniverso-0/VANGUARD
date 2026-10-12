@@ -2545,3 +2545,63 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
   .v107-menu, .v107-chip { animation: none !important; }
   .v107-levanta { box-shadow: 0 0 0 1px rgba(255, 201, 77, 0.2); }
 }
+
+/* ═══════════ v108.0 LA CIUDAD VIVA ═══════════
+   Portadas reales en CSS (el lugar en sí, cero IA) + customización profunda de
+   la franja + modo inmersión. Solo transform/opacity — 60 FPS garantizado. */
+
+/* estrellas titilantes de todas las portadas */
+.v108-estrella { animation: v108Titila 3.2s ease-in-out infinite; }
+@keyframes v108Titila {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50%      { opacity: 1; transform: scale(1.15); }
+}
+
+/* ventanas de la ciudad que se encienden y apagan — la ciudad respira */
+.v108-ventana { animation: v108Ventana 4.5s ease-in-out infinite; }
+@keyframes v108Ventana {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 0.25; }
+}
+
+/* latido de halos y pines (radar, monedas, núcleo) */
+.v108-latido { animation: v108Latido 2.4s ease-in-out infinite; }
+@keyframes v108Latido {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(1.25); }
+}
+
+/* ondas de la torre de emisión, banderas y monedas */
+.v108-onda { animation: v108Onda 2.6s ease-out infinite; }
+@keyframes v108Onda {
+  0%   { opacity: 0.9; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+span.v108-onda { transform-origin: center; }
+
+/* haz de escaneo del hangar — solo transform (60 FPS) */
+.v108-escaneo { animation: v108Escaneo 3.4s ease-in-out infinite; }
+@keyframes v108Escaneo {
+  0%, 100% { transform: translateY(-100%); opacity: 0.9; }
+  50%      { transform: translateY(100%); opacity: 0.4; }
+}
+
+/* vista previa de pestaña: entra con elevación */
+.v108-previa { animation: v108Previa 0.16s ease-out both; transform-origin: top center; }
+@keyframes v108Previa {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* píldora de salida de inmersión */
+.v108-pill { animation: v108Pill 0.22s ease-out both; }
+@keyframes v108Pill {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── ACCESIBILIDAD v108: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v108-estrella, .v108-ventana, .v108-latido, .v108-onda, .v108-escaneo,
+  .v108-previa, .v108-pill { animation: none !important; }
+}

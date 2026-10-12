@@ -9,6 +9,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { SECTIONS } from "./tab-nav";
+import { VitrinaSala } from "./portadas";
+import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
@@ -307,7 +309,12 @@ export function SectionSearch({
                 i === idx ? "bg-amber-hud/30 border border-amber-hud/60" : "border border-transparent hover:bg-secondary/40"
               )}
             >
-              <span className="shrink-0 text-amber">{a.icon}</span>
+              {/* v108: la sala se VE antes de entrar — mini-portada real en CSS */}
+              {a.kind === "tab" ? (
+                <VitrinaSala tab={a.key as TabKey} modo="mini" className="h-10 w-14 shrink-0 hidden sm:flex" />
+              ) : (
+                <span className="shrink-0 text-amber">{a.icon}</span>
+              )}
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13px] font-bold text-zinc-100">
                   <Resaltar texto={tabLabel(lang, a.key, a.label)} q={q} />

@@ -1,19 +1,17 @@
 "use client";
 
-// v107.0 GRUPOS DE CROMO — la franja de pestañas se vuelve Chrome completo.
-// Mandato del comandante: "reordena las pestañas arrastrándolas, grupos de
-// pestañas con color" — sobre la franja v106 PESTAÑAS DE CROMO.
-// NUEVO:
-//  ① ARRASTRAR PARA REORDENAR: ratón agarra y mueve; móvil/lápiz mantén pulsada
-//    0.45s (vibra) y arrastrala — el scroll horizontal del dedo sigue intacto
-//    (bloqueo touchmove solo cuando la pestaña ya se levantó).
-//  ② GRUPOS DE PESTAÑAS CON COLOR como Chrome: clic derecho (o botón ⋮) →
-//    menú de la pestaña → elige color → chip con nombre, conteo y color;
-//    clic en el chip contrae/expande, doble clic renombra, clic derecho
-//    recolorea/desagrupa/cierra; soltar una pestaña pegada a un grupo la integra.
-//  ③ CERRAR LAS DEMÁS + REABRIR PESTAÑA CERRADA (menú y Ctrl+Shift+T).
-// Rendimiento: mismo contrato 60 FPS — Reorder anima con transform/layout, la
-// píldora activa sigue viajando con layoutId; reduced-motion apaga todo.
+// v108.0 LA CIUDAD VIVA — la franja de cromo gana CUSTOMIZACIÓN PROFUNDA.
+// Mandato: "que uno pueda personalizar aún más las pestañas, detalles nuevos
+// e innovaciones" + "haz un modo pantalla completa".
+// NUEVO sobre v107 (arrastre + grupos con color):
+//  ① FIJAR PESTAÑA (pin): zona fija a la izquierda, solo icono, × oculto.
+//  ② RENOMBRAR PESTAÑA (alias): nombre propio que vive en tu navegador.
+//  ③ DUPLICAR PESTAÑA como el navegador de verdad.
+//  ④ VISTA PREVIA AL PASAR EL RATÓN: mini-portada real de la sala (CSS).
+//  ⑤ CTRL+TAB y CTRL+RUEDA ciclan entre pestañas abiertas.
+//  ⑥ BOTÓN DE PANTALLA COMPLETA / INMERSIÓN (con la tecla F en page.tsx).
+// Rendimiento: mismo contrato 60 FPS — solo transform/opacity; reduced-motion
+// apaga todo.
 
 import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -26,6 +24,11 @@ import {
   ChevronLeft,
   ChevronRight,
   MoreVertical,
+  Pin,
+  PinOff,
+  Copy,
+  Maximize2,
+  Type,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -37,6 +40,7 @@ import {
 } from "@/components/vanguard/tab-nav";
 import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
 import { useGameStore } from "@/lib/game-store";
+import { VitrinaSala } from "@/components/vanguard/portadas";
 
 // Límite honesto de pestañas abiertas (herencia v106): al llegar a 9 avisamos.
 export const MAX_PESTANAS = 9;
@@ -55,8 +59,14 @@ export const COLORES_GRUPO = [
 
 const LS_GRUPOS = "vg-cromo-grupos-v107";
 const LS_GRUPO_DE = "vg-cromo-grupo-de-v107";
+// v108: fijadas + alias — la customización profunda vive en tu navegador
+const LS_FIJADAS = "vg-cromo-fijadas-v108";
+const LS_ALIAS = "vg-cromo-alias-v108";
 
 export type GrupoCromo = { id: string; nombre: string; color: string; colapsada: boolean };
+
+// v108: estado de la vista previa al pasar el ratón (portal, solo ratón)
+type Previa108 = { k: TabKey; left: number; top: number; abajo: boolean } | null;
 
 // ---------- MENÚ DE PESTAÑA / GRUPO (portal: la franja tiene backdrop-blur,
 // que crearía un containing block y rompería el position:fixed) ----------
@@ -117,21 +127,29 @@ function PestanaItem({
   esActiva,
   chip,
   grupoColor,
+  fijada,
+  alias,
   onElegir,
   onCerrar,
   onMenu,
   onAgarre,
   onSoltar,
+  onPrevisualizar,
+  onSalirPrevia,
 }: {
   k: TabKey;
   esActiva: boolean;
   chip?: React.ReactNode;
   grupoColor?: string;
+  fijada?: boolean;
+  alias?: string;
   onElegir: (k: TabKey) => void;
   onCerrar: (k: TabKey) => void;
   onMenu: (k: TabKey, x: number, y: number) => void;
   onAgarre: () => void;
   onSoltar: (k: TabKey) => void;
+  onPrevisualizar?: (k: TabKey, el: HTMLElement) => void;
+  onSalirPrevia?: () => void;
 }) {
   const { t, lang } = useT();
   const def = TABS[k];
@@ -142,6 +160,20 @@ function PestanaItem({
   const inicioRef = useRef<{ x: number; y: number } | null>(null);
   const levantaRef = useRef(false);
   const [levanta, setLevanta] = useState(false);
+  // v108: vista previa al pasar el ratón (solo ratón real: los táctiles son
+  // "pointer: coarse" — en ratón/desktop/lápiz fino la preview es bienvenida)
+  const hoverRef = useRef<number | null>(null);
+  const puedeHoverRef = useRef(false);
+  useEffect(() => {
+    puedeHoverRef.current = !(window.matchMedia?.("(pointer: coarse)").matches ?? false);
+  }, []);
+  const clearHover = () => {
+    if (hoverRef.current !== null) {
+      clearTimeout(hoverRef.current);
+      hoverRef.current = null;
+    }
+  };
+  useEffect(() => clearHover, []);
 
   // táctil: mientras la pestaña esté levantada, el dedo NO hace scroll nativo
   // (listener no pasivo montado una vez, decide con ref viva)
@@ -204,8 +236,13 @@ function PestanaItem({
       e.stopPropagation();
       return;
     }
+    clearHover();
+    onSalirPrevia?.();
     onElegir(k);
   };
+
+  const etiqueta = (def ? tabLabel(lang, k, def.label) : k).split(" (")[0];
+  const titulo = alias || etiqueta;
 
   return (
     <Reorder.Item
@@ -229,7 +266,21 @@ function PestanaItem({
       onClick={onClick}
       onContextMenu={(e) => {
         e.preventDefault();
+        clearHover();
+        onSalirPrevia?.();
         onMenu(k, e.clientX, e.clientY);
+      }}
+      onMouseEnter={() => {
+        if (!puedeHoverRef.current) return;
+        clearHover();
+        hoverRef.current = window.setTimeout(() => {
+          hoverRef.current = null;
+          if (itemRef.current) onPrevisualizar?.(k, itemRef.current);
+        }, 420);
+      }}
+      onMouseLeave={() => {
+        clearHover();
+        onSalirPrevia?.();
       }}
       initial={{ opacity: 0, scale: 0.88, y: 6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -257,10 +308,11 @@ function PestanaItem({
             />
           )}
           <button
-            title={t("grupo.arrastre")}
+            title={fijada ? `${t("m108.fijada")}: ${titulo}` : t("grupo.arrastre")}
             aria-current={esActiva ? "page" : undefined}
             className={cn(
               "group relative z-10 flex items-center gap-1.5 h-8 pl-2.5 rounded-t-[10px] font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wide whitespace-nowrap transition-colors max-w-[168px] sm:max-w-[190px]",
+              fijada && "pl-0 pr-0 w-9 justify-center max-w-none",
               esActiva
                 ? "text-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-white/[0.045]"
@@ -270,12 +322,14 @@ function PestanaItem({
             {/* favicon del mundo: punto del color de la sección */}
             <span
               className={cn("w-2 h-2 rounded-full shrink-0", esActiva && "vg-acc-dot")}
-              style={{ backgroundColor: acc, boxShadow: esActiva ? `0 0 8px ${acc}` : `${acc}55` }}
+              style={{ backgroundColor: fijada ? (grupoColor ?? acc) : acc, boxShadow: esActiva ? `0 0 8px ${fijada ? (grupoColor ?? acc) : acc}` : `${acc}55` }}
             />
-            <span className="truncate">
-              <span className="sm:hidden">{TAB_SHORTS[lang]?.[k] ?? def?.short ?? ""}</span>
-              <span className="hidden sm:inline truncate">{(def ? tabLabel(lang, k, def.label) : k).split(" (")[0]}</span>
-            </span>
+            {!fijada && (
+              <span className="truncate">
+                <span className="sm:hidden">{TAB_SHORTS[lang]?.[k] ?? def?.short ?? ""}</span>
+                <span className="hidden sm:inline truncate">{titulo}</span>
+              </span>
+            )}
             {/* ⋮ abre el menú de la pestaña (grupos, cerrar las demás, reabrir) */}
             <span
               role="button"
@@ -304,31 +358,34 @@ function PestanaItem({
             >
               <MoreVertical className="w-2.5 h-2.5" />
             </span>
-            {/* la × cierra la pestaña — como el navegador, nunca oculta */}
-            <span
-              role="button"
-              tabIndex={0}
-              aria-label={`${t("cromo.cerrar")}: ${(def ? tabLabel(lang, k, def.label) : k).split(" (")[0]}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onCerrar(k);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
+            {/* la × cierra la pestaña — en las FIJADAS se esconde (como Chrome):
+                se cierra desde el menú ⋮ */}
+            {!fijada && (
+              <span
+                role="button"
+                tabIndex={0}
+                aria-label={`${t("cromo.cerrar")}: ${titulo}`}
+                onClick={(e) => {
                   e.stopPropagation();
                   onCerrar(k);
-                }
-              }}
-              className={cn(
-                "ml-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors",
-                esActiva
-                  ? "hover:bg-white/15 text-muted-foreground hover:text-foreground"
-                  : "opacity-0 group-hover:opacity-100 hover:bg-white/10 focus:opacity-100"
-              )}
-            >
-              <X className="w-2.5 h-2.5" />
-            </span>
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onCerrar(k);
+                  }
+                }}
+                className={cn(
+                  "ml-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                  esActiva
+                    ? "hover:bg-white/15 text-muted-foreground hover:text-foreground"
+                    : "opacity-0 group-hover:opacity-100 hover:bg-white/10 focus:opacity-100"
+                )}
+              >
+                <X className="w-2.5 h-2.5" />
+              </span>
+            )}
             {/* subrayado del acento bajo la pestaña activa */}
             {esActiva && (
               <span
@@ -448,7 +505,7 @@ function ChipGrupo({
 
 // ---------- LA FRANJA DE CROMO v107 ----------
 type Menu107 =
-  | { modo: "pestana"; tab: TabKey; x: number; y: number; sub: null | "nuevo" | "existente" }
+  | { modo: "pestana"; tab: TabKey; x: number; y: number; sub: null | "nuevo" | "existente" | "alias" }
   | { modo: "grupo"; gid: string; x: number; y: number; sub: null };
 
 export function ChromeTabs({
@@ -461,6 +518,8 @@ export function ChromeTabs({
   onNueva,
   onOpenMenu,
   onOpenSearch,
+  onDuplicar,
+  onInmersion,
 }: {
   pestanas: TabKey[];
   activa: TabKey;
@@ -471,6 +530,8 @@ export function ChromeTabs({
   onNueva: () => void;
   onOpenMenu?: () => void;
   onOpenSearch?: () => void;
+  onDuplicar?: (k: TabKey) => void;
+  onInmersion?: () => void;
 }) {
   const { t, lang } = useT();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -487,6 +548,14 @@ export function ChromeTabs({
   const cerradas = useRef<TabKey[]>([]);
   const [cerradasN, setCerradasN] = useState(0); // para leer en render sin refs
   const ordenAgarreRef = useRef("");
+  const zonaAgarreRef = useRef<"fij" | "lib">("lib");
+
+  // ----- v108: FIJADAS + ALIAS (customización profunda de la franja) -----
+  const [fijadas, setFijadas] = useState<TabKey[]>([]);
+  const [alias, setAlias] = useState<Record<string, string>>({});
+  const [aliasTmp, setAliasTmp] = useState("");
+  // v108: vista previa al pasar el ratón
+  const [previa, setPrevia] = useState<Previa108>(null);
 
   // espejos vivos para callbacks estables (drag end): se actualizan en EFECTO
   // (el compilador de React prohíbe tocar refs durante el render) y, para el
@@ -495,6 +564,8 @@ export function ChromeTabs({
   const grupoDeRef = useRef(grupoDe);
   const gruposRef = useRef(grupos);
   const elegirRef = useRef(onElegir);
+  const activaRef = useRef(activa);
+  const fijadasRef = useRef(fijadas);
   useEffect(() => {
     pestanasRef.current = pestanas;
   }, [pestanas]);
@@ -507,6 +578,12 @@ export function ChromeTabs({
   useEffect(() => {
     elegirRef.current = onElegir;
   }, [onElegir]);
+  useEffect(() => {
+    activaRef.current = activa;
+  }, [activa]);
+  useEffect(() => {
+    fijadasRef.current = fijadas;
+  }, [fijadas]);
 
   // v48.0 BRÚJULA: el progreso del Explorador sobrevive en la franja
   const visited = useGameStore((s) => s.visitedTabs);
@@ -543,6 +620,28 @@ export function ChromeTabs({
             setGrupoDe(limpio);
           }
         }
+        // v108: fijadas (solo claves válidas)
+        const rawF = localStorage.getItem(LS_FIJADAS);
+        if (rawF) {
+          const arr = JSON.parse(rawF);
+          if (Array.isArray(arr)) {
+            setFijadas(arr.filter((k: unknown): k is TabKey => typeof k === "string" && k in TABS).slice(0, 4));
+          }
+        }
+        // v108: alias (nombre propio por pestaña)
+        const rawA = localStorage.getItem(LS_ALIAS);
+        if (rawA) {
+          const o = JSON.parse(rawA);
+          if (o && typeof o === "object" && !Array.isArray(o)) {
+            const limpio: Record<string, string> = {};
+            for (const [k, v] of Object.entries(o)) {
+              if (typeof k === "string" && typeof v === "string" && k in TABS && v.trim()) {
+                limpio[k] = v.trim().slice(0, 28);
+              }
+            }
+            setAlias(limpio);
+          }
+        }
       } catch {
         /* sin almacenamiento la franja vive sin grupos */
       }
@@ -551,7 +650,7 @@ export function ChromeTabs({
     return () => clearTimeout(id);
   }, []);
 
-  // ----- persistencia de grupos (solo tras hidratar) -----
+  // ----- persistencia de grupos + fijadas + alias (solo tras hidratar) -----
   useEffect(() => {
     if (!hidratadoRef.current) return;
     try {
@@ -559,6 +658,18 @@ export function ChromeTabs({
       localStorage.setItem(LS_GRUPO_DE, JSON.stringify(grupoDe));
     } catch {}
   }, [grupos, grupoDe]);
+  useEffect(() => {
+    if (!hidratadoRef.current) return;
+    try {
+      localStorage.setItem(LS_FIJADAS, JSON.stringify(fijadas));
+    } catch {}
+  }, [fijadas]);
+  useEffect(() => {
+    if (!hidratadoRef.current) return;
+    try {
+      localStorage.setItem(LS_ALIAS, JSON.stringify(alias));
+    } catch {}
+  }, [alias]);
 
   // limpieza: pertenencias de pestañas ya cerradas se reciclan (deferido —
   // el compilador prohíbe setState síncrono en el cuerpo del efecto)
@@ -573,6 +684,12 @@ export function ChromeTabs({
           else cambio = true;
         }
         return cambio ? next : prev;
+      });
+      // v108: las fijadas de pestañas cerradas también se purgan
+      setFijadas((prev) => {
+        const vivos = new Set(pestanas);
+        const next = prev.filter((k) => vivos.has(k));
+        return next.length === prev.length ? prev : next;
       });
     }, 0);
     return () => clearTimeout(id);
@@ -631,6 +748,81 @@ export function ChromeTabs({
     });
   };
 
+  // ----- v108: FIJAR / DESFIJAR — la zona fija vive al principio de la franja -----
+  const fijar = (k: TabKey) => {
+    const fij = new Set([...fijadasRef.current, k]);
+    const ps = pestanasRef.current;
+    const zonaFija = ps.filter((p) => fij.has(p));
+    const resto = ps.filter((p) => !fij.has(p));
+    onReordenar([...zonaFija, ...resto]);
+    pestanasRef.current = [...zonaFija, ...resto];
+    setFijadas(zonaFija);
+    quitarDeGrupo(k); // una pestaña fijada no pertenece a grupos (como Chrome)
+  };
+
+  const desfijar = (k: TabKey) => {
+    const fij = fijadasRef.current.filter((x) => x !== k);
+    const ps = pestanasRef.current;
+    const zonaFija = ps.filter((p) => fij.includes(p));
+    const libres = ps.filter((p) => !fij.includes(p) && p !== k);
+    const full = [...zonaFija, k, ...libres]; // sale justo tras la zona fija
+    onReordenar(full);
+    pestanasRef.current = full;
+    setFijadas(zonaFija);
+  };
+
+  // ----- v108: RENOMBRAR PESTAÑA (alias que vive en tu navegador) -----
+  const guardarAlias = (k: TabKey) => {
+    const nombre = aliasTmp.trim().slice(0, 28);
+    if (nombre) setAlias((a) => ({ ...a, [k]: nombre }));
+    else setAlias((a) => {
+      const n = { ...a };
+      delete n[k];
+      return n;
+    });
+  };
+
+  const quitarAlias = (k: TabKey) =>
+    setAlias((a) => {
+      const n = { ...a };
+      delete n[k];
+      return n;
+    });
+
+  // ----- v108: CTRL+TAB / CTRL+RUEDA — ciclar entre las pestañas ABIERTAS -----
+  const ciclar = (dir: number) => {
+    const ps = pestanasRef.current;
+    if (ps.length < 2) return;
+    const i = ps.indexOf(activaRef.current);
+    const next = ps[(i + dir + ps.length) % ps.length];
+    if (next) elegirRef.current(next);
+  };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Tab") {
+        e.preventDefault();
+        ciclar(e.shiftKey ? -1 : 1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Ctrl + rueda sobre la franja: pestaña siguiente/anterior (el navegador
+  // reserva Ctrl+Tab para sí mismo; la rueda siempre llega)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      ciclar(e.deltaY > 0 ? 1 : -1);
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
   const cerrarGrupo = (gid: string) => {
     const ks = miembrosDe(gid);
     cerradas.current = [...ks, ...cerradas.current].slice(0, 6);
@@ -676,7 +868,8 @@ export function ChromeTabs({
   }, []);
 
   // ----- reordenar + integración en grupo al soltar (como Chrome) -----
-  const handleAgarre = () => {
+  const handleAgarre = (zona: "fij" | "lib") => {
+    zonaAgarreRef.current = zona;
     ordenAgarreRef.current = pestanasRef.current.join("¦");
   };
 
@@ -685,6 +878,7 @@ export function ChromeTabs({
     ordenAgarreRef.current = "";
     const nuevas = pestanasRef.current;
     if (!antes || antes === nuevas.join("¦")) return; // no hubo reorden real
+    if (zonaAgarreRef.current === "fij") return; // la zona fija solo se reordena
     const i = nuevas.indexOf(k);
     if (i < 0) return;
     const gPrev = i > 0 ? grupoDeRef.current[nuevas[i - 1]] : undefined;
@@ -744,14 +938,18 @@ export function ChromeTabs({
   // ----- visibilidad según grupos contraídos -----
   const colapsadasSet = new Set(grupos.filter((g) => g.colapsada).map((g) => g.id));
   const visibles = pestanas.filter((k) => !colapsadasSet.has(grupoDe[k] ?? ""));
+  // v108: la ZONA FIJA va siempre delante — dos grupos de arrastre separados
+  const fijadasVis = visibles.filter((k) => fijadas.includes(k));
+  const libresVis = visibles.filter((k) => !fijadas.includes(k));
   const chipsContraidos = grupos.filter(
     (g) => g.colapsada && pestanas.some((k) => grupoDe[k] === g.id)
   );
 
   // el chip de cada grupo expandido va delante del PRIMER miembro visible
+  // (solo pestañas libres: una fijada nunca pertenece a un grupo)
   const chipAntesDe = new Map<string, GrupoCromo>();
   const vistos = new Set<string>();
-  for (const k of visibles) {
+  for (const k of libresVis) {
     const g = grupoDe[k];
     if (!g || vistos.has(g)) continue;
     vistos.add(g);
@@ -759,11 +957,74 @@ export function ChromeTabs({
     if (gr) chipAntesDe.set(k, gr);
   }
 
-  const reordenarVisibles = (nuevasVis: TabKey[]) => {
-    const cola = [...nuevasVis];
-    const full = pestanas.map((k) => (visibles.includes(k) ? (cola.shift() as TabKey) : k));
+  const reordenarFijadas = (nuevas: TabKey[]) => {
+    const full = [...nuevas, ...pestanas.filter((k) => !fijadas.includes(k))];
     pestanasRef.current = full; // handler (no render): el dragEnd lee orden fresco
     onReordenar(full);
+  };
+
+  const reordenarLibres = (nuevas: TabKey[]) => {
+    const full = [...pestanas.filter((k) => fijadas.includes(k)), ...nuevas];
+    pestanasRef.current = full;
+    onReordenar(full);
+  };
+
+  // v108: vista previa al pasar el ratón — bajo la pestaña, sujeta al viewport
+  const abrirPrevia = (k: TabKey, el: HTMLElement) => {
+    const r = el.getBoundingClientRect();
+    const ancho = 232;
+    const left = Math.max(8, Math.min(r.left, (window.innerWidth ?? 360) - ancho - 8));
+    const alto = 150;
+    const abajo = r.bottom + alto + 12 < (window.innerHeight ?? 640);
+    setPrevia({
+      k,
+      left,
+      top: abajo ? r.bottom + 6 : Math.max(8, r.top - alto - 6),
+      abajo,
+    });
+  };
+
+  const renderPestana = (k: TabKey) => {
+    const chip = chipAntesDe.get(k);
+    return (
+      <PestanaItem
+        key={k}
+        k={k}
+        esActiva={k === activa}
+        fijada={fijadas.includes(k)}
+        alias={alias[k]}
+        chip={
+          chip ? (
+            <ChipGrupo
+              grupo={chip}
+              miembros={miembrosDe(chip.id).length}
+              enRenombre={renombre === chip.id}
+              nombreTmp={nombreTmp}
+              setNombreTmp={setNombreTmp}
+              onToggle={() => toggleColapsar(chip.id)}
+              onRenombrarInicio={() => {
+                setNombreTmp(chip.nombre);
+                setRenombre(chip.id);
+              }}
+              onRenombrarFin={() => finRenombre(chip.id)}
+              onCancelarRenombre={() => setRenombre(null)}
+              onMenu={abrirMenuGrupo}
+            />
+          ) : undefined
+        }
+        grupoColor={chip?.color}
+        onElegir={onElegir}
+        onCerrar={(kk) => {
+          registrarCerrada(kk);
+          onCerrar(kk);
+        }}
+        onMenu={abrirMenuPestana}
+        onAgarre={() => handleAgarre(fijadas.includes(k) ? "fij" : "lib")}
+        onSoltar={handleSoltar}
+        onPrevisualizar={abrirPrevia}
+        onSalirPrevia={() => setPrevia(null)}
+      />
+    );
   };
 
   const updateArrows = () => {
@@ -841,55 +1102,28 @@ export function ChromeTabs({
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <div className="flex items-end gap-0.5 px-2 sm:px-3 pt-1.5 min-w-max">
+            {/* v108: ZONA FIJA — pestañas fijadas, solo icono, reordenables entre sí */}
+            {fijadasVis.length > 0 && (
+              <Reorder.Group
+                axis="x"
+                values={fijadasVis}
+                onReorder={reordenarFijadas}
+                as="div"
+                className="flex items-end gap-0.5 pr-1 mr-0.5 border-r border-white/10"
+              >
+                <AnimatePresence initial={false}>{fijadasVis.map(renderPestana)}</AnimatePresence>
+              </Reorder.Group>
+            )}
+
             {/* ARRASTRA Y REORDENA: Reorder.Group anima con transform puro */}
             <Reorder.Group
               axis="x"
-              values={visibles}
-              onReorder={reordenarVisibles}
+              values={libresVis}
+              onReorder={reordenarLibres}
               as="div"
               className="flex items-end gap-0.5"
             >
-              <AnimatePresence initial={false}>
-                {visibles.map((k) => {
-                  const chip = chipAntesDe.get(k);
-                  const miGrupo = chip;
-                  return (
-                    <PestanaItem
-                      key={k}
-                      k={k}
-                      esActiva={k === activa}
-                      chip={
-                        chip ? (
-                          <ChipGrupo
-                            grupo={chip}
-                            miembros={miembrosDe(chip.id).length}
-                            enRenombre={renombre === chip.id}
-                            nombreTmp={nombreTmp}
-                            setNombreTmp={setNombreTmp}
-                            onToggle={() => toggleColapsar(chip.id)}
-                            onRenombrarInicio={() => {
-                              setNombreTmp(chip.nombre);
-                              setRenombre(chip.id);
-                            }}
-                            onRenombrarFin={() => finRenombre(chip.id)}
-                            onCancelarRenombre={() => setRenombre(null)}
-                            onMenu={abrirMenuGrupo}
-                          />
-                        ) : undefined
-                      }
-                      grupoColor={miGrupo?.color}
-                      onElegir={onElegir}
-                      onCerrar={(kk) => {
-                        registrarCerrada(kk);
-                        onCerrar(kk);
-                      }}
-                      onMenu={abrirMenuPestana}
-                      onAgarre={handleAgarre}
-                      onSoltar={handleSoltar}
-                    />
-                  );
-                })}
-              </AnimatePresence>
+              <AnimatePresence initial={false}>{libresVis.map(renderPestana)}</AnimatePresence>
             </Reorder.Group>
 
             {/* chips de grupos CONTRAIDOS: quedan en la franja como en Chrome */}
@@ -927,7 +1161,7 @@ export function ChromeTabs({
               <Plus className="w-4 h-4" />
             </motion.button>
 
-            {/* buscar + menú: los dos acompañantes fijos de la franja */}
+            {/* buscar + pantalla completa + menú: los acompañantes fijos de la franja */}
             <div className="shrink-0 ml-auto flex items-center gap-1 mb-0.5 pl-3 pr-1">
               {onOpenSearch && (
                 <button
@@ -938,6 +1172,18 @@ export function ChromeTabs({
                 >
                   <Search className="w-3 h-3" />
                   <span className="hidden sm:inline">{t("nav.search")}</span>
+                </button>
+              )}
+              {onInmersion && (
+                <button
+                  onClick={onInmersion}
+                  title={`${t("inmi.entrar")} (F)`}
+                  aria-label={t("inmi.entrar")}
+                  data-inmi108
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-green-hud/60 text-green-hud bg-green-hud/10 hover:bg-green-hud/30 transition-colors"
+                >
+                  <Maximize2 className="w-3 h-3" />
+                  <span className="hidden sm:inline">{t("inmi.corto")}</span>
                 </button>
               )}
               {onOpenMenu && (
@@ -969,10 +1215,38 @@ export function ChromeTabs({
               {menu.modo === "pestana" ? (
                 <>
                   <div className="px-3 py-1.5 text-[9px] uppercase tracking-widest text-muted-foreground/80 border-b border-white/5 truncate">
-                    {TABS[menu.tab] ? tabLabel(lang, menu.tab, TABS[menu.tab].label).split(" (")[0] : ""}
+                    {TABS[menu.tab] ? (alias[menu.tab] || tabLabel(lang, menu.tab, TABS[menu.tab].label)).split(" (")[0] : ""}
                   </div>
                   {menu.sub === null && (
                     <>
+                      {/* v108: customización profunda de la pestaña */}
+                      <ItemMenu
+                        onClick={() => {
+                          if (fijadas.includes(menu.tab)) desfijar(menu.tab);
+                          else fijar(menu.tab);
+                          setMenu(null);
+                        }}
+                      >
+                        {fijadas.includes(menu.tab) ? <PinOff className="w-3 h-3" /> : <Pin className="w-3 h-3" />}
+                        {fijadas.includes(menu.tab) ? t("m108.desfijar") : t("m108.fijar")}
+                      </ItemMenu>
+                      <ItemMenu
+                        onClick={() => {
+                          setAliasTmp(alias[menu.tab] ?? "");
+                          setMenu({ ...menu, sub: "alias" });
+                        }}
+                      >
+                        <Type className="w-3 h-3" /> {t("m108.renombrar")}
+                      </ItemMenu>
+                      <ItemMenu
+                        onClick={() => {
+                          onDuplicar?.(menu.tab);
+                          setMenu(null);
+                        }}
+                      >
+                        <Copy className="w-3 h-3" /> {t("m108.duplicar")}
+                      </ItemMenu>
+                      <SepMenu />
                       <ItemMenu onClick={() => setMenu({ ...menu, sub: "nuevo" })}>
                         <span aria-hidden>▸</span> {t("grupo.anadir")}
                       </ItemMenu>
@@ -1023,6 +1297,44 @@ export function ChromeTabs({
                         <X className="w-3 h-3" /> {t("cromo.cerrar")}
                       </ItemMenu>
                     </>
+                  )}
+                  {menu.sub === "alias" && (
+                    <div className="px-3 py-2">
+                      <input
+                        autoFocus
+                        value={aliasTmp}
+                        onChange={(e) => setAliasTmp(e.target.value.slice(0, 28))}
+                        onKeyDown={(e) => {
+                          e.stopPropagation();
+                          if (e.key === "Enter") {
+                            guardarAlias(menu.tab);
+                            setMenu(null);
+                          }
+                          if (e.key === "Escape") setMenu(null);
+                        }}
+                        onBlur={() => {
+                          guardarAlias(menu.tab);
+                          setMenu(null);
+                        }}
+                        placeholder={t("m108.aliasPh")}
+                        maxLength={28}
+                        className="w-full bg-black/50 border border-white/20 rounded-sm px-2 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wide text-foreground focus:outline-none focus:border-amber-hud"
+                        aria-label={t("m108.renombrar")}
+                      />
+                      {alias[menu.tab] && (
+                        <ItemMenu
+                          onClick={() => {
+                            quitarAlias(menu.tab);
+                            setMenu(null);
+                          }}
+                        >
+                          <span aria-hidden>↺</span> {t("m108.restaurar")}
+                        </ItemMenu>
+                      )}
+                      <div className="px-0 pt-1.5 text-[8px] font-mono text-muted-foreground/70 normal-case tracking-normal">
+                        {t("m108.aliasHint")}
+                      </div>
+                    </div>
                   )}
                   {menu.sub === "nuevo" && (
                     <FilaColores
@@ -1114,6 +1426,20 @@ export function ChromeTabs({
                   </ItemMenu>
                 </>
               )}
+            </div>,
+            document.body
+          )}
+
+        {/* v108: VISTA PREVIA AL PASAR EL RATÓN — la sala se ve antes de entrar */}
+        {previa &&
+          createPortal(
+            <div
+              data-previa108={previa.k}
+              aria-hidden
+              className="v108-previa fixed z-[90] w-[232px] pointer-events-none rounded-md border border-amber-hud/35 bg-[#0B0B12]/97 backdrop-blur-md shadow-[0_24px_60px_-18px_rgba(0,0,0,0.95)] p-2"
+              style={{ left: previa.left, top: previa.top }}
+            >
+              <VitrinaSala tab={previa.k} modo="card" alias={alias[previa.k]} className="h-24 w-full" />
             </div>,
             document.body
           )}
