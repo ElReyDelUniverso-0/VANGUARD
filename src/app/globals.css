@@ -2511,3 +2511,37 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
   .v106-radar, .v106-muralla::after { animation: none !important; }
   .v106-mundo, .v106-omnibox { transition: none !important; }
 }
+
+/* ═══════════ v107.0 GRUPOS DE CROMO ═══════════
+   La franja se vuelve Chrome completo: arrastrar para reordenar + grupos con
+   color. Solo transform/opacity/box-shadow — 60 FPS garantizado. */
+
+/* la pestaña levantada: sombra de "agarrada" + por encima de sus vecinas */
+.v107-levanta {
+  box-shadow: 0 16px 34px -14px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 201, 77, 0.2);
+  z-index: 6;
+}
+
+/* mientras se arrastra, el táctil no dispara scroll nativo (además del
+   listener no pasivo de touchmove) */
+.v107-levanta { touch-action: none !important; }
+
+/* menú de pestaña/grupo: entra con escala y caída suave */
+.v107-menu { animation: v107Menu 0.14s ease-out both; transform-origin: top left; }
+@keyframes v107Menu {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* chip de grupo: aparece con un levantamiento sutil */
+.v107-chip { animation: v107Chip 0.2s ease-out both; }
+@keyframes v107Chip {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── ACCESIBILIDAD v107: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v107-menu, .v107-chip { animation: none !important; }
+  .v107-levanta { box-shadow: 0 0 0 1px rgba(255, 201, 77, 0.2); }
+}

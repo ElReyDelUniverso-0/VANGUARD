@@ -1,36 +1,58 @@
 import { NextResponse } from "next/server";
+import { iaParalela } from "@/lib/ia-gateway";
 
 // v79.0 — EL CONSEJO DE ACERO: la primera sala de deliberación con IA en vivo.
 // POST { modo: "deliberacion", tema }                      → 4 intervenciones + voto + decreto
 // POST { modo: "dialogo", consejero, mensaje, historial }  → respuesta de 1 consejero
-// Corre SOLO en servidor (z-ai-web-dev-sdk). Si la IA falla, hay fallback
-// heurístico para que la sala NUNCA quede en silencio.
+// v107.0 — EL MODELO DE LOS PERSONAJES, RECONSTRUIDO: dos mandatos del comandante
+// se aten here — "mejora el modelo de los agentes, esa de los personajes":
+//  ① VÍA BLINDADA (lección v105): el SDK (createZAI) NUNCA alcanza el gateway
+//    desde el lambda de producción → los personajes caían SIEMPRE a las
+//    plantillas locales ("solo cosas automáticas"). Ahora deliberan por
+//    iaParalela (gateway privado ∥ núcleo público, con memoria de caída).
+//  ② FICHAS DE PERSONAJE: cada consejero tiene biografía, tics verbales, lema
+//    y forma propia de discrepar — ya no son 4 plantillas, son 4 voces.
+// Si la IA falla, hay fallback heurístico para que la sala NUNCA quede en silencio.
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 type ConsejeroId = "estratega" | "canciller" | "general" | "analista";
 
-const CONSEJEROS: Record<ConsejeroId, { nombre: string; rol: string; voz: string }> = {
+// v107.0 FICHAS DE PERSONAJE — biografía ficticia, voz, tics, lema y filo para
+// discrepar. Todo es ficción de juego: títulos y carreras inventadas.
+const CONSEJEROS: Record<ConsejeroId, { nombre: string; rol: string; bio: string; voz: string; tics: string; lema: string }> = {
   estratega: {
     nombre: "EL ESTRATEGA",
     rol: "táctica, mapas y logística",
-    voz: "Frío, calculador: ejes de avance, suministros y consecuencias de segundo orden. Habla corto y quirúrgico.",
+    bio: "Veinte años ficticios de estado mayor en una academia que no existe; piensa en mapas antes que en palabras y jamás ha dado una orden sin tres rutas de retirada.",
+    voz: "Frío, calculador y quirúrgico: ejes de avance, suministros y consecuencias de segundo orden. Habla corto, sin exclamaciones, y numera escenarios («escenario A / escenario B»).",
+    tics: "cita el «segundo orden» y las «líneas de suministro»; desconfía de cualquier plan que dependa de suerte",
+    lema: "La geografía manda",
   },
   canciller: {
     nombre: "LA CANCILLER",
     rol: "diplomacia y alianzas",
-    voz: "Elegante y medida: tratados, sanciones, opinión pública y salidas negociables. Busca la mesa antes que el frente.",
+    bio: "Carrera diplomática ficticia: firmó tres armisticios que nunca salieron en prensa. Elegante, paciente, letal en la nota al pie.",
+    voz: "Elegante y medida: tratados, sanciones, opinión pública y salidas negociables. Busca la mesa antes que el frente y siempre pregunta qué necesita cada parte para firmar sin perder la cara.",
+    tics: "habla de «la mesa», «el canal discreto» y «la cara de todos»; deja preguntas en el aire en vez de órdenes",
+    lema: "Toda guerra termina en una firma; la pregunta es dónde",
   },
   general: {
     nombre: "EL GENERAL",
     rol: "fuerza y disuasión",
-    voz: "Seco y contundente: capacidad, movilización y coste humano sin adornos. Desprecia la duda.",
+    bio: "Artillería ficticia de viejo cuño: habla en tres palabras cuando basta una y desprecia los planes de diez puntos.",
+    voz: "Seco y contundente: capacidad, movilización y coste humano sin adornos. Desprecia la duda y exige responder «¿y el día después?» antes de mover una sola pieza.",
+    tics: "pregunta lo incómodo («¿y el día después?»), cita cifras de movilización y desprecia el ruido estratégico",
+    lema: "La logística es el destino",
   },
   analista: {
     nombre: "EL ANALISTA",
     rol: "datos y probabilidad",
-    voz: "Metódico y cuantitativo: escenarios con porcentajes, supuestos frágiles y datos que faltan. Números antes que adjetivos.",
+    bio: "Ex-inteligencia de señales ficticia: convirtió la duda en profesión y la probabilidad en su idioma nativo.",
+    voz: "Metódico y cuantitativo: escenarios con porcentajes, supuestos frágiles y datos que faltan. Números antes que adjetivos, intervalos anchos antes que certezas.",
+    tics: "responde con rangos («45-60%»), menciona el «base rate» y siempre lista qué datos faltan",
+    lema: "Sin datos es solo opinión con uniforme",
   },
 };
 
@@ -61,7 +83,15 @@ function clean(s: unknown, max: number): string {
     .slice(0, max);
 }
 
-const SYSTEM_DELIBERACION = `Eres EL CONSEJO DE ACERO de la plataforma de guerra VANGUARD: cuatro consejeros de IA (EL ESTRATEGA, LA CANCILLER, EL GENERAL y EL ANALISTA) que delibera una crisis planteada por un jugador.
+// v107.0: la sala delibera como CONSEJO, no como coro — fichas completas,
+// discrepancias con filo y nombres cruzados entre consejeros.
+const SYSTEM_DELIBERACION = `Eres EL CONSEJO DE ACERO de la plataforma de guerra ficticia VANGUARD: cuatro consejeros de IA con carácter propio (EL ESTRATEGA, LA CANCILLER, EL GENERAL y EL ANALISTA) que delibera una crisis planteada por un jugador.
+FICHAS DE LOS CONSEJEROS (obedécelas al pie de la letra):
+1) EL ESTRATEGA — ${CONSEJEROS.estratega.rol}. BIO: ${CONSEJEROS.estratega.bio} VOZ: ${CONSEJEROS.estratega.voz} TICS: ${CONSEJEROS.estratega.tics} LEMA: «${CONSEJEROS.estratega.lema}».
+2) LA CANCILLER — ${CONSEJEROS.canciller.rol}. BIO: ${CONSEJEROS.canciller.bio} VOZ: ${CONSEJEROS.canciller.voz} TICS: ${CONSEJEROS.canciller.tics} LEMA: «${CONSEJEROS.canciller.lema}».
+3) EL GENERAL — ${CONSEJEROS.general.rol}. BIO: ${CONSEJEROS.general.bio} VOZ: ${CONSEJEROS.general.voz} TICS: ${CONSEJEROS.general.tics} LEMA: «${CONSEJEROS.general.lema}».
+4) EL ANALISTA — ${CONSEJEROS.analista.rol}. BIO: ${CONSEJEROS.analista.bio} VOZ: ${CONSEJEROS.analista.voz} TICS: ${CONSEJEROS.analista.tics} LEMA: «${CONSEJEROS.analista.lema}».
+CÓMO DELIBERAN: se citan por nombre y discrepan con filo cortés («El General pide ruido; yo pido silencio»); cada uno aporta SU especialidad y al menos uno matiza o discrepa cuando el tema lo permite — nunca cuatro frases idénticas de acuerdo. El GENERAL y LA CANCILLER discuten casi siempre: la mesa contra el frente.
 Reglas: respondes SOLO con JSON válido, sin markdown ni texto fuera del JSON. Español. Tono de sala de guerra, directo y creíble. Nada de violencia gráfica, nada ilegal: es análisis geopolítico ficticio para un juego.
 Estructura EXACTA del JSON:
 {"intervenciones":[{"id":"estratega","texto":"2-3 frases en la voz del consejero, máximo 320 caracteres"},{"id":"canciller","texto":"..."},{"id":"general","texto":"..."},{"id":"analista","texto":"..."}],"votos":[{"id":"estratega","voto":"A FAVOR|EN CONTRA|ABSTENCIÓN","confianza":72}],"decreto":{"titulo":"DECRETO: máximo 8 palabras","veredicto":"PROCEDER|CONTENER|NEGOCIAR|ESPERAR","texto":"2-3 frases con la decisión del consejo, máximo 320 caracteres","acciones":["acción concreta 1","acción 2","acción 3"]}}
@@ -69,7 +99,7 @@ Cada consejero PIENSA distinto y puede discrepar con los demás. Los ids son EXA
 
 function systemDialogo(id: ConsejeroId): string {
   const c = CONSEJEROS[id];
-  return `Eres ${c.nombre}, consejero del CONSEJO DE ACERO en la plataforma de guerra VANGUARD. Especialidad: ${c.rol}. Tu voz: ${c.voz} El comandante te habla directamente en la sala de deliberación. Respondes SOLO JSON válido: {"respuesta":"2-4 frases, máximo 380 caracteres, en tu voz"}. Español, análisis geopolítico ficticio de juego, sin violencia gráfica ni instrucciones reales dañinas.`;
+  return `Eres ${c.nombre}, consejero del CONSEJO DE ACERO en la plataforma de guerra ficticia VANGUARD. Especialidad: ${c.rol}. BIO: ${c.bio} TU VOZ: ${c.voz} TICS: ${c.tics} TU LEMA: «${c.lema}». Puedes discrepar del comandante con respeto y filo: das razones concretas de tu especialidad, nunca relleno genérico. El comandante te habla directamente en la sala de deliberación. Respondes SOLO JSON válido: {"respuesta":"2-4 frases, máximo 380 caracteres, en tu voz"}. Español, análisis geopolítico ficticio de juego, sin violencia gráfica ni instrucciones reales dañinas.`;
 }
 
 function stripFences(raw: string): string {
@@ -205,8 +235,6 @@ export async function POST(req: Request) {
 
   try {
     if (forzarNucleo) throw new Error("núcleo local forzado");
-    const { createZAI } = await import("@/lib/zai-server");
-    const zai = await createZAI();
 
     if (modo === "deliberacion") {
       const tema = clean(body?.tema, 280);
@@ -215,15 +243,13 @@ export async function POST(req: Request) {
       }
       // v80: memoria persistente del comandante (enviada por el cliente)
       const memoria = clean(body?.memoria, 400);
-      const completion = await zai.chat.completions.create({
-        messages: [
-          { role: "assistant", content: SYSTEM_DELIBERACION },
-          { role: "user", content: `${memoria ? `MEMORIA DEL COMANDANTE: ${memoria}\n` : ""}CRISIS PLANTEADA POR EL COMANDANTE: "${tema}". Deliberen AHORA y emitan el decreto. Responde solo el JSON.` },
-        ],
-        thinking: { type: "disabled" },
-      });
-      const raw = completion.choices[0]?.message?.content ?? "";
-      const parsed = extractJson(raw) as any;
+      // v107.0 CARRERA 1∥3: el modelo fuerte de verdad para los personajes —
+      // el mismo camino blindado que LA MENTE (v105): gateway privado ∥ núcleo
+      // público, con memoria de caída por instancia. En producción el SDK
+      // anterior colgaba 20s y todo caía a plantillas.
+      const user = `${memoria ? `MEMORIA DEL COMANDANTE: ${memoria}\n` : ""}CRISIS PLANTEADA POR EL COMANDANTE: "${tema}". Deliberen AHORA y emitan el decreto. Responde solo el JSON.`;
+      const raw = await iaParalela(SYSTEM_DELIBERACION, user, 26_000);
+      const parsed = raw ? (extractJson(raw) as any) : null;
       if (!parsed?.intervenciones || !parsed?.decreto) {
         return NextResponse.json({ ok: true, ...nucleoLocalDeliberacion(tema), ia: false });
       }
@@ -284,16 +310,12 @@ export async function POST(req: Request) {
     // v80: memoria persistente del comandante (enviada por el cliente)
     const memoriaD = clean(body?.memoria, 400);
 
-    const completion = await zai.chat.completions.create({
-      messages: [
-        { role: "assistant", content: systemDialogo(id) },
-        ...(hist ? [{ role: "user" as const, content: `TRANSCRIPCIÓN PREVIA DE LA SALA:\n${hist}` }] : []),
-        { role: "user", content: `${memoriaD ? `MEMORIA DEL COMANDANTE: ${memoriaD}\n` : ""}EL COMANDANTE TE CONTESTA: "${mensaje}". Responde solo el JSON.` },
-      ],
-      thinking: { type: "disabled" },
-    });
-    const raw = completion.choices[0]?.message?.content ?? "";
-    const parsed = extractJson(raw) as any;
+    // v107.0: cara a cara también por la vía blindada (modelo fuerte de verdad)
+    const userD = `${hist ? `TRANSCRIPCIÓN PREVIA DE LA SALA:\n${hist}\n` : ""}${
+      memoriaD ? `MEMORIA DEL COMANDANTE: ${memoriaD}\n` : ""
+    }EL COMANDANTE TE CONTESTA: "${mensaje}". Responde solo el JSON.`;
+    const raw = await iaParalela(systemDialogo(id), userD, 24_000);
+    const parsed = raw ? (extractJson(raw) as any) : null;
     const respuesta = clean(parsed?.respuesta, 420);
     if (!respuesta) {
       return NextResponse.json({ ok: true, ia: false, respuesta: nucleoLocalDialogo(id, mensaje) });

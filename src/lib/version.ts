@@ -1,4 +1,4 @@
-// Vanguard — versión única de verdad (leída por health, footer y QA)
-export const APP_VERSION = "v106.0";
-export const APP_CODENAME = "PESTAÑAS DE CROMO";
+// FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+export const APP_VERSION = "v107.0";
+export const APP_CODENAME = "GRUPOS DE CROMO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

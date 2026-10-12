@@ -341,6 +341,23 @@ export default function Home() {
     handleTabChange("nueva");
   }, [handleTabChange]);
 
+  // v107.0 GRUPOS DE CROMO: reordenar arrastrando + cerrar VARIAS (grupos y
+  // "cerrar las demás") en UNA sola escritura de estado — cerrar de a una con
+  // el mismo estado viejo dejaría pestañas fantasma en la franja.
+  const cerrarVarias = useCallback(
+    (ks: TabKey[]) => {
+      if (ks.length === 0) return;
+      const restantes = pestanas.filter((p) => !ks.includes(p));
+      const lista = restantes.length > 0 ? restantes : ["nueva" as TabKey];
+      setPestanas(lista);
+      if (ks.includes(tab)) {
+        const idx = pestanas.indexOf(tab);
+        setTab(lista[Math.max(0, Math.min(idx < 0 ? 0 : idx, lista.length - 1))] ?? "nueva");
+      }
+    },
+    [pestanas, tab],
+  );
+
   // hidratación de las pestañas guardadas (una vez, tras montar — sin mismatch;
   // microtask para no cascada de renders, patrón v102). El guardián "hidratado"
   // evita la trampa cazada en QA: la persistencia corriendo ANTES de la
@@ -532,6 +549,8 @@ export default function Home() {
         activa={tab}
         onElegir={handleTabChange}
         onCerrar={cerrarPestana}
+        onCerrarVarias={cerrarVarias}
+        onReordenar={setPestanas}
         onNueva={abrirNueva}
         onOpenMenu={() => setMenuOpen(true)}
         onOpenSearch={() => setSearchOpen(true)}

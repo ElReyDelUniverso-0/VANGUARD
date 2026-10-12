@@ -24,11 +24,11 @@ type ConsejeroId = "estratega" | "canciller" | "general" | "analista";
 
 const ACERO = "#00E5FF";
 
-const CONSEJEROS: { id: ConsejeroId; nombre: string; rol: string; icon: typeof Swords; hex: string }[] = [
-  { id: "estratega", nombre: "EL ESTRATEGA", rol: "Táctica · mapas · logística", icon: Crosshair, hex: "#38BDF8" },
-  { id: "canciller", nombre: "LA CANCILLER", rol: "Diplomacia · alianzas", icon: Landmark, hex: "#FFC94D" },
-  { id: "general", nombre: "EL GENERAL", rol: "Fuerza · disuasión", icon: Swords, hex: "#FF5A3C" },
-  { id: "analista", nombre: "EL ANALISTA", rol: "Datos · probabilidad", icon: LineChart, hex: "#00FF87" },
+const CONSEJEROS: { id: ConsejeroId; nombre: string; rol: string; icon: typeof Swords; hex: string; lema: string }[] = [
+  { id: "estratega", nombre: "EL ESTRATEGA", rol: "Táctica · mapas · logística", icon: Crosshair, hex: "#38BDF8", lema: "La geografía manda" },
+  { id: "canciller", nombre: "LA CANCILLER", rol: "Diplomacia · alianzas", icon: Landmark, hex: "#FFC94D", lema: "Toda guerra termina en una firma" },
+  { id: "general", nombre: "EL GENERAL", rol: "Fuerza · disuasión", icon: Swords, hex: "#FF5A3C", lema: "La logística es el destino" },
+  { id: "analista", nombre: "EL ANALISTA", rol: "Datos · probabilidad", icon: LineChart, hex: "#00FF87", lema: "Sin datos es solo opinión con uniforme" },
 ];
 
 const TEMAS_SUGERIDOS = [
@@ -44,24 +44,23 @@ type Voto = { id: ConsejeroId; voto: string; confianza: number };
 type Decreto = { titulo: string; veredicto: string; texto: string; acciones: string[] };
 
 // máquina de escribir a 60fps: revela por caracteres con intervalo fijo
+// (v107: el reinicio corre dentro del primer tick — el compilador de React
+// prohíbe setState síncrono en el cuerpo del efecto)
 function useTypewriter(text: string, active: boolean, cps = 55) {
-  const [out, setOut] = useState("");
+  const [n, setN] = useState(0);
   useEffect(() => {
-    if (!active || !text) {
-      setOut(active ? "" : text);
-      return;
-    }
-    setOut("");
+    if (!active || !text) return;
     let i = 0;
     const step = Math.max(1, Math.round(cps / 20));
     const t = setInterval(() => {
+      if (i === 0) setN(0); // primer tick reinicia el revelado
       i += step;
-      setOut(text.slice(0, i));
+      setN(i);
       if (i >= text.length) clearInterval(t);
     }, 50);
     return () => clearInterval(t);
   }, [text, active, cps]);
-  return out;
+  return active ? text.slice(0, n) : text;
 }
 
 function ConsejoCard({
@@ -104,6 +103,8 @@ function ConsejoCard({
             {c.nombre}
           </div>
           <div className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-1">{c.rol}</div>
+          {/* v107.0: el personaje se sabe personaje — su lema identifica la voz */}
+          <div className="text-[9px] italic text-muted-foreground/55 mt-0.5 truncate">«{c.lema}»</div>
         </div>
         {estado === "deliberando" && (
           <span className="ml-auto text-[8px] font-mono font-bold uppercase tracking-widest" style={{ color: c.hex }}>
@@ -143,9 +144,9 @@ function ConsejoCard({
   );
 }
 
-// NÚCLEO EMBEBIDO (v80): banda de activación y estado de la IA neuronal local.
-// Es la pieza "nunca vista": un LLM de verdad que corre en el dispositivo del
-// jugador, sin claves ni servidores, y con memoria persistente de sesiones.
+// RESERVA EMBEBIDA (v80 → v107): la IA neuronal local ya no es la principal —
+// el modelo fuerte (NÚCLEO GLM en el servidor) delibera primero; esta reserva
+// corre EN TU dispositivo cuando no hay red o el núcleo principal se cae.
 function NucleoBanner({ onListo }: { onListo: () => void }) {
   const [estado, setEstado] = useState<NucleoEstado>(() => estadoNucleo());
   const [tokens, setTokens] = useState(0);
@@ -154,20 +155,25 @@ function NucleoBanner({ onListo }: { onListo: () => void }) {
 
   useEffect(() => {
     const uns = suscribirNucleo((e) => setEstado({ ...e }));
-    setEstado({ ...estadoNucleo() });
+    // sync inicial diferido (el compilador prohíbe setState síncrono en efecto)
+    const id = setTimeout(() => setEstado({ ...estadoNucleo() }), 0);
     return () => {
       uns();
+      clearTimeout(id);
     };
   }, []);
 
   useEffect(() => {
-    if (estado.fase === "listo") {
+    if (estado.fase !== "listo") return;
+    // deferido: el compilador prohíbe setState síncrono en el cuerpo del efecto
+    const id = setTimeout(() => {
       setTokens(razonado());
       const m = cargarMemoria();
       setMemoriaN(m.length);
       setMemoriaUlt(m[0] ?? null);
       onListo();
-    }
+    }, 0);
+    return () => clearTimeout(id);
   }, [estado.fase, onListo]);
 
   const activar = useCallback(async () => {
@@ -192,13 +198,13 @@ function NucleoBanner({ onListo }: { onListo: () => void }) {
         </span>
         <div className="min-w-0 flex-1">
           <div className="font-display text-[11px] font-black tracking-widest leading-none" style={{ color: ACERO, textShadow: `0 0 14px ${ACERO}55` }}>
-            NÚCLEO EMBEBIDO · IA EN TU NAVEGADOR
+            NÚCLEO DE RESERVA · IA EN TU NAVEGADOR
           </div>
           <div className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-1">
-            {estado.fase === "inactivo" && "IA neuronal de verdad, dentro de tu dispositivo · sin claves · sin servidores"}
+            {estado.fase === "inactivo" && "Reserva neuronal de verdad, dentro de tu dispositivo · se activa si el núcleo principal se cae o sin conexión"}
             {estado.fase === "descargando" && `Descargando pesos neuronales · ${estado.progreso}%`}
             {estado.fase === "compilando" && "Compilando kernels de inferencia… primer arranque"}
-            {estado.fase === "listo" && `IA VIVA · ${tokens.toLocaleString("es-ES")} tokens razonados en tu dispositivo · ${memoriaN} crisis en memoria`}
+            {estado.fase === "listo" && `RESERVA VIVA · ${tokens.toLocaleString("es-ES")} tokens razonados en tu dispositivo · ${memoriaN} crisis en memoria`}
             {estado.fase === "error" && "No pudo activarse aquí — la sala sigue en pie con el núcleo de reserva"}
           </div>
         </div>
@@ -208,7 +214,7 @@ function NucleoBanner({ onListo }: { onListo: () => void }) {
             className="px-3 py-2 rounded-sm border font-display text-[9px] font-black tracking-[0.2em] uppercase transition-transform hover:scale-[1.02] active:scale-[0.98]"
             style={{ borderColor: `${ACERO}88`, color: "#04121A", background: `linear-gradient(120deg, ${ACERO}, #7DF3FF)`, boxShadow: `0 0 22px ${ACERO}44` }}
           >
-            ACTIVAR IA EN MI NAVEGADOR
+            ACTIVAR RESERVA EN MI NAVEGADOR
           </button>
         )}
         {estado.fase === "error" && (
@@ -240,7 +246,7 @@ function NucleoBanner({ onListo }: { onListo: () => void }) {
       {estado.fase === "inactivo" && (
         <p className="mt-2.5 text-[9px] font-mono text-muted-foreground/70 leading-relaxed">
           Qwen2.5-0.5B · ~480 MB · se descarga UNA sola vez y queda cacheada en el navegador · corre en tu GPU (WebGPU) o CPU (WASM) ·
-          activándola, EL GENERAL y los demás consejeros ganan una IA de verdad y MEMORIA de tus sesiones
+          activándola, EL GENERAL y los demás consejeros siguen hablando INCLUSO SIN CONEXIÓN, con memoria de tus sesiones
         </p>
       )}
       {estado.fase === "listo" && memoriaUlt && (
@@ -335,6 +341,58 @@ export function ConsejoIaPanel() {
     return () => clearTimeout(t);
   }, [fase, orden, intervenciones, generando]);
 
+  // v107.0 RESERVA EMBEBIDA: el show en vivo del núcleo del navegador, ahora como
+  // SEGUNDA línea — se convoca si el servidor no pudo con la IA fuerte.
+  const arrancarEmbebida = useCallback((t: string) => {
+    setGenerando(true);
+    generandoRef.current = true;
+    setOrigen("embebida");
+    (async () => {
+      try {
+        const ints: Intervencion[] = [];
+        for (const c of CONSEJEROS) {
+          const texto = (await intervenirNucleo(c.id, t)) ?? intervencionFinta(c.id, t);
+          ints.push({ id: c.id, texto });
+          setIntervenciones([...ints]);
+        }
+        const dec = (await decretoNucleo(t, ints.map((i) => i.texto))) ?? decretoFinta(t);
+        setVotos(dec.votos);
+        setDecreto(dec.decreto);
+        guardarRecuerdo({ tema: t.slice(0, 100), veredicto: dec.decreto.veredicto, fecha: Date.now() });
+        try {
+          sessionStorage.setItem(
+            "vanguard:consejo-sesion",
+            JSON.stringify({ tema: t, intervenciones: ints, votos: dec.votos, decreto: dec.decreto, ia: true, ts: Date.now() }),
+          );
+        } catch {}
+      } finally {
+        setGenerando(false);
+        generandoRef.current = false;
+      }
+    })();
+  }, []);
+
+  // aplica una deliberación terminada (del servidor o de la reserva) y la guarda
+  const aplicar = useCallback(
+    (ints: Intervencion[], vt: Voto[], dec: Decreto | null, temaStr: string, ia: boolean) => {
+      setIntervenciones(ints ?? []);
+      setVotos(vt ?? []);
+      setDecreto(dec ?? null);
+      guardarRecuerdo({
+        tema: temaStr.slice(0, 100),
+        veredicto: String(dec?.veredicto ?? "SIN VEREDICTO"),
+        fecha: Date.now(),
+      });
+      try {
+        sessionStorage.setItem(
+          "vanguard:consejo-sesion",
+          JSON.stringify({ tema: temaStr, intervenciones: ints ?? [], votos: vt ?? [], decreto: dec ?? null, ia, ts: Date.now() }),
+        );
+      } catch {}
+    },
+    [],
+  );
+
   const deliberar = useCallback(async () => {
     const t = tema.trim();
     if (t.length < 4) {
@@ -351,39 +409,10 @@ export function ConsejoIaPanel() {
     setFase("deliberando");
     sfx.click();
 
-    // v80 RUTA NÚCLEO EMBEBIDO: la IA neuronal del navegador delibera en vivo —
-    // cada consejero genera SU intervención de verdad y el show crece en directo.
-    if (nucleoListo()) {
-      setGenerando(true);
-      generandoRef.current = true;
-      setOrigen("embebida");
-      (async () => {
-        try {
-          const ints: Intervencion[] = [];
-          for (const c of CONSEJEROS) {
-            const texto = (await intervenirNucleo(c.id, t)) ?? intervencionFinta(c.id, t);
-            ints.push({ id: c.id, texto });
-            setIntervenciones([...ints]);
-          }
-          const dec = (await decretoNucleo(t, ints.map((i) => i.texto))) ?? decretoFinta(t);
-          setVotos(dec.votos);
-          setDecreto(dec.decreto);
-          guardarRecuerdo({ tema: t.slice(0, 100), veredicto: dec.decreto.veredicto, fecha: Date.now() });
-          try {
-            sessionStorage.setItem(
-              "vanguard:consejo-sesion",
-              JSON.stringify({ tema: t, intervenciones: ints, votos: dec.votos, decreto: dec.decreto, ia: true, ts: Date.now() }),
-            );
-          } catch {}
-        } finally {
-          setGenerando(false);
-          generandoRef.current = false;
-        }
-      })();
-      return;
-    }
-
-    // RUTA SERVIDOR: gateway interno (dev) o núcleo de reserva (producción)
+    // v107.0 EL MODELO DE LOS PERSONAJES: PRIMERO el núcleo fuerte del servidor
+    // (GLM vía carrera blindada) — la IA embebida pasa a RESERVA y el núcleo
+    // local a última instancia. Nunca más el comandante baja de modelo por
+    // haber activado la reserva.
     try {
       const res = await fetch("/api/consejo", {
         method: "POST",
@@ -391,67 +420,83 @@ export function ConsejoIaPanel() {
         body: JSON.stringify({ modo: "deliberacion", tema: t, memoria: textoMemoria() }),
       });
       const data = await res.json();
-      if (!data?.ok) {
-        setError(data?.error ?? "El consejo no pudo reunirse.");
-        setFase("sala");
-        sfx.error();
+      if (data?.ok && data.ia !== false) {
+        setOrigen("ia");
+        aplicar(data.intervenciones ?? [], data.votos ?? [], data.decreto ?? null, t, true);
         return;
       }
-      setOrigen(data.ia !== false ? "ia" : "local");
-      setIntervenciones(data.intervenciones ?? []);
-      setVotos(data.votos ?? []);
-      setDecreto(data.decreto ?? null);
-      guardarRecuerdo({
-        tema: t.slice(0, 100),
-        veredicto: String(data.decreto?.veredicto ?? "SIN VEREDICTO"),
-        fecha: Date.now(),
-      });
-      try {
-        sessionStorage.setItem(
-          "vanguard:consejo-sesion",
-          JSON.stringify({ tema: t, intervenciones: data.intervenciones ?? [], votos: data.votos ?? [], decreto: data.decreto ?? null, ia: data.ia !== false, ts: Date.now() }),
-        );
-      } catch {}
+      if (data?.ok) {
+        // IA fuerte caída en el servidor → reserva embebida si está viva
+        if (nucleoListo()) {
+          arrancarEmbebida(t);
+          return;
+        }
+        setOrigen("local");
+        aplicar(data.intervenciones ?? [], data.votos ?? [], data.decreto ?? null, t, false);
+        return;
+      }
+      if (nucleoListo()) {
+        arrancarEmbebida(t);
+        return;
+      }
+      setError(data?.error ?? "El consejo no pudo reunirse.");
+      setFase("sala");
+      sfx.error();
     } catch {
+      if (nucleoListo()) {
+        arrancarEmbebida(t);
+        return;
+      }
       setError("Señal perdida con la sala. Reintenta.");
       setFase("sala");
       sfx.error();
     }
-  }, [tema]);
+  }, [tema, arrancarEmbebida, aplicar]);
 
   const enviarReplica = useCallback(async () => {
     if (!hablandoCon || replica.trim().length < 2) return;
     setPensando(true);
     sfx.click();
     const id = hablandoCon;
+    const mensaje = replica.trim();
     const historial = [
       { consejero: "tema", texto: tema },
       ...intervenciones.filter((i) => i.id === id).map((i) => ({ consejero: id, texto: i.texto })),
       ...(respuestas[id] ?? []).map((r, i) => ({ consejero: i % 2 ? id : "comandante", texto: r })),
     ];
+    const push = (r: string) =>
+      setRespuestas((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), mensaje, r] }));
 
-    // v80: cara a cara con IA embebida (memoria de sala + memoria persistente)
-    if (nucleoListo()) {
-      const respuesta =
-        (await dialogarNucleo(id, tema, replica.trim(), historial.map((h) => `${h.consejero}: ${h.texto}`))) ??
-        "Señal débil en el núcleo embebido. Repite la orden.";
-      setRespuestas((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), replica, respuesta] }));
-      setReplica("");
-      setPensando(false);
-      return;
-    }
-
+    // v107.0: el diálogo también va PRIMERO al modelo fuerte del servidor;
+    // la embebida contesta solo si el servidor no pudo (o sin conexión).
     try {
       const res = await fetch("/api/consejo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "dialogo", consejero: id, mensaje: replica, historial, memoria: textoMemoria() }),
+        body: JSON.stringify({ modo: "dialogo", consejero: id, mensaje, historial, memoria: textoMemoria() }),
       });
       const data = await res.json();
-      const respuesta = data?.respuesta ?? "…";
-      setRespuestas((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), replica, respuesta] }));
+      if (data?.ok && data.ia !== false && data.respuesta) {
+        push(data.respuesta);
+        return;
+      }
+      if (nucleoListo()) {
+        const respuesta =
+          (await dialogarNucleo(id, tema, mensaje, historial.map((h) => `${h.consejero}: ${h.texto}`))) ??
+          "Señal débil en el núcleo embebido. Repite la orden.";
+        push(respuesta);
+        return;
+      }
+      push(data?.respuesta ?? "…");
     } catch {
-      setRespuestas((prev) => ({ ...prev, [id]: [...(prev[id] ?? []), replica, "Señal perdida. Repite la orden."] }));
+      if (nucleoListo()) {
+        const respuesta =
+          (await dialogarNucleo(id, tema, mensaje, historial.map((h) => `${h.consejero}: ${h.texto}`))) ??
+          "Señal débil en el núcleo embebido. Repite la orden.";
+        push(respuesta);
+        return;
+      }
+      push("Señal perdida. Repite la orden.");
     } finally {
       setReplica("");
       setPensando(false);
@@ -495,7 +540,7 @@ export function ConsejoIaPanel() {
             style={{ borderColor: `${ACERO}55`, color: ACERO, background: `${ACERO}10` }}
           >
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: origen === "local" ? "#FFB020" : "#00FF87" }} />
-            {origen === "embebida" ? "IA NEURONAL EMBEBIDA" : origen === "ia" ? "NÚCLEO IA EN VIVO" : "NÚCLEO DE RESERVA (SIN IA)"}
+            {origen === "embebida" ? "IA EMBEBIDA DE RESERVA" : origen === "ia" ? "NÚCLEO GLM EN VIVO" : "NÚCLEO LOCAL (SIN IA)"}
           </span>
         </div>
 
@@ -664,7 +709,7 @@ export function ConsejoIaPanel() {
       </AnimatePresence>
 
       <p className="text-center text-[9px] font-mono uppercase tracking-widest text-muted-foreground/60 flex flex-wrap items-center justify-center gap-1.5 px-4">
-        <Sparkles className="w-3 h-3 shrink-0" /> Cada deliberación es única e irrepetible · activa el Núcleo Embebido y la IA vive en tu navegador, con memoria de tus sesiones
+        <Sparkles className="w-3 h-3 shrink-0" /> NÚCLEO GLM en vivo con memoria persistente de tus sesiones · si falla, la reserva embebida responde en tu navegador · cada deliberación es única e irrepetible
       </p>
     </section>
   );
