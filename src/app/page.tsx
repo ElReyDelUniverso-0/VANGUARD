@@ -7,10 +7,14 @@
 // v17 ESTABILIDAD: PanelErrorBoundary aísla fallos por panel — un módulo caído
 // ya NO tumba la app; tarjeta de recuperación con REINTENTAR por módulo.
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
-import { TabNav, sectionOfTab, accentOfSection, type TabKey } from "@/components/vanguard/tab-nav";
+import { sectionOfTab, accentOfSection, ALL_TABS, type TabKey } from "@/components/vanguard/tab-nav";
+// v106.0 PESTAÑAS DE CROMO: la franja del navegador interno reemplaza a la
+// barra de secciones — pestañas que se abren, se eligen y se cierran.
+import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
+import { toast } from "sonner";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 // v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
 // luna llena y ocaso cálido). Una vez por sesión, saltable, reduced-motion off.
@@ -89,6 +93,10 @@ function PanelSkeleton() {
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
 // v105.0 LA REDACCIÓN — el lugar optimizado para leer el mundo
 const RedaccionPanel = dynamic(() => import("@/components/vanguard/panels/redaccion-panel").then((m) => m.RedaccionPanel), { ssr: false, loading: PanelSkeleton });
+// v106.0 PESTAÑAS DE CROMO: la NUEVA PESTAÑA (elegir destino con ómnibox) + la
+// MURALLA DE VIGILANCIA (el corazón nuevo del OBSERVATORIO)
+const NuevaPanel = dynamic(() => import("@/components/vanguard/panels/nueva-panel").then((m) => m.NuevaPanel), { ssr: false, loading: PanelSkeleton });
+const ObservatorioPanel = dynamic(() => import("@/components/vanguard/panels/observatorio-panel").then((m) => m.ObservatorioPanel), { ssr: false, loading: PanelSkeleton });
 // v105.0 EL NAVEGADOR — brújula "¿qué quiero hacer hoy?" (global)
 const Navegador = dynamic(() => import("@/components/vanguard/navegador").then((m) => m.Navegador), { ssr: false });
 const DailyBriefingPanel = dynamic(() => import("@/components/vanguard/panels/daily-briefing-panel").then((m) => m.DailyBriefingPanel), { ssr: false, loading: PanelSkeleton });
@@ -283,6 +291,104 @@ export default function Home() {
   const checkAchievements = useGameStore((s) => s.checkAchievements);
   const recordTabVisit = useGameStore((s) => s.recordTabVisit);
 
+  // ===== v106.0 PESTAÑAS DE CROMO — el navegador interno de Vanguard =====
+  // Pestañas abiertas + activa, con persistencia honesta en localStorage
+  // (vuelves donde estabas, como en el navegador de tu máquina).
+  const [pestanas, setPestanas] = useState<TabKey[]>(["inicio"]);
+
+  // ABRIR pestaña: dedupe (si ya está abierta, solo se activa), tope honesto de
+  // MAX_PESTANAS (la más antigua se recoge con aviso), visita registrada para el
+  // Explorador — la NUEVA no cuenta: abrir pestañas no paga el mapa. Escena para
+  // la radio + scroll arriba (la franja nunca tapa el inicio del panel).
+  const handleTabChange = useCallback((k: TabKey) => {
+    sfx.tab();
+    setTab(k);
+    if (!pestanas.includes(k)) {
+      if (pestanas.length >= MAX_PESTANAS) {
+        const idxVieja = pestanas.findIndex((p) => p !== tab && p !== "nueva");
+        if (idxVieja >= 0) {
+          setPestanas([...pestanas.slice(0, idxVieja), ...pestanas.slice(idxVieja + 1), k]);
+          toast(t("cromo.tope"), { description: `${MAX_PESTANAS} ${t("cromo.topeDesc")}` });
+        } else {
+          setPestanas([...pestanas, k]);
+        }
+      } else {
+        setPestanas([...pestanas, k]);
+      }
+    }
+    if (k !== "nueva") recordTabVisit(k);
+    window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(k).key }));
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [pestanas, tab, recordTabVisit, t]);
+
+  // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
+  // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.
+  const cerrarPestana = useCallback((k: TabKey) => {
+    const idx = pestanas.indexOf(k);
+    if (idx < 0) return;
+    if (pestanas.length <= 1) {
+      setPestanas(["nueva"]);
+      setTab("nueva");
+      return;
+    }
+    const restantes = pestanas.filter((p) => p !== k);
+    setPestanas(restantes);
+    if (k === tab) setTab(restantes[Math.min(idx, restantes.length - 1)]);
+  }, [pestanas, tab]);
+
+  // la NUEVA PESTAÑA: elegir destino (el + de la franja / Alt+N)
+  const abrirNueva = useCallback(() => {
+    handleTabChange("nueva");
+  }, [handleTabChange]);
+
+  // hidratación de las pestañas guardadas (una vez, tras montar — sin mismatch;
+  // microtask para no cascada de renders, patrón v102). El guardián "hidratado"
+  // evita la trampa cazada en QA: la persistencia corriendo ANTES de la
+  // hidratación sobreescribía el archivo con ["inicio"] y se perdía la sesión.
+  const hidratado = useRef(false);
+  useEffect(() => {
+    const id = setTimeout(() => {
+      try {
+        const raw = localStorage.getItem("vg-cromo-tabs-v106");
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr) && arr.length > 0) {
+            const validas = arr.filter(
+              (k: unknown): k is TabKey => typeof k === "string" && (k === "nueva" || ALL_TABS.includes(k as TabKey))
+            );
+            if (validas.length > 0) {
+              setPestanas(validas.slice(0, MAX_PESTANAS));
+              const guardada = localStorage.getItem("vg-cromo-activa-v106");
+              if (
+                guardada &&
+                (guardada === "nueva" || ALL_TABS.includes(guardada as TabKey)) &&
+                validas.includes(guardada as TabKey)
+              ) {
+                setTab(guardada as TabKey);
+              }
+            }
+          }
+        }
+      } catch {
+        /* sin almacenamiento el navegador abre en INICIO y ya está */
+      }
+      hidratado.current = true;
+    }, 0);
+    return () => clearTimeout(id);
+  }, []);
+
+  // persistencia en cada cambio del navegador interno (solo tras hidratar:
+  // escribir antes machacaría las pestañas guardadas con las iniciales)
+  useEffect(() => {
+    if (!hidratado.current) return;
+    try {
+      localStorage.setItem("vg-cromo-tabs-v106", JSON.stringify(pestanas));
+      localStorage.setItem("vg-cromo-activa-v106", tab);
+    } catch {
+      /* la sesión vive igual sin almacenamiento */
+    }
+  }, [pestanas, tab]);
+
   // init sound + player alias + sesión de cuenta + logros
   useEffect(() => {
     initSound();
@@ -300,12 +406,11 @@ export default function Home() {
     return () => clearInterval(t);
   }, [checkAchievements, initPlayer, authRefresh]);
 
-  // Keyboard shortcuts: number keys 1-9 to switch tabs, ArrowLeft/Right to navigate
+  // v106.0 TECLADO DE CROMO: los números 1-9/0 saltan entre tus PESTAÑAS
+  // ABIERTAS (ya no a un orden fijo — el navegador te obedece a ti), las flechas
+  // giran entre lo abierto y Alt+N abre la NUEVA PESTAÑA. (M = mega-menú,
+  // Ctrl+K o / = buscador: intactos.)
   useEffect(() => {
-    const TAB_ORDER: TabKey[] = [
-      "inicio", "hangar", "mundo", "bolsa", "bookmaker", "osint", "ojodios", "detective",
-      "dron", "warsim", "arcade", "noticias",
-    ];
     const handleKey = (e: KeyboardEvent) => {
       // Don't intercept if typing in input/textarea
       const target = e.target as HTMLElement;
@@ -327,45 +432,40 @@ export default function Home() {
         setSearchOpen(true);
         return;
       }
-      // Number keys 1-9 (and 0 for 10th)
+      // Alt+N: nueva pestaña (como el navegador, Ctrl+T está reservado por el SO)
+      if (e.altKey && (e.key === "n" || e.key === "N")) {
+        e.preventDefault();
+        abrirNueva();
+        return;
+      }
+      // Números 1-9 (y 0 para la última): saltar entre pestañas ABIERTAS
       if (e.key >= "1" && e.key <= "9") {
         const idx = parseInt(e.key, 10) - 1;
-        if (idx < TAB_ORDER.length) {
-          setTab(TAB_ORDER[idx]);
+        if (idx < pestanas.length) {
+          setTab(pestanas[idx]);
           sfx.tab();
         }
       }
       if (e.key === "0") {
-        // v48.0: el 0 lleva a la ÚLTIMA pestaña del orden (antes quedaba inaccesible)
-        setTab(TAB_ORDER[TAB_ORDER.length - 1]);
+        setTab(pestanas[pestanas.length - 1]);
         sfx.tab();
       }
       if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
         // v67.0: en EL HANGAR las flechas mueven al agente — no cambian de pestaña
         if (tab === "hangar") return;
-        const curIdx = TAB_ORDER.indexOf(tab);
+        const curIdx = pestanas.indexOf(tab);
         if (curIdx >= 0) {
           const dir = e.key === "ArrowRight" ? 1 : -1;
-          const newIdx = (curIdx + dir + TAB_ORDER.length) % TAB_ORDER.length;
-          setTab(TAB_ORDER[newIdx]);
+          setTab(pestanas[(curIdx + dir + pestanas.length) % pestanas.length]);
           sfx.tab();
         }
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [tab]);
+  }, [tab, pestanas, abrirNueva]);
 
-  // play sound on tab change + record tab visit for daily challenges
-  const handleTabChange = (k: TabKey) => {
-    sfx.tab();
-    setTab(k);
-    recordTabVisit(k);
-    // v98.0 MODO ESCENA: la radio sigue tu posición (el MusicPlayer escucha esto)
-    window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(k).key }));
-    // v29 FIX: cada sección abre desde arriba — la barra sticky nunca tapa el inicio del panel
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-  };
+  // (v106.0: el handleTabChange vive ahora arriba, con el estado del navegador)
 
   // v98.0 COLOR ÚNICO POR SECCIÓN — publica el acento del mundo activo como CSS
   // var: la transición de cine, el buscador y los detalles del chrome se tiñen
@@ -379,13 +479,9 @@ export default function Home() {
   useEffect(() => {
     const handler = (e: Event) => {
       const target = (e as CustomEvent).detail as TabKey;
-      if (target) {
-        setTab(target);
-        recordTabVisit(target);
-        // v98.0 MODO ESCENA también en la navegación programática
-        window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(target).key }));
-        window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-      }
+      // v106.0: TODA la navegación programática abre PESTAÑA (dedupe + escena +
+      // scroll incluidos en el navegador interno) — nada se salta la franja.
+      if (target) handleTabChange(target);
     };
     const openMenu = () => setMenuOpen(true);
     const openAccount = () => setAccountOpen(true);
@@ -406,7 +502,7 @@ export default function Home() {
       window.removeEventListener("vanguard:open-account", openAccount);
       window.removeEventListener("vanguard:pasaporte", pedirPasaporte);
     };
-  }, [recordTabVisit]);
+  }, [handleTabChange]);
 
   return (
     <div className="min-h-screen flex flex-col relative z-10">
@@ -429,7 +525,17 @@ export default function Home() {
       {/* v96.0 GOOGLE VIVO: la estructura de las webs más usadas del mundo —
           letras vivas + buscador central + INVESTIGAR + rejilla de apps */}
       <GoogleBar active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} />
-      <TabNav active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} onOpenSearch={() => setSearchOpen(true)} />
+      {/* v106.0 PESTAÑAS DE CROMO: la franja del navegador interno — pestañas
+          abiertas, + para la NUEVA, × para cerrar, buscar y menú a la derecha */}
+      <ChromeTabs
+        pestanas={pestanas}
+        activa={tab}
+        onElegir={handleTabChange}
+        onCerrar={cerrarPestana}
+        onNueva={abrirNueva}
+        onOpenMenu={() => setMenuOpen(true)}
+        onOpenSearch={() => setSearchOpen(true)}
+      />
       {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
       <LiveTitle />
       <StatsTicker />
@@ -479,6 +585,10 @@ export default function Home() {
         {tab === "misiones" && <MissionsPanel />}
         {tab === "noticias" && <NewsPanel />}
         {tab === "redaccion" && <RedaccionPanel />}
+        {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
+        {tab === "nueva" && <NuevaPanel />}
+        {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
+        {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "galeria" && <GalleryPanel />}
         {tab === "briefings" && <BriefingsPanel />}
         {tab === "quiz" && <QuizPanel />}

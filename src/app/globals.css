@@ -2456,3 +2456,58 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .v105-entra, .v105-brillo::after, .v105-brujula svg { animation: none !important; transition: none !important; }
 }
+
+/* ═══════════ v106.0 PESTAÑAS DE CROMO ═══════════
+   La franja del navegador interno + la NUEVA PESTAÑA + la MURALLA DE VIGILANCIA.
+   Regla de oro: solo transform/opacity/box-shadow — 60 FPS, reduced-motion apaga. */
+
+/* el ómnibox de la NUEVA PESTAÑA respira cuando escribes en él */
+.v106-omnibox { transition: box-shadow 0.3s ease, border-color 0.3s ease; border-radius: 12px; }
+.v106-omnibox:focus-within {
+  box-shadow: 0 0 0 1px rgba(255, 201, 77, 0.35), 0 0 28px -8px rgba(255, 201, 77, 0.5);
+}
+
+/* las tarjetas-mundo de la NUEVA PESTAÑA se elevan al pasar (transform puro) */
+.v106-mundo { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, background-color 0.25s ease; }
+.v106-mundo:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -14px rgba(0, 0, 0, 0.85); }
+
+/* el barrido de radar de la MURALLA: cono giratorio decorativo (transform) */
+@keyframes v106Sweep {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.v106-radar {
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 240px;
+  height: 240px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: conic-gradient(from 0deg, rgba(94, 234, 212, 0.16), transparent 22%);
+  animation: v106Sweep 7s linear infinite;
+  opacity: 0.8;
+}
+
+/* la muralla respira: brillo lento que recorre la cabecera (transform) */
+@keyframes v106Muralla {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(220%); }
+}
+.v106-muralla { position: relative; overflow: hidden; }
+.v106-muralla::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30%;
+  background: linear-gradient(100deg, transparent, rgba(94, 234, 212, 0.06), transparent);
+  animation: v106Muralla 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── ACCESIBILIDAD v106: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v106-radar, .v106-muralla::after { animation: none !important; }
+  .v106-mundo, .v106-omnibox { transition: none !important; }
+}

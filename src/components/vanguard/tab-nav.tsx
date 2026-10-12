@@ -11,6 +11,7 @@ import {
   Radio, MessagesSquare, Vote, Command, Radar, Signal, TrendingUp, Shield,
   Castle, CircleDollarSign, MessageCircle, Network, Gift, Medal, Rocket, Fingerprint,
   Joystick, Flag, Coins, BookOpen, Sparkles, Hourglass, Earth, Activity, VenetianMask,
+  AppWindow,
   Siren, BookLock, Gavel, BrainCircuit, ShieldAlert, Home, LayoutGrid,
   Bomb, Clapperboard, Banknote, UserCog, Scale, MapPinned, Flame as FlameIcon, AlertOctagon,
   Crosshair, UserCheck, Send, Laugh, Palette, Satellite, Eye,
@@ -121,7 +122,12 @@ export type TabKey =
   // el usuario progresa y la gente crea y participa
   | "cambios" | "analista" | "escenarios"
   // v104.0 LA VITRINA: el muro unificado de TODAS las obras de la comunidad
-  | "obras";
+  | "obras"
+  // v106.0 PESTAÑAS DE CROMO: navegación como las webs más usadas del mundo —
+  // cada vista es una pestaña que se abre, se elige y se cierra + la página
+  // NUEVA PESTAÑA para elegir destino + el OBSERVATORIO como sala con cuerpo propio
+  | "nueva"
+  | "observatorio";
 
 interface TabDef {
   key: TabKey;
@@ -141,7 +147,7 @@ interface SectionDef {
   tabs: TabDef[];
 }
 
-const TABS: Record<TabKey, TabDef> = {
+export const TABS: Record<TabKey, TabDef> = {
   inicio:        { key: "inicio",        label: "Inicio (Noticias)", short: "INICIO", icon: <Home className="w-3.5 h-3.5" />, color: "amber" },
   // v105.0 LA REDACCIÓN: el lugar para LEER — portada real, porqués, investigación en vivo
   redaccion:     { key: "redaccion",     label: "LA REDACCIÓN (el lugar para leer el mundo: portada real con resumen, ¿por qué importa? e investigación en vivo)", short: "REDACCIÓN", icon: <Newspaper className="w-3.5 h-3.5" />, color: "amber" },
@@ -256,6 +262,10 @@ const TABS: Record<TabKey, TabDef> = {
   escenarios:    { key: "escenarios",    label: "GALERÍA DEL DESTINO (escenarios ¿Y SI...? de la comunidad: explóralos, coméntalos y mejóralos)", short: "ESCENARIOS", icon: <Share2 className="w-3.5 h-3.5" />, color: "violet" },
   // v104.0 LA VITRINA — el muro unificado de todas las obras de la comunidad
   obras:         { key: "obras",         label: "MURO DE OBRAS (la vitrina de la comunidad: juega, simula, remezcla y expón — con Paseo de la Fama y el agente que evalúa)", short: "OBRAS", icon: <LayoutDashboard className="w-3.5 h-3.5" />, color: "violet" },
+  // v106.0 PESTAÑAS DE CROMO — la página NUEVA PESTAÑA (elegir destino como en
+  // el navegador más usado del mundo) y el OBSERVATORIO como sala con cuerpo
+  nueva:         { key: "nueva",         label: "NUEVA PESTAÑA (elige tu destino: buscador, atajos y todo el índice de Vanguard)", short: "NUEVA", icon: <AppWindow className="w-3.5 h-3.5" />, color: "amber" },
+  observatorio:  { key: "observatorio",  label: "MURALLA DE VIGILANCIA (el corazón del Observatorio: sismos, pulso, presencia y las 17 salas en vivo)", short: "OBSERV", icon: <Telescope className="w-3.5 h-3.5" />, color: "cyan" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
   mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
@@ -374,8 +384,10 @@ export const SECTIONS: SectionDef[] = [
     // v96.0 GOOGLE VIVO: nueva sala de VIGILANCIA TOTAL — los espejos y monitores
     // salen de INTELIGENCIA para que respire (17 pestañas propias)
     key: "observatorio", label: "OBSERVATORIO", short: "OBSERV", icon: <Telescope className="w-4 h-4" />, color: "cyan",
-    desc: "La sala de vigilancia total del planeta: el centinela, el espectro, pulsos, evaluación, pérdidas, frentes, GEOINT, monitor global, cámaras del mundo, cielos, sismos, ciber, el pulso, radar, planeta vivo, geopolítica y la galería",
-    tabs: [TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.geoint, TABS.monitorglobal, TABS.camaras, TABS.cielos, TABS.sismo, TABS.ciber, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria],
+    // v106.0: el OBSERVATORIO abre con su MURALLA DE VIGILANCIA — la muralla
+    // manda en la sala y las 17 salas quedan a un toque (pestañas de cromo)
+    desc: "La sala de vigilancia total del planeta: la MURALLA DE VIGILANCIA, el centinela, el espectro, pulsos, evaluación, pérdidas, frentes, GEOINT, monitor global, cámaras del mundo, cielos, sismos, ciber, el pulso, radar, planeta vivo, geopolítica y la galería",
+    tabs: [TABS.observatorio, TABS.centinela, TABS.espectro, TABS.pulsos, TABS.evaluacion, TABS.perdidas, TABS.frentes, TABS.geoint, TABS.monitorglobal, TABS.camaras, TABS.cielos, TABS.sismo, TABS.ciber, TABS.pulso, TABS.radar, TABS.planeta, TABS.geopolitica, TABS.galeria],
   },
   {
     // v96.0 GOOGLE VIVO: gran estrategia y simulación en su propia sala
@@ -412,8 +424,24 @@ export const SECTIONS: SectionDef[] = [
 ];
 
 export function sectionOfTab(tab: TabKey): SectionDef {
+  // v106.0: NUEVA PESTAÑA es su propio mundo (fuera del índice del Explorador
+  // — abrir pestañas no paga el mapa) con el oro de la identidad Vanguard
+  if (tab === "nueva") return NUEVA_SECTION;
   return SECTIONS.find((s) => s.tabs.some((t) => t.key === tab)) ?? SECTIONS[0];
 }
+
+// v106.0 PESTAÑAS DE CROMO: la NUEVA PESTAÑA vive fuera de SECTIONS para no
+// contaminar el mega-menú ni el índice del Explorador, pero necesita su propia
+// definición de sección para el acento, el título y el color de la pestaña.
+export const NUEVA_SECTION: SectionDef = {
+  key: "nueva",
+  label: "NUEVA PESTAÑA",
+  short: "NUEVA",
+  icon: <AppWindow className="w-4 h-4" />,
+  color: "amber",
+  desc: "Elige tu destino: buscador de secciones, atajos recientes, los 14 mundos y todo el índice de Vanguard",
+  tabs: [TABS.nueva],
+};
 
 // v48.0 BRÚJULA: índice plano de TODAS las secciones — motor del Explorador
 export const ALL_TABS: TabKey[] = SECTIONS.flatMap((s) => s.tabs.map((t) => t.key));
@@ -435,6 +463,7 @@ const SECTION_COLOR: Record<string, { active: string; dot: string }> = {
 // --vg-acc (page.tsx) para teñir la barra Google, la transición de cine y el
 // buscador con el color del mundo donde estás.
 export const SECTION_ACCENT: Record<string, string> = {
+  nueva:         "#FFC94D", // oro — la identidad de Vanguard en la nueva pestaña
   hangar:        "#52D5E0", // turquesa metálico — tu base 3D
   inicio:        "#FFC94D", // ORO — la identidad dorada de Vanguard
   inteligencia:  "#7FE3FF", // cian inteligente — conocimiento
