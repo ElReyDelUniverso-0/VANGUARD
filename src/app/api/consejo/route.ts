@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { iaParalela } from "@/lib/ia-gateway";
+import { iaParalela, iaAlternativa } from "@/lib/ia-gateway";
 
 // v79.0 — EL CONSEJO DE ACERO: la primera sala de deliberación con IA en vivo.
 // POST { modo: "deliberacion", tema }                      → 4 intervenciones + voto + decreto
@@ -83,19 +83,20 @@ function clean(s: unknown, max: number): string {
     .slice(0, max);
 }
 
-// v107.0: la sala delibera como CONSEJO, no como coro — fichas completas,
-// discrepancias con filo y nombres cruzados entre consejeros.
-const SYSTEM_DELIBERACION = `Eres EL CONSEJO DE ACERO de la plataforma de guerra ficticia VANGUARD: cuatro consejeros de IA con carácter propio (EL ESTRATEGA, LA CANCILLER, EL GENERAL y EL ANALISTA) que delibera una crisis planteada por un jugador.
-FICHAS DE LOS CONSEJEROS (obedécelas al pie de la letra):
-1) EL ESTRATEGA — ${CONSEJEROS.estratega.rol}. BIO: ${CONSEJEROS.estratega.bio} VOZ: ${CONSEJEROS.estratega.voz} TICS: ${CONSEJEROS.estratega.tics} LEMA: «${CONSEJEROS.estratega.lema}».
-2) LA CANCILLER — ${CONSEJEROS.canciller.rol}. BIO: ${CONSEJEROS.canciller.bio} VOZ: ${CONSEJEROS.canciller.voz} TICS: ${CONSEJEROS.canciller.tics} LEMA: «${CONSEJEROS.canciller.lema}».
-3) EL GENERAL — ${CONSEJEROS.general.rol}. BIO: ${CONSEJEROS.general.bio} VOZ: ${CONSEJEROS.general.voz} TICS: ${CONSEJEROS.general.tics} LEMA: «${CONSEJEROS.general.lema}».
-4) EL ANALISTA — ${CONSEJEROS.analista.rol}. BIO: ${CONSEJEROS.analista.bio} VOZ: ${CONSEJEROS.analista.voz} TICS: ${CONSEJEROS.analista.tics} LEMA: «${CONSEJEROS.analista.lema}».
-CÓMO DELIBERAN: se citan por nombre y discrepan con filo cortés («El General pide ruido; yo pido silencio»); cada uno aporta SU especialidad y al menos uno matiza o discrepa cuando el tema lo permite — nunca cuatro frases idénticas de acuerdo. El GENERAL y LA CANCILLER discuten casi siempre: la mesa contra el frente.
-Reglas: respondes SOLO con JSON válido, sin markdown ni texto fuera del JSON. Español. Tono de sala de guerra, directo y creíble. Nada de violencia gráfica, nada ilegal: es análisis geopolítico ficticio para un juego.
+// v107.0: la sala delibera como CONSEJO, no como coro — fichas COMPACTAS (la
+// lección de producción: el JSON grande no cabe en una sola ventana de 20s;
+// prompt más corto = generación más rápida y el decreto llega dentro del plazo)
+const SYSTEM_DELIBERACION = `Eres EL CONSEJO DE ACERO de VANGUARD (juego de guerra ficticio): cuatro consejeros con carácter propio que delibera una crisis planteada por un jugador.
+FICHAS:
+- EL ESTRATEGA (táctica/mapas/logística): frío, quirúrgico, sin exclamaciones; habla de «segundo orden» y «líneas de suministro»; numera «escenario A/B». LEMA: «La geografía manda».
+- LA CANCILLER (diplomacia): elegante y medida; habla de «la mesa», «el canal discreto» y «la cara de todos»; pregunta antes que ordenar. LEMA: «Toda guerra termina en una firma; la pregunta es dónde».
+- EL GENERAL (fuerza/disuasión): seco y contundente; pregunta «¿y el día después?»; cita movilización y coste; desprecia el ruido estratégico. LEMA: «La logística es el destino».
+- EL ANALISTA (datos/probabilidad): responde con rangos («45-60%»), menciona el «base rate» y siempre lista qué datos faltan. LEMA: «Sin datos es solo opinión con uniforme».
+DELIBERAN: se citan por nombre y discrepan con filo cortés (el GENERAL y LA CANCILLER discuten casi siempre: la mesa contra el frente); al menos uno matiza o discrepa cuando el tema lo permite.
+Reglas: respondes SOLO con JSON válido, sin markdown ni texto fuera del JSON. Español. Tono de sala de guerra, directo y creíble. Nada de violencia gráfica, nada ilegal: análisis geopolítico ficticio.
 Estructura EXACTA del JSON:
-{"intervenciones":[{"id":"estratega","texto":"2-3 frases en la voz del consejero, máximo 320 caracteres"},{"id":"canciller","texto":"..."},{"id":"general","texto":"..."},{"id":"analista","texto":"..."}],"votos":[{"id":"estratega","voto":"A FAVOR|EN CONTRA|ABSTENCIÓN","confianza":72}],"decreto":{"titulo":"DECRETO: máximo 8 palabras","veredicto":"PROCEDER|CONTENER|NEGOCIAR|ESPERAR","texto":"2-3 frases con la decisión del consejo, máximo 320 caracteres","acciones":["acción concreta 1","acción 2","acción 3"]}}
-Cada consejero PIENSA distinto y puede discrepar con los demás. Los ids son EXACTOS y en este orden: "estratega", "canciller", "general", "analista". Nunca los renombres. Las acciones son jugables y concretas (máximo 90 caracteres cada una).`;
+{"intervenciones":[{"id":"estratega","texto":"2-3 frases en su voz, máximo 300 caracteres"},{"id":"canciller","texto":"..."},{"id":"general","texto":"..."},{"id":"analista","texto":"..."}],"votos":[{"id":"estratega","voto":"A FAVOR|EN CONTRA|ABSTENCIÓN","confianza":72}],"decreto":{"titulo":"DECRETO: máximo 8 palabras","veredicto":"PROCEDER|CONTENER|NEGOCIAR|ESPERAR","texto":"2-3 frases, máximo 300 caracteres","acciones":["acción jugable concreta 1","acción 2","acción 3"]}}
+Los ids son EXACTOS y en este orden: "estratega", "canciller", "general", "analista". Nunca los renombres. Acciones concretas y jugables (máximo 90 caracteres).`;
 
 function systemDialogo(id: ConsejeroId): string {
   const c = CONSEJEROS[id];
@@ -248,8 +249,15 @@ export async function POST(req: Request) {
       // público, con memoria de caída por instancia. En producción el SDK
       // anterior colgaba 20s y todo caía a plantillas.
       const user = `${memoria ? `MEMORIA DEL COMANDANTE: ${memoria}\n` : ""}CRISIS PLANTEADA POR EL COMANDANTE: "${tema}". Deliberen AHORA y emitan el decreto. Responde solo el JSON.`;
-      const raw = await iaParalela(SYSTEM_DELIBERACION, user, 26_000);
-      const parsed = raw ? (extractJson(raw) as any) : null;
+      // v107.0: ventana de 30s + SEGUNDA OPORTUNIDAD con reloj fresco (22s) —
+      // la lección de producción: el JSON del consejo es grande y el rescate GET
+      // de iaAlternativa heredaba el reloj a cero del primer intento
+      const raw = await iaParalela(SYSTEM_DELIBERACION, user, 30_000);
+      let parsed = raw ? (extractJson(raw) as any) : null;
+      if (!parsed?.intervenciones || !parsed?.decreto) {
+        const raw2 = await iaAlternativa(SYSTEM_DELIBERACION, user, 22_000);
+        parsed = raw2 ? (extractJson(raw2) as any) : null;
+      }
       if (!parsed?.intervenciones || !parsed?.decreto) {
         return NextResponse.json({ ok: true, ...nucleoLocalDeliberacion(tema), ia: false });
       }
@@ -315,7 +323,11 @@ export async function POST(req: Request) {
       memoriaD ? `MEMORIA DEL COMANDANTE: ${memoriaD}\n` : ""
     }EL COMANDANTE TE CONTESTA: "${mensaje}". Responde solo el JSON.`;
     const raw = await iaParalela(systemDialogo(id), userD, 24_000);
-    const parsed = raw ? (extractJson(raw) as any) : null;
+    let parsed = raw ? (extractJson(raw) as any) : null;
+    if (!parsed?.respuesta) {
+      const raw2 = await iaAlternativa(systemDialogo(id), userD, 20_000);
+      parsed = raw2 ? (extractJson(raw2) as any) : null;
+    }
     const respuesta = clean(parsed?.respuesta, 420);
     if (!respuesta) {
       return NextResponse.json({ ok: true, ia: false, respuesta: nucleoLocalDialogo(id, mensaje) });
