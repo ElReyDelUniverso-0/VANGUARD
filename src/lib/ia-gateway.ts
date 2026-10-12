@@ -38,8 +38,12 @@ export async function iaDirecta(system: string, user: string, timeoutMs = 25_000
     });
     if (!res.ok) throw new Error(`gateway ${res.status}`);
     const data = await res.json();
+    gatewayCaidoHasta = 0; // el gateway volvió
     return String(data?.choices?.[0]?.message?.content ?? "");
   } catch {
+    // v105.0: gateway colgado/fallido — memoria por instancia para no volver a
+    // quemar 20s de deadline en la siguiente petición del mismo lambda
+    gatewayCaidoHasta = Date.now() + 600_000;
     return "";
   } finally {
     clearTimeout(t);
@@ -91,6 +95,14 @@ export function primerJSON(raw: string): Record<string, unknown> | null {
 
 const ALT_ENDPOINT = "https://text.pollinations.ai/openai";
 
+// v105.0 memoria del gateway caído (por instancia de lambda)
+let gatewayCaidoHasta = 0;
+
+/** true si el gateway privado falló en los últimos 10 minutos (instancia). */
+export function gatewaySospechosoCaido(): boolean {
+  return Date.now() < gatewayCaidoHasta;
+}
+
 export async function iaAlternativa(system: string, user: string, timeoutMs = 14_000): Promise<string> {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
@@ -124,9 +136,14 @@ export async function iaAlternativa(system: string, user: string, timeoutMs = 14
  * GLM y producción no espera 40s de cuelgues muertos.
  */
 export async function iaParalela(system: string, user: string, timeoutMs = 20_000): Promise<string> {
+  // v105.0: si el gateway ya demostró estar caído en esta instancia (producción),
+  // no lo llamamos — TODO el margen va al núcleo público que sí responde.
+  if (gatewaySospechosoCaido()) {
+    return iaAlternativa(system, user, timeoutMs);
+  }
   const r = await Promise.allSettled([
     iaDirecta(system, user, timeoutMs),
-    iaAlternativa(system, user, Math.min(16_000, timeoutMs)),
+    iaAlternativa(system, user, Math.min(20_000, timeoutMs)),
   ]);
   if (r[0].status === "fulfilled" && r[0].value) return r[0].value;
   if (r[1].status === "fulfilled" && r[1].value) return r[1].value;
