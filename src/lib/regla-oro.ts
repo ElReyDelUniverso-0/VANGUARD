@@ -1022,6 +1022,14 @@ export const REGLA_ORO = {
       "La sala donde la IA de Vanguard ya no es una herramienta: es la anfitriona. La MENTE vigila el planeta en pulsos de 5 minutos — piensa en voz alta sobre lo que ve, conversa contigo cuando le hablas, y firma expedientes completos de cualquier titular que le pongas delante: actores, riesgo, confianza, recomendación y una proyección de escenarios con su razonamiento explicable, paso a paso, con las 8 neuronas del núcleo al descubierto. Vanguard se actualiza sola aquí: si la abandonas un rato, cuando vuelvas ella te cuenta lo que el mundo hizo mientras no mirabas.",
     acento: "#BEF264",
   },
+  redaccion: {
+    titulo: "LA REDACCIÓN",
+    volanta: "El lugar para leer el mundo — despacio y sin interrupciones",
+    imagen: "/ilustraciones/noticias.jpg",
+    texto:
+      "Vanguard tenía mil salas y ninguna sala de lectura. Ahora la tiene: noticias REALES de más de 15 medios mundiales con su resumen legible y su tiempo de lectura, tipografía serif de periódico con tres tamaños de letra, barra de progreso y GUARDADOS para leer después. Cada pieza abre su ¿POR QUÉ IMPORTA? — el contexto y los antecedentes redactados por la sala — y su INVESTIGACIÓN EN VIVO: pregunta al mundo real y recibe síntesis firmada con hallazgos citados (medio y fecha, cero enlaces). Y mientras lees, el MODO LECTURA silencia todos los comerciales: nada salta, nada cubre, nada estorba.",
+    acento: "#FFC94D",
+  },
   agenteia: {
     titulo: "MODO AGENTE",
     volanta: "La mente, superpotente — y creadora",

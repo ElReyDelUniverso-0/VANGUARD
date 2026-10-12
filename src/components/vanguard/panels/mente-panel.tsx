@@ -8,11 +8,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Brain, Send, Loader2, Eye, Timer, MessageSquare, ScanSearch, Sparkles, Zap, RefreshCw } from "lucide-react";
+import { Brain, Send, Loader2, Eye, Timer, MessageSquare, ScanSearch, Sparkles, Zap, RefreshCw, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 // v101.0 EL REGRESO — PILAR 2: cada análisis alimenta el PERFIL DE ANALISTA
 import { useAnalista } from "@/lib/analista";
+// v105.0 LA REDACCIÓN: calma mientras escribes — nada interrumpe el diálogo
+import { useCalma } from "@/lib/calma";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import {
@@ -26,7 +28,7 @@ const LS_MENTE = "vg-mente-v99";
 const LS_CHAT = "vg-mente-chat-v99";
 const MENTE_ACC = "#BEF264";
 
-type ChatMsg = { role: "user" | "mente"; text: string; ia?: boolean };
+type ChatMsg = { role: "user" | "mente"; text: string; ia?: boolean; web?: boolean; hallazgos?: { titulo: string; fuente: string; fecha: string }[]; claves?: string[]; confianza?: number };
 
 function leerMente(): { recompensados: string[]; dia: string; n: number; chatDia: string; chatHecho: boolean } {
   try {
@@ -140,6 +142,10 @@ export function MentePanel() {
   const [input, setInput] = useState("");
   const [pensando, setPensando] = useState(false);
   const chatFin = useRef<HTMLDivElement | null>(null);
+  // v105.0: modo INVESTIGAR — la pregunta sale a la red real y vuelve con fuentes
+  const [investigarModo, setInvestigarModo] = useState(false);
+  const activarLectura = useCalma((s) => s.activarLectura);
+  const desactivarLectura = useCalma((s) => s.desactivarLectura);
 
   // ---- análisis ----
   const [texto, setTexto] = useState("");
@@ -158,6 +164,23 @@ export function MentePanel() {
       const raw = JSON.parse(localStorage.getItem(LS_CHAT) || "[]") as ChatMsg[];
       if (Array.isArray(raw)) setChat(raw.slice(-24));
     } catch { /* chat fresco */ }
+  }, []);
+
+  // v105.0: "INVESTIGAR ESTO" desde LA REDACCIÓN aterriza aquí
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("vg-mente-investigar");
+      if (raw) {
+        const d = JSON.parse(raw) as { q?: string };
+        if (d.q && d.q.length > 3) {
+          setSala("charla"); // aterrizar directo en la sala de conversa
+          setInvestigarModo(true);
+          setInput(d.q);
+          toast("INVESTIGACIÓN lista en el compositor — pulsa enviar y LA MENTE sale a la red real", { description: "Hallazgos con medio y fecha, cero enlaces" });
+        }
+        sessionStorage.removeItem("vg-mente-investigar");
+      }
+    } catch { /* sin pedido */ }
   }, []);
 
   const bucket = pulsoActual(now);
@@ -194,14 +217,27 @@ export function MentePanel() {
         toast.success("LA MENTE te escucha: +2ⓒ +2 XP por abrir la charla");
         localStorage.setItem(LS_MENTE, JSON.stringify({ ...m, chatDia: dia, chatHecho: true }));
       }
+      // v105.0: INVESTIGAR sale a la red real — dialogo conversa con el núcleo
+      const modo = investigarModo ? "investigar" : "dialogo";
+      const cuerpo = investigarModo
+        ? { modo, pregunta: msg }
+        : { modo, mensaje: msg, historial: siguiente.slice(-6).map((c) => ({ role: c.role === "user" ? "user" : "assistant", content: c.text })) };
       const res = await fetch("/api/mente", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ modo: "dialogo", mensaje: msg, historial: siguiente.slice(-6).map((c) => ({ role: c.role === "user" ? "user" : "assistant", content: c.text })) }),
+        body: JSON.stringify(cuerpo),
       });
       const data = await res.json();
       const respuesta: string = data.respuesta || data.error || "…";
-      const conIa: ChatMsg[] = [...siguiente, { role: "mente", text: respuesta, ia: data.ia === true }];
+      const conIa: ChatMsg[] = [...siguiente, {
+        role: "mente",
+        text: respuesta,
+        ia: data.ia === true,
+        web: data.web === true,
+        hallazgos: Array.isArray(data.hallazgos) ? data.hallazgos : undefined,
+        claves: Array.isArray(data.claves) ? data.claves : undefined,
+        confianza: typeof data.confianza === "number" ? data.confianza : undefined,
+      }];
       setChat(conIa);
       localStorage.setItem(LS_CHAT, JSON.stringify(conIa.slice(-24)));
     } catch {
@@ -365,17 +401,45 @@ export function MentePanel() {
               <div key={i} className={cn("v99-msg flex", c.role === "user" ? "justify-end" : "justify-start")}>
                 <div
                   className={cn(
-                    "max-w-[85%] rounded-xl px-3 py-2 text-[12.5px] leading-relaxed border",
+                    "max-w-[88%] rounded-xl px-3 py-2 text-[12.5px] leading-relaxed border",
                     c.role === "user" ? "bg-amber/10 border-amber/30 text-foreground" : "bg-black/60 text-foreground/90"
                   )}
                   style={c.role === "mente" ? { borderColor: `${MENTE_ACC}44` } : undefined}
                 >
                   {c.role === "mente" && (
-                    <p className="font-mono text-[8.5px] uppercase tracking-widest mb-1 flex items-center gap-1" style={{ color: MENTE_ACC }}>
-                      <Brain className="w-2.5 h-2.5" /> LA MENTE {c.ia === false && <span className="text-muted-foreground">· red local</span>}
+                    <p className="font-mono text-[8.5px] uppercase tracking-widest mb-1 flex items-center gap-1 flex-wrap" style={{ color: MENTE_ACC }}>
+                      <Brain className="w-2.5 h-2.5" /> LA MENTE{" "}
+                      {c.web ? (
+                        <span className="px-1.5 py-0.5 rounded-full" style={{ background: `${MENTE_ACC}1f`, color: MENTE_ACC }}>· investigación en vivo</span>
+                      ) : c.ia === false ? (
+                        <span className="text-muted-foreground">· red local</span>
+                      ) : (
+                        <span className="text-muted-foreground">· núcleo IA</span>
+                      )}
                     </p>
                   )}
-                  {c.text}
+                  <p className="whitespace-pre-wrap">{c.text}</p>
+                  {c.role === "mente" && c.hallazgos && c.hallazgos.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      <p className="font-mono text-[8px] uppercase tracking-widest text-muted-foreground">hallazgos reales · medio y fecha</p>
+                      {c.hallazgos.map((h, j) => (
+                        <div key={j} className="rounded-md bg-black/50 border border-white/10 px-2 py-1">
+                          <p className="text-[11px] leading-snug text-foreground/80">{h.titulo}</p>
+                          <p className="font-mono text-[8px] text-muted-foreground mt-0.5">{h.fuente}{h.fecha ? ` · ${h.fecha}` : ""}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {c.role === "mente" && c.claves && c.claves.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-0.5">
+                      {c.claves.map((k, j) => (
+                        <p key={j} className="text-[11px] text-foreground/75 flex gap-1"><span style={{ color: MENTE_ACC }}>▸</span>{k}</p>
+                      ))}
+                    </div>
+                  )}
+                  {c.role === "mente" && typeof c.confianza === "number" && c.confianza > 0 && (
+                    <p className="font-mono text-[8px] text-muted-foreground mt-1.5">confianza en los hallazgos: {c.confianza}/100</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -383,28 +447,47 @@ export function MentePanel() {
               <div className="flex justify-start">
                 <div className="rounded-xl px-3 py-2 border bg-black/60 flex items-center gap-2" style={{ borderColor: `${MENTE_ACC}44` }}>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: MENTE_ACC }} />
-                  <span className="text-[11px] text-muted-foreground font-mono">LA MENTE está siguiendo el patrón…</span>
+                  <span className="text-[11px] text-muted-foreground font-mono">
+                    {investigarModo ? "LA MENTE está recorriendo la red real…" : "LA MENTE está siguiendo el patrón…"}
+                  </span>
                 </div>
               </div>
             )}
             <div ref={chatFin} />
           </div>
-          <div className="p-2.5 border-t border-white/10 flex gap-2">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") enviar(); }}
-              placeholder="Escríbele a LA MENTE…"
-              className="flex-1 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-amber/50"
-            />
+          {/* v105.0 compositor: interruptor INVESTIGAR + calma al escribir */}
+          <div className="p-2.5 border-t border-white/10 space-y-1.5">
             <button
-              onClick={enviar}
-              disabled={pensando || !input.trim()}
-              className="rounded-lg px-3.5 font-bold text-black transition-transform active:scale-95 disabled:opacity-40"
-              style={{ background: MENTE_ACC }}
+              onClick={() => setInvestigarModo(!investigarModo)}
+              className={cn(
+                "w-full rounded-lg border py-1.5 font-mono text-[9.5px] font-bold tracking-wider flex items-center justify-center gap-1.5 transition-all",
+                investigarModo ? "text-black" : "text-muted-foreground border-white/10 bg-black/30 hover:border-white/25"
+              )}
+              style={investigarModo ? { background: MENTE_ACC, borderColor: MENTE_ACC } : undefined}
             >
-              <Send className="w-4 h-4" />
+              <Globe2 className="w-3.5 h-3.5" />
+              {investigarModo ? "INVESTIGACIÓN EN VIVO ACTIVA — la respuesta saldrá de la red real" : "ACTIVAR INVESTIGACIÓN EN VIVO — pregunta a la red real"}
             </button>
+            <div className="flex gap-2">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); enviar(); } }}
+                onFocus={() => activarLectura()}
+                onBlur={() => desactivarLectura()}
+                rows={2}
+                placeholder={investigarModo ? "¿Qué investigar en el mundo real? Ej.: últimas noticias del estrecho de Ormuz…" : "Escríbele a LA MENTE…"}
+                className="flex-1 min-w-0 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-amber/50 resize-none"
+              />
+              <button
+                onClick={enviar}
+                disabled={pensando || !input.trim()}
+                className="rounded-lg px-3.5 font-bold text-black transition-transform active:scale-95 disabled:opacity-40 self-stretch"
+                style={{ background: MENTE_ACC }}
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}

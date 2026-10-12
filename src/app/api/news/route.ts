@@ -479,7 +479,7 @@ async function refreshGdeltInBackground() {
         if (!esNueva(a.title)) continue; // misma historia desde otro medio: fuera
         await db.newsItem.upsert({
           where: { externalId: a.link },
-          update: {},
+          update: a.summary && !a.summary.startsWith("http") ? { summary: a.summary } : {},
           create: {
             externalId: a.link,
             title: a.title,
@@ -491,6 +491,7 @@ async function refreshGdeltInBackground() {
             conflictTag: conflictTag(a.title),
             tacticalTag: classifyTag(a.title),
             sourceCountry: guessCountry(a.title, ""),
+            summary: a.summary || null,
           },
         });
       } catch {
@@ -565,6 +566,9 @@ interface RssArticle {
   link: string;
   pubDate: Date;
   source: string;
+  // v105.0 LA REDACCIÓN: el párrafo real del medio (description del RSS) —
+  // sin él la noticia es solo un titular imposible de LEER.
+  summary: string;
 }
 
 function decodeCdata(s: string): string {
@@ -594,7 +598,14 @@ async function fetchRssSource(src: { url: string; source: string }): Promise<Rss
         raw.match(/<dc:date>([\s\S]*?)<\/dc:date>/)?.[1] ?? "";
       const pubDate = dateRaw ? new Date(dateRaw) : new Date();
       if (Number.isNaN(pubDate.getTime())) continue;
-      out.push({ title, link, pubDate, source: src.source });
+      // v105.0: description real del medio → resumen legible (limpia HTML y entidades)
+      const descRaw = raw.match(/<description>([\s\S]*?)<\/description>/)?.[1] ?? "";
+      const summary = unescapeXml(decodeCdata(descRaw))
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 600);
+      out.push({ title, link, pubDate, source: src.source, summary });
     }
   } catch {
     // un medio caído no tumba el canal

@@ -6,7 +6,7 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, SignalLow } from "lucide-react";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, SignalLow, Compass } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { suscribirModoGuerra, toggleModoGuerra } from "@/lib/modo-guerra";
@@ -146,6 +146,14 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               )}
             >
               <SignalLow className="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
+            {/* v105.0 EL NAVEGADOR: la brújula que responde "¿qué hago hoy?" — visible siempre */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("vanguard:navegador"))}
+              title="¿Qué quieres hacer hoy? — el navegador de Vanguard"
+              className="w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center border-amber-hud text-amber hover:bg-amber-hud transition-colors v105-brujula"
+            >
+              <Compass className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={toggleMute}

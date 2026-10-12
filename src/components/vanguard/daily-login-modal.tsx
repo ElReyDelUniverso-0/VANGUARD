@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Coins, Flame, Gift, Check, Play, ShieldAlert, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { calmaActiva } from "@/lib/calma";
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
@@ -18,6 +19,8 @@ function todayKey() {
 export function DailyLoginModal() {
   const [open, setOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // v105.0 MODO CALMA: el bono se aparta si el operador empieza a leer/escribir
+  const [pospuesto, setPospuesto] = useState(false);
   // v58.0 DOMINIO TOTAL — ESCUDO DE RACHA: salva la racha con 150ⓒ si faltaste
   const [shieldSaved, setShieldSaved] = useState(false);
   const { lastLoginDate, addCoins, addGems, addXp, streak, progressMission, coins, spendCoins, inventory, consumeFromInventory } = useGameStore();
@@ -33,14 +36,38 @@ export function DailyLoginModal() {
       // pequeño delay para que cargue el HUD
       // v72.0: si la intro cinematográfica va a correr esta sesión, el bono
       // ESPERA a que termine (8.3s de intro + margen) — primero la intro, luego el premio.
+      // v105.0 MODO CALMA: si el operador está leyendo (Redacción) o escribiendo
+      // (charla con LA MENTE), el bono ESPERA en silencio — nada cubre la lectura.
       let delay = 400;
       try {
         if (sessionStorage.getItem("vanguard-booted") !== "1") delay = 9400;
       } catch { /* noop */ }
-      const t = setTimeout(() => setOpen(true), delay);
-      return () => clearTimeout(t);
+      const start = Date.now();
+      const iv = setInterval(() => {
+        if (Date.now() - start < delay) return;
+        if (calmaActiva()) return;
+        clearInterval(iv);
+        setOpen(true);
+      }, 1500);
+      return () => clearInterval(iv);
     }
   }, [lastLoginDate, dismissed]);
+
+  // v105.0: si la lectura/escritura empieza con el modal abierto, el modal SE APARTA
+  // y regresa solo cuando el operador termina — el bono no se pierde jamás.
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const calma = calmaActiva();
+      if (calma && open) {
+        setOpen(false);
+        setPospuesto(true);
+      } else if (!calma && !open && pospuesto && !dismissed) {
+        setOpen(true);
+        setPospuesto(false);
+      }
+    }, 2000);
+    return () => clearInterval(iv);
+  }, [open, pospuesto, dismissed]);
 
   const handleShield = () => {
     const ok = spendCoins(150, "ESCUDO DE RACHA — racha protegida");
@@ -71,6 +98,7 @@ export function DailyLoginModal() {
 
   const handleClaim = () => {
     const today = todayKey();
+    setPospuesto(false); // v105: reclamado — el bono no debe regresar después
     const newStreak = lastLoginDate && (isYesterday(lastLoginDate) || shieldSaved) ? streak + 1 : 1;
     const reward = 30 + newStreak * 10;
     addCoins(reward, `Login diario dia ${newStreak}${shieldSaved ? " (escudo)" : ""}`);

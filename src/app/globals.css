@@ -2417,3 +2417,42 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 @media (prefers-reduced-motion: reduce) {
   .v104-podio, .v104-rango, .v104-latido, .v104-pulso { animation: none !important; }
 }
+
+/* ══════════ v105.0 LA REDACCIÓN — SALA DE LECTURA ══════════
+   Tipografía de periódico, calma y silencio: solo transform/opacity/box-shadow
+   — 60 FPS. reduced-motion apaga todo. */
+
+/* entrada de piezas de la redacción y tarjetas del navegador */
+@keyframes v105Entra {
+  0%   { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.v105-entra { animation: v105Entra 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* esqueleto de sintonización: brillo que recorre (transform) */
+@keyframes v105Brillo {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.v105-brillo { position: relative; overflow: hidden; }
+.v105-brillo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 201, 77, 0.09), transparent);
+  animation: v105Brillo 1.5s ease-in-out infinite;
+}
+
+/* la brújula del HUD gira despacio al pasar el ratón */
+.v105-brujula svg { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.v105-brujula:hover svg { transform: rotate(28deg); }
+
+/* scrollbar fina de la redacción (chips de categoría) */
+.v105-scroll::-webkit-scrollbar { height: 5px; }
+.v105-scroll::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+.v105-scroll::-webkit-scrollbar-thumb { background: rgba(255, 201, 77, 0.28); border-radius: 3px; }
+
+/* ── ACCESIBILIDAD v105: con movimiento reducido, todo queda quieto ── */
+@media (prefers-reduced-motion: reduce) {
+  .v105-entra, .v105-brillo::after, .v105-brujula svg { animation: none !important; transition: none !important; }
+}

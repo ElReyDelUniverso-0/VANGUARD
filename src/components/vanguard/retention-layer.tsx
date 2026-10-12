@@ -29,6 +29,9 @@ import { EXPEDIENTES, expedienteDelDia, useExpedientes } from "@/lib/expedientes
 import { OSCURA_TOTAL, entradaDelDia, useOscura } from "@/lib/oscura";
 import { DailyLoginModal } from "@/components/vanguard/daily-login-modal";
 import { Flame, Gift, Star, Timer, TrendingUp, Radar, Plane, MapPin, X } from "lucide-react";
+// v105.0 LA REDACCIÓN: el contrato de silencio — mientras el operador lee o
+// escribe, ningún comercial interrumpe (los avisos siguen en su centro)
+import { calmaActiva } from "@/lib/calma";
 
 const RARITY_STYLE: Record<string, { label: string; cls: string; glow: string }> = {
   COMUN: { label: "COMÚN", cls: "text-slate-200 border-slate-500/60", glow: "shadow-[0_0_18px_rgba(148,163,184,0.5)]" },
@@ -104,10 +107,10 @@ export function RetentionLayer() {
 
       // combo x2 alcanzado → celebración una vez por sesión
       const combo = comboOf();
-      if (combo >= 2.0 && lastComboToast.current < 2) {
+      if (!calmaActiva() && combo >= 2.0 && lastComboToast.current < 2) {
         lastComboToast.current = 2;
         toast("🔥 ¡COMBO x2.0! Tu XP de temporada va al doble", { description: "Sigue activo para llegar a x3.0" });
-      } else if (combo >= 3.0 && lastComboToast.current < 3) {
+      } else if (!calmaActiva() && combo >= 3.0 && lastComboToast.current < 3) {
         lastComboToast.current = 3;
         toast("⚡ ¡COMBO MÁXIMO x3.0!", { description: "Estás en modo veterano. Así se juega en VANGUARD." });
       }
@@ -122,7 +125,8 @@ export function RetentionLayer() {
       if (chestIdx > chestBase.current && !chestReady) {
         chestBase.current = chestIdx;
         setChestReady(true);
-        toast("🎁 COFRE DETECTADO EN TU SECTOR", { description: "Suministros sin abrir. Pulsa el cofre." });
+        // v105.0: en MODO LECTURA el cofre se prepara en silencio (sin comercial)
+        if (!calmaActiva()) toast("🎁 COFRE DETECTADO EN TU SECTOR", { description: "Suministros sin abrir. Pulsa el cofre." });
       }
     }, 1000);
 
@@ -169,6 +173,8 @@ export function RetentionLayer() {
     if (!mounted) return;
     const iv = setInterval(() => {
       if (document.hidden || ret.nudgesMuted) return;
+      // v105.0 MODO CALMA: leyendo o escribiendo, cero avisos cada 90s
+      if (calmaActiva()) return;
       const t = Date.now();
       if (t - lastNudge.current < 90000) return;
       const tier = ret.tierOf();

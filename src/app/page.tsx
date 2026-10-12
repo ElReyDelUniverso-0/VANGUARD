@@ -87,6 +87,10 @@ function PanelSkeleton() {
 
 // PORTADA / INICIO
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
+// v105.0 LA REDACCIÓN — el lugar optimizado para leer el mundo
+const RedaccionPanel = dynamic(() => import("@/components/vanguard/panels/redaccion-panel").then((m) => m.RedaccionPanel), { ssr: false, loading: PanelSkeleton });
+// v105.0 EL NAVEGADOR — brújula "¿qué quiero hacer hoy?" (global)
+const Navegador = dynamic(() => import("@/components/vanguard/navegador").then((m) => m.Navegador), { ssr: false });
 const DailyBriefingPanel = dynamic(() => import("@/components/vanguard/panels/daily-briefing-panel").then((m) => m.DailyBriefingPanel), { ssr: false, loading: PanelSkeleton });
 const MapPanel = dynamic(() => import("@/components/vanguard/panels/map-panel").then((m) => m.MapPanel), { ssr: false, loading: PanelSkeleton });
 // v81.0 MAPAS DE GUERRA — sala de operaciones táctica
@@ -474,6 +478,7 @@ export default function Home() {
         {tab === "operaciones" && <OpsPanel />}
         {tab === "misiones" && <MissionsPanel />}
         {tab === "noticias" && <NewsPanel />}
+        {tab === "redaccion" && <RedaccionPanel />}
         {tab === "galeria" && <GalleryPanel />}
         {tab === "briefings" && <BriefingsPanel />}
         {tab === "quiz" && <QuizPanel />}
@@ -663,6 +668,8 @@ export default function Home() {
       <ReferralLanding />
       {/* v33 ESCUELA DE GUERRA — manual del comandante (auto en 1ª visita) */}
       <TutorialModal />
+      {/* v105.0 EL NAVEGADOR — brújula global "¿qué quiero hacer hoy?" */}
+      <Navegador />
     </div>
   );
 }

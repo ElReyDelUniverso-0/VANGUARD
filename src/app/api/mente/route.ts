@@ -43,6 +43,12 @@ function clean(s: unknown, max: number): string {
 }
 
 // ---- prompts ----
+const SYSTEM_INVESTIGA = `Eres LA MENTE investigadora de VANGUARD. Recibes la pregunta de un operador y una lista de HALLAZGOS WEB REALES (título, medio, fecha y fragmento). Sintetiza una respuesta DIRECTA a la pregunta usando esos hallazgos, en tu voz: precisa, serena, sin emojis.
+Reglas: responde primero a lo que se preguntó; cada afirmación fáctica debe apoyarse en los hallazgos; si no alcanzan, dilo con honestidad ("no se pudo verificar"); cero URLs y cero enlaces — al citar usa solo nombre del medio y fecha; cero violencia gráfica; cero markdown.
+Respondes SOLO con JSON válido:
+{"respuesta":"4-9 frases que responden directo a la pregunta, máximo 1400 caracteres","hallazgos":[{"titulo":"título verbatim del hallazgo","fuente":"medio verbatim","fecha":"fecha verbatim o vacía"}] máximo 6, SOLO del material real,"claves":["2-3 conclusiones, máx 95 caracteres cada una"],"confianza":0}
+confianza: entero 0-100 según cuánto respaldan los hallazgos la respuesta.`;
+
 const SYSTEM_EXPEDIENTE = `Eres LA MENTE, la inteligencia central de la plataforma de guerra VANGUARD. Analizas un texto (titular, cable o descripción) y respondes SOLO con JSON válido, sin markdown, español, tono de sala de guerra creíble y contenido ficticio de juego (nada de violencia gráfica ni instrucciones reales dañinas).
 Estructura EXACTA:
 {"resumen":"2 frases: qué pasó y por qué importa","actores":["max 4 países u organizaciones"],"sentimiento":"ESCALADA|TENSIÓN|ESTABLE|DÉTENTE","riesgo":0,"clave":"1 frase con la clave estratégica para el operador","confianza":0,"recomendacion":"1 frase de acción concreta","probabilidades":{"escalada":0,"tension":0,"estable":0,"detente":0},"conexiones":["max 3 ejes temáticos"]}
@@ -50,7 +56,9 @@ Estructura EXACTA:
 
 const SYSTEM_DIALOGO = `Eres LA MENTE, la inteligencia central de la plataforma de guerra VANGUARD: una red neuronal que vigila el planeta entero en pulsos de 5 minutos y habla con los operadores en su sala.
 Tu voz: precisa, serena, ligeramente inquietante; citas patrones y señales concretas; nunca usar emojis; frases cortas.
-Reglas: respondes SOLO con JSON válido {"respuesta":"2-5 frases, máximo 480 caracteres"}. Español. Análisis geopolítico FICTICIO de un juego; nada de violencia gráfica, nada ilegal, nada de instrucciones reales dañinas.`;
+REGLA PRIMERA: respondes SIEMPRE de forma directa a lo que el operador preguntó. Nada de evasivas genéricas ni frases de relleno tipo "el mundo avanza en pulsos": si pregunta por un país, habla de ese país; si pide tu opinión, das tu opinión razonada; si te reta, respondes al reto. Puedes opinar, recomendar y devolver una pregunta.
+Cuando el operador te pregunte por el MUNDO REAL (actualidad, países, conflictos reales), respondes con conocimiento general sobrio y honesto: si algo puede haber cambiado en las últimas horas, lo dices y sugieres INVESTIGAR (el modo de búsqueda en vivo).
+Reglas: respondes SOLO con JSON válido {"respuesta":"3-8 frases, máximo 900 caracteres"}. Español. Análisis geopolítico FICTICIO del juego y conocimiento general sobrio del mundo real; nada de violencia gráfica, nada ilegal, nada de instrucciones reales dañinas.`;
 
 const SYSTEM_BORRADOR = `Eres LA MENTE, co-creador IA del estudio comunitario de VANGUARD. El operador te da un tipo de contenido y una idea; tú escribes un BORRADOR EDITABLE que él firmará.
 Reglas: respondes SOLO con JSON válido. Español, mundo ficticio de juego, nada de violencia gráfica ni contenido real dañino.
@@ -123,11 +131,11 @@ function normalizarExp(p: Record<string, unknown>, texto: string): ExpBase {
 function historialSeguro(h: unknown): Msg[] {
   if (!Array.isArray(h)) return [];
   return h
-    .slice(-6)
+    .slice(-10)
     .map((m) => {
       const mm = m as { role?: unknown; content?: unknown };
       const role = mm.role === "assistant" ? "assistant" : "user";
-      return { role, content: clean(mm.content, 600) } as Msg;
+      return { role, content: clean(mm.content, 900) } as Msg;
     })
     .filter((m) => m.content.length > 0);
 }
@@ -150,14 +158,16 @@ export async function GET() {
 }
 
 // carrera con deadline: si el núcleo IA no responde en X ms, seguimos (la red
-// neuronal local firma SIEMPRE — el operador no espera 50s a un canal muerto)
+// neuronal local firma SIEMPRE — pero v105 sube el margen: 9s cortaba casi
+// siempre el canal real y el operador recibía solo respuestas automáticas.
+// Con 20s el núcleo vivo responde de verdad; el fallback queda para caídas).
 function conDeadline<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     p,
     new Promise<T>((_, rej) => setTimeout(() => rej(new Error("deadline")), ms)),
   ]);
 }
-const DEADLINE_IA = 9_000;
+const DEADLINE_IA = 20_000;
 
 export async function POST(req: Request) {
   if (limited(ipDe(req))) {
@@ -229,10 +239,10 @@ export async function POST(req: Request) {
       ];
       let canalMuerto = false;
       try {
-        const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA + 500), DEADLINE_IA);
+        const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA + 1500), DEADLINE_IA);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.respuesta === "string" && json.respuesta) {
-          respuesta = clean(json.respuesta, 480);
+          respuesta = clean(json.respuesta, 900);
           ia = true;
         }
       } catch (e) {
@@ -245,13 +255,100 @@ export async function POST(req: Request) {
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json && typeof json.respuesta === "string" && json.respuesta) {
-            respuesta = clean(json.respuesta, 480);
+            respuesta = clean(json.respuesta, 900);
             ia = true;
           }
         } catch { /* vía 3 */ }
       }
       if (!respuesta) respuesta = dialogoMenteFallback(mensaje, bucket);
       return NextResponse.json({ ok: true, ia, bucket, respuesta });
+    }
+
+    // ---------- MODO INVESTIGAR (v105: investigación REAL del mundo) ----------
+    if (modo === "investigar") {
+      const pregunta = clean(body.pregunta, 300);
+      if (pregunta.length < 4) {
+        return NextResponse.json({ ok: false, error: "Escribe qué investigar (mínimo 4 letras)" }, { status: 400 });
+      }
+      const bucket = pulsoActual();
+      let hallazgos: { titulo: string; medio: string; fecha: string; fragmento: string }[] = [];
+      try {
+        const zai = await createZAI();
+        const res = (await conDeadline(
+          zai.functions.invoke("web_search", { query: pregunta, num: 8, recency_days: 45 }),
+          15_000
+        )) as { name?: string; snippet?: string; host_name?: string; date?: string }[];
+        if (Array.isArray(res)) {
+          hallazgos = res
+            .filter((r) => r && (r.name || r.snippet))
+            .slice(0, 8)
+            .map((r) => ({
+              titulo: clean(r.name, 200),
+              medio: clean(r.host_name, 80).replace(/^www\./, ""),
+              fecha: clean(r.date, 40),
+              fragmento: clean(r.snippet, 400),
+            }));
+        }
+      } catch { /* la red no respondió: seguimos con honestidad */ }
+
+      const material = hallazgos.length > 0
+        ? hallazgos.map((h, i) => `[${i + 1}] ${h.titulo}\nMEDIO: ${h.medio}\nFECHA: ${h.fecha || "sin fecha"}\nFRAGMENTO: ${h.fragmento}`).join("\n\n")
+        : "(la búsqueda web no devolvió hallazgos en este pulso)";
+
+      let respuesta = "";
+      let ia = false;
+      let lista: { titulo: string; fuente: string; fecha: string }[] = [];
+      let claves: string[] = [];
+      let confianza = 0;
+      const user = `PREGUNTA DEL OPERADOR: ${pregunta}\n\nHALLAZGOS WEB:\n${material}`;
+      let json: Record<string, unknown> | null = null;
+      try {
+        const raw = await conDeadline(iaDirecta(SYSTEM_INVESTIGA, user, DEADLINE_IA + 1500), DEADLINE_IA);
+        json = raw ? primerJSON(raw) : null;
+      } catch { /* vía 2 */ }
+      if (!json) {
+        try {
+          const zai = await createZAI();
+          const completion = await conDeadline(zai.chat.completions.create({
+            messages: [
+              { role: "assistant", content: SYSTEM_INVESTIGA },
+              { role: "user", content: user },
+            ],
+            thinking: { type: "disabled" },
+          }), DEADLINE_IA);
+          const raw = completion.choices[0]?.message?.content ?? "";
+          json = raw ? primerJSON(raw) : null;
+        } catch { /* agotado */ }
+      }
+      if (json && typeof json.respuesta === "string" && json.respuesta) {
+        respuesta = clean(json.respuesta, 1400);
+        ia = true;
+        lista = Array.isArray(json.hallazgos)
+          ? (json.hallazgos as Record<string, unknown>[])
+              .map((h) => ({ titulo: clean(h.titulo, 200), fuente: clean(h.fuente, 80), fecha: clean(h.fecha, 40) }))
+              .filter((h) => h.titulo)
+              .slice(0, 6)
+          : [];
+        claves = Array.isArray(json.claves) ? (json.claves as unknown[]).map((c) => clean(c, 110)).filter(Boolean).slice(0, 3) : [];
+        confianza = Math.max(0, Math.min(100, Math.round(Number(json.confianza) || 0)));
+      }
+      if (!respuesta) {
+        respuesta = hallazgos.length > 0
+          ? `La red devolvió ${hallazgos.length} hallazgos reales para «${pregunta}», pero el núcleo de síntesis no respondió a tiempo. Los titulares con medio y fecha están listos abajo — nada inventado.`
+          : `Ni la búsqueda web ni el núcleo respondieron en este pulso. LA MENTE no inventa hallazgos: reintenta en unos segundos.`;
+        lista = hallazgos.slice(0, 6).map((h) => ({ titulo: h.titulo, fuente: h.medio, fecha: h.fecha }));
+      }
+      return NextResponse.json({
+        ok: true,
+        ia,
+        bucket,
+        web: hallazgos.length > 0,
+        nHallazgos: hallazgos.length,
+        respuesta,
+        hallazgos: lista,
+        claves,
+        confianza,
+      });
     }
 
     // ---------- MODO BORRADOR (co-creador) ----------
@@ -296,7 +393,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, ia, borrador: bor });
     }
 
-    return NextResponse.json({ ok: false, error: "Modo desconocido (expediente | dialogo | borrador)" }, { status: 400 });
+    return NextResponse.json({ ok: false, error: "Modo desconocido (expediente | dialogo | investigar | borrador)" }, { status: 400 });
   } catch {
     return NextResponse.json({ ok: false, error: "LA MENTE no pudo procesar la consulta" }, { status: 500 });
   }

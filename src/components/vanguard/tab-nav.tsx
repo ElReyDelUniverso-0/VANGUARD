@@ -35,6 +35,7 @@ import {
 
 export type TabKey =
   | "inicio"
+  | "redaccion"
   | "googles"
   | "briefing" | "mapa" | "misiones" | "noticias" | "galeria" | "briefings"
   | "quiz" | "predicciones" | "fusion" | "recompensas" | "tienda" | "logros"
@@ -142,6 +143,8 @@ interface SectionDef {
 
 const TABS: Record<TabKey, TabDef> = {
   inicio:        { key: "inicio",        label: "Inicio (Noticias)", short: "INICIO", icon: <Home className="w-3.5 h-3.5" />, color: "amber" },
+  // v105.0 LA REDACCIÓN: el lugar para LEER — portada real, porqués, investigación en vivo
+  redaccion:     { key: "redaccion",     label: "LA REDACCIÓN (el lugar para leer el mundo: portada real con resumen, ¿por qué importa? e investigación en vivo)", short: "REDACCIÓN", icon: <Newspaper className="w-3.5 h-3.5" />, color: "amber" },
   briefing:      { key: "briefing",      label: "Briefing diario",   short: "BRIEFING", icon: <Globe className="w-3.5 h-3.5" />, color: "amber" },
   misiones:      { key: "misiones",      label: "Misiones",          short: "MISIONES", icon: <Target className="w-3.5 h-3.5" />, color: "red" },
   retos:         { key: "retos",         label: "Retos diarios",     short: "RETOS", icon: <Zap className="w-3.5 h-3.5" />, color: "amber" },
@@ -341,8 +344,9 @@ export const SECTIONS: SectionDef[] = [
     // v101.0 EL REGRESO — PILAR 1: EL MUNDO CAMBIA. La segunda pestaña de INICIO:
     // qué cambió desde la última visita, con fechas y fuentes verificables.
     key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
-    desc: "Portada con noticias en vivo, EL MUNDO CAMBIA (informe de regreso con fechas y fuentes), muro infinito de verdades y menú de mundos",
-    tabs: [TABS.inicio, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
+    // v105.0 LA REDACCIÓN abre el INICIO: primero se lee, después se explora
+    desc: "LA REDACCIÓN (el lugar optimizado para leer el mundo), portada con noticias en vivo, EL MUNDO CAMBIA (informe de regreso con fechas y fuentes), muro infinito de verdades y verificación",
+    tabs: [TABS.inicio, TABS.redaccion, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",

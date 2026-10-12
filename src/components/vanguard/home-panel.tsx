@@ -11,7 +11,7 @@ import {
   Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown,
+  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -54,6 +54,8 @@ interface WorldTile {
 
 // ====== MENÚ LLAMATIVO: los 8 mundos principales ======
 const WORLD_TILES: WorldTile[] = [
+  // v105.0 LA REDACCIÓN — lo primero del muro: el lugar para LEER el mundo
+  { tab: "redaccion", title: "LA REDACCIÓN", desc: "El lugar optimizado para leer el mundo: noticias reales con resumen, el ¿POR QUÉ IMPORTA? de cada pieza, investigación en vivo con fuentes citadas y modo lectura sin interrupciones", icon: <Newspaper className="w-6 h-6" />, hex: "#FFC94D" },
   // v97.0 PANTALLA TOTAL: la plataforma de video de Vanguard abre el muro
   { tab: "pantalla", title: "VANGUARD TV", desc: "El mundo en pases verticales: cámaras en vivo, informes OSINT, explicadores y crónicas — doble tap, suscripciones y sala de proyección", icon: <MonitorPlay className="w-6 h-6" />, hex: "#FFC94D" },
   // v98.0 ORO TOTAL: la búsqueda visual de fotos reales
@@ -620,6 +622,23 @@ export function HomePanel() {
 
       {/* ====== v17: GUERRA GLOBAL EN VIVO ====== */}
       <LiveWarCard />
+
+      {/* ====== v105.0 ¿NO SABES QUÉ HACER? — el navegador responde ====== */}
+      <motion.button
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        onClick={() => window.dispatchEvent(new CustomEvent("vanguard:navegador"))}
+        className="v105-entra w-full text-left rounded-xl border px-4 py-3 flex items-center gap-3 hover:bg-white/[0.04] transition-colors"
+        style={{ borderColor: "rgba(255,201,77,0.35)", background: "linear-gradient(90deg, rgba(255,201,77,0.10) 0%, rgba(5,5,8,0.4) 65%)" }}
+      >
+        <Compass className="w-5 h-5 shrink-0" style={{ color: "#FFC94D" }} />
+        <div className="min-w-0 flex-1">
+          <p className="font-mono text-[11px] font-bold tracking-wider" style={{ color: "#FFC94D" }}>¿NO SABES QUÉ HACER HOY?</p>
+          <p className="text-[11px] text-muted-foreground leading-snug">Ocho intenciones claras — leer, investigar, explorar, jugar, crear — y el navegador te lleva directo, sin buscar en el menú.</p>
+        </div>
+        <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+      </motion.button>
 
       {/* ====== MENÚ LLAMATIVO: ELIGE TU CAMPO DE BATALLA ====== */}
       <div>

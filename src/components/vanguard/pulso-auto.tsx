@@ -10,6 +10,7 @@
 import { useEffect, useState } from "react";
 import { Brain, X, ChevronRight, Radio } from "lucide-react";
 import { navigateTo } from "@/lib/nav";
+import { calmaActiva } from "@/lib/calma";
 import {
   pulsoActual, proximoPulsoMs, eventosPulso, riesgoPulso,
   TIPO_COLOR,
@@ -70,7 +71,9 @@ export function PulsoAuto() {
     const evs = eventosPulso(bucket);
     const top = [...evs].sort((a, b) => b.riesgo - a.riesgo)[0];
     setEvento(top ? top.titulo : "");
-    setAbierto(true);
+    // v105.0 MODO CALMA: leyendo o escribiendo, el pulso avanza en silencio —
+    // el banner no salta (la señal queda en LA MENTE, no como comercial)
+    if (!calmaActiva()) setAbierto(true);
     guardarVisto(bucket);
   }
 
