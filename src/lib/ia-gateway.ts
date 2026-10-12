@@ -94,6 +94,7 @@ export function primerJSON(raw: string): Record<string, unknown> | null {
 // IA real donde el gateway privado está bloqueado. Devuelve "" si falla.
 
 const ALT_ENDPOINT = "https://text.pollinations.ai/openai";
+const ALT_GET = "https://text.pollinations.ai";
 
 // v105.0 memoria del gateway caído (por instancia de lambda)
 let gatewayCaidoHasta = 0;
@@ -121,9 +122,21 @@ export async function iaAlternativa(system: string, user: string, timeoutMs = 14
     });
     if (!res.ok) throw new Error(`alt ${res.status}`);
     const data = await res.json();
-    return String(data?.choices?.[0]?.message?.content ?? "");
+    const out = String(data?.choices?.[0]?.message?.content ?? "");
+    if (out) return out;
+    throw new Error("alt vacío");
   } catch {
-    return "";
+    // v105.0 vía 3b: GET simple del mismo servicio (otra ruta del CDN) —
+    // rescata cuando el POST se satura (429/lentitud) en producción
+    try {
+      const prompt = `${system}\n\n${user}`.slice(0, 4000);
+      const url = `${ALT_GET}/${encodeURIComponent(prompt)}?model=openai&private=true`;
+      const res2 = await fetch(url, { signal: controller.signal });
+      if (!res2.ok) return "";
+      return (await res2.text()).slice(0, 8000);
+    } catch {
+      return "";
+    }
   } finally {
     clearTimeout(t);
   }
