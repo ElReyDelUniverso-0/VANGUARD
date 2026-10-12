@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createZAI } from "@/lib/zai-server";
-import { iaDirecta, primerJSON } from "@/lib/ia-gateway";
+import { iaParalela, primerJSON } from "@/lib/ia-gateway";
+import { busquedaAlternativa } from "@/lib/investiga-rss";
 
 // v105.0 LA REDACCIÓN — la sala de lectura de Vanguard.
 // Tres vías sobre la capa de noticias REALES que ya vive en la BD (GDELT +
@@ -107,9 +108,11 @@ function conDeadline<T>(p: Promise<T>, ms: number): Promise<T> {
 const DEADLINE_IA = 20_000;
 
 async function llmJSON(system: string, user: string): Promise<Record<string, unknown> | null> {
+  // v105.0 CARRERA 1∥3: gateway privado y núcleo público a la vez; si ambos
+  // colapsan (raro), el SDK lo intenta 8s. Nunca más 40s de cuelgues muertos.
   let raw = "";
   try {
-    raw = await conDeadline(iaDirecta(system, user, DEADLINE_IA + 500), DEADLINE_IA);
+    raw = await conDeadline(iaParalela(system, user, DEADLINE_IA), DEADLINE_IA + 1500);
   } catch { /* vía 2 */ }
   if (!raw) {
     try {
@@ -120,7 +123,7 @@ async function llmJSON(system: string, user: string): Promise<Record<string, unk
           { role: "user", content: user },
         ],
         thinking: { type: "disabled" },
-      }), DEADLINE_IA);
+      }), 8000);
       raw = completion.choices[0]?.message?.content ?? "";
     } catch { /* agotado */ }
   }
@@ -214,6 +217,11 @@ export async function GET(req: Request) {
           }));
       }
     } catch { /* la red no respondió: seguimos */ }
+    // v105.0 vía 3 de hallazgos: Google News RSS — alcanzable desde producción
+    if (hallazgos.length === 0) {
+      const alt = await busquedaAlternativa(q, 8);
+      hallazgos = alt.map((h) => ({ name: h.titulo, snippet: h.fragmento, host: h.medio, date: h.fecha }));
+    }
 
     const material = hallazgos.length > 0
       ? hallazgos.map((h, i) => `[${i + 1}] ${h.name}\nMEDIO: ${h.host}\nFECHA: ${h.date || "sin fecha"}\nFRAGMENTO: ${h.snippet}`).join("\n\n")

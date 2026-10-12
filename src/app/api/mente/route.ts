@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { iaDirecta, iaConversa, primerJSON, type Msg } from "@/lib/ia-gateway";
+import { iaParalela, primerJSON, type Msg } from "@/lib/ia-gateway";
+import { busquedaAlternativa } from "@/lib/investiga-rss";
 import { createZAI } from "@/lib/zai-server";
 import { evaluarNeuronal, predecir } from "@/lib/neurona-core";
 import { borradorCreador, dialogoMenteFallback, pensamientoMente, pulsoActual } from "@/lib/mente-data";
@@ -186,19 +187,17 @@ export async function POST(req: Request) {
       const bucket = pulsoActual();
       let exp: ExpBase | null = null;
       let ia = false;
-      let canalMuerto = false;
+      // v105.0 CARRERA 1∥3: gateway privado y núcleo público a la vez — gana el
+      // primero que responda (sandbox: GLM · producción: núcleo público)
       try {
-        const raw = await conDeadline(iaDirecta(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`, DEADLINE_IA + 500), DEADLINE_IA);
+        const raw = await conDeadline(iaParalela(SYSTEM_EXPEDIENTE, `TEXTO A ANALIZAR:\n${texto}`, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
         if (json) {
           exp = normalizarExp(json, texto);
           ia = true;
         }
-      } catch (e) {
-        // si la vía 1 se colgó hasta el deadline, la vía 2 usa la misma red: no insistir
-        canalMuerto = e instanceof Error && e.message === "deadline";
-      }
-      if (!exp && !canalMuerto) {
+      } catch { /* vías 1+3 colapsadas: la vía 2 (SDK) lo intenta corto */ }
+      if (!exp) {
         try {
           const zai = await createZAI();
           const completion = await conDeadline(zai.chat.completions.create({
@@ -207,14 +206,14 @@ export async function POST(req: Request) {
               { role: "user", content: `TEXTO A ANALIZAR:\n${texto}` },
             ],
             thinking: { type: "disabled" },
-          }), DEADLINE_IA);
+          }), 8000);
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json) {
             exp = normalizarExp(json, texto);
             ia = true;
           }
-        } catch { /* vía 3 */ }
+        } catch { /* agotado */ }
       }
       if (!exp) exp = expedienteLocal(texto);
       const prediccion = predecir(texto, bucket);
@@ -237,28 +236,26 @@ export async function POST(req: Request) {
         ...historial,
         { role: "user", content: contexto },
       ];
-      let canalMuerto = false;
+      // v105.0 CARRERA 1∥3 — la mente responde de verdad en sandbox Y en producción
       try {
-        const raw = await conDeadline(iaConversa(msgs, DEADLINE_IA + 1500), DEADLINE_IA);
+        const raw = await conDeadline(iaParalela(SYSTEM_DIALOGO, contexto, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.respuesta === "string" && json.respuesta) {
           respuesta = clean(json.respuesta, 900);
           ia = true;
         }
-      } catch (e) {
-        canalMuerto = e instanceof Error && e.message === "deadline";
-      }
-      if (!respuesta && !canalMuerto) {
+      } catch { /* vías 1+3 colapsadas */ }
+      if (!respuesta) {
         try {
           const zai = await createZAI();
-          const completion = await conDeadline(zai.chat.completions.create({ messages: msgs, thinking: { type: "disabled" } }), DEADLINE_IA);
+          const completion = await conDeadline(zai.chat.completions.create({ messages: msgs, thinking: { type: "disabled" } }), 8000);
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json && typeof json.respuesta === "string" && json.respuesta) {
             respuesta = clean(json.respuesta, 900);
             ia = true;
           }
-        } catch { /* vía 3 */ }
+        } catch { /* agotado */ }
       }
       if (!respuesta) respuesta = dialogoMenteFallback(mensaje, bucket);
       return NextResponse.json({ ok: true, ia, bucket, respuesta });
@@ -290,6 +287,11 @@ export async function POST(req: Request) {
             }));
         }
       } catch { /* la red no respondió: seguimos con honestidad */ }
+      // v105.0 vía 3 de hallazgos: Google News RSS — alcanzable desde producción
+      if (hallazgos.length === 0) {
+        const alt = await busquedaAlternativa(pregunta, 8);
+        hallazgos = alt.map((h) => ({ titulo: h.titulo, medio: h.medio, fecha: h.fecha, fragmento: h.fragmento }));
+      }
 
       const material = hallazgos.length > 0
         ? hallazgos.map((h, i) => `[${i + 1}] ${h.titulo}\nMEDIO: ${h.medio}\nFECHA: ${h.fecha || "sin fecha"}\nFRAGMENTO: ${h.fragmento}`).join("\n\n")
@@ -302,10 +304,11 @@ export async function POST(req: Request) {
       let confianza = 0;
       const user = `PREGUNTA DEL OPERADOR: ${pregunta}\n\nHALLAZGOS WEB:\n${material}`;
       let json: Record<string, unknown> | null = null;
+      // v105.0 CARRERA 1∥3 — síntesis con el primer núcleo que responda
       try {
-        const raw = await conDeadline(iaDirecta(SYSTEM_INVESTIGA, user, DEADLINE_IA + 1500), DEADLINE_IA);
+        const raw = await conDeadline(iaParalela(SYSTEM_INVESTIGA, user, DEADLINE_IA), DEADLINE_IA + 1500);
         json = raw ? primerJSON(raw) : null;
-      } catch { /* vía 2 */ }
+      } catch { /* vías 1+3 colapsadas */ }
       if (!json) {
         try {
           const zai = await createZAI();
@@ -315,7 +318,7 @@ export async function POST(req: Request) {
               { role: "user", content: user },
             ],
             thinking: { type: "disabled" },
-          }), DEADLINE_IA);
+          }), 8000);
           const raw = completion.choices[0]?.message?.content ?? "";
           json = raw ? primerJSON(raw) : null;
         } catch { /* agotado */ }
@@ -360,18 +363,16 @@ export async function POST(req: Request) {
       }
       let bor: { titulo: string; resumen: string; cuerpo: string } | null = null;
       let ia = false;
-      let canalMuerto = false;
+      // v105.0 CARRERA 1∥3
       try {
-        const raw = await conDeadline(iaDirecta(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`, DEADLINE_IA + 500), DEADLINE_IA);
+        const raw = await conDeadline(iaParalela(SYSTEM_BORRADOR, `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}`, DEADLINE_IA), DEADLINE_IA + 1500);
         const json = raw ? primerJSON(raw) : null;
         if (json && typeof json.titulo === "string" && typeof json.cuerpo === "string") {
           bor = { titulo: clean(json.titulo, 120), resumen: clean(json.resumen, 300), cuerpo: String(json.cuerpo).slice(0, 1200) };
           ia = true;
         }
-      } catch (e) {
-        canalMuerto = e instanceof Error && e.message === "deadline";
-      }
-      if (!bor && !canalMuerto) {
+      } catch { /* vías 1+3 colapsadas */ }
+      if (!bor) {
         try {
           const zai = await createZAI();
           const completion = await conDeadline(zai.chat.completions.create({
@@ -380,14 +381,14 @@ export async function POST(req: Request) {
               { role: "user", content: `TIPO: ${tipo}\nIDEA DEL CREADOR: ${idea}` },
             ],
             thinking: { type: "disabled" },
-          }), DEADLINE_IA);
+          }), 8000);
           const raw = completion.choices[0]?.message?.content ?? "";
           const json = raw ? primerJSON(raw) : null;
           if (json && typeof json.titulo === "string" && typeof json.cuerpo === "string") {
             bor = { titulo: clean(json.titulo, 120), resumen: clean(json.resumen, 300), cuerpo: String(json.cuerpo).slice(0, 1200) };
             ia = true;
           }
-        } catch { /* vía 3 */ }
+        } catch { /* agotado */ }
       }
       if (!bor) bor = borradorCreador(tipo, idea);
       return NextResponse.json({ ok: true, ia, borrador: bor });

@@ -80,3 +80,55 @@ export function primerJSON(raw: string): Record<string, unknown> | null {
     return null;
   }
 }
+
+// v105.0 LA REDACCIÓN — VÍA ALTERNATIVA (vía 3) para el lambda de producción.
+// Lección confirmada dos años seguidos: el lambda de Vercel NO alcanza
+// internal-api.z.ai (ni el SDK ni el fetch directo cuelgan hasta el deadline),
+// mientras que los feeds públicos (RSS de medios) SÍ salen. La vía 3 usa un
+// núcleo generativo público sin clave (pollinations.ai, endpoint OpenAI-
+// compatible) — alcanza desde cualquier lambda y mantiene la sala viva con
+// IA real donde el gateway privado está bloqueado. Devuelve "" si falla.
+
+const ALT_ENDPOINT = "https://text.pollinations.ai/openai";
+
+export async function iaAlternativa(system: string, user: string, timeoutMs = 14_000): Promise<string> {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(ALT_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "openai",
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`alt ${res.status}`);
+    const data = await res.json();
+    return String(data?.choices?.[0]?.message?.content ?? "");
+  } catch {
+    return "";
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/**
+ * v105.0 — CARRERA 1∥3: el gateway privado (rápido donde es alcanzable) y el
+ * núcleo público (rápido en producción, donde el gateway está bloqueado) corren
+ * a la vez; gana el primero que devuelva texto. Así el sandbox no pierde su
+ * GLM y producción no espera 40s de cuelgues muertos.
+ */
+export async function iaParalela(system: string, user: string, timeoutMs = 20_000): Promise<string> {
+  const r = await Promise.allSettled([
+    iaDirecta(system, user, timeoutMs),
+    iaAlternativa(system, user, Math.min(16_000, timeoutMs)),
+  ]);
+  if (r[0].status === "fulfilled" && r[0].value) return r[0].value;
+  if (r[1].status === "fulfilled" && r[1].value) return r[1].value;
+  return "";
+}
