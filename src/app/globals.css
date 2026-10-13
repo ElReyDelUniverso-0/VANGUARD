@@ -2605,3 +2605,24 @@ span.v108-onda { transform-origin: center; }
   .v108-estrella, .v108-ventana, .v108-latido, .v108-onda, .v108-escaneo,
   .v108-previa, .v108-pill { animation: none !important; }
 }
+
+/* ═══════════ v109.0 ORQUESTA DE ORO — el AUDITORIO ═══════════ */
+
+/* la sala de escucha entra creciendo (solo opacity/transform → 60 FPS) */
+.v109-aud { animation: v109Aud 0.3s ease-out both; }
+@keyframes v109Aud {
+  from { opacity: 0; transform: scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* la obra que suena respira en dorado (glow por opacity, sin filtros caros) */
+.v109-brilla { animation: v109Brilla 4.2s ease-in-out infinite; }
+@keyframes v109Brilla {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.86; }
+}
+
+/* ── ACCESIBILIDAD v109 ── */
+@media (prefers-reduced-motion: reduce) {
+  .v109-aud, .v109-brilla { animation: none !important; }
+}

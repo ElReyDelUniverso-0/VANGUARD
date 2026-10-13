@@ -1,40 +1,47 @@
-// VANGUARD v31 — MOTOR DE MÚSICA v2 "BANDA SONORA CINEMATOGRÁFICA" (Web Audio, cero assets)
-// Reescritura total a petición del usuario: la v26 sonaba a "bips" porque loopeaba
-// UN compás con ondas crudas. Esta versión añade:
-//   · Arreglo de 4 compases con progresión de acordes real (i-VI-III-VII etc.)
-//   · PAD cinematográfico: acordes sostenidos con ataque lento + filtro + reverb
-//   · Arpegio melódico con DELAY con feedback (espacio tridimensional)
-//   · REVERB sintética (impulso exponencial generado en vivo)
-//   · COMPRESOR en el master (sonido pegado, sin clips)
-//   · Batería refinada: kick con sub grave, caja con cuerpo, hats suaves
-//   · Fill de batería al final del ciclo de 4 compases
-//   · Autoplay: resumeMusicIfWanted() arranca la radio en el primer gesto si
-//     el usuario la dejó encendida (los navegadores exigen un gesto).
-// UI: MusicPlayer (widget global). Persistencia: localStorage vanguard_music.
-// v88.0 OPERADOR LEGENDARIO: 5 pistas nuevas (20 en total) — Operación Amanecer,
-// Fuego Cruzado, Neón de Damasco, Sintetizador del Abismo y Aurora. La pista
-// por defecto de la radio ahora es "amanecer" y el MODO CINE abre con ella.
-// v98.0 ORO TOTAL — SONIDO VANGUARD v3, la radio ya no es un loop que se repite:
-//   · 4 PISTAS PROPIAS de la plataforma (24 en total): Oro de Vanguard (tema
-//     insignia dorado), Pulso del Grafo, Neón Vertical y Bóveda Secreta.
-//   · VARIACIÓN DIARIA — cada día UTC la progresión rota, el arpegio se
-//     transpone y el hi-hat acentúa distinto: determinista por fecha, así la
-//     radio de Vanguard suena ÚNICA cada día y distinta de cualquier otra.
-//   · MODO ESCENA — la radio cambia de pista sola según la SECCIÓN donde estás
-//     (INTELIGENCIA → Pulso del Grafo, EMISORA → Neón Vertical, ARCHIVO →
-//     Bóveda Secreta…), con fundido cruzado suave al cambiar de mundo.
-//   · ENSANCHE ESTÉREO — el arpegio y el pad paneen en el campo estéreo
-//     (StereoPannerNode) para una escena tridimensional.
+// VANGUARD v109.0 — SONIDO VANGUARD v4 "ORQUESTA DE ORO" (Web Audio, cero assets)
+// Mandato del comandante: "música 100%, nada mediocre, una música ÚNICA para
+// Vanguard, dulce para los oídos — que la gente entre solo a escuchar Vanguard".
+// Reescritura total del motor de síntesis sobre la misma arquitectura de pistas:
+//   · CADENA MASTER DE ESTUDIO: HPF 28Hz → EQ (corte de fangos 240Hz + aire en
+//     9kHz) → compresor de bus → limitador de techo → analizador → salida.
+//   · REVERB CÁLIDA v2: impulso de 3s con cola lowpass (más oscuro con el
+//     tiempo) y reflexiones tempranas — sala, no lata.
+//   · CHORUS ESTÉREO en el bus de pads (2 líneas de retraso moduladas L/R).
+//   · DELAY PING-PONG filtrado (el eco salta de oído a oído).
+//   · PAD v4: sierras desafinadas ±7 cents + sub triangular una octava abajo,
+//     filtro con deriva lenta, colas que cruzan el compás (legato).
+//   · BAJO v4: sub senoidal + armónico triangular con envolvente de filtro.
+//   · VOZ DORADA v4: la melodía ya no es el arpegio repetido — FM de campana
+//     suave (portadora + modulador 2:1 con índice que cae), variantes glass y
+//     brass, con MOTIVO + SECUENCIA + CADENCIA por secciones A A' B A''.
+//   · ARMONÍA RICA: séptimas mayores/menores en los pads (flag rich).
+//   · DRONE QUE SIGUE AL ACORDE: desliza a la fundamental de cada compás.
+//   · PERCUSIÓN REFINADA: bombo redondo con click filtrado, caja con sala,
+//     hats metálicos, shaker y tom para los fills.
+//   · ESTRUCTURA de 16 compases: intro (2 compases suaves al arrancar) ·
+//     A · A' (variante diaria) · respiro · B (puente al cielo) · A'' · fill.
+//   · VARIACIÓN DIARIA (v98) se conserva: 48 ediciones distintas por pista.
+//   · MOTIVO FIRMA de Vanguard (la "llamada de la casa") en las 4 pistas
+//     insignia nuevas: orquesta · serena · sala · frontera.
+// API intacta (startMusic/stopMusic/volumen/espectro/escena/suscripción) — la
+// Radio y el resto de la app no notan el cambio de orquesta.
 
 type Pattern = string; // "x...x..." — x = golpe, . = silencio, o = acento
+
+export type TrackCat = "vanguard" | "guerra" | "ambiente";
+
+export type LeadType = "fm" | "glass" | "brass";
 
 interface TrackDef {
   id: string;
   name: string;
   desc: string;
+  cat: TrackCat; // familia de la Radio
   bpm: number;
   root: number; // Hz del bajo raíz (registro grave)
   chords: number[][]; // 4 compases: acorde por compás, semitonos relativos a root
+  chordsB?: number[][]; // progresión B (el puente); si falta, se usa la A
+  rich?: boolean; // pads con séptima (color de orquesta)
   bass: number[]; // 16 pasos: offset en semitonos sobre la FUNDAMENTAL del acorde (-1 silencio)
   arp: number[]; // 16 pasos: índice de nota del acorde (0=root,1=3ª,2=5ª,3=root+12...) (-1 silencio)
   arpType: OscillatorType;
@@ -45,8 +52,11 @@ interface TrackDef {
   drone: number; // multiplicador de root para el drone continuo (0 = sin drone)
   droneGain: number;
   padLevel: number; // volumen del colchón de acordes
+  lead?: number[]; // MOTIVO de 16 pasos en grados del acorde (-1 silencio) — la voz que canta
+  leadType?: LeadType; // fm = campana suave · glass = cristal · brass = metales
+  shaker?: boolean;
   swing?: boolean;
-  fill?: boolean; // relleno de batería en el compás 4
+  fill?: boolean; // relleno de batería en el compás final
 }
 
 const st = (semi: number, root: number) => root * Math.pow(2, semi / 12);
@@ -56,10 +66,109 @@ const maj = (r: number) => [r, r + 4, r + 7];
 const min = (r: number) => [r, r + 3, r + 7];
 
 export const MUSIC_TRACKS: TrackDef[] = [
+  // ══════════════ v109.0 ORQUESTA DE ORO — las 4 insignias de la casa ══════════════
+  {
+    id: "orquesta",
+    name: "Orquesta de Oro",
+    desc: "El alma de Vanguard: piano de campana dorada sobre cuerdas cálidas — el tema de la casa",
+    cat: "vanguard",
+    bpm: 74,
+    root: st(-24, 98), // G0
+    chords: [min(0), maj(-4), maj(-2), maj(3)], // Gm - Eb - F - C
+    chordsB: [maj(3), maj(-2), min(0), min(7)], // Bb - F - Gm - Dm (el puente)
+    rich: true,
+    bass: [0, -1, -1, 0, -1, -1, 0, -1, -1, 0, -1, -1, 0, -1, 7, -1],
+    arp: [3, -1, -1, 4, -1, -1, 5, -1, -1, -1, 4, -1, -1, 5, -1, -1],
+    arpType: "triangle",
+    bassType: "sine",
+    kick: "x.......x.......",
+    snare: "....x.......x...",
+    hat: "..x...x...x...x.",
+    drone: 0.5,
+    droneGain: 0.045,
+    padLevel: 0.085,
+    lead: [0, -1, -1, 2, -1, -1, 1, -1, 3, -1, -1, -1, 2, -1, 1, -1], // la llamada de Vanguard
+    leadType: "fm",
+    shaker: true,
+    fill: true,
+  },
+  {
+    id: "serena",
+    name: "Noche Serena",
+    desc: "Cristal líquido bajo la luna llena — la pista más dulce de la casa, para mirar las estrellas",
+    cat: "ambiente",
+    bpm: 52,
+    root: st(-24, 87.31), // F0
+    chords: [maj(0), maj(7), min(4), maj(-5)], // F - C - Dm - Bb
+    chordsB: [maj(9), min(2), maj(7), maj(0)], // D - Gm - C - F (la promesa)
+    rich: true,
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 7, -1, -1, -1],
+    arp: [3, -1, -1, 6, -1, -1, 8, -1, -1, 6, -1, -1, 3, -1, -1, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x...............",
+    snare: "................",
+    hat: "........x.......",
+    drone: 0.5,
+    droneGain: 0.04,
+    padLevel: 0.09,
+    lead: [-1, -1, 3, -1, -1, -1, 5, -1, -1, -1, 4, -1, -1, 1, -1, -1],
+    leadType: "glass",
+  },
+  {
+    id: "sala",
+    name: "La Sala Dorada",
+    desc: "Piano elegante en el vestíbulo de Vanguard — brillos cálidos para la comunidad",
+    cat: "vanguard",
+    bpm: 88,
+    root: st(-24, 116.54), // Bb0
+    chords: [maj(0), min(-3), maj(-5), maj(-7)], // Bb - Gm - Eb - F
+    chordsB: [maj(-5), maj(-7), min(-3), min(7)], // Eb - F - Gm - Cm
+    rich: true,
+    bass: [0, -1, -1, -1, 7, -1, -1, -1, 0, -1, -1, -1, 10, -1, 7, -1],
+    arp: [3, -1, 4, -1, 5, -1, 4, -1, 3, -1, 4, -1, 5, -1, 6, -1],
+    arpType: "triangle",
+    bassType: "triangle",
+    kick: "x.....x.x.......",
+    snare: "....x.......x...",
+    hat: "..x...x...x...x.",
+    drone: 0,
+    droneGain: 0,
+    padLevel: 0.07,
+    lead: [0, -1, 1, -1, 2, -1, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1],
+    leadType: "fm",
+    shaker: true,
+    swing: true,
+  },
+  {
+    id: "frontera",
+    name: "Última Frontera",
+    desc: "Metales al amanecer de la batalla — la épica de Vanguard cuando el mundo se decide",
+    cat: "guerra",
+    bpm: 96,
+    root: st(-24, 73.42), // D0
+    chords: [min(0), maj(-4), maj(3), maj(-2)], // Dm - Bb - F - C
+    chordsB: [min(0), min(5), maj(-4), maj(7)], // Dm - Gm - Bb - A (dramático)
+    bass: [0, -1, 0, -1, 0, -1, 0, 7, 0, -1, 0, -1, 0, -1, 10, 7],
+    arp: [3, -1, 4, -1, -1, 5, -1, 4, 3, -1, 4, -1, 6, -1, 5, -1],
+    arpType: "triangle",
+    bassType: "sawtooth",
+    kick: "x...x...x...x...",
+    snare: "....x.......x...",
+    hat: "x.x.x.x.x.x.x.x.",
+    drone: 0.5,
+    droneGain: 0.05,
+    padLevel: 0.06,
+    lead: [0, -1, 0, -1, 3, -1, -1, 2, 0, -1, 0, -1, 4, -1, 3, -1],
+    leadType: "brass",
+    fill: true,
+  },
+  // ══════════════ la colección histórica (v26→v98) ══════════════
   {
     id: "marcha",
     name: "Marcha de Acero",
     desc: "Tambores de desfile militar y bajo de columnas blindadas",
+    cat: "guerra",
     bpm: 96,
     root: st(-24, 110), // A0
     chords: [min(0), maj(-4), maj(3), maj(-2)], // Am - F - C - G
@@ -79,6 +188,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "drones",
     name: "Drones en la Noche",
     desc: "Zumbido oscuro a 2.000 metros — la espera antes del impacto",
+    cat: "ambiente",
     bpm: 58,
     root: st(-24, 73.42), // D0
     chords: [min(0), maj(-4), min(-7), maj(-5)], // Dm - Bb - Gm - A
@@ -97,6 +207,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "frente",
     name: "Tensión de Frente",
     desc: "Segundero del francotirador — ostinato de trincheras",
+    cat: "guerra",
     bpm: 112,
     root: st(-24, 82.41), // E0
     chords: [min(0), maj(-4), maj(3), maj(-2)], // Em - C - G - D
@@ -117,6 +228,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "radio",
     name: "Radio Guerra",
     desc: "Morse cifrado, latidos y estática de la central de mando",
+    cat: "guerra",
     bpm: 84,
     root: st(-24, 98), // G0
     chords: [min(0), maj(-4), maj(3), maj(-2)], // Gm - Eb - Bb - F
@@ -135,6 +247,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "cumbre",
     name: "Cumbre Rota",
     desc: "Piano de mesa de negociaciones que ya se cae a pedazos",
+    cat: "ambiente",
     bpm: 72,
     root: st(-24, 87.31), // F0
     chords: [maj(0), min(-3), maj(-7), maj(-5)], // F - Dm - Bb - C
@@ -153,6 +266,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "victoria",
     name: "Victoria Final",
     desc: "Fanfarria de banderas — la capital que resiste y celebra",
+    cat: "vanguard",
     bpm: 124,
     root: st(-24, 130.81), // C0
     chords: [maj(0), maj(-5), min(-3), maj(-7)], // C - G - Am - F
@@ -172,6 +286,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "exodo",
     name: "Éxodo Silencioso",
     desc: "Maletas en la carretera — la marcha lenta de quienes huyen",
+    cat: "ambiente",
     bpm: 64,
     root: st(-24, 65.41), // C0
     chords: [min(0), maj(-4), maj(3), maj(-2)], // Cm - Ab - Eb - Bb
@@ -190,6 +305,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "bloqueo",
     name: "Bloqueo Naval",
     desc: "Buques de guerra en la gabarra — escoltas y sonar activo",
+    cat: "guerra",
     bpm: 76,
     root: st(-24, 55), // G0 profundo
     chords: [min(0), min(5), maj(-5), min(0)], // Gm - Cm - D - Gm
@@ -208,6 +324,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "ciber",
     name: "Ciberataque",
     desc: "Glitch en la red eléctrica — la guerra que no se ve",
+    cat: "guerra",
     bpm: 132,
     root: st(-24, 92.5), // F#0
     chords: [min(0), maj(-4), maj(3), maj(-2)], // F#m - D - A - E
@@ -228,6 +345,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "invierno",
     name: "Invierno Atómico",
     desc: "Silencio después de la sirena — cielo gris, tierra helada",
+    cat: "ambiente",
     bpm: 50,
     root: st(-24, 49), // G0 casi subgrave
     chords: [min(0), maj(-4), min(0), maj(-5)], // Gm - Eb - Gm - D
@@ -246,6 +364,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "cerco",
     name: "Cerco Urbano",
     desc: "Calles atrincheradas — escombros, protestas y pancartas",
+    cat: "guerra",
     bpm: 104,
     root: st(-24, 87.31), // F0
     chords: [min(0), maj(-4), maj(-2), maj(-5)], // Fm - Db - Eb - C
@@ -265,6 +384,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "tregua",
     name: "Tregua al Amanecer",
     desc: "Cese al fuego a las 6:00 — café frío y bandera blanca",
+    cat: "ambiente",
     bpm: 68,
     root: st(-24, 110), // A0 cálido
     chords: [maj(0), maj(-5), min(4), maj(5)], // A - E - F#m - D
@@ -279,11 +399,11 @@ export const MUSIC_TRACKS: TrackDef[] = [
     droneGain: 0,
     padLevel: 0.06,
   },
-  // ====== v83.0 ESTADIO GLOBAL — 3 pistas nuevas (15 en total) ======
   {
     id: "ocaso",
     name: "Ocaso en el Frente",
     desc: "El sol cae ámbar sobre las trincheras — la banda sonora del atardecer de Vanguard",
+    cat: "ambiente",
     bpm: 64,
     root: st(-24, 98), // G0 cálido
     chords: [maj(0), maj(7), min(4), maj(5)], // G - D - Em - C
@@ -302,6 +422,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "blitz",
     name: "Blitz Total",
     desc: "Columnas mecánicas a 150 BPM — asalto relámpago sin cuartel",
+    cat: "guerra",
     bpm: 148,
     root: st(-24, 92.5), // F#0 agresivo
     chords: [min(0), min(0), maj(-5), maj(-2)], // F#m - F#m - B - A
@@ -321,6 +442,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "himno",
     name: "Himno de Vanguardia",
     desc: "Marcha épica de la agencia — trompetas sintéticas al atardecer",
+    cat: "vanguard",
     bpm: 100,
     root: st(-24, 110), // A0
     chords: [min(0), maj(3), maj(5), maj(-2)], // Am - C - D - G
@@ -336,11 +458,11 @@ export const MUSIC_TRACKS: TrackDef[] = [
     padLevel: 0.06,
     fill: true,
   },
-  // ============ v88.0 OPERADOR LEGENDARIO — nueva sesión de estudio ============
   {
     id: "amanecer",
     name: "Operación Amanecer",
     desc: "Primera luz sobre la base — cuerdas cálidas y esperanza táctica",
+    cat: "ambiente",
     bpm: 78,
     root: st(-24, 130.81), // C0 luminoso
     chords: [maj(0), min(-3), maj(-7), maj(-5)], // C - Am - F - G
@@ -359,6 +481,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "fuego",
     name: "Fuego Cruzado",
     desc: "Posiciones enfrentadas a 132 BPM — industrial, metálico, sin tregua",
+    cat: "guerra",
     bpm: 132,
     root: st(-24, 87.31), // F0
     chords: [min(0), maj(-4), min(-2), maj(-5)], // Fm - Db - Cm - Bb
@@ -378,6 +501,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "damasco",
     name: "Neón de Damasco",
     desc: "Escala oriental bajo luces de bazar — espías en la ciudad vieja",
+    cat: "ambiente",
     bpm: 92,
     root: st(-24, 82.41), // E0
     chords: [min(0), maj(1), maj(-4), maj(5)], // Em - F - C - B
@@ -396,6 +520,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "abismo",
     name: "Sintetizador del Abismo",
     desc: "Synthwave de sala de servidores — la verdad a las 3 de la mañana",
+    cat: "ambiente",
     bpm: 84,
     root: st(-24, 69.30), // C#0
     chords: [min(0), maj(-4), maj(-2), maj(-7)], // C#m - A - B - E
@@ -415,6 +540,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "aurora",
     name: "Aurora",
     desc: "Luces del norte sobre el cuartel dormido — la calma después del protocolo",
+    cat: "ambiente",
     bpm: 56,
     root: st(-24, 87.31), // F0
     chords: [maj(0), maj(-5), min(2), maj(-7)], // F - C - Dm - Bb
@@ -429,12 +555,11 @@ export const MUSIC_TRACKS: TrackDef[] = [
     droneGain: 0.045,
     padLevel: 0.09,
   },
-
-  // ====== v98.0 ORO TOTAL — las 4 pistas propias de Vanguard ======
   {
     id: "oro",
     name: "Oro de Vanguard",
-    desc: "El tema insignia de la plataforma: cuerdas doradas sobre el ocaso",
+    desc: "El tema insignia clásico: cuerdas doradas sobre el ocaso",
+    cat: "vanguard",
     bpm: 76,
     root: st(-24, 98), // G0
     chords: [min(0), maj(-4), maj(-2), maj(3)], // Gm - Eb - F - C
@@ -455,6 +580,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "grafo",
     name: "Pulso del Grafo",
     desc: "La red del conocimiento latiendo: nodos y aristas en secuencia",
+    cat: "vanguard",
     bpm: 122,
     root: st(-24, 82.41), // E0
     chords: [min(0), maj(5), min(3), maj(-4)], // Em - A - G - C
@@ -473,6 +599,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "neon",
     name: "Neón Vertical",
     desc: "La emisora de noche: synth del feed infinito de Vanguard TV",
+    cat: "vanguard",
     bpm: 108,
     root: st(-24, 87.31), // F0
     chords: [min(0), maj(-4), maj(2), min(-7)], // Fm - Db - G - Cm
@@ -491,6 +618,7 @@ export const MUSIC_TRACKS: TrackDef[] = [
     id: "boveda",
     name: "Bóveda Secreta",
     desc: "Dentro del archivo desclasificado: hormigón, luz roja y espera",
+    cat: "ambiente",
     bpm: 64,
     root: st(-24, 65.41), // C0
     chords: [min(0), min(-5), maj(-8), maj(-3)], // Cm - Gm - Ab - Bb
@@ -507,60 +635,70 @@ export const MUSIC_TRACKS: TrackDef[] = [
   },
 ];
 
-// ====== v98.0 VARIACIÓN DIARIA — la radio suena ÚNICA cada día ======
-// Determinista por fecha UTC: mismo día = misma versión en todo el planeta.
-// rot: rota el orden de la progresión · arpShift: transpone el arpegio una
-// octava · hatAcc: mueve el acento del hi-hat. Tres capas = 4x4x3 = 48 formas
-// distintas por pista, suficientes para semanas sin repetir.
-function variacionDiaria(): { rot: number; arpShift: number; hatAcc: number } {
-  const day = Math.floor(Date.now() / 86_400_000); // días UTC
-  return {
-    rot: day % 4,
-    arpShift: [0, 0, 12, -12][day % 4],
-    hatAcc: day % 3, // 0, 1 o 2 → acento en pasos distintos del semicompás
-  };
-}
-
-// ====== v98.0 MODO ESCENA — la radio sigue tu posición en Vanguard ======
+// ====== v98 MODO ESCENA — la radio sigue tu posición en Vanguard (v109: insignias) ======
 export type EscenaKey =
   | "hangar" | "inicio" | "inteligencia" | "juego" | "mercado"
   | "archivo" | "comando" | "observatorio" | "estrategia" | "emisora"
   | "oscsuro" | "creadores" | "social" | "sistema";
 
 export const ESCENA_TRACKS: Record<EscenaKey, string> = {
-  hangar: "drones",       // tu base 3D: zumbido de espera
-  inicio: "oro",          // portada: el tema insignia dorado
-  inteligencia: "grafo",  // conocimiento: la red latiendo
-  juego: "marcha",        // guerra: tambores de acero
-  mercado: "ciber",       // dinero: Ciberataque
-  archivo: "boveda",      // archivo: Bóveda Secreta
-  comando: "radio",       // operaciones diarias: Radio Guerra
-  observatorio: "frente", // vigilancia: Tensión de Frente
-  estrategia: "cerco",    // gran estrategia: Cerco Urbano
-  emisora: "neon",        // TV y feeds: Neón Vertical
-  oscsuro: "invierno",    // verdad cruda: Invierno Atómico
-  creadores: "damasco",   // creadores: Neón de Damasco
-  social: "tregua",       // comunidad: Tregua al Amanecer
-  sistema: "himno",       // sistema: Himno de Vanguardia
+  hangar: "drones",        // tu base 3D: zumbido de espera
+  inicio: "orquesta",      // portada: el tema de la casa
+  inteligencia: "grafo",   // conocimiento: la red latiendo
+  juego: "frontera",       // guerra: los metales de la Última Frontera
+  mercado: "ciber",        // dinero: Ciberataque
+  archivo: "boveda",       // archivo: Bóveda Secreta
+  comando: "radio",        // operaciones diarias: Radio Guerra
+  observatorio: "serena",  // vigilancia: Noche Serena bajo la cúpula
+  estrategia: "cerco",     // gran estrategia: Cerco Urbano
+  emisora: "neon",         // TV y feeds: Neón Vertical
+  oscsuro: "invierno",     // verdad cruda: Invierno Atómico
+  creadores: "damasco",    // creadores: Neón de Damasco
+  social: "sala",          // comunidad: La Sala Dorada
+  sistema: "himno",        // sistema: Himno de Vanguardia
 };
 
 let escenaActiva: EscenaKey | null = null;
 export function setEscenaActiva(e: EscenaKey) { escenaActiva = e; }
 export function getEscenaActiva(): EscenaKey | null { return escenaActiva; }
 
-// ================== motor v2 ==================
+// ====== v98 VARIACIÓN DIARIA — la radio suena ÚNICA cada día ======
+// Determinista por fecha UTC: mismo día = misma versión en todo el planeta.
+// rot rota la progresión · arpShift transpone · hatAcc mueve el acento.
+// 4 × 4 × 3 = 48 ediciones distintas por pista.
+function variacionDiaria(): { rot: number; arpShift: number; hatAcc: number; variante: number } {
+  const day = Math.floor(Date.now() / 86_400_000); // días UTC
+  return {
+    rot: day % 4,
+    arpShift: [0, 0, 12, -12][day % 4],
+    hatAcc: day % 3,
+    variante: day % 2, // la A' cambia de carácter cada dos días
+  };
+}
+
+// v109: número de edición de hoy (para la Radio) — determinista, 1..48
+export function edicionDeHoy(): number {
+  const v = variacionDiaria();
+  return v.rot * 12 + ([0, 0, 12, -12].indexOf(v.arpShift) + 1) * 3 + v.hatAcc + 1;
+}
+export const EDICIONES_TOTAL = 48;
+
+// ================== MOTOR V4 — ORQUESTA DE ORO ==================
 let ctx: AudioContext | null = null;
-let master: GainNode | null = null; // volumen general
-let comp: DynamicsCompressorNode | null = null; // compresor master
-let analyser: AnalyserNode | null = null; // v83.0 espectro para el visualizador
-let reverbBus: GainNode | null = null; // envío a reverb
-let delayBus: GainNode | null = null; // envío a delay
-let delayNode: DelayNode | null = null;
+let master: GainNode | null = null; // pre-ganancia (volumen)
+let analyser: AnalyserNode | null = null;
+let reverbBus: GainNode | null = null;
+let delayBus: GainNode | null = null;
+let delayL: DelayNode | null = null;
+let delayR: DelayNode | null = null;
 let padFilter: BiquadFilterNode | null = null;
+let padDriftLfo: OscillatorNode | null = null;
 let droneOsc: OscillatorNode | null = null;
 let droneOsc2: OscillatorNode | null = null;
+let droneAir: AudioBufferSourceNode | null = null;
 let droneGain: GainNode | null = null;
 let droneLfo: OscillatorNode | null = null;
+let noiseBuf: AudioBuffer | null = null;
 let timer: ReturnType<typeof setInterval> | null = null;
 let step = 0;
 let nextTime = 0;
@@ -572,15 +710,28 @@ function notify() {
   subscribers.forEach((s) => s());
 }
 
+// ---- impulso de reverb v2: sala cálida con cola que se oscurece ----
 function buildReverbImpulse(c: AudioContext): AudioBuffer {
-  // impulso sintético: ruido estéreo con decaimiento exponencial (sala grande)
-  const dur = 2.1;
+  const dur = 3.0;
   const len = Math.floor(c.sampleRate * dur);
   const buf = c.createBuffer(2, len, c.sampleRate);
   for (let ch = 0; ch < 2; ch++) {
     const d = buf.getChannelData(ch);
+    let lp = 0;
     for (let i = 0; i < len; i++) {
-      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.4);
+      const x = i / len;
+      const n = Math.random() * 2 - 1;
+      // filtro un polo cuyo corte baja con el tiempo → cola cada vez más oscura
+      const k = 0.62 - 0.5 * x;
+      lp += k * (n - lp);
+      d[i] = lp * Math.pow(1 - x, 2.6);
+    }
+    // reflexiones tempranas (el oído las lee como "sala de verdad")
+    const taps = [0.011, 0.019, 0.031, 0.047, 0.067];
+    const gains = [0.42, 0.33, 0.26, 0.19, 0.13];
+    for (let tI = 0; tI < taps.length; tI++) {
+      const idx = Math.floor(taps[tI] * c.sampleRate) + (ch === 1 ? 37 : 0);
+      if (idx < len) d[idx] += (ch === 0 ? 1 : -1) * gains[tI] * 0.8;
     }
   }
   return buf;
@@ -591,59 +742,107 @@ function getCtx(): AudioContext | null {
   if (!ctx) {
     try {
       const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!Ctor) return null;
       ctx = new Ctor();
 
-      // cadena master: volumen -> compresor -> salida
-      comp = ctx.createDynamicsCompressor();
-      comp.threshold.value = -18;
-      comp.knee.value = 22;
-      comp.ratio.value = 4;
-      comp.attack.value = 0.004;
-      comp.release.value = 0.24;
-      // v83.0 ESTADIO GLOBAL: analizador para el visualizador de la Radio
+      // ── CADENA MASTER DE ESTUDIO ──
+      const hpf = ctx.createBiquadFilter(); // limpia el rumor infrasonoro
+      hpf.type = "highpass";
+      hpf.frequency.value = 28;
+      hpf.Q.value = 0.71;
+      const eqFango = ctx.createBiquadFilter(); // quita la acumulación de 240Hz
+      eqFango.type = "peaking";
+      eqFango.frequency.value = 240;
+      eqFango.gain.value = -1.6;
+      eqFango.Q.value = 0.9;
+      const eqAire = ctx.createBiquadFilter(); // brillo de orquesta
+      eqAire.type = "highshelf";
+      eqAire.frequency.value = 9000;
+      eqAire.gain.value = 2.2;
+      const comp = ctx.createDynamicsCompressor(); // pega el conjunto
+      comp.threshold.value = -20;
+      comp.knee.value = 24;
+      comp.ratio.value = 2.6;
+      comp.attack.value = 0.006;
+      comp.release.value = 0.28;
+      const limiter = ctx.createDynamicsCompressor(); // techo: nada satura
+      limiter.threshold.value = -5;
+      limiter.knee.value = 0;
+      limiter.ratio.value = 14;
+      limiter.attack.value = 0.001;
+      limiter.release.value = 0.1;
       analyser = ctx.createAnalyser();
-      analyser.fftSize = 128; // 64 bins — suficiente para 24 barras
+      analyser.fftSize = 128;
       analyser.smoothingTimeConstant = 0.78;
-      comp.connect(analyser);
-      analyser.connect(ctx.destination);
 
       master = ctx.createGain();
-      master.gain.value = volume * 0.55;
-      master.connect(comp);
+      master.gain.value = volume * 0.5;
+      master.connect(hpf);
+      hpf.connect(eqFango); eqFango.connect(eqAire);
+      eqAire.connect(comp); comp.connect(limiter);
+      limiter.connect(analyser);
+      analyser.connect(ctx.destination);
 
-      // bus de reverb
+      // buffer de ruido compartido (las percusiones lo leen con offset)
+      noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 1.2), ctx.sampleRate);
+      const nd = noiseBuf.getChannelData(0);
+      for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+
+      // ── REVERB (bus de sala) ──
       const conv = ctx.createConvolver();
       conv.buffer = buildReverbImpulse(ctx);
       const wet = ctx.createGain();
-      wet.gain.value = 0.9;
+      wet.gain.value = 0.85;
       reverbBus = ctx.createGain();
       reverbBus.gain.value = 1;
       reverbBus.connect(conv);
       conv.connect(wet);
       wet.connect(master);
 
-      // bus de delay con feedback filtrado
+      // ── DELAY PING-PONG filtrado ──
       delayBus = ctx.createGain();
-      delayNode = ctx.createDelay(1.5);
-      const fb = ctx.createGain();
-      fb.gain.value = 0.34;
-      const fbFilter = ctx.createBiquadFilter();
-      fbFilter.type = "lowpass";
-      fbFilter.frequency.value = 2200;
-      delayNode.connect(fbFilter);
-      fbFilter.connect(fb);
-      fb.connect(delayNode); // loop
-      delayBus.connect(delayNode);
-      delayNode.connect(master);
-      if (reverbBus) delayNode.connect(reverbBus); // una pizca de reverb al eco
+      delayL = ctx.createDelay(1.6);
+      delayR = ctx.createDelay(1.6);
+      const fbLp = ctx.createBiquadFilter();
+      fbLp.type = "lowpass"; fbLp.frequency.value = 2600;
+      const fbHp = ctx.createBiquadFilter();
+      fbHp.type = "highpass"; fbHp.frequency.value = 300;
+      const fb = ctx.createGain(); fb.gain.value = 0.34;
+      const panL = ctx.createStereoPanner(); panL.pan.value = -0.55;
+      const panR = ctx.createStereoPanner(); panR.pan.value = 0.55;
+      delayBus.connect(delayL);
+      delayL.connect(fbLp); fbLp.connect(fbHp);
+      fbHp.connect(panL); panL.connect(master);          // eco 1 → izquierda
+      fbHp.connect(delayR);                              // cruza
+      delayR.connect(panR); panR.connect(master);        // eco 2 → derecha
+      delayR.connect(fb); fb.connect(delayL);            // el loop baila L→R→L
+      if (reverbBus) { panR.connect(reverbBus); }
 
-      // filtro del pad (colchón cálido)
+      // ── BUS DE PADS: filtro cálido + deriva lenta + chorus ──
       padFilter = ctx.createBiquadFilter();
       padFilter.type = "lowpass";
-      padFilter.frequency.value = 780;
+      padFilter.frequency.value = 2100;
       padFilter.Q.value = 0.4;
-      padFilter.connect(master);
+      const dry = ctx.createGain(); dry.gain.value = 0.72;
+      padFilter.connect(dry); dry.connect(master);
+      // chorus estéreo: dos líneas de retraso moduladas L/R
+      const chL = ctx.createDelay(0.1); chL.delayTime.value = 0.012;
+      const chR = ctx.createDelay(0.1); chR.delayTime.value = 0.017;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.5;
+      const lfoG = ctx.createGain(); lfoG.gain.value = 0.0026;
+      const lfo2 = ctx.createOscillator(); lfo2.frequency.value = 0.37;
+      const lfo2G = ctx.createGain(); lfo2G.gain.value = 0.0031;
+      lfo.connect(lfoG); lfoG.connect(chL.delayTime);
+      lfo2.connect(lfo2G); lfo2G.connect(chR.delayTime);
+      const chPanL = ctx.createStereoPanner(); chPanL.pan.value = -0.6;
+      const chPanR = ctx.createStereoPanner(); chPanR.pan.value = 0.6;
+      const chGL = ctx.createGain(); chGL.gain.value = 0.34;
+      const chGR = ctx.createGain(); chGR.gain.value = 0.34;
+      padFilter.connect(chL); chL.connect(chGL); chGL.connect(chPanL); chPanL.connect(master);
+      padFilter.connect(chR); chR.connect(chGR); chGR.connect(chPanR); chPanR.connect(master);
       if (reverbBus) padFilter.connect(reverbBus);
+      padDriftLfo = lfo; // guardado para no recolectarlo
+      lfo.start(); lfo2.start();
     } catch {
       return null;
     }
@@ -652,185 +851,345 @@ function getCtx(): AudioContext | null {
   return ctx;
 }
 
-function noiseBuffer(c: AudioContext, dur: number): AudioBuffer {
-  const buf = c.createBuffer(1, Math.max(1, Math.floor(c.sampleRate * dur)), c.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-  return buf;
+function noise(c: AudioContext, t: number, dur: number, rate = 1): AudioBufferSourceNode | null {
+  if (!noiseBuf) return null;
+  const src = c.createBufferSource();
+  src.buffer = noiseBuf;
+  src.playbackRate.value = rate;
+  src.start(t, Math.random() * 0.5, dur + 0.05);
+  return src;
 }
 
-// ---------- percusión refinada ----------
+// ---------- PERCUSIÓN REFINADA ----------
 function playKick(c: AudioContext, t: number, accent: boolean) {
-  const osc = c.createOscillator();
+  if (!master) return;
   const g = c.createGain();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(accent ? 130 : 105, t);
-  osc.frequency.exponentialRampToValueAtTime(36, t + 0.24);
-  g.gain.setValueAtTime(accent ? 0.52 : 0.4, t);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-  osc.connect(g);
-  g.connect(master!);
-  osc.start(t);
-  osc.stop(t + 0.34);
-  // click suave filtrado (menos "pop" que la v26)
-  const src = c.createBufferSource();
-  src.buffer = noiseBuffer(c, 0.02);
-  const f = c.createBiquadFilter();
-  f.type = "lowpass";
-  f.frequency.value = 900;
-  const cg = c.createGain();
-  cg.gain.setValueAtTime(accent ? 0.16 : 0.1, t);
-  cg.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
-  src.connect(f);
-  f.connect(cg);
-  cg.connect(master!);
-  src.start(t);
-  src.stop(t + 0.03);
+  g.connect(master);
+  const o = c.createOscillator();
+  o.type = "sine";
+  o.frequency.setValueAtTime(accent ? 118 : 102, t);
+  o.frequency.exponentialRampToValueAtTime(37, t + 0.16);
+  g.gain.setValueAtTime(accent ? 0.5 : 0.38, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+  o.connect(g); o.start(t); o.stop(t + 0.3);
+  // cuerpo redondo
+  const b = c.createOscillator();
+  const bg = c.createGain();
+  b.type = "triangle";
+  b.frequency.setValueAtTime(84, t);
+  b.frequency.exponentialRampToValueAtTime(52, t + 0.07);
+  bg.gain.setValueAtTime(0.14, t);
+  bg.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+  b.connect(bg); bg.connect(master); b.start(t); b.stop(t + 0.1);
+  // click filtrado (definición sin "pop")
+  const s = noise(c, t, 0.018, 1.4);
+  if (s) {
+    const f = c.createBiquadFilter();
+    f.type = "highpass"; f.frequency.value = 3200;
+    const cg = c.createGain();
+    cg.gain.setValueAtTime(accent ? 0.12 : 0.08, t);
+    cg.gain.exponentialRampToValueAtTime(0.001, t + 0.018);
+    s.connect(f); f.connect(cg); cg.connect(master); s.stop(t + 0.03);
+  }
 }
 
 function playSnare(c: AudioContext, t: number, accent: boolean) {
-  const src = c.createBufferSource();
-  src.buffer = noiseBuffer(c, 0.2);
-  const f = c.createBiquadFilter();
-  f.type = "bandpass";
-  f.frequency.value = 1700;
-  f.Q.value = 0.7;
-  const g = c.createGain();
-  g.gain.setValueAtTime(accent ? 0.26 : 0.15, t);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.17);
-  src.connect(f);
-  f.connect(g);
-  g.connect(master!);
-  if (reverbBus) g.connect(reverbBus); // cola de sala
-  src.start(t);
-  src.stop(t + 0.22);
-  // cuerpo tonal corto
-  const osc = c.createOscillator();
+  if (!master) return;
+  const s = noise(c, t, 0.18, 1);
+  if (s) {
+    const f = c.createBiquadFilter();
+    f.type = "bandpass"; f.frequency.value = 1650; f.Q.value = 0.8;
+    const g = c.createGain();
+    g.gain.setValueAtTime(accent ? 0.24 : 0.14, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+    s.connect(f); f.connect(g); g.connect(master);
+    if (reverbBus) g.connect(reverbBus);
+    s.stop(t + 0.2);
+  }
+  // snap de agudos
+  const s2 = noise(c, t, 0.05, 1.6);
+  if (s2) {
+    const f2 = c.createBiquadFilter();
+    f2.type = "highpass"; f2.frequency.value = 6000;
+    const g2 = c.createGain();
+    g2.gain.setValueAtTime(accent ? 0.1 : 0.06, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+    s2.connect(f2); f2.connect(g2); g2.connect(master); s2.stop(t + 0.07);
+  }
+  // cuerpo tonal
+  const o = c.createOscillator();
   const og = c.createGain();
-  osc.type = "triangle";
-  osc.frequency.setValueAtTime(185, t);
-  osc.frequency.exponentialRampToValueAtTime(120, t + 0.08);
-  og.gain.setValueAtTime(accent ? 0.12 : 0.07, t);
+  o.type = "triangle";
+  o.frequency.setValueAtTime(196, t);
+  o.frequency.exponentialRampToValueAtTime(132, t + 0.08);
+  og.gain.setValueAtTime(accent ? 0.11 : 0.07, t);
   og.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
-  osc.connect(og);
-  og.connect(master!);
-  osc.start(t);
-  osc.stop(t + 0.1);
+  o.connect(og); og.connect(master); o.start(t); o.stop(t + 0.1);
 }
 
-function playHat(c: AudioContext, t: number, accent: boolean) {
-  const src = c.createBufferSource();
-  src.buffer = noiseBuffer(c, 0.05);
-  const f = c.createBiquadFilter();
-  f.type = "highpass";
-  f.frequency.value = 8600;
+function playHat(c: AudioContext, t: number, accent: boolean, open = false) {
+  if (!master) return;
+  const dur = open ? 0.16 : 0.038;
+  const s = noise(c, t, dur, open ? 0.9 : 1.25);
+  if (!s) return;
+  const hp = c.createBiquadFilter();
+  hp.type = "highpass"; hp.frequency.value = 9200;
+  const bp = c.createBiquadFilter();
+  bp.type = "bandpass"; bp.frequency.value = 7800; bp.Q.value = 0.6;
   const g = c.createGain();
-  g.gain.setValueAtTime(accent ? 0.07 : 0.038, t);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
-  src.connect(f);
-  f.connect(g);
-  g.connect(master!);
-  src.start(t);
-  src.stop(t + 0.055);
+  g.gain.setValueAtTime(accent ? 0.062 : 0.032, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  s.connect(hp); hp.connect(bp); bp.connect(g); g.connect(master);
+  s.stop(t + dur + 0.02);
 }
 
-// ---------- notas ----------
+function playShaker(c: AudioContext, t: number, accent: boolean) {
+  if (!master) return;
+  const s = noise(c, t, 0.05, 1.1);
+  if (!s) return;
+  const f = c.createBiquadFilter();
+  f.type = "bandpass"; f.frequency.value = 5600; f.Q.value = 1.1;
+  const g = c.createGain();
+  g.gain.setValueAtTime(accent ? 0.024 : 0.014, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+  s.connect(f); f.connect(g); g.connect(master);
+  if (reverbBus) g.connect(reverbBus);
+  s.stop(t + 0.06);
+}
+
+function playTom(c: AudioContext, t: number, freq: number) {
+  if (!master) return;
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(freq, t);
+  o.frequency.exponentialRampToValueAtTime(freq * 0.55, t + 0.2);
+  g.gain.setValueAtTime(0.3, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+  o.connect(g); g.connect(master);
+  if (reverbBus) g.connect(reverbBus);
+  o.start(t); o.stop(t + 0.26);
+}
+
+// ---------- NOTAS ----------
+function routeVoice(
+  c: AudioContext, g: GainNode, opts?: { reverb?: number; delay?: number; pan?: number },
+) {
+  if (!master) return;
+  if (opts?.pan && typeof c.createStereoPanner === "function") {
+    const p = c.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, opts.pan));
+    g.connect(p); p.connect(master);
+    if (opts?.reverb && reverbBus) { const r = c.createGain(); r.gain.value = opts.reverb; p.connect(r); r.connect(reverbBus); }
+    if (opts?.delay && delayBus) { const d = c.createGain(); d.gain.value = opts.delay; p.connect(d); d.connect(delayBus); }
+  } else {
+    g.connect(master);
+    if (opts?.reverb && reverbBus) { const r = c.createGain(); r.gain.value = opts.reverb; g.connect(r); r.connect(reverbBus); }
+    if (opts?.delay && delayBus) { const d = c.createGain(); d.gain.value = opts.delay; g.connect(d); d.connect(delayBus); }
+  }
+}
+
+// nota simple (arpegio de textura)
 function playNote(
-  c: AudioContext,
-  t: number,
-  freq: number,
-  dur: number,
-  type: OscillatorType,
-  gain: number,
-  opts?: { reverb?: number; delay?: number; cutoff?: number; pan?: number },
+  c: AudioContext, t: number, freq: number, dur: number, type: OscillatorType,
+  gain: number, opts?: { reverb?: number; delay?: number; cutoff?: number; pan?: number },
 ) {
   const osc = c.createOscillator();
   const g = c.createGain();
   const f = c.createBiquadFilter();
   f.type = "lowpass";
-  f.frequency.value = opts?.cutoff ?? (type === "sawtooth" || type === "square" ? 1400 : 3000);
+  f.frequency.value = opts?.cutoff ?? (type === "sawtooth" || type === "square" ? 1500 : 3200);
   osc.type = type;
   osc.frequency.value = freq;
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(gain, t + 0.02);
   g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-  osc.connect(f);
-  f.connect(g);
-  // v98.0 ENSANCHE ESTÉREO: si hay paneo, la nota entra al campo estéreo
-  if (opts?.pan && typeof c.createStereoPanner === "function") {
-    const p = c.createStereoPanner();
-    p.pan.value = Math.max(-1, Math.min(1, opts.pan));
-    g.connect(p);
-    p.connect(master!);
-  } else {
-    g.connect(master!);
-  }
-  if (opts?.reverb && reverbBus) {
-    const rs = c.createGain();
-    rs.gain.value = opts.reverb;
-    g.connect(rs);
-    rs.connect(reverbBus);
-  }
-  if (opts?.delay && delayBus) {
-    const ds = c.createGain();
-    ds.gain.value = opts.delay;
-    g.connect(ds);
-    ds.connect(delayBus);
-  }
-  osc.start(t);
-  osc.stop(t + dur + 0.06);
+  osc.connect(f); f.connect(g);
+  routeVoice(c, g, opts);
+  osc.start(t); osc.stop(t + dur + 0.06);
 }
 
-// ---------- pad: acordes sostenidos por compás ----------
-function playPad(c: AudioContext, t: number, chordSemis: number[], root: number, barDur: number, level: number) {
+// VOZ DORADA — FM de campana suave (el piano eléctrico de Vanguard)
+function playFM(
+  c: AudioContext, t: number, freq: number, dur: number, gain: number,
+  opts?: { reverb?: number; delay?: number; pan?: number },
+) {
+  if (!master) return;
+  const car = c.createOscillator();
+  const mod = c.createOscillator();
+  const modG = c.createGain();
+  const env = c.createGain();
+  const f = c.createBiquadFilter();
+  f.type = "lowpass"; f.frequency.value = 4400;
+  car.type = "sine"; car.frequency.value = freq;
+  mod.type = "sine"; mod.frequency.value = freq * 2.005;
+  // el índice cae → ataque con cuerpo, cola pura (dulzura)
+  modG.gain.setValueAtTime(freq * 2.3, t);
+  modG.gain.exponentialRampToValueAtTime(freq * 0.22, t + Math.min(0.42, dur * 0.6));
+  mod.connect(modG); modG.connect(car.frequency);
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(gain, t + 0.007);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + dur * 1.45);
+  car.connect(env); env.connect(f);
+  routeVoice(c, f, { reverb: 0.4, delay: 0.45, ...opts });
+  car.start(t); mod.start(t);
+  car.stop(t + dur * 1.5 + 0.1); mod.stop(t + dur * 1.5 + 0.1);
+  // cuerpo cálido debajo de la campana
+  const body = c.createOscillator();
+  const bg = c.createGain();
+  body.type = "triangle"; body.frequency.value = freq;
+  bg.gain.setValueAtTime(0, t);
+  bg.gain.linearRampToValueAtTime(gain * 0.32, t + 0.01);
+  bg.gain.exponentialRampToValueAtTime(0.0001, t + dur * 0.7);
+  body.connect(bg);
+  routeVoice(c, bg, { pan: opts?.pan });
+  body.start(t); body.stop(t + dur * 0.8);
+}
+
+// VOZ DE CRISTAL — senos armónicos etéreos (Noche Serena)
+function playGlass(
+  c: AudioContext, t: number, freq: number, dur: number, gain: number,
+  opts?: { reverb?: number; delay?: number; pan?: number },
+) {
+  if (!master) return;
+  const partials: [number, number, number][] = [[1, 1, 1], [3, 0.14, 0.7], [7.02, 0.04, 0.4]];
+  for (const [mult, amp, durMult] of partials) {
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = "sine";
+    o.frequency.value = freq * mult;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(gain * amp, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 1.9 * durMult);
+    o.connect(g);
+    routeVoice(c, g, { reverb: 0.6, delay: 0.5, ...opts });
+    o.start(t); o.stop(t + dur * 2 + 0.1);
+  }
+}
+
+// VOZ DE METALES — sierras con envolvente de filtro (Última Frontera)
+function playBrass(
+  c: AudioContext, t: number, freq: number, dur: number, gain: number,
+  opts?: { reverb?: number; delay?: number; pan?: number },
+) {
+  if (!master) return;
+  const f = c.createBiquadFilter();
+  f.type = "lowpass"; f.Q.value = 1.1;
+  f.frequency.setValueAtTime(2100, t);
+  f.frequency.exponentialRampToValueAtTime(720, t + dur);
+  const env = c.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(gain, t + 0.045);
+  env.gain.setValueAtTime(gain, t + dur * 0.7);
+  env.gain.linearRampToValueAtTime(0.0001, t + dur * 1.15);
+  for (const det of [-8, 8]) {
+    const o = c.createOscillator();
+    o.type = "sawtooth";
+    o.frequency.value = freq;
+    o.detune.value = det;
+    o.connect(env);
+    o.start(t); o.stop(t + dur * 1.2);
+  }
+  const sub = c.createOscillator();
+  const sg = c.createGain();
+  sub.type = "sine"; sub.frequency.value = freq / 2;
+  sg.gain.setValueAtTime(0, t);
+  sg.gain.linearRampToValueAtTime(gain * 0.4, t + 0.05);
+  sg.gain.exponentialRampToValueAtTime(0.0001, t + dur * 1.1);
+  sub.connect(sg);
+  sg.connect(master!);
+  sub.start(t); sub.stop(t + dur * 1.15);
+  env.connect(f);
+  routeVoice(c, f, { reverb: 0.3, delay: 0.22, ...opts });
+}
+
+function leadVoice(c: AudioContext, t: number, freq: number, dur: number, gain: number, type: LeadType, pan: number) {
+  if (type === "glass") playGlass(c, t, freq, dur, gain, { pan });
+  else if (type === "brass") playBrass(c, t, freq, dur, gain, { pan });
+  else playFM(c, t, freq, dur, gain, { pan });
+}
+
+// ---------- PAD v4: colchón de orquesta ----------
+function playPad(c: AudioContext, t: number, chordSemis: number[], root: number, barDur: number, level: number, rich: boolean) {
   if (!padFilter || level <= 0) return;
-  const notes = [...chordSemis.slice(0, 3), chordSemis[0] + 12]; // tríada + octava
-  for (const semi of notes) {
-    for (const det of [-5, 5]) {
+  const isMin = ((chordSemis[1] - chordSemis[0]) % 12 + 12) % 12 === 3;
+  const color = chordSemis[0] + (isMin ? 10 : 11); // 7ª menor/mayor
+  // [fundamental, 3ª, 5ª, (7ª si rica), octava] — registro medio
+  const notes: { semi: number; mult: number }[] = [
+    { semi: chordSemis[0], mult: 1 },
+    { semi: chordSemis[1], mult: 1 },
+    { semi: chordSemis[2], mult: 1 },
+  ];
+  if (rich) notes.push({ semi: color, mult: 1 });
+  notes.push({ semi: chordSemis[0] + 12, mult: 0.7 });
+  const per = level / (rich ? 2.4 : 2.0);
+  for (const n of notes) {
+    for (const det of [-7, 7]) {
       const osc = c.createOscillator();
       const g = c.createGain();
       osc.type = "sawtooth";
-      osc.frequency.value = st(semi, root * 4);
+      osc.frequency.value = st(n.semi, root * 4);
       osc.detune.value = det;
-      const atk = barDur * 0.35;
+      const atk = barDur * 0.42;
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(level, t + atk);
-      g.gain.setValueAtTime(level, t + barDur * 0.7);
-      g.gain.linearRampToValueAtTime(0, t + barDur * 1.15);
-      osc.connect(g);
-      g.connect(padFilter);
-      osc.start(t);
-      osc.stop(t + barDur * 1.2);
+      g.gain.linearRampToValueAtTime(per * n.mult, t + atk);
+      g.gain.setValueAtTime(per * n.mult, t + barDur * 0.85);
+      g.gain.linearRampToValueAtTime(0, t + barDur * 1.35); // la cola cruza al siguiente acorde (legato)
+      osc.connect(g); g.connect(padFilter);
+      osc.start(t); osc.stop(t + barDur * 1.4);
     }
   }
+  // sub triangular una octava abajo (el corazón del colchón)
+  const sub = c.createOscillator();
+  const sg = c.createGain();
+  sub.type = "triangle";
+  sub.frequency.value = st(chordSemis[0], root * 2);
+  sg.gain.setValueAtTime(0, t);
+  sg.gain.linearRampToValueAtTime(level * 0.5, t + barDur * 0.45);
+  sg.gain.setValueAtTime(level * 0.5, t + barDur * 0.85);
+  sg.gain.linearRampToValueAtTime(0, t + barDur * 1.3);
+  sub.connect(sg); sg.connect(padFilter);
+  sub.start(t); sub.stop(t + barDur * 1.35);
 }
 
+// ---------- DRONE QUE SIGUE AL ACORDE ----------
 function startDrone(t: TrackDef) {
   const c = getCtx();
   if (!c || !master || !t.drone) return;
   stopDrone();
-  droneOsc = c.createOscillator();
-  droneOsc2 = c.createOscillator();
   droneGain = c.createGain();
-  droneLfo = c.createOscillator();
-  const lfoGain = c.createGain();
   const dFilter = c.createBiquadFilter();
   dFilter.type = "lowpass";
-  dFilter.frequency.value = 320;
+  dFilter.frequency.value = 340;
+  droneOsc = c.createOscillator();
   droneOsc.type = "sine";
-  droneOsc.frequency.value = t.root * t.drone;
+  droneOsc.frequency.value = st(0, t.root * 4 * t.drone);
+  droneOsc2 = c.createOscillator();
   droneOsc2.type = "sine";
-  droneOsc2.frequency.value = t.root * t.drone;
-  droneOsc2.detune.value = 7; // coro ligero
+  droneOsc2.frequency.value = st(0, t.root * 4 * t.drone);
+  droneOsc2.detune.value = 7;
   droneGain.gain.value = t.droneGain;
+  droneLfo = c.createOscillator();
+  const lfoGain = c.createGain();
   droneLfo.frequency.value = 0.09;
-  lfoGain.gain.value = t.droneGain * 0.45;
-  droneLfo.connect(lfoGain);
-  lfoGain.connect(droneGain.gain);
-  droneOsc.connect(dFilter);
-  droneOsc2.connect(dFilter);
-  dFilter.connect(droneGain);
-  droneGain.connect(master);
+  lfoGain.gain.value = t.droneGain * 0.4;
+  droneLfo.connect(lfoGain); lfoGain.connect(droneGain.gain);
+  droneOsc.connect(dFilter); droneOsc2.connect(dFilter);
+  dFilter.connect(droneGain); droneGain.connect(master);
+  // capa de aire (respiración de la sala, lazo del ruido compartido)
+  if (noiseBuf) {
+    const af = c.createBiquadFilter();
+    af.type = "lowpass"; af.frequency.value = 480;
+    const ag = c.createGain();
+    ag.gain.value = t.droneGain * 0.35;
+    const loop = c.createBufferSource();
+    loop.buffer = noiseBuf;
+    loop.loop = true;
+    loop.playbackRate.value = 0.5;
+    loop.connect(af); af.connect(ag); ag.connect(master);
+    loop.start();
+    droneAir = loop;
+  }
   droneOsc.start(c.currentTime);
   droneOsc2.start(c.currentTime);
   droneLfo.start(c.currentTime);
@@ -838,16 +1197,27 @@ function startDrone(t: TrackDef) {
 
 function stopDrone() {
   try {
-    droneOsc?.stop();
-    droneOsc2?.stop();
-    droneLfo?.stop();
-  } catch {
-    /* noop */
+    droneOsc?.stop(); droneOsc2?.stop(); droneLfo?.stop(); droneAir?.stop();
+  } catch { /* noop */ }
+  droneOsc = null; droneOsc2 = null; droneLfo = null; droneAir = null; droneGain = null;
+}
+
+// ---------- EL COMPOSITOR: motivo → secuencia → cadencia ----------
+// Las pistas sin motivo propio heredan el contorno del arpegio una octava
+// arriba (mismo tono del acorde, registro de canto); las densas se aclaran.
+const LEAD_CACHE = new Map<string, number[]>();
+function getLead(t: TrackDef): number[] {
+  let l = LEAD_CACHE.get(t.id);
+  if (!l) {
+    if (t.lead) l = t.lead;
+    else {
+      const dens = t.arp.filter((a) => a >= 0).length;
+      const thin = dens > 9;
+      l = t.arp.map((a, idx) => (a < 0 || (thin && idx % 2 === 1) ? -1 : a + 3));
+    }
+    LEAD_CACHE.set(t.id, l);
   }
-  droneOsc = null;
-  droneOsc2 = null;
-  droneLfo = null;
-  droneGain = null;
+  return l;
 }
 
 function scheduler() {
@@ -856,41 +1226,83 @@ function scheduler() {
   if (!c || !t || !master) return;
   const stepDur = 60 / t.bpm / 4; // semicorcheas
   const barDur = stepDur * 16;
-  const vari = variacionDiaria(); // v98.0 la variación diaria se lee en vivo
-  while (nextTime < c.currentTime + 0.16) {
+  const vari = variacionDiaria();
+  const leadArr = getLead(t);
+  const leadType: LeadType = t.leadType ?? (t.cat === "guerra" ? "brass" : t.cat === "vanguard" ? "fm" : "glass");
+  while (nextTime < c.currentTime + 0.24) {
     const i = step % 16;
-    const bar = Math.floor(step / 16) % 4;
+    const barAbs = Math.floor(step / 16);
+    const barInCycle = barAbs % 16;
+    const cycle = Math.floor(barAbs / 16);
+    // estructura A A' · respiro · B · A''
+    const section = barInCycle < 4 ? 0 : barInCycle < 8 ? 1 : barInCycle < 12 ? 2 : 3;
+    const chordSet = section === 2 && t.chordsB ? t.chordsB : t.chords;
+    const chord = chordSet[(barInCycle % 4 + vari.rot) % 4];
+    const intro = cycle === 0 && barInCycle < 2; // la orquesta entra respirando
+    const breath = barInCycle === 7; // el compás que contiene la respiración
+    const filling = !!t.fill && barInCycle === 15 && i >= 12;
     const swingOffset = t.swing && i % 2 === 1 ? stepDur * 0.16 : 0;
     const time = nextTime + swingOffset;
 
-    // batería + fill en el último compás del ciclo (t.fill es opcional → !! para boolean estricto)
-    const filling = !!t.fill && bar === 3 && i >= 12;
-    if (t.kick[i] === "x" || t.kick[i] === "o") playKick(c, time, t.kick[i] === "o");
-    if (t.snare[i] === "x" || t.snare[i] === "o" || (filling && i % 2 === 0)) playSnare(c, time, t.snare[i] === "o" || filling);
-    // v98.0: el acento del hi-hat rota según el día (variación diaria)
-    const hatAcent = t.hat[i] === "o" || (filling && i % 2 === 1) || (t.hat[i] === "x" && i % 4 === vari.hatAcc);
-    if (t.hat[i] === "x" || t.hat[i] === "o" || (filling && i % 2 === 1)) playHat(c, time, hatAcent);
-
-    // bajo: sigue la fundamental del acorde del compás (v98: progresión rotada por día)
-    const chord = t.chords[(bar + vari.rot) % 4];
-    const b = t.bass[i];
-    if (b >= 0) {
-      playNote(c, time, st(chord[0] + b, t.root), stepDur * 2.2, t.bassType, 0.17, { cutoff: 480 });
+    // ── drone: desliza a la fundamental del compás (el suelo se mueve contigo)
+    if (i === 0 && droneOsc && droneOsc2 && t.drone) {
+      const target = st(chord[0], t.root * 4 * t.drone);
+      try {
+        droneOsc.frequency.exponentialRampToValueAtTime(target, time + 0.55);
+        droneOsc2.frequency.exponentialRampToValueAtTime(target, time + 0.55);
+      } catch { /* noop */ }
     }
-    // arpegio melódico con eco (v98: transpuesto por día + paneo estéreo alternante)
+
+    // ── batería (ausente en la intro; en el respiro solo hats)
+    if (!intro) {
+      const isKick = t.kick[i] === "x" || t.kick[i] === "o";
+      const isSn = t.snare[i] === "x" || t.snare[i] === "o" || (filling && i % 2 === 0);
+      if (isKick && !breath) playKick(c, time, t.kick[i] === "o");
+      if (isSn && !breath) playSnare(c, time, t.snare[i] === "o" || filling);
+      const hatOn = t.hat[i] === "x" || t.hat[i] === "o" || (filling && i % 2 === 1);
+      if (hatOn) playHat(c, time, t.hat[i] === "o" || (filling && i % 2 === 1), (t.hat[i] === "o" && i > 10) || (breath && i === 12));
+      if (t.shaker && i % 2 === 1 && !breath) playShaker(c, time, i % 4 === 3);
+      if (filling && i === 14) playTom(c, time, st(chord[0], t.root * 8));
+    }
+
+    // ── bajo (late incluso en la respiración, más suave)
+    const b = t.bass[i];
+    if (b >= 0 && !intro) {
+      playNote(c, time, st(chord[0] + b, t.root * 2), stepDur * 2.4, t.bassType, breath ? 0.09 : 0.16, { cutoff: 520 });
+    }
+
+    // ── arpegio de textura (callado en la intro, brilla en el puente)
     const a = t.arp[i];
-    if (a >= 0) {
+    if (a >= 0 && !intro) {
       const oct = Math.floor(a / 3);
       const tone = chord[a % 3] + 12 * oct + vari.arpShift;
-      playNote(c, time, st(tone, t.root * 4), stepDur * 2.6, t.arpType, 0.05, {
-        reverb: 0.35,
-        delay: 0.4,
+      playNote(c, time, st(tone, t.root * 4), stepDur * 2.6, t.arpType, section === 2 ? 0.04 : 0.03, {
+        reverb: 0.5,
+        delay: 0.5,
         cutoff: t.arpType === "square" ? 1500 : 3200,
         pan: i % 4 === 0 ? -0.32 : i % 4 === 2 ? 0.32 : i % 2 === 1 ? 0.16 : -0.16,
       });
     }
-    // pad al inicio de cada compás
-    if (i === 0) playPad(c, time, chord, t.root, barDur, t.padLevel);
+
+    // ── pad al inicio de cada compás
+    if (i === 0) {
+      const lvl = t.padLevel * (intro ? 1.1 : breath ? 1.15 : 1);
+      playPad(c, time, chord, t.root, barDur, lvl, t.rich === true);
+    }
+
+    // ── LA VOZ DORADA: motivo → variante → puente → cadencia
+    if (!intro && !(breath && i > 12)) {
+      let deg = leadArr[i];
+      if (deg >= 0) {
+        if (section === 1) deg = vari.variante === 0 ? deg + 3 : (i % 4 === 0 ? deg + 1 : deg); // A': octava o color según el día
+        else if (section === 2) deg = deg + 3; // B: el puente al cielo
+        if (barInCycle % 4 === 3 && i === 15) deg = 3; // cadencia: la frase cae a la octava
+        const human = (Math.random() - 0.5) * 0.007;
+        const vel = 0.85 + Math.random() * 0.28;
+        const gain = leadType === "brass" ? 0.036 * vel : leadType === "glass" ? 0.055 * vel : 0.05 * vel;
+        leadVoice(c, time + human, st(deg, t.root * 8) * (1 + (Math.random() - 0.5) * 0.0016), stepDur * 3, gain, leadType, i % 8 < 4 ? -0.18 : 0.18);
+      }
+    }
 
     nextTime += stepDur;
     step++;
@@ -901,29 +1313,33 @@ function scheduler() {
 function arranque(c: AudioContext, def: TrackDef) {
   current = def;
   step = 0;
-  nextTime = c.currentTime + 0.08;
-  if (delayNode) delayNode.delayTime.value = Math.min(1.4, (60 / def.bpm) * 0.75); // corchea con puntillo
+  nextTime = c.currentTime + 0.1;
+  if (delayL && delayR) {
+    const dt = Math.min(1.5, (60 / def.bpm) * 0.75); // corchea con puntillo
+    delayL.delayTime.value = dt;
+    delayR.delayTime.value = dt;
+  }
   startDrone(def);
-  timer = setInterval(scheduler, 40);
+  timer = setInterval(scheduler, 45);
 }
 
 export function startMusic(trackId?: string) {
   const c = getCtx();
   if (!c) return;
-  const def = MUSIC_TRACKS.find((t) => t.id === trackId) || current || MUSIC_TRACKS[0];
-  // v98.0 FUNDIDO CRUZADO: si la radio ya sonaba, la nueva pista entra con un
-  // dip de volumen (180ms) en vez de cortar en seco — el cambio de escena se siente de cine.
+  const def = MUSIC_TRACKS.find((x) => x.id === trackId) || current || MUSIC_TRACKS[0];
+  // FUNDIDO CRUZADO MUSICAL (0.8s): la sala se apaga suave, la nueva pieza
+  // entra creciendo — los pads viejos dejan su cola dentro de la nueva.
   const yaSonaba = timer !== null;
   if (yaSonaba && master) {
-    master.gain.setTargetAtTime(0, c.currentTime, 0.06);
+    master.gain.setTargetAtTime(0, c.currentTime, 0.26);
     setTimeout(() => {
       const cc = getCtx();
       if (!cc || !master) return;
       stopMusic();
       arranque(cc, def);
-      master.gain.setTargetAtTime(volume * 0.55, cc.currentTime, 0.12);
+      master.gain.setTargetAtTime(volume * 0.5, cc.currentTime, 0.3);
       notify();
-    }, 180);
+    }, 780);
     notify();
     return;
   }
@@ -932,8 +1348,7 @@ export function startMusic(trackId?: string) {
   notify();
 }
 
-// v98.0 MODO ESCENA — cambia la pista según la sección de Vanguard actual.
-// Lo llama el MusicPlayer cuando la escena automática está activa.
+// v98 MODO ESCENA — cambia la pista según la sección de Vanguard actual.
 export function aplicarEscena(escena: EscenaKey) {
   escenaActiva = escena;
   const track = ESCENA_TRACKS[escena];
@@ -958,7 +1373,7 @@ export function currentTrackId(): string | null {
 
 export function setMusicVolume(v: number) {
   volume = Math.max(0, Math.min(1, v));
-  if (master && ctx) master.gain.setTargetAtTime(volume * 0.55, ctx.currentTime, 0.05);
+  if (master && ctx) master.gain.setTargetAtTime(volume * 0.5, ctx.currentTime, 0.05);
   notify();
 }
 
@@ -966,21 +1381,20 @@ export function getMusicVolume(): number {
   return volume;
 }
 
-// v83.0 ESTADIO GLOBAL — espectro en vivo para el visualizador de la Radio.
-// Devuelve `bars` niveles normalizados 0..1 (o null si no hay audio activo).
+// v83 ESTADIO GLOBAL — espectro en vivo para la Radio.
 export function getMusicSpectrum(bars = 24): number[] | null {
   if (!analyser || !isMusicPlaying()) return null;
   try {
     const bins = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(bins);
     const out: number[] = [];
-    const usable = Math.floor(bins.length * 0.72); // los agudos altos casi siempre en silencio
+    const usable = Math.floor(bins.length * 0.72);
     const per = usable / bars;
-    for (let b = 0; b < bars; b++) {
+    for (let bIdx = 0; bIdx < bars; bIdx++) {
       let sum = 0;
-      const from = Math.floor(b * per);
-      const to = Math.max(from + 1, Math.floor((b + 1) * per));
-      for (let i = from; i < to; i++) sum += bins[i];
+      const from = Math.floor(bIdx * per);
+      const to = Math.max(from + 1, Math.floor((bIdx + 1) * per));
+      for (let i2 = from; i2 < to; i2++) sum += bins[i2];
       out.push(Math.min(1, (sum / (to - from) / 255) * 1.35));
     }
     return out;
@@ -994,9 +1408,8 @@ export function subscribeMusic(cb: () => void): () => void {
   return () => subscribers.delete(cb);
 }
 
-// v31 — AUTOPLAY: si el usuario dejó la radio encendida, arranca en el primer
-// gesto (los navegadores bloquean el audio sin interacción). Devuelve true si
-// reanudó la reproducción.
+// AUTOPLAY: si el usuario dejó la radio encendida, arranca en el primer gesto
+// (los navegadores bloquean el audio sin interacción).
 export function resumeMusicIfWanted(): boolean {
   if (typeof window === "undefined" || isMusicPlaying()) return false;
   try {
@@ -1005,9 +1418,25 @@ export function resumeMusicIfWanted(): boolean {
     const p = JSON.parse(raw) as { on?: boolean; vol?: number; track?: string };
     if (p.on !== true) return false;
     if (typeof p.vol === "number") setMusicVolume(p.vol);
-    startMusic(p.track || "marcha");
+    startMusic(p.track || "orquesta");
     return true;
   } catch {
     return false;
   }
 }
+
+// v109: diagnóstico de solo-lectura para QA automatizado (no toca la UI):
+// si `step` avanza, el secuenciador está programando notas reales.
+export function __qaEngineDebug(): { step: number; playing: boolean; trackId: string | null; state: string } {
+  return {
+    step,
+    playing: timer !== null,
+    trackId: current?.id ?? null,
+    state: ctx?.state ?? "sin-ctx",
+  };
+}
+// puente de QA (solo lectura)
+if (typeof window !== "undefined") {
+  (window as unknown as { __vgOrquesta?: typeof __qaEngineDebug }).__vgOrquesta = __qaEngineDebug;
+}
+
