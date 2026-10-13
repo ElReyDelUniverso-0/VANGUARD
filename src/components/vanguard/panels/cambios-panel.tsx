@@ -10,12 +10,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { RefreshCw, ExternalLink, Globe2, Newspaper, FolderOpen, BookLock, ShieldQuestion, Eye } from "lucide-react";
+import { RefreshCw, ExternalLink, Globe2, Newspaper, FolderOpen, BookLock, ShieldQuestion, Eye, History } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useRetention } from "@/lib/retention";
 import { informeRegreso, ausenciaTxt, type InformeRegreso } from "@/lib/regreso";
 import { TIPO_COLOR } from "@/lib/mente-data";
 import { useT } from "@/lib/i18n";
+// v110.0 MATRIZ 2100 — BITÁCORA: las ACTUALIZACIONES de Vanguard por fin visibles
+import { BITACORA, BITACORA_COLOR } from "@/lib/bitacora";
 
 interface NewsItem {
   id: string;
@@ -218,6 +220,42 @@ export function CambiosPanel() {
             />
           </div>
         )}
+      </Seccion>
+
+      {/* 4 · BITÁCORA DE VANGUARD — ACTUALIZACIONES (v110: nunca más ocultas) */}
+      <Seccion
+        icono={<History className="h-4 w-4" />}
+        titulo="BITÁCORA DE VANGUARD · ACTUALIZACIONES"
+        nota={`${BITACORA.length} versiones registradas`}
+        color="#34C759"
+      >
+        <div className="grid gap-2">
+          {BITACORA.map((b, i) => {
+            const col = BITACORA_COLOR[b.tipo];
+            return (
+              <motion.details
+                key={b.version}
+                className="v101-entra group rounded-xl border border-white/8 bg-black/35 p-2.5 open:border-white/20"
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: Math.min(i * 0.03, 0.5), duration: 0.35 }}
+              >
+                <summary className="flex cursor-pointer list-none items-center gap-2">
+                  <span className="rounded px-1.5 py-0.5 font-mono text-[9px] font-black" style={{ color: col, border: `1px solid ${col}55` }}>{b.version}</span>
+                  <span className="text-[11.5px] font-black uppercase tracking-wide text-white/85">{b.nombre}</span>
+                  <span className="ml-auto text-[8.5px] font-black uppercase tracking-widest" style={{ color: col }}>{b.tipo}</span>
+                </summary>
+                <ul className="mt-2 grid gap-1 border-t border-white/8 pt-2">
+                  {b.hitos.map((h, j) => (
+                    <li key={j} className="flex items-start gap-1.5 text-[11px] leading-snug text-white/70">
+                      <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full" style={{ background: col }} />
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              </motion.details>
+            );
+          })}
+        </div>
       </Seccion>
 
       <p className="mt-4 text-center text-[10px] font-semibold text-white/25">

@@ -264,6 +264,8 @@ export interface GameState {
   cameraTotalIncome: number;
   cameraTotalEvents: number;
   nextCameraId: number;
+  /** v110: marca del kit de bienvenida (3 cámaras gratis) */
+  kitInicioEntregado: boolean;
 
   // Elite pass
   eliteUntil: number | null;
@@ -422,6 +424,8 @@ export interface GameState {
   cameraIncomeRate: (cam: PlacedCamera) => number;
   cameraPending: (cam: PlacedCamera) => number;
   placeCamera: (modelId: string, lat: number, lng: number, name?: string) => { ok: boolean; reason?: string };
+  /** v110: kit de bienvenida — 3 cámaras GRATIS para que la sala nazca viva (una sola vez) */
+  regalarKitInicio: () => number;
   removeCamera: (id: string) => boolean;
   collectCamera: (id: string) => number;
   collectAllCameras: () => number;
@@ -603,6 +607,7 @@ export const useGameStore = create<GameState>()(
       cameraTotalIncome: 0,
       cameraTotalEvents: 0,
       nextCameraId: 1,
+      kitInicioEntregado: false,
 
       eliteUntil: null,
       eliteLastClaimDate: null,
@@ -1726,6 +1731,33 @@ export const useGameStore = create<GameState>()(
         get().checkAchievements();
         return { ok: true };
       },
+      // v110 MATRIZ 2100: la sala de CÁMARAS nunca más nace muerta — kit gratis
+      regalarKitInicio: () => {
+        const s = get();
+        if (s.kitInicioEntregado || s.cameras.length > 0) return 0;
+        const KIT: Array<[string, number, number, string]> = [
+          ["CAM_BASIC", 50.45, 30.52, "KIT·KYIV"],
+          ["CAM_BASIC", 31.5, 34.47, "KIT·GAZA"],
+          ["CAM_BASIC", 25.03, 121.56, "KIT·TAIPEI"],
+        ];
+        let nid = s.nextCameraId;
+        const nuevas: PlacedCamera[] = KIT.map(([modelId, lat, lng, name]) => {
+          const id = `CAM-${String(nid).padStart(3, "0")}`;
+          nid += 1;
+          return { id, modelId, name, lat, lng, installedAt: Date.now(), lastCollectAt: Date.now(), totalEarned: 0, eventsCaught: 0 };
+        });
+        set((st) => ({
+          cameras: [...st.cameras, ...nuevas],
+          nextCameraId: nid,
+          kitInicioEntregado: true,
+          log: [
+            { ts: Date.now(), msg: "KIT DE BIENVENIDA: 3 cámaras desplegadas gratis (KYIV · GAZA · TAIPEI)", delta: 0 },
+            ...st.log,
+          ].slice(0, 50),
+        }));
+        get().checkAchievements();
+        return nuevas.length;
+      },
       removeCamera: (id) => {
         const s = get();
         const cam = s.cameras.find((c) => c.id === id);
@@ -2180,6 +2212,7 @@ export const useGameStore = create<GameState>()(
           cameraTotalIncome: 0,
           cameraTotalEvents: 0,
           nextCameraId: 1,
+          kitInicioEntregado: false,
           eliteUntil: null,
           eliteLastClaimDate: null,
           conquestSave: null,

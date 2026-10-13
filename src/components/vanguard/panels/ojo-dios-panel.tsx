@@ -320,14 +320,17 @@ export function OjoDiosPanel() {
         }
       />
 
-      {/* v72.0 REGLA DE ORO: título grande + ilustración + texto fácil */}
+      {/* v72.0 REGLA DE ORO + v110 MATRIZ 2100: título grande + ESCENA 3D orbital viva + texto fácil */}
       <TituloEpico
         titulo="EL OJO DE DIOS"
         volanta="TODA la información del planeta Tierra en este lugar"
         imagen="/ilustraciones/ojo-dios.jpg"
+        escena="orbita"
+        semilla={210}
         texto="Todo lo que pasa en el mundo, visto desde arriba: el globo 3D en vivo con unidades militares reales, cámaras públicas de cada país, clima, divisas, sismos, eventos naturales de la NASA, la ISS y el escáner de conflictos. Nada escapa al Ojo."
         altura={250}
         tinte="luna"
+        acento="#5EEAD4"
       />
 
       {/* v87.0 SIGNOS VITALES DEL PLANETA — población que nace, tensiones que

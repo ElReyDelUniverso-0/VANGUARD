@@ -16,6 +16,8 @@ import { useT } from "@/lib/i18n";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v82.0 TODO EL MUNDO — teletipo en vivo: cinta de última hora + mensajes constantes
 import { TeletipoCinta, TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
+// v110.0 MATRIZ 2100 — PORTADA 3D garantizada en cada cable (nada vacío, nada plano)
+import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
 
 interface NewsItem {
   id: string;
@@ -417,22 +419,8 @@ export function NewsPanel() {
                 onClick={() => handleOpen(item)}
               >
                 <div className="flex items-start gap-3">
-                  {item.imageUrl ? (
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 overflow-hidden hud-corner border-amber-hud/40 bg-secondary">
-                      <img
-                        src={item.imageUrl}
-                        alt=""
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 hud-corner bg-secondary/40 flex items-center justify-center">
-                      <Newspaper className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                  )}
+                  {/* v110: PORTADA 3D SIEMPRE — cada cable nace con su escena holográfica viva */}
+                  <PortadaNoticia id={item.id} tag={item.tacticalTag} className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-sm hud-corner border-amber-hud/40" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                       {esUltimaHora(item.publishedAt) && (

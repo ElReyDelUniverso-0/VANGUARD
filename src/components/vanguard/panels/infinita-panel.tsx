@@ -188,6 +188,8 @@ export function InfinitaPanel() {
         titulo="INFINITA VERDADES"
         volanta="El mayor centro de noticias del mundo"
         imagen="/ilustraciones/verdades.jpg"
+        escena="noticias"
+        semilla={72}
         prioritaria
         texto="Todas las verdades del planeta en un solo muro que nunca se acaba: noticia a noticia, país por país, minuto a minuto. Filtra por bandera, busca por palabra y desciende tan profundo como quieras. Aquí nada se esconde."
         altura={280}

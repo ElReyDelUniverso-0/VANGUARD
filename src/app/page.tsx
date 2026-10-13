@@ -19,6 +19,8 @@ import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 // v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
 // luna llena y ocaso cálido). Una vez por sesión, saltable, reduced-motion off.
 const IntroCinematica = dynamic(() => import("@/components/vanguard/intro-cinematica").then((m) => m.IntroCinematica), { ssr: false });
+// v110.0 MATRIZ 2100 — motor 3D global (ajustes → CSS vars + paralaje)
+const Motor3D = dynamic(() => import("@/components/vanguard/motor-3d").then((m) => m.Motor3D), { ssr: false });
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
 import { SettingsModal } from "@/components/vanguard/settings-modal";
 import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
@@ -612,6 +614,9 @@ export default function Home() {
       <div className="particles-layer" aria-hidden />
       {/* v72.0: intro cinematográfica de vuelta — letras realistas + luna llena */}
       <IntroCinematica />
+      {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
+          CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
+      <Motor3D />
       {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
           apartan (display:contents cuando no — cero cajas fantasma) para que
           el contenido mande y se vea TODO */}

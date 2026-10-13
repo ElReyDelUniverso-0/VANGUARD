@@ -113,6 +113,8 @@ export function ExpedientesPanel() {
         titulo="ARCHIVO SECRETO"
         volanta="Expedientes desclasificados"
         imagen="/ilustraciones/expedientes.jpg"
+        escena="archivo"
+        semilla={41}
         texto="Documentos que los gobiernos mantuvieron ocultos y hoy son públicos: FBI, CIA, NARA, NSArchive y Black Vault. Colecciónalos, léalos rápido y descubre lo que pasaba entre bambalinas."
         altura={220}
         tinte="luna"

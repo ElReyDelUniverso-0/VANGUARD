@@ -23,6 +23,8 @@ import { CONFLICTS } from "@/lib/game-data";
 import { navigateTo, openMainMenu } from "@/lib/nav";
 import { ManifiestoMundo } from "@/components/vanguard/panels/empleos-panel";
 import type { TabKey } from "@/components/vanguard/tab-nav";
+// v110.0 MATRIZ 2100 — escenas 3D procedurales (nada plano, nada IA)
+import { Escena3D, escenaDePanel, hashDe } from "@/components/vanguard/escenas-3d";
 
 interface NewsItem {
   id: string;
@@ -108,38 +110,8 @@ const WORLD_TILES: WorldTile[] = [
 
 // v75 PLANETA VIVO: portada cinematográfica única por tile — imagen primero,
 // con movimiento Ken Burns y colores fuertes (regla de oro del comandante).
-const TILE_IMG: Record<string, string> = {
-  mente: "/ilustraciones/ojo-dios.jpg",
-  foryou: "/ilustraciones/foryou.jpg",
-  mundo: "/ilustraciones/mundo.jpg",
-  bookmaker: "/ilustraciones/bookmaker.jpg",
-  bolsa: "/ilustraciones/bolsa.jpg",
-  osint: "/ilustraciones/osint.jpg",
-  expedientes: "/ilustraciones/expedientes.jpg",
-  oscura: "/ilustraciones/oscura.jpg",
-  detective: "/ilustraciones/detective.jpg",
-  dron: "/ilustraciones/dronguerra.jpg",
-  warsim: "/ilustraciones/warsim.jpg",
-  envivo: "/ilustraciones/envivo.jpg",
-  contribuidores: "/ilustraciones/contribuidores.jpg",
-  memes: "/ilustraciones/memes.jpg",
-  creador: "/ilustraciones/creador.jpg",
-  studios: "/ilustraciones/studios.jpg",
-  gobierno: "/ilustraciones/gobierno.jpg",
-  bolsamonedas: "/ilustraciones/bolsamonedas.jpg",
-  armeria: "/ilustraciones/armeria.jpg",
-  abusos: "/ilustraciones/abusos.jpg",
-  memorial: "/ilustraciones/memorial.jpg",
-  arcade: "/ilustraciones/arcade.jpg",
-  tierra: "/ilustraciones/planeta.jpg",
-  pantalla: "/ilustraciones/camaras.jpg",
-  grafo: "/ilustraciones/osint.jpg",
-  maquina: "/ilustraciones/historia.jpg",
-  espejo: "/ilustraciones/canales.jpg",
-  laboratorio: "/ilustraciones/simulador.jpg",
-  agenteia: "/ilustraciones/agente.jpg",
-  obras: "/ilustraciones/creador.jpg",
-};
+// v110.0 MATRIZ 2100: las 30 imágenes planas IA JUBILADAS — cada tile nace
+// con su ESCENA 3D procedural (escenaDePanel) que respira e interactúa.
 
 function timeAgo(iso: string): string {
   const d = new Date(iso).getTime();
@@ -467,7 +439,7 @@ export function HomePanel() {
             >
               {hero.imageUrl && (
                 <div className="relative h-40 sm:h-52 rounded-sm overflow-hidden mb-3 border border-border/50 bg-black/40">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  { }
                   <img
                     src={hero.imageUrl}
                     alt=""
@@ -529,7 +501,7 @@ export function HomePanel() {
                   <div className="flex items-start gap-2.5">
                     {n.imageUrl ? (
                       <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 overflow-hidden border border-border/60 bg-secondary">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        { }
                         <img
                           src={n.imageUrl}
                           alt=""
@@ -671,19 +643,18 @@ export function HomePanel() {
               }}
               aria-label={`${t.title}: ${t.desc}`}
             >
-              {/* v75 PORTADA VIVA — la ilustración primero, moviéndose sola (Ken Burns) */}
+              {/* v110 ESCENA 3D VIVA — nada plano, nada IA: el mundo se ve en sí */}
               <div className="portada-media relative h-28 sm:h-32 w-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={TILE_IMG[t.tab] ?? "/ilustraciones/planeta.jpg"}
-                  alt=""
-                  loading={i < 4 ? "eager" : "lazy"}
-                  className={`ken-burns absolute inset-0 w-full h-full object-cover ${i % 2 ? "ken-burns-alt" : ""}`}
+                <Escena3D
+                  variante={escenaDePanel(t.tab)}
+                  acento={t.hex}
+                  semilla={hashDe(t.tab)}
+                  className="absolute inset-0"
                 />
                 {/* velo del color fuerte de la sección + fundido al cuerpo */}
                 <div
                   className="absolute inset-0 pointer-events-none"
-                  style={{ background: `linear-gradient(180deg, ${t.hex}33 0%, ${t.hex}14 34%, rgba(6,6,10,0.72) 72%, rgba(6,6,10,0.97) 100%)` }}
+                  style={{ background: `linear-gradient(180deg, ${t.hex}22 0%, transparent 34%, rgba(6,6,10,0.62) 72%, rgba(6,6,10,0.95) 100%)` }}
                   aria-hidden
                 />
                 <div className="portada-destello" aria-hidden />

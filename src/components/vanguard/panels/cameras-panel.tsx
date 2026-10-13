@@ -351,6 +351,20 @@ export function CamerasPanel() {
   const [pendingTotal, setPendingTotal] = useState(0);
   const [tickT, setTickT] = useState(0);
 
+  // v110 MATRIZ 2100: KIT DE BIENVENIDA — la sala nunca más nace vacía.
+  // Al primer arranque se despliegan 3 cámaras GRATIS (KYIV · GAZA · TAIPEI)
+  // y el agentе entra a una red VIVA: ingresos generándose y feeds activos.
+  useEffect(() => {
+    const s = useGameStore.getState();
+    if (s.kitInicioEntregado || s.cameras.length > 0) return;
+    const n = s.regalarKitInicio();
+    if (n > 0) {
+      toast("KIT DE BIENVENIDA desplegado", {
+        description: "3 cámaras GRATIS instaladas en KYIV · GAZA · TAIPEI — ya están generando intel.",
+      });
+    }
+  }, []);
+
   // refresco de ingresos acumulados cada 4s
   useEffect(() => {
     const t = setInterval(() => {

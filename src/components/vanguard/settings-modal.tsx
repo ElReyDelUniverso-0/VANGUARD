@@ -7,13 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes } from "lucide-react";
 import { toast } from "sonner";
 import { sfx, setMuted as setSoundMuted } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 import { LANGS, useLangStore, useT } from "@/lib/i18n";
 import { isStrict18, setStrict18, subscribeStrict18 } from "@/lib/safety";
 import { Languages } from "lucide-react";
+// v110.0 MATRIZ 2100 — TECNOLOGÍA 3D personalizable (el usuario manda en la matriz)
+import { useEstilo3D } from "@/lib/estilo3d";
 
 interface SettingsModalProps {
   open: boolean;
@@ -34,6 +36,8 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     () => false
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // v110: ajustes del motor 3D (persistidos)
+  const m3d = useEstilo3D();
 
   const handleToggleStrict18 = (v: boolean) => {
     setStrict18(v);
@@ -170,6 +174,59 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               </div>
               <Switch checked={!muted} onCheckedChange={(c) => handleToggleMute(!c)} />
             </div>
+          </div>
+
+          {/* v110.0 MATRIZ 2100 — TECNOLOGÍA 3D: la matrix responde a TU mano */}
+          <div className={cn("hud-corner p-3 bg-secondary/30", !m3d.activo && "opacity-70")}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Boxes className={cn("w-4 h-4", m3d.activo ? "text-emerald-400" : "text-muted-foreground")} />
+                <div>
+                  <div className="text-xs font-mono font-bold text-foreground">TECNOLOGÍA 3D · MATRIZ 2100</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Escenas holográficas que se inclinan contigo — todo Vanguard en profundidad
+                  </div>
+                </div>
+              </div>
+              <Switch checked={m3d.activo} onCheckedChange={(c) => { m3d.setActivo(c); sfx.click(); }} />
+            </div>
+            {m3d.activo && (
+              <div className="mt-3 space-y-2.5">
+                <div>
+                  <div className="flex items-center justify-between text-[10px] font-mono uppercase text-muted-foreground">
+                    <span>Intensidad de profundidad</span>
+                    <span className="text-emerald-400 tabular-nums">{m3d.intensidad}%</span>
+                  </div>
+                  <input
+                    type="range" min={0} max={100} step={5} value={m3d.intensidad}
+                    onChange={(e) => m3d.setIntensidad(Number(e.target.value))}
+                    className="mt-1 w-full accent-emerald-400"
+                    aria-label="Intensidad 3D"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {([
+                    ["inclinar", "SEGUIR AL PUNTERO"],
+                    ["paralaje", "PARALAJE GLOBAL"],
+                    ["rejilla", "SUELO HOLOGRAFICO"],
+                    ["sellosVivos", "RELOJ EN VIVO"],
+                  ] as const).map(([k, lbl]) => (
+                    <button
+                      key={k}
+                      onClick={() => { m3d[`set${k[0].toUpperCase()}${k.slice(1)}` as "setInclinar" | "setParalaje" | "setRejilla" | "setSellosVivos"](!m3d[k]); sfx.click(); }}
+                      className={cn(
+                        "h-7 hud-corner text-[9px] font-mono uppercase transition-all",
+                        m3d[k]
+                          ? "border-emerald-400/60 text-emerald-300 bg-emerald-400/10"
+                          : "border-border text-muted-foreground"
+                      )}
+                    >
+                      {m3d[k] ? "■ " : "□ "}{lbl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* v26: MODO ESTRICTO 18+ — el usuario pidió no ver NINGUNA foto censurada */}

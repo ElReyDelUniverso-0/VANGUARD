@@ -3,22 +3,33 @@
 // v72.0 INFINITA VERDADES — TÍTULO ÉPICO UNIVERSAL.
 // La regla de oro del comandante para TODA sección de Vanguard:
 //   1) ARRIBA: título GRANDE y llamativo (letras con luz de luna y brasa).
-//   2) DEBAJO: una ilustración hermosa (imagen real, nada plano).
+//   2) DEBAJO: una escena HERMOSA (v110: escena 3D holográfica viva —
+//      nada plano, cero imágenes muertas; imagen solo como legado).
 //   3) DEBAJO: texto rápido y fácil de leer.
-// Animado con framer-motion (entrada por letras + la ilustración sube con
-// resplandor cálido). Respeta prefers-reduced-motion.
+// v110.0 MATRIZ 2100: la ilustración se vuelve ESCENA 3D del motor
+// procedural (interactúa con la persona, sello EN VIVO con reloj real,
+// personalizable desde Ajustes → Tecnología 3D).
+// Animado con framer-motion. Respeta prefers-reduced-motion.
 
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Escena3D, SelloVivo, type VarianteEscena } from "./escenas-3d";
+import { useEstilo3D } from "@/lib/estilo3d";
 
 interface TituloEpicoProps {
   /** Título grande y llamativo */
   titulo: string;
   /** Línea pequeña encima del título (ej. "EL MAYOR CENTRO DE NOTICIAS DEL MUNDO") */
   volanta?: string;
-  /** Ilustración hero debajo del título */
+  /** Ilustración hero (LEGADO v109 — se usa solo si no hay `escena`) */
   imagen: string;
+  /** v110: variante de la escena 3D procedural (mata a la imagen plana) */
+  escena?: VarianteEscena;
+  /** v110: semilla determinista de la escena (varía el detalle) */
+  semilla?: number;
+  /** v110: mostrar sello EN VIVO con reloj real (default true) */
+  sello?: boolean;
   /** Texto fácil de leer debajo de la ilustración */
   texto: string;
   /** Altura de la ilustración en px (default 260) */
@@ -36,6 +47,9 @@ export function TituloEpico({
   titulo,
   volanta,
   imagen,
+  escena,
+  semilla = 7,
+  sello = true,
   texto,
   altura = 260,
   prioritaria = false,
@@ -44,6 +58,7 @@ export function TituloEpico({
   className,
 }: TituloEpicoProps) {
   const reduced = useReducedMotion();
+  const sellos = useEstilo3D((s) => s.sellosVivos);
   const letras = Array.from(titulo);
   // v73.0 REGLA DE ORO: acento hex por sección (si no hay, usa el tinte clásico)
   const acc = acento && /^#[0-9a-fA-F]{6}$/.test(acento) ? acento : tinte === "luna" ? "#A8C7FF" : "#FF8A2A";
@@ -105,7 +120,7 @@ export function TituloEpico({
         </motion.h2>
       </div>
 
-      {/* ILUSTRACIÓN hero — imagen primero, nada plano */}
+      {/* ESCENA hero — v110: 3D holográfica viva (o imagen legado) */}
       <motion.div
         initial={reduced ? false : { opacity: 0, scale: 1.04, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -117,22 +132,32 @@ export function TituloEpico({
           boxShadow: `0 18px 50px rgba(0,0,0,0.65), 0 0 38px ${accSuave}`,
         }}
       >
-        <Image
-          src={imagen}
-          alt={`Ilustración de ${titulo}`}
-          fill
-          sizes="(max-width: 768px) 100vw, 900px"
-          priority={prioritaria}
-          className="object-cover"
-        />
-        {/* viñeta cinematográfica + brasa baja, coherente con v71.1 */}
+        {escena ? (
+          <Escena3D variante={escena} acento={acc} semilla={semilla} className="absolute inset-0" />
+        ) : (
+          <Image
+            src={imagen}
+            alt={`Ilustración de ${titulo}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 900px"
+            priority={prioritaria}
+            className="object-cover"
+          />
+        )}
+        {/* sello EN VIVO con reloj real — Vanguard late en tiempo real */}
+        {sello && sellos ? (
+          <div className="absolute top-2 right-2 z-30">
+            <SelloVivo acento={acc} etiqueta="EN VIVO" />
+          </div>
+        ) : null}
+        {/* viñeta cinematográfica, coherente con v71.1 (más suave: la escena debe verse) */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.55)_100%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_62%,rgba(0,0,0,0.42)_100%)] pointer-events-none"
         />
         <div
           aria-hidden
-          className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent"
+          className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black/55 to-transparent pointer-events-none"
         />
         <div
           aria-hidden
