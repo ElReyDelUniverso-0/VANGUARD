@@ -4,7 +4,13 @@
 // — RESUELTO: registro oficial y honesto de la evolución del
 // sistema, de la era 1800 a la MATRIZ 2100. Fuente: historial
 // real de despliegues. Se pinta en CAMBIOS y en AYUDA.
+// v111.0 MÁQUINA DEL TIEMPO — la bitácora se ALIMENTA SOLA:
+// version.ts es la fuente única; si la versión en marcha no
+// tiene entrada, bitacoraViva() la antepone automáticamente
+// (ningún release volverá a ser invisible en la bitácora).
 // ============================================================
+
+import { APP_VERSION, APP_CODENAME } from "@/lib/version";
 
 export interface EntradaBitacora {
   version: string;
@@ -15,6 +21,18 @@ export interface EntradaBitacora {
 }
 
 export const BITACORA: EntradaBitacora[] = [
+  {
+    version: "v111.0",
+    nombre: "MÁQUINA DEL TIEMPO",
+    tipo: "tecno",
+    hitos: [
+      "MÁQUINA DEL TIEMPO 1950→2100: toda la casa viaja de era — CRT verde, terminal ámbar, presentes y MATRIZ HOLO",
+      "GIROSCOPIO: en el móvil la matriz se inclina con tu mano (permiso iOS en Ajustes)",
+      "Los 14 mundos del MENÚ con profundidad 3D real heredando las escenas holo",
+      "RADIO: ECUALIZADOR de 3 bandas ±12 dB + SESIÓN CONTINUA (encadena obras sin cortes) + cada obra con su mini-escena 3D",
+      "BITÁCORA AUTO-ALIMENTADA desde version.ts · MURALLA con mapa sísmico en canvas · CONSEJO se reconvoca solo",
+    ],
+  },
   {
     version: "v110.0",
     nombre: "MATRIZ 2100",
@@ -155,3 +173,23 @@ export const BITACORA_COLOR: Record<EntradaBitacora["tipo"], string> = {
   tecno: "#34C759",
   reten: "#FF3B30",
 };
+
+// ── v111: ALIMENTACIÓN AUTOMÁTICA — la versión en marcha SIEMPRE está ──
+// Si el release actual no tiene entrada escrita a mano, la bitácora la genera
+// (título = codename de version.ts, hito honesto de publicación).
+export function bitacoraViva(): EntradaBitacora[] {
+  const yaEsta = BITACORA.some((e) => e.version === APP_VERSION);
+  if (yaEsta) return BITACORA;
+  return [
+    {
+      version: APP_VERSION,
+      nombre: APP_CODENAME,
+      tipo: "tecno",
+      hitos: [
+        `${APP_VERSION} · ${APP_CODENAME} — publicado y en marcha (entrada automática de la bitácora viva)`,
+        "Los hitos detallados se escriben con cada ronda — esta línea garantiza que ningún release sea invisible",
+      ],
+    },
+    ...BITACORA,
+  ];
+}

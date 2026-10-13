@@ -2716,3 +2716,47 @@ span.v108-onda { transform-origin: center; }
   .v110-subio, .v110-blanco, .v110-nieve, .v110-haz, .v110-ventana,
   .v110-coche, .v110-cubo { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   v111.0 MÁQUINA DEL TIEMPO — ERA 1950→2100
+   Overlay global del Motor 3D: tinte CRT + líneas de barrido +
+   viñeta según la era elegida. El filtro de escena viaja en la
+   var --vg-3d-filtro (Motor3D la escribe en :root). SOLO capas
+   estáticas y opacity (contrato 60 FPS). reduced-motion apaga.
+   ════════════════════════════════════════════════════════════ */
+.v111-era-capa {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+.v111-era-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0px,
+    rgba(0, 0, 0, 0.55) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+.v111-era-flicker {
+  animation: v111Flicker 4.2s steps(3) infinite;
+  opacity: 0;
+}
+@keyframes v111Flicker {
+  0%, 100% { opacity: 0; }
+  48% { opacity: 0; }
+  50% { opacity: 0.045; }
+  52% { opacity: 0; }
+  83% { opacity: 0.03; }
+  85% { opacity: 0; }
+}
+
+/* el filtro de la era lo consumen las escenas (2100 = casi neutro,
+   2020 = sin filtro — el Motor3D escribe "none") */
+.v110-escena {
+  filter: var(--vg-3d-filtro, none);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v111-era-flicker { animation: none !important; }
+}

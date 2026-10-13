@@ -57,6 +57,9 @@ function magColor(mag: number): string {
   return "#4ADE80";
 }
 
+// v111.0 MÁQUINA DEL TIEMPO — mini-mapa sísmico en canvas dentro de la muralla
+import { MiniMapaSismos } from "@/components/vanguard/mini-mapa-sismos";
+
 // salas con latido en vivo (los 6 instrumentos que respiran solos)
 const SALAS_VIVAS = new Set<string>(["centinela", "espectro", "sismo", "cielos", "planeta", "pulso"]);
 
@@ -183,6 +186,10 @@ export function ObservatorioPanel() {
             <Waves className="w-4 h-4" style={{ color: TEAL }} />
             <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: TEAL }}>{t("obs.sismos")}</h2>
             <span className="ml-auto font-mono text-[8px] uppercase tracking-widest text-muted-foreground">USGS</span>
+          </div>
+          {/* v111: el planeta entero con los sismos EN VIVO latiendo sobre él */}
+          <div className="mb-3">
+            <MiniMapaSismos quakes={quakes} iss={iss} />
           </div>
           {topSismos.length === 0 ? (
             <p className="text-[11px] text-muted-foreground font-mono py-3">{cargando ? t("obs.cargando") : t("obs.sindatos")}</p>

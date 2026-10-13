@@ -17,7 +17,7 @@ import { informeRegreso, ausenciaTxt, type InformeRegreso } from "@/lib/regreso"
 import { TIPO_COLOR } from "@/lib/mente-data";
 import { useT } from "@/lib/i18n";
 // v110.0 MATRIZ 2100 — BITÁCORA: las ACTUALIZACIONES de Vanguard por fin visibles
-import { BITACORA, BITACORA_COLOR } from "@/lib/bitacora";
+import { bitacoraViva, BITACORA_COLOR } from "@/lib/bitacora";
 
 interface NewsItem {
   id: string;
@@ -222,15 +222,15 @@ export function CambiosPanel() {
         )}
       </Seccion>
 
-      {/* 4 · BITÁCORA DE VANGUARD — ACTUALIZACIONES (v110: nunca más ocultas) */}
+      {/* 4 · BITÁCORA DE VANGUARD — ACTUALIZACIONES (v111: se alimenta sola desde version.ts) */}
       <Seccion
         icono={<History className="h-4 w-4" />}
         titulo="BITÁCORA DE VANGUARD · ACTUALIZACIONES"
-        nota={`${BITACORA.length} versiones registradas`}
+        nota={`${bitacoraViva().length} versiones registradas`}
         color="#34C759"
       >
         <div className="grid gap-2">
-          {BITACORA.map((b, i) => {
+          {bitacoraViva().map((b, i) => {
             const col = BITACORA_COLOR[b.tipo];
             return (
               <motion.details

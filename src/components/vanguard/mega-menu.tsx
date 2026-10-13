@@ -1,13 +1,16 @@
 "use client";
 
 // v108.0 LA CIUDAD VIVA — el MENÚ VANGUARD deja de ser una parrilla aburrida:
-//  ① PORTADAS REALES EN CSS: cada sección lleva su escena dibujada (el lugar en
-//     sí: hangar, redacción, cúpula del observatorio, mesa de guerra...) —
+//  ① PORTADAS REALES EN CSS: cada sección lleva su escena dibujada —
 //     cero fotos IA (mandato: "que no sean IA sino mejor, que se vea el lugar").
 //  ② LA CIUDAD VIVA: horizonte de ciudad nocturna con luna llena y ventanas
 //     encendidas sobre el menú — Vanguard es una ciudad de mundos.
 //  ③ PORTADA PARA CADA SUBSECCIÓN: botón "VER LAS SALAS" expande la vitrina
 //     con una mini-portada por pestaña — ves qué hay en cada una ANTES de entrar.
+// v111.0 MÁQUINA DEL TIEMPO — ④ PROFUNDIDAD 3D REAL: las portadas de los 14
+//     mundos heredan el motor de escenas MATRIZ (Escena3D): se inclinan con
+//     tu puntero, con suelo holo y marco HUD. El horizonte de la ciudad
+//     mantiene su PortadaMundo como identidad.
 // Hereda: Explorador de mundos (v48), Sorpréndeme, badges de no visitadas.
 
 import { useEffect, useState } from "react";
@@ -16,9 +19,28 @@ import { X, Home, Dices, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SECTIONS, TOTAL_TABS, accentOfSection, type TabKey } from "@/components/vanguard/tab-nav";
 import { PortadaMundo, VitrinaSala } from "@/components/vanguard/portadas";
+import { Escena3D, hashDe, type VarianteEscena } from "@/components/vanguard/escenas-3d";
 import { sfx } from "@/lib/sound";
 import { useT, TAB_SHORTS } from "@/lib/i18n";
 import { useGameStore } from "@/lib/game-store";
+
+// v111: mundo → escena holográfica (semilla por clave para variedades)
+const SECCION_ESCENA: Record<string, VarianteEscena> = {
+  hangar: "hangar",
+  inteligencia: "radar",
+  inicio: "ciudad",
+  juego: "diana",
+  mercado: "moneda",
+  archivo: "libro",
+  comando: "guerra",
+  observatorio: "orbita",
+  estrategia: "red",
+  emisora: "onda",
+  oscsuro: "archivo",
+  creadores: "prisma",
+  social: "red",
+  sistema: "nucleo",
+};
 
 export function MegaMenu({
   open,
@@ -181,7 +203,9 @@ export function MegaMenu({
                 }}
                 className="group hud-corner card-shine text-left border rounded-sm overflow-hidden border-amber-hud bg-amber-hud/10 hover:bg-amber-hud/25 transition-colors relative"
               >
-                <PortadaMundo mundo="inicio" className="portada-media h-24 w-full" />
+                {/* v111: INICIO también en holo vivo */}
+                <Escena3D variante="ciudad" acento="#FFC94D" semilla={41} className="portada-media h-24 w-full" />
+                <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/70 to-transparent" aria-hidden />
                 <div className="relative z-10 px-4 pb-4 -mt-7">
                   <div
                     className="w-9 h-9 rounded-sm flex items-center justify-center border mb-2 backdrop-blur-sm text-amber"
@@ -210,8 +234,16 @@ export function MegaMenu({
                     className="group hud-corner card-shine relative overflow-hidden border rounded-sm"
                     style={{ borderColor: `${accentOfSection(s.key)}55`, background: "rgba(7,7,11,0.92)" }}
                   >
-                    {/* v108 PORTADA REAL — la escena del lugar, dibujada en CSS */}
-                    <PortadaMundo mundo={s.key} className="portada-media h-24 w-full" />
+                    {/* v111 PORTADA 3D — el mundo como escena holográfica que se inclina contigo */}
+                    <div className="relative">
+                      <Escena3D
+                        variante={SECCION_ESCENA[s.key] ?? "prisma"}
+                        acento={accentOfSection(s.key)}
+                        semilla={hashDe(s.key)}
+                        className="portada-media h-24 w-full"
+                      />
+                      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/70 to-transparent" aria-hidden />
+                    </div>
                     {sinVer > 0 && (
                       <span className="absolute top-2.5 right-2.5 z-10 min-w-[20px] h-[20px] px-1.5 rounded-full bg-amber text-black text-[9px] font-bold flex items-center justify-center shadow-lg" style={{ boxShadow: "0 0 14px rgba(255,176,32,0.5)" }}>
                         +{sinVer}

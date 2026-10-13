@@ -18,6 +18,7 @@ import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 import { activarNucleo, nucleoListo, razonado, estadoNucleo, suscribirNucleo, type NucleoEstado } from "@/lib/nucleo-navegador";
+import { toast } from "sonner";
 import { intervenirNucleo, dialogarNucleo, decretoNucleo, intervencionFinta, decretoFinta, cargarMemoria, guardarRecuerdo, textoMemoria, type Recuerdo } from "@/lib/consejo-nucleo";
 
 type ConsejeroId = "estratega" | "canciller" | "general" | "analista";
@@ -275,6 +276,8 @@ export function ConsejoIaPanel() {
   const [origen, setOrigen] = useState<"embebida" | "ia" | "local">("ia");
   const [generando, setGenerando] = useState(false); // núcleo embebido aún generando contenido
   const generandoRef = useRef(false);
+  // v111: máximo 1 reconvocación por deliberación (el modelo fuerte se reanima solo)
+  const reconvocaRef = useRef(false);
 
   // diálogo directo
   const [hablandoCon, setHablandoCon] = useState<ConsejeroId | null>(null);
@@ -407,6 +410,7 @@ export function ConsejoIaPanel() {
     setOrden(0);
     setRespuestas({});
     setFase("deliberando");
+    reconvocaRef.current = false; // v111: cada crisis tiene derecho a su reconvocación
     sfx.click();
 
     // v107.0 EL MODELO DE LOS PERSONAJES: PRIMERO el núcleo fuerte del servidor
@@ -430,6 +434,33 @@ export function ConsejoIaPanel() {
         if (nucleoListo()) {
           arrancarEmbebida(t);
           return;
+        }
+        // v111 RECONVOCACIÓN: la memoria de caída es por instancia — un segundo
+        // toque 1.4s después suele reanimar el modelo fuerte (máx. 1 reintento)
+        if (!reconvocaRef.current) {
+          reconvocaRef.current = true;
+          toast.info("Reconvocando el consejo…", { description: "El modelo fuerte tardó en responder — segundo toque en marcha" });
+          await new Promise((r) => setTimeout(r, 1400));
+          const res2 = await fetch("/api/consejo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ modo: "deliberacion", tema: t, memoria: textoMemoria() }),
+          });
+          const data2 = await res2.json();
+          if (data2?.ok && data2.ia !== false) {
+            setOrigen("ia");
+            aplicar(data2.intervenciones ?? [], data2.votos ?? [], data2.decreto ?? null, t, true);
+            return;
+          }
+          if (data2?.ok && nucleoListo()) {
+            arrancarEmbebida(t);
+            return;
+          }
+          if (data2?.ok) {
+            setOrigen("local");
+            aplicar(data2.intervenciones ?? [], data2.votos ?? [], data2.decreto ?? null, t, false);
+            return;
+          }
         }
         setOrigen("local");
         aplicar(data.intervenciones ?? [], data.votos ?? [], data.decreto ?? null, t, false);

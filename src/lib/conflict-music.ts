@@ -679,7 +679,8 @@ function variacionDiaria(): { rot: number; arpShift: number; hatAcc: number; var
 // v109: número de edición de hoy (para la Radio) — determinista, 1..48
 export function edicionDeHoy(): number {
   const v = variacionDiaria();
-  return v.rot * 12 + ([0, 0, 12, -12].indexOf(v.arpShift) + 1) * 3 + v.hatAcc + 1;
+  // clamp 1..48: la variación diaria puede sumar de más (v111: Nº 49/48 visto en QA)
+  return Math.min(EDICIONES_TOTAL, v.rot * 12 + ([0, 0, 12, -12].indexOf(v.arpShift) + 1) * 3 + v.hatAcc + 1);
 }
 export const EDICIONES_TOTAL = 48;
 
@@ -699,6 +700,11 @@ let droneAir: AudioBufferSourceNode | null = null;
 let droneGain: GainNode | null = null;
 let droneLfo: OscillatorNode | null = null;
 let noiseBuf: AudioBuffer | null = null;
+// v111 ECUALIZADOR DE SALA — 3 bandas entre el EQ de fábrica y el bus comp
+let eqBajo: BiquadFilterNode | null = null;
+let eqMedio: BiquadFilterNode | null = null;
+let eqAlto: BiquadFilterNode | null = null;
+const eqValores: { bajo: number; medio: number; alto: number } = { bajo: 0, medio: 0, alto: 0 };
 let timer: ReturnType<typeof setInterval> | null = null;
 let step = 0;
 let nextTime = 0;
@@ -759,6 +765,13 @@ function getCtx(): AudioContext | null {
       eqAire.type = "highshelf";
       eqAire.frequency.value = 9000;
       eqAire.gain.value = 2.2;
+      // ── v111 ECUALIZADOR DE SALA (3 bandas, lo mueve el Auditorio) ──
+      eqBajo = ctx.createBiquadFilter();
+      eqBajo.type = "lowshelf"; eqBajo.frequency.value = 180; eqBajo.gain.value = 0;
+      eqMedio = ctx.createBiquadFilter();
+      eqMedio.type = "peaking"; eqMedio.frequency.value = 1000; eqMedio.Q.value = 0.85; eqMedio.gain.value = 0;
+      eqAlto = ctx.createBiquadFilter();
+      eqAlto.type = "highshelf"; eqAlto.frequency.value = 5200; eqAlto.gain.value = 0;
       const comp = ctx.createDynamicsCompressor(); // pega el conjunto
       comp.threshold.value = -20;
       comp.knee.value = 24;
@@ -779,7 +792,8 @@ function getCtx(): AudioContext | null {
       master.gain.value = volume * 0.5;
       master.connect(hpf);
       hpf.connect(eqFango); eqFango.connect(eqAire);
-      eqAire.connect(comp); comp.connect(limiter);
+      eqAire.connect(eqBajo); eqBajo.connect(eqMedio); eqMedio.connect(eqAlto);
+      eqAlto.connect(comp); comp.connect(limiter);
       limiter.connect(analyser);
       analyser.connect(ctx.destination);
 
@@ -1381,6 +1395,19 @@ export function getMusicVolume(): number {
   return volume;
 }
 
+// ── v111 ECUALIZADOR DE SALA ──
+export type BandaEq = "bajo" | "medio" | "alto";
+export function setEqBand(banda: BandaEq, gainDb: number) {
+  const g = Math.max(-12, Math.min(12, gainDb));
+  eqValores[banda] = g;
+  const nodo = banda === "bajo" ? eqBajo : banda === "medio" ? eqMedio : eqAlto;
+  if (nodo && ctx) nodo.gain.setTargetAtTime(g, ctx.currentTime, 0.05);
+  notify();
+}
+export function getEqBands(): { bajo: number; medio: number; alto: number } {
+  return { ...eqValores };
+}
+
 // v83 ESTADIO GLOBAL — espectro en vivo para la Radio.
 export function getMusicSpectrum(bars = 24): number[] | null {
   if (!analyser || !isMusicPlaying()) return null;
@@ -1427,12 +1454,13 @@ export function resumeMusicIfWanted(): boolean {
 
 // v109: diagnóstico de solo-lectura para QA automatizado (no toca la UI):
 // si `step` avanza, el secuenciador está programando notas reales.
-export function __qaEngineDebug(): { step: number; playing: boolean; trackId: string | null; state: string } {
+export function __qaEngineDebug(): { step: number; playing: boolean; trackId: string | null; state: string; eq: { bajo: number; medio: number; alto: number } } {
   return {
     step,
     playing: timer !== null,
     trackId: current?.id ?? null,
     state: ctx?.state ?? "sin-ctx",
+    eq: { ...eqValores },
   };
 }
 // puente de QA (solo lectura)

@@ -1,19 +1,15 @@
 "use client";
 
-// VANGUARD v109.0 ORQUESTA DE ORO — RADIO VANGUARD+ con AUDITORIO.
-// v26: 6 pistas sintetizadas en vivo. v31: motor cinematográfico v2.
-// v83: visualizador de espectro + MODO CINE (la radio sigue el termómetro).
-// v98: MODO ESCENA (la banda sonora sigue tu sección) + variación diaria.
-// v109: · 28 pistas con el motor ORQUESTA DE ORO (4 insignias nuevas:
-//         Orquesta de Oro, Noche Serena, La Sala Dorada, Última Frontera)
-//       · MODO AUDITORIO: sala de escucha a pantalla completa — espectro
-//         grande, ficha de la obra, categorías con color y edición del día.
-//         Vanguard ya no solo se navega: se ESCUCHA.
-//       · SFX de madera y campanas (sound.ts) — la casa entera suena al oro.
+// VANGUARD v111.0 MÁQUINA DEL TIEMPO — RADIO VANGUARD+ con AUDITORIO.
+// v109: 28 pistas con el motor ORQUESTA DE ORO + MODO AUDITORIO.
+// v111: · ECUALIZADOR DE SALA (3 bandas Graves/Medios/Agudos ±12 dB)
+//       · SESIÓN CONTINUA: la radio encadena obras sola, sin cortes
+//       · CADA OBRA con su MINI-ESCENA 3D en la colección
+//       · HORA REAL en las ciudades 3D y era 1950→2100 en el Motor 3D
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import {
-  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X,
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X, Repeat, SlidersHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -21,14 +17,22 @@ import {
   MUSIC_TRACKS, startMusic, stopMusic, isMusicPlaying, currentTrackId,
   setMusicVolume, getMusicVolume, subscribeMusic, getMusicSpectrum,
   aplicarEscena, setEscenaActiva, getEscenaActiva, edicionDeHoy, EDICIONES_TOTAL,
+  setEqBand, type BandaEq,
   type EscenaKey, type TrackCat,
 } from "@/lib/conflict-music";
+import { Escena3D, hashDe, type VarianteEscena } from "@/components/vanguard/escenas-3d";
+import { sfx } from "@/lib/sound";
 import { getTension } from "@/lib/tension";
 import { useT } from "@/lib/i18n";
 
 const LS_MUSIC = "vanguard_music";
 
-function readSaved(): { on: boolean; vol: number; track: string; auto: boolean; escena: boolean } {
+interface GuardadoRadio {
+  on: boolean; vol: number; track: string; auto: boolean; escena: boolean;
+  cont: boolean; eq: { bajo: number; medio: number; alto: number };
+}
+
+function readSaved(): GuardadoRadio {
   try {
     const raw = localStorage.getItem(LS_MUSIC);
     if (raw) {
@@ -39,10 +43,16 @@ function readSaved(): { on: boolean; vol: number; track: string; auto: boolean; 
         track: p.track || "orquesta",
         auto: p.auto === true,
         escena: p.escena === true,
+        cont: p.cont === true,
+        eq: {
+          bajo: typeof p.eq?.bajo === "number" ? p.eq.bajo : 0,
+          medio: typeof p.eq?.medio === "number" ? p.eq.medio : 0,
+          alto: typeof p.eq?.alto === "number" ? p.eq.alto : 0,
+        },
       };
     }
   } catch { /* noop */ }
-  return { on: false, vol: 0.5, track: "orquesta", auto: false, escena: false };
+  return { on: false, vol: 0.5, track: "orquesta", auto: false, escena: false, cont: false, eq: { bajo: 0, medio: 0, alto: 0 } };
 }
 
 function useMusicSnapshot() {
@@ -71,6 +81,13 @@ const CATS: { id: TrackCat; key: string; dot: string }[] = [
 ];
 const catLabel = (c: TrackCat, tr: (k: string) => string) =>
   tr(CATS.find((x) => x.id === c)?.key ?? "radio109.cat.ambiente");
+
+// v111: cada obra respira en su propia mini-escena 3D (familia → variante)
+const CAT_ESCENA: Record<TrackCat, VarianteEscena> = {
+  vanguard: "nucleo",
+  guerra: "guerra",
+  ambiente: "onda",
+};
 
 // ====== visualizador de espectro (solo transform por frame → 60fps) ======
 function Spectrum({ bars, big = false }: { bars: number; big?: boolean }) {
@@ -133,13 +150,24 @@ export function MusicPlayer() {
   const [selTrack, setSelTrack] = useState(saved.track);
   const [auto, setAuto] = useState(saved.auto); // MODO CINE
   const [escena, setEscena] = useState(saved.escena); // v98.0 MODO ESCENA
+  // v111: SESIÓN CONTINUA + ECUALIZADOR DE SALA
+  const [cont, setCont] = useState(saved.cont);
+  const [eq, setEq] = useState(saved.eq);
   const tierRef = useRef<number>(tierOf(getTension()));
 
-  const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena) => {
+  const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
     try {
-      localStorage.setItem(LS_MUSIC, JSON.stringify({ on, vol: v, track, auto: autoFlag, escena: escenaFlag }));
+      localStorage.setItem(LS_MUSIC, JSON.stringify({ on, vol: v, track, auto: autoFlag, escena: escenaFlag, cont: contFlag, eq: eqVal }));
     } catch { /* noop */ }
   };
+
+  // v111: aplica el EQ guardado al encender la sala (los nodos toman el valor
+  // aunque el AudioContext nazca después — setEqBand lo guarda en el motor)
+  useEffect(() => {
+    setEqBand("bajo", saved.eq.bajo);
+    setEqBand("medio", saved.eq.medio);
+    setEqBand("alto", saved.eq.alto);
+  }, []);
 
   const toggle = () => {
     if (playing) {
@@ -170,6 +198,61 @@ export function MusicPlayer() {
     if (autoplay && (playing || wantOn)) startMusic(id);
   };
 
+  // v111 SESIÓN CONTINUA — avance silencioso (no rompe los modos, sin toasts):
+  // la obra siguiente de la colección entra con el fundido cruzado del motor.
+  const avanzarSesion = () => {
+    const idxActual = MUSIC_TRACKS.findIndex((x) => x.id === (currentTrackId() || selTrack));
+    const nxt = MUSIC_TRACKS[(idxActual + 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length];
+    if (!nxt) return;
+    setSelTrack(nxt.id);
+    if (playing || wantOn) startMusic(nxt.id);
+    persist(playing || wantOn, vol, nxt.id);
+  };
+
+  // v111: mientras SESIÓN CONTINUA esté activa y suene música, cada ~3.5 min
+  // pasa a la obra siguiente (la generativa respira 5 ciclos por obra)
+  useEffect(() => {
+    if (!cont || !playing) return;
+    const iv = setInterval(avanzarSesion, 210_000);
+    return () => clearInterval(iv);
+  }, [cont, playing, selTrack, vol]);
+
+  const toggleCont = () => {
+    const nxt = !cont;
+    setCont(nxt);
+    if (nxt) {
+      // una sola inteligencia musical a la vez
+      setAuto(false);
+      setEscena(false);
+      if (!playing && !wantOn) {
+        setWantOn(true);
+        setMusicVolume(vol);
+        startMusic(selTrack || "orquesta");
+      }
+      persist(playing || wantOn || true, vol, selTrack, false, false, true);
+      toast.success("SESIÓN CONTINUA · activa", { description: "La radio encadena obras sola, sin cortes ni silencios" });
+    } else {
+      persist(playing || wantOn, vol, selTrack, auto, escena, false);
+      toast.info("SESIÓN CONTINUA apagada");
+    }
+    sfx.click();
+  };
+
+  const cambiarBanda = (banda: BandaEq, v: number) => {
+    const nxt = { ...eq, [banda]: v };
+    setEq(nxt);
+    setEqBand(banda, v);
+    persist(playing || wantOn, vol, selTrack, auto, escena, cont, nxt);
+  };
+
+  const resetEq = () => {
+    const cero = { bajo: 0, medio: 0, alto: 0 };
+    setEq(cero);
+    (Object.keys(cero) as BandaEq[]).forEach((b) => setEqBand(b, 0));
+    persist(playing || wantOn, vol, selTrack, auto, escena, cont, cero);
+    sfx.click();
+  };
+
   const changeVol = (v: number) => {
     setVol(v);
     setMusicVolume(v);
@@ -187,6 +270,7 @@ export function MusicPlayer() {
     tierRef.current = tier;
     const track = AUTO_TRACKS[tier];
     setAuto(true);
+    setCont(false); // v111: una sola inteligencia musical a la vez
     setSelTrack(track);
     if (!playing && !wantOn) {
       setWantOn(true);
@@ -195,7 +279,7 @@ export function MusicPlayer() {
     } else {
       startMusic(track);
     }
-    persist(true, vol, track, true);
+    persist(true, vol, track, true, escena, false);
     toast.success(`MODO CINE · tensión ${Math.round(getTension())}`, {
       description: `Suena ${AUTO_NAMES[tier]} — la radio sigue el termómetro del mundo`,
     });
@@ -229,6 +313,7 @@ export function MusicPlayer() {
     }
     // activar escena apaga el modo cine (una sola inteligencia musical a la vez)
     setAuto(false);
+    setCont(false); // v111: una sola inteligencia musical a la vez
     const act = getEscenaActiva();
     setEscena(true);
     if (!playing && !wantOn) {
@@ -241,7 +326,7 @@ export function MusicPlayer() {
     } else {
       startMusic("orquesta");
     }
-    persist(true, vol, "orquesta", false, true);
+    persist(true, vol, "orquesta", false, true, false);
     toast.success("MODO ESCENA · activo", {
       description: "La radio cambia de pista sola según la sección de Vanguard donde estés",
     });
@@ -402,6 +487,62 @@ export function MusicPlayer() {
                 </span>
               </span>
             </button>
+            {/* v111 SESIÓN CONTINUA — la radio DJ: encadena obras sin cortes */}
+            <button
+              onClick={toggleCont}
+              aria-pressed={cont}
+              className={cn(
+                "flex items-center gap-2 px-3 py-2 border rounded-sm transition-colors text-left",
+                cont ? "border-cyan-400 bg-cyan-400/15" : "border-border/60 hover:border-amber-hud/60 hover:bg-amber-hud/10"
+              )}
+            >
+              <Repeat className={cn("w-4 h-4 shrink-0", cont ? "text-cyan-300" : "text-muted-foreground")} />
+              <span className="min-w-0">
+                <span className={cn("block text-[10px] font-mono font-bold uppercase tracking-wider", cont ? "text-cyan-300" : "text-foreground")}>
+                  {t("radio111.cont")} {cont ? "· ON" : ""}
+                </span>
+                <span className="block text-[8px] font-mono text-muted-foreground leading-snug">
+                  {t("radio111.contDesc")}
+                </span>
+              </span>
+            </button>
+          </div>
+
+          {/* v111 ECUALIZADOR DE SALA — 3 bandas ±12 dB sobre la cadena de estudio */}
+          <div className="hud-panel border-amber-hud/40 rounded-sm px-4 py-3">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-amber" />
+                <span className="text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/90">
+                  {t("radio111.eq")}
+                </span>
+              </div>
+              <button
+                onClick={resetEq}
+                className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground hover:text-amber transition-colors"
+              >
+                {t("radio111.eqReset")}
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {([
+                ["bajo", t("radio111.eqGraves")],
+                ["medio", t("radio111.eqMedios")],
+                ["alto", t("radio111.eqAgudos")],
+              ] as const).map(([b, lbl]) => (
+                <div key={b} className="flex flex-col items-center gap-1">
+                  <span className="text-[9px] font-mono tabular-nums text-amber/90">{eq[b] > 0 ? `+${eq[b]}` : eq[b]} dB</span>
+                  <input
+                    type="range" min={-12} max={12} step={1}
+                    value={eq[b as BandaEq]}
+                    onChange={(e) => cambiarBanda(b as BandaEq, parseInt(e.target.value, 10))}
+                    aria-label={`${lbl} EQ`}
+                    className="w-full h-1 accent-amber"
+                  />
+                  <span className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground">{lbl}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* colección por familias */}
@@ -422,17 +563,27 @@ export function MusicPlayer() {
                     key={trk.id}
                     onClick={() => switchTrack(trk.id)}
                     className={cn(
-                      "w-full text-left px-3 py-2 border-b border-amber-hud/10 hover:bg-amber-hud/20 transition-colors",
+                      "w-full text-left px-3 py-2 border-b border-amber-hud/10 hover:bg-amber-hud/20 transition-colors flex items-center gap-3",
                       trk.id === cur.id && "bg-amber-hud/20"
                     )}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className={cn("text-[11px] font-mono font-bold uppercase tracking-wide", trk.id === cur.id ? "text-amber" : "text-foreground")}>
-                        {trk.name}
+                    {/* v111: la obra respirando en su propia escena 3D (estática — 0 coste) */}
+                    <Escena3D
+                      variante={CAT_ESCENA[trk.cat]}
+                      acento={trk.cat === "guerra" ? "#FF5A4E" : trk.cat === "ambiente" ? "#5EEAD4" : "#FFC94D"}
+                      semilla={hashDe(trk.id)}
+                      estatico
+                      className="w-16 h-11 shrink-0 rounded-sm border border-amber-hud/20"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center justify-between gap-2">
+                        <span className={cn("text-[11px] font-mono font-bold uppercase tracking-wide", trk.id === cur.id ? "text-amber" : "text-foreground")}>
+                          {trk.name}
+                        </span>
+                        <span className="text-[8px] font-mono text-muted-foreground shrink-0">{trk.bpm} BPM</span>
                       </span>
-                      <span className="text-[8px] font-mono text-muted-foreground shrink-0">{trk.bpm} BPM</span>
-                    </div>
-                    <div className="text-[9px] text-muted-foreground leading-snug">{trk.desc}</div>
+                      <span className="block text-[9px] text-muted-foreground leading-snug">{trk.desc}</span>
+                    </span>
                   </button>
                 ))}
               </div>
@@ -615,6 +766,27 @@ export function MusicPlayer() {
                 </span>
               </span>
               {escena && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-amber blink-soft shrink-0" />}
+            </button>
+
+            {/* v111: SESIÓN CONTINUA en el widget — la radio DJ a un toque */}
+            <button
+              onClick={toggleCont}
+              aria-pressed={cont}
+              className={cn(
+                "mx-3 mb-2 w-[calc(100%-24px)] flex items-center gap-2 px-2.5 py-2 border rounded-sm transition-colors text-left",
+                cont ? "border-cyan-400 bg-cyan-400/15" : "border-border/60 hover:border-amber-hud/60 hover:bg-amber-hud/10"
+              )}
+            >
+              <Repeat className={cn("w-3.5 h-3.5 shrink-0", cont ? "text-cyan-300" : "text-muted-foreground")} />
+              <span className="min-w-0">
+                <span className={cn("block text-[10px] font-mono font-bold uppercase tracking-wider", cont ? "text-cyan-300" : "text-foreground")}>
+                  {t("radio111.cont")} {cont ? "· ACTIVA" : ""}
+                </span>
+                <span className="block text-[8px] font-mono text-muted-foreground leading-snug">
+                  {t("radio111.contDesc")}
+                </span>
+              </span>
+              {cont && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-300 blink-soft shrink-0" />}
             </button>
 
             {/* colección por familias con puntos de color */}

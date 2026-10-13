@@ -14,7 +14,7 @@
 //     prefers-reduced-motion apaga el tilt y las escenas respiran.
 // ============================================================
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -396,22 +396,53 @@ function EscenaHangar({ acento }: { acento: string; rnd: () => number }) {
 
 function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
   const bloques = Array.from({ length: 15 }, (_, i) => ({ x: 16 + i * 26, w: 18, h: 30 + rnd() * 90 }));
+  // v111 HORA REAL: la ciudad vive según TU reloj — ventanas encendidas y luna
+  // de noche (19→7); sol y ventanas apagadas de día. SSR pinta la noche y el
+  // efecto corrige en vivo (hidratación sin salto).
+  const [noche, setNoche] = useState(true);
+  useEffect(() => {
+    const h = new Date().getHours();
+    // patrón legítimo: el reloj real solo se conoce en el cliente (v111 hora real)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNoche(h >= 19 || h < 7);
+  }, []);
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
-        <circle cx="330" cy="46" r="20" fill={acento} opacity="0.16" />
-        <circle cx="330" cy="46" r="20" fill="none" stroke={acento} strokeOpacity="0.4" />
+        {noche ? (
+          <>
+            <circle cx="330" cy="46" r="20" fill={acento} opacity="0.16" />
+            <circle cx="330" cy="46" r="20" fill="none" stroke={acento} strokeOpacity="0.4" />
+          </>
+        ) : (
+          <>
+            <circle cx="330" cy="46" r="24" fill="#FFC94D" opacity="0.28" />
+            <circle cx="330" cy="46" r="13" fill="#FFD97A" opacity="0.85" />
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <line key={i} x1={330 + Math.cos((i * Math.PI) / 4) * 29} y1={46 + Math.sin((i * Math.PI) / 4) * 29}
+                x2={330 + Math.cos((i * Math.PI) / 4) * 36} y2={46 + Math.sin((i * Math.PI) / 4) * 36}
+                stroke="#FFC94D" strokeOpacity="0.5" strokeWidth="1.2" />
+            ))}
+          </>
+        )}
         {bloques.map((b, i) => (
           <g key={i}>
             <rect x={b.x} y={190 - b.h} width={b.w} height={b.h} fill="rgba(255,255,255,0.03)" stroke={acento} strokeOpacity="0.4" strokeWidth="0.8" />
             {Array.from({ length: Math.floor(b.h / 14) }, (_, f) => (
-              <rect key={f} x={b.x + 4} y={190 - b.h + 6 + f * 12} width="4" height="5" fill={acento} className="v110-ventana" style={{ animationDelay: `${(i * 3 + f) * 0.35 % 6}s` }} />
+              <rect key={f} x={b.x + 4} y={190 - b.h + 6 + f * 12} width="4" height="5" fill={acento} className="v110-ventana"
+                style={{ opacity: noche ? undefined : 0.14, animationDelay: `${(i * 3 + f) * 0.35 % 6}s` }} />
             ))}
           </g>
         ))}
         <line x1="0" y1="190" x2="400" y2="190" stroke={acento} strokeOpacity="0.6" />
         <g className="v110-coche"><rect x="-30" y="196" width="26" height="3" rx="1.5" fill={acento} opacity="0.9" /></g>
       </svg>
+      <span
+        className="absolute top-2 left-2 font-mono text-[8px] tracking-[0.3em] opacity-60"
+        style={{ color: acento }}
+      >
+        {noche ? "22:47 · NOCHE REAL" : "12:15 · DÍA REAL"}
+      </span>
     </div>
   );
 }
@@ -462,7 +493,7 @@ function cuerpoDe(variante: VarianteEscena, acento: string, semilla: number): Re
 // marco HUD y scanline. Todo transform/opacity.
 // ============================================================
 export function Escena3D({
-  variante, acento = "#FF8A2A", semilla = 7, className, estilo, hijos,
+  variante, acento = "#FF8A2A", semilla = 7, className, estilo, hijos, estatico,
 }: {
   variante: VarianteEscena;
   acento?: string;
@@ -470,11 +501,14 @@ export function Escena3D({
   className?: string;
   estilo?: CSSProperties;
   hijos?: ReactNode;
+  /** v111: tarjetas diminutas — sin tilt ni rAF (cero coste, 60 FPS garantizado) */
+  estatico?: boolean;
 }) {
   const caja = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
   useEffect(() => {
+    if (estatico) return;
     const el = caja.current;
     if (!el || reduced) return;
     let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0, vivo = true;
@@ -496,7 +530,7 @@ export function Escena3D({
     el.addEventListener("pointerleave", onLeave);
     raf = requestAnimationFrame(loop);
     return () => { vivo = false; cancelAnimationFrame(raf); el.removeEventListener("pointermove", onMove); el.removeEventListener("pointerleave", onLeave); };
-  }, [reduced]);
+  }, [reduced, estatico]);
 
   return (
     <div ref={caja} className={cn("v110-escena relative overflow-hidden", className)} style={{ ...estilo, ["--vg-acc" as string]: acento }}>

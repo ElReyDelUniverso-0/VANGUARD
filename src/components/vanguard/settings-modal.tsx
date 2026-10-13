@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes, Hourglass } from "lucide-react";
 import { toast } from "sonner";
 import { sfx, setMuted as setSoundMuted } from "@/lib/sound";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,8 @@ import { LANGS, useLangStore, useT } from "@/lib/i18n";
 import { isStrict18, setStrict18, subscribeStrict18 } from "@/lib/safety";
 import { Languages } from "lucide-react";
 // v110.0 MATRIZ 2100 — TECNOLOGÍA 3D personalizable (el usuario manda en la matriz)
-import { useEstilo3D } from "@/lib/estilo3d";
+// v111.0 MÁQUINA DEL TIEMPO — giroscopio (iOS pide permiso con gesto) + era 1950→2100
+import { useEstilo3D, ERAS, type EraKey } from "@/lib/estilo3d";
 
 interface SettingsModalProps {
   open: boolean;
@@ -38,6 +39,42 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   // v110: ajustes del motor 3D (persistidos)
   const m3d = useEstilo3D();
+  // v111: ¿el aparato expone giroscopio? (móvil sí, escritorio no)
+  const [hayGyro] = useState(() => typeof window !== "undefined" && "DeviceOrientationEvent" in window);
+
+  // v111 GIROSCOPIO: iOS 13+ exige pedir permiso desde un gesto del usuario
+  const activarGiro = async () => {
+    sfx.click();
+    const DOE = typeof window !== "undefined"
+      ? (window.DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> } | undefined)
+      : undefined;
+    if (DOE && typeof DOE.requestPermission === "function") {
+      try {
+        const p = await DOE.requestPermission();
+        if (p === "granted") {
+          m3d.setGiroscopio(true);
+          sfx.unlock();
+          toast.success(tr("gyro111.ok"), { description: tr("gyro111.okDesc") });
+        } else {
+          m3d.setGiroscopio(false);
+          toast.error(tr("gyro111.denegado"));
+        }
+      } catch {
+        toast.error(tr("gyro111.denegado"));
+      }
+      return;
+    }
+    // Android/escritorio: sin ceremonia — el toggle manda
+    const nxt = !m3d.giroscopio;
+    m3d.setGiroscopio(nxt);
+    if (nxt) toast.success(tr("gyro111.ok"), { description: tr("gyro111.okDesc") });
+  };
+
+  const elegirEra = (e: EraKey) => {
+    m3d.setEra(e);
+    sfx.unlock();
+    toast.success(`${tr("era111.titulo")}: ${tr(`era111.e${e}`)}`);
+  };
 
   const handleToggleStrict18 = (v: boolean) => {
     setStrict18(v);
@@ -224,6 +261,48 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                       {m3d[k] ? "■ " : "□ "}{lbl}
                     </button>
                   ))}
+                </div>
+
+                {/* v111 GIROSCOPIO — el móvil inclina la matriz con la mano */}
+                {hayGyro && (
+                  <button
+                    onClick={activarGiro}
+                    className={cn(
+                      "w-full h-8 hud-corner text-[9px] font-mono uppercase tracking-widest transition-all",
+                      m3d.giroscopio
+                        ? "border-emerald-400/60 text-emerald-300 bg-emerald-400/10"
+                        : "border-border text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {m3d.giroscopio ? "■ " : "□ "}{tr("gyro111.activar")}
+                  </button>
+                )}
+
+                {/* v111 MÁQUINA DEL TIEMPO — la era visual de toda la casa */}
+                <div className="pt-1">
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                    <Hourglass className="w-3 h-3 text-amber" />
+                    {tr("era111.titulo")}
+                  </div>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {((Object.keys(ERAS) as EraKey[])).map((e) => (
+                      <button
+                        key={e}
+                        onClick={() => elegirEra(e)}
+                        className={cn(
+                          "h-8 hud-corner text-[9px] font-mono font-bold uppercase transition-all",
+                          m3d.era === e
+                            ? "border-amber-hud text-amber bg-amber-hud/25 glow-amber"
+                            : "border-border text-muted-foreground hover:text-foreground hover:border-amber-hud/50"
+                        )}
+                      >
+                        {e}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[9px] font-mono text-muted-foreground mt-1.5 leading-snug">
+                    {tr(`era111.e${m3d.era}`)} — {tr("era111.desc")}
+                  </p>
                 </div>
               </div>
             )}
