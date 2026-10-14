@@ -2760,3 +2760,46 @@ span.v108-onda { transform-origin: center; }
 @media (prefers-reduced-motion: reduce) {
   .v111-era-flicker { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   v113.0 LETRAS VIVAS — TIPOGRAFÍA 3D PROCEDURAL
+   Cada letra de la casa lleva VOLUMEN real (capas extruidas en
+   preserve-3d). La entrada es una animación CSS por letra; el
+   hover levanta la letra en Z; el tilt lo consume del Motor3D
+   vía --vg-mx/--vg-my (cero JS por frame). SOLO transform y
+   opacity — contrato 60 FPS. reduced-motion lo apaga todo.
+   ════════════════════════════════════════════════════════════ */
+@keyframes v113Entra {
+  0% { opacity: 0; transform: translateY(24px) rotateX(-68deg); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+}
+.v113-letra { animation: v113Entra 0.55s cubic-bezier(0.2, 0.9, 0.25, 1) both; backface-visibility: hidden; }
+.v113-letra-quieto { animation: none !important; }
+.v113-cuerpo { transition: transform 0.16s ease-out; }
+.v113-cuerpo:hover { transform: translateZ(16px); }
+
+/* giro orbital de la FORJA (el spin vive en un wrapper propio para
+   no pisar el tilt de las vars del Motor) */
+.v113-giro { animation: v113Gira 16s linear infinite; transform-style: preserve-3d; }
+@keyframes v113Gira { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+
+/* esfera de palabras de la ÓRBITA */
+.v113-orbita { animation: v113Orb 46s linear infinite; transform-style: preserve-3d; }
+@keyframes v113Orb { from { transform: rotateX(-8deg) rotateY(0deg); } to { transform: rotateX(-8deg) rotateY(360deg); } }
+.v113-orbita-palabra { text-shadow: 0 0 12px currentColor; will-change: transform; }
+
+/* suelo de rejilla de la FORJA */
+.v113-suelo {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--vg-acc, #ff5edb) 14%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--vg-acc, #ff5edb) 14%, transparent) 1px, transparent 1px);
+  background-size: 34px 34px;
+  transform: rotateX(64deg) scale(1.6);
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(to top, black 30%, transparent 92%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v113-letra, .v113-giro, .v113-orbita { animation: none !important; }
+  .v113-cuerpo { transition: none !important; }
+}

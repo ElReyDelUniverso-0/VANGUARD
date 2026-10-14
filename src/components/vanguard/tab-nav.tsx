@@ -123,12 +123,13 @@ export type TabKey =
   | "cambios" | "analista" | "escenarios"
   // v104.0 LA VITRINA: el muro unificado de TODAS las obras de la comunidad
   | "obras"
+  // v113.0 LETRAS VIVAS: EXPERIMENTAL — la página de los imposibles
+  | "experimental"
   // v106.0 PESTAÑAS DE CROMO: navegación como las webs más usadas del mundo —
   // cada vista es una pestaña que se abre, se elige y se cierra + la página
   // NUEVA PESTAÑA para elegir destino + el OBSERVATORIO como sala con cuerpo propio
   | "nueva"
   | "observatorio";
-
 interface TabDef {
   key: TabKey;
   label: string;
@@ -266,6 +267,8 @@ export const TABS: Record<TabKey, TabDef> = {
   // el navegador más usado del mundo) y el OBSERVATORIO como sala con cuerpo
   nueva:         { key: "nueva",         label: "NUEVA PESTAÑA (elige tu destino: buscador, atajos y todo el índice de Vanguard)", short: "NUEVA", icon: <AppWindow className="w-3.5 h-3.5" />, color: "amber" },
   observatorio:  { key: "observatorio",  label: "MURALLA DE VIGILANCIA (el corazón del Observatorio: sismos, pulso, presencia y las 17 salas en vivo)", short: "OBSERV", icon: <Telescope className="w-3.5 h-3.5" />, color: "cyan" },
+  // v113.0 LETRAS VIVAS: la página donde la gente toca la materia tipográfica
+  experimental:  { key: "experimental",   label: "EXPERIMENTAL (la página de los imposibles: forja de letras 3D, órbita de palabras y lluvia de letras)", short: "EXPERIM", icon: <FlaskConical className="w-3.5 h-3.5" />, color: "violet" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
   mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
@@ -421,6 +424,15 @@ export const SECTIONS: SectionDef[] = [
     desc: "PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
     tabs: [TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
   },
+  {
+    // v113.0 LETRAS VIVAS: EXPERIMENTAL — el 15º mundo. La página de los
+    // imposibles donde la persona toca la materia: la FORJA DE LETRAS
+    // convierte cualquier texto en volumen 3D real (material, profundidad,
+    // giro, arrastre), la ÓRBITA DE PALABRAS y la LLUVIA DE LETRAS.
+    key: "experimental", label: "EXPERIMENTAL", short: "EXPERIM", icon: <FlaskConical className="w-4 h-4" />, color: "violet",
+    desc: "La página de los imposibles: escribe y mira tus palabras convertirse en letras 3D de verdad (forja de letras, órbita de palabras y lluvia de letras — todo en vivo, sin imágenes)",
+    tabs: [TABS.experimental],
+  },
 ];
 
 export function sectionOfTab(tab: TabKey): SectionDef {
@@ -479,6 +491,7 @@ export const SECTION_ACCENT: Record<string, string> = {
   creadores:     "#E879F9", // fucsia — creadores
   social:        "#A78BFA", // lavanda — comunidad
   sistema:       "#34D399", // esmeralda — sistema
+  experimental:  "#FF5EDB", // magenta holográfico — la página de los imposibles (v113)
 };
 
 export function accentOfSection(sectionKey: string): string {

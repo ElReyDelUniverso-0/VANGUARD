@@ -382,6 +382,19 @@ export function MusicPlayer() {
 
   const cur = MUSIC_TRACKS.find((x) => x.id === (curId || selTrack)) || MUSIC_TRACKS[0];
   const idx = MUSIC_TRACKS.findIndex((x) => x.id === cur.id);
+  // v113 LETRAS VIVAS: la PRÓXIMA OBRA se ve antes de sonar — con SESIÓN
+  // INTELIGENTE manda la familia de la hora (misma lógica de avanzarSesion);
+  // sin sesión, la siguiente de la fila. Cero sorpresas en la píldora.
+  const proximaObra = (() => {
+    if (cont) {
+      const { fam } = franjaMusical();
+      const enFamilia = MUSIC_TRACKS.filter((x) => x.cat === fam);
+      const idxEnFam = cur.cat === fam ? enFamilia.findIndex((x) => x.id === cur.id) : -1;
+      const nxt = enFamilia[(idxEnFam + 1 + enFamilia.length) % enFamilia.length];
+      if (nxt && nxt.id !== cur.id) return nxt;
+    }
+    return MUSIC_TRACKS[(idx + 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length];
+  })();
   void snap; // la suscripción re-renderiza el widget en play/stop/vol
 
   // ─────────────── MODO AUDITORIO (sala de escucha) ───────────────
@@ -657,6 +670,12 @@ export function MusicPlayer() {
             <div className="text-[10px] font-mono font-bold text-amber truncate leading-tight">
               {playing ? cur.name : wantOn ? `${cur.name} (pausada)` : cur.name}
             </div>
+            {/* v113: PRÓXIMA OBRA visible — el skip sin cortes ya existe (botones ◀▶), ahora se sabe qué viene */}
+            {playing && proximaObra && proximaObra.id !== cur.id && (
+              <div className="hidden md:block text-[8px] font-mono uppercase tracking-wider text-muted-foreground/80 truncate leading-tight">
+                <span className="text-amber/60">{t("radio113.proxima")}:</span> {proximaObra.name}
+              </div>
+            )}
           </div>
 
           {/* mini espectro en vivo (solo si suena) */}

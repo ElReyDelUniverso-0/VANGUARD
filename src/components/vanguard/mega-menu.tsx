@@ -40,6 +40,7 @@ const SECCION_ESCENA: Record<string, VarianteEscena> = {
   creadores: "prisma",
   social: "red",
   sistema: "nucleo",
+  experimental: "prisma", // v113: la página de los imposibles respira prisma
 };
 
 export function MegaMenu({

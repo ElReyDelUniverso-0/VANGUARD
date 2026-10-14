@@ -99,6 +99,8 @@ const RedaccionPanel = dynamic(() => import("@/components/vanguard/panels/redacc
 // MURALLA DE VIGILANCIA (el corazón nuevo del OBSERVATORIO)
 const NuevaPanel = dynamic(() => import("@/components/vanguard/panels/nueva-panel").then((m) => m.NuevaPanel), { ssr: false, loading: PanelSkeleton });
 const ObservatorioPanel = dynamic(() => import("@/components/vanguard/panels/observatorio-panel").then((m) => m.ObservatorioPanel), { ssr: false, loading: PanelSkeleton });
+// v113.0 LETRAS VIVAS: la página de los imposibles (forja de letras 3D, órbita, lluvia)
+const ExperimentalPanel = dynamic(() => import("@/components/vanguard/panels/experimental-panel").then((m) => m.ExperimentalPanel), { ssr: false, loading: PanelSkeleton });
 // v105.0 EL NAVEGADOR — brújula "¿qué quiero hacer hoy?" (global)
 const Navegador = dynamic(() => import("@/components/vanguard/navegador").then((m) => m.Navegador), { ssr: false });
 const DailyBriefingPanel = dynamic(() => import("@/components/vanguard/panels/daily-briefing-panel").then((m) => m.DailyBriefingPanel), { ssr: false, loading: PanelSkeleton });
@@ -741,6 +743,7 @@ export default function Home() {
         {tab === "nueva" && <NuevaPanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
+        {tab === "experimental" && <ExperimentalPanel />}
         {tab === "galeria" && <GalleryPanel />}
         {tab === "briefings" && <BriefingsPanel />}
         {tab === "quiz" && <QuizPanel />}

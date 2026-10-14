@@ -16,6 +16,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Escena3D, SelloVivo, type VarianteEscena } from "./escenas-3d";
 import { useEstilo3D } from "@/lib/estilo3d";
+import { TituloLetras3D, type MaterialLetra } from "./letras-3d";
 
 interface TituloEpicoProps {
   /** Título grande y llamativo */
@@ -40,6 +41,10 @@ interface TituloEpicoProps {
   tinte?: "brasa" | "luna";
   /** v73.0: acento vibrante ÚNICO de la sección (hex) — tiñe glow, borde y volanta */
   acento?: string;
+  /** v113.0: material del MOTOR DE LETRAS 3D (default: brasa→BRASA, luna→HOLOGRAMA) */
+  materialLetras?: MaterialLetra;
+  /** v113.0: capas de extrusión de las letras (default 5) */
+  profundidadLetras?: number;
   className?: string;
 }
 
@@ -55,11 +60,14 @@ export function TituloEpico({
   prioritaria = false,
   tinte = "brasa",
   acento,
+  materialLetras,
+  profundidadLetras = 5,
   className,
 }: TituloEpicoProps) {
   const reduced = useReducedMotion();
   const sellos = useEstilo3D((s) => s.sellosVivos);
-  const letras = Array.from(titulo);
+  // v113.0 LETRAS VIVAS: el título deja de ser tinta plana y gana VOLUMEN real
+  const materialFinal: MaterialLetra = materialLetras ?? (tinte === "luna" ? "holo" : "brasa");
   // v73.0 REGLA DE ORO: acento hex por sección (si no hay, usa el tinte clásico)
   const acc = acento && /^#[0-9a-fA-F]{6}$/.test(acento) ? acento : tinte === "luna" ? "#A8C7FF" : "#FF8A2A";
   const accSuave = `${acc}2E`; // ~18% alpha para glows
@@ -87,37 +95,19 @@ export function TituloEpico({
           </motion.p>
         ) : null}
 
-        {/* TÍTULO GIGANTE letra a letra: luz de luna arriba, brasa abajo */}
-        <motion.h2
-          initial={reduced ? false : "oculto"}
-          animate="visible"
-          aria-label={titulo}
-          className="font-display font-black uppercase leading-none tracking-tight text-[clamp(1.9rem,6.5vw,3.6rem)] mt-1 mb-3 select-none"
-        >
-          {letras.map((l, i) => (
-            <motion.span
-              key={i}
-              aria-hidden
-              variants={{
-                oculto: { opacity: 0, y: 22, rotateX: -70, filter: "blur(6px)" },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  rotateX: 0,
-                  filter: "blur(0px)",
-                  transition: { delay: 0.04 * i, duration: 0.55, ease: [0.2, 0.9, 0.25, 1] },
-                },
-              }}
-              className="inline-block whitespace-pre bg-gradient-to-b from-white via-[#ffe9c4] via-45% to-[#ff8a2a] bg-clip-text text-transparent"
-              style={{
-                textShadow: `0 0 22px ${accMedio}, 0 2px 0 rgba(0,0,0,0.85), 0 10px 28px rgba(0,0,0,0.6)`,
-                transformStyle: "preserve-3d",
-              }}
-            >
-              {l}
-            </motion.span>
-          ))}
-        </motion.h2>
+        {/* v113.0 TÍTULO GIGANTE = MOTOR DE LETRAS 3D: cada letra es un volumen
+            extruido por capas que se inclina con la persona (Motor3D vars).
+            La identidad dorada (BRASA) y la lunar (HOLOGRAMA) se conservan. */}
+        <div className="mt-1 mb-3">
+          <TituloLetras3D
+            texto={titulo}
+            acento={acc}
+            material={materialFinal}
+            profundidad={profundidadLetras}
+            className="text-[clamp(1.9rem,6.5vw,3.6rem)]"
+            etiqueta={titulo}
+          />
+        </div>
       </div>
 
       {/* ESCENA hero — v110: 3D holográfica viva (o imagen legado) */}

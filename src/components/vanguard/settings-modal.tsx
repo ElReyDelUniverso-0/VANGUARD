@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes, Hourglass, Crosshair, Landmark } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes, Hourglass, Crosshair, Landmark, Box } from "lucide-react";
 import { toast } from "sonner";
 import { sfx, setMuted as setSoundMuted } from "@/lib/sound";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,7 @@ const SALAS_ERA: { key: string; nombre: string }[] = [
   { key: "creadores", nombre: "CREADORES" },
   { key: "social", nombre: "SOCIAL" },
   { key: "sistema", nombre: "SISTEMA" },
+  { key: "experimental", nombre: "EXPERIM" }, // v113: la página de los imposibles viste eras también
 ];
 const CICLO_ERA: (EraKey | null)[] = [null, "1950", "1980", "2020", "2100"];
 
@@ -362,6 +363,49 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                     )}
                   </>
                 )}
+
+                {/* v113 VISTA PREVIA EN VIVO — el cubo respira tu mano/giroscopio.
+                    Puro CSS calc sobre las vars del Motor (--vg-mx/--vg-my): la
+                    calibración ya viene aplicada, cero re-render, 60 FPS. */}
+                <div className="mt-2.5 pt-2.5 border-t border-white/5">
+                  <div className="text-[10px] font-mono uppercase text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                    <Box className="w-3 h-3 text-emerald-400" />
+                    {tr("ajustes113.cubo.titulo")}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-[86px] w-[86px] shrink-0 grid place-items-center rounded-md border border-emerald-400/25 bg-emerald-400/[0.04]" style={{ perspective: "260px" }}>
+                      <div
+                        className="relative"
+                        style={{
+                          width: 40, height: 40, transformStyle: "preserve-3d",
+                          transform: "rotateX(calc(-18deg + var(--vg-my, 0) * -34deg * var(--vg-3d-i, 1))) rotateY(calc(var(--vg-mx, 0) * 42deg * var(--vg-3d-i, 1)))",
+                          transition: "transform 0.06s linear",
+                        }}
+                      >
+                        {([
+                          ["rotateY(0deg)", "rgba(52,211,153,0.30)"],
+                          ["rotateY(90deg)", "rgba(52,211,153,0.22)"],
+                          ["rotateY(180deg)", "rgba(52,211,153,0.30)"],
+                          ["rotateY(270deg)", "rgba(52,211,153,0.22)"],
+                          ["rotateX(90deg)", "rgba(52,211,153,0.40)"],
+                          ["rotateX(-90deg)", "rgba(52,211,153,0.40)"],
+                        ] as const).map(([tf, bg], i) => (
+                          <span key={i} aria-hidden className="absolute inset-0 border border-emerald-300/50" style={{ transform: `${tf} translateZ(20px)`, background: bg }} />
+                        ))}
+                      </div>
+                      {/* retícula de calibración: el punto = tu cero */}
+                      <span aria-hidden className="pointer-events-none absolute h-3 w-3 rounded-full border border-emerald-300/40" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[9px] font-mono text-muted-foreground leading-snug">{tr("ajustes113.cubo.desc")}</p>
+                      {m3d.giroscopio && (
+                        <p className="mt-1 font-mono text-[9px] tabular-nums text-emerald-300/90">
+                          CERO X {m3d.gyroCal.x >= 0 ? "+" : ""}{m3d.gyroCal.x.toFixed(2)} · Y {m3d.gyroCal.y >= 0 ? "+" : ""}{m3d.gyroCal.y.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
                 {/* v111 MÁQUINA DEL TIEMPO — la era visual de toda la casa */}
                 <div className="pt-1">

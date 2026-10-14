@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v113.0",
+    nombre: "LETRAS VIVAS",
+    tipo: "tecno",
+    hitos: [
+      "MOTOR DE LETRAS 3D: cada letra de la casa tiene VOLUMEN real — capas extruidas en preserve-3d, 5 materiales (HOLOGRAMA, NEÓN, CROMO, MATRIZ y la BRASA dorada) y tilt con la persona vía el Motor 3D",
+      "TODOS LOS HÉROES visten letras 3D: el título grande de cada sala se extruye por capas y se inclina contigo (mandato: todo sea 3D letras)",
+      "EXPERIMENTAL — LA PÁGINA DE LOS IMPOSIBLES: el 15º mundo con la FORJA DE LETRAS (escribe → volumen 3D vivo, material, profundidad, giro orbital y arrastre), la ÓRBITA DE PALABRAS y la LLUVIA DE LETRAS con TU alfabeto",
+      "GIROSCOPIO CON VISTA PREVIA EN VIVO: un cubo 3D en Ajustes respira tu mano (o tu móvil) y muestra tu calibración al segundo",
+      "RADIO: la PRÓXIMA OBRA ya se ve en la píldora — con SESIÓN INTELIGENTE manda la familia de la hora",
+      "ARREGLO: las etiquetas nueva/observatorio de los diccionarios ruso y chino estaban intercambiadas — Rusia y China leen su idioma",
+    ],
+  },
+  {
     version: "v112.0",
     nombre: "SOLSTICIO",
     tipo: "tecno",
