@@ -21,7 +21,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useReducedMotion } from "framer-motion";
-import { Eraser, FlaskConical, RotateCw, Type, Signature } from "lucide-react";
+import { Eraser, FlaskConical, RotateCw, Type, Signature, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
@@ -244,6 +244,12 @@ export function ExperimentalPanel() {
     setConf(leerForja());
     setMontado(true);
   }, []);
+  // v115.0 SINGULARIDAD: la FORJA es una SUB-SALA con época propia —
+  // al entrar la casa viste "experimental.forja"; al salir vuelve la era global
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: "experimental.forja" }));
+    return () => window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null }));
+  }, []);
   useEffect(() => {
     if (!montado) return;
     try { localStorage.setItem(LS_FORJA, JSON.stringify(conf)); } catch { /* noop */ }
@@ -279,6 +285,64 @@ export function ExperimentalPanel() {
   const onUp = () => { pose.current.activo = false; };
 
   const textoForja = conf.texto.trim() ? conf.texto : "VANGUARD";
+
+  // v115.0 SINGULARIDAD: la FORJA EXPORTA la composición como .PNG real —
+  // canvas fuera de pantalla, texto extruido por capas con la tinta del
+  // material elegido, rejilla y sello de la casa. Descarga directa.
+  const exportarPNG = () => {
+    const W = 1600, H = 520;
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const ctx = cv.getContext("2d");
+    if (!ctx) return;
+    const TINTA: Record<MaterialLetra, [string, string]> = {
+      holo: ["#9BE8FF", "#4FA9D8"], neon: ["#FF7EDB", "#B4318C"], cromo: ["#F4F7FB", "#8A97A8"],
+      matriz: ["#B7FFD8", "#1F8F5A"], brasa: ["#FFD98A", "#C2451E"], vidrio: ["#D8F4FF", "#7AB8D8"],
+      oro: ["#FFE27A", "#A8720A"], glitch: ["#FF5EDB", "#39E5FF"],
+    };
+    const [c1, c2] = TINTA[conf.material];
+    ctx.fillStyle = "#05070a";
+    ctx.fillRect(0, 0, W, H);
+    const halo = ctx.createRadialGradient(W / 2, H * 0.78, 40, W / 2, H * 0.78, W * 0.72);
+    halo.addColorStop(0, `${c1}30`);
+    halo.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = halo;
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = `${c1}14`;
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    const texto = textoForja.toUpperCase();
+    const size = Math.min(170, Math.floor((W * 0.92) / Math.max(4, texto.length) * 1.62));
+    ctx.font = `900 ${size}px system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const capas = Math.max(2, Math.min(9, conf.profundidad));
+    for (let i = capas; i >= 1; i--) {
+      const oscuro = 0.18 + (i / capas) * 0.62;
+      ctx.fillStyle = i === 1 ? c1 : c2;
+      ctx.globalAlpha = i === 1 ? 1 : 1 - oscuro;
+      ctx.fillText(texto, W / 2 + i * 2.4, H / 2 + i * 2.4);
+    }
+    ctx.globalAlpha = 1;
+    const cara = ctx.createLinearGradient(0, H / 2 - size / 2, 0, H / 2 + size / 2);
+    cara.addColorStop(0, "#ffffff");
+    cara.addColorStop(0.5, c1);
+    cara.addColorStop(1, c2);
+    ctx.fillStyle = cara;
+    ctx.shadowColor = c1;
+    ctx.shadowBlur = 34;
+    ctx.fillText(texto, W / 2, H / 2);
+    ctx.shadowBlur = 0;
+    ctx.font = "700 21px monospace";
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.fillText(`FORJA DE LETRAS · ${textoForja.toUpperCase()} · VANGUARD`, W / 2, H - 44);
+    const a = document.createElement("a");
+    a.download = `forja-${textoForja.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now()}.png`;
+    a.href = cv.toDataURL("image/png");
+    a.click();
+    toast.success(t("exp115.pngOk"), { description: t("exp115.pngOkDesc") });
+  };
   const palabrasOrbita = (() => {
     const propias = textoForja.split(/\s+/).filter((w) => w.length > 1).map((w) => w.toUpperCase());
     const todas = [...propias, ...PALABRAS_ORBITA];
@@ -443,6 +507,16 @@ export function ExperimentalPanel() {
             title={t("exp114.firma.btn")}
           >
             <Signature className="h-3.5 w-3.5" /> {t("exp114.firma.btn")}
+          </button>
+
+          {/* v115: EXPORTAR .PNG — la forja entrega la obra para llevar */}
+          <button
+            onClick={exportarPNG}
+            className="flex items-center justify-center gap-2 rounded-sm border px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+            style={{ borderColor: `${ACC}47` }}
+            title={t("exp115.png")}
+          >
+            <Download className="h-3.5 w-3.5" /> {t("exp115.png")}
           </button>
         </div>
       </section>

@@ -29,6 +29,9 @@ import { Escena3D, hashDe, type VarianteEscena } from "@/components/vanguard/esc
 import { sfx } from "@/lib/sound";
 import { getTension } from "@/lib/tension";
 import { useT } from "@/lib/i18n";
+// v115.0 SINGULARIDAD: la radio SIENTE el cambio de era (1950↔2100) — la
+// sesión inteligente funde 7 s hacia la familia que pide la nueva época
+import { useEstilo3D, type EraKey } from "@/lib/estilo3d";
 
 const LS_MUSIC = "vanguard_music";
 
@@ -162,6 +165,8 @@ export function MusicPlayer() {
   const [franjaViva, setFranjaViva] = useState(() => franjaMusical().franja);
   // v114: el Auditorio son dos sub-salas — SALA (escucha) y COLECCIÓN (las obras)
   const [vistaAud, setVistaAud] = useState<"sala" | "coleccion">("sala");
+  // v115: la era global del Motor 3D — la radio la siente al cambiar
+  const era3d = useEstilo3D((s) => s.era);
   const tierRef = useRef<number>(tierOf(getTension()));
 
   const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
@@ -226,15 +231,16 @@ export function MusicPlayer() {
   // madrugada→ambiente) y entra con el fundido cruzado del motor. Si la
   // familia actual no tiene más obras, cae a la obra siguiente global —
   // la radio nunca se queda muda.
-  const avanzarSesion = () => {
+  const avanzarSesion = (familiaForzada?: TrackCat) => {
     const idActual = currentTrackId() || selTrack;
     const idxActual = MUSIC_TRACKS.findIndex((x) => x.id === idActual);
     const actual = MUSIC_TRACKS[idxActual] ?? MUSIC_TRACKS[0];
     const { franja, fam } = franjaMusical();
-    const enFamilia = MUSIC_TRACKS.filter((x) => x.cat === fam);
+    const familia = familiaForzada ?? fam; // v115: el cambio de era puede forzar la familia
+    const enFamilia = MUSIC_TRACKS.filter((x) => x.cat === familia);
     // si la obra en curso ya es de la familia, sigue la siguiente de la fila;
     // si no (cambio de franja), la radio sintoniza la primera de la familia
-    const idxEnFam = actual.cat === fam ? enFamilia.findIndex((x) => x.id === actual.id) : -1;
+    const idxEnFam = actual.cat === familia ? enFamilia.findIndex((x) => x.id === actual.id) : -1;
     let nxt = enFamilia[(idxEnFam + 1 + enFamilia.length) % enFamilia.length];
     if (!nxt || nxt.id === actual.id) {
       nxt = MUSIC_TRACKS[(idxActual + 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length];
@@ -244,7 +250,8 @@ export function MusicPlayer() {
     // v114 CROSSFADE DE FAMILIA: si la franja cambió (alba→día→noche), el
     // fundido es CINEMATOGRÁFICO (7 s) — el anochecer se oye llegar. Dentro
     // de la misma familia, el fundido cruzado normal del motor (0.8 s).
-    const cambioFamilia = actual.cat !== fam;
+    // v115: el CAMBIO DE ERA también funde cinematográfico.
+    const cambioFamilia = actual.cat !== familia || familiaForzada !== undefined;
     if (playing || wantOn) startMusic(nxt.id, cambioFamilia ? 7 : undefined);
     persist(playing || wantOn, vol, nxt.id);
     setFranjaViva(franja);
@@ -259,6 +266,20 @@ export function MusicPlayer() {
     const ivFranja = setInterval(() => setFranjaViva(franjaMusical().franja), 60_000);
     return () => { clearInterval(iv); clearInterval(ivFranja); };
   }, [cont, playing, selTrack, vol]);
+
+  // v115.0 SINGULARIDAD: el CAMBIO DE ERA manda en la música — al viajar de
+  // época (1950 CRT → 2100 HOLO) la sesión inteligente funde 7 s hacia la
+  // familia que pide la nueva era: 1950/1980 = guerra, 2020 = vanguard,
+  // 2100 = ambiente. La casa se viste y suena coherente.
+  const anteriorEra = useRef<EraKey | null>(null);
+  useEffect(() => {
+    const prev = anteriorEra.current;
+    anteriorEra.current = era3d;
+    if (!prev || prev === era3d) return; // primer render o misma era
+    if (!cont) return; // solo manda cuando la sesión inteligente conduce
+    const familiaEra: Record<EraKey, TrackCat> = { "1950": "guerra", "1980": "guerra", "2020": "vanguard", "2100": "ambiente" };
+    avanzarSesion(familiaEra[era3d]);
+  }, [era3d, cont]);
 
   const toggleCont = () => {
     const nxt = !cont;

@@ -101,6 +101,9 @@ const NuevaPanel = dynamic(() => import("@/components/vanguard/panels/nueva-pane
 const ObservatorioPanel = dynamic(() => import("@/components/vanguard/panels/observatorio-panel").then((m) => m.ObservatorioPanel), { ssr: false, loading: PanelSkeleton });
 // v113.0 LETRAS VIVAS: la página de los imposibles (forja de letras 3D, órbita, lluvia)
 const ExperimentalPanel = dynamic(() => import("@/components/vanguard/panels/experimental-panel").then((m) => m.ExperimentalPanel), { ssr: false, loading: PanelSkeleton });
+// v115.0 SINGULARIDAD: la sala del ARQUITECTO + su motor perpetuo global
+const ArquitectoPanel = dynamic(() => import("@/components/vanguard/panels/arquitecto-panel").then((m) => m.ArquitectoPanel), { ssr: false, loading: PanelSkeleton });
+const MotorArquitecto = dynamic(() => import("@/components/vanguard/panels/arquitecto-panel").then((m) => m.MotorArquitecto), { ssr: false });
 // v105.0 EL NAVEGADOR — brújula "¿qué quiero hacer hoy?" (global)
 const Navegador = dynamic(() => import("@/components/vanguard/navegador").then((m) => m.Navegador), { ssr: false });
 const DailyBriefingPanel = dynamic(() => import("@/components/vanguard/panels/daily-briefing-panel").then((m) => m.DailyBriefingPanel), { ssr: false, loading: PanelSkeleton });
@@ -636,6 +639,8 @@ export default function Home() {
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
+      {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
+      <MotorArquitecto />
       {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
           apartan (display:contents cuando no — cero cajas fantasma) para que
           el contenido mande y se vea TODO */}
@@ -744,6 +749,8 @@ export default function Home() {
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}
+        {/* v115.0 SINGULARIDAD — la sala donde el agente autónomo construye delante de ti */}
+        {tab === "arquitecto" && <ArquitectoPanel />}
         {tab === "galeria" && <GalleryPanel />}
         {tab === "briefings" && <BriefingsPanel />}
         {tab === "quiz" && <QuizPanel />}

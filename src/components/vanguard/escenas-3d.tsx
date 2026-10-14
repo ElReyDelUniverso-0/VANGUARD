@@ -399,13 +399,33 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
   // v111 HORA REAL: la ciudad vive según TU reloj — ventanas encendidas y luna
   // de noche (19→7); sol y ventanas apagadas de día. SSR pinta la noche y el
   // efecto corrige en vivo (hidratación sin salto).
-  const [noche, setNoche] = useState(true);
+  // v115 SINGULARIDAD: la sombra también manda — el sol recorre el cielo con
+  // TU hora real y los bloques proyectan SU sombra en la acera (larga al alba,
+  // corta al mediodía); el sello muestra HH:MM reales, no teatro.
+  const [reloj, setReloj] = useState({ h: 22, m: 47 });
   useEffect(() => {
-    const h = new Date().getHours();
-    // patrón legítimo: el reloj real solo se conoce en el cliente (v111 hora real)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setNoche(h >= 19 || h < 7);
+    const pinta = () => {
+      const d = new Date();
+      // patrón legítimo: el reloj real solo se conoce en el cliente (v111 hora real)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setReloj({ h: d.getHours(), m: d.getMinutes() });
+    };
+    pinta();
+    const iv = setInterval(pinta, 60_000); // el sol anda 0.25°/min — 1 repintado/min basta
+    return () => clearInterval(iv);
   }, []);
+  const { h, m } = reloj;
+  const noche = h >= 19 || h < 7;
+  // posición del sol: 6h sale por la izquierda (x=20), 18h se pone a la derecha (x=380)
+  const tDia = Math.max(0, Math.min(1, (h + m / 60 - 6) / 12));
+  const solX = 20 + tDia * 360;
+  const solY = 84 - Math.sin(tDia * Math.PI) * 62; // arco: nace bajo, sube, cae
+  const alturaDia = Math.sin(tDia * Math.PI); // 0 alba/ocaso · 1 mediodía
+  // sombra de cada bloque: apunta OPUESTA al sol, larga cuando el sol está bajo
+  const sombraLen = noche ? 0 : 10 + (1 - alturaDia) * 26;
+  const sombraDir = solX < 200 ? 1 : -1; // sol a la izquierda → sombras a la derecha
+  const hh = String(h).padStart(2, "0");
+  const mm = String(m).padStart(2, "0");
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -416,17 +436,25 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
           </>
         ) : (
           <>
-            <circle cx="330" cy="46" r="24" fill="#FFC94D" opacity="0.28" />
-            <circle cx="330" cy="46" r="13" fill="#FFD97A" opacity="0.85" />
+            {/* v115: el sol en SU posición real del día (arco por TU hora) */}
+            <circle cx={solX} cy={solY} r="24" fill="#FFC94D" opacity="0.28" />
+            <circle cx={solX} cy={solY} r="13" fill="#FFD97A" opacity="0.85" />
             {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-              <line key={i} x1={330 + Math.cos((i * Math.PI) / 4) * 29} y1={46 + Math.sin((i * Math.PI) / 4) * 29}
-                x2={330 + Math.cos((i * Math.PI) / 4) * 36} y2={46 + Math.sin((i * Math.PI) / 4) * 36}
+              <line key={i} x1={solX + Math.cos((i * Math.PI) / 4) * 29} y1={solY + Math.sin((i * Math.PI) / 4) * 29}
+                x2={solX + Math.cos((i * Math.PI) / 4) * 36} y2={solY + Math.sin((i * Math.PI) / 4) * 36}
                 stroke="#FFC94D" strokeOpacity="0.5" strokeWidth="1.2" />
             ))}
           </>
         )}
         {bloques.map((b, i) => (
           <g key={i}>
+            {/* v115: la SOMBRA REAL del bloque en la acera — geometría por hora */}
+            {!noche && sombraLen > 0 && (
+              <polygon
+                points={`${b.x},${190} ${b.x + b.w},${190} ${b.x + b.w + sombraDir * sombraLen},${196 + sombraLen * 0.12} ${b.x + sombraDir * sombraLen},${196 + sombraLen * 0.12}`}
+                fill="rgba(0,0,0,0.42)"
+              />
+            )}
             <rect x={b.x} y={190 - b.h} width={b.w} height={b.h} fill="rgba(255,255,255,0.03)" stroke={acento} strokeOpacity="0.4" strokeWidth="0.8" />
             {Array.from({ length: Math.floor(b.h / 14) }, (_, f) => (
               <rect key={f} x={b.x + 4} y={190 - b.h + 6 + f * 12} width="4" height="5" fill={acento} className="v110-ventana"
@@ -441,7 +469,7 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
         className="absolute top-2 left-2 font-mono text-[8px] tracking-[0.3em] opacity-60"
         style={{ color: acento }}
       >
-        {noche ? "22:47 · NOCHE REAL" : "12:15 · DÍA REAL"}
+        {noche ? `${hh}:${mm} · NOCHE REAL` : `${hh}:${mm} · DÍA REAL · SOL ${Math.round(alturaDia * 100)}%`}
       </span>
     </div>
   );

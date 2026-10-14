@@ -136,6 +136,11 @@ export const SALAS_ERA: { key: string; nombre: string; sub?: boolean }[] = [
   { key: "social", nombre: "SOCIAL" },
   { key: "sistema", nombre: "SISTEMA" },
   { key: "experimental", nombre: "EXPERIM" }, // v113: la página de los imposibles viste eras también
+  { key: "arquitecto", nombre: "ARQUITECTO" }, // v115: el taller del agente autónomo viste eras
+  // v115: las SUB-SALAS pendientes de la ronda anterior — el estudio del creador
+  // y la forja de letras tienen su propia época dentro de su mundo
+  { key: "creadores.estudio", nombre: "· ESTUDIO", sub: true },
+  { key: "experimental.forja", nombre: "· FORJA", sub: true },
 ];
 
 // etiqueta bonita para el sello del overlay ("ERA 1980 · COLECCIÓN")

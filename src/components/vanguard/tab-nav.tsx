@@ -21,7 +21,7 @@ import {
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
-  History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
+  History, FlipHorizontal2, FlaskConical, RefreshCw, Share2, Bot,
   Hammer, ShieldCheck, LayoutPanelLeft,
   LayoutDashboard,
 } from "lucide-react";
@@ -125,6 +125,8 @@ export type TabKey =
   | "obras"
   // v113.0 LETRAS VIVAS: EXPERIMENTAL — la página de los imposibles
   | "experimental"
+  // v115.0 SINGULARIDAD: EL ARQUITECTO — el agente autónomo que mejora Vanguard solo
+  | "arquitecto"
   // v106.0 PESTAÑAS DE CROMO: navegación como las webs más usadas del mundo —
   // cada vista es una pestaña que se abre, se elige y se cierra + la página
   // NUEVA PESTAÑA para elegir destino + el OBSERVATORIO como sala con cuerpo propio
@@ -269,6 +271,7 @@ export const TABS: Record<TabKey, TabDef> = {
   observatorio:  { key: "observatorio",  label: "MURALLA DE VIGILANCIA (el corazón del Observatorio: sismos, pulso, presencia y las 17 salas en vivo)", short: "OBSERV", icon: <Telescope className="w-3.5 h-3.5" />, color: "cyan" },
   // v113.0 LETRAS VIVAS: la página donde la gente toca la materia tipográfica
   experimental:  { key: "experimental",   label: "EXPERIMENTAL (la página de los imposibles: forja de letras 3D, órbita de palabras y lluvia de letras)", short: "EXPERIM", icon: <FlaskConical className="w-3.5 h-3.5" />, color: "violet" },
+  arquitecto:    { key: "arquitecto",     label: "ARQUITECTO (el agente autónomo que mejora Vanguard solo: se promptea a sí mismo, instala módulos, compone obras y nunca se detiene)", short: "ARQUIT", icon: <Bot className="w-3.5 h-3.5" />, color: "green" },
   canales:       { key: "canales",       label: "Canales OSINT en vivo", short: "CANALES", icon: <Rss className="w-3.5 h-3.5" />, color: "violet" },
   // v90.0 ESPEJOS SIN FIN — segunda hornada de clones adaptados a Vanguard
   mundial:       { key: "mundial",       label: "Dossier Mundial de Naciones", short: "MUNDIAL", icon: <BookMarked className="w-3.5 h-3.5" />, color: "amber" },
@@ -433,6 +436,15 @@ export const SECTIONS: SectionDef[] = [
     desc: "La página de los imposibles: escribe y mira tus palabras convertirse en letras 3D de verdad (forja de letras, órbita de palabras y lluvia de letras — todo en vivo, sin imágenes)",
     tabs: [TABS.experimental],
   },
+  {
+    // v115.0 SINGULARIDAD: EL ARQUITECTO — el 16º mundo. La IA autónoma que
+    // mejora Vanguard sin manos: se promptea a sí misma, instala módulos
+    // funcionales reales, compone obras para el estudio, firma doctrinas,
+    // vigila el frente y audita su propia obra — en un bucle perpetuo.
+    key: "arquitecto", label: "ARQUITECTO", short: "ARQUIT", icon: <Bot className="w-4 h-4" />, color: "green",
+    desc: "El agente autónomo de Vanguard: se promptea a sí mismo y trabaja sin fin — instala módulos funcionales, compone obras para la radio, firma doctrinas, vigila el frente y nunca se detiene (más grande en cada ciclo, con o sin tu ayuda)",
+    tabs: [TABS.arquitecto],
+  },
 ];
 
 export function sectionOfTab(tab: TabKey): SectionDef {
@@ -492,6 +504,7 @@ export const SECTION_ACCENT: Record<string, string> = {
   social:        "#A78BFA", // lavanda — comunidad
   sistema:       "#34D399", // esmeralda — sistema
   experimental:  "#FF5EDB", // magenta holográfico — la página de los imposibles (v113)
+  arquitecto:    "#00FFA3", // verde matriz — la singularidad que construye sola (v115)
 };
 
 export function accentOfSection(sectionKey: string): string {

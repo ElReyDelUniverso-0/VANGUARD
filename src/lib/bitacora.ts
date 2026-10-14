@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v115.0",
+    nombre: "SINGULARIDAD",
+    tipo: "ia",
+    hitos: [
+      "EL ARQUITECTO: el 16º mundo — el agente autónomo que mejora Vanguard sin manos. Se PROMPTEA A SÍ MISMO (cada ciclo escribe su próximo prompt citando lo que acaba de construir) y trabaja en un bucle que no termina",
+      "TRABAJO REAL Y PERMANENTE: instala 6 módulos funcionales (sismógrafo de letras, telemetro neuronal, brújula del frente, faro de misiones, espejo de eras, cartógrafo de semillas), compone obras con voces V4, firma doctrinas, funda salas satélite y audita su propia obra",
+      "MODO PERPETUO GLOBAL: sigue construyendo mientras navegas cualquier sala (MotorArquitecto en page.tsx) con 4 velocidades — LENTA/NORMAL/RÁPIDA/TURBO — y memoria eterna en vg-arquitecto-v115",
+      "IA REAL CON RED DE SEGURIDAD: cada ciclo intenta el gateway (nueva ruta /api/arquitecto con iaParalela); si el modelo no responde, el núcleo embebido determinista toma el turno — el agente NUNCA se detiene",
+      "LAS OBRAS DEL ARQUITECTO SUENAN: sus partituras aparecen como botones verdes ◈ en el ESTUDIO de CREADORES y son jugables al toque",
+      "RONDAS PENDIENTES CERRADAS: FIRMA 3D junto al alias en el HUD · SOL con posición y sombras reales por TU hora en la ciudad de INICIO · SUB-SALAS de era (· ESTUDIO y · FORJA) · FORJA exporta .PNG · la radio FUNDE 7 s al cambiar de era (1950↔2100)",
+    ],
+  },
+  {
     version: "v114.0",
     nombre: "ECLIPSE",
     tipo: "tecno",

@@ -10,6 +10,9 @@ import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { suscribirModoGuerra, toggleModoGuerra } from "@/lib/modo-guerra";
+// v115.0 SINGULARIDAD: la FIRMA 3D de la FORJA luce junto al alias del HUD
+import { useProfileStore } from "@/lib/profile-store";
+import { TituloLetras3D } from "@/components/vanguard/letras-3d";
 
 interface HudHeaderProps {
   onOpenSettings?: () => void;
@@ -19,6 +22,8 @@ interface HudHeaderProps {
 
 export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeaderProps) {
   const { coins, gems, xp, level, rank, streak, alias, boosts, muted, setMuted, account } = useGameStore();
+  // v115: la firma 3D grabada en la FORJA acompaña al agente en el HUD
+  const firma = useProfileStore((s) => s.firma);
   const { t } = useT();
   const [menuOpen, setMenuOpen] = useState(false);
   // v86.0 MODO GUERRA: versión ligera para redes saturadas (2G/satélite)
@@ -101,6 +106,20 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
                     <><UserRound className="w-3 h-3" /> {alias || "AGENTE"} · {t("hud.enter")}</>
                   )}
                 </button>
+                {/* v115.0 SINGULARIDAD: la FIRMA 3D de la FORJA junto al alias —
+                    la identidad del agente con volumen real (volumen mínimo, sin peso) */}
+                {firma && (
+                  <span className="hidden md:inline-flex max-w-[190px] items-center overflow-hidden" title={`FIRMA 3D · ${firma.texto}`}>
+                    <TituloLetras3D
+                      texto={firma.texto}
+                      acento={firma.acento}
+                      material={firma.material}
+                      profundidad={Math.min(4, firma.profundidad)}
+                      className="text-[13px] leading-none"
+                      etiqueta={firma.texto}
+                    />
+                  </span>
+                )}
               </div>
             </div>
           </div>

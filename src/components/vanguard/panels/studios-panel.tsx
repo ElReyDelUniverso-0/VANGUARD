@@ -29,6 +29,8 @@ import {
   STUDIO_GENRES, emptyPattern, playPreview, stopPreview, renderToWav, type StudioPattern,
 } from "@/lib/music-studio";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v115.0 SINGULARIDAD: las obras del ARQUITECTO suenan en el estudio de música
+import { useArquitecto } from "@/lib/arquitecto";
 
 type StudioTab = "noticias" | "prensa" | "banderas" | "mapas" | "musica" | "stickers" | "comunidad";
 
@@ -638,6 +640,9 @@ function MusicaStudio() {
   const [playing, setPlaying] = useState(false);
   const [rendering, setRendering] = useState(false);
   const [trackName, setTrackName] = useState("");
+  // v115.0 SINGULARIDAD: las OBRAS DEL ARQUITECTO suenan aquí — el agente
+  // autónomo compone en su bucle y sus partituras son jugables con un toque
+  const obrasArq = useArquitecto((s) => s.obras);
 
   const set = (patch: Partial<StudioPattern>) => setPat((p) => ({ ...p, ...patch }));
   const toggleDrum = (row: "kick" | "snare" | "hat", i: number) =>
@@ -699,6 +704,15 @@ function MusicaStudio() {
             <button key={g.id} onClick={() => setPat(g.build())} title={g.desc}
               className="px-1.5 py-0.5 text-[9px] font-mono border border-cyan-hud/30 text-cyan-hud rounded-sm hover:bg-cyan-hud/20">
               {g.name}
+            </button>
+          ))}
+          {/* v115: las obras compuestas por EL ARQUITECTO (más grandes en cada ciclo) */}
+          {obrasArq.map((o) => (
+            <button key={o.id} onClick={() => setPat(JSON.parse(JSON.stringify(o.patron)) as StudioPattern)}
+              title={`OBRA DEL ARQUITECTO · ${o.titulo} · voz ${o.voz} · ${o.bpm} BPM`}
+              className="px-1.5 py-0.5 text-[9px] font-mono border rounded-sm hover:opacity-80"
+              style={{ borderColor: "rgba(0,255,163,0.45)", color: "#00FFA3", background: "rgba(0,255,163,0.08)" }}>
+              ◈ {o.titulo}
             </button>
           ))}
         </div>
@@ -1299,6 +1313,13 @@ const STUDIO_TABS: { id: StudioTab; label: string }[] = [
 
 export function StudiosPanel() {
   const [tab, setTab] = useState<StudioTab>("noticias");
+
+  // v115.0 SINGULARIDAD: el estudio es una SUB-SALA con época propia —
+  // al entrar la casa viste "creadores.estudio"; al salir vuelve la era global
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: "creadores.estudio" }));
+    return () => window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null }));
+  }, []);
 
   return (
     <div className="space-y-4">
