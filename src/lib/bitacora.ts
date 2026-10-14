@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v114.0",
+    nombre: "ECLIPSE",
+    tipo: "tecno",
+    hitos: [
+      "TERMINADOR SOLAR en VANGUARD EARTH: una cúpula shader oscurece el hemisferio nocturno del globo con crepúsculo suave — la MISMA matemática solar del mini-mapa (lib/sol.ts), el uniforme respira cada 60 s",
+      "ERA POR SUB-SALA: el AUDITORIO son dos salas (SALA y COLECCIÓN) y cada una viste SU época — el auditorio en 2100 con la colección en 1980 conviven",
+      "CHIP DE GRUPO EXPANDIDO ARRASTRABLE: el chip sobre su bloque mueve el grupo entero pestaña a pestaña (ratón al instante, pulsación larga en táctil) — como Chrome",
+      "CROSSFADE DE FAMILIA: al cruzar de franja (alba→día→noche) la SESIÓN INTELIGENTE funde 7 s en vez de 0.8 — el anochecer se OYE llegar",
+      "FIRMA 3D DE PERFIL: la FORJA exporta tu composición (texto, material, profundidad, acento) y el PERFIL del agente la luce con el motor de letras — se quita desde el propio perfil",
+      "3 MATERIALES NUEVOS de letras: VIDRIO (cristal translúcido con filos de luz), ORO LÍQUIDO (metal dorado en bandas) y GLITCH (aberración cromática RGB con temblor de señal)",
+    ],
+  },
+  {
     version: "v113.0",
     nombre: "LETRAS VIVAS",
     tipo: "tecno",

@@ -3,6 +3,8 @@
 // v20 PERFIL: personalización total del agente — avatar countryball con BANDERA
 // REAL (los 251 países con buscador), banner, marco, bio, facción y país favorito
 // con su bandera verdadera. Todo persiste en localStorage (profile-store).
+// v114.0 ECLIPSE — FIRMA 3D: la firma forjada en EXPERIMENTAL → FORJA luce
+// bajo la bio con el motor de letras 3D de la casa (grabar/quitar aquí).
 
 import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -12,14 +14,17 @@ import { Flag } from "@/lib/flags";
 import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useProfileStore, BANNERS, FRAMES, FACTIONS, type BannerStyle, type FrameStyle } from "@/lib/profile-store";
 import { toast } from "sonner";
-import { UserCog, Check, Swords, ScrollText, Search } from "lucide-react";
+import { UserCog, Check, Swords, ScrollText, Search, Signature, X } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { TituloLetras3D } from "@/components/vanguard/letras-3d";
+import { useT } from "@/lib/i18n";
 
 export function PerfilPanel() {
   const {
-    cbAvatar, banner, frame, bio, favCountry, favFaction,
-    setCbAvatar, setBanner, setFrame, setBio, setFavCountry, setFavFaction,
+    cbAvatar, banner, frame, bio, favCountry, favFaction, firma,
+    setCbAvatar, setBanner, setFrame, setBio, setFavCountry, setFavFaction, setFirma,
   } = useProfileStore();
+  const { t } = useT();
   const [bioLocal, setBioLocal] = useState(bio);
   const [qAvatar, setQAvatar] = useState("");
   const [qFav, setQFav] = useState("");
@@ -66,6 +71,19 @@ export function PerfilPanel() {
               {countryName(favCountry)} · {favFaction}
             </div>
             <p className="text-xs text-foreground/80 border-l-2 border-amber-hud/50 pl-2 italic min-h-8">{bio || "Sin bio todavía…"}</p>
+            {/* v114: la FIRMA 3D del agente — forjada en EXPERIMENTAL → FORJA */}
+            {firma && (
+              <div className="mt-3 rounded-sm border border-white/10 bg-black/35 px-3 py-2.5 overflow-hidden">
+                <TituloLetras3D
+                  texto={firma.texto}
+                  acento={firma.acento}
+                  material={firma.material}
+                  profundidad={firma.profundidad}
+                  className="text-[clamp(1rem,3.4vw,1.6rem)]"
+                  etiqueta={firma.texto}
+                />
+              </div>
+            )}
             <div className="mt-3 flex items-center gap-2">
               <Countryball code={favCountry} size={22} />
               <span className="text-[10px] font-mono text-muted-foreground">país favorito · {countryName(favCountry)}</span>
@@ -80,6 +98,30 @@ export function PerfilPanel() {
           </h3>
           <Input value={bioLocal} onChange={(e) => setBioLocal(e.target.value)} maxLength={90} className="font-mono text-xs h-9" placeholder="Ej: Observo los frentes antes que el mundo." aria-label="Bio del perfil" />
           <Button size="sm" onClick={saveBio} className="w-full font-mono text-[11px]">Guardar bio</Button>
+        </div>
+
+        {/* v114: FIRMA 3D — se forja en EXPERIMENTAL, se luce aquí */}
+        <div className="hud-panel p-4 space-y-2">
+          <h3 className="font-orbitron text-xs tracking-widest uppercase text-gradient flex items-center gap-2">
+            <Signature className="w-4 h-4 text-electric" /> {t("perfil114.firma.titulo")}
+          </h3>
+          {firma ? (
+            <>
+              <p className="text-[10px] font-mono text-muted-foreground leading-snug">
+                «{firma.texto}» · {firma.material.toUpperCase()} · {firma.acento}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => { setFirma(null); toast.info(t("exp114.firma.quitar")); }}
+                className="w-full font-mono text-[11px] flex items-center gap-1.5"
+              >
+                <X className="w-3.5 h-3.5" /> {t("exp114.firma.quitar")}
+              </Button>
+            </>
+          ) : (
+            <p className="text-[10px] font-mono text-muted-foreground leading-snug">{t("exp114.firma.edita")}</p>
+          )}
         </div>
       </div>
 

@@ -7,6 +7,10 @@
 // analista por texto, director de escenas, crónicas guiadas y reset al
 // planeta completo). Estructura aprendida del original; contenido, código y
 // arte 100% Vanguard: el núcleo es determinista e inspeccionable.
+// v114.0 ECLIPSE — TERMINADOR SOLAR REAL sobre el globo: una cúpula shader
+// (esfera levemente mayor) oscurece el hemisferio NOCTURNO con crepúsculo
+// suave, gobernada por la MISMA matemática solar del mini-mapa (lib/sol.ts).
+// El uniforme se repasa cada 60 s (el sol anda 0.25°/min) — cero rAF nuestro.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +28,7 @@ import {
   SENSORES, MISIONES, CRONICAS, preguntar, buscarLugar, vientoEn, texturaPorHora,
   distanciaKm, hhmmUTC, type Contacto, type RespuestaAnalista,
 } from "@/lib/tierra-data";
+import { solAhora, direccionSolGlobo } from "@/lib/sol"; // v114: la misma noche del mini-mapa
 
 // ---------- formas encadenadas mínimas de globe.gl (solo lo que usamos) ----------
 type GLike = {
@@ -56,6 +61,8 @@ type GLike = {
   pathDashLength: (n: number) => GLike; pathDashGap: (n: number) => GLike; pathDashAnimateTime: (n: number) => GLike;
   pathTransitionDuration: (n: number) => GLike;
   getScreenCoords: (lat: number, lng: number, alt?: number) => { x: number; y: number };
+  customLayerData: (d: unknown[]) => GLike; // v114: capa custom del terminador
+  customThreeObject: (o: unknown) => GLike;
   _destructor?: () => void;
 };
 
@@ -104,6 +111,7 @@ export function TierraPanel() {
   const [t, setT] = useState(() => Date.now());
   const [capas, setCapas] = useState<Record<string, boolean>>({
     aviones: true, buques: true, satelites: true, drones: true, sismos: true, camaras: true,
+    terminador: true, // v114: la noche real puesta donde la pone el Sol
   });
   const [vientos, setVientos] = useState(false);
   const [sensorId, setSensorId] = useState("normal");
@@ -125,6 +133,8 @@ export function TierraPanel() {
 
   const wrapRef = useRef<HTMLDivElement>(null);
   const gRef = useRef<GLike | null>(null);
+  // v114: la cúpula del terminador (mesh + refresco del uniforme solar)
+  const termRef = useRef<{ mesh: { visible: boolean }; actualizaSol: () => void } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const centroRef = useRef(centro);
   const selRef = useRef<Contacto | null>(null);
@@ -210,6 +220,52 @@ export function TierraPanel() {
       const c = g.controls();
       c.autoRotate = true; c.autoRotateSpeed = 0.35; c.enableDamping = true;
       c.minDistance = 155; c.maxDistance = 900;
+
+      // ── v114 TERMINADOR SOLAR: cúpula shader con la noche real ──
+      // Esfera 100.7 (la textura vive en 100, la atmósfera en 122): la GPU
+      // oscurece los fragmentos cuyo normal se aleja del sol (crepúsculo
+      // suave). El uniforme lo alimenta lib/sol.ts cada 60 s — cero rAF.
+      try {
+        const THREE = await import("three");
+        if (!muerto && gRef.current) {
+          const uni = { uSol: { value: new THREE.Vector3(1, 0, 0) } };
+          const mat = new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            uniforms: uni,
+            vertexShader: `
+              varying vec3 vN;
+              void main() {
+                vN = normalize(mat3(modelMatrix) * normal);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+              }`,
+            fragmentShader: `
+              varying vec3 vN;
+              uniform vec3 uSol;
+              void main() {
+                float d = dot(normalize(vN), normalize(uSol));
+                float noche = smoothstep(0.10, -0.16, d); // crepúsculo suave
+                vec3 col = vec3(0.004, 0.012, 0.030);     // azul noche profundo
+                gl_FragColor = vec4(col, noche * 0.66);
+              }`,
+          });
+          const mesh = new THREE.Mesh(new THREE.SphereGeometry(100.7, 96, 96), mat);
+          const actualizaSol = () => {
+            const { dec, lngSub } = solAhora();
+            const s = direccionSolGlobo(dec, lngSub);
+            uni.uSol.value.set(s.x, s.y, s.z);
+          };
+          actualizaSol();
+          gRef.current.customLayerData([{}]).customThreeObject(() => mesh);
+          termRef.current = { mesh, actualizaSol };
+          const ivSol = setInterval(() => {
+            if (muerto) return;
+            actualizaSol();
+          }, 60_000);
+          // el intervalo muere con el panel (el destructor limpia el DOM)
+          (el as unknown as { _termIv?: ReturnType<typeof setInterval> })._termIv = ivSol;
+        }
+      } catch { /* sin terminador si three no llega — el globo sigue vivo */ }
       // arrastrar apaga el autogiro unos segundos (sensación Googles)
       el.addEventListener("mousedown", () => {
         if (!g) return;
@@ -222,6 +278,9 @@ export function TierraPanel() {
     })();
     return () => {
       muerto = true;
+      const ivTerm = (el as unknown as { _termIv?: ReturnType<typeof setInterval> })._termIv;
+      if (ivTerm) clearInterval(ivTerm);
+      termRef.current = null;
       try { g?._destructor?.(); } catch { /* noop */ }
       el.innerHTML = "";
       gRef.current = null;
@@ -242,6 +301,14 @@ export function TierraPanel() {
 
   // textura en caliente
   useEffect(() => { gRef.current?.globeImageUrl(texturaURL); }, [texturaURL]);
+
+  // v114: la cúpula del terminador obedece a SU chip (y repasa el sol al volver)
+  useEffect(() => {
+    const term = termRef.current;
+    if (!term) return;
+    term.mesh.visible = capas.terminador !== false;
+    if (term.mesh.visible) term.actualizaSol();
+  }, [capas.terminador]);
 
   // ---------- contacto seleccionado ----------
   const alSeleccionar = (c: Contacto) => {
@@ -491,7 +558,7 @@ export function TierraPanel() {
       else if (ev.key === "d" || ev.key === "D") setDetOn((v) => !v);
       else if (ev.key === "r" || ev.key === "R") resetGlobo();
       else if (ev.key === "g" || ev.key === "G") {
-        setCapas({ aviones: true, buques: true, satelites: true, drones: true, sismos: true, camaras: true });
+        setCapas({ aviones: true, buques: true, satelites: true, drones: true, sismos: true, camaras: true, terminador: true });
         setDetOn(true); setHudOn(true);
         toast.success("CONTEXTO GLOBAL ACTIVADO", { description: "Todo encendido. Tecla R para volver a la vista limpia." });
       } else if (ev.key === "c" || ev.key === "C") {
@@ -767,6 +834,13 @@ export function TierraPanel() {
             </button>
           ))}
           <button onClick={() => setVientos((v) => !v)} className={cn("ve-chip", vientos && "ve-chip-on")} title="Vientos en vivo sobre el planeta"><Wind className="w-3 h-3" /> VIENTOS</button>
+          <button
+            onClick={() => setCapas((p) => ({ ...p, terminador: !p.terminador }))}
+            className={cn("ve-chip", capas.terminador && "ve-chip-on")}
+            title="Terminador solar: la noche real, donde la pone el Sol ahora mismo (v114)"
+          >
+            <Earth className="w-3 h-3" /> TERMINADOR
+          </button>
           <span className="w-px h-4 bg-amber-hud/30 mx-0.5" />
           {SENSORES.map((s, i) => (
             <button key={s.id} onClick={() => setSensorId(s.id)} title={`${s.nota} (tecla ${i + 1})`} className={cn("ve-chip", sensorId === s.id && "ve-chip-on")}>

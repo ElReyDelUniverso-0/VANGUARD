@@ -113,6 +113,39 @@ export function eraVivaDe(estado: { era: EraKey; presetsOn: boolean; presetsEra:
   return estado.era;
 }
 
+// ── v114.0 ECLIPSE — REGISTRO DE SALAS + SUB-SALAS ──
+// Las SALAS son las secciones (vanguard:escena). Las SUB-SALAS son estados
+// interiores con identidad propia (el AUDITORIO abierto, su COLECCIÓN) que
+// se anuncian con vanguard:subescena y pueden vestir SU propia era:
+// "el AUDITORIO entero en 2100 pero la colección en 1980".
+export const SALAS_ERA: { key: string; nombre: string; sub?: boolean }[] = [
+  { key: "hangar", nombre: "HANGAR" },
+  { key: "inicio", nombre: "INICIO" },
+  { key: "inteligencia", nombre: "INTEL" },
+  { key: "juego", nombre: "JUEGO" },
+  { key: "mercado", nombre: "MERCADO" },
+  { key: "archivo", nombre: "ARCHIVO" },
+  { key: "comando", nombre: "COMANDO" },
+  { key: "observatorio", nombre: "MURALLA" },
+  { key: "estrategia", nombre: "ESTRAT" },
+  { key: "emisora", nombre: "AUDITORIO" },
+  { key: "emisora.auditorio", nombre: "· SALA AUD", sub: true },
+  { key: "emisora.coleccion", nombre: "· COLECCIÓN", sub: true },
+  { key: "oscsuro", nombre: "VERDAD" },
+  { key: "creadores", nombre: "CREADORES" },
+  { key: "social", nombre: "SOCIAL" },
+  { key: "sistema", nombre: "SISTEMA" },
+  { key: "experimental", nombre: "EXPERIM" }, // v113: la página de los imposibles viste eras también
+];
+
+// etiqueta bonita para el sello del overlay ("ERA 1980 · COLECCIÓN")
+export function nombreDeSala(key: string | null | undefined): string {
+  if (!key) return "";
+  const fila = SALAS_ERA.find((s) => s.key === key);
+  if (fila) return fila.nombre.replace(/^· /, "").trim();
+  return key.toUpperCase();
+}
+
 // ---------- FICHA DE CADA ERA (la consume el Motor 3D) ----------
 export interface EraDef {
   key: EraKey;

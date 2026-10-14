@@ -17,6 +17,11 @@
 //     page.tsx en cada cambio de pestaña).
 //   · CALIBRACIÓN FINA del giroscopio: TU pose de reposo es el
 //     cero (offsets gamma/beta restados antes del clamp).
+// v114.0 ECLIPSE — ERA POR SUB-SALA: los estados interiores con
+//   identidad propia (el AUDITORIO abierto, la COLECCIÓN) anuncian
+//   vanguard:subescena (detail = clave | null al salir) y la casa
+//   viste SU era mientras duren — el AUDITORIO en 2100 y su
+//   colección en 1980 conviven.
 // Montado en el layout raíz: traduce los ajustes del usuario
 // (useEstilo3D) a CSS vars en :root. Contrato 60 FPS: solo CSS
 // vars + capas fijas estáticas (sin re-render de React).
@@ -27,7 +32,7 @@
 // ============================================================
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { useEstilo3D, ERAS, eraVivaDe, type EraKey } from "@/lib/estilo3d";
+import { useEstilo3D, ERAS, eraVivaDe, nombreDeSala, type EraKey } from "@/lib/estilo3d";
 
 export function Motor3D() {
   const { activo, intensidad, inclinar, paralaje, era, presetsOn, presetsEra } = useEstilo3D();
@@ -43,9 +48,6 @@ export function Motor3D() {
       return null;
     }
   });
-  const eraViva: EraKey = eraVivaDe({ era, presetsOn, presetsEra }, sala);
-  const eraDef = ERAS[eraViva] ?? ERAS["2100"];
-
   // v112: escuchar los cambios de sala (page.tsx emite vanguard:escena
   // con la clave de sección en cada cambio de pestaña).
   useEffect(() => {
@@ -56,6 +58,21 @@ export function Motor3D() {
     window.addEventListener("vanguard:escena", onSala);
     return () => window.removeEventListener("vanguard:escena", onSala);
   }, []);
+
+  // v114: SUB-SALA — estados interiores con era propia ("emisora.coleccion").
+  // detail string = entrar en la sub-sala · null = salir (vuelve la sala).
+  const [subSala, setSubSala] = useState<string | null>(null);
+  useEffect(() => {
+    const onSub = (e: Event) => {
+      const d = (e as CustomEvent).detail;
+      setSubSala(typeof d === "string" && d ? d : null);
+    };
+    window.addEventListener("vanguard:subescena", onSub);
+    return () => window.removeEventListener("vanguard:subescena", onSub);
+  }, []);
+  const salaEfectiva = subSala ?? sala;
+  const eraViva: EraKey = eraVivaDe({ era, presetsOn, presetsEra }, salaEfectiva);
+  const eraDef = ERAS[eraViva] ?? ERAS["2100"];
 
   // CSS vars de configuración (cambian poco — escritura directa)
   useEffect(() => {
@@ -124,7 +141,7 @@ export function Motor3D() {
   if (eraViva === "2020") return null;
 
   // v112: cuando un preset de sala viste la casa, la etiqueta lo dice
-  const esPreset = !!sala && presetsOn && !!presetsEra[sala];
+  const esPreset = !!salaEfectiva && presetsOn && !!presetsEra[salaEfectiva];
 
   return (
     <div aria-hidden className="v111-era-capa" data-era={eraViva} style={{ zIndex: 45 }}>
@@ -149,7 +166,7 @@ export function Motor3D() {
         className="absolute bottom-1.5 right-2 font-mono text-[8px] tracking-[0.4em] pointer-events-none"
         style={{ color: "rgba(255,255,255,0.22)" }}
       >
-        {esPreset ? `ERA ${eraViva} · ${sala?.toUpperCase()}` : `ERA ${eraViva}`}
+        {esPreset ? `ERA ${eraViva} · ${nombreDeSala(salaEfectiva)}` : `ERA ${eraViva}`}
       </div>
     </div>
   );

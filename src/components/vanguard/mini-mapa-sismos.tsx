@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import worldPaths from "@/lib/world-paths.json";
 import { projectLatLng, unprojectXY } from "@/components/vanguard/world-map-svg";
 import { PATRULLAS, type MapPatrulla } from "@/lib/patrullas";
+import { solAhora, latitudTerminador } from "@/lib/sol"; // v114: la matemática del sol vive en UNA sola casa
 
 const W = 1000;
 const H = 500;
@@ -34,32 +35,8 @@ function colorDeMag(m: number): string {
   return "#5EEAD4";
 }
 
-// ── v112 SOLSTICIO: geometría del Sol AHORA MISMO ──
-// Declinación δ (aprox. precisa ±0.2°) y ecuación del tiempo (±15 s):
-// suficiente para pintar la noche donde la Tierra la pinta de verdad.
-function solAhora(): { dec: number; lngSub: number } {
-  const ahora = new Date();
-  const inicio = Date.UTC(ahora.getUTCFullYear(), 0, 0);
-  const N = Math.floor((ahora.getTime() - inicio) / 86_400_000); // día del año
-  const dec = 23.44 * Math.sin((2 * Math.PI * (284 + N)) / 365); // grados
-  const B = (2 * Math.PI * (N - 81)) / 364;
-  const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B); // minutos
-  const hUtc = ahora.getUTCHours() + ahora.getUTCMinutes() / 60 + ahora.getUTCSeconds() / 3600;
-  const lngSub = -15 * (hUtc + eot / 60 - 12); // longitud subsolar (grados)
-  return { dec, lngSub: ((lngSub + 540) % 360) - 180 };
-}
-
-// ── v112: la noche por columnas — latitud del terminador en cada longitud ──
-// tan(φb) = −cos(H)/tan(δ) · H = longitud − longitud subsolar.
-// δ > 0 (sol en el norte): la noche va del sur hasta φb · δ < 0: del φb al norte.
-function latitudTerminador(lng: number, dec: number, lngSub: number): number {
-  const H = ((lng - lngSub) * Math.PI) / 180;
-  const d = (dec * Math.PI) / 180;
-  const tanD = Math.tan(d);
-  if (Math.abs(tanD) < 1e-4) return Math.cos(H) > 0 ? -90 : 90; // equinoccio: circulo polar
-  return (Math.atan(-Math.cos(H) / tanD) * 180) / Math.PI;
-}
-
+// ── v112 SOLSTICIO → v114: la geometría del Sol AHORA MISMO vive en src/lib/sol.ts
+// (compartida con el terminador 3D de VANGUARD EARTH — misma noche en todo el planeta)
 function dibujarNoche(ctx: CanvasRenderingContext2D, dec: number, lngSub: number) {
   const paso = 4; // columnas de 4 px — curva lisa a coste mínimo
   for (let x = 0; x <= W; x += paso) {

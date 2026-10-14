@@ -2,11 +2,23 @@
 
 // v19 PERFIL: personalización persistente del agente — countryball, banner,
 // marco, bio y país favorito. Store propio (no toca game-store) con persist localStorage.
+// v114.0 ECLIPSE — FIRMA 3D: la FORJA de EXPERIMENTAL exporta la composición
+// (texto + material + profundidad + acento) y el perfil del agente la luce
+// con el motor de letras 3D de la casa.
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { MaterialLetra } from "@/components/vanguard/letras-3d";
 
 export type BannerStyle = "aurora" | "inferno" | "royal" | "arctic" | "stealth";
 export type FrameStyle = "none" | "neon" | "gold" | "camo" | "radar";
+
+/** v114: la firma 3D forjada en EXPERIMENTAL → FORJA (null = sin firma) */
+export interface Firma3D {
+  texto: string;
+  material: MaterialLetra;
+  profundidad: number;
+  acento: string;
+}
 
 export interface ProfileState {
   cbAvatar: string;          // countryball elegido (código país)
@@ -15,12 +27,14 @@ export interface ProfileState {
   bio: string;               // frase del agente
   favCountry: string;        // país favorito (code)
   favFaction: string;        // facción declarada
+  firma: Firma3D | null;     // v114: firma 3D de la FORJA
   setCbAvatar: (c: string) => void;
   setBanner: (b: BannerStyle) => void;
   setFrame: (f: FrameStyle) => void;
   setBio: (b: string) => void;
   setFavCountry: (c: string) => void;
   setFavFaction: (f: string) => void;
+  setFirma: (f: Firma3D | null) => void;
 }
 
 export const BANNERS: Record<BannerStyle, { label: string; css: string }> = {
@@ -53,12 +67,14 @@ export const useProfileStore = create<ProfileState>()(
       bio: "Agente en activo. El mundo, en tiempo real.",
       favCountry: "us",
       favFaction: "Observador OSINT",
+      firma: null,
       setCbAvatar: (cbAvatar) => set({ cbAvatar }),
       setBanner: (banner) => set({ banner }),
       setFrame: (frame) => set({ frame }),
       setBio: (bio) => set({ bio }),
       setFavCountry: (favCountry) => set({ favCountry }),
       setFavFaction: (favFaction) => set({ favFaction }),
+      setFirma: (firma) => set({ firma }),
     }),
     { name: "vanguard-profile-v1" }
   )

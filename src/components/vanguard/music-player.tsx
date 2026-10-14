@@ -1,11 +1,16 @@
 "use client";
 
-// VANGUARD v111.0 MÁQUINA DEL TIEMPO — RADIO VANGUARD+ con AUDITORIO.
+// VANGUARD v114.0 ECLIPSE — RADIO VANGUARD+ con AUDITORIO.
 // v109: 28 pistas con el motor ORQUESTA DE ORO + MODO AUDITORIO.
 // v111: · ECUALIZADOR DE SALA (3 bandas Graves/Medios/Agudos ±12 dB)
 //       · SESIÓN CONTINUA: la radio encadena obras sola, sin cortes
 //       · CADA OBRA con su MINI-ESCENA 3D en la colección
 //       · HORA REAL en las ciudades 3D y era 1950→2100 en el Motor 3D
+// v114: · el AUDITORIO son DOS SUB-SALAS — SALA (escucha) y COLECCIÓN
+//         (las 28 obras) — cada una viste SU ERA (vanguard:subescena)
+//       · CROSSFADE DE FAMILIA: al cruzar de franja (alba→día→noche)
+//         la sesión inteligente funde 7 s en vez de 0.8 s — el anochecer
+//         se OYE llegar (ambiente→guerra sin costura)
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import {
@@ -155,6 +160,8 @@ export function MusicPlayer() {
   const [eq, setEq] = useState(saved.eq);
   // v112: la franja musical viva (alba/día/noche/madrugada) para el Auditorio
   const [franjaViva, setFranjaViva] = useState(() => franjaMusical().franja);
+  // v114: el Auditorio son dos sub-salas — SALA (escucha) y COLECCIÓN (las obras)
+  const [vistaAud, setVistaAud] = useState<"sala" | "coleccion">("sala");
   const tierRef = useRef<number>(tierOf(getTension()));
 
   const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
@@ -170,6 +177,19 @@ export function MusicPlayer() {
     setEqBand("medio", saved.eq.medio);
     setEqBand("alto", saved.eq.alto);
   }, []);
+
+  // v114 ERA POR SUB-SALA: al abrir el Auditorio la casa viste "emisora.auditorio"
+  // (o "emisora.coleccion" si estás en la colección); al cerrar, vuelve la era
+  // de la sala. El cleanup emite null en cada desmontaje/cierre.
+  useEffect(() => {
+    if (!auditorio) return;
+    window.dispatchEvent(
+      new CustomEvent("vanguard:subescena", { detail: vistaAud === "coleccion" ? "emisora.coleccion" : "emisora.auditorio" })
+    );
+    return () => {
+      window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null }));
+    };
+  }, [auditorio, vistaAud]);
 
   const toggle = () => {
     if (playing) {
@@ -221,7 +241,11 @@ export function MusicPlayer() {
     }
     if (!nxt) return;
     setSelTrack(nxt.id);
-    if (playing || wantOn) startMusic(nxt.id);
+    // v114 CROSSFADE DE FAMILIA: si la franja cambió (alba→día→noche), el
+    // fundido es CINEMATOGRÁFICO (7 s) — el anochecer se oye llegar. Dentro
+    // de la misma familia, el fundido cruzado normal del motor (0.8 s).
+    const cambioFamilia = actual.cat !== fam;
+    if (playing || wantOn) startMusic(nxt.id, cambioFamilia ? 7 : undefined);
     persist(playing || wantOn, vol, nxt.id);
     setFranjaViva(franja);
   };
@@ -421,6 +445,33 @@ export function MusicPlayer() {
             </button>
           </div>
 
+          {/* v114: DOS SUB-SALAS — SALA (escucha) y COLECCIÓN (las obras).
+              Cada una viste su propia ERA en el Motor 3D */}
+          <div className="flex items-center justify-center gap-1" role="tablist" aria-label={t("aud114.titulo")}>
+            {([
+              ["sala", t("aud114.sala"), ListMusic],
+              ["coleccion", t("aud114.coleccion"), Orbit],
+            ] as const).map(([v, lbl, Ico]) => (
+              <button
+                key={v}
+                role="tab"
+                aria-selected={vistaAud === v}
+                onClick={() => setVistaAud(v)}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-t-md border-b-2 font-mono text-[10px] font-bold uppercase tracking-widest transition-colors",
+                  vistaAud === v
+                    ? "border-amber text-amber bg-amber-hud/15"
+                    : "border-transparent text-muted-foreground hover:text-amber/80 hover:bg-amber-hud/5"
+                )}
+              >
+                <Ico className="w-3.5 h-3.5" />
+                {lbl}
+              </button>
+            ))}
+          </div>
+
+          {vistaAud === "sala" && (
+            <>
           {/* título */}
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-amber tracking-wide v109-brilla">{cur.name}</h2>
@@ -584,8 +635,12 @@ export function MusicPlayer() {
               ))}
             </div>
           </div>
+            </>
+          )}
 
-          {/* colección por familias */}
+          {/* v114: LA COLECCIÓN — sub-sala propia (su ERA propia en el Motor 3D).
+              Las 28 obras con su mini-escena 3D, agrupadas por familia */}
+          {vistaAud === "coleccion" && (
           <div className="hud-panel border-amber-hud/40 rounded-sm overflow-hidden">
             {CATS.map((cat) => (
               <div key={cat.id}>
@@ -629,6 +684,7 @@ export function MusicPlayer() {
               </div>
             ))}
           </div>
+          )}
 
           <p className="text-center text-[8px] font-mono text-muted-foreground/70 uppercase tracking-[0.25em] pb-2">
             {t("radio109.aud.pie")}

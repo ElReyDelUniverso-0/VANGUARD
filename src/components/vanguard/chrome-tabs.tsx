@@ -414,6 +414,10 @@ function PestanaItem({
 // (chip + sus pestañas ocultas) como en el navegador de verdad. Ratón: agarra y
 // mueve al instante · táctil: pulsación larga 450 ms levanta el chip (misma
 // pauta de las pestañas v107) · un arrastre NUNCA contrae el grupo.
+// Umbral (px) de arrastre del chip EXPANDIDO: cada cruce desplaza el bloque
+// del grupo una pestaña — como empujar el grupo con la mano en Chrome.
+const UMBRAL_BLOQUE = 56;
+
 function ChipGrupo({
   grupo,
   miembros,
@@ -428,6 +432,7 @@ function ChipGrupo({
   arrastre,
   onAgarreChip,
   onSoltarChip,
+  onMoverBloque,
 }: {
   grupo: GrupoCromo;
   miembros: number;
@@ -442,6 +447,8 @@ function ChipGrupo({
   arrastre?: boolean;
   onAgarreChip?: () => void;
   onSoltarChip?: (gid: string) => void;
+  /** v114: chip de grupo EXPANDIDO — desplaza el BLOQUE visible (dir ±1 pestaña) */
+  onMoverBloque?: (gid: string, dir: 1 | -1) => void;
 }) {
   const { t } = useT();
   // v112: controles de arrastre + pulsación larga táctil (herencia v107)
@@ -450,6 +457,8 @@ function ChipGrupo({
   const holdRef = useRef<number | null>(null);
   const levantaRef = useRef(false);
   const [levanta, setLevanta] = useState(false);
+  // v114: arrastre del chip EXPANDIDO (estado del gesto del bloque)
+  const expDrag = useRef<{ x: number; activo: boolean } | null>(null);
 
   const soltarAgarre = () => {
     if (holdRef.current !== null) {
@@ -465,20 +474,40 @@ function ChipGrupo({
     inicioRef.current ? Math.hypot(e.clientX - inicioRef.current.x, e.clientY - inicioRef.current.y) : 0;
 
   const onPointerDownChip = (e: React.PointerEvent) => {
-    if (!arrastre) return;
+    if (!arrastre && !onMoverBloque) return;
     if (e.pointerType === "mouse" && e.button !== 0) return;
     inicioRef.current = { x: e.clientX, y: e.clientY };
+    if (arrastre) {
+      if (e.pointerType === "mouse") {
+        controls.start(e);
+      } else {
+        soltarAgarre();
+        holdRef.current = window.setTimeout(() => {
+          levantaRef.current = true;
+          setLevanta(true);
+          try {
+            navigator.vibrate?.(12);
+          } catch {}
+          controls.start(e);
+        }, 450);
+      }
+      return;
+    }
+    // v114 EXPANDIDO: ratón = arrastre inmediato · táctil = pulsación larga 450 ms
     if (e.pointerType === "mouse") {
-      controls.start(e);
+      expDrag.current = { x: e.clientX, activo: true };
+      levantaRef.current = true;
+      setLevanta(true);
+      (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
     } else {
       soltarAgarre();
       holdRef.current = window.setTimeout(() => {
         levantaRef.current = true;
         setLevanta(true);
+        expDrag.current = { x: inicioRef.current?.x ?? 0, activo: true };
         try {
           navigator.vibrate?.(12);
         } catch {}
-        controls.start(e);
       }, 450);
     }
   };
@@ -486,6 +515,18 @@ function ChipGrupo({
     if (holdRef.current !== null && inicioRef.current) {
       const d = Math.hypot(e.clientX - inicioRef.current.x, e.clientY - inicioRef.current.y);
       if (d > 10) soltarAgarre(); // era scroll del dedo, no arrastre
+    }
+    // v114 EXPANDIDO: cada umbral cruzado desplaza el BLOQUE una pestaña —
+    // el grupo viaja con la mano sin soltar (varios saltos por gesto)
+    if (expDrag.current?.activo && onMoverBloque) {
+      const dx = e.clientX - expDrag.current.x;
+      if (dx >= UMBRAL_BLOQUE) {
+        onMoverBloque(grupo.id, 1);
+        expDrag.current.x = e.clientX;
+      } else if (dx <= -UMBRAL_BLOQUE) {
+        onMoverBloque(grupo.id, -1);
+        expDrag.current.x = e.clientX;
+      }
     }
   };
 
@@ -516,19 +557,27 @@ function ChipGrupo({
       onPointerMove={onPointerMoveChip}
       onPointerUp={() => {
         soltarAgarre();
+        expDrag.current = null;
         bajar();
       }}
       onPointerCancel={() => {
         soltarAgarre();
+        expDrag.current = null;
         bajar();
       }}
-      className={cn("v107-chip relative flex items-center gap-1.5 h-8 pl-2 pr-2 rounded-t-[10px] cursor-pointer select-none shrink-0", arrastre && levanta && "v107-levanta")}
+      className={cn(
+        "v107-chip relative flex items-center gap-1.5 h-8 pl-2 pr-2 rounded-t-[10px] cursor-pointer select-none shrink-0",
+        (arrastre || onMoverBloque) && levanta && "v107-levanta"
+      )}
       style={{
         color: grupo.color,
         background: `linear-gradient(160deg, ${grupo.color}22, rgba(8,8,13,0.9) 70%)`,
         border: `1px solid ${grupo.color}55`,
         borderBottom: "none",
         boxShadow: `inset 0 1px 0 ${grupo.color}33, 0 -4px 14px -8px ${grupo.color}55`,
+        // v114 EXPANDIDO: pan-y — el gesto horizontal del chip es NUESTRO
+        // (mover el bloque), el vertical sigue siendo scroll de la casa
+        touchAction: onMoverBloque ? "pan-y" : undefined,
       }}
       role="button"
       tabIndex={0}
@@ -875,6 +924,40 @@ export function ChromeTabs({
     onReordenar(full);
   };
 
+  // ── v114: ARRASTRAR EL CHIP DE GRUPO EXPANDIDO — el bloque visible viaja ──
+  // Cada cruce de umbral desplaza el grupo UNA PESTAÑA (intercambio con el
+  // vecino no-miembro): el gesto empuja el grupo entero sin soltar, como en
+  // el navegador real. Respeta la zona fija (nunca arrastra una fijada).
+  const moverBloqueGrupo = (gid: string, dir: 1 | -1) => {
+    const ps = pestanasRef.current;
+    const gDe = grupoDeRef.current;
+    const fij = new Set(fijadasRef.current);
+    const setM = new Set(ps.filter((k) => gDe[k] === gid));
+    if (setM.size === 0) return;
+    const idxs = ps.map((k, i) => (setM.has(k) ? i : -1)).filter((i) => i >= 0);
+    const first = idxs[0];
+    const last = idxs[idxs.length - 1];
+    let full: TabKey[] | null = null;
+    if (dir > 0) {
+      // el vecino de la DERECHA pasa a la izquierda del bloque
+      let j = last + 1;
+      while (j < ps.length && setM.has(ps[j])) j++;
+      if (j < ps.length && !fij.has(ps[j])) {
+        full = [...ps.slice(0, first), ps[j], ...ps.slice(first, j), ...ps.slice(j + 1)];
+      }
+    } else {
+      // el vecino de la IZQUIERDA pasa a la derecha del bloque
+      let j = first - 1;
+      while (j >= 0 && setM.has(ps[j])) j--;
+      if (j >= 0 && !fij.has(ps[j])) {
+        full = [...ps.slice(0, j), ...ps.slice(j + 1, last + 1), ps[j], ...ps.slice(last + 1)];
+      }
+    }
+    if (!full || full.join("¦") === ps.join("¦")) return;
+    pestanasRef.current = full;
+    onReordenar(full);
+  };
+
   // ----- v108: FIJAR / DESFIJAR — la zona fija vive al principio de la franja -----
   const fijar = (k: TabKey) => {
     const fij = new Set([...fijadasRef.current, k]);
@@ -1136,6 +1219,7 @@ export function ChromeTabs({
               onRenombrarFin={() => finRenombre(chip.id)}
               onCancelarRenombre={() => setRenombre(null)}
               onMenu={abrirMenuGrupo}
+              onMoverBloque={moverBloqueGrupo} // v114: el chip EXPANDIDO también arrastra
             />
           ) : undefined
         }

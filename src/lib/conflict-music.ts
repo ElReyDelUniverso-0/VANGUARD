@@ -1352,14 +1352,30 @@ function arranque(c: AudioContext, def: TrackDef) {
   timer = setInterval(scheduler, 45);
 }
 
-export function startMusic(trackId?: string) {
+export function startMusic(trackId?: string, fundidoSeg?: number) {
   const c = getCtx();
   if (!c) return;
   const def = MUSIC_TRACKS.find((x) => x.id === trackId) || current || MUSIC_TRACKS[0];
   // FUNDIDO CRUZADO MUSICAL (0.8s): la sala se apaga suave, la nueva pieza
   // entra creciendo — los pads viejos dejan su cola dentro de la nueva.
+  // v114 CROSSFADE DE FAMILIA (fundidoSeg ≥ 2): fundido CINEMATOGRÁFICO —
+  // la obra vieja muere lenta (τ = fundido/4) y la nueva nace creciendo
+  // (τ = fundido/3) — el anochecer de la SESIÓN INTELIGENTE se OYE llegar.
   const yaSonaba = timer !== null;
   if (yaSonaba && master) {
+    if (fundidoSeg && fundidoSeg >= 2) {
+      master.gain.setTargetAtTime(0, c.currentTime, fundidoSeg / 4);
+      setTimeout(() => {
+        const cc = getCtx();
+        if (!cc || !master) return;
+        stopMusic();
+        arranque(cc, def);
+        master.gain.setTargetAtTime(volume * 0.5, cc.currentTime, fundidoSeg / 3);
+        notify();
+      }, Math.round(fundidoSeg * 500));
+      notify();
+      return;
+    }
     master.gain.setTargetAtTime(0, c.currentTime, 0.26);
     setTimeout(() => {
       const cc = getCtx();

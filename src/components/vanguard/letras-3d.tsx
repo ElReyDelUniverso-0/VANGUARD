@@ -1,6 +1,9 @@
 "use client";
 
 // ============================================================
+// v114.0 ECLIPSE — 3 MATERIALES NUEVOS votados por la casa:
+//   · VIDRIO (transparente, filos de luz) · ORO LÍQUIDO (metal
+//     dorado en bandas) · GLITCH (aberración cromática RGB).
 // v113.0 LETRAS VIVAS — MOTOR DE TIPOGRAFÍA 3D PROCEDURAL
 // Mandato del comandante: "todo sea 3D, letras". Este motor
 // convierte CUALQUIER texto en letras con VOLUMEN real:
@@ -22,7 +25,7 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export type MaterialLetra = "holo" | "neon" | "cromo" | "matriz" | "brasa";
+export type MaterialLetra = "holo" | "neon" | "cromo" | "matriz" | "brasa" | "vidrio" | "oro" | "glitch";
 
 export const MATERIALES_LETRA: { id: MaterialLetra; clave: string }[] = [
   { id: "holo", clave: "exp113.m.holo" },
@@ -30,6 +33,9 @@ export const MATERIALES_LETRA: { id: MaterialLetra; clave: string }[] = [
   { id: "cromo", clave: "exp113.m.cromo" },
   { id: "matriz", clave: "exp113.m.matriz" },
   { id: "brasa", clave: "exp113.m.brasa" },
+  { id: "vidrio", clave: "exp114.m.vidrio" },  // v114
+  { id: "oro", clave: "exp114.m.oro" },        // v114
+  { id: "glitch", clave: "exp114.m.glitch" },  // v114
 ];
 
 // el alfabeto vivo del material MATRIZ (glifos que respiran)
@@ -48,6 +54,10 @@ interface PaletaMaterial {
   /** color base si no hay recorte */
   plano?: string;
   mono?: boolean;
+  /** v114 GLITCH: desvío horizontal (px) de cada capa de profundidad */
+  desvio?: (i: number) => number;
+  /** v114 GLITCH: la cara frontal respira con el temblor v114-glitch */
+  temblor?: boolean;
 }
 
 const PALETAS: Record<MaterialLetra, PaletaMaterial> = {
@@ -81,6 +91,37 @@ const PALETAS: Record<MaterialLetra, PaletaMaterial> = {
     capa: (acc, i) => `color-mix(in srgb, ${acc} ${Math.max(22, 58 - i * 10)}%, #140a04)`,
     brillo: (acc) => `0 0 20px color-mix(in srgb, ${acc} 45%, transparent), 0 2px 0 rgba(0,0,0,0.85)`,
     recorte: true,
+  },
+  // ── v114.0 ECLIPSE — los 3 materiales votados por la casa ──
+  vidrio: {
+    // cristal esmerilado: la cara deja VER a través (gradiente translúcido
+    // con bg-clip-text) y las capas interiores son refracciones tenues
+    frente: () => "linear-gradient(160deg, rgba(255,255,255,0.92) 0%, rgba(214,240,255,0.42) 38%, rgba(150,205,240,0.30) 58%, rgba(235,252,255,0.78) 100%)",
+    capa: (acc, i) => {
+      const mezcla = Math.max(6, 26 - i * 4);
+      const alfa = Math.max(0.05, 0.3 - i * 0.045).toFixed(3);
+      return `color-mix(in srgb, ${acc} ${mezcla}%, rgba(215,240,255,${alfa}))`;
+    },
+    brillo: () => "0 0 1px rgba(255,255,255,0.95), 0 1px 0 rgba(255,255,255,0.55), 0 0 20px rgba(190,232,255,0.40), inset 0 0 8px rgba(255,255,255,0.28)",
+    recorte: true,
+  },
+  oro: {
+    // ORO LÍQUIDO: bandas de metal dorado — luz blanca arriba, sombra
+    // profunda abajo, reflejo caliente en el centro (el lingote de la casa)
+    frente: () => "linear-gradient(180deg, #fffbe6 0%, #ffe27a 26%, #d4a017 47%, #fff3b0 58%, #a8720a 82%, #ffd75e 100%)",
+    capa: (_acc, i) => `color-mix(in srgb, #d4a017 ${Math.max(26, 74 - i * 11)}%, #1c1204)`,
+    brillo: () => "0 0 18px rgba(255,203,74,0.55), 0 2px 0 rgba(58,36,0,0.9), 0 10px 26px rgba(120,80,0,0.35)",
+    recorte: true,
+  },
+  glitch: {
+    // GLITCH: la señal rota — cara blanca con temblor (clase v114-glitch)
+    // y capas que se desvían en X alternando magenta/cian (aberración RGB)
+    frente: () => "linear-gradient(180deg, #ffffff 0%, #f2f6ff 55%, #d9e4ff 100%)",
+    capa: (_acc, i) => (i % 2 === 0 ? "rgba(255,45,120,0.85)" : "rgba(0,240,255,0.85)"),
+    brillo: () => "-2px 0 0 rgba(255,45,120,0.75), 2px 0 0 rgba(0,240,255,0.75), 0 0 12px rgba(160,120,255,0.35)",
+    recorte: true,
+    desvio: (i) => (i % 2 === 0 ? -1.7 : 1.7) * Math.ceil(i / 2),
+    temblor: true,
   },
 };
 
@@ -117,13 +158,15 @@ export function Letra3D({ char, acento, material, profundidad, idx, tick, quieto
 
   const capas: React.ReactNode[] = [];
   for (let i = 1; i <= n; i++) {
+    // v114 GLITCH: cada capa se desvía en X (aberración cromática en volumen)
+    const dx = pal.desvio ? pal.desvio(i) : 0;
     capas.push(
       <span
         key={i}
         aria-hidden
         className="absolute inset-0 select-none"
         style={{
-          transform: `translateZ(${(-PROF_CAPA_PX * i).toFixed(1)}px)`,
+          transform: `translateX(${dx.toFixed(1)}px) translateZ(${(-PROF_CAPA_PX * i).toFixed(1)}px)`,
           color: pal.capa(acento, i, n),
           textShadow: "0 1px 0 rgba(0,0,0,0.6)",
         }}
@@ -138,7 +181,7 @@ export function Letra3D({ char, acento, material, profundidad, idx, tick, quieto
       <span className="v113-cuerpo inline-block" style={{ transformStyle: "preserve-3d" }}>
         {capas}
         <span
-          className="relative select-none"
+          className={cn("relative select-none", pal.temblor && "v114-glitch")}
           style={
             pal.recorte
               ? {

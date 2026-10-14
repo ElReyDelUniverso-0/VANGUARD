@@ -2803,3 +2803,21 @@ span.v108-onda { transform-origin: center; }
   .v113-letra, .v113-giro, .v113-orbita { animation: none !important; }
   .v113-cuerpo { transition: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   v114.0 ECLIPSE — material GLITCH: la señal rota.
+   Temblor de señal en la cara frontal (steps, solo transform —
+   contrato 60 FPS). reduced-motion lo apaga.
+   ════════════════════════════════════════════════════════════ */
+@keyframes v114Glitch {
+  0%, 86%, 100% { transform: translate(0, 0) skewX(0deg); }
+  88% { transform: translate(-1.5px, 0.5px) skewX(-6deg); }
+  91% { transform: translate(1.8px, -0.5px) skewX(4deg); }
+  94% { transform: translate(-1px, 0) skewX(0deg); }
+  97% { transform: translate(1.2px, 0.4px) skewX(3deg); }
+}
+.v114-glitch { animation: v114Glitch 2.6s steps(1, end) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v114-glitch { animation: none !important; }
+}

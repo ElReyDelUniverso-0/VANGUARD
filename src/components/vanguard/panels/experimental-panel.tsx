@@ -11,6 +11,9 @@
 //     datos que gira y responde a la mano.
 //   · LLUVIA DE LETRAS: tu alfabeto llueve sobre la matriz
 //     (canvas propio, sin imágenes, se apaga al salir).
+// v114.0 ECLIPSE — FIRMA DE PERFIL: la FORJA exporta la composición
+//   como FIRMA 3D del agente — el perfil la luce con el motor de
+//   letras de la casa (y se quita desde el propio perfil).
 // Todo en TIEMPO REAL, CERO imágenes, personalizable (la forja
 // recuerda tu material y tu profundidad) y con contrato 60 FPS:
 // drag/rotación vía refs imperativas + CSS vars, sin re-render.
@@ -18,12 +21,17 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useReducedMotion } from "framer-motion";
-import { Eraser, FlaskConical, RotateCw, Type } from "lucide-react";
+import { Eraser, FlaskConical, RotateCw, Type, Signature } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
+import { useProfileStore } from "@/lib/profile-store";
 import { TituloEpico } from "../titulo-epico";
 import { TituloLetras3D, MATERIALES_LETRA, type MaterialLetra } from "../letras-3d";
 import { SelloVivo } from "../escenas-3d";
+
+// v114: los materiales VÁLIDOS salen del propio motor (8: +vidrio/oro/glitch)
+const MATERIALES_VALIDOS = MATERIALES_LETRA.map((m) => m.id) as MaterialLetra[];
 
 const ACC = "#FF5EDB"; // magenta holográfico — acento único de EXPERIMENTAL
 const LS_FORJA = "vg-exp113-forja";
@@ -50,7 +58,7 @@ function leerForja(): ForjaConf {
     const d = confDefault();
     return {
       texto: typeof p.texto === "string" && p.texto.trim() ? p.texto.slice(0, 24) : d.texto,
-      material: (["holo", "neon", "cromo", "matriz", "brasa"] as const).includes(p.material as MaterialLetra) ? (p.material as MaterialLetra) : d.material,
+      material: MATERIALES_VALIDOS.includes(p.material as MaterialLetra) ? (p.material as MaterialLetra) : d.material,
       profundidad: Math.max(2, Math.min(9, Math.round(p.profundidad ?? d.profundidad))),
       tamano: Math.max(26, Math.min(92, Math.round(p.tamano ?? d.tamano))),
       giro: p.giro === true,
@@ -223,6 +231,8 @@ function LluviaLetras({ texto, acento }: { texto: string; acento: string }) {
 export function ExperimentalPanel() {
   const { t } = useT();
   const reduced = useReducedMotion();
+  // v114: la FIRMA vive en el perfil — grabar desde la FORJA, lucir en PERFIL
+  const setFirma = useProfileStore((s) => s.setFirma);
   const [conf, setConf] = useState<ForjaConf>(confDefault);
   const [montado, setMontado] = useState(false);
   const dragRef = useRef<HTMLDivElement>(null);
@@ -420,6 +430,19 @@ export function ExperimentalPanel() {
             style={{ borderColor: conf.giro ? ACC : `${ACC}47`, background: conf.giro ? ACC : "transparent" }}
           >
             <RotateCw className="h-3.5 w-3.5" /> {t("exp113.giro")} {conf.giro ? "■" : "□"}
+          </button>
+
+          {/* v114: GRABAR COMO FIRMA — la composición viaja al perfil del agente */}
+          <button
+            onClick={() => {
+              setFirma({ texto: textoForja.toUpperCase(), material: conf.material, profundidad: conf.profundidad, acento: ACC });
+              toast.success(t("exp114.firma.ok"), { description: t("exp114.firma.okDesc") });
+            }}
+            className="flex items-center justify-center gap-2 rounded-sm border px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+            style={{ borderColor: `${ACC}47` }}
+            title={t("exp114.firma.btn")}
+          >
+            <Signature className="h-3.5 w-3.5" /> {t("exp114.firma.btn")}
           </button>
         </div>
       </section>

@@ -17,26 +17,10 @@ import { Languages } from "lucide-react";
 // v110.0 MATRIZ 2100 — TECNOLOGÍA 3D personalizable (el usuario manda en la matriz)
 // v111.0 MÁQUINA DEL TIEMPO — giroscopio (iOS pide permiso con gesto) + era 1950→2100
 // v112.0 SOLSTICIO — presets de era POR SALA + calibración fina del giroscopio
-import { useEstilo3D, ERAS, type EraKey } from "@/lib/estilo3d";
+import { useEstilo3D, ERAS, SALAS_ERA, type EraKey } from "@/lib/estilo3d";
 
-// v112: las 14 salas de la casa (mismas claves que vanguard:escena)
-const SALAS_ERA: { key: string; nombre: string }[] = [
-  { key: "hangar", nombre: "HANGAR" },
-  { key: "inicio", nombre: "INICIO" },
-  { key: "inteligencia", nombre: "INTEL" },
-  { key: "juego", nombre: "JUEGO" },
-  { key: "mercado", nombre: "MERCADO" },
-  { key: "archivo", nombre: "ARCHIVO" },
-  { key: "comando", nombre: "COMANDO" },
-  { key: "observatorio", nombre: "MURALLA" },
-  { key: "estrategia", nombre: "ESTRAT" },
-  { key: "emisora", nombre: "AUDITORIO" },
-  { key: "oscsuro", nombre: "VERDAD" },
-  { key: "creadores", nombre: "CREADORES" },
-  { key: "social", nombre: "SOCIAL" },
-  { key: "sistema", nombre: "SISTEMA" },
-  { key: "experimental", nombre: "EXPERIM" }, // v113: la página de los imposibles viste eras también
-];
+// v114: las SALAS + SUB-SALAS viven en estilo3d.ts (el Motor y los Ajustes
+// comparten el mismo registro — "· SALA AUD" y "· COLECCIÓN" visten su era).
 const CICLO_ERA: (EraKey | null)[] = [null, "1950", "1980", "2020", "2100"];
 
 interface SettingsModalProps {
@@ -454,6 +438,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                       </button>
                     </div>
                     <p className="text-[9px] font-mono text-muted-foreground leading-snug mb-1.5">{tr("preset112.desc")}</p>
+                    <p className="text-[9px] font-mono text-amber/70 leading-snug mb-1.5">{tr("preset114.sub")}</p>
                     <div className="flex gap-1 overflow-x-auto thin-scroll pb-1" style={{ scrollbarWidth: "none" }}>
                       {SALAS_ERA.map((s) => {
                         const pre = m3d.presetsEra[s.key];
@@ -464,12 +449,13 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                             title={`${s.nombre}: ${pre ?? tr("preset112.auto")}`}
                             className={cn(
                               "shrink-0 w-[58px] px-1 py-1 rounded-sm border text-center transition-all",
+                              s.sub && "opacity-90",
                               pre && m3d.presetsOn
                                 ? "border-amber-hud/70 text-amber bg-amber-hud/15"
                                 : "border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
                             )}
                           >
-                            <span className="block text-[8px] font-mono font-bold uppercase tracking-wide truncate">{s.nombre}</span>
+                            <span className={cn("block text-[8px] font-mono font-bold uppercase tracking-wide truncate", s.sub && "italic")}>{s.nombre}</span>
                             <span className="block text-[8px] font-mono tabular-nums opacity-80">{pre ?? tr("preset112.auto")}</span>
                           </button>
                         );
