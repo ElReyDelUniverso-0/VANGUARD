@@ -410,6 +410,10 @@ function PestanaItem({
 }
 
 // ---------- EL CHIP DE GRUPO (clic contrae, doble clic renombra, derecho: menú) ----------
+// v112.0 SOLSTICIO — el chip CONTRAÍDO es arrastrable: mueves el GRUPO COMPLETO
+// (chip + sus pestañas ocultas) como en el navegador de verdad. Ratón: agarra y
+// mueve al instante · táctil: pulsación larga 450 ms levanta el chip (misma
+// pauta de las pestañas v107) · un arrastre NUNCA contrae el grupo.
 function ChipGrupo({
   grupo,
   miembros,
@@ -421,6 +425,9 @@ function ChipGrupo({
   onRenombrarFin,
   onCancelarRenombre,
   onMenu,
+  arrastre,
+  onAgarreChip,
+  onSoltarChip,
 }: {
   grupo: GrupoCromo;
   miembros: number;
@@ -432,13 +439,67 @@ function ChipGrupo({
   onRenombrarFin: () => void;
   onCancelarRenombre: () => void;
   onMenu: (gid: string, x: number, y: number) => void;
+  arrastre?: boolean;
+  onAgarreChip?: () => void;
+  onSoltarChip?: (gid: string) => void;
 }) {
   const { t } = useT();
-  return (
+  // v112: controles de arrastre + pulsación larga táctil (herencia v107)
+  const controls = useDragControls();
+  const inicioRef = useRef<{ x: number; y: number } | null>(null);
+  const holdRef = useRef<number | null>(null);
+  const levantaRef = useRef(false);
+  const [levanta, setLevanta] = useState(false);
+
+  const soltarAgarre = () => {
+    if (holdRef.current !== null) {
+      clearTimeout(holdRef.current);
+      holdRef.current = null;
+    }
+  };
+  const bajar = () => {
+    levantaRef.current = false;
+    setLevanta(false);
+  };
+  const distancia = (e: React.MouseEvent) =>
+    inicioRef.current ? Math.hypot(e.clientX - inicioRef.current.x, e.clientY - inicioRef.current.y) : 0;
+
+  const onPointerDownChip = (e: React.PointerEvent) => {
+    if (!arrastre) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    inicioRef.current = { x: e.clientX, y: e.clientY };
+    if (e.pointerType === "mouse") {
+      controls.start(e);
+    } else {
+      soltarAgarre();
+      holdRef.current = window.setTimeout(() => {
+        levantaRef.current = true;
+        setLevanta(true);
+        try {
+          navigator.vibrate?.(12);
+        } catch {}
+        controls.start(e);
+      }, 450);
+    }
+  };
+  const onPointerMoveChip = (e: React.PointerEvent) => {
+    if (holdRef.current !== null && inicioRef.current) {
+      const d = Math.hypot(e.clientX - inicioRef.current.x, e.clientY - inicioRef.current.y);
+      if (d > 10) soltarAgarre(); // era scroll del dedo, no arrastre
+    }
+  };
+
+  const chipVisual = (
     <div
       data-grupo-chip={grupo.id}
       title={t("grupo.chipTitle")}
-      onClick={() => {
+      onClick={(e) => {
+        // un arrastre NUNCA contrae el grupo (como las pestañas)
+        if (distancia(e) > 8) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
         if (!enRenombre) onToggle();
       }}
       onDoubleClick={(e) => {
@@ -448,9 +509,20 @@ function ChipGrupo({
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();
+        soltarAgarre();
         onMenu(grupo.id, e.clientX, e.clientY);
       }}
-      className="v107-chip relative flex items-center gap-1.5 h-8 pl-2 pr-2 rounded-t-[10px] cursor-pointer select-none shrink-0"
+      onPointerDown={onPointerDownChip}
+      onPointerMove={onPointerMoveChip}
+      onPointerUp={() => {
+        soltarAgarre();
+        bajar();
+      }}
+      onPointerCancel={() => {
+        soltarAgarre();
+        bajar();
+      }}
+      className={cn("v107-chip relative flex items-center gap-1.5 h-8 pl-2 pr-2 rounded-t-[10px] cursor-pointer select-none shrink-0", arrastre && levanta && "v107-levanta")}
       style={{
         color: grupo.color,
         background: `linear-gradient(160deg, ${grupo.color}22, rgba(8,8,13,0.9) 70%)`,
@@ -500,6 +572,25 @@ function ChipGrupo({
         </>
       )}
     </div>
+  );
+
+  // sin arrastre (chips de grupos EXPANDIDOS dentro de su primera pestaña):
+  // el chip vive como siempre — JAMÁS un Reorder.Item fuera de su grupo
+  if (!arrastre) return chipVisual;
+
+  return (
+    <Reorder.Item
+      value={grupo.id}
+      as="div"
+      dragListener={false}
+      dragControls={controls}
+      onDragStart={onAgarreChip}
+      onDragEnd={() => onSoltarChip?.(grupo.id)}
+      className="relative shrink-0 list-none"
+      style={{ touchAction: "pan-x" }}
+    >
+      {chipVisual}
+    </Reorder.Item>
   );
 }
 
@@ -672,7 +763,10 @@ export function ChromeTabs({
   }, [alias]);
 
   // limpieza: pertenencias de pestañas ya cerradas se reciclan (deferido —
-  // el compilador prohíbe setState síncrono en el cuerpo del efecto)
+  // el compilador prohíbe setState síncrono en el cuerpo del efecto).
+  // v112: 1200 ms — el restore de page.tsx (setTimeout 0) debe ganar la
+  // carrera, o esta limpieza PODA la pertenencia de pestañas que están a
+  // punto de restaurarse y el grupo pierde miembros en cada recarga en frío.
   useEffect(() => {
     const id = setTimeout(() => {
       setGrupoDe((prev) => {
@@ -691,7 +785,7 @@ export function ChromeTabs({
         const next = prev.filter((k) => vivos.has(k));
         return next.length === prev.length ? prev : next;
       });
-    }, 0);
+    }, 1200);
     return () => clearTimeout(id);
   }, [pestanas]);
 
@@ -746,6 +840,39 @@ export function ChromeTabs({
       for (const k of Object.keys(n)) if (n[k] === gid) delete n[k];
       return n;
     });
+  };
+
+  // ----- v112: ARRASTRAR EL CHIP DE GRUPO COMPLETO — el grupo viaja entero -----
+  // Al soltar el chip: ① se reordena el registro de grupos (persistencia) y
+  // ② se mueven los BLOQUES de pestañas del grupo en pestanas — cuando expanda,
+  // sus pestañas aparecen donde el grupo quedó, como en el navegador real.
+  const reordenarGruposChips = (ids: string[]) => {
+    const ps = pestanasRef.current;
+    const gDe = grupoDeRef.current;
+    setGrupos((gs) => {
+      const mapa = new Map(gs.map((g) => [g.id, g]));
+      const ordenados = ids.map((id) => mapa.get(id)).filter((g): g is GrupoCromo => !!g);
+      const resto = gs.filter((g) => !ids.includes(g.id));
+      return [...ordenados, ...resto];
+    });
+    const bloques = ids
+      .map((id) => ps.filter((k) => gDe[k] === id))
+      .filter((b) => b.length > 0);
+    if (bloques.length === 0) return;
+    const miembros = new Set(bloques.flat());
+    const base = ps.filter((k) => !miembros.has(k));
+    // ancla: nº de pestañas NO miembros antes del primer miembro del grupo
+    // más a la izquierda — los bloques reordenados aterrizan ahí (en base,
+    // que ya no tiene miembros, ese índice es exactamente el mismo)
+    let ancla = 0;
+    for (const k of ps) {
+      if (miembros.has(k)) break;
+      ancla++;
+    }
+    const full = [...base.slice(0, ancla), ...bloques.flat(), ...base.slice(ancla)];
+    if (full.join("¦") === ps.join("¦")) return;
+    pestanasRef.current = full; // dragEnd de pestañas lee orden fresco
+    onReordenar(full);
   };
 
   // ----- v108: FIJAR / DESFIJAR — la zona fija vive al principio de la franja -----
@@ -1126,14 +1253,22 @@ export function ChromeTabs({
               <AnimatePresence initial={false}>{libresVis.map(renderPestana)}</AnimatePresence>
             </Reorder.Group>
 
-            {/* chips de grupos CONTRAIDOS: quedan en la franja como en Chrome */}
+            {/* chips de grupos CONTRAIDOS: quedan en la franja como en Chrome.
+                v112: ARRASTRABLES — mover un chip mueve el GRUPO COMPLETO */}
             {chipsContraidos.length > 0 && (
-              <div className="flex items-end gap-1 ml-0.5">
+              <Reorder.Group
+                axis="x"
+                values={chipsContraidos.map((g) => g.id)}
+                onReorder={reordenarGruposChips}
+                as="div"
+                className="flex items-end gap-1 ml-0.5"
+              >
                 {chipsContraidos.map((g) => (
                   <ChipGrupo
                     key={g.id}
                     grupo={g}
                     miembros={miembrosDe(g.id).length}
+                    arrastre
                     enRenombre={renombre === g.id}
                     nombreTmp={nombreTmp}
                     setNombreTmp={setNombreTmp}
@@ -1145,9 +1280,15 @@ export function ChromeTabs({
                     onRenombrarFin={() => finRenombre(g.id)}
                     onCancelarRenombre={() => setRenombre(null)}
                     onMenu={abrirMenuGrupo}
+                    onAgarreChip={() => {
+                      ordenAgarreRef.current = pestanasRef.current.join("¦");
+                    }}
+                    onSoltarChip={() => {
+                      ordenAgarreRef.current = "";
+                    }}
                   />
                 ))}
-              </div>
+              </Reorder.Group>
             )}
 
             {/* el + abre la NUEVA PESTAÑA — elegir destino como el navegador */}

@@ -662,6 +662,21 @@ let escenaActiva: EscenaKey | null = null;
 export function setEscenaActiva(e: EscenaKey) { escenaActiva = e; }
 export function getEscenaActiva(): EscenaKey | null { return escenaActiva; }
 
+// ====== v112 SOLSTICIO — SESIÓN CONTINUA INTELIGENTE ======
+// La radio encadena obras de la FAMILIA que pide la hora del día:
+//   ALBA (05-11)     → AMBIENTE  (el planeta despierta sereno)
+//   DÍA  (11-18)     → VANGUARD  (la firma de la casa en plena luz)
+//   NOCHE (18-23)    → GUERRA    (la noche es del frente)
+//   MADRUGADA (23-05)→ AMBIENTE  (la madrugada vuelve a la calma)
+export type FranjaMusical = "alba" | "dia" | "noche" | "madrugada";
+export function franjaMusical(d = new Date()): { franja: FranjaMusical; fam: TrackCat } {
+  const h = d.getHours();
+  if (h >= 5 && h < 11) return { franja: "alba", fam: "ambiente" };
+  if (h >= 11 && h < 18) return { franja: "dia", fam: "vanguard" };
+  if (h >= 18 && h < 23) return { franja: "noche", fam: "guerra" };
+  return { franja: "madrugada", fam: "ambiente" };
+}
+
 // ====== v98 VARIACIÓN DIARIA — la radio suena ÚNICA cada día ======
 // Determinista por fecha UTC: mismo día = misma versión en todo el planeta.
 // rot rota la progresión · arpShift transpone · hatAcc mueve el acento.

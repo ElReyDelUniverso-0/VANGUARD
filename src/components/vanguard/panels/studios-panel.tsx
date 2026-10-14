@@ -634,7 +634,7 @@ function MapasStudio() {
 function MusicaStudio() {
   const alias = useGameStore((s) => s.alias);
   const feed = useUgcFeed("musica");
-  const [pat, setPat] = useState<StudioPattern>(() => emptyPattern("marcha"));
+  const [pat, setPat] = useState<StudioPattern>(() => emptyPattern("orquesta"));
   const [playing, setPlaying] = useState(false);
   const [rendering, setRendering] = useState(false);
   const [trackName, setTrackName] = useState("");
@@ -668,7 +668,7 @@ function MusicaStudio() {
       const wav = await renderToWav(pat, 4);
       const ok = await publishUgc({
         kind: "musica", author: alias || "ANÓNIMO",
-        title: trackName.trim(), summary: `Composición creada en el Estudio de Música de VANGUARD · ${pat.bpm} BPM`,
+        title: trackName.trim(), summary: `Composición creada en el Estudio de Música de VANGUARD · ${pat.bpm} BPM · voz ${pat.voz ?? "sierra"}${pat.pad ? " + pad 7ª" : ""}${pat.sub ? " + sub" : ""}${pat.aire ? " + aire" : ""}`,
         audioData: wav, audioGenre: "estudio", sensitive: false,
       });
       if (ok) {
@@ -692,8 +692,7 @@ function MusicaStudio() {
           <h3 className="text-[12px] font-bold uppercase text-cyan-hud tracking-wide">Estudio de Música</h3>
         </div>
         <p className="text-[10px] text-muted-foreground leading-snug">
-          Compón TU música de conflicto dentro de la página: 16 pasos × 5 pistas, BPM y ondas. Escucha la vista previa y
-          publícala — se renderiza a WAV real en tu navegador y la comunidad la califica.
+          Compón TU música de conflicto dentro de la página: 16 pasos × 5 pistas, BPM y las VOCES V4 de la casa (campana FM, cristal, metal) con colchón de séptimas, sub-bajo y cadena de estudio. Escucha la vista previa y publícala — se renderiza a WAV real en tu navegador y la comunidad la califica.
         </p>
         <div className="flex gap-1 flex-wrap">
           {STUDIO_GENRES.map((g) => (
@@ -739,12 +738,24 @@ function MusicaStudio() {
           </label>
           <div className="flex gap-2">
             <label className="flex-1">
-              <span className="text-[9px] font-mono uppercase text-muted-foreground">Onda melodía</span>
-              <select value={pat.wave} onChange={(e) => set({ wave: e.target.value as OscillatorType })} className="w-full bg-secondary border border-cyan-hud/30 rounded-sm px-1 py-1 text-[10px]">
-                <option value="sawtooth">Sierra (épica)</option>
-                <option value="square">Cuadrada (chiptune)</option>
-                <option value="sine">Senoidal (melancólica)</option>
-                <option value="triangle">Triangular (suave)</option>
+              <span className="text-[9px] font-mono uppercase text-muted-foreground">Voz melodía (v4)</span>
+              <select
+                value={pat.voz ?? "sierra"}
+                onChange={(e) => {
+                  const v = e.target.value as import("@/lib/music-studio").VozStudio;
+                  // las 4 voces clásicas sincronizan `wave` (compatibilidad total)
+                  const ondaClasica: Record<string, OscillatorType> = { sierra: "sawtooth", cuadrada: "square", senoidal: "sine", triangular: "triangle" };
+                  set(ondaClasica[v] ? { voz: v, wave: ondaClasica[v] } : { voz: v });
+                }}
+                className="w-full bg-secondary border border-cyan-hud/30 rounded-sm px-1 py-1 text-[10px]"
+              >
+                <option value="fm">Campana FM (orquesta)</option>
+                <option value="cristal">Cristal (sala dorada)</option>
+                <option value="metal">Metal (metales v4)</option>
+                <option value="sierra">Sierra (épica)</option>
+                <option value="cuadrada">Cuadrada (chiptune)</option>
+                <option value="senoidal">Senoidal (melancólica)</option>
+                <option value="triangular">Triangular (suave)</option>
               </select>
             </label>
             <label className="flex-1">
@@ -756,6 +767,29 @@ function MusicaStudio() {
                 <option value="123">Aguda (Si2)</option>
               </select>
             </label>
+          </div>
+          {/* v112 INSTRUMENTOS V4: pad con séptimas · sub-bajo · cadena de estudio */}
+          <div className="grid grid-cols-3 gap-1">
+            {([
+              ["pad", "PAD 7ª", "colchón de acordes con séptima mayor"],
+              ["sub", "SUB", "senoidal una octava bajo el bajo"],
+              ["aire", "AIRE", "cadena master: HPF + aire + compresor"],
+            ] as const).map(([k, lbl, desc]) => (
+              <button
+                key={k}
+                onClick={() => set({ [k]: !pat[k] } as Partial<StudioPattern>)}
+                title={desc}
+                aria-pressed={!!pat[k]}
+                className={cn(
+                  "h-7 rounded-sm border text-[8px] font-mono font-bold uppercase tracking-widest transition-colors",
+                  pat[k]
+                    ? "border-amber-hud text-amber bg-amber-hud/20"
+                    : "border-cyan-hud/30 text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {pat[k] ? "■ " : "□ "}{lbl}
+              </button>
+            ))}
           </div>
         </div>
         <div className="flex gap-1.5">

@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v112.0",
+    nombre: "SOLSTICIO",
+    tipo: "tecno",
+    hitos: [
+      "ERA POR SALA: presets que visten cada sala de su época al entrar — la MURALLA en 1950, el AUDITORIO en 2100 — y devuelven la casa a su era al salir",
+      "ARRASTRAR EL CHIP DE GRUPO: el grupo completo (chip + sus pestañas) viaja por la franja de cromo con pulsación larga en móvil",
+      "ESTUDIO DEL CREADOR CON INSTRUMENTOS V4: campana FM, cristal y metal, pad con séptimas, sub-bajo y cadena de estudio en las composiciones publicables",
+      "GIROSCOPIO CON CALIBRACIÓN FINA: tu pose de reposo es el cero (mediana de 700 ms) — y el defecto del listener siempre-activo de v111 queda cazado",
+      "MURALLA con TERMINADOR SOLAR REAL (declinación + ecuación del tiempo) y las 10 PATRULLAS cruzando el planeta en vivo",
+      "SESIÓN CONTINUA INTELIGENTE: la radio encadena la familia que pide la hora — alba→ambiente · día→vanguard · noche→guerra · madrugada→ambiente",
+    ],
+  },
+  {
     version: "v111.0",
     nombre: "MÁQUINA DEL TIEMPO",
     tipo: "tecno",

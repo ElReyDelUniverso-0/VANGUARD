@@ -17,7 +17,7 @@ import {
   MUSIC_TRACKS, startMusic, stopMusic, isMusicPlaying, currentTrackId,
   setMusicVolume, getMusicVolume, subscribeMusic, getMusicSpectrum,
   aplicarEscena, setEscenaActiva, getEscenaActiva, edicionDeHoy, EDICIONES_TOTAL,
-  setEqBand, type BandaEq,
+  setEqBand, franjaMusical, type BandaEq,
   type EscenaKey, type TrackCat,
 } from "@/lib/conflict-music";
 import { Escena3D, hashDe, type VarianteEscena } from "@/components/vanguard/escenas-3d";
@@ -153,6 +153,8 @@ export function MusicPlayer() {
   // v111: SESIÓN CONTINUA + ECUALIZADOR DE SALA
   const [cont, setCont] = useState(saved.cont);
   const [eq, setEq] = useState(saved.eq);
+  // v112: la franja musical viva (alba/día/noche/madrugada) para el Auditorio
+  const [franjaViva, setFranjaViva] = useState(() => franjaMusical().franja);
   const tierRef = useRef<number>(tierOf(getTension()));
 
   const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
@@ -198,23 +200,40 @@ export function MusicPlayer() {
     if (autoplay && (playing || wantOn)) startMusic(id);
   };
 
-  // v111 SESIÓN CONTINUA — avance silencioso (no rompe los modos, sin toasts):
-  // la obra siguiente de la colección entra con el fundido cruzado del motor.
+  // v111 SESIÓN CONTINUA → v112 SESIÓN INTELIGENTE — avance silencioso (no
+  // rompe los modos, sin toasts): la obra siguiente sale de la FAMILIA que
+  // pide la hora del día (alba→ambiente · día→vanguard · noche→guerra ·
+  // madrugada→ambiente) y entra con el fundido cruzado del motor. Si la
+  // familia actual no tiene más obras, cae a la obra siguiente global —
+  // la radio nunca se queda muda.
   const avanzarSesion = () => {
-    const idxActual = MUSIC_TRACKS.findIndex((x) => x.id === (currentTrackId() || selTrack));
-    const nxt = MUSIC_TRACKS[(idxActual + 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length];
+    const idActual = currentTrackId() || selTrack;
+    const idxActual = MUSIC_TRACKS.findIndex((x) => x.id === idActual);
+    const actual = MUSIC_TRACKS[idxActual] ?? MUSIC_TRACKS[0];
+    const { franja, fam } = franjaMusical();
+    const enFamilia = MUSIC_TRACKS.filter((x) => x.cat === fam);
+    // si la obra en curso ya es de la familia, sigue la siguiente de la fila;
+    // si no (cambio de franja), la radio sintoniza la primera de la familia
+    const idxEnFam = actual.cat === fam ? enFamilia.findIndex((x) => x.id === actual.id) : -1;
+    let nxt = enFamilia[(idxEnFam + 1 + enFamilia.length) % enFamilia.length];
+    if (!nxt || nxt.id === actual.id) {
+      nxt = MUSIC_TRACKS[(idxActual + 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length];
+    }
     if (!nxt) return;
     setSelTrack(nxt.id);
     if (playing || wantOn) startMusic(nxt.id);
     persist(playing || wantOn, vol, nxt.id);
+    setFranjaViva(franja);
   };
 
   // v111: mientras SESIÓN CONTINUA esté activa y suene música, cada ~3.5 min
-  // pasa a la obra siguiente (la generativa respira 5 ciclos por obra)
+  // pasa a la obra siguiente de la familia de la hora (la generativa respira
+  // 5 ciclos por obra). v112: también refresca la franja al cruzar la hora.
   useEffect(() => {
     if (!cont || !playing) return;
     const iv = setInterval(avanzarSesion, 210_000);
-    return () => clearInterval(iv);
+    const ivFranja = setInterval(() => setFranjaViva(franjaMusical().franja), 60_000);
+    return () => { clearInterval(iv); clearInterval(ivFranja); };
   }, [cont, playing, selTrack, vol]);
 
   const toggleCont = () => {
@@ -487,7 +506,7 @@ export function MusicPlayer() {
                 </span>
               </span>
             </button>
-            {/* v111 SESIÓN CONTINUA — la radio DJ: encadena obras sin cortes */}
+            {/* v111 SESIÓN CONTINUA → v112 SESIÓN INTELIGENTE: encena por familia y hora */}
             <button
               onClick={toggleCont}
               aria-pressed={cont}
@@ -506,6 +525,14 @@ export function MusicPlayer() {
                 </span>
               </span>
             </button>
+            {cont && (
+              <div className="px-3 py-1.5 border border-cyan-400/30 bg-cyan-400/5 rounded-sm flex items-center gap-2" data-franja112>
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 blink-soft" aria-hidden />
+                <span className="text-[8px] font-mono uppercase tracking-[0.25em] text-cyan-200/90">
+                  {t("radio112.sesion")} · {t(`radio112.franja.${franjaViva}`)}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* v111 ECUALIZADOR DE SALA — 3 bandas ±12 dB sobre la cadena de estudio */}

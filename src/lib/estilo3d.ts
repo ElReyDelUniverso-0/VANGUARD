@@ -32,6 +32,12 @@ export interface Estilo3DEstado {
   giroscopio: boolean;
   /** v111: la era visual de toda la casa (1950 CRT → 2100 holo) */
   era: EraKey;
+  /** v112: presets de era POR SALA — la MURALLA en 1950, el AUDITORIO en 2100 */
+  presetsEra: Record<string, EraKey>;
+  /** v112: los presets por sala mandan al entrar en cada sala */
+  presetsOn: boolean;
+  /** v112: calibración fina del giroscopio — TU pose de reposo es el cero */
+  gyroCal: { x: number; y: number };
   setActivo: (v: boolean) => void;
   setIntensidad: (v: number) => void;
   setInclinar: (v: boolean) => void;
@@ -40,6 +46,9 @@ export interface Estilo3DEstado {
   setSellosVivos: (v: boolean) => void;
   setGiroscopio: (v: boolean) => void;
   setEra: (v: EraKey) => void;
+  setPresetEra: (sala: string, era: EraKey | null) => void;
+  setPresetsOn: (v: boolean) => void;
+  setGyroCal: (x: number, y: number) => void;
 }
 
 const DEFAULTS = {
@@ -51,6 +60,9 @@ const DEFAULTS = {
   sellosVivos: true,
   giroscopio: false,
   era: "2100" as EraKey,
+  presetsEra: {} as Record<string, EraKey>,
+  presetsOn: false,
+  gyroCal: { x: 0, y: 0 },
 };
 
 export const useEstilo3D = create<Estilo3DEstado>()(
@@ -65,16 +77,41 @@ export const useEstilo3D = create<Estilo3DEstado>()(
       setSellosVivos: (v) => set({ sellosVivos: v }),
       setGiroscopio: (v) => set({ giroscopio: v }),
       setEra: (v) => set({ era: v }),
+      setPresetEra: (sala, era) =>
+        set((st) => {
+          const n = { ...st.presetsEra };
+          if (era === null) delete n[sala];
+          else n[sala] = era;
+          return { presetsEra: n };
+        }),
+      setPresetsOn: (v) => set({ presetsOn: v }),
+      setGyroCal: (x, y) => set({ gyroCal: { x: +x.toFixed(2), y: +y.toFixed(2) } }),
     }),
     {
       name: "vg-3d-v111",
       storage: createJSONStorage(() => localStorage),
-      version: 2,
-      // v110 → v111: los ajustes de la MATRIZ migran, el resto entra por defecto
-      migrate: (persisted: unknown) => ({ ...(persisted as Record<string, unknown>), giroscopio: false, era: "2100" as EraKey }),
+      version: 3,
+      // v111 → v112: los ajustes de la MATRIZ migran; presets y calibración entran limpios
+      migrate: (persisted: unknown) => {
+        const p = (persisted ?? {}) as Record<string, unknown>;
+        return {
+          ...p,
+          giroscopio: p.giroscopio === true,
+          era: (p.era as EraKey) ?? "2100",
+          presetsEra: (p.presetsEra as Record<string, EraKey>) ?? {},
+          presetsOn: p.presetsOn === true,
+          gyroCal: (p.gyroCal as { x: number; y: number }) ?? { x: 0, y: 0 },
+        };
+      },
     }
   )
 );
+
+// v112: la ERA VIVA de una sala — el preset manda si está activo, si no la era global
+export function eraVivaDe(estado: { era: EraKey; presetsOn: boolean; presetsEra: Record<string, EraKey> }, sala: string | null | undefined): EraKey {
+  if (sala && estado.presetsOn && estado.presetsEra[sala]) return estado.presetsEra[sala];
+  return estado.era;
+}
 
 // ---------- FICHA DE CADA ERA (la consume el Motor 3D) ----------
 export interface EraDef {

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes, Hourglass } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, VolumeX, User, RotateCcw, Shield, AlertTriangle, Download, Upload, EyeOff, Boxes, Hourglass, Crosshair, Landmark } from "lucide-react";
 import { toast } from "sonner";
 import { sfx, setMuted as setSoundMuted } from "@/lib/sound";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,27 @@ import { isStrict18, setStrict18, subscribeStrict18 } from "@/lib/safety";
 import { Languages } from "lucide-react";
 // v110.0 MATRIZ 2100 — TECNOLOGÍA 3D personalizable (el usuario manda en la matriz)
 // v111.0 MÁQUINA DEL TIEMPO — giroscopio (iOS pide permiso con gesto) + era 1950→2100
+// v112.0 SOLSTICIO — presets de era POR SALA + calibración fina del giroscopio
 import { useEstilo3D, ERAS, type EraKey } from "@/lib/estilo3d";
+
+// v112: las 14 salas de la casa (mismas claves que vanguard:escena)
+const SALAS_ERA: { key: string; nombre: string }[] = [
+  { key: "hangar", nombre: "HANGAR" },
+  { key: "inicio", nombre: "INICIO" },
+  { key: "inteligencia", nombre: "INTEL" },
+  { key: "juego", nombre: "JUEGO" },
+  { key: "mercado", nombre: "MERCADO" },
+  { key: "archivo", nombre: "ARCHIVO" },
+  { key: "comando", nombre: "COMANDO" },
+  { key: "observatorio", nombre: "MURALLA" },
+  { key: "estrategia", nombre: "ESTRAT" },
+  { key: "emisora", nombre: "AUDITORIO" },
+  { key: "oscsuro", nombre: "VERDAD" },
+  { key: "creadores", nombre: "CREADORES" },
+  { key: "social", nombre: "SOCIAL" },
+  { key: "sistema", nombre: "SISTEMA" },
+];
+const CICLO_ERA: (EraKey | null)[] = [null, "1950", "1980", "2020", "2100"];
 
 interface SettingsModalProps {
   open: boolean;
@@ -70,10 +90,49 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     if (nxt) toast.success(tr("gyro111.ok"), { description: tr("gyro111.okDesc") });
   };
 
+  // v112 CALIBRACIÓN FINA: TU pose de reposo es el cero. Un toque, 700 ms de
+  // lectura (mediana de gamma/beta) y el motor resta esos offsets para siempre.
+  const [calibrando, setCalibrando] = useState(false);
+  const calibrarPose = () => {
+    sfx.click();
+    if (calibrando) return;
+    setCalibrando(true);
+    const muestras: { g: number; b: number }[] = [];
+    const onMuestra = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null) return;
+      muestras.push({ g: e.gamma, b: e.beta });
+    };
+    window.addEventListener("deviceorientation", onMuestra, { passive: true });
+    setTimeout(() => {
+      window.removeEventListener("deviceorientation", onMuestra);
+      setCalibrando(false);
+      if (muestras.length < 4) {
+        toast.error(tr("gyro111.denegado"));
+        return;
+      }
+      muestras.sort((a, b) => a.g - b.g);
+      const g = muestras[Math.floor(muestras.length / 2)].g;
+      muestras.sort((a, b) => a.b - b.b);
+      const b = muestras[Math.floor(muestras.length / 2)].b;
+      m3d.setGyroCal(g, b - 30); // 30° = teléfono en mano (el mismo reposo del motor)
+      sfx.unlock();
+      toast.success(tr("gyro112.ok"), { description: `${tr("gyro112.calibrar")}: γ ${g.toFixed(0)}° · β ${(b - 30).toFixed(0)}°` });
+    }, 700);
+  };
+
   const elegirEra = (e: EraKey) => {
     m3d.setEra(e);
     sfx.unlock();
     toast.success(`${tr("era111.titulo")}: ${tr(`era111.e${e}`)}`);
+  };
+
+  // v112: ciclar el preset de una sala AUTO → 1950 → 1980 → 2020 → 2100 → AUTO
+  const ciclarPreset = (sala: string) => {
+    const actual = m3d.presetsEra[sala] ?? null;
+    const idx = CICLO_ERA.indexOf(actual);
+    const nxt = CICLO_ERA[(idx + 1) % CICLO_ERA.length];
+    m3d.setPresetEra(sala, nxt);
+    sfx.click();
   };
 
   const handleToggleStrict18 = (v: boolean) => {
@@ -265,17 +324,43 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
                 {/* v111 GIROSCOPIO — el móvil inclina la matriz con la mano */}
                 {hayGyro && (
-                  <button
-                    onClick={activarGiro}
-                    className={cn(
-                      "w-full h-8 hud-corner text-[9px] font-mono uppercase tracking-widest transition-all",
-                      m3d.giroscopio
-                        ? "border-emerald-400/60 text-emerald-300 bg-emerald-400/10"
-                        : "border-border text-muted-foreground hover:text-foreground"
+                  <>
+                    <button
+                      onClick={activarGiro}
+                      className={cn(
+                        "w-full h-8 hud-corner text-[9px] font-mono uppercase tracking-widest transition-all",
+                        m3d.giroscopio
+                          ? "border-emerald-400/60 text-emerald-300 bg-emerald-400/10"
+                          : "border-border text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {m3d.giroscopio ? "■ " : "□ "}{tr("gyro111.activar")}
+                    </button>
+                    {/* v112 CALIBRACIÓN FINA — tu pose de reposo es el cero */}
+                    {m3d.giroscopio && (
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <button
+                          onClick={calibrarPose}
+                          className={cn(
+                            "h-8 hud-corner text-[9px] font-mono uppercase tracking-widest transition-all flex items-center justify-center gap-1.5",
+                            calibrando
+                              ? "border-amber-hud text-amber bg-amber-hud/20 blink-soft"
+                              : "border-emerald-400/40 text-emerald-300/90 bg-emerald-400/5 hover:bg-emerald-400/15"
+                          )}
+                        >
+                          <Crosshair className="w-3 h-3" />
+                          {calibrando ? "···" : tr("gyro112.calibrar")}
+                        </button>
+                        <button
+                          onClick={() => { m3d.setGyroCal(0, 0); sfx.click(); toast.info(tr("gyro112.reset")); }}
+                          className="h-8 hud-corner text-[9px] font-mono uppercase tracking-widest border-border text-muted-foreground hover:text-foreground transition-all flex items-center justify-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          {tr("gyro112.reset")}
+                        </button>
+                      </div>
                     )}
-                  >
-                    {m3d.giroscopio ? "■ " : "□ "}{tr("gyro111.activar")}
-                  </button>
+                  </>
                 )}
 
                 {/* v111 MÁQUINA DEL TIEMPO — la era visual de toda la casa */}
@@ -303,6 +388,50 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                   <p className="text-[9px] font-mono text-muted-foreground mt-1.5 leading-snug">
                     {tr(`era111.e${m3d.era}`)} — {tr("era111.desc")}
                   </p>
+
+                  {/* v112 PRESETS DE ERA POR SALA — la MURALLA en 1950, el AUDITORIO en 2100 */}
+                  <div className="mt-3 pt-2.5 border-t border-white/5">
+                    <div className="flex items-center justify-between mb-1.5 gap-2">
+                      <div className="text-[10px] font-mono uppercase text-muted-foreground flex items-center gap-1.5">
+                        <Landmark className="w-3 h-3 text-amber" />
+                        {tr("preset112.titulo")}
+                      </div>
+                      <button
+                        onClick={() => { m3d.setPresetsOn(!m3d.presetsOn); sfx.click(); }}
+                        className={cn(
+                          "px-2 py-1 rounded-sm text-[8px] font-mono font-bold uppercase tracking-widest border transition-all",
+                          m3d.presetsOn
+                            ? "border-amber-hud text-amber bg-amber-hud/25"
+                            : "border-border text-muted-foreground hover:text-foreground"
+                        )}
+                        aria-pressed={m3d.presetsOn}
+                      >
+                        {m3d.presetsOn ? "■ ON" : "□ OFF"}
+                      </button>
+                    </div>
+                    <p className="text-[9px] font-mono text-muted-foreground leading-snug mb-1.5">{tr("preset112.desc")}</p>
+                    <div className="flex gap-1 overflow-x-auto thin-scroll pb-1" style={{ scrollbarWidth: "none" }}>
+                      {SALAS_ERA.map((s) => {
+                        const pre = m3d.presetsEra[s.key];
+                        return (
+                          <button
+                            key={s.key}
+                            onClick={() => ciclarPreset(s.key)}
+                            title={`${s.nombre}: ${pre ?? tr("preset112.auto")}`}
+                            className={cn(
+                              "shrink-0 w-[58px] px-1 py-1 rounded-sm border text-center transition-all",
+                              pre && m3d.presetsOn
+                                ? "border-amber-hud/70 text-amber bg-amber-hud/15"
+                                : "border-border/70 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
+                            )}
+                          >
+                            <span className="block text-[8px] font-mono font-bold uppercase tracking-wide truncate">{s.nombre}</span>
+                            <span className="block text-[8px] font-mono tabular-nums opacity-80">{pre ?? tr("preset112.auto")}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

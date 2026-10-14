@@ -323,6 +323,11 @@ export default function Home() {
       }
     }
     if (k !== "nueva") recordTabVisit(k);
+    // v112: la sala activa queda a la vista de todos (sessionStorage) — el
+    // Motor 3D y la radio la leen si despiertan después que este dispatch
+    try {
+      sessionStorage.setItem("vg-sala-activa", sectionOfTab(k).key);
+    } catch { /* noop */ }
     window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(k).key }));
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pestanas, tab, recordTabVisit, t]);
@@ -388,6 +393,18 @@ export default function Home() {
                 validas.includes(guardada as TabKey)
               ) {
                 setTab(guardada as TabKey);
+                // v112: la sala restaurada anuncia su escena — el Motor 3D viste
+                // su preset de era y la radio sabe dónde despertó. Doble vía:
+                // sessionStorage (el chunk lazy del Motor la lee al montar — su
+                // montaje llega DESPUÉS de este restore) + el evento para quien
+                // ya esté escuchando. (defecto de recarga en frío: nadie
+                // anunciaba la sala al montar)
+                try {
+                  sessionStorage.setItem("vg-sala-activa", sectionOfTab(guardada as TabKey).key);
+                } catch { /* sin sesión la era global manda */ }
+                window.dispatchEvent(
+                  new CustomEvent("vanguard:escena", { detail: sectionOfTab(guardada as TabKey).key })
+                );
               }
             }
           }
