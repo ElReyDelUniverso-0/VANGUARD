@@ -1318,7 +1318,7 @@ export function StudiosPanel() {
   // al entrar la casa viste "creadores.estudio"; al salir vuelve la era global
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: "creadores.estudio" }));
-    return () => window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null }));
+    return () => { window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null })); };
   }, []);
 
   return (

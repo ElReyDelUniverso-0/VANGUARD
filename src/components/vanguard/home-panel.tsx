@@ -54,8 +54,12 @@ interface WorldTile {
   hex: string;
 }
 
-// ====== MENÚ LLAMATIVO: los 8 mundos principales ======
+// ====== MENÚ LLAMATIVO: los mundos principales ======
 const WORLD_TILES: WorldTile[] = [
+  // v115.0 SINGULARIDAD — el 16º mundo abre el muro: el agente autónomo
+  { tab: "arquitecto", title: "ARQUITECTO", desc: "El agente autónomo de Vanguard: se promptea a sí mismo y trabaja sin fin — instala módulos funcionales, compone obras para la radio, firma doctrinas, vigila el frente y nunca se detiene (con o sin tu ayuda)", icon: <Bot className="w-6 h-6" />, hex: "#00FFA3" },
+  // v113.0 LETRAS VIVAS — la página de los imposibles
+  { tab: "experimental", title: "EXPERIMENTAL", desc: "La página de los imposibles: escribe y mira tus palabras volverse letras 3D de verdad — forja de letras, órbita de palabras y lluvia de letras, todo en vivo y sin imágenes", icon: <FlaskConical className="w-6 h-6" />, hex: "#FF5EDB" },
   // v105.0 LA REDACCIÓN — lo primero del muro: el lugar para LEER el mundo
   { tab: "redaccion", title: "LA REDACCIÓN", desc: "El lugar optimizado para leer el mundo: noticias reales con resumen, el ¿POR QUÉ IMPORTA? de cada pieza, investigación en vivo con fuentes citadas y modo lectura sin interrupciones", icon: <Newspaper className="w-6 h-6" />, hex: "#FFC94D" },
   // v97.0 PANTALLA TOTAL: la plataforma de video de Vanguard abre el muro

@@ -149,7 +149,7 @@ const LEMAS_SATELITE = [
 
 const DOMINIOS: DominioArq[] = ["ingenieria", "composicion", "vigilancia", "doctrina", "expansion", "mantenimiento"];
 
-const VELOCIDADES: Record<VelosidadArq, { factor: number; pausaMs: number }> = {
+const VELOCIDADES: Record<VelocidadArq, { factor: number; pausaMs: number }> = {
   lenta: { factor: 2.2, pausaMs: 30000 },
   normal: { factor: 1, pausaMs: 14000 },
   rapida: { factor: 0.45, pausaMs: 6000 },
@@ -332,7 +332,7 @@ function forjarObra(ciclo: number): { acciones: string[]; resultado: string; obr
       "▸ depositada en el ESTUDIO de CREADORES (jugable ya)",
     ],
     resultado: `OBRA COMPUESTA — «${titulo}» (${patron.bpm} BPM, voz ${patron.voz})`,
-    obra: { id, titulo, bpm: patron.bpm, voz: patron.voz, t: Date.now(), patron },
+    obra: { id, titulo, bpm: patron.bpm, voz: patron.voz ?? "fm", t: Date.now(), patron },
   };
 }
 
@@ -418,14 +418,15 @@ function forjarLocal(dominio: DominioArq, ciclo: number, s: { modulos: ModuloArq
 }
 
 // ============================================================
-// IA REAL — intenta el gateway vía /api/arquitecto (12 s de gracia);
+// IA REAL — intenta el gateway vía /api/arquitecto (19 s de gracia: el
+// servidor da 20 s al modelo — la voz real gana cuando está sana);
 // si falla, el núcleo embebido toma el turno. NUNCA se detiene.
 // ============================================================
 
 async function construirConIA(dominio: DominioArq, prompt: string, ultimoResultado: string | undefined): Promise<{ titulo: string; resultado: string; acciones: string[] } | null> {
   try {
     const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 12_000);
+    const t = setTimeout(() => ctrl.abort(), 19_000);
     const res = await fetch("/api/arquitecto", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -447,14 +448,19 @@ async function construirConIA(dominio: DominioArq, prompt: string, ultimoResulta
 }
 
 // auditoría local del ciclo (VERIFICANDO) — honesta, sin teatro
-function audirCiclo(dominio: DominioArq, local: ReturnType<typeof forjarLocal>): { ok: boolean; nota: string } {
-  if (dominio === "composicion" && local && "obra" in local && local.obra) {
-    const p = local.obra.patron;
+function audirCiclo(dominio: DominioArq, local: ReturnType<typeof forjarLocal> | null): { ok: boolean; nota: string } {
+  // el retorno de forjarLocal es una unión de 6 formas distintas: se lee por
+  // campo opcional — el estrechamiento con "in" no basta para el compilador
+  const obra = (local ?? {}) as { obra?: ObraArq };
+  const doctrina = (local ?? {}) as { doctrina?: DoctrinaArq };
+  const modulo = (local ?? {}) as { modulo?: ModuloArq };
+  if (dominio === "composicion" && obra.obra) {
+    const p = obra.obra.patron;
     if (p.kick.length !== 16 || p.bass.length !== 16 || p.lead.length !== 16) return { ok: false, nota: "patrón fuera de medida (16 pasos)" };
     if (p.bpm < 50 || p.bpm > 140) return { ok: false, nota: "BPM fuera del rango del estudio" };
   }
-  if (dominio === "doctrina" && local && "doctrina" in local && local.doctrina && local.doctrina.cuerpo.length < 80) return { ok: false, nota: "doctrina demasiado corta" };
-  if (dominio === "ingenieria" && local && "modulo" in local && !local.modulo) return { ok: false, nota: "el taller no devolvió módulo" };
+  if (dominio === "doctrina" && doctrina.doctrina && doctrina.doctrina.cuerpo.length < 80) return { ok: false, nota: "doctrina demasiado corta" };
+  if (dominio === "ingenieria" && !modulo.modulo) return { ok: false, nota: "el taller no devolvió módulo" };
   return { ok: true, nota: "verificado contra el catálogo de la casa" };
 }
 

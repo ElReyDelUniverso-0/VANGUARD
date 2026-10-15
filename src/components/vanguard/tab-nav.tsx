@@ -21,7 +21,7 @@ import {
   TowerControl, NotebookPen, Truck, Waypoints, Radiation, Rss,
   BookMarked, FileStack, Plane, Bug, Waves, LineChart, Crown,
   Telescope, KeyRound, Feather, ScanEye, RadioTower, MonitorPlay, GraduationCap,
-  History, FlipHorizontal2, FlaskConical, RefreshCw, Share2, Bot,
+  History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
   Hammer, ShieldCheck, LayoutPanelLeft,
   LayoutDashboard,
 } from "lucide-react";

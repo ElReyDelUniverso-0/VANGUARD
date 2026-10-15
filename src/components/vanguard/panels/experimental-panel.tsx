@@ -248,7 +248,7 @@ export function ExperimentalPanel() {
   // al entrar la casa viste "experimental.forja"; al salir vuelve la era global
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: "experimental.forja" }));
-    return () => window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null }));
+    return () => { window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null })); };
   }, []);
   useEffect(() => {
     if (!montado) return;
