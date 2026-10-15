@@ -21,7 +21,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useReducedMotion } from "framer-motion";
-import { Eraser, FlaskConical, RotateCw, Type, Signature, Download } from "lucide-react";
+import { Eraser, FlaskConical, RotateCw, Type, Signature, Download, MapPin, Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
@@ -29,6 +29,9 @@ import { useProfileStore } from "@/lib/profile-store";
 import { TituloEpico } from "../titulo-epico";
 import { TituloLetras3D, MATERIALES_LETRA, type MaterialLetra } from "../letras-3d";
 import { SelloVivo } from "../escenas-3d";
+// v117.0 ATMÓSFERA: la FORJA BAUTIZA las regiones de la megalópolis —
+// el nombre popular que escribas aquí luce en la ciudad del INICIO
+import { REGIONES_CIUDAD, bautizarRegion, quitarBautismo, leerBautizos, type BautismoRegion } from "../megalopolis";
 
 // v114: los materiales VÁLIDOS salen del propio motor (8: +vidrio/oro/glitch)
 const MATERIALES_VALIDOS = MATERIALES_LETRA.map((m) => m.id) as MaterialLetra[];
@@ -235,6 +238,10 @@ export function ExperimentalPanel() {
   const setFirma = useProfileStore((s) => s.setFirma);
   const [conf, setConf] = useState<ForjaConf>(confDefault);
   const [montado, setMontado] = useState(false);
+  // v117: BAUTIZO POPULAR de las regiones de la ciudad
+  const [bautizos, setBautizos] = useState<Record<string, BautismoRegion>>({});
+  const [regionElegida, setRegionElegida] = useState<string>(REGIONES_CIUDAD[0].id);
+  const [bautizo, setBautizo] = useState("");
   const dragRef = useRef<HTMLDivElement>(null);
   const spinRef = useRef<HTMLDivElement>(null);
   const pose = useRef({ rx: 6, ry: -14, activo: false, x: 0, y: 0 });
@@ -242,8 +249,25 @@ export function ExperimentalPanel() {
   // la forja recuerda TU material, TU profundidad y TU texto
   useEffect(() => {
     setConf(leerForja());
+    setBautizos(leerBautizos());
     setMontado(true);
   }, []);
+
+  const sfxClick = useCallback(() => {
+    import("@/lib/sound").then(({ sfx }) => sfx.click());
+  }, []);
+
+  // v117: guardar el bautizo — la ciudad lo luce al instante (evento en caliente)
+  const guardarBautizo = useCallback(() => {
+    const nombre = bautizo.trim();
+    if (nombre.length < 3) return;
+    sfxClick();
+    bautizarRegion(regionElegida, nombre);
+    setBautizos(leerBautizos());
+    setBautizo("");
+    const reg = REGIONES_CIUDAD.find((r) => r.id === regionElegida);
+    toast.success(t("exp117.bautizoOk"), { description: t("exp117.bautizoOkDesc", { region: reg?.nombre ?? regionElegida }) });
+  }, [bautizo, regionElegida, sfxClick, t]);
   // v115.0 SINGULARIDAD: la FORJA es una SUB-SALA con época propia —
   // al entrar la casa viste "experimental.forja"; al salir vuelve la era global
   useEffect(() => {
@@ -538,6 +562,88 @@ export function ExperimentalPanel() {
         </h3>
         <p className="mb-2 font-mono text-[10px] leading-snug text-muted-foreground">{t("exp113.lluviaDesc")}</p>
         <LluviaLetras texto={textoForja} acento={ACC} />
+      </section>
+
+      {/* ═══ v117 BAUTIZAR LA CIUDAD — tu nombre vive en la megalópolis ═══ */}
+      <section className="mt-5 rounded-lg border bg-black/30 p-3" style={{ borderColor: `${ACC}47` }}>
+        <h3 className="mb-2 flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: ACC }}>
+          <MapPin className="h-3.5 w-3.5" /> {t("exp117.bautizo")}
+        </h3>
+        <p className="mb-2 font-mono text-[10px] leading-snug text-muted-foreground">{t("exp117.bautizoDesc")}</p>
+
+        {/* las 6 regiones — con su bautizo actual si existe */}
+        <div className="flex flex-wrap gap-1.5">
+          {REGIONES_CIUDAD.map((r) => {
+            const b = bautizos[r.id];
+            return (
+              <button
+                key={r.id}
+                onClick={() => setRegionElegida(r.id)}
+                aria-pressed={regionElegida === r.id}
+                className={cn(
+                  "rounded-sm border px-2 py-1 font-mono text-[10px] uppercase tracking-widest transition-colors",
+                  regionElegida === r.id ? "text-black" : "text-muted-foreground hover:text-foreground"
+                )}
+                style={{
+                  borderColor: regionElegida === r.id ? r.acc2 : `${r.acc2}47`,
+                  background: regionElegida === r.id ? r.acc2 : "transparent",
+                }}
+                title={b ? `${t("exp117.bautizoActual")}: ${b.nombre}` : r.nombre}
+              >
+                {b ? `★ ${b.nombre}` : r.nombre}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* el bautizo de la región elegida */}
+        {(() => {
+          const reg = REGIONES_CIUDAD.find((r) => r.id === regionElegida) ?? REGIONES_CIUDAD[0];
+          const b = bautizos[reg.id];
+          return (
+            <div className="mt-3 flex items-center gap-1.5">
+              <input
+                value={bautizo}
+                onChange={(e) => setBautizo(e.target.value.slice(0, 24))}
+                onKeyDown={(e) => { if (e.key === "Enter") guardarBautizo(); }}
+                maxLength={24}
+                className="min-w-0 flex-1 rounded-sm border bg-black/50 px-2 py-1.5 font-mono text-sm text-foreground outline-none"
+                style={{ borderColor: `${reg.acc2}47` }}
+                placeholder={t("exp117.bautizoPh", { region: b ? `★ ${b.nombre}` : reg.nombre })}
+                aria-label={t("exp117.bautizo")}
+              />
+              <button
+                onClick={guardarBautizo}
+                disabled={bautizo.trim().length < 3}
+                className="inline-flex shrink-0 items-center gap-1 rounded-sm border px-2.5 py-1.5 font-mono text-[9px] font-bold tracking-wider transition-colors disabled:opacity-40"
+                style={{ borderColor: `${reg.acc2}66`, color: reg.acc2 }}
+              >
+                <Star className="h-3 w-3" /> {t("exp117.bautizoBtn")}
+              </button>
+              {b && (
+                <button
+                  onClick={() => {
+                    sfxClick();
+                    quitarBautismo(reg.id);
+                    setBautizos((cur) => {
+                      const c2 = { ...cur };
+                      delete c2[reg.id];
+                      return c2;
+                    });
+                    toast.success(t("exp117.bautizoFuera"));
+                  }}
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-sm border text-muted-foreground hover:text-foreground"
+                  style={{ borderColor: `${reg.acc2}47` }}
+                  title={t("exp117.bautizoQuitar")}
+                  aria-label={t("exp117.bautizoQuitar")}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          );
+        })()}
+        <p className="mt-1.5 font-mono text-[8px] uppercase tracking-widest text-muted-foreground">{t("exp117.bautizoNota")}</p>
       </section>
     </div>
   );

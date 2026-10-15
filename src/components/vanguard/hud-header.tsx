@@ -13,6 +13,12 @@ import { suscribirModoGuerra, toggleModoGuerra } from "@/lib/modo-guerra";
 // v115.0 SINGULARIDAD: la FIRMA 3D de la FORJA luce junto al alias del HUD
 import { useProfileStore } from "@/lib/profile-store";
 import { TituloLetras3D } from "@/components/vanguard/letras-3d";
+// v117.0 ATMÓSFERA: mini-noticiero 2100 rotativo (Sala de Lectura interna,
+// cero enlaces externos) + chip vivo de EL ARQUITECTO (navega a su sala)
+import { useArquitecto } from "@/lib/arquitecto";
+import { navigateTo } from "@/lib/nav";
+import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+import { Radio, Bot } from "lucide-react";
 
 interface HudHeaderProps {
   onOpenSettings?: () => void;
@@ -24,6 +30,15 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
   const { coins, gems, xp, level, rank, streak, alias, boosts, muted, setMuted, account } = useGameStore();
   // v115: la firma 3D grabada en la FORJA acompaña al agente en el HUD
   const firma = useProfileStore((s) => s.firma);
+  // v117: el ARQUITECTO respira en el HUD — ciclo vivo junto a la brújula
+  const arqActivo = useArquitecto((s) => s.activo);
+  const arqFase = useArquitecto((s) => s.fase);
+  const arqCiclos = useArquitecto((s) => s.contadores.ciclos);
+  const arqEnCurso = useArquitecto((s) => s.enCurso);
+  // v117: mini-noticiero 2100 — titular rotativo de la casa, SIN salir de Vanguard
+  const [cables, setCables] = useState<CableLectura[]>([]);
+  const [idxNoti, setIdxNoti] = useState(0);
+  const [lectorHud, setLectorHud] = useState<CableLectura | null>(null);
   const { t } = useT();
   const [menuOpen, setMenuOpen] = useState(false);
   // v86.0 MODO GUERRA: versión ligera para redes saturadas (2G/satélite)
@@ -42,6 +57,41 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
       setSoundMuted(newMuted);
     });
   };
+
+  // v117 MINI-NOTICIERO: 6 titulares de la casa, rotan cada 7 s — leerlos
+  // abre la SALA DE LECTURA interna (portada 3D + contexto + NEURONA)
+  useEffect(() => {
+    let viva = true;
+    const pide = async () => {
+      try {
+        const r = await fetch("/api/news", { signal: AbortSignal.timeout(12000) });
+        const j = await r.json();
+        if (!viva || !Array.isArray(j?.items)) return;
+        const cs: CableLectura[] = j.items.slice(0, 8).map((it: Record<string, unknown>) => ({
+          id: String(it.id ?? it.url ?? Math.random().toString(36).slice(2)),
+          title: String(it.title ?? ""),
+          url: String(it.url ?? ""),
+          source: String(it.source ?? ""),
+          publishedAt: String(it.publishedAt ?? new Date().toISOString()),
+          tacticalTag: (it.tacticalTag as string) ?? null,
+          conflictTag: (it.conflictTag as string) ?? null,
+          sourceCountry: (it.sourceCountry as string) ?? null,
+        })).filter((c) => c.title.length > 12).slice(0, 6);
+        if (cs.length > 0) setCables(cs);
+      } catch {
+        /* la casa no se queja: el noticiero espera la próxima señal */
+      }
+    };
+    pide();
+    const iv = setInterval(pide, 180_000);
+    return () => { viva = false; clearInterval(iv); };
+  }, []);
+  useEffect(() => {
+    if (cables.length < 2) return;
+    const iv = setInterval(() => setIdxNoti((i) => (i + 1) % cables.length), 7000);
+    return () => clearInterval(iv);
+  }, [cables.length]);
+  const cableHud = cables.length > 0 ? cables[idxNoti % cables.length] : null;
 
   return (
     <header className="sticky top-0 z-30 hud-panel border-b border-amber-hud">
@@ -124,6 +174,32 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             </div>
           </div>
 
+          {/* v117 MINI-NOTICIERO 2100 — titular rotativo de la casa (solo pantallas anchas) */}
+          {cableHud && (
+            <button
+              onClick={() => setLectorHud(cableHud)}
+              title={t("hud117.noticiero")}
+              className="v117-noticiero group relative hidden min-w-0 max-w-[300px] flex-1 items-center gap-2 overflow-hidden rounded-sm border px-2 py-1 text-left transition-colors lg:flex"
+              style={{ borderColor: "#FF8A2A44", background: "rgba(255,138,42,0.05)" }}
+            >
+              <span className="flex shrink-0 items-center gap-1 font-mono text-[8px] font-bold tracking-[0.2em]" style={{ color: "#FF8A2A" }}>
+                <Radio className="h-3 w-3 v117-parpadeo" /> 2100
+              </span>
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={idxNoti}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.35 }}
+                  className="truncate text-[10px] leading-tight text-foreground/80 transition-colors group-hover:text-foreground"
+                >
+                  {cableHud.title}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          )}
+
           {/* Coins & gems - compact on mobile */}
           <div className="flex items-center gap-0.5 sm:gap-2 flex-shrink-0">
             <CoinPill
@@ -174,6 +250,23 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             >
               <Compass className="w-3 h-3 sm:w-4 sm:h-4" />
             </button>
+            {/* v117 CHIP DEL ARQUITECTO — el agente autónomo respira aquí mismo:
+                ciclo actual y fase, un clic te lleva a su sala (sin recargar) */}
+            {arqActivo && (
+              <button
+                onClick={() => navigateTo("arquitecto")}
+                title={t("hud117.arq")}
+                className="v117-chiparq hidden h-6 items-center gap-1 rounded-sm border px-1.5 font-mono text-[9px] font-bold tracking-wider transition-colors sm:flex sm:h-8"
+                style={{ borderColor: "#FF5EDB66", background: "rgba(255,94,219,0.08)", color: "#FF5EDB" }}
+              >
+                <Bot className="h-3 w-3" />
+                <span className="hidden md:inline">ARQ · C{arqCiclos}</span>
+                <span
+                  className={cn("inline-block h-1.5 w-1.5 rounded-full", arqEnCurso ? "v117-parpadeo" : "")}
+                  style={{ background: arqEnCurso ? "#FF5EDB" : arqFase === "INSTALADO" ? "#34C759" : arqFase === "DORMIDO" ? "#8a8a9a" : "#FFC94D" }}
+                />
+              </button>
+            )}
             <button
               onClick={toggleMute}
               title={muted ? t("hud.soundOn") : t("hud.soundOff")}
@@ -263,6 +356,10 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
       </div>
       {/* v16: línea de aurora bajo la cabecera */}
       <div className="hairline-gradient opacity-80" aria-hidden />
+
+      {/* v117: la SALA DE LECTURA del noticiero del HUD — portal al body,
+          misma sala interna que en INICIO (cero navegación externa) */}
+      <LectorNoticia cable={lectorHud} onCerrar={() => setLectorHud(null)} />
     </header>
   );
 }

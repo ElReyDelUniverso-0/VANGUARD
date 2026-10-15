@@ -2854,3 +2854,78 @@ span.v108-onda { transform-origin: center; }
   .v116-meteoro, .v116-nube, .v116-reflejo, .v116-carga { animation: none !important; }
   .v116-meteoro { opacity: 0 !important; }
 }
+
+/* ===== v117.0 ATMÓSFERA — el METEO real tiñe la ciudad ===== */
+/* LLUVIA: gotas finas que caen (transform puro — contrato 60 FPS) */
+.v117-gota {
+  position: absolute;
+  top: -6%;
+  width: 1.5px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, transparent, rgba(190,220,255,0.75));
+  animation: v117Caer linear infinite;
+  pointer-events: none;
+}
+@keyframes v117Caer {
+  from { transform: translateY(-8vh); }
+  to   { transform: translateY(500px); }
+}
+/* NIEVE: flocos que caen con deriva lateral */
+.v117-floco {
+  position: absolute;
+  top: -4%;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 0 4px rgba(255,255,255,0.5);
+  animation: v117Nevar linear infinite;
+  pointer-events: none;
+}
+@keyframes v117Nevar {
+  0%   { transform: translate(0, -6px); }
+  50%  { transform: translate(16px, 240px); }
+  100% { transform: translate(-10px, 500px); }
+}
+/* TORMENTA: relámpago de la casa — dos destellos cada 7 s */
+.v117-relampago {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.16);
+  opacity: 0;
+  animation: v117Flash 7s steps(1) infinite;
+  pointer-events: none;
+}
+@keyframes v117Flash {
+  0%, 93% { opacity: 0; }
+  94% { opacity: 0.55; }
+  95% { opacity: 0.06; }
+  96% { opacity: 0.4; }
+  97%, 100% { opacity: 0; }
+}
+/* NIEBLA: bruma que se arrastra a ras de calle */
+.v117-niebla {
+  position: absolute;
+  height: 34%;
+  left: -30%;
+  width: 160%;
+  background: linear-gradient(90deg, transparent, rgba(180,190,210,0.15) 30%, rgba(180,190,210,0.22) 55%, transparent 90%);
+  filter: blur(2px);
+  animation: v117Bruma 26s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes v117Bruma {
+  from { transform: translateX(-6%); }
+  to   { transform: translateX(10%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v117-gota, .v117-floco, .v117-relampago { display: none !important; }
+  .v117-niebla { animation: none !important; }
+}
+
+/* ===== v117.0 ATMÓSFERA — HUD: noticiero 2100 + chip del ARQUITECTO ===== */
+.v117-parpadeo { animation: v117Latido 1.6s ease-in-out infinite; }
+@keyframes v117Latido { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+.v117-noticiero { box-shadow: 0 0 18px -10px rgba(255,138,42,0.5); }
+.v117-chiparq { box-shadow: 0 0 14px -8px rgba(255,94,219,0.6); }
+@media (prefers-reduced-motion: reduce) {
+  .v117-parpadeo { animation: none !important; }
+}

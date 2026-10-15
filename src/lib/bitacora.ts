@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v117.0",
+    nombre: "ATMÓSFERA",
+    tipo: "mundo",
+    hitos: [
+      "CLIMA REAL EN LA CIUDAD: el METEO del planeta (/api/meteo) tiñe la megalópolis — lluvia que cae, nieve con deriva, niebla que se arrastra, tormenta con relámpagos de la casa y nubes cubiertas; chip CLIMA en vivo con temperatura",
+      "TERMINADOR POR HORA: cada edificio recibe la LUZ del lado que mira al sol y sombra en el contrario, siguiendo la posición real del sol en tu reloj (alba este, ocaso oeste) — la ciudad sombreada de verdad",
+      "CROSSFADE DE REGIÓN: cuando la ciudad cambia de región, la antigua se desvanece sobre la nueva durante 2.4 s (y el evento vanguard:rotar-region permite girarla a mano) — el cambio de día se SIENTE",
+      "VOZ DE LA CIUDAD: audio ambiente 100% procedural de la casa (ciudad-audio.ts) — tráfico lejano que respira con la fase del día, aire y pitidos lejanos; se apaga con el MUTE y nunca arrastra muestras",
+      "LECTURA NEURONA: la SALA DE LECTURA gana el veredicto del núcleo v4 sobre cada cable — riesgo/tensión/confianza, sentimiento y neuronas activas, computado EN TU DISPOSITIVO con el mismo motor del Monitor Global",
+      "MINI-NOTICIERO 2100 EN EL HUD: titular rotativo de la casa cada 7 s — un toque abre la SALA DE LECTURA interna (cero enlaces externos) — y el CHIP DEL ARQUITECTO respira junto a la brújula con su ciclo vivo",
+      "EL ARQUITECTO EXPANDIDO: ARCHIVO DE OBRA exportable (memoria visible descargable como JSON), SALAS SATÉLITE navegables (cada fundación abre su sala real por semilla determinista) y sus OBRAS audibles aquí mismo con sello OBRA DEL ARQUITECTO",
+      "BAUTIZAR LA CIUDAD: la FORJA da nombres populares a las regiones — tu bautizo luce en la ciudad del INICIO con su estrella ★ (local en tu dispositivo, retirable)",
+    ],
+  },
+  {
     version: "v116.0",
     nombre: "MEGALÓPOLIS",
     tipo: "mundo",

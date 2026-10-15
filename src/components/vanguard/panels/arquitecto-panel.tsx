@@ -13,7 +13,7 @@
 // ============================================================
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bot, Play, Pause, Zap, Gauge, Cpu, Hammer, Music4, ScrollText, Radar as RadarIcon, Building2, Wrench, Send, Terminal, Layers, Infinity as InfIcon } from "lucide-react";
+import { Bot, Play, Pause, Zap, Gauge, Cpu, Hammer, Music4, ScrollText, Radar as RadarIcon, Building2, Wrench, Send, Terminal, Layers, Infinity as InfIcon, Download, Volume2, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { sfx } from "@/lib/sound";
@@ -25,9 +25,22 @@ import { areaOcupada } from "@/lib/frente-zonas-data";
 import { pulsoActual, titularPulso, pensamientoMente } from "@/lib/mente-data";
 import { extraerRasgos, evaluarNeuronal, fnvHash } from "@/lib/neurona-core";
 import { misionesDelDia, MISIONES } from "@/lib/agente-nucleo";
+// v117.0 ATMÓSFERA: la memoria VISIBLE — el archivo de obra se exporta,
+// los satélites fundados se ENTRAN (sala real) y las obras se ESCUCHAN aquí.
+import { playPreview, stopPreview } from "@/lib/music-studio";
+import { navigateTo } from "@/lib/nav";
+import { APP_VERSION_LABEL } from "@/lib/version";
 
 const ACC = "#00FFA3"; // verde matriz — la singularidad de Vanguard
 const ACC_SUELVE = "rgba(0,255,163,0.14)";
+
+// v117 — las salas REALES donde puede aterrizar un satélite fundado
+// (determinista: misma semilla del satélite → misma sala, en todos los navegadores)
+const SALAS_SATELITE = ["biblioteca", "observatorio", "radar", "cielos", "planeta", "mente", "osint", "pantalla", "frentes", "wikiguerra"] as const;
+
+function salaDeSatelite(id: string): string {
+  return SALAS_SATELITE[fnvHash(id) % SALAS_SATELITE.length];
+}
 
 // ────────────────────────────────────────────────────────────
 // MÓDULOS REALES — cada widget instalado es funcional de verdad
@@ -239,6 +252,9 @@ export function ArquitectoPanel() {
   const era = useEstilo3D((s) => s.era);
   const [orden, setOrden] = useState("");
   const [visto, setVisto] = useState(false);
+  // v117: obra sonando en la sala + archivo exportado/copiado
+  const [obraSonando, setObraSonando] = useState<string | null>(null);
+  const [archivoOk, setArchivoOk] = useState(false);
 
   // la sala anuncia la era global al motor del agente + reanuda el perpetuo
   useEffect(() => {
@@ -246,6 +262,51 @@ export function ArquitectoPanel() {
     reanudarArquitecto();
     setVisto(true);
   }, [era]);
+  // al desmontar la sala, la obra se detiene (el estudio sigue de su lado)
+  useEffect(() => () => { if (obraSonando) stopPreview(); }, [obraSonando]);
+
+  const escucharObra = (id: string, patron: Parameters<typeof playPreview>[0]) => {
+    sfx.click();
+    if (obraSonando === id) {
+      stopPreview();
+      setObraSonando(null);
+      return;
+    }
+    stopPreview();
+    playPreview(patron, () => setObraSonando((cur) => (cur === id ? null : cur)));
+    setObraSonando(id);
+  };
+
+  // v117 ARCHIVO DE OBRA: la memoria del agente, exportable — un archivo
+  // JSON con TODA su obra (bitácora, módulos, obras, doctrinas, satélites)
+  const exportarArchivo = () => {
+    sfx.click();
+    try {
+      const archivo = {
+        casa: "VANGUARD",
+        version: APP_VERSION_LABEL,
+        agente: "EL ARQUITECTO",
+        exportado: new Date().toISOString(),
+        contadores: arq.contadores,
+        modulos: arq.modulos,
+        obras: arq.obras.map((o) => ({ id: o.id, titulo: o.titulo, bpm: o.bpm, voz: o.voz, t: o.t })),
+        doctrinas: arq.doctrinas,
+        satelites: arq.satelites.map((s) => ({ ...s, sala: salaDeSatelite(s.id) })),
+        obra: arq.obra,
+      };
+      const blob = new Blob([JSON.stringify(archivo, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `archivo-arquitecto-${arq.contadores.ciclos}ciclos.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setArchivoOk(true);
+      setTimeout(() => setArchivoOk(false), 2200);
+    } catch {
+      /* sin descargas: la obra sigue en su memoria eterna */
+    }
+  };
 
   const modulosMap = useMemo(() => new Map(arq.modulos.map((m) => [m.id, m])), [arq.modulos]);
   const obraDatos = useMemo(() => arq.obra.map((c) => ({ prompt: c.prompt, n: c.n })), [arq.obra]);
@@ -420,20 +481,33 @@ export function ArquitectoPanel() {
         </div>
       </section>
 
-      {/* ═══ OBRAS COMPUESTAS — suenan de verdad en CREADORES·ESTUDIO ═══ */}
+      {/* ═══ OBRAS COMPUESTAS — suenan de verdad AQUÍ MISMO (v117) ═══ */}
       {arq.obras.length > 0 && (
         <section className="mt-3 rounded-lg border bg-black/30 p-3" style={{ borderColor: "#FF5EDB47" }}>
           <h3 className="mb-2 flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: "#FF5EDB" }}>
             <Music4 className="h-3.5 w-3.5" /> {t("arqui115.obras")}
+            <span className="rounded-sm border px-1.5 py-0.5 text-[7px] font-black" style={{ borderColor: "#FF5EDB66", color: "#FF5EDB" }}>{t("arqui117.obra.sello")}</span>
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {arq.obras.map((o) => (
-              <span key={o.id} className="rounded-sm border px-2 py-1 text-[9px] font-mono font-bold tracking-wider" style={{ borderColor: "#FF5EDB55", color: "#FF5EDB", background: "rgba(255,94,219,0.08)" }} title={t("arqui115.obras.hint")}>
-                {o.titulo} · {o.voz}
-              </span>
+              <button
+                key={o.id}
+                onClick={() => escucharObra(o.id, o.patron)}
+                title={t("arqui117.obra.escuchar")}
+                className="inline-flex items-center gap-1.5 rounded-sm border px-2 py-1 text-[9px] font-mono font-bold tracking-wider transition-colors"
+                style={{
+                  borderColor: obraSonando === o.id ? "#FF5EDB" : "#FF5EDB55",
+                  color: "#FF5EDB",
+                  background: obraSonando === o.id ? "rgba(255,94,219,0.22)" : "rgba(255,94,219,0.08)",
+                  boxShadow: obraSonando === o.id ? "0 0 14px -4px #FF5EDB88" : undefined,
+                }}
+              >
+                {obraSonando === o.id ? <Square className="h-2.5 w-2.5" /> : <Volume2 className="h-2.5 w-2.5" />}
+                {o.titulo} · {o.voz} · {o.bpm} BPM
+              </button>
             ))}
           </div>
-          <p className="mt-1.5 text-[8px] font-mono uppercase tracking-widest text-muted-foreground">{t("arqui115.obras.hint")}</p>
+          <p className="mt-1.5 text-[8px] font-mono uppercase tracking-widest text-muted-foreground">{t("arqui117.obra.hint")}</p>
         </section>
       )}
 
@@ -454,7 +528,7 @@ export function ArquitectoPanel() {
         </section>
       )}
 
-      {/* ═══ SALAS SATÉLITE FUNDADAS ═══ */}
+      {/* ═══ SALAS SATÉLITE FUNDADAS — ahora se ENTRAN (v117) ═══ */}
       {arq.satelites.length > 0 && (
         <section className="mt-3 rounded-lg border bg-black/30 p-3" style={{ borderColor: "#B48CFF47" }}>
           <h3 className="mb-2 flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: "#B48CFF" }}>
@@ -462,15 +536,25 @@ export function ArquitectoPanel() {
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {arq.satelites.map((s) => (
-              <span key={s.id} className="rounded-sm border px-2 py-1 text-[9px] font-mono tracking-wider" style={{ borderColor: "#B48CFF55", color: "#B48CFF", background: "rgba(180,140,255,0.08)" }} title={s.lema}>
+              <button
+                key={s.id}
+                onClick={() => { sfx.click(); navigateTo(salaDeSatelite(s.id) as Parameters<typeof navigateTo>[0]); }}
+                title={`${s.lema} — ${t("arqui117.sat.entrar")}`}
+                className="group inline-flex items-center gap-1.5 rounded-sm border px-2 py-1 text-[9px] font-mono tracking-wider transition-colors"
+                style={{ borderColor: "#B48CFF55", color: "#B48CFF", background: "rgba(180,140,255,0.08)" }}
+              >
                 {s.nombre} <span className="text-muted-foreground">«{s.lema}»</span>
-              </span>
+                <span className="rounded-sm border px-1 text-[7px] font-black opacity-70 transition-opacity group-hover:opacity-100" style={{ borderColor: "#B48CFF77" }}>
+                  {t("arqui117.sat.entrar")} →
+                </span>
+              </button>
             ))}
           </div>
+          <p className="mt-1.5 text-[8px] font-mono uppercase tracking-widest text-muted-foreground">{t("arqui117.sat.hint")}</p>
         </section>
       )}
 
-      {/* ═══ LA OBRA COMPLETA — bitácora eterna ═══ */}
+      {/* ═══ LA OBRA COMPLETA — bitácora eterna + ARCHIVO EXPORTABLE (v117) ═══ */}
       <section className="mt-3 rounded-lg border bg-black/30 p-3" style={{ borderColor: `${ACC}47` }}>
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <h3 className="flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: ACC }}>
@@ -481,6 +565,22 @@ export function ArquitectoPanel() {
             {arq.activo && arq.perpetuo && <span className="hidden items-center gap-1 text-[8px] font-mono font-bold uppercase tracking-widest sm:inline-flex" style={{ color: ACC }}><Zap className="h-3 w-3 animate-pulse" /> {t("arqui115.trabajando")}</span>}
           </div>
         </div>
+        {/* v117 MEMORIA VISIBLE: el archivo completo del agente, descargable */}
+        {arq.obra.length > 0 && (
+          <div className="mb-2 flex flex-wrap items-center gap-2 rounded-sm border px-2.5 py-2" style={{ borderColor: `${ACC}33`, background: ACC_SUELVE }}>
+            <Download className="h-3.5 w-3.5 shrink-0" style={{ color: ACC }} />
+            <p className="min-w-0 flex-1 font-mono text-[9px] leading-snug text-muted-foreground">
+              {t("arqui117.archivo.txt", { ciclos: arq.contadores.ciclos, motores: arq.contadores.ia + arq.contadores.locales, modulos: arq.modulos.length })}
+            </p>
+            <button
+              onClick={exportarArchivo}
+              className="inline-flex shrink-0 items-center gap-1 rounded-sm border px-2 py-1 text-[9px] font-mono font-bold tracking-wider transition-colors"
+              style={{ borderColor: `${ACC}66`, color: ACC }}
+            >
+              <Download className="h-3 w-3" /> {archivoOk ? t("arqui117.archivo.ok") : t("arqui117.archivo.btn")}
+            </button>
+          </div>
+        )}
         {arq.obra.length === 0 ? (
           <p className="py-3 text-center font-mono text-[10px] text-muted-foreground">{t("arqui115.bitacora.vacia")}</p>
         ) : (

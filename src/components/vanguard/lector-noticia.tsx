@@ -19,7 +19,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShieldAlert, Clock, Copy, Check, Newspaper, Compass } from "lucide-react";
+import { X, ShieldAlert, Clock, Copy, Check, Newspaper, Compass, BrainCircuit } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { useCalma } from "@/lib/calma";
@@ -27,6 +27,10 @@ import { Flag } from "@/lib/flags";
 import { navigateTo } from "@/lib/nav";
 import type { TabKey } from "./tab-nav";
 import { PortadaNoticia } from "./portada-noticia";
+// v117.0 ATMÓSFERA: la NEURONA lee el cable — núcleo v4 determinista que
+// corre EN TU DISPOSITIVO (misma receta que el Monitor Global y la Mente:
+// rasgos → pesos → sigmoide → veredicto, reproducible en los 8 idiomas).
+import { evaluarNeuronal, type Sentimiento } from "@/lib/neurona-core";
 
 export interface CableLectura {
   id: string;
@@ -89,6 +93,32 @@ const ETIQUETA_TAG: Record<string, string> = {
   INFO: "INFORMACIÓN",
 };
 
+// v117 — color del sentimiento de la NEURONA (semáforo de la casa)
+const COLOR_SENTIMIENTO: Record<Sentimiento, string> = {
+  ESCALADA: "#FF6B5E",
+  TENSIÓN: "#FFC94D",
+  ESTABLE: "#34C759",
+  DÉTENTE: "#38BDF8",
+};
+
+function colorNivel(n: number): string {
+  return n >= 70 ? "#FF6B5E" : n >= 40 ? "#FFC94D" : "#34C759";
+}
+
+// barra de nivel de la NEURONA (ancho via width, sin re-render en vivo)
+function BarraNeurona({ etiqueta, valor }: { etiqueta: string; valor: number }) {
+  const c = colorNivel(valor);
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-20 shrink-0 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{etiqueta}</span>
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+        <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${Math.round(valor)}%`, background: c, boxShadow: `0 0 8px ${c}66` }} />
+      </div>
+      <span className="w-8 shrink-0 text-right font-mono text-[10px] font-bold tabular-nums" style={{ color: c }}>{Math.round(valor)}</span>
+    </div>
+  );
+}
+
 export function LectorNoticia({
   cable,
   onCerrar,
@@ -132,6 +162,10 @@ export function LectorNoticia({
   const cred = cable ? credibilidadDe(cable.source) : null;
   const salas = cable ? (SALAS_POR_TAG[(cable.tacticalTag || "").toUpperCase()] ?? ["redaccion", "verifica", "noticias"]) : [];
   const dominio = cable ? dominioDe(cable.url) : "";
+
+  // v117 LECTURA NEURONA: veredicto del núcleo v4 sobre el titular —
+  // determinista (misma semilla → mismo veredicto) y cero latencia.
+  const neurona = useMemo(() => (cable ? evaluarNeuronal(cable.title) : null), [cable]);
 
   // EL CONTEXTO VANGUARD: lo que la casa sabe del asunto — derivado del
   // propio cable (fuente, etiqueta, bandera), sin pedidos externos.
@@ -243,6 +277,36 @@ export function LectorNoticia({
                   ))}
                 </ul>
               </div>
+
+              {/* v117 LECTURA NEURONA — el núcleo v4 lee el cable en tu dispositivo */}
+              {neurona && (
+                <div className="rounded-md border p-3" style={{ borderColor: "#B48CFF44", background: "rgba(180,140,255,0.06)" }}>
+                  <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                    <p className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.3em] uppercase" style={{ color: "#B48CFF" }}>
+                      <BrainCircuit className="w-3.5 h-3.5" /> {t("lector117.neurona")}
+                    </p>
+                    <span className="rounded-sm px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-widest" style={{ border: `1px solid ${COLOR_SENTIMIENTO[neurona.sentimiento]}66`, color: COLOR_SENTIMIENTO[neurona.sentimiento], background: `${COLOR_SENTIMIENTO[neurona.sentimiento]}14` }}>
+                      {neurona.sentimiento}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <BarraNeurona etiqueta={t("lector117.riesgo")} valor={neurona.riesgo} />
+                    <BarraNeurona etiqueta={t("lector117.tension")} valor={neurona.tension} />
+                    <BarraNeurona etiqueta={t("lector117.confianza")} valor={neurona.confianza} />
+                  </div>
+                  <p className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{t("lector117.neuronas")}</span>
+                    {neurona.neuronasActivas.length > 0 ? (
+                      neurona.neuronasActivas.map((n) => (
+                        <span key={n} className="rounded-sm border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest text-foreground/80">{n}</span>
+                      ))
+                    ) : (
+                      <span className="font-mono text-[9px] text-muted-foreground">{t("lector117.ninguna")}</span>
+                    )}
+                  </p>
+                  <p className="mt-1.5 font-mono text-[8.5px] leading-relaxed text-muted-foreground/80">{t("lector117.sub")}</p>
+                </div>
+              )}
 
               {/* SALAS RELACIONADAS — el asunto te lleva a donde se vigila */}
               <div>
