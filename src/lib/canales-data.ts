@@ -1,7 +1,8 @@
 // v89.0 OPERACIÓN ESPEJO — MOTOR DE CANALES OSINT (espejo del agregador de
-// canales tipo Telegram que todo analista tiene abierto). 8 canales con
+// canales tipo Telegram que todo analista tiene abierto). 12 canales con
 // personalidad propia; los mensajes ENGANCHAN con los incidentes del motor de
 // PULSOS para que el ecosistema de información sea coherente entre salas.
+// v116.0 MEGALÓPOLIS: 4 NOTICIEROS nuevos de la casa — el ecosistema crece.
 
 import { generarPulsos, fnv89, horaCorta, type PulsoIncidente } from "./pulsos-data";
 
@@ -25,6 +26,11 @@ export const CANALES: CanalOSINT[] = [
   { id: "frontline", nombre: "FRENTE·CERO", handle: "@frontecero", emoji: "⚡", color: "#FF8A3D", subs: 98800, verificado: false, tipo: "SIN VERIFICAR" },
   { id: "sismografo", nombre: "Sismógrafo", handle: "@sismografo_g", emoji: "📊", color: "#4DFFC4", subs: 76200, verificado: true, tipo: "INSTITUCIONAL" },
   { id: "laberinto", nombre: "Laberinto Gris", handle: "@laberintogris", emoji: "🌀", color: "#FF4D6D", subs: 54300, verificado: false, tipo: "SIN VERIFICAR" },
+  // ── v116.0 MEGALÓPOLIS: los 4 NOTICIEROS nuevos de la casa ──
+  { id: "vg2100", nombre: "VANGUARD·2100 INFORMATIVO", handle: "@vg2100", emoji: "📺", color: "#FFC94D", subs: 512800, verificado: true, tipo: "INSTITUCIONAL" },
+  { id: "alertaroja", nombre: "ALERTA ROJA 24H", handle: "@alertaroja24", emoji: "🚨", color: "#FF3B30", subs: 341500, verificado: true, tipo: "INDEPENDIENTE" },
+  { id: "mareas", nombre: "Mareas Azules", handle: "@mareasazules", emoji: "🌊", color: "#38BDF8", subs: 187300, verificado: true, tipo: "INDEPENDIENTE" },
+  { id: "corresponsal", nombre: "El Corresponsal", handle: "@elcorresponsal_vg", emoji: "🎙️", color: "#E5E7EB", subs: 92400, verificado: false, tipo: "SIN VERIFICAR" },
 ];
 
 export interface MensajeCanal {

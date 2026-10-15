@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Newspaper, ExternalLink, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2 } from "lucide-react";
+import { Newspaper, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,8 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { TeletipoCinta, TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
 // v110.0 MATRIZ 2100 — PORTADA 3D garantizada en cada cable (nada vacío, nada plano)
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
+// v116.0 MEGALÓPOLIS — SALA DE LECTURA: los cables se leen DENTRO de Vanguard
+import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 
 interface NewsItem {
   id: string;
@@ -129,6 +131,8 @@ export function NewsPanel() {
     }
   });
   const [loading, setLoading] = useState(true);
+  // v116: la SALA DE LECTURA — el cable abierto dentro de la casa
+  const [lector, setLector] = useState<CableLectura | null>(null);
   const [source, setSource] = useState("");
   const [filter, setFilter] = useState<string>("ALL");
   const [commentOpen, setCommentOpen] = useState<string | null>(null);
@@ -205,9 +209,17 @@ export function NewsPanel() {
 
   const handleOpen = (item: NewsItem) => {
     recordViewNews(item.id);
-    if (item.url && item.url.startsWith("http")) {
-      window.open(item.url, "_blank", "noopener,noreferrer");
-    }
+    // v116: YA NO manda a otra página — abre la SALA DE LECTURA de la casa
+    setLector({
+      id: item.id,
+      title: item.title,
+      url: item.url,
+      source: item.source,
+      publishedAt: item.publishedAt,
+      tacticalTag: item.tacticalTag,
+      conflictTag: item.conflictTag ?? null,
+      sourceCountry: item.sourceCountry ?? null,
+    });
   };
 
   const submitComment = (id: string) => {
@@ -530,7 +542,7 @@ export function NewsPanel() {
                           <MessageSquare className="w-3 h-3" />
                           {commentsFor(item.id).length > 0 ? commentsFor(item.id).length : "comentar"}
                         </button>
-                        <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-amber" />
+                        <BookOpen className="w-3 h-3 text-muted-foreground group-hover:text-amber" aria-label="Leer en la sala de lectura" />
                       </div>
                     </div>
 
@@ -672,6 +684,9 @@ export function NewsPanel() {
           <p className="text-sm font-mono">Sin cables en este filtro</p>
         </div>
       )}
+
+      {/* v116: LA SALA DE LECTURA — el cable se lee aquí, no fuera */}
+      <LectorNoticia cable={lector} onCerrar={() => setLector(null)} />
     </div>
   );
 }

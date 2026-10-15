@@ -18,6 +18,8 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
+// v116 MEGALÓPOLIS — las regiones de la ciudad (skyline que rota a diario)
+import { REGIONES_CIUDAD } from "./megalopolis";
 
 export type VarianteEscena =
   | "orbita" | "noticias" | "red" | "radar" | "guerra" | "moneda"
@@ -394,28 +396,28 @@ function EscenaHangar({ acento }: { acento: string; rnd: () => number }) {
   );
 }
 
-function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const bloques = Array.from({ length: 15 }, (_, i) => ({ x: 16 + i * 26, w: 18, h: 30 + rnd() * 90 }));
-  // v111 HORA REAL: la ciudad vive según TU reloj — ventanas encendidas y luna
-  // de noche (19→7); sol y ventanas apagadas de día. SSR pinta la noche y el
-  // efecto corrige en vivo (hidratación sin salto).
-  // v115 SINGULARIDAD: la sombra también manda — el sol recorre el cielo con
-  // TU hora real y los bloques proyectan SU sombra en la acera (larga al alba,
-  // corta al mediodía); el sello muestra HH:MM reales, no teatro.
+function EscenaCiudad({ acento, semilla }: { acento: string; rnd: () => number; semilla?: number }) {
+  // v116 MEGALÓPOLIS: la skyline la dicta la REGIÓN del día (rota a diario);
+  // la semilla de la tarjeta desplaza la región para que no todas las salas
+  // muestren la misma ciudad. Cielo por FASE real (alba/día/ocaso/noche).
   const [reloj, setReloj] = useState({ h: 22, m: 47 });
+  const [region, setRegion] = useState(() => REGIONES_CIUDAD[2]);
   useEffect(() => {
     const pinta = () => {
       const d = new Date();
       // patrón legítimo: el reloj real solo se conoce en el cliente (v111 hora real)
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setReloj({ h: d.getHours(), m: d.getMinutes() });
+      const dia = Math.floor((d.getTime() - Date.UTC(d.getFullYear(), 0, 0)) / 86_400_000);
+      setRegion(REGIONES_CIUDAD[(dia + (semilla ?? 0)) % REGIONES_CIUDAD.length]);
     };
     pinta();
     const iv = setInterval(pinta, 60_000); // el sol anda 0.25°/min — 1 repintado/min basta
     return () => clearInterval(iv);
-  }, []);
+  }, [semilla]);
   const { h, m } = reloj;
   const noche = h >= 19 || h < 7;
+  const fase = noche ? "noche" : h >= 17 ? "ocaso" : h >= 7 && h + m / 60 < 8 ? "alba" : "dia";
   // posición del sol: 6h sale por la izquierda (x=20), 18h se pone a la derecha (x=380)
   const tDia = Math.max(0, Math.min(1, (h + m / 60 - 6) / 12));
   const solX = 20 + tDia * 360;
@@ -426,13 +428,26 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
   const sombraDir = solX < 200 ? 1 : -1; // sol a la izquierda → sombras a la derecha
   const hh = String(h).padStart(2, "0");
   const mm = String(m).padStart(2, "0");
+  // skyline de la REGIÓN: 14 lotes con altura 0..1 → escala real del marco
+  const bloques = region.perfil.map((hh2, i) => ({ x: 16 + i * 26, w: 18, h: 18 + hh2 * 104 }));
+  // cielo por fase: de noche profundo, de día un azul tech (la ciudad de 2100 nunca es postal plana)
+  const cieloAlto = fase === "noche" ? "#05050c" : fase === "alba" ? "#141032" : fase === "ocaso" ? "#1c1440" : "#16345e";
+  const cieloHoriz = fase === "noche" ? `${region.acc2}16` : fase === "alba" ? "#7a3a52" : fase === "ocaso" ? "#8a3a2a" : "#3a6a9a";
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id={`vg116-cielo-${region.id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={cieloAlto} />
+            <stop offset="100%" stopColor={cieloHoriz} stopOpacity="0.55" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="400" height="220" fill={`url(#vg116-cielo-${region.id})`} />
         {noche ? (
           <>
-            <circle cx="330" cy="46" r="20" fill={acento} opacity="0.16" />
-            <circle cx="330" cy="46" r="20" fill="none" stroke={acento} strokeOpacity="0.4" />
+            {/* la luna recorre SU arco real (v116): nace a la derecha, muere a la izquierda */}
+            <circle cx={370 - tNoche(h, m) * 340} cy={40 + Math.abs(tNoche(h, m) - 0.5) * 30} r="17" fill={acento} opacity="0.16" />
+            <circle cx={370 - tNoche(h, m) * 340} cy={40 + Math.abs(tNoche(h, m) - 0.5) * 30} r="17" fill="none" stroke={acento} strokeOpacity="0.4" />
           </>
         ) : (
           <>
@@ -446,6 +461,10 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
             ))}
           </>
         )}
+        {/* v116: silueta lejana de la región — profundidad de metrópoli */}
+        {region.perfil.map((hh2, i) => (
+          <rect key={`f${i}`} x={8 + i * 28} y={190 - (12 + hh2 * 60)} width={16} height={12 + hh2 * 60} fill={cieloAlto} stroke={region.acc2} strokeOpacity="0.22" strokeWidth="0.6" />
+        ))}
         {bloques.map((b, i) => (
           <g key={i}>
             {/* v115: la SOMBRA REAL del bloque en la acera — geometría por hora */}
@@ -456,6 +475,18 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
               />
             )}
             <rect x={b.x} y={190 - b.h} width={b.w} height={b.h} fill="rgba(255,255,255,0.03)" stroke={acento} strokeOpacity="0.4" strokeWidth="0.8" />
+            {region.mojon === "domos" && b.h > 80 && (
+              <path d={`M ${b.x} ${190 - b.h} a 9 7 0 0 1 18 0`} fill="none" stroke={region.acc2} strokeOpacity="0.8" strokeWidth="0.9" />
+            )}
+            {region.mojon === "grua" && b.h > 100 && i % 4 === 1 && (
+              <g stroke={region.acc2} strokeOpacity="0.85" strokeWidth="1">
+                <line x1={b.x + b.w / 2} y1={190 - b.h} x2={b.x + b.w / 2} y2={190 - b.h - 12} />
+                <line x1={b.x + b.w / 2 - 8} y1={190 - b.h - 10} x2={b.x + b.w / 2 + 12} y2={190 - b.h - 10} />
+              </g>
+            )}
+            {region.mojon === "letreos" && b.h > 90 && i % 3 === 0 && (
+              <rect x={b.x + 6} y={190 - b.h + 5} width={b.w - 12} height="4" fill={region.acc2} className="v110-ventana" style={{ animationDelay: `${i * 0.4}s` }} />
+            )}
             {Array.from({ length: Math.floor(b.h / 14) }, (_, f) => (
               <rect key={f} x={b.x + 4} y={190 - b.h + 6 + f * 12} width="4" height="5" fill={acento} className="v110-ventana"
                 style={{ opacity: noche ? undefined : 0.14, animationDelay: `${(i * 3 + f) * 0.35 % 6}s` }} />
@@ -467,12 +498,25 @@ function EscenaCiudad({ acento, rnd }: { acento: string; rnd: () => number }) {
       </svg>
       <span
         className="absolute top-2 left-2 font-mono text-[8px] tracking-[0.3em] opacity-60"
+        style={{ color: region.acc2 }}
+      >
+        {region.nombre}
+      </span>
+      <span
+        className="absolute top-2 right-2 font-mono text-[8px] tracking-[0.3em] opacity-60"
         style={{ color: acento }}
       >
-        {noche ? `${hh}:${mm} · NOCHE REAL` : `${hh}:${mm} · DÍA REAL · SOL ${Math.round(alturaDia * 100)}%`}
+        {noche ? `${hh}:${mm} · NOCHE REAL` : `${hh}:${mm} · ${fase === "alba" ? "ALBA" : fase === "ocaso" ? "OCASO" : "DÍA"} · SOL ${Math.round(alturaDia * 100)}%`}
       </span>
     </div>
   );
+}
+
+// fracción de la noche recorrida 0..1 (la luna viaja de 19h a 7h)
+function tNoche(h: number, m: number): number {
+  const hm = h + m / 60;
+  const t = hm >= 19 ? (hm - 19) / 12 : (hm + 5) / 12;
+  return Math.max(0, Math.min(1, t));
 }
 
 function EscenaPrisma({ acento }: { acento: string; rnd: () => number }) {
@@ -495,7 +539,7 @@ function EscenaPrisma({ acento }: { acento: string; rnd: () => number }) {
 
 // ---------- RENDER DE VARIANTE ----------
 function cuerpoDe(variante: VarianteEscena, acento: string, semilla: number): ReactNode {
-  const rnd = mulberry(semilla);
+  const rnd = mulberry(semilla + 1);
   switch (variante) {
     case "orbita": return <EscenaOrbita acento={acento} rnd={rnd} />;
     case "noticias": return <EscenaNoticias acento={acento} rnd={rnd} />;
@@ -510,7 +554,7 @@ function cuerpoDe(variante: VarianteEscena, acento: string, semilla: number): Re
     case "onda": return <EscenaOnda acento={acento} rnd={rnd} />;
     case "camaras": return <EscenaCamaras acento={acento} rnd={rnd} />;
     case "hangar": return <EscenaHangar acento={acento} rnd={rnd} />;
-    case "ciudad": return <EscenaCiudad acento={acento} rnd={rnd} />;
+    case "ciudad": return <EscenaCiudad acento={acento} rnd={rnd} semilla={semilla} />;
     default: return <EscenaPrisma acento={acento} rnd={rnd} />;
   }
 }

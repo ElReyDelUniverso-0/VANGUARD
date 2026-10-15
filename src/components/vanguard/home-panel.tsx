@@ -8,7 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Castle, Radar, Rocket, Swords, Joystick, Fingerprint, Coins, TrendingUp,
-  Newspaper, ChevronRight, Menu, Clock, Zap, ExternalLink, ShieldAlert, Gift,
+  Newspaper, ChevronRight, Menu, Clock, Zap, ShieldAlert, Gift, BookOpen,
+  SignalHigh,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
   Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass,
@@ -25,6 +26,10 @@ import { ManifiestoMundo } from "@/components/vanguard/panels/empleos-panel";
 import type { TabKey } from "@/components/vanguard/tab-nav";
 // v110.0 MATRIZ 2100 — escenas 3D procedurales (nada plano, nada IA)
 import { Escena3D, escenaDePanel, hashDe } from "@/components/vanguard/escenas-3d";
+// v116.0 MEGALÓPOLIS — SALA DE LECTURA: los cables se leen DENTRO de Vanguard
+import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+// v116.0 — portada 3D viva para el héroe (adiós al <img> plano)
+import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
 
 interface NewsItem {
   id: string;
@@ -35,6 +40,7 @@ interface NewsItem {
   publishedAt: string;
   tacticalTag: string | null;
   conflictTag: string | null;
+  sourceCountry?: string | null;
 }
 
 const TAG_HEX: Record<string, string> = {
@@ -164,6 +170,8 @@ export function HomePanel() {
   const [clock, setClock] = useState("");
   const [typed, setTyped] = useState("");
   const [crisisIn, setCrisisIn] = useState("");
+  // v116: la SALA DE LECTURA — el cable abierto dentro de la casa
+  const [lector, setLector] = useState<CableLectura | null>(null);
 
   // tensión mundial = intensidad media de los conflictos activos
   const tension = useMemo(
@@ -186,7 +194,7 @@ export function HomePanel() {
         .then((data) => {
           if (!alive) return;
           if (Array.isArray(data.items) && data.items.length > 0) {
-            const top = data.items.slice(0, 12);
+            const top = data.items.slice(0, 20); // v116: más señales en la portada (héroe + 4 + 8 + reserva)
             setItems(top);
             setNewsOffline(false);
             try {
@@ -281,13 +289,26 @@ export function HomePanel() {
     return () => clearInterval(t);
   }, [headlines]);
 
+  // v116: abrir un cable YA NO manda a otra página — se lee en la SALA DE
+  // LECTURA de Vanguard (mandato: "que no te mande a otras páginas")
   const openNews = (n: NewsItem) => {
     recordViewNews(n.id);
-    if (n.url?.startsWith("http")) window.open(n.url, "_blank", "noopener,noreferrer");
+    setLector({
+      id: n.id,
+      title: n.title,
+      url: n.url,
+      source: n.source,
+      publishedAt: n.publishedAt,
+      tacticalTag: n.tacticalTag,
+      conflictTag: n.conflictTag,
+      sourceCountry: n.sourceCountry ?? null,
+    });
   };
 
   const hero = items[0];
   const secondary = items.slice(1, 5);
+  // v116: MÁS SEÑALES — 8 cables adicionales en la portada (más noticieros)
+  const senales = items.slice(5, 13);
 
   return (
     <div className="space-y-5">
@@ -441,22 +462,12 @@ export function HomePanel() {
               className="hud-corner p-4 bg-secondary/40 border-l-2 flex flex-col justify-between min-h-[180px] relative overflow-hidden"
               style={{ borderLeftColor: TAG_HEX[hero.tacticalTag ?? "INFO"] }}
             >
-              {hero.imageUrl && (
-                <div className="relative h-40 sm:h-52 rounded-sm overflow-hidden mb-3 border border-border/50 bg-black/40">
-                  { }
-                  <img
-                    src={hero.imageUrl}
-                    alt=""
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent" />
-                </div>
-              )}
+              {/* v116: la portada del héroe es una escena 3D VIVA derivada del
+                  propio cable — cero <img>, cero píxeles externos (mandato) */}
+              <div className="relative h-40 sm:h-52 rounded-sm overflow-hidden mb-3 border border-border/50 bg-black/40">
+                <PortadaNoticia id={hero.id} tag={hero.tacticalTag} className="absolute inset-0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent pointer-events-none" />
+              </div>
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <span
@@ -486,7 +497,7 @@ export function HomePanel() {
                   onClick={() => openNews(hero)}
                   className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest px-2.5 py-1.5 border border-amber-hud rounded-sm text-amber hover:bg-amber-hud/30 transition-colors"
                 >
-                  Abrir <ExternalLink className="w-3 h-3" />
+                  Leer en la sala <BookOpen className="w-3 h-3" />
                 </button>
               </div>
             </motion.article>
@@ -505,17 +516,8 @@ export function HomePanel() {
                   <div className="flex items-start gap-2.5">
                     {n.imageUrl ? (
                       <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 overflow-hidden border border-border/60 bg-secondary">
-                        { }
-                        <img
-                          src={n.imageUrl}
-                          alt=""
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
+                        {/* v116: miniatura 3D viva — nada de imágenes planas */}
+                        <PortadaNoticia id={n.id} tag={n.tacticalTag} className="w-full h-full" />
                       </div>
                     ) : (
                       <span
@@ -559,6 +561,48 @@ export function HomePanel() {
           </div>
         )}
       </div>
+
+      {/* ====== v116 MÁS SEÑALES — más noticieros en la portada, todo dentro ====== */}
+      {senales.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2">
+              <SignalHigh className="w-4 h-4 text-electric" />
+              <h2 className="font-display text-sm font-bold tracking-widest uppercase text-gradient">
+                Más señales
+              </h2>
+              <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest hidden sm:inline">
+                8 cables más · se leen dentro de Vanguard
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            {senales.map((n, i) => (
+              <motion.button
+                key={n.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: Math.min(i * 0.05, 0.4) }}
+                onClick={() => openNews(n)}
+                className="text-left hud-panel card-shine p-3 hover:border-electric-hud transition-colors group"
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0 blink-soft" style={{ background: TAG_HEX[n.tacticalTag ?? "INFO"] }} />
+                  <span className="text-[8.5px] font-mono uppercase tracking-widest text-muted-foreground truncate">
+                    {n.source} · {timeAgo(n.publishedAt)}
+                  </span>
+                </div>
+                <div className="text-[11.5px] leading-snug text-foreground/85 line-clamp-3 group-hover:text-foreground">
+                  {n.title}
+                </div>
+                <div className="mt-2 flex items-center gap-1 text-[9px] font-mono uppercase tracking-widest font-bold" style={{ color: TAG_HEX[n.tacticalTag ?? "INFO"] }}>
+                  Leer <BookOpen className="w-3 h-3" />
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ====== PACK DE LANZAMIENTO ====== */}
       {!launchPackClaimed && (
@@ -731,6 +775,10 @@ export function HomePanel() {
           </div>
         </button>
       </div>
+
+      {/* v116: LA SALA DE LECTURA — el cable abierto dentro de la casa,
+          nunca una pestaña externa (mandato del comandante) */}
+      <LectorNoticia cable={lector} onCerrar={() => setLector(null)} />
     </div>
   );
 }

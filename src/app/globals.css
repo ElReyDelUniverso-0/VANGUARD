@@ -2821,3 +2821,36 @@ span.v108-onda { transform-origin: center; }
 @media (prefers-reduced-motion: reduce) {
   .v114-glitch { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   v116.0 MEGALÓPOLIS — la ciudad del inicio con regiones.
+   Meteoro nocturno, nubes de día, reflejo de calle y la carga
+   de la grúa del puerto. SOLO transform/opacity (60 FPS);
+   reduced-motion apaga todo el tráfico atmosférico.
+   ════════════════════════════════════════════════════════════ */
+.v116-meteoro {
+  width: 46px; height: 1.5px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.95), transparent);
+  border-radius: 1px;
+  transform: rotate(-24deg);
+  animation: v116Meteoro 7s ease-in infinite;
+  animation-delay: 2.2s;
+  opacity: 0;
+}
+@keyframes v116Meteoro {
+  0%, 78% { transform: translate(0,0) rotate(-24deg); opacity: 0; }
+  80% { opacity: 0.95; }
+  92% { transform: translate(-120px, 54px) rotate(-24deg); opacity: 0; }
+  100% { opacity: 0; }
+}
+.v116-nube { animation: v116Nube 34s linear infinite; }
+@keyframes v116Nube { from { transform: translateX(-12%); } to { transform: translateX(120%); } }
+.v116-reflejo { animation: v116Reflejo 5.5s ease-in-out infinite; }
+@keyframes v116Reflejo { 0%,100% { transform: translateX(0) scaleX(1); opacity: 0.75; } 50% { transform: translateX(8px) scaleX(1.12); opacity: 0.4; } }
+.v116-carga { animation: v116Carga 6.5s ease-in-out infinite; }
+@keyframes v116Carga { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .v116-meteoro, .v116-nube, .v116-reflejo, .v116-carga { animation: none !important; }
+  .v116-meteoro { opacity: 0 !important; }
+}

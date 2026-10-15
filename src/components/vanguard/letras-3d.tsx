@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-export type MaterialLetra = "holo" | "neon" | "cromo" | "matriz" | "brasa" | "vidrio" | "oro" | "glitch";
+export type MaterialLetra = "holo" | "neon" | "cromo" | "matriz" | "brasa" | "vidrio" | "oro" | "glitch" | "plasma" | "aurora" | "titanio";
 
 export const MATERIALES_LETRA: { id: MaterialLetra; clave: string }[] = [
   { id: "holo", clave: "exp113.m.holo" },
@@ -36,6 +36,9 @@ export const MATERIALES_LETRA: { id: MaterialLetra; clave: string }[] = [
   { id: "vidrio", clave: "exp114.m.vidrio" },  // v114
   { id: "oro", clave: "exp114.m.oro" },        // v114
   { id: "glitch", clave: "exp114.m.glitch" },  // v114
+  { id: "plasma", clave: "exp116.m.plasma" },  // v116
+  { id: "aurora", clave: "exp116.m.aurora" },  // v116
+  { id: "titanio", clave: "exp116.m.titanio" }, // v116
 ];
 
 // el alfabeto vivo del material MATRIZ (glifos que respiran)
@@ -122,6 +125,31 @@ const PALETAS: Record<MaterialLetra, PaletaMaterial> = {
     recorte: true,
     desvio: (i) => (i % 2 === 0 ? -1.7 : 1.7) * Math.ceil(i / 2),
     temblor: true,
+  },
+  // ── v116.0 MEGALÓPOLIS — los 3 materiales de la ciudad viva ──
+  plasma: {
+    // PLASMA: energía ionizada — cara blanca-quemada, capas magenta/violeta
+    // y un halo doble que respira como una bobina (pulso por text-shadow)
+    frente: () => "linear-gradient(180deg, #ffffff 0%, #ffd6f4 30%, #ff5edb 58%, #8a2be2 100%)",
+    capa: (_acc, i) => `color-mix(in srgb, ${i % 2 === 0 ? "#ff5edb" : "#8a2be2"} ${Math.max(24, 68 - i * 9)}%, #0c0416)`,
+    brillo: () => "0 0 8px rgba(255,94,219,0.9), 0 0 22px rgba(255,94,219,0.55), 0 0 44px rgba(138,43,226,0.45)",
+    recorte: true,
+  },
+  aurora: {
+    // AURORA: boreal en volumen — la cara viaja verde→cian→violeta y las
+    // capas interiores alternan el velo polar (cada capa un tramo del cielo)
+    frente: () => "linear-gradient(165deg, #eafff8 0%, #7dffd4 24%, #35e8b8 44%, #7a5aff 74%, #c44dff 100%)",
+    capa: (_acc, i) => `color-mix(in srgb, ${i % 3 === 0 ? "#35e8b8" : i % 3 === 1 ? "#7a5aff" : "#c44dff"} ${Math.max(20, 60 - i * 8)}%, #041018)`,
+    brillo: () => "0 0 14px rgba(53,232,184,0.55), 0 0 30px rgba(122,90,255,0.40), 0 2px 0 rgba(0,0,0,0.8)",
+    recorte: true,
+  },
+  titanio: {
+    // TITANIO: el metal del casco — gris oscuro con filo de luz frío,
+    // capas que se apagan hacia el núcleo (blindaje de la casa)
+    frente: () => "linear-gradient(180deg, #f8fafc 0%, #c8d0dc 30%, #7a8698 55%, #b8c2d2 78%, #eef2f8 100%)",
+    capa: (_acc, i) => `color-mix(in srgb, #5a6578 ${Math.max(30, 80 - i * 10)}%, #0a0d12)`,
+    brillo: () => "0 1px 0 rgba(255,255,255,0.6), 0 0 16px rgba(160,180,205,0.35), 0 8px 22px rgba(0,0,0,0.6)",
+    recorte: true,
   },
 };
 

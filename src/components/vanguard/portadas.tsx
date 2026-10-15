@@ -11,6 +11,9 @@
 import { cn } from "@/lib/utils";
 import { accentOfSection, sectionOfTab, TABS, type TabKey } from "./tab-nav";
 import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
+// v116.0 MEGALÓPOLIS — la ciudad del inicio rota de región y vive el
+// ciclo día/noche REAL (sol, luna, estrellas y ventanas obedecen a TU hora)
+import { CiudadInicio } from "./megalopolis";
 
 export type MundoKey =
   | "nueva" | "inicio" | "hangar" | "inteligencia" | "juego" | "mercado"
@@ -104,34 +107,12 @@ function Skyline({ acc, alto = "38%" }: { acc: string; alto?: string }) {
 // ---------- LAS 15 ESCENAS (una por mundo) ----------
 
 function EscenaInicio({ acc }: { acc: string }) {
-  return (
-    <>
-      <Cielo acc={acc} lunaX={78} lunaY={18} lunaR={14} />
-      <Skyline acc={acc} alto="42%" />
-      {/* la puerta dorada de la ciudadela: arco + rombo de Vanguard */}
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-24 sm:w-32 h-[58%]" aria-hidden>
-        <div
-          className="absolute inset-x-0 bottom-0 top-0 rounded-t-full border-2"
-          style={{ borderColor: `${acc}AA`, background: `linear-gradient(180deg, ${acc}1E, rgba(8,8,13,0.92) 72%)`, boxShadow: `0 0 34px -6px ${acc}77, inset 0 0 24px -8px ${acc}55` }}
-        />
-        <div
-          className="absolute left-1/2 top-[26%] -translate-x-1/2 w-4 h-4 rotate-45"
-          style={{ background: acc, boxShadow: `0 0 16px ${acc}` }}
-        />
-        <Ventanas n={7} acc={acc} top="46%" h={999} />
-      </div>
-      {/* banderas a los lados */}
-      {[18, 82].map((x, i) => (
-        <div key={i} className="absolute bottom-0" style={{ left: `${x}%` }} aria-hidden>
-          <div className="w-px h-10" style={{ background: `${acc}88` }} />
-          <div
-            className="v108-onda absolute top-0 left-0 w-5 h-3"
-            style={{ background: `linear-gradient(90deg, ${acc}, ${acc}55)`, clipPath: "polygon(0 0, 100% 12%, 92% 100%, 0 88%)", transformOrigin: "left" }}
-          />
-        </div>
-      ))}
-    </>
-  );
+  // v116.0 MEGALÓPOLIS: la ciudad del inicio ya no es una postal nocturna
+  // fija — rota de REGIÓN cada día (Núcleo Cromo, Distrito Neón, Meseta
+  // Solar, Puerto Abierto, Jardines Verticales, Ciudadela) y vive el
+  // ciclo día/noche EN TIEMPO REAL: sol, luna, meteoros y ventanas que
+  // obedecen a la luz de tu reloj. Tres capas de volumen 3D.
+  return <CiudadInicio acc={acc} />;
 }
 
 function EscenaHangar({ acc }: { acc: string }) {

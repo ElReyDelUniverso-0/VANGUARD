@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v116.0",
+    nombre: "MEGALÓPOLIS",
+    tipo: "mundo",
+    hitos: [
+      "MEGALÓPOLIS: la ciudad del INICIO rota de REGIÓN cada día (Núcleo Cromo, Distrito Neón, Meseta Solar, Puerto Abierto, Jardines Verticales, Ciudadela Vanguard) — cada región con su propia skyline, mojón y color, en 3 capas de volumen 3D que se inclinan contigo",
+      "CICLO DÍA/NOCHE EN TIEMPO REAL: el cielo vive TU hora — noche profunda, alba, día pleno y ocaso interpolados minuto a minuto; sol y luna recorren su arco real, las estrellas y las ventanas obedecen a la luz, hay meteoros de noche y nubes de día",
+      "SALA DE LECTURA: ningún cable te manda ya fuera de Vanguard — todo se lee DENTRO (portada 3D viva, credibilidad de fuente, bandera, EL CONTEXTO VANGUARD y salas relacionadas); la fuente original queda como nota al pie, sin enlaces",
+      "MÁS NOTICIEROS: 4 canales nuevos (VANGUARD·2100 INFORMATIVO, ALERTA ROJA 24H, Mareas Azules, El Corresponsal) y la fila MÁS SEÑALES con 8 cables más en la portada",
+      "3 MATERIALES NUEVOS en la FORJA: PLASMA (energía ionizada), AURORA (boreal en volumen) y TITANIO (el blindaje de la casa) — 11 materiales en total",
+      "CERO IMÁGENES PLANAS: el héroe de INICIO y las miniaturas de los cables son ahora escenas 3D vivas derivadas del propio cable (PortadaNoticia) — adiós al <img> de la portada",
+    ],
+  },
+  {
     version: "v115.0",
     nombre: "SINGULARIDAD",
     tipo: "ia",

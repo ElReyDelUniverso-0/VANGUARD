@@ -248,10 +248,18 @@ export async function GET(req: Request) {
   }
   try {
     // 1) Cache-first: return cached news immediately if any cache exists
-    const cached = await db.newsItem.findMany({
-      orderBy: { publishedAt: "desc" },
-      take: 48,
-    });
+    // v116 FIX: la lectura de caché va BLINDADA — si la BD no responde, la
+    // ruta cae al camino GDELT/curated en vez de morir con 500 (v116 QA local
+    // lo cazó con la BD local caída: 500 crudo sin fallback).
+    let cached: Awaited<ReturnType<typeof db.newsItem.findMany>> = [];
+    try {
+      cached = await db.newsItem.findMany({
+        orderBy: { publishedAt: "desc" },
+        take: 48,
+      });
+    } catch (e) {
+      console.error("news cache read failed (db down), falling to GDELT/curated", e);
+    }
     const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
     const hasFresh = cached.length > 0 && cached[0].createdAt > thirtyMinAgo;
 
@@ -345,6 +353,33 @@ export async function GET(req: Request) {
     }
 
     items.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+    // v116 FIX: si la BD está caída los upserts mueren en silencio y la casa
+    // se quedaría SIN noticias. Última línea de defensa: servir los artículos
+    // en crudo (GDELT o curados) sin persistencia — la casa nunca calla.
+    if (items.length === 0 && allArticles.length > 0) {
+      return NextResponse.json({
+        items: allArticles.slice(0, 30).map((a, i) =>
+          withFallbackImage(
+            {
+              id: a.url,
+              externalId: a.url,
+              title: a.title,
+              url: a.url.startsWith("http") ? a.url : "#",
+              source: a.domain ?? "vanguard-cmd",
+              imageUrl: a.socialimage ?? null,
+              publishedAt: parseGdeltDate(a.seendate),
+              language: a.language ?? "es",
+              conflictTag: conflictTag(a.title),
+              tacticalTag: classifyTag(a.title),
+              sourceCountry: guessCountry(a.title, a.sourcecountry),
+              createdAt: new Date(),
+            },
+            i
+          )
+        ),
+        source: articles.length > 0 ? "GDELT" : "CURATED",
+      });
+    }
     return NextResponse.json({
       items: items.slice(0, 30).map((it, i) => withFallbackImage(withCuratedImage(it), i)),
       source: articles.length > 0 ? "GDELT" : "CURATED",

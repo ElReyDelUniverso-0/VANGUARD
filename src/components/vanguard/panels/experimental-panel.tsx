@@ -299,6 +299,7 @@ export function ExperimentalPanel() {
       holo: ["#9BE8FF", "#4FA9D8"], neon: ["#FF7EDB", "#B4318C"], cromo: ["#F4F7FB", "#8A97A8"],
       matriz: ["#B7FFD8", "#1F8F5A"], brasa: ["#FFD98A", "#C2451E"], vidrio: ["#D8F4FF", "#7AB8D8"],
       oro: ["#FFE27A", "#A8720A"], glitch: ["#FF5EDB", "#39E5FF"],
+      plasma: ["#FF8AE4", "#8A2BE2"], aurora: ["#7DFFD4", "#7A5AFF"], titanio: ["#E8EEF6", "#5A6578"], // v116
     };
     const [c1, c2] = TINTA[conf.material];
     ctx.fillStyle = "#05070a";
