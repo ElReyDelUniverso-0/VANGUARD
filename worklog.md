@@ -1522,3 +1522,23 @@ Stage Summary:
 - La IA compañera tiene 2 rutas: (a) git clone con token de CREDENCIALES-GITHUB.md, o (b) zip directo VANGUARD-COMPANERO-IA.zip.
 - Única credencial real del proyecto: PAT de GitHub (embebida en .git/config). .env solo tiene DATABASE_URL SQLite local; sin Telegram, sin más secretos.
 - v79.0 «GRAN SALTO 3D» sigue pendiente de ejecución, backlog cerrado en AGENTS.md §7.
+
+---
+Task ID: 2
+Agent: main (Super Z)
+Task: Guía súper detallada para dar VANGUARD a una IA compañera, nivel principiante sin experiencia GitHub (petición: "dame una guía más detallada para darle a la ia, no tengo experiencia ej github")
+
+Work Log:
+- Routed a PDF Creative Flow (guía/manual). Leídos SKILL.md + brief creative-flow + fonts/overflow/palette/typography/pagination.
+- Outline 11 secciones confirmado. Generado download/guia-ia-companera.html (720×1020, paleta navy una familia, Inter/Space Grotesk con fallback Carlito; Google Fonts sin red → fallbacks embebidos OK).
+- Validación check-html: falsos positivos resueltos → divisores de capítulo integrados como background-image del header (Pass 1 texto↔línea: LIMPIO); Pass 2 solo celdas de tabla adyacentes y span anidado (falsos positivos estructurales, tool cover_validate es cover-only según SKILL.md).
+- Decoración de portada/cierre convertida de divs con offsets negativos a radial-gradients de fondo (elimina desbordamiento y el auto-removal de overflow:hidden).
+- Corregido bug de paginación: label de MENSAJE 1 huérfano + vacío oscuro (body bg oscuro visible) → body bg = claro (cover px-exacta 720×1020 lo tapa sin sub-pixel) + 4 grupos .msg-group con break-inside:avoid (label+copybox indivisibles).
+- pagedjs instalado vía bun en skills/pdf/scripts. PDF final: 14 págs, 590 KB, vectorial, ~3.879 palabras, 2 tablas, 0 caracteres corruptos, 0 filtraciones de token.
+- Metadata Title/Author/Creator/Subject + pdf_qa --no-tables: PASS completo.
+
+Stage Summary:
+- Entregables: download/guia-ia-companera.pdf (14 págs) + guia-ia-companera.html (fuente editable).
+- Contenido: kit de 3 archivos, diccionario con analogías, RUTA 1 (ZIP, 5 pasos), RUTA 2 (GitHub, 5 pasos), 4 mensajes copiables listos (arranque, GitHub, nueva orden, informe), 5 preguntas de supervisión, seguridad del token, 7 problemas/soluciones, chuleta del primer día.
+- El usuario no necesita crear nada: cuenta/repo/token ya existen; guía enfocada en copiar-pegar.
+- v79.0 GRAN SALTO 3D sigue pendiente de arranque (backlog en AGENTS.md §7).
