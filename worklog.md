@@ -1542,3 +1542,25 @@ Stage Summary:
 - Contenido: kit de 3 archivos, diccionario con analogías, RUTA 1 (ZIP, 5 pasos), RUTA 2 (GitHub, 5 pasos), 4 mensajes copiables listos (arranque, GitHub, nueva orden, informe), 5 preguntas de supervisión, seguridad del token, 7 problemas/soluciones, chuleta del primer día.
 - El usuario no necesita crear nada: cuenta/repo/token ya existen; guía enfocada en copiar-pegar.
 - v79.0 GRAN SALTO 3D sigue pendiente de arranque (backlog en AGENTS.md §7).
+
+---
+Task ID: 3
+Agent: main (Super Z)
+Task: v120.0 «GRAN SALTO 3D» — ejecutar el backlog aprobado (petición: "Okey si a todo" + "Sigue")
+
+Work Log:
+- DIAGNÓSTICO RAÍZ: /api/health devolvía db:"down" — prisma/schema.prisma quedó en provider "postgresql" (herencia v30 Supabase) mientras .env apunta al SQLite local db/custom.db. Ese desajuste mantenía la BD muerta (noticias curadas, perfiles y semillas sin servir). Cambiado a "sqlite" (38 modelos, sin enums/arrays escalares — compatible) + bun run db:push (30 ms) + reinicio → db:"up".
+- CIUDAD HERO (nuevo src/components/vanguard/ciudad-hero.tsx): la CiudadInicio de la MEGALÓPOLIS (v116/v117) reina ahora en la portada del INICIO (h-252/332) sustituyendo al OcasoBanner estático de v71. Cielo real según el reloj del visitante, región del día con su mojón, clima real vía /api/meteo, chips CLIMA/REGIÓN/SONIDO/FASE. Botón GIRAR REGIÓN (lucide RotateCw) que despacha "vanguard:rotar-region" → crossfade de 2.4 s. page.tsx: import + swap en tab inicio.
+- LETRAS 3D: el título de la casa se renderiza con TituloLetras3D material "brasa" (identidad dorada), 7 capas de extrusión, entrada letra a letra, tilt por Motor3D, reduced-motion respetado (8 letras = 8 spans de glifo).
+- /api/news: +8 cables curados (curated-13..20) usando las 12 fotos reales que estaban sin usar (ship-2, sub-1, desert-1, heli-1, missile-1, jet-2, wall-1, fire-2) — CURATED_COUNTRY ampliado a 20 entradas.
+- canales-data.ts: +4 noticieros (HORIZONTE 7, Mesa Roja de Redacción, Sexto Constelada, Vientos del Norte) → red OSINT de 20 canales; el generador de mensajes los consume genéricamente.
+- i18n: scripts/gen_i18n_v120.mjs (guard anti-doble-corrida, ancla exp116.m.titanio ×8 bloques es/en/pt/fr/de/it/zh/ru) — 3 claves nuevas (ciudad120.girar/girarHint/lema) ×8 = 24 inserciones.
+- version.ts → v120.0 · GRAN SALTO 3D; bitacora.ts con entrada de 5 hitos; AGENTS.md actualizado (versión + §7 marcado ejecutado).
+- QA EN VIVO (agent-browser 1440×900 y 390×844): héroe montado (hero:true, 8 letras), lema y botón EN/ES correctos (la casa auto-detectó EN y las claves respondieron), giro real DISTRITO NEÓN → MESETA SOLAR, móvill 366 px gutter 12 overflowX:false, noticias (48 cables + última hora), ojodios (globo + signos vitales; badge NO SIGNAL = socket :3003 ausente en este entorno, panel degrada bien), camaras (globo de despliegue sin errores). Capturas: download/qa-v120-ciudad-hero.png, qa-v120-noticias.png, qa-v120-ojodios.png, qa-v120-movil.png.
+- bun run build VERDE · lint 76 problemas (22 err/54 warn) = baseline exacto, cero nuevos · consola: solo nota benigna de hidratación preexistente.
+- COMMIT 1a24e3b → push a main (08f9da1..1a24e3b).
+
+Stage Summary:
+- v120.0 GRAN SALTO 3D en producción local y en GitHub. Las 3 secciones que el dueño reportó rotas (noticias, Vista Dios, cámaras) responden; la causa raíz de "noticias no carga" era la BD caída por el desajuste de provider.
+- La portada abre con la ciudad viva (día/noche real, región rotativa a mano y sola cada día, clima del planeta) y VANGUARD en letras 3D volumétricas.
+- Pendiente sugerido para la próxima ronda (v121): mini-ciudad 3D dentro de cámaras-panel, intel del Espejo/Briefing, exportar crono de localidad como PNG (ideas v120 que ya apuntaban v119).
