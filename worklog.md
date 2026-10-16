@@ -1504,3 +1504,21 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v119.0 CRONOTEATRO. El teatro del Karsk ya es una CRÓNICA VIVA: el cielo decide la guerra (cada clima multiplica o corta artillería, drones, convoyes y bajas con sus factores a la vista), la nieve se acumula día tras día, tocar cualquier localidad cuenta SU historia de 21 días con quién la tuvo, cuántas veces cambió de mano y qué despachos la nombraron, el parte se ESCUCHA con la voz de la casa (es-ES, respeta el MUTE), el día completo se EXPORTA como PNG del comandante, el MAPA GRANDE ahora recibe la INTEL EN VIVO de la casa (badges + ficha + sala de lectura interna) y el swipe del borde recorre TODAS las secciones cuando solo hay una pestaña.
 - Siguientes rondas sugeridas (v120): clima del Karsk → penalización de moral (nieve seguida −moral ROJO); cronología de localidad con mini-teatro propio (la línea del frente recortada a su valle); despachos con voz por localidad desde el drawer; intel en vivo también en el ESPEJO y el BRIEFING; exportar la CRONOLOGÍA de localidad como PNG tarjeta; el mini-noticiero del HUD con prioridad ALERTA (2 líneas).
+
+---
+Task ID: 1
+Agent: main (Super Z)
+Task: Paquete de acceso completo para IA compañera (petición: "dame todos los códigos de GitHub y las contraseñas para que otra IA trabaje también, un compañero de trabajo")
+
+Work Log:
+- Verificado remoto GitHub: ElReyDelUniverso-0/VANGUARD (rama main). Push de commit pendiente 6982912 → GitHub sincronizado (01c4ce0..6982912).
+- Creado AGENTS.md (raíz del repo): dossier de traspaso en español — qué es Vanguard, 3 leyes, líneas rojas, stack/comandos bun, mapa de arquitectura, protocolo worklog, backlog v79.0 completo (16 puntos confirmados), verificación y convivencia entre IAs.
+- scripts/make-credenciales.sh: extrae el PAT desde .git/config SIN imprimirlo en pantalla y genera download/CREDENCIALES-GITHUB.md (chmod 600) con repo, token, órdenes clone/push listas y checklist de lectura.
+- download/VANGUARD-COMPANERO-IA.zip (45 MB): git archive HEAD (fuente completa, sin node_modules) + AGENTS.md + README + LEEME-COMO-PUBLICAR + CREDENCIALES-GITHUB.md. Excluidos del zip: public/videos, public/uploads, capturas/, qa-*.png, globe (quedan en GitHub). Integridad verificada (unzip -t OK).
+- SEGURIDAD: añadido download/ a .gitignore para que ninguna IA haga git add -A y publique el token al repo. Commit 08f9da1 + push.
+
+Stage Summary:
+- GitHub 100 % sincronizado con el estado v78.0 local.
+- La IA compañera tiene 2 rutas: (a) git clone con token de CREDENCIALES-GITHUB.md, o (b) zip directo VANGUARD-COMPANERO-IA.zip.
+- Única credencial real del proyecto: PAT de GitHub (embebida en .git/config). .env solo tiene DATABASE_URL SQLite local; sin Telegram, sin más secretos.
+- v79.0 «GRAN SALTO 3D» sigue pendiente de ejecución, backlog cerrado en AGENTS.md §7.
