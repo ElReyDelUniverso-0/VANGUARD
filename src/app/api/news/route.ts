@@ -212,9 +212,19 @@ async function getCuratedFallback(): Promise<GdeltArticle[]> {
     { url: "curated-10", title: "Flanco este: nueva generación de drones de ataque entra en servicio activo", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: CURATED_IMG["curated-10"] },
     { url: "curated-11", title: "Convoy humanitario escoltado por blindados alcanza el frente interior", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: CURATED_IMG["curated-11"] },
     { url: "curated-12", title: "La OTAN refuerza la vigilancia aérea con radares de largo alcance en el ártico", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: CURATED_IMG["curated-12"] },
+    // v120.0 GRAN SALTO 3D: +8 cables curados (la portada amanece llena)
+    { url: "curated-13", title: "Mar Negro: fragata de misiles de crucero despliega escolta dinámica ante nueva amenaza de drones navales", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/ship-2.jpg" },
+    { url: "curated-14", title: "Submarino de ataque clase nuclear completa patrulla silenciosa de 70 días bajo el hielo ártico", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/sub-1.jpg" },
+    { url: "curated-15", title: "Cinturón Sahel: columna mecanizada avanza sobre eje de desertización ante ofensiva coordinada", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/desert-1.jpg" },
+    { url: "curated-16", title: "Helicópteros de ataque reforzados trasladan artillería de campaña al flanco sur en 48 horas", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/heli-1.jpg" },
+    { url: "curated-17", title: "Sistema antimisiles de nueva generación intercepta salva múltiple en prueba operativa conjunta", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/missile-1.jpg" },
+    { url: "curated-18", title: "Escuadrón de quinta generación ejecuta vuelo de disuasión sobre corredor internacional", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/jet-2.jpg" },
+    { url: "curated-19", title: "Frontera norte: muralla de sensores y radar de barrido electrónico eleva la alerta temprana", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/wall-1.jpg" },
+    { url: "curated-20", title: "Incendio en refinería periférica obliga a redistribuir convoyes de combustible del frente", seendate: new Date().toISOString(), domain: "vanguard-cmd", language: "es", sourcecountry: "INT", socialimage: "/assets/real/fire-2.jpg" },
   ];
   // v20: país real de cada noticia curada (para su bandera verdadera)
-  const CURATED_COUNTRY = ["ua", "ps", "ye", "sd", "tw", "ml", "lb", "ee", "jp", "ua", "ua", "us"];
+  // v120: ampliado con los 8 cables nuevos (13-20)
+  const CURATED_COUNTRY = ["ua", "ps", "ye", "sd", "tw", "ml", "lb", "ee", "jp", "ua", "ua", "us", "ua", "ru", "ml", "ua", "us", "us", "ru", "ua"];
   return list.map((a, i) => ({ ...a, sourcecountry: CURATED_COUNTRY[i] ?? a.sourcecountry }));
 }
 

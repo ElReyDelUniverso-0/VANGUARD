@@ -2,7 +2,7 @@
 # VANGUARD — Proyecto del usuario "ElReyDelUniverso-0"
 # Lee este archivo COMPLETO antes de tocar nada. Es tu contrato de trabajo.
 
-Última actualización: 2026-10-17 · Versión actual del proyecto: **v78.0 MENÚ DE CINE**
+Última actualización: 2026-10-17 · Versión actual del proyecto: **v120.0 GRAN SALTO 3D**
 
 ---
 
@@ -108,7 +108,7 @@ src/
 5. **Nunca dejes la rama en rojo**: si compilaba antes de tu cambio, debe
    compilar después (`bun run build` es el juez).
 
-## 7. BACKLOG CONFIRMADO — v79.0 «GRAN SALTO 3D» (aprobado por el dueño)
+## 7. BACKLOG CONFIRMADO — «GRAN SALTO 3D» (aprobado por el dueño) — EJECUTADO en v120.0 (ciudad héroe, letras 3D, BD reparada, +20 canales, +8 cables); resto de puntos ya vivía desde v110-v119
 
 El dueño lo confirmó varias veces ("Si a todo", "Sigue"). Pendiente de ejecutar:
 

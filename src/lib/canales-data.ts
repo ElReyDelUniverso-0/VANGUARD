@@ -31,6 +31,11 @@ export const CANALES: CanalOSINT[] = [
   { id: "alertaroja", nombre: "ALERTA ROJA 24H", handle: "@alertaroja24", emoji: "🚨", color: "#FF3B30", subs: 341500, verificado: true, tipo: "INDEPENDIENTE" },
   { id: "mareas", nombre: "Mareas Azules", handle: "@mareasazules", emoji: "🌊", color: "#38BDF8", subs: 187300, verificado: true, tipo: "INDEPENDIENTE" },
   { id: "corresponsal", nombre: "El Corresponsal", handle: "@elcorresponsal_vg", emoji: "🎙️", color: "#E5E7EB", subs: 92400, verificado: false, tipo: "SIN VERIFICAR" },
+  // ── v120.0 GRAN SALTO 3D: 4 NOTICIEROS más — la red llega a 20 ──
+  { id: "horizonte7", nombre: "HORIZONTE 7", handle: "@horizontesiete", emoji: "🌅", color: "#FF9A5A", subs: 264100, verificado: true, tipo: "INDEPENDIENTE" },
+  { id: "mesaroja", nombre: "Mesa Roja de Redacción", handle: "@mesaroja.vg", emoji: "🗞️", color: "#FF4D6D", subs: 158900, verificado: true, tipo: "INSTITUCIONAL" },
+  { id: "sextoconstelada", nombre: "Sexto Constelada", handle: "@sextoconstelada", emoji: "🛰️", color: "#B48CFF", subs: 87600, verificado: false, tipo: "SIN VERIFICAR" },
+  { id: "vientosnorte", nombre: "Vientos del Norte", handle: "@vientosdelnorte", emoji: "🌬️", color: "#7FE3FF", subs: 64200, verificado: false, tipo: "INDEPENDIENTE" },
 ];
 
 export interface MensajeCanal {

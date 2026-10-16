@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v120.0",
+    nombre: "GRAN SALTO 3D",
+    tipo: "tecno",
+    hitos: [
+      "LA CIUDAD REINA EN LA PORTADA: el ocaso estático (v71) se jubila — lo primero que ves es la MEGALÓPOLIS viva: cielo real según tu reloj, la región del día con su mojón y el clima del planeta",
+      "GIRAR REGIÓN A MANO: botón nuevo sobre la ciudad — salta a la región vecina con el fundido de 2.4 s de la casa (la rotación diaria sigue sola)",
+      "VANGUARD EN LETRAS 3D DE VERDAD: el título de la portada se extruye en 7 capas con material BRASA (la identidad dorada) — volumen real, entrada letra a letra, se inclina con tu puntero",
+      "LA SANGRE VUELVE A LA CASA: el schema de la BD quedó en PostgreSQL de la era v30 y la casa corre en SQLite — reparado: la BD vuelve a estar viva, las noticias curadas y los perfiles respiran otra vez",
+      "MÁS NOTICIEROS QUE NUNCA: 4 canales nuevos en la red OSINT (20 en total) y 8 cables curados nuevos — la portada amanece llena",
+    ],
+  },
+  {
     version: "v119.0",
     nombre: "CRONOTEATRO",
     tipo: "tecno",

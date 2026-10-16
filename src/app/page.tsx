@@ -33,8 +33,9 @@ import { MegaMenu } from "@/components/vanguard/mega-menu";
 import { GoogleBar } from "@/components/vanguard/google-bar";
 import { TransicionCine } from "@/components/vanguard/transicion-cine";
 import { CineVivo } from "@/components/vanguard/cine-vivo";
-// v71.0 OCASO: banner cinematográfico — puesta de sol eterna + luna llena
-import { OcasoBanner } from "@/components/vanguard/ocaso-banner";
+// v120.0 GRAN SALTO 3D: la ciudad viva REINA en la portada — cielo real
+// (día/noche según tu reloj), región rotativa a mano y VANGUARD en letras 3D
+import { CiudadHero } from "@/components/vanguard/ciudad-hero";
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 import { SectionSearch } from "@/components/vanguard/section-search";
 import { AccountModal } from "@/components/vanguard/account-modal";
@@ -791,8 +792,10 @@ export default function Home() {
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (
           <>
-            {/* v71.0 OCASO: la puesta de sol eterna abre la portada — nada plano */}
-            <OcasoBanner />
+            {/* v120.0 GRAN SALTO 3D: la MEGALÓPOLIS viva abre la portada —
+                ciclo día/noche EN TIEMPO REAL, región que gira (sola cada
+                día, a mano con fundido) y letras 3D volumétricas */}
+            <CiudadHero />
             {/* v67.0 EL HANGAR: el costo del mundo y tu rival, siempre a la vista */}
             <CostoGuerra />
             <RivalStrip />

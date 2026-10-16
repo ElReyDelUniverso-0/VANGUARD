@@ -1,14 +1,15 @@
 // Vanguard — Geopolitical Intelligence Gamified Platform
-// v30 PASO PRO — Supabase Postgres (la BD vive en la nube)
-// Local/VPS: DATABASE_URL apunta al pooler session :5432
-// Vercel:    DATABASE_URL apunta al pooler transaction :6543 con pgbouncer=true
+// v120 GRAN SALTO 3D — REPARACIÓN CRÍTICA: el schema quedó en "postgresql"
+// (herencia v30 Supabase) pero la casa corre LOCAL con SQLite (db/custom.db).
+// Ese desajuste dejaba la BD caída: /api/news sin noticias, perfiles muertos.
+// SQLite: 38 modelos, cero servicios externos, todo vivo otra vez.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
