@@ -178,17 +178,66 @@ export interface StatsDia {
   moralAzul: number;   // 0..100
 }
 
+// ============================================================
+// v119.0 CRONOTEATRO — EL CLIMA TIÑE LA GUERRA
+// Las estadísticas de campaña ya no son ajenas al cielo: cada
+// clima multiplica (o corta) bombardeos, drones, convoyes y
+// bajas con factores fijos y deterministas. Reproducir el mismo
+// día produce los mismos números tintados por su clima.
+//   · NIEVE    → artillería −40 % (el cañón se ahoga), convoyes
+//                +20 % (cadenas en las ruedas, la logística dura)
+//   · TORMENTA → aviación y drones en tierra (−55 % drones)
+//   · NIEBLA   → fuego de precisión a ciegas (−30 % bombardeos)
+//   · LLUVIA   → fango: menos aviación, menos bajas
+//   · VIENTO   → ráfagas derriban drones (−35 %)
+//   · DESPEJADO→ el cielo limpio dispara la aviación (+15 %)
+// ============================================================
+
+export interface ModsClima {
+  bombardeos: number;
+  drones: number;
+  convoyes: number;
+  bajas: number;
+  /** factores legibles para los chips del panel */
+  efectos: string[];
+}
+
+const MODS: Record<ClimaInfo["tipo"], ModsClima> = {
+  despejado: { bombardeos: 1.12, drones: 1.15, convoyes: 1.0, bajas: 1.0, efectos: ["cielo limpio: aviación al máximo"] },
+  lluvia: { bombardeos: 0.82, drones: 0.7, convoyes: 0.95, bajas: 0.92, efectos: ["fango: la aviación escasea", "menos bajas por fuego indirecto"] },
+  tormenta: { bombardeos: 0.65, drones: 0.45, convoyes: 0.75, bajas: 0.85, efectos: ["aviación en tierra", "los drones caen del cielo", "convoyes parados"] },
+  niebla: { bombardeos: 0.7, drones: 0.55, convoyes: 0.85, bajas: 0.8, efectos: ["fuego de precisión a ciegas", "reconocimiento aéreo nulo"] },
+  nieve: { bombardeos: 0.6, drones: 0.75, convoyes: 1.2, bajas: 0.82, efectos: ["la artillería se ahoga", "convoyes con cadenas: logística +"] },
+  viento: { bombardeos: 0.94, drones: 0.65, convoyes: 1.08, bajas: 0.97, efectos: ["ráfagas derriban drones", "los convoyes ganan la carretera"] },
+};
+
+/** Multiplicadores del clima al día dado (determinista). */
+export function modsDe(dia: number): ModsClima {
+  return MODS[climaDe(dia).tipo];
+}
+
+/** Nieve acumulada: días consecutivos de nieve hasta `dia` (tope 4). */
+export function nieveAcumulada(dia: number): number {
+  let n = 0;
+  for (let d = dia; d >= 0; d--) {
+    if (climaDe(d).tipo === "nieve") n++;
+    else break;
+  }
+  return Math.min(n, 4);
+}
+
 export function statsDe(dia: number): StatsDia {
   const area = areaOcupada(dia);
   const areaAntes = areaOcupada(Math.max(0, dia - 1));
   const empuje = Math.max(0, area - areaAntes); // km² ganados por el rojo hoy
   const h = fnv89(`stats118:${dia}`);
-  const bombardeos = 14 + (ch(h, 0) % 34);
-  const drones = 3 + (ch(h, 1) % 11);
-  const convoyes = 8 + (ch(h, 2) % 15);
+  const m = modsDe(dia); // v119: el clima tiñe cada número del parte
+  const bombardeos = Math.round((14 + (ch(h, 0) % 34)) * m.bombardeos);
+  const drones = Math.round((3 + (ch(h, 1) % 11)) * m.drones);
+  const convoyes = Math.round((8 + (ch(h, 2) % 15)) * m.convoyes);
   const intensidad = 0.6 + empuje / 140; // más empuje → más bajas
-  const bajasRojo = Math.round(90 * intensidad + (ch(h, 3) % 70));
-  const bajasAzul = Math.round(60 * intensidad + (ch(h, 4) % 55));
+  const bajasRojo = Math.round((90 * intensidad + (ch(h, 3) % 70)) * m.bajas);
+  const bajasAzul = Math.round((60 * intensidad + (ch(h, 4) % 55)) * m.bajas);
   const moralRojo = Math.min(96, Math.max(28, 62 + dia * 0.8 - (ch(h, 5) % 14)));
   const moralAzul = Math.min(94, Math.max(26, 58 - dia * 0.5 + (ch(h, 6) % 18)));
   return { bajasRojo, bajasAzul, bombardeos, drones, convoyes, moralRojo, moralAzul };
@@ -257,4 +306,51 @@ export function fuerzaEje(ejeIdx: number, dia: number): number {
   const h = fnv89(`eje118:${ejeIdx}:${dia}`);
   const ond = ((ch(h, 0) % 1000) / 1000) * 0.5 - 0.25; // -0.25..+0.25
   return Math.min(1, Math.max(0.12, base + ond));
+}
+
+// ============================================================
+// v119.0 CRONOTEATRO — CRONOLOGÍA DE LOCALIDAD
+// Toca una localidad del teatro y la campaña se cuenta desde
+// SU esquina: quién la tuvo cada uno de los 21 días, cuántas
+// veces cambió de mano y qué despachos la mencionaron.
+// ============================================================
+
+export interface CambioMano { dia: number; de: 0 | 1 | 2; a: 0 | 1 | 2 }
+
+export interface HistoriaLoc {
+  nombre: string;
+  /** control día a día: índice = día de campaña */
+  dias: (0 | 1 | 2)[];
+  diasRojo: number;
+  diasDisputada: number;
+  diasAzul: number;
+  cambios: CambioMano[];
+  /** despachos de la campaña que mencionan la localidad (hora/sector/texto/día) */
+  menciones: (Despacho & { dia: number })[];
+}
+
+export function historiaDe(idx: number, dias = DIAS_CAMPANA): HistoriaLoc {
+  const loc = LOCALIDADES[Math.max(0, Math.min(LOCALIDADES.length - 1, idx))];
+  const diasArr: (0 | 1 | 2)[] = [];
+  for (let d = 0; d < dias; d++) diasArr.push(controlDe(loc, d));
+  const cambios: CambioMano[] = [];
+  for (let d = 1; d < diasArr.length; d++) {
+    if (diasArr[d] !== diasArr[d - 1]) cambios.push({ dia: d, de: diasArr[d - 1], a: diasArr[d] });
+  }
+  const nombre = loc.nombre.toLowerCase();
+  const menciones: (Despacho & { dia: number })[] = [];
+  for (let d = 0; d < dias; d++) {
+    for (const dp of despachosDe(d)) {
+      if (dp.texto.toLowerCase().includes(nombre)) menciones.push({ ...dp, dia: d });
+    }
+  }
+  return {
+    nombre: loc.nombre,
+    dias: diasArr,
+    diasRojo: diasArr.filter((c) => c === 0).length,
+    diasDisputada: diasArr.filter((c) => c === 1).length,
+    diasAzul: diasArr.filter((c) => c === 2).length,
+    cambios,
+    menciones,
+  };
 }

@@ -10,7 +10,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
-import { sectionOfTab, accentOfSection, ALL_TABS, type TabKey } from "@/components/vanguard/tab-nav";
+import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
 // v106.0 PESTAÑAS DE CROMO: la franja del navegador interno reemplaza a la
 // barra de secciones — pestañas que se abren, se eligen y se cierran.
 import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
@@ -395,10 +395,20 @@ export default function Home() {
     const dy = tch.clientY - s.y;
     const dt = Date.now() - s.t;
     if (Math.abs(dx) < 70 || Math.abs(dy) > 60 || dt > 800) return;
-    if (pestanas.length < 2) return;
+    const dirSwipe = dx < 0 ? 1 : -1; // izquierda → siguiente
+    // v119: SWIPE TAMBIÉN PARA SECCIONES — con una sola pestaña abierta el
+    // gesto recorre el CATÁLOGO COMPLETO de SECTIONS (la sección se abre como
+    // pestaña al navegar), así el borde nunca queda sin respuesta.
+    if (pestanas.length < 2) {
+      const catalogo = SECTIONS.map((sct) => sct.key);
+      const idxSec = catalogo.indexOf(tab);
+      const destinoSec = catalogo[(idxSec + dirSwipe + catalogo.length) % catalogo.length];
+      forceDirRef.current = dirSwipe;
+      handleTabChange(destinoSec as TabKey);
+      return;
+    }
     const idx = pestanas.indexOf(tab);
     if (idx < 0) return;
-    const dirSwipe = dx < 0 ? 1 : -1; // izquierda → siguiente pestaña
     const destino = pestanas[(idx + dirSwipe + pestanas.length) % pestanas.length];
     forceDirRef.current = dirSwipe;
     handleTabChange(destino);

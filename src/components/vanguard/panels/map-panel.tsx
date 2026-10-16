@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { CONFLICTS, type AlertLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -8,11 +8,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Map as MapIcon, Crosshair, Layers, AlertTriangle, X, Users, HeartPulse, Flag, Video,
   Bomb, Pill, Skull, Route, Globe2, Satellite, Moon, LocateFixed, ScanEye, Plane,
-  Ship, Radiation,
+  Ship, Radiation, Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { WorldMapSVG, type MapRoute } from "@/components/vanguard/world-map-svg";
+// v119 CRONOTEATRO: la INTEL EN VIVO de la casa también en el MAPA GRANDE —
+// los cables de /api/news se emparejan a cada conflicto y se leen DENTRO
+// de Vanguard con la SALA DE LECTURA (cero saltos a otras páginas).
+import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 const Globe3D = dynamic(
   () => import("@/components/vanguard/globe-3d").then((m) => m.Globe3D),
   { ssr: false, loading: () => (
@@ -201,6 +205,40 @@ const MODE_ICON: Record<MapMode, React.ReactNode> = {
   NUCLEAR: <Radiation className="w-3 h-3" />,
 };
 
+// ====== v119 CRONOTEATRO: INTEL EN VIVO PARA EL MAPA GRANDE ======
+// (los campos son los reales de /api/news: publishedAt ISO, source, tags)
+interface CableRuta { url: string; title: string; publishedAt: string; source: string; tacticalTag?: string | null; conflictTag?: string | null; sourceCountry?: string | null }
+
+function parseFecha119(s: string): Date | null {
+  if (!s) return null;
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z$/.exec(s);
+  if (m) return new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`);
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function haceCuanto119(s: string): string {
+  const d = parseFecha119(s);
+  if (!d) return "";
+  const min = Math.max(0, Math.round((Date.now() - d.getTime()) / 60000));
+  if (min < 60) return `HACE ${min} MIN`;
+  const h = Math.round(min / 60);
+  if (h < 36) return `HACE ${h} H`;
+  return `HACE ${Math.round(h / 24)} D`;
+}
+
+/** Empareja cables con un conflicto por su nombre y sus tags (mismas claves del atlas v118). */
+function emparejar119(nombre: string, tags: string[], cables: CableRuta[]): CableRuta[] {
+  const t = nombre.toLowerCase();
+  const claves = [t, ...tags.map((x) => x.toLowerCase())].filter((k) => k.length > 2);
+  return cables
+    .filter((c) => {
+      const titulo = (c.title || "").toLowerCase();
+      return claves.some((k) => titulo.includes(k));
+    })
+    .slice(0, 3);
+}
+
 // v31 — modos de textura del globo 3D
 const VIEW_MODES: { id: GlobeViewMode; label: string; icon: React.ReactNode; color: "amber" | "cyan" | "violet" }[] = [
   { id: "oscuridad", label: "Táctico", icon: <Crosshair className="w-3 h-3" />, color: "amber" },
@@ -229,6 +267,48 @@ export function MapPanel() {
   const [unitCache] = useState<MilUnitCache>(() => newMilUnitCache());
   const recordOpenMap = useGameStore((s) => s.recordOpenMap);
   const cameras = useGameStore((s) => s.cameras);
+  // v119 CRONOTEATRO: la intel en vivo de la casa (misma fuente que el atlas)
+  const [cables119, setCables119] = useState<CableRuta[]>([]);
+  const [cargado119, setCargado119] = useState(false);
+  const [cableSel119, setCableSel119] = useState<CableLectura | null>(null);
+
+  useEffect(() => {
+    let vivo = true;
+    const cargar = async () => {
+      try {
+        const res = await fetch("/api/news", { cache: "no-store" });
+        const j = await res.json();
+        if (vivo && Array.isArray(j?.items)) {
+          setCables119((j.items as Record<string, unknown>[]).map((it) => ({
+            url: String(it.url ?? "#"),
+            title: String(it.title ?? ""),
+            publishedAt: String(it.publishedAt ?? ""),
+            source: String(it.source ?? it.domain ?? "frente"),
+            tacticalTag: (it.tacticalTag as string | null) ?? null,
+            conflictTag: (it.conflictTag as string | null) ?? null,
+            sourceCountry: (it.sourceCountry as string | null) ?? (it.sourcecountry as string | null) ?? null,
+          })));
+        }
+      } catch { /* la casa sigue viva sin intel */ }
+      if (vivo) setCargado119(true);
+    };
+    cargar();
+    const id = setInterval(cargar, 300000); // refresco cada 5 min
+    return () => { vivo = false; clearInterval(id); };
+  }, []);
+
+  const abrirCable119 = useCallback((c: CableRuta) => {
+    setCableSel119({
+      id: c.url || c.title,
+      title: c.title,
+      url: c.url,
+      source: c.source || "frente",
+      publishedAt: parseFecha119(c.publishedAt)?.toISOString() || new Date().toISOString(),
+      tacticalTag: c.tacticalTag && c.tacticalTag !== "None" ? c.tacticalTag : null,
+      conflictTag: c.conflictTag && c.conflictTag !== "None" ? c.conflictTag : null,
+      sourceCountry: c.sourceCountry ?? null,
+    });
+  }, []);
 
   // v87.0 DESPERTAR DEL TEATRO: arranque cinemático "ADQUIRIENDO SEÑAL SATELITAL"
   // una vez por sesión — el mapa se levanta como se levanta un cuartel general
@@ -315,6 +395,16 @@ export function MapPanel() {
   const modeDef = MODES[mode];
   const visibleConflicts = useMemo(() => CONFLICTS.filter((c) => modeDef.match(c.tags)), [modeDef]);
   const conflict = CONFLICTS.find((c) => c.id === selected);
+  // v119: intel del conflicto seleccionado + contador de badges por fila
+  const intelSel119 = useMemo(
+    () => (conflict ? emparejar119(conflict.name, conflict.tags, cables119) : []),
+    [conflict, cables119],
+  );
+  const intelConteo119 = useMemo(() => {
+    const mapa: Record<string, number> = {};
+    visibleConflicts.forEach((c) => { mapa[c.id] = emparejar119(c.name, c.tags, cables119).length; });
+    return mapa;
+  }, [visibleConflicts, cables119]);
   const customColors = useMemo(() => {
     if (mode === "GLOBAL") return undefined;
     return Object.fromEntries(visibleConflicts.map((c) => [c.id, modeDef.hex]));
@@ -689,6 +779,11 @@ export function MapPanel() {
             <div className="p-3 border-b border-amber-hud/30 bg-secondary/50">
               <div className="text-[10px] font-mono text-muted-foreground uppercase">Indice de amenaza · {modeDef.label}</div>
               <div className="text-xs font-mono text-amber">Ordenado por intensidad</div>
+              {/* v119: la casa escucha — señales emparejadas a estas zonas */}
+              <div className="mt-1 flex items-center gap-1.5 text-[8.5px] font-mono uppercase tracking-wider text-cyan-hud/80">
+                <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-cyan-hud" />
+                {cargado119 ? `${cables119.length} señales en escucha · refresh 5 min` : "sintonizando la casa..."}
+              </div>
             </div>
             <div className="max-h-[360px] overflow-y-auto thin-scroll">
               {visibleConflicts.length === 0 && (
@@ -707,9 +802,16 @@ export function MapPanel() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <div className="text-xs font-mono font-bold truncate text-foreground">{c.name}</div>
-                      <span className={cn("text-[9px] font-mono px-1.5 py-0.5 border rounded-sm", levelColor[c.level])}>
-                        {c.level}
-                      </span>
+                      <div className="flex shrink-0 items-center gap-1">
+                        {(intelConteo119[c.id] ?? 0) > 0 && (
+                          <span className="flex items-center gap-1 rounded-full border border-cyan-hud/40 bg-cyan-hud/10 px-1.5 py-0.5 text-[8px] font-mono font-black text-cyan-hud">
+                            <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-cyan-hud" />{intelConteo119[c.id]}
+                          </span>
+                        )}
+                        <span className={cn("text-[9px] font-mono px-1.5 py-0.5 border rounded-sm", levelColor[c.level])}>
+                          {c.level}
+                        </span>
+                      </div>
                     </div>
                     <div className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">{c.summary}</div>
                     <div className="flex items-center gap-2 mt-1.5">
@@ -829,9 +931,50 @@ export function MapPanel() {
                 </span>
               ))}
             </div>
+
+            {/* v119: INTEL EN VIVO DE LA CASA — cables emparejados, se leen DENTRO de Vanguard */}
+            <div className="mt-3 rounded-sm border border-cyan-hud/30 bg-cyan-hud/[0.04] p-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-hud">
+                  <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-hud" />
+                  <Radio className="w-3 h-3" /> intel en vivo · cables de la casa
+                </span>
+                <span className="text-[8.5px] font-mono text-muted-foreground">{cables119.length} señales · refresh 5 min</span>
+              </div>
+              {intelSel119.length === 0 ? (
+                <div className="mt-2 text-[10px] font-mono text-muted-foreground">
+                  {cargado119 ? "Sin cables de la casa para esta zona ahora mismo — el mundo sigue girando." : "Sintonizando /api/news..."}
+                </div>
+              ) : (
+                <div className="mt-2 space-y-1.5">
+                  {intelSel119.map((c) => (
+                    <button
+                      key={c.url || c.title}
+                      onClick={() => abrirCable119(c)}
+                      className="w-full rounded-sm border border-cyan-hud/20 bg-black/40 px-2.5 py-2 text-left transition hover:border-cyan-hud/60 hover:bg-cyan-hud/10"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="truncate text-[11px] font-mono font-bold text-foreground">{c.title}</span>
+                        <span className="shrink-0 text-[8px] font-mono text-cyan-hud">{haceCuanto119(c.publishedAt)}</span>
+                      </div>
+                      <div className="mt-0.5 flex items-center gap-2 text-[8.5px] font-mono text-muted-foreground">
+                        <span className="truncate">{c.source}</span>
+                        {c.tacticalTag && c.tacticalTag !== "None" && (
+                          <span className="shrink-0 rounded-sm border border-amber-hud/40 px-1 text-amber">{c.tacticalTag}</span>
+                        )}
+                        <span className="shrink-0 text-cyan-hud/70">LEER EN LA SALA →</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* v119: LA SALA DE LECTURA INTERNA — el cable se abre en Vanguard, nunca fuera */}
+      <LectorNoticia cable={cableSel119} onCerrar={() => setCableSel119(null)} />
     </div>
   );
 }

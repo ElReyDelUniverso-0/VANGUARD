@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v119.0",
+    nombre: "CRONOTEATRO",
+    tipo: "tecno",
+    hitos: [
+      "EL CLIMA TIÑE LA GUERRA: las estadísticas de campaña ya no son ajenas al cielo — nieve corta la artillería (−40 %) pero endurece la logística (convoyes +20 %), la tormenta aterriza la aviación y deja los drones en el suelo, la niebla dispara a ciegas; cada parte lleva sus modificadores a la vista",
+      "NIEVE QUE SE ACUMULA: los días seguidos de nieve velan el terreno del teatro día tras día (hasta ×4) y el chip del clima lo cuenta — NIEVE ×3 DÍAS, como un invierno de verdad",
+      "CRONOLOGÍA DE LOCALIDAD: toca cualquier localidad del teatro y la campaña se cuenta desde SU esquina — quién la tuvo cada uno de los 21 días (línea de puntos ROJO/GRIS/AZUL), cuántas veces cambió de mano y qué despachos la mencionaron",
+      "LA VOZ DEL PARTE: los despachos del frente se ESCUCHAN — la casa narra su propio parte en es-ES con ritmo de operador de radio, nace en tu máquina, respeta el MUTE de Vanguard y se corta al cambiar de día",
+      "EXPORTAR EL TEATRO: el día completo de campaña se descarga como PNG 1600×1080 — serializa el SVG vivo y lo rasteriza en tu máquina, sin servicios ni costes: vanguard-karsk-dia{N}.png",
+      "INTEL EN VIVO EN EL MAPA GRANDE: el mapa militar de la casa también recibe los cables emparejados por conflicto — badges pulsantes en la lista, bloque INTEL EN VIVO en la ficha y lectura DENTRO de Vanguard con la SALA DE LECTURA (cero saltos fuera)",
+      "SWIPE PARA TODAS LAS SECCIONES: con una sola pestaña abierta el gesto del borde ya no muere — recorre el CATÁLOGO COMPLETO de SECTIONS y abre la sala que toca como pestaña",
+    ],
+  },
+  {
     version: "v118.0",
     nombre: "CRONOATLAS",
     tipo: "tecno",

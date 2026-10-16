@@ -15,29 +15,36 @@
 // cronologías verificables (MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO,
 // ECHELON) marcadas REAL.
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Hourglass, Play, Pause, ChevronLeft, ChevronRight, FileText, Landmark,
   Anchor, Crosshair, Radiation, CalendarDays, Skull, Bomb, Plane, Truck,
   CloudRain, CloudSnow, CloudFog, Wind, Sun, CloudLightning, Gauge, Radio,
+  Volume2, SquareX, Download, X, Snowflake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigateTo } from "@/lib/nav";
+import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { ExpedienteDrawer } from "@/components/vanguard/expediente-drawer";
+// v119 CRONOTEATRO: la voz del parte (TTS de la casa, respeta el MUTE)
+import { narrarDespachos, callarVoz, vozDisponible, vozActiva } from "@/lib/despacho-voz";
 import {
   CRISIS, ARCHIVO, nodoPorId, ARISTA_META,
   type CrisisVG, type ArchivoReal, type PinTeatro,
 } from "@/lib/expediente-data";
 import { useExpediente } from "@/lib/expediente-store";
+import { useT } from "@/lib/i18n";
 import {
   puntosFrente, areaOcupada, deltas, LOCALIDADES, controlDe, EJES_PRESION,
   TEATRO_W, TEATRO_H, fuerzaEje,
   // v118 CRONOATLAS
   DIAS_CAMPANA, DIA_HOY, FASES_CAMPANA, faseDe, climaDe, statsDe, despachosDe,
   diasConEvento, RIO_KARSK, PUENTE_KARSK, CARRETERAS, CONTORNOS, KARSKGRAD_LABEL,
-  type ClimaInfo,
+  // v119 CRONOTEATRO
+  modsDe, nieveAcumulada, historiaDe,
+  type ClimaInfo, type HistoriaLoc,
 } from "@/lib/frente-zonas-data";
 import { fnv89 } from "@/lib/pulsos-data";
 
@@ -118,8 +125,20 @@ function ClimaSvg({ clima, dia }: { clima: ClimaInfo; dia: number }) {
 }
 
 // ---------- teatro del Karsk (vivo, v118 realista) ----------
-function TeatroKarsk({ dia }: { dia: number }) {
+// v119: recibe localidadSel (anillo dorado), onSelect (cronología de la
+// localidad) y exportarTeatro (el día completo como PNG del comandante).
+function TeatroKarsk({
+  dia, localidadSel, onSelect, exportarTeatro, mapaRef, onCerrar,
+}: {
+  dia: number;
+  localidadSel: number | null;
+  onSelect: (i: number) => void;
+  exportarTeatro: () => void;
+  mapaRef: React.RefObject<HTMLDivElement | null>;
+  onCerrar: () => void;
+}) {
   const pts = useMemo(() => puntosFrente(dia), [dia]);
+  const { t } = useT();
   const deltas21 = useMemo(() => deltas(DIAS_CAMPANA), []);
   const deltaHoy = useMemo(() => deltas21.find((d) => d.dia === dia)?.delta ?? 0, [deltas21, dia]);
   const area = useMemo(() => areaOcupada(dia), [dia]);
@@ -136,13 +155,28 @@ function TeatroKarsk({ dia }: { dia: number }) {
   const stats = useMemo(() => statsDe(dia), [dia]);
   const despachos = useMemo(() => despachosDe(dia), [dia]);
   const fuerzas = useMemo(() => EJES_PRESION.map((_, i) => fuerzaEje(i, dia)), [dia]);
+  // v119 CRONOTEATRO: el clima tiñe el parte + la nieve se acumula día tras día
+  const mods = useMemo(() => modsDe(dia), [dia]);
+  const nieve = useMemo(() => nieveAcumulada(dia), [dia]);
+  // v119: LA VOZ DEL PARTE — estado local; al cambiar de día la voz se corta
+  const [vozOn, setVozOn] = useState(false);
+  useEffect(() => {
+    if (!vozOn) return;
+    const id = setInterval(() => { if (!vozActiva()) setVozOn(false); }, 1000);
+    return () => clearInterval(id);
+  }, [vozOn]);
+  useEffect(() => {
+    callarVoz();
+    setVozOn(false);
+  }, [dia]);
+  useEffect(() => () => callarVoz(), []);
   const ClimaIcon = CLIMA_META[clima.tipo].icon;
 
   return (
     <div className="space-y-3">
       <div className="grid gap-3 lg:grid-cols-[1fr_280px]">
         {/* mapa con capas de información */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/12 bg-[#08080e]">
+        <div ref={mapaRef} className="relative overflow-hidden rounded-2xl border border-white/12 bg-[#08080e]">
           <AnimatePresence mode="wait">
             <motion.svg
               key={dia}
@@ -210,6 +244,8 @@ function TeatroKarsk({ dia }: { dia: number }) {
               </text>
               {/* área ocupada */}
               <polygon points={polyOcupada} fill="#FF3B30" fillOpacity="0.14" />
+              {/* v119: la nieve ACUMULADA vela el terreno (cada día seguido la tiñe más) */}
+              {nieve > 0 && <rect width={TEATRO_W} height={TEATRO_H} fill="#ffffff" fillOpacity={0.035 * nieve} />}
               {/* frente */}
               <polyline
                 points={pts.map(([x, y]) => `${x},${y}`).join(" ")}
@@ -240,16 +276,25 @@ function TeatroKarsk({ dia }: { dia: number }) {
                   </g>
                 );
               })}
-              {/* localidades */}
+              {/* v119: localidades CLICABLES — toca una y lee su cronología de 21 días */}
               {LOCALIDADES.map((l, i) => {
                 const c = controles[i];
+                const sel = i === localidadSel;
                 return (
-                  <g key={l.nombre}>
-                    <circle cx={l.x} cy={l.y} r="5.4" fill={`${CONTROL_COLOR[c]}2E`} stroke={CONTROL_COLOR[c]} strokeWidth="1.8" />
+                  <g
+                    key={l.nombre}
+                    onClick={() => onSelect(i)}
+                    className="cursor-pointer"
+                    data-localidad119={l.nombre}
+                  >
+                    {/* zona de toque generosa (el mapa es denso en móvil) */}
+                    <circle cx={l.x} cy={l.y} r="16" fill="transparent" />
+                    {sel && <circle cx={l.x} cy={l.y} r="13" fill="none" stroke="#FFC94D" strokeOpacity="0.9" strokeWidth="1.6" strokeDasharray="3 3" className="vg-nodo-anillo" />}
+                    <circle cx={l.x} cy={l.y} r={sel ? "6.6" : "5.4"} fill={`${CONTROL_COLOR[c]}2E`} stroke={CONTROL_COLOR[c]} strokeWidth={sel ? "2.4" : "1.8"} />
                     {cambiadas.includes(l.nombre) && (
                       <circle cx={l.x} cy={l.y} r="10" fill="none" stroke="#FFFFFF" strokeOpacity="0.75" strokeWidth="1.2" className="vg-nodo-anillo" />
                     )}
-                    <text x={l.x} y={l.y - 10} textAnchor="middle" fontSize="9.5" fontWeight="800" fill="#ffffff99" stroke="#000" strokeWidth="2.6" style={{ paintOrder: "stroke" }}>
+                    <text x={l.x} y={l.y - 10} textAnchor="middle" fontSize={sel ? "10.5" : "9.5"} fontWeight={sel ? "900" : "800"} fill={sel ? "#FFC94D" : "#ffffff99"} stroke="#000" strokeWidth="2.6" style={{ paintOrder: "stroke" }}>
                       {l.nombre}
                     </text>
                   </g>
@@ -283,12 +328,26 @@ function TeatroKarsk({ dia }: { dia: number }) {
           <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
             <span className="flex items-center gap-1 rounded-lg border border-white/15 bg-black/70 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/75 backdrop-blur-sm">
               <ClimaIcon className="h-3 w-3 text-cyan-300" />
-              {CLIMA_META[clima.tipo].label} {clima.tempC > 0 ? "+" : ""}{clima.tempC}° · V {clima.vientoKmh} KM/H {clima.direccion}
+              {CLIMA_META[clima.tipo].label}{nieve > 1 ? ` ×${nieve} DÍAS` : ""} {clima.tempC > 0 ? "+" : ""}{clima.tempC}° · V {clima.vientoKmh} KM/H {clima.direccion}
             </span>
+            {/* v119: el parte lleva los MODIFICADORES del clima a la vista */}
+            {mods.efectos.map((ef) => (
+              <span key={ef} className="flex items-center gap-1 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[8.5px] font-black uppercase tracking-wider text-amber-300/90 backdrop-blur-sm">
+                <Snowflake className="h-2.5 w-2.5" /> {ef}
+              </span>
+            ))}
             <span className="rounded-lg border border-white/15 bg-black/70 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/50 backdrop-blur-sm">
               tecla: {String.fromCharCode(65 + (dia % 8))}·{1 + (dia % 6)} · escala 1:250000
             </span>
           </div>
+          {/* v119: EXPORTAR EL TEATRO — el día entero como PNG del comandante */}
+          <button
+            onClick={exportarTeatro}
+            title={t("maqui119.pngTitle")}
+            className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-lg border border-cyan-400/40 bg-black/75 px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest text-cyan-300 backdrop-blur-sm transition hover:bg-cyan-400/20 active:scale-95"
+          >
+            <Download className="h-3 w-3" /> {t("maqui119.png")}
+          </button>
         </div>
 
         {/* panel lateral del día */}
@@ -387,13 +446,46 @@ function TeatroKarsk({ dia }: { dia: number }) {
         </div>
       </div>
 
-      {/* v118: despachos del frente — el parte diario */}
+      {/* v119: LA CRONOLOGÍA DE LA LOCALIDAD TOCADA — la campaña desde su esquina */}
+      <AnimatePresence>
+        {localidadSel !== null && (
+          <CronologiaLocalidad idx={localidadSel} dia={dia} onCerrar={onCerrar} />
+        )}
+      </AnimatePresence>
+
+      {/* v118: despachos del frente — el parte diario + v119: LA VOZ DEL PARTE */}
       <div className="rounded-2xl border border-white/12 bg-black/40 p-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white/45">
             <Radio className="h-3 w-3 text-amber-300" /> despachos del frente · día {dia}
           </span>
-          <span className="text-[9px] font-semibold text-white/30">parte de la casa · verificado</span>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <span className="hidden text-[9px] font-semibold text-white/30 sm:inline">parte de la casa · verificado</span>
+            {vozDisponible() && (
+              <button
+                onClick={() => {
+                  if (vozActiva()) {
+                    callarVoz();
+                    setVozOn(false);
+                  } else {
+                    const ok = narrarDespachos(dia, despachos);
+                    setVozOn(ok);
+                    if (!ok) toast(t("maqui119.mute"));
+                  }
+                }}
+                className={cn(
+                  "flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-black uppercase tracking-widest transition active:scale-95",
+                  vozOn
+                    ? "border-amber-400/60 bg-amber-400/15 text-amber-300"
+                    : "border-cyan-400/40 bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20",
+                )}
+                title={vozOn ? "Callar el parte" : "Escuchar el parte"}
+              >
+                {vozOn ? <SquareX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
+                {vozOn ? t("maqui119.callar") : t("maqui119.voz")}
+              </button>
+            )}
+          </div>
         </div>
         <div className="mt-2 grid gap-2 md:grid-cols-3">
           {despachos.map((d, i) => (
@@ -414,6 +506,123 @@ function TeatroKarsk({ dia }: { dia: number }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// ---------- v119: CRONOLOGÍA DE LOCALIDAD (la campaña desde SU esquina) ----------
+function CronologiaLocalidad({
+  idx, dia, onCerrar,
+}: {
+  idx: number;
+  dia: number;
+  onCerrar: () => void;
+}) {
+  const hist = useMemo(() => historiaDe(idx), [idx]);
+  return (
+    <motion.div
+      key={hist.nombre}
+      className="rounded-2xl border border-amber-400/30 bg-[radial-gradient(ellipse_at_0%_0%,rgba(255,201,77,0.09),transparent_55%),rgba(0,0,0,0.5)] p-3"
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-2">
+          <span className="text-[9px] font-black uppercase tracking-widest text-amber-300/80">cronología de localidad</span>
+          <span className="truncate text-[15px] font-black text-amber-100">{hist.nombre.toUpperCase()}</span>
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-black text-white/60">{DIAS_CAMPANA} DÍAS</span>
+        </div>
+        <button
+          onClick={onCerrar}
+          aria-label="Cerrar cronología"
+          className="shrink-0 rounded-lg border border-white/15 bg-white/5 p-1.5 text-white/60 transition hover:border-white/35 active:scale-95"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      {/* quién la tuvo: días por bando */}
+      <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <div className="rounded-lg border border-red-400/25 bg-red-400/8 px-2 py-1.5">
+          <div className="text-[8.5px] font-black uppercase tracking-wider text-white/45">días ocupada</div>
+          <div className="text-[15px] font-black tabular-nums text-red-300">{hist.diasRojo}</div>
+        </div>
+        <div className="rounded-lg border border-amber-400/25 bg-amber-400/8 px-2 py-1.5">
+          <div className="text-[8.5px] font-black uppercase tracking-wider text-white/45">días disputada</div>
+          <div className="text-[15px] font-black tabular-nums text-amber-300">{hist.diasDisputada}</div>
+        </div>
+        <div className="rounded-lg border border-cyan-400/25 bg-cyan-400/8 px-2 py-1.5">
+          <div className="text-[8.5px] font-black uppercase tracking-wider text-white/45">días bajo control</div>
+          <div className="text-[15px] font-black tabular-nums text-cyan-300">{hist.diasAzul}</div>
+        </div>
+        <div className="rounded-lg border border-white/12 bg-white/[0.04] px-2 py-1.5">
+          <div className="text-[8.5px] font-black uppercase tracking-wider text-white/45">cambios de mano</div>
+          <div className="text-[15px] font-black tabular-nums text-white/85">{hist.cambios.length}</div>
+        </div>
+      </div>
+
+      {/* la línea de 21 puntos: quién la tuvo cada día */}
+      <div className="mt-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-2">
+        <div className="flex items-center justify-between text-[8.5px] font-black uppercase tracking-wider text-white/40">
+          <span>quién la tuvo, día a día</span>
+          <span>d0 → d{DIA_HOY}</span>
+        </div>
+        <div className="mt-1.5 flex items-end gap-[3px]">
+          {hist.dias.map((c, d) => (
+            <div key={d} className="flex min-w-0 flex-1 flex-col items-center gap-0.5">
+              <span
+                className={cn("h-5 w-full rounded-[3px]", d === dia && "ring-2 ring-white/80")}
+                style={{ background: `${CONTROL_COLOR[c]}B8`, opacity: d <= dia ? 1 : 0.28 }}
+                title={`Día ${d}: ${CONTROL_LABEL[c]}`}
+              />
+              {(d % 5 === 0 || d === DIA_HOY) && (
+                <span className="text-[7.5px] font-black tabular-nums text-white/35">{d}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* los cambios de mano */}
+      {hist.cambios.length > 0 ? (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {hist.cambios.map((cm) => (
+            <span
+              key={cm.dia}
+              className={cn(
+                "rounded-lg border px-2 py-1 text-[9.5px] font-black tabular-nums",
+                cm.dia === dia ? "border-white/50 bg-white/15 text-white" : "border-white/12 bg-white/[0.04] text-white/60",
+              )}
+            >
+              DÍA {cm.dia} · {CONTROL_LABEL[cm.de]} → {CONTROL_LABEL[cm.a]}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2 text-[11px] font-semibold text-white/45">
+          La línea nunca la tocó: {hist.diasRojo === DIAS_CAMPANA ? "toda la campaña detrás del frente enemigo" : "toda la campaña del lado azul"}.
+        </p>
+      )}
+
+      {/* los despachos que la mencionaron */}
+      {hist.menciones.length > 0 && (
+        <div className="mt-2 space-y-1">
+          <div className="text-[8.5px] font-black uppercase tracking-wider text-white/40">
+            la mencionan los despachos ({hist.menciones.length})
+          </div>
+          {hist.menciones.slice(0, 3).map((m, i) => (
+            <div key={i} className="rounded-lg border border-white/8 bg-white/[0.03] px-2.5 py-1.5">
+              <div className="flex items-center gap-1.5">
+                <span className="rounded bg-amber-400/12 px-1.5 py-0.5 text-[9px] font-black tabular-nums text-amber-300">DÍA {m.dia} · {m.hora}</span>
+                <span className="text-[8px] font-black uppercase tracking-wider text-white/35">{m.sector}</span>
+              </div>
+              <p className="mt-0.5 text-[11px] leading-snug text-white/70">{m.texto}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </motion.div>
   );
 }
 
@@ -619,6 +828,57 @@ function KarskPlayer() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const eventos = useMemo(() => diasConEvento(), []);
   const porcentaje = (d: number) => (d / DIA_HOY) * 100;
+  // v119 CRONOTEATRO: cronología de localidad + exportación PNG del teatro
+  const [localidadSel, setLocalidadSel] = useState<number | null>(null);
+  const mapaRef = useRef<HTMLDivElement>(null);
+
+  // v119: EXPORTAR EL TEATRO — el SVG del día a canvas 2× y descarga PNG.
+  // Sin servicios: serializa el <svg> vivo, rasteriza en tu máquina y baja
+  // como "vanguard-karsk-dia{N}.png". Si el navegador lo bloquea, avisa.
+  const exportarTeatro = useCallback(() => {
+    const svg = mapaRef.current?.querySelector("svg");
+    if (!svg) return;
+    try {
+      const clon = svg.cloneNode(true) as SVGSVGElement;
+      clon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      clon.setAttribute("width", String(TEATRO_W * 2));
+      clon.setAttribute("height", String(TEATRO_H * 2));
+      clon.style.opacity = "1"; // AnimatePresence puede dejarlo a medio fundir
+      const base = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      base.setAttribute("width", String(TEATRO_W * 2));
+      base.setAttribute("height", String(TEATRO_H * 2));
+      base.setAttribute("fill", "#0a0a12");
+      clon.insertBefore(base, clon.firstChild);
+      const data = new XMLSerializer().serializeToString(clon);
+      const url = URL.createObjectURL(new Blob([data], { type: "image/svg+xml;charset=utf-8" }));
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = TEATRO_W * 2;
+        canvas.height = TEATRO_H * 2;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((blob) => {
+          if (!blob) return;
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = `vanguard-karsk-dia${dia}.png`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+          toast(`TEATRO EXPORTADO · día ${dia} · ${canvas.width}×${canvas.height}`);
+        }, "image/png");
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        toast("EL NAVEGADOR BLOQUEÓ LA EXPORTACIÓN");
+      };
+      img.src = url;
+    } catch {
+      toast("EL NAVEGADOR BLOQUEÓ LA EXPORTACIÓN");
+    }
+  }, [dia]);
 
   useEffect(() => {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
@@ -719,7 +979,14 @@ function KarskPlayer() {
           ))}
         </div>
       </div>
-      <TeatroKarsk dia={dia} />
+      <TeatroKarsk
+        dia={dia}
+        localidadSel={localidadSel}
+        onSelect={(i) => setLocalidadSel((v) => (v === i ? null : i))}
+        exportarTeatro={exportarTeatro}
+        mapaRef={mapaRef}
+        onCerrar={() => setLocalidadSel(null)}
+      />
     </>
   );
 }

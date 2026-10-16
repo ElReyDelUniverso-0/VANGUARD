@@ -1,4 +1,4 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
-export const APP_VERSION = "v118.0";
-export const APP_CODENAME = "CRONOATLAS";
+export const APP_VERSION = "v119.0";
+export const APP_CODENAME = "CRONOTEATRO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

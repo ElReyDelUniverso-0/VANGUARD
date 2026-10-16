@@ -995,7 +995,7 @@ export const REGLA_ORO = {
     volanta: "Viaja por la historia de cada crisis",
     imagen: "/ilustraciones/historia.jpg",
     texto:
-      "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (21 días, velocidad ×0.5/×1/×2, terreno con río y puente, clima diario, bajas y moral por bando, y el parte de DESPACHOS DEL FRENTE), Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO y ECHELON con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
+      "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (21 días, velocidad ×0.5/×1/×2, terreno con río y puente, clima diario, bajas y moral por bando, y el parte de DESPACHOS DEL FRENTE que ahora se ESCUCHA — la voz del parte narra el día), el clima tiñe cada número (la nieve ahoga la artillería y endurece los convoyes, la tormenta deja la aviación en tierra), tocar una localidad cuenta su propia cronología de 21 días, y el teatro completo se EXPORTA como PNG del comandante; Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO y ECHELON con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
     acento: "#FFC94D",
   },
   pantalla: {
