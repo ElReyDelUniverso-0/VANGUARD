@@ -7,7 +7,7 @@
 // v17 ESTABILIDAD: PanelErrorBoundary aísla fallos por panel — un módulo caído
 // ya NO tumba la app; tarjeta de recuperación con REINTENTAR por módulo.
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
 import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
@@ -25,13 +25,22 @@ import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
 import { SettingsModal } from "@/components/vanguard/settings-modal";
 import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
 import { StatsTicker } from "@/components/vanguard/stats-ticker";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 // v14: reestructuración — portada INICIO con noticias primero + menú llamativo
 import { HomePanel } from "@/components/vanguard/home-panel";
 import { MegaMenu } from "@/components/vanguard/mega-menu";
+// v121.0 LA CAMA MÁS CÓMODA: ATLAS MUNDIAL (el modo que faltaba: cada país y
+// cada persona importante con su ubicación) + LA CAMA (la habitación de
+// personalización total) + TRANSICIÓN MAESTRA (5 estilos de viaje) + el
+// MOTOR DE LA CAMA (CSS vars) + FRANJA ILUSTRADA (ilustraciones funcionales)
+const AtlasPanel = dynamic(() => import("@/components/vanguard/panels/atlas-panel").then((m) => m.AtlasPanel), { ssr: false, loading: PanelSkeleton });
+const CamaPanel = dynamic(() => import("@/components/vanguard/panels/cama-panel").then((m) => m.CamaPanel), { ssr: false, loading: PanelSkeleton });
+import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
+import { MotorCama } from "@/components/vanguard/motor-cama";
+import { FranjaIlustrada } from "@/components/vanguard/ilustraciones-vivas";
+import { useCama } from "@/lib/cama-store";
 // v96.0 GOOGLE VIVO: barra estructura Google + transición de cine + motor CineVivo
 import { GoogleBar } from "@/components/vanguard/google-bar";
-import { TransicionCine } from "@/components/vanguard/transicion-cine";
 import { CineVivo } from "@/components/vanguard/cine-vivo";
 // v120.0 GRAN SALTO 3D: la ciudad viva REINA en la portada — cielo real
 // (día/noche según tu reloj), región rotativa a mano y VANGUARD en letras 3D
@@ -334,6 +343,8 @@ export default function Home() {
       dir = -1;
     }
     setDirMov(dir);
+    // v121.0 LA CAMA: la casa aprende el camino del dueño en cada viaje
+    useCama.getState().visita(k);
     historialTabsRef.current = [...hist.filter((x) => x !== k), k].slice(-12);
     setTab(k);
     if (!pestanas.includes(k)) {
@@ -377,6 +388,50 @@ export default function Home() {
   // v118: SWIPE EN BORDES (móvil) — desliza desde el borde para cambiar de
   // pestaña abierta, como el navegador de tu máquina. Bordes de 44 px, umbral
   // de 70 px horizontales, ignora gestos verticales, interactivos y modales.
+  // v121.0 LA CAMA: el dueño elige CÓMO viaja entre salas y CUÁNTO se mueve
+  const estiloTrans = useCama((s) => s.transicion);
+  const movCama = useCama((s) => s.movimiento);
+  const modoCamaOn = useCama((s) => s.modoCama);
+  const variantesSala = useMemo<Variants>(() => {
+    const mov = modoCamaOn ? Math.min(movCama, 0.35) : movCama;
+    const m = Math.max(0.15, mov);          // multiplicador de distancias
+    const dur = (n: number) => n / m;        // a más intensidad, más rápido
+    const d = (n: number) => n * m;
+    const bez = [0.22, 1, 0.36, 1] as [number, number, number, number];
+    switch (estiloTrans) {
+      case "cine3d":
+        return {
+          entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(60) : d(-60), rotateY: dir >= 0 ? -16 : 16, transformPerspective: 1200 }),
+          centro: { opacity: 1, x: 0, rotateY: 0, transformPerspective: 1200, transition: { duration: dur(0.42), ease: bez } },
+          sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(-50) : d(50), rotateY: dir >= 0 ? 12 : -12, transformPerspective: 1200, transition: { duration: dur(0.26), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+        };
+      case "telon":
+        return {
+          entra: () => ({ opacity: 0, scaleY: 0.82, y: d(-34), transformOrigin: "50% 0%" }),
+          centro: { opacity: 1, scaleY: 1, y: 0, transformOrigin: "50% 0%", transition: { duration: dur(0.4), ease: bez } },
+          sale: () => ({ opacity: 0, scaleY: 0.88, y: d(26), transformOrigin: "50% 100%", transition: { duration: dur(0.24), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+        };
+      case "hiperespacio":
+        return {
+          entra: () => ({ opacity: 0, scale: 1.14 }),
+          centro: { opacity: 1, scale: 1, transition: { duration: dur(0.36), ease: bez } },
+          sale: () => ({ opacity: 0, scale: 0.9, transition: { duration: dur(0.22), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+        };
+      case "disolver":
+        return {
+          entra: () => ({ opacity: 0, scale: 0.992 }),
+          centro: { opacity: 1, scale: 1, transition: { duration: dur(0.5), ease: "easeOut" } },
+          sale: () => ({ opacity: 0, transition: { duration: dur(0.3), ease: "easeIn" } }),
+        };
+      default: // deslizar — el v118 direccional, ahora con intensidad ajustable
+        return {
+          entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(30) : d(-30), y: d(18), scale: 0.99 }),
+          centro: { opacity: 1, x: 0, y: 0, scale: 1, transition: { duration: dur(0.3), ease: bez } },
+          sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(-24) : d(24), y: d(-12), scale: 0.995, transition: { duration: dur(0.2), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+        };
+    }
+  }, [estiloTrans, movCama, modoCamaOn]);
+
   const alTocarBorde = useCallback((e: React.TouchEvent) => {
     const tch = e.touches[0];
     if (!tch) return;
@@ -704,6 +759,9 @@ export default function Home() {
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
+      {/* v121.0 LA CAMA MÁS CÓMODA: el motor de personalización — letra, acento,
+          movimiento, densidad y modo cama a CSS vars en :root (cero re-render) */}
+      <MotorCama />
       {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
       <MotorArquitecto />
       {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
@@ -767,8 +825,9 @@ export default function Home() {
         </motion.div>
       )}
 
-      {/* v96.0 GOOGLE VIVO: barrido cinematográfico al cambiar de mundo + motor de animación global */}
-      <TransicionCine tabKey={tab} label={APP_VERSION_LABEL} />
+      {/* v121.0 TRANSICIÓN MAESTRA: el dueño ELIGE cómo viaja entre salas
+          (deslizar · cine 3D · telón · hiperespacio · disolver) + sello vivo */}
+      <TransicionMaestra tabKey={tab} label={APP_VERSION_LABEL} />
       <CineVivo />
 
       <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20" data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
@@ -780,11 +839,7 @@ export default function Home() {
             key={tab}
             className="panel-stagger"
             custom={dirMov}
-            variants={{
-              entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? 30 : -30, y: 18, scale: 0.99 }),
-              centro: { opacity: 1, x: 0, y: 0, scale: 1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
-              sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? -24 : 24, y: -12, scale: 0.995, transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }),
-            }}
+            variants={variantesSala}
             initial="entra"
             animate="centro"
             exit="sale"
@@ -800,6 +855,10 @@ export default function Home() {
             <CostoGuerra />
             <RivalStrip />
             <HomePanel />
+            {/* v121.0 FRANJA ILUSTRADA: las ilustraciones vivas FUNCIONALES
+                viven ENTRE los bloques de la casa — satélite, globo y ciudad
+                procedurales + la hora real del visitante */}
+            <FranjaIlustrada titulo="EL MUNDO NO SE DETIENE" />
             {/* v46.0: la meta comunitaria encima de todo — cada visitante ve el objetivo y su recompensa */}
             <GoalBanner />
             {/* v49.0: misión de difusión 200 enlaces — progreso real desde la BD, recompensa global al llegar */}
@@ -821,6 +880,11 @@ export default function Home() {
         {tab === "redaccion" && <RedaccionPanel />}
         {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
         {tab === "nueva" && <NuevaPanel />}
+        {/* v121.0 MODO ATLAS MUNDIAL — el modo que faltaba: cada país y cada
+            persona importante del planeta con su ubicación EN VIVO */}
+        {tab === "atlas" && <AtlasPanel />}
+        {/* v121.0 LA CAMA — la habitación de personalización total */}
+        {tab === "cama" && <CamaPanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}

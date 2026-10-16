@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v121.0",
+    nombre: "LA CAMA MÁS CÓMODA",
+    tipo: "nav",
+    hitos: [
+      "MODO ATLAS MUNDIAL: la sala que faltaba — 66 países con capital, población, superficie, idiomas, moneda, gobierno y líder; 70 personas importantes del planeta (gobierno, organismos, dinero, ciencia y cultura) con SU UBICACIÓN REAL en el mapa, hora local EN VIVO de donde están y ficha completa con su historia",
+      "EL MAPA DEL PLANETA: pines vivos por categoría sobre el mapa real de Vanguard (Natural Earth) — toca un pin y ves quién es, dónde está y qué hora es allí ahora mismo; relojes de las 8 potencias latiendo al segundo",
+      "5 FORMAS DE VIAJAR ENTRE SALAS: elige tu movimiento (DESLIZAR direccional, CINE 3D con puertas volumétricas, TELÓN de teatro, HIPERESPACIO con anillos o DISOLVER de calma absoluta) — con vista previa jugable en LA CAMA",
+      "LETRAS ANIMADAS EN TODA LA CASA: los títulos de todas las salas entran ahora letra a letra con rotación volumétrica (solo transform/opacity, 60 FPS)",
+      "LA CAMA: la habitación de personalización total — tamaño de las letras de la casa entera (85%–130%), densidad del aire, intensidad de movimiento 0–120%, tu color personal (6 acentos que tiñen selección, brillos y transiciones), MODO CAMA de calma cálida y AUTO-CAMA que se pone solo a las 22:00",
+      "LA CASA APRENDE TU CAMINO: cada visita queda registrada — tus salas más pisadas y tus recientes aparecen en LA CAMA a un toque",
+      "ILUSTRACIONES VIVAS FUNCIONALES: satélite, globo, ciudad, antena, cohete, prensa y una cama lunar — dibujadas a código (cero imágenes), respiran con tu hora real y viven ENTRE los bloques de la portada",
+    ],
+  },
+  {
     version: "v120.0",
     nombre: "GRAN SALTO 3D",
     tipo: "tecno",

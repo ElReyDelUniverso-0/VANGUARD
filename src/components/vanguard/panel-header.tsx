@@ -1,6 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+// v121.0 LA CAMA MÁS CÓMODA: los títulos de TODAS las salas entran ahora
+// letra a letra (rotación volumétrica + subida, solo transform/opacity).
+import { LetrasAnimadas } from "@/components/vanguard/letras-animadas";
 
 interface PanelHeaderProps {
   title: string;
@@ -27,9 +30,9 @@ export function PanelHeader({ title, subtitle, icon, color = "amber", right }: P
             {icon}
           </div>
         )}
-        <div>
-          <h2 className="font-mono text-base sm:text-lg font-bold tracking-wider uppercase text-foreground">
-            {title}
+        <div className="min-w-0">
+          <h2 className="font-mono text-base sm:text-lg font-bold tracking-wider uppercase text-foreground [perspective:600px]">
+            <LetrasAnimadas text={title} />
           </h2>
           {subtitle && (
             <p className="text-[10px] sm:text-xs text-muted-foreground font-mono uppercase">{subtitle}</p>

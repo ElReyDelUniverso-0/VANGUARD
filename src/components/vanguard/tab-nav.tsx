@@ -24,6 +24,7 @@ import {
   History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
   Hammer, ShieldCheck, LayoutPanelLeft,
   LayoutDashboard,
+  Compass, BedDouble,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -131,7 +132,12 @@ export type TabKey =
   // cada vista es una pestaña que se abre, se elige y se cierra + la página
   // NUEVA PESTAÑA para elegir destino + el OBSERVATORIO como sala con cuerpo propio
   | "nueva"
-  | "observatorio";
+  | "observatorio"
+  // v121.0 LA CAMA MÁS CÓMODA: el ATLAS MUNDIAL (todos los países y las
+  // personas importantes del planeta con sus ubicaciones) + LA CAMA (la
+  // habitación de personalización total que se adapta a cada visitante)
+  | "atlas"
+  | "cama";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -331,6 +337,10 @@ export const TABS: Record<TabKey, TabDef> = {
 
   tienda:        { key: "tienda",        label: "Tienda",            short: "TIENDA", icon: <ShoppingBag className="w-3.5 h-3.5" />, color: "cyan" },
   minijuego:     { key: "minijuego",     label: "Minijuegos",        short: "MINIJUEGO", icon: <Gamepad2 className="w-3.5 h-3.5" />, color: "red" },
+  // v121.0 MODO ATLAS MUNDIAL — el modo que faltaba: todo el planeta
+  atlas:         { key: "atlas",         label: "ATLAS MUNDIAL (todos los países y las personas importantes del planeta con sus ubicaciones en vivo)", short: "ATLAS", icon: <Compass className="w-3.5 h-3.5" />, color: "cyan" },
+  // v121.0 LA CAMA — la habitación de personalización total
+  cama:          { key: "cama",          label: "LA CAMA (personalización total: Vanguard se adapta a ti como la cama más cómoda)", short: "CAMA", icon: <BedDouble className="w-3.5 h-3.5" />, color: "violet" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -378,8 +388,8 @@ export const SECTIONS: SectionDef[] = [
     // v48.0 COHERENCIA: Guerras históricas y Figuras y bajas viven aquí — son
     // ARCHIVO, no emisión en vivo. Todo lo histórico queda en un solo lugar.
     key: "archivo", label: "ARCHIVO MUNDIAL", short: "ARCHIVO", icon: <BookOpen className="w-4 h-4" />, color: "cyan",
-    desc: "Enciclopedia, épocas, guerras históricas, figuras, biblioteca, tribunal y el ARCHIVO SECRETO",
-    tabs: [TABS.enciclopedia, TABS.curiosidades, TABS.epocas, TABS.historia, TABS.muertes, TABS.conquistas3d, TABS.contadores, TABS.carteles, TABS.biblioteca, TABS.tribunal, TABS.oscura],
+    desc: "El ATLAS MUNDIAL (cada país y cada persona importante con su ubicación), enciclopedia, épocas, guerras históricas, figuras, biblioteca, tribunal y el ARCHIVO SECRETO",
+    tabs: [TABS.atlas, TABS.enciclopedia, TABS.curiosidades, TABS.epocas, TABS.historia, TABS.muertes, TABS.conquistas3d, TABS.contadores, TABS.carteles, TABS.biblioteca, TABS.tribunal, TABS.oscura],
   },
   {
     key: "comando", label: "COMANDO", short: "COMANDO", icon: <Command className="w-4 h-4" />, color: "amber",
@@ -424,8 +434,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",
-    desc: "PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
-    tabs: [TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
+    desc: "LA CAMA (la habitación de personalización total), PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
+    tabs: [TABS.cama, TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
   },
   {
     // v113.0 LETRAS VIVAS: EXPERIMENTAL — el 15º mundo. La página de los

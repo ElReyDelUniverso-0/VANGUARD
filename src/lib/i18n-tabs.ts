@@ -532,3 +532,39 @@ export const TAB_SHORTS: Record<string, TabDict> = {
 
   },
 };
+
+// ====== v121.0 LA CAMA MÁS CÓMODA — ATLAS MUNDIAL + LA CAMA (8 idiomas) ======
+// Object.assign añade las dos salas nuevas a cada diccionario sin tocar el
+// bloque original (merge seguro, fallback a español intacto).
+Object.assign(TAB_LABELS.es, {
+  atlas: "ATLAS MUNDIAL (todos los países y las personas importantes del planeta con sus ubicaciones en vivo)",
+  cama: "LA CAMA (personalización total: Vanguard se adapta a ti como la cama más cómoda)",
+});
+Object.assign(TAB_LABELS.en, {
+  atlas: "WORLD ATLAS (every country and the world's key people with their live locations)",
+  cama: "THE BED (total personalization: Vanguard adapts to you like the most comfortable bed)",
+});
+Object.assign(TAB_LABELS.pt, {
+  atlas: "ATLAS MUNDIAL (todos os países e as pessoas importantes do planeta com suas localizações ao vivo)",
+  cama: "A CAMA (personalização total: o Vanguard se adapta a você como a cama mais confortável)",
+});
+Object.assign(TAB_LABELS.fr, {
+  atlas: "ATLAS MONDIAL (tous les pays et les personnes importantes de la planète avec leurs localisations en direct)",
+  cama: "LE LIT (personnalisation totale : Vanguard s'adapte à vous comme le lit le plus confortable)",
+});
+Object.assign(TAB_LABELS.de, {
+  atlas: "WELTATLAS (alle Länder und die wichtigsten Menschen der Welt mit ihren Live-Standorten)",
+  cama: "DAS BETT (totale Anpassung: Vanguard passt sich dir an wie das gemütlichste Bett)",
+});
+Object.assign(TAB_LABELS.it, {
+  atlas: "ATLANTE MONDIALE (tutti i paesi e le persone importanti del pianeta con le loro posizioni in diretta)",
+  cama: "IL LETTO (personalizzazione totale: Vanguard si adatta a te come il letto più comodo)",
+});
+Object.assign(TAB_LABELS.ru, {
+  atlas: "МИРОВОЙ АТЛАС (все страны и важнейшие люди планеты с их местоположением в реальном времени)",
+  cama: "КРОВАТЬ (полная персонализация: Vanguard подстраивается под тебя как самая удобная кровать)",
+});
+Object.assign(TAB_LABELS.zh, {
+  atlas: "世界地图集（所有国家与世界重要人物的实时位置）",
+  cama: "床（全面个性化：Vanguard 像最舒适的床一样适应你）",
+});
