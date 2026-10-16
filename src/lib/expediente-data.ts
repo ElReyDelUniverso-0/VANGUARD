@@ -533,6 +533,61 @@ const REAL_SEED: ArchivoReal[] = [
           "El expediente completo queda público: el mito del 'científico apolítico' se cae para siempre.",
         ] },
     ] },
+  // v118.0 CRONOATLAS — dos cronologías reales más para la MÁQUINA DEL TIEMPO
+  { id: "cointelpro", nombre: "COINTELPRO: el FBI contra sus propios ciudadanos",
+    region: "Estados Unidos · 1956-1971", rango: "1956-1971",
+    resumen: "El programa de contrainteligencia doméstica que vigiló, infiltró y desestabilizó movimientos civiles durante 15 años — y que murió por un robo de papeles en una oficina de provincia.",
+    fuente: "FBI Reading Room · Senate Church Committee Report (1976)",
+    enlaces: [teo("t-cointelpro"), teo("t-mkultra")],
+    fases: [
+      { titulo: "El comienzo", rango: "1956", tension: 30,
+        eventos: [
+          "El FBI crea COINTELPRO para 'exponer, perturbar y desviar' actividades del Partido Comunista.",
+          "Las técnicas: informantes, cartas anónimas, filtrados a la prensa y despidos por presión.",
+        ] },
+      { titulo: "La expansión", rango: "1960-1967", tension: 55,
+        eventos: [
+          "El programa se extiende a movimientos por derechos civiles, grupos blancos y organizaciones puertorriqueñas.",
+          "Martin Luther King Jr. recibe cartas anónimas amenazantes firmadas por el propio FBI.",
+        ] },
+      { titulo: "La escalada", rango: "1968-1971", tension: 85,
+        eventos: [
+          "La dirección interna ordena 'exponer, perturbar, desviar o de otro modo neutralizar' a nuevos objetivos: Panteras Negras, movimiento pacifista.",
+          "Las operaciones incluyen informantes provocadores y desinformación entre grupos rivales.",
+        ] },
+      { titulo: "El final", rango: "1971-1976", tension: 70,
+        eventos: [
+          "El 8 de marzo de 1971, el colectivo Citizens' Commission roba archivos de la oficina del FBI en Media (Pensilvania) y los envía a la prensa.",
+          "La filtración confirma el programa; el director Hoover lo cancela oficialmente un mes después. La Comisión Church (1976) lo documenta entero.",
+        ] },
+    ] },
+  { id: "echelon", nombre: "ECHELON: la red que escuchaba al planeta",
+    region: "UKUSA · 1966-2001", rango: "1966-2001",
+    resumen: "La red de intercepción de satélites compartida por cinco países anglosajones, confirmada oficialmente por un informe del Parlamento Europeo en 2001 — la mayor filtración de señales de la Guerra Fría.",
+    fuente: "Informe TEMP 168 del Parlamento Europeo (2001) · Archivos NSA desclasificados",
+    enlaces: [exp("nsa-nuclear"), arm("a-enigma")],
+    fases: [
+      { titulo: "El pacto silencioso", rango: "1946-1966", tension: 25,
+        eventos: [
+          "El acuerdo UKUSA reparte la vigilancia de señales entre Reino Unido y EE.UU.; Canadá, Australia y Nueva Zelanda se suman después.",
+          "Cada país cubre una franja del planeta y comparte el producto sin preguntas sobre ciudadanos propios.",
+        ] },
+      { titulo: "La era satelital", rango: "1966-1988", tension: 50,
+        eventos: [
+          "Estaciones como Menwith Hill (Reino Unido) y Yakima (EE.UU.) interceptan comunicaciones de satélites Intelsat.",
+          "El sistema ECHELON cruza la intercepción con diccionarios de palabras clave asignadas a cada agencia.",
+        ] },
+      { titulo: "La filtración", rango: "1988-1999", tension: 70,
+        eventos: [
+          "El periodista Duncan Campbell nombra públicamente ECHELON en 1988; durante años nadie lo confirma ni lo niega.",
+          "En 1998 un informe del Parlamento Europeo sobre interferencias toma el asunto en serio y pide investigación formal.",
+        ] },
+      { titulo: "La confirmación", rango: "2000-2001", tension: 90,
+        eventos: [
+          "La comisión STOA del Parlamento Europeo publica el informe más detallado: estaciones, miembros y capacidad, todo documentado.",
+          "La Casa Blanca admite 'actividades de inteligencia de señales' compatibles con el informe; nada vuelve a ser igual en la vigilancia europea.",
+        ] },
+    ] },
 ];
 
 // ============================================================
@@ -859,6 +914,10 @@ function semillasAristas(): AristaExp[] {
   push(arc("paperclip"), teo("t-paperclip"), "misma-historia");
   push(arc("mkultra"), arc("paperclip"), "antecedente", "la era de los programas secretos");
   push(arc("stargate"), arc("mkultra"), "antecedente");
+  push(arc("cointelpro"), teo("t-cointelpro"), "misma-historia");
+  push(arc("cointelpro"), arc("mkultra"), "antecedente", "la vigilancia doméstica y los programas secretos");
+  push(arc("echelon"), exp("nsa-nuclear"), "misma-historia");
+  push(arc("echelon"), arm("a-enigma"), "antecedente", "de Enigma a los diccionarios de palabras clave");
 
   // --- papers que estudian crisis (match determinista por título) ---
   PAPERS.forEach((p) => {

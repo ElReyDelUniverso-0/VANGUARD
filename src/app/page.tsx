@@ -307,12 +307,33 @@ export default function Home() {
   // (vuelves donde estabas, como en el navegador de tu máquina).
   const [pestanas, setPestanas] = useState<TabKey[]>(["inicio"]);
 
+  // ===== v118.0 CRONOATLAS — FLUIDEZ DIRECCIONAL =====
+  // El panel entra desde el lado que le toca: navegación hacia delante entra
+  // por la derecha y sale por la izquierda; volver invierte el movimiento.
+  // Como un navegador de verdad: la dirección SE SIENTE.
+  const [dirMov, setDirMov] = useState<1 | -1>(1);
+  const historialTabsRef = useRef<TabKey[]>(["inicio"]);
+  const forceDirRef = useRef<number | null>(null); // swipe/ciclo fuerzan dirección
+  const swipeRef = useRef<{ x: number; y: number; t: number } | null>(null);
+
   // ABRIR pestaña: dedupe (si ya está abierta, solo se activa), tope honesto de
   // MAX_PESTANAS (la más antigua se recoge con aviso), visita registrada para el
   // Explorador — la NUEVA no cuenta: abrir pestañas no paga el mapa. Escena para
   // la radio + scroll arriba (la franja nunca tapa el inicio del panel).
   const handleTabChange = useCallback((k: TabKey) => {
     sfx.tab();
+    // v118: dirección del movimiento (adelante por defecto, atrás si
+    // volvemos a la pestaña previa del historial, o la que fuerza el swipe)
+    const hist = historialTabsRef.current;
+    let dir: 1 | -1 = 1;
+    if (forceDirRef.current != null) {
+      dir = forceDirRef.current < 0 ? -1 : 1;
+      forceDirRef.current = null;
+    } else if (hist.length >= 2 && hist[hist.length - 2] === k) {
+      dir = -1;
+    }
+    setDirMov(dir);
+    historialTabsRef.current = [...hist.filter((x) => x !== k), k].slice(-12);
     setTab(k);
     if (!pestanas.includes(k)) {
       if (pestanas.length >= MAX_PESTANAS) {
@@ -351,6 +372,37 @@ export default function Home() {
     setPestanas(restantes);
     if (k === tab) setTab(restantes[Math.min(idx, restantes.length - 1)]);
   }, [pestanas, tab]);
+
+  // v118: SWIPE EN BORDES (móvil) — desliza desde el borde para cambiar de
+  // pestaña abierta, como el navegador de tu máquina. Bordes de 44 px, umbral
+  // de 70 px horizontales, ignora gestos verticales, interactivos y modales.
+  const alTocarBorde = useCallback((e: React.TouchEvent) => {
+    const tch = e.touches[0];
+    if (!tch) return;
+    if (tch.clientX > 44 && tch.clientX < window.innerWidth - 44) { swipeRef.current = null; return; }
+    const el = e.target as HTMLElement | null;
+    if (el && el.closest("input,textarea,select,iframe,canvas,button,a,[data-no-swipe]")) return;
+    swipeRef.current = { x: tch.clientX, y: tch.clientY, t: Date.now() };
+  }, []);
+  const alSoltarBorde = useCallback((e: React.TouchEvent) => {
+    const s = swipeRef.current;
+    swipeRef.current = null;
+    if (!s) return;
+    if (menuOpen || searchOpen || settingsOpen || logOpen || accountOpen || gatePasaporte) return;
+    const tch = e.changedTouches[0];
+    if (!tch) return;
+    const dx = tch.clientX - s.x;
+    const dy = tch.clientY - s.y;
+    const dt = Date.now() - s.t;
+    if (Math.abs(dx) < 70 || Math.abs(dy) > 60 || dt > 800) return;
+    if (pestanas.length < 2) return;
+    const idx = pestanas.indexOf(tab);
+    if (idx < 0) return;
+    const dirSwipe = dx < 0 ? 1 : -1; // izquierda → siguiente pestaña
+    const destino = pestanas[(idx + dirSwipe + pestanas.length) % pestanas.length];
+    forceDirRef.current = dirSwipe;
+    handleTabChange(destino);
+  }, [pestanas, tab, handleTabChange, menuOpen, searchOpen, settingsOpen, logOpen, accountOpen, gatePasaporte]);
 
   // la NUEVA PESTAÑA: elegir destino (el + de la franja / Alt+N)
   const abrirNueva = useCallback(() => {
@@ -501,6 +553,8 @@ export default function Home() {
         const curIdx = pestanas.indexOf(tab);
         if (curIdx >= 0) {
           const dir = e.key === "ArrowRight" ? 1 : -1;
+          // v118: el ciclo de pestañas también viaja en su dirección
+          forceDirRef.current = dir;
           setTab(pestanas[(curIdx + dir + pestanas.length) % pestanas.length]);
           sfx.tab();
         }
@@ -706,15 +760,23 @@ export default function Home() {
       <TransicionCine tabKey={tab} label={APP_VERSION_LABEL} />
       <CineVivo />
 
-      <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20">
-        <AnimatePresence mode="wait" initial={false}>
+      <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20" data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
+        {/* v118 CRONOATLAS: transición DIRECCIONAL — adelante entra por la
+            derecha, atrás invierte el movimiento; AnimatePresence pasa el
+            custom a la pestaña saliente para que el exit también lo sepa. */}
+        <AnimatePresence mode="wait" initial={false} custom={dirMov}>
           <motion.div
             key={tab}
             className="panel-stagger"
-            initial={{ opacity: 0, y: 18, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.995 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            custom={dirMov}
+            variants={{
+              entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? 30 : -30, y: 18, scale: 0.99 }),
+              centro: { opacity: 1, x: 0, y: 0, scale: 1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
+              sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? -24 : 24, y: -12, scale: 0.995, transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }),
+            }}
+            initial="entra"
+            animate="centro"
+            exit="sale"
           >
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (

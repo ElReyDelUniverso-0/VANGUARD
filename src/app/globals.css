@@ -2929,3 +2929,29 @@ span.v108-onda { transform-origin: center; }
 @media (prefers-reduced-motion: reduce) {
   .v117-parpadeo { animation: none !important; }
 }
+
+/* ===== v118.0 CRONOATLAS — FLUIDEZ Y MOVILIDAD =====
+   El deslizar de la casa: chips con scroll-snap (se detienen solos),
+   rebote contenido (el navegador no se lleva la página al hacer swipe en
+   una fila horizontal) y respuesta táctil inmediata en los botones. */
+.vg-chips {
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.vg-chips > * {
+  scroll-snap-align: start;
+}
+main[ontouchstart] {
+  overscroll-behavior-x: contain;
+}
+button, [role="button"], a, summary {
+  touch-action: manipulation;
+}
+/* la fila del teatro de la máquina del tiempo también fluye */
+.vg-slider {
+  touch-action: pan-x;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vg-chips { scroll-snap-type: none; }
+}

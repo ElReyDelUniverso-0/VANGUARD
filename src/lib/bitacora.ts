@@ -22,6 +22,23 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v118.0",
+    nombre: "CRONOATLAS",
+    tipo: "tecno",
+    hitos: [
+      "MÁQUINA DEL TIEMPO REALISTA: la campaña del Karsk pasa de 14 a 21 días con terreno de verdad — río con su puente estratégico, carreteras, contornos de elevación y la sombra de KARSKGRAD al este",
+      "CLIMA DIARIO EN EL TEATRO: cada día amanece con su parte — despejado, lluvia, tormenta con relámpago, niebla a ras, nieve o viento — determinista y reproducible, con temperatura y viento por dirección",
+      "DESPACHOS DEL FRENTE: el parte diario de la casa — 2-3 despachos por hora y sector sobre las localidades reales del día, escritos por Vanguard",
+      "ESTADÍSTICAS DE CAMPAÑA: bajas por bando, bombardeos, drones derribados, convoyes logísticos y la moral de ROJO y AZUL moviéndose con el empuje del frente, día a día",
+      "REPRODUCTOR NUEVO: velocidad ×0.5/×1/×2, avance y retroceso paso a paso, y TICKS rojos en la línea de tiempo marcando los días en que una localidad cambia de mano; ejes de presión con flechas que respiran según la fuerza del día",
+      "ARCHIVO REAL AMPLIADO: dos cronologías verificables más — COINTELPRO (FBI, 1956-1971) y ECHELON (UKUSA, 1966-2001) — con fases, fuente nombrada y enlaces al grafo; el ARCHIVO pasa de 3 a 5 expedientes reales",
+      "ATLAS QUE INFORMA: GOOGLE MAPS DE CONFLICTOS pasa de 8 a 12 zonas (Líbano Sur, Mar Negro, Cáucaso y Congo Este) con FICHA RICA: actores del conflicto, cifras clave e historial del frente",
+      "INTEL EN VIVO EN LOS MAPAS: los cables de la casa se emparejan a cada zona por palabras clave y se leen DENTRO de Vanguard con la SALA DE LECTURA — el enlace externo a Google muere: las coordenadas se COPIAN y quedan como nota",
+      "FLUIDEZ DIRECCIONAL: las salas entran desde el lado que les toca — adelante entra por la derecha y atrás invierte el movimiento, como un navegador de verdad; el ciclo de pestañas (flechas) viaja en su dirección",
+      "SWIPE EN BORDES (móvil): desliza desde el borde para cambiar de pestaña abierta, con umbral honesto, bordes de 44 px y respeto a modales e interactivos; chips con scroll-snap y rebote contenido en toda la casa",
+    ],
+  },
+  {
     version: "v117.0",
     nombre: "ATMÓSFERA",
     tipo: "mundo",

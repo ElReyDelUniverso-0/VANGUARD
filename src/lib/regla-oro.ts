@@ -572,7 +572,7 @@ export const REGLA_ORO = {
     volanta: "El planeta como maqueta: relieve satelital real",
     imagen: "/ilustraciones/maps.jpg",
     texto:
-      "El mapa satelital ahora tiene modo 3D REAL: imagen de Esri sobre terreno en relieve con inclinación, rotación y vuelos cinemáticos a 10 zonas calientes — del Donbás a Ormuz, de Taiwán a Bab el-Mandeb. Del espacio a la esquina exacta, y ahora también al valle exacto.",
+      "El mapa satelital ahora tiene modo 3D REAL: imagen de Esri sobre terreno en relieve con inclinación, rotación y vuelos cinemáticos a 12 zonas calientes — del Donbás a Ormuz, de Taiwán a Bab el-Mandeb, del Líbano Sur al Congo Este. Del espacio a la esquina exacta, y ahora también al valle exacto.",
     acento: "#34D399",
   },
   ayuda: {
@@ -995,7 +995,7 @@ export const REGLA_ORO = {
     volanta: "Viaja por la historia de cada crisis",
     imagen: "/ilustraciones/historia.jpg",
     texto:
-      "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (14 días, reproducción automática, área ocupada y localidades que cambian de mano), Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE y PAPERCLIP con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
+      "Elige un conflicto y retrocede por sus días: el frente del Valle del Karsk se mueve ante tus ojos con su odómetro de campaña real (21 días, velocidad ×0.5/×1/×2, terreno con río y puente, clima diario, bajas y moral por bando, y el parte de DESPACHOS DEL FRENTE), Vand, Zenit y Sarn se ven en capítulos con teatro esquemático y curva de tensión, y el archivo REAL te lleva a las cronologías documentadas de MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO y ECHELON con su fuente nombrada. Cómo llegó cada crisis a ser lo que es hoy.",
     acento: "#FFC94D",
   },
   pantalla: {

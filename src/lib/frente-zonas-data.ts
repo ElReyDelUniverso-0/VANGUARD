@@ -117,3 +117,144 @@ export const EJES_PRESION = [
   { nombre: "Eje Central — Bakhmut", x: 452, y: 270, dir: -1, fuerza: 0.5 },
   { nombre: "Eje Sur — Vuhledar", x: 420, y: 500, dir: -1, fuerza: 0.34 },
 ] as const;
+
+// ============================================================
+// v118.0 CRONOATLAS — LA MÁQUINA DEL TIEMPO REALISTA
+// La campaña del Karsk pasa de 14 a 21 días y el teatro gana
+// CAPAS DE INFORMACIÓN deterministas: clima diario, estadísticas
+// de campaña (bajas, fuego, drones, convoyes, moral), despachos
+// del frente escritos por la casa, terreno (río, carreteras,
+// contornos, puente) y marcadores de eventos en la línea de tiempo.
+// Reproducir el mismo día produce el MISMO mapa y el MISMO parte.
+// ============================================================
+
+export const DIAS_CAMPANA = 21; // días 0..20 — 20 es HOY
+export const DIA_HOY = DIAS_CAMPANA - 1;
+
+// v118 FIX: fnv89 devuelve base-36 de 1 a 7 caracteres — charCodeAt(i) fuera
+// de rango da NaN (cazó en vivo: la barra de moral animaba a "NaN%").
+// Accesor seguro: envuelve el índice y cae a '0' si no hay nada.
+function ch(h: string, i: number): number {
+  const c = h.charCodeAt(i % Math.max(1, h.length));
+  return Number.isFinite(c) && c > 0 ? c : 48;
+}
+
+/** Fases canónicas de la campaña de 21 días (el panel las pinta como saltos). */
+export const FASES_CAMPANA = [
+  { titulo: "La marea del norte", de: 0, hasta: 6 },
+  { titulo: "El pulso del este", de: 7, hasta: 13 },
+  { titulo: "La semana decisiva", de: 14, hasta: 20 },
+] as const;
+
+export function faseDe(dia: number): (typeof FASES_CAMPANA)[number] {
+  return FASES_CAMPANA.find((f) => dia >= f.de && dia <= f.hasta) ?? FASES_CAMPANA[2];
+}
+
+// ---- clima diario (determinista por día) ----
+export type ClimaDia = "despejado" | "lluvia" | "tormenta" | "niebla" | "nieve" | "viento";
+
+export interface ClimaInfo { tipo: ClimaDia; vientoKmh: number; tempC: number; direccion: string }
+
+const CLIMAS: ClimaDia[] = ["despejado", "despejado", "lluvia", "niebla", "viento", "lluvia", "tormenta", "nieve"];
+const DIRS_VIENTO = ["NO", "N", "NE", "E", "SE", "S", "SO", "O"];
+
+export function climaDe(dia: number): ClimaInfo {
+  const h = fnv89(`clima118:${dia}`);
+  const tipo = CLIMAS[ch(h, 0) % CLIMAS.length];
+  const vientoKmh = 4 + (ch(h, 1) % 28);
+  const tempC = 2 - (ch(h, 2) % 9) + (tipo === "despejado" ? 3 : tipo === "nieve" ? -6 : 0);
+  const direccion = DIRS_VIENTO[ch(h, 3) % DIRS_VIENTO.length];
+  return { tipo, vientoKmh, tempC, direccion };
+}
+
+// ---- estadísticas de campaña por día (deterministas) ----
+export interface StatsDia {
+  bajasRojo: number;   // bajas del bando rojo (ocupante) en 24 h
+  bajasAzul: number;   // bajas del bando azul (defensa) en 24 h
+  bombardeos: number;  // impactos de artillería registrados
+  drones: number;      // drones derribados (ambos bandos)
+  convoyes: number;    // convoyes logísticos cruzados
+  moralRojo: number;   // 0..100
+  moralAzul: number;   // 0..100
+}
+
+export function statsDe(dia: number): StatsDia {
+  const area = areaOcupada(dia);
+  const areaAntes = areaOcupada(Math.max(0, dia - 1));
+  const empuje = Math.max(0, area - areaAntes); // km² ganados por el rojo hoy
+  const h = fnv89(`stats118:${dia}`);
+  const bombardeos = 14 + (ch(h, 0) % 34);
+  const drones = 3 + (ch(h, 1) % 11);
+  const convoyes = 8 + (ch(h, 2) % 15);
+  const intensidad = 0.6 + empuje / 140; // más empuje → más bajas
+  const bajasRojo = Math.round(90 * intensidad + (ch(h, 3) % 70));
+  const bajasAzul = Math.round(60 * intensidad + (ch(h, 4) % 55));
+  const moralRojo = Math.min(96, Math.max(28, 62 + dia * 0.8 - (ch(h, 5) % 14)));
+  const moralAzul = Math.min(94, Math.max(26, 58 - dia * 0.5 + (ch(h, 6) % 18)));
+  return { bajasRojo, bajasAzul, bombardeos, drones, convoyes, moralRojo, moralAzul };
+}
+
+// ---- despachos del frente: el parte diario escrito por la casa ----
+export interface Despacho { hora: string; sector: string; texto: string }
+
+const PLANTILLAS: ((loc: string, eje: string) => string)[] = [
+  (l) => `Duelo de artillería sobre ${l} durante toda la madrugada; los incendios secundarios siguen activos.`,
+  (l) => `Drones de reconocimiento sobre ${l} derribados por defensas cortas; el cielo queda limpio al amanecer.`,
+  (l) => `Convoy logístico alcanza ${l} escoltado; la ruta alterna sigue bajo riesgo de fuego de contrabatería.`,
+  (l) => `Contraataque local al este de ${l} recupera trincheras de la víspera; el frente vuelve a su línea de la mañana.`,
+  (l) => `Bombardeo de saturación sobre las aproximaciones de ${l}; ingenieros abren paso entre los cráteres.`,
+  (l) => `Repliegue táctico en ${l}: la línea se acorta para negar flancos; el terreno cedido es campo abierto.`,
+  (l) => `Puentes de campaña levantados junto a ${l}; la presión sobre el eje ${"{EJE}"} se sostiene sin pausa.`,
+  (l) => `Guerra electrónica: el GPS de ${l} y alrededores cae durante horas; la navegación vuelve al papel.`,
+];
+
+const SECTORES = ["SECTOR NORTE", "SECTOR CENTRAL", "SECTOR SUR", "BOLSÓN DEL ESTE", "RIBERA DEL KARSK"];
+
+export function despachosDe(dia: number): Despacho[] {
+  const h = fnv89(`desp118:${dia}`);
+  const n = 2 + (ch(h, 0) % 2); // 2..3 despachos
+  const out: Despacho[] = [];
+  for (let i = 0; i < n; i++) {
+    const horaH = fnv89(`desp118:${dia}:${i}`);
+    const hh = String(4 + (ch(horaH, 0) % 20)).padStart(2, "0");
+    const mm = String(ch(horaH, 1) % 60).padStart(2, "0");
+    const loc = LOCALIDADES[(ch(horaH, 2) * 3 + i * 5) % LOCALIDADES.length].nombre;
+    const eje = EJES_PRESION[ch(horaH, 3) % EJES_PRESION.length].nombre;
+    const plant = PLANTILLAS[(ch(horaH, 4) + i * 3) % PLANTILLAS.length];
+    const texto = plant(loc, eje).replace("{EJE}", eje.split("—")[0].trim());
+    const sector = SECTORES[(ch(horaH, 5) + i) % SECTORES.length];
+    out.push({ hora: `${hh}:${mm}`, sector, texto });
+  }
+  return out;
+}
+
+// ---- terreno del teatro (estático, dibujado bajo las unidades) ----
+export const RIO_KARSK: [number, number][] = [
+  [648, 0], [612, 78], [628, 150], [586, 236], [566, 318], [524, 396], [492, 470], [462, 540],
+];
+export const PUENTE_KARSK = { x: 586, y: 236, nombre: "Puente de Orikhiv" };
+export const CARRETERAS: [number, number][][] = [
+  [[0, 120], [178, 132], [356, 110], [620, 62]],          // carretera del norte
+  [[0, 424], [222, 434], [432, 402], [800, 470]],         // carretera del sur
+];
+export const CONTORNOS: { cx: number; cy: number; rx: number; ry: number }[] = [
+  { cx: 700, cy: 176, rx: 92, ry: 56 },
+  { cx: 706, cy: 182, rx: 64, ry: 38 },
+  { cx: 712, cy: 188, rx: 36, ry: 21 },
+];
+export const KARSKGRAD_LABEL = { x: 762, y: 250, texto: "KARSKGRAD →" };
+
+/** Días en los que una localidad cambia de mano (para los ticks del slider). */
+export function diasConEvento(dias = DIAS_CAMPANA): number[] {
+  return deltas(dias)
+    .filter((d) => d.localidades.length > 0)
+    .map((d) => d.dia);
+}
+
+/** Fuerza del eje de presión al día dado (ondula con la campaña). */
+export function fuerzaEje(ejeIdx: number, dia: number): number {
+  const base = EJES_PRESION[ejeIdx].fuerza;
+  const h = fnv89(`eje118:${ejeIdx}:${dia}`);
+  const ond = ((ch(h, 0) % 1000) / 1000) * 0.5 - 0.25; // -0.25..+0.25
+  return Math.min(1, Math.max(0.12, base + ond));
+}
