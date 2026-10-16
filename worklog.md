@@ -1564,3 +1564,28 @@ Stage Summary:
 - v120.0 GRAN SALTO 3D en producción local y en GitHub. Las 3 secciones que el dueño reportó rotas (noticias, Vista Dios, cámaras) responden; la causa raíz de "noticias no carga" era la BD caída por el desajuste de provider.
 - La portada abre con la ciudad viva (día/noche real, región rotativa a mano y sola cada día, clima del planeta) y VANGUARD en letras 3D volumétricas.
 - Pendiente sugerido para la próxima ronda (v121): mini-ciudad 3D dentro de cámaras-panel, intel del Espejo/Briefing, exportar crono de localidad como PNG (ideas v120 que ya apuntaban v119).
+
+---
+Task ID: 4
+Agent: main (Super Z)
+Task: v121.0 «LA CAMA MÁS CÓMODA» — petición del dueño: "haz movimientos al cambiar de sección, letras con animación, Vanguard personalizable como la cama más cómoda que se adapte a cada usuario, imágenes e ilustraciones funcionales entre dos, y un modo con toda la información de cada país y cada persona importante del mundo con sus ubicaciones"
+
+Work Log:
+- MODO ATLAS MUNDIAL (nuevo tab "atlas", primera sala de ARCHIVO MUNDIAL): src/lib/atlas-data.ts con 66 países (capital, lat/lng, zona IANA, población, superficie, idiomas, moneda, gobierno, líder, dato estratégico) + 70 personas importantes (GOBIERNO 33, ORGANISMOS 6, DINERO 14, CIENCIA 8, CULTURA 9) con SU UBICACIÓN REAL (sede, ciudad, lat/lng, zona) y bio.
+- src/components/vanguard/panels/atlas-panel.tsx: 3 vistas internas (MAPA / PAÍSES / PERSONAS). MAPA: el SVG real de Vanguard (world-paths.json Natural Earth vía projectLatLng) con pines de personas coloreados por categoría + pulso, ficha lateral, filtros por categoría y relojes de 8 potencias a 1 Hz. PAÍSES: buscador + filtros por región + 66 tarjetas con bandera flagcdn y ficha completa expandible. PERSONAS: buscador + 5 categorías + fichas con hora local EN VIVO y botón VER EN EL MAPA. Nota de edición 2026.
+- TRANSICIÓN MAESTRA (5 estilos): src/components/vanguard/transicion-maestra.tsx (capas fijas transform/opacity) sustituye a TransicionCine en page.tsx; variantes de AnimatePresence por estilo en page.tsx (cine3d con rotateY+perspective, telón scaleY, hiperespacio escala, disolver calma, deslizar direccional v118) — multiplicadas por la intensidad de movimiento del dueño.
+- LETRAS ANIMADAS: src/components/vanguard/letras-animadas.tsx (LetrasAnimadas + LetrasBrasa) integrado en PanelHeader → TODOS los títulos de las salas entran letra a letra (rotateX volumétrico, 60 FPS, reduced-motion respetado).
+- LA CAMA (nuevo tab "cama", primera sala de SISTEMA): src/lib/cama-store.ts (zustand persist vg_cama_v121: transicion, letraEscala 0.85-1.3, densidad, movimiento 0-1.2, acento, modoCama, autoCama, favorito, recientes, visitas) + panels/cama-panel.tsx (5 estilos con vista previa jugable, sliders, 6 acentos, modo cama, auto-cama 22-7h, adaptación con salas más visitadas + recientes, reset) + motor-cama.tsx (CSS vars en :root: --vg-escala via html font-size calc, --vg-acento en selection/scrollbar/focus, --vg-kdur para keyframes, data-densidad, html.modo-cama con overlay cálido — NUNCA filter en body por los fixed).
+- ILUSTRACIONES VIVAS FUNCIONALES: src/components/vanguard/ilustraciones-vivas.tsx — 7 tipos procedurales SVG (globo con satélite orbital, satélite, ciudad con sol/luna real, antena, cohete, cama lunar con Zzz, prensa) animadas con --vg-kdur + FranjaIlustrada ENTRE bloques de la portada (satélite+globo+ciudad + hora real del visitante).
+- i18n-tabs.ts: atlas/cama añadidos a los 8 diccionarios vía Object.assign (merge seguro). tab-nav.tsx: TabKey "atlas"/"cama" + TABS (iconos Compass/BedDouble) + SECTIONS (atlas primero en ARCHIVO MUNDIAL, cama primera en SISTEMA).
+- globals.css: ~150 líneas nuevas (CSS vars de la cama, 5 animaciones de transición tm-*, keyframes iv-* de ilustraciones, iv-pulso-pin del atlas, vg-letra-brasa, modo-cama overlay, reduced-motion).
+- version.ts → v121.0 · LA CAMA MÁS CÓMODA; bitacora.ts con entrada de 7 hitos.
+- BUGS corregidos en el camino: useMemo faltante en page.tsx (build roto en /clasico), desde: 1994 (Amazon) inválido en atlas-data, nested buttons en las tarjetas del Atlas (hydration error) → div role=button + teclado, set-state-in-effect → rAF (lint), VER EN EL MAPA visible también en ficha inline.
+- QA EN VIVO (agent-browser 1440×900 y 390×844): portada con v121.0 + franja ilustrada con hora viva; Atlas: 69 pines coloreados, relojes reales (Washington 17:46 / Pekín 05:46 / Tokio 06:46), fichas de Putin (El Kremlin + hora local) y España (Pedro Sánchez + dato) verificadas, 66 banderas; LA CAMA: 5 estilos listados, cambio a CINE 3D + acento magenta PERSISTIDOS en localStorage (vg_cama_v121) y --vg-acento aplicado en vivo; capa .transicion-maestra detectada disparándose con data-estilo=cine3d en navegación real; móvil 390px sin overflowX. Capturas: download/qa-v121-atlas-mapa.png, qa-v121-cama.png, qa-v121-pais-ficha.png, qa-v121-movil-atlas.png.
+- bun run build VERDE · lint 76 problemas (22 err/54 warn) = baseline exacto, cero nuevos · tsc --noEmit limpio.
+- COMMIT 20d0153 → push a main (cab9ce3..20d0153).
+
+Stage Summary:
+- v121.0 LA CAMA MÁS CÓMODA en producción local y en GitHub. Las 5 órdenes del dueño cumplidas: movimientos de sección elegibles (5 estilos), letras animadas en toda la casa, personalización total con adaptación real, ilustraciones funcionales procedurales ENTRE bloques, y el MODO ATLAS MUNDIAL con 66 países + 70 personas importantes y sus ubicaciones con relojes en vivo.
+- La casa aprende: cada visita queda en vg_cama_v121 y LA CAMA muestra las salas más pisadas + recientes a un toque.
+- Sugerido para v122: rutas de vuelo entre líderes en el mapa del Atlas, comparador de países A vs B, y que el favorito de LA CAMA abra la sala al arrancar.
