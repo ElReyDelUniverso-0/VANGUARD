@@ -568,3 +568,29 @@ Object.assign(TAB_LABELS.zh, {
   atlas: "世界地图集（所有国家与世界重要人物的实时位置）",
   cama: "床（全面个性化：Vanguard 像最舒适的床一样适应你）",
 });
+
+// ====== v126.0 LA CASA · ATELIER — las 5 leyes del lujo (8 idiomas) ======
+Object.assign(TAB_LABELS.es, {
+  atelier: "EL ATELIER (las cinco leyes del lujo: acabados finos, edición limitada numerada, tu serie grabada, modo galería e historia de la Casa)",
+});
+Object.assign(TAB_LABELS.en, {
+  atelier: "THE ATELIER (the five laws of luxury: fine finishes, numbered limited edition, your engraved serial, gallery mode and the House's story)",
+});
+Object.assign(TAB_LABELS.pt, {
+  atelier: "O ATELIÊ (as cinco leis do luxo: acabamentos finos, edição limitada numerada, sua série gravada, modo galeria e a história da Casa)",
+});
+Object.assign(TAB_LABELS.fr, {
+  atelier: "L'ATELIER (les cinq lois du luxe : finitions raffinées, édition limitée numérotée, votre série gravée, mode galerie et l'histoire de la Maison)",
+});
+Object.assign(TAB_LABELS.de, {
+  atelier: "DAS ATELIER (die fünf Gesetze des Luxus: feine Ausführungen, nummerierte Limitierte Auflage, Ihre gravierte Serie, Galeriemodus und die Geschichte des Hauses)",
+});
+Object.assign(TAB_LABELS.it, {
+  atelier: "L'ATELIER (le cinque leggi del lusso: finiture raffinate, edizione limitata numerata, la tua serie incisa, modalità galleria e la storia della Casa)",
+});
+Object.assign(TAB_LABELS.ru, {
+  atelier: "АТЕЛЬЕ (пять законов роскоши: тонкая отделка, нумерованное лимитированное издание, ваш гравированный серийный номер, режим галереи и история Дома)",
+});
+Object.assign(TAB_LABELS.zh, {
+  atelier: "工坊（奢华五法则：精致材质、编号限量版、专属刻印编号、画廊模式与家族历史）",
+});

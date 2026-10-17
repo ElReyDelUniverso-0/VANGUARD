@@ -34,6 +34,7 @@ export function OcasoBanner() {
       style={{ padding: 0 }}
       data-parallax="0.12"
       aria-label="VANGUARD · ocaso eterno sobre el mundo en guerra"
+      data-luxe-oculto
     >
       <svg viewBox="0 0 100 42" className="block w-full" role="img" preserveAspectRatio="xMidYMid slice">
         <defs>

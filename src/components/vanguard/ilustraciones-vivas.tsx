@@ -19,7 +19,8 @@ export type TipoIlustracion =
   | "antena"     // antena emitiendo ondas de radio
   | "cohete"     // cohete con llama encendida
   | "cama"       // LA CAMA: cama lunar con estrellas y Zzz flotando
-  | "prensa";    // micrófono con ondas (la Redacción)
+  | "prensa"    // micrófono con ondas (la Redacción)
+  | "gema";     // v126 ATELIER: gema tallada con destello (la Casa)
 
 interface IlustracionVivaProps {
   tipo: TipoIlustracion;
@@ -197,6 +198,29 @@ export function IlustracionViva({ tipo, className, ancho = 120, tono }: Ilustrac
           {[0, 1, 2].map((i) => (
             <path key={`d${i}`} d={`M${76 + i * 7} ${28 + i * 2} Q80 ${34 + i * 2} ${76 + i * 7} ${40 + i * 2}`} fill="none" stroke={t} strokeWidth="1.1" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${q2(i * 0.4)}s` }} />
           ))}
+        </g>
+      )}
+
+      {/* v126 ATELIER — la gema de la Casa: talla facetada con destello vivo */}
+      {tipo === "gema" && (
+        <g>
+          {/* corona + pabellón */}
+          <g stroke={t} strokeWidth="1.5" fill="none" strokeLinejoin="round">
+            <polygon points="38,28 82,28 96,44 60,70 24,44" />
+            <polyline points="24,44 96,44" />
+            <polyline points="38,28 48,44 60,28 72,44 82,28" />
+            <polyline points="48,44 60,70 72,44" />
+            <polyline points="24,44 48,44" />
+            <polyline points="72,44 96,44" />
+          </g>
+          {/* destellos vivos (opacity only — contrato 60 FPS) */}
+          <g fill={t}>
+            <circle cx="60" cy="44" r="1.6" className="iv-parpadeo" />
+            <path d="M100 18 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4 z" className="iv-parpadeo iv-delay" />
+            <path d="M18 14 l1.1 2.9 2.9 1.1 -2.9 1.1 -1.1 2.9 -1.1 -2.9 -2.9 -1.1 2.9 -1.1 z" className="iv-latido-soft" />
+          </g>
+          {/* pedestal */}
+          <line x1="40" y1="74" x2="80" y2="74" stroke={t} strokeWidth="1.4" strokeLinecap="round" />
         </g>
       )}
 

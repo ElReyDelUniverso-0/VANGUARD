@@ -2,7 +2,7 @@
 # VANGUARD — Proyecto del usuario "ElReyDelUniverso-0"
 # Lee este archivo COMPLETO antes de tocar nada. Es tu contrato de trabajo.
 
-Última actualización: 2026-10-18 · Versión actual del proyecto: **v125.0 CORRECCIÓN TOTAL** (v124 CAVIAR: lujo exclusivo oro/champán · v125: LA CAZA DE BUGS TOTAL — error de hidratación en cada visita fresca eliminado (useId + cuantizador q2 en estilos), los botones vuelven a responder al primer toque, resolutor de salas para las 10 salas que quedaban con panel vacío por swipe/navegación (juego, inteligencia, mercado…), cabeceras no-cache contra la página vieja («a veces no se actualiza»), peak de presencia GREATEST→MAX en SQLite, purga de zombis y caché Turbopack; barrido QA de 158 pestañas sin paneles vacíos ni errores de consola)
+Última actualización: 2026-10-18 · Versión actual del proyecto: **v126.0 LA CASA · ATELIER** (las CINCO LEYES DEL LUJO dictadas por el Dueño son ahora constitución de la Casa — `src/lib/luxe.ts`: ① espacio negativo con MODO GALERÍA real (atributo `data-luxe-oculto` en capas secundarias + `html[data-galeria="on"]`), ② materiales y texturas finas (6 acabados CSS .vg-mat-*: Oro Caviar, Platino Nocturno, Obsidiana, Champán Viejo, Oro Rosa, Marfil Real) con campana de salón, ③ escasez verdadera (edición limitada por estación astronómica, 2500 piezas numeradas, cuenta atrás real), ④ artesanía (SERIE única grabada por visitante en HUD + Atelier), ⑤ narrativa (Historia de la Casa, horas de forja, firma del fundador). Sala nueva: EL ATELIER en SISTEMA. · v125: LA CAZA DE BUGS TOTAL — hidratación limpia, botones al primer toque, resolutor de salas, no-cache, peak de presencia MAX · v124 CAVIAR: lujo oro/champán)
 
 ---
 

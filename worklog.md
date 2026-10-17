@@ -1691,3 +1691,32 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v125.0 CORRECCIÓN TOTAL. La casa está SANA por fin: cada visita fresca hidrata sin un solo error (el bug más viejo de Vanguard, vivo desde v120, eliminado con dos cambios quirúrgicos), los 1415 botones responden al primer toque, las 16 salas del mega-menú siempre muestran su contenido (el swipe ya no aterriza en salas vacías), el navegador nunca vuelve a enseñar una página vieja (no-cache en HTML) y el pico de guerreros en línea vuelve a subir. Barrido completo de 158 pestañas: cero paneles vacíos, cero errores.
 - Sugerido para v126: reducir la RAM del dev server (el OOM del sandbox mató el servidor 4 veces durante el QA — en producción Vercel no aplica), console.error global con reporte a /api/diagnostico para cazar futuros fallos en producción, y playwright headless en CI para repetir el barrido de 158 salas automáticamente en cada release.
+
+---
+Task ID: 5
+Agent: main (Super Z)
+Task: v126.0 LA CASA · ATELIER — las 5 leyes del lujo del Dueño convertidas en constitución + diagnóstico de inestabilidad del servidor
+
+Work Log:
+- El Dueño dictó las 5 leyes del lujo (minimalismo/espacio negativo, materiales y texturas, escasez percibida, personalización artesanal, narrativa y herencia). Se convirtieron en v126.0.
+- NUEVO src/lib/luxe.ts: motor de las 5 leyes — forjarSerie() (crypto, una vez por visitante), hashEstable FNV-1a (determinista SSR-safe), granoDeSerie, ACABADOS (6 materiales: Oro Caviar pulido, Platino Nocturno cepillado, Obsidiana vidrio, Champán Viejo satinado, Oro Rosa grano, Marfil Real mate), edicionVigente() por solsticios/equinoccios reales con 2500 unidades y demanda determinista, cuentaAtras(), HISTORIA (4 capítulos), horasDeForja, FIRMA_CASA.
+- NUEVO src/lib/luxe-store.ts (zustand persist vg_luxe_v126): serie, forjaISO, acabado, galeria.
+- NUEVO src/components/vanguard/motor-luxe.tsx: html[data-galeria], html[data-acabado], --vg-sello, html[data-serie]; forja la serie en rAF (contrato 60 FPS, cero re-render).
+- NUEVO src/components/vanguard/panels/atelier-panel.tsx (sala EL ATELIER en SISTEMA, tras LA CAMA): armario de acabados con muestras de material (.vg-mat-*) y brillo .vg-sheen al hover + campana sfx; placa de serie grabada (.vg-grabado) con fecha y grano Nº; edición limitada con unidad reservada, barra de escasez y cuenta atrás real; interruptor MODO GALERÍA; Historia de la Casa con animación whileInView y firma.
+- ilustraciones-vivas.tsx: nueva ilustración "gema" (talla facetada con destellos, opacity-only).
+- tab-nav.tsx: TabKey "atelier" + TABS.atelier (Gem, ámbar) + SISTEMA tabs + desc. i18n-tabs.ts: 8 idiomas.
+- page.tsx: AtelierPanel dynamic ssr:false + MotorLuxe montado junto a MotorCama.
+- globals.css: bloque v126 — 6 texturas .vg-mat-* (color-mix), .vg-sheen (transform), .vg-grabado (grano con --vg-grano-giro), MODO GALERÍA (html[data-galeria="on"] [data-luxe-oculto] display:none + aire extra en space-y + bordes silenciados).
+- data-luxe-oculto añadido a capas secundarias: stats-ticker, goal-banner, share-goal, rival-strip, ocaso-banner, regreso-banner, clúster de chips de retention.
+- hud-header.tsx: SERIE grabada junto a la firma 3D (font-caviar 9px, oro del sello, click → atelier).
+- version.ts → v126.0 LA CASA · ATELIER; bitacora.ts: entrada v126 con 7 hitos + tipo nuevo "luxe" (#D4AF37).
+- HALLAZGO IMPORTANTE (falso bug): la terminal de bash devora la secuencia "[m" en su SALIDA (un [modoCama] se mostraba como odoCama]) — el motor-cama nunca estuvo roto; verificado con base64/hex. Lección: desconfiar de corchetes en salidas bash, usar Read tool o base64.
+- DIAGNÓSTICO DE INESTABILIDAD: el dev server del sandbox murió 4 veces durante el QA (el health marcaba RSS 2373MB — zona OOM documentada en v125). Esto es EL root cause de "a veces no se actualiza" en el sandbox (la casa queda muerta/vieja). Mitigación: NODE_OPTIONS=--max-old-space-size=1536 + setsid; en producción Vercel no aplica.
+- BUG CSS REAL corregido en el camino: el Modo Galería apuntaba a la clase .luxe-ocultable pero los componentes llevan el atributo data-luxe-oculto → selector corregido a [data-luxe-oculto].
+- prisma:error visto en dev.log ($executeRawUnsafe "Execute returned results" en SQLite) — API preexistente (probablemente /api/visits); queda anotado para v127.
+- Lint: 76 problemas = baseline EXACTO de v125 (cero nuevos).
+- QA agent-browser: home 200 + health {"version":"v126.0"}; EL ATELIER renderiza completo (serie/acabados/edición/historía); serie grabada en HUD (VG-9AEF-11DF); acabado Platino en vivo (--vg-sello #C0C8D8, data-acabado=platino); MODO GALERÍA ON oculta 2/2 elementos [data-luxe-oculto] (display:none); home sin módulos caídos. Captura: download/qa-v126-final.png.
+
+Stage Summary:
+- PRODUCCIÓN = v126.0 LA CASA · ATELIER. Las 5 leyes del lujo son ahora ley de la Casa y viven en una sala propia. La serie única graba a cada visitante; las ediciones limitadas caducan con las estaciones reales; el Modo Galería da el espacio negativo en TODAS las salas.
+- Pendiente v127: fijar el $executeRawUnsafe de /api/visits, seguir el plan de RAM del dev server, y continuar el backlog de 25 puntos (música épica/gloria ya en v123; profundizar secciones 3D y el mapa global de personas).

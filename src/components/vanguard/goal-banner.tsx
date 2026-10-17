@@ -112,7 +112,7 @@ export function GoalBanner() {
   const alreadyClaimed = claimedHere && goal.unlocked;
 
   return (
-    <section className="mt-6" aria-label="Objetivo mundial — meta comunitaria">
+    <section className="mt-6" aria-label="Objetivo mundial — meta comunitaria" data-luxe-oculto>
       <div className="relative overflow-hidden rounded-xl border border-amber-500/40 bg-gradient-to-br from-amber-950/40 via-zinc-900 to-zinc-950 p-4 md:p-5">
         {/* brillo dorado */}
         <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-amber-500/10 blur-3xl" aria-hidden />

@@ -3259,3 +3259,99 @@ html.auto-cama-activa .particles-layer { opacity: 0.35; }
   .v123-aurora, .v123-ave, .v123-dron, .v123-coche-a, .v123-coche-b, .v123-corona { animation: none; }
   .v123-ave, .v123-dron { display: none; }
 }
+
+/* ============================================================
+   v126.0 LA CASA · ATELIER — LAS 5 LEYES DEL LUJO EN CSS
+   Ley 2 · Materiales: .vg-mat-* (texturas finas que responden a la luz)
+   Ley 1 · Espacio negativo: html[data-galeria="on"] (MODO GALERÍA)
+   Ley 4 · Artesanía: .vg-grabado (la placa de serie con grano propio)
+   Contrato 60 FPS: solo transform/opacity/background estáticos.
+   ============================================================ */
+
+/* ── muestra de material (los acabados del Atelier) ── */
+.vg-mat { position: relative; border: 1px solid rgba(255,255,255,0.08); }
+/* oro / metales pulidos a espejo */
+.vg-mat-pulido {
+  background:
+    linear-gradient(135deg,
+      color-mix(in oklab, var(--vg-mat, #D4AF37) 88%, #ffffff) 0%,
+      color-mix(in oklab, var(--vg-mat, #D4AF37) 55%, #ffffff) 38%,
+      color-mix(in oklab, var(--vg-mat, #D4AF37) 92%, #000000) 62%,
+      color-mix(in oklab, var(--vg-mat, #D4AF37) 70%, #ffffff) 100%);
+}
+/* metal cepillado: vetas finas paralelas */
+.vg-mat-cepillado {
+  background:
+    repeating-linear-gradient(90deg,
+      color-mix(in oklab, var(--vg-mat, #C0C8D8) 82%, #000000) 0 1px,
+      color-mix(in oklab, var(--vg-mat, #C0C8D8) 78%, #ffffff) 1px 3px),
+    linear-gradient(160deg, rgba(255,255,255,0.14), transparent 55%);
+}
+/* vidrio volcánico: profundidad con arista de luz */
+.vg-mat-vidrio {
+  background:
+    linear-gradient(150deg,
+      color-mix(in oklab, var(--vg-mat, #9BA3B4) 34%, transparent) 0%,
+      color-mix(in oklab, var(--vg-mat, #9BA3B4) 12%, transparent) 45%,
+      rgba(0,0,0,0.42) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+/* satinado de bodega: cambio de hilo suave */
+.vg-mat-satinado {
+  background:
+    linear-gradient(115deg,
+      color-mix(in oklab, var(--vg-mat, #DCC078) 72%, #ffffff) 0%,
+      color-mix(in oklab, var(--vg-mat, #DCC078) 96%, #000000) 30%,
+      color-mix(in oklab, var(--vg-mat, #DCC078) 66%, #ffffff) 52%,
+      color-mix(in oklab, var(--vg-mat, #DCC078) 88%, #000000) 78%,
+      color-mix(in oklab, var(--vg-mat, #DCC078) 74%, #ffffff) 100%);
+}
+/* grano artesanal: puntos irregulares (Ley 4) */
+.vg-mat-grano {
+  background:
+    radial-gradient(circle at 22% 30%, rgba(255,255,255,0.20) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 68% 58%, rgba(0,0,0,0.28) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 44% 76%, rgba(255,255,255,0.12) 0 1px, transparent 1.8px),
+    linear-gradient(140deg, color-mix(in oklab, var(--vg-mat, #E3B0A2) 88%, #ffffff), color-mix(in oklab, var(--vg-mat, #E3B0A2) 76%, #000000));
+}
+/* mate profundo: absorbe la luz */
+.vg-mat-mate {
+  background:
+    radial-gradient(120% 120% at 50% 0%, color-mix(in oklab, var(--vg-mat, #E8E4D8) 92%, #000000) 0%, color-mix(in oklab, var(--vg-mat, #E8E4D8) 74%, #000000) 100%);
+}
+
+/* ── Ley 2: la luz responde al dedo — brillo que barre la tarjeta ── */
+.vg-sheen {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255,255,255,0.13) 50%, transparent 58%);
+  transform: translateX(-130%);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+button:hover > .vg-sheen, button:focus-visible > .vg-sheen { transform: translateX(130%); }
+
+/* ── Ley 4: la placa grabada con grano único de la serie ── */
+.vg-grabado {
+  background:
+    radial-gradient(circle at 28% 18%, color-mix(in oklab, var(--vg-sello, #D4AF37) 9%, transparent), transparent 58%),
+    repeating-linear-gradient(var(--vg-grano-giro, 0deg),
+      rgba(255,255,255,0.024) 0 1px, transparent 1px 4px),
+    rgba(0,0,0,0.30);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.42),
+    inset 0 0 24px rgba(0,0,0,0.30);
+}
+
+/* ── Ley 1: MODO GALERÍA — el espacio negativo manda ──
+   La casa retira lo secundario y el aire se ensancha. */
+html[data-galeria="on"] [data-luxe-oculto] { display: none !important; }
+html[data-galeria="on"] .hud-panel {
+  border-color: rgba(232, 197, 106, 0.10);
+  box-shadow: inset 0 1px 0 rgba(243, 238, 226, 0.03);
+}
+html[data-galeria="on"] .space-y-4 > * + * { margin-top: 1.35rem; }
+html[data-galeria="on"] .space-y-3 > * + * { margin-top: 1rem; }
+@media (prefers-reduced-motion: reduce) {
+  .vg-sheen { display: none; }
+}

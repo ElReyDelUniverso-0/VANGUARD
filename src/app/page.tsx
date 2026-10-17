@@ -35,8 +35,13 @@ import { MegaMenu } from "@/components/vanguard/mega-menu";
 // MOTOR DE LA CAMA (CSS vars) + FRANJA ILUSTRADA (ilustraciones funcionales)
 const AtlasPanel = dynamic(() => import("@/components/vanguard/panels/atlas-panel").then((m) => m.AtlasPanel), { ssr: false, loading: PanelSkeleton });
 const CamaPanel = dynamic(() => import("@/components/vanguard/panels/cama-panel").then((m) => m.CamaPanel), { ssr: false, loading: PanelSkeleton });
+// v126.0 LA CASA · ATELIER: las cinco leyes del lujo — materia, escasez
+// numerada, serie grabada, MODO GALERÍA (espacio negativo) e historia
+const AtelierPanel = dynamic(() => import("@/components/vanguard/panels/atelier-panel").then((m) => m.AtelierPanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
 import { MotorCama } from "@/components/vanguard/motor-cama";
+// v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
+import { MotorLuxe } from "@/components/vanguard/motor-luxe";
 import { FranjaIlustrada } from "@/components/vanguard/ilustraciones-vivas";
 import { useCama } from "@/lib/cama-store";
 // v96.0 GOOGLE VIVO: barra estructura Google + transición de cine + motor CineVivo
@@ -789,6 +794,7 @@ export default function Home() {
       {/* v121.0 LA CAMA MÁS CÓMODA: el motor de personalización — letra, acento,
           movimiento, densidad y modo cama a CSS vars en :root (cero re-render) */}
       <MotorCama />
+      <MotorLuxe />
       {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
       <MotorArquitecto />
       {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
@@ -912,6 +918,7 @@ export default function Home() {
         {tab === "atlas" && <AtlasPanel />}
         {/* v121.0 LA CAMA — la habitación de personalización total */}
         {tab === "cama" && <CamaPanel />}
+        {tab === "atelier" && <AtelierPanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}

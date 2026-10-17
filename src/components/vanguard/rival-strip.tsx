@@ -18,6 +18,7 @@ export function RivalStrip({ compact = false }: { compact?: boolean }) {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
+      data-luxe-oculto
       className={cn("hud-corner p-3", ahead ? "neon-border" : "border-crisis-hud")}
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">

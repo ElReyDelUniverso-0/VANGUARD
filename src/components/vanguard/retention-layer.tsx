@@ -303,7 +303,7 @@ export function RetentionLayer() {
       {!hidden && (
         <>
           {/* ---------- CLÚSTER INFERIOR IZQUIERDO: temporada + combo ---------- */}
-          <div className="fixed bottom-2 left-2 z-30 flex flex-col gap-1.5 max-w-[62vw]">
+          <div className="fixed bottom-2 left-2 z-30 flex flex-col gap-1.5 max-w-[62vw]" data-luxe-oculto>
             <button
               onClick={() => setSeasonOpen(true)}
               className="pointer-events-auto text-left rounded-lg border border-amber-500/40 bg-black/85 backdrop-blur px-2.5 py-1.5 shadow-lg hover:border-amber-400/70 transition-colors"

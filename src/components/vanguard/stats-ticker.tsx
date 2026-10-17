@@ -28,6 +28,7 @@ export function StatsTicker() {
 
   return (
     <div
+      data-luxe-oculto
       className="border-b border-amber-hud/40 bg-background/80 overflow-hidden relative"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}

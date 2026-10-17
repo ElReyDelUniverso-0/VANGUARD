@@ -17,10 +17,24 @@ export interface EntradaBitacora {
   nombre: string;
   hitos: string[];
   /** etiqueta de familia para el color */
-  tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten";
+  tipo: "nav" | "musica" | "mundo" | "ia" | "tecno" | "reten" | "luxe";
 }
 
 export const BITACORA: EntradaBitacora[] = [
+  {
+    version: "v126.0",
+    nombre: "LA CASA · ATELIER",
+    tipo: "luxe",
+    hitos: [
+      "LAS CINCO LEYES DEL LUJO dictadas por el Dueño, ahora constitución de la Casa: espacio negativo, materia honesta, escasez verdadera, artesanía con nombre y una historia que contar",
+      "EL ATELIER (sala nueva en SISTEMA): el armario de ACABADOS finos (Oro Caviar, Platino Nocturno, Obsidiana, Champán Viejo, Oro Rosa, Marfil Real) — tocas uno y la casa entera cambia de piel con su campana de salón",
+      "EDICIONES LIMITADAS de verdad: una por estación del planeta (solsticios y equinoccios), 2500 piezas numeradas, barra de escasez y cuenta atrás real — tu unidad Nº queda reservada por tu serie",
+      "LA PLACA DE SERIE: cada visitante recibe SU número único grabado (no se repite ni se vende), con grano propio y fecha de forja; vive también en la cabecera de la casa junto a la firma 3D",
+      "MODO GALERÍA (Ley del espacio negativo): un interruptor retira avisos, franja de estadísticas, banderines y rivales en TODAS las salas — el aire se ensancha y queda solo la obra",
+      "LA HISTORIA DE LA CASA: las eras (la primera forja, las 158 salas, la lección de caviar, las cinco leyes), las horas de taller contadas desde la bitácora real y la firma del fundador",
+      "MATERIALES EN CSS: texturas de oro pulido, metal cepillado, vidrio volcánico, satinado, grano artesanal y mate profundo + brillo de luz que barre la tarjeta al pasar (solo transform/opacity, 60 FPS)",
+    ],
+  },
   {
     version: "v125.0",
     nombre: "CORRECCIÓN TOTAL",
@@ -370,6 +384,7 @@ export const BITACORA_COLOR: Record<EntradaBitacora["tipo"], string> = {
   ia: "#A8C7FF",
   tecno: "#34C759",
   reten: "#FF3B30",
+  luxe: "#D4AF37",
 };
 
 // ── v111: ALIMENTACIÓN AUTOMÁTICA — la versión en marcha SIEMPRE está ──

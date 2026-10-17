@@ -24,7 +24,7 @@ import {
   History, FlipHorizontal2, FlaskConical, RefreshCw, Share2,
   Hammer, ShieldCheck, LayoutPanelLeft,
   LayoutDashboard,
-  Compass, BedDouble,
+  Compass, BedDouble, Gem,
 } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
@@ -137,7 +137,10 @@ export type TabKey =
   // personas importantes del planeta con sus ubicaciones) + LA CAMA (la
   // habitación de personalización total que se adapta a cada visitante)
   | "atlas"
-  | "cama";
+  | "cama"
+  // v126.0 LA CASA · ATELIER: la sala de las 5 leyes del lujo —
+  // materia, escasez numerada, serie grabada, modo galería e historia
+  | "atelier";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -341,6 +344,8 @@ export const TABS: Record<TabKey, TabDef> = {
   atlas:         { key: "atlas",         label: "ATLAS MUNDIAL (todos los países y las personas importantes del planeta con sus ubicaciones en vivo)", short: "ATLAS", icon: <Compass className="w-3.5 h-3.5" />, color: "cyan" },
   // v121.0 LA CAMA — la habitación de personalización total
   cama:          { key: "cama",          label: "LA CAMA (personalización total: Vanguard se adapta a ti como la cama más cómoda)", short: "CAMA", icon: <BedDouble className="w-3.5 h-3.5" />, color: "violet" },
+  // v126.0 LA CASA · ATELIER — las cinco leyes del lujo en una sala
+  atelier:       { key: "atelier",       label: "EL ATELIER (las cinco leyes del lujo: acabados finos, edición limitada numerada, tu serie grabada, modo galería e historia de la Casa)", short: "ATELIER", icon: <Gem className="w-3.5 h-3.5" />, color: "amber" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -434,8 +439,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",
-    desc: "LA CAMA (la habitación de personalización total), PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
-    tabs: [TABS.cama, TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
+    desc: "EL ATELIER (las cinco leyes del lujo de la Casa), LA CAMA (la habitación de personalización total), PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
+    tabs: [TABS.cama, TABS.atelier, TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
   },
   {
     // v113.0 LETRAS VIVAS: EXPERIMENTAL — el 15º mundo. La página de los

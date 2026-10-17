@@ -158,6 +158,7 @@ export function ShareGoalBanner() {
       className="mt-6 hud-panel p-5 relative overflow-hidden border-electric/40"
       aria-label={`Misión de difusión — meta ${sg.goal} enlaces`}
       data-testid="share-goal-banner"
+      data-luxe-oculto
     >
       <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
       <div className="flex flex-wrap items-center justify-between gap-3">

@@ -60,6 +60,7 @@ export function RegresoBanner() {
     <AnimatePresence>
       {visible && informe && (
         <motion.div
+          data-luxe-oculto
           className="fixed bottom-16 left-1/2 z-40 w-[min(94vw,520px)] -translate-x-1/2 sm:bottom-20"
           initial={{ opacity: 0, y: 24, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
