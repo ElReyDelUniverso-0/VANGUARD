@@ -1616,3 +1616,36 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v122.0 RUTAS DE PODER. El ATLAS ahora cuenta CÓMO está atado el planeta (15 ejes animados que se encienden al tocar sus protagonistas) y pone naciones cara a cara; la cama abre TU sala al arrancar; el teatro del Karsk se SIENTE (la moral cae con la tormenta y la nieve acumulada); toda cronología sale en PNG; el HUD no entierra las alertas; las cámaras vigilan una ciudad que vive con tu reloj; y el Espejo/Briefing respiran con los cables reales de la casa sin salir jamás de Vanguard.
 - Siguientes rondas sugeridas (v123): escalas en las rutas (trump–xi con escala en Riad), filtros de rutas por categoría, comparador con radar de 6 ejes, PNG del COMPARADOR, la ciudad vigilada con clima real de /api/meteo, alertas sonoras (sfx) en el HUD cuando llega un ALERTA nuevo, y la franja REAL del Espejo con reloj "hace cuanto" vivo.
+
+---
+Task ID: 6
+Agent: main (Super Z)
+Task: v123.0 «GLORIA ETERNA» — orden del dueño: "la música de Vanguard no me gusta para nada: música épica de gloria sin derechos de autor, músicas relajantes, única y súper reconocible; a los gráficos dales más detalles, más colores, vida".
+
+Work Log:
+- RECON: producción real v122.0 (worklog manda). Motor v4 "ORQUESTA DE ORO" auditado línea a línea (conflict-music.ts, 1501 líneas): arquitectura de escenas, franja musical, variación diaria, scheduler A A'·respiro·B·A''.
+- MÚSICA — CINCO VOCES NUEVAS de la orquesta épica (síntesis pura Web Audio, cero assets, cero copyright):
+  · playTimbal: membrana senoidal que cae de pitch (1.65×→1×) + mazo de ruido bandpass 190 Hz + resonancia triangular — timbal afinado al acorde.
+  · playCoro: sierras ×3 (±7 cents) por DOS formantes de la vocal "a" (640/1060 Hz) + vibrato colectivo 4.3 Hz — el coro celestial "aah".
+  · playPlatillo: ruido HPF 4200 Hz + highshelf aire, cola 2.1 s — el crash de gloria.
+  · playTrompeta: sierras+cuadrada por formante de latón (freq×3.2) + vibrato tardío + sub — la voz del abanderado (LeadType "heroe").
+  · playArpa: glissando de 6 notas barriendo el acorde en el respiro.
+- MÚSICA — CINCO OBRAS NUEVAS al frente de MUSIC_TRACKS, todas comparten EL MOTIVO GLORIA (raíz·raíz·raíz→octava→5ª, reconocible en 3 notas): gloria (vanguard, 72 BPM Dm, himno con clímax de coro+timbales+platillo), triunfo (guerra, 100 BPM Bb, marcha victoriosa), heroes (vanguard, 66 BPM C, coro solemne), serenidad (ambiente, 56 BPM F, arpa de cristal + coro lejano), estrellas (ambiente, 50 BPM Am, campana sobre drones).
+- SCHEDULER ÉPICO: timbal al arranque de compás (cada compás en puente/clímax, alternos en el resto), coro cantando la fundamental (+5ª en el puente), platillo coronando barInCycle 8 y el fill final, arpa en el compás de respiro, octava heroica en el clímax (leadType heroe + section 2 + i 0). LeadType ampliado ("heroe"|"coro") con ganancias propias (0.052/0.06).
+- ESCENAS: inicio→gloria, juego→triunfo, sistema→heroes, observatorio→estrellas (las 4 restantes intactas). resumeMusicIfWanted ahora cae a "gloria" si no había obra guardada. Radio: las 5 obras aparecen solas en COLECCIÓN (auto por cat).
+- GRÁFICOS (megalopolis.tsx) — más detalles/colores/vida, todo transform/opacity, determinista, reduced-motion respetado:
+  · CIELO: +16 estrellas (34 en total), AURORA BOREAL de dos cintas (solo noches limpias), luna con 3 cráteres, sol con corona pulsante v123Corona.
+  · CIELO VIVO: 3 bandadas de aves (chevron con aleteo v123Aleteo/vuelo v123Vuelo) de día sin tormenta; el DRON DE LA CASA patrulla la bóveda de noche (v123Patrulla + baliza v110-latido).
+  · CIUDAD: luces de aviación rojas en los 3 más altos (h>0.84), antenas con baliza en Núcleo/Ciudadela, tanques de agua en Puerto/Meseta, cúmulos de tres lóbulos derivando.
+  · CALLE VIVA: 8 faroles que se encienden con la luz real (opacity ligado a pal.ventanas) + 2 pisos de tránsito perpetuo (v123CocheA blancos ida / v123CocheB rojos vuelta).
+  · VENTANAS MULTICOLOR: paleta de 8 tonos (acento de región, cálido, frío #9BD4FF, blanco cálido, menta #B7F5D8) + glow en 1 de cada 4.
+- CSS v123 (globals.css): keyframes v123Aurora/v123Vuelo/v123Aleteo/v123Patrulla/v123CocheA/B/v123Corona + bloque reduced-motion (aves/dron display:none).
+- GUIA PENDIENTE ENTREGADA: download/GUIA-PASO-A-PASO-PARA-DUENO.md — 8 secciones para dueño con cero experiencia GitHub (qué es GitHub con analogía, Ruta A ZIP+Mensaje Mágico / Ruta B clone, prompt completo para la IA compañera, 4 formas de verificar el trabajo, git pull, seguridad del token, plan B).
+- TRAMPA DE LA RONDA: la línea de dependencias del efecto muted/ambienteOn quedó corrupta un momento (", uted, ambienteOn]" — el [m perdió 2 chars durante edición); detectada por lint, reparada (}, [muted, ambienteOn]);), braces/paréntesis verificados 456/456 · 460/460. TSC_EXIT=0 real (no por pipe).
+- QA EN VIVO (agent-browser 1440×900): health {"ok":true,"db":"up","version":"v123.0"}; SSR "v123.0 · GLORIA ETERNA"; ciudad HOME con hero:true, aves:3, coches:2, estrellas:34 (aurora/dron=0 correcto: era de día — aparecen de noche); Radio → AUDITORIO → COLECCIÓN con las 5 obras nuevas detectadas por nombre; motor real: play trusted → {"playing":true,"trackId":"gloria","state":"running"} y step 24→43 (scheduler programando notas de verdad). Consola sin errores nuevos. Capturas: download/qa-v123-portada-gloria.png, qa-v123-ciudad-vida.png, qa-v123-radio-gloria.png.
+- bun run build VERDE · tsc --noEmit limpio · lint: solo los 2 preexistentes de megalopolis (set-state-in-effect, baseline).
+- COMMIT 9b6ab27 → push a main (0b48be7..9b6ab27).
+
+Stage Summary:
+- PRODUCCIÓN = v123.0 GLORIA ETERNA. Vanguard tiene HIMNO: la portada abre con coro celestial, timbales, platillos y trompetas heroicas 100% sintetizadas (cero copyright para siempre). Las 5 obras nuevas son de la misma sangre (EL MOTIVO GLORIA) y la radio ya las programa por escena y por franja. La ciudad respira: aves de día, dron de noche, faroles que se encienden solos, tránsito perpetuo, aurora boreal, luna con cráteres, sol coronado y ventanas de muchos colores. El dueño tiene su guía paso a paso para pasar el proyecto a cualquier otra IA sin saber nada de GitHub.
+- Sugerido para v124: caricatura del coro en el visualizador de la Radio (boca abierta al ritmo del espectro), modo "CONCIERTO" en el auditorio (las 5 de GLORIA seguidas con fundidos de 7 s), y que las campanas de GLORIA ETERNA tiñan la transición de sección (stinger de 2 notas al cambiar de sala).
