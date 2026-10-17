@@ -2,7 +2,7 @@
 # VANGUARD — Proyecto del usuario "ElReyDelUniverso-0"
 # Lee este archivo COMPLETO antes de tocar nada. Es tu contrato de trabajo.
 
-Última actualización: 2026-10-17 · Versión actual del proyecto: **v120.0 GRAN SALTO 3D**
+Última actualización: 2026-10-17 · Versión actual del proyecto: **v122.0 RUTAS DE PODER** (v121 LA CAMA MÁS CÓMODA + v122 pulido: rutas de poder, comparador, favorito al arrancar, moral por clima, PNG cronologías, HUD ALERTA, ciudad vigilada, señales reales)
 
 ---
 
