@@ -38,6 +38,8 @@ const CamaPanel = dynamic(() => import("@/components/vanguard/panels/cama-panel"
 // v126.0 LA CASA · ATELIER: las cinco leyes del lujo — materia, escasez
 // numerada, serie grabada, MODO GALERÍA (espacio negativo) e historia
 const AtelierPanel = dynamic(() => import("@/components/vanguard/panels/atelier-panel").then((m) => m.AtelierPanel), { ssr: false, loading: PanelSkeleton });
+// v127.0 LA COMUNIDAD — los 18 ojos de la Comunidad de Inteligencia de EE. UU.
+const ComunidadPanel = dynamic(() => import("@/components/vanguard/panels/comunidad-panel").then((m) => m.ComunidadPanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
@@ -919,6 +921,7 @@ export default function Home() {
         {/* v121.0 LA CAMA — la habitación de personalización total */}
         {tab === "cama" && <CamaPanel />}
         {tab === "atelier" && <AtelierPanel />}
+        {tab === "comunidad" && <ComunidadPanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}

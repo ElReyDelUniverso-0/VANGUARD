@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v50.0 RED GLOBAL — la misión de difusión ya no termina en 200: ahora es
 // progresiva. Cada hito alcanzado abre el siguiente, con recompensas mayores:
@@ -36,9 +37,10 @@ const REWARDS: Record<number, { coins: number; gems: number; xp: number }> = {
 };
 
 async function ensureTable() {
-  await db.$executeRawUnsafe(
-    "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
-  );
+  await asegurarTabla(
+      "site_counter",
+      "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
+    );
 }
 
 const toNum = (n: bigint | number) => (typeof n === "bigint" ? Number(n) : n);

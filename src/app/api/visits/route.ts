@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v34 LLAMADO A LAS ARMAS — contador real de visitas sin migración de esquema.
 // La tabla se crea on-demand con CREATE TABLE IF NOT EXISTS (idempotente):
@@ -23,9 +24,10 @@ export const dynamic = "force-dynamic";
 const todayKey = () => new Date().toISOString().slice(0, 10);
 
 async function ensureTable() {
-  await db.$executeRawUnsafe(
-    "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
-  );
+  await asegurarTabla(
+      "site_counter",
+      "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
+    );
 }
 
 async function bump(key: string) {

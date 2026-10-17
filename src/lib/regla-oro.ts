@@ -1054,6 +1054,15 @@ export const REGLA_ORO = {
       "El laboratorio contrafactual conectado a EL ESPEJO: elige una crisis del mundo Vanguard, aplícale una perturbación con dosis ajustable —la capital al borde, el estrecho cerrado, el proxy que cambia de bando— y mira la guerra moverse día a día con el motor de factores múltiples: fuerza, logística, moral, terreno, economía, clima, escalera de escalada y Monte Carlo de 24 mundos. Cada resultado llega con su desglose explicable y su etiqueta: SIMULACIÓN, no predicción. Entender cómo un solo cambio desplaza un frente entero: eso es el destino en el laboratorio.",
     acento: "#38BDF8",
   },
+  // v127.0 LA COMUNIDAD — los 18 ojos de la Comunidad de Inteligencia de EE. UU.
+  comunidad: {
+    titulo: "LA COMUNIDAD",
+    volanta: "Los 18 ojos de la Casa — la Comunidad de Inteligencia de EE. UU.",
+    imagen: "/ilustraciones/espionaje.jpg",
+    texto:
+      "La pirámide entera abierta como una colección de expedientes finos: la ODNI en la corona, la CIA en el exterior, las cuatro grandes del Pentágono, los cinco servicios armados, el escudo interno y los ministerios. Su mapa de sedes en el corredor Washington–Virginia–Maryland, su oficio (HUMINT, SIGINT, GEOINT, OSINT, FININT), su lema y su misión — y el pulso real: los cables que la Casa recibe ahora mismo sobre cada agencia. Conocimiento abierto, presentado como joya.",
+    acento: "#D4AF37",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

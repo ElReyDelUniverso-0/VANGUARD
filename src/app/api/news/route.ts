@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
 
 // GDELT 2.0 Doc API - free, no key
@@ -409,7 +410,8 @@ async function refreshGdeltInBackground() {
   // v84.0: el candado baja de 5 min a 3 min — más refrescos/hora = más noticia
   // nueva por visita, y el RSS paralelo completa en segundos (ver abajo).
   try {
-    await db.$executeRawUnsafe(
+    await asegurarTabla(
+      "site_counter",
       "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
     );
     await db.$executeRawUnsafe(

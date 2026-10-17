@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v42.2 AGENTE AUTO DE PROMOCIÓN — el agente que el comandante pidió:
 // "cuando termines una tarea, el agente manda el siguiente mensaje solo".
@@ -74,7 +75,8 @@ async function runPings(): Promise<PingResult[]> {
 
 async function recordRun(results: PingResult[]) {
   try {
-    await db.$executeRawUnsafe(
+    await asegurarTabla(
+      "site_counter",
       "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
     );
     await db.$executeRaw`

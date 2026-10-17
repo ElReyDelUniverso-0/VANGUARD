@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 import { createZAI } from "@/lib/zai-server";
 import { iaParalela, primerJSON, gatewaySospechosoCaido } from "@/lib/ia-gateway";
 import { busquedaAlternativa } from "@/lib/investiga-rss";
@@ -68,7 +69,8 @@ function huella(t: string): string {
 // ---- caché persistente (tabla creada al vuelo — patrón site_counter) ----
 async function cacheLeer(k: string, ttlMs: number): Promise<Record<string, unknown> | null> {
   try {
-    await db.$executeRawUnsafe(
+    await asegurarTabla(
+      "redaccion_cache",
       "CREATE TABLE IF NOT EXISTS redaccion_cache (k TEXT PRIMARY KEY, v TEXT NOT NULL, ts BIGINT NOT NULL)"
     );
     const rows = await db.$queryRawUnsafe<{ v: string; ts: bigint }[]>(
@@ -85,7 +87,8 @@ async function cacheLeer(k: string, ttlMs: number): Promise<Record<string, unkno
 
 async function cacheGuardar(k: string, valor: unknown): Promise<void> {
   try {
-    await db.$executeRawUnsafe(
+    await asegurarTabla(
+      "redaccion_cache",
       "CREATE TABLE IF NOT EXISTS redaccion_cache (k TEXT PRIMARY KEY, v TEXT NOT NULL, ts BIGINT NOT NULL)"
     );
     const v = JSON.stringify(valor).replace(/'/g, "''");

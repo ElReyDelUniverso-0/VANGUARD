@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v72.0 INFINITA VERDADES — SIMULADOR DE PAÍS (MI PAÍS).
 // El comandante pidió "crear simulador de país: mi país, cartel/unión, elegir
@@ -17,8 +18,9 @@ export const dynamic = "force-dynamic";
 const MIN = 2;
 
 async function ensureTables() {
-  await db.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS site_naciones (
+  await asegurarTabla(
+    "site_naciones",
+    `    CREATE TABLE IF NOT EXISTS site_naciones (
       uid TEXT PRIMARY KEY,
       nombre TEXT NOT NULL,
       gentilicio TEXT NOT NULL DEFAULT '',
@@ -36,16 +38,19 @@ async function ensureTables() {
       pib BIGINT NOT NULL DEFAULT 0,
       ejercito INT NOT NULL DEFAULT 0,
       updated_at BIGINT NOT NULL
-    )`);
-  await db.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS site_uniones (
+    )`
+  );
+  await asegurarTabla(
+    "site_uniones",
+    `    CREATE TABLE IF NOT EXISTS site_uniones (
       nombre TEXT PRIMARY KEY,
       tipo TEXT NOT NULL DEFAULT 'ALIANZA',
       lema TEXT NOT NULL DEFAULT '',
       fundador TEXT NOT NULL DEFAULT '',
       fundador_uid TEXT NOT NULL DEFAULT '',
       created_at BIGINT NOT NULL
-    )`);
+    )`
+  );
 }
 
 function str(v: unknown, max: number): string {

@@ -21,10 +21,11 @@ export async function ensureDbPragmas(): Promise<void> {
   if (pragmasDone) return
   pragmasDone = true
   try {
-    // journal_mode DEVUELVE una fila → queryRaw; busy_timeout/synchronous no devuelven
+    // v127.0: TODOS los PRAGMA con asignación devuelven una fila en SQLite
+    // ("Execute returned results" en el canal de ejecución) — todo por queryRaw
     await db.$queryRawUnsafe("PRAGMA journal_mode=WAL")
-    await db.$executeRawUnsafe("PRAGMA busy_timeout=5000")
-    await db.$executeRawUnsafe("PRAGMA synchronous=NORMAL")
+    await db.$queryRawUnsafe("PRAGMA busy_timeout=5000")
+    await db.$queryRawUnsafe("PRAGMA synchronous=NORMAL")
   } catch {
     // si falla (p.ej. migrando), no rompe el boot
   }

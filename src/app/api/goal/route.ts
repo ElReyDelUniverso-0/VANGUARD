@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v46.0 OBJETIVO MUNDIAL — LA META QUE NOS PAGA A TODOS.
 // El comandante ordenó: "busca jugadores y supera siempre el límite". La
@@ -31,9 +32,10 @@ const MILESTONES: { goal: number; coins: number; gems: number; xp: number }[] = 
 ];
 
 async function ensureTable() {
-  await db.$executeRawUnsafe(
-    "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
-  );
+  await asegurarTabla(
+      "site_counter",
+      "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
+    );
 }
 
 const toNum = (n: bigint | number) => (typeof n === "bigint" ? Number(n) : n);

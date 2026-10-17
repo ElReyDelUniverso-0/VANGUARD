@@ -594,3 +594,29 @@ Object.assign(TAB_LABELS.ru, {
 Object.assign(TAB_LABELS.zh, {
   atelier: "工坊（奢华五法则：精致材质、编号限量版、专属刻印编号、画廊模式与家族历史）",
 });
+
+// ====== v127.0 LA COMUNIDAD — los 18 ojos de la Comunidad de Inteligencia (8 idiomas) ======
+Object.assign(TAB_LABELS.es, {
+  comunidad: "LA COMUNIDAD (los 18 ojos de la Casa: la Comunidad de Inteligencia de EE. UU. — ODNI, CIA, NSA y 15 más: pirámide, corredor de sedes, expedientes y pulso real)",
+});
+Object.assign(TAB_LABELS.en, {
+  comunidad: "THE COMMUNITY (the House's 18 eyes: the U.S. Intelligence Community — ODNI, CIA, NSA and 15 more: pyramid, headquarters corridor, dossiers and live pulse)",
+});
+Object.assign(TAB_LABELS.pt, {
+  comunidad: "A COMUNIDADE (os 18 olhos da Casa: a Comunidade de Inteligência dos EUA — ODNI, CIA, NSA e mais 15: pirâmide, corredor de sedes, dossiês e pulso real)",
+});
+Object.assign(TAB_LABELS.fr, {
+  comunidad: "LA COMMUNAUTÉ (les 18 yeux de la Maison : la Communauté du renseignement des États-Unis — ODNI, CIA, NSA et 15 autres : pyramide, corridor des sièges, dossiers et pouls réel)",
+});
+Object.assign(TAB_LABELS.de, {
+  comunidad: "DIE GEMEINSCHAFT (die 18 Augen des Hauses: die US-Nachrichtengemeinschaft — ODNI, CIA, NSA und 15 weitere: Pyramide, Sitzkorridor, Dossiers und Live-Puls)",
+});
+Object.assign(TAB_LABELS.it, {
+  comunidad: "LA COMUNITÀ (i 18 occhi della Casa: la Comunità di Intelligence degli Stati Uniti — ODNI, CIA, NSA e altri 15: piramide, corridoio delle sedi, dossier e polso reale)",
+});
+Object.assign(TAB_LABELS.ru, {
+  comunidad: "СООБЩЕСТВО (18 глаз Дома: разведывательное сообщество США — ODNI, CIA, NSA и ещё 15: пирамида, коридор штаб-квартир, досье и живой пульс)",
+});
+Object.assign(TAB_LABELS.zh, {
+  comunidad: "共同体（本座的18只眼睛：美国情报界——ODNI、CIA、NSA等18个机构：金字塔、总部走廊、档案与实时脉搏）",
+});

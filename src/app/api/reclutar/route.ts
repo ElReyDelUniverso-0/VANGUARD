@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v72.0 INFINITA VERDADES — RECLUTAR ALIADO ALEATORIO.
 // El comandante pidió "que se pueda invitar jugadores aleatorios". Doctrina:
@@ -15,8 +16,9 @@ const VENTANA_MS = 90_000; // misma ventana de presencia
 const VIDA_MS = 15 * 60_000; // la invitación caduca en 15 min
 
 async function ensureTables() {
-  await db.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS site_invites (
+  await asegurarTabla(
+    "site_invites",
+    `    CREATE TABLE IF NOT EXISTS site_invites (
       id BIGSERIAL PRIMARY KEY,
       from_uid TEXT NOT NULL,
       from_nacion TEXT NOT NULL DEFAULT '',
@@ -24,7 +26,8 @@ async function ensureTables() {
       to_uid TEXT NOT NULL,
       accepted INT NOT NULL DEFAULT 0,
       ts BIGINT NOT NULL
-    )`);
+    )`
+  );
 }
 
 function str(v: unknown, max: number): string {

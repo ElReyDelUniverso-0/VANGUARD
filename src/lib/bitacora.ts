@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v127.0",
+    nombre: "LA COMUNIDAD",
+    tipo: "nav",
+    hitos: [
+      "LA COMUNIDAD (sala nueva en INTELIGENCIA): la Comunidad de Inteligencia de los Estados Unidos abierta como una colección de expedientes finos — 18 agencias oficiales bajo la ODNI, con su historia, su lema y su misión narrados como manda la Casa",
+      "LA PIRÁMIDE: la corona (ODNI), el ojo exterior (CIA), las cuatro grandes del Pentágono (NSA · DIA · NGA · NRO), los cinco servicios armados, el escudo interno (FBI · DHS · Guardia Costera · DEA) y los ministerios (INR · OIA · OICI) — toca cualquier sigla y su expediente se abre con campana de salón",
+      "EL CORREDOR: mapa real de sedes Washington · Virginia · Maryland con 16 puntos numerados clicables, el Potomac dibujado y la leyenda de expedientes — Langley, Fort Meade, Chantilly y el resto del vecindario más vigilado del planeta",
+      "EL PULSO REAL: los cables auténticos que la Casa recibe ahora mismo, filtrados por el dominio de cada agencia (FBI busca FBI, FEMA huracanes, OICI lo nuclear…) — lectura interna en la sala de la Casa, cero portales externos, refresco cada 5 minutos",
+      "LOS CINCO SENTIDOS: HUMINT, SIGINT, GEOINT, OSINT y FININT explicados como oficios — y la SALA ANEXA con DHS/FEMA, las manos que actúan tras los ojos",
+      "EL ARREGLO DEL prisma:error: «Execute returned results» en SQLite — el helper asegurarTabla() pregunta primero a sqlite_master (canal de consulta) y solo crea lo que falta; 12 sentencias DDL en 9 rutas API corregidas y la primera visita en frío ya no se pierde",
+      "8 IDIOMAS: la sala se traduce a español, inglés, portugués, francés, alemán, italiano, ruso y chino — como todo lo que la Casa abre",
+    ],
+  },
+  {
     version: "v126.0",
     nombre: "LA CASA · ATELIER",
     tipo: "luxe",

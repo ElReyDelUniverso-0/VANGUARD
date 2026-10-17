@@ -3355,3 +3355,17 @@ html[data-galeria="on"] .space-y-3 > * + * { margin-top: 1rem; }
 @media (prefers-reduced-motion: reduce) {
   .vg-sheen { display: none; }
 }
+
+/* ============================================================
+   v127.0 LA COMUNIDAD — los 18 ojos de la Casa
+   ============================================================ */
+/* anillo de selección en el corredor (solo opacity — contrato 60 FPS) */
+@keyframes v127Anillo {
+  0%   { opacity: 0.9; }
+  50%  { opacity: 0.2; }
+  100% { opacity: 0.9; }
+}
+.v127-anillo { animation: v127Anillo 2.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .v127-anillo { animation: none; }
+}

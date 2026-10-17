@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v73.0 REGLA DE ORO — DUELO PVP DE PREDICCIONES.
 // Dos guerreros, una pregunta táctica con 4 opciones: el que acierte más rápido
@@ -15,8 +16,9 @@ const VENTANA_MS = 90_000; // ventana de presencia
 const VIDA_MS = 10 * 60_000; // el duelo caduca en 10 min
 
 async function ensureTables() {
-  await db.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS site_duelos (
+  await asegurarTabla(
+    "site_duelos",
+    `    CREATE TABLE IF NOT EXISTS site_duelos (
       id BIGSERIAL PRIMARY KEY,
       from_uid TEXT NOT NULL,
       from_alias TEXT NOT NULL DEFAULT '',
@@ -33,7 +35,8 @@ async function ensureTables() {
       ganador TEXT,
       apuesta INT NOT NULL DEFAULT 100,
       ts BIGINT NOT NULL
-    )`);
+    )`
+  );
 }
 
 function str(v: unknown, max: number): string {

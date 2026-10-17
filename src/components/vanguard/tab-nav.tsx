@@ -140,7 +140,9 @@ export type TabKey =
   | "cama"
   // v126.0 LA CASA · ATELIER: la sala de las 5 leyes del lujo —
   // materia, escasez numerada, serie grabada, modo galería e historia
-  | "atelier";
+  | "atelier"
+  // v127.0 LA COMUNIDAD: los 18 ojos de la Comunidad de Inteligencia de EE. UU.
+  | "comunidad";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -346,6 +348,8 @@ export const TABS: Record<TabKey, TabDef> = {
   cama:          { key: "cama",          label: "LA CAMA (personalización total: Vanguard se adapta a ti como la cama más cómoda)", short: "CAMA", icon: <BedDouble className="w-3.5 h-3.5" />, color: "violet" },
   // v126.0 LA CASA · ATELIER — las cinco leyes del lujo en una sala
   atelier:       { key: "atelier",       label: "EL ATELIER (las cinco leyes del lujo: acabados finos, edición limitada numerada, tu serie grabada, modo galería e historia de la Casa)", short: "ATELIER", icon: <Gem className="w-3.5 h-3.5" />, color: "amber" },
+  // v127.0 LA COMUNIDAD: los 18 ojos de la Casa, expediente a expediente
+  comunidad:     { key: "comunidad",     label: "LA COMUNIDAD (los 18 ojos de la Casa: la Comunidad de Inteligencia de EE. UU. — ODNI, CIA, NSA y 15 más: pirámide, corredor de sedes, expedientes y pulso real)", short: "COMUNIDAD", icon: <Eye className="w-3.5 h-3.5" />, color: "cyan" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -368,8 +372,8 @@ export const SECTIONS: SectionDef[] = [
     // las 12 salas de conocimiento; los espejos pasan a OBSERVATORIO y las
     // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
-    tabs: [TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+    desc: "LA COMUNIDAD (los 18 ojos de la Comunidad de Inteligencia de EE. UU.: ODNI, CIA, NSA y 15 más con pirámide, corredor de sedes y pulso real), GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
+    tabs: [TABS.comunidad, TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
   },
   {
     // v101.0 EL REGRESO — PILAR 1: EL MUNDO CAMBIA. La segunda pestaña de INICIO:

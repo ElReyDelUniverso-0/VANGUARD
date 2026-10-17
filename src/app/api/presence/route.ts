@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { asegurarTabla } from "@/lib/db-ddl";
 
 // v42 TU IDIOMA, TU GUERRA — GUERREROS EN VIVO.
 // El comandante pidió ver "personas activas, no solo entraron y ya": esto es la
@@ -21,9 +22,10 @@ const GC_MS = 7_200_000;  // borra muertos con más de 2h
 // Si el online actual supera el pico, se guarda y la respuesta avisa newRecord
 // para que el badge lo celebre. Nunca tumba la presencia: todo en try/catch.
 async function ensureCounterTable() {
-  await db.$executeRawUnsafe(
-    "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
-  );
+  await asegurarTabla(
+      "site_counter",
+      "CREATE TABLE IF NOT EXISTS site_counter (k TEXT PRIMARY KEY, n BIGINT NOT NULL DEFAULT 0)"
+    );
 }
 
 async function peakState(online: number): Promise<{ peak: number; newRecord: boolean }> {
@@ -45,9 +47,10 @@ async function peakState(online: number): Promise<{ peak: number; newRecord: boo
 }
 
 async function ensureTable() {
-  await db.$executeRawUnsafe(
-    "CREATE TABLE IF NOT EXISTS site_presence (uid TEXT PRIMARY KEY, last_seen BIGINT NOT NULL, lang TEXT NOT NULL DEFAULT '')"
-  );
+  await asegurarTabla(
+      "site_presence",
+      "CREATE TABLE IF NOT EXISTS site_presence (uid TEXT PRIMARY KEY, last_seen BIGINT NOT NULL, lang TEXT NOT NULL DEFAULT '')"
+    );
 }
 
 async function countOnline(): Promise<number> {
