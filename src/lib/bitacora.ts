@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v122.0",
+    nombre: "RUTAS DE PODER",
+    tipo: "nav",
+    hitos: [
+      "RUTAS DE PODER EN EL ATLAS: los 15 ejes reales del planeta dibujados como arcos de vuelo animados sobre el mapa — GRAN PARIDAD, SIN LÍMITES, EJE NORTE–SUR, PETRODÓLAR... toca un pin y SUS rutas se encienden con tu color",
+      "COMPARADOR DE NACIONES: nueva vista del ATLAS que pone dos países cara a cara — población, superficie y densidad en barras que coronan al ganador, con capital, moneda, idiomas, líder y su hora viva al lado",
+      "TU SALA AL ARRANCAR: LA CAMA gana TU SALA DE SIEMPRE — eliges tu sala favorita y Vanguard puede aterrizar directo en ella cuando despierta sin sesión guardada, como entrar a tu habitación y no al hall",
+      "LA MORAL RESIENTE EL CIELO: la tormenta pega −12% a la moral de los dos bandos, la nieve −10% y la nieve acumulada castiga −3 por día seguido; el despejado levanta el ánimo +4% — el teatro del Karsk ahora se siente",
+      "TARJETA DEL COMANDANTE: cada cronología de localidad se exporta como PNG 1200×630 — su línea de 21 días, sus cambios de mano y sus despachos listos para enviar",
+      "PRIORIDAD ALERTA EN EL HUD: los cables marcados ALERTA van PRIMERO en el mini-noticiero 2100 y lo visten de rojo con su chip parpadeante — la casa no entierra un ataque entre el ruido",
+      "LA CIUDAD VIGILADA: la sala de CÁMARAS estrena su skyline procedural — vive con tu reloj real (luna y ventanas encendidas de noche, sol de día) mientras el dron de la red la barre en bucle",
+      "SEÑALES REALES EN EL ESPEJO Y EL BRIEFING: los frentes del briefing lucen badges de señales en escucha y el espejo estrena su franja REAL separada del SIM — todo se lee dentro de Vanguard con la SALA DE LECTURA",
+    ],
+  },
+  {
     version: "v121.0",
     nombre: "LA CAMA MÁS CÓMODA",
     tipo: "nav",

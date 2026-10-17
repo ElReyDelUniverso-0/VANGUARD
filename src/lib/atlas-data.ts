@@ -231,3 +231,53 @@ export function fmtKm2(n: number): string {
 export function fmtMillones(n: number): string {
   return n >= 1000 ? `${(n / 1000).toFixed(2).replace(".", ",")} mil millones` : `${String(n).replace(".", ",")} millones`;
 }
+
+// ============================================================
+// v122.0 RUTAS DE PODER — los ejes reales entre las personas
+// que mueven el planeta. Cada ruta une DOS personas importantes
+// (por SU UBICACIÓN REAL) con el nombre del eje que las ata.
+// El mapa del ATLAS las dibuja como arcos de vuelo animados.
+// ============================================================
+export interface RutaPoder {
+  de: string;       // id de PERSONAS_ATLAS
+  a: string;        // id de PERSONAS_ATLAS
+  etiqueta: string; // nombre del eje
+}
+
+export const RUTAS_PODER: RutaPoder[] = [
+  { de: "trump", a: "xi", etiqueta: "GRAN PARIDAD" },
+  { de: "trump", a: "putin", etiqueta: "CANAL DIRECTO" },
+  { de: "putin", a: "xi", etiqueta: "SIN LÍMITES" },
+  { de: "trump", a: "starmer", etiqueta: "ATLÁNTICO ESPECIAL" },
+  { de: "macron", a: "merz", etiqueta: "MOTOR EUROPEO" },
+  { de: "trump", a: "modi", etiqueta: "CUÁDRUPLE (CUAD)" },
+  { de: "zelenski", a: "trump", etiqueta: "COALICIÓN DE DEFENSA" },
+  { de: "netanyahu", a: "trump", etiqueta: "ALIANZA FIRMADA" },
+  { de: "jamenei", a: "putin", etiqueta: "EJE NORTE–SUR" },
+  { de: "mbs", a: "trump", etiqueta: "PETRODÓLAR" },
+  { de: "guterres", a: "trump", etiqueta: "LA ONU Y EL PODER" },
+  { de: "erdogan", a: "putin", etiqueta: "ARBITRAJE TENSO" },
+  { de: "sanchez", a: "macron", etiqueta: "EJE LATINO EUROPEO" },
+  { de: "lula", a: "xi", etiqueta: "SUR GLOBAL" },
+  { de: "sheinbaum", a: "trump", etiqueta: "FRONTERA 3.000 KM" },
+];
+
+/** Busca una persona por id (para las rutas de poder). */
+export function personaPorId(id: string): PersonaAtlas | undefined {
+  return PERSONAS_ATLAS.find((p) => p.id === id);
+}
+
+/** El país líder en población/superficie de cada par (para el COMPARADOR). */
+export function compararPaises(a: PaisAtlas, b: PaisAtlas) {
+  return {
+    poblacionGana: a.poblacion === b.poblacion ? null : a.poblacion > b.poblacion ? "a" : "b",
+    superficieGana: a.superficie === b.superficie ? null : a.superficie > b.superficie ? "a" : "b",
+    densidadA: a.poblacion * 1_000_000 / a.superficie,
+    densidadB: b.poblacion * 1_000_000 / b.superficie,
+    densidadGana: (() => {
+      const da = a.poblacion * 1_000_000 / a.superficie;
+      const db = b.poblacion * 1_000_000 / b.superficie;
+      return Math.abs(da - db) < 0.5 ? null : da > db ? "a" : "b";
+    })(),
+  };
+}

@@ -198,17 +198,27 @@ export interface ModsClima {
   drones: number;
   convoyes: number;
   bajas: number;
+  /** v122: factor de moral del clima */
+  moral: number;
   /** factores legibles para los chips del panel */
   efectos: string[];
 }
 
+// ============================================================
+// v122.0 PULIDO REAL — LA MORAL RESIENTE EL CIELO
+// Cada clima ahora también PESA en la moral de los dos bandos:
+//   · TORMENTA −12% (el cielo ruge y nadie duerme)
+//   · NIEVE −10% y la NIEVE ACUMULADA pega −3 puntos por día seguido
+//   · NIEBLA −5%, LLUVIA −3%, VIENTO neutro, DESPEJADO +4%
+// Determinista: reproducir el mismo día da la misma moral.
+// ============================================================
 const MODS: Record<ClimaInfo["tipo"], ModsClima> = {
-  despejado: { bombardeos: 1.12, drones: 1.15, convoyes: 1.0, bajas: 1.0, efectos: ["cielo limpio: aviación al máximo"] },
-  lluvia: { bombardeos: 0.82, drones: 0.7, convoyes: 0.95, bajas: 0.92, efectos: ["fango: la aviación escasea", "menos bajas por fuego indirecto"] },
-  tormenta: { bombardeos: 0.65, drones: 0.45, convoyes: 0.75, bajas: 0.85, efectos: ["aviación en tierra", "los drones caen del cielo", "convoyes parados"] },
-  niebla: { bombardeos: 0.7, drones: 0.55, convoyes: 0.85, bajas: 0.8, efectos: ["fuego de precisión a ciegas", "reconocimiento aéreo nulo"] },
-  nieve: { bombardeos: 0.6, drones: 0.75, convoyes: 1.2, bajas: 0.82, efectos: ["la artillería se ahoga", "convoyes con cadenas: logística +"] },
-  viento: { bombardeos: 0.94, drones: 0.65, convoyes: 1.08, bajas: 0.97, efectos: ["ráfagas derriban drones", "los convoyes ganan la carretera"] },
+  despejado: { bombardeos: 1.12, drones: 1.15, convoyes: 1.0, bajas: 1.0, moral: 1.04, efectos: ["cielo limpio: aviación al máximo", "la moral sube con el sol"] },
+  lluvia: { bombardeos: 0.82, drones: 0.7, convoyes: 0.95, bajas: 0.92, moral: 0.97, efectos: ["fango: la aviación escasea", "menos bajas por fuego indirecto"] },
+  tormenta: { bombardeos: 0.65, drones: 0.45, convoyes: 0.75, bajas: 0.85, moral: 0.88, efectos: ["aviación en tierra", "los drones caen del cielo", "convoyes parados", "el cielo ruge: moral −12%"] },
+  niebla: { bombardeos: 0.7, drones: 0.55, convoyes: 0.85, bajas: 0.8, moral: 0.95, efectos: ["fuego de precisión a ciegas", "reconocimiento aéreo nulo"] },
+  nieve: { bombardeos: 0.6, drones: 0.75, convoyes: 1.2, bajas: 0.82, moral: 0.9, efectos: ["la artillería se ahoga", "convoyes con cadenas: logística +", "el frío pega a la moral"] },
+  viento: { bombardeos: 0.94, drones: 0.65, convoyes: 1.08, bajas: 0.97, moral: 1.0, efectos: ["ráfagas derriban drones", "los convoyes ganan la carretera"] },
 };
 
 /** Multiplicadores del clima al día dado (determinista). */
@@ -238,8 +248,11 @@ export function statsDe(dia: number): StatsDia {
   const intensidad = 0.6 + empuje / 140; // más empuje → más bajas
   const bajasRojo = Math.round((90 * intensidad + (ch(h, 3) % 70)) * m.bajas);
   const bajasAzul = Math.round((60 * intensidad + (ch(h, 4) % 55)) * m.bajas);
-  const moralRojo = Math.min(96, Math.max(28, 62 + dia * 0.8 - (ch(h, 5) % 14)));
-  const moralAzul = Math.min(94, Math.max(26, 58 - dia * 0.5 + (ch(h, 6) % 18)));
+  // v122: la moral resiente el cielo + la nieve acumulada castiga −3 por día seguido
+  const nieve = nieveAcumulada(dia);
+  const castigoNieve = nieve > 1 ? nieve * 3 : 0;
+  const moralRojo = Math.min(96, Math.max(20, (62 + dia * 0.8 - (ch(h, 5) % 14)) * m.moral - castigoNieve));
+  const moralAzul = Math.min(94, Math.max(18, (58 - dia * 0.5 + (ch(h, 6) % 18)) * m.moral - castigoNieve));
   return { bajasRojo, bajasAzul, bombardeos, drones, convoyes, moralRojo, moralAzul };
 }
 

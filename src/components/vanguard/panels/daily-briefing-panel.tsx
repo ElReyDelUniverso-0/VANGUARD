@@ -1,16 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { CONFLICTS, BRIEFINGS, type AlertLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
-import { Newspaper, AlertTriangle, Flame, TrendingUp, Globe, Clock, Zap, Eye, ChevronRight } from "lucide-react";
+import { Newspaper, AlertTriangle, Flame, TrendingUp, Globe, Clock, Zap, Eye, ChevronRight, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v122 INTEL EN VIVO: los cables REALES de la casa leídos DENTRO del briefing
+import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud border-red-hud bg-red-hud/30",
@@ -29,6 +31,55 @@ const levelDot: Record<AlertLevel, string> = {
 export function DailyBriefingPanel() {
   const { level, streak, readBriefings, viewedNews, coins } = useGameStore();
   const [ttsState, setTtsState] = useState<"idle" | "playing">("idle");
+
+  // ===== v122 INTEL EN VIVO DE LA CASA =====
+  // Los cables REALES de /api/news emparejados con los frentes del briefing:
+  // cada señal abre la SALA DE LECTURA interna (cero saltos fuera).
+  const [cables122, setCables122] = useState<CableLectura[]>([]);
+  const [cableSel122, setCableSel122] = useState<CableLectura | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    const cargar = async () => {
+      try {
+        const r = await fetch("/api/news", { cache: "no-store" });
+        const j = await r.json();
+        if (!vivo || !Array.isArray(j?.items)) return;
+        const cs: CableLectura[] = (j.items as Record<string, unknown>[]).map((it) => ({
+          id: String(it.id ?? it.url ?? Math.random().toString(36).slice(2)),
+          title: String(it.title ?? ""),
+          url: String(it.url ?? ""),
+          source: String(it.source ?? "casa"),
+          publishedAt: String(it.publishedAt ?? new Date().toISOString()),
+          tacticalTag: (it.tacticalTag as string) ?? null,
+          conflictTag: (it.conflictTag as string) ?? null,
+          sourceCountry: (it.sourceCountry as string) ?? null,
+        })).filter((c) => c.title.length > 12);
+        if (cs.length > 0) setCables122(cs);
+      } catch { /* la casa sigue viva sin intel */ }
+    };
+    cargar();
+    const id = setInterval(cargar, 300000);
+    return () => { vivo = false; clearInterval(id); };
+  }, []);
+
+  const intelPorFrente = useMemo(() => {
+    const mapa: Record<string, CableLectura[]> = {};
+    for (const c of CONFLICTS) {
+      const clave = c.name.toLowerCase();
+      const hits = cables122.filter((cab) => {
+        const t = cab.title.toLowerCase();
+        if (t.includes(clave)) return true;
+        // puente por conflictTag (ukraine/gaza/taiwan...)
+        if (cab.conflictTag && c.id && t.length > 0) {
+          return cab.conflictTag === c.id.toLowerCase();
+        }
+        return false;
+      }).slice(0, 3);
+      if (hits.length > 0) mapa[c.id] = hits;
+    }
+    return mapa;
+  }, [cables122]);
+  const totalIntel122 = useMemo(() => Object.values(intelPorFrente).flat().length, [intelPorFrente]);
 
   // Generate daily briefing based on current state
   const briefing = useMemo(() => {
@@ -201,6 +252,12 @@ export function DailyBriefingPanel() {
                   <span className={cn("text-[9px] font-mono px-1 py-0.5 border uppercase flex-shrink-0", levelColor[c.level])}>
                     {c.level}
                   </span>
+                  {/* v122: badge de señales reales en escucha para este frente */}
+                  {(intelPorFrente[c.id]?.length ?? 0) > 0 && (
+                    <span className="text-[8.5px] font-mono px-1 py-0.5 border border-cyan-hud/60 text-cyan-hud rounded-sm flex-shrink-0 flex items-center gap-1">
+                      <Radio className="w-2.5 h-2.5 blink-soft" /> {intelPorFrente[c.id].length} SEÑAL{intelPorFrente[c.id].length > 1 ? "ES" : ""}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <div className="flex-1 h-1 bg-secondary rounded-full overflow-hidden min-w-[60px]">
@@ -217,6 +274,36 @@ export function DailyBriefingPanel() {
           ))}
         </div>
       </div>
+
+      {/* v122: INTEL EN VIVO DE LA CASA — las señales reales de los frentes */}
+      {totalIntel122 > 0 && (
+        <div className="hud-corner p-3 border-cyan-hud/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Radio className="w-4 h-4 text-cyan-hud blink-soft" />
+            <span className="text-xs font-mono font-bold text-foreground uppercase">Intel en vivo de la casa</span>
+            <span className="text-[9px] font-mono text-muted-foreground ml-auto">{cables122.length} cables en escucha · refresh 5 min</span>
+          </div>
+          <div className="space-y-1.5">
+            {Object.entries(intelPorFrente).slice(0, 5).map(([cid, hits]) => {
+              const conf = CONFLICTS.find((c) => c.id === cid);
+              if (!conf) return null;
+              return hits.map((cab, i) => (
+                <button
+                  key={`${cid}-${cab.id}-${i}`}
+                  onClick={() => setCableSel122(cab)}
+                  className="w-full text-left flex items-center gap-2 p-2 hud-corner bg-secondary/30 hover:bg-secondary/50 transition-colors group"
+                >
+                  <span className="flex-shrink-0"><FlagBadge code={conf.flag} /></span>
+                  <span className="text-[8.5px] font-mono font-bold text-amber uppercase shrink-0 hidden sm:inline">{conf.name}</span>
+                  <span className="flex-1 min-w-0 text-[11px] text-foreground/85 group-hover:text-foreground truncate">{cab.title}</span>
+                  {cab.tacticalTag === "ALERTA" && <span className="text-[8px] font-mono font-black text-red-hud border border-red-hud/60 px-1 rounded-sm shrink-0">ALERTA</span>}
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                </button>
+              ));
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Daily recommendations */}
       <div className="hud-corner p-3 bg-gradient-to-br from-amber-hud/10 to-transparent">
@@ -255,6 +342,9 @@ export function DailyBriefingPanel() {
           <span className="text-muted-foreground">VANGUARD v2.5.0 · CANAL ENCRIPTADO</span>
         </div>
       </div>
+
+      {/* v122: la SALA DE LECTURA del briefing — misma sala interna de la casa */}
+      <LectorNoticia cable={cableSel122} onCerrar={() => setCableSel122(null)} />
     </div>
   );
 }

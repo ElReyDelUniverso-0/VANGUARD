@@ -25,6 +25,9 @@ import {
   Sun, Crown, Download, MapPin, Activity, PackageOpen, ShieldCheck, Gem,
 } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v122.0 PULIDO REAL: la CIUDAD VIGILADA — skyline procedural con el reloj
+// real del visitante (día/noche) y el dron de la red barriendo en bucle
+import { MiniCiudadVigilada } from "@/components/vanguard/mini-ciudad-vigilada";
 
 // ---------- utilidades CCTV ----------
 // v14 — GLOBO 3D de cámaras: reemplaza el mapa plano de despliegue
@@ -404,6 +407,8 @@ export function CamerasPanel() {
   return (
     <div className="space-y-4">
       <HeroOro panel="camaras" />
+      {/* v122: LA CIUDAD VIGILADA — la casa ve su ciudad respirar con el reloj real */}
+      <MiniCiudadVigilada camarasActivas={cameras.length} />
       <PanelHeader
         title="Red de cámaras de vigilancia"
         subtitle="Compra, despliega donde quieras en el globo 3D y cobra intel 24/7 · mira devastaciones en vivo"

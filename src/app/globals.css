@@ -3069,3 +3069,15 @@ html.auto-cama-activa .particles-layer { opacity: 0.35; }
   .transicion-maestra { display: none; }
   .iv-orbita, .iv-cruce, .iv-flote, .iv-llama, .iv-zzz { animation: none; }
 }
+
+/* ===== v122.0 RUTAS DE PODER — arcos de vuelo animados del ATLAS ===== */
+@keyframes v122-dash {
+  to { stroke-dashoffset: -112; }
+}
+.v122-ruta {
+  stroke-dasharray: 7 7;
+  animation: v122-dash 3.2s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v122-ruta { animation: none; }
+}

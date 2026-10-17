@@ -535,6 +535,17 @@ export default function Home() {
       } catch {
         /* sin almacenamiento el navegador abre en INICIO y ya está */
       }
+      // v122.0 LA CAMA: si el dueño pidió abrir SU SALA al arrancar y esta
+      // sesión no tiene pestaña guardada (arranque en frío), aterrizamos
+      // directo en su favorita — como entrar a tu habitación, no al hall.
+      try {
+        const cama = useCama.getState();
+        const guardadaActiva = localStorage.getItem("vg-cromo-activa-v106");
+        if (cama.abrirFavorito && cama.favorito && ALL_TABS.includes(cama.favorito) && !guardadaActiva) {
+          forceDirRef.current = 1;
+          handleTabChange(cama.favorito);
+        }
+      } catch { /* la casa abre en INICIO igual */ }
       hidratado.current = true;
     }, 0);
     return () => clearTimeout(id);

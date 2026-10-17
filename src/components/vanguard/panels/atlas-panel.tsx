@@ -21,14 +21,14 @@ import { IlustracionViva } from "@/components/vanguard/ilustraciones-vivas";
 import { projectLatLng } from "@/components/vanguard/world-map-svg";
 import worldPaths from "@/lib/world-paths.json";
 import { cn } from "@/lib/utils";
-import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight } from "lucide-react";
+import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight, Route, Scale, Crown } from "lucide-react";
 import {
-  PAISES_ATLAS, PERSONAS_ATLAS, COLOR_CATEGORIA,
+  PAISES_ATLAS, PERSONAS_ATLAS, COLOR_CATEGORIA, RUTAS_PODER, personaPorId, compararPaises,
   buscarPaises, buscarPersonas, fmtKm2, fmtMillones,
   type PaisAtlas, type PersonaAtlas, type CategoriaPersona,
 } from "@/lib/atlas-data";
 
-type Vista = "mapa" | "paises" | "personas";
+type Vista = "mapa" | "paises" | "personas" | "comparar";
 
 const CATS: (CategoriaPersona | "TODAS")[] = ["TODAS", "GOBIERNO", "ORGANISMOS", "DINERO", "CIENCIA", "CULTURA"];
 const CAT_ICON: Record<CategoriaPersona, React.ReactNode> = {
@@ -66,6 +66,10 @@ export function AtlasPanel() {
   const [selPersona, setSelPersona] = useState<PersonaAtlas | null>(null);
   const [selPais, setSelPais] = useState<PaisAtlas | null>(null);
   const [now, setNow] = useState(() => new Date());
+  // v122.0 RUTAS DE PODER + COMPARADOR A vs B
+  const [rutasOn, setRutasOn] = useState(true);
+  const [cmpA, setCmpA] = useState<string>("us");
+  const [cmpB, setCmpB] = useState<string>("cn");
 
   // RELOJ VIVO del planeta (1 Hz — un solo intervalo para toda la sala)
   useEffect(() => {
@@ -91,6 +95,24 @@ export function AtlasPanel() {
 
   const pinPais = useMemo(() => (selPais ? { ...selPais, xy: projectLatLng(selPais.lat, selPais.lng) } : null), [selPais]);
 
+  // v122 RUTAS DE PODER: arcos entre las personas de cada eje (proyectados una vez)
+  const rutasProyectadas = useMemo(() => {
+    return RUTAS_PODER.map((r) => {
+      const pa = personaPorId(r.de);
+      const pb = personaPorId(r.a);
+      if (!pa || !pb) return null;
+      const xa = projectLatLng(pa.lat, pa.lng);
+      const xb = projectLatLng(pb.lat, pb.lng);
+      if (xa.x <= 0 || xa.x >= 1000 || xb.x <= 0 || xb.x >= 1000) return null;
+      // control point: punto medio levantado hacia el norte, escala por distancia
+      const dist = Math.hypot(xb.x - xa.x, xb.y - xa.y);
+      return { ruta: r, pa, pb, xa, xb, cx: (xa.x + xb.x) / 2, cy: (xa.y + xb.y) / 2 - Math.min(120, dist * 0.22) };
+    }).filter(Boolean) as { ruta: (typeof RUTAS_PODER)[number]; pa: PersonaAtlas; pb: PersonaAtlas; xa: { x: number; y: number }; xb: { x: number; y: number }; cx: number; cy: number }[];
+  }, []);
+
+  const paisA = PAISES_ATLAS.find((p) => p.id === cmpA) ?? PAISES_ATLAS[0];
+  const paisB = PAISES_ATLAS.find((p) => p.id === cmpB) ?? PAISES_ATLAS[1];
+
   const verEnMapa = (p: PersonaAtlas) => {
     setSelPersona(p);
     setVista("mapa");
@@ -113,7 +135,7 @@ export function AtlasPanel() {
 
       {/* SUB-NAVEGACIÓN interna de la sala */}
       <div className="flex items-center gap-1.5 flex-wrap">
-        {([["mapa", "MAPA", <MapPin key="m" className="w-3.5 h-3.5" />], ["paises", "PAÍSES", <Globe2 key="p" className="w-3.5 h-3.5" />], ["personas", "PERSONAS", <Users key="u" className="w-3.5 h-3.5" />]] as [Vista, string, React.ReactNode][]).map(([v, label, icon]) => (
+        {([["mapa", "MAPA", <MapPin key="m" className="w-3.5 h-3.5" />], ["paises", "PAÍSES", <Globe2 key="p" className="w-3.5 h-3.5" />], ["personas", "PERSONAS", <Users key="u" className="w-3.5 h-3.5" />], ["comparar", "COMPARAR", <Scale key="c" className="w-3.5 h-3.5" />]] as [Vista, string, React.ReactNode][]).map(([v, label, icon]) => (
           <button
             key={v}
             onClick={() => setVista(v)}
@@ -128,7 +150,7 @@ export function AtlasPanel() {
             {label}
           </button>
         ))}
-        {vista !== "mapa" && (
+        {(vista === "paises" || vista === "personas") && (
           <div className="relative flex-1 min-w-[180px] max-w-xs ml-auto">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
@@ -160,8 +182,18 @@ export function AtlasPanel() {
                   {c === "TODAS" ? "TODAS" : CAT_ICON[c as CategoriaPersona]} {c === "TODAS" ? "TODAS" : c}
                 </button>
               ))}
-              <span className="ml-auto font-mono text-[9px] text-muted-foreground flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-hud blink-soft" /> {pinesPersonas.length} PINES EN VIVO
+              <button
+                onClick={() => setRutasOn((v) => !v)}
+                className={cn(
+                  "ml-auto flex items-center gap-1 rounded border px-2 py-0.5 font-mono text-[9px] font-bold tracking-wider transition-all",
+                  rutasOn ? "border-amber-hud bg-amber-hud/15 text-amber" : "border-border text-muted-foreground hover:text-foreground"
+                )}
+                title="Los ejes reales entre las personas que mueven el mundo"
+              >
+                <Route className="w-3 h-3" /> RUTAS DE PODER · {rutasProyectadas.length}
+              </button>
+              <span className="font-mono text-[9px] text-muted-foreground flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-hud blink-soft" /> {pinesPersonas.length} PINES
               </span>
             </div>
 
@@ -169,6 +201,18 @@ export function AtlasPanel() {
               <path d={worldPaths.graticulePath} fill="none" stroke="#1a2a3a" strokeWidth="0.5" />
               <path d={worldPaths.landPath} fill="#0e1a24" stroke="#2a4a5a" strokeWidth="0.6" />
               <path d={worldPaths.borderPath} fill="none" stroke="#1e3446" strokeWidth="0.5" />
+
+              {/* v122 RUTAS DE PODER: arcos de vuelo animados entre los ejes del planeta */}
+              {rutasOn && rutasProyectadas.map(({ ruta, pa, pb, xa, xb, cx, cy }) => {
+                const tocada = selPersona != null && (selPersona.id === pa.id || selPersona.id === pb.id);
+                const col = tocada ? "var(--vg-acento, #FFC94D)" : "#5a8aa8";
+                return (
+                  <g key={`${ruta.de}-${ruta.a}`}>
+                    <path d={`M ${xa.x} ${xa.y} Q ${cx} ${cy} ${xb.x} ${xb.y}`} fill="none" stroke={col} strokeWidth={tocada ? 1.6 : 0.8} opacity={tocada ? 0.95 : 0.5} className="v122-ruta" />
+                    <text x={cx} y={cy - 4} fontSize="10" fill={tocada ? "var(--vg-acento, #FFC94D)" : "#7aa8c8"} fontFamily="monospace" fontWeight="bold" textAnchor="middle" opacity={tocada ? 1 : 0.65}>{ruta.etiqueta}</text>
+                  </g>
+                );
+              })}
 
               {/* capital del país seleccionado */}
               {pinPais && pinPais.xy && (
@@ -341,6 +385,79 @@ export function AtlasPanel() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* ===== v122 VISTA COMPARAR (A vs B) ===== */}
+      {vista === "comparar" && (
+        <div className="space-y-3">
+          <div className="grid sm:grid-cols-2 gap-2">
+            {([[cmpA, setCmpA, paisA], [cmpB, setCmpB, paisB]] as [string, (v: string) => void, PaisAtlas][]).map(([val, set, pais], i) => (
+              <div key={i} className="hud-panel p-3">
+                <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground mb-1.5">{i === 0 ? "PAÍS A" : "PAÍS B"}</p>
+                <div className="flex items-center gap-2">
+                  <Flag code={pais.id} size={28} />
+                  <select
+                    value={val}
+                    onChange={(e) => set(e.target.value)}
+                    aria-label={i === 0 ? "Selecciona el país A" : "Selecciona el país B"}
+                    className="flex-1 min-w-0 bg-black/50 border border-border rounded px-2 py-1.5 font-mono text-[11px] font-bold text-foreground focus:outline-none focus:border-cyan-hud"
+                  >
+                    {PAISES_ATLAS.map((p) => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+                  </select>
+                </div>
+                <p className="text-[9px] text-muted-foreground mt-1.5 truncate">{pais.gobierno} · LÍDER: <span className="text-amber-hud font-bold">{pais.lider}</span></p>
+              </div>
+            ))}
+          </div>
+
+          {(() => {
+            const cmp = compararPaises(paisA, paisB);
+            const maxPob = Math.max(paisA.poblacion, paisB.poblacion);
+            const maxSup = Math.max(paisA.superficie, paisB.superficie);
+            const maxDen = Math.max(cmp.densidadA, cmp.densidadB);
+            const fila = (label: string, va: number, vb: number, max: number, gana: string | null, fmt: (n: number) => string) => (
+              <div key={label} className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                <div className="flex flex-col items-end gap-0.5">
+                  <span className={cn("font-mono text-[10px] font-bold tabular-nums", gana === "a" ? "text-cyan-hud" : "text-muted-foreground")}>{fmt(va)}</span>
+                  <div className="h-1.5 w-full rounded bg-black/50 overflow-hidden"><div className={cn("h-full rounded-r", gana === "a" ? "bg-cyan-hud" : "bg-muted-foreground/40")} style={{ width: `${Math.max(4, (va / max) * 100)}%` }} /></div>
+                </div>
+                <span className="font-mono text-[8px] uppercase tracking-widest text-muted-foreground w-20 text-center shrink-0">{label}{gana && <span className={cn("block font-bold", gana === "a" ? "text-cyan-hud" : "text-amber-hud")}>◄ {gana === "a" ? "A" : "B"}</span>}</span>
+                <div className="flex flex-col items-start gap-0.5">
+                  <span className={cn("font-mono text-[10px] font-bold tabular-nums", gana === "b" ? "text-amber-hud" : "text-muted-foreground")}>{fmt(vb)}</span>
+                  <div className="h-1.5 w-full rounded bg-black/50 overflow-hidden"><div className={cn("h-full rounded-l", gana === "b" ? "bg-amber-hud" : "bg-muted-foreground/40")} style={{ width: `${Math.max(4, (vb / max) * 100)}%` }} /></div>
+                </div>
+              </div>
+            );
+            return (
+              <div className="hud-panel p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground">CAREO DE NACIONES</p>
+                  <p className="font-mono text-[9px] text-muted-foreground">densidad: {cmp.densidadA.toFixed(0)} vs {cmp.densidadB.toFixed(0)} hab/km²</p>
+                </div>
+                {fila("POBLACIÓN", paisA.poblacion, paisB.poblacion, maxPob, cmp.poblacionGana, fmtMillones)}
+                {fila("SUPERFICIE", paisA.superficie, paisB.superficie, maxSup, cmp.superficieGana, fmtKm2)}
+                {fila("DENSIDAD", cmp.densidadA, cmp.densidadB, maxDen, cmp.densidadGana, (n) => `${n.toFixed(0)} hab/km²`)}
+                <div className="grid sm:grid-cols-2 gap-2 pt-1 border-t border-border/60">
+                  {(["A", "B"] as const).map((lado) => {
+                    const p = lado === "A" ? paisA : paisB;
+                    return (
+                      <div key={lado} className="rounded border border-border/60 bg-black/30 p-2.5">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Flag code={p.id} size={16} />
+                          <span className="font-mono text-[10px] font-bold text-foreground truncate">{p.nombre}</span>
+                          <span className="ml-auto font-mono text-[9px] text-cyan-hud tabular-nums">{horaEn(p.zona, now)}</span>
+                        </div>
+                        <p className="font-mono text-[9px] text-muted-foreground">CAP. <span className="text-foreground">{p.capital}</span> · MONEDA <span className="text-foreground">{p.moneda}</span></p>
+                        <p className="font-mono text-[9px] text-muted-foreground mt-0.5">IDIOMAS <span className="text-foreground">{p.idiomas}</span></p>
+                        <p className="text-[10px] text-foreground/75 leading-relaxed mt-1.5">{p.dato}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 

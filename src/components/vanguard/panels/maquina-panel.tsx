@@ -510,6 +510,69 @@ function TeatroKarsk({
 }
 
 // ---------- v119: CRONOLOGÍA DE LOCALIDAD (la campaña desde SU esquina) ----------
+// v122: EXPORTAR LA CRONOLOGÍA DE LOCALIDAD como tarjeta PNG del comandante.
+// La tarjeta se dibuja como SVG puro (sin dependencias externas, monospace
+// genérico) a partir de los datos reales de historiaDe().
+function descargarCronoPng(hist: HistoriaLoc, dia: number) {
+  try {
+    const W = 1200;
+    const H = 630;
+    const barW = (W - 120) / hist.dias.length;
+    const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const rectCambios = hist.cambios.slice(0, 6).map(
+      (cm, i) => `<text x="60" y="${470 + i * 26}" font-family="monospace" font-size="15" font-weight="bold" fill="${cm.dia === dia ? "#ffffff" : "#9aa3ad"}">DÍA ${cm.dia} · ${CONTROL_LABEL[cm.de]} → ${CONTROL_LABEL[cm.a]}</text>`
+    ).join("");
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  <defs>
+    <radialGradient id="fondo" cx="18%" cy="8%" r="90%">
+      <stop offset="0%" stop-color="#241a06"/>
+      <stop offset="100%" stop-color="#0a0a12"/>
+    </radialGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#fondo)"/>
+  <rect x="8" y="8" width="${W - 16}" height="${H - 16}" fill="none" stroke="#FFC94D55" stroke-width="2" rx="14"/>
+  <text x="60" y="72" font-family="monospace" font-size="20" font-weight="bold" fill="#FFC94D" letter-spacing="6">VANGUARD · MÁQUINA DEL TIEMPO</text>
+  <text x="60" y="126" font-family="monospace" font-size="44" font-weight="bold" fill="#ffffff">${esc(hist.nombre.toUpperCase())}</text>
+  <text x="60" y="160" font-family="monospace" font-size="17" fill="#8a9199">CRONOLOGÍA DE LOCALIDAD · ${DIAS_CAMPANA} DÍAS · DÍA VIVO ${dia}</text>
+  <text x="60" y="216" font-family="monospace" font-size="14" font-weight="bold" fill="#8a9199">QUIÉN LA TUVO, DÍA A DÍA</text>
+  ${hist.dias.map((c, d) => `<rect x="${60 + d * barW}" y="232" width="${barW - 3}" height="56" rx="3" fill="${CONTROL_COLOR[c]}" opacity="${d <= dia ? 0.92 : 0.22}"/>${d === dia ? `<rect x="${60 + d * barW - 2}" y="228" width="${barW + 1}" height="64" rx="4" fill="none" stroke="#ffffff" stroke-width="2.5"/>` : ""}`).join("")}
+  <text x="60" y="318" font-family="monospace" font-size="14" fill="#FF4D4D" font-weight="bold">OCUPADA ${hist.diasRojo} D</text>
+  <text x="300" y="318" font-family="monospace" font-size="14" fill="#FFC94D" font-weight="bold">DISPUTADA ${hist.diasDisputada} D</text>
+  <text x="560" y="318" font-family="monospace" font-size="14" fill="#3DDCFF" font-weight="bold">BAJO CONTROL ${hist.diasAzul} D</text>
+  <text x="820" y="318" font-family="monospace" font-size="14" fill="#ffffff" font-weight="bold">CAMBIOS DE MANO ${hist.cambios.length}</text>
+  <line x1="60" y1="342" x2="${W - 60}" y2="342" stroke="#ffffff22" stroke-width="1.5"/>
+  <text x="60" y="386" font-family="monospace" font-size="15" font-weight="bold" fill="#8a9199">CAMBIOS DE MANO REGISTRADOS</text>
+  ${rectCambios || '<text x="60" y="470" font-family="monospace" font-size="15" fill="#6a7178">La línea nunca la tocó: toda la campaña de un mismo lado.</text>'}
+  ${hist.menciones.length > 0 ? `<text x="60" y="${470 + Math.min(6, hist.cambios.length) * 26 + 18}" font-family="monospace" font-size="14" fill="#8a9199">La mencionan ${hist.menciones.length} despachos del frente</text>` : ""}
+  <text x="60" y="${H - 40}" font-family="monospace" font-size="14" fill="#6a7178">vanguard · teatro del karsk determinista · exportado del día ${dia}</text>
+</svg>`;
+    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(img, 0, 0, W, H);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `vanguard-cronologia-${hist.nombre.toLowerCase().replace(/\s+/g, "-")}.png`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        toast(`CRONOLOGÍA EXPORTADA · ${hist.nombre.toUpperCase()}`);
+      }, "image/png");
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); toast("EL NAVEGADOR BLOQUEÓ LA EXPORTACIÓN"); };
+    img.src = url;
+  } catch {
+    toast("EL NAVEGADOR BLOQUEÓ LA EXPORTACIÓN");
+  }
+}
+
 function CronologiaLocalidad({
   idx, dia, onCerrar,
 }: {
@@ -533,13 +596,24 @@ function CronologiaLocalidad({
           <span className="truncate text-[15px] font-black text-amber-100">{hist.nombre.toUpperCase()}</span>
           <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-black text-white/60">{DIAS_CAMPANA} DÍAS</span>
         </div>
-        <button
-          onClick={onCerrar}
-          aria-label="Cerrar cronología"
-          className="shrink-0 rounded-lg border border-white/15 bg-white/5 p-1.5 text-white/60 transition hover:border-white/35 active:scale-95"
-        >
-          <X className="h-3.5 w-3.5" />
-        </button>
+        <div className="flex shrink-0 items-center gap-1.5">
+          {/* v122: la tarjeta del comandante — la crónica de esta localidad en PNG */}
+          <button
+            onClick={() => descargarCronoPng(hist, dia)}
+            aria-label="Exportar cronología como PNG"
+            title="Exportar esta cronología como tarjeta PNG"
+            className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-2 py-1.5 text-[9px] font-black uppercase tracking-wider text-amber-300 transition hover:border-amber-400/80 active:scale-95"
+          >
+            PNG
+          </button>
+          <button
+            onClick={onCerrar}
+            aria-label="Cerrar cronología"
+            className="rounded-lg border border-white/15 bg-white/5 p-1.5 text-white/60 transition hover:border-white/35 active:scale-95"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* quién la tuvo: días por bando */}

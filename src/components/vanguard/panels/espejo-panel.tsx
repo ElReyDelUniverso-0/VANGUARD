@@ -8,11 +8,11 @@
 // Mesa y síntesis con el núcleo neuronal. Contenido SIM del mundo Vanguard,
 // declarado como tal; el método (confirmado/omitido/en disputa) es el real.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FlipHorizontal2, CheckCircle2, EyeOff, HelpCircle, ChevronDown, Hourglass,
-  ShieldCheck, Bell, BellRing, Newspaper, FlaskConical,
+  ShieldCheck, Bell, BellRing, Newspaper, FlaskConical, Radio,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -23,6 +23,8 @@ import { CRISIS, convergenciaDe, medioPorId, type CrisisVG } from "@/lib/expedie
 import { useExpediente } from "@/lib/expediente-store";
 import { evaluarNeuronal, fnvHash, predecir, bucketMinutos } from "@/lib/neurona-core";
 import { dayKeyUtc } from "@/lib/googles";
+// v122 SEÑALES REALES: los cables de la casa junto al espejo SIM (separación honesta)
+import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 
 const ESTADO_META = {
   confirmado: { label: "CONFIRMADO", color: "#4DFFC4" },
@@ -175,6 +177,36 @@ export function EspejoPanel() {
   );
   const [abierto, setAbierto] = useState<string | null>(crisis.perspectivas[0]?.medio ?? null);
 
+  // ===== v122 SEÑALES REALES DE AHORA (bloque honesto: SIM ≠ REAL) =====
+  // El espejo cuenta el mundo Vanguard (SIM); debajo, los cables REALES
+  // que la casa recibe ahora mismo, leídos en la SALA DE LECTURA interna.
+  const [cablesReales, setCablesReales] = useState<CableLectura[]>([]);
+  const [cableSelReal, setCableSelReal] = useState<CableLectura | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    const cargar = async () => {
+      try {
+        const r = await fetch("/api/news", { cache: "no-store" });
+        const j = await r.json();
+        if (!vivo || !Array.isArray(j?.items)) return;
+        const cs: CableLectura[] = (j.items as Record<string, unknown>[]).map((it) => ({
+          id: String(it.id ?? it.url ?? Math.random().toString(36).slice(2)),
+          title: String(it.title ?? ""),
+          url: String(it.url ?? ""),
+          source: String(it.source ?? "casa"),
+          publishedAt: String(it.publishedAt ?? new Date().toISOString()),
+          tacticalTag: (it.tacticalTag as string) ?? null,
+          conflictTag: (it.conflictTag as string) ?? null,
+          sourceCountry: (it.sourceCountry as string) ?? null,
+        })).filter((c) => c.title.length > 12).slice(0, 4);
+        if (cs.length > 0) setCablesReales(cs);
+      } catch { /* el espejo vive sin señales */ }
+    };
+    cargar();
+    const id = setInterval(cargar, 300000);
+    return () => { vivo = false; clearInterval(id); };
+  }, []);
+
   const vigila = vigilados.some((v) => v.toLowerCase() === crisis.nombre.toLowerCase());
 
   return (
@@ -203,6 +235,44 @@ export function EspejoPanel() {
           );
         })}
       </div>
+
+      {/* v122: SEÑALES REALES DE AHORA — SIM y REAL nunca se mezclan */}
+      {cablesReales.length > 0 && (
+        <div className="mt-3 overflow-hidden rounded-2xl border border-cyan-400/25 bg-[radial-gradient(ellipse_at_80%_0%,rgba(56,189,248,0.08),transparent_55%),#0a0d12] p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-cyan-300">
+              <Radio className="h-3.5 w-3.5 blink-soft" /> señales reales de ahora
+            </span>
+            <span className="rounded-full border border-cyan-400/50 bg-cyan-400/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-cyan-300">
+              REAL · cables de la casa
+            </span>
+            <span className="text-[9px] font-semibold text-white/35 ml-auto">el espejo de arriba cuenta el mundo Vanguard (SIM)</span>
+          </div>
+          <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+            {cablesReales.map((cab) => (
+              <button
+                key={cab.id}
+                onClick={() => setCableSelReal(cab)}
+                className="text-left rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 transition hover:border-cyan-400/40 active:scale-[0.99] group"
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className="shrink-0 rounded px-1 py-0.5 text-[8px] font-black tracking-wider"
+                    style={{
+                      color: cab.tacticalTag === "ALERTA" ? "#FF6B60" : "#7DD3FC",
+                      border: `1px solid ${cab.tacticalTag === "ALERTA" ? "#FF6B6066" : "#7DD3FC44"}`,
+                    }}
+                  >
+                    {cab.tacticalTag ?? "INFO"}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-white/35 shrink-0">{cab.source}</span>
+                </div>
+                <p className="mt-1 line-clamp-2 text-[11.5px] font-semibold leading-snug text-white/80 group-hover:text-white">{cab.title}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* cabecera de crisis */}
       <motion.div
@@ -402,6 +472,9 @@ export function EspejoPanel() {
       </p>
 
       <ExpedienteDrawer />
+
+      {/* v122: la SALA DE LECTURA de las señales reales — misma sala interna, cero saltos */}
+      <LectorNoticia cable={cableSelReal} onCerrar={() => setCableSelReal(null)} />
     </div>
   );
 }

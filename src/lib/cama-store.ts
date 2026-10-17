@@ -60,6 +60,8 @@ export interface CamaEstado {
   autoCama: boolean;
   /** La sala favorita del dueño (chip de lanzamiento en LA CAMA) */
   favorito: TabKey | null;
+  /** v122: abrir la sala favorita SOLA al arrancar la casa */
+  abrirFavorito: boolean;
   /** Últimas salas visitadas (máx 8) — la casa recuerda tu camino */
   recientes: TabKey[];
   /** Visitas por sala — la adaptación real de LA CAMA */
@@ -72,6 +74,7 @@ export interface CamaEstado {
   setModoCama: (v: boolean) => void;
   setAutoCama: (v: boolean) => void;
   setFavorito: (v: TabKey | null) => void;
+  setAbrirFavorito: (v: boolean) => void;
   /** Registrar una visita (la casa aprende) */
   visita: (tab: TabKey) => void;
   resetCama: () => void;
@@ -86,6 +89,7 @@ const DEFAULTS = {
   modoCama: false,
   autoCama: false,
   favorito: null,
+  abrirFavorito: false,
   recientes: [] as TabKey[],
   visitas: {} as Record<string, number>,
 };
@@ -102,6 +106,7 @@ export const useCama = create<CamaEstado>()(
       setModoCama: (v) => set({ modoCama: v }),
       setAutoCama: (v) => set({ autoCama: v }),
       setFavorito: (v) => set({ favorito: v }),
+      setAbrirFavorito: (v) => set({ abrirFavorito: v }),
       visita: (tab) =>
         set((s) => {
           const recientes = [tab, ...s.recientes.filter((t) => t !== tab)].slice(0, 8);

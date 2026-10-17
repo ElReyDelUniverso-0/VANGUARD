@@ -77,6 +77,12 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
           conflictTag: (it.conflictTag as string) ?? null,
           sourceCountry: (it.sourceCountry as string) ?? null,
         })).filter((c) => c.title.length > 12).slice(0, 6);
+        // v122 PRIORIDAD ALERTA: los cables marcados ALERTA/URGENTE van PRIMERO
+        // en la rotación — la casa no entierra un ataque entre el ruido.
+        cs.sort((a, b) => {
+          const prio = (c: CableLectura) => (c.tacticalTag === "ALERTA" || c.tacticalTag === "URGENTE" ? 0 : 1);
+          return prio(a) - prio(b);
+        });
         if (cs.length > 0) setCables(cs);
       } catch {
         /* la casa no se queja: el noticiero espera la próxima señal */
@@ -92,6 +98,8 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
     return () => clearInterval(iv);
   }, [cables.length]);
   const cableHud = cables.length > 0 ? cables[idxNoti % cables.length] : null;
+  // v122: el cable actual es una ALERTA → el noticiero se viste de rojo y avisa
+  const esAlerta = cableHud?.tacticalTag === "ALERTA" || cableHud?.tacticalTag === "URGENTE";
 
   return (
     <header className="sticky top-0 z-30 hud-panel border-b border-amber-hud">
@@ -180,10 +188,12 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               onClick={() => setLectorHud(cableHud)}
               title={t("hud117.noticiero")}
               className="v117-noticiero group relative hidden min-w-0 max-w-[300px] flex-1 items-center gap-2 overflow-hidden rounded-sm border px-2 py-1 text-left transition-colors lg:flex"
-              style={{ borderColor: "#FF8A2A44", background: "rgba(255,138,42,0.05)" }}
+              style={esAlerta
+                ? { borderColor: "#FF3B3077", background: "rgba(255,59,48,0.12)" }
+                : { borderColor: "#FF8A2A44", background: "rgba(255,138,42,0.05)" }}
             >
-              <span className="flex shrink-0 items-center gap-1 font-mono text-[8px] font-bold tracking-[0.2em]" style={{ color: "#FF8A2A" }}>
-                <Radio className="h-3 w-3 v117-parpadeo" /> 2100
+              <span className="flex shrink-0 items-center gap-1 font-mono text-[8px] font-bold tracking-[0.2em]" style={{ color: esAlerta ? "#FF3B30" : "#FF8A2A" }}>
+                <Radio className={cn("h-3 w-3", esAlerta && "v117-parpadeo")} /> {esAlerta ? "ALERTA" : "2100"}
               </span>
               <AnimatePresence mode="wait">
                 <motion.span

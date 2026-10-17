@@ -307,6 +307,44 @@ export function CamaPanel() {
         )}
       </div>
 
+      {/* 7. v122 SALA DE SIEMPRE: favorita + abrir sola al arrancar */}
+      <div className="hud-panel p-4">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-foreground flex items-center gap-2 mb-3">
+          <Star className="w-3.5 h-3.5 text-amber-hud" /> TU SALA DE SIEMPRE
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <select
+            value={cama.favorito ?? ""}
+            onChange={(e) => cama.setFavorito((e.target.value || null) as TabKey | null)}
+            aria-label="Elige tu sala favorita"
+            className="flex-1 min-w-[180px] bg-black/50 border border-border rounded px-2 py-1.5 font-mono text-[11px] font-bold text-foreground focus:outline-none focus:border-amber-hud"
+          >
+            <option value="">— sin favorita —</option>
+            {ALL_TABS.map((k) => <option key={k} value={k}>{TABS[k]?.short ?? k}</option>)}
+          </select>
+          {cama.favorito && (
+            <button
+              onClick={() => navigateTo(cama.favorito as TabKey)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-amber-hud bg-amber-hud/15 font-mono text-[10px] font-bold text-amber hover:bg-amber-hud/25 transition-colors"
+            >
+              <Play className="w-3 h-3" /> IR AHORA
+            </button>
+          )}
+        </div>
+        <label className="flex items-start gap-2.5 mt-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={cama.abrirFavorito}
+            onChange={(e) => cama.setAbrirFavorito(e.target.checked)}
+            disabled={!cama.favorito}
+            className="mt-0.5 w-4 h-4 accent-amber-hud disabled:opacity-40"
+          />
+          <span className="text-[11px] leading-relaxed text-muted-foreground group-hover:text-foreground/80 transition-colors">
+            <span className="font-bold text-foreground">Abrir tu sala al arrancar.</span> Si la casa despierta sin una sesión guardada, Vanguard aterriza directo en tu sala favorita — como entrar a tu habitación, no al hall.
+          </span>
+        </label>
+      </div>
+
       {/* Reset */}
       <div className="flex justify-end">
         <button
