@@ -30,6 +30,18 @@ const nextConfig: NextConfig = {
           { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
       },
+      // v125.0 CORRECCIÓN TOTAL — LEY CONTRA LA PÁGINA VIEJA: el HTML de la app
+      // SIEMPRE se revalida (el navegador y cualquier gateway nunca muestran una
+      // versión caducada — la causa «a veces no se actualiza»). Los assets de
+      // /_next/static conservan su caché inmutable de fábrica (no se tocan).
+      {
+        source: "/((?!_next/static|_next/image|favicon|assets/).*)",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Pragma", value: "no-cache" },
+          { key: "Expires", value: "0" },
+        ],
+      },
     ];
   },
 };

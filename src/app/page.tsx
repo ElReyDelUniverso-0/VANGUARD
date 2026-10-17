@@ -331,6 +331,14 @@ export default function Home() {
   // Explorador — la NUEVA no cuenta: abrir pestañas no paga el mapa. Escena para
   // la radio + scroll arriba (la franja nunca tapa el inicio del panel).
   const handleTabChange = useCallback((k: TabKey) => {
+    // v125.0 CORRECCIÓN TOTAL — RESOLUTOR DE SALA: si llega la CLAVE DE SECCIÓN
+    // (los 16 mundos del mega-menú; el swipe de borde las usaba directo) y esa
+    // clave no tiene panel propio, se resuelve a su PRIMERA PESTAÑA real. Antes:
+    // 10 de 16 salas (juego, inteligencia, mercado…) quedaban con el panel VACÍO.
+    const seccion = SECTIONS.find((s) => s.key === k);
+    if (seccion && !ALL_TABS.includes(k)) {
+      k = seccion.tabs[0].key;
+    }
     // v124.0 CAVIAR: entrar a una sala suena a lujo — la campana de oro del
     // salón (dos notas con cola de sala) sustituye al toque de madera.
     sfx.campana();

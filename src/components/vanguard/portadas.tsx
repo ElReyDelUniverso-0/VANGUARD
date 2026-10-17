@@ -8,7 +8,7 @@
 // vivas del color del mundo. Cero <img>, cero ilustraciones IA, cero enlaces.
 // Rendimiento: solo transform/opacity anima — 60 FPS; reduced-motion apaga.
 
-import { cn } from "@/lib/utils";
+import { cn, q2 } from "@/lib/utils";
 import { accentOfSection, sectionOfTab, TABS, type TabKey } from "./tab-nav";
 import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
 // v116.0 MEGALÓPOLIS — la ciudad del inicio rota de región y vive el
@@ -258,7 +258,7 @@ function EscenaMercado({ acc }: { acc: string }) {
         <span
           key={i}
           className="v108-onda absolute w-4 h-4 rounded-full border-2"
-          style={{ left: `${x}%`, top: `${28 + i * 10}%`, borderColor: acc, background: `${acc}22`, animationDelay: `${i * 1.1}s` }}
+          style={{ left: `${x}%`, top: `${28 + i * 10}%`, borderColor: acc, background: `${acc}22`, animationDelay: `${q2(i * 1.1)}s` }}
           aria-hidden
         />
       ))}
@@ -397,7 +397,7 @@ function EscenaEstrategia({ acc }: { acc: string }) {
           <span
             key={i}
             className={cn("absolute w-3 h-3 rotate-45 border-2", i === 0 && "v108-latido")}
-            style={{ left: `${x}%`, top: `${y}%`, borderColor: i === 0 ? acc : "#4ADE80", background: `${i === 0 ? acc : "#4ADE80"}33`, animationDelay: `${i * 0.9}s` }}
+            style={{ left: `${x}%`, top: `${y}%`, borderColor: i === 0 ? acc : "#4ADE80", background: `${i === 0 ? acc : "#4ADE80"}33`, animationDelay: `${q2(i * 0.9)}s` }}
             aria-hidden
           />
         ))}
@@ -421,7 +421,7 @@ function EscenaEmisora({ acc }: { acc: string }) {
           <span
             key={i}
             className="v108-onda absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2"
-            style={{ borderColor: `${acc}88`, animationDelay: `${i * 0.9}s` }}
+            style={{ borderColor: `${acc}88`, animationDelay: `${q2(i * 0.9)}s` }}
             aria-hidden
           />
         ))}
@@ -500,7 +500,7 @@ function EscenaCreadores({ acc }: { acc: string }) {
         <span
           key={i}
           className="v108-estrella absolute text-[10px] font-black"
-          style={{ left: `${x}%`, top: `${y}%`, color: i % 2 ? "#FFC94D" : acc, animationDelay: `${i * 0.6}s` }}
+          style={{ left: `${x}%`, top: `${y}%`, color: i % 2 ? "#FFC94D" : acc, animationDelay: `${q2(i * 0.6)}s` }}
           aria-hidden
         >
           +
@@ -539,7 +539,7 @@ function EscenaSocial({ acc }: { acc: string }) {
         {/* avatares */}
         <div className="flex gap-1 pt-1">
           {["#FF6B5A", "#4ADE80", "#5EEAD4"].map((c, i) => (
-            <span key={i} className={cn("w-4 h-4 rounded-full border-2", i === 1 && "v108-latido")} style={{ borderColor: c, background: `${c}33`, animationDelay: `${i * 0.8}s` }} />
+            <span key={i} className={cn("w-4 h-4 rounded-full border-2", i === 1 && "v108-latido")} style={{ borderColor: c, background: `${c}33`, animationDelay: `${q2(i * 0.8)}s` }} />
           ))}
           <span className="w-4 h-4 rounded-full border border-dashed" style={{ borderColor: `${acc}66` }} />
         </div>
@@ -617,7 +617,7 @@ function EscenaNueva({ acc }: { acc: string }) {
         <span
           key={i}
           className="v108-estrella absolute w-1.5 h-1.5 rounded-full"
-          style={{ left: `${22 + i * 28}%`, top: `${58 - (i % 2) * 14}%`, background: i === 1 ? "#5EEAD4" : acc, boxShadow: `0 0 10px ${i === 1 ? "#5EEAD4" : acc}`, animationDelay: `${i * 0.7}s` }}
+          style={{ left: `${22 + i * 28}%`, top: `${58 - (i % 2) * 14}%`, background: i === 1 ? "#5EEAD4" : acc, boxShadow: `0 0 10px ${i === 1 ? "#5EEAD4" : acc}`, animationDelay: `${q2(i * 0.7)}s` }}
           aria-hidden
         />
       ))}

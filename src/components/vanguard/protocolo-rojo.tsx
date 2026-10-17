@@ -11,6 +11,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { q2 } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import {
@@ -203,7 +204,7 @@ export function ProtocoloRojo() {
                 <div
                   key={i}
                   className="absolute font-mono text-[10px] text-crisis/50 whitespace-nowrap"
-                  style={{ top: `${(i * 7.3 + 4) % 100}%`, left: 0, animation: `vg-news-slide ${6 + (i % 5)}s linear infinite`, animationDelay: `${i * 0.7}s` }}
+                  style={{ top: `${q2((i * 7.3 + 4) % 100)}%`, left: 0, animation: `vg-news-slide ${6 + (i % 5)}s linear infinite`, animationDelay: `${q2(i * 0.7)}s` }}
                 >
                   {CLASSIFIED_MSGS[i % CLASSIFIED_MSGS.length]} ··· ÚLTIMA HORA ··· {CLASSIFIED_MSGS[(i + 3) % CLASSIFIED_MSGS.length]}
                 </div>

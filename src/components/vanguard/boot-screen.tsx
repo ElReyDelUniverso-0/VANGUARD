@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { APP_VERSION_LABEL } from "@/lib/version";
+import { q2 } from "@/lib/utils";
 
 const BOOT_LINES = [
   "Conectando con fuentes globales...",
@@ -100,7 +101,7 @@ export function BootScreen() {
               <span
                 key={i}
                 className="w-1.5 h-1.5 rounded-full bg-electric blink-soft"
-                style={{ animationDelay: `${i * 0.22}s` }}
+                style={{ animationDelay: `${q2(i * 0.22)}s` }}
               />
             ))}
           </div>

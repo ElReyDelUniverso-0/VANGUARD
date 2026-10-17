@@ -36,7 +36,7 @@ async function peakState(online: number): Promise<{ peak: number; newRecord: boo
     if (newRecord) {
       await db.$executeRaw`
         INSERT INTO site_counter (k, n) VALUES ('presence:peak', ${online})
-        ON CONFLICT (k) DO UPDATE SET n = GREATEST(site_counter.n, ${online})`;
+        ON CONFLICT (k) DO UPDATE SET n = MAX(site_counter.n, ${online})`;
     }
     return { peak: Math.max(prev, online), newRecord };
   } catch {

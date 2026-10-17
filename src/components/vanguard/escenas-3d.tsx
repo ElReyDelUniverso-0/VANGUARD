@@ -36,6 +36,16 @@ function mulberry(semilla: number) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+
+// v125.0 CORRECCIÓN TOTAL — CUANTIZADOR HIDRATACIÓN: React server redondea los
+// números de estilo a 6 cifras significativas y Chrome recorta los tiempos CSS;
+// un float de precisión completa (83.29604581548776) llegaba DISTINTO a cada lado
+// → error de hidratación en cada visita fresca y botones muertos durante la
+// recuperación. Todo valor que entra a un estilo/atributo pasa por q2 (2 decimales:
+// invisible al ojo, idéntico en servidor y cliente).
+function q2(v: number): number {
+  return Math.round(v * 100) / 100;
+}
 export function hashDe(txt: string): number {
   let h = 2166136261;
   for (let i = 0; i < txt.length; i++) { h ^= txt.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -87,7 +97,7 @@ export function SelloVivo({ acento = "#5EEAD4", etiqueta = "EN VIVO", className 
 // ============================================================
 
 function EscenaOrbita({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const sats = Array.from({ length: 5 }, (_, i) => ({ a: 14 + i * 9, d: 7 + rnd() * 9, r: 1.6 + rnd() * 1.4 }));
+  const sats = Array.from({ length: 5 }, (_, i) => ({ a: 14 + i * 9, d: q2(7 + rnd() * 9), r: q2(1.6 + rnd() * 1.4) }));
   return (
     <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" aria-hidden>
       <defs>
@@ -103,7 +113,7 @@ function EscenaOrbita({ acento, rnd }: { acento: string; rnd: () => number }) {
         <line x1="130" y1="108" x2="270" y2="108" stroke={acento} strokeOpacity="0.25" strokeDasharray="3 5" />
       </g>
       {sats.map((s, i) => (
-        <g key={i} className="v110-orbita" style={{ transformOrigin: "200px 108px", animationDuration: `${s.d}s`, animationDelay: `${-i * 2.3}s` }}>
+        <g key={i} className="v110-orbita" style={{ transformOrigin: "200px 108px", animationDuration: `${s.d}s`, animationDelay: `${q2(-i * 2.3)}s` }}>
           <circle cx={200 + s.a} cy="108" r={s.r} fill={acento} />
           <circle cx={200 + s.a} cy="108" r={s.r + 3} fill="none" stroke={acento} strokeOpacity="0.4" />
         </g>
@@ -121,7 +131,7 @@ function EscenaOrbita({ acento, rnd }: { acento: string; rnd: () => number }) {
 }
 
 function EscenaNoticias({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const barras = Array.from({ length: 26 }, (_, i) => ({ h: 8 + rnd() * 30, d: rnd() * 2 }));
+  const barras = Array.from({ length: 26 }, (_, i) => ({ h: q2(8 + rnd() * 30), d: q2(rnd() * 2) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -131,11 +141,11 @@ function EscenaNoticias({ acento, rnd }: { acento: string; rnd: () => number }) 
           <ellipse cx="120" cy="104" rx="20" ry="58" fill="none" stroke={acento} strokeOpacity="0.3" strokeWidth="0.7" />
           <path d="M62 104 H178 M120 46 V162" stroke={acento} strokeOpacity="0.2" strokeDasharray="2 4" />
           {[[100, 82], [142, 96], [110, 128], [148, 118]].map(([x, y], i) => (
-            <circle key={i} cx={x} cy={y} r="2.4" fill={acento} className="v110-parpadeo" style={{ animationDelay: `${i * 0.7}s` }} />
+            <circle key={i} cx={x} cy={y} r="2.4" fill={acento} className="v110-parpadeo" style={{ animationDelay: `${q2(i * 0.7)}s` }} />
           ))}
         </g>
         {[0, 1, 2].map((i) => (
-          <g key={i} className="v110-flota" style={{ animationDelay: `${i * 1.4}s` }}>
+          <g key={i} className="v110-flota" style={{ animationDelay: `${q2(i * 1.4)}s` }}>
             <rect x={222 + i * 8} y={38 + i * 34} width={118 - i * 18} height="16" rx="2" fill="none" stroke={acento} strokeOpacity="0.45" />
             <rect x={228 + i * 8} y={43 + i * 34} width={40 - i * 8} height="5" rx="1" fill={acento} opacity="0.55" />
             <rect x={228 + i * 8} y={50 + i * 34} width={70 - i * 14} height="2.5" rx="1" fill={acento} opacity="0.3" />
@@ -157,7 +167,7 @@ function EscenaNoticias({ acento, rnd }: { acento: string; rnd: () => number }) 
 }
 
 function EscenaRed({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const nodos = Array.from({ length: 14 }, () => ({ x: 30 + rnd() * 340, y: 24 + rnd() * 170, r: 1.8 + rnd() * 2.4, d: rnd() * 3 }));
+  const nodos = Array.from({ length: 14 }, () => ({ x: q2(30 + rnd() * 340), y: q2(24 + rnd() * 170), r: q2(1.8 + rnd() * 2.4), d: q2(rnd() * 3) }));
   const enlaces: Array<[number, number]> = [];
   for (let i = 0; i < nodos.length; i++) {
     const dists = nodos.map((n, j) => ({ j, d: Math.hypot(n.x - nodos[i].x, n.y - nodos[i].y) })).filter((o) => o.j !== i).sort((a, b) => a.d - b.d);
@@ -183,7 +193,7 @@ function EscenaRed({ acento, rnd }: { acento: string; rnd: () => number }) {
 }
 
 function EscenaRadar({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const blips = Array.from({ length: 7 }, () => ({ x: 200 + (rnd() - 0.5) * 220, y: 108 + (rnd() - 0.5) * 150, d: rnd() * 4 }));
+  const blips = Array.from({ length: 7 }, () => ({ x: q2(200 + (rnd() - 0.5) * 220), y: q2(108 + (rnd() - 0.5) * 150), d: q2(rnd() * 4) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -202,7 +212,7 @@ function EscenaRadar({ acento, rnd }: { acento: string; rnd: () => number }) {
 }
 
 function EscenaGuerra({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const pins = Array.from({ length: 9 }, () => ({ x: 40 + rnd() * 320, y: 40 + rnd() * 130 }));
+  const pins = Array.from({ length: 9 }, () => ({ x: q2(40 + rnd() * 320), y: q2(40 + rnd() * 130) }));
   return (
     <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" aria-hidden>
       <path d="M0 70 Q 60 52 120 70 T 240 66 T 400 78" fill="none" stroke={acento} strokeOpacity="0.18" />
@@ -210,7 +220,7 @@ function EscenaGuerra({ acento, rnd }: { acento: string; rnd: () => number }) {
       <path d="M0 150 Q 80 132 160 150 T 320 144 T 400 154" fill="none" stroke={acento} strokeOpacity="0.12" />
       <path d="M20 128 C 90 96, 150 148, 210 112 S 330 84, 384 108" fill="none" stroke={acento} strokeOpacity="0.75" strokeWidth="1.6" strokeDasharray="8 5" />
       {pins.map((p, i) => (
-        <g key={i} className="v110-parpadeo" style={{ animationDelay: `${i * 0.5}s` }}>
+        <g key={i} className="v110-parpadeo" style={{ animationDelay: `${q2(i * 0.5)}s` }}>
           <circle cx={p.x} cy={p.y} r="2.2" fill={acento} />
           <circle cx={p.x} cy={p.y} r="6.5" fill="none" stroke={acento} strokeOpacity="0.35" />
         </g>
@@ -225,7 +235,7 @@ function EscenaGuerra({ acento, rnd }: { acento: string; rnd: () => number }) {
 }
 
 function EscenaMoneda({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const flotantes = Array.from({ length: 8 }, () => ({ x: 40 + rnd() * 320, y: 30 + rnd() * 140, d: rnd() * 3 }));
+  const flotantes = Array.from({ length: 8 }, () => ({ x: q2(40 + rnd() * 320), y: q2(30 + rnd() * 140), d: q2(rnd() * 3) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -238,7 +248,7 @@ function EscenaMoneda({ acento, rnd }: { acento: string; rnd: () => number }) {
         </g>
         <path d="M60 190 H340" stroke={acento} strokeOpacity="0.3" />
         <path d="M60 190 L110 172 L150 180 L200 150 L250 162 L300 128 L340 140" fill="none" stroke={acento} strokeOpacity="0.8" strokeWidth="1.4" />
-        {[[110, 172], [200, 150], [300, 128]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="2" fill={acento} className="v110-parpadeo" style={{ animationDelay: `${i * 0.8}s` }} />)}
+        {[[110, 172], [200, 150], [300, 128]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="2" fill={acento} className="v110-parpadeo" style={{ animationDelay: `${q2(i * 0.8)}s` }} />)}
       </svg>
       {flotantes.map((f, i) => (
         <span key={i} className="v110-subio absolute font-mono text-[10px]" style={{ left: f.x, top: f.y, color: acento, opacity: 0.7, animationDelay: `${f.d}s` }}>+1</span>
@@ -248,7 +258,7 @@ function EscenaMoneda({ acento, rnd }: { acento: string; rnd: () => number }) {
 }
 
 function EscenaDiana({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const marcas = Array.from({ length: 6 }, () => ({ g: rnd() * 360, d: rnd() * 4 }));
+  const marcas = Array.from({ length: 6 }, () => ({ g: q2(rnd() * 360), d: q2(rnd() * 4) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -258,14 +268,14 @@ function EscenaDiana({ acento, rnd }: { acento: string; rnd: () => number }) {
         <line x1="200" y1="4" x2="200" y2="212" stroke={acento} strokeOpacity="0.3" />
       </svg>
       {marcas.map((m, i) => (
-        <span key={i} className="v110-blanco absolute w-2 h-2 rounded-full border" style={{ left: 200 + Math.cos((m.g * Math.PI) / 180) * 70 - 4, top: 108 + Math.sin((m.g * Math.PI) / 180) * 52 - 4, borderColor: acento, animationDelay: `${m.d}s` }} />
+        <span key={i} className="v110-blanco absolute w-2 h-2 rounded-full border" style={{ left: q2(200 + Math.cos((m.g * Math.PI) / 180) * 70 - 4), top: q2(108 + Math.sin((m.g * Math.PI) / 180) * 52 - 4), borderColor: acento, animationDelay: `${m.d}s` }} />
       ))}
     </div>
   );
 }
 
 function EscenaArchivo({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const carpetas = Array.from({ length: 7 }, (_, i) => ({ x: 34 + i * 50, y: 60 + rnd() * 60, d: i * 0.35 }));
+  const carpetas = Array.from({ length: 7 }, (_, i) => ({ x: 34 + i * 50, y: q2(60 + rnd() * 60), d: q2(i * 0.35) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -282,7 +292,7 @@ function EscenaArchivo({ acento, rnd }: { acento: string; rnd: () => number }) {
           <text x="37" y="19" textAnchor="middle" fontSize="10" fill={acento} fontFamily="monospace" letterSpacing="2">SELLADO</text>
         </g>
         {[0, 1, 2, 3, 4].map((i) => (
-          <circle key={i} cx={50 + i * 70 + rnd() * 30} cy={30 + rnd() * 150} r="1" fill={acento} opacity="0.5" className="v110-polvo" style={{ animationDelay: `${i * 1.1}s` }} />
+          <circle key={i} cx={q2(50 + i * 70 + rnd() * 30)} cy={q2(30 + rnd() * 150)} r="1" fill={acento} opacity="0.5" className="v110-polvo" style={{ animationDelay: `${q2(i * 1.1)}s` }} />
         ))}
       </svg>
     </div>
@@ -302,14 +312,14 @@ function EscenaLibro({ acento }: { acento: string; rnd: () => number }) {
         <path d="M0 -34 C 30 -46, 60 -46, 92 -34 L 92 30 C 60 18, 30 18, 0 30 Z" fill={`${acento}14`} stroke={acento} strokeOpacity="0.4" />
       </g>
       {["A", "B", "Ω", "Δ", "∑"].map((g, i) => (
-        <text key={i} x={60 + i * 70} y={42 + (i % 2) * 12} fontSize="13" fill={acento} opacity="0.5" fontFamily="monospace" className="v110-parpadeo" style={{ animationDelay: `${i * 0.9}s` }}>{g}</text>
+        <text key={i} x={60 + i * 70} y={42 + (i % 2) * 12} fontSize="13" fill={acento} opacity="0.5" fontFamily="monospace" className="v110-parpadeo" style={{ animationDelay: `${q2(i * 0.9)}s` }}>{g}</text>
       ))}
     </svg>
   );
 }
 
 function EscenaNucleo({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const particulas = Array.from({ length: 10 }, () => ({ a: rnd() * 360, d: 5 + rnd() * 8, r: 1.4 + rnd() }));
+  const particulas = Array.from({ length: 10 }, () => ({ a: q2(rnd() * 360), d: q2(5 + rnd() * 8), r: q2(1.4 + rnd()) }));
   return (
     <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" aria-hidden>
       <defs><radialGradient id="ng" cx="50%" cy="50%"><stop offset="0%" stopColor={acento} stopOpacity="0.5" /><stop offset="100%" stopColor="transparent" /></radialGradient></defs>
@@ -323,14 +333,14 @@ function EscenaNucleo({ acento, rnd }: { acento: string; rnd: () => number }) {
         <ellipse key={i} cx="200" cy="110" rx="70" ry="24" fill="none" stroke={acento} strokeOpacity="0.3" className="v110-giro-lento" style={{ transformOrigin: "200px 110px", animationDuration: `${9 + i * 4}s`, animationDirection: i % 2 ? "reverse" : "normal" }} transform={`rotate(${i * 60} 200 110)`} />
       ))}
       {particulas.map((p, i) => (
-        <circle key={i} cx="200" cy="110" r={p.r} fill={acento} opacity="0.7" className="v110-orbita" style={{ transformOrigin: "200px 110px", animationDuration: `${p.d}s`, animationDelay: `${-i * 0.9}s` }} transform={`rotate(${p.a} 200 110) translate(46 0)`} />
+        <circle key={i} cx="200" cy="110" r={p.r} fill={acento} opacity="0.7" className="v110-orbita" style={{ transformOrigin: "200px 110px", animationDuration: `${p.d}s`, animationDelay: `${q2(-i * 0.9)}s` }} transform={`rotate(${p.a} 200 110) translate(46 0)`} />
       ))}
     </svg>
   );
 }
 
 function EscenaOnda({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const espectro = Array.from({ length: 34 }, (_, i) => ({ h: 6 + Math.abs(Math.sin(i * 0.7)) * 26 + rnd() * 8, d: rnd() * 1.5 }));
+  const espectro = Array.from({ length: 34 }, (_, i) => ({ h: q2(6 + Math.abs(Math.sin(i * 0.7)) * 26 + rnd() * 8), d: q2(rnd() * 1.5) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -341,7 +351,7 @@ function EscenaOnda({ acento, rnd }: { acento: string; rnd: () => number }) {
           <line x1="12" y1="-14" x2="0" y2="-2" stroke={acento} strokeWidth="1.2" />
         </g>
         {[0, 1, 2].map((i) => (
-          <circle key={i} cx="200" cy="88" r={22 + i * 22} fill="none" stroke={acento} strokeOpacity={0.4 - i * 0.11} className="v110-onda-crece" style={{ animationDelay: `${i * 0.9}s`, transformOrigin: "200px 88px" }} />
+          <circle key={i} cx="200" cy="88" r={22 + i * 22} fill="none" stroke={acento} strokeOpacity={0.4 - i * 0.11} className="v110-onda-crece" style={{ animationDelay: `${q2(i * 0.9)}s`, transformOrigin: "200px 88px" }} />
         ))}
       </svg>
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-end gap-[3px] h-8">
@@ -362,7 +372,7 @@ function EscenaCamaras({ acento, rnd }: { acento: string; rnd: () => number }) {
           <g key={i}>
             <rect x={x} y={y} width="162" height="86" rx="3" fill="rgba(0,0,0,0.5)" stroke={acento} strokeOpacity="0.55" />
             <path d={`M${x + 14} ${y + 66} L${x + 60} ${y + 30} L${x + 104} ${y + 58} L${x + 148} ${y + 36}`} fill="none" stroke={acento} strokeOpacity="0.4" />
-            <circle cx={x + 132} cy={y + 16} r="3" fill="#FF4444" className="v110-parpadeo" style={{ animationDelay: `${i * 0.4}s` }} />
+            <circle cx={x + 132} cy={y + 16} r="3" fill="#FF4444" className="v110-parpadeo" style={{ animationDelay: `${q2(i * 0.4)}s` }} />
             <text x={x + 140} y={y + 20} fontSize="8" fill="#FF8888" fontFamily="monospace">REC</text>
             <line x1={x} y1={y + 6} x2={x + 162} y2={y + 6} stroke={acento} strokeOpacity="0.2" />
           </g>
@@ -485,11 +495,11 @@ function EscenaCiudad({ acento, semilla }: { acento: string; rnd: () => number; 
               </g>
             )}
             {region.mojon === "letreos" && b.h > 90 && i % 3 === 0 && (
-              <rect x={b.x + 6} y={190 - b.h + 5} width={b.w - 12} height="4" fill={region.acc2} className="v110-ventana" style={{ animationDelay: `${i * 0.4}s` }} />
+              <rect x={b.x + 6} y={190 - b.h + 5} width={b.w - 12} height="4" fill={region.acc2} className="v110-ventana" style={{ animationDelay: `${q2(i * 0.4)}s` }} />
             )}
             {Array.from({ length: Math.floor(b.h / 14) }, (_, f) => (
               <rect key={f} x={b.x + 4} y={190 - b.h + 6 + f * 12} width="4" height="5" fill={acento} className="v110-ventana"
-                style={{ opacity: noche ? undefined : 0.14, animationDelay: `${(i * 3 + f) * 0.35 % 6}s` }} />
+                style={{ opacity: noche ? undefined : 0.14, animationDelay: `${q2((i * 3 + f) * 0.35 % 6)}s` }} />
             ))}
           </g>
         ))}

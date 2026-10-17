@@ -9,8 +9,8 @@
 // ENTRE los bloques de la casa (divisores, héroes, estados
 // vacíos). Animación solo transform/opacity (60 FPS).
 // ============================================================
-import { useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useId, useState } from "react";
+import { cn, q2 } from "@/lib/utils";
 
 export type TipoIlustracion =
   | "globo"      // globo con meridianos girando y satélite en órbita
@@ -48,7 +48,12 @@ function useEsNoche() {
 export function IlustracionViva({ tipo, className, ancho = 120, tono }: IlustracionVivaProps) {
   const noche = useEsNoche();
   const t = tono ?? "var(--vg-acento, #FFC94D)";
-  const id = useMemo(() => `iv-${tipo}-${Math.random().toString(36).slice(2, 7)}`, [tipo]);
+  // v125.0 CORRECCIÓN TOTAL: el sufijo del id de gradiente ya NO es Math.random()
+  // (el servidor y el cliente tiraban sufijos distintos → error de hidratación en
+  // CADA visita fresca, el bug más viejo de la casa). useId() es idéntico en
+  // servidor y cliente y único por instancia; se limpian los «:» para url(#...).
+  const uid = useId().replace(/:/g, "");
+  const id = `iv-${tipo}-${uid}`;
 
   return (
     <svg
@@ -107,7 +112,7 @@ export function IlustracionViva({ tipo, className, ancho = 120, tono }: Ilustrac
             <g>
               <circle cx="100" cy="16" r="7" fill={t} className="iv-latido-soft" />
               {[0, 1, 2].map((i) => (
-                <line key={i} x1={110 + i * 4} y1="16" x2={114 + i * 4} y2="16" stroke={t} strokeWidth="1.2" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${i * 0.45}s` }} />
+                <line key={i} x1={110 + i * 4} y1="16" x2={114 + i * 4} y2="16" stroke={t} strokeWidth="1.2" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${q2(i * 0.45)}s` }} />
               ))}
             </g>
           )}
@@ -135,7 +140,7 @@ export function IlustracionViva({ tipo, className, ancho = 120, tono }: Ilustrac
           <line x1="74" y1="66" x2="60" y2="26" stroke={t} strokeWidth="1.6" strokeLinecap="round" />
           <circle cx="60" cy="24" r="4" fill={t} className="iv-latido-soft" />
           {[0, 1, 2].map((i) => (
-            <path key={i} d={`M${50 - i * 8} ${18 - i * 4} Q60 ${6 - i * 2} ${70 + i * 8} ${18 - i * 4}`} fill="none" stroke={t} strokeWidth="1.2" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${i * 0.5}s` }} />
+            <path key={i} d={`M${50 - i * 8} ${18 - i * 4} Q60 ${6 - i * 2} ${70 + i * 8} ${18 - i * 4}`} fill="none" stroke={t} strokeWidth="1.2" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${q2(i * 0.5)}s` }} />
           ))}
           <line x1="30" y1="70" x2="90" y2="70" stroke={t} strokeWidth="1.4" />
         </g>
@@ -187,10 +192,10 @@ export function IlustracionViva({ tipo, className, ancho = 120, tono }: Ilustrac
           <line x1="60" y1="46" x2="60" y2="56" stroke={t} strokeWidth="1.6" />
           <path d="M48 56 Q60 66 72 56" fill="none" stroke={t} strokeWidth="1.6" strokeLinecap="round" />
           {[0, 1, 2].map((i) => (
-            <path key={i} d={`M${44 - i * 7} ${28 + i * 2} Q40 ${34 + i * 2} ${44 - i * 7} ${40 + i * 2}`} fill="none" stroke={t} strokeWidth="1.1" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${i * 0.4}s` }} />
+            <path key={i} d={`M${44 - i * 7} ${28 + i * 2} Q40 ${34 + i * 2} ${44 - i * 7} ${40 + i * 2}`} fill="none" stroke={t} strokeWidth="1.1" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${q2(i * 0.4)}s` }} />
           ))}
           {[0, 1, 2].map((i) => (
-            <path key={`d${i}`} d={`M${76 + i * 7} ${28 + i * 2} Q80 ${34 + i * 2} ${76 + i * 7} ${40 + i * 2}`} fill="none" stroke={t} strokeWidth="1.1" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${i * 0.4}s` }} />
+            <path key={`d${i}`} d={`M${76 + i * 7} ${28 + i * 2} Q80 ${34 + i * 2} ${76 + i * 7} ${40 + i * 2}`} fill="none" stroke={t} strokeWidth="1.1" strokeLinecap="round" className="iv-onda" style={{ animationDelay: `${q2(i * 0.4)}s` }} />
           ))}
         </g>
       )}

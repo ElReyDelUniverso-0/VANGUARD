@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v125.0",
+    nombre: "CORRECCIÓN TOTAL",
+    tipo: "tecno",
+    hitos: [
+      "EL BUG MÁS VIEJO DE LA CAÍDO: la hidratación fallaba en CADA visita fresca — IlustracionViva firmaba sus gradientes SVG con Math.random() (servidor y cliente tiraban sufijos distintos) y las escenas 3D escribían floats de precisión completa (83.29604581548776px) que React redondeaba distinto a cada lado. Ahora: useId() para los gradientes y cuantizador q2() en TODO valor que entra a un estilo — cero errores de hidratación verificado en cargas frescas",
+      "BOTONES REVIVIDOS: durante la recuperación del error de hidratación la casa entera quedaba sorda — clics muertos, secciones que no respondían al primer toque. Con la hidratación limpia, los 1415 botones responden al primer intento",
+      "RESOLUTOR DE SALAS: 10 de las 16 salas del mega-menú (juego, inteligencia, mercado, archivo, comando, emisora, oscsuro, creadores, social y sistema) quedaban con el PANEL VACÍO si llegaba su clave de sección por swipe de borde o navegación programática — ahora handleTabChange resuelve cada clave de sala a su primera pestaña real. Barrido completo: 158 pestañas, cero paneles vacíos",
+      "LEY CONTRA LA PÁGINA VIEJA: el HTML de la app se sirve ahora con no-cache/no-store — el navegador y cualquier gateway ya NUNCA muestran una versión caducada (la causa «a veces no se actualiza»), mientras los assets /_next/static conservan su caché inmutable",
+      "PEAK DE PRESENCIA ARREGLADO: /api/presence usaba GREATEST() (función que SQLite no tiene) y el récord global de guerreros en línea nunca se actualizaba — sustituido por MAX() nativo",
+      "PURGA DE ZOMBIS: múltiples servidores de desarrollo competían por el puerto y servían código viejo desde la caché de Turbopack — purga completa de .next y proceso único limpio (2.1 GB → 384 MB de RAM)",
+      "QA EN VIVO: barrido de las 158 salas con cero paneles vacíos, cero errores de consola; noticias reales cargando, bono diario, cámaras, GOD VIEW, ATLAS, LA CAMA y la radio verificados clic a clic",
+    ],
+  },
+  {
     version: "v124.0",
     nombre: "CAVIAR",
     tipo: "nav",
