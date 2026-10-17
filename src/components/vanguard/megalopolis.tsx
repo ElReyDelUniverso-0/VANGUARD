@@ -244,7 +244,20 @@ const ESTRELLAS_MEGA: [number, number, number][] = [
   [33, 32, 1], [39, 18, 1.3], [45, 38, 1], [51, 10, 1.4], [57, 26, 1],
   [63, 6, 1.5], [69, 34, 1], [75, 16, 1.2], [81, 40, 1], [87, 22, 1.5],
   [93, 12, 1], [97, 36, 1.1], [48, 44, 0.9],
+  // v123 GLORIA: el cielo ganó población — 16 más, la bóveda ya no es un desierto
+  [2, 42, 0.9], [11, 20, 1], [18, 44, 1.1], [24, 12, 0.9], [30, 46, 1],
+  [36, 26, 0.8], [43, 2, 1.1], [54, 46, 0.9], [60, 20, 1.1], [66, 44, 0.8],
+  [72, 4, 1], [78, 30, 0.9], [84, 8, 1.2], [90, 44, 1], [95, 28, 0.9], [99, 16, 1.1],
 ];
+
+// v123 GLORIA — LA CIUDAD VIVA: habitantes del cielo y de la calle (deterministas)
+const AVES_V123 = [
+  { top: "18%", dur: 34, delay: 0, esc: 1 },
+  { top: "26%", dur: 42, delay: -14, esc: 0.8 },
+  { top: "12%", dur: 50, delay: -27, esc: 1.2 },
+];
+const FAROLES_V123 = [7, 18, 30, 41, 52, 63, 74, 86]; // % de la calle
+const PISOS_V123 = [26, 58]; // rastros de coches (dos direcciones)
 
 // ============================================================
 // SKYLINE — las 3 capas de la ciudad de UNA región (extraído para
@@ -298,6 +311,20 @@ function SkylineCiudad({ region, pal, acc, ciclo }: { region: RegionCiudad; pal:
               )}
               {region.mojon === "letreos" && h > 0.55 && (
                 <span className="v110-ventana absolute rounded-[1px]" style={{ top: "14%", left: i % 2 ? 2 : "auto", right: i % 2 ? "auto" : 2, width: 3, height: 8, background: i % 3 ? "#3DDCFF" : "#FF4DD8", boxShadow: `0 0 6px ${i % 3 ? "#3DDCFF" : "#FF4DD8"}`, animationDelay: `${(i % 7) * 0.4}s` }} />
+              )}
+              {/* v123 DETALLES DE TECHO: antena con baliza en los altos del Núcleo/Ciudadela */}
+              {(region.mojon === "aguja" || region.mojon === "ciudadela") && h > 0.7 && (
+                <span className="absolute left-1/2 -translate-x-1/2" style={{ top: -8, width: 1, height: 9, background: `${acc2}AA` }}>
+                  <span className="v110-latido absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: "#FF3B30", boxShadow: "0 0 6px #FF3B30" }} />
+                </span>
+              )}
+              {/* v123 LUZ DE AVIACIÓN: los tres más altos llevan su baliza roja de vuelo */}
+              {h > 0.84 && (
+                <span className="v110-latido absolute left-1/2 -translate-x-1/2 rounded-full" style={{ top: -4, width: 3, height: 3, background: "#FF3B30", boxShadow: "0 0 7px 1px #FF3B30" }} />
+              )}
+              {/* v123 TANQUE DE AGUA en los medianos del Puerto y la Meseta */}
+              {(region.mojon === "grua" || region.mojon === "domos") && h > 0.55 && h <= 0.84 && (
+                <span className="absolute" style={{ top: -6, left: i % 2 ? "22%" : "auto", right: i % 2 ? "auto" : "22%", width: 5, height: 6, background: `${acc2}33`, borderTop: `2px solid ${acc2}88` }} />
               )}
               {/* ventanas que obedecen a la LUZ real: encendidas de noche */}
               <VentanasMega n={Math.max(3, Math.round(h * 10))} acc={acc2} lit={pal.ventanas} flicker={i % 2 === 0} />
@@ -472,6 +499,27 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
       {/* meteoro nocturno — la señal de la casa */}
       {pal.meteoro && <span className="v116-meteoro absolute" style={{ top: "12%", left: "70%" }} />}
 
+      {/* v123 AURORA BOREAL — la bóveda se tiñe de verde y violeta en las noches limpias */}
+      {pal.estrellas > 0.5 && efecto === "despejado" && (
+        <div className="absolute inset-x-0 top-0 h-[46%] overflow-hidden pointer-events-none" aria-hidden>
+          <span className="v123-aurora absolute" style={{ left: "-6%", top: "6%", width: "62%", height: "60%", background: "linear-gradient(100deg, transparent 4%, rgba(94,255,154,0.16) 30%, rgba(61,220,255,0.13) 55%, rgba(138,92,255,0.10) 78%, transparent 96%)", filter: "blur(9px)" }} />
+          <span className="v123-aurora absolute" style={{ left: "38%", top: "0%", width: "55%", height: "70%", background: "linear-gradient(84deg, transparent 6%, rgba(255,77,216,0.10) 34%, rgba(61,220,255,0.12) 62%, transparent 92%)", filter: "blur(11px)", animationDelay: "-11s" }} />
+        </div>
+      )}
+
+      {/* v123 AVES DE DÍA — tres bandadas lejanas cruzando la bóveda */}
+      {!ciclo.noche && ciclo.alturaSol > 0.12 && efecto !== "tormenta" && efecto !== "lluvia" && AVES_V123.map((a, i) => (
+        <span key={i} className="v123-ave absolute" style={{ top: a.top, animationDuration: `${a.dur}s`, animationDelay: `${a.delay}s`, transform: `scale(${a.esc})` }} aria-hidden />
+      ))}
+
+      {/* v123 EL DRON DE LA CASA — de noche patrulla la bóveda con su baliza */}
+      {ciclo.noche && (
+        <span className="v123-dron absolute" style={{ top: "16%" }} aria-hidden>
+          <span className="absolute inset-0 rounded-full" style={{ background: "rgba(10,10,16,0.9)", border: "1px solid rgba(255,201,77,0.4)" }} />
+          <span className="v110-latido absolute rounded-full" style={{ top: 1, left: 9, width: 3, height: 3, background: "#FF3B30", boxShadow: "0 0 6px #FF3B30" }} />
+        </span>
+      )}
+
       {/* nubes de día — bandas que cruzan (v117: el clima CUBIERTO las espesa) */}
       {(pal.nubes > 0.03 || nubesClima > 0) && (
         <>
@@ -479,6 +527,18 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
           <span className="v116-nube absolute h-[2px] rounded-full" style={{ top: "38%", left: "55%", width: "34%", background: `rgba(255,255,255,${Math.max(pal.nubes, nubesClima) * 0.35})`, animationDelay: "-6s" }} />
           {nubesClima > 0 && (
             <span className="v116-nube absolute h-[4px] rounded-full" style={{ top: "14%", left: "22%", width: "48%", background: `rgba(255,255,255,${nubesClima * 0.4})`, animationDelay: "-3s" }} />
+          )}
+          {/* v123 CÚMULOS CON CUERPO — dos nubes de tres lóbulos que derivan despacio */}
+          {ciclo.alturaSol > 0.05 && (
+            <>
+              <span className="v116-nube absolute" style={{ top: "20%", left: "12%", width: 58, height: 10, borderRadius: 999, background: `rgba(255,255,255,${0.10 + pal.nubes * 0.3})`, filter: "blur(1px)" }}>
+                <span className="absolute rounded-full" style={{ top: -6, left: 10, width: 22, height: 12, background: `rgba(255,255,255,${0.09 + pal.nubes * 0.26})` }} />
+                <span className="absolute rounded-full" style={{ top: -4, left: 30, width: 16, height: 9, background: `rgba(255,255,255,${0.08 + pal.nubes * 0.22})` }} />
+              </span>
+              <span className="v116-nube absolute" style={{ top: "33%", left: "64%", width: 44, height: 8, borderRadius: 999, background: `rgba(255,255,255,${0.08 + pal.nubes * 0.24})`, filter: "blur(1px)", animationDelay: "-9s" }}>
+                <span className="absolute rounded-full" style={{ top: -5, left: 8, width: 17, height: 10, background: `rgba(255,255,255,${0.07 + pal.nubes * 0.2})` }} />
+              </span>
+            </>
           )}
         </>
       )}
@@ -529,11 +589,34 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
       <div className="absolute inset-x-0 bottom-0 h-[9%]" style={{ background: `linear-gradient(180deg, ${acc}18, rgba(2,2,6,0.98) 70%)`, borderTop: `1px solid ${acc}55` }} />
       <div className="v116-reflejo absolute bottom-[2%] left-[12%] h-[2px] w-[30%]" style={{ background: `linear-gradient(90deg, transparent, ${acc2}AA, transparent)`, opacity: ciclo.noche ? 0.8 : 0.4 }} />
 
-      {/* SOL DE DÍA / LUNA LLENA DE NOCHE — la firma de Vanguard */}
+      {/* v123 LA CALLE VIVA — faroles encendidos al anochecer + tránsito perpetuo */}
+      <div className="absolute inset-x-0 bottom-0 h-[9%] overflow-hidden pointer-events-none" aria-hidden>
+        {FAROLES_V123.map((x, i) => (
+          <span key={i} className="absolute rounded-full" style={{ left: `${x}%`, top: 1, width: 3, height: 3, background: "#FFD98A", boxShadow: "0 0 6px 1px rgba(255,217,138,0.8)", opacity: pal.ventanas, transition: "opacity 1.2s" }} />
+        ))}
+        {PISOS_V123.map((x, i) => (
+          <span key={i} className={i === 0 ? "v123-coche-a absolute" : "v123-coche-b absolute"} style={{ bottom: i === 0 ? 4 : 10, background: i === 0
+            ? "linear-gradient(90deg, transparent, rgba(255,235,190,0.9), rgba(255,255,255,0.98))"
+            : "linear-gradient(270deg, transparent, rgba(255,80,70,0.85), rgba(255,140,120,0.95))", animationDelay: `${i * -13}s` }} />
+        ))}
+        {/* farola encendida en tiempo real según la luz (la ciudad se ilumina sola) */}
+        <span className="absolute inset-x-0 top-0 h-[1px]" style={{ background: `linear-gradient(90deg, transparent, ${acc2}44, transparent)`, opacity: pal.ventanas }} />
+      </div>
+
+      {/* SOL DE DÍA / LUNA LLENA DE NOCHE — la firma de Vanguard (v123: corona y cráteres) */}
       {sol ? (
-        <div className="absolute rounded-full" style={{ left: `${lx}%`, top: `${ly}%`, width: 26, height: 26, transform: "translate(-50%,-50%)", background: "radial-gradient(circle at 40% 36%, #FFF3D0, #FFD97A 58%, #FFB84D)", boxShadow: `0 0 34px 12px rgba(255,201,77,0.30), 0 0 70px 24px rgba(255,201,77,0.12)` }} />
+        <div className="absolute" style={{ left: `${lx}%`, top: `${ly}%`, transform: "translate(-50%,-50%)" }}>
+          <span className="v123-corona absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ width: 58, height: 58, border: "1px solid rgba(255,201,77,0.35)" }} />
+          <span className="absolute rounded-full" style={{ width: 26, height: 26, background: "radial-gradient(circle at 40% 36%, #FFF3D0, #FFD97A 58%, #FFB84D)", boxShadow: "0 0 34px 12px rgba(255,201,77,0.30), 0 0 70px 24px rgba(255,201,77,0.12)" }} />
+        </div>
       ) : (
-        <div className="absolute rounded-full" style={{ left: `${lx}%`, top: `${ly}%`, width: 30, height: 30, transform: "translate(-50%,-50%)", background: "radial-gradient(circle at 38% 34%, #FFF7E0, #FFE9B8 52%, #F5D48A)", boxShadow: `0 0 36px 14px rgba(255,233,184,0.20), 0 0 80px 30px rgba(255,233,184,0.10)` }} />
+        <div className="absolute" style={{ left: `${lx}%`, top: `${ly}%`, transform: "translate(-50%,-50%)" }}>
+          <span className="absolute rounded-full" style={{ width: 30, height: 30, background: "radial-gradient(circle at 38% 34%, #FFF7E0, #FFE9B8 52%, #F5D48A)", boxShadow: "0 0 36px 14px rgba(255,233,184,0.20), 0 0 80px 30px rgba(255,233,184,0.10)" }} />
+          {/* cráteres de la luna — el astro ahora tiene cara */}
+          <span className="absolute rounded-full" style={{ top: 6, left: 7, width: 5, height: 5, background: "rgba(190,160,110,0.35)" }} />
+          <span className="absolute rounded-full" style={{ top: 14, left: 17, width: 4, height: 4, background: "rgba(190,160,110,0.3)" }} />
+          <span className="absolute rounded-full" style={{ top: 18, left: 6, width: 3, height: 3, background: "rgba(190,160,110,0.28)" }} />
+        </div>
       )}
 
       {/* CHIPS EN VIVO (v117): clima + voz de la ciudad + región (bautizada) + fase */}
@@ -574,6 +657,8 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
 // ---------- ventanas que obedecen a la luz (no al teatro) ----------
 function VentanasMega({ n, acc, lit, flicker, tenue }: { n: number; acc: string; lit: number; flicker?: boolean; tenue?: boolean }) {
   if (lit < 0.05) return null;
+  // v123 GLORIA: la ciudad ganó paleta — cálido, frío, blanco cálido y el acento
+  const tonos = [acc, "#FFD98A", "#FFD98A", "#9BD4FF", "#FFF6E3", acc, "#FFD98A", "#B7F5D8"];
   return (
     <div className="absolute inset-x-1 flex flex-wrap gap-[3px] content-start" style={{ top: "5px", maxHeight: "calc(100% - 8px)" }}>
       {Array.from({ length: n }).map((_, i) => (
@@ -581,9 +666,10 @@ function VentanasMega({ n, acc, lit, flicker, tenue }: { n: number; acc: string;
           key={i}
           className={cn("w-[3px] h-[3px] rounded-[0.5px]", flicker && i % 3 === 0 && "v108-ventana")}
           style={{
-            background: i % 4 === 0 ? acc : "#FFD98A",
+            background: tonos[i % tonos.length],
             opacity: (i % 5 === 0 ? 0.35 : 0.8) * (tenue ? 0.7 : 1) * Math.min(1, lit + 0.15),
             animationDelay: `${(i % 7) * 0.5}s`,
+            boxShadow: i % 4 === 1 && !tenue ? "0 0 3px rgba(255,217,138,0.7)" : undefined,
           }}
         />
       ))}

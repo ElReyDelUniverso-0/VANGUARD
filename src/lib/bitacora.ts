@@ -22,6 +22,24 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v123.0",
+    nombre: "GLORIA ETERNA",
+    tipo: "musica",
+    hitos: [
+      "LA ORQUESTA ÉPICA NACE: cinco voces nuevas sintetizadas de cero — TIMBAL afinado al acorde, CORO CELESTIAL que canta \"aah\" con formantes humanos, PLATILLO con cola dorada, TROMPETA HEROICA y ARPA de glissando — todo 100% Web Audio, cero muestras, cero copyright para siempre",
+      "GLORIA ETERNA, el himno de la casa: 72 BPM en Re menor que asciende a un clímax de coro, timbales y trompetas con platillo — la portada ahora se abre con el himno épico de Vanguard",
+      "EL MOTIVO GLORIA, la firma reconocible en 3 notas: raíz·raíz·raíz→octava→5ª compartida por las 5 obras nuevas — GLORIA ETERNA, MARCHA DEL TRIUNFO, CORO DE LOS HÉROES, SERENIDAD DORADA y NOCHE DE ESTRELLAS son de la misma sangre",
+      "MARCHA DEL TRIUNFO: trompetas victoriosas y tambores de desfile a 100 BPM — la guerra de Vanguard ya no entra con metales fríos sino con la marcha que cierra las guerras",
+      "CORO DE LOS HÉROES: cien voces sintéticas cantando el arco del héroe — la obra más solemne de la casa, asignada al SISTEMA",
+      "CALMA GLORIOSA: SERENIDAD DORADA (arpa de cristal + coro lejano) y NOCHE DE ESTRELLAS (campana sobre drones profundos) — las dos nuevas obras relajantes para mirar el cielo y quedarse; el OBSERVATORIO ahora duerme con ellas",
+      "EL CIELO GANA POBLACIÓN: 16 estrellas nuevas (34 en total), AURORA BOREAL en las noches limpias y la luna con sus cráteres — la bóveda ya no es un desierto",
+      "EL SOL CORONADO: halo que pulsa lento y noble sobre el astro — la firma de Vanguard brilla con más vida",
+      "LA CIUDAD RESPIRA GENTE: tres bandadas de aves cruzando el día, el dron de la casa patrullando la noche, antenas con baliza en los altos, luces de aviación en las torres, tanques de agua en el Puerto y la Meseta",
+      "LA CALLE VIVA: 8 faroles que se encienden solos al anochecer y tránsito perpetuo — dos pisos de luz (blancos que van, rojos que vuelven) recorriendo el horizonte noche y día",
+      "VENTANAS CON PALETA: los edificios mezclan cálido, frío, blanco cálido, menta y el acento de la región — la ciudad ya no apaga todos los colores al caer el sol",
+    ],
+  },
+  {
     version: "v122.0",
     nombre: "RUTAS DE PODER",
     tipo: "nav",

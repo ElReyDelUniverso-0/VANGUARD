@@ -3081,3 +3081,64 @@ html.auto-cama-activa .particles-layer { opacity: 0.35; }
 @media (prefers-reduced-motion: reduce) {
   .v122-ruta { animation: none; }
 }
+
+/* ===== v123.0 GLORIA ETERNA — la ciudad viva (aves, dron, aurora, tránsito) ===== */
+/* Aurora boreal: cintas que respiran (solo opacity/transform — 60 FPS) */
+.v123-aurora { opacity: 0; animation: v123Aurora 14s ease-in-out infinite; }
+@keyframes v123Aurora {
+  0% { opacity: 0; transform: translateX(-3%) scaleY(0.9); }
+  38% { opacity: 1; }
+  62% { opacity: 0.75; transform: translateX(3%) scaleY(1.06); }
+  100% { opacity: 0; transform: translateX(-2%) scaleY(0.92); }
+}
+/* Aves de día: chevron que cruza el cielo y aletea */
+.v123-ave { width: 10px; height: 7px; animation: v123Vuelo linear infinite; }
+.v123-ave::before, .v123-ave::after {
+  content: ""; position: absolute; top: 2px; width: 5px; height: 1.6px;
+  background: rgba(20, 24, 34, 0.72); border-radius: 2px;
+}
+.v123-ave::before { left: 0; transform: rotate(-14deg); animation: v123Aleteo 0.5s ease-in-out infinite; }
+.v123-ave::after { right: 0; transform: rotate(14deg); animation: v123Aleteo 0.5s ease-in-out infinite reverse; }
+@keyframes v123Vuelo {
+  0% { left: -6%; opacity: 0; }
+  8% { opacity: 0.9; }
+  50% { top: 14%; }
+  88% { opacity: 0.9; }
+  100% { left: 106%; opacity: 0; }
+}
+@keyframes v123Aleteo { 0%, 100% { transform: rotate(-14deg) translateY(0); } 50% { transform: rotate(-30deg) translateY(-1px); } }
+/* El dron de la casa: patrulla nocturna con baliza */
+.v123-dron { width: 13px; height: 7px; animation: v123Patrulla 44s linear infinite; }
+@keyframes v123Patrulla {
+  0% { left: -5%; opacity: 0; transform: translateY(0); }
+  6% { opacity: 0.95; }
+  30% { transform: translateY(14px); }
+  55% { transform: translateY(-8px); }
+  94% { opacity: 0.95; }
+  100% { left: 105%; opacity: 0; transform: translateY(6px); }
+}
+/* Tránsito de la calle: dos pisos, dos direcciones */
+.v123-coche-a { width: 34px; height: 2px; border-radius: 2px; animation: v123CocheA 9s linear infinite; }
+.v123-coche-b { width: 26px; height: 2px; border-radius: 2px; animation: v123CocheB 12s linear infinite; }
+@keyframes v123CocheA {
+  0% { left: -12%; opacity: 0; }
+  10% { opacity: 0.95; }
+  85% { opacity: 0.9; }
+  100% { left: 108%; opacity: 0; }
+}
+@keyframes v123CocheB {
+  0% { left: 108%; opacity: 0; }
+  12% { opacity: 0.85; }
+  88% { opacity: 0.8; }
+  100% { left: -12%; opacity: 0; }
+}
+/* Corona del sol: pulso lento y noble */
+.v123-corona { animation: v123Corona 6s ease-in-out infinite; }
+@keyframes v123Corona {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+  50% { transform: translate(-50%, -50%) scale(1.12); opacity: 0.75; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v123-aurora, .v123-ave, .v123-dron, .v123-coche-a, .v123-coche-b, .v123-corona { animation: none; }
+  .v123-ave, .v123-dron { display: none; }
+}

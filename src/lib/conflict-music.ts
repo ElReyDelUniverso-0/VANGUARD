@@ -1,4 +1,15 @@
 // VANGUARD v109.0 — SONIDO VANGUARD v4 "ORQUESTA DE ORO" (Web Audio, cero assets)
+// v123.0 GLORIA ETERNA — LA CÚSPIDE: el comandante pidió "música épica de gloria,
+// relajante, única y súper reconocible, sin derechos de autor". Cinco obras nuevas
+// (gloria · triunfo · heroes · serenidad · estrellas) comparten EL MOTIVO GLORIA
+// (raíz·raíz·raíz→octava→5ª) y cinco voces nuevas de la orquesta épica:
+//   · TIMBAL afinado al acorde (membrana que cae + mazo de fieltro)
+//   · CORO CELESTIAL "aah" (dos formantes de vocal + vibrato colectivo)
+//   · PLATILLO con cola dorada (corona los puentes de las obras épicas)
+//   · TROMPETA HEROICA (formante de latón + vibrato tardío, la voz del abanderado)
+//   · ARPA (glissando dorado en el respiro)
+// Todo 100% sintetizado en el navegador: cero muestras, cero copyright, para siempre.
+//
 // Mandato del comandante: "música 100%, nada mediocre, una música ÚNICA para
 // Vanguard, dulce para los oídos — que la gente entre solo a escuchar Vanguard".
 // Reescritura total del motor de síntesis sobre la misma arquitectura de pistas:
@@ -30,7 +41,8 @@ type Pattern = string; // "x...x..." — x = golpe, . = silencio, o = acento
 
 export type TrackCat = "vanguard" | "guerra" | "ambiente";
 
-export type LeadType = "fm" | "glass" | "brass";
+// v123 GLORIA ETERNA: "heroe" = trompeta heroica · "coro" = coro celestial
+export type LeadType = "fm" | "glass" | "brass" | "heroe" | "coro";
 
 interface TrackDef {
   id: string;
@@ -53,10 +65,14 @@ interface TrackDef {
   droneGain: number;
   padLevel: number; // volumen del colchón de acordes
   lead?: number[]; // MOTIVO de 16 pasos en grados del acorde (-1 silencio) — la voz que canta
-  leadType?: LeadType; // fm = campana suave · glass = cristal · brass = metales
+  leadType?: LeadType; // fm = campana suave · glass = cristal · brass = metales · heroe/coro = v123
   shaker?: boolean;
   swing?: boolean;
   fill?: boolean; // relleno de batería en el compás final
+  // ── v123 GLORIA ETERNA: la planta de la ORQUESTA ÉPICA ──
+  timbal?: boolean; // timbales afinados al acorde en el arranque de compás
+  coro?: boolean; // coro celestial ("aah") cantando la armonía de cada compás
+  epico?: boolean; // dramaturgia completa: platillo en el puente, arpa en el respiro, final triunfal
 }
 
 const st = (semi: number, root: number) => root * Math.pow(2, semi / 12);
@@ -66,6 +82,128 @@ const maj = (r: number) => [r, r + 4, r + 7];
 const min = (r: number) => [r, r + 3, r + 7];
 
 export const MUSIC_TRACKS: TrackDef[] = [
+  // ══════════════ v123.0 GLORIA ETERNA — la cúspide de la casa ══════════════
+  // Las 5 obras nuevas comparten EL MOTIVO GLORIA (raíz · raíz · raíz · octava →
+  // resolución a la 5ª): la firma que hace a Vanguard reconocible en 3 notas.
+  {
+    id: "gloria",
+    name: "GLORIA ETERNA",
+    desc: "El himno épico de la casa: coro celestial, timbales y trompetas que se alzan — la gloria de Vanguard",
+    cat: "vanguard",
+    bpm: 72,
+    root: st(-24, 73.42), // D0
+    chords: [min(0), maj(-4), maj(-2), maj(3)], // Dm - Bb - C - F
+    chordsB: [maj(-2), maj(3), maj(5), min(0)], // C - F - G - Dm (el resplandor)
+    rich: true, timbal: true, coro: true, epico: true,
+    bass: [0, -1, -1, -1, -1, -1, 0, -1, -1, -1, 0, -1, -1, -1, 7, -1],
+    arp: [3, -1, -1, 5, -1, -1, 4, -1, 3, -1, -1, 5, -1, -1, 4, -1],
+    arpType: "triangle",
+    bassType: "sine",
+    kick: "x.......x.......",
+    snare: "....x.......x...",
+    hat: "..x...x...x...x.",
+    drone: 0.5,
+    droneGain: 0.05,
+    padLevel: 0.09,
+    lead: [0, -1, -1, 0, -1, -1, 0, -1, 3, -1, -1, 3, -1, 2, -1, -1], // LA LLAMADA DE GLORIA
+    leadType: "heroe",
+    shaker: true,
+    fill: true,
+  },
+  {
+    id: "triunfo",
+    name: "MARCHA DEL TRIUNFO",
+    desc: "Trompetas victoriosas y tambores de desfile — la marcha que cierra las guerras",
+    cat: "guerra",
+    bpm: 100,
+    root: st(-24, 116.54), // Bb0
+    chords: [maj(0), maj(7), maj(-5), maj(7)], // Bb - F - Eb - F
+    chordsB: [maj(-5), maj(2), maj(7), maj(0)], // Eb - C - F - Bb (plagal, solemne)
+    rich: true, timbal: true, epico: true,
+    bass: [0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 0, -1, 7, -1, 7, -1],
+    arp: [3, -1, 4, -1, 5, -1, 4, -1, 3, -1, 4, -1, 5, -1, 6, -1],
+    arpType: "triangle",
+    bassType: "sawtooth",
+    kick: "x...x...x...x...",
+    snare: "....x...o...x.x.",
+    hat: "x.x.x.x.x.x.x.x.",
+    drone: 0.5,
+    droneGain: 0.045,
+    padLevel: 0.075,
+    lead: [0, -1, 0, -1, 0, -1, 3, -1, 2, -1, -1, -1, 3, -1, -1, -1], // la marcha de gloria
+    leadType: "heroe",
+    fill: true,
+  },
+  {
+    id: "heroes",
+    name: "CORO DE LOS HÉROES",
+    desc: "Cien voces cantando a los que velan por el mundo — el coro celestial de Vanguard",
+    cat: "vanguard",
+    bpm: 66,
+    root: st(-24, 130.81), // C0
+    chords: [maj(0), min(-3), maj(-7), maj(-5)], // C - Am - F - G
+    chordsB: [maj(-7), maj(-5), min(-3), maj(0)], // F - G - Am - C (el alzarse)
+    rich: true, timbal: true, coro: true, epico: true,
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, 7, -1],
+    arp: [3, -1, -1, 4, -1, -1, 5, -1, -1, -1, 4, -1, -1, -1, 3, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x...............",
+    snare: "................",
+    hat: "....x.......x...",
+    drone: 0.5,
+    droneGain: 0.048,
+    padLevel: 0.095,
+    lead: [0, -1, -1, -1, 3, -1, -1, -1, 2, -1, -1, -1, 1, -1, -1, -1], // el arco del héroe
+    leadType: "coro",
+    shaker: true,
+  },
+  {
+    id: "serenidad",
+    name: "SERENIDAD DORADA",
+    desc: "La calma después de la gloria: arpa de cristal y coro lejano — respirar hondo, el mundo está velado",
+    cat: "ambiente",
+    bpm: 56,
+    root: st(-24, 87.31), // F0
+    chords: [maj(0), min(9), maj(5), maj(7)], // F - Dm - Bb - C
+    chordsB: [maj(5), maj(7), min(9), maj(0)], // Bb - C - Dm - F (el regreso)
+    rich: true, coro: true, epico: true,
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 7, -1, -1, -1],
+    arp: [3, -1, -1, 6, -1, -1, 8, -1, -1, 6, -1, -1, 3, -1, -1, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x...............",
+    snare: "................",
+    hat: "........x.......",
+    drone: 0.5,
+    droneGain: 0.038,
+    padLevel: 0.085,
+    lead: [-1, -1, 0, -1, -1, 2, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1], // el eco sereno del motivo
+    leadType: "glass",
+  },
+  {
+    id: "estrellas",
+    name: "NOCHE DE ESTRELLAS",
+    desc: "La casa bajo la bóveda: campana de cristal sobre drones profundos — para mirar el cielo y quedarse",
+    cat: "ambiente",
+    bpm: 50,
+    root: st(-24, 110), // A0
+    chords: [min(0), maj(-3), maj(3), min(5)], // Am - F - C - Dm
+    chordsB: [maj(-3), maj(3), min(0), maj(-3)], // F - C - Am - F (la promesa nocturna)
+    rich: true, coro: true,
+    bass: [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+    arp: [3, -1, -1, -1, 5, -1, -1, -1, 4, -1, -1, -1, 5, -1, -1, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x...............",
+    snare: "................",
+    hat: "................",
+    drone: 1,
+    droneGain: 0.05,
+    padLevel: 0.08,
+    lead: [0, -1, -1, -1, -1, -1, 2, -1, -1, -1, -1, -1, 3, -1, -1, -1], // la estrella que sube
+    leadType: "glass",
+  },
   // ══════════════ v109.0 ORQUESTA DE ORO — las 4 insignias de la casa ══════════════
   {
     id: "orquesta",
@@ -643,19 +781,19 @@ export type EscenaKey =
 
 export const ESCENA_TRACKS: Record<EscenaKey, string> = {
   hangar: "drones",        // tu base 3D: zumbido de espera
-  inicio: "orquesta",      // portada: el tema de la casa
+  inicio: "gloria",        // portada: GLORIA ETERNA — el himno épico de la casa (v123)
   inteligencia: "grafo",   // conocimiento: la red latiendo
-  juego: "frontera",       // guerra: los metales de la Última Frontera
+  juego: "triunfo",        // guerra: la MARCHA DEL TRIUNFO abre el frente (v123)
   mercado: "ciber",        // dinero: Ciberataque
   archivo: "boveda",       // archivo: Bóveda Secreta
   comando: "radio",        // operaciones diarias: Radio Guerra
-  observatorio: "serena",  // vigilancia: Noche Serena bajo la cúpula
+  observatorio: "estrellas", // vigilancia: NOCHE DE ESTRELLAS bajo la cúpula (v123)
   estrategia: "cerco",     // gran estrategia: Cerco Urbano
   emisora: "neon",         // TV y feeds: Neón Vertical
   oscsuro: "invierno",     // verdad cruda: Invierno Atómico
   creadores: "damasco",    // creadores: Neón de Damasco
   social: "sala",          // comunidad: La Sala Dorada
-  sistema: "himno",        // sistema: Himno de Vanguardia
+  sistema: "heroes",       // sistema: CORO DE LOS HÉROES (v123)
 };
 
 let escenaActiva: EscenaKey | null = null;
@@ -1132,9 +1270,167 @@ function playBrass(
   routeVoice(c, f, { reverb: 0.3, delay: 0.22, ...opts });
 }
 
+// ═════════ v123 GLORIA ETERNA — LA ORQUESTA ÉPICA (cinco voces nuevas) ═════════
+
+// TIMBAL — timbal afinado al acorde: membrana que cae de pitch, golpe de fieltro
+function playTimbal(
+  c: AudioContext, t: number, freq: number, gain: number,
+  opts?: { reverb?: number },
+) {
+  if (!master) return;
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.type = "sine";
+  // la membrana ARRIBA y cae — el "boom" del timbal de verdad
+  o.frequency.setValueAtTime(freq * 1.65, t);
+  o.frequency.exponentialRampToValueAtTime(freq, t + 0.085);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(gain, t + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 1.15);
+  o.connect(g);
+  routeVoice(c, g, { reverb: opts?.reverb ?? 0.35 });
+  o.start(t); o.stop(t + 1.2);
+  // el mazo: golpe corto de ruido filtrado (ataque que se siente en el pecho)
+  if (noiseBuf) {
+    const n = c.createBufferSource();
+    n.buffer = noiseBuf;
+    n.playbackRate.value = 0.7;
+    const f = c.createBiquadFilter();
+    f.type = "bandpass"; f.frequency.value = 190; f.Q.value = 0.9;
+    const ng = c.createGain();
+    ng.gain.setValueAtTime(gain * 0.55, t);
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+    n.connect(f); f.connect(ng); ng.connect(master);
+    n.start(t); n.stop(t + 0.08);
+  }
+  // armónico de resonancia (la caja del timbal cantando detrás)
+  const r = c.createOscillator();
+  const rg = c.createGain();
+  r.type = "triangle";
+  r.frequency.value = freq * 1.5;
+  rg.gain.setValueAtTime(gain * 0.22, t);
+  rg.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+  r.connect(rg); rg.connect(master);
+  r.start(t); r.stop(t + 0.55);
+}
+
+// CORO CELESTIAL — "aah" humano: sierras por DOS FORMANTES de vocal + vibrato lento
+function playCoro(
+  c: AudioContext, t: number, freq: number, dur: number, gain: number,
+  opts?: { reverb?: number; pan?: number },
+) {
+  if (!master) return;
+  const env = c.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(gain, t + dur * 0.38); // el aire llenando el pecho
+  env.gain.setValueAtTime(gain, t + dur * 0.78);
+  env.gain.linearRampToValueAtTime(0, t + dur * 1.28); // la cola cruza al acorde siguiente
+  // DOS formantes de la vocal "a" (el oído lee VOZ HUMANA, no sintetizador)
+  const fA = c.createBiquadFilter();
+  fA.type = "bandpass"; fA.frequency.value = 640; fA.Q.value = 1.3;
+  const fB = c.createBiquadFilter();
+  fB.type = "bandpass"; fB.frequency.value = 1060; fB.Q.value = 1.6;
+  const gB = c.createGain(); gB.gain.value = 0.55;
+  env.connect(fA); env.connect(fB); fB.connect(gB);
+  // vibrato colectivo (el coro respira juntos)
+  const vib = c.createOscillator();
+  const vibG = c.createGain();
+  vib.frequency.value = 4.3; vibG.gain.value = 4.5; // cents
+  vib.start(t); vib.stop(t + dur * 1.3);
+  for (const det of [-7, 0, 7]) {
+    const o = c.createOscillator();
+    o.type = "sawtooth";
+    o.frequency.value = freq;
+    o.detune.value = det;
+    vibG.connect(o.detune);
+    o.connect(env);
+    o.start(t); o.stop(t + dur * 1.32);
+  }
+  fA.connect(master!); gB.connect(master!);
+  routeVoice(c, env, { reverb: opts?.reverb ?? 0.62, pan: opts?.pan });
+  routeVoice(c, gB, { pan: opts?.pan });
+}
+
+// PLATILLO — crash con cola dorada (el instante de gloria)
+function playPlatillo(c: AudioContext, t: number, gain: number) {
+  if (!master || !noiseBuf) return;
+  const n = c.createBufferSource();
+  n.buffer = noiseBuf;
+  n.playbackRate.value = 1.4;
+  const f = c.createBiquadFilter();
+  f.type = "highpass"; f.frequency.value = 4200;
+  const g = c.createGain();
+  g.gain.setValueAtTime(gain, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 2.1);
+  const brillo = c.createBiquadFilter();
+  brillo.type = "highshelf"; brillo.frequency.value = 8000; brillo.gain.value = 4;
+  n.connect(f); f.connect(brillo); brillo.connect(g); g.connect(master);
+  if (reverbBus) { const r = c.createGain(); r.gain.value = 0.5; g.connect(r); r.connect(reverbBus); }
+  n.start(t); n.stop(t + 2.2);
+}
+
+// TROMPETA HEROICA — la voz que proclama: formante de latón, ataque de abanderado
+function playTrompeta(
+  c: AudioContext, t: number, freq: number, dur: number, gain: number,
+  opts?: { reverb?: number; delay?: number; pan?: number },
+) {
+  if (!master) return;
+  const f = c.createBiquadFilter();
+  f.type = "bandpass"; f.frequency.value = Math.min(2800, freq * 3.2); f.Q.value = 0.85;
+  const brillo = c.createBiquadFilter();
+  brillo.type = "highshelf"; brillo.frequency.value = 5200; brillo.gain.value = 5;
+  const env = c.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(gain, t + 0.035); // la lengua ataca
+  env.gain.setValueAtTime(gain, t + dur * 0.72);
+  env.gain.linearRampToValueAtTime(0.0001, t + dur * 1.12);
+  // vibrato del heroísmo (llega tarde, como el pulso del que sostiene la nota)
+  const vib = c.createOscillator();
+  const vibG = c.createGain();
+  vib.frequency.value = 5.2;
+  vibG.gain.setValueAtTime(0, t);
+  vibG.gain.linearRampToValueAtTime(6, t + Math.min(0.3, dur * 0.45));
+  vib.start(t); vib.stop(t + dur * 1.15);
+  for (const [type, det, lv] of [["sawtooth", -6, 1], ["sawtooth", 6, 1], ["square", 0, 0.4]] as const) {
+    const o = c.createOscillator();
+    o.type = type as OscillatorType;
+    o.frequency.value = freq;
+    o.detune.value = det;
+    const og = c.createGain(); og.gain.value = lv;
+    vibG.connect(o.detune);
+    o.connect(og); og.connect(env);
+    o.start(t); o.stop(t + dur * 1.18);
+  }
+  // la boquilla: sub senoidal presente pero digno
+  const sub = c.createOscillator();
+  const sg = c.createGain();
+  sub.type = "sine"; sub.frequency.value = freq / 2;
+  sg.gain.setValueAtTime(0, t);
+  sg.gain.linearRampToValueAtTime(gain * 0.3, t + 0.05);
+  sg.gain.exponentialRampToValueAtTime(0.0001, t + dur * 1.05);
+  sub.connect(sg); sg.connect(master);
+  sub.start(t); sub.stop(t + dur * 1.1);
+  env.connect(f); f.connect(brillo);
+  routeVoice(c, brillo, { reverb: opts?.reverb ?? 0.38, delay: opts?.delay ?? 0.2, ...opts });
+}
+
+// ARPA — glissando dorado que barre el acorde (el respiro entre batallas)
+function playArpa(c: AudioContext, t: number, chordSemis: number[], root: number) {
+  const grados = [0, 1, 2, 3, 4, 5]; // raíz→3ª→5ª→octava→3ª'→5ª'
+  grados.forEach((gIdx, k) => {
+    const oct = Math.floor(gIdx / 3);
+    const semi = chordSemis[gIdx % 3] + 12 * oct;
+    playNote(c, t + k * 0.052, st(semi, root * 8), 0.9, "triangle", 0.035 - k * 0.002, {
+      reverb: 0.55, delay: 0.4, pan: k % 2 === 0 ? -0.3 : 0.3,
+    });
+  });
+}
+
 function leadVoice(c: AudioContext, t: number, freq: number, dur: number, gain: number, type: LeadType, pan: number) {
   if (type === "glass") playGlass(c, t, freq, dur, gain, { pan });
   else if (type === "brass") playBrass(c, t, freq, dur, gain, { pan });
+  else if (type === "heroe") playTrompeta(c, t, freq, dur, gain * 1.15, { pan }); // v123: el abanderado
+  else if (type === "coro") playCoro(c, t, freq, Math.max(dur * 2.2, 0.5), gain * 1.6, { pan }); // v123: la voz colectiva
   else playFM(c, t, freq, dur, gain, { pan });
 }
 
@@ -1282,6 +1578,26 @@ function scheduler() {
       } catch { /* noop */ }
     }
 
+    // ── v123 GLORIA ETERNA: la planta épica ──
+    // TIMBALES afinados al acorde: en el arranque de compás (cada compás en el
+    // puente/clímax, compases alternos en el resto); la intro respira sin ellos.
+    if (t.timbal && i === 0 && !intro && !breath) {
+      const climax = section === 2 || barInCycle >= 12;
+      if (climax || barAbs % 2 === 0) {
+        playTimbal(c, time, st(chord[0], t.root * 2), climax ? 0.3 : 0.2);
+      }
+    }
+    // CORO CELESTIAL: canta la fundamental del acorde (y la 5ª arriba en el puente)
+    if (t.coro && i === 0 && !intro) {
+      playCoro(c, time, st(chord[0], t.root * 4), barDur, section === 2 ? 0.055 : 0.034, { pan: 0 });
+      if (section === 2) playCoro(c, time + barDur * 0.5, st(chord[2], t.root * 4), barDur * 0.5, 0.03, { pan: 0.3 });
+    }
+    // PLATILLO: el crash corona la entrada del puente y el final de ciclo épico
+    if (t.epico && i === 0 && barInCycle === 8 && !intro) playPlatillo(c, time, 0.14);
+    if (t.epico && filling && i === 12) playPlatillo(c, time + stepDur * 2, 0.1);
+    // ARPA: el glissando dorado-barre el acorde en la respiración (calma entre murallas)
+    if (t.epico && breath && i === 0) playArpa(c, time, chord, t.root);
+
     // ── batería (ausente en la intro; en el respiro solo hats)
     if (!intro) {
       const isKick = t.kick[i] === "x" || t.kick[i] === "o";
@@ -1325,10 +1641,12 @@ function scheduler() {
       if (deg >= 0) {
         if (section === 1) deg = vari.variante === 0 ? deg + 3 : (i % 4 === 0 ? deg + 1 : deg); // A': octava o color según el día
         else if (section === 2) deg = deg + 3; // B: el puente al cielo
+        // v123: la trompeta heroica proclama su llamada UNA octava más arriba en el clímax
+        if (t.epico && section === 2 && t.leadType === "heroe" && i === 0) deg = deg + 7;
         if (barInCycle % 4 === 3 && i === 15) deg = 3; // cadencia: la frase cae a la octava
         const human = (Math.random() - 0.5) * 0.007;
         const vel = 0.85 + Math.random() * 0.28;
-        const gain = leadType === "brass" ? 0.036 * vel : leadType === "glass" ? 0.055 * vel : 0.05 * vel;
+        const gain = leadType === "brass" ? 0.036 * vel : leadType === "glass" ? 0.055 * vel : leadType === "coro" ? 0.06 * vel : leadType === "heroe" ? 0.052 * vel : 0.05 * vel;
         leadVoice(c, time + human, st(deg, t.root * 8) * (1 + (Math.random() - 0.5) * 0.0016), stepDur * 3, gain, leadType, i % 8 < 4 ? -0.18 : 0.18);
       }
     }
@@ -1476,7 +1794,7 @@ export function resumeMusicIfWanted(): boolean {
     const p = JSON.parse(raw) as { on?: boolean; vol?: number; track?: string };
     if (p.on !== true) return false;
     if (typeof p.vol === "number") setMusicVolume(p.vol);
-    startMusic(p.track || "orquesta");
+    startMusic(p.track || "gloria"); // v123: si no había obra guardada, la GLORIA recibe
     return true;
   } catch {
     return false;
