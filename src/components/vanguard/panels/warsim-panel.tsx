@@ -286,14 +286,14 @@ export function WarsimPanel() {
           {/* COMPARATIVA DE ESTADISTICAS */}
           <div className="hud-panel p-3">
             <div className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase mb-2">Comparativa militar</div>
-            <StatRow icon={<Users className="w-3.5 h-3.5" />} label="Ejército activo" va={a.army} vb={b.army} fa={`${a.army}K`} fb={`${b.army}K`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<Plane className="w-3.5 h-3.5" />} label="Flota aérea" va={a.air} vb={b.air} fa={`${a.air}`} fb={`${b.air}`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<Ship className="w-3.5 h-3.5" />} label="Flota naval" va={a.naval} vb={b.naval} fa={`${a.naval}`} fb={`${b.naval}`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<Rocket className="w-3.5 h-3.5" />} label="Misiles" va={a.missiles} vb={b.missiles} fa={`${a.missiles}`} fb={`${b.missiles}`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<Banknote className="w-3.5 h-3.5" />} label="Presupuesto ($B)" va={a.budget} vb={b.budget} fa={`$${a.budget}B`} fb={`$${b.budget}B`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<ShieldHalf className="w-3.5 h-3.5" />} label="Defensa antimisiles" va={a.defense} vb={b.defense} fa={`${a.defense}/10`} fb={`${b.defense}/10`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<Mountain className="w-3.5 h-3.5" />} label="Ventaja geográfica" va={a.geo} vb={b.geo} fa={`${a.geo}/10`} fb={`${b.geo}/10`} ca="#1E90FF" cb="#FF3B30" />
-            <StatRow icon={<BrainCircuit className="w-3.5 h-3.5" />} label="Experiencia reciente" va={a.exp} vb={b.exp} fa={`${a.exp}/10`} fb={`${b.exp}/10`} ca="#1E90FF" cb="#FF3B30" />
+            <StatRow icon={<Users className="w-3.5 h-3.5" />} label="Ejército activo" va={a.army} vb={b.army} fa={`${a.army}K`} fb={`${b.army}K`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<Plane className="w-3.5 h-3.5" />} label="Flota aérea" va={a.air} vb={b.air} fa={`${a.air}`} fb={`${b.air}`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<Ship className="w-3.5 h-3.5" />} label="Flota naval" va={a.naval} vb={b.naval} fa={`${a.naval}`} fb={`${b.naval}`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<Rocket className="w-3.5 h-3.5" />} label="Misiles" va={a.missiles} vb={b.missiles} fa={`${a.missiles}`} fb={`${b.missiles}`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<Banknote className="w-3.5 h-3.5" />} label="Presupuesto ($B)" va={a.budget} vb={b.budget} fa={`$${a.budget}B`} fb={`$${b.budget}B`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<ShieldHalf className="w-3.5 h-3.5" />} label="Defensa antimisiles" va={a.defense} vb={b.defense} fa={`${a.defense}/10`} fb={`${b.defense}/10`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<Mountain className="w-3.5 h-3.5" />} label="Ventaja geográfica" va={a.geo} vb={b.geo} fa={`${a.geo}/10`} fb={`${b.geo}/10`} ca="#DCC078" cb="#FF3B30" />
+            <StatRow icon={<BrainCircuit className="w-3.5 h-3.5" />} label="Experiencia reciente" va={a.exp} vb={b.exp} fa={`${a.exp}/10`} fb={`${b.exp}/10`} ca="#DCC078" cb="#FF3B30" />
             <div className="grid grid-cols-2 gap-2 mt-2">
               <div className="font-mono text-[9px] text-muted-foreground">
                 ☢️ Nuclear: <span className={a.nuclear ? "text-crisis" : "text-muted-foreground"}>{a.nuclear ? "SÍ" : "NO"}</span> · Alianzas: {a.alliances.join(", ") || "—"}
@@ -391,7 +391,7 @@ export function WarsimPanel() {
               <div className="mt-2 border border-border/70 bg-secondary/40 p-2">
                 <div className="font-mono text-[8px] tracking-widest text-muted-foreground uppercase mb-1.5">Factores de precisión v100 · logística · moral · escalada</div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                  {[{ l: `moral ${a.code}`, v: sim.moralA, c: "#1E90FF" }, { l: `moral ${b.code}`, v: sim.moralB, c: "#FF3B30" }, { l: `suministro ${a.code}`, v: sim.sumiA, c: "#4DFFC4" }, { l: `suministro ${b.code}`, v: sim.sumiB, c: "#FFD166" }].map((f) => (
+                  {[{ l: `moral ${a.code}`, v: sim.moralA, c: "#DCC078" }, { l: `moral ${b.code}`, v: sim.moralB, c: "#FF3B30" }, { l: `suministro ${a.code}`, v: sim.sumiA, c: "#4DFFC4" }, { l: `suministro ${b.code}`, v: sim.sumiB, c: "#FFD166" }].map((f) => (
                     <div key={f.l} className="flex items-center gap-1.5">
                       <span className="font-mono text-[8px] uppercase text-muted-foreground w-24 shrink-0">{f.l}</span>
                       <div className="h-1.5 flex-1 overflow-hidden bg-secondary">
@@ -492,7 +492,7 @@ function PowerCard({ power, side, onClear }: { power: WarPower | null; side: "A"
   }
   return (
     <div className={cn("hud-corner border p-3 flex items-center gap-3", side === "A" ? "border-electric-hud" : "border-crisis-hud")}>
-      <div className="w-11 h-11 flex items-center justify-center border" style={{ borderColor: side === "A" ? "#1E90FF55" : "#FF3B3055" }}>
+      <div className="w-11 h-11 flex items-center justify-center border" style={{ borderColor: side === "A" ? "#DCC07855" : "#FF3B3055" }}>
         <FlagBadge code={power.code} size="lg" />
       </div>
       <div className="min-w-0 flex-1">

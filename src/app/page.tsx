@@ -331,7 +331,9 @@ export default function Home() {
   // Explorador — la NUEVA no cuenta: abrir pestañas no paga el mapa. Escena para
   // la radio + scroll arriba (la franja nunca tapa el inicio del panel).
   const handleTabChange = useCallback((k: TabKey) => {
-    sfx.tab();
+    // v124.0 CAVIAR: entrar a una sala suena a lujo — la campana de oro del
+    // salón (dos notas con cola de sala) sustituye al toque de madera.
+    sfx.campana();
     // v118: dirección del movimiento (adelante por defecto, atrás si
     // volvemos a la pestaña previa del historial, o la que fuerza el swipe)
     const hist = historialTabsRef.current;
@@ -410,6 +412,12 @@ export default function Home() {
           entra: () => ({ opacity: 0, scaleY: 0.82, y: d(-34), transformOrigin: "50% 0%" }),
           centro: { opacity: 1, scaleY: 1, y: 0, transformOrigin: "50% 0%", transition: { duration: dur(0.4), ease: bez } },
           sale: () => ({ opacity: 0, scaleY: 0.88, y: d(26), transformOrigin: "50% 100%", transition: { duration: dur(0.24), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+        };
+      case "oro": // v124.0 CAVIAR — la sala se recibe como se recibe a un invitado de alta clase: lenta, digna, dorada
+        return {
+          entra: () => ({ opacity: 0, scale: 1.02, y: d(12) }),
+          centro: { opacity: 1, scale: 1, y: 0, transition: { duration: dur(0.46), ease: bez } },
+          sale: () => ({ opacity: 0, scale: 0.99, y: d(-8), transition: { duration: dur(0.26), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
         };
       case "hiperespacio":
         return {

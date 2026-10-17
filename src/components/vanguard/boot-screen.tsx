@@ -70,7 +70,7 @@ export function BootScreen() {
           <div className="text-center px-4">
             <div
               className="font-display text-xl sm:text-3xl font-black tracking-[0.3em] text-gradient"
-              style={{ filter: "drop-shadow(0 0 18px rgba(30,144,255,0.55))" }}
+              style={{ filter: "drop-shadow(0 0 18px rgba(212, 175, 55,0.55))" }}
             >
               VANGUARD
             </div>

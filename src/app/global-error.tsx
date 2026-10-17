@@ -23,7 +23,7 @@ export default function GlobalError({
             <button
               onClick={reset}
               style={{
-                padding: "10px 22px", background: "rgba(30,144,255,0.2)", border: "1px solid #1E90FF",
+                padding: "10px 22px", background: "rgba(212, 175, 55,0.2)", border: "1px solid #DCC078",
                 color: "#5EB2FF", borderRadius: 4, cursor: "pointer", textTransform: "uppercase",
                 letterSpacing: 2, fontSize: 12,
               }}

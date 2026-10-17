@@ -233,7 +233,7 @@ function InsigniaCard({ ins, idx }: { ins: Insignia; idx: number }) {
       <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/8">
         <motion.div
           className="h-full rounded-full"
-          style={{ background: lograda ? ins.acento : "#3EA6FF88" }}
+          style={{ background: lograda ? ins.acento : "#E8C56A88" }}
           initial={{ width: 0 }} animate={{ width: `${Math.max(2, pct)}%` }}
           transition={{ duration: 0.7, delay: idx * 0.03 }}
         />

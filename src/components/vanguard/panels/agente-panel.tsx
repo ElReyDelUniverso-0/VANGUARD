@@ -158,7 +158,7 @@ export function AgentePanel() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className={cn("font-tech text-5xl font-bold tabular-nums leading-none", tier.color)}
-              style={{ textShadow: "0 0 22px rgba(30,144,255,0.35)" }}
+              style={{ textShadow: "0 0 22px rgba(212, 175, 55,0.35)" }}
             >
               {iq}
             </motion.div>
@@ -181,8 +181,8 @@ export function AgentePanel() {
             <TrendingUp className="w-3 h-3" /> Evolución del IQ
           </div>
           <svg viewBox={`0 0 ${spark.w} ${spark.h}`} className="w-full">
-            <polyline points={spark.pts} fill="none" stroke="#1E90FF" strokeWidth="1.8" />
-            <polyline points={`0,${spark.h} ${spark.pts} ${spark.w},${spark.h}`} fill="#1E90FF" opacity="0.1" stroke="none" />
+            <polyline points={spark.pts} fill="none" stroke="#DCC078" strokeWidth="1.8" />
+            <polyline points={`0,${spark.h} ${spark.pts} ${spark.w},${spark.h}`} fill="#DCC078" opacity="0.1" stroke="none" />
           </svg>
           <div className="flex justify-between font-mono text-[8px] text-muted-foreground">
             <span>inicio: {spark.first}</span>
@@ -326,7 +326,7 @@ function EditorAgente3D() {
         <div className="flex-shrink-0 mx-auto sm:mx-0">
           <svg viewBox="0 0 120 190" className="w-[120px] h-[190px]" role="img" aria-label="Vista previa del operador">
             {/* aura de suelo */}
-            <ellipse cx="60" cy="178" rx="42" ry="8" fill="none" stroke={look.uniforme === "rango" ? "#1E90FF" : look.uniforme} strokeOpacity="0.7" strokeWidth="2.5" />
+            <ellipse cx="60" cy="178" rx="42" ry="8" fill="none" stroke={look.uniforme === "rango" ? "#DCC078" : look.uniforme} strokeOpacity="0.7" strokeWidth="2.5" />
             {/* mochila (detrás del torso) */}
             {look.mochila && <rect x="38" y="70" width="44" height="34" rx="4" fill={look.mochilaColor} stroke="#000" strokeOpacity="0.4" />}
             {/* piernas */}

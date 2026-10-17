@@ -65,7 +65,7 @@ export function LatidoSocial({ tono = "violet" }: { tono?: "violet" | "amber" | 
     violet: { barra: "rgba(192,132,252,0.85)", texto: "text-violet-hud", borde: "border-violet-hud/40" },
     amber: { barra: "rgba(255,176,32,0.85)", texto: "text-amber", borde: "border-amber-hud/40" },
     cyan: { barra: "rgba(34,211,238,0.85)", texto: "text-cyan-hud", borde: "border-cyan-hud/40" },
-    green: { barra: "rgba(0,255,135,0.85)", texto: "text-neon", borde: "border-neon-hud/40" },
+    green: { barra: "rgba(61, 220, 151,0.85)", texto: "text-neon", borde: "border-neon-hud/40" },
     red: { barra: "rgba(255,70,85,0.85)", texto: "text-crisis", borde: "border-crisis-hud/40" },
   }[tono];
 

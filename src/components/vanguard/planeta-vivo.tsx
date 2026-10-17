@@ -40,8 +40,8 @@ const CAT_COLOR: Record<string, string> = {
   "Sea and Lake Ice": "#67E8F9",
   Drought: "#FFD166",
   "Dust and Haze": "#FFB347",
-  Floods: "#3EA6FF",
-  Earthquakes: "#00FF87",
+  Floods: "#E8C56A",
+  Earthquakes: "#3DDC97",
   Landslides: "#A855F7",
   Snow: "#E0F2FE",
 };
@@ -63,9 +63,9 @@ function climaInfo(codigo: number): { desc: string; tinte: string } {
   if (codigo <= 3) return { desc: "parcial", tinte: "#FFD166" };
   if (codigo <= 48) return { desc: "niebla", tinte: "#9AA3AD" };
   if (codigo <= 57) return { desc: "llovizna", tinte: "#38BDF8" };
-  if (codigo <= 67) return { desc: "lluvia", tinte: "#3EA6FF" };
+  if (codigo <= 67) return { desc: "lluvia", tinte: "#E8C56A" };
   if (codigo <= 77) return { desc: "nieve", tinte: "#E0F2FE" };
-  if (codigo <= 82) return { desc: "chubascos", tinte: "#3EA6FF" };
+  if (codigo <= 82) return { desc: "chubascos", tinte: "#E8C56A" };
   if (codigo <= 86) return { desc: "nevada", tinte: "#E0F2FE" };
   return { desc: "tormenta", tinte: "#FF3B30" };
 }
@@ -73,7 +73,7 @@ function climaInfo(codigo: number): { desc: string; tinte: string } {
 function tempColor(t: number): string {
   if (t <= 0) return "#67E8F9";
   if (t < 10) return "#38BDF8";
-  if (t < 20) return "#00FF87";
+  if (t < 20) return "#3DDC97";
   if (t < 29) return "#FFB347";
   return "#FF5A1F";
 }

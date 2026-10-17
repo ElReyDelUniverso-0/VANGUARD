@@ -84,7 +84,7 @@ export function IntroCinematica() {
     }));
     // nebulosas (gradients fijos con drift)
     const nebulae = [
-      { x: 0.22, y: 0.3, r: 0.55, c: "rgba(30,144,255,0.16)" },
+      { x: 0.22, y: 0.3, r: 0.55, c: "rgba(212, 175, 55,0.16)" },
       { x: 0.78, y: 0.62, r: 0.6, c: "rgba(120,40,200,0.14)" },
       { x: 0.5, y: 0.85, r: 0.5, c: "rgba(255,59,48,0.10)" },
     ];
@@ -249,7 +249,7 @@ export function IntroCinematica() {
           ctx.globalAlpha = 0.55 * g;
           ctx.fillStyle = "#FF3B30";
           ctx.fillText(letters[i], -3.5 * g, (Math.random() - 0.5) * 3);
-          ctx.fillStyle = "#00FF87";
+          ctx.fillStyle = "#3DDC97";
           ctx.fillText(letters[i], 3.5 * g, (Math.random() - 0.5) * 3);
         }
         ctx.restore();
@@ -322,8 +322,8 @@ export function IntroCinematica() {
         const cy = H / 2 - zoomP * H * 0.08;
         // atmósfera azul brillante
         const atmo = ctx.createRadialGradient(cx, cy, R * 0.82, cx, cy, R * 1.35);
-        atmo.addColorStop(0, "rgba(30,144,255,0.55)");
-        atmo.addColorStop(0.55, "rgba(30,144,255,0.16)");
+        atmo.addColorStop(0, "rgba(212, 175, 55,0.55)");
+        atmo.addColorStop(0.55, "rgba(212, 175, 55,0.16)");
         atmo.addColorStop(1, "transparent");
         ctx.fillStyle = atmo;
         ctx.fillRect(cx - R * 1.5, cy - R * 1.5, R * 3, R * 3);
@@ -455,7 +455,7 @@ export function IntroCinematica() {
             for (let i = 1; i < sh.pts.length; i++) ctx.lineTo(sh.pts[i].x - sh.x, sh.pts[i].y - sh.y);
             ctx.closePath();
             ctx.fillStyle = `rgba(140,190,255,${Math.max(0, 0.34 - st / 2400)})`;
-            ctx.strokeStyle = `rgba(30,144,255,${Math.max(0, 0.7 - st / 1400)})`;
+            ctx.strokeStyle = `rgba(212, 175, 55,${Math.max(0, 0.7 - st / 1400)})`;
             ctx.fill();
             ctx.stroke();
             ctx.restore();
@@ -477,7 +477,7 @@ export function IntroCinematica() {
       }
 
       // barra de progreso discreta + pista de salto
-      ctx.fillStyle = "rgba(30,144,255,0.7)";
+      ctx.fillStyle = "rgba(212, 175, 55,0.7)";
       ctx.fillRect(W / 2 - 60, H - 14, Math.min(1, t / DURATION_MS) * 120, 2);
       ctx.font = '600 9px "JetBrains Mono", monospace';
       ctx.fillStyle = "rgba(138,144,168,0.8)";

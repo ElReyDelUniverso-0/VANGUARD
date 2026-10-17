@@ -15,7 +15,7 @@ export interface Faction {
 }
 
 export const FACTIONS: Faction[] = [
-  { id: 0, name: "TU IMPERIO", short: "TÚ", color: "#3EA6FF", colorClass: "text-amber", bgClass: "bg-amber-hud", borderClass: "border-amber-hud", doctrine: "Comandante supremo — lo decides tú" },
+  { id: 0, name: "TU IMPERIO", short: "TÚ", color: "#E8C56A", colorClass: "text-amber", bgClass: "bg-amber-hud", borderClass: "border-amber-hud", doctrine: "Comandante supremo — lo decides tú" },
   { id: 1, name: "EJE ESCARLATA", short: "EJE", color: "#FF3B30", colorClass: "text-red-hud", bgClass: "bg-red-hud", borderClass: "border-red-hud", doctrine: "Blitz agresivo — ataca la frontera más débil" },
   { id: 2, name: "ALIANZA ACERO", short: "ACERO", color: "#38BDF8", colorClass: "text-cyan-hud", bgClass: "bg-cyan-hud", borderClass: "border-cyan-hud", doctrine: "Fortificación paciente — acumula tropas" },
   { id: 3, name: "SINDICATO SOMBRA", short: "SOMBRA", color: "#A855F7", colorClass: "text-violet-hud", bgClass: "bg-violet-hud", borderClass: "border-violet-hud", doctrine: "Oportunista — golpea cuando sangras" },

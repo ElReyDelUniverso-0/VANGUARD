@@ -608,7 +608,7 @@ export function HangarPanel() {
         parcheMesh.rotation.y = Math.PI / 2.6;
         agent.add(parcheMesh);
       }
-      (parcheMesh.material as THREE.MeshBasicMaterial).color.set(skinHexOk(color) ? color : "#1E90FF");
+      (parcheMesh.material as THREE.MeshBasicMaterial).color.set(skinHexOk(color) ? color : "#DCC078");
     };
     const setCompanero = (tipo: AgenteLook["companero"]) => {
       if (companeroMesh) { scene.remove(companeroMesh); disposeGroup(companeroMesh); companeroMesh = null; }
@@ -1320,13 +1320,13 @@ export function HangarPanel() {
         <div
           id="hangar-joystick"
           className="absolute bottom-4 left-4 w-28 h-28 rounded-full touch-none select-none"
-          style={{ background: "radial-gradient(circle, rgba(30,144,255,0.14), rgba(10,10,15,0.5))", border: "1px solid rgba(30,144,255,0.4)" }}
+          style={{ background: "radial-gradient(circle, rgba(212, 175, 55,0.14), rgba(10,10,15,0.5))", border: "1px solid rgba(212, 175, 55,0.4)" }}
           aria-label="Joystick táctil del hangar"
         >
           <div
             id="hangar-joystick-knob"
             className="absolute top-1/2 left-1/2 w-11 h-11 -mt-5.5 -ml-5.5 rounded-full"
-            style={{ transform: "translate(0px,0px)", background: "radial-gradient(circle at 35% 30%, #3ea6ff, #123a7a)", boxShadow: "0 0 16px rgba(30,144,255,0.6)" }}
+            style={{ transform: "translate(0px,0px)", background: "radial-gradient(circle at 35% 30%, #E8C56A, #123a7a)", boxShadow: "0 0 16px rgba(212, 175, 55,0.6)" }}
           />
         </div>
 

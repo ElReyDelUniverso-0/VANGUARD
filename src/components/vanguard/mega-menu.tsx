@@ -160,7 +160,7 @@ export function MegaMenu({
             </div>
 
             {/* v48.0 EXPLORADOR DE MUNDOS — progreso + descubrimiento en un toque */}
-            <div className="hud-panel p-4 mb-5" style={{ borderColor: "#3EA6FF55" }}>
+            <div className="hud-panel p-4 mb-5" style={{ borderColor: "#E8C56A55" }}>
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="min-w-0">
                   <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-amber">

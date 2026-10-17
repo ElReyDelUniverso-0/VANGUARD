@@ -12,9 +12,9 @@ export interface GameTemplate {
 
 const TPL_QUIZ = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiz de Conflictos</title><style>
 body{font-family:monospace;background:#0A0A0F;color:#F0F0F0;margin:0;padding:16px;text-align:center}
-h1{color:#1E90FF;font-size:18px;text-transform:uppercase;letter-spacing:2px}
-.q{font-size:15px;margin:18px 0}.btn{display:block;width:100%;max-width:420px;margin:8px auto;padding:10px;background:#1A1A2E;border:1px solid #1E90FF;color:#F0F0F0;font-family:monospace;font-size:13px;cursor:pointer}
-.btn:hover{background:#1E90FF33}.btn.ok{border-color:#00FF87;color:#00FF87}.btn.ko{border-color:#FF3B30;color:#FF3B30}
+h1{color:#DCC078;font-size:18px;text-transform:uppercase;letter-spacing:2px}
+.q{font-size:15px;margin:18px 0}.btn{display:block;width:100%;max-width:420px;margin:8px auto;padding:10px;background:#1A1A2E;border:1px solid #DCC078;color:#F0F0F0;font-family:monospace;font-size:13px;cursor:pointer}
+.btn:hover{background:#DCC07833}.btn.ok{border-color:#3DDC97;color:#3DDC97}.btn.ko{border-color:#FF3B30;color:#FF3B30}
 #score{color:#FFD700;font-size:14px;margin-top:12px}</style></head><body>
 <h1>⚔️ QUIZ DE CONFLICTOS</h1><div id="app"></div><div id="score"></div><script>
 var QS=[{q:"¿Cuál es la capital de Ucrania?",o:["Kyiv","Moscú","Varsovia","Odesa"],a:0},{q:"¿Qué país tiene más habitantes?",o:["EE.UU.","India","Brasil","Rusia"],a:1},{q:"¿Cuál es el río más largo del mundo?",o:["Nilo","Amazonas","Yangtsé","Misisipi"],a:1},{q:"¿Qué moneda usa Japón?",o:["Yuan","Won","Yen","Rupia"],a:2},{q:"¿Qué océano es el más grande?",o:["Atlántico","Índico","Pacífico","Ártico"],a:2}];
@@ -32,8 +32,8 @@ pintar();</script></body></html>`;
 
 const TPL_REFLEJOS = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reflejo Nuclear</title><style>
 body{font-family:monospace;background:#0A0A0F;color:#F0F0F0;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;text-align:center}
-#zone{width:min(86vw,420px);height:min(50vh,300px);border:2px solid #1E90FF;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;user-select:none;background:#1A1A2E}
-#zone.go{border-color:#00FF87;background:#00FF8722}
+#zone{width:min(86vw,420px);height:min(50vh,300px);border:2px solid #DCC078;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;user-select:none;background:#1A1A2E}
+#zone.go{border-color:#3DDC97;background:#3DDC9722}
 #msg{margin:14px 0;color:#FFD700;font-size:16px;min-height:22px}</style></head><body>
 <h1 style="color:#FF3B30">☢️ REFLEJO NUCLEAR</h1>
 <p style="font-size:12px;color:#8A90A8">Espera el VERDE… y toca lo más rápido que puedas</p>
@@ -51,9 +51,9 @@ z.onclick=function(){
 
 const TPL_DRONES = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Caza-Drones</title><style>
 body{font-family:monospace;background:#0A0A0F;color:#F0F0F0;margin:0;padding:10px;text-align:center}
-canvas{background:#05070D;border:1px solid #1E90FF;touch-action:none;max-width:100%}
+canvas{background:#05070D;border:1px solid #DCC078;touch-action:none;max-width:100%}
 #hud{color:#FFD700;font-size:14px;margin:6px 0}</style></head><body>
-<h1 style="color:#1E90FF;font-size:16px">🛸 CAZA-DRONES 30s</h1>
+<h1 style="color:#DCC078;font-size:16px">🛸 CAZA-DRONES 30s</h1>
 <div id="hud">PUNTOS: 0</div>
 <canvas id="cv" width="360" height="420"></canvas>
 <p style="font-size:11px;color:#8A90A8">Toca/clic los drones rojos · 30 segundos</p><script>

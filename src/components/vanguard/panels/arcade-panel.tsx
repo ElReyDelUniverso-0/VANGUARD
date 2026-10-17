@@ -182,7 +182,7 @@ function GameArt({ id }: { id: GameId }) {
         <div className={wrap} style={base}>
           <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-center gap-1.5">
             {["dot", "dot", "dash", "dot", "dash", "dash", "dot"].map((k, i) => (
-              <span key={i} className={cn("rounded-full", k === "dot" ? "h-1.5 w-1.5 bg-neon" : "h-1.5 w-5 bg-neon/80")} style={{ boxShadow: "0 0 8px rgba(0,255,135,0.55)" }} />
+              <span key={i} className={cn("rounded-full", k === "dot" ? "h-1.5 w-1.5 bg-neon" : "h-1.5 w-5 bg-neon/80")} style={{ boxShadow: "0 0 8px rgba(61, 220, 151,0.55)" }} />
             ))}
           </div>
           <div className="absolute inset-x-8 bottom-2 h-px bg-gradient-to-r from-transparent via-neon/60 to-transparent" />
@@ -199,7 +199,7 @@ function GameArt({ id }: { id: GameId }) {
     case "banderas":
       return (
         <div className={wrap} style={base}>
-          {["#FF3B30", "#1E90FF", "#00FF87"].map((c, i) => (
+          {["#FF3B30", "#DCC078", "#3DDC97"].map((c, i) => (
             <div key={c} className="absolute top-3 w-8 border-t-2 border-b-2" style={{ left: `${18 + i * 26}%`, height: 26, borderColor: `${c}aa`, background: `linear-gradient(180deg, ${c}55, transparent)` }} />
           ))}
           <div className="absolute inset-x-0 bottom-1 text-center font-mono text-[8px] tracking-[0.3em] text-amber/80">+5s ×10</div>
@@ -218,8 +218,8 @@ function GameArt({ id }: { id: GameId }) {
     case "duelo":
       return (
         <div className={wrap} style={base}>
-          <div className="absolute left-[32%] top-1/2 h-12 w-1.5 -translate-y-1/2 rotate-[30deg] rounded bg-green-hud/70" style={{ boxShadow: "0 0 10px rgba(0,255,135,0.5)" }} />
-          <div className="absolute right-[32%] top-1/2 h-12 w-1.5 -translate-y-1/2 rotate-[-30deg] rounded bg-green-hud/70" style={{ boxShadow: "0 0 10px rgba(0,255,135,0.5)" }} />
+          <div className="absolute left-[32%] top-1/2 h-12 w-1.5 -translate-y-1/2 rotate-[30deg] rounded bg-green-hud/70" style={{ boxShadow: "0 0 10px rgba(61, 220, 151,0.5)" }} />
+          <div className="absolute right-[32%] top-1/2 h-12 w-1.5 -translate-y-1/2 rotate-[-30deg] rounded bg-green-hud/70" style={{ boxShadow: "0 0 10px rgba(61, 220, 151,0.5)" }} />
           <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border border-amber bg-amber/40" />
         </div>
       );
@@ -230,7 +230,7 @@ function GameArt({ id }: { id: GameId }) {
             <div className="absolute inset-0 rounded-full bg-amber/10" />
             <div className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(from 0deg, rgba(255,179,71,0.75) 0deg, transparent 80deg)", animation: "barridoRadar 2.2s linear infinite" }} />
             <span className="absolute left-[30%] top-[38%] h-1 w-1 rounded-full bg-red-hud" style={{ boxShadow: "0 0 6px rgba(255,59,48,0.9)" }} />
-            <span className="absolute left-[64%] top-[62%] h-1 w-1 rounded-full bg-green-hud" style={{ boxShadow: "0 0 6px rgba(0,255,135,0.9)" }} />
+            <span className="absolute left-[64%] top-[62%] h-1 w-1 rounded-full bg-green-hud" style={{ boxShadow: "0 0 6px rgba(61, 220, 151,0.9)" }} />
           </div>
         </div>
       );

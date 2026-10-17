@@ -38,7 +38,7 @@ export function LaunchCountdown() {
       className="hud-corner relative overflow-hidden border-amber-hud"
       style={{
         background:
-          "linear-gradient(120deg, rgba(255,58,48,0.14) 0%, rgba(30,144,255,0.10) 45%, rgba(255,211,77,0.12) 100%)",
+          "linear-gradient(120deg, rgba(255,58,48,0.14) 0%, rgba(212, 175, 55,0.10) 45%, rgba(255,211,77,0.12) 100%)",
       }}
       role="status"
     >

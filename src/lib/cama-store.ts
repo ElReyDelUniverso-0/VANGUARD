@@ -21,10 +21,11 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { TabKey } from "@/components/vanguard/tab-nav";
 
-/** Los 5 estilos de viaje entre secciones (v121). */
-export type EstiloTransicion = "deslizar" | "cine3d" | "telon" | "hiperespacio" | "disolver";
+/** Los 6 estilos de viaje entre secciones (v121 + v124 ORO CAVIAR). */
+export type EstiloTransicion = "oro" | "deslizar" | "cine3d" | "telon" | "hiperespacio" | "disolver";
 
 export const ESTILOS_TRANSICION: { id: EstiloTransicion; nombre: string; desc: string }[] = [
+  { id: "oro", nombre: "ORO CAVIAR", desc: "Telas de terciopelo noir y polvo de oro — la entrada exclusiva de la casa" },
   { id: "deslizar", nombre: "DESLIZAR", desc: "El clásico de Vanguard: la sala entra por el lado del viaje" },
   { id: "cine3d", nombre: "CINE 3D", desc: "La sala gira como un cubo de cine volumétrico" },
   { id: "telon", nombre: "TELÓN", desc: "Telares de teatro que suben y bajan entre salas" },
@@ -66,6 +67,8 @@ export interface CamaEstado {
   recientes: TabKey[];
   /** Visitas por sala — la adaptación real de LA CAMA */
   visitas: Record<string, number>;
+  /** v124: la casa ya vistió a este usuario de CAVIAR (migración de lujo 1 vez) */
+  oroOnboard: boolean;
   setTransicion: (v: EstiloTransicion) => void;
   setLetraEscala: (v: number) => void;
   setDensidad: (v: Densidad) => void;
@@ -81,7 +84,7 @@ export interface CamaEstado {
 }
 
 const DEFAULTS = {
-  transicion: "deslizar" as EstiloTransicion,
+  transicion: "oro" as EstiloTransicion,
   letraEscala: 1,
   densidad: "normal" as Densidad,
   movimiento: 1,
@@ -92,6 +95,7 @@ const DEFAULTS = {
   abrirFavorito: false,
   recientes: [] as TabKey[],
   visitas: {} as Record<string, number>,
+  oroOnboard: true,
 };
 
 export const useCama = create<CamaEstado>()(
@@ -118,6 +122,16 @@ export const useCama = create<CamaEstado>()(
     {
       name: "vg_cama_v121",
       storage: createJSONStorage(() => localStorage),
+      // v124.0 CAVIAR — migración de lujo (solo UNA vez): quien ya tenía la
+      // casa a su medida conserva TODO (visitas, favorito, acento…), pero su
+      // viaje entre salas se estrena con el telón de ORO CAVIAR.
+      version: 1,
+      migrate: (estado, version) => {
+        const s = estado as Partial<CamaEstado> | undefined;
+        if (!s || version < 1) return { ...DEFAULTS, ...s, transicion: "oro", oroOnboard: true } as CamaEstado;
+        if (!s.oroOnboard) return { ...DEFAULTS, ...s, transicion: "oro", oroOnboard: true } as CamaEstado;
+        return { ...DEFAULTS, ...s } as CamaEstado;
+      },
     }
   )
 );

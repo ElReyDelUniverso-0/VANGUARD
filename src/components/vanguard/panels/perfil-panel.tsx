@@ -141,7 +141,7 @@ export function PerfilPanel() {
               <button
                 key={f.code}
                 onClick={() => { setCbAvatar(f.code); toast.success(`Avatar: ${f.name}`); }}
-                className={`p-1.5 rounded-lg border transition-all hover:scale-105 hover:border-electric/60 ${cbAvatar === f.code ? "border-electric bg-electric/10 shadow-[0_0_10px_#1E90FF55]" : "border-transparent bg-black/20"}`}
+                className={`p-1.5 rounded-lg border transition-all hover:scale-105 hover:border-electric/60 ${cbAvatar === f.code ? "border-electric bg-electric/10 shadow-[0_0_10px_#DCC07855]" : "border-transparent bg-black/20"}`}
                 title={f.name}
                 aria-pressed={cbAvatar === f.code}
               >

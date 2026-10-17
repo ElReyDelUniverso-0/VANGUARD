@@ -311,7 +311,7 @@ export function RadarPanel() {
                         <span className={cn("font-bold", n.veracity >= 70 ? "text-neon" : n.veracity >= 40 ? "text-amber" : "text-crisis")}>{n.veracity}%</span>
                       </div>
                       <div className="h-1.5 bg-secondary overflow-hidden">
-                        <div className="h-full" style={{ width: `${n.veracity}%`, background: n.veracity >= 70 ? "#00FF87" : n.veracity >= 40 ? "#FFD60A" : "#FF3B30" }} />
+                        <div className="h-full" style={{ width: `${n.veracity}%`, background: n.veracity >= 70 ? "#3DDC97" : n.veracity >= 40 ? "#FFD60A" : "#FF3B30" }} />
                       </div>
                       <div className="mt-1 flex flex-wrap gap-1">
                         {n.flags.map((f, i) => (
@@ -346,7 +346,7 @@ export function RadarPanel() {
               <div className="font-mono text-[9px] tracking-widest text-muted-foreground uppercase mb-2 flex items-center gap-1.5">
                 <ShieldCheck className="w-3 h-3" /> PPI · Barrido en vivo
               </div>
-              <div className="radar-zone rounded-full border border-neon-hud/60 mx-auto" style={{ width: 168, height: 168, background: "radial-gradient(circle, rgba(0,255,135,0.05) 0%, rgba(0,10,6,0.9) 70%)" }}>
+              <div className="radar-zone rounded-full border border-neon-hud/60 mx-auto" style={{ width: 168, height: 168, background: "radial-gradient(circle, rgba(61, 220, 151,0.05) 0%, rgba(0,10,6,0.9) 70%)" }}>
                 {/* anillos de alcance */}
                 {[112, 84, 56, 28].map((r) => (
                   <span key={r} className="absolute rounded-full border border-neon-hud/25" style={{ width: r, height: r, left: "50%", top: "50%", transform: "translate(-50%, -50%)" }} />
@@ -388,7 +388,7 @@ export function RadarPanel() {
                   <span className="font-tech text-[10px] w-4 text-muted-foreground">{i + 1}</span>
                   <span className="font-mono text-[10px] flex-1 truncate">{m.name}</span>
                   <div className="w-14 h-1 bg-secondary">
-                    <div className="h-full" style={{ width: `${m.score}%`, background: m.score >= 85 ? "#00FF87" : m.score >= 60 ? "#1E90FF" : "#FF3B30" }} />
+                    <div className="h-full" style={{ width: `${m.score}%`, background: m.score >= 85 ? "#3DDC97" : m.score >= 60 ? "#DCC078" : "#FF3B30" }} />
                   </div>
                   <span className={cn("font-tech text-[11px] font-bold tabular-nums w-8 text-right", m.cor)}>{m.score}</span>
                 </div>

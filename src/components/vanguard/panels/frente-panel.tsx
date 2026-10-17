@@ -747,12 +747,12 @@ export function FrentePanel() {
           ctx.fillStyle = "#FF3B30"; ctx.font = "8px monospace"; ctx.textAlign = "left";
           ctx.fillText("REPLEGÁNDOSE", cxp - 26, cyp - 42);
         } else if (Math.floor(t / 30) % 2 === 0) {
-          ctx.fillStyle = "#00FF87";
+          ctx.fillStyle = "#3DDC97";
           ctx.beginPath(); ctx.arc(cxp - 28, cyp - 38, 2.2, 0, Math.PI * 2); ctx.fill();
         }
         const hpr = Math.max(0, s.cpHp) / 100;
         ctx.fillStyle = "rgba(0,0,0,0.55)"; ctx.fillRect(cxp - 26, cyp - 26, 52, 4);
-        ctx.fillStyle = hpr > 0.5 ? "#00FF87" : hpr > 0.25 ? "#FFB800" : "#FF3B30";
+        ctx.fillStyle = hpr > 0.5 ? "#3DDC97" : hpr > 0.25 ? "#FFB800" : "#FF3B30";
         ctx.fillRect(cxp - 26, cyp - 26, 52 * hpr, 4);
       }
 
@@ -859,7 +859,7 @@ export function FrentePanel() {
       ctx.fillText(`PUNTOS ${s.score}${bestRef.current ? ` · RÉCORD ${bestRef.current}` : ""}`, 10, 16);
       if (s.combo > 1) {
         const mult = Math.min(5, 1 + Math.floor(s.combo / 4));
-        ctx.fillStyle = s.combo >= 8 ? "#FF3B30" : "#00FF87";
+        ctx.fillStyle = s.combo >= 8 ? "#FF3B30" : "#3DDC97";
         ctx.font = "bold 13px monospace";
         ctx.fillText(`COMBO x${s.combo} (×${mult} PAGO)`, 10, 32);
       }

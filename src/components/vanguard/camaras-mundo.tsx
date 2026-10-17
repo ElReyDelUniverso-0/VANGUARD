@@ -183,7 +183,7 @@ export function CamarasMundo() {
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
               <span className="font-mono text-[9px] uppercase tracking-[0.4em] text-cyan-hud animate-pulse">señal en espera</span>
-              <span className="inline-flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-sm font-mono text-xs uppercase tracking-[0.25em] font-bold text-black bg-gradient-to-b from-[#8fd3ff] to-[#1E90FF] border border-[#c9e9ff]/60 shadow-[0_6px_26px_rgba(30,144,255,0.45)] group-hover:brightness-110 group-active:scale-95 transition-all">
+              <span className="inline-flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-sm font-mono text-xs uppercase tracking-[0.25em] font-bold text-black bg-gradient-to-b from-[#8fd3ff] to-[#DCC078] border border-[#c9e9ff]/60 shadow-[0_6px_26px_rgba(212, 175, 55,0.45)] group-hover:brightness-110 group-active:scale-95 transition-all">
                 <Video className="w-4 h-4" /> Conectar la señal en vivo
               </span>
               <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
@@ -205,7 +205,7 @@ export function CamarasMundo() {
           </p>
           <button onClick={() => setMosaico((m) => !m)}
             className={cn("inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] border rounded-sm text-[10px] font-mono uppercase font-bold tracking-widest transition-all active:scale-95",
-              mosaico ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20 shadow-[0_0_18px_rgba(30,144,255,0.35)]" : "border-cyan-hud/50 text-cyan-hud hover:bg-cyan-hud/10")}>
+              mosaico ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20 shadow-[0_0_18px_rgba(212, 175, 55,0.35)]" : "border-cyan-hud/50 text-cyan-hud hover:bg-cyan-hud/10")}>
             <Grid3x3 className="w-3.5 h-3.5" /> {mosaico ? "cerrar mosaico" : "modo vigilancia"}
           </button>
         </div>
@@ -262,7 +262,7 @@ export function CamarasMundo() {
               title={`${countryName(f.pais)} — ${f.nota}`}
               className={cn(
                 "transition-all active:scale-90 rounded-sm hover:-translate-y-0.5",
-                pais === f.pais ? "ring-1 ring-cyan-hud shadow-[0_0_16px_rgba(30,144,255,0.35)]" : "opacity-85 hover:opacity-100"
+                pais === f.pais ? "ring-1 ring-cyan-hud shadow-[0_0_16px_rgba(212, 175, 55,0.35)]" : "opacity-85 hover:opacity-100"
               )}
             >
               <FlagBadge code={f.pais} />
@@ -330,7 +330,7 @@ export function CamarasMundo() {
             href={e.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hud-panel p-3.5 group hover:border-cyan-hud/50 hover:shadow-[0_8px_26px_rgba(30,144,255,0.15)] transition-all hover:-translate-y-0.5 active:scale-[0.98]"
+            className="hud-panel p-3.5 group hover:border-cyan-hud/50 hover:shadow-[0_8px_26px_rgba(212, 175, 55,0.15)] transition-all hover:-translate-y-0.5 active:scale-[0.98]"
           >
             <p className="flex items-center justify-between font-display font-bold text-[13px] uppercase tracking-wide text-foreground group-hover:text-cyan-hud transition-colors">
               {e.nombre}

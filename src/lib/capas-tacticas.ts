@@ -15,23 +15,23 @@ export interface DefCapa {
 
 // ---------- BASES MILITARES (públicamente conocidas) ----------
 const BASES: CapaTactica[] = [
-  { id: "b-ramstein", tipo: "BASE", nombre: "RAMSTEIN", lat: 49.44, lng: 7.6, color: "#00FF87" },
-  { id: "b-incirlik", tipo: "BASE", nombre: "INCIRLIK", lat: 37.0, lng: 35.42, color: "#00FF87" },
-  { id: "b-aludeid", tipo: "BASE", nombre: "AL UDEID", lat: 25.12, lng: 51.31, color: "#00FF87" },
-  { id: "b-diegogarcia", tipo: "BASE", nombre: "DIEGO GARCIA", lat: -7.31, lng: 72.41, color: "#00FF87" },
-  { id: "b-rota", tipo: "BASE", nombre: "ROTA", lat: 36.64, lng: -6.35, color: "#00FF87" },
-  { id: "b-napoles", tipo: "BASE", nombre: "NÁPOLES", lat: 40.85, lng: 14.27, color: "#00FF87" },
-  { id: "b-souda", tipo: "BASE", nombre: "SOUDA BAY", lat: 35.53, lng: 24.15, color: "#00FF87" },
+  { id: "b-ramstein", tipo: "BASE", nombre: "RAMSTEIN", lat: 49.44, lng: 7.6, color: "#3DDC97" },
+  { id: "b-incirlik", tipo: "BASE", nombre: "INCIRLIK", lat: 37.0, lng: 35.42, color: "#3DDC97" },
+  { id: "b-aludeid", tipo: "BASE", nombre: "AL UDEID", lat: 25.12, lng: 51.31, color: "#3DDC97" },
+  { id: "b-diegogarcia", tipo: "BASE", nombre: "DIEGO GARCIA", lat: -7.31, lng: 72.41, color: "#3DDC97" },
+  { id: "b-rota", tipo: "BASE", nombre: "ROTA", lat: 36.64, lng: -6.35, color: "#3DDC97" },
+  { id: "b-napoles", tipo: "BASE", nombre: "NÁPOLES", lat: 40.85, lng: 14.27, color: "#3DDC97" },
+  { id: "b-souda", tipo: "BASE", nombre: "SOUDA BAY", lat: 35.53, lng: 24.15, color: "#3DDC97" },
   { id: "b-kaliningrado", tipo: "BASE", nombre: "KALININGRADO", lat: 54.71, lng: 20.51, color: "#FF4655" },
   { id: "b-sebastopol", tipo: "BASE", nombre: "SEBASTÓPOL", lat: 44.62, lng: 33.53, color: "#FF4655" },
   { id: "b-tartus", tipo: "BASE", nombre: "TARTUS", lat: 34.9, lng: 35.87, color: "#FF4655" },
   { id: "b-hmeimim", tipo: "BASE", nombre: "HMEIMIM", lat: 35.4, lng: 35.95, color: "#FF4655" },
   { id: "b-djibouti", tipo: "BASE", nombre: "DJIBOUTI (CN)", lat: 11.55, lng: 43.15, color: "#FF4655" },
   { id: "b-gwadar", tipo: "BASE", nombre: "GWADAR", lat: 25.12, lng: 62.32, color: "#FFB020" },
-  { id: "b-djibouti-us", tipo: "BASE", nombre: "CAMP LEMONNIER", lat: 11.54, lng: 43.14, color: "#00FF87" },
-  { id: "b-yokosuka", tipo: "BASE", nombre: "YOKOSUKA", lat: 35.29, lng: 139.67, color: "#00FF87" },
-  { id: "b-guam", tipo: "BASE", nombre: "ANDERSEN", lat: 13.58, lng: 144.92, color: "#00FF87" },
-  { id: "b-kadena", tipo: "BASE", nombre: "KADENA", lat: 26.35, lng: 127.77, color: "#00FF87" },
+  { id: "b-djibouti-us", tipo: "BASE", nombre: "CAMP LEMONNIER", lat: 11.54, lng: 43.14, color: "#3DDC97" },
+  { id: "b-yokosuka", tipo: "BASE", nombre: "YOKOSUKA", lat: 35.29, lng: 139.67, color: "#3DDC97" },
+  { id: "b-guam", tipo: "BASE", nombre: "ANDERSEN", lat: 13.58, lng: 144.92, color: "#3DDC97" },
+  { id: "b-kadena", tipo: "BASE", nombre: "KADENA", lat: 26.35, lng: 127.77, color: "#3DDC97" },
   { id: "b-murmansk", tipo: "BASE", nombre: "SEVEROMORSK", lat: 69.07, lng: 33.42, color: "#FF4655" },
 ];
 
@@ -112,7 +112,7 @@ const POBLACION: CapaTactica[] = [
 ];
 
 export const CAPAS_TACTICAS: DefCapa[] = [
-  { id: "bases", nombre: "Bases militares", desc: "18 bases públicas de EE.UU., Rusia y China", color: "#00FF87", items: BASES },
+  { id: "bases", nombre: "Bases militares", desc: "18 bases públicas de EE.UU., Rusia y China", color: "#3DDC97", items: BASES },
   { id: "energia", nombre: "Oleoductos y gas", desc: "Druzhba, TurkStream, BTC, rutas LNG", color: "#FFB020", items: ENERGIA },
   { id: "exclusiones", nombre: "Exclusión aérea", desc: "7 espacios aéreos restringidos u hostiles", color: "#FF4655", items: EXCLUSIONES },
   { id: "bloqueos", nombre: "Bloqueos navales", desc: "7 gargantas y corredores amenazados", color: "#38BDF8", items: BLOQUEOS },

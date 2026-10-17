@@ -85,7 +85,7 @@ function nivelDe(i: number): { nivel: RegionOut["nivel"]; color: string } {
   if (i >= 78) return { nivel: "CRÍTICO", color: "#FF4655" };
   if (i >= 58) return { nivel: "ELEVADO", color: "#FFB020" };
   if (i >= 38) return { nivel: "VIGILANCIA", color: "#38BDF8" };
-  return { nivel: "BAJO", color: "#00FF87" };
+  return { nivel: "BAJO", color: "#3DDC97" };
 }
 
 function calcularRegiones(tension: number): RegionOut[] {
@@ -144,7 +144,7 @@ function Aguja({ valor, tam = 220 }: { valor: number; tam?: number }) {
   };
   return (
     <svg viewBox="0 0 200 118" style={{ width: tam, maxWidth: "100%" }} role="img" aria-label={`Índice global: ${Math.round(valor)} de 100`}>
-      {arcoDe(0, 37, "#00FF87")}
+      {arcoDe(0, 37, "#3DDC97")}
       {arcoDe(38, 57, "#38BDF8")}
       {arcoDe(58, 77, "#FFB020")}
       {arcoDe(78, 100, "#FF4655")}
@@ -322,7 +322,7 @@ export function CentinelaPanel() {
                 <div key={DRIVERS[i].id} className="flex items-center gap-2">
                   <span className="font-mono text-[8.5px] uppercase tracking-wide text-muted-foreground w-[152px] shrink-0 truncate">{DRIVERS[i].nombre}</span>
                   <div className="flex-1 h-1 bg-black/50 border border-white/10 rounded-sm overflow-hidden">
-                    <div className="h-full rounded-sm transition-all duration-700" style={{ width: `${d.valor}%`, background: d.trend === 1 ? "#FF4655" : d.trend === -1 ? "#00FF87" : "#FFB020", boxShadow: "none" }} />
+                    <div className="h-full rounded-sm transition-all duration-700" style={{ width: `${d.valor}%`, background: d.trend === 1 ? "#FF4655" : d.trend === -1 ? "#3DDC97" : "#FFB020", boxShadow: "none" }} />
                   </div>
                   <span className="shrink-0 w-4 text-right">
                     {d.trend === 1 ? <ArrowUpRight className="w-3 h-3 text-red-hud" /> : d.trend === -1 ? <ArrowDownRight className="w-3 h-3 text-green-hud" /> : <ArrowRight className="w-3 h-3 text-amber" />}

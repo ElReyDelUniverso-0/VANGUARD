@@ -375,7 +375,7 @@ export function OsintPanel() {
                       "absolute top-0.5 w-2.5 h-2.5 rounded-full vg-transition",
                       on ? "left-[15px]" : "left-0.5"
                     )}
-                    style={{ background: on ? "#00FF87" : "#555" }}
+                    style={{ background: on ? "#3DDC97" : "#555" }}
                   />
                 </span>
                 <span className="text-xs w-4 text-center flex-shrink-0">{l.emoji}</span>
@@ -445,7 +445,7 @@ export function OsintPanel() {
                   </span>
                 </div>
                 <div className="h-1.5 bg-secondary overflow-hidden">
-                  <div className="h-full" style={{ width: `${selected.intensity * 10}%`, background: `linear-gradient(90deg, #00FF87, #FFD60A 55%, #FF3B30)` }} />
+                  <div className="h-full" style={{ width: `${selected.intensity * 10}%`, background: `linear-gradient(90deg, #3DDC97, #FFD60A 55%, #FF3B30)` }} />
                 </div>
               </div>
 
@@ -516,7 +516,7 @@ function OsintGlobe3D({
     const markers: Globe3DMarker[] = [];
     const arcs: Globe3DArc[] = [];
     for (const lid of Array.from(active)) {
-      const color = LAYERS.find((l) => l.id === lid)?.color ?? "#1E90FF";
+      const color = LAYERS.find((l) => l.id === lid)?.color ?? "#DCC078";
       const pts = pointsByLayer[lid];
       if (pts) {
         for (const p of pts) {

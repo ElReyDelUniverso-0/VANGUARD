@@ -30,7 +30,7 @@ export default function AppError({
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
             onClick={reset}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-[#1E90FF]/20 border border-[#1E90FF] text-[#5EB2FF] font-mono text-xs uppercase tracking-widest hover:bg-[#1E90FF]/40 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-[#DCC078]/20 border border-[#DCC078] text-[#5EB2FF] font-mono text-xs uppercase tracking-widest hover:bg-[#DCC078]/40 transition-colors"
           >
             <RefreshCw className="w-4 h-4" /> Reiniciar sistema
           </button>

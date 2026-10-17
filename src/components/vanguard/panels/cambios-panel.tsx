@@ -161,7 +161,7 @@ export function CambiosPanel() {
         icono={<Newspaper className="h-4 w-4" />}
         titulo={t("regreso.noticias")}
         nota={t("regreso.noticiasNota")}
-        color="#00FF87"
+        color="#3DDC97"
       >
         {noticiasNuevas === null ? (
           <p className="text-[11px] text-white/45">…</p>

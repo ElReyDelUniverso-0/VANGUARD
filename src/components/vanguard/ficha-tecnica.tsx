@@ -140,7 +140,7 @@ export function FichaTecnica({ ficha, onClose }: { ficha: Ficha | null; onClose:
 
               {/* estado */}
               <div className="flex items-center gap-2 px-2.5 py-2 border border-green-hud/40 bg-green-hud/10">
-                <span className="beacon w-1.5 h-1.5 rounded-full bg-green-hud" style={{ color: "#00FF87" }} />
+                <span className="beacon w-1.5 h-1.5 rounded-full bg-green-hud" style={{ color: "#3DDC97" }} />
                 <span className="font-mono text-[10px] uppercase tracking-widest text-green-hud">{ficha.estado}</span>
               </div>
 

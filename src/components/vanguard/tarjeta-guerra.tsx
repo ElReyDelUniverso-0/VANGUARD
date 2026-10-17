@@ -280,8 +280,8 @@ export function TarjetaGuerra({ compact = false }: { compact?: boolean }) {
               <div className="font-orbitron text-sm font-black" style={{ color: "#FFB800" }}>{seasonXp}</div>
               <div className="text-[7px] font-mono tracking-widest uppercase" style={{ color: "#8A93A6" }}>XP TEMPORADA</div>
             </div>
-            <div className="rounded-md border border-white/10 py-1.5" style={{ background: "rgba(0,255,135,0.07)" }}>
-              <div className="font-orbitron text-sm font-black" style={{ color: "#00FF87" }}>{coins}</div>
+            <div className="rounded-md border border-white/10 py-1.5" style={{ background: "rgba(61, 220, 151,0.07)" }}>
+              <div className="font-orbitron text-sm font-black" style={{ color: "#3DDC97" }}>{coins}</div>
               <div className="text-[7px] font-mono tracking-widest uppercase" style={{ color: "#8A93A6" }}>MONEDAS</div>
             </div>
           </div>

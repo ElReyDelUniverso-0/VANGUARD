@@ -31,8 +31,10 @@ export function PanelHeader({ title, subtitle, icon, color = "amber", right }: P
           </div>
         )}
         <div className="min-w-0">
-          <h2 className="font-mono text-base sm:text-lg font-bold tracking-wider uppercase text-foreground [perspective:600px]">
-            <LetrasAnimadas text={title} />
+          {/* v124.0 CAVIAR: los títulos de la casa van en serif de colección
+              con ORO en cada glifo — alta clase en todas las salas */}
+          <h2 className="font-caviar text-base sm:text-lg font-bold tracking-[0.12em] uppercase text-foreground [perspective:600px]">
+            <LetrasAnimadas text={title} letraClass="caviar-letra" />
           </h2>
           {subtitle && (
             <p className="text-[10px] sm:text-xs text-muted-foreground font-mono uppercase">{subtitle}</p>

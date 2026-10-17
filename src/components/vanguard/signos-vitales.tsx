@@ -39,12 +39,12 @@ function EkgPlaneta({ peligro }: { peligro: boolean }) {
       <path
         d="M0 20 H42 l6-9 6 18 6-14 6 5 H120 l6-11 6 20 6-15 6 6 H210 l6-9 6 16 6-13 6 6 H300"
         fill="none"
-        stroke={peligro ? "#FF3B30" : "#00FF87"}
+        stroke={peligro ? "#FF3B30" : "#3DDC97"}
         strokeWidth="1.6"
         strokeLinejoin="round"
         strokeLinecap="round"
         className="ekg-corre"
-        style={{ filter: `drop-shadow(0 0 4px ${peligro ? "rgba(255,59,48,0.6)" : "rgba(0,255,135,0.55)"})` }}
+        style={{ filter: `drop-shadow(0 0 4px ${peligro ? "rgba(255,59,48,0.6)" : "rgba(61, 220, 151,0.55)"})` }}
       />
     </svg>
   );

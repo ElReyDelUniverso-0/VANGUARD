@@ -195,7 +195,7 @@ export function PropagandaModal({ open, onClose }: { open: boolean; onClose: () 
             <Wand2 className="w-3.5 h-3.5 mr-1" /> Analizar texto
           </Button>
           {risk !== null && analized && (
-            <div className="font-tech text-sm font-bold px-3" style={{ color: risk >= 60 ? "#FF3B30" : risk >= 30 ? "#FFD60A" : "#00FF87" }}>
+            <div className="font-tech text-sm font-bold px-3" style={{ color: risk >= 60 ? "#FF3B30" : risk >= 30 ? "#FFD60A" : "#3DDC97" }}>
               {riskLabel} · {risk}/100
             </div>
           )}

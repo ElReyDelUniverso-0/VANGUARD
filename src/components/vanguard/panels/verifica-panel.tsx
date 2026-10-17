@@ -41,7 +41,7 @@ function hash(s: string): number {
 type Estado = "VERIFICADO" | "EN VERIFICACIÓN" | "NO CONFIRMADO" | "DISPUTADO";
 
 const ESTADO_STYLES: Record<Estado, { chip: string; dot: string; color: string }> = {
-  "VERIFICADO": { chip: "text-green-hud border-green-hud/50 bg-green-hud/15", dot: "bg-green-hud", color: "#00FF87" },
+  "VERIFICADO": { chip: "text-green-hud border-green-hud/50 bg-green-hud/15", dot: "bg-green-hud", color: "#3DDC97" },
   "EN VERIFICACIÓN": { chip: "text-amber border-amber-hud/50 bg-amber-hud/15", dot: "bg-amber", color: "#FFB020" },
   "NO CONFIRMADO": { chip: "text-red-hud border-red-hud/50 bg-red-hud/15", dot: "bg-red-hud", color: "#FF4655" },
   "DISPUTADO": { chip: "text-violet-hud border-violet-hud/50 bg-violet-hud/15", dot: "bg-violet-hud", color: "#C084FC" },
@@ -235,7 +235,7 @@ export function VerificaPanel() {
         color="amber"
         right={
           <span className="flex items-center gap-1.5 text-[9px] font-mono uppercase px-2 py-1 border border-green-hud/60 text-green-hud bg-green-hud/10">
-            <span className="beacon w-1.5 h-1.5 rounded-full bg-green-hud" style={{ color: "#00FF87" }} />
+            <span className="beacon w-1.5 h-1.5 rounded-full bg-green-hud" style={{ color: "#3DDC97" }} />
             MESA ACTIVA
           </span>
         }

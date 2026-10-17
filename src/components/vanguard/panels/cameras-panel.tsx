@@ -93,7 +93,7 @@ function CamerasGlobe3D({
         id: "pending",
         lat: pendingSpot.lat,
         lng: pendingSpot.lng,
-        color: "#00FF87",
+        color: "#3DDC97",
         size: 0.45,
         alt: 0.05,
         ring: true,

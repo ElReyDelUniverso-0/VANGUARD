@@ -57,7 +57,7 @@ export function CostoGuerra() {
   // aguja del medidor nuclear: tensión 0-100 → 1-100 de riesgo (nunca 0)
   const risk = Math.max(1, Math.min(100, Math.round(tension)));
   const angle = -110 + (risk / 100) * 220; // -110° .. +110°
-  const riskColor = risk >= 90 ? "#FF3B30" : risk >= 70 ? "#FF7A45" : risk >= 45 ? "#FFD60A" : "#00FF87";
+  const riskColor = risk >= 90 ? "#FF3B30" : risk >= 70 ? "#FF7A45" : risk >= 45 ? "#FFD60A" : "#3DDC97";
   const riskLabel = risk >= 90 ? "ZONA EXTINCIÓN" : risk >= 70 ? "MUY ALTO" : risk >= 45 ? "ELEVADO" : "CONTENIDO";
 
   return (
@@ -102,7 +102,7 @@ export function CostoGuerra() {
         <svg viewBox="0 0 120 78" className="w-full max-w-[190px]">
           {/* arco de fondo 220° */}
           {[
-            { from: 0, to: 45, color: "#00FF87" },
+            { from: 0, to: 45, color: "#3DDC97" },
             { from: 45, to: 70, color: "#FFD60A" },
             { from: 70, to: 90, color: "#FF7A45" },
             { from: 90, to: 100, color: "#FF3B30" },

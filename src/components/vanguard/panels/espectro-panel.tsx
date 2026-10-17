@@ -111,7 +111,7 @@ export function EspectroPanel() {
             "flex items-center gap-1.5 text-[9px] font-mono uppercase px-2 py-1 border bg-black/30",
             data?.fuentes.adsb ? "border-green-hud/60 text-green-hud" : "border-amber-hud/60 text-amber"
           )}>
-            <span className={cn("beacon w-1.5 h-1.5 rounded-full", data?.fuentes.adsb ? "bg-green-hud" : "bg-amber")} style={{ color: data?.fuentes.adsb ? "#00FF87" : "#FFB020" }} />
+            <span className={cn("beacon w-1.5 h-1.5 rounded-full", data?.fuentes.adsb ? "bg-green-hud" : "bg-amber")} style={{ color: data?.fuentes.adsb ? "#3DDC97" : "#FFB020" }} />
             {data?.fuentes.adsb ? "ADS-B REAL" : "SIMULADO"}
           </span>
         }

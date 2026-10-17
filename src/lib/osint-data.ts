@@ -45,7 +45,7 @@ export interface LayerDef {
 export const LAYERS: LayerDef[] = [
   { id: "conflictos", label: "Conflictos armados activos", emoji: "🔴", color: "#FF3B30", desc: "Frentes de guerra con combates activos verificados" },
   { id: "tensiones", label: "Tensiones geopoliticas", emoji: "🟠", color: "#FF9500", desc: "Escaladas diplomáticas, movilizaciones y crisis sin fuego" },
-  { id: "vuelos", label: "Vuelos militares (OpenSky)", emoji: "✈️", color: "#1E90FF", desc: "Patrullas, transportes y ISR en ruta" },
+  { id: "vuelos", label: "Vuelos militares (OpenSky)", emoji: "✈️", color: "#DCC078", desc: "Patrullas, transportes y ISR en ruta" },
   { id: "barcos", label: "Barcos de guerra (MarineTraffic)", emoji: "🚢", color: "#4DA6FF", desc: "Grupos de combate y patrullas navales" },
   { id: "ciber", label: "Ciberataques en vivo (Cloudflare)", emoji: "💻", color: "#BF5AF2", desc: "Tráfico malicioso entre países, atenuación DNS" },
   { id: "gps", label: "Interferencia GPS (GPSJam)", emoji: "📡", color: "#FFD60A", desc: "Zonas con degradación de señal GNSS reportada" },
@@ -53,10 +53,10 @@ export const LAYERS: LayerDef[] = [
   { id: "satelites", label: "Satélites militares en órbita", emoji: "🛸", color: "#F0F0F0", desc: "Reconocimiento, SIGINT y alerta temprana" },
   { id: "clima", label: "Clima en zonas de conflicto", emoji: "🌩️", color: "#00C7BE", desc: "Ventanas meteorológicas que afectan operaciones" },
   { id: "nucleares", label: "Instalaciones nucleares", emoji: "☢️", color: "#FFD60A", desc: "Centrales, enriquecimiento y arsenales declarados" },
-  { id: "bases", label: "Bases militares del mundo", emoji: "🏛️", color: "#00FF87", desc: "Despliegues extranjeros permanentes" },
+  { id: "bases", label: "Bases militares del mundo", emoji: "🏛️", color: "#3DDC97", desc: "Despliegues extranjeros permanentes" },
   { id: "oleoductos", label: "Oleoductos estratégicos", emoji: "🛢️", color: "#C68452", desc: "Energía que cruza zonas de riesgo" },
   { id: "incendios", label: "Incendios (NASA FIRMS)", emoji: "🔥", color: "#FF6B35", desc: "Hotspots térmicos detectados por satélite" },
-  { id: "sismos", label: "Terremotos (USGS en vivo)", emoji: "🌋", color: "#00FF87", desc: "Sismos M2.5+ últimas 24h — API real", live: true },
+  { id: "sismos", label: "Terremotos (USGS en vivo)", emoji: "🌋", color: "#3DDC97", desc: "Sismos M2.5+ últimas 24h — API real", live: true },
   { id: "historicos", label: "Eventos históricos", emoji: "📜", color: "#F5A623", desc: "Batallas y giros que cambiaron el mapa" },
 ];
 
@@ -222,7 +222,7 @@ export function tensionColor(v: number): string {
   if (v >= 80) return "#FF3B30";
   if (v >= 60) return "#FF9500";
   if (v >= 40) return "#FFD60A";
-  return "#00FF87";
+  return "#3DDC97";
 }
 
 export function tensionLabel(v: number): string {

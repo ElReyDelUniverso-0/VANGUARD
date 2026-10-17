@@ -101,10 +101,10 @@ const SCENES: { id: Scene; label: string; desc: string }[] = [
   { id: "globe", label: "GLOBO 3D", desc: "Giro mundial con malla táctica" },
 ];
 const PALETTES = [
-  { id: "blue", label: "Eléctrico", main: "#1E90FF", accent: "#00FF87" },
+  { id: "blue", label: "Eléctrico", main: "#DCC078", accent: "#3DDC97" },
   { id: "red", label: "Crisis", main: "#FF3B30", accent: "#FFD60A" },
   { id: "gold", label: "Premium", main: "#d4af37", accent: "#F0F0F0" },
-  { id: "green", label: "Comando", main: "#00FF87", accent: "#1E90FF" },
+  { id: "green", label: "Comando", main: "#3DDC97", accent: "#DCC078" },
 ];
 const FILTERS = [
   { id: "none", label: "Original", css: "none" },
@@ -246,7 +246,7 @@ export function EstudioPanel() {
         ctx.beginPath(); ctx.arc(px * W, py * H, pulse, 0, Math.PI * 2); ctx.fill();
         for (const [qx, qy] of pts) {
           if (px < qx) {
-            ctx.strokeStyle = "rgba(30,144,255,0.25)";
+            ctx.strokeStyle = "rgba(212, 175, 55,0.25)";
             ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(px * W, py * H);
@@ -255,7 +255,7 @@ export function EstudioPanel() {
           }
         }
       }
-      ctx.strokeStyle = "rgba(30,144,255,0.08)";
+      ctx.strokeStyle = "rgba(212, 175, 55,0.08)";
       for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
       for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
     } else if (scene === "battle") {
@@ -289,7 +289,7 @@ export function EstudioPanel() {
       ctx.fillRect(0, 0, W, H);
     } else {
       const cx = W / 2, cy = H * 0.52, R = H * 0.4;
-      ctx.strokeStyle = "rgba(30,144,255,0.5)";
+      ctx.strokeStyle = "rgba(212, 175, 55,0.5)";
       ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
       for (let i = 1; i < 6; i++) {
@@ -922,7 +922,7 @@ export function EstudioPanel() {
                       type="range" min={0} max={Math.max(0.5, duration)} step={0.1}
                       value={trimStart}
                       onChange={(e) => setTrimStart(Math.min(Number(e.target.value), trimEnd - 0.5))}
-                      className="w-full" style={{ accentColor: "#1E90FF" }}
+                      className="w-full" style={{ accentColor: "#DCC078" }}
                       aria-label="Punto de inicio del recorte en segundos"
                     />
                   </div>
@@ -1135,7 +1135,7 @@ export function EstudioPanel() {
                     type="range" min={18} max={110} step={1}
                     value={sel.r}
                     onChange={(e) => resizeSelected(Number(e.target.value))}
-                    className="w-full" style={{ accentColor: "#00FF87" }}
+                    className="w-full" style={{ accentColor: "#3DDC97" }}
                     aria-label="Tamaño del personaje seleccionado"
                   />
                 </label>

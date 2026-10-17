@@ -57,7 +57,7 @@ export function CiudadHero() {
           <TituloLetras3D
             texto="VANGUARD"
             acento="#FFC94D"
-            material="brasa"
+            material="oro"
             profundidad={7}
             entrada={!reduced}
             etiqueta="VANGUARD"

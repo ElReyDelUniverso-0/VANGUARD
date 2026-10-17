@@ -32,10 +32,10 @@ const GlobeMap3D = dynamic(
 );
 
 const CONTINENT_COLOR: Record<string, string> = {
-  "NORTEAMÉRICA": "#3EA6FF",
+  "NORTEAMÉRICA": "#E8C56A",
   "SUDAMÉRICA": "#38BDF8",
   "EUROPA": "#A855F7",
-  "ÁFRICA": "#00FF87",
+  "ÁFRICA": "#3DDC97",
   "ASIA": "#FF3B30",
   "OCEANÍA": "#FFD166",
 };
@@ -730,7 +730,7 @@ function HomeSelect({
   // v14: colores por continente para la vista previa 3D
   const previewColors = useMemo(() => {
     const m: Record<string, string> = {};
-    for (const t of TERRITORIES) m[t.id] = CONTINENT_COLOR[t.continent] ?? "#3EA6FF";
+    for (const t of TERRITORIES) m[t.id] = CONTINENT_COLOR[t.continent] ?? "#E8C56A";
     return m;
   }, []);
 
@@ -763,7 +763,7 @@ function HomeSelect({
                   id: "cap",
                   lat: getTerritory(homePick).lat,
                   lng: getTerritory(homePick).lng,
-                  color: "#3EA6FF",
+                  color: "#E8C56A",
                   size: 0.55,
                   alt: 0.05,
                   ring: true,

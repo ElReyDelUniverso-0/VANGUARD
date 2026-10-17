@@ -397,7 +397,7 @@ export function Frente3D({ stateRef, front, onStrike }: {
     cp.add(antenna);
     cp.position.set(-34.5, 0, 7);
     scene.add(cp);
-    const cpLight = addSprite("rgba(0,255,135,0.95)", "rgba(0,255,135,0)", -34.5, 1.4, 7, 1.6);
+    const cpLight = addSprite("rgba(61, 220, 151,0.95)", "rgba(61, 220, 151,0)", -34.5, 1.4, 7, 1.6);
 
     // ---- POOLS DE UNIDADES (por tipo y bando)
     const colA = new THREE.Color(front.sideA.colors[0] ?? "#888");

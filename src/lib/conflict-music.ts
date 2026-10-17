@@ -204,6 +204,31 @@ export const MUSIC_TRACKS: TrackDef[] = [
     lead: [0, -1, -1, -1, -1, -1, 2, -1, -1, -1, -1, -1, 3, -1, -1, -1], // la estrella que sube
     leadType: "glass",
   },
+  {
+    id: "caviar",
+    name: "SALÓN CAVIAR",
+    desc: "El lounge de la élite: piano de cristal, contrabajo de terciopelo y champán con swing — Vanguard en smoking",
+    cat: "vanguard",
+    bpm: 58,
+    root: st(-24, 87.31), // F0
+    chords: [maj(0), min(-3), maj(-7), maj(7)], // Fmaj7 - Dm7 - Bbmaj7 - C7 (el color de séptima lo da rich)
+    chordsB: [maj(-7), maj(7), maj(3), min(0)], // Bb - C - Fmaj - Dm (el brindis)
+    rich: true,
+    bass: [0, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1, -1, 0, -1, 7, -1],
+    arp: [0, -1, 1, -1, 2, -1, 3, -1, -1, 2, -1, 1, -1, 0, -1, -1],
+    arpType: "sine",
+    bassType: "sine",
+    kick: "x.......x.......",
+    snare: "....x.......x...",
+    hat: "..x...x...x...x.",
+    drone: 0.5,
+    droneGain: 0.035,
+    padLevel: 0.07,
+    lead: [4, -1, -1, 3, -1, -1, 2, -1, -1, -1, 3, -1, -1, -1, -1, -1], // el brindis de la casa
+    leadType: "glass",
+    swing: true,
+    shaker: true,
+  },
   // ══════════════ v109.0 ORQUESTA DE ORO — las 4 insignias de la casa ══════════════
   {
     id: "orquesta",
@@ -792,7 +817,7 @@ export const ESCENA_TRACKS: Record<EscenaKey, string> = {
   emisora: "neon",         // TV y feeds: Neón Vertical
   oscsuro: "invierno",     // verdad cruda: Invierno Atómico
   creadores: "damasco",    // creadores: Neón de Damasco
-  social: "sala",          // comunidad: La Sala Dorada
+  social: "caviar",        // comunidad: SALÓN CAVIAR — el lounge de lujo (v124)
   sistema: "heroes",       // sistema: CORO DE LOS HÉROES (v123)
 };
 

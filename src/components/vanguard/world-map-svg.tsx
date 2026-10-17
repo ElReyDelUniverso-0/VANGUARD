@@ -434,7 +434,7 @@ export function WorldMapSVG({
       {capas.length > 0 && (
         <g>
           {capas.map((c) => {
-            const color = c.color ?? "#00FF87";
+            const color = c.color ?? "#3DDC97";
             if (c.tipo === "BASE" && c.lat != null && c.lng != null) {
               const p = projectLatLng(c.lat, c.lng);
               return (

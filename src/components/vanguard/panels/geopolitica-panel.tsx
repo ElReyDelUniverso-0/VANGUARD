@@ -61,7 +61,7 @@ function quakeColor(mag: number): string {
 type Metric = "military" | "population" | "gdp";
 const METRIC_LABEL: Record<Metric, { t: string; sub: string; icon: React.ReactNode; color: string }> = {
   military: { t: "GASTO MILITAR", sub: "% del PIB · Banco Mundial", icon: <Swords className="w-3.5 h-3.5" />, color: "#FF3B30" },
-  population: { t: "POBLACIÓN", sub: "habitantes · Banco Mundial", icon: <Users className="w-3.5 h-3.5" />, color: "#00FF87" },
+  population: { t: "POBLACIÓN", sub: "habitantes · Banco Mundial", icon: <Users className="w-3.5 h-3.5" />, color: "#3DDC97" },
   gdp: { t: "POTENCIA ECONÓMICA", sub: "PIB en dólares · Banco Mundial", icon: <DollarSign className="w-3.5 h-3.5" />, color: "#FFD60A" },
 };
 

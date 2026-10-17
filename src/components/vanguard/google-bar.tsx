@@ -59,7 +59,7 @@ const APP_HEX: Record<string, string> = {
   amber: "#FFC94D",
   cyan: "#38BDF8",
   red: "#FF5A4E",
-  green: "#00FF87",
+  green: "#3DDC97",
   violet: "#B48CFF",
 };
 

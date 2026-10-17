@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v124.0",
+    nombre: "CAVIAR",
+    tipo: "nav",
+    hitos: [
+      "LA CASA SE VISTE DE ALTA CLASE: la paleta completa pasa del neón frío a la sala de lujo — noir cálido de terciopelo, marfil, ORO #E8C56A como acento de la casa, champán en lugar del azul eléctrico y esmeralda fina en lugar del verde neón (279 sustituciones en 59 archivos, la crisis sigue siendo roja)",
+      "TIPOGRAFÍA DE COLECCIÓN: los títulos de TODAS las salas y el wordmark del HUD van ahora en la serif caviar (Didot · Bodoni · Playfair · Georgia) con ORO EN CADA GLIFO — gradiente champán→oro→bronce por letra",
+      "EL TELÓN DE ORO, el 6º estilo de viaje: telas de terciopelo noir con bastilla de oro brillante, costura dorada donde se encuentran y polvo de oro cayendo — y es el nuevo viaje POR DEFECTO de toda la casa (migración de lujo única que conserva tus visitas, favoritos y color)",
+      "LA CAMPANA DEL SALÓN: entrar a una sala ya no suena a madera sino a lujo — dos notas de campana (Si5→Mi6, quinta justa) con cola de sala larga en cada cambio de sección",
+      "SALÓN CAVIAR, la obra del lounge de la élite: 58 BPM en Fa con séptimas (Fmaj7·Dm7·Bbmaj7·C7), piano de cristal, contrabajo de terciopelo, shaker y swing — la RADIO la programa en la sala SOCIAL y puedes pedir-la en COLECCIÓN",
+      "VANGUARD 3D EN ORO: las letras volumétricas de la portada pasan de material brasa a material ORO — la ciudad vive bajo un rótulo de lingote",
+      "EL CRISTAL DE LA CASA: hud-panel y glass con veta cálida de terciopelo, rejilla tejida en oro, hilatura dorada en cada borde, selección y foco en oro — hasta el escáner CRT se apacigua para la sala de lujo",
+    ],
+  },
+  {
     version: "v123.0",
     nombre: "GLORIA ETERNA",
     tipo: "musica",

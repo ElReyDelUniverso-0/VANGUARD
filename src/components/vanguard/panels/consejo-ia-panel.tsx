@@ -29,7 +29,7 @@ const CONSEJEROS: { id: ConsejeroId; nombre: string; rol: string; icon: typeof S
   { id: "estratega", nombre: "EL ESTRATEGA", rol: "Táctica · mapas · logística", icon: Crosshair, hex: "#38BDF8", lema: "La geografía manda" },
   { id: "canciller", nombre: "LA CANCILLER", rol: "Diplomacia · alianzas", icon: Landmark, hex: "#FFC94D", lema: "Toda guerra termina en una firma" },
   { id: "general", nombre: "EL GENERAL", rol: "Fuerza · disuasión", icon: Swords, hex: "#FF5A3C", lema: "La logística es el destino" },
-  { id: "analista", nombre: "EL ANALISTA", rol: "Datos · probabilidad", icon: LineChart, hex: "#00FF87", lema: "Sin datos es solo opinión con uniforme" },
+  { id: "analista", nombre: "EL ANALISTA", rol: "Datos · probabilidad", icon: LineChart, hex: "#3DDC97", lema: "Sin datos es solo opinión con uniforme" },
 ];
 
 const TEMAS_SUGERIDOS = [
@@ -116,9 +116,9 @@ function ConsejoCard({
           <span
             className="ml-auto shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm border text-[8px] font-mono font-black tracking-wider"
             style={{
-              borderColor: voto.voto === "A FAVOR" ? "#00FF8766" : voto.voto === "EN CONTRA" ? "#FF3B3066" : "#8A8A9466",
-              color: voto.voto === "A FAVOR" ? "#00FF87" : voto.voto === "EN CONTRA" ? "#FF3B30" : "#9CA3AF",
-              background: voto.voto === "A FAVOR" ? "#00FF8714" : voto.voto === "EN CONTRA" ? "#FF3B3014" : "#8A8A9414",
+              borderColor: voto.voto === "A FAVOR" ? "#3DDC9766" : voto.voto === "EN CONTRA" ? "#FF3B3066" : "#8A8A9466",
+              color: voto.voto === "A FAVOR" ? "#3DDC97" : voto.voto === "EN CONTRA" ? "#FF3B30" : "#9CA3AF",
+              background: voto.voto === "A FAVOR" ? "#3DDC9714" : voto.voto === "EN CONTRA" ? "#FF3B3014" : "#8A8A9414",
             }}
           >
             {voto.voto === "A FAVOR" ? <Check className="w-2.5 h-2.5" /> : voto.voto === "EN CONTRA" ? <X className="w-2.5 h-2.5" /> : <MinusCircle className="w-2.5 h-2.5" />}
@@ -194,7 +194,7 @@ function NucleoBanner({ onListo }: { onListo: () => void }) {
         >
           <Brain className={cn("w-4 h-4", (estado.fase === "descargando" || estado.fase === "compilando") && "animate-pulse")} style={{ color: ACERO }} />
           {estado.fase === "listo" && (
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full animate-pulse" style={{ background: "#00FF87", boxShadow: "0 0 8px #00FF87" }} />
+            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full animate-pulse" style={{ background: "#3DDC97", boxShadow: "0 0 8px #3DDC97" }} />
           )}
         </span>
         <div className="min-w-0 flex-1">
@@ -230,7 +230,7 @@ function NucleoBanner({ onListo }: { onListo: () => void }) {
         {estado.fase === "listo" && (
           <span
             className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border text-[8px] font-mono font-black uppercase tracking-widest"
-            style={{ borderColor: "#00FF8755", color: "#00FF87", background: "#00FF8710" }}
+            style={{ borderColor: "#3DDC9755", color: "#3DDC97", background: "#3DDC9710" }}
           >
             <Cpu className="w-3 h-3" /> {estado.dispositivo === "webgpu" ? "WEBGPU · TU GPU" : "WASM · TU CPU"}
           </span>
@@ -570,7 +570,7 @@ export function ConsejoIaPanel() {
             className={cn("inline-flex items-center gap-1.5 px-2 py-1 rounded-sm border text-[8px] font-mono font-bold uppercase tracking-widest", enVivo && "animate-pulse")}
             style={{ borderColor: `${ACERO}55`, color: ACERO, background: `${ACERO}10` }}
           >
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: origen === "local" ? "#FFB020" : "#00FF87" }} />
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: origen === "local" ? "#FFB020" : "#3DDC97" }} />
             {origen === "embebida" ? "IA EMBEBIDA DE RESERVA" : origen === "ia" ? "NÚCLEO GLM EN VIVO" : "NÚCLEO LOCAL (SIN IA)"}
           </span>
         </div>

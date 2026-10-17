@@ -200,7 +200,7 @@ function MemeThumb({ comp }: { comp: MemeComposition }) {
 
 // ====== PANEL PRINCIPAL ======
 
-const TEXT_COLORS = ["#FFFFFF", "#FFD34D", "#FF3B30", "#00FF87", "#38BDF8", "#C084FC", "#FF6B4D", "#0A0A0F"];
+const TEXT_COLORS = ["#FFFFFF", "#FFD34D", "#FF3B30", "#3DDC97", "#38BDF8", "#C084FC", "#FF6B4D", "#0A0A0F"];
 
 function parseComp(raw: string): MemeComposition | null {
   try {

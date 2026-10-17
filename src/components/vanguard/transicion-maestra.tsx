@@ -3,9 +3,9 @@
 // ============================================================
 // v121.0 LA CAMA MÁS CÓMODA — TRANSICIÓN MAESTRA
 // "haz movimientos al cambiar de sección": el dueño ELIGE cómo
-// viaja entre salas. 5 estilos (deslizar, cine3d, telón,
-// hiperespacio, disolver) renderizados como capas fijas de puro
-// transform/opacity (60 FPS) + sello de versión. Se apaga con
+// viaja entre salas. 6 estilos (ORO CAVIAR v124, deslizar, cine3d,
+// telón, hiperespacio, disolver) renderizados como capas fijas de
+// puro transform/opacity (60 FPS) + sello de versión. Se apaga con
 // prefers-reduced-motion. Sustituye y amplía a TransicionCine.
 // ============================================================
 import { useEffect, useState } from "react";
@@ -33,6 +33,17 @@ export function TransicionMaestra({ tabKey, label }: { tabKey: string; label: st
 
   return (
     <div className="transicion-maestra" aria-hidden data-estilo={estilo}>
+      {estilo === "oro" && (
+        <>
+          {/* v124 CAVIAR: telas de terciopelo noir con bastilla de oro */}
+          <span className="tm-oro-tela tm-oro-tela-sup" />
+          <span className="tm-oro-tela tm-oro-tela-inf" />
+          <span className="tm-oro-costura" />
+          <span className="tm-oro-mota tm-oro-mota-1" />
+          <span className="tm-oro-mota tm-oro-mota-2" />
+          <span className="tm-oro-mota tm-oro-mota-3" />
+        </>
+      )}
       {estilo === "deslizar" && (
         <>
           <span className="tm-banda tm-banda-1" />
@@ -64,7 +75,7 @@ export function TransicionMaestra({ tabKey, label }: { tabKey: string; label: st
         </>
       )}
       {estilo === "disolver" && <span className="tm-velo" />}
-      <span className={`tm-sello font-mono ${estilo === "disolver" ? "tm-sello-calma" : ""}`}>{label}</span>
+      <span className={`tm-sello font-mono ${estilo === "disolver" ? "tm-sello-calma" : ""} ${estilo === "oro" ? "tm-sello-oro" : ""}`}>{label}</span>
     </div>
   );
 }

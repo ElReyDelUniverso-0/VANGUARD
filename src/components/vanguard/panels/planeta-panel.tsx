@@ -67,7 +67,7 @@ const CAT_COLOR: Record<string, string> = {
 };
 
 function quakeColor(mag: number): string {
-  return mag >= 6.5 ? "#FF3B30" : mag >= 5.5 ? "#F59E0B" : "#00FF87";
+  return mag >= 6.5 ? "#FF3B30" : mag >= 5.5 ? "#F59E0B" : "#3DDC97";
 }
 
 function auroraColor(prob: number): string {
@@ -194,7 +194,7 @@ export function PlanetaPanel() {
         id: "iss",
         lat: iss.lat,
         lng: iss.lng,
-        color: "#00FF87",
+        color: "#3DDC97",
         size: 0.75,
         alt: 0.09,
         labelTag: "EEI EN DIRECTO",
@@ -283,7 +283,7 @@ export function PlanetaPanel() {
                 { k: "evt", label: "Eventos NASA", sub: `${counts.evt} activos`, color: "#22D3EE", icon: <Satellite className="w-3.5 h-3.5" /> },
                 { k: "aur", label: "Auroras", sub: layers?.auroraMax ? `pico ${layers.auroraMax}%` : "sin pico", color: "#C084FC", icon: <Sparkles className="w-3.5 h-3.5" /> },
                 { k: "qk", label: "Sismos M4.5+", sub: `${counts.qk} en 24h`, color: "#F59E0B", icon: <Mountain className="w-3.5 h-3.5" /> },
-                { k: "iss", label: "EEI en directo", sub: iss ? `${Math.round(iss.altitude)} km` : "adquiriendo…", color: "#00FF87", icon: <Orbit className="w-3.5 h-3.5" /> },
+                { k: "iss", label: "EEI en directo", sub: iss ? `${Math.round(iss.altitude)} km` : "adquiriendo…", color: "#3DDC97", icon: <Orbit className="w-3.5 h-3.5" /> },
               ] as { k: LayerKey; label: string; sub: string; color: string; icon: React.ReactNode }[]).map((l) => (
                 <button
                   key={l.k}

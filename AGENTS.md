@@ -2,7 +2,7 @@
 # VANGUARD — Proyecto del usuario "ElReyDelUniverso-0"
 # Lee este archivo COMPLETO antes de tocar nada. Es tu contrato de trabajo.
 
-Última actualización: 2026-10-17 · Versión actual del proyecto: **v122.0 RUTAS DE PODER** (v121 LA CAMA MÁS CÓMODA + v122 pulido: rutas de poder, comparador, favorito al arrancar, moral por clima, PNG cronologías, HUD ALERTA, ciudad vigilada, señales reales)
+Última actualización: 2026-10-17 · Versión actual del proyecto: **v124.0 CAVIAR** (v123 GLORIA ETERNA: orquesta épica sin copyright + ciudad viva · v124: la casa se viste de LUJO EXCLUSIVO — paleta oro/champán/marfil/noir cálido en TODO el código, tipografía serif de colección con oro en cada glifo, 6º estilo de viaje «TELÓN DE ORO» por defecto con migración de lujo única, campana del salón al cambiar de sala, obra SALÓN CAVIAR en la radio y escena social)
 
 ---
 

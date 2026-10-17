@@ -95,7 +95,7 @@ const RED_SENT_HEX: Record<NeuronaExp["sentimiento"], string> = {
   ESCALADA: "#FF3B30",
   "TENSIÓN": "#FFD60A",
   ESTABLE: "#3DDCFF",
-  "DÉTENTE": "#00FF87",
+  "DÉTENTE": "#3DDC97",
 };
 
 function cargarRed(): NeuronaNodo[] {
@@ -487,7 +487,7 @@ export function NewsPanel() {
                           className="h-full"
                           style={{
                             width: `${veracityOf(item.source)}%`,
-                            background: veracityOf(item.source) >= 80 ? "#00FF87" : veracityOf(item.source) >= 60 ? "#FFD60A" : "#FF3B30",
+                            background: veracityOf(item.source) >= 80 ? "#3DDC97" : veracityOf(item.source) >= 60 ? "#FFD60A" : "#FF3B30",
                           }}
                         />
                       </div>
@@ -578,7 +578,7 @@ export function NewsPanel() {
                                 <div className="h-1.5 bg-secondary overflow-hidden">
                                   <div
                                     className="h-full transition-all"
-                                    style={{ width: `${exp.riesgo}%`, background: exp.riesgo >= 70 ? "#FF3B30" : exp.riesgo >= 45 ? "#FFD60A" : "#00FF87" }}
+                                    style={{ width: `${exp.riesgo}%`, background: exp.riesgo >= 70 ? "#FF3B30" : exp.riesgo >= 45 ? "#FFD60A" : "#3DDC97" }}
                                   />
                                 </div>
                               </div>
@@ -606,7 +606,7 @@ export function NewsPanel() {
                               )}
                               {exp.probabilidades && (
                                 <div className="grid grid-cols-4 gap-1">
-                                  {([["escalada", exp.probabilidades.escalada, "#FF3B30"], ["tensión", exp.probabilidades.tension, "#FFD60A"], ["estable", exp.probabilidades.estable, "#3DDCFF"], ["détente", exp.probabilidades.detente, "#00FF87"]] as const).map(([k, v, c]) => (
+                                  {([["escalada", exp.probabilidades.escalada, "#FF3B30"], ["tensión", exp.probabilidades.tension, "#FFD60A"], ["estable", exp.probabilidades.estable, "#3DDCFF"], ["détente", exp.probabilidades.detente, "#3DDC97"]] as const).map(([k, v, c]) => (
                                     <div key={k} className="border border-border/60 p-1">
                                       <p className="text-[7px] font-mono uppercase text-muted-foreground text-center leading-none mb-0.5">{k}</p>
                                       <p className="text-[10px] font-mono font-bold text-center" style={{ color: c }}>{v}%</p>

@@ -297,14 +297,14 @@ export function GlobeMap3D({
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
-        if (!color) return tid ? hexA("#1E90FF", 0.12) : dimColor;
+        if (!color) return tid ? hexA("#DCC078", 0.12) : dimColor;
         return tid === highlightTerritory ? hexA(color, 0.92) : hexA(color, 0.58);
       })
       .polygonSideColor((d) => {
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
-        return color ? hexA(color, 0.28) : "rgba(30, 144, 255, 0.04)";
+        return color ? hexA(color, 0.28) : "rgba(212, 175, 55, 0.04)";
       })
       .polygonStrokeColor((d) => {
         const f = d as PolyDatum;
@@ -322,7 +322,7 @@ export function GlobeMap3D({
         const f = d as PolyDatum;
         const tid = f.__tid ?? null;
         const color = tid && territoryColors ? territoryColors[tid] ?? null : null;
-        const c = color ?? "#3EA6FF";
+        const c = color ?? "#E8C56A";
         const label = tid && territoryNames?.[tid] ? territoryNames[tid] : f.properties.name;
         return `<div style="font-family:monospace;background:#0A0A0Fee;border:1px solid ${c};padding:6px 9px;border-radius:2px;max-width:240px">
           <b style="color:${c}">${label}</b>${tid ? "" : `<br/><span style="color:#8A90A8">sin control</span>`}
@@ -382,7 +382,7 @@ export function GlobeMap3D({
       .arcStartLng((d) => (d as Globe3DArc).startLng)
       .arcEndLat((d) => (d as Globe3DArc).endLat)
       .arcEndLng((d) => (d as Globe3DArc).endLng)
-      .arcColor((d) => (d as Globe3DArc).color ?? ["#1E90FF", "#00FF87"])
+      .arcColor((d) => (d as Globe3DArc).color ?? ["#DCC078", "#3DDC97"])
       .arcDashLength(0.45)
       .arcDashGap(0.2)
       .arcDashAnimateTime((d) => (d as Globe3DArc).dashTime ?? 3000)
@@ -411,7 +411,7 @@ export function GlobeMap3D({
         .objectThreeObject((d) => (d as Globe3DUnit).object)
         .objectLabel((d) => {
           const u = d as Globe3DUnit;
-          const c = u.color ?? "#3EA6FF";
+          const c = u.color ?? "#E8C56A";
           return `<div style="font-family:monospace;background:#0A0A0Fee;border:1px solid ${c};padding:6px 9px;border-radius:2px">${
             u.labelTag ? `<b style="color:${c}">${u.labelTag}</b><br/>` : ""
           }<span style="color:#F0F0F0">${u.label ?? u.id}</span></div>`;

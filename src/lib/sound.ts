@@ -252,6 +252,13 @@ export const sfx = {
     playBell(1108.73, 0.28, 0.06, 0.12);
   },
   tab: () => playWood(330, 0.04, 0.03),
+  // v124.0 CAVIAR — la campana de oro del salón: dos notas (Si5 → Mi6,
+  // quinta justa) con cola de sala larga. Sustituye al toque de madera
+  // como sonido de viaje entre salas: entrar a una sala suena a lujo.
+  campana: () => {
+    playBell(987.77, 0.55, 0.03);
+    playBell(1318.51, 0.85, 0.026, 0.13);
+  },
   beep: () => playTone(1200, 0.04, "sine", 0.025),
   streak: () => {
     for (let i = 0; i < 4; i++) playBell(440 + i * 110, 0.1, 0.04, i * 0.06);

@@ -104,15 +104,15 @@ export async function GET() {
           <div
             style={{
               flex: 1, display: "flex", flexDirection: "column", gap: 10,
-              border: "2px solid rgba(0,255,135,0.4)",
-              background: "rgba(0,255,135,0.08)",
+              border: "2px solid rgba(61, 220, 151,0.4)",
+              background: "rgba(61, 220, 151,0.08)",
               padding: "28px 32px",
             }}
           >
             <div style={{ display: "flex", fontSize: 24, color: "#9CA3AF", letterSpacing: 4 }}>
               AGENTES EN LA PLATAFORMA
             </div>
-            <div style={{ display: "flex", fontSize: 84, fontWeight: 900, color: "#00FF87" }}>
+            <div style={{ display: "flex", fontSize: 84, fontWeight: 900, color: "#3DDC97" }}>
               {fmt(agents)}
             </div>
           </div>

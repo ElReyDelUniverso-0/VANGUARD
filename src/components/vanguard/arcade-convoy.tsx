@@ -123,7 +123,7 @@ export function ArcadeConvoy({
       // barra de vida mini
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(t.x - 16, y - 26, 32, 3);
-      ctx.fillStyle = t.hp >= 3 ? "#00FF87" : t.hp === 2 ? "#FFB347" : "#FF3B30";
+      ctx.fillStyle = t.hp >= 3 ? "#3DDC97" : t.hp === 2 ? "#FFB347" : "#FF3B30";
       ctx.fillRect(t.x - 16, y - 26, (t.hp / 3) * 32, 3);
     };
 

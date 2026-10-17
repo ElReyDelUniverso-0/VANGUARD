@@ -1006,7 +1006,7 @@ interface PaperArticle { t: string; c: string; tone: string; b: string; }
 interface PaperData { logo: string; accent: string; articles: PaperArticle[]; }
 
 const PAPER_LOGOS = ["📰", "🗞️", "📡", "🌍", "⚡", "🛰️", "🔥", "🦅", "☕", "🎖️"];
-const PAPER_ACCENTS = ["#d4af37", "#FF3B30", "#1E90FF", "#00FF87", "#9B5CFF", "#FF8A2A", "#38bdf8", "#F0F0F0"];
+const PAPER_ACCENTS = ["#d4af37", "#FF3B30", "#DCC078", "#3DDC97", "#9B5CFF", "#FF8A2A", "#38bdf8", "#F0F0F0"];
 const PAPER_CATS = ["MUNDO", "GUERRA", "OSINT", "POLÍTICA", "ECONOMÍA", "TECNOLOGÍA", "OPINIÓN", "CULTURA"];
 const PAPER_TONES = ["INFORMATIVO", "ANÁLISIS", "INVESTIGACIÓN", "CRÓNICA"];
 const PAPER_BODY_MAX = 480;

@@ -21,6 +21,8 @@ import { BedDouble, Sparkles, Palette, Type, Move3d, MoonStar, History, Star, Ro
 /** Variantes de la vista previa — espejo exacto de las de page.tsx */
 function variantePreview(estilo: EstiloTransicion) {
   switch (estilo) {
+    case "oro": // v124.0 CAVIAR — telón de oro: la sala desciende digna
+      return { inicial: { opacity: 0, scale: 1.06, y: 16 }, final: { opacity: 1, scale: 1, y: 0 } };
     case "cine3d":
       return { inicial: { opacity: 0, rotateY: -70, x: 40 }, final: { opacity: 1, rotateY: 0, x: 0 } };
     case "telon":

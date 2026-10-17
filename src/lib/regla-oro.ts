@@ -75,7 +75,7 @@ export const REGLA_ORO = {
     imagen: "/ilustraciones/osint.jpg",
     texto:
       "Satélites, radar, fotos y señales abiertas. Todo lo que ve un analista profesional — ahora al alcance de tu dedo.",
-    acento: "#1E90FF",
+    acento: "#DCC078",
   },
   mundo: {
     titulo: "Mundo de Guerra",
@@ -107,7 +107,7 @@ export const REGLA_ORO = {
     imagen: "/ilustraciones/bookmaker.jpg",
     texto:
       "Apuesta monedas por eventos reales del mundo: cuotas vivas, mercados de GUERRA con la tensión real del planeta y JACKPOT progresivo que engorda con cada boleto. La primera apuesta del día la paga la casa — y las combinadas de 3+ aciertos suman bonus hasta +12%.",
-    acento: "#00FF87",
+    acento: "#3DDC97",
   },
   espionaje: {
     titulo: "Red de Espionaje",
@@ -236,7 +236,7 @@ export const REGLA_ORO = {
     imagen: "/ilustraciones/bolsa.jpg",
     texto:
       "Compra monedas de países reales y velas subir o caer con el mundo. Empieza con poco, aprende rápido — y si aciertas, la bolsa paga.",
-    acento: "#3EA6FF",
+    acento: "#E8C56A",
   },
   expedientes: {
     titulo: "Archivo Secreto",

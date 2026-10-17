@@ -10,6 +10,9 @@
   --font-mono: var(--font-jetmono), var(--font-geist-mono), monospace;
   --font-display: var(--font-orbitron), var(--font-geist-sans), sans-serif;
   --font-tech: var(--font-rajdhani), var(--font-geist-sans), sans-serif;
+  /* v124.0 CAVIAR — la tipografía de la alta clase: serif de colección
+     (Didot en iOS, Bodoni en Windows, Playfair si existe, Georgia de guardián) */
+  --font-caviar: Didot, "Bodoni MT", "Playfair Display", "Cormorant Garamond", Georgia, "Times New Roman", serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,11 +55,13 @@
    es plano: --color-amber añade el tono base SIN tocar la escala por defecto
    amber-50…amber-950, y los modificadores /NN compilan con color-mix. */
 @theme {
-  --color-electric: #1E90FF;
+  /* v124.0 CAVIAR — la paleta se viste de alta clase: champán, ORO y
+     esmeralda fina sustituyen al neón frío. La crisis sigue siendo roja. */
+  --color-electric: #DCC078;   /* champán oro (antes azul eléctrico) */
   --color-crisis: #FF3B30;
-  --color-neon: #00FF87;
-  --color-amber: #3EA6FF;
-  --color-green-hud: #00FF87;
+  --color-neon: #3DDC97;       /* esmeralda fina (antes verde neón) */
+  --color-amber: #E8C56A;      /* EL ORO CAVIAR — acento de la casa */
+  --color-green-hud: #3DDC97;
   --color-red-hud: #FF3B30;
   --color-cyan-hud: #38BDF8;
   --color-violet-hud: #A855F7;
@@ -65,85 +70,88 @@
 }
 
 /* ====== Vanguard v14 — tema NEON GLOBAL (aliento fresco) ======
-   Paleta v13: negro profundo #0A0A0F · azul eléctrico #1E90FF · rojo crisis #FF3B30
-   verde neón #00FF87 · blanco suave #F0F0F0 · panel #1A1A2E.
+   Paleta v13: negro profundo #0A0A0F · azul eléctrico #DCC078 · rojo crisis #FF3B30
+   verde neón #3DDC97 · blanco suave #F0F0F0 · panel #1A1A2E.
    Los nombres de clase historicos (amber-hud, red-hud...) se conservan;
    sus valores apuntan ahora a la nueva paleta para renovar toda la app. */
 :root {
   --radius: 0.5rem;
-  --background: #050508;                      /* v59: negro abisal */
-  --foreground: #F0F0F0;                      /* blanco suave */
-  --card: #0C0C13;
-  --card-foreground: #F0F0F0;
-  --popover: #101018;
-  --popover-foreground: #F0F0F0;
-  --primary: #1E90FF;                         /* azul eléctrico */
-  --primary-foreground: #06101f;
-  --secondary: #12121E;                       /* panel */
-  --secondary-foreground: #E4E6F0;
-  --muted: #101020;
-  --muted-foreground: #8A90A8;
-  --accent: #FF3B30;                          /* rojo crisis */
+  /* v124.0 CAVIAR — noir cálido de terciopelo, marfil y ORO. La casa
+     entera pasa de neón frío a sala de lujo: cada token cálido, fino. */
+  --background: #070606;                      /* v124: noir caviar (antes abisal frío) */
+  --foreground: #F3EEE2;                      /* v124: marfil (antes blanco frío) */
+  --card: #0E0C09;                            /* v124: panel cálido */
+  --card-foreground: #F3EEE2;
+  --popover: #12100B;
+  --popover-foreground: #F3EEE2;
+  --primary: #D4AF37;                         /* v124: ORO CAVIAR */
+  --primary-foreground: #171104;
+  --secondary: #151209;                       /* v124: panel oro oscuro */
+  --secondary-foreground: #EAE3D2;
+  --muted: #131108;
+  --muted-foreground: #9E9682;                /* v124: champán grisáceo */
+  --accent: #FF3B30;                          /* rojo crisis — intacto para alertas */
   --accent-foreground: #1c0605;
   --destructive: #FF3B30;
-  --border: rgba(240, 240, 240, 0.08);
-  --input: rgba(240, 240, 240, 0.10);
-  --ring: rgba(30, 144, 255, 0.6);
-  --chart-1: #1E90FF;   /* azul eléctrico */
+  --border: rgba(232, 197, 106, 0.10);        /* v124: hilatura de oro */
+  --input: rgba(232, 197, 106, 0.13);
+  --ring: rgba(212, 175, 55, 0.55);
+  --chart-1: #D4AF37;   /* v124: oro */
   --chart-2: #FF3B30;   /* rojo crisis */
   --chart-3: #38BDF8;   /* cian dato */
-  --chart-4: #00FF87;   /* verde neón */
+  --chart-4: #3DDC97;   /* v124: esmeralda fina */
   --chart-5: #A855F7;   /* violeta */
-  --sidebar: #101018;
-  --sidebar-foreground: #F0F0F0;
-  --sidebar-primary: #1E90FF;
-  --sidebar-primary-foreground: #06101f;
-  --sidebar-accent: #1A1A2E;
-  --sidebar-accent-foreground: #F0F0F0;
-  --sidebar-border: rgba(240, 240, 240, 0.08);
-  --sidebar-ring: rgba(30, 144, 255, 0.6);
+  --sidebar: #12100B;
+  --sidebar-foreground: #F3EEE2;
+  --sidebar-primary: #D4AF37;
+  --sidebar-primary-foreground: #171104;
+  --sidebar-accent: #1D180D;
+  --sidebar-accent-foreground: #F3EEE2;
+  --sidebar-border: rgba(232, 197, 106, 0.10);
+  --sidebar-ring: rgba(212, 175, 55, 0.55);
 
-  /* Vanguard extras — nombres intactos, valores nuevos */
-  --hud-grid: rgba(130, 28, 28, 0.055); /* v59: rejilla con tinte de sangre */
-  --hud-amber: #3EA6FF;   /* acento principal (antes ambar) -> azul eléctrico claro */
+  /* Vanguard extras — nombres intactos, valores caviar */
+  --hud-grid: rgba(212, 175, 55, 0.045); /* v124: rejilla tejida en oro */
+  --hud-amber: #E8C56A;   /* v124: EL ORO — acento principal de la casa */
   --hud-red: #FF3B30;     /* rojo crisis */
   --hud-cyan: #38BDF8;    /* cian dato */
-  --hud-green: #00FF87;   /* verde neón */
+  --hud-green: #3DDC97;   /* v124: esmeralda fina */
   --hud-violet: #A855F7;  /* violeta */
 }
 
 .dark {
-  --background: #050508;
-  --foreground: #F0F0F0;
-  --card: #0C0C13;
-  --card-foreground: #F0F0F0;
-  --popover: #101018;
-  --popover-foreground: #F0F0F0;
-  --primary: #1E90FF;
-  --primary-foreground: #06101f;
-  --secondary: #12121E;
-  --secondary-foreground: #E4E6F0;
-  --muted: #101020;
-  --muted-foreground: #8A90A8;
+  /* v124.0 CAVIAR — espejo exacto del tema claro de lujo */
+  --background: #070606;
+  --foreground: #F3EEE2;
+  --card: #0E0C09;
+  --card-foreground: #F3EEE2;
+  --popover: #12100B;
+  --popover-foreground: #F3EEE2;
+  --primary: #D4AF37;
+  --primary-foreground: #171104;
+  --secondary: #151209;
+  --secondary-foreground: #EAE3D2;
+  --muted: #131108;
+  --muted-foreground: #9E9682;
   --accent: #FF3B30;
   --accent-foreground: #1c0605;
   --destructive: #FF3B30;
-  --border: rgba(240, 240, 240, 0.08);
-  --input: rgba(240, 240, 240, 0.10);
-  --ring: rgba(30, 144, 255, 0.6);
-  --chart-1: #1E90FF;
+  --border: rgba(232, 197, 106, 0.10);
+  --input: rgba(232, 197, 106, 0.13);
+  --ring: rgba(212, 175, 55, 0.55);
+  --chart-1: #D4AF37;
   --chart-2: #FF3B30;
   --chart-3: #38BDF8;
-  --chart-4: #00FF87;
+  --chart-4: #3DDC97;
   --chart-5: #A855F7;
-  --sidebar: #101018;
-  --sidebar-foreground: #F0F0F0;
-  --sidebar-primary: #1E90FF;
-  --sidebar-primary-foreground: #06101f;
-  --sidebar-accent: #1A1A2E;
-  --sidebar-accent-foreground: #F0F0F0;
-  --sidebar-border: rgba(240, 240, 240, 0.08);
-  --sidebar-ring: rgba(30, 144, 255, 0.6);
+  --sidebar: #12100B;
+  --sidebar-foreground: #F3EEE2;
+  --sidebar-primary: #D4AF37;
+  --sidebar-primary-foreground: #171104;
+  --sidebar-accent: #1D180D;
+  --sidebar-accent-foreground: #F3EEE2;
+  --sidebar-border: rgba(232, 197, 106, 0.10);
+  --sidebar-ring: rgba(212, 175, 55, 0.55);
 }
 
 @layer base {
@@ -175,18 +183,18 @@
     z-index: 0;
     background: repeating-linear-gradient(
       0deg,
-      rgba(0, 0, 0, 0.16) 0px,
-      rgba(0, 0, 0, 0.16) 1px,
+      rgba(0, 0, 0, 0.11) 0px,
+      rgba(0, 0, 0, 0.11) 1px,
       transparent 1px,
       transparent 3px
     );
   }
   ::selection {
-    background: rgba(255, 160, 70, 0.45);
-    color: #1a0d02;
+    background: rgba(232, 197, 106, 0.45);
+    color: #1c1405;
   }
   :focus-visible {
-    outline: 1.5px solid rgba(255, 179, 71, 0.8);
+    outline: 1.5px solid rgba(232, 197, 106, 0.85);
     outline-offset: 2px;
   }
 }
@@ -256,12 +264,13 @@
   /* v16: cristal esmerilado premium */
   .hud-panel {
     position: relative;
-    background: linear-gradient(165deg, rgba(16, 16, 30, 0.66) 0%, rgba(9, 9, 18, 0.9) 46%, rgba(4, 4, 8, 0.96) 100%);
-    border: 1px solid rgba(62, 166, 255, 0.16);
+    /* v124 CAVIAR: cristal de terciopelo noir con veta cálida */
+    background: linear-gradient(165deg, rgba(20, 17, 11, 0.66) 0%, rgba(12, 10, 7, 0.9) 46%, rgba(6, 5, 4, 0.96) 100%);
+    border: 1px solid rgba(232, 197, 106, 0.16);
     backdrop-filter: blur(10px) saturate(1.2);
     box-shadow:
-      inset 0 1px 0 rgba(240, 240, 240, 0.04),
-      0 12px 34px rgba(0, 0, 0, 0.5);
+      inset 0 1px 0 rgba(243, 238, 226, 0.05),
+      0 12px 34px rgba(0, 0, 0, 0.55);
   }
   /* v29 FIX CRÍTICO de navegación: .hud-panel forzaba position:relative y anulaba
      .sticky en la cabecera y en la barra de secciones (por eso la nav "se iba" con el
@@ -276,13 +285,14 @@
     position: sticky;
   }
   .glass {
-    background: linear-gradient(160deg, rgba(16, 16, 30, 0.55), rgba(6, 6, 12, 0.78));
-    border: 1px solid rgba(240, 240, 240, 0.07);
+    background: linear-gradient(160deg, rgba(20, 17, 11, 0.55), rgba(8, 7, 5, 0.8));
+    border: 1px solid rgba(232, 197, 106, 0.08);
     backdrop-filter: blur(12px) saturate(1.1);
   }
   /* Texto con gradiente animado (títulos importantes) */
   .text-gradient {
-    background: linear-gradient(92deg, #3EA6FF 0%, #38BDF8 28%, #00FF87 58%, #3EA6FF 100%);
+    /* v124 CAVIAR: el degradado de la casa fluye en ORO de ley */
+    background: linear-gradient(92deg, #F1DC9E 0%, #E8C56A 30%, #B8892F 58%, #E8C56A 100%);
     background-size: 220% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -323,7 +333,7 @@
     position: absolute;
     inset: -1px;
     padding: 1px;
-    background: conic-gradient(from var(--ang, 0deg), rgba(62, 166, 255, 0.95), rgba(0, 255, 135, 0.55) 30%, rgba(168, 85, 247, 0.65) 55%, rgba(30, 144, 255, 0.95) 100%);
+    background: conic-gradient(from var(--ang, 0deg), rgba(232, 197, 106, 0.95), rgba(61, 220, 151, 0.55) 30%, rgba(168, 85, 247, 0.65) 55%, rgba(212, 175, 55, 0.95) 100%);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -343,8 +353,8 @@
   /* Línea degradada decorativa bajo la cabecera */
   .hairline-gradient {
     height: 2px;
-    background: linear-gradient(90deg, transparent 0%, rgba(62, 166, 255, 0.75) 18%, rgba(0, 255, 135, 0.5) 50%, rgba(62, 166, 255, 0.75) 82%, transparent 100%);
-    box-shadow: 0 0 14px rgba(62, 166, 255, 0.35);
+    background: linear-gradient(90deg, transparent 0%, rgba(232, 197, 106, 0.75) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(232, 197, 106, 0.75) 82%, transparent 100%);
+    box-shadow: 0 0 14px rgba(232, 197, 106, 0.35);
   }
   .hud-panel::before, .hud-panel::after {
     content: "";
@@ -378,18 +388,18 @@
   .text-red-hud { color: var(--hud-red); }
   .text-green-hud { color: var(--hud-green); }
   .text-violet-hud { color: var(--hud-violet); }
-  .bg-amber-hud { background-color: rgba(30, 144, 255, 0.16); }
+  .bg-amber-hud { background-color: rgba(212, 175, 55, 0.15); }
   .bg-red-hud { background-color: rgba(255, 59, 48, 0.16); }
   .bg-cyan-hud { background-color: rgba(56, 189, 248, 0.16); }
-  .bg-green-hud { background-color: rgba(0, 255, 135, 0.13); }
+  .bg-green-hud { background-color: rgba(61, 220, 151, 0.13); }
   .bg-violet-hud { background-color: rgba(168, 85, 247, 0.16); }
-  .border-amber-hud { border-color: rgba(30, 144, 255, 0.38); }
+  .border-amber-hud { border-color: rgba(212, 175, 55, 0.42); }
   .border-cyan-hud { border-color: rgba(56, 189, 248, 0.38); }
   .border-red-hud { border-color: rgba(255, 59, 48, 0.38); }
-  .border-green-hud { border-color: rgba(0, 255, 135, 0.35); }
+  .border-green-hud { border-color: rgba(61, 220, 151, 0.35); }
 
   .glow-amber {
-    box-shadow: 0 0 12px rgba(30, 144, 255, 0.30), inset 0 0 8px rgba(30, 144, 255, 0.08);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.30), inset 0 0 8px rgba(212, 175, 55, 0.08);
   }
   .glow-red {
     box-shadow: 0 0 12px rgba(255, 59, 48, 0.30), inset 0 0 8px rgba(255, 59, 48, 0.08);
@@ -406,7 +416,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(transparent 50%, rgba(30, 144, 255, 0.05) 50%);
+    background: linear-gradient(transparent 50%, rgba(212, 175, 55, 0.05) 50%);
     background-size: 100% 4px;
     pointer-events: none;
     animation: scanmove 8s linear infinite;
@@ -455,24 +465,24 @@
 .thin-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
 .thin-scroll::-webkit-scrollbar-track { background: transparent; }
 .thin-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(62, 166, 255, 0.55), rgba(56, 189, 248, 0.3));
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.55), rgba(56, 189, 248, 0.3));
   border-radius: 99px;
-  box-shadow: 0 0 6px rgba(62, 166, 255, 0.3);
+  box-shadow: 0 0 6px rgba(232, 197, 106, 0.3);
 }
 .thin-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(62, 166, 255, 0.85), rgba(0, 255, 135, 0.5));
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.85), rgba(61, 220, 151, 0.5));
 }
 
 /* ============================================================
    v13 CENTRO DE MANDO — paleta global + efectos visuales
-   Negro profundo #0A0A0F · Azul eléctrico #1E90FF · Rojo crisis #FF3B30
-   Verde neón #00FF87 · Blanco suave #F0F0F0 · Panel #1A1A2E
+   Negro profundo #0A0A0F · Azul eléctrico #DCC078 · Rojo crisis #FF3B30
+   Verde neón #3DDC97 · Blanco suave #F0F0F0 · Panel #1A1A2E
    ============================================================ */
 :root {
   --vg-black: #0A0A0F;
-  --vg-electric: #1E90FF;
+  --vg-electric: #DCC078;
   --vg-crisis: #FF3B30;
-  --vg-neon: #00FF87;
+  --vg-neon: #3DDC97;
   --vg-soft: #F0F0F0;
   --vg-panel: #1A1A2E;
 
@@ -493,30 +503,30 @@
 .text-crisis { color: var(--vg-crisis); }
 .text-neon { color: var(--vg-neon); }
 .text-soft { color: var(--vg-soft); }
-.bg-electric-hud { background-color: rgba(30, 144, 255, 0.16); }
+.bg-electric-hud { background-color: rgba(212, 175, 55, 0.16); }
 .bg-crisis-hud { background-color: rgba(255, 59, 48, 0.16); }
-.bg-neon-hud { background-color: rgba(0, 255, 135, 0.13); }
+.bg-neon-hud { background-color: rgba(61, 220, 151, 0.13); }
 .bg-vg-panel { background-color: var(--vg-panel); }
-.border-electric-hud { border-color: rgba(30, 144, 255, 0.4); }
+.border-electric-hud { border-color: rgba(212, 175, 55, 0.4); }
 .border-crisis-hud { border-color: rgba(255, 59, 48, 0.4); }
-.border-neon-hud { border-color: rgba(0, 255, 135, 0.4); }
+.border-neon-hud { border-color: rgba(61, 220, 151, 0.4); }
 
 /* Borde con brillo neón en cards importantes — v16 más rico */
 .neon-border {
-  border: 1px solid rgba(62, 166, 255, 0.6);
+  border: 1px solid rgba(232, 197, 106, 0.6);
   box-shadow:
-    0 0 16px rgba(30, 144, 255, 0.32),
-    0 0 44px rgba(30, 144, 255, 0.1),
-    inset 0 0 14px rgba(30, 144, 255, 0.08);
+    0 0 16px rgba(212, 175, 55, 0.32),
+    0 0 44px rgba(212, 175, 55, 0.1),
+    inset 0 0 14px rgba(212, 175, 55, 0.08);
 }
 .neon-green-border {
-  border: 1px solid rgba(0, 255, 135, 0.5);
+  border: 1px solid rgba(61, 220, 151, 0.5);
   box-shadow:
-    0 0 10px rgba(0, 255, 135, 0.22),
-    inset 0 0 10px rgba(0, 255, 135, 0.06);
+    0 0 10px rgba(61, 220, 151, 0.22),
+    inset 0 0 10px rgba(61, 220, 151, 0.06);
 }
 .sombra-crisis { box-shadow: 0 0 14px rgba(255, 59, 48, 0.35); }
-.sombra-electric { box-shadow: 0 0 14px rgba(30, 144, 255, 0.35); }
+.sombra-electric { box-shadow: 0 0 14px rgba(212, 175, 55, 0.35); }
 
 /* Efecto GLITCH sutil para el logo principal */
 .glitch {
@@ -561,11 +571,11 @@
   pointer-events: none;
   background: conic-gradient(
     from 0deg,
-    rgba(30, 144, 255, 0) 0deg,
-    rgba(30, 144, 255, 0) 300deg,
-    rgba(30, 144, 255, 0.14) 344deg,
-    rgba(0, 255, 135, 0.2) 356deg,
-    rgba(0, 255, 135, 0) 360deg
+    rgba(212, 175, 55, 0) 0deg,
+    rgba(212, 175, 55, 0) 300deg,
+    rgba(212, 175, 55, 0.14) 344deg,
+    rgba(61, 220, 151, 0.2) 356deg,
+    rgba(61, 220, 151, 0) 360deg
   );
   animation: radarspin 7s linear infinite;
   mix-blend-mode: screen;
@@ -583,13 +593,13 @@
   pointer-events: none;
   opacity: 0.5;
   background-image:
-    radial-gradient(1.2px 1.2px at 22% 18%, rgba(30,144,255,0.5) 50%, transparent 51%),
-    radial-gradient(1px 1px at 68% 42%, rgba(0,255,135,0.42) 50%, transparent 51%),
-    radial-gradient(1.4px 1.4px at 84% 76%, rgba(30,144,255,0.38) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 22% 18%, rgba(212, 175, 55,0.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 42%, rgba(61, 220, 151,0.42) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 84% 76%, rgba(212, 175, 55,0.38) 50%, transparent 51%),
     radial-gradient(1px 1px at 12% 64%, rgba(240,240,240,0.3) 50%, transparent 51%),
-    radial-gradient(1.1px 1.1px at 46% 88%, rgba(30,144,255,0.4) 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 46% 88%, rgba(212, 175, 55,0.4) 50%, transparent 51%),
     radial-gradient(1px 1px at 91% 12%, rgba(255,59,48,0.35) 50%, transparent 51%),
-    radial-gradient(1.2px 1.2px at 34% 34%, rgba(0,255,135,0.3) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 34% 34%, rgba(61, 220, 151,0.3) 50%, transparent 51%),
     radial-gradient(1px 1px at 58% 8%, rgba(240,240,240,0.26) 50%, transparent 51%);
   background-size: 640px 640px;
   animation: particlesDrift 64s linear infinite;
@@ -644,10 +654,10 @@
 .boot-globe {
   border-radius: 50%;
   background:
-    radial-gradient(circle at 32% 30%, rgba(30,144,255,0.85) 0%, rgba(10,40,90,0.9) 32%, #060a16 70%);
+    radial-gradient(circle at 32% 30%, rgba(212, 175, 55,0.85) 0%, rgba(10,40,90,0.9) 32%, #060a16 70%);
   box-shadow:
     inset -18px -14px 40px rgba(0, 0, 0, 0.75),
-    0 0 26px rgba(30, 144, 255, 0.35);
+    0 0 26px rgba(212, 175, 55, 0.35);
   position: relative;
   overflow: hidden;
 }
@@ -656,8 +666,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    repeating-linear-gradient(0deg, transparent 0 9px, rgba(0, 255, 135, 0.14) 9px 10px),
-    repeating-linear-gradient(90deg, transparent 0 9px, rgba(30, 144, 255, 0.12) 9px 10px);
+    repeating-linear-gradient(0deg, transparent 0 9px, rgba(61, 220, 151, 0.14) 9px 10px),
+    repeating-linear-gradient(90deg, transparent 0 9px, rgba(212, 175, 55, 0.12) 9px 10px);
   border-radius: 50%;
   animation: globeSpin 3.4s linear infinite;
   filter: blur(0.4px);
@@ -667,8 +677,8 @@
   position: absolute;
   inset: -14%;
   border-radius: 50%;
-  border: 1px solid rgba(30, 144, 255, 0.35);
-  border-top-color: rgba(0, 255, 135, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-top-color: rgba(61, 220, 151, 0.6);
   animation: globeOrbit 2.6s linear infinite;
 }
 @keyframes globeSpin {
@@ -686,12 +696,12 @@
 /* ===== v31 LANZAMIENTO MUNDIAL — aire fresco ===== */
 /* Selección de texto con el acento de la marca */
 ::selection {
-  background: rgba(30, 144, 255, 0.35);
+  background: rgba(212, 175, 55, 0.35);
   color: #ffffff;
 }
 /* Foco visible accesible y elegante */
 :focus-visible {
-  outline: 2px solid rgba(62, 166, 255, 0.7);
+  outline: 2px solid rgba(232, 197, 106, 0.7);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -699,20 +709,20 @@
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: rgba(10, 12, 20, 0.6); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(62, 166, 255, 0.45), rgba(168, 85, 247, 0.4));
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.45), rgba(168, 85, 247, 0.4));
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(62, 166, 255, 0.7), rgba(168, 85, 247, 0.6));
+  background: linear-gradient(180deg, rgba(232, 197, 106, 0.7), rgba(168, 85, 247, 0.6));
 }
 /* Sombra de marca en paneles HUD existentes (sin tocar su estructura) */
 .hud-panel {
-  box-shadow: 0 10px 34px -18px rgba(30, 144, 255, 0.28), 0 2px 10px -4px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 10px 34px -18px rgba(212, 175, 55, 0.28), 0 2px 10px -4px rgba(0, 0, 0, 0.6);
 }
 /* Acento vivo para títulos con .text-gradient (degradado un pelo más rico) */
 .text-gradient {
-  background-image: linear-gradient(100deg, #3EA6FF 0%, #7DD3FC 35%, #A855F7 70%, #FFD34D 100%);
+  background-image: linear-gradient(100deg, #E8C56A 0%, #7DD3FC 35%, #A855F7 70%, #FFD34D 100%);
 }
 
 /* ===== v67.0 EL HANGAR — capas de crisis, protocolo rojo y arcade ===== */
@@ -731,8 +741,8 @@
 .vg-scanlines {
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0, 255, 135, 0.05) 0px,
-    rgba(0, 255, 135, 0.05) 1px,
+    rgba(61, 220, 151, 0.05) 0px,
+    rgba(61, 220, 151, 0.05) 1px,
     transparent 1px,
     transparent 4px
   );
@@ -1096,8 +1106,8 @@ main img {
 /* — contador vivo del planeta: dígito que respira — */
 .vivo-num { animation: vivoNum 2.4s ease-in-out infinite; }
 @keyframes vivoNum {
-  0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 135, 0.35); }
-  50% { text-shadow: 0 0 22px rgba(0, 255, 135, 0.7); }
+  0%, 100% { text-shadow: 0 0 10px rgba(61, 220, 151, 0.35); }
+  50% { text-shadow: 0 0 22px rgba(61, 220, 151, 0.7); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1180,8 +1190,8 @@ main img {
   bottom: 0;
   width: 26%;
   left: -26%;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 135, 0.05) 70%, rgba(0, 255, 135, 0.12) 99%, transparent);
-  border-right: 1px solid rgba(0, 255, 135, 0.3);
+  background: linear-gradient(90deg, transparent, rgba(61, 220, 151, 0.05) 70%, rgba(61, 220, 151, 0.12) 99%, transparent);
+  border-right: 1px solid rgba(61, 220, 151, 0.3);
   animation: barrePanel 7.5s linear infinite;
   pointer-events: none;
   will-change: transform;
@@ -3062,6 +3072,113 @@ html.auto-cama-activa .particles-layer { opacity: 0.35; }
 .iv-pulso-pin { transform-box: fill-box !important; transform-origin: center; animation: ivPulso calc(var(--vg-kdur, 1.4s) * 1.9) ease-out infinite; }
 @keyframes ivPulso { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(1.3); opacity: 0.15; } }
 .vg-letra-brasa { animation: ivBrasa calc(var(--vg-kdur, 1.4s) * 3) ease-in-out infinite alternate; }
+
+/* ============================================================
+   v124.0 CAVIAR — LA CASA DEL LUJO EXCLUSIVO
+   "haz como vanguard como caviar… fina, elegante, de alta clase,
+   como un lujo, colores hermosos finos, exclusivo".
+   1) TIPOGRAFÍA DE COLECCIÓN: la serif caviar para los títulos.
+   2) ORO EN LETRA: gradiente champán→oro→bronce por glifo.
+   3) TELÓN DE ORO: el 6º estilo de viaje entre salas — telas de
+      terciopelo noir con bastilla de oro y polvo dorado cayendo.
+   Todo transform/opacity (contrato 60 FPS) + reduced-motion.
+   ============================================================ */
+
+/* — 1) La serif de la alta clase (token --font-caviar en @theme) — */
+
+/* — 2) Oro en letra: gradiente por GLIFO (una capa por letra, sin glitch) — */
+.caviar-letra {
+  background: linear-gradient(180deg, #F7EBC8 0%, #E8C56A 52%, #A87E2E 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #E8C56A; /* guarda: si el clip no soporta, la letra sigue siendo oro */
+}
+.caviar-titulo {
+  background: linear-gradient(180deg, #F7EBC8 0%, #E8C56A 52%, #A87E2E 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #E8C56A;
+  filter: drop-shadow(0 1px 10px rgba(212, 175, 55, 0.28));
+}
+
+/* — 3) EL TELÓN DE ORO (estilo "oro" de la Transición Maestra) — */
+.tm-oro-tela {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  height: 60%;
+  will-change: transform;
+  /* terciopelo noir con pliegues cálidos */
+  background:
+    repeating-linear-gradient(90deg, rgba(232, 197, 106, 0.045) 0 2px, transparent 2px 34px),
+    linear-gradient(180deg, #0A0906 0%, #14100A 52%, #1E1709 100%);
+}
+.tm-oro-tela::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, transparent 0%, #E8C56A 16%, #F7EBC8 50%, #E8C56A 84%, transparent 100%);
+  box-shadow: 0 0 24px rgba(232, 197, 106, 0.55);
+}
+.tm-oro-tela-sup { top: 0; animation: tmOroSup 0.68s cubic-bezier(0.55, 0, 0.3, 1) both; }
+.tm-oro-tela-sup::after { bottom: 0; }
+.tm-oro-tela-inf { bottom: 0; animation: tmOroInf 0.68s cubic-bezier(0.55, 0, 0.3, 1) both; }
+.tm-oro-tela-inf::after { top: 0; }
+@keyframes tmOroSup {
+  0% { transform: translateY(-112%); }
+  45%, 55% { transform: translateY(0); }
+  100% { transform: translateY(-112%); }
+}
+@keyframes tmOroInf {
+  0% { transform: translateY(112%); }
+  45%, 55% { transform: translateY(0); }
+  100% { transform: translateY(112%); }
+}
+/* la costura de oro donde se encuentran las telas */
+.tm-oro-costura {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #F7EBC8 30%, #E8C56A 50%, #F7EBC8 70%, transparent);
+  animation: tmEje 0.68s both;
+}
+/* polvo de oro cayendo detrás de las telas */
+.tm-oro-mota {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #F7EBC8;
+  box-shadow: 0 0 10px 2px rgba(232, 197, 106, 0.8);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: tmOroMota 0.66s linear both;
+}
+.tm-oro-mota-1 { left: 30%; animation-delay: 0.02s; --omx: -6vw; }
+.tm-oro-mota-2 { left: 52%; animation-delay: 0.1s; --omx: 4vw; }
+.tm-oro-mota-3 { left: 71%; animation-delay: 0.16s; --omx: -3vw; }
+@keyframes tmOroMota {
+  0% { transform: translate3d(0, -10vh, 0); opacity: 0; }
+  22% { opacity: 1; }
+  82% { opacity: 1; }
+  100% { transform: translate3d(var(--omx, 0), 112vh, 0); opacity: 0; }
+}
+/* el sello de la versión, en oro puro cuando viaja el telón */
+.tm-sello-oro {
+  color: #F1DC9E !important;
+  text-shadow: 0 0 18px rgba(232, 197, 106, 0.65) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-oro-mota { display: none; }
+}
 @keyframes ivBrasa { from { opacity: 0.82; } to { opacity: 1; } }
 
 /* LA CAMA manda también con movimiento reducido del sistema */

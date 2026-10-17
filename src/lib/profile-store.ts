@@ -38,19 +38,19 @@ export interface ProfileState {
 }
 
 export const BANNERS: Record<BannerStyle, { label: string; css: string }> = {
-  aurora:  { label: "Aurora Eléctrica", css: "linear-gradient(120deg,#0A0A0F 0%,#0d2540 40%,#1E90FF 100%)" },
+  aurora:  { label: "Aurora Eléctrica", css: "linear-gradient(120deg,#0A0A0F 0%,#0d2540 40%,#DCC078 100%)" },
   inferno: { label: "Infierno Rojo",    css: "linear-gradient(120deg,#0A0A0F 0%,#3d0d0d 40%,#FF3B30 100%)" },
   royal:   { label: "Dorado Real",      css: "linear-gradient(120deg,#0A0A0F 0%,#2e2410 40%,#d4af37 100%)" },
-  arctic:  { label: "Ártico",           css: "linear-gradient(120deg,#0A0A0F 0%,#0c2e2a 40%,#00FF87 100%)" },
+  arctic:  { label: "Ártico",           css: "linear-gradient(120deg,#0A0A0F 0%,#0c2e2a 40%,#3DDC97 100%)" },
   stealth: { label: "Sigilo",           css: "linear-gradient(120deg,#0A0A0F 0%,#1a1a2e 55%,#3a3a55 100%)" },
 };
 
 export const FRAMES: Record<FrameStyle, { label: string; ring: string }> = {
   none:  { label: "Sin marco",   ring: "none" },
-  neon:  { label: "Neón",        ring: "0 0 0 2px #1E90FF, 0 0 12px #1E90FF88" },
+  neon:  { label: "Neón",        ring: "0 0 0 2px #DCC078, 0 0 12px #DCC07888" },
   gold:  { label: "Oro",         ring: "0 0 0 2px #d4af37, 0 0 12px #d4af3788" },
   camo:  { label: "Camuflaje",   ring: "0 0 0 3px #3a4a3a" },
-  radar: { label: "Radar",       ring: "0 0 0 2px #00FF87, 0 0 14px #00FF8799" },
+  radar: { label: "Radar",       ring: "0 0 0 2px #3DDC97, 0 0 14px #3DDC9799" },
 };
 
 export const FACTIONS = [

@@ -142,7 +142,7 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             </div>
             <div className="leading-tight min-w-0">
               <div
-                className="font-display text-[11px] sm:text-base font-black tracking-[0.2em] text-amber truncate glitch"
+                className="font-caviar text-[12px] sm:text-lg font-bold tracking-[0.22em] text-amber truncate"
                 data-text="VANGUARD"
               >
                 VANGUARD
@@ -349,8 +349,8 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
           <div className="flex-1 min-w-0">
             <div className="h-1.5 sm:h-2 hud-corner bg-black/50 overflow-hidden border border-border/50">
               <motion.div
-                className="h-full bg-gradient-to-r from-[#3EA6FF] via-[#38BDF8] to-[#00FF87]"
-                style={{ boxShadow: "0 0 10px rgba(62,166,255,0.5)" }}
+                className="h-full bg-gradient-to-r from-[#E8C56A] via-[#38BDF8] to-[#3DDC97]"
+                style={{ boxShadow: "0 0 10px rgba(232, 197, 106,0.5)" }}
                 initial={{ width: 0 }}
                 animate={{ width: `${pct}%` }}
                 transition={{ type: "spring", stiffness: 200, damping: 30 }}

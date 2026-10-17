@@ -223,9 +223,9 @@ export function OpsPanel() {
             {/* bases amigas con baliza */}
             {([[96, 428, "BASE ALFA"], [908, 430, "BASE BRAVO"], [200, 452, "BASE CHARLIE"], [806, 462, "BASE DELTA"]] as [number, number, string][]).map(([bx, by, nombre]) => (
               <g key={nombre}>
-                <rect x={bx - 12} y={by - 8} width={24} height={16} fill="rgba(0,255,135,0.14)" stroke="#00FF87" strokeWidth="1" />
-                <text x={bx} y={by + 24} fill="rgba(0,255,135,0.75)" fontSize="8.5" fontFamily="monospace" textAnchor="middle">{nombre}</text>
-                <circle cx={bx} cy={by} r={5} fill="none" stroke="#00FF87" strokeWidth="0.8" className="beacon" style={{ color: "#00FF87" }} />
+                <rect x={bx - 12} y={by - 8} width={24} height={16} fill="rgba(61, 220, 151,0.14)" stroke="#3DDC97" strokeWidth="1" />
+                <text x={bx} y={by + 24} fill="rgba(61, 220, 151,0.75)" fontSize="8.5" fontFamily="monospace" textAnchor="middle">{nombre}</text>
+                <circle cx={bx} cy={by} r={5} fill="none" stroke="#3DDC97" strokeWidth="0.8" className="beacon" style={{ color: "#3DDC97" }} />
               </g>
             ))}
 
@@ -273,7 +273,7 @@ export function OpsPanel() {
             {OPERACIONES.map((op) => {
               const est = estados[op.id] ?? "PLANIFICADA";
               const p = prog[op.id] ?? 0;
-              const color = est === "EXITO" ? "#00FF87" : est === "EN CURSO" ? "#FFB020" : "#8b93a7";
+              const color = est === "EXITO" ? "#3DDC97" : est === "EN CURSO" ? "#FFB020" : "#8b93a7";
               return (
                 <g key={op.id}>
                   {/* retícula giratoria siempre que el objetivo esté designado */}
@@ -336,7 +336,7 @@ export function OpsPanel() {
               {OPERACIONES.map((op) => {
                 const est = estados[op.id] ?? "PLANIFICADA";
                 const p = Math.round(prog[op.id] ?? 0);
-                const color = est === "EXITO" ? "#00FF87" : est === "EN CURSO" ? "#FFB020" : "#8b93a7";
+                const color = est === "EXITO" ? "#3DDC97" : est === "EN CURSO" ? "#FFB020" : "#8b93a7";
                 const f = fase(p);
                 return (
                   <div key={op.id} className="escaneo-carta hud-corner p-2.5 border" style={{ borderColor: `${color}44`, background: est === "PLANIFICADA" ? "rgba(139,147,167,0.04)" : `${color}0a` }}>
@@ -405,7 +405,7 @@ export function OpsPanel() {
           <Radio className="w-4 h-4 text-amber" />
           <h3 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Canal de comunicaciones</h3>
           <span className="ml-auto flex items-center gap-1 text-[9px] font-mono uppercase text-green-hud">
-            <span className="beacon w-1.5 h-1.5 rounded-full bg-green-hud" style={{ color: "#00FF87" }} /> REC
+            <span className="beacon w-1.5 h-1.5 rounded-full bg-green-hud" style={{ color: "#3DDC97" }} /> REC
           </span>
         </div>
         <div className="space-y-1 min-h-[96px]">

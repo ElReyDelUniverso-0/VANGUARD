@@ -41,7 +41,7 @@ const PLANTILLAS: { id: PlantillaId; label: string; glifo: string; titulo: strin
     glifo: "+",
     titulo: "ALIANZA ÉPICA",
     sub: (a, b) => `${a} y ${b} dominan el tablero mundial`,
-    acento: "#00FF87",
+    acento: "#3DDC97",
   },
   {
     id: "reto",
@@ -49,7 +49,7 @@ const PLANTILLAS: { id: PlantillaId; label: string; glifo: string; titulo: strin
     glifo: "➜",
     titulo: "TU MISIÓN, AGENTE",
     sub: (a, b) => `conquista ${b} saliendo desde ${a}`,
-    acento: "#1E90FF",
+    acento: "#DCC078",
   },
   {
     id: "expectativa",
@@ -65,7 +65,7 @@ const PLANTILLAS: { id: PlantillaId; label: string; glifo: string; titulo: strin
     glifo: "🤫",
     titulo: "TRATO SECRETO",
     sub: (a, b) => `se filtra: ${a} y ${b} firman a puerta cerrada`,
-    acento: "#00FF87",
+    acento: "#3DDC97",
   },
 ];
 

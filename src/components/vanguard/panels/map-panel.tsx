@@ -418,7 +418,7 @@ export function MapPanel() {
     if (crit >= 2) return { n: 2, label: "ALERTA ROJA", color: "#FF6B35" };
     if (crit >= 1 || ten >= 3) return { n: 3, label: "MOVILIZACIÓN", color: "#FFD60A" };
     if (ten >= 1) return { n: 4, label: "VIGILANCIA", color: "#38BDF8" };
-    return { n: 5, label: "CALMA TENSA", color: "#00FF87" };
+    return { n: 5, label: "CALMA TENSA", color: "#3DDC97" };
   }, [visibleConflicts]);
 
   const stats = useMemo(() => {
@@ -524,7 +524,7 @@ export function MapPanel() {
           <div className="flex items-end gap-1 flex-1 max-w-[220px]">
             {[5, 4, 3, 2, 1].map((n) => {
               const encendido = n <= defcon.n;
-              const segColor = n >= 2 ? "#FF3B30" : n === 3 ? "#FFD60A" : "#00FF87";
+              const segColor = n >= 2 ? "#FF3B30" : n === 3 ? "#FFD60A" : "#3DDC97";
               return (
                 <span
                   key={n}

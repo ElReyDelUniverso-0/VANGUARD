@@ -354,7 +354,7 @@ export function MiPaisPanel() {
                 {REGIONES.map((r) => (
                   <button key={r} onClick={() => setF({ ...f, region: r })} aria-pressed={f.region === r}
                     className={cn("px-2.5 py-1.5 text-[10px] font-mono uppercase tracking-widest border rounded-sm transition-all active:scale-95 min-h-[32px]",
-                      f.region === r ? "text-cyan-hud border-cyan-hud bg-cyan-hud/20 shadow-[0_0_14px_rgba(30,144,255,0.25)]" : "text-muted-foreground border-white/10 hover:border-cyan-hud/40")}>
+                      f.region === r ? "text-cyan-hud border-cyan-hud bg-cyan-hud/20 shadow-[0_0_14px_rgba(212, 175, 55,0.25)]" : "text-muted-foreground border-white/10 hover:border-cyan-hud/40")}>
                     {r}
                   </button>
                 ))}

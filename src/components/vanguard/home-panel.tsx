@@ -46,9 +46,9 @@ interface NewsItem {
 const TAG_HEX: Record<string, string> = {
   ALERTA: "#FF3B30",
   DIPLOMACIA: "#38BDF8",
-  ECONOMIA: "#3EA6FF",
+  ECONOMIA: "#E8C56A",
   HUMANITARIO: "#A855F7",
-  ANALISIS: "#00FF87",
+  ANALISIS: "#3DDC97",
   INFO: "#8A90A8",
 };
 
@@ -88,8 +88,8 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "obras", title: "MURO DE OBRAS", desc: "La vitrina de la comunidad: un muro con TODO lo que la gente crea — juegos, escenarios, encuestas, música, periódicos — con Paseo de la Fama, señales de tus obras y el agente que evalúa cada pieza", icon: <Crown className="w-6 h-6" />, hex: "#FFC94D" },
   { tab: "foryou", title: "PARA TI", desc: "El feed de la comunidad: videos, música y stickers de los jugadores en scroll infinito — como TikTok, pero de guerra", icon: <Flame className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "mundo", title: "MUNDO DE GUERRA", desc: "Conquista los 24 territorios en el globo 3D contra 3 IA", icon: <Castle className="w-6 h-6" />, hex: "#FF3B30" },
-  { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#00FF87" },
-  { tab: "bolsa", title: "BOLSA GEOPOLÍTICA", desc: "Invierte en monedas de países: gana o pierde al instante", icon: <TrendingUp className="w-6 h-6" />, hex: "#3EA6FF" },
+  { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#3DDC97" },
+  { tab: "bolsa", title: "BOLSA GEOPOLÍTICA", desc: "Invierte en monedas de países: gana o pierde al instante", icon: <TrendingUp className="w-6 h-6" />, hex: "#E8C56A" },
   { tab: "osint", title: "SALA OSINT 3D", desc: "15 capas de inteligencia sobre un globo interactivo", icon: <Radar className="w-6 h-6" />, hex: "#38BDF8" },
   // v94.0 GOOGLES TOTAL: Vanguard como el Google de los problemas geopolíticos
   { tab: "googles", title: "GOOGLES DE VANGUARD", desc: "El Google de los problemas geopolíticos: buscador de todo el mundo Vanguard, tendencias, traductor de 8 idiomas, noticias, académico y alertas", icon: <Search className="w-6 h-6" />, hex: "#FFC94D" },
@@ -106,7 +106,7 @@ const WORLD_TILES: WorldTile[] = [
   { tab: "dron", title: "DRON STRIKE 3D", desc: "Vuela el dron, marca objetivos y multiplica combos", icon: <Rocket className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "warsim", title: "SIMULADOR DE GUERRAS", desc: "Cualquier país contra cualquier país, en segundos", icon: <Swords className="w-6 h-6" />, hex: "#FF6B4A" },
   { tab: "envivo", title: "EN VIVO MUNDIAL", desc: "Noticias reales 24/7 + streams de la comunidad con donaciones", icon: <Radio className="w-6 h-6" />, hex: "#FF3B30" },
-  { tab: "contribuidores", title: "CONTRIBUIDORES", desc: "7 trabajos remunerados: reporta, escribe, verifica, traduce y gana", icon: <Users className="w-6 h-6" />, hex: "#00FF87" },
+  { tab: "contribuidores", title: "CONTRIBUIDORES", desc: "7 trabajos remunerados: reporta, escribe, verifica, traduce y gana", icon: <Users className="w-6 h-6" />, hex: "#3DDC97" },
   { tab: "memes", title: "ESTUDIO DE MEMES", desc: "Diseña tu meme geopolítico con 251 países personajes — publícalo y gana", icon: <Laugh className="w-6 h-6" />, hex: "#A855F7" },
   { tab: "creador", title: "ESTUDIO COMUNITARIO", desc: "Sube TU contenido: personajes, armas, juegos, música, noticias y encuestas — la IA modera", icon: <Palette className="w-6 h-6" />, hex: "#A855F7" },
   { tab: "studios", title: "ESTUDIOS CREADORES", desc: "Un estudio para cada sección: noticias con fotos, banderas propias, mapas con flechas, música compuesta in-page, stickers y muro social", icon: <Wand2 className="w-6 h-6" />, hex: "#22D3EE" },
@@ -178,7 +178,7 @@ export function HomePanel() {
     () => Math.round(CONFLICTS.reduce((a, c) => a + c.intensity, 0) / Math.max(1, CONFLICTS.length)),
     []
   );
-  const tensionColor = tension >= 80 ? "#FF3B30" : tension >= 60 ? "#FF8A3B" : tension >= 40 ? "#3EA6FF" : "#00FF87";
+  const tensionColor = tension >= 80 ? "#FF3B30" : tension >= 60 ? "#FF8A3B" : tension >= 40 ? "#E8C56A" : "#3DDC97";
 
   // noticias (la primera página es la de noticias) — v36: con caché, reintentos
   // (5s/15s/30s) y estado SIN SEÑAL con botón REINTENTAR. Nunca más "sin noticias".
@@ -346,7 +346,7 @@ export function HomePanel() {
       <div className="hero-ring">
         <div className="hud-panel hud-corner p-5 sm:p-7 section-gradient relative overflow-hidden">
           <div className="radar-sweep opacity-40" aria-hidden />
-          <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full blur-3xl opacity-30 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(62,166,255,0.5), transparent 70%)" }} aria-hidden />
+          <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full blur-3xl opacity-30 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(232, 197, 106,0.5), transparent 70%)" }} aria-hidden />
           <div className="absolute -bottom-20 -left-10 w-56 h-56 rounded-full blur-3xl opacity-25 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(168,85,247,0.4), transparent 70%)" }} aria-hidden />
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-5">
           <div>
@@ -356,7 +356,7 @@ export function HomePanel() {
             <h1
               className="glitch font-display text-3xl sm:text-5xl font-black tracking-wider text-soft"
               data-text="VANGUARD"
-              style={{ textShadow: "0 0 26px rgba(62,166,255,0.35)" }}
+              style={{ textShadow: "0 0 26px rgba(232, 197, 106,0.35)" }}
             >
               VANGUARD
             </h1>
@@ -364,7 +364,7 @@ export function HomePanel() {
               <span className="text-gradient font-mono text-[10px] font-bold uppercase tracking-[0.3em]">
                 {APP_VERSION_LABEL}
               </span>
-              <span className="h-px w-16 bg-gradient-to-r from-[#3EA6FF]/60 to-transparent" aria-hidden />
+              <span className="h-px w-16 bg-gradient-to-r from-[#E8C56A]/60 to-transparent" aria-hidden />
             </div>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground">
               El mundo en tiempo real: noticias, guerra, economía e inteligencia
@@ -407,7 +407,7 @@ export function HomePanel() {
             <div className="mt-2 h-2.5 rounded-full bg-black/50 overflow-hidden border border-border/60 relative">
               <motion.div
                 className="h-full rounded-full relative"
-                style={{ background: `linear-gradient(90deg, #00FF87, #3EA6FF, #FF8A3B, #FF3B30)`, boxShadow: `0 0 12px ${tensionColor}88` }}
+                style={{ background: `linear-gradient(90deg, #3DDC97, #E8C56A, #FF8A3B, #FF3B30)`, boxShadow: `0 0 12px ${tensionColor}88` }}
                 initial={{ width: 0 }}
                 animate={{ width: `${tension}%` }}
                 transition={{ duration: 1.2, ease: "easeOut" }}

@@ -258,7 +258,7 @@ export function HaciendaPanel() {
             const progreso = d ? Math.min(100, ((ahora - d.inicio) / totalMs) * 100) : 0;
             const ganancia = Math.round((d?.monto ?? monto) * p.interes);
             return (
-              <div key={p.id} className={cn("hud-panel p-3 relative overflow-hidden transition-colors", maduro && "border-green-hud shadow-[0_0_18px_rgba(0,255,135,0.12)]")}>
+              <div key={p.id} className={cn("hud-panel p-3 relative overflow-hidden transition-colors", maduro && "border-green-hud shadow-[0_0_18px_rgba(61, 220, 151,0.12)]")}>
                 <div className="flex items-center justify-between">
                   <h4 className="font-mono text-[10px] uppercase tracking-widest text-foreground">{p.nombre}</h4>
                   <span className="font-mono text-[10px] font-bold text-green-hud">+{Math.round(p.interes * 100)}%</span>

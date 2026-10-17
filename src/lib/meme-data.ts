@@ -70,20 +70,20 @@ export const MEME_TEMPLATES: MemeTemplate[] = [
     ],
   },
   {
-    id: "alianza", label: "Alianza épica", title: "ALIANZA ÉPICA", accent: "#00FF87",
+    id: "alianza", label: "Alianza épica", title: "ALIANZA ÉPICA", accent: "#3DDC97",
     caption: (a, b) => `${a} y ${b} dominan el tablero mundial`,
     layers: [
       B("A", 33, 46, 145), B("B", 67, 46, 145), E("🤝", 50, 46, 64),
-      T("ALIANZA ÉPICA", 50, 12, 44, "#00FF87"),
+      T("ALIANZA ÉPICA", 50, 12, 44, "#3DDC97"),
       T("{{A}} + {{B}} dominan el tablero", 50, 85, 20, "#FFFFFF"),
     ],
   },
   {
-    id: "mision", label: "Tu misión", title: "TU MISIÓN, AGENTE", accent: "#1E90FF",
+    id: "mision", label: "Tu misión", title: "TU MISIÓN, AGENTE", accent: "#DCC078",
     caption: (a, b) => `conquista ${b} saliendo desde ${a}`,
     layers: [
       B("A", 18, 52, 120), B("B", 82, 52, 120), E("🎯", 50, 44, 70),
-      T("TU MISIÓN, AGENTE", 50, 12, 42, "#1E90FF"),
+      T("TU MISIÓN, AGENTE", 50, 12, 42, "#DCC078"),
       T("➜ conquista {{B}} desde {{A}}", 50, 86, 20, "#FFFFFF"),
     ],
   },
@@ -97,11 +97,11 @@ export const MEME_TEMPLATES: MemeTemplate[] = [
     ],
   },
   {
-    id: "trato", label: "Trato secreto", title: "TRATO SECRETO", accent: "#00FF87",
+    id: "trato", label: "Trato secreto", title: "TRATO SECRETO", accent: "#3DDC97",
     caption: (a, b) => `se filtra: ${a} y ${b} firman en secreto`,
     layers: [
       B("A", 28, 48, 130), B("B", 72, 48, 130), E("🤫", 50, 30, 66),
-      T("TRATO SECRETO", 50, 10, 44, "#00FF87"),
+      T("TRATO SECRETO", 50, 10, 44, "#3DDC97"),
       T("se filtra: {{A}} + {{B}} firman a puerta cerrada", 50, 87, 18, "#FFFFFF"),
     ],
   },
@@ -160,11 +160,11 @@ export const MEME_TEMPLATES: MemeTemplate[] = [
     ],
   },
   {
-    id: "bolsa", label: "Se cae la bolsa", title: "LA BOLSA DE...", accent: "#00FF87",
+    id: "bolsa", label: "Se cae la bolsa", title: "LA BOLSA DE...", accent: "#3DDC97",
     caption: (a, b) => `la bolsa de ${b} después de lo que hizo ${a}`,
     layers: [
       B("A", 26, 44, 120), B("B", 74, 44, 120, -10), E("📉", 50, 62, 84),
-      T("LA BOLSA DE {{B}}", 50, 10, 40, "#00FF87"),
+      T("LA BOLSA DE {{B}}", 50, 10, 40, "#3DDC97"),
       T("después de lo que hizo {{A}} 💀", 50, 88, 18, "#FFFFFF"),
     ],
   },
