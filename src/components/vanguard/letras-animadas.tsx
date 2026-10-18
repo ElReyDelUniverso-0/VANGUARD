@@ -30,18 +30,18 @@ export function LetrasAnimadas({ text, className, delay = 0, step = 0.026, brasa
   if (reduced) return <span className={[className, letraClass].filter(Boolean).join(" ") || undefined}>{text}</span>;
 
   return (
-    <span className={className} role="text" aria-label={text}>
+    <span className={className} role="text" aria-label={text} style={{ transformStyle: "preserve-3d" }}>
       {letras.map((ch, i) => (
         <motion.span
           key={`${i}-${ch}`}
           aria-hidden
           className={letraClass}
-          style={{ display: "inline-block", whiteSpace: "pre", transformOrigin: "50% 100%" }}
-          initial={{ opacity: 0, y: 10, rotateX: -64 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          style={{ display: "inline-block", whiteSpace: "pre", transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}
+          initial={{ opacity: 0, y: 10, rotateX: -64, z: -300, scale: 0.72 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0, z: 0, scale: 1 }}
           transition={{
             delay: delay + i * step,
-            duration: 0.42,
+            duration: 0.52,
             ease: [0.22, 1, 0.36, 1],
           }}
         >
@@ -61,16 +61,16 @@ export function LetrasBrasa({ text, className, delay = 0, step = 0.03, letraClas
   if (reduced) return <span className={[className, letraClass].filter(Boolean).join(" ") || undefined}>{text}</span>;
 
   return (
-    <span className={className} role="text" aria-label={text}>
+    <span className={className} role="text" aria-label={text} style={{ transformStyle: "preserve-3d" }}>
       {letras.map((ch, i) => (
         <motion.span
           key={`${i}-${ch}`}
           aria-hidden
           className={["vg-letra-brasa", letraClass].filter(Boolean).join(" ")}
-          style={{ display: "inline-block", whiteSpace: "pre", transformOrigin: "50% 100%" }}
-          initial={{ opacity: 0, y: 12, rotateX: -70, scale: 0.92 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-          transition={{ delay: delay + i * step, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: "inline-block", whiteSpace: "pre", transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}
+          initial={{ opacity: 0, y: 12, rotateX: -70, scale: 0.7, z: -340 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0, scale: 1, z: 0 }}
+          transition={{ delay: delay + i * step, duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
         >
           {ch}
         </motion.span>

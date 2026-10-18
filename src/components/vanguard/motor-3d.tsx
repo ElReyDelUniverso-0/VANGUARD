@@ -77,9 +77,15 @@ export function Motor3D() {
   // CSS vars de configuración (cambian poco — escritura directa)
   useEffect(() => {
     const r = document.documentElement;
-    r.style.setProperty("--vg-3d-i", activo && !reduced ? (intensidad / 100).toFixed(2) : "0");
+    const encendido = activo && !reduced;
+    r.style.setProperty("--vg-3d-i", encendido ? (intensidad / 100).toFixed(2) : "0");
     r.style.setProperty("--vg-3d-tilt", activo && inclinar && !reduced ? "1" : "0");
     r.style.setProperty("--vg-3d-filtro", eraDef.filtro || "none");
+    // v137 SALE DE LA PANTALLA: la puerta del diorama — el CSS solo convierte
+    // los paneles en cuerpos flotantes cuando el motor está REALLY encendido
+    // (con la var a 0 el transform seguiría existiendo y crearía containing
+    // blocks: la puerta de atributo lo deja en transform:none, cero riesgo)
+    r.setAttribute("data-vg-3d", encendido ? "on" : "off");
   }, [activo, intensidad, inclinar, reduced, eraDef]);
 
   // Paralaje global con rAF + lerp (nunca re-render) + GIROSCOPIO
@@ -107,6 +113,14 @@ export function Motor3D() {
       cx += (tx - cx) * 0.05; cy += (ty - cy) * 0.05;
       r.style.setProperty("--vg-mx", cx.toFixed(3));
       r.style.setProperty("--vg-my", cy.toFixed(3));
+      // v137 SALE DE LA PANTALLA: los ángulos del diorama PRE-MULTIPLICADOS
+      // (calc() no soporta productos de 3+ var() — el patrón que funciona es
+      // una sola var × literal, como el enjambre; aquí doblamos intensidad
+      // e inclinar del store en el propio valor: dx/dy = mx/my × k)
+      const st = useEstilo3D.getState();
+      const k = st.activo && !reduced ? (st.intensidad / 100) * (st.inclinar ? 1 : 0) : 0;
+      r.style.setProperty("--vg-dx", (cx * k).toFixed(4));
+      r.style.setProperty("--vg-dy", (cy * k).toFixed(4));
       raf = requestAnimationFrame(loop);
     };
     window.addEventListener("pointermove", onMove, { passive: true });

@@ -425,39 +425,39 @@ export default function Home() {
     switch (estiloTrans) {
       case "cine3d":
         return {
-          entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(60) : d(-60), rotateY: dir >= 0 ? -16 : 16, transformPerspective: 1200 }),
-          centro: { opacity: 1, x: 0, rotateY: 0, transformPerspective: 1200, transition: { duration: dur(0.42), ease: bez } },
-          sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(-50) : d(50), rotateY: dir >= 0 ? 12 : -12, transformPerspective: 1200, transition: { duration: dur(0.26), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+          entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(60) : d(-60), rotateY: dir >= 0 ? -16 : 16, z: d(-320), transformPerspective: 1200 }),
+          centro: { opacity: 1, x: 0, rotateY: 0, z: 0, transformPerspective: 1200, transition: { duration: dur(0.42), ease: bez } },
+          sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(-50) : d(50), rotateY: dir >= 0 ? 12 : -12, z: d(140), transformPerspective: 1200, transition: { duration: dur(0.26), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
         };
       case "telon":
         return {
-          entra: () => ({ opacity: 0, scaleY: 0.82, y: d(-34), transformOrigin: "50% 0%" }),
-          centro: { opacity: 1, scaleY: 1, y: 0, transformOrigin: "50% 0%", transition: { duration: dur(0.4), ease: bez } },
-          sale: () => ({ opacity: 0, scaleY: 0.88, y: d(26), transformOrigin: "50% 100%", transition: { duration: dur(0.24), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+          entra: () => ({ opacity: 0, scaleY: 0.82, y: d(-34), z: d(-180), transformPerspective: 1200, transformOrigin: "50% 0%" }),
+          centro: { opacity: 1, scaleY: 1, y: 0, z: 0, transformPerspective: 1200, transformOrigin: "50% 0%", transition: { duration: dur(0.4), ease: bez } },
+          sale: () => ({ opacity: 0, scaleY: 0.88, y: d(26), z: d(90), transformPerspective: 1200, transformOrigin: "50% 100%", transition: { duration: dur(0.24), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
         };
       case "oro": // v124.0 CAVIAR — la sala se recibe como se recibe a un invitado de alta clase: lenta, digna, dorada
         return {
-          entra: () => ({ opacity: 0, scale: 1.02, y: d(12) }),
-          centro: { opacity: 1, scale: 1, y: 0, transition: { duration: dur(0.46), ease: bez } },
-          sale: () => ({ opacity: 0, scale: 0.99, y: d(-8), transition: { duration: dur(0.26), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+          entra: () => ({ opacity: 0, scale: 1.02, y: d(12), z: d(-160), transformPerspective: 1200 }),
+          centro: { opacity: 1, scale: 1, y: 0, z: 0, transformPerspective: 1200, transition: { duration: dur(0.46), ease: bez } },
+          sale: () => ({ opacity: 0, scale: 0.99, y: d(-8), z: d(70), transformPerspective: 1200, transition: { duration: dur(0.26), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
         };
       case "hiperespacio":
         return {
-          entra: () => ({ opacity: 0, scale: 1.14 }),
-          centro: { opacity: 1, scale: 1, transition: { duration: dur(0.36), ease: bez } },
-          sale: () => ({ opacity: 0, scale: 0.9, transition: { duration: dur(0.22), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+          entra: () => ({ opacity: 0, scale: 1.14, z: d(-420), transformPerspective: 1200 }),
+          centro: { opacity: 1, scale: 1, z: 0, transformPerspective: 1200, transition: { duration: dur(0.36), ease: bez } },
+          sale: () => ({ opacity: 0, scale: 0.9, z: d(260), transformPerspective: 1200, transition: { duration: dur(0.22), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
         };
       case "disolver":
         return {
-          entra: () => ({ opacity: 0, scale: 0.992 }),
-          centro: { opacity: 1, scale: 1, transition: { duration: dur(0.5), ease: "easeOut" } },
-          sale: () => ({ opacity: 0, transition: { duration: dur(0.3), ease: "easeIn" } }),
+          entra: () => ({ opacity: 0, scale: 0.992, z: d(-120), transformPerspective: 1200 }),
+          centro: { opacity: 1, scale: 1, z: 0, transformPerspective: 1200, transition: { duration: dur(0.5), ease: "easeOut" } },
+          sale: () => ({ opacity: 0, z: d(50), transformPerspective: 1200, transition: { duration: dur(0.3), ease: "easeIn" } }),
         };
-      default: // deslizar — el v118 direccional, ahora con intensidad ajustable
+      default: // deslizar — el v118 direccional, ahora con VUELO Z (v137): la sala viene desde el fondo de la pantalla hacia ti
         return {
-          entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(30) : d(-30), y: d(18), scale: 0.99 }),
-          centro: { opacity: 1, x: 0, y: 0, scale: 1, transition: { duration: dur(0.3), ease: bez } },
-          sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(-24) : d(24), y: d(-12), scale: 0.995, transition: { duration: dur(0.2), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
+          entra: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(30) : d(-30), y: d(18), scale: 0.99, z: d(-260), rotateX: 5, transformPerspective: 1200 }),
+          centro: { opacity: 1, x: 0, y: 0, scale: 1, z: 0, rotateX: 0, transformPerspective: 1200, transition: { duration: dur(0.3), ease: bez } },
+          sale: (dir: number) => ({ opacity: 0, x: dir >= 0 ? d(-24) : d(24), y: d(-12), scale: 0.995, z: d(110), transformPerspective: 1200, transition: { duration: dur(0.2), ease: [0.4, 0, 1, 1] as [number, number, number, number] } }),
         };
     }
   }, [estiloTrans, movCama, modoCamaOn]);
@@ -872,7 +872,7 @@ export default function Home() {
       <TransicionMaestra tabKey={tab} label={APP_VERSION_LABEL} />
       <CineVivo />
 
-      <main className="flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20" data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
+      <main className="escenario-v137 flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20" data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
         {/* v118 CRONOATLAS: transición DIRECCIONAL — adelante entra por la
             derecha, atrás invierte el movimiento; AnimatePresence pasa el
             custom a la pestaña saliente para que el exit también lo sepa. */}
@@ -886,6 +886,13 @@ export default function Home() {
             animate="centro"
             exit="sale"
           >
+            {/* v137 SALE DE LA PANTALLA: el DIORAMA — la sala entera es un
+                cuerpo rígido que se inclina con tu mano (puntero/giroscopio,
+                vars del Motor3D, cero JS por frame). Va AQUÍ y no en los
+                paneles porque el backdrop-filter del cristal aplana el 3D
+                del elemento que lo lleva (lección de la autopsia Blink):
+                el mundo se mueve, el cristal sigue siendo cristal. */}
+            <div className="diorama-v137">
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (
           <>
@@ -1087,6 +1094,7 @@ export default function Home() {
         {/* v28 — PARA TI: feed de la comunidad */}
         {tab === "foryou" && <ForYouPanel />}
             </PanelErrorBoundary>
+            </div>
           </motion.div>
         </AnimatePresence>
       </main>

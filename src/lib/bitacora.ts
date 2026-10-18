@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v137.0",
+    nombre: "SALE DE LA PANTALLA",
+    tipo: "tecno",
+    hitos: [
+      "LA ORDEN DEL DUEÑO, EN CLARO: «haz Vanguard 3D completamente, interactivo, que salga de la pantalla LITERALMENTE, que sea un mundo 3D de los conflictos mundiales» — ESTA ES LA RESPUESTA: EL DIORAMA. La Casa entera vive ahora dentro de una escena con perspectiva real (1500px) y los paneles del búnker son CUERPOS FLOTANTES: viven a 22px POR DELANTE de tu pantalla y el tablero completo se inclina hasta ~1.9° siguiendo tu mano (puntero o giroscopio — las vars del Motor3D, cero JS por frame, solo transform = 60 FPS). El panel que MIRAS se acerca otros 18px más hacia ti. La puerta data-vg-3d garantiza transform:none para quien tenga la Tecnología 3D apagada (ni containing blocks, ni regresiones de anclaje — la lección v135 convertida en arquitectura)",
+      "LAS LETRAS SALEN DE LA PANTALLA LITERALMENTE: cada título de las 50+ salas (LetrasAnimadas) ahora VUELA desde 300px DEBAJO de tu pantalla — cada glifo viene desde el fondo, girando, creciendo y aterrizando en su sitio, letra a letra. La variante BRASA de los héroes vuela desde 340px. Con la perspectiva del h2 ya existente, el título literalmente SALE hacia ti en cada sala",
+      "EL POP POR GLIFO SUBE DE NIVEL: la letra de los títulos 3D (v113) que miras viene hacia tu CARA — translateZ 16→26px + scale 1.09 + brillo de neón con halo (brightness 1.35 + drop-shadow del color propio); los bloques TituloLetras3D ya se inclinaban con tu puntero (Motor3D)",
+      "TODAS LAS TRANSICIONES DE SALA VUELAN EN Z: los 6 estilos del dueño (deslizar · cine 3D · telón · oro · hiperespacio · disolver) ahora viajan en la TERCERA DIMENSIÓN — la sala nueva ENTRA desde 120-420px de profundidad (hiperespacio = el salto más largo) y la vieja se va PASANDO DE LARGO hacia ti (z positivo) al despedirse; con rotateX de llegada en el deslizar direccional v118",
+      "LA INGENIERÍA INVISIBLE: framer-motion z + transformPerspective en los 6 variants; atributo data-vg-3d (on/off) escrito por el Motor3D como puerta del diorama; los 4 componentes con position:fixed (cámara de consecuencias, lector, buscador, menús del cromo) ya viven en portales al body (cura v135) — el diorama no los captura; reduced-motion apaga diorama, pop y vuelo",
+    ],
+  },
+  {
     version: "v136.0",
     nombre: "PROFUNDIDAD TOTAL",
     tipo: "tecno",

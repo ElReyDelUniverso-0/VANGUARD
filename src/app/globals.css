@@ -1994,6 +1994,12 @@ main img.img-in { animation: imgEpica 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
   to   { opacity: 1; transform: translateY(0); }
 }
 .panel-stagger > * { animation: panelUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+/* v137: el DIORAMA es el único hijo directo (envuelve la sala entera) —
+   el stagger v121 con fill:both le CONGELARÍA el transform en identidad
+   para siempre (las animaciones ganan hasta al inline). El vuelo de
+   entrada ya lo hacen las variants framer; el diorama queda libre para
+   inclinarse con la mano. */
+.panel-stagger > .diorama-v137 { animation: none; }
 .panel-stagger > *:nth-child(1) { animation-delay: 0.03s; }
 .panel-stagger > *:nth-child(2) { animation-delay: 0.09s; }
 .panel-stagger > *:nth-child(3) { animation-delay: 0.15s; }
@@ -3779,4 +3785,54 @@ html[data-tension="critica"] .nexus-letra {
   .v135-velo, .v135-veredicto, .v135-bunker-on, .v135-cursor,
   html[data-tension="critica"] .nexus-letra,
   html[data-tension="critica"] body::after { animation: none; }
+}
+
+/* ============================================================
+   v137.0 SALE DE LA PANTALLA — EL DIORAMA
+   «Vanguard 3D completamente, que salga de la pantalla
+   literalmente, que sea un mundo 3D de los conflictos.»
+   La Casa vive ahora DENTRO de un diorama con perspectiva
+   real: los paneles flotan a su profundidad y TODO el tablero
+   se inclina contigo (puntero o giroscopio — vars del Motor3D,
+   cero JS por frame). Contrato 60 FPS: solo transform.
+   La puerta data-vg-3d="on" (Motor3D) garantiza cero transform
+   para quien tenga la Tecnología 3D apagada: ni containing
+   blocks, ni regresiones de anclaje.
+   ============================================================ */
+
+/* ---- 1. EL ESCENARIO — el contenido respira en perspectiva --- */
+.escenario-v137 {
+  perspective: 1500px;
+  perspective-origin: 50% 22%;
+}
+
+/* ---- 2. EL DIORAMA — la sala entera como cuerpo rígido --------
+   LECCIÓN DE LA AUTOPSIA BLINK: un elemento con backdrop-filter
+   (el cristal de los paneles) APLANA su propio 3D — darle
+   rotateX/translateZ a cada panel es matemáticamente muerto.
+   Solución: la SALA ENTERA se inclina como un cuerpo rígido
+   (puntero/giroscopio → --vg-dx/--vg-dy del Motor3D, cero JS
+   por frame, solo transform) — el mundo se mueve, el cristal
+   sigue siendo cristal. */
+html[data-vg-3d="on"] .escenario-v137 .diorama-v137 {
+  transform:
+    perspective(1400px)
+    rotateX(calc(var(--vg-dy, 0) * -1.7deg))
+    rotateY(calc(var(--vg-dx, 0) * 2.4deg))
+    translateZ(calc(8px * var(--vg-3d-i, 0)));
+  will-change: transform;
+}
+
+/* ---- 3. LAS LETRAS DE LOS TÍTULOS 3D SALEN MÁS ---------------
+   el pop por glifo (v113) sube de 16px a 26px con brillo de
+   neón — la letra que miras viene hacia tu cara */
+.v113-cuerpo { transition: transform 0.18s ease-out, filter 0.18s ease-out; }
+.v113-cuerpo:hover {
+  transform: translateZ(26px) scale(1.09);
+  filter: brightness(1.35) drop-shadow(0 0 10px currentColor);
+}
+@media (prefers-reduced-motion: reduce) {
+  .v113-cuerpo { transition: none !important; }
+  .v113-cuerpo:hover { transform: translateZ(16px); filter: none; }
+  html[data-vg-3d="on"] .escenario-v137 .diorama-v137 { transform: none; }
 }
