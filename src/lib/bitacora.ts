@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v138.0",
+    nombre: "MUNDO VIVO",
+    tipo: "tecno",
+    hitos: [
+      "LA AUTOPSIA DE LA INVISIBILIDAD: el Dueño dijo «aún no veo nada 3D» y tenía RAZÓN — la v137 inclinaba el diorama un MÁXIMO de 1.44° (0.6 de intensidad × 2.4° de coeficiente) y flotaba 4.8px: matemáticamente correcto, humanamente invisible (el ojo necesita >3° para percibir un giro). LA CURA: amplitud ×4 — rotateX hasta 6.5° y rotateY hasta 8° a intensidad plena (~4°/4.8° con la 60 por defecto), flotante constante 8→26px, y el PUNTO DE FUGA del escenario ahora PERSIGUE al puntero (±7%/±5%) — la habitación gira alrededor de donde miras",
+      "EL FLOTADOR: la sala entera VUELA desde el fondo del escenario (translateZ −380px, con fundido) en CADA cambio de pestaña — el remount de AnimatePresence relanza la animación CSS sola — y después RESPIRA: se acerca 22px y se retira en ciclos de 9s (la Casa nunca está quieta ni un segundo). La cadena 3D se completó: panel-stagger y flotador llevan preserve-3d para que la profundidad proyecte contra la perspectiva de 1500px del escenario",
+      "EL POP-OUT UNIVERSAL: las 447 tarjetas hud-panel de TODAS las salas SALEN DE LA PANTALLA al pasar el cursor — perspective(900px) propia + translateZ(46px) = +5.4% de tamaño REAL proyectado (no un truco de escala), brillo 1.08 y halo cian. Funciona hasta dentro del cristal backdrop-filter porque lleva su propia perspectiva embebida en el transform",
+      "EL MUNDO BAJO LA CASA: capa fija z:-1 con tres planos — CIELO de dos campos estelares + nebulosas cian/magenta con deriva de 120s y paralaje CONTRARIO al puntero (el firmamento se desplaza opuesto a tu mano), HORIZONTE vivo donde el mundo se dobla (cian a estribor, magenta a babor, latiendo en 7s) y SUELO de rejilla holográfica en perspectiva real (rotateX 63°) RODANDO hacia ti en ciclos de 16s, huyendo del lado donde está tu mano. El cristal translúcido de los paneles ahora mira A TRAVÉS hacia un mundo infinito",
+      "ACCESIBILIDAD Y PUERTAS: todo bajo data-vg-3d (on/off — la Tecnología 3D apagada esconde el mundo y congela el diorama), reduced-motion apaga entrada/respiración/pop/paralaje (el suelo queda quieto pero en perspectiva), calc solo con var × literal (lección Blink #1), y el mundo no captura puntero ni ancla fixed (capa hermana de la aurora)",
+    ],
+  },
+  {
     version: "v137.0",
     nombre: "SALE DE LA PANTALLA",
     tipo: "tecno",

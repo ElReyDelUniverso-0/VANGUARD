@@ -795,6 +795,15 @@ export default function Home() {
       </div>
       <div className="vignette-layer" aria-hidden />
       <div className="particles-layer" aria-hidden />
+      {/* v138 MUNDO VIVO: el mundo bajo la Casa — cielo estrellado con
+          paralaje (contrario al puntero), horizonte cian/magenta latiendo
+          y suelo de rejilla holográfica rodando en perspectiva. Capa fija
+          z:-1, sin puntero; se apaga con la Tecnología 3D o reduced-motion. */}
+      <div className="v138-mundo" aria-hidden>
+        <div className="v138-cielo" />
+        <div className="v138-horizonte" />
+        <div className="v138-suelo" />
+      </div>
       {/* v72.0: intro cinematográfica de vuelta — letras realistas + luna llena */}
       <IntroCinematica />
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
@@ -893,6 +902,12 @@ export default function Home() {
                 del elemento que lo lleva (lección de la autopsia Blink):
                 el mundo se mueve, el cristal sigue siendo cristal. */}
             <div className="diorama-v137">
+            {/* v138 MUNDO VIVO: el FLOTADOR — la sala entera vuela desde el
+                fondo del escenario (z −380px) al entrar y luego RESPIRA
+                acercándose 22px en ciclos de 9s: la Casa nunca está quieta.
+                Vive dentro del diorama (preserve-3d) para que el translateZ
+                proyecte contra la perspectiva del escenario. */}
+            <div className="flotador-v138">
             <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (
           <>
@@ -1094,6 +1109,7 @@ export default function Home() {
         {/* v28 — PARA TI: feed de la comunidad */}
         {tab === "foryou" && <ForYouPanel />}
             </PanelErrorBoundary>
+            </div>
             </div>
           </motion.div>
         </AnimatePresence>
