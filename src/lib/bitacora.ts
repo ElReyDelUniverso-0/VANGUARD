@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v128.0",
+    nombre: "LA RED MUNDIAL",
+    tipo: "nav",
+    hitos: [
+      "LA RED MUNDIAL (sala nueva en INTELIGENCIA, hermana de LA COMUNIDAD): los 18 servicios de inteligencia del resto del planeta, de 12 naciones, abiertos como colección de expedientes finos — el MI6 y su tinta verde, el Mossad y su proverbio, el bloque ruso-chino, la continental y el Subcontinente",
+      "EL MAPA DEL MUNDO: las 18 sedes reales proyectadas sobre el mapa de la Casa con pines numerados clicables — y los arcos del pacto UKUSA de 1946 cruzando el Atlántico hasta Washington, la terminal que une esta sala con los 18 ojos de LA COMUNIDAD",
+      "LOS CINCO BLOQUES: la alianza de los Cinco Ojos (MI6 · MI5 · GCHQ · ASIS · CSIS · GCSB), el bloque ruso-chino (SVR · FSB · GRU · MSS), el Levante israelí (Mossad · Shabak · AMAN), la continental europea (DGSE · BND · CNI) y el Subcontinente (RAW · ISI) — índice con banderas y señales vivas",
+      "EL EXPEDIENTE ABIERTO: fundación y linaje, sede, plantilla, dominio, lema (o su leyenda honesta cuando el silencio es la firma) y misión narrada de cada servicio — de Semper Occultus a la discreción como cortesía de reyes",
+      "EL PULSO REAL: los cables auténticos de la Casa filtrados por el dominio de cada servicio (Mossad busca Mossad, GCHQ busca Bletchley, MI6 busca British Intelligence…) — lectura interna, cero portales externos, refresco cada 5 minutos",
+      "EL PACTO: UKUSA 1946 explicado — 5 ojos, 9 y 14, y la segunda fila europea; y la sala hermana anunciada en LA COMUNIDAD: las dos orillas de la misma historia",
+      "8 IDIOMAS: la sala se traduce a español, inglés, portugués, francés, alemán, italiano, ruso y chino — como todo lo que la Casa abre",
+    ],
+  },
+  {
     version: "v127.0",
     nombre: "LA COMUNIDAD",
     tipo: "nav",

@@ -3369,3 +3369,23 @@ html[data-galeria="on"] .space-y-3 > * + * { margin-top: 1rem; }
 @media (prefers-reduced-motion: reduce) {
   .v127-anillo { animation: none; }
 }
+
+/* ============================================================
+   v128.0 LA RED MUNDIAL — los 18 servicios del resto del planeta
+   ============================================================ */
+/* los arcos del pacto UKUSA: dash que corre por la red (SVG liviano) */
+@keyframes v128Dash {
+  to { stroke-dashoffset: -26; }
+}
+.v128-ruta { animation: v128Dash 2.6s linear infinite; }
+/* anillo de selección sobre la sede activa (solo opacity — contrato 60 FPS) */
+@keyframes v128Anillo {
+  0%   { opacity: 0.9; }
+  50%  { opacity: 0.2; }
+  100% { opacity: 0.9; }
+}
+.v128-anillo { animation: v128Anillo 2.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .v128-ruta { animation: none; }
+  .v128-anillo { animation: none; }
+}

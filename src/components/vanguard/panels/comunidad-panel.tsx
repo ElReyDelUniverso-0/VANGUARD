@@ -27,7 +27,7 @@ import {
 import {
   Crown, Eye, Signal, Crosshair, Map as MapIcon, Satellite, Landmark, Ship, Swords,
   Plane, Rocket, Scale, Building2, Anchor, Pill, ScrollText, Coins, Atom, Radar,
-  Handshake, Radio, ChevronRight, Fingerprint, ShieldCheck,
+  Handshake, Radio, ChevronRight, Fingerprint, ShieldCheck, Network,
 } from "lucide-react";
 
 const ICONO: Record<string, React.ReactNode> = {
@@ -465,6 +465,20 @@ export function ComunidadPanel() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* ── SALA HERMANA: la red mundial (v128) ── */}
+      <div className="hud-panel p-4 border-dashed">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-foreground flex items-center gap-2">
+          <Network className="w-3.5 h-3.5" style={{ color: "#7FE3FF" }} /> SALA HERMANA — LA RED MUNDIAL
+        </p>
+        <p className="text-[10px] text-muted-foreground leading-relaxed mt-1.5">
+          Los 18 ojos de esta sala miran desde Washington. Al otro lado del Atlántico y del mapa viven los
+          18 servicios del resto del planeta — el MI6 de Londres, el Mossad de Tel Aviv, el bloque
+          ruso-chino, la continental París-Berlín-Madrid y los Cinco Ojos del pacto UKUSA de 1946, que es
+          justamente el hilo que une las dos salas. Sus expedientes finos, su mapa del mundo y su pulso real
+          esperan en <span className="text-foreground font-bold">LA RED MUNDIAL</span>, la pestaña siguiente de esta sección.
+        </p>
       </div>
 
       {/* lectura interna */}

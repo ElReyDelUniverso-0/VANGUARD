@@ -1063,6 +1063,15 @@ export const REGLA_ORO = {
       "La pirámide entera abierta como una colección de expedientes finos: la ODNI en la corona, la CIA en el exterior, las cuatro grandes del Pentágono, los cinco servicios armados, el escudo interno y los ministerios. Su mapa de sedes en el corredor Washington–Virginia–Maryland, su oficio (HUMINT, SIGINT, GEOINT, OSINT, FININT), su lema y su misión — y el pulso real: los cables que la Casa recibe ahora mismo sobre cada agencia. Conocimiento abierto, presentado como joya.",
     acento: "#D4AF37",
   },
+  // v128.0 LA RED MUNDIAL — los 18 servicios del resto del planeta (sala hermana)
+  redmundial: {
+    titulo: "LA RED MUNDIAL",
+    volanta: "Los 18 servicios del resto del planeta — la sala hermana de LA COMUNIDAD",
+    imagen: "/ilustraciones/mundo.jpg",
+    texto:
+      "Dieciocho servicios de inteligencia de doce naciones, expediente a expediente: el MI6 y su tinta verde, el Mossad y su proverbio, el bloque ruso-chino, la continental París–Berlín–Madrid y los Cinco Ojos del pacto UKUSA de 1946. Su mapa del mundo con sedes reales, sus arcos de alianza cruzando el Atlántico hasta la sala hermana, su lema y su misión — y el pulso real: los cables que la Casa recibe ahora mismo sobre cada servicio. El planeta entero, presentado como joya.",
+    acento: "#7FE3FF",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

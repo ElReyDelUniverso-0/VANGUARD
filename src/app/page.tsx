@@ -40,6 +40,8 @@ const CamaPanel = dynamic(() => import("@/components/vanguard/panels/cama-panel"
 const AtelierPanel = dynamic(() => import("@/components/vanguard/panels/atelier-panel").then((m) => m.AtelierPanel), { ssr: false, loading: PanelSkeleton });
 // v127.0 LA COMUNIDAD — los 18 ojos de la Comunidad de Inteligencia de EE. UU.
 const ComunidadPanel = dynamic(() => import("@/components/vanguard/panels/comunidad-panel").then((m) => m.ComunidadPanel), { ssr: false, loading: PanelSkeleton });
+// v128.0 LA RED MUNDIAL — los 18 servicios del resto del planeta (sala hermana de LA COMUNIDAD)
+const RedMundialPanel = dynamic(() => import("@/components/vanguard/panels/red-mundial-panel").then((m) => m.RedMundialPanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
@@ -922,6 +924,7 @@ export default function Home() {
         {tab === "cama" && <CamaPanel />}
         {tab === "atelier" && <AtelierPanel />}
         {tab === "comunidad" && <ComunidadPanel />}
+        {tab === "redmundial" && <RedMundialPanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}
