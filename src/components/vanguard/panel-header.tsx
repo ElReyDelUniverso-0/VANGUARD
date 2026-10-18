@@ -39,7 +39,8 @@ export function PanelHeader({ title, subtitle, icon, color = "amber", right }: P
             <LetrasAnimadas text={title} letraClass="caviar-letra nexus-letra" />
           </h2>
           {subtitle && (
-            <p className="text-[10px] sm:text-xs text-muted-foreground font-mono uppercase">{subtitle}</p>
+            /* v136 PROFUNDIDAD TOTAL: el subtítulo duerme con una capa de cuerpo */
+            <p className="text-[10px] sm:text-xs text-muted-foreground font-mono uppercase nexus-sub">{subtitle}</p>
           )}
         </div>
       </div>

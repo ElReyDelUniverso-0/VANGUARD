@@ -744,7 +744,7 @@ export function TabNav({
                   }}
                   title={s.desc}
                   className={cn(
-                    "relative flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest whitespace-nowrap border transition-colors",
+                    "nexus-tab-host relative flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest whitespace-nowrap border transition-colors",
                     isActive ? "" : "border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                   )}
                   style={isActive ? { color: acc, borderColor: `${acc}66`, backgroundColor: `${acc}1a` } : undefined}
@@ -759,8 +759,9 @@ export function TabNav({
                   )}
                   <span className="relative z-10 flex items-center gap-1.5">
                     {s.icon}
-                    <span className="hidden sm:inline">{t(`sec.${s.key}`)}</span>
-                    <span className="sm:hidden">{t(`sec.${s.key}`)}</span>
+                    {/* v136 PROFUNDIDAD TOTAL: la letra del cromo sale de la pantalla */}
+                    <span className="hidden sm:inline nexus-tab nexus-letra-suave">{t(`sec.${s.key}`)}</span>
+                    <span className="sm:hidden nexus-tab nexus-letra-suave">{t(`sec.${s.key}`)}</span>
                     <span
                       className={cn("w-1.5 h-1.5 rounded-full ml-0.5 transition-shadow", isActive && "vg-acc-dot")}
                       style={{ backgroundColor: acc, boxShadow: isActive ? `0 0 8px ${acc}` : undefined }}
@@ -788,10 +789,10 @@ export function TabNav({
               onClick={surprise}
               title="Sorpréndeme: llévame a una sección que nunca has visto"
               aria-label="Sorpréndeme con una sección al azar"
-              className="mr-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-green-hud text-green-hud bg-green-hud/15 hover:bg-green-hud/40 transition-colors"
+              className="nexus-btn3d mr-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-green-hud text-green-hud bg-green-hud/15 hover:bg-green-hud/40 transition-colors"
             >
               <Dices className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Sorpréndeme</span>
+              <span className="hidden sm:inline nexus-letra-suave">Sorpréndeme</span>
             </button>
             {/* v47.0 BUSCADOR DE SECCIONES — salta a cualquiera de las 81 en 2 toques */}
             {onOpenSearch && (
@@ -799,10 +800,10 @@ export function TabNav({
                 onClick={onOpenSearch}
                 title="Buscador de secciones (Ctrl+K o /)"
                 aria-label="Buscar sección"
-                className="mr-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-amber-hud text-amber bg-amber-hud/20 hover:bg-amber-hud/50 transition-colors"
+                className="nexus-btn3d mr-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-amber-hud text-amber bg-amber-hud/20 hover:bg-amber-hud/50 transition-colors"
               >
                 <Search className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Buscar</span>
+                <span className="hidden sm:inline nexus-letra-suave">Buscar</span>
               </button>
             )}
             {/* MENÚ llamativo a pantalla completa */}
@@ -811,10 +812,10 @@ export function TabNav({
                 onClick={onOpenMenu}
                 title={t("nav.openFull")}
                 aria-label={t("nav.openFull")}
-                className="ml-1 mr-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-electric-hud text-electric bg-electric-hud/40 hover:bg-electric-hud/70 transition-colors"
+                className="nexus-btn3d ml-1 mr-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border border-electric-hud text-electric bg-electric-hud/40 hover:bg-electric-hud/70 transition-colors"
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{t("nav.menu")}</span>
+                <span className="hidden sm:inline nexus-letra-suave">{t("nav.menu")}</span>
               </button>
             )}
           </div>
@@ -835,7 +836,7 @@ export function TabNav({
             <div className="px-3 sm:px-4 py-3">
               <div className="flex items-center gap-2 mb-2.5">
                 <LayoutPanelLeft className="w-3.5 h-3.5" style={{ color: accentOfSection(section.key) }} />
-                <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground nexus-sub">
                   {section.label} · {section.tabs.length} destinos · toca para saltar
                 </span>
                 <button onClick={() => setDrawer(false)} className="ml-auto font-mono text-[9px] uppercase tracking-widest text-electric hover:text-foreground transition-colors">
@@ -853,17 +854,17 @@ export function TabNav({
                       onClick={() => onChange(tb.key)}
                       title={tabLabel(lang, tb.key, tb.label)}
                       className={cn(
-                        "flex items-center gap-2 px-3 py-2 rounded-md border text-left max-w-full transition-colors",
+                        "nexus-tab-host flex items-center gap-2 px-3 py-2 rounded-md border text-left max-w-full transition-colors",
                         esActiva ? "border-transparent" : "border-border/60 hover:border-amber-hud/50 hover:bg-secondary/40"
                       )}
                       style={esActiva ? { backgroundColor: `${acc}1f`, boxShadow: `inset 0 0 0 1px ${acc}66` } : undefined}
                     >
                       <span style={{ color: acc }} className="shrink-0">{tb.icon}</span>
                       <span className="min-w-0">
-                        <span className={cn("block text-[11px] font-bold uppercase tracking-wide truncate", esActiva ? "" : "text-foreground/90")} style={esActiva ? { color: acc } : undefined}>
+                        <span className={cn("block text-[11px] font-bold uppercase tracking-wide truncate nexus-tab nexus-letra-suave", esActiva ? "" : "text-foreground/90")} style={esActiva ? { color: acc } : undefined}>
                           {tabLabel(lang, tb.key, tb.label).split(" (")[0]}
                         </span>
-                        <span className="block font-mono text-[8px] uppercase tracking-widest text-muted-foreground/70">
+                        <span className="block font-mono text-[8px] uppercase tracking-widest text-muted-foreground/70 nexus-sub">
                           {TAB_SHORTS[lang]?.[tb.key] ?? tb.short}
                         </span>
                       </span>
@@ -927,7 +928,7 @@ export function TabNav({
                   data-tab={t.key}
                   onClick={() => onChange(t.key)}
                   className={cn(
-                    "relative flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-sm font-mono text-[9px] sm:text-[11px] font-bold uppercase tracking-wide transition-colors whitespace-nowrap border",
+                    "nexus-tab-host relative flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-sm font-mono text-[9px] sm:text-[11px] font-bold uppercase tracking-wide transition-colors whitespace-nowrap border",
                     isActive
                       ? "border-transparent"
                       : "border-border/60 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
@@ -943,8 +944,9 @@ export function TabNav({
                   )}
                   <span className="relative z-10 flex items-center gap-1" style={isActive ? { color: acc } : undefined}>
                     {t.icon}
-                    <span className="hidden sm:inline">{tabLabel(lang, t.key, t.label)}</span>
-                    <span className="sm:hidden">{TAB_SHORTS[lang]?.[t.key] ?? t.short}</span>
+                    {/* v136 PROFUNDIDAD TOTAL: letra extruida que se levanta al foco */}
+                    <span className="hidden sm:inline nexus-tab nexus-letra-suave">{tabLabel(lang, t.key, t.label)}</span>
+                    <span className="sm:hidden nexus-tab nexus-letra-suave">{TAB_SHORTS[lang]?.[t.key] ?? t.short}</span>
                     {/* v48.0: punto “sin descubrir” — brilla hasta que lo visitas */}
                     {!visitedSet.has(t.key) && !isActive && (
                       <span className="w-1 h-1 rounded-full bg-electric blink-soft" aria-hidden />

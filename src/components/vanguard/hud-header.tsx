@@ -205,7 +205,7 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             </div>
             <div className="leading-tight min-w-0">
               <div
-                className="font-caviar text-[12px] sm:text-lg font-bold tracking-[0.22em] text-amber truncate"
+                className="font-caviar text-[12px] sm:text-lg font-bold tracking-[0.22em] text-amber truncate nexus-letra"
                 data-text="VANGUARD"
               >
                 VANGUARD
@@ -413,9 +413,9 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
         <div className="mt-1.5 flex items-center gap-1.5 sm:gap-3">
           <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
             <div className="px-1 sm:px-1.5 py-0.5 hud-corner border-amber-hud bg-amber-hud/30">
-              <span className="text-[9px] sm:text-xs font-mono font-bold text-amber">L{level}</span>
+              <span className="text-[9px] sm:text-xs font-mono font-bold text-amber nexus-num">L{level}</span>
             </div>
-            <div className={cn("text-[9px] sm:text-xs font-bold font-mono uppercase tracking-wide", rankInfo.color)}>
+            <div className={cn("text-[9px] sm:text-xs font-bold font-mono uppercase tracking-wide nexus-letra-suave", rankInfo.color)}>
               {rank}
             </div>
           </div>
@@ -468,7 +468,7 @@ function CoinPill({
   return (
     <div
       className={cn(
-        "flex items-center gap-0.5 sm:gap-1 px-1 sm:px-2 py-0.5 sm:py-1 rounded-sm border font-mono text-[10px] sm:text-sm font-bold tabular-nums",
+        "nexus-btn3d flex items-center gap-0.5 sm:gap-1 px-1 sm:px-2 py-0.5 sm:py-1 rounded-sm border font-mono text-[10px] sm:text-sm font-bold nexus-num",
         colors[color],
         boosted && "blink-soft"
       )}

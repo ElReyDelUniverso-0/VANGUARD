@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v136.0",
+    nombre: "PROFUNDIDAD TOTAL",
+    tipo: "tecno",
+    hitos: [
+      "LA ORDEN DEL DUEÑO: «pon las letras en 3D» — y la Casa obedeció por SEGUNDA vez: la extrusión ya no es privilegio de los títulos. NACE EL SISTEMA NEXUS COMPLETO: .nexus-letra (títulos, ahora con FILO CROMÁTICO holográfico — la luz se descompone en los bordes: cian a estribor, magenta a babor), .nexus-letra-suave (micro-extrusión de 3 capas de vidrio para letra de 9-11px: se ve VOLUMEN sin sacrificar legibilidad), .nexus-num (los NÚMEROS del búnker salen de la pantalla, tabulares para que el cajeador no baile), .nexus-sub (subtítulos con una capa de cuerpo) y .nexus-tab/.nexus-btn3d (el HOVER SE LEVANTA EN Z — la pestaña y el botón salen un píxel hacia ti al enfocarlos; contrato 60 FPS: solo transform/filter, reduced-motion lo apaga)",
+      "LA CROMO INTEGRA VOLUMEN: el wordmark VANGUARD del HUD ahora extruye (nexus-letra), las píldoras de monedas/gemas/racha son NÚMEROS EN VOLUMEN con lift al foco, el chip L{nivel} y el RANGO del agente llevan cuerpo, y las etiquetas Buscar / Menú / Sorpréndeme se levantan al pasar el cursor",
+      "LA NAVEGACIÓN COMPLETA EN 3D: las pestañas de sección (la fila del cromo), los subtemas deslizables y los chips del drawer del menú — TODOS llevan ahora letra extruida que se LEVANTA EN Z al enfocar (el hover vive en el host porque framer-motion pisa el transform del botón: detalle de ingeniería que preserva la píldora deslizante v98 intacta)",
+      "EL TRÁILER DE ESTRENO (v134) ahora proyecta sus letras con cuerpo: VANGUARD entra al aire con extrusión de 3 capas + halo doble",
+      "los subtítulos de TODAS las salas (PanelHeader) y los metadatos del cromo duermen con profundidad de una capa — hasta lo pequeño tiene cuerpo ahora",
+    ],
+  },
+  {
     version: "v135.0",
     nombre: "NEXUS-HYPNOS",
     tipo: "tecno",

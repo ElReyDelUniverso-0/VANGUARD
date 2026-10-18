@@ -3523,12 +3523,81 @@ html[data-acabado="marfil"] .hairline-gradient {
    Z + halo de emisión. Cero JS, cero imágenes. */
 .nexus-letra {
   text-shadow:
+    /* v136 PROFUNDIDAD TOTAL: filo cromático holográfico — la luz se
+       descompone en los bordes del glifo (cian a estribor, magenta a
+       babor) como una pantalla proyectando en el aire */
+    1px 0 0 color-mix(in srgb, #00F0FF 16%, transparent),
+    -1px 0 0 color-mix(in srgb, #FF2D78 13%, transparent),
     0 1px 0 color-mix(in srgb, currentColor 70%, #05070c),
     0 2px 0 color-mix(in srgb, currentColor 50%, #05070c),
     0 3px 0 color-mix(in srgb, currentColor 32%, #05070c),
     0 4px 0 color-mix(in srgb, currentColor 18%, #05070c),
     0 6px 14px rgba(0, 0, 0, 0.68),
     0 0 18px color-mix(in srgb, currentColor 26%, transparent);
+}
+/* ---- 1b. PROFUNDIDAD TOTAL (v136) — LA LETRA EN TODAS PARTES ----
+   El Dueño mandó: «pon las letras en 3D». Ya no solo los títulos:
+   TABS, BOTONES, NÚMEROS y SUBTÍTULOS del HUD y la navegación
+   llevan ahora micro-extrusión. Contrato: cero JS, cero imágenes,
+   el hover solo mueve transform (60 FPS). */
+/* micro-extrusión para letra pequeña (tabs, chips, botones): 3 capas
+   de vidrio — se ve VOLUMEN sin sacrificar legibilidad a 9-11px */
+.nexus-letra-suave {
+  text-shadow:
+    1px 0 0 color-mix(in srgb, #00F0FF 10%, transparent),
+    -1px 0 0 color-mix(in srgb, #FF2D78 8%, transparent),
+    0 1px 0 color-mix(in srgb, currentColor 55%, #05070c),
+    0 2px 0 color-mix(in srgb, currentColor 26%, #05070c),
+    0 3px 6px rgba(0, 0, 0, 0.5),
+    0 0 8px color-mix(in srgb, currentColor 14%, transparent);
+}
+/* los NÚMEROS del búnker (monedas, gemas, nivel) salen de la pantalla:
+   tabular para que el cajeador no baile al contar */
+.nexus-num {
+  font-variant-numeric: tabular-nums;
+  text-shadow:
+    0 1px 0 color-mix(in srgb, currentColor 58%, #05070c),
+    0 2px 0 color-mix(in srgb, currentColor 28%, #05070c),
+    0 3px 7px rgba(0, 0, 0, 0.55),
+    0 0 9px color-mix(in srgb, currentColor 16%, transparent);
+}
+/* subtítulos y metadatos: una sola capa de profundidad — duermen
+   planos pero al mirarlos de cerca tienen cuerpo */
+.nexus-sub {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.72),
+    0 2px 5px rgba(0, 0, 0, 0.4);
+}
+/* las pestañas del cromo: letra extruida + HOVER QUE SE LEVANTA EN Z.
+   El hover vive en el HOST (el botón framer-motion lleva transform
+   inline que pisaría este CSS) y levanta la etiqueta interior. */
+.nexus-tab { transition: transform 0.16s ease, filter 0.16s ease; }
+.nexus-tab-host:hover .nexus-tab {
+  transform: translateY(-1px) scale(1.04);
+  filter: brightness(1.2) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+}
+.nexus-tab-host:active .nexus-tab { transform: translateY(0) scale(0.97); }
+/* botones de acción del HUD: la etiqueta sale de la pantalla al foco */
+.nexus-btn3d {
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.nexus-btn3d:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.14) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+}
+.nexus-btn3d:active { transform: translateY(0); }
+/* el tráiler de estreno también extruye sus letras (v134 + v136) */
+.v134-intro-letra {
+  text-shadow:
+    0 1px 0 color-mix(in srgb, currentColor 65%, #05070c),
+    0 2px 0 color-mix(in srgb, currentColor 40%, #05070c),
+    0 3px 0 color-mix(in srgb, currentColor 22%, #05070c),
+    0 5px 12px rgba(0, 0, 0, 0.7),
+    0 0 22px color-mix(in srgb, currentColor 34%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .nexus-tab, .nexus-btn3d { transition: none; }
+  .nexus-tab-host:hover .nexus-tab, .nexus-btn3d:hover { transform: none; filter: none; }
 }
 /* jerarquía lumínica: el texto secundario dormita y despierta al foco */
 .nexus-letra-parent { perspective: 640px; }

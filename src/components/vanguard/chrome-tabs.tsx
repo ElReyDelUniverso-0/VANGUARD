@@ -84,7 +84,7 @@ function ItemMenu({
       role="menuitem"
       onClick={onClick}
       className={cn(
-        "w-full text-left px-3 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-2",
+        "w-full text-left px-3 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-2 nexus-letra-suave",
         peligro ? "text-red-400 hover:bg-red-500/15" : "text-soft/90 hover:bg-amber-hud/20 hover:text-foreground"
       )}
     >
@@ -311,7 +311,7 @@ function PestanaItem({
             title={fijada ? `${t("m108.fijada")}: ${titulo}` : t("grupo.arrastre")}
             aria-current={esActiva ? "page" : undefined}
             className={cn(
-              "group relative z-10 flex items-center gap-1.5 h-8 pl-2.5 rounded-t-[10px] font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wide whitespace-nowrap transition-colors max-w-[168px] sm:max-w-[190px]",
+              "nexus-tab-host group relative z-10 flex items-center gap-1.5 h-8 pl-2.5 rounded-t-[10px] font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-wide whitespace-nowrap transition-colors max-w-[168px] sm:max-w-[190px]",
               fijada && "pl-0 pr-0 w-9 justify-center max-w-none",
               esActiva
                 ? "text-foreground"
@@ -325,9 +325,10 @@ function PestanaItem({
               style={{ backgroundColor: fijada ? (grupoColor ?? acc) : acc, boxShadow: esActiva ? `0 0 8px ${fijada ? (grupoColor ?? acc) : acc}` : `${acc}55` }}
             />
             {!fijada && (
+              /* v136 PROFUNDIDAD TOTAL: la letra de la pestaña sale de la pantalla */
               <span className="truncate">
-                <span className="sm:hidden">{TAB_SHORTS[lang]?.[k] ?? def?.short ?? ""}</span>
-                <span className="hidden sm:inline truncate">{titulo}</span>
+                <span className="sm:hidden nexus-tab nexus-letra-suave">{TAB_SHORTS[lang]?.[k] ?? def?.short ?? ""}</span>
+                <span className="hidden sm:inline truncate nexus-tab nexus-letra-suave">{titulo}</span>
               </span>
             )}
             {/* ⋮ abre el menú de la pestaña (grupos, cerrar las demás, reabrir) */}
@@ -1393,10 +1394,10 @@ export function ChromeTabs({
                   onClick={onOpenSearch}
                   title={t("nav.searchTitle")}
                   aria-label={t("nav.searchTitle")}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-amber-hud/50 text-amber bg-amber-hud/10 hover:bg-amber-hud/30 transition-colors"
+                  className="nexus-btn3d flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-amber-hud/50 text-amber bg-amber-hud/10 hover:bg-amber-hud/30 transition-colors"
                 >
                   <Search className="w-3 h-3" />
-                  <span className="hidden sm:inline">{t("nav.search")}</span>
+                  <span className="hidden sm:inline nexus-letra-suave">{t("nav.search")}</span>
                 </button>
               )}
               {onInmersion && (
@@ -1405,10 +1406,10 @@ export function ChromeTabs({
                   title={`${t("inmi.entrar")} (F)`}
                   aria-label={t("inmi.entrar")}
                   data-inmi108
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-green-hud/60 text-green-hud bg-green-hud/10 hover:bg-green-hud/30 transition-colors"
+                  className="nexus-btn3d flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-green-hud/60 text-green-hud bg-green-hud/10 hover:bg-green-hud/30 transition-colors"
                 >
                   <Maximize2 className="w-3 h-3" />
-                  <span className="hidden sm:inline">{t("inmi.corto")}</span>
+                  <span className="hidden sm:inline nexus-letra-suave">{t("inmi.corto")}</span>
                 </button>
               )}
               {onOpenMenu && (
@@ -1416,10 +1417,10 @@ export function ChromeTabs({
                   onClick={onOpenMenu}
                   title={t("nav.openFull")}
                   aria-label={t("nav.openFull")}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-electric-hud text-electric bg-electric-hud/30 hover:bg-electric-hud/60 transition-colors"
+                  className="nexus-btn3d flex items-center gap-1.5 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-electric-hud text-electric bg-electric-hud/30 hover:bg-electric-hud/60 transition-colors"
                 >
                   <LayoutGrid className="w-3 h-3" />
-                  <span className="hidden sm:inline">{t("nav.menu")}</span>
+                  <span className="hidden sm:inline nexus-letra-suave">{t("nav.menu")}</span>
                 </button>
               )}
             </div>
