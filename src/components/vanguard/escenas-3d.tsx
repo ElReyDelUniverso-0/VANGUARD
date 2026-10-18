@@ -632,7 +632,7 @@ export function Escena3D({
 // ============================================================
 const GRUPOS: Record<VarianteEscena, string[]> = {
   noticias: ["noticias", "redaccion", "briefing", "briefings", "canalbrief", "envivo", "verdades", "verifica", "ayuda", "registro"],
-  orbita: ["mapa", "maps", "conquistas3d", "geoint", "planeta", "cielos", "tierra", "sismo", "pulso", "pulsos", "centinela", "espectro", "monitorglobal", "ojodios", "observatorio"],
+  orbita: ["mapa", "maps", "conquistas3d", "geoint", "planeta", "cielos", "tierra", "sismo", "pulso", "pulsos", "centinela", "espectro", "monitorglobal", "ojodios", "observatorio", "rostros"],
   guerra: ["salaguerra", "operaciones", "estrategia", "frentes", "evaluacion", "mundo", "warsim", "combate", "frente", "crisis", "dronguerra", "edad", "imperio", "sala18", "incidentes", "abusos", "memorial", "muertes", "perdidas"],
   red: ["multijugador", "foryou", "contribuidores", "memes", "creador", "obras", "foros", "amigos", "notificaciones", "enclaves", "extranjera", "grafo"],
   radar: ["osint", "radar"],
@@ -640,7 +640,7 @@ const GRUPOS: Record<VarianteEscena, string[]> = {
   diana: ["misiones", "retos", "logros", "recompensas", "racha", "arcade", "minijuego", "quiz", "torneos", "ranking"],
   archivo: ["espionaje", "carteles", "oscura", "detective", "expedientes"],
   libro: ["biblioteca", "enciclopedia", "epocas", "historia", "wikiguerra"],
-  nucleo: ["agente", "agenteia", "mente", "consejoia", "analista", "curiosidades", "simulador", "taller", "mapascrea", "studios", "laboratorio", "fusion", "espejo", "maquina", "perfil", "ciber"],
+  nucleo: ["agente", "agenteia", "mente", "consejoia", "analista", "curiosidades", "simulador", "taller", "mapascrea", "studios", "laboratorio", "fusion", "espejo", "maquina", "perfil", "ciber", "agentes"],
   onda: ["estudio", "videos", "pantalla", "canales", "directos", "imagenes", "galeria", "telegram"],
   camaras: ["camaras"],
   hangar: ["hangar", "armeria", "fortaleza"],

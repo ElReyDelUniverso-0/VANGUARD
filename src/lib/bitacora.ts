@@ -22,6 +22,35 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v131.0",
+    nombre: "EL GOBIERNO LIBRE",
+    tipo: "ia",
+    hitos: [
+      "EL GOBIERNO LIBRE (sala nueva en SISTEMA, primera pestaña): la respuesta a la orden del Dueño — «agrega agente que cada cierto tiempo hagan actualización o pulan Vanguard» — y el manifiesto hecho sala: Vanguard es como un gobierno, pero libre",
+      "LOS AGENTES AUTÓNOMOS (motor real, no teatro): cinco agentes con ciclos verdaderos de setInterval — EL VIGÍA ronda la salud de la Casa cada 30 s (consulta /api/health y reporta la versión), EL EDITOR refresca el pulso del mundo cada 45 s (cuenta los cables de /api/news), EL CARTÓGRAFO re-alinea el mapa del poder cada 60 s, EL ARCHIVISTA ordena la bitácora cada 90 s y EL CURADOR viste la galería cada 120 s — con interruptor EN SERVICIO / EN PAUSA del Dueño",
+      "EL PULIDO EN VIVO: bitácora de los agentes anotada al segundo — cada acción con su sello de color, su hora y su detalle verificable (salud OK · v131.0, N cables en la red, pulidos totales); la Casa se mantiene sola y lo demuestra",
+      "LA CREDENCIAL EXCLUSIVA: el visitante recibe su número de serie único (VG-XXXX-XXXX), su fecha de emisión, sus visitas contadas una por sesión y su NIVEL DE DESPACHO que sube con cada llegada — OBSERVADOR → ANALISTA → OPERADOR → DIRECTOR → SOBERANO — con el sello del palacio girando en oro (v130-sello)",
+      "EL PALACIO LIBRE: el manifiesto «como el gobierno, pero libre» — tabla comparativa gobierno clásico vs. gobierno libre (información, puerta, mantenimiento, precio) y los tres artículos eternos: todo libre, todo verificado, todo en vivo",
+      "LA CADENA DE MANDO: EL DUEÑO (soberanía final: pausar el cuerpo, abrir salas), EL CUERPO (los cinco agentes con sus ciclos) y LA CONSTITUCIÓN (un gobierno que no esconde nada — la exclusividad de verdad)",
+      "8 IDIOMAS: la sala se traduce a español, inglés, portugués, francés, alemán, italiano, ruso y chino — como todo lo que la Casa abre",
+    ],
+  },
+  {
+    version: "v130.0",
+    nombre: "LOS ROSTROS DEL PODER",
+    tipo: "nav",
+    hitos: [
+      "LOS ROSTROS DEL PODER (sala nueva en INTELIGENCIA): el dossier de las personas que mueven el planeta — la orden original del Dueño («toda la información de cada persona importante del mundo con sus ubicaciones») hecha colección fina de 34 expedientes",
+      "LOS CUATRO CORTES: LOS TRONOS (12 jefes de Estado y monarcas, de la Casa Blanca a Ryongsong), EL DINERO (10 banqueros y magnates, de la Fed al Denny's donde nació NVIDIA), EL TRIBUNAL (6 organismos y cortes, de la ONU a la CPI de La Haya) y LOS NUEVOS (6 poderes del silicio, de OpenAI a ByteDance) — con filtros de corte y conteo en vivo",
+      "EL MAPA DEL PODER: las 34 ubicaciones reales proyectadas (projectLatLng de la Casa) — el tamaño de cada punto es su índice de poder, el anillo dorado marca el expediente abierto, el punto encendido son señales vivas, y los tríos que comparten ciudad (Washington ×3, Nueva York ×2, San Francisco ×2, Pekín ×2) respiran con guiado anti-solape",
+      "EL EXPEDIENTE ABIERTO: nombre, cargo, organización, sede física exacta, mandato, LA RUTA AL PODER contada sin maquillaje, rasgos de mando, LA GUARDIA (el aro de exclusividad que rodea a cada rostro), EL RELEVO (quién espera en la sombra), la frase que manda y las fichas del expediente — más el índice de poder de la Casa 0-100 con su barra",
+      "LA JERARQUÍA: el top 10 del índice de poder — mando, presupuesto y alcance en una sola cifra, con salto directo al expediente tocado",
+      "EL PULSO REAL: los cables auténticos de la Casa filtrados por las palabras de cada rostro (Trump busca White House, Powell busca Federal Reserve, Huang busca Nvidia…) — lectura interna, cero portales externos, refresco cada 5 minutos",
+      "LA LEY DEL ACCESO: ABIERTO (como un gobierno, pero libre — esto en un gobierno real vive en un búnker), VERIFICADO (fuentes abiertas sin maquillaje) y VIVO (los rostros no posan: se vigilan)",
+      "8 IDIOMAS: la sala se traduce a español, inglés, portugués, francés, alemán, italiano, ruso y chino — como todo lo que la Casa abre",
+    ],
+  },
+  {
     version: "v129.0",
     nombre: "LA SALA DE GUERRA",
     tipo: "mundo",

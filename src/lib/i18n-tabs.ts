@@ -632,25 +632,41 @@ Object.assign(TAB_LABELS.zh, {
 // ====== v129.0 LA SALA DE GUERRA — el mando supremo (8 idiomas) ======
 Object.assign(TAB_LABELS.es, {
   salaguerra: "LA SALA DE GUERRA (el mando supremo: entra a un teatro 3D de la guerra en vivo, mapa maestro de frentes y control, fuerzas enfrentadas, pulso real y la bolsa de guerra)",
+  rostros: "LOS ROSTROS DEL PODER (el dossier de las personas que mueven el mundo: presidentes, banqueros centrales, jueces y nuevos poderes — mapa de ubicaciones reales, expedientes finos y pulso real)",
+  agentes: "EL GOBIERNO LIBRE (tu credencial exclusiva y los agentes autónomos que pulen Vanguard cada cierto tiempo — como un gobierno, pero libre)",
 });
 Object.assign(TAB_LABELS.en, {
   salaguerra: "THE WAR ROOM (the supreme command: enter a live 3D war theater, master map of fronts and control, forces compared, live pulse and the war exchange)",
+  rostros: "THE FACES OF POWER (the dossier of the people who move the world: presidents, central bankers, judges and new powers — real-location map, fine dossiers and live pulse)",
+  agentes: "THE FREE GOVERNMENT (your exclusive credential and the autonomous agents that polish Vanguard on a timer — like a government, but free)",
 });
 Object.assign(TAB_LABELS.pt, {
   salaguerra: "A SALA DE GUERRA (o comando supremo: entre num teatro 3D da guerra ao vivo, mapa mestre de frentes e controle, forças comparadas, pulso real e a bolsa de guerra)",
+  rostros: "OS ROSTOS DO PODER (o dossiê das pessoas que movem o mundo: presidentes, banqueiros centrais, juízes e novos poderes — mapa de localizações reais, dossiês finos e pulso real)",
+  agentes: "O GOVERNO LIVRE (a sua credencial exclusiva e os agentes autónomos que lapidam o Vanguard de tempos em tempos — como um governo, mas livre)",
 });
 Object.assign(TAB_LABELS.fr, {
   salaguerra: "LA SALLE DE GUERRE (le commandement suprême : entrez dans un théâtre 3D de la guerre en direct, carte maîtresse des fronts et du contrôle, forces comparées, pouls réel et la bourse de guerre)",
+  rostros: "LES VISAGES DU POUVOIR (le dossier des personnes qui font bouger le monde : présidents, banquiers centraux, juges et nouveaux pouvoirs — carte des localisations réelles, dossiers fins et pouls réel)",
+  agentes: "LE GOUVERNEMENT LIBRE (votre accréditation exclusive et les agents autonomes qui polissent Vanguard à intervalles réguliers — comme un gouvernement, mais libre)",
 });
 Object.assign(TAB_LABELS.de, {
   salaguerra: "DER KRIEGSRAUM (das Oberkommando: betrete ein 3D-Kriegstheater in Echtzeit, Meisterkarte der Fronten und Kontrolle, gegenübergestellte Streitkräfte, Live-Puls und die Kriegsbörse)",
+  rostros: "DIE GESICHTER DER MACHT (das Dossier der Menschen, die die Welt bewegen: Präsidenten, Notenbankchefs, Richter und neue Mächte — Karte mit realen Standorten, feine Dossiers und Live-Puls)",
+  agentes: "DIE FREIE REGIERUNG (Ihr exklusiver Ausweis und die autonomen Agenten, die Vanguard in regelmäßigen Abständen polieren — wie eine Regierung, nur frei)",
 });
 Object.assign(TAB_LABELS.it, {
   salaguerra: "LA SALA DI GUERRA (il comando supremo: entra in un teatro 3D della guerra in diretta, mappa madre dei fronti e del controllo, forze a confronto, polso reale e la borsa di guerra)",
+  rostros: "I VOLTI DEL POTERE (il dossier delle persone che muovono il mondo: presidenti, banchieri centrali, giudici e nuovi poteri — mappa delle sedi reali, dossier fini e polso reale)",
+  agentes: "IL GOVERNO LIBRE (il tuo tesserino esclusivo e gli agenti autonomi che lucidano Vanguard a intervalli regolari — come un governo, ma libero)",
 });
 Object.assign(TAB_LABELS.ru, {
   salaguerra: "ВОЕННАЯ КОМНАТА (верховное командование: войдите в 3D-театр войны в прямом эфире, мастер-карту фронтов и контроля, сравнение сил, живой пульс и военную биржу)",
+  rostros: "ЛИЦА ВЛАСТИ (досье людей, которые двигают мир: президенты, главы центробанков, судьи и новые силы — карта реальных местоположений, тонкие досье и живой пульс)",
+  agentes: "СВОБОДНОЕ ПРАВИТЕЛЬСТВО (ваше эксклюзивное удостоверение и автономные агенты, которые полируют Vanguard через заданные интервалы — как правительство, но свободное)",
 });
 Object.assign(TAB_LABELS.zh, {
   salaguerra: "战争室（最高指挥部：进入实时战争3D剧场、战线与控制区主地图、兵力对比、实时脉搏与战争交易所）",
+  rostros: "权力之面（掌动世界的人物档案：总统、央行行长、法官与新势力——真实定位地图、精细档案与实时脉搏）",
+  agentes: "自由政府（你的专属通行证与定时打磨 Vanguard 的自治代理——像政府，但自由）",
 });

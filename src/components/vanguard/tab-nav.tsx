@@ -147,7 +147,11 @@ export type TabKey =
   | "redmundial"
   // v129.0 LA SALA DE GUERRA: el mando supremo — teatros en vivo, teatro 3D,
   // mapa maestro, fuerzas, pulso real y la bolsa de guerra
-  | "salaguerra";
+  | "salaguerra"
+  // v130.0 LOS ROSTROS DEL PODER: el dossier de las personas que mueven el mundo
+  | "rostros"
+  // v131.0 EL GOBIERNO LIBRE: la credencial exclusiva + los agentes autónomos
+  | "agentes";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -359,6 +363,10 @@ export const TABS: Record<TabKey, TabDef> = {
   redmundial:    { key: "redmundial",    label: "LA RED MUNDIAL (los 18 servicios del resto del planeta: MI6, Mossad, SVR/FSB/GRU, MSS, DGSE, BND, CNI, RAW, ISI y los Cinco Ojos — mapa del mundo, expedientes y pulso real)", short: "RED MUNDIAL", icon: <Network className="w-3.5 h-3.5" />, color: "cyan" },
   // v129.0 LA SALA DE GUERRA: el mega simulador del mando supremo
   salaguerra:    { key: "salaguerra",    label: "LA SALA DE GUERRA (el mando supremo: entra a un teatro 3D de la guerra en vivo, mapa maestro de frentes y control, fuerzas enfrentadas, pulso real y la bolsa de guerra)", short: "SALA GUERRA", icon: <Swords className="w-3.5 h-3.5" />, color: "red" },
+  // v130.0 LOS ROSTROS DEL PODER: el dossier de las personas que mueven el planeta
+  rostros:       { key: "rostros",       label: "LOS ROSTROS DEL PODER (el dossier de las personas que mueven el mundo: presidentes, banqueros centrales, jueces y nuevos poderes — mapa de ubicaciones reales, expedientes finos y pulso real)", short: "ROSTROS", icon: <Users className="w-3.5 h-3.5" />, color: "amber" },
+  // v131.0 EL GOBIERNO LIBRE: la credencial exclusiva y el cuerpo de pulido
+  agentes:       { key: "agentes",       label: "EL GOBIERNO LIBRE (tu credencial exclusiva y los agentes autónomos que pulen Vanguard cada cierto tiempo — como un gobierno, pero libre)", short: "AGENTES", icon: <Landmark className="w-3.5 h-3.5" />, color: "green" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -382,7 +390,7 @@ export const SECTIONS: SectionDef[] = [
     // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
     desc: "LA SALA DE GUERRA (el mando supremo: teatros en vivo con teatro 3D, mapa maestro y bolsa de guerra), LA COMUNIDAD (los 18 ojos de la Comunidad de Inteligencia de EE. UU.: ODNI, CIA, NSA y 15 más con pirámide, corredor de sedes y pulso real), LA RED MUNDIAL (los 18 servicios del resto del planeta: MI6, Mossad, el bloque ruso-chino y los Cinco Ojos con mapa y expedientes), GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
-    tabs: [TABS.salaguerra, TABS.comunidad, TABS.redmundial, TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+    tabs: [TABS.salaguerra, TABS.comunidad, TABS.redmundial, TABS.rostros, TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
   },
   {
     // v101.0 EL REGRESO — PILAR 1: EL MUNDO CAMBIA. La segunda pestaña de INICIO:
@@ -452,8 +460,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",
-    desc: "EL ATELIER (las cinco leyes del lujo de la Casa), LA CAMA (la habitación de personalización total), PERFIL DE ANALISTA (nivel, insignias, retos semanales y ELO), FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
-    tabs: [TABS.cama, TABS.atelier, TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
+    desc: "EL GOBIERNO LIBRE (tu credencial exclusiva y los agentes autónomos que pulen Vanguard), EL ATELIER (las cinco leyes del lujo de la Casa), LA CAMA (la habitación de personalización total), PERFIL DE ANALISTA, FORTALEZA DE ACERO, perfil, progreso, logros, tienda, telegram y ayuda",
+    tabs: [TABS.agentes, TABS.cama, TABS.atelier, TABS.agente, TABS.analista, TABS.fortaleza, TABS.logros, TABS.recompensas, TABS.ranking, TABS.racha, TABS.fusion, TABS.registro, TABS.estadisticas, TABS.notificaciones, TABS.telegram, TABS.tienda, TABS.ayuda],
   },
   {
     // v113.0 LETRAS VIVAS: EXPERIMENTAL — el 15º mundo. La página de los

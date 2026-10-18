@@ -3409,3 +3409,39 @@ html[data-galeria="on"] .space-y-3 > * + * { margin-top: 1rem; }
   .v129-frente { animation: none; }
   .v129-anillo { animation: none; }
 }
+
+/* ============================================================
+   v130.0 LOS ROSTROS DEL PODER — el dossier de las personas
+   que mueven el mundo
+   ============================================================ */
+/* anillo de selección sobre el sillón activo (solo opacity — contrato 60 FPS) */
+@keyframes v130Anillo {
+  0%   { opacity: 0.9; }
+  50%  { opacity: 0.2; }
+  100% { opacity: 0.9; }
+}
+.v130-anillo { animation: v130Anillo 2.2s ease-in-out infinite; }
+/* el sello de la credencial: giro lento con dignidad (solo transform) */
+@keyframes v130Sello {
+  to { transform: rotate(360deg); }
+}
+.v130-sello { animation: v130Sello 24s linear infinite; transform-origin: center; }
+@media (prefers-reduced-motion: reduce) {
+  .v130-anillo { animation: none; }
+  .v130-sello { animation: none; }
+}
+
+/* ============================================================
+   v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los
+   agentes autónomos que pulen Vanguard
+   ============================================================ */
+/* la luz de servicio de cada agente: respiración de estatus (solo opacity) */
+@keyframes v131Luz {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.35; }
+  100% { opacity: 1; }
+}
+.v131-luz { animation: v131Luz 2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .v131-luz { animation: none; }
+}

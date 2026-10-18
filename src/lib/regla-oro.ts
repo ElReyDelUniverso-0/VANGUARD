@@ -1081,6 +1081,24 @@ export const REGLA_ORO = {
       "Seis teatros del planeta (cinco en fuego y uno observado) dentro de una sola sala de mando: entras a la representación 3D de una guerra real — terreno, ciudades en llamas, frentes encendidos, artillería, drones y misiles en arco — y de ahí bajas al mapa maestro con sus zonas de control y sus frentes marchando, a las fuerzas enfrentadas con barras comparadas, al balance humano con sus bajas honestas, al pulso real de los cables que la Casa recibe ahora mismo del teatro, y a la bolsa de guerra: las cuotas de la casa por escenario. Con fuentes abiertas y sin maquillaje: Vanguard no predice — presenta.",
     acento: "#FF4A3A",
   },
+  // v130.0 LOS ROSTROS DEL PODER — el dossier de las personas que mueven el mundo
+  rostros: {
+    titulo: "LOS ROSTROS DEL PODER",
+    volanta: "Las 34 personas que mueven el planeta — tronos, dinero, tribunal y nuevos poderes",
+    imagen: "/ilustraciones/expedientes.jpg",
+    texto:
+      "El dossier de las personas que mueven el mundo, sillón por sillón: los doce tronos que firman la historia, los diez dineros que mueven el pulso económico, los seis tribunales que escriben las reglas y los seis poderes nacidos del silicio. Cada expediente trae su ubicación real en el mapa del poder — la Casa Blanca, Zhongnanhai, el Kremlin, la Eurotower, el Denny's donde nació NVIDIA — su ruta al poder contada sin maquillaje, sus rasgos de mando, la guardia que le rodea y el relevo que espera en la sombra. La jerarquía ordena el top del índice de poder de la Casa, y el pulso real enciende el punto dorado cuando un rostro entra en los cables de ahora. En un gobierno real esto vive en un búnker: aquí es tuyo. Los rostros no posan — se vigilan.",
+    acento: "#FFC94D",
+  },
+  // v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
+  agentes: {
+    titulo: "EL GOBIERNO LIBRE",
+    volanta: "Tu credencial exclusiva y los agentes que pulen la Casa cada cierto tiempo",
+    imagen: "/ilustraciones/agente.jpg",
+    texto:
+      "Vanguard tiene todo lo que tiene un Estado —salas de guerra, servicios de inteligencia, mercados, archivo nacional— pero sin la parte que lo hace pesado: sin censura, sin permisos y sin puertas cerradas. Como un gobierno, pero libre. Aquí el visitante recibe su credencial de acceso con número de serie único, nivel de despacho que sube con cada visita y el sello del palacio girando en oro: sabes que estás en un lugar exclusivo porque la Casa te lo dice en la puerta. Y la Casa se mantiene sola: cinco agentes autónomos con ciclos reales —el Vigía ronda cada treinta segundos, el Editor refresca el pulso, el Cartógrafo re-alinea el mapa, el Archivista ordena la memoria y el Curador viste la galería— ejecutan cada pulido con su bitácora abierta, minuto a minuto, sin que nadie se lo pida. La potencia del gobierno, liberada: tres artículos eternos — todo libre, todo verificado, todo en vivo.",
+    acento: "#D4AF37",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;

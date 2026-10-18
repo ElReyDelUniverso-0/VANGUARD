@@ -44,6 +44,10 @@ const ComunidadPanel = dynamic(() => import("@/components/vanguard/panels/comuni
 const RedMundialPanel = dynamic(() => import("@/components/vanguard/panels/red-mundial-panel").then((m) => m.RedMundialPanel), { ssr: false, loading: PanelSkeleton });
 // v129.0 LA SALA DE GUERRA — el mega simulador del mando supremo
 const SalaGuerraPanel = dynamic(() => import("@/components/vanguard/panels/sala-guerra-panel").then((m) => m.SalaGuerraPanel), { ssr: false, loading: PanelSkeleton });
+// v130.0 LOS ROSTROS DEL PODER — el dossier de las personas que mueven el mundo
+const RostrosPanel = dynamic(() => import("@/components/vanguard/panels/rostros-panel").then((m) => m.RostrosPanel), { ssr: false, loading: PanelSkeleton });
+// v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
+const GobiernoLibrePanel = dynamic(() => import("@/components/vanguard/panels/gobierno-libre-panel").then((m) => m.GobiernoLibrePanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
@@ -929,6 +933,8 @@ export default function Home() {
         {tab === "redmundial" && <RedMundialPanel />}
         {/* v129.0 LA SALA DE GUERRA — el mando supremo: teatros en vivo, teatro 3D y bolsa de guerra */}
         {tab === "salaguerra" && <SalaGuerraPanel />}
+        {tab === "rostros" && <RostrosPanel />}
+        {tab === "agentes" && <GobiernoLibrePanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}
