@@ -6,7 +6,12 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass } from "lucide-react";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass, AudioLines } from "lucide-react";
+// v135.0 NEXUS-HYPNOS: el SONIDO DEL BÚNKER — atmósfera generativa que respira
+// con el pulso del planeta (drone + estática de satélite + estación numérica)
+import { iniciarBunker, pararBunker, bunkerActivo, setNivelBunker } from "@/lib/audio-bunker";
+import { getTension } from "@/lib/tension";
+const BUNKER_KEY = "vg-bunker-v135";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 // v134.0 EL ESTRENO: MODO GUERRA ELIMINADO por orden del Dueño —
@@ -60,6 +65,48 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
     import("@/lib/sound").then(({ setMuted: setSoundMuted }) => {
       setSoundMuted(newMuted);
     });
+  };
+
+  // v135 SONIDO DEL BÚNKER: interruptor del HUD. La preferencia se recuerda,
+  // pero el arranque SIEMPRE es con gesto del usuario (política de autoplay):
+  // si quedó «on», resucita en el primer toque que dé en la casa.
+  const [bunkerOn, setBunkerOn] = useState(false);
+  useEffect(() => {
+    let queria = false;
+    try { queria = localStorage.getItem(BUNKER_KEY) === "on"; } catch { /* sin storage */ }
+    if (!queria) return;
+    const resucitar = () => {
+      if (!bunkerActivo()) {
+        if (iniciarBunker()) {
+          setNivelBunker(getTension() / 100);
+          setBunkerOn(true);
+        }
+      }
+      window.removeEventListener("pointerdown", resucitar);
+    };
+    window.addEventListener("pointerdown", resucitar, { once: true });
+    return () => window.removeEventListener("pointerdown", resucitar);
+  }, []);
+  // el búnker sigue el pulso del planeta mientras suena
+  useEffect(() => {
+    if (!bunkerOn) return;
+    setNivelBunker(getTension() / 100);
+    const iv = window.setInterval(() => setNivelBunker(getTension() / 100), 12000);
+    return () => window.clearInterval(iv);
+  }, [bunkerOn]);
+  const toggleBunker = () => {
+    if (bunkerOn || bunkerActivo()) {
+      pararBunker();
+      setBunkerOn(false);
+      try { localStorage.setItem(BUNKER_KEY, "off"); } catch { /* noop */ }
+    } else {
+      const ok = iniciarBunker();
+      if (ok) {
+        setNivelBunker(getTension() / 100);
+        setBunkerOn(true);
+        try { localStorage.setItem(BUNKER_KEY, "on"); } catch { /* noop */ }
+      }
+    }
   };
 
   // v117 MINI-NOTICIERO: 6 titulares de la casa, rotan cada 7 s — leerlos
@@ -295,6 +342,14 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
                 />
               </button>
             )}
+            <button
+              onClick={toggleBunker}
+              title={bunkerOn ? "Sonido del búnker ON · la atmósfera respira con la tensión del mundo (clic para apagar)" : "Sonido del búnker OFF · drone generativo + estática de satélite reactiva a la tensión global"}
+              aria-pressed={bunkerOn}
+              className={cn("w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center transition-colors", bunkerOn ? "border-cyan-hud text-cyan-hud v135-bunker-on" : "border-amber-hud text-amber hover:bg-amber-hud")}
+            >
+              <AudioLines className="w-3 h-3 sm:w-4 sm:h-4" />
+            </button>
             <button
               onClick={toggleMute}
               title={muted ? t("hud.soundOn") : t("hud.soundOff")}

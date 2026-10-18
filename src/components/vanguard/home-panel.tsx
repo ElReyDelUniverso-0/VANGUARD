@@ -430,7 +430,7 @@ export function HomePanel() {
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-red-hud blink-soft" />
-            <h2 className="font-display text-sm sm:text-base font-bold tracking-widest uppercase text-gradient">
+            <h2 className="font-display text-sm sm:text-base font-bold tracking-widest uppercase text-gradient nexus-letra">
               Última hora
             </h2>
             <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest hidden sm:inline">
@@ -569,7 +569,7 @@ export function HomePanel() {
           <div className="flex items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2">
               <SignalHigh className="w-4 h-4 text-electric" />
-              <h2 className="font-display text-sm font-bold tracking-widest uppercase text-gradient">
+              <h2 className="font-display text-sm font-bold tracking-widest uppercase text-gradient nexus-letra">
                 Más señales
               </h2>
               <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest hidden sm:inline">
@@ -664,7 +664,7 @@ export function HomePanel() {
       {/* ====== MENÚ LLAMATIVO: ELIGE TU CAMPO DE BATALLA ====== */}
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <h2 className="font-display text-sm sm:text-base font-bold tracking-widest uppercase text-gradient">
+          <h2 className="font-display text-sm sm:text-base font-bold tracking-widest uppercase text-gradient nexus-letra">
             Elige tu campo de batalla
           </h2>
           <button

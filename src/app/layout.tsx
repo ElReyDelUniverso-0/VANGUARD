@@ -20,6 +20,9 @@ import { Rehidratador } from "@/components/vanguard/rehidratador";
 import { MotorAgentes } from "@/components/vanguard/motor-agentes";
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
 import { IntroTrailer } from "@/components/vanguard/intro-trailer";
+// v135.0 NEXUS-HYPNOS: el motor de tensión global — la Casa entera respira
+// con el pulso del planeta (html[data-tension] + --vg-tension, cero re-render)
+import { MotorNexus } from "@/components/vanguard/motor-nexus";
 // v99.0 MENTE VIVA: el pulso autónomo global (el mundo se actualiza solo)
 import { PulsoAuto } from "@/components/vanguard/pulso-auto";
 // v101.0 EL REGRESO — PILAR 1: banner global "el mundo cambió" en todas las páginas
@@ -276,6 +279,8 @@ export default function RootLayout({
         <MotorAgentes />
         {/* v134.0 EL ESTRENO: el tráiler proyecta una vez por sesión */}
         <IntroTrailer />
+        {/* v135.0 NEXUS-HYPNOS: el pulso del planeta viste la Casa entera */}
+        <MotorNexus />
         {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
         <RetentionLayer />
         {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}

@@ -32,9 +32,11 @@ export function PanelHeader({ title, subtitle, icon, color = "amber", right }: P
         )}
         <div className="min-w-0">
           {/* v124.0 CAVIAR: los títulos de la casa van en serif de colección
-              con ORO en cada glifo — alta clase en todas las salas */}
+              con ORO en cada glifo — alta clase en todas las salas.
+              v135.0 NEXUS-HYPNOS: cada glifo ahora tiene VOLUMEN 3D
+              (extrusión holográfica .nexus-letra) — adiós al plano de 1990 */}
           <h2 className="font-caviar text-base sm:text-lg font-bold tracking-[0.12em] uppercase text-foreground [perspective:600px]">
-            <LetrasAnimadas text={title} letraClass="caviar-letra" />
+            <LetrasAnimadas text={title} letraClass="caviar-letra nexus-letra" />
           </h2>
           {subtitle && (
             <p className="text-[10px] sm:text-xs text-muted-foreground font-mono uppercase">{subtitle}</p>

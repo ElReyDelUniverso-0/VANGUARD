@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v135.0",
+    nombre: "NEXUS-HYPNOS",
+    tipo: "tecno",
+    hitos: [
+      "ADIOS AL PLANO DE 1990 (orden del Dueño: «Vanguard se aburrió, se ve plano viejo, que parezca una página del futuro con las letras como 3D»): TIPOGRAFÍA 3D GLOBAL — cada título de las 50+ salas (el PanelHeader que viste toda la Casa) ahora extruye VOLUMEN holográfico (.nexus-letra: pila de capas de vidrio en Z + halo de emisión, sobre el oro CAVIAR de v124); cero JS, cero imágenes, el futuro se escribe con CSS",
+      "THE WAR ROOM AMBIENT — LA CASA RESPIRA CON EL PLANETA (módulo 1 de la transmisión NEXUS-HYPNOS): el nuevo MOTOR NEXUS (global en layout) lee el termómetro de tensión cada 12s y escribe html[data-tension] + --vg-tension; el CSS entero obedece — calma azul lenta → tensa ámbar → alta naranja (bordes que sudan, signos de vida acelerados) → CRÍTICA roja (rejilla de estática respirando sobre toda la señal + títulos en glitch RGB); cero re-render, puro CSS reaccionando",
+      "EL SONIDO DEL BÚNKER (nuevo botón AudioLines en el HUD): sintetizador generativo 100% Web Audio — drone de sierras desafinadas con filtro que deriva, sub grave, ESTÁTICA DE SATELITE y una ESTACIÓN NUMÉRICA militar emitiendo códigos al fondo; TODO reacciona al pulso global (con la tensión el filtro se abre, la estática muerde y los códigos suenan más seguido); arranque solo con gesto del dueño del clic, preferencia recordada, apagado con desvanecimiento honesto",
+      "EL EFECTO MARIPOSA EN LAS NOTICIAS (módulo 2 de la transmisión): cada cable real de la portada lleva ahora su botón [SIMULAR] — abre la CÁMARA DE CONSECUENCIAS, que acopla el cable a un escenario del LABORATORIO DEL DESTINO (el motor real de la casa: atrición de Lanchester, escalera de escalada 1-6, Monte Carlo de 24 semillas); eliges el escenario, la perturbación (¿y si cierran la clave? ¿y si hay refuerzos externos? ¿sanciones totales?), la dosis 1-5 y el horizonte 90/180/240 días — y la guerra corre día a día ante tus ojos: la línea de frente se mueve, los misiles vuelan en escalada alta, bajas y coste suben en vivo y el veredicto final llega con sus probabilidades; con su sello SIMULACIÓN · NO PREDICCIÓN",
+      "EL ENJAMBRE DE OJOS (módulo 3 de la transmisión, en VISTA DIOS): una esfera de micro-pantallas orbitando en 3D real (3 anillos a velocidades distintas, el bloque se inclina con tu puntero, el Ojo central vigila) — cada pantalla es una transmisión interna de la Casa (feed del Mundo de Guerra + cables OSINT reales + directos observados; cero enlaces externos); POSA el cursor y el enjambre se congela, suena el BLIP DE INTERCEPCIÓN espacializado (nace del oído del lado de la pantalla) y la TRANSCRIPCIÓN DE INTERCEPCIÓN SATELITAL se descifra letra a letra",
+      "LA CAZA DE ERRORES CONTINÚA: veredicto de la Cámara corregido a la API real del veredicto (riesgo/confianza), tipos verificados en los 4 módulos nuevos, contrato 60 FPS en TODO lo animado (solo transform/opacity), reduced-motion apaga el enjambre, el glitch y la estática",
+    ],
+  },
+  {
     version: "v134.0",
     nombre: "EL ESTRENO",
     tipo: "luxe",

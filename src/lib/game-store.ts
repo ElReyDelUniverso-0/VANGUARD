@@ -519,6 +519,16 @@ const debouncedLocalStorage: StateStorage = (() => {
     }
     pending = null;
   };
+  // v135.0 CURA DEL FLUSH PERDIDO: la escritura diferida moría si la página
+  // se descargaba dentro de la ventana de 1.2s (reclamar el bono y salir =
+  // el reclamo NUNCA llegaba a disco). El despedida honesta descarga el
+  // pendiente antes de cerrar — cero partida perdida.
+  if (typeof window !== "undefined") {
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flush();
+    });
+  }
   return {
     getItem: (name) => {
       try {

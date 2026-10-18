@@ -24,6 +24,19 @@ export function DailyLoginModal() {
   // v58.0 DOMINIO TOTAL — ESCUDO DE RACHA: salva la racha con 150ⓒ si faltaste
   const [shieldSaved, setShieldSaved] = useState(false);
   const { lastLoginDate, addCoins, addGems, addXp, streak, progressMission, coins, spendCoins, inventory, consumeFromInventory } = useGameStore();
+  // v135.0 CURA DE CARRERA (#418-class): el store del juego rehidrata DESPUÉS
+  // del primer render (skipHydration + REHIDRATADOR v132) — si el bono consultaba
+  // antes, lastLoginDate parecía vacío y la modal REAPARECÍA aunque ya se
+  // hubiera reclamado hoy. Ahora la consulta espera a la rehidratación.
+  const [hidratado, setHidratado] = useState(false);
+  useEffect(() => {
+    try {
+      const p = useGameStore.persist;
+      if (!p || p.hasHydrated()) { setHidratado(true); return; }
+      const d = p.onFinishHydration(() => setHidratado(true));
+      return () => { d(); };
+    } catch { setHidratado(true); }
+  }, []);
   // v62.0: escudos guardados en inventario (comprados en la tienda por 120ⓒ)
   const shieldsOwned = inventory
     .filter((i) => i.id === "consumable_shield")
@@ -32,6 +45,7 @@ export function DailyLoginModal() {
 
   useEffect(() => {
     const today = todayKey();
+    if (!hidratado) return; // v135: la casa primero recuerda, luego pregunta
     if (lastLoginDate !== today && !dismissed) {
       // pequeño delay para que cargue el HUD
       // v72.0: si la intro cinematográfica va a correr esta sesión, el bono
@@ -51,7 +65,7 @@ export function DailyLoginModal() {
       }, 1500);
       return () => clearInterval(iv);
     }
-  }, [lastLoginDate, dismissed]);
+  }, [lastLoginDate, dismissed, hidratado]);
 
   // v105.0: si la lectura/escritura empieza con el modal abierto, el modal SE APARTA
   // y regresa solo cuando el operador termina — el bono no se pierde jamás.

@@ -22,6 +22,9 @@ import { AtlasSecreto } from "@/components/vanguard/atlas-secreto";
 import { TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
 // v87.0 EL DESPERTAR — signos vitales del planeta: el Ojo toma el pulso del mundo
 import { SignosVitales } from "@/components/vanguard/signos-vitales";
+// v135.0 NEXUS-HYPNOS — ENJAMBRE DE OJOS: la esfera de micro-pantallas flotantes
+// que orbita en 3D con audio espacial al interceptar (todo dato interno de la Casa)
+import { EnjambreOjos, type TransmisionOjo } from "@/components/vanguard/enjambre-ojos";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { getRealtime, peekRealtime } from "@/lib/realtime";
@@ -336,6 +339,33 @@ export function OjoDiosPanel() {
       {/* v87.0 SIGNOS VITALES DEL PLANETA — población que nace, tensiones que
           respiran y un electrocardiograma que nunca deja de correr */}
       <SignosVitales online={totalOnline} />
+
+      {/* v135.0 ENJAMBRE DE OJOS — la esfera 3D de transmisiones: feed del Mundo
+          de Guerra + cables OSINT reales + directos observados, orbitando como
+          un enjambre de micro-pantallas; hover = interceptar (blip espacial) */}
+      <EnjambreOjos transmisiones={[
+        ...(god?.feed ?? []).slice(0, 6).map<TransmisionOjo>((f) => ({
+          id: `feed-${f.room}-${f.ts}`,
+          titulo: f.body,
+          cuerpo: f.body,
+          origen: `SALA ${f.room.toUpperCase()}`,
+          color: "#C4A2FF",
+        })),
+        ...news.slice(0, 5).map<TransmisionOjo>((n) => ({
+          id: `news-${n.id}`,
+          titulo: n.title,
+          cuerpo: `${n.title} — interceptado vía ${n.source}${n.tacticalTag ? ` · TAG ${n.tacticalTag}` : ""}${n.publishedAt ? ` · ${newsAge(n.publishedAt)}` : ""}`,
+          origen: n.tacticalTag || "OSINT",
+          color: n.tacticalTag === "ALERTA" ? "#FF3B30" : n.tacticalTag === "DIPLOMACIA" ? "#5EEAD4" : n.tacticalTag === "ECONOMIA" ? "#34C759" : "#FF8A2A",
+        })),
+        ...streams.map<TransmisionOjo>((s) => ({
+          id: `live-${s.id}`,
+          titulo: `${s.title} — ${s.streamerName} en directo`,
+          cuerpo: `TRANSMISIÓN EN DIRECTO · ${s.title} · canal ${s.streamerName} · ${s.viewers} operadores mirando · región ${s.country}`,
+          origen: "EN DIRECTO",
+          color: "#FF3B30",
+        })),
+      ]} />
 
       {/* v82.0 TELETIPO — mensajes en vivo constantes del sistema Vanguard */}
       <TeletipoFeed max={10} intervaloMs={5200} titulo="EL MUNDO AHORA MISMO" />

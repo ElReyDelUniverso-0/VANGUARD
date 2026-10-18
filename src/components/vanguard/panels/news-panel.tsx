@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Newspaper, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2, BookOpen } from "lucide-react";
+import { Newspaper, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2, BookOpen, FlaskConical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,9 @@ import { TeletipoCinta, TeletipoFeed } from "@/components/vanguard/teletipo-vivo
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
 // v116.0 MEGALÓPOLIS — SALA DE LECTURA: los cables se leen DENTRO de Vanguard
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+// v135.0 NEXUS-HYPNOS — CÁMARA DE CONSECUENCIAS: el botón [SIMULAR ESCALADA]
+// acopla cada cable real al motor del LABORATORIO DEL DESTINO (efecto mariposa)
+import { CamaraConsecuencias, type CableSim } from "@/components/vanguard/camara-consecuencias";
 
 interface NewsItem {
   id: string;
@@ -136,6 +139,8 @@ export function NewsPanel() {
   const [source, setSource] = useState("");
   const [filter, setFilter] = useState<string>("ALL");
   const [commentOpen, setCommentOpen] = useState<string | null>(null);
+  // v135 EFECTO MARIPOSA: el cable que está siendo proyectado en la Cámara
+  const [cableSim, setCableSim] = useState<CableSim | null>(null);
   const [commentText, setCommentText] = useState("");
   // v88.0 NEURONA: expedientes por cable (undefined = sin pedir, "loading" = cargando)
   const [neuronaOpen, setNeuronaOpen] = useState<string | null>(null);
@@ -530,6 +535,15 @@ export function NewsPanel() {
                         >
                           <BrainCircuit className="w-3 h-3" /> neurona
                         </button>
+                        {/* v135 NEXUS-HYPNOS: la puerta del EFECTO MARIPOSA —
+                            este cable real entra a la Cámara de Consecuencias */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setCableSim({ id: item.id, titulo: item.title, tag: item.tacticalTag }); }}
+                          title="¿Qué pasaría si...? — simular la escalada de este cable en el laboratorio del destino"
+                          className="flex items-center gap-1 text-[10px] font-mono uppercase transition-colors border px-1.5 py-0.5 border-crisis-hud/60 text-crisis hover:bg-crisis-hud/20"
+                        >
+                          <FlaskConical className="w-3 h-3" /> simular
+                        </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -688,6 +702,9 @@ export function NewsPanel() {
 
       {/* v116: LA SALA DE LECTURA — el cable se lee aquí, no fuera */}
       <LectorNoticia cable={lector} onCerrar={() => setLector(null)} />
+
+      {/* v135.0 NEXUS-HYPNOS — la CÁMARA DE CONSECUENCIAS sobre la portada */}
+      <CamaraConsecuencias cable={cableSim} onCerrar={() => setCableSim(null)} />
     </div>
   );
 }
