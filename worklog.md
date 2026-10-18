@@ -1919,3 +1919,20 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v136.0 PROFUNDIDAD TOTAL. Ya no hay una sola letra plana en el cromo: el wordmark extruye, los números salen de la pantalla, las pestañas se levantan al pasar el cursor, los títulos descomponen la luz en cian y magenta. El futuro se lee en volumen.
 - Sugerido para v137: noche forzada de QA para capturar la Vía Láctea de la ciudad (pendiente desde v134), segundo tráiler por acabado LUXE, o segunda ola de teatros en LA SALA DE GUERRA (㉚).
+
+---
+Task ID: 18
+Agent: main (Super Z)
+Task: v137.0 «SALE DE LA PANTALLA» — orden del Dueño en claro: «haz Vanguard 3D completamente e interactivo, que salga de la pantalla literalmente, que sea un mundo 3D de los conflictos mundiales».
+
+Work Log:
+- EL DIORAMA: la sala entera es un cuerpo rígido dentro de perspective(1400px) que se inclina con la mano (puntero/giroscopio) y flota a translateZ(8px×intensidad) — wrapper .diorama-v137 dentro del motion.div de AnimatePresence, transform 100% CSS vía --vg-dx/--vg-dy que el Motor3D PRE-MULTIPLICA en su rAF (intensidad × inclinar doblados en el valor, cero JS por frame).
+- LETRAS QUE SALEN DE LA PANTALLA: LetrasAnimadas/LetrasBrasa vuelan desde z=-300/-340px letra a letra (framer z + preserve-3d en wrapper e hijos — el span envolvente aplana el Z si no se lo das); pop por glifo v113 subido a translateZ(26px)+scale(1.09)+neón.
+- TRANSICIONES EN Z: los 6 estilos de LA CAMA viajan en la tercera dimensión (entra z -120..-420 según estilo, sale pasando de largo +50..+260).
+- AUTOPSIA BLINK (4 lecciones de ingeniería, todas verificadas en vivo): (1) calc() con producto de 3+ var() → invalid at computed-value time → Motor3D pre-multiplica; (2) backdrop-filter APLANA el 3D del propio elemento → por eso los paneles (cristal blur) nunca podrían inclinarse: el diorama es un cuerpo rígido y el cristal queda intacto; (3) .panel-stagger > * { animation: panelUp ... both } congelaba el transform de CADA hijo directo para siempre (fill:both gana hasta al inline) — hallado con getAnimations(): el diorama lleva animation:none (el stagger de 1 hijo era redundante; el vuelo ya lo hacen las variants); (4) puerta data-vg-3d=on|off en el Motor3D — Tecnología 3D apagada = transform:none real, ni containing blocks.
+- QA EN VIVO (producción standalone): health v137.0 (RSS 176MB); diorama computando matrix3d en reposo (m43=4.8, m44=0.9965); TILT VERIFICADO EXACTO: mouse a (1350,100) → dx=0.0749 → rotateY -0.18° en la matrix3d; lector de noticias portaled anclado en viewport (x=29,y=30) pese al transform del diorama; móvil 390px sin overflow; recarga ×2 → 0 errores; build limpio; capturas qa-v137-diorama.png + qa-v137-inicio.png.
+- COMMIT b43e29c → push a main (5954249..b43e29c), 7 archivos (+123/−33).
+
+Stage Summary:
+- PRODUCCIÓN = v137.0 SALE DE LA PANTALLA. Vanguard ya no es una página: es un diorama — la sala entera se inclina cuando mueves la mano (o el teléfono con giroscopio), las letras de cada título vuelan desde el fondo de la pantalla, el panel que miras te viene a la cara, y cada cambio de sala es un salto en la tercera dimensión. Cuatro lecciones de Blink documentadas para siempre en el CSS.
+- Sugerido para v138: parallax por capas DENTRO del diorama (ciudad/paneles a profundidades distintas), noche forzada de QA (Vía Láctea), o segunda ola de teatros en LA SALA DE GUERRA (㉚).
