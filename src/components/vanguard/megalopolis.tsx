@@ -287,6 +287,10 @@ function SkylineCiudad({ region, pal, acc, ciclo }: { region: RegionCiudad; pal:
               boxShadow: `0 -6px 18px -10px ${acc2}${ciclo.noche ? "88" : "44"}`,
               clipPath: region.mojon === "aguja" && h > 0.8 ? "polygon(46% 0, 54% 0, 100% 7%, 100% 100%, 0 100%, 0 7%)" : undefined,
             }}>
+              {/* v134 CARA LATERAL VOLUMÉTRICA: la torre tiene ANCHURA — cara
+                  derecha en sombra + arista iluminada del lado del sol */}
+              <span className="absolute inset-y-0 right-0 pointer-events-none" style={{ width: "20%", background: "linear-gradient(270deg, rgba(0,0,0,0.52), rgba(0,0,0,0.12) 84%, transparent)" }} />
+              <span className="absolute inset-y-0 pointer-events-none" style={{ ...(luzIzq ? { left: 0 } : { right: 0 }), width: "1.5px", background: acc2, opacity: Math.min(0.75, ciclo.noche ? 0.35 : 0.28 + ciclo.alturaSol * 0.6) }} />
               {/* v117 TERMINADOR POR HORA: luz en el lado del sol, sombra en el opuesto */}
               {!ciclo.noche && ciclo.alturaSol > 0.03 && (
                 <>
@@ -325,6 +329,13 @@ function SkylineCiudad({ region, pal, acc, ciclo }: { region: RegionCiudad; pal:
               {/* v123 TANQUE DE AGUA en los medianos del Puerto y la Meseta */}
               {(region.mojon === "grua" || region.mojon === "domos") && h > 0.55 && h <= 0.84 && (
                 <span className="absolute" style={{ top: -6, left: i % 2 ? "22%" : "auto", right: i % 2 ? "auto" : "22%", width: 5, height: 6, background: `${acc2}33`, borderTop: `2px solid ${acc2}88` }} />
+              )}
+              {/* v134 CASSETES DE AIRE: los medianos ganan azotea de verdad */}
+              {h > 0.42 && h <= 0.7 && (
+                <>
+                  <span className="absolute" style={{ top: -4, left: "26%", width: 6, height: 4, background: `${acc2}2A`, borderTop: `1px solid ${acc2}77`, borderRight: `1px solid ${acc2}55` }} />
+                  <span className="absolute" style={{ top: -3, right: "30%", width: 4, height: 3, background: `${acc2}1E`, borderTop: `1px solid ${acc2}66` }} />
+                </>
               )}
               {/* ventanas que obedecen a la LUZ real: encendidas de noche */}
               <VentanasMega n={Math.max(3, Math.round(h * 10))} acc={acc2} lit={pal.ventanas} flicker={i % 2 === 0} />
@@ -370,7 +381,11 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
   const regionRef = useRef(region);
   const primeroRef = useRef(true);
   const muted = useGameStore((s) => s.muted);
-  useEffect(() => setMontado(true), []);
+  // v134: montaje señalado por rAF (contrato anti-cascada del linter)
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMontado(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   useEffect(() => {
     const pinta = () => {
@@ -388,7 +403,8 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
       primeroRef.current = false;
       setPopular(leerBautizos()[r.id]?.nombre ?? null);
     };
-    pinta();
+    // v134: el primer latido entra por rAF (contrato anti-cascada del linter)
+    const primerLatido = requestAnimationFrame(pinta);
     const iv = setInterval(pinta, 30_000); // el cielo respira cada medio minuto
     // v117: giro manual de región con crossfade real (QA + demo + futuras salas)
     const rota = () => {
@@ -402,6 +418,7 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
     };
     window.addEventListener("vanguard:rotar-region", rota);
     return () => {
+      cancelAnimationFrame(primerLatido);
       clearInterval(iv);
       window.removeEventListener("vanguard:rotar-region", rota);
     };
@@ -455,7 +472,9 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
   useEffect(() => {
     if (muted && ambienteOn) {
       pararAmbiente();
-      setAmbienteOn(false);
+      // v134: el estado baja por rAF (contrato anti-cascada del linter)
+      const id = requestAnimationFrame(() => setAmbienteOn(false));
+      return () => cancelAnimationFrame(id);
     }
   }, [muted, ambienteOn]);
   useEffect(() => () => pararAmbiente(), []);
@@ -505,6 +524,26 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
       {pal.estrellas > 0.02 && ESTRELLAS_MEGA.map(([x, y, r], i) => (
         <span key={i} className="v108-estrella absolute rounded-full bg-white" style={{ left: `${x}%`, top: `${y}%`, width: r, height: r, opacity: pal.estrellas, animationDelay: `${(i % 5) * 0.7}s` }} />
       ))}
+
+      {/* v134 LA VÍA LÁCTEA — el río del cielo cruza la bóveda en las noches limpias */}
+      {pal.estrellas > 0.4 && (
+        <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden pointer-events-none" aria-hidden>
+          <span className="absolute" style={{ left: "-8%", top: "6%", width: "86%", height: "34%", background: "linear-gradient(118deg, transparent 8%, rgba(255,246,227,0.055) 30%, rgba(155,212,255,0.075) 48%, rgba(255,246,227,0.05) 66%, transparent 92%)", filter: "blur(7px)", transform: "rotate(-9deg)" }} />
+          <span className="absolute" style={{ left: "24%", top: "-4%", width: "58%", height: "44%", background: "radial-gradient(50% 42% at 50% 50%, rgba(255,246,227,0.06), transparent 70%)", filter: "blur(9px)" }} />
+        </div>
+      )}
+
+      {/* v134 EL RESPLANDOR DEL HORIZONTE — el cielo se enciende donde vive el sol */}
+      {!ciclo.noche && (
+        <div
+          className="absolute inset-x-0 bottom-[8%] h-[38%] pointer-events-none"
+          aria-hidden
+          style={{
+            background: `radial-gradient(46% 88% at ${lx}% 100%, rgba(255,184,77,${0.16 + ciclo.alturaSol * 0.14}) 0%, rgba(255,138,42,${0.07 + ciclo.alturaSol * 0.06}) 46%, transparent 74%)`,
+            filter: "blur(6px)",
+          }}
+        />
+      )}
 
       {/* meteoro nocturno — la señal de la casa */}
       {pal.meteoro && <span className="v116-meteoro absolute" style={{ top: "12%", left: "70%" }} />}
@@ -667,22 +706,36 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
 // ---------- ventanas que obedecen a la luz (no al teatro) ----------
 function VentanasMega({ n, acc, lit, flicker, tenue }: { n: number; acc: string; lit: number; flicker?: boolean; tenue?: boolean }) {
   if (lit < 0.05) return null;
-  // v123 GLORIA: la ciudad ganó paleta — cálido, frío, blanco cálido y el acento
+  // v134.0 EL ESTRENO — de puntos sueltos a REJILLA REAL: torres con filas
+  // × columnas de ventanas (patrón determinista: nada de Math.random en
+  // render), cada ventana despierta a su hora — la ciudad se lee como
+  // edificio de verdad, no como palitos. Solo opacity/animationDelay (60 FPS).
+  const filas = Math.max(2, n);
+  const cols = tenue ? 2 : 3;
   const tonos = [acc, "#FFD98A", "#FFD98A", "#9BD4FF", "#FFF6E3", acc, "#FFD98A", "#B7F5D8"];
-  return (
-    <div className="absolute inset-x-1 flex flex-wrap gap-[3px] content-start" style={{ top: "5px", maxHeight: "calc(100% - 8px)" }}>
-      {Array.from({ length: n }).map((_, i) => (
+  const celdas: React.ReactNode[] = [];
+  for (let f = 0; f < filas; f++) {
+    for (let c = 0; c < cols; c++) {
+      const i = f * cols + c;
+      const semilla = (i * 7 + 3) % 10;
+      if (semilla < 3) continue; // ventanas apagadas (la ciudad respira)
+      celdas.push(
         <span
           key={i}
-          className={cn("w-[3px] h-[3px] rounded-[0.5px]", flicker && i % 3 === 0 && "v108-ventana")}
+          className={cn("w-[3px] h-[2.5px] rounded-[0.5px]", flicker && i % 4 === 0 && "v108-ventana")}
           style={{
             background: tonos[i % tonos.length],
-            opacity: (i % 5 === 0 ? 0.35 : 0.8) * (tenue ? 0.7 : 1) * Math.min(1, lit + 0.15),
+            opacity: (semilla > 7 ? 0.4 : 0.82) * (tenue ? 0.7 : 1) * Math.min(1, lit + 0.15),
             animationDelay: `${(i % 7) * 0.5}s`,
-            boxShadow: i % 4 === 1 && !tenue ? "0 0 3px rgba(255,217,138,0.7)" : undefined,
+            boxShadow: semilla === 5 && !tenue ? "0 0 3px rgba(255,217,138,0.7)" : undefined,
           }}
         />
-      ))}
+      );
+    }
+  }
+  return (
+    <div className="absolute inset-x-1 bottom-1 top-[5px] flex flex-wrap-reverse content-start justify-center gap-x-[3.5px] gap-y-[3px]">
+      {celdas}
     </div>
   );
 }

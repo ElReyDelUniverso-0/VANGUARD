@@ -18,6 +18,8 @@ import { RetentionLayer } from "@/components/vanguard/retention-layer";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 import { MotorAgentes } from "@/components/vanguard/motor-agentes";
+// v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
+import { IntroTrailer } from "@/components/vanguard/intro-trailer";
 // v99.0 MENTE VIVA: el pulso autónomo global (el mundo se actualiza solo)
 import { PulsoAuto } from "@/components/vanguard/pulso-auto";
 // v101.0 EL REGRESO — PILAR 1: banner global "el mundo cambió" en todas las páginas
@@ -272,6 +274,8 @@ export default function RootLayout({
         {/* v133.0: el cuerpo de agentes autónomos — la Casa se pule sola
             en cualquier sala, sin que nadie tenga que visitar su sala */}
         <MotorAgentes />
+        {/* v134.0 EL ESTRENO: el tráiler proyecta una vez por sesión */}
+        <IntroTrailer />
         {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
         <RetentionLayer />
         {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}

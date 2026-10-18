@@ -1,54 +1,10 @@
-// v86.0 CENTINELA GLOBAL — MODO GUERRA
-// "Protocolo de ancho de banda ultra-bajo": un botón que convierte Vanguard en
-// su versión ligera de puro texto, para leer el mundo con red de 2G, satélite
-// saturado o batería al límite. Pausa animaciones, oculta imágenes pesadas y
-// apaga brillos: la verdad sin adorno. Persistido + bus de eventos.
-
-const LS_KEY = "vanguard-modo-guerra";
-export const MG_EVENTO = "vanguard:modo-guerra";
-
-export function modoGuerraActivo(): boolean {
-  try {
-    return localStorage.getItem(LS_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function aplicar(activo: boolean) {
-  if (typeof document === "undefined") return;
-  document.documentElement.classList.toggle("modo-guerra", activo);
-}
-
-export function setModoGuerra(activo: boolean) {
-  try {
-    localStorage.setItem(LS_KEY, activo ? "1" : "0");
-  } catch { /* sin storage */ }
-  aplicar(activo);
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(MG_EVENTO, { detail: { activo } }));
-  }
-}
-
-export function toggleModoGuerra(): boolean {
-  const next = !modoGuerraActivo();
-  setModoGuerra(next);
-  return next;
-}
-
-/** Se suscribe a cambios y sincroniza el estado inicial. Devuelve cleanup. */
-export function suscribirModoGuerra(cb: (activo: boolean) => void): () => void {
-  aplicar(modoGuerraActivo());
-  cb(modoGuerraActivo());
-  const listener = (e: Event) => cb(Boolean((e as CustomEvent).detail?.activo));
-  window.addEventListener(MG_EVENTO, listener);
-  const storage = () => cb(modoGuerraActivo());
-  window.addEventListener("storage", storage);
-  return () => {
-    window.removeEventListener(MG_EVENTO, listener);
-    window.removeEventListener("storage", storage);
-  };
-}
+// ============================================================
+// v86.0 CENTINELA GLOBAL — FILTRO DE CONTENIDO GRÁFICO
+// v134.0 EL ESTRENO: EL MODO GUERRA (versión ligera «sin imágenes»)
+// queda ELIMINADO por orden del Dueño — atrapaba visitantes en una
+// pantalla negra sin salida clara. Solo sobrevive aquí el filtro de
+// contenido explícito (protege sin censurar, no toca el diseño).
+// ============================================================
 
 // Estado del filtro de contenido gráfico (misma mecánica, bus aparte)
 const LS_FILTRO = "vanguard-filtro-grafico";

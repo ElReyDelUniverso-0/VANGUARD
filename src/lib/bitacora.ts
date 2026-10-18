@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v134.0",
+    nombre: "EL ESTRENO",
+    tipo: "luxe",
+    hitos: [
+      "EL TRÁILER DE CARGA (orden del Dueño: «una intro tipo tráiler cuando está cargando»): la Casa proyecta su estreno — 4.6 segundos de cine (el ojo de la Casa se abre → VANGUARD letra a letra → tres destellos: EL MUNDO, LA INTELIGENCIA, EL TIEMPO → «BIENVENIDO A LA CASA · ESTÁS DENTRO») con barra de progreso dorada, botón SALTAR siempre a la vista, campana de estreno y UNA proyección por sesión (el recurrente entra directo; reduced-motion no proyecta; 60 FPS: solo transform/opacity)",
+      "EL MODO GUERRA HA MUERTO (orden del Dueño tras quedar atrapado: «elimina el modo ligero sin imágenes, se puso todo negro y no puedo salir»): el botón SignalLow del HUD, la lib (sus funciones de apagón), el bloque CSS que congelaba animaciones y oscurecía imágenes — TODO eliminado; y LA CURA queda instalada en el REHIDRATADOR: cada visitante atrapado carga libre (la llave vanguard-modo-guerra se expulsa y la clase se retira del <html>) — el filtro de contenido explícito sobrevive porque es otra cosa: protege sin censurar",
+      "ADIOS A LOS PALITOS (orden del Dueño: «las ilustraciones no sean palitos, más detalladas con anchura y que se muevan»): las 8 ilustraciones procedurales re-dibujadas con CUERPO REAL — gradientes metálicos y atmosféricos (planeta con océanos y terminador, sonda con paneles de celdas, skyline en dos planos, torre de celosía, cohete con fuselaje y llama con cuerpo, cama con manta y almohada, micrófono de estudio, diamante facetado), resplandor de fondo + sombra de suelo en 3 planos y más habitantes animados — ATELIER, ATLAS, CAMA y COMUNIDAD heredan el lujo sin tocar una línea",
+      "LA CIUDAD MÁS REAL (orden del Dueño: «ciudades más realista 3D, mejor cielo»): ventanas en REJILLA de verdad (filas × columnas deterministas, cada ventana despierta a su hora — torres de edificio, no puntos sueltos), CARA LATERAL VOLUMÉTRICA con arista iluminada del lado del sol (las torres tienen anchura), casetes de aire en azoteas, LA VÍA LÁCTEA cruzando la bóveda en noches limpias y EL RESPLANDOR DEL HORIZONTE encendiéndose donde vive el sol",
+      "LA CAZA DE ERRORES LÍNEA A LÍNEA (orden del Dueño): barrido completo de tsc + eslint — cero errores de tipos, cero errores nuevos en los 7 ficheros tocados, y los 3 errores legacy de la MEGALÓPOLIS (setState síncrono en efectos) migrados al contrato rAF; el resto del baseline (patrones de corrección SSR de salas históricas) auditado y documentado",
+    ],
+  },
+  {
     version: "v133.0",
     nombre: "EL ACABADO REAL",
     tipo: "luxe",

@@ -6,10 +6,11 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, SignalLow, Compass } from "lucide-react";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { suscribirModoGuerra, toggleModoGuerra } from "@/lib/modo-guerra";
+// v134.0 EL ESTRENO: MODO GUERRA ELIMINADO por orden del Dueño —
+// atrapaba visitantes en pantalla negra (la lib ya solo guarda el filtro de contenido)
 // v115.0 SINGULARIDAD: la FIRMA 3D de la FORJA luce junto al alias del HUD
 import { useProfileStore } from "@/lib/profile-store";
 import { TituloLetras3D } from "@/components/vanguard/letras-3d";
@@ -47,9 +48,6 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
   const [lectorHud, setLectorHud] = useState<CableLectura | null>(null);
   const { t } = useT();
   const [menuOpen, setMenuOpen] = useState(false);
-  // v86.0 MODO GUERRA: versión ligera para redes saturadas (2G/satélite)
-  const [modoGuerra, setModoGuerra] = useState(false);
-  useEffect(() => suscribirModoGuerra(setModoGuerra), []);
   const rankInfo = getRankForLevel(level);
   const needed = xpForLevel(level);
   const pct = Math.min(100, Math.round((xp / needed) * 100));
@@ -270,21 +268,8 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             <LiveCounter />
             {/* v21: selector de idioma (7 idiomas) */}
             <LanguageSwitcher />
-            {/* v86.0 MODO GUERRA: protocolo de ancho de banda ultra-bajo */}
-            <button
-              onClick={() => {
-                const activo = toggleModoGuerra();
-                import("@/lib/sound").then(({ sfx }) => sfx.click());
-              }}
-              title={modoGuerra ? "MODO GUERRA activo: versión de puro texto para redes saturadas — toca para volver" : "MODO GUERRA: versión ligera de puro texto para 2G / satélite / batería baja"}
-              aria-pressed={modoGuerra}
-              className={cn(
-                "w-6 h-6 sm:w-8 sm:h-8 hud-corner flex-shrink-0 flex items-center justify-center transition-colors",
-                modoGuerra ? "border-red-hud text-red-hud bg-red-hud/25 blink-soft" : "border-amber-hud text-amber hover:bg-amber-hud"
-              )}
-            >
-              <SignalLow className="w-3 h-3 sm:w-4 sm:h-4" />
-            </button>
+            {/* v134.0: el botón del MODO GUERRA (versión ligera) se retiró del HUD —
+                atrapaba visitantes en pantalla negra; la Casa ya no tiene modo oscuro */}
             {/* v105.0 EL NAVEGADOR: la brújula que responde "¿qué hago hoy?" — visible siempre */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("vanguard:navegador"))}

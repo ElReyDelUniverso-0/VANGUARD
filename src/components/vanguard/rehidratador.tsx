@@ -31,6 +31,14 @@ function rehidratar(store: { persist: { rehydrate: () => void | Promise<void> } 
 
 export function Rehidratador() {
   useEffect(() => {
+    // v134.0 EL ESTRENO — LA CURA DEL MODO GUERRA: el botón «versión ligera»
+    // atrapaba visitantes en pantalla negra. La lib ya no existe, pero la
+    // llave sigue en el storage de quienes cayeron: se expulsa AQUÍ y se
+    // retira la clase del <html>. Nadie vuelve a quedar dentro.
+    try {
+      localStorage.removeItem("vanguard-modo-guerra");
+      document.documentElement.classList.remove("modo-guerra");
+    } catch { /* sin storage: nada que curar */ }
     // Cada rehidratación es idempotente; al terminar, su cerradura se abre.
     rehidratar(useGameStore)
       .then(() => marcarHidratado("vanguard-game-state-v1"))

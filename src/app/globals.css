@@ -1321,49 +1321,9 @@ main img {
   .nomina-pulso { animation: none !important; }
 }
 
-/* — v86.0 CENTINELA GLOBAL · MODO GUERRA —
-   Protocolo de ancho de banda ultra-bajo: la versión de puro texto de Vanguard
-   para 2G, satélite saturado o batería al límite. Congela animaciones, apaga
-   brillos/sombras y atenúa imágenes: la verdad sin adorno. */
-html.modo-guerra *,
-html.modo-guerra *::before,
-html.modo-guerra *::after {
-  animation-play-state: paused !important;
-  transition-duration: 0.001s !important;
-}
-html.modo-guerra img,
-html.modo-guerra video {
-  filter: grayscale(1) brightness(0.45) contrast(1.15);
-}
-html.modo-guerra * {
-  box-shadow: none !important;
-  text-shadow: none !important;
-}
-html.modo-guerra [class*="glow-"],
-html.modo-guerra [class*="holo"],
-html.modo-guerra .ken-burns,
-html.modo-guerra .barrido-map,
-html.modo-guerra .glitch::before,
-html.modo-guerra .glitch::after {
-  display: none !important;
-}
-html.modo-guerra body::after {
-  content: "MODO GUERRA · VERSIÓN LIGERA DE PURA VERDAD · SIN IMÁGENES PESADAS NI ANIMACIONES";
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-  background: rgba(20, 9, 4, 0.94);
-  color: #ffb020;
-  font-family: var(--font-mono, monospace);
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-align: center;
-  padding: 4px 8px;
-  pointer-events: none;
-  border-top: 1px solid rgba(255, 176, 32, 0.4);
-}
+/* — v134.0 EL ESTRENO: el bloque CSS del MODO GUERRA (versión ligera
+   «sin imágenes») fue ELIMINADO por orden del Dueño: atrapaba visitantes
+   en pantalla negra sin salida clara. La Casa ya no tiene modo oscuro. — */
 
 /* ============================================================
    v87.0 EL DESPERTAR — el tablero respira, la arena tiembla
@@ -3491,4 +3451,60 @@ html[data-acabado="marfil"] .border-amber-hud { border-color: rgba(232, 228, 216
 html[data-acabado="marfil"] .hairline-gradient {
   background: linear-gradient(90deg, transparent 0%, rgba(232, 228, 216, 0.70) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(232, 228, 216, 0.70) 82%, transparent 100%);
   box-shadow: 0 0 14px rgba(232, 228, 216, 0.30);
+}
+
+/* ============================================================
+   v134.0 EL ESTRENO — EL TRÁILER DE VANGUARD
+   Cine de carga: emblema, letras escalonadas, tres destellos y
+   bienvenida. Solo transform/opacity (contrato 60 FPS); reduced-
+   motion no proyecta (el componente ni se monta).
+   ============================================================ */
+.v134-intro-bg { background: radial-gradient(120% 90% at 50% 40%, #0d0b04 0%, #050508 58%, #020204 100%); }
+.v134-intro-velo {
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.014) 0 1px, transparent 1px 3px),
+    radial-gradient(80% 55% at 50% 108%, rgba(212,175,55,0.10), transparent 60%);
+}
+@keyframes v134IntroPulso {
+  0%   { transform: translate(-50%,-50%) scale(0.6); opacity: 0; }
+  38%  { opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1.25); opacity: 0.55; }
+}
+.v134-intro-pulso { animation: v134IntroPulso 2.6s ease-out infinite; }
+@keyframes v134IntroEmblema {
+  0%   { transform: scale(0.5) rotate(-14deg); opacity: 0; filter: blur(6px); }
+  60%  { filter: blur(0); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0); }
+}
+.v134-intro-emblema { animation: v134IntroEmblema 1.1s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes v134IntroLetra {
+  0%   { transform: translateY(26px) scale(1.5); opacity: 0; filter: blur(4px); }
+  100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
+}
+.v134-intro-letra { animation: v134IntroLetra 0.62s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes v134IntroSub {
+  0%   { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.v134-intro-sub { animation: v134IntroSub 0.7s ease-out both; }
+@keyframes v134IntroEscena {
+  0%   { transform: translateY(18px) scale(0.86); opacity: 0; }
+  55%  { transform: translateY(-3px) scale(1.03); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.v134-intro-escena { animation: v134IntroEscena 0.85s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes v134IntroKen {
+  0%   { transform: scale(1); }
+  100% { transform: scale(1.09); }
+}
+.v134-intro-ken { animation: v134IntroKen 4.4s ease-out both; }
+@keyframes v134IntroProgreso {
+  0%   { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+.v134-intro-progreso { transform-origin: left center; animation: v134IntroProgreso 4.2s linear both; }
+@media (prefers-reduced-motion: reduce) {
+  .v134-intro-pulso, .v134-intro-emblema, .v134-intro-letra,
+  .v134-intro-sub, .v134-intro-escena, .v134-intro-ken,
+  .v134-intro-progreso { animation-duration: 0.01s; }
 }
