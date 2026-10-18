@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v129.0",
+    nombre: "LA SALA DE GUERRA",
+    tipo: "mundo",
+    hitos: [
+      "LA SALA DE GUERRA (sala nueva en INTELIGENCIA): el mega simulador del mando supremo — seis teatros del planeta (Ucrania, Oriente Medio, Sudán, Sahel, Myanmar y el estrecho de Taiwán como teatro observado) dentro de una sola sala, con sus banderas, su intensidad y su nivel de escalada",
+      "EL TEATRO 3D: entrar y ver una guerra representada — mesa tridimensional con el terreno del país (llanura, urbano, desierto, sabana, selva o marítimo), ciudades con su estado real (capital, frente, sitio, ocupada…), humo sobre las que arden, frentes encendidos con luz de brasa, unidades con símbolos OTAN de ambos bandos, drones orbitando, misiles en arco parabólico y fogonazos de artillería — con velocidad 0.5x/1x/2x, pausa, modo noche y botón ENTRAR (pantalla completa)",
+      "EL MAPA MAESTRO: esquema OSINT por teatro con retícula, zonas de control aproximadas de ambos bandos, frentes con dash que marcha, ciudades fichadas clicables con ficha propia (estado, nota y coordenadas), brújula y leyenda de estados",
+      "FUERZAS ENFRENTADAS: barras comparadas de efectivos, tanques, artillería y aeronaves de los dos bandos, con sus apoyos externos — y EL BALANCE HUMANO: bajas y desplazados con honestidad radical (fuentes OCHA, ACLED, ACNUR, ISW) y la nota de por qué ninguna cifra es completa",
+      "EL PULSO REAL: los cables auténticos de la Casa filtrados por las palabras de cada teatro (Ucrania busca Ucrania, Gaza busca Hamás, Taiwán busca TSMC…) — lectura interna, cero portales externos, refresco cada 5 minutos",
+      "LA LÍNEA DEL TIEMPO y LA BOLSA DE GUERRA: los hitos que llevaron cada teatro hasta aquí, las cuotas de la casa por escenario (con la advertencia de siempre: Vanguard no predice, presenta) y el puente directo a BETNACIÓN y al LABORATORIO ¿Y SI...?",
+      "8 IDIOMAS: la sala se traduce a español, inglés, portugués, francés, alemán, italiano, ruso y chino — como todo lo que la Casa abre",
+    ],
+  },
+  {
     version: "v128.0",
     nombre: "LA RED MUNDIAL",
     tipo: "nav",

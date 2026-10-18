@@ -628,3 +628,29 @@ Object.assign(TAB_LABELS.zh, {
   comunidad: "共同体（本座的18只眼睛：美国情报界——ODNI、CIA、NSA等18个机构：金字塔、总部走廊、档案与实时脉搏）",
   redmundial: "世界之网（全球其他18大情报机构：MI6、摩萨德、SVR/FSB/GRU、MSS、DGSE、BND、CNI、RAW、ISI与五眼联盟——世界地图、档案与实时脉搏）",
 });
+
+// ====== v129.0 LA SALA DE GUERRA — el mando supremo (8 idiomas) ======
+Object.assign(TAB_LABELS.es, {
+  salaguerra: "LA SALA DE GUERRA (el mando supremo: entra a un teatro 3D de la guerra en vivo, mapa maestro de frentes y control, fuerzas enfrentadas, pulso real y la bolsa de guerra)",
+});
+Object.assign(TAB_LABELS.en, {
+  salaguerra: "THE WAR ROOM (the supreme command: enter a live 3D war theater, master map of fronts and control, forces compared, live pulse and the war exchange)",
+});
+Object.assign(TAB_LABELS.pt, {
+  salaguerra: "A SALA DE GUERRA (o comando supremo: entre num teatro 3D da guerra ao vivo, mapa mestre de frentes e controle, forças comparadas, pulso real e a bolsa de guerra)",
+});
+Object.assign(TAB_LABELS.fr, {
+  salaguerra: "LA SALLE DE GUERRE (le commandement suprême : entrez dans un théâtre 3D de la guerre en direct, carte maîtresse des fronts et du contrôle, forces comparées, pouls réel et la bourse de guerre)",
+});
+Object.assign(TAB_LABELS.de, {
+  salaguerra: "DER KRIEGSRAUM (das Oberkommando: betrete ein 3D-Kriegstheater in Echtzeit, Meisterkarte der Fronten und Kontrolle, gegenübergestellte Streitkräfte, Live-Puls und die Kriegsbörse)",
+});
+Object.assign(TAB_LABELS.it, {
+  salaguerra: "LA SALA DI GUERRA (il comando supremo: entra in un teatro 3D della guerra in diretta, mappa madre dei fronti e del controllo, forze a confronto, polso reale e la borsa di guerra)",
+});
+Object.assign(TAB_LABELS.ru, {
+  salaguerra: "ВОЕННАЯ КОМНАТА (верховное командование: войдите в 3D-театр войны в прямом эфире, мастер-карту фронтов и контроля, сравнение сил, живой пульс и военную биржу)",
+});
+Object.assign(TAB_LABELS.zh, {
+  salaguerra: "战争室（最高指挥部：进入实时战争3D剧场、战线与控制区主地图、兵力对比、实时脉搏与战争交易所）",
+});

@@ -144,7 +144,10 @@ export type TabKey =
   // v127.0 LA COMUNIDAD: los 18 ojos de la Comunidad de Inteligencia de EE. UU.
   | "comunidad"
   // v128.0 LA RED MUNDIAL: los 18 servicios del resto del planeta (sala hermana)
-  | "redmundial";
+  | "redmundial"
+  // v129.0 LA SALA DE GUERRA: el mando supremo — teatros en vivo, teatro 3D,
+  // mapa maestro, fuerzas, pulso real y la bolsa de guerra
+  | "salaguerra";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -354,6 +357,8 @@ export const TABS: Record<TabKey, TabDef> = {
   comunidad:     { key: "comunidad",     label: "LA COMUNIDAD (los 18 ojos de la Casa: la Comunidad de Inteligencia de EE. UU. — ODNI, CIA, NSA y 15 más: pirámide, corredor de sedes, expedientes y pulso real)", short: "COMUNIDAD", icon: <Eye className="w-3.5 h-3.5" />, color: "cyan" },
   // v128.0 LA RED MUNDIAL: los 18 servicios del resto del planeta, sala hermana de LA COMUNIDAD
   redmundial:    { key: "redmundial",    label: "LA RED MUNDIAL (los 18 servicios del resto del planeta: MI6, Mossad, SVR/FSB/GRU, MSS, DGSE, BND, CNI, RAW, ISI y los Cinco Ojos — mapa del mundo, expedientes y pulso real)", short: "RED MUNDIAL", icon: <Network className="w-3.5 h-3.5" />, color: "cyan" },
+  // v129.0 LA SALA DE GUERRA: el mega simulador del mando supremo
+  salaguerra:    { key: "salaguerra",    label: "LA SALA DE GUERRA (el mando supremo: entra a un teatro 3D de la guerra en vivo, mapa maestro de frentes y control, fuerzas enfrentadas, pulso real y la bolsa de guerra)", short: "SALA GUERRA", icon: <Swords className="w-3.5 h-3.5" />, color: "red" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -376,8 +381,8 @@ export const SECTIONS: SectionDef[] = [
     // las 12 salas de conocimiento; los espejos pasan a OBSERVATORIO y las
     // simulaciones a ESTRATEGIA (estructura limpia como las webs más usadas).
     key: "inteligencia", label: "INTELIGENCIA", short: "INTEL", icon: <Radar className="w-4 h-4" />, color: "cyan",
-    desc: "LA COMUNIDAD (los 18 ojos de la Comunidad de Inteligencia de EE. UU.: ODNI, CIA, NSA y 15 más con pirámide, corredor de sedes y pulso real), LA RED MUNDIAL (los 18 servicios del resto del planeta: MI6, Mossad, el bloque ruso-chino y los Cinco Ojos con mapa y expedientes), GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
-    tabs: [TABS.comunidad, TABS.redmundial, TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
+    desc: "LA SALA DE GUERRA (el mando supremo: teatros en vivo con teatro 3D, mapa maestro y bolsa de guerra), LA COMUNIDAD (los 18 ojos de la Comunidad de Inteligencia de EE. UU.: ODNI, CIA, NSA y 15 más con pirámide, corredor de sedes y pulso real), LA RED MUNDIAL (los 18 servicios del resto del planeta: MI6, Mossad, el bloque ruso-chino y los Cinco Ojos con mapa y expedientes), GOOGLES DE VANGUARD (el buscador de los problemas geopolíticos), LA MENTE (el cerebro central de IA), el GRAFO MUNDIAL (la red del conocimiento), EL ESPEJO (una crisis, todas las perspectivas), la MÁQUINA DEL TIEMPO, VANGUARD EARTH y los expedientes desclasificados — el núcleo de conocimiento de Vanguard",
+    tabs: [TABS.salaguerra, TABS.comunidad, TABS.redmundial, TABS.googles, TABS.mente, TABS.imagenes, TABS.grafo, TABS.espejo, TABS.maquina, TABS.tierra, TABS.expedientes, TABS.ojodios, TABS.osint, TABS.mapa, TABS.canales, TABS.mundial, TABS.wikiguerra],
   },
   {
     // v101.0 EL REGRESO — PILAR 1: EL MUNDO CAMBIA. La segunda pestaña de INICIO:

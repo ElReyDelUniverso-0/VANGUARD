@@ -42,6 +42,8 @@ const AtelierPanel = dynamic(() => import("@/components/vanguard/panels/atelier-
 const ComunidadPanel = dynamic(() => import("@/components/vanguard/panels/comunidad-panel").then((m) => m.ComunidadPanel), { ssr: false, loading: PanelSkeleton });
 // v128.0 LA RED MUNDIAL — los 18 servicios del resto del planeta (sala hermana de LA COMUNIDAD)
 const RedMundialPanel = dynamic(() => import("@/components/vanguard/panels/red-mundial-panel").then((m) => m.RedMundialPanel), { ssr: false, loading: PanelSkeleton });
+// v129.0 LA SALA DE GUERRA — el mega simulador del mando supremo
+const SalaGuerraPanel = dynamic(() => import("@/components/vanguard/panels/sala-guerra-panel").then((m) => m.SalaGuerraPanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
@@ -925,6 +927,8 @@ export default function Home() {
         {tab === "atelier" && <AtelierPanel />}
         {tab === "comunidad" && <ComunidadPanel />}
         {tab === "redmundial" && <RedMundialPanel />}
+        {/* v129.0 LA SALA DE GUERRA — el mando supremo: teatros en vivo, teatro 3D y bolsa de guerra */}
+        {tab === "salaguerra" && <SalaGuerraPanel />}
         {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
         {tab === "observatorio" && <ObservatorioPanel />}
         {tab === "experimental" && <ExperimentalPanel />}

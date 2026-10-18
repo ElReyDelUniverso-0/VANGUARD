@@ -3389,3 +3389,23 @@ html[data-galeria="on"] .space-y-3 > * + * { margin-top: 1rem; }
   .v128-ruta { animation: none; }
   .v128-anillo { animation: none; }
 }
+
+/* ============================================================
+   v129.0 LA SALA DE GUERRA — el mando supremo
+   ============================================================ */
+/* la línea de frente: el dash que marcha sobre el mapa maestro (SVG liviano) */
+@keyframes v129Marcha {
+  to { stroke-dashoffset: -18; }
+}
+.v129-frente { animation: v129Marcha 1.8s linear infinite; }
+/* anillo de selección sobre la ciudad tocada (solo opacity — contrato 60 FPS) */
+@keyframes v129Anillo {
+  0%   { opacity: 0.9; }
+  50%  { opacity: 0.2; }
+  100% { opacity: 0.9; }
+}
+.v129-anillo { animation: v129Anillo 2.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .v129-frente { animation: none; }
+  .v129-anillo { animation: none; }
+}

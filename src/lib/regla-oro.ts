@@ -1072,6 +1072,15 @@ export const REGLA_ORO = {
       "Dieciocho servicios de inteligencia de doce naciones, expediente a expediente: el MI6 y su tinta verde, el Mossad y su proverbio, el bloque ruso-chino, la continental París–Berlín–Madrid y los Cinco Ojos del pacto UKUSA de 1946. Su mapa del mundo con sedes reales, sus arcos de alianza cruzando el Atlántico hasta la sala hermana, su lema y su misión — y el pulso real: los cables que la Casa recibe ahora mismo sobre cada servicio. El planeta entero, presentado como joya.",
     acento: "#7FE3FF",
   },
+  // v129.0 LA SALA DE GUERRA — el mando supremo: teatros en vivo, teatro 3D y bolsa
+  salaguerra: {
+    titulo: "LA SALA DE GUERRA",
+    volanta: "El mando supremo — entra y mira la guerra como nunca antes se pudo",
+    imagen: "/ilustraciones/simulador.jpg",
+    texto:
+      "Seis teatros del planeta (cinco en fuego y uno observado) dentro de una sola sala de mando: entras a la representación 3D de una guerra real — terreno, ciudades en llamas, frentes encendidos, artillería, drones y misiles en arco — y de ahí bajas al mapa maestro con sus zonas de control y sus frentes marchando, a las fuerzas enfrentadas con barras comparadas, al balance humano con sus bajas honestas, al pulso real de los cables que la Casa recibe ahora mismo del teatro, y a la bolsa de guerra: las cuotas de la casa por escenario. Con fuentes abiertas y sin maquillaje: Vanguard no predice — presenta.",
+    acento: "#FF4A3A",
+  },
 } satisfies Record<string, ReglaOroEntry>;
 
 export type ReglaOroPanel = keyof typeof REGLA_ORO;
