@@ -1902,3 +1902,20 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v135.0 NEXUS-HYPNOS. Vanguard ya no es una página: es una CASA DEL FUTURO — letras con volumen en todas las salas, un planeta cuyo pulso tiñe la señal entera (y en crisis la pone a glitchear), un búnker que suena a radio militar interceptada, un botón SIMULAR en cada noticia que deja jugar a ser Dios con el destino, y un enjambre de ojos orbitando en VISTA DIOS. Tres curas de errores reales: ancla robada del fixed, carrera de la modal de reconexión y el flush perdido del game-store.
 - Sugerido para v136: proyectar el tráiler v134 con la sala del acabado LUXE activo; noche forzada de QA para capturar la Vía Láctea; segunda ola de teatros en LA SALA DE GUERRA (㉚ pendiente); audio del búnker también espacializado por sala.
+
+---
+Task ID: 17
+Agent: main (Super Z)
+Task: v136.0 «PROFUNDIDAD TOTAL» — orden del Dueño: «Sigue trabajando y pon las letras en 3D» (segunda pasada del mandato 3D: el volumen ya no es solo de los títulos, es de TODA la letra).
+
+Work Log:
+- RECON CLAVE: la v135 extruía títulos (.nexus-letra en PanelHeader/home-panel + TituloEpico en 9 salas), pero el resto de la letra seguía PLANA — y descubrí que la navegación real ya no es tab-nav (legacy, solo datos exportados) sino chrome-tabs.tsx (la franja de pestañas de cromo v106+): ahí vivía el trabajo.
+- SISTEMA NEXUS COMPLETO (globals.css bloque v136): .nexus-letra UPGRADE con filo cromático holográfico (cian #00F0FF a estribor / magenta #FF2D78 a babor — la luz se descompone en el borde del glifo); .nexus-letra-suave (micro-extrusión 3 capas para 9-11px legible); .nexus-num (números tabulares extruidos); .nexus-sub (1 capa de cuerpo para subtítulos); .nexus-tab/.nexus-btn3d (hover SE LEVANTA EN Z: translateY(-1px)+scale+brightness+drop-shadow, solo transform/filter, :active baja, reduced-motion apaga). El tráiler v134 también extruye sus letras ahora.
+- DETALLE DE INGENIERÍA: los motion.button de tab-nav llevan transform inline de framer (chipVariant) que PISA el CSS hover → el lift vive en el HOST (.nexus-tab-host:hover .nexus-tab) levantando la etiqueta interior; en chrome-tabs el botón es plano y la píldora layoutId es hermana — sin conflicto.
+- VESTIDO COMPLETO: hud-header (wordmark VANGUARD, píldoras 250/5/0, L{nivel}, rango), chrome-tabs (pestañas del cromo, menú ⋮ completo, Buscar/Pantalla completa/Menú), tab-nav legacy (secciones/subtabs/drawer/Sorpréndeme/Buscar/Menú — por si vuelve), panel-header (subtítulos de TODAS las salas).
+- QA EN VIVO (producción standalone, RSS 139→177MB): health v136.0; sombra cromática COMPUTADA verificada en wordmark/pestañas/números (rgba(0,240,255,0.1) 1px 0 / rgba(255,45,120,0.08) -1px 0); LIFT EN Z probado con hover real (mouse move → transform matrix(1,0,0,1,0,-1) + brightness(1.14) + drop-shadow, primer sample pescó la transición en vuelo); 6 botones 3D + pestañas extruidas tras recarga; móvil 390px scrollWidth 390=390; recarga recurrente ×2 → 0 errores; capturas qa-v136-inicio.png (HUD+pestaña+héroe con volumen).
+- COMMIT 5954249 → push a main (c162a8b..5954249), 8 archivos (+118/−33).
+
+Stage Summary:
+- PRODUCCIÓN = v136.0 PROFUNDIDAD TOTAL. Ya no hay una sola letra plana en el cromo: el wordmark extruye, los números salen de la pantalla, las pestañas se levantan al pasar el cursor, los títulos descomponen la luz en cian y magenta. El futuro se lee en volumen.
+- Sugerido para v137: noche forzada de QA para capturar la Vía Láctea de la ciudad (pendiente desde v134), segundo tráiler por acabado LUXE, o segunda ola de teatros en LA SALA DE GUERRA (㉚).
