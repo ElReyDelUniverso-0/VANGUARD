@@ -34,8 +34,11 @@ export function PanelHeader({ title, subtitle, icon, color = "amber", right }: P
           {/* v124.0 CAVIAR: los títulos de la casa van en serif de colección
               con ORO en cada glifo — alta clase en todas las salas.
               v135.0 NEXUS-HYPNOS: cada glifo ahora tiene VOLUMEN 3D
-              (extrusión holográfica .nexus-letra) — adiós al plano de 1990 */}
-          <h2 className="font-caviar text-base sm:text-lg font-bold tracking-[0.12em] uppercase text-foreground [perspective:600px]">
+              (extrusión holográfica .nexus-letra) — adiós al plano de 1990.
+              v139 3D BRUTAL: el título entero FLOTA SOLO en 3D (vaivén
+              constante con perspectiva propia — se ve incluso dentro del
+              cristal y sin mover un dedo). */}
+          <h2 className="vg-flota-v139 font-caviar text-base sm:text-lg font-bold tracking-[0.12em] uppercase text-foreground [perspective:600px]">
             <LetrasAnimadas text={title} letraClass="caviar-letra nexus-letra" />
           </h2>
           {subtitle && (

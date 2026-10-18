@@ -204,8 +204,13 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
               </svg>
             </div>
             <div className="leading-tight min-w-0">
+              {/* v139 3D BRUTAL: el wordmark ya no es texto — es un HOLOGRAMA
+                  que gira solo (rotateY ±14° constante) con DOS capas fantasma
+                  reales detrás (::before/::after a translateZ −16/−32px): al
+                  girar, la profundidad se separa ante tus ojos. Sin truncate
+                  (recorta las capas 3D); "VANGUARD" con tracking cabe en 360px. */}
               <div
-                className="font-caviar text-[12px] sm:text-lg font-bold tracking-[0.22em] text-amber truncate nexus-letra"
+                className="vg-holo-v139 font-caviar text-[12px] sm:text-lg font-bold tracking-[0.22em] text-amber nexus-letra"
                 data-text="VANGUARD"
               >
                 VANGUARD

@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v139.0",
+    nombre: "3D BRUTAL",
+    tipo: "tecno",
+    hitos: [
+      "EL 3D QUE NO PIDE PERMISO: el Dueño recargó dos veces y siguió sin ver 3D — autopsia final: en TÁCTIL no hay puntero (cero tilt) ni hover (cero pop-out), y una respiración de 22px no llega al ojo. LA CURA: el 3D se mueve SOLO — la CUNA hace que la sala entera se meza SIEMPRE (vaivén constante rotateX ±1.6° / rotateY ±3.2° / balanceo de 14px en Z, ciclo de 13s): con la pantalla quieta en la mesa, el mundo ya no está quieto jamás. Cuerpo preserve-3d nuevo entre diorama y flotador — tres planos anidados, cada uno con su animación",
+      "EL HOLOGRAMA: el wordmark VANGUARD de la cabecera ya no es texto — GIRA SOLO (rotateY ±14° con perspectiva propia, ciclo de 7s) con DOS capas fantasma REALES detrás (::before/::after a translateZ −16px y −32px): al rotar, la extrusión se separa ante tus ojos — geometría, no sombra. Abajo, los títulos de TODAS las salas flotan en 3D constante (vg-flota-v139, perspectiva embebida en el transform — se ve incluso dentro del cristal backdrop-filter)",
+      "CHISPAS AL FRENTE: nueva capa fija ENCIMA de toda la interfaz (z 44, sin puntero) — 12 motas de polvo holográfico cian/oro/magenta a la deriva con paralaje CONTRARIO al puntero, más un RAYO DE ESCANEO que barre la pantalla de arriba a abajo cada 11s: el futuro cruza ENTRE TÚ Y LA INTERFAZ en cualquier dispositivo, sin mover un dedo",
+      "BOOSTS GORDOS: el vuelo de sala ahora parte de −640px CON inclinación de 14° (cada cambio de pestaña es una nave que se acerca — el móvil lo ve en cada toque), la respiración sube a 46px en ciclos de 7s, el tilt con mano llega a 11°/8.5°, y las tarjetas salen de la pantalla también AL TOCARLAS (:active translateZ 18px — feedback 3D en táctil)",
+      "CONTRATO INTACTO: solo transform/opacity (60 FPS), todo bajo data-vg-3d y reduced-motion (cuna/holograma/flota/chispas se apagan limpio), calc solo con var × literal (lección Blink #1), y el wordmark perdió su truncate para no recortar las capas 3D (VANGUARD con tracking cabe en 360px)",
+    ],
+  },
+  {
     version: "v138.0",
     nombre: "MUNDO VIVO",
     tipo: "tecno",

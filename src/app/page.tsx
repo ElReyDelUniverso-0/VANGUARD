@@ -804,6 +804,14 @@ export default function Home() {
         <div className="v138-horizonte" />
         <div className="v138-suelo" />
       </div>
+      {/* v139 3D BRUTAL: CHISPAS AL FRENTE — polvo holográfico y un rayo de
+          escaneo que VUELAN ENTRE TÚ Y LA INTERFAZ (capa fija encima de todo,
+          sin puntero, solo transform/opacity). El 3D ya no depende de tu mano:
+          aunque no toques nada, el futuro cruza la pantalla. */}
+      <div className="v139-frente" aria-hidden>
+        <i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i />
+        <b className="v139-asta" />
+      </div>
       {/* v72.0: intro cinematográfica de vuelta — letras realistas + luna llena */}
       <IntroCinematica />
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
@@ -902,9 +910,15 @@ export default function Home() {
                 del elemento que lo lleva (lección de la autopsia Blink):
                 el mundo se mueve, el cristal sigue siendo cristal. */}
             <div className="diorama-v137">
+            {/* v139 3D BRUTAL: la CUNA — la sala entera se MECE SOLO (vaivén
+                constante rotateX/rotateY/translateZ, sin puntero ni giroscopio):
+                en móvil y en reposo el mundo ya no está quieto jamás. Cuerpo
+                intermedio preserve-3d entre el tilt del diorama y el vuelo del
+                flotador — tres planos anidados, cada uno con su animación. */}
+            <div className="cuna-v139">
             {/* v138 MUNDO VIVO: el FLOTADOR — la sala entera vuela desde el
-                fondo del escenario (z −380px) al entrar y luego RESPIRA
-                acercándose 22px en ciclos de 9s: la Casa nunca está quieta.
+                fondo del escenario al entrar y luego RESPIRA acercándose en
+                ciclos de 7s: la Casa nunca está quieta.
                 Vive dentro del diorama (preserve-3d) para que el translateZ
                 proyecte contra la perspectiva del escenario. */}
             <div className="flotador-v138">
@@ -1109,6 +1123,7 @@ export default function Home() {
         {/* v28 — PARA TI: feed de la comunidad */}
         {tab === "foryou" && <ForYouPanel />}
             </PanelErrorBoundary>
+            </div>
             </div>
             </div>
           </motion.div>
