@@ -19,6 +19,7 @@
 // visual vive en CSS transform/opacity.
 // ============================================================
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useReducedMotion } from "framer-motion";
 import { X, FlaskConical, Dna, CalendarClock, Gauge, Skull, Banknote, Radio } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -114,7 +115,11 @@ export function CamaraConsecuencias({ cable, onCerrar }: { cable: CableSim | nul
   const xFrente = pinA.x + (pinB.x - pinA.x) * (hoy.frente / 100);
   const misiles = hoy.escalada >= 4;
 
-  return (
+  // v135 CURA DEL ANCLA ROBADA: la sala vive dentro del wrapper de transición
+  // (tiene transform) — un position:fixed ahí se ancla al wrapper y no al
+  // viewport (el panel caía bajo el pliegue). El PORTAL al body la libra:
+  // la cámara siempre centrada, por encima de todo.
+  return createPortal(
     <div className="fixed inset-0 z-[95] flex items-center justify-center p-2 sm:p-6" role="dialog" aria-label="Cámara de Consecuencias">
       <button aria-label="Cerrar cámara" onClick={onCerrar} className="absolute inset-0 bg-black/78 backdrop-blur-md v135-velo cursor-default" />
       <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto hud-panel border-amber-hud shadow-[0_30px_120px_-20px_rgba(0,0,0,0.95)]">
@@ -290,6 +295,7 @@ export function CamaraConsecuencias({ cable, onCerrar }: { cable: CableSim | nul
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
