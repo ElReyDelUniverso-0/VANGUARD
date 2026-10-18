@@ -27,6 +27,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { storageBlindado } from "@/lib/storage-blindado";
 import type { StudioPattern, VozStudio } from "@/lib/music-studio";
 import { fnvHash, mulberry32, evaluarNeuronal } from "@/lib/neurona-core";
 import { areaOcupada } from "@/lib/frente-zonas-data";
@@ -614,7 +615,10 @@ export const useArquitecto = create<ArquitectoEstado>()(
     }),
     {
       name: "vg-arquitecto-v115",
-      storage: createJSONStorage(() => localStorage),
+      // v132.0: skipHydration — la fase/ciclos del arquitecto llegan tras el
+      // montaje (el HUD del servidor y el del cliente ya no difieren)
+      skipHydration: true,
+      storage: createJSONStorage(() => storageBlindado),
       partialize: (s) => ({
         activo: s.activo, perpetuo: s.perpetuo, velocidad: s.velocidad,
         obra: s.obra, modulos: s.modulos, obras: s.obras, doctrinas: s.doctrinas,

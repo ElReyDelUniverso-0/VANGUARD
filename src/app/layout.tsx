@@ -15,6 +15,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { RetentionLayer } from "@/components/vanguard/retention-layer";
+import { Rehidratador } from "@/components/vanguard/rehidratador";
 // v99.0 MENTE VIVA: el pulso autónomo global (el mundo se actualiza solo)
 import { PulsoAuto } from "@/components/vanguard/pulso-auto";
 // v101.0 EL REGRESO — PILAR 1: banner global "el mundo cambió" en todas las páginas
@@ -263,6 +264,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados
+            entran tras la hidratación de React; adiós al error #418 para siempre */}
+        <Rehidratador />
         {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
         <RetentionLayer />
         {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}

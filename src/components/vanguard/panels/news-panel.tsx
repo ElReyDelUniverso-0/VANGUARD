@@ -367,8 +367,9 @@ export function NewsPanel() {
         onEntrenar={() => void entrenarRed()}
       />
 
-      {/* Status bar */}
-      <div className="hud-corner p-2 flex items-center gap-3 text-[10px] font-mono">
+      {/* Status bar — v132.0: flex-wrap para móvil (la fila de filtros
+          desbordaba 390px y daba scroll horizontal a toda la sala) */}
+      <div className="hud-corner p-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] font-mono">
         <div className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-green-hud blink-soft" />
           <span className="text-green-hud">LIVE</span>
@@ -390,7 +391,7 @@ export function NewsPanel() {
         <span className="flex items-center gap-1 text-amber">
           <Radio className="w-3 h-3" /> actualizacion auto 60s
         </span>
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex flex-wrap items-center gap-1">
           {tags.map((t) => (
             <button
               key={t}

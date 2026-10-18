@@ -6,7 +6,8 @@
 // (texto + material + profundidad + acento) y el perfil del agente la luce
 // con el motor de letras 3D de la casa.
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { storageBlindado } from "@/lib/storage-blindado";
 import type { MaterialLetra } from "@/components/vanguard/letras-3d";
 
 export type BannerStyle = "aurora" | "inferno" | "royal" | "arctic" | "stealth";
@@ -60,6 +61,8 @@ export const FACTIONS = [
 
 export const useProfileStore = create<ProfileState>()(
   persist(
+    // v132.0: skipHydration — la firma/avatar llegan tras el montaje (sin #418)
+    // vía EL REHIDRATADOR (layout raíz)
     (set) => ({
       cbAvatar: "us",
       banner: "aurora",
@@ -76,6 +79,8 @@ export const useProfileStore = create<ProfileState>()(
       setFavFaction: (favFaction) => set({ favFaction }),
       setFirma: (firma) => set({ firma }),
     }),
-    { name: "vanguard-profile-v1" }
+    // v132.0: skipHydration + storage blindado — la firma/avatar llegan tras el
+    // montaje y la cerradura protege lo guardado (sin #418, sin pisadas)
+    { name: "vanguard-profile-v1", skipHydration: true, storage: createJSONStorage(() => storageBlindado) }
   )
 );

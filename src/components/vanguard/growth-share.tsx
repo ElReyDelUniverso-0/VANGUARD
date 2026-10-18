@@ -34,11 +34,16 @@ export function GrowthShare() {
   const [installEvt, setInstallEvt] = useState<BeforeInstallPromptEvent | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   // contador persistente de invitaciones compartidas (mision viral)
-  const [invited, setInvited] = useState(() => {
-    if (typeof window === "undefined") return 0;
-    const n = parseInt(localStorage.getItem("vanguard_shares") || "0", 10);
-    return Number.isFinite(n) ? n : 0;
-  });
+  // v132.0 LA GRAN AUDITORÍA — el valor guardado entra en el efecto (tras la
+  // hidratación de React): leer localStorage en el inicializador desajustaba
+  // el texto del contador entre servidor y visitante recurrente (#418).
+  const [invited, setInvited] = useState(0);
+  useEffect(() => {
+    try {
+      const n = parseInt(localStorage.getItem("vanguard_shares") || "0", 10);
+      if (Number.isFinite(n) && n > 0) setInvited(n);
+    } catch { /* sin storage: 0 */ }
+  }, []);
 
   // captura el evento de instalacion PWA del navegador
   useEffect(() => {

@@ -12,6 +12,7 @@ import { protocoloMultiplier, trackProtocoloEarnings } from "@/lib/tension";
 import { rollFortuna, emitirFortuna } from "@/lib/fortuna";
 // v26: sonido especial de recompensa en cada moneda ganada
 import { sfx } from "@/lib/sound";
+import { estaHidratado } from "@/lib/storage-blindado";
 import {
   defaultAlias,
   getRankForLevel,
@@ -527,6 +528,14 @@ const debouncedLocalStorage: StateStorage = (() => {
       }
     },
     setItem: (name, value) => {
+      // v132.0 LA GRAN AUDITORÍA — CERRADURA DE HIDRATACIÓN: con skipHydration,
+      // un setState pre-reehidratación (initPlayer…) escribiría los valores por
+      // defecto y PISARÍA la partida guardada. Nada sale hasta que el
+      // REHIDRATADOR marca el store como hidratado.
+      if (!estaHidratado("vanguard-game-state-v1")) {
+        pending = null;
+        return;
+      }
       pending = value;
       if (name !== "vanguard-game-state-v1") {
         // otras claves: escritura inmediata
@@ -2261,6 +2270,12 @@ export const useGameStore = create<GameState>()(
     {
       name: "vanguard-game-state-v1",
       version: 8,
+      // v132.0 LA GRAN AUDITORÍA — skipHydration: la rehidratación SÍNCRONA
+      // aplicaba las cifras guardadas ANTES de que React hidratara y el HUD
+      // del servidor (valores por defecto) no coincidía con el del cliente →
+      // React error #418 (parpadeo + "a veces no se actualiza"). Ahora el
+      // REHIDRATADOR rehidrata tras el montaje, sin desajuste posible.
+      skipHydration: true,
       storage: createJSONStorage(() => debouncedLocalStorage),
       merge: (persisted: any, current: any) => {
         // shallow merge: keep new fields from current if not in persisted

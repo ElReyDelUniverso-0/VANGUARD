@@ -11,6 +11,7 @@
 // ============================================================
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { storageBlindado } from "@/lib/storage-blindado";
 import { forjarSerie } from "@/lib/luxe";
 
 export interface LuxeEstado {
@@ -53,7 +54,9 @@ export const useLuxe = create<LuxeEstado>()(
     }),
     {
       name: "vg_luxe_v126",
-      storage: createJSONStorage(() => localStorage),
+      // v132.0: skipHydration — la serie grabada entra tras el montaje (sin #418)
+      skipHydration: true,
+      storage: createJSONStorage(() => storageBlindado),
       version: 1,
     }
   )

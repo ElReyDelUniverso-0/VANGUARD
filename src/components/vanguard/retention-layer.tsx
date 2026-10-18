@@ -61,7 +61,11 @@ function fmtCountdown(ms: number): string {
 export function RetentionLayer() {
   const [mounted, setMounted] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [now, setNow] = useState(() => Date.now());
+  // v132.0 LA GRAN AUDITORÍA — el reloj arranca en 0 y se pone en el efecto:
+  // Date.now() en el estado inicial hacia que el servidor pinte una cuenta
+  // atrás y el cliente OTRA (minuto distinto) = React #418 intermitente,
+  // exactamente el "a veces no se actualiza" del Dueño.
+  const [now, setNow] = useState(0);
   const [seasonOpen, setSeasonOpen] = useState(false);
   const [chestReady, setChestReady] = useState(false);
   const [rolling, setRolling] = useState(false);
@@ -291,7 +295,9 @@ export function RetentionLayer() {
   const day = ret.seasonDay();
   const combo = comboOf();
   const seasonEnds = new Date(ret.seasonStart + "T00:00:00").getTime() + SEASON_DAYS * 86400000;
-  const seasonLeft = seasonEnds - now;
+  // v132: mientras el reloj real no llegue (efecto), la cuenta atrás pinta
+  // el mismo texto estable en servidor y cliente — cero desajuste.
+  const seasonLeft = now > 0 ? Math.max(0, seasonEnds - now) : 0;
   const secToNextCombo = COMBO_STEP_S - (activeSec.current % COMBO_STEP_S);
   const nextTier = tier + 1;
 

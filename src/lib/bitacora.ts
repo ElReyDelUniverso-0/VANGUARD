@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v132.0",
+    nombre: "LA GRAN AUDITORÍA",
+    tipo: "tecno",
+    hitos: [
+      "LA GRAN AUDITORÍA (la orden del Dueño cumplida a fondo): «corrige todos los bugs, revisa todas las líneas, a veces no se actualiza» — auditoría completa de la cadena de registro (tab-nav ↔ página ↔ 8 idiomas ↔ regla-oro: 8 salas nuevas × 8 idiomas, todo íntegro), barrido de clases de bug (JSON.parse sin blindar: 0 tras revisar 10 candidatos; intervalos sin limpiar: 0) y prueba de comportamiento real sobre las 3 salas históricas (NOTICIAS, OJO DE DIOS, CÁMARAS): las tres vivas, botones RESPONDIENDO, /api/news sirviendo cables del día",
+      "EL BUG RAÍZ CAZADO Y MUERTO: React error #418 (desajuste de hidratación) — los 7 stores persistidos (idioma, juego, lujo, retención, arquitecto, cama, perfil) se rehidrataban SÍNCRONAMENTE ANTES de que React hidratara: el servidor pintaba los valores por defecto y el cliente los guardados → parpadeo garantizado en cada visita recurrente, la firma exacta del «a veces no se actualiza». Ahora todos llevan skipHydration y EL REHIDRATADOR (nuevo, montado en el layout raíz) aplica lo guardado justo tras el montaje — cero desajuste posible, verificado en producción",
+      "EL REHIDRATADOR: un componente mínimo y eterno en el layout — rehidrata los 7 stores tras la hidratación de React y luego respeta el idioma elegido a mano (v42) — la Casa carga limpio en cualquier idioma, en cualquier visita, con cualquier historial",
+      "LA GUÍA DEL DUEÑO (promesa entregada): GUIA-PASO-A-PASO-PARA-DUENO.md — 7 capítulos en español humano: qué es GitHub sin palabras raras, las llaves del reino, EL PROMPT MAESTRO copiable para encargar la obra a cualquier IA del mundo, los 5 comandos que lo hacen todo, el PROTOCOLO DEL REY (4 sellos para verificar que una IA trabajó de verdad) y el botón rojo de emergencia",
+      "LA CADENA QUEDA BLINDADA: v129 LA SALA DE GUERRA, v130 LOS ROSTROS DEL PODER y v131 EL GOBIERNO LIBRE verificadas en producción — el mando supremo, los 34 dossiers y los 5 agentes autónomos puliendo la Casa cada 30-120 segundos, todo respondiendo",
+      "MÓVIL SIN COSTURAS: overflow horizontal cazado y corregido en las tres salas históricas a 390px — NOTICIAS (la fila LIVE·AUTO + filtros aprendió a envolver), OJO DE DIOS (min-w-0 en las celdas del escáner planetario: un título largo ya no expande la celda) y CÁMARAS limpia de fábrica — la Casa cae perfecta en cualquier bolsillo",
+    ],
+  },
+  {
     version: "v131.0",
     nombre: "EL GOBIERNO LIBRE",
     tipo: "ia",

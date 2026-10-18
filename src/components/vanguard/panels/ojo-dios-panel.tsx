@@ -561,8 +561,10 @@ export function OjoDiosPanel() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-3">
-        {/* ===== ESCÁNER PLANETARIO — CONFLICTOS REALES ===== */}
-        <div className="hud-panel p-3">
+        {/* ===== ESCÁNER PLANETARIO — CONFLICTOS REALES =====
+            v132.0: min-w-0 en las celdas del grid (min-width:auto dejaba que
+            un título largo expandiera la celda → overflow móvil 443px) */}
+        <div className="hud-panel p-3 min-w-0">
           <div className="flex items-center gap-1.5 mb-2 text-[9px] font-mono uppercase tracking-widest text-red-hud">
             <RadarIcon className="w-3 h-3" /> {t("god.scan.title")}
           </div>
@@ -573,7 +575,7 @@ export function OjoDiosPanel() {
             {news.map((n) => (
               <div key={n.id} className="flex items-start gap-2 text-[10px] leading-snug">
                 <FlagBadge code={n.sourceCountry ?? undefined} className="w-4 h-3 mt-0.5 shrink-0" />
-                <span className="text-foreground/90 flex-1">{n.title}</span>
+                <span className="text-foreground/90 flex-1 min-w-0 break-words">{n.title}</span>
                 {n.tacticalTag && (
                   <span className={cn("text-[7px] font-mono px-1 border uppercase shrink-0 mt-0.5", TAG_COLOR[n.tacticalTag] ?? "border-border text-muted-foreground")}>
                     {n.tacticalTag}
@@ -585,7 +587,7 @@ export function OjoDiosPanel() {
         </div>
 
         {/* ===== DIRECTOS OBSERVADOS ===== */}
-        <div className="hud-panel p-3">
+        <div className="hud-panel p-3 min-w-0">
           <div className="flex items-center gap-1.5 mb-2 text-[9px] font-mono uppercase tracking-widest text-amber-hud">
             <MonitorPlay className="w-3 h-3" /> {t("god.streams.title")}
           </div>

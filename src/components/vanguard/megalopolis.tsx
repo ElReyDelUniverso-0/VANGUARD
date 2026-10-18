@@ -481,10 +481,20 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
   const efecto: EfectoClima = clima ? efectoDeClima(clima.cond) : "despejado";
   const nubesClima = efecto === "nublado" ? 0.5 : 0;
 
-  const horaTxt = (() => {
-    const d = new Date();
-    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  })();
+  // v132.0 LA GRAN AUDITORÍA — la hora real entra por ESTADO (fijo en el primer
+  // render) y se pone en el efecto: new Date() directo en el render pintaba la
+  // hora del SERVIDOR en el HTML y la del VISITANTE en la hidratación → React
+  // #418 de texto en cada carga (husos distintos o cruce de minuto).
+  const [horaTxt, setHoraTxt] = useState("--:--");
+  useEffect(() => {
+    const pinta = () => {
+      const d = new Date();
+      setHoraTxt(`${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`);
+    };
+    pinta();
+    const iv = setInterval(pinta, 30_000);
+    return () => clearInterval(iv);
+  }, []);
 
   return (
     <div className={cn("absolute inset-0 overflow-hidden", className)} aria-hidden>

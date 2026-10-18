@@ -78,7 +78,6 @@ import { Mission100 } from "@/components/vanguard/mission-100";
 import { SeoFaq } from "@/components/vanguard/seo-faq";
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
 import { ensurePlayerCounted } from "@/lib/realtime";
-import { ensureLangDetected } from "@/lib/i18n";
 import { startPresenceHeartbeat, LiveTitle } from "@/components/vanguard/presence-ping";
 // v67.0 EL HANGAR — capa global de crisis/PROTOCOLO ROJO + easter eggs + contador de guerra + rival
 const ProtocoloRojo = dynamic(() => import("@/components/vanguard/protocolo-rojo").then((m) => m.ProtocoloRojo), { ssr: false });
@@ -603,9 +602,9 @@ export default function Home() {
     // montaje de la página — SIN esperar al socket (Render puede tardar 30-50s
     // en despertar; antes esos móviles se iban sin contar). Idempotente.
     ensurePlayerCounted();
-    // v42 TU IDIOMA, TU GUERRA: idioma automático del navegador + presencia
-    // en vivo por HTTP (latidos 30s — el badge "N EN LÍNEA" del HUD).
-    ensureLangDetected();
+    // v132.0 LA GRAN AUDITORÍA — la detección de idioma ya NO corre aquí:
+    // antes pisaba la elección manual (autoDetected aún no rehidratado).
+    // EL REHIDRATADOR (layout) la ejecuta tras rehidratar vanguard-lang-v1.
     startPresenceHeartbeat();
     const t = setInterval(() => checkAchievements(), 5000);
     return () => clearInterval(t);

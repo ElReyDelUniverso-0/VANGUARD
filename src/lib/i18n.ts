@@ -7,7 +7,8 @@
 // el CHROME (nav, secciones, HUD, footer, multijugador) queda 100% traducido.
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { storageBlindado } from "@/lib/storage-blindado";
 import { useMemo, useState, useEffect } from "react";
 import { TAB_LABELS, TAB_SHORTS } from "./i18n-tabs";
 
@@ -70,7 +71,14 @@ export const useLangStore = create<LangState>()(
       autoDetected: true,
       setLang: (lang) => set({ lang, autoDetected: false }),
     }),
-    { name: "vanguard-lang-v1" }
+    // v132.0 LA GRAN AUDITORÍA — skipHydration + storage blindado: el idioma
+    // guardado entra tras el montaje (sin #418) y la cerradura impide que la
+    // detección temprana pise una elección hecha a mano.
+    {
+      name: "vanguard-lang-v1",
+      skipHydration: true,
+      storage: createJSONStorage(() => storageBlindado),
+    }
   )
 );
 

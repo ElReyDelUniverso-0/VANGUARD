@@ -8,6 +8,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { storageBlindado } from "@/lib/storage-blindado";
 
 export type Rarity = "COMUN" | "RARO" | "EPICO" | "LEGENDARIO";
 
@@ -202,7 +203,10 @@ export const useRetention = create<RetentionState>()(
     }),
     {
       name: "vg_retention_v55",
-      storage: createJSONStorage(() => localStorage),
+      // v132.0: skipHydration — los chips de temporada llegan tras el montaje
+      // (sin desajuste de hidratación en la capa raíz)
+      skipHydration: true,
+      storage: createJSONStorage(() => storageBlindado),
     }
   )
 );

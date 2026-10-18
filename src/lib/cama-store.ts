@@ -19,6 +19,7 @@
 // ============================================================
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { storageBlindado } from "@/lib/storage-blindado";
 import type { TabKey } from "@/components/vanguard/tab-nav";
 
 /** Los 6 estilos de viaje entre secciones (v121 + v124 ORO CAVIAR). */
@@ -121,7 +122,10 @@ export const useCama = create<CamaEstado>()(
     }),
     {
       name: "vg_cama_v121",
-      storage: createJSONStorage(() => localStorage),
+      // v132.0: skipHydration — la transición/movimiento elegidos se aplican
+      // tras el montaje (sin desajuste de clases entre servidor y cliente)
+      skipHydration: true,
+      storage: createJSONStorage(() => storageBlindado),
       // v124.0 CAVIAR — migración de lujo (solo UNA vez): quien ya tenía la
       // casa a su medida conserva TODO (visitas, favorito, acento…), pero su
       // viaje entre salas se estrena con el telón de ORO CAVIAR.

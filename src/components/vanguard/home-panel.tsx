@@ -154,17 +154,12 @@ export function HomePanel() {
   const launchPackClaimed = useGameStore((s) => s.launchPackClaimed);
   const claimLaunchPack = useGameStore((s) => s.claimLaunchPack);
 
-  const [items, setItems] = useState<NewsItem[]>(() => {
-    // v36: caché local — si la API tarda o falla, la portada NUNCA queda sin
-    // noticias: muestra las últimas buenas al instante.
-    if (typeof window === "undefined") return [];
-    try {
-      const arr = JSON.parse(localStorage.getItem("vanguard-news-cache") || "[]");
-      return Array.isArray(arr) ? arr.slice(0, 12) : [];
-    } catch {
-      return [];
-    }
-  });
+  // v132.0 LA GRAN AUDITORÍA — el estado arranca VACÍO en servidor Y cliente:
+  // leer localStorage en el inicializador de useState hacía que el servidor
+  // pintara el placeholder y el visitante recurrente la tarjeta del héroe →
+  // React #418 en CADA visita de regreso. La caché se carga en el efecto de
+  // abajo (post-hidratación), la portada nunca queda sin noticias igual.
+  const [items, setItems] = useState<NewsItem[]>([]);
   const [newsOffline, setNewsOffline] = useState(false);
   const [reloadTick, setReloadTick] = useState(0);
   const [clock, setClock] = useState("");
@@ -185,6 +180,12 @@ export function HomePanel() {
   useEffect(() => {
     let alive = true;
     let retry: ReturnType<typeof setTimeout> | null = null;
+    // v132.0: la caché local entra AQUÍ — tras la hidratación de React (la
+    // portada pinta las últimas buenas al instante, sin desajuste posible)
+    try {
+      const arr = JSON.parse(localStorage.getItem("vanguard-news-cache") || "[]");
+      if (Array.isArray(arr) && arr.length > 0) setItems(arr.slice(0, 12));
+    } catch { /* sin caché: sigue la carga de red */ }
     const load = (attempt: number) => {
       fetch("/api/news", { cache: "no-store" })
         .then((r) => {
