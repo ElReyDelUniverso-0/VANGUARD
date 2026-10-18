@@ -3445,3 +3445,50 @@ html[data-galeria="on"] .space-y-3 > * + * { margin-top: 1rem; }
 @media (prefers-reduced-motion: reduce) {
   .v131-luz { animation: none; }
 }
+
+/* ============================================================
+   v133.0 EL ACABADO REAL — la casa se viste del material elegido
+   Hasta hoy el acabado del Atelier solo vestía sus muestras;
+   desde v133 el material manda sobre el cromo entero: el oro del
+   HUD, los marcos, la línea de aurora — todo obedece al metal.
+   (oro queda como default de la casa: sin overrides)
+   ============================================================ */
+html[data-acabado="platino"] { --hud-amber: #D6DCE8; --vg-mat: #C0C8D8; }
+html[data-acabado="platino"] .bg-amber-hud { background-color: rgba(192, 200, 216, 0.15); }
+html[data-acabado="platino"] .border-amber-hud { border-color: rgba(192, 200, 216, 0.42); }
+html[data-acabado="platino"] .hairline-gradient {
+  background: linear-gradient(90deg, transparent 0%, rgba(192, 200, 216, 0.75) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(192, 200, 216, 0.75) 82%, transparent 100%);
+  box-shadow: 0 0 14px rgba(192, 200, 216, 0.35);
+}
+
+html[data-acabado="obsidiana"] { --hud-amber: #AEB6C6; --vg-mat: #9BA3B4; }
+html[data-acabado="obsidiana"] .bg-amber-hud { background-color: rgba(155, 163, 180, 0.15); }
+html[data-acabado="obsidiana"] .border-amber-hud { border-color: rgba(155, 163, 180, 0.42); }
+html[data-acabado="obsidiana"] .hairline-gradient {
+  background: linear-gradient(90deg, transparent 0%, rgba(155, 163, 180, 0.75) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(155, 163, 180, 0.75) 82%, transparent 100%);
+  box-shadow: 0 0 14px rgba(155, 163, 180, 0.35);
+}
+
+html[data-acabado="champan"] { --hud-amber: #E8D08E; --vg-mat: #DCC078; }
+html[data-acabado="champan"] .bg-amber-hud { background-color: rgba(220, 192, 120, 0.15); }
+html[data-acabado="champan"] .border-amber-hud { border-color: rgba(220, 192, 120, 0.42); }
+html[data-acabado="champan"] .hairline-gradient {
+  background: linear-gradient(90deg, transparent 0%, rgba(220, 192, 120, 0.75) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(220, 192, 120, 0.75) 82%, transparent 100%);
+  box-shadow: 0 0 14px rgba(220, 192, 120, 0.35);
+}
+
+html[data-acabado="orosarosa"] { --hud-amber: #F0C4B6; --vg-mat: #E3B0A2; }
+html[data-acabado="orosarosa"] .bg-amber-hud { background-color: rgba(227, 176, 162, 0.15); }
+html[data-acabado="orosarosa"] .border-amber-hud { border-color: rgba(227, 176, 162, 0.42); }
+html[data-acabado="orosarosa"] .hairline-gradient {
+  background: linear-gradient(90deg, transparent 0%, rgba(227, 176, 162, 0.75) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(227, 176, 162, 0.75) 82%, transparent 100%);
+  box-shadow: 0 0 14px rgba(227, 176, 162, 0.35);
+}
+
+html[data-acabado="marfil"] { --hud-amber: #F2EFE4; --vg-mat: #E8E4D8; }
+html[data-acabado="marfil"] .bg-amber-hud { background-color: rgba(232, 228, 216, 0.14); }
+html[data-acabado="marfil"] .border-amber-hud { border-color: rgba(232, 228, 216, 0.40); }
+html[data-acabado="marfil"] .hairline-gradient {
+  background: linear-gradient(90deg, transparent 0%, rgba(232, 228, 216, 0.70) 18%, rgba(61, 220, 151, 0.5) 50%, rgba(232, 228, 216, 0.70) 82%, transparent 100%);
+  box-shadow: 0 0 14px rgba(232, 228, 216, 0.30);
+}

@@ -17,7 +17,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { sfx } from "@/lib/sound";
 import { cn, q2 } from "@/lib/utils";
 import {
-  AGENTES_LIBRES, instalarMotorAgentes, nivelDeVisitas, NIVELES_DESPACHO,
+  AGENTES_LIBRES, nivelDeVisitas, NIVELES_DESPACHO,
   useAgentesLibres, type AgenteLibre,
 } from "@/lib/agentes-autonomos";
 import {
@@ -72,11 +72,11 @@ export function GobiernoLibrePanel() {
   const credencial = useAgentesLibres((s) => s.credencial);
   const toggleAgentes = useAgentesLibres((s) => s.toggleAgentes);
 
-  // el motor: se instala UNA sola vez; la sala lo observa
+  // v133: el motor del cuerpo ya NO pertenece a esta sala — late en el
+  // layout raíz (MotorAgentes) en TODAS las salas desde el primer segundo;
+  // aquí solo se emite la credencial del visitante
   useEffect(() => {
-    const detener = instalarMotorAgentes();
     useAgentesLibres.getState().emitirCredencial();
-    return detener;
   }, []);
 
   // reloj de la sala: los ciclos respiran en segundos reales

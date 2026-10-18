@@ -20,6 +20,8 @@ import { useRetention } from "@/lib/retention";
 import { useArquitecto } from "@/lib/arquitecto";
 import { useCama } from "@/lib/cama-store";
 import { useProfileStore } from "@/lib/profile-store";
+// v133.0: el store de los agentes entra a la disciplina de rehidratación
+import { useAgentesLibres } from "@/lib/agentes-autonomos";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -48,6 +50,11 @@ export function Rehidratador() {
     rehidratar(useProfileStore)
       .then(() => marcarHidratado("vanguard-profile-v1"))
       .catch(() => marcarHidratado("vanguard-profile-v1"));
+    // v133.0 EL ACABADO REAL: el cuerpo de agentes también respeta la fila —
+    // su bitácora y credencial entran tras el montaje (cero #418)
+    rehidratar(useAgentesLibres)
+      .then(() => marcarHidratado("vg-agentes-libres-v131"))
+      .catch(() => marcarHidratado("vg-agentes-libres-v131"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

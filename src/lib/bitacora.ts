@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v133.0",
+    nombre: "EL ACABADO REAL",
+    tipo: "luxe",
+    hitos: [
+      "LA CASA SE VISTE DE VERDAD (la Ley 2 deja el atelier y toma el palacio): elegir PLATINO NOCTURNO, OBSIDIANA, CHAMPÁN VIEJO, ORO ROSA o MARFIL REAL ahora REDIBUJA la casa entera — el oro del HUD, los marcos de las esquinas, los fondos y la línea de aurora obedecen al material elegido (globals.css redefine --hud-amber y las tres capas de cromo bajo html[data-acabado])",
+      "LA FORJA A PRUEBA DE TIEMPO: el Motor del Lujo (v126) forjaba la serie ANTES de la rehidratación y la cerradura del storage (v132) descartaba el grabado — la serie de un visitante nuevo se regeneraba en cada visita; ahora el grabado espera su turno tras la rehidratación y la serie queda en placa UNA sola vez de verdad",
+      "LA CAMPANA DEL SALÓN (Ley 2 · sonido): cambiar de material suena — la campana FM del salón (v124) tañe SOLO en el cambio de acabado, nunca en el arranque; el lujo que se oye al vestir la casa",
+      "LA PLACA CON Nº DE UNIDAD (Ley 3 · escasez): la serie del HUD ahora luce la pieza numerada de la EDICIÓN LIMITADA vigente — «SERIE VG-XXXX-XXXX · Nº 0184/2500» con la edición de la estación real (equinoccios y solsticios) calculada una sola vez tras la hidratación (contrato anti-#418 respetado)",
+      "LOS AGENTES DEJAN DE DECLARAR Y EMPIEZAN A LEER: EL ARCHIVISTA reporta la ÚLTIMA VERSIÓN REAL de la bitácora viva («bitácora al día · v133.0 «EL ACABADO REAL»») y EL CURADOR reporta las UNIDADES QUE QUEDAN del lote de la edición vigente — cada detalle de LOS AGENTES AUTÓNOMOS es ahora verificable",
+      "LOS PULIDOS DEL CUERPO (sala CAMBIOS, sección nueva en vivo): la bitácora de la casa luce los pulidos autónomos de los cinco agentes con su sello de color, su hora y su detalle — lo que la Casa se hace sola, aquí queda escrito; como un gobierno, pero libre",
+      "EL CUERPO YA NO DUERME EN SU SALA: el motor de los agentes (v131) solo latía cuando visitabas EL GOBIERNO LIBRE — ahora late en el LAYOUT RAÍZ (MotorAgentes) y pule la Casa en TODAS las salas desde el primer segundo, con guardia de instalación única (cero ciclos duplicados) y detenedor honesto",
+      "EL RESIDUO DE v132 CAZADO: el store de los agentes (vg-agentes-libres-v131) era el ÚNICO persistido que se rehidrataba SÍNCRONO antes de React — la clase exacta del bug #418 viva en la única sala que se creía curada; ahora lleva skipHydration + cerradura + fila en el REHIDRATADOR como todos los demás",
+    ],
+  },
+  {
     version: "v132.0",
     nombre: "LA GRAN AUDITORÍA",
     tipo: "tecno",

@@ -20,7 +20,11 @@ import { navigateTo } from "@/lib/nav";
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 import { Radio, Bot } from "lucide-react";
 // v126.0 LA CASA · ATELIER — la serie grabada del visitante (Ley de la artesanía)
+// v133.0 EL ACABADO REAL — la placa luce el Nº de unidad de la EDICIÓN
+// LIMITADA vigente (Ley de la escasez): cada visitante sale del taller
+// con una pieza numerada del lote de la estación.
 import { useLuxe } from "@/lib/luxe-store";
+import { edicionVigente, unidadDeSerie } from "@/lib/luxe";
 
 interface HudHeaderProps {
   onOpenSettings?: () => void;
@@ -101,6 +105,16 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
   }, [cables.length]);
   // v126: la placa de serie grabada — pequeña, como las cosas bien hechas
   const serieLuxe = useLuxe((s) => s.serie);
+  // v133: el Nº de unidad de la edición vigente — se calcula UNA vez tras
+  // la hidratación (sin relojes vivos en render, contrato anti-#418 de v132)
+  const [unidadLuxe, setUnidadLuxe] = useState<{ n: number; total: number; nombre: string } | null>(null);
+  useEffect(() => {
+    if (!serieLuxe) return;
+    try {
+      const ed = edicionVigente();
+      setUnidadLuxe({ n: unidadDeSerie(serieLuxe, ed), total: ed.total, nombre: ed.nombre });
+    } catch { /* la edición espera a la próxima señal */ }
+  }, [serieLuxe]);
   // v122: el cable actual es una ALERTA → el noticiero se viste de rojo y avisa
   const cableHud = cables.length > 0 ? cables[idxNoti % cables.length] : null;
   const esAlerta = cableHud?.tacticalTag === "ALERTA" || cableHud?.tacticalTag === "URGENTE";
@@ -187,11 +201,14 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
                 {serieLuxe && (
                   <button
                     onClick={() => navigateTo("atelier")}
-                    title="Tu placa de serie · EL ATELIER"
+                    title={unidadLuxe ? `${unidadLuxe.nombre} · pieza Nº ${unidadLuxe.n} de ${unidadLuxe.total} — EL ATELIER` : "Tu placa de serie · EL ATELIER"}
                     className="hidden lg:inline-flex items-center gap-1 font-caviar text-[9px] tracking-[0.14em] opacity-45 hover:opacity-90 transition-opacity"
                     style={{ color: "var(--vg-sello, #D4AF37)" }}
                   >
                     · SERIE {serieLuxe}
+                    {unidadLuxe && (
+                      <span className="opacity-80">· Nº {String(unidadLuxe.n).padStart(4, "0")}/{unidadLuxe.total}</span>
+                    )}
                   </button>
                 )}
               </div>

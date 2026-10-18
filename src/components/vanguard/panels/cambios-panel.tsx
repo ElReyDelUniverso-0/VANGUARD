@@ -18,6 +18,10 @@ import { TIPO_COLOR } from "@/lib/mente-data";
 import { useT } from "@/lib/i18n";
 // v110.0 MATRIZ 2100 — BITÁCORA: las ACTUALIZACIONES de Vanguard por fin visibles
 import { bitacoraViva, BITACORA_COLOR } from "@/lib/bitacora";
+// v133.0 EL ACABADO REAL — la bitácora de la casa luce también los pulidos
+// AUTÓNOMOS del cuerpo (v131): lo que los agentes hacen solo, aquí queda.
+import { useAgentesLibres, AGENTES_LIBRES } from "@/lib/agentes-autonomos";
+import { Bot } from "lucide-react";
 
 interface NewsItem {
   id: string;
@@ -30,6 +34,11 @@ interface NewsItem {
 
 export function CambiosPanel() {
   const { t } = useT();
+  // v133: los pulidos autónomos del cuerpo — el store llega persistido;
+  // SSR pinta el estado vacío y el cliente se rellena tras la rehidratación
+  // (contrato anti-#418: nada del storage en inicializadores de estado)
+  const logCuerpo = useAgentesLibres((s) => s.log);
+  const pulidosCuerpo = useAgentesLibres((s) => s.pulidos);
   const [informe, setInforme] = useState<InformeRegreso | null>(null);
   const [noticias, setNoticias] = useState<NewsItem[] | null>(null);
 
@@ -258,11 +267,77 @@ export function CambiosPanel() {
         </div>
       </Seccion>
 
+      {/* 5 · LOS PULIDOS DEL CUERPO (v133) — la bitácora viva de los agentes
+          autónomos: cada pulido que la Casa se da sola, con su hora y su
+          detalle verificable. Lo declarativo se acabó. */}
+      <Seccion
+        icono={<Bot className="h-4 w-4" />}
+        titulo="LOS PULIDOS DEL CUERPO · EN VIVO"
+        nota={`${pulidosCuerpo} pulidos autónomos en total`}
+        color="#FFC94D"
+      >
+        {pulidosCuerpo === 0 ? (
+          <div className="rounded-xl border border-white/8 bg-black/35 p-3">
+            <p className="text-[11.5px] leading-snug text-white/60">
+              El cuerpo aún no ha entrado en servicio esta visita — los cinco agentes
+              despertarán solos en los primeros minutos y cada pulido quedará aquí,
+              con su hora y su prueba.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-1.5">
+            {logCuerpo.slice(0, 6).map((e, i) => {
+              const info = AGENTES_LIBRES.find((a) => a.id === e.agente);
+              const col = SELLO_AGENTE[e.agente] ?? "#FFC94D";
+              return (
+                <motion.div
+                  key={`${e.t}-${e.agente}-${i}`}
+                  className="flex items-start gap-2 rounded-lg border border-white/8 bg-black/35 px-2.5 py-2"
+                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.04, 0.4), duration: 0.3 }}
+                >
+                  <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full v131-luz" style={{ background: col }} />
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2">
+                      <span className="text-[9.5px] font-black uppercase tracking-widest" style={{ color: col }}>{info?.nombre ?? e.agente}</span>
+                      <span className="font-mono text-[8.5px] text-white/30 tabular-nums">{horaTxt(e.t)}</span>
+                    </div>
+                    <p className="text-[11px] leading-snug text-white/75">{e.accion}</p>
+                    {e.detalle && <p className="text-[9.5px] font-mono leading-snug text-white/40">— {e.detalle}</p>}
+                  </div>
+                </motion.div>
+              );
+            })}
+            <p className="mt-1 text-center text-[9px] font-mono uppercase tracking-widest text-white/25">
+              la casa se pule sola · como un gobierno, pero libre
+            </p>
+          </div>
+        )}
+      </Seccion>
+
       <p className="mt-4 text-center text-[10px] font-semibold text-white/25">
         {t("regreso.pie")}
       </p>
     </div>
   );
+}
+
+// sellos de color por agente (v133 · LA PULIDOS DEL CUERPO)
+const SELLO_AGENTE: Record<string, string> = {
+  vigia: "#38BDF8",
+  editor: "#FF8A2A",
+  cartografo: "#3DDC97",
+  archivista: "#FFC94D",
+  curador: "#E3B0A2",
+};
+
+/** hora legible de un pulido — solo se invoca con datos ya rehidratados */
+function horaTxt(ts: number): string {
+  try {
+    return new Date(ts).toLocaleTimeString("es-ES", { hour12: false });
+  } catch {
+    return "--:--:--";
+  }
 }
 
 function Seccion({ icono, titulo, nota, color, children }: {

@@ -7,9 +7,18 @@
 // visitante sabe que está en un lugar exclusivo desde el
 // primer segundo, con número de serie, nivel de despacho y
 // sello del palacio.
+// v133.0 EL ACABADO REAL — los detalles dejan de ser declarativos:
+//   · EL ARCHIVISTA lee la bitácora VIVA (bitacoraViva()) y reporta
+//     la última versión registrada de verdad.
+//   · EL CURADOR lee la EDICIÓN LIMITADA vigente (edicionVigente())
+//     y reporta las unidades que quedan del lote de la estación.
 // ============================================================
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+// v133: la cerradura del storage (v132) — nada escribe antes de rehidratar
+import { storageBlindado } from "@/lib/storage-blindado";
+import { bitacoraViva } from "@/lib/bitacora";
+import { edicionVigente } from "@/lib/luxe";
 
 export interface AgenteLibre {
   id: string;
@@ -201,7 +210,11 @@ export const useAgentesLibres = create<EstadoAgentes>()(
     }),
     {
       name: "vg-agentes-libres-v131",
-      storage: createJSONStorage(() => localStorage),
+      // v133: skipHydration + cerradura — el store rehidrata tras el montaje
+      // (Rehidratador) y no escribe antes: la bitácora y la credencial del
+      // visitante jamás vuelven a provocar un desajuste de hidratación (#418)
+      skipHydration: true,
+      storage: createJSONStorage(() => storageBlindado),
       merge: (persisted: unknown, current: EstadoAgentes): EstadoAgentes => {
         const p = (persisted ?? {}) as Partial<EstadoAgentes>;
         return { ...current, ...p };
@@ -216,7 +229,15 @@ export const useAgentesLibres = create<EstadoAgentes>()(
 // escena). Se instala una sola vez por sesión; el panel solo lo observa.
 type MotorDetener = () => void;
 
+// v133: GUARDIA DE INSTALACIÓN ÚNICA — el motor del cuerpo es GLOBAL:
+// vive en el layout raíz y late en todas las salas. Una segunda
+// instalación (React StrictMode, visitas a la sala) devuelve un
+// detenedor nulo y no duplica ciclos.
+let motorEnMarcha = false;
+
 export function instalarMotorAgentes(): MotorDetener {
+  if (motorEnMarcha) return () => { /* ya late: no se toca */ };
+  motorEnMarcha = true;
   const st = useAgentesLibres.getState();
   if (st.credencial) {
     // una visita por sesión: el sello se estampa una sola vez por llegada
@@ -251,9 +272,24 @@ export function instalarMotorAgentes(): MotorDetener {
       } else if (a.id === "cartografo") {
         detalle = "34 pines sobre sus sedes reales";
       } else if (a.id === "archivista") {
-        detalle = `${estado.pulidos + 1} pulidos en la bitácora`;
+        // v133: el detalle ya no se declara — se LEE de la bitácora real
+        try {
+          const ultima = bitacoraViva()[0];
+          detalle = ultima
+            ? `bitácora al día · ${ultima.version} «${ultima.nombre}»`
+            : "bitácora en silencio — esperando el primer hito";
+        } catch {
+          detalle = "bitácora al día";
+        }
       } else if (a.id === "curador") {
-        detalle = "galería en su orden grabado";
+        // v133: el detalle sale de la EDICIÓN LIMITADA real del calendario
+        try {
+          const ed = edicionVigente();
+          const quedan = Math.max(0, ed.total - ed.reclamadas);
+          detalle = `«${ed.nombre}» · quedan ${quedan} unidades del lote`;
+        } catch {
+          detalle = "galería en su orden grabado";
+        }
       }
     } catch {
       detalle = "la red respondió tarde — la ronda sigue";
@@ -269,5 +305,9 @@ export function instalarMotorAgentes(): MotorDetener {
     timers.push(primer, repetidor);
   }
 
-  return () => timers.forEach((t) => { clearTimeout(t); clearInterval(t as unknown as ReturnType<typeof setInterval>); });
+  return () => {
+    // v133: al detener de verdad, el guardia se abre para futuras instalaciones
+    motorEnMarcha = false;
+    timers.forEach((t) => { clearTimeout(t); clearInterval(t as unknown as ReturnType<typeof setInterval>); });
+  };
 }
