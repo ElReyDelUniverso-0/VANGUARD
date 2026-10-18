@@ -1954,3 +1954,22 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v138.0 MUNDO VIVO. El 3D por fin se VE: la sala se inclina ~5° siguiendo la mano, vuela desde el fondo del escenario en cada sala y respira; 447 tarjetas salen físicamente de la pantalla al pasar el cursor (+3.9% real proyectado, cura de la segunda enfermedad fill:both); y bajo toda la Casa rueda un mundo: cielo estrellado con paralaje, horizonte que late y suelo de rejilla holográfica en perspectiva.
 - Sugerido para v139: profundidad INTERNA por capas (ciudad al fondo z−60, paneles al frente z+30 dentro del flotador), noche forzada de QA para el cielo/ciudad, o segunda ola de teatros en LA SALA DE GUERRA (㉚).
+
+---
+Task ID: 20
+Agent: main (Super Z)
+Task: v139.0 «3D BRUTAL» — el Dueño por tercera vez: «Aún no veo nada 3D... recargué el sitio dos veces y nada, quiero que las letras salgan de la pantalla, animaciones, contenido picante».
+
+Work Log:
+- AUTOPSIA DEFINITIVA: el Dueño navega en TÁCTIL — sin puntero no hay tilt (los 8° de la v138 existen solo con mouse), sin hover no hay pop-out, y la respiración de 22px bajo ciclos de 9s no llega al ojo. La v138 verificaba matrix3d perfectas que el ojo seguía sin ver. DECISIÓN DE DISEÑO: el 3D a partir de v139 NO PIDE PERMISO AL INPUT — se mueve solo, siempre, en cualquier dispositivo.
+- LA CUNA (page.tsx + CSS): nuevo cuerpo preserve-3d ENTRE diorama y flotador — la sala entera se MECE SOLO para siempre (vg139Cuna 13s: rotateX ±1.6°, rotateY ±3.2°, balanceo translateZ ±7px). Tres planos anidados (diorama tilt de mano → cuna vaivén eterno → flotador vuelo/respiración), cada transform en SU elemento: se componen sin pelearse. Con la pantalla quieta en la mesa, el mundo ya no está quieto jamás.
+- EL HOLOGRAMA (hud-header): el wordmark VANGUARD GIRA SOLO (vg139Holo 7s: perspective(340px) rotateY ±14° rotateX ∓3°) con DOS capas fantasma REALES detrás (::before/::after con attr(data-text) a translateZ −16/−32px, cian y magenta): al rotar, la extrusión se separa ante tus ojos — geometría, no sombra. El truncate murió (recortaba las capas 3D; VANGUARD con tracking cabe en 360px).
+- TÍTULOS FLOTANTES (panel-header): el h2 de TODAS las salas flota en 3D constante (vg139Flota 8s, perspectiva embebida en el transform — funciona dentro del cristal backdrop-filter).
+- CHISPAS AL FRENTE (page.tsx + CSS): capa fija z-44 ENCIMA de toda la UI, sin puntero — 12 motas holo cian/oro/magenta a la deriva (vg139Chispa 8-12s) con paralaje contrario al puntero a nivel capa + RAYO DE ESCANEO que barre la pantalla cada 11s (vg139Asta). El futuro cruza ENTRE TÚ Y LA INTERFAZ sin mover un dedo.
+- BOOSTS: vuelo de sala −380→−640px CON rotateX 14° (v139Entra — cada cambio de pestaña es una nave que se acerca, el móvil lo ve en cada toque); respiración 22→46px en ciclos de 7s; tilt de mano 8→11° (rotateX 8.5°); POP TÁCTIL :active en .hud-panel (translateZ 18px — tocar una tarjeta la trae al dedo).
+- QA EN VIVO (dev server :3000, restart limpio por build concurrente, RSS 578MB fresco): health v139.0; cuna vg139Cuna:running con matrix3d viva (m13 −0.041 = 2.4° en reposo); holo ::before content "VANGUARD" + vg139Holo:running; vg139Flota:running en INVESTIGATE con matrix3d (m13 0.065); 12 chispas + asta en ambos viewports; capturas: qa-v139-investiga.png (SALA ENTERA INCLINADA — el diorama se VE: ARCHIVO SECRETO flotando en 3D con mundo estelar detrás), qa-v139-inicio-scroll.png (ciudad en diagonal con letras doradas gigantes en profundidad + láser rojo + $2,874 BILLIONES inclinados), qa-v139-movil.png (sala inclinada en 390px sin tocar nada); móvil 390px scrollW 390=390; recarga ×2 → 0 errores, consola limpia (solo HMR de dev); build limpio.
+- COMMIT f9f2ea3 → push a main (3cbfeb2..f9f2ea3, incluye worklog huérfano 99c3cae), 7 archivos (+259/−7).
+
+Stage Summary:
+- PRODUCCIÓN = v139.0 3D BRUTAL. El 3D ya no depende de tu mano: la sala se mece sola para siempre, el wordmark es un holograma que gira con capas fantasma reales, los títulos flotan, las chispas y el rayo de escaneo cruzan entre tú y la interfaz, y cada sala llega volando desde −640px. En táctil, por fin, SE VE.
+- Sugerido para v140: primera impresión del INICIO (el cielo nocturno real de la ciudad deja el primer pliegue muy oscuro — mover las letras doradas más arriba o aclarar la noche), profundidad interna por capas dentro del flotador, o noche forzada de QA para la Vía Láctea (pendiente desde v134).
