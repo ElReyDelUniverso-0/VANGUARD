@@ -1837,3 +1837,25 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v132.0 LA GRAN AUDITORÍA. El «a veces no se actualiza» está MUERTO: carga sin #418 en visita fresca y recurrente (×2 verificado), progreso del visitante intocable (cerradura de hidratación), idioma manual respetado, móvil sin overflow en las 3 salas históricas, y el Dueño tiene su guía de GitHub con el Prompt Maestro para comisionar la obra a cualquier IA.
 - Sugerido para v133: ㉖ LUXE total en paneles antiguos (el Atelier ya dicta las 5 leyes), conectar el ARCHIVISTA (v131) a bitacoraViva() real, o ampliación de la SALA DE GUERRA (más teatros/escenarios en la bolsa).
+
+---
+Task ID: 14
+Agent: main (Super Z)
+Task: v133.0 «EL ACABADO REAL» — orden ㉖ del Dueño: que las 5 leyes del lujo (v126) salgan del Atelier y vistan la Casa entera + conectar los agentes (v131) a datos reales.
+
+Work Log:
+- RECON: descubrí que v129/v130/v131/v132 ya estaban en producción (la pila real iba por delante del resumen). El gap real: data-acabado se aplicaba al <html> pero globals.css NO respondía — elegir PLATINO NOCTURNO solo vestía las muestras del Atelier. También: MotorLuxe forjaba la serie ANTES de la rehidratación (la cerradura v132 descartaba la escritura → serie nueva en cada visita) y el motor de agentes solo latía dentro de su sala.
+- LA CASA SE VISTE (globals.css bloque v133): html[data-acabado="platino|obsidiana|champan|orosarosa|marfil"] redefine --hud-amber + .bg-amber-hud + .border-amber-hud + .hairline-gradient (5 acabados × 4 capas) — el cromo entero (HUD, marcos hud-corner, tabs, secciones) obedece al material; oro queda como default sin overrides. MotorLuxe además fija --vg-mat/--vg-luxe/--vg-sello.
+- FORJA A PRUEBA DE TIEMPO (motor-luxe.tsx): forjar() ahora espera useLuxe.persist (hasHydrated/onFinishHydration) — la serie se graba UNA vez de verdad (verificado: VG-TEST-1330 sobrevive recargas); campana del salón (sfx.campana v124) SOLO al cambiar de acabado, nunca en arranque.
+- PLACA LEY 3 (hud-header.tsx): la serie del HUD luce el Nº de unidad de la edición vigente — «SERIE VG-3608-7CC9 · Nº 0288/2500» — calculada UNA vez tras hidratación en useEffect (contrato anti-#418), tooltip con nombre de edición.
+- AGENTES REALES (agentes-autonomos.ts): EL ARCHIVISTA lee bitacoraViva()[0] → «bitácora al día · v133.0 «EL ACABADO REAL»»; EL CURADOR lee edicionVigente() → ««EDICIÓN EQUINOCCIO DE OTOÑO» · quedan 1509 unidades del lote».
+- LOS PULIDOS DEL CUERPO (cambios-panel.tsx): sección nueva en vivo — últimos 6 pulidos del cuerpo con sello de color por agente, hora y detalle verificable + contador total; SSR pinta vacío, el cliente rellena tras rehidratación.
+- EL CUERPO GLOBAL (motor-agentes.tsx NUEVO montado en layout.tsx): la orden ㉟ era «que pulen Vanguard cada cierto tiempo» — el motor solo latía al visitar EL GOBIERNO LIBRE; ahora late en TODAS las salas desde el primer segundo. instalarMotorAgentes() lleva guardia de instalación única (motorEnMarcha, detenedor honesto que reabre el guardia); el panel ya no es dueño del motor (cero ciclos duplicados).
+- RESIDUO DE v132 CAZADO: vg-agentes-libres-v131 era el ÚNICO store persistido SIN skipHydration (se rehidrata síncrono pre-React = clase #418 viva). FIX: skipHydration + storageBlindado + fila en el REHIDRATADOR. MotorAgentes también espera la rehidratación antes de instalar (credencial/visita con la cerradura ya abierta).
+- QA EN VIVO (producción bun run start, RSS ~140MB): health v133.0; visita fresca 0 errores; seed platino → data-acabado=platino + .text-amber rgb(214,220,232) + border rgba(192,200,216,.42) + badge recomputado; clic PLATINO en Atelier → repintado EN VIVO sin recarga; LOS PULIDOS DEL CUERPO: 10→16 pulidos autónomos en sala CAMBIOS (motor global verificado: agentes latiendo sin visitar su sala); recarga recurrente con store poblado: 0 errores, 0 #418; móvil 390px scrollWidth 390=390 sin overflow; sala GOBIERNO LIBRE sana tras quitarle el motor (credencial + sello v130 ok).
+- Capturas: download/qa-v133-atelier-platino.png (casa vestida de platino), qa-v133-pulidos-cuerpo.png (bitácora viva del cuerpo).
+- COMMIT 23c1e44 → push a main (c9a94c2..23c1e44), 11 archivos (+280/−18), 1 archivo nuevo (motor-agentes.tsx).
+
+Stage Summary:
+- PRODUCCIÓN = v133.0 EL ACABADO REAL. Las 5 leyes del lujo ya no son una sala: son la Casa. El visitante elige su metal y el palacio entero se viste; su serie se graba una vez con Nº de unidad del lote de la estación; y el cuerpo de agentes pule Vanguard en todas las salas sin que nadie se lo pida — cada pulido firmado con dato real.
+- Sugerido para v134: ㉚ segunda ola de LA SALA DE GUERRA (más teatros/escenarios en la bolsa + galería de capturas de los 6 teatros), LUXE fino en los paneles deINTELIGENCIA (salaguerra/rostros con acabados por sala), o el censo de sonidos (campana en más gestos de la casa).
