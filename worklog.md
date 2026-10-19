@@ -2137,3 +2137,17 @@ Work Log:
 Stage Summary:
 - v145.2 = v145.0 + P2 + P3. CERO capas de chrome DOM planas quedan en el flujo del usuario: pestañas, mandos, menú, búsqueda, radio, estado y ahora los tres modales del sistema viven DENTRO del universo. Solo queda flat el PulsoAuto de layout (global multi-página) y los toasts — cola P3b.
 - Siguiente en la cola: P4 (ciudad héroe zona 1) o P7 (joystick móvil).
+
+---
+Task ID: 30
+Agent: main (Super Z)
+Task: v145.3 — P4 del AGENTE DE PROMPTS: ciudad héroe en el mundo del HOY (zona 1).
+
+Work Log:
+- LA CAPITAL: mini-metrópolis holográfica colgada junto al anillo orbital — plataforma cilíndrica con aro baliza + 12 torres (7 en móvil) con filo de neón ámbar + ventanas emisivas (3 materiales compartidos con fase propia parpadeando en el loop: opacity 0.3 + max(0,sin)·0.45).
+- GEOMETRÍA COMPARTIDA: un solo BoxGeometry + un solo EdgesGeometry escalados por mesh; ~27 draw calls. Seed determinista (mulberry-style 16807) para skyline reproducible.
+- BUG CAZADO EN QA: primera posición (-1.42, -0.78, z 1.02) = 3 unidades más cerca de la cámara que el planeta → torres GIGANTES en primer plano tapando la vista (qa-v145-p4-ciudad.png). Cura: fondo (-1.78, -1.18, -0.35) + escala 0.85 — skyline de profundidad que no toca nada (qa-v145-p4-ciudad2.png).
+- tsc + build limpios. version.ts → v145.3 · bitacora.ts · P4 marcado HECHO.
+
+Stage Summary:
+- v145.3 = v145.0 + P2 + P3 + P4. El mundo del HOY tiene capital visible con ventanas que laten. La cola del agente sigue: P5 (sonido espacial), P7 (joystick móvil), P8 (QA automatizado), P9 (modo cine), P10 (bloom).

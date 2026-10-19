@@ -22,6 +22,14 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v145.3",
+    nombre: "VUELO LIBRE · CIUDAD HÉROE",
+    tipo: "tecno",
+    hitos: [
+      "P4 DEL AGENTE DE PROMPTS: la capital del HOY existe — una mini-metrópolis holográfica flota junto al anillo orbital (12 torres wireframe con filo ámbar, ventanas emisivas que parpadean en 3 fases, plataforma-baliza con aro). Geometría y materiales COMPARTIDOS: ~27 draw calls, 60 FPS intactos. En móvil 7 torres. Lección de QA aplicada: a z=1.02 las torres hacían primer plano gigante — la ciudad vive en el fondo (-1.78, -1.18, -0.35), junto al anillo, sin tapar al planeta",
+    ],
+  },
+  {
     version: "v145.2",
     nombre: "VUELO LIBRE · MODALES HOLO",
     tipo: "tecno",

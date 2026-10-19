@@ -417,6 +417,8 @@ class MundoWGL {
   widDerObj: CSS3DObject | null = null;
   widDerEl: HTMLDivElement | null = null;
   widDerPx = 300;
+  // v145 P4 — la ciudad héroe: materiales de ventana que parpadean por fases
+  ciudadWinsMats: THREE.MeshBasicMaterial[] = [];
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -1313,6 +1315,63 @@ class MundoWGL {
     this.aroSpin.rotation.x = Math.PI / 2 - 0.38;
     this.aroSpin.rotation.y = 0.22;
     g1.add(this.aroSpin);
+
+    // v145 P4 — LA CIUDAD HÉROE: una mini-metrópolis holográfica flotando
+    // junto al anillo — la capital visible del HOY. Geometría y materiales
+    // COMPARTIDOS (un solo BoxGeometry + un solo EdgesGeometry + 3 luces de
+    // ventanas con fase propia): 12 torres, ~27 draw calls, 60 FPS intactos.
+    const ciudad = new THREE.Group();
+    const nTorres = this.calidadBaja ? 7 : 12;
+    const geoTorre = new THREE.BoxGeometry(1, 1, 1);
+    const geoFilo = new THREE.EdgesGeometry(geoTorre);
+    const matCuerpo = new THREE.MeshBasicMaterial({ color: 0x0a1120, transparent: true, opacity: 0.92 });
+    const matFilo = new THREE.LineBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.7 });
+    this.ciudadWinsMats = [0, 1, 2].map((i) =>
+      new THREE.MeshBasicMaterial({ color: i === 1 ? 0x7ab8ff : 0xffd27a, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    // la plataforma-baliza donde crece la ciudad
+    const base = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.62, 0.7, 0.05, 22),
+      new THREE.MeshBasicMaterial({ color: 0x0d1524, transparent: true, opacity: 0.95 }),
+    );
+    const aroBase = new THREE.Mesh(
+      new THREE.TorusGeometry(0.62, 0.012, 8, 44),
+      new THREE.MeshBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    aroBase.rotation.x = Math.PI / 2;
+    ciudad.add(base, aroBase);
+    let seed = 7;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    for (let i = 0; i < nTorres; i++) {
+      const w = 0.1 + rnd() * 0.12;
+      const h = 0.24 + rnd() * 0.68;
+      const d = 0.1 + rnd() * 0.12;
+      const a = (i / nTorres) * Math.PI * 2 + rnd() * 0.5;
+      const r = 0.12 + rnd() * 0.38;
+      const x = Math.cos(a) * r;
+      const z = Math.sin(a) * r;
+      const caja = new THREE.Mesh(geoTorre, matCuerpo);
+      caja.scale.set(w, h, d);
+      caja.position.set(x, h / 2 + 0.03, z);
+      const filos = new THREE.LineSegments(geoFilo, matFilo);
+      filos.scale.copy(caja.scale);
+      filos.position.copy(caja.position);
+      ciudad.add(caja, filos);
+      // ventanas: chapa emisiva en el frente de la torre (fase compartida)
+      if (rnd() > 0.25) {
+        const matWin = this.ciudadWinsMats[i % 3];
+        const win = new THREE.Mesh(geoTorre, matWin);
+        win.scale.set(w * 0.62, h * 0.5, 0.012);
+        win.position.set(x, h * 0.48 + 0.03, z + d / 2 + 0.004);
+        ciudad.add(win);
+      }
+    }
+    // la capital flota JUNTO al anillo en el fondo (que no tape al planeta:
+    // lección de QA — a z=1.02 las torres hacían primer plano gigante)
+    ciudad.position.set(-1.78, -1.18, -0.35);
+    ciudad.scale.setScalar(0.85);
+    ciudad.rotation.y = 0.45;
+    g1.add(ciudad);
     g1.visible = false;
     this.escena.add(g1);
     this.mundosZona[1] = g1;
@@ -2277,6 +2336,12 @@ class MundoWGL {
     // v142 — EL ANILLO ORBITAL gira para siempre; sus balizas laten; las
     // banderas del cuartel ondean; las balizas del globo táctico pulsan
     if (this.mundosZona[1]?.visible) this.aroSpin.rotation.y += dt * 0.07;
+    // v145 P4 — las ventanas de la CIUDAD HÉROE parpadean como vida real
+    for (let i = 0; i < this.ciudadWinsMats.length; i++) {
+      const wm = this.ciudadWinsMats[i];
+      if (!wm) continue;
+      wm.opacity = 0.3 + Math.max(0, Math.sin(t * (1.6 + i * 0.7) + i * 2.2)) * 0.45;
+    }
     for (let i = 0; i < this.balizasOrb.length; i++) {
       const bm = this.balizasOrb[i].material as THREE.MeshBasicMaterial;
       bm.opacity = 0.5 + Math.sin(t * 2.6 + i * 1.7) * 0.45;
