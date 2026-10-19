@@ -296,7 +296,7 @@ class MundoWGL {
   marcadores: { grupo: THREE.Group; nucleo: THREE.Mesh; anillo: THREE.Mesh; proxy: THREE.Mesh; datos: MarcadorWGL; fase: number }[] = [];
   zona = 0;
   mirada = new THREE.Vector3(0, 0, 0);
-  cancelar: (() => void)[] = [];
+  cancelar = new Set<() => void>();  // v144 P6: Set con auto-poda (no crece eterno)
   reloj = new THREE.Clock();
   raf = 0;
   vivo = true;
@@ -639,7 +639,7 @@ class MundoWGL {
     this.capsulaEl.dataset.acoplada = "1";
     if (instant) { this.capsula.scale.setScalar(a.escala); return; }
     this.capsula.scale.setScalar(a.escala * 0.9);
-    this.cancelar.push(animar(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut }));
+    this.animarP(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
     // v144 P1: el ACOPLE suena a metal asentándose
     sonar("clank");
   }
@@ -721,13 +721,13 @@ class MundoWGL {
   private volarCamara(pos: [number, number, number], tgt: THREE.Vector3, dur: number) {
     const objPos = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
     const objMir = { x: this.mirada.x, y: this.mirada.y, z: this.mirada.z };
-    this.cancelar.push(animar(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
+    this.animarP(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
       onUpdate: () => {
         this.camara.position.set(objPos.x, objPos.y, objPos.z);
         this.camara.lookAt(objMir.x, objMir.y, objMir.z);
       },
-    }));
-    this.cancelar.push(animar(objMir, { x: tgt.x, y: tgt.y, z: tgt.z }, dur, {
+    });
+    this.animarP(objMir, { x: tgt.x, y: tgt.y, z: tgt.z }, dur, {
       onUpdate: () => this.camara.lookAt(objPos.x, objPos.y, objPos.z),
       onDone: () => {
         this.mirada.copy(tgt);
@@ -739,7 +739,7 @@ class MundoWGL {
         // la mantiene apagada: el universo queda desnudo)
         this.acoplarCapsula(this.zona);
       },
-    }));
+    });
   }
 
   // re-volar a la MISMA zona (para alternar pose panel/mundo sin cambiar de sala)
@@ -763,7 +763,7 @@ class MundoWGL {
       if (debe && !g.visible) {
         g.visible = true;
         g.scale.setScalar(0.84);
-        this.cancelar.push(animar(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut }));
+        this.animarP(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut });
       } else if (!debe) g.visible = false;
     }
     for (const tz of this.titulosZona) tz.grupo.visible = modo || (tz.zona === zona && zona !== 0);
@@ -1115,8 +1115,8 @@ class MundoWGL {
         const m = l.mesh.material as THREE.MeshStandardMaterial;
         m.opacity = 0;
         l.mesh.scale.setScalar(2.6);
-        this.cancelar.push(animar(l.mesh.scale, { x: 1, y: 1, z: 1 }, 480, { ease: easeOut }));
-        this.cancelar.push(animar(m, { opacity: 1 }, 380));
+        this.animarP(l.mesh.scale, { x: 1, y: 1, z: 1 }, 480, { ease: easeOut });
+        this.animarP(m, { opacity: 1 }, 380);
       }, i * 110);
     });
   }
@@ -1124,17 +1124,17 @@ class MundoWGL {
   // tras entrar(): el logo se condensa en un arco compacto que vive en el cielo
   condensarLogo() {
     if (!this.logoNacido) return;
-    if (this.logoGrupo) this.cancelar.push(animar(this.logoGrupo.position, { y: 2.02 }, 950, { ease: easeInOut }));
+    if (this.logoGrupo) this.animarP(this.logoGrupo.position, { y: 2.02 }, 950, { ease: easeInOut });
     for (const l of this.letrasLogo) {
       if (!l.expandida) continue;
       l.quieto = true;
-      this.cancelar.push(animar(l.mesh.scale, { x: 0.6, y: 0.6, z: 0.6 }, 900, { ease: easeInOut }));
-      this.cancelar.push(animar(l.mesh.position, { x: l.expandida.x * 0.62, y: l.expandida.y + 0.3, z: l.expandida.z * 0.62 }, 950, {
+      this.animarP(l.mesh.scale, { x: 0.6, y: 0.6, z: 0.6 }, 900, { ease: easeInOut });
+      this.animarP(l.mesh.position, { x: l.expandida.x * 0.62, y: l.expandida.y + 0.3, z: l.expandida.z * 0.62 }, 950, {
         onDone: () => {
           l.base.set(l.mesh.position.x, l.mesh.position.y, l.mesh.position.z);
           l.quieto = false;
         },
-      }));
+      });
     }
   }
 
@@ -1143,18 +1143,18 @@ class MundoWGL {
   // título HOY del mundo que vive justo debajo (2.72 se salía del cuadro)
   expandirLogo() {
     if (!this.logoNacido) return;
-    if (this.logoGrupo) this.cancelar.push(animar(this.logoGrupo.position, { y: 2.5 }, 950, { ease: easeInOut }));
+    if (this.logoGrupo) this.animarP(this.logoGrupo.position, { y: 2.5 }, 950, { ease: easeInOut });
     for (const l of this.letrasLogo) {
       if (!l.expandida) continue;
       l.quieto = true;
       l.mesh.visible = true;
-      this.cancelar.push(animar(l.mesh.scale, { x: 1, y: 1, z: 1 }, 900, { ease: easeInOut }));
-      this.cancelar.push(animar(l.mesh.position, { x: l.expandida.x, y: l.expandida.y, z: l.expandida.z }, 950, {
+      this.animarP(l.mesh.scale, { x: 1, y: 1, z: 1 }, 900, { ease: easeInOut });
+      this.animarP(l.mesh.position, { x: l.expandida.x, y: l.expandida.y, z: l.expandida.z }, 950, {
         onDone: () => {
           l.base.copy(l.expandida!);
           l.quieto = false;
         },
-      }));
+      });
     }
   }
 
@@ -1219,6 +1219,25 @@ class MundoWGL {
   // alto del frustum a una distancia dada (unidades de mundo)
   private altoPlano(z: number): number {
     return 2 * z * Math.tan((this.camara.fov * Math.PI) / 360);
+  }
+
+  // v144 P6 — animación con registro AUTO-PODADO: al terminar, el cancelador
+  // se saca del Set (antes this.cancelar crecía para siempre → OOM del dev)
+  private animarP(
+    obj: ObjNum | THREE.Vector3 | THREE.Object3D | THREE.Material | { opacity: number; size?: number; fov?: number },
+    to: ObjNum,
+    ms: number,
+    opts: { ease?: (t: number) => number; onUpdate?: () => void; onDone?: () => void } = {},
+  ): () => void {
+    const cancel = animar(obj, to, ms, {
+      ...opts,
+      onDone: () => {
+        this.cancelar.delete(cancel);
+        opts.onDone?.();
+      },
+    });
+    this.cancelar.add(cancel);
+    return cancel;
   }
 
   construirConsola() {
@@ -1580,7 +1599,7 @@ class MundoWGL {
           l.mesh.visible = true;
           const m = l.mesh.material as THREE.MeshStandardMaterial;
           m.opacity = 0;
-          this.cancelar.push(animar(m, { opacity: 1 }, 260));
+          this.animarP(m, { opacity: 1 }, 260);
         }, i * 30);
       });
     } else if (fase === "hint") {
@@ -1629,10 +1648,10 @@ class MundoWGL {
   pulsarPlato(ref: string) {
     const plato = this.platosHolo.find((p) => p.key === ref || p.accion === ref);
     if (!plato) return;
-    this.cancelar.push(animar(plato.grupo.scale, { x: 0.92, y: 0.92, z: 0.92 }, 80, {
+    this.animarP(plato.grupo.scale, { x: 0.92, y: 0.92, z: 0.92 }, 80, {
       ease: easeOut,
-      onDone: () => this.cancelar.push(animar(plato.grupo.scale, { x: 1, y: 1, z: 1 }, 180, { ease: easeOut })),
-    }));
+      onDone: () => this.animarP(plato.grupo.scale, { x: 1, y: 1, z: 1 }, 180, { ease: easeOut }),
+    });
   }
 
   // por frame: el puente, el pie, la entrada, el modo y el rail pegan a la cámara
@@ -1712,17 +1731,17 @@ class MundoWGL {
 
     // WARP: estrellas gordas + fov punch — hipervelocidad suave (400ms)
     const fovBase = 50;
-    this.cancelar.push(animar(this.camara, { fov: fovBase + 7 }, 380, {
+    this.animarP(this.camara, { fov: fovBase + 7 }, 380, {
       ease: easeOut,
       onUpdate: () => this.camara.updateProjectionMatrix(),
-      onDone: () => this.cancelar.push(animar(this.camara, { fov: fovBase }, 620, {
+      onDone: () => this.animarP(this.camara, { fov: fovBase }, 620, {
         onUpdate: () => this.camara.updateProjectionMatrix(),
-      })),
-    }));
-    this.cancelar.push(animar(this.matEstrellas, { size: this.baseEstrellas * 2.1 }, 400, {
+      }),
+    });
+    this.animarP(this.matEstrellas, { size: this.baseEstrellas * 2.1 }, 400, {
       ease: easeOut,
-      onDone: () => this.cancelar.push(animar(this.matEstrellas, { size: this.baseEstrellas }, 700)),
-    }));
+      onDone: () => this.animarP(this.matEstrellas, { size: this.baseEstrellas }, 700),
+    });
 
     this.volarCamara(pos, tgt, dur);
     this.visibleZona(zona);
@@ -1736,46 +1755,46 @@ class MundoWGL {
     const dir = new THREE.Color(cDir), rim = new THREE.Color(cRim);
     const d0 = this.luzDir.color.clone(), r0 = this.luzRim.color.clone();
     const obj = { t: 0 };
-    this.cancelar.push(animar(obj, { t: 1 }, 900, {
+    this.animarP(obj, { t: 1 }, 900, {
       onUpdate: () => {
         this.luzDir.color.lerpColors(d0, dir, obj.t);
         this.luzRim.color.lerpColors(r0, rim, obj.t);
       },
-    }));
+    });
     this.particulasOro.visible = zona === 3;
     this.particulasAzul.visible = zona === 4;
     const opOro = { o: (this.particulasOro.material as THREE.PointsMaterial).opacity };
-    this.cancelar.push(animar(opOro, { o: zona === 3 ? 0.8 : 0 }, 900, {
+    this.animarP(opOro, { o: zona === 3 ? 0.8 : 0 }, 900, {
       onUpdate: () => { (this.particulasOro.material as THREE.PointsMaterial).opacity = opOro.o; },
-    }));
+    });
     const opAzul = { o: (this.particulasAzul.material as THREE.PointsMaterial).opacity };
-    this.cancelar.push(animar(opAzul, { o: zona === 4 ? 0.75 : 0 }, 900, {
+    this.animarP(opAzul, { o: zona === 4 ? 0.75 : 0 }, 900, {
       onUpdate: () => { (this.particulasAzul.material as THREE.PointsMaterial).opacity = opAzul.o; },
-    }));
+    });
   }
 
   // ════════════════════════════════════════════════════════
   // LA SECUENCIA DE ENTRADA — los gestos del mundo (0-7s)
   // ════════════════════════════════════════════════════════
   nacerEstrellas() {
-    this.cancelar.push(animar(this.matEstrellas, { opacity: 0.95 }, 1400, { ease: easeOut }));
+    this.animarP(this.matEstrellas, { opacity: 0.95 }, 1400, { ease: easeOut });
   }
   subirGlobo() {
     const obj = { y: -5.4 };
     this.camara.position.y = -5.4;
     this.camara.lookAt(0, -1.2, 0);
     const atmMat = this.atmosfera.material as THREE.ShaderMaterial;
-    this.cancelar.push(animar(obj, { y: 0 }, 1700, {
+    this.animarP(obj, { y: 0 }, 1700, {
       ease: easeOut,
       onUpdate: () => {
         this.camara.position.y = obj.y;
         this.camara.lookAt(0, obj.y * 0.24, 0);
       },
-    }));
+    });
     const op = { o: 0 };
-    this.cancelar.push(animar(op, { o: 1.35 }, 1300, {
+    this.animarP(op, { o: 1.35 }, 1300, {
       onUpdate: () => atmMat.uniforms.uOp.value = op.o,
-    }));
+    });
   }
   encenderMarcadores(alFinal: () => void) {
     const orden = [...this.marcadores].sort((a, b) => a.datos.intensidad - b.datos.intensidad);
@@ -1786,12 +1805,12 @@ class MundoWGL {
         const nm = m.nucleo.material as THREE.MeshBasicMaterial;
         const na = m.anillo.material as THREE.MeshBasicMaterial;
         // destello: el núcleo nace gordo y se asienta
-        this.cancelar.push(animar(m.nucleo.scale, { x: 3.2, y: 3.2, z: 3.2 }, 0, {}));
+        this.animarP(m.nucleo.scale, { x: 3.2, y: 3.2, z: 3.2 }, 0, {});
         m.nucleo.scale.setScalar(3.2);
         nm.opacity = 1;
         na.opacity = 0.9;
-        this.cancelar.push(animar(m.nucleo.scale, { x: 1, y: 1, z: 1 }, 620, { ease: easeOut }));
-        this.cancelar.push(animar(na, { opacity: 0.55 }, 620));
+        this.animarP(m.nucleo.scale, { x: 1, y: 1, z: 1 }, 620, { ease: easeOut });
+        this.animarP(na, { opacity: 0.55 }, 620);
         if (esUltimo) {
           // ONDA EXPANSIVA del más grave
           const onda = new THREE.Mesh(
@@ -1803,14 +1822,14 @@ class MundoWGL {
           this.mundo.add(onda);
           const om = onda.material as THREE.MeshBasicMaterial;
           const obj = { s: 0.3, o: 0.95 };
-          this.cancelar.push(animar(obj, { s: 3.4, o: 0 }, 1000, {
+          this.animarP(obj, { s: 3.4, o: 0 }, 1000, {
             ease: easeOut,
             onUpdate: () => {
               onda.scale.setScalar(obj.s);
               om.opacity = obj.o;
             },
             onDone: () => { this.mundo.remove(onda); onda.geometry.dispose(); om.dispose(); },
-          }));
+          });
           alFinal?.();
         }
       }, i * 170);
@@ -1960,7 +1979,8 @@ class MundoWGL {
   despertar() { if (!this.vivo) { this.vivo = true; this.reloj.getDelta(); this.loop(); } }
   destruir() {
     this.dormir();
-    for (const c of this.cancelar) c();
+    for (const c of [...this.cancelar]) c();
+    this.cancelar.clear();
     // v143: la cápsula muere con el mundo — la Casa vuelve al DOM plano
     try {
       (window as unknown as { __vgCapsulaHost?: HTMLDivElement | null }).__vgCapsulaHost = null;
