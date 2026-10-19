@@ -2084,3 +2084,22 @@ Work Log:
 
 Stage Summary:
 - v144.1 = v144.0 + P1 + P6. El AGENTE DE PROMPTS sigue su cola: `bun scripts/agente-prompts.ts` → siguiente = P2 (widgets flotantes al universo — requiere rediseño por widget porque usan position:fixed que no sobrevive un portal CSS3D).
+
+---
+Task ID: 27
+Agent: main (Super Z)
+Task: v145.0 «VUELO LIBRE» — mandato del Dueño («que se pueda mover libremente a los lados, adelante y atrás… nada 2D todo 3D, hasta todo el menú… que salga de la pantalla como holograma… letras estilo nada caricaturesco… animaciones fluidas, haz todo perfectamente»).
+
+Work Log:
+- VUELO LIBRE REAL: WASD/flechas (adelante/atrás/lados), Q/E (arriba/abajo), Shift turbo, RUEDA y PINZA (dolly) y ARRASTRE de mirada (yaw/pitch con límite ±72°) — inercia de nave (lerp exponencial dt*7.5, freno dt*5.2) y límites honestos (R_MIN 2.05: el planeta es intocable; R_MAX 13.5; corredor Y ±). calmarLibre() en todo vuelo de zona. TAP-vs-DRAG: portales/marcadores ahora se ejecutan en pointerup SOLO sin arrastre (>7px = mirar); pointercancel no ejecuta nada. Hover del puente solo con la mano quieta.
+- LA VENTANA HOLO: MegaMenu y SectionSearch dejan de ser capas fixed — nueva pantalla CSS3D (Z_VENTANA 3.35, delante del puente) con marco .vg145-marco-ventana, remaches de esquina, BARRERA DE ESCANEO (CSS vg145-barrer), acople con escala 0.86→1 + clank, yaw de consola, altura 82% viewport. page.tsx: hostVentana (vg:wgl-ventanahost) + orden vg:holo-ventana {on: menuOpen||searchOpen}; SectionSearch acepta prop contenedor (portal Radix-style a la ventana); al cambiar menú↔búsqueda la MISMA ventana se conserva. Cierre por X interna verificado.
+- TIPOGRAFÍA FUTURISTA: RAJDHANI BOLD (Google Fonts) convertida a typeface.json con converter propio scripts/ttf2typeface.mjs (opentype.js; lección: PathCommand usa .type no .command) — 116 glifos, validada con FontLoader.parse + TextGeometry (y-up correcto). Fallback honesto a helvetiker. Compensación de tamaño ×1.12 (fuente condensada), metal frío (metalness 0.86/roughness 0.24) y FILO DE NEÓN (EdgesGeometry) en las letras del logo y de los títulos de los 4 mundos — cero caricatura.
+- HOLOGRAMA QUE SALE DE LA PANTALLA: HAZ DEL PROYECTOR (cono aditivo cian bajo la cápsula, escala con ella, late con el tiempo, muere con el desacople); PARPADEO de proyección (emissiveIntensity del logo/títulos oscila — sin tocar opacidades animadas); placas del puente con respiración en Z (baseZ + sin·0.014 — pulsan HACIA el piloto).
+- QA EN PRODUCCIÓN (standalone, dev OOM ×2 — lección confirmada): entrada AAA con logo Rajdhani + tagline 3D + placa ENTRAR (capturas qa-v145-entrada3/logo2), zona 1 con puente+cápsula+haz (qa-v145-zona1), W vuela hasta el muro del planeta (z 4.00→2.05 con guard), drag-look rota mirada (0.62,0,0→0.93,0,-1.97), MENU abre la VENTANA HOLO con el menú completo dentro (qa-v145-menu-abierto — LA CIUDAD VIVA proyectada en el espacio), X la repliega, SEARCH proyecta la paleta con input real (qa-v145-buscar-holo), cadena de eventos espiada (accion:menu→ventana:true→portal 1 hijo), móvil 390px (qa-v145-movil2: puente compacto + cápsula 92% + ventana 97% frac), 0 errores de consola, tsc limpio, build limpio.
+- FALSA ALARMA DE CORRUPCIÓN: el filtro del terminal come secuencias «[h»/«[m» en el OUTPUT de sed/cat (md5 estable, tsc pasa, grep en archivo = 0) — NO editar "para arreglar" lo que solo está roto en pantalla.
+- EL AGENTE DE PROMPTS RECREADO (se perdió en el reset del entorno): agent-ctx/AGENTE-PROMPTS.md (lecciones 1-8 + P0/P1/P6 hechos + cola P2-P10 autocontenida) + scripts/agente-prompts.ts (--list/--show/--done/--bloquear) — probado: siguiente = P2.
+- version.ts → v145.0 · VUELO LIBRE. bitacora.ts: entrada completa.
+
+Stage Summary:
+- PRODUCCIÓN = v145.0 VUELO LIBRE. El Dueño ya no mira el universo: LO VUELA. La cámara obedece al teclado, al dedo y a la rueda con inercia de nave; el menú y la búsqueda son hologramas que salen de la pantalla; las letras son Rajdhani militar con filo de neón; la cápsula flota sobre un haz de proyector que parpadea como proyección real. Cero 2D en el camino del usuario (los modales Radix de cuenta/ajustes quedan como cola P3).
+- Siguiente automático: `bun scripts/agente-prompts.ts` → P2 (widgets flotantes al universo).

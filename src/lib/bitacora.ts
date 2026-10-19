@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v145.0",
+    nombre: "VUELO LIBRE",
+    tipo: "tecno",
+    hitos: [
+      "EL PILOTO TOMA EL MANDO: la cámara obedece AL USUARIO — WASD/flechas vuelan adelante/atrás y a los lados, Q/E suben y bajan, Shift da turbo, la RUEDA (y el pinza en móvil) acercan y alejan, y ARRASTRAR con el dedo o el ratón gira la mirada libremente por todo el universo. Inercia de nave real: la velocidad llega y se va suave (lerp exponencial), y los límites son honestos — la cámara JAMÁS atraviesa el planeta ni abandona el universo",
+      "TAP VS DRAG INTELIGENTE: los portales, títulos 3D y marcadores ahora se ejecutan en el ALZADO del toque SOLO si no hubo arrastre — mirar alrededor nunca dispara vuelos accidentales. El gesto cancelado no ejecuta nada",
+      "LA VENTANA HOLO: el MENÚ VANGUARD y la BÚSQUEDA dejan de ser capas planas fijas al viewport — se PROYECTAN como un holograma que SALE DE LA PANTALLA: una pantalla CSS3D con marco remachado, filo cian/dorado y barrera de escaneo, acoplada a la cámara con su yaw de consola y su clank de acople. El contenido es DOM real portado (React portal): clicable, scrollable y en los 8 idiomas — y al cambiar de menú a búsqueda la MISMA ventana se conserva",
+      "TIPOGRAFÍA FUTURISTA REAL: adiós helvetiker — las letras 3D de TODO Vanguard (logo, títulos de mundos, portales, puente, entrada) nacen de RAJDHANI BOLD convertida al formato typeface (converter propio: TTF→typeface.json con opentype.js): angular, condensada, HUD militar — cero caricatura. Metal más frío (metalness 0.86) y FILO DE NEÓN: el logo y los títulos llevan aristas luminosas EdgesGeometry",
+      "HOLOGRAMA VIVO: el HAZ DEL PROYECTOR — un cono de luz volumétrico aditivo nace bajo la cápsula de contenido y la SOSTIENE en el aire (late con el tiempo); las letras holográficas PARPADEAN como proyección real (emissiveIntensity oscila, sin tocar opacidades animadas); cada placa del puente PULSA hacia el piloto (respiración en Z) — el holograma sale de la pantalla",
+      "Móvil 390px verificado: puente compacto (INICIO/+/MENU), cápsula al 92%, ventana holo al 97% del cuadro, pinza de dos dedos = dolly + deslizar — el vuelo libre funciona con dedos",
+    ],
+  },
+  {
     version: "v144.0",
     nombre: "HOLOGRAMA TOTAL",
     tipo: "tecno",

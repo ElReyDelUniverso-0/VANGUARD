@@ -606,6 +606,8 @@ export default function Home() {
   // DENTRO del universo 3D vía portal. Si no (sin WebGL), DOM plano de siempre.
   const [hostCapsula, setHostCapsula] = useState<HTMLElement | null>(null);
   const [hostNav, setHostNav] = useState<HTMLElement | null>(null);
+  // v145 — LA VENTANA HOLO: el menú y la búsqueda viven DENTRO del universo
+  const [hostVentana, setHostVentana] = useState<HTMLElement | null>(null);
   // v144 HOLOGRAMA TOTAL: el RAIL del estado — la franja viva de la Casa como
   // tira holográfica CSS3D acoplada a la cámara (StatsTicker + LiveTitle)
   const [hostRail, setHostRail] = useState<HTMLElement | null>(null);
@@ -752,15 +754,27 @@ export default function Home() {
     const onCapsula = (e: Event) => setHostCapsula(((e as CustomEvent).detail as HTMLElement | null) ?? null);
     const onNav = (e: Event) => setHostNav(((e as CustomEvent).detail as HTMLElement | null) ?? null);
     const onRail = (e: Event) => setHostRail(((e as CustomEvent).detail as HTMLElement | null) ?? null);
+    const w2 = window as unknown as { __vgVentanaHost?: HTMLElement | null };
+    setHostVentana(w2.__vgVentanaHost ?? null);
+    const onVentana = (e: Event) => setHostVentana(((e as CustomEvent).detail as HTMLElement | null) ?? null);
+    window.addEventListener("vg:wgl-ventanahost", onVentana);
     window.addEventListener("vg:wgl-capsula", onCapsula);
     window.addEventListener("vg:wgl-navhost", onNav);
     window.addEventListener("vg:wgl-railhost", onRail);
     return () => {
+      window.removeEventListener("vg:wgl-ventanahost", onVentana);
       window.removeEventListener("vg:wgl-capsula", onCapsula);
       window.removeEventListener("vg:wgl-navhost", onNav);
       window.removeEventListener("vg:wgl-railhost", onRail);
     };
   }, []);
+
+  // v145 — LA ORDEN DE PROYECCIÓN: menú o búsqueda abiertos = el holograma
+  // sale de la pantalla; cerrados = la ventana se repliega al espacio
+  useEffect(() => {
+    if (!hostVentana) return;
+    window.dispatchEvent(new CustomEvent("vg:holo-ventana", { detail: { on: menuOpen || searchOpen } }));
+  }, [menuOpen, searchOpen, hostVentana]);
 
   // v143: cada sala que abre la cámara aterriza LEYENDO desde arriba —
   // el scroll de la cápsula 3D vuelve al techo con cada vuelo
@@ -929,7 +943,7 @@ export default function Home() {
       salir: t("holo.salir"),
       hintMundo: t("holo.hintMundo"),
       pieIzq: `${t("footer.system")} · ${APP_VERSION_LABEL}`,
-      pieDer: "M MENU · 1-9 PESTAÑAS · F PANTALLA",
+      pieDer: "WASD VUELO · ARRASTRA MIRAR · M MENU",
     } }));
   }, [hostCapsula, t]);
 
@@ -1447,9 +1461,17 @@ export default function Home() {
         </div>
       )}
 
-      <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />
-      {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
-      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
+      {/* v145: con mundo vivo, el MENÚ es una PROYECCIÓN en el espacio
+          (ventana holo acoplada a la cámara); sin mundo, capa plana de siempre */}
+      {hostVentana
+        ? createPortal(
+            <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />,
+            hostVentana,
+          )
+        : <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />}
+      {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav.
+          v145: también proyectada en la ventana holo cuando el universo vive */}
+      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} contenedor={hostVentana} />
       <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} />
       {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />

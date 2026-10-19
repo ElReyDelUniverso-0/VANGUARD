@@ -137,6 +137,20 @@ const POSE_PANEL_DESV = 0.62; // desvío del punto de mira (unidades de mundo)
 // v144 P1: yaw de la CONSOLA — 6° de giro para el aire «consola de mando»
 const Q_YAW_CONSOLA = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.105);
 
+// v145 — VUELO LIBRE: límites del universo piloteable (la cámara JAMÁS se
+// pierde ni atraviesa el planeta) y física del vuelo (inercia = suavidad)
+const R_MIN_GLOBO = 2.05;   // radio mínimo al centro (la Tierra es 1.35)
+const R_MAX_UNI = 13.5;     // radio máximo (no abandonar el universo)
+const Y_MIN_LIBRE = -5.6;   // techo/suelo del corredor de vuelo
+const Y_MAX_LIBRE = 6.6;
+const VEL_LIBRE = 2.6;      // unidades/segundo (Shift = ×2.3)
+const Z_VENTANA = 3.35;     // distancia de la VENTANA HOLO a la cámara
+
+// v145 — TIPOGRAFÍA FUTURISTA: Rajdhani Bold (angular, HUD militar, cero
+// caricatura). Si no llegara, helvetiker_bold rescata el mundo.
+const FUENTE_PRIMARIA = "/assets/fonts/rajdhani_bold.typeface.json";
+const FUENTE_RESERVA = "/assets/fonts/helvetiker_bold.typeface.json";
+
 interface Titulo3D {
   zona: number;
   texto: string;
@@ -197,6 +211,7 @@ interface PlatoHolo {
   accion: string;
   key?: string;
   baseY: number;
+  baseZ: number;
   fase: number;
   activa: boolean;
   cierre?: boolean;
@@ -360,6 +375,39 @@ class MundoWGL {
   railEl: HTMLDivElement | null = null;
   railPx = 900;
   railFrac = 0.62;
+  // v145 — LA VENTANA HOLO: el MENÚ (y la búsqueda) dejan de ser capas planas
+  // fijas al viewport: ahora son una PANTALLA de proyección flotando en el
+  // espacio, acoplada a la cámara como el puente — un holograma que sale de
+  // la Casa y se planta frente al piloto (CSS3D real, scrollable, clicable)
+  ventanaObj!: CSS3DObject;
+  ventanaEl!: HTMLDivElement;
+  ventanaHost!: HTMLDivElement;
+  ventanaPx = 1100;
+  ventanaFrac = 0.84;
+  ventanaOn = false;
+  ventanaNacida = false;
+  // v145 — VUELO LIBRE: la cámara obedece AL PILOTO (adelante/atrás, lados,
+  // arriba/abajo) con inercia de nave; la mirada se arrastra con el dedo o
+  // el ratón y el pinza (o la rueda) acercan/alejan. Nada de menús 2D: el
+  // mundo SE RECORRE.
+  vel = new THREE.Vector3();          // velocidad actual (inercia)
+  teclas = new Set<string>();         // WASD/QE/flechas/shift
+  arrastrando = false;                // drag de mirada activo
+  ultimoArrastre = 0;                 // freno de eventos (70ms)
+  dirArrastre = new THREE.Vector3();  // dirección base del drag de mirada
+  punteros = new Map<number, { x: number; y: number }>(); // para el pinza táctil
+  distPinza = 0;                      // distancia inicial del pinza
+  // v145 — pendiente de toque: los portales/marcadores/globo ahora se
+  // ejecutan en pointerup si NO hubo arrastre (así mirar nunca dispara vuelos)
+  pendiente: { zona?: number; datos?: MarcadorWGL; punto?: THREE.Vector3; x: number; y: number } | null = null;
+  origenToque = { x: 0, y: 0 };
+  toqueArrastrado = false;
+  // v145 — HOLOGRAMA VIVO: parpadeo de proyector en las letras + haz
+  // volumétrico bajo la cápsula + placas del puente que respiran hacia el piloto
+  matsFlicker: { mat: THREE.MeshStandardMaterial; base: number; fase: number }[] = [];
+  hazCrono: THREE.Mesh | null = null;
+  hazActivo = false;
+  matHaz!: THREE.MeshBasicMaterial;
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -400,9 +448,13 @@ class MundoWGL {
     this.construirNavFlotante();
     // v144: EL PUENTE DE MANDO — el chrome entero de la Casa como holograma
     this.construirConsola();
+    // v145: LA VENTANA HOLO — el menú flotando como proyección en el espacio
+    this.construirVentana();
     // v144: la Casa publica sus pestañas y sus etiquetas i18n por eventos
     window.addEventListener("vg:holo-pestanas", this.onPestanasEv);
     window.addEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
+    // v145: la Casa manda abrir/cerrar LA VENTANA HOLO (menú / búsqueda)
+    window.addEventListener("vg:holo-ventana", this.onVentanaEv);
 
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
@@ -637,6 +689,8 @@ class MundoWGL {
     this.capsula.visible = true;
     this.capsulaAcoplada = true;
     this.capsulaEl.dataset.acoplada = "1";
+    // v145: el HAZ DEL PROYECTOR enciende — la pantalla flota SOBRE una luz
+    this.armarHaz(a.pos, a.escala);
     if (instant) { this.capsula.scale.setScalar(a.escala); return; }
     this.capsula.scale.setScalar(a.escala * 0.9);
     this.animarP(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
@@ -649,6 +703,7 @@ class MundoWGL {
     if (!this.capsulaAcoplada) return;
     this.capsulaAcoplada = false;
     this.capsulaEl.dataset.acoplada = "0";
+    this.apagarHaz(); // v145: el proyector duerme con la pantalla
   }
 
   // ════════════════════════════════════════════════════════
@@ -695,7 +750,211 @@ class MundoWGL {
   }
 
   // ════════════════════════════════════════════════════════
-  // v141 — LA POSE — dónde mira la cámara según el estado:
+  // v145 — LA VENTANA HOLO — el MENÚ y la BÚSQUEDA como proyección 3D.
+  // Fin de las capas fijas al viewport: el menú SALE de la pantalla como un
+  // holograma, se planta frente al piloto con su marco remachado, respira
+  // con la cámara y su contenido es DOM real (React portal): clicable y
+  // scrollable por dentro, volumétrico por fuera.
+  // ════════════════════════════════════════════════════════
+  construirVentana() {
+    const cuerpo = document.createElement("div");
+    cuerpo.className = "vg145-ventana";
+    cuerpo.dataset.abierta = "0";
+    const marco = document.createElement("div");
+    marco.className = "vg145-marco-ventana";
+    const scan = document.createElement("div");
+    scan.className = "vg145-scan";
+    const host = document.createElement("div");
+    host.className = "vg145-ventana-host";
+    marco.appendChild(scan);
+    marco.appendChild(host);
+    cuerpo.appendChild(marco);
+    this.ventanaEl = cuerpo;
+    this.ventanaHost = host;
+    this.recalibrarVentana();
+    this.ventanaObj = new CSS3DObject(cuerpo);
+    this.ventanaObj.visible = false;
+    this.cssEscena.add(this.ventanaObj);
+    this.ventanaNacida = true;
+    (window as unknown as { __vgVentanaHost?: HTMLDivElement }).__vgVentanaHost = host;
+    window.dispatchEvent(new CustomEvent("vg:wgl-ventanahost", { detail: host }));
+  }
+
+  private recalibrarVentana() {
+    const movil = this.esMovil();
+    const w = movil ? Math.min(window.innerWidth - 16, 430) : Math.min(Math.round(window.innerWidth * 0.86), 1240);
+    const h = movil ? Math.round(window.innerHeight * 0.8) : Math.round(Math.min(window.innerHeight * 0.82, 800));
+    this.ventanaEl.style.width = `${w}px`;
+    this.ventanaEl.style.height = `${h}px`;
+    this.ventanaPx = w;
+    this.ventanaFrac = movil ? 0.97 : 0.84;
+  }
+
+  // abrir/cerrar la proyección (la Casa manda por vg:holo-ventana)
+  setVentana(on: boolean) {
+    if (!this.ventanaNacida || on === this.ventanaOn) return;
+    this.ventanaOn = on;
+    if (on) {
+      this.ventanaEl.dataset.abierta = "1";
+      this.ventanaObj.visible = true;
+      // nace un pelín pequeña y se ASIENTA en el aire (acople de proyector)
+      const escala = this.escalaVentana();
+      this.ventanaObj.scale.setScalar(escala * 0.86);
+      this.animarP(this.ventanaObj.scale, { x: escala, y: escala, z: escala }, 560, { ease: easeOut });
+      sonar("clank");
+    } else {
+      this.ventanaEl.dataset.abierta = "0";
+      const escala = this.escalaVentana();
+      this.animarP(this.ventanaObj.scale, { x: escala * 0.86, y: escala * 0.86, z: escala * 0.86 }, 300, {
+        ease: easeInOut,
+        onDone: () => { if (!this.ventanaOn) this.ventanaObj.visible = false; },
+      });
+      sonar("tic");
+    }
+  }
+
+  // la escala que llena una FRACCIÓN fija del cuadro a la distancia de la ventana
+  private escalaVentana(): number {
+    const alto = this.altoPlano(Z_VENTANA);
+    const ancho = alto * this.camara.aspect;
+    return (ancho * this.ventanaFrac) / Math.max(this.ventanaPx, 1);
+  }
+
+  // por frame: pegada a la cámara (delante del puente — sale HACIA el piloto)
+  private acoplarVentanaFrame() {
+    if (!this.ventanaNacida || !this.ventanaObj.visible) return;
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    this.ventanaObj.position.copy(this.camara.position).addScaledVector(f, Z_VENTANA);
+    this.ventanaObj.quaternion.copy(this.camara.quaternion);
+    this.ventanaObj.quaternion.multiply(Q_YAW_CONSOLA);
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v145 — VUELO LIBRE — el piloto toma el mando:
+  //  · TECLADO: WASD/flechas (adelante/atrás/lados), Q/E (abajo/arriba),
+  //    Shift = impulso. Inercia de nave: la velocidad llega y se va suave.
+  //  · ARRASTRE (ratón o dedo): girar la mirada libremente.
+  //  · RUEDA / PINZA: acercar y alejar el vuelo.
+  // Límites: la cámara NUNCA atraviesa el planeta ni abandona el universo.
+  // ════════════════════════════════════════════════════════
+  private libreOK(): boolean {
+    // después de la entrada (o en pleno modo mundo), nunca en pleno vuelo de zona
+    return this.consolaVisibleFin && !this.enVuelo;
+  }
+
+  iniciarMirada() {
+    if (!this.libreOK()) return;
+    this.arrastrando = true;
+    this.dirArrastre.copy(this.mirada).sub(this.camara.position).normalize();
+  }
+
+  moverMirada(dxPx: number, dyPx: number) {
+    if (!this.arrastrando) return;
+    const yaw = -dxPx * 0.0030;
+    const pitch = -dyPx * 0.0030;
+    const dir = this.dirArrastre.clone();
+    // yaw alrededor del eje Y del mundo
+    dir.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+    // pitch alrededor del eje DERECHA de la propia dirección
+    const derecha = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0));
+    if (derecha.lengthSq() > 1e-6) {
+      dir.applyAxisAngle(derecha.normalize(), pitch);
+      // límite de cabeza: jamás más de ±72° de inclinación
+      const len = dir.length();
+      const maxY = len * Math.sin(1.25);
+      if (dir.y > maxY) dir.y = maxY;
+      if (dir.y < -maxY) dir.y = -maxY;
+      dir.normalize();
+    }
+    this.dirArrastre.copy(dir);
+    this.mirada.copy(this.camara.position).addScaledVector(dir, 4);
+    this.camara.lookAt(this.mirada.x, this.mirada.y, this.mirada.z);
+  }
+
+  terminarMirada() { this.arrastrando = false; }
+
+  // rueda / pinza: empujón de dolly con la misma inercia del vuelo
+  dolar(delta: number) {
+    if (!this.libreOK()) return;
+    const dir = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
+    this.vel.addScaledVector(dir, -delta * 0.0032);
+  }
+
+  // movimientos del teclado → velocidad objetivo; el loop integra con inercia
+  private integrarLibre(dt: number) {
+    if (!this.libreOK()) { this.vel.multiplyScalar(Math.max(0, 1 - dt * 6)); return; }
+    const T = this.teclas;
+    let fwd = 0, lado = 0, vert = 0;
+    if (T.has("w") || T.has("arrowup")) fwd += 1;
+    if (T.has("s") || T.has("arrowdown")) fwd -= 1;
+    if (T.has("d") || T.has("arrowright")) lado += 1;
+    if (T.has("a") || T.has("arrowleft")) lado -= 1;
+    if (T.has("e")) vert += 1;
+    if (T.has("q")) vert -= 1;
+    const obj = new THREE.Vector3(lado, vert, fwd);
+    if (obj.lengthSq() > 0) {
+      obj.normalize().multiplyScalar(VEL_LIBRE * (T.has("shift") ? 2.3 : 1));
+      // los ejes del VUELO salen de la CÁMARA: adelante = hacia la mirada
+      const dirF = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
+      const dirR = new THREE.Vector3().crossVectors(dirF, new THREE.Vector3(0, 1, 0)).normalize();
+      const dirU = new THREE.Vector3().crossVectors(dirR, dirF).normalize();
+      const objetivo = new THREE.Vector3()
+        .addScaledVector(dirF, obj.z)
+        .addScaledVector(dirR, obj.x)
+        .addScaledVector(dirU, obj.y);
+      this.vel.lerp(objetivo, 1 - Math.exp(-dt * 7.5));
+    } else {
+      this.vel.multiplyScalar(Math.max(0, 1 - dt * 5.2)); // frena suave (inercia)
+    }
+    if (this.vel.lengthSq() < 1e-7) return;
+    const p = this.camara.position.clone().addScaledVector(this.vel, dt);
+    // LÍMITES del universo piloteable
+    const r = Math.hypot(p.x, p.z);
+    if (p.length() < R_MIN_GLOBO) return;       // el planeta es intocable
+    if (p.length() > R_MAX_UNI) return;         // el universo tiene pared
+    p.y = Math.max(Y_MIN_LIBRE, Math.min(Y_MAX_LIBRE, p.y));
+    const d = p.clone().sub(this.camara.position);
+    this.camara.position.copy(p);
+    this.mirada.add(d); // la mirada viaja CON la cámara (orientación intacta)
+    this.camara.lookAt(this.mirada.x, this.mirada.y, this.mirada.z);
+  }
+
+  // calmar el vuelo libre (al despegar a otra zona, todo se asienta)
+  calmarLibre() {
+    this.vel.set(0, 0, 0);
+    this.arrastrando = false;
+    this.teclas.clear();
+    this.pendiente = null;
+    this.punteros.clear();
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v145 — EL HAZ DEL PROYECTOR — la cápsula no flota sola: una luz
+  // volumétrica nace debajo de ella y la SOSTIENE en el aire (el truco
+  // de los hologramas de cine: el cono aditivo que «proyecta» la pantalla)
+  // ════════════════════════════════════════════════════════
+  private armarHaz(pos: THREE.Vector3, escala: number) {
+    if (!this.hazCrono) {
+      const geo = new THREE.ConeGeometry(0.62, 1.5, 26, 1, true);
+      this.matHaz = new THREE.MeshBasicMaterial({
+        color: 0x00e5ff, transparent: true, opacity: 0.075,
+        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+      });
+      this.hazCrono = new THREE.Mesh(geo, this.matHaz);
+      this.escena.add(this.hazCrono);
+    }
+    this.hazCrono.visible = true;
+    this.hazActivo = true;
+    this.hazCrono.scale.setScalar(escala);
+    // la punta del cono toca la BASE de la pantalla: nace abajo y abre hacia arriba
+    this.hazCrono.position.set(pos.x, pos.y - 0.75 * escala, pos.z);
+  }
+
+  private apagarHaz() {
+    this.hazActivo = false;
+    if (this.hazCrono) this.hazCrono.visible = false;
+  }
   //  · MODO MUNDO: LA POSE DEL UNIVERSO (v142) — todo el mundo en cuadro
   //  · Z0: el espacio centrado (entrada pura)
   //  · panel abierto: el mira se desvía a la DERECHA de la
@@ -719,6 +978,7 @@ class MundoWGL {
   // EL VUELO DE CÁMARA puro (compartido por volarAZona e irAPose)
   // v142: al aterrizar suena el FRENO — dos notas graves que anclan la sala
   private volarCamara(pos: [number, number, number], tgt: THREE.Vector3, dur: number) {
+    this.calmarLibre(); // v145: el vuelo de zona SIEMPRE calma el vuelo libre
     const objPos = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
     const objMir = { x: this.mirada.x, y: this.mirada.y, z: this.mirada.z };
     this.animarP(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
@@ -781,25 +1041,28 @@ class MundoWGL {
   // ════════════════════════════════════════════════════════
   // v141 — LAS LETRAS 3D — tipografía volumétrica real
   // ════════════════════════════════════════════════════════
+  // v145: Rajdhani primero; si el JSON no llegara (REGLA 5 del mundo),
+  // helvetiker rescata las letras — el universo JAMÁS queda mudo
   cargarFuente() {
-    new FontLoader().load(
-      "/assets/fonts/helvetiker_bold.typeface.json",
-      (f) => {
-        if (!this.vivo) return;
-        this.fuente = f;
-        this.construirLetras3D();
-        // v142: si el reencuentro corrió ANTES de que la fuente llegara, los
-        // portales/títulos nacen con su visibilidad por defecto (apagada) —
-        // se reaplica el vestido de la zona actual para ganar la carrera
-        this.visibleZona(this.zona);
-        if (this.pendienteLogo) { this.pendienteLogo = false; this.nacerLogo(); }
-        // v144: con fuente a bordo, EL PUENTE se viste completo
-        this.reconstruirPuente();
-        this.vestirDecoracion();
-      },
-      undefined,
-      () => { /* sin fuente el mundo sigue: los títulos DOM ya existen */ },
-    );
+    new FontLoader().load(FUENTE_PRIMARIA, (f) => this.aplicarFuente(f), undefined, () => {
+      new FontLoader().load(FUENTE_RESERVA, (f) => this.aplicarFuente(f), undefined, () => {
+        /* sin fuente el mundo sigue: los títulos DOM ya existen */
+      });
+    });
+  }
+
+  private aplicarFuente(f: Font) {
+    if (!this.vivo) return;
+    this.fuente = f;
+    this.construirLetras3D();
+    // v142: si el reencuentro corrió ANTES de que la fuente llegara, los
+    // portales/títulos nacen con su visibilidad por defecto (apagada) —
+    // se reaplica el vestido de la zona actual para ganar la carrera
+    this.visibleZona(this.zona);
+    if (this.pendienteLogo) { this.pendienteLogo = false; this.nacerLogo(); }
+    // v144: con fuente a bordo, EL PUENTE se viste completo
+    this.reconstruirPuente();
+    this.vestirDecoracion();
   }
 
   // la fuente typeface no trae acentos: como un HUD militar, se caen
@@ -808,26 +1071,29 @@ class MundoWGL {
   }
 
   // convierte un texto en letras extruidas individuales (volumen real)
+  // v145: Rajdhani es condensada — compensa ×1.12 · metal más frío (menos
+  // caricatura: acero antracita con filo de neón que el filoLetra cuelga)
   private hacerTexto3D(texto: string, o: { tam: number; prof: number; color: number; emis: number }): { grupo: THREE.Group; letras: Letra3D[]; ancho: number } {
     const grupo = new THREE.Group();
     const letras: Letra3D[] = [];
     const mat = new THREE.MeshStandardMaterial({
       color: o.color,
-      metalness: 0.78,
-      roughness: 0.3,
+      metalness: 0.86,
+      roughness: 0.24,
       emissive: new THREE.Color(o.color),
       emissiveIntensity: o.emis,
       transparent: true,
       opacity: 0,
     });
+    const tam = o.tam * 1.12;
     let cursor = 0;
     for (const crudo of this.sanitizar(texto)) {
-      if (crudo === " ") { cursor += o.tam * 0.55; continue; }
+      if (crudo === " ") { cursor += tam * 0.55; continue; }
       let geo: TextGeometry | null = null;
       try {
         geo = new TextGeometry(crudo, {
           font: this.fuente!,
-          size: o.tam,
+          size: tam,
           depth: o.prof,
           curveSegments: this.calidadBaja ? 3 : 5,
           bevelEnabled: false,
@@ -842,9 +1108,20 @@ class MundoWGL {
       mesh.visible = false;
       grupo.add(mesh);
       letras.push({ mesh, fase: Math.random() * Math.PI * 2, base: mesh.position.clone() });
-      cursor += w + o.tam * 0.13;
+      cursor += w + tam * 0.13;
     }
-    return { grupo, letras, ancho: Math.max(cursor - o.tam * 0.13, 0.001) };
+    return { grupo, letras, ancho: Math.max(cursor - tam * 0.13, 0.001) };
+  }
+
+  // v145 — FILO DE NEÓN: aristas luminosas sobre una letra (el logo y los
+  // títulos leen como hardware holográfico militar, no como juguete)
+  private filoLetra(mesh: THREE.Mesh, color: number, op = 0.42) {
+    const filo = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mesh.geometry, 18),
+      new THREE.LineBasicMaterial({ color, transparent: true, opacity: op }),
+    );
+    filo.raycast = () => {}; // el filo NO intercepta el dedo
+    mesh.add(filo);
   }
 
   private construirLetras3D() {
@@ -855,7 +1132,7 @@ class MundoWGL {
     this.holo.add(logo.grupo);
     this.logoGrupo = logo.grupo;
     this.letrasLogo = logo.letras;
-    for (const l of this.letrasLogo) l.expandida = l.base.clone();
+    for (const l of this.letrasLogo) { l.expandida = l.base.clone(); this.filoLetra(l.mesh, 0xffe9a0, 0.4); }
     if (this.logoNacido) this.compactarLogoInstante();
     // LOS TÍTULOS DE CADA MUNDO — tocables (tocar el título = entrar)
     for (const t of TITULOS_3D) {
@@ -864,6 +1141,7 @@ class MundoWGL {
       for (const l of tit.letras) {
         (l.mesh.material as THREE.MeshStandardMaterial).opacity = 1;
         l.mesh.visible = true;
+        this.filoLetra(l.mesh, t.color, 0.5);
       }
       const sub = this.hacerTexto3D(t.sub, { tam: t.tam * 0.4, prof: t.tam * 0.18, color: t.color, emis: t.emis * 0.72 });
       sub.grupo.position.set(t.p[0] - sub.ancho / 2, t.p[1] - t.tam * 0.9, t.p[2]);
@@ -1290,6 +1568,11 @@ class MundoWGL {
     if (!d) return;
     this.setEtiquetas(d as Partial<EtiquetasHolo>);
   };
+  // v145: la orden de proyección del menú/búsqueda (viene de la Casa)
+  onVentanaEv = (e: Event) => {
+    const d = (e as CustomEvent).detail;
+    this.setVentana(!!d?.on);
+  };
 
   setPestanasHolo(lista: DatosPestana[], activa: string) {
     const nuevaLlave = JSON.stringify([lista, activa]);
@@ -1390,7 +1673,7 @@ class MundoWGL {
         this.proxiesHolo.push(proxyC);
       }
       this.consola.add(grupo);
-      return { grupo, marco, filos, proxy, mat, accion, key, baseY: topY, fase: Math.random() * Math.PI * 2, activa: activo, cierre };
+      return { grupo, marco, filos, proxy, mat, accion, key, baseY: topY, baseZ: 0, fase: Math.random() * Math.PI * 2, activa: activo, cierre };
     };
 
     // ── LAYOUT — izquierda: logo mini + pestañas; derecha: mandos ──
@@ -1427,6 +1710,7 @@ class MundoWGL {
       }
       const plato = hacerPlato(w, p.color, esActiva, "tab", p.key, !movil && this.consolaDatos.pestanas.length > 1);
       plato.grupo.position.set(cursor + w / 2, topY, esActiva ? 0.03 : 0);
+      plato.baseZ = plato.grupo.position.z;
       this.platosHolo.push(plato);
       cursor += w + 0.09;
       puestas++;
@@ -1436,6 +1720,7 @@ class MundoWGL {
       const w = 0.36;
       const plato = hacerPlato(w, 0xf5c542, false, "menu");
       plato.grupo.position.set(cursor + w / 2, topY, 0);
+      plato.baseZ = 0;
       this.platosHolo.push(plato);
     }
     // mandos desde la derecha
@@ -1444,6 +1729,7 @@ class MundoWGL {
       const c = mandos[i];
       const plato = hacerPlato(c.w, c.id === "nueva" ? 0xf5c542 : 0x8fd8ff, false, c.id);
       plato.grupo.position.set(rc - c.w / 2, topY, 0);
+      plato.baseZ = 0;
       this.platosHolo.push(plato);
       rc -= c.w + 0.09;
     }
@@ -1933,6 +2219,10 @@ class MundoWGL {
       this.banderas[i].rotation.y = Math.sin(t * 2.1 + i * 1.3) * 0.42;
     }
 
+    // v145 — VUELO LIBRE: el teclado/drag/pinza mueven la cámara ANTES del
+    // render (la consola, el rail y la ventana pegan a la nueva pose)
+    this.integrarLibre(dt);
+
     // PARALLAX de paneles: la cámara cuenta dónde está — CSS vars
     const tgt = ZONA_TGT[this.zona] ?? [0, 0, 0];
     const cx = Math.max(-1, Math.min(1, (this.camara.position.x - tgt[0]) / 3.4));
@@ -1943,6 +2233,28 @@ class MundoWGL {
     if (Math.abs(px - cx) > 0.003) st.setProperty("--wgl-cx", cx.toFixed(3));
     if (Math.abs(py - cy) > 0.003) st.setProperty("--wgl-cy", cy.toFixed(3));
 
+    // v145 — EL PARPADEO DEL PROYECTOR: la luz de proyección tiembla (el
+    // universo respira como holograma real, sin tocar opacidades animadas)
+    const fl = 0.88 + Math.sin(t * 11.7) * 0.06 + Math.sin(t * 27.3) * 0.06;
+    const letra0 = (g?: THREE.Object3D): THREE.MeshStandardMaterial | null => {
+      let cur = g;
+      let pasos = 0;
+      while (cur && !(cur as THREE.Mesh).isMesh && pasos++ < 3) cur = cur.children[0];
+      return cur && (cur as THREE.Mesh).isMesh ? ((cur as THREE.Mesh).material as THREE.MeshStandardMaterial) : null;
+    };
+    if (this.logoGrupo?.visible) {
+      const m = letra0(this.logoGrupo);
+      if (m) m.emissiveIntensity = 0.5 * fl;
+    }
+    for (const tz of this.titulosZona) {
+      if (!tz.grupo.visible) continue;
+      const m = letra0(tz.grupo);
+      if (m) m.emissiveIntensity = 0.6 * fl;
+    }
+    if (this.hazActivo && this.hazCrono) {
+      this.matHaz.opacity = 0.075 * (0.8 + Math.sin(t * 2.9) * 0.14 + Math.sin(t * 9.1) * 0.06);
+    }
+
     // v143: la CONSOLA DE VUELO flota pegada a la cámara y la CASA
     // (cápsula CSS3D) se proyecta con la misma matriz que el mundo —
     // un solo universo: WebGL detrás, DOM real dentro del espacio.
@@ -1950,9 +2262,12 @@ class MundoWGL {
     for (const p of this.platosHolo) {
       if (!p.grupo.visible) continue;
       p.grupo.position.y = p.baseY + Math.sin(t * 1.3 + p.fase) * 0.006;
+      // v145: cada placa PULSA hacia el piloto — el holograma sale de la pantalla
+      p.grupo.position.z = p.baseZ + Math.sin(t * 1.55 + p.fase) * 0.014;
     }
     this.acoplarConsolaFrame();
     this.acoplarNavFrame();
+    this.acoplarVentanaFrame();
     this.cssEscena.updateMatrixWorld(true);
     this.renderer.render(this.escena, this.camara);
     this.cssRenderer.render(this.cssEscena, this.camara);
@@ -1967,6 +2282,7 @@ class MundoWGL {
     this.cssRenderer?.setSize(window.innerWidth, window.innerHeight);
     this.dimensionarCapsula();
     this.recalibrarNav();
+    this.recalibrarVentana();
     // v144: el puente se re-mide con el viewport nuevo (sin guard: la
     // geometría SÍ cambia con el aspecto)
     this.llavePuente = "";
@@ -1994,6 +2310,7 @@ class MundoWGL {
     try {
       window.removeEventListener("vg:holo-pestanas", this.onPestanasEv);
       window.removeEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
+      window.removeEventListener("vg:holo-ventana", this.onVentanaEv);
       (window as unknown as { __vgRailHost?: HTMLDivElement | null }).__vgRailHost = null;
       window.dispatchEvent(new CustomEvent("vg:wgl-railhost", { detail: null }));
       document.documentElement.removeAttribute("data-holo");
@@ -2004,6 +2321,17 @@ class MundoWGL {
       this.limpiarGrupo(this.modoGrupo);
       this.platosHolo = [];
       this.proxiesHolo = [];
+    } catch { /* silencio honesto */ }
+    // v145: la ventana holo y el haz del proyector también mueren
+    try {
+      (window as unknown as { __vgVentanaHost?: HTMLDivElement | null }).__vgVentanaHost = null;
+      window.dispatchEvent(new CustomEvent("vg:wgl-ventanahost", { detail: null }));
+      if (this.hazCrono) {
+        this.escena.remove(this.hazCrono);
+        this.hazCrono.geometry.dispose();
+        this.matHaz?.dispose();
+        this.hazCrono = null;
+      }
     } catch { /* silencio honesto */ }
     this.renderer.dispose();
   }
@@ -2068,29 +2396,62 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     // v144 HOVER del puente: la placa despierta bajo el puntero (con freno)
     let ultimoApunte = 0;
     const onMover = (e: PointerEvent) => {
+      const m = mundoRef.current;
+      if (!m) return;
+      // v145: el hover solo respira con la mano quieta (nada de placas
+      // temblando mientras el piloto gira la mirada)
       const ahora = performance.now();
-      if (ahora - ultimoApunte < 70) return;
-      ultimoApunte = ahora;
-      mundo?.apuntar((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      if (ahora - ultimoApunte >= 70 && !m.arrastrando && m.punteros.size === 0) {
+        ultimoApunte = ahora;
+        m.apuntar((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+      }
+      // v145: seguimiento de punteros (pinza táctil + arrastre de mirada)
+      const prev = m.punteros.get(e.pointerId);
+      if (!prev) return;
+      const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+      prev.x = e.clientX; prev.y = e.clientY;
+      if (m.punteros.size >= 2) {
+        // PINZA: dos dedos — acercar/alejar (dolly) + deslizar lateral/vertical
+        const [a, b] = [...m.punteros.values()];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (m.distPinza > 0 && d > 0) m.dolar(-(d - m.distPinza) * 2.4);
+        m.distPinza = d;
+        m.vel.add(new THREE.Vector3(dx * 0.0035, -dy * 0.0035, 0).applyQuaternion(m.camara.quaternion));
+        return;
+      }
+      if (Math.abs(e.clientX - m.origenToque.x) + Math.abs(e.clientY - m.origenToque.y) > 7) m.toqueArrastrado = true;
+      if (m.arrastrando) m.moverMirada(dx, dy);
     };
     window.addEventListener("pointermove", onMover, { passive: true });
 
-    // EL TOQUE — window-level: los paneles HTML jamás roban el mundo
+    // EL TOQUE — window-level: los paneles HTML jamás roban el mundo.
+    // v145: el toque guarda la INTENCIÓN (portal/marcador) y el alzado la
+    // ejecuta SOLO si no hubo arrastre — mirar nunca dispara vuelos.
     const onToque = (e: PointerEvent) => {
       if (!mundoRef.current) return;
       const el = e.target as HTMLElement | null;
-      // v143: la CÁPSULA y la CONSOLA también son UI de la Casa — el mundo
-      // no raycastea a través de sus propias pantallas
-      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost")) return;
+      // v143/v145: cápsula, consola y VENTANA HOLO son UI de la Casa
+      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost,.vg145-ventana")) return;
+      const m = mundoRef.current;
+      m.punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (m.punteros.size === 2) {
+        const [a, b] = [...m.punteros.values()];
+        m.distPinza = Math.hypot(a.x - b.x, a.y - b.y);
+        m.arrastrando = false;
+        m.pendiente = null;
+        return;
+      }
+      m.origenToque = { x: e.clientX, y: e.clientY };
+      m.toqueArrastrado = false;
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
-      const g = mundoRef.current.golpear(nx, ny, false);
+      const g = m.golpear(nx, ny, false);
       // v144: EL PUENTE — una placa de mando tocada obedece al instante
       if (g.tipo === "holo") {
         const acc = g.accion ?? "";
         const key = g.key;
-        if (key) mundoRef.current?.pulsarPlato(key);
-        else if (acc) mundoRef.current?.pulsarPlato(acc);
+        if (key) m.pulsarPlato(key);
+        else if (acc) m.pulsarPlato(acc);
         sonar("click");
         if (acc === "entrar") {
           entrarRef.current?.();
@@ -2101,36 +2462,94 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         }
         return;
       }
+      if (g.tipo === "globo" && document.documentElement.getAttribute("data-wgl-entrada") === "1") {
+        entrar(); // la ceremonia de entrada: tocar el globo despierta la Casa
+        return;
+      }
       if (g.tipo === "portal" && typeof g.zona === "number") {
+        m.pendiente = { zona: g.zona, x: e.clientX, y: e.clientY };
+        return;
+      }
+      if (g.tipo === "marcador" && g.datos && g.punto) {
+        m.pendiente = { datos: g.datos, punto: g.punto, x: e.clientX, y: e.clientY };
+        return;
+      }
+      m.iniciarMirada(); // espacio vacío = girar la mirada (vuelo libre)
+    };
+    window.addEventListener("pointerdown", onToque, { passive: true });
+
+    // v145 EL ALZADO — la intención se ejecuta si el dedo no arrastró
+    const onLevantar = (e: PointerEvent) => {
+      const m = mundoRef.current;
+      if (!m) return;
+      m.punteros.delete(e.pointerId);
+      if (m.punteros.size < 2) m.distPinza = 0;
+      m.terminarMirada();
+      const pend = m.pendiente;
+      m.pendiente = null;
+      if (!pend || m.toqueArrastrado) return;
+      if (typeof pend.zona === "number") {
         // v141: PORTAL o TÍTULO 3D tocado — la cámara vuela a ese mundo
-        // y la Casa abre su sala (se acaba el modo mundo si estaba)
-        mundoRef.current.entrarPortal(g.zona);
-      } else if (g.tipo === "marcador" && g.datos && g.punto) {
-        // CONFLICTO TOCADO: destello 2x + popup mínimo + vuelo al Command Center
-        const { datos: m, punto } = g;
-        try { sessionStorage.setItem("vg-wgl-conflicto", m.id); } catch {}
-        window.dispatchEvent(new CustomEvent("vg:wgl-conflicto", { detail: m }));
-        const p = mundoRef.current.proyectar(punto);
-        setPopup({ x: p.x, y: p.y, m });
+        m.entrarPortal(pend.zona);
+      } else if (pend.datos && pend.punto) {
+        // CONFLICTO TOCADO: destello + popup mínimo + vuelo al Command Center
+        const { datos: mrk, punto } = pend;
+        try { sessionStorage.setItem("vg-wgl-conflicto", mrk.id); } catch {}
+        window.dispatchEvent(new CustomEvent("vg:wgl-conflicto", { detail: mrk }));
+        const pr = m.proyectar(punto);
+        setPopup({ x: pr.x, y: pr.y, m: mrk });
         window.setTimeout(() => setPopup(null), 3600);
-        if (mundoRef.current.zona !== 0) {
+        if (m.zona !== 0) {
           // v142: desde el MODO MUNDO sobre la zona 2 el vuelo no se mueve
-          // (misma zona) — salir del modo a mano para volver a la pose panel
-          if (mundoRef.current.modoMundo && mundoRef.current.zona === 2) mundoRef.current.salirModo();
-          mundoRef.current.volarAZona(2);
+          if (m.modoMundo && m.zona === 2) m.salirModo();
+          m.volarAZona(2);
           document.documentElement.setAttribute("data-wgl-zona", "2");
         } else {
-          // primera vez: entrar + volar (la entrada vive en Zona 0)
-          mundoRef.current.zona = 1;
-          mundoRef.current.volarAZona(2);
+          m.zona = 1;
+          m.volarAZona(2);
           document.documentElement.setAttribute("data-wgl-zona", "2");
         }
         sonar("ping");
-      } else if (g.tipo === "globo" && document.documentElement.getAttribute("data-wgl-entrada") === "1") {
-        entrar();
       }
     };
-    window.addEventListener("pointerdown", onToque, { passive: true });
+    window.addEventListener("pointerup", onLevantar, { passive: true });
+
+    // v145: el gesto cancelado no ejecuta NADA (dedo que sale del cuadro)
+    const onCancelar = (e: PointerEvent) => {
+      const m = mundoRef.current;
+      if (!m) return;
+      m.punteros.delete(e.pointerId);
+      m.distPinza = 0;
+      m.terminarMirada();
+      m.pendiente = null;
+    };
+    window.addEventListener("pointercancel", onCancelar, { passive: true });
+
+    // v145 EL TECLADO DEL PILOTO — WASD/flechas (vuelo), Q/E (altura), Shift turbo
+    const teclaValida = (k: string) => ["w", "a", "s", "d", "q", "e", "arrowup", "arrowdown", "arrowleft", "arrowright", "shift"].includes(k);
+    const onTecla = (e: KeyboardEvent, down: boolean) => {
+      const m = mundoRef.current;
+      if (!m) return;
+      const objetivo = e.target as HTMLElement | null;
+      if (objetivo && (objetivo.tagName === "INPUT" || objetivo.tagName === "TEXTAREA" || objetivo.tagName === "SELECT" || objetivo.isContentEditable)) return;
+      const k = e.key.toLowerCase();
+      if (!teclaValida(k)) return;
+      if (down) m.teclas.add(k); else m.teclas.delete(k);
+    };
+    const onTeclaDown = (e: KeyboardEvent) => onTecla(e, true);
+    const onTeclaUp = (e: KeyboardEvent) => onTecla(e, false);
+    window.addEventListener("keydown", onTeclaDown);
+    window.addEventListener("keyup", onTeclaUp);
+
+    // v145 LA RUEDA — acercar/alejar el vuelo (el scroll de la Casa es SUYO)
+    const onRueda = (e: WheelEvent) => {
+      const m = mundoRef.current;
+      if (!m) return;
+      const el = e.target as HTMLElement | null;
+      if (el && typeof el.closest === "function" && el.closest(".vg143-capsula,.vg145-ventana,.vg143-navhost")) return;
+      m.dolar(e.deltaY);
+    };
+    window.addEventListener("wheel", onRueda, { passive: true });
 
     // vuelos pedidos por la Casa (navbar / cambios de tab)
     const onIr = (e: Event) => {
@@ -2154,6 +2573,11 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pointerdown", onToque);
       window.removeEventListener("pointermove", onMover);
+      window.removeEventListener("pointerup", onLevantar);
+      window.removeEventListener("pointercancel", onCancelar);
+      window.removeEventListener("keydown", onTeclaDown);
+      window.removeEventListener("keyup", onTeclaUp);
+      window.removeEventListener("wheel", onRueda);
       window.removeEventListener("vg:wgl-ir-a", onIr);
       window.removeEventListener("vg:wgl-modo-toggle", onModoToggle);
       window.removeEventListener("vg:wgl-modo-sync", onModoSync);

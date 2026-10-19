@@ -66,10 +66,14 @@ export function SectionSearch({
   open,
   onClose,
   onChange,
+  contenedor,
 }: {
   open: boolean;
   onClose: () => void;
   onChange: (tab: string) => void;
+  // v145: contenedor opcional — con el universo 3D vivo la paleta se
+  // proyecta DENTRO de la ventana holo (CSS3D) en vez de plana sobre el body
+  contenedor?: HTMLElement | null;
 }) {
   const { t, lang } = useT();
   const [q, setQ] = useState("");
@@ -358,6 +362,6 @@ export function SectionSearch({
         </div>
       </div>
     </div>,
-    document.body
+    contenedor ?? document.body
   );
 }
