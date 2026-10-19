@@ -134,6 +134,9 @@ export const TAB_ZONA: Record<string, number> = { inicio: 1, crisis: 2, arcade: 
 // ────────────────────────────────────────────────────────────
 const POSE_PANEL_DESV = 0.62; // desvío del punto de mira (unidades de mundo)
 
+// v144 P1: yaw de la CONSOLA — 6° de giro para el aire «consola de mando»
+const Q_YAW_CONSOLA = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -0.105);
+
 interface Titulo3D {
   zona: number;
   texto: string;
@@ -171,6 +174,57 @@ type Letra3D = { mesh: THREE.Mesh; fase: number; base: THREE.Vector3; expandida?
 // portales. Desde ahí se toca CUALQUIER mundo y la cámara entra a él.
 const POSE_MUNDO: [number, number, number] = [0, 0.3, 5.6];
 const TGT_MUNDO: [number, number, number] = [0, 0.1, 0];
+
+// ────────────────────────────────────────────────────────────
+// v144 HOLOGRAMA TOTAL — EL PUENTE DE MANDO.
+// El chrome plano de la Casa (cabecera HUD, franja de pestañas, pie) MUERE:
+// ahora vive DENTRO del universo como un puente holográfico acoplado a la
+// cámara — placas 3D con LETRAS EXTRUIDAS reales para cada pestaña abierta,
+// botones de mando (BUSCAR · MENU · CUENTA · AJUSTES · NUEVA), el mini logo
+// VANGUARD, el pie de la Casa y hasta la UI del MODO MUNDO. Todo se toca con
+// raycast, todo respira, nada es 2D.
+// ────────────────────────────────────────────────────────────
+const Z_CONSOLA = 4.2; // distancia del puente a la cámara (plano de mando)
+
+type DatosPestana = { key: string; label: string; color: number };
+
+interface PlatoHolo {
+  grupo: THREE.Group;
+  marco: THREE.Mesh;
+  filos: THREE.LineSegments;
+  proxy: THREE.Mesh;
+  mat: THREE.MeshStandardMaterial;
+  accion: string;
+  key?: string;
+  baseY: number;
+  fase: number;
+  activa: boolean;
+  cierre?: boolean;
+}
+
+// v144: un proxy de placa solo cuenta si todo su árbol está visible —
+// (el Raycaster ignora visible=false? NO: los objetos invisibles TAMBIÉN
+// se raycastean — hay que vigilar la cadena de ancestros a mano)
+function ancestroVisible(o: THREE.Object3D | null): boolean {
+  let cur: THREE.Object3D | null = o;
+  while (cur) {
+    if (cur.visible === false) return false;
+    cur = cur.parent;
+  }
+  return true;
+}
+
+type EtiquetasHolo = {
+  buscar: string; menu: string; cuenta: string; ajustes: string; nueva: string;
+  hintEntrar: string; salir: string; hintMundo: string; pieIzq: string; pieDer: string;
+};
+
+const ETIQUETAS_DEFECTO: EtiquetasHolo = {
+  buscar: "BUSCAR", menu: "MENU", cuenta: "CUENTA", ajustes: "AJUSTES", nueva: "+",
+  hintEntrar: "TOCA EL GLOBO PARA ENTRAR", salir: "SALIR DEL MUNDO",
+  hintMundo: "TOCA UN PORTAL · ENTRA A UN MUNDO 3D",
+  pieIzq: "SISTEMA VIVO", pieDer: "M MENU · 1-9 PESTAÑAS · F PANTALLA",
+};
 
 // marcadores: teatros de guerra de la Casa (OSINT real) + ciudades caliente
 export interface MarcadorWGL {
@@ -280,6 +334,32 @@ class MundoWGL {
   navEl!: HTMLDivElement;
   navPx = 470;
   navFrac = 0.44;
+  // v144 — EL PUENTE DE MANDO (chrome 3D acoplado a la cámara)
+  consola = new THREE.Group();    // placas de pestañas + botones de mando
+  consolaVisibleFin = true;       // el puente despierta al terminar la entrada
+  consolaDatos: { pestanas: DatosPestana[]; activa: string } = { pestanas: [], activa: "" };
+  etiquetas: EtiquetasHolo = { ...ETIQUETAS_DEFECTO };
+  platosHolo: PlatoHolo[] = [];
+  proxiesHolo: THREE.Mesh[] = [];
+  logoMiniSlot: THREE.Group | null = null;
+  pieGrupo = new THREE.Group();   // pie de la Casa en letras 3D
+  pieIzq: THREE.Group | null = null;
+  pieDer: THREE.Group | null = null;
+  entradaGrupo = new THREE.Group(); // tagline + placa ENTRAR (letras 3D)
+  letrasTagline: Letra3D[] = [];
+  platoEntrar: THREE.Group | null = null;
+  modoGrupo = new THREE.Group();  // UI del MODO MUNDO en 3D (salir + hint)
+  modoConstruido = false;
+  faseHolo = "negro";
+  holoHover: THREE.Mesh | null = null;
+  desbordeHolo = 0;             // pestañas que no cupieron en el puente
+  llavePuente = "";             // anti-churn: no reconstruir si nada cambió
+  // v144 — EL RAIL DEL ESTADO: la franja viva (StatsTicker) como tira
+  // holográfica CSS3D acoplada a la cámara bajo el puente
+  railObj: CSS3DObject | null = null;
+  railEl: HTMLDivElement | null = null;
+  railPx = 900;
+  railFrac = 0.62;
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -318,6 +398,11 @@ class MundoWGL {
     // consola de vuelo flotante — el último plano 2D se convierte en 3D
     this.construirCapsula();
     this.construirNavFlotante();
+    // v144: EL PUENTE DE MANDO — el chrome entero de la Casa como holograma
+    this.construirConsola();
+    // v144: la Casa publica sus pestañas y sus etiquetas i18n por eventos
+    window.addEventListener("vg:holo-pestanas", this.onPestanasEv);
+    window.addEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
 
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
@@ -545,13 +630,18 @@ class MundoWGL {
     if (this.modoMundo || zona === 0 || !this.capsula) return;
     const a = this.anclaCapsula(zona);
     this.capsula.position.copy(a.pos);
+    // v144 P1: POSE DE CONSOLA — yaw deliberado de 6° (la pantalla ya no es
+    // una pared paralela: es la consola de mando del universo)
     this.capsula.quaternion.copy(this.camara.quaternion);
+    this.capsula.quaternion.multiply(Q_YAW_CONSOLA);
     this.capsula.visible = true;
     this.capsulaAcoplada = true;
     this.capsulaEl.dataset.acoplada = "1";
     if (instant) { this.capsula.scale.setScalar(a.escala); return; }
     this.capsula.scale.setScalar(a.escala * 0.9);
     this.cancelar.push(animar(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut }));
+    // v144 P1: el ACOPLE suena a metal asentándose
+    sonar("clank");
   }
 
   // DESACOPLAR: la pantalla se apaga mientras la cámara vuela (o en MODO MUNDO)
@@ -703,6 +793,9 @@ class MundoWGL {
         // se reaplica el vestido de la zona actual para ganar la carrera
         this.visibleZona(this.zona);
         if (this.pendienteLogo) { this.pendienteLogo = false; this.nacerLogo(); }
+        // v144: con fuente a bordo, EL PUENTE se viste completo
+        this.reconstruirPuente();
+        this.vestirDecoracion();
       },
       undefined,
       () => { /* sin fuente el mundo sigue: los títulos DOM ya existen */ },
@@ -1073,6 +1166,8 @@ class MundoWGL {
     document.documentElement.removeAttribute("data-wgl-modo");
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: false } }));
     this.condensarLogo();
+    // v144: el puente vuelve con la Casa
+    this.setModoMundoUI(false);
     if (volar) this.irAPose(1000);
   }
 
@@ -1098,6 +1193,8 @@ class MundoWGL {
     if (this.modoMundo) this.expandirLogo(); else this.condensarLogo();
     // v143: en el MUNDO la cápsula se apaga — solo existe el universo
     if (this.modoMundo) this.desacoplarCapsula();
+    // v144: el puente se apaga y la UI 3D del modo despierta
+    this.setModoMundoUI(this.modoMundo);
     this.irAPose(1000);
     sonar("whoosh");
   }
@@ -1110,14 +1207,474 @@ class MundoWGL {
     if (on) this.expandirLogo(); else this.condensarLogo();
     // v143: la cápsula obedece al modo (apagada dentro del universo)
     if (on) this.desacoplarCapsula();
+    // v144: el puente obedece al modo
+    this.setModoMundoUI(on);
     this.irAPose(1000);
   }
 
+  // ════════════════════════════════════════════════════════
+  // v144 — EL PUENTE DE MANDO — construcción y vida
+  // ════════════════════════════════════════════════════════
+
+  // alto del frustum a una distancia dada (unidades de mundo)
+  private altoPlano(z: number): number {
+    return 2 * z * Math.tan((this.camara.fov * Math.PI) / 360);
+  }
+
+  construirConsola() {
+    this.escena.add(this.consola);
+    this.escena.add(this.pieGrupo);
+    this.escena.add(this.entradaGrupo);
+    this.escena.add(this.modoGrupo);
+    this.consola.visible = false;       // despierta al terminar la entrada
+    this.pieGrupo.visible = false;
+    this.entradaGrupo.visible = false;
+    this.modoGrupo.visible = false;
+    // EL RAIL DEL ESTADO — la franja viva de la Casa como tira holográfica
+    const railHost = document.createElement("div");
+    railHost.className = "vg144-railhost";
+    const railInner = document.createElement("div");
+    railInner.className = "vg144-rail";
+    railHost.appendChild(railInner);
+    this.railEl = railInner;
+    this.recalibrarRail();
+    this.railObj = new CSS3DObject(railHost);
+    this.railObj.visible = false;
+    this.cssEscena.add(this.railObj);
+    (window as unknown as { __vgRailHost?: HTMLDivElement }).__vgRailHost = railInner;
+    window.dispatchEvent(new CustomEvent("vg:wgl-railhost", { detail: railInner }));
+    // el html entero se entera: el chrome plano debe dormirse (data-holo)
+    document.documentElement.setAttribute("data-holo", "1");
+  }
+
+  private recalibrarRail() {
+    const movil = this.esMovil();
+    const frac = movil ? 0.94 : 0.62;
+    const w = Math.min(window.innerWidth * frac, 1040);
+    if (this.railEl) {
+      const host = this.railEl.parentElement;
+      if (host) host.style.width = `${w}px`;
+      this.railEl.style.width = `${w}px`;
+    }
+    this.railPx = w;
+    this.railFrac = frac;
+  }
+
+  // ── la Casa publica pestañas/etiquetas (page.tsx) ──
+  onPestanasEv = (e: Event) => {
+    const d = (e as CustomEvent).detail;
+    if (!d || !Array.isArray(d.lista)) return;
+    this.setPestanasHolo(d.lista as DatosPestana[], String(d.activa ?? ""));
+  };
+  onEtiquetasEv = (e: Event) => {
+    const d = (e as CustomEvent).detail;
+    if (!d) return;
+    this.setEtiquetas(d as Partial<EtiquetasHolo>);
+  };
+
+  setPestanasHolo(lista: DatosPestana[], activa: string) {
+    const nuevaLlave = JSON.stringify([lista, activa]);
+    if (nuevaLlave === this.llavePuente.split("|§|")[0]) return; // cero churn
+    this.llavePuente = `${nuevaLlave}|§|${this.llavePuente.split("|§|")[1] ?? ""}`;
+    this.consolaDatos = { pestanas: lista.slice(0, 9), activa };
+    this.reconstruirPuente();
+  }
+
+  setEtiquetas(e: Partial<EtiquetasHolo>) {
+    const nuevaLlave = JSON.stringify(e);
+    if (nuevaLlave === (this.llavePuente.split("|§|")[1] ?? "")) return; // cero churn
+    this.llavePuente = `${this.llavePuente.split("|§|")[0]}|§|${nuevaLlave}`;
+    this.etiquetas = { ...ETIQUETAS_DEFECTO, ...e };
+    this.reconstruirPuente();
+    this.vestirDecoracion();
+  }
+
+  // limpiar un grupo entero (geometrías + materiales) sin piedad
+  private limpiarGrupo(g: THREE.Group | null) {
+    if (!g) return;
+    g.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = (m as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+      if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
+      else if (mat) mat.dispose();
+    });
+    g.clear();
+  }
+
+  // RECONSTRUIR EL PUENTE — placas de pestañas + botones de mando.
+  // Sin fuente cargada las placas nacen desnudas; vestirPlatos las viste.
+  reconstruirPuente() {
+    for (const p of this.platosHolo) {
+      this.consola.remove(p.grupo);
+      this.limpiarGrupo(p.grupo);
+    }
+    this.platosHolo = [];
+    this.proxiesHolo = [];
+    if (this.logoMiniSlot) { this.consola.remove(this.logoMiniSlot); this.limpiarGrupo(this.logoMiniSlot); this.logoMiniSlot = null; }
+    const movil = this.esMovil();
+    const alto = this.altoPlano(Z_CONSOLA);
+    const ancho = alto * this.camara.aspect;
+    const topY = alto / 2 - 0.26;
+    const E = this.etiquetas;
+    const hacerPlato = (wP: number, colorAcento: number, activo: boolean, accion: string, key?: string, cierre = false): PlatoHolo => {
+      const grupo = new THREE.Group();
+      const h = 0.2, d = 0.035;
+      const geo = new THREE.BoxGeometry(wP, h, d);
+      const acento = new THREE.Color(colorAcento);
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0x0d1626,
+        metalness: 0.62,
+        roughness: 0.34,
+        emissive: acento.clone().multiplyScalar(activo ? 0.5 : 0.14),
+        transparent: true,
+        opacity: 0.94,
+        depthTest: false,
+      });
+      const marco = new THREE.Mesh(geo, mat);
+      marco.renderOrder = 940;
+      const filos = new THREE.LineSegments(
+        new THREE.EdgesGeometry(geo),
+        new THREE.LineBasicMaterial({ color: colorAcento, transparent: true, opacity: activo ? 0.95 : 0.38, depthTest: false }),
+      );
+      filos.renderOrder = 941;
+      // PROXY invisible para el dedo (opacidad 0 — el Raycaster la ignora si
+      // es visible:false, lección v141) — levantado un pelín hacia la cámara
+      const proxy = new THREE.Mesh(
+        new THREE.BoxGeometry(wP + 0.05, h + 0.06, d + 0.02),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false }),
+      );
+      proxy.renderOrder = 945;
+      proxy.userData = { holo: { accion, key } };
+      grupo.add(marco, filos, proxy);
+      this.proxiesHolo.push(proxy);
+      if (cierre) {
+        const s = 0.026;
+        const g1 = new THREE.Mesh(
+          new THREE.BoxGeometry(s * 2.5, s * 0.7, 0.01),
+          new THREE.MeshBasicMaterial({ color: colorAcento, transparent: true, opacity: 0.9, depthTest: false }),
+        );
+        const g2 = new THREE.Mesh(g1.geometry, g1.material as THREE.Material);
+        g1.rotation.z = Math.PI / 4;
+        g2.rotation.z = -Math.PI / 4;
+        g1.position.set(wP / 2 - 0.088, 0, d / 2 + 0.01);
+        g2.position.copy(g1.position);
+        g1.renderOrder = 942; g2.renderOrder = 942;
+        const proxyC = new THREE.Mesh(
+          new THREE.SphereGeometry(0.058, 8, 8),
+          new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false }),
+        );
+        proxyC.position.set(wP / 2 - 0.088, 0, d / 2 + 0.03);
+        proxyC.renderOrder = 946;
+        proxyC.userData = { holo: { accion: "cerrar", key } };
+        grupo.add(g1, g2, proxyC);
+        this.proxiesHolo.push(proxyC);
+      }
+      this.consola.add(grupo);
+      return { grupo, marco, filos, proxy, mat, accion, key, baseY: topY, fase: Math.random() * Math.PI * 2, activa: activo, cierre };
+    };
+
+    // ── LAYOUT — izquierda: logo mini + pestañas; derecha: mandos ──
+    let cursor = -ancho / 2 + 0.22;
+    if (!movil) {
+      // el MINI LOGO VANGUARD — letras extruidas vivas en el puente
+      this.logoMiniSlot = new THREE.Group();
+      this.logoMiniSlot.position.set(cursor, topY, 0.01);
+      this.consola.add(this.logoMiniSlot);
+      cursor += 0.86 + 0.2;
+    }
+    const mandos = movil
+      ? [{ id: "nueva", label: "+", w: 0.28 }, { id: "menu", label: E.menu, w: Math.max(0.36, E.menu.length * 0.048 + 0.14) }]
+      : [
+          { id: "nueva", label: "+", w: 0.28 },
+          { id: "buscar", label: E.buscar, w: Math.max(0.42, E.buscar.length * 0.048 + 0.16) },
+          { id: "menu", label: E.menu, w: Math.max(0.38, E.menu.length * 0.048 + 0.16) },
+          { id: "cuenta", label: E.cuenta, w: Math.max(0.42, E.cuenta.length * 0.048 + 0.16) },
+          { id: "ajustes", label: E.ajustes, w: Math.max(0.44, E.ajustes.length * 0.048 + 0.16) },
+        ];
+    const wMandos = mandos.reduce((s, c) => s + c.w, 0) + (mandos.length - 1) * 0.09;
+    const finTabs = ancho / 2 - wMandos - 0.24;
+    const maxPlacas = movil ? 2 : 6;
+    let puestas = 0;
+    let desborde = 0;
+    this.desbordeHolo = 0;
+    for (const p of this.consolaDatos.pestanas) {
+      const esActiva = p.key === this.consolaDatos.activa;
+      const extra = esActiva && this.consolaDatos.pestanas.length > 1 && !movil ? 0.17 : 0;
+      const w = Math.min(Math.max((p.label?.length || 4) * 0.052 + 0.2 + extra, 0.42), 1.2);
+      if (cursor + w > finTabs || puestas >= maxPlacas) {
+        desborde = this.consolaDatos.pestanas.length - puestas;
+        break;
+      }
+      const plato = hacerPlato(w, p.color, esActiva, "tab", p.key, !movil && this.consolaDatos.pestanas.length > 1);
+      plato.grupo.position.set(cursor + w / 2, topY, esActiva ? 0.03 : 0);
+      this.platosHolo.push(plato);
+      cursor += w + 0.09;
+      puestas++;
+    }
+    if (desborde > 0) {
+      this.desbordeHolo = desborde;
+      const w = 0.36;
+      const plato = hacerPlato(w, 0xf5c542, false, "menu");
+      plato.grupo.position.set(cursor + w / 2, topY, 0);
+      this.platosHolo.push(plato);
+    }
+    // mandos desde la derecha
+    let rc = ancho / 2 - 0.16;
+    for (let i = mandos.length - 1; i >= 0; i--) {
+      const c = mandos[i];
+      const plato = hacerPlato(c.w, c.id === "nueva" ? 0xf5c542 : 0x8fd8ff, false, c.id);
+      plato.grupo.position.set(rc - c.w / 2, topY, 0);
+      this.platosHolo.push(plato);
+      rc -= c.w + 0.09;
+    }
+    if (this.fuente) this.vestirPlatos();
+  }
+
+  // VESTIR LAS PLACAS — letras extruidas reales dentro de cada placa
+  private vestirPlatos() {
+    if (!this.fuente) return;
+    for (const p of this.platosHolo) {
+      const datos = this.consolaDatos.pestanas.find((x) => x.key === p.key);
+      let texto = "";
+      let colorTxt = 0xdfe9ff;
+      let emisTxt = 0.3;
+      if (p.accion === "tab") { texto = datos?.label ?? ""; colorTxt = p.activa ? datos?.color ?? 0xf5c542 : 0xe8f1ff; emisTxt = p.activa ? 0.85 : 0.55; }
+      else if (p.accion === "nueva") { texto = "+"; colorTxt = 0xf5c542; emisTxt = 0.9; }
+      else if (p.accion === "menu") { texto = this.desbordeHolo > 0 ? `+${this.desbordeHolo}` : this.etiquetas.menu; colorTxt = 0xbfe4ff; emisTxt = 0.75; }
+      else { texto = (this.etiquetas as Record<string, string>)[p.accion] ?? p.accion.toUpperCase(); colorTxt = 0xbfe4ff; emisTxt = 0.75; }
+      if (!texto) continue;
+      // el cierre × roba sitio a la derecha de la placa: centrar la letra un pelín a la izquierda
+      const tieneCierre = !!p.cierre;
+      const t = this.hacerTexto3D(texto, { tam: 0.072, prof: 0.018, color: colorTxt, emis: emisTxt });
+      const m = t.grupo.children.length ? (t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+      if (m) { m.depthTest = false; m.opacity = 1; }
+      for (const l of t.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+      t.grupo.position.set(-t.ancho / 2 - (tieneCierre ? 0.05 : 0), 0, 0.028);
+      p.grupo.add(t.grupo);
+    }
+    // MINI LOGO
+    if (this.logoMiniSlot && !this.logoMiniSlot.children.length) {
+      const logo = this.hacerTexto3D("VANGUARD", { tam: 0.112, prof: 0.028, color: 0xf5c542, emis: 0.6 });
+      const m = logo.grupo.children.length ? (logo.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+      if (m) { m.depthTest = false; m.opacity = 1; }
+      for (const l of logo.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+      logo.grupo.position.set(0, 0, 0.012);
+      this.logoMiniSlot.add(logo.grupo);
+    }
+  }
+
+  // DECORACIÓN del puente: pie de la Casa + tagline de entrada + UI del MODO MUNDO
+  vestirDecoracion() {
+    if (!this.fuente) return;
+    const movil = this.esMovil();
+    const alto = this.altoPlano(Z_CONSOLA);
+    const ancho = alto * this.camara.aspect;
+    // PIE — dos líneas de letras 3D en las esquinas bajas (solo escritorio)
+    this.limpiarGrupo(this.pieGrupo);
+    this.pieIzq = null;
+    this.pieDer = null;
+    if (!movil) {
+      const izq = this.hacerTexto3D(this.etiquetas.pieIzq, { tam: 0.05, prof: 0.012, color: 0x8fa8cf, emis: 0.35 });
+      const mI = izq.grupo.children.length ? (izq.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+      if (mI) { mI.depthTest = false; mI.opacity = 0.9; }
+      for (const l of izq.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+      izq.grupo.position.set(-ancho / 2 + 0.22, -alto / 2 + 0.15, 0.01);
+      this.pieGrupo.add(izq.grupo);
+      this.pieIzq = izq.grupo;
+      const der = this.hacerTexto3D(this.etiquetas.pieDer, { tam: 0.05, prof: 0.012, color: 0x8fa8cf, emis: 0.35 });
+      const mD = der.grupo.children.length ? (der.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+      if (mD) { mD.depthTest = false; mD.opacity = 0.9; }
+      for (const l of der.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+      der.grupo.position.set(ancho / 2 - 0.18 - der.ancho, -alto / 2 + 0.15, 0.01);
+      this.pieGrupo.add(der.grupo);
+      this.pieDer = der.grupo;
+    }
+    // ENTRADA — tagline letra a letra + placa ENTRAR (la placa es 3D y se toca)
+    this.limpiarGrupo(this.entradaGrupo);
+    this.letrasTagline = [];
+    this.platoEntrar = null;
+    const tag = this.hacerTexto3D("El mundo no espera. Tu tampoco.", { tam: 0.082, prof: 0.02, color: 0xffe9b0, emis: 0.7 });
+    const mT = tag.grupo.children.length ? (tag.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+    if (mT) { mT.depthTest = false; }
+    for (const l of tag.letras) { l.mesh.visible = false; l.mesh.renderOrder = 948; l.quieto = true; }
+    const escalaTag = Math.min(1, (ancho * 0.92) / tag.ancho);
+    tag.grupo.scale.setScalar(escalaTag);
+    tag.grupo.position.set(-tag.ancho * escalaTag / 2, -alto / 2 + 0.9, 0.01);
+    this.entradaGrupo.add(tag.grupo);
+    this.letrasTagline = tag.letras;
+    const plato = new THREE.Group();
+    const geoP = new THREE.BoxGeometry(2.0, 0.21, 0.03);
+    const matP = new THREE.MeshStandardMaterial({ color: 0x14202f, metalness: 0.6, roughness: 0.35, emissive: new THREE.Color(0xf5c542).multiplyScalar(0.4), transparent: true, opacity: 0.95, depthTest: false });
+    const marco = new THREE.Mesh(geoP, matP);
+    marco.renderOrder = 944;
+    const filos = new THREE.LineSegments(new THREE.EdgesGeometry(geoP), new THREE.LineBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.9, depthTest: false }));
+    filos.renderOrder = 945;
+    const proxyE = new THREE.Mesh(new THREE.BoxGeometry(2.06, 0.27, 0.05), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false }));
+    proxyE.renderOrder = 946;
+    proxyE.userData = { holo: { accion: "entrar" } };
+    plato.add(marco, filos, proxyE);
+    const txt = this.hacerTexto3D(this.etiquetas.hintEntrar, { tam: 0.062, prof: 0.016, color: 0xf5c542, emis: 0.8 });
+    const mX = txt.grupo.children.length ? (txt.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+    if (mX) { mX.depthTest = false; mX.opacity = 1; }
+    for (const l of txt.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+    txt.grupo.position.set(-txt.ancho / 2, 0, 0.024);
+    plato.add(txt.grupo);
+    plato.position.set(0, -alto / 2 + 0.56, 0.01);
+    plato.visible = false;
+    this.entradaGrupo.add(plato);
+    this.platoEntrar = plato;
+    this.proxiesHolo = this.proxiesHolo.filter((px) => { const a = px.userData?.holo?.accion; return a !== "entrar" && a !== "modo"; });
+    this.proxiesHolo.push(proxyE);
+    // MODO MUNDO — placa SALIR (arriba-izquierda) + hint (abajo) en letras 3D
+    this.limpiarGrupo(this.modoGrupo);
+    this.modoConstruido = false;
+    const platoS = new THREE.Group();
+    const geoS = new THREE.BoxGeometry(Math.max(1.05, this.etiquetas.salir.length * 0.058 + 0.24), 0.2, 0.03);
+    const matS = new THREE.MeshStandardMaterial({ color: 0x14202f, metalness: 0.6, roughness: 0.35, emissive: new THREE.Color(0xff2d78).multiplyScalar(0.45), transparent: true, opacity: 0.95, depthTest: false });
+    const marcoS = new THREE.Mesh(geoS, matS);
+    marcoS.renderOrder = 944;
+    const filosS = new THREE.LineSegments(new THREE.EdgesGeometry(geoS), new THREE.LineBasicMaterial({ color: 0xff2d78, transparent: true, opacity: 0.9, depthTest: false }));
+    filosS.renderOrder = 945;
+    const proxyS = new THREE.Mesh(new THREE.BoxGeometry(geoS.parameters.width + 0.06, 0.26, 0.05), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false }));
+    proxyS.renderOrder = 946;
+    proxyS.userData = { holo: { accion: "modo" } };
+    this.proxiesHolo.push(proxyS);
+    platoS.add(marcoS, filosS, proxyS);
+    const txtS = this.hacerTexto3D(this.etiquetas.salir, { tam: 0.062, prof: 0.016, color: 0xff8ab5, emis: 0.75 });
+    const mS = txtS.grupo.children.length ? (txtS.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+    if (mS) { mS.depthTest = false; mS.opacity = 1; }
+    for (const l of txtS.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+    txtS.grupo.position.set(-txtS.ancho / 2, 0, 0.024);
+    platoS.add(txtS.grupo);
+    platoS.position.set(-ancho / 2 + 0.24 + geoS.parameters.width / 2, alto / 2 - 0.28, 0.01);
+    this.modoGrupo.add(platoS);
+    const hint = this.hacerTexto3D(this.etiquetas.hintMundo, { tam: 0.062, prof: 0.016, color: 0x00f0ff, emis: 0.7 });
+    const mH = hint.grupo.children.length ? (hint.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial : null;
+    if (mH) { mH.depthTest = false; mH.opacity = 0.95; }
+    for (const l of hint.letras) { l.mesh.visible = true; l.mesh.renderOrder = 948; l.quieto = true; }
+    const escalaH = Math.min(1, (ancho * 0.9) / hint.ancho);
+    hint.grupo.scale.setScalar(escalaH);
+    hint.grupo.position.set(-hint.ancho * escalaH / 2, -alto / 2 + 0.6, 0.01);
+    this.modoGrupo.add(hint.grupo);
+    this.modoConstruido = true;
+    this.modoGrupo.visible = this.modoMundo && this.consolaVisibleFin;
+  }
+
+  // LA FASE DE ENTRADA manda sobre el puente: pestañas dormidas durante la
+  // ceremonia, tagline letra a letra, placa ENTRAR al final, todo despierta al fin
+  setFaseEntrada(fase: string) {
+    this.faseHolo = fase;
+    const fin = fase === "volando" || fase === "fin";
+    this.consolaVisibleFin = fin;
+    this.consola.visible = fin && !this.modoMundo;
+    this.pieGrupo.visible = fin && !this.modoMundo && !this.esMovil();
+    if (this.railObj) this.railObj.visible = fin && !this.modoMundo;
+    this.modoGrupo.visible = fin && this.modoMundo;
+    if (fase === "tagline") {
+      this.entradaGrupo.visible = true;
+      if (this.platoEntrar) this.platoEntrar.visible = false;
+      this.letrasTagline.forEach((l, i) => {
+        window.setTimeout(() => {
+          if (!this.vivo) return;
+          l.mesh.visible = true;
+          const m = l.mesh.material as THREE.MeshStandardMaterial;
+          m.opacity = 0;
+          this.cancelar.push(animar(m, { opacity: 1 }, 260));
+        }, i * 30);
+      });
+    } else if (fase === "hint") {
+      this.entradaGrupo.visible = true;
+      if (this.platoEntrar) this.platoEntrar.visible = true;
+    } else if (fin) {
+      this.entradaGrupo.visible = false;
+    }
+  }
+
+  // EL MODO MUNDO — el puente se apaga y solo queda la UI 3D del universo
+  setModoMundoUI(on: boolean) {
+    this.consola.visible = this.consolaVisibleFin && !on;
+    this.pieGrupo.visible = this.consolaVisibleFin && !on && !this.esMovil();
+    if (this.railObj) this.railObj.visible = this.consolaVisibleFin && !on;
+    this.modoGrupo.visible = this.consolaVisibleFin && on && this.modoConstruido;
+  }
+
+  // ── HOVER del puente — la placa respira más fuerte bajo el puntero ──
+  apuntar(nx: number, ny: number) {
+    let objetivo: THREE.Mesh | null = null;
+    if (this.proxiesHolo.length) {
+      const ray = new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
+      const hit = ray.intersectObjects(this.proxiesHolo, false)[0];
+      if (hit && ancestroVisible(hit.object)) objetivo = hit.object as THREE.Mesh;
+    }
+    if (objetivo === this.holoHover) return;
+    // restaurar el anterior
+    if (this.holoHover) {
+      const g = this.holoHover.parent;
+      if (g) { g.scale.setScalar(1); }
+      this.holoHover = null;
+      document.documentElement.style.cursor = "";
+    }
+    if (objetivo) {
+      this.holoHover = objetivo;
+      const g = objetivo.parent;
+      if (g) g.scale.setScalar(1.07);
+      document.documentElement.style.cursor = "pointer";
+      sonar("tic");
+    }
+  }
+
+  // golpe visual al pulsar una placa
+  pulsarPlato(ref: string) {
+    const plato = this.platosHolo.find((p) => p.key === ref || p.accion === ref);
+    if (!plato) return;
+    this.cancelar.push(animar(plato.grupo.scale, { x: 0.92, y: 0.92, z: 0.92 }, 80, {
+      ease: easeOut,
+      onDone: () => this.cancelar.push(animar(plato.grupo.scale, { x: 1, y: 1, z: 1 }, 180, { ease: easeOut })),
+    }));
+  }
+
+  // por frame: el puente, el pie, la entrada, el modo y el rail pegan a la cámara
+  private acoplarConsolaFrame() {
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const colocar = (g: THREE.Group) => {
+      g.position.copy(this.camara.position).addScaledVector(f, Z_CONSOLA);
+      g.quaternion.copy(this.camara.quaternion);
+    };
+    colocar(this.consola);
+    colocar(this.pieGrupo);
+    colocar(this.entradaGrupo);
+    colocar(this.modoGrupo);
+    // RAIL — tira holográfica bajo el puente (CSS3D, la Casa vive dentro)
+    if (this.railObj && this.railEl) {
+      const alto = this.altoPlano(Z_CONSOLA);
+      const ancho = alto * this.camara.aspect;
+      // la MISMA matemática de la consola de vuelo (v143): el elemento css
+      // ocupa una fracción fija del cuadro a la distancia del plano de mando
+      const escala = (ancho * this.railFrac) / Math.max(this.railPx, 1);
+      this.railObj.scale.setScalar(escala);
+      const hPx = this.railEl.offsetHeight || 26;
+      const y = alto / 2 - 0.26 - 0.2 - 0.09 - (hPx * escala) / 2 - 0.015;
+      this.railObj.position.copy(this.camara.position).addScaledVector(f, Z_CONSOLA).addScaledVector(arriba, y);
+      this.railObj.quaternion.copy(this.camara.quaternion);
+    }
+  }
+
   // ── RAYCAST — portales/títulos → marcadores → globo ──
-  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "portal" | "marcador" | "globo" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number } {
+  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "portal" | "marcador" | "globo" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
     if (ignorarUI) return { tipo: "nada" };
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
+    // v144: EL PUENTE primero — las placas de mando pisan al resto del mundo
+    if (this.proxiesHolo.length) {
+      const hitH = ray.intersectObjects(this.proxiesHolo, false)[0];
+      if (hitH && ancestroVisible(hitH.object) && hitH.object.userData?.holo) {
+        return { tipo: "holo", accion: hitH.object.userData.holo.accion as string, key: hitH.object.userData.holo.key as string | undefined };
+      }
+    }
     const hitP = ray.intersectObjects(this.proxiesClic, false)[0];
     if (hitP && hitP.object.userData?.portal) {
       return { tipo: "portal", zona: hitP.object.userData.portal as number };
@@ -1370,6 +1927,12 @@ class MundoWGL {
     // v143: la CONSOLA DE VUELO flota pegada a la cámara y la CASA
     // (cápsula CSS3D) se proyecta con la misma matriz que el mundo —
     // un solo universo: WebGL detrás, DOM real dentro del espacio.
+    // v144: EL PUENTE DE MANDO pega a la cámara y sus placas respiran.
+    for (const p of this.platosHolo) {
+      if (!p.grupo.visible) continue;
+      p.grupo.position.y = p.baseY + Math.sin(t * 1.3 + p.fase) * 0.006;
+    }
+    this.acoplarConsolaFrame();
     this.acoplarNavFrame();
     this.cssEscena.updateMatrixWorld(true);
     this.renderer.render(this.escena, this.camara);
@@ -1385,6 +1948,12 @@ class MundoWGL {
     this.cssRenderer?.setSize(window.innerWidth, window.innerHeight);
     this.dimensionarCapsula();
     this.recalibrarNav();
+    // v144: el puente se re-mide con el viewport nuevo (sin guard: la
+    // geometría SÍ cambia con el aspecto)
+    this.llavePuente = "";
+    this.recalibrarRail();
+    this.reconstruirPuente();
+    this.vestirDecoracion();
     if (this.capsulaAcoplada) this.acoplarCapsula(this.zona, true);
   }
   dormir() { this.vivo = false; cancelAnimationFrame(this.raf); }
@@ -1401,6 +1970,21 @@ class MundoWGL {
       document.documentElement.removeAttribute("data-wgl-capsula");
       this.cssRenderer?.domElement?.remove();
     } catch { /* silencio honesto */ }
+    // v144: el puente muere con el mundo — el chrome plano resucita
+    try {
+      window.removeEventListener("vg:holo-pestanas", this.onPestanasEv);
+      window.removeEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
+      (window as unknown as { __vgRailHost?: HTMLDivElement | null }).__vgRailHost = null;
+      window.dispatchEvent(new CustomEvent("vg:wgl-railhost", { detail: null }));
+      document.documentElement.removeAttribute("data-holo");
+      document.documentElement.style.cursor = "";
+      this.limpiarGrupo(this.consola);
+      this.limpiarGrupo(this.pieGrupo);
+      this.limpiarGrupo(this.entradaGrupo);
+      this.limpiarGrupo(this.modoGrupo);
+      this.platosHolo = [];
+      this.proxiesHolo = [];
+    } catch { /* silencio honesto */ }
     this.renderer.dispose();
   }
 }
@@ -1416,6 +2000,9 @@ type Fase = "negro" | "estrellas" | "globo" | "marcadores" | "logo" | "tagline" 
 export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
   const lienzoRef = useRef<HTMLCanvasElement>(null);
   const mundoRef = useRef<MundoWGL | null>(null);
+  // v144: la placa ENTRAR del puente vive fuera del ciclo de render — el
+  // raycast del mundo la llama vía ref (el callback cambia con la fase)
+  const entrarRef = useRef<(() => void) | null>(null);
   const [fase, setFase] = useState<Fase>("negro");
   const [soporte, setSoporte] = useState<boolean | null>(null); // null = verificando
   const [escrito, setEscrito] = useState("");
@@ -1458,6 +2045,16 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     window.addEventListener("resize", onResize);
     document.addEventListener("visibilitychange", onVis);
 
+    // v144 HOVER del puente: la placa despierta bajo el puntero (con freno)
+    let ultimoApunte = 0;
+    const onMover = (e: PointerEvent) => {
+      const ahora = performance.now();
+      if (ahora - ultimoApunte < 70) return;
+      ultimoApunte = ahora;
+      mundo?.apuntar((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+    };
+    window.addEventListener("pointermove", onMover, { passive: true });
+
     // EL TOQUE — window-level: los paneles HTML jamás roban el mundo
     const onToque = (e: PointerEvent) => {
       if (!mundoRef.current) return;
@@ -1468,6 +2065,22 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
       const g = mundoRef.current.golpear(nx, ny, false);
+      // v144: EL PUENTE — una placa de mando tocada obedece al instante
+      if (g.tipo === "holo") {
+        const acc = g.accion ?? "";
+        const key = g.key;
+        if (key) mundoRef.current?.pulsarPlato(key);
+        else if (acc) mundoRef.current?.pulsarPlato(acc);
+        sonar("click");
+        if (acc === "entrar") {
+          entrarRef.current?.();
+        } else if (acc === "modo") {
+          window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"));
+        } else {
+          window.dispatchEvent(new CustomEvent("vg:holo-accion", { detail: { accion: acc, key } }));
+        }
+        return;
+      }
       if (g.tipo === "portal" && typeof g.zona === "number") {
         // v141: PORTAL o TÍTULO 3D tocado — la cámara vuela a ese mundo
         // y la Casa abre su sala (se acaba el modo mundo si estaba)
@@ -1520,6 +2133,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pointerdown", onToque);
+      window.removeEventListener("pointermove", onMover);
       window.removeEventListener("vg:wgl-ir-a", onIr);
       window.removeEventListener("vg:wgl-modo-toggle", onModoToggle);
       window.removeEventListener("vg:wgl-modo-sync", onModoSync);
@@ -1543,19 +2157,21 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       document.documentElement.setAttribute("data-wgl-zona", String(z));
       setFase("fin");
       mundoRef.current?.reencuentro(z);
+      mundoRef.current?.setFaseEntrada("fin");
       return;
     }
     document.documentElement.setAttribute("data-wgl-entrada", "1");
     const T = (s: number) => s * 1000;
-    despues(T(1.0), () => { setFase("estrellas"); mundoRef.current?.nacerEstrellas(); });
-    despues(T(2.0), () => { setFase("globo"); mundoRef.current?.subirGlobo(); });
+    despues(T(1.0), () => { setFase("estrellas"); mundoRef.current?.setFaseEntrada("estrellas"); mundoRef.current?.nacerEstrellas(); });
+    despues(T(2.0), () => { setFase("globo"); mundoRef.current?.setFaseEntrada("globo"); mundoRef.current?.subirGlobo(); });
     despues(T(3.2), () => {
       setFase("marcadores");
+      mundoRef.current?.setFaseEntrada("marcadores");
       mundoRef.current?.encenderMarcadores(() => sonar("onda"));
     });
-    despues(T(4.4), () => { setFase("logo"); mundoRef.current?.nacerLogo(); });
-    despues(T(5.4), () => setFase("tagline"));
-    despues(T(6.4), () => { setFase("hint"); mundoRef.current?.invitar(); });
+    despues(T(4.4), () => { setFase("logo"); mundoRef.current?.setFaseEntrada("logo"); mundoRef.current?.nacerLogo(); });
+    despues(T(5.4), () => { setFase("tagline"); mundoRef.current?.setFaseEntrada("tagline"); });
+    despues(T(6.4), () => { setFase("hint"); mundoRef.current?.setFaseEntrada("hint"); mundoRef.current?.invitar(); });
     return () => { for (const id of tiempos.current) clearTimeout(id); tiempos.current = []; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [soporte]);
@@ -1575,6 +2191,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
   const entrar = useCallback(() => {
     if (fase === "volando" || fase === "fin") return;
     setFase("volando");
+    mundoRef.current?.setFaseEntrada("volando");
     sonar("whoosh");
     const m = mundoRef.current;
     if (m) {
@@ -1592,8 +2209,13 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       document.documentElement.setAttribute("data-wgl-entrada", "0");
       window.dispatchEvent(new CustomEvent("vg:wgl-entrada-fin"));
     });
-    despues(1250, () => setFase("fin"));
+    despues(1250, () => {
+      setFase("fin");
+      mundoRef.current?.setFaseEntrada("fin");
+    });
   }, [fase, despues]);
+
+  entrarRef.current = entrar;
 
   // ── SIN WEBGL: la Casa vuelve a su intro cinematográfica v72 ──
   if (soporte === false) return <IntroFallback />;
@@ -1663,14 +2285,46 @@ function IntroFallback() {
 // onda del teatro grave. Todo try/catch: sin audio la Casa sigue.
 // ────────────────────────────────────────────────────────────
 let ctxAudio: AudioContext | null = null;
-function sonar(tipo: "ping" | "whoosh" | "onda" | "freno") {
+function sonar(tipo: "ping" | "whoosh" | "onda" | "freno" | "tic" | "click" | "clank") {
   try {
     ctxAudio = ctxAudio || new (window.AudioContext || (window as never as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (!ctxAudio || ctxAudio.state === "suspended") return;
     const t = ctxAudio.currentTime;
     const g = ctxAudio.createGain();
     g.connect(ctxAudio.destination);
-    if (tipo === "freno") {
+    if (tipo === "tic") {
+      // v144: el SUSURRO del puente — la placa avisa que está viva bajo el dedo
+      const o = ctxAudio.createOscillator();
+      o.type = "square";
+      o.frequency.setValueAtTime(1720, t);
+      g.gain.setValueAtTime(0.012, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      o.connect(g); o.start(t); o.stop(t + 0.06);
+    } else if (tipo === "click") {
+      // v144: el MANDO se obedece — dos notas de consola militar
+      const o = ctxAudio.createOscillator();
+      const o2 = ctxAudio.createOscillator();
+      o.type = "square"; o2.type = "square";
+      o.frequency.setValueAtTime(720, t);
+      o2.frequency.setValueAtTime(1080, t + 0.055);
+      g.gain.setValueAtTime(0.028, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+      o.connect(g); o2.connect(g);
+      o.start(t); o.stop(t + 0.06); o2.start(t + 0.055); o2.stop(t + 0.13);
+    } else if (tipo === "clank") {
+      // v144 P1: el ACOPLE de la pantalla holográfica — metal que se asienta
+      const o = ctxAudio.createOscillator();
+      const o2 = ctxAudio.createOscillator();
+      o.type = "triangle"; o2.type = "square";
+      o.frequency.setValueAtTime(196, t);
+      o.frequency.exponentialRampToValueAtTime(131, t + 0.09);
+      o2.frequency.setValueAtTime(1244, t);
+      o2.frequency.exponentialRampToValueAtTime(622, t + 0.05);
+      g.gain.setValueAtTime(0.03, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      o.connect(g); o2.connect(g);
+      o.start(t); o.stop(t + 0.24); o2.start(t); o2.stop(t + 0.06);
+    } else if (tipo === "freno") {
       // v142: el aterrizaje — nota grave + quinta que se asientan (el anillo
       // de la nave frena); cortita y grave para no cansar en vuelos seguidos
       const o = ctxAudio.createOscillator();

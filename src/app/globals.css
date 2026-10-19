@@ -4825,3 +4825,75 @@ html[data-wgl-capsula="1"] .vg143-capsula h3 {
   .vg143-capsula { transition: none; }
   .vg143-marco::before, .vg143-marco::after { content: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v144.0 HOLOGRAMA TOTAL — EL PUENTE DE MANDO + EL RAIL DEL ESTADO
+   El chrome plano muere: html[data-holo] dorme todo residuo 2D y el
+   rail (StatsTicker + LiveTitle) vive como tira holográfica CSS3D.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* EL RAIL — tira holográfica acoplada a la cámara (host CSS3D) */
+.vg144-railhost {
+  pointer-events: auto;
+  user-select: none;
+}
+.vg144-rail {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(12, 19, 33, 0.82), rgba(6, 10, 20, 0.68));
+  border: 1px solid rgba(245, 197, 66, 0.26);
+  box-shadow:
+    0 0 26px -10px rgba(245, 197, 66, 0.35),
+    inset 0 0 22px rgba(0, 240, 255, 0.05);
+  /* SIN backdrop-filter: el blur dentro de una capa CSS3D transformada
+     mata al rasterizador de Chrome headless (lección v144 QA) */
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+/* el ticker dentro del rail: sin borde inferior de página, pegado al cristal */
+.vg144-rail [data-luxe-oculto] {
+  border-bottom: none;
+  background: transparent;
+  width: 100%;
+}
+
+/* EL CHROME PLANO DORMIDO — nada 2D donde el puente vive */
+html[data-holo="1"] .vg140-tagline,
+html[data-holo="1"] .vg140-hint {
+  display: none;
+}
+html[data-holo="1"] .vg141-modo-ui {
+  display: none;
+}
+/* el casco (cabecera HUD + barra Google + franja de cromo) con mundo vivo:
+   display none por React (hostCapsula) — esta regla lo garantiza si HMR */
+html[data-wgl-capsula="1"] .vg-casco-v140 {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vg144-rail { box-shadow: none; }
+}
+
+/* v144 QA: en MÓVIL, la cadena diorama→cuna→flotador (translateZ real +
+   preserve-3d) DENTRO de la cápsula CSS3D empuja el contenido detrás del
+   plano de la pantalla holográfica y deja la sala invisible. La cápsula ya
+   VIVE en 3D real (vuela con el universo): en móvil se aplana el nido. */
+@media (max-width: 767px) {
+  html[data-wgl-capsula="1"] .vg143-capsula .diorama-v137,
+  html[data-wgl-capsula="1"] .vg143-capsula .cuna-v139,
+  html[data-wgl-capsula="1"] .vg143-capsula .flotador-v138 {
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* v144 P1: SOMBRA PROYECTADA de la pantalla holográfica — el cristal pesa */
+.vg143-marco {
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.14),
+    0 24px 70px rgba(0, 0, 0, 0.6),
+    0 60px 160px 30px rgba(0, 0, 0, 0.45),
+    inset 0 0 30px rgba(0, 240, 255, 0.05);
+}

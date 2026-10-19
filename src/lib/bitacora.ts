@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v144.0",
+    nombre: "HOLOGRAMA TOTAL",
+    tipo: "tecno",
+    hitos: [
+      "EL CHROME PLANO MUERE: la cabecera HUD, la franja de pestañas y el pie de la Casa dejan de ser DOM — ahora viven DENTRO del universo como EL PUENTE DE MANDO, una consola holográfica acoplada a la cámara con PLACAS 3D reales (marco metálico + filos de neón + LETRAS EXTRUIDAS individuales por placa). Cada pestaña abierta es una placa que respira, se enciende con el color de su sección, se toca con raycast (hover = la placa crece y susurra) y se cierra con su × 3D propio",
+      "MANDOS DEL PUENTE: + (nueva pestaña), BUSCAR, MENU, CUENTA y AJUSTES son placas 3D con letras de volumen real — nada de botones planos. El MINI LOGO VANGUARD (8 letras de oro extruido) corona el puente en escritorio; en móvil el puente se compacta (pestaña activa + + + MENU) y el pie 3D se apaga para dejar la consola de vuelo limpia",
+      "EL PIE Y LA ENTRADA EN 3D: el pie de la Casa (sistema vivo · versión · atajos) son letras 3D en las esquinas; el TAGLINE de la entrada («El mundo no espera. Tú tampoco.») nace LETRA A LETRA en volumen 3D bajo el planeta y la placa ENTRAR («TOCA EL GLOBO PARA ENTRAR») es una placa 3D raycasteable — el DOM de la entrada queda dormido (html[data-holo])",
+      "EL RAIL DEL ESTADO: la franja viva (StatsTicker + LiveTitle) vive DENTRO del mundo como tira holográfica CSS3D acoplada a la cámara bajo el puente — cristal oscuro, filo dorado y respiración con el warp. El TÍTULO DE LA PÁGINA también es holograma: pulsa con marcos de esquina animados (document.title vivo)",
+      "MODO MUNDO EN 3D PURO: la UI del modo (SALIR DEL MUNDO + hint de portales) son placas y letras 3D en el espacio — el único residuo DOM visible queda en cero. Todo el puente obedece a los 8 idiomas de la Casa (etiquetas via vg:holo-etiquetas) y muere/renace limpio con el mundo WebGL (data-holo se quita, el chrome plano resucita en el fallback sin WebGL)",
+    ],
+  },
+  {
     version: "v143.0",
     nombre: "LA CASA EN EL MUNDO",
     tipo: "tecno",

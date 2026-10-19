@@ -11,7 +11,7 @@ import { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } fr
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
-import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
+import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, TABS, type TabKey } from "@/components/vanguard/tab-nav";
 // v106.0 PESTAÑAS DE CROMO: la franja del navegador interno reemplaza a la
 // barra de secciones — pestañas que se abren, se eligen y se cierran.
 import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
@@ -606,6 +606,9 @@ export default function Home() {
   // DENTRO del universo 3D vía portal. Si no (sin WebGL), DOM plano de siempre.
   const [hostCapsula, setHostCapsula] = useState<HTMLElement | null>(null);
   const [hostNav, setHostNav] = useState<HTMLElement | null>(null);
+  // v144 HOLOGRAMA TOTAL: el RAIL del estado — la franja viva de la Casa como
+  // tira holográfica CSS3D acoplada a la cámara (StatsTicker + LiveTitle)
+  const [hostRail, setHostRail] = useState<HTMLElement | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
@@ -742,16 +745,20 @@ export default function Home() {
   // (antes del primer pintado); aquí —layout effect padre— ya existen. Los
   // eventos cubren el ciclo de vida posterior (HMR, destrucción del mundo).
   useLayoutEffect(() => {
-    const w = window as unknown as { __vgCapsulaHost?: HTMLElement | null; __vgNavHost?: HTMLElement | null };
+    const w = window as unknown as { __vgCapsulaHost?: HTMLElement | null; __vgNavHost?: HTMLElement | null; __vgRailHost?: HTMLElement | null };
     setHostCapsula(w.__vgCapsulaHost ?? null);
     setHostNav(w.__vgNavHost ?? null);
+    setHostRail(w.__vgRailHost ?? null);
     const onCapsula = (e: Event) => setHostCapsula(((e as CustomEvent).detail as HTMLElement | null) ?? null);
     const onNav = (e: Event) => setHostNav(((e as CustomEvent).detail as HTMLElement | null) ?? null);
+    const onRail = (e: Event) => setHostRail(((e as CustomEvent).detail as HTMLElement | null) ?? null);
     window.addEventListener("vg:wgl-capsula", onCapsula);
     window.addEventListener("vg:wgl-navhost", onNav);
+    window.addEventListener("vg:wgl-railhost", onRail);
     return () => {
       window.removeEventListener("vg:wgl-capsula", onCapsula);
       window.removeEventListener("vg:wgl-navhost", onNav);
+      window.removeEventListener("vg:wgl-railhost", onRail);
     };
   }, []);
 
@@ -871,6 +878,72 @@ export default function Home() {
   const abrirNueva = useCallback(() => {
     handleTabChange("nueva");
   }, [handleTabChange]);
+
+  // ════════════════════════════════════════════════════════
+  // v144 HOLOGRAMA TOTAL — EL PUENTE DE MANDO.
+  // La Casa alimenta al puente 3D (pestañas + etiquetas i18n) y obedece sus
+  // mandos: cada placa del puente despacha vg:holo-accion y aquí se ejecuta.
+  // (tras cerrarPestana y abrirNueva: las deps existen aquí)
+  // ════════════════════════════════════════════════════════
+  useEffect(() => {
+    if (!hostCapsula) return;
+    const onHolo = (e: Event) => {
+      const d = (e as CustomEvent).detail || {};
+      const acc = String(d.accion ?? "");
+      const key = d.key as TabKey | undefined;
+      switch (acc) {
+        case "tab": if (key) handleTabChange(key); break;
+        case "cerrar": if (key) cerrarPestana(key); break;
+        case "nueva": abrirNueva(); break;
+        case "buscar": setSearchOpen(true); break;
+        case "menu": setMenuOpen(true); break;
+        case "cuenta": setAccountOpen(true); break;
+        case "ajustes": setSettingsOpen(true); break;
+      }
+    };
+    window.addEventListener("vg:holo-accion", onHolo);
+    return () => window.removeEventListener("vg:holo-accion", onHolo);
+  }, [hostCapsula, handleTabChange, cerrarPestana, abrirNueva]);
+
+  // las PESTAÑAS abiertas viajan al puente (placas 3D con letras extruidas)
+  useEffect(() => {
+    if (!hostCapsula) return;
+    const lista = pestanas.map((k) => ({
+      key: k as string,
+      label: TABS[k]?.short ?? k,
+      color: accentOfSection(sectionOfTab(k).key),
+    }));
+    window.dispatchEvent(new CustomEvent("vg:holo-pestanas", { detail: { lista, activa: tab } }));
+  }, [pestanas, tab, hostCapsula]);
+
+  // las ETIQUETAS del puente en el idioma de la Casa (8 idiomas)
+  useEffect(() => {
+    if (!hostCapsula) return;
+    window.dispatchEvent(new CustomEvent("vg:holo-etiquetas", { detail: {
+      buscar: t("holo.buscar"),
+      menu: t("holo.menu"),
+      cuenta: t("holo.cuenta"),
+      ajustes: t("holo.ajustes"),
+      nueva: "+",
+      hintEntrar: t("holo.entrar"),
+      salir: t("holo.salir"),
+      hintMundo: t("holo.hintMundo"),
+      pieIzq: `${t("footer.system")} · ${APP_VERSION_LABEL}`,
+      pieDer: "M MENU · 1-9 PESTAÑAS · F PANTALLA",
+    } }));
+  }, [hostCapsula, t]);
+
+  // el TÍTULO DE LA PÁGINA también es holograma — pulsa con la Casa viva
+  useEffect(() => {
+    if (!hostCapsula) return;
+    const marcos = ["\u25E4", "\u25E2", "\u25E3", "\u25E5"];
+    let i = 0;
+    const id = window.setInterval(() => {
+      i++;
+      document.title = `${marcos[i % marcos.length]} VANGUARD \u00B7 HOLOGRAMA`;
+    }, 1600);
+    return () => window.clearInterval(id);
+  }, [hostCapsula]);
 
   // v107.0 GRUPOS DE CROMO: reordenar arrastrando + cerrar VARIAS (grupos y
   // "cerrar las demás") en UNA sola escritura de estado — cerrar de a una con
@@ -1211,10 +1284,11 @@ export default function Home() {
       <MotorLuxe />
       {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
       <MotorArquitecto />
-      {/* v108.0 MODO INMERSIÓN / v141 MODO MUNDO: la cabecera, la barra Google
-          y la franja se apartan (display:contents cuando no — cero cajas fantasma);
-          en MODO MUNDO se aparta TODO — solo vive el universo 3D */}
-      <div className={inmersion || modoMundo ? "hidden" : "contents vg-casco-v140"}>
+      {/* v108.0 MODO INMERSIÓN / v141 MODO MUNDO / v144 HOLOGRAMA TOTAL:
+          con el mundo WebGL vivo (hostCapsula) EL CHROME PLANO ENTERO se
+          aparta — el puente de mando 3D (mundo-webgl) lo reemplaza completo.
+          Sin WebGL: display:contents cuando no — cero cajas fantasma. */}
+      <div className={inmersion || modoMundo || hostCapsula ? "hidden" : "contents vg-casco-v140"}>
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -1238,13 +1312,28 @@ export default function Home() {
         onDuplicar={duplicarPestana}
         onInmersion={alternarInmersion}
       />
-      {/* v42.3: la pestaña del navegador muestra "(N EN LÍNEA)" con 2+ guerreros */}
-      <LiveTitle />
-      <StatsTicker />
       {/* v67.0 EL HANGAR: capa de crisis global + easter eggs vivos en toda la app */}
       <ProtocoloRojo />
       <EasterEggs />
       </div>
+
+      {/* v144 HOLOGRAMA TOTAL: la franja viva (StatsTicker + LiveTitle) vive
+          DENTRO del universo — el RAIL holográfico CSS3D acoplado a la cámara.
+          Sin mundo: DOM plano de siempre. */}
+      {hostRail ? (
+        createPortal(
+          <>
+            <LiveTitle />
+            <StatsTicker />
+          </>,
+          hostRail,
+        )
+      ) : (
+        <div className={hostCapsula || inmersion || modoMundo ? "hidden" : "contents"}>
+          <LiveTitle />
+          <StatsTicker />
+        </div>
+      )}
 
       {/* v108: píldora flotante para salir de la inmersión — siempre a mano */}
       {inmersion && (
@@ -1292,7 +1381,7 @@ export default function Home() {
           </main>
         )}
 
-      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion || modoMundo ? "hidden" : ""}`}>
+      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion || modoMundo || hostCapsula ? "hidden" : ""}`}>
         <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] sm:text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">
