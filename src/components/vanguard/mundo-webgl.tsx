@@ -137,7 +137,13 @@ const PORTALES_3D: { zona: number; texto: string; p: [number, number, number]; c
   { zona: 4, texto: "CUARTEL", p: [-0.45, -2.05, 1.6], color: 0x4da6ff },
 ];
 
-type Letra3D = { mesh: THREE.Mesh; fase: number; base: THREE.Vector3; quieto?: boolean };
+type Letra3D = { mesh: THREE.Mesh; fase: number; base: THREE.Vector3; expandida?: THREE.Vector3; quieto?: boolean };
+
+// v141: en MODO MUNDO la cámara se ALEJA (el universo entero en cuadro:
+// portales completos + logo expandido sobre el planeta)
+const ZONA_POS_MODO: Record<number, [number, number, number]> = {
+  1: [0, 0, 5.4],
+};
 
 // marcadores: teatros de guerra de la Casa (OSINT real) + ciudades caliente
 export interface MarcadorWGL {
@@ -409,18 +415,20 @@ class MundoWGL {
   //    pantalla → planeta a la izquierda, contenido a la derecha
   // ════════════════════════════════════════════════════════
   private poseDe(zona: number): { pos: [number, number, number]; tgt: THREE.Vector3 } {
-    const pos = ZONA_POS[zona];
     const t0 = ZONA_TGT[zona];
     const tgt = new THREE.Vector3(t0[0], t0[1], t0[2]);
-    if (this.modoMundo || zona === 0) return { pos, tgt };
+    if (this.modoMundo || zona === 0) {
+      const p = ZONA_POS_MODO[zona] ?? ZONA_POS[zona];
+      return { pos: p, tgt };
+    }
     // desviar el punto de mira sobre el vector DERECHA de la cámara:
     // funciona igual en las 5 zonas sin recalcular poses a mano
+    const pos = ZONA_POS[zona];
     const dir = new THREE.Vector3(t0[0] - pos[0], t0[1] - pos[1], t0[2] - pos[2]).normalize();
     const derecha = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize();
     tgt.addScaledVector(derecha, POSE_PANEL_DESV);
     return { pos, tgt };
   }
-
   // EL VUELO DE CÁMARA puro (compartido por volarAZona e irAPose)
   private volarCamara(pos: [number, number, number], tgt: THREE.Vector3, dur: number) {
     const objPos = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
@@ -535,16 +543,8 @@ class MundoWGL {
     logo.grupo.position.set(-logo.ancho / 2, 2.02, 0.55);
     this.holo.add(logo.grupo);
     this.letrasLogo = logo.letras;
-    if (this.logoNacido) {
-      // la fuente llegó tarde: nacer directo y compacto (reencuentro)
-      for (const l of this.letrasLogo) {
-        l.mesh.visible = true;
-        (l.mesh.material as THREE.MeshStandardMaterial).opacity = 1;
-        l.mesh.scale.setScalar(0.6);
-        l.base.multiplyScalar(0.62).add(new THREE.Vector3(0, 0.3, 0));
-        l.mesh.position.copy(l.base);
-      }
-    }
+    for (const l of this.letrasLogo) l.expandida = l.base.clone();
+    if (this.logoNacido) this.compactarLogoInstante();
     // LOS TÍTULOS DE CADA MUNDO — tocables (tocar el título = entrar)
     for (const t of TITULOS_3D) {
       const tit = this.hacerTexto3D(t.texto, { tam: t.tam, prof: t.tam * 0.38, color: t.color, emis: t.emis });
@@ -729,6 +729,19 @@ class MundoWGL {
   // ════════════════════════════════════════════════════════
   // v141 — EL LOGO 3D y EL MODO MUNDO
   // ════════════════════════════════════════════════════════
+  // reencuentro (recarga): el logo aparece YA compacto, sin animación
+  private compactarLogoInstante() {
+    this.logoNacido = true;
+    for (const l of this.letrasLogo) {
+      if (!l.expandida) continue;
+      l.mesh.visible = true;
+      (l.mesh.material as THREE.MeshStandardMaterial).opacity = 1;
+      l.mesh.scale.setScalar(0.6);
+      l.base.copy(l.expandida).multiplyScalar(0.62).add(new THREE.Vector3(0, 0.3, 0));
+      l.mesh.position.copy(l.base);
+    }
+  }
+
   nacerLogo() {
     if (!this.letrasLogo.length) { this.pendienteLogo = true; return; }
     this.logoNacido = true;
@@ -749,11 +762,29 @@ class MundoWGL {
   condensarLogo() {
     if (!this.logoNacido) return;
     for (const l of this.letrasLogo) {
+      if (!l.expandida) continue;
       l.quieto = true;
       this.cancelar.push(animar(l.mesh.scale, { x: 0.6, y: 0.6, z: 0.6 }, 900, { ease: easeInOut }));
-      this.cancelar.push(animar(l.mesh.position, { x: l.base.x * 0.62, y: l.base.y + 0.3, z: l.base.z * 0.62 }, 950, {
+      this.cancelar.push(animar(l.mesh.position, { x: l.expandida.x * 0.62, y: l.expandida.y + 0.3, z: l.expandida.z * 0.62 }, 950, {
         onDone: () => {
           l.base.set(l.mesh.position.x, l.mesh.position.y, l.mesh.position.z);
+          l.quieto = false;
+        },
+      }));
+    }
+  }
+
+  // MODO MUNDO: el arco completo VANGUARD vuelve a abrirse sobre el planeta
+  expandirLogo() {
+    if (!this.logoNacido) return;
+    for (const l of this.letrasLogo) {
+      if (!l.expandida) continue;
+      l.quieto = true;
+      l.mesh.visible = true;
+      this.cancelar.push(animar(l.mesh.scale, { x: 1, y: 1, z: 1 }, 900, { ease: easeInOut }));
+      this.cancelar.push(animar(l.mesh.position, { x: l.expandida.x, y: l.expandida.y, z: l.expandida.z }, 950, {
+        onDone: () => {
+          l.base.copy(l.expandida!);
           l.quieto = false;
         },
       }));
@@ -765,6 +796,7 @@ class MundoWGL {
     this.modoMundo = false;
     document.documentElement.removeAttribute("data-wgl-modo");
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: false } }));
+    this.condensarLogo();
     this.volarAZona(zona);
     document.documentElement.setAttribute("data-wgl-zona", String(zona));
     window.dispatchEvent(new CustomEvent("vg:wgl-sala", { detail: { zona } }));
@@ -776,6 +808,7 @@ class MundoWGL {
     if (this.modoMundo) document.documentElement.setAttribute("data-wgl-modo", "1");
     else document.documentElement.removeAttribute("data-wgl-modo");
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: this.modoMundo } }));
+    if (this.modoMundo) this.expandirLogo(); else this.condensarLogo();
     this.irAPose(1000);
     sonar("whoosh");
   }
@@ -785,6 +818,7 @@ class MundoWGL {
     this.modoMundo = on;
     if (on) document.documentElement.setAttribute("data-wgl-modo", "1");
     else document.documentElement.removeAttribute("data-wgl-modo");
+    if (on) this.expandirLogo(); else this.condensarLogo();
     this.irAPose(1000);
   }
 
@@ -937,6 +971,8 @@ class MundoWGL {
   }
   reencuentro(zonaInicial: number) {
     // entrada ya vivida esta sesión: el mundo espera en la zona de la sala
+    // v141: el logo 3D aparece YA compacto (antes no nacía tras recargar)
+    if (!this.logoNacido) this.compactarLogoInstante();
     this.zona = zonaInicial;
     window.dispatchEvent(new CustomEvent("vg:wgl-zona", { detail: { zona: zonaInicial } }));
     const { pos, tgt } = this.poseDe(zonaInicial);
