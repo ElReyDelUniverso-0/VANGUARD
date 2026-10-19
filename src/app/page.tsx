@@ -7,7 +7,8 @@
 // v17 ESTABILIDAD: PanelErrorBoundary aísla fallos por panel — un módulo caído
 // ya NO tumba la app; tarjeta de recuperación con REINTENTAR por módulo.
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
 import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
@@ -307,6 +308,280 @@ const MaquinaPanel = dynamic(() => import("@/components/vanguard/panels/maquina-
 const EstrategiaGlobalPanel = dynamic(() => import("@/components/vanguard/panels/estrategia-panel").then((m) => m.EstrategiaGlobalPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
+// ══════════════════════════════════════════════════════════════
+// v143.0 LA CASA EN EL MUNDO — las salas viven DENTRO del mundo 3D.
+// SALAS: el catálogo entero de paneles — UNA sola fuente de verdad.
+// SALAVIVA: el cuerpo de la Casa. El MISMO árbol vive en dos hogares:
+//  · dentro de la CÁPSULA holográfica del mundo WebGL (portal React a
+//    la pantalla CSS3D acoplada a la zona donde aterriza la cámara), o
+//  · en el DOM plano cuando no hay universo (fallback honesto v72/v140).
+// ══════════════════════════════════════════════════════════════
+function Salas({ tab }: { tab: TabKey }) {
+  return (
+    <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
+        {tab === "inicio" && (
+          <>
+            {/* v120.0 GRAN SALTO 3D: la MEGALÓPOLIS viva abre la portada —
+                ciclo día/noche EN TIEMPO REAL, región que gira (sola cada
+                día, a mano con fundido) y letras 3D volumétricas */}
+            <CiudadHero />
+            {/* v67.0 EL HANGAR: el costo del mundo y tu rival, siempre a la vista */}
+            <CostoGuerra />
+            <RivalStrip />
+            <HomePanel />
+            {/* v121.0 FRANJA ILUSTRADA: las ilustraciones vivas FUNCIONALES
+                viven ENTRE los bloques de la casa — satélite, globo y ciudad
+                procedurales + la hora real del visitante */}
+            <FranjaIlustrada titulo="EL MUNDO NO SE DETIENE" />
+            {/* v46.0: la meta comunitaria encima de todo — cada visitante ve el objetivo y su recompensa */}
+            <GoalBanner />
+            {/* v49.0: misión de difusión 200 enlaces — progreso real desde la BD, recompensa global al llegar */}
+            <ShareGoalBanner />
+            {/* v18: sección de crecimiento bajo la portada — conversión de visitantes a embajadores */}
+            <GrowthShare />
+            {/* v34: kit de reclutamiento (mensajes para copiar + medidor de agentes) y FAQ SEO */}
+            <PromoKit />
+            {/* v37 MISIÓN 100: arsenal de 100 enlaces + contador global en vivo */}
+            <Mission100 />
+            <SeoFaq />
+          </>
+        )}
+        {tab === "briefing" && <DailyBriefingPanel />}
+        {tab === "mapa" && <MapPanel />}
+        {tab === "operaciones" && <OpsPanel />}
+        {tab === "misiones" && <MissionsPanel />}
+        {tab === "noticias" && <NewsPanel />}
+        {tab === "redaccion" && <RedaccionPanel />}
+        {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
+        {tab === "nueva" && <NuevaPanel />}
+        {/* v121.0 MODO ATLAS MUNDIAL — el modo que faltaba: cada país y cada
+            persona importante del planeta con su ubicación EN VIVO */}
+        {tab === "atlas" && <AtlasPanel />}
+        {/* v121.0 LA CAMA — la habitación de personalización total */}
+        {tab === "cama" && <CamaPanel />}
+        {tab === "atelier" && <AtelierPanel />}
+        {tab === "comunidad" && <ComunidadPanel />}
+        {tab === "redmundial" && <RedMundialPanel />}
+        {/* v129.0 LA SALA DE GUERRA — el mando supremo: teatros en vivo, teatro 3D y bolsa de guerra */}
+        {tab === "salaguerra" && <SalaGuerraPanel />}
+        {tab === "rostros" && <RostrosPanel />}
+        {tab === "agentes" && <GobiernoLibrePanel />}
+        {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
+        {tab === "observatorio" && <ObservatorioPanel />}
+        {tab === "experimental" && <ExperimentalPanel />}
+        {/* v115.0 SINGULARIDAD — la sala donde el agente autónomo construye delante de ti */}
+        {tab === "arquitecto" && <ArquitectoPanel />}
+        {tab === "galeria" && <GalleryPanel />}
+        {tab === "briefings" && <BriefingsPanel />}
+        {tab === "quiz" && <QuizPanel />}
+        {tab === "predicciones" && <PredictionsPanel />}
+        {tab === "fusion" && <FusionPanel />}
+        {tab === "recompensas" && <RewardsPanel />}
+        {tab === "tienda" && <ShopPanel />}
+        {tab === "logros" && <AchievementsPanel />}
+        {tab === "minijuego" && <MiniGamePanel />}
+        {tab === "dron" && <DroneStrikePanel />}
+        {tab === "torneos" && <TournamentsPanel />}
+        {tab === "retos" && <DailyChallengesPanel />}
+        {tab === "estadisticas" && <ProgressChartsPanel />}
+        {tab === "amigos" && <FriendsPanel />}
+        {tab === "notificaciones" && <NotificationsPanel />}
+        {tab === "racha" && <StreakCalendarPanel />}
+        {tab === "registro" && <ActivityLogPanel />}
+        {tab === "ayuda" && <HelpPanel />}
+        {tab === "camaras" && <CamerasPanel />}
+        {tab === "pulso" && <PulsoPanel />}
+        {/* v67.0 EL HANGAR: base 3D del agente */}
+        {tab === "hangar" && <HangarPanel />}
+        {tab === "combate" && <CombatSimulatorPanel />}
+        {tab === "historia" && <HistoricalWarsPanel />}
+        {tab === "muertes" && <FamousDeathsPanel />}
+        {tab === "apuestas" && <WarBettingPanel />}
+        {tab === "conquista" && <CountryControlPanel />}
+        {tab === "mundo" && <WorldConquestPanel />}
+        {tab === "multijugador" && <MultiplayerPanel />}
+        {tab === "frente" && <FrentePanel />}
+        {tab === "detective" && <DetectivePanel />}
+        {tab === "edad" && <AgeOfNationsPanel />}
+        {tab === "arcade" && <ArcadePanel />}
+        {/* v102.0 LA CIUDADELA — taller de juegos de la comunidad */}
+        {tab === "taller" && <TallerJuegosPanel />}
+        {tab === "bookmaker" && <BookmakerPanel />}
+        {tab === "enciclopedia" && <EncyclopediaPanel />}
+        {tab === "curiosidades" && <CuriosidadesPanel />}
+        {tab === "epocas" && <ErasPanel />}
+        {tab === "conquistas3d" && <Conquistas3DPanel />}
+        {tab === "contadores" && <CountersPanel />}
+        {tab === "carteles" && <CartelesPanel />}
+        {tab === "bolsa" && <MarketsPanel />}
+        {tab === "hacienda" && <HaciendaPanel />}
+        {tab === "divisas" && <DivisasPanel />}
+        {/* v13 — centro de mando global */}
+        {tab === "osint" && <OsintPanel />}
+        {tab === "warsim" && <WarsimPanel />}
+        {/* v100.0 LABORATORIO DEL DESTINO: ¿y si...? */}
+        {tab === "laboratorio" && <LaboratorioPanel />}
+        {tab === "cambios" && <CambiosPanel />}
+        {tab === "analista" && <AnalistaPanel />}
+        {/* v102.0 LA CIUDADELA — fortaleza de acero (seguridad visible) */}
+        {tab === "fortaleza" && <FortalezaPanel />}
+        {tab === "escenarios" && <EscenariosPanel />}
+        {tab === "espionaje" && <EspionagePanel />}
+        {tab === "crisis" && <CrisisPanel />}
+        {tab === "radar" && <RadarPanel />}
+        {tab === "ojodios" && <OjoDiosPanel />}
+        {tab === "verdades" && <InfinitaPanel />}
+        {tab === "verifica" && <VerificaPanel />}
+        {tab === "centinela" && <CentinelaPanel />}
+        {tab === "espectro" && <EspectroPanel />}
+        {/* v89.0 OPERACIÓN ESPEJO */}
+        {tab === "pulsos" && <PulsosPanel />}
+        {tab === "evaluacion" && <EvaluacionPanel />}
+        {tab === "perdidas" && <PerdidasPanel />}
+        {tab === "frentes" && <FrentesPanel />}
+        {tab === "simulador" && <SimuladorPanel />}
+        {tab === "canales" && <CanalesPanel />}
+        {tab === "mundial" && <MundialPanel />}
+        {tab === "wikiguerra" && <WikiguerraPanel />}
+        {tab === "cielos" && <CielosPanel />}
+        {tab === "ciber" && <CiberPanel />}
+        {tab === "sismo" && <SismoPanel />}
+        {tab === "mercados" && <MercadosPanel />}
+        {/* v91.0 AUGE Y CAÍDA: RTS territorial jugable */}
+        {tab === "imperio" && <ImperioPanel />}
+        {/* v92.0 OJO DEL MUNDO: tercera hornada de espejos */}
+        {tab === "pronosticos" && <PronosticosPanel />}
+        {tab === "enclaves" && <EnClavePanel />}
+        {tab === "extranjera" && <ExtranjeraPanel />}
+        {tab === "geoint" && <GeointPanel />}
+        {tab === "monitorglobal" && <MonitorGlobalPanel />}
+        {tab === "canalbrief" && <CanalBriefPanel />}
+        {tab === "estrategia" && <EstrategiaGlobalPanel />}
+        {/* v94.0 GOOGLES TOTAL: el Google de los problemas geopolíticos */}
+        {tab === "googles" && <GooglesPanel />}
+        {/* v98.0 ORO TOTAL: la búsqueda visual de Vanguard */}
+        {tab === "imagenes" && <ImagenesPanel />}
+        {tab === "mente" && <MentePanel />}
+        {/* v95.0 EXPEDIENTE TOTAL: la red, el espejo y la máquina del tiempo */}
+        {tab === "grafo" && <GrafoPanel />}
+        {tab === "espejo" && <EspejoPanel />}
+        {tab === "maquina" && <MaquinaPanel />}
+        {/* v93.0 VANGUARD EARTH: el googles de Vanguard */}
+        {tab === "tierra" && <TierraPanel />}
+        {tab === "mipais" && <MiPaisPanel />}
+        {/* v97.0 PANTALLA TOTAL: VANGUARD TV — feed vertical + sala de proyección */}
+        {tab === "pantalla" && <PantallaPanel />}
+        {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
+        {tab === "expedientes" && <ExpedientesPanel />}
+        {/* v59 ALEJANDRÍA OSCURA: teorías, armas y civilizaciones */}
+        {tab === "oscura" && <OscuraPanel />}
+        {tab === "geopolitica" && <GeopoliticaPanel />}
+        {tab === "planeta" && <PlanetaPanel />}
+        {tab === "biblioteca" && <BibliotecaPanel />}
+        {tab === "tribunal" && <TribunalPanel />}
+        {tab === "alianzas" && <AlianzasPanel />}
+        {tab === "agente" && <AgentePanel />}
+        {tab === "agenteia" && <AgenteIaPanel />}
+        {tab === "obras" && <MuroObrasPanel />}
+        {tab === "gancho" && <HooksPanel />}
+        {tab === "ranking" && <RankingPanel />}
+        {tab === "foros" && <ForumPanel />}
+        {tab === "consejoia" && <ConsejoIaPanel />}
+        {/* v85 — EL MUNDO DENTRO: empleos con sueldos, AR y constructor de mapas */}
+        {tab === "empleos" && <EmpleosPanel />}
+        {tab === "armodo" && <ModoArPanel />}
+        {tab === "mapascrea" && <CreadorMapasPanel />}
+        {tab === "salas" && <SalasPanel />}
+        {tab === "encuestas" && <PollsPanel />}
+        {tab === "videos" && <VideosPanel />}
+        {tab === "estudio" && <EstudioPanel />}
+        {tab === "directos" && <DirectosPanel />}
+        {tab === "memes" && <MemeStudioPanel />}
+        {tab === "envivo" && <EnVivoPanel />}
+        {tab === "contribuidores" && <ContribuidoresPanel />}
+        {tab === "perfil" && <PerfilPanel />}
+        {/* v24 — VERDAD CRUDA: el lado oscuro de los conflictos */}
+        {tab === "abusos" && <AbusosPanel />}
+        {tab === "incidentes" && <IncidentesPanel />}
+        {tab === "memorial" && <MemorialPanel />}
+        {tab === "sala18" && <SalaRojaPanel />}
+        {tab === "dronguerra" && <DronGuerraPanel />}
+        {tab === "recluta" && <ReclutamientoPanel />}
+        {tab === "embajadores" && <EmbajadoresPanel />}
+        {tab === "telegram" && <TelegramPanel />}
+        {/* v26 — COMUNIDAD CREADORA: todo lo sube la gente */}
+        {tab === "creador" && <CreadorPanel />}
+        {tab === "armeria" && <ArmeriaPanel />}
+        {tab === "maps" && <GMapsPanel />}
+        {tab === "studios" && <StudiosPanel />}
+        {tab === "gobierno" && <GobiernoPanel />}
+        {tab === "bolsamonedas" && <BolsaPanel />}
+        {/* v28 — PARA TI: feed de la comunidad */}
+        {tab === "foryou" && <ForYouPanel />}
+    </PanelErrorBoundary>
+  );
+}
+
+// v143: el CUERPO de la Casa — el mismo árbol en la cápsula 3D o en el DOM.
+// Los tres planos vivos (diorama → cuna → flotador) viajan con las salas:
+// dentro del mundo 3D siguen meciéndose como pantallas reales del espacio.
+function SalaViva({ tab, dirMov, oculta, variantesSala, alTocarBorde, alSoltarBorde }: {
+  tab: TabKey;
+  dirMov: 1 | -1;
+  oculta: boolean;
+  variantesSala: Variants;
+  alTocarBorde: (e: React.TouchEvent) => void;
+  alSoltarBorde: (e: React.TouchEvent) => void;
+}) {
+  return (
+    <div
+      className={`escenario-v137 flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20 ${oculta ? "hidden" : ""}`}
+      data-swipe118="1"
+      onTouchStart={alTocarBorde}
+      onTouchEnd={alSoltarBorde}
+    >
+      {/* v118 CRONOATLAS: transición DIRECCIONAL — adelante entra por la
+          derecha, atrás invierte el movimiento; AnimatePresence pasa el
+          custom a la pestaña saliente para que el exit también lo sepa. */}
+      <AnimatePresence mode="wait" initial={false} custom={dirMov}>
+        <motion.div
+          key={tab}
+          className="panel-stagger"
+          custom={dirMov}
+          variants={variantesSala}
+          initial="entra"
+          animate="centro"
+          exit="sale"
+        >
+          {/* v137 SALE DE LA PANTALLA: el DIORAMA — la sala entera es un
+              cuerpo rígido que se inclina con tu mano (puntero/giroscopio,
+              vars del Motor3D, cero JS por frame). Va AQUÍ y no en los
+              paneles porque el backdrop-filter del cristal aplana el 3D
+              del elemento que lo lleva (lección de la autopsia Blink):
+              el mundo se mueve, el cristal sigue siendo cristal. */}
+          <div className="diorama-v137">
+          {/* v139 3D BRUTAL: la CUNA — la sala entera se MECE SOLO (vaivén
+              constante rotateX/rotateY/translateZ, sin puntero ni giroscopio):
+              en móvil y en reposo el mundo ya no está quieto jamás. Cuerpo
+              intermedio preserve-3d entre el tilt del diorama y el vuelo del
+              flotador — tres planos anidados, cada uno con su animación. */}
+          <div className="cuna-v139">
+          {/* v138 MUNDO VIVO: el FLOTADOR — la sala entera vuela desde el
+              fondo del escenario al entrar y luego RESPIRA acercándose en
+              ciclos de 7s: la Casa nunca está quieta.
+              Vive dentro del diorama (preserve-3d) para que el translateZ
+              proyecte contra la perspectiva del escenario. */}
+          <div className="flotador-v138">
+            <Salas tab={tab} />
+          </div>
+          </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function Home() {
   // v14: la PRIMERA página es la portada con NOTICIAS EN VIVO
   const [tab, setTab] = useState<TabKey>("inicio");
@@ -325,6 +600,12 @@ export default function Home() {
   // tocar un portal o un título de letras 3D = volar a ese mundo y abrir su sala
   const [modoMundo, setModoMundo] = useState(false);
   const modoMundoRef = useRef(false);
+  // v143 LA CASA EN EL MUNDO: los hogares 3D del contenido. El mundo WebGL
+  // (mundo-webgl.tsx) crea la CÁPSULA de contenido y la CONSOLA de vuelo y
+  // los ofrece por window + evento; si existen, las salas y la navbar viven
+  // DENTRO del universo 3D vía portal. Si no (sin WebGL), DOM plano de siempre.
+  const [hostCapsula, setHostCapsula] = useState<HTMLElement | null>(null);
+  const [hostNav, setHostNav] = useState<HTMLElement | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
@@ -455,6 +736,30 @@ export default function Home() {
       window.removeEventListener("vg:wgl-sala", onSala);
     };
   }, [handleTabChange]);
+
+  // v143 LA CASA EN EL MUNDO: recoger los hogares 3D del mundo (cápsula de
+  // contenido + consola de vuelo). El mundo nace en un useLayoutEffect hijo
+  // (antes del primer pintado); aquí —layout effect padre— ya existen. Los
+  // eventos cubren el ciclo de vida posterior (HMR, destrucción del mundo).
+  useLayoutEffect(() => {
+    const w = window as unknown as { __vgCapsulaHost?: HTMLElement | null; __vgNavHost?: HTMLElement | null };
+    setHostCapsula(w.__vgCapsulaHost ?? null);
+    setHostNav(w.__vgNavHost ?? null);
+    const onCapsula = (e: Event) => setHostCapsula(((e as CustomEvent).detail as HTMLElement | null) ?? null);
+    const onNav = (e: Event) => setHostNav(((e as CustomEvent).detail as HTMLElement | null) ?? null);
+    window.addEventListener("vg:wgl-capsula", onCapsula);
+    window.addEventListener("vg:wgl-navhost", onNav);
+    return () => {
+      window.removeEventListener("vg:wgl-capsula", onCapsula);
+      window.removeEventListener("vg:wgl-navhost", onNav);
+    };
+  }, []);
+
+  // v143: cada sala que abre la cámara aterriza LEYENDO desde arriba —
+  // el scroll de la cápsula 3D vuelve al techo con cada vuelo
+  useEffect(() => {
+    if (hostCapsula) hostCapsula.scrollTo({ top: 0 });
+  }, [tab, hostCapsula]);
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
   // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.
@@ -780,6 +1085,12 @@ export default function Home() {
     const next = !inmersionRef.current;
     inmersionRef.current = next;
     setInmersion(next);
+    // v143: la CÁPSULA 3D también obedece a la inmersión (sin atributo no
+    // hay regla CSS que la apague — el contenido vive fuera del main ahora)
+    try {
+      if (next) document.documentElement.setAttribute("data-inmi108", "1");
+      else document.documentElement.removeAttribute("data-inmi108");
+    } catch { /* noop */ }
     try {
       if (next && !document.fullscreenElement) {
         const p = document.documentElement.requestFullscreen?.();
@@ -861,7 +1172,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div id="vg-casa" className="min-h-screen flex flex-col relative z-10">
       {/* v16 HERMOSA: aurora cinematográfica + partículas + viñeta */}
       <div className="aurora-layer" aria-hidden>
         <div className="aurora-orb aurora-orb-1" />
@@ -966,246 +1277,20 @@ export default function Home() {
       <TransicionMaestra tabKey={tab} label={APP_VERSION_LABEL} />
       <CineVivo />
 
-      <main className={`escenario-v137 flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20 ${inmersion || modoMundo ? "hidden" : ""}`} data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
-        {/* v118 CRONOATLAS: transición DIRECCIONAL — adelante entra por la
-            derecha, atrás invierte el movimiento; AnimatePresence pasa el
-            custom a la pestaña saliente para que el exit también lo sepa. */}
-        <AnimatePresence mode="wait" initial={false} custom={dirMov}>
-          <motion.div
-            key={tab}
-            className="panel-stagger"
-            custom={dirMov}
-            variants={variantesSala}
-            initial="entra"
-            animate="centro"
-            exit="sale"
-          >
-            {/* v137 SALE DE LA PANTALLA: el DIORAMA — la sala entera es un
-                cuerpo rígido que se inclina con tu mano (puntero/giroscopio,
-                vars del Motor3D, cero JS por frame). Va AQUÍ y no en los
-                paneles porque el backdrop-filter del cristal aplana el 3D
-                del elemento que lo lleva (lección de la autopsia Blink):
-                el mundo se mueve, el cristal sigue siendo cristal. */}
-            <div className="diorama-v137">
-            {/* v139 3D BRUTAL: la CUNA — la sala entera se MECE SOLO (vaivén
-                constante rotateX/rotateY/translateZ, sin puntero ni giroscopio):
-                en móvil y en reposo el mundo ya no está quieto jamás. Cuerpo
-                intermedio preserve-3d entre el tilt del diorama y el vuelo del
-                flotador — tres planos anidados, cada uno con su animación. */}
-            <div className="cuna-v139">
-            {/* v138 MUNDO VIVO: el FLOTADOR — la sala entera vuela desde el
-                fondo del escenario al entrar y luego RESPIRA acercándose en
-                ciclos de 7s: la Casa nunca está quieta.
-                Vive dentro del diorama (preserve-3d) para que el translateZ
-                proyecte contra la perspectiva del escenario. */}
-            <div className="flotador-v138">
-            <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
-        {tab === "inicio" && (
-          <>
-            {/* v120.0 GRAN SALTO 3D: la MEGALÓPOLIS viva abre la portada —
-                ciclo día/noche EN TIEMPO REAL, región que gira (sola cada
-                día, a mano con fundido) y letras 3D volumétricas */}
-            <CiudadHero />
-            {/* v67.0 EL HANGAR: el costo del mundo y tu rival, siempre a la vista */}
-            <CostoGuerra />
-            <RivalStrip />
-            <HomePanel />
-            {/* v121.0 FRANJA ILUSTRADA: las ilustraciones vivas FUNCIONALES
-                viven ENTRE los bloques de la casa — satélite, globo y ciudad
-                procedurales + la hora real del visitante */}
-            <FranjaIlustrada titulo="EL MUNDO NO SE DETIENE" />
-            {/* v46.0: la meta comunitaria encima de todo — cada visitante ve el objetivo y su recompensa */}
-            <GoalBanner />
-            {/* v49.0: misión de difusión 200 enlaces — progreso real desde la BD, recompensa global al llegar */}
-            <ShareGoalBanner />
-            {/* v18: sección de crecimiento bajo la portada — conversión de visitantes a embajadores */}
-            <GrowthShare />
-            {/* v34: kit de reclutamiento (mensajes para copiar + medidor de agentes) y FAQ SEO */}
-            <PromoKit />
-            {/* v37 MISIÓN 100: arsenal de 100 enlaces + contador global en vivo */}
-            <Mission100 />
-            <SeoFaq />
-          </>
+      {/* v143 LA CASA EN EL MUNDO: con WebGL vivo, el CUERPO de la Casa
+          (SalaViva) vive DENTRO del universo — portal React hacia la CÁPSULA
+          CSS3D que el mundo acopla a la zona donde aterriza la cámara.
+          Sin WebGL, el MISMO árbol vive en el main plano (fallback honesto). */}
+      {hostCapsula
+        ? createPortal(
+            <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion || modoMundo} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />,
+            hostCapsula,
+          )
+        : (
+          <main className="contents" aria-label="Contenido de Vanguard">
+            <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion || modoMundo} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
+          </main>
         )}
-        {tab === "briefing" && <DailyBriefingPanel />}
-        {tab === "mapa" && <MapPanel />}
-        {tab === "operaciones" && <OpsPanel />}
-        {tab === "misiones" && <MissionsPanel />}
-        {tab === "noticias" && <NewsPanel />}
-        {tab === "redaccion" && <RedaccionPanel />}
-        {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
-        {tab === "nueva" && <NuevaPanel />}
-        {/* v121.0 MODO ATLAS MUNDIAL — el modo que faltaba: cada país y cada
-            persona importante del planeta con su ubicación EN VIVO */}
-        {tab === "atlas" && <AtlasPanel />}
-        {/* v121.0 LA CAMA — la habitación de personalización total */}
-        {tab === "cama" && <CamaPanel />}
-        {tab === "atelier" && <AtelierPanel />}
-        {tab === "comunidad" && <ComunidadPanel />}
-        {tab === "redmundial" && <RedMundialPanel />}
-        {/* v129.0 LA SALA DE GUERRA — el mando supremo: teatros en vivo, teatro 3D y bolsa de guerra */}
-        {tab === "salaguerra" && <SalaGuerraPanel />}
-        {tab === "rostros" && <RostrosPanel />}
-        {tab === "agentes" && <GobiernoLibrePanel />}
-        {/* v106.0 MURALLA DE VIGILANCIA — el corazón del OBSERVATORIO */}
-        {tab === "observatorio" && <ObservatorioPanel />}
-        {tab === "experimental" && <ExperimentalPanel />}
-        {/* v115.0 SINGULARIDAD — la sala donde el agente autónomo construye delante de ti */}
-        {tab === "arquitecto" && <ArquitectoPanel />}
-        {tab === "galeria" && <GalleryPanel />}
-        {tab === "briefings" && <BriefingsPanel />}
-        {tab === "quiz" && <QuizPanel />}
-        {tab === "predicciones" && <PredictionsPanel />}
-        {tab === "fusion" && <FusionPanel />}
-        {tab === "recompensas" && <RewardsPanel />}
-        {tab === "tienda" && <ShopPanel />}
-        {tab === "logros" && <AchievementsPanel />}
-        {tab === "minijuego" && <MiniGamePanel />}
-        {tab === "dron" && <DroneStrikePanel />}
-        {tab === "torneos" && <TournamentsPanel />}
-        {tab === "retos" && <DailyChallengesPanel />}
-        {tab === "estadisticas" && <ProgressChartsPanel />}
-        {tab === "amigos" && <FriendsPanel />}
-        {tab === "notificaciones" && <NotificationsPanel />}
-        {tab === "racha" && <StreakCalendarPanel />}
-        {tab === "registro" && <ActivityLogPanel />}
-        {tab === "ayuda" && <HelpPanel />}
-        {tab === "camaras" && <CamerasPanel />}
-        {tab === "pulso" && <PulsoPanel />}
-        {/* v67.0 EL HANGAR: base 3D del agente */}
-        {tab === "hangar" && <HangarPanel />}
-        {tab === "combate" && <CombatSimulatorPanel />}
-        {tab === "historia" && <HistoricalWarsPanel />}
-        {tab === "muertes" && <FamousDeathsPanel />}
-        {tab === "apuestas" && <WarBettingPanel />}
-        {tab === "conquista" && <CountryControlPanel />}
-        {tab === "mundo" && <WorldConquestPanel />}
-        {tab === "multijugador" && <MultiplayerPanel />}
-        {tab === "frente" && <FrentePanel />}
-        {tab === "detective" && <DetectivePanel />}
-        {tab === "edad" && <AgeOfNationsPanel />}
-        {tab === "arcade" && <ArcadePanel />}
-        {/* v102.0 LA CIUDADELA — taller de juegos de la comunidad */}
-        {tab === "taller" && <TallerJuegosPanel />}
-        {tab === "bookmaker" && <BookmakerPanel />}
-        {tab === "enciclopedia" && <EncyclopediaPanel />}
-        {tab === "curiosidades" && <CuriosidadesPanel />}
-        {tab === "epocas" && <ErasPanel />}
-        {tab === "conquistas3d" && <Conquistas3DPanel />}
-        {tab === "contadores" && <CountersPanel />}
-        {tab === "carteles" && <CartelesPanel />}
-        {tab === "bolsa" && <MarketsPanel />}
-        {tab === "hacienda" && <HaciendaPanel />}
-        {tab === "divisas" && <DivisasPanel />}
-        {/* v13 — centro de mando global */}
-        {tab === "osint" && <OsintPanel />}
-        {tab === "warsim" && <WarsimPanel />}
-        {/* v100.0 LABORATORIO DEL DESTINO: ¿y si...? */}
-        {tab === "laboratorio" && <LaboratorioPanel />}
-        {tab === "cambios" && <CambiosPanel />}
-        {tab === "analista" && <AnalistaPanel />}
-        {/* v102.0 LA CIUDADELA — fortaleza de acero (seguridad visible) */}
-        {tab === "fortaleza" && <FortalezaPanel />}
-        {tab === "escenarios" && <EscenariosPanel />}
-        {tab === "espionaje" && <EspionagePanel />}
-        {tab === "crisis" && <CrisisPanel />}
-        {tab === "radar" && <RadarPanel />}
-        {tab === "ojodios" && <OjoDiosPanel />}
-        {tab === "verdades" && <InfinitaPanel />}
-        {tab === "verifica" && <VerificaPanel />}
-        {tab === "centinela" && <CentinelaPanel />}
-        {tab === "espectro" && <EspectroPanel />}
-        {/* v89.0 OPERACIÓN ESPEJO */}
-        {tab === "pulsos" && <PulsosPanel />}
-        {tab === "evaluacion" && <EvaluacionPanel />}
-        {tab === "perdidas" && <PerdidasPanel />}
-        {tab === "frentes" && <FrentesPanel />}
-        {tab === "simulador" && <SimuladorPanel />}
-        {tab === "canales" && <CanalesPanel />}
-        {tab === "mundial" && <MundialPanel />}
-        {tab === "wikiguerra" && <WikiguerraPanel />}
-        {tab === "cielos" && <CielosPanel />}
-        {tab === "ciber" && <CiberPanel />}
-        {tab === "sismo" && <SismoPanel />}
-        {tab === "mercados" && <MercadosPanel />}
-        {/* v91.0 AUGE Y CAÍDA: RTS territorial jugable */}
-        {tab === "imperio" && <ImperioPanel />}
-        {/* v92.0 OJO DEL MUNDO: tercera hornada de espejos */}
-        {tab === "pronosticos" && <PronosticosPanel />}
-        {tab === "enclaves" && <EnClavePanel />}
-        {tab === "extranjera" && <ExtranjeraPanel />}
-        {tab === "geoint" && <GeointPanel />}
-        {tab === "monitorglobal" && <MonitorGlobalPanel />}
-        {tab === "canalbrief" && <CanalBriefPanel />}
-        {tab === "estrategia" && <EstrategiaGlobalPanel />}
-        {/* v94.0 GOOGLES TOTAL: el Google de los problemas geopolíticos */}
-        {tab === "googles" && <GooglesPanel />}
-        {/* v98.0 ORO TOTAL: la búsqueda visual de Vanguard */}
-        {tab === "imagenes" && <ImagenesPanel />}
-        {tab === "mente" && <MentePanel />}
-        {/* v95.0 EXPEDIENTE TOTAL: la red, el espejo y la máquina del tiempo */}
-        {tab === "grafo" && <GrafoPanel />}
-        {tab === "espejo" && <EspejoPanel />}
-        {tab === "maquina" && <MaquinaPanel />}
-        {/* v93.0 VANGUARD EARTH: el googles de Vanguard */}
-        {tab === "tierra" && <TierraPanel />}
-        {tab === "mipais" && <MiPaisPanel />}
-        {/* v97.0 PANTALLA TOTAL: VANGUARD TV — feed vertical + sala de proyección */}
-        {tab === "pantalla" && <PantallaPanel />}
-        {/* v57 ARCHIVO SECRETO: expedientes desclasificados coleccionables */}
-        {tab === "expedientes" && <ExpedientesPanel />}
-        {/* v59 ALEJANDRÍA OSCURA: teorías, armas y civilizaciones */}
-        {tab === "oscura" && <OscuraPanel />}
-        {tab === "geopolitica" && <GeopoliticaPanel />}
-        {tab === "planeta" && <PlanetaPanel />}
-        {tab === "biblioteca" && <BibliotecaPanel />}
-        {tab === "tribunal" && <TribunalPanel />}
-        {tab === "alianzas" && <AlianzasPanel />}
-        {tab === "agente" && <AgentePanel />}
-        {tab === "agenteia" && <AgenteIaPanel />}
-        {tab === "obras" && <MuroObrasPanel />}
-        {tab === "gancho" && <HooksPanel />}
-        {tab === "ranking" && <RankingPanel />}
-        {tab === "foros" && <ForumPanel />}
-        {tab === "consejoia" && <ConsejoIaPanel />}
-        {/* v85 — EL MUNDO DENTRO: empleos con sueldos, AR y constructor de mapas */}
-        {tab === "empleos" && <EmpleosPanel />}
-        {tab === "armodo" && <ModoArPanel />}
-        {tab === "mapascrea" && <CreadorMapasPanel />}
-        {tab === "salas" && <SalasPanel />}
-        {tab === "encuestas" && <PollsPanel />}
-        {tab === "videos" && <VideosPanel />}
-        {tab === "estudio" && <EstudioPanel />}
-        {tab === "directos" && <DirectosPanel />}
-        {tab === "memes" && <MemeStudioPanel />}
-        {tab === "envivo" && <EnVivoPanel />}
-        {tab === "contribuidores" && <ContribuidoresPanel />}
-        {tab === "perfil" && <PerfilPanel />}
-        {/* v24 — VERDAD CRUDA: el lado oscuro de los conflictos */}
-        {tab === "abusos" && <AbusosPanel />}
-        {tab === "incidentes" && <IncidentesPanel />}
-        {tab === "memorial" && <MemorialPanel />}
-        {tab === "sala18" && <SalaRojaPanel />}
-        {tab === "dronguerra" && <DronGuerraPanel />}
-        {tab === "recluta" && <ReclutamientoPanel />}
-        {tab === "embajadores" && <EmbajadoresPanel />}
-        {tab === "telegram" && <TelegramPanel />}
-        {/* v26 — COMUNIDAD CREADORA: todo lo sube la gente */}
-        {tab === "creador" && <CreadorPanel />}
-        {tab === "armeria" && <ArmeriaPanel />}
-        {tab === "maps" && <GMapsPanel />}
-        {tab === "studios" && <StudiosPanel />}
-        {tab === "gobierno" && <GobiernoPanel />}
-        {tab === "bolsamonedas" && <BolsaPanel />}
-        {/* v28 — PARA TI: feed de la comunidad */}
-        {tab === "foryou" && <ForYouPanel />}
-            </PanelErrorBoundary>
-            </div>
-            </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </main>
 
       <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion || modoMundo ? "hidden" : ""}`}>
         <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
@@ -1231,12 +1316,25 @@ export default function Home() {
 
       {/* v140 MUNDO WEBGL: EL NAVBAR DE ZONAS — los 4 íconos siempre visibles;
           tocarlos no cambia de página: vuela la cámara a esa zona del mundo.
-          v141: el 5º botón MUNDO aparta la Casa y deja solo el universo 3D */}
-      <NavZonas zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
-        const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
-        const destino = mapa[z];
-        if (destino) handleTabChange(destino);
-      }} />
+          v141: el 5º botón MUNDO aparta la Casa y deja solo el universo 3D.
+          v143: con mundo vivo, la consola FLOTA EN EL ESPACIO (CSS3D acoplada
+          a la cámara — respira con el warp); sin mundo, DOM fijo de siempre. */}
+      {hostNav
+        ? createPortal(
+            <NavZonas flotante zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
+              const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
+              const destino = mapa[z];
+              if (destino) handleTabChange(destino);
+            }} />,
+            hostNav,
+          )
+        : (
+          <NavZonas zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
+            const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
+            const destino = mapa[z];
+            if (destino) handleTabChange(destino);
+          }} />
+        )}
 
       {/* v141 MODO MUNDO: el único HUD visible — salir + la invitación a entrar */}
       {modoMundo && (

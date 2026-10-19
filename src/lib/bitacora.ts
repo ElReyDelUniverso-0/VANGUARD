@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v143.0",
+    nombre: "LA CASA EN EL MUNDO",
+    tipo: "tecno",
+    hitos: [
+      "EL ÚLTIMO PLANO 2D CAE: las salas de la Casa dejan de ser una capa DOM encima del universo — VIVEN DENTRO de él. Una CÁPSULA holográfica (CSS3DRenderer: DOM real proyectado con matriz 3D real) se ACOPLA a la ancla de la zona donde aterriza la cámara: posición real en el espacio, escala real con la distancia (fracción fija del frustum en cualquier zona y pantalla), orientación paralela al piloto (cero skew, lectura perfecta). El contenido es el MISMO árbol de siempre (REGLA 1: cero features borrados) — portal React hacia la cápsula; sin WebGL, el mismo árbol vive en el main plano",
+      "LA CONSOLA DE VUELO: la navbar de zonas (HOY · ANÁLISIS · ARENA · CUARTEL · MUNDO) también flota EN EL ESPACIO — CSS3D acoplada a la cámara, respira con el FOV del warp (se hincha en el hipervuelo) y siempre queda al fondo del cuadro. El DOM fijo antiguo solo queda para el fallback sin WebGL",
+      "VUELOS DE CÁPSULA: al despegar la pantalla se DESACOPLA (fade 0.42s) mientras la cámara vuela; al aterrizar, el FRENO suena y la cápsula NACE en la ancla nueva (scale 0.9→1, easeOut 620ms). En MODO MUNDO la cápsula se apaga y el universo queda desnudo; al tocar un portal, aterriza con su sala ya dentro. El reencuentro (recarga) acopla AL INSTANTE en la zona de la sala — la Casa vive en su zona desde el primer fotograma",
+      "LA PANTALLA ES UNA PANTALLA: scroll propio con overscroll contain (cada sala aterriza leída desde arriba), esquinas de enganche militar, marco holográfico con filo cian, y los planos vivos de la Casa (diorama/cuna/flotador) siguen meciéndose DENTRO del espacio 3D real — doble capa de vida sin romper el 60 FPS (un solo rAF para mundo WebGL + proyección CSS)",
+      "QA DE HIERRO EN PRODUCCIÓN: entrada AAA completa → toque al globo → cápsula acoplada con la portada; vuelos a las 4 zonas con su sala dentro (Crisis en el Command Center con globo wireframe al lado, Arena dorada, Cuartel azul); MODO MUNDO desnudo + portal ARENA tocado desde él → aterriza con Arcade Pack; móvil 390px con la cápsula al 92% del frustum; scroll dentro de la pantalla verificado; cero errores de consola; build limpio",
+    ],
+  },
+  {
     version: "v140.0",
     nombre: "MUNDO WEBGL",
     tipo: "tecno",

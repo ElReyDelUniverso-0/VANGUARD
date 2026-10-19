@@ -4690,3 +4690,138 @@ html[data-wgl-modo="1"] .v139-frente { display: none; }
   .vg142-origen, .vg142-origen::after, .vg142-origen-icono { animation: none; }
   .vg142-origen::after { display: none; }
 }
+
+/* ================================================================
+   v143.0 LA CASA EN EL MUNDO — el último plano 2D cae.
+   El contenido de la Casa vive DENTRO del mundo WebGL: una CÁPSULA
+   holográfica (CSS3DRenderer — DOM real con matriz 3D real) se
+   acopla a la zona donde aterriza la cámara, y la CONSOLA DE VUELO
+   (navbar de zonas) flota pegada al piloto. El main DOM plano se
+   apaga: su árbol vive ahora en la cápsula vía portal React.
+   ================================================================ */
+
+/* ---- 1. LA CASA PLANA SE APAGA — vive en la cápsula ------------
+   (el árbol NO se desmonta: es el mismo portal, solo cambia el hogar) */
+html[data-wgl-capsula="1"] main,
+html[data-wgl-capsula="1"] footer { display: none; }
+
+/* ---- 2. LA CÁPSULA — pantalla holográfica del universo --------- */
+.vg143-capsula {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.42s ease;
+  filter: drop-shadow(0 34px 70px rgba(0, 0, 0, 0.6));
+}
+.vg143-capsula[data-acoplada="1"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.vg143-marco {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: linear-gradient(158deg, rgba(10, 13, 21, 0.97), rgba(6, 8, 14, 0.95));
+  border: 1px solid rgba(0, 240, 255, 0.17);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.45),
+    0 0 36px -8px rgba(0, 240, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  position: relative;
+}
+/* esquinas de enganche militar — la pantalla está REMACHADA al espacio */
+.vg143-marco::before,
+.vg143-marco::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  border-color: rgba(0, 240, 255, 0.55);
+  border-style: solid;
+  z-index: 3;
+}
+.vg143-marco::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+  border-top-left-radius: 14px;
+}
+.vg143-marco::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+  border-bottom-right-radius: 14px;
+}
+.vg143-paralaje {
+  width: 100%;
+  height: 100%;
+}
+.vg143-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.32) transparent;
+}
+
+/* la cápsula se apaga (sin desmontar su contenido) en entrada,
+   MODO MUNDO e inmersión — el universo queda desnudo */
+html[data-wgl-entrada="1"] .vg143-capsula,
+html[data-wgl-modo="1"] .vg143-capsula,
+html[data-inmi108="1"] .vg143-capsula {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ---- 3. LA CONSOLA DE VUELO — navbar flotando en el espacio ---- */
+.vg143-navhost {
+  pointer-events: auto;
+}
+html[data-wgl-entrada="1"] .vg143-navhost {
+  opacity: 0;
+  pointer-events: none;
+}
+.vg143-nav3d {
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  background: rgba(11, 11, 18, 0.9);
+  border: 1px solid rgba(245, 197, 66, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 18px 44px -18px rgba(0, 0, 0, 0.9);
+}
+
+/* ---- 4. LA PIEL HOLOGRAMA TAMBIÉN DENTRO DE LA CÁPSULA ---------
+   los selectores v141 apuntaban a main — el contenido vive aquí ahora */
+html[data-wgl-capsula="1"] .vg143-capsula .hud-panel {
+  background: linear-gradient(158deg, rgba(14, 17, 27, 0.96), rgba(8, 10, 17, 0.94));
+  backdrop-filter: none;
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.055),
+    0 20px 55px -26px rgba(0, 0, 0, 0.92),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+html[data-wgl-capsula="1"] .vg143-capsula h2 {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    0 2px 0 rgba(0, 0, 0, 0.45),
+    0 3px 0 rgba(0, 0, 0, 0.32),
+    0 4px 0 rgba(0, 0, 0, 0.2),
+    0 10px 26px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.05em;
+}
+html[data-wgl-capsula="1"] .vg143-capsula h3 {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.55),
+    0 2px 0 rgba(0, 0, 0, 0.35),
+    0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- 5. ACCESIBILIDAD v143 -------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .vg143-capsula { transition: none; }
+  .vg143-marco::before, .vg143-marco::after { content: none; }
+}

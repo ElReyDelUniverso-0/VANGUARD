@@ -2029,3 +2029,22 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v142.0 UNIVERSO COMPLETO. El mandato WEBGL EXPERIENCE está CERRADO: las cinco zonas son mundos (el HOY vive en un anillo orbital que abraza al planeta), el MODO MUNDO es el universo entero de una vez, tocar un conflicto en el globo aterriza en el Command Center con su crisis en la mesa, y cada aterrizaje suena a nave que frena.
 - Sugerido para v143: sonido espacial por zona (drone grave en Command Center, sintes dorados en Arena) conectado al botón HUD del búnker, y layout de Command Center dedicado (55% derecha + mini-globo propio).
+
+---
+Task ID: 24
+Agent: main (Super Z)
+Task: v143.0 «LA CASA EN EL MUNDO» — mandato del Dueño («vuélvelo completamente 3D»): el último plano 2D de Vanguard (las salas DOM encima del universo) cae — el contenido de la Casa ahora VIVE DENTRO del mundo WebGL como cápsula holográfica CSS3D acoplada por zona, y la navbar de zonas flota en el espacio acoplada a la cámara.
+
+Work Log:
+- CÁPSULA DE CONTENIDO (mundo-webgl.tsx): CSS3DRenderer + CSS3DObject — el árbol de salas de page.tsx se porta (createPortal) dentro de una pantalla holográfica que se ACOPLA a la ancla de la zona al aterrizar la cámara (volarCamara onDone → acoplarCapsula), con escala derivada del frustum (fracción fija 0.52 desktop / 0.92 móvil) y orientación PARALELA a cámara (quaternion — el lookAt provocaba 13° de skew legible, curado en QA). Desacople con fade al despegar; MODO MUNDO la mantiene apagada; reencuentro acopla instantáneo.
+- HOGARES REACT: page.tsx extrajo SALAS (catálogo único de paneles, una sola fuente de verdad) y SALAVIVA (diorama/cuna/flotador + AnimatePresence incluidos); el mismo árbol vive en la cápsula (portal) o en el main plano (fallback sin WebGL). MundoWebGL monta en useLayoutEffect y ofrece hosts por window.__vgCapsulaHost + evento vg:wgl-capsula (y vg:wgl-navhost); Home los recoge en useLayoutEffect padre — cero parpadeo del plano antiguo. data-wgl-capsula apaga main/footer planos; data-inmi108 añadido a alternarInmersion para apagar la cápsula en inmersión.
+- CONSOLA DE VUELO 3D: la NavZonas flota en el espacio via CSS3D acoplada a la cámara por frame (posición/orientación/escala del frustum a z=3.1), respira con el FOV del warp; prop flotante para cambiar vg140-nav (fijo) por vg143-nav3d (libre).
+- FIX CRÍTICO DE QA ( stacking contexts ): el renderer CSS colgaba de <body> (z1) pero el lienzo WebGL vive DENTRO del div raíz de la Casa (#vg-casa, z10 → contexto propio) — el planeta pintaba ENCIMA de la cápsula. Cura: appendChild del cssRenderer dentro de #vg-casa con z1 (sobre lienzo -1, bajo HUD/modales). Segundo fix: ancla exacta en el punto de mira + offset vertical −3.5% del frustum para no pisar el ticker del chrome.
+- QA EN PRODUCCIÓN STANDALONE (health v143.0, RSS 143MB): entrada AAA intacta → toque al globo → cápsula acoplada con la portada; vuelos a las 4 zonas con su sala dentro (Crisis en Command Center, Arena dorada, Cuartel azul); MODO MUNDO desnudo (cápsula op 0) + portal ARENA tocado desde el modo → aterrizaje con Arcade Pack; móvil 390px (cápsula 92% frustum, consola re-dockeada); scroll dentro de la pantalla verificado (scrollBy 400 + wheel); raycast ignora .vg143-capsula/.vg143-navhost; cero errores de consola (solo warnings THREE.Clock preexistentes); build limpio; tsc limpio.
+- CAPTURAS: qa-v143-entrada2.png (entrada AAA), qa-v143-zona1-fix.png (cápsula con portada sobre el planeta), qa-v143-zona2b.png (Crisis en el Command Center), qa-v143-modo.png (universo desnudo), qa-v143-arena.png (portal→Arena con Arcade), qa-v143-movil2.png (390px), qa-v143-scroll.png (scroll interno), qa-v143-cuartel.png (Cuartel), qa-v143-entrega.png (entrega final).
+- bitacora.ts: entrada v143.0 completa. version.ts → v143.0 · LA CASA EN EL MUNDO.
+- COMMIT v143.0 → push a main.
+
+Stage Summary:
+- PRODUCCIÓN = v143.0 LA CASA EN EL MUNDO. El mandato «Vanguard completamente 3D» está CERRADO: no queda ni un plano 2D en la experiencia — el universo WebGL (Tierra, portales, letras, mundos por zona) y la Casa entera (cada sala, cada línea) viven en el mismo espacio; la navegación es vuelo de cámara y el contenido es una pantalla holográfica que te acompaña de mundo en mundo.
+- Sugerido para v144: pose de cápsula con yaw deliberado (5-7°) para un aire más «consola de mando», sombra proyectada de la cápsula sobre los mundos (plano oscuro bajo el marco), y sonido de acople metálico (clank suave) al aterrizar la pantalla.

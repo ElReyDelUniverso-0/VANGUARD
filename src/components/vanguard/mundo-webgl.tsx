@@ -27,6 +27,15 @@
 // puesta en la mesa, las banderas ondean, las balizas laten y
 // cada aterrizaje suena a nave que frena.
 //
+// v143 LA CASA EN EL MUNDO: el ÚLTIMO plano 2D cae. Las salas de
+// la Casa dejan de ser una capa DOM encima del universo y pasan
+// a VIVIR DENTRO de él: una CÁPSULA holográfica (CSS3DRenderer —
+// DOM real proyectado con matriz 3D real) se ACOPLA a la ancla
+// de la zona donde aterriza la cámara, vuela con el universo,
+// escala con la distancia y se apaga en el MODO MUNDO. La
+// navbar de zonas también flota en el espacio, acoplada a la
+// cámara: la consola de vuelo del comandante.
+//
 // REGLA 2 (adaptada a la Casa): TODO el mundo Three.js vive en
 // ESTE archivo único. REGLA 3: móvil primero (calidad adaptativa,
 // pointer events unificados, navbar con safe-area). REGLA 4:
@@ -37,11 +46,13 @@
 // Contrato 60 FPS del mundo: renderer pausado en hidden,
 // pixelRatio capado, geometría adaptativa, un solo rAF.
 // ============================================================
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as THREE from "three";
 // v141 WEBGL EXPERIENCE: letras 3D REALES — cada glifo extruido con volumen
 import { FontLoader, type Font } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+// v143: DOM REAL dentro de la escena — la Casa vive en el mundo
+import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { GUERRAS } from "@/lib/guerras-activas-data";
 
 // ────────────────────────────────────────────────────────────
@@ -257,6 +268,18 @@ class MundoWGL {
   logoNacido = false;
   pendienteLogo = false;
   modoMundo = false;
+  // v143 — LA CÁPSULA DE CONTENIDO (la Casa vive dentro del mundo)
+  cssRenderer!: CSS3DRenderer;
+  cssEscena = new THREE.Scene();
+  capsula!: CSS3DObject;
+  capsulaEl!: HTMLDivElement;     // el cuerpo visual (marco holográfico)
+  capsulaScroll!: HTMLDivElement; // AQUÍ la Casa porta sus salas (React portal)
+  capsulaPx = 1000;               // ancho CSS del cuerpo (px) — para la escala
+  capsulaAcoplada = false;
+  navObj!: CSS3DObject;           // la consola de vuelo — flota pegada a la cámara
+  navEl!: HTMLDivElement;
+  navPx = 470;
+  navFrac = 0.44;
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -291,6 +314,10 @@ class MundoWGL {
     this.escena.add(this.holo);
     this.cargarFuente();
     this.construirMundos();
+    // v143: la CÁPSULA de contenido (la Casa dentro del mundo) + la
+    // consola de vuelo flotante — el último plano 2D se convierte en 3D
+    this.construirCapsula();
+    this.construirNavFlotante();
 
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
@@ -431,6 +458,153 @@ class MundoWGL {
   }
 
   // ════════════════════════════════════════════════════════
+  // v143 — LA CÁPSULA DE CONTENIDO — el último plano 2D cae.
+  // La Casa (las salas, el contenido de page.tsx) vive DENTRO de una
+  // pantalla holográfica que se ACOPLA a la zona donde aterriza la
+  // cámara: posición real en el espacio, escala real con la distancia,
+  // orientación real mirando al piloto. CSS3DRenderer = DOM real con
+  // matriz 3D real: todo sigue siendo clicable/scrollable por dentro.
+  // ════════════════════════════════════════════════════════
+  construirCapsula() {
+    this.cssRenderer = new CSS3DRenderer();
+    const el = this.cssRenderer.domElement;
+    el.style.position = "fixed";
+    el.style.inset = "0";
+    el.style.zIndex = "1"; // sobre el lienzo (-1), bajo el HUD de la Casa (z20+)
+    el.style.pointerEvents = "none";
+    // v143 QA: el renderer CSS debe vivir DENTRO del árbol de la Casa —
+    // el div raíz (#vg-casa, z-10) crea un contexto de apilamiento: si el
+    // renderer cuelga de <body>, el lienzo WebGL (z -1 dentro del contexto
+    // de la Casa) pintaría ENCIMA de la cápsula y el planeta la taparía
+    const casa = document.getElementById("vg-casa") || document.body;
+    casa.appendChild(el);
+    this.cssRenderer.setSize(window.innerWidth, window.innerHeight);
+
+    // el CUERPO: marco holográfico → paralaje → ventana de scroll.
+    // page.tsx porta las salas DENTRO de capsulaScroll (createPortal).
+    const cuerpo = document.createElement("div");
+    cuerpo.className = "vg143-capsula";
+    cuerpo.dataset.acoplada = "0";
+    const marco = document.createElement("div");
+    marco.className = "vg143-marco";
+    const paralaje = document.createElement("div");
+    paralaje.className = "vg143-paralaje";
+    const scroll = document.createElement("div");
+    scroll.className = "vg143-scroll";
+    paralaje.appendChild(scroll);
+    marco.appendChild(paralaje);
+    cuerpo.appendChild(marco);
+    this.capsulaScroll = scroll;
+    this.capsulaEl = cuerpo;
+    this.dimensionarCapsula();
+    this.capsula = new CSS3DObject(cuerpo);
+    this.capsula.visible = false; // nace dormida: despierta al acoplar
+    this.cssEscena.add(this.capsula);
+    document.documentElement.setAttribute("data-wgl-capsula", "1");
+    // la Casa se entera: su contenido nace DENTRO del mundo (portal React)
+    (window as unknown as { __vgCapsulaHost?: HTMLDivElement }).__vgCapsulaHost = scroll;
+    window.dispatchEvent(new CustomEvent("vg:wgl-capsula", { detail: scroll }));
+  }
+
+  // el tamaño CSS del cuerpo (px) — la escala 3D lo normaliza por zona
+  private dimensionarCapsula() {
+    const movil = window.innerWidth < 768;
+    const w = movil ? Math.min(window.innerWidth - 26, 420) : 1000;
+    const h = movil ? Math.round(window.innerHeight * 0.56) : Math.round(Math.min(window.innerHeight * 0.74, 660));
+    this.capsulaEl.style.width = `${w}px`;
+    this.capsulaEl.style.height = `${h}px`;
+    this.capsulaPx = w;
+  }
+
+  private esMovil() { return window.innerWidth < 768; }
+
+  // la ANCLA de la cápsula en una zona: EXACTAMENTE el punto de mira de la
+  // pose (la cámara la tiene centrada — el planeta queda a la izquierda por
+  // el desvío de la pose). La escala sale del frustum a esa distancia: la
+  // cápsula ocupa una FRACCIÓN fija de la pantalla en cualquier zona.
+  private anclaCapsula(zona: number): { pos: THREE.Vector3; escala: number } {
+    const { pos, tgt } = this.poseDe(zona);
+    const dir = new THREE.Vector3(tgt.x - pos[0], tgt.y - pos[1], tgt.z - pos[2]);
+    const dist = Math.max(1.2, dir.length());
+    const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
+    const anchoMundo = altoMundo * this.camara.aspect;
+    const movil = this.esMovil();
+    const fracAncho = movil ? 0.92 : 0.52;
+    const escala = (anchoMundo * fracAncho) / this.capsulaPx;
+    // la pantalla flota un pelín POR DEBAJO del eje de mira: respire el
+    // ticker superior del chrome (la corona de la Casa sigue siendo HUD)
+    const p = tgt.clone();
+    p.y -= altoMundo * 0.035;
+    return { pos: p, escala };
+  }
+
+  // ACOPLAR: la cápsula vuela a la ancla de la zona y queda PARALELA a la
+  // pantalla del piloto (quaternion de la cámara — cero skew: el contenido
+  // se lee perfecto y aún así vive en el espacio, con paralaje y warp reales)
+  acoplarCapsula(zona: number, instant = false) {
+    if (this.modoMundo || zona === 0 || !this.capsula) return;
+    const a = this.anclaCapsula(zona);
+    this.capsula.position.copy(a.pos);
+    this.capsula.quaternion.copy(this.camara.quaternion);
+    this.capsula.visible = true;
+    this.capsulaAcoplada = true;
+    this.capsulaEl.dataset.acoplada = "1";
+    if (instant) { this.capsula.scale.setScalar(a.escala); return; }
+    this.capsula.scale.setScalar(a.escala * 0.9);
+    this.cancelar.push(animar(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut }));
+  }
+
+  // DESACOPLAR: la pantalla se apaga mientras la cámara vuela (o en MODO MUNDO)
+  desacoplarCapsula() {
+    if (!this.capsulaAcoplada) return;
+    this.capsulaAcoplada = false;
+    this.capsulaEl.dataset.acoplada = "0";
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v143 — LA CONSOLA DE VUELO — la navbar de zonas flotando en el
+  // espacio, acoplada a la cámara (hija espiritual del HUD militar):
+  // respira con el FOV del warp y siempre queda al fondo del cuadro.
+  // ════════════════════════════════════════════════════════
+  construirNavFlotante() {
+    const el = document.createElement("div");
+    el.className = "vg143-navhost";
+    this.navEl = el;
+    this.recalibrarNav();
+    this.navObj = new CSS3DObject(el);
+    this.cssEscena.add(this.navObj);
+    (window as unknown as { __vgNavHost?: HTMLDivElement }).__vgNavHost = el;
+    window.dispatchEvent(new CustomEvent("vg:wgl-navhost", { detail: el }));
+  }
+
+  private recalibrarNav() {
+    const movil = this.esMovil();
+    const w = movil ? 322 : 470;
+    this.navEl.style.width = `${w}px`;
+    this.navPx = w;
+    this.navFrac = movil ? 0.9 : 0.44;
+  }
+
+  // por frame: posición/orientación/escala de la consola pegadas a la cámara
+  private acoplarNavFrame() {
+    if (!this.navObj) return;
+    const zNav = 3.1;
+    const fovR = (this.camara.fov * Math.PI) / 180;
+    const alto = 2 * zNav * Math.tan(fovR / 2);
+    const ancho = alto * this.camara.aspect;
+    const escala = (ancho * this.navFrac) / this.navPx;
+    this.navObj.scale.setScalar(escala);
+    const hPx = this.navEl.offsetHeight || 58;
+    const mundoPorPx = alto / window.innerHeight;
+    const y = -(alto / 2) + (hPx * escala) / 2 + 16 * mundoPorPx;
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    this.navObj.position.copy(this.camara.position).addScaledVector(f, zNav).addScaledVector(arriba, y);
+    this.navObj.quaternion.copy(this.camara.quaternion);
+  }
+
+  // ════════════════════════════════════════════════════════
   // v141 — LA POSE — dónde mira la cámara según el estado:
   //  · MODO MUNDO: LA POSE DEL UNIVERSO (v142) — todo el mundo en cuadro
   //  · Z0: el espacio centrado (entrada pura)
@@ -470,6 +644,10 @@ class MundoWGL {
         this.camara.lookAt(tgt.x, tgt.y, tgt.z);
         this.enVuelo = false;
         sonar("freno");
+        // v143: al aterrizar, la CÁPSULA de contenido se acopla a la ancla
+        // de la zona — la Casa vive donde la cámara posa (el MODO MUNDO
+        // la mantiene apagada: el universo queda desnudo)
+        this.acoplarCapsula(this.zona);
       },
     }));
   }
@@ -918,6 +1096,8 @@ class MundoWGL {
     else document.documentElement.removeAttribute("data-wgl-modo");
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: this.modoMundo } }));
     if (this.modoMundo) this.expandirLogo(); else this.condensarLogo();
+    // v143: en el MUNDO la cápsula se apaga — solo existe el universo
+    if (this.modoMundo) this.desacoplarCapsula();
     this.irAPose(1000);
     sonar("whoosh");
   }
@@ -928,6 +1108,8 @@ class MundoWGL {
     if (on) document.documentElement.setAttribute("data-wgl-modo", "1");
     else document.documentElement.removeAttribute("data-wgl-modo");
     if (on) this.expandirLogo(); else this.condensarLogo();
+    // v143: la cápsula obedece al modo (apagada dentro del universo)
+    if (on) this.desacoplarCapsula();
     this.irAPose(1000);
   }
 
@@ -1099,6 +1281,9 @@ class MundoWGL {
     }
     this.visibleZona(zonaInicial);
     this.ambientarZona(zonaInicial);
+    // v143: el reencuentro acopla la cápsula YA (sin animación) —
+    // la Casa vive en su zona desde el primer fotograma
+    this.acoplarCapsula(zonaInicial, true);
   }
 
   // ── RAYCAST — tocar el globo o un conflicto (window-level: los
@@ -1182,19 +1367,40 @@ class MundoWGL {
     if (Math.abs(px - cx) > 0.003) st.setProperty("--wgl-cx", cx.toFixed(3));
     if (Math.abs(py - cy) > 0.003) st.setProperty("--wgl-cy", cy.toFixed(3));
 
+    // v143: la CONSOLA DE VUELO flota pegada a la cámara y la CASA
+    // (cápsula CSS3D) se proyecta con la misma matriz que el mundo —
+    // un solo universo: WebGL detrás, DOM real dentro del espacio.
+    this.acoplarNavFrame();
+    this.cssEscena.updateMatrixWorld(true);
     this.renderer.render(this.escena, this.camara);
+    this.cssRenderer.render(this.cssEscena, this.camara);
   };
 
   redimensionar() {
     this.camara.aspect = window.innerWidth / window.innerHeight;
     this.camara.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    // v143: la proyección CSS y el cuerpo de la cápsula siguen al viewport;
+    // si estaba acoplada, re-acopla AL INSTANTE con la nueva geometría
+    this.cssRenderer?.setSize(window.innerWidth, window.innerHeight);
+    this.dimensionarCapsula();
+    this.recalibrarNav();
+    if (this.capsulaAcoplada) this.acoplarCapsula(this.zona, true);
   }
   dormir() { this.vivo = false; cancelAnimationFrame(this.raf); }
   despertar() { if (!this.vivo) { this.vivo = true; this.reloj.getDelta(); this.loop(); } }
   destruir() {
     this.dormir();
     for (const c of this.cancelar) c();
+    // v143: la cápsula muere con el mundo — la Casa vuelve al DOM plano
+    try {
+      (window as unknown as { __vgCapsulaHost?: HTMLDivElement | null }).__vgCapsulaHost = null;
+      (window as unknown as { __vgNavHost?: HTMLDivElement | null }).__vgNavHost = null;
+      window.dispatchEvent(new CustomEvent("vg:wgl-capsula", { detail: null }));
+      window.dispatchEvent(new CustomEvent("vg:wgl-navhost", { detail: null }));
+      document.documentElement.removeAttribute("data-wgl-capsula");
+      this.cssRenderer?.domElement?.remove();
+    } catch { /* silencio honesto */ }
     this.renderer.dispose();
   }
 }
@@ -1224,7 +1430,10 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
   }, []);
 
   // ── MONTAJE: soporte WebGL → mundo o fallback (IntroCinematica v72) ──
-  useEffect(() => {
+  // v143: useLayoutEffect — el mundo (y su CÁPSULA de contenido) nace
+  // ANTES del primer pintado: la Casa monta su contenido ya dentro del
+  // mundo 3D sin parpadeo de la capa plana antigua.
+  useLayoutEffect(() => {
     let mundo: MundoWGL | null = null;
     try {
       const c = document.createElement("canvas");
@@ -1253,7 +1462,9 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     const onToque = (e: PointerEvent) => {
       if (!mundoRef.current) return;
       const el = e.target as HTMLElement | null;
-      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel]")) return;
+      // v143: la CÁPSULA y la CONSOLA también son UI de la Casa — el mundo
+      // no raycastea a través de sus propias pantallas
+      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost")) return;
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
       const g = mundoRef.current.golpear(nx, ny, false);
@@ -1539,9 +1750,9 @@ const ICONO_MUNDO = (
   </svg>
 );
 
-export function NavZonas({ zona, modo, onIr, onMundo }: { zona: number; modo: boolean; onIr: (z: number) => void; onMundo: () => void }) {
+export function NavZonas({ zona, modo, flotante, onIr, onMundo }: { zona: number; modo: boolean; flotante?: boolean; onIr: (z: number) => void; onMundo: () => void }) {
   return (
-    <nav className="vg140-nav" aria-label="Zonas del mundo VANGUARD">
+    <nav className={flotante ? "vg143-nav3d" : "vg140-nav"} aria-label="Zonas del mundo VANGUARD">
       {[1, 2, 3, 4].map((z) => (
         <button
           key={z}
