@@ -2121,3 +2121,19 @@ Work Log:
 Stage Summary:
 - v145.1 = v145.0 + P2. El último chrome DOM de las esquinas (radio/estado) vive ahora en el plano de mando 3D. Quedan flat SOLO los modales Radix (P3) y el PulsoAuto de layout.
 - Siguiente: P3 (modales Radix a ventana holo con Dialog.Portal container) o P7 (joystick móvil).
+
+---
+Task ID: 29
+Agent: main (Super Z)
+Task: v145.2 — P3 del AGENTE DE PROMPTS: modales Radix (cuenta/ajustes/bitácora) a la ventana holo.
+
+Work Log:
+- ui/dialog.tsx: DialogContent acepta prop contenedor → DialogPortal container={contenedor ?? undefined} (los tres modales de la Casa usan este mismo DialogContent — un solo parche).
+- account-modal / settings-modal / activity-log-modal: prop contenedor añadida y pasada a DialogContent.
+- page.tsx: los tres modales reciben contenedor={hostVentana}; la orden de proyección ahora incluye accountOpen || settingsOpen || logOpen (la ventana se abre con CUALQUIER de ellos y se repliega al cerrar todos).
+- CSS: el overlay Radix dentro de la ventana oscurece solo el cristal (rgba 0.62).
+- QA producción: placa CUENTA del puente → ventana holo abre con el dialogo Radix DENTRO (dialogoEnHolo=true, «Iniciar sesión»), inputs reales y centrado dentro del marco; X cierra y la ventana se repliega (ventana:false). qa-v145-cuenta-holo.png. tsc + build limpios.
+
+Stage Summary:
+- v145.2 = v145.0 + P2 + P3. CERO capas de chrome DOM planas quedan en el flujo del usuario: pestañas, mandos, menú, búsqueda, radio, estado y ahora los tres modales del sistema viven DENTRO del universo. Solo queda flat el PulsoAuto de layout (global multi-página) y los toasts — cola P3b.
+- Siguiente en la cola: P4 (ciudad héroe zona 1) o P7 (joystick móvil).

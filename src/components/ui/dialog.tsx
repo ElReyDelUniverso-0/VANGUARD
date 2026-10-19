@@ -50,12 +50,16 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  contenedor,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  showCloseButton?: boolean
+  showCloseButton?: boolean;
+  // v145 P3: contenedor opcional — con el mundo 3D vivo los modales se
+  // portan DENTRO de la ventana holo (CSS3D) en vez de planos sobre el body
+  contenedor?: HTMLElement | null;
 }) {
   return (
-    <DialogPortal data-slot="dialog-portal">
+    <DialogPortal data-slot="dialog-portal" container={contenedor ?? undefined}>
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"

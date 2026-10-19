@@ -24,12 +24,12 @@ const iconForMsg = (msg: string) => {
   return <ScrollText className="w-3.5 h-3.5 text-muted-foreground" />;
 };
 
-export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) {
+export function ActivityLogModal({ open, onOpenChange, contenedor }: ActivityLogModalProps & { contenedor?: HTMLElement | null }) {
   const log = useGameStore((s) => s.log);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="!fixed hud-panel border-cyan-hud sm:max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent contenedor={contenedor} className="!fixed hud-panel border-cyan-hud sm:max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="font-mono text-cyan-hud flex items-center gap-2">
             <ScrollText className="w-5 h-5" /> Bitacora de comando

@@ -28,7 +28,7 @@ interface SettingsModalProps {
   onOpenChange: (o: boolean) => void;
 }
 
-export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
+export function SettingsModal({ open, onOpenChange, contenedor }: SettingsModalProps & { contenedor?: HTMLElement | null }) {
   const { alias, setAlias, muted, setMuted, resetProgress, hudTheme, ownedCosmetics, setHudTheme, exportProgress, importProgress } = useGameStore();
   const { t: tr } = useT();
   const lang = useLangStore((s) => s.lang);
@@ -208,7 +208,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="!fixed hud-panel border-amber-hud sm:max-w-md">
+      <DialogContent contenedor={contenedor} className="!fixed hud-panel border-amber-hud sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-mono text-amber flex items-center gap-2">
             <SettingsIcon className="w-5 h-5" /> Ajustes de comando

@@ -22,6 +22,14 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v145.2",
+    nombre: "VUELO LIBRE · MODALES HOLO",
+    tipo: "tecno",
+    hitos: [
+      "P3 DEL AGENTE DE PROMPTS: los modales Radix (CUENTA, AJUSTES y BITÁCORA) entran al holograma — DialogContent acepta contenedor y Dialog.Portal los nace DENTRO de la ventana proyectada: el overlay oscurece SOLO el cristal y el formulario flota centrado en el espacio, con foco atrapado y Esc funcionando dentro del CSS3D",
+    ],
+  },
+  {
     version: "v145.1",
     nombre: "VUELO LIBRE · WIDGETS",
     tipo: "tecno",

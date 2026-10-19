@@ -782,12 +782,13 @@ export default function Home() {
     };
   }, []);
 
-  // v145 — LA ORDEN DE PROYECCIÓN: menú o búsqueda abiertos = el holograma
-  // sale de la pantalla; cerrados = la ventana se repliega al espacio
+  // v145 — LA ORDEN DE PROYECCIÓN: menú, búsqueda o CUALQUIER modal abierto
+  // = el holograma sale de la pantalla; cerrados = la ventana se repliega
   useEffect(() => {
     if (!hostVentana) return;
-    window.dispatchEvent(new CustomEvent("vg:holo-ventana", { detail: { on: menuOpen || searchOpen } }));
-  }, [menuOpen, searchOpen, hostVentana]);
+    const on = menuOpen || searchOpen || accountOpen || settingsOpen || logOpen;
+    window.dispatchEvent(new CustomEvent("vg:holo-ventana", { detail: { on } }));
+  }, [menuOpen, searchOpen, accountOpen, settingsOpen, logOpen, hostVentana]);
 
   // v143: cada sala que abre la cámara aterriza LEYENDO desde arriba —
   // el scroll de la cápsula 3D vuelve al techo con cada vuelo
@@ -1485,10 +1486,10 @@ export default function Home() {
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav.
           v145: también proyectada en la ventana holo cuando el universo vive */}
       <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} contenedor={hostVentana} />
-      <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} />
+      <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} contenedor={hostVentana} />
       {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
-      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
-      <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} />
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} contenedor={hostVentana} />
+      <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} contenedor={hostVentana} />
       {/* v145 P2: con mundo vivo, la RADIO y el ESTADO del enlace viven en
           las esquinas 3D del plano de mando (mini-pantallas CSS3D) */}
       {hostWidIzq ? createPortal(<RealtimeStatus />, hostWidIzq) : <RealtimeStatus />}

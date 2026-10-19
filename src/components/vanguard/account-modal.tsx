@@ -16,7 +16,7 @@ import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, 
 
 type Mode = "LOGIN" | "REGISTER" | "PROFILE";
 
-export function AccountModal({ open, onClose, gate }: { open: boolean; onClose: () => void; gate?: string | null }) {
+export function AccountModal({ open, onClose, gate, contenedor }: { open: boolean; onClose: () => void; gate?: string | null; contenedor?: HTMLElement | null }) {
   // v102.0 LA CIUDADELA — modo GATE: el modal se abre PIDIENDO pasaporte
   // (lo dispara cualquier panel que necesite cuenta para publicar). Con gate
   // activo y sin sesión, la pestaña REGISTER sale primero con el motivo.
@@ -99,7 +99,7 @@ export function AccountModal({ open, onClose, gate }: { open: boolean; onClose: 
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="hud-panel border-amber-hud max-w-sm" aria-describedby="acc-desc">
+      <DialogContent contenedor={contenedor} className="hud-panel border-amber-hud max-w-sm" aria-describedby="acc-desc">
         <DialogHeader>
           <DialogTitle className="font-display tracking-widest uppercase text-sm text-soft">
             {gate && !account ? "PASAPORTE DE LA CIUDADELA" : mode === "PROFILE" ? "Mi cuenta" : mode === "LOGIN" ? "Iniciar sesión" : "Crear cuenta"}
