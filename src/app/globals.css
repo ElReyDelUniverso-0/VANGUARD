@@ -4540,3 +4540,109 @@ html[data-wgl-entrada="1"] [role="dialog"] { visibility: hidden; }
    (el padre del dialog) oscurecía todo el mundo: :has() lo alcanza */
 html[data-wgl-entrada="1"] div:has(> [role="dialog"]),
 html[data-wgl-entrada="1"] [role="dialog"] { visibility: hidden; }
+
+/* ══════════════════════════════════════════════════════════════
+   v141.0 WEBGL EXPERIENCE — TODO el mundo es 3D
+   ══════════════════════════════════════════════════════════════ */
+
+/* ---- 1. LA CASA SE VISTE DE HOLOGRAMA -------------------------
+   los paneles son PANTALLAS del mundo: cuerpo opaco con filo de
+   luz — el planeta JAMÁS se cuela entre las letras del contenido
+   (cura directa del «el menú opaca al planeta») */
+html[data-wgl="on"] main .hud-panel {
+  background: linear-gradient(158deg, rgba(14, 17, 27, 0.95), rgba(8, 10, 17, 0.93));
+  box-shadow:
+    0 0 0 1px rgba(0, 240, 255, 0.055),
+    0 20px 55px -26px rgba(0, 0, 0, 0.92),
+    inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+/* ---- 2. CADA LÍNEA EN 3D ---------------------------------------
+   las cabeceras de cada sala se EXTRUYEN (profundidad por capas
+   de sombra negra, como bloques 3D); h3 lleva la extrusión corta */
+html[data-wgl="on"] main h2 {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    0 2px 0 rgba(0, 0, 0, 0.45),
+    0 3px 0 rgba(0, 0, 0, 0.32),
+    0 4px 0 rgba(0, 0, 0, 0.2),
+    0 10px 26px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.05em;
+}
+html[data-wgl="on"] main h3 {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.55),
+    0 2px 0 rgba(0, 0, 0, 0.35),
+    0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- 3. EL MODO MUNDO — la Casa entera se aparta ---------------
+   solo queda el universo 3D: portales, títulos de letras y mundos */
+html[data-wgl-modo="1"] .vg-casco-v140,
+html[data-wgl-modo="1"] main,
+html[data-wgl-modo="1"] footer { visibility: hidden; }
+html[data-wgl-modo="1"] .v139-frente { display: none; }
+.vg141-modo-ui {
+  position: fixed;
+  left: 0; right: 0;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.vg141-modo-salir {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  background: rgba(8, 10, 17, 0.88);
+  color: #00F0FF;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 40px -14px rgba(0, 240, 255, 0.4);
+  animation: vg140Pulso 1.8s ease-in-out infinite;
+  transition: transform 0.15s ease;
+}
+.vg141-modo-salir:active { transform: scale(0.94); }
+.vg141-modo-salir span { opacity: 0.5; letter-spacing: 0.1em; }
+.vg141-modo-hint {
+  margin: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: rgba(214, 229, 255, 0.66);
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+  animation: vg141Aparece 1.2s ease-out both 0.4s;
+}
+@keyframes vg141Aparece {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+/* el botón MUNDO respira cian cuando está activo */
+.vg140-nav-btn.vg141-nav-mundo[data-activa="1"] {
+  color: #00F0FF;
+  border-color: rgba(0, 240, 255, 0.45);
+  background: rgba(0, 240, 255, 0.09);
+  box-shadow: 0 0 18px -4px rgba(0, 240, 255, 0.55), inset 0 0 12px rgba(0, 240, 255, 0.08);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+/* ---- 4. LA ENTRADA — la marca es 3D en el lienzo ---------------
+   el DOM solo firma el tagline y el hint DEBAJO del planeta:
+   arriba manda el logo de letras extruidas de oro */
+.vg140-marca { top: 56%; }
+
+/* ---- 5. ACCESIBILIDAD v141 ------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .vg141-modo-salir { animation: none; }
+  .vg141-modo-hint { animation: none; }
+}

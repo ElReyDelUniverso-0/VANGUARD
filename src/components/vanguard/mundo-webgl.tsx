@@ -27,6 +27,9 @@
 // ============================================================
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+// v141 WEBGL EXPERIENCE: letras 3D REALES — cada glifo extruido con volumen
+import { FontLoader, type Font } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { GUERRAS } from "@/lib/guerras-activas-data";
 
 // ────────────────────────────────────────────────────────────
@@ -38,13 +41,14 @@ const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 function animar(
-  obj: ObjNum,
+  obj: ObjNum | THREE.Vector3 | THREE.Object3D | THREE.Material | { opacity: number; size?: number; fov?: number },
   to: ObjNum,
   ms: number,
   opts: { ease?: (t: number) => number; onUpdate?: () => void; onDone?: () => void } = {},
 ): () => void {
+  const o = obj as ObjNum;
   const from: ObjNum = {};
-  for (const k in to) from[k] = obj[k] ?? 0;
+  for (const k in to) from[k] = o[k] ?? 0;
   const t0 = performance.now();
   const ease = opts.ease ?? easeInOut;
   let raf = 0, vivo = true;
@@ -52,7 +56,7 @@ function animar(
     if (!vivo) return;
     const t = Math.min(1, (now - t0) / ms);
     const e = ease(t);
-    for (const k in to) obj[k] = from[k] + (to[k] - from[k]) * e;
+    for (const k in to) o[k] = from[k] + (to[k] - from[k]) * e;
     opts.onUpdate?.();
     if (t < 1) raf = requestAnimationFrame(paso);
     else opts.onDone?.();
@@ -91,6 +95,49 @@ export const ZONA_TGT: Record<number, [number, number, number]> = {
 };
 export const ZONA_TAB: Record<number, string> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
 export const TAB_ZONA: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, perfil: 4 };
+
+// ────────────────────────────────────────────────────────────
+// v141 WEBGL EXPERIENCE — TODO el mundo es 3D:
+//  · LETRAS 3D: logo VANGUARD extruido + un título 3D por zona
+//    + subtítulo + etiquetas de portales (TextGeometry real).
+//  · PORTALES: anillos 3D flotando alrededor del planeta — se
+//    TOCAN y la cámara VUELA a ese mundo y abre su sala.
+//  · POSE DE PANEL: cuando la Casa (contenido DOM) está abierta,
+//    el punto de mira se desplaza hacia la DERECHA de la cámara
+//    → el planeta vive a la IZQUIERDA y el contenido a la derecha:
+//    se acaba el «el menú opaca al planeta».
+//  · MODO MUNDO: la Casa entera se aparta y solo queda el
+//    universo 3D — tocar un portal o un título = entrar.
+// ────────────────────────────────────────────────────────────
+const POSE_PANEL_DESV = 0.62; // desvío del punto de mira (unidades de mundo)
+
+interface Titulo3D {
+  zona: number;
+  texto: string;
+  sub: string;
+  p: [number, number, number];
+  color: number;
+  emis: number;
+  tam: number;
+}
+
+// LOS TÍTULOS 3D DE CADA MUNDO (ASCII-seguro: la fuente typeface
+// no trae acentos; el sanitizador los elimina como un HUD militar)
+const TITULOS_3D: Titulo3D[] = [
+  { zona: 1, texto: "HOY", sub: "EL MUNDO EN VIVO", p: [0, 2.02, 0.42], color: 0xf5c542, emis: 0.42, tam: 0.3 },
+  { zona: 2, texto: "COMMAND CENTER", sub: "CRISIS MUNDIAL", p: [-1.7, 2.2, -0.9], color: 0x00f0ff, emis: 0.6, tam: 0.2 },
+  { zona: 3, texto: "ARENA", sub: "JUEGA LA GUERRA", p: [1.35, -0.32, -1.05], color: 0xffd27a, emis: 0.55, tam: 0.25 },
+  { zona: 4, texto: "CUARTEL", sub: "TU BASE SECRETA", p: [-2.55, 0.98, -1.05], color: 0x8fc1ff, emis: 0.55, tam: 0.24 },
+];
+
+// LOS PORTALES — mundos entra­bles flotando junto al planeta
+const PORTALES_3D: { zona: number; texto: string; p: [number, number, number]; color: number }[] = [
+  { zona: 2, texto: "COMMAND", p: [-2.05, 0.95, 1.15], color: 0x00f0ff },
+  { zona: 3, texto: "ARENA", p: [2.05, -0.75, 1.15], color: 0xffb347 },
+  { zona: 4, texto: "CUARTEL", p: [-0.45, -2.05, 1.6], color: 0x4da6ff },
+];
+
+type Letra3D = { mesh: THREE.Mesh; fase: number; base: THREE.Vector3; quieto?: boolean };
 
 // marcadores: teatros de guerra de la Casa (OSINT real) + ciudades caliente
 export interface MarcadorWGL {
@@ -171,6 +218,17 @@ class MundoWGL {
   enVuelo = false;
   calidadBaja: boolean;
   baseEstrellas = 0.05;
+  // v141 — la capa HOLO: letras y portales que NO giran con la Tierra
+  holo = new THREE.Group();
+  fuente: Font | null = null;
+  letrasLogo: Letra3D[] = [];
+  titulosZona: { grupo: THREE.Group; zona: number; letras: Letra3D[] }[] = [];
+  portales: { grupo: THREE.Group; nucleo: THREE.Mesh; proxy: THREE.Mesh; zona: number; fase: number }[] = [];
+  mundosZona: Record<number, THREE.Group> = {};
+  proxiesClic: THREE.Mesh[] = [];
+  logoNacido = false;
+  pendienteLogo = false;
+  modoMundo = false;
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -201,6 +259,10 @@ class MundoWGL {
     this.construirTierra();
     this.construirMarcadores();
     this.construirParticulas();
+    // v141: la capa holo (letras + portales) y los mundos por zona
+    this.escena.add(this.holo);
+    this.cargarFuente();
+    this.construirMundos();
 
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
@@ -341,7 +403,414 @@ class MundoWGL {
   }
 
   // ════════════════════════════════════════════════════════
+  // v141 — LA POSE — dónde mira la cámara según el estado:
+  //  · MODO MUNDO / Z0: el mundo CENTRADO (universo puro)
+  //  · panel abierto: el mira se desvía a la DERECHA de la
+  //    pantalla → planeta a la izquierda, contenido a la derecha
+  // ════════════════════════════════════════════════════════
+  private poseDe(zona: number): { pos: [number, number, number]; tgt: THREE.Vector3 } {
+    const pos = ZONA_POS[zona];
+    const t0 = ZONA_TGT[zona];
+    const tgt = new THREE.Vector3(t0[0], t0[1], t0[2]);
+    if (this.modoMundo || zona === 0) return { pos, tgt };
+    // desviar el punto de mira sobre el vector DERECHA de la cámara:
+    // funciona igual en las 5 zonas sin recalcular poses a mano
+    const dir = new THREE.Vector3(t0[0] - pos[0], t0[1] - pos[1], t0[2] - pos[2]).normalize();
+    const derecha = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize();
+    tgt.addScaledVector(derecha, POSE_PANEL_DESV);
+    return { pos, tgt };
+  }
+
+  // EL VUELO DE CÁMARA puro (compartido por volarAZona e irAPose)
+  private volarCamara(pos: [number, number, number], tgt: THREE.Vector3, dur: number) {
+    const objPos = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
+    const objMir = { x: this.mirada.x, y: this.mirada.y, z: this.mirada.z };
+    this.cancelar.push(animar(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
+      onUpdate: () => {
+        this.camara.position.set(objPos.x, objPos.y, objPos.z);
+        this.camara.lookAt(objMir.x, objMir.y, objMir.z);
+      },
+    }));
+    this.cancelar.push(animar(objMir, { x: tgt.x, y: tgt.y, z: tgt.z }, dur, {
+      onUpdate: () => this.camara.lookAt(objPos.x, objPos.y, objPos.z),
+      onDone: () => {
+        this.mirada.copy(tgt);
+        this.camara.lookAt(tgt.x, tgt.y, tgt.z);
+        this.enVuelo = false;
+      },
+    }));
+  }
+
+  // re-volar a la MISMA zona (para alternar pose panel/mundo sin cambiar de sala)
+  irAPose(dur = 950) {
+    if (this.enVuelo) return;
+    const { pos, tgt } = this.poseDe(this.zona);
+    this.volarCamara(pos, tgt, dur);
+  }
+
+  // qué es visible en cada zona: mundos 2-4, títulos 3D y portales
+  visibleZona(zona: number) {
+    for (const z of [2, 3, 4]) {
+      const g = this.mundosZona[z];
+      if (!g) continue;
+      if (z === zona) {
+        if (!g.visible) {
+          g.visible = true;
+          g.scale.setScalar(0.84);
+          this.cancelar.push(animar(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut }));
+        }
+      } else g.visible = false;
+    }
+    for (const tz of this.titulosZona) tz.grupo.visible = tz.zona === zona && zona !== 0;
+    const portalesOn = zona === 1;
+    for (const p of this.portales) p.grupo.visible = portalesOn;
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v141 — LAS LETRAS 3D — tipografía volumétrica real
+  // ════════════════════════════════════════════════════════
+  cargarFuente() {
+    new FontLoader().load(
+      "/assets/fonts/helvetiker_bold.typeface.json",
+      (f) => {
+        if (!this.vivo) return;
+        this.fuente = f;
+        this.construirLetras3D();
+        if (this.pendienteLogo) { this.pendienteLogo = false; this.nacerLogo(); }
+      },
+      undefined,
+      () => { /* sin fuente el mundo sigue: los títulos DOM ya existen */ },
+    );
+  }
+
+  // la fuente typeface no trae acentos: como un HUD militar, se caen
+  private sanitizar(t: string): string {
+    return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  }
+
+  // convierte un texto en letras extruidas individuales (volumen real)
+  private hacerTexto3D(texto: string, o: { tam: number; prof: number; color: number; emis: number }): { grupo: THREE.Group; letras: Letra3D[]; ancho: number } {
+    const grupo = new THREE.Group();
+    const letras: Letra3D[] = [];
+    const mat = new THREE.MeshStandardMaterial({
+      color: o.color,
+      metalness: 0.78,
+      roughness: 0.3,
+      emissive: new THREE.Color(o.color),
+      emissiveIntensity: o.emis,
+      transparent: true,
+      opacity: 0,
+    });
+    let cursor = 0;
+    for (const crudo of this.sanitizar(texto)) {
+      if (crudo === " ") { cursor += o.tam * 0.55; continue; }
+      let geo: TextGeometry | null = null;
+      try {
+        geo = new TextGeometry(crudo, {
+          font: this.fuente!,
+          size: o.tam,
+          depth: o.prof,
+          curveSegments: this.calidadBaja ? 3 : 5,
+          bevelEnabled: false,
+        });
+      } catch { continue; }
+      geo.computeBoundingBox();
+      const bb = geo.boundingBox!;
+      const w = Math.max(0.001, bb.max.x - bb.min.x);
+      geo.translate(-bb.min.x - w / 2, -(bb.max.y + bb.min.y) / 2, -o.prof / 2);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(cursor + w / 2, 0, 0);
+      mesh.visible = false;
+      grupo.add(mesh);
+      letras.push({ mesh, fase: Math.random() * Math.PI * 2, base: mesh.position.clone() });
+      cursor += w + o.tam * 0.13;
+    }
+    return { grupo, letras, ancho: Math.max(cursor - o.tam * 0.13, 0.001) };
+  }
+
+  private construirLetras3D() {
+    if (!this.fuente) return;
+    // EL LOGO — 8 letras de oro extruido flotando sobre el planeta
+    const logo = this.hacerTexto3D("VANGUARD", { tam: 0.34, prof: 0.11, color: 0xf5c542, emis: 0.5 });
+    logo.grupo.position.set(-logo.ancho / 2, 2.02, 0.55);
+    this.holo.add(logo.grupo);
+    this.letrasLogo = logo.letras;
+    if (this.logoNacido) {
+      // la fuente llegó tarde: nacer directo y compacto (reencuentro)
+      for (const l of this.letrasLogo) {
+        l.mesh.visible = true;
+        (l.mesh.material as THREE.MeshStandardMaterial).opacity = 1;
+        l.mesh.scale.setScalar(0.6);
+        l.base.multiplyScalar(0.62).add(new THREE.Vector3(0, 0.3, 0));
+        l.mesh.position.copy(l.base);
+      }
+    }
+    // LOS TÍTULOS DE CADA MUNDO — tocables (tocar el título = entrar)
+    for (const t of TITULOS_3D) {
+      const tit = this.hacerTexto3D(t.texto, { tam: t.tam, prof: t.tam * 0.38, color: t.color, emis: t.emis });
+      tit.grupo.position.set(t.p[0] - tit.ancho / 2, t.p[1], t.p[2]);
+      for (const l of tit.letras) {
+        (l.mesh.material as THREE.MeshStandardMaterial).opacity = 1;
+        l.mesh.visible = true;
+      }
+      const sub = this.hacerTexto3D(t.sub, { tam: t.tam * 0.4, prof: t.tam * 0.18, color: t.color, emis: t.emis * 0.72 });
+      sub.grupo.position.set(t.p[0] - sub.ancho / 2, t.p[1] - t.tam * 0.9, t.p[2]);
+      for (const l of sub.letras) {
+        (l.mesh.material as THREE.MeshStandardMaterial).opacity = 0.92;
+        l.mesh.visible = true;
+      }
+      const envoltura = new THREE.Group();
+      envoltura.add(tit.grupo, sub.grupo);
+      const proxy = new THREE.Mesh(
+        new THREE.SphereGeometry(Math.max(tit.ancho * 0.55, 0.75), 8, 8),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+      );
+      proxy.position.set(t.p[0], t.p[1] - t.tam * 0.42, t.p[2]);
+      proxy.userData = { portal: t.zona }; // tocar el título de un mundo = entrar a él
+      envoltura.add(proxy);
+      envoltura.visible = false;
+      this.holo.add(envoltura);
+      this.titulosZona.push({ grupo: envoltura, zona: t.zona, letras: [...tit.letras, ...sub.letras] });
+      this.proxiesClic.push(proxy);
+    }
+    // LOS PORTALES — anillos de estela alrededor del planeta
+    for (const pt of PORTALES_3D) {
+      const grupo = new THREE.Group();
+      grupo.position.set(pt.p[0], pt.p[1], pt.p[2]);
+      const nucleo = new THREE.Mesh(
+        new THREE.TorusGeometry(0.34, 0.026, 10, 36),
+        new THREE.MeshBasicMaterial({ color: pt.color, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
+      const halo = new THREE.Mesh(
+        new THREE.RingGeometry(0.2, 0.235, 30),
+        new THREE.MeshBasicMaterial({ color: pt.color, transparent: true, opacity: 0.5, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
+      const etiqueta = this.hacerTexto3D(pt.texto, { tam: 0.13, prof: 0.05, color: pt.color, emis: 0.65 });
+      etiqueta.grupo.position.set(-etiqueta.ancho / 2, -0.56, 0);
+      for (const l of etiqueta.letras) {
+        (l.mesh.material as THREE.MeshStandardMaterial).opacity = 0.95;
+        l.mesh.visible = true;
+      }
+      const proxy = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 8, 8),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+      );
+      proxy.userData = { portal: pt.zona };
+      grupo.add(nucleo, halo, etiqueta.grupo, proxy);
+      grupo.visible = false;
+      this.holo.add(grupo);
+      this.portales.push({ grupo, nucleo, proxy, zona: pt.zona, fase: Math.random() * Math.PI * 2 });
+      this.proxiesClic.push(proxy);
+    }
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v141 — LOS MUNDOS — cada zona es un lugar 3D propio
+  // ════════════════════════════════════════════════════════
+  construirMundos() {
+    const lim = (m: THREE.Material & { opacity: number }, v: number) => { m.transparent = true; m.opacity = v; };
+
+    // ZONA 2 — COMMAND CENTER: globo táctico holográfico + rejilla de mando
+    const g2 = new THREE.Group();
+    const holoGlobo = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.8, 1),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, wireframe: true, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    holoGlobo.position.set(-1.7, 1.02, -0.95);
+    const anilloEq = new THREE.Mesh(
+      new THREE.TorusGeometry(1.12, 0.012, 8, 64),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    anilloEq.position.copy(holoGlobo.position);
+    anilloEq.rotation.x = Math.PI / 2.15;
+    const anilloPol = new THREE.Mesh(
+      new THREE.TorusGeometry(0.96, 0.008, 8, 64),
+      new THREE.MeshBasicMaterial({ color: 0xff2d78, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    anilloPol.position.copy(holoGlobo.position);
+    anilloPol.rotation.z = Math.PI / 2.6;
+    const piso2 = new THREE.GridHelper(9, 18, 0x00f0ff, 0x0d5a68);
+    piso2.position.set(-1.7, -1.35, -0.75);
+    lim(piso2.material as THREE.LineBasicMaterial, 0.34);
+    const balizas: THREE.Mesh[] = [];
+    for (let i = 0; i < 3; i++) {
+      const b = new THREE.Mesh(
+        new THREE.SphereGeometry(0.035, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xff2d3a, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
+      const a = (i / 3) * Math.PI * 2;
+      b.position.set(holoGlobo.position.x + Math.cos(a) * 1.12, holoGlobo.position.y, holoGlobo.position.z + Math.sin(a) * 1.12);
+      balizas.push(b);
+      g2.add(b);
+    }
+    g2.add(holoGlobo, anilloEq, anilloPol, piso2);
+    g2.visible = false;
+    this.escena.add(g2);
+    this.mundosZona[2] = g2;
+
+    // ZONA 3 — LA ARENA: piso Tron dorado + monolitos de juego con filo de neón
+    const g3 = new THREE.Group();
+    const piso3 = new THREE.GridHelper(10, 20, 0xffb347, 0x6b4a12);
+    piso3.position.set(1.25, -2.28, -0.6);
+    lim(piso3.material as THREE.LineBasicMaterial, 0.5);
+    const piso3b = new THREE.GridHelper(10, 10, 0xff2d78, 0x5a1230);
+    piso3b.position.set(1.25, -2.27, -0.62);
+    lim(piso3b.material as THREE.LineBasicMaterial, 0.2);
+    g3.add(piso3, piso3b);
+    const monolitos: { p: [number, number, number]; t: [number, number, number] }[] = [
+      { p: [0.25, -1.68, -1.05], t: [0.52, 1.14, 0.34] },
+      { p: [1.4, -1.52, -1.5], t: [0.44, 0.86, 0.3] },
+      { p: [2.42, -1.72, -0.85], t: [0.5, 0.98, 0.32] },
+    ];
+    for (const mo of monolitos) {
+      const caja = new THREE.Mesh(
+        new THREE.BoxGeometry(mo.t[0], mo.t[1], mo.t[2]),
+        new THREE.MeshBasicMaterial({ color: 0x0d0d16, transparent: true, opacity: 0.9 }),
+      );
+      caja.position.set(mo.p[0], mo.p[1] + mo.t[1] / 2 + 0.06, mo.p[2]);
+      const filos = new THREE.LineSegments(
+        new THREE.EdgesGeometry(caja.geometry),
+        new THREE.LineBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0.85 }),
+      );
+      filos.position.copy(caja.position);
+      g3.add(caja, filos);
+    }
+    const aro3 = new THREE.Mesh(
+      new THREE.TorusGeometry(0.55, 0.02, 8, 48),
+      new THREE.MeshBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    aro3.position.set(1.4, -0.62, -1.15);
+    aro3.rotation.x = 1.25;
+    g3.add(aro3);
+    g3.visible = false;
+    this.escena.add(g3);
+    this.mundosZona[3] = g3;
+
+    // ZONA 4 — EL CUARTEL: plataforma-búnker con astas y banderas azules
+    const g4 = new THREE.Group();
+    const base4 = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.55, 1.78, 0.16, 26),
+      new THREE.MeshBasicMaterial({ color: 0x0a1420, transparent: true, opacity: 0.95 }),
+    );
+    base4.position.set(-2.55, -0.62, -1.1);
+    const aro4 = new THREE.Mesh(
+      new THREE.TorusGeometry(1.55, 0.016, 8, 56),
+      new THREE.MeshBasicMaterial({ color: 0x4da6ff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    aro4.position.set(-2.55, -0.54, -1.1);
+    aro4.rotation.x = Math.PI / 2;
+    g4.add(base4, aro4);
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2 + 0.5;
+      const x = -2.55 + Math.cos(a) * 1.25, z = -1.1 + Math.sin(a) * 1.05;
+      const asta = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.014, 0.014, 0.95, 6),
+        new THREE.MeshBasicMaterial({ color: 0x8fc1ff, transparent: true, opacity: 0.8 }),
+      );
+      asta.position.set(x, -0.16, z);
+      const bandera = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.4, 0.24),
+        new THREE.MeshBasicMaterial({ color: 0x4da6ff, transparent: true, opacity: 0.6, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
+      bandera.position.set(x + 0.21, 0.18, z);
+      g4.add(asta, bandera);
+    }
+    const muro4 = new THREE.Mesh(
+      new THREE.BoxGeometry(3.3, 1.0, 0.06),
+      new THREE.MeshBasicMaterial({ color: 0x1a3550, wireframe: true, transparent: true, opacity: 0.4 }),
+    );
+    muro4.position.set(-2.55, 0.02, -2.0);
+    g4.add(muro4);
+    g4.visible = false;
+    this.escena.add(g4);
+    this.mundosZona[4] = g4;
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v141 — EL LOGO 3D y EL MODO MUNDO
+  // ════════════════════════════════════════════════════════
+  nacerLogo() {
+    if (!this.letrasLogo.length) { this.pendienteLogo = true; return; }
+    this.logoNacido = true;
+    this.letrasLogo.forEach((l, i) => {
+      window.setTimeout(() => {
+        if (!this.vivo) return;
+        l.mesh.visible = true;
+        const m = l.mesh.material as THREE.MeshStandardMaterial;
+        m.opacity = 0;
+        l.mesh.scale.setScalar(2.6);
+        this.cancelar.push(animar(l.mesh.scale, { x: 1, y: 1, z: 1 }, 480, { ease: easeOut }));
+        this.cancelar.push(animar(m, { opacity: 1 }, 380));
+      }, i * 110);
+    });
+  }
+
+  // tras entrar(): el logo se condensa en un arco compacto que vive en el cielo
+  condensarLogo() {
+    if (!this.logoNacido) return;
+    for (const l of this.letrasLogo) {
+      l.quieto = true;
+      this.cancelar.push(animar(l.mesh.scale, { x: 0.6, y: 0.6, z: 0.6 }, 900, { ease: easeInOut }));
+      this.cancelar.push(animar(l.mesh.position, { x: l.base.x * 0.62, y: l.base.y + 0.3, z: l.base.z * 0.62 }, 950, {
+        onDone: () => {
+          l.base.set(l.mesh.position.x, l.mesh.position.y, l.mesh.position.z);
+          l.quieto = false;
+        },
+      }));
+    }
+  }
+
+  // tocar un portal o un título 3D = entrar a ese mundo (vuela + abre su sala)
+  entrarPortal(zona: number) {
+    this.modoMundo = false;
+    document.documentElement.removeAttribute("data-wgl-modo");
+    window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: false } }));
+    this.volarAZona(zona);
+    document.documentElement.setAttribute("data-wgl-zona", String(zona));
+    window.dispatchEvent(new CustomEvent("vg:wgl-sala", { detail: { zona } }));
+    sonar("whoosh");
+  }
+
+  alternarModo() {
+    this.modoMundo = !this.modoMundo;
+    if (this.modoMundo) document.documentElement.setAttribute("data-wgl-modo", "1");
+    else document.documentElement.removeAttribute("data-wgl-modo");
+    window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: this.modoMundo } }));
+    this.irAPose(1000);
+    sonar("whoosh");
+  }
+
+  // la Casa (page.tsx) ordena el modo (Esc, abrir sala) — sin bucles
+  syncModo(on: boolean) {
+    this.modoMundo = on;
+    if (on) document.documentElement.setAttribute("data-wgl-modo", "1");
+    else document.documentElement.removeAttribute("data-wgl-modo");
+    this.irAPose(1000);
+  }
+
+  // ── RAYCAST — portales/títulos → marcadores → globo ──
+  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "portal" | "marcador" | "globo" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number } {
+    if (ignorarUI) return { tipo: "nada" };
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
+    const hitP = ray.intersectObjects(this.proxiesClic, false)[0];
+    if (hitP && hitP.object.userData?.portal) {
+      return { tipo: "portal", zona: hitP.object.userData.portal as number };
+    }
+    const proxies = this.marcadores.map((m) => m.proxy);
+    const hitM = ray.intersectObjects(proxies, false)[0];
+    if (hitM && hitM.object.userData?.marcador) {
+      return { tipo: "marcador", datos: hitM.object.userData.marcador as MarcadorWGL, punto: hitM.point.clone() };
+    }
+    const hitG = ray.intersectObject(this.tierra, false)[0];
+    if (hitG) return { tipo: "globo", punto: hitG.point.clone() };
+    return { tipo: "nada" };
+  }
+
+  // ════════════════════════════════════════════════════════
   // EL VUELO — REGLA 1: SIEMPRE SUAVE · REGLA 2: SE VE EL VIAJE
+  // v141: la pose la decide poseDe() (mundo centrado en MODO MUNDO,
+  // planeta a la izquierda cuando la Casa está abierta)
   // ════════════════════════════════════════════════════════
   volarAZona(zona: number, dur = 1200) {
     if (this.enVuelo || zona === this.zona) return;
@@ -354,10 +823,7 @@ class MundoWGL {
     window.setTimeout(() => {
       document.documentElement.removeAttribute("data-wgl-volando");
     }, Math.min(1500, dur) + 150);
-    const pos = ZONA_POS[zona], tgt = ZONA_TGT[zona];
-    const desde = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
-    const objPos = { x: desde.x, y: desde.y, z: desde.z };
-    const objMir = { x: this.mirada.x, y: this.mirada.y, z: this.mirada.z };
+    const { pos, tgt } = this.poseDe(zona);
 
     // WARP: estrellas gordas + fov punch — hipervelocidad suave (400ms)
     const fovBase = 50;
@@ -373,21 +839,8 @@ class MundoWGL {
       onDone: () => this.cancelar.push(animar(this.matEstrellas, { size: this.baseEstrellas }, 700)),
     }));
 
-    this.cancelar.push(animar(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
-      onUpdate: () => {
-        this.camara.position.set(objPos.x, objPos.y, objPos.z);
-        this.camara.lookAt(objMir.x, objMir.y, objMir.z);
-      },
-    }));
-    this.cancelar.push(animar(objMir, { x: tgt[0], y: tgt[1], z: tgt[2] }, dur, {
-      onUpdate: () => this.camara.lookAt(objPos.x, objPos.y, objPos.z),
-      onDone: () => {
-        this.mirada.set(tgt[0], tgt[1], tgt[2]);
-        this.camara.lookAt(tgt[0], tgt[1], tgt[2]);
-        this.enVuelo = false;
-      },
-    }));
-
+    this.volarCamara(pos, tgt, dur);
+    this.visibleZona(zona);
     this.ambientarZona(zona);
   }
 
@@ -406,11 +859,11 @@ class MundoWGL {
     }));
     this.particulasOro.visible = zona === 3;
     this.particulasAzul.visible = zona === 4;
-    const opOro = { o: this.particulasOro.material.opacity };
+    const opOro = { o: (this.particulasOro.material as THREE.PointsMaterial).opacity };
     this.cancelar.push(animar(opOro, { o: zona === 3 ? 0.8 : 0 }, 900, {
       onUpdate: () => { (this.particulasOro.material as THREE.PointsMaterial).opacity = opOro.o; },
     }));
-    const opAzul = { o: this.particulasAzul.material.opacity };
+    const opAzul = { o: (this.particulasAzul.material as THREE.PointsMaterial).opacity };
     this.cancelar.push(animar(opAzul, { o: zona === 4 ? 0.75 : 0 }, 900, {
       onUpdate: () => { (this.particulasAzul.material as THREE.PointsMaterial).opacity = opAzul.o; },
     }));
@@ -486,35 +939,23 @@ class MundoWGL {
     // entrada ya vivida esta sesión: el mundo espera en la zona de la sala
     this.zona = zonaInicial;
     window.dispatchEvent(new CustomEvent("vg:wgl-zona", { detail: { zona: zonaInicial } }));
-    const pos = ZONA_POS[zonaInicial], tgt = ZONA_TGT[zonaInicial];
+    const { pos, tgt } = this.poseDe(zonaInicial);
     this.camara.position.set(pos[0], pos[1], pos[2]);
-    this.mirada.set(tgt[0], tgt[1], tgt[2]);
-    this.camara.lookAt(tgt[0], tgt[1], tgt[2]);
+    this.mirada.copy(tgt);
+    this.camara.lookAt(tgt.x, tgt.y, tgt.z);
     this.matEstrellas.opacity = 0.95;
     (this.atmosfera.material as THREE.ShaderMaterial).uniforms.uOp.value = 1.35;
     for (const m of this.marcadores) {
       (m.nucleo.material as THREE.MeshBasicMaterial).opacity = 1;
       (m.anillo.material as THREE.MeshBasicMaterial).opacity = 0.55;
     }
+    this.visibleZona(zonaInicial);
     this.ambientarZona(zonaInicial);
   }
 
   // ── RAYCAST — tocar el globo o un conflicto (window-level: los
   // paneles HTML nunca bloquean el mundo) ──
-  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "marcador" | "globo" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3 } {
-    if (ignorarUI) return { tipo: "nada" };
-    const ray = new THREE.Raycaster();
-    ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
-    const proxies = this.marcadores.map((m) => m.proxy);
-    const hitM = ray.intersectObjects(proxies, false)[0];
-    if (hitM && hitM.object.userData?.marcador) {
-      return { tipo: "marcador", datos: hitM.object.userData.marcador as MarcadorWGL, punto: hitM.point.clone() };
-    }
-    const hitG = ray.intersectObject(this.tierra, false)[0];
-    if (hitG) return { tipo: "globo", punto: hitG.point.clone() };
-    return { tipo: "nada" };
-  }
-
+  // v141: el raycast PORTAL/TÍTULO vive en el golpear de arriba
   proyectar(p: THREE.Vector3): { x: number; y: number } {
     const v = p.clone().project(this.camara);
     return {
@@ -546,6 +987,27 @@ class MundoWGL {
     if (this.particulasOro.visible) this.particulasOro.rotation.y += dt * 0.06;
     if (this.particulasAzul.visible) this.particulasAzul.rotation.y -= dt * 0.05;
     this.estrellas.rotation.y += dt * 0.0035;
+
+    // v141: CADA LETRA 3D RESPIRA (flota con su propia fase) y los
+    // portales giran/pulsan — el universo entero está vivo
+    const flota = (arr: Letra3D[], amp = 0.018) => {
+      for (const l of arr) {
+        if (l.quieto) continue;
+        l.mesh.position.y = l.base.y + Math.sin(t * 1.15 + l.fase) * amp;
+      }
+    };
+    flota(this.letrasLogo);
+    for (const tz of this.titulosZona) if (tz.grupo.visible) flota(tz.letras, 0.012);
+    for (const p of this.portales) {
+      if (!p.grupo.visible) continue;
+      p.nucleo.rotation.z += dt * 0.55;
+      p.grupo.scale.setScalar(1 + Math.sin(t * 2 + p.fase) * 0.07);
+    }
+    // los mundos por zona también respiran (holo-globo y aros)
+    const g2v = this.mundosZona[2];
+    if (g2v?.visible) g2v.rotation.y += dt * 0.1;
+    const g3v = this.mundosZona[3];
+    if (g3v?.visible) g3v.rotation.y -= dt * 0.015;
 
     // PARALLAX de paneles: la cámara cuenta dónde está — CSS vars
     const tgt = ZONA_TGT[this.zona] ?? [0, 0, 0];
@@ -632,7 +1094,11 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
       const ny = -(e.clientY / window.innerHeight) * 2 + 1;
       const g = mundoRef.current.golpear(nx, ny, false);
-      if (g.tipo === "marcador" && g.datos && g.punto) {
+      if (g.tipo === "portal" && typeof g.zona === "number") {
+        // v141: PORTAL o TÍTULO 3D tocado — la cámara vuela a ese mundo
+        // y la Casa abre su sala (se acaba el modo mundo si estaba)
+        mundoRef.current.entrarPortal(g.zona);
+      } else if (g.tipo === "marcador" && g.datos && g.punto) {
         // CONFLICTO TOCADO: destello 2x + popup mínimo + vuelo al Command Center
         const { datos: m, punto } = g;
         try { sessionStorage.setItem("vg-wgl-conflicto", m.id); } catch {}
@@ -667,14 +1133,23 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     };
     window.addEventListener("vg:wgl-ir-a", onIr);
 
+    // v141 MODO MUNDO: el botón MUNDO del navbar y la Casa (Esc / abrir sala)
+    const onModoToggle = () => mundoRef.current?.alternarModo();
+    const onModoSync = (e: Event) => mundoRef.current?.syncModo(!!(e as CustomEvent).detail?.on);
+    window.addEventListener("vg:wgl-modo-toggle", onModoToggle);
+    window.addEventListener("vg:wgl-modo-sync", onModoSync);
+
     return () => {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pointerdown", onToque);
       window.removeEventListener("vg:wgl-ir-a", onIr);
+      window.removeEventListener("vg:wgl-modo-toggle", onModoToggle);
+      window.removeEventListener("vg:wgl-modo-sync", onModoSync);
       for (const id of tiempos.current) clearTimeout(id);
       mundo?.destruir();
       document.documentElement.removeAttribute("data-wgl");
+      document.documentElement.removeAttribute("data-wgl-modo");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -701,7 +1176,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       setFase("marcadores");
       mundoRef.current?.encenderMarcadores(() => sonar("onda"));
     });
-    despues(T(4.4), () => setFase("logo"));
+    despues(T(4.4), () => { setFase("logo"); mundoRef.current?.nacerLogo(); });
     despues(T(5.4), () => setFase("tagline"));
     despues(T(6.4), () => { setFase("hint"); mundoRef.current?.invitar(); });
     return () => { for (const id of tiempos.current) clearTimeout(id); tiempos.current = []; };
@@ -728,6 +1203,8 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     if (m) {
       m.invitando = false;
       m.respiro = 0.006;
+      // v141: el logo 3D se condensa y vive para siempre en el cielo del mundo
+      m.condensarLogo();
       // OJO: NO asignar m.zona aquí — volarAZona lo hace y su guard
       // (zona === this.zona) cancelaría el vuelo (bug cazado en QA)
       m.volarAZona(1);
@@ -760,11 +1237,10 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
             <i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i />
           </div>
           <div className="vg140-marca" data-visible={fase === "logo" || fase === "tagline" || fase === "hint" ? "1" : "0"}>
-            <h1 className="vg140-logo" aria-label="VANGUARD">
-              {"VANGUARD".split("").map((ch, i) => (
-                <span key={i} style={{ ["--gi" as string]: `${i * 100}ms` }}>{ch}</span>
-              ))}
-            </h1>
+            {/* v141: el LOGO ya no es DOM — son 8 LETRAS 3D EXTRUIDAS de oro
+                viviendo en el lienzo WebGL (nacen con glitch letra a letra);
+                el DOM solo firma el tagline y el hint debajo del planeta */}
+            <span className="sr-only">VANGUARD</span>
             <p className="vg140-tagline">
               {escrito}
               <span className="vg140-cursor" aria-hidden />
@@ -872,7 +1348,17 @@ const ICONOS: Record<number, React.ReactNode> = {
 };
 const NOMBRES_ZONA: Record<number, string> = { 1: "HOY", 2: "ANÁLISIS", 3: "ARENA", 4: "CUARTEL" };
 
-export function NavZonas({ zona, onIr }: { zona: number; onIr: (z: number) => void }) {
+// v141: el ícono del MODO MUNDO — el planeta dentro de una órbita con flechas
+const ICONO_MUNDO = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+    <circle cx="12" cy="12" r="5.2" />
+    <path d="M3.2 8.6c-1.5 2.9 3.4 7 10 9.3s12 1.7 12.6-1.2" opacity="0.85" />
+    <path d="M4.2 6.4 3 9l2.7.4" />
+    <path d="M19.8 17.6 21 15l-2.7-.4" />
+  </svg>
+);
+
+export function NavZonas({ zona, modo, onIr, onMundo }: { zona: number; modo: boolean; onIr: (z: number) => void; onMundo: () => void }) {
   return (
     <nav className="vg140-nav" aria-label="Zonas del mundo VANGUARD">
       {[1, 2, 3, 4].map((z) => (
@@ -880,7 +1366,7 @@ export function NavZonas({ zona, onIr }: { zona: number; onIr: (z: number) => vo
           key={z}
           type="button"
           className="vg140-nav-btn"
-          data-activa={zona === z ? "1" : "0"}
+          data-activa={!modo && zona === z ? "1" : "0"}
           onClick={() => onIr(z)}
           aria-label={`Volar a la zona ${NOMBRES_ZONA[z]}`}
         >
@@ -888,6 +1374,19 @@ export function NavZonas({ zona, onIr }: { zona: number; onIr: (z: number) => vo
           <span>{NOMBRES_ZONA[z]}</span>
         </button>
       ))}
+      {/* v141: MODO MUNDO — la Casa se aparta y solo queda el universo 3D:
+          tocar un portal o un título de letras = entrar a ese mundo */}
+      <button
+        type="button"
+        className="vg140-nav-btn vg141-nav-mundo"
+        data-activa={modo ? "1" : "0"}
+        onClick={onMundo}
+        aria-pressed={modo}
+        aria-label="Modo mundo: volar libre por el universo Vanguard en 3D"
+      >
+        {ICONO_MUNDO}
+        <span>MUNDO</span>
+      </button>
     </nav>
   );
 }

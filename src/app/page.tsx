@@ -321,6 +321,10 @@ export default function Home() {
   const inmersionRef = useRef(false);
   // v140 MUNDO WEBGL: la zona del mundo donde está la cámara (navbar sincronizado)
   const [wglZona, setWglZona] = useState(1);
+  // v141 MODO MUNDO: la Casa entera se aparta y solo queda el universo 3D —
+  // tocar un portal o un título de letras 3D = volar a ese mundo y abrir su sala
+  const [modoMundo, setModoMundo] = useState(false);
+  const modoMundoRef = useRef(false);
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
@@ -351,6 +355,13 @@ export default function Home() {
   // Explorador — la NUEVA no cuenta: abrir pestañas no paga el mapa. Escena para
   // la radio + scroll arriba (la franja nunca tapa el inicio del panel).
   const handleTabChange = useCallback((k: TabKey) => {
+    // v141: si venimos del MODO MUNDO, la Casa vuelve a su sitio (sin bucles:
+    // vg:wgl-modo-sync solo re-pone la pose, no re-dispara eventos)
+    if (modoMundoRef.current) {
+      modoMundoRef.current = false;
+      setModoMundo(false);
+      window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
+    }
     // v125.0 CORRECCIÓN TOTAL — RESOLUTOR DE SALA: si llega la CLAVE DE SECCIÓN
     // (los 16 mundos del mega-menú; el swipe de borde las usaba directo) y esa
     // clave no tiene panel propio, se resuelve a su PRIMERA PESTAÑA real. Antes:
@@ -411,6 +422,7 @@ export default function Home() {
   // v140 MUNDO WEBGL: la cámara manda — cuando el mundo vuela a otra zona
   // (marcador tocado, entrada, vuelos), el navbar y la Casa se sincronizan.
   // Un conflicto tocado en el globo aterriza en el COMMAND CENTER (crisis).
+  // v141: el mundo también manda el MODO MUNDO y las salas entradas por portal.
   useEffect(() => {
     const onZona = (e: Event) => {
       const z = (e as CustomEvent).detail?.zona;
@@ -419,11 +431,28 @@ export default function Home() {
     const onConflicto = () => {
       handleTabChange("crisis");
     };
+    const onModo = (e: Event) => {
+      const on = !!(e as CustomEvent).detail?.on;
+      modoMundoRef.current = on;
+      setModoMundo(on);
+    };
+    const TAB_POR_ZONA_WGL: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
+    const onSala = (e: Event) => {
+      const z = (e as CustomEvent).detail?.zona;
+      if (typeof z !== "number" || !TAB_POR_ZONA_WGL[z]) return;
+      modoMundoRef.current = false;
+      setModoMundo(false);
+      handleTabChange(TAB_POR_ZONA_WGL[z]);
+    };
     window.addEventListener("vg:wgl-zona", onZona);
     window.addEventListener("vg:wgl-conflicto", onConflicto);
+    window.addEventListener("vg:wgl-modo", onModo);
+    window.addEventListener("vg:wgl-sala", onSala);
     return () => {
       window.removeEventListener("vg:wgl-zona", onZona);
       window.removeEventListener("vg:wgl-conflicto", onConflicto);
+      window.removeEventListener("vg:wgl-modo", onModo);
+      window.removeEventListener("vg:wgl-sala", onSala);
     };
   }, [handleTabChange]);
 
@@ -764,6 +793,20 @@ export default function Home() {
     sfx.tab();
   }, [t]);
 
+  // v141: Esc también sale del MODO MUNDO (el mundo re-centra su pose solo)
+  useEffect(() => {
+    if (!modoMundo) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        modoMundoRef.current = false;
+        setModoMundo(false);
+        window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [modoMundo]);
+
   // Esc sale de la inmersión; si el usuario sale del fullscreen nativo con Esc,
   // fullscreenchange mantiene el estado coherente.
   useEffect(() => {
@@ -857,10 +900,10 @@ export default function Home() {
       <MotorLuxe />
       {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
       <MotorArquitecto />
-      {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
-          apartan (display:contents cuando no — cero cajas fantasma) para que
-          el contenido mande y se vea TODO */}
-      <div className={inmersion ? "hidden" : "contents vg-casco-v140"}>
+      {/* v108.0 MODO INMERSIÓN / v141 MODO MUNDO: la cabecera, la barra Google
+          y la franja se apartan (display:contents cuando no — cero cajas fantasma);
+          en MODO MUNDO se aparta TODO — solo vive el universo 3D */}
+      <div className={inmersion || modoMundo ? "hidden" : "contents vg-casco-v140"}>
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -923,7 +966,7 @@ export default function Home() {
       <TransicionMaestra tabKey={tab} label={APP_VERSION_LABEL} />
       <CineVivo />
 
-      <main className="escenario-v137 flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20" data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
+      <main className={`escenario-v137 flex-1 px-3 py-4 sm:px-4 sm:py-6 max-w-7xl w-full mx-auto pb-20 ${inmersion || modoMundo ? "hidden" : ""}`} data-swipe118="1" onTouchStart={alTocarBorde} onTouchEnd={alSoltarBorde}>
         {/* v118 CRONOATLAS: transición DIRECCIONAL — adelante entra por la
             derecha, atrás invierte el movimiento; AnimatePresence pasa el
             custom a la pestaña saliente para que el exit también lo sepa. */}
@@ -1164,7 +1207,7 @@ export default function Home() {
         </AnimatePresence>
       </main>
 
-      <footer className="mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative">
+      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion || modoMundo ? "hidden" : ""}`}>
         <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] sm:text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">
@@ -1187,12 +1230,35 @@ export default function Home() {
       </footer>
 
       {/* v140 MUNDO WEBGL: EL NAVBAR DE ZONAS — los 4 íconos siempre visibles;
-          tocarlos no cambia de página: vuela la cámara a esa zona del mundo */}
-      <NavZonas zona={wglZona} onIr={(z) => {
+          tocarlos no cambia de página: vuela la cámara a esa zona del mundo.
+          v141: el 5º botón MUNDO aparta la Casa y deja solo el universo 3D */}
+      <NavZonas zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
         const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
         const destino = mapa[z];
         if (destino) handleTabChange(destino);
       }} />
+
+      {/* v141 MODO MUNDO: el único HUD visible — salir + la invitación a entrar */}
+      {modoMundo && (
+        <div className="vg141-modo-ui">
+          <button
+            type="button"
+            className="vg141-modo-salir"
+            onClick={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))}
+            data-wgl-panel
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
+              <polyline points="4 14 10 14 10 20" />
+              <polyline points="20 10 14 10 14 4" />
+              <line x1="14" y1="10" x2="21" y2="3" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            SALIR DEL MUNDO
+            <span>Esc</span>
+          </button>
+          <p className="vg141-modo-hint">TOCA UN PORTAL · ENTRA A UN MUNDO 3D</p>
+        </div>
+      )}
 
       <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}
