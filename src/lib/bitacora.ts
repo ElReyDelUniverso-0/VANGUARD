@@ -22,6 +22,15 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v145.1",
+    nombre: "VUELO LIBRE · WIDGETS",
+    tipo: "tecno",
+    hitos: [
+      "LOS WIDGETS ENTRAN AL UNIVERSO (P2 del agente de prompts): la RADIO VANGUARD+ y el ESTADO DEL ENLACE dejan de ser capas DOM fijas — viven como MINI-PANTALLAS holográficas CSS3D clavadas en las esquinas del plano de mando (izquierda el enlace, derecha la radio), escalan con el frustum y siguen a la cámara en cada vuelo",
+      "El truco: el host transformado es el CONTAINING BLOCK de los position:fixed internos — el widget ancla a SU esquina dentro del host y el host flota en el espacio. NINGÚN backdrop-filter dentro de la capa (lección v144 aplicada a los widgets)",
+    ],
+  },
+  {
     version: "v145.0",
     nombre: "VUELO LIBRE",
     tipo: "tecno",

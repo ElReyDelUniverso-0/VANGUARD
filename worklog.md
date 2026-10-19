@@ -2103,3 +2103,21 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v145.0 VUELO LIBRE. El Dueño ya no mira el universo: LO VUELA. La cámara obedece al teclado, al dedo y a la rueda con inercia de nave; el menú y la búsqueda son hologramas que salen de la pantalla; las letras son Rajdhani militar con filo de neón; la cápsula flota sobre un haz de proyector que parpadea como proyección real. Cero 2D en el camino del usuario (los modales Radix de cuenta/ajustes quedan como cola P3).
 - Siguiente automático: `bun scripts/agente-prompts.ts` → P2 (widgets flotantes al universo).
+
+---
+Task ID: 28
+Agent: main (Super Z)
+Task: v145.1 — P2 del AGENTE DE PROMPTS: widgets flotantes al universo (radio + estado del enlace).
+
+Work Log:
+- construidos dos hosts CSS3D en el plano de mando: .vg145-wid-izq (210px, estado del enlace) y .vg145-wid-der (300px, radio) — visibles al terminar la entrada, apagados en modo mundo, colocados por frame en acoplarWidgesFrame (frustum frac 0.15/0.185 desktop, 0.42/0.5 móvil).
+- EL TRUCO DE LOS FIXED: el host transformado es el CONTAINING BLOCK de los position:fixed internos — MusicPlayer y RealtimeStatus se portan SIN tocar su markup (createPortal) y sus clases fixed bottom/right anclan a la esquina del host flotante.
+- page.tsx: hostWidIzq/hostWidDer (vg:wgl-widhosts + __vgWidIzqHost/__vgWidDerHost) + portales. PulsoAuto queda flat (monta en layout.tsx global, fuera de la Casa) — anotado para P3.
+- GUARDIAS actualizados: .vg145-widhost añadido al closest() del onToque y del onRueda (la radio no raycastea el mundo ni el vuelo hace dolly sobre el volumen de la radio).
+- REGLA backdrop-filter aplicada a los widgets: strip forzado en .vg145-widhost (RealtimeStatus llevaba backdrop-blur-sm y el panel expandido de la radio backdrop-blur-md — riesgo de rasterizador).
+- QA producción: radio + estado DENTRO del mundo (qa-v145-p2-widgets.png, qa-v145-p2-final.png), portales con 1 hijo cada host, 0 errores de consola, tsc + build limpios.
+- version.ts → v145.1. bitacora.ts entrada. P2 marcado HECHO en la cola.
+
+Stage Summary:
+- v145.1 = v145.0 + P2. El último chrome DOM de las esquinas (radio/estado) vive ahora en el plano de mando 3D. Quedan flat SOLO los modales Radix (P3) y el PulsoAuto de layout.
+- Siguiente: P3 (modales Radix a ventana holo con Dialog.Portal container) o P7 (joystick móvil).

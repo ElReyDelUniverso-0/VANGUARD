@@ -4998,3 +4998,30 @@ html[data-inmi108="1"] .vg145-ventana {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+/* v145 P2 — LOS WIDGETS FLOTANTES: la radio y el estado del enlace viven
+   en las esquinas del plano de mando (mini-pantallas CSS3D). El host es su
+   containing block: los `fixed` de los widgets anclan a SU esquina. */
+.vg145-widhost {
+  pointer-events: auto;
+  user-select: none;
+  overflow: visible;
+}
+html[data-wgl-entrada="1"] .vg145-widhost,
+html[data-wgl-modo="1"] .vg145-widhost {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* REGLA v144 (lección QA) también para los widgets: NINGÚN backdrop-filter
+   dentro de una capa CSS3D — mata al rasterizador. */
+.vg145-widhost [class*="backdrop-blur"],
+.vg145-widhost [class*="backdrop-blur"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.vg145-widhost .hud-panel {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: linear-gradient(158deg, rgba(12, 16, 26, 0.97), rgba(7, 9, 16, 0.95)) !important;
+}

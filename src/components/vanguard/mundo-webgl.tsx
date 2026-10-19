@@ -408,6 +408,15 @@ class MundoWGL {
   hazCrono: THREE.Mesh | null = null;
   hazActivo = false;
   matHaz!: THREE.MeshBasicMaterial;
+  // v145 P2 — LOS WIDGETS FLOTANTES: la radio (der) y el estado del enlace
+  // (izq) dejan de ser capas DOM fijas y viven como mini-pantallas CSS3D en
+  // las esquinas del plano de mando
+  widIzqObj: CSS3DObject | null = null;
+  widIzqEl: HTMLDivElement | null = null;
+  widIzqPx = 210;
+  widDerObj: CSS3DObject | null = null;
+  widDerEl: HTMLDivElement | null = null;
+  widDerPx = 300;
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -450,6 +459,8 @@ class MundoWGL {
     this.construirConsola();
     // v145: LA VENTANA HOLO — el menú flotando como proyección en el espacio
     this.construirVentana();
+    // v145 P2: LOS WIDGETS FLOTANTES — radio y estado en las esquinas 3D
+    this.construirWidges();
     // v144: la Casa publica sus pestañas y sus etiquetas i18n por eventos
     window.addEventListener("vg:holo-pestanas", this.onPestanasEv);
     window.addEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
@@ -747,6 +758,63 @@ class MundoWGL {
     const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
     this.navObj.position.copy(this.camara.position).addScaledVector(f, zNav).addScaledVector(arriba, y);
     this.navObj.quaternion.copy(this.camara.quaternion);
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v145 P2 — LOS WIDGETS FLOTANTES — la radio y el estado del enlace
+  // como mini-pantallas holográficas en las ESQUINAS del plano de mando.
+  // position:fixed no sobrevive un portal CSS3D… pero el CONTAINING BLOCK
+  // de un elemento transformado sí atrapa a los fixed: el widget ancla a
+  // la esquina de SU host, y el host flota en el espacio del puente.
+  // ════════════════════════════════════════════════════════
+  construirWidges() {
+    const hacer = (clase: string, w: number, h: number) => {
+      const host = document.createElement("div");
+      host.className = `vg145-widhost ${clase}`;
+      host.style.width = `${w}px`;
+      host.style.height = `${h}px`;
+      const obj = new CSS3DObject(host);
+      obj.visible = false; // despiertan al terminar la entrada
+      this.cssEscena.add(obj);
+      return { obj, host };
+    };
+    const izq = hacer("vg145-wid-izq", this.widIzqPx, 52);
+    this.widIzqObj = izq.obj;
+    this.widIzqEl = izq.host;
+    const der = hacer("vg145-wid-der", this.widDerPx, 96);
+    this.widDerObj = der.obj;
+    this.widDerEl = der.host;
+    (window as unknown as { __vgWidIzqHost?: HTMLDivElement }).__vgWidIzqHost = izq.host;
+    (window as unknown as { __vgWidDerHost?: HTMLDivElement }).__vgWidDerHost = der.host;
+    window.dispatchEvent(new CustomEvent("vg:wgl-widhosts", { detail: { izq: izq.host, der: der.host } }));
+  }
+
+  private setVisibleWidges(on: boolean) {
+    if (this.widIzqObj) this.widIzqObj.visible = on;
+    if (this.widDerObj) this.widDerObj.visible = on;
+  }
+
+  // por frame: cada widget clavado en SU esquina del plano de mando
+  private acoplarWidgesFrame() {
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const derecha = new THREE.Vector3(1, 0, 0).applyQuaternion(this.camara.quaternion);
+    const movil = this.esMovil();
+    const colocar = (obj: CSS3DObject | null, el: HTMLDivElement | null, px: number, frac: number, lado: number) => {
+      if (!obj || !el || !obj.visible) return;
+      const alto = this.altoPlano(Z_CONSOLA);
+      const ancho = alto * this.camara.aspect;
+      const escala = (ancho * frac) / Math.max(px, 1);
+      obj.scale.setScalar(escala);
+      const hPx = el.offsetHeight || 48;
+      const x = lado * (ancho / 2 - (px * escala) / 2 - 0.2);
+      const y = -(alto / 2) + (hPx * escala) / 2 + (movil ? 0.3 : 0.36);
+      obj.position.copy(this.camara.position).addScaledVector(f, Z_CONSOLA).addScaledVector(arriba, y).addScaledVector(derecha, x);
+      obj.quaternion.copy(this.camara.quaternion);
+    };
+    colocar(this.widIzqObj, this.widIzqEl, this.widIzqPx, movil ? 0.42 : 0.15, -1);
+    colocar(this.widDerObj, this.widDerEl, this.widDerPx, movil ? 0.5 : 0.185, 1);
   }
 
   // ════════════════════════════════════════════════════════
@@ -1876,6 +1944,7 @@ class MundoWGL {
     this.pieGrupo.visible = fin && !this.modoMundo && !this.esMovil();
     if (this.railObj) this.railObj.visible = fin && !this.modoMundo;
     this.modoGrupo.visible = fin && this.modoMundo;
+    this.setVisibleWidges(fin && !this.modoMundo); // v145 P2
     if (fase === "tagline") {
       this.entradaGrupo.visible = true;
       if (this.platoEntrar) this.platoEntrar.visible = false;
@@ -1902,6 +1971,7 @@ class MundoWGL {
     this.pieGrupo.visible = this.consolaVisibleFin && !on && !this.esMovil();
     if (this.railObj) this.railObj.visible = this.consolaVisibleFin && !on;
     this.modoGrupo.visible = this.consolaVisibleFin && on && this.modoConstruido;
+    this.setVisibleWidges(this.consolaVisibleFin && !on); // v145 P2
   }
 
   // ── HOVER del puente — la placa respira más fuerte bajo el puntero ──
@@ -2268,6 +2338,7 @@ class MundoWGL {
     this.acoplarConsolaFrame();
     this.acoplarNavFrame();
     this.acoplarVentanaFrame();
+    this.acoplarWidgesFrame();
     this.cssEscena.updateMatrixWorld(true);
     this.renderer.render(this.escena, this.camara);
     this.cssRenderer.render(this.cssEscena, this.camara);
@@ -2326,6 +2397,9 @@ class MundoWGL {
     try {
       (window as unknown as { __vgVentanaHost?: HTMLDivElement | null }).__vgVentanaHost = null;
       window.dispatchEvent(new CustomEvent("vg:wgl-ventanahost", { detail: null }));
+      (window as unknown as { __vgWidIzqHost?: HTMLDivElement | null }).__vgWidIzqHost = null;
+      (window as unknown as { __vgWidDerHost?: HTMLDivElement | null }).__vgWidDerHost = null;
+      window.dispatchEvent(new CustomEvent("vg:wgl-widhosts", { detail: { izq: null, der: null } }));
       if (this.hazCrono) {
         this.escena.remove(this.hazCrono);
         this.hazCrono.geometry.dispose();
@@ -2431,7 +2505,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       if (!mundoRef.current) return;
       const el = e.target as HTMLElement | null;
       // v143/v145: cápsula, consola y VENTANA HOLO son UI de la Casa
-      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost,.vg145-ventana")) return;
+      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost,.vg145-ventana,.vg145-widhost")) return;
       const m = mundoRef.current;
       m.punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (m.punteros.size === 2) {
@@ -2546,7 +2620,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const m = mundoRef.current;
       if (!m) return;
       const el = e.target as HTMLElement | null;
-      if (el && typeof el.closest === "function" && el.closest(".vg143-capsula,.vg145-ventana,.vg143-navhost")) return;
+      if (el && typeof el.closest === "function" && el.closest(".vg143-capsula,.vg145-ventana,.vg143-navhost,.vg145-widhost")) return;
       m.dolar(e.deltaY);
     };
     window.addEventListener("wheel", onRueda, { passive: true });

@@ -608,6 +608,9 @@ export default function Home() {
   const [hostNav, setHostNav] = useState<HTMLElement | null>(null);
   // v145 — LA VENTANA HOLO: el menú y la búsqueda viven DENTRO del universo
   const [hostVentana, setHostVentana] = useState<HTMLElement | null>(null);
+  // v145 P2 — LOS WIDGETS FLOTANTES: radio (der) y estado (izq) en el plano de mando
+  const [hostWidIzq, setHostWidIzq] = useState<HTMLElement | null>(null);
+  const [hostWidDer, setHostWidDer] = useState<HTMLElement | null>(null);
   // v144 HOLOGRAMA TOTAL: el RAIL del estado — la franja viva de la Casa como
   // tira holográfica CSS3D acoplada a la cámara (StatsTicker + LiveTitle)
   const [hostRail, setHostRail] = useState<HTMLElement | null>(null);
@@ -758,11 +761,21 @@ export default function Home() {
     setHostVentana(w2.__vgVentanaHost ?? null);
     const onVentana = (e: Event) => setHostVentana(((e as CustomEvent).detail as HTMLElement | null) ?? null);
     window.addEventListener("vg:wgl-ventanahost", onVentana);
+    const w3 = window as unknown as { __vgWidIzqHost?: HTMLElement | null; __vgWidDerHost?: HTMLElement | null };
+    setHostWidIzq(w3.__vgWidIzqHost ?? null);
+    setHostWidDer(w3.__vgWidDerHost ?? null);
+    const onWids = (e: Event) => {
+      const d = (e as CustomEvent).detail;
+      setHostWidIzq(d?.izq ?? null);
+      setHostWidDer(d?.der ?? null);
+    };
+    window.addEventListener("vg:wgl-widhosts", onWids);
     window.addEventListener("vg:wgl-capsula", onCapsula);
     window.addEventListener("vg:wgl-navhost", onNav);
     window.addEventListener("vg:wgl-railhost", onRail);
     return () => {
       window.removeEventListener("vg:wgl-ventanahost", onVentana);
+      window.removeEventListener("vg:wgl-widhosts", onWids);
       window.removeEventListener("vg:wgl-capsula", onCapsula);
       window.removeEventListener("vg:wgl-navhost", onNav);
       window.removeEventListener("vg:wgl-railhost", onRail);
@@ -1476,8 +1489,10 @@ export default function Home() {
       {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} />
-      <MusicPlayer />
-      <RealtimeStatus />
+      {/* v145 P2: con mundo vivo, la RADIO y el ESTADO del enlace viven en
+          las esquinas 3D del plano de mando (mini-pantallas CSS3D) */}
+      {hostWidIzq ? createPortal(<RealtimeStatus />, hostWidIzq) : <RealtimeStatus />}
+      {hostWidDer ? createPortal(<MusicPlayer />, hostWidDer) : <MusicPlayer />}
       <ConnectionWatchdog />
       <FortunaLluvia />
       {/* v34 — recepción del recluta: procesa ?ref= y da bono de bienvenida */}
