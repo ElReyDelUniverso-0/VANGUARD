@@ -54,6 +54,8 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 // v143: DOM REAL dentro de la escena — la Casa vive en el mundo
 import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { GUERRAS } from "@/lib/guerras-activas-data";
+// v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
+import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
 
 // ────────────────────────────────────────────────────────────
 // MOTOR DE TWEEN — GSAP casero (power2.inOut = cúbica in-out).
@@ -296,7 +298,7 @@ class MundoWGL {
   marcadores: { grupo: THREE.Group; nucleo: THREE.Mesh; anillo: THREE.Mesh; proxy: THREE.Mesh; datos: MarcadorWGL; fase: number }[] = [];
   zona = 0;
   mirada = new THREE.Vector3(0, 0, 0);
-  cancelar: (() => void)[] = [];
+  cancelar = new Set<() => void>();  // v144 P6: Set con auto-poda (no crece eterno)
   reloj = new THREE.Clock();
   raf = 0;
   vivo = true;
@@ -360,6 +362,10 @@ class MundoWGL {
   railEl: HTMLDivElement | null = null;
   railPx = 900;
   railFrac = 0.62;
+  // v145 — SALAS EN VOLUMEN: el contenido real de la sala activa
+  salaInst: Sala3DInstancia | null = null;
+  salaPayload: PayloadSala3D | null = null;
+  salaLlave = "";
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -403,6 +409,10 @@ class MundoWGL {
     // v144: la Casa publica sus pestañas y sus etiquetas i18n por eventos
     window.addEventListener("vg:holo-pestanas", this.onPestanasEv);
     window.addEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
+    // v145: la Casa publica la SALA activa y sus datos vivos — el contenido
+    // real de Vanguard nace en volumen dentro del mundo
+    window.addEventListener("vg:sala3d", this.onSala3dEv);
+    window.addEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
 
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
@@ -592,13 +602,19 @@ class MundoWGL {
   }
 
   // el tamaño CSS del cuerpo (px) — la escala 3D lo normaliza por zona
+  // v145: MODO CONSOLA — las salas insignia ponen su escenario 3D arriba
+  // y la cápsula se hace consola de mando compacta abajo
   private dimensionarCapsula() {
     const movil = window.innerWidth < 768;
-    const w = movil ? Math.min(window.innerWidth - 26, 420) : 1000;
-    const h = movil ? Math.round(window.innerHeight * 0.56) : Math.round(Math.min(window.innerHeight * 0.74, 660));
+    const consola = this.esInsignia() && !!this.salaInst;
+    const w = movil ? Math.min(window.innerWidth - 26, 420) : consola ? 720 : 1000;
+    const h = movil
+      ? Math.round(window.innerHeight * (consola ? 0.3 : 0.56))
+      : Math.round(Math.min(window.innerHeight * (consola ? 0.3 : 0.74), consola ? 290 : 660));
     this.capsulaEl.style.width = `${w}px`;
     this.capsulaEl.style.height = `${h}px`;
     this.capsulaPx = w;
+    this.capsulaEl.dataset.consola = consola ? "1" : "0";
   }
 
   private esMovil() { return window.innerWidth < 768; }
@@ -614,12 +630,14 @@ class MundoWGL {
     const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
     const anchoMundo = altoMundo * this.camara.aspect;
     const movil = this.esMovil();
-    const fracAncho = movil ? 0.92 : 0.52;
+    const consola = this.esInsignia() && !!this.salaInst;
+    const fracAncho = movil ? (consola ? 0.82 : 0.92) : consola ? 0.42 : 0.52;
     const escala = (anchoMundo * fracAncho) / this.capsulaPx;
     // la pantalla flota un pelín POR DEBAJO del eje de mira: respire el
-    // ticker superior del chrome (la corona de la Casa sigue siendo HUD)
+    // ticker superior del chrome (la corona de la Casa sigue siendo HUD).
+    // En consola baja MÁS: el escenario 3D de la sala vive arriba
     const p = tgt.clone();
-    p.y -= altoMundo * 0.035;
+    p.y -= altoMundo * (consola ? (movil ? 0.33 : 0.29) : 0.035);
     return { pos: p, escala };
   }
 
@@ -637,11 +655,13 @@ class MundoWGL {
     this.capsula.visible = true;
     this.capsulaAcoplada = true;
     this.capsulaEl.dataset.acoplada = "1";
-    if (instant) { this.capsula.scale.setScalar(a.escala); return; }
+    if (instant) { this.capsula.scale.setScalar(a.escala); this.anclarSala(true); return; }
     this.capsula.scale.setScalar(a.escala * 0.9);
-    this.cancelar.push(animar(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut }));
+    this.animarP(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
     // v144 P1: el ACOPLE suena a metal asentándose
     sonar("clank");
+    // v145: la SALA 3D de la zona nace con el aterrizaje
+    this.anclarSala();
   }
 
   // DESACOPLAR: la pantalla se apaga mientras la cámara vuela (o en MODO MUNDO)
@@ -673,6 +693,157 @@ class MundoWGL {
     this.navEl.style.width = `${w}px`;
     this.navPx = w;
     this.navFrac = movil ? 0.9 : 0.44;
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v145 — SALAS EN VOLUMEN — el contenido real de la sala
+  // activa (el gráfico de la economía, la mesa de conflictos, la
+  // galería de memes, la placa de cualquier otra rama) vive en
+  // el mundo 3D, anclado a la zona donde aterriza la cámara.
+  // ════════════════════════════════════════════════════════
+
+  // las salas INSIGNIA tienen constructor propio (economía,
+  // conflictos, memes) — el resto lleva su placa genérica
+  private esInsignia(): boolean {
+    return !!this.salaPayload && this.salaPayload.tipo !== "generica";
+  }
+
+  private onSala3dEv = (e: Event) => {
+    const p = (e as CustomEvent<PayloadSala3D>).detail;
+    if (!p?.tab) return;
+    const llave = `${p.tab}|${p.titulo}`;
+    if (this.salaLlave === llave && this.salaInst) return;
+    this.salaLlave = llave;
+    this.salaPayload = p;
+    this.montarSala();
+  };
+
+  private onSala3dDatosEv = (e: Event) => {
+    const p = (e as CustomEvent<PayloadSala3D>).detail;
+    if (!p?.tab) return;
+    // datos vivos de la sala montada (o de la que aún no nace)
+    if (this.salaPayload && this.salaPayload.tab !== p.tab) return;
+    const eraGenerica = this.salaPayload?.tipo === "generica";
+    this.salaPayload = p;
+    if (this.salaInst && !eraGenerica && p.tipo !== "generica") {
+      this.salaInst.actualizar(p);
+    } else {
+      // la sala nace/asciende a insignia con datos reales
+      this.montarSala();
+    }
+  };
+
+  montarSala() {
+    if (!this.fuente || !this.salaPayload) return;
+    this.desmontarSala(true);
+    const p = this.salaPayload;
+    const ctx: CtxSala3D = {
+      fuente: this.fuente,
+      calidadBaja: this.calidadBaja,
+      animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
+    };
+    try {
+      this.salaInst = construirSala3D(ctx, p);
+    } catch (e) {
+      // el fallo se VE: una sala rota nunca muere en silencio
+      console.warn("[v145] montarSala fallo:", e);
+      this.salaInst = null;
+      return;
+    }
+    this.salaInst.grupo.visible = false;
+    this.escena.add(this.salaInst.grupo);
+    // la cápsula se hace consola (o vuelve a pantalla) según la sala
+    this.dimensionarCapsula();
+    if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
+      this.acoplarCapsula(this.zona, true);
+      this.anclarSala();
+      sonar("ping");
+    }
+  }
+
+  desmontarSala(instant = false) {
+    const inst = this.salaInst;
+    if (!inst) return;
+    this.salaInst = null;
+    if (instant) {
+      this.escena.remove(inst.grupo);
+      this.desechar(inst.grupo);
+      inst.liberar();
+      return;
+    }
+    const g = inst.grupo;
+    const s0 = g.scale.x;
+    const obj = { t: 0 };
+    this.animarP(obj, { t: 1 }, 300, {
+      onUpdate: () => g.scale.setScalar(Math.max(s0 * (1 - obj.t), 0.001)),
+      onDone: () => { this.escena.remove(g); this.desechar(g); inst.liberar(); },
+    });
+  }
+
+  // barrido de geometrías/materiales del grupo (los compartidos se
+  // disponen dos veces — dispose es idempotente en three)
+  private desechar(g: THREE.Object3D) {
+    g.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | THREE.Material[] | undefined;
+      if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
+      else if (mat) mat.dispose();
+    });
+  }
+
+  // la ANCLA del escenario 3D de la sala: sobre el punto de mira de
+  // la pose. Insignia: héroe ARRIBA (la cápsula-consola vive abajo).
+  // Genérica: placa flotando SOBRE la cápsula completa.
+  private anclarSala(instant = false) {
+    const inst = this.salaInst;
+    const p = this.salaPayload;
+    if (!inst || !p || this.modoMundo || this.zona === 0 || !this.capsulaAcoplada) return;
+    const insignia = p.tipo !== "generica";
+    const a = this.anclaSala(insignia);
+    inst.grupo.position.copy(a.pos);
+    inst.grupo.quaternion.copy(this.camara.quaternion);
+    inst.grupo.quaternion.multiply(Q_YAW_CONSOLA);
+    inst.grupo.visible = true;
+    if (instant) { inst.grupo.scale.setScalar(a.escala); return; }
+    inst.grupo.scale.setScalar(a.escala * 0.84);
+    this.animarP(inst.grupo.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
+  }
+
+  private anclaSala(insignia: boolean): { pos: THREE.Vector3; escala: number } {
+    // v145 QA: ancla EN COORDENADAS DE PANTALLA (como el puente de mando) —
+    // el planeta vive al centro-izquierda del encuadre; la sala insignia
+    // flota ARRIBA-DERECHA (desktop) o ARRIBA (móvil) sin que el globo la tape
+    const dist = insignia ? 3.4 : 4.0;
+    const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
+    const anchoMundo = altoMundo * this.camara.aspect;
+    const movil = this.esMovil();
+    const fracAncho = movil ? 0.94 : insignia ? 0.44 : 0.46;
+    // los constructores miden ~2.6 unidades de ancho
+    const escala = (anchoMundo * fracAncho) / 2.6;
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
+    // fracciones del cuadro: insignia → x +19%, y +9% (desktop); genérica →
+    // placa SOBRE la cápsula completa
+    const fx = insignia ? (movil ? 0 : 0.19) : 0;
+    const fy = insignia ? (movil ? 0.22 : 0.05) : 0;
+    const pos = this.camara.position.clone()
+      .addScaledVector(f, dist)
+      .addScaledVector(derecha, anchoMundo * fx)
+      .addScaledVector(arriba, altoMundo * fy);
+    if (!insignia) {
+      const { tgt } = this.poseDe(this.zona);
+      const dir = new THREE.Vector3(tgt.x - this.camara.position.x, tgt.y - this.camara.position.y, tgt.z - this.camara.position.z);
+      const distT = Math.max(1.2, dir.length());
+      const altoT = 2 * distT * Math.tan((this.camara.fov * Math.PI) / 360);
+      const escCaps = (altoT * this.camara.aspect * (movil ? 0.92 : 0.52)) / this.capsulaPx;
+      const altoCapsMundo = (this.capsulaEl?.offsetHeight || 600) * escCaps;
+      pos.copy(tgt);
+      pos.y += altoT * 0.035 + altoCapsMundo / 2 + 0.75 * escala;
+    }
+    return { pos, escala };
   }
 
   // por frame: posición/orientación/escala de la consola pegadas a la cámara
@@ -721,13 +892,13 @@ class MundoWGL {
   private volarCamara(pos: [number, number, number], tgt: THREE.Vector3, dur: number) {
     const objPos = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
     const objMir = { x: this.mirada.x, y: this.mirada.y, z: this.mirada.z };
-    this.cancelar.push(animar(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
+    this.animarP(objPos, { x: pos[0], y: pos[1], z: pos[2] }, dur, {
       onUpdate: () => {
         this.camara.position.set(objPos.x, objPos.y, objPos.z);
         this.camara.lookAt(objMir.x, objMir.y, objMir.z);
       },
-    }));
-    this.cancelar.push(animar(objMir, { x: tgt.x, y: tgt.y, z: tgt.z }, dur, {
+    });
+    this.animarP(objMir, { x: tgt.x, y: tgt.y, z: tgt.z }, dur, {
       onUpdate: () => this.camara.lookAt(objPos.x, objPos.y, objPos.z),
       onDone: () => {
         this.mirada.copy(tgt);
@@ -739,7 +910,7 @@ class MundoWGL {
         // la mantiene apagada: el universo queda desnudo)
         this.acoplarCapsula(this.zona);
       },
-    }));
+    });
   }
 
   // re-volar a la MISMA zona (para alternar pose panel/mundo sin cambiar de sala)
@@ -763,7 +934,7 @@ class MundoWGL {
       if (debe && !g.visible) {
         g.visible = true;
         g.scale.setScalar(0.84);
-        this.cancelar.push(animar(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut }));
+        this.animarP(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut });
       } else if (!debe) g.visible = false;
     }
     for (const tz of this.titulosZona) tz.grupo.visible = modo || (tz.zona === zona && zona !== 0);
@@ -796,11 +967,21 @@ class MundoWGL {
         // v144: con fuente a bordo, EL PUENTE se viste completo
         this.reconstruirPuente();
         this.vestirDecoracion();
+        // v145: si la sala 3D llegó antes que la fuente, nace ahora
+        if (this.salaPayload) this.montarSala();
       },
       undefined,
-      () => { /* sin fuente el mundo sigue: los títulos DOM ya existen */ },
+      () => {
+        // sin fuente el mundo sigue: los títulos DOM ya existen — pero una
+        // caída puntual de red no mata las letras para siempre: 1 reintento
+        if (!this.vivo || this.fuenteReintentos > 0) return;
+        this.fuenteReintentos++;
+        window.setTimeout(() => { if (this.vivo && !this.fuente) this.cargarFuente(); }, 1200);
+      },
     );
   }
+
+  private fuenteReintentos = 0;
 
   // la fuente typeface no trae acentos: como un HUD militar, se caen
   private sanitizar(t: string): string {
@@ -1115,8 +1296,8 @@ class MundoWGL {
         const m = l.mesh.material as THREE.MeshStandardMaterial;
         m.opacity = 0;
         l.mesh.scale.setScalar(2.6);
-        this.cancelar.push(animar(l.mesh.scale, { x: 1, y: 1, z: 1 }, 480, { ease: easeOut }));
-        this.cancelar.push(animar(m, { opacity: 1 }, 380));
+        this.animarP(l.mesh.scale, { x: 1, y: 1, z: 1 }, 480, { ease: easeOut });
+        this.animarP(m, { opacity: 1 }, 380);
       }, i * 110);
     });
   }
@@ -1124,17 +1305,17 @@ class MundoWGL {
   // tras entrar(): el logo se condensa en un arco compacto que vive en el cielo
   condensarLogo() {
     if (!this.logoNacido) return;
-    if (this.logoGrupo) this.cancelar.push(animar(this.logoGrupo.position, { y: 2.02 }, 950, { ease: easeInOut }));
+    if (this.logoGrupo) this.animarP(this.logoGrupo.position, { y: 2.02 }, 950, { ease: easeInOut });
     for (const l of this.letrasLogo) {
       if (!l.expandida) continue;
       l.quieto = true;
-      this.cancelar.push(animar(l.mesh.scale, { x: 0.6, y: 0.6, z: 0.6 }, 900, { ease: easeInOut }));
-      this.cancelar.push(animar(l.mesh.position, { x: l.expandida.x * 0.62, y: l.expandida.y + 0.3, z: l.expandida.z * 0.62 }, 950, {
+      this.animarP(l.mesh.scale, { x: 0.6, y: 0.6, z: 0.6 }, 900, { ease: easeInOut });
+      this.animarP(l.mesh.position, { x: l.expandida.x * 0.62, y: l.expandida.y + 0.3, z: l.expandida.z * 0.62 }, 950, {
         onDone: () => {
           l.base.set(l.mesh.position.x, l.mesh.position.y, l.mesh.position.z);
           l.quieto = false;
         },
-      }));
+      });
     }
   }
 
@@ -1143,18 +1324,18 @@ class MundoWGL {
   // título HOY del mundo que vive justo debajo (2.72 se salía del cuadro)
   expandirLogo() {
     if (!this.logoNacido) return;
-    if (this.logoGrupo) this.cancelar.push(animar(this.logoGrupo.position, { y: 2.5 }, 950, { ease: easeInOut }));
+    if (this.logoGrupo) this.animarP(this.logoGrupo.position, { y: 2.5 }, 950, { ease: easeInOut });
     for (const l of this.letrasLogo) {
       if (!l.expandida) continue;
       l.quieto = true;
       l.mesh.visible = true;
-      this.cancelar.push(animar(l.mesh.scale, { x: 1, y: 1, z: 1 }, 900, { ease: easeInOut }));
-      this.cancelar.push(animar(l.mesh.position, { x: l.expandida.x, y: l.expandida.y, z: l.expandida.z }, 950, {
+      this.animarP(l.mesh.scale, { x: 1, y: 1, z: 1 }, 900, { ease: easeInOut });
+      this.animarP(l.mesh.position, { x: l.expandida.x, y: l.expandida.y, z: l.expandida.z }, 950, {
         onDone: () => {
           l.base.copy(l.expandida!);
           l.quieto = false;
         },
-      }));
+      });
     }
   }
 
@@ -1168,6 +1349,8 @@ class MundoWGL {
     this.condensarLogo();
     // v144: el puente vuelve con la Casa
     this.setModoMundoUI(false);
+    // v145: la sala 3D vuelve con la Casa
+    if (this.capsulaAcoplada) this.anclarSala();
     if (volar) this.irAPose(1000);
   }
 
@@ -1192,7 +1375,11 @@ class MundoWGL {
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: this.modoMundo } }));
     if (this.modoMundo) this.expandirLogo(); else this.condensarLogo();
     // v143: en el MUNDO la cápsula se apaga — solo existe el universo
-    if (this.modoMundo) this.desacoplarCapsula();
+    if (this.modoMundo) {
+      this.desacoplarCapsula();
+      // v145: la sala 3D también se apaga — el universo queda desnudo
+      if (this.salaInst) this.salaInst.grupo.visible = false;
+    }
     // v144: el puente se apaga y la UI 3D del modo despierta
     this.setModoMundoUI(this.modoMundo);
     this.irAPose(1000);
@@ -1206,7 +1393,11 @@ class MundoWGL {
     else document.documentElement.removeAttribute("data-wgl-modo");
     if (on) this.expandirLogo(); else this.condensarLogo();
     // v143: la cápsula obedece al modo (apagada dentro del universo)
-    if (on) this.desacoplarCapsula();
+    if (on) {
+      this.desacoplarCapsula();
+      // v145: la sala 3D obedece al modo
+      if (this.salaInst) this.salaInst.grupo.visible = false;
+    }
     // v144: el puente obedece al modo
     this.setModoMundoUI(on);
     this.irAPose(1000);
@@ -1219,6 +1410,25 @@ class MundoWGL {
   // alto del frustum a una distancia dada (unidades de mundo)
   private altoPlano(z: number): number {
     return 2 * z * Math.tan((this.camara.fov * Math.PI) / 360);
+  }
+
+  // v144 P6 — animación con registro AUTO-PODADO: al terminar, el cancelador
+  // se saca del Set (antes this.cancelar crecía para siempre → OOM del dev)
+  private animarP(
+    obj: ObjNum | THREE.Vector3 | THREE.Object3D | THREE.Material | { opacity: number; size?: number; fov?: number },
+    to: ObjNum,
+    ms: number,
+    opts: { ease?: (t: number) => number; onUpdate?: () => void; onDone?: () => void } = {},
+  ): () => void {
+    const cancel = animar(obj, to, ms, {
+      ...opts,
+      onDone: () => {
+        this.cancelar.delete(cancel);
+        opts.onDone?.();
+      },
+    });
+    this.cancelar.add(cancel);
+    return cancel;
   }
 
   construirConsola() {
@@ -1580,7 +1790,7 @@ class MundoWGL {
           l.mesh.visible = true;
           const m = l.mesh.material as THREE.MeshStandardMaterial;
           m.opacity = 0;
-          this.cancelar.push(animar(m, { opacity: 1 }, 260));
+          this.animarP(m, { opacity: 1 }, 260);
         }, i * 30);
       });
     } else if (fase === "hint") {
@@ -1629,10 +1839,10 @@ class MundoWGL {
   pulsarPlato(ref: string) {
     const plato = this.platosHolo.find((p) => p.key === ref || p.accion === ref);
     if (!plato) return;
-    this.cancelar.push(animar(plato.grupo.scale, { x: 0.92, y: 0.92, z: 0.92 }, 80, {
+    this.animarP(plato.grupo.scale, { x: 0.92, y: 0.92, z: 0.92 }, 80, {
       ease: easeOut,
-      onDone: () => this.cancelar.push(animar(plato.grupo.scale, { x: 1, y: 1, z: 1 }, 180, { ease: easeOut })),
-    }));
+      onDone: () => this.animarP(plato.grupo.scale, { x: 1, y: 1, z: 1 }, 180, { ease: easeOut }),
+    });
   }
 
   // por frame: el puente, el pie, la entrada, el modo y el rail pegan a la cámara
@@ -1664,7 +1874,7 @@ class MundoWGL {
   }
 
   // ── RAYCAST — portales/títulos → marcadores → globo ──
-  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "portal" | "marcador" | "globo" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
+  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "portal" | "marcador" | "globo" | "sala" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
     if (ignorarUI) return { tipo: "nada" };
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
@@ -1673,6 +1883,13 @@ class MundoWGL {
       const hitH = ray.intersectObjects(this.proxiesHolo, false)[0];
       if (hitH && ancestroVisible(hitH.object) && hitH.object.userData?.holo) {
         return { tipo: "holo", accion: hitH.object.userData.holo.accion as string, key: hitH.object.userData.holo.key as string | undefined };
+      }
+    }
+    // v145: LAS PLACAS DE LA SALA 3D — votar la crisis, abrir un meme…
+    if (this.salaInst && this.salaInst.proxies.length) {
+      const hitS = ray.intersectObjects(this.salaInst.proxies, false)[0];
+      if (hitS && hitS.object.userData?.salaAccion) {
+        return { tipo: "sala", key: JSON.stringify(hitS.object.userData.salaAccion) };
       }
     }
     const hitP = ray.intersectObjects(this.proxiesClic, false)[0];
@@ -1712,17 +1929,17 @@ class MundoWGL {
 
     // WARP: estrellas gordas + fov punch — hipervelocidad suave (400ms)
     const fovBase = 50;
-    this.cancelar.push(animar(this.camara, { fov: fovBase + 7 }, 380, {
+    this.animarP(this.camara, { fov: fovBase + 7 }, 380, {
       ease: easeOut,
       onUpdate: () => this.camara.updateProjectionMatrix(),
-      onDone: () => this.cancelar.push(animar(this.camara, { fov: fovBase }, 620, {
+      onDone: () => this.animarP(this.camara, { fov: fovBase }, 620, {
         onUpdate: () => this.camara.updateProjectionMatrix(),
-      })),
-    }));
-    this.cancelar.push(animar(this.matEstrellas, { size: this.baseEstrellas * 2.1 }, 400, {
+      }),
+    });
+    this.animarP(this.matEstrellas, { size: this.baseEstrellas * 2.1 }, 400, {
       ease: easeOut,
-      onDone: () => this.cancelar.push(animar(this.matEstrellas, { size: this.baseEstrellas }, 700)),
-    }));
+      onDone: () => this.animarP(this.matEstrellas, { size: this.baseEstrellas }, 700),
+    });
 
     this.volarCamara(pos, tgt, dur);
     this.visibleZona(zona);
@@ -1736,46 +1953,46 @@ class MundoWGL {
     const dir = new THREE.Color(cDir), rim = new THREE.Color(cRim);
     const d0 = this.luzDir.color.clone(), r0 = this.luzRim.color.clone();
     const obj = { t: 0 };
-    this.cancelar.push(animar(obj, { t: 1 }, 900, {
+    this.animarP(obj, { t: 1 }, 900, {
       onUpdate: () => {
         this.luzDir.color.lerpColors(d0, dir, obj.t);
         this.luzRim.color.lerpColors(r0, rim, obj.t);
       },
-    }));
+    });
     this.particulasOro.visible = zona === 3;
     this.particulasAzul.visible = zona === 4;
     const opOro = { o: (this.particulasOro.material as THREE.PointsMaterial).opacity };
-    this.cancelar.push(animar(opOro, { o: zona === 3 ? 0.8 : 0 }, 900, {
+    this.animarP(opOro, { o: zona === 3 ? 0.8 : 0 }, 900, {
       onUpdate: () => { (this.particulasOro.material as THREE.PointsMaterial).opacity = opOro.o; },
-    }));
+    });
     const opAzul = { o: (this.particulasAzul.material as THREE.PointsMaterial).opacity };
-    this.cancelar.push(animar(opAzul, { o: zona === 4 ? 0.75 : 0 }, 900, {
+    this.animarP(opAzul, { o: zona === 4 ? 0.75 : 0 }, 900, {
       onUpdate: () => { (this.particulasAzul.material as THREE.PointsMaterial).opacity = opAzul.o; },
-    }));
+    });
   }
 
   // ════════════════════════════════════════════════════════
   // LA SECUENCIA DE ENTRADA — los gestos del mundo (0-7s)
   // ════════════════════════════════════════════════════════
   nacerEstrellas() {
-    this.cancelar.push(animar(this.matEstrellas, { opacity: 0.95 }, 1400, { ease: easeOut }));
+    this.animarP(this.matEstrellas, { opacity: 0.95 }, 1400, { ease: easeOut });
   }
   subirGlobo() {
     const obj = { y: -5.4 };
     this.camara.position.y = -5.4;
     this.camara.lookAt(0, -1.2, 0);
     const atmMat = this.atmosfera.material as THREE.ShaderMaterial;
-    this.cancelar.push(animar(obj, { y: 0 }, 1700, {
+    this.animarP(obj, { y: 0 }, 1700, {
       ease: easeOut,
       onUpdate: () => {
         this.camara.position.y = obj.y;
         this.camara.lookAt(0, obj.y * 0.24, 0);
       },
-    }));
+    });
     const op = { o: 0 };
-    this.cancelar.push(animar(op, { o: 1.35 }, 1300, {
+    this.animarP(op, { o: 1.35 }, 1300, {
       onUpdate: () => atmMat.uniforms.uOp.value = op.o,
-    }));
+    });
   }
   encenderMarcadores(alFinal: () => void) {
     const orden = [...this.marcadores].sort((a, b) => a.datos.intensidad - b.datos.intensidad);
@@ -1786,12 +2003,12 @@ class MundoWGL {
         const nm = m.nucleo.material as THREE.MeshBasicMaterial;
         const na = m.anillo.material as THREE.MeshBasicMaterial;
         // destello: el núcleo nace gordo y se asienta
-        this.cancelar.push(animar(m.nucleo.scale, { x: 3.2, y: 3.2, z: 3.2 }, 0, {}));
+        this.animarP(m.nucleo.scale, { x: 3.2, y: 3.2, z: 3.2 }, 0, {});
         m.nucleo.scale.setScalar(3.2);
         nm.opacity = 1;
         na.opacity = 0.9;
-        this.cancelar.push(animar(m.nucleo.scale, { x: 1, y: 1, z: 1 }, 620, { ease: easeOut }));
-        this.cancelar.push(animar(na, { opacity: 0.55 }, 620));
+        this.animarP(m.nucleo.scale, { x: 1, y: 1, z: 1 }, 620, { ease: easeOut });
+        this.animarP(na, { opacity: 0.55 }, 620);
         if (esUltimo) {
           // ONDA EXPANSIVA del más grave
           const onda = new THREE.Mesh(
@@ -1803,14 +2020,14 @@ class MundoWGL {
           this.mundo.add(onda);
           const om = onda.material as THREE.MeshBasicMaterial;
           const obj = { s: 0.3, o: 0.95 };
-          this.cancelar.push(animar(obj, { s: 3.4, o: 0 }, 1000, {
+          this.animarP(obj, { s: 3.4, o: 0 }, 1000, {
             ease: easeOut,
             onUpdate: () => {
               onda.scale.setScalar(obj.s);
               om.opacity = obj.o;
             },
             onDone: () => { this.mundo.remove(onda); onda.geometry.dispose(); om.dispose(); },
-          }));
+          });
           alFinal?.();
         }
       }, i * 170);
@@ -1932,6 +2149,8 @@ class MundoWGL {
       if (!p.grupo.visible) continue;
       p.grupo.position.y = p.baseY + Math.sin(t * 1.3 + p.fase) * 0.006;
     }
+    // v145: la SALA 3D vive — velas que laten, monedas que giran, placas
+    if (this.salaInst && this.salaInst.grupo.visible) this.salaInst.tic(t, dt);
     this.acoplarConsolaFrame();
     this.acoplarNavFrame();
     this.cssEscena.updateMatrixWorld(true);
@@ -1960,7 +2179,10 @@ class MundoWGL {
   despertar() { if (!this.vivo) { this.vivo = true; this.reloj.getDelta(); this.loop(); } }
   destruir() {
     this.dormir();
-    for (const c of this.cancelar) c();
+    for (const c of [...this.cancelar]) c();
+    this.cancelar.clear();
+    // v145: la sala 3D muere con el mundo
+    this.desmontarSala(true);
     // v143: la cápsula muere con el mundo — la Casa vuelve al DOM plano
     try {
       (window as unknown as { __vgCapsulaHost?: HTMLDivElement | null }).__vgCapsulaHost = null;
@@ -1974,6 +2196,9 @@ class MundoWGL {
     try {
       window.removeEventListener("vg:holo-pestanas", this.onPestanasEv);
       window.removeEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
+      // v145: los eventos de la sala 3D también se retiran
+      window.removeEventListener("vg:sala3d", this.onSala3dEv);
+      window.removeEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
       (window as unknown as { __vgRailHost?: HTMLDivElement | null }).__vgRailHost = null;
       window.dispatchEvent(new CustomEvent("vg:wgl-railhost", { detail: null }));
       document.documentElement.removeAttribute("data-holo");
@@ -2079,6 +2304,16 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         } else {
           window.dispatchEvent(new CustomEvent("vg:holo-accion", { detail: { accion: acc, key } }));
         }
+        return;
+      }
+      // v145: SALA 3D — una placa del contenido 3D tocada (votar la crisis,
+      // abrir un meme…) manda la acción a la sala DOM de la Casa
+      if (g.tipo === "sala") {
+        sonar("click");
+        try {
+          const acc = JSON.parse(g.key ?? "{}");
+          window.dispatchEvent(new CustomEvent("vg:sala3d-accion", { detail: acc }));
+        } catch { /* llave corrupta: silencio honesto */ }
         return;
       }
       if (g.tipo === "portal" && typeof g.zona === "number") {

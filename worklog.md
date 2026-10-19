@@ -2070,3 +2070,17 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v144.0 HOLOGRAMA TOTAL. Vanguard ya no tiene chrome 2D: pestañas, mandos, logo, pie, entrada, modo mundo y la franja viva viven DENTRO del universo (WebGL extruido + CSS3D acoplado a cámara). El fallback sin WebGL conserva el DOM plano (data-holo se quita y todo resucita).
 - El AGENTE DE PROMPTS queda instalado: siguiente paso automático = `bun scripts/agente-prompts.ts` → P1 ya hecho → P2 (widgets flotantes al universo) es la cola viva; P4 (ciudad héroe móvil) y P6 (memoria) son los más sanos para la próxima sesión.
+
+---
+Task ID: 26
+Agent: main (Super Z)
+Task: v144.1 — P1 (pose de consola) + P6 (guardia de memoria) del AGENTE DE PROMPTS, ejecutados en la misma sesión (el Dueño vuelve a las 3:00).
+
+Work Log:
+- P1 EJECUTADO: la cápsula de contenido posa ahora con YAW deliberado de -6° (Q_YAW_CONSOLA sobre el quaternion de cámara — aire «consola de mando», se despide de la pared paralela), SOMBRA PROYECTADA del cristal (box-shadow profundo en .vg143-marco: 24px/70px + 60px/160px de caída) y CLANK metálico al acoplar (Web Audio: triángulo 196→131Hz + click cuadrado 1244→622Hz, gain 0.03).
+- P6 EJECUTADO: el registro de animaciones this.cancelar era un array que crecía PARA SIEMPRE (cada vuelo/letra/hover empujaba canceladores sin podar) — ahora es un Set con AUTO-PODA: animarP() registra el cancelador y lo saca del Set en onDone. 29 llamadas migradas (23 paréntesis sobrantes de la migración depurados + 2 anidados corregidos a mano). Verificado en runtime: cancelares.size = 0 tras el reencuentro (antes acumulaba).
+- QA: tsc limpio, build limpio (30.1s), runtime OK (fase fin, 6 placas, Set en 0), captura de entrega capturas/qa-v144-entrega-final.png. Commit + push.
+- NOTA DE ENTORNO: el dev server de esta caja (4GB, turbopack, app gigante) puede llegar a OOM en sesiones muy largas de QA — si pasa, `pkill -f next dev; bun run dev`. En producción standalone no aplica.
+
+Stage Summary:
+- v144.1 = v144.0 + P1 + P6. El AGENTE DE PROMPTS sigue su cola: `bun scripts/agente-prompts.ts` → siguiente = P2 (widgets flotantes al universo — requiere rediseño por widget porque usan position:fixed que no sobrevive un portal CSS3D).

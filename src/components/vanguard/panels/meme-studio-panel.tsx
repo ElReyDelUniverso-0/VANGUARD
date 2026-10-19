@@ -287,6 +287,47 @@ export function MemeStudioPanel() {
     cargarGaleria(sort);
   }, [cargarGaleria, sort]);
 
+  // ════════════════════════════════════════════════════════════
+  // v145 SALAS EN VOLUMEN: el ESTUDIO DE MEMES vive en el mundo 3D —
+  // la galería comunitaria real como arco de hologramas: el caption
+  // de cada meme en LETRAS 3D, las bolas del elenco como esferas y
+  // sus likes en oro. Toca un marco → abre ese meme en la galería DOM.
+  // ════════════════════════════════════════════════════════════
+  useEffect(() => {
+    const toMeme3D = (m: GalleryMeme) => {
+      let c: MemeComposition | null = null;
+      try { c = JSON.parse(m.composition) as MemeComposition; } catch { /* sin composición */ }
+      const textos = (c?.layers ?? []).filter((l) => l.kind === "text").map((l) => l.text ?? "");
+      const bolas = (c?.layers ?? []).filter((l) => l.kind === "ball").slice(0, 2)
+        .map((l) => (l.code === "A" ? "#4da3ff" : l.code === "B" ? "#ff5a5a" : l.color || "#f5c542"));
+      return {
+        caption: m.caption || "",
+        autor: m.author || "",
+        likes: m.likes || 0,
+        bg: c?.bg || "#101a2c",
+        bolas,
+        textos,
+      };
+    };
+    window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+      detail: {
+        tab: "memes", tipo: "memes",
+        memes: memes.slice(0, 8).map(toMeme3D),
+      },
+    }));
+  }, [memes]);
+
+  // el 3D manda: un marco tocado activa la vista galería
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab?: string; accion?: string }>).detail;
+      if (d?.tab !== "memes" || d.accion !== "abrir") return;
+      setView("galeria");
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
+
   // ====== EDICIÓN ======
 
   const applyTemplate = (id: string, a = codeA, b = codeB) => {
