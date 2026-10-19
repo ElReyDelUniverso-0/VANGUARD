@@ -19,6 +19,10 @@ import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 // v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
 // luna llena y ocaso cálido). Una vez por sesión, saltable, reduced-motion off.
 const IntroCinematica = dynamic(() => import("@/components/vanguard/intro-cinematica").then((m) => m.IntroCinematica), { ssr: false });
+// v140.0 MUNDO WEBGL: el MOD de videojuego — el usuario vive dentro de un
+// mundo Three.js y la navegación es VUELO DE CÁMARA entre 5 zonas.
+const MundoWebGL = dynamic(() => import("@/components/vanguard/mundo-webgl").then((m) => m.MundoWebGL), { ssr: false });
+const NavZonas = dynamic(() => import("@/components/vanguard/mundo-webgl").then((m) => m.NavZonas), { ssr: false });
 // v110.0 MATRIZ 2100 — motor 3D global (ajustes → CSS vars + paralaje)
 const Motor3D = dynamic(() => import("@/components/vanguard/motor-3d").then((m) => m.Motor3D), { ssr: false });
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
@@ -315,6 +319,8 @@ export default function Home() {
   // se aparta (mandato: "un modo pantalla completa, que el menú de arriba opaque")
   const [inmersion, setInmersion] = useState(false);
   const inmersionRef = useRef(false);
+  // v140 MUNDO WEBGL: la zona del mundo donde está la cámara (navbar sincronizado)
+  const [wglZona, setWglZona] = useState(1);
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
@@ -356,6 +362,14 @@ export default function Home() {
     // v124.0 CAVIAR: entrar a una sala suena a lujo — la campana de oro del
     // salón (dos notas con cola de sala) sustituye al toque de madera.
     sfx.campana();
+    // v140 MUNDO WEBGL: si esta sala vive en una ZONA del mundo 3D, la cámara
+    // VUELA hasta ella (mapa espejo del componente — import liviano a propósito:
+    // three.js no puede entrar al bundle principal de la página).
+    const zonaWgl: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, perfil: 4 };
+    const zWgl = zonaWgl[k as string];
+    if (typeof zWgl === "number") {
+      window.dispatchEvent(new CustomEvent("vg:wgl-ir-a", { detail: { zona: zWgl } }));
+    }
     // v118: dirección del movimiento (adelante por defecto, atrás si
     // volvemos a la pestaña previa del historial, o la que fuerza el swipe)
     const hist = historialTabsRef.current;
@@ -393,6 +407,25 @@ export default function Home() {
     window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(k).key }));
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pestanas, tab, recordTabVisit, t]);
+
+  // v140 MUNDO WEBGL: la cámara manda — cuando el mundo vuela a otra zona
+  // (marcador tocado, entrada, vuelos), el navbar y la Casa se sincronizan.
+  // Un conflicto tocado en el globo aterriza en el COMMAND CENTER (crisis).
+  useEffect(() => {
+    const onZona = (e: Event) => {
+      const z = (e as CustomEvent).detail?.zona;
+      if (typeof z === "number") setWglZona(z);
+    };
+    const onConflicto = () => {
+      handleTabChange("crisis");
+    };
+    window.addEventListener("vg:wgl-zona", onZona);
+    window.addEventListener("vg:wgl-conflicto", onConflicto);
+    return () => {
+      window.removeEventListener("vg:wgl-zona", onZona);
+      window.removeEventListener("vg:wgl-conflicto", onConflicto);
+    };
+  }, [handleTabChange]);
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
   // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.
@@ -812,8 +845,9 @@ export default function Home() {
         <i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i />
         <b className="v139-asta" />
       </div>
-      {/* v72.0: intro cinematográfica de vuelta — letras realistas + luna llena */}
-      <IntroCinematica />
+      {/* v72.0: intro cinematográfica — ahora vive DENTRO de MundoWebGL como
+          fallback honesto sin WebGL (v140): la entrada AAA la reemplaza */}
+      <MundoWebGL tabInicial={tab} />
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
@@ -826,7 +860,7 @@ export default function Home() {
       {/* v108.0 MODO INMERSIÓN: la cabecera, la barra Google y la franja se
           apartan (display:contents cuando no — cero cajas fantasma) para que
           el contenido mande y se vea TODO */}
-      <div className={inmersion ? "hidden" : "contents"}>
+      <div className={inmersion ? "hidden" : "contents vg-casco-v140"}>
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -1151,6 +1185,14 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* v140 MUNDO WEBGL: EL NAVBAR DE ZONAS — los 4 íconos siempre visibles;
+          tocarlos no cambia de página: vuela la cámara a esa zona del mundo */}
+      <NavZonas zona={wglZona} onIr={(z) => {
+        const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
+        const destino = mapa[z];
+        if (destino) handleTabChange(destino);
+      }} />
 
       <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav */}

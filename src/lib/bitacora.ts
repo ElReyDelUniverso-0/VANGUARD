@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v140.0",
+    nombre: "MUNDO WEBGL",
+    tipo: "tecno",
+    hitos: [
+      "EL MOD DE VIDEOJUEGO: Vanguard ya no es una web con secciones — es UN MUNDO THREE.JS PERMANENTE (espacio + Tierra girando + estrellas) donde la navegación es VUELO DE CÁMARA entre 5 zonas fijas: ZONA 0 el espacio (entrada, z=8), ZONA 1 el globo/HOY (0,0,4), ZONA 2 el COMMAND CENTER de análisis (−3,2,3 → sala crisis), ZONA 3 la ARENA dorada de juego (3,−2,3 → arcade) y ZONA 4 el CUARTEL azul personal (−4,0,3 → perfil). El contenido de la Casa no se tocó (REGLA 1: cero features borrados) — solo cambió DÓNDE vive: cada sala llega cuando la cámara aterriza en su zona",
+      "REGLAS DEL VUELO: cámara SIEMPRE suave (tween propio power2.inOut 1.2s — GSAP casero, cero dependencias nuevas), el usuario VE el viaje (fov punch 50→57° + estrellas ×2.1 + overlay de hipervelocidad radial durante el vuelo), el contenido espera en su zona (AnimatePresence existente hace el fade), y el globo JAMÁS deja de existir: siempre visible, girando (0.05 rad/s) y respirando (escala ±0.6%) en las 5 zonas — grande y central en 0/1, pequeño al fondo en 2/3/4",
+      "LA ENTRADA AAA (segundo a segundo): pantalla negra → las estrellas nacen en grupos como ojos que se adaptan (1s) → el globo SUBE desde fuera del borde inferior con su brillo azul de atmósfera fresnel (2s) → los marcadores de conflicto se encienden UNO POR UNO del menos al más grave con destello, y el último (el más grave) lanza una ONDA EXPANSIVA (3.2s) → el logo VANGUARD aparece letra a letra con micro-glitch cian/magenta (4.4s) → typewriter «El mundo no espera. Tú tampoco.» (5.4s) → «Toca el globo para entrar» pulsante + el globo late invitando (6.4s). Tocar el globo: logo se funde, la cámara vuela a Zona 1, VANGUARD está abierto. Una vez por sesión (sessionStorage), y SIN WebGL la Casa cae a su intro cinematográfica v72 intacta",
+      "LOS 15 MARCADORES SON REALES: salen de guerras-activas-data.ts (OSINT de la Casa) — los 6 teatros (Ucrania, Oriente, Sudán, Sahel, Myanmar, Taiwán) con su intensidad real pintando el color (ámbar→rojo sangre) + ciudades en el fuego (frente/sitio/contendida) hasta techo de 15. TOCAR UN CONFLICTO: el punto destella, popup mínimo junto al punto (nombre + intensidad + estado), la cámara vuela al COMMAND CENTER y la sala crisis abre ese contexto (evento vg:wgl-conflicto → handleTabChange completo con registro de pestañas)",
+      "EL NAVBAR DE ZONAS: 4 íconos SIEMPRE visibles al fondo (HOY · ANÁLISIS · ARENA · CUARTEL) con glassmorphism, safe-area de móvil y glow del activo — tocarlos no cambia de página: VUELA la cámara. Sincronía bidireccional total: tab→vuelo (handleTabChange despacha vg:wgl-ir-a) y vuelo→tab (vg:wgl-zona). Los paneles se inclinan al CONTRARIO del vuelo (parallax --wgl-cx/cy desde la posición real de la cámara), la Arena se baña en oro y el Cuartel en azul (luces lerp + partículas de ambiente + tinte radial por zona)",
+      "MÓVIL PRIMERO Y CONTRATO SAGRADO: raycast a nivel window (los paneles HTML jamás roban el mundo, el dedo golpea marcadores con proxy invisible ×3), calidad adaptativa (móvil: 1300 estrellas, esfera 48, sin antialias, pixelRatio 1.5), renderer pausado en hidden, un solo rAF para TODO el mundo, audio Web Audio mínimo honesto (ping/whoosh/onda, try/catch), reduced-motion apaga warp/glitch/pulso y salta la entrada, y sin internet el mundo funciona igual — los conflictos ya viven en la Casa",
+    ],
+  },
+  {
     version: "v139.0",
     nombre: "3D BRUTAL",
     tipo: "tecno",
