@@ -4594,6 +4594,9 @@ html[data-wgl-modo="1"] .v139-frente { display: none; }
   pointer-events: none;
 }
 .vg141-modo-salir {
+  /* v142: el chip vive a la DERECHA — el centro del cielo es del logo VANGUARD */
+  align-self: flex-end;
+  margin-right: 14px;
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
@@ -4645,4 +4648,45 @@ html[data-wgl-modo="1"] .v139-frente { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .vg141-modo-salir { animation: none; }
   .vg141-modo-hint { animation: none; }
+}
+
+/* ================================================================
+   v142.0 UNIVERSO COMPLETO — el testigo de origen 3D
+   La sala Crisis Mundial sabe que llegaste tocando el planeta:
+   un chip militar con satélite que parpadea y filo eléctrico.
+   ================================================================ */
+.vg142-origen {
+  animation: vg142Aterriza 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  box-shadow: 0 0 22px -8px rgba(0, 240, 255, 0.5), inset 0 0 18px rgba(0, 240, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+/* el rayo de escaneo que cruza el chip una vez (sello del mundo 3D) */
+.vg142-origen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(0, 240, 255, 0.14) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: vg142Escaneo 1.6s ease-out 0.5s 1;
+  pointer-events: none;
+}
+.vg142-origen-icono {
+  animation: vg142Satelite 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.65));
+}
+@keyframes vg142Aterriza {
+  from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes vg142Escaneo {
+  to { transform: translateX(120%); }
+}
+@keyframes vg142Satelite {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2px) rotate(-8deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vg142-origen, .vg142-origen::after, .vg142-origen-icono { animation: none; }
+  .vg142-origen::after { display: none; }
 }

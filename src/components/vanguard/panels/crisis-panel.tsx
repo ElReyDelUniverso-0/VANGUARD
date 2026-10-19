@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Siren, Timer, Vote, Trophy, History, Zap, Users } from "lucide-react";
+import { Siren, Timer, Vote, Trophy, History, Zap, Users, Satellite } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
@@ -121,6 +121,8 @@ export function CrisisPanel() {
   const [myVote, setMyVote] = useState<number | null>(null);
   const [flash, setFlash] = useState<{ crisis: Crisis; votes: number[]; endsAt: number; voted: number | null; resolved: boolean } | null>(null);
   const [save, setSave] = useState<CrisisSave>({ weekKey: "", voted: false, choice: -1, flashResolved: 0, flashWon: 0, history: [] });
+  // v142: el teatro tocado en el globo WebGL aterriza aquí con un testigo de origen
+  const [origen3d, setOrigen3d] = useState<string | null>(null);
 
   // cargar/rotar crisis semanal
   useEffect(() => {
@@ -128,6 +130,33 @@ export function CrisisPanel() {
     const c = crisisForWeek(key);
     setCrisis(c);
     setVotes(c.options.map(() => 40 + Math.floor(Math.random() * 80)));
+
+    // v142 INTEGRACIÓN PROFUNDA — EL MUNDO 3D MANDA: tocar un marcador del
+    // globo (mundo-webgl) escribe «vg-wgl-conflicto» y vuela al Command Center;
+    // aquí la consumimos UNA SOLA VEZ: el teatro de guerra se mapea a su crisis
+    // más cercana y la sala la abre ya puesta en la mesa.
+    try {
+      const guerra3d = sessionStorage.getItem("vg-wgl-conflicto");
+      if (guerra3d) {
+        sessionStorage.removeItem("vg-wgl-conflicto");
+        const base = guerra3d.split(":")[0];
+        const MAPA: Record<string, string> = {
+          ucrania: "cr-baltico",
+          oriente: "cr-hormuz",
+          sudan: "cr-sahel",
+          sahel: "cr-sahel",
+          myanmar: "cr-taiwan",
+          taiwan: "cr-taiwan",
+        };
+        const cid = MAPA[base];
+        const hit = cid ? CRISES.find((x) => x.id === cid) : undefined;
+        if (hit) {
+          setCrisis(hit);
+          setVotes(hit.options.map(() => 40 + Math.floor(Math.random() * 80)));
+          setOrigen3d(hit.title);
+        }
+      }
+    } catch { /* sin sesión no pasa nada */ }
     let s: CrisisSave = { weekKey: "", voted: false, choice: -1, flashResolved: 0, flashWon: 0, history: [] };
     try { s = JSON.parse(localStorage.getItem(LS_KEY) ?? "") ?? s; } catch { /* noop */ }
     if (s.weekKey !== key) {
@@ -215,6 +244,33 @@ export function CrisisPanel() {
         icon={<Siren className="w-4 h-4 text-crisis" />}
         color="red"
       />
+
+      {/* v142: TESTIGO DE ORIGEN — la sala sabe que llegaste tocando el planeta */}
+      <AnimatePresence>
+        {origen3d && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="vg142-origen hud-panel border-electric-hud p-2.5 flex items-start gap-2.5"
+          >
+            <Satellite className="w-4 h-4 text-electric shrink-0 mt-0.5 vg142-origen-icono" />
+            <div className="min-w-0">
+              <p className="font-tech text-[10px] tracking-widest text-electric font-bold">LLEGÓ DESDE EL MUNDO 3D</p>
+              <p className="text-[11px] text-soft/80 leading-snug">
+                Tocaste «{origen3d}» en el globo: la cámara voló al Command Center y su crisis más cercana quedó en la mesa.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOrigen3d(null)}
+              className="ml-auto shrink-0 font-tech text-[9px] tracking-widest text-muted-foreground hover:text-electric vg-transition"
+            >
+              OCULTAR
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* CRISIS OFICIAL */}
       <div className="hud-panel sombra-crisis border-crisis-hud p-4">

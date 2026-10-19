@@ -15,6 +15,18 @@
 //   ZONA 3 — LA ARENA          pos(3, -2, 3)  tab "arcade"
 //   ZONA 4 — EL CUARTEL        pos(-4, 0, 3)  tab "perfil"
 //
+// v141 WEBGL EXPERIENCE: letras extruidas REALES (logo + títulos
+// + etiquetas), portales entra­bles, pose de panel (planeta a la
+// izquierda, contenido a la derecha), MODO MUNDO (5º botón),
+// mundos por zona, piel holograma de paneles, cada línea 3D.
+// v142 UNIVERSO COMPLETO: cada zona tiene SU mundo (el HOY vive
+// dentro de un ANILLO ORBITAL que abraza al planeta), el MODO
+// MUNDO es el universo entero de una vez (todos los mundos,
+// títulos y portales visibles desde la pose del universo), un
+// marcador tocado aterriza en el Command Center con SU crisis
+// puesta en la mesa, las banderas ondean, las balizas laten y
+// cada aterrizaje suena a nave que frena.
+//
 // REGLA 2 (adaptada a la Casa): TODO el mundo Three.js vive en
 // ESTE archivo único. REGLA 3: móvil primero (calidad adaptativa,
 // pointer events unificados, navbar con safe-area). REGLA 4:
@@ -126,24 +138,28 @@ interface Titulo3D {
 const TITULOS_3D: Titulo3D[] = [
   { zona: 1, texto: "HOY", sub: "EL MUNDO EN VIVO", p: [0, 2.02, 0.42], color: 0xf5c542, emis: 0.42, tam: 0.3 },
   { zona: 2, texto: "COMMAND CENTER", sub: "CRISIS MUNDIAL", p: [-1.7, 2.2, -0.9], color: 0x00f0ff, emis: 0.6, tam: 0.2 },
-  { zona: 3, texto: "ARENA", sub: "JUEGA LA GUERRA", p: [1.35, -0.32, -1.05], color: 0xffd27a, emis: 0.55, tam: 0.25 },
+  { zona: 3, texto: "ARENA", sub: "JUEGA LA GUERRA", p: [2.3, 0.5, -0.95], color: 0xffd27a, emis: 0.55, tam: 0.25 },
   { zona: 4, texto: "CUARTEL", sub: "TU BASE SECRETA", p: [-2.55, 0.98, -1.05], color: 0x8fc1ff, emis: 0.55, tam: 0.24 },
 ];
 
 // LOS PORTALES — mundos entra­bles flotando junto al planeta
-const PORTALES_3D: { zona: number; texto: string; p: [number, number, number]; color: number }[] = [
-  { zona: 2, texto: "COMMAND", p: [-2.05, 0.95, 1.15], color: 0x00f0ff },
-  { zona: 3, texto: "ARENA", p: [2.05, -0.75, 1.15], color: 0xffb347 },
-  { zona: 4, texto: "CUARTEL", p: [-0.45, -2.05, 1.6], color: 0x4da6ff },
+// v142: el CUARTEL sube a una órbita visible desde la pose del universo
+// (a y=-2.05 llevaba toda la vida bajo el borde inferior del cuadro).
+// `pm` = órbita de RETRATO: en móvil el cuadro es estrecho y alto — los
+// portales se reordenan en vertical para que los tres sean tocables.
+const PORTALES_3D: { zona: number; texto: string; p: [number, number, number]; pm?: [number, number, number]; color: number }[] = [
+  { zona: 2, texto: "COMMAND", p: [-2.05, 0.95, 1.15], pm: [-0.72, 1.8, 0.9], color: 0x00f0ff },
+  { zona: 3, texto: "ARENA", p: [2.05, -0.75, 1.15], pm: [0.78, -1.35, 0.9], color: 0xffb347 },
+  { zona: 4, texto: "CUARTEL", p: [-1.9, -1.15, 0.6], pm: [0.95, 1.35, 0.5], color: 0x4da6ff },
 ];
 
 type Letra3D = { mesh: THREE.Mesh; fase: number; base: THREE.Vector3; expandida?: THREE.Vector3; quieto?: boolean };
 
-// v141: en MODO MUNDO la cámara se ALEJA (el universo entero en cuadro:
-// portales completos + logo expandido sobre el planeta)
-const ZONA_POS_MODO: Record<number, [number, number, number]> = {
-  1: [0, 0, 5.4],
-};
+// v142: en MODO MUNDO la cámara vuela a LA POSE DEL UNIVERSO — el mundo entero
+// en cuadro: planeta + anillo orbital + los 3 mundos + todos los títulos y
+// portales. Desde ahí se toca CUALQUIER mundo y la cámara entra a él.
+const POSE_MUNDO: [number, number, number] = [0, 0.3, 5.6];
+const TGT_MUNDO: [number, number, number] = [0, 0.1, 0];
 
 // marcadores: teatros de guerra de la Casa (OSINT real) + ciudades caliente
 export interface MarcadorWGL {
@@ -228,10 +244,16 @@ class MundoWGL {
   holo = new THREE.Group();
   fuente: Font | null = null;
   letrasLogo: Letra3D[] = [];
+  logoGrupo!: THREE.Group;
   titulosZona: { grupo: THREE.Group; zona: number; letras: Letra3D[] }[] = [];
-  portales: { grupo: THREE.Group; nucleo: THREE.Mesh; proxy: THREE.Mesh; zona: number; fase: number }[] = [];
+  portales: { grupo: THREE.Group; nucleo: THREE.Mesh; proxy: THREE.Mesh; etiqueta: THREE.Group; zona: number; fase: number }[] = [];
   mundosZona: Record<number, THREE.Group> = {};
   proxiesClic: THREE.Mesh[] = [];
+  // v142 — la vida del universo: anillo orbital, sus balizas, banderas y balizas tácticas
+  aroSpin!: THREE.Group;
+  balizasOrb: THREE.Mesh[] = [];
+  banderas: THREE.Mesh[] = [];
+  balizasC2: THREE.Mesh[] = [];
   logoNacido = false;
   pendienteLogo = false;
   modoMundo = false;
@@ -410,17 +432,18 @@ class MundoWGL {
 
   // ════════════════════════════════════════════════════════
   // v141 — LA POSE — dónde mira la cámara según el estado:
-  //  · MODO MUNDO / Z0: el mundo CENTRADO (universo puro)
+  //  · MODO MUNDO: LA POSE DEL UNIVERSO (v142) — todo el mundo en cuadro
+  //  · Z0: el espacio centrado (entrada pura)
   //  · panel abierto: el mira se desvía a la DERECHA de la
   //    pantalla → planeta a la izquierda, contenido a la derecha
   // ════════════════════════════════════════════════════════
   private poseDe(zona: number): { pos: [number, number, number]; tgt: THREE.Vector3 } {
+    if (this.modoMundo && zona !== 0) {
+      return { pos: POSE_MUNDO, tgt: new THREE.Vector3(TGT_MUNDO[0], TGT_MUNDO[1], TGT_MUNDO[2]) };
+    }
     const t0 = ZONA_TGT[zona];
     const tgt = new THREE.Vector3(t0[0], t0[1], t0[2]);
-    if (this.modoMundo || zona === 0) {
-      const p = ZONA_POS_MODO[zona] ?? ZONA_POS[zona];
-      return { pos: p, tgt };
-    }
+    if (zona === 0) return { pos: ZONA_POS[0], tgt };
     // desviar el punto de mira sobre el vector DERECHA de la cámara:
     // funciona igual en las 5 zonas sin recalcular poses a mano
     const pos = ZONA_POS[zona];
@@ -430,6 +453,7 @@ class MundoWGL {
     return { pos, tgt };
   }
   // EL VUELO DE CÁMARA puro (compartido por volarAZona e irAPose)
+  // v142: al aterrizar suena el FRENO — dos notas graves que anclan la sala
   private volarCamara(pos: [number, number, number], tgt: THREE.Vector3, dur: number) {
     const objPos = { x: this.camara.position.x, y: this.camara.position.y, z: this.camara.position.z };
     const objMir = { x: this.mirada.x, y: this.mirada.y, z: this.mirada.z };
@@ -445,6 +469,7 @@ class MundoWGL {
         this.mirada.copy(tgt);
         this.camara.lookAt(tgt.x, tgt.y, tgt.z);
         this.enVuelo = false;
+        sonar("freno");
       },
     }));
   }
@@ -453,25 +478,36 @@ class MundoWGL {
   irAPose(dur = 950) {
     if (this.enVuelo) return;
     const { pos, tgt } = this.poseDe(this.zona);
+    // v142: la VISIBILIDAD también viaja con la pose — al entrar/salir del
+    // modo mundo el universo se viste o se desviste sin cambiar de zona
+    this.visibleZona(this.zona);
     this.volarCamara(pos, tgt, dur);
   }
 
-  // qué es visible en cada zona: mundos 2-4, títulos 3D y portales
+  // qué es visible en cada zona: mundos 1-4, títulos 3D y portales
+  // v142: en MODO MUNDO se ve TODO — cada lugar del universo a la vista
   visibleZona(zona: number) {
-    for (const z of [2, 3, 4]) {
+    const modo = this.modoMundo;
+    for (const z of [1, 2, 3, 4]) {
       const g = this.mundosZona[z];
       if (!g) continue;
-      if (z === zona) {
-        if (!g.visible) {
-          g.visible = true;
-          g.scale.setScalar(0.84);
-          this.cancelar.push(animar(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut }));
-        }
-      } else g.visible = false;
+      const debe = modo || z === zona;
+      if (debe && !g.visible) {
+        g.visible = true;
+        g.scale.setScalar(0.84);
+        this.cancelar.push(animar(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut }));
+      } else if (!debe) g.visible = false;
     }
-    for (const tz of this.titulosZona) tz.grupo.visible = tz.zona === zona && zona !== 0;
-    const portalesOn = zona === 1;
-    for (const p of this.portales) p.grupo.visible = portalesOn;
+    for (const tz of this.titulosZona) tz.grupo.visible = modo || (tz.zona === zona && zona !== 0);
+    const portalesOn = modo || zona === 1;
+    for (const p of this.portales) {
+      p.grupo.visible = portalesOn;
+      // v142: en MODO MUNDO las etiquetas de los portales sobran — cada mundo
+      // ya luce su TÍTULO 3D encima (adiós al texto duplicado apilado).
+      // En MÓVIL se quedan: los títulos de los mundos viven fuera del cuadro
+      // retrato y la etiqueta es la única placa con nombre del portal.
+      p.etiqueta.visible = !modo || this.calidadBaja;
+    }
   }
 
   // ════════════════════════════════════════════════════════
@@ -484,6 +520,10 @@ class MundoWGL {
         if (!this.vivo) return;
         this.fuente = f;
         this.construirLetras3D();
+        // v142: si el reencuentro corrió ANTES de que la fuente llegara, los
+        // portales/títulos nacen con su visibilidad por defecto (apagada) —
+        // se reaplica el vestido de la zona actual para ganar la carrera
+        this.visibleZona(this.zona);
         if (this.pendienteLogo) { this.pendienteLogo = false; this.nacerLogo(); }
       },
       undefined,
@@ -542,6 +582,7 @@ class MundoWGL {
     const logo = this.hacerTexto3D("VANGUARD", { tam: 0.34, prof: 0.11, color: 0xf5c542, emis: 0.5 });
     logo.grupo.position.set(-logo.ancho / 2, 2.02, 0.55);
     this.holo.add(logo.grupo);
+    this.logoGrupo = logo.grupo;
     this.letrasLogo = logo.letras;
     for (const l of this.letrasLogo) l.expandida = l.base.clone();
     if (this.logoNacido) this.compactarLogoInstante();
@@ -576,7 +617,9 @@ class MundoWGL {
     // LOS PORTALES — anillos de estela alrededor del planeta
     for (const pt of PORTALES_3D) {
       const grupo = new THREE.Group();
-      grupo.position.set(pt.p[0], pt.p[1], pt.p[2]);
+      // v142: en móvil (retrato) los portales viven en su órbita vertical
+      const P = (this.calidadBaja && pt.pm) ? pt.pm : pt.p;
+      grupo.position.set(P[0], P[1], P[2]);
       const nucleo = new THREE.Mesh(
         new THREE.TorusGeometry(0.34, 0.026, 10, 36),
         new THREE.MeshBasicMaterial({ color: pt.color, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending, depthWrite: false }),
@@ -599,7 +642,7 @@ class MundoWGL {
       grupo.add(nucleo, halo, etiqueta.grupo, proxy);
       grupo.visible = false;
       this.holo.add(grupo);
-      this.portales.push({ grupo, nucleo, proxy, zona: pt.zona, fase: Math.random() * Math.PI * 2 });
+      this.portales.push({ grupo, nucleo, proxy, etiqueta: etiqueta.grupo, zona: pt.zona, fase: Math.random() * Math.PI * 2 });
       this.proxiesClic.push(proxy);
     }
   }
@@ -609,6 +652,53 @@ class MundoWGL {
   // ════════════════════════════════════════════════════════
   construirMundos() {
     const lim = (m: THREE.Material & { opacity: number }, v: number) => { m.transparent = true; m.opacity = v; };
+
+    // ZONA 1 — EL ANILLO ORBITAL (v142): la estación que abraza al planeta —
+    // el mundo del HOY: un aro metálico inclinado con módulos habitados y
+    // balizas que laten. Gira despacio alrededor de la Tierra, para siempre.
+    const g1 = new THREE.Group();
+    this.aroSpin = new THREE.Group();
+    const aroOrb = new THREE.Mesh(
+      new THREE.TorusGeometry(1.95, 0.028, 10, this.calidadBaja ? 64 : 96),
+      new THREE.MeshBasicMaterial({ color: 0x16233a, transparent: true, opacity: 0.95 }),
+    );
+    const aroFilo = new THREE.Mesh(
+      new THREE.TorusGeometry(1.95, 0.009, 8, this.calidadBaja ? 64 : 96),
+      new THREE.MeshBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
+    );
+    this.aroSpin.add(aroOrb, aroFilo);
+    // módulos habitados sobre el aro (cajas con filo dorado)
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2 + 0.4;
+      const mod = new THREE.Mesh(
+        new THREE.BoxGeometry(0.2, 0.1, 0.1),
+        new THREE.MeshBasicMaterial({ color: 0x0d1524, transparent: true, opacity: 0.95 }),
+      );
+      mod.position.set(Math.cos(a) * 1.95, Math.sin(a) * 1.95, 0);
+      mod.lookAt(mod.position.clone().multiplyScalar(2));
+      const filos = new THREE.LineSegments(
+        new THREE.EdgesGeometry(mod.geometry),
+        new THREE.LineBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.8 }),
+      );
+      filos.position.copy(mod.position);
+      filos.lookAt(mod.position.clone().multiplyScalar(2));
+      this.aroSpin.add(mod, filos);
+      // baliza del módulo (late en el loop)
+      const b = new THREE.Mesh(
+        new THREE.SphereGeometry(0.026, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }),
+      );
+      b.position.set(Math.cos(a + 0.28) * 1.95, Math.sin(a + 0.28) * 1.95, 0);
+      this.balizasOrb.push(b);
+      this.aroSpin.add(b);
+    }
+    // inclinación de la órbita: el aro abraza al planeta en diagonal
+    this.aroSpin.rotation.x = Math.PI / 2 - 0.38;
+    this.aroSpin.rotation.y = 0.22;
+    g1.add(this.aroSpin);
+    g1.visible = false;
+    this.escena.add(g1);
+    this.mundosZona[1] = g1;
 
     // ZONA 2 — COMMAND CENTER: globo táctico holográfico + rejilla de mando
     const g2 = new THREE.Group();
@@ -641,6 +731,7 @@ class MundoWGL {
       const a = (i / 3) * Math.PI * 2;
       b.position.set(holoGlobo.position.x + Math.cos(a) * 1.12, holoGlobo.position.y, holoGlobo.position.z + Math.sin(a) * 1.12);
       balizas.push(b);
+      this.balizasC2.push(b);
       g2.add(b);
     }
     g2.add(holoGlobo, anilloEq, anilloPol, piso2);
@@ -713,6 +804,7 @@ class MundoWGL {
         new THREE.MeshBasicMaterial({ color: 0x4da6ff, transparent: true, opacity: 0.6, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
       );
       bandera.position.set(x + 0.21, 0.18, z);
+      this.banderas.push(bandera);
       g4.add(asta, bandera);
     }
     const muro4 = new THREE.Mesh(
@@ -761,6 +853,7 @@ class MundoWGL {
   // tras entrar(): el logo se condensa en un arco compacto que vive en el cielo
   condensarLogo() {
     if (!this.logoNacido) return;
+    if (this.logoGrupo) this.cancelar.push(animar(this.logoGrupo.position, { y: 2.02 }, 950, { ease: easeInOut }));
     for (const l of this.letrasLogo) {
       if (!l.expandida) continue;
       l.quieto = true;
@@ -775,8 +868,11 @@ class MundoWGL {
   }
 
   // MODO MUNDO: el arco completo VANGUARD vuelve a abrirse sobre el planeta
+  // v142: y el logo ENTERO sube al cielo (y 2.02 → 2.5) para no pisar el
+  // título HOY del mundo que vive justo debajo (2.72 se salía del cuadro)
   expandirLogo() {
     if (!this.logoNacido) return;
+    if (this.logoGrupo) this.cancelar.push(animar(this.logoGrupo.position, { y: 2.5 }, 950, { ease: easeInOut }));
     for (const l of this.letrasLogo) {
       if (!l.expandida) continue;
       l.quieto = true;
@@ -791,13 +887,26 @@ class MundoWGL {
     }
   }
 
-  // tocar un portal o un título 3D = entrar a ese mundo (vuela + abre su sala)
-  entrarPortal(zona: number) {
+  // v142: SALIR DEL MODO MUNDO — un solo camino honesto (volando o quieto)
+  // `volar` en false cuando el vuelo lo hace otro (volarAZona/irAPose)
+  salirModo(volar = true) {
+    if (!this.modoMundo) return;
     this.modoMundo = false;
     document.documentElement.removeAttribute("data-wgl-modo");
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: false } }));
     this.condensarLogo();
+    if (volar) this.irAPose(1000);
+  }
+
+  // tocar un portal o un título 3D = entrar a ese mundo (vuela + abre su sala)
+  // v142: el modo se sale ANTES de volar — si el portal es de la MISMA zona,
+  // volarAZona no se mueve (guard zona===zona) y el modo se quedaría pegado
+  entrarPortal(zona: number) {
+    const antes = this.zona;
+    const estabaModo = this.modoMundo;
+    this.salirModo(false);
     this.volarAZona(zona);
+    if (estabaModo && antes === zona) this.irAPose(1000);
     document.documentElement.setAttribute("data-wgl-zona", String(zona));
     window.dispatchEvent(new CustomEvent("vg:wgl-sala", { detail: { zona } }));
     sonar("whoosh");
@@ -849,6 +958,9 @@ class MundoWGL {
   volarAZona(zona: number, dur = 1200) {
     if (this.enVuelo || zona === this.zona) return;
     this.enVuelo = true;
+    // v142: CUALQUIER vuelo de zona cierra el modo mundo (navbar, portal,
+    // marcador, Casa) — la pose del universo solo se pide a propósito
+    this.salirModo(false);
     this.zona = zona;
     // v140: la Casa entera se entera (page.tsx sincroniza tab y navbar)
     window.dispatchEvent(new CustomEvent("vg:wgl-zona", { detail: { zona } }));
@@ -1045,6 +1157,21 @@ class MundoWGL {
     const g3v = this.mundosZona[3];
     if (g3v?.visible) g3v.rotation.y -= dt * 0.015;
 
+    // v142 — EL ANILLO ORBITAL gira para siempre; sus balizas laten; las
+    // banderas del cuartel ondean; las balizas del globo táctico pulsan
+    if (this.mundosZona[1]?.visible) this.aroSpin.rotation.y += dt * 0.07;
+    for (let i = 0; i < this.balizasOrb.length; i++) {
+      const bm = this.balizasOrb[i].material as THREE.MeshBasicMaterial;
+      bm.opacity = 0.5 + Math.sin(t * 2.6 + i * 1.7) * 0.45;
+    }
+    for (let i = 0; i < this.balizasC2.length; i++) {
+      const bm = this.balizasC2[i].material as THREE.MeshBasicMaterial;
+      bm.opacity = 0.55 + Math.sin(t * 3.1 + i * 2.1) * 0.4;
+    }
+    for (let i = 0; i < this.banderas.length; i++) {
+      this.banderas[i].rotation.y = Math.sin(t * 2.1 + i * 1.3) * 0.42;
+    }
+
     // PARALLAX de paneles: la cámara cuenta dónde está — CSS vars
     const tgt = ZONA_TGT[this.zona] ?? [0, 0, 0];
     const cx = Math.max(-1, Math.min(1, (this.camara.position.x - tgt[0]) / 3.4));
@@ -1143,6 +1270,9 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         setPopup({ x: p.x, y: p.y, m });
         window.setTimeout(() => setPopup(null), 3600);
         if (mundoRef.current.zona !== 0) {
+          // v142: desde el MODO MUNDO sobre la zona 2 el vuelo no se mueve
+          // (misma zona) — salir del modo a mano para volver a la pose panel
+          if (mundoRef.current.modoMundo && mundoRef.current.zona === 2) mundoRef.current.salirModo();
           mundoRef.current.volarAZona(2);
           document.documentElement.setAttribute("data-wgl-zona", "2");
         } else {
@@ -1322,14 +1452,29 @@ function IntroFallback() {
 // onda del teatro grave. Todo try/catch: sin audio la Casa sigue.
 // ────────────────────────────────────────────────────────────
 let ctxAudio: AudioContext | null = null;
-function sonar(tipo: "ping" | "whoosh" | "onda") {
+function sonar(tipo: "ping" | "whoosh" | "onda" | "freno") {
   try {
     ctxAudio = ctxAudio || new (window.AudioContext || (window as never as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (!ctxAudio || ctxAudio.state === "suspended") return;
     const t = ctxAudio.currentTime;
     const g = ctxAudio.createGain();
     g.connect(ctxAudio.destination);
-    if (tipo === "whoosh") {
+    if (tipo === "freno") {
+      // v142: el aterrizaje — nota grave + quinta que se asientan (el anillo
+      // de la nave frena); cortita y grave para no cansar en vuelos seguidos
+      const o = ctxAudio.createOscillator();
+      const o2 = ctxAudio.createOscillator();
+      o.type = "sine"; o2.type = "triangle";
+      o.frequency.setValueAtTime(196, t);
+      o.frequency.exponentialRampToValueAtTime(98, t + 0.28);
+      o2.frequency.setValueAtTime(294, t);
+      o2.frequency.exponentialRampToValueAtTime(147, t + 0.28);
+      g.gain.setValueAtTime(0.035, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.34);
+      o.connect(g); o2.connect(g);
+      o.start(t); o2.start(t);
+      o.stop(t + 0.36); o2.stop(t + 0.36);
+    } else if (tipo === "whoosh") {
       const o = ctxAudio.createOscillator();
       o.type = "sine";
       o.frequency.setValueAtTime(120, t);

@@ -1992,3 +1992,40 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v140.0 MUNDO WEBGL. Vanguard ya no navega: VUELA. Un solo mundo Three.js permanente con la Tierra latiendo en el centro, 15 conflictos reales pulsando sobre ella, cinco zonas habitadas por el contenido que ya existía, y una entrada de videojuego AAA que termina cuando tocas el planeta. Sin WebGL la Casa cae de pie a su intro v72; con WebGL, hasta el reconector diario espera a que termine el despegue.
 - Sugerido para v141: integración profunda marcador→panel (que el CrisisPanel abra el teatro tocado), Zona 2 con layout de Command Center dedicado (55% derecha + mini-globo), y sonido espacial por zona.
+
+---
+Task ID: 22
+Agent: main (Super Z)
+Task: v141.0/141.1 WEBGL EXPERIENCE (backfill — la sesión anterior murió tras el push sin dejar bitácora): convertir TODA la Casa en 3D — letras extruidas reales, portales entra­bles, pose de panel, MODO MUNDO y mundos por zona.
+
+Work Log:
+- LETRAS 3D REALES: fuente helvetiker typeface local (public/assets/fonts/, la ruta es .typeface.json — hotfix 0cd422b por 404 del FontLoader) + sanitizador ASCII (la fuente no trae acentos). Logo VANGUARD nace letra a letra en la entrada (scale 2.6→1 + fade, 110ms/glifo) y vive condensado (×0.62, +0.3y) en el cielo; título 3D + subtítulo por zona (HOY/COMMAND CENTER/ARENA/CUARTEL) tocables (proxy → entrar).
+- PORTALES ENTRA­BLES: anillos torus + halo + etiqueta 3D flotando junto al planeta; tocarlos vuela la cámara y abre la sala (vg:wgl-sala).
+- POSE DE PANEL: poseDe() desvía el punto de mira sobre el vector DERECHA de la cámara (POSE_PANEL_DESV 0.62) — planeta a la izquierda, contenido a la derecha: se acabó el mezclado menú/planeta.
+- MODO MUNDO (5º botón navbar): la Casa se aparta (data-wgl-modo → visibility hidden de casco/main/footer), Esc sale, tocar portal/título entra; v141.1: pose z5.4, logo se expande/condensa por letra (expandida guardada), fix del logo que no nacía tras recarga (compactarLogoInstante en reencuentro).
+- MUNDOS POR ZONA: Z2 Command Center (globo wireframe + anillos + rejilla + balizas), Z3 Arena (piso Tron dorado doble + monolitos con filo neón + aro), Z4 Cuartel (plataforma búnker + astas con banderas + muro wireframe). Piel holograma de paneles + h2/h3 extruidos por sombras en CSS.
+- QA: qa-v141-*.png (command center, logo 3D, modo mundo, zona1 pose); build limpio; commits 0cd422b + fdc2a00 → push.
+
+Stage Summary:
+- PRODUCCIÓN = v141.1. El sitio entero es un WebGL Experience: el logo y cada título son geometría extruida, cada zona es un mundo propio con portal, y el MODO MUNDO deja el universo desnudo a un toque.
+- Pendiente que hereda v142: integración profunda marcador→crisis, mundo propio para la Zona 1, universo completo visible en MODO MUNDO, etiquetas duplicadas junto a los títulos.
+
+---
+Task ID: 23
+Agent: main (Super Z)
+Task: v142.0 «UNIVERSO COMPLETO» — cierre del mandato WEBGL EXPERIENCE («Sigue hasta terminar»): cada zona con SU mundo, el MODO MUNDO como universo entero navegable, la integración profunda marcador→panel, y la caza de 3 bugs de estado.
+
+Work Log:
+- INTEGRACIÓN PROFUNDA marcador→panel: CrisisPanel consume sessionStorage «vg-wgl-conflicto» (UNA vez, lo borra) → mapa teatros→crisis (ucrania→cr-baltico, oriente→cr-hormuz, sudan/sahel→cr-sahel, myanmar/taiwan→cr-taiwan) → abre la sala con SU crisis puesta en la mesa + banner «LLEGÓ DESDE EL MUNDO 3D» (chip con satélite que parpadea, rayo de escaneo, vg142-origen CSS con reduced-motion). Verificado EN VIVO: tocar UCRANIA en el globo → vuelo a Command Center → «Cable submarino cortado en el Báltico» abierto con banner.
+- MODO MUNDO = UNIVERSO COMPLETO: poseDe() en modo devuelve POSE_MUNDO [0,0.3,5.6] para CUALQUIER zona; visibleZona() viste TODO (mundos 1-4 + 4 títulos + 3 portales) cuando modo. irAPose() reaplica visibilidad. Cualquier vuelo de zona (volarAZona) sale del modo. Composición verificada: planeta al centro con el anillo cruzándolo, Command Center arriba-izq, Cuartel a la izquierda, Arena a la derecha, 3 portales y 4 títulos respirando.
+- ZONA 1 TIENE MUNDO: EL ANILLO ORBITAL — aro metálico inclinado (π/2−0.38) con filo dorado, 4 módulos habitados con EdgesGeometry + 4 balizas que laten, girando para siempre (aroSpin +0.07/s). Nace con scale 0.84→1 al entrar a HOY.
+- VIDA EXTRA: banderas del Cuartel ondean (rotation.y sin(t·2.1)·0.42), balizas del globo táctico pulsan, sonido de FRENO al aterrizar cada vuelo (dos notas graves 196→98Hz + quinta, gain 0.035, cortesía del ctxAudio suspendido honesto).
+- CIRUGÍA DE COLISIONES EN EL CIELO: logo sube a y=2.5 en modo (2.72 se salía del cuadro), título ARENA a [2.3,0.5,-0.95] (el planeta lo tapaba), etiquetas de portales RETIRADAS en modo (los títulos ya dicen su nombre; en móvil se quedan: los títulos viven fuera del cuadro retrato), chip SALIR a la derecha (el centro es del logo).
+- MÓVIL PRIMERO: portales con órbita `pm` de retrato (COMMAND arriba-izq, ARENA abajo-der, CUARTEL arriba-der) — los 3 tocables en 390px; scrollW 390=390.
+- 3 BUGS CAZADOS EN QA: (1) portal de la MISMA zona desde modo → guard zona===zona de volarAZona bloqueaba el vuelo y el modo quedaba pegado (cámara en pose universo con Casa abierta) — cura: salirModo() centralizado ANTES de volar + irAPose si misma zona; (2) CARRERA fuente/reencuentro: al recargar, la fuente llegaba después → portales/títulos nacían invisibles en zona 1 — cura: visibleZona(this.zona) al terminar construirLetras3D; (3) marcador tocado en modo sobre zona 2 → mismo guard — cura: salirModo() en la rama del marcador.
+- QA EN PRODUCCIÓN STANDALONE (RSS 140-184MB, health v142.0): universo completo capturado (qa-v142-universo-final.png — logo arriba, 4 mundos, 3 portales, 4 títulos), zona 1 con anillo (qa-v142-zona1-final), banner de origen en Crisis Mundial (qa-v142-banner-origen), móvil modo mundo 390px (qa-v142-movil-universo-v2) y sala crisis móvil, recarga ×2 → 0 errores + estado restaurado (zona, g1, portales, 8 letras), regresión de vuelos cruzados (portal ARENA desde modo zona 2 → Arcade Pack abierto, mundo 3 visible, mundo 2 oculto), tsc limpio, build limpio.
+- COMMIT v142.0 → push a main.
+
+Stage Summary:
+- PRODUCCIÓN = v142.0 UNIVERSO COMPLETO. El mandato WEBGL EXPERIENCE está CERRADO: las cinco zonas son mundos (el HOY vive en un anillo orbital que abraza al planeta), el MODO MUNDO es el universo entero de una vez, tocar un conflicto en el globo aterriza en el Command Center con su crisis en la mesa, y cada aterrizaje suena a nave que frena.
+- Sugerido para v143: sonido espacial por zona (drone grave en Command Center, sintes dorados en Arena) conectado al botón HUD del búnker, y layout de Command Center dedicado (55% derecha + mini-globo propio).
