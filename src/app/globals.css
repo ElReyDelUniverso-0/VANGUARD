@@ -4767,6 +4767,28 @@ html[data-wgl-capsula="1"] footer { display: none; }
   scrollbar-color: rgba(0, 240, 255, 0.32) transparent;
 }
 
+/* v145 SALAS EN VOLUMEN — MODO CONSOLA: las salas insignia ponen su
+   escenario 3D como héroe y la cápsula se convierte en la consola de
+   mando compacta de abajo: mismo vidrio, filo más denso, cabecera
+   mínima — manda el contenido 3D real */
+.vg143-capsula[data-consola="1"] .vg143-marco {
+  border-radius: 12px;
+  border-color: rgba(245, 197, 66, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 0 44px -6px rgba(245, 197, 66, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.vg143-capsula[data-consola="1"] .vg143-marco::before,
+.vg143-capsula[data-consola="1"] .vg143-marco::after {
+  border-color: rgba(245, 197, 66, 0.65);
+  width: 16px;
+  height: 16px;
+}
+.vg143-capsula[data-consola="1"] .vg143-scroll {
+  scrollbar-color: rgba(245, 197, 66, 0.4) transparent;
+}
+
 /* la cápsula se apaga (sin desmontar su contenido) en entrada,
    MODO MUNDO e inmersión — el universo queda desnudo */
 html[data-wgl-entrada="1"] .vg143-capsula,

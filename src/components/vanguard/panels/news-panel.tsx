@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Newspaper, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2, BookOpen, FlaskConical } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -58,6 +58,21 @@ const tagColor: Record<string, string> = {
   ANALISIS: "text-green-hud border-green-hud bg-green-hud/50",
   INFO: "text-muted-foreground border-border bg-secondary",
 };
+// v145.1 SALAS EN VOLUMEN: color y edad para la ÓRBITA DE NOTICIAS 3D
+const TAG_HEX: Record<string, string> = {
+  ALERTA: "#ff4d5e", DIPLOMACIA: "#7ab8ff", ECONOMIA: "#f5c542",
+  HUMANITARIO: "#b48cff", ANALISIS: "#3ddc84", INFO: "#8b98ad",
+};
+function edadDe(iso: string): string {
+  try {
+    const ms = Date.now() - new Date(iso).getTime();
+    const min = Math.max(1, Math.round(ms / 60000));
+    if (min < 60) return `HACE ${min} MIN`;
+    const h = Math.round(min / 60);
+    if (h < 24) return `HACE ${h} H`;
+    return `HACE ${Math.round(h / 24)} D`;
+  } catch { return ""; }
+}
 
 const VOTE_KEY = "vanguard-news-votes-v13";
 type VoteMap = Record<string, "REAL" | "FAKE">;
@@ -226,6 +241,49 @@ export function NewsPanel() {
       sourceCountry: item.sourceCountry ?? null,
     });
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v145.1 SALAS EN VOLUMEN: LA ÓRBITA DE NOTICIAS — los cables
+  // reales viven como tarjetas holográficas girando alrededor del
+  // núcleo de radar; tocar una abre la SALA DE LECTURA (mismo
+  // handleOpen del panel). La antigüedad se re-emite cada 30s.
+  // ════════════════════════════════════════════════════════════
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+  useEffect(() => {
+    const emitir = () => {
+      const lista = itemsRef.current;
+      if (!lista.length) return;
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "noticias", tipo: "noticias",
+            noticias: lista.slice(0, 5).map((n) => ({
+              titulo: n.title || "SIN TITULAR",
+              fuente: (n.source || "AGENCIA").toUpperCase().slice(0, 14),
+              edad: edadDe(n.publishedAt),
+              tag: (n.tacticalTag || n.conflictTag || "INFO").toUpperCase().slice(0, 8),
+              color: TAG_HEX[(n.tacticalTag || "").toUpperCase()] || "#8b98ad",
+            })),
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 30000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "noticias" || d.accion !== "abrir") return;
+      const n = itemsRef.current[d.idx];
+      if (n) handleOpen(n);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   const submitComment = (id: string) => {
     if (commentText.trim().length < 2) {

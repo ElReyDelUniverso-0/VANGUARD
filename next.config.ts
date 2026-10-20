@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  // v145.1 GUARDIA DE MEMORIA (dev): el realtime-status sondea /socket.io
+  // cada pocos segundos; en DEV cada 404 dispara una compilacion de
+  // not-found de Turbopack y la memoria del server crece hasta el OOM de
+  // la caja (4GB). En dev, /socket.io responde 404 BARATO via rewrite a
+  // una ruta API ya compilada — cero compiles repetidos. En produccion no
+  // aplica (standalone no recompila nada).
+  ...(process.env.NODE_ENV === "development"
+    ? {
+        async rewrites() {
+          return { beforeFiles: [{ source: "/socket.io", destination: "/api/health" }] };
+        },
+      }
+    : {}),
   allowedDevOrigins: [
     "*.space-z.ai",
     "*.chatglm.cn",

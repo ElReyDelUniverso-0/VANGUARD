@@ -54,6 +54,8 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 // v143: DOM REAL dentro de la escena — la Casa vive en el mundo
 import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { GUERRAS } from "@/lib/guerras-activas-data";
+// v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
+import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
 
 // ────────────────────────────────────────────────────────────
 // MOTOR DE TWEEN — GSAP casero (power2.inOut = cúbica in-out).
@@ -419,6 +421,10 @@ class MundoWGL {
   widDerPx = 300;
   // v145 P4 — la ciudad héroe: materiales de ventana que parpadean por fases
   ciudadWinsMats: THREE.MeshBasicMaterial[] = [];
+  // v145 — SALAS EN VOLUMEN: el contenido real de la sala activa
+  salaInst: Sala3DInstancia | null = null;
+  salaPayload: PayloadSala3D | null = null;
+  salaLlave = "";
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -468,6 +474,10 @@ class MundoWGL {
     window.addEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
     // v145: la Casa manda abrir/cerrar LA VENTANA HOLO (menú / búsqueda)
     window.addEventListener("vg:holo-ventana", this.onVentanaEv);
+    // v145: la Casa publica la SALA activa y sus datos vivos — el contenido
+    // real de Vanguard nace en volumen dentro del mundo
+    window.addEventListener("vg:sala3d", this.onSala3dEv);
+    window.addEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
 
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
@@ -657,13 +667,19 @@ class MundoWGL {
   }
 
   // el tamaño CSS del cuerpo (px) — la escala 3D lo normaliza por zona
+  // v145: MODO CONSOLA — las salas insignia ponen su escenario 3D arriba
+  // y la cápsula se hace consola de mando compacta abajo
   private dimensionarCapsula() {
     const movil = window.innerWidth < 768;
-    const w = movil ? Math.min(window.innerWidth - 26, 420) : 1000;
-    const h = movil ? Math.round(window.innerHeight * 0.56) : Math.round(Math.min(window.innerHeight * 0.74, 660));
+    const consola = this.esInsignia() && !!this.salaInst;
+    const w = movil ? Math.min(window.innerWidth - 26, 420) : consola ? 720 : 1000;
+    const h = movil
+      ? Math.round(window.innerHeight * (consola ? 0.3 : 0.56))
+      : Math.round(Math.min(window.innerHeight * (consola ? 0.3 : 0.74), consola ? 290 : 660));
     this.capsulaEl.style.width = `${w}px`;
     this.capsulaEl.style.height = `${h}px`;
     this.capsulaPx = w;
+    this.capsulaEl.dataset.consola = consola ? "1" : "0";
   }
 
   private esMovil() { return window.innerWidth < 768; }
@@ -679,12 +695,14 @@ class MundoWGL {
     const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
     const anchoMundo = altoMundo * this.camara.aspect;
     const movil = this.esMovil();
-    const fracAncho = movil ? 0.92 : 0.52;
+    const consola = this.esInsignia() && !!this.salaInst;
+    const fracAncho = movil ? (consola ? 0.82 : 0.92) : consola ? 0.42 : 0.52;
     const escala = (anchoMundo * fracAncho) / this.capsulaPx;
     // la pantalla flota un pelín POR DEBAJO del eje de mira: respire el
-    // ticker superior del chrome (la corona de la Casa sigue siendo HUD)
+    // ticker superior del chrome (la corona de la Casa sigue siendo HUD).
+    // En consola baja MÁS: el escenario 3D de la sala vive arriba
     const p = tgt.clone();
-    p.y -= altoMundo * 0.035;
+    p.y -= altoMundo * (consola ? (movil ? 0.33 : 0.29) : 0.035);
     return { pos: p, escala };
   }
 
@@ -704,11 +722,13 @@ class MundoWGL {
     this.capsulaEl.dataset.acoplada = "1";
     // v145: el HAZ DEL PROYECTOR enciende — la pantalla flota SOBRE una luz
     this.armarHaz(a.pos, a.escala);
-    if (instant) { this.capsula.scale.setScalar(a.escala); return; }
+    if (instant) { this.capsula.scale.setScalar(a.escala); this.anclarSala(true); return; }
     this.capsula.scale.setScalar(a.escala * 0.9);
     this.animarP(this.capsula.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
     // v144 P1: el ACOPLE suena a metal asentándose
     sonar("clank");
+    // v145: la SALA 3D de la zona nace con el aterrizaje
+    this.anclarSala();
   }
 
   // DESACOPLAR: la pantalla se apaga mientras la cámara vuela (o en MODO MUNDO)
@@ -741,6 +761,158 @@ class MundoWGL {
     this.navEl.style.width = `${w}px`;
     this.navPx = w;
     this.navFrac = movil ? 0.9 : 0.44;
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v145 — SALAS EN VOLUMEN — el contenido real de la sala
+  // activa (el gráfico de la economía, la mesa de conflictos, la
+  // galería de memes, la placa de cualquier otra rama) vive en
+  // el mundo 3D, anclado a la zona donde aterriza la cámara.
+  // ════════════════════════════════════════════════════════
+
+  // las salas INSIGNIA tienen constructor propio (economía,
+  // conflictos, memes) — el resto lleva su placa genérica
+  private esInsignia(): boolean {
+    return !!this.salaPayload && this.salaPayload.tipo !== "generica";
+  }
+
+  private onSala3dEv = (e: Event) => {
+    const p = (e as CustomEvent<PayloadSala3D>).detail;
+    if (!p?.tab) return;
+    const llave = `${p.tab}|${p.titulo}`;
+    if (this.salaLlave === llave && this.salaInst) return;
+    this.salaLlave = llave;
+    this.salaPayload = p;
+    this.montarSala();
+  };
+
+  private onSala3dDatosEv = (e: Event) => {
+    const p = (e as CustomEvent<PayloadSala3D>).detail;
+    if (!p?.tab) return;
+    // datos vivos de la sala montada (o de la que aún no nace)
+    if (this.salaPayload && this.salaPayload.tab !== p.tab) return;
+    const eraGenerica = this.salaPayload?.tipo === "generica";
+    this.salaPayload = p;
+    if (this.salaInst && !eraGenerica && p.tipo !== "generica") {
+      this.salaInst.actualizar(p);
+    } else {
+      // la sala nace/asciende a insignia con datos reales
+      this.montarSala();
+    }
+  };
+
+  montarSala() {
+    if (!this.fuente || !this.salaPayload) return;
+    this.desmontarSala(true);
+    const p = this.salaPayload;
+    const ctx: CtxSala3D = {
+      fuente: this.fuente,
+      calidadBaja: this.calidadBaja,
+      movil: this.esMovil(),
+      animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
+    };
+    try {
+      this.salaInst = construirSala3D(ctx, p);
+    } catch (e) {
+      // el fallo se VE: una sala rota nunca muere en silencio
+      console.warn("[v145] montarSala fallo:", e);
+      this.salaInst = null;
+      return;
+    }
+    this.salaInst.grupo.visible = false;
+    this.escena.add(this.salaInst.grupo);
+    // la cápsula se hace consola (o vuelve a pantalla) según la sala
+    this.dimensionarCapsula();
+    if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
+      this.acoplarCapsula(this.zona, true);
+      this.anclarSala();
+      sonar("ping");
+    }
+  }
+
+  desmontarSala(instant = false) {
+    const inst = this.salaInst;
+    if (!inst) return;
+    this.salaInst = null;
+    if (instant) {
+      this.escena.remove(inst.grupo);
+      this.desechar(inst.grupo);
+      inst.liberar();
+      return;
+    }
+    const g = inst.grupo;
+    const s0 = g.scale.x;
+    const obj = { t: 0 };
+    this.animarP(obj, { t: 1 }, 300, {
+      onUpdate: () => g.scale.setScalar(Math.max(s0 * (1 - obj.t), 0.001)),
+      onDone: () => { this.escena.remove(g); this.desechar(g); inst.liberar(); },
+    });
+  }
+
+  // barrido de geometrías/materiales del grupo (los compartidos se
+  // disponen dos veces — dispose es idempotente en three)
+  private desechar(g: THREE.Object3D) {
+    g.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | THREE.Material[] | undefined;
+      if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
+      else if (mat) mat.dispose();
+    });
+  }
+
+  // la ANCLA del escenario 3D de la sala: sobre el punto de mira de
+  // la pose. Insignia: héroe ARRIBA (la cápsula-consola vive abajo).
+  // Genérica: placa flotando SOBRE la cápsula completa.
+  private anclarSala(instant = false) {
+    const inst = this.salaInst;
+    const p = this.salaPayload;
+    if (!inst || !p || this.modoMundo || this.zona === 0 || !this.capsulaAcoplada) return;
+    const insignia = p.tipo !== "generica";
+    const a = this.anclaSala(insignia);
+    inst.grupo.position.copy(a.pos);
+    inst.grupo.quaternion.copy(this.camara.quaternion);
+    inst.grupo.quaternion.multiply(Q_YAW_CONSOLA);
+    inst.grupo.visible = true;
+    if (instant) { inst.grupo.scale.setScalar(a.escala); return; }
+    inst.grupo.scale.setScalar(a.escala * 0.84);
+    this.animarP(inst.grupo.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
+  }
+
+  private anclaSala(insignia: boolean): { pos: THREE.Vector3; escala: number } {
+    // v145 QA: ancla EN COORDENADAS DE PANTALLA (como el puente de mando) —
+    // el planeta vive al centro-izquierda del encuadre; la sala insignia
+    // flota ARRIBA-DERECHA (desktop) o ARRIBA (móvil) sin que el globo la tape
+    const dist = insignia ? 3.4 : 4.0;
+    const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
+    const anchoMundo = altoMundo * this.camara.aspect;
+    const movil = this.esMovil();
+    const fracAncho = movil ? 0.94 : insignia ? 0.44 : 0.46;
+    // los constructores miden ~2.6 unidades de ancho
+    const escala = (anchoMundo * fracAncho) / 2.6;
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
+    // fracciones del cuadro: insignia → x +19%, y +9% (desktop); genérica →
+    // placa SOBRE la cápsula completa
+    const fx = insignia ? (movil ? 0 : 0.19) : 0;
+    const fy = insignia ? (movil ? 0.22 : 0.05) : 0;
+    const pos = this.camara.position.clone()
+      .addScaledVector(f, dist)
+      .addScaledVector(derecha, anchoMundo * fx)
+      .addScaledVector(arriba, altoMundo * fy);
+    if (!insignia) {
+      const { tgt } = this.poseDe(this.zona);
+      const dir = new THREE.Vector3(tgt.x - this.camara.position.x, tgt.y - this.camara.position.y, tgt.z - this.camara.position.z);
+      const distT = Math.max(1.2, dir.length());
+      const altoT = 2 * distT * Math.tan((this.camara.fov * Math.PI) / 360);
+      const escCaps = (altoT * this.camara.aspect * (movil ? 0.92 : 0.52)) / this.capsulaPx;
+      const altoCapsMundo = (this.capsulaEl?.offsetHeight || 600) * escCaps;
+      pos.copy(tgt);
+      pos.y += altoT * 0.035 + altoCapsMundo / 2 + 0.75 * escala;
+    }
+    return { pos, escala };
   }
 
   // por frame: posición/orientación/escala de la consola pegadas a la cámara
@@ -1133,6 +1305,8 @@ class MundoWGL {
     // v144: con fuente a bordo, EL PUENTE se viste completo
     this.reconstruirPuente();
     this.vestirDecoracion();
+    // v145: si la sala 3D llegó antes que la fuente, nace ahora
+    if (this.salaPayload) this.montarSala();
   }
 
   // la fuente typeface no trae acentos: como un HUD militar, se caen
@@ -1573,6 +1747,8 @@ class MundoWGL {
     this.condensarLogo();
     // v144: el puente vuelve con la Casa
     this.setModoMundoUI(false);
+    // v145: la sala 3D vuelve con la Casa
+    if (this.capsulaAcoplada) this.anclarSala();
     if (volar) this.irAPose(1000);
   }
 
@@ -1597,7 +1773,11 @@ class MundoWGL {
     window.dispatchEvent(new CustomEvent("vg:wgl-modo", { detail: { on: this.modoMundo } }));
     if (this.modoMundo) this.expandirLogo(); else this.condensarLogo();
     // v143: en el MUNDO la cápsula se apaga — solo existe el universo
-    if (this.modoMundo) this.desacoplarCapsula();
+    if (this.modoMundo) {
+      this.desacoplarCapsula();
+      // v145: la sala 3D también se apaga — el universo queda desnudo
+      if (this.salaInst) this.salaInst.grupo.visible = false;
+    }
     // v144: el puente se apaga y la UI 3D del modo despierta
     this.setModoMundoUI(this.modoMundo);
     this.irAPose(1000);
@@ -1611,7 +1791,11 @@ class MundoWGL {
     else document.documentElement.removeAttribute("data-wgl-modo");
     if (on) this.expandirLogo(); else this.condensarLogo();
     // v143: la cápsula obedece al modo (apagada dentro del universo)
-    if (on) this.desacoplarCapsula();
+    if (on) {
+      this.desacoplarCapsula();
+      // v145: la sala 3D obedece al modo
+      if (this.salaInst) this.salaInst.grupo.visible = false;
+    }
     // v144: el puente obedece al modo
     this.setModoMundoUI(on);
     this.irAPose(1000);
@@ -2098,7 +2282,7 @@ class MundoWGL {
   }
 
   // ── RAYCAST — portales/títulos → marcadores → globo ──
-  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "portal" | "marcador" | "globo" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
+  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "portal" | "marcador" | "globo" | "sala" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
     if (ignorarUI) return { tipo: "nada" };
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
@@ -2107,6 +2291,13 @@ class MundoWGL {
       const hitH = ray.intersectObjects(this.proxiesHolo, false)[0];
       if (hitH && ancestroVisible(hitH.object) && hitH.object.userData?.holo) {
         return { tipo: "holo", accion: hitH.object.userData.holo.accion as string, key: hitH.object.userData.holo.key as string | undefined };
+      }
+    }
+    // v145: LAS PLACAS DE LA SALA 3D — votar la crisis, abrir un meme…
+    if (this.salaInst && this.salaInst.proxies.length) {
+      const hitS = ray.intersectObjects(this.salaInst.proxies, false)[0];
+      if (hitS && hitS.object.userData?.salaAccion) {
+        return { tipo: "sala", key: JSON.stringify(hitS.object.userData.salaAccion) };
       }
     }
     const hitP = ray.intersectObjects(this.proxiesClic, false)[0];
@@ -2400,6 +2591,8 @@ class MundoWGL {
       // v145: cada placa PULSA hacia el piloto — el holograma sale de la pantalla
       p.grupo.position.z = p.baseZ + Math.sin(t * 1.55 + p.fase) * 0.014;
     }
+    // v145: la SALA 3D vive — velas que laten, monedas que giran, placas
+    if (this.salaInst && this.salaInst.grupo.visible) this.salaInst.tic(t, dt);
     this.acoplarConsolaFrame();
     this.acoplarNavFrame();
     this.acoplarVentanaFrame();
@@ -2433,6 +2626,8 @@ class MundoWGL {
     this.dormir();
     for (const c of [...this.cancelar]) c();
     this.cancelar.clear();
+    // v145: la sala 3D muere con el mundo
+    this.desmontarSala(true);
     // v143: la cápsula muere con el mundo — la Casa vuelve al DOM plano
     try {
       (window as unknown as { __vgCapsulaHost?: HTMLDivElement | null }).__vgCapsulaHost = null;
@@ -2447,6 +2642,9 @@ class MundoWGL {
       window.removeEventListener("vg:holo-pestanas", this.onPestanasEv);
       window.removeEventListener("vg:holo-etiquetas", this.onEtiquetasEv);
       window.removeEventListener("vg:holo-ventana", this.onVentanaEv);
+      // v145: los eventos de la sala 3D también se retiran
+      window.removeEventListener("vg:sala3d", this.onSala3dEv);
+      window.removeEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
       (window as unknown as { __vgRailHost?: HTMLDivElement | null }).__vgRailHost = null;
       window.dispatchEvent(new CustomEvent("vg:wgl-railhost", { detail: null }));
       document.documentElement.removeAttribute("data-holo");
@@ -2599,6 +2797,16 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         } else {
           window.dispatchEvent(new CustomEvent("vg:holo-accion", { detail: { accion: acc, key } }));
         }
+        return;
+      }
+      // v145: SALA 3D — una placa del contenido 3D tocada (votar la crisis,
+      // abrir un meme…) manda la acción a la sala DOM de la Casa
+      if (g.tipo === "sala") {
+        sonar("click");
+        try {
+          const acc = JSON.parse(g.key ?? "{}");
+          window.dispatchEvent(new CustomEvent("vg:sala3d-accion", { detail: acc }));
+        } catch { /* llave corrupta: silencio honesto */ }
         return;
       }
       if (g.tipo === "globo" && document.documentElement.getAttribute("data-wgl-entrada") === "1") {

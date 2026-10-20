@@ -66,6 +66,37 @@ export function MarketsPanel() {
     marketSim.init();
   }, []);
 
+  // ════════════════════════════════════════════════════════════
+  // v145 SALAS EN VOLUMEN: el gráfico de la ECONOMÍA vive también en
+  // el mundo 3D — velas japonesas reales como cajas con volumen,
+  // ticker extruido con símbolo + precio + cambio. Datos vivos cada
+  // 4s (el mismo marketSim que alimenta el panel).
+  // ════════════════════════════════════════════════════════════
+  useEffect(() => {
+    const emitir = () => {
+      try {
+        const velas = marketSim.getCandles(selId, tf).slice(-26);
+        if (!velas.length) return;
+        const last = velas[velas.length - 1];
+        const prev = velas.length > 1 ? velas[velas.length - 2] : last;
+        const cambio = prev.close ? ((last.close - prev.close) / prev.close) * 100 : 0;
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "bolsa", tipo: "economia",
+            velas: velas.map((c) => ({ o: c.open, h: c.high, l: c.low, c: c.close })),
+            simbolo: selId,
+            precio: last.close >= 1000 ? last.close.toFixed(0) : last.close.toFixed(2),
+            cambio: `${cambio >= 0 ? "+" : ""}${cambio.toFixed(2)}%`,
+            sube: cambio >= 0,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 4000);
+    return () => window.clearInterval(id);
+  }, [selId, tf]);
+
   // motor de ordenes limite: se ejecutan cuando el precio cruza el limite
   useEffect(() => {
     const st = marketSim.getState();

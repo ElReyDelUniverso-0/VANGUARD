@@ -311,6 +311,16 @@ const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-pa
 // ══════════════════════════════════════════════════════════════
 // v143.0 LA CASA EN EL MUNDO — las salas viven DENTRO del mundo 3D.
 // SALAS: el catálogo entero de paneles — UNA sola fuente de verdad.
+// ════════════════════════════════════════════════════════════
+// v145 SALAS EN VOLUMEN: qué salas son INSIGNIA (constructor 3D propio
+// con el contenido real: gráficos, mesa de conflictos, galería) — todas
+// las demás nacen con su placa 3D genérica.
+const TIPO_SALA_3D: Record<string, string> = {
+  bolsa: "economia", mercados: "economia", hacienda: "economia", divisas: "economia",
+  crisis: "conflictos", salaguerra: "conflictos",
+  memes: "memes",
+  noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
+};
 // SALAVIVA: el cuerpo de la Casa. El MISMO árbol vive en dos hogares:
 //  · dentro de la CÁPSULA holográfica del mundo WebGL (portal React a
 //    la pantalla CSS3D acoplada a la zona donde aterriza la cámara), o
@@ -794,6 +804,27 @@ export default function Home() {
   // el scroll de la cápsula 3D vuelve al techo con cada vuelo
   useEffect(() => {
     if (hostCapsula) hostCapsula.scrollTo({ top: 0 });
+  }, [tab, hostCapsula]);
+
+  // ════════════════════════════════════════════════════════════
+  // v145 SALAS EN VOLUMEN — la sala activa se publica al mundo 3D:
+  // el CONTENIDO REAL de cada rama nace en volumen (el gráfico de la
+  // economía en 3D, las letras en 3D, la sala de conflictos 3D, el
+  // estudio de memes 3D). Insignia con constructor propio + TODAS las
+  // demás ramas con su placa 3D genérica. Re-dispatch cuando nace el
+  // mundo (hostCapsula) para ganar la carrera de arranque.
+  // ════════════════════════════════════════════════════════════
+  useEffect(() => {
+    const seccion = sectionOfTab(tab);
+    const hex = accentOfSection(seccion.key);
+    window.dispatchEvent(new CustomEvent("vg:sala3d", {
+      detail: {
+        tab,
+        titulo: TABS[tab]?.label ?? String(tab),
+        color: parseInt(hex.replace("#", ""), 16) || 0x7ab8ff,
+        tipo: TIPO_SALA_3D[tab as string] ?? "generica",
+      },
+    }));
   }, [tab, hostCapsula]);
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);

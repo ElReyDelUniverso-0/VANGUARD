@@ -203,6 +203,34 @@ export function CrisisPanel() {
     toast.success("VOTO REGISTRADO · +15 mon — el domingo 20:00 se resuelve la crisis", { description: "Si tu opción gana: +500 mon" });
   };
 
+  // ════════════════════════════════════════════════════════════
+  // v145 SALAS EN VOLUMEN: la SALA DE CONFLICTOS vive en el mundo 3D —
+  // mesa de mando holográfica, la crisis en letras extruidas y las
+  // opciones A·B·C·D como placas 3D TOCABLES: se vota desde dentro
+  // del universo (vg:sala3d-accion) con el MISMO voteOfficial.
+  // ════════════════════════════════════════════════════════════
+  const voteOfficialRef = useRef(voteOfficial);
+  voteOfficialRef.current = voteOfficial;
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab?: string; accion?: string; idx?: number }>).detail;
+      if (d?.tab !== "crisis" || d.accion !== "voto" || typeof d.idx !== "number") return;
+      voteOfficialRef.current(d.idx);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+      detail: {
+        tab: "crisis", tipo: "conflictos",
+        id: crisis.id, crisis: crisis.title, region: crisis.region,
+        opciones: crisis.options.map((o) => o.label),
+        votos: votes, votada: myVote,
+      },
+    }));
+  }, [crisis, votes, myVote]);
+
   const startFlash = () => {
     const c = CRISES[Math.floor(Math.random() * CRISES.length)];
     setFlash({ crisis: c, votes: c.options.map(() => 10 + Math.floor(Math.random() * 30)), endsAt: Date.now() + 90_000, voted: null, resolved: false });
