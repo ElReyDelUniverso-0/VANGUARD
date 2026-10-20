@@ -319,6 +319,7 @@ const TIPO_SALA_3D: Record<string, string> = {
   bolsa: "economia", mercados: "economia", hacienda: "economia", divisas: "economia",
   crisis: "conflictos", salaguerra: "conflictos",
   memes: "memes",
+  noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
 };
 // SALAVIVA: el cuerpo de la Casa. El MISMO árbol vive en dos hogares:
 //  · dentro de la CÁPSULA holográfica del mundo WebGL (portal React a

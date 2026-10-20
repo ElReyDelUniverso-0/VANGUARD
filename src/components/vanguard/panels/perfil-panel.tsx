@@ -6,13 +6,14 @@
 // v114.0 ECLIPSE — FIRMA 3D: la firma forjada en EXPERIMENTAL → FORJA luce
 // bajo la bio con el motor de letras 3D de la casa (grabar/quitar aquí).
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Countryball } from "@/components/vanguard/countryball";
 import { Flag } from "@/lib/flags";
 import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useProfileStore, BANNERS, FRAMES, FACTIONS, type BannerStyle, type FrameStyle } from "@/lib/profile-store";
+import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
 import { UserCog, Check, Swords, ScrollText, Search, Signature, X } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -28,6 +29,34 @@ export function PerfilPanel() {
   const [bioLocal, setBioLocal] = useState(bio);
   const [qAvatar, setQAvatar] = useState("");
   const [qFav, setQFav] = useState("");
+
+  // ════════════════════════════════════════════════════════════
+  // v145.1 SALAS EN VOLUMEN: EL NÚCLEO DEL AGENTE — el perfil vive
+  // como ser de energía en el mundo 3D: icosaedro del color del
+  // nivel, anillos de logros orbitando, nombre y botín extruidos.
+  // ════════════════════════════════════════════════════════════
+  const nivel = useGameStore((s) => s.level);
+  const coins = useGameStore((s) => s.coins);
+  const gems = useGameStore((s) => s.gems);
+  const xp = useGameStore((s) => s.xp);
+  const racha = useGameStore((s) => s.streak);
+  const aliasAgente = useGameStore((s) => s.alias);
+  useEffect(() => {
+    const emitir = () => {
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "perfil", tipo: "perfil",
+            nombre: (aliasAgente || "AGENTE").toUpperCase().slice(0, 14),
+            nivel, xp, monedas: coins, gemas: gems, racha,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 5000);
+    return () => window.clearInterval(id);
+  }, [aliasAgente, nivel, xp, coins, gems, racha]);
 
   const avatarList = useMemo(() => {
     const ql = qAvatar.trim().toLowerCase();

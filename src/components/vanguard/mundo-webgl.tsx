@@ -740,6 +740,7 @@ class MundoWGL {
     const ctx: CtxSala3D = {
       fuente: this.fuente,
       calidadBaja: this.calidadBaja,
+      movil: this.esMovil(),
       animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
     };
     try {

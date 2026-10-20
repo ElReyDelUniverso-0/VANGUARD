@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QUIZ_QUESTIONS, type QuizQ } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 // v101.0 EL REGRESO — PILAR 2: los aciertos alimentan el PERFIL DE ANALISTA
@@ -60,6 +60,50 @@ export function QuizPanel() {
     setLockedQ(null);
     toast.success("Quiz reiniciado · puedes volver a responder");
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v145.1 SALAS EN VOLUMEN: el examen vive DENTRO del mundo 3D —
+  // la pregunta en letras extruidas y las respuestas A·D como
+  // placas holográficas tocables (el raycast manda responder /
+  // siguiente y la Casa lo ejecuta con el MISMO handleSelect).
+  // ════════════════════════════════════════════════════════════
+  useEffect(() => {
+    try {
+      window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+        detail: allDone
+          ? {
+              tab: "quiz", tipo: "quiz",
+              categoria: "", dificultad: "",
+              pregunta: "QUIZ COMPLETADO. REINICIA PARA REPETIR",
+              opciones: ["Reiniciar"], correcta: null, seleccionada: null,
+              revelada: true, aciertos: quizCorrect, total: QUIZ_QUESTIONS.length,
+            }
+          : {
+              tab: "quiz", tipo: "quiz",
+              categoria: current.category || "",
+              dificultad: current.difficulty || "",
+              pregunta: current.question || "",
+              opciones: current.options || [],
+              correcta: current.answerIdx ?? null,
+              seleccionada: revealed ? selected : null,
+              revelada: revealed,
+              aciertos: quizCorrect,
+              total: QUIZ_QUESTIONS.length,
+            },
+      }));
+    } catch { /* el mundo 3D no bloquea el panel */ }
+  }, [current, revealed, selected, quizCorrect, allDone]);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "quiz") return;
+      if (d.accion === "responder" && !revealed && !allDone) handleSelect(d.idx);
+      if (d.accion === "siguiente") handleNext();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  });
 
   return (
     <div className="space-y-3">

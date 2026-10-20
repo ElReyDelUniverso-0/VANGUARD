@@ -89,6 +89,51 @@ export function PollsPanel() {
     }
   };
 
+  // ════════════════════════════════════════════════════════════
+  // v145.1 SALAS EN VOLUMEN: EL PORTAL DE VOTO — la primera
+  // encuesta sin votar vive como portal holográfico (pregunta en
+  // letras extruidas + opciones con barras de volumen que laten).
+  // El voto desde el mundo 3D entra por el MISMO votePoll.
+  // ════════════════════════════════════════════════════════════
+  const idxDestacada = useMemo(() => {
+    const i = POLLS.findIndex((p) => pollVotes[p.id] === undefined);
+    return i >= 0 ? i : POLLS.length - 1;
+  }, [pollVotes]);
+  const destacada = POLLS[idxDestacada] ?? null;
+
+  useEffect(() => {
+    if (!destacada) return;
+    const emitir = () => {
+      try {
+        const my = pollVotes[destacada.id];
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "encuestas", tipo: "votaciones",
+            pregunta: destacada.question,
+            opciones: destacada.options.map((o) => o.label),
+            votos: destacada.options.map((o, i) => o.baseVotes + (my === i ? 1 : 0)),
+            votada: my ?? null,
+            indice: idxDestacada + 1,
+            total: POLLS.length,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 10000);
+    return () => window.clearInterval(id);
+  }, [destacada, idxDestacada, pollVotes]);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "encuestas" || d.accion !== "voto" || !destacada) return;
+      if (pollVotes[destacada.id] === undefined) handleVote(destacada.id, d.idx);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [destacada, pollVotes]);
+
   // ====== tarjeta reutilizable de encuesta ======
   const PollCard = (
     { id, question, options, category, conflictTag, hoursLeft, votes, totalVotes, isMine, ts }: {

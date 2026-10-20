@@ -1,4 +1,4 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
-export const APP_VERSION = "v144.0";
-export const APP_CODENAME = "HOLOGRAMA TOTAL";
+export const APP_VERSION = "v145.0";
+export const APP_CODENAME = "SALAS EN VOLUMEN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
