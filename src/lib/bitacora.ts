@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v149.0",
+    nombre: "EL MUNDO AL MANDO",
+    tipo: "mundo",
+    hitos: [
+      "EL VEREDICTO DEL DUEÑO («sigue igualito: mucha lag, la página está en 2D con un planeta bugeado, moverse está frizado, las ramas son un papel blanco fino en el medio») CAZADO EN LABORATORIO: captura real del arranque reveló la cápsula ocupando el 135% del ancho del móvil (526px en una pantalla de 390px) — EL FILO SAGRADO: la escala de la cápsula (y del héroe de cada sala) ahora se calcula con la DISTANCIA REAL cámara→objeto, no con la del eje de mira; el desvío vertical acercaba la pantalla y la inflaba un 30%. La cápsula ocupa SIEMPRE su fracción (78-88% móvil tope) pase lo que pase con la correa, el FOV o la zona",
+      "LA CONSOLA ESCÉNICA: el modo consola ya no es de las salas insignia sino de TODA sala viva (contenido, insignia, genérica recién nacida) — en móvil la cápsula baja de 56%→26-38% del alto y el universo gana 2.2× más cielo libre; el marco holográfico se hizo INCONFUNDIBLE (doble filo 1.5px + remaches 26px con halo + scanlines finas + doble halo exterior): un objeto del espacio, no un papel fino",
+      "MOVIMIENTO DESBLOQUEADO: el joystick móvil SUBE al cielo libre (30% del cuadro desde abajo, siempre por encima de la cápsula — el pulgar nunca pelea con la Casa) con hint de vuelo «palanca = volar · arrastrar = mirar» que se despide solo a los 10s; verificado en laboratorio: W mantenido desplazó la cámara [0,0,4]→[0.32,0,2.02] con inercia",
+      "EL GOBERNADOR DE FPS (la lag se autopila): cada 1.6s el mundo mide el pulso real y ajusta solo — el DPR baja por pasos (100→88→78→68% del techo, nunca bajo 0.72) si el aparato sufre y SUBE cuando respira (histéresis de 2.5s, nada de verja oscilante); a nivel 2+ la ECONOMÍA DE GUERRA congela los adornos (partículas de zona dormidas, parpadeos de ciudad/balizas/banderas en pausa) — la fluidez del vuelo vale más que un brillo decorativo",
+      "CERO BASURA POR FRAME: los 6 `new THREE.Vector3` por rAF del vuelo/acoples (moverMirada, dolar, integrarLibre, asentarVuelo, correa, joystick) hoy reutilizan 5 vectores module-level — los tirones de GC que se sentían como lag mueren; recortes honestos de móvil: estrellas 1300→850, partículas 110→64, Tierra 48→40 segmentos, anillos de marcadores 24→16, techo DPR 1.5→1.3 (el DPR 2 pintaba 4× píxeles en pantallas de alta densidad)",
+      "QA E2E (laboratorio 390×844 iPhone 14 + 1280×720): cápsula a sangre 526px → 317px (81% del cuadro, dentro del tope del 88%), consola \"1\" con sala viva, movimiento de teclado verificado, gobernador activo (dpr 0.88 en renderer de software — se autorregula solo), captura desktop del arranque con ceremonia 3D (letras extruidas + planeta + tagline) y zona 1 con puente de mando, consola de noticias con marco y planeta/atmósfera dominando; lección honesta: el salto condicional del render CSS3D se REVERTIÓ en QA (dejaba objetos CSS3D nuevos sin DOM insertado cuando la cámara respiraba quieta — el ahorro real era marginal y el riesgo alto)",
+    ],
+  },
+  {
     version: "v148.0",
     nombre: "NADA 2D",
     tipo: "mundo",

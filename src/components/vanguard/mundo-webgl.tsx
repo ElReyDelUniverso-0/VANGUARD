@@ -153,6 +153,15 @@ const CORREA_DIST = 2.3;
 const CORREA_RETURN = 2.15; // distancia de re-acople (un pelín más cerca)
 const Z_VENTANA = 3.35;     // distancia de la VENTANA HOLO a la cámara
 
+// v149 — CERO BASURA POR FRAME: los vuelos y acoples del loop reutilizan
+// estos vectores (nada de `new THREE.Vector3` dentro del rAF: cada uno era
+// un candidato a pausa de GC — los «tirones» que el Dueño siente como lag)
+const _vA = new THREE.Vector3();
+const _vB = new THREE.Vector3();
+const _vC = new THREE.Vector3();
+const _vD = new THREE.Vector3();
+const _vE = new THREE.Vector3();
+
 // v145 — TIPOGRAFÍA FUTURISTA: Rajdhani Bold (angular, HUD militar, cero
 // caricatura). Si no llegara, helvetiker_bold rescata el mundo.
 const FUENTE_PRIMARIA = "/assets/fonts/rajdhani_bold.typeface.json";
@@ -441,6 +450,14 @@ class MundoWGL {
   // v148 — EL CASCO DEL PILOTO: el HUD 3D real (adiós a los últimos DOM fijos)
   hud3D: Hud3D | null = null;
   rollActual = 0; // v148: el alabeo del caza (banking) del vuelo libre
+  // v149 — EL GOBERNADOR DE FPS: si el aparato sufre, el mundo baja la
+  // factura él solo (DPR por pasos, partículas y parpadeos congelados) y
+  // la sube cuando respira. Nadie toca un ajuste: el mundo se autopila.
+  dprBase = 1.5;            // techo DPR por aparato (móvil 1.3 / mesa 1.75)
+  dprActual = 1.5;
+  nivelCal = 0;             // 0=pleno … 3=economía de guerra
+  fpsN = 0; fpsT0 = 0; calUltimo = 0;
+  ecoOn = false;            // nivel>=2: los adornos respiran menos
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -450,7 +467,11 @@ class MundoWGL {
       alpha: true,
       powerPreference: "high-performance",
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, opts.calidadBaja ? 1.5 : 2));
+    // v149: techo de píxeles más honesto — el DPR 2 pintaba 4× los píxeles
+    // en los móviles de alta densidad (el «mucho lag» del Dueño)
+    this.dprBase = opts.calidadBaja ? 1.3 : 1.75;
+    this.dprActual = Math.min(window.devicePixelRatio || 1, this.dprBase);
+    this.renderer.setPixelRatio(this.dprActual);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.escena = new THREE.Scene();
     this.camara = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 120);
@@ -504,7 +525,7 @@ class MundoWGL {
 
   // ── LAS ESTRELLAS — dos capas de puntos con color propio ──
   construirEstrellas() {
-    const n = this.calidadBaja ? 1300 : 2600;
+    const n = this.calidadBaja ? 850 : 2600; // v149: móvil respira (850 lucen igual)
     const pos = new Float32Array(n * 3);
     const col = new Float32Array(n * 3);
     const tinte = [
@@ -542,7 +563,7 @@ class MundoWGL {
 
   // ── LA TIERRA — blue marble local + atmósfera fresnel ──
   construirTierra() {
-    const seg = this.calidadBaja ? 48 : 64;
+    const seg = this.calidadBaja ? 40 : 64;
     const R = 1.35;
     const loader = new THREE.TextureLoader();
     const mapa = loader.load("/assets/globe/earth-blue-marble.jpg");
@@ -588,7 +609,7 @@ class MundoWGL {
         new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0 }),
       );
       const anillo = new THREE.Mesh(
-        new THREE.RingGeometry(esTeatro ? 0.075 : 0.048, esTeatro ? 0.115 : 0.072, 24),
+        new THREE.RingGeometry(esTeatro ? 0.075 : 0.048, esTeatro ? 0.115 : 0.072, this.calidadBaja ? 16 : 24),
         new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }),
       );
       // el anillo respira mirando hacia fuera del planeta
@@ -609,7 +630,7 @@ class MundoWGL {
   // ── PARTÍCULAS DE AMBIENTE — oro en la Arena, azul en el Cuartel ──
   construirParticulas() {
     const hacer = (color: number) => {
-      const n = this.calidadBaja ? 110 : 220;
+      const n = this.calidadBaja ? 64 : 220; // v149: menos en móvil, mismo brillo
       const pos = new Float32Array(n * 3);
       for (let i = 0; i < n; i++) {
         const r = 2.6 + Math.random() * 2.4;
@@ -686,12 +707,15 @@ class MundoWGL {
   // el tamaño CSS del cuerpo (px) — la escala 3D lo normaliza por zona
   // v145: MODO CONSOLA — las salas insignia ponen su escenario 3D arriba
   // y la cápsula se hace consola de mando compacta abajo
+  // v149: la consola es de TODA sala viva (insignia, contenido, genérica
+  // recién nacida): mientras haya volumen 3D en la sala, la cápsula manda
+  // poco y el universo manda mucho — el móvil gana 2.2× más cielo libre
   private dimensionarCapsula() {
     const movil = window.innerWidth < 768;
-    const consola = this.esInsignia() && !!this.salaInst;
-    const w = movil ? Math.min(window.innerWidth - 26, 420) : consola ? 720 : 1000;
+    const consola = !!this.salaInst;
+    const w = movil ? Math.min(window.innerWidth - 30, 392) : consola ? 720 : 1000;
     const h = movil
-      ? Math.round(window.innerHeight * (consola ? 0.3 : 0.56))
+      ? Math.round(Math.min(window.innerHeight * (consola ? 0.26 : 0.38), consola ? 240 : 420))
       : Math.round(Math.min(window.innerHeight * (consola ? 0.3 : 0.74), consola ? 290 : 660));
     this.capsulaEl.style.width = `${w}px`;
     this.capsulaEl.style.height = `${h}px`;
@@ -709,17 +733,22 @@ class MundoWGL {
     const { pos, tgt } = this.poseDe(zona);
     const dir = new THREE.Vector3(tgt.x - pos[0], tgt.y - pos[1], tgt.z - pos[2]);
     const dist = Math.max(1.2, dir.length());
-    const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
-    const anchoMundo = altoMundo * this.camara.aspect;
     const movil = this.esMovil();
-    const consola = this.esInsignia() && !!this.salaInst;
-    const fracAncho = movil ? (consola ? 0.82 : 0.92) : consola ? 0.42 : 0.52;
-    const escala = (anchoMundo * fracAncho) / this.capsulaPx;
-    // la pantalla flota un pelín POR DEBAJO del eje de mira: respire el
-    // ticker superior del chrome (la corona de la Casa sigue siendo HUD).
-    // En consola baja MÁS: el escenario 3D de la sala vive arriba
+    const consola = !!this.salaInst;
+    const fracAncho = movil ? (consola ? 0.78 : 0.88) : consola ? 0.42 : 0.52;
+    // v149 EL FILO SAGRADO: la escala sale de la distancia REAL cámara→pantalla
+    // (no del eje de mira). El desvío hacia abajo acercaba la cápsula y la
+    // inflaba ~30%: el marco se salía del cuadro y TODO leía «página 2D a
+    // sangre». Con la distancia real, la cápsula ocupa SIEMPRE su fracción.
     const p = tgt.clone();
-    p.y -= altoMundo * (consola ? (movil ? 0.33 : 0.29) : 0.035);
+    p.y -= 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360) * (consola ? (movil ? 0.34 : 0.3) : 0.05);
+    const distReal = Math.max(1.1, p.distanceTo(this.camara.position));
+    const altoReal = 2 * distReal * Math.tan((this.camara.fov * Math.PI) / 360);
+    const anchoReal = altoReal * this.camara.aspect;
+    // doble seguro: la cápsula jamás pasa del 88% del cuadro (consola 78%)
+    const tope = movil ? 0.88 : 0.9;
+    const fracFinal = Math.min(fracAncho, tope);
+    const escala = (anchoReal * fracFinal) / this.capsulaPx;
     return { pos: p, escala };
   }
 
@@ -804,11 +833,14 @@ class MundoWGL {
       <div class="vg147-joy-alt">
         <button class="vg147-joy-btn" data-joy="sube" aria-label="Subir">▲</button>
         <button class="vg147-joy-btn" data-joy="baja" aria-label="Bajar">▼</button>
-      </div>`;
+      </div>
+      <p class="vg149-joy-hint" data-joy="hint">palanca = volar · arrastrar = mirar</p>`;
     this.joyEl = host;
     this.joyKnob = host.querySelector('[data-joy="knob"]');
     this.joyObj = new CSS3DObject(host);
     this.cssEscena.add(this.joyObj);
+    // v149: el hint de vuelo se despide solo (10s) — enseña, no estorba
+    window.setTimeout(() => host.classList.add("vg149-hint-fuera"), 10000);
     // los listeners viven EN el host: el mundo jamás ve estos pointers
     host.addEventListener("pointerdown", this.onJoyDown);
     host.addEventListener("pointermove", this.onJoyMove);
@@ -875,12 +907,14 @@ class MundoWGL {
   }
 
   // pegado abajo-izquierda del cuadro, paralelo a la cámara (como el puente)
+  // v149: SUBE al cielo libre — al 30% de la pantalla desde abajo, siempre
+  // POR ENCIMA de la cápsula-consola: el pulgar nunca pelea con la Casa
   acoplarJoystickFrame() {
     if (!this.joyObj || !this.joyEl) return;
     const visible = this.consolaVisibleFin && this.quiereJoystick();
     this.joyObj.visible = visible;
     if (!visible) return;
-    const zJ = 3.0;
+    const zJ = 2.7;
     const fovR = (this.camara.fov * Math.PI) / 180;
     const alto = 2 * zJ * Math.tan(fovR / 2);
     const ancho = alto * this.camara.aspect;
@@ -889,12 +923,14 @@ class MundoWGL {
     const escala = (ancho * this.joyFrac) / px;
     this.joyObj.scale.setScalar(escala);
     const mundoPorPx = alto / window.innerHeight;
-    const f = new THREE.Vector3();
+    // v149: vectores reutilizados — cero basura por frame
+    const f = _vA;
     this.camara.getWorldDirection(f);
-    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
-    const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
+    const arriba = _vB.set(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const derecha = _vC.crossVectors(f, arriba).normalize();
     const x = -(ancho / 2) + (px * escala) / 2 + 14 * mundoPorPx;
-    const y = -(alto / 2) + (hPx * escala) / 2 + 76 * mundoPorPx;
+    // v149: 30% del cuadro desde el borde inferior (antes 76px ≈ bajo la cápsula)
+    const y = -alto / 2 + window.innerHeight * 0.3 * mundoPorPx;
     this.joyObj.position.copy(this.camara.position).addScaledVector(f, zJ).addScaledVector(derecha, x).addScaledVector(arriba, y);
     this.joyObj.quaternion.copy(this.camara.quaternion);
   }
@@ -1024,33 +1060,38 @@ class MundoWGL {
     // el planeta vive al centro-izquierda del encuadre; la sala insignia
     // flota ARRIBA-DERECHA (desktop) o ARRIBA (móvil) sin que el globo la tape
     const dist = insignia ? 3.4 : 4.0;
-    const altoMundo = 2 * dist * Math.tan((this.camara.fov * Math.PI) / 360);
+    const fovR = (this.camara.fov * Math.PI) / 360;
+    const altoMundo = 2 * dist * Math.tan(fovR);
     const anchoMundo = altoMundo * this.camara.aspect;
     const movil = this.esMovil();
     const fracAncho = movil ? 0.94 : insignia ? 0.44 : 0.46;
-    // los constructores miden ~2.6 unidades de ancho
-    const escala = (anchoMundo * fracAncho) / 2.6;
     const f = new THREE.Vector3();
     this.camara.getWorldDirection(f);
     const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
     const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
-    // fracciones del cuadro: insignia → x +19%, y +9% (desktop); genérica →
-    // placa SOBRE la cápsula completa
     const fx = insignia ? (movil ? 0 : 0.19) : 0;
-    const fy = insignia ? (movil ? 0.22 : 0.05) : 0;
+    const fy = insignia ? (movil ? 0.24 : 0.05) : 0;
     const pos = this.camara.position.clone()
       .addScaledVector(f, dist)
       .addScaledVector(derecha, anchoMundo * fx)
       .addScaledVector(arriba, altoMundo * fy);
+    // v149: escala por DISTANCIA REAL cámara→héroe (el mismo filo sagrado de
+    // la cápsula: el desvío vertical acercaba la sala y la inflaba)
+    const distReal = Math.max(1.1, pos.distanceTo(this.camara.position));
+    const anchoReal = 2 * distReal * Math.tan(fovR) * this.camara.aspect;
+    const escala = (anchoReal * fracAncho) / 2.6;
     if (!insignia) {
+      // placa genérica: SOBRE la cápsula completa (se apoya en su alto real)
       const { tgt } = this.poseDe(this.zona);
       const dir = new THREE.Vector3(tgt.x - this.camara.position.x, tgt.y - this.camara.position.y, tgt.z - this.camara.position.z);
       const distT = Math.max(1.2, dir.length());
-      const altoT = 2 * distT * Math.tan((this.camara.fov * Math.PI) / 360);
-      const escCaps = (altoT * this.camara.aspect * (movil ? 0.92 : 0.52)) / this.capsulaPx;
+      const altoT = 2 * distT * Math.tan(fovR);
+      const escCaps = (altoT * this.camara.aspect * (movil ? 0.88 : 0.52)) / this.capsulaPx;
       const altoCapsMundo = (this.capsulaEl?.offsetHeight || 600) * escCaps;
       pos.copy(tgt);
       pos.y += altoT * 0.035 + altoCapsMundo / 2 + 0.75 * escala;
+    } else {
+      pos.y += altoMundo * 0.02;
     }
     return { pos, escala };
   }
@@ -1238,11 +1279,12 @@ class MundoWGL {
     const s = this.esMovil() ? 0.0048 : 0.0032;
     const yaw = -dxPx * s;
     const pitch = -dyPx * s;
-    const dir = this.dirArrastre.clone();
+    // v149: vectores reutilizados — cero basura por frame
+    const dir = _vA.copy(this.dirArrastre);
     // yaw alrededor del eje Y del mundo
-    dir.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
+    dir.applyAxisAngle(_vB.set(0, 1, 0), yaw);
     // pitch alrededor del eje DERECHA de la propia dirección
-    const derecha = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0));
+    const derecha = _vC.crossVectors(dir, _vB.set(0, 1, 0));
     if (derecha.lengthSq() > 1e-6) {
       dir.applyAxisAngle(derecha.normalize(), pitch);
       // límite de cabeza: jamás más de ±72° de inclinación
@@ -1262,7 +1304,7 @@ class MundoWGL {
   // rueda / pinza: empujón de dolly con la misma inercia del vuelo
   dolar(delta: number) {
     if (!this.libreOK()) return;
-    const dir = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
+    const dir = _vA.subVectors(this.mirada, this.camara.position).normalize();
     this.vel.addScaledVector(dir, -delta * 0.0032);
   }
 
@@ -1281,7 +1323,7 @@ class MundoWGL {
     // MISMA física del teclado — inercia de nave idéntica, cero tosquedad)
     fwd += this.joy.y;
     lado += this.joy.x;
-    const obj = new THREE.Vector3(lado, vert, fwd);
+    const obj = _vA.set(lado, vert, fwd);
     if (obj.lengthSq() > 0) {
       // v147: analógico — la MAGNITUD manda (palanca a medio camino = medio
       // gas); el teclado es binario y satur en 1 igual que siempre
@@ -1289,10 +1331,10 @@ class MundoWGL {
       const turbo = (T.has("shift") ? 2.6 : 1) * (mag >= 0.92 ? 1.35 : 1); // al fondo del anillo = turbo suave
       obj.normalize().multiplyScalar(VEL_LIBRE * turbo * mag);
       // los ejes del VUELO salen de la CÁMARA: adelante = hacia la mirada
-      const dirF = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
-      const dirR = new THREE.Vector3().crossVectors(dirF, new THREE.Vector3(0, 1, 0)).normalize();
-      const dirU = new THREE.Vector3().crossVectors(dirR, dirF).normalize();
-      const objetivo = new THREE.Vector3()
+      const dirF = _vB.subVectors(this.mirada, this.camara.position).normalize();
+      const dirR = _vC.crossVectors(dirF, _vD.set(0, 1, 0)).normalize();
+      const dirU = _vD.crossVectors(dirR, dirF).normalize();
+      const objetivo = _vE.set(0, 0, 0)
         .addScaledVector(dirF, obj.z)
         .addScaledVector(dirR, obj.x)
         .addScaledVector(dirU, obj.y);
@@ -1301,25 +1343,25 @@ class MundoWGL {
       this.vel.multiplyScalar(Math.max(0, 1 - dt * 5.2)); // frena suave (inercia)
     }
     if (this.vel.lengthSq() < 1e-7) { this.asentarVuelo(dt); return; }
-    const p = this.camara.position.clone().addScaledVector(this.vel, dt);
+    const p = _vA.copy(this.camara.position).addScaledVector(this.vel, dt);
     // v148 — LÍMITES QUE DESLIZAN: antes el paso entero moría contra la
     // pared (la nave «pegote»). Ahora el movimiento se PROYECTA sobre la
     // superficie permitida: rozar el planeta o el muro es un planeo suave.
     const l = p.length();
     if (l < R_MIN_GLOBO) {
       p.multiplyScalar(R_MIN_GLOBO / Math.max(l, 1e-6));
-      const n = p.clone().normalize();
+      const n = _vB.copy(p).normalize();
       const hacia = n.dot(this.vel);          // componente radial entrante
       if (hacia < 0) this.vel.addScaledVector(n, -hacia); // muere lo que empuja, vive lo que roza
     } else if (l > R_MAX_UNI) {
       p.multiplyScalar(R_MAX_UNI / l);
-      const n = p.clone().normalize();
+      const n = _vB.copy(p).normalize();
       const fuera = n.dot(this.vel);
       if (fuera > 0) this.vel.addScaledVector(n, -fuera);
     }
     if (p.y < Y_MIN_LIBRE) { p.y = Y_MIN_LIBRE; this.vel.y = Math.max(0, this.vel.y); }
     else if (p.y > Y_MAX_LIBRE) { p.y = Y_MAX_LIBRE; this.vel.y = Math.min(0, this.vel.y); }
-    const d = p.clone().sub(this.camara.position);
+    const d = _vB.subVectors(p, this.camara.position);
     this.camara.position.copy(p);
     this.mirada.add(d); // la mirada viaja CON la cámara (orientación intacta)
     this.camara.lookAt(this.mirada.x, this.mirada.y, this.mirada.z);
@@ -1339,8 +1381,8 @@ class MundoWGL {
       }
       return;
     }
-    const dirF = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
-    const dirR = new THREE.Vector3().crossVectors(dirF, new THREE.Vector3(0, 1, 0)).normalize();
+    const dirF = _vA.subVectors(this.mirada, this.camara.position).normalize();
+    const dirR = _vB.crossVectors(dirF, _vC.set(0, 1, 0)).normalize();
     const lat = this.vel.dot(dirR);
     const objetivoRoll = THREE.MathUtils.clamp(-lat * 0.055, -0.15, 0.15);
     this.rollActual += (objetivoRoll - this.rollActual) * Math.min(1, dt * 4.2);
@@ -1381,9 +1423,9 @@ class MundoWGL {
       return; // cerca: la Casa vive en el mundo, quieta
     }
     // objetivo: frente a la mirada del piloto, a la distancia de re-acople
-    const f = new THREE.Vector3();
+    const f = _vA;
     this.camara.getWorldDirection(f);
-    const objetivo = this.camara.position.clone().addScaledVector(f, CORREA_RETURN);
+    const objetivo = _vB.copy(this.camara.position).addScaledVector(f, CORREA_RETURN);
     // el planeta manda: el re-acople respeta su radio sagrado
     if (objetivo.length() < R_MIN_GLOBO + 0.35) return;
     const k = 1 - Math.exp(-dt * 2.6); // suave: la Casa vuela HACIA ti
@@ -2605,8 +2647,9 @@ class MundoWGL {
         this.luzRim.color.lerpColors(r0, rim, obj.t);
       },
     });
-    this.particulasOro.visible = zona === 3;
-    this.particulasAzul.visible = zona === 4;
+    // v149: en economía de guerra las partículas duermen pase lo que pase
+    this.particulasOro.visible = zona === 3 && !this.ecoOn;
+    this.particulasAzul.visible = zona === 4 && !this.ecoOn;
     const opOro = { o: (this.particulasOro.material as THREE.PointsMaterial).opacity };
     this.animarP(opOro, { o: zona === 3 ? 0.8 : 0 }, 900, {
       onUpdate: () => { (this.particulasOro.material as THREE.PointsMaterial).opacity = opOro.o; },
@@ -2724,6 +2767,15 @@ class MundoWGL {
     const dt = Math.min(0.05, this.reloj.getDelta());
     const t = this.reloj.elapsedTime;
 
+    // v149 GOBERNADOR: mide el pulso real cada 1.6s y decide
+    this.fpsN++;
+    if (this.fpsT0 === 0) this.fpsT0 = t;
+    else if (t - this.fpsT0 >= 1.6) {
+      const fps = this.fpsN / (t - this.fpsT0);
+      this.fpsN = 0; this.fpsT0 = t;
+      this.gobernarCalidad(fps);
+    }
+
     // REGLA 6: el globo JAMÁS deja de girar y respirar
     this.mundo.rotation.y += dt * 0.05;
     const brillo = 1 + Math.sin(t * 0.85) * this.respiro + (this.invitando ? Math.sin(t * 2.6) * 0.006 : 0);
@@ -2765,22 +2817,25 @@ class MundoWGL {
     // v142 — EL ANILLO ORBITAL gira para siempre; sus balizas laten; las
     // banderas del cuartel ondean; las balizas del globo táctico pulsan
     if (this.mundosZona[1]?.visible) this.aroSpin.rotation.y += dt * 0.07;
-    // v145 P4 — las ventanas de la CIUDAD HÉROE parpadean como vida real
-    for (let i = 0; i < this.ciudadWinsMats.length; i++) {
-      const wm = this.ciudadWinsMats[i];
-      if (!wm) continue;
-      wm.opacity = 0.3 + Math.max(0, Math.sin(t * (1.6 + i * 0.7) + i * 2.2)) * 0.45;
-    }
-    for (let i = 0; i < this.balizasOrb.length; i++) {
-      const bm = this.balizasOrb[i].material as THREE.MeshBasicMaterial;
-      bm.opacity = 0.5 + Math.sin(t * 2.6 + i * 1.7) * 0.45;
-    }
-    for (let i = 0; i < this.balizasC2.length; i++) {
-      const bm = this.balizasC2[i].material as THREE.MeshBasicMaterial;
-      bm.opacity = 0.55 + Math.sin(t * 3.1 + i * 2.1) * 0.4;
-    }
-    for (let i = 0; i < this.banderas.length; i++) {
-      this.banderas[i].rotation.y = Math.sin(t * 2.1 + i * 1.3) * 0.42;
+    // v149 ECONOMÍA DE GUERRA (nivel>=2): los adornos dejan de respirar —
+    // la fluidez del vuelo vale más que un parpadeo decorativo
+    if (!this.ecoOn) {
+      for (let i = 0; i < this.ciudadWinsMats.length; i++) {
+        const wm = this.ciudadWinsMats[i];
+        if (!wm) continue;
+        wm.opacity = 0.3 + Math.max(0, Math.sin(t * (1.6 + i * 0.7) + i * 2.2)) * 0.45;
+      }
+      for (let i = 0; i < this.balizasOrb.length; i++) {
+        const bm = this.balizasOrb[i].material as THREE.MeshBasicMaterial;
+        bm.opacity = 0.5 + Math.sin(t * 2.6 + i * 1.7) * 0.45;
+      }
+      for (let i = 0; i < this.balizasC2.length; i++) {
+        const bm = this.balizasC2[i].material as THREE.MeshBasicMaterial;
+        bm.opacity = 0.55 + Math.sin(t * 3.1 + i * 2.1) * 0.4;
+      }
+      for (let i = 0; i < this.banderas.length; i++) {
+        this.banderas[i].rotation.y = Math.sin(t * 2.1 + i * 1.3) * 0.42;
+      }
     }
 
     // v145 — VUELO LIBRE: el teclado/drag/pinza mueven la cámara ANTES del
@@ -2851,8 +2906,37 @@ class MundoWGL {
     this.acoplarJoystickFrame();
     this.cssEscena.updateMatrixWorld(true);
     this.renderer.render(this.escena, this.camara);
+    // v149 QA: el render CSS3D va SIEMPRE — el salto condicional dejó
+    // objetos nuevos sin DOM insertado (el joy host no nacía) y el ahorro
+    // real es marginal: el coste está en el composite del navegador, no aquí
     this.cssRenderer.render(this.cssEscena, this.camara);
   };
+
+  // v149 — EL GOBERNADOR DE CALIDAD: histéresis de 2.5s (nada de verja
+  // oscilante), pasos de DPR y economía de adornos a partir del nivel 2.
+  private gobernarCalidad(fps: number) {
+    const ahora = performance.now();
+    if (ahora - this.calUltimo < 2500) return;
+    if (fps < 27 && this.nivelCal < 3) { this.nivelCal++; this.calUltimo = ahora; this.aplicarCalidad(); }
+    else if (fps > 52 && this.nivelCal > 0) { this.nivelCal--; this.calUltimo = ahora; this.aplicarCalidad(); }
+  }
+
+  private aplicarCalidad() {
+    // DPR por pasos: 100% → 88% → 78% → 68% del techo del aparato
+    const pasos = [1, 0.88, 0.78, 0.68];
+    this.dprActual = Math.max(0.72, this.dprBase * pasos[this.nivelCal]);
+    this.renderer.setPixelRatio(this.dprActual);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    const eco = this.nivelCal >= 2;
+    if (eco !== this.ecoOn) {
+      this.ecoOn = eco;
+      // al salir de economía las partículas de zona despiertan (por zona)
+      if (!eco) {
+        this.particulasOro.visible = this.zona === 3;
+        this.particulasAzul.visible = this.zona === 4;
+      }
+    }
+  }
 
   redimensionar() {
     this.camara.aspect = window.innerWidth / window.innerHeight;

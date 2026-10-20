@@ -5167,3 +5167,69 @@ html[data-wgl-hud="1"] .vg141-modo-ui { display: none !important; }
   border-color: rgba(30, 144, 255, 0.32);
   background: linear-gradient(160deg, rgba(16, 24, 40, 0.85), rgba(8, 12, 20, 0.85));
 }
+
+/* ================================================================
+   v149.0 «EL MUNDO AL MANDO» — el marco que se VE y el hint que enseña
+   ═══════════════════════════════════════════════════════════ */
+/* el hint del joystick: instrucción mínima que se despide sola */
+.vg149-joy-hint {
+  position: absolute;
+  left: 0;
+  bottom: -22px;
+  width: max-content;
+  max-width: 240px;
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(159, 198, 255, 0.85);
+  text-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
+  pointer-events: none;
+  opacity: 0.95;
+  transition: opacity 1.2s ease;
+}
+.vg147-joyhost.vg149-hint-fuera .vg149-joy-hint { opacity: 0; }
+
+/* la cápsula NUNCA vuelve a ser un papel fino: doble filo + scanlines
+   + remaches visibles — se LEE como objeto holográfico del universo */
+.vg143-marco {
+  border-width: 1.5px;
+  border-color: rgba(0, 240, 255, 0.3);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.028) 0 1px, transparent 1px 4px),
+    linear-gradient(158deg, rgba(10, 13, 21, 0.97), rgba(6, 8, 14, 0.96));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 0 46px -8px rgba(0, 240, 255, 0.28),
+    0 0 0 5px rgba(0, 240, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.vg143-marco::before,
+.vg143-marco::after {
+  width: 26px;
+  height: 26px;
+  border-color: rgba(0, 240, 255, 0.75);
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4));
+}
+/* consola de mando: filo dorado doble igual de presente */
+.vg143-capsula[data-consola="1"] .vg143-marco {
+  border-width: 1.5px;
+  border-color: rgba(245, 197, 66, 0.42);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px),
+    linear-gradient(158deg, rgba(12, 14, 22, 0.97), rgba(7, 9, 15, 0.96));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 0 50px -6px rgba(245, 197, 66, 0.3),
+    0 0 0 5px rgba(245, 197, 66, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.vg143-capsula[data-consola="1"] .vg143-marco::before,
+.vg143-capsula[data-consola="1"] .vg143-marco::after {
+  border-color: rgba(245, 197, 66, 0.8);
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 5px rgba(245, 197, 66, 0.45));
+}
