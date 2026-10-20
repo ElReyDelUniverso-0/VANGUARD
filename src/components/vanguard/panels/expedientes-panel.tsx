@@ -23,6 +23,7 @@ import {
   useExpedientes, intelRank, nextRankAt, expedienteDelDia,
   isExpedienteDelDia, lecturaReward, type Agencia,
 } from "@/lib/expedientes";
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 const AGEN_ICONS: Record<Agencia, React.ReactNode> = {
   FBI: <ShieldAlert className="w-3 h-3" />,
@@ -55,6 +56,21 @@ export function ExpedientesPanel() {
   const lista = useMemo(
     () => (filtro === "TODOS" ? EXPEDIENTES : EXPEDIENTES.filter((e) => e.agencia === filtro)),
     [filtro]
+  );
+
+  // v148 SALA DE CONTENIDO — el archivo desclasificado orbita en volumen:
+  // los próximos expedientes sin leer como filas de cristal tocables
+  useSala3DContenido(
+    "expedientes",
+    "Archivo Secreto",
+    "#C9A85C",
+    `${readIds.length}/${total} LEIDOS · RANGO ${rank}`,
+    EXPEDIENTES.filter((e) => !readSet.has(e.id)).slice(0, 6).map((e) => ({
+      t: e.titulo,
+      v: e.rareza,
+      p: Math.round((readIds.length / Math.max(1, total)) * 100),
+      color: isExpedienteDelDia(e.id) ? "#FFC94D" : undefined,
+    })),
   );
   const pendientes = useMemo(
     () => SEC_MILESTONES.filter((m) => readIds.length >= m.at && !claimed.includes(m.at)),

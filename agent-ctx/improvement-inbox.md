@@ -266,3 +266,13 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - TARJETAS COLECCIONABLES de dos caras (frente CSS3D + reverso WebGL con textura de canvas) en arco en la Arena
 - TERCERA OLA de ramas en volumen: misiones (tablero holográfico), Arcade (cabinas), Expedientes (archivador con carpetas 3D), Ranking (podio 3D)
 - MEMORIA: el renderer del navegador OOMea en sesiones largas de QA del mundo — capturas tempranas, una sala por sesión de navegador
+
+## Cola v148+ — NADA 2D (tercera ola) [Task 33]
+- ✅ HECHO en v148.0: EL CASCO DEL PILOTO (hud-3d.ts) — el HUD 100% WebGL: logo, ficha del agente, TEMPORADA y COMBO acoplados a cámara, tocables, datos reales cada 1s; los chips DOM fijos muertos con data-wgl-hud
+- ✅ HECHO en v148.0: SALA «CONTENIDO» UNIVERSAL + emisor use-sala3d-contenido — MISIONES, EXPEDIENTES, OSCURA, RANKING, FOROS y ARCADE viven en volumen (filas de cristal + barras + valores oro)
+- ✅ HECHO en v148.0: REDESIGN de placas (cristal 13mm, -24/-30% en conflictos/quiz/votaciones/predicciones/logros/SIGUIENTE) + LÍMITES QUE DESLIZAN + alabeo + FOV de velocidad + joystick esbelto
+- CUARTA OLA de ramas en volumen con el emisor universal (bajo esfuerzo, alto alcance): retos, gancho, conquista, bookmaker, enciclopedia, ojodios, planeta, frente — cada panel añade ~15 líneas de useSala3DContenido
+- ACCIONES de fila en salas de contenido: el proxy manda accion:"fila" — los paneles aún no lo escuchan; cablear vg:sala3d-accion "fila" → abrir/interactuar el ítem (expediente abre fuente, arcade lanza juego)
+- TOSTS Y COFRE al universo (P3b pendiente): toast + cofre flotante siguen siendo DOM; portal CSS3D a un host de casco o placa 3D efímera
+- INTERROGATORIO/ATLAS/COLECCIONABLES de la cola v146+ siguen abiertos (spec del Dueño)
+- MEMORIA: el dev server de esta caja OOMeó 4 veces esta ronda — sesiones de navegador MUY cortas, una captura por open; producción standalone no aplica

@@ -12,6 +12,7 @@ import { Target, CheckCircle2, Lock, Trophy, Coins, Gem, Star, Zap, Search, Filt
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 const difficultyColor: Record<string, string> = {
   EASY: "text-green-hud border-green-hud",
@@ -38,6 +39,25 @@ export function MissionsPanel() {
   const { missionProgress, claimMission } = useGameStore();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | "COMPLETED" | "PENDING" | "CLAIMED">("ALL");
+
+  // v148 SALA DE CONTENIDO — el centro de misiones también vive en volumen:
+  // las 6 misiones clave como filas de cristal con su barra de progreso 3D
+  useSala3DContenido(
+    "misiones",
+    "Misiones",
+    "#FF6B5A",
+    `${MISSION_TEMPLATES.filter((m) => missionProgress[m.code]?.completed).length}/${MISSION_TEMPLATES.length} COMPLETADAS`,
+    MISSION_TEMPLATES.slice(0, 6).map((m) => {
+      const p = missionProgress[m.code] ?? { progress: 0, completed: false, claimed: false };
+      const prog = Math.min(p.progress, m.target);
+      return {
+        t: m.title,
+        v: `${prog}/${m.target}`,
+        p: Math.min(100, Math.round((prog / Math.max(1, m.target)) * 100)),
+        color: p.completed ? "#4ADE80" : undefined,
+      };
+    }),
+  );
 
   const filterMission = (m: MissionTemplate) => {
     if (search) {

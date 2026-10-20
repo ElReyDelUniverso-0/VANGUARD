@@ -47,6 +47,7 @@ export type TipoSala3D =
   | "predicciones"
   | "logros"
   | "tienda"
+  | "contenido"
   | "generica";
 
 export interface BaseSala3D {
@@ -147,6 +148,23 @@ export interface SalaTienda3D extends BaseSala3D {
 export interface SalaGenerica3D extends BaseSala3D {
   tipo: "generica";
 }
+// v148 SALA DE CONTENIDO — la tercera ola del mandato «100% 3D»: CUALQUIER
+// rama sin constructor insignia muestra su contenido real en volumen:
+// filas de cristal con texto extruido, valor en oro, barra de volumen e
+// IMAGEN texturizada cuando la fila la trae. El panel manda filas; el
+// mundo las levanta.
+export interface FilaContenido3D {
+  t: string;              // texto de la fila
+  v?: string;             // valor (oro, a la derecha)
+  p?: number;             // barra 0..100 (volumen proporcional)
+  img?: string;           // url de imagen → plano texturizado
+  color?: string;         // acento hexadecimal de la fila
+}
+export interface SalaContenido3D extends BaseSala3D {
+  tipo: "contenido";
+  filas: FilaContenido3D[];
+  resumen?: string;       // línea fina bajo el título
+}
 export type PayloadSala3D =
   | SalaEconomia3D
   | SalaConflictos3D
@@ -158,6 +176,7 @@ export type PayloadSala3D =
   | SalaPredicciones3D
   | SalaLogros3D
   | SalaTienda3D
+  | SalaContenido3D
   | SalaGenerica3D;
 
 // la instancia viva de una sala montada en el mundo
@@ -261,15 +280,18 @@ function texto3D(
 }
 
 // placa holográfica — el soporte de vidrio con filo de neón
+// v148 REDESIGN DEL DUEÑO («los botones son feos, muy grandes»): placas
+// FINAS (cristal de 13mm en escala de sala), más transparentes y con
+// cuerpo más oscuro — el filo de neón manda, la caja apenas se ve
 function placaHolo(w: number, h: number, color: number): { cuerpo: THREE.Mesh; borde: THREE.LineSegments } {
   const cuerpo = new THREE.Mesh(
-    new THREE.BoxGeometry(w, h, 0.022),
+    new THREE.BoxGeometry(w, h, 0.013),
     new THREE.MeshStandardMaterial({
-      color: 0x0c1526,
-      metalness: 0.9,
-      roughness: 0.22,
+      color: 0x0a111e,
+      metalness: 0.92,
+      roughness: 0.16,
       transparent: true,
-      opacity: 0.82,
+      opacity: 0.66,
     }),
   );
   const borde = filos(cuerpo, color, 0.95);
@@ -607,12 +629,14 @@ function construirConflictos(ctx: CtxSala3D, p: SalaConflictos3D): Sala3DInstanc
     const totalVotos = Math.max(1, vts.reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0));
     for (let i = 0; i < n; i++) {
       const placa = new THREE.Group();
-      const w = 0.62, h = 0.3;
+      // v148: la opción respiró — 24% menos de caja, cristal fino, letra
+      // ajustada: mandan el neón y el dato, no el ladrillo
+      const w = 0.5, h = 0.21;
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w, h, 0.02)),
+        reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: votada === i ? 0x2a1a08 : 0x0c1526,
-          metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.86,
+          color: votada === i ? 0x2a1a08 : 0x0a111e,
+          metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.7,
           emissive: new THREE.Color(votada === i ? COL_ORO : 0x000000),
           emissiveIntensity: votada === i ? 0.35 : 0,
         })),
@@ -621,24 +645,24 @@ function construirConflictos(ctx: CtxSala3D, p: SalaConflictos3D): Sala3DInstanc
       const matBorde = borde.material as THREE.LineBasicMaterial;
       placa.add(cuerpo, borde);
       // LA LETRA de la opción — extruida, real
-      const letra = texto3D(ctx, String.fromCharCode(65 + i), { tam: 0.09, prof: 0.03, color: votada === i ? COL_ORO : 0x7ab8ff, emis: 0.6 });
-      letra.grupo.position.set(-w / 2 + 0.09, -0.02, 0.02);
+      const letra = texto3D(ctx, String.fromCharCode(65 + i), { tam: 0.064, prof: 0.02, color: votada === i ? COL_ORO : 0x7ab8ff, emis: 0.6 });
+      letra.grupo.position.set(-w / 2 + 0.07, -0.01, 0.015);
       placa.add(letra.grupo);
       // LA BARRA DE VOTOS — volumen proporcional real
       const frac = (vts[i] || 0) / totalVotos;
       const barra = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry((w - 0.3) * Math.max(frac, 0.02), 0.035, 0.012)),
+        reg.geo(new THREE.BoxGeometry((w - 0.26) * Math.max(frac, 0.02), 0.026, 0.009)),
         reg.mat(new THREE.MeshBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.85 })),
       );
-      barra.position.set(-0.02, -h / 2 + 0.07, 0.02);
+      barra.position.set(-0.02, -h / 2 + 0.05, 0.015);
       placa.add(barra);
       // el núcleo de votos con el número
-      const nv = texto3D(ctx, `${Math.round(frac * 100)}%`, { tam: 0.055, prof: 0.02, color: COL_ORO, emis: 0.55 });
-      nv.grupo.position.set(w / 2 - 0.11, 0.045, 0.02);
+      const nv = texto3D(ctx, `${Math.round(frac * 100)}%`, { tam: 0.042, prof: 0.015, color: COL_ORO, emis: 0.55 });
+      nv.grupo.position.set(w / 2 - 0.09, 0.032, 0.015);
       placa.add(nv.grupo);
       // PROXY invisible-opaco para el dedo (el Raycaster ignora visible:false)
       const proxy = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w + 0.06, h + 0.06, 0.05)),
+        reg.geo(new THREE.BoxGeometry(w + 0.05, h + 0.05, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
       proxy.userData = { salaAccion: { tab: p.tab, accion: "voto", idx: i } };
@@ -647,7 +671,7 @@ function construirConflictos(ctx: CtxSala3D, p: SalaConflictos3D): Sala3DInstanc
       // abanico: 4 en fila (2×2 en móvil lo resuelve la escala del grupo)
       const cols = 2;
       const col = i % cols, fila = Math.floor(i / cols);
-      placa.position.set((col - 0.5) * (w + 0.14), (0.5 - fila) * (h + 0.12), -fila * 0.06);
+      placa.position.set((col - 0.5) * (w + 0.12), (0.5 - fila) * (h + 0.1), -fila * 0.05);
       contenedorOps.add(placa);
       placasOps.push({ grupo: placa, mat: matBorde, baseY: placa.position.y, fase: i * 1.4, proxy });
     }
@@ -865,6 +889,170 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
     },
     tic: (t, dt) => { for (const f of tics) f(t, dt); },
     liberar: () => { reg.liberar(); titulo.mats.forEach((m) => m.dispose()); },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
+// SALA DE CONTENIDO — v148 «NADA 2D»: la tercera ola. Las ramas
+// sin constructor insignia ya NO caen a una pantalla plana: el
+// panel manda sus filas reales (título, valor, barra, imagen) y
+// este constructor las levanta como filas de cristal con letras
+// extruidas, barras de volumen y fotos texturizadas. El contenido
+// de Vanguard vive EN el espacio.
+// ────────────────────────────────────────────────────────────
+function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.92, 0);
+  grupo.add(titulo.grupo);
+
+  // el arco que abraza el título (firma de las salas)
+  const arco = new THREE.Mesh(
+    reg.geo(new THREE.TorusGeometry(0.86, 0.011, 8, 60, Math.PI)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false })),
+  );
+  arco.position.y = 0.12;
+  grupo.add(arco);
+
+  const peana = pedestal(1.3, p.color);
+  peana.position.y = -0.72;
+  grupo.add(peana);
+
+  // contenedor vivo de filas (se repinta con datos reales)
+  let filasWrap = new THREE.Group();
+  grupo.add(filasWrap);
+  let sigKey = "";
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const pintar = (c: SalaContenido3D) => {
+    grupo.remove(filasWrap);
+    limpiar(filasWrap);
+    filasWrap = new THREE.Group();
+    filasWrap.position.x = ctx.movil ? 0.06 : 0.26;
+    proxies.length = 0;
+
+    // RESUMEN — la línea fina bajo el título
+    if (c.resumen) {
+      const rz = texto3D(ctx, acotar(c.resumen, 46), { tam: 0.032, prof: 0.011, color: 0x9fb8dd, emis: 0.32 });
+      rz.grupo.position.set(-rz.ancho / 2, 0.68, 0);
+      filasWrap.add(rz.grupo);
+    }
+
+    // LAS FILAS — cristal fino + letras extruidas + valor + barra + imagen
+    const w = 1.02, h = 0.13;
+    (c.filas || []).slice(0, 7).forEach((f, i) => {
+      const fila = new THREE.Group();
+      const colFila = parseInt(String(f.color || "").replace("#", ""), 16) || p.color;
+      const tieneImg = !!f.img;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.62,
+        })),
+      );
+      fila.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(colFila, 0.8))));
+
+      // LA IMAGEN de la fila — plano texturizado (vive EN el espacio)
+      let dx = -w / 2 + 0.045;
+      if (tieneImg) {
+        const img = planoImagen3D(f.img!, acotar(f.t, 10), `#${colFila.toString(16).padStart(6, "0")}`, f.t, 0.115, 0.075);
+        img.position.set(-w / 2 + 0.075, 0, 0.012);
+        fila.add(img);
+        dx = -w / 2 + 0.15;
+      }
+
+      // EL TEXTO extruido de la fila
+      const txt = texto3D(ctx, acotar(f.t || "-", tieneImg ? 24 : 30).toUpperCase(), { tam: 0.027, prof: 0.009, color: colFila, emis: 0.45 });
+      txt.grupo.position.set(dx, h / 2 - 0.04, 0.012);
+      fila.add(txt.grupo);
+
+      // EL VALOR en oro (a la derecha)
+      if (f.v) {
+        const val = texto3D(ctx, acotar(f.v, 14).toUpperCase(), { tam: 0.028, prof: 0.009, color: COL_ORO, emis: 0.55 });
+        val.grupo.position.set(w / 2 - 0.045 - val.ancho, h / 2 - 0.04, 0.012);
+        fila.add(val.grupo);
+      }
+
+      // LA BARRA de volumen (0..100)
+      if (typeof f.p === "number" && isFinite(f.p)) {
+        const frac = Math.max(0.02, Math.min(1, f.p / 100));
+        const barra = new THREE.Mesh(
+          reg.geo(new THREE.BoxGeometry((w - 0.09) * frac, 0.018, 0.008)),
+          reg.mat(new THREE.MeshBasicMaterial({ color: colFila, transparent: true, opacity: 0.85 })),
+        );
+        barra.position.set(-w / 2 + 0.045 + ((w - 0.09) * frac) / 2, -h / 2 + 0.024, 0.012);
+        fila.add(barra);
+      }
+
+      // PROXY — la fila es tocable (la acción viaja al panel)
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: c.tab, accion: "fila", idx: i } };
+      fila.add(proxy);
+      proxies.push(proxy);
+
+      fila.position.set(0, 0.5 - i * (h + 0.078), -i * 0.022);
+      fila.userData.baseY = fila.position.y;
+      filasWrap.add(fila);
+    });
+
+    if (!(c.filas || []).length) {
+      const espera = texto3D(ctx, "EL PANEL ALIMENTA ESTA SALA", { tam: 0.03, prof: 0.01, color: 0x7ab8ff, emis: 0.35 });
+      espera.grupo.position.set(-espera.ancho / 2, 0.44, 0);
+      filasWrap.add(espera.grupo);
+    }
+
+    grupo.add(filasWrap);
+  };
+
+  pintar({
+    ...p,
+    filas: (p.filas || []).map((f) => ({ ...f, p: Number(f.p) })),
+  });
+
+  const polvoC = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.35, 1.8);
+  polvoC.position.y = -0.68;
+  grupo.add(polvoC);
+
+  tics.push((t, dt) => {
+    polvoC.rotation.y += dt * 0.2;
+    arco.rotation.z = Math.sin(t * 0.6) * 0.05;
+    (arco.material as THREE.MeshBasicMaterial).opacity = 0.5 + Math.sin(t * 1.6) * 0.22;
+    titulo.grupo.position.y = 0.92 + Math.sin(t * 1.05) * 0.014;
+    filasWrap.children.forEach((ch, i) => {
+      const baseY = (ch.userData.baseY as number | undefined) ?? ch.position.y;
+      ch.position.y = baseY + Math.sin(t * 1.4 + i * 0.9) * 0.006;
+    });
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "contenido") return;
+      const sig = JSON.stringify((nuevo.filas || []).map((f) => [f.t, f.v, f.p, f.img, f.color])) + `|${nuevo.resumen ?? ""}`;
+      if (sig === sigKey) return;
+      sigKey = sig;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiar(filasWrap);
+    },
   };
 }
 
@@ -1091,7 +1279,8 @@ function construirQuiz(ctx: CtxSala3D, p: SalaQuiz3D): Sala3DInstancia {
     });
 
     // LAS RESPUESTAS — placas 2×2 con letra y texto reales
-    const w = 1.18, h = 0.3;
+    // v148: 22% menos de caja + cristal fino — el examen respira
+    const w = 0.9, h = 0.21;
     (q.opciones || []).slice(0, 4).forEach((op, i) => {
       const placa = new THREE.Group();
       const esCorrecta = q.revelada && q.correcta === i;
@@ -1099,23 +1288,23 @@ function construirQuiz(ctx: CtxSala3D, p: SalaQuiz3D): Sala3DInstancia {
       const apagada = q.revelada && !esCorrecta && !esFallo;
       const col = esCorrecta ? COL_VERDE : esFallo ? COL_ROJO : apagada ? 0x5a6a80 : 0x7ab8ff;
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w, h, 0.02)),
+        reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: apagada ? 0.5 : 0.86,
+          color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: apagada ? 0.4 : 0.7,
           emissive: new THREE.Color(esCorrecta ? COL_VERDE : esFallo ? COL_ROJO : 0x000000), emissiveIntensity: 0.22,
         })),
       );
       const borde = new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, apagada ? 0.4 : 0.9)));
       placa.add(cuerpo, borde);
-      const letra = texto3D(ctx, String.fromCharCode(65 + i), { tam: 0.08, prof: 0.026, color: col, emis: 0.6 });
-      letra.grupo.position.set(-w / 2 + 0.1, -0.015, 0.02);
+      const letra = texto3D(ctx, String.fromCharCode(65 + i), { tam: 0.06, prof: 0.02, color: col, emis: 0.6 });
+      letra.grupo.position.set(-w / 2 + 0.075, -0.012, 0.015);
       placa.add(letra.grupo);
-      const txt = texto3D(ctx, acotar(op || "-", 22).toUpperCase(), { tam: 0.042, prof: 0.014, color: apagada ? 0x5a6a80 : col, emis: 0.45 });
-      txt.grupo.position.set(-w / 2 + 0.24, -0.015, 0.02);
+      const txt = texto3D(ctx, acotar(op || "-", 26).toUpperCase(), { tam: 0.034, prof: 0.011, color: apagada ? 0x5a6a80 : col, emis: 0.45 });
+      txt.grupo.position.set(-w / 2 + 0.185, -0.012, 0.015);
       placa.add(txt.grupo);
       if (!q.revelada) {
         const proxy = new THREE.Mesh(
-          reg.geo(new THREE.BoxGeometry(w + 0.05, h + 0.05, 0.05)),
+          reg.geo(new THREE.BoxGeometry(w + 0.05, h + 0.05, 0.04)),
           reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
         );
         proxy.userData = { salaAccion: { tab: p.tab, accion: "responder", idx: i } };
@@ -1123,33 +1312,33 @@ function construirQuiz(ctx: CtxSala3D, p: SalaQuiz3D): Sala3DInstancia {
         proxies.push(proxy);
       }
       const colG = i % 2, fila = Math.floor(i / 2);
-      placa.position.set((colG - 0.5) * (w + 0.12), -0.06 - fila * (h + 0.1), -fila * 0.05);
+      placa.position.set((colG - 0.5) * (w + 0.1), -0.04 - fila * (h + 0.09), -fila * 0.045);
       opsWrap.add(placa);
     });
 
-    // SIGUIENTE — la placa dorada nace al revelar
+    // SIGUIENTE — la placa dorada nace al revelar (v148: chip fino y compacto)
     if (q.revelada) {
       sigWrap = new THREE.Group();
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(1.0, 0.22, 0.02)),
+        reg.geo(new THREE.BoxGeometry(0.68, 0.15, 0.013)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: 0x2a1a08, metalness: 0.85, roughness: 0.3, transparent: true, opacity: 0.92,
+          color: 0x2a1a08, metalness: 0.88, roughness: 0.24, transparent: true, opacity: 0.82,
           emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.3,
         })),
       );
       const borde = new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(COL_ORO, 0.95)));
       sigWrap.add(cuerpo, borde);
-      const txt = texto3D(ctx, "SIGUIENTE", { tam: 0.06, prof: 0.02, color: COL_ORO, emis: 0.65 });
-      txt.grupo.position.set(-txt.ancho / 2, -0.015, 0.02);
+      const txt = texto3D(ctx, "SIGUIENTE", { tam: 0.042, prof: 0.014, color: COL_ORO, emis: 0.65 });
+      txt.grupo.position.set(-txt.ancho / 2, -0.011, 0.015);
       sigWrap.add(txt.grupo);
       const proxy = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(1.06, 0.27, 0.05)),
+        reg.geo(new THREE.BoxGeometry(0.74, 0.2, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
       proxy.userData = { salaAccion: { tab: p.tab, accion: "siguiente", idx: -1 } };
       sigWrap.add(proxy);
       proxies.push(proxy);
-      sigWrap.position.set(0, -0.62, 0.1);
+      sigWrap.position.set(0, -0.56, 0.1);
       grupo.add(sigWrap);
     }
 
@@ -1164,7 +1353,7 @@ function construirQuiz(ctx: CtxSala3D, p: SalaQuiz3D): Sala3DInstancia {
 
   tics.push((t, dt) => {
     polvoVerde.rotation.y += dt * 0.18;
-    if (sigWrap) sigWrap.position.y = -0.62 + Math.sin(t * 2.2) * 0.012;
+    if (sigWrap) sigWrap.position.y = -0.56 + Math.sin(t * 2.2) * 0.012;
   });
 
   return {
@@ -1253,46 +1442,47 @@ function construirVotaciones(ctx: CtxSala3D, p: SalaVotaciones3D): Sala3DInstanc
 
     const vts = v.votos || [];
     const totalV = Math.max(1, vts.reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0));
-    const w = 1.18, h = 0.26;
+    // v148: portal de voto esbelto — cristal fino, letra ajustada
+    const w = 0.9, h = 0.2;
     (v.opciones || []).slice(0, 4).forEach((op, i) => {
       const placa = new THREE.Group();
       const votada = v.votada === i;
       const col = votada ? COL_ORO : 0x7ab8ff;
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w, h, 0.02)),
+        reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: votada ? 0x2a1a08 : 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.86,
+          color: votada ? 0x2a1a08 : 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.7,
           emissive: new THREE.Color(votada ? COL_ORO : 0x000000), emissiveIntensity: votada ? 0.3 : 0,
         })),
       );
       const borde = new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.9)));
       placa.add(cuerpo, borde);
-      const letra = texto3D(ctx, String.fromCharCode(65 + i), { tam: 0.07, prof: 0.022, color: col, emis: 0.6 });
-      letra.grupo.position.set(-w / 2 + 0.09, -0.01, 0.02);
+      const letra = texto3D(ctx, String.fromCharCode(65 + i), { tam: 0.055, prof: 0.018, color: col, emis: 0.6 });
+      letra.grupo.position.set(-w / 2 + 0.07, -0.012, 0.015);
       placa.add(letra.grupo);
-      const txt = texto3D(ctx, acotar(op || "-", 18).toUpperCase(), { tam: 0.038, prof: 0.013, color: col, emis: 0.4 });
-      txt.grupo.position.set(-w / 2 + 0.22, 0.045, 0.02);
+      const txt = texto3D(ctx, acotar(op || "-", 22).toUpperCase(), { tam: 0.032, prof: 0.011, color: col, emis: 0.4 });
+      txt.grupo.position.set(-w / 2 + 0.18, 0.038, 0.015);
       placa.add(txt.grupo);
       // LA BARRA DE VOTOS — volumen proporcional que respira
       const frac = (vts[i] || 0) / totalV;
       const barra = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry((w - 0.36) * Math.max(frac, 0.02), 0.03, 0.012)),
+        reg.geo(new THREE.BoxGeometry((w - 0.3) * Math.max(frac, 0.02), 0.024, 0.009)),
         reg.mat(new THREE.MeshBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.85 })),
       );
-      barra.position.set(-w / 2 + 0.22 + ((w - 0.36) * Math.max(frac, 0.02)) / 2, -0.055, 0.02);
+      barra.position.set(-w / 2 + 0.18 + ((w - 0.3) * Math.max(frac, 0.02)) / 2, -0.048, 0.015);
       placa.add(barra);
-      const pct = texto3D(ctx, `${Math.round(frac * 100)}%`, { tam: 0.048, prof: 0.016, color: COL_ORO, emis: 0.55 });
-      pct.grupo.position.set(w / 2 - 0.09 - pct.ancho, 0.045, 0.02);
+      const pct = texto3D(ctx, `${Math.round(frac * 100)}%`, { tam: 0.04, prof: 0.013, color: COL_ORO, emis: 0.55 });
+      pct.grupo.position.set(w / 2 - 0.075 - pct.ancho, 0.038, 0.015);
       placa.add(pct.grupo);
       const proxy = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w + 0.05, h + 0.05, 0.05)),
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
       proxy.userData = { salaAccion: { tab: p.tab, accion: "voto", idx: i } };
       placa.add(proxy);
       proxies.push(proxy);
       const colG = i % 2, fila = Math.floor(i / 2);
-      placa.position.set((colG - 0.5) * (w + 0.12), -0.08 - fila * (h + 0.1), -fila * 0.05);
+      placa.position.set((colG - 0.5) * (w + 0.1), -0.06 - fila * (h + 0.09), -fila * 0.045);
       opsWrap.add(placa);
       placasOps.push({ g: placa, baseY: placa.position.y, fase: i * 1.3 });
     });
@@ -1513,8 +1703,9 @@ function construirPredicciones(ctx: CtxSala3D, p: SalaPredicciones3D): Sala3DIns
     hz.grupo.position.set(-hz.ancho / 2, 0.44, 0);
     pregWrap.add(hz.grupo);
 
-    // LAS DOS CARAS DEL MERCADO — SÍ (verde) y NO (rojo), monumentales
-    const w = 0.84, h = 0.46;
+    // LAS DOS CARAS DEL MERCADO — SÍ (verde) y NO (rojo)
+    // v148: monumentales ya no — elegantes: 17% menos de caja, cristal fino
+    const w = 0.68, h = 0.34;
     const caras: { letra: string; cuota: number; col: number; fondo: number; idx: number }[] = [
       { letra: "SÍ", cuota: v.cuotaSi, col: COL_VERDE, fondo: 0x0a1f14, idx: 0 },
       { letra: "NO", cuota: v.cuotaNo, col: COL_ROJO, fondo: 0x1f0a0e, idx: 1 },
@@ -1522,78 +1713,78 @@ function construirPredicciones(ctx: CtxSala3D, p: SalaPredicciones3D): Sala3DIns
     caras.forEach((c, i) => {
       const placa = new THREE.Group();
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w, h, 0.024)),
+        reg.geo(new THREE.BoxGeometry(w, h, 0.014)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: c.fondo, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.88,
+          color: c.fondo, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.74,
           emissive: new THREE.Color(c.col), emissiveIntensity: 0.14,
         })),
       );
       placa.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(c.col, 0.95))));
-      const letra = texto3D(ctx, c.letra, { tam: 0.1, prof: 0.03, color: c.col, emis: 0.62 });
-      letra.grupo.position.set(-w / 2 + 0.16, 0.06, 0.03);
+      const letra = texto3D(ctx, c.letra, { tam: 0.072, prof: 0.022, color: c.col, emis: 0.62 });
+      letra.grupo.position.set(-w / 2 + 0.12, 0.03, 0.02);
       placa.add(letra.grupo);
-      const cuota = texto3D(ctx, `x${c.cuota.toFixed(2)}`, { tam: 0.072, prof: 0.022, color: 0xffffff, emis: 0.5 });
-      cuota.grupo.position.set(w / 2 - 0.1 - cuota.ancho, 0.09, 0.03);
+      const cuota = texto3D(ctx, `x${c.cuota.toFixed(2)}`, { tam: 0.054, prof: 0.018, color: 0xffffff, emis: 0.5 });
+      cuota.grupo.position.set(w / 2 - 0.08 - cuota.ancho, 0.05, 0.02);
       placa.add(cuota.grupo);
       // LA BARRA DE PROBABILIDAD como volumen (solo en SÍ)
       if (i === 0) {
         const frac = Math.max(0.02, Math.min(0.98, v.probSi / 100));
         const barra = new THREE.Mesh(
-          reg.geo(new THREE.BoxGeometry((w - 0.16) * frac, 0.028, 0.012)),
+          reg.geo(new THREE.BoxGeometry((w - 0.12) * frac, 0.022, 0.009)),
           reg.mat(new THREE.MeshBasicMaterial({ color: COL_VERDE, transparent: true, opacity: 0.85 })),
         );
-        barra.position.set(-w / 2 + 0.08 + ((w - 0.16) * frac) / 2, -0.11, 0.03);
+        barra.position.set(-w / 2 + 0.06 + ((w - 0.12) * frac) / 2, -0.085, 0.02);
         placa.add(barra);
-        const pct = texto3D(ctx, `${Math.round(v.probSi)}%`, { tam: 0.036, prof: 0.013, color: COL_VERDE, emis: 0.5 });
-        pct.grupo.position.set(w / 2 - 0.08 - pct.ancho, -0.125, 0.03);
+        const pct = texto3D(ctx, `${Math.round(v.probSi)}%`, { tam: 0.03, prof: 0.011, color: COL_VERDE, emis: 0.5 });
+        pct.grupo.position.set(w / 2 - 0.06 - pct.ancho, -0.095, 0.02);
         placa.add(pct.grupo);
       }
       const proxy = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.05)),
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
       proxy.userData = { salaAccion: { tab: p.tab, accion: "apostar", idx: c.idx } };
       placa.add(proxy);
       proxies.push(proxy);
-      placa.position.set((i - 0.5) * (w + 0.14), -0.06, 0);
+      placa.position.set((i - 0.5) * (w + 0.12), -0.04, 0);
       opsWrap.add(placa);
       placas.push({ g: placa, baseY: placa.position.y, fase: i * 1.7 });
     });
 
-    // LAS FICHAS DE APUESTA — el stake se toca desde el mundo
+    // LAS FICHAS DE APUESTA — el stake se toca desde el mundo (v148: fichas finas)
     const fichas = [10, 25, 50, 100];
     fichas.forEach((val, i) => {
       const chip = new THREE.Group();
       const activo = v.stake === val;
-      const fw = 0.3, fh = 0.14;
+      const fw = 0.22, fh = 0.1;
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.CylinderGeometry(fw / 2, fw / 2, 0.03, 24)),
+        reg.geo(new THREE.CylinderGeometry(fw / 2, fw / 2, 0.02, 22)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: activo ? 0x2a1a08 : 0x101a2c, metalness: 0.85, roughness: 0.3,
+          color: activo ? 0x2a1a08 : 0x101a2c, metalness: 0.88, roughness: 0.24,
           emissive: new THREE.Color(activo ? COL_ORO : 0x000000), emissiveIntensity: activo ? 0.35 : 0,
-          transparent: true, opacity: 0.94,
+          transparent: true, opacity: 0.9,
         })),
       );
       cuerpo.rotation.x = Math.PI / 2;
       chip.add(cuerpo);
       const borde = new THREE.Mesh(
-        reg.geo(new THREE.TorusGeometry(fw / 2, 0.006, 6, 28)),
+        reg.geo(new THREE.TorusGeometry(fw / 2, 0.0045, 6, 26)),
         reg.mat(new THREE.MeshBasicMaterial({ color: activo ? COL_ORO : 0x7ab8ff, transparent: true, opacity: 0.9 })),
       );
       chip.add(borde);
-      const txt = texto3D(ctx, `${val}`, { tam: 0.042, prof: 0.012, color: activo ? COL_ORO : 0xd6e6ff, emis: activo ? 0.6 : 0.35 });
-      txt.grupo.position.set(-txt.ancho / 2, -0.021, 0.024);
+      const txt = texto3D(ctx, `${val}`, { tam: 0.032, prof: 0.009, color: activo ? COL_ORO : 0xd6e6ff, emis: activo ? 0.6 : 0.35 });
+      txt.grupo.position.set(-txt.ancho / 2, -0.016, 0.018);
       txt.grupo.rotation.x = Math.PI / 2;
       txt.grupo.rotation.z = 0;
       chip.add(txt.grupo);
       const proxy = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(fw + 0.04, fh + 0.04, 0.06)),
+        reg.geo(new THREE.BoxGeometry(fw + 0.04, fh + 0.04, 0.05)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
       proxy.userData = { salaAccion: { tab: p.tab, accion: "stake", idx: val } };
       chip.add(proxy);
       proxies.push(proxy);
-      chip.position.set((i - 1.5) * 0.42, -0.46, i * 0.02);
+      chip.position.set((i - 1.5) * 0.34, -0.36, i * 0.02);
       opsWrap.add(chip);
       placas.push({ g: chip, baseY: chip.position.y, fase: 2 + i * 1.1 });
     });
@@ -1601,12 +1792,12 @@ function construirPredicciones(ctx: CtxSala3D, p: SalaPredicciones3D): Sala3DIns
     // EL ESTADO — premio potencial o el veredicto de la casa
     if (v.resuelto) {
       const gano = v.resuelto === "SÍ";
-      const ver = texto3D(ctx, gano ? "PREDICCIÓN ACERTADA" : "PREDICCIÓN FALLIDA", { tam: 0.052, prof: 0.018, color: gano ? COL_VERDE : COL_ROJO, emis: 0.62 });
-      ver.grupo.position.set(-ver.ancho / 2, -0.66, 0);
+      const ver = texto3D(ctx, gano ? "PREDICCIÓN ACERTADA" : "PREDICCIÓN FALLIDA", { tam: 0.042, prof: 0.014, color: gano ? COL_VERDE : COL_ROJO, emis: 0.62 });
+      ver.grupo.position.set(-ver.ancho / 2, -0.52, 0);
       opsWrap.add(ver.grupo);
     } else {
-      const premio = texto3D(ctx, `PREMIO: ${v.stake} × ${v.cuotaSi.toFixed(2)} = ${Math.round(v.stake * v.cuotaSi * v.mult)}`, { tam: 0.044, prof: 0.015, color: COL_ORO, emis: 0.55 });
-      premio.grupo.position.set(-premio.ancho / 2, -0.66, 0);
+      const premio = texto3D(ctx, `PREMIO: ${v.stake} × ${v.cuotaSi.toFixed(2)} = ${Math.round(v.stake * v.cuotaSi * v.mult)}`, { tam: 0.036, prof: 0.012, color: COL_ORO, emis: 0.55 });
+      premio.grupo.position.set(-premio.ancho / 2, -0.52, 0);
       opsWrap.add(premio.grupo);
     }
 
@@ -1752,41 +1943,42 @@ function construirLogros(ctx: CtxSala3D, p: SalaLogros3D): Sala3DInstancia {
     listaWrap.add(meta.grupo);
 
     // LOS PRÓXIMOS TRES — placas con barra de volumen; listos = oro latente
-    const w = 1.06, h = 0.24;
+    // v148: placas esbeltas — cristal fino de 13mm, datos apretados
+    const w = 0.86, h = 0.17;
     (v.proximos || []).slice(0, 3).forEach((lx, i) => {
       const placa = new THREE.Group();
       const listo = lx.reclamar;
       const col = listo ? COL_ORO : 0x7ab8ff;
       const cuerpo = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w, h, 0.02)),
+        reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: listo ? 0x2a1a08 : 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.86,
+          color: listo ? 0x2a1a08 : 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.7,
           emissive: new THREE.Color(listo ? COL_ORO : 0x000000), emissiveIntensity: listo ? 0.3 : 0,
         })),
       );
       placa.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.9))));
-      const txt = texto3D(ctx, acotar(lx.titulo || "-", 24).toUpperCase(), { tam: 0.04, prof: 0.013, color: col, emis: 0.45 });
-      txt.grupo.position.set(-w / 2 + 0.1, 0.045, 0.02);
+      const txt = texto3D(ctx, acotar(lx.titulo || "-", 26).toUpperCase(), { tam: 0.032, prof: 0.011, color: col, emis: 0.45 });
+      txt.grupo.position.set(-w / 2 + 0.08, 0.03, 0.015);
       placa.add(txt.grupo);
       // barra de progreso como volumen
       const fracB = Math.max(0.02, Math.min(1, (lx.pct || 0) / 100));
       const barra = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry((w - 0.2) * fracB, 0.026, 0.012)),
+        reg.geo(new THREE.BoxGeometry((w - 0.16) * fracB, 0.02, 0.009)),
         reg.mat(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85 })),
       );
-      barra.position.set(-w / 2 + 0.1 + ((w - 0.2) * fracB) / 2, -0.05, 0.02);
+      barra.position.set(-w / 2 + 0.08 + ((w - 0.16) * fracB) / 2, -0.04, 0.015);
       placa.add(barra);
-      const botin = texto3D(ctx, listo ? "TOCAR PARA RECLAMAR" : acotar(lx.botin || "", 16).toUpperCase(), { tam: 0.03, prof: 0.01, color: listo ? COL_ORO : 0x9fb8dd, emis: listo ? 0.62 : 0.3 });
-      botin.grupo.position.set(w / 2 - 0.08 - botin.ancho, 0.045, 0.02);
+      const botin = texto3D(ctx, listo ? "TOCAR PARA RECLAMAR" : acotar(lx.botin || "", 18).toUpperCase(), { tam: 0.024, prof: 0.008, color: listo ? COL_ORO : 0x9fb8dd, emis: listo ? 0.62 : 0.3 });
+      botin.grupo.position.set(w / 2 - 0.06 - botin.ancho, 0.03, 0.015);
       placa.add(botin.grupo);
       const proxy = new THREE.Mesh(
-        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.05)),
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
       proxy.userData = { salaAccion: { tab: p.tab, accion: "logro", idx: i } };
       placa.add(proxy);
       proxies.push(proxy);
-      placa.position.set(0, 0.02 - i * (h + 0.08), -i * 0.05);
+      placa.position.set(0, 0.02 - i * (h + 0.07), -i * 0.04);
       listaWrap.add(placa);
       placas.push({ g: placa, baseY: placa.position.y, fase: i * 1.4 + (listo ? 10 : 0) });
     });
@@ -2017,6 +2209,7 @@ export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstanc
     case "predicciones": return construirPredicciones(ctx, p);
     case "logros": return construirLogros(ctx, p);
     case "tienda": return construirTienda(ctx, p);
+    case "contenido": return construirContenido(ctx, p);
     default: return construirGenerica(ctx, p);
   }
 }

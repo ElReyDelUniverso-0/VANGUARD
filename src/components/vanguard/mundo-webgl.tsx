@@ -56,6 +56,7 @@ import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRe
 import { GUERRAS } from "@/lib/guerras-activas-data";
 // v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
 import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
+import { construirHud3D, type Hud3D } from "./hud-3d";
 
 // ────────────────────────────────────────────────────────────
 // MOTOR DE TWEEN — GSAP casero (power2.inOut = cúbica in-out).
@@ -437,6 +438,9 @@ class MundoWGL {
   salaInst: Sala3DInstancia | null = null;
   salaPayload: PayloadSala3D | null = null;
   salaLlave = "";
+  // v148 — EL CASCO DEL PILOTO: el HUD 3D real (adiós a los últimos DOM fijos)
+  hud3D: Hud3D | null = null;
+  rollActual = 0; // v148: el alabeo del caza (banking) del vuelo libre
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -911,6 +915,10 @@ class MundoWGL {
   private onSala3dEv = (e: Event) => {
     const p = (e as CustomEvent<PayloadSala3D>).detail;
     if (!p?.tab) return;
+    // v148: la base «generica» JAMÁS degrada una sala ya ascendida (el
+    // contenido real que el panel publicó) del mismo tab — la carrera de
+    // arranque no borra contenido vivo
+    if (p.tipo === "generica" && this.salaPayload && this.salaPayload.tab === p.tab && this.salaPayload.tipo !== "generica") return;
     const llave = `${p.tab}|${p.titulo}`;
     if (this.salaLlave === llave && this.salaInst) return;
     this.salaLlave = llave;
@@ -1288,26 +1296,66 @@ class MundoWGL {
         .addScaledVector(dirF, obj.z)
         .addScaledVector(dirR, obj.x)
         .addScaledVector(dirU, obj.y);
-      this.vel.lerp(objetivo, 1 - Math.exp(-dt * 8.5));
+      this.vel.lerp(objetivo, 1 - Math.exp(-dt * 10)); // v148: gas más vivo
     } else {
-      this.vel.multiplyScalar(Math.max(0, 1 - dt * 4.4)); // frena suave (inercia)
+      this.vel.multiplyScalar(Math.max(0, 1 - dt * 5.2)); // frena suave (inercia)
     }
-    if (this.vel.lengthSq() < 1e-7) return;
+    if (this.vel.lengthSq() < 1e-7) { this.asentarVuelo(dt); return; }
     const p = this.camara.position.clone().addScaledVector(this.vel, dt);
-    // LÍMITES del universo piloteable
-    const r = Math.hypot(p.x, p.z);
-    if (p.length() < R_MIN_GLOBO) return;       // el planeta es intocable
-    if (p.length() > R_MAX_UNI) return;         // el universo tiene pared
-    p.y = Math.max(Y_MIN_LIBRE, Math.min(Y_MAX_LIBRE, p.y));
+    // v148 — LÍMITES QUE DESLIZAN: antes el paso entero moría contra la
+    // pared (la nave «pegote»). Ahora el movimiento se PROYECTA sobre la
+    // superficie permitida: rozar el planeta o el muro es un planeo suave.
+    const l = p.length();
+    if (l < R_MIN_GLOBO) {
+      p.multiplyScalar(R_MIN_GLOBO / Math.max(l, 1e-6));
+      const n = p.clone().normalize();
+      const hacia = n.dot(this.vel);          // componente radial entrante
+      if (hacia < 0) this.vel.addScaledVector(n, -hacia); // muere lo que empuja, vive lo que roza
+    } else if (l > R_MAX_UNI) {
+      p.multiplyScalar(R_MAX_UNI / l);
+      const n = p.clone().normalize();
+      const fuera = n.dot(this.vel);
+      if (fuera > 0) this.vel.addScaledVector(n, -fuera);
+    }
+    if (p.y < Y_MIN_LIBRE) { p.y = Y_MIN_LIBRE; this.vel.y = Math.max(0, this.vel.y); }
+    else if (p.y > Y_MAX_LIBRE) { p.y = Y_MAX_LIBRE; this.vel.y = Math.min(0, this.vel.y); }
     const d = p.clone().sub(this.camara.position);
     this.camara.position.copy(p);
     this.mirada.add(d); // la mirada viaja CON la cámara (orientación intacta)
     this.camara.lookAt(this.mirada.x, this.mirada.y, this.mirada.z);
+    this.asentarVuelo(dt);
+  }
+
+  // v148 — EL ALABEO Y EL FOV DE VELOCIDAD: la SENSACIÓN de fluidez.
+  // El caza se inclina con el lateral (banking) y el objetivo visual abre
+  // el ángulo con la velocidad — el vuelo se SIENTE rápido y suave sin
+  // tocar una sola constante de física. Solo con la mano en el volante.
+  private asentarVuelo(dt: number) {
+    if (!this.libreOK() || this.enVuelo) {
+      if (this.rollActual !== 0) {
+        this.rollActual += (0 - this.rollActual) * Math.min(1, dt * 5);
+        this.camara.rotateZ(this.rollActual);
+        if (Math.abs(this.rollActual) < 0.001) this.rollActual = 0;
+      }
+      return;
+    }
+    const dirF = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
+    const dirR = new THREE.Vector3().crossVectors(dirF, new THREE.Vector3(0, 1, 0)).normalize();
+    const lat = this.vel.dot(dirR);
+    const objetivoRoll = THREE.MathUtils.clamp(-lat * 0.055, -0.15, 0.15);
+    this.rollActual += (objetivoRoll - this.rollActual) * Math.min(1, dt * 4.2);
+    if (Math.abs(this.rollActual) > 0.0008) this.camara.rotateZ(this.rollActual);
+    const fovObj = 50 + Math.min(4.5, this.vel.length() * 0.5);
+    if (Math.abs(this.camara.fov - fovObj) > 0.04) {
+      this.camara.fov += (fovObj - this.camara.fov) * Math.min(1, dt * 3);
+      this.camara.updateProjectionMatrix();
+    }
   }
 
   // calmar el vuelo libre (al despegar a otra zona, todo se asienta)
   calmarLibre() {
     this.vel.set(0, 0, 0);
+    this.rollActual = 0; // v148: sin alabeo residual tras el warp
     this.arrastrando = false;
     this.teclas.clear();
     this.joy = { x: 0, y: 0 };
@@ -1473,6 +1521,16 @@ class MundoWGL {
   private aplicarFuente(f: Font) {
     if (!this.vivo) return;
     this.fuente = f;
+    // v148: EL CASCO DEL PILOTO nace con la fuente — el HUD de geometría
+    // real que mata los últimos DOM fijos (temporada/combo/cabecera)
+    if (!this.hud3D) {
+      try {
+        this.hud3D = construirHud3D({ fuente: f, calidadBaja: this.calidadBaja, movil: this.esMovil() });
+        this.escena.add(this.hud3D.grupo);
+        this.hud3D.grupo.visible = false; // despierta al terminar la entrada
+        this.proxiesHolo.push(...this.hud3D.proxies);
+      } catch (e) { console.warn("[v148] hud3d fallo:", e); }
+    }
     this.construirLetras3D();
     // v142: si el reencuentro corrió ANTES de que la fuente llegara, los
     // portales/títulos nacen con su visibilidad por defecto (apagada) —
@@ -2360,6 +2418,9 @@ class MundoWGL {
     this.faseHolo = fase;
     const fin = fase === "volando" || fase === "fin";
     this.consolaVisibleFin = fin;
+    // v148: con el casco vivo, el chrome DOM fijo se aparta (CSS data-wgl-hud)
+    if (fin) document.documentElement.setAttribute("data-wgl-hud", "1");
+    else document.documentElement.removeAttribute("data-wgl-hud");
     this.consola.visible = fin && !this.modoMundo;
     this.pieGrupo.visible = fin && !this.modoMundo && !this.esMovil();
     if (this.railObj) this.railObj.visible = fin && !this.modoMundo;
@@ -2728,6 +2789,17 @@ class MundoWGL {
     // v147 — LA CORREA: la Casa y su sala siguen al piloto si se aleja
     this.seguirPiloto(dt);
 
+    // v148 — EL CASCO DEL PILOTO pega a la cámara y respira con los stores
+    if (this.hud3D) {
+      this.hud3D.grupo.visible = this.consolaVisibleFin;
+      // el logo del casco SOLO asoma si el del cielo no está (cero duplicado)
+      this.hud3D.logo.visible = !this.logoGrupo?.visible;
+      if (this.consolaVisibleFin) {
+        this.hud3D.colocar(this.camara);
+        this.hud3D.tic(t, dt);
+      }
+    }
+
     // PARALLAX de paneles: la cámara cuenta dónde está — CSS vars
     const tgt = ZONA_TGT[this.zona] ?? [0, 0, 0];
     const cx = Math.max(-1, Math.min(1, (this.camara.position.x - tgt[0]) / 3.4));
@@ -2808,6 +2880,13 @@ class MundoWGL {
     this.cancelar.clear();
     // v145: la sala 3D muere con el mundo
     this.desmontarSala(true);
+    // v148: el casco muere con el mundo — y el chrome DOM vuelve
+    if (this.hud3D) {
+      this.escena.remove(this.hud3D.grupo);
+      this.hud3D.liberar();
+      this.hud3D = null;
+    }
+    document.documentElement.removeAttribute("data-wgl-hud");
     // v143: la cápsula muere con el mundo — la Casa vuelve al DOM plano
     try {
       (window as unknown as { __vgCapsulaHost?: HTMLDivElement | null }).__vgCapsulaHost = null;

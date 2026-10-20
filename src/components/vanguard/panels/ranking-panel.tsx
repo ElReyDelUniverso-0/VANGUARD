@@ -17,6 +17,7 @@ import { useRetention, weekKeyOf, weekDaysLeft, WEEK_TOP3_REWARD } from "@/lib/r
 import { useOscura, OSCURA_TOTAL } from "@/lib/oscura";
 import { useExpedientes, EXPEDIENTES } from "@/lib/expedientes";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 type Discipline = "XP" | "CONQ" | "TRADER";
 
@@ -263,6 +264,21 @@ export function RankingPanel() {
   }, [alias, xp, conquestWins, conquestCapturesTotal, mpStats, marketRealized, stakeEarnedTotal]);
 
   const playerPos = (rows: Row[]) => rows.findIndex((r) => r.isPlayer) + 1;
+
+  // v148 SALA DE CONTENIDO — el tablón mundial en volumen: las tres
+  // disciplinas con tu posición real como filas de cristal
+  useSala3DContenido(
+    "ranking",
+    "Ranking Global",
+    "#FFA030",
+    `XP ${xp} · NIVEL ${level} · SEMANA ${weekKeyOf().slice(5)}`,
+    (Object.keys(tables) as Discipline[]).map((disc) => ({
+      t: disc === "XP" ? "CARRERA XP" : disc === "CONQ" ? "CONQUISTADORES" : "TRADERS",
+      v: `#${playerPos(tables[disc])}`,
+      p: Math.max(2, 100 - (playerPos(tables[disc]) - 1) * 12),
+      color: playerPos(tables[disc]) === 1 ? "#FFC94D" : undefined,
+    })),
+  );
 
   return (
     <div className="space-y-4">

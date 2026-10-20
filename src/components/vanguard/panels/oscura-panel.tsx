@@ -30,6 +30,7 @@ import {
   useOscura, type Veredicto, type OscuraRarity, type QuizQuestion,
 } from "@/lib/oscura";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 type Coleccion = "TEORIAS" | "ARMAS" | "CIVIS" | "DOCS" | "QUIZ";
 
@@ -64,6 +65,24 @@ export function OscuraPanel() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [quizDay, setQuizDay] = useState(() => dayKeyUtc());
   const quizSet = useMemo(() => quizSetOfDay(), []);
+
+  // v148 SALA DE CONTENIDO — la biblioteca prohibida vive en volumen:
+  // las entradas sin leer como filas de cristal (la del día late en oro)
+  useSala3DContenido(
+    "oscura",
+    "Alejandria Oscura",
+    "#C9A85C",
+    `${readIds.length}/${OSCURA_TOTAL} ENTRADAS LEIDAS`,
+    [...TEORIAS, ...ARMAS, ...CIVILIZACIONES, ...DOCS]
+      .filter((e) => !readIds.includes(e.id))
+      .slice(0, 6)
+      .map((e) => ({
+        t: e.titulo,
+        v: "veredicto" in e ? String(e.veredicto) : "REAL",
+        p: Math.round((readIds.length / Math.max(1, OSCURA_TOTAL)) * 100),
+        color: isEntradaDelDia(e.id) ? "#FFC94D" : undefined,
+      })),
+  );
 
   const reads = readIds.length;
   const rank = useMemo(() => oscuraRank(reads), [reads]);

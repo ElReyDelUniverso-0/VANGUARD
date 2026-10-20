@@ -111,6 +111,9 @@ export function RetentionLayer() {
 
       // combo x2 alcanzado → celebración una vez por sesión
       const combo = comboOf();
+      // v148: el CASCO 3D lee el combo aquí (window.__vgCombo) — el HUD de
+      // geometría real sustituye al chip DOM sin duplicar la lógica
+      try { (window as unknown as { __vgCombo?: number }).__vgCombo = combo; } catch {}
       if (!calmaActiva() && combo >= 2.0 && lastComboToast.current < 2) {
         lastComboToast.current = 2;
         toast("🔥 ¡COMBO x2.0! Tu XP de temporada va al doble", { description: "Sigue activo para llegar a x3.0" });
@@ -308,8 +311,10 @@ export function RetentionLayer() {
 
       {!hidden && (
         <>
-          {/* ---------- CLÚSTER INFERIOR IZQUIERDO: temporada + combo ---------- */}
-          <div className="fixed bottom-2 left-2 z-30 flex flex-col gap-1.5 max-w-[62vw]" data-luxe-oculto>
+          {/* ---------- CLÚSTER INFERIOR IZQUIERDO: temporada + combo ----------
+              v148: data-vg-retencion — el HUD 3D (casco del piloto) lo sustituye
+              en el universo; este clúster DOM solo vive fuera del mundo */}
+          <div className="fixed bottom-2 left-2 z-30 flex flex-col gap-1.5 max-w-[62vw]" data-luxe-oculto data-vg-retencion="cluster">
             <button
               onClick={() => setSeasonOpen(true)}
               className="pointer-events-auto text-left rounded-lg border border-amber-500/40 bg-black/85 backdrop-blur px-2.5 py-1.5 shadow-lg hover:border-amber-400/70 transition-colors"
@@ -353,6 +358,7 @@ export function RetentionLayer() {
       {hidden && (
         <button
           onClick={toggleHidden}
+          data-vg-retencion="cluster"
           className="fixed bottom-2 left-2 z-30 rounded-lg border border-slate-600/60 bg-black/85 px-2 py-1 font-mono text-[10px] text-slate-400"
         >
           ★ temporada

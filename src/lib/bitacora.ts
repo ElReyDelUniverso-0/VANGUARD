@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v148.0",
+    nombre: "NADA 2D",
+    tipo: "mundo",
+    hitos: [
+      "EL MANDATO DEL DUEÑO («solo el fondo es 3D, lo demás es 2D… todo literal: cada imagen, cada letra, cada gráfico, cada elemento que sea 3D totalmente»): EL CASCO DEL PILOTO — el primer HUD 100% WEBGL de Vanguard (hud-3d.ts nuevo): VANGUARD en letras extruidas, la FICHA DEL AGENTE (alias + nivel + C/G/R) arriba, TEMPORADA CERO (nivel + barra de volumen + cuenta atrás) abajo-izquierda y el COMBO de sesión abajo-derecha — geometría real acoplada a la cámara, TOCABLES por el raycast del puente (la ficha abre la cuenta, la temporada salta al inicio) y alimentados por los stores REALES cada segundo (vanguard-game-state-v1 + vg_retention_v55 + window.__vgCombo). Los chips DOM fijos (data-vg-retencion) y el chip MODO mueren con data-wgl-hud=\"1\"",
+      "SALA DE CONTENIDO UNIVERSAL (la tercera ola del 100% 3D): las ramas sin constructor insignia YA NO caen a una pantalla plana — nuevo tipo \"contenido\" en salas-3d.ts que levanta las filas REALES del panel como cristal fino con letras extruidas, valor en oro, barra de volumen y plano texturizado para imágenes; el emisor universal use-sala3d-contenido.ts conecta MISIONES (6 misiones con su progreso real), ARCHIVO SECRETO (expedientes sin leer con su rareza), ALEJANDRÍA OSCURA (entradas prohibidas con veredicto), RANKING (las 3 disciplinas con tu posición), FOROS (hilos vivos con respuestas) y ARCADE (12 minijuegos con tus récords) — la cápsula DOM se hace consola y el contenido manda en el espacio",
+      "REDESIGN DE BOTONES (el otro mandato: «los botones que agregaste son feos, muy grandes»): placaHolo rebajada a cristal de 13mm más transparente (opacity 0.66), opciones de la sala de conflictos -24%, respuestas del examen 1.18×0.30 → 0.90×0.21 con letra y texto ajustados, placas del portal de voto -24%, las dos caras SÍ/NO de predicciones 0.84×0.46 → 0.68×0.34, fichas de apuesta -27%, placas de logros -30% y el SIGUIENTE dorado 1.0×0.22 → 0.68×0.15 — mandan el filo de neón y el dato, no el ladrillo",
+      "FLUIDEZ REAL del vuelo: los LÍMITES QUE DESLIZAN (antes el paso entero moría contra el planeta/el muro y la nave se pegaba — ahora el movimiento se PROYECTA sobre la superficie permitida y rozar es un planeo), gas más vivo (lerp dt*10) y freno más noble (dt*5.2), EL ALABEO del caza (banking: el casco se inclina hasta ±8.6° con el lateral) y el FOV de velocidad (+4.5° con la velocidad) — la sensación de fluidez sin tocar una sola constante de física; joystick móvil esbelto (92px, cristal más limpio)",
+      "BLINDAJES: la base \"generica\" JAMÁS degrada una sala ya ascendida (la carrera de arranque no borra contenido vivo), el emisor universal re-publica cuando nace la cápsula (el mundo tardío no pierde datos) y el HUD no duplica el logo del cielo (el casco cede cuando el VANGUARD 3D del cielo asoma)",
+      "QA E2E EN NAVEGADOR (1380×820 y 390×844): casco vivo tras la entrada con la ficha sincronizando en vivo (C 740 → C 750 al responder el examen), quiz con placas esbeltas → tocar C (ORMUZ) reveló VERDE + «Correcto! +10 monedas +15 XP» + SIGUIENTE compacto, sala de contenido de MISIONES con 6 filas reales y barras de volumen, ARCHIVO SECRETO con rarezas en oro, ARCADE en móvil con récords y el chip del agente compacto sin recortes (el frustum de 390px mide 0.39 — el chip bajó a 0.30); tsc limpio ×3, eslint 0 errores en los 11 ficheros tocados; el dev server OOMeó 3 veces (protocolo pkill+bun run dev)",
+    ],
+  },
+  {
     version: "v147.0",
     nombre: "PILOTAJE TOTAL",
     tipo: "mundo",

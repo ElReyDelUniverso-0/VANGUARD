@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
 import { LatidoSocial } from "@/components/vanguard/latido-social";
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 interface ThreadView {
   id: string;
@@ -315,6 +316,21 @@ export function ForumPanel() {
     const all = [...own, ...seeds];
     return all.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.ts - a.ts);
   }, [forumThreads, forumReplies, forumLikedIds]);
+
+  // v148 SALA DE CONTENIDO — el foro vive en volumen: los hilos vivos como
+  // filas de cristal con sus respuestas reales
+  useSala3DContenido(
+    "foros",
+    "Foros",
+    "#7FE3FF",
+    `${threads.length} HILOS ABIERTOS`,
+    threads.slice(0, 6).map((t) => ({
+      t: t.title,
+      v: `${t.replyCount} RES`,
+      p: Math.min(100, Math.round((t.replyCount / 12) * 100)),
+      color: t.pinned ? "#FFC94D" : undefined,
+    })),
+  );
 
   const filtered = useMemo(() => {
     let list = filter === "TODOS" ? threads : threads.filter((t) => t.category === filter);
