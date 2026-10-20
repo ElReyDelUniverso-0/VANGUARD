@@ -145,7 +145,11 @@ const R_MIN_GLOBO = 2.05;   // radio mínimo al centro (la Tierra es 1.35)
 const R_MAX_UNI = 13.5;     // radio máximo (no abandonar el universo)
 const Y_MIN_LIBRE = -5.6;   // techo/suelo del corredor de vuelo
 const Y_MAX_LIBRE = 6.6;
-const VEL_LIBRE = 2.6;      // unidades/segundo (Shift = ×2.3)
+const VEL_LIBRE = 3.2;      // unidades/segundo (Shift = ×2.6) — v147: más ágil
+// v147 — LA CORREA: si el piloto se aleja de la Casa más que esto, la
+// cápsula y su sala 3D lo ALCANZAN con suavidad (nunca se queda arriba)
+const CORREA_DIST = 2.3;
+const CORREA_RETURN = 2.15; // distancia de re-acople (un pelín más cerca)
 const Z_VENTANA = 3.35;     // distancia de la VENTANA HOLO a la cámara
 
 // v145 — TIPOGRAFÍA FUTURISTA: Rajdhani Bold (angular, HUD militar, cero
@@ -394,10 +398,18 @@ class MundoWGL {
   // mundo SE RECORRE.
   vel = new THREE.Vector3();          // velocidad actual (inercia)
   teclas = new Set<string>();         // WASD/QE/flechas/shift
+  // v147 — EL JOYSTICK MÓVIL: el pulgar manda un vector analógico (-1..1)
+  joy = { x: 0, y: 0 };
+  joyId = -1;                         // pointerId capturado por la palanca
+  joyEl: HTMLDivElement | null = null;
+  joyKnob: HTMLDivElement | null = null;
+  joyObj: CSS3DObject | null = null;
+  joyFrac = 0.4;
   arrastrando = false;                // drag de mirada activo
   ultimoArrastre = 0;                 // freno de eventos (70ms)
   dirArrastre = new THREE.Vector3();  // dirección base del drag de mirada
   punteros = new Map<number, { x: number; y: number }>(); // para el pinza táctil
+  correaActiva = false;              // v147: la correa ya aviso (un clank por estirada)
   distPinza = 0;                      // distancia inicial del pinza
   // v145 — pendiente de toque: los portales/marcadores/globo ahora se
   // ejecutan en pointerup si NO hubo arrastre (así mirar nunca dispara vuelos)
@@ -463,6 +475,7 @@ class MundoWGL {
     // consola de vuelo flotante — el último plano 2D se convierte en 3D
     this.construirCapsula();
     this.construirNavFlotante();
+    this.construirJoystick();
     // v144: EL PUENTE DE MANDO — el chrome entero de la Casa como holograma
     this.construirConsola();
     // v145: LA VENTANA HOLO — el menú flotando como proyección en el espacio
@@ -761,6 +774,125 @@ class MundoWGL {
     this.navEl.style.width = `${w}px`;
     this.navPx = w;
     this.navFrac = movil ? 0.9 : 0.44;
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v147 — EL JOYSTICK MÓVIL — el mandato del Dueño («moverse es muy
+  // tosco: tengo que presionar un lado varias veces para solo moverme»).
+  // En táctil NO había forma fluida de volar: el pinza apenas empuja.
+  // Nace una palanca analógica acoplada a la cámara (abajo-izquierda):
+  // el pulgar manda un vector (-1..1) y el mundo obedece CON INERCIA.
+  // Los botones ▲▼ sintetizan Q/E (misma física del teclado).
+  // ════════════════════════════════════════════════════════
+  private quiereJoystick(): boolean {
+    return typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+  }
+
+  construirJoystick() {
+    if (!this.quiereJoystick()) return;
+    const host = document.createElement("div");
+    host.className = "vg147-joyhost";
+    host.innerHTML = `
+      <div class="vg147-joy-base" data-joy="base">
+        <div class="vg147-joy-anillo"></div>
+        <div class="vg147-joy-knob" data-joy="knob"></div>
+      </div>
+      <div class="vg147-joy-alt">
+        <button class="vg147-joy-btn" data-joy="sube" aria-label="Subir">▲</button>
+        <button class="vg147-joy-btn" data-joy="baja" aria-label="Bajar">▼</button>
+      </div>`;
+    this.joyEl = host;
+    this.joyKnob = host.querySelector('[data-joy="knob"]');
+    this.joyObj = new CSS3DObject(host);
+    this.cssEscena.add(this.joyObj);
+    // los listeners viven EN el host: el mundo jamás ve estos pointers
+    host.addEventListener("pointerdown", this.onJoyDown);
+    host.addEventListener("pointermove", this.onJoyMove);
+    host.addEventListener("pointerup", this.onJoyUp);
+    host.addEventListener("pointercancel", this.onJoyUp);
+    this.acoplarJoystickFrame();
+  }
+
+  // el pulgar en el cuadro: el anillo se lee como palanca
+  private joyBase: HTMLDivElement | null = null;
+  private joyPulso(e: PointerEvent): { x: number; y: number } | null {
+    const base = this.joyBase;
+    if (!base) return null;
+    const r = base.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const radio = r.width / 2;
+    let dx = (e.clientX - cx) / radio, dy = (e.clientY - cy) / radio;
+    const m = Math.hypot(dx, dy);
+    if (m > 1) { dx /= m; dy /= m; }
+    return { x: dx, y: dy };
+  }
+
+  private onJoyDown = (e: PointerEvent) => {
+    const t = (e.target as HTMLElement)?.dataset?.joy;
+    if (!t) return;
+    e.stopPropagation();
+    if (t === "sube" || t === "baja") {
+      this.teclas.add(t === "sube" ? "e" : "q");
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      const up = () => { this.teclas.delete(t === "sube" ? "e" : "q"); };
+      (e.target as HTMLElement).addEventListener("pointerup", up, { once: true });
+      (e.target as HTMLElement).addEventListener("pointercancel", up, { once: true });
+      return;
+    }
+    if (t !== "base" && t !== "knob") return;
+    this.joyId = e.pointerId;
+    this.joyBase = (e.target as HTMLElement).closest(".vg147-joy-base") as HTMLDivElement | null;
+    (e.currentTarget as HTMLElement)?.setPointerCapture?.(e.pointerId);
+    const p = this.joyPulso(e);
+    if (p) this.moverKnob(p);
+  };
+
+  private onJoyMove = (e: PointerEvent) => {
+    if (this.joyId !== e.pointerId) return;
+    e.stopPropagation();
+    const p = this.joyPulso(e);
+    if (p) this.moverKnob(p);
+  };
+
+  private onJoyUp = (e: PointerEvent) => {
+    if (this.joyId !== e.pointerId) return;
+    e.stopPropagation();
+    this.joyId = -1;
+    this.joy = { x: 0, y: 0 };
+    this.moverKnob({ x: 0, y: 0 });
+  };
+
+  private moverKnob(p: { x: number; y: number }) {
+    this.joy = { x: p.x, y: -p.y }; // pantalla abajo = atrás
+    if (this.joyKnob) {
+      const R = 34; // px de recorrido del knob dentro del anillo
+      this.joyKnob.style.transform = `translate(calc(-50% + ${p.x * R}px), calc(-50% + ${p.y * R}px))`;
+    }
+  }
+
+  // pegado abajo-izquierda del cuadro, paralelo a la cámara (como el puente)
+  acoplarJoystickFrame() {
+    if (!this.joyObj || !this.joyEl) return;
+    const visible = this.consolaVisibleFin && this.quiereJoystick();
+    this.joyObj.visible = visible;
+    if (!visible) return;
+    const zJ = 3.0;
+    const fovR = (this.camara.fov * Math.PI) / 180;
+    const alto = 2 * zJ * Math.tan(fovR / 2);
+    const ancho = alto * this.camara.aspect;
+    const px = this.joyEl.offsetWidth || 150;
+    const hPx = this.joyEl.offsetHeight || 150;
+    const escala = (ancho * this.joyFrac) / px;
+    this.joyObj.scale.setScalar(escala);
+    const mundoPorPx = alto / window.innerHeight;
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
+    const x = -(ancho / 2) + (px * escala) / 2 + 14 * mundoPorPx;
+    const y = -(alto / 2) + (hPx * escala) / 2 + 76 * mundoPorPx;
+    this.joyObj.position.copy(this.camara.position).addScaledVector(f, zJ).addScaledVector(derecha, x).addScaledVector(arriba, y);
+    this.joyObj.quaternion.copy(this.camara.quaternion);
   }
 
   // ════════════════════════════════════════════════════════
@@ -1093,8 +1225,11 @@ class MundoWGL {
 
   moverMirada(dxPx: number, dyPx: number) {
     if (!this.arrastrando) return;
-    const yaw = -dxPx * 0.0030;
-    const pitch = -dyPx * 0.0030;
+    // v147: sensibilidad por dispositivo — el móvil exige más giro por píxel
+    // (el Dueño: «moverse es muy tosco»); el ratón conserva su fino control
+    const s = this.esMovil() ? 0.0048 : 0.0032;
+    const yaw = -dxPx * s;
+    const pitch = -dyPx * s;
     const dir = this.dirArrastre.clone();
     // yaw alrededor del eje Y del mundo
     dir.applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
@@ -1123,7 +1258,7 @@ class MundoWGL {
     this.vel.addScaledVector(dir, -delta * 0.0032);
   }
 
-  // movimientos del teclado → velocidad objetivo; el loop integra con inercia
+  // movimientos del teclado + joystick → velocidad objetivo; el loop integra con inercia
   private integrarLibre(dt: number) {
     if (!this.libreOK()) { this.vel.multiplyScalar(Math.max(0, 1 - dt * 6)); return; }
     const T = this.teclas;
@@ -1134,9 +1269,17 @@ class MundoWGL {
     if (T.has("a") || T.has("arrowleft")) lado -= 1;
     if (T.has("e")) vert += 1;
     if (T.has("q")) vert -= 1;
+    // v147: el JOYSTICK suma su vector analógico (el pulgar manda con la
+    // MISMA física del teclado — inercia de nave idéntica, cero tosquedad)
+    fwd += this.joy.y;
+    lado += this.joy.x;
     const obj = new THREE.Vector3(lado, vert, fwd);
     if (obj.lengthSq() > 0) {
-      obj.normalize().multiplyScalar(VEL_LIBRE * (T.has("shift") ? 2.3 : 1));
+      // v147: analógico — la MAGNITUD manda (palanca a medio camino = medio
+      // gas); el teclado es binario y satur en 1 igual que siempre
+      const mag = Math.min(1, obj.length());
+      const turbo = (T.has("shift") ? 2.6 : 1) * (mag >= 0.92 ? 1.35 : 1); // al fondo del anillo = turbo suave
+      obj.normalize().multiplyScalar(VEL_LIBRE * turbo * mag);
       // los ejes del VUELO salen de la CÁMARA: adelante = hacia la mirada
       const dirF = new THREE.Vector3().subVectors(this.mirada, this.camara.position).normalize();
       const dirR = new THREE.Vector3().crossVectors(dirF, new THREE.Vector3(0, 1, 0)).normalize();
@@ -1145,9 +1288,9 @@ class MundoWGL {
         .addScaledVector(dirF, obj.z)
         .addScaledVector(dirR, obj.x)
         .addScaledVector(dirU, obj.y);
-      this.vel.lerp(objetivo, 1 - Math.exp(-dt * 7.5));
+      this.vel.lerp(objetivo, 1 - Math.exp(-dt * 8.5));
     } else {
-      this.vel.multiplyScalar(Math.max(0, 1 - dt * 5.2)); // frena suave (inercia)
+      this.vel.multiplyScalar(Math.max(0, 1 - dt * 4.4)); // frena suave (inercia)
     }
     if (this.vel.lengthSq() < 1e-7) return;
     const p = this.camara.position.clone().addScaledVector(this.vel, dt);
@@ -1167,8 +1310,42 @@ class MundoWGL {
     this.vel.set(0, 0, 0);
     this.arrastrando = false;
     this.teclas.clear();
+    this.joy = { x: 0, y: 0 };
+    this.joyId = -1;
+    this.moverKnob({ x: 0, y: 0 });
     this.pendiente = null;
     this.punteros.clear();
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v147 — LA CORREA — el otro mandato del Dueño («cuando bajo mucho los
+  // botones se quedan arriba; cuando subo, se queda arriba del todo»):
+  // la Casa (cápsula + sala 3D) es un OBJETO en el mundo, pero el piloto
+  // vuela con libertad — si se aleja, la Casa lo ALCANZA con suavidad y
+  // se planta de nuevo frente a su mirada. El contenido nunca se pierde.
+  // ════════════════════════════════════════════════════════
+  private seguirPiloto(dt: number) {
+    if (!this.capsulaAcoplada || this.enVuelo || this.modoMundo || !this.capsula) return;
+    if (!this.libreOK()) return;
+    const dist = this.camara.position.distanceTo(this.capsula.position);
+    if (dist < CORREA_DIST) {
+      if (this.correaActiva) this.correaActiva = false; // de vuelta en casa: la correa descansa
+      return; // cerca: la Casa vive en el mundo, quieta
+    }
+    // objetivo: frente a la mirada del piloto, a la distancia de re-acople
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const objetivo = this.camara.position.clone().addScaledVector(f, CORREA_RETURN);
+    // el planeta manda: el re-acople respeta su radio sagrado
+    if (objetivo.length() < R_MIN_GLOBO + 0.35) return;
+    const k = 1 - Math.exp(-dt * 2.6); // suave: la Casa vuela HACIA ti
+    this.capsula.position.lerp(objetivo, k);
+    this.capsula.quaternion.copy(this.camara.quaternion);
+    this.capsula.quaternion.multiply(Q_YAW_CONSOLA);
+    const a = this.anclaCapsula(this.zona);
+    this.armarHaz(this.capsula.position, a.escala);
+    this.anclarSala(true);
+    if (!this.correaActiva) { this.correaActiva = true; sonar("clank"); } // un solo aviso por estirada
   }
 
   // ════════════════════════════════════════════════════════
@@ -2548,6 +2725,8 @@ class MundoWGL {
     // v145 — VUELO LIBRE: el teclado/drag/pinza mueven la cámara ANTES del
     // render (la consola, el rail y la ventana pegan a la nueva pose)
     this.integrarLibre(dt);
+    // v147 — LA CORREA: la Casa y su sala siguen al piloto si se aleja
+    this.seguirPiloto(dt);
 
     // PARALLAX de paneles: la cámara cuenta dónde está — CSS vars
     const tgt = ZONA_TGT[this.zona] ?? [0, 0, 0];
@@ -2597,6 +2776,7 @@ class MundoWGL {
     this.acoplarNavFrame();
     this.acoplarVentanaFrame();
     this.acoplarWidgesFrame();
+    this.acoplarJoystickFrame();
     this.cssEscena.updateMatrixWorld(true);
     this.renderer.render(this.escena, this.camara);
     this.cssRenderer.render(this.cssEscena, this.camara);
@@ -2669,6 +2849,13 @@ class MundoWGL {
         this.matHaz?.dispose();
         this.hazCrono = null;
       }
+    } catch { /* silencio honesto */ }
+    // v147: el joystick muere con el mundo (sus listeners van con él)
+    try {
+      this.joyEl?.remove();
+      this.joyObj = null;
+      this.joyEl = null;
+      this.joyKnob = null;
     } catch { /* silencio honesto */ }
     this.renderer.dispose();
   }
@@ -2768,7 +2955,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       if (!mundoRef.current) return;
       const el = e.target as HTMLElement | null;
       // v143/v145: cápsula, consola y VENTANA HOLO son UI de la Casa
-      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost,.vg145-ventana,.vg145-widhost")) return;
+      if (el && typeof el.closest === "function" && el.closest("button,a,input,textarea,select,[role=button],[data-wgl-panel],.vg143-capsula,.vg143-navhost,.vg145-ventana,.vg145-widhost,.vg147-joyhost")) return;
       const m = mundoRef.current;
       m.punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
       if (m.punteros.size === 2) {
@@ -2893,7 +3080,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const m = mundoRef.current;
       if (!m) return;
       const el = e.target as HTMLElement | null;
-      if (el && typeof el.closest === "function" && el.closest(".vg143-capsula,.vg145-ventana,.vg143-navhost,.vg145-widhost")) return;
+      if (el && typeof el.closest === "function" && el.closest(".vg143-capsula,.vg145-ventana,.vg143-navhost,.vg145-widhost,.vg147-joyhost")) return;
       m.dolar(e.deltaY);
     };
     window.addEventListener("wheel", onRueda, { passive: true });

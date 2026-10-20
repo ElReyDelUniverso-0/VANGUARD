@@ -31,6 +31,7 @@
 import * as THREE from "three";
 import { type Font } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import { TextureLoader } from "three/examples/jsm/loaders/TextureLoader.js";
 
 // ────────────────────────────────────────────────────────────
 // TIPOS DEL PROTOCOLO
@@ -72,10 +73,11 @@ export interface SalaMemes3D extends BaseSala3D {
   tipo: "memes";
   memes: { caption: string; autor: string; likes: number; bg: string; bolas: string[]; textos: string[] }[];
 }
-// v145.1 ÓRBITA DE NOTICIAS — los cables REALES como hologramas
+// v146 ÓRBITA DE NOTICIAS — los cables REALES como hologramas, ahora CON
+// SU IMAGEN como plano texturizado (v147: las imágenes también son 3D)
 export interface SalaNoticias3D extends BaseSala3D {
   tipo: "noticias";
-  noticias: { titulo: string; fuente: string; edad: string; tag: string; color: string }[];
+  noticias: { titulo: string; fuente: string; edad: string; tag: string; color: string; img?: string }[];
 }
 // v145.1 EXAMEN HOLOGRÁFICO — la pregunta y las respuestas A·D en volumen
 export interface SalaQuiz3D extends BaseSala3D {
@@ -281,6 +283,48 @@ function polvo(n: number, color: number, radio: number, altura: number): THREE.P
 function acotar(s: string, n: number): string {
   const t = (s || "").trim();
   return t.length > n ? t.slice(0, n - 1).trimEnd() + "." : t;
+}
+
+// la textura de RESERVA — portada generada (degradado del tag + inicial de
+// la fuente): si la imagen real no cruza CORS, la tarjeta JAMÁS nace vacía
+function portadaDeReserva(tag: string, color: string, fuente: string): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = 128; c.height = 64;
+  const g = c.getContext("2d");
+  if (!g) return c;
+  const grad = g.createLinearGradient(0, 0, 128, 64);
+  grad.addColorStop(0, color || "#1a2a44");
+  grad.addColorStop(1, "#0a0f1c");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 128, 64);
+  g.fillStyle = "rgba(255,255,255,0.85)";
+  g.font = "bold 26px monospace";
+  g.fillText((fuente || tag || "V").trim().charAt(0).toUpperCase(), 54, 42);
+  g.strokeStyle = "rgba(255,255,255,0.25)";
+  g.strokeRect(2, 2, 124, 60);
+  return c;
+}
+
+// la IMAGEN 3D — plano texturizado con la foto real del cable (si CORS
+// la cruza) o la portada generada: las imágenes de Vanguard viven EN el espacio
+function planoImagen3D(url: string, tag: string, color: string, fuente: string, w: number, h: number): THREE.Mesh {
+  const geo = new THREE.PlaneGeometry(w, h);
+  const mat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.96 });
+  const mesh = new THREE.Mesh(geo, mat);
+  const pintarReserva = () => {
+    const tex = new THREE.CanvasTexture(portadaDeReserva(tag, color, fuente));
+    mat.map = tex;
+    mat.needsUpdate = true;
+  };
+  try {
+    new TextureLoader().setCrossOrigin("anonymous").load(
+      url,
+      (tex) => { mat.map = tex; mat.needsUpdate = true; },
+      undefined,
+      () => pintarReserva(),
+    );
+  } catch { pintarReserva(); }
+  return mesh;
 }
 
 // mono de la instancia — registro de tweens/geos para liberar
