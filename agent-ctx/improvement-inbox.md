@@ -256,3 +256,11 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 ⭐ IDEA ESTRELLA: NOTIFICACIONES PUSH CONTEXTUALES — el impacto inmediato en retención y engagement justifica el esfuerzo. Los usuarios necesitan sentirse conectados a eventos en tiempo real.
 
 ---
+
+## Cola v146+ — SALAS EN VOLUMEN (segunda ola) [Task 31]
+- PREDICCIONES como portal de cuotas (necesita stake input → placa 3D de opción + consola para la apuesta)
+- ATLAS como esfera de energía neuronal en el Cuartel (spec del Dueño: núcleo + 3 anillos + nodos de red + chat CSS3D frente a ella)
+- TARJETAS COLECCIONABLES de dos caras (frente CSS3D + reverso WebGL con textura de canvas) en arco en la Arena
+- LOGROS como anillos orbitales alrededor del avatar (los completados brillan, hover expande)
+- TIENDA/RECOMPENSAS: cofres 3D con tapa animada
+- MEMORIA: el renderer del navegador OOMea en sesiones largas de QA del mundo fusionado — capturas tempranas, una sala por sesión de navegador
