@@ -8,7 +8,7 @@ import { Award, Lock, Check, Coins, Gem, Star, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { sfx } from "@/lib/sound";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -104,10 +104,85 @@ export function AchievementsPanel() {
     });
   };
 
-  const cats = ["PROGRESO", "GUERRA", "MERCADO", "GANANCIAS", "VIGILANCIA", "COMBATE", "INTEL", "SOCIAL", "ESPECIAL"];
+  // ════════════════════════════════════════════════════════════
+  // v147 SALAS EN VOLUMEN: LA CORONA DE HITOS — el centro de
+  // logros vive como núcleo de energía con anillos orbitales y los
+  // PRÓXIMOS TRES hitos como placas tocables (los listos laten en
+  // oro y TOCARLOS LOS RECLAMA por el mismo handleClaim).
+  // ════════════════════════════════════════════════════════════
   const totalUnlocked = unlockedAchievements.length;
   const totalClaimed = claimedAchievements.length;
   const totalXp = ACHIEVEMENTS.reduce((acc, a) => acc + (claimedAchievements.includes(a.id) ? a.xpReward : 0), 0);
+
+  const proximos = useMemo(() => {
+    const snap: AchievementState = {
+      level, streak, fusionCount, quizCorrect,
+      readBriefings: readBriefings.length,
+      viewedNews: viewedNews.length,
+      viewedPhotos: viewedPhotos.length,
+      openedMaps: openedMaps.length,
+      predictions: predictions.length,
+      coins, gems,
+      unlockedBriefings: unlockedBriefings.length,
+      claimedMissions: Object.values(missionProgress).filter((m) => m.claimed).length,
+      logrosUnlocked: unlockedAchievements.length,
+      visitedTabs, minigameBestScore,
+      camerasPlaced: cameras.length,
+      cameraEvents: cameraTotalEvents,
+      cameraIncome: cameraTotalIncome,
+    };
+    // primero los LISTOS para reclamar (laten en oro), luego los más cercanos
+    const enCurso = ACHIEVEMENTS
+      .filter((a) => !claimedAchievements.includes(a.id))
+      .map((a) => {
+        const prog = a.progress(snap);
+        const pct = Math.min(100, Math.round((prog.current / prog.target) * 100));
+        return {
+          a,
+          pct,
+          listo: unlockedAchievements.includes(a.id),
+          botin: `${a.coinReward > 0 ? `+${a.coinReward} C ` : ""}+${a.xpReward} XP${a.gemReward ? ` +${a.gemReward} G` : ""}`,
+        };
+      })
+      .sort((x, y) => (Number(y.listo) - Number(x.listo)) || (y.pct - x.pct));
+    return enCurso.slice(0, 3).map((x) => ({ titulo: x.a.title, pct: x.pct, botin: x.botin, reclamar: x.listo }));
+  }, [level, streak, fusionCount, quizCorrect, readBriefings, viewedNews, viewedPhotos, openedMaps, predictions, coins, gems, unlockedBriefings, missionProgress, unlockedAchievements, claimedAchievements, visitedTabs, minigameBestScore, cameras, cameraTotalEvents, cameraTotalIncome]);
+
+  useEffect(() => {
+    const emitir = () => {
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "logros", tipo: "logros",
+            titulo: "Logros",
+            desbloqueados: totalUnlocked,
+            total: ACHIEVEMENTS.length,
+            reclamados: totalClaimed,
+            xpGanada: totalXp,
+            proximos,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 8000);
+    return () => window.clearInterval(id);
+  }, [totalUnlocked, totalClaimed, totalXp, proximos]);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "logros" || d.accion !== "logro") return;
+      const lx = proximos[d.idx];
+      if (!lx?.reclamar) return;
+      const ach = ACHIEVEMENTS.find((a) => a.title === lx.titulo);
+      if (ach) handleClaim(ach);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [proximos]);
+
+  const cats = ["PROGRESO", "GUERRA", "MERCADO", "GANANCIAS", "VIGILANCIA", "COMBATE", "INTEL", "SOCIAL", "ESPECIAL"];
 
   return (
     <div className="space-y-3">

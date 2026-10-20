@@ -5,7 +5,7 @@
 // (1+ años, x2.5 y pozo que crece). Con evolucion de odds y acierto
 // personal vs global.
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PREDICTION_MARKETS } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -74,6 +74,41 @@ export function PredictionsPanel() {
   const meta = HORIZON_META[horizon];
   const poolSize = horizon === "PROFECIA" ? 48210 + markets.filter((m) => m.horizon === "PROFECIA").length * 1240 : 0;
 
+  // ════════════════════════════════════════════════════════════
+  // v147 SALAS EN VOLUMEN: EL PORTAL DE CUOTAS — el mercado
+  // destacado vive como portal holográfico (SÍ/NO monumentales con
+  // su cuota + fichas de apuesta tocables). La apuesta desde el
+  // mundo 3D entra por el MISMO handlePredict — cero lógica nueva.
+  // ════════════════════════════════════════════════════════════
+  const destacado = visible[0] ?? null;
+  useEffect(() => {
+    if (!destacado) return;
+    const emitir = () => {
+      try {
+        const s = stake[destacado.id] ?? 10;
+        const res = resolved[destacado.id];
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "predicciones", tipo: "predicciones",
+            titulo: "Predicciones",
+            pregunta: destacado.title,
+            horizonte: HORIZON_META[horizon].label,
+            cuotaSi: destacado.odds,
+            cuotaNo: 1 / (1 - destacado.probability),
+            probSi: Math.round(destacado.probability * 100),
+            stake: s,
+            mult: HORIZON_META[horizon].mult,
+            resuelto: res ? (res === "YES" ? "SÍ" : "NO") : null,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 5000);
+    return () => window.clearInterval(id);
+  }, [destacado, horizon, stake, resolved]);
+
+
   const handlePredict = (marketId: string, outcome: "YES" | "NO", odds: number) => {
     const amount = stake[marketId] ?? 10;
     if (amount <= 0) {
@@ -124,6 +159,25 @@ export function PredictionsPanel() {
       });
     }, 2500);
   };
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "predicciones" || !destacado) return;
+      if (d.accion === "stake") {
+        setStake((s) => ({ ...s, [destacado.id]: d.idx }));
+        return;
+      }
+      if (d.accion === "apostar") {
+        const outcome = d.idx === 0 ? "YES" : "NO";
+        const odds = outcome === "YES" ? destacado.odds : 1 / (1 - destacado.probability);
+        handlePredict(destacado.id, outcome, odds);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+     
+  }, [destacado, horizon, stake]);
 
   return (
     <div className="space-y-3">

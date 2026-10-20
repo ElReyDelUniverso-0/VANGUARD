@@ -320,6 +320,8 @@ const TIPO_SALA_3D: Record<string, string> = {
   crisis: "conflictos", salaguerra: "conflictos",
   memes: "memes",
   noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
+  // v147 — segunda ola: el mercado de apuestas, la corona de hitos y la vitrina
+  predicciones: "predicciones", logros: "logros", tienda: "tienda",
 };
 // SALAVIVA: el cuerpo de la Casa. El MISMO árbol vive en dos hogares:
 //  · dentro de la CÁPSULA holográfica del mundo WebGL (portal React a

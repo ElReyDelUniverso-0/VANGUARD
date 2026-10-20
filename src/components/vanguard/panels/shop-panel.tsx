@@ -10,6 +10,7 @@ import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useEffect, useMemo } from "react";
 
 export function ShopPanel() {
   const { coins, gems, ownedAvatars, ownedCosmetics, activeAvatar, hudTheme, buyAvatar, buyCosmetic, buyBoost, unlockBriefing, readBriefings, spendCoins, addToInventory, activateElite, isElite } = useGameStore();
@@ -99,6 +100,68 @@ export function ShopPanel() {
       else toast.error("Gemas insuficientes");
     }
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v147 SALAS EN VOLUMEN: LA VITRINA DE COFRES — los 4 items
+  // estrella de la tienda viven como cofres 3D con tapa viva;
+  // TOCAR UN COFRE = comprar por el MISMO handleBuy (cero lógica
+  // nueva, el mundo dispara la compra real con su toast).
+  // ════════════════════════════════════════════════════════════
+  const vitrina = useMemo(() => {
+    // el orden del arco: ELITE → BOOST → AVATAR → CONSUMABLE (los compras de verdad)
+    const claves = ["ELITE", "BOOST", "AVATAR", "CONSUMABLE"];
+    const items: typeof SHOP_ITEMS = [];
+    for (const cat of claves) {
+      const it = SHOP_ITEMS.find((i) => i.category === cat && (cat !== "AVATAR" || !ownedAvatars.includes(i.id)));
+      if (it) items.push(it);
+    }
+    if (items.length < 4) {
+      for (const it of SHOP_ITEMS) {
+        if (items.length >= 4) break;
+        if (!items.includes(it) && it.category !== "CAMERA") items.push(it);
+      }
+    }
+    return items.slice(0, 4).map((it) => {
+      let activo = false;
+      if (it.category === "ELITE") activo = isElite();
+      else if (it.category === "AVATAR") activo = activeAvatar === it.id && ownedAvatars.includes(it.id);
+      else if (it.category === "COSMETIC") {
+        const t = it.id.includes("RED") ? "RED" : it.id.includes("CYAN") ? "CYAN" : "AMBER";
+        activo = hudTheme === t;
+      } else if (it.category === "BRIEFING") activo = readBriefings.includes("B-TW-01");
+      return { item: it, titulo: it.title, costo: it.cost, moneda: (it.currency === "GEMS" ? "GEMS" : "COINS") as "GEMS" | "COINS", activo };
+    });
+  }, [ownedAvatars, activeAvatar, hudTheme, readBriefings, isElite]);
+
+  useEffect(() => {
+    const emitir = () => {
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "tienda", tipo: "tienda",
+            titulo: "Tienda",
+            monedas: coins, gemas: gems,
+            items: vitrina.map((v) => ({ titulo: v.titulo, costo: v.costo, moneda: v.moneda, activo: v.activo })),
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 6000);
+    return () => window.clearInterval(id);
+  }, [coins, gems, vitrina]);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "tienda" || d.accion !== "comprar") return;
+      const v = vitrina[d.idx];
+      if (v) handleBuy(v.item);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+     
+  }, [vitrina]);
 
   return (
     <div className="space-y-3">

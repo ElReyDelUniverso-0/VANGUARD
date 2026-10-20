@@ -258,9 +258,11 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 ---
 
 ## Cola v146+ — SALAS EN VOLUMEN (segunda ola) [Task 31]
-- PREDICCIONES como portal de cuotas (necesita stake input → placa 3D de opción + consola para la apuesta)
+- ✅ HECHO en v147.0 [Task 32]: PREDICCIONES como portal de cuotas (SÍ/NO monumentales + fichas de stake tocables — apostar desde el mundo E2E verificado)
+- ✅ HECHO en v147.0 [Task 32]: LOGROS como corona de hitos (núcleo + 3 anillos + próximos 3 con barra — reclamar desde el mundo E2E verificado)
+- ✅ HECHO en v147.0 [Task 32]: TIENDA como vitrina de cofres (4 cofres con tapa con bisagra — comprar desde el mundo E2E verificado)
+- ✅ HECHO en v147.0 [Task 32]: JOYSTICK MÓVIL (P7 del agente de prompts) + LA CORREA (la Casa sigue al piloto — sync vertical resuelto)
 - ATLAS como esfera de energía neuronal en el Cuartel (spec del Dueño: núcleo + 3 anillos + nodos de red + chat CSS3D frente a ella)
 - TARJETAS COLECCIONABLES de dos caras (frente CSS3D + reverso WebGL con textura de canvas) en arco en la Arena
-- LOGROS como anillos orbitales alrededor del avatar (los completados brillan, hover expande)
-- TIENDA/RECOMPENSAS: cofres 3D con tapa animada
-- MEMORIA: el renderer del navegador OOMea en sesiones largas de QA del mundo fusionado — capturas tempranas, una sala por sesión de navegador
+- TERCERA OLA de ramas en volumen: misiones (tablero holográfico), Arcade (cabinas), Expedientes (archivador con carpetas 3D), Ranking (podio 3D)
+- MEMORIA: el renderer del navegador OOMea en sesiones largas de QA del mundo — capturas tempranas, una sala por sesión de navegador

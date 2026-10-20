@@ -31,7 +31,7 @@
 import * as THREE from "three";
 import { type Font } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
-import { TextureLoader } from "three/examples/jsm/loaders/TextureLoader.js";
+import { TextureLoader } from "three";
 
 // ────────────────────────────────────────────────────────────
 // TIPOS DEL PROTOCOLO
@@ -44,6 +44,9 @@ export type TipoSala3D =
   | "quiz"
   | "votaciones"
   | "perfil"
+  | "predicciones"
+  | "logros"
+  | "tienda"
   | "generica";
 
 export interface BaseSala3D {
@@ -112,6 +115,35 @@ export interface SalaPerfil3D extends BaseSala3D {
   gemas: number;
   racha: number;
 }
+// v147 PORTAL DE CUOTAS — el mercado de predicciones en volumen:
+// SÍ/NO gigantes con su cuota, fichas de apuesta tocables y el premio
+export interface SalaPredicciones3D extends BaseSala3D {
+  tipo: "predicciones";
+  pregunta: string;
+  horizonte: string; // "SEMANAL · 7d" etc.
+  cuotaSi: number;
+  cuotaNo: number;
+  probSi: number; // 0..100
+  stake: number;
+  mult: number;
+  resuelto: string | null; // "SÍ" acertó · "NO" falló · null = en juego
+}
+// v147 CORONA DE HITOS — los logros como anillos orbitales + próximos
+export interface SalaLogros3D extends BaseSala3D {
+  tipo: "logros";
+  desbloqueados: number;
+  total: number;
+  reclamados: number;
+  xpGanada: number;
+  proximos: { titulo: string; pct: number; botin: string; reclamar: boolean }[];
+}
+// v147 VITRINA DE COFRES — la tienda como arca holográfica tocable
+export interface SalaTienda3D extends BaseSala3D {
+  tipo: "tienda";
+  monedas: number;
+  gemas: number;
+  items: { titulo: string; costo: number; moneda: "COINS" | "GEMS"; activo: boolean }[];
+}
 export interface SalaGenerica3D extends BaseSala3D {
   tipo: "generica";
 }
@@ -123,6 +155,9 @@ export type PayloadSala3D =
   | SalaQuiz3D
   | SalaVotaciones3D
   | SalaPerfil3D
+  | SalaPredicciones3D
+  | SalaLogros3D
+  | SalaTienda3D
   | SalaGenerica3D;
 
 // la instancia viva de una sala montada en el mundo
@@ -151,7 +186,7 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 // la fuente typeface no trae acentos: como un HUD militar, se caen
 function sanitizar(t: string): string {
-  return t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 }
 
 // ────────────────────────────────────────────────────────────
@@ -1412,6 +1447,562 @@ function construirPerfil(ctx: CtxSala3D, p: SalaPerfil3D): Sala3DInstancia {
 }
 
 // ────────────────────────────────────────────────────────────
+// v147 PORTAL DE CUOTAS — el mercado de predicciones en volumen:
+// las dos caras del mercado (SÍ/NO) como placas monumentales con
+// su cuota extruida, la barra de probabilidad como VOLUMEN y las
+// fichas de apuesta tocables (10/25/50/100). Tocar = apostar de
+// verdad: el mundo ejecuta el MISMO handlePredict del panel.
+// ────────────────────────────────────────────────────────────
+function construirPredicciones(ctx: CtxSala3D, p: SalaPredicciones3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  grupo.add(titulo.grupo);
+
+  const peana = pedestal(1.5, p.color);
+  peana.position.y = -0.85;
+  grupo.add(peana);
+
+  const anillo = new THREE.Mesh(
+    reg.geo(new THREE.TorusGeometry(1.14, 0.008, 8, 56)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false })),
+  );
+  anillo.rotation.x = Math.PI / 2;
+  anillo.position.y = -0.7;
+  grupo.add(anillo);
+
+  let pregWrap = new THREE.Group();
+  let opsWrap = new THREE.Group();
+  let sigKey = "";
+  const placas: { g: THREE.Group; baseY: number; fase: number }[] = [];
+
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const pintar = (v: SalaPredicciones3D) => {
+    grupo.remove(pregWrap, opsWrap);
+    limpiar(pregWrap); limpiar(opsWrap);
+    pregWrap = new THREE.Group(); opsWrap = new THREE.Group();
+    // desplazamiento derecho del contenido (el ancla deja el globo a la izquierda)
+    pregWrap.position.x = ctx.movil ? 0.06 : 0.24;
+    opsWrap.position.x = ctx.movil ? 0.08 : 0.4;
+    proxies.length = 0;
+    placas.length = 0;
+
+    const limpio = acotar(v.pregunta || "CARGANDO MERCADO", 62).toUpperCase();
+    const mitad = Math.ceil(limpio.length / 2);
+    const cortado = limpio.slice(0, mitad).lastIndexOf(" ");
+    const p1 = acotar(limpio.slice(0, cortado > 14 ? cortado : mitad), 32);
+    const p2 = acotar(limpio.slice(p1.length).trim(), 32);
+    [p1, p2].filter(Boolean).forEach((ln, li) => {
+      const t = texto3D(ctx, ln, { tam: 0.055, prof: 0.02, color: 0xffffff, emis: 0.45 });
+      t.grupo.position.set(-t.ancho / 2, 0.62 - li * 0.09, 0);
+      pregWrap.add(t.grupo);
+    });
+    const hz = texto3D(ctx, acotar(`${v.horizonte} · PREMIO x${v.mult}`, 40), { tam: 0.038, prof: 0.014, color: COL_ORO, emis: 0.5 });
+    hz.grupo.position.set(-hz.ancho / 2, 0.44, 0);
+    pregWrap.add(hz.grupo);
+
+    // LAS DOS CARAS DEL MERCADO — SÍ (verde) y NO (rojo), monumentales
+    const w = 0.84, h = 0.46;
+    const caras: { letra: string; cuota: number; col: number; fondo: number; idx: number }[] = [
+      { letra: "SÍ", cuota: v.cuotaSi, col: COL_VERDE, fondo: 0x0a1f14, idx: 0 },
+      { letra: "NO", cuota: v.cuotaNo, col: COL_ROJO, fondo: 0x1f0a0e, idx: 1 },
+    ];
+    caras.forEach((c, i) => {
+      const placa = new THREE.Group();
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w, h, 0.024)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: c.fondo, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.88,
+          emissive: new THREE.Color(c.col), emissiveIntensity: 0.14,
+        })),
+      );
+      placa.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(c.col, 0.95))));
+      const letra = texto3D(ctx, c.letra, { tam: 0.1, prof: 0.03, color: c.col, emis: 0.62 });
+      letra.grupo.position.set(-w / 2 + 0.16, 0.06, 0.03);
+      placa.add(letra.grupo);
+      const cuota = texto3D(ctx, `x${c.cuota.toFixed(2)}`, { tam: 0.072, prof: 0.022, color: 0xffffff, emis: 0.5 });
+      cuota.grupo.position.set(w / 2 - 0.1 - cuota.ancho, 0.09, 0.03);
+      placa.add(cuota.grupo);
+      // LA BARRA DE PROBABILIDAD como volumen (solo en SÍ)
+      if (i === 0) {
+        const frac = Math.max(0.02, Math.min(0.98, v.probSi / 100));
+        const barra = new THREE.Mesh(
+          reg.geo(new THREE.BoxGeometry((w - 0.16) * frac, 0.028, 0.012)),
+          reg.mat(new THREE.MeshBasicMaterial({ color: COL_VERDE, transparent: true, opacity: 0.85 })),
+        );
+        barra.position.set(-w / 2 + 0.08 + ((w - 0.16) * frac) / 2, -0.11, 0.03);
+        placa.add(barra);
+        const pct = texto3D(ctx, `${Math.round(v.probSi)}%`, { tam: 0.036, prof: 0.013, color: COL_VERDE, emis: 0.5 });
+        pct.grupo.position.set(w / 2 - 0.08 - pct.ancho, -0.125, 0.03);
+        placa.add(pct.grupo);
+      }
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.05)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "apostar", idx: c.idx } };
+      placa.add(proxy);
+      proxies.push(proxy);
+      placa.position.set((i - 0.5) * (w + 0.14), -0.06, 0);
+      opsWrap.add(placa);
+      placas.push({ g: placa, baseY: placa.position.y, fase: i * 1.7 });
+    });
+
+    // LAS FICHAS DE APUESTA — el stake se toca desde el mundo
+    const fichas = [10, 25, 50, 100];
+    fichas.forEach((val, i) => {
+      const chip = new THREE.Group();
+      const activo = v.stake === val;
+      const fw = 0.3, fh = 0.14;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.CylinderGeometry(fw / 2, fw / 2, 0.03, 24)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: activo ? 0x2a1a08 : 0x101a2c, metalness: 0.85, roughness: 0.3,
+          emissive: new THREE.Color(activo ? COL_ORO : 0x000000), emissiveIntensity: activo ? 0.35 : 0,
+          transparent: true, opacity: 0.94,
+        })),
+      );
+      cuerpo.rotation.x = Math.PI / 2;
+      chip.add(cuerpo);
+      const borde = new THREE.Mesh(
+        reg.geo(new THREE.TorusGeometry(fw / 2, 0.006, 6, 28)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: activo ? COL_ORO : 0x7ab8ff, transparent: true, opacity: 0.9 })),
+      );
+      chip.add(borde);
+      const txt = texto3D(ctx, `${val}`, { tam: 0.042, prof: 0.012, color: activo ? COL_ORO : 0xd6e6ff, emis: activo ? 0.6 : 0.35 });
+      txt.grupo.position.set(-txt.ancho / 2, -0.021, 0.024);
+      txt.grupo.rotation.x = Math.PI / 2;
+      txt.grupo.rotation.z = 0;
+      chip.add(txt.grupo);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(fw + 0.04, fh + 0.04, 0.06)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "stake", idx: val } };
+      chip.add(proxy);
+      proxies.push(proxy);
+      chip.position.set((i - 1.5) * 0.42, -0.46, i * 0.02);
+      opsWrap.add(chip);
+      placas.push({ g: chip, baseY: chip.position.y, fase: 2 + i * 1.1 });
+    });
+
+    // EL ESTADO — premio potencial o el veredicto de la casa
+    if (v.resuelto) {
+      const gano = v.resuelto === "SÍ";
+      const ver = texto3D(ctx, gano ? "PREDICCIÓN ACERTADA" : "PREDICCIÓN FALLIDA", { tam: 0.052, prof: 0.018, color: gano ? COL_VERDE : COL_ROJO, emis: 0.62 });
+      ver.grupo.position.set(-ver.ancho / 2, -0.66, 0);
+      opsWrap.add(ver.grupo);
+    } else {
+      const premio = texto3D(ctx, `PREMIO: ${v.stake} × ${v.cuotaSi.toFixed(2)} = ${Math.round(v.stake * v.cuotaSi * v.mult)}`, { tam: 0.044, prof: 0.015, color: COL_ORO, emis: 0.55 });
+      premio.grupo.position.set(-premio.ancho / 2, -0.66, 0);
+      opsWrap.add(premio.grupo);
+    }
+
+    grupo.add(pregWrap, opsWrap);
+  };
+
+  pintar({
+    ...p,
+    pregunta: p.pregunta || "CARGANDO MERCADO",
+    horizonte: p.horizonte || "SEMANAL",
+    cuotaSi: Number(p.cuotaSi) || 2,
+    cuotaNo: Number(p.cuotaNo) || 1.8,
+    probSi: Number(p.probSi) || 50,
+    stake: Number(p.stake) || 10,
+    mult: Number(p.mult) || 1.5,
+  });
+
+  const polvoApu = polvo(ctx.calidadBaja ? 50 : 90, COL_ORO, 1.45, 1.85);
+  polvoApu.position.y = -0.8;
+  grupo.add(polvoApu);
+
+  tics.push((t, dt) => {
+    polvoApu.rotation.y += dt * 0.22;
+    anillo.rotation.z += dt * 0.32;
+    (anillo.material as THREE.MeshBasicMaterial).opacity = 0.45 + Math.sin(t * 1.6) * 0.22;
+    for (const pl of placas) pl.g.position.y = pl.baseY + Math.sin(t * 1.5 + pl.fase) * 0.011;
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "predicciones") return;
+      const sig = `${nuevo.pregunta}|${nuevo.cuotaSi}|${nuevo.cuotaNo}|${nuevo.probSi}|${nuevo.stake}|${nuevo.mult}|${nuevo.resuelto ?? ""}`;
+      if (sig === sigKey) return;
+      sigKey = sig;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiar(pregWrap); limpiar(opsWrap);
+    },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
+// v147 CORONA DE HITOS — los logros como anillos orbitales que
+// giran alrededor del núcleo del comando: cada anillo es una
+// ronda de progreso (más brillo = más desbloqueados) y los
+// PRÓXIMOS TRES hitos cuelgan como placas con barra de volumen;
+// si uno está listo, late en oro y TOCARLO LO RECLAMA.
+// ────────────────────────────────────────────────────────────
+function construirLogros(ctx: CtxSala3D, p: SalaLogros3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  grupo.add(titulo.grupo);
+
+  const peana = pedestal(1.5, p.color);
+  peana.position.y = -0.85;
+  grupo.add(peana);
+
+  // EL NÚCLEO DEL COMANDO — icosaedro que late según el progreso total
+  // (color y anillos se ACTUALIZAN en pintar con los datos reales)
+  const nucleo = new THREE.Mesh(
+    reg.geo(new THREE.IcosahedronGeometry(0.16, ctx.calidadBaja ? 0 : 1)),
+    reg.mat(new THREE.MeshStandardMaterial({
+      color: COL_ORO, metalness: 0.5, roughness: 0.25,
+      emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.55,
+      transparent: true, opacity: 0.95,
+    })),
+  );
+  nucleo.position.y = 0.32;
+  grupo.add(nucleo);
+  const alambre = new THREE.LineSegments(
+    reg.geo(new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(0.2, 0))),
+    reg.mat(new THREE.LineBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.4 })),
+  );
+  alambre.position.y = 0.32;
+  grupo.add(alambre);
+
+  // LOS ANILROS DE HITOS — su opacidad es el progreso total
+  const anillos: THREE.Mesh[] = [];
+  const radios = [0.46, 0.64, 0.82];
+  radios.forEach((r, i) => {
+    const a = new THREE.Mesh(
+      reg.geo(new THREE.TorusGeometry(r, 0.007, 6, 64)),
+      reg.mat(new THREE.MeshBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false })),
+    );
+    a.rotation.x = Math.PI / 2.6 + i * 0.35;
+    a.rotation.y = i * 0.8;
+    a.position.y = 0.32;
+    grupo.add(a);
+    anillos.push(a);
+  });
+
+  let contWrap = new THREE.Group();
+  grupo.add(contWrap);
+
+  let listaWrap = new THREE.Group();
+  let sigKey = "";
+  const placas: { g: THREE.Group; baseY: number; fase: number }[] = [];
+
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const pintar = (v: SalaLogros3D) => {
+    // el contador y el núcleo viven con los DATOS REALES (el montaje base
+    // llega sin números — nunca más «UNDEFINED/UNDEFINED HITOS»)
+    grupo.remove(contWrap); limpiar(contWrap);
+    contWrap = new THREE.Group();
+    const frac = v.total > 0 ? Math.min(1, v.desbloqueados / v.total) : 0;
+    const colN = new THREE.Color(COL_ORO).lerp(new THREE.Color(0x7ab8ff), Math.min(1, frac * 1.6));
+    (nucleo.material as THREE.MeshStandardMaterial).color.copy(colN);
+    (nucleo.material as THREE.MeshStandardMaterial).emissive.copy(colN);
+    (alambre.material as THREE.LineBasicMaterial).color.copy(colN);
+    for (const a of anillos) (a.material as THREE.MeshBasicMaterial).opacity = 0.16 + frac * 0.55;
+    const cont = texto3D(ctx, `${v.desbloqueados}/${v.total} HITOS`, { tam: 0.062, prof: 0.02, color: COL_ORO, emis: 0.58 });
+    cont.grupo.position.set(-cont.ancho / 2, 0.82, 0);
+    contWrap.add(cont.grupo);
+    grupo.add(contWrap);
+
+    grupo.remove(listaWrap);
+    limpiar(listaWrap);
+    listaWrap = new THREE.Group();
+    listaWrap.position.x = ctx.movil ? 0.06 : 0.4;
+    proxies.length = 0;
+    placas.length = 0;
+
+    const meta = texto3D(ctx, `${v.reclamados} RECLAMADOS · ${v.xpGanada} XP GANADA`, { tam: 0.034, prof: 0.012, color: 0x9fb8dd, emis: 0.35 });
+    meta.grupo.position.set(-meta.ancho / 2, 0.66, 0);
+    listaWrap.add(meta.grupo);
+
+    // LOS PRÓXIMOS TRES — placas con barra de volumen; listos = oro latente
+    const w = 1.06, h = 0.24;
+    (v.proximos || []).slice(0, 3).forEach((lx, i) => {
+      const placa = new THREE.Group();
+      const listo = lx.reclamar;
+      const col = listo ? COL_ORO : 0x7ab8ff;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w, h, 0.02)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: listo ? 0x2a1a08 : 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.86,
+          emissive: new THREE.Color(listo ? COL_ORO : 0x000000), emissiveIntensity: listo ? 0.3 : 0,
+        })),
+      );
+      placa.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.9))));
+      const txt = texto3D(ctx, acotar(lx.titulo || "-", 24).toUpperCase(), { tam: 0.04, prof: 0.013, color: col, emis: 0.45 });
+      txt.grupo.position.set(-w / 2 + 0.1, 0.045, 0.02);
+      placa.add(txt.grupo);
+      // barra de progreso como volumen
+      const fracB = Math.max(0.02, Math.min(1, (lx.pct || 0) / 100));
+      const barra = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry((w - 0.2) * fracB, 0.026, 0.012)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85 })),
+      );
+      barra.position.set(-w / 2 + 0.1 + ((w - 0.2) * fracB) / 2, -0.05, 0.02);
+      placa.add(barra);
+      const botin = texto3D(ctx, listo ? "TOCAR PARA RECLAMAR" : acotar(lx.botin || "", 16).toUpperCase(), { tam: 0.03, prof: 0.01, color: listo ? COL_ORO : 0x9fb8dd, emis: listo ? 0.62 : 0.3 });
+      botin.grupo.position.set(w / 2 - 0.08 - botin.ancho, 0.045, 0.02);
+      placa.add(botin.grupo);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.05)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "logro", idx: i } };
+      placa.add(proxy);
+      proxies.push(proxy);
+      placa.position.set(0, 0.02 - i * (h + 0.08), -i * 0.05);
+      listaWrap.add(placa);
+      placas.push({ g: placa, baseY: placa.position.y, fase: i * 1.4 + (listo ? 10 : 0) });
+    });
+
+    grupo.add(listaWrap);
+  };
+
+  pintar({
+    ...p,
+    desbloqueados: Number(p.desbloqueados) || 0,
+    total: Number(p.total) || 1,
+    reclamados: Number(p.reclamados) || 0,
+    xpGanada: Number(p.xpGanada) || 0,
+    proximos: p.proximos || [],
+  });
+
+  const polvoH = polvo(ctx.calidadBaja ? 50 : 90, COL_ORO, 1.4, 1.9);
+  polvoH.position.y = -0.8;
+  grupo.add(polvoH);
+
+  tics.push((t, dt) => {
+    polvoH.rotation.y += dt * 0.2;
+    nucleo.rotation.y += dt * 0.5;
+    nucleo.rotation.x = Math.sin(t * 0.6) * 0.2;
+    alambre.rotation.y -= dt * 0.3;
+    alambre.position.y = 0.32 + Math.sin(t * 1.2) * 0.012;
+    for (let i = 0; i < anillos.length; i++) {
+      anillos[i].rotation.z += dt * (0.24 + i * 0.14) * (i % 2 ? -1 : 1);
+    }
+    for (const pl of placas) {
+      const late = pl.fase >= 10; // los listos laten más fuerte
+      pl.g.position.y = pl.baseY + Math.sin(t * (late ? 2.6 : 1.4) + pl.fase) * (late ? 0.02 : 0.009);
+    }
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "logros") return;
+      const sig = `${nuevo.desbloqueados}|${nuevo.total}|${nuevo.reclamados}|${nuevo.xpGanada}|${(nuevo.proximos || []).map((x) => `${x.titulo}:${x.pct}:${x.reclamar}`).join(";")}`;
+      if (sig === sigKey) return;
+      sigKey = sig;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiar(contWrap); limpiar(listaWrap);
+    },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
+// v147 VITRINA DE COFRES — la tienda como arca holográfica:
+// cuatro cofres reales (caja + tapa con bisagra que respira)
+// sobre la peana, su precio extruido en oro/violeta y el botín
+// del comando flotando encima. Tocar un cofre = COMPRAR de
+// verdad (el mundo ejecuta el MISMO handleBuy del panel) y su
+// tapa se abre en silencio de victoria.
+// ────────────────────────────────────────────────────────────
+function construirTienda(ctx: CtxSala3D, p: SalaTienda3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  grupo.add(titulo.grupo);
+
+  const peana = pedestal(1.5, p.color);
+  peana.position.y = -0.85;
+  grupo.add(peana);
+
+  let vitrina = new THREE.Group();
+  let sigKey = "";
+  const tapas: { g: THREE.Group; abierto: boolean; base: number; fase: number }[] = [];
+  const brillos: THREE.MeshBasicMaterial[] = [];
+
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  // UN COFRE — caja + tapa con bisagra en el canto trasero
+  const cofre = (col: number, abierto: boolean) => {
+    const g = new THREE.Group();
+    const W = 0.34, H = 0.18, D = 0.24;
+    const base = new THREE.Mesh(
+      reg.geo(new THREE.BoxGeometry(W, H, D)),
+      reg.mat(new THREE.MeshStandardMaterial({ color: 0x101a2c, metalness: 0.85, roughness: 0.3, transparent: true, opacity: 0.95 })),
+    );
+    base.position.y = H / 2;
+    g.add(base, new THREE.LineSegments(base.geometry, reg.mat(matFilo(col, 0.95))));
+    // banda de oro de la cerradura
+    const banda = new THREE.Mesh(
+      reg.geo(new THREE.BoxGeometry(W + 0.012, 0.03, D + 0.012)),
+      reg.mat(new THREE.MeshStandardMaterial({ color: COL_ORO, metalness: 0.7, roughness: 0.35, emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.32, transparent: true, opacity: 0.95 })),
+    );
+    banda.position.y = H;
+    g.add(banda);
+    // LA TAPA con bisagra en el fondo-trasero (rotation.x abre hacia atrás)
+    const tapa = new THREE.Group();
+    const solapa = new THREE.Mesh(
+      reg.geo(new THREE.BoxGeometry(W + 0.01, 0.055, D + 0.01)),
+      reg.mat(new THREE.MeshStandardMaterial({ color: 0x16233c, metalness: 0.88, roughness: 0.26, transparent: true, opacity: 0.96 })),
+    );
+    solapa.position.set(0, 0.028, -D / 2);
+    tapa.add(solapa, new THREE.LineSegments(solapa.geometry, reg.mat(matFilo(col, 0.8))));
+    tapa.position.set(0, H + 0.015, D / 2);
+    tapa.rotation.x = abierto ? -1.15 : -0.06;
+    g.add(tapa);
+    return { g, tapa };
+  };
+
+  const pintar = (v: SalaTienda3D) => {
+    grupo.remove(vitrina);
+    limpiar(vitrina);
+    vitrina = new THREE.Group();
+    vitrina.position.x = ctx.movil ? 0.05 : 0.24;
+    proxies.length = 0;
+    tapas.length = 0;
+    brillos.length = 0;
+
+    const botin = texto3D(ctx, `BOTÍN: ${v.monedas} COINS · ${v.gemas} GEMS`, { tam: 0.042, prof: 0.014, color: COL_ORO, emis: 0.55 });
+    botin.grupo.position.set(-botin.ancho / 2, 0.66, 0);
+    vitrina.add(botin.grupo);
+
+    // EL ARCO DE COFRES — hasta 4 items reales de la tienda
+    const items = (v.items || []).slice(0, 4);
+    items.forEach((it, i) => {
+      const col = it.moneda === "GEMS" ? 0xb18cff : COL_ORO;
+      const c = cofre(col, it.activo);
+      const paso = ctx.movil ? 0.44 : 0.5;
+      c.g.position.set((i - (items.length - 1) / 2) * paso, -0.34, Math.abs(i - (items.length - 1) / 2) * -0.1);
+      vitrina.add(c.g);
+      tapas.push({ g: c.tapa, abierto: it.activo, base: c.tapa.rotation.x, fase: i * 1.3 });
+      const nom = texto3D(ctx, acotar(it.titulo || "-", 14).toUpperCase(), { tam: 0.032, prof: 0.011, color: 0xd6e6ff, emis: 0.4 });
+      nom.grupo.position.set(c.g.position.x - nom.ancho / 2, -0.58, c.g.position.z + 0.02);
+      vitrina.add(nom.grupo);
+      const precio = texto3D(ctx, `${it.costo} ${it.moneda === "GEMS" ? "GEMS" : "COINS"}`, { tam: 0.03, prof: 0.01, color: col, emis: 0.55 });
+      precio.grupo.position.set(c.g.position.x - precio.ancho / 2, -0.64, c.g.position.z + 0.02);
+      vitrina.add(precio.grupo);
+      // resplandor bajo el cofre activo
+      const halo = new THREE.Mesh(
+        reg.geo(new THREE.RingGeometry(0.16, 0.24, 32)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: it.activo ? 0.4 : 0.12, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false })),
+      );
+      halo.rotation.x = -Math.PI / 2;
+      halo.position.set(c.g.position.x, -0.5 + 0.001, c.g.position.z);
+      vitrina.add(halo);
+      brillos.push(halo.material as THREE.MeshBasicMaterial);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.42, 0.34, 0.34)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.position.set(c.g.position.x, -0.24, c.g.position.z);
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "comprar", idx: i } };
+      vitrina.add(proxy);
+      proxies.push(proxy);
+    });
+
+    const pista = texto3D(ctx, items.length ? "TOCA UN COFRE PARA COMPRAR" : "CARGANDO VITRINA", { tam: 0.032, prof: 0.011, color: 0x7ab8ff, emis: 0.4 });
+    pista.grupo.position.set(-pista.ancho / 2, -0.72, 0.1);
+    vitrina.add(pista.grupo);
+
+    grupo.add(vitrina);
+  };
+
+  pintar({
+    ...p,
+    monedas: Number(p.monedas) || 0,
+    gemas: Number(p.gemas) || 0,
+    items: p.items || [],
+  });
+
+  const polvoT = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.4, 1.9);
+  polvoT.position.y = -0.8;
+  grupo.add(polvoT);
+
+  tics.push((t, dt) => {
+    polvoT.rotation.y += dt * 0.2;
+    // LA TAPA VIVA: cerrada respira (queriendo abrirse), comprada queda abierta
+    for (const tp of tapas) {
+      const objetivo = tp.abierto ? -1.15 : tp.base + Math.sin(t * 1.9 + tp.fase) * 0.05;
+      tp.g.rotation.x += (objetivo - tp.g.rotation.x) * Math.min(1, dt * 6);
+    }
+    for (let i = 0; i < brillos.length; i++) {
+      brillos[i].opacity = (tapas[i]?.abierto ? 0.4 : 0.12) + Math.sin(t * 2.2 + i * 1.1) * 0.06;
+    }
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "tienda") return;
+      const sig = `${nuevo.monedas}|${nuevo.gemas}|${(nuevo.items || []).map((x) => `${x.titulo}:${x.costo}:${x.moneda}:${x.activo}`).join(";")}`;
+      if (sig === sigKey) return;
+      sigKey = sig;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiar(vitrina);
+    },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
 // EL DESPACHADOR — construye la sala según su tipo
 // ────────────────────────────────────────────────────────────
 export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstancia {
@@ -1423,6 +2014,9 @@ export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstanc
     case "quiz": return construirQuiz(ctx, p);
     case "votaciones": return construirVotaciones(ctx, p);
     case "perfil": return construirPerfil(ctx, p);
+    case "predicciones": return construirPredicciones(ctx, p);
+    case "logros": return construirLogros(ctx, p);
+    case "tienda": return construirTienda(ctx, p);
     default: return construirGenerica(ctx, p);
   }
 }

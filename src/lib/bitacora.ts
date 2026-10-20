@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v147.0",
+    nombre: "PILOTAJE TOTAL",
+    tipo: "mundo",
+    hitos: [
+      "EL MANDATO DEL DUEÑO («moverse es muy tosco, tengo que presionar un lado varias veces para solo moverme») RESUELTO POR DENTRO: el vuelo es CONTINUO — la tecla/dedo MANTENIDO integra velocidad cada frame (nada de pasos por pulsación) y la inercia de nave se conservó y midió: mantener D recorre en línea recta, soltar la nave derrapa hasta frenar (vel 2.47 → decae suave) — dt clampeado a 0.05s para que ninguna caída de FPS convierta el vuelo en saltos",
+      "EL JOYSTICK MÓVIL (P7 de la cola del agente): palanca analógica acoplada a la cámara abajo-izquierda (CSS3D, anillo + knob con recorrido de 34px) — el pulgar manda un vector (-1..1) que entra a la MISMA física del teclado: palanca a medio camino = medio gas, al fondo del anillo = turbo suave ×1.35; ▲▼ sintetizan Q/E para la altura; touch-action none (el dedo es del vuelo, no del scroll)",
+      "LA CORREA (el otro mandato: «cuando bajo mucho los botones se quedan arriba; cuando subo se queda arriba del todo»): la Casa ya no se queda atrás — si el piloto se aleja más de 2.3 unidades de su cápsula, la Casa lo ALCANZA con suavidad (lerp dt*2.6) y se replanta frente a su mirada a 2.15, respetando el radio sagrado del planeta; un solo clank por estirada — VERIFICADO EN QA: la cápsula siguió al piloto y quedó a 2.29 de la cámara",
+      "SEGUNDA OLA DE SALAS EN VOLUMEN (el 100% del contenido en 3D sigue creciendo): PREDICCIONES (portal de cuotas: SÍ/NO monumentales con su cuota extruida, barra de probabilidad como volumen y las 4 FICHAS DE APUESTA tocables — tocar SÍ apostó de verdad: 250→240ⓒ y el registro quedó en el store), LOGROS (corona de hitos: núcleo icosaédrico que colorea según el progreso + 3 anillos orbitales + los próximos 3 hitos como placas con barra de volumen — la placa dorada PRIMER CONTACTO «TOCAR PARA RECLAMAR» se tocó y PAGÓ: +20ⓒ, 1/53 real), TIENDA (vitrina de cofres: 4 cofres con tapa con bisagra que respira — la comprada queda abierta —, precio extruido en oro/violeta y botín flotante; tocar un cofre COMPRÓ de verdad: -50ⓒ y «Kit medico de campo» al inventario)",
+      "BLINDAJE DE MONTAJE: la carrera vg:sala3d (payload base sin números) vs vg:sala3d-datos (datos del panel) ya no puede reventar la fábrica — sanitizar() tolera undefined, los tres constructores nuevos normalizan sus números al entrar y los paneles nuevos publican su titulo; el contador de la corona se repinta con los datos reales (adiós «UNDEFINED/UNDEFINED HITOS») y el núcleo ya no tapa la primera placa",
+      "LAS IMÁGENES DE LAS NOTICIAS SON 3D: cada tarjeta de la órbita lleva su foto real como plano texturizado (TextureLoader con crossOrigin anónimo) — si el CORS la niega, nace una portada generada en canvas (degradado del tag + inicial de la fuente): la tarjeta JAMÁS nace vacía",
+      "QA E2E DE ESTA RONDA: vuelo continuo medido (tecla mantenida = 0.196u, con inercia hasta 0.291u tras soltar), joystick analógico integrado (x 0.9 → +1.018 lateral; y 0.9 → −0.960 adelante), correa de la Casa activa, apuesta/reclamo/compra reales desde el mundo con toasts y store sincronizados, tsc limpio, eslint limpio en los 6 ficheros tocados — el renderer del navegador volvió a saturarse en sesiones largas (OOM conocido): QA por sesiones cortas y capturas tempranas",
+    ],
+  },
+  {
     version: "v145.3",
     nombre: "VUELO LIBRE · CIUDAD HÉROE",
     tipo: "tecno",
