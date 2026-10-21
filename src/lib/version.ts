@@ -6,6 +6,6 @@
 // (2) una cortina HTML/CSS puro se pinta ANTES de todo JavaScript; (3) si el
 // universo no da señal de vida (__vgvivo) en 12s, ofrece «TOCA PARA
 // DESPERTARLO»; (4) los chunks viejos disparan UNA auto-recarga por minuto.
-export const APP_VERSION = "v155.0";
+export const APP_VERSION = "v155.1";
 export const APP_CODENAME = "LA CORTINA DE ARRANQUE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
