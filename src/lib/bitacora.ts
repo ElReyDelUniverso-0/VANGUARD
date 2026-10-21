@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v152.0",
+    nombre: "MUNDOS PROPIOS",
+    tipo: "mundo",
+    hitos: [
+      "EL MANDATO DEL DUEÑO RESUELTO DE RAÍZ («cada sección Vanguard debería tener su propio mundo 3D y no ligarlas todas... y cada página emita sus frases»): nace mundos-3d.ts, la FÁBRICA DE MUNDOS — al entrar a una rama, la sección deja de ser una placa flotando sobre el planeta compartido y RECIBE UN UNIVERSO ENTERO con identidad propia",
+      "ONCE MUNDOS CON IDENTIDAD: BOLSA ORBITAL (oro — torres-vela, moneda mayor, anillo de cotizaciones), BUNKER DE MANDO (rojo — silos, radar giratorio, baliza de alerta), ARENA DEL HUMOR (magenta — bolas del elenco en jaula, arco de neón, estrella viral), ESTACION DE PRENSA (cian — antenas, satélite con paneles, anillo de emisión), CATEDRAL DEL SABER (azul — cristales flotantes, columnas del examen, la pregunta mayor), DOMO CIVICO (verde — urna con ranura, pilares cívicos, balota), SANTUARIO DEL AGENTE (violeta — anillos del núcleo, estandarte, corona), CASINO DEL DESTINO (verde lima — ruleta, dados, fichas), SALON DE LA GLORIA (oro — pilares, laurel, estrella mayor), EL ARSENAL (naranja — cofres con banda de oro, armero, caja de suministro) y el PUESTO AVANZADO genérico que firma SU nombre de rama — las ~146 ramas reciben mundo propio desde el segundo uno",
+      "CADA PÁGINA EMITE SUS FRASES: 2-3 lemas extruidos en letras 3D reales (Rajdhani/helvetiker) que el mundo EMITE al entrar con aparecimiento escalonado — flotan y respiran sobre la sala («EL CAPITAL MANDA», «LA GUERRA NO DUERME», «EL PUEBLO DECIDE»...) — la voz de cada página ya no es un cartel DOM, es VOLUMEN",
+      "EL TELÓN: gran plano tintado con resplandor radial del color del sector + retícula de estrellas propias — AÍSLA cada mundo del planeta compartido (cada rama respira SU atmósfera; «no ligarlas todas» hecho literal), con plataforma anular holográfica de suelo (disco + retícula radial + baliza perimetral + polvo ascendente) y portales gemelos que enmarcan la entrada",
+      "EL «ARRANCA 2D» DIAGNOSTICADO Y CURADO: no había manejador de webglcontextlost — si el GPU retiraba el contexto (OOM, driver, sesión larga), el mundo MORÍA EN SILENCIO y la Casa caía a 2D/vacío; ahora el mundo SE ENTERA (aviso holo «REESTABLECIENDO EL UNIVERSO»), intenta restauración y si en 4s no hay universo, UNA recarga de cortesía reentra limpia (guard anti-bucle en sessionStorage)",
+      "BLINDAJE TRIPLE DEL MOTOR: (1) la sonda WebGL REINTENTA 3 veces con espera creciente — el contexto agotado por otra pestaña ya no condena la sesión a 2D; (2) EL VIGÍA DEL CORAZÓN — un centinela cada 2.2s relanza el bucle rAF si lleva 2.6s parado con la pestaña visible (el «Vanguard congelado» del Dueño ya no existe); (3) los eventos webglcontextrestored despiertan el mundo con delta limpio",
+      "HIGIENE DE MEMORIA DE MUNDOS: llave tipo|tab — los datos vivos (vg:sala3d-datos) NUNCA remontan el mundo; solo el cambio de rama lo sustituye con dispose completo (registrar() barre geometrías/materiales, telón con CanvasTexture dispuesta); calidad baja/móvil: menos propios, menos segmentos, menos partículas",
+    ],
+  },
+  {
     version: "v151.0",
     nombre: "NUEVO VANGUARD",
     tipo: "mundo",

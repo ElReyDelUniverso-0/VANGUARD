@@ -208,7 +208,7 @@ export interface CtxSala3D {
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 // la fuente typeface no trae acentos: como un HUD militar, se caen
-function sanitizar(t: string): string {
+export function sanitizar(t: string): string {
   return (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 }
 
@@ -216,17 +216,18 @@ function sanitizar(t: string): string {
 // MATERIALES — la piel del holograma (misma estética del mundo:
 // metal oscuro + filo de neón + oro de la Casa)
 // ────────────────────────────────────────────────────────────
-const COL_VERDE = 0x3ddc84;
-const COL_ROJO = 0xff4d5e;
-const COL_ORO = 0xf5c542;
+// v148: exportados — la FÁBRICA DE MUNDOS (mundos-3d.ts) comparte la piel
+export const COL_VERDE = 0x3ddc84;
+export const COL_ROJO = 0xff4d5e;
+export const COL_ORO = 0xf5c542;
 
-function matMetal(color = 0x141d2e) {
+export function matMetal(color = 0x141d2e) {
   return new THREE.MeshStandardMaterial({ color, metalness: 0.85, roughness: 0.34 });
 }
-function matFilo(color: number, op = 0.9) {
+export function matFilo(color: number, op = 0.9) {
   return new THREE.LineBasicMaterial({ color, transparent: true, opacity: op });
 }
-function filos(mesh: THREE.Mesh, color: number, op = 0.9) {
+export function filos(mesh: THREE.Mesh, color: number, op = 0.9) {
   return new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 24), matFilo(color, op));
 }
 function matVela(sube: boolean) {
@@ -242,7 +243,7 @@ function matVela(sube: boolean) {
 }
 
 // texto extruido — cada glifo con volumen real (letras de la sala)
-function texto3D(
+export function texto3D(
   ctx: CtxSala3D,
   texto: string,
   o: { tam: number; prof: number; color: number; emis: number },
@@ -287,7 +288,8 @@ function texto3D(
 // v148 REDESIGN DEL DUEÑO («los botones son feos, muy grandes»): placas
 // FINAS (cristal de 13mm en escala de sala), más transparentes y con
 // cuerpo más oscuro — el filo de neón manda, la caja apenas se ve
-function placaHolo(w: number, h: number, color: number): { cuerpo: THREE.Mesh; borde: THREE.LineSegments } {
+// v152: exportada — la FÁBRICA DE MUNDOS (mundos-3d.ts) comparte la piel
+export function placaHolo(w: number, h: number, color: number): { cuerpo: THREE.Mesh; borde: THREE.LineSegments } {
   const cuerpo = new THREE.Mesh(
     new THREE.BoxGeometry(w, h, 0.013),
     new THREE.MeshStandardMaterial({
@@ -303,7 +305,7 @@ function placaHolo(w: number, h: number, color: number): { cuerpo: THREE.Mesh; b
 }
 
 // pedestal — el disco del que nace la sala
-function pedestal(r: number, color: number): THREE.Group {
+export function pedestal(r: number, color: number): THREE.Group {
   const g = new THREE.Group();
   const disco = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.06, 0.035, 42), matMetal(0x101a2c));
   const anillo = new THREE.Mesh(
@@ -323,7 +325,7 @@ function pedestal(r: number, color: number): THREE.Group {
 }
 
 // partículas ascendentes — el polvo dorado del holograma
-function polvo(n: number, color: number, radio: number, altura: number): THREE.Points {
+export function polvo(n: number, color: number, radio: number, altura: number): THREE.Points {
   const pos = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const a = Math.random() * Math.PI * 2;
@@ -341,7 +343,7 @@ function polvo(n: number, color: number, radio: number, altura: number): THREE.P
 }
 
 // acotar — el helvetiker no tiene elipsis: corte honesto
-function acotar(s: string, n: number): string {
+export function acotar(s: string, n: number): string {
   const t = (s || "").trim();
   return t.length > n ? t.slice(0, n - 1).trimEnd() + "." : t;
 }

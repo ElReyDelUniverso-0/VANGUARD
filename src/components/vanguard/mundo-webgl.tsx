@@ -57,6 +57,9 @@ import { GUERRAS } from "@/lib/guerras-activas-data";
 // v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
 import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
 import { construirHud3D, type Hud3D } from "./hud-3d";
+// v148 MUNDOS PROPIOS: cada sección recibe SU PROPIO universo — telón que
+// aísla del planeta compartido, plataforma, paisaje vivo y frases 3D
+import { construirMundo3D, type Mundo3DInstancia } from "./mundos-3d";
 
 // ────────────────────────────────────────────────────────────
 // MOTOR DE TWEEN — GSAP casero (power2.inOut = cúbica in-out).
@@ -330,6 +333,12 @@ class MundoWGL {
   cancelar = new Set<() => void>();  // v144 P6: Set con auto-poda (no crece eterno)
   reloj = new THREE.Clock();
   raf = 0;
+  // v148 — EL VIGÍA: si el bucle rAF se congela con la pestaña VISIBLE
+  // (contexto vivo pero corazón parado — el «Vanguard congelado» del
+  // Dueño), el vigilancia lo relanza solo. La pestaña oculta no cuenta:
+  // dormir() ya pausa el mundo por diseño.
+  ultimoFrame = 0;
+  vigia: number | null = null;
   vivo = true;
   respiro = 0.006;      // amplitud de la respiración del globo
   invitando = false;    // pulso de invitación en la entrada
@@ -458,6 +467,9 @@ class MundoWGL {
   nivelCal = 0;             // 0=pleno … 3=economía de guerra
   fpsN = 0; fpsT0 = 0; calUltimo = 0;
   ecoOn = false;            // nivel>=2: los adornos respiran menos
+  // v148 — MUNDOS PROPIOS: el universo PRIVADO de la sección activa
+  mundoInst: Mundo3DInstancia | null = null;
+  mundoLlave = "";
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -520,6 +532,7 @@ class MundoWGL {
     // la Tierra ya nace girando (REGLA 6)
     this.mundo.rotation.y = 1.2;
     this.escena.add(this.mundo);
+    this.arranqueVigia(); // v148: el corazón JAMÁS se queda parado
     this.loop();
   }
 
@@ -1004,6 +1017,8 @@ class MundoWGL {
     }
     this.salaInst.grupo.visible = false;
     this.escena.add(this.salaInst.grupo);
+    // v148: la sección recibe SU PROPIO mundo (si aún no lo tiene)
+    this.montarMundo(p);
     // la cápsula se hace consola (o vuelve a pantalla) según la sala
     this.dimensionarCapsula();
     if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
@@ -1014,6 +1029,7 @@ class MundoWGL {
   }
 
   desmontarSala(instant = false) {
+    this.desmontarMundo();
     const inst = this.salaInst;
     if (!inst) return;
     this.salaInst = null;
@@ -1057,9 +1073,86 @@ class MundoWGL {
     inst.grupo.quaternion.copy(this.camara.quaternion);
     inst.grupo.quaternion.multiply(Q_YAW_CONSOLA);
     inst.grupo.visible = true;
-    if (instant) { inst.grupo.scale.setScalar(a.escala); return; }
+    if (instant) { inst.grupo.scale.setScalar(a.escala); this.anclarMundo(true); return; }
     inst.grupo.scale.setScalar(a.escala * 0.84);
     this.animarP(inst.grupo.scale, { x: a.escala, y: a.escala, z: a.escala }, 620, { ease: easeOut });
+    // v148: el mundo de la sección SE ANCLA con la sala — rodeándola
+    this.anclarMundo();
+  }
+
+  // v148 MUNDOS PROPIOS — montaje del universo privado de la sección.
+  // Llave = tipo|tab: los datos vivos (vg:sala3d-datos) NO remontan el
+  // mundo; solo un cambio de rama lo sustituye (dispose completo).
+  private montarMundo(p: PayloadSala3D) {
+    const llave = `${p.tipo}|${p.tab}`;
+    if (this.mundoLlave === llave && this.mundoInst) return;
+    this.desmontarMundo();
+    this.mundoLlave = llave;
+    const ctx: CtxSala3D = {
+      fuente: this.fuente!,
+      calidadBaja: this.calidadBaja,
+      movil: this.esMovil(),
+      animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
+    };
+    try {
+      this.mundoInst = construirMundo3D(ctx, p);
+    } catch (e) {
+      // un mundo roto nunca tumba la sala: la placa sigue viva
+      console.warn("[v148] montarMundo fallo:", e);
+      this.mundoInst = null;
+      return;
+    }
+    this.mundoInst.grupo.visible = false;
+    this.escena.add(this.mundoInst.grupo);
+    if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) this.anclarMundo(true);
+  }
+
+  private desmontarMundo() {
+    this.mundoLlave = "";
+    const mi = this.mundoInst;
+    if (!mi) return;
+    this.mundoInst = null;
+    this.escena.remove(mi.grupo);
+    mi.liberar();
+  }
+
+  // v148 MUNDOS PROPIOS — EL ANCLA PROPIA DEL MUNDO (QA v148: reusar el
+  // ancla de la sala hundía las frases fuera del encuadre — la placa
+  // genérica vive SOBRE la cápsula y le sumaba +1.58 locales). El mundo
+  // NO copia el ancla de su sala: tiene la SUYA, centrada en la VISTA,
+  // calibrada para que el anillo de propios enmarque el cuadro entero:
+  // plataforma al borde inferior, frases al superior, propios a los flancos.
+  private anclarMundo(instant = false) {
+    const mi = this.mundoInst;
+    if (!mi || this.modoMundo || this.zona === 0 || !this.capsulaAcoplada) return;
+    // v148 QA (3ª calibración, fov 50 medido): a 3.05 la cúpula del
+    // planeta (cápsula frontal a 3.2) seguía comiendo la fila de frases.
+    // El mundo abraza a 2.55 — TODO su contenido flota DELANTE del
+    // planeta y las frases bajan al espacio libre del cuadro.
+    const dist = 2.55;
+    const fovR = (this.camara.fov * Math.PI) / 180;
+    const alto = 2 * dist * Math.tan(fovR / 2);
+    const ancho = alto * this.camara.aspect;
+    const movil = this.esMovil();
+    // la escala CONVIERTE el mundo local (plataforma -1.62 → frases +1.58,
+    // propios a radio 2.9) en un cuadro completo
+    const escW = alto * (movil ? 0.3 : 0.28);
+    const f = new THREE.Vector3();
+    this.camara.getWorldDirection(f);
+    const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
+    const fx = movil ? 0 : 0.10;
+    const fy = movil ? -0.02 : 0;
+    mi.grupo.position.copy(this.camara.position)
+      .addScaledVector(f, dist)
+      .addScaledVector(derecha, ancho * fx)
+      .addScaledVector(arriba, alto * fy);
+    mi.grupo.quaternion.copy(this.camara.quaternion);
+    mi.grupo.quaternion.multiply(Q_YAW_CONSOLA);
+    mi.grupo.visible = true;
+    if (instant) { mi.grupo.scale.setScalar(escW); return; }
+    mi.grupo.scale.setScalar(escW * 0.9);
+    this.animarP(mi.grupo.scale, { x: escW, y: escW, z: escW }, 700, { ease: easeOut });
   }
 
   private anclaSala(insignia: boolean): { pos: THREE.Vector3; escala: number } {
@@ -2796,6 +2889,7 @@ class MundoWGL {
   loop = () => {
     if (!this.vivo) return;
     this.raf = requestAnimationFrame(this.loop);
+    this.ultimoFrame = performance.now();
     const dt = Math.min(0.05, this.reloj.getDelta());
     const t = this.reloj.elapsedTime;
 
@@ -2931,6 +3025,8 @@ class MundoWGL {
     }
     // v145: la SALA 3D vive — velas que laten, monedas que giran, placas
     if (this.salaInst && this.salaInst.grupo.visible) this.salaInst.tic(t, dt);
+    // v148: el mundo privado de la sección también respira
+    if (this.mundoInst && this.mundoInst.grupo.visible) this.mundoInst.tic(t, dt);
     this.acoplarConsolaFrame();
     this.acoplarNavFrame();
     this.acoplarVentanaFrame();
@@ -2990,8 +3086,24 @@ class MundoWGL {
   }
   dormir() { this.vivo = false; cancelAnimationFrame(this.raf); }
   despertar() { if (!this.vivo) { this.vivo = true; this.reloj.getDelta(); this.loop(); } }
+
+  // v148 — EL VIGÍA DEL CORAZÓN: latido cada 2.2s; si el rAF lleva
+  // 2.6s sin latir con la pestaña visible, el bucle se relanza solo.
+  arranqueVigia() {
+    if (this.vigia !== null) return;
+    this.vigia = window.setInterval(() => {
+      if (!this.vivo) return; // dormido: pausa legítima
+      if (performance.now() - this.ultimoFrame > 2600) {
+        console.warn("[v148] bucle rAF estancado con pestaña visible — relanzando");
+        cancelAnimationFrame(this.raf);
+        this.reloj.getDelta(); // traga el delta muerto (nunca saltos)
+        this.raf = requestAnimationFrame(this.loop);
+      }
+    }, 2200);
+  }
   destruir() {
     this.dormir();
+    if (this.vigia !== null) { window.clearInterval(this.vigia); this.vigia = null; }
     for (const c of [...this.cancelar]) c();
     this.cancelar.clear();
     // v145: la sala 3D muere con el mundo
@@ -3072,6 +3184,11 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
   const entrarRef = useRef<(() => void) | null>(null);
   const [fase, setFase] = useState<Fase>("negro");
   const [soporte, setSoporte] = useState<boolean | null>(null); // null = verificando
+  // v148 — BLINDAJE ANTI-2D: la sonda REINTENTA (el navegador a veces
+  // agota los contextos con otras pestañas y los libera al cerrarlas)
+  // y si el GPU retira el contexto en pleno vuelo, el mundo se avisa.
+  const [sondeo, setSondeo] = useState(0);
+  const [ctxPerdido, setCtxPerdido] = useState(false);
   const [escrito, setEscrito] = useState("");
   const [popup, setPopup] = useState<{ x: number; y: number; m: MarcadorWGL } | null>(null);
   const tiempos = useRef<number[]>([]);
@@ -3092,8 +3209,18 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     try {
       const c = document.createElement("canvas");
       const gl = c.getContext("webgl2") || c.getContext("webgl");
-      setSoporte(!!gl);
-      if (!gl) return;
+      if (!gl) {
+        // v148 REINTENTO — jamás rendirse a la primera: el contexto puede
+        // estar agotado por otra pestaña y liberarse al cerrarla
+        if (sondeo < 2) {
+          const id = window.setTimeout(() => setSondeo((s) => s + 1), 900 * (sondeo + 1));
+          tiempos.current.push(id);
+          return;
+        }
+        setSoporte(false);
+        return;
+      }
+      setSoporte(true);
     } catch {
       setSoporte(false);
       return;
@@ -3106,6 +3233,35 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     document.documentElement.setAttribute("data-wgl", "on");
     // puerta de QA (y de curiosos): el mundo examinable desde la consola
     (window as unknown as { __vgMundo?: MundoWGL }).__vgMundo = mundo;
+
+    // v148 — SI EL GPU RETIRA EL CONTEXTO en pleno vuelo (OOM, driver,
+    // otra pestaña pesada): el mundo SE ENTERA — aviso holo + recuperación.
+    // Si el navegador no restaura en 4s, UNA recarga de cortesía (guard
+    // anti-bucle en sessionStorage) reentra limpia: eso mata el «arranca
+    // 2D / mundo muerto» que el Dueño veía tras sesiones largas.
+    const LLAVE_RECARGA = "vg148-recarga";
+    let timerCtx = 0;
+    const onCtxPerdido = (e: Event) => {
+      e.preventDefault();
+      setCtxPerdido(true);
+      let ya = false;
+      try { ya = window.sessionStorage.getItem(LLAVE_RECARGA) === "1"; } catch {}
+      if (!ya) {
+        timerCtx = window.setTimeout(() => {
+          try { window.sessionStorage.setItem(LLAVE_RECARGA, "1"); } catch {}
+          window.location.reload();
+        }, 4000);
+        tiempos.current.push(timerCtx);
+      }
+    };
+    const onCtxRestaurado = () => {
+      window.clearTimeout(timerCtx);
+      try { window.sessionStorage.removeItem(LLAVE_RECARGA); } catch {}
+      setCtxPerdido(false);
+      mundo?.despertar();
+    };
+    mundo.renderer.domElement.addEventListener("webglcontextlost", onCtxPerdido);
+    mundo.renderer.domElement.addEventListener("webglcontextrestored", onCtxRestaurado);
 
     const onResize = () => mundo?.redimensionar();
     const onVis = () => (document.hidden ? mundo?.dormir() : mundo?.despertar());
@@ -3310,13 +3466,16 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       window.removeEventListener("vg:wgl-ir-a", onIr);
       window.removeEventListener("vg:wgl-modo-toggle", onModoToggle);
       window.removeEventListener("vg:wgl-modo-sync", onModoSync);
+      if (mundo) {
+        mundo.renderer.domElement.removeEventListener("webglcontextlost", onCtxPerdido);
+        mundo.renderer.domElement.removeEventListener("webglcontextrestored", onCtxRestaurado);
+      }
       for (const id of tiempos.current) clearTimeout(id);
       mundo?.destruir();
       document.documentElement.removeAttribute("data-wgl");
       document.documentElement.removeAttribute("data-wgl-modo");
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sondeo]);
 
   // ── LA SECUENCIA DE ENTRADA (segundo a segundo, mandato exacto) ──
   useEffect(() => {
@@ -3351,7 +3510,6 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     despues(T(5.4), () => { setFase("tagline"); mundoRef.current?.setFaseEntrada("tagline"); });
     despues(T(6.4), () => { setFase("hint"); mundoRef.current?.setFaseEntrada("hint"); mundoRef.current?.invitar(); });
     return () => { for (const id of tiempos.current) clearTimeout(id); tiempos.current = []; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [soporte]);
 
   // typewriter del tagline (40ms/glifo)
@@ -3442,6 +3600,15 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
           <strong>{popup.m.nombre}</strong>
           <span>{popup.m.sub}</span>
           <em>{popup.m.intensidad >= 80 ? "GRAVE" : popup.m.intensidad >= 55 ? "ALTA" : "MEDIA"} · la cámara vuela al Command Center</em>
+        </div>
+      )}
+      {/* v148 — EL GPU RETIRÓ EL CONTEXTO: aviso holo mientras el mundo
+          se recupera (restauración del navegador o recarga de cortesía) */}
+      {ctxPerdido && (
+        <div className="vg148-ctxperdido" role="alert">
+          <span className="vg148-ctxperdido-aro" aria-hidden />
+          <strong>REESTABLECIENDO EL UNIVERSO</strong>
+          <em>El motor 3D perdió el enlace con tu GPU — reconectando</em>
         </div>
       )}
     </>
