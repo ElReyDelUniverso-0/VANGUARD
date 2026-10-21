@@ -313,8 +313,9 @@ export function RetentionLayer() {
         <>
           {/* ---------- CLÚSTER INFERIOR IZQUIERDO: temporada + combo ----------
               v148: data-vg-retencion — el HUD 3D (casco del piloto) lo sustituye
-              en el universo; este clúster DOM solo vive fuera del mundo */}
-          <div className="fixed bottom-2 left-2 z-30 flex flex-col gap-1.5 max-w-[62vw]" data-luxe-oculto data-vg-retencion="cluster">
+              en el universo; este clúster DOM solo vive fuera del mundo.
+              v150: data-ceremonia-oculta — duerme también en la ceremonia */}
+          <div className="fixed bottom-2 left-2 z-30 flex flex-col gap-1.5 max-w-[62vw]" data-luxe-oculto data-vg-retencion="cluster" data-ceremonia-oculta>
             <button
               onClick={() => setSeasonOpen(true)}
               className="pointer-events-auto text-left rounded-lg border border-amber-500/40 bg-black/85 backdrop-blur px-2.5 py-1.5 shadow-lg hover:border-amber-400/70 transition-colors"
@@ -341,6 +342,7 @@ export function RetentionLayer() {
           {/* ---------- COFRE FLOTANTE ---------- */}
           <button
             onClick={openChest}
+            data-ceremonia-oculta
             className={`fixed bottom-2 right-2 z-30 rounded-lg border px-3 py-2 font-mono text-[11px] font-bold backdrop-blur transition-all ${
               chestReady
                 ? `border-amber-400 bg-amber-500/20 text-amber-200 animate-pulse ${RARITY_STYLE.EPICO.glow}`

@@ -968,8 +968,15 @@ class MundoWGL {
     // datos vivos de la sala montada (o de la que aún no nace)
     if (this.salaPayload && this.salaPayload.tab !== p.tab) return;
     const eraGenerica = this.salaPayload?.tipo === "generica";
+    const esGenerica = p.tipo === "generica";
+    // v150: nunca DEGRADAR — si la sala montada es «contenido» (filas reales
+    // del panel en volumen) y llega un pulso genérico, el pulso se ignora:
+    // el contenido manda sobre la estación informativa
+    if (this.salaPayload?.tipo === "contenido" && esGenerica) return;
     this.salaPayload = p;
-    if (this.salaInst && !eraGenerica && p.tipo !== "generica") {
+    // v148: la ESTACIÓN INFORMATIVA repinta sus letras/datos SIN rebote —
+    // solo la ascensión genérica→insignia (o sala muerta) reconstruye
+    if (this.salaInst && eraGenerica === esGenerica) {
       this.salaInst.actualizar(p);
     } else {
       // la sala nace/asciende a insignia con datos reales
@@ -1064,7 +1071,9 @@ class MundoWGL {
     const altoMundo = 2 * dist * Math.tan(fovR);
     const anchoMundo = altoMundo * this.camara.aspect;
     const movil = this.esMovil();
-    const fracAncho = movil ? 0.94 : insignia ? 0.44 : 0.46;
+    // v150: la estación informativa (genérica) vive en la franja derecha del
+    // cuadro — 0.22 del ancho para caber íntegra entre la cápsula y el borde
+    const fracAncho = movil ? 0.55 : insignia ? 0.44 : 0.22;
     const f = new THREE.Vector3();
     this.camara.getWorldDirection(f);
     const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
@@ -1081,15 +1090,38 @@ class MundoWGL {
     const anchoReal = 2 * distReal * Math.tan(fovR) * this.camara.aspect;
     const escala = (anchoReal * fracAncho) / 2.6;
     if (!insignia) {
-      // placa genérica: SOBRE la cápsula completa (se apoya en su alto real)
-      const { tgt } = this.poseDe(this.zona);
-      const dir = new THREE.Vector3(tgt.x - this.camara.position.x, tgt.y - this.camara.position.y, tgt.z - this.camara.position.z);
-      const distT = Math.max(1.2, dir.length());
-      const altoT = 2 * distT * Math.tan(fovR);
-      const escCaps = (altoT * this.camara.aspect * (movil ? 0.88 : 0.52)) / this.capsulaPx;
-      const altoCapsMundo = (this.capsulaEl?.offsetHeight || 600) * escCaps;
-      pos.copy(tgt);
-      pos.y += altoT * 0.035 + altoCapsMundo / 2 + 0.75 * escala;
+      // placa genérica: FRANJA DERECHA (desktop) o sobre la cápsula (móvil)
+      const rCaps = this.capsulaEl?.getBoundingClientRect();
+      // v150 ESTACIÓN INFORMATIVA: en ESCRITORIO la cápsula llena el centro y
+      // arriba solo queda una ranura — la estación vive en la FRANJA DERECHA
+      // del cuadro (todo en el plano del ancla, dist delante de la cámara);
+      // el ancla vieja caía detrás del planeta o fuera del cuadro: el «papel
+      // sin estación» que el Dueño vio como una rama vacía
+      if (!movil && rCaps && rCaps.width > 100) {
+        const stationHalf = 1.3 * escala;
+        const capsRightFrac = Math.min(rCaps.right / window.innerWidth, 0.92);
+        const xFrac = Math.min(
+          capsRightFrac + (stationHalf + 0.12) / anchoMundo,
+          1 - stationHalf / anchoMundo - 0.012,
+        );
+        pos.copy(this.camara.position)
+          .addScaledVector(f, dist)
+          .addScaledVector(derecha, anchoMundo * (xFrac - 0.5))
+          .addScaledVector(arriba, -altoMundo * 0.02);
+      } else {
+        // MÓVIL: la cápsula llena el ancho — la estación flota sobre su borde
+        // superior real (fracción de pantalla → plano del ancla), sujeta al
+        // cuadro: nunca detrás de la cápsula ni fuera del marco
+        const capsTopFrac = rCaps ? rCaps.top / window.innerHeight : 0.25;
+        const stationHalfH = 0.78 * escala;
+        const yFrac = Math.max(
+          capsTopFrac - (stationHalfH + 0.04) / altoMundo,
+          stationHalfH / altoMundo + 0.01,
+        );
+        pos.copy(this.camara.position)
+          .addScaledVector(f, dist)
+          .addScaledVector(arriba, altoMundo * (0.5 - yFrac));
+      }
     } else {
       pos.y += altoMundo * 0.02;
     }
@@ -3296,12 +3328,17 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const z = (tabInicial && TAB_ZONA[tabInicial]) || 1;
       document.documentElement.setAttribute("data-wgl-entrada", "0");
       document.documentElement.setAttribute("data-wgl-zona", String(z));
+      // v148: el arranque ya no es 2D — la Casa despierta cuando el mundo está listo
+      window.dispatchEvent(new CustomEvent("vg:wgl-entrada-estado", { detail: { on: false } }));
       setFase("fin");
       mundoRef.current?.reencuentro(z);
       mundoRef.current?.setFaseEntrada("fin");
       return;
     }
+    // v148 CEREMONIA PURA: la Casa se aparta — el negro y las estrellas SON la
+    // pantalla de carga; nada de chrome plano alrededor del universo
     document.documentElement.setAttribute("data-wgl-entrada", "1");
+    window.dispatchEvent(new CustomEvent("vg:wgl-entrada-estado", { detail: { on: true } }));
     const T = (s: number) => s * 1000;
     despues(T(1.0), () => { setFase("estrellas"); mundoRef.current?.setFaseEntrada("estrellas"); mundoRef.current?.nacerEstrellas(); });
     despues(T(2.0), () => { setFase("globo"); mundoRef.current?.setFaseEntrada("globo"); mundoRef.current?.subirGlobo(); });
@@ -3348,6 +3385,9 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     despues(500, () => {
       try { sessionStorage.setItem(LLAVE_ENTRADA, "1"); } catch {}
       document.documentElement.setAttribute("data-wgl-entrada", "0");
+      // v148: la ceremonia terminó — la Casa despierta (la cápsula ya nace
+      // acoplada: cero flash del chrome plano entre el vuelo y el aterrizaje)
+      window.dispatchEvent(new CustomEvent("vg:wgl-entrada-estado", { detail: { on: false } }));
       window.dispatchEvent(new CustomEvent("vg:wgl-entrada-fin"));
     });
     despues(1250, () => {
@@ -3412,6 +3452,8 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
 function IntroFallback() {
   const [Comp, setComp] = useState<React.ComponentType | null>(null);
   useEffect(() => {
+    // v148: sin mundo WebGL la Casa DOM es el único cuerpo — despierta al instante
+    window.dispatchEvent(new CustomEvent("vg:wgl-entrada-estado", { detail: { on: false } }));
     let vivo = true;
     import("@/components/vanguard/intro-cinematica").then((m) => {
       if (vivo) setComp(() => m.IntroCinematica);

@@ -4521,6 +4521,26 @@ html[data-wgl-entrada="1"] footer { visibility: hidden; }
 html[data-wgl-entrada="1"] main { visibility: hidden; }
 html[data-wgl-entrada="1"] .v139-frente { display: none; }
 
+/* ---- 8b. v148 CEREMONIA PURA TOTAL — nada 2D flotante sobre el
+   arranque del universo: retención, pulso, cofre y capa ERA duermen
+   mientras las estrellas y el globo hacen la entrada (mandato del
+   Dueño: «arrancan 2D aún» — ya no) */
+html[data-wgl-entrada="1"] [data-ceremonia-oculta],
+html[data-wgl-entrada="1"] .v111-era-capa { display: none !important; }
+
+/* v148: los diálogos Radix enteros duermen en la ceremonia — el overlay
+   (data-slot) no lleva role y su backdrop asomaba sobre el universo */
+html[data-wgl-entrada="1"] [data-slot="dialog-overlay"],
+html[data-wgl-entrada="1"] [data-slot="dialog-content"],
+html[data-wgl-entrada="1"] [data-slot="dialog-portal"] { display: none !important; }
+
+/* v148: la consola CSS3D del mundo (navhost, widgets, ventana holo) también
+   espera a que el universo termine su entrada — cero UI antes del fin */
+html[data-wgl-entrada="1"] .vg143-navhost,
+html[data-wgl-entrada="1"] .vg145-widhost,
+html[data-wgl-entrada="1"] .vg145-ventana,
+html[data-wgl-entrada="1"] .vg143-capsula { display: none !important; }
+
 /* ---- 9. ACCESIBILIDAD v140 ------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   .vg140-warp { display: none; }
@@ -5233,3 +5253,4 @@ html[data-wgl-hud="1"] .vg141-modo-ui { display: none !important; }
   height: 22px;
   filter: drop-shadow(0 0 5px rgba(245, 197, 66, 0.45));
 }
+/* v150 retrigger — ceremonia pura arriba, casco del piloto aquí */

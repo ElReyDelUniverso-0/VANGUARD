@@ -323,6 +323,35 @@ const TIPO_SALA_3D: Record<string, string> = {
   // v147 — segunda ola: el mercado de apuestas, la corona de hitos y la vitrina
   predicciones: "predicciones", logros: "logros", tienda: "tienda",
 };
+
+// v148 — LAS LETRAS INFORMATIVAS: cada módulo se describe en el mundo 3D
+// con su rótulo volumétrico (el nombre + lo que hace, en letras extruidas).
+// Fuente honesta: el label del tab (partiendo su paréntesis) y la desc de
+// la sección — ninguna sala de Vanguard vuelve a ser un portal mudo.
+function lineasInformativas(tab: TabKey): string[] {
+  const crudo = TABS[tab]?.label ?? "";
+  const enParentesis = (/\(([^)]+)\)/.exec(crudo)?.[1] ?? "").replace(/\s+/g, " ").trim();
+  const bruto = crudo.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim();
+  const desc = (sectionOfTab(tab).desc || "").replace(/\s*\(([^)]*)\)\s*/g, " ").replace(/\s+/g, " ").trim();
+  const fuentes = [enParentesis, ...desc.split(/[.;:]|—/).map((s) => s.trim())]
+    .filter((s) => s.length >= 14);
+  const lineas: string[] = bruto ? [bruto] : [];
+  for (const f of fuentes) {
+    if (lineas.length >= 3) break;
+    if (f.length <= 46) { lineas.push(f); continue; }
+    const palabras = f.split(" ");
+    let actual = "";
+    for (const w of palabras) {
+      if ((actual + " " + w).trim().length > 46) {
+        if (actual) lineas.push(actual.trim());
+        actual = w;
+        if (lineas.length >= 3) break;
+      } else actual = (actual + " " + w).trim();
+    }
+    if (actual && lineas.length < 3) lineas.push(actual.trim());
+  }
+  return lineas.slice(0, 3);
+}
 // SALAVIVA: el cuerpo de la Casa. El MISMO árbol vive en dos hogares:
 //  · dentro de la CÁPSULA holográfica del mundo WebGL (portal React a
 //    la pantalla CSS3D acoplada a la zona donde aterriza la cámara), o
@@ -632,6 +661,10 @@ export default function Home() {
   const [gatePasaporte, setGatePasaporte] = useState<string | null>(null);
   const authRefresh = useGameStore((s) => s.authRefresh);
   const alias = useGameStore((s) => s.alias);
+  // v148 — LAS DATOS VIVAS del agente: alimentan las placas de la estación informativa 3D
+  const nivelAgente = useGameStore((s) => s.level);
+  const monedasAgente = useGameStore((s) => s.coins);
+  const gemasAgente = useGameStore((s) => s.gems);
   const { t } = useT();
   const initPlayer = useGameStore((s) => s.initPlayer);
   const checkAchievements = useGameStore((s) => s.checkAchievements);
@@ -809,25 +842,70 @@ export default function Home() {
   }, [tab, hostCapsula]);
 
   // ════════════════════════════════════════════════════════════
+  // v148 ARRANQUE 3D PURO — el Dueño: «arrancan 2D aún». Ahora NO:
+  // la Casa DOM nace DORMIDA y solo despierta cuando el universo está
+  // listo (ceremonia terminada / reencuentro / sin WebGL). El negro y
+  // las estrellas de la ceremonia SON la pantalla de carga.
+  // ════════════════════════════════════════════════════════════
+  const [ceremonia, setCeremonia] = useState(true);
+  useEffect(() => {
+    const onEstado = (e: Event) => setCeremonia(!!(e as CustomEvent).detail?.on);
+    window.addEventListener("vg:wgl-entrada-estado", onEstado);
+    // red de seguridad: si nada habla en 12s, la Casa se levanta sola
+    const red = window.setTimeout(() => setCeremonia(false), 12000);
+    return () => { window.removeEventListener("vg:wgl-entrada-estado", onEstado); clearTimeout(red); };
+  }, []);
+  const ocultarCasa = ceremonia && !hostCapsula && !modoMundo;
+
+  // ════════════════════════════════════════════════════════════
   // v145 SALAS EN VOLUMEN — la sala activa se publica al mundo 3D:
   // el CONTENIDO REAL de cada rama nace en volumen (el gráfico de la
   // economía en 3D, las letras en 3D, la sala de conflictos 3D, el
   // estudio de memes 3D). Insignia con constructor propio + TODAS las
   // demás ramas con su placa 3D genérica. Re-dispatch cuando nace el
   // mundo (hostCapsula) para ganar la carrera de arranque.
+  // v148: el payload lleva las LETRAS INFORMATIVAS (qué es este módulo)
+  // y las DATOS VIVAS del agente — la estación informativa las extruye.
   // ════════════════════════════════════════════════════════════
+  const statsAgente = useMemo(() => [
+    { k: "AGENTE", v: alias || "RECLUTA" },
+    { k: "NIVEL", v: String(nivelAgente) },
+    { k: "MONEDAS", v: String(monedasAgente) },
+    { k: "GEMAS", v: String(gemasAgente) },
+  ], [alias, nivelAgente, monedasAgente, gemasAgente]);
+
   useEffect(() => {
     const seccion = sectionOfTab(tab);
     const hex = accentOfSection(seccion.key);
     window.dispatchEvent(new CustomEvent("vg:sala3d", {
       detail: {
         tab,
-        titulo: TABS[tab]?.label ?? String(tab),
+        titulo: TABS[tab]?.short ?? String(tab),
         color: parseInt(hex.replace("#", ""), 16) || 0x7ab8ff,
         tipo: TIPO_SALA_3D[tab as string] ?? "generica",
+        lineas: lineasInformativas(tab),
+        stats: statsAgente,
       },
     }));
-  }, [tab, hostCapsula]);
+  }, [tab, hostCapsula, statsAgente]);
+
+  // v148 — EL PULSO DE DATOS: las stats del agente laten y la estación
+  // informativa repinta sus placas SIN rebote (vg:sala3d-datos → actualizar)
+  useEffect(() => {
+    if (TIPO_SALA_3D[tab as string]) return; // insignia: sus paneles mandan sus datos
+    const seccion = sectionOfTab(tab);
+    const hex = accentOfSection(seccion.key);
+    window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+      detail: {
+        tab,
+        titulo: TABS[tab]?.short ?? String(tab),
+        color: parseInt(hex.replace("#", ""), 16) || 0x7ab8ff,
+        tipo: "generica",
+        lineas: lineasInformativas(tab),
+        stats: statsAgente,
+      },
+    }));
+  }, [tab, hostCapsula, statsAgente]);
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
   // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.
@@ -1349,7 +1427,7 @@ export default function Home() {
           con el mundo WebGL vivo (hostCapsula) EL CHROME PLANO ENTERO se
           aparta — el puente de mando 3D (mundo-webgl) lo reemplaza completo.
           Sin WebGL: display:contents cuando no — cero cajas fantasma. */}
-      <div className={inmersion || modoMundo || hostCapsula ? "hidden" : "contents vg-casco-v140"}>
+      <div className={ocultarCasa || inmersion || modoMundo || hostCapsula ? "hidden" : "contents vg-casco-v140"}>
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -1390,7 +1468,7 @@ export default function Home() {
           hostRail,
         )
       ) : (
-        <div className={hostCapsula || inmersion || modoMundo ? "hidden" : "contents"}>
+        <div className={ocultarCasa || hostCapsula || inmersion || modoMundo ? "hidden" : "contents"}>
           <LiveTitle />
           <StatsTicker />
         </div>
@@ -1437,12 +1515,12 @@ export default function Home() {
             hostCapsula,
           )
         : (
-          <main className="contents" aria-label="Contenido de Vanguard">
+          <main className={ocultarCasa ? "hidden" : "contents"} aria-label="Contenido de Vanguard">
             <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion || modoMundo} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
           </main>
         )}
 
-      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion || modoMundo || hostCapsula ? "hidden" : ""}`}>
+      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${ocultarCasa || inmersion || modoMundo || hostCapsula ? "hidden" : ""}`}>
         <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] sm:text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">

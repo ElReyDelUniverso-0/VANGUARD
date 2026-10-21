@@ -19,7 +19,7 @@ import { Rehidratador } from "@/components/vanguard/rehidratador";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 import { MotorAgentes } from "@/components/vanguard/motor-agentes";
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
-import { IntroTrailer } from "@/components/vanguard/intro-trailer";
+// v148: el import del tráiler se retira — el estreno es la ceremonia 3D del mundo
 // v135.0 NEXUS-HYPNOS: el motor de tensión global — la Casa entera respira
 // con el pulso del planeta (html[data-tension] + --vg-tension, cero re-render)
 import { MotorNexus } from "@/components/vanguard/motor-nexus";
@@ -277,8 +277,10 @@ export default function RootLayout({
         {/* v133.0: el cuerpo de agentes autónomos — la Casa se pule sola
             en cualquier sala, sin que nadie tenga que visitar su sala */}
         <MotorAgentes />
-        {/* v134.0 EL ESTRENO: el tráiler proyecta una vez por sesión */}
-        <IntroTrailer />
+        {/* v134.0 EL ESTRENO — RETIRADO EN v148: la ceremonia de entrada del
+            mundo WebGL (negro → estrellas → globo → logo 3D → placa ENTRAR)
+            ES el estreno ahora; el tráiler DOM era la última capa 2D del
+            arranque (mandato del Dueño: «arrancan 2D aún») */}
         {/* v135.0 NEXUS-HYPNOS: el pulso del planeta viste la Casa entera */}
         <MotorNexus />
         {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}

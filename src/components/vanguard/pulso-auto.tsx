@@ -84,7 +84,7 @@ export function PulsoAuto() {
   const colorRiesgo = riesgo >= 70 ? "#FF3B30" : riesgo >= 45 ? "#FFA030" : "#4ADE80";
 
   return (
-    <div className="fixed bottom-3 left-3 z-[70] max-w-[min(92vw,360px)] pointer-events-none">
+    <div className="fixed bottom-3 left-3 z-[70] max-w-[min(92vw,360px)] pointer-events-none" data-ceremonia-oculta>
       {abierto ? (
         // ---------- banner de actualización ----------
         <div className="pointer-events-auto v99-pulso rounded-xl border bg-black/90 backdrop-blur-md p-3 shadow-2xl" style={{ borderColor: "#BEF26466" }}>

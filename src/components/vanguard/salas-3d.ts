@@ -145,8 +145,12 @@ export interface SalaTienda3D extends BaseSala3D {
   gemas: number;
   items: { titulo: string; costo: number; moneda: "COINS" | "GEMS"; activo: boolean }[];
 }
+// v148 ESTACIÓN INFORMATIVA — TODA rama de Vanguard vive en volumen:
+// letras 3D informativas (qué es esta sala) + placas de datos vivas
 export interface SalaGenerica3D extends BaseSala3D {
   tipo: "generica";
+  lineas?: string[];                 // letras informativas extruidas (qué es este módulo)
+  stats?: { k: string; v: string }[]; // datos vivas del agente (nivel, monedas…)
 }
 // v148 SALA DE CONTENIDO — la tercera ola del mandato «100% 3D»: CUALQUIER
 // rama sin constructor insignia muestra su contenido real en volumen:
@@ -823,50 +827,175 @@ function construirMemes(ctx: CtxSala3D, p: SalaMemes3D): Sala3DInstancia {
 }
 
 // ────────────────────────────────────────────────────────────
-// SALA GENÉRICA — TODAS las demás ramas: placa de título
-// extruida + arco holográfico + partículas del acento de la
-// sección. Toda sala de Vanguard tiene presencia volumétrica.
+// SALA GENÉRICA — v148 ESTACIÓN INFORMATIVA: TODAS las demás ramas viven
+// en volumen real — título extruido + LETRAS INFORMATIVAS (qué es este
+// módulo) + placas de datos vivas del agente + núcleo temático propio
+// (geometría por hash del tab) + arco holográfico + partículas.
 // ────────────────────────────────────────────────────────────
 function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
   const reg = registrar();
+  const regDin = registrar(); // las letras/datos que se repintan en vivo
   const grupo = new THREE.Group();
   const proxies: THREE.Mesh[] = [];
   const tics: ((t: number, dt: number) => void)[] = [];
 
-  // EL TÍTULO en volumen — la firma de la sala
+  // hash determinista del tab — cada módulo tiene su núcleo temático
+  const hashDe = (s: string): number => {
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+    return h;
+  };
+
+  // ── EL TÍTULO en volumen — la firma de la sala (escala honesta: un título
+  // largo nunca desborda el portal, se acota como un HUD militar) ──
   const titulo = texto3D(ctx, p.titulo, { tam: 0.165, prof: 0.055, color: p.color, emis: 0.6 });
-  titulo.grupo.position.set(-titulo.ancho / 2, 0.62, 0);
+  const escalaT = Math.min(1, 1.92 / titulo.ancho);
+  titulo.grupo.scale.setScalar(escalaT);
+  titulo.grupo.position.set(-titulo.ancho * escalaT / 2, 0.55, 0);
   grupo.add(titulo.grupo);
 
-  // EL ARCO holográfico que abraza el título
+  // ── LAS LETRAS INFORMATIVAS — qué es este módulo, en volumen real ──
+  const grupoLineas = new THREE.Group();
+  const matsLineas: THREE.MeshStandardMaterial[] = [];
+  const pintarLineas = (lineas: string[]) => {
+    limpiarGrupoLocal(grupoLineas);
+    matsLineas.length = 0;
+    const limpias = (lineas || []).slice(0, 3).map((l) => acotar(l, 44)).filter(Boolean);
+    limpias.forEach((linea, i) => {
+      const t = texto3D(ctx, linea, { tam: 0.052, prof: 0.016, color: 0xbfe3ff, emis: 0.4 });
+      const esc = Math.min(1, 1.9 / t.ancho);
+      t.grupo.scale.setScalar(esc);
+      t.grupo.position.set(-t.ancho * esc / 2, 0.37 - i * 0.072, 0);
+      grupoLineas.add(t.grupo);
+      matsLineas.push(...t.mats);
+    });
+    grupoLineas.visible = limpias.length > 0;
+  };
+  grupo.add(grupoLineas);
+
+  // ── LAS PLACAS DE DATOS — las stats vivas del agente como hologramas ──
+  const grupoStats = new THREE.Group();
+  const pintarStats = (stats: { k: string; v: string }[]) => {
+    limpiarGrupoLocal(grupoStats);
+    const vivas = (stats || []).filter((s) => s && s.k && s.v).slice(0, 4);
+    vivas.forEach((s, i) => {
+      const lado = i % 2 === 0 ? -1 : 1;
+      const fila = Math.floor(i / 2);
+      const placa = new THREE.Group();
+      const caja = new THREE.Mesh(
+        regDin.geo(new THREE.BoxGeometry(0.56, 0.15, 0.014)),
+        regDin.mat(new THREE.MeshStandardMaterial({
+          color: 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.78,
+        })),
+      );
+      const filo = new THREE.LineSegments(caja.geometry, regDin.mat(matFilo(p.color, 0.8)));
+      const tk = texto3D(ctx, s.k, { tam: 0.038, prof: 0.012, color: 0x9fc7e8, emis: 0.3 });
+      const escK = Math.min(1, 0.24 / tk.ancho);
+      tk.grupo.scale.setScalar(escK);
+      tk.grupo.position.set(-0.24, 0.028, 0.01);
+      const tv = texto3D(ctx, acotar(s.v, 10), { tam: 0.05, prof: 0.014, color: COL_ORO, emis: 0.65 });
+      const escV = Math.min(1, 0.3 / tv.ancho);
+      tv.grupo.scale.setScalar(escV);
+      tv.grupo.position.set(-0.24, -0.032, 0.01);
+      placa.add(caja, filo, tk.grupo, tv.grupo);
+      placa.position.set(lado * 0.66, 0.04 - fila * 0.22, 0.12);
+      placa.rotation.y = lado * -0.16;
+      grupoStats.add(placa);
+    });
+    grupoStats.visible = vivas.length > 0;
+  };
+  grupo.add(grupoStats);
+
+  // repintado con firma anti-churn (los datos laten, la sala no rebota)
+  let sigDatos = "";
+  const repintarDatos = (lineas?: string[], stats?: { k: string; v: string }[]) => {
+    const sig = JSON.stringify([lineas ?? [], stats ?? []]);
+    if (sig === sigDatos) return;
+    sigDatos = sig;
+    pintarLineas(lineas ?? []);
+    pintarStats(stats ?? []);
+  };
+  repintarDatos(p.lineas, p.stats);
+
+  // ── EL NÚCLEO TEMÁTICO — cada módulo con su geometría propia (hash del tab):
+  // esfera · icosaedro · octaedro · toro · dodecaedro · cono — con su gemelo
+  // wireframe y dos anillos orbitando en direcciones opuestas ──
+  const formas = ["esfera", "icosa", "octa", "toro", "dodeca", "cono"] as const;
+  const forma = formas[hashDe(p.tab) % formas.length];
+  let geoNucleo: THREE.BufferGeometry;
+  switch (forma) {
+    case "icosa": geoNucleo = new THREE.IcosahedronGeometry(0.155, 0); break;
+    case "octa": geoNucleo = new THREE.OctahedronGeometry(0.17, 0); break;
+    case "toro": geoNucleo = new THREE.TorusGeometry(0.115, 0.045, 10, 26); break;
+    case "dodeca": geoNucleo = new THREE.DodecahedronGeometry(0.16, 0); break;
+    case "cono": geoNucleo = new THREE.ConeGeometry(0.14, 0.24, 24); break;
+    default: geoNucleo = new THREE.SphereGeometry(0.15, 24, 18);
+  }
+  reg.geo(geoNucleo);
+  const nucleo = new THREE.Mesh(geoNucleo, reg.mat(new THREE.MeshStandardMaterial({
+    color: p.color, metalness: 0.75, roughness: 0.28,
+    emissive: new THREE.Color(p.color), emissiveIntensity: 0.4, transparent: true, opacity: 0.92,
+  })));
+  nucleo.position.set(0, -0.12, 0);
+  grupo.add(nucleo);
+  // el gemelo wireframe — el esqueleto del núcleo late un 5% alrededor
+  let geoWire: THREE.BufferGeometry;
+  switch (forma) {
+    case "icosa": geoWire = new THREE.IcosahedronGeometry(0.172, 0); break;
+    case "octa": geoWire = new THREE.OctahedronGeometry(0.188, 0); break;
+    case "toro": geoWire = new THREE.TorusGeometry(0.115, 0.045, 8, 18); break;
+    case "dodeca": geoWire = new THREE.DodecahedronGeometry(0.178, 0); break;
+    case "cono": geoWire = new THREE.ConeGeometry(0.14, 0.24, 18); break;
+    default: geoWire = new THREE.SphereGeometry(0.166, 14, 10);
+  }
+  reg.geo(geoWire);
+  const wireNucleo = new THREE.Mesh(
+    geoWire,
+    reg.mat(new THREE.MeshBasicMaterial({ color: p.color, wireframe: true, transparent: true, opacity: 0.3 })),
+  );
+  wireNucleo.position.copy(nucleo.position);
+  grupo.add(wireNucleo);
+  const anillosNucleo: THREE.Mesh[] = [];
+  for (const [r, incl] of [[0.26, 0.5], [0.34, -0.35]] as const) {
+    const an = new THREE.Mesh(
+      reg.geo(new THREE.TorusGeometry(r, 0.006, 6, 44)),
+      reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false })),
+    );
+    an.position.copy(nucleo.position);
+    an.rotation.x = Math.PI / 2 + incl;
+    grupo.add(an);
+    anillosNucleo.push(an);
+  }
+
+  // ── EL ARCO holográfico que abraza el título ──
   const arco = new THREE.Mesh(
-    reg.geo(new THREE.TorusGeometry(0.88, 0.012, 8, 60, Math.PI)),
+    reg.geo(new THREE.TorusGeometry(0.74, 0.012, 8, 60, Math.PI)),
     reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false })),
   );
-  arco.position.y = 0.1;
+  arco.position.y = 0.14;
   grupo.add(arco);
   const arcoInt = new THREE.Mesh(
-    reg.geo(new THREE.TorusGeometry(0.78, 0.006, 8, 60, Math.PI)),
+    reg.geo(new THREE.TorusGeometry(0.66, 0.006, 8, 60, Math.PI)),
     reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false })),
   );
-  arcoInt.position.y = 0.1;
+  arcoInt.position.y = 0.14;
   grupo.add(arcoInt);
 
-  // LAS COLUMNAS del portal (dos estelas verticales)
+  // ── LAS COLUMNAS del portal (dos estelas verticales) ──
   for (const s of [-1, 1]) {
     const col = new THREE.Mesh(
-      reg.geo(new THREE.BoxGeometry(0.035, 1.0, 0.035)),
+      reg.geo(new THREE.BoxGeometry(0.035, 0.86, 0.035)),
       reg.mat(matMetal(0x101a2c)),
     );
-    col.position.set(s * 0.92, 0.08, 0);
+    col.position.set(s * 0.86, 0.02, 0);
     grupo.add(col);
     const filo = new THREE.LineSegments(col.geometry, reg.mat(matFilo(p.color, 0.85)));
     filo.position.copy(col.position);
     grupo.add(filo);
   }
 
-  const peana = pedestal(1.25, p.color);
-  peana.position.y = -0.62;
+  const peana = pedestal(1.1, p.color);
+  peana.position.y = -0.58;
   grupo.add(peana);
 
   const polvoSala = polvo(ctx.calidadBaja ? 55 : 100, p.color, 1.35, 1.7);
@@ -877,18 +1006,45 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
     polvoSala.rotation.y += dt * 0.2;
     arco.rotation.z = Math.sin(t * 0.6) * 0.05;
     (arco.material as THREE.MeshBasicMaterial).opacity = 0.55 + Math.sin(t * 1.6) * 0.25;
-    titulo.grupo.position.y = 0.62 + Math.sin(t * 1.05) * 0.015;
+    titulo.grupo.position.y = 0.55 + Math.sin(t * 1.05) * 0.015;
+    // el núcleo respira y sus anillos orbitan en sentidos opuestos
+    nucleo.rotation.y += dt * 0.45;
+    nucleo.rotation.x += dt * 0.18;
+    wireNucleo.rotation.y -= dt * 0.3;
+    wireNucleo.rotation.z += dt * 0.12;
+    const pulso = 1 + Math.sin(t * 1.7) * 0.05;
+    wireNucleo.scale.setScalar(pulso);
+    anillosNucleo[0].rotation.z += dt * 0.8;
+    anillosNucleo[1].rotation.z -= dt * 0.55;
+    // las letras informativas flotan en bloque (una vida suave)
+    grupoLineas.position.y = Math.sin(t * 0.9) * 0.008;
+    grupoStats.position.y = Math.sin(t * 0.75 + 1.3) * 0.006;
   });
+
+  // desposeedor local de los grupos dinámicos (dispose honesto en cada repintado)
+  function limpiarGrupoLocal(g: THREE.Group) {
+    for (const hijo of [...g.children]) {
+      g.remove(hijo);
+      hijo.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (m.geometry) m.geometry.dispose();
+        const mm = m.material as THREE.Material | THREE.Material[] | undefined;
+        if (Array.isArray(mm)) mm.forEach((x) => x.dispose());
+        else if (mm) mm.dispose();
+      });
+    }
+  }
 
   return {
     grupo,
     proxies,
     actualizar: (nuevo) => {
-      if (nuevo.tipo !== "generica" && nuevo.tab !== p.tab) return;
-      // el título vivo: si cambia la sala, se repinta la placa
+      if (nuevo.tipo !== "generica") return;
+      const g = nuevo as SalaGenerica3D;
+      repintarDatos(g.lineas, g.stats);
     },
     tic: (t, dt) => { for (const f of tics) f(t, dt); },
-    liberar: () => { reg.liberar(); titulo.mats.forEach((m) => m.dispose()); },
+    liberar: () => { reg.liberar(); regDin.liberar(); titulo.mats.forEach((m) => m.dispose()); matsLineas.forEach((m) => m.dispose()); },
   };
 }
 

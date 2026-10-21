@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v150.0",
+    nombre: "INFORMACION EN VOLUMEN",
+    tipo: "mundo",
+    hitos: [
+      "ARRANQUE 3D PURO: «arrancan 2D aún» — ya no. La Casa DOM nace dormida (ceremonia, reencuentro o sin WebGL la despiertan); el negro y las estrellas SON la pantalla de carga",
+      "EL TRÁILER 2D (v134) se retira del arranque: la ceremonia del mundo (negro → estrellas → globo → logo extruido → placa ENTRAR) es el estreno",
+      "CEREMONIA PURA TOTAL: retención, pulso, cofre, capa ERA, diálogos Radix y la consola CSS3D duermen bajo data-wgl-entrada — cero chrome 2D sobre el universo",
+      "ESTACIÓN INFORMATIVA: TODAS las ramas genéricas (~136) viven en volumen — título extruido + LETRAS 3D INFORMATIVAS (qué es el módulo) + 4 placas de datos vivas + núcleo temático propio (geometría por hash del tab) con anillos orbitando",
+      "DATOS VIVAS EN EL MUNDO: el pulso vg:sala3d-datos repinta letras y placas SIN rebote (firma anti-churn); el agente, nivel, monedas y gemas laten en oro",
+      "BUG CAZADO: el ancla genérica caía detrás del planeta (la estación invisible — «las ramas son un papel blanco») — nueva ancla de plano de cámara en la franja derecha (desktop) y sobre el borde real de la cápsula (móvil), verificada en 1380px y 390px",
+      "LAYOUT COMPACTO de la estación (arco 0.74, columnas 0.86, núcleo −0.12) para caber íntegra entre la cápsula y el marco — título, letras, placas y peana siempre en cuadro",
+    ],
+  },
+  {
     version: "v149.0",
     nombre: "EL MUNDO AL MANDO",
     tipo: "mundo",
