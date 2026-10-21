@@ -318,7 +318,16 @@ try{
   function apagar(){
     if(c.getAttribute('data-off')==='1') return;
     c.setAttribute('data-off','1'); c.className='vg-off';
+    c.style.opacity='0';
     setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },800);
+    // v155.1: si la pestaña durmió durante el fundido (móvil bloqueado,
+    // throttling de timers), la retiramos al despertar — nunca queda un
+    // nodo muerto flotando en el DOM
+    document.addEventListener('visibilitychange',function(){
+      if(document.visibilityState==='visible'&&c&&c.parentNode&&c.getAttribute('data-off')==='1'){
+        setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },150);
+      }
+    });
   }
   function encender(msg){
     if(c.getAttribute('data-off')==='1') return;
