@@ -164,6 +164,7 @@ const _vB = new THREE.Vector3();
 const _vC = new THREE.Vector3();
 const _vD = new THREE.Vector3();
 const _vE = new THREE.Vector3();
+const _colA = new THREE.Color(); // v154: scratch de color (cero new por frame)
 
 // v145 — TIPOGRAFÍA FUTURISTA: Rajdhani Bold (angular, HUD militar, cero
 // caricatura). Si no llegara, helvetiker_bold rescata el mundo.
@@ -259,6 +260,11 @@ const ETIQUETAS_DEFECTO: EtiquetasHolo = {
   hintMundo: "TOCA UN PORTAL · ENTRA A UN MUNDO 3D",
   pieIzq: "SISTEMA VIVO", pieDer: "M MENU · 1-9 PESTAÑAS · F PANTALLA",
 };
+
+// v154 LA CIUDAD-MENÚ — el catálogo de secciones que la Casa envía al mundo:
+// cada sección es un EDIFICIO con figura 3D propia y color de identidad
+ type TabCiudad = { key: string; label: string };
+type SeccionCiudad = { key: string; label: string; color: string; tabs: TabCiudad[] };
 
 // marcadores: teatros de guerra de la Casa (OSINT real) + ciudades caliente
 export interface MarcadorWGL {
@@ -470,6 +476,22 @@ class MundoWGL {
   // v148 — MUNDOS PROPIOS: el universo PRIVADO de la sección activa
   mundoInst: Mundo3DInstancia | null = null;
   mundoLlave = "";
+  // v154 — LA CIUDAD-MENÚ: el menú de Vanguard es una CIUDAD de secciones
+  ciudadGrupo: THREE.Group | null = null;
+  ciudadAbierta = false;
+  ciudadCatalogo: SeccionCiudad[] = [];
+  ciudadSucia = false;
+  proxiesCiudad: THREE.Mesh[] = [];
+  ciudadEdificios: { grupo: THREE.Group; x0: number; y0: number; z0: number; fase: number; fig: THREE.Object3D | null; plateMat: THREE.MeshStandardMaterial | null; nacido: boolean }[] = [];
+  ciudadPlateMats: THREE.MeshStandardMaterial[] = [];
+  ciudadTituloMat: THREE.MeshStandardMaterial | null = null;
+  ciudadSalaVisible = false;
+  ciudadMundoVisible = false;
+  // v154 — EL TINTE DE SECCIÓN: el fondo del universo lava con el color de la sección activa
+  cumarTinte: THREE.Mesh | null = null;
+  tinteObjetivo = new THREE.Color(0x0a1428);
+  tinteAmbBase = new THREE.Color(0x35476b);
+  luzAmb: THREE.AmbientLight | null = null;
 
   constructor(opts: MundoOpts) {
     this.calidadBaja = opts.calidadBaja;
@@ -493,7 +515,19 @@ class MundoWGL {
     this.camara.lookAt(0, 0, 0);
 
     // LUCES — el frío del espacio + el rim magenta de la casa (globo SIEMPRE legible)
-    this.escena.add(new THREE.AmbientLight(0x35476b, 1.5));
+    // v154: la ambiental se CAPTURA — se tiñe con el color de la sección activa
+    this.luzAmb = new THREE.AmbientLight(0x35476b, 1.5);
+    this.escena.add(this.luzAmb);
+    // v154 — EL TINTE DE SECCIÓN: una cúpula gigante envuelve al universo y
+    // lava el fondo con el color del sector donde estás — el fondo del mundo
+    // CAMBIA DE COLOR dependiendo de la sección (el mandato del Dueño)
+    const cumarGeo = new THREE.SphereGeometry(92, 20, 14);
+    const cumarMat = new THREE.MeshBasicMaterial({ color: 0x0a1428, transparent: true, opacity: 0.34, side: THREE.BackSide, depthWrite: false });
+    this.cumarTinte = new THREE.Mesh(cumarGeo, cumarMat);
+    this.cumarTinte.renderOrder = -9;
+    this.escena.add(this.cumarTinte);
+    // v154: asomo de QA (patrón v151 __vg2) — sondas en vivo desde consola
+    (window as unknown as { __vgMundo?: MundoWGL }).__vgMundo = this;
     this.luzDir = new THREE.DirectionalLight(0xbfd8ff, 2.3);
     this.luzDir.position.set(5, 2.4, 4);
     this.escena.add(this.luzDir);
@@ -529,6 +563,9 @@ class MundoWGL {
     // real de Vanguard nace en volumen dentro del mundo
     window.addEventListener("vg:sala3d", this.onSala3dEv);
     window.addEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
+    // v154: LA CIUDAD-MENÚ — catálogo de secciones + toggle desde la Casa
+    window.addEventListener("vg:holo-ciudad", this.onCiudadCatalogoEv);
+    window.addEventListener("vg:ciudad-toggle", this.onCiudadToggleEv);
 
     // la Tierra ya nace girando (REGLA 6) — v148: el ángulo de nacimiento
     // ya NO es 1.2 (mostraba el Pacífico central, -158°: SOLO MAR — queja
@@ -2294,12 +2331,30 @@ class MundoWGL {
     const d = (e as CustomEvent).detail;
     this.setVentana(!!d?.on);
   };
+  // v154 — LA CIUDAD-MENÚ: la Casa envía el catálogo de secciones
+  onCiudadCatalogoEv = (e: Event) => {
+    const d = (e as CustomEvent).detail;
+    if (!d || !Array.isArray(d.secciones)) return;
+    this.ciudadCatalogo = d.secciones as SeccionCiudad[];
+    this.ciudadSucia = true;
+    if (this.ciudadAbierta) { this.cerrarCiudad(true); this.abrirCiudad(); }
+  };
+  onCiudadToggleEv = () => {
+    if (this.ciudadAbierta) this.cerrarCiudad();
+    else this.abrirCiudad();
+  };
 
   setPestanasHolo(lista: DatosPestana[], activa: string) {
     const nuevaLlave = JSON.stringify([lista, activa]);
     if (nuevaLlave === this.llavePuente.split("|§|")[0]) return; // cero churn
     this.llavePuente = `${nuevaLlave}|§|${this.llavePuente.split("|§|")[1] ?? ""}`;
     this.consolaDatos = { pestanas: lista.slice(0, 9), activa };
+    // v154: el fondo del universo lava con el color de la sección activa
+    // («el fondo puede cambiar de color dependiendo») y la ciudad se recoge
+    // si estabas eligiendo un edificio (entraste a una sección)
+    const act = lista.find((x) => x.key === activa);
+    if (act?.color) { try { this.tinteObjetivo.set(act.color); } catch { /* color inválido */ } }
+    if (this.ciudadAbierta) this.cerrarCiudad(true);
     this.reconstruirPuente();
   }
 
@@ -2630,10 +2685,386 @@ class MundoWGL {
     this.setVisibleWidges(this.consolaVisibleFin && !on); // v145 P2
   }
 
+  // ════════════════════════════════════════════════════════════════
+  // v154 — LA CIUDAD-MENÚ. El menú de Vanguard deja de ser un panel:
+  // es una CIUDAD de secciones que flota ante el piloto. Cada sección
+  // es un edificio con su figura 3D propia y su nombre en letras
+  // extruidas; tocas un edificio y ENTRAS a su mundo. La ciudad pega a
+  // la cámara (las letras te SIGUEN), nace creciendo en cascada y solo
+  // existe mientras está abierta (cero coste en el vuelo, cero lag).
+  // ════════════════════════════════════════════════════════════════
+
+  // despiece total (geometrías propias de la ciudad + materiales)
+  private destruirCiudad() {
+    if (this.ciudadGrupo) {
+      this.escena.remove(this.ciudadGrupo);
+      this.ciudadGrupo.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (m.geometry) m.geometry.dispose();
+        const mat = m.material as THREE.Material | THREE.Material[] | undefined;
+        if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
+        else if (mat) mat.dispose();
+      });
+      this.ciudadGrupo = null;
+    }
+    this.ciudadEdificios = [];
+    this.ciudadPlateMats = [];
+    this.ciudadTituloMat = null;
+    this.proxiesCiudad = [];
+  }
+
+  // LA FIGURA PROPIA DE CADA SECCIÓN — 16 siluetas que se reconocen
+  // de lejos: hangar, radar, casa, castillo, moneda, libro, diana,
+  // telescopio, brújula, antena, monolito, prisma, red, escudo,
+  // matraz y robot. Geometrías propias (el despiece es total).
+  private figuraCiudad(key: string, matHi: THREE.Material, matBase: THREE.Material): THREE.Group {
+    const g = new THREE.Group();
+    const poner = (geo: THREE.BufferGeometry, m: THREE.Material, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) => {
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.position.set(x, y, z);
+      mesh.rotation.set(rx, ry, rz);
+      mesh.scale.set(sx, sy, sz);
+      g.add(mesh);
+      return mesh;
+    };
+    const caja = (w: number, h: number, d: number) => new THREE.BoxGeometry(w, h, d);
+    switch (key) {
+      case "hangar": // la base 3D: nave con techo de sierra
+        poner(caja(0.3, 0.16, 0.24), matBase, 0, 0.08, 0);
+        poner(new THREE.ConeGeometry(0.17, 0.12, 4), matHi, 0, 0.22, 0, 0, Math.PI / 4, 0);
+        break;
+      case "inteligencia": // radar: plato + haz
+        poner(new THREE.SphereGeometry(0.11, 10, 8), matBase, 0, 0.1, 0, 0, 0, 0, 1, 0.6, 1);
+        poner(new THREE.TorusGeometry(0.13, 0.02, 6, 16), matHi, 0, 0.1, 0.02, -0.7, 0, 0);
+        poner(new THREE.CylinderGeometry(0.014, 0.02, 0.14, 6), matBase, 0, 0.02, 0);
+        break;
+      case "inicio": // la casa: hogar dorado de Vanguard
+        poner(caja(0.26, 0.14, 0.2), matBase, 0, 0.07, 0);
+        poner(new THREE.ConeGeometry(0.2, 0.14, 4), matHi, 0, 0.2, 0, 0, Math.PI / 4, 0);
+        break;
+      case "juego": // el castillo: dos torres y muralla
+        poner(new THREE.CylinderGeometry(0.05, 0.06, 0.24, 8), matBase, -0.11, 0.12, 0);
+        poner(new THREE.CylinderGeometry(0.05, 0.06, 0.24, 8), matBase, 0.11, 0.12, 0);
+        poner(caja(0.3, 0.12, 0.1), matHi, 0, 0.06, 0);
+        break;
+      case "mercado": // la moneda de pie
+        poner(new THREE.CylinderGeometry(0.13, 0.13, 0.03, 16), matHi, 0, 0.13, 0, Math.PI / 2, 0, 0);
+        poner(new THREE.TorusGeometry(0.13, 0.018, 6, 18), matBase, 0, 0.13, 0);
+        break;
+      case "archivo": // el libro abierto
+        poner(caja(0.24, 0.03, 0.17), matBase, -0.11, 0.06, 0, 0, 0, 0.28);
+        poner(caja(0.24, 0.03, 0.17), matHi, 0.11, 0.06, 0, 0, 0, -0.28);
+        break;
+      case "comando": // la diana del mando diario
+        poner(new THREE.TorusGeometry(0.13, 0.02, 6, 18), matHi, 0, 0.14, 0);
+        poner(caja(0.3, 0.016, 0.016), matBase, 0, 0.14, 0);
+        poner(caja(0.016, 0.3, 0.016), matBase, 0, 0.14, 0);
+        poner(new THREE.SphereGeometry(0.032, 8, 8), matHi, 0, 0.14, 0);
+        break;
+      case "observatorio": // el telescopio bajo la cúpula
+        poner(new THREE.SphereGeometry(0.12, 10, 8), matBase, 0, 0.09, 0, 0, 0, 0, 1, 0.72, 1);
+        poner(new THREE.CylinderGeometry(0.028, 0.036, 0.24, 8), matHi, 0.05, 0.2, 0, 0, 0, -0.9);
+        break;
+      case "estrategia": // la brújula táctica
+        poner(new THREE.OctahedronGeometry(0.11, 0), matHi, 0, 0.13, 0);
+        poner(new THREE.TorusGeometry(0.15, 0.014, 6, 18), matBase, 0, 0.13, 0, 0.5, 0.4, 0);
+        break;
+      case "emisora": // la antena con ondas
+        poner(new THREE.CylinderGeometry(0.012, 0.02, 0.3, 6), matBase, 0, 0.15, 0);
+        poner(new THREE.TorusGeometry(0.07, 0.008, 6, 14), matHi, 0, 0.2, 0);
+        poner(new THREE.TorusGeometry(0.12, 0.008, 6, 14), matHi, 0, 0.26, 0);
+        break;
+      case "oscsuro": // el monolito de la verdad cruda
+        poner(caja(0.14, 0.26, 0.1), matBase, 0, 0.13, 0);
+        poner(new THREE.SphereGeometry(0.024, 6, 6), matHi, -0.04, 0.18, 0.05);
+        poner(new THREE.SphereGeometry(0.024, 6, 6), matHi, 0.04, 0.18, 0.05);
+        break;
+      case "creadores": // el prisma de la creación
+        poner(new THREE.OctahedronGeometry(0.13, 0), matHi, 0, 0.14, 0);
+        poner(new THREE.OctahedronGeometry(0.06, 0), matBase, 0.14, 0.05, 0.06);
+        break;
+      case "social": // la red de la comunidad
+        poner(new THREE.SphereGeometry(0.035, 8, 8), matHi, -0.1, 0.06, 0);
+        poner(new THREE.SphereGeometry(0.035, 8, 8), matHi, 0.1, 0.06, 0);
+        poner(new THREE.SphereGeometry(0.035, 8, 8), matHi, 0, 0.2, 0);
+        poner(new THREE.CylinderGeometry(0.007, 0.007, 0.2, 5), matBase, 0, 0.1, 0, 0, 0, Math.PI / 2.6);
+        poner(new THREE.CylinderGeometry(0.007, 0.007, 0.2, 5), matBase, -0.05, 0.13, 0, 0, 0, -Math.PI / 2.6);
+        break;
+      case "sistema": // el escudo del sistema
+        poner(new THREE.CylinderGeometry(0.13, 0.13, 0.035, 14), matBase, 0, 0.12, 0, 0, 0, 0, 1, 1, 0.5);
+        poner(new THREE.OctahedronGeometry(0.06, 0), matHi, 0, 0.13, 0.03);
+        break;
+      case "experimental": // el matraz de los imposibles
+        poner(new THREE.ConeGeometry(0.1, 0.2, 10), matBase, 0, 0.1, 0);
+        poner(new THREE.SphereGeometry(0.035, 8, 8), matHi, 0, 0.22, 0);
+        break;
+      case "arquitecto": // el robot que construye solo
+        poner(caja(0.15, 0.11, 0.11), matBase, 0, 0.09, 0);
+        poner(new THREE.CylinderGeometry(0.008, 0.008, 0.1, 5), matHi, 0, 0.2, 0);
+        poner(new THREE.SphereGeometry(0.024, 8, 8), matHi, 0, 0.26, 0);
+        break;
+      default: // la silueta comodín: el octaedro Vanguard
+        poner(new THREE.OctahedronGeometry(0.12, 0), matHi, 0, 0.13, 0);
+        break;
+    }
+    return g;
+  }
+
+  // CONSTRUIR LA CIUDAD — suelo holo, filas de edificios (8 por fila en
+  // escritorio, 4 en móvil), título, frase y VOLVER. Todo con geometrías
+  // propias; el ancho se recalcula del aspect para que NUNCA se salga
+  // del cuadro (lección v145 de calibración en coordenadas de pantalla).
+  private construirCiudad() {
+    const cat = this.ciudadCatalogo;
+    if (!cat.length) return;
+    const movil = this.esMovil();
+    const aspect = this.camara.aspect;
+    const dist = 2.55;
+    const fovR = (this.camara.fov * Math.PI) / 180;
+    const alto = 2 * dist * Math.tan(fovR / 2);
+    const frac = movil ? 0.245 : 0.225;
+    // el SEMIANCHO del cuadro en coordenadas LOCALES de la ciudad
+    const halfW = aspect / (2 * frac);
+    const g = new THREE.Group();
+    g.visible = false;
+    this.ciudadGrupo = g;
+    this.ciudadEdificios = [];
+    this.ciudadPlateMats = [];
+    this.ciudadTituloMat = null;
+    this.proxiesCiudad = [];
+
+    // EL SUELO — disco holo con aro dorado perimetral
+    const suelo = new THREE.Mesh(
+      new THREE.CircleGeometry(3.34, 44),
+      new THREE.MeshBasicMaterial({ color: 0x060d18, transparent: true, opacity: 0.62, depthWrite: false }),
+    );
+    suelo.rotation.x = -Math.PI / 2;
+    suelo.position.y = -1.44;
+    g.add(suelo);
+    const aro = new THREE.Mesh(
+      new THREE.TorusGeometry(3.34, 0.012, 6, 56),
+      new THREE.MeshBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.5 }),
+    );
+    aro.rotation.x = -Math.PI / 2;
+    aro.position.y = -1.42;
+    g.add(aro);
+    const matPodio = new THREE.MeshStandardMaterial({ color: 0x0b1526, metalness: 0.7, roughness: 0.4 });
+    const matProxy = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false });
+
+    // EL TRAZADO — filas de manzanas con callejón entre ellas
+    const cols = movil ? 4 : 8;
+    const pasoX = movil ? 0.46 : 0.74;
+    const pasoZ = movil ? 0.58 : 1.5;
+    const zDesde = movil ? -1.05 : -0.95;
+    const baseY = -1.42;
+    for (let i = 0; i < cat.length; i++) {
+      const sec = cat[i];
+      const nHex = parseInt(String(sec.color).replace("#", ""), 16);
+      const hex = Number.isFinite(nHex) ? nHex : 0xf5c542;
+      const fila = Math.floor(i / cols);
+      const col = i % cols;
+      const nEnFila = Math.min(cols, cat.length - fila * cols);
+      const x = (col - (nEnFila - 1) / 2) * pasoX + (fila % 2 ? pasoX * 0.18 : 0);
+      const z = zDesde + fila * pasoZ;
+      const h = (movil ? 0.5 : 0.62) + ((i * 37) % 4) * 0.08 - fila * 0.03;
+      const matTorre = new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: 0.15, metalness: 0.62, roughness: 0.3, transparent: true, opacity: 0.95 });
+      const matHi = new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: 0.5, metalness: 0.5, roughness: 0.26 });
+      const ed = new THREE.Group();
+      ed.position.set(x, baseY, z);
+      const podio = new THREE.Mesh(new THREE.BoxGeometry(pasoX * 0.84, 0.1, pasoX * 0.84), matPodio);
+      podio.position.y = 0.05;
+      ed.add(podio);
+      const torreGeo = new THREE.BoxGeometry(pasoX * 0.65, h, pasoX * 0.65);
+      const torre = new THREE.Mesh(torreGeo, matTorre);
+      torre.position.y = h / 2 + 0.1;
+      ed.add(torre);
+      if (!this.calidadBaja) {
+        const filo = new THREE.LineSegments(
+          new THREE.EdgesGeometry(torreGeo),
+          new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.5 }),
+        );
+        filo.position.copy(torre.position);
+        ed.add(filo);
+      }
+      // LA FIGURA PROPIA — la silueta que delata la sección de lejos
+      const fig = this.figuraCiudad(sec.key, matHi, matTorre);
+      const figS = movil ? 0.85 : 1;
+      fig.scale.setScalar(figS);
+      fig.position.y = h + 0.1 + 0.16 * figS;
+      ed.add(fig);
+      // EL NOMBRE en letras extruidas, acotado a la manzana (lección v145)
+      let plateMat: THREE.MeshStandardMaterial | null = null;
+      if (this.fuente && sec.label) {
+        const t = this.hacerTexto3D(sec.label, { tam: movil ? 0.055 : 0.082, prof: 0.02, color: hex, emis: 0.8 });
+        for (const l of t.letras) l.mesh.visible = true;
+        const escP = Math.min(1, (pasoX * (movil ? 1.1 : 0.92)) / Math.max(t.ancho, 0.001));
+        t.grupo.scale.setScalar(escP);
+        t.grupo.position.set((-t.ancho * escP) / 2, h + 0.36, 0);
+        ed.add(t.grupo);
+        plateMat = t.grupo.children.length ? ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial) : null;
+        if (plateMat) this.ciudadPlateMats.push(plateMat);
+      }
+      // EL PROXY — el edificio entero es un botón (entra a su primer mundo)
+      const proxy = new THREE.Mesh(new THREE.SphereGeometry(movil ? 0.21 : 0.34, 8, 8), matProxy);
+      proxy.position.set(0, h * 0.55 + 0.1, 0);
+      proxy.userData = { ciudad: { tab: sec.tabs?.[0]?.key ?? "", seccion: sec.key } };
+      ed.add(proxy);
+      this.proxiesCiudad.push(proxy);
+      g.add(ed);
+      this.ciudadEdificios.push({ grupo: ed, x0: x, y0: baseY, z0: z, fase: Math.random() * Math.PI * 2, fig, plateMat, nacido: true });
+    }
+
+    // EL TÍTULO + LA FRASE + VOLVER — acotados al semiancho local
+    if (this.fuente) {
+      const tit = this.hacerTexto3D("LA CIUDAD VANGUARD", { tam: 0.15, prof: 0.045, color: 0xf5c542, emis: 0.6 });
+      for (const l of tit.letras) { l.mesh.visible = true; l.quieto = true; }
+      tit.grupo.scale.setScalar(Math.min(1, (halfW * 0.92) / Math.max(tit.ancho, 0.001)));
+      tit.grupo.position.set(-tit.ancho * tit.grupo.scale.x * 0.5, 1.66, 0.9);
+      g.add(tit.grupo);
+      this.ciudadTituloMat = tit.grupo.children.length ? ((tit.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial) : null;
+      const fra = this.hacerTexto3D("CADA SECCIÓN ES UN MUNDO · TOCA UN EDIFICIO", { tam: 0.058, prof: 0.014, color: 0xbfe4ff, emis: 0.7 });
+      for (const l of fra.letras) l.mesh.visible = true;
+      fra.grupo.scale.setScalar(Math.min(1, (halfW * 0.9) / Math.max(fra.ancho, 0.001)));
+      fra.grupo.position.set(-fra.ancho * fra.grupo.scale.x * 0.5, 1.42, 0.9);
+      g.add(fra.grupo);
+      const fraMat = fra.grupo.children.length ? ((fra.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial) : null;
+      if (fraMat) this.ciudadPlateMats.push(fraMat);
+      const vol = this.hacerTexto3D("VOLVER", { tam: 0.075, prof: 0.018, color: 0xff8ab5, emis: 0.8 });
+      for (const l of vol.letras) l.mesh.visible = true;
+      const volX = Math.min(halfW * 0.78, 2.62);
+      vol.grupo.position.set(volX - vol.ancho / 2, 1.66, 0.9);
+      g.add(vol.grupo);
+      const volMat = vol.grupo.children.length ? ((vol.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial) : null;
+      if (volMat) this.ciudadPlateMats.push(volMat);
+      const proxyV = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), matProxy);
+      proxyV.position.set(volX, 1.66, 0.9);
+      proxyV.userData = { ciudad: { cerrar: true } };
+      g.add(proxyV);
+      this.proxiesCiudad.push(proxyV);
+    }
+    this.escena.add(g);
+  }
+
+  abrirCiudad() {
+    if (this.ciudadAbierta) return;
+    if (!this.ciudadCatalogo.length) return; // sin catálogo no hay ciudad
+    if (!this.ciudadGrupo || this.ciudadSucia) { this.destruirCiudad(); this.construirCiudad(); this.ciudadSucia = false; }
+    if (!this.ciudadGrupo) return;
+    this.ciudadAbierta = true;
+    // la Casa se aparta: la ciudad es el ÚNICO contenido mientras eliges
+    // (el panel DOM le pisaba el centro y el guard del puente ignoraba
+    // sus toques — html[data-vg-ciudad] la duerme como data-wgl-entrada)
+    document.documentElement.setAttribute("data-vg-ciudad", "1");
+    // la sala y el mundo de la sección se apartan: eliges en LIMPIO
+    this.ciudadSalaVisible = this.salaInst?.grupo.visible ?? false;
+    this.ciudadMundoVisible = this.mundoInst?.grupo.visible ?? false;
+    if (this.salaInst) this.salaInst.grupo.visible = false;
+    if (this.mundoInst) this.mundoInst.grupo.visible = false;
+    this.anclarCiudad(true);
+    // NACIMIENTO EN CASCADA — la ciudad crece ante tus ojos, edificio a
+    // edificio (las letras ya están vestidas y laten al aparecer)
+    for (let i = 0; i < this.ciudadEdificios.length; i++) {
+      const ed = this.ciudadEdificios[i];
+      ed.nacido = false;
+      ed.grupo.position.set(ed.x0, ed.y0 - 0.55, ed.z0);
+      ed.grupo.scale.setScalar(0.55);
+      const dummy = { d: 0 };
+      this.animarP(dummy, { d: 1 }, 60 + i * 46, {
+        onDone: () => {
+          if (!this.ciudadAbierta) return;
+          this.animarP(ed.grupo.position, { x: ed.x0, y: ed.y0, z: ed.z0 }, 560, { ease: easeOut });
+          this.animarP(ed.grupo.scale, { x: 1, y: 1, z: 1 }, 560, { ease: easeOut, onDone: () => { ed.nacido = true; } });
+        },
+      });
+    }
+    sonar("ping");
+  }
+
+  cerrarCiudad(instant = false) {
+    if (!this.ciudadAbierta) return;
+    this.ciudadAbierta = false;
+    document.documentElement.removeAttribute("data-vg-ciudad");
+    const g = this.ciudadGrupo;
+    if (g) {
+      if (instant) {
+        g.visible = false;
+      } else {
+        const s0 = g.scale.x;
+        const obj = { t: 0 };
+        this.animarP(obj, { t: 1 }, 240, {
+          onUpdate: () => g.scale.setScalar(Math.max(s0 * (1 - obj.t), 0.001)),
+          onDone: () => { g.visible = false; },
+        });
+      }
+    }
+    // la sección vuelve a su sitio
+    if (this.salaInst && this.ciudadSalaVisible) this.salaInst.grupo.visible = true;
+    if (this.mundoInst && this.ciudadMundoVisible) this.mundoInst.grupo.visible = true;
+  }
+
+  // el ANCLA de la ciudad: abraza la cámara a 2.55 (el mismo abrazo del
+  // mundo privado) con un pelín de caída — diorama ante el piloto
+  private anclarCiudad(instant = false) {
+    const g = this.ciudadGrupo;
+    if (!g) return;
+    const escala = this.medirCiudadEscala();
+    _vA.set(0, 0, 0);
+    this.camara.getWorldDirection(_vA);
+    _vB.set(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const alto = 2 * 2.55 * Math.tan((this.camara.fov * Math.PI) / 360);
+    g.position.copy(this.camara.position).addScaledVector(_vA, 2.55).addScaledVector(_vB, alto * -0.05);
+    g.quaternion.copy(this.camara.quaternion);
+    g.visible = true;
+    if (instant) { g.scale.setScalar(escala); return; }
+    g.scale.setScalar(escala * 0.86);
+    this.animarP(g.scale, { x: escala, y: escala, z: escala }, 620, { ease: easeOut });
+  }
+
+  private medirCiudadEscala(): number {
+    const movil = this.esMovil();
+    const alto = 2 * 2.55 * Math.tan((this.camara.fov * Math.PI) / 360);
+    return alto * (movil ? 0.245 : 0.225);
+  }
+
+  // por frame mientras la ciudad vive: pega a la cámara SIN tocar la escala
+  // (la animación de entrada es la dueña de la escala)
+  private anclarCiudadFrame() {
+    const g = this.ciudadGrupo;
+    if (!g) return;
+    this.camara.getWorldDirection(_vA);
+    _vB.set(0, 1, 0).applyQuaternion(this.camara.quaternion);
+    const alto = 2 * 2.55 * Math.tan((this.camara.fov * Math.PI) / 360);
+    g.position.copy(this.camara.position).addScaledVector(_vA, 2.55).addScaledVector(_vB, alto * -0.05);
+    g.quaternion.copy(this.camara.quaternion);
+  }
+
+  // LA CIUDAD RESPIRA — placas que aparecen y laten, edificios que flotan,
+  // figuras que giran: el menú es un lugar vivo, no un cartel
+  ticCiudad(t: number, dt: number) {
+    for (const m of this.ciudadPlateMats) {
+      if (m.opacity < 1) m.opacity = Math.min(1, m.opacity + dt * 1.8);
+    }
+    if (this.ciudadTituloMat) {
+      if (this.ciudadTituloMat.opacity < 0.94) this.ciudadTituloMat.opacity = Math.min(0.94, this.ciudadTituloMat.opacity + dt * 1.8);
+      this.ciudadTituloMat.emissiveIntensity = 0.55 + Math.sin(t * 2.1) * 0.18;
+    }
+    for (const ed of this.ciudadEdificios) {
+      if (!ed.nacido) continue;
+      ed.grupo.position.y = ed.y0 + Math.sin(t * 0.85 + ed.fase) * 0.026;
+      if (ed.fig) ed.fig.rotation.y += dt * 0.7;
+      if (ed.plateMat) ed.plateMat.emissiveIntensity = 0.72 + Math.sin(t * 1.7 + ed.fase) * 0.22;
+    }
+  }
+
   // ── HOVER del puente — la placa respira más fuerte bajo el puntero ──
   apuntar(nx: number, ny: number) {
     let objetivo: THREE.Mesh | null = null;
-    if (this.proxiesHolo.length) {
+    if (this.ciudadAbierta && this.proxiesCiudad.length) {
+      const ray = new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
+      const hit = ray.intersectObjects(this.proxiesCiudad, false)[0];
+      if (hit && ancestroVisible(hit.object)) objetivo = hit.object as THREE.Mesh;
+    } else if (this.proxiesHolo.length) {
       const ray = new THREE.Raycaster();
       ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
       const hit = ray.intersectObjects(this.proxiesHolo, false)[0];
@@ -2695,10 +3126,19 @@ class MundoWGL {
   }
 
   // ── RAYCAST — portales/títulos → marcadores → globo ──
-  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "portal" | "marcador" | "globo" | "sala" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
+  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "ciudad" | "portal" | "marcador" | "globo" | "sala" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
     if (ignorarUI) return { tipo: "nada" };
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
+    // v154: LA CIUDAD-MENÚ — los edificios pisan a TODO mientras eliges
+    if (this.ciudadAbierta && this.proxiesCiudad.length) {
+      const hitC = ray.intersectObjects(this.proxiesCiudad, false)[0];
+      if (hitC && ancestroVisible(hitC.object)) {
+        const u = hitC.object.userData?.ciudad;
+        if (u?.cerrar) return { tipo: "ciudad", key: "__cerrar" };
+        if (u?.tab) return { tipo: "ciudad", key: String(u.tab) };
+      }
+    }
     // v144: EL PUENTE primero — las placas de mando pisan al resto del mundo
     if (this.proxiesHolo.length) {
       const hitH = ray.intersectObjects(this.proxiesHolo, false)[0];
@@ -3047,6 +3487,21 @@ class MundoWGL {
     if (this.salaInst && this.salaInst.grupo.visible) this.salaInst.tic(t, dt);
     // v148: el mundo privado de la sección también respira
     if (this.mundoInst && this.mundoInst.grupo.visible) this.mundoInst.tic(t, dt);
+    // v154 — LA CIUDAD-MENÚ: pega a la cámara y respira mientras eliges
+    if (this.ciudadAbierta && this.ciudadGrupo) {
+      this.anclarCiudadFrame();
+      this.ticCiudad(t, dt);
+    }
+    // v154 — EL TINTE DE SECCIÓN: el fondo del universo lava hacia el color
+    // de la sección activa (y la luz ambiental lo acompaña) — cero new por frame
+    if (this.cumarTinte) {
+      const kT = 1 - Math.exp(-dt * 2.2);
+      (this.cumarTinte.material as THREE.MeshBasicMaterial).color.lerp(this.tinteObjetivo, kT);
+      if (this.luzAmb) {
+        _colA.copy(this.tinteAmbBase).lerp(this.tinteObjetivo, 0.26);
+        this.luzAmb.color.lerp(_colA, kT);
+      }
+    }
     this.acoplarConsolaFrame();
     this.acoplarNavFrame();
     this.acoplarVentanaFrame();
@@ -3152,6 +3607,17 @@ class MundoWGL {
       // v145: los eventos de la sala 3D también se retiran
       window.removeEventListener("vg:sala3d", this.onSala3dEv);
       window.removeEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
+      // v154: la ciudad y su catálogo mueren con el mundo
+      window.removeEventListener("vg:holo-ciudad", this.onCiudadCatalogoEv);
+      window.removeEventListener("vg:ciudad-toggle", this.onCiudadToggleEv);
+      (window as unknown as { __vgMundo?: MundoWGL | null }).__vgMundo = null;
+      this.destruirCiudad();
+      if (this.cumarTinte) {
+        this.escena.remove(this.cumarTinte);
+        this.cumarTinte.geometry.dispose();
+        (this.cumarTinte.material as THREE.Material).dispose();
+        this.cumarTinte = null;
+      }
       (window as unknown as { __vgRailHost?: HTMLDivElement | null }).__vgRailHost = null;
       window.dispatchEvent(new CustomEvent("vg:wgl-railhost", { detail: null }));
       document.documentElement.removeAttribute("data-holo");
@@ -3357,8 +3823,15 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         }
         return;
       }
-      // v145: SALA 3D — una placa del contenido 3D tocada (votar la crisis,
-      // abrir un meme…) manda la acción a la sala DOM de la Casa
+      // v154: CIUDAD-MENÚ — un edificio tocado entra a su sección
+      if (g.tipo === "ciudad") {
+        sonar("click");
+        if (g.key === "__cerrar") { m.cerrarCiudad(); return; }
+        // ENTRAR a una sección desde su edificio: la Casa abre la pestaña y
+        // el cambio de pestaña recoge la ciudad (setPestanasHolo → cerrar)
+        window.dispatchEvent(new CustomEvent("vg:holo-accion", { detail: { accion: "tab", key: g.key } }));
+        return;
+      }
       if (g.tipo === "sala") {
         sonar("click");
         try {
@@ -3438,6 +3911,8 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const objetivo = e.target as HTMLElement | null;
       if (objetivo && (objetivo.tagName === "INPUT" || objetivo.tagName === "TEXTAREA" || objetivo.tagName === "SELECT" || objetivo.isContentEditable)) return;
       const k = e.key.toLowerCase();
+      // v154: ESC recoge la ciudad (la casa siempre responde)
+      if (k === "escape" && down && m.ciudadAbierta) { m.cerrarCiudad(); return; }
       if (!teclaValida(k)) return;
       if (down) m.teclas.add(k); else m.teclas.delete(k);
     };

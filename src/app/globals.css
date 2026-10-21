@@ -4541,6 +4541,14 @@ html[data-wgl-entrada="1"] .vg145-widhost,
 html[data-wgl-entrada="1"] .vg145-ventana,
 html[data-wgl-entrada="1"] .vg143-capsula { display: none !important; }
 
+/* ---- v154 LA CIUDAD-MENÚ: mientras eliges sección, la Casa se aparta —
+   la ciudad 3D es el único contenido (el panel DOM le pisaba el centro y
+   el guard del puente ignoraba sus toques). Patrón data-wgl-entrada. */
+html[data-vg-ciudad="1"] .vg143-navhost,
+html[data-vg-ciudad="1"] .vg145-widhost,
+html[data-vg-ciudad="1"] .vg145-ventana,
+html[data-vg-ciudad="1"] .vg143-capsula { display: none !important; }
+
 /* ---- 9. ACCESIBILIDAD v140 ------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   .vg140-warp { display: none; }

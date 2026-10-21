@@ -1026,6 +1026,33 @@ export default function Home() {
   // mandos: cada placa del puente despacha vg:holo-accion y aquí se ejecuta.
   // (tras cerrarPestana y abrirNueva: las deps existen aquí)
   // ════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════
+  // v154 LA CIUDAD-MENÚ — el MENÚ de Vanguard es una CIUDAD 3D:
+  // ① la Casa envía el catálogo de secciones al mundo (cada una con su
+  //   color de identidad) para que el universo levante sus edificios;
+  // ② MENU (placa del puente, tecla M, botones del chrome) YA NO abre el
+  //   panel DOM: abre la ciudad de secciones — un edificio con figura 3D
+  //   por sección, y ENTRAS a cada uno como si fuera una ciudad. El
+  //   MegaMenu DOM queda como respaldo si el mundo 3D no está vivo.
+  // ════════════════════════════════════════════════════════
+  const abrirMenu = useCallback(() => {
+    if (hostCapsula) window.dispatchEvent(new CustomEvent("vg:ciudad-toggle"));
+    else setMenuOpen(true);
+  }, [hostCapsula]);
+
+  // el catálogo de secciones viaja al mundo 3D (se envía al montar el
+  // puente y cada vez que el idioma renombra las secciones)
+  useEffect(() => {
+    if (!hostCapsula) return;
+    const secciones = SECTIONS.map((s) => ({
+      key: s.key,
+      label: s.short,
+      color: accentOfSection(s.key),
+      tabs: s.tabs.slice(0, 5).map((tb) => ({ key: tb.key as string, label: tb.short })),
+    }));
+    window.dispatchEvent(new CustomEvent("vg:holo-ciudad", { detail: { secciones } }));
+  }, [hostCapsula]);
+
   useEffect(() => {
     if (!hostCapsula) return;
     const onHolo = (e: Event) => {
@@ -1037,14 +1064,14 @@ export default function Home() {
         case "cerrar": if (key) cerrarPestana(key); break;
         case "nueva": abrirNueva(); break;
         case "buscar": setSearchOpen(true); break;
-        case "menu": setMenuOpen(true); break;
+        case "menu": abrirMenu(); break;
         case "cuenta": setAccountOpen(true); break;
         case "ajustes": setSettingsOpen(true); break;
       }
     };
     window.addEventListener("vg:holo-accion", onHolo);
     return () => window.removeEventListener("vg:holo-accion", onHolo);
-  }, [hostCapsula, handleTabChange, cerrarPestana, abrirNueva]);
+  }, [hostCapsula, handleTabChange, cerrarPestana, abrirNueva, abrirMenu]);
 
   // las PESTAÑAS abiertas viajan al puente (placas 3D con letras extruidas)
   useEffect(() => {
@@ -1270,7 +1297,11 @@ export default function Home() {
       // scroll incluidos en el navegador interno) — nada se salta la franja.
       if (target) handleTabChange(target);
     };
-    const openMenu = () => setMenuOpen(true);
+    const openMenu = () => {
+      // v154: con el puente vivo, MENÚ = LA CIUDAD 3D (no el panel DOM)
+      if ((window as unknown as { __vgCapsulaHost?: HTMLElement | null }).__vgCapsulaHost) window.dispatchEvent(new CustomEvent("vg:ciudad-toggle"));
+      else setMenuOpen(true);
+    };
     const openAccount = () => setAccountOpen(true);
     // v102: el pasaporte se pide desde cualquier panel del taller/estudio
     const pedirPasaporte = (e: Event) => {
@@ -1437,7 +1468,7 @@ export default function Home() {
       />
       {/* v96.0 GOOGLE VIVO: la estructura de las webs más usadas del mundo —
           letras vivas + buscador central + INVESTIGAR + rejilla de apps */}
-      <GoogleBar active={tab} onChange={handleTabChange} onOpenMenu={() => setMenuOpen(true)} />
+      <GoogleBar active={tab} onChange={handleTabChange} onOpenMenu={abrirMenu} />
       {/* v106.0 PESTAÑAS DE CROMO: la franja del navegador interno — pestañas
           abiertas, + para la NUEVA, × para cerrar, buscar y menú a la derecha */}
       <ChromeTabs
@@ -1448,7 +1479,7 @@ export default function Home() {
         onCerrarVarias={cerrarVarias}
         onReordenar={setPestanas}
         onNueva={abrirNueva}
-        onOpenMenu={() => setMenuOpen(true)}
+        onOpenMenu={abrirMenu}
         onOpenSearch={() => setSearchOpen(true)}
         onDuplicar={duplicarPestana}
         onInmersion={alternarInmersion}

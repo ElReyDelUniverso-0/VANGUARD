@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v154.0",
+    nombre: "LA CIUDAD-MENÚ",
+    tipo: "mundo",
+    hitos: [
+      "EL MENÚ DE VANGUARD ES UNA CIUDAD 3D (mandato del Dueño: «el menú lo puedo 3D totalmente, cada sección módulo con una figura 3D y puedo entrar como si fuera una ciudad»): pulsar MENU (placa del puente, tecla M, botones del chrome) ya NO abre el panel DOM — levanta LA CIUDAD VANGUARD, un diorama de secciones que flota ante el piloto: suelo holográfico con aro dorado, manzanas de edificios en filas (8 por fila en escritorio, 4 en móvil), y UN EDIFICIO POR CADA SECCIÓN con su color de identidad",
+      "16 FIGURAS PROPIAS QUE SE RECONOCEN DE LEJOS: el hangar (nave con techo de sierra), la inteligencia (radar con haz), el inicio (casa dorada), el juego (castillo de dos torres), el mercado (moneda de pie con aro), el archivo (libro abierto), el comando (diana de mando), el observatorio (telescopio bajo cúpula), la estrategia (brújula táctica), la emisora (antena con ondas), la verdad cruda (monolito con ojos), los creadores (prisma), la social (red de nodos), el sistema (escudo), el experimental (matraz) y el arquitecto (robot que construye solo) — cada edificio es un BOTÓN: lo tocas y ENTRAS a su mundo",
+      "LAS LETRAS TE SIGUEN Y LA CIUDAD RESPIRA: la ciudad entera pega a la cámara (las letras extruidas de cada edificio, el título LA CIUDAD VANGUARD y la frase CADA SECCIÓN ES UN MUNDO · TOCA UN EDIFICIO te acompañan al volar), nace en CASCADA edificio a edificio, las placas aparecen fundiéndose, las figuras giran, los nombres laten — un lugar vivo, no un cartel",
+      "EL FONDO CAMBIA DE COLOR DEPENDIENDO DE LA SECCIÓN (mandato literal): una cúpula de tinte envuelve el universo y lava el cielo con el color de identidad de la sección activa (oro de inicio, rojo de verdad cruda, violeta de estrategia, verde matriz del arquitecto...) con transición exponencial suave — y la luz ambiental del universo se tiñe con él",
+      "CERO LAG POR DISEÑO: la ciudad solo existe mientras está abierta (visible=false = cero draw calls en el vuelo), geometrías propias con despiece total, filos de neón suprimidos en calidad baja, ESC o VOLVER la recogen, y al entrar a un edificio la sección abre su pestaña y la ciudad se recoge sola — el catálogo viaja de la Casa al mundo por vg:holo-ciudad y el MegaMenu DOM queda como respaldo si el puente 3D no vive",
+    ],
+  },
+  {
     version: "v153.0",
     nombre: "MUNDOS SEPARADOS",
     tipo: "mundo",
