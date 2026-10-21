@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v151.0",
+    nombre: "NUEVO VANGUARD",
+    tipo: "mundo",
+    hitos: [
+      "NACE /vanguard2: el NUEVO Vanguard mandato del Dueño — «cada sección su propio mundo 3D y no ligarlas todas; todo debe tener 3D, cada mínimo detalle» — motor nuevo limpio (src/components/vanguard2), paralelo a la Casa y sin tocarla",
+      "CERO CSS3D, CERO DOM: un solo canvas WebGL a pantalla completa; el guardia SoloCasa impide que retención, pulso, regreso o rehidratador monten sobre el universo (la «capa 2D» es estructuralmente imposible)",
+      "147 MUNDOS INDEPENDIENTES: los 147 tabs extraídos a tabs-v2.json; HUB portaviones con 11 portales + ÍNDICE TOTAL (muro curvo de 147 placas) + generador procedural con semilla propia por sección (monumento, color, frases y placas únicas) — cada mundo nace al entrar y se despieza al salir",
+      "MUNDOS INSIGNIA CON DATOS REALES: NOTICIAS (GDELT /api/news shape items), MEMES (meme del día + galería con likes), QUIZ (10 preguntas reales + recompensa al ledger v2), ENCUESTAS (SÍ/NO con barras vivas), PERFIL (ficha del agente v2 + nivel del clásico), TIENDA (compra real), LOGROS (progreso real), CONFLICTOS (globo con pines por intensidad), PRONÓSTICO y BANCO CENTRAL V2",
+      "LETRAS 3D EN TODO: la typeface Rajdhani VIVE EN EL BUNDLE (fetch+FontLoader.load se colgaban en producción del lab — QA con diagnóstico en vivo); título, subtítulo, datos, precios, frases y botones: todo extruido; rescate por bloques si la fuente faltara",
+      "VUELO LIBRE v2: arrastrar mira con inercia, WASD+QE/rueda, dos dedos deslizan, doble toque empuja, límites que deslizan, FOV 62, raycast con poda de pickables muertos y umbral de tap tolerante (700ms — el click del lab tarda hasta 517ms)",
+      "GOBERNADOR: DPR cap 1.6/1.25 + FPS adaptativo (0.85 medido en lab), pausa en pestaña dormida, despieza geometrías al salir, materiales compartidos; QA E2E producción: ciclo HUB→QUIZ (acierto real +25C/+30XP al ledger)→VOLVER, ÍNDICE→conquista procedural, MEMES con meme del día real, NOTICIAS GDELT 6 piezas, móvil 390px con dprCap 1.25",
+      "LECCIONES QA: chunk de nombre estable cacheado por Chrome (protocolo bitácora v150), el script start apunta a standalone inexistente (next start directo), OOM del dev-server (build de producción para QA larga)",
+    ],
+  },
+  {
     version: "v150.0",
     nombre: "INFORMACION EN VOLUMEN",
     tipo: "mundo",

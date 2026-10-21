@@ -15,6 +15,9 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { RetentionLayer } from "@/components/vanguard/retention-layer";
+// v151.0 VANGUARD-2: guardia de ruta — /vanguard2 es un universo 3D puro,
+// ninguna capa DOM de la Casa monta encima (mandato: cero 2D en el nuevo Vanguard)
+import { SoloCasa } from "@/components/vanguard2/solo-casa";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 import { MotorAgentes } from "@/components/vanguard/motor-agentes";
@@ -271,24 +274,37 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}
         {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados
             entran tras la hidratación de React; adiós al error #418 para siempre */}
-        <Rehidratador />
+        <SoloCasa>
+          <Rehidratador />
+        </SoloCasa>
         {/* v133.0: el cuerpo de agentes autónomos — la Casa se pule sola
             en cualquier sala, sin que nadie tenga que visitar su sala */}
-        <MotorAgentes />
+        <SoloCasa>
+          <MotorAgentes />
+        </SoloCasa>
         {/* v134.0 EL ESTRENO — RETIRADO EN v148: la ceremonia de entrada del
             mundo WebGL (negro → estrellas → globo → logo 3D → placa ENTRAR)
             ES el estreno ahora; el tráiler DOM era la última capa 2D del
             arranque (mandato del Dueño: «arrancan 2D aún») */}
         {/* v135.0 NEXUS-HYPNOS: el pulso del planeta viste la Casa entera */}
-        <MotorNexus />
+        <SoloCasa>
+          <MotorNexus />
+        </SoloCasa>
         {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
-        <RetentionLayer />
+        <SoloCasa>
+          <RetentionLayer />
+        </SoloCasa>
         {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}
-        <PulsoAuto />
+        <SoloCasa>
+          <PulsoAuto />
+        </SoloCasa>
         {/* v101.0 EL REGRESO — PILAR 1: el mundo cambió mientras no mirabas (banner de regreso) */}
-        <RegresoBanner />
+        <SoloCasa>
+          <RegresoBanner />
+        </SoloCasa>
         <Toaster />
         <Sonner />
       </body>

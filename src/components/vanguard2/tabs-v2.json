@@ -1,0 +1,884 @@
+[
+ {
+  "key": "inicio",
+  "short": "INICIO",
+  "label": "Inicio (Noticias)",
+  "color": "amber"
+ },
+ {
+  "key": "redaccion",
+  "short": "REDACCIÓN",
+  "label": "LA REDACCIÓN (el lugar para leer el mundo: portada real con resumen, ¿por qué importa? e investigación en vivo)",
+  "color": "amber"
+ },
+ {
+  "key": "briefing",
+  "short": "BRIEFING",
+  "label": "Briefing diario",
+  "color": "amber"
+ },
+ {
+  "key": "misiones",
+  "short": "MISIONES",
+  "label": "Misiones",
+  "color": "red"
+ },
+ {
+  "key": "retos",
+  "short": "RETOS",
+  "label": "Retos diarios",
+  "color": "amber"
+ },
+ {
+  "key": "gancho",
+  "short": "GANANCIAS",
+  "label": "Centro de Ganancias",
+  "color": "amber"
+ },
+ {
+  "key": "conquista",
+  "short": "CONQUISTA",
+  "label": "Conquista",
+  "color": "amber"
+ },
+ {
+  "key": "mundo",
+  "short": "GUERRA",
+  "label": "Mundo de Guerra",
+  "color": "red"
+ },
+ {
+  "key": "multijugador",
+  "short": "MULTI",
+  "label": "Multijugador",
+  "color": "red"
+ },
+ {
+  "key": "detective",
+  "short": "DETECTIVE",
+  "label": "Archivos Nación (Detective)",
+  "color": "violet"
+ },
+ {
+  "key": "edad",
+  "short": "AOF",
+  "label": "Age of Nations",
+  "color": "red"
+ },
+ {
+  "key": "arcade",
+  "short": "ARCADE",
+  "label": "Arcade Pack",
+  "color": "red"
+ },
+ {
+  "key": "taller",
+  "short": "TALLER",
+  "label": "TALLER DE JUEGOS (crea, publica y juega juegos de la comunidad — sin código)",
+  "color": "amber"
+ },
+ {
+  "key": "bookmaker",
+  "short": "BETNACIÓN",
+  "label": "BetNación (Casa de Apuestas)",
+  "color": "green"
+ },
+ {
+  "key": "enciclopedia",
+  "short": "ENCICLO",
+  "label": "Enciclopedia mundial",
+  "color": "cyan"
+ },
+ {
+  "key": "curiosidades",
+  "short": "CURIOSO",
+  "label": "Curiosidades",
+  "color": "amber"
+ },
+ {
+  "key": "epocas",
+  "short": "EPOCAS",
+  "label": "Épocas antiguas",
+  "color": "violet"
+ },
+ {
+  "key": "conquistas3d",
+  "short": "CONQ.3D",
+  "label": "Conquistas 3D",
+  "color": "cyan"
+ },
+ {
+  "key": "contadores",
+  "short": "CONTADORES",
+  "label": "Contadores mundiales",
+  "color": "red"
+ },
+ {
+  "key": "carteles",
+  "short": "CARTELES",
+  "label": "Carteles",
+  "color": "violet"
+ },
+ {
+  "key": "osint",
+  "short": "OSINT",
+  "label": "Sala OSINT (15 capas)",
+  "color": "cyan"
+ },
+ {
+  "key": "warsim",
+  "short": "WARSIM",
+  "label": "Simulador de Guerras",
+  "color": "red"
+ },
+ {
+  "key": "espionaje",
+  "short": "ESPIONAJE",
+  "label": "Red de Espionaje",
+  "color": "violet"
+ },
+ {
+  "key": "crisis",
+  "short": "CRISIS",
+  "label": "Crisis Mundial",
+  "color": "red"
+ },
+ {
+  "key": "geopolitica",
+  "short": "GEO",
+  "label": "Geopolítica en Vivo (ONU/USGS)",
+  "color": "cyan"
+ },
+ {
+  "key": "planeta",
+  "short": "PLANETA",
+  "label": "Planeta Vivo (NASA/auroras/EEI)",
+  "color": "cyan"
+ },
+ {
+  "key": "frente",
+  "short": "FRENTE",
+  "label": "Líneas de Frente en Vivo",
+  "color": "red"
+ },
+ {
+  "key": "estudio",
+  "short": "ESTUDIO",
+  "label": "Estudio de Video",
+  "color": "red"
+ },
+ {
+  "key": "directos",
+  "short": "DIRECTOS",
+  "label": "Directos en Vivo",
+  "color": "red"
+ },
+ {
+  "key": "envivo",
+  "short": "EN VIVO",
+  "label": "EN VIVO Mundial (Noticias + Comunidad)",
+  "color": "red"
+ },
+ {
+  "key": "contribuidores",
+  "short": "CONTRIB",
+  "label": "Comunidad de Contribuidores",
+  "color": "green"
+ },
+ {
+  "key": "abusos",
+  "short": "ABUSOS",
+  "label": "Crímenes y Abusos",
+  "color": "red"
+ },
+ {
+  "key": "incidentes",
+  "short": "INCIDEN",
+  "label": "Mapa de Incidentes",
+  "color": "red"
+ },
+ {
+  "key": "memorial",
+  "short": "MEMORIAL",
+  "label": "Memorial †",
+  "color": "violet"
+ },
+ {
+  "key": "sala18",
+  "short": "SALA 18+",
+  "label": "Sala Roja (18+)",
+  "color": "red"
+ },
+ {
+  "key": "dronguerra",
+  "short": "DR.GUERRA",
+  "label": "Guerra de Drones",
+  "color": "red"
+ },
+ {
+  "key": "recluta",
+  "short": "RECLUTA",
+  "label": "Cómo se Recluta (3D)",
+  "color": "cyan"
+ },
+ {
+  "key": "embajadores",
+  "short": "EMBAJAD",
+  "label": "Embajadores por País",
+  "color": "green"
+ },
+ {
+  "key": "telegram",
+  "short": "TELEGRAM",
+  "label": "Bot de Telegram",
+  "color": "cyan"
+ },
+ {
+  "key": "memes",
+  "short": "MEMES",
+  "label": "Estudio de Memes",
+  "color": "violet"
+ },
+ {
+  "key": "creador",
+  "short": "CREADOR",
+  "label": "Estudio Comunitario (sube tu contenido)",
+  "color": "violet"
+ },
+ {
+  "key": "armeria",
+  "short": "ARMERÍA",
+  "label": "Armería Real (fotos + armado)",
+  "color": "red"
+ },
+ {
+  "key": "maps",
+  "short": "G.MAPS",
+  "label": "Google Maps de Conflictos",
+  "color": "cyan"
+ },
+ {
+  "key": "studios",
+  "short": "ESTUDIOS",
+  "label": "Estudios Creadores (noticias, banderas, mapas, música)",
+  "color": "violet"
+ },
+ {
+  "key": "gobierno",
+  "short": "GOBIERNO",
+  "label": "Gobierno Mundial (presidente, decretos, reclutar)",
+  "color": "amber"
+ },
+ {
+  "key": "bolsamonedas",
+  "short": "MONEDAS",
+  "label": "Bolsa de Monedas (crea tu propia moneda)",
+  "color": "green"
+ },
+ {
+  "key": "hacienda",
+  "short": "BANCO",
+  "label": "Banco Central (sueldo, bóvedas, tesorería)",
+  "color": "amber"
+ },
+ {
+  "key": "foryou",
+  "short": "PARA TI",
+  "label": "Para Ti (feed de la comunidad)",
+  "color": "red"
+ },
+ {
+  "key": "pantalla",
+  "short": "V.TV",
+  "label": "Vanguard TV (feed vertical + sala de proyección)",
+  "color": "amber"
+ },
+ {
+  "key": "ojodios",
+  "short": "OJO",
+  "label": "Vista Dios (Ojo de Dios)",
+  "color": "cyan"
+ },
+ {
+  "key": "expedientes",
+  "short": "ARCHIVO.S",
+  "label": "Archivo Secreto (expedientes desclasificados)",
+  "color": "violet"
+ },
+ {
+  "key": "oscura",
+  "short": "OSCURA",
+  "label": "Alejandría Oscura (teorías, armas y civilizaciones)",
+  "color": "red"
+ },
+ {
+  "key": "divisas",
+  "short": "DIVISAS",
+  "label": "Divisas del Mundo",
+  "color": "green"
+ },
+ {
+  "key": "perfil",
+  "short": "PERFIL",
+  "label": "Personalizar Perfil",
+  "color": "violet"
+ },
+ {
+  "key": "radar",
+  "short": "RADAR",
+  "label": "Radar Desinfo + Conexiones",
+  "color": "green"
+ },
+ {
+  "key": "operaciones",
+  "short": "OPERACIONES",
+  "label": "Sala de Operaciones",
+  "color": "amber"
+ },
+ {
+  "key": "empleos",
+  "short": "EMPLEOS",
+  "label": "Empleos de Vanguard (trabaja por sueldos)",
+  "color": "amber"
+ },
+ {
+  "key": "armodo",
+  "short": "AR",
+  "label": "MODO AR (conflictos en tu cámara)",
+  "color": "cyan"
+ },
+ {
+  "key": "mapascrea",
+  "short": "MAPAS.C",
+  "label": "Constructor de Mapas",
+  "color": "violet"
+ },
+ {
+  "key": "biblioteca",
+  "short": "BIBLIO",
+  "label": "Biblioteca Secreta",
+  "color": "amber"
+ },
+ {
+  "key": "tribunal",
+  "short": "TRIBUNAL",
+  "label": "Juicio Histórico",
+  "color": "amber"
+ },
+ {
+  "key": "alianzas",
+  "short": "ALIANZAS",
+  "label": "Alianzas",
+  "color": "violet"
+ },
+ {
+  "key": "agente",
+  "short": "AGENTE",
+  "label": "Perfil del Agente (IQ)",
+  "color": "cyan"
+ },
+ {
+  "key": "agenteia",
+  "short": "M.AGENTE",
+  "label": "MODO AGENTE (la IA superpotente que crea dentro de Vanguard)",
+  "color": "cyan"
+ },
+ {
+  "key": "mapa",
+  "short": "MAPA",
+  "label": "Mapa mundial",
+  "color": "amber"
+ },
+ {
+  "key": "noticias",
+  "short": "NOTICIAS",
+  "label": "Noticias",
+  "color": "amber"
+ },
+ {
+  "key": "galeria",
+  "short": "GALERÍA",
+  "label": "Galería OSINT",
+  "color": "violet"
+ },
+ {
+  "key": "briefings",
+  "short": "BRIEFINGS",
+  "label": "Briefings clasificados",
+  "color": "cyan"
+ },
+ {
+  "key": "camaras",
+  "short": "CÁMARAS",
+  "label": "Cámaras CCTV",
+  "color": "cyan"
+ },
+ {
+  "key": "pulso",
+  "short": "PULSO",
+  "label": "Pulso Mundial (satélite + radar aéreo)",
+  "color": "cyan"
+ },
+ {
+  "key": "hangar",
+  "short": "HANGAR",
+  "label": "EL HANGAR (Base 3D)",
+  "color": "cyan"
+ },
+ {
+  "key": "verdades",
+  "short": "VERDADES",
+  "label": "INFINITA VERDADES (el mayor centro de noticias)",
+  "color": "amber"
+ },
+ {
+  "key": "verifica",
+  "short": "VERIFICA",
+  "label": "Mesa de Verificación (OSINT: sellos + las dos orillas)",
+  "color": "amber"
+ },
+ {
+  "key": "centinela",
+  "short": "CENTINELA",
+  "label": "Centinela (alerta temprana del planeta)",
+  "color": "cyan"
+ },
+ {
+  "key": "espectro",
+  "short": "ESPECTRO",
+  "label": "Espectro en Vivo (tráfico aéreo y marítimo)",
+  "color": "cyan"
+ },
+ {
+  "key": "pulsos",
+  "short": "PULSOS",
+  "label": "Mapa de Pulsos en Vivo",
+  "color": "red"
+ },
+ {
+  "key": "evaluacion",
+  "short": "EVAL",
+  "label": "Evaluación de Campaña diaria",
+  "color": "amber"
+ },
+ {
+  "key": "perdidas",
+  "short": "PÉRDIDAS",
+  "label": "Pérdidas Confirmadas (registro visual)",
+  "color": "red"
+ },
+ {
+  "key": "frentes",
+  "short": "FRENTES",
+  "label": "Línea del Frente (zonas de control)",
+  "color": "cyan"
+ },
+ {
+  "key": "simulador",
+  "short": "SIMULADOR",
+  "label": "Simulador de Detonación",
+  "color": "red"
+ },
+ {
+  "key": "laboratorio",
+  "short": "LAB",
+  "label": "LABORATORIO DEL DESTINO (¿y si...? simulación contrafactual conectada al Espejo)",
+  "color": "sky"
+ },
+ {
+  "key": "cambios",
+  "short": "CAMBIOS",
+  "label": "EL MUNDO CAMBIA (informe de regreso: qué cambió desde tu última visita, con fechas y fuentes verificables)",
+  "color": "amber"
+ },
+ {
+  "key": "analista",
+  "short": "ANALISTA",
+  "label": "PERFIL DE ANALISTA (nivel, insignias, retos semanales de investigación y ELO)",
+  "color": "amber"
+ },
+ {
+  "key": "fortaleza",
+  "short": "FORTALEZA",
+  "label": "FORTALEZA DE ACERO (sellos de seguridad, muros y blindajes de la Ciudadela)",
+  "color": "green"
+ },
+ {
+  "key": "escenarios",
+  "short": "ESCENARIOS",
+  "label": "GALERÍA DEL DESTINO (escenarios ¿Y SI...? de la comunidad: explóralos, coméntalos y mejóralos)",
+  "color": "violet"
+ },
+ {
+  "key": "obras",
+  "short": "OBRAS",
+  "label": "MURO DE OBRAS (la vitrina de la comunidad: juega, simula, remezcla y expón — con Paseo de la Fama y el agente que evalúa)",
+  "color": "violet"
+ },
+ {
+  "key": "nueva",
+  "short": "NUEVA",
+  "label": "NUEVA PESTAÑA (elige tu destino: buscador, atajos y todo el índice de Vanguard)",
+  "color": "amber"
+ },
+ {
+  "key": "observatorio",
+  "short": "OBSERV",
+  "label": "MURALLA DE VIGILANCIA (el corazón del Observatorio: sismos, pulso, presencia y las 17 salas en vivo)",
+  "color": "cyan"
+ },
+ {
+  "key": "experimental",
+  "short": "EXPERIM",
+  "label": "EXPERIMENTAL (la página de los imposibles: forja de letras 3D, órbita de palabras y lluvia de letras)",
+  "color": "violet"
+ },
+ {
+  "key": "arquitecto",
+  "short": "ARQUIT",
+  "label": "ARQUITECTO (el agente autónomo que mejora Vanguard solo: se promptea a sí mismo, instala módulos, compone obras y nunca se detiene)",
+  "color": "green"
+ },
+ {
+  "key": "canales",
+  "short": "CANALES",
+  "label": "Canales OSINT en vivo",
+  "color": "violet"
+ },
+ {
+  "key": "mundial",
+  "short": "MUNDIAL",
+  "label": "Dossier Mundial de Naciones",
+  "color": "amber"
+ },
+ {
+  "key": "wikiguerra",
+  "short": "WIKI",
+  "label": "WIKIGUERRA (enciclopedia del conflicto)",
+  "color": "cyan"
+ },
+ {
+  "key": "cielos",
+  "short": "CIELOS",
+  "label": "CIELOS (vuelos militares en vivo)",
+  "color": "violet"
+ },
+ {
+  "key": "ciber",
+  "short": "CIBER",
+  "label": "CIBER (mapa de amenazas en vivo)",
+  "color": "green"
+ },
+ {
+  "key": "sismo",
+  "short": "SISMO",
+  "label": "SISMO (red sismológica global)",
+  "color": "red"
+ },
+ {
+  "key": "mercados",
+  "short": "MERCADOS",
+  "label": "Mercados de Guerra",
+  "color": "green"
+ },
+ {
+  "key": "imperio",
+  "short": "IMPERIO",
+  "label": "IMPERIO (auge y caída del continente)",
+  "color": "amber"
+ },
+ {
+  "key": "pronosticos",
+  "short": "PRONÓST",
+  "label": "Pronósticos de Inteligencia (escenarios + riesgo)",
+  "color": "green"
+ },
+ {
+  "key": "enclaves",
+  "short": "EN CLAVE",
+  "label": "El Mundo en Clave (explicador en 5 claves)",
+  "color": "red"
+ },
+ {
+  "key": "extranjera",
+  "short": "REVISTA",
+  "label": "Asuntos Exteriores (revista de ensayos)",
+  "color": "amber"
+ },
+ {
+  "key": "geoint",
+  "short": "GEOINT",
+  "label": "OJO-GEOINT (capas, detecciones IA y pases)",
+  "color": "cyan"
+ },
+ {
+  "key": "monitorglobal",
+  "short": "MONITOR",
+  "label": "Monitor Global (índices del núcleo neuronal)",
+  "color": "green"
+ },
+ {
+  "key": "canalbrief",
+  "short": "BRIEF.TV",
+  "label": "Canal Brief (briefing en vídeo con capítulos)",
+  "color": "red"
+ },
+ {
+  "key": "estrategia",
+  "short": "ESTRAT",
+  "label": "Estrategia Global (doctrinas y wargames)",
+  "color": "violet"
+ },
+ {
+  "key": "tierra",
+  "short": "EARTH",
+  "label": "VANGUARD EARTH (el googles de Vanguard)",
+  "color": "amber"
+ },
+ {
+  "key": "googles",
+  "short": "GOOGLES",
+  "label": "GOOGLES DE VANGUARD (buscador, tendencias, traductor, académico, noticias y alertas)",
+  "color": "amber"
+ },
+ {
+  "key": "imagenes",
+  "short": "IMAGENES",
+  "label": "IMÁGENES DE VANGUARD (búsqueda visual de fotos reales: lugares, poder, archivo, armas y civilizaciones)",
+  "color": "cyan"
+ },
+ {
+  "key": "mente",
+  "short": "MENTE",
+  "label": "LA MENTE DE VANGUARD (IA central: pulso autónomo del mundo, charla y expedientes neuronales)",
+  "color": "cyan"
+ },
+ {
+  "key": "grafo",
+  "short": "GRAFO",
+  "label": "GRAFO MUNDIAL (la red del conocimiento geopolítico de Vanguard)",
+  "color": "cyan"
+ },
+ {
+  "key": "espejo",
+  "short": "ESPEJO",
+  "label": "EL ESPEJO (una crisis, todas las perspectivas: confirmado, omitido y en disputa)",
+  "color": "red"
+ },
+ {
+  "key": "maquina",
+  "short": "TIEMPO",
+  "label": "MÁQUINA DEL TIEMPO (viaja por la historia de cada crisis, teatro del Karsk en vivo)",
+  "color": "amber"
+ },
+ {
+  "key": "mipais",
+  "short": "MI PAÍS",
+  "label": "MI PAÍS (simulador de nación)",
+  "color": "red"
+ },
+ {
+  "key": "videos",
+  "short": "VIDEOS",
+  "label": "GlobalVision",
+  "color": "red"
+ },
+ {
+  "key": "combate",
+  "short": "COMBATE",
+  "label": "Simulador de combate",
+  "color": "red"
+ },
+ {
+  "key": "historia",
+  "short": "HISTORIA",
+  "label": "Guerras históricas",
+  "color": "amber"
+ },
+ {
+  "key": "muertes",
+  "short": "MUERTES",
+  "label": "Figuras y bajas",
+  "color": "red"
+ },
+ {
+  "key": "quiz",
+  "short": "QUIZ",
+  "label": "Quiz geopolítico",
+  "color": "green"
+ },
+ {
+  "key": "bolsa",
+  "short": "MERCADO",
+  "label": "Mercado geopolítico",
+  "color": "green"
+ },
+ {
+  "key": "predicciones",
+  "short": "PREDIC",
+  "label": "Predicciones",
+  "color": "amber"
+ },
+ {
+  "key": "apuestas",
+  "short": "APUESTAS",
+  "label": "Apuestas de guerra",
+  "color": "amber"
+ },
+ {
+  "key": "estadisticas",
+  "short": "ESTADÍS",
+  "label": "Estadísticas",
+  "color": "cyan"
+ },
+ {
+  "key": "logros",
+  "short": "LOGROS",
+  "label": "Logros",
+  "color": "green"
+ },
+ {
+  "key": "recompensas",
+  "short": "RECOMP",
+  "label": "Recompensas",
+  "color": "amber"
+ },
+ {
+  "key": "ranking",
+  "short": "RANKING",
+  "label": "Ranking global",
+  "color": "amber"
+ },
+ {
+  "key": "racha",
+  "short": "RACHA",
+  "label": "Racha",
+  "color": "red"
+ },
+ {
+  "key": "fusion",
+  "short": "FUSION",
+  "label": "Fusion",
+  "color": "violet"
+ },
+ {
+  "key": "registro",
+  "short": "REGISTRO",
+  "label": "Registro",
+  "color": "cyan"
+ },
+ {
+  "key": "foros",
+  "short": "FOROS",
+  "label": "Foros",
+  "color": "cyan"
+ },
+ {
+  "key": "consejoia",
+  "short": "CONSEJO",
+  "label": "Consejo de Acero (IA)",
+  "color": "cyan"
+ },
+ {
+  "key": "salas",
+  "short": "SALAS",
+  "label": "Salas sociales",
+  "color": "violet"
+ },
+ {
+  "key": "encuestas",
+  "short": "ENCUESTAS",
+  "label": "Encuestas",
+  "color": "green"
+ },
+ {
+  "key": "amigos",
+  "short": "AMIGOS",
+  "label": "Amigos",
+  "color": "cyan"
+ },
+ {
+  "key": "torneos",
+  "short": "TORNEOS",
+  "label": "Torneos",
+  "color": "amber"
+ },
+ {
+  "key": "notificaciones",
+  "short": "ALERTAS",
+  "label": "Alertas",
+  "color": "amber"
+ },
+ {
+  "key": "tienda",
+  "short": "TIENDA",
+  "label": "Tienda",
+  "color": "cyan"
+ },
+ {
+  "key": "minijuego",
+  "short": "MINIJUEGO",
+  "label": "Minijuegos",
+  "color": "red"
+ },
+ {
+  "key": "atlas",
+  "short": "ATLAS",
+  "label": "ATLAS MUNDIAL (todos los países y las personas importantes del planeta con sus ubicaciones en vivo)",
+  "color": "cyan"
+ },
+ {
+  "key": "cama",
+  "short": "CAMA",
+  "label": "LA CAMA (personalización total: Vanguard se adapta a ti como la cama más cómoda)",
+  "color": "violet"
+ },
+ {
+  "key": "atelier",
+  "short": "ATELIER",
+  "label": "EL ATELIER (las cinco leyes del lujo: acabados finos, edición limitada numerada, tu serie grabada, modo galería e historia de la Casa)",
+  "color": "amber"
+ },
+ {
+  "key": "comunidad",
+  "short": "COMUNIDAD",
+  "label": "LA COMUNIDAD (los 18 ojos de la Casa: la Comunidad de Inteligencia de EE. UU. — ODNI, CIA, NSA y 15 más: pirámide, corredor de sedes, expedientes y pulso real)",
+  "color": "cyan"
+ },
+ {
+  "key": "redmundial",
+  "short": "RED MUNDIAL",
+  "label": "LA RED MUNDIAL (los 18 servicios del resto del planeta: MI6, Mossad, SVR/FSB/GRU, MSS, DGSE, BND, CNI, RAW, ISI y los Cinco Ojos — mapa del mundo, expedientes y pulso real)",
+  "color": "cyan"
+ },
+ {
+  "key": "salaguerra",
+  "short": "SALA GUERRA",
+  "label": "LA SALA DE GUERRA (el mando supremo: entra a un teatro 3D de la guerra en vivo, mapa maestro de frentes y control, fuerzas enfrentadas, pulso real y la bolsa de guerra)",
+  "color": "red"
+ },
+ {
+  "key": "rostros",
+  "short": "ROSTROS",
+  "label": "LOS ROSTROS DEL PODER (el dossier de las personas que mueven el mundo: presidentes, banqueros centrales, jueces y nuevos poderes — mapa de ubicaciones reales, expedientes finos y pulso real)",
+  "color": "amber"
+ },
+ {
+  "key": "agentes",
+  "short": "AGENTES",
+  "label": "EL GOBIERNO LIBRE (tu credencial exclusiva y los agentes autónomos que pulen Vanguard cada cierto tiempo — como un gobierno, pero libre)",
+  "color": "green"
+ },
+ {
+  "key": "dron",
+  "short": "DRON",
+  "label": "Dron Strike 3D",
+  "color": "red"
+ },
+ {
+  "key": "ayuda",
+  "short": "AYUDA",
+  "label": "Ayuda",
+  "color": "amber"
+ }
+]
