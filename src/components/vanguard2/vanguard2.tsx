@@ -32,6 +32,8 @@ export default function Vanguard2() {
       motor.irA(construirHub, "inicio", false); // arranque directo: 3D al instante
       if (typeof window !== "undefined") {
         (window as unknown as { __vg2?: MotorV2 }).__vg2 = motor; // QA/diagnóstico
+        // v155.0 LA CORTINA: el motor V2 nació y ya pinta — señal de vida
+        (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
       }
       setVisitas(true);
     } catch (e) {

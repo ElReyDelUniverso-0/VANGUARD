@@ -3345,6 +3345,11 @@ class MundoWGL {
     if (!this.vivo) return;
     this.raf = requestAnimationFrame(this.loop);
     this.ultimoFrame = performance.now();
+    // v155.0 LA CORTINA: el primer latido del corazón es la señal de vida —
+    // la pantalla de arranque estática (layout) se retira al verla
+    if (!(window as unknown as { __vgvivo?: boolean }).__vgvivo) {
+      (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
+    }
     const dt = Math.min(0.05, this.reloj.getDelta());
     if (this.calidadBaja) {
       this.acumFrame += dt;
@@ -4118,7 +4123,11 @@ function IntroFallback() {
     window.dispatchEvent(new CustomEvent("vg:wgl-entrada-estado", { detail: { on: false } }));
     let vivo = true;
     import("@/components/vanguard/intro-cinematica").then((m) => {
-      if (vivo) setComp(() => m.IntroCinematica);
+      if (vivo) {
+        setComp(() => m.IntroCinematica);
+        // v155.0 LA CORTINA: la intro va a pintarse — señal de vida a la cortina
+        (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
+      }
     });
     return () => { vivo = false; };
   }, []);

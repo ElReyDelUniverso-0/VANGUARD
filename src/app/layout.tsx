@@ -269,6 +269,89 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${inter.variable} ${rajdhani.variable} ${jetMono.variable} antialiased bg-background text-foreground min-h-screen`}
       >
+        {/* ════════════════════════════════════════════════════════════
+            v155.0 LA CORTINA DE ARRANQUE — la ley contra la pantalla muerta.
+            El Dueño (móvil) pasó 3 días viendo NADA: el servidor dev moría
+            de OOM y su teléfono se quedaba en negro sin decir nada. Esta
+            cortina es HTML/CSS PURO: se pinta ANTES de que exista JavaScript,
+            siempre. Si el universo tarda >12s en dar señal de vida
+            (window.__vgvivo, la pone el primer frame del mundo 3D, el
+            fallback sin WebGL y el motor de /vanguard2), ofrece el botón
+            «TOCA PARA DESPERTARLO» (recarga con guardia anti-bucle). Si el
+            fallo es de chunks viejos (despliegue nuevo), UNA recarga sola
+            por minuto. En las páginas ligeras (portales) se retira sola al
+            completar la carga: solo los universos 3D exigen señal de vida.
+            ════════════════════════════════════════════════════════════ */}
+        <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
+          <style dangerouslySetInnerHTML={{ __html: `
+            #vg-cortina{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(120% 90% at 50% 110%,#14100a 0%,#070606 55%,#050404 100%);transition:opacity .65s ease;font-family:var(--font-orbitron),system-ui,sans-serif}
+            #vg-cortina.vg-off{opacity:0;pointer-events:none}
+            #vg-cortina .vg-faro{width:9px;height:9px;border-radius:50%;background:#e8c476;box-shadow:0 0 0 0 rgba(232,196,118,.55);animation:vgFaro 1.6s ease-out infinite}
+            #vg-cortina .vg-marca{font-size:clamp(30px,9vw,60px);font-weight:800;letter-spacing:.4em;color:#e8c476;text-shadow:0 0 26px rgba(232,196,118,.28);margin-right:-.4em}
+            #vg-cortina .vg-estado{font-family:var(--font-jetmono),monospace;font-size:11px;letter-spacing:.32em;color:rgba(232,196,118,.72);text-transform:uppercase;text-align:center;padding:0 18px}
+            #vg-cortina .vg-estado::after{content:'';animation:vgPuntos 1.2s steps(4,end) infinite}
+            #vg-cortina .vg-barra{width:170px;height:2px;overflow:hidden;border-radius:2px;background:rgba(232,196,118,.14)}
+            #vg-cortina .vg-barra i{display:block;width:40%;height:100%;background:linear-gradient(90deg,transparent,#e8c476,transparent);animation:vgBrillo 1.15s linear infinite}
+            #vg-cortina-btn{display:none;margin-top:6px;border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.07);padding:15px 24px;letter-spacing:.24em;font-size:12px;font-weight:600;border-radius:2px;text-transform:uppercase;font-family:inherit}
+            #vg-cortina-btn[data-on="1"]{display:inline-block;animation:vgAparecer .5s ease-out}
+            #vg-cortina .vg-nojs{color:rgba(232,196,118,.8);font-size:12px;letter-spacing:.2em;text-align:center;padding:0 24px}
+            @keyframes vgFaro{0%{box-shadow:0 0 0 0 rgba(232,196,118,.5)}100%{box-shadow:0 0 0 18px rgba(232,196,118,0)}}
+            @keyframes vgBrillo{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+            @keyframes vgPuntos{0%{content:''}25%{content:'·'}50%{content:'··'}75%{content:'···'}}
+            @keyframes vgAparecer{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+            @media (prefers-reduced-motion:reduce){#vg-cortina *{animation:none !important}}
+          `}} />
+          <span className="vg-faro" />
+          <span className="vg-marca">VANGUARD</span>
+          <span className="vg-barra"><i /></span>
+          <span className="vg-estado" id="vg-cortina-estado">Desplegando el universo</span>
+          <button id="vg-cortina-btn" type="button">El universo no responde · Toca para despertarlo</button>
+          <noscript><span className="vg-nojs">VANGUARD necesita JavaScript activado para desplegar el universo 3D.</span></noscript>
+        </div>
+        <script dangerouslySetInnerHTML={{ __html: `(function(){
+try{
+  var c=document.getElementById('vg-cortina'); if(!c) return;
+  var btn=document.getElementById('vg-cortina-btn');
+  var st=document.getElementById('vg-cortina-estado');
+  var K='vg155-recarga';
+  var pesado=(location.pathname==='/')||(location.pathname.indexOf('/vanguard2')===0);
+  function apagar(){
+    if(c.getAttribute('data-off')==='1') return;
+    c.setAttribute('data-off','1'); c.className='vg-off';
+    setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },800);
+  }
+  function encender(msg){
+    if(c.getAttribute('data-off')==='1') return;
+    if(st&&msg) st.textContent=msg;
+    if(btn) btn.setAttribute('data-on','1');
+  }
+  function recargar(){
+    try{ sessionStorage.setItem(K,String(Date.now())); }catch(e){}
+    location.reload();
+  }
+  window.addEventListener('error',function(e){
+    if(window.__vgvivo===true||c.getAttribute('data-off')==='1') return;
+    var esRecurso=e&&e.target&&e.target.tagName&&(e.target.tagName==='SCRIPT'||e.target.tagName==='LINK');
+    var m=esRecurso?String((e.target.src||e.target.href||'')):String((e&&e.message)||'')+' '+String((e&&e.filename)||'');
+    if(esRecurso||/chunk|import|module|Failed to fetch|NetworkError|Load failed/i.test(m)){
+      var ult=0; try{ ult=Number(sessionStorage.getItem(K)||0); }catch(_){}
+      if(Date.now()-ult>60000){ recargar(); return; }
+    }
+    encender('Fallo de carga — toca para recargar');
+  },true);
+  window.addEventListener('unhandledrejection',function(){
+    if(window.__vgvivo!==true&&c.getAttribute('data-off')!=='1') encender('Fallo de carga — toca para recargar');
+  });
+  if(btn) btn.addEventListener('click',recargar);
+  var n=0;
+  var ojo=window.setInterval(function(){
+    n++;
+    if(window.__vgvivo===true||( !pesado && document.readyState==='complete')){ clearInterval(ojo); apagar(); return; }
+    if(pesado&&n===48) encender('Tarda más de lo normal — toca para despertarlo');
+    if(pesado&&n>=80){ clearInterval(ojo); encender('El universo no responde — toca para despertarlo'); }
+  },250);
+}catch(e){}
+})();` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

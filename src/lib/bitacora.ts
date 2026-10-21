@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v155.0",
+    nombre: "LA CORTINA DE ARRANQUE",
+    tipo: "tecno",
+    hitos: [
+      "EL FIN DE LOS 3 DÍAS DE NADA (diagnóstico de raíz del «no veo nada» del Dueño): el sandbox sega los procesos huérfanos y el servidor que sirve al móvil era el MODO DEV — 2.2GB de RSS que el kernel mataba por OOM (confirmado en dmesg, 6+ kills); cuando estaba vivo, el teléfono descargaba bundles sin minificar por red móvil. CURA ESTRUCTURAL: el script «dev» del entorno ahora sirve la BUILD DE PRODUCCIÓN (standalone, ~148MB de RSS estables, 1.86MB de carga total en móvil) — adiós al ciclo OOM-muerto-negro",
+      "LA CORTINA (layout.tsx): pantalla de arranque HTML/CSS PURO — faro dorado pulsante, VANGUARD en oro con tracking, barra de destello, «DESPLEGANDO EL UNIVERSO···» — se pinta ANTES de que exista JavaScript, así que NINGÚN fallo de red, chunk o WebGL puede volver a dejar al Dueño mirando negro eterno",
+      "LA SEÑAL DE VIDA (window.__vgvivo): la pone el primer latido del corazón del mundo (mundo-webgl loop), el fallback sin WebGL y el motor de /vanguard2 — la cortina la lee cada 250ms y se funde sola al verla",
+      "EL VIGILANTE: si en 12s no hay vida → «TARDA MÁS DE LO NORMAL — TOCA PARA DESPERTARLO»; en 20s → «EL UNIVERSO NO RESPONDE» — el botón de rescate siempre da control al Dueño (recarga con guardia anti-bucle en sessionStorage)",
+      "LA AUTO-RECARGA ANTI-CHUNK-VIEJO: errores de carga de recursos (fase de captura — los <script> rotos no disparan window.onerror normal) o ChunkLoadError → UNA recarga sola por minuto: el teléfono que quedó en un HTML caducado de hace días se cura con un toque o solo",
+      "QA E2E EN PRODUCCIÓN con iPhone 14 emulado: cortina cazada en pleno fundido hacia la ceremonia (qa-v155-01), ceremonia completa dorada con África de frente (qa-v155-02), cadena de rescate con JS bloqueado verificado de punta a punta — recarga única + botón visible (qa-v155-04), entrada al mundo real: Manual del Comandante, planeta vivo, puente INICIO/MENU, HUD AGENTE-7302, LA CIUDAD VIVA y cofre (qa-v155-05/06), /vanguard2 con hub icosaédrico y anillos por sección (qa-v155-07), carga total 1.86MB · HTML 68KB · 87 recursos, tsc limpio",
+    ],
+  },
+  {
     version: "v154.0",
     nombre: "LA CIUDAD-MENÚ",
     tipo: "mundo",
