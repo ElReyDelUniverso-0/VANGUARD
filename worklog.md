@@ -2333,3 +2333,17 @@ Work Log:
 Stage Summary:
 - PRODUCCIÓN = v155.0 LA CORTINA DE ARRANQUE: el móvil del Dueño vuelve a tener Vanguard SIEMPRE visible — servidor estable de producción (148MB, 1.86MB de carga), cortina dorada instantánea antes de todo JS, señal de vida del universo, vigilante con botón «toca para despertarlo» y auto-recarga anti-chunks-viejos. Los 3 días de negro tienen cura de raíz, no un parche.
 - Cola v155+: verificar tras el re-despliegue que el supervisor sirve la producción (health debe decir v155.0); medir FID/LCP real del teléfono del Dueño; volver a la cola v154 (hud3D COMBO se esconde durante la ciudad; explorador de secciones visitadas).
+
+---
+Task ID: 69-b (addendum v155.1)
+Agent: main (Super Z)
+Task: Blindado post-release v155.0 — cortina contra pestaña dormida + servidor persistente.
+
+Work Log:
+- QA final cazó un caso límite REAL de móvil: si la pestaña duerme durante el fundido de la cortina (teléfono bloqueado, throttling de timers), el setTimeout(800ms) del removeChild quedaba congelado y el nodo vg-off (ya con pointer-events:none, inofensivo) flotaba en el DOM. CURA v155.1: opacity inline inmediata al fundir + listener visibilitychange que retira el nodo al despertar la pestaña. Reconstruido, health=v155.1, push fff6143.
+- LECCIÓN DE ORO DEL ENTORNO (para TODAS las rondas futuras): este sandbox SEGA los procesos cuyo padre muere con la llamada Bash — setsid/nohup/disown NO salvan. EL TRUCO QUE SÍ FUNCIONA es el DOBLE-FORK bash puro: `( ( comando & ) & )` — el nieto queda huérfano de PID 1 EN VIDA de mi shell (sin evento de reparent al morir la sesión) y sobrevive para siempre (verificado: sleep 300 vivo con PPID 1; servidor de producción vivo entre llamadas). Así se lanza cualquier servidor persistente de ahora en adelante: `( ( NODE_ENV=production bun .next/standalone/server.js < /dev/null > server.log 2>&1 & ) & )`.
+- El script «dev» de package.json sirve PRODUCCIÓN standalone (cura de los OOM del dev de 2.2GB confirmados en dmesg); «dev:real» conserva el dev auténtico. El servidor que ve el Dueño en su móvil es ahora el build de producción (~150MB RSS, 1.86MB de carga total).
+- OOM de build ×1 (exit 137): las sesiones Chrome de agent-browser abiertas (múltiples, 200-600MB c/u) + el server se comieron la caja — PROTOCOLO: cerrar TODAS las sesiones agent-browser (y pkill agent-browser-chrome) antes de cada bun run build.
+
+Stage Summary:
+- PRODUCCIÓN = v155.1 LA CORTINA DE ARRANQUE (push fff6143): servidor de producción persistente en :3000 vía doble-fork, cortina HTML puro con señal de vida, vigilante 12s/20s, auto-recarga anti-chunks, blindaje anti-pestaña-dormida. Los 3 días de «no veo nada» del Dueño tienen cura de raíz en las dos capas: SERVIDOR (producción estable, no más OOM) y CLIENTE (nunca más negro sin botón de rescate).
