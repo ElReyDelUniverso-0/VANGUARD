@@ -48,6 +48,8 @@ export type TipoSala3D =
   | "logros"
   | "tienda"
   | "contenido"
+  | "misiones"
+  | "ranking"
   | "generica";
 
 export interface BaseSala3D {
@@ -145,8 +147,27 @@ export interface SalaTienda3D extends BaseSala3D {
   gemas: number;
   items: { titulo: string; costo: number; moneda: "COINS" | "GEMS"; activo: boolean }[];
 }
-// v148 ESTACIÓN INFORMATIVA — TODA rama de Vanguard vive en volumen:
-// letras 3D informativas (qué es esta sala) + placas de datos vivas
+// v148/v153 ESTACIÓN INFORMATIVA (remota) — TODA rama vive en volumen:
+// letras 3D informativas + placas de datos vivas
+// v153 TABLERO DE MISIONES — la tercera ola local: el centro de misiones
+// en volumen (placas con barra de progreso de VOLUMEN + RECLAMAR en oro)
+export interface SalaMisiones3D extends BaseSala3D {
+  tipo: "misiones";
+  hechas: number;
+  total: number;
+  monedas: number;
+  misiones: { titulo: string; cat: string; pct: number; recompensa: string; reclamar: boolean }[];
+}
+// v153 PODIO GLOBAL — el ranking semanal en volumen: podio de 3 columnas
+// (oro/plata/bronce) + filas con barra proporcional al puntaje
+export interface SalaRanking3D extends BaseSala3D {
+  tipo: "ranking";
+  disciplina: string; // "XP" | "CONQ" | "TRADER"
+  filas: { nombre: string; tag: string; puntos: number; jugador: boolean }[];
+  posicion: number;
+  semana: string;
+  dias: number;
+}
 export interface SalaGenerica3D extends BaseSala3D {
   tipo: "generica";
   lineas?: string[];                 // letras informativas extruidas (qué es este módulo)
@@ -181,6 +202,8 @@ export type PayloadSala3D =
   | SalaLogros3D
   | SalaTienda3D
   | SalaContenido3D
+  | SalaMisiones3D
+  | SalaRanking3D
   | SalaGenerica3D;
 
 // la instancia viva de una sala montada en el mundo
@@ -2353,6 +2376,360 @@ function construirTienda(ctx: CtxSala3D, p: SalaTienda3D): Sala3DInstancia {
 }
 
 // ────────────────────────────────────────────────────────────
+// v148 TERCERA OLA — TABLERO DE MISIONES: el centro de misiones
+// vive en volumen: objetivo girando, contador HECHAS, placas con
+// barra de progreso de VOLUMEN y RECLAMAR en oro latente (tocable).
+// ────────────────────────────────────────────────────────────
+function construirMisiones(ctx: CtxSala3D, p: SalaMisiones3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  grupo.add(titulo.grupo);
+
+  const peana = pedestal(1.5, p.color);
+  peana.position.y = -0.85;
+  grupo.add(peana);
+
+  // EL OBJETIVO — diana de mando: toro + núcleo que late (la misión esperando)
+  const diana = new THREE.Mesh(
+    reg.geo(new THREE.TorusGeometry(0.17, 0.028, 10, ctx.calidadBaja ? 28 : 44)),
+    reg.mat(new THREE.MeshStandardMaterial({
+      color: COL_ORO, metalness: 0.55, roughness: 0.28,
+      emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.5,
+      transparent: true, opacity: 0.95,
+    })),
+  );
+  diana.position.set(-0.72, 0.34, 0);
+  grupo.add(diana);
+  const pupila = new THREE.Mesh(
+    reg.geo(new THREE.SphereGeometry(0.055, 12, 12)),
+    reg.mat(new THREE.MeshStandardMaterial({
+      color: 0xff4d5e, metalness: 0.4, roughness: 0.3,
+      emissive: new THREE.Color(0xff4d5e), emissiveIntensity: 0.7,
+      transparent: true, opacity: 0.95,
+    })),
+  );
+  pupila.position.set(-0.72, 0.34, 0.02);
+  grupo.add(pupila);
+
+  let contWrap = new THREE.Group();
+  grupo.add(contWrap);
+
+  let listaWrap = new THREE.Group();
+  let sigKey = "";
+  const placas: { g: THREE.Group; baseY: number; fase: number }[] = [];
+
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const pintar = (v: SalaMisiones3D) => {
+    // contador + meta con DATOS REALES (el montaje base llega sin números)
+    grupo.remove(contWrap); limpiar(contWrap);
+    contWrap = new THREE.Group();
+    const frac = v.total > 0 ? Math.min(1, v.hechas / v.total) : 0;
+    const cont = texto3D(ctx, `${v.hechas}/${v.total} MISIONES`, { tam: 0.062, prof: 0.02, color: COL_ORO, emis: 0.58 });
+    cont.grupo.position.set(-cont.ancho / 2, 0.82, 0);
+    contWrap.add(cont.grupo);
+    const meta = texto3D(ctx, `${v.monedas} COINS EN BOLSILLO · ${Math.round(frac * 100)}% DEL TABLERO`, { tam: 0.032, prof: 0.011, color: 0x9fb8dd, emis: 0.35 });
+    meta.grupo.position.set(-meta.ancho / 2, 0.66, 0);
+    contWrap.add(meta.grupo);
+    grupo.add(contWrap);
+
+    grupo.remove(listaWrap);
+    limpiar(listaWrap);
+    listaWrap = new THREE.Group();
+    listaWrap.position.x = ctx.movil ? 0.06 : 0.4;
+    proxies.length = 0;
+    placas.length = 0;
+
+    const w = 1.06, h = 0.24;
+    (v.misiones || []).slice(0, 4).forEach((ms, i) => {
+      const placa = new THREE.Group();
+      const lista = ms.reclamar;
+      const col = lista ? COL_ORO : ms.pct >= 100 ? COL_VERDE : 0x7ab8ff;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w, h, 0.02)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: lista ? 0x2a1a08 : 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.86,
+          emissive: new THREE.Color(lista ? COL_ORO : 0x000000), emissiveIntensity: lista ? 0.3 : 0,
+        })),
+      );
+      placa.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.9))));
+      const cat = texto3D(ctx, acotar(ms.cat || "-", 10), { tam: 0.024, prof: 0.008, color: 0x9fb8dd, emis: 0.3 });
+      cat.grupo.position.set(-w / 2 + 0.08, h / 2 - 0.035, 0.02);
+      placa.add(cat.grupo);
+      const txt = texto3D(ctx, acotar(ms.titulo || "-", 22).toUpperCase(), { tam: 0.042, prof: 0.014, color: col, emis: 0.45 });
+      txt.grupo.position.set(-w / 2 + 0.08, 0.012, 0.02);
+      placa.add(txt.grupo);
+      // barra de progreso como VOLUMEN
+      const fracB = Math.max(0.02, Math.min(1, (ms.pct || 0) / 100));
+      const barra = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry((w - 0.16) * fracB, 0.024, 0.012)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85 })),
+      );
+      barra.position.set(-w / 2 + 0.08 + ((w - 0.16) * fracB) / 2, -0.062, 0.02);
+      placa.add(barra);
+      const botin = texto3D(ctx, lista ? "TOCAR PARA RECLAMAR" : acotar(ms.recompensa || "", 18).toUpperCase(), { tam: 0.026, prof: 0.009, color: lista ? COL_ORO : 0x9fb8dd, emis: lista ? 0.62 : 0.3 });
+      botin.grupo.position.set(w / 2 - 0.07 - botin.ancho, 0.012, 0.02);
+      placa.add(botin.grupo);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.05)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "reclamar", idx: i } };
+      placa.add(proxy);
+      proxies.push(proxy);
+      placa.position.set(0, 0.34 - i * (h + 0.09), -i * 0.05);
+      listaWrap.add(placa);
+      placas.push({ g: placa, baseY: placa.position.y, fase: i * 1.4 + (lista ? 10 : 0) });
+    });
+
+    if (!(v.misiones || []).length) {
+      const vacio = texto3D(ctx, "CARGANDO TABLERO", { tam: 0.04, prof: 0.013, color: 0x7ab8ff, emis: 0.4 });
+      vacio.grupo.position.set(-vacio.ancho / 2, 0.3, 0);
+      listaWrap.add(vacio.grupo);
+    }
+
+    grupo.add(listaWrap);
+  };
+
+  pintar({
+    ...p,
+    hechas: Number(p.hechas) || 0,
+    total: Number(p.total) || 1,
+    monedas: Number(p.monedas) || 0,
+    misiones: p.misiones || [],
+  });
+
+  const polvoM = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.4, 1.9);
+  polvoM.position.y = -0.8;
+  grupo.add(polvoM);
+
+  tics.push((t, dt) => {
+    polvoM.rotation.y += dt * 0.2;
+    diana.rotation.y += dt * 0.65;
+    diana.rotation.x = Math.sin(t * 0.7) * 0.18;
+    pupila.position.z = 0.02 + Math.sin(t * 2.4) * 0.012;
+    for (const pl of placas) {
+      const late = pl.fase >= 10;
+      pl.g.position.y = pl.baseY + Math.sin(t * (late ? 2.6 : 1.4) + pl.fase) * (late ? 0.02 : 0.009);
+    }
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "misiones") return;
+      const sig = `${nuevo.hechas}|${nuevo.total}|${nuevo.monedas}|${(nuevo.misiones || []).map((x) => `${x.titulo}:${x.pct}:${x.reclamar}`).join(";")}`;
+      if (sig === sigKey) return;
+      sigKey = sig;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiar(contWrap); limpiar(listaWrap);
+    },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
+// v148 TERCERA OLA — PODIO GLOBAL: el ranking semanal en volumen:
+// copa dorada girando, podio de 3 columnas (oro/plata/bronce) con
+// el nombre extruido, filas con barra proporcional al puntaje y
+// el AGENTE en oro (el gancho: siempre hay alguien a 1 puesto).
+// ────────────────────────────────────────────────────────────
+function construirRanking(ctx: CtxSala3D, p: SalaRanking3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  grupo.add(titulo.grupo);
+
+  const peana = pedestal(1.5, p.color);
+  peana.position.y = -0.85;
+  grupo.add(peana);
+
+  // LA COPA — cono invertido dorado + base (el trofeo semanal)
+  const copa = new THREE.Group();
+  const campana = new THREE.Mesh(
+    reg.geo(new THREE.ConeGeometry(0.11, 0.2, ctx.calidadBaja ? 10 : 16)),
+    reg.mat(new THREE.MeshStandardMaterial({
+      color: COL_ORO, metalness: 0.85, roughness: 0.2,
+      emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.4,
+      transparent: true, opacity: 0.96,
+    })),
+  );
+  campana.rotation.z = Math.PI; // invertida: copa
+  campana.position.y = 0.16;
+  const tallo = new THREE.Mesh(
+    reg.geo(new THREE.CylinderGeometry(0.014, 0.014, 0.07, 8)),
+    reg.mat(new THREE.MeshStandardMaterial({ color: COL_ORO, metalness: 0.85, roughness: 0.25 })),
+  );
+  tallo.position.y = 0.03;
+  const base = new THREE.Mesh(
+    reg.geo(new THREE.CylinderGeometry(0.05, 0.055, 0.02, 14)),
+    reg.mat(new THREE.MeshStandardMaterial({ color: 0x8a6a1c, metalness: 0.7, roughness: 0.35 })),
+  );
+  base.position.y = -0.01;
+  copa.add(campana, tallo, base);
+  copa.position.set(-0.82, 0.3, 0);
+  grupo.add(copa);
+
+  let contWrap = new THREE.Group();
+  grupo.add(contWrap);
+
+  let podioWrap = new THREE.Group();
+  let filasWrap = new THREE.Group();
+  let sigKey = "";
+  const filasAnim: { g: THREE.Group; baseY: number; fase: number }[] = [];
+
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const pintar = (v: SalaRanking3D) => {
+    grupo.remove(contWrap); limpiar(contWrap);
+    contWrap = new THREE.Group();
+    const disc = (v.disciplina || "XP").toUpperCase();
+    const meta = texto3D(ctx, `${disc} · SEMANA ${v.semana || "-"} · ${v.dias || 0} DIAS · POS #${v.posicion || "-"}`, { tam: 0.032, prof: 0.011, color: 0x9fb8dd, emis: 0.35 });
+    meta.grupo.position.set(-meta.ancho / 2, 0.82, 0);
+    contWrap.add(meta.grupo);
+    grupo.add(contWrap);
+
+    // EL PODIO — 3 columnas con alturas de honor
+    grupo.remove(podioWrap); limpiar(podioWrap);
+    podioWrap = new THREE.Group();
+    podioWrap.position.set(-0.62, -0.28, 0);
+    const alturas = [0.46, 0.32, 0.24];
+    const cols = [COL_ORO, 0xc0c8d8, 0xcd7f32];
+    const top3 = (v.filas || []).slice(0, 3);
+    for (let i = 0; i < 3; i++) {
+      const f = top3[i];
+      const hCol = alturas[i];
+      const col = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.3, hCol, 0.22)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: 0x101a2c, metalness: 0.85, roughness: 0.3,
+          emissive: new THREE.Color(cols[i]), emissiveIntensity: 0.12,
+          transparent: true, opacity: 0.92,
+        })),
+      );
+      col.position.set((i - 1) * 0.42, hCol / 2, 0);
+      podioWrap.add(col, new THREE.LineSegments(col.geometry, reg.mat(matFilo(cols[i], 0.85))));
+      const num = texto3D(ctx, `${i + 1}`, { tam: 0.075, prof: 0.02, color: cols[i], emis: 0.6 });
+      num.grupo.position.set((i - 1) * 0.42 - num.ancho / 2, hCol + 0.05, 0);
+      podioWrap.add(num.grupo);
+      if (f) {
+        const nom = texto3D(ctx, acotar(f.nombre || "-", 9).toUpperCase(), { tam: 0.026, prof: 0.009, color: f.jugador ? COL_ORO : 0x9fb8dd, emis: f.jugador ? 0.6 : 0.32 });
+        nom.grupo.position.set((i - 1) * 0.42 - nom.ancho / 2, -0.12, 0.001);
+        podioWrap.add(nom.grupo);
+        const pts = texto3D(ctx, `${f.puntos || 0}`, { tam: 0.022, prof: 0.008, color: cols[i], emis: 0.45 });
+        pts.grupo.position.set((i - 1) * 0.42 - pts.ancho / 2, -0.19, 0.001);
+        podioWrap.add(pts.grupo);
+      }
+    }
+    grupo.add(podioWrap);
+
+    // LAS FILAS 4-8 — placas con barra proporcional al puntaje
+    grupo.remove(filasWrap); limpiar(filasWrap);
+    filasWrap = new THREE.Group();
+    filasWrap.position.x = ctx.movil ? 0.28 : 0.52;
+    proxies.length = 0;
+    filasAnim.length = 0;
+    const resto = (v.filas || []).slice(3, ctx.movil ? 6 : 8);
+    const maxP = Math.max(1, ...(v.filas || []).map((x) => x.puntos || 0));
+    const w = 0.94, h = 0.17;
+    resto.forEach((f, i) => {
+      const placa = new THREE.Group();
+      const col = f.jugador ? COL_ORO : 0x7ab8ff;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w, h, 0.016)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: f.jugador ? 0x2a1a08 : 0x0c1526, metalness: 0.9, roughness: 0.22, transparent: true, opacity: 0.86,
+          emissive: new THREE.Color(f.jugador ? COL_ORO : 0x000000), emissiveIntensity: f.jugador ? 0.26 : 0,
+        })),
+      );
+      placa.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.8))));
+      const nom = texto3D(ctx, `#${(v.filas || []).indexOf(f) + 1} ${acotar(f.nombre || "-", 10).toUpperCase()}`, { tam: 0.028, prof: 0.009, color: col, emis: f.jugador ? 0.55 : 0.38 });
+      nom.grupo.position.set(-w / 2 + 0.06, 0.024, 0.018);
+      placa.add(nom.grupo);
+      const fracB = Math.max(0.02, Math.min(1, (f.puntos || 0) / maxP));
+      const barra = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry((w - 0.12) * fracB, 0.017, 0.01)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.8 })),
+      );
+      barra.position.set(-w / 2 + 0.06 + ((w - 0.12) * fracB) / 2, -0.038, 0.018);
+      placa.add(barra);
+      const pts = texto3D(ctx, `${f.puntos || 0}`, { tam: 0.022, prof: 0.008, color: col, emis: 0.42 });
+      pts.grupo.position.set(w / 2 - 0.05 - pts.ancho, 0.024, 0.018);
+      placa.add(pts.grupo);
+      placa.position.set(0, 0.5 - i * (h + 0.062), -i * 0.04);
+      filasWrap.add(placa);
+      filasAnim.push({ g: placa, baseY: placa.position.y, fase: i * 1.3 + (f.jugador ? 9 : 0) });
+    });
+    grupo.add(filasWrap);
+  };
+
+  pintar({
+    ...p,
+    filas: p.filas || [],
+    posicion: Number(p.posicion) || 0,
+    dias: Number(p.dias) || 0,
+  });
+
+  const polvoR = polvo(ctx.calidadBaja ? 50 : 90, COL_ORO, 1.4, 1.9);
+  polvoR.position.y = -0.8;
+  grupo.add(polvoR);
+
+  tics.push((t, dt) => {
+    polvoR.rotation.y += dt * 0.2;
+    copa.rotation.y += dt * 0.8;
+    copa.position.y = 0.3 + Math.sin(t * 1.3) * 0.014;
+    for (const f of filasAnim) {
+      const late = f.fase >= 9;
+      f.g.position.y = f.baseY + Math.sin(t * (late ? 2.4 : 1.3) + f.fase) * (late ? 0.016 : 0.008);
+    }
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "ranking") return;
+      const sig = `${nuevo.disciplina}|${nuevo.semana}|${nuevo.posicion}|${(nuevo.filas || []).map((x) => `${x.nombre}:${x.puntos}:${x.jugador}`).join(";")}`;
+      if (sig === sigKey) return;
+      sigKey = sig;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiar(contWrap); limpiar(podioWrap); limpiar(filasWrap);
+    },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
 // EL DESPACHADOR — construye la sala según su tipo
 // ────────────────────────────────────────────────────────────
 export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstancia {
@@ -2368,6 +2745,8 @@ export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstanc
     case "logros": return construirLogros(ctx, p);
     case "tienda": return construirTienda(ctx, p);
     case "contenido": return construirContenido(ctx, p);
+    case "misiones": return construirMisiones(ctx, p);
+    case "ranking": return construirRanking(ctx, p);
     default: return construirGenerica(ctx, p);
   }
 }

@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v153.0",
+    nombre: "MUNDOS SEPARADOS",
+    tipo: "mundo",
+    hitos: [
+      "EL DIAGNÓSTICO DE LA QUEJA («hay muchas secciones en un solo»): visibleZona() llevaba desde v142 un `modo ||` que en MODO MUNDO encendía LOS 4 MUNDOS DE ZONA A LA VEZ — el universo entero (anillo orbital + command center + arena + cuartel + ciudad + portales) renderizando detrás de cada sala = el lag que mataba el móvil. ABOLIDO: ahora CADA sección muestra SOLO su mundo — entrar a Economía es estar en el mundo de Economía, nada más existe alrededor (mandato literal: «cada sección Vanguard tendrá su propio mundo 3D y no ligarlas todas»)",
+      "LA INTRO NACE EN TIERRA, NO EN MAR («la intro no me gusta, comienza en la parte trasera del mapa donde solo hay mar»): el ángulo de nacimiento del mundo (rotation.y=1.2 desde v140) ponía frente a la cámara la longitud -158.8° — el PACÍFICO CENTRAL, puro océano. Fórmula verificada contra el mapeo equirect de SphereGeometry (la longitud mirada es L = -90 - θg·57.3): nuevo θg=-1.92 mira 20°E — ÁFRICA + EUROPA de frente con Ucrania/Oriente Medio/Sudán latiendo en el flanco derecho desde el primer fotograma",
+      "LAG CERO EN MÓVIL, TRES ESCUDOS: (1) TOPE 30fps en aparatos táctiles — frame-skip honesto que devuelve la mitad del CPU/GPU/CSS3D al aparato (la física usa dt clampeado: cero impacto en el vuelo); (2) tope de pixelRatio móvil → 1.2 (fusionado con el GOBERNADOR v149 que degrada por pasos hasta 0.72 cuando el aparato sufre) + estrellas 1300→850 + partículas 110→64",
+      "TERCERA OLA DE SALAS EN VOLUMEN (12 salas insignia de 146 ramas): MISIONES (el tablero de mando: diana girando con pupila roja, contador X/Y MISIONES con datos reales, 4 placas con barra de progreso de VOLUMEN, recompensa extruida y RECLAMAR en oro latente — tocar la placa RECLAMÓ la misión de verdad vía claimMission del panel) y RANKING (el podio global: copa dorada girando, podio de 3 columnas oro/plata/bronce con nombre extruido, filas 4-8 con barra proporcional al puntaje y el AGENTE latiendo en oro — semana, días restantes y posición reales del tablón semanal)",
+      "CABLEADO Casa⇄Mundo de la tercera ola: missions-panel publica su tablero cada 5s (listas primero, luego por % cercano) y escucha vg:sala3d-accion reclamar→claimMission con toast; ranking-panel publica el tablón semanal cada 6s (filas, posición, semana ISO, días para el cierre) — cero lógica duplicada: el mundo manda, el panel obedece",
+      "QA: tsc limpio; portada 200; salud del mundo verificada por sesiones cortas (protocolo anti-OOM) — capturas qa-v148-*",
+    ],
+  },
+  {
     version: "v152.0",
     nombre: "MUNDOS PROPIOS",
     tipo: "mundo",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MISSION_TEMPLATES, type MissionTemplate } from "@/lib/game-data";
 import { TarjetaGuerra } from "../tarjeta-guerra";
 import { useGameStore } from "@/lib/game-store";
@@ -37,27 +37,77 @@ const categoryColor: Record<string, string> = {
 
 export function MissionsPanel() {
   const { missionProgress, claimMission } = useGameStore();
+  const monedasAgente = useGameStore((s) => s.coins);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | "COMPLETED" | "PENDING" | "CLAIMED">("ALL");
 
-  // v148 SALA DE CONTENIDO — el centro de misiones también vive en volumen:
-  // las 6 misiones clave como filas de cristal con su barra de progreso 3D
-  useSala3DContenido(
-    "misiones",
-    "Misiones",
-    "#FF6B5A",
-    `${MISSION_TEMPLATES.filter((m) => missionProgress[m.code]?.completed).length}/${MISSION_TEMPLATES.length} COMPLETADAS`,
-    MISSION_TEMPLATES.slice(0, 6).map((m) => {
-      const p = missionProgress[m.code] ?? { progress: 0, completed: false, claimed: false };
-      const prog = Math.min(p.progress, m.target);
-      return {
-        t: m.title,
-        v: `${prog}/${m.target}`,
-        p: Math.min(100, Math.round((prog / Math.max(1, m.target)) * 100)),
-        color: p.completed ? "#4ADE80" : undefined,
-      };
-    }),
+  // ════════════════════════════════════════════════════════════
+  // v153 SALAS EN VOLUMEN: EL TABLERO DE MISIONES — el centro de
+  // misiones vive en el mundo 3D: diana girando, contador HECHAS,
+  // placas con barra de volumen y RECLAMAR en oro latente tocable.
+  // (v153: gana la sala DEDICADA sobre la genérica de contenido —
+  // el RECLAMAR real desde el mundo es el valor; dos emisores para
+  // el mismo tab pelearían en vg:sala3d-datos)
+  // ════════════════════════════════════════════════════════════
+  const hechas = useMemo(
+    () => MISSION_TEMPLATES.filter((m) => missionProgress[m.code]?.claimed).length,
+    [missionProgress],
   );
+  const misionesSala = useMemo(() => {
+    return MISSION_TEMPLATES
+      .map((m) => {
+        const pr = missionProgress[m.code] ?? { progress: 0, completed: false, claimed: false };
+        const prog = Math.min(pr.progress, m.target);
+        const pct = Math.min(100, Math.round((prog / m.target) * 100));
+        return {
+          code: m.code,
+          titulo: m.title,
+          cat: m.category === "DAILY" ? "DIARIA" : m.category === "WEEKLY" ? "SEMANAL" : m.category === "SPECIAL" ? "ESPECIAL" : "HISTORIA",
+          pct,
+          recompensa: `+${m.coinReward}C +${m.xpReward}XP${m.gemReward ? ` +${m.gemReward}G` : ""}`,
+          reclamar: prog >= m.target && !pr.claimed,
+        };
+      })
+      .sort((a, b) => (Number(b.reclamar) - Number(a.reclamar)) || (b.pct - a.pct))
+      .slice(0, 4);
+  }, [missionProgress]);
+
+  useEffect(() => {
+    const emitir = () => {
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "misiones", tipo: "misiones", titulo: "Centro de misiones",
+            hechas, total: MISSION_TEMPLATES.length, monedas: monedasAgente, misiones: misionesSala,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 5000);
+    return () => window.clearInterval(id);
+  }, [hechas, monedasAgente, misionesSala]);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "misiones" || d.accion !== "reclamar") return;
+      const ms = misionesSala[d.idx];
+      if (!ms?.reclamar) return;
+      const mission = MISSION_TEMPLATES.find((m) => m.code === ms.code);
+      if (!mission) return;
+      claimMission(mission.code, {
+        xp: mission.xpReward,
+        coins: mission.coinReward,
+        gems: mission.gemReward,
+      });
+      toast.success(`Mision reclamada: ${mission.title}`, {
+        description: `+${mission.coinReward} monedas · +${mission.xpReward} XP${mission.gemReward ? ` · +${mission.gemReward} gemas` : ""}`,
+      });
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [misionesSala, claimMission]);
 
   const filterMission = (m: MissionTemplate) => {
     if (search) {

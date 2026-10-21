@@ -479,9 +479,10 @@ class MundoWGL {
       alpha: true,
       powerPreference: "high-performance",
     });
-    // v149: techo de píxeles más honesto — el DPR 2 pintaba 4× los píxeles
-    // en los móviles de alta densidad (el «mucho lag» del Dueño)
-    this.dprBase = opts.calidadBaja ? 1.3 : 1.75;
+    // v149/v153: techo de píxeles honesto — el DPR 2 pintaba 4× los píxeles
+    // en los móviles de alta densidad (el «mucho lag» del Dueño); v153 aprieta
+    // el móvil a 1.2 (fusión de las dos rondas anti-lag)
+    this.dprBase = opts.calidadBaja ? 1.2 : 1.75;
     this.dprActual = Math.min(window.devicePixelRatio || 1, this.dprBase);
     this.renderer.setPixelRatio(this.dprActual);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -529,8 +530,13 @@ class MundoWGL {
     window.addEventListener("vg:sala3d", this.onSala3dEv);
     window.addEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
 
-    // la Tierra ya nace girando (REGLA 6)
-    this.mundo.rotation.y = 1.2;
+    // la Tierra ya nace girando (REGLA 6) — v148: el ángulo de nacimiento
+    // ya NO es 1.2 (mostraba el Pacífico central, -158°: SOLO MAR — queja
+    // literal del Dueño «comienza en la parte trasera del mapa donde solo
+    // hay mar»). Fórmula verificada: la longitud que mira la cámara es
+    // L = -90 - θg·57.3 → θg=-1.92 mira 20°E: ÁFRICA + EUROPA de frente,
+    // con Ucrania/Oriente Medio/Sudán latiendo en el flanco derecho.
+    this.mundo.rotation.y = -1.92;
     this.escena.add(this.mundo);
     this.arranqueVigia(); // v148: el corazón JAMÁS se queda parado
     this.loop();
@@ -538,7 +544,7 @@ class MundoWGL {
 
   // ── LAS ESTRELLAS — dos capas de puntos con color propio ──
   construirEstrellas() {
-    const n = this.calidadBaja ? 850 : 2600; // v149: móvil respira (850 lucen igual)
+    const n = this.calidadBaja ? 850 : 2600; // v149/v153: móvil respira (850 lucen igual)
     const pos = new Float32Array(n * 3);
     const col = new Float32Array(n * 3);
     const tinte = [
@@ -643,7 +649,7 @@ class MundoWGL {
   // ── PARTÍCULAS DE AMBIENTE — oro en la Arena, azul en el Cuartel ──
   construirParticulas() {
     const hacer = (color: number) => {
-      const n = this.calidadBaja ? 64 : 220; // v149: menos en móvil, mismo brillo
+      const n = this.calidadBaja ? 64 : 220; // v149/v153: menos en móvil, mismo brillo
       const pos = new Float32Array(n * 3);
       for (let i = 0; i < n; i++) {
         const r = 2.6 + Math.random() * 2.4;
@@ -1647,28 +1653,30 @@ class MundoWGL {
   }
 
   // qué es visible en cada zona: mundos 1-4, títulos 3D y portales
-  // v142: en MODO MUNDO se ve TODO — cada lugar del universo a la vista
+  // v148 «MUNDOS SEPARADOS» — mandato del Dueño («cada sección Vanguard
+  // tendrá su propio mundo 3D y no ligarlas todas» + «hay muchas secciones
+  // en un solo»): se ABOLió el `modo ||` que en MODO MUNDO encendía los 4
+  // mundos de zona a la vez (el universo entero renderizando = el lag que
+  // mataba el móvil). Ahora CADA sección muestra SOLO su mundo: entrar a
+  // Economía es estar en el mundo de Economía, nada más existe alrededor.
   visibleZona(zona: number) {
-    const modo = this.modoMundo;
     for (const z of [1, 2, 3, 4]) {
       const g = this.mundosZona[z];
       if (!g) continue;
-      const debe = modo || z === zona;
+      const debe = z === zona;
       if (debe && !g.visible) {
         g.visible = true;
         g.scale.setScalar(0.84);
         this.animarP(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut });
       } else if (!debe) g.visible = false;
     }
-    for (const tz of this.titulosZona) tz.grupo.visible = modo || (tz.zona === zona && zona !== 0);
-    const portalesOn = modo || zona === 1;
+    for (const tz of this.titulosZona) tz.grupo.visible = tz.zona === zona && zona !== 0;
+    // los portales (anillos de navegación) solo viven en la vista de la
+    // ESTACIÓN (zona 1): ni en el planeta desnudo ni dentro de otra sala
+    const portalesOn = zona === 1;
     for (const p of this.portales) {
       p.grupo.visible = portalesOn;
-      // v142: en MODO MUNDO las etiquetas de los portales sobran — cada mundo
-      // ya luce su TÍTULO 3D encima (adiós al texto duplicado apilado).
-      // En MÓVIL se quedan: los títulos de los mundos viven fuera del cuadro
-      // retrato y la etiqueta es la única placa con nombre del portal.
-      p.etiqueta.visible = !modo || this.calidadBaja;
+      p.etiqueta.visible = portalesOn;
     }
   }
 
@@ -2886,11 +2894,23 @@ class MundoWGL {
   }
 
   // ── EL CORAZÓN — un solo rAF para todo el mundo ──
+  // v153 TOPE 30fps EN MÓVIL: frame-skip honesto que devuelve la mitad del
+  // CPU/GPU/CSS3D al aparato (la física usa dt clampeado: cero impacto). La
+  // RESOLUCIÓN ADAPTATIVA vive en el GOBERNADOR v149 (gobernarCalidad →
+  // nivelCal → aplicarCalidad): aquí solo queda el tope de frecuencia —
+  // un aparato sano renderiza 30fps estables (>27: el gobernador no castiga),
+  // uno sufriendo cae por debajo y el gobernador baja la calidad solo.
+  private acumFrame = 0;
   loop = () => {
     if (!this.vivo) return;
     this.raf = requestAnimationFrame(this.loop);
     this.ultimoFrame = performance.now();
     const dt = Math.min(0.05, this.reloj.getDelta());
+    if (this.calidadBaja) {
+      this.acumFrame += dt;
+      if (this.acumFrame < 1 / 31) return; // frame-skip: el rAF sigue, el render no
+      this.acumFrame = 0;
+    }
     const t = this.reloj.elapsedTime;
 
     // v149 GOBERNADOR: mide el pulso real cada 1.6s y decide

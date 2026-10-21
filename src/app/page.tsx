@@ -322,6 +322,8 @@ const TIPO_SALA_3D: Record<string, string> = {
   noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
   // v147 — segunda ola: el mercado de apuestas, la corona de hitos y la vitrina
   predicciones: "predicciones", logros: "logros", tienda: "tienda",
+  // v148 — tercera ola: el tablero de misiones y el podio global
+  misiones: "misiones", ranking: "ranking",
 };
 
 // v148 — LAS LETRAS INFORMATIVAS: cada módulo se describe en el mundo 3D

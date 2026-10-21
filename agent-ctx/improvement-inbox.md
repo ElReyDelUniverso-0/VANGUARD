@@ -276,3 +276,16 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - TOSTS Y COFRE al universo (P3b pendiente): toast + cofre flotante siguen siendo DOM; portal CSS3D a un host de casco o placa 3D efímera
 - INTERROGATORIO/ATLAS/COLECCIONABLES de la cola v146+ siguen abiertos (spec del Dueño)
 - MEMORIA: el dev server de esta caja OOMeó 4 veces esta ronda — sesiones de navegador MUY cortas, una captura por open; producción standalone no aplica
+
+---
+---
+
+## Cola v153+ — MUNDOS SEPARADOS [Task 67, renumerada: v148-v152 tomados por el remoto]
+- ✅ HECHO en v153.0: MISIONES como tablero de mando (diana + placas con barra de volumen + RECLAMAR oro → claimMission real E2E)
+- ✅ HECHO en v153.0: RANKING como podio global (copa girando + oro/plata/bronce + filas proporcionales + AGENTE en oro)
+- ✅ HECHO en v153.0: CADA SECCIÓN SU MUNDO (visibleZona sin `modo ||` — el universo entero ya no renderiza detrás de cada sala) + LAG MÓVIL: tope 30fps (convive con el GOBERNADOR v149, dueño de la resolución adaptativa) + pixelRatio 1.2 + población reducida
+- ✅ HECHO en v153.0: LA INTRO NACE EN ÁFRICA/EUROPA (rotation.y -1.92; adiós al Pacífico vacío — fórmula L = -90 - θg·57.3)
+- CUARTA OLA de salas: Arcade (cabinas), Expedientes (archivador con carpetas 3D), ATLAS esfera de energía, tarjetas coleccionables de dos caras
+- Ancla de sala en móvil 390px: el título extruido roza la barra de chips superior — bajar el ancla ~0.05 o reducir fracAncho insignia
+- Audit de draw calls en desktop (renderer.info) para medir la mejora de MUNDOS SEPARADOS con números
+- MEMORIA: dev server OOMea en sesiones largas (pkill+bun run dev por ronda) — capturas tempranas, una sala por sesión de navegador

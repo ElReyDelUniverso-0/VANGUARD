@@ -4,7 +4,7 @@
 // Traders por P/L) con rivales simulados deterministas que derivan cada dia.
 // El objetivo es que siempre haya alguien a 1 posicion de distancia — gancho clasico.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Swords, TrendingUp, Crown, Medal, CalendarDays, ShieldCheck, Zap, BookOpen, Flame, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,6 @@ import { useRetention, weekKeyOf, weekDaysLeft, WEEK_TOP3_REWARD } from "@/lib/r
 import { useOscura, OSCURA_TOTAL } from "@/lib/oscura";
 import { useExpedientes, EXPEDIENTES } from "@/lib/expedientes";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { useSala3DContenido } from "../use-sala3d-contenido";
 
 type Discipline = "XP" | "CONQ" | "TRADER";
 
@@ -65,6 +64,31 @@ function WeekBoard() {
   const pos = rows.findIndex((r) => r.isPlayer) + 1;
   const inTop3 = pos <= 3 && weekXp > 0;
   const claimed = weekRewardClaimed === wk;
+
+  // ════════════════════════════════════════════════════════════
+  // v148 SALAS EN VOLUMEN: EL PODIO GLOBAL — el tablón semanal vive
+  // en el mundo 3D: copa girando, podio oro/plata/bronce y filas con
+  // barra proporcional; el AGENTE late en oro (a 1 puesto del rival).
+  // ════════════════════════════════════════════════════════════
+  useEffect(() => {
+    const emitir = () => {
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "ranking", tipo: "ranking", titulo: "Ranking global",
+            disciplina: "XP",
+            filas: rows.slice(0, 8).map((r) => ({
+              nombre: r.name, tag: r.tag, puntos: r.score, jugador: r.isPlayer,
+            })),
+            posicion: pos, semana: wk, dias: daysLeft,
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 6000);
+    return () => window.clearInterval(id);
+  }, [rows, pos, wk, daysLeft]);
 
   const handleClaim = () => {
     if (claiming) return;
@@ -265,20 +289,10 @@ export function RankingPanel() {
 
   const playerPos = (rows: Row[]) => rows.findIndex((r) => r.isPlayer) + 1;
 
-  // v148 SALA DE CONTENIDO — el tablón mundial en volumen: las tres
-  // disciplinas con tu posición real como filas de cristal
-  useSala3DContenido(
-    "ranking",
-    "Ranking Global",
-    "#FFA030",
-    `XP ${xp} · NIVEL ${level} · SEMANA ${weekKeyOf().slice(5)}`,
-    (Object.keys(tables) as Discipline[]).map((disc) => ({
-      t: disc === "XP" ? "CARRERA XP" : disc === "CONQ" ? "CONQUISTADORES" : "TRADERS",
-      v: `#${playerPos(tables[disc])}`,
-      p: Math.max(2, 100 - (playerPos(tables[disc]) - 1) * 12),
-      color: playerPos(tables[disc]) === 1 ? "#FFC94D" : undefined,
-    })),
-  );
+  // v153: la sala DEDICADA (el podio global, emitida por WeekBoard cada 6s)
+  // gana sobre la genérica de contenido — dos emisores para el mismo tab
+  // pelearían en vg:sala3d-datos: el último que emite sobreescribe el tipo
+  // y el podio insignia perdería su constructor (lección del merge v153).
 
   return (
     <div className="space-y-4">
