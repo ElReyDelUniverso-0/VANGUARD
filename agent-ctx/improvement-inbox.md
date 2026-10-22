@@ -289,3 +289,12 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - Ancla de sala en móvil 390px: el título extruido roza la barra de chips superior — bajar el ancla ~0.05 o reducir fracAncho insignia
 - Audit de draw calls en desktop (renderer.info) para medir la mejora de MUNDOS SEPARADOS con números
 - MEMORIA: dev server OOMea en sesiones largas (pkill+bun run dev por ronda) — capturas tempranas, una sala por sesión de navegador
+
+## v157.0 EL UNIVERSO VIVO (2026-10-22) — cola viva
+- [ ] Frases del mundo en telón profundo: 0.34× las empequeñece — probar 0.5× o re-anclar frases más cerca en holo
+- [ ] BALIZA con etiqueta 3D de distancia («LA CASA · 42m») — helvetiker pequeño latiendo bajo la columna
+- [ ] SATÉLITES tocables: raycast → abrir su sección (hito de exploración + XP)
+- [ ] Auditar draw calls de la comitiva en mundos grandes (desktop 3 cortes × ~2 meshes — barato, verificar)
+- [ ] Cometas: variante roja/cian con curva (no solo rectas)
+- [ ] Respiración idle: añadir deriva orbital mínima (el mundo rota alrededor del piloto quieto)
+- [ ] El guard re-armable: métrica de cuántas restauraciones ocurren en producción (console.info con contador)
