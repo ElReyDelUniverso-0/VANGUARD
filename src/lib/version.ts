@@ -24,6 +24,27 @@
 //     al aterrizar; se sirven cuando el piloto sale a un módulo.
 // Herencia v158: LA CIUDAD (metrópolis fija, entrada/salida cinematográficas,
 // cielo ámbar, naves, farolas, rótulos a 45°) y todo lo anterior.
-export const APP_VERSION = "v159.0";
-export const APP_CODENAME = "EL ATERRIZAJE";
+
+// v160.0: EL VACÍO LIMPIO — la ciudad se lee como un cartel de neón en la noche.
+// (RENUMERADA: la v159.0 ya era EL ATERRIZAJE, publicada antes en esta misma era.)
+// (1) «no me gusta que en el fondo haya un planeta y estructura nada que ver»
+//     → al abrir la ciudad el planeta, su atmósfera, las partículas, el logo y
+//     los marcadores DUERMEN; el cielo ámbar se sustituye por una cúpula NEGRA
+//     con estrellas propias — la metrópolis flota en un vacío legible.
+// (2) «las casas están feas» → torres de VIDRIO OSCURO (metal 0.9) con columna
+//     de neón, corona luminosa, retícula de ventanas 4×3, rótulo con RESPALDO
+//     oscuro de filo vivo y una LÍNEA DE SENTIDO que dice qué hay dentro.
+// (3) «no preguntas si quieres entrar» → tocar un edificio YA NO entra solo:
+//     un panel 3D anclado a la cámara pregunta «¿ENTRAR?» con SÍ y NO reales
+//     (raycast, sonido, auto-cierre a los 9 s, ESC/VOLVER lo retiran).
+// (4) «el contenido es pobre, no se entiende y aburrido» + «cuando uno se
+//     mueva al rededor aparezcan elementos» → LOS REVELADOS: 8 núcleos de
+//     datos brotan del vacío al volar cerca (consejos reales, teatros en
+//     guerra, nivel/monedas/racha del piloto) y vuelven a dormir al alejarte;
+//     contador «HALLADOS n/8» sobre la puerta convierte el vuelo en expedición.
+// Herencia v159 EL ATERRIZAJE (aterrizaje automático en la ciudad, intro
+// brillante, dieta HUD móvil, sala héroe única) y v158 LA CIUDAD (metrópolis
+// anclada y=10.6, avenida + 16 manzanas, vuelo ida/regreso, corredor propio).
+export const APP_VERSION = "v160.0";
+export const APP_CODENAME = "EL VACÍO LIMPIO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

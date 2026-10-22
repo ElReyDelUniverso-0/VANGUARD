@@ -35,6 +35,18 @@ export const BITACORA: EntradaBitacora[] = [
     ],
   },
   {
+    version: "v160.0",
+    nombre: "EL VACÍO LIMPIO",
+    tipo: "mundo",
+    hitos: [
+      "EL FONDO NEGRO LIMPIO — «no me gusta que en el fondo haya un planeta y estructura nada que ver»: al abrir la ciudad, el planeta, su atmósfera, las partículas doradas/azules, el logo y los marcadores/portales DUERMEN (restaurados uno a uno al cerrar); el cielo ámbar se jubila y llega una cúpula shader NEGRA con estrellas propias — la metrópolis flota en un vacío legible donde solo importa la ciudad",
+      "LAS CASAS BELLAS — «las casas están feas»: torres de vidrio oscuro (metal 0.78, cuerpo casi negro con tinte del módulo), columna de neón en la fachada a la avenida, corona luminosa en la cornisa, retícula de ventanas 4×3 por fases, rótulo con RESPALDO oscuro de filo vivo (el nombre se lee incluso contra el negro puro) y una LÍNEA DE SENTIDO bajo el nombre: «EXPEDIENTES SECRETOS REALES», «TIENDA · CAJAS Y FICHAS»… el contenido ya no es un misterio",
+      "LA PREGUNTA ANTES DE ENTRAR — «no preguntas si quieres entrar»: tocar un edificio YA NO entra solo; un panel 3D anclado a la cámara pregunta «¿ENTRAR?» con el nombre del módulo y botones SÍ/NO reales (raycast, hover, sonido, auto-cierre a los 9 s); SÍ vuela al módulo, NO retira el panel — en móvil la placa escala 0.62 y entra completa en pantalla",
+      "LOS REVELADOS — «el contenido es pobre y aburrido» + «cuando uno se mueva al rededor aparezcan elementos»: 8 núcleos de datos brotan del vacío al volar cerca (consejos reales, teatros en guerra vigilados 24/7, nivel/monedas/racha leídos del piloto, expedientes por abrir) y vuelven a dormir al alejarte (re-armables); el contador «HALLADOS n/8» sobre la puerta convierte cada vuelo en una expedición de caza de datos (4 en móvil)",
+      "LA ISLA CON LUZ PROPIA — con el vacío negro la ciudad necesita su propia luz o muere: plaza ámbar 46 + fondo cian 34 + luz cenital blanca + luz luna direccional; suelo y calle casi negros para que la luz la firmen los neones y las ventanas (lección qa-v159-02)",
+    ],
+  },
+  {
     version: "v158.0",
     nombre: "LA CIUDAD",
     tipo: "mundo",

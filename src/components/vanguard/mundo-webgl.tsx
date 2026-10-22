@@ -275,6 +275,27 @@ const ETIQUETAS_DEFECTO: EtiquetasHolo = {
  type TabCiudad = { key: string; label: string };
 type SeccionCiudad = { key: string; label: string; color: string; tabs: TabCiudad[] };
 
+// v159 — LA LÍNEA DE SENTIDO: qué hay DENTRO de cada edificio, en una frase
+// (el contenido ya no es un misterio: se lee desde la avenida)
+const DESCRIPCIONES_CIUDAD: Record<string, string> = {
+  inicio: "TU BASE · MISIONES DEL DÍA",
+  inteligencia: "OSINT · EL MUNDO EN VIVO",
+  hangar: "SIMULADORES Y ARCADE 3D",
+  juego: "JUEGA · DUELOS Y RETOS",
+  mercado: "TIENDA · CAJAS Y FICHAS",
+  archivo: "EXPEDIENTES SECRETOS REALES",
+  comando: "MANDO DIARIO · CRISIS ACTIVA",
+  observatorio: "PREDICCIONES DEL FRENTE",
+  estrategia: "MAPAS Y GUERRA HOY",
+  emisora: "EMISORA · AUDIO EN VIVO",
+  oscsuro: "LA VERDAD CRUDA DEL FRENTE",
+  creadores: "MEMES Y CREACIONES",
+  social: "FOROS DE LA COMUNIDAD",
+  sistema: "AJUSTES · PERFIL · RANGO",
+  experimental: "LABORATORIO DE LO NUEVO",
+  arquitecto: "CONSTRUCCIÓN AUTOMÁTICA",
+};
+
 // marcadores: teatros de guerra de la Casa (OSINT real) + ciudades caliente
 export interface MarcadorWGL {
   id: string;
@@ -523,6 +544,14 @@ class MundoWGL {
   ciudadAroA: THREE.Object3D | null = null;
   ciudadAroB: THREE.Object3D | null = null;
   ciudadUIOn = false;
+  // v159 — EL VACÍO LIMPIO + LA PREGUNTA + LOS REVELADOS
+  ciudadOcultos: { o: THREE.Object3D; v: boolean }[] = [];
+  ciudadPrompt: THREE.Group | null = null;
+  ciudadPromptProxies: THREE.Mesh[] = [];
+  ciudadPromptTimer: number | null = null;
+  ciudadRevelados: { g: THREE.Group; x: number; y: number; z: number; radio: number; dentro: boolean; visto: boolean }[] = [];
+  ciudadHallados = 0;
+  ciudadHallaGrupo: THREE.Group | null = null;
   // v154 — EL TINTE DE SECCIÓN: el fondo del universo lava con el color de la sección activa
   cumarTinte: THREE.Mesh | null = null;
   tinteObjetivo = new THREE.Color(0x0a1428);
@@ -3069,6 +3098,23 @@ class MundoWGL {
     this.ciudadBeaconMat = null;
     this.ciudadAroA = null;
     this.ciudadAroB = null;
+    this.cerrarPregunta();
+    this.ciudadRevelados = [];
+    this.ciudadHallados = 0;
+    this.ciudadHallaGrupo = null;
+    this.ciudadOcultos = [];
+  }
+
+  // v159 — cirugía de dispose: geometrías y materiales PROPIOS de un grupo
+  // (prompt y textos reconstruidos) — nunca toca materiales compartidos
+  private eliminarRecursos(o: THREE.Object3D) {
+    o.traverse((n) => {
+      const m = n as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | THREE.Material[] | undefined;
+      if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
+      else if (mat) mat.dispose();
+    });
   }
 
   // LA FIGURA PROPIA DE CADA SECCIÓN — 16 siluetas que se reconocen
@@ -3201,8 +3247,10 @@ class MundoWGL {
     this.ciudadAroA = null;
     this.ciudadAroB = null;
 
-    const matSuelo = new THREE.MeshStandardMaterial({ color: 0x0a1428, emissive: 0x0e1c38, emissiveIntensity: 0.62, metalness: 0.45, roughness: 0.6 });
-    const matCalle = new THREE.MeshStandardMaterial({ color: 0x0e1c38, emissive: 0x14264a, emissiveIntensity: 0.7, metalness: 0.35, roughness: 0.5 });
+    // v159 — PALETA DEL VACÍO: suelo y calle casi negros — la luz la ponen
+    // los neones y las ventanas, no el asfalto (fondo negro limpio)
+    const matSuelo = new THREE.MeshStandardMaterial({ color: 0x070d18, emissive: 0x0a1226, emissiveIntensity: 0.55, metalness: 0.5, roughness: 0.62 });
+    const matCalle = new THREE.MeshStandardMaterial({ color: 0x0b1426, emissive: 0x101d3c, emissiveIntensity: 0.6, metalness: 0.4, roughness: 0.52 });
     const matNeon = new THREE.MeshBasicMaterial({ color: 0xf5c542, transparent: true, opacity: 0.85 });
     const matNeonCian = new THREE.MeshBasicMaterial({ color: 0x3fd6ff, transparent: true, opacity: 0.55 });
     const matPodio = new THREE.MeshStandardMaterial({ color: 0x0b1526, metalness: 0.7, roughness: 0.4 });
@@ -3271,12 +3319,26 @@ class MundoWGL {
       aro.rotation.x = -Math.PI / 2;
       aro.position.set(-lado * 0.36, 0.165, 0);
       ed.add(aro);
-      // torre con filos
+      // v159 — LA TORRE DE VIDRIO OSCURO: cuerpo casi negro con un filo vivo
+      // del color del módulo (más elegante que el bloque pintado de antes)
       const torreGeo = new THREE.BoxGeometry(0.94, h, 0.94);
-      const matTorre = new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: 0.13, metalness: 0.62, roughness: 0.3, transparent: true, opacity: 0.97 });
+      const matTorre = new THREE.MeshStandardMaterial({ color: 0x14203a, emissive: hex, emissiveIntensity: 0.14, metalness: 0.78, roughness: 0.26 });
       const torre = new THREE.Mesh(torreGeo, matTorre);
       torre.position.y = 0.16 + h / 2;
       ed.add(torre);
+      // LA COLUMNA DE NEÓN y LA CORONA — el filo que delata el módulo de noche
+      const espina = new THREE.Mesh(
+        new THREE.BoxGeometry(0.03, h, 0.03),
+        new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.92 }),
+      );
+      espina.position.set(0, 0.16 + h / 2, 0.472);
+      ed.add(espina);
+      const corona = new THREE.Mesh(
+        new THREE.BoxGeometry(1.0, 0.035, 1.0),
+        new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.72 }),
+      );
+      corona.position.y = 0.16 + h + 0.017;
+      ed.add(corona);
       if (!this.calidadBaja) {
         const filo = new THREE.LineSegments(
           new THREE.EdgesGeometry(torreGeo),
@@ -3285,15 +3347,17 @@ class MundoWGL {
         filo.position.copy(torre.position);
         ed.add(filo);
       }
-      // VENTANAS mirando a la avenida (piscinas compartidas que laten)
+      // VENTANAS mirando a la avenida (piscinas compartidas que laten) —
+      // v159: retícula ordenada 4×3, más ventanas, mejor silueta nocturna
       if (!this.calidadBaja) {
-        for (let f = 0; f < 3; f++) {
-          for (let c = 0; c < 2; c++) {
+        const filas = h > 0.95 ? 4 : 3;
+        for (let f = 0; f < filas; f++) {
+          for (let c = 0; c < 3; c++) {
             const win = new THREE.Mesh(
-              new THREE.BoxGeometry(0.012, 0.1, 0.14),
+              new THREE.BoxGeometry(0.012, 0.085, 0.12),
               this.ciudadVentanaMats[(i + f + c) % this.ciudadVentanaMats.length],
             );
-            win.position.set(-lado * 0.477, 0.42 + f * 0.28, -0.2 + c * 0.4);
+            win.position.set(-lado * 0.477, 0.38 + f * 0.26, -0.28 + c * 0.28);
             ed.add(win);
           }
         }
@@ -3307,20 +3371,46 @@ class MundoWGL {
       // EL NOMBRE extruido — inclinado 45°: se lee volando por la avenida
       // Y también al llegar por la puerta (lección qa-v158-10)
       if (this.fuente && sec.label) {
-        const t = this.hacerTexto3D(sec.label, { tam: 0.075, prof: 0.02, color: hex, emis: 0.85 });
+        const t = this.hacerTexto3D(sec.label, { tam: 0.075, prof: 0.02, color: hex, emis: 0.95 });
         for (const l of t.letras) l.mesh.visible = true;
         const escP = Math.min(1, 1.18 / Math.max(t.ancho, 0.001));
         t.grupo.scale.setScalar(escP);
         t.grupo.rotation.y = -lado * Math.PI / 4;
         t.grupo.position.set(-lado * 0.58, 0.16 + h + 0.44, 0.5);
         ed.add(t.grupo);
+        // v159 — RESPALDO del rótulo: placa oscura fina con filo del módulo —
+        // el nombre se lee SIEMPRE, incluso contra el negro puro
+        const placaR = new THREE.Mesh(
+          new THREE.BoxGeometry(t.ancho * escP + 0.16, 0.15, 0.012),
+          new THREE.MeshStandardMaterial({ color: 0x060b16, metalness: 0.7, roughness: 0.3, transparent: true, opacity: 0.82 }),
+        );
+        placaR.rotation.y = -lado * Math.PI / 4;
+        placaR.position.set(-lado * 0.58, 0.16 + h + 0.44, 0.492);
+        const filoR = new THREE.LineSegments(
+          new THREE.EdgesGeometry(placaR.geometry),
+          new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.6 }),
+        );
+        filoR.raycast = () => {};
+        placaR.add(filoR);
+        ed.add(placaR);
         const plateMat = t.grupo.children.length ? ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial) : null;
         if (plateMat) { plateMat.transparent = true; plateMat.opacity = 0; this.ciudadPlateMats.push(plateMat); }
+        // v159 — LA LÍNEA DE SENTIDO: qué hay DENTRO, en una frase legible
+        if (!this.calidadBaja) {
+          const td = this.hacerTexto3D(DESCRIPCIONES_CIUDAD[sec.key] ?? "MUNDO 3D PROPIO", { tam: 0.041, prof: 0.012, color: 0xcfe0ff, emis: 0.5 });
+          for (const l of td.letras) l.mesh.visible = true;
+          if (td.grupo.children.length) ((td.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.85;
+          const escD = Math.min(1, 1.34 / Math.max(td.ancho, 0.001));
+          td.grupo.scale.setScalar(escD);
+          td.grupo.rotation.y = -lado * Math.PI / 4;
+          td.grupo.position.set(-lado * 0.56, 0.16 + h + 0.29, 0.5);
+          ed.add(td.grupo);
+        }
       }
-      // EL PROXY — el edificio entero es un botón (entra a su primer mundo)
+      // EL PROXY — el edificio entero es un botón (v159: PREGUNTA antes de entrar)
       const proxy = new THREE.Mesh(new THREE.SphereGeometry(0.62, 8, 8), matProxy);
       proxy.position.y = 0.16 + h * 0.55;
-      proxy.userData = { ciudad: { tab: sec.tabs?.[0]?.key ?? "", seccion: sec.key } };
+      proxy.userData = { ciudad: { tab: sec.tabs?.[0]?.key ?? "", seccion: sec.key, nombre: sec.label, color: hex } };
       ed.add(proxy);
       this.proxiesCiudad.push(proxy);
       g.add(ed);
@@ -3453,8 +3543,50 @@ class MundoWGL {
       this.ciudadVehiculos.push({ g: nave, fase: i * 2.1, vel: 0.28 + i * 0.09, x: xv, y: yv });
     }
 
-    // ── EL CIELO de la ciudad: cúpula con amanecer propio (el fondo cambia
-    // de color al entrar — «el fondo puede cambiar dependiendo») ──
+    // ── v159 LOS REVELADOS: datos que BROTAN del vacío cuando vuelas cerca.
+    // Núcleos con aro y un lema flotante — lejos duermen (escala 0.001),
+    // al acercarte despiertan, al alejarte vuelven al vacío (re-armables).
+    if (this.fuente) {
+      const datos = this.datosCiudad();
+      const nR = this.calidadBaja ? 4 : datos.length;
+      for (let i = 0; i < nR; i++) {
+        const d = datos[i];
+        const ladoR = i % 2 === 0 ? 1 : -1;
+        const rv = new THREE.Group();
+        rv.position.set(ladoR * 0.62, d.y, d.z);
+        rv.scale.setScalar(0.001);
+        const nucleoR = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.055, 0),
+          new THREE.MeshBasicMaterial({ color: d.color, transparent: true, opacity: 0.95 }),
+        );
+        rv.add(nucleoR);
+        const aroR = new THREE.Mesh(
+          new THREE.TorusGeometry(0.13, 0.01, 6, 20),
+          new THREE.MeshBasicMaterial({ color: d.color, transparent: true, opacity: 0.5 }),
+        );
+        rv.add(aroR);
+        const tR = this.hacerTexto3D(d.texto, { tam: 0.048, prof: 0.013, color: d.color, emis: 0.85 });
+        for (const l of tR.letras) l.mesh.visible = true;
+        if (tR.grupo.children.length) ((tR.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.95;
+        const escR = Math.min(1, 1.5 / Math.max(tR.ancho, 0.001));
+        tR.grupo.scale.setScalar(escR);
+        tR.grupo.position.set(-tR.ancho * escR / 2, 0.16, 0);
+        rv.add(tR.grupo);
+        g.add(rv);
+        this.ciudadRevelados.push({ g: rv, x: ladoR * 0.62, y: d.y, z: d.z, radio: 1.45, dentro: false, visto: false });
+      }
+      // EL CONTADOR de la expedición: «HALLADOS n/8» sobre la puerta
+      const cnt = new THREE.Group();
+      cnt.position.set(0, 2.5, 6.9);
+      this.ciudadHallaGrupo = new THREE.Group();
+      cnt.add(this.ciudadHallaGrupo);
+      this.refrescarHallados();
+      g.add(cnt);
+    }
+
+    // ── v159 EL CIELO de la ciudad: NEGRO LIMPIO con estrellas propias —
+    // nada de amanecer ámbar ni planeta de fondo: la metrópolis flota en
+    // un vacío legible donde SOLO importa la ciudad («fondo negro limpio»)
     const cieloGeo = new THREE.SphereGeometry(12.4, 22, 14);
     const cieloMat = new THREE.ShaderMaterial({
       transparent: true,
@@ -3467,12 +3599,14 @@ class MundoWGL {
         uniform float uOp;
         void main() {
           float h = normalize(vP).y * 0.5 + 0.5;
-          vec3 cenit = vec3(0.05, 0.09, 0.22);
-          vec3 medio = vec3(0.12, 0.16, 0.32);
-          vec3 horizonte = vec3(0.4, 0.21, 0.07);
-          vec3 col = mix(horizonte, medio, smoothstep(0.28, 0.52, h));
-          col = mix(col, cenit, smoothstep(0.5, 0.75, h));
-          col += vec3(0.5, 0.27, 0.07) * exp(-abs(h - 0.44) * 9.0);
+          vec3 cenit = vec3(0.004, 0.005, 0.012);
+          vec3 medio = vec3(0.010, 0.014, 0.030);
+          vec3 horizonte = vec3(0.016, 0.022, 0.048);
+          vec3 col = mix(horizonte, medio, smoothstep(0.18, 0.52, h));
+          col = mix(col, cenit, smoothstep(0.52, 0.82, h));
+          vec3 celda = floor(normalize(vP) * 170.0);
+          float st = step(0.9982, fract(sin(dot(celda, vec3(12.9898, 78.233, 37.719))) * 43758.5453));
+          col += vec3(0.42, 0.47, 0.58) * st * 0.55;
           gl_FragColor = vec4(col, uOp);
         }`,
     });
@@ -3483,14 +3617,20 @@ class MundoWGL {
     this.ciudadCielo = cielo;
     this.ciudadCieloMat = cieloMat;
 
-    // ── LUZ PROPIA DE LA CIUDAD: ámbar sobre la plaza, cian al fondo de la
-    // avenida — la isla nunca lee como un agujero negro y muere con la ciudad
-    const luzPlaza = new THREE.PointLight(0xffd28a, 26, 11, 1.7);
+    // ── LUZ PROPIA DE LA CIUDAD: v159 la subimos — con el vacío negro la
+    // isla necesita SU propia luz o muere en la penumbra (lección qa-v159-02)
+    const luzPlaza = new THREE.PointLight(0xffd28a, 46, 13, 1.55);
     luzPlaza.position.set(0, 3.4, 3.4);
     g.add(luzPlaza);
-    const luzFondo = new THREE.PointLight(0x6fb6ff, 18, 11, 1.7);
+    const luzFondo = new THREE.PointLight(0x6fb6ff, 34, 13, 1.55);
     luzFondo.position.set(0, 3.2, -4.6);
     g.add(luzFondo);
+    const luzMedia = new THREE.PointLight(0xe8f0ff, 30, 12, 1.6);
+    luzMedia.position.set(0, 4.2, 0);
+    g.add(luzMedia);
+    const luzLuna = new THREE.DirectionalLight(0xbfd4ff, 1.1);
+    luzLuna.position.set(3, 8, 4);
+    g.add(luzLuna);
 
     this.escena.add(g);
   }
@@ -3517,6 +3657,26 @@ class MundoWGL {
     this.enVuelo = true;
     this.ciudadGrupo.visible = true;
     this.animarCielo(1);
+    // v159 — EL VACÍO LIMPIO: el planeta, su atmósfera, partículas, logo y
+    // marcadores DUERMEN mientras eliges — la ciudad flota en negro puro con
+    // SU cielo de estrellas (nada «que no viene al caso» alrededor)
+    this.ciudadOcultos = [];
+    const esconder = (o: THREE.Object3D | null | undefined) => {
+      if (!o) return;
+      this.ciudadOcultos.push({ o, v: o.visible });
+      o.visible = false;
+    };
+    esconder(this.tierra);
+    esconder(this.atmosfera);
+    esconder(this.particulasOro);
+    esconder(this.particulasAzul);
+    esconder(this.aroSpin);
+    esconder(this.logoGrupo);
+    for (const mk of this.marcadores) esconder(mk.grupo);
+    for (const pt of this.portales) esconder(pt.grupo);
+    for (const tz of this.titulosZona) esconder(tz.grupo);
+    // los revelados vuelven al vacío para volver a brotar en cada visita
+    for (const r of this.ciudadRevelados) { r.dentro = false; r.g.scale.setScalar(0.001); }
     // EL VIAJE VISIBLE — la cámara sube hasta la puerta de la avenida
     const esc = this.ciudadGrupo.scale.x;
     const movl = this.esMovil();
@@ -3548,6 +3708,10 @@ class MundoWGL {
     if (!this.ciudadAbierta) return;
     this.ciudadAbierta = false;
     document.documentElement.removeAttribute("data-vg-ciudad");
+    this.cerrarPregunta();
+    // v159 — el planeta y su corte DESPIERTAN al cerrar (el regreso a casa)
+    for (const oc of this.ciudadOcultos) oc.o.visible = oc.v;
+    this.ciudadOcultos = [];
     const volver = this.ciudadPose;
     this.ciudadPose = null;
     this.setCiudadUI(false);
@@ -3627,6 +3791,139 @@ class MundoWGL {
     });
   }
 
+  // ──────────────────────────────────────────────────────────────
+  // v159 — LA CIUDAD QUE HABLA: datos, contador y LA PREGUNTA.
+  // ──────────────────────────────────────────────────────────────
+
+  // LOS CONTENIDOS que esperan en el vacío: consejos reales + datos del
+  // mundo (teatros vigilados) y del propio piloto (leídos UNA vez)
+  private datosCiudad(): { texto: string; color: number; y: number; z: number }[] {
+    let nivel = 0, coins = 0, racha = 0;
+    try {
+      const crudo = localStorage.getItem("vanguard-game-state-v1");
+      if (crudo) {
+        const j = JSON.parse(crudo) as { state?: { level?: number; coins?: number; streak?: number } };
+        nivel = j.state?.level ?? 0;
+        coins = j.state?.coins ?? 0;
+        racha = j.state?.streak ?? 0;
+      }
+    } catch { /* sin datos: la ciudad sigue viva igual */ }
+    const teatros = GUERRAS.length;
+    return [
+      { texto: "VUELA POR LA AVENIDA · EXPLORA", color: 0x3fd6ff, y: 2.5, z: 5.2 },
+      { texto: "TOCA UN EDIFICIO Y CONFIRMA PARA ENTRAR", color: 0xf5c542, y: 2.1, z: 3.4 },
+      { texto: `${teatros} TEATROS DE GUERRA VIGILADOS 24/7`, color: 0xff7a5c, y: 1.8, z: 1.6 },
+      { texto: nivel > 0 ? `PILOTO NIVEL ${nivel} · RACHA ${racha} DÍAS` : "TU NIVEL TE ESPERA · JUEGA Y SUBE", color: 0x9fe8c8, y: 2.3, z: -0.2 },
+      { texto: coins > 0 ? `${coins} MONEDAS EN TU BOLSA` : "GANA MONEDAS EN CADA MUNDO", color: 0xffd76a, y: 1.9, z: -2.0 },
+      { texto: "23 EXPEDIENTES SECRETOS POR ABRIR", color: 0xc9a0ff, y: 2.4, z: -3.8 },
+      { texto: "EL UNIVERSO NO DUERME · VUELVE SIEMPRE", color: 0x7ab8ff, y: 2.0, z: -5.6 },
+      { texto: "8 DATOS OCULTOS · HALLA TODOS", color: 0x9fe8c8, y: 2.6, z: -6.8 },
+    ];
+  }
+
+  // EL CONTADOR del explorador: «HALLADOS n/8» — se reconstruye al hallar
+  private refrescarHallados() {
+    if (!this.ciudadHallaGrupo || !this.fuente) return;
+    for (const hijo of [...this.ciudadHallaGrupo.children]) {
+      this.ciudadHallaGrupo.remove(hijo);
+      this.eliminarRecursos(hijo);
+    }
+    const total = Math.max(this.ciudadRevelados.length, 1);
+    const t = this.hacerTexto3D(`HALLADOS ${this.ciudadHallados}/${total}`, { tam: 0.06, prof: 0.015, color: 0x9fe8c8, emis: 0.85 });
+    for (const l of t.letras) l.mesh.visible = true;
+    if (t.grupo.children.length) ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.95;
+    const escT = Math.min(1, 1.5 / Math.max(t.ancho, 0.001));
+    t.grupo.scale.setScalar(escT);
+    t.grupo.position.set(-t.ancho * escT / 2, 0, 0);
+    this.ciudadHallaGrupo.add(t.grupo);
+  }
+
+  // LA PREGUNTA: tocar un edificio NUNCA entra solo — un panel 3D anclado
+  // a la cámara pregunta «¿ENTRAR?» con SÍ y NO reales (raycast, sonido)
+  preguntarEntrada(ed: { tab: string; nombre: string; color: number }) {
+    if (!this.fuente || !this.ciudadAbierta || !ed.tab) return;
+    this.cerrarPregunta();
+    const hex = ed.color;
+    const g = new THREE.Group();
+    const placa = new THREE.Mesh(
+      new THREE.BoxGeometry(1.26, 0.68, 0.045),
+      new THREE.MeshStandardMaterial({ color: 0x101a30, metalness: 0.55, roughness: 0.32, transparent: true, opacity: 0.95, emissive: 0x1a2946, emissiveIntensity: 0.5 }),
+    );
+    g.add(placa);
+    const filo = new THREE.LineSegments(
+      new THREE.EdgesGeometry(placa.geometry),
+      new THREE.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.9 }),
+    );
+    filo.raycast = () => {};
+    placa.add(filo);
+    const tit = this.hacerTexto3D("¿ENTRAR?", { tam: 0.082, prof: 0.02, color: 0xf5c542, emis: 0.9 });
+    for (const l of tit.letras) l.mesh.visible = true;
+    if (tit.grupo.children.length) ((tit.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 1;
+    const escT = Math.min(1, 1.02 / Math.max(tit.ancho, 0.001));
+    tit.grupo.scale.setScalar(escT);
+    tit.grupo.position.set(-tit.ancho * escT / 2, 0.24, 0.03);
+    g.add(tit.grupo);
+    const nom = this.hacerTexto3D(ed.nombre || "MÓDULO", { tam: 0.072, prof: 0.018, color: hex, emis: 0.95 });
+    for (const l of nom.letras) l.mesh.visible = true;
+    if (nom.grupo.children.length) ((nom.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 1;
+    const escN = Math.min(1, 1.14 / Math.max(nom.ancho, 0.001));
+    nom.grupo.scale.setScalar(escN);
+    nom.grupo.position.set(-nom.ancho * escN / 2, 0.06, 0.03);
+    g.add(nom.grupo);
+    const proxyMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false });
+    const boton = (txt: string, x: number, color: number, si: boolean) => {
+      const b = new THREE.Group();
+      b.position.set(x, -0.2, 0.04);
+      const p = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.17, 0.04),
+        new THREE.MeshStandardMaterial({ color: 0x0b1322, metalness: 0.6, roughness: 0.35, transparent: true, opacity: 0.95 }),
+      );
+      b.add(p);
+      const fb = new THREE.LineSegments(new THREE.EdgesGeometry(p.geometry), new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.9 }));
+      fb.raycast = () => {};
+      p.add(fb);
+      const t = this.hacerTexto3D(txt, { tam: 0.055, prof: 0.014, color, emis: 0.95 });
+      for (const l of t.letras) l.mesh.visible = true;
+      if (t.grupo.children.length) ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 1;
+      const escB = Math.min(1, 0.38 / Math.max(t.ancho, 0.001));
+      t.grupo.scale.setScalar(escB);
+      t.grupo.position.set(-t.ancho * escB / 2, -0.018, 0.025);
+      b.add(t.grupo);
+      const proxy = new THREE.Mesh(new THREE.SphereGeometry(0.21, 8, 8), proxyMat);
+      proxy.userData = si ? { ciudad: { si: { tab: ed.tab } } } : { ciudad: { no: true } };
+      b.add(proxy);
+      this.proxiesCiudad.push(proxy);
+      this.ciudadPromptProxies.push(proxy);
+      g.add(b);
+    };
+    boton("SÍ", -0.3, hex, true);
+    boton("NO", 0.3, 0xff6b9d, false);
+    // v159 móvil: la placa entra COMPLETA en pantalla estrecha (qa-v159-10)
+    const escFinal = this.esMovil() ? 0.62 : 1;
+    g.scale.setScalar(escFinal * 0.6);
+    this.escena.add(g);
+    this.ciudadPrompt = g;
+    this.animarP(g.scale, { x: escFinal, y: escFinal, z: escFinal }, 300, { ease: easeOut });
+    if (this.ciudadPromptTimer) window.clearTimeout(this.ciudadPromptTimer);
+    this.ciudadPromptTimer = window.setTimeout(() => this.cerrarPregunta(), 9000);
+    sonar("tic");
+  }
+
+  // la pregunta se retira: proxies fuera del raycast, recursos liberados
+  cerrarPregunta() {
+    if (this.ciudadPromptTimer) { window.clearTimeout(this.ciudadPromptTimer); this.ciudadPromptTimer = null; }
+    for (const px of this.ciudadPromptProxies) {
+      const i = this.proxiesCiudad.indexOf(px);
+      if (i >= 0) this.proxiesCiudad.splice(i, 1);
+    }
+    this.ciudadPromptProxies = [];
+    const g = this.ciudadPrompt;
+    this.ciudadPrompt = null;
+    if (!g) return;
+    this.escena.remove(g);
+    this.eliminarRecursos(g);
+  }
+
   // EL PUENTE Y SU CONSOLA duermen mientras eliges en la ciudad (capas limpias)
   private setCiudadUI(on: boolean) {
     if (this.ciudadUIOn === on) return;
@@ -3684,6 +3981,37 @@ class MundoWGL {
     if (this.ciudadAroA) this.ciudadAroA.rotation.z += dt * 0.6;
     if (this.ciudadAroB) this.ciudadAroB.rotation.y += dt * 0.45;
     if (this.ciudadBeaconMat) this.ciudadBeaconMat.opacity = 0.18 + Math.sin(t * 1.7) * 0.12;
+    // v159 — LA PREGUNTA vive pegada a la cámara (nunca se queda atrás)
+    if (this.ciudadPrompt) {
+      _vA.set(0, 0, -1).applyQuaternion(this.camara.quaternion);
+      this.ciudadPrompt.position.copy(this.camara.position).addScaledVector(_vA, 1.25);
+      this.ciudadPrompt.quaternion.copy(this.camara.quaternion);
+    }
+    // v159 — REVELADOS: la proximidad los hace BROTAR del vacío (primera vez
+    // suma al contador de hallazgos); al alejarte vuelven a dormir, re-armados
+    if (this.ciudadGrupo && this.ciudadRevelados.length) {
+      const esc = this.ciudadGrupo.scale.x;
+      const cx = this.ciudadGrupo.position.x, cy = this.ciudadGrupo.position.y, cz = this.ciudadGrupo.position.z;
+      for (const r of this.ciudadRevelados) {
+        const dx = this.camara.position.x - (cx + r.x * esc);
+        const dy = this.camara.position.y - (cy + r.y * esc);
+        const dz = this.camara.position.z - (cz + r.z * esc);
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (!r.dentro && d2 < r.radio * r.radio) {
+          r.dentro = true;
+          if (!r.visto) {
+            r.visto = true;
+            this.ciudadHallados = Math.min(this.ciudadRevelados.length, this.ciudadHallados + 1);
+            this.refrescarHallados();
+          }
+          this.animarP(r.g.scale, { x: 1, y: 1, z: 1 }, 460, { ease: easeOut });
+          sonar("ping");
+        } else if (r.dentro && d2 > r.radio * r.radio * 2.4) {
+          r.dentro = false;
+          this.animarP(r.g.scale, { x: 0.001, y: 0.001, z: 0.001 }, 380, { ease: easeOut });
+        }
+      }
+    }
   }
 
   // ── HOVER del puente — la placa respira más fuerte bajo el puntero ──
@@ -3756,18 +4084,22 @@ class MundoWGL {
   }
 
   // ── RAYCAST — portales/títulos → marcadores → globo ──
-  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "ciudad" | "portal" | "marcador" | "globo" | "sala" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string } {
+  golpear(nx: number, ny: number, ignorarUI: boolean): { tipo: "holo" | "ciudad" | "portal" | "marcador" | "globo" | "sala" | "nada"; datos?: MarcadorWGL; punto?: THREE.Vector3; zona?: number; accion?: string; key?: string; edificio?: { tab: string; nombre: string; color: number } } {
     if (ignorarUI) return { tipo: "nada" };
     const ray = new THREE.Raycaster();
     ray.setFromCamera(new THREE.Vector2(nx, ny), this.camara);
     // v154: LA CIUDAD-MENÚ — los edificios pisan a TODO mientras eliges
     // (v158: no durante el vuelo de ida/regreso — la cámara viaja)
+    // v159: tocar un edificio YA NO entra — devuelve la intención y el
+    // mundo pregunta «¿ENTRAR?» con SÍ/NO; SÍ/NO del panel también viven aquí
     if (this.ciudadAbierta && !this.enVuelo && this.proxiesCiudad.length) {
       const hitC = ray.intersectObjects(this.proxiesCiudad, false)[0];
       if (hitC && ancestroVisible(hitC.object)) {
         const u = hitC.object.userData?.ciudad;
         if (u?.cerrar) return { tipo: "ciudad", key: "__cerrar" };
-        if (u?.tab) return { tipo: "ciudad", key: String(u.tab) };
+        if (u?.no) return { tipo: "ciudad", key: "__no" };
+        if (u?.si) return { tipo: "ciudad", key: "__si", edificio: { tab: String(u.si.tab), nombre: "", color: 0xf5c542 } };
+        if (u?.tab) return { tipo: "ciudad", key: "__preguntar", edificio: { tab: String(u.tab), nombre: String(u.nombre ?? ""), color: Number(u.color ?? 0xf5c542) } };
       }
     }
     // v144: EL PUENTE primero — las placas de mando pisan al resto del mundo
@@ -4507,12 +4839,21 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         }
         return;
       }
-      // v154: CIUDAD-MENÚ — un edificio tocado entra a su sección
+      // v154: CIUDAD-MENÚ — v159: el edificio PREGUNTA antes de entrar
       if (g.tipo === "ciudad") {
         sonar("click");
         if (g.key === "__cerrar") { m.cerrarCiudad(); return; }
-        // ENTRAR a una sección desde su edificio: la Casa abre la pestaña y
-        // el cambio de pestaña recoge la ciudad (setPestanasHolo → cerrar)
+        if (g.key === "__no") { m.cerrarPregunta(); return; }
+        if (g.key === "__si" && g.edificio) {
+          const tabSi = g.edificio.tab;
+          m.cerrarPregunta();
+          // ENTRAR confirmado: la Casa abre la pestaña y el cambio de pestaña
+          // recoge la ciudad (setPestanasHolo → cerrar)
+          window.dispatchEvent(new CustomEvent("vg:holo-accion", { detail: { accion: "tab", key: tabSi } }));
+          return;
+        }
+        if (g.key === "__preguntar" && g.edificio) { m.preguntarEntrada(g.edificio); return; }
+        // respaldo legacy: llave de tab directa
         window.dispatchEvent(new CustomEvent("vg:holo-accion", { detail: { accion: "tab", key: g.key } }));
         return;
       }
