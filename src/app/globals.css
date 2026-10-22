@@ -4740,6 +4740,60 @@ html[data-wgl-capsula="1"] footer { display: none; }
   transition: opacity 0.42s ease;
   filter: drop-shadow(0 34px 70px rgba(0, 0, 0, 0.6));
 }
+/* ═══ v156 MODO 3D PURO — «lo 3D debe ser lo principal» ═══
+   La consola DOM de la insignia SE GUARDA: la sala volumétrica es el
+   módulo entero. El chip HOLO la devuelve con un toque. */
+.vg143-capsula[data-holo="1"] {
+  display: none !important;
+}
+.vg156-holo-chip {
+  position: fixed;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 134px);
+  z-index: 58;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 191, 87, 0.42);
+  border-radius: 999px;
+  background: rgba(10, 14, 24, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffd98a;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: 0 0 14px rgba(255, 191, 87, 0.16), inset 0 0 10px rgba(255, 191, 87, 0.05);
+  pointer-events: auto;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+}
+.vg156-holo-chip:active { transform: scale(0.96); }
+.vg156-holo-ico {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffc95c;
+  box-shadow: 0 0 8px #ffc95c;
+  animation: vg156-holo-lat 2.2s ease-in-out infinite;
+}
+.vg156-holo-chip[aria-pressed="false"] .vg156-holo-ico {
+  background: #7ab8ff;
+  box-shadow: 0 0 8px #7ab8ff;
+  animation: none;
+}
+@keyframes vg156-holo-lat {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+html[data-vg-ciudad="1"] .vg156-holo-chip,
+html[data-wgl-entrada="1"] .vg156-holo-chip { display: none !important; }
+@media (min-width: 768px) {
+  .vg156-holo-chip { bottom: calc(env(safe-area-inset-bottom, 0px) + 112px); }
+}
 .vg143-capsula[data-acoplada="1"] {
   opacity: 1;
   pointer-events: auto;

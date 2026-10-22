@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v156.0",
+    nombre: "EL MÓDULO EN VOLUMEN",
+    tipo: "mundo",
+    hitos: [
+      "MODO 3D PURO — «lo 3D debe ser lo principal» (el Dueño vio que los módulos seguían leyéndose 2D): al entrar a cualquier sala INSIGNIA la consola DOM se GUARDA (display:none por dataset.holo) y el módulo entero ES la sala volumétrica — el héroe re-ancla al CENTRO del cuadro, más grande (0.66 del ancho en móvil, 0.52 en escritorio), con el mundo de la sección cediéndole aire (0.84×) y el haz del proyector dormido mientras no hay pantalla que sostener",
+      "EL CHIP HOLO — un toque lo devuelve todo: chip pequeño, holo, en zona de pulgar (derecha, sobre el puente) que muestra/oculta la consola de datos 2D sin salir del universo; dataset.vgHolo en <html> es la fuente única de verdad y el mundo escucha vg:sala3d-holo para re-anclar al vuelo (corte limpio, sin rebote); los paneles JAMÁS dejan de trabajar debajo: publican sus datos y atienden las acciones tocadas en la sala 3D",
+      "LAG BAJO CONTROL (la acumulación de módulos): con la consola guardada, el móvil ya no compone la pared DOM en la capa CSS3D mientras juega el módulo — la capa más cara de renderizar desaparece del cuadro exactamente cuando el 3D manda; el raycast de la sala y los proxies quedan como ÚNICA interfaz",
+      "LAS LETRAS VIVAS: los títulos 3D de TODAS las salas (14 constructores: economía, conflictos, memes, noticias, quiz, votaciones, perfil, predicciones, logros, tienda, misiones, ranking, contenido y genérica) RESPIRAN ahora — marea lenta (±0.016) y emisión latiente, cero new por frame; además cazadas dos mareas viejas que peleaban por la misma position.y (genérica y contenido) — un solo dueño por título",
+      "REGALO DE QA: reparadas dos líneas corruptas de page.tsx que venían del commit anterior (const odoMundo → [modoMundo]) — el build vuelve a compilar limpio de punta a punta (tsc 0 errores)",
+    ],
+  },
+  {
     version: "v155.0",
     nombre: "LA CORTINA DE ARRANQUE",
     tipo: "tecno",

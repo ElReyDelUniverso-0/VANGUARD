@@ -327,6 +327,22 @@ export function placaHolo(w: number, h: number, color: number): { cuerpo: THREE.
   return { cuerpo, borde };
 }
 
+// v156 — LAS LETRAS VIVAS: el título de la sala RESPIRA — flota con una
+// marea lenta y su emisión late (el Dueño: «las letras... tiene animaciones»).
+// Cero new por frame, cero coste en GPU: dos senos por título.
+export function animarTitulo(
+  tics: ((t: number, dt: number) => void)[],
+  titulo: { grupo: THREE.Group; mats: THREE.MeshStandardMaterial[] },
+  baseY: number,
+  fase = 0,
+) {
+  tics.push((t) => {
+    titulo.grupo.position.y = baseY + Math.sin(t * 1.25 + fase) * 0.016;
+    const em = 0.55 + Math.sin(t * 1.8 + fase) * 0.24;
+    for (const m of titulo.mats) m.emissiveIntensity = em;
+  });
+}
+
 // pedestal — el disco del que nace la sala
 export function pedestal(r: number, color: number): THREE.Group {
   const g = new THREE.Group();
@@ -438,6 +454,7 @@ function construirEconomia(ctx: CtxSala3D, p: SalaEconomia3D): Sala3DInstancia {
   // EL TÍTULO — la sala firmada en volumen
   const titulo = texto3D(ctx, p.titulo, { tam: 0.155, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.9, 0);
+  animarTitulo(tics, titulo, 0.9);
   grupo.add(titulo.grupo);
 
   // LA BASE HOLOGRÁFICA del gráfico
@@ -587,6 +604,7 @@ function construirConflictos(ctx: CtxSala3D, p: SalaConflictos3D): Sala3DInstanc
   // EL TÍTULO de la sala
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   // LA MESA DE MANDO — disco holográfico con anillo de neón
@@ -755,6 +773,7 @@ function construirMemes(ctx: CtxSala3D, p: SalaMemes3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.96, 0);
+  animarTitulo(tics, titulo, 0.96, 1.3);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.6, p.color);
@@ -877,6 +896,7 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
   const escalaT = Math.min(1, 1.92 / titulo.ancho);
   titulo.grupo.scale.setScalar(escalaT);
   titulo.grupo.position.set(-titulo.ancho * escalaT / 2, 0.55, 0);
+  animarTitulo(tics, titulo, 0.55, 0.7);
   grupo.add(titulo.grupo);
 
   // ── LAS LETRAS INFORMATIVAS — qué es este módulo, en volumen real ──
@@ -1031,7 +1051,7 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
     polvoSala.rotation.y += dt * 0.2;
     arco.rotation.z = Math.sin(t * 0.6) * 0.05;
     (arco.material as THREE.MeshBasicMaterial).opacity = 0.55 + Math.sin(t * 1.6) * 0.25;
-    titulo.grupo.position.y = 0.55 + Math.sin(t * 1.05) * 0.015;
+    // v156: la marea del título la lleva animarTitulo (único dueño de position.y)
     // el núcleo respira y sus anillos orbitan en sentidos opuestos
     nucleo.rotation.y += dt * 0.45;
     nucleo.rotation.x += dt * 0.18;
@@ -1089,6 +1109,7 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.92, 0);
+  animarTitulo(tics, titulo, 0.92, 1.9);
   grupo.add(titulo.grupo);
 
   // el arco que abraza el título (firma de las salas)
@@ -1212,7 +1233,7 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     polvoC.rotation.y += dt * 0.2;
     arco.rotation.z = Math.sin(t * 0.6) * 0.05;
     (arco.material as THREE.MeshBasicMaterial).opacity = 0.5 + Math.sin(t * 1.6) * 0.22;
-    titulo.grupo.position.y = 0.92 + Math.sin(t * 1.05) * 0.014;
+    // v156: la marea del título la lleva animarTitulo (único dueño de position.y)
     filasWrap.children.forEach((ch, i) => {
       const baseY = (ch.userData.baseY as number | undefined) ?? ch.position.y;
       ch.position.y = baseY + Math.sin(t * 1.4 + i * 0.9) * 0.006;
@@ -1251,6 +1272,7 @@ function construirNoticias(ctx: CtxSala3D, p: SalaNoticias3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   // v145.1 QA: desplazamiento al espacio derecho del cuadro (responsive:
@@ -1403,6 +1425,7 @@ function construirQuiz(ctx: CtxSala3D, p: SalaQuiz3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
@@ -1568,6 +1591,7 @@ function construirVotaciones(ctx: CtxSala3D, p: SalaVotaciones3D): Sala3DInstanc
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
@@ -1715,6 +1739,7 @@ function construirPerfil(ctx: CtxSala3D, p: SalaPerfil3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.4, p.color);
@@ -1832,6 +1857,7 @@ function construirPredicciones(ctx: CtxSala3D, p: SalaPredicciones3D): Sala3DIns
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
@@ -2040,6 +2066,7 @@ function construirLogros(ctx: CtxSala3D, p: SalaLogros3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
@@ -2229,6 +2256,7 @@ function construirTienda(ctx: CtxSala3D, p: SalaTienda3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
@@ -2388,6 +2416,7 @@ function construirMisiones(ctx: CtxSala3D, p: SalaMisiones3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
@@ -2558,6 +2587,7 @@ function construirRanking(ctx: CtxSala3D, p: SalaRanking3D): Sala3DInstancia {
 
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
   titulo.grupo.position.set(-titulo.ancho / 2, 0.98, 0);
+  animarTitulo(tics, titulo, 0.98);
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);

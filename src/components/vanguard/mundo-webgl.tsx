@@ -461,6 +461,10 @@ class MundoWGL {
   // v145 — SALAS EN VOLUMEN: el contenido real de la sala activa
   salaInst: Sala3DInstancia | null = null;
   salaPayload: PayloadSala3D | null = null;
+  // v156 MODO 3D PURO: la consola DOM de la insignia se guarda y la sala
+  // volumétrica ES el módulo entero (el Dueño: «lo 3D debe ser lo principal»)
+  holoOculto = false;
+  private anclaUltima: { pos: THREE.Vector3; escala: number } | null = null;
   salaLlave = "";
   // v148 — EL CASCO DEL PILOTO: el HUD 3D real (adiós a los últimos DOM fijos)
   hud3D: Hud3D | null = null;
@@ -563,6 +567,8 @@ class MundoWGL {
     // real de Vanguard nace en volumen dentro del mundo
     window.addEventListener("vg:sala3d", this.onSala3dEv);
     window.addEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
+    // v156: la Casa guarda/muestra la consola DOM — el héroe se re-ancla
+    window.addEventListener("vg:sala3d-holo", this.onHoloEv);
     // v154: LA CIUDAD-MENÚ — catálogo de secciones + toggle desde la Casa
     window.addEventListener("vg:holo-ciudad", this.onCiudadCatalogoEv);
     window.addEventListener("vg:ciudad-toggle", this.onCiudadToggleEv);
@@ -777,7 +783,22 @@ class MundoWGL {
     this.capsulaEl.style.height = `${h}px`;
     this.capsulaPx = w;
     this.capsulaEl.dataset.consola = consola ? "1" : "0";
+    // v156 MODO 3D PURO: la consola DOM de la insignia SE GUARDA (CSS la
+    // retira con display:none) — la sala volumétrica es el módulo entero
+    const holo = consola && this.holoOculto && this.salaPayload?.tipo !== "generica";
+    this.capsulaEl.dataset.holo = holo ? "1" : "0";
   }
+
+  // v156 — EL PULSO DEL HOLO: la Casa manda el estado (dataset.vgHolo es la
+  // fuente única) y el mundo re-ancla el héroe al centro del cuadro al vuelo
+  private onHoloEv = () => {
+    this.holoOculto = document.documentElement.dataset.vgHolo === "1";
+    this.dimensionarCapsula();
+    if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
+      this.anclarSala(true);
+      if (!this.holoOculto && this.anclaUltima) this.armarHaz(this.anclaUltima.pos, this.anclaUltima.escala);
+    }
+  };
 
   private esMovil() { return window.innerWidth < 768; }
 
@@ -814,6 +835,7 @@ class MundoWGL {
   acoplarCapsula(zona: number, instant = false) {
     if (this.modoMundo || zona === 0 || !this.capsula) return;
     const a = this.anclaCapsula(zona);
+    this.anclaUltima = a; // v156: para re-encender el haz al salir del holo
     this.capsula.position.copy(a.pos);
     // v144 P1: POSE DE CONSOLA — yaw deliberado de 6° (la pantalla ya no es
     // una pared paralela: es la consola de mando del universo)
@@ -1044,6 +1066,8 @@ class MundoWGL {
     if (!this.fuente || !this.salaPayload) return;
     this.desmontarSala(true);
     const p = this.salaPayload;
+    // v156: la sala nace RESPETANDO el modo 3D puro elegido por la Casa
+    this.holoOculto = p.tipo !== "generica" && document.documentElement.dataset.vgHolo === "1";
     const ctx: CtxSala3D = {
       fuente: this.fuente,
       calidadBaja: this.calidadBaja,
@@ -1112,6 +1136,7 @@ class MundoWGL {
     if (!inst || !p || this.modoMundo || this.zona === 0 || !this.capsulaAcoplada) return;
     const insignia = p.tipo !== "generica";
     const a = this.anclaSala(insignia);
+    // v156: con el holo activo el héroe re-ancla SIN rebote (corte limpio)
     inst.grupo.position.copy(a.pos);
     inst.grupo.quaternion.copy(this.camara.quaternion);
     inst.grupo.quaternion.multiply(Q_YAW_CONSOLA);
@@ -1179,7 +1204,9 @@ class MundoWGL {
     const movil = this.esMovil();
     // la escala CONVIERTE el mundo local (plataforma -1.62 → frases +1.58,
     // propios a radio 2.9) en un cuadro completo
-    const escW = alto * (movil ? 0.3 : 0.28);
+    // v156: con la consola guardada el mundo respira más pequeño — el héroe
+    // de la sala manda el centro y las frases le ceden el aire
+    const escW = alto * (movil ? 0.3 : 0.28) * (this.holoOculto && this.salaInst && this.salaPayload?.tipo !== "generica" ? 0.84 : 1);
     const f = new THREE.Vector3();
     this.camara.getWorldDirection(f);
     const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
@@ -1202,24 +1229,43 @@ class MundoWGL {
     // v145 QA: ancla EN COORDENADAS DE PANTALLA (como el puente de mando) —
     // el planeta vive al centro-izquierda del encuadre; la sala insignia
     // flota ARRIBA-DERECHA (desktop) o ARRIBA (móvil) sin que el globo la tape
-    const dist = insignia ? 3.4 : 4.0;
+    // v156 HOLO: el héroe SE ADELANTA a 2.3 — DELANTE del mundo de la sección
+    // (2.55) y del planeta: flota como una proyección entre el piloto y la
+    // Tierra, el módulo entero de frente sin que nada lo tape
+    const dist = insignia ? (this.holoOculto ? 2.3 : 3.4) : 4.0;
     const fovR = (this.camara.fov * Math.PI) / 360;
     const altoMundo = 2 * dist * Math.tan(fovR);
     const anchoMundo = altoMundo * this.camara.aspect;
     const movil = this.esMovil();
+    // v156 MODO 3D PURO: con la consola guardada el héroe manda el CENTRO
+    // del cuadro — más grande y centrado, el módulo entero es volumen
+    const holo = insignia && this.holoOculto;
     // v150: la estación informativa (genérica) vive en la franja derecha del
     // cuadro — 0.22 del ancho para caber íntegra entre la cápsula y el borde
-    const fracAncho = movil ? 0.55 : insignia ? 0.44 : 0.22;
+    // v156 QA móvil: en RETRATO el ancho es el eje corto — el héroe manda
+    // con 0.94 del ancho (la consola no vuelve a empequeñecer el módulo)
+    const fracAncho = movil ? (holo ? 0.94 : 0.55) : insignia ? (holo ? 0.54 : 0.44) : 0.22;
     const f = new THREE.Vector3();
     this.camara.getWorldDirection(f);
     const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
     const derecha = new THREE.Vector3().crossVectors(f, arriba).normalize();
-    const fx = insignia ? (movil ? 0 : 0.19) : 0;
-    const fy = insignia ? (movil ? 0.24 : 0.05) : 0;
+    const fx = insignia ? (movil ? 0 : holo ? 0 : 0.19) : 0;
+    // v156 QA: la sala es pesada de arriba (título 0.98 + núcleo) — el holo
+    // la BAJA para que el título respire bajo el borde superior del cuadro
+    const fy = insignia ? (movil ? (holo ? -0.06 : 0.24) : (holo ? -0.16 : 0.05)) : 0;
     const pos = this.camara.position.clone()
       .addScaledVector(f, dist)
       .addScaledVector(derecha, anchoMundo * fx)
       .addScaledVector(arriba, altoMundo * fy);
+    // v156 QA móvil: la cámara MIRA desviada del eje (el planeta vive a la
+    // izquierda del encuadre) — el ancla de eje recto cae a la DERECHA del
+    // centro. En holo el módulo aterriza EXACTAMENTE en la MIRA de la pose:
+    // se mide dónde proyecta el tgt de la zona y se compensa ese desvío.
+    if (holo) {
+      const v = this.poseDe(this.zona).tgt.clone().project(this.camara);
+      pos.addScaledVector(derecha, (v.x * anchoMundo) / 2);
+      pos.addScaledVector(arriba, (v.y * altoMundo) / 2);
+    }
     // v149: escala por DISTANCIA REAL cámara→héroe (el mismo filo sagrado de
     // la cápsula: el desvío vertical acercaba la sala y la inflaba)
     const distReal = Math.max(1.1, pos.distanceTo(this.camara.position));
@@ -1612,6 +1658,9 @@ class MundoWGL {
   // de los hologramas de cine: el cono aditivo que «proyecta» la pantalla)
   // ════════════════════════════════════════════════════════
   private armarHaz(pos: THREE.Vector3, escala: number) {
+    // v156: con la cápsula guardada (holo) el proyector duerme — nada
+    // ilumina una pantalla que no está
+    if (this.capsulaEl?.dataset.holo === "1") return;
     if (!this.hazCrono) {
       const geo = new THREE.ConeGeometry(0.62, 1.5, 26, 1, true);
       this.matHaz = new THREE.MeshBasicMaterial({
@@ -3611,6 +3660,7 @@ class MundoWGL {
       window.removeEventListener("vg:holo-ventana", this.onVentanaEv);
       // v145: los eventos de la sala 3D también se retiran
       window.removeEventListener("vg:sala3d", this.onSala3dEv);
+      window.removeEventListener("vg:sala3d-holo", this.onHoloEv);
       window.removeEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
       // v154: la ciudad y su catálogo mueren con el mundo
       window.removeEventListener("vg:holo-ciudad", this.onCiudadCatalogoEv);

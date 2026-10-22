@@ -2347,3 +2347,22 @@ Work Log:
 
 Stage Summary:
 - PRODUCCIÓN = v155.1 LA CORTINA DE ARRANQUE (push fff6143): servidor de producción persistente en :3000 vía doble-fork, cortina HTML puro con señal de vida, vigilante 12s/20s, auto-recarga anti-chunks, blindaje anti-pestaña-dormida. Los 3 días de «no veo nada» del Dueño tienen cura de raíz en las dos capas: SERVIDOR (producción estable, no más OOM) y CLIENTE (nunca más negro sin botón de rescate).
+
+---
+Task ID: 70
+Agent: main (Super Z)
+Task: v156.0 «EL MÓDULO EN VOLUMEN» — el Dueño: «lo 3D ve bien pero lo 3D debe ser lo principal, los módulos sean 3D todo... si se acumulan muchos elementos 3D de diferentes módulos da mucho lag».
+
+Work Log:
+- DIAGNÓSTICO: la sala 3D insignia existía PERO la consola DOM (cápsula CSS3D con el panel) seguía mandando el tercio inferior del cuadro — el módulo SE LEÍA 2D. Además esa pared DOM era la capa más cara de componer en móvil.
+- MODO 3D PURO (mundo-webgl.tsx): campo holoOculto + listener vg:sala3d-holo; dimensionarCapsula estampa dataset.holo y el CSS retira la cápsula (display:none); anclaSala rama holo: héroe a dist 2.3 (DELANTE del mundo de sección a 2.55 y del planeta), frac 0.54 escritorio / 0.94 móvil, fy negativo (la sala es pesada de arriba); anclarMundo cede aire (0.84×); armarHaz se niega a iluminar pantalla guardada; montarSala nace respetando dataset.vgHolo.
+- COMPENSACIÓN DE MIRA (QA móvil cazó el desvío): la cámara mira DESVIADA del eje (el planeta vive a la izquierda) — el ancla de eje recto caía a la derecha del centro en retrato. En holo se proyecta el tgt de la pose y se compensa el desvío exacto: el módulo aterriza EN LA MIRA.
+- CHIP HOLO (page.tsx + globals.css): chip pequeño holo en zona de pulgar — «VER DATOS» devuelve la consola 2D, «SOLO 3D» la guarda otra vez; dataset.vgHolo en <html> es fuente única; el chip se esconde en ciudad/ceremonia/modo mundo; pestañas genéricas no lo muestran y su panel vive como siempre.
+- LETRAS VIVAS: animarTitulo en salas-3d.ts — los títulos 3D de los 14 constructores RESPIRAN (marea seno + emisión latiente, cero new por frame); cazadas dos mareas viejas que peleaban por la misma position.y (genérica/contenido) — un solo dueño por título.
+- REGALO: reparadas 2 líneas corruptas en page.tsx del commit anterior (const odoMundo → [modoMundo]) — el build volvía a estar roto en HEAD.
+- QA E2E producción (sesiones cortas anti-OOM): tsc 0, eslint 0, build limpia, health v156.0 · Desktop 1380×820: noticias en holo — consola guardada, sala flotando DELANTE del planeta con cables reales (AL JAZEERA/RT/UPI), chip VER DATOS, toggle ida-y-vuelta verificado, bono diario reclamado CON el panel guardado (los paneles viven debajo); quiz — responder A→rojo/C→verde/SIGUIENTE→nueva pregunta TODO tocando el mundo 3D. Móvil 390×844: quiz centrado con compensación de mira, ciclo completo de juego en 3D, chip en zona de pulgar. Capturas qa-v156-01..17.
+- LECCIÓN: `agent-browser open --viewport` es intermitente — fijar con `set viewport` tras abrir Y recargar (el resize re-ancla: acoplarCapsula(zona,true) en el handler).
+
+Stage Summary:
+- PRODUCCIÓN = v156.0 EL MÓDULO EN VOLUMEN: las salas insignia SON el módulo — entras y el módulo entero es volumen 3D (título que respira, tarjetas reales, proxies tocables), la consola 2D se guarda y vuelve con un toque del chip HOLO, y el móvil deja de componer la pared DOM exactamente cuando el 3D manda. 14 salas con letras animadas.
+- Cola v156+: subir tam de texto de pregunta/respuestas del quiz en holo móvil (queda chico en CSS px); frases del mundo ceden aún más aire en retrato; revisar solape título HUD superior en móvil; extender proxies de acciones a noticias (abrir lectura) y votaciones (votar) si no existen.

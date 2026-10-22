@@ -1,11 +1,12 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
-// v155.0: LA CORTINA DE ARRANQUE — el fin de la pantalla muerta. El Dueño
-// (móvil) pasó 3 días viendo NADA: el servidor dev moría de OOM y su teléfono
-// se quedaba en negro sin decir nada. Ahora: (1) el script `dev` del entorno
-// sirve la BUILD DE PRODUCCIÓN (148MB estables vs 2.2GB del dev que OOMeaba);
-// (2) una cortina HTML/CSS puro se pinta ANTES de todo JavaScript; (3) si el
-// universo no da señal de vida (__vgvivo) en 12s, ofrece «TOCA PARA
-// DESPERTARLO»; (4) los chunks viejos disparan UNA auto-recarga por minuto.
-export const APP_VERSION = "v155.1";
-export const APP_CODENAME = "LA CORTINA DE ARRANQUE";
+// v156.0: EL MÓDULO EN VOLUMEN — «lo 3D debe ser lo principal». Al entrar a
+// una sala insignia la consola DOM SE GUARDA (dataset.vgHolo) y el módulo
+// entero ES la sala volumétrica: héroe al CENTRO del cuadro, más grande,
+// mundo cediéndole el aire (0.84×), proyector dormido mientras no hay
+// pantalla. Los paneles siguen vivos debajo (publican datos y atienden las
+// acciones tocadas en el mundo) y el chip HOLO devuelve la consola 2D con
+// un toque. Además: los títulos 3D de TODAS las salas RESPIRAN (marea +
+// emisión latiente) — las letras informativas ya tienen animación propia.
+export const APP_VERSION = "v156.0";
+export const APP_CODENAME = "EL MÓDULO EN VOLUMEN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

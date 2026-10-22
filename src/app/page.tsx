@@ -909,6 +909,31 @@ export default function Home() {
     }));
   }, [tab, hostCapsula, statsAgente]);
 
+  // ════════════════════════════════════════════════════════════
+  // v156 MODO 3D PURO — «lo 3D debe ser lo principal»: al entrar a una
+  // sala insignia la consola DOM SE GUARDA y el módulo entero ES la sala
+  // volumétrica (los paneles siguen vivos debajo: publican sus datos y
+  // atienden las acciones tocadas en el mundo). El chip HOLO devuelve la
+  // consola con un toque — dataset.vgHolo es la fuente única de verdad.
+  // ════════════════════════════════════════════════════════════
+  const insigniaTab = !!TIPO_SALA_3D[tab as string];
+  const [holoOn, setHoloOn] = useState(false);
+  useEffect(() => {
+    const on = insigniaTab && !!hostCapsula && !modoMundo;
+    setHoloOn(on);
+    document.documentElement.dataset.vgHolo = on ? "1" : "0";
+    window.dispatchEvent(new CustomEvent("vg:sala3d-holo", { detail: { on } }));
+    return () => { document.documentElement.dataset.vgHolo = "0"; };
+  }, [tab, hostCapsula, insigniaTab, modoMundo]);
+  const toggleHolo = useCallback(() => {
+    setHoloOn((v) => {
+      const n = !v;
+      document.documentElement.dataset.vgHolo = n ? "1" : "0";
+      window.dispatchEvent(new CustomEvent("vg:sala3d-holo", { detail: { on: n } }));
+      return n;
+    });
+  }, []);
+
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
   // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.
   const cerrarPestana = useCallback((k: TabKey) => {
@@ -1596,6 +1621,23 @@ export default function Home() {
             if (destino) handleTabChange(destino);
           }} />
         )}
+
+      {/* v156 MODO 3D PURO — EL CHIP HOLO: la sala volumétrica ES el módulo;
+          un toque devuelve la consola de datos (2D), otro la guarda otra vez.
+          Pequeño, holo, en zona de pulgar — nada de saturación. */}
+      {hostCapsula && insigniaTab && !modoMundo && !inmersion && !ceremonia && (
+        <button
+          type="button"
+          className="vg156-holo-chip"
+          data-wgl-panel
+          onClick={toggleHolo}
+          aria-pressed={holoOn}
+          aria-label={holoOn ? "Mostrar panel de datos" : "Volver al módulo 3D"}
+        >
+          <span className="vg156-holo-ico" aria-hidden />
+          {holoOn ? "Ver datos" : "Solo 3D"}
+        </button>
+      )}
 
       {/* v141 MODO MUNDO: el único HUD visible — salir + la invitación a entrar */}
       {modoMundo && (
