@@ -150,10 +150,13 @@ const R_MAX_UNI = 13.5;     // radio máximo (no abandonar el universo)
 const Y_MIN_LIBRE = -5.6;   // techo/suelo del corredor de vuelo
 const Y_MAX_LIBRE = 6.6;
 const VEL_LIBRE = 3.2;      // unidades/segundo (Shift = ×2.6) — v147: más ágil
-// v147 — LA CORREA: si el piloto se aleja de la Casa más que esto, la
-// cápsula y su sala 3D lo ALCANZAN con suavidad (nunca se queda arriba)
-const CORREA_DIST = 2.3;
-const CORREA_RETURN = 2.15; // distancia de re-acople (un pelín más cerca)
+// v157 — LA CORREA NUEVA: la Casa NO persigue al piloto. Mirar para atrás
+// es libre y volar también: una baliza holo late sobre la Casa para guiar
+// la vuelta; el rescate solo llega en el borde del universo y conservando
+// la orientación de la Casa (NUNCA replantándose frente a la mirada — eso
+// era «las cosas te siguen» del Dueño)
+const CORREA_DIST = 7.2;
+const CORREA_RESCATE = 11.5; // el borde honesto del rescate (móvil 9.5)
 const Z_VENTANA = 3.35;     // distancia de la VENTANA HOLO a la cámara
 
 // v149 — CERO BASURA POR FRAME: los vuelos y acoples del loop reutilizan
@@ -543,6 +546,7 @@ class MundoWGL {
     this.construirTierra();
     this.construirMarcadores();
     this.construirParticulas();
+    this.construirVida(); // v157: la vida orbital — el universo nunca quieto
     // v141: la capa holo (letras + portales) y los mundos por zona
     this.escena.add(this.holo);
     this.cargarFuente();
@@ -783,9 +787,9 @@ class MundoWGL {
     this.capsulaEl.style.height = `${h}px`;
     this.capsulaPx = w;
     this.capsulaEl.dataset.consola = consola ? "1" : "0";
-    // v156 MODO 3D PURO: la consola DOM de la insignia SE GUARDA (CSS la
-    // retira con display:none) — la sala volumétrica es el módulo entero
-    const holo = consola && this.holoOculto && this.salaPayload?.tipo !== "generica";
+    // v157 MODO 3D PURO TOTAL: la consola DOM de CUALQUIER sala SE GUARDA
+    // (CSS la retira con display:none) — el módulo volumétrico es entero
+    const holo = consola && this.holoOculto;
     this.capsulaEl.dataset.holo = holo ? "1" : "0";
   }
 
@@ -1066,8 +1070,9 @@ class MundoWGL {
     if (!this.fuente || !this.salaPayload) return;
     this.desmontarSala(true);
     const p = this.salaPayload;
-    // v156: la sala nace RESPETANDO el modo 3D puro elegido por la Casa
-    this.holoOculto = p.tipo !== "generica" && document.documentElement.dataset.vgHolo === "1";
+    // v157 HOLO TOTAL: TODAS las salas nacen en 3D puro (genéricas también)
+    // — la consola DOM se guarda en cualquier módulo, el chip la devuelve
+    this.holoOculto = document.documentElement.dataset.vgHolo === "1";
     const ctx: CtxSala3D = {
       fuente: this.fuente,
       calidadBaja: this.calidadBaja,
@@ -1134,7 +1139,9 @@ class MundoWGL {
     const inst = this.salaInst;
     const p = this.salaPayload;
     if (!inst || !p || this.modoMundo || this.zona === 0 || !this.capsulaAcoplada) return;
-    const insignia = p.tipo !== "generica";
+    // v157 HOLO TOTAL: la genérica también manda el centro cuando la consola
+    // está guardada — el módulo entero (cualquiera) es el héroe
+    const insignia = p.tipo !== "generica" || this.holoOculto;
     const a = this.anclaSala(insignia);
     // v156: con el holo activo el héroe re-ancla SIN rebote (corte limpio)
     inst.grupo.position.copy(a.pos);
@@ -1197,16 +1204,20 @@ class MundoWGL {
     // planeta (cápsula frontal a 3.2) seguía comiendo la fila de frases.
     // El mundo abraza a 2.55 — TODO su contenido flota DELANTE del
     // planeta y las frases bajan al espacio libre del cuadro.
-    const dist = 2.55;
+    // v157 — CAPAS LIMPIAS: en holo el héroe (2.3) manda el centro y el
+    // mundo de la sección se retira a FONDO (4.6, escala menor) — escenario
+    // lejano detrás del módulo, nada mezclado en el mismo plano (queja
+    // «hay mucho elemento mezclado en lo 3D»). Sin holo abraza como siempre.
+    const dist = this.holoOculto ? 4.6 : 2.55;
     const fovR = (this.camara.fov * Math.PI) / 180;
     const alto = 2 * dist * Math.tan(fovR / 2);
     const ancho = alto * this.camara.aspect;
     const movil = this.esMovil();
     // la escala CONVIERTE el mundo local (plataforma -1.62 → frases +1.58,
     // propios a radio 2.9) en un cuadro completo
-    // v156: con la consola guardada el mundo respira más pequeño — el héroe
-    // de la sala manda el centro y las frases le ceden el aire
-    const escW = alto * (movil ? 0.3 : 0.28) * (this.holoOculto && this.salaInst && this.salaPayload?.tipo !== "generica" ? 0.84 : 1);
+    // v157: en holo el mundo respira como telón de fondo (más lejos Y más
+    // pequeño) — el módulo es el protagonista absoluto del cuadro
+    const escW = alto * (movil ? 0.3 : 0.28) * (this.holoOculto && this.salaInst ? 0.34 : 1);
     const f = new THREE.Vector3();
     this.camara.getWorldDirection(f);
     const arriba = new THREE.Vector3(0, 1, 0).applyQuaternion(this.camara.quaternion);
@@ -1622,34 +1633,62 @@ class MundoWGL {
   }
 
   // ════════════════════════════════════════════════════════
-  // v147 — LA CORREA — el otro mandato del Dueño («cuando bajo mucho los
-  // botones se quedan arriba; cuando subo, se queda arriba del todo»):
-  // la Casa (cápsula + sala 3D) es un OBJETO en el mundo, pero el piloto
-  // vuela con libertad — si se aleja, la Casa lo ALCANZA con suavidad y
-  // se planta de nuevo frente a su mirada. El contenido nunca se pierde.
+  // v157 — LA CORREA NUEVA — el mandato del Dueño («no puedo mirar para
+  // atrás, las cosas te siguen»): la Casa ya NO persigue ni se replanta
+  // frente a la mirada. El piloto mira y vuela a donde quiera; una BALIZA
+  // holo late sobre la Casa para señalar el camino de vuelta, y el rescate
+  // físico solo llega al borde del universo — arrastrando a la Casa
+  // conservando SU orientación, sin cazar nunca la vista del piloto.
   // ════════════════════════════════════════════════════════
   private seguirPiloto(dt: number) {
     if (!this.capsulaAcoplada || this.enVuelo || this.modoMundo || !this.capsula) return;
     if (!this.libreOK()) return;
     const dist = this.camara.position.distanceTo(this.capsula.position);
-    if (dist < CORREA_DIST) {
-      if (this.correaActiva) this.correaActiva = false; // de vuelta en casa: la correa descansa
-      return; // cerca: la Casa vive en el mundo, quieta
+    // LA BALIZA: desde que te alejas un poco, la columna dorada señala la Casa
+    this.setBaliza(dist > CORREA_DIST * 0.42);
+    const limiteRescate = this.esMovil() ? 9.5 : CORREA_RESCATE;
+    // el rescate ARRANCA solo en el borde del universo, pero una vez activado
+    // NO SUELTA hasta devolver la Casa a distancia cómoda (QA v157: parar en
+    // el umbral abandonaba la Casa a mitad de camino)
+    if (!this.correaActiva) {
+      if (dist < limiteRescate) return; // libertad total: la Casa vive quieta
+    } else if (dist <= CORREA_DIST * 0.55) {
+      this.correaActiva = false; // rescate completado: la Casa vuelve a reposar
+      return;
     }
-    // objetivo: frente a la mirada del piloto, a la distancia de re-acople
-    const f = _vA;
-    this.camara.getWorldDirection(f);
-    const objetivo = _vB.copy(this.camara.position).addScaledVector(f, CORREA_RETURN);
-    // el planeta manda: el re-acople respeta su radio sagrado
-    if (objetivo.length() < R_MIN_GLOBO + 0.35) return;
-    const k = 1 - Math.exp(-dt * 2.6); // suave: la Casa vuela HACIA ti
-    this.capsula.position.lerp(objetivo, k);
-    this.capsula.quaternion.copy(this.camara.quaternion);
-    this.capsula.quaternion.multiply(Q_YAW_CONSOLA);
-    const a = this.anclaCapsula(this.zona);
-    this.armarHaz(this.capsula.position, a.escala);
-    this.anclarSala(true);
+    // RESCATE DE BORDE: la Casa vuela hacia el piloto por la mitad del camino
+    // CONSERVANDO su orientación y llevándose a su sala y su mundo (poses
+    // intactas) — la mirada del piloto jamás es secuestrada
+    const objetivo = _vA.copy(this.capsula.position).lerp(this.camara.position, 0.5).sub(this.capsula.position);
+    const paso = Math.min(objetivo.length(), dt * 3.2);
+    if (paso < 1e-5) return;
+    objetivo.normalize().multiplyScalar(paso);
+    this.capsula.position.add(objetivo);
+    if (this.salaInst) this.salaInst.grupo.position.add(objetivo);
+    if (this.mundoInst) this.mundoInst.grupo.position.add(objetivo);
+    this.armarHaz(this.capsula.position, this.anclaCapsula(this.zona).escala);
     if (!this.correaActiva) { this.correaActiva = true; sonar("clank"); } // un solo aviso por estirada
+  }
+
+  // ── LA BALIZA DE RETORNO (v157): columna holo + latido — la señal que
+  // marca dónde quedó la Casa cuando el piloto sale de expedición ──
+  private balizaCrono: THREE.Mesh | null = null;
+  private balizaMat: THREE.MeshBasicMaterial | null = null;
+  private balizaOn = false;
+  private setBaliza(on: boolean) {
+    if (on === this.balizaOn && this.balizaCrono) return;
+    this.balizaOn = on;
+    if (on && !this.balizaCrono) {
+      const geo = new THREE.CylinderGeometry(0.05, 0.19, 1.9, 10, 1, true);
+      this.balizaMat = new THREE.MeshBasicMaterial({
+        color: 0xffd76a, transparent: true, opacity: 0.3,
+        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+      });
+      this.balizaCrono = new THREE.Mesh(geo, this.balizaMat);
+      this.balizaCrono.renderOrder = 7;
+      this.escena.add(this.balizaCrono);
+    }
+    if (this.balizaCrono) this.balizaCrono.visible = on;
   }
 
   // ════════════════════════════════════════════════════════
@@ -1680,6 +1719,188 @@ class MundoWGL {
   private apagarHaz() {
     this.hazActivo = false;
     if (this.hazCrono) this.hazCrono.visible = false;
+  }
+
+  // ════════════════════════════════════════════════════════
+  // v157 — LA VIDA ORBITAL — el mandato del Dueño («lo 3D es muy simple,
+  // solo un fondo, no dinamismo, es aburrido»): el universo NUNCA está
+  // quieto — satélites con paneles solares orbitando la Tierra, jets de
+  // guerra patrullando con luces de navegación, cometas que cruzan el
+  // cielo profundo, drones guardianes alrededor de la Casa y la
+  // respiración del piloto cuando se queda quieto.
+  // ════════════════════════════════════════════════════════
+  private vidaGrupo = new THREE.Group();
+  private orbitas: { pivote: THREE.Group; g: THREE.Group; vel: number; fase: number }[] = [];
+  private jets: { pivote: THREE.Group; g: THREE.Group; luz: THREE.MeshBasicMaterial; vel: number }[] = [];
+  private cometas: THREE.Line[] = [];
+  private cometaDatos: ({ ini: THREE.Vector3; dir: THREE.Vector3; vida: number; t: number } | null)[] = [];
+  private cometaSiguiente = 4;
+  private dronesCasa: { g: THREE.Group; r: number; vel: number; fase: number; y: number }[] = [];
+  private idleT = 0;
+
+  private construirVida() {
+    const bajo = this.calidadBaja;
+    this.escena.add(this.vidaGrupo);
+    // SATÉLITES con paneles solares: órbitas inclinadas distintas, giran
+    // sobre sí mismos mientras rodean el planeta
+    const nSat = bajo ? 2 : 3;
+    for (let i = 0; i < nSat; i++) {
+      const pivote = new THREE.Group();
+      pivote.rotation.set(0.38 + i * 0.52, i * 2.1, 0.3 - i * 0.24);
+      const g = new THREE.Group();
+      const cuerpo = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.052),
+        new THREE.MeshStandardMaterial({ color: 0xbfe4ff, emissive: 0x3a6a8f, emissiveIntensity: 1.0, metalness: 0.6, roughness: 0.3 }),
+      );
+      const matPanel = new THREE.MeshStandardMaterial({ color: 0x1a3a6a, emissive: 0x2a5a9f, emissiveIntensity: 0.55, metalness: 0.7, roughness: 0.25 });
+      const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.115, 0.007, 0.05), matPanel);
+      p1.position.x = 0.105;
+      const p2 = new THREE.Mesh(new THREE.BoxGeometry(0.115, 0.007, 0.05), matPanel);
+      p2.position.x = -0.105;
+      g.add(cuerpo, p1, p2);
+      g.position.set(2.75 + i * 0.36, 0, 0);
+      pivote.add(g);
+      this.vidaGrupo.add(pivote);
+      this.orbitas.push({ pivote, g, vel: 0.21 - i * 0.05, fase: i * 1.7 });
+    }
+    // JETS DE GUERRA: patrullas lejanas con luz de navegación latiendo
+    const nJets = bajo ? 1 : 2;
+    for (let i = 0; i < nJets; i++) {
+      const pivote = new THREE.Group();
+      pivote.rotation.set(1.12 + i * 0.42, i * 3.3, -0.5 + i * 0.3);
+      const g = new THREE.Group();
+      const cuerpo = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.1, 6), new THREE.MeshBasicMaterial({ color: 0x9ab4c8 }));
+      cuerpo.rotation.x = Math.PI / 2;
+      const luz = new THREE.MeshBasicMaterial({ color: 0xff5a4a, transparent: true, opacity: 0.9 });
+      const farol = new THREE.Mesh(new THREE.SphereGeometry(0.013, 6, 6), luz);
+      farol.position.z = 0.052;
+      g.add(cuerpo, farol);
+      g.position.set(5.4 + i * 1.5, 0, 0);
+      pivote.add(g);
+      this.vidaGrupo.add(pivote);
+      this.jets.push({ pivote, g, luz, vel: 0.05 + i * 0.021 });
+    }
+    // COMETAS: estelas efímeras que cruzan el cielo profundo (pool de 2)
+    const nCom = bajo ? 1 : 2;
+    for (let i = 0; i < nCom; i++) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6), 3));
+      const m = new THREE.LineBasicMaterial({ color: 0xffe9c4, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+      const line = new THREE.Line(geo, m);
+      line.frustumCulled = false;
+      line.visible = false;
+      this.vidaGrupo.add(line);
+      this.cometas.push(line);
+      this.cometaDatos.push(null);
+    }
+    // DRONES GUARDIANES de la Casa (escritorio): tres centinelas orbitando
+    if (!bajo) {
+      for (let i = 0; i < 3; i++) {
+        const g = new THREE.Group();
+        const nucleo = new THREE.Mesh(
+          new THREE.TetrahedronGeometry(0.032),
+          new THREE.MeshBasicMaterial({ color: 0x7ab8ff, transparent: true, opacity: 0.85 }),
+        );
+        const aro = new THREE.Mesh(
+          new THREE.TorusGeometry(0.055, 0.004, 6, 18),
+          new THREE.MeshBasicMaterial({ color: 0x7ab8ff, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }),
+        );
+        g.add(nucleo, aro);
+        g.visible = false;
+        this.vidaGrupo.add(g);
+        this.dronesCasa.push({ g, r: 0.92 + i * 0.14, vel: 0.42 - i * 0.09, fase: i * 2.09, y: 0.24 - i * 0.2 });
+      }
+    }
+  }
+
+  private lanzarCometa(i: number) {
+    const d = this.cometaDatos[i];
+    const line = this.cometas[i];
+    if (!d || !line) return;
+    // nace en la cáscara lejana y cruza tangencialmente — jamás hacia el planeta
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    const r = 14 + Math.random() * 8;
+    d.ini.set(r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th));
+    d.dir.set(Math.random() - 0.5, (Math.random() - 0.5) * 0.5, Math.random() - 0.5).normalize().multiplyScalar(9 + Math.random() * 6);
+    d.vida = 1.1 + Math.random() * 0.6;
+    d.t = 0;
+    line.visible = true;
+  }
+
+  private ticVida(t: number, dt: number) {
+    // satélites: órbita + giro propio + cabeceo
+    for (const s of this.orbitas) {
+      s.pivote.rotation.y += dt * s.vel;
+      s.g.rotation.y = t * 0.85 + s.fase;
+      s.g.rotation.x = Math.sin(t * 0.5 + s.fase) * 0.3;
+    }
+    // jets: patrulla + farol de navegación latiendo
+    for (const j of this.jets) {
+      j.pivote.rotation.y += dt * j.vel;
+      j.g.rotation.z = Math.sin(t * 1.4 + j.vel * 30) * 0.18;
+      j.luz.opacity = 0.3 + (Math.sin(t * 5.5 + j.vel * 40) * 0.5 + 0.5) * 0.65;
+    }
+    // cometas: vidas cruzadas en el cielo profundo
+    if (this.cometaSiguiente > 0) this.cometaSiguiente -= dt;
+    else {
+      const libre = this.cometaDatos.findIndex((d) => !d);
+      if (libre >= 0) {
+        this.cometaDatos[libre] = { ini: new THREE.Vector3(), dir: new THREE.Vector3(), vida: 1, t: 0 };
+        this.lanzarCometa(libre);
+      }
+      this.cometaSiguiente = 6 + Math.random() * 9;
+    }
+    for (let i = 0; i < this.cometas.length; i++) {
+      const d = this.cometaDatos[i];
+      if (!d) continue;
+      d.t += dt;
+      const k = d.t / d.vida;
+      if (k >= 1) {
+        this.cometas[i].visible = false;
+        (this.cometas[i].material as THREE.LineBasicMaterial).opacity = 0;
+        this.cometaDatos[i] = null;
+        continue;
+      }
+      const pos = this.cometas[i].geometry.getAttribute("position") as THREE.BufferAttribute;
+      const mx = d.ini.x + d.dir.x * k, my = d.ini.y + d.dir.y * k, mz = d.ini.z + d.dir.z * k;
+      const largo = 1.7 * (1 - k * 0.55);
+      const nl = d.dir.length();
+      pos.setXYZ(0, mx, my, mz);
+      pos.setXYZ(1, mx - (d.dir.x / nl) * largo, my - (d.dir.y / nl) * largo, mz - (d.dir.z / nl) * largo);
+      pos.needsUpdate = true;
+      (this.cometas[i].material as THREE.LineBasicMaterial).opacity = Math.sin(Math.PI * k) * 0.7;
+    }
+    // drones guardianes: giran alrededor de la Casa cuando está acoplada
+    if (this.dronesCasa.length) {
+      const activos = this.capsulaAcoplada && this.consolaVisibleFin && !!this.capsula;
+      for (const d of this.dronesCasa) {
+        d.g.visible = activos;
+        if (!activos || !this.capsula) continue;
+        const a = t * d.vel + d.fase;
+        d.g.position.set(
+          this.capsula.position.x + Math.cos(a) * d.r,
+          this.capsula.position.y + d.y + Math.sin(t * 1.6 + d.fase) * 0.05,
+          this.capsula.position.z + Math.sin(a) * d.r,
+        );
+        d.g.rotation.y = -a;
+      }
+    }
+    // la baliza: sigue a la Casa y late para ser vista desde lejos
+    if (this.balizaOn && this.balizaCrono && this.capsula) {
+      this.balizaCrono.position.set(this.capsula.position.x, this.capsula.position.y + 0.92, this.capsula.position.z);
+      if (this.balizaMat) this.balizaMat.opacity = 0.14 + (Math.sin(t * 3.4) * 0.5 + 0.5) * 0.3;
+    }
+  }
+
+  // v157 — LA RESPIRACIÓN DEL PILOTO: quieto más de 6s, la cámara flota
+  // (cabeceo suave + alabeo mínimo) — el universo se siente VIVO incluso
+  // sin tocar nada. Cualquier entrada la apaga al instante.
+  private respiracionIdle(t: number) {
+    if (this.idleT <= 6 || !this.libreOK()) return;
+    const k = Math.min(1, (this.idleT - 6) / 4);
+    this.camara.lookAt(this.mirada.x, this.mirada.y + Math.sin(t * 0.5) * 0.014 * k, this.mirada.z);
+    this.camara.rotateZ(Math.sin(t * 0.33 + 0.8) * 0.0045 * k);
   }
   //  · MODO MUNDO: LA POSE DEL UNIVERSO (v142) — todo el mundo en cuadro
   //  · Z0: el espacio centrado (entrada pura)
@@ -3196,7 +3417,10 @@ class MundoWGL {
       }
     }
     // v145: LAS PLACAS DE LA SALA 3D — votar la crisis, abrir un meme…
-    if (this.salaInst && this.salaInst.proxies.length) {
+    // v157 QA: solo si la sala está VISIBLE — una sala montada pero no
+    // anclada (ceremonia, modo mundo) ya NO roba toques al globo (el
+    // «TOUCH THE GLOBE» dejaba de funcionar si un payload llegó antes)
+    if (this.salaInst && this.salaInst.grupo.visible && this.salaInst.proxies.length) {
       const hitS = ray.intersectObjects(this.salaInst.proxies, false)[0];
       if (hitS && hitS.object.userData?.salaAccion) {
         return { tipo: "sala", key: JSON.stringify(hitS.object.userData.salaAccion) };
@@ -3390,6 +3614,7 @@ class MundoWGL {
   // un aparato sano renderiza 30fps estables (>27: el gobernador no castiga),
   // uno sufriendo cae por debajo y el gobernador baja la calidad solo.
   private acumFrame = 0;
+  private vigiaMemT = 0; // v157: latido del vigilante de VRAM
   loop = () => {
     if (!this.vivo) return;
     this.raf = requestAnimationFrame(this.loop);
@@ -3414,6 +3639,21 @@ class MundoWGL {
       const fps = this.fpsN / (t - this.fpsT0);
       this.fpsN = 0; this.fpsT0 = t;
       this.gobernarCalidad(fps);
+    }
+
+    // v157 — EL VIGILANTE DE VRAM: en sesiones largas el heap de GPU puede
+    // inflarse (contextos evictados = «lo 3D se borra»). Cada 8s mira los
+    // contadores del renderizador: si algo respira raro, libera las listas
+    // de render y deja constancia — el guard de recarga re-armable es la
+    // segunda línea de defensa.
+    this.vigiaMemT += dt;
+    if (this.vigiaMemT >= 8) {
+      this.vigiaMemT = 0;
+      const mem = this.renderer.info.memory;
+      if (mem.geometries > 1400 || mem.textures > 90) {
+        this.renderer.renderLists.dispose();
+        console.warn("[v157] vigilante de VRAM: geos=" + mem.geometries + " tex=" + mem.textures + " — listas de render liberadas");
+      }
     }
 
     // REGLA 6: el globo JAMÁS deja de girar y respirar
@@ -3481,8 +3721,14 @@ class MundoWGL {
     // v145 — VUELO LIBRE: el teclado/drag/pinza mueven la cámara ANTES del
     // render (la consola, el rail y la ventana pegan a la nueva pose)
     this.integrarLibre(dt);
-    // v147 — LA CORREA: la Casa y su sala siguen al piloto si se aleja
+    // v157 — LA CORREA NUEVA: la Casa NO persigue (baliza de retorno)
     this.seguirPiloto(dt);
+    // v157 — LA VIDA ORBITAL: satélites, jets, cometas, drones, baliza
+    this.ticVida(t, dt);
+    // v157 — LA RESPIRACIÓN DEL PILOTO: quietud medida por frame
+    const quieto = this.punteros.size === 0 && !this.arrastrando && this.vel.lengthSq() < 1e-7 && !this.enVuelo;
+    this.idleT = quieto ? this.idleT + dt : 0;
+    this.respiracionIdle(t);
 
     // v148 — EL CASCO DEL PILOTO pega a la cámara y respira con los stores
     if (this.hud3D) {
@@ -3637,6 +3883,17 @@ class MundoWGL {
     this.cancelar.clear();
     // v145: la sala 3D muere con el mundo
     this.desmontarSala(true);
+    // v157: la vida orbital y la baliza mueren con el mundo
+    this.desechar(this.vidaGrupo);
+    this.escena.remove(this.vidaGrupo);
+    if (this.balizaCrono) {
+      this.escena.remove(this.balizaCrono);
+      this.balizaCrono.geometry.dispose();
+      this.balizaMat?.dispose();
+      this.balizaCrono = null;
+      this.balizaMat = null;
+      this.balizaOn = false;
+    }
     // v148: el casco muere con el mundo — y el chrome DOM vuelve
     if (this.hud3D) {
       this.escena.remove(this.hud3D.grupo);
@@ -3800,6 +4057,15 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       try { window.sessionStorage.removeItem(LLAVE_RECARGA); } catch {}
       setCtxPerdido(false);
       mundo?.despertar();
+      // v157 — EL GUARD RE-ARMABLE: la recarga de cortesía era UNA sola por
+      // pestaña (sessionStorage la guardaba para siempre) — si el GPU perdía
+      // el contexto OTRA VEZ en una sesión larga, el 3D moría SIN remedio
+      // («cuando uno dura mucho tiempo lo 3D se borra»). Ahora el guard
+      // expira 30s tras cada restauración: la recuperación vuelve a ARMARSE.
+      const tRearm = window.setTimeout(() => {
+        try { window.sessionStorage.removeItem(LLAVE_RECARGA); } catch {}
+      }, 30000);
+      tiempos.current.push(tRearm);
     };
     mundo.renderer.domElement.addEventListener("webglcontextlost", onCtxPerdido);
     mundo.renderer.domElement.addEventListener("webglcontextrestored", onCtxRestaurado);

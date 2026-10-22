@@ -299,6 +299,154 @@ const ESPACIOS: Record<string, EspacioMundo> = {
 };
 
 // ────────────────────────────────────────────────────────────
+// LA COMITIVA (v157) — la corte ÚNICA de cada módulo: tres
+// acompañantes que orbitan la sala girando y cabeceando. Cada
+// mundo tiene SU corteja viva — monedas rodando en economía,
+// drones-prensa en noticias, dados del saber en quiz, urnas
+// cívicas en votaciones, escudos en perfil, dardos en
+// predicciones, estrellas en logros, cajas del arsenal en
+// tienda, dianas en conflictos, donuts en memes y cubos holo
+// en la genérica. Registrados en reg: cero fuga al desmontar.
+// ────────────────────────────────────────────────────────────
+function corteComitiva(
+  tipo: string,
+  color: number,
+  bajo: boolean,
+  reg: ReturnType<typeof registrar>,
+): { grupo: THREE.Group; tic: (t: number) => void } {
+  const grupo = new THREE.Group();
+  const n = bajo ? 2 : 3;
+  const cuerpos: THREE.Group[] = [];
+  const giro: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const g = new THREE.Group();
+    if (tipo === "economia") {
+      // monedas rodando alrededor de la bolsa
+      const m = new THREE.Mesh(
+        reg.geo(new THREE.CylinderGeometry(0.075, 0.075, 0.018, 16)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: COL_ORO, emissive: 0x6a4a10, emissiveIntensity: 0.55, metalness: 0.75, roughness: 0.3 })),
+      );
+      m.rotation.x = Math.PI / 2;
+      g.add(m);
+      giro.push(1.4);
+    } else if (tipo === "conflictos") {
+      // dianas de mando con núcleo vivo
+      const aro = new THREE.Mesh(
+        reg.geo(new THREE.TorusGeometry(0.06, 0.016, 8, 16)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: COL_ROJO, emissive: 0x5a1018, emissiveIntensity: 0.6, metalness: 0.5, roughness: 0.4 })),
+      );
+      const nucleo = new THREE.Mesh(reg.geo(new THREE.SphereGeometry(0.03, 8, 8)), reg.mat(new THREE.MeshBasicMaterial({ color: 0xffb0a8 })));
+      nucleo.position.z = 0.012;
+      g.add(aro, nucleo);
+      giro.push(0.9);
+    } else if (tipo === "memes") {
+      // donuts rosas del humor
+      const d = new THREE.Mesh(
+        reg.geo(new THREE.TorusGeometry(0.055, 0.024, 8, 14)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0xff4fd8, emissive: 0x6a1050, emissiveIntensity: 0.5, metalness: 0.35, roughness: 0.45 })),
+      );
+      g.add(d);
+      giro.push(1.2);
+    } else if (tipo === "noticias") {
+      // drones-prensa con foco cian colgando
+      const caja = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.085, 0.022, 0.085)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x2a3a4a, emissive: 0x103048, emissiveIntensity: 0.5, metalness: 0.6, roughness: 0.35 })),
+      );
+      const foco = new THREE.Mesh(reg.geo(new THREE.SphereGeometry(0.024, 8, 8)), reg.mat(new THREE.MeshBasicMaterial({ color: 0x4fd8ff })));
+      foco.position.y = -0.022;
+      g.add(caja, foco);
+      giro.push(0.7);
+    } else if (tipo === "quiz") {
+      // dados del saber
+      const dado = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.075, 0.075, 0.075)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x4f7dff, emissive: 0x1a2a6a, emissiveIntensity: 0.5, metalness: 0.45, roughness: 0.35 })),
+      );
+      g.add(dado);
+      giro.push(1.05);
+    } else if (tipo === "votaciones") {
+      // urnas cívicas
+      const urna = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.065, 0.08, 0.065)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x3ddc9a, emissive: 0x0a4a30, emissiveIntensity: 0.5, metalness: 0.4, roughness: 0.4 })),
+      );
+      const ranura = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(0.04, 0.008, 0.008)), reg.mat(new THREE.MeshBasicMaterial({ color: 0x06301f })));
+      ranura.position.y = 0.03;
+      g.add(urna, ranura);
+      giro.push(0.6);
+    } else if (tipo === "perfil") {
+      // escudos del agente
+      const esc = new THREE.Mesh(
+        reg.geo(new THREE.OctahedronGeometry(0.07)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0xb44fff, emissive: 0x3a1060, emissiveIntensity: 0.6, metalness: 0.65, roughness: 0.3 })),
+      );
+      g.add(esc);
+      giro.push(1.1);
+    } else if (tipo === "predicciones") {
+      // dardos del destino
+      const punta = new THREE.Mesh(
+        reg.geo(new THREE.ConeGeometry(0.032, 0.11, 8)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x2fd66b, emissive: 0x0a4a20, emissiveIntensity: 0.55, metalness: 0.6, roughness: 0.3 })),
+      );
+      punta.rotation.x = Math.PI / 2;
+      g.add(punta);
+      giro.push(0.85);
+    } else if (tipo === "logros") {
+      // estrellas de la gloria con aro dorado
+      const est = new THREE.Mesh(
+        reg.geo(new THREE.OctahedronGeometry(0.065)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: COL_ORO, emissive: 0x6a4a10, emissiveIntensity: 0.75, metalness: 0.8, roughness: 0.25 })),
+      );
+      const aro = new THREE.Mesh(
+        reg.geo(new THREE.TorusGeometry(0.1, 0.004, 6, 20)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false })),
+      );
+      aro.rotation.x = Math.PI / 2;
+      g.add(est, aro);
+      giro.push(1.3);
+    } else if (tipo === "tienda") {
+      // cajas del arsenal con cinta de oro
+      const caja = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.075, 0.065, 0.075)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0xff8a3d, emissive: 0x5a2408, emissiveIntensity: 0.5, metalness: 0.45, roughness: 0.4 })),
+      );
+      const cinta = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.082, 0.014, 0.082)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: COL_ORO, emissive: 0x4a3208, emissiveIntensity: 0.5, metalness: 0.6, roughness: 0.35 })),
+      );
+      g.add(caja, cinta);
+      giro.push(0.75);
+    } else {
+      // LA GENÉRICA: cubos holo con filo aditivo
+      const cubo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.07, 0.07, 0.07)),
+        reg.mat(new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.35, metalness: 0.5, roughness: 0.35 })),
+      );
+      const fil = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.095, 0.095, 0.095)),
+        reg.mat(new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, depthWrite: false })),
+      );
+      g.add(cubo, fil);
+      giro.push(0.95);
+    }
+    grupo.add(g);
+    cuerpos.push(g);
+  }
+  const tic = (t: number) => {
+    for (let i = 0; i < cuerpos.length; i++) {
+      const g = cuerpos[i];
+      const r = 1.62 + i * 0.17;
+      const a = t * (0.42 - i * 0.08) + i * 2.1;
+      g.position.set(Math.cos(a) * r, 0.05 - i * 0.24 + Math.sin(t * 1.35 + i * 1.9) * 0.075, Math.sin(a) * r * 0.72 - 0.35);
+      g.rotation.y = t * giro[i] * 0.5;
+      g.rotation.x = Math.sin(t * 0.7 + i) * 0.4;
+    }
+  };
+  return { grupo, tic };
+}
+
+// ────────────────────────────────────────────────────────────
 // ENSAMBLAJE — un mundo = telón + plataforma + propios + frases
 // ────────────────────────────────────────────────────────────
 export function construirMundo3D(ctx: CtxSala3D, p: PayloadSala3D): Mundo3DInstancia {
@@ -376,6 +524,13 @@ export function construirMundo3D(ctx: CtxSala3D, p: PayloadSala3D): Mundo3DInsta
   aroIn.position.set(0, 0.15, -1.35);
   grupo.add(aroIn);
   tics.push((t) => { aroIn.rotation.z = t * 0.16; });
+
+  // 7 — LA COMITIVA (v157): la corte ÚNICA del módulo orbitando la sala —
+  // monedas, drones, dados, urnas, escudos... cada mundo respira con SU
+  // corteja viva (adiós al fondo estático que el Dueño llamó aburrido)
+  const comitiva = corteComitiva(p.tipo, esp.color, bajo, reg);
+  grupo.add(comitiva.grupo);
+  tics.push((t) => comitiva.tic(t));
 
   // ── EL LATIDO ──
   const tic = (t: number) => {

@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v157.0",
+    nombre: "EL UNIVERSO VIVO",
+    tipo: "mundo",
+    hitos: [
+      "EL GUARD RE-ARMABLE — cura del «cuando uno dura mucho tiempo lo 3D se borra»: la recarga de cortesía del webglcontextlost era de UN SOLO USO por pestaña (sessionStorage la guardaba para siempre), así que la SEGUNDA pérdida de contexto GPU en una sesión larga ya no se recuperaba jamás; ahora el guard expira 30s tras cada restauración y la recuperación vuelve a ARMARSE, con el VIGILANTE DE VRAM (cada 8s: geometrías/texturas del renderizador, renderLists liberadas si respiran raro) como primera línea",
+      "LA CORREA NUEVA — «no puedo mirar para atrás, las cosas te siguen» CURADO: la Casa ya NO persigue al piloto ni se replanta frente a su mirada (CORREA_DIST 2.3→7.2; el rescate físico solo llega en el borde del universo — móvil 9.5 / escritorio 11.5 — y arrastrando Casa+sala+mundo CONSERVANDO su orientación); mirar y volar para atrás es LIBRE y una BALIZA holo dorada (columna aditiva latiendo) señala dónde quedó la Casa desde que te alejas",
+      "CAPAS LIMPIAS — «hay mucho elemento mezclado» curado: en holo el módulo manda el CENTRO (dist 2.3) y el mundo de la sección se retira a FONDO PROFUNDO (4.6, telón 0.34×) — escenario lejano detrás del héroe, nada apilado en el mismo plano; sin holo el mundo abraza como siempre (2.55)",
+      "HOLO TOTAL — «los módulos ya 100% 3D, nada 2D»: TODOS los módulos nacen en 3D puro por defecto (las pestañas genéricas también — su consola DOM se guarda y el chip VER DATOS la devuelve); el héroe genérico manda el centro con la misma pose de insignia; el chip HOLO vive ahora en todas las pestañas",
+      "LA VIDA ORBITAL — «lo 3D es muy simple, solo un fondo, no dinamismo, es aburrido» curado con un universo que NUNCA está quieto: SATÉLITES con paneles solares orbitando la Tierra en planos inclinados, JETS DE GUERRA patrullando lejos con farol de navegación latiente, COMETAS que cruzan el cielo profundo cada 6-15s (pool con estela que se desvanece), DRONES GUARDIANES girando alrededor de la Casa, y LA RESPIRACIÓN DEL PILOTO (quieto >6s: la cámara flota con cabeceo y alabeo mínimo — cualquier entrada la apaga)",
+      "LA COMITIVA — cada módulo con su corte ÚNICA orbitando la sala: monedas rodando en economía, dianas de mando en conflictos, donuts del humor en memes, drones-prensa con foco en noticias, dados del saber en quiz, urnas cívicas en votaciones, escudos del agente en perfil, dardos del destino en predicciones, estrellas de la gloria en logros, cajas del arsenal en tienda y cubos holo en la genérica — todo registrado en reg (cero fuga al desmontar), 2 cortes en móvil",
+    ],
+  },
+  {
     version: "v156.0",
     nombre: "EL MÓDULO EN VOLUMEN",
     tipo: "mundo",
