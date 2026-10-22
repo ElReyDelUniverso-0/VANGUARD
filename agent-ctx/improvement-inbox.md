@@ -298,3 +298,12 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] Cometas: variante roja/cian con curva (no solo rectas)
 - [ ] Respiración idle: añadir deriva orbital mínima (el mundo rota alrededor del piloto quieto)
 - [ ] El guard re-armable: métrica de cuántas restauraciones ocurren en producción (console.info con contador)
+
+## v158.0 LA CIUDAD (2026-10-22) — cola viva
+- [ ] Colisión suave con las torres de la ciudad (hoy el corredor es anillo+suelo: se puede atravesar un edificio de vapor)
+- [ ] Distritos con cielo propio: la cúpula actual es única — teñirla con el color del edificio más cercano (el tinte de sección ya existe como patrón)
+- [ ] Aterrizaje ceremonial: tocar el aro del edificio → la cámara posa en el aro antes de abrir el módulo
+- [ ] Minimapa 3D flotante de la ciudad (octaedro-brújula que apunta a la plaza desde lejos)
+- [ ] Nombres de pestañas (2º nivel) como rótulos pequeños bajo el rótulo de sección
+- [ ] Tráfico peatonal: drones-repartidor aterrizando en los aros (vida extra)
+- [ ] La ciudad en MODO MUNDO: hoy MENU abre la ciudad desde cualquier pose — probar variante nocturna/día con el reloj real
