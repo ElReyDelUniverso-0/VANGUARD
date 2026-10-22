@@ -56,10 +56,18 @@ export function TutorialModal() {
       }
     };
     const fire = () => {
-      if (!seen) {
-        setOpen(true);
-        try { localStorage.setItem(STORE_KEY, "1"); } catch { /* noop */ }
-      }
+      if (seen) return;
+      // v159 EL ATERRIZAJE: si la ceremonia o el vuelo a la ciudad siguen
+      // corriendo, el manual ESPERA — nada tapa la metrópolis al nacer
+      try {
+        if (document.documentElement.getAttribute("data-wgl-entrada") === "1" ||
+            document.documentElement.hasAttribute("data-vg-ciudad")) {
+          window.setTimeout(fire, 3000);
+          return;
+        }
+      } catch { /* noop */ }
+      setOpen(true);
+      try { localStorage.setItem(STORE_KEY, "1"); } catch { /* noop */ }
     };
     const tm = setTimeout(fire, fireDelay());
     // MANUAL: evento global (Centro de ayuda, HUD, etc.)

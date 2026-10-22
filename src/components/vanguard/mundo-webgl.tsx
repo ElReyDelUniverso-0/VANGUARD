@@ -493,6 +493,16 @@ class MundoWGL {
   ciudadGrupo: THREE.Group | null = null;
   ciudadAbierta = false;
   ciudadCatalogo: SeccionCiudad[] = [];
+  // v159 EL ATERRIZAJE: si la ciudad pide abrirse antes de que el catálogo
+  // llegue (boot), se QUEDA PENDIENTE y nace sola cuando el catálogo aterrice
+  ciudadPendiente = false;
+  // v159 «TODO DESORDENADO»: en móvil, cuando una sala es el HÉROE, el mundo
+  // de zona y sus títulos DUERMEN — una sola capa 3D manda (sala + planeta);
+  // cero mezcla de gigantes detrás del módulo, menos draw calls, cero lag
+  salaHeroMovil = false;
+  // v159: la sala (y su mundo) despiertan AL ATERRIZAR del vuelo de ciudad,
+  // nunca a mitad de descenso (nacían varadas en el cielo, fuera de la mira)
+  ciudadRevivir = false;
   ciudadSucia = false;
   proxiesCiudad: THREE.Mesh[] = [];
   ciudadEdificios: { grupo: THREE.Group; x0: number; y0: number; z0: number; fase: number; fig: THREE.Object3D | null; plateMat: THREE.MeshStandardMaterial | null; nacido: boolean }[] = [];
@@ -1108,11 +1118,17 @@ class MundoWGL {
     }
     this.salaInst.grupo.visible = false;
     this.escena.add(this.salaInst.grupo);
+    // v159: sala héroe en móvil → el mundo de zona duerme (una sola capa manda)
+    this.salaHeroMovil = this.esMovil();
+    this.visibleZona(this.zona);
     // v148: la sección recibe SU PROPIO mundo (si aún no lo tiene)
     this.montarMundo(p);
     // la cápsula se hace consola (o vuelve a pantalla) según la sala
     this.dimensionarCapsula();
-    if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
+    // v159: si un VUELO de ciudad sigue corriendo, NO se ancla — la pose
+    // actual es intermedia y la sala quedaría varada en el cielo; el
+    // aterrizaje del vuelo (volarCiudad onDone) la ancla y la enciende
+    if (this.capsulaAcoplada && !this.modoMundo && this.zona !== 0 && !this.enVuelo) {
       this.acoplarCapsula(this.zona, true);
       this.anclarSala();
       sonar("ping");
@@ -1124,6 +1140,8 @@ class MundoWGL {
     const inst = this.salaInst;
     if (!inst) return;
     this.salaInst = null;
+    // v159: sin sala héroe → el mundo de zona despierta otra vez
+    if (this.salaHeroMovil) { this.salaHeroMovil = false; this.visibleZona(this.zona); }
     if (instant) {
       this.escena.remove(inst.grupo);
       this.desechar(inst.grupo);
@@ -2010,20 +2028,23 @@ class MundoWGL {
   // mataba el móvil). Ahora CADA sección muestra SOLO su mundo: entrar a
   // Economía es estar en el mundo de Economía, nada más existe alrededor.
   visibleZona(zona: number) {
+    // v159: con la sala héroe en móvil, el mundo de zona NO existe — la
+    // zona efectiva es 0 (planeta desnudo): nada compite con el módulo
+    const zEf = this.salaHeroMovil ? 0 : zona;
     for (const z of [1, 2, 3, 4]) {
       const g = this.mundosZona[z];
       if (!g) continue;
-      const debe = z === zona;
+      const debe = z === zEf;
       if (debe && !g.visible) {
         g.visible = true;
         g.scale.setScalar(0.84);
         this.animarP(g.scale, { x: 1, y: 1, z: 1 }, 850, { ease: easeOut });
       } else if (!debe) g.visible = false;
     }
-    for (const tz of this.titulosZona) tz.grupo.visible = tz.zona === zona && zona !== 0;
+    for (const tz of this.titulosZona) tz.grupo.visible = tz.zona === zEf && zEf !== 0;
     // los portales (anillos de navegación) solo viven en la vista de la
     // ESTACIÓN (zona 1): ni en el planeta desnudo ni dentro de otra sala
-    const portalesOn = zona === 1;
+    const portalesOn = zEf === 1;
     for (const p of this.portales) {
       p.grupo.visible = portalesOn;
       p.etiqueta.visible = portalesOn;
@@ -2650,6 +2671,12 @@ class MundoWGL {
     if (!d || !Array.isArray(d.secciones)) return;
     this.ciudadCatalogo = d.secciones as SeccionCiudad[];
     this.ciudadSucia = true;
+    // v159 EL ATERRIZAJE: si el boot pidió la ciudad antes del catálogo, nace AHORA
+    if (this.ciudadPendiente && !this.ciudadAbierta) {
+      this.ciudadPendiente = false;
+      this.abrirCiudad();
+      return;
+    }
     if (this.ciudadAbierta) { this.cerrarCiudad(true); this.abrirCiudad(); }
   };
   onCiudadToggleEv = () => {
@@ -2963,6 +2990,13 @@ class MundoWGL {
     this.faseHolo = fase;
     const fin = fase === "volando" || fase === "fin";
     this.consolaVisibleFin = fin;
+    // v159 INTRO BRILLANTE: durante la ceremonia el sol acompaña a la cámara
+    // — el globo muestra su CARA ILUMINADA (antes el piloto móvil veía un
+    // disco casi negro); al aterrizar el sol vuelve a su órbita fija
+    if (this.luzDir) {
+      if (!fin) this.luzDir.position.copy(this.camara.position).add(_vA.set(0.4, 0.8, 0.6));
+      else this.luzDir.position.set(5, 2.4, 4);
+    }
     // v148: con el casco vivo, el chrome DOM fijo se aparta (CSS data-wgl-hud)
     if (fin) document.documentElement.setAttribute("data-wgl-hud", "1");
     else document.documentElement.removeAttribute("data-wgl-hud");
@@ -3463,7 +3497,7 @@ class MundoWGL {
 
   abrirCiudad() {
     if (this.ciudadAbierta || this.enVuelo) return;
-    if (!this.ciudadCatalogo.length) return; // sin catálogo no hay ciudad
+    if (!this.ciudadCatalogo.length) { this.ciudadPendiente = true; return; } // v159: sin catálogo aún → pendiente, nace al llegar
     if (!this.ciudadGrupo || this.ciudadSucia) { this.destruirCiudad(); this.construirCiudad(); this.ciudadSucia = false; }
     if (!this.ciudadGrupo) return;
     this.ciudadAbierta = true;
@@ -3517,9 +3551,13 @@ class MundoWGL {
     const volver = this.ciudadPose;
     this.ciudadPose = null;
     this.setCiudadUI(false);
-    // la sección vuelve a su sitio
-    if (this.salaInst && this.ciudadSalaVisible) this.salaInst.grupo.visible = true;
-    if (this.mundoInst && this.ciudadMundoVisible) this.mundoInst.grupo.visible = true;
+    // la sección vuelve a su sitio — v159: la sala DESPIERTA AL ATERRIZAR
+    // (volarCiudad onDone): encendida ahora nacería varada a mitad de vuelo
+    if (!instant) this.ciudadRevivir = true;
+    else {
+      if (this.salaInst && this.ciudadSalaVisible) this.salaInst.grupo.visible = true;
+      if (this.mundoInst && this.ciudadMundoVisible) this.mundoInst.grupo.visible = true;
+    }
     this.animarCielo(0);
     if (instant) {
       if (volver) {
@@ -3561,6 +3599,15 @@ class MundoWGL {
         this.camara.lookAt(dest.mir.x, dest.mir.y, dest.mir.z);
         this.enVuelo = false;
         sonar("freno");
+        // v159 EL ATERRIZAJE PERFECTO: al posar la cámara, la sala del módulo
+        // se RE-ANCILA en la pose final y DESPIERTA — nacida a mitad de vuelo
+        // quedaba varada en el cielo («las cosas se pierden / te siguen»)
+        if (!this.ciudadAbierta && this.salaInst && this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
+          this.anclarSala(true);
+          this.salaInst.grupo.visible = true;
+          if (this.mundoInst && this.ciudadMundoVisible && this.mundoInst.grupo) this.mundoInst.grupo.visible = true;
+        }
+        this.ciudadRevivir = false;
       },
     });
   }
@@ -4045,8 +4092,10 @@ class MundoWGL {
     this.respiracionIdle(t);
 
     // v148 — EL CASCO DEL PILOTO pega a la cámara y respira con los stores
+    // v159: en la CIUDAD el casco DUERME — la metrópolis es el menú, cero
+    // fichas/combos flotando sobre los edificios (una pantalla, un foco)
     if (this.hud3D) {
-      this.hud3D.grupo.visible = this.consolaVisibleFin;
+      this.hud3D.grupo.visible = this.consolaVisibleFin && !this.ciudadAbierta;
       // el logo del casco SOLO asoma si el del cielo no está (cero duplicado)
       this.hud3D.logo.visible = !this.logoGrupo?.visible;
       if (this.consolaVisibleFin) {
@@ -4607,6 +4656,29 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     };
   }, [sondeo]);
 
+  // ════════════════════════════════════════════════════════
+  // v159 EL ATERRIZAJE — «no veo nada de sentido, todo desordenado»:
+  // el piloto YA NO aterriza en la sopa del corredor. Al terminar la
+  // ceremonia (o el reencuentro) el mundo VUELA SOLO hasta la CIUDAD:
+  // la metrópolis ordenada ES la pantalla de inicio — un edificio por
+  // módulo, una sola acción clara (tocar para entrar). Con reintentos
+  // por si el vuelo de zona inicial aún no soltó la cámara.
+  // ════════════════════════════════════════════════════════
+  const aterrizajeCiudad = useCallback(() => {
+    let n = 0;
+    const tic = () => {
+      const m = mundoRef.current;
+      if (!m || !m.vivo) return;
+      if (m.ciudadAbierta) return;
+      if (!m.enVuelo) {
+        m.abrirCiudad();
+        if (m.ciudadAbierta) return;
+      }
+      if (++n < 7) window.setTimeout(tic, 900);
+    };
+    window.setTimeout(tic, 750);
+  }, []);
+
   // ── LA SECUENCIA DE ENTRADA (segundo a segundo, mandato exacto) ──
   useEffect(() => {
     if (soporte !== true) return;
@@ -4622,6 +4694,8 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       setFase("fin");
       mundoRef.current?.reencuentro(z);
       mundoRef.current?.setFaseEntrada("fin");
+      // v159 EL ATERRIZAJE: la recarga también nace en la CIUDAD — el hogar ordenado
+      aterrizajeCiudad();
       return;
     }
     // v148 CEREMONIA PURA: la Casa se aparta — el negro y las estrellas SON la
@@ -4640,7 +4714,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     despues(T(5.4), () => { setFase("tagline"); mundoRef.current?.setFaseEntrada("tagline"); });
     despues(T(6.4), () => { setFase("hint"); mundoRef.current?.setFaseEntrada("hint"); mundoRef.current?.invitar(); });
     return () => { for (const id of tiempos.current) clearTimeout(id); tiempos.current = []; };
-  }, [soporte]);
+  }, [soporte, aterrizajeCiudad]);
 
   // typewriter del tagline (40ms/glifo)
   useEffect(() => {
@@ -4681,8 +4755,10 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     despues(1250, () => {
       setFase("fin");
       mundoRef.current?.setFaseEntrada("fin");
+      // v159 EL ATERRIZAJE: terminada la ceremonia, el mundo vuela SOLO a la ciudad
+      aterrizajeCiudad();
     });
-  }, [fase, despues]);
+  }, [fase, despues, aterrizajeCiudad]);
 
   entrarRef.current = entrar;
 

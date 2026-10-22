@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v159.0",
+    nombre: "EL ATERRIZAJE",
+    tipo: "mundo",
+    hitos: [
+      "EL ATERRIZAJE EN LA CIUDAD — «recuerda que soy de móvil, aún no veo nada de sentido»: las capturas reales de iPhone lo confirmaron (intro casi negra, aterrizaje en una sopa de 12 capas y la ciudad v158 inalcanzable sin tocar MENU) — ahora la ceremonia TERMINA y el mundo VUELA SOLO hasta la metrópolis: la ciudad ordenada es la pantalla de inicio, un edificio por módulo, una sola acción clara",
+      "LA INTRO BRILLANTE — el sol acompaña a la cámara durante toda la ceremonia: el globo muestra su cara iluminada (África/Europa con sus marcadores latiendo), el logo VANGUARD dorado manda y el CTA se lee desde el primer segundo — adiós al disco negro que parecía una app rota",
+      "LA DIETA HUD — «todo desordenado»: en móvil con el universo vivo duermen el PULSO autónomo, la RADIO, el cofre flotante, el clúster de retención (temporada+combo), la «×» suelta y la barra de zonas DOM (data-vg-retencion extendido + capsulaMovil) — una pantalla móvil = un foco, los datos viven en el HUD 3D y en la ciudad",
+      "SALA HÉROE ÚNICA — en móvil, el mundo de zona y sus títulos gigantes DUERMEN mientras la sala del módulo manda (salaHeroMovil + visibleZona zona efectiva 0): cero mezcla de capas, menos draw calls, cero lag",
+      "EL ATERRIZAJE PERFECTO — QA cazó la sala varada a y=8.9 (nacía anclada a mitad del vuelo de descenso, fuera de la mira): ahora duerme durante el vuelo y DESPIERTA re-anclada en la pose final al posar la cámara — jamás otra sala perdida en el cielo",
+      "MODALES EDUCADOS — el bono diario y el manual del comandante ESPERAN a que la ceremonia y la ciudad terminen (data-vg-ciudad + data-wgl-entrada): nada tapa la metrópolis al aterrizar, se sirven cuando el piloto sale a un módulo",
+    ],
+  },
+  {
     version: "v158.0",
     nombre: "LA CIUDAD",
     tipo: "mundo",

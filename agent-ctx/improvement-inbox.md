@@ -307,3 +307,12 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] Nombres de pestañas (2º nivel) como rótulos pequeños bajo el rótulo de sección
 - [ ] Tráfico peatonal: drones-repartidor aterrizando en los aros (vida extra)
 - [ ] La ciudad en MODO MUNDO: hoy MENU abre la ciudad desde cualquier pose — probar variante nocturna/día con el reloj real
+
+## v159.0 EL ATERRIZAJE (2026-10-22) — cola viva
+- [ ] Placas de salas genéricas: texto microscópico en móvil — subir 1.5-1.8× y reducir de 4 a 2 placas en retrato
+- [ ] Casco 3D: ficha AGENTE y pestañas +1/+1 más discretas y legibles (franja superior)
+- [ ] Colisión suave con las torres de la ciudad (cola v158: hoy anillo+suelo, se atraviesa vapor)
+- [ ] Distritos con cielo propio: teñir la cúpula con el color del edificio más cercano
+- [ ] Aterrizaje ceremonial en el aro del edificio antes de abrir el módulo (cola v158)
+- [ ] El bono diario como PLACA 3D en la plaza de la ciudad (matizar 2D definitivo)
+- [ ] MEMORIA: dev server OOM-eó a mitad de ronda — rebuild + relanzar cada vez; sesiones de navegador cortas

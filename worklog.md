@@ -2407,3 +2407,23 @@ Work Log:
 Stage Summary:
 - Producción v158.0 LA CIUDAD: el menú de Vanguard es una metrópolis ordenada, fija y viva — nada mezclado, nada siguiendo a la cámara, entrada/salida cinematográficas, móvil verificado.
 - Siguientes rondas: colisión suave con las torres (hoy solo anillo+suelo), distritos con cielo propio por módulo (el tinte de sección ya existe), aterrizaje en el aro del edificio antes de entrar, minimapa 3D de la ciudad, ampliar figuras a más módulos.
+
+---
+Task ID: 16
+Agent: main (Super Z)
+Task: v159.0 «EL ATERRIZAJE» — el Dueño (móvil): «recuerda que soy de movil y sigue desarrollando, aun no veo nada de sentido, todo desordenado y ya».
+
+Work Log:
+- DIAGNÓSTICO CON CAPTURAS REALES DE iPHONE (la clave de la ronda): (1) la intro nacía CASI NEGRA — el globo era un disco invisible y el VANGUARD era sr-only (qa-v159-diag-01/02); (2) tras tocar el globo, el piloto aterriza en una SOPA de ~12 capas: NavZonas DOM + PULSO + RADIO + cofre + clúster retención + «×» suelta + ticker + sala genérica gigante + mundo de zona sangrando detrás (qa-v159-diag-05) — un texto 3D de OTRO módulo asomaba sobre INICIO; (3) la CIUDAD v158 solo se veía tocando MENU — el Dueño nunca llegaba a ella; (4) el dev server OOM-eó a mitad del QA («This site can't be reached») — rebuild + relanzamiento.
+- CURA (1) EL ATERRIZAJE EN LA CIUDAD (mundo-webgl.tsx): aterrizajeCiudad() con reintentos (7×900ms, guard enVuelo) — se llama al terminar la ceremonia (entrar → despues(1250)) Y en el reencuentro (recarga); abrirCiudad() guarda ciudadPendiente si el catálogo no llegó aún y onCiudadCatalogoEv la abre al aterrizar el catálogo. RESULTADO: enciendes el móvil → intro → vuelo cinematográfico → LA METRÓPOLIS ordenada como pantalla de inicio.
+- CURA (2) INTRO BRILLANTE: setFaseEntrada — durante fases de ceremonia la luzDir acompaña a la cámara (+0.4/+0.8/+0.6), al fin vuelve a (5,2.4,4). El globo muestra África/Europa iluminada con marcadores — «hermosa» de nuevo y LEGIBLE (qa-v159-01).
+- CURA (3) LA DIETA HUD: page.tsx capsulaMovil (matchMedia 700px + hostCapsula) retira RealtimeStatus/MusicPlayer/FortunaLluvia/NavZonas; pulso-auto.tsx, cofre y «×» de retention-layer llevan ahora data-vg-retencion → la regla CSS v158 (html[data-wgl-hud=1]) los duerme en cuanto el casco 3D vive.
+- CURA (4) SALA HÉROE ÚNICA: campo salaHeroMovil — montarSala lo activa en móvil, desmontarSala lo libera; visibleZona usa zona efectiva 0 (mundo de zona + títulos + portales duermen). La sopa de gigantes desaparece (qa-v159-06: módulo limpio con planeta de fondo y tinte de sección).
+- CURA (5) EL ATERRIZAJE PERFECTO: QA cazó la sala VARADA a y=8.89 (montarSala anclaba a mitad del vuelo de descenso de la ciudad — fuera de la mira, «no veo nada»). Cura: montarSala no ancla si enVuelo; cerrarCiudad(!instant) deja la sala dormida (ciudadRevivir); volarCiudad onDone RE-ANCILA (anclarSala(true)) y despierta sala+mundo en la pose final. Verificado: salaY -0.09 EN LA MIRA (qa-v159-07/08).
+- CURA (6) MODALES EDUCADOS: daily-login-modal espera 15s y mientras data-vg-ciudad o data-wgl-entrada=1; tutorial-modal fire() se difiere 3s en las mismas condiciones. La metrópolis aterriza SIN NADA encima (qa-v159-03).
+- BUCLE VERIFICADO E2E EN MÓVIL 390×844: intro → globo → CIUDAD VANGUARD (cero DOM) → tocar edificio ABUSOS → descenso → sala héroe anclada en la mira → MENU → regreso volando a la ciudad. Escritorio 1380×820: misma ciudad, casco y dieta intactas (qa-v159-10). Capturas qa-v159-01..10.
+- INFRA: bun build (v159d) + relanzamiento standalone; health v159.0. tsc 0; eslint 0 en tocados (1 error preexistente en daily-login hidratación, verificado contra HEAD con git stash).
+
+Stage Summary:
+- PRODUCCIÓN = v159.0 EL ATERRIZAJE: el móvil ENCIENDE y entiende — intro brillante, aterrizaje automático en la ciudad ordenada, módulos héroe únicos anclados en la mira, cero sopa DOM, modales educados. El «no veo nada de sentido» tiene cura verificada con capturas.
+- Cola v159+: texto de placas de salas genéricas más grande en móvil (microscópicas); casco 3D con ficha de agente más discreta; el «+1/+1» de pestañas del casco legible; colisión suave con torres (cola v158); distritos con cielo propio por módulo.

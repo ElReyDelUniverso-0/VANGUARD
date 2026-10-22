@@ -657,6 +657,21 @@ export default function Home() {
   // v144 HOLOGRAMA TOTAL: el RAIL del estado — la franja viva de la Casa como
   // tira holográfica CSS3D acoplada a la cámara (StatsTicker + LiveTitle)
   const [hostRail, setHostRail] = useState<HTMLElement | null>(null);
+  // ════════════════════════════════════════════════════════
+  // v159 LA DIETA HUD — «no veo nada de sentido, todo desordenado»:
+  // en móvil con el universo 3D vivo, los widgets planos (PULSO, RADIO,
+  // cofre) y la barra de zonas DOM SE RETIRAN: la ciudad 3D es el menú,
+  // el HUD 3D es el casco. Una pantalla móvil = un foco, cero sopa.
+  // ════════════════════════════════════════════════════════
+  const [movilVp, setMovilVp] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 700px)");
+    const on = () => setMovilVp(mq.matches);
+    on();
+    mq.addEventListener?.("change", on);
+    return () => mq.removeEventListener?.("change", on);
+  }, []);
+  const capsulaMovil = !!hostCapsula && movilVp;
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
@@ -1603,7 +1618,10 @@ export default function Home() {
           v141: el 5º botón MUNDO aparta la Casa y deja solo el universo 3D.
           v143: con mundo vivo, la consola FLOTA EN EL ESPACIO (CSS3D acoplada
           a la cámara — respira con el warp); sin mundo, DOM fijo de siempre. */}
-      {hostNav
+      {/* v159 DIETA HUD: en móvil la barra de zonas DOM se retira — LA CIUDAD
+          es el menú de secciones (aterrizaje automático + botón MENU del casco);
+          sin WebGL o en escritorio la barra sigue como respaldo */}
+      {!capsulaMovil && (hostNav
         ? createPortal(
             <NavZonas flotante zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
               const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
@@ -1618,7 +1636,7 @@ export default function Home() {
             const destino = mapa[z];
             if (destino) handleTabChange(destino);
           }} />
-        )}
+        ))}
 
       {/* v157 HOLO TOTAL — el chip vive en TODOS los módulos: la sala
           volumétrica ES el módulo; un toque devuelve la consola de datos
@@ -1676,10 +1694,13 @@ export default function Home() {
       <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} contenedor={hostVentana} />
       {/* v145 P2: con mundo vivo, la RADIO y el ESTADO del enlace viven en
           las esquinas 3D del plano de mando (mini-pantallas CSS3D) */}
-      {hostWidIzq ? createPortal(<RealtimeStatus />, hostWidIzq) : <RealtimeStatus />}
-      {hostWidDer ? createPortal(<MusicPlayer />, hostWidDer) : <MusicPlayer />}
+      {/* v159 DIETA HUD: en cápsula móvil, PULSO/RADIO/cofre se retiran —
+          sus datos viven en el HUD 3D y en las esquinas del plano de mando;
+          la pantalla móvil queda con UNA capa de información, no cinco */}
+      {!capsulaMovil && (hostWidIzq ? createPortal(<RealtimeStatus />, hostWidIzq) : <RealtimeStatus />)}
+      {!capsulaMovil && (hostWidDer ? createPortal(<MusicPlayer />, hostWidDer) : <MusicPlayer />)}
+      {!capsulaMovil && <FortunaLluvia />}
       <ConnectionWatchdog />
-      <FortunaLluvia />
       {/* v34 — recepción del recluta: procesa ?ref= y da bono de bienvenida */}
       <ReferralLanding />
       {/* v33 ESCUELA DE GUERRA — manual del comandante (auto en 1ª visita) */}

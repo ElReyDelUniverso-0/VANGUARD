@@ -54,11 +54,17 @@ export function DailyLoginModal() {
       // (charla con LA MENTE), el bono ESPERA en silencio — nada cubre la lectura.
       let delay = 400;
       try {
-        if (sessionStorage.getItem("vanguard-booted") !== "1") delay = 9400;
+        // v159: con intro cinematográfica el bono espera al ATERRIZAJE COMPLETO
+        // (ceremonia ~8.3s + vuelo a la ciudad) — jamás tapa la metrópolis
+        if (sessionStorage.getItem("vanguard-booted") !== "1") delay = 15000;
       } catch { /* noop */ }
       const start = Date.now();
       const iv = setInterval(() => {
         if (Date.now() - start < delay) return;
+        // v159 EL ATERRIZAJE: mientras la ciudad 3D esté abierta o la ceremonia
+        // corra, el bono ESPERA — se sirve en cuanto el piloto sale a un módulo
+        if (document.documentElement.hasAttribute("data-vg-ciudad")) return;
+        if (document.documentElement.getAttribute("data-wgl-entrada") === "1") return;
         if (calmaActiva()) return;
         clearInterval(iv);
         setOpen(true);

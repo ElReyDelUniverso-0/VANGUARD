@@ -343,6 +343,7 @@ export function RetentionLayer() {
           <button
             onClick={openChest}
             data-ceremonia-oculta
+            data-vg-retencion="cofre"
             className={`fixed bottom-2 right-2 z-30 rounded-lg border px-3 py-2 font-mono text-[11px] font-bold backdrop-blur transition-all ${
               chestReady
                 ? `border-amber-400 bg-amber-500/20 text-amber-200 animate-pulse ${RARITY_STYLE.EPICO.glow}`
@@ -367,7 +368,7 @@ export function RetentionLayer() {
         </button>
       )}
       {!hidden && (
-        <button onClick={toggleHidden} className="fixed bottom-2 left-1/2 -translate-x-1/2 z-30 rounded border border-slate-700/50 bg-black/70 px-1.5 py-0.5 text-slate-600" aria-label="ocultar">
+        <button onClick={toggleHidden} data-vg-retencion="ocultar" className="fixed bottom-2 left-1/2 -translate-x-1/2 z-30 rounded border border-slate-700/50 bg-black/70 px-1.5 py-0.5 text-slate-600" aria-label="ocultar">
           <X className="w-3 h-3" />
         </button>
       )}
