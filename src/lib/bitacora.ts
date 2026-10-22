@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v158.0",
+    nombre: "LA CIUDAD",
+    tipo: "mundo",
+    hitos: [
+      "EL MENÚ ES UNA METRÓPOLIS — «hay muchos elementos y módulos mezclados» + «tipo ciudad, algo ordenado» + «el nuevo menú 3D para elegir los módulos»: la ciudad-ménú deja de ser un diorama pegado a la cámara y pasa a ser un LUGAR fijo del universo (y=10.6, muy por encima del corredor de vuelo) — abrir el menú VUELA hasta su puerta monumental, recorres la avenida en vuelo libre con corredor propio, y NADA sigue al piloto jamás",
+      "EL TRAZADO ORDENADO — avenida central con neones dorados, calles transversales con luz cian, y 16 manzanas en dos hileras espejadas: un edificio ÚNICO por módulo, SIEMPRE en el mismo sitio, separado por su callejón, con su torre del color de la sección, su silueta 3D propia girando en la cornisa, su nombre extruido mirando a la avenida, sus ventanas que parpadean por fases y su aro de aterrizaje",
+      "EL VIAJE — MENU (placa del puente, tecla M, botones del chrome) despega la cámara en un vuelo cinematográfico de 2s hasta la puerta «CIUDAD VANGUARD»; tocas un edificio y ENTRAS a su módulo mientras la cámara desciende de regreso (nunca un teletransporte); el pad rosa VOLVER y la tecla ESC traen de vuelta a donde estabas",
+      "LA VIDA DE LA CIUDAD — 3 naves que patrullan el eje de la avenida (estela dorada, giro según rumbo), farolas que laten en dos piscinas, ventanas en fases, emblema octaedro girando entre dos aros en contrafase, baliza que respira, y un CIELO propio: cúpula shader con amanecer ámbar que se enciende al llegar (el fondo cambia de color en la ciudad) y se apaga al irte",
+      "CAPAS LIMPIAS EN LA CIUDAD — mientras eliges: sala, mundo, puente, haz y baliza duermen; los límites del planeta se sustituyen por el corredor de la ciudad (anillo 6.1 sobre la isla, techo/suelo del diorama) y la correa descansa — cero mezcla, cero lag del planeta detrás",
+    ],
+  },
+  {
     version: "v157.0",
     nombre: "EL UNIVERSO VIVO",
     tipo: "mundo",
