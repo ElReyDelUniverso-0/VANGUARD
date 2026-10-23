@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v161.0",
+    nombre: "LA CIUDAD VIVA",
+    tipo: "mundo",
+    hitos: [
+      "DATOS EN VIVO — dos revelados de la ciudad nacen «SINTONIZANDO…» y un latido a /api/presence los reescribe con la presencia REAL del servidor: «N OPERADORES EN LÍNEA AHORA MISMO» y «RÉCORD DE LA CIUDADELA · N A LA VEZ» — la metrópolis ya no recita carteles muertos, respira con la comunidad",
+      "MÁS CONTENIDO — la avenida esconde DOCE datos ocultos (antes 8) y en móvil SEIS (antes 4): teatros en guerra, nº de edificios con su mundo 3D, versión del universo, nivel/monedas/racha del piloto y consejos de vuelo — cada dato con su color de familia",
+      "LA RECOMPENSA DEL EXPLORADOR — hallar TODOS los datos ocultos vuelve el letrero de la puerta ORO («¡EXPEDICIÓN COMPLETA!») y paga +150 monedas +50 XP una sola vez por sesión (vg:ciudad-recompensa → la Casa paga y lo celebra con toast)",
+      "COLISIÓN SUAVE CON LAS TORRES — el bug de la vapor-ventana (cola v158) muere: el caza ya no atraviesa los edificios; cada manzana empuja por el eje menos profundo y mata la velocidad entrante — rozar una torre es un planeo, no un fantasma",
+      "AUDITORÍA DE BUGS — tsc 0, lint revisado (los 24 errores son reglas react-hooks preexistentes, cero bugs de runtime), flujo de credenciales verificado: la cuenta del propietario DUENO responde con su contraseña canónica",
+    ],
+  },
+  {
     version: "v159.0",
     nombre: "EL ATERRIZAJE",
     tipo: "mundo",

@@ -45,6 +45,25 @@
 // Herencia v159 EL ATERRIZAJE (aterrizaje automático en la ciudad, intro
 // brillante, dieta HUD móvil, sala héroe única) y v158 LA CIUDAD (metrópolis
 // anclada y=10.6, avenida + 16 manzanas, vuelo ida/regreso, corredor propio).
-export const APP_VERSION = "v160.0";
-export const APP_CODENAME = "EL VACÍO LIMPIO";
+// v161.0: LA CIUDAD VIVA — «sigue mejorando buscando bugs y agregando más
+// contenido». La expedición de la ciudad deja de ser estática:
+// (1) DATOS EN VIVO: dos revelados nacen «SINTONIZANDO…» y un latido a
+//     /api/presence los reescribe con la presencia REAL del servidor —
+//     «N OPERADORES EN LÍNEA AHORA MISMO» y «RÉCORD DE LA CIUDADELA · N A LA
+//     VEZ». Sin señal, los lemas de espera siguen siendo válidos.
+// (2) MÁS CONTENIDO: la avenida ahora esconde DOCE datos ocultos (antes 8)
+//     y en móvil SEIS (antes 4) — edificados con datos reales: teatros en
+//     guerra, nº de edificios de la ciudad, versión del universo, nivel/
+//     monedas/racha del piloto y consejos de vuelo.
+// (3) LA RECOMPENSA DEL EXPLORADOR: hallarlos TODOS vuelve el letrero ORO
+//     («¡EXPEDICIÓN COMPLETA!») y paga +150 monedas +50 XP una vez por
+//     sesión (vg:ciudad-recompensa → la Casa paga con toast).
+// (4) BUG DE LA VAPOR-VENTANA (cola v158): COLISIÓN SUAVE CON LAS TORRES —
+//     el caza ya no atraviesa los edificios: cada manzana empuja por el eje
+//     menos profundo y mata la velocidad entrante (mismo espíritu que los
+//     límites que deslizan del v148); rozar es planeo, no fantasma.
+// Herencia v160 EL VACÍO LIMPIO (negro puro, casas de vidrio y neón,
+// ¿ENTRAR? con SÍ/NO, revelados re-armables) y v159 EL ATERRIZAJE.
+export const APP_VERSION = "v161.0";
+export const APP_CODENAME = "LA CIUDAD VIVA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

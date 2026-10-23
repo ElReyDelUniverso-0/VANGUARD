@@ -2447,3 +2447,24 @@ Work Log:
 Stage Summary:
 - Producción v160.0 EL VACÍO LIMPIO: ciudad en negro puro sin planeta ni estructura ajena, casas de vidrio y neón con letrero que explica qué hay dentro, entrada SIEMPRE preguntada con SÍ/NO 3D, y 8 revelados que brotan al volar (con contador de expedición) — el «aburrido» tiene antídoto.
 - Siguientes rondas: colisión suave con torres (sigue pendiente de v158), tinte del cielo por distrito, aterrizaje ceremonial en el aro, revelados con datos EN VIVO del feed OSINT (hoy estáticos leídos 1 vez), recompensa por completar HALLADOS 8/8 (monedas + placa dorada).
+
+---
+Task ID: 18
+Agent: main (Super Z)
+Task: v161.0 «LA CIUDAD VIVA» — el Dueño: «sigue mejorando buscando bugs; también pásame en escrito todas las contraseñas para acceder a Vanguard y sigue agregando más contenido».
+
+Work Log:
+- AUDITORÍA DE BUGS: tsc 0; eslint revisado (24 errores = reglas react-hooks nuevas preexistentes, cero bugs de runtime); caza de falsos positivos verificada byte a byte (el «chk() corrupto» de desafio-codigo.tsx era un artefacto del terminal — od confirma `ALFABETO[hashStr(...)]` intacto).
+- LAS CLAVES EN ESCRITO: inventario completo de credenciales extraído del código (auth-server.ts, easter-eggs.tsx, desafio-codigo.tsx, promo-kit.tsx): DUENO/vanguard2026 (propietario, sin override en .env), código Konami ↑↑↓↓←→←→BA (+1000ⓒ arcade), nombres reservados (DUENO/ADMIN/SISTEMA/VANGUARD), formatos VG83-SEED-APUESTA-CHK (PVP) y VGD-XXXXXX (referidos), AUTH_SECRET por defecto. Entregado en chat + archivo download/vanguard-contrasenas.txt.
+- (1) DATOS EN VIVO (mundo-webgl.tsx): datosCiudad() ahora recibe nEdificios y devuelve 12 lemas (12 slots z 5.2→-9.1, y 1.7-2.6); dos son VIVOS con placeholders «SINTONIZANDO…»: refrescarReveladosVivos() hace UN fetch a /api/presence (online + pico histórico) y refrescarTextoRevelado() reescribe SOLO el lema flotante (cirugía de dispose; núcleo y aro intactos). Sin señal, los lemas de espera siguen siendo válidos.
+- (2) MÁS CONTENIDO: revelados 8→12 en escritorio y 4→6 en móvil; lemas nuevos con datos reales: «N EDIFICIOS · UN MUNDO 3D EN CADA UNO» (cat.length), «VANGUARD v161.0 · EN CRECIMIENTO» (import APP_VERSION), «VUELA ENTRE LAS TORRES · NO LAS TOQUES» (anuncia la colisión nueva), teatros/nivel/monedas/racha del piloto.
+- (3) LA RECOMPENSA DEL EXPLORADOR: al hallar TODOS, refrescarHallados() pinta el letrero ORO «¡EXPEDICIÓN COMPLETA! +150 MONEDAS», el motor dispara vg:ciudad-recompensa {coins:150,xp:50} UNA vez por sesión (ciudadRecompensada, reset en destruirCiudad) + sonar onda/ping; page.tsx paga de verdad (addCoins + addXp + toast.success «EXPEDICIÓN COMPLETA»).
+- (4) COLISIÓN SUAVE CON LAS TORRES (bug v158 de la vapor-ventana): en el corredor de la ciudad, si ly<1.8 cada manzana empuja por el eje MENOS profundo (0.58) y mata la velocidad entrante — verificado con sonda: cámara a x0+0.70 con vel -8 queda EN dx=0.5800 con velX=0 (enFrontera:true).
+- BUGS QA CAZADOS Y MUERTOS: (a) MÓVIL MUDO (qa-v161-09: revelados=0) — la ciudad nacía ANTES que helvetiker y el bloque de texto se saltaba entero; cura en aplicarFuente(): si la ciudad está abierta se reconstruye EN VIVO, si no ciudadSucia=true; (b) CIUDAD INVISIBLE tras la reconstrucción (abierta:true, ciudadVis:false) — el grupo nuevo nace g.visible=false: se enciende a mano; (c) CIELO AMBAR tras la reconstrucción (uOp=0) — animarCielo(1) reaplica el VACÍO LIMPIO. Verificado móvil 390×844: abierta:true, ciudadVis:true, revelados:6, uOp:1 (qa-v161-11).
+- QA E2E ESCRITORIO 1380×820: intro → ciudad (HALLADOS 0/12 qa-v161-03/04) → vuelo por la avenida con brotes (hallados=1 volando) → tour por los 12 (hallados=12, recompensada=true) → letrero ORO visible + coins 250→400 en el store (qa-v161-08) → colisión verificada. /api/presence vivo: online=1 peak=1.
+- Release: tsc 0, lint 0 en tocados, bun build OK, health v161.0 «LA CIUDAD VIVA»; capturas qa-v161-01..11; bitacora.ts + version.ts actualizados; download/vanguard-contrasenas.txt publicado.
+
+Stage Summary:
+- Producción v161.0 LA CIUDAD VIVA: la expedición de la ciudad ya no recita carteles muertos — dos revelados respiran con la presencia REAL del servidor, doce datos ocultos (seis en móvil) convierten el vuelo en caza, hallarlos TODOS paga +150ⓒ +50 XP con letrero de oro, y el caza ya NO atraviesa las torres (colisión suave verificada al milímetro).
+- Tres bugs de carrera móvil muertos en esta ronda (ciudad muda / ciudad invisible / cielo ámbar) — la reconstrucción con fuente tardía queda blindada.
+- Cola: revelados con titulares del feed OSINT (hoy solo presencia), minimapa 3D flotante, aterrizaje ceremonial en el aro, distritos con cielo propio.

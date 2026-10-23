@@ -54,6 +54,7 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 // v143: DOM REAL dentro de la escena — la Casa vive en el mundo
 import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { GUERRAS } from "@/lib/guerras-activas-data";
+import { APP_VERSION } from "@/lib/version";
 // v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
 import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
 import { construirHud3D, type Hud3D } from "./hud-3d";
@@ -552,6 +553,10 @@ class MundoWGL {
   ciudadRevelados: { g: THREE.Group; x: number; y: number; z: number; radio: number; dentro: boolean; visto: boolean }[] = [];
   ciudadHallados = 0;
   ciudadHallaGrupo: THREE.Group | null = null;
+  // v161 — LA CIUDAD VIVA: revelados con datos EN VIVO (presencia real) +
+  // recompensa única por hallar TODOS los datos ocultos de la expedición
+  ciudadReveladosVivos: { idx: number; vivo: "online" | "pico"; grupo: THREE.Group | null; color: number }[] = [];
+  ciudadRecompensada = false;
   // v154 — EL TINTE DE SECCIÓN: el fondo del universo lava con el color de la sección activa
   cumarTinte: THREE.Mesh | null = null;
   tinteObjetivo = new THREE.Color(0x0a1428);
@@ -1653,6 +1658,32 @@ class MundoWGL {
       const yMin = 0.5 * esc, yMax = 5.4 * esc;
       if (rel.y < yMin) { rel.y = yMin; this.vel.y = Math.max(0, this.vel.y); }
       else if (rel.y > yMax) { rel.y = yMax; this.vel.y = Math.min(0, this.vel.y); }
+      // v161 — COLISIÓN SUAVE CON LAS TORRES: el caza ya no atraviesa el
+      // cristal de las manzanas. Cada edificio empuja por el eje MENOS
+      // profundo y mata la velocidad entrante — rozar una torre es un
+      // planeo (el mismo espíritu de los límites que deslizan del v148).
+      const ly = rel.y / esc;
+      if (ly < 1.8 && this.ciudadEdificios.length) {
+        const lx = rel.x / esc, lz = rel.z / esc;
+        for (const ed of this.ciudadEdificios) {
+          const dx = lx - ed.x0;
+          const dz = lz - ed.z0;
+          const px = 0.58 - Math.abs(dx);
+          const pz = 0.58 - Math.abs(dz);
+          if (px <= 0 || pz <= 0) continue;
+          if (px < pz) {
+            const sx = dx >= 0 ? 1 : -1;
+            rel.x = (ed.x0 + sx * 0.58) * esc;
+            const vn = this.vel.x * sx;
+            if (vn < 0) this.vel.x -= sx * vn;
+          } else {
+            const sz = dz >= 0 ? 1 : -1;
+            rel.z = (ed.z0 + sz * 0.58) * esc;
+            const vn = this.vel.z * sz;
+            if (vn < 0) this.vel.z -= sz * vn;
+          }
+        }
+      }
       p.copy(this.ciudadGrupo.position).add(rel);
     } else {
     // v148 — LÍMITES QUE DESLIZAN: antes el paso entero moría contra la
@@ -2107,6 +2138,24 @@ class MundoWGL {
       } catch (e) { console.warn("[v148] hud3d fallo:", e); }
     }
     this.construirLetras3D();
+    // v161 — FIX MÓVIL (QA qa-v161-09: revelados=0): la ciudad puede nacer
+    // ANTES de que helvetiker llegue (red lenta) — nace MUDA: sin revelados,
+    // sin contador y sin nombres. Con fuente a bordo: si la ciudad está
+    // abierta se reconstruye EN VIVO; si no, queda marcada sucia para que
+    // el próximo abrirCiudad la levante YA con voz.
+    if (this.ciudadAbierta) {
+      if (this.ciudadGrupo) this.destruirCiudad();
+      this.construirCiudad();
+      this.ciudadSucia = false;
+      // la ciudad SIGUE abierta: el grupo nuevo nace apagado (g.visible=false
+      // en construirCiudad) — hay que encenderlo o el piloto queda a ciegas
+      if (this.ciudadGrupo) this.ciudadGrupo.visible = true;
+      // y el VACÍO LIMPIO se reaplica: el cielo nuevo nace con uOp=0 (se vería
+      // el amanecer ámbar del mundo detrás — qa-v161-10), hay que encenderlo
+      this.animarCielo(1);
+    } else {
+      this.ciudadSucia = true;
+    }
     // v142: si el reencuentro corrió ANTES de que la fuente llegara, los
     // portales/títulos nacen con su visibilidad por defecto (apagada) —
     // se reaplica el vestido de la zona actual para ganar la carrera
@@ -3103,6 +3152,8 @@ class MundoWGL {
     this.ciudadHallados = 0;
     this.ciudadHallaGrupo = null;
     this.ciudadOcultos = [];
+    this.ciudadReveladosVivos = [];
+    this.ciudadRecompensada = false;
   }
 
   // v159 — cirugía de dispose: geometrías y materiales PROPIOS de un grupo
@@ -3547,8 +3598,9 @@ class MundoWGL {
     // Núcleos con aro y un lema flotante — lejos duermen (escala 0.001),
     // al acercarte despiertan, al alejarte vuelven al vacío (re-armables).
     if (this.fuente) {
-      const datos = this.datosCiudad();
-      const nR = this.calidadBaja ? 4 : datos.length;
+      const datos = this.datosCiudad(cat.length);
+      // v161 — móvil también merece una expedición rica: 6 hallazgos (antes 4)
+      const nR = this.calidadBaja ? 6 : datos.length;
       for (let i = 0; i < nR; i++) {
         const d = datos[i];
         const ladoR = i % 2 === 0 ? 1 : -1;
@@ -3572,6 +3624,7 @@ class MundoWGL {
         tR.grupo.scale.setScalar(escR);
         tR.grupo.position.set(-tR.ancho * escR / 2, 0.16, 0);
         rv.add(tR.grupo);
+        if (d.vivo) this.ciudadReveladosVivos.push({ idx: i, vivo: d.vivo, grupo: tR.grupo, color: d.color });
         g.add(rv);
         this.ciudadRevelados.push({ g: rv, x: ladoR * 0.62, y: d.y, z: d.z, radio: 1.45, dentro: false, visto: false });
       }
@@ -3582,6 +3635,9 @@ class MundoWGL {
       cnt.add(this.ciudadHallaGrupo);
       this.refrescarHallados();
       g.add(cnt);
+      // v161 — LA SEÑAL EN VIVO: al nacer la ciudad, un latido al servidor
+      // reescribe los revelados vivos con la presencia REAL (online + pico)
+      this.refrescarReveladosVivos();
     }
 
     // ── v159 EL CIELO de la ciudad: NEGRO LIMPIO con estrellas propias —
@@ -3795,9 +3851,11 @@ class MundoWGL {
   // v159 — LA CIUDAD QUE HABLA: datos, contador y LA PREGUNTA.
   // ──────────────────────────────────────────────────────────────
 
-  // LOS CONTENIDOS que esperan en el vacío: consejos reales + datos del
-  // mundo (teatros vigilados) y del propio piloto (leídos UNA vez)
-  private datosCiudad(): { texto: string; color: number; y: number; z: number }[] {
+  // LOS CONTENIDOS que esperan en el vacío: v161 — DOCE datos repartidos por
+  // la avenida: dos EN VIVO (presencia real del servidor), datos del mundo,
+  // del propio piloto y de la expedición. Los vivos nacen «sintonizando» y
+  // refrescarReveladosVivos() los reescribe al llegar la señal real.
+  private datosCiudad(nEdificios: number): { texto: string; color: number; y: number; z: number; vivo?: "online" | "pico" }[] {
     let nivel = 0, coins = 0, racha = 0;
     try {
       const crudo = localStorage.getItem("vanguard-game-state-v1");
@@ -3809,19 +3867,27 @@ class MundoWGL {
       }
     } catch { /* sin datos: la ciudad sigue viva igual */ }
     const teatros = GUERRAS.length;
+    const zs = [5.2, 3.9, 2.6, 1.3, 0.0, -1.3, -2.6, -3.9, -5.2, -6.5, -7.8, -9.1];
+    const ys = [2.5, 1.9, 2.2, 1.7, 2.4, 1.8, 2.1, 1.7, 2.5, 1.9, 2.3, 2.0];
     return [
-      { texto: "VUELA POR LA AVENIDA · EXPLORA", color: 0x3fd6ff, y: 2.5, z: 5.2 },
-      { texto: "TOCA UN EDIFICIO Y CONFIRMA PARA ENTRAR", color: 0xf5c542, y: 2.1, z: 3.4 },
-      { texto: `${teatros} TEATROS DE GUERRA VIGILADOS 24/7`, color: 0xff7a5c, y: 1.8, z: 1.6 },
-      { texto: nivel > 0 ? `PILOTO NIVEL ${nivel} · RACHA ${racha} DÍAS` : "TU NIVEL TE ESPERA · JUEGA Y SUBE", color: 0x9fe8c8, y: 2.3, z: -0.2 },
-      { texto: coins > 0 ? `${coins} MONEDAS EN TU BOLSA` : "GANA MONEDAS EN CADA MUNDO", color: 0xffd76a, y: 1.9, z: -2.0 },
-      { texto: "23 EXPEDIENTES SECRETOS POR ABRIR", color: 0xc9a0ff, y: 2.4, z: -3.8 },
-      { texto: "EL UNIVERSO NO DUERME · VUELVE SIEMPRE", color: 0x7ab8ff, y: 2.0, z: -5.6 },
-      { texto: "8 DATOS OCULTOS · HALLA TODOS", color: 0x9fe8c8, y: 2.6, z: -6.8 },
+      { texto: "OPERADORES EN LÍNEA · SINTONIZANDO…", color: 0x3fd6ff, y: ys[0], z: zs[0], vivo: "online" as const },
+      { texto: "TOCA UN EDIFICIO Y CONFIRMA PARA ENTRAR", color: 0xf5c542, y: ys[1], z: zs[1] },
+      { texto: "RÉCORD DE LA CIUDADELA · SINTONIZANDO…", color: 0xff7a5c, y: ys[2], z: zs[2], vivo: "pico" as const },
+      { texto: `${teatros} TEATROS DE GUERRA VIGILADOS 24/7`, color: 0xff9a5c, y: ys[3], z: zs[3] },
+      { texto: nivel > 0 ? `PILOTO NIVEL ${nivel} · RACHA ${racha} DÍAS` : "TU NIVEL TE ESPERA · JUEGA Y SUBE", color: 0x9fe8c8, y: ys[4], z: zs[4] },
+      { texto: coins > 0 ? `${coins} MONEDAS EN TU BOLSA` : "GANA MONEDAS EN CADA MUNDO", color: 0xffd76a, y: ys[5], z: zs[5] },
+      { texto: `${nEdificios} EDIFICIOS · UN MUNDO 3D EN CADA UNO`, color: 0xc9a0ff, y: ys[6], z: zs[6] },
+      { texto: "EXPEDIENTES SECRETOS REALES POR ABRIR", color: 0xb08cff, y: ys[7], z: zs[7] },
+      { texto: `VANGUARD ${APP_VERSION} · EN CRECIMIENTO`, color: 0x7ab8ff, y: ys[8], z: zs[8] },
+      { texto: "VUELA ENTRE LAS TORRES · NO LAS TOQUES", color: 0x8fd0ff, y: ys[9], z: zs[9] },
+      { texto: "EL UNIVERSO NO DUERME · VUELVE SIEMPRE", color: 0x7ab8ff, y: ys[10], z: zs[10] },
+      { texto: "DATOS OCULTOS · HALLA TODOS Y GANA", color: 0x9fe8c8, y: ys[11], z: zs[11] },
     ];
   }
 
-  // EL CONTADOR del explorador: «HALLADOS n/8» — se reconstruye al hallar
+  // EL CONTADOR del explorador: «HALLADOS n/12» — se reconstruye al hallar.
+  // v161: al COMPLETAR la expedición el letrero se vuelve ORO y anuncia la
+  // recompensa (+150 monedas +50 XP, pagadas una sola vez por sesión).
   private refrescarHallados() {
     if (!this.ciudadHallaGrupo || !this.fuente) return;
     for (const hijo of [...this.ciudadHallaGrupo.children]) {
@@ -3829,13 +3895,58 @@ class MundoWGL {
       this.eliminarRecursos(hijo);
     }
     const total = Math.max(this.ciudadRevelados.length, 1);
-    const t = this.hacerTexto3D(`HALLADOS ${this.ciudadHallados}/${total}`, { tam: 0.06, prof: 0.015, color: 0x9fe8c8, emis: 0.85 });
+    const completo = this.ciudadHallados >= total;
+    const t = this.hacerTexto3D(
+      completo ? "¡EXPEDICIÓN COMPLETA! +150 MONEDAS" : `HALLADOS ${this.ciudadHallados}/${total}`,
+      { tam: 0.06, prof: 0.015, color: completo ? 0xffd76a : 0x9fe8c8, emis: completo ? 1 : 0.85 },
+    );
     for (const l of t.letras) l.mesh.visible = true;
     if (t.grupo.children.length) ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.95;
     const escT = Math.min(1, 1.5 / Math.max(t.ancho, 0.001));
     t.grupo.scale.setScalar(escT);
     t.grupo.position.set(-t.ancho * escT / 2, 0, 0);
     this.ciudadHallaGrupo.add(t.grupo);
+  }
+
+  // v161 — LA CIUDAD VIVA: los revelados «SINTONIZANDO…» se reescriben con
+  // la presencia REAL del servidor (/api/presence → online + pico histórico).
+  // Un solo latido, tolerante a fallos: sin señal, los lemas de espera siguen
+  // siendo válidos y la expedición no se rompe.
+  private refrescarReveladosVivos() {
+    if (!this.fuente || !this.ciudadReveladosVivos.length) return;
+    try {
+      fetch("/api/presence", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j: { online?: number; peak?: number } | null) => {
+          if (!j || !this.ciudadAbierta) return;
+          if (typeof j.online === "number" && j.online > 0) {
+            this.refrescarTextoRevelado("online", `${j.online} OPERADORES EN LÍNEA AHORA MISMO`);
+          }
+          if (typeof j.peak === "number" && j.peak > 0) {
+            this.refrescarTextoRevelado("pico", `RÉCORD DE LA CIUDADELA · ${j.peak} A LA VEZ`);
+          }
+        })
+        .catch(() => { /* sin señal: los lemas de espera siguen */ });
+    } catch { /* fetch indisponible: la ciudad sigue viva igual */ }
+  }
+
+  // v161 — cirugía de texto: cambia SOLO el lema flotante de un revelado
+  // (núcleo y aro quedan intactos; el grupo viejo se dispone con cuidado)
+  private refrescarTextoRevelado(vivo: "online" | "pico", texto: string) {
+    const reg = this.ciudadReveladosVivos.find((v) => v.vivo === vivo && v.grupo);
+    if (!reg || !reg.grupo) return;
+    const t = this.hacerTexto3D(texto, { tam: 0.048, prof: 0.013, color: reg.color, emis: 0.85 });
+    for (const l of t.letras) l.mesh.visible = true;
+    if (t.grupo.children.length) ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.95;
+    const escR = Math.min(1, 1.5 / Math.max(t.ancho, 0.001));
+    t.grupo.scale.setScalar(escR);
+    t.grupo.position.set(-t.ancho * escR / 2, 0.16, 0);
+    const padre = reg.grupo.parent;
+    if (!padre) return;
+    padre.remove(reg.grupo);
+    this.eliminarRecursos(reg.grupo);
+    padre.add(t.grupo);
+    reg.grupo = t.grupo;
   }
 
   // LA PREGUNTA: tocar un edificio NUNCA entra solo — un panel 3D anclado
@@ -4003,6 +4114,13 @@ class MundoWGL {
             r.visto = true;
             this.ciudadHallados = Math.min(this.ciudadRevelados.length, this.ciudadHallados + 1);
             this.refrescarHallados();
+            // v161 — LA RECOMPENSA del explorador: hallarlos TODOS paga una vez
+            if (this.ciudadHallados >= this.ciudadRevelados.length && !this.ciudadRecompensada) {
+              this.ciudadRecompensada = true;
+              window.dispatchEvent(new CustomEvent("vg:ciudad-recompensa", { detail: { coins: 150, xp: 50 } }));
+              sonar("onda");
+              window.setTimeout(() => sonar("ping"), 260);
+            }
           }
           this.animarP(r.g.scale, { x: 1, y: 1, z: 1 }, 460, { ease: easeOut });
           sonar("ping");

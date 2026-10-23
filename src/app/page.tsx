@@ -1111,6 +1111,28 @@ export default function Home() {
     return () => window.removeEventListener("vg:holo-accion", onHolo);
   }, [hostCapsula, handleTabChange, cerrarPestana, abrirNueva, abrirMenu]);
 
+  // ════════════════════════════════════════════════════════
+  // v161 LA CIUDAD VIVA — LA RECOMPENSA DEL EXPLORADOR: hallar TODOS los
+  // datos ocultos de la ciudad paga en monedas y XP (una vez por sesión;
+  // el mundo 3D hace de árbitro, la Casa paga y lo celebra).
+  // ════════════════════════════════════════════════════════
+  useEffect(() => {
+    if (!hostCapsula) return;
+    const onRecompensa = (e: Event) => {
+      const d = (e as CustomEvent).detail || {};
+      const coins = Number(d.coins ?? 150);
+      const xp = Number(d.xp ?? 50);
+      const st = useGameStore.getState();
+      st.addCoins(coins, "Expedición completa en la Ciudad");
+      st.addXp(xp);
+      toast.success(`EXPEDICIÓN COMPLETA · +${coins} monedas +${xp} XP`, {
+        description: "Hallaste todos los datos ocultos de la ciudad",
+      });
+    };
+    window.addEventListener("vg:ciudad-recompensa", onRecompensa);
+    return () => window.removeEventListener("vg:ciudad-recompensa", onRecompensa);
+  }, [hostCapsula]);
+
   // las PESTAÑAS abiertas viajan al puente (placas 3D con letras extruidas)
   useEffect(() => {
     if (!hostCapsula) return;

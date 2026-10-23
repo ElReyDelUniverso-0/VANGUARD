@@ -316,3 +316,13 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] Aterrizaje ceremonial en el aro del edificio antes de abrir el módulo (cola v158)
 - [ ] El bono diario como PLACA 3D en la plaza de la ciudad (matizar 2D definitivo)
 - [ ] MEMORIA: dev server OOM-eó a mitad de ronda — rebuild + relanzar cada vez; sesiones de navegador cortas
+
+## v161.0 LA CIUDAD VIVA (2026-10-23) — cola viva
+- [ ] Revelados con TITULARES EN VIVO del feed OSINT (hoy la señal viva es solo presencia: online + pico) — «ÚLTIMA HORA: <titular>»
+- [ ] Revelados persistentes entre sesiones (localStorage vanguard-ciudad-v161): los ya hallados nacen con aro dorado y el contador arranca donde quedó
+- [ ] Minimapa 3D flotante de la ciudad (octaedro-brújula que apunta a la plaza — cola v158)
+- [ ] Aterrizaje ceremonial en el aro del edificio antes de abrir el módulo (cola v158)
+- [ ] Distritos con cielo propio: teñir la cúpula con el color del edificio más cercano (cola v158)
+- [ ] Colisión también con la PUERTA y el EMBLEMA (hoy solo manzanas de edificios)
+- [ ] La colisión empuja con sonidito «clank» y chispa cuando el golpe es fuerte (feedback físico)
+- [ ] Móvil: 6 revelados quizá queden cortos — probar 8 con calidades medias
