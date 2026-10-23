@@ -1080,13 +1080,15 @@ export default function Home() {
 
   // el catálogo de secciones viaja al mundo 3D (se envía al montar el
   // puente y cada vez que el idioma renombra las secciones)
+  // v162 LA MEGAPÓLIS: viajan TODAS las pestañas de cada sección (antes
+  // solo 5) — los 147 módulos del sitio tienen casa en la ciudad
   useEffect(() => {
     if (!hostCapsula) return;
     const secciones = SECTIONS.map((s) => ({
       key: s.key,
       label: s.short,
       color: accentOfSection(s.key),
-      tabs: s.tabs.slice(0, 5).map((tb) => ({ key: tb.key as string, label: tb.short })),
+      tabs: s.tabs.slice(0, 24).map((tb) => ({ key: tb.key as string, label: tb.short })),
     }));
     window.dispatchEvent(new CustomEvent("vg:holo-ciudad", { detail: { secciones } }));
   }, [hostCapsula]);

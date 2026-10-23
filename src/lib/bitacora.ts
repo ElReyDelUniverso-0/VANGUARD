@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v162.0",
+    nombre: "LA MEGAPÓLIS",
+    tipo: "mundo",
+    hitos: [
+      "TODO EL SITIO EN LA CIUDAD — la Casa envía el catálogo COMPLETO (antes solo 5 pestañas por sección) y cada sección levanta junto a su torre un TÓTEM DE MÓDULOS: columna de neón + corona girando + una placa por cada módulo de la sección — las 147 pestañas de Vanguard son ahora edificios tocables que abren SU módulo exacto con la misma pregunta ¿ENTRAR?",
+      "EL RÓTULO DE PROXIMIDAD — un SOLO texto 3D compartido se re-escribe por cirugía (dispose + rebuild) para revelar el nombre de la placa más cercana al volar: 147 módulos legibles sin 147 letreros vivos — billboard a cámara, búsqueda cada 6 frames, cero fugas de memoria",
+      "LA ISLA CRECE — plataforma 12.6×16.2 (antes 9.8×15.4), dos calles laterales con neón cian conectan las torres con sus distritos de placas, farolas extra en escritorio, corredor de vuelo ampliado (rMax 10.2→11.8) y colisión suave también con los tótems (x 0.58 · z 0.3) — rozar una placa es planeo, no fantasma",
+      "MÁS CONTENIDO — los revelados de la avenida ahora anuncian la MEGAPÓLIS («N TORRES · M MÓDULOS TOCABLES», «LOS TÓTEMS GUARDAN TODO EL SITIO»), los tótems nacen en cascada tras las torres y sus coronas giran con vaivén — la ciudad entera respira",
+      "CAZA DE BUGS — tsc 0 errores, eslint 0 en tocados; la guardia de preguntarEntrada restaurada tras una edición traicionera, dispose verificado en destruirCiudad (rótulo/placas/columnas viajan dentro de ciudadGrupo) y reconstrucción con fuente tardía blindada (los tótems no dependen de la fuente)",
+    ],
+  },
+  {
     version: "v161.0",
     nombre: "LA CIUDAD VIVA",
     tipo: "mundo",

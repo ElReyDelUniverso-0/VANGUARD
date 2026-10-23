@@ -557,6 +557,20 @@ class MundoWGL {
   // recompensa única por hallar TODOS los datos ocultos de la expedición
   ciudadReveladosVivos: { idx: number; vivo: "online" | "pico"; grupo: THREE.Group | null; color: number }[] = [];
   ciudadRecompensada = false;
+  // v162 — LA MEGAPÓLIS: TODO el sitio vive en la ciudad. Cada sección
+  // levanta junto a su torre un TÓTEM con una placa-neón POR MÓDULO (las
+  // 147 pestañas del sitio son tocables y abren SU módulo exacto), y un
+  // RÓTULO compartido revela el nombre de la placa más cercana al volar.
+  ciudadTotems: { g: THREE.Group; x0: number; y0: number; z0: number; nacido: boolean }[] = [];
+  ciudadSlabs: { x: number; y: number; z: number; nombre: string; color: number; tab: string }[] = [];
+  ciudadCrownes: THREE.Object3D[] = [];
+  ciudadColisTotems: { x0: number; z0: number }[] = [];
+  ciudadRotulo: THREE.Group | null = null;
+  ciudadRotuloPlaca: THREE.Mesh | null = null;
+  ciudadRotuloTexto: THREE.Group | null = null;
+  ciudadRotuloNombre = "";
+  ciudadRotuloColor = 0;
+  ciudadTick = 0;
   // v154 — EL TINTE DE SECCIÓN: el fondo del universo lava con el color de la sección activa
   cumarTinte: THREE.Mesh | null = null;
   tinteObjetivo = new THREE.Color(0x0a1428);
@@ -1647,7 +1661,7 @@ class MundoWGL {
       const esc = this.ciudadGrupo.scale.x;
       const rel = _vC.copy(p).sub(this.ciudadGrupo.position);
       const rXZ = Math.sqrt(rel.x * rel.x + rel.z * rel.z);
-      const rMax = 10.2 * esc;
+      const rMax = 11.8 * esc;
       if (rXZ > rMax) {
         const k = rMax / Math.max(rXZ, 1e-6);
         rel.x *= k; rel.z *= k;
@@ -1679,6 +1693,26 @@ class MundoWGL {
           } else {
             const sz = dz >= 0 ? 1 : -1;
             rel.z = (ed.z0 + sz * 0.58) * esc;
+            const vn = this.vel.z * sz;
+            if (vn < 0) this.vel.z -= sz * vn;
+          }
+        }
+        // v162 — COLISIÓN CON LOS TÓTEMS: la columna y sus placas también
+        // son sólidas (más estrechas que una torre: x 0.58 · z 0.3)
+        for (const tt of this.ciudadColisTotems) {
+          const dx = lx - tt.x0;
+          const dz = lz - tt.z0;
+          const px = 0.58 - Math.abs(dx);
+          const pz = 0.3 - Math.abs(dz);
+          if (px <= 0 || pz <= 0) continue;
+          if (px < pz) {
+            const sx = dx >= 0 ? 1 : -1;
+            rel.x = (tt.x0 + sx * 0.58) * esc;
+            const vn = this.vel.x * sx;
+            if (vn < 0) this.vel.x -= sx * vn;
+          } else {
+            const sz = dz >= 0 ? 1 : -1;
+            rel.z = (tt.z0 + sz * 0.3) * esc;
             const vn = this.vel.z * sz;
             if (vn < 0) this.vel.z -= sz * vn;
           }
@@ -3154,6 +3188,17 @@ class MundoWGL {
     this.ciudadOcultos = [];
     this.ciudadReveladosVivos = [];
     this.ciudadRecompensada = false;
+    // v162 — la MEGAPÓLIS se desmonta entera (los grupos viajan dentro de
+    // ciudadGrupo: el traverse de arriba ya dispuso geometrías/materiales)
+    this.ciudadTotems = [];
+    this.ciudadSlabs = [];
+    this.ciudadCrownes = [];
+    this.ciudadColisTotems = [];
+    this.ciudadRotulo = null;
+    this.ciudadRotuloPlaca = null;
+    this.ciudadRotuloTexto = null;
+    this.ciudadRotuloNombre = "";
+    this.ciudadRotuloColor = 0;
   }
 
   // v159 — cirugía de dispose: geometrías y materiales PROPIOS de un grupo
@@ -3297,6 +3342,15 @@ class MundoWGL {
     this.ciudadBeaconMat = null;
     this.ciudadAroA = null;
     this.ciudadAroB = null;
+    // v162 — reset de la MEGAPÓLIS (tótems, placas, rótulo, colisiones)
+    this.ciudadTotems = [];
+    this.ciudadSlabs = [];
+    this.ciudadCrownes = [];
+    this.ciudadColisTotems = [];
+    this.ciudadRotulo = null;
+    this.ciudadRotuloPlaca = null;
+    this.ciudadRotuloTexto = null;
+    this.ciudadRotuloNombre = "";
 
     // v159 — PALETA DEL VACÍO: suelo y calle casi negros — la luz la ponen
     // los neones y las ventanas, no el asfalto (fondo negro limpio)
@@ -3314,11 +3368,13 @@ class MundoWGL {
       new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.8 }));
 
     // ── EL SUELO: plataforma-isla sobre el vacío ──
-    const suelo = new THREE.Mesh(new THREE.BoxGeometry(9.8, 0.3, 15.4), matSuelo);
+    // v162 — la MEGAPÓLIS crece a los lados (12.6×16.2): junto a cada torre
+    // se levanta su TÓTEM de módulos (todo el sitio vive en la ciudad)
+    const suelo = new THREE.Mesh(new THREE.BoxGeometry(12.6, 0.3, 16.2), matSuelo);
     suelo.position.y = -0.15;
     g.add(suelo);
     const canto = new THREE.Mesh(
-      new THREE.BoxGeometry(9.92, 0.05, 15.52),
+      new THREE.BoxGeometry(12.72, 0.05, 16.32),
       new THREE.MeshBasicMaterial({ color: 0x1d3a66, transparent: true, opacity: 0.5 }),
     );
     canto.position.y = -0.29;
@@ -3338,13 +3394,26 @@ class MundoWGL {
     const zSlots = [4.4, 3.0, 1.6, 0.2, -1.2, -2.6, -4.0, -5.4];
     for (let i = 0; i < zSlots.length - 1; i++) {
       const zc = (zSlots[i] + zSlots[i + 1]) / 2;
-      const calle = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.05, 0.62), matCalle);
+      const calle = new THREE.Mesh(new THREE.BoxGeometry(12.2, 0.05, 0.62), matCalle);
       calle.position.set(0, 0.03, zc);
       g.add(calle);
       if (!this.calidadBaja && i % 2 === 0) {
-        const luz = new THREE.Mesh(new THREE.BoxGeometry(9.3, 0.02, 0.03), matNeonCian);
+        const luz = new THREE.Mesh(new THREE.BoxGeometry(12.0, 0.02, 0.03), matNeonCian);
         luz.position.set(0, 0.058, zc);
         g.add(luz);
+      }
+    }
+
+    // ── v162 LAS CALLES LATERALES — la MEGAPÓLIS respira: dos avenidas
+    // paralelas conectan las torres con sus tótems de módulos ──
+    for (const sx of [-1, 1]) {
+      const lateral = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.05, 12.4), matCalle);
+      lateral.position.set(sx * 3.45, 0.03, -0.5);
+      g.add(lateral);
+      if (!this.calidadBaja) {
+        const neonL = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 12.2), matNeonCian);
+        neonL.position.set(sx * 3.45, 0.058, -0.5);
+        g.add(neonL);
       }
     }
 
@@ -3468,6 +3537,81 @@ class MundoWGL {
       this.ciudadEdificios.push({ grupo: ed, x0: x, y0: 0, z0: z, fase: (i * 1.31) % (Math.PI * 2), fig, plateMat: null, nacido: true });
     }
 
+    // ── v162 LOS TÓTEMS DE MÓDULOS — la MEGAPÓLIS: TODO el sitio vive en
+    // la ciudad. Junto a cada torre se levanta una columna de neón con una
+    // PLACA por cada módulo de la sección (las 147 pestañas del sitio son
+    // tocables): tocar una placa pregunta «¿ENTRAR?» y abre ESE módulo
+    // exacto. Un solo RÓTULO compartido revela el nombre de la placa más
+    // cercana al volar — 147 módulos legibles sin 147 letreros vivos.
+    const matColT = new THREE.MeshStandardMaterial({ color: 0x0b1326, metalness: 0.75, roughness: 0.34 });
+    for (let i = 0; i < cat.length; i++) {
+      const sec = cat[i];
+      if (!sec.tabs?.length) continue;
+      const nHexT = parseInt(String(sec.color).replace("#", ""), 16);
+      const hexT = Number.isFinite(nHexT) ? nHexT : 0xf5c542;
+      const ladoT = i % 2 === 0 ? 1 : -1;
+      const zT = zSlots[i >> 1];
+      const tt = new THREE.Group();
+      tt.position.set(ladoT * 4.35, 0, zT);
+      // LA COLUMNA — espina dorsal del tótem
+      const colT = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.1, 0.05), matColT);
+      colT.position.y = 1.21;
+      tt.add(colT);
+      const colNeonT = new THREE.Mesh(
+        new THREE.BoxGeometry(0.02, 2.1, 0.02),
+        new THREE.MeshBasicMaterial({ color: hexT, transparent: true, opacity: 0.78 }),
+      );
+      colNeonT.position.set(0, 1.21, 0.032);
+      tt.add(colNeonT);
+      // LA CORONA — baliza del color de la sección, girando: delata el
+      // tótem de lejos y guía el vuelo por las calles laterales
+      const coronaT = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.075, 0),
+        new THREE.MeshStandardMaterial({ color: hexT, emissive: hexT, emissiveIntensity: 0.6, metalness: 0.5, roughness: 0.26 }),
+      );
+      coronaT.position.y = 2.42;
+      tt.add(coronaT);
+      this.ciudadCrownes.push(coronaT);
+      // LAS PLACAS — hasta 9 por columna × 2 columnas, compartiendo UN
+      // material por sección (el despiece es barato y el latido es global)
+      const matPlaca = new THREE.MeshStandardMaterial({ color: 0x0d1730, emissive: hexT, emissiveIntensity: 0.42, metalness: 0.7, roughness: 0.3 });
+      const nP = Math.min(18, sec.tabs.length);
+      for (let k = 0; k < nP; k++) {
+        const colI = k < 9 ? 0 : 1;
+        const fila = k % 9;
+        const tb = sec.tabs[k];
+        const pl = new THREE.Group();
+        pl.position.set(colI === 0 ? -0.28 : 0.28, 0.62 + fila * 0.168, 0);
+        const malla = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.115, 0.024), matPlaca);
+        pl.add(malla);
+        const proxyP = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 8), matProxy);
+        proxyP.userData = { ciudad: { tab: tb.key, nombre: tb.label || sec.label, color: hexT } };
+        pl.add(proxyP);
+        this.proxiesCiudad.push(proxyP);
+        tt.add(pl);
+        // coordenadas LOCALES de ciudad para el rótulo de proximidad
+        this.ciudadSlabs.push({ x: ladoT * 4.35 + (colI === 0 ? -0.28 : 0.28), y: 0.62 + fila * 0.168, z: zT, nombre: tb.label || sec.label, color: hexT, tab: tb.key });
+      }
+      g.add(tt);
+      this.ciudadTotems.push({ g: tt, x0: ladoT * 4.35, y0: 0, z0: zT, nacido: true });
+      this.ciudadColisTotems.push({ x0: ladoT * 4.35, z0: zT });
+    }
+
+    // ── v162 EL RÓTULO DE PROXIMIDAD — un SOLO texto compartido que se
+    // re-escribe al volar: el módulo más cercano revela su nombre (la
+    // escritura nace y muere por cirugía — cero fuga, cero coste)
+    if (this.fuente) {
+      const rg = new THREE.Group();
+      rg.visible = false;
+      this.ciudadRotulo = rg;
+      this.ciudadRotuloPlaca = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.105, 0.008),
+        new THREE.MeshStandardMaterial({ color: 0x050a14, metalness: 0.7, roughness: 0.3, transparent: true, opacity: 0.85 }),
+      );
+      rg.add(this.ciudadRotuloPlaca);
+      g.add(rg);
+    }
+
     // ── LA PUERTA monumental a la entrada de la avenida ──
     const puerta = new THREE.Group();
     puerta.position.set(0, 0, 6.35);
@@ -3571,6 +3715,22 @@ class MundoWGL {
       foco.position.set(lado * 1.06, 0.56, zf);
       g.add(foco);
     });
+    // v162 — FAROLAS de las calles laterales (solo escritorio): la
+    // MEGAPÓLIS se lee de noche hasta el fondo de los distritos
+    if (!this.calidadBaja) {
+      [4.4, 1.6, -1.2, -4.0].forEach((zf, i) => {
+        const lado = i % 2 === 0 ? 1 : -1;
+        const poste = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.024, 0.46, 6), matPoste);
+        poste.position.set(lado * 3.2, 0.26, zf);
+        g.add(poste);
+        const foco = new THREE.Mesh(
+          new THREE.SphereGeometry(0.05, 8, 8),
+          this.ciudadLampMats[(i + 1) % this.ciudadLampMats.length],
+        );
+        foco.position.set(lado * 3.2, 0.52, zf);
+        g.add(foco);
+      });
+    }
 
     // ── NAVES que patrullan la avenida (la ciudad JAMÁS está quieta) ──
     for (let i = 0; i < 3; i++) {
@@ -3756,6 +3916,22 @@ class MundoWGL {
         },
       });
     }
+    // v162 — los TÓTEMS de módulos nacen en cascada también (la MEGAPÓLIS
+    // se levanta de golpe: torres primero, distritos de placas después)
+    for (let i = 0; i < this.ciudadTotems.length; i++) {
+      const tt = this.ciudadTotems[i];
+      tt.nacido = false;
+      tt.g.position.set(tt.x0, tt.y0 - 0.5, tt.z0);
+      tt.g.scale.setScalar(0.55);
+      const dummy = { d: 0 };
+      this.animarP(dummy, { d: 1 }, 820 + i * 65, {
+        onDone: () => {
+          if (!this.ciudadAbierta) return;
+          this.animarP(tt.g.position, { x: tt.x0, y: tt.y0, z: tt.z0 }, 560, { ease: easeOut });
+          this.animarP(tt.g.scale, { x: 1, y: 1, z: 1 }, 560, { ease: easeOut, onDone: () => { tt.nacido = true; } });
+        },
+      });
+    }
     sonar("ping");
   }
 
@@ -3867,6 +4043,8 @@ class MundoWGL {
       }
     } catch { /* sin datos: la ciudad sigue viva igual */ }
     const teatros = GUERRAS.length;
+    // v162 — LA MEGAPÓLIS: el catálogo entero vive en los tótems
+    const modulos = this.ciudadCatalogo.reduce((a, s) => a + Math.min(18, s.tabs?.length ?? 0), 0);
     const zs = [5.2, 3.9, 2.6, 1.3, 0.0, -1.3, -2.6, -3.9, -5.2, -6.5, -7.8, -9.1];
     const ys = [2.5, 1.9, 2.2, 1.7, 2.4, 1.8, 2.1, 1.7, 2.5, 1.9, 2.3, 2.0];
     return [
@@ -3876,10 +4054,10 @@ class MundoWGL {
       { texto: `${teatros} TEATROS DE GUERRA VIGILADOS 24/7`, color: 0xff9a5c, y: ys[3], z: zs[3] },
       { texto: nivel > 0 ? `PILOTO NIVEL ${nivel} · RACHA ${racha} DÍAS` : "TU NIVEL TE ESPERA · JUEGA Y SUBE", color: 0x9fe8c8, y: ys[4], z: zs[4] },
       { texto: coins > 0 ? `${coins} MONEDAS EN TU BOLSA` : "GANA MONEDAS EN CADA MUNDO", color: 0xffd76a, y: ys[5], z: zs[5] },
-      { texto: `${nEdificios} EDIFICIOS · UN MUNDO 3D EN CADA UNO`, color: 0xc9a0ff, y: ys[6], z: zs[6] },
+      { texto: `${nEdificios} TORRES · ${modulos} MÓDULOS TOCABLES`, color: 0xc9a0ff, y: ys[6], z: zs[6] },
       { texto: "EXPEDIENTES SECRETOS REALES POR ABRIR", color: 0xb08cff, y: ys[7], z: zs[7] },
       { texto: `VANGUARD ${APP_VERSION} · EN CRECIMIENTO`, color: 0x7ab8ff, y: ys[8], z: zs[8] },
-      { texto: "VUELA ENTRE LAS TORRES · NO LAS TOQUES", color: 0x8fd0ff, y: ys[9], z: zs[9] },
+      { texto: "LOS TÓTEMS GUARDAN TODO EL SITIO · VUELA CERCA", color: 0x8fd0ff, y: ys[9], z: zs[9] },
       { texto: "EL UNIVERSO NO DUERME · VUELVE SIEMPRE", color: 0x7ab8ff, y: ys[10], z: zs[10] },
       { texto: "DATOS OCULTOS · HALLA TODOS Y GANA", color: 0x9fe8c8, y: ys[11], z: zs[11] },
     ];
@@ -3947,6 +4125,34 @@ class MundoWGL {
     this.eliminarRecursos(reg.grupo);
     padre.add(t.grupo);
     reg.grupo = t.grupo;
+  }
+
+  // v162 — cirugía del rótulo: re-escribe SOLO el texto (la placa se
+  // re-dimensiona con él); si el módulo no cambia, no se toca nada
+  private refrescarRotulo(nombre: string, color: number) {
+    if (!this.ciudadRotulo || !this.ciudadRotuloPlaca) return;
+    if (this.ciudadRotuloTexto) {
+      this.ciudadRotulo.remove(this.ciudadRotuloTexto);
+      this.eliminarRecursos(this.ciudadRotuloTexto);
+      this.ciudadRotuloTexto = null;
+    }
+    const t = this.hacerTexto3D(nombre, { tam: 0.05, prof: 0.014, color, emis: 0.9 });
+    for (const l of t.letras) l.mesh.visible = true;
+    if (t.grupo.children.length) ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.98;
+    const esc = Math.min(1, 0.72 / Math.max(t.ancho, 0.001));
+    t.grupo.scale.setScalar(esc);
+    t.grupo.position.set(-t.ancho * esc / 2, -0.028, 0.006);
+    this.ciudadRotulo.add(t.grupo);
+    this.ciudadRotuloTexto = t.grupo;
+    // la placa acompaña al texto (se dispone y se re-crea — barato, 1 caja)
+    const vieja = this.ciudadRotuloPlaca.geometry;
+    this.ciudadRotuloPlaca.geometry = new THREE.BoxGeometry(t.ancho * esc + 0.1, 0.105, 0.008);
+    vieja.dispose();
+    const matPl = this.ciudadRotuloPlaca.material as THREE.MeshStandardMaterial;
+    matPl.emissive = new THREE.Color(color);
+    matPl.emissiveIntensity = 0.35;
+    this.ciudadRotuloNombre = nombre;
+    this.ciudadRotuloColor = color;
   }
 
   // LA PREGUNTA: tocar un edificio NUNCA entra solo — un panel 3D anclado
@@ -4130,6 +4336,44 @@ class MundoWGL {
         }
       }
     }
+    // v162 — LAS CORONAS de los tótems giran (balizas vivas del distrito)
+    for (let i = 0; i < this.ciudadCrownes.length; i++) {
+      this.ciudadCrownes[i].rotation.y += dt * 1.1;
+      this.ciudadCrownes[i].rotation.x = Math.sin(t * 1.3 + i) * 0.18;
+    }
+    // v162 — EL RÓTULO DE PROXIMIDAD: cada 6 frames se busca la placa más
+    // cercana (radio ~1.07); si cambia el módulo, el texto se re-escribe
+    // por cirugía. Siempre mira a la cámara (billboard) — los 147 módulos
+    // del sitio se leen al vuelo sin 147 letreros vivos.
+    this.ciudadTick++;
+    if (this.ciudadRotulo && this.ciudadSlabs.length && this.ciudadGrupo) {
+      if (this.ciudadTick % 6 === 0) {
+        const escR = this.ciudadGrupo.scale.x;
+        const relXR = (this.camara.position.x - this.ciudadGrupo.position.x) / escR;
+        const relYR = (this.camara.position.y - this.ciudadGrupo.position.y) / escR;
+        const relZR = (this.camara.position.z - this.ciudadGrupo.position.z) / escR;
+        let mejorR = -1, md2R = 1.15;
+        for (let i = 0; i < this.ciudadSlabs.length; i++) {
+          const s = this.ciudadSlabs[i];
+          const dx = relXR - s.x, dy = relYR - s.y, dz = relZR - s.z;
+          const d2 = dx * dx + dy * dy + dz * dz;
+          if (d2 < md2R) { md2R = d2; mejorR = i; }
+        }
+        if (mejorR >= 0) {
+          const s = this.ciudadSlabs[mejorR];
+          if ((s.nombre !== this.ciudadRotuloNombre || s.color !== this.ciudadRotuloColor) && this.fuente) {
+            this.refrescarRotulo(s.nombre, s.color);
+          }
+          if (this.ciudadRotuloTexto) {
+            this.ciudadRotulo.position.set(s.x, s.y + 0.19, s.z);
+            this.ciudadRotulo.visible = true;
+          }
+        } else {
+          this.ciudadRotulo.visible = false;
+        }
+      }
+      if (this.ciudadRotulo.visible) this.ciudadRotulo.quaternion.copy(this.camara.quaternion);
+    }
   }
 
   // ── HOVER del puente — la placa respira más fuerte bajo el puntero ──
@@ -4210,6 +4454,17 @@ class MundoWGL {
     // (v158: no durante el vuelo de ida/regreso — la cámara viaja)
     // v159: tocar un edificio YA NO entra — devuelve la intención y el
     // mundo pregunta «¿ENTRAR?» con SÍ/NO; SÍ/NO del panel también viven aquí
+    // v162 BUG DE QA: los botones del prompt compiten con los proxies de
+    // las torres (una torre cercana robaba el toque del SÍ y re-abría la
+    // pregunta equivocada) — el panel anclado a cámara SIEMPRE va primero
+    if (this.ciudadAbierta && !this.enVuelo && this.ciudadPromptProxies.length) {
+      const hitP = ray.intersectObjects(this.ciudadPromptProxies, false)[0];
+      if (hitP && ancestroVisible(hitP.object)) {
+        const u = hitP.object.userData?.ciudad;
+        if (u?.no) return { tipo: "ciudad", key: "__no" };
+        if (u?.si) return { tipo: "ciudad", key: "__si", edificio: { tab: String(u.si.tab), nombre: "", color: 0xf5c542 } };
+      }
+    }
     if (this.ciudadAbierta && !this.enVuelo && this.proxiesCiudad.length) {
       const hitC = ray.intersectObjects(this.proxiesCiudad, false)[0];
       if (hitC && ancestroVisible(hitC.object)) {

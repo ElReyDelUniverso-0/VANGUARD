@@ -62,8 +62,27 @@
 //     el caza ya no atraviesa los edificios: cada manzana empuja por el eje
 //     menos profundo y mata la velocidad entrante (mismo espíritu que los
 //     límites que deslizan del v148); rozar es planeo, no fantasma.
-// Herencia v160 EL VACÍO LIMPIO (negro puro, casas de vidrio y neón,
-// ¿ENTRAR? con SÍ/NO, revelados re-armables) y v159 EL ATERRIZAJE.
-export const APP_VERSION = "v161.0";
-export const APP_CODENAME = "LA CIUDAD VIVA";
+// v162.0: LA MEGAPÓLIS — «sigue agregando más contenido completo de
+// vanguard, todo el sitio de vanguard súmalo… las ciudades, mejóralas».
+// (1) TODO EL SITIO EN LA CIUDAD: la Casa envía el catálogo COMPLETO
+//     (antes solo 5 pestañas por sección) y cada sección levanta junto a
+//     su torre un TÓTEM DE MÓDULOS: columna de neón + corona girando + una
+//     PLACA por cada módulo de la sección (2 columnas × 9) — las 147
+//     pestañas del sitio son tocables y abren SU módulo exacto (misma
+//     pregunta ¿ENTRAR? con SÍ/NO de la v160).
+// (2) EL RÓTULO DE PROXIMIDAD: un SOLO texto 3D compartido se re-escribe
+//     por cirugía (dispose + rebuild) para revelar el nombre de la placa
+//     más cercana al volar — 147 módulos legibles sin 147 letreros vivos
+//     (billboard a cámara, búsqueda cada 6 frames, cero fugas).
+// (3) LA ISLA CRECE: plataforma 12.6×16.2 (antes 9.8×15.4), dos CALLES
+//     LATERALES con neón cian conectan las torres con sus distritos de
+//     placas, farolas extra en escritorio, corredor de vuelo rMax 10.2→11.8
+//     y COLISIÓN SUAVE también con los tótems (x 0.58 · z 0.3).
+// (4) MÁS CONTENIDO: revelados reescritos con la MEGAPÓLIS («N TORRES · M
+//     MÓDULOS TOCABLES», «LOS TÓTEMS GUARDAN TODO EL SITIO»), tótems que
+//     nacen en cascada tras las torres y coronas que giran con vaivén.
+// Herencia v161 LA CIUDAD VIVA (presencia en vivo, 12 revelados, recompensa
+// del explorador, colisión con torres) y todo lo anterior.
+export const APP_VERSION = "v162.0";
+export const APP_CODENAME = "LA MEGAPÓLIS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
