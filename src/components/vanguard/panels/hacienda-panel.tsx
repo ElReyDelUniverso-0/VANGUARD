@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -96,8 +97,8 @@ export function HaciendaPanel() {
   };
 
   // ————— 2) DEPÓSITOS —————
-  const depositar = (planId: string) => {
-    const m = Math.max(MIN_DEPOSITO, Math.min(MAX_DEPOSITO, Math.floor(monto) || 0));
+  const depositar = (planId: string, cantidad?: number) => {
+    const m = Math.max(MIN_DEPOSITO, Math.min(MAX_DEPOSITO, Math.floor(cantidad ?? monto) || 0));
     if (estado.depositos[planId]) return;
     if (!spendCoins(m, `Depósito a plazo ${planId} — Banco Central`)) {
       toast.error(`Necesitas ${m}ⓒ para entrar en la bóveda`);
@@ -161,6 +162,71 @@ export function HaciendaPanel() {
   const cdCert = Math.max(0, COOLDOWN_CERTIFICADO - (ahora - estado.ultimoCertificado));
 
   const fmt = (n: number) => n.toLocaleString("es");
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — el BANCO CENTRAL en volumen: el sueldo
+  // pendiente COBRABLE desde el mundo, las 3 bóvedas con su estado
+  // real (depositar/abrir desde 3D) y la tesorería con su flujo
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `SUELDO PENDIENTE: ${fmt(sueldoPendiente)} MONEDAS`,
+        v: topeAlcanzado ? "TOPE 8H" : `${tasaMin.toFixed(2)}/MIN`,
+        color: sueldoPendiente > 0 ? "#F5C542" : "#9FB8DD",
+        d: `Nivel ${level} · acumulas desde que entraste · toca COBRAR y el banco te paga`,
+        a: sueldoPendiente > 0 ? "COBRAR" : undefined,
+      },
+      {
+        t: `INFORME AL OJO: ${listoCertificado ? "PAGA LISTA" : `EN ${Math.ceil(cdCert / 60000)} MIN`}`,
+        v: "20-40ⓒ",
+        color: listoCertificado ? "#3DDC84" : "#9FB8DD",
+        d: "El Ojo de Dios paga por buena información: certifica cada 10 minutos",
+      },
+    ];
+    for (const plan of PLANES) {
+      const dep = estado.depositos[plan.id];
+      const maduro = dep && ahora - dep.inicio >= plan.minutos * 60_000;
+      filas.push({
+        t: `${plan.nombre} +${Math.round(plan.interes * 100)}%`,
+        v: dep ? (maduro ? "¡VENCIDA!" : `${fmt(dep.monto)} GUARDADOS`) : "VACÍA",
+        color: maduro ? "#3DDC84" : dep ? "#9FB8DD" : "#F5C542",
+        d: dep ? (maduro ? "El interés ya maduró: toca ABRIR y cobra capital + interés" : `Sellada hasta las ${new Date(dep.inicio + plan.minutos * 60_000).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" })}`) : plan.nota,
+        a: maduro ? "ABRIR" : dep ? undefined : "DEPOSITAR",
+      });
+    }
+    filas.push(
+      { t: `TESORERÍA: INGRESOS ${fmt(tesoreria.ingresos)}`, v: `NETO ${tesoreria.neto >= 0 ? "+" : ""}${fmt(tesoreria.neto)}`, color: tesoreria.neto >= 0 ? "#3DDC84" : "#FF4D5E", d: tesoreria.top.length ? `Top fuente: ${tesoreria.top[0][0]} (${fmt(tesoreria.top[0][1])}ⓒ)` : "Sin movimientos aún" },
+      { t: `GASTOS: ${fmt(tesoreria.gastos)}`, v: `${fmt(coins)} EN BOLSA`, color: "#9FB8DD", d: "El flujo real de tus últimas 50 operaciones" },
+    );
+    return filas;
+  }, [sueldoPendiente, topeAlcanzado, tasaMin, level, listoCertificado, cdCert, estado, ahora, tesoreria, coins]);
+  useSala3DContenido(
+    "hacienda",
+    "BANCO CENTRAL",
+    "#F5C542",
+    `Saldo ${fmt(coins)}ⓒ · ${fmt(gems)} gemas · bóvedas del guerrero`,
+    filas3D,
+  );
+
+  // v165 — LAS ACCIONES DEL BANCO en 3D: cobrar sueldo, abrir bóveda
+  // vencida y depositar 500 — TODO ejecuta el mismo dinero de verdad
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "hacienda") return;
+      if (d.accion === "cobrar") cobrarSueldo();
+      else if (d.accion === "abrir" || d.accion === "depositar") {
+        const plan = PLANES[d.idx - 2]; // filas 0-1: sueldo + informe; 2-4: bóvedas
+        if (plan) {
+          if (d.accion === "abrir") cobrarDeposito(plan.id);
+          else depositar(plan.id, 500);
+        }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  });
 
   return (
     <div className="space-y-3">

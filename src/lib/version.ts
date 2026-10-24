@@ -131,6 +131,40 @@
 //     en filas de cristal con valores en oro y barras de volumen.
 // Herencia v163 LA CIUDAD TALLADA (torres esculpidas, decoraciones por
 // distrito), v162 LA MEGAPÓLIS (146 placas) y todo lo anterior.
-export const APP_VERSION = "v164.0";
-export const APP_CODENAME = "LA REDACCIÓN EN VIVO";
+// v165.0: LA SALA COMPLETA — «cuando entre a un módulo-casa este el módulo
+// COMPLETO, no solo el encabezado... toda la información que está en
+// Vanguard sea 3D... y que pueda poner el vanguard 2D o 3D».
+// (1) LA SALA DE CONTENIDO CRECE: 9 filas en escritorio / 7 en móvil
+//     (antes 7/7), cada fila con su VALOR en oro, barra, imagen y —cuando
+//     el panel la manda— su BOTÓN de acción real (comprar / invertir /
+//     cobrar / vender / abrir / depositar) que ejecuta DE VERDAD vía
+//     vg:sala3d-accion. El pie honesto «+N MÁS EN EL PANEL» confiesa lo
+//     que queda en la consola.
+// (2) EL DETALLE DE PROXIMIDAD: al volar CERCA de una fila, SU información
+//     nueva brota en letras doradas que VAN Y VIENEN (entra flotando, sale
+//     desvaneciéndose) con una aguja que la señala y billboard solo-yaw —
+//     la sala le contesta al piloto que se acerca a mirar.
+// (3) EL MONUMENTO: toda sala de contenido estrena su FIGURA GRANDE —
+//     torre de 3 cuerpos coronada por la INICIAL del módulo en letras
+//     enormes girando con aro orbital — se ve desde lejos y firma la sala.
+// (4) LA ECONOMÍA COMPLETA EN 3D: la BOLSA estrena lista de mercado viva
+//     (10 activos con precio y %) + CARTERA del piloto, tocables:
+//     INVERTIR compra 1 unidad con su comisión, VENDER liquida la
+//     posición. MERCADOS DE GUERRA deja de ser figura+encabezado: miedo,
+//     sanciones y TODAS las cotizaciones en volumen. TIENDA manda el
+//     CATÁLOGO COMPLETO (14 items con descripción): cofres + estantería
+//     con COMPRAR. DIVISAS: casa de cambio con COMPRAR/VENDER reales.
+//     HACIENDA: sueldo COBRABLE y bóvedas (depositar/abrir) desde el mundo.
+// (5) EL INTERRUPTOR 2D ↔ 3D: píldora fija en todas las pantallas —
+//     2D duerme el universo y manda la consola plana clásica; 3D lo
+//     despierta (el reencuentro evita repetir la ceremonia). Y desde la
+//     consola 2D, CADA módulo estrena su botón VER EN 3D (PanelHeader):
+//     todo vanguard 2D se puede volver 3D módulo a módulo.
+// (6) LOTE INFORMATIVO: espionaje (agentes, trampas, encubierto), radar
+//     de desinformación (veracidad + teorías), alianzas (clan, guerra,
+//     ranking, canal) y gobierno (presidente, cargos, decretos, ranking)
+//     muestran SU contenido real en filas de cristal.
+// Herencia v164 LA REDACCIÓN EN VIVO y todo lo anterior.
+export const APP_VERSION = "v165.0";
+export const APP_CODENAME = "LA SALA COMPLETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

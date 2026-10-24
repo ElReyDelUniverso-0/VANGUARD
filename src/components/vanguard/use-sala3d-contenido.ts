@@ -12,6 +12,9 @@
 import { useEffect, useRef } from "react";
 import type { FilaContenido3D } from "./salas-3d";
 
+// v165: los paneles importan la fila de aquí — el emisor es la puerta única
+export type { FilaContenido3D } from "./salas-3d";
+
 export function emitirSalaContenido(
   tab: string,
   titulo: string,

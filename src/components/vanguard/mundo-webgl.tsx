@@ -1176,6 +1176,7 @@ class MundoWGL {
       fuente: this.fuente,
       calidadBaja: this.calidadBaja,
       movil: this.esMovil(),
+      camara: this.camara.position, // v165: la proximidad lee la cámara VIVA
       animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
     };
     try {
@@ -1274,6 +1275,7 @@ class MundoWGL {
       fuente: this.fuente!,
       calidadBaja: this.calidadBaja,
       movil: this.esMovil(),
+      camara: this.camara.position, // v165: los mundos privados también ven la cámara
       animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
     };
     try {

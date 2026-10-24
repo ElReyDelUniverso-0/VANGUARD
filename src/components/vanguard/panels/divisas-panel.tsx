@@ -12,6 +12,7 @@ import { Flag } from "@/lib/flags";
 import { WORLD_CURRENCIES, REGIONS, type WorldCurrency } from "@/lib/currency-data";
 import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { toast } from "sonner";
 import { Banknote, TrendingUp, TrendingDown, Search, Wallet, ArrowLeftRight, LayoutGrid, List } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -80,6 +81,56 @@ export function DivisasPanel() {
     setPortfolio((p) => { const n = { ...p }; delete n[sel.code]; return n; });
     toast.success(`Vendidos ${units.toLocaleString("es", { maximumFractionDigits: 0 })} ${sel.code} → +${vgc} ◉`);
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — LA CASA DE CAMBIO en volumen: 10 divisas
+  // vivas con su tasa, la cartera FX y COMPRAR/VENDER reales desde
+  // el mundo (la misma operación que la consola, con su toast)
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = lives.slice(0, 10).map((c) => {
+      const units = portfolio[c.code] ?? 0;
+      return {
+        t: `${c.code} ${c.country}`,
+        v: c.live >= 100 ? c.live.toFixed(0) : c.live.toFixed(2),
+        color: c.dir > 0 ? "#3DDC84" : c.dir < 0 ? "#FF4D5E" : "#9FB8DD",
+        d: `${c.currency} (${c.symbol}) · 1 USD = ${c.live.toFixed(2)} ${c.code}${units > 0 ? ` · tienes ${Math.round(units)} u.` : ""}`,
+        a: units > 0 ? "VENDER" : "COMPRAR",
+      };
+    });
+    filas.push({
+      t: `CARTERA FX: ${holdings.length} DIVISAS`,
+      v: `${Math.round(portfolioUsd)} USD`,
+      color: "#F5C542",
+      d: holdings.length ? holdings.slice(0, 3).map((h) => `${h.code} ${Math.round(h.units)}u`).join(" · ") : "Compra divisas con 100 monedas y véndelas cuando muevan",
+    });
+    return filas;
+  }, [lives, portfolio, holdings, portfolioUsd]);
+  useSala3DContenido("divisas", "DIVISAS MUNDIALES", "#7AB8FF", `247 países · ${coins} monedas en bolsillo`, filas3D);
+
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "divisas") return;
+      const c = lives[d.idx];
+      if (!c) return;
+      if (d.accion === "comprar") {
+        if (!spendCoins(100, `Comprar ${c.code} desde el mundo 3D`)) { toast.error("Necesitas 100 ◉"); return; }
+        const units = 100 * c.live;
+        setPortfolio((p) => ({ ...p, [c.code]: (p[c.code] ?? 0) + units }));
+        toast.success(`+${units.toLocaleString("es", { maximumFractionDigits: 0 })} ${c.code} comprados EN 3D`);
+      } else if (d.accion === "vender") {
+        const units = portfolio[c.code] ?? 0;
+        if (units <= 0) return;
+        const vgc = Math.round((units / c.live) * 100);
+        addCoins(vgc, `Vender ${c.code} desde el mundo 3D`);
+        setPortfolio((p) => { const n = { ...p }; delete n[c.code]; return n; });
+        toast.success(`Vendidos ${Math.round(units)} ${c.code} → +${vgc} ◉`);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [lives, portfolio, spendCoins, addCoins]);
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">

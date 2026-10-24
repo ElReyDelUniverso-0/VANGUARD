@@ -103,9 +103,11 @@ export function ShopPanel() {
 
   // ════════════════════════════════════════════════════════════
   // v147 SALAS EN VOLUMEN: LA VITRINA DE COFRES — los 4 items
-  // estrella de la tienda viven como cofres 3D con tapa viva;
-  // TOCAR UN COFRE = comprar por el MISMO handleBuy (cero lógica
-  // nueva, el mundo dispara la compra real con su toast).
+  // estrella de la tienda viven como cofres 3D con tapa viva.
+  // v165 EL CATÁLOGO COMPLETO: la sala ya no enseña 4 cofres y ya —
+  // manda TODO el catálogo (con descripción y categoría como detalle
+  // de proximidad) y la sala levanta cofres + estantería de filas.
+  // TOCAR = comprar por el MISMO handleBuy (cero lógica nueva).
   // ════════════════════════════════════════════════════════════
   const vitrina = useMemo(() => {
     // el orden del arco: ELITE → BOOST → AVATAR → CONSUMABLE (los compras de verdad)
@@ -133,6 +135,18 @@ export function ShopPanel() {
     });
   }, [ownedAvatars, activeAvatar, hudTheme, readBriefings, isElite]);
 
+  // v165 EL CATÁLOGO ENTERO — hasta 14 items con su descripción real
+  const catalogo = useMemo(() => {
+    return SHOP_ITEMS.slice(0, 14).map((it) => {
+      let activo = false;
+      if (it.category === "ELITE") activo = isElite();
+      else if (it.category === "AVATAR") activo = ownedAvatars.includes(it.id);
+      else if (it.category === "BRIEFING") activo = readBriefings.includes("B-TW-01");
+      return { item: it, titulo: it.title, costo: it.cost, moneda: (it.currency === "GEMS" ? "GEMS" : "COINS") as "GEMS" | "COINS", activo, d: it.description, cat: catLabel[it.category] || it.category };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownedAvatars, readBriefings, isElite]);
+
   useEffect(() => {
     const emitir = () => {
       try {
@@ -141,7 +155,7 @@ export function ShopPanel() {
             tab: "tienda", tipo: "tienda",
             titulo: "Tienda",
             monedas: coins, gemas: gems,
-            items: vitrina.map((v) => ({ titulo: v.titulo, costo: v.costo, moneda: v.moneda, activo: v.activo })),
+            items: catalogo.map((v) => ({ titulo: v.titulo, costo: v.costo, moneda: v.moneda, activo: v.activo, d: v.d, cat: v.cat })),
           },
         }));
       } catch { /* el mundo 3D no bloquea el panel */ }
@@ -149,19 +163,19 @@ export function ShopPanel() {
     emitir();
     const id = window.setInterval(emitir, 6000);
     return () => window.clearInterval(id);
-  }, [coins, gems, vitrina]);
+  }, [coins, gems, catalogo]);
 
   useEffect(() => {
     const onAccion = (e: Event) => {
       const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
       if (d?.tab !== "tienda" || d.accion !== "comprar") return;
-      const v = vitrina[d.idx];
+      const v = catalogo[d.idx] ?? vitrina[d.idx];
       if (v) handleBuy(v.item);
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
      
-  }, [vitrina]);
+  }, [vitrina, catalogo]);
 
   return (
     <div className="space-y-3">

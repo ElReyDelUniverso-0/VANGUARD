@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v165.0",
+    nombre: "LA SALA COMPLETA",
+    tipo: "mundo",
+    hitos: [
+      "LA SALA COMPLETA — entrar a un módulo-casa YA NO es solo figura + encabezado: la sala de contenido crece a 9 filas en escritorio / 7 en móvil, cada fila con texto, VALOR en oro, barra de volumen, imagen y —cuando el panel la manda— su BOTÓN de acción real que ejecuta de verdad (vg:sala3d-accion); pie honesto «+N MÁS EN EL PANEL»",
+      "EL DETALLE DE PROXIMIDAD — al volar CERCA de una fila, su información nueva brota en letras doradas que VAN Y VIENEN (entra flotando, sale desvaneciéndose) con aguja que la señala y billboard solo-yaw: la sala contesta al piloto que se acerca a mirar",
+      "EL MONUMENTO — toda sala de contenido estrena su FIGURA GRANDE: torre de 3 cuerpos coronada por la INICIAL del módulo en letras enormes girando con aro orbital, visible desde lejos",
+      "LA ECONOMÍA COMPLETA EN 3D — BOLSA: lista de mercado viva (10 activos) + cartera, con INVERTIR (compra 1 unidad con comisión) y VENDER reales desde el mundo; MERCADOS: miedo, sanciones y TODAS las cotizaciones en volumen; TIENDA: catálogo COMPLETO (14 items) en cofres + estantería con COMPRAR; DIVISAS: casa de cambio con COMPRAR/VENDER; HACIENDA: sueldo COBRABLE y bóvedas depositar/abrir desde 3D",
+      "EL INTERRUPTOR 2D ↔ 3D — píldora fija en todas las pantallas: 2D duerme el universo y manda la consola plana clásica; 3D lo despierta (reencuentro sin repetir ceremonia). Y CADA módulo en 2D estrena su botón VER EN 3D: todo Vanguard 2D se puede volver 3D módulo a módulo",
+      "LOTE INFORMATIVO — espionaje (encubierto, trampas, agentes en campo), radar de desinformación (veracidad + teorías conectadas), alianzas (clan, guerra, ranking, canal) y gobierno (presidente, cargos, decretos, ranking mundial) muestran su contenido real en filas de cristal",
+      "tsc 0 · QA E2E escritorio+móvil del interruptor, la sala completa, el monumento y las acciones de bolsa/tienda/hacienda",
+    ],
+  },
+  {
     version: "v164.0",
     nombre: "LA REDACCIÓN EN VIVO",
     tipo: "mundo",

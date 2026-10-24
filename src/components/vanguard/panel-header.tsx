@@ -47,7 +47,28 @@ export function PanelHeader({ title, subtitle, icon, color = "amber", right }: P
           )}
         </div>
       </div>
-      {right}
+      <div className="flex items-center gap-2 shrink-0">
+        {right}
+        {/* v165 VER EN 3D — el Dueño: «en vanguard 2D también pueda poner
+            módulos 3D, osea todo vanguard 2D que lo vuelva 3D». Desde la
+            consola plana de CUALQUIER módulo, un toque despierta el universo
+            y SU sala 3D se ancla con el contenido completo. Se duerme dentro
+            del mundo (el chip Solo 3D manda ahí). */}
+        <button
+          type="button"
+          className="vg165-ir3d"
+          onClick={() => window.dispatchEvent(new CustomEvent("vg:modo-3d"))}
+          title="Abrir este módulo en su sala 3D"
+          aria-label="Ver este módulo en 3D"
+        >
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M12 2 3 7v10l9 5 9-5V7l-9-5z" />
+            <path d="M12 22V12" />
+            <path d="m3 7 9 5 9-5" />
+          </svg>
+          3D
+        </button>
+      </div>
     </div>
   );
 }

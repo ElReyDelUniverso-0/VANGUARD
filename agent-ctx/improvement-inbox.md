@@ -326,3 +326,13 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] Colisión también con la PUERTA y el EMBLEMA (hoy solo manzanas de edificios)
 - [ ] La colisión empuja con sonidito «clank» y chispa cuando el golpe es fuerte (feedback físico)
 - [ ] Móvil: 6 revelados quizá queden cortos — probar 8 con calidades medias
+
+## v165.0 LA SALA COMPLETA (2026-10-24) — cola viva
+- [ ] ConstruirTienda con DETALLE DE PROXIMIDAD propio (los items de estantería muestran la descripción al volar cerca — hoy el detalle d solo vive en salas contenido)
+- [ ] Lote informativo restante: biblioteca, históricas, famosos caídos, curiosidades, memorial, eras, empleos, contribuidores, googles, telegram, help, armería, fortaleza (~13 módulos aún en genérico)
+- [ ] Acciones RECLAMAR en logros/misiones/recompensas desde 3D (payloads ya traen reclamar:boolean)
+- [ ] Quiz y votaciones desde 3D: responder tocando la placa (el payload de insignia ya viaja; falta wirear accion responder/votar en los listeners)
+- [ ] La lista del mercado en la sala BOLSA con pagination (10 activos visibles de 34 — tocar "SIGUIENTE" rotaría la lista)
+- [ ] Cámara de detalle: en móvil el radio de proximidad (2.0) quizá quede corto con el héroe a 3.4 — probar 2.4
+- [ ] El interruptor 2D/3D guarda la preferencia en localStorage (hoy vuelve a 3D en cada recarga — por diseño la ciudad es el hogar)
+- [ ] VER EN 3D: variante por-edificio (saltar directo a la sala del módulo sin pasar por la ciudad)

@@ -4,7 +4,7 @@
 // chat privado, guerras de alianzas (duelo de predicciones semanal entre
 // clanes, las monedas del perdedor van al ganador) y ranking global.
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Flag, Swords, Send, Users, Crown, Trophy, LogOut } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
 import { LatidoSocial } from "@/components/vanguard/latido-social";
@@ -184,6 +185,44 @@ export function AlianzasPanel() {
 
   const rankList = [...alliances];
   if (current && save.allianceId === "own") rankList.push(current);
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — el clan en volumen: tu alianza, la guerra
+  // con su frente, el ranking de clanes y el último cable del canal
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    if (current) {
+      filas.push({
+        t: `TU ALIANZA: ${current.tag} ${current.name}`,
+        v: `${current.members.length}/50`,
+        color: "#F5C542",
+        d: `${current.motto} · ELO ${current.elo} · guerras ganadas ${current.wins}`,
+      });
+      filas.push({
+        t: `GUERRA DE ALIANZAS: ${Math.min(100, current.warProgress)}% DEL FRENTE`,
+        v: `ELO ${current.elo}`,
+        p: Math.min(100, current.warProgress),
+        color: "#3DDC84",
+        d: "El frente paga botín al clan que domina cada ciclo · aporta desde la consola del clan",
+      });
+    } else {
+      filas.push({ t: "SIN ALIANZA · EL CLAN TE ESPERA", v: `${alliances.length} CLANES`, color: "#7AB8FF", d: "Únete a un clan o funda el tuyo (500 mon): guerra de alianzas, botín compartido y chat de comando" });
+    }
+    for (const a of rankList.slice(0, 5)) {
+      filas.push({
+        t: `${a.tag} ${a.name}`,
+        v: `${a.members.length} AG · ${a.elo}`,
+        p: Math.min(100, Math.round((a.members.length / 50) * 100)),
+        color: a.id === current?.id ? "#F5C542" : "#9FB8DD",
+        d: `${a.motto} · guerras ganadas ${a.wins}${a.id === current?.id ? " · TU CLAN" : ""}`,
+      });
+    }
+    const ultimo = save.chat[save.chat.length - 1];
+    if (ultimo) filas.push({ t: `CANAL DEL CLAN: ${ultimo.who}`, v: `${save.chat.length} MENSAJES`, color: "#B18CFF", d: ultimo.text });
+    return filas;
+  }, [current, rankList, save.chat, alliances]);
+  useSala3DContenido("alianzas", "ALIANZAS", "#7AB8FF", current ? `${current.tag} · ELO ${current.elo}` : "Fundar o unirse", filas3D);
 
   return (
     <div className="space-y-3">

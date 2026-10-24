@@ -6,7 +6,7 @@
 // departamentos de su nación y publicar DECRETOS oficiales. Poder político =
 // roster x10 + decretos x25 + base 100. El ranking mundial muestra quién manda.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Landmark, Crown, ScrollText, Users, ShieldHalf, Vote, Loader2, Megaphone, UserPlus, LogOut,
@@ -16,6 +16,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Countryball } from "@/components/vanguard/countryball";
 import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/components/vanguard/creador-parts";
@@ -125,6 +126,45 @@ export function GobiernoPanel() {
   const isPresident = !!president && president.alias === (alias || "ANÓNIMO");
   const iAmElected = !!data?.electedAmbassador && data.electedAmbassador === (alias || "ANÓNIMO");
   const mineJoined = data?.roster.some((r) => r.alias === (alias || "ANÓNIMO"));
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — el gobierno en volumen: presidente, cargos
+  // nombrados, decretos publicados, roster y el ranking mundial de poder
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    let pais = String(country).toUpperCase();
+    try { pais = countryName(country) || pais; } catch { /* país sin nombre: el ticker manda */ }
+    const filas: FilaContenido3D[] = [];
+    if (president) {
+      filas.push({
+        t: `PRESIDENTE DE ${pais}: ${president.alias}`,
+        v: "EN EL CARGO",
+        color: isPresident ? "#3DDC84" : "#F5C542",
+        d: isPresident ? "TÚ mandas: publica decretos (x25 poder), nombra 7 cargos y recluta departamentos" : "El presidente publica decretos, nombra cargos y recluta para los departamentos",
+      });
+    } else {
+      filas.push({ t: `${pais}: TRONO VACANTE`, v: "SIN PRESIDENTE", color: "#F5C542", d: "El embajador electo puede TOMAR EL PODER como presidente" });
+    }
+    filas.push({
+      t: `CICLO ${data?.cycle?.cycle ?? "—"} · FASE ${data?.cycle?.phase ?? "—"}`,
+      v: `${data?.cycle?.daysLeft ?? "?"} DÍAS`,
+      color: "#7AB8FF",
+      d: data?.electedAmbassador ? `Embajador electo: ${data.electedAmbassador} · poder del país ${data.power}` : "Elige embajador desde la consola para desbloquear el gobierno",
+    });
+    for (const r of (data?.roles ?? []).slice(0, 4)) {
+      filas.push({ t: `${r.role}: ${r.alias}`, v: "NOMBRADO", color: "#9FB8DD", d: `Cargo del gobierno de ${pais} · nombrado por ${r.appointedBy}` });
+    }
+    for (const d of (data?.decrees ?? []).slice(0, 3)) {
+      filas.push({ t: `DECRETO: ${d.title}`, v: d.author, color: "#B18CFF", d: d.body });
+    }
+    filas.push({ t: `ROSTER: ${data?.roster?.length ?? 0} AGENTES EN EL GOBIERNO`, v: mineJoined ? "YA DENTRO" : "PUERTAS ABIERTAS", color: mineJoined ? "#3DDC84" : "#7AB8FF", d: mineJoined ? "Vota, propón y asciende desde la consola" : "Únete a un departamento: MILITAR, DIPLOMACIA, INTELIGENCIA, PRENSA o ECONOMIA" });
+    for (const p of ranking.slice(0, 3)) {
+      filas.push({ t: `#RANKING ${p.country}`, v: `${p.power} PODER`, color: "#7AB8FF", d: `Presidente ${p.president} · roster ${p.roster} · decretos ${p.decrees}` });
+    }
+    if (!filas.length) filas.push({ t: "CONECTANDO CON EL GOBIERNO…", v: "CARGANDO", color: "#9FB8DD", d: "El censo y los cargos llegan del servidor en segundos" });
+    return filas;
+  }, [data, ranking, president, isPresident, mineJoined, country]);
+  useSala3DContenido("gobierno", "GOBIERNO MUNDIAL", "#7AB8FF", president ? `Presidente ${president.alias}` : "Democracia de Vanguard", filas3D);
 
   return (
     <div className="space-y-4">

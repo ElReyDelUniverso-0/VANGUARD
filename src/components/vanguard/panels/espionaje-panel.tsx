@@ -4,7 +4,7 @@
 // (aciertas = ganas menos, fallas = pierdes el doble), modo encubierto que
 // oculta tus predicciones y predicciones trampa que castigan a los espías.
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { VenetianMask, Eye, Copy, Ghost, Bomb, ShieldOff, Skull, Coins } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { PREDICTION_MARKETS } from "@/lib/game-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
@@ -201,6 +202,31 @@ export function EspionagePanel() {
   };
 
   const undercover = Date.now() < undercoverUntil;
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — la red en volumen: encubierto, trampa,
+  // agentes en campo con su mercado y su liquidación, y el historial
+  // de víctimas — TODO el panel vive en la sala
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: `MODO ENCUBIERTO: ${undercover ? "ACTIVO 24H" : "APAGADO"}`, v: undercover ? "OCULTO" : `${UNDERCOVER_COST} MON`, color: undercover ? "#3DDC84" : "#9FB8DD", d: "Encubierto: tus predicciones quedan ocultas para el resto de espías durante 24 horas" },
+      { t: `TRAMPA: ${trapActive ? "PLANTADA" : "SIN TRAMPA"}`, v: trapActive ? `${trapActive.copiedBy.length} CAIDOS` : `${TRAP_COST} MON`, color: trapActive ? "#FF4D5E" : "#9FB8DD", d: trapActive ? `«${trapActive.text}» — quien la copie pierde el doble y te paga` : "Planta una predicción falsa: los espías que la copien te pagan" },
+      { t: `AGENTES EN CAMPO: ${agents.length}`, v: `${stats.spies} MISIONES`, color: "#B18CFF", d: `Copias ganadas ${stats.copiesWon} · perdidas ${stats.copiesLost} · ganancia total ${stats.earned} mon` },
+    ];
+    for (const a of agents.slice(0, 5)) {
+      const mkt = PREDICTION_MARKETS.find((m) => m.id === a.marketId)?.title ?? a.marketId;
+      filas.push({
+        t: `${a.name} · ${a.outcome}`,
+        v: `${a.stake} MON`,
+        color: a.isTrap ? "#FF4D5E" : a.copied ? "#F5C542" : a.spied ? "#3DDC84" : "#9FB8DD",
+        d: `${mkt} · resuelve ${new Date(a.resolveAt).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" })} · ${a.copied ? "copiada: x0.8 si acierta, x2 si falla" : a.spied ? "espionada por ti" : "propia"}${a.isTrap ? " · TRAMPA" : ""}`,
+      });
+    }
+    if (victims.length) filas.push({ t: `VICTIMAS DE TUS TRAMPAS: ${victims.length}`, v: `+${victims.reduce((n, v) => n + v.lost, 0)} MON`, color: "#F5C542", d: victims[0] ? `${victims[0].agentName} pagó ${victims[0].lost} mon` : "" });
+    return filas;
+  }, [agents, stats, undercover, trapActive, victims]);
+  useSala3DContenido("espionaje", "RED DE ESPIONAJE", "#B18CFF", `${agents.length} agentes en campo · encubierto ${undercover ? "ON" : "OFF"}`, filas3D);
 
   return (
     <div className="space-y-3">

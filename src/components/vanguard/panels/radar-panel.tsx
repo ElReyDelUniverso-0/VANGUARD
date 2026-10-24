@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, ShieldAlert, BadgeCheck, Link2, BrainCircuit, TrendingUp, Vote, Coins, Zap } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ---------- Determinismo (mismo FNV que la Mesa de Verificación) ----------
@@ -245,6 +246,36 @@ export function RadarPanel() {
   };
 
   const extend = (c: Connection, side: "RELACIONADOS" | "COINCIDENCIA") => bet(c, side, c.betAmount ? Math.min(500, c.betAmount * 2) : 100);
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — el radar en volumen: el feed con su % de
+  // veracidad (REAL/FAKE + señales como detalle de proximidad) y las
+  // teorías conectadas con su consenso en vivo
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = feed.slice(0, 8).map((n) => {
+      const my = save.votes[n.id];
+      return {
+        t: `${n.veracity}% · ${n.title}`,
+        v: my ? `VOTASTE ${my}` : n.veracity >= 60 ? "REAL" : "FAKE",
+        p: n.veracity,
+        color: n.veracity >= 60 ? "#3DDC84" : "#FF4D5E",
+        d: `${n.source} · ${n.ago} · señales: ${n.flags.slice(0, 3).join(", ")}`,
+      };
+    });
+    for (const c of connections.slice(0, 3)) {
+      const total = c.betsRelated + c.betsNot;
+      const cons = total ? Math.round((c.betsRelated / total) * 100) : 50;
+      filas.push({
+        t: `TEORÍA ${c.similarity}%: ${c.a} ↔ ${c.b}`,
+        v: c.myBet ? `TU APUESTA ${c.myBet === "RELACIONADOS" ? "REL" : "COIN"}` : `${cons}% REL`,
+        color: c.myBet ? "#F5C542" : cons >= 65 ? "#3DDC84" : "#9FB8DD",
+        d: `${c.why} · apuestas ${c.betsRelated} rel vs ${c.betsNot} coin · se liquida por consenso >= 65%`,
+      });
+    }
+    return filas;
+  }, [feed, save, connections]);
+  useSala3DContenido("radar", "RADAR DE DESINFORMACIÓN", "#7AB8FF", `${feed.length} cables medidos · ${connections.length} teorías en juego`, filas3D);
 
   return (
     <div className="space-y-3">

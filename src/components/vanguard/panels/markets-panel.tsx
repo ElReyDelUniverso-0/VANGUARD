@@ -69,8 +69,10 @@ export function MarketsPanel() {
   // ════════════════════════════════════════════════════════════
   // v145 SALAS EN VOLUMEN: el gráfico de la ECONOMÍA vive también en
   // el mundo 3D — velas japonesas reales como cajas con volumen,
-  // ticker extruido con símbolo + precio + cambio. Datos vivos cada
-  // 4s (el mismo marketSim que alimenta el panel).
+  // ticker extruido con símbolo + precio + cambio.
+  // v165 LA SALA COMPLETA: la lista del mercado ENTRA en la sala (10
+  // activos con precio y %) y la CARTERA del piloto — y las filas son
+  // TOCABLES: INVERTIR compra 1 unidad de verdad, VENDER liquida.
   // ════════════════════════════════════════════════════════════
   useEffect(() => {
     const emitir = () => {
@@ -80,6 +82,22 @@ export function MarketsPanel() {
         const last = velas[velas.length - 1];
         const prev = velas.length > 1 ? velas[velas.length - 2] : last;
         const cambio = prev.close ? ((last.close - prev.close) / prev.close) * 100 : 0;
+        const st = marketSim.getState();
+        const lista = ASSETS.slice(0, 10).map((a) => {
+          const s = st.assets[a.id];
+          const chg = s?.change24h ?? 0;
+          return {
+            id: a.id, nombre: a.name, sector: a.sector,
+            precio: formatPrice(s?.price ?? a.base),
+            chg: `${chg >= 0 ? "+" : ""}${chg.toFixed(2)}%`, sube: chg >= 0,
+          };
+        });
+        const gs = useGameStore.getState();
+        const cartera = Object.entries(gs.marketHoldings).map(([id, h]) => {
+          const p = st.assets[id]?.price ?? h.avgCost;
+          const pnl = (p - h.avgCost) * h.qty;
+          return { id, qty: `${h.qty}U`, pnl: `P/L ${pnl >= 0 ? "+" : ""}${Math.round(pnl)}`, gana: pnl >= 0 };
+        }).sort((x, y) => Math.abs(parseFloat(y.pnl.replace(/[^\d.-]/g, ""))) - Math.abs(parseFloat(x.pnl.replace(/[^\d.-]/g, ""))));
         window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
           detail: {
             tab: "bolsa", tipo: "economia",
@@ -88,14 +106,54 @@ export function MarketsPanel() {
             precio: last.close >= 1000 ? last.close.toFixed(0) : last.close.toFixed(2),
             cambio: `${cambio >= 0 ? "+" : ""}${cambio.toFixed(2)}%`,
             sube: cambio >= 0,
+            lista, cartera, monedas: gs.coins,
           },
         }));
       } catch { /* el mundo 3D no bloquea el panel */ }
     };
     emitir();
-    const id = window.setInterval(emitir, 4000);
+    const id = window.setInterval(emitir, 3000);
     return () => window.clearInterval(id);
   }, [selId, tf]);
+
+  // v165 — LAS ACCIONES DE LA SALA: INVERTIR (compra real de 1 unidad
+  // con su comisión) y VENDER (liquida la posición completa) — el mundo
+  // ejecuta la bolsa con el MISMO motor que la consola 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "bolsa") return;
+      const st = marketSim.getState();
+      if (d.accion === "invertir") {
+        const a = ASSETS[d.idx];
+        if (!a) return;
+        const p = st.assets[a.id]?.price ?? a.base;
+        const qty = 1;
+        const fee = qty * p * FEE;
+        const costo = Math.ceil(qty * p + fee);
+        if (useGameStore.getState().coins < costo) {
+          toast.error(`SALDO INSUFICIENTE: ${a.id} cuesta ~${costo} mon con comisión`);
+          return;
+        }
+        const ok = buyAsset(a.id, qty, p, fee);
+        if (ok) { toast.success(`INVERTIDO DESDE EL MUNDO 3D: +${qty} ${a.id} @ ${formatPrice(p)}`); sfx.coin(); }
+        else toast.error("La bolsa rechazó la orden");
+      } else if (d.accion === "vender") {
+        const cartera = useGameStore.getState().marketHoldings;
+        const id = Object.keys(cartera)[d.idx];
+        const h = id ? cartera[id] : undefined;
+        if (!h) return;
+        const price = st.assets[id]?.price;
+        if (!price) return;
+        const fee = h.qty * price * FEE;
+        const pnl = sellAsset(id, h.qty, price, fee);
+        if (pnl >= 0) { toast.success(`VENTA DESDE EL 3D: ${h.qty} u. de ${id} · P/L ${pnl >= 0 ? "+" : ""}${pnl} mon`); sfx.coin(); }
+        else { toast.success(`VENTA DESDE EL 3D: ${h.qty} u. de ${id} · P/L ${pnl} mon`); sfx.error(); }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [buyAsset, sellAsset]);
 
   // motor de ordenes limite: se ejecutan cuando el precio cruza el limite
   useEffect(() => {

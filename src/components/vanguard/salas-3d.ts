@@ -81,6 +81,11 @@ export interface SalaEconomia3D extends BaseSala3D {
   precio: string;
   cambio: string;
   sube: boolean;
+  // v165 LA SALA COMPLETA — el mercado ENTERO vive en la sala: lista de
+  // activos TOCABLES (invertir de verdad desde el mundo) + cartera del piloto
+  lista?: { id: string; nombre: string; precio: string; chg: string; sube: boolean }[];
+  cartera?: { id: string; qty: string; pnl: string; gana: boolean }[];
+  monedas?: number;
 }
 export interface SalaConflictos3D extends BaseSala3D {
   tipo: "conflictos";
@@ -163,11 +168,14 @@ export interface SalaLogros3D extends BaseSala3D {
   proximos: { titulo: string; pct: number; botin: string; reclamar: boolean }[];
 }
 // v147 VITRINA DE COFRES — la tienda como arca holográfica tocable
+// v165 CATÁLOGO COMPLETO: la vitrina ya no enseña 4 cofres y ya —
+// el panel manda TODO el catálogo (cada item con su descripción como
+// detalle de proximidad) y la sala levanta cofres + estantería de filas
 export interface SalaTienda3D extends BaseSala3D {
   tipo: "tienda";
   monedas: number;
   gemas: number;
-  items: { titulo: string; costo: number; moneda: "COINS" | "GEMS"; activo: boolean }[];
+  items: { titulo: string; costo: number; moneda: "COINS" | "GEMS"; activo: boolean; d?: string; cat?: string }[];
 }
 // v148/v153 ESTACIÓN INFORMATIVA (remota) — TODA rama vive en volumen:
 // letras 3D informativas + placas de datos vivas
@@ -206,11 +214,14 @@ export interface FilaContenido3D {
   p?: number;             // barra 0..100 (volumen proporcional)
   img?: string;           // url de imagen → plano texturizado
   color?: string;         // acento hexadecimal de la fila
+  d?: string;             // v165 EL DETALLE — la info nueva que la PROXIMIDAD revela (letra que va y viene)
+  a?: string;             // v165 LA ACCIÓN — comprar/invertir/vender… (la fila ejecuta de verdad)
 }
 export interface SalaContenido3D extends BaseSala3D {
   tipo: "contenido";
   filas: FilaContenido3D[];
   resumen?: string;       // línea fina bajo el título
+  mas?: number;           // v165 filas que quedan en el panel (pie «+N MÁS»)
 }
 export type PayloadSala3D =
   | SalaEconomia3D
@@ -243,6 +254,9 @@ export interface CtxSala3D {
   fuente: Font;
   calidadBaja: boolean;
   movil: boolean; // v145.1: el desplazamiento derecho solo existe en escritorio
+  // v165 LA PROXIMIDAD: la posición VIVA de la cámara — las filas la leen
+  // para revelar su detalle cuando el piloto se acerca (letra que va y viene)
+  camara?: THREE.Vector3;
   animarP: (
     obj: Record<string, number> | THREE.Vector3 | THREE.Material | { opacity: number },
     to: Record<string, number>,
@@ -514,7 +528,7 @@ function construirEconomia(ctx: CtxSala3D, p: SalaEconomia3D): Sala3DInstancia {
     let min = Infinity, max = -Infinity;
     for (const v of datos) { min = Math.min(min, v.l); max = Math.max(max, v.h); }
     const rango = Math.max(max - min, 1e-9);
-    const paso = (baseW - 0.32) / datos.length;
+    const paso = ((baseW - 0.32) * (ctx.movil ? 0.62 : 0.55)) / datos.length; // v165: el mercado entra a la derecha
     const anchoV = Math.min(paso * 0.62, 0.085);
     datos.forEach((v, i) => {
       const sube = v.c >= v.o;
@@ -575,6 +589,86 @@ function construirEconomia(ctx: CtxSala3D, p: SalaEconomia3D): Sala3DInstancia {
     animables.push({ m: moneda, fase: a, y0: moneda.position.y });
   }
 
+  // ═══ v165 EL MERCADO ENTERO — lista tocable + cartera del piloto ═══
+  // la derecha de la sala ES la lista: cada activo con su precio y su %,
+  // tocable para INVERTIR de verdad; debajo, la cartera con VENDER
+  let listaWrap: THREE.Group | null = null;
+  let sigLista = "";
+  const limpiarG = (g: THREE.Group) => {
+    g.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mm = m.material as THREE.Material | undefined;
+      if (mm) mm.dispose();
+    });
+  };
+  const pintarLista = (nuevo: SalaEconomia3D) => {
+    const lista = (nuevo.lista || []).slice(0, ctx.movil ? 4 : 5);
+    const cartera = (nuevo.cartera || []).slice(0, ctx.movil ? 2 : 3);
+    const sig = JSON.stringify([lista, cartera, nuevo.monedas ?? 0]);
+    if (sig === sigLista) return;
+    sigLista = sig;
+    if (listaWrap) { grupo.remove(listaWrap); limpiarG(listaWrap); listaWrap = null; }
+    proxies.length = 0;
+    if (!lista.length && !cartera.length) return;
+    listaWrap = new THREE.Group();
+    const listW = ctx.movil ? 0.82 : 0.94;
+    const listX = ctx.movil ? 0.5 : 0.62;
+    const cab = texto3D(ctx, "MERCADO EN VIVO", { tam: 0.026, prof: 0.009, color: COL_ORO, emis: 0.5 });
+    cab.grupo.position.set(listX - listW / 2, 0.585, 0);
+    listaWrap.add(cab.grupo);
+    lista.forEach((a, i) => {
+      const fila = new THREE.Group();
+      const col = a.sube ? COL_VERDE : COL_ROJO;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(listW, 0.095, 0.011)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.6 })),
+      );
+      fila.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.75))));
+      const nom = texto3D(ctx, `${a.id} ${a.chg}`.toUpperCase(), { tam: 0.02, prof: 0.007, color: col, emis: 0.5 });
+      nom.grupo.position.set(-listW / 2 + 0.04, 0.006, 0.01);
+      fila.add(nom.grupo);
+      const pre = texto3D(ctx, acotar(a.precio.toUpperCase(), 9), { tam: 0.021, prof: 0.007, color: COL_ORO, emis: 0.55 });
+      pre.grupo.position.set(listW / 2 - 0.04 - pre.ancho, 0.006, 0.01);
+      fila.add(pre.grupo);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(listW + 0.03, 0.12, 0.035)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: nuevo.tab, accion: "invertir", idx: i } };
+      fila.add(proxy);
+      proxies.push(proxy);
+      fila.position.set(0, 0.47 - i * 0.123, -0.01 * i);
+      listaWrap!.add(fila);
+    });
+    cartera.forEach((c, i) => {
+      const fila = new THREE.Group();
+      const col = c.gana ? COL_VERDE : COL_ROJO;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(listW, 0.085, 0.011)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.55 })),
+      );
+      fila.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.6))));
+      const nom = texto3D(ctx, `${c.id} ${c.qty}`.toUpperCase(), { tam: 0.019, prof: 0.006, color: 0xd6e6ff, emis: 0.4 });
+      nom.grupo.position.set(-listW / 2 + 0.04, 0.005, 0.01);
+      fila.add(nom.grupo);
+      const pnl = texto3D(ctx, c.pnl.toUpperCase(), { tam: 0.019, prof: 0.006, color: col, emis: 0.5 });
+      pnl.grupo.position.set(listW / 2 - 0.04 - pnl.ancho, 0.005, 0.01);
+      fila.add(pnl.grupo);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(listW + 0.03, 0.11, 0.035)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: nuevo.tab, accion: "vender", idx: i } };
+      fila.add(proxy);
+      proxies.push(proxy);
+      fila.position.set(0, -0.115 - i * 0.112, -0.01 * i);
+      listaWrap!.add(fila);
+    });
+    grupo.add(listaWrap);
+  };
+  pintarLista(p);
+
   // EL POLVO dorado de la sala
   const polvoOro = polvo(ctx.calidadBaja ? 60 : 110, p.color, 1.7, 2.1);
   polvoOro.position.y = -0.78;
@@ -595,6 +689,7 @@ function construirEconomia(ctx: CtxSala3D, p: SalaEconomia3D): Sala3DInstancia {
     actualizar: (nuevo) => {
       if (nuevo.tipo !== "economia") return;
       pintarVelas(nuevo.velas);
+      pintarLista(nuevo); // v165: la lista y la cartera viven con el mercado
       // el ticker vive: se repinta entero (barato: pocas letras)
       grupo.remove(ticker.grupo, cambio.grupo);
       ticker.mats.forEach((m) => m.dispose());
@@ -608,7 +703,10 @@ function construirEconomia(ctx: CtxSala3D, p: SalaEconomia3D): Sala3DInstancia {
       grupo.add(ticker.grupo, cambio.grupo);
     },
     tic: (t, dt) => { for (const f of tics) f(t, dt); },
-    liberar: () => { reg.liberar(); titulo.mats.forEach((m) => m.dispose()); ticker.mats.forEach((m) => m.dispose()); cambio.mats.forEach((m) => m.dispose()); },
+    liberar: () => {
+      if (listaWrap) limpiarG(listaWrap); // v165: la lista viaja con la sala
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose()); ticker.mats.forEach((m) => m.dispose()); cambio.mats.forEach((m) => m.dispose());
+    },
   };
 }
 
@@ -1313,8 +1411,45 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
   grupo.add(arco);
 
   const peana = pedestal(1.3, p.color);
-  peana.position.y = -0.72;
+  peana.position.y = -1.12; // v165: la sala completa baja la peana — caben más filas
   grupo.add(peana);
+
+  // ═══ v165 EL MONUMENTO — la FIGURA GRANDE del módulo ═══
+  // torre de 3 cuerpos coronada por la INICIAL del módulo en letras enormes
+  // girando con su aro orbital: se ve desde lejos y firma la sala
+  const monumento = new THREE.Group();
+  monumento.position.set(ctx.movil ? -0.98 : -1.12, -0.52, -0.14);
+  if (ctx.movil) monumento.scale.setScalar(0.8);
+  let acuY = 0;
+  for (const [cw, ch] of [[0.17, 0.52], [0.125, 0.4], [0.085, 0.3]] as const) {
+    const c = new THREE.Mesh(
+      reg.geo(new THREE.BoxGeometry(cw, ch, cw)),
+      reg.mat(new THREE.MeshStandardMaterial({ color: 0x0e1626, metalness: 0.9, roughness: 0.2, transparent: true, opacity: 0.96 })),
+    );
+    c.position.y = acuY + ch / 2;
+    monumento.add(c, new THREE.LineSegments(c.geometry, reg.mat(matFilo(p.color, 0.7))));
+    acuY += ch;
+  }
+  const letraInicial = (p.titulo || "?").replace(/\s+/g, "").charAt(0).toUpperCase() || "?";
+  const letraBig = texto3D(ctx, letraInicial, { tam: 0.36, prof: 0.13, color: p.color, emis: 0.75 });
+  const ejeLetra = new THREE.Group();
+  letraBig.grupo.position.set(-letraBig.ancho / 2, 0, 0);
+  ejeLetra.add(letraBig.grupo);
+  ejeLetra.position.y = acuY + 0.34;
+  monumento.add(ejeLetra);
+  const aroM = new THREE.Mesh(
+    reg.geo(new THREE.TorusGeometry(0.3, 0.008, 8, 44)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })),
+  );
+  aroM.position.y = acuY + 0.34;
+  aroM.rotation.x = Math.PI / 2.25;
+  monumento.add(aroM);
+  grupo.add(monumento);
+  tics.push((t, dt) => {
+    ejeLetra.rotation.y += dt * 0.55;
+    aroM.rotation.z += dt * 0.85;
+    monumento.position.y = -0.52 + Math.sin(t * 0.9) * 0.014;
+  });
 
   // contenedor vivo de filas (se repinta con datos reales)
   let filasWrap = new THREE.Group();
@@ -1329,12 +1464,100 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     });
   };
 
+  // ═══ v165 EL DETALLE DE PROXIMIDAD ═══
+  // al ACERCARSE a una fila, SU info nueva brota en letras doradas que van
+  // y vienen (entra flotando, sale desvaneciéndose) con una aguja que la
+  // señala — la sala le contesta al piloto que vuela hasta mirar de cerca
+  const filasVivas: { g: THREE.Group; f: FilaContenido3D }[] = [];
+  let detGrupo: THREE.Group | null = null;
+  let detMats: { m: THREE.Material; base: number }[] = [];
+  let detObjetivo = -1;
+  let detOp = 0;
+  let detEscaneo = 0;
+  const detTmp = new THREE.Vector3();
+  const detQ = new THREE.Quaternion();
+  const detE = new THREE.Euler();
+
+  const matarDetalle = () => {
+    if (detGrupo) { filasWrap.remove(detGrupo); limpiar(detGrupo); detGrupo = null; detMats = []; }
+  };
+
+  const brotarDetalle = (texto: string) => {
+    matarDetalle();
+    detGrupo = new THREE.Group();
+    const tx = texto3D(ctx, acotar(texto.toUpperCase(), 52), { tam: 0.023, prof: 0.008, color: COL_ORO, emis: 0.7 });
+    tx.grupo.position.set(-tx.ancho / 2, 0, 0);
+    detGrupo.add(tx.grupo);
+    for (const m of tx.mats) detMats.push({ m, base: 1 });
+    const pin = new THREE.Mesh(
+      reg.geo(new THREE.ConeGeometry(0.013, 0.045, 4)),
+      reg.mat(new THREE.MeshBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false })),
+    );
+    pin.rotation.x = Math.PI;
+    pin.position.set(0.015, -0.05, 0);
+    detGrupo.add(pin);
+    detMats.push({ m: pin.material as THREE.Material, base: 0.85 });
+    detGrupo.visible = false;
+    filasWrap.add(detGrupo);
+  };
+
+  const escanear = () => {
+    const cam = ctx.camara;
+    if (!cam || !filasVivas.length) { detObjetivo = -1; return; }
+    let mejor = -1;
+    let mejorD = Infinity;
+    for (let i = 0; i < filasVivas.length; i++) {
+      filasVivas[i].g.getWorldPosition(detTmp);
+      const dd = detTmp.distanceTo(cam);
+      if (dd < mejorD) { mejorD = dd; mejor = i; }
+    }
+    const radio = ctx.movil ? 2.0 : 2.55;
+    if (mejorD > radio) mejor = -1;
+    if (mejor === detObjetivo) return;
+    detObjetivo = mejor;
+    if (mejor >= 0) {
+      const fv = filasVivas[mejor];
+      const f = fv.f;
+      const piezas = [
+        f.d,
+        f.v ? `VALOR ${f.v}` : "",
+        typeof f.p === "number" && isFinite(f.p) ? `NIVEL ${Math.round(f.p)}%` : "",
+        f.a ? `TOCA PARA ${f.a.toUpperCase()}` : "",
+      ].filter(Boolean) as string[];
+      brotarDetalle(piezas.join(" · ") || acotar(f.t, 44));
+      detGrupo!.position.set(fv.g.position.x + 0.05, fv.g.position.y + 0.1, 0.13);
+      detGrupo!.userData.baseY = detGrupo!.position.y;
+    }
+  };
+
+  tics.push((t, dt) => {
+    detEscaneo += dt;
+    if (detEscaneo >= 0.12) { detEscaneo = 0; escanear(); }
+    if (!detGrupo) return;
+    // LA LETRA VA Y VIENE: entra flotando al acercarse, se desvanece al irse
+    detOp = detObjetivo >= 0 ? Math.min(1, detOp + dt * 4.5) : Math.max(0, detOp - dt * 3.4);
+    detGrupo.visible = detOp > 0.02;
+    if (!detGrupo.visible) return;
+    for (const d of detMats) (d.m as THREE.Material).opacity = d.base * detOp;
+    detGrupo.position.y = (detGrupo.userData.baseY as number) + Math.sin(t * 2.3) * 0.005;
+    if (ctx.camara) {
+      // billboard SOLO yaw: la letra mira al piloto sin marear la sala
+      detGrupo.getWorldPosition(detTmp);
+      filasWrap.getWorldQuaternion(detQ);
+      detE.setFromQuaternion(detQ, "YXZ");
+      detGrupo.rotation.y = Math.atan2(ctx.camara.x - detTmp.x, ctx.camara.z - detTmp.z) - detE.y;
+    }
+  });
+
   const pintar = (c: SalaContenido3D) => {
     grupo.remove(filasWrap);
     limpiar(filasWrap);
     filasWrap = new THREE.Group();
     filasWrap.position.x = ctx.movil ? 0.06 : 0.26;
     proxies.length = 0;
+    filasVivas.length = 0;
+    detObjetivo = -1;
+    matarDetalle();
 
     // RESUMEN — la línea fina bajo el título
     if (c.resumen) {
@@ -1343,9 +1566,13 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
       filasWrap.add(rz.grupo);
     }
 
-    // LAS FILAS — cristal fino + letras extruidas + valor + barra + imagen
-    const w = 1.02, h = 0.13;
-    (c.filas || []).slice(0, 7).forEach((f, i) => {
+    // v165 LAS FILAS — LA SALA COMPLETA: 9 en escritorio / 7 en móvil,
+    // cada fila con su texto, valor, barra, imagen y —cuando el panel la
+    // manda— su BOTÓN de acción real (comprar / invertir / reclamar)
+    const MAX = ctx.movil ? 7 : 9;
+    const w = 1.02, h = 0.115, paso = 0.155;
+    const visibles = (c.filas || []).slice(0, MAX);
+    visibles.forEach((f, i) => {
       const fila = new THREE.Group();
       const colFila = parseInt(String(f.color || "").replace("#", ""), 16) || p.color;
       const tieneImg = !!f.img;
@@ -1360,21 +1587,39 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
       // LA IMAGEN de la fila — plano texturizado (vive EN el espacio)
       let dx = -w / 2 + 0.045;
       if (tieneImg) {
-        const img = planoImagen3D(f.img!, acotar(f.t, 10), `#${colFila.toString(16).padStart(6, "0")}`, f.t, 0.115, 0.075);
-        img.position.set(-w / 2 + 0.075, 0, 0.012);
+        const img = planoImagen3D(f.img!, acotar(f.t, 10), `#${colFila.toString(16).padStart(6, "0")}`, f.t, 0.1, 0.066);
+        img.position.set(-w / 2 + 0.068, 0, 0.012);
         fila.add(img);
-        dx = -w / 2 + 0.15;
+        dx = -w / 2 + 0.135;
       }
 
       // EL TEXTO extruido de la fila
-      const txt = texto3D(ctx, acotar(f.t || "-", tieneImg ? 24 : 30).toUpperCase(), { tam: 0.027, prof: 0.009, color: colFila, emis: 0.45 });
-      txt.grupo.position.set(dx, h / 2 - 0.04, 0.012);
+      const txt = texto3D(ctx, acotar(f.t || "-", tieneImg ? 22 : 28).toUpperCase(), { tam: 0.025, prof: 0.008, color: colFila, emis: 0.45 });
+      txt.grupo.position.set(dx, h / 2 - 0.036, 0.012);
       fila.add(txt.grupo);
 
-      // EL VALOR en oro (a la derecha)
+      // v165 LA ACCIÓN — botón real verde (COMPRAR / INVERTIR / RECLAMAR…)
+      let actX = w / 2 - 0.04;
+      let actW = 0.09;
+      if (f.a) {
+        const act = texto3D(ctx, acotar(f.a, 9).toUpperCase(), { tam: 0.017, prof: 0.006, color: 0x0b1626, emis: 0.12 });
+        actW = Math.max(act.ancho + 0.026, 0.09);
+        const boton = new THREE.Mesh(
+          reg.geo(new THREE.BoxGeometry(actW, 0.032, 0.012)),
+          reg.mat(new THREE.MeshBasicMaterial({ color: COL_VERDE, transparent: true, opacity: 0.92 })),
+        );
+        actX = w / 2 - 0.04 - actW / 2;
+        boton.position.set(actX, h / 2 - 0.036, 0.014);
+        act.grupo.position.set(-act.ancho / 2, 0, 0.006);
+        boton.add(act.grupo);
+        fila.add(boton);
+      }
+
+      // EL VALOR en oro (a la derecha; si hay botón, a su izquierda)
       if (f.v) {
-        const val = texto3D(ctx, acotar(f.v, 14).toUpperCase(), { tam: 0.028, prof: 0.009, color: COL_ORO, emis: 0.55 });
-        val.grupo.position.set(w / 2 - 0.045 - val.ancho, h / 2 - 0.04, 0.012);
+        const val = texto3D(ctx, acotar(f.v, 14).toUpperCase(), { tam: 0.026, prof: 0.008, color: COL_ORO, emis: 0.55 });
+        const bordeVal = f.a ? actX - actW / 2 - 0.03 : w / 2 - 0.045;
+        val.grupo.position.set(bordeVal - val.ancho, h / 2 - 0.036, 0.012);
         fila.add(val.grupo);
       }
 
@@ -1382,26 +1627,35 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
       if (typeof f.p === "number" && isFinite(f.p)) {
         const frac = Math.max(0.02, Math.min(1, f.p / 100));
         const barra = new THREE.Mesh(
-          reg.geo(new THREE.BoxGeometry((w - 0.09) * frac, 0.018, 0.008)),
+          reg.geo(new THREE.BoxGeometry((w - 0.09) * frac, 0.016, 0.008)),
           reg.mat(new THREE.MeshBasicMaterial({ color: colFila, transparent: true, opacity: 0.85 })),
         );
-        barra.position.set(-w / 2 + 0.045 + ((w - 0.09) * frac) / 2, -h / 2 + 0.024, 0.012);
+        barra.position.set(-w / 2 + 0.045 + ((w - 0.09) * frac) / 2, -h / 2 + 0.02, 0.012);
         fila.add(barra);
       }
 
-      // PROXY — la fila es tocable (la acción viaja al panel)
+      // PROXY — la fila es tocable (la acción viaja al panel y EJECUTA)
       const proxy = new THREE.Mesh(
         reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
-      proxy.userData = { salaAccion: { tab: c.tab, accion: "fila", idx: i } };
+      proxy.userData = { salaAccion: { tab: c.tab, accion: f.a || "fila", idx: i } };
       fila.add(proxy);
       proxies.push(proxy);
 
-      fila.position.set(0, 0.5 - i * (h + 0.078), -i * 0.022);
+      fila.position.set(0, 0.5 - i * paso, -i * 0.02);
       fila.userData.baseY = fila.position.y;
       filasWrap.add(fila);
+      filasVivas.push({ g: fila, f });
     });
+
+    // v165 EL PIE — lo que quedó en el panel se confiesa aquí
+    const resto = (c.filas || []).length - visibles.length;
+    if (resto > 0) {
+      const pie = texto3D(ctx, `+${resto} MAS EN EL PANEL`, { tam: 0.024, prof: 0.008, color: 0x7ab8ff, emis: 0.42 });
+      pie.grupo.position.set(-pie.ancho / 2, 0.5 - visibles.length * paso - 0.02, 0);
+      filasWrap.add(pie.grupo);
+    }
 
     if (!(c.filas || []).length) {
       const espera = texto3D(ctx, "EL PANEL ALIMENTA ESTA SALA", { tam: 0.03, prof: 0.01, color: 0x7ab8ff, emis: 0.35 });
@@ -1418,7 +1672,7 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
   });
 
   const polvoC = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.35, 1.8);
-  polvoC.position.y = -0.68;
+  polvoC.position.y = -0.98;
   grupo.add(polvoC);
 
   tics.push((t, dt) => {
@@ -1427,6 +1681,7 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     (arco.material as THREE.MeshBasicMaterial).opacity = 0.5 + Math.sin(t * 1.6) * 0.22;
     // v156: la marea del título la lleva animarTitulo (único dueño de position.y)
     filasWrap.children.forEach((ch, i) => {
+      if (ch === detGrupo) return; // v165: el detalle vuela solo (sin marea doble)
       const baseY = (ch.userData.baseY as number | undefined) ?? ch.position.y;
       ch.position.y = baseY + Math.sin(t * 1.4 + i * 0.9) * 0.006;
     });
@@ -1437,13 +1692,14 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     proxies,
     actualizar: (nuevo) => {
       if (nuevo.tipo !== "contenido") return;
-      const sig = JSON.stringify((nuevo.filas || []).map((f) => [f.t, f.v, f.p, f.img, f.color])) + `|${nuevo.resumen ?? ""}`;
+      const sig = JSON.stringify((nuevo.filas || []).map((f) => [f.t, f.v, f.p, f.img, f.color, f.d, f.a])) + `|${nuevo.resumen ?? ""}|${nuevo.mas ?? ""}`;
       if (sig === sigKey) return;
       sigKey = sig;
       pintar(nuevo);
     },
     tic: (t, dt) => { for (const f of tics) f(t, dt); },
     liberar: () => {
+      matarDetalle();
       reg.liberar(); titulo.mats.forEach((m) => m.dispose());
       limpiar(filasWrap);
     },
@@ -2520,7 +2776,7 @@ function construirTienda(ctx: CtxSala3D, p: SalaTienda3D): Sala3DInstancia {
   grupo.add(titulo.grupo);
 
   const peana = pedestal(1.5, p.color);
-  peana.position.y = -0.85;
+  peana.position.y = -1.52; // v165: la estantería del catálogo completo baja la peana
   grupo.add(peana);
 
   let vitrina = new THREE.Group();
@@ -2615,8 +2871,57 @@ function construirTienda(ctx: CtxSala3D, p: SalaTienda3D): Sala3DInstancia {
       proxies.push(proxy);
     });
 
-    const pista = texto3D(ctx, items.length ? "TOCA UN COFRE PARA COMPRAR" : "CARGANDO VITRINA", { tam: 0.032, prof: 0.011, color: 0x7ab8ff, emis: 0.4 });
-    pista.grupo.position.set(-pista.ancho / 2, -0.72, 0.1);
+    // v165 LA ESTANTERÍA — el catálogo COMPLETO: los items que no caben en
+    // el arco de cofres viven como filas tocables con su COMPRAR real
+    const extras = (v.items || []).slice(4, 4 + (ctx.movil ? 4 : 6));
+    extras.forEach((it, j) => {
+      const idx = 4 + j;
+      const col = it.moneda === "GEMS" ? 0xb18cff : COL_ORO;
+      const fila = new THREE.Group();
+      const w2 = 1.16, h2 = 0.082;
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w2, h2, 0.011)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.6 })),
+      );
+      fila.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(col, 0.75))));
+      const nom = texto3D(ctx, acotar(it.titulo || "-", 20).toUpperCase(), { tam: 0.02, prof: 0.007, color: 0xd6e6ff, emis: 0.4 });
+      nom.grupo.position.set(-w2 / 2 + 0.04, 0.006, 0.01);
+      fila.add(nom.grupo);
+      const precio = texto3D(ctx, `${it.costo} ${it.moneda === "GEMS" ? "GEMS" : "COINS"}`, { tam: 0.02, prof: 0.007, color: col, emis: 0.55 });
+      precio.grupo.position.set(w2 / 2 - 0.34 - precio.ancho, 0.006, 0.01);
+      fila.add(precio.grupo);
+      const act = texto3D(ctx, it.activo ? "ACTIVO" : "COMPRAR", { tam: 0.016, prof: 0.005, color: 0x0b1626, emis: 0.12 });
+      const actW = Math.max(act.ancho + 0.024, 0.08);
+      const boton = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(actW, 0.028, 0.011)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: it.activo ? COL_VERDE : COL_ORO, transparent: true, opacity: 0.92 })),
+      );
+      boton.position.set(w2 / 2 - 0.045 - actW / 2, 0.006, 0.012);
+      act.grupo.position.set(-act.ancho / 2, 0, 0.005);
+      boton.add(act.grupo);
+      fila.add(boton);
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w2 + 0.03, h2 + 0.03, 0.035)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "comprar", idx } };
+      fila.add(proxy);
+      proxies.push(proxy);
+      fila.position.set(0, -0.84 - j * 0.105, -0.01 * j);
+      vitrina.add(fila);
+    });
+
+    // v165 el pie honesto: lo que queda en la tienda
+    const restoT = (v.items || []).length - 4 - extras.length;
+    const pieY = -0.84 - extras.length * 0.105 - (restoT > 0 ? 0.042 : 0.028);
+    if (restoT > 0) {
+      const pie = texto3D(ctx, `+${restoT} MAS EN LA TIENDA`, { tam: 0.022, prof: 0.007, color: 0x7ab8ff, emis: 0.4 });
+      pie.grupo.position.set(-pie.ancho / 2, pieY, 0.05);
+      vitrina.add(pie.grupo);
+    }
+
+    const pista = texto3D(ctx, items.length ? "TOCA UN COFRE O UNA FILA PARA COMPRAR" : "CARGANDO VITRINA", { tam: 0.032, prof: 0.011, color: 0x7ab8ff, emis: 0.4 });
+    pista.grupo.position.set(-pista.ancho / 2, pieY - 0.055, 0.1);
     vitrina.add(pista.grupo);
 
     grupo.add(vitrina);
@@ -2630,7 +2935,7 @@ function construirTienda(ctx: CtxSala3D, p: SalaTienda3D): Sala3DInstancia {
   });
 
   const polvoT = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.4, 1.9);
-  polvoT.position.y = -0.8;
+  polvoT.position.y = -1.24; // v165: el polvo sigue a la estantería
   grupo.add(polvoT);
 
   tics.push((t, dt) => {

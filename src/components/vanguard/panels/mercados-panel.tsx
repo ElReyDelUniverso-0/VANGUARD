@@ -11,6 +11,7 @@ import { TrendingUp, TrendingDown, Flame, Ban, Gauge } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarMercados, frasesCinta, fmtPrecio, type Cotizacion } from "@/lib/mercados-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 
 function Spark({ serie, color, sube }: { serie: number[]; color: string; sube: boolean }) {
@@ -74,6 +75,48 @@ export function MercadosPanel() {
   const energia = cots.filter((c) => c.contrato.tipo === "energia" || c.contrato.tipo === "indice");
   const materia = cots.filter((c) => c.contrato.tipo === "agro" || c.contrato.tipo === "metal");
   const divisas = cots.filter((c) => c.contrato.tipo === "divisa");
+
+  // ════════════════════════════════════════════════════════════
+  // v165 LA SALA COMPLETA — el MERCADO deja de ser un figura + encabezado:
+  // TODA la información del panel vive en volumen — el índice de miedo,
+  // las sanciones y TODAS las cotizaciones con precio, % y su impacto
+  // como detalle de proximidad (letra que va y viene)
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `ÍNDICE DE MIEDO DE GUERRA: ${miedo}`,
+        v: miedo >= 70 ? "PÁNICO" : miedo >= 45 ? "ALARMA" : "CALMA",
+        p: miedo,
+        color: miedo >= 70 ? "#FF4D5E" : miedo >= 45 ? "#F5C542" : "#3DDC84",
+        d: miedo >= 70 ? "El crudo y el oro se disparan · las divisas sancionadas se hunden" : miedo >= 45 ? "Presión sobre energía y defensa · refugios firmes" : "Mercados tranquilos · el dinero duerme en renta",
+      },
+      {
+        t: `PAQUETES DE SANCIONES: ${sanciones.toLocaleString("es-ES")}`,
+        v: "ACUMULADOS",
+        color: "#9FB8DD",
+        d: "Cada paquete castiga las divisas sancionadas del juego",
+      },
+    ];
+    for (const c of [...energia, ...materia, ...divisas]) {
+      const sube = c.varPct >= 0;
+      filas.push({
+        t: `${c.contrato.simbolo} ${c.contrato.nombre}`,
+        v: fmtPrecio(c.contrato, c.precio),
+        p: Math.max(3, Math.min(100, 50 + c.varPct * 4)),
+        color: sube ? "#3DDC84" : "#FF4D5E",
+        d: `${c.impacto} · unidad: ${c.contrato.unidad}`,
+      });
+    }
+    return filas;
+  }, [energia, materia, divisas, miedo, sanciones]);
+  useSala3DContenido(
+    "mercados",
+    "MERCADOS DE GUERRA",
+    "#3DDC84",
+    `El dinero opina primero · miedo ${miedo} · ${sanciones.toLocaleString("es-ES")} sanciones`,
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

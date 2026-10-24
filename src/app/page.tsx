@@ -316,7 +316,7 @@ const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-pa
 // con el contenido real: gráficos, mesa de conflictos, galería) — todas
 // las demás nacen con su placa 3D genérica.
 const TIPO_SALA_3D: Record<string, string> = {
-  bolsa: "economia", mercados: "economia", hacienda: "economia", divisas: "economia",
+  bolsa: "economia",
   crisis: "conflictos", salaguerra: "conflictos",
   memes: "memes",
   noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
@@ -324,6 +324,9 @@ const TIPO_SALA_3D: Record<string, string> = {
   predicciones: "predicciones", logros: "logros", tienda: "tienda",
   // v148 — tercera ola: el tablero de misiones y el podio global
   misiones: "misiones", ranking: "ranking",
+  // v165 — mercados/hacienda/divisas dejan la insignia ECONOMIA: sus paneles
+  // emiten CONTENIDO COMPLETO (cotizaciones, bóvedas, casa de cambio) y la
+  // sala genérica ASCIENDE al contenido real — el encabezado vacío murió
 };
 
 // v148 — LAS LETRAS INFORMATIVAS: cada módulo se describe en el mundo 3D
@@ -643,6 +646,10 @@ export default function Home() {
   // tocar un portal o un título de letras 3D = volar a ese mundo y abrir su sala
   const [modoMundo, setModoMundo] = useState(false);
   const modoMundoRef = useRef(false);
+  // v165 EL INTERRUPTOR 2D ↔ 3D: el Dueño pidió poder poner Vanguard en 2D
+  // (consola plana clásica, mundo dormido) o en 3D (el universo completo) —
+  // y en 2D, saltar CUALQUIER módulo a su sala 3D con el botón VER EN 3D
+  const [modo2D, setModo2D] = useState(false);
   // v143 LA CASA EN EL MUNDO: los hogares 3D del contenido. El mundo WebGL
   // (mundo-webgl.tsx) crea la CÁPSULA de contenido y la CONSOLA de vuelo y
   // los ofrece por window + evento; si existen, las salas y la navbar viven
@@ -945,6 +952,50 @@ export default function Home() {
       window.dispatchEvent(new CustomEvent("vg:sala3d-holo", { detail: { on: n } }));
       return n;
     });
+  }, []);
+
+  // ══════════════════════════════════════════════════════════
+  // v165 EL INTERRUPTOR 2D ↔ 3D — el Dueño manda: «pueda poner el
+  // vanguard 2D o 3D». A 2D: el universo WebGL DUERME (remontado limpio)
+  // y la consola plana clásica manda. A 3D: el mundo remonta, el
+  // reencuentro evita repetir la ceremonia y la sala del módulo activo
+  // se ancla sola (el dispatch vg:sala3d corre al nacer la cápsula).
+  // ══════════════════════════════════════════════════════════
+  const alternarModo = useCallback(() => {
+    setModo2D((v) => {
+      const a2D = !v;
+      if (a2D && modoMundoRef.current) {
+        // el MODO MUNDO muere con el universo (cero capas peleando)
+        modoMundoRef.current = false;
+        setModoMundo(false);
+        window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
+      }
+      document.documentElement.dataset.vgModo = a2D ? "2d" : "3d";
+      toast(a2D ? "VANGUARD 2D" : "VANGUARD 3D", {
+        description: a2D
+          ? "Consola plana clásica · el botón 3D (o VER EN 3D de cada módulo) te devuelve al universo"
+          : "El universo completo de vuelta · tu módulo activo aterriza en su sala 3D",
+      });
+      return a2D;
+    });
+  }, []);
+
+  // v165 — VER EN 3D desde CUALQUIER módulo 2D (botón del PanelHeader):
+  // despierta el mundo y la sala del módulo activo se ancla sola
+  useEffect(() => {
+    const ir3D = () => {
+      setModo2D((v) => {
+        if (!v) {
+          toast.info("Ya estás en el universo 3D", { description: "El chip «Solo 3D» guarda la consola dentro del mundo" });
+          return v;
+        }
+        document.documentElement.dataset.vgModo = "3d";
+        toast("VOLANDO AL MÓDULO EN 3D", { description: "El mundo despierta y tu sala se ancla con el contenido completo" });
+        return false;
+      });
+    };
+    window.addEventListener("vg:modo-3d", ir3D);
+    return () => window.removeEventListener("vg:modo-3d", ir3D);
   }, []);
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
@@ -1507,8 +1558,10 @@ export default function Home() {
         <b className="v139-asta" />
       </div>
       {/* v72.0: intro cinematográfica — ahora vive DENTRO de MundoWebGL como
-          fallback honesto sin WebGL (v140): la entrada AAA la reemplaza */}
-      <MundoWebGL tabInicial={tab} />
+          fallback honesto sin WebGL (v140): la entrada AAA la reemplaza.
+          v165: con el INTERRUPTOR en 2D el mundo duerme — la consola plana
+          manda; al volver a 3D el mundo remonta y reencuentra al piloto. */}
+      {!modo2D && <MundoWebGL tabInicial={tab} />}
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
@@ -1661,6 +1714,25 @@ export default function Home() {
             if (destino) handleTabChange(destino);
           }} />
         ))}
+
+      {/* v165 EL INTERRUPTOR 2D ↔ 3D — fijo, en TODAS las pantallas y
+          modos (ciudad incluida): un toque alterna la consola plana y el
+          universo. El modo activo brilla en oro. */}
+      {!ceremonia && (
+        <button
+          type="button"
+          className="vg165-switch"
+          data-wgl-panel
+          onClick={alternarModo}
+          aria-pressed={!modo2D}
+          aria-label={modo2D ? "Activar Vanguard 3D" : "Activar Vanguard 2D"}
+          title={modo2D ? "Volver al universo 3D" : "Consola plana 2D"}
+        >
+          <span className={!modo2D ? "" : "vg165-on"}>2D</span>
+          <i aria-hidden />
+          <span className={!modo2D ? "vg165-on" : ""}>3D</span>
+        </button>
+      )}
 
       {/* v157 HOLO TOTAL — el chip vive en TODOS los módulos: la sala
           volumétrica ES el módulo; un toque devuelve la consola de datos
