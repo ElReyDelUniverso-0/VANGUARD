@@ -198,6 +198,37 @@
 //     están habitadas.
 // Herencia v165 LA SALA COMPLETA y todo lo anterior.
 // Herencia v164 LA REDACCIÓN EN VIVO y todo lo anterior.
-export const APP_VERSION = "v166.0";
-export const APP_CODENAME = "LA CASA HABITADA";
+
+// v167.0: EL ATERRIZAJE EDUCADO — la ronda 19 de caza de bugs entra en
+//         producción sobre LA CASA HABITADA (la v164 local «LA CASA DE LAS
+//         HABITACIONES» se RENUMERA: el remoto ya tomó v164-v166 con las
+//         habitaciones y el fondo del módulo; esta ronda entrega LO QUE
+//         FALTABA: tres bugs graves encontrados en QA E2E con flujo real).
+// (1) EL ATERRIZAJE RE-ABRÍA LA CIUDAD ENCIMA DEL MÓDULO: los 7 reintentos
+//     ×900ms de aterrizajeCiudad corren hasta ~11s tras el boot — si el
+//     piloto entra a un módulo en esa ventana, un reintento tardío llamaba
+//     abrirCiudad() y la ciudad VIVÍA PARA SIEMPRE encima del módulo, con
+//     la sala sin anclar (verificado por cirugía: anclarSala@7915 SEGUNDO
+//     de abrirCiudad@8533). TRIPLE GUARD: (a) ciudadCerradaAlgunaVez — un
+//     cierre de ciudad es SIEMPRE acción del piloto; (b) salaLlaveArranque —
+//     el mundo recuerda la PRIMERA sala que vio y el aterrizaje se retira
+//     cuando la llave activa cambia (inmune al timing de hidratación de la
+//     Casa); (c) el reintento compara la llave, no la pestaña.
+// (2) SALAS VARADAS INVISIBLES: una sala montada a mitad de un vuelo (el
+//     guard de v159 la deja dormida para no nacer varada) necesitaba que
+//     el vuelo fuese DE CIUDAD para re-anclarse en su onDone — si el vuelo
+//     era el de la ceremonia, la sala quedaba INVISIBLE para siempre.
+//     WATCHDOG salaAnclaPendiente en el loop: en cuanto el vuelo suelta la
+//     cámara, la sala se ancla, se acopla la pantalla y despierta.
+// (3) TEXTO MICROSCÓPICO EN MÓVIL (cola v159): las letras informativas de
+//     las salas genéricas suben 1.3× (0.052→0.068, prof 0.02) y las placas
+//     de datos pasan de 4 en dos filas a 2 grandes en una fila (escala
+//     1.22) — legible de verdad en el aparato del Dueño.
+// QA v167: entrada a un módulo a los 4.5s del boot (dentro de la ventana de
+//     reintentos) → ciudad:false, salaVisible:true, pantalla 899px escritorio
+//     / 358px móvil; habitaciones por tiempo (8s sintéticos → 1/3) y por
+//     movimiento (5.3m reales → 3/3); consola 0 errores.
+// Herencia v166 LA CASA HABITADA y todo lo anterior.
+export const APP_VERSION = "v167.0";
+export const APP_CODENAME = "EL ATERRIZAJE EDUCADO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

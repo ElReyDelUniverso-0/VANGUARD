@@ -495,8 +495,25 @@ class MundoWGL {
   // v156 MODO 3D PURO: la consola DOM de la insignia se guarda y la sala
   // volumétrica ES el módulo entero (el Dueño: «lo 3D debe ser lo principal»)
   holoOculto = false;
+  // v167 BUG R19: el aterrizaje automático de la ciudad reintenta abrir la
+  // ciudad hasta ~11s tras el boot — si el piloto ENTRA a un módulo dentro
+  // de esa ventana, un reintento tardío la RE-ABRÍA encima del módulo y la
+  // sala quedaba sin anclar (QA: dispatch tab a los 4.5s → ciudad viva para
+  // siempre). Esta bandera muere al primer cierre explícito de ciudad.
+  ciudadCerradaAlgunaVez = false;
+  // v167 BUG R19 (2ª pata): una sala montada a mitad de un vuelo (el guard
+  // de v159 la deja dormida) necesita UN ancla cuando el vuelo suelte la
+  // cámara — sin esto, entrar a un módulo durante la ceremonia lo deja
+  // invisible para siempre
+  salaAnclaPendiente = false;
   private anclaUltima: { pos: THREE.Vector3; escala: number } | null = null;
   salaLlave = "";
+  // v167 BUG R19 (cura definitiva del aterrizaje): el mundo recuerda la
+  // PRIMERA sala que vio (la del arranque) — si la sala activa ya no es esa,
+  // el piloto eligió otro módulo y el aterrizaje de la ciudad retira su
+  // mano. Inmune al timing de hidratación de la Casa (la compara el mundo,
+  // no la Casa).
+  salaLlaveArranque = "";
   // v148 — EL CASCO DEL PILOTO: el HUD 3D real (adiós a los últimos DOM fijos)
   hud3D: Hud3D | null = null;
   rollActual = 0; // v148: el alabeo del caza (banking) del vuelo libre
@@ -1162,6 +1179,9 @@ class MundoWGL {
     const llave = `${p.tab}|${p.titulo}`;
     if (this.salaLlave === llave && this.salaInst) return;
     this.salaLlave = llave;
+    // v167 BUG R19: la primera sala que el mundo ve ES la del arranque —
+    // el aterrizaje de la ciudad se retira cuando esta llave cambie
+    if (!this.salaLlaveArranque) this.salaLlaveArranque = llave;
     this.salaPayload = p;
     this.montarSala();
   };
@@ -1228,6 +1248,10 @@ class MundoWGL {
       this.acoplarCapsula(this.zona, true);
       this.anclarSala();
       sonar("ping");
+    } else if (this.enVuelo && this.capsulaAcoplada && !this.modoMundo && this.zona !== 0) {
+      // v167 BUG R19: el vuelo que manda NO es de ciudad (ceremonia) — el
+      // WATCHDOG del loop ancla la sala en cuanto el aire se tranquiliza
+      this.salaAnclaPendiente = true;
     }
   }
 
@@ -4356,6 +4380,10 @@ class MundoWGL {
   cerrarCiudad(instant = false) {
     if (!this.ciudadAbierta) return;
     this.ciudadAbierta = false;
+    // v167 BUG R19: un cierre de ciudad es SIEMPRE una acción del piloto
+    // (entró a un módulo / ESC / VOLVER) — el aterrizaje automático del boot
+    // jamás debe pelear con ella otra vez
+    this.ciudadCerradaAlgunaVez = true;
     document.documentElement.removeAttribute("data-vg-ciudad");
     this.cerrarPregunta();
     // v159 — el planeta y su corte DESPIERTAN al cerrar (el regreso a casa)
@@ -5450,6 +5478,16 @@ class MundoWGL {
     }
     // v145: la SALA 3D vive — velas que laten, monedas que giran, placas
     if (this.salaInst && this.salaInst.grupo.visible) this.salaInst.tic(t, dt);
+    // v167 BUG R19 — EL WATCHDOG DEL ANCLA DIFERIDA: la sala montada a mitad
+    // de vuelo despierta en cuanto el vuelo suelta la cámara
+    if (this.salaAnclaPendiente && !this.enVuelo) {
+      this.salaAnclaPendiente = false;
+      if (this.salaInst && this.capsulaAcoplada && !this.modoMundo && this.zona !== 0 && !this.ciudadAbierta) {
+        this.anclarSala(true);
+        this.acoplarCapsula(this.zona, true);
+        this.salaInst.grupo.visible = true;
+      }
+    }
     // v148: el mundo privado de la sección también respira
     if (this.mundoInst && this.mundoInst.grupo.visible) this.mundoInst.tic(t, dt);
     // v166 — CAPAS LIMPIAS EN LA CASA: cuando el piloto ENTRA (cámara en
@@ -5999,6 +6037,24 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       const m = mundoRef.current;
       if (!m || !m.vivo) return;
       if (m.ciudadAbierta) return;
+      // v167 BUG R19: si la ciudad ya se cerró una vez (el piloto entró a un
+      // módulo durante la ventana de reintentos), el aterrizaje RETIRA SU
+      // MANO — jamás re-abre la ciudad encima del módulo vivo
+      const retirarMano = () => {
+        // v167 BUG R19 (4ª pata): el retiro COMPLETA el compromiso de zona —
+        // si el piloto entró ANTES de que la ceremonia llegara a su zona
+        // (zona 0 = limbo: sin ciudad, sin sala, sin mundo), el mundo vuela
+        // a la zona base y el onDone del vuelo acopla la cápsula y ancla la
+        // sala del módulo elegido. En mapped (crisis/arcade/perfil) la Casa
+        // ya despachó su vg:wgl-ir-a — volarAZona es guardado (enVuelo/zona).
+        const z = m.zona === 0 ? 1 : m.zona;
+        if (!m.enVuelo) m.volarAZona(z);
+      };
+      if (m.ciudadCerradaAlgunaVez) { retirarMano(); return; }
+      // v167 BUG R19 (cura definitiva): el mundo recuerda la sala del
+      // arranque — si la activa ya es OTRA, el piloto eligió destino y el
+      // aterrizaje retira su mano (inmune al timing de la Casa)
+      if (m.salaLlaveArranque && m.salaLlave !== m.salaLlaveArranque) { retirarMano(); return; }
       if (!m.enVuelo) {
         m.abrirCiudad();
         if (m.ciudadAbierta) return;

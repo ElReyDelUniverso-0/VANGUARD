@@ -336,3 +336,10 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] Cámara de detalle: en móvil el radio de proximidad (2.0) quizá quede corto con el héroe a 3.4 — probar 2.4
 - [ ] El interruptor 2D/3D guarda la preferencia en localStorage (hoy vuelve a 3D en cada recarga — por diseño la ciudad es el hogar)
 - [ ] VER EN 3D: variante por-edificio (saltar directo a la sala del módulo sin pasar por la ciudad)
+
+## v167.0 EL ATERRIZAJE EDUCADO (2026-10-25) — cola viva
+- [ ] Puertas tocables + recompensa HABITACIONES 3/3 para las SALAS II/III del remoto (la extracción honesta extraerHabitacion de 14 tipos vive en el reflog commit 30e5258 — portarla como mejora de datos de esas salas)
+- [ ] Repintado EN VIVO de las placas de datos de las habitaciones con vg:sala3d-datos (hoy nacen con el payload del montaje)
+- [ ] El modal diario re-fire cada ~15s en headless — estudiar si en dispositivo real re-dispara (fueceso QA, no bug confirmado)
+- [ ] La ceremonia v166 (7s con TAP) vs la local (3s auto) — el Dueño pidió «elimina el mapa de la intro»; el remoto mantiene globo+marcadores: confirmar con el Dueño cuál quiere
+- [ ] Minimapa 3D / distritos con cielo propio / aterrizaje ceremonial (colas v158-v161 abiertas)

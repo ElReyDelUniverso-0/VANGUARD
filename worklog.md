@@ -2576,3 +2576,23 @@ Work Log:
 
 Stage Summary:
 - Producción v166.0 LA CASA HABITADA: cada módulo PINTA su propio fondo (cúpula del acento + planeta dormido), la sala es una CASA de vidrio con habitaciones que se encienden solas (por tiempo o al entrar), la letra dorada va y viene en toda la casa, y el móvil AVANZA con un botón.
+
+---
+Task ID: 21
+Agent: main (Super Z)
+Task: v167.0 «EL ATERRIZAJE EDUCADO» — el Dueño: «Si a todo». Ronda de RECONCILIACIÓN con el remoto + caza de bugs de la ronda 19 (la v164 local «LA CASA DE LAS HABITACIONES» se renumera: el remoto ya tomó v164 LA REDACCIÓN EN VIVO, v165 LA SALA COMPLETA y v166 LA CASA HABITADA).
+
+Work Log:
+- RECONCILIACIÓN: el remoto divergió en v163 (LA CIUDAD TALLADA vs la local LA SALA QUE LO TIENE TODO) y publicó v164-v166 cubriendo la agenda local (habitaciones de la casa, fondo por módulo, tiempo+movimiento, paridad 2D⇄3D). Rebase abortado (conflicto pesado en dos líneas del motor); decisión: reset a origin/main (v166) y portar SOLO lo único local.
+- DESCARTE HONESTO (duplicados del remoto): construirHabitaciones/extraerHabitacion (el remoto tiene SUS habitaciones SALA II/III en la casa de vidrio), tinte de cielo por hash del tab + monograma (el remoto tiene la cúpula del acento), fix de tic sin dt (atado a mis habitaciones). El código descartado vive en el commit 30e5258 del reflog como referencia.
+- PORTADO (lo que el remoto NO tenía, verificado en su fuente): (1) los 7 reintentos×900ms de aterrizajeCiudad SIN guards — el bug estaba VIVO en v166; (2) sin watchdog de ancla; (3) texto microscópico 0.052 intacto.
+- BUG GRAVE #1 (R19) — EL ATERRIZAJE RE-ABRÍA LA CIUDAD ENCIMA DEL MÓDULO: los reintentos corren hasta ~11s tras el boot; entrar a un módulo en esa ventana → un reintento tardío llamaba abrirCiudad() → ciudad viva para siempre + sala sin anclar (QA local v164: verificado por monkey-patch anclarSala@7915 SEGUNDO de abrirCiudad@8533). CURA TRIPLE: ciudadCerradaAlgunaVez (cierre de ciudad = acción del piloto), salaLlaveArranque (el mundo recuerda la PRIMERA sala que vio — inmune al timing de hidratación de la Casa; el aterrizaje se retira cuando la llave activa cambia) y comparación por llave.
+- BUG GRAVE #2 (R19) — SALAS VARADAS INVISIBLES: montarSala con enVuelo deja la sala dormida (v159) y SOLO el onDone de volarCiudad la re-anclaba; si el vuelo era de ceremonia, sala invisible para siempre. WATCHDOG salaAnclaPendiente en el loop: el vuelo suelta la cámara → anclarSala(true) + acoplarCapsula + despertar.
+- BUG #3 (4ª pata, hallada en QA del port): el retiro del aterrizaje COMPLETA el compromiso de zona — retirarMano() vuela a la zona base si el piloto entró antes de que la ceremonia llegara a su zona (volarAZona → volarCamara onDone → acoplarCapsula → anclarSala; guardado por enVuelo/zona: en crisis/arcade/perfil la Casa ya despachó su vg:wgl-ir-a).
+- BUG #4 (R19, cola v159) — TEXTO MICROSCÓPICO MÓVIL: pintarLineas 0.052→0.068 (prof 0.02) y pintarStats 4 placas en 2 filas → 2 en una fila escala 1.22.
+- QA E2E (agent-browser, sesiones cortas): descubierto que v166 restauró la ceremonia completa de 7s con TAP (el auto-entrar de 3s era de la línea local) — el QA del limbo (dispatch sin tap, zona 0) es un estado imposible para usuario real; el flujo REAL (tap globo → volarAZona(1) → tab dentro de la ventana del aterrizaje) verifica: zona 1, salaVisible true, ciudad false (antes: ciudad viva), acoplada true, arranque «inicio|I». Mundo v166 intacto con pie «v167.0 · EL ATERRIZAJE EDUCADO» + interruptor 2D/3D. Consola 0 errores. Capturas qa-v167-01..02 + las de la era v164 local (qa-v164-01..18, m01..m03) documentan el diagnóstico.
+- Release: tsc 0, eslint 0 en tocados, bun build OK, health v167.0; version.ts (renumeración explicada) + bitacora.ts + este worklog + inbox.
+
+Stage Summary:
+- Producción v167.0: sobre LA CASA HABITADA, el aterrizaje automático ya JAMÁS pisa un módulo vivo (triple guard + retiro que completa la zona), las salas montadas a mitad de vuelo despiertan por watchdog, y el texto móvil es legible. La ronda 19 entrega sus primeros 4 bugs graves en producción.
+- Cola v168+: puertas tocables y recompensa 3/3 para las habitaciones del remoto; repintado en vivo de las placas de datos con vg:sala3d-datos; extracción honesta por tipo (extraerHabitacion del reflog) como mejora de las salas II/III del remoto; colas v158-v161 (minimapa, distritos, aterrizaje ceremonial).

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v167.0",
+    nombre: "EL ATERRIZAJE EDUCADO",
+    tipo: "mundo",
+    hitos: [
+      "EL ATERRIZAJE JAMÁS PISA UN MÓDULO VIVO — los 7 reintentos del aterrizaje automático de la ciudad re-abrían la ciudad ENCIMA del módulo si el piloto entraba dentro de su ventana de ~11s (la sala quedaba sin anclar para siempre); triple guard: ciudadCerradaAlgunaVez + salaLlaveArranque (el mundo recuerda la primera sala que vio) + comparación por llave inmune al timing de la Casa",
+      "SALAS VARADAS INVISIBLES MUERTAS — una sala montada a mitad de un vuelo que no fuese de ciudad quedaba invisible para siempre; el watchdog salaAnclaPendiente la ancla, acopla la pantalla y la despierta en cuanto el vuelo suelta la cámara",
+      "TEXTO MICROSCÓPICO MÓVIL CURADO (cola v159) — las letras informativas de las salas genéricas suben 1.3× y las placas de datos pasan de 4 en dos filas a 2 grandes en una fila",
+      "RECONCILIACIÓN CON EL REMOTO — la v164 local (LA CASA DE LAS HABITACIONES) se renumera: el remoto ya tomó v164 LA REDACCIÓN EN VIVO, v165 LA SALA COMPLETA y v166 LA CASA HABITADA; esta ronda entrega lo que faltaba sobre la casa habitada",
+    ],
+  },
+  {
     version: "v166.0",
     nombre: "LA CASA HABITADA",
     tipo: "mundo",

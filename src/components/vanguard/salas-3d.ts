@@ -1195,9 +1195,11 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
   const pintarLineas = (lineas: string[]) => {
     limpiarGrupoLocal(grupoLineas);
     matsLineas.length = 0;
+    // v167 BUG R19: en móvil el texto era microscópico (cola v159) — sube 1.3×
+    const tamLinea = ctx.movil ? 0.068 : 0.052;
     const limpias = (lineas || []).slice(0, 3).map((l) => acotar(l, 44)).filter(Boolean);
     limpias.forEach((linea, i) => {
-      const t = texto3D(ctx, linea, { tam: 0.052, prof: 0.016, color: 0xbfe3ff, emis: 0.4 });
+      const t = texto3D(ctx, linea, { tam: tamLinea, prof: ctx.movil ? 0.02 : 0.016, color: 0xbfe3ff, emis: 0.4 });
       const esc = Math.min(1, 1.9 / t.ancho);
       t.grupo.scale.setScalar(esc);
       t.grupo.position.set(-t.ancho * esc / 2, 0.37 - i * 0.072, 0);
@@ -1212,7 +1214,8 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
   const grupoStats = new THREE.Group();
   const pintarStats = (stats: { k: string; v: string }[]) => {
     limpiarGrupoLocal(grupoStats);
-    const vivas = (stats || []).filter((s) => s && s.k && s.v).slice(0, 4);
+    // v167 BUG R19: en móvil 4 placas en 2 filas eran ilegibles — 2 en una fila, más grandes
+    const vivas = (stats || []).filter((s) => s && s.k && s.v).slice(0, ctx.movil ? 2 : 4);
     vivas.forEach((s, i) => {
       const lado = i % 2 === 0 ? -1 : 1;
       const fila = Math.floor(i / 2);
@@ -1235,6 +1238,7 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
       placa.add(caja, filo, tk.grupo, tv.grupo);
       placa.position.set(lado * 0.66, 0.04 - fila * 0.22, 0.12);
       placa.rotation.y = lado * -0.16;
+      if (ctx.movil) placa.scale.setScalar(1.22);
       grupoStats.add(placa);
     });
     grupoStats.visible = vivas.length > 0;
