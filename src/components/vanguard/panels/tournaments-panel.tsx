@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v164 TODO EN VOLUMEN — el podio alimenta su sala 3D con la tabla real
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 const rankColor: Record<number, string> = {
   1: "text-amber border-amber-hud bg-amber-hud/30",
@@ -46,6 +48,20 @@ export function TournamentsPanel() {
     .sort((a, b) => b.score - a.score)
     .map((e, i) => ({ ...e, rank: i + 1 }));
   const playerRank = fullBoard.find((e) => e.isPlayer)?.rank ?? 8;
+
+  // v164 SALA EN VOLUMEN: el podio del torneo activo en volumen
+  useSala3DContenido(
+    "torneos",
+    "Torneos",
+    "#F5C542",
+    `${active.title} · TU RANGO #${playerRank} · ${playerScore} PTS`,
+    fullBoard.slice(0, 6).map((e) => ({
+      t: e.isPlayer ? `${e.alias} (TÚ)` : e.alias,
+      v: `${e.score}`,
+      p: Math.min(100, Math.round((e.score / Math.max(1, fullBoard[0]?.score || 1)) * 100)),
+      color: e.isPlayer ? "#FFC94D" : e.rank === 1 ? "#F5C542" : "#8B98AD",
+    })),
+  );
 
   return (
     <div className="space-y-3">

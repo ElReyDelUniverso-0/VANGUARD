@@ -8,6 +8,8 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — la sala OSINT alimenta su mundo con los frentes activos
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-3d";
 import { CONFLICTS } from "@/lib/game-data";
@@ -215,6 +217,20 @@ export function OsintPanel() {
         oleoductos: PIPELINES,
       }) as Partial<Record<LayerId, OsintRoute[]>>,
     []
+  );
+
+  // v164 SALA EN VOLUMEN: los frentes activos del radar en filas de cristal 3D
+  useSala3DContenido(
+    "osint",
+    "Sala OSINT",
+    "#3FD6FF",
+    `${CONFLICTS.length} FRENTES · ${quakePoints.length} SISMOS · ${TENSIONS.length} CAPAS DE TENSIÓN`,
+    CONFLICTS.slice(0, 6).map((c) => ({
+      t: c.name || "FRENTE",
+      v: (c.level || "ACTIVO").slice(0, 10).toUpperCase(),
+      p: Math.min(100, c.intensity || 60),
+      color: c.level === "CRITICO" ? "#FF4D5E" : "#FF7A5C",
+    })),
   );
 
   // ====== DETECCION DE CONVERGENCIA: 3+ capas en la misma zona ======

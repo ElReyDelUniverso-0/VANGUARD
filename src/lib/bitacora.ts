@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v164.0",
+    nombre: "LA REDACCIÓN EN VIVO",
+    tipo: "mundo",
+    hitos: [
+      "LA REDACCIÓN EN VIVO — la sala de noticias RESPIRA: cartel rojo EN VIVO con latido de cabina, contador de ESPECTADORES reales del servidor (/api/presence) y FARO DE ÚLTIMA HORA — un anillo dorado que late alrededor del núcleo cuando el cable más nuevo nació hace menos de 15 minutos",
+      "EL TELETIPO DE LA CIUDAD — el titular de última hora flota sobre la plaza de la megápolis: cartel rojo que late + titular REAL del feed (sintonía autónoma de 1 fetch/min al abrir la ciudad, y re-escritura en vivo cuando el módulo noticias emite). La ciudad entera respira con las noticias aunque nunca abras el módulo — billboard a cámara SOLO yaw",
+      "LA GALERÍA DE JUEGOS — sala insignia nueva: los juegos REALES de Vanguard como CARTUCHOS 3D con su puntuación real, el trofeo dorado girando con aros en órbita, la partida en curso latiendo y JUGAR tocable desde dentro del mundo — ARCADE emite 8 cartuchos con récords + juego del día en oro, MINIJUEGO emite Threat Assessment + récords del piloto",
+      "TODO TEXTO EN 3D — el emisor universal llega a 17 módulos nuevos: redacción, enciclopedia, atlas del poder, sala OSINT, briefings, canal brief, comunidad, escuadra, retos diarios, briefing diario, en vivo, directos, notificaciones, recompensas, apuestas de guerra, torneos y wikiguerra — cada sala de módulo muestra SU contenido real en filas de cristal con valores en oro y barras de volumen",
+      "QA E2E completa — teletipo con titular REAL (RT · Madrid), JUGAR verificado por raycast (vg:sala3d-accion jugar), faro verificado con cable caliente (opacidad viva), espectadores:1 en presencia real, tsc/eslint 0, salud v164.0",
+    ],
+  },
+  {
     version: "v163.0",
     nombre: "LA CIUDAD TALLADA",
     tipo: "mundo",

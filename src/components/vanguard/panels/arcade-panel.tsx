@@ -24,7 +24,6 @@ import { useGameStore } from "@/lib/game-store";
 import { WIKI_ENTRIES } from "@/lib/wiki-data";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { useSala3DContenido } from "../use-sala3d-contenido";
 
 type GameId = "memoria" | "historia" | "quien" | "trivia" | "codigo" | "negociador" | "banderas" | "antimisil" | "duelo" | "radar" | "convoy" | "simon" | null;
 
@@ -935,20 +934,54 @@ export function ArcadePanel() {
     { id: "simon" as const, name: "CIFRADO SIMON", desc: "Escucha el código que crece un glifo por ronda y repítelo · +15 mon por eslabón", icon: <AudioLines className="w-5 h-5" />, color: "text-neon border-neon-hud/60" },
   ];
 
-  // v148 SALA DE CONTENIDO — el arcade vive en volumen: los 12 minijuegos
-  // como filas de cristal con tus récords reales
-  useSala3DContenido(
-    "arcade",
-    "Arcade",
-    "#FF6B5A",
-    `JUEGO DEL DIA: ${GAMES.find((g) => g.id === juegoHoy)?.name ?? "ARCADE"}`,
-    GAMES.slice(0, 6).map((g) => ({
-      t: g.name,
-      v: records[g.id] != null ? `REC ${records[g.id]}` : "SIN RECORD",
-      p: records[g.id] != null ? Math.min(100, Math.round((Number(records[g.id]) / 1000) * 100)) : 2,
-      color: g.id === juegoHoy ? "#FFC94D" : undefined,
-    })),
-  );
+  // v164 LA GALERÍA DE JUEGOS — el arcade vive en volumen como CARTUCHOS
+  // REALES: cada minijuego con su récord, el juego del día destacado en oro,
+  // y JUGAR se toca desde dentro del mundo (vg:sala3d-accion → startGame)
+  const gamesRef = useRef(GAMES);
+  gamesRef.current = GAMES;
+  const recordsRef = useRef(records);
+  recordsRef.current = records;
+  useEffect(() => {
+    const emitir = () => {
+      const recs = recordsRef.current;
+      const lista = gamesRef.current;
+      const conRecord = lista.filter((g) => recs[g.id] != null);
+      const mejor = conRecord.length
+        ? conRecord.reduce((a, b) => (Number(recs[b.id]) > Number(recs[a.id]) ? b : a))
+        : null;
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "arcade", tipo: "juegos",
+            partida: `JUEGO DEL DIA: ${lista.find((g) => g.id === juegoHoy)?.name ?? "ARCADE"} · PAGA DOBLE`,
+            records: mejor
+              ? `TU MEJOR RÉCORD: ${mejor.name} · ${recs[mejor.id]} PTS`
+              : "AÚN SIN RÉCORDS · ENCIENDE UN CARTUCHO Y JUEGA",
+            juegos: lista.slice(0, 8).map((g) => ({
+              nombre: g.name,
+              detalle: recs[g.id] != null ? `RÉCORD ${recs[g.id]}` : "SIN RÉCORD",
+              color: g.id === juegoHoy ? "#FFC94D" : "#FF6B5A",
+            })),
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 30000);
+    return () => window.clearInterval(id);
+  }, [juegoHoy]);
+
+  // JUGAR desde el 3D — el cartucho tocado enciende su minijuego real
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "arcade" || d.accion !== "jugar") return;
+      const g = gamesRef.current[d.idx];
+      if (g) startGame(g.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   const startGame = (id: Exclude<GameId, null>) => {
     sfx.levelUp();

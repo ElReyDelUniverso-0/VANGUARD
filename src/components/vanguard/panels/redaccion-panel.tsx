@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — la redacción alimenta su sala 3D con las piezas reales
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { useCalma, calmaActiva } from "@/lib/calma";
 
@@ -160,6 +162,22 @@ export function RedaccionPanel() {
   const [invLoading, setInvLoading] = useState(false);
   const [tick, setTick] = useState(0);
   const progresoRef = useRef<HTMLDivElement | null>(null);
+
+  // v164 SALA EN VOLUMEN: la portada real vive como filas de cristal 3D
+  const itemsRef3D = useRef(items);
+  itemsRef3D.current = items;
+  useSala3DContenido(
+    "redaccion",
+    "La Redacción",
+    "#F5C542",
+    `${items.length} PIEZAS EN PORTADA · LECTURA EN VOLUMEN`,
+    items.slice(0, 6).map((it) => ({
+      t: it.t || "SIN TITULAR",
+      v: (it.tag || "INFO").toUpperCase().slice(0, 10),
+      img: it.img || undefined,
+      color: TAG_COLOR[it.tag] || undefined,
+    })),
+  );
 
   // ---- MODO CALMA: mientras la redacción esté abierta, nada interrumpe ----
   useEffect(() => {

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { FRIENDS, type Friend, RANKS } from "@/lib/game-data";
+// v164 TODO EN VOLUMEN — la escuadra alimenta su sala 3D con operadores reales
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Users, Search, UserPlus, Crown, Star, Target, Flame, Brain, Gamepad2, TrendingUp, Award, ChevronRight, X } from "lucide-react";
@@ -30,6 +32,19 @@ export function FriendsPanel() {
   });
 
   const onlineCount = FRIENDS.filter((f) => f.online).length;
+
+  // v164 SALA EN VOLUMEN: la escuadra en filas de cristal 3D
+  useSala3DContenido(
+    "amigos",
+    "Escuadra",
+    "#3DDC84",
+    `${onlineCount} EN LÍNEA · ${FRIENDS.length} OPERADORES · TU NIVEL ${level}`,
+    filtered.slice(0, 6).map((f) => ({
+      t: f.alias,
+      v: f.online ? "EN LÍNEA" : `NIVEL ${f.level ?? "?"}`,
+      color: f.online ? "#3DDC84" : "#8B98AD",
+    })),
+  );
 
   const playerStats = {
     quizCorrect,

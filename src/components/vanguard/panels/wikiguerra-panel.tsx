@@ -8,6 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, History, MessageSquare, Lock, Eye, PenLine, ListTree } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — la wiki viva alimenta su sala 3D
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarArticulo, generarCharla, WIKI_IDS, haceEdicion } from "@/lib/wikiguerra-data";
 import { cn } from "@/lib/utils";
@@ -25,6 +27,22 @@ export function WikiguerraPanel() {
   const a = useMemo(() => generarArticulo(sel, dia), [sel, dia]);
   const charla = useMemo(() => generarCharla(sel, dia), [sel, dia]);
   const minsEdicion = useMemo(() => 3 + ((dia * 37 + sel.length * 11) % 240), [dia, sel]);
+
+  // v164 SALA EN VOLUMEN: los artículos vivos de la wiki en volumen
+  useSala3DContenido(
+    "wikiguerra",
+    "Wikiguerra",
+    "#7AB8FF",
+    `ARTÍCULO: ${String(a.titulo || sel).slice(0, 30).toUpperCase()} · EDICIÓN COMUNITARIA`,
+    WIKI_IDS.slice(0, 6).map((id) => {
+      const art = generarArticulo(id, dia);
+      return {
+        t: String(art.titulo || id),
+        v: art.editores ? `${art.editores} EDITORES` : "ABIERTO",
+        color: id === sel ? "#FFC94D" : "#7AB8FF",
+      };
+    }),
+  );
 
   return (
     <div className="space-y-4">

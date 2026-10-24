@@ -12,6 +12,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — los directos en vivo alimentan su sala 3D
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import {
   Radio, Eye, Coins, Users, Send, Share2, CalendarDays, History, Crown,
   ArrowLeft, Video, VideoOff, Scissors, Copy, Gift, Target, TrendingUp,
@@ -364,6 +366,22 @@ function ComunidadSection({ alias, cbAvatar, onGoLive }: { alias: string; cbAvat
   const [cat, setCat] = useState("");
   const [watching, setWatching] = useState<LiveStreamRow | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // v164 SALA EN VOLUMEN: los directos comunitarios en volumen (espectadores reales)
+  useSala3DContenido(
+    "envivo",
+    "En Vivo",
+    "#FF3D55",
+    streams.length
+      ? `${streams.length} DIRECTOS AHORA · ${streams.reduce((a, b) => a + (b.viewers || 0), 0)} ESPECTADORES`
+      : "SINTONIZANDO LOS DIRECTOS…",
+    streams.slice(0, 6).map((st) => ({
+      t: st.title || st.streamerName,
+      v: `${st.viewers || 0} 👁`.replace(" 👁", " VIENDO"),
+      p: Math.min(100, Math.round(((st.viewers || 0) / Math.max(1, streams[0]?.viewers || 1)) * 100)),
+      color: "#FF3D55",
+    })),
+  );
 
   const load = useCallback(() => {
     const params = new URLSearchParams({ status: "live", sort: sort === "category" || sort === "country" ? "recent" : sort });

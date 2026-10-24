@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { CONFLICTS, BRIEFINGS, type AlertLevel } from "@/lib/game-data";
+// v164 TODO EN VOLUMEN — el briefing diario alimenta su sala 3D
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
@@ -79,6 +81,19 @@ export function DailyBriefingPanel() {
     }
     return mapa;
   }, [cables122]);
+
+  // v164 SALA EN VOLUMEN: el intel del día en filas de cristal 3D
+  useSala3DContenido(
+    "briefing",
+    "Briefing Diario",
+    "#FFC94D",
+    `${cables122.length} CABLES DE LA CASA · ${CONFLICTS.length} FRENTES VIGILADOS`,
+    cables122.slice(0, 6).map((c) => ({
+      t: c.title || "CABLE",
+      v: (c.tacticalTag || "INFO").toUpperCase().slice(0, 10),
+      color: "#FFC94D",
+    })),
+  );
   const totalIntel122 = useMemo(() => Object.values(intelPorFrente).flat().length, [intelPorFrente]);
 
   // Generate daily briefing based on current state

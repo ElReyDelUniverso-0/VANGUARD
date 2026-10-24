@@ -8,6 +8,8 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — los canales en directo alimentan su sala 3D
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import {
   Radio, Eye, Coins, Gem, Send, Crown, Gift, Users, TrendingUp,
   ArrowLeft, Zap, BellRing, Sparkles, MessageSquare, Trophy, CircleDot,
@@ -128,6 +130,19 @@ export function DirectosPanel() {
   const [watching, setWatching] = useState<LiveChannel | null>(null);
   const [tick, setTick] = useState(0);
   const [channels, setChannels] = useState<LiveChannel[]>(CHANNELS);
+
+  // v164 SALA EN VOLUMEN: los canales al aire en volumen
+  useSala3DContenido(
+    "directos",
+    "Directos",
+    "#FF3D55",
+    `${channels.length} CANALES AL AIRE · ${channels.reduce((a, b) => a + (b.baseViewers || 0), 0)} ESPECTADORES`,
+    channels.slice(0, 6).map((ch) => ({
+      t: ch.title || ch.name,
+      v: `${ch.baseViewers || 0} VIENDO`,
+      color: "#FF3D55",
+    })),
+  );
 
   // chat compartido
   const [chat, setChat] = useState<ChatMsg[]>([]);

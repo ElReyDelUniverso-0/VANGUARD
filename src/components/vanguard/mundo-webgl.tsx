@@ -573,6 +573,21 @@ class MundoWGL {
   ciudadRotulo: THREE.Group | null = null;
   ciudadRotuloPlaca: THREE.Mesh | null = null;
   ciudadRotuloTexto: THREE.Group | null = null;
+  // v164 — EL TELETIPO DE LA CIUDAD: el titular EN VIVO flota sobre la
+  // plaza con cartel de ÚLTIMA HORA — la megápolis respira con el mundo
+  ciudadTeletipo: THREE.Group | null = null;
+  ciudadTeletipoTexto: THREE.Group | null = null;
+  ciudadTeletipoAlerta: THREE.MeshStandardMaterial | null = null;
+  teletipoDato: { titulo: string; fuente: string; edad: string; ultimo: boolean } | null = null;
+  teletipoMs = 0;
+  onTeletipoEv = (e: Event) => {
+    const d = (e as CustomEvent<{ tab?: string; tipo?: string; noticias?: { titulo?: string; fuente?: string; edad?: string }[]; ultimo?: boolean }>).detail;
+    if (d?.tab !== "noticias" || d.tipo !== "noticias" || !Array.isArray(d.noticias) || !d.noticias.length) return;
+    const n0 = d.noticias[0];
+    if (!n0?.titulo) return;
+    this.teletipoDato = { titulo: n0.titulo, fuente: n0.fuente || "AGENCIA", edad: n0.edad || "", ultimo: !!d.ultimo };
+    if (this.ciudadAbierta) this.refrescarTeletipo();
+  };
   ciudadRotuloNombre = "";
   ciudadRotuloColor = 0;
   ciudadTick = 0;
@@ -653,6 +668,8 @@ class MundoWGL {
     // real de Vanguard nace en volumen dentro del mundo
     window.addEventListener("vg:sala3d", this.onSala3dEv);
     window.addEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
+    // v164: EL TELETIPO — los cables de ÚLTIMA HORA viven en la CIUDAD
+    window.addEventListener("vg:sala3d-datos", this.onTeletipoEv);
     // v156: la Casa guarda/muestra la consola DOM — el héroe se re-ancla
     window.addEventListener("vg:sala3d-holo", this.onHoloEv);
     // v154: LA CIUDAD-MENÚ — catálogo de secciones + toggle desde la Casa
@@ -3207,6 +3224,10 @@ class MundoWGL {
     // v163 — las decoraciones viajan dentro de ciudadGrupo (traverse dispone)
     this.ciudadDecor = [];
     this.ciudadBlinkers = [];
+    // v164 — el teletipo viaja dentro de ciudadGrupo (dispose del traverse)
+    this.ciudadTeletipo = null;
+    this.ciudadTeletipoTexto = null;
+    this.ciudadTeletipoAlerta = null;
   }
 
   // v159 — cirugía de dispose: geometrías y materiales PROPIOS de un grupo
@@ -4002,6 +4023,40 @@ class MundoWGL {
     this.ciudadAroB = aroB;
     g.add(plaza);
 
+    // ── v164 EL TELETIPO EN VIVO — el titular de última hora flotando sobre
+    // la plaza: cartel rojo de ÚLTIMA HORA que late + titular REAL del feed,
+    // billboard a cámara. La ciudad entera respira con las noticias. ──
+    const teletipo = new THREE.Group();
+    teletipo.position.set(0, 2.62, 3.55);
+    this.ciudadTeletipo = teletipo;
+    const cartel = new THREE.Mesh(
+      new THREE.BoxGeometry(0.62, 0.14, 0.02),
+      new THREE.MeshStandardMaterial({
+        color: 0x2a0810, emissive: new THREE.Color(0xff3d55), emissiveIntensity: 0.8,
+        metalness: 0.6, roughness: 0.3, transparent: true, opacity: 0.94,
+      }),
+    );
+    cartel.position.set(0, 0.14, 0);
+    teletipo.add(cartel);
+    const cartelFilo = new THREE.LineSegments(cartel.geometry, new THREE.LineBasicMaterial({ color: 0xff3d55, transparent: true, opacity: 0.95 }));
+    cartelFilo.position.copy(cartel.position);
+    teletipo.add(cartelFilo);
+    this.ciudadTeletipoAlerta = cartel.material as THREE.MeshStandardMaterial;
+    if (this.fuente) {
+      const rot = this.hacerTexto3D("ULTIMA HORA", { tam: 0.062, prof: 0.016, color: 0xff5d75, emis: 0.95 });
+      for (const l of rot.letras) { l.mesh.visible = true; l.quieto = true; }
+      const escR = Math.min(1, 0.52 / Math.max(rot.ancho, 0.001));
+      rot.grupo.scale.setScalar(escR);
+      rot.grupo.position.set(-rot.ancho * escR / 2, 0.14, 0.015);
+      teletipo.add(rot.grupo);
+      // EL TITULAR — el texto vivo (refrescarTeletipo() lo re-escribe)
+      this.ciudadTeletipoTexto = new THREE.Group();
+      this.ciudadTeletipoTexto.position.set(0, -0.05, 0);
+      teletipo.add(this.ciudadTeletipoTexto);
+      this.pintarTeletipoTexto();
+    }
+    g.add(teletipo);
+
     // ── EL PAD DE REGRESO — VOLVER, junto a la puerta ──
     if (this.fuente) {
       const vol = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.44, 0.07, 20), matPodio);
@@ -4199,6 +4254,8 @@ class MundoWGL {
     this.enVuelo = true;
     this.ciudadGrupo.visible = true;
     this.animarCielo(1);
+    // v164 — el TELETIPO se sintoniza: el titular más nuevo del feed real
+    this.sintonizarTeletipo();
     // v159 — EL VACÍO LIMPIO: el planeta, su atmósfera, partículas, logo y
     // marcadores DUERMEN mientras eliges — la ciudad flota en negro puro con
     // SU cielo de estrellas (nada «que no viene al caso» alrededor)
@@ -4481,6 +4538,65 @@ class MundoWGL {
     this.ciudadRotuloColor = color;
   }
 
+  // v164 — EL TELETIPO: cirugía del titular vivo sobre la plaza. El cartel
+  // y su filo nunca se tocan; SOLO el grupo del texto se dispone y re-nace
+  // (el titular REAL del feed, fuente y edad, en volumen).
+  private pintarTeletipoTexto() {
+    if (!this.ciudadTeletipoTexto) return;
+    const crudo = this.teletipoDato
+      ? `${this.teletipoDato.fuente} · ${this.teletipoDato.titulo}`
+      : "SINTONIZANDO LA REDACCIÓN…";
+    const t = this.hacerTexto3D(
+      crudo.length > 78 ? crudo.slice(0, 75).trimEnd() + "…" : crudo,
+      { tam: 0.042, prof: 0.012, color: this.teletipoDato?.ultimo ? 0xffd76a : 0xdfeaff, emis: 0.8 },
+    );
+    for (const l of t.letras) l.mesh.visible = true;
+    if (t.grupo.children.length) ((t.grupo.children[0] as THREE.Mesh).material as THREE.MeshStandardMaterial).opacity = 0.96;
+    const esc = Math.min(1, 2.6 / Math.max(t.ancho, 0.001));
+    t.grupo.scale.setScalar(esc);
+    t.grupo.position.set(-t.ancho * esc / 2, 0, 0);
+    // el texto nuevo entra flotando (nace y respira en ticCiudad)
+    const nuevo = new THREE.Group();
+    nuevo.position.set(0, -0.05, 0);
+    nuevo.add(t.grupo);
+    const viejo = this.ciudadTeletipoTexto;
+    this.ciudadTeletipoTexto = nuevo;
+    if (viejo.parent) viejo.parent.remove(viejo);
+    this.eliminarRecursos(viejo);
+    this.ciudadTeletipo?.add(nuevo);
+  }
+
+  private refrescarTeletipo() {
+    if (!this.ciudadAbierta) return;
+    this.pintarTeletipoTexto();
+  }
+
+  // v164 — LA SINTONÍA AUTÓNOMA: al abrir la ciudad se pide el cable más
+  // nuevo al feed real (1 fetch por minuto como máximo) — el teletipo vive
+  // aunque el módulo de noticias nunca se haya abierto.
+  private sintonizarTeletipo() {
+    const ahora = Date.now();
+    if (ahora - this.teletipoMs < 60000) return;
+    this.teletipoMs = ahora;
+    try {
+      fetch("/api/news?limit=5", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j: { items?: { title?: string; source?: string; publishedAt?: string }[] } | null) => {
+          const it = j?.items?.[0];
+          if (!it?.title || !this.ciudadAbierta) return;
+          let edad = "";
+          try {
+            const min = Math.max(1, Math.round((Date.now() - new Date(it.publishedAt || Date.now()).getTime()) / 60000));
+            edad = min < 60 ? `HACE ${min} MIN` : `HACE ${Math.round(min / 60)} H`;
+          } catch { edad = ""; }
+          const min15 = (() => { try { return Date.now() - new Date(it.publishedAt || 0).getTime() < 15 * 60000; } catch { return false; } })();
+          this.teletipoDato = { titulo: it.title, fuente: (it.source || "AGENCIA").toUpperCase().slice(0, 14), edad, ultimo: min15 };
+          this.refrescarTeletipo();
+        })
+        .catch(() => { /* sin señal: el lema de espera sigue siendo válido */ });
+    } catch { /* fetch indisponible: la ciudad sigue viva igual */ }
+  }
+
   // LA PREGUNTA: tocar un edificio NUNCA entra solo — un panel 3D anclado
   // a la cámara pregunta «¿ENTRAR?» con SÍ y NO reales (raycast, sonido)
   preguntarEntrada(ed: { tab: string; nombre: string; color: number }) {
@@ -4632,6 +4748,19 @@ class MundoWGL {
     if (this.ciudadAroA) this.ciudadAroA.rotation.z += dt * 0.6;
     if (this.ciudadAroB) this.ciudadAroB.rotation.y += dt * 0.45;
     if (this.ciudadBeaconMat) this.ciudadBeaconMat.opacity = 0.18 + Math.sin(t * 1.7) * 0.12;
+    // v164 — EL TELETIPO: billboard a cámara (SOLO yaw — nunca persigue) +
+    // cartel de ÚLTIMA HORA que late cuando el cable está caliente
+    if (this.ciudadTeletipo) {
+      const tp = this.ciudadTeletipo;
+      _vA.copy(this.camara.position).sub(tp.position);
+      tp.rotation.y = Math.atan2(_vA.x, _vA.z);
+    }
+    if (this.ciudadTeletipoAlerta) {
+      const hot = !!this.teletipoDato?.ultimo;
+      this.ciudadTeletipoAlerta.emissiveIntensity = hot
+        ? 0.62 + Math.max(0, Math.sin(t * 8.2)) * 0.85
+        : 0.55 + Math.sin(t * 2.0) * 0.18;
+    }
     // v159 — LA PREGUNTA vive pegada a la cámara (nunca se queda atrás)
     if (this.ciudadPrompt) {
       _vA.set(0, 0, -1).applyQuaternion(this.camara.quaternion);
@@ -5321,6 +5450,7 @@ class MundoWGL {
       window.removeEventListener("vg:sala3d", this.onSala3dEv);
       window.removeEventListener("vg:sala3d-holo", this.onHoloEv);
       window.removeEventListener("vg:sala3d-datos", this.onSala3dDatosEv);
+    window.removeEventListener("vg:sala3d-datos", this.onTeletipoEv);
       // v154: la ciudad y su catálogo mueren con el mundo
       window.removeEventListener("vg:holo-ciudad", this.onCiudadCatalogoEv);
       window.removeEventListener("vg:ciudad-toggle", this.onCiudadToggleEv);

@@ -254,6 +254,14 @@ export function NewsPanel() {
     const emitir = () => {
       const lista = itemsRef.current;
       if (!lista.length) return;
+      // v164 LA REDACCIÓN EN VIVO: el cable más nuevo enciende el faro de
+      // ÚLTIMA HORA si nació hace menos de 15 min; los espectadores reales
+      // llegan de /api/presence (1 petición por ciclo, tolerante a fallos)
+      const primero = lista[0];
+      const ultimoMin = (() => {
+        try { return Date.now() - new Date(primero.publishedAt).getTime() < 15 * 60000; }
+        catch { return false; }
+      })();
       try {
         window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
           detail: {
@@ -265,9 +273,34 @@ export function NewsPanel() {
               tag: (n.tacticalTag || n.conflictTag || "INFO").toUpperCase().slice(0, 8),
               color: TAG_HEX[(n.tacticalTag || "").toUpperCase()] || "#8b98ad",
             })),
+            ultimo: ultimoMin,
+            ultimoTitulo: primero.title || "",
           },
         }));
       } catch { /* el mundo 3D no bloquea el panel */ }
+      try {
+        fetch("/api/presence", { cache: "no-store" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j: { online?: number } | null) => {
+            if (!j || typeof j.online !== "number" || j.online <= 0) return;
+            window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+              detail: {
+                tab: "noticias", tipo: "noticias",
+                noticias: lista.slice(0, 5).map((n) => ({
+                  titulo: n.title || "SIN TITULAR",
+                  fuente: (n.source || "AGENCIA").toUpperCase().slice(0, 14),
+                  edad: edadDe(n.publishedAt),
+                  tag: (n.tacticalTag || n.conflictTag || "INFO").toUpperCase().slice(0, 8),
+                  color: TAG_HEX[(n.tacticalTag || "").toUpperCase()] || "#8b98ad",
+                })),
+                espectadores: j.online,
+                ultimo: ultimoMin,
+                ultimoTitulo: primero.title || "",
+              },
+            }));
+          })
+          .catch(() => { /* sin señal: la sala sigue con su cartel de espera */ });
+      } catch { /* fetch indisponible: la sala vive igual */ }
     };
     emitir();
     const id = window.setInterval(emitir, 30000);

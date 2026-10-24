@@ -159,6 +159,52 @@ export function MiniGamePanel() {
     startTimers();
   }, [startTimers]);
 
+  // ════════════════════════════════════════════════════════════
+  // v164 LA GALERÍA DE JUEGOS — el minijuego vive en volumen: el cartucho
+  // THREAT ASSESSMENT con su récord real, la partida en curso latiendo y
+  // JUGAR se toca desde dentro del mundo (vg:sala3d-accion → startGame)
+  // ════════════════════════════════════════════════════════════
+  const mgBest = useGameStore((s) => s.minigameBestScore);
+  const mgTotal = useGameStore((s) => s.minigameTotalScore);
+  const mgHits = useGameStore((s) => s.minigameTotalHits);
+  const vivoRef = useRef({ highScore, score, playing, streak, mgBest, mgTotal, mgHits, startGame });
+  vivoRef.current = { highScore, score, playing, streak, mgBest, mgTotal, mgHits, startGame };
+  useEffect(() => {
+    const emitir = () => {
+      const v = vivoRef.current;
+      try {
+        window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
+          detail: {
+            tab: "minijuego", tipo: "juegos",
+            partida: v.playing
+              ? `PARTIDA EN CURSO · ${v.score} PTS · RACHA ${v.streak}`
+              : "LISTOS PARA JUGAR · DEFENDE LA BASE",
+            records: `RÉCORD ${Math.max(v.highScore, v.mgBest)} · TOTAL ${v.mgTotal} PTS · ${v.mgHits} DERRIBOS`,
+            juegos: [
+              { nombre: "THREAT ASSESSMENT", detalle: `RÉCORD ${Math.max(v.highScore, v.mgBest)}`, color: "#FF4D5E", jugable: true },
+              { nombre: "DERRIBOS TOTALES", detalle: String(v.mgHits), color: "#FF8A5C", jugable: false },
+              { nombre: "PUNTOS ACUMULADOS", detalle: String(v.mgTotal), color: "#F5C542", jugable: false },
+            ],
+          },
+        }));
+      } catch { /* el mundo 3D no bloquea el panel */ }
+    };
+    emitir();
+    const id = window.setInterval(emitir, 4000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // JUGAR desde el 3D — el cartucho tocado arranca la partida real
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "minijuego" || d.accion !== "jugar" || d.idx !== 0) return;
+      vivoRef.current.startGame();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
+
   // end game when time hits 0
   useEffect(() => {
     if (playing && timeLeft === 0 && !gameOver) {

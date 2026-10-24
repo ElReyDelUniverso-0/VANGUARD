@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import { MonitorPlay, Play, Pause, ListVideo, MessageSquare, Eye, Clock } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v164 TODO EN VOLUMEN — el canal brief alimenta su sala 3D con sus episodios
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { episodiosDeHoy, episodiosSiguientes, type Episodio } from "@/lib/canalbrief-data";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +37,19 @@ export function CanalBriefPanel() {
   const episodios = useMemo(() => episodiosDeHoy(6), []);
   const [sel, setSel] = useState<Episodio>(episodios[0]);
   const siguientes = useMemo(() => episodiosSiguientes(sel.id, 3), [sel.id]);
+
+  // v164 SALA EN VOLUMEN: los episodios del canal como filas de cristal 3D
+  useSala3DContenido(
+    "canalbrief",
+    "Canal Brief",
+    "#FF5D75",
+    `EPISODIO EN PANTALLA: ${sel.titulo ? String(sel.titulo).slice(0, 26) : "BRIEF.TV"}`,
+    episodios.slice(0, 6).map((e) => ({
+      t: String(e.titulo || "EPISODIO"),
+      v: `${Math.max(1, Math.round((e.duracionSeg || 60) / 60))} MIN · ${e.vistas || 0} VIEWS`,
+      color: "#FF5D75",
+    })),
+  );
 
   const [play, setPlay] = useState(false);
   const [t, setT] = useState(0);

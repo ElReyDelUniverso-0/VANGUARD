@@ -4,6 +4,8 @@ import { DAILY_CHALLENGES } from "@/lib/game-data";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — los retos alimentan su sala 3D con progreso real
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { Zap, Check, Coins, Star, RefreshCw, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,23 @@ export function DailyChallengesPanel() {
 
   const claimedCount = dailyChallengeClaimed.length;
   const totalCompleted = challenges.filter((c) => (dailyChallengeProgress[c.id] || 0) >= c.target).length;
+
+  // v164 SALA EN VOLUMEN: los retos del día en volumen
+  useSala3DContenido(
+    "retos",
+    "Retos Diarios",
+    "#F5C542",
+    `${totalCompleted}/${challenges.length} COMPLETADOS · ${claimedCount} RECLAMADOS HOY`,
+    challenges.slice(0, 6).map((c) => {
+      const prog = dailyChallengeProgress[c.id] || 0;
+      return {
+        t: c.title,
+        v: `${Math.min(prog, c.target)}/${c.target}`,
+        p: Math.min(100, Math.round((prog / Math.max(1, c.target)) * 100)),
+        color: prog >= c.target ? "#3DDC84" : "#F5C542",
+      };
+    }),
+  );
 
   const handleClaim = (challengeId: string, xp: number, coins: number, title: string) => {
     if (dailyChallengeClaimed.includes(challengeId)) return;

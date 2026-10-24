@@ -50,7 +50,23 @@ export type TipoSala3D =
   | "contenido"
   | "misiones"
   | "ranking"
+  | "juegos"
   | "generica";
+// v164 LA GALERÍA DE JUEGOS — los cartuchos reales de Vanguard en volumen:
+// cada juego es un cartucho 3D con su puntuación real, el trofeo dorado
+// gira en lo alto y JUGAR se toca desde dentro del mundo
+export interface SalaJuegos3DFila {
+  nombre: string;
+  detalle: string;   // puntuación/récord/victorias reales del agente
+  color: string;
+  jugable?: boolean; // false = placa de datos (sin JUGAR, sin proxy)
+}
+export interface SalaJuegos3D extends BaseSala3D {
+  tipo: "juegos";
+  juegos: SalaJuegos3DFila[];
+  partida: string;   // el juego del día o la partida activa
+  records: string;   // resumen de récords del piloto
+}
 
 export interface BaseSala3D {
   tab: string;
@@ -81,9 +97,15 @@ export interface SalaMemes3D extends BaseSala3D {
 }
 // v146 ÓRBITA DE NOTICIAS — los cables REALES como hologramas, ahora CON
 // SU IMAGEN como plano texturizado (v147: las imágenes también son 3D)
+// v164 LA REDACCIÓN EN VIVO — la sala RESPIRA: cartel EN VIVO pulsante,
+// espectadores reales del servidor y faro de ÚLTIMA HORA cuando el cable
+// más nuevo sigue caliente (< 15 min de nacido)
 export interface SalaNoticias3D extends BaseSala3D {
   tipo: "noticias";
   noticias: { titulo: string; fuente: string; edad: string; tag: string; color: string; img?: string }[];
+  espectadores?: number;  // operadores conectados AHORA (presencia real)
+  ultimo?: boolean;       // el cable más nuevo es de ÚLTIMA HORA
+  ultimoTitulo?: string;  // el titular caliente que enciende el faro
 }
 // v145.1 EXAMEN HOLOGRÁFICO — la pregunta y las respuestas A·D en volumen
 export interface SalaQuiz3D extends BaseSala3D {
@@ -204,6 +226,7 @@ export type PayloadSala3D =
   | SalaContenido3D
   | SalaMisiones3D
   | SalaRanking3D
+  | SalaJuegos3D
   | SalaGenerica3D;
 
 // la instancia viva de una sala montada en el mundo
@@ -871,6 +894,175 @@ function construirMemes(ctx: CtxSala3D, p: SalaMemes3D): Sala3DInstancia {
 }
 
 // ────────────────────────────────────────────────────────────
+// LA GALERÍA DE JUEGOS (v164) — los juegos REALES de Vanguard en volumen:
+// cada juego es un CARTUCHO 3D con su puntuación real del piloto, el
+// trofeo dorado gira en lo alto, y tocar un cartucho manda JUGAR al
+// panel — se juega desde dentro del mundo, sin salir del 3D.
+// ────────────────────────────────────────────────────────────
+function construirJuegos(ctx: CtxSala3D, p: SalaJuegos3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+
+  const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.94, 0);
+  animarTitulo(tics, titulo, 0.94);
+  grupo.add(titulo.grupo);
+
+  // LA PARTIDA ACTIVA — la línea fina bajo el título (juego del día / partida)
+  const partida = texto3D(ctx, acotar(p.partida || "LISTOS PARA JUGAR", 46).toUpperCase(), { tam: 0.034, prof: 0.012, color: COL_ORO, emis: 0.6 });
+  partida.grupo.position.set(-partida.ancho / 2, 0.7, 0);
+  grupo.add(partida.grupo);
+
+  const peana = pedestal(1.3, p.color);
+  peana.position.y = -0.74;
+  grupo.add(peana);
+
+  // EL TROFEO dorado girando en lo alto de la peana + dos aros orbitando
+  const trofeo = new THREE.Group();
+  trofeo.position.set(0, -0.38, -0.12);
+  const copa = new THREE.Mesh(
+    reg.geo(new THREE.OctahedronGeometry(0.15, 0)),
+    reg.mat(new THREE.MeshStandardMaterial({
+      color: COL_ORO, metalness: 0.85, roughness: 0.18,
+      emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.7, transparent: true, opacity: 0.95,
+    })),
+  );
+  trofeo.add(copa);
+  const arosTrofeo: THREE.Mesh[] = [];
+  for (const [r, tilt] of [[0.27, 0.5], [0.35, -0.9]] as const) {
+    const an = new THREE.Mesh(
+      reg.geo(new THREE.TorusGeometry(r, 0.007, 8, 44)),
+      reg.mat(new THREE.MeshBasicMaterial({ color: COL_ORO, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false })),
+    );
+    an.rotation.x = Math.PI / 2 + tilt;
+    trofeo.add(an);
+    arosTrofeo.push(an);
+  }
+  grupo.add(trofeo);
+
+  // LOS CARTUCHOS — dos columnas de placas con nombre + puntuación real
+  let cartWrap = new THREE.Group();
+  grupo.add(cartWrap);
+  const cartuchos: { g: THREE.Group; baseY: number; fase: number }[] = [];
+  const limpiar = (w: THREE.Group) => {
+    w.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const pintar = (c: SalaJuegos3D) => {
+    grupo.remove(cartWrap);
+    limpiar(cartWrap);
+    cartWrap = new THREE.Group();
+    cartWrap.position.x = ctx.movil ? 0.05 : 0.24;
+    proxies.length = 0;
+    cartuchos.length = 0;
+
+    const lista = (c.juegos || []).slice(0, 6);
+    const w = 0.96, h = 0.135;
+    lista.forEach((j, i) => {
+      const colHex = parseInt(String(j.color || "").replace("#", ""), 16) || p.color;
+      const card = new THREE.Group();
+      const col = i % 2 === 0 ? -1 : 1;
+      const fil = Math.floor(i / 2);
+      const cuerpo = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.64,
+        })),
+      );
+      card.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(colHex, 0.85))));
+
+      // EL MUESCO de cartucho (la muesca superior como cartucho real)
+      const muesca = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.16, 0.02, 0.015)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: colHex, transparent: true, opacity: 0.75 })),
+      );
+      muesca.position.set(0, h / 2 - 0.014, 0.012);
+      card.add(muesca);
+
+      // EL NOMBRE del juego
+      const nom = texto3D(ctx, acotar(j.nombre || "JUEGO", 24).toUpperCase(), { tam: 0.03, prof: 0.01, color: colHex, emis: 0.5 });
+      nom.grupo.position.set(-w / 2 + 0.045, h / 2 - 0.052, 0.012);
+      card.add(nom.grupo);
+      // LA PUNTUACIÓN real en oro
+      if (j.detalle) {
+        const det = texto3D(ctx, acotar(j.detalle, 26).toUpperCase(), { tam: 0.024, prof: 0.008, color: COL_ORO, emis: 0.5 });
+        det.grupo.position.set(-w / 2 + 0.045, -h / 2 + 0.036, 0.012);
+        card.add(det.grupo);
+      }
+      // JUGAR — el verbo en cian, invitación a tocar (solo cartuchos jugables)
+      const jugable = j.jugable !== false;
+      if (jugable) {
+        const jugar = texto3D(ctx, "JUGAR", { tam: 0.026, prof: 0.009, color: 0x3fd6ff, emis: 0.7 });
+        jugar.grupo.position.set(w / 2 - 0.045 - jugar.ancho, -h / 2 + 0.034, 0.012);
+        card.add(jugar.grupo);
+      }
+
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.userData = { salaAccion: { tab: c.tab, accion: "jugar", idx: i } };
+      proxy.visible = jugable; // las placas de datos no roban toques
+      if (jugable) proxies.push(proxy);
+      card.add(proxy);
+
+      const baseY = 0.44 - fil * (h + 0.078);
+      card.position.set(col * (w / 2 + 0.02), baseY, -fil * 0.03);
+      card.userData.baseY = baseY;
+      cartuchos.push({ g: card, baseY, fase: i * 1.7 });
+      cartWrap.add(card);
+    });
+
+    if (!lista.length) {
+      const espera = texto3D(ctx, "LOS JUEGOS LLEGAN A ESTA SALA", { tam: 0.03, prof: 0.01, color: 0x7ab8ff, emis: 0.35 });
+      espera.grupo.position.set(-espera.ancho / 2, 0.42, 0);
+      cartWrap.add(espera.grupo);
+    }
+    grupo.add(cartWrap);
+  };
+  pintar(p);
+
+  // LOS RÉCORDS — la línea fina bajo la peana
+  if (p.records) {
+    const rec = texto3D(ctx, acotar(p.records, 52).toUpperCase(), { tam: 0.028, prof: 0.01, color: 0x9fb8dd, emis: 0.32 });
+    rec.grupo.position.set(-rec.ancho / 2, -0.98, 0.02);
+    grupo.add(rec.grupo);
+  }
+
+  const polvoJ = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.35, 1.9);
+  polvoJ.position.y = -0.7;
+  grupo.add(polvoJ);
+
+  tics.push((t, dt) => {
+    polvoJ.rotation.y += dt * 0.2;
+    copa.rotation.y += dt * 0.8;
+    copa.position.y = Math.sin(t * 1.6) * 0.02;
+    for (const [i, an] of arosTrofeo.entries()) an.rotation.z += dt * (i === 0 ? 0.7 : -0.5);
+    for (const c of cartuchos) {
+      c.g.position.y = c.baseY + Math.sin(t * 1.35 + c.fase) * 0.009;
+    }
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "juegos") return;
+      pintar(nuevo);
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => { reg.liberar(); titulo.mats.forEach((m) => m.dispose()); },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
 // SALA GENÉRICA — v148 ESTACIÓN INFORMATIVA: TODAS las demás ramas viven
 // en volumen real — título extruido + LETRAS INFORMATIVAS (qué es este
 // módulo) + placas de datos vivas del agente + núcleo temático propio
@@ -1387,11 +1579,77 @@ function construirNoticias(ctx: CtxSala3D, p: SalaNoticias3D): Sala3DInstancia {
   polvoAzul.position.y = -0.78;
   grupo.add(polvoAzul);
 
+  // ── v164 LA REDACCIÓN EN VIVO ──────────────────────────────
+  // (1) EL CARTEL EN VIVO — letras rojas que palpitan como un pulso de
+  //     cabina de emisión; junto a él, los ESPECTADORES reales del server.
+  // (2) EL FARO DE ÚLTIMA HORA — anillo dorado que late alrededor del
+  //     núcleo cuando el cable más nuevo sigue caliente (< 15 min).
+  const enVivo = texto3D(ctx, "EN VIVO", { tam: 0.055, prof: 0.02, color: 0xff3d55, emis: 1.0 });
+  enVivo.grupo.position.set(0.62 - enVivo.ancho, 1.08, 0);
+  grupo.add(enVivo.grupo);
+  const penna = new THREE.Mesh(
+    reg.geo(new THREE.CylinderGeometry(0.008, 0.008, 0.09, 6)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: 0xff3d55 })),
+  );
+  penna.position.set(0.58, 1.055, 0);
+  grupo.add(penna);
+
+  let especWrap = new THREE.Group();
+  especWrap.position.set(DESPLAZ, -0.52, 0.05);
+  grupo.add(especWrap);
+  const pintarEspectadores = (n: number | undefined) => {
+    grupo.remove(especWrap);
+    especWrap.traverse((x) => {
+      const m = x as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mm = m.material as THREE.Material | undefined;
+      if (mm) mm.dispose();
+    });
+    especWrap = new THREE.Group();
+    especWrap.position.set(DESPLAZ, -0.52, 0.05);
+    const txt = typeof n === "number" && n > 0
+      ? `${n} ESPECTADORES EN DIRECTO`
+      : "DIRECTO · SINTONIZANDO…";
+    const t = texto3D(ctx, txt, { tam: 0.028, prof: 0.01, color: 0x3fd6ff, emis: 0.65 });
+    t.grupo.position.set(-t.ancho / 2, 0, 0);
+    especWrap.add(t.grupo);
+    grupo.add(especWrap);
+  };
+  pintarEspectadores(p.espectadores);
+
+  // EL FARO — anillo dorado latiendo cuando hay ÚLTIMA HORA
+  const faro = new THREE.Mesh(
+    reg.geo(new THREE.TorusGeometry(0.34, 0.012, 8, 40)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: 0xffd76a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })),
+  );
+  faro.position.copy(nucleo.position);
+  grupo.add(faro);
+  const flash = { t: 0 }; // segundos restantes del destello (recargado al renovar)
+  if (p.ultimo) flash.t = 6;
+
   tics.push((t, dt) => {
     polvoAzul.rotation.y += dt * 0.16;
     corazon.rotation.y += dt * 0.7;
     corazon.rotation.x += dt * 0.35;
     (corazon.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.6 + Math.sin(t * 2.1) * 0.3;
+    // EL PULSO del cartel EN VIVO (latido de cabina, 1.4 Hz)
+    const latido = 0.62 + Math.max(0, Math.sin(t * 8.8)) * 0.55;
+    for (const m of enVivo.mats) {
+      m.emissiveIntensity = latido;
+      m.opacity = 0.72 + latido * 0.28;
+    }
+    // EL FARO late mientras el cable está caliente y se apaga solo
+    if (flash.t > 0) {
+      flash.t -= dt;
+      const ola = 0.5 + Math.sin(t * 5.2) * 0.5;
+      faro.rotation.x += dt * 0.9;
+      faro.rotation.y += dt * 1.3;
+      (faro.material as THREE.MeshBasicMaterial).opacity = Math.min(0.85, flash.t / 3) * ola;
+      faro.scale.setScalar(1 + Math.sin(t * 3.1) * 0.08);
+    } else if ((faro.material as THREE.MeshBasicMaterial).opacity !== 0) {
+      (faro.material as THREE.MeshBasicMaterial).opacity = 0;
+      flash.t = 0;
+    }
     for (const tj of tarjetas) {
       tj.ang += dt * tj.spd;
       tj.g.position.set(Math.cos(tj.ang) * RX, Math.sin(tj.ang) * RY, Math.sin(tj.ang) * 0.14);
@@ -1406,9 +1664,11 @@ function construirNoticias(ctx: CtxSala3D, p: SalaNoticias3D): Sala3DInstancia {
     actualizar: (nuevo) => {
       if (nuevo.tipo !== "noticias") return;
       pintarTarjetas(nuevo.noticias);
+      pintarEspectadores(nuevo.espectadores);
+      if (nuevo.ultimo) flash.t = 6;
     },
     tic: (t, dt) => { for (const f of tics) f(t, dt); },
-    liberar: () => { reg.liberar(); titulo.mats.forEach((m) => m.dispose()); },
+    liberar: () => { reg.liberar(); titulo.mats.forEach((m) => m.dispose()); enVivo.mats.forEach((m) => m.dispose()); },
   };
 }
 
@@ -2777,6 +3037,7 @@ export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstanc
     case "contenido": return construirContenido(ctx, p);
     case "misiones": return construirMisiones(ctx, p);
     case "ranking": return construirRanking(ctx, p);
+    case "juegos": return construirJuegos(ctx, p);
     default: return construirGenerica(ctx, p);
   }
 }

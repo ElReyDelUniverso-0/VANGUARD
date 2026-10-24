@@ -15,6 +15,8 @@ import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { WIKI_ENTRIES, WIKI_CATS, type WikiEntry, type WikiCat } from "@/lib/wiki-data";
+// v164 TODO EN VOLUMEN — la enciclopedia alimenta su sala 3D con sus entradas
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 interface WikiExtract { title: string; extract: string; thumbnail?: string; url?: string; }
@@ -41,6 +43,21 @@ export function EncyclopediaPanel() {
       (!ql || e.title.toLowerCase().includes(ql) || e.subtitle.toLowerCase().includes(ql) || e.desc.toLowerCase().includes(ql))
     );
   }, [q, cat]);
+
+  // v164 SALA EN VOLUMEN: la enciclopedia en filas de cristal 3D (leídas tachadas)
+  useSala3DContenido(
+    "encyclopedia",
+    "Enciclopedia",
+    "#7AB8FF",
+    `${readSet.length}/${WIKI_ENTRIES.length} ENTRADAS LEÍDAS · +5 XP CADA UNA`,
+    filtered.slice(0, 6).map((e) => ({
+      t: e.title,
+      v: e.dates?.slice(0, 14) || "",
+      img: e.img || undefined,
+      p: Math.round((readSet.length / Math.max(1, WIKI_ENTRIES.length)) * 100),
+      color: readSet.includes(e.id) ? "#3DDC84" : "#7AB8FF",
+    })),
+  );
 
   const openDetail = (e: WikiEntry) => {
     sfx.tab();

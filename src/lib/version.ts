@@ -103,6 +103,34 @@
 //     — nada flota fuera del edificio tras los retranqueos.
 // Herencia v162 LA MEGAPÓLIS (146 placas de módulo en tótems, rótulo de
 // proximidad, colisión con tótems) y v161 LA CIUDAD VIVA y todo lo anterior.
-export const APP_VERSION = "v163.0";
-export const APP_CODENAME = "LA CIUDAD TALLADA";
+// v164.0: LA REDACCIÓN EN VIVO — «completa vanguard 3D: las noticias en vivo
+// y más, el menú de vanguard 3D completamente, también todas las
+// informaciones, y todo texto que tenía vanguard 3D, y los juegos también».
+// (1) LA REDACCIÓN EN VIVO (salas-3d.ts): la sala de noticias RESPIRA —
+//     cartel rojo EN VIVO con latido de cabina (1.4 Hz), contador de
+//     ESPECTADORES reales (/api/presence) y FARO DE ÚLTIMA HORA: anillo
+//     dorado que late alrededor del núcleo cuando el cable más nuevo nació
+//     hace menos de 15 minutos (news-panel manda ultimo/ultimoTitulo).
+// (2) EL TELETIPO DE LA CIUDAD (mundo-webgl.tsx): el titular EN VIVO flota
+//     sobre la plaza de la megápolis — cartel rojo de ÚLTIMA HORA que late
+//     + titular REAL del feed (sintonizarTeletipo: 1 fetch/min a /api/news
+//     al abrir la ciudad; onTeletipoEv re-escribe en vivo si el módulo
+//     noticias emite). Billboard a cámara SOLO yaw — nunca persigue. La
+//     ciudad entera respira con las noticias aunque nunca abras el módulo.
+// (3) LA GALERÍA DE JUEGOS (salas-3d.ts): sala insignia nueva — los juegos
+//     REALES de Vanguard como CARTUCHOS 3D con su puntuación, el trofeo
+//     dorado girando con aros en órbita, la partida en curso latiendo y
+//     JUGAR tocable desde dentro del mundo (vg:sala3d-accion jugar).
+//     ARCADE emite sus 8 cartuchos con récords reales + juego del día en
+//     oro; MINIJUEGO emite Threat Assessment + récords del piloto.
+// (4) TODO TEXTO EN 3D: el emisor universal llega a 17 módulos nuevos —
+//     redacción, enciclopedia, atlas del poder, sala OSINT, briefings,
+//     canal brief, comunidad, escuadra, retos diarios, briefing diario,
+//     en vivo, directos, notificaciones, recompensas, apuestas de guerra,
+//     torneos y wikiguerra — cada sala de módulo muestra SU contenido real
+//     en filas de cristal con valores en oro y barras de volumen.
+// Herencia v163 LA CIUDAD TALLADA (torres esculpidas, decoraciones por
+// distrito), v162 LA MEGAPÓLIS (146 placas) y todo lo anterior.
+export const APP_VERSION = "v164.0";
+export const APP_CODENAME = "LA REDACCIÓN EN VIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

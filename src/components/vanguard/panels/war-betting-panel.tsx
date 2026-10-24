@@ -7,6 +7,8 @@
 import { useState } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { WAR_BETS, type WarBet } from "@/lib/game-data";
+// v164 TODO EN VOLUMEN — la casa de apuestas alimenta su sala 3D con cuotas reales
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Dice5, Coins, Trophy, TrendingUp, Swords, Check, X, Gift, Layers, Target } from "lucide-react";
@@ -48,6 +50,19 @@ export function WarBettingPanel() {
     return acc * (side === "A" ? bet.oddsA : bet.oddsB);
   }, 1) * (pickEntries.length >= 2 ? PARLEY_MARGEN : 1);
   const parleyPayout = Math.round(parleyStake * combinedOdds);
+
+  // v164 SALA EN VOLUMEN: el tablero de cuotas reales en filas de cristal 3D
+  useSala3DContenido(
+    "apuestas",
+    "Apuestas de Guerra",
+    "#FF7A5C",
+    `${WAR_BETS.length} CONFLICTOS CON CUOTA · PARLEY x${combinedOdds.toFixed(2)}`,
+    WAR_BETS.slice(0, 6).map((b) => ({
+      t: b.warName,
+      v: `${b.oddsA.toFixed(2)} / ${b.oddsB.toFixed(2)}`,
+      color: b.category === "ACTUAL" ? "#FF4D5E" : b.category === "MODERNA" ? "#FF7A5C" : "#F5C542",
+    })),
+  );
 
   const winRate = betStats.placed > 0 ? Math.round((betStats.won / betStats.placed) * 100) : 0;
 

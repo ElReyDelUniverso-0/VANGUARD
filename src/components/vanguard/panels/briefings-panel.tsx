@@ -5,6 +5,8 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { BRIEFINGS, CONFLICTS, type Briefing } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v164 TODO EN VOLUMEN — los briefings clasificados alimentan su sala 3D
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { FileText, Lock, CheckCircle2, Eye, Coins, Clock, ChevronRight, X, Search, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,6 +44,19 @@ export function BriefingsPanel() {
     }
     return true;
   });
+
+  // v164 SALA EN VOLUMEN: los informes clasificados en filas de cristal 3D
+  useSala3DContenido(
+    "briefings",
+    "Briefings",
+    "#3FD6FF",
+    `${filtered.length} INFORMES EN SALA · CLASIFICACION VIVA`,
+    filtered.slice(0, 6).map((b) => ({
+      t: b.title,
+      v: b.classification === "SECRETO" ? "SECRETO" : b.classification === "RESERVADO" ? "RESERVADO" : "PUBLICO",
+      color: b.classification === "SECRETO" ? "#FF4D5E" : b.classification === "RESERVADO" ? "#F5C542" : "#3DDC84",
+    })),
+  );
 
   const handleOpen = (b: Briefing) => {
     if (!isUnlocked(b)) {

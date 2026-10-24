@@ -16,6 +16,7 @@
 // ============================================================
 import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { Flag } from "@/lib/flags";
 import { IlustracionViva } from "@/components/vanguard/ilustraciones-vivas";
 import { projectLatLng } from "@/components/vanguard/world-map-svg";
@@ -88,6 +89,19 @@ export function AtlasPanel() {
     if (region !== "TODAS") r = r.filter((p) => p.region === region);
     return r;
   }, [q, region]);
+
+  // v164 SALA EN VOLUMEN: los protagonistas del poder en filas de cristal 3D
+  useSala3DContenido(
+    "atlas",
+    "Atlas del Poder",
+    "#C9A0FF",
+    `${paisesFiltrados.length} PAÍSES · ${personasFiltradas.length} PERSONAS · EDICIÓN 2026`,
+    personasFiltradas.slice(0, 6).map((pr: PersonaAtlas) => ({
+      t: pr.nombre,
+      v: pr.categoria?.slice(0, 12).toUpperCase() || "",
+      color: COLOR_CATEGORIA[pr.categoria] || undefined,
+    })),
+  );
 
   const pinesPersonas = useMemo(() => {
     return personasFiltradas.map((p) => ({ ...p, xy: projectLatLng(p.lat, p.lng) })).filter((p) => p.xy.x > 0 && p.xy.x < 1000);

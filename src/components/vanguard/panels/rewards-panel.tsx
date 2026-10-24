@@ -4,6 +4,8 @@ import { WEEKLY_REWARDS, RANKS, getRankForLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Trophy, Coins, Gem, Star, Check, Lock, Calendar, Gift, Flame, Package } from "lucide-react";
+// v164 TODO EN VOLUMEN — la vitrina de recompensas alimenta su sala 3D
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -50,6 +52,20 @@ export function RewardsPanel() {
 
   const rankInfo = getRankForLevel(level);
   const nextRank = RANKS.find((r) => r.minLevel > level);
+
+  // v164 SALA EN VOLUMEN: la semana y la racha en filas de cristal 3D
+  useSala3DContenido(
+    "recompensas",
+    "Recompensas",
+    "#F5C542",
+    `SEMANA ${weekKey} · RACHA ${streak} DÍAS · NIVEL ${level}`,
+    WEEKLY_REWARDS.slice(0, 6).map((rw, i) => ({
+      t: rw.title,
+      v: claimedThisWeek.includes(i) ? "RECLAMADA" : `+${rw.coinReward}`,
+      p: claimedThisWeek.includes(i) ? 100 : (i <= today ? 50 : 4),
+      color: claimedThisWeek.includes(i) ? "#3DDC84" : i === today ? "#FFC94D" : "#F5C542",
+    })),
+  );
 
   return (
     <div className="space-y-3">

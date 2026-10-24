@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v164 TODO EN VOLUMEN — el tablón alimenta su sala 3D con avisos reales
+import { useSala3DContenido } from "../use-sala3d-contenido";
 
 const typeColor: Record<string, string> = {
   ACHIEVEMENT: "text-green-hud border-green-hud bg-green-hud/30",
@@ -72,6 +74,19 @@ export function NotificationsPanel() {
 
   const filtered = filter === "UNREAD" ? allNotifications.filter((n) => !n.read) : allNotifications;
   const unreadCount = allNotifications.filter((n) => !n.read).length;
+
+  // v164 SALA EN VOLUMEN: el tablón de avisos en filas de cristal 3D
+  useSala3DContenido(
+    "notificaciones",
+    "Notificaciones",
+    "#B48CFF",
+    `${unreadCount} SIN LEER · ${allNotifications.length} AVISOS`,
+    filtered.slice(0, 6).map((n) => ({
+      t: n.title || "AVISO",
+      v: n.read ? "LEÍDO" : "NUEVO",
+      color: n.read ? "#8B98AD" : "#B48CFF",
+    })),
+  );
 
   const markRead = (id: string) => {
     setReadIds((prev) => [...prev, id]);

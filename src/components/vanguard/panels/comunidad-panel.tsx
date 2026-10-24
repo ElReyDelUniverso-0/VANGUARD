@@ -16,6 +16,8 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+// v164 TODO EN VOLUMEN — la sala de agencias alimenta su mundo con cables frescos
+import { useSala3DContenido } from "../use-sala3d-contenido";
 import { IlustracionViva } from "@/components/vanguard/ilustraciones-vivas";
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 import { sfx } from "@/lib/sound";
@@ -77,6 +79,19 @@ export function ComunidadPanel() {
 
   const sel: Agencia = agenciaDe(selId) ?? AGENCIAS[0];
   const meta = CATEGORIA_META[sel.categoria];
+
+  // v164 SALA EN VOLUMEN: los cables de la agencia en filas de cristal 3D
+  useSala3DContenido(
+    "comunidad",
+    "Comunidad OSINT",
+    "#3FD6FF",
+    `${cables.length} CABLES DE LA CASA · ${AGENCIAS.length} AGENCIAS AL DIA`,
+    cables.slice(0, 6).map((c) => ({
+      t: c.title || "CABLE",
+      v: (c.tacticalTag || "INFO").toUpperCase().slice(0, 10),
+      color: "#3FD6FF",
+    })),
+  );
 
   // ── pulso real: cables de la casa, frescos cada 5 minutos ──
   useEffect(() => {
