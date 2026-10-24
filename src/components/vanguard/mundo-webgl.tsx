@@ -528,6 +528,11 @@ class MundoWGL {
   ciudadSucia = false;
   proxiesCiudad: THREE.Mesh[] = [];
   ciudadEdificios: { grupo: THREE.Group; x0: number; y0: number; z0: number; fase: number; fig: THREE.Object3D | null; plateMat: THREE.MeshStandardMaterial | null; nacido: boolean }[] = [];
+  // v163 — LA CIUDAD TALLADA: cada torre se esculpe en 3 cuerpos con
+  // retranqueos + portal + antena con baliza, y el vacío negro alrededor
+  // se puebla con DECORACIONES TEMÁTICAS del módulo que orbitan despacio
+  ciudadDecor: { g: THREE.Group; fase: number }[] = [];
+  ciudadBlinkers: THREE.MeshBasicMaterial[] = [];
   ciudadPlateMats: THREE.MeshStandardMaterial[] = [];
   ciudadTituloMat: THREE.MeshStandardMaterial | null = null;
   ciudadSalaVisible = false;
@@ -3199,6 +3204,9 @@ class MundoWGL {
     this.ciudadRotuloTexto = null;
     this.ciudadRotuloNombre = "";
     this.ciudadRotuloColor = 0;
+    // v163 — las decoraciones viajan dentro de ciudadGrupo (traverse dispone)
+    this.ciudadDecor = [];
+    this.ciudadBlinkers = [];
   }
 
   // v159 — cirugía de dispose: geometrías y materiales PROPIOS de un grupo
@@ -3211,6 +3219,272 @@ class MundoWGL {
       if (Array.isArray(mat)) mat.forEach((x) => x.dispose());
       else if (mat) mat.dispose();
     });
+  }
+
+  // v163 — LAS DECORACIONES DEL MÓDULO: 3 piezas temáticas (2 en lite) que
+  // orbitan cada torre DENTRO del vacío negro — el fondo nunca está vacío y
+  // cada distrito se delata por lo que vuela a su lado. Piezas pequeñas
+  // (≤0.26), a radio 1.15–1.5 (fuera del cuerpo y del rótulo), sin proxies:
+  // no roban toques. El grupo entero gira despacio en ticCiudad.
+  private decoracionModulo(key: string, matHi: THREE.Material, matGlow: THREE.Material, lite: boolean): THREE.Group {
+    const g = new THREE.Group();
+    const matOsc = new THREE.MeshStandardMaterial({ color: 0x0b1526, metalness: 0.7, roughness: 0.4 });
+    const caja = (w: number, h: number, d: number) => new THREE.BoxGeometry(w, h, d);
+    const nueva = (x: number, y: number, z: number) => {
+      const p = new THREE.Group();
+      p.position.set(x, y, z);
+      g.add(p);
+      return p;
+    };
+    const poner = (p: THREE.Group, geo: THREE.BufferGeometry, m: THREE.Material, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1) => {
+      const mesh = new THREE.Mesh(geo, m);
+      mesh.position.set(x, y, z);
+      mesh.rotation.set(rx, ry, rz);
+      mesh.scale.set(sx, sy, sz);
+      p.add(mesh);
+      return mesh;
+    };
+    // LOS TRES PUESTOS fijos alrededor de la torre (el 3º solo escritorio)
+    const s1: [number, number, number] = [1.32, 1.62, 0.30];
+    const s2: [number, number, number] = [-1.24, 2.02, -0.44];
+    const s3: [number, number, number] = [0.42, 2.30, -1.34];
+    switch (key) {
+      case "inicio": { // LA BASE: bandera + casa mascota + aro de llegada
+        const p = nueva(...s1);
+        poner(p, new THREE.CylinderGeometry(0.008, 0.008, 0.24, 5), matOsc, 0, 0.12, 0);
+        poner(p, caja(0.12, 0.07, 0.012), matHi, 0.062, 0.2, 0);
+        const q = nueva(...s2);
+        poner(q, caja(0.14, 0.09, 0.11), matOsc, 0, 0.045, 0);
+        poner(q, new THREE.ConeGeometry(0.1, 0.08, 4), matHi, 0, 0.13, 0, 0, Math.PI / 4, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.09, 0.012, 6, 14), matGlow, 0, 0, 0, Math.PI / 2.4, 0.4, 0);
+        }
+        break;
+      }
+      case "inteligencia": { // OSINT: satélite espía + plato radar + blip
+        const p = nueva(...s1);
+        poner(p, caja(0.09, 0.05, 0.13), matOsc, 0, 0, 0);
+        poner(p, caja(0.14, 0.002, 0.06), matHi, 0.14, 0, 0);
+        poner(p, caja(0.14, 0.002, 0.06), matHi, -0.14, 0, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.CylinderGeometry(0.006, 0.01, 0.1, 5), matOsc, 0, 0.05, 0);
+        poner(q, new THREE.TorusGeometry(0.08, 0.012, 6, 16), matHi, 0, 0.12, 0, -0.8, 0, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.SphereGeometry(0.026, 6, 6), matGlow, 0, 0, 0);
+          poner(r, new THREE.TorusGeometry(0.06, 0.006, 6, 12), matGlow, 0, 0, 0, 0.6, 0.3, 0);
+        }
+        break;
+      }
+      case "hangar": { // SIMULADORES: caza en miniatura + cajas de carga
+        const p = nueva(...s1);
+        poner(p, new THREE.ConeGeometry(0.045, 0.2, 6), matOsc, 0, 0, 0, Math.PI / 2, 0, 0);
+        poner(p, caja(0.16, 0.008, 0.05), matHi, 0, 0, -0.02);
+        const q = nueva(...s2);
+        poner(q, caja(0.1, 0.08, 0.1), matOsc, 0.03, 0.04, 0, 0, 0.4, 0);
+        poner(q, caja(0.09, 0.07, 0.09), matHi, -0.05, 0.115, 0.02, 0, -0.3, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.08, 0.01, 6, 14), matGlow, 0, 0, 0, 1.2, 0, 0);
+        }
+        break;
+      }
+      case "juego": { // DUELOS: dado + trofeo + estrella
+        const p = nueva(...s1);
+        poner(p, caja(0.11, 0.11, 0.11), matOsc, 0, 0.055, 0, 0.3, 0.5, 0.2);
+        poner(p, caja(0.03, 0.03, 0.004), matGlow, 0, 0.055, 0.058, 0.3, 0.5, 0.2);
+        const q = nueva(...s2);
+        poner(q, new THREE.CylinderGeometry(0.05, 0.07, 0.03, 10), matHi, 0, 0.015, 0);
+        poner(q, new THREE.SphereGeometry(0.05, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2), matHi, 0, 0.03, 0, Math.PI, 0, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.OctahedronGeometry(0.07, 0), matGlow, 0, 0, 0);
+        }
+        break;
+      }
+      case "mercado": { // TIENDA: moneda + gema + caja de mercancía
+        const p = nueva(...s1);
+        poner(p, new THREE.CylinderGeometry(0.09, 0.09, 0.018, 16), matHi, 0, 0, 0, Math.PI / 2.4, 0, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.OctahedronGeometry(0.075, 0), matGlow, 0, 0.08, 0);
+        poner(q, caja(0.1, 0.07, 0.1), matOsc, 0, -0.06, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, caja(0.11, 0.08, 0.11), matOsc, 0, 0, 0, 0, 0.6, 0);
+          poner(r, caja(0.115, 0.012, 0.02), matHi, 0, 0.01, 0.05, 0, 0.6, 0);
+        }
+        break;
+      }
+      case "archivo": { // EXPEDIENTES: carpetas desclasificadas + sello
+        const p = nueva(...s1);
+        poner(p, caja(0.16, 0.012, 0.11), matOsc, 0, 0, 0, 0, 0, 0.16);
+        poner(p, caja(0.16, 0.012, 0.11), matHi, 0.01, 0.018, 0, 0, 0, -0.1);
+        const q = nueva(...s2);
+        poner(q, new THREE.TorusGeometry(0.07, 0.014, 6, 14), matGlow, 0, 0, 0, 0.7, 0.2, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, caja(0.12, 0.02, 0.09), matOsc, 0, 0, 0, 0.2, 0.5, -0.12);
+        }
+        break;
+      }
+      case "comando": { // MANDO: diana + flecha de orden
+        const p = nueva(...s1);
+        poner(p, new THREE.TorusGeometry(0.09, 0.012, 6, 18), matHi, 0, 0, 0);
+        poner(p, new THREE.SphereGeometry(0.028, 8, 8), matGlow, 0, 0, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.ConeGeometry(0.05, 0.13, 6), matHi, 0, 0, 0, 0, 0, -Math.PI / 2);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.05, 0.008, 6, 12), matGlow, 0, 0, 0, 0.4, 0.6, 0);
+        }
+        break;
+      }
+      case "observatorio": { // PREDICCIONES: cúpula + telescopio + estrella
+        const p = nueva(...s1);
+        poner(p, new THREE.SphereGeometry(0.1, 10, 8), matOsc, 0, 0.04, 0, 0, 0, 0, 1, 0.66, 1);
+        poner(p, new THREE.CylinderGeometry(0.02, 0.026, 0.16, 7), matHi, 0.05, 0.12, 0, 0, 0, -0.85);
+        const q = nueva(...s2);
+        poner(q, new THREE.OctahedronGeometry(0.055, 0), matGlow, 0, 0, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.07, 0.01, 6, 14), matHi, 0, 0, 0, 0.9, 0.3, 0);
+        }
+        break;
+      }
+      case "estrategia": { // MAPAS: tablero + dos banderitas de frente
+        const p = nueva(...s1);
+        poner(p, caja(0.2, 0.008, 0.14), matOsc, 0, 0, 0, 0.35, 0.2, 0);
+        poner(p, caja(0.006, 0.07, 0.006), matHi, -0.05, 0.04, 0.02, 0.35, 0.2, 0);
+        poner(p, caja(0.04, 0.025, 0.006), matGlow, -0.032, 0.066, 0.028, 0.35, 0.2, 0);
+        const q = nueva(...s2);
+        poner(q, caja(0.006, 0.06, 0.006), matOsc, 0, 0.03, 0);
+        poner(q, caja(0.035, 0.022, 0.006), matHi, 0.018, 0.05, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, caja(0.14, 0.006, 0.1), matOsc, 0, 0, 0, -0.3, -0.4, 0);
+        }
+        break;
+      }
+      case "emisora": { // EMISORA: altavoz + ondas de audio
+        const p = nueva(...s1);
+        poner(p, caja(0.1, 0.13, 0.07), matOsc, 0, 0.06, 0);
+        poner(p, new THREE.ConeGeometry(0.03, 0.02, 10), matGlow, 0, 0.06, 0.038, Math.PI / 2, 0, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.TorusGeometry(0.06, 0.007, 6, 14), matHi, 0, 0, 0, 0.5, 0.2, 0);
+        poner(q, new THREE.TorusGeometry(0.11, 0.007, 6, 14), matHi, 0, 0.03, 0, 0.5, 0.2, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.SphereGeometry(0.022, 6, 6), matGlow, 0, 0, 0);
+        }
+        break;
+      }
+      case "oscsuro": { // VERDAD CRUDA: monolitos rotos + ojo encendido
+        const p = nueva(...s1);
+        poner(p, new THREE.ConeGeometry(0.05, 0.2, 4), matOsc, 0, 0.1, 0, 0.15, 0.4, -0.1);
+        const q = nueva(...s2);
+        poner(q, caja(0.07, 0.16, 0.05), matOsc, 0, 0.08, 0, 0, -0.3, 0.12);
+        poner(q, new THREE.SphereGeometry(0.02, 6, 6), matGlow, 0.01, 0.11, 0.028);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.ConeGeometry(0.04, 0.14, 4), matOsc, 0, 0.07, 0, -0.2, 0.9, 0.15);
+        }
+        break;
+      }
+      case "creadores": { // MEMES: prisma + brotes de pintura
+        const p = nueva(...s1);
+        poner(p, new THREE.OctahedronGeometry(0.09, 0), matHi, 0, 0.09, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.SphereGeometry(0.032, 8, 8), matGlow, -0.05, 0, 0);
+        poner(q, new THREE.SphereGeometry(0.026, 8, 8), matHi, 0.05, 0.03, 0.02);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.OctahedronGeometry(0.05, 0), matGlow, 0, 0.05, 0);
+        }
+        break;
+      }
+      case "social": { // FOROS: red de nodos conectados
+        const p = nueva(...s1);
+        poner(p, new THREE.SphereGeometry(0.032, 8, 8), matHi, -0.07, 0.02, 0);
+        poner(p, new THREE.SphereGeometry(0.032, 8, 8), matHi, 0.07, 0.02, 0);
+        poner(p, new THREE.SphereGeometry(0.036, 8, 8), matGlow, 0, 0.11, 0);
+        poner(p, new THREE.CylinderGeometry(0.005, 0.005, 0.14, 5), matOsc, 0, 0.065, 0, 0, 0, Math.PI / 2.1);
+        poner(p, new THREE.CylinderGeometry(0.005, 0.005, 0.13, 5), matOsc, -0.035, 0.06, 0, 0, 0, -Math.PI / 2.4);
+        const q = nueva(...s2);
+        poner(q, new THREE.TorusGeometry(0.075, 0.008, 6, 16), matHi, 0, 0, 0, 0.7, 0.3, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.SphereGeometry(0.026, 6, 6), matGlow, 0, 0, 0);
+        }
+        break;
+      }
+      case "sistema": { // AJUSTES: engranaje + escudo
+        const p = nueva(...s1);
+        poner(p, new THREE.TorusGeometry(0.08, 0.016, 6, 16), matOsc, 0, 0.08, 0);
+        for (let k = 0; k < 4; k++) {
+          const a = (k / 4) * Math.PI * 2;
+          poner(p, caja(0.03, 0.03, 0.02), matOsc, Math.cos(a) * 0.095, 0.08 + Math.sin(a) * 0.095, 0);
+        }
+        poner(p, new THREE.SphereGeometry(0.024, 6, 6), matGlow, 0, 0.08, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.CylinderGeometry(0.07, 0.07, 0.016, 3), matHi, 0, 0.06, 0, 0.4, 0, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.06, 0.008, 6, 14), matGlow, 0, 0, 0, 1.1, 0.2, 0);
+        }
+        break;
+      }
+      case "experimental": { // LABORATORIO: matraz + burbujas imposibles
+        const p = nueva(...s1);
+        poner(p, new THREE.ConeGeometry(0.07, 0.14, 10), matOsc, 0, 0.07, 0);
+        poner(p, new THREE.CylinderGeometry(0.012, 0.012, 0.06, 6), matHi, 0, 0.17, 0);
+        poner(p, new THREE.SphereGeometry(0.028, 6, 6), matGlow, 0, 0.12, 0.03);
+        const q = nueva(...s2);
+        poner(q, new THREE.SphereGeometry(0.03, 8, 8), matGlow, -0.04, 0.02, 0);
+        poner(q, new THREE.SphereGeometry(0.022, 8, 8), matHi, 0.05, 0.06, 0.02);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.055, 0.009, 6, 14), matGlow, 0, 0, 0, 0.8, 0.5, 0);
+        }
+        break;
+      }
+      case "arquitecto": { // AUTOMATIZACIÓN: bloques flotando + gancho
+        const p = nueva(...s1);
+        poner(p, caja(0.09, 0.07, 0.09), matOsc, -0.03, 0.035, 0, 0, 0.3, 0);
+        poner(p, caja(0.07, 0.06, 0.07), matHi, 0.05, 0.1, 0.02, 0, -0.2, 0);
+        const q = nueva(...s2);
+        poner(q, new THREE.CylinderGeometry(0.007, 0.007, 0.14, 5), matOsc, 0, 0.07, 0);
+        poner(q, new THREE.ConeGeometry(0.03, 0.05, 6), matHi, 0, -0.02, 0, Math.PI, 0, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, caja(0.08, 0.05, 0.08), matOsc, 0, 0, 0, 0, 0.8, 0.1);
+        }
+        break;
+      }
+      default: { // comodín: el octaedro Vanguard + satélite menor
+        const p = nueva(...s1);
+        poner(p, new THREE.OctahedronGeometry(0.085, 0), matHi, 0, 0.085, 0);
+        const q = nueva(...s2);
+        poner(q, caja(0.07, 0.04, 0.1), matOsc, 0, 0.02, 0);
+        poner(q, caja(0.11, 0.002, 0.045), matGlow, 0, 0.02, 0);
+        if (!lite) {
+          const r = nueva(...s3);
+          poner(r, new THREE.TorusGeometry(0.07, 0.01, 6, 14), matHi, 0, 0, 0, 0.6, 0.4, 0);
+        }
+        break;
+      }
+    }
+    // EL CARRIL: un aro tenue marca la órbita de las piezas (solo escritorio)
+    if (!lite) {
+      const carril = new THREE.Mesh(
+        new THREE.TorusGeometry(1.34, 0.006, 5, 40),
+        new THREE.MeshBasicMaterial({ color: 0x3fd6ff, transparent: true, opacity: 0.13 }),
+      );
+      carril.rotation.x = -Math.PI / 2;
+      carril.position.y = 1.9;
+      g.add(carril);
+    }
+    return g;
   }
 
   // LA FIGURA PROPIA DE CADA SECCIÓN — 16 siluetas que se reconocen
@@ -3351,6 +3625,8 @@ class MundoWGL {
     this.ciudadRotuloPlaca = null;
     this.ciudadRotuloTexto = null;
     this.ciudadRotuloNombre = "";
+    this.ciudadDecor = [];
+    this.ciudadBlinkers = [];
 
     // v159 — PALETA DEL VACÍO: suelo y calle casi negros — la luz la ponen
     // los neones y las ventanas, no el asfalto (fondo negro limpio)
@@ -3439,26 +3715,59 @@ class MundoWGL {
       aro.rotation.x = -Math.PI / 2;
       aro.position.set(-lado * 0.36, 0.165, 0);
       ed.add(aro);
-      // v159 — LA TORRE DE VIDRIO OSCURO: cuerpo casi negro con un filo vivo
-      // del color del módulo (más elegante que el bloque pintado de antes)
-      const torreGeo = new THREE.BoxGeometry(0.94, h, 0.94);
+      // v163 — LA TORRE TALLADA: rascacielos de 3 CUERPOS con retranqueos
+      // (base ancha, cintura, corona estrecha) + PORTAL de entrada con
+      // dintel neón mirando a la avenida + ANTENA con baliza que parpadea.
+      // Más edificio de verdad que el bloque único de la v160.
+      const h1 = h * 0.46, h2 = h * 0.34, h3 = h - h1 - h2;
+      const yBase = 0.16;
+      const torreGeo = new THREE.BoxGeometry(0.94, h1, 0.94);
       const matTorre = new THREE.MeshStandardMaterial({ color: 0x14203a, emissive: hex, emissiveIntensity: 0.14, metalness: 0.78, roughness: 0.26 });
       const torre = new THREE.Mesh(torreGeo, matTorre);
-      torre.position.y = 0.16 + h / 2;
+      torre.position.y = yBase + h1 / 2;
       ed.add(torre);
-      // LA COLUMNA DE NEÓN y LA CORONA — el filo que delata el módulo de noche
-      const espina = new THREE.Mesh(
-        new THREE.BoxGeometry(0.03, h, 0.03),
-        new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.92 }),
-      );
-      espina.position.set(0, 0.16 + h / 2, 0.472);
+      const cintura = new THREE.Mesh(new THREE.BoxGeometry(0.78, h2, 0.78), matTorre);
+      cintura.position.y = yBase + h1 + h2 / 2;
+      ed.add(cintura);
+      const coronaCuerpo = new THREE.Mesh(new THREE.BoxGeometry(0.60, h3, 0.60), matTorre);
+      coronaCuerpo.position.y = yBase + h1 + h2 + h3 / 2;
+      ed.add(coronaCuerpo);
+      // EL PORTAL — la puerta del módulo con su dintel encendido
+      const matGlowT = new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.9 });
+      const xF = -lado * 0.477;
+      const puerta = new THREE.Mesh(new THREE.BoxGeometry(0.012, Math.min(0.17, h1 - 0.04), 0.24), matPodio);
+      puerta.position.set(xF, yBase + Math.min(0.17, h1 - 0.04) / 2, 0);
+      ed.add(puerta);
+      for (const pz of [-0.16, 0.16]) {
+        const pilar = new THREE.Mesh(new THREE.BoxGeometry(0.05, Math.min(0.22, h1 - 0.02), 0.06), matTorre);
+        pilar.position.set(xF, yBase + Math.min(0.22, h1 - 0.02) / 2, pz);
+        ed.add(pilar);
+      }
+      const dintel = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.032, 0.40), matGlowT);
+      dintel.position.set(xF, yBase + Math.min(0.24, h1 - 0.03), 0);
+      ed.add(dintel);
+      // LA COLUMNA DE NEÓN por cuerpo — la espina que delata el módulo de noche
+      const espina = new THREE.Mesh(new THREE.BoxGeometry(0.03, h1, 0.03), matGlowT);
+      espina.position.set(0, yBase + h1 / 2, 0.472);
       ed.add(espina);
+      const espina2 = new THREE.Mesh(new THREE.BoxGeometry(0.03, h2, 0.03), matGlowT);
+      espina2.position.set(0, yBase + h1 + h2 / 2, 0.392);
+      ed.add(espina2);
+      // LA CORONA luminosa sobre el cuerpo alto + la ANTENA con baliza
       const corona = new THREE.Mesh(
-        new THREE.BoxGeometry(1.0, 0.035, 1.0),
-        new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.72 }),
+        new THREE.BoxGeometry(0.66, 0.035, 0.66),
+        matGlowT,
       );
-      corona.position.y = 0.16 + h + 0.017;
+      corona.position.y = yBase + h + 0.017;
       ed.add(corona);
+      const masto = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.017, 0.2, 5), matPoste);
+      masto.position.set(0.2, yBase + h + 0.1, 0.2);
+      ed.add(masto);
+      const matCh = new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.3 });
+      const chispa = new THREE.Mesh(new THREE.SphereGeometry(0.024, 6, 6), matCh);
+      chispa.position.set(0.2, yBase + h + 0.21, 0.2);
+      ed.add(chispa);
+      this.ciudadBlinkers.push(matCh);
       if (!this.calidadBaja) {
         const filo = new THREE.LineSegments(
           new THREE.EdgesGeometry(torreGeo),
@@ -3468,17 +3777,28 @@ class MundoWGL {
         ed.add(filo);
       }
       // VENTANAS mirando a la avenida (piscinas compartidas que laten) —
-      // v159: retícula ordenada 4×3, más ventanas, mejor silueta nocturna
+      // v163: encajadas en CADA cuerpo — retícula en la base + cinta en la
+      // cintura; nada flota fuera del edificio
       if (!this.calidadBaja) {
-        const filas = h > 0.95 ? 4 : 3;
+        const filas = h1 > 0.44 ? 3 : 2;
         for (let f = 0; f < filas; f++) {
           for (let c = 0; c < 3; c++) {
             const win = new THREE.Mesh(
-              new THREE.BoxGeometry(0.012, 0.085, 0.12),
+              new THREE.BoxGeometry(0.012, 0.075, 0.11),
               this.ciudadVentanaMats[(i + f + c) % this.ciudadVentanaMats.length],
             );
-            win.position.set(-lado * 0.477, 0.38 + f * 0.26, -0.28 + c * 0.28);
+            win.position.set(-lado * 0.477, yBase + 0.16 + f * 0.105, -0.26 + c * 0.26);
             ed.add(win);
+          }
+        }
+        if (h2 > 0.26) {
+          for (let c = 0; c < 2; c++) {
+            const w2 = new THREE.Mesh(
+              new THREE.BoxGeometry(0.012, 0.07, 0.1),
+              this.ciudadVentanaMats[(i + 2) % this.ciudadVentanaMats.length],
+            );
+            w2.position.set(-lado * 0.393, yBase + h1 + h2 * 0.55, -0.15 + c * 0.3);
+            ed.add(w2);
           }
         }
       }
@@ -3488,6 +3808,12 @@ class MundoWGL {
       fig.scale.setScalar(movil ? 0.9 : 1.05);
       fig.position.y = 0.16 + h + 0.17;
       ed.add(fig);
+      // v163 — LAS DECORACIONES DEL MÓDULO: el vacío negro alrededor de la
+      // torre se puebla con 3 piezas temáticas que orbitan despacio (2 en
+      // móvil) — cada distrito se reconoce por lo que vuela a su lado
+      const dec = this.decoracionModulo(sec.key, matHi, matGlowT, this.calidadBaja);
+      ed.add(dec);
+      this.ciudadDecor.push({ g: dec, fase: i * 1.7 });
       // EL NOMBRE extruido — inclinado 45°: se lee volando por la avenida
       // Y también al llegar por la puerta (lección qa-v158-10)
       if (this.fuente && sec.label) {
@@ -4276,6 +4602,14 @@ class MundoWGL {
       if (!ed.nacido) continue;
       ed.grupo.position.y = ed.y0 + Math.sin(t * 0.85 + ed.fase) * 0.014;
       if (ed.fig) ed.fig.rotation.y += dt * 0.7;
+    }
+    // v163 — DECORACIONES TEMÁTICAS orbitando cada torre + balizas de
+    // antena parpadeando por fases — el vacío negro JAMÁS está quieto
+    for (let i = 0; i < this.ciudadDecor.length; i++) {
+      this.ciudadDecor[i].g.rotation.y = t * 0.16 + this.ciudadDecor[i].fase;
+    }
+    for (let i = 0; i < this.ciudadBlinkers.length; i++) {
+      this.ciudadBlinkers[i].opacity = 0.22 + Math.max(0, Math.sin(t * 2.4 + i * 1.3)) * 0.78;
     }
     // ventanas por fases (4 piscinas compartidas)
     for (let i = 0; i < this.ciudadVentanaMats.length; i++) {

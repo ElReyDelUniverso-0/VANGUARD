@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v163.0",
+    nombre: "LA CIUDAD TALLADA",
+    tipo: "mundo",
+    hitos: [
+      "LAS TORRES TALLADAS — cada edificio se esculpe en 3 CUERPOS con retranqueos (base 0.94 → cintura 0.78 → corona 0.60), PORTAL de entrada con pilares y dintel de neón mirando a la avenida, corona luminosa ajustada al cuerpo alto y ANTENA con baliza que PARPADEA por fases — silueta de rascacielos de verdad, no un bloque pintado",
+      "LAS DECORACIONES DEL MÓDULO — el vacío negro alrededor de cada torre se puebla con 3 piezas temáticas que ORBITAN despacio (2 en móvil): satélites espía en OSINT, cazas y cajas en el HANGAR, monedas y gemas en el MERCADO, carpetas en el ARCHIVO, ondas en la EMISORA, monolitos rotos en OJOSCURO, redes en SOCIAL, engranajes en SISTEMA, matraces en EXPERIMENTAL… 16 distritos reconocibles por lo que vuela a su lado, con carril de órbita tenue en escritorio",
+      "VENTANAS ENCAJADAS — la retícula de ventanas vive en CADA cuerpo (base + cintura) después de los retranqueos: nada flota fuera del edificio",
+      "CERO IMPACTO EN EL JUEGO — las decoraciones no llevan proxies (no roban toques), viajan dentro de ciudadGrupo (dispose total al desmontar) y en móvil nacen 2 piezas por distrito para mantener los cero lag",
+    ],
+  },
+  {
     version: "v162.0",
     nombre: "LA MEGAPÓLIS",
     tipo: "mundo",

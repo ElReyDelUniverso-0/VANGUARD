@@ -83,6 +83,26 @@
 //     nacen en cascada tras las torres y coronas que giran con vaivén.
 // Herencia v161 LA CIUDAD VIVA (presencia en vivo, 12 revelados, recompensa
 // del explorador, colisión con torres) y todo lo anterior.
-export const APP_VERSION = "v162.0";
-export const APP_CODENAME = "LA MEGAPÓLIS";
+// v163.0: LA CIUDAD TALLADA — «sí a todo, pero haz el fondo negro con
+// decoraciones del módulo; agrega los módulos completos; los edificios,
+// las casas mejoradas; mejora los modelos».
+// (1) LAS TORRES TALLADAS: cada edificio se esculpe en 3 CUERPOS con
+//     retranqueos (base 0.94 → cintura 0.78 → corona 0.60), PORTAL de
+//     entrada con pilares y dintel de neón mirando a la avenida, corona
+//     luminosa ajustada al cuerpo alto y ANTENA con baliza que PARPADEA
+//     por fases — silueta de rascacielos de verdad, no un bloque pintado.
+// (2) LAS DECORACIONES DEL MÓDULO: el vacío negro alrededor de cada torre
+//     se puebla con 3 piezas temáticas que ORBITAN despacio (2 en móvil):
+//     satélites espía en OSINT, cazas y cajas en el HANGAR, monedas y
+//     gemas en el MERCADO, carpetas desclasificadas en el ARCHIVO, ondas
+//     de audio en la EMISORA, monolitos rotos en OJOSCURO, redes de nodos
+//     en SOCIAL, engranajes en SISTEMA, matraces en EXPERIMENTAL… — 16
+//     distritos reconocibles por lo que vuela a su lado, con carril de
+//     órbita tenue en escritorio. Nada de proxies: no roban toques.
+// (3) VENTANAS ENCAJADAS: la retícula vive en CADA cuerpo (base + cintura)
+//     — nada flota fuera del edificio tras los retranqueos.
+// Herencia v162 LA MEGAPÓLIS (146 placas de módulo en tótems, rótulo de
+// proximidad, colisión con tótems) y v161 LA CIUDAD VIVA y todo lo anterior.
+export const APP_VERSION = "v163.0";
+export const APP_CODENAME = "LA CIUDAD TALLADA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
