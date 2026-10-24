@@ -7,6 +7,7 @@ import { BarChart3, TrendingUp, Coins, Star, Activity, Zap } from "lucide-react"
 import { cn } from "@/lib/utils";
 import { INITIAL_HISTORY } from "@/lib/game-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 export function ProgressChartsPanel() {
   const { xp, coins, level, streak, fusionCount, quizCorrect, minigameBestScore, viewedNews, viewedPhotos, predictions } = useGameStore();
@@ -61,6 +62,31 @@ export function ProgressChartsPanel() {
     { label: "Fusiones", value: fusionCount, max: 10, color: "bg-red-hud" },
     { label: "Quiz", value: quizCorrect, max: 12, color: "bg-green-hud" },
   ];
+
+  // v166 — LA CASA DEL PROGRESO: tus números viven en las estanterías 3D
+  // (nivel, XP, monedas, racha + la actividad real con su barra de volumen)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const hexDe: Record<string, string> = {
+      "text-amber": "#F5C542", "text-cyan-hud": "#4DD8FF", "text-red-hud": "#FF4D5E",
+      "text-violet-hud": "#C084FC", "text-green-hud": "#3DDC84",
+    };
+    const deStats: FilaContenido3D[] = stats.map((s) => ({
+      t: s.label,
+      v: String(s.value),
+      p: Math.min(100, Math.round((Number(s.value) / Math.max(1, xp || 1)) * 100)) || 12,
+      color: hexDe[s.color] || "#60A5FA",
+      d: `Tu ${s.label.toLowerCase()} acumulado como operador`,
+    }));
+    const deActividad: FilaContenido3D[] = activityData.map((a) => ({
+      t: a.label,
+      v: `${a.value}/${a.max}`,
+      p: Math.max(6, Math.min(100, Math.round((a.value / a.max) * 100))),
+      color: "#60A5FA",
+      d: `Actividad de los últimos 7 dias · ${a.value} registros`,
+    }));
+    return [...deStats, ...deActividad];
+  }, [stats, activityData, xp]);
+  useSala3DContenido("estadisticas", "ESTADISTICAS Y PROGRESO", "#60A5FA", `Nivel ${level} · ${xp} XP · evolución de 7 dias`, filas3D);
 
   return (
     <div className="space-y-3">

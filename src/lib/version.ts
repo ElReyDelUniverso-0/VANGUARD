@@ -164,7 +164,40 @@
 //     de desinformación (veracidad + teorías), alianzas (clan, guerra,
 //     ranking, canal) y gobierno (presidente, cargos, decretos, ranking)
 //     muestran SU contenido real en filas de cristal.
+// ═══════════════════════════════════════════════════════════
+// v166.0 LA CASA HABITADA — «el fondo que sea creado por el módulo;
+// la información va llegando con el tiempo y por el movimiento; cada
+// módulo parezca una casa y voy entrando por habitaciones; ese 3D
+// está feo, sí es difícil moverse».
+// (1) EL FONDO CREADO POR EL MÓDULO: al entrar a una casa, su acento
+//     PINTA el universo — cúpula shader propia (cenit profundo →
+//     horizonte vivo del color del módulo, hazes girando lento,
+//     estrellas teñidas del acento) y el planeta con todo su corte
+//     DUERMEN. Cada módulo genera su propio fondo; al salir, el
+//     mundo despierta (gen-counter anti-tweens-peleando).
+// (2) LA CASA CON HABITACIONES: la sala de contenido nace FACHADA con
+//     PORTAL (título sobre la puerta + arco vivo) y DENTRO: vestíbulo
+//     + 2 habitaciones (paredes de vidrio, lámpara, zócalos, umbral
+//     ardiente, letrero SALA II/III, estanterías de filas mirando al
+//     centro, CUADROS GRANDES enmarcados con las imágenes y el CRISTAL
+//     grande sobre columna de luz). El monumento con la inicial vive
+//     en el vestíbulo. Todas las acciones reales siguen tocables.
+// (3) LA INFORMACIÓN LLEGA CON EL TIEMPO Y POR EL MOVIMIENTO: el
+//     vestíbulo nace encendido y cada habitación DORMIDA despierta
+//     SOLA (olas ~6s) o cuando el piloto ENTRA a la sala anterior
+//     (cámara leída en local de la casa) — la lámpara se enciende,
+//     el vidrio sube y las filas entran en CASCADA. La info nunca
+//     llega de golpe: llega cuando el piloto la gana.
+// (4) EL BOTÓN AVANZAR (móvil): moverse YA NO es difícil — un dedo
+//     MANTIENE el avance (misma física del teclado) y el otro mira;
+//     y DENTRO de una casa el vuelo se vuelve FINO (55% de gas) para
+//     atravesar puertas sin pasarse de largo.
+// (5) MÓDULO SIGUIENTE: historia (12 guerras con eras y bajas),
+//     estadísticas (6 stats + actividad real) y racha (récord,
+//     botín, escudo) entran al emisor universal — sus casas 3D ya
+//     están habitadas.
+// Herencia v165 LA SALA COMPLETA y todo lo anterior.
 // Herencia v164 LA REDACCIÓN EN VIVO y todo lo anterior.
-export const APP_VERSION = "v165.0";
-export const APP_CODENAME = "LA SALA COMPLETA";
+export const APP_VERSION = "v166.0";
+export const APP_CODENAME = "LA CASA HABITADA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

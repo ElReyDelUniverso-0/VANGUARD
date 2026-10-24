@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v166.0",
+    nombre: "LA CASA HABITADA",
+    tipo: "mundo",
+    hitos: [
+      "EL FONDO CREADO POR EL MÓDULO — entrar a una casa cambia el UNIVERSO: cúpula shader con el acento del módulo (hazes girando + estrellas propias) y el planeta dormido; cada módulo genera su propio fondo",
+      "LA CASA CON HABITACIONES — la sala de contenido es una CASA de vidrio: fachada con portal y arco, vestíbulo + SALA II + SALA III (lámparas, zócalos, umbrales ardientes), estanterías de filas mirando al centro, cuadros grandes enmarcados y el cristal sobre columna de luz",
+      "LA INFO LLEGA CON EL TIEMPO Y POR EL MOVIMIENTO — cada habitación dormida despierta SOLA cada ~6s o cuando ENTRAS a la sala anterior: lámpara encendida, vidrio vivo y filas entrando en cascada",
+      "EL BOTÓN AVANZAR — móvil: mantener el pill verde = volar (misma física del teclado); y dentro de una casa el gas baja al 55% para cruzar puertas con precisión",
+      "MÓDULO SIGUIENTE — historia (12 guerras, 4 eras, bajas), estadísticas (6 stats + actividad) y racha (récord, botín, escudo) entran al emisor universal: sus casas 3D habitadas",
+    ],
+  },
+  {
     version: "v165.0",
     nombre: "LA SALA COMPLETA",
     tipo: "mundo",

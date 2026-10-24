@@ -1391,35 +1391,208 @@ function construirGenerica(ctx: CtxSala3D, p: SalaGenerica3D): Sala3DInstancia {
 // extruidas, barras de volumen y fotos texturizadas. El contenido
 // de Vanguard vive EN el espacio.
 // ────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────
+// v166.0 «LA CASA HABITADA» — LA CASA DEL MÓDULO.
+// El Dueño: «cada módulo parezca una casa y voy entrando por
+// habitaciones; la información va llegando con el tiempo y por
+// el movimiento». La sala nace FACHADA con PORTAL: dentro, el
+// VESTÍBULO y las HABITACIONES (vidrio, lámpara, umbral, cristal
+// grande) guardan TODAS las filas del panel. Cada habitación
+// DORMIDA se enciende sola por TIEMPO (olas ~6s) o por
+// MOVIMIENTO (entrar a la sala anterior la despierta) — la info
+// nunca llega de golpe: llega cuando el piloto la gana. El
+// detalle de proximidad (letra que va y viene) y las acciones
+// reales (comprar/invertir) siguen vivos fila a fila.
+// ────────────────────────────────────────────────────────────
 function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia {
   const reg = registrar();
   const grupo = new THREE.Group();
   const proxies: THREE.Mesh[] = [];
   const tics: ((t: number, dt: number) => void)[] = [];
 
+  // ── MEDIDAS DE LA CASA ──
+  const SUELO = -1.32;               // el suelo de la casa
+  const TECHO = 1.42;                // el techo
+  const MEDIO = 1.04;                // media anchura (paredes a ±MEDIO)
+  const PROF = 2.55;                 // profundidad de cada habitación
+  const PUERTA_X = 0.78;             // media anchura del vano de la puerta
+  const PUERTA_Y = 0.4;              // altura del vano (desde el suelo)
+  const NHABS = 3;                   // vestíbulo + 2 habitaciones
+  const ALTO = TECHO - SUELO;
+  const YC = (SUELO + TECHO) / 2;
+  const tmpV = new THREE.Vector3();  // cero basura por frame
+  const tmpW = new THREE.Vector3();
+
+  const limpiar = (o: THREE.Object3D) => {
+    o.traverse((x) => {
+      const m = x as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  interface Habitacion {
+    i: number;
+    filasWrap: THREE.Group;
+    revelada: boolean;
+    lampMats: THREE.MeshBasicMaterial[];
+    vidrioMats: THREE.MeshStandardMaterial[];
+    lineMats: { m: THREE.Material; base: number; vivo: number }[];
+    letrero?: { mats: THREE.MeshStandardMaterial[] };
+    cristal?: THREE.Group;
+    luz?: THREE.PointLight;
+  }
+  const habs: Habitacion[] = [];
+
+  // ── VIDRIO DORMIDO/DESPIERTO: la casa se ve brillar desde fuera ──
+  const vidrioDe = () => reg.mat(new THREE.MeshStandardMaterial({
+    color: 0x0b1526, metalness: 0.82, roughness: 0.24,
+    transparent: true, opacity: 0.1, side: THREE.DoubleSide,
+  }));
+  const lineaDe = () => reg.mat(matFilo(p.color, 0.22));
+  const neonDe = (op: number) => reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
+
+  // ── LA ENVOLVENTE (nace UNA vez; los datos solo repintan filas) ──
+  for (let i = 0; i < NHABS; i++) {
+    const zc = -(i + 0.5) * PROF;    // centro de la habitación
+    const zf = -i * PROF;            // puerta frontal de la habitación
+    const hab: Habitacion = { i, filasWrap: new THREE.Group(), revelada: false, lampMats: [], vidrioMats: [], lineMats: [] };
+
+    // PARED FRONTAL con VANO (la fachada es la del vestíbulo)
+    const segs: [number, number, number, number][] = [
+      [-(MEDIO + PUERTA_X) / 2, YC, MEDIO - PUERTA_X, ALTO],
+      [(MEDIO + PUERTA_X) / 2, YC, MEDIO - PUERTA_X, ALTO],
+      [0, (PUERTA_Y + TECHO) / 2, PUERTA_X * 2, TECHO - PUERTA_Y],
+    ];
+    for (const [x, y, w, h] of segs) {
+      const m = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(w, h, 0.05)), vidrioDe());
+      m.position.set(x, y, zf);
+      hab.vidrioMats.push(m.material as THREE.MeshStandardMaterial);
+      const ln = new THREE.LineSegments(m.geometry, lineaDe());
+      hab.lineMats.push({ m: ln.material as THREE.Material, base: 0.22, vivo: 0.55 });
+      grupo.add(m, ln);
+    }
+
+    // PARED del FONDO (solo la última habitación cierra la casa)
+    if (i === NHABS - 1) {
+      const fondo = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(MEDIO * 2 + 0.1, ALTO, 0.06)), vidrioDe());
+      fondo.position.set(0, YC, zf - PROF);
+      hab.vidrioMats.push(fondo.material as THREE.MeshStandardMaterial);
+      const lnF = new THREE.LineSegments(fondo.geometry, lineaDe());
+      hab.lineMats.push({ m: lnF.material as THREE.Material, base: 0.22, vivo: 0.5 });
+      grupo.add(fondo, lnF);
+    }
+
+    // PAREDES LATERALES de vidrio (el interior brilla desde fuera)
+    for (const sx of [-1, 1]) {
+      const lat = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(0.05, ALTO, PROF)), vidrioDe());
+      lat.position.set(sx * (MEDIO + 0.025), YC, zc);
+      hab.vidrioMats.push(lat.material as THREE.MeshStandardMaterial);
+      const ln = new THREE.LineSegments(lat.geometry, lineaDe());
+      hab.lineMats.push({ m: ln.material as THREE.Material, base: 0.22, vivo: 0.55 });
+      grupo.add(lat, ln);
+    }
+
+    // SUELO + zócalos de neón + TECHO
+    const suelo = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(MEDIO * 2 + 0.1, 0.05, PROF)), reg.mat(matMetal(0x0a1220)));
+    suelo.position.set(0, SUELO - 0.025, zc);
+    grupo.add(suelo);
+    for (const sx of [-1, 1]) {
+      const zoc = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(0.035, 0.02, PROF)), neonDe(0.14));
+      zoc.position.set(sx * (MEDIO - 0.02), SUELO + 0.012, zc);
+      hab.lineMats.push({ m: zoc.material as THREE.Material, base: 0.14, vivo: 0.6 });
+      grupo.add(zoc);
+    }
+    const techo = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(MEDIO * 2 + 0.1, 0.05, PROF)), reg.mat(matMetal(0x080e1a)));
+    techo.position.set(0, TECHO + 0.025, zc);
+    grupo.add(techo);
+
+    // LÁMPARA del techo (dormida: 0.05 — despierta al revelar: 0.9)
+    const lampMat = reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.05, depthWrite: false }));
+    const lamp = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(0.8, 0.02, 0.8)), lampMat);
+    lamp.position.set(0, TECHO - 0.03, zc);
+    hab.lampMats.push(lampMat);
+    grupo.add(lamp);
+    // v166 QA: la habitación necesita LUZ REAL — punto de neón del acento
+    // que se enciende al revelar (intensidad 0 → 1.7): el interior se LEE
+    const luz = new THREE.PointLight(p.color, 0, 7.5, 1.75);
+    luz.position.set(0, TECHO - 0.4, zc);
+    hab.luz = luz;
+    grupo.add(luz);
+
+    // UMBRAL luminoso en cada puerta (guía al piloto de sala en sala)
+    const umbral = new THREE.Mesh(reg.geo(new THREE.BoxGeometry(PUERTA_X * 2 - 0.08, 0.018, 0.1)), neonDe(i === 0 ? 0.8 : 0.12));
+    umbral.position.set(0, SUELO + 0.012, zf);
+    grupo.add(umbral);
+    if (i > 0) hab.lineMats.push({ m: umbral.material as THREE.Material, base: 0.12, vivo: 0.6 });
+
+    // LETRERO de la puerta: «SALA II» / «SALA III»
+    if (i > 0) {
+      const rom = i === 1 ? "II" : "III";
+      const letr = texto3D(ctx, `SALA ${rom}`, { tam: 0.042, prof: 0.012, color: p.color, emis: 0.3 });
+      letr.grupo.position.set(-letr.ancho / 2, PUERTA_Y + 0.34, zf + 0.035);
+      for (const m of letr.mats) { m.transparent = true; m.opacity = 0.2; }
+      hab.letrero = { mats: letr.mats };
+      grupo.add(letr.grupo);
+    }
+
+    // v166 EL CRISTAL GRANDE — figura viva de la habitación (hab 2 y 3),
+    // gema sobre columna de luz: la «figura grande que puedo ver»
+    if (i > 0) {
+      const cristal = new THREE.Group();
+      const col = new THREE.Mesh(reg.geo(new THREE.CylinderGeometry(0.045, 0.075, 1.55, 12)), neonDe(0.3));
+      col.position.set(0, SUELO + 0.8, 0);
+      cristal.add(col);
+      const pie = new THREE.Mesh(reg.geo(new THREE.CylinderGeometry(0.11, 0.15, 0.05, 24)), reg.mat(matMetal(0x101a2c)));
+      pie.position.set(0, SUELO + 0.028, 0);
+      cristal.add(pie);
+      const gema = new THREE.Mesh(
+        reg.geo(new THREE.OctahedronGeometry(0.23, 0)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: p.color, metalness: 0.7, roughness: 0.22,
+          emissive: new THREE.Color(p.color), emissiveIntensity: 0.75, transparent: true, opacity: 0.92,
+        })),
+      );
+      gema.position.y = 0.5;
+      cristal.add(gema);
+      const anillo = new THREE.Mesh(reg.geo(new THREE.TorusGeometry(0.34, 0.007, 8, 44)), neonDe(0.5));
+      anillo.position.y = 0.5;
+      anillo.rotation.x = Math.PI / 2.2;
+      cristal.add(anillo);
+      cristal.position.set(ctx.movil ? 0.52 : 0.44, 0, 0.5);
+      const idxC = i;
+      tics.push((t, dt) => {
+        if (!hab.revelada) return;
+        gema.rotation.y += dt * 0.7;
+        anillo.rotation.z += dt * 0.9;
+        gema.position.y = 0.5 + Math.sin(t * 1.2 + idxC) * 0.02;
+      });
+      hab.cristal = cristal;
+      grupo.add(cristal);
+    }
+
+    habs.push(hab);
+  }
+
+  // ── LA FACHADA: título sobre el portal + arco vivo ──
   const titulo = texto3D(ctx, p.titulo, { tam: 0.15, prof: 0.05, color: p.color, emis: 0.55 });
-  titulo.grupo.position.set(-titulo.ancho / 2, 0.92, 0);
-  animarTitulo(tics, titulo, 0.92, 1.9);
+  titulo.grupo.position.set(-titulo.ancho / 2, 0.95, 0.05);
+  animarTitulo(tics, titulo, 0.95);
   grupo.add(titulo.grupo);
 
-  // el arco que abraza el título (firma de las salas)
   const arco = new THREE.Mesh(
-    reg.geo(new THREE.TorusGeometry(0.86, 0.011, 8, 60, Math.PI)),
+    reg.geo(new THREE.TorusGeometry(PUERTA_X + 0.05, 0.011, 8, 60, Math.PI)),
     reg.mat(new THREE.MeshBasicMaterial({ color: p.color, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false })),
   );
-  arco.position.y = 0.12;
+  arco.position.set(0, PUERTA_Y, 0.04);
   grupo.add(arco);
 
-  const peana = pedestal(1.3, p.color);
-  peana.position.y = -1.12; // v165: la sala completa baja la peana — caben más filas
-  grupo.add(peana);
-
-  // ═══ v165 EL MONUMENTO — la FIGURA GRANDE del módulo ═══
-  // torre de 3 cuerpos coronada por la INICIAL del módulo en letras enormes
-  // girando con su aro orbital: se ve desde lejos y firma la sala
+  // v165 EL MONUMENTO — la FIGURA GRANDE del vestíbulo: torre de 3 cuerpos
+  // coronada por la INICIAL del módulo girando con su aro orbital
   const monumento = new THREE.Group();
-  monumento.position.set(ctx.movil ? -0.98 : -1.12, -0.52, -0.14);
-  if (ctx.movil) monumento.scale.setScalar(0.8);
+  monumento.position.set(ctx.movil ? 0.4 : 0.48, SUELO + 0.02, -1.6);
+  monumento.scale.setScalar(ctx.movil ? 0.62 : 0.72);
   let acuY = 0;
   for (const [cw, ch] of [[0.17, 0.52], [0.125, 0.4], [0.085, 0.3]] as const) {
     const c = new THREE.Mesh(
@@ -1448,38 +1621,30 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
   tics.push((t, dt) => {
     ejeLetra.rotation.y += dt * 0.55;
     aroM.rotation.z += dt * 0.85;
-    monumento.position.y = -0.52 + Math.sin(t * 0.9) * 0.014;
+    monumento.position.y = SUELO + 0.02 + Math.sin(t * 0.9) * 0.012;
   });
 
-  // contenedor vivo de filas (se repinta con datos reales)
-  let filasWrap = new THREE.Group();
-  grupo.add(filasWrap);
+  // contenedor del resumen (se repinta con datos)
+  let rzObj: THREE.Group | null = null;
+  // contenedor del estado vacío
+  let esperaObj: THREE.Group | null = null;
+  // firma anti-churn de los datos
   let sigKey = "";
-  const limpiar = (w: THREE.Group) => {
-    w.traverse((o) => {
-      const m = o as THREE.Mesh;
-      if (m.geometry) m.geometry.dispose();
-      const mat = m.material as THREE.Material | undefined;
-      if (mat) mat.dispose();
-    });
-  };
 
-  // ═══ v165 EL DETALLE DE PROXIMIDAD ═══
+  // ═══ v165/v166 EL DETALLE DE PROXIMIDAD ═══
   // al ACERCARSE a una fila, SU info nueva brota en letras doradas que van
-  // y vienen (entra flotando, sale desvaneciéndose) con una aguja que la
-  // señala — la sala le contesta al piloto que vuela hasta mirar de cerca
-  const filasVivas: { g: THREE.Group; f: FilaContenido3D }[] = [];
+  // y vienen (entra flotando, sale desvaneciéndose) — ahora en TODA la casa
+  const filasVivas: { g: THREE.Group; f: FilaContenido3D; hab: Habitacion }[] = [];
   let detGrupo: THREE.Group | null = null;
   let detMats: { m: THREE.Material; base: number }[] = [];
   let detObjetivo = -1;
   let detOp = 0;
   let detEscaneo = 0;
-  const detTmp = new THREE.Vector3();
   const detQ = new THREE.Quaternion();
   const detE = new THREE.Euler();
 
   const matarDetalle = () => {
-    if (detGrupo) { filasWrap.remove(detGrupo); limpiar(detGrupo); detGrupo = null; detMats = []; }
+    if (detGrupo) { grupo.remove(detGrupo); limpiar(detGrupo); detGrupo = null; detMats = []; }
   };
 
   const brotarDetalle = (texto: string) => {
@@ -1498,17 +1663,64 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     detGrupo.add(pin);
     detMats.push({ m: pin.material as THREE.Material, base: 0.85 });
     detGrupo.visible = false;
-    filasWrap.add(detGrupo);
+    grupo.add(detGrupo);
+  };
+
+  // ═══ v166 REVELAR UNA HABITACIÓN — la lámpara se enciende, el vidrio
+  // sube, el umbral arde y las filas ENTRAN en cascada ═══
+  const revelarHab = (hab: Habitacion) => {
+    if (hab.revelada) return;
+    hab.revelada = true;
+    for (const m of hab.lampMats) ctx.animarP(m, { opacity: 0.9 }, 750, { ease: easeOut });
+    for (const m of hab.vidrioMats) ctx.animarP(m, { opacity: 0.48 }, 850, { ease: easeOut });
+    if (hab.luz) {
+      const lo = { i: 0 };
+      ctx.animarP(lo, { i: 1.7 }, 800, { ease: easeOut, onUpdate: () => { if (hab.luz) hab.luz.intensity = lo.i; } });
+    }
+    for (const l of hab.lineMats) ctx.animarP(l.m, { opacity: l.vivo }, 850, { ease: easeOut });
+    if (hab.letrero) for (const m of hab.letrero.mats) ctx.animarP(m, { opacity: 0.9 }, 750, { ease: easeOut });
+    hab.filasWrap.visible = true;
+    if (hab.cristal) {
+      hab.cristal.scale.setScalar(0.001);
+      const cr = { d: 0 };
+      ctx.animarP(cr, { d: 1 }, 620, { ease: easeOut, onDone: () => { if (hab.cristal) hab.cristal.scale.setScalar(1); } });
+    }
+    hab.filasWrap.children.forEach((ch, i) => {
+      const ret = { d: 0 };
+      ctx.animarP(ret, { d: 1 }, Math.max(1, 80 + i * 130), {
+        ease: easeOut,
+        onDone: () => ch.scale.setScalar(1),
+      });
+      ch.scale.setScalar(0.001);
+    });
+  };
+
+  // ── v166 LA INFORMACIÓN LLEGA POR MOVIMIENTO ──
+  // entrar (o volar cerca) de una habitación despierta la SIGUIENTE;
+  // la cámara se lee en coordenadas LOCALES de la casa
+  const chequearMovimiento = () => {
+    const cam = ctx.camara;
+    if (!cam) return;
+    tmpV.copy(cam);
+    grupo.worldToLocal(tmpV);
+    if (Math.abs(tmpV.x) > 3.2 || tmpV.y < SUELO - 2 || tmpV.y > TECHO + 2.5) return;
+    const iz = Math.floor(-tmpV.z / PROF);
+    if (iz < 0 || iz >= NHABS) return;
+    if (!habs[iz].revelada) revelarHab(habs[iz]);
+    if (iz + 1 < NHABS && !habs[iz + 1].revelada) revelarHab(habs[iz + 1]);
   };
 
   const escanear = () => {
+    chequearMovimiento();
     const cam = ctx.camara;
     if (!cam || !filasVivas.length) { detObjetivo = -1; return; }
     let mejor = -1;
     let mejorD = Infinity;
     for (let i = 0; i < filasVivas.length; i++) {
-      filasVivas[i].g.getWorldPosition(detTmp);
-      const dd = detTmp.distanceTo(cam);
+      const fv = filasVivas[i];
+      if (!fv.hab.revelada) continue; // una sala dormida no habla
+      fv.g.getWorldPosition(tmpW);
+      const dd = tmpW.distanceTo(cam);
       if (dd < mejorD) { mejorD = dd; mejor = i; }
     }
     const radio = ctx.movil ? 2.0 : 2.55;
@@ -1525,66 +1737,62 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
         f.a ? `TOCA PARA ${f.a.toUpperCase()}` : "",
       ].filter(Boolean) as string[];
       brotarDetalle(piezas.join(" · ") || acotar(f.t, 44));
-      detGrupo!.position.set(fv.g.position.x + 0.05, fv.g.position.y + 0.1, 0.13);
-      detGrupo!.userData.baseY = detGrupo!.position.y;
+      // el detalle nace JUNTO a la fila (coordenadas locales de la casa)
+      fv.g.getWorldPosition(tmpW);
+      grupo.worldToLocal(tmpW);
+      detGrupo!.position.set(tmpW.x, tmpW.y + 0.11, tmpW.z);
+      detGrupo!.userData.basePos = { x: tmpW.x, y: tmpW.y + 0.11, z: tmpW.z };
     }
   };
 
-  tics.push((t, dt) => {
-    detEscaneo += dt;
-    if (detEscaneo >= 0.12) { detEscaneo = 0; escanear(); }
-    if (!detGrupo) return;
-    // LA LETRA VA Y VIENE: entra flotando al acercarse, se desvanece al irse
-    detOp = detObjetivo >= 0 ? Math.min(1, detOp + dt * 4.5) : Math.max(0, detOp - dt * 3.4);
-    detGrupo.visible = detOp > 0.02;
-    if (!detGrupo.visible) return;
-    for (const d of detMats) (d.m as THREE.Material).opacity = d.base * detOp;
-    detGrupo.position.y = (detGrupo.userData.baseY as number) + Math.sin(t * 2.3) * 0.005;
-    if (ctx.camara) {
-      // billboard SOLO yaw: la letra mira al piloto sin marear la sala
-      detGrupo.getWorldPosition(detTmp);
-      filasWrap.getWorldQuaternion(detQ);
-      detE.setFromQuaternion(detQ, "YXZ");
-      detGrupo.rotation.y = Math.atan2(ctx.camara.x - detTmp.x, ctx.camara.z - detTmp.z) - detE.y;
-    }
-  });
+  // ═══ v166 LA INFORMACIÓN LLEGA CON EL TIEMPO — olas: el vestíbulo
+  // nace encendido; cada habitación despierta sola cada ~6s ═══
+  let reloj = 0;
 
   const pintar = (c: SalaContenido3D) => {
-    grupo.remove(filasWrap);
-    limpiar(filasWrap);
-    filasWrap = new THREE.Group();
-    filasWrap.position.x = ctx.movil ? 0.06 : 0.26;
+    // las filas viejas se desintegran (dispose completo)
+    for (const hab of habs) {
+      if (hab.filasWrap.parent) grupo.remove(hab.filasWrap);
+      limpiar(hab.filasWrap);
+      hab.filasWrap = new THREE.Group();
+      hab.filasWrap.position.set(0, 0, -(hab.i + 0.5) * PROF);
+      if (!hab.revelada) hab.filasWrap.visible = false;
+      grupo.add(hab.filasWrap);
+    }
     proxies.length = 0;
     filasVivas.length = 0;
     detObjetivo = -1;
     matarDetalle();
 
-    // RESUMEN — la línea fina bajo el título
+    // RESUMEN — la línea fina sobre el portal
+    if (rzObj) { grupo.remove(rzObj); limpiar(rzObj); rzObj = null; }
     if (c.resumen) {
       const rz = texto3D(ctx, acotar(c.resumen, 46), { tam: 0.032, prof: 0.011, color: 0x9fb8dd, emis: 0.32 });
-      rz.grupo.position.set(-rz.ancho / 2, 0.68, 0);
-      filasWrap.add(rz.grupo);
+      rz.grupo.position.set(-rz.ancho / 2, 0.62, 0.05);
+      grupo.add(rz.grupo);
+      rzObj = rz.grupo;
     }
 
-    // v165 LAS FILAS — LA SALA COMPLETA: 9 en escritorio / 7 en móvil,
-    // cada fila con su texto, valor, barra, imagen y —cuando el panel la
-    // manda— su BOTÓN de acción real (comprar / invertir / reclamar)
+    // reparto de filas por habitación: estanterías de 3 (7 máximo en móvil)
     const MAX = ctx.movil ? 7 : 9;
-    const w = 1.02, h = 0.115, paso = 0.155;
+    const w = 1.02, h = 0.115;
     const visibles = (c.filas || []).slice(0, MAX);
-    visibles.forEach((f, i) => {
+    const POR_HAB = 3;
+    visibles.forEach((f, gi) => {
+      const hab = habs[Math.min(NHABS - 1, Math.floor(gi / POR_HAB))];
+      const j = gi % POR_HAB;
       const fila = new THREE.Group();
       const colFila = parseInt(String(f.color || "").replace("#", ""), 16) || p.color;
       const tieneImg = !!f.img;
       const cuerpo = new THREE.Mesh(
         reg.geo(new THREE.BoxGeometry(w, h, 0.013)),
         reg.mat(new THREE.MeshStandardMaterial({
-          color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.62,
+          color: 0x0a111e, metalness: 0.92, roughness: 0.16, transparent: true, opacity: 0.74,
         })),
       );
       fila.add(cuerpo, new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(colFila, 0.8))));
 
-      // LA IMAGEN de la fila — plano texturizado (vive EN el espacio)
+      // LA IMAGEN de la fila — plano texturizado (miniatura de la estantería)
       let dx = -w / 2 + 0.045;
       if (tieneImg) {
         const img = planoImagen3D(f.img!, acotar(f.t, 10), `#${colFila.toString(16).padStart(6, "0")}`, f.t, 0.1, 0.066);
@@ -1598,7 +1806,7 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
       txt.grupo.position.set(dx, h / 2 - 0.036, 0.012);
       fila.add(txt.grupo);
 
-      // v165 LA ACCIÓN — botón real verde (COMPRAR / INVERTIR / RECLAMAR…)
+      // LA ACCIÓN — botón real verde (COMPRAR / INVERTIR / RECLAMAR…)
       let actX = w / 2 - 0.04;
       let actW = 0.09;
       if (f.a) {
@@ -1639,31 +1847,55 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
         reg.geo(new THREE.BoxGeometry(w + 0.04, h + 0.04, 0.04)),
         reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
       );
-      proxy.userData = { salaAccion: { tab: c.tab, accion: f.a || "fila", idx: i } };
+      proxy.userData = { salaAccion: { tab: c.tab, accion: f.a || "fila", idx: gi } };
       fila.add(proxy);
       proxies.push(proxy);
 
-      fila.position.set(0, 0.5 - i * paso, -i * 0.02);
+      // LA ESTANTERÍA de la pared izquierda (la fila mira al pasillo)
+      fila.rotation.y = Math.PI / 2 - 0.55;
+      fila.position.set(-MEDIO + 0.07, 0.62 - j * 0.34, (j - 1) * 0.82);
       fila.userData.baseY = fila.position.y;
-      filasWrap.add(fila);
-      filasVivas.push({ g: fila, f });
+      hab.filasWrap.add(fila);
+      filasVivas.push({ g: fila, f, hab });
+
+      // v166 EL CUADRO GRANDE — las filas con imagen cuelgan ENMARCADAS
+      // en la pared derecha: figuras grandes que el piloto ve al entrar
+      if (tieneImg && j < 2) {
+        const cuadro = new THREE.Group();
+        const marco = new THREE.Mesh(
+          reg.geo(new THREE.BoxGeometry(0.62, 0.44, 0.02)),
+          reg.mat(new THREE.MeshStandardMaterial({ color: 0x0a111e, metalness: 0.9, roughness: 0.2, transparent: true, opacity: 0.72 })),
+        );
+        cuadro.add(marco, new THREE.LineSegments(marco.geometry, reg.mat(matFilo(colFila, 0.85))));
+        const grande = planoImagen3D(f.img!, acotar(f.t, 10), `#${colFila.toString(16).padStart(6, "0")}`, f.t, 0.54, 0.36);
+        grande.position.z = 0.014;
+        cuadro.add(grande);
+        const pieC = texto3D(ctx, acotar(f.t || "-", 20).toUpperCase(), { tam: 0.022, prof: 0.007, color: colFila, emis: 0.5 });
+        pieC.grupo.position.set(-pieC.ancho / 2, -0.27, 0.012);
+        cuadro.add(pieC.grupo);
+        cuadro.rotation.y = -Math.PI / 2 + 0.55;
+        cuadro.position.set(MEDIO - 0.07, 0.42 - j * 0.62, (j - 1) * 0.3 + 0.2);
+        cuadro.userData.baseY = cuadro.position.y;
+        hab.filasWrap.add(cuadro);
+      }
     });
 
-    // v165 EL PIE — lo que quedó en el panel se confiesa aquí
+    // EL PIE — lo que quedó en el panel se confiesa en la pared del fondo
     const resto = (c.filas || []).length - visibles.length;
     if (resto > 0) {
       const pie = texto3D(ctx, `+${resto} MAS EN EL PANEL`, { tam: 0.024, prof: 0.008, color: 0x7ab8ff, emis: 0.42 });
-      pie.grupo.position.set(-pie.ancho / 2, 0.5 - visibles.length * paso - 0.02, 0);
-      filasWrap.add(pie.grupo);
+      pie.grupo.position.set(-pie.ancho / 2, 0.05, -PROF + 0.16);
+      habs[NHABS - 1].filasWrap.add(pie.grupo);
     }
 
+    // estado vacío: la casa confiesa que espera al panel
+    if (esperaObj) { grupo.remove(esperaObj); limpiar(esperaObj); esperaObj = null; }
     if (!(c.filas || []).length) {
-      const espera = texto3D(ctx, "EL PANEL ALIMENTA ESTA SALA", { tam: 0.03, prof: 0.01, color: 0x7ab8ff, emis: 0.35 });
-      espera.grupo.position.set(-espera.ancho / 2, 0.44, 0);
-      filasWrap.add(espera.grupo);
+      const espera = texto3D(ctx, "EL PANEL ALIMENTA ESTA CASA", { tam: 0.03, prof: 0.01, color: 0x7ab8ff, emis: 0.35 });
+      espera.grupo.position.set(-espera.ancho / 2, 0.44, -1.2);
+      grupo.add(espera.grupo);
+      esperaObj = espera.grupo;
     }
-
-    grupo.add(filasWrap);
   };
 
   pintar({
@@ -1671,20 +1903,50 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     filas: (p.filas || []).map((f) => ({ ...f, p: Number(f.p) })),
   });
 
-  const polvoC = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.35, 1.8);
-  polvoC.position.y = -0.98;
+  // EL VESTÍBULO nace encendido (la cascada de entrada)
+  revelarHab(habs[0]);
+
+  const polvoC = polvo(ctx.calidadBaja ? 50 : 90, p.color, 1.5, 2.0);
+  polvoC.position.set(0, SUELO + 0.5, -PROF * 1.5);
   grupo.add(polvoC);
 
   tics.push((t, dt) => {
     polvoC.rotation.y += dt * 0.2;
-    arco.rotation.z = Math.sin(t * 0.6) * 0.05;
+    arco.rotation.z = Math.sin(t * 0.6) * 0.04;
     (arco.material as THREE.MeshBasicMaterial).opacity = 0.5 + Math.sin(t * 1.6) * 0.22;
-    // v156: la marea del título la lleva animarTitulo (único dueño de position.y)
-    filasWrap.children.forEach((ch, i) => {
-      if (ch === detGrupo) return; // v165: el detalle vuela solo (sin marea doble)
-      const baseY = (ch.userData.baseY as number | undefined) ?? ch.position.y;
-      ch.position.y = baseY + Math.sin(t * 1.4 + i * 0.9) * 0.006;
-    });
+    // v166 LAS OLAS DEL TIEMPO: cada ~6s despierta la siguiente habitación
+    reloj += dt;
+    if (!habs[1].revelada && reloj > 6) revelarHab(habs[1]);
+    if (!habs[2].revelada && reloj > 12) revelarHab(habs[2]);
+    // el escaneo de proximidad (detalle + movimiento) late cada 0.12s
+    detEscaneo += dt;
+    if (detEscaneo >= 0.12) { detEscaneo = 0; escanear(); }
+    // LA MAREA — cada habitación encendida respirando
+    for (const hab of habs) {
+      if (!hab.revelada) continue;
+      hab.filasWrap.children.forEach((ch, i) => {
+        if (ch === detGrupo) return;
+        const baseY = (ch.userData.baseY as number | undefined) ?? ch.position.y;
+        ch.position.y = baseY + Math.sin(t * 1.4 + i * 0.9) * 0.006;
+      });
+    }
+    if (!detGrupo) return;
+    // LA LETRA VA Y VIENE: entra flotando al acercarse, se desvanece al irse
+    detOp = detObjetivo >= 0 ? Math.min(1, detOp + dt * 4.5) : Math.max(0, detOp - dt * 3.4);
+    detGrupo.visible = detOp > 0.02;
+    if (!detGrupo.visible) return;
+    for (const d of detMats) (d.m as THREE.Material).opacity = d.base * detOp;
+    const bp = detGrupo.userData.basePos as { x: number; y: number; z: number } | undefined;
+    if (bp) {
+      detGrupo.position.set(bp.x, bp.y + Math.sin(t * 2.3) * 0.005, bp.z);
+      if (ctx.camara) {
+        // billboard SOLO yaw: la letra mira al piloto sin marear la casa
+        detGrupo.getWorldPosition(tmpW);
+        grupo.getWorldQuaternion(detQ);
+        detE.setFromQuaternion(detQ, "YXZ");
+        detGrupo.rotation.y = Math.atan2(ctx.camara.x - tmpW.x, ctx.camara.z - tmpW.z) - detE.y;
+      }
+    }
   });
 
   return {
@@ -1701,7 +1963,9 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     liberar: () => {
       matarDetalle();
       reg.liberar(); titulo.mats.forEach((m) => m.dispose());
-      limpiar(filasWrap);
+      for (const hab of habs) limpiar(hab.filasWrap);
+      if (rzObj) limpiar(rzObj);
+      if (esperaObj) limpiar(esperaObj);
     },
   };
 }

@@ -567,6 +567,18 @@ class MundoWGL {
   // 147 pestañas del sitio son tocables y abren SU módulo exacto), y un
   // RÓTULO compartido revela el nombre de la placa más cercana al volar.
   ciudadTotems: { g: THREE.Group; x0: number; y0: number; z0: number; nacido: boolean }[] = [];
+  // v166 — EL FONDO CREADO POR EL MÓDULO: cúpula temática que ENVUELVE al
+  // piloto mientras visita una casa (el acento del módulo pinta el cielo,
+  // los hazes y las estrellas) y el planeta/da su corte DUERMEN: cada
+  // módulo genera su propio universo. Al cerrar la casa, el mundo vuelve.
+  salaCielo: THREE.Mesh | null = null;
+  salaCieloMat: THREE.ShaderMaterial | null = null;
+  salaFondoOcultos: { o: THREE.Object3D; v: boolean }[] = [];
+  salaTemaOn = false;
+  salaTemaPendiente = false;
+  salaTemaGen = 0;
+  // v166: el mundo privado se APARTA cuando el piloto entra a la casa
+  mundoFueraDeCasa = false;
   ciudadSlabs: { x: number; y: number; z: number; nombre: string; color: number; tab: string }[] = [];
   ciudadCrownes: THREE.Object3D[] = [];
   ciudadColisTotems: { x0: number; z0: number }[] = [];
@@ -1015,7 +1027,8 @@ class MundoWGL {
         <button class="vg147-joy-btn" data-joy="sube" aria-label="Subir">▲</button>
         <button class="vg147-joy-btn" data-joy="baja" aria-label="Bajar">▼</button>
       </div>
-      <p class="vg149-joy-hint" data-joy="hint">palanca = volar · arrastrar = mirar</p>`;
+      <button class="vg166-avanza" data-joy="avanza" aria-label="Avanzar (mantén pulsado)">AVANZAR</button>
+      <p class="vg149-joy-hint" data-joy="hint">palanca o avanzar = volar · arrastrar = mirar</p>`;
     this.joyEl = host;
     this.joyKnob = host.querySelector('[data-joy="knob"]');
     this.joyObj = new CSS3DObject(host);
@@ -1050,8 +1063,18 @@ class MundoWGL {
     e.stopPropagation();
     if (t === "sube" || t === "baja") {
       this.teclas.add(t === "sube" ? "e" : "q");
-      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      try { (e.target as HTMLElement).setPointerCapture?.(e.pointerId); } catch { /* el dedo ya está capturado por el host */ }
       const up = () => { this.teclas.delete(t === "sube" ? "e" : "q"); };
+      (e.target as HTMLElement).addEventListener("pointerup", up, { once: true });
+      (e.target as HTMLElement).addEventListener("pointercancel", up, { once: true });
+      return;
+    }
+    // v166 — EL BOTÓN AVANZAR: un solo dedo empuja la casa, el otro mira.
+    // Mantener pulsado = mantener W (la misma física del teclado).
+    if (t === "avanza") {
+      this.teclas.add("w");
+      try { (e.target as HTMLElement).setPointerCapture?.(e.pointerId); } catch { /* el dedo ya está capturado por el host */ }
+      const up = () => { this.teclas.delete("w"); };
       (e.target as HTMLElement).addEventListener("pointerup", up, { once: true });
       (e.target as HTMLElement).addEventListener("pointercancel", up, { once: true });
       return;
@@ -1189,6 +1212,8 @@ class MundoWGL {
     }
     this.salaInst.grupo.visible = false;
     this.escena.add(this.salaInst.grupo);
+    // v166: EL MÓDULO PINTA SU FONDO — la cúpula temática envuelve al piloto
+    this.despertarTemaSala(p.color || 0x7ab8ff);
     // v159: sala héroe en móvil → el mundo de zona duerme (una sola capa manda)
     this.salaHeroMovil = this.esMovil();
     this.visibleZona(this.zona);
@@ -1207,6 +1232,8 @@ class MundoWGL {
   }
 
   desmontarSala(instant = false) {
+    // v166: al salir de la casa, el fondo del módulo muere (el planeta vuelve)
+    this.dormirTemaSala();
     this.desmontarMundo();
     const inst = this.salaInst;
     if (!inst) return;
@@ -1663,7 +1690,10 @@ class MundoWGL {
       // gas); el teclado es binario y satur en 1 igual que siempre
       const mag = Math.min(1, obj.length());
       const turbo = (T.has("shift") ? 2.6 : 1) * (mag >= 0.92 ? 1.35 : 1); // al fondo del anillo = turbo suave
-      obj.normalize().multiplyScalar(VEL_LIBRE * turbo * mag);
+      // v166 — VUELO FINO EN LA CASA: dentro de un módulo la velocidad baja
+      // (atravesar puertas sin pasarse de largo); fuera, el vuelo libre intacto
+      const enCasa = !!this.salaInst && this.salaInst.grupo.visible && this.salaPayload?.tipo !== "generica";
+      obj.normalize().multiplyScalar((enCasa ? VEL_LIBRE * 0.55 : VEL_LIBRE) * turbo * mag);
       // los ejes del VUELO salen de la CÁMARA: adelante = hacia la mirada
       const dirF = _vB.subVectors(this.mirada, this.camara.position).normalize();
       const dirR = _vC.crossVectors(dirF, _vD.set(0, 1, 0)).normalize();
@@ -4256,6 +4286,8 @@ class MundoWGL {
     this.enVuelo = true;
     this.ciudadGrupo.visible = true;
     this.animarCielo(1);
+    // v166: la ciudad manda SU vacío — la cúpula del módulo duerme
+    this.dormirTemaSala();
     // v164 — el TELETIPO se sintoniza: el titular más nuevo del feed real
     this.sintonizarTeletipo();
     // v159 — EL VACÍO LIMPIO: el planeta, su atmósfera, partículas, logo y
@@ -4329,6 +4361,8 @@ class MundoWGL {
     // v159 — el planeta y su corte DESPIERTAN al cerrar (el regreso a casa)
     for (const oc of this.ciudadOcultos) oc.o.visible = oc.v;
     this.ciudadOcultos = [];
+    // v166: si había una casa abierta, SU fondo vuelve a pintar el universo
+    if (this.salaInst && this.salaPayload) this.despertarTemaSala(this.salaPayload.color || 0x7ab8ff);
     const volver = this.ciudadPose;
     this.ciudadPose = null;
     this.setCiudadUI(false);
@@ -4390,6 +4424,104 @@ class MundoWGL {
         }
         this.ciudadRevivir = false;
       },
+    });
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // v166 — EL FONDO CREADO POR EL MÓDULO. Al entrar a una casa, su
+  // acento PINTA el universo: cúpula shader (cenit profundo → horizonte
+  // vivo del color del módulo, hazes girando, estrellas propias) y el
+  // planeta con todo su corte DUERMEN. Nada del mundo viejo compite:
+  // cada módulo genera su propio fondo. Al salir, todo despierta.
+  // ──────────────────────────────────────────────────────────────
+  despertarTemaSala(color: number) {
+    if (this.ciudadAbierta) { this.salaTemaPendiente = true; return; }
+    this.salaTemaPendiente = false;
+    this.salaTemaGen++;
+    if (!this.salaCielo || !this.salaCieloMat) {
+      const geo = new THREE.SphereGeometry(10.5, 24, 16);
+      const mat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        side: THREE.BackSide,
+        uniforms: {
+          uOp: { value: 0 },
+          uT: { value: 0 },
+          uAcento: { value: new THREE.Color(color) },
+        },
+        vertexShader: `varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+        fragmentShader: `
+          varying vec3 vP;
+          uniform float uOp;
+          uniform float uT;
+          uniform vec3 uAcento;
+          void main() {
+            vec3 d = normalize(vP);
+            float h = d.y * 0.5 + 0.5;
+            // el cielo lo PINTA el módulo: cenit profundo, horizonte vivo
+            vec3 cenit = uAcento * 0.07 + vec3(0.004, 0.005, 0.012);
+            vec3 medio = uAcento * 0.13 + vec3(0.008, 0.011, 0.024);
+            vec3 horizonte = uAcento * 0.34 + vec3(0.014, 0.02, 0.045);
+            vec3 col = mix(horizonte, medio, smoothstep(0.18, 0.52, h));
+            col = mix(col, cenit, smoothstep(0.52, 0.85, h));
+            // HAZES del módulo: columnas de luz del acento girando lento
+            float ang = atan(d.x, d.z);
+            float haz = pow(max(0.0, sin(ang * 7.0 + uT * 0.12)), 28.0);
+            col += uAcento * haz * (1.0 - h) * (0.4 + 0.18 * sin(uT * 0.7));
+            // ESTRELLAS propias, teñidas del acento
+            vec3 celda = floor(d * 170.0);
+            float st = step(0.9982, fract(sin(dot(celda, vec3(12.9898, 78.233, 37.719))) * 43758.5453));
+            col += mix(vec3(0.42, 0.47, 0.58), uAcento, 0.45) * st * 0.5;
+            gl_FragColor = vec4(col, uOp);
+          }`,
+      });
+      this.salaCielo = new THREE.Mesh(geo, mat);
+      this.salaCielo.frustumCulled = false;
+      this.escena.add(this.salaCielo);
+      this.salaCieloMat = mat;
+    }
+    (this.salaCieloMat.uniforms.uAcento.value as THREE.Color).setHex(color);
+    this.salaCielo.visible = true;
+    // EL PLANETA Y SU CORTE DUERMEN: el fondo lo firma el módulo
+    this.salaFondoOcultos = [];
+    const esconder = (o: THREE.Object3D | null | undefined) => {
+      if (!o) return;
+      this.salaFondoOcultos.push({ o, v: o.visible });
+      o.visible = false;
+    };
+    esconder(this.tierra);
+    esconder(this.atmosfera);
+    esconder(this.particulasOro);
+    esconder(this.particulasAzul);
+    esconder(this.aroSpin);
+    esconder(this.logoGrupo);
+    for (const mk of this.marcadores) esconder(mk.grupo);
+    for (const pt of this.portales) esconder(pt.grupo);
+    for (const tz of this.titulosZona) esconder(tz.grupo);
+    const gen = this.salaTemaGen;
+    const obj = { o: this.salaCieloMat.uniforms.uOp.value as number };
+    this.animarP(obj, { o: 1 }, 900, {
+      onUpdate: () => { if (this.salaTemaGen === gen && this.salaCieloMat) this.salaCieloMat.uniforms.uOp.value = obj.o; },
+    });
+    this.salaTemaOn = true;
+  }
+
+  dormirTemaSala() {
+    if (!this.salaTemaOn) { this.salaTemaPendiente = false; return; }
+    this.salaTemaOn = false;
+    this.salaTemaPendiente = false;
+    this.salaTemaGen++;
+    // EL PLANETA DESPIERTA YA (nada queda preso si algo falla después)
+    for (const oc of this.salaFondoOcultos) oc.o.visible = oc.v;
+    this.salaFondoOcultos = [];
+    const mat = this.salaCieloMat;
+    if (!mat || !this.salaCielo) return;
+    this.salaCielo.visible = true;
+    const gen = this.salaTemaGen;
+    const obj = { o: mat.uniforms.uOp.value as number };
+    this.animarP(obj, { o: 0 }, 420, {
+      onUpdate: () => { if (this.salaTemaGen === gen && mat) mat.uniforms.uOp.value = obj.o; },
+      onDone: () => { if (this.salaTemaGen === gen && this.salaCielo) this.salaCielo.visible = false; },
     });
   }
 
@@ -5320,6 +5452,23 @@ class MundoWGL {
     if (this.salaInst && this.salaInst.grupo.visible) this.salaInst.tic(t, dt);
     // v148: el mundo privado de la sección también respira
     if (this.mundoInst && this.mundoInst.grupo.visible) this.mundoInst.tic(t, dt);
+    // v166 — CAPAS LIMPIAS EN LA CASA: cuando el piloto ENTRA (cámara en
+    // local de la sala, z < -0.35), el mundo privado de la sección SE APARTA
+    // — dentro manda la casa; al salir, el telón de fondo vuelve
+    if (this.salaInst && this.mundoInst) {
+      _vA.copy(this.camara.position);
+      this.salaInst.grupo.worldToLocal(_vA);
+      const dentro = _vA.z < -0.35 && _vA.z > -8.4 && Math.abs(_vA.x) < 2.8 && _vA.y > -3.6 && _vA.y < 3.2;
+      if (dentro !== this.mundoFueraDeCasa) {
+        this.mundoFueraDeCasa = dentro;
+        this.mundoInst.grupo.visible = !dentro;
+      }
+    }
+    // v166: LA CÚPULA DEL MÓDULO pega a la cámara (el fondo te envuelve) y respira
+    if (this.salaTemaOn && this.salaCielo && this.salaCieloMat) {
+      this.salaCielo.position.copy(this.camara.position);
+      this.salaCieloMat.uniforms.uT.value = t;
+    }
     // v154/v158 — LA CIUDAD-MENÚ: es un LUGAR fijo del universo (no se
     // ancla a nada); solo respira — naves, ventanas, farolas, emblema
     if (this.ciudadAbierta && this.ciudadGrupo) {

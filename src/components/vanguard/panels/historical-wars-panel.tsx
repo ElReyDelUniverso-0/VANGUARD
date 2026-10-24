@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { HISTORICAL_WARS, type HistoricalWar } from "@/lib/game-data";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -8,6 +8,7 @@ import { ScrollText, MapPin, Calendar, Swords, ChevronRight, ChevronDown, Filter
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const eraColor: Record<string, string> = {
   ANTIGUA: "text-amber border-amber-hud bg-amber-hud/30",
@@ -34,6 +35,18 @@ export function HistoricalWarsPanel() {
 
   const filtered = HISTORICAL_WARS.filter((w) => eraFilter === "ALL" || w.era === eraFilter);
   const selectedWar = HISTORICAL_WARS.find((w) => w.id === selected);
+
+  // v166 — LA CASA DE LA HISTORIA: el archivo completo vive en las
+  // estanterías 3D (año de inicio → fin, volumen de duración, región,
+  // desenlace y bajas como EL DETALLE que la proximidad revela)
+  const filas3D = useMemo<FilaContenido3D[]>(() => HISTORICAL_WARS.slice(0, 12).map((w: HistoricalWar) => ({
+    t: `${formatYear(w.yearStart)} · ${w.name}`,
+    v: formatYear(w.yearEnd),
+    p: Math.max(8, Math.min(100, Math.round((Math.abs(w.yearEnd - w.yearStart) / 30) * 100))),
+    color: w.era === "ANTIGUA" ? "#F5C542" : w.era === "EDAD_MEDIA" ? "#C084FC" : w.era === "MODERNA" ? "#4DD8FF" : "#FF4D5E",
+    d: `${w.region} · ${w.outcome} · Bajas: ${w.casualties}`,
+  })), []);
+  useSala3DContenido("historia", "GUERRAS HISTORICAS", "#D9A05B", `${HISTORICAL_WARS.length} guerras del archivo · 4 eras`, filas3D);
 
   return (
     <div className="space-y-3">

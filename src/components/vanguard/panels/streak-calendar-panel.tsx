@@ -5,9 +5,10 @@ import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Flame, Calendar, TrendingUp, Award, ChevronLeft, ChevronRight, Check, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 export function StreakCalendarPanel() {
   const { streak, lastLoginDate, coins, addCoins, addXp } = useGameStore();
@@ -52,6 +53,17 @@ export function StreakCalendarPanel() {
   const longestStreak = Math.max(streak, Math.floor(Math.random() * 8) + 5); // mock for display
   const totalClaimed = history.filter((h) => h.claimed).length;
   const totalRewards = history.filter((h) => h.claimed).reduce((a, h) => a + h.reward, 0);
+
+  // v166 — LA CASA DE LA RACHA: tu constancia vive en las estanterías 3D
+  // (racha actual, récord, dias cobrados y el botín total de la racha)
+  const filas3D = useMemo<FilaContenido3D[]>(() => [
+    { t: "RACHA ACTIVA", v: `${streak} DIAS`, p: Math.min(100, streak * 5), color: "#FF4D5E", d: `Dia ${streak} de tu racha · no la rompas: entra mañana` },
+    { t: "RECORD PERSONAL", v: `${longestStreak} DIAS`, p: Math.min(100, longestStreak * 5), color: "#F5C542", d: `Tu mejor racha historica · ${longestStreak} dias seguidos` },
+    { t: "DIAS COBRADOS", v: `${totalClaimed}/30`, p: Math.round((totalClaimed / 30) * 100), color: "#FB923C", d: `Has cobrado la recompensa en ${totalClaimed} dias de este ciclo` },
+    { t: "BOTIN DE LA RACHA", v: `${totalRewards} C`, p: Math.min(100, Math.round((totalRewards / 500) * 100)), color: "#3DDC84", d: `Monedas ganadas solo por volver cada dia: ${totalRewards}` },
+    { t: "ESCUDO DE RACHA", v: "150 C", p: coins >= 150 ? 100 : Math.round((coins / 150) * 100), color: "#C084FC", d: coins >= 150 ? "Tienes saldo para UN escudo: salva la racha un dia malo" : `Te faltan ${150 - coins} monedas para tu escudo de racha` },
+  ], [streak, longestStreak, totalClaimed, totalRewards, coins]);
+  useSala3DContenido("racha", "CALENDARIO DE RACHA", "#FB923C", `${streak} dias seguidos · botin ${totalRewards} monedas`, filas3D);
 
   return (
     <div className="space-y-3">
