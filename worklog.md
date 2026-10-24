@@ -2596,3 +2596,17 @@ Work Log:
 Stage Summary:
 - Producción v167.0: sobre LA CASA HABITADA, el aterrizaje automático ya JAMÁS pisa un módulo vivo (triple guard + retiro que completa la zona), las salas montadas a mitad de vuelo despiertan por watchdog, y el texto móvil es legible. La ronda 19 entrega sus primeros 4 bugs graves en producción.
 - Cola v168+: puertas tocables y recompensa 3/3 para las habitaciones del remoto; repintado en vivo de las placas de datos con vg:sala3d-datos; extracción honesta por tipo (extraerHabitacion del reflog) como mejora de las salas II/III del remoto; colas v158-v161 (minimapa, distritos, aterrizaje ceremonial).
+
+---
+Task ID: 21-b
+Agent: main (Super Z)
+Task: Observación de producción v167.0 — DB caída (no atribuible a esta ronda)
+
+Work Log:
+- Deploy verificado: health v167.0 en vanguard-kq9r.vercel.app, portada 200.
+- /api/health reporta db:"down" de forma sostenida (~4 min, múltiples invocaciones serverless — no es cold start); /api/presence {ok:false}; /api/news sirve el fallback curado (curated-1) como está diseñado.
+- Esta ronda NO toca superficie de DB (diff: mundo-webgl.tsx, salas-3d.ts, version.ts, bitacora.ts, worklog, inbox); la DB LOCAL lleva db:up toda la sesión con el mismo DATABASE_URL → causa ambiental en el proveedor (pausa del Postgres serverless / allowlist de IPs del pooler / env de Vercel). FUERA DEL ALCANCE DEL CÓDIGO.
+- El mundo degrada con elegancia (lemas «SINTONIZANDO…» de v161; news curada).
+
+Stage Summary:
+- Requiere atención del Dueño fuera del repo: revisar el panel del proveedor de Postgres (estado/pausa/IPs) y las env vars de Vercel (DATABASE_URL). Todo lo demás v167.0 operativa.
