@@ -1182,6 +1182,8 @@ export function ChromeTabs({
 
   // v108: vista previa al pasar el ratón — bajo la pestaña, sujeta al viewport
   const abrirPrevia = (k: TabKey, el: HTMLElement) => {
+    // v170.0 PREFETCH: mientras se mira la vitrina, el chunk ya viene volando
+    window.dispatchEvent(new CustomEvent("vg:prefetch-tab", { detail: { key: k } }));
     const r = el.getBoundingClientRect();
     const ancho = 232;
     const left = Math.max(8, Math.min(r.left, (window.innerWidth ?? 360) - ancho - 8));
@@ -1275,7 +1277,7 @@ export function ChromeTabs({
 
   return (
     <nav className="sticky top-[126px] sm:top-[160px] z-20" aria-label={t("cromo.franga")}>
-      <div className="relative bg-[#07070b]/88 backdrop-blur-md border-b border-amber-hud/25 shadow-[0_8px_24px_-14px_rgba(0,0,0,0.9)]">
+      <div className="vg170-franja-pulida relative bg-[#07070b]/88 backdrop-blur-md border-b border-amber-hud/25 shadow-[0_8px_24px_-14px_rgba(0,0,0,0.9)]">
         {/* degradados + flechas: nada queda opacado en móvil (herencia v48) */}
         <div
           className={cn(

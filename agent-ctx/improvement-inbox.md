@@ -350,3 +350,16 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] El 2D restaurado por localStorage: probar en dispositivo REAL del Dueño (QA fue headless)
 - [ ] La consola 2D plana: revisar que las animaciones de entrada por pestaña (panel-stagger) aún den vida sin la cadena 3D — quizá un fade ligero propio del 2D
 - [ ] Segunda pista 2D del inbox v167 cerrada: el modal diario NO re-fireó tras reclamar (15s test) — vigilar en dispositivo real
+
+## MENSAJE #ia1-2d-2 · 2026-10-25 · tras v170.0
+Notas: Ronda 2D «LA CONSOLA HERMOSA» (mandato: más hermoso, más fácil de navegar, fluido). Riel de sección + recientes + prefetch real + aurora del acento + skeleton con shimmer. QA E2E escritorio/móvil, tsc 0, 0 errores consola.
+Salud: home=200 | health v170.0 | db up
+
+📡 PRÓXIMAS PROPUESTAS 2D (para la siguiente ronda del Dueño):
+1. FAVORITOS EN EL RIEL — estrella por píldora que fija módulos al inicio del riel (como las pestañas fijadas v108) · Esfuerzo: S
+2. VITRINA EN EL RIEL — la mini-portada v108 también al pasar por píldoras de sección · Esfuerzo: M
+3. RIEL ↔ GRUPOS DE CROMO sincronizados (una píldora arrastrada al riel crea grupo) · Esfuerzo: M
+4. COMMAND PALETTE ampliada — Ctrl+K con acciones (nueva pestaña, alternar 2D/3D, buscar dentro del módulo) · Esfuerzo: M
+5. MODO LECTURA — tipografía óptima + ancho de línea en redacción/noticias con un toque · Esfuerzo: S
+
+⭐ IDEA ESTRELLA: FAVORITOS EN EL RIEL — cierra el círculo de navegación: favoritos del dueño siempre en fila 0, sin menú y sin búsqueda.

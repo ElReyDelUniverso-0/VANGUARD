@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v170.0",
+    nombre: "LA CONSOLA HERMOSA",
+    tipo: "nav",
+    hitos: [
+      "EL RIEL DE SECCIÓN — la navegación que faltaba: los hermanos de tu sección viven SIEMPRE a un toque bajo la franja de cromo (sticky 165/199): chip de identidad con el acento del mundo + píldoras de cristal + la sala viva en oro; en la NUEVA PESTAÑA se convierte en lanzador de las 16 secciones; plegable con memoria (vg170-riel)",
+      "RECIENTES DE LA CASA — el camino que La Cama ya aprendía viaja a la derecha del riel: tus últimas salas a un toque con el punto de color de su sección (escritorio)",
+      "PREFETCH REAL (el ascensor privado) — pasar el ratón por una píldora del riel o por una pestaña de la franja (vg:prefetch-tab) baja el chunk del módulo ANTES del click: abrir una sala pasa de «Cargando módulo...» a instantáneo (~45 módulos de alto tráfico, deduplicado por webpack, una vez por sesión)",
+      "AURORA DEL ACENTO — la casa se tiñe del color del mundo activo: lavado radial que respira var(--vg-acc) (oro INICIO, cian INTELIGENCIA, verde MERCADO…), 1.2s de transición al cambiar de sección; se apaga sola en 3D y con reduced-motion",
+      "FRANJA PULIDA + ESQUELETO HERMOSO — línea de acento bajo la franja de cromo y el «Cargando módulo...» respira con shimmer del acento",
+      "FLUIDEZ — blur contenido en móvil, chispas v139 en volumen bajo en la consola plana, rueda vertical desplaza el riel, overscroll contenido (contain:paint descartado a conciencia: rompería las cadenas preserve-3d de la Casa)",
+    ],
+  },
+  {
     version: "v169.0",
     nombre: "LA CONSOLA PLANA",
     tipo: "tecno",

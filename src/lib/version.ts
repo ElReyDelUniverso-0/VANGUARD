@@ -257,6 +257,44 @@
 //     noticias reales (Al Jazeera/RT/France 24) alcanzables por scroll,
 //     pestaña ANÁLISIS (WORLD CRISIS) viva, tsc 0, build limpio.
 // Herencia v168 (ia2, rama en vuelo) y todo lo anterior.
-export const APP_VERSION = "v169.0";
-export const APP_CODENAME = "LA CONSOLA PLANA";
+
+// v170.0: LA CONSOLA HERMOSA — el Dueño: «más hermoso visualmente, más fácil
+//         de navegar, fluido — sí a todo, sigue con las propuestas».
+// (1) EL RIEL DE SECCIÓN (navegación que faltaba): con ~160 módulos, saltar
+//     de hermano en hermano obligaba a abrir el menú (M) o el buscador.
+//     Ahora los hermanos de TU sección viven SIEMPRE a un toque, pegados
+//     bajo la franja de cromo (sticky 165/199): chip de identidad de sección
+//     con su acento + píldoras de cristal + la pestaña viva brilla en oro.
+//     En la NUEVA PESTAÑA el riel se convierte en lanzador de las 16
+//     secciones. Plegable (persistente, vg170-riel) y con fade honesto en
+//     los bordes del scroll.
+// (2) RECIENTES DE LA CASA: el camino que ya aprende La Cama (cama-store
+//     recientes, persistido) viaja a la derecha del riel (escritorio) —
+//     tus últimas salas a un toque, con el punto de color de su sección.
+// (3) PREFETCH REAL — EL ASCENSOR PRIVADO: pasar el ratón por una píldora
+//     del riel (o por una pestaña de la franja, vg:prefetch-tab) baja el
+//     chunk del módulo ANTES del click; abrir una sala pasa de «Cargando
+//     módulo...» a instantáneo. Mapa curado de ~45 módulos de alto tráfico
+//     deduplicado por webpack con los dynamic() existentes; una vez por
+//     módulo y por sesión.
+// (4) AURORA DEL ACENTO: la casa se tiñe del color del mundo activo —
+//     lavado radial fijo que respira var(--vg-acc) (oro INICIO, cian
+//     INTELIGENCIA, verde MERCADO...), transición de 1.2s al cambiar de
+//     sección; el CSS la apaga sola en los modos 3D y reduced-motion.
+// (5) FRANJA PULIDA: línea de acento bajo la franja de cromo; ESQUELETO
+//     HERMOSO: el «Cargando módulo...» ahora respira con shimmer del acento
+//     (el skeleton era la cara aburrida de la casa).
+// (6) FLUIDEZ: blur contenido en móvil, chispas v139 bajan el volumen en la
+//     consola plana (0.55), rueda vertical desplaza el riel, overscroll
+//     contenido. (contain:paint descartado a conciencia: rompería las
+//     cadenas preserve-3d del diorama/cuna/flotador.)
+// QA v170 (agent-browser + next start, db up): riel visible escritorio y
+//     móvil 390px (38px, scrollable, sin overflow), sticky correcto bajo la
+//     franja (strip 160 / riel 199), píldora navega (NEWS abrió pestaña),
+//     plegado persiste (vg170-riel), NUEVA lanza las 16 secciones, prefetch
+//     E2E verificado con hover real (+2 chunks en performance), 0 errores
+//     de consola, tsc 0, build limpio.
+// Herencia v169.0 LA CONSOLA PLANA y todo lo anterior.
+export const APP_VERSION = "v170.0";
+export const APP_CODENAME = "LA CONSOLA HERMOSA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -2639,3 +2639,20 @@ Work Log:
 
 Stage Summary:
 - El 2D ahora es una consola de verdad: plana, completa, legible desde el primer frame y fiel a la elección del piloto. Ronda 19: 2 bugs graves más (total 6 en producción). Pendiente para ia1 2D: probar la restauración en dispositivo real; fade propio del 2D por pestaña; VER EN 3D por-edificio.
+
+---
+Task ID: ia1-2d-2
+Agent: main (ia1 — ronda 2D del Dueño)
+Task: v170.0 LA CONSOLA HERMOSA — el Dueño: «más hermoso visualmente, más fácil de navegar, fluido, sí a todo»
+
+Work Log:
+- Baseline: tsc 0, health v169.0, db up, servidor serve.mjs --prod (200MB). QA baseline con capturas (home + crisis).
+- NAVEGACIÓN — EL RIEL DE SECCIÓN (nuevo riel-seccion.tsx): los hermanos de la sección activa SIEMPRE a un toque, sticky bajo la franja (top 165 móvil / 199 escritorio): chip de identidad de sección con su acento (usa el icono/color de tab-nav) + píldoras de cristal + activa en oro con glow. En la NUEVA PESTAÑA se convierte en lanzador de las 16 secciones. Recientes de La Cama (cama-store.recientes, ya persistido) a la derecha en escritorio. Plegable con memoria (localStorage vg170-riel). Rueda vertical desplaza el riel; fade honesto en bordes (mask-image); reduced-motion apaga transiciones.
+- FLUIDEZ — PREFETCH REAL: mapa PREFETCH_MODULOS (~45 módulos de alto tráfico) + listener vg:prefetch-tab en page.tsx; el riel lo despacha al hover/touch y la franja de cromo al abrir la vitrina v108 (chrome-tabs.tsx). Webpack deduplica con los dynamic() existentes (mismo módulo = mismo chunk). QA: hover real sobre «THE WORLD CHANGES» → +2 chunks en performance.getEntriesByType('resource'); apertura sin skeleton.
+- BELLEZA — capa CSS v170 en globals.css: ① AURORA DEL ACENTO (fija 340px, respira var(--vg-acc) por sección, transición 1.2s, se apaga sola en 3D/reduced-motion; coexiste con la aurora-orb v16 que es ambiente); ② FRANJA PULIDA (línea de acento bajo la franja); ③ ESQUELETO HERMOSO (shimmer del acento + líneas + puntos que suben, reemplaza a los 3 puntos planos); ④ riel completo (píldoras, recientes, plegado); ⑤ blur contenido en móvil y chispas v139 al 0.55 en consola plana.
+- DECISIÓN DE INGENIERÍA: contain:paint en la sala DESCARTADO a conciencia — crea contexto de recorte y rompería las cadenas preserve-3d (diorama→cuna→flotador) y los popovers absolutos; la fluidez va por prefetch + perceived-perf, no por containment arriesgado.
+- QA E2E (agent-browser + next start, db up): boot 2D directo, riel visible (top 201/168 móvil, 38px), sticky correcta bajo la franja (strip 160/riel 199 con scroll 1200px), píldora NEWS abrió su sala, plegado persiste (data-vg-riel-plegado=1 + ls=1, altura 36), NUEVA muestra 16 secciones (HANGAR/INTEL/HOME/GAME/...), móvil 390px sin overflow-x y recientes ocultos, 0 errores de consola (solo THREE.Clock heredado), tsc 0, build limpio.
+- Release: version.ts v170.0 LA CONSOLA HERMOSA + bitacora.ts + inbox + este worklog.
+
+Stage Summary:
+- El 2D ganó su capa de cuidado: la navegación entre los ~160 módulos ya no depende del menú (riel siempre visible + recientes + prefetch instantáneo) y la casa respira el color del mundo activo. QA real en escritorio y móvil. Pendiente para próxima ronda 2D: riel con favoritos fijados (estrella), hover-vitrina dentro del riel, sincronizar riel con grupos de cromo.

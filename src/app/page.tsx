@@ -15,6 +15,9 @@ import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, TABS, type TabKey } 
 // v106.0 PESTAÑAS DE CROMO: la franja del navegador interno reemplaza a la
 // barra de secciones — pestañas que se abren, se eligen y se cierran.
 import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
+// v170.0 EL RIEL DE SECCIÓN: los hermanos de tu sección siempre a un toque
+// + recientes de La Cama + prefetch de módulos al hover (apertura instantánea)
+import { RielSeccion } from "@/components/vanguard/riel-seccion";
 import { toast } from "sonner";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 // v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
@@ -105,18 +108,100 @@ const PlanetaPanel = dynamic(() => import("@/components/vanguard/panels/planeta-
 const TutorialModal = dynamic(() => import("@/components/vanguard/tutorial-modal").then((m) => m.TutorialModal), { ssr: false });
 
 // ============ MOTOR DE CARGA PEREZOSA v17 ============
+// v170.0 ESQUELETO HERMOSO: el «Cargando módulo...» de puntos planos era
+// la cara aburrida de la casa — ahora el skeleton respira con el acento
+// de la sección (shimmer transform/opacity, reduced-motion lo apaga).
 function PanelSkeleton() {
   return (
-    <div className="hud-panel p-10 flex flex-col items-center justify-center gap-3 text-[11px] font-mono text-muted-foreground uppercase tracking-widest">
-      <span className="flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-electric blink-soft" />
-        <span className="w-2 h-2 rounded-full bg-electric blink-soft" style={{ animationDelay: "0.2s" }} />
-        <span className="w-2 h-2 rounded-full bg-electric blink-soft" style={{ animationDelay: "0.4s" }} />
-      </span>
+    <div className="hud-panel p-10 flex flex-col items-center justify-center gap-4 text-[11px] font-mono text-muted-foreground uppercase tracking-widest vg170-skel" aria-busy="true">
+      <div className="flex items-center gap-2">
+        <span className="vg170-skel-dot" />
+        <span className="vg170-skel-dot" style={{ animationDelay: "0.18s" }} />
+        <span className="vg170-skel-dot" style={{ animationDelay: "0.36s" }} />
+      </div>
+      <div className="flex flex-col items-center gap-2 w-full max-w-md">
+        <span className="vg170-skel-line" style={{ width: "72%" }} />
+        <span className="vg170-skel-line" style={{ width: "54%" }} />
+        <span className="vg170-skel-line" style={{ width: "38%" }} />
+      </div>
       Cargando módulo...
     </div>
   );
 }
+
+// ══════════════════════════════════════════════════════════
+// v170.0 PREFETCH DE MÓDULOS — EL ASCENSOR PRIVADO.
+// El riel de sección y la franja despachan vg:prefetch-tab al pasar el
+// ratón: el chunk del módulo se baja ANTES del click. Abrir una sala
+// pasa de «cargando...» a instantáneo. webpack deduplica estos imports
+// con los dynamic() de arriba (mismo módulo = mismo chunk).
+// Mapa curado: las salas de mayor tráfico de cada sección.
+// ══════════════════════════════════════════════════════════
+const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
+  // INICIO
+  redaccion: () => import("@/components/vanguard/panels/redaccion-panel"),
+  noticias: () => import("@/components/vanguard/panels/news-panel"),
+  cambios: () => import("@/components/vanguard/panels/cambios-panel"),
+  verdades: () => import("@/components/vanguard/panels/infinita-panel"),
+  verifica: () => import("@/components/vanguard/panels/verifica-panel"),
+  // COMANDO
+  briefing: () => import("@/components/vanguard/panels/daily-briefing-panel"),
+  misiones: () => import("@/components/vanguard/panels/missions-panel"),
+  quiz: () => import("@/components/vanguard/panels/quiz-panel"),
+  // CRISIS / OBSERVATORIO
+  crisis: () => import("@/components/vanguard/panels/crisis-panel"),
+  mapa: () => import("@/components/vanguard/panels/map-panel"),
+  geopolitica: () => import("@/components/vanguard/panels/geopolitica-panel"),
+  planeta: () => import("@/components/vanguard/panels/planeta-panel"),
+  radar: () => import("@/components/vanguard/panels/radar-panel"),
+  observatorio: () => import("@/components/vanguard/panels/observatorio-panel"),
+  osint: () => import("@/components/vanguard/panels/osint-panel"),
+  // MERCADO
+  bolsa: () => import("@/components/vanguard/panels/bolsa-panel"),
+  mercados: () => import("@/components/vanguard/panels/mercados-panel"),
+  hacienda: () => import("@/components/vanguard/panels/hacienda-panel"),
+  divisas: () => import("@/components/vanguard/panels/divisas-panel"),
+  bookmaker: () => import("@/components/vanguard/panels/bookmaker-panel"),
+  apuestas: () => import("@/components/vanguard/panels/war-betting-panel"),
+  predicciones: () => import("@/components/vanguard/panels/predictions-panel"),
+  espionaje: () => import("@/components/vanguard/panels/espionaje-panel"),
+  // JUEGO
+  mundo: () => import("@/components/vanguard/panels/world-conquest-panel"),
+  multijugador: () => import("@/components/vanguard/panels/multiplayer-panel"),
+  frente: () => import("@/components/vanguard/panels/frente-panel"),
+  detective: () => import("@/components/vanguard/panels/detective-panel"),
+  arcade: () => import("@/components/vanguard/panels/arcade-panel"),
+  edad: () => import("@/components/vanguard/panels/age-of-nations-panel"),
+  mipais: () => import("@/components/vanguard/panels/mi-pais-panel"),
+  // INTELIGENCIA
+  salaguerra: () => import("@/components/vanguard/panels/sala-guerra-panel"),
+  googles: () => import("@/components/vanguard/panels/googles-panel"),
+  tierra: () => import("@/components/vanguard/panels/tierra-panel"),
+  espejo: () => import("@/components/vanguard/panels/espejo-panel"),
+  maquina: () => import("@/components/vanguard/panels/maquina-panel"),
+  grafo: () => import("@/components/vanguard/panels/grafo-panel"),
+  // ARCHIVO
+  atlas: () => import("@/components/vanguard/panels/atlas-panel"),
+  enciclopedia: () => import("@/components/vanguard/panels/encyclopedia-panel"),
+  historia: () => import("@/components/vanguard/panels/historical-wars-panel"),
+  // EMISORA
+  pantalla: () => import("@/components/vanguard/panels/pantalla-panel"),
+  foryou: () => import("@/components/vanguard/panels/foryou-panel"),
+  envivo: () => import("@/components/vanguard/panels/en-vivo-panel"),
+  videos: () => import("@/components/vanguard/panels/videos-panel"),
+  directos: () => import("@/components/vanguard/panels/directos-panel"),
+  // SOCIAL / SISTEMA
+  perfil: () => import("@/components/vanguard/panels/perfil-panel"),
+  foros: () => import("@/components/vanguard/panels/forum-panel"),
+  empleos: () => import("@/components/vanguard/panels/empleos-panel"),
+  logros: () => import("@/components/vanguard/panels/achievements-panel"),
+  ranking: () => import("@/components/vanguard/panels/ranking-panel"),
+  tienda: () => import("@/components/vanguard/panels/shop-panel"),
+  // CREADORES
+  obras: () => import("@/components/vanguard/panels/muro-obras-panel"),
+  studios: () => import("@/components/vanguard/panels/studios-panel"),
+  agenteia: () => import("@/components/vanguard/panels/agente-ia-panel"),
+};
 // NOTA Next 16: las opciones de dynamic() deben ir inline en cada llamada
 // (no se puede compartir un objeto literal entre llamadas).
 
@@ -998,6 +1083,18 @@ export default function Home() {
     } catch {}
   }, []);
 
+  // v170.0 PREFETCH DE MÓDULOS: el riel y la franja piden el chunk al pasar
+  // el ratón (vg:prefetch-tab) — abrir una sala pasa a ser instantáneo.
+  useEffect(() => {
+    const alPrefetch = (e: Event) => {
+      const k = (e as CustomEvent).detail?.key as TabKey | undefined;
+      const bajar = k ? PREFETCH_MODULOS[k] : undefined;
+      if (bajar) void bajar().catch(() => {/* el chunk llegará al click */});
+    };
+    window.addEventListener("vg:prefetch-tab", alPrefetch);
+    return () => window.removeEventListener("vg:prefetch-tab", alPrefetch);
+  }, []);
+
   // v165 — VER EN 3D desde CUALQUIER módulo 2D (botón del PanelHeader):
   // despierta el mundo y la sala del módulo activo se ancla sola
   useEffect(() => {
@@ -1559,6 +1656,10 @@ export default function Home() {
       </div>
       <div className="vignette-layer" aria-hidden />
       <div className="particles-layer" aria-hidden />
+      {/* v170.0 AURORA DEL ACENTO: la casa se tiñe del color del mundo activo
+          (var(--vg-acc) por sección). Lavado radial fijo z-0, sin puntero,
+          opacity-only; el CSS la apaga sola en los modos 3D. */}
+      <div className="vg170-aurora vg170-aurora-viva" aria-hidden />
       {/* v138 MUNDO VIVO: el mundo bajo la Casa — cielo estrellado con
           paralaje (contrario al puntero), horizonte cian/magenta latiendo
           y suelo de rejilla holográfica rodando en perspectiva. Capa fija
@@ -1618,6 +1719,9 @@ export default function Home() {
         onDuplicar={duplicarPestana}
         onInmersion={alternarInmersion}
       />
+      {/* v170.0 EL RIEL DE SECCIÓN: hermanos de la sección + recientes a un
+          toque, pegados bajo la franja (sticky) — la navegación que faltaba. */}
+      <RielSeccion tab={tab} onChange={handleTabChange} />
       {/* v67.0 EL HANGAR: capa de crisis global + easter eggs vivos en toda la app */}
       <ProtocoloRojo />
       <EasterEggs />
