@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v173.0",
+    nombre: "LA CASA EN VIVO",
+    tipo: "tecno",
+    hitos: [
+      "ORDEN DIRECTA DEL DUEÑO, EN CLARO: «los mejores gráficos, que se actualice solo, copia los sitios parecidos sin vergüenza y elimina ese modo 3D» — ESTA ES LA RESPUESTA: el universo WebGL se retira COMPLETO (mundo-webgl 6.411 líneas, salas-3d, mundos-3d, hud-3d, ciudad-hero, intro-cinematica — 11.800+ líneas de tres.js del modo fuera del repo) y la casa plana queda como ÚNICO Vanguard: arranque directo, sin ceremonia, sin interruptor 2D/3D, sin VER EN 3D, sin chip holo. La cirugía de page.tsx: 51 operaciones atómicas, -29 KB de maquinaria; 129 paneles sin cambiar un byte (el emisor use-sala3d-contenido duerme con su firma intacta) y NavZonas trasplantada a nav-zonas.tsx",
+      "MERCADO REAL EN VIVO SIN API KEYS — los mismos grifos que beben los grandes: /api/mercado sirve 32 activos (cripto por Binance, acciones/índices/divisas por Yahoo Finance chart) con cache en memoria (4s/30s/45s) y fallback simulado sembrado si un upstream se corta; el hook useMercadoVivo late cada 5s, duerme con la pestaña y reparte flash sube/baja por activo",
+      "EL HUB «MERCADO EN VIVO» COMO HÉROE DE PORTADA — cinta de tickers que camina sola (pausa al hover), gráfico de velas 1m con volumen sobre lightweight-charts (el motor open-source de TradingView, que ya dormía en el package.json), lista de seguimiento con chispas SVG de 60 puntos, pestañas TODAS/CRIPTO/ACCIONES/ÍNDICES/DIVISAS y pastillas por activo; QA con navegador real: BTC $80-81k en vivo con velas reales de Binance, click en NVDA cambia el gráfico, móvil 390px sin overflow",
+      "LA LECCIÓN DEL DIORAMA — la cuna-v139 respira sobre un escenario de 20.000px y proyecta el módulo superior fuera del viewport al compás del ciclo (medidas fantasma -9.999 → -17.829 entre evals: el ciclo, no el layout). Un terminal de datos exige horizonte firme: flotador y cuna se estabilizan donde vive .vg173-terminal (:has bajo data-vg-3d); el cielo, el suelo y los demás cuerpos flotantes siguen vivos",
+      "QA v173: tsc 0, lint 0, build limpio, health v173.0, cortina de arranque se funde sola (la casa ya no espera a ningún universo), cero fósiles 3D en el DOM (switch/holo-chip/modo-ui/ir3d/nav-mundo = 0), cero errores de consola, home 200, /api/mercado 32 activos reales (10 binance + 22 yahoo)",
+    ],
+  },
+  {
     version: "v172.0",
     nombre: "EL PULSO DE LA PARIDAD",
     tipo: "mundo",
