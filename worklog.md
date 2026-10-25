@@ -2610,3 +2610,16 @@ Work Log:
 
 Stage Summary:
 - Requiere atención del Dueño fuera del repo: revisar el panel del proveedor de Postgres (estado/pausa/IPs) y las env vars de Vercel (DATABASE_URL). Todo lo demás v167.0 operativa.
+
+---
+Task ID: handoff-1
+Agent: main
+Task: Entregar paquete de handoff para otra IA que edite Vanguard
+
+Work Log:
+- Confirmado estado: v167.0 (git 63e9240), próximo v168.0
+- Inventariados archivos clave (mundo-webgl 6.4k, salas-3d 3.6k, zc3d-engine 2.3k, ~160 panels)
+- Escrito HANDOFF-VANGUARD.md en raíz del proyecto con leyes, protocolo, tareas y trampas
+
+Stage Summary:
+- /home/z/my-project/HANDOFF-VANGUARD.md listo: basta con que la otra IA lea ese archivo + los 3 archivos núcleo para editar Vanguard
