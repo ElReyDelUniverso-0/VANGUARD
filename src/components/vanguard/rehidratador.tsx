@@ -25,6 +25,8 @@ import { useAgentesLibres } from "@/lib/agentes-autonomos";
 import { useFavoritos } from "@/lib/favoritos-store";
 // v172.0: la telemetría de la paridad entra a la disciplina de rehidratación
 import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
+// v176.0: el álbum de LAS FICHAS DE GUERRA entra a la disciplina de rehidratación
+import { useColeccionFichas } from "@/lib/fichas-guerra-data";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -77,6 +79,11 @@ export function Rehidratador() {
     rehidratar(useTelemetriaParidad)
       .then(() => marcarHidratado("vg172-telemetria"))
       .catch(() => marcarHidratado("vg172-telemetria"));
+    // v176.0 LAS FICHAS DE GUERRA: sin este registro la cerradura del escudo
+    // bloquearía la persistencia del álbum (mismo patrón del bug v171/v172)
+    rehidratar(useColeccionFichas)
+      .then(() => marcarHidratado("vg176-fichas"))
+      .catch(() => marcarHidratado("vg176-fichas"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

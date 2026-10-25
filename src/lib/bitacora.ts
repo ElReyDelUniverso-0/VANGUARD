@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v176.0",
+    nombre: "LAS FICHAS DE GUERRA",
+    tipo: "nav",
+    hitos: [
+      "LA COLECCIÓN DE GUERRA (tab FICHAS en INICIO, junto al CENTRO MUNDIAL) — orden del Dueño: «haz tarjetas de placas también, crea fichas coleccionables de conflictos mundiales, de noticias únicas de cada guerra»: las 9 guerras del mapa conflictTag de /api/news (ukraine, gaza, lebanon, sudan, redsea, korea, taiwan, hormuz, sahel) como cartas coleccionables VG-01…VG-09 con bandos, teatro, coordenadas, inicio histórico verificable y contexto (fichas-guerra-data.ts)",
+      "LA RAREZA ES VIVA — la decrece el motor de impacto con los cables de HOY de ESA guerra: LEYENDA (cable URGENTE ≥80) · ÉPICA (CRÍTICO ≥64) · RARA (ALTO ≥48) · COMÚN (DESARROLLO ≥32) · SILENCIO (sin señales frescas) — la misma verdad del ranking del Centro Mundial, una sola fuente; sin cables la carta duerme en reposo, no miente",
+      "LA NOTICIA ÚNICA DE CADA GUERRA — cada ficha porta el cable de mayor impacto de SU conflicto con foto + pie de foto + POR QUÉ IMPORTA, más «LAS SEÑALES DE HOY» (todos los cables de esa guerra, hasta 4) que abren el lector v116; la ficha técnica graba el inicio histórico, el teatro y el contexto",
+      "EL ÁLBUM COLECCIONABLE (vg176-fichas) — abrir una ficha la DESCUBRE: sello con estampa animada que conserva la PRIMERA fecha y la intensidad de ese día, progreso X/9 DESCUBIERTAS, LEYENDAS de hoy y contador de aperturas; persistencia con storageBlindado + registro en el rehidratador (la lección v171/v172 aplicada desde el diseño); refresco 60s con caché local si la red se corta",
+      "LA PLACA DE CONFLICTO (intros-gta.tsx · IntroGtaConflicto) — LA TERCERA TARJETA GTA (idea #1 del inbox #19, la familia queda completa): letterbox de cine, los DOS BANDOS frente a frente (RUSIA ✕ UCRANIA…), sello de rareza de la colección, medidor de intensidad con la misma verdad del ranking, placa del teatro con coordenadas estilo carta naval y las barras PULSO/FRESCURA/INTENSIDAD subiendo como las habilidades del juego; una vez por ficha por sesión, tap = saltar, reduced-motion = no hay cine",
+      "QA v176: tsc 0, build limpio, health v176.0, colección descubierta y verificada en navegador real (móvil 390px): ficha VG-01 descubre con sello de fecha, sobrevive recarga (vg176-fichas en localStorage), placa de conflicto auto-descarta, 0 errores de consola",
+    ],
+  },
+  {
     version: "v175.0",
     nombre: "LAS INTROS GTA",
     tipo: "luxe",

@@ -22,6 +22,13 @@
 //     credibilidad. Una vez por cable por sesión: quien ya la vio
 //     entra directo a la sala de lectura.
 //
+//   · PLACA DE CONFLICTO (IntroGtaConflicto, v176) — la tercera
+//     tarjeta de la familia, al abrir la ficha coleccionable de
+//     una guerra (LA COLECCIÓN DE GUERRA): los DOS BANDOS frente
+//     a frente (A ✕ B), el sello de rareza vivo de la colección,
+//     el medidor de intensidad con la misma verdad del motor de
+//     impacto y las barras de la ficha subiendo como en el juego.
+//
 // Contrato de la casa: portal al body (lección v116: los ancestros
 // con transform rompen el fixed), solo transform/opacity, tap =
 // saltar siempre, reduced-motion = no hay cine, móvil primero.
@@ -42,6 +49,7 @@ import { APP_VERSION_LABEL } from "@/lib/version";
 
 const DURACION_PERSONAJE = 2100;
 const DURACION_NOTICIA = 2300;
+const DURACION_CONFLICTO = 2400; // v176: la placa de conflicto (dos bandos + stats de ficha)
 const SALIDA_MS = 380;
 
 // utilidad: CSS var --vg-stat para las barras scaleX
@@ -92,7 +100,7 @@ export function IntroGtaPersonaje({
   const [montado, setMontado] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
   const onFinRef = useRef(onFin);
-  onFinRef.current = onFin;
+  useEffect(() => { onFinRef.current = onFin; }); // el ref se actualiza FUERA del render (react-hooks/refs)
   const saliendoRef = useRef(false);
 
   useEffect(() => setMontado(true), []);
@@ -274,13 +282,206 @@ function BarraAtributo({
 }
 
 // ────────────────────────────────────────────────────────────
+// LA PLACA DE CONFLICTO (v176) — la tercera tarjeta de la familia:
+// los DOS BANDOS frente a frente (A ✕ B) al abrir la ficha
+// coleccionable de una guerra. La rareza de la colección tiñe la
+// escena; la intensidad es la misma verdad del motor de impacto.
+// ────────────────────────────────────────────────────────────
+export function IntroGtaConflicto({
+  bandoA,
+  bandoB,
+  teatro,
+  lat,
+  lng,
+  serie,
+  rareza,
+  hexRareza,
+  intensidad,
+  pulso,
+  frescuraTxt,
+  frescuraVal,
+  onFin,
+}: {
+  bandoA: { bandera: string; nombre: string };
+  bandoB: { bandera: string; nombre: string };
+  teatro: string;
+  lat: number;
+  lng: number;
+  serie: string;
+  rareza: string;
+  hexRareza: string;
+  intensidad: number; // 0-100 (la del mejor cable de HOY)
+  pulso: number;      // nº de cables de la guerra en el escáner
+  frescuraTxt: string;
+  frescuraVal: number; // 0-1
+  onFin: () => void;
+}) {
+  const [saliendo, setSaliendo] = useState(false);
+  const onFinRef = useRef(onFin);
+  useEffect(() => { onFinRef.current = onFin; }); // el ref se actualiza FUERA del render (react-hooks/refs)
+  const saliendoRef = useRef(false);
+  // el módulo vive tras dynamic(..., { ssr: false }): document existe siempre —
+  // sin guard de montaje (la regla set-state-in-effect lo prohíbe en la casa)
+
+  const cerrar = () => {
+    if (saliendoRef.current) return;
+    saliendoRef.current = true;
+    setSaliendo(true);
+    setTimeout(() => onFinRef.current(), SALIDA_MS);
+  };
+
+  useEffect(() => {
+    if (esReducido()) {
+      onFinRef.current();
+      return;
+    }
+    const t = setTimeout(cerrar, DURACION_CONFLICTO);
+    return () => clearTimeout(t);
+  }, []);
+
+  return createPortal(
+    <AnimatePresence>
+      {!saliendo && (
+        <motion.div
+          key={`v176ficha-${serie}`}
+          className="fixed inset-0 z-[300] select-none overflow-hidden"
+          style={{ background: "rgba(2,2,4,0.93)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28 }}
+          onPointerDown={cerrar}
+          role="dialog"
+          aria-label={`Placa de conflicto: ${bandoA.nombre} contra ${bandoB.nombre}`}
+        >
+          {/* el tinte de la rareza */}
+          <div
+            className="absolute inset-0"
+            style={{ background: `radial-gradient(115% 82% at 50% 42%, ${hexRareza}17 0%, transparent 62%)` }}
+            aria-hidden
+          />
+
+          {/* letterbox de cine */}
+          <div className="v174gta-barra-sup absolute inset-x-0 top-0 h-[9vh] border-b border-white/10 bg-black" aria-hidden />
+          <div className="v174gta-barra-inf absolute inset-x-0 bottom-0 h-[9vh] border-t border-white/10 bg-black" aria-hidden />
+
+          {/* sello de la colección arriba */}
+          <div className="v174gta-linea-sup absolute left-6 top-[11vh] flex items-center gap-2.5" style={{ animationDelay: "160ms" }}>
+            <span className="v174gta-pulso inline-block h-1.5 w-1.5 rounded-full" style={{ background: hexRareza, boxShadow: `0 0 10px ${hexRareza}` }} aria-hidden />
+            <span className="font-mono text-[9px] uppercase tracking-[0.32em] text-white/70">
+              LA COLECCIÓN DE GUERRA · {serie}
+            </span>
+            <span
+              className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] border px-1.5 py-0.5"
+              style={{ color: hexRareza, borderColor: `${hexRareza}66`, background: `${hexRareza}14` }}
+            >
+              {rareza}
+            </span>
+          </div>
+
+          {/* los dos bandos frente a frente */}
+          <div className="relative flex h-full items-center justify-center px-6">
+            <div className="w-full max-w-xl">
+              <div className="flex items-end justify-between gap-3">
+                {/* bando A */}
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="v174gta-ken text-4xl sm:text-5xl leading-none" style={{ filter: `drop-shadow(0 6px 20px ${hexRareza}55)` }} aria-hidden>
+                    {bandoA.bandera}
+                  </p>
+                  <h2
+                    className="v174gta-nombre mt-2 font-sans text-2xl font-black uppercase leading-[0.94] tracking-tight text-white sm:text-4xl"
+                    style={{
+                      animationDelay: "240ms",
+                      textShadow: `0 4px 0 rgba(0,0,0,0.9), 0 0 40px ${hexRareza}40`,
+                    }}
+                  >
+                    {bandoA.nombre}
+                  </h2>
+                </div>
+
+                {/* el cruce de guerra */}
+                <span
+                  className="v174gta-nombre shrink-0 pb-1 font-mono text-2xl font-black sm:text-3xl"
+                  style={{ color: hexRareza, textShadow: `0 0 22px ${hexRareza}88`, animationDelay: "380ms" }}
+                  aria-hidden
+                >
+                  ✕
+                </span>
+
+                {/* bando B */}
+                <div className="min-w-0 flex-1 text-right">
+                  <p className="v174gta-ken text-4xl sm:text-5xl leading-none" style={{ filter: `drop-shadow(0 6px 20px ${hexRareza}55)` }} aria-hidden>
+                    {bandoB.bandera}
+                  </p>
+                  <h2
+                    className="v174gta-nombre mt-2 font-sans text-2xl font-black uppercase leading-[0.94] tracking-tight text-white sm:text-4xl"
+                    style={{
+                      animationDelay: "300ms",
+                      textShadow: `0 4px 0 rgba(0,0,0,0.9), 0 0 40px ${hexRareza}40`,
+                    }}
+                  >
+                    {bandoB.nombre}
+                  </h2>
+                </div>
+              </div>
+
+              <div
+                className="v174gta-subrayado mt-3 h-[5px] w-[52%] rounded-sm"
+                style={{ background: hexRareza, boxShadow: `0 0 18px ${hexRareza}88`, animationDelay: "480ms" }}
+                aria-hidden
+              />
+
+              {/* el medidor de intensidad — la misma verdad del ranking */}
+              <div className="mt-4 flex items-center gap-2.5">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">INTENSIDAD</span>
+                <div className="h-[7px] flex-1 overflow-hidden rounded-sm bg-white/10" aria-hidden>
+                  <div
+                    className="v174gta-stat h-full rounded-sm"
+                    style={{ background: hexRareza, boxShadow: `0 0 14px ${hexRareza}77`, ...statStyle(Math.max(0.04, intensidad / 100), 640) }}
+                  />
+                </div>
+                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/80">{intensidad}/100</span>
+              </div>
+
+              {/* la placa del teatro */}
+              <div className="v174gta-placa mt-4 border-l-[3px] pl-3" style={{ borderColor: hexRareza, animationDelay: "760ms" }}>
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/90">{teatro}</p>
+                <p className="mt-0.5 font-mono text-[9px] tracking-[0.14em] text-white/45">
+                  {coordTxt(lat, lng)} · FICHA {serie}
+                </p>
+              </div>
+
+              {/* los atributos de la ficha */}
+              <div className="mt-5 max-w-[340px] space-y-2.5">
+                <BarraAtributo etiqueta="PULSO" valorTxt={`${pulso} CABLES HOY`} valor={Math.min(1, pulso / 8)} color={hexRareza} delay={900} />
+                <BarraAtributo etiqueta="FRESCURA" valorTxt={frescuraTxt.toUpperCase()} valor={frescuraVal} color={hexRareza} delay={1020} />
+                <BarraAtributo etiqueta="INTENSIDAD" valorTxt={`${intensidad}/100`} valor={intensidad / 100} color={hexRareza} delay={1140} />
+              </div>
+            </div>
+          </div>
+
+          {/* las marcas de la casa */}
+          <p className="v174gta-pulso absolute bottom-[3.4vh] left-1/2 -translate-x-1/2 font-mono text-[9px] uppercase tracking-[0.3em] text-white/50">
+            TOCA PARA VER LA FICHA
+          </p>
+          <p className="absolute right-3 top-3 font-mono text-[9px] tracking-[0.2em] text-white/35">
+            {APP_VERSION_LABEL}
+          </p>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body,
+  );
+}
+
+// ────────────────────────────────────────────────────────────
 // LA PLACA DE NOTICIA — la tarjeta de inicio de misión
 // ────────────────────────────────────────────────────────────
 export function IntroGtaNoticia({ cable, onFin }: { cable: EntradaImpacto; onFin: () => void }) {
   const [montado, setMontado] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
   const onFinRef = useRef(onFin);
-  onFinRef.current = onFin;
+  useEffect(() => { onFinRef.current = onFin; }); // el ref se actualiza FUERA del render (react-hooks/refs)
   const saliendoRef = useRef(false);
 
   useEffect(() => setMontado(true), []);

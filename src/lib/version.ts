@@ -477,6 +477,37 @@
 //     cambió de comportamiento — las placas son capa pura sobre la verdad;
 //     compatible con LA CASA EN VIVO (sin modo 3D): las placas no tocan
 //     el universo, solo las puertas 2D que sobrevivieron a la cirugía.
-export const APP_VERSION = "v175.0";
-export const APP_CODENAME = "LAS INTROS GTA";
+// v176.0: LAS FICHAS DE GUERRA (ia1 · la ronda del Dueño: «sí a todo — haz
+//         tarjetas de placas también, crea fichas coleccionables de conflictos
+//         mundiales, de noticias únicas de cada guerra») — la tercera tarjeta
+//         de la familia GTA (idea #1 del inbox #19) y el álbum que la guarda:
+// (1) EL CATÁLOGO (src/lib/fichas-guerra-data.ts): las 9 guerras del mapa
+//     conflictTag de /api/news (ukraine, gaza, lebanon, sudan, redsea, korea,
+//     taiwan, hormuz, sahel) como FICHAS COLECCIONABLES VG-01…VG-09: bandos,
+//     teatro, coordenadas, inicio histórico verificable y contexto — los datos
+//     históricos son fijos y citables; lo que respira lo pone el feed real.
+// (2) LA RAREZA VIVA — la decrece el motor de impacto con los cables de HOY
+//     de ESA guerra (LEYENDA ≥80 · ÉPICA ≥64 · RARA ≥48 · COMÚN ≥32 ·
+//     SILENCIO sin señales): la misma verdad del ranking del Centro Mundial,
+//     una sola fuente, cero invención — sin cables, la carta duerme, no miente.
+// (3) LA NOTICIA ÚNICA — cada ficha porta el cable de mayor impacto de SU
+//     guerra con foto + pie + POR QUÉ IMPORTA + las señales del día (los
+//     cables de esa guerra) + el lector v116 — «noticias únicas de cada guerra».
+// (4) EL ÁLBUM (vg176-fichas): abrir una ficha la DESCUBRE — sello con fecha
+//     e intensidad del día, progreso X/9, contador de aperturas; persistencia
+//     con el escudo de la casa (storageBlindado) y REGISTRO EN EL REHIDRATADOR
+//     (la lección v171/v172: sin registro, la cerradura bloquea la escritura).
+// (5) LA PLACA DE CONFLICTO (intros-gta.tsx · IntroGtaConflicto) — la tercera
+//     tarjeta GTA: letterbox, los DOS BANDOS frente a frente (A ✕ B), sello
+//     de rareza de la colección, medidor de intensidad con la misma verdad
+//     del ranking, placa del teatro con coordenadas y las barras PULSO/
+//     FRESCURA/INTENSIDAD subiendo como las habilidades del juego; una vez
+//     por ficha por sesión (vg176-ficha-*, patrón vg174-gta-ultimo), tap =
+//     saltar, reduced-motion = no hay cine, portal al body, z-300.
+// (6) LA PUERTA — tab FICHAS en la sección INICIO junto al CENTRO MUNDIAL,
+//     prefetch real, i18n en 8 idiomas; el feed refresca cada 60s y la caché
+//     local sostiene el álbum si la red se corta.
+// Herencia v175.0 y todo lo anterior — 100% 2D, compatible con LA CASA EN VIVO.
+export const APP_VERSION = "v176.0";
+export const APP_CODENAME = "LAS FICHAS DE GUERRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

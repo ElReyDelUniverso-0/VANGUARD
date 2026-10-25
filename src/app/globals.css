@@ -5863,3 +5863,31 @@ html[data-vg-3d="on"] .cuna-v139:has(.vg173-terminal) {
   .v174gta-nombre, .v174gta-subrayado, .v174gta-placa, .v174gta-stat,
   .v174gta-palabra, .v174gta-pulso { animation-duration: 0.01s; animation-iteration-count: 1; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   v176.0 LAS FICHAS DE GUERRA — la colección coleccionable
+   Las cartas respiran: la ficha SIN DESCUBRIR late (aura de la
+   rareza), el sello del álbum entra con golpe de estampa y el
+   marco de la rareza brilla al pasar. Solo transform/opacity.
+   reduced-motion: el kill-switch de abajo apaga el latido.
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes v176FichaAura {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255, 184, 0, 0.25), 0 0 20px -8px rgba(255, 184, 0, 0.35); }
+  50% { box-shadow: 0 0 0 1px rgba(255, 184, 0, 0.4), 0 0 34px -6px rgba(255, 184, 0, 0.55); }
+}
+@keyframes v176FichaSello {
+  0% { opacity: 0; transform: scale(1.7) rotate(-14deg); }
+  60% { opacity: 1; transform: scale(0.94) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes v176FichaEntra {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.v176ficha { animation: v176FichaEntra 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v176ficha-nueva { animation: v176FichaAura 2.4s ease-in-out infinite; }
+.v176ficha-sello { animation: v176FichaSello 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v176ficha, .v176ficha-nueva, .v176ficha-sello { animation: none; }
+}

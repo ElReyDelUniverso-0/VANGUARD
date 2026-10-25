@@ -144,6 +144,7 @@ const ZONAS_WGL: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, per
 const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
   // INICIO
   redaccion: () => import("@/components/vanguard/panels/redaccion-panel"),
+  fichas: () => import("@/components/vanguard/panels/fichas-panel"),
   noticias: () => import("@/components/vanguard/panels/news-panel"),
   cambios: () => import("@/components/vanguard/panels/cambios-panel"),
   verdades: () => import("@/components/vanguard/panels/infinita-panel"),
@@ -213,6 +214,8 @@ const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
 // v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias por impacto
 const CentroPanel = dynamic(() => import("@/components/vanguard/panels/centro-panel").then((m) => m.CentroPanel), { ssr: false, loading: PanelSkeleton });
+// v176.0 LAS FICHAS DE GUERRA — la colección coleccionable de conflictos
+const FichasPanel = dynamic(() => import("@/components/vanguard/panels/fichas-panel").then((m) => m.FichasPanel), { ssr: false, loading: PanelSkeleton });
 // v105.0 LA REDACCIÓN — el lugar optimizado para leer el mundo
 const RedaccionPanel = dynamic(() => import("@/components/vanguard/panels/redaccion-panel").then((m) => m.RedaccionPanel), { ssr: false, loading: PanelSkeleton });
 // v106.0 PESTAÑAS DE CROMO: la NUEVA PESTAÑA (elegir destino con ómnibox) + la
@@ -440,6 +443,8 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "noticias" && <NewsPanel />}
         {/* v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias */}
         {tab === "centro" && <CentroPanel />}
+        {/* v176.0 LAS FICHAS DE GUERRA — la colección coleccionable de conflictos */}
+        {tab === "fichas" && <FichasPanel />}
         {tab === "redaccion" && <RedaccionPanel />}
         {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
         {tab === "nueva" && <NuevaPanel />}

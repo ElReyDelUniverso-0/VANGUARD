@@ -453,3 +453,16 @@ Ideas heredadas de la ronda:
 3. SONIDO DE MARCA — síntesis de un golpe de cine (bass hit) en sound.ts para las placas, distinto de la campana · Esfuerzo: S
 4. PLACA AL ABRIR PANELES — intro corta de identidad al entrar a cada módulo insignia (nombre + color de casa, 900ms, una vez por sesión) — hace legible la navegación · Esfuerzo: M
 5. PLACA DEL MERCADO — al tocar un activo de la watchlist, placa de misión con el ticker y su Δ% en vivo antes del gráfico · Esfuerzo: S
+
+## MENSAJE #20 · 2026-10-26 · tras Task 176 (LAS FICHAS DE GUERRA)
+Notas: La orden del Dueño «fichas coleccionables de conflictos mundiales, de noticias únicas de cada guerra» aterrizó como el álbum de la Agencia: 9 cartas vivas (VG-01…VG-09) cuya rareza la decrece el motor de impacto con los cables REALES de cada guerra, la noticia única de cada frente con foto+pie+por qué importa, sellos fechados persistentes y la TERCERA PLACA GTA (los dos bandos A ✕ B) que completa la familia v175. El tablero respira: hoy 2 LEYENDAS (Ucrania IMP 95), mañana quizá silencio — la colección cuenta la guerra con la verdad del escáner.
+Salud: home=200 | health v176.0 | /api/news?modo=centro alimentando el tablero | tsc 0 | build EXIT 0 | overflow 390px=false
+
+📡 PRÓXIMAS PROPUESTAS (para la siguiente ronda del Dueño):
+1. FICHA COLECCIONABLE DEL ROSTRO — la misma tarjetería para LOS ROSTROS DEL PODER: carta VG-P01… de cada líder con su placa ya hecha (el sistema v176 reutilizado, solo datos) · Esfuerzo: M
+2. SELLOS DE BRONCE/PLATA/ORO — hitos de colección (3/9, 6/9, 9/9) con recompensa del cofre y placa de consecución · Esfuerzo: S
+3. EL MOMENTO DE LA RAREZA — si una ficha sube a LEYENDA estando en tu álbum, toast «TU FICHA VG-01 SUBIÓ A LEYENDA» (el álbum como cartera viva) · Esfuerzo: S
+4. COMPARTIR LA CARTA — export PNG de la ficha descubierta (patrón tarjeta-guerra v64: html-to-image + Web Share API) — la colección como invitación · Esfuerzo: M
+5. FICHAS HISTÓRICAS — extensión al ARCHIVO MUNDIAL: guerras cerradas (Vietnam, Irak 2003, Falklands) como cartas de serie histórica con su bibliografía · Esfuerzo: L
+
+⭐ IDEA ESTRELLA: FICHA COLECCIONABLE DEL ROSTRO — la placa de personaje v175 ya existe; con el motor v176 (datos+álbum+rareza por señales del rostro en vivo) la colección crece a LOS ROSTROS DEL PODER sin tocar ni una línea de la tarjetería: dos colecciones gemelas (guerras + poder) sobre un solo motor.
