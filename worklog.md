@@ -2723,3 +2723,23 @@ Work Log:
 
 Stage Summary:
 - v172.0 EL PULSO DE LA PARIDAD lista en ia2/v172.0: la paridad ya no solo existe — se MIDE (3D vs 2D con dos puntos únicos, sin doble conteo), el ascenso SUENA (cascada por fila) y ninguna fila del mundo se pierde (paginación universal patrón BOLSA, asunto del mundo). Bitácora + inbox actualizados; sugerencias nuevas en MENSAJE #17.
+
+---
+Task ID: ia2-v173.0
+Agent: ia2 (main · Z)
+Task: v173.0 LA CASA EN VIVO — orden directa del Dueño: «los mejores gráficos, que se actualice solo, busca apis, copia otros sitios parecidos sin vergüenza y elimina ese modo 3D»
+
+Work Log:
+- Estado heredado verificado: main=v171.0 + ia2/v172.0 sin mergear (d951727) → revisión pre-merge (diff 10f +387, guards v167 intactos, tsc 0) → merge --no-ff a main (543ac5d) y push. Abierta ia2/v173.0.
+- MAPEO 3D: el universo = mundo-webgl.tsx (6.411 líneas) + salas-3d.ts (3.691) + mundos-3d.ts (1.184) + hud-3d + ciudad-hero + intro-cinematica (muere con el mundo; su dynamic import en page.tsx estaba huérfano). NO tocar: escenas-3d/letras-3d (decoración de paneles 2D), zona-cero-3d/teatro-guerra/hangar (piezas propias con three propio), vanguard2 (ruta aparte). Descubrimiento clave: use-sala3d-contenido es un EMISOR puro consumido por 129 paneles → se duerme con la misma firma (tipo FilaContenido3D definido local) y ni un panel cambia.
+- CIRUGÍA page.tsx: scripts/v173_cirugia_page.py (51 operaciones regex atómicas con conteos esperados; 3 iteraciones por anclas exactas; -29.359 bytes). Extirpado: ceremonia/v148, host* y portales v143-v145, holo v157, modo mundo v141, interruptor 2D/3D v165, restauración v169, VER EN 3D, dispatchs vg:sala3d*, effects de ciudad, NavZonas portal. Montado: MercadoVivo como héroe de portada (reemplaza CiudadHero), NavZonas plana (nav-zonas.tsx nueva, 4 zonas sin MUNDO), rail/StatsTicker plano.
+- git rm de 6 archivos del universo; panel-header sin botón 3D; cortina de arranque (layout.tsx) ya no exige latido en "/" (solo /vanguard2 es pesada) → boot funde sola. three se queda en package.json (piezas propias).
+- /api/mercado NUEVA: Binance (batch 24hr 4s TTL + klines 1m para chispa 60s) + Yahoo chart (30s TTL por símbolo, un endpoint da precio+Δ%+velas) → 32 activos keyless; fallback simulado sembrado (mulberry32 por símbolo+minuto); velas con cache 45s. Conectividad verificada con curl antes de codificar.
+- Hook useMercadoVivo (latido 5s, visibilitychange, flash dirs con timers) + hub mercado-vivo.tsx (cinta marquee 48s pausa-hover, GraficoVivo lightweight-charts v4 ya instalado: velas 1m + volumen + fitContent + update de última vela por tick, watchlist con Chispa SVG, tabs por clase, pastillas) + CSS (marquee/pulso/flash/scroll).
+- QA E2E (agent-browser, build standalone + serve.mjs): cortina funde sola OK; hub 32 filas + 48 chips + canvas; BTC real $80-81k moviéndose entre polls; click NVDA → gráfico cambia ($210.96 yahoo); cero fósiles 3D en DOM; navegación HOY/ANÁLISIS OK; móvil 390px sin overflow; desktop y móvil con capturas en agent-ctx/.
+- BUG CAZADO EN QA (el de la ronda): el hub era INVISIBLE en móvil con layout perfecto (offsetHeight 865, chart 280, todo visible según computed). Causa real: la cuna-v139 del diorama respira (rotateX) sobre un escenario de 20.000px → proyecta el módulo superior fuera del viewport al compás del ciclo (por eso los rects fantasma cambiaban: -9.999 → -17.829 → -11.998). FIX: .flotador-v138:has(.vg173-terminal) y .cuna-v139:has(.vg173-terminal) estabilizados (animation/transform none bajo data-vg-3d) — un terminal de datos no flota. Verificado en móvil: top -147, enViewport true, captura perfecta.
+- version.ts → v173.0 LA CASA EN VIVO (crónica completa); bitacora.ts entrada v173 (tipo tecno, 5 hitos); tsc 0 · lint 0 · build limpio · health v173.0.
+
+Stage Summary:
+- Producción v173.0 LA CASA EN VIVO: Vanguard es una consola de mercado plana con datos reales keyless (Binance + Yahoo) actualizándose sola cada 5s, gráficos de velas nivel TradingView y CERO modo 3D. El three.js restante es de piezas propias (teatro, hangar, zona-cero), no del modo.
+- Nota para ia1: el emisor universal duerme pero conserva firma — si alguna ronda futura quiere «salas», hay que reconstruir el receptor, no los paneles. La cola del inbox #17 queda intacta salvo su idea #3 (proximidad 3D), que muere con el universo.

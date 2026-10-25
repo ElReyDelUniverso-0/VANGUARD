@@ -369,6 +369,41 @@
 //     como acción). Mismo estante (7 móvil / 9 escritorio) pero el resto
 //     alcanzable: densidad primero (ley móvil), cero filas perdidas.
 // Herencia v171.0 LA FILA CERO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v172.0";
-export const APP_CODENAME = "EL PULSO DE LA PARIDAD";
+// ════════════════════════════════════════════════════════════
+// v173.0 LA CASA EN VIVO (ia2 · rama ia2/v173.0 — ORDEN DIRECTA del Dueño:
+//         «los mejores gráficos, que se actualice solo, copia los sitios
+//         parecidos sin vergüenza y ELIMINA ese modo 3D»). Dos cirugías:
+// (0) ADIÓS AL UNIVERSO: mundo-webgl.tsx (6.411 líneas), salas-3d.ts,
+//     mundos-3d.ts, hud-3d.ts, ciudad-hero.tsx e intro-cinematica.tsx
+//     salen del repo; page.tsx pierde 29 KB de maquinaria 3D en 51
+//     operaciones atómicas (ceremonia, cápsula, holo, modo mundo,
+//     interruptor 2D/3D, VER EN 3D, portales, dispatchs vg:sala3d*).
+//     El emisor use-sala3d-contenido duerme con la MISMA firma — 129
+//     paneles sin cambiar un byte. NavZonas se trasplanta a nav-zonas.tsx
+//     (4 zonas, sin botón MUNDO). La cortina de arranque ya no espera al
+//     universo: la casa plana se funde sola (solo /vanguard2 sigue pesado).
+// (1) MERCADO REAL EN VIVO (los grifos de los grandes sitios, sin keys):
+//     NUEVA /api/mercado — cripto vía Binance (batch 24hr + klines 1m),
+//     acciones/índices/divisas vía Yahoo Finance chart — cache en memoria
+//     (4s cripto / 30s yahoo / 45s velas) y fallback simulado sembrado si
+//     un grifo se corta: 32 activos (10 cripto, 10 acciones, 6 índices,
+//     6 divisas) con chispa de 60 puntos. NUEVO hook useMercadoVivo
+//     (latido 5s, pausa honesta con la pestaña dormida, flash sube/baja).
+// (2) EL HUB «MERCADO EN VIVO» — héroe de la portada: cinta de tickers
+//     que camina sola (marquee 48s, pausa al hover), gráfico de velas 1m
+//     con volumen (lightweight-charts, el motor open-source de TradingView,
+//     ya estaba en el package.json), lista de seguimiento con chispas SVG,
+//     pestañas por clase y flash verde/rojo en cada tick. QA con navegador
+//     real: BTC $80-81k en vivo, velas reales de Binance, watchlist 32
+//     activos, click NVDA cambia el gráfico, móvil 390px sin overflow.
+// (3) LA LECCIÓN DEL DIORAMA: la cuna-v139 respira (rotateX) sobre un
+//     escenario de 20.000px y proyecta el módulo superior FUERA del
+//     viewport al compás del ciclo (medidas fantasma -9.999/-17.829).
+//     Un terminal de datos exige horizonte firme: flotador y cuna se
+//     estabilizan donde vive .vg173-terminal (:has, gate data-vg-3d).
+// Herencia v172.0 y todo lo anterior. El three.js que queda es de las
+// piezas propias (teatro-guerra, hangar, zona-cero, globos): no es el modo.
+// ════════════════════════════════════════════════════════════
+export const APP_VERSION = "v173.0";
+export const APP_CODENAME = "LA CASA EN VIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
