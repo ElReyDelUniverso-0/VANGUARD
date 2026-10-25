@@ -281,6 +281,18 @@ export default function RootLayout({
             fallo es de chunks viejos (despliegue nuevo), UNA recarga sola
             por minuto. En las páginas ligeras (portales) se retira sola al
             completar la carga: solo los universos 3D exigen señal de vida.
+
+            v178.0 EL DESPERTADOR — la ley contra la cortina eterna. El Dueño
+            volvió a quedarse horas en «Desplegando el universo» con el
+            servidor sano: la causa era la ESPERA DEL EVENTO LOAD (un chunk
+            de 1MB+ estancado en la red móvil deja readyState en interactive
+            para siempre) y la falta de rescate fuera del universo pesado.
+            Cura triple: ① la casa plana se funde de la cortina en cuanto el
+            DOM existe (el HTML prerenderizado YA ES la casa entera — el load
+            ya no manda); ② botón de rescate también en rutas ligeras (10s)
+            y tope duro de 20s: la cortina JAMÁS es eterna; ③ en el universo
+            pesado el ojo ya no muere a los 20s (si __vgvivo llega tarde, la
+            cortina se funde igual) y recibe tope duro de 60s.
             ════════════════════════════════════════════════════════════ */}
         <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
           <style dangerouslySetInnerHTML={{ __html: `
@@ -362,9 +374,23 @@ try{
   var n=0;
   var ojo=window.setInterval(function(){
     n++;
-    if(window.__vgvivo===true||modo2d||(!pesado && document.readyState==='complete')){ clearInterval(ojo); apagar(); return; }
-    if(pesado&&n===48) encender('Tarda más de lo normal — toca para despertarlo');
-    if(pesado&&n>=80){ clearInterval(ojo); encender('El universo no responde — toca para despertarlo'); }
+    // v178.0: la casa plana vive en cuanto el DOM existe — el HTML
+    // prerenderizado YA ES la casa entera; esperar al evento load era
+    // dejar la cortina rehén del recurso más lento de la red del móvil
+    var domListo=(document.readyState!=='loading');
+    if(window.__vgvivo===true||modo2d||(!pesado&&domListo)){ clearInterval(ojo); apagar(); return; }
+    if(!pesado){
+      // v178.0: rescate universal también fuera del universo pesado —
+      // botón a los 10s y tope duro a los 20s (jamás una cortina eterna)
+      if(n===40) encender('Tarda más de lo normal — toca para despertarlo');
+      if(n>=80){ clearInterval(ojo); apagar(); return; }
+    }else{
+      if(n===48) encender('Tarda más de lo normal — toca para despertarlo');
+      // v178.0: el ojo ya NO muere a los 20s — si el universo despierta
+      // tarde, la cortina se funde igual; el botón queda a la vista; tope 60s
+      if(n===80) encender('El universo no responde — toca para despertarlo');
+      if(n>=240){ clearInterval(ojo); apagar(); return; }
+    }
   },250);
 }catch(e){}
 })();` }} />

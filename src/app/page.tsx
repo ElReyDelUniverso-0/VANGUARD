@@ -778,6 +778,15 @@ export default function Home() {
 
 
 
+  // v178.0 EL DESPERTADOR — la señal de vida propia de la Casa (lección v165
+  // restaurada, se perdió con el universo 3D): la cortina de arranque se funde
+  // cuando la consola RESPIRA, no cuando el evento load termina. Con el HTML
+  // prerenderizado + esta señal, ni una red móvil estancada puede volver a
+  // dejar al Dueño mirando «Desplegando el universo».
+  useEffect(() => {
+    (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
+  }, []);
+
   // v170.0 PREFETCH DE MÓDULOS: el riel y la franja piden el chunk al pasar
   // el ratón (vg:prefetch-tab) — abrir una sala pasa a ser instantáneo.
   useEffect(() => {

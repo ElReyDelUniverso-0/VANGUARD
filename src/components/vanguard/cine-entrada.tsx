@@ -9,7 +9,9 @@
 // con duotono del acento de CADA conflicto, tipografía condensada en
 // itálica (Rajdhani), ceja de agencia, dato duro, Ken Burns, barras de
 // cine letterbox, progreso GTA y SALTAR siempre a la vista.
-// Contrato de la casa: una vez por sesión (vg-cine-entrada-v177),
+// Contrato de la casa: UNA VEZ AL DÍA (v178: la clave lleva la fecha — una
+// sesión de PWA móvil dura semanas y el cine se volvió invisible; así el
+// Dueño ve SU intro GTA cada día que abre Vanguard, sin repetir el mismo día),
 // reduced-motion no ve cine, solo transform/opacity (60 FPS móvil),
 // tocar avanza, la consola vive detrás (nada se bloquea al saltar).
 // ============================================================
@@ -24,7 +26,10 @@ const sinSuscripcion = () => () => {};
 const esCliente = () => true;
 const esServidor = () => false;
 
-const CLAVE_SESION = "vg-cine-entrada-v177";
+// v178: clave DIARIA — el cine renace cada día nuevo (la sesión de PWA
+// móvil es semanal y una vez por sesión eterna = «no hay intro como gta»);
+// fecha LOCAL del aparato (en-CA = YYYY-MM-DD), el día del Dueño manda
+const CLAVE_SESION = `vg-cine-entrada-v178-${new Date().toLocaleDateString("en-CA")}`;
 const CINE_MS = 2150;
 
 const CINE_PLACAS: { foto: string; ceja: string; titulo: string; tituloAcc: string; sub: string; dato: string; acento: string }[] = [

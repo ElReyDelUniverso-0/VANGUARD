@@ -478,3 +478,13 @@ Salud: home=200 | health v177.0 | prod rss 211MB | tsc 0 | lint 0
 3. PLACA FINAL TOCABLE — la última placa del cine («TOCA PARA DESPLEGAR LA CASA») abre directamente la baldosa del CENTRO MUNDIAL · Esfuerzo: S
 4. SONIDO DE SALA OSCURA — arranque del cine con golpe grave (la familia GTA ya suena en rostros/lector) · Esfuerzo: S
 5. RED VISUAL DE CONEXIONES (directiva v168 viva) — nodos con peso de relación como panel 2D del CENTRO (el 3D ya no existe; la red nace plana) · Esfuerzo: L
+
+## MENSAJE #28 · 2026-10-25 · v178.0 EL DESPERTADOR
+Notas: ronda de caza del bug del Dueño («se queda en desplegando universo y ya cargando»). Resuelto: idea #2 del mensaje anterior (OVERFLOW DESKTOP 1298/1280 — la ley overflow-x clip en la raíz lo mató junto al pan móvil 451/390 de la capa aurora). El cine v177 ya no es invisible: clave diaria + cortina que se funda sola.
+Salud: home=200 (57ms) | health v178.0 rss 199MB | cortina <2s | overflow móvil 390=390 y desktop 1280=1280
+
+1. CINE v2 EN VIVO (⭐ sigue viva) — las placas del cine pescan EL titular real del día de cada conflicto desde /api/news?modo=centro: la intro se actualiza sola cada día · Esfuerzo: M
+2. PLACA FINAL TOCABLE (⭐ sube a #2) — la última placa del cine («TOCA PARA DESPLEGAR LA CASA») abre directamente la baldosa del CENTRO MUNDIAL · Esfuerzo: S
+3. SONIDO DE SALA OSCURA — arranque del cine con golpe grave (la familia GTA ya suena en rostros/lector) · Esfuerzo: S
+4. RED VISUAL DE CONEXIONES (directiva v168 viva) — nodos con peso de relación como panel 2D del CENTRO (el 3D ya no existe; la red nace plana) · Esfuerzo: L
+5. TELEMETRÍA DE CORTINA — contador anónimo de rescates (cuántas veces se muestra el botón «despierta») para medir en producción si queda algún camino lento · Esfuerzo: S

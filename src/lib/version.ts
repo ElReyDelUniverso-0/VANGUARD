@@ -534,6 +534,33 @@
 // (3) NADA SE ROMPE: fichas de guerra v176, centro mundial v173, intros GTA
 //     v174, cortina v155, guards y álbum intactos; el cine comparte el CSS
 //     .vg174-cine (ya fusionado en globals.css) — cero duplicados.
-export const APP_VERSION = "v177.0";
-export const APP_CODENAME = "EL CINE DE LA CASA";
+// v178.0 EL DESPERTADOR — la cortina jamás vuelve a ser eterna. El Dueño
+// reportó de nuevo: «se queda en desplegando universo y ya cargando» CON el
+// servidor sano (health 200, RSS 208MB): la causa era cliente, no infra.
+// Diagnóstico con navegador real sobre producción local: la cortina de `/`
+// esperaba document.readyState==='complete' (el EVENTO LOAD entero — con
+// chunks de 1.1–1.3MB, una conexión móvil estancada deja readyState en
+// 'interactive' indefinidamente) y las rutas no-pesadas NO tenían botón de
+// rescate ni tope (los timers de rescate eran exclusivos de /vanguard2).
+// Segundo bug eterno cazado en la misma sala: en pesado, el ojo hacía
+// clearInterval a los 20s — si __vgvivo llegaba tarde, la cortina ya no se
+// levantaba NI CON señal de vida.
+// (1) LA CURA TRIPLE EN LA CORTINA (layout.tsx): ① la casa plana se funde de
+//     la cortina en cuanto el DOM existe (readyState!=='loading' — el HTML
+//     prerenderizado YA ES la casa entera; el load dejó de mandar); ② botón
+//     «toca para despertarlo» también en rutas ligeras (10s) y TOPE DURO de
+//     20s: la cortina jamás es eterna; ③ en el universo pesado el ojo ya no
+//     muere a los 20s (la señal tardía despierta igual) + tope duro de 60s.
+// (2) LA SEÑAL DE VIDA PROPIA RESTAURADA (page.tsx, lección v165 que se fue
+//     con el universo 3D): la Casa pone window.__vgvivo=true al montar — la
+//     cortina se funde cuando la consola RESPIRA, no cuando el load termina.
+// (3) EL CINE RENACE CADA DÍA (cine-entrada.tsx): la clave de sesión llevaba
+//     semanas inmortal (una sesión de PWA móvil dura semanas = «no hay intro
+//     como gta»); ahora es DIARIA con fecha LOCAL del aparato
+//     (vg-cine-entrada-v178-YYYY-MM-DD): el Dueño ve SU intro GTA cada día
+//     que abre Vanguard, sin repetir el mismo día. Reduced-motion sin cine.
+// Herencia v177.0 y todo lo anterior — cortina v155 de red de seguridad,
+// guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
+export const APP_VERSION = "v178.0";
+export const APP_CODENAME = "EL DESPERTADOR";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

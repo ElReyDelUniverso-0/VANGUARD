@@ -2943,6 +2943,11 @@ button, [role="button"], a, summary {
    de los keyframes de la casa (a movimiento 0, la casa queda quieta).
    ════════════════════════════════════════════════════════════════════ */
 html { font-size: calc(16px * var(--vg-escala, 1)); }
+/* v178.0 EL PAN PROHIBIDO: la capa aurora (inset:-22%, v71) empuja el
+   scrollWidth del documento (451px medidos en un viewport de 390) y en móvil
+   la Casa se podía arrastrar de lado. `clip` no crea contenedor de scroll
+   (sticky y fixed ilesos); `hidden` queda de fallback para aparatos viejos */
+html, body { overflow-x: hidden; overflow-x: clip; }
 ::selection { background: color-mix(in srgb, var(--vg-acento, #FFC94D) 82%, white); color: #0b0b12; }
 ::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--vg-acento, #FFC94D) 42%, #1a1a22); }
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--vg-acento, #FFC94D) 65%, #1a1a22); }

@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v178.0",
+    nombre: "EL DESPERTADOR",
+    tipo: "tecno",
+    hitos: [
+      "EL BUG DEL DESPLEGANDO ETERNO, CAZADO CON NAVEGADOR REAL (el Dueño: «se queda en desplegando universo y ya cargando» CON el servidor sano: health 200, RSS 208MB) — la cortina de la casa esperaba document.readyState==='complete', es decir, el EVENTO LOAD ENTERO: con chunks de 1.1–1.3MB, una conexión móvil estancada deja readyState en 'interactive' indefinidamente y la cortina no se levantaba NUNCA; peor: las rutas no-pesadas NO tenían botón de rescate ni tope (los timers de rescate eran exclusivos de /vanguard2), y en pesado el ojo se hacía clearInterval a los 20s — si la señal de vida llegaba tarde, la cortina ya no se fundía NI CON el universo despierto",
+      "LA CURA TRIPLE EN LA CORTINA (layout.tsx) — ① la casa plana se funde de la cortina en cuanto el DOM existe (readyState!=='loading': el HTML prerenderizado YA ES la casa entera; el evento load dejó de mandar); ② botón «toca para despertarlo» también en rutas ligeras (10s) y TOPE DURO de 20s — la cortina JAMÁS vuelve a ser eterna; ③ en el universo pesado el ojo ya no muere a los 20s (la señal tardía despierta igual) con tope duro de 60s",
+      "LA SEÑAL DE VIDA PROPIA RESTAURADA (page.tsx) — la lección v165 que se fue con el universo 3D vuelve: la Casa pone window.__vgvivo=true al montar y la cortina se funde cuando la consola RESPIRA, no cuando el recurso más lento de la red termina",
+      "EL CINE GTA RENACE CADA DÍA (cine-entrada.tsx) — la clave de sesión era inmortal (una sesión de PWA móvil dura semanas = el Dueño dejaba de ver SU intro para siempre): ahora es DIARIA con fecha LOCAL del aparato (vg-cine-entrada-v178-YYYY-MM-DD) — la entrada animada de 6 placas vuelve cada día que se abre Vanguard, sin repetir el mismo día",
+      "EL PAN PROHIBIDO (globals.css) — la capa aurora (inset:-22%, v71) empujaba el scrollWidth del documento (451px en un viewport de 390; 1298/1280 en escritorio) y la Casa se podía arrastrar de lado: overflow-x clip en la raíz (hidden de fallback) — el overflow horizontal intermitente, MUERTO en móvil y en el bug desktop preexistente v138 del inbox",
+      "QA v178: tsc 0, lint 0 en los archivos tocados, build standalone EXIT 0 (tras dos OOM-killer del propio build — el navegador headless abierto se comía la RAM del builder, lección de taller), health v178.0 rss 199MB, cortina disuelta en <2s, __vgvivo=true, cine 6 placas capturado (RUSIA—UCRANIA oro, LA RUTA DEL PETRÓLEO azul), SALTAR → casa viva, recarga sin cine (guard diario), CHUNKS MUERTOS simulados → la cortina se disipa igual, /vanguard2 intacto, overflow móvil 390=390 y escritorio 1280=1280, 0 errores de consola",
+    ],
+  },
+  {
     version: "v177.0",
     nombre: "EL CINE DE LA CASA",
     tipo: "mundo",

@@ -2829,3 +2829,20 @@ Work Log:
 
 Stage Summary:
 - MAIN = v177.0 EL CINE DE LA CASA: la verdad remota integrada (fichas v176 + intros v174 + casa 2D v173) y el arranque tiene SU tráiler GTA de noticias (6 placas, acento por conflicto, SALTAR). El cuelgue del Dueño muere doble: server producción (211MB) + cine DOM liviano. La familia GTA queda completa: arranque (cine) + personaje (rostros) + noticia (lector) + conflicto (fichas).
+
+---
+Task ID: ia1-v178.0
+Agent: ia1 (solitaria)
+Task: v178.0 EL DESPERTADOR — el Dueño volvió a reportar: «el bug sigue: se queda en desplegando universo y ya cargando — céntrate en el bug y la intro as nuevas animadas».
+
+Work Log:
+- DIAGNÓSTICO CON NAVEGADOR REAL SOBRE PRODUCCIÓN (la diferencia con v177): el server estaba SANO (health 200, RSS 208-216MB, uptime estable) y en local la cortina se disolvía en <1s — el atasco del Dueño era CLIENTE, no infra. La cortina de `/` esperaba `document.readyState==='complete'` (el EVENTO LOAD entero: chunks de 1.1–1.3MB + conexión móvil estancada = readyState 'interactive' infinito) y las rutas no-pesadas NO tenían botón de rescate ni tope (los timers de rescate eran exclusivos de `/vanguard2`). Segundo bug eterno en la misma sala: en pesado el ojo hacía clearInterval a los 20s — señal de vida tardía = cortina que ya no se levanta NADA.
+- FIX layout.tsx (curtina v178): ① la casa plana se funde de la cortina en cuanto el DOM existe (`readyState!=='loading'` — el HTML prerenderizado YA ES la casa entera, el load dejó de mandar); ② botón de rescate universal (10s) + TOPE DURO de 20s en rutas ligeras; ③ ojo de pesado ya no muere a los 20s + tope duro 60s. Comentario v178 completo en el bloque de la cortina.
+- FIX page.tsx: señal de vida propia restaurada (lección v165 perdida con el 3D): `window.__vgvivo = true` al montar la Casa — la cortina responde a la consola VIVA, no al recurso más lento.
+- FIX cine-entrada.tsx (la intro GTA «invisible»): la clave `vg-cine-entrada-v177` era una-vez-por-SESIÓN de navegador y una sesión de PWA móvil dura semanas → el Dueño dejaba de ver el cine para siempre. Clave DIARIA con fecha LOCAL (`vg-cine-entrada-v178-${toLocaleDateString("en-CA")}`): el cine de 6 placas renace cada día que abre Vanguard.
+- FIX globals.css (EL PAN PROHIBIDO): la capa aurora (inset:-22%, v71) empujaba el scrollWidth (451px en viewport 390; el overflow desktop 1298/1280 preexistente v138 del inbox): `overflow-x: hidden/clip` en html/body — pan horizontal muerto en móvil y escritorio.
+- INFRA: dos OOM-killer del propio BUILD (exit 137) causados por el navegador headless abierto durante el rebuild — lección: cerrar chromium antes de `npm run build`; con 3.1GB libres, build EXIT 0. Servidor producción reiniciado (serve.mjs --prod): health v178.0, RSS 199MB.
+- QA E2E final: tsc 0; lint 0 en los 4 archivos tocados; build EXIT 0; cortina disuelta <2s; __vgvivo=true; cine 6 placas capturado en 390px (RUSIA—UCRANIA oro con artillería, LA RUTA DEL PETRÓLEO azul con caza, letterbox+SALTAR+progreso GTA); auto-avance y fin limpio; SALTAR → casa viva; recarga SIN cine (guard diario vg-cine-entrada-v178-2026-10-25); CHUCKS MUERTOS simulados con network route abort → cortina disipada igual (3s y 11s); /vanguard2 intacto (cortina + vgvivo); overflow móvil 390=390 y desktop 1280=1280; 0 errores de consola. Capturas: agent-ctx/qa-v178-*.png.
+
+Stage Summary:
+- v178.0 EL DESPERTADOR en main: la cortina JAMÁS vuelve a ser eterna (DOM-mando + señal de vida propia + rescate universal + topes duros), la intro GTA renace CADA DÍA y el pan horizontal está muerto en móvil y escritorio. Server producción v178.0 (199MB). tsc 0, guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
