@@ -18,6 +18,8 @@ import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
+import { useEffect, useMemo } from "react";
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud border-red-hud bg-red-hud/50",
@@ -119,6 +121,104 @@ export function GalleryPanel() {
       setBusy(false);
     }
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — la galería vive en volumen: el estado del
+  // filtro y las fotos REALES que ya se ven en 2D (con su imagen,
+  // severidad y BDA); modo MIS-FOTOS emite tus fotos publicadas
+  // ════════════════════════════════════════════════════════════
+  const sevHex: Record<string, string> = {
+    CRITICO: "#FF4D5E", TENSION: "#F5C542", INESTABILIDAD: "#A855F7", VIGILANCIA: "#7AB8FF",
+  };
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const visibles = PHOTOS.filter((p) => {
+      if (onlyReal && !p.real) return false;
+      if (filter !== "ALL" && filter !== "MIS-FOTOS" && p.conflictId !== filter) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        const c = CONFLICTS.find((co) => co.id === p.conflictId);
+        return p.title.toLowerCase().includes(q) || p.caption.toLowerCase().includes(q) || c?.country.toLowerCase().includes(q);
+      }
+      return true;
+    });
+    const filas: FilaContenido3D[] = [
+      {
+        t: `FOTOGRAMAS VERIFICADOS: ${PHOTOS.length}`,
+        v: `${filter === "MIS-FOTOS" ? myPhotos.length : visibles.length} VISIBLES`,
+        color: "#A855F7",
+        d: `Filtro: ${filter === "ALL" ? "todos los frentes" : filter === "MIS-FOTOS" ? "tus fotos" : filter} · ${onlyReal ? "solo reales" : "reales + OSINT"} · búsqueda: ${search ? `"${search}"` : "—"}`,
+      },
+    ];
+    // offset 1: la fila de cabecera precede a las fotos
+    if (filter === "MIS-FOTOS") {
+      for (const p of myPhotos.slice(0, 9)) {
+        filas.push({ t: p.title, img: p.src, v: "TU FOTO", color: "#F5C542", d: `Foto publicada por ti · +15 monedas y +5 XP ya cobrados` });
+      }
+    } else {
+      for (const p of visibles.slice(0, 9)) {
+        const c = CONFLICTS.find((co) => co.id === p.conflictId);
+        filas.push({
+          t: p.title,
+          img: p.image,
+          v: p.severity,
+          color: sevHex[p.severity] ?? "#7AB8FF",
+          d: `${c?.country ?? p.conflictId} · ${p.caption} · BDA: ${p.bda} · ${p.real ? "REAL · verificado" : "OSINT"}`,
+          a: "ver foto",
+        });
+      }
+    }
+    if (myPhotos.length > 0) {
+      filas.push({
+        t: `TUS FOTOS: ${myPhotos.length}`,
+        v: "+15ⓒ C/U",
+        color: "#F5C542",
+        d: "Se listan en el filtro MIS-FOTOS del panel",
+      });
+    }
+    filas.push({
+      t: "PUBLICAR FOTO",
+      a: "abrir publicador",
+      color: "#A855F7",
+      d: "Sube tu foto de campo (+15 monedas, +5 XP) · abre el mismo diálogo 2D",
+    });
+    return filas;
+  }, [filter, onlyReal, search, myPhotos]);
+  useSala3DContenido(
+    "galeria",
+    "GALERIA OSINT",
+    "#A855F7",
+    `${PHOTOS.length} fotogramas · ${myPhotos.length} tuyos · publica y suma +15 monedas`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // abrir foto (handleView con registro de vista) y abrir el publicador
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "galeria") return;
+      if (det.accion === "ver foto") {
+        // offset 1: la fila de cabecera precede a las fotos en filas3D
+        const visibles = PHOTOS.filter((p) => {
+          if (onlyReal && !p.real) return false;
+          if (filter !== "ALL" && p.conflictId !== filter) return false;
+          if (search) {
+            const q = search.toLowerCase();
+            const c = CONFLICTS.find((co) => co.id === p.conflictId);
+            return p.title.toLowerCase().includes(q) || p.caption.toLowerCase().includes(q) || c?.country.toLowerCase().includes(q);
+          }
+          return true;
+        });
+        const p = visibles[det.idx - 1];
+        if (p) handleView(p.id);
+      } else if (det.accion === "abrir publicador") {
+        setPubOpen(true);
+        sfx.click();
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filter, onlyReal, search]);
 
   return (
     <div className="space-y-3">

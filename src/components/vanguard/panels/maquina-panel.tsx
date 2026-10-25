@@ -47,6 +47,7 @@ import {
   type ClimaInfo, type HistoriaLoc,
 } from "@/lib/frente-zonas-data";
 import { fnv89 } from "@/lib/pulsos-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const PIN_META: Record<PinTeatro["tipo"], { color: string; icon: typeof Landmark }> = {
   capital: { color: "#FFC94D", icon: Landmark },
@@ -1078,6 +1079,73 @@ export function MaquinaPanel() {
     [],
   );
   const sel = opciones.find((o) => o.id === crisisSel) ?? opciones[0];
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — LA MÁQUINA DEL TIEMPO en volumen: la
+  // línea temporal activa (SIM o REAL), su modo y todas las
+  // crisis/archivos reales, seleccionables desde el mundo
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `MÁQUINA DEL TIEMPO: ${sel.kind === "sim" ? sel.c.nombre.toUpperCase() : sel.a.nombre.toUpperCase()}`,
+        v: sel.kind === "sim" ? "SIM · VANGUARD" : "REAL · ARCHIVO",
+        color: sel.kind === "sim" ? "#FFC94D" : "#3DDCFF",
+        d: sel.kind === "sim" ? sel.c.resumen : sel.a.resumen,
+      },
+      {
+        t: sel.kind === "real" ? "CRONOLOGÍA VERIFICABLE" : sel.c.modo === "karsk-vivo" ? "TEATRO KARSK VIVO · 21 DÍAS" : "CRISIS EN FASES",
+        color: "#7AB8FF",
+        d: sel.kind === "real"
+          ? "Documentos desclasificados con fuente nombrada · fechas y hechos verificables"
+          : sel.c.modo === "karsk-vivo"
+            ? "Reproductor día a día con clima, ejes de presión, estadísticas y despachos del frente"
+            : "Capítulos con curva de tensión y teatro esquemático",
+      },
+    ];
+    // offset 2: la línea activa y su modo preceden al resto de opciones
+    for (const o of opciones.slice(0, 9)) {
+      filas.push({
+        t: (o.kind === "sim" ? o.c.nombre : o.a.nombre).toUpperCase(),
+        v: o.kind === "real" ? o.a.rango : o.c.region,
+        color: o.kind === "real" ? "#3DDCFF" : "#FFC94D",
+        d: `${o.id === sel.id ? "LÍNEA ACTIVA · " : ""}${o.kind === "sim" ? o.c.resumen : o.a.resumen}`,
+        a: "abrir linea",
+      });
+    }
+    if (sel.kind === "sim" && sel.c.modo === "fases" && sel.c.hechos[0]) {
+      filas.push({
+        t: sel.c.hechos[0].texto,
+        color: "#FFC94D",
+        d: `Hecho real de la crisis · ${Math.max(0, sel.c.hechos.length - 1)} más en el panel 2D`,
+      });
+    }
+    return filas;
+  }, [opciones, sel]);
+  useSala3DContenido(
+    "maquina",
+    "MÁQUINA DEL TIEMPO",
+    "#FFC94D",
+    sel.kind === "sim"
+      ? `${sel.c.nombre} · ${sel.c.modo === "karsk-vivo" ? "teatro vivo de 21 días" : "crisis en fases"} · ${CRISIS.length} crisis SIM + ${ARCHIVO.length} archivos REALES`
+      : `${sel.a.nombre} · ${sel.a.rango} · archivo real desclasificado`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismo setCrisis que los chips 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "maquina") return;
+      if (det.accion === "abrir linea") {
+        // offset 2: la línea activa y su modo preceden a las opciones
+        const o = opciones[det.idx - 2];
+        if (o) setCrisis(o.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [opciones, setCrisis]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">

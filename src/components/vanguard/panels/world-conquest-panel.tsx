@@ -20,6 +20,7 @@ import {
   type ConquestSnapshot, type FactionId,
 } from "@/lib/conquest-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 // v14 — MAPA DE GUERRA EN 3D: globo real (globe.gl) en lugar del SVG plano
 const GlobeMap3D = dynamic(
@@ -45,6 +46,123 @@ const TERRITORY_NAMES: Record<string, string> = Object.fromEntries(
 );
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// ============================================================
+// v168: PARIDAD 2D→3D — filas reales del MUNDO DE GUERRA (portada + campaña)
+// con registro paralelo de acciones (mismo índice que filas3D) para que el
+// oyente ejecute el handler 2D exacto.
+// ============================================================
+type RegistroMundo3D = { kind: string; tid?: string; from?: string; to?: string };
+function construirMundo3D(
+  snap: ConquestSnapshot | null,
+  homePick: string | null,
+  commanderPick: string | null,
+  phase: "REINFORCE" | "ATTACK" | "IDLE" | "OVER",
+  busy: boolean,
+  aiThinking: FactionId | null,
+  selectedTerr: { id: string; name: string } | null,
+  attackTargets: string[],
+): { filas: FilaContenido3D[]; reg: RegistroMundo3D[] } {
+  const filas: FilaContenido3D[] = [];
+  const reg: RegistroMundo3D[] = [];
+  const emite = (f: FilaContenido3D, r: RegistroMundo3D = { kind: "" }) => { filas.push(f); reg.push(r); };
+
+  if (!snap) {
+    const cmd = getCommander(commanderPick);
+    const listo = !!homePick && !!commanderPick;
+    emite({
+      t: "NUEVA CAMPAÑA — MUNDO DE GUERRA",
+      v: homePick ? (TERRITORY_NAMES[homePick] ?? homePick).toUpperCase() : "SIN ORIGEN",
+      color: listo ? "#3DDC84" : "#F5C542",
+      d: listo
+        ? `capital ${TERRITORY_NAMES[homePick] ?? homePick} · comandante ${cmd?.name ?? "?"} · listo para despegar`
+        : "toca el globo para elegir tu nación de origen y elige comandante abajo",
+      a: listo ? "iniciar campaña" : undefined,
+    }, { kind: "iniciar campaña" });
+    for (const c of COMMANDERS) {
+      emite({
+        t: c.name,
+        v: commanderPick === c.id ? "ELEGIDO" : undefined,
+        color: commanderPick === c.id ? "#F5C542" : "#7AB8FF",
+        d: c.doctrine,
+        a: "elegir comandante",
+      }, { kind: "elegir comandante", tid: c.id });
+    }
+    return { filas, reg };
+  }
+
+  const total = TERRITORIES.filter((t) => snap.territories[t.id].owner === 0).length;
+  const pct = Math.round((total / TERRITORIES.length) * 100);
+  const cmd = getCommander(snap.commander);
+  const faseTxt = phase === "REINFORCE" ? `REFUERZOS — ${snap.reserves} tropas por desplegar`
+    : phase === "OVER" ? (snap.victory ? "DOMINIO MUNDIAL COMPLETADO" : "IMPERIO DESTRUIDO")
+    : busy && aiThinking !== null ? `TURNO ENEMIGO — ${FACTIONS[aiThinking].name} moviendo…`
+    : "ATAQUE — elige territorio tuyo (2+ tropas) y un vecino enemigo";
+  emite({
+    t: `RONDA ${snap.turn} · ${pct}% DEL MUNDO`,
+    v: `${total}/${TERRITORIES.length} TERR`,
+    p: pct,
+    color: phase === "OVER" ? (snap.victory ? "#F5C542" : "#FF4D5E") : "#E8C56A",
+    d: faseTxt,
+  });
+  if (cmd) {
+    emite({ t: `COMANDANTE: ${cmd.name}`, color: "#7AB8FF", d: cmd.doctrine });
+  }
+  for (const f of FACTIONS) {
+    const count = TERRITORIES.filter((t) => snap.territories[t.id].owner === f.id).length;
+    const troops = TERRITORIES.filter((t) => snap.territories[t.id].owner === f.id).reduce((acc, t) => acc + snap.territories[t.id].troops, 0);
+    emite({
+      t: f.name,
+      v: `${count} terr · ${troops}t`,
+      color: f.color,
+      p: Math.round((count / TERRITORIES.length) * 100),
+      d: `${f.doctrine}${busy ? " · turno IA en curso" : ""}`,
+    });
+  }
+  // acciones reales según la fase (los mismos handlers que los botones 2D)
+  if (phase === "REINFORCE") {
+    const mios = TERRITORIES.filter((t) => snap.territories[t.id].owner === 0).slice(0, 5);
+    for (const t of mios) {
+      emite({ t: t.name, v: `${snap.territories[t.id].troops}t`, color: "#3DDC84", d: `${snap.reserves} reservas · despliega 1 tropa aquí`, a: "desplegar" }, { kind: "desplegar", tid: t.id });
+    }
+    if (snap.reserves > 0) {
+      emite({ t: "DESPLEGAR TODO", v: `${snap.reserves} tropas`, color: "#3DDC84", d: "reparte todas las reservas priorizando fronteras", a: "desplegar todo" }, { kind: "desplegar todo" });
+    }
+  }
+  if (phase === "ATTACK" && !busy) {
+    if (selectedTerr && attackTargets.length > 0) {
+      for (const a of attackTargets.slice(0, 5)) {
+        const dst = snap.territories[a];
+        const atkForce = snap.territories[selectedTerr.id].troops - 1;
+        const odds = Math.round((atkForce / (atkForce + dst.troops * 1.15)) * 100);
+        emite({
+          t: `ATACAR ${TERRITORY_NAMES[a] ?? a}`,
+          v: `${odds}%`,
+          p: odds,
+          color: "#FF4D5E",
+          d: `desde ${selectedTerr.name} · ${FACTIONS[dst.owner].short} defiende con ${dst.troops} tropas`,
+          a: "atacar",
+        }, { kind: "atacar", from: selectedTerr.id, to: a });
+      }
+    } else {
+      const listos = TERRITORIES.filter((t) => snap.territories[t.id].owner === 0 && snap.territories[t.id].troops >= 2).slice(0, 5);
+      for (const t of listos) {
+        emite({ t: t.name, v: `${snap.territories[t.id].troops}t`, color: "#E8C56A", d: "pulsa para seleccionarlo y ver objetivos vecinos", a: "seleccionar" }, { kind: "seleccionar", tid: t.id });
+      }
+      emite({ t: "TERMINAR TURNO", v: "3 IA", color: "#FF4D5E", d: "pasa el turno: refuerzos y ataques enemigos", a: "fin de turno" }, { kind: "fin de turno" });
+    }
+  }
+  if (phase === "OVER") {
+    emite({
+      t: snap.victory ? "¡DOMINIO MUNDIAL!" : "IMPERIO DESTRUIDO",
+      v: `${snap.turn} RONDAS`,
+      color: snap.victory ? "#F5C542" : "#FF4D5E",
+      d: snap.victory ? `los ${TERRITORIES.length} territorios son tuyos · +500 monedas, +250 XP, +3 gemas` : "los generales enemigos reparten tu territorio",
+      a: "nueva campaña",
+    }, { kind: "nueva campaña" });
+  }
+  return { filas, reg };
+}
 
 export function WorldConquestPanel() {
   const save = useGameStore((s) => s.conquestSave);
@@ -308,6 +426,41 @@ export function WorldConquestPanel() {
     if (!selectedTerr || !snap || !canAttackFrom(selectedTerr.id)) return [];
     return selectedTerr.adj.filter((a) => snap.territories[a].owner !== 0);
   }, [selectedTerr, snap]);
+
+  // v168: PARIDAD 2D→3D — el MUNDO DE GUERRA emite sus filas reales a la sala de contenido
+  const mundo3D = useMemo(
+    () => construirMundo3D(snap, homePick, commanderPick, phase, busy, aiThinking, selectedTerr ?? null, attackTargets),
+    [snap, homePick, commanderPick, phase, busy, aiThinking, selectedTerr, attackTargets],
+  );
+  const filas3D = useMemo<FilaContenido3D[]>(() => mundo3D.filas, [mundo3D]);
+  useSala3DContenido(
+    "mundo",
+    "MUNDO DE GUERRA",
+    "#E8C56A",
+    snap
+      ? `ronda ${snap.turn} · ${Math.round((TERRITORIES.filter((t) => snap.territories[t.id].owner === 0).length / TERRITORIES.length) * 100)}% del mundo conquistado`
+      : "elige nación de origen y comandante para conquistar los 24 territorios",
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — el registro paralelo mapea idx→handler 2D real
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "mundo") return;
+      const r = mundo3D.reg[det.idx];
+      if (!r || r.kind !== det.accion) return;
+      if (r.kind === "iniciar campaña") startCampaign();
+      else if (r.kind === "elegir comandante" && r.tid) setCommanderPick(r.tid);
+      else if (r.kind === "desplegar" && r.tid) deployTroop(r.tid);
+      else if (r.kind === "desplegar todo") deployAll();
+      else if (r.kind === "seleccionar" && r.tid) setSelected(r.tid);
+      else if (r.kind === "atacar" && r.from && r.to) doAttack(r.from, r.to);
+      else if (r.kind === "fin de turno") endTurn();
+      else if (r.kind === "nueva campaña") newCampaign();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [mundo3D, startCampaign, deployTroop, deployAll, doAttack, endTurn, newCampaign]);
 
   // ====== render ======
   if (!snap) {

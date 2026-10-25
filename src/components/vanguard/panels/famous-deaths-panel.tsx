@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { FAMOUS_FIGURES, type FamousFigure } from "@/lib/game-data";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -8,6 +8,7 @@ import { Skull, MapPin, Calendar, ChevronRight, ChevronDown, Crosshair } from "l
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 function formatYear(year: number): string {
   if (year < 0) return `${Math.abs(year)} a.C.`;
@@ -19,6 +20,47 @@ export function FamousDeathsPanel() {
   const [filter, setFilter] = useState<"ALL" | "famous">("ALL");
 
   const filtered = FAMOUS_FIGURES.filter((f) => filter === "ALL" || f.famous);
+
+  // v168: PARIDAD 2D→3D — las figuras históricas reales del panel viven en volumen
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: filter === "ALL" ? "FILTRO · TODAS LAS FIGURAS" : "FILTRO · MÁS FAMOSAS",
+        v: `${filtered.length}`,
+        color: "#F5C542",
+        d: "Toca una fila para desplegar causa, lugar y guerra del personaje",
+      },
+    ];
+    for (const f of filtered.slice(0, 9)) {
+      filas.push({
+        t: f.name,
+        v: formatYear(f.deathYear),
+        color: f.famous ? "#F5C542" : "#7AB8FF",
+        d: `${f.role} · causa: ${f.cause} · ${f.deathPlace} · ${f.war}`,
+        a: "detalles",
+      });
+    }
+    return filas;
+  }, [filtered, filter]);
+  useSala3DContenido(
+    "muertes",
+    "MUERTES FAMOSAS EN GUERRA",
+    "#FF3B30",
+    `${FAMOUS_FIGURES.length} figuras históricas · cómo murieron`,
+    filas3D,
+  );
+  // v168: "detalles" desde el 3D despliega la misma ficha que el botón 2D
+  // (offset 1: la fila 0 es la del filtro, las figuras empiezan en idx 1)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "muertes" || d.accion !== "detalles") return;
+      const item = filtered[d.idx - 1];
+      if (item) setSelected(item.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filtered]);
 
   return (
     <div className="space-y-3">

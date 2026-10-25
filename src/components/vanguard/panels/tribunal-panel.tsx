@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Gavel, Scale, FileSearch, Users, Check, X } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface Evidence { title: string; detail: string; source: string; weight: "FAVORABLE" | "CARGO" | "NEUTRA"; }
 interface Case {
@@ -140,6 +141,72 @@ export function TribunalPanel() {
       toast("Veredicto disidente registrado — el tribunal valora las minorías");
     }
   };
+
+  // v168: PARIDAD 2D→3D — cada caso del banquillo sube en volumen con su
+  // jurado global; los veredictos se emiten por el MISMO vote() del 2D
+  // (determinismo: cada caso SIEMPRE son 2 filas — idx pares/impartes)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    for (const c of CASES) {
+      const my = save.votes[c.id];
+      const guiltyPct = Math.min(95, Math.max(20, c.baseGuilty));
+      const info = `ACUSADO: ${c.accused} · CARGO: ${c.charge} · jurado global ${guiltyPct}% culpable · evidencias: ${c.evidence.length}`;
+      if (my) {
+        filas.push({
+          t: `${c.year} · ${c.title}`,
+          v: `TU VOTO: ${my}`,
+          p: guiltyPct,
+          color: my === "CULPABLE" ? "#FF4D5E" : "#3DDC84",
+          d: `${info} · veredicto guardado en tu expediente`,
+        });
+        filas.push({
+          t: `DEFENSA · ${c.title}`,
+          v: "CERRADO",
+          color: "#7AB8FF",
+          d: c.verdictAnalysis.innocent,
+        });
+      } else {
+        filas.push({
+          t: `${c.year} · ${c.title}`,
+          v: "¿CULPABLE?",
+          p: guiltyPct,
+          color: featured.id === c.id ? "#F5C542" : "#7AB8FF",
+          d: `${info}${featured.id === c.id ? " · CASO DE LA SEMANA" : ""} · +10 mon, si aciertas con la mayoría +25`,
+          a: "votar culpable",
+        });
+        filas.push({
+          t: `DEFENSA · ${c.title}`,
+          v: "¿INOCENTE?",
+          color: "#3DDC84",
+          d: c.verdictAnalysis.innocent,
+          a: "votar inocente",
+        });
+      }
+    }
+    return filas;
+  }, [save, featured]);
+  useSala3DContenido(
+    "tribunal",
+    "JUICIO HISTÓRICO",
+    "#E8C56A",
+    `La comunidad como jurado · evidencias con fuentes reales · caso de la semana: ${featured.title}`,
+    filas3D,
+  );
+
+  // v168: el 3D vota por el MISMO vote() que los botones Culpable/Inocente 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "tribunal") return;
+      // offset: dos filas por caso (acusación par, defensa impar)
+      const c = CASES[Math.floor(d.idx / 2)];
+      if (!c) return;
+      if (d.accion === "votar culpable") vote(c, "CULPABLE");
+      if (d.accion === "votar inocente") vote(c, "INOCENTE");
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [save, featured, vote]);
 
   return (
     <div className="space-y-3">

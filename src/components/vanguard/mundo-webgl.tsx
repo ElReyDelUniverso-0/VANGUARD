@@ -643,9 +643,13 @@ class MundoWGL {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.escena = new THREE.Scene();
     this.camara = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 120);
-    const p0 = ZONA_POS[0];
-    this.camara.position.set(p0[0], p0[1], p0[2]);
-    this.camara.lookAt(0, 0, 0);
+    // v168 SIN MAPA EN LA INTRO: la cámara nace en la PANTALLA DE TÍTULO —
+    // el logo dorado al centro y las estrellas por todas partes; el planeta
+    // solo asoma abajo como escenario (NUNCA de frente como un mapa con
+    // marcadores — mandato del Dueño «elimina el mapa de la intro»)
+    this.camara.position.set(0, 0.75, 7.2);
+    this.mirada.set(0, 1.75, 0);
+    this.camara.lookAt(this.mirada.x, this.mirada.y, this.mirada.z);
 
     // LUCES — el frío del espacio + el rim magenta de la casa (globo SIEMPRE legible)
     // v154: la ambiental se CAPTURA — se tiñe con el color de la sección activa
@@ -5203,22 +5207,16 @@ class MundoWGL {
   nacerEstrellas() {
     this.animarP(this.matEstrellas, { opacity: 0.95 }, 1400, { ease: easeOut });
   }
-  subirGlobo() {
-    const obj = { y: -5.4 };
-    this.camara.position.y = -5.4;
-    this.camara.lookAt(0, -1.2, 0);
+  // v168 SIN MAPA EN LA INTRO — EL ENCENDIDO DEL MUNDO: el planeta y sus
+  // teatros de guerra NO participan de la ceremonia; se encienden cuando el
+  // piloto ENTRA (paridad exacta con reencuentro: atmósfera 1.35 + marcadores)
+  encenderMundo() {
     const atmMat = this.atmosfera.material as THREE.ShaderMaterial;
-    this.animarP(obj, { y: 0 }, 1700, {
-      ease: easeOut,
-      onUpdate: () => {
-        this.camara.position.y = obj.y;
-        this.camara.lookAt(0, obj.y * 0.24, 0);
-      },
-    });
-    const op = { o: 0 };
-    this.animarP(op, { o: 1.35 }, 1300, {
+    const op = { o: atmMat.uniforms.uOp.value };
+    this.animarP(op, { o: 1.35 }, 900, {
       onUpdate: () => atmMat.uniforms.uOp.value = op.o,
     });
+    this.encenderMarcadores(() => sonar("onda"));
   }
   encenderMarcadores(alFinal: () => void) {
     const orden = [...this.marcadores].sort((a, b) => a.datos.intensidad - b.datos.intensidad);
@@ -5693,7 +5691,10 @@ class MundoWGL {
 // ────────────────────────────────────────────────────────────
 const LLAVE_ENTRADA = "vg-wgl-entrada-v1";
 
-type Fase = "negro" | "estrellas" | "globo" | "marcadores" | "logo" | "tagline" | "hint" | "volando" | "fin";
+// v168 SIN MAPA EN LA INTRO: las fases «globo» y «marcadores» (el mapa con
+// los teatros de guerra latiendo) FUERA de la ceremonia — la entrada es
+// estrellas → logo → tagline → hint; el mundo real se enciende al ENTRAR
+type Fase = "negro" | "estrellas" | "logo" | "tagline" | "hint" | "volando" | "fin";
 
 export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
   const lienzoRef = useRef<HTMLCanvasElement>(null);
@@ -6088,16 +6089,13 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     document.documentElement.setAttribute("data-wgl-entrada", "1");
     window.dispatchEvent(new CustomEvent("vg:wgl-entrada-estado", { detail: { on: true } }));
     const T = (s: number) => s * 1000;
+    // v168 SIN MAPA EN LA INTRO — CEREMONIA PURA DE TÍTULO: estrellas →
+    // logo → tagline → hint. Sin planeta de frente, sin marcadores latiendo
+    // (el mapa ya no espera al piloto: el mundo se descubre volando)
     despues(T(1.0), () => { setFase("estrellas"); mundoRef.current?.setFaseEntrada("estrellas"); mundoRef.current?.nacerEstrellas(); });
-    despues(T(2.0), () => { setFase("globo"); mundoRef.current?.setFaseEntrada("globo"); mundoRef.current?.subirGlobo(); });
-    despues(T(3.2), () => {
-      setFase("marcadores");
-      mundoRef.current?.setFaseEntrada("marcadores");
-      mundoRef.current?.encenderMarcadores(() => sonar("onda"));
-    });
-    despues(T(4.4), () => { setFase("logo"); mundoRef.current?.setFaseEntrada("logo"); mundoRef.current?.nacerLogo(); });
-    despues(T(5.4), () => { setFase("tagline"); mundoRef.current?.setFaseEntrada("tagline"); });
-    despues(T(6.4), () => { setFase("hint"); mundoRef.current?.setFaseEntrada("hint"); mundoRef.current?.invitar(); });
+    despues(T(2.0), () => { setFase("logo"); mundoRef.current?.setFaseEntrada("logo"); mundoRef.current?.nacerLogo(); });
+    despues(T(3.0), () => { setFase("tagline"); mundoRef.current?.setFaseEntrada("tagline"); });
+    despues(T(4.0), () => { setFase("hint"); mundoRef.current?.setFaseEntrada("hint"); mundoRef.current?.invitar(); });
     return () => { for (const id of tiempos.current) clearTimeout(id); tiempos.current = []; };
   }, [soporte, aterrizajeCiudad]);
 
@@ -6120,6 +6118,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
     sonar("whoosh");
     const m = mundoRef.current;
     if (m) {
+      m.encenderMundo(); // v168: el planeta + teatros se encienden al ENTRAR (no en la intro)
       m.invitando = false;
       m.respiro = 0.006;
       // v141: el logo 3D se condensa y vive para siempre en el cielo del mundo
@@ -6158,7 +6157,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
       <div className="vg140-tinte" aria-hidden />
       {/* EL WARP — hipervelocidad suave durante el vuelo (REGLA 2) */}
       <div className="vg140-warp" aria-hidden />
-      {/* LA ENTRADA — negro → estrellas → globo → conflictos → logo → tagline → hint */}
+      {/* LA ENTRADA — negro → estrellas → logo → tagline → hint (v168: SIN mapa) */}
       {fase !== "fin" && (
         <div className="vg140-entrada" data-fase={fase} aria-hidden>
           <div className="vg140-negro" />
@@ -6180,7 +6179,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
               onClick={entrar}
               data-visible={fase === "hint" ? "1" : "0"}
             >
-              Toca el globo para entrar
+              Toca para entrar
             </button>
           </div>
         </div>

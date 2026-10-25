@@ -7,7 +7,7 @@
 // ficha) + ficha técnica + pasos de armado + puente al ESTUDIO COMUNITARIO
 // para que cada agente SUBA SU PROPIA arma con sus fotos.
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ import { ARSENAL, type ArsenalWeapon } from "@/lib/arsenal-data";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 function SpecIcon({ k }: { k: string }) {
   if (k.includes("calibre") || k.includes("ogiva")) return <Ruler className="w-3 h-3" />;
@@ -46,6 +47,69 @@ export function ArmeriaPanel() {
 
   // 429/403 transitorios de Wikimedia: la ficha degrada a "foto en verificación"
   const pending = (u?: string) => isPending(u) || (u ? imgFail[u] : false);
+
+  // v168: PARIDAD 2D→3D — ARMERÍA REAL emite sus filas reales a la sala de contenido
+  // (offset: las armas empiezan en idx 1; las piezas del despiece después)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "ARMERÍA REAL · FOTOS DE WIKIMEDIA",
+        v: `${ARSENAL.length} FICHAS`,
+        color: "#FF3B30",
+        d: w ? `en foco: ${w.name} (${w.origin} · ${w.era}) — función, ficha técnica y armado pieza por pieza` : "fotos reales de las armas de los conflictos actuales — nada de polígonos",
+      },
+    ];
+    ARSENAL.slice(0, 8).forEach((a) => {
+      filas.push({
+        t: a.name,
+        v: a.origin.toUpperCase().slice(0, 14),
+        img: isPending(a.photo) ? undefined : a.photo,
+        color: w?.id === a.id ? "#F5C542" : "#7AB8FF",
+        d: `${a.function}`.slice(0, 170),
+        a: "ver arma",
+      });
+    });
+    if (w) {
+      for (const [i, s] of w.assembly.slice(0, 3).entries()) {
+        filas.push({
+          t: `PIEZA ${i + 1}: ${s.pieza}`,
+          color: "#F5C542",
+          d: `${s.desc} — despiece real de ${w.name} (${w.assembly.length} piezas)`,
+        });
+      }
+    }
+    filas.push({
+      t: "SUBE TU ARMA AL ESTUDIO COMUNITARIO",
+      color: "#7AB8FF",
+      d: "la armería la construye la comunidad: tu ficha con fotos reales sale publicada tras revisión del agente IA (+30 monedas)",
+      a: "sube tu arma",
+    });
+    return filas;
+  }, [w]);
+  useSala3DContenido(
+    "armeria",
+    "ARMERÍA REAL",
+    "#FF3B30",
+    w ? `fotos reales, no polígonos · ${w.name} (${w.origin}) en foco` : `fotos reales de las armas de los conflictos · ${ARSENAL.length} fichas`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — ver arma/subir usan los MISMOS handlers 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "armeria") return;
+      if (det.accion === "ver arma") {
+        const i = det.idx - 1;
+        const a = ARSENAL[i];
+        if (a) { setIdx(i); setW(a); sfx.click(); }
+      } else if (det.accion === "sube tu arma") {
+        window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "creador" }));
+        toast.success("Abre el ESTUDIO COMUNITARIO → tipo ARMA", { description: "Sube TU arma con fotos reales y su armado" });
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   return (
     <div className="space-y-4">

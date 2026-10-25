@@ -26,6 +26,7 @@ import { WORLD_FLAG_MAP } from "@/lib/world-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { Terra3D } from "@/components/vanguard/terra-3d";
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { toast } from "sonner";
 
 interface Zone {
@@ -368,6 +369,105 @@ export function GMapsPanel() {
       sourceCountry: c.sourceCountry ?? null,
     });
   }, []);
+
+  // v168: orden fijo de vistas para las filas 3D (mismo orden que los botones 2D)
+  const MODOS_3D = ["sat", "mapa", "terra"] as const;
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el atlas en volumen: la zona activa con
+  // su ficha (actores, cifras, historial), las vistas del mapa,
+  // copiar coordenadas, la intel en vivo y el resto de frentes
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const otros = ZONES.filter((z) => z.id !== active.id);
+    const filas: FilaContenido3D[] = [
+      {
+        t: `ZONA: ${active.name.toUpperCase()}`,
+        v: modo.toUpperCase(),
+        color: "#38BDF8",
+        d: active.desc,
+      },
+      ...MODOS_3D.map((m) => ({
+        t: `VISTA: ${m === "sat" ? "SATELITE" : m === "mapa" ? "MAPA" : "TERRA 3D"}`,
+        color: modo === m ? "#F5C542" : "#7AB8FF",
+        d: "Mismos botones del mapa 2D",
+        a: "cambiar vista",
+      })),
+      {
+        t: `COORDENADAS: ${active.lat.toFixed(5)}, ${active.lng.toFixed(5)}`,
+        a: "copiar coordenadas",
+        color: "#7AB8FF",
+        d: copiadas ? "¡Copiadas al portapapeles!" : "Copia la ubicación de la zona activa (mismo botón COORD)",
+      },
+      {
+        t: "ACTORES DEL CONFLICTO",
+        color: "#F5C542",
+        d: active.actores.join(" · "),
+      },
+    ];
+    const c0 = active.cifras[0];
+    if (c0) {
+      filas.push({ t: c0.k.toUpperCase(), v: c0.v, color: "#38BDF8", d: "Cifra clave de la ficha rica · las demás en el panel 2D" });
+    }
+    const h0 = active.historial[0];
+    if (h0) {
+      filas.push({ t: `${h0.anio} · ${h0.txt}`, color: "#7AB8FF", d: "Inicio de la mini-línea de tiempo de la zona" });
+    }
+    // offset 8: zona + 3 vistas + coordenadas + actores + cifra + historial
+    for (const c of intelZona.slice(0, 2)) {
+      filas.push({
+        t: c.title,
+        color: "#38BDF8",
+        d: `${c.source} · ${haceCuanto(c.publishedAt)} · pulsa para leer en la sala interna`,
+        a: "leer cable",
+      });
+    }
+    // offset dinámico: 8 filas fijas + hasta 2 de intel preceden a los otros frentes
+    for (const z of otros.slice(0, 2)) {
+      filas.push({
+        t: z.name.toUpperCase(),
+        v: `${intelPorZona[z.id] ?? 0} SEÑALES`,
+        color: "#7AB8FF",
+        d: z.desc,
+        a: "ir a zona",
+      });
+    }
+    return filas;
+  }, [active, modo, copiadas, intelZona, intelPorZona]);
+  useSala3DContenido(
+    "maps",
+    "GOOGLE MAPS DE CONFLICTOS",
+    "#38BDF8",
+    `${ZONES.length} zonas calientes · activa: ${active.name} · vista ${modo} · ${cables.length} señales en escucha`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // setModo, copiarCoordenadas, abrirCable (sala de lectura) y setActive
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "maps") return;
+      if (det.accion === "cambiar vista") {
+        // offset 1: la fila de zona precede a las vistas
+        const m = MODOS_3D[det.idx - 1];
+        if (m) setModo(m);
+      } else if (det.accion === "copiar coordenadas") {
+        copiarCoordenadas(active);
+      } else if (det.accion === "leer cable") {
+        // offset 8: zona + 3 vistas + coordenadas + actores + cifra + historial
+        const c = intelZona[det.idx - 8];
+        if (c) abrirCable(c);
+      } else if (det.accion === "ir a zona") {
+        // offset dinámico: 8 fijas + hasta 2 de intel preceden a los otros frentes
+        const otros = ZONES.filter((z) => z.id !== active.id);
+        const z = otros[det.idx - (8 + Math.min(intelZona.length, 2))];
+        if (z) setActive(z);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [active, intelZona]);
 
   return (
     <div className="space-y-4">

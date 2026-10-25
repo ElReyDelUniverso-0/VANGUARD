@@ -2623,3 +2623,20 @@ Work Log:
 
 Stage Summary:
 - /home/z/my-project/HANDOFF-VANGUARD.md listo: basta con que la otra IA lea ese archivo + los 3 archivos núcleo para editar Vanguard
+---
+Task ID: ia2-v168.0
+Agent: ia2 (nueva instancia, sandbox aislado — repo clonado vía rama ia2/v168.0)
+Task: v168.0 — (A) Paridad 2D→3D de las ~139 salas genéricas en salas-3d.ts (patrón v165: filas de datos reales + acciones reales por raycast, datos vía vg:sala3d-datos); (B) Eliminar el mapa de la intro (mundo-webgl.tsx / intro-cinematica.tsx). Mandatos del Dueño: «si a todo» + «elimina el mapa de la intro».
+
+Work Log:
+- ARRANQUE ia2: repo clonado en rama ia2/v168.0 (HEAD 1a63d1e), user ia2/ia2@vanguard.dev, npm install OK. Lectura de reglas de la casa (COLABORACION-IA.md + HANDOFF-VANGUARD.md) y verificación de git log antes de numerar (trampa del remoto que se comió v164-v166).
+- (A) PARIDAD TOTAL — 98 paneles que vivían como ESTACIÓN INFORMATIVA (letras + placas de la base genérica) ahora EMITEN SU CONTENIDO REAL por el emisor v165 (use-sala3d-contenido → emitirSalaContenido → vg:sala3d-datos): cada panel construye sus filas de cristal con el ORDEN DEL DUEÑO (título arriba, datos en filas, barra de volumen, imagen → cuadro grande) y un registro PARALELO de acciones (mismo índice que filas) para que el raycast 3D ejecute el MISMO handler que el botón 2D (comprar, vender, invertir, votar, jugar, cobrar, reclamar, detonar, atacar…). 129 paneles emiten en total (los 31 insignia/contenido de v165-v166 + los 98 nuevos).
+- MECÁNICA DE ASCENSO (mundo-webgl onSala3dDatosEv): al llegar el primer pulso «contenido» de un tab, la sala genérica ASCIENDE al vuelo (montarSala con tipo contenido); guard v150 «nunca degradar» intacto (el contenido manda sobre la estación informativa; un pulso genérico posterior se ignora). Los datos vivos NO remontan el mundo privado (llave tipo|tab, v148).
+- CONTRATO DE ACCIONES BLINDADO: el string de la fila (a:) viaja VERBATIM al oyente del panel — convención MINÚSCULAS documentada en el emisor. Fix de paso: divisas mandaba COMPRAR/VENDER en mayúsculas y el oyente nunca disparaba (ahora comprar/vender, comentario v168 en divisas-panel).
+- (B) EL MAPA FUERA DE LA INTRO: mundo-webgl elimina las fases «globo»/«marcadores» de la ceremonia de entrada — la cámara nace en PANTALLA DE TÍTULO (logo dorado + estrellas; el planeta solo asoma abajo como escenario) y el mundo real (atmósfera + teatros de guerra) se enciende AL ENTRAR vía encenderMundo() (paridad exacta con el reencuentro). intro-cinematica (cine sin WebGL) pierde las fases «earth»/«conflict» con sus continentes procedurales y explosiones de guerra: warp → title → shatter, 8.3s → 6.8s. globals.css cae las reglas data-fase="globo"/"marcadores" en coherencia.
+- TRAMPA EVITADA: el tipo "globo" del raycast (golpear → tipo "globo" → handler de entrada) NO se tocó — es el flujo normal tap-globo→tab del QA v167, no la fase de intro.
+- GUARDS v167 INTACTOS: ciudadCerradaAlgunaVez (×3) + watchdog salaAnclaPendiente (×4) verificados por grep tras los cambios.
+- QA: npx tsc --noEmit = 0 en todo el repo; eslint sin NINGÚN error nuevo (los 33 heredados de v167 no se tocan); 129 emisores verificados por grep; smoke test dev:real: home 200, /api/health {ok:true, db:"down", version:"v168.0"} — el db:down es la causa ambiental documentada en v167 Task 21-b (proveedor Postgres; este diff no toca superficie de DB).
+
+Stage Summary:
+- Producción v168.0 LA PARIDAD TOTAL: la ley #25 se cumple — el 3D alcanza al 2D. 129 paneles emiten contenido real (filas de cristal con acciones reales por raycast) y la intro ya no abre con el mapa (pantalla de título + encenderMundo al entrar; cine 6.8s). Sin Work Log antes de este commit en el repo remoto (la ronda anterior se cortó antes del cierre; este commit restaura la continuidad de la bitácora).

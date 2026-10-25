@@ -4,7 +4,7 @@
 // PÚBLICO (libre) · RESTRINGIDO (1.000) · CONFIDENCIAL (5.000) · SECRETO
 // (15.000) · ULTRA SECRETO (solo élite: nivel 8+). Desbloqueo permanente.
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BookLock, Lock, LockOpen, ShieldAlert, FileKey2, Crown } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type Level = "PUBLICO" | "RESTRINGIDO" | "CONFIDENCIAL" | "SECRETO" | "ULTRA";
 
@@ -165,6 +166,53 @@ export function SecretLibraryPanel() {
     setOpen(d);
     toast.success(`EXPEDIENTE DESCLASIFICADO · +50 xp`, { description: d.title });
   };
+
+  // v168: PARIDAD 2D→3D — la sala BIBLIOTECA emite los expedientes reales con
+  // su nivel de acceso y miniatura; cada fila desclasifica o lee como el botón 2D.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const colorNivel: Record<Level, string> = {
+      PUBLICO: "#3DDC84", RESTRINGIDO: "#F5C542", CONFIDENCIAL: "#7AB8FF", SECRETO: "#FF4D5E", ULTRA: "#A855F7",
+    };
+    const filas: FilaContenido3D[] = [
+      {
+        t: "DOCUMENTOS DESCLASIFICADOS",
+        v: `${unlocked.length}/${DOCS.length}`,
+        color: "#D4AF37",
+        d: "desbloqueo permanente · ULTRA SECRETO solo para nivel 8+",
+      },
+    ];
+    for (const d of DOCS) {
+      const isUnlocked = unlocked.includes(d.id);
+      filas.push({
+        t: d.title,
+        v: isUnlocked ? "ABIERTO" : d.cost > 0 ? `${d.cost.toLocaleString("es-ES")} MON` : "GRATIS",
+        img: d.image,
+        color: colorNivel[d.level],
+        d: `${LEVEL_META[d.level].label} · ${d.year} · ${d.excerpt}`,
+        a: isUnlocked ? "leer expediente" : "desclasificar",
+      });
+    }
+    return filas;
+  }, [unlocked]);
+  // v168: el raycast 3D ejecuta el MISMO unlock que el botón 2D
+  // (offset 1: la fila 0 es la cabecera, los expedientes empiezan en idx 1)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "biblioteca" || (det.accion !== "desclasificar" && det.accion !== "leer expediente")) return;
+      const d = DOCS[det.idx - 1];
+      if (d) unlock(d);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [unlocked, level, spendCoins, addXp]);
+  useSala3DContenido(
+    "biblioteca",
+    "BIBLIOTECA SECRETA",
+    "#D4AF37",
+    "Documentos desclasificados por nivel de acceso",
+    filas3D,
+  );
 
   return (
     <div className="space-y-3">

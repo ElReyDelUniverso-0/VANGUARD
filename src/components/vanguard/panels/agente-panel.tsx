@@ -12,6 +12,7 @@ import { BrainCircuit, Flame, Coins, Gem, Trophy, TrendingUp, Target, Globe2, Aw
 import { useGameStore } from "@/lib/game-store";
 import { getRankForLevel, xpForLevel } from "@/lib/game-data";
 import { useAgenteLook, PIEL_TONOS, UNIFORME_COLORES, PANTALON_COLORES, VISOR_COLORES, HEADGEAR_COLORES, MOCHILA_COLORES, PARCHE_COLORES, MEDALLAS, RELIQUIAS, medallasGanadas, reliquiaDesbloqueada, type AgenteLook, type MedalStats } from "@/lib/agente-look";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 const LS_IQ = "vanguard-iq-history";
@@ -112,6 +113,66 @@ export function AgentePanel() {
   }, [iqHistory, iq]);
 
   const biggestBets = [...s.predictions].sort((a, b) => b.stake - a.stake).slice(0, 5);
+
+  // v168: PARIDAD 2D→3D — el expediente real del agente sube a la sala: IQ, rango,
+  // regiones que sigue, actividad registrada y mayores predicciones
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const engagement = Math.max(6, s.viewedNews.length + s.viewedPhotos.length + s.quizCorrect + s.predictions.length);
+    const regs = [
+      { name: "Europa Oriental", weight: 0.27 },
+      { name: "Medio Oriente", weight: 0.24 },
+      { name: "Indo-Pacífico", weight: 0.16 },
+      { name: "África / Sahel", weight: 0.14 },
+      { name: "Américas", weight: 0.12 },
+      { name: "Ártico / Global", weight: 0.07 },
+    ].map((r) => ({ ...r, value: Math.round(engagement * r.weight) })).sort((x, y) => y.value - x.value);
+    const maxReg = Math.max(...regs.map((r) => r.value));
+    const acc = s.betStats.placed > 0 ? Math.round((s.betStats.won / s.betStats.placed) * 100) : 0;
+    const roi = s.betStats.wagered > 0 ? Math.round(((s.betStats.payout - s.betStats.wagered) / s.betStats.wagered) * 100) : 0;
+    const filas: FilaContenido3D[] = [
+      {
+        t: `IQ GEOPOLÍTICO: ${iq}`,
+        v: tier.name.toUpperCase(),
+        p: Math.round(iq / 10),
+        color: iq >= 550 ? "#3DDC84" : iq >= 250 ? "#F5C542" : "#7AB8FF",
+        d: nextTier ? `de 1000 · próximo grado: ${nextTier.name} (${nextTier.min})` : "de 1000 · grado máximo alcanzado",
+      },
+      {
+        t: (s.alias || "AGENTE SIN REGISTRO").toUpperCase(),
+        v: `NIVEL ${s.level}`,
+        color: "#F5C542",
+        d: `${rank.name} · ${s.xp}/${needed} XP hacia el siguiente nivel`,
+      },
+      { t: "RACHA", v: `${s.streak} DÍAS`, color: "#F5C542", d: `Días consecutivos activo · ${s.coins.toLocaleString()} monedas · ${s.gems} gemas` },
+      { t: "LOGROS", v: `${s.unlockedAchievements.length}`, color: "#3DDC84", d: `Insignias desbloqueadas en tu carrera de analista` },
+    ];
+    for (const r of regs.slice(0, 3)) {
+      filas.push({ t: r.name.toUpperCase(), v: String(r.value), p: Math.round((r.value / maxReg) * 100), color: "#7AB8FF", d: "Regiones que más sigues según tu actividad real (noticias, fotos, quiz)" });
+    }
+    filas.push({
+      t: "ACTIVIDAD REGISTRADA",
+      v: `${s.viewedNews.length + s.viewedPhotos.length + s.quizCorrect}`,
+      color: "#7AB8FF",
+      d: `${s.viewedNews.length} noticias · ${s.viewedPhotos.length} fotos OSINT · ${s.quizCorrect} quiz correctos`,
+    });
+    filas.push({ t: "VICTORIAS PvP", v: `${s.mpStats.wins}`, color: "#3DDC84", d: `${s.conquestWins} conquistas totales · récord arcade ${s.minigameBestScore}` });
+    filas.push({
+      t: "TÚ VS PROMEDIO GLOBAL",
+      v: `IQ ${iq} / 312`,
+      color: roi >= 0 ? "#3DDC84" : "#FF4D5E",
+      d: `acierto en apuestas ${acc}% (media 48%) · ROI ${roi >= 0 ? "+" : ""}${roi}% · ${s.betStats.placed} colocadas`,
+    });
+    for (const p of biggestBets.slice(0, 2)) {
+      filas.push({
+        t: `PREDICCIÓN ${p.id.replace("PM-", "")} · ${p.outcome}`,
+        v: `${p.stake} mon`,
+        color: p.outcome === "YES" ? "#3DDC84" : "#FF4D5E",
+        d: `cuota @${p.odds.toFixed(1)} · de ${s.predictions.length} predicciones totales`,
+      });
+    }
+    return filas;
+  }, [s, iq, tier, rank, needed, nextTier, biggestBets]);
+  useSala3DContenido("agente", "PERFIL DEL AGENTE", "#DCC078", `${(s.alias || "agente sin registro")} · IQ geopolítico ${iq} · ${tier.name}`, filas3D);
 
   return (
     <div className="space-y-3">

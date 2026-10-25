@@ -14,6 +14,7 @@ import { PULSO_CATS, generarPulsos, catDe, horaCorta, haceDe, type PulsoIncident
 import { getTension } from "@/lib/tension";
 import { cn } from "@/lib/utils";
 import type { ConflictRegion } from "@/lib/game-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const RANGOS = [
   { id: 6 * 3600_000, label: "6 H" },
@@ -77,6 +78,59 @@ export function PulsosPanel() {
       return n;
     });
   };
+
+  // v168: PARIDAD 2D→3D — las categorías reales del mapa y el feed cronológico
+  // suben en volumen; tocar una categoría la enciende/apaga de verdad
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    // v168: sin mutación del memo (push) — el compilador React exige memoización preservable
+    const filas: FilaContenido3D[] = [
+      ...PULSO_CATS.map((c) => {
+        const off = catsOff.has(c.id);
+        const n = contar(c.id);
+        return {
+          t: c.nombre.toUpperCase(),
+          v: String(n),
+          p: Math.min(100, n * 12),
+          color: off ? "#7AB8FF" : c.color,
+          d: off ? "categoría apagada en el mapa y el feed — tócala para encenderla" : "categoría encendida en el mapa y el feed",
+          a: "alternar categoria",
+        };
+      }),
+      {
+        t: "TENSIÓN DEL PLANETA",
+        v: tension.toFixed(0),
+        p: Math.min(100, tension),
+        color: tension >= 60 ? "#FF4D5E" : "#F5C542",
+        d: "el planeta en una cifra — mueve los mercados, los pulsos y el espectro",
+      },
+      ...visibles.slice(0, 3).map((i) => ({
+        t: i.titulo,
+        v: horaCorta(i.ts),
+        color: i.urgente ? "#FF4D5E" : "#7AB8FF",
+        d: `${catDe(i.categoria).nombre} · ${i.zona} · fuente: ${i.fuente} · ${haceDe(i.ts, ahora)}`,
+      })),
+    ];
+    return filas;
+  }, [incidentes, catsOff, tension, visibles, ahora]);
+  useSala3DContenido(
+    "pulsos",
+    "MAPA DE PULSOS EN VIVO",
+    "#FF3B30",
+    `${visibles.length} incidentes en el mapa · ventana ${ventana === 6 * 3600_000 ? "6 h" : ventana === 24 * 3600_000 ? "24 h" : "3 días"}`,
+    filas3D,
+  );
+
+  // v168: el 3D enciende/apaga categorías por el MISMO toggleCat del mapa 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "pulsos" || d.accion !== "alternar categoria") return;
+      const c = PULSO_CATS[d.idx];
+      if (c) toggleCat(c.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   return (
     <div className="space-y-4">

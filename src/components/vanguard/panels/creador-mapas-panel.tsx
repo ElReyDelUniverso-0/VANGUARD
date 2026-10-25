@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import worldPaths from "@/lib/world-paths.json";
 import { sfx } from "@/lib/sound";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const WIDTH = 1000;
 const HEIGHT = 500;
@@ -59,6 +60,15 @@ interface MapaDatos {
 }
 
 const LS_GALERIA = "vanguard-mapas-v85";
+
+// v168: lista fija de herramientas para las filas 3D (mismo orden que la barra 2D)
+const HERRS_3D: Array<{ t: Herramienta; label: string }> = [
+  { t: "zona", label: "ZONA" },
+  { t: "frente", label: "FRENTE" },
+  { t: "marcador", label: "MARCA" },
+  { t: "etiqueta", label: "TEXTO" },
+  { t: "borrar", label: "BORRAR" },
+];
 
 function cargarGaleria(): MapaDatos[] {
   try {
@@ -270,6 +280,93 @@ export function CreadorMapasPanel() {
   };
 
   const col = (f: number) => facciones[f]?.color ?? "#FFB020";
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el tablero del constructor en volumen:
+  // la operación y sus conteos, las 4 facciones (seleccionables),
+  // las 5 herramientas (activables), GUARDAR y la cartoteca
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `OPERACIÓN: ${nombre.toUpperCase()}`,
+        v: `${galeria.length} GUARDADOS`,
+        color: "#A855F7",
+        d: `${datos.z.length} zonas · ${datos.fr.length} frentes fijados · ${datos.m.length} marcas · ${datos.t.length} etiquetas · herramienta activa: ${herr.toUpperCase()}`,
+      },
+    ];
+    // offset 1: la fila de operación precede a las facciones
+    facciones.forEach((f, i) => {
+      filas.push({
+        t: f.nombre.toUpperCase(),
+        v: i === factiva ? "ACTIVA" : undefined,
+        color: f.color,
+        d: `Facción ${i + 1} · ${zonas.filter((z) => z.f === i).length + marcas.filter((m) => m.f === i).length} elementos pintados · pulsa para pintar con ella`,
+        a: "pintar faccion",
+      });
+    });
+    // offset 5: operación + 4 facciones preceden a las herramientas
+    for (const h of HERRS_3D) {
+      filas.push({
+        t: `HERRAMIENTA: ${h.label}`,
+        color: herr === h.t ? "#F5C542" : "#7AB8FF",
+        d: "Pulsa para activarla en el tablero (mismos botones 2D)",
+        a: "usar herramienta",
+      });
+    }
+    filas.push({
+      t: "GUARDAR EN LA CARTOTECA",
+      a: "guardar mapa",
+      color: "#A855F7",
+      d: `Fija "${nombre}" en tu galería local (mismo botón GUARDAR del encabezado)`,
+    });
+    const m0 = galeria[0];
+    if (m0) {
+      filas.push({
+        t: `CARTOTECA: ${m0.n.toUpperCase()}`,
+        v: `${(m0.z ?? []).length}Z ${(m0.fr ?? []).length}F`,
+        color: "#7AB8FF",
+        d: `Último mapa guardado de ${galeria.length} · pulsa para cargarlo en el tablero`,
+        a: "abrir mapa",
+      });
+    }
+    return filas;
+  }, [datos, nombre, herr, factiva, facciones, zonas, marcas, galeria]);
+  useSala3DContenido(
+    "mapascrea",
+    "CONSTRUCTOR DE MAPAS",
+    "#A855F7",
+    `${nombre} · ${zonas.length} zonas · ${frentes.length} frentes · ${galeria.length} mapas guardados`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // setFactiva, setHerr, guardar y abrir de la cartoteca
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "mapascrea") return;
+      if (det.accion === "pintar faccion") {
+        // offset 1: la fila de operación precede a las facciones
+        if (facciones[det.idx - 1]) setFactiva(det.idx - 1);
+      } else if (det.accion === "usar herramienta") {
+        // offset 5: operación + 4 facciones preceden a las herramientas
+        const h = HERRS_3D[det.idx - 5];
+        if (h) {
+          setHerr(h.t);
+          sfx.click();
+        }
+      } else if (det.accion === "guardar mapa") {
+        guardar();
+      } else if (det.accion === "abrir mapa") {
+        // offset 11: operación + 4 facciones + 5 herramientas + GUARDAR
+        const m = galeria[det.idx - 11];
+        if (m) abrir(m);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [facciones, galeria, nombre]);
 
   const herramientas: { t: Herramienta; icon: React.ReactNode; label: string }[] = [
     { t: "zona", icon: <Circle className="w-3.5 h-3.5" />, label: "Zona" },

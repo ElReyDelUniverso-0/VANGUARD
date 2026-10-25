@@ -27,6 +27,7 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { buscarFichas, detectarFichas, type Ficha } from "@/lib/dossier";
 import { filtroGraficoActivo, suscribirFiltroGrafico } from "@/lib/modo-guerra";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ---------- Determinismo ----------
 function hash(s: string): number {
@@ -225,6 +226,52 @@ export function VerificaPanel() {
 
   const turno = Math.floor(reloj / 12) % 3;
   const fichasBusqueda = useMemo(() => (q.trim().length >= 2 ? buscarFichas(q) : []), [q]);
+
+  // v168: PARIDAD 2D→3D — la mesa OSINT en volumen: sellos y cola de verificación reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = (Object.keys(stats) as Estado[]).map((e): FilaContenido3D => ({
+      t: e,
+      v: `${stats[e]}`,
+      color: ESTADO_STYLES[e].color,
+      d: e === "VERIFICADO"
+        ? "la mesa la da por contrastada"
+        : e === "EN VERIFICACIÓN"
+        ? "aún pasada por la mesa"
+        : e === "NO CONFIRMADO"
+        ? "entra con su sello de dudas"
+        : "versiones encontradas: se muestran las dos",
+    }));
+    for (const { n, v } of filtradas.slice(0, 8)) {
+      filas.push({
+        t: n.title,
+        v: `${v.confianza}%`,
+        p: v.confianza,
+        color: ESTADO_STYLES[v.estado].color,
+        d: `${n.source} · ${v.agencia} · ${v.estado.toLowerCase()}`,
+        a: "expandir",
+      });
+    }
+    return filas;
+  }, [filtradas, stats]);
+  useSala3DContenido(
+    "verifica",
+    "MESA DE VERIFICACIÓN",
+    "#FFB020",
+    "primero se verifica, después se publica — y si hay dos versiones, se muestran las dos",
+    filas3D,
+  );
+  // v168: "expandir" desde el 3D abre el mismo expediente que el botón 2D
+  // (offset 4: los 4 sellos ocupan 0-3, la cola empieza en idx 4)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "verifica" || d.accion !== "expandir") return;
+      const item = filtradas[d.idx - 4];
+      if (item) setAbierto(item.n.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filtradas]);
 
   return (
     <div className="space-y-4">

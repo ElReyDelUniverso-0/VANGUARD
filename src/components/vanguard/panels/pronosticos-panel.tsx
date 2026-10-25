@@ -4,13 +4,14 @@
 // notas con horizonte, escenarios probabilísticos, barras de confianza del
 // núcleo neuronal y rating de riesgo por país con desglose en 4 ejes.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Telescope, CalendarDays, Gauge, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarPronosticos, riesgoPaises, clavesPaises, fechasPronosticos, fechaLarga } from "@/lib/pronosticos-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 function colorRiesgo(n: number): string {
   return n >= 75 ? "#FF4D4D" : n >= 55 ? "#FF8A3D" : n >= 35 ? "#FFC94D" : "#9AE04D";
@@ -27,6 +28,57 @@ export function PronosticosPanel() {
   const paises = useMemo(() => riesgoPaises(fecha).sort((a, b) => b.riesgoTotal - a.riesgoTotal), [fecha]);
   const claves = useMemo(() => clavesPaises(), []);
   const [abierta, setAbierta] = useState<string | null>(notas[0]?.id ?? null);
+
+  // v168: PARIDAD 2D→3D — PRONÓSTICOS emite sus filas reales a la sala de contenido
+  // (offset: las notas empiezan en idx 1; los países después de las notas)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "DESK DE PROSPECTIVA",
+        v: fecha.slice(5),
+        color: "#3DDC97",
+        d: `${fechaLarga(fecha)} · horizontes 3–12 meses · ${notas.length} notas + ratings de riesgo por país en 4 ejes`,
+      },
+    ];
+    for (const n of notas.slice(0, 6)) {
+      filas.push({
+        t: n.titulo,
+        v: `RIESGO ${n.riesgo}`,
+        p: n.confianza,
+        color: colorRiesgo(n.riesgo),
+        d: `${n.region} · horizonte ${n.horizonte} · confianza ${n.confianza}% · ${n.sentimiento.toLowerCase()} · ${n.resumen}`.slice(0, 170),
+        a: "abrir nota",
+      });
+    }
+    for (const p of paises.slice(0, 5)) {
+      filas.push({
+        t: `${claves[p.pais] ?? "--"} · ${p.pais}`,
+        v: `${p.riesgoTotal}`,
+        p: p.riesgoTotal,
+        color: colorRiesgo(p.riesgoTotal),
+        d: `armado ${p.armado} · político ${p.politico} · económico ${p.economico} · social ${p.social} · tendencia ${p.tendencia.toLowerCase()}`,
+      });
+    }
+    return filas;
+  }, [notas, paises, claves, fecha]);
+  useSala3DContenido(
+    "pronosticos",
+    "PRONÓSTICOS DE INTELIGENCIA",
+    "#3DDC97",
+    `el futuro se estima, no se adivina · ${notas.length} notas · ${paises.length} países valorados`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — abrir nota ejecuta el MISMO toggle del panel 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "pronosticos" || det.accion !== "abrir nota") return;
+      const n = notas[det.idx - 1];
+      if (n) setAbierta(abierta === n.id ? null : n.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [notas, abierta]);
 
   return (
     <div className="space-y-4">

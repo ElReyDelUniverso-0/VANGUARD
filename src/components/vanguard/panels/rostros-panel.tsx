@@ -26,6 +26,7 @@ import {
 import {
   Crown, Map as MapIcon, Radio, ChevronRight, Fingerprint, Users, Shield, TrendingUp,
 } from "lucide-react";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type Filtro = "todos" | CategoriaRostro;
 
@@ -122,6 +123,92 @@ export function RostrosPanel() {
       document.getElementById("v130-expediente")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el dossier del poder en volumen: la
+  // colección, el expediente abierto (con su índice de poder real),
+  // la jerarquía top (abre expediente) y el pulso real de cables
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `EL MAPA DEL PODER: ${COLECCION_ROSTROS.total} ROSTROS`,
+        v: `${visibles.length} EN VISTA`,
+        color: "#D4AF37",
+        d: `${COLECCION_ROSTROS.tronos} tronos · ${COLECCION_ROSTROS.dinero} dineros · ${COLECCION_ROSTROS.tribunal} tribunales · ${COLECCION_ROSTROS.nuevos} nuevos · filtro: ${filtro === "todos" ? "todos" : CATEGORIAS_ROSTRO[filtro].etiqueta} · ${totalSenales} señales vivas`,
+      },
+      {
+        t: `EXPEDIENTE Nº ${String(sel.num).padStart(2, "0")}: ${sel.nombre.toUpperCase()}`,
+        v: `${sel.poder}/100`,
+        p: sel.poder,
+        color: cm.color,
+        d: `${sel.cargo} · ${sel.organizacion} · sede: ${sel.sede}, ${sel.ciudad} · mandato: ${sel.mandato}`,
+      },
+      {
+        t: "LA RUTA AL PODER",
+        color: "#7AB8FF",
+        d: sel.ruta,
+      },
+    ];
+    // offset 3: colección + expediente + ruta preceden a la jerarquía
+    for (const [i, r] of jerarquia.slice(0, 6).entries()) {
+      filas.push({
+        t: `${String(i + 1).padStart(2, "0")}· ${r.nombre.toUpperCase()}`,
+        v: `${r.poder}`,
+        p: r.poder,
+        color: CATEGORIAS_ROSTRO[r.categoria].color,
+        d: `${r.cargo} · ${r.pais} · índice de poder de la Casa`,
+        a: "abrir expediente",
+      });
+    }
+    if (cablesSel.length > 0) {
+      for (const c of cablesSel.slice(0, 2)) {
+        filas.push({
+          t: c.title,
+          color: "#D4AF37",
+          d: `${c.tacticalTag ?? "SEÑAL"} · ${c.source} · pulsa para leer en la sala interna`,
+          a: "leer cable",
+        });
+      }
+    } else {
+      filas.push({
+        t: "EL ROSTRO ESTÁ EN SILENCIO",
+        color: "#7AB8FF",
+        d: "Ningún cable de su dominio en la franja actual · el pulso se renueva cada cinco minutos",
+      });
+    }
+    return filas;
+  }, [sel, cm, visibles, filtro, totalSenales, jerarquia, cablesSel]);
+  useSala3DContenido(
+    "rostros",
+    "LOS ROSTROS DEL PODER",
+    "#D4AF37",
+    `${COLECCION_ROSTROS.total} rostros vigilados · expediente abierto: ${sel.nombre} · ${totalSenales} señales vivas`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // irAlExpediente (jerarquía) y apertura del cable en la sala de lectura
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "rostros") return;
+      if (det.accion === "abrir expediente") {
+        // offset 3: colección + expediente + ruta preceden a la jerarquía en filas3D
+        const r = jerarquia[det.idx - 3];
+        if (r) irAlExpediente(r.id);
+      } else if (det.accion === "leer cable") {
+        // offset dinámico: 3 fijas + hasta 6 de jerarquía preceden a los cables
+        const c = cablesSel[det.idx - (3 + Math.min(jerarquia.length, 6))];
+        if (c) {
+          setCableSel(c);
+          sfx.campana();
+        }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [jerarquia, cablesSel]);
 
   return (
     <div className="space-y-5">

@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { AlertTriangle, ShieldCheck, Eye, EyeOff, X, ExternalLink, Lock, HeartHandshake } from "lucide-react";
 import { isStrict18, subscribeStrict18 } from "@/lib/safety";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const LS_SALA18 = "vanguard_sala18_ok";
 
@@ -59,6 +60,61 @@ export function SalaRojaPanel() {
     () => isStrict18(),
     () => false
   );
+
+  // v168: PARIDAD 2D→3D — la sala emite su estado REAL (bloqueada / modo estricto /
+  // abierta con sus cintas). El hook siempre se llama, antes de los returns tempranos.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (strict) {
+      return [
+        { t: "CONTENIDO OCULTO POR EL MODO ESTRICTO 18+", color: "#F5C542", d: "Nada de esta sala se muestra, ni siquiera censurado — pediste ahorrarte todo ese tiempo" },
+        { t: "CÓMO VOLVER A VERLA", color: "#7AB8FF", d: "Puedes desactivarlo en Ajustes → Modo estricto 18+ si quieres verla con advertencias" },
+        { t: "REGLA DE LA SALA", color: "#7AB8FF", d: "Cada imagen tiene dueño y contexto: fuentes verificadas, no capturas" },
+        { t: "OBJETIVO", color: "#7AB8FF", d: "Que ninguna cifra de la guerra siga siendo abstracta" },
+      ];
+    }
+    if (gate !== "open") {
+      return [
+        { t: "SALA ROJA · ACCESO RESTRINGIDO", color: "#FF4D5E", d: "Material documental de guerra muy duro: combate real, civiles, cámaras de seguridad y evidencia de tortura" },
+        { t: "DEBES TENER 18 AÑOS O MÁS", color: "#F5C542", d: "Comprobación honesta: no hay gore gratuito, pero sí es real" },
+        { t: "CADA CINTA PIDE SEGUNDA CONFIRMACIÓN", color: "#F5C542", d: "Doble advertencia: age gate persistente + confirmación por cinta" },
+        { t: "PUEDES DESACTIVAR EL ACCESO CUANDO QUIERAS", color: "#7AB8FF", d: "El acceso 18+ se revoca con un botón, sin castigos" },
+        { t: "SI ESTÁS MAL ANÍMICAMENTE, NO ENTRES HOY", color: "#FF4D5E", d: "El objetivo no es el morbo: es que ninguna cifra siga siendo abstracta" },
+      ];
+    }
+    const filas: FilaContenido3D[] = [
+      { t: `REGLA DE LA SALA · ${items.length} CINTAS FILTRADAS`, color: "#F5C542", d: `Categoría activa: ${cat.toLowerCase()} · cada imagen tiene dueño y contexto — fuentes, no capturas` },
+    ];
+    for (const item of items) {
+      filas.push({
+        t: item.title,
+        v: item.warning === "GRAVEDAD EXTREMA" ? "⚠ EXTREMA" : item.warning === "GRAVEDAD ALTA" ? "⚠ ALTA" : "MEDIA",
+        color: item.warning === "GRAVEDAD EXTREMA" ? "#FF4D5E" : item.warning === "GRAVEDAD ALTA" ? "#F5C542" : "#7AB8FF",
+        d: `REC ${item.tape} · ${item.category.toLowerCase()} · ${Intl.NumberFormat("es", { notation: "compact" }).format(item.views)} reproducciones · fuente ${item.sourceLabel}${item.verified ? " verificada" : ""}`,
+        a: "confirmar y ver",
+      });
+    }
+    return filas;
+  }, [strict, gate, items, cat]);
+  useSala3DContenido(
+    "sala18",
+    "SALA ROJA · MATERIAL DOCUMENTAL VERIFICADO",
+    "#FF3B30",
+    strict ? "oculta por el modo estricto 18+" : gate !== "open" ? "acceso restringido · doble confirmación" : `${items.length} cintas · acceso 18+ activo · doble confirmación por cinta`,
+    filas3D,
+  );
+
+  // v168: «confirmar y ver» abre el MISMO modal de segunda advertencia del panel
+  // (offset 1: la fila 0 es la regla de la sala)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "sala18" || det.accion !== "confirmar y ver") return;
+      const item = items[det.idx - 1];
+      if (item) setConfirmItem(item);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [items]);
 
   if (strict) {
     return (

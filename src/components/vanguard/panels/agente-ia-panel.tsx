@@ -34,6 +34,7 @@ import {
 } from "@/lib/agente-nucleo";
 import { simular, type ResultadoLab } from "@/lib/whatif";
 import { validarJuego } from "@/lib/juegos";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 const LS_AGENTE = "vg-agente-v103";
 
@@ -233,6 +234,81 @@ export function AgenteIaPanel() {
   };
 
   const metaMision = mision ? MISIONES.find((m) => m.id === mision) : null;
+
+  // v168: PARIDAD 2D→3D — la consola del agente emite sus filas reales a la sala de contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    filas.push({
+      t: estado.vivo ? "AGENTE EN VIVO" : "AGENTE EN REPOSO",
+      v: `${estado.sesiones ?? 0} SESIONES`,
+      color: estado.vivo ? "#BEF264" : "#7AB8FF",
+      d: estado.vivo ? "la agenda del día corre sola al entrar — Vanguard se actualiza sola" : "activa el interruptor y la agenda diaria correrá sola",
+      a: estado.vivo ? "apagar agente" : "encender agente",
+    });
+    filas.push(
+      stats
+        ? { t: "MENTE·VANGUARD EN LA PLATAFORMA", v: `${stats.creacionesAgente} OBRAS`, color: "#F5C542", d: `${stats.juegosEnArcade} juegos en arcade · ${stats.escenariosEnGaleria} escenarios en galería` }
+        : { t: "MENTE·VANGUARD EN LA PLATAFORMA", v: "SIN DATOS", color: "#7AB8FF", d: "sincronizando con el servidor…" },
+    );
+    if (fase !== "reposo") {
+      filas.push({
+        t: `MISIÓN ${(mision ?? "?").toUpperCase()} · ${fase === "corriendo" ? "EN DIRECTO" : "COMPLETADA"}`,
+        p: Math.round((pasoActivo / Math.max(1, protocolo.length)) * 100),
+        color: fase === "corriendo" ? "#BEF264" : "#3DDC84",
+        d: fase === "corriendo" ? `paso ${pasoActivo}/${protocolo.length} — investiga, redacta y se audita` : `obra auditada: ${notaAuditoria || "veredicto pendiente"}`,
+      });
+    }
+    if (fase === "listo" && creacion) {
+      filas.push({ t: creacion.titulo, color: "#BEF264", d: `${creacion.resumen} · fuente: ${creacion.fuente}` });
+      if (creacion.tipo !== "informe") {
+        filas.push({
+          t: publicado ? (publicado.yaPublicado ? "YA ESTABA PUBLICADA" : "PUBLICADA EN VANGUARD") : "PUBLICAR EN VANGUARD",
+          v: publicado?.reward ? `+${publicado.reward}ⓒ` : firmar ? "FIRMA: PASAPORTE" : "FIRMA: MENTE·VANGUARD",
+          color: publicado ? "#3DDC84" : "#BEF264",
+          d: "el servidor re-ejecuta la misma semilla y firma la obra",
+          a: publicado ? undefined : "publicar",
+        });
+      } else {
+        filas.push({ t: "INFORME NEURONAL", v: "COPIAR", color: "#7AB8FF", d: "brief completo con riesgo, tensión y confianza — pulsa para copiarlo", a: "copiar informe" });
+      }
+    }
+    for (const m of MISIONES) {
+      filas.push({
+        t: m.nombre,
+        v: mision === m.id && fase !== "reposo" ? "EN CURSO" : `crea ${m.producto}`,
+        color: m.color,
+        d: `${m.desc} · ${m.pasos} pasos · recompensa: ${m.recompensa}`,
+        a: fase === "corriendo" ? undefined : "ejecutar misión",
+      });
+    }
+    return filas;
+  }, [estado, stats, fase, mision, pasoActivo, protocolo, creacion, notaAuditoria, publicado, firmar]);
+  useSala3DContenido(
+    "agenteia",
+    "MODO AGENTE",
+    "#BEF264",
+    fase === "corriendo" ? `el agente está creando ${metaMision?.producto ?? "su obra"} en directo` : "la mente de Vanguard investiga, redacta, se audita y publica su obra dentro de la plataforma",
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — ejecuta los MISMOS handlers que los botones 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "agenteia") return;
+      if (det.accion === "encender agente") guardar({ vivo: true });
+      else if (det.accion === "apagar agente") guardar({ vivo: false });
+      else if (det.accion === "publicar") publicar();
+      else if (det.accion === "copiar informe") copiarInforme();
+      else if (det.accion === "ejecutar misión") {
+        // v168: las filas de MISIONES son las últimas del array — compensa el offset
+        const start = filas3D.length - MISIONES.length;
+        const m = MISIONES[det.idx - start];
+        if (m) correrMision(m.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filas3D, estado.vivo, guardar, publicar, copiarInforme, correrMision]);
 
   return (
     <div className="space-y-4 v101-panel">

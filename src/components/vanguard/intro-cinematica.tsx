@@ -15,9 +15,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { APP_VERSION_LABEL } from "@/lib/version";
 
 const BOOT_KEY = "vanguard-booted"; // misma llave de la vieja pantalla de carga
-const DURATION_MS = 8300;
+// v168 SIN MAPA EN LA INTRO: el cine cae de 8.3s a 6.8s — las fases «earth»
+// y «conflict» (el mapa del planeta con continentes y marcas de guerra
+// latiendo) FUERA por mandato del Dueño. Queda: warp → title → shatter.
+const DURATION_MS = 6800;
 
-type Phase = "warp" | "earth" | "conflict" | "title" | "shatter";
+type Phase = "warp" | "title" | "shatter";
 
 interface Shard {
   x: number; y: number; vx: number; vy: number; rot: number; vr: number; size: number;
@@ -88,14 +91,6 @@ export function IntroCinematica() {
       { x: 0.78, y: 0.62, r: 0.6, c: "rgba(120,40,200,0.14)" },
       { x: 0.5, y: 0.85, r: 0.5, c: "rgba(255,59,48,0.10)" },
     ];
-    // continentes procedurales (blobs deterministas)
-    const landBlobs = Array.from({ length: 26 }, (_, i) => {
-      const seed = Math.sin(i * 127.1) * 43758.5453;
-      const fx = seed - Math.floor(seed);
-      const fy = Math.sin(i * 311.7) * 12345.678;
-      const fyy = fy - Math.floor(fy);
-      return { lon: fx * 360, lat: (fyy - 0.5) * 140, w: 18 + ((i * 37) % 40), h: 10 + ((i * 53) % 26) };
-    });
     let shards: Shard[] = [];
     let shake = 0;
 
@@ -126,9 +121,6 @@ export function IntroCinematica() {
       }
       return list;
     };
-
-    let explosion: { x: number; y: number; vx: number; vy: number; life: number; hue: number }[] = [];
-    let explosionAt = -1;
 
     // v72.0 — LUNA LLENA con cráteres + halo (se dibuja en el cielo del título)
     const drawMoon = () => {
@@ -278,9 +270,7 @@ export function IntroCinematica() {
       lastT = now;
       let phase: Phase = "warp";
       if (t < 2600) phase = "warp";
-      else if (t < 4400) phase = "earth";
-      else if (t < 5900) phase = "conflict";
-      else if (t < 7100) phase = "title";
+      else if (t < 5600) phase = "title";
       else phase = "shatter";
 
       // fondo base
@@ -312,130 +302,17 @@ export function IntroCinematica() {
       }
       ctx.restore();
 
-      // TIERRA: aparece en fase earth y crece hasta el zoom
-      if (phase === "earth" || phase === "conflict" || phase === "title" || phase === "shatter") {
-        const pEarth = Math.min(1, (t - 2600) / 900);
-        const zoomP = phase === "earth" ? 0 : Math.min(1, (t - 4400) / 1500);
-        const baseR = Math.min(W, H) * 0.21 * (0.4 + 0.6 * pEarth);
-        const R = baseR * (1 + zoomP * 2.6);
-        const cx = W / 2;
-        const cy = H / 2 - zoomP * H * 0.08;
-        // atmósfera azul brillante
-        const atmo = ctx.createRadialGradient(cx, cy, R * 0.82, cx, cy, R * 1.35);
-        atmo.addColorStop(0, "rgba(212, 175, 55,0.55)");
-        atmo.addColorStop(0.55, "rgba(212, 175, 55,0.16)");
-        atmo.addColorStop(1, "transparent");
-        ctx.fillStyle = atmo;
-        ctx.fillRect(cx - R * 1.5, cy - R * 1.5, R * 3, R * 3);
-        // océano
-        const ocean = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R);
-        ocean.addColorStop(0, "#2a6fd6");
-        ocean.addColorStop(0.7, "#123a7a");
-        ocean.addColorStop(1, "#081c3f");
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.fillStyle = ocean;
-        ctx.fill();
-        // continentes girando (proyección simple con recorte circular)
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.clip();
-        const rot = (t / 2400) % (Math.PI * 2);
-        for (const b of landBlobs) {
-          const lonRad = (b.lon * Math.PI) / 180 + rot;
-          const visible = Math.cos(lonRad) > 0.05;
-          if (!visible) continue;
-          const x = cx + Math.sin(lonRad) * R * 0.94;
-          const y = cy + (b.lat / 180) * R * 1.7;
-          const wScale = Math.cos(lonRad);
-          ctx.fillStyle = zoomP > 0.35 ? "#3d7a3a" : "#2f6b34";
-          ctx.globalAlpha = 0.92 * Math.max(0.15, wScale);
-          ctx.beginPath();
-          ctx.ellipse(x, y, b.w * 0.5 * wScale * (R / (Math.min(W, H) * 0.21)), b.h * 0.5 * (R / (Math.min(W, H) * 0.21)), 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-        // terminador día/noche
-        const night = ctx.createLinearGradient(cx - R, cy, cx + R, cy);
-        night.addColorStop(0.55, "transparent");
-        night.addColorStop(1, "rgba(4,6,12,0.72)");
-        ctx.fillStyle = night;
-        ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-        ctx.restore();
-        // marcas de conflicto pulsantes en el planeta
-        if (phase !== "earth") {
-          const pulse = 0.5 + 0.5 * Math.sin(now / 180);
-          for (const m of [{ dx: 0.32, dy: -0.12 }, { dx: -0.4, dy: 0.18 }, { dx: 0.1, dy: 0.42 }]) {
-            const mx = cx + m.dx * R;
-            const my = cy + m.dy * R;
-            ctx.beginPath();
-            ctx.arc(mx, my, 3 + pulse * 5, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255,59,48,${0.45 + pulse * 0.5})`;
-            ctx.fill();
-          }
-        }
-      }
-
-      // CONFLICTO: zoom termina en explosión de partículas naranjas/rojas + shake
-      if (phase === "conflict") {
-        if (explosionAt < 0) {
-          explosionAt = t;
-          const ex = W / 2 + W * 0.06;
-          const ey = H / 2 - H * 0.04;
-          explosion = Array.from({ length: 150 }, () => {
-            const a = Math.random() * Math.PI * 2;
-            const sp = 2 + Math.random() * 9;
-            return { x: ex, y: ey, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, hue: 12 + Math.random() * 34 };
-          });
-          shake = 16;
-        }
-        const et = t - explosionAt;
-        ctx.save();
-        for (const p of explosion) {
-          p.x += p.vx; p.y += p.vy;
-          p.vx *= 0.985; p.vy = p.vy * 0.985 + 0.06;
-          p.life -= 0.008;
-          if (p.life <= 0) continue;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 1.5 + p.life * 3.5, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${p.hue}, 100%, ${45 + p.life * 25}%, ${p.life})`;
-          ctx.fill();
-        }
-        // flash central
-        const fl = Math.max(0, 1 - et / 350);
-        if (fl > 0) {
-          const fg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.5);
-          fg.addColorStop(0, `rgba(255,180,90,${fl * 0.85})`);
-          fg.addColorStop(1, "transparent");
-          ctx.fillStyle = fg;
-          ctx.fillRect(0, 0, W, H);
-        }
-        ctx.restore();
-      }
-      if (phase === "title" || phase === "shatter") {
-        // humo/brasas residuales de la explosión
-        ctx.save();
-        for (const p of explosion) {
-          if (p.life <= 0) continue;
-          p.x += p.vx * 0.4; p.y += p.vy * 0.4 + 0.05;
-          p.life -= 0.004;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 1 + p.life * 2.4, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${p.hue}, 95%, 50%, ${p.life * 0.6})`;
-          ctx.fill();
-        }
-        ctx.restore();
-      }
+      // v168 SIN MAPA: la tierra y su explosión de conflicto YA NO EXISTEN —
+      // del warp se pasa derecho al título sobre el cielo de ocaso
 
       // TÍTULO GLITCH sobre cielo de ocaso con luna llena y brasas
       if (phase === "title" || phase === "shatter") drawOcaso(dt);
-      if (phase === "title") drawTitle(t - 5900);
-      if (phase === "shatter") drawTitle(1200 + Math.random() * 40);
+      if (phase === "title") drawTitle(t - 2600);
+      if (phase === "shatter") drawTitle(3000 + Math.random() * 40);
 
       // SHATTER: cristal roto
       if (phase === "shatter") {
-        const st = t - 7100;
+        const st = t - 5600;
         if (st > 0 && shards.length === 0) {
           shards = makeShards(W / 2, H * 0.42);
           shake = 22;
@@ -489,13 +366,6 @@ export function IntroCinematica() {
 
     rafRef.current = requestAnimationFrame(frame);
 
-    // alarma al llegar al conflicto (gesto del usuario puede no existir aún: es mejor esfuerzo)
-    const alarmTimer = setTimeout(() => {
-      try {
-        import("@/lib/sound").then(({ sfx }) => sfx.alarm());
-      } catch { /* noop */ }
-    }, 4400);
-
     const endTimer = setTimeout(() => finish(), DURATION_MS + 120);
     function finish() {
       if (doneRef.current) return;
@@ -516,7 +386,6 @@ export function IntroCinematica() {
     return () => {
       doneRef.current = true;
       cancelAnimationFrame(rafRef.current);
-      clearTimeout(alarmTimer);
       clearTimeout(endTimer);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointerdown", skip);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface EnemyUnit {
   id: number;
@@ -171,6 +172,110 @@ export function CombatSimulatorPanel() {
   };
 
   const usableItems = inventory.filter((i) => ITEM_STATS[i.id]);
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el combate en volumen, filas del MODO
+  // activo: listo (iniciar), luchando (enemigo + items seleccionables
+  // + atacar) y fin (volver), con HP, botín y registro reales
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const usable = inventory.filter((i) => ITEM_STATS[i.id]);
+    const filas: FilaContenido3D[] = [
+      {
+        t: `ESTADO: ${phase === "idle" ? "LISTO" : phase === "fighting" ? `COMBATIENDO · RONDA ${round}` : phase.toUpperCase()}`,
+        v: `${playerHp}/${maxPlayerHp} HP`,
+        p: Math.round((playerHp / maxPlayerHp) * 100),
+        color: phase === "fighting" ? "#FF4D5E" : "#F5C542",
+        d: `${enemiesDefeated} enemigos derrotados · botín +${totalReward.coins}ⓒ +${totalReward.xp} XP`,
+      },
+    ];
+    if (phase === "fighting" && enemy) {
+      filas.push({
+        t: `ENEMIGO: ${enemy.name.toUpperCase()}`,
+        v: `${enemy.hp}/${enemy.maxHp}`,
+        p: Math.round((enemy.hp / enemy.maxHp) * 100),
+        color: "#FF4D5E",
+        d: `Ronda ${round} · ataque ${enemy.attack} · defensa ${enemy.defense} · botín ${enemy.reward.coins}ⓒ +${enemy.reward.xp} XP`,
+      });
+      for (const item of usable.slice(0, 6)) {
+        const st = ITEM_STATS[item.id];
+        filas.push({
+          t: item.label,
+          v: `x${item.quantity}`,
+          color: selectedItem === item.id ? "#F5C542" : "#7AB8FF",
+          d: `${st?.attack ?? 5} ataque · ${st?.defense ?? 0} defensa${st?.special ? ` · ${st.special}` : ""}`,
+          a: "seleccionar item",
+        });
+      }
+      if (selectedItem) {
+        filas.push({
+          t: `ATACAR CON ${(inventory.find((i) => i.id === selectedItem)?.label ?? "ITEM").toUpperCase()}`,
+          a: "atacar",
+          color: "#FF4D5E",
+          d: "Mismo botón 2D: consume el item y golpea al enemigo",
+        });
+      }
+    } else {
+      for (const item of usable.slice(0, 6)) {
+        const st = ITEM_STATS[item.id];
+        filas.push({
+          t: item.label,
+          v: `x${item.quantity}`,
+          color: "#7AB8FF",
+          d: `${st?.attack ?? 5} ataque · ${st?.defense ?? 0} defensa${st?.special ? ` · ${st.special}` : ""}`,
+        });
+      }
+      if (phase === "idle") {
+        filas.push({
+          t: "INICIAR COMBATE",
+          a: "iniciar combate",
+          color: "#FF4D5E",
+          d: usable.length ? `${usable.length} tipos de items usables (${usable.reduce((a, i) => a + i.quantity, 0)} total) · mismo botón 2D` : "Sin items usables: consigue cables en Noticias o fotos en Galería",
+        });
+      }
+    }
+    for (const entry of log.slice(-2)) {
+      filas.push({
+        t: entry.text,
+        color: entry.type === "player" ? "#F5C542" : entry.type === "enemy" || entry.type === "defeat" ? "#FF4D5E" : entry.type === "victory" ? "#3DDC84" : "#7AB8FF",
+        d: "Registro de combate (últimas líneas)",
+      });
+    }
+    if (phase === "victory" || phase === "defeat") {
+      filas.push({ t: "VOLVER", a: "volver", color: "#F5C542", d: "Cierra el combate (mismo botón 2D)" });
+    }
+    return filas;
+  }, [inventory, phase, round, playerHp, maxPlayerHp, enemy, selectedItem, log, enemiesDefeated, totalReward]);
+  useSala3DContenido(
+    "combate",
+    "SIMULADOR DE COMBATE",
+    "#FF4D5E",
+    phase === "fighting" ? `Ronda ${round} · ${enemy?.name ?? "enemigo"} · ${playerHp}/${maxPlayerHp} HP` : `Listo · ${enemiesDefeated} derrotados · botín +${totalReward.coins}ⓒ`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // startCombat, selección de item, playerAttack y endCombat
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "combate") return;
+      if (det.accion === "iniciar combate") {
+        if (inventory.some((i) => ITEM_STATS[i.id] && i.quantity > 0)) startCombat();
+      } else if (det.accion === "seleccionar item") {
+        // offset 2 en modo luchando: estado + enemigo preceden a los items
+        const usable = inventory.filter((i) => ITEM_STATS[i.id]);
+        const item = usable[det.idx - 2];
+        if (item) setSelectedItem(item.id);
+      } else if (det.accion === "atacar") {
+        playerAttack();
+      } else if (det.accion === "volver") {
+        endCombat();
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [inventory, phase, enemy, selectedItem, maxPlayerHp]);
 
   return (
     <div className="space-y-3">

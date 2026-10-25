@@ -20,6 +20,7 @@ import { navigateTo } from "@/lib/nav";
 import { simular, escenarioPorId, PERTURBACIONES, NIVELES_ESCALADA, type ConfigLab, type ResultadoLab } from "@/lib/whatif";
 import { Countryball } from "@/components/vanguard/countryball";
 import { useT } from "@/lib/i18n";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface EscItem {
   id: string;
@@ -152,6 +153,68 @@ export function EscenariosPanel() {
   };
 
   const total = items?.length ?? 0;
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — la GALERÍA DEL DESTINO (nombre de la
+  // cabecera del panel) en volumen: los escenarios UGC reales con
+  // su crisis, perturbación y final, simulables desde el mundo
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `ESCENARIOS COMPARTIDOS: ${total}`,
+        v: orden === "top" ? "ORDEN TOP" : "RECIENTES",
+        color: "#FFC94D",
+        d: "SIMULACIÓN · NO ES PREDICCIÓN · alterna el orden igual que los botones 2D",
+        a: "alternar orden",
+      },
+    ];
+    // offset 1: la fila de cabecera precede a los escenarios
+    for (const it of (items ?? []).slice(0, 8)) {
+      const s = specsDe(it);
+      filas.push({
+        t: it.title,
+        v: `♥ ${it.likes}`,
+        color: s ? colorFinal(s.ganador) : "#7AB8FF",
+        d: `${it.author} · ${it.summary}${s ? ` · ${escenarioPorId(s.crisisId)?.nombre ?? s.crisis} · ${pertNombre(s.perturbacion)} dosis ${s.dosis}/5 · final: ${s.final} (día ${s.diaFin})` : ""}`,
+        a: "explorar escenario",
+      });
+    }
+    filas.push({
+      t: "IR AL LABORATORIO",
+      a: "ir al laboratorio",
+      color: "#7AB8FF",
+      d: "Crea tu propio escenario ¿Y SI...? y publícalo (mismo CTA del estado vacío)",
+    });
+    return filas;
+  }, [items, orden]);
+  useSala3DContenido(
+    "escenarios",
+    "GALERÍA DEL DESTINO",
+    "#FFC94D",
+    `${total} escenarios ¿Y SI...? de la comunidad · orden ${orden === "top" ? "TOP" : "RECIENTES"} · SIMULACIÓN, NO PREDICCIÓN`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // simularAqui (la simulación determinista), el orden y el CTA al Lab
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "escenarios") return;
+      if (det.accion === "explorar escenario") {
+        // offset 1: la fila de cabecera precede a los escenarios en filas3D
+        const it = items?.[det.idx - 1];
+        if (it) simularAqui(it);
+      } else if (det.accion === "alternar orden") {
+        setOrden((o) => (o === "top" ? "recent" : "top"));
+      } else if (det.accion === "ir al laboratorio") {
+        navigateTo("laboratorio" as never);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [items]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">

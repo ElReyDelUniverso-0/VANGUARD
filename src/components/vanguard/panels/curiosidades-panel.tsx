@@ -15,6 +15,7 @@ import { useGameStore } from "@/lib/game-store";
 import { CURIOSITIES, type CurioCat } from "@/lib/archive-data";
 import { dayKey } from "@/lib/hooks-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const CAT_META: Record<CurioCat, { label: string; icon: React.ReactNode; color: string }> = {
   GUERRA: { label: "Guerra", icon: <Brain className="w-3 h-3" />, color: "text-red-hud border-red-hud/60" },
@@ -83,6 +84,67 @@ export function CuriosidadesPanel() {
     }, 0);
     return () => clearTimeout(t);
   }, []);
+
+  // v168: PARIDAD 2D→3D — el archivo emite sus filas reales (del día, dado,
+  // efemérides y muro) para que la sala de curiosidades ascienda a contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `DEL DÍA · ${daily.text}`,
+        v: CAT_META[daily.cat].label,
+        color: "#F5C542",
+        d: "Curiosidad del día del archivo Vanguard · archivarla nueva paga +5 mon y 4 XP",
+        a: "archivar del día",
+      },
+      {
+        t: `DADO · ${featured.text}`,
+        v: CAT_META[featured.cat].label,
+        color: "#E8C56A",
+        d: "Tarjeta rotada por el dado de la suerte — tira otra vez para cambiarla",
+        a: "otra curiosidad",
+      },
+    ];
+    // efemérides reales de Wikipedia (async: aparecen cuando llegan)
+    for (const e of efems.slice(0, 4)) {
+      filas.push({ t: `EFEMÉRIDE ${e.year}`, color: "#7AB8FF", d: e.text });
+    }
+    // muro: las fichas que el usuario ya ve y archiva tocándolas
+    for (const c of list.slice(0, 6)) {
+      const leida = read.includes(c.id);
+      filas.push({
+        t: c.text,
+        v: leida ? "LEÍDA" : "+5 MON",
+        color: leida ? "#3DDC84" : "#E8C56A",
+        d: `categoría: ${CAT_META[c.cat].label}${leida ? " · ya archivada" : " · archívala para cobrar"}`,
+        a: leida ? undefined : "archivar",
+      });
+    }
+    return filas;
+  }, [daily, featured, efems, list, read]);
+  useSala3DContenido(
+    "curiosidades",
+    "CURIOSIDADES",
+    "#E8C56A",
+    `El archivo de lo improbable · ${readCount}/${CURIOSITIES.length} leídas · +5 mon por lectura nueva`,
+    filas3D,
+  );
+
+  // v168: el 3D archiva por el MISMO handler que los botones 2D (reward/roll)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "curiosidades") return;
+      if (d.accion === "archivar del día") { reward(daily.id); return; }
+      if (d.accion === "otra curiosidad") { roll(); return; }
+      if (d.accion === "archivar") {
+        // offset: 2 filas fijas (del día + dado) + efemérides (máx 4) delante del muro
+        const c = list.slice(0, 6)[d.idx - 2 - Math.min(4, efems.length)];
+        if (c) reward(c.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [daily, list, efems, read, reward, roll]);
 
   return (
     <div className="space-y-3">

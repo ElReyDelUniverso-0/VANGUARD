@@ -59,6 +59,7 @@ function magColor(mag: number): string {
 
 // v111.0 MÁQUINA DEL TIEMPO — mini-mapa sísmico en canvas dentro de la muralla
 import { MiniMapaSismos } from "@/components/vanguard/mini-mapa-sismos";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 // salas con latido en vivo (los 6 instrumentos que respiran solos)
 const SALAS_VIVAS = new Set<string>(["centinela", "espectro", "sismo", "cielos", "planeta", "pulso"]);
@@ -130,6 +131,64 @@ export function ObservatorioPanel() {
     const obs = SECTIONS.find((s) => s.key === "observatorio");
     return (obs?.tabs ?? []).filter((tb) => tb.key !== "observatorio");
   }, []);
+
+  // v168: PARIDAD 2D→3D — la MURALLA DE VIGILANCIA emite sus filas reales
+  // (sismos USGS reales, la ISS del pulso y las salas de vigilancia)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "MURALLA DE VIGILANCIA",
+        v: `${online ?? "—"} EN LÍNEA`,
+        color: TEAL,
+        d: `el planeta medido en vivo · ${quakes.length} eventos sísmicos en 48h · pico de presencia ${peak ?? "—"} · ${sismosLive ? "red USGS en vivo" : "red sísmica local"}`,
+      },
+      {
+        t: iss && typeof iss.lat === "number" && typeof iss.lng === "number"
+          ? `ISS SOBRE ${iss.lat.toFixed(2)}°, ${iss.lng.toFixed(2)}°`
+          : "ISS SIN SEÑAL",
+        v: `${nVuelos} VUELOS`,
+        color: TEAL,
+        d: `pulso real del planeta: ${nVuelos} vuelos rastreados · ${nNoticias} noticias · la EEI posicionada en directo`,
+      },
+    ];
+    for (const q of topSismos.slice(0, 4)) {
+      filas.push({
+        t: q.place || "SIN LUGAR",
+        v: `M${q.mag.toFixed(1)}`,
+        color: magColor(q.mag),
+        d: `hace ${haceCuanto(q.time)} · profundidad ${q.depth.toFixed(0)} km · ${q.lat.toFixed(1)}°, ${q.lng.toFixed(1)}° · USGS`,
+      });
+    }
+    for (const tb of salas.slice(0, 6)) {
+      filas.push({
+        t: (TAB_SHORTS[lang]?.[tb.key] ?? tb.short).toUpperCase(),
+        v: SALAS_VIVAS.has(tb.key) ? "EN VIVO" : undefined,
+        color: SALAS_VIVAS.has(tb.key) ? "#3DDC84" : TEAL,
+        d: `sala de vigilancia · un toque para abrirla como pestaña de cromo`,
+        a: "abrir sala",
+      });
+    }
+    return filas;
+  }, [topSismos, salas, lang, iss, nVuelos, nNoticias, online, peak, quakes.length, sismosLive]);
+  useSala3DContenido(
+    "observatorio",
+    "MURALLA DE VIGILANCIA",
+    "#5EEAD4",
+    `observatorio en directo · ${quakes.length} sismos · ${online ?? "—"} guerreros en línea`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — offset: las salas empiezan tras 2 fijas + 4 sismos
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "observatorio" || det.accion !== "abrir sala") return;
+      const start = 2 + Math.min(4, topSismos.length);
+      const tb = salas[det.idx - start];
+      if (tb) irA(tb.key);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [topSismos.length, salas]);
 
   return (
     <section className="space-y-5" aria-label={t("obs.titulo")}>

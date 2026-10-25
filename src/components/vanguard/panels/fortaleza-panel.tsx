@@ -5,10 +5,11 @@
 // de los muros en vivo y el estado del pasaporte del analista. Si intentas
 // publicar sin cuenta, este panel te explica por qué el muro existe.
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { ShieldCheck, ShieldAlert, Lock, Fingerprint, Eye, ServerCog, ScanFace } from "lucide-react";
 
 interface Sello { id: string; label: string }
@@ -49,6 +50,24 @@ export function FortalezaPanel() {
     })();
     return () => { vivo = false; };
   }, []);
+
+  // v168: PARIDAD 2D→3D — la fortaleza emite su telemetría real a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: account ? `PASAPORTE FIRMADO: ${account.username}` : "PASAPORTE: VISITANTE",
+        v: account ? "SESIÓN 30 DÍAS" : "SIN CUENTA",
+        color: account ? "#3DDC84" : "#F5C542",
+        d: account ? "Sesión cifrada de 30 días: puedes publicar juegos y guardar tu progreso en la nube" : "Crea tu pasaporte para publicar juegos y guardar tu progreso en la nube",
+      },
+      { t: "MUROS ACTIVOS", v: estado ? String(estado.murosActivos) : "—", p: estado ? Math.min(100, estado.murosActivos * 10) : undefined, color: "#3DDC84", d: "Telemetría en vivo de los muros de frecuencia que protegen Vanguard" },
+      { t: "BLINDAJES DE LOGIN", v: estado ? String(estado.blindajes) : "—", color: "#F5C542", d: "Capas que protegen la entrada: lockout, cabeceras y sesiones firmadas" },
+    ];
+    if (error) filas.push({ t: "LA FORTALEZA NO RESPONDE", color: "#FF4D5E", d: "La telemetría no llegó — inténtalo de nuevo en unos segundos" });
+    for (const sello of estado?.sellos ?? []) filas.push({ t: sello.label, color: "#3DDC84" });
+    return filas;
+  }, [estado, error, account]);
+  useSala3DContenido("fortaleza", "FORTALEZA DE ACERO", "#3DDC97", "Los muros invisibles que protegen Vanguard · telemetría en vivo", filas3D);
 
   return (
     <div className="space-y-4 v101-panel">

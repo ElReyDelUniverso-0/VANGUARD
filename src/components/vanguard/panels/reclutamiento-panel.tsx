@@ -5,7 +5,7 @@
 // Ucrania, Rusia, Israel, Myanmar y voluntarios internacionales:
 // método, edades, pagos, fases del proceso y centros en el globo.
 // ============================================================
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { RECRUIT_SIDES, type RecruitSide } from "@/lib/dark-data";
@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, MapPin, GraduationCap, Banknote, Route, ExternalLink } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const KIND_COLOR: Record<string, string> = {
   CENTRO: "#38bdf8",
@@ -53,6 +54,65 @@ export function ReclutamientoPanel() {
       stroke: 0.35,
     }));
   }, [side]);
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el mapa de recluta vive en volumen:
+  // los 5 bandos reales (seleccionables desde el mundo), la ficha
+  // del bando activo, sus fases y el verificador de Bellingcat
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    // los bandos encabezan la lista: el idx del 3D = índice en RECRUIT_SIDES (sin offset)
+    const filas: FilaContenido3D[] = RECRUIT_SIDES.map((s, i) => ({
+      t: s.name.toUpperCase(),
+      v: s.method,
+      color: i === sideIdx ? "#F5C542" : "#38BDF8",
+      d: s.summary,
+      a: "ver bando",
+    }));
+    filas.push(
+      { t: `EDADES DE RECLUTA: ${side.ages}`, color: "#38BDF8", d: `Bando activo: ${side.name} · método ${side.method}` },
+      { t: `PAGO: ${side.pay}`, color: "#3DDC84", d: `Duración del contrato: ${side.term}` },
+      ...side.phases.slice(0, 3).map((ph) => ({
+        t: ph.name,
+        color: "#7AB8FF",
+        d: ph.desc,
+      })),
+      { t: "LO QUE NO SALE EN LOS ANUNCIOS", color: "#F5C542", d: side.facts[0] ?? "Hechos verificados del bando activo" },
+      {
+        t: "VERIFICAR EN BELLINGCAT",
+        a: "verificar en bellingcat",
+        color: "#7AB8FF",
+        d: `Abre bellingcat.com con la búsqueda de reclutamiento de ${side.name}`,
+      },
+    );
+    return filas;
+  }, [side, sideIdx]);
+  useSala3DContenido(
+    "recluta",
+    "CÓMO SE RECLUTA · MAPA 3D POR BANDOS",
+    "#38BDF8",
+    `${RECRUIT_SIDES.length} bandos · activo: ${side.name} · ${side.method}`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismo setSideIdx que los
+  // botones 2D y misma apertura del enlace de Bellingcat
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "recluta") return;
+      if (det.accion === "ver bando") {
+        // sin offset: las filas de bandos encabezan filas3D, idx = índice en RECRUIT_SIDES
+        const s = RECRUIT_SIDES[det.idx];
+        if (s) setSideIdx(det.idx);
+      } else if (det.accion === "verificar en bellingcat") {
+        const s = RECRUIT_SIDES[sideIdx];
+        if (s) window.open(`https://www.bellingcat.com/?s=${encodeURIComponent(s.name + " recruitment")}`, "_blank", "noreferrer");
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [sideIdx]);
 
   return (
     <div className="space-y-3">

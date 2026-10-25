@@ -30,6 +30,7 @@ import {
 } from "@/components/vanguard/creador-parts";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { retoCreadorDelDia } from "@/lib/mente-data"; // v99.0 MENTE VIVA
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // v99.0 MENTE VIVA — RANGOS DEL TALLER: la progresión del creador
 const RANGOS_CREADOR = [
@@ -438,6 +439,87 @@ export function CreadorPanel() {
   };
 
   const kindLabel = KIND_META[kind];
+
+  // v168: PARIDAD 2D→3D — la sección activa manda: CREAR emite rango, reto y
+  // los 7 tipos (elegir tipo de verdad); GALERÍA/MIS ENVÍOS emiten las obras
+  // reales con like y jugar por los MISMOS handlers del 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (section === "crear") {
+      const filas: FilaContenido3D[] = [
+        {
+          t: `RANGO: ${RANGOS_CREADOR[rangoActual].nombre}`,
+          v: `${misObras} OBRAS`,
+          color: "#A855F7",
+          d: rangoSiguiente ? `siguiente rango: ${rangoSiguiente.nombre} a las ${rangoSiguiente.min} obras` : "rango máximo: todo el taller mira hacia ti",
+        },
+        {
+          t: `RETO DEL DÍA · ${reto.kind.toUpperCase()}`,
+          v: `+${reto.bonusCoins}ⓒ`,
+          color: "#F5C542",
+          d: `${reto.reto}${retoCobrado ? " · cumplido hoy — vuelve mañana" : ` · pista: ${reto.pista}`}`,
+        },
+      ];
+      for (const k of KINDS) {
+        filas.push({
+          t: KIND_META[k].label.toUpperCase(),
+          color: kind === k ? "#F5C542" : "#7AB8FF",
+          d: `crear ${KIND_META[k].label.toLowerCase()} — tú pones las fotos y la información · el agente IA modera cada envío (+30 mon)`,
+          a: "crear tipo",
+        });
+      }
+      return filas;
+    }
+    const filas: FilaContenido3D[] = [
+      {
+        t: section === "mios" ? "MIS ENVÍOS" : "GALERÍA DE LA COMUNIDAD",
+        v: String(items.length),
+        color: "#A855F7",
+        d: `${stats.total} publicaciones · +${stats.today} hoy${stats.pending > 0 ? ` · ${stats.pending} en revisión del agente` : ""}`,
+      },
+    ];
+    for (const it of items.slice(0, 10)) {
+      filas.push({
+        t: `${KIND_META[it.kind]?.label ?? it.kind} · ${it.title}`,
+        v: `♥ ${it.likes}`,
+        color: myLikes.has(it.id) ? "#FF4D5E" : "#7AB8FF",
+        d: `@${it.author} · ${timeAgo(it.createdAt)}${it.summary ? ` · ${it.summary}` : ""}`,
+        a: it.kind === "juego" && (it.gameHtml || it.gameUrl) ? "jugar" : "like",
+      });
+    }
+    return filas;
+  }, [section, items, kind, myLikes, misObras, reto, retoCobrado]);
+  useSala3DContenido(
+    "creador",
+    "ESTUDIO COMUNITARIO",
+    "#A855F7",
+    section === "crear"
+      ? "todo lo sube la gente · 7 tipos de contenido · el agente IA modera cada envío"
+      : `${items.length} obras en ${section === "mios" ? "tu cola personal" : "la galería de la comunidad"} · +30 mon por publicar`,
+    filas3D,
+  );
+
+  // v168: el 3D elige tipo, da like y juega por los MISMOS handlers del 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "creador") return;
+      if (d.accion === "crear tipo") {
+        // offset: rango + reto delante de los 7 tipos
+        const k = KINDS[d.idx - 2];
+        if (k) { setKind(k); setVerdict(null); }
+        return;
+      }
+      if (d.accion === "like" || d.accion === "jugar") {
+        // offset: la fila 0 es la cabecera de la galería
+        const it = items.slice(0, 10)[d.idx - 1];
+        if (!it) return;
+        if (d.accion === "jugar") play(it);
+        else void toggleLike(it);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [section, items, myLikes, toggleLike]);
 
   return (
     <div className="space-y-4">

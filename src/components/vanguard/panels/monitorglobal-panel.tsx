@@ -11,6 +11,7 @@ import { RadioTower, BrainCircuit, TrendingUp, TrendingDown, Activity } from "lu
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarMonitor, type MonitorGlobal } from "@/lib/monitor-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 
 function colorTension(n: number): string {
@@ -39,6 +40,53 @@ export function MonitorGlobalPanel() {
     return () => clearInterval(t);
   }, []);
   const m: MonitorGlobal = useMemo(() => generarMonitor(base), [base]);
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el tablero del núcleo neuronal vive en
+  // volumen: índice global, los 4 dominios, los teatros reales y
+  // la alerta más fresca del feed, con la misma paleta de tensión
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `TENSIÓN GLOBAL: ${m.tensionGlobal}`,
+        v: `${m.deltaGlobal >= 0 ? "+" : ""}${m.deltaGlobal} 24H`,
+        p: m.tensionGlobal,
+        color: colorTension(m.tensionGlobal),
+        d: `Índice del núcleo neuronal v3 · ${m.deltaGlobal >= 0 ? "la tensión SUBE" : "la tensión BAJA"} en 24 h`,
+      },
+      ...([["ENERGÍA", m.energia], ["CIBER", m.ciber], ["DESINFORMACIÓN", m.desinformacion], ["MARÍTIMO", m.maritimo]] as const).map(([k, v]) => ({
+        t: `DOMINIO ${k}`,
+        v: `${v}`,
+        p: v,
+        color: colorTension(v),
+        d: `Dominio vigilado por el núcleo · ${v >= 75 ? "en rojo crítico" : v >= 55 ? "presión alta" : v >= 35 ? "tensión media" : "bajo control"}`,
+      })),
+      ...m.teatros.slice(0, 6).map((t) => ({
+        t: t.teatro.toUpperCase(),
+        v: `${t.valor} ${t.delta >= 0 ? "▲" : "▼"}${Math.abs(t.delta)}`,
+        p: t.valor,
+        color: colorTension(t.valor),
+        d: `Teatro computado en directo · ${t.delta >= 0 ? "+" : ""}${t.delta} en el último tramo`,
+      })),
+    ];
+    const a0 = m.alertas[0];
+    if (a0) {
+      filas.push({
+        t: a0.texto,
+        color: a0.severidad === "CRÍTICA" ? "#FF4D5E" : a0.severidad === "ALTA" ? "#FF8A3D" : a0.severidad === "MEDIA" ? "#F5C542" : "#3DDC84",
+        d: `${a0.severidad} · ${a0.hora} · fuente: ${a0.fuente} · ${m.alertas.length} alertas en el feed`,
+      });
+    }
+    return filas;
+  }, [m]);
+  useSala3DContenido(
+    "monitorglobal",
+    "MONITOR GLOBAL",
+    "#3DDC97",
+    `El pulso del planeta · tensión ${m.tensionGlobal} (${m.deltaGlobal >= 0 ? "+" : ""}${m.deltaGlobal} 24h) · ${m.alertas.length} alertas`,
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

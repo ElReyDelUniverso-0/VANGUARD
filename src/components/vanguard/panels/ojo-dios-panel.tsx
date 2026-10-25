@@ -32,6 +32,7 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 // v32 CIELO DE ACERO — globo 3D con unidades militares reales (aviones/tanques/infantería)
 import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type MilUnitCache, type UnitKind } from "@/lib/military-units";
 import type { Globe3DArc, Globe3DUnit, Globe3DMarker, GlobeFlyTo } from "@/components/vanguard/globe-map-3d";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const GlobeMap3D = dynamic(
   () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
@@ -305,6 +306,91 @@ export function OjoDiosPanel() {
     if (!battleGeo) return;
     setFlyTo({ lat: battleGeo.to.lat, lng: battleGeo.to.lng, altitude: 1.45, nonce: Date.now() });
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — LA OBSERVACIÓN OMNISCIENTE en volumen:
+  // estado del god:state real, mapa/globo conmutable (mismo botón),
+  // unidades del Cielo de Acero, última batalla (vuela al frente),
+  // facciones, feed de salas y escáner GDELT
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `SISTEMA: ${god?.war.phase ?? "SIN SEÑAL"}`,
+        v: `${totalOnline} ONLINE`,
+        color: connected ? "#3DDC84" : "#FF4D5E",
+        d: `Ronda ${god?.war.round ?? "—"} · ${god?.war.humans ?? "—"} operadores humanos · ${god?.war.bots ?? "—"} simulados · ${god?.war.battles ?? "—"} batallas libradas`,
+      },
+      {
+        t: `MAPA OMNISCIENTE: ${god ? `${god.war.claimed}/${god.war.total} TERRITORIOS` : "SIN DATOS"}`,
+        v: vista3d ? "GLOBO 3D" : "MAPA 2D",
+        color: "#5EEAD4",
+        d: "Vista conmutable — mismo par de botones del panel 2D",
+        a: "alternar vista",
+      },
+      {
+        t: "CIELO DE ACERO — UNIDADES EN VUELO",
+        v: `${unitCounts.jet + unitCounts.tank + unitCounts.inf}`,
+        color: "#7AB8FF",
+        d: `${unitCounts.jet} aviones · ${unitCounts.tank} tanques · ${unitCounts.inf} soldados desplegados sobre el globo`,
+      },
+    ];
+    if (lastB) {
+      filas.push({
+        t: `ÚLTIMA BATALLA: ${lastB.attackerName} VS ${lastB.defenderName}`,
+        v: `${lastB.atkRoll}VS${lastB.defRoll}`,
+        color: "#FF4D5E",
+        d: `${lastB.captured ? "Territorio CAPTURADO" : "La defensa resistió"} · bajas ${lastB.atkLosses}/${lastB.defLosses} · vuela al frente con la misma acción 2D`,
+        a: "volar al frente",
+      });
+    }
+    for (const p of playersList.slice(0, 4)) {
+      filas.push({
+        t: p.name.toUpperCase(),
+        v: `${p.captures} CAP`,
+        color: p.color,
+        d: `${p.isBot ? "Facción simulada" : "Operador humano"} · ${p.connected ? "conectado ahora" : "desconectado"} · dueño de territorios en el mapa`,
+      });
+    }
+    for (const m of (god?.feed ?? []).slice(0, 2)) {
+      filas.push({
+        t: `${m.room.toUpperCase()} · ${m.author}`,
+        color: m.bot ? "#A855F7" : "#38BDF8",
+        d: m.body,
+      });
+    }
+    for (const n of news.slice(0, 2)) {
+      filas.push({
+        t: n.title,
+        color: n.tacticalTag === "ALERTA" ? "#FF4D5E" : "#F5C542",
+        d: `${n.tacticalTag ?? "OSINT"} · ${n.source} · ${newsAge(n.publishedAt) || "escáner GDELT"}`,
+      });
+    }
+    return filas;
+  }, [god, connected, totalOnline, vista3d, unitCounts, playersList, news, lastB]);
+  useSala3DContenido(
+    "ojodios",
+    "EL OJO DE DIOS",
+    "#5EEAD4",
+    connected ? `Toda la información del planeta · ${god ? `${god.war.claimed}/${god.war.total} territorios · ronda ${god.war.round}` : "sintonizando god:state…"}` : "OJO SIN SEÑAL — reintentando el enlace con el mundo",
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // el conmutador mapa/globo y el botón ⚔ vuela al frente
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "ojodios") return;
+      if (det.accion === "alternar vista") {
+        setVista3d((v) => !v);
+      } else if (det.accion === "volar al frente") {
+        flyToFront();
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [battleGeo]);
 
   return (
     <div className="space-y-3">

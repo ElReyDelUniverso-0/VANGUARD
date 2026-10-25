@@ -29,6 +29,7 @@ import {
   distanciaKm, hhmmUTC, type Contacto, type RespuestaAnalista,
 } from "@/lib/tierra-data";
 import { solAhora, direccionSolGlobo } from "@/lib/sol"; // v114: la misma noche del mini-mapa
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 // ---------- formas encadenadas mínimas de globe.gl (solo lo que usamos) ----------
 type GLike = {
@@ -82,6 +83,60 @@ const ICONO_TIPO: Record<Contacto["tipo"], React.ReactNode> = {
 const ALT_VUELO: Record<Contacto["tipo"], number> = {
   avion: 0.55, buque: 0.5, satelite: 1.9, dron: 0.5, sismo: 0.7, camara: 0.45,
 };
+
+// v168: PARIDAD 2D→3D — filas reales de VANGUARD EARTH para la sala de
+// contenido, con registro paralelo de acciones (mismo índice que filas3D).
+type RegistroTierra3D = { kind: string; c?: Contacto; m?: (typeof MISIONES)[number] };
+type ConteosTierra = { total: number; avion: number; buque: number; satelite: number; dron: number; sismo: number; camara: number };
+function construirTierra3D(
+  contados: ConteosTierra,
+  roster: Array<{ c: Contacto; d: number }>,
+  trackedC: Contacto | null,
+  sensor: (typeof SENSORES)[number],
+  hechas: string[],
+): { filas: FilaContenido3D[]; reg: RegistroTierra3D[] } {
+  const filas: FilaContenido3D[] = [];
+  const reg: RegistroTierra3D[] = [];
+  const emite = (f: FilaContenido3D, r: RegistroTierra3D = { kind: "" }) => { filas.push(f); reg.push(r); };
+  emite({
+    t: `CONTACTOS EN VIVO: ${contados.total}`,
+    v: hhmmUTC(Date.now()),
+    p: Math.min(100, contados.total),
+    color: "#E8C56A",
+    d: `${contados.avion} aviones · ${contados.buque} buques · ${contados.satelite} satélites · ${contados.dron} drones · ${contados.sismo} sismos 1h · ${contados.camara} cámaras`,
+  });
+  emite({
+    t: `SENSOR: ${sensor.nombre}`,
+    color: "#7AB8FF",
+    d: sensor.nota,
+  });
+  emite(
+    trackedC
+      ? { t: `RASTREANDO ${trackedC.callsign}`, v: trackedC.vel ? `${trackedC.vel} km/h` : "ESTÁTICO", color: "#F5C542", d: trackedC.vel ? `rumbo ${trackedC.rumbo}° · tecla C para cockpit · Esc para soltar` : "objetivo fijo · Esc para soltar" }
+      : { t: "SIN RASTREO", color: "#7AB8FF", d: "pulsa un contacto y RASTREAR para que la cámara lo siga" },
+  );
+  // los contactos más cercanos a la vista (mismo roster que la lista 2D)
+  for (const { c, d } of roster.slice(0, 5)) {
+    emite({
+      t: c.callsign,
+      v: `${Math.round(d).toLocaleString("es")} km`,
+      color: COLOR_TIPO[c.tipo],
+      d: `${c.nombre} · ${c.clase.toUpperCase()}${c.vel ? ` · ${c.vel} km/h · rumbo ${c.rumbo}°` : " · estático"}`,
+      a: "rastrear",
+    }, { kind: "rastrear", c });
+  }
+  // misiones guiadas (los primeros cinco minutos)
+  for (const m of MISIONES.slice(0, 4)) {
+    emite({
+      t: `MISIÓN: ${m.titulo}`,
+      v: hechas.includes(m.id) ? "HECHA" : "NUEVA",
+      color: hechas.includes(m.id) ? "#3DDC84" : "#F5C542",
+      d: m.desc,
+      a: "lanzar misión",
+    }, { kind: "lanzar misión", m });
+  }
+  return { filas, reg };
+}
 
 const LS_KEY = "vg-tierra-v93";
 
@@ -570,6 +625,33 @@ export function TierraPanel() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [escenas, hechas]);
+
+  // v168: PARIDAD 2D→3D — VANGUARD EARTH emite sus filas reales a la sala de contenido
+  const tierra3D = useMemo(
+    () => construirTierra3D(contados, roster, trackedC, sensor, hechas),
+    [contados, roster, trackedC, sensor, hechas],
+  );
+  const filas3D = useMemo<FilaContenido3D[]>(() => tierra3D.filas, [tierra3D]);
+  useSala3DContenido(
+    "tierra",
+    "VANGUARD EARTH",
+    "#E8C56A",
+    trackedC ? `rastreando ${trackedC.callsign} · ${contados.total} contactos en vivo` : `simulador de satélite espía · ${contados.total} contactos en vivo · sensor ${sensor.nombre}`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — rastrear/lanzar misión usan los handlers 2D reales
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "tierra") return;
+      const r = tierra3D.reg[det.idx];
+      if (!r || r.kind !== det.accion) return;
+      if (r.kind === "rastrear" && r.c) rastrear(r.c);
+      else if (r.kind === "lanzar misión" && r.m) lanzarMision(r.m);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [tierra3D, rastrear, lanzarMision]);
 
   const cronicaActiva = cronica ? CRONICAS.find((c) => c.id === cronica.id) : null;
 

@@ -16,6 +16,7 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 // v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
 import { LatidoSocial } from "@/components/vanguard/latido-social";
 
@@ -252,6 +253,55 @@ export function SalasPanel() {
 
   const cardFirma = cardUser ? firmaDe(cardUser.name) : null;
   const cardMensajes = cardUser ? msgs.filter((m) => m.author === cardUser.name).length : 0;
+
+  // v168: PARIDAD 2D→3D — el chat en vivo en volumen: salas, online y grito del día reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: connected ? "CONEXIÓN EN VIVO" : "CONECTANDO…",
+        v: `${totalOnline} EN LÍNEA`,
+        color: connected ? "#3DDC84" : "#F5C542",
+        d: `hablas como ${alias || "OPERADOR"} · +2 monedas cada 10 mensajes en salas`,
+      },
+      {
+        t: "GRITO DEL DÍA · DEBATE ABIERTO",
+        color: "#A855F7",
+        d: gritoHoy,
+      },
+      ...rooms.slice(0, 5).map((r): FilaContenido3D => ({
+        t: `#${r.name}`,
+        v: `${online[r.id] ?? 0}`,
+        color: r.id === active ? "#F5C542" : "#7AB8FF",
+        d: `${r.desc} · ${(onlineNames[r.id]?.length ?? 0)} operadores visibles`,
+        a: "entrar",
+      })),
+      ...msgs.filter((m) => !m.sys).slice(-3).reverse().map((m): FilaContenido3D => ({
+        t: m.body,
+        color: m.author === (alias || "OPERADOR") ? "#F5C542" : "#7AB8FF",
+        d: `${m.author} · ${timeAgo(m.ts)}${m.bot ? " · COMUNIDAD" : ""}`,
+      })),
+    ];
+    return filas;
+  }, [rooms, online, onlineNames, msgs, active, connected, totalOnline, gritoHoy, alias]);
+  useSala3DContenido(
+    "salas",
+    "SALAS SOCIALES",
+    "#A855F7",
+    `${rooms.length} salas temáticas · ${totalOnline} operadores en línea`,
+    filas3D,
+  );
+  // v168: "entrar" desde el 3D cambia a la misma sala que el botón 2D
+  // (offset 2: conexión y grito ocupan 0-1, las salas empiezan en idx 2)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "salas" || d.accion !== "entrar") return;
+      const item = rooms[d.idx - 2];
+      if (item) changeRoom(item.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [rooms, changeRoom]);
 
   return (
     <div className="space-y-3">

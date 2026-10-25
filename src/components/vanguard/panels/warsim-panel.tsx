@@ -15,6 +15,7 @@ import { Swords, Play, RotateCcw, Share2, Shuffle, Users, Plane, Ship, Rocket, R
 import { useGameStore } from "@/lib/game-store";
 import { navigateTo } from "@/lib/nav";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { NIVELES_ESCALADA } from "@/lib/whatif";
 
 interface WarPower {
@@ -236,6 +237,56 @@ export function WarsimPanel() {
     const text = `⚔️ SIMULACIÓN VANGUARD: ${a.name} vs ${b.name} (${warType}) → GANA ${wName} con ${Math.max(sim.winProb, 100 - sim.winProb)}% · ${sim.day} días · ${(sim.casualtiesA + sim.casualtiesB).toLocaleString()} bajas estimadas · $${sim.cost.toFixed(0)}B`;
     navigator.clipboard?.writeText(text).then(() => toast.success("Resultado copiado para compartir"), () => toast.error("No se pudo copiar"));
   }, [sim, a, b, warType]);
+
+  // v168: PARIDAD 2D→3D — el enfrentamiento configurado y las potencias con sus
+  // datos reales suben a la sala. Offsets del oyente: 2 filas de cabecera + POWERS
+  const OFF_POTENCIAS = 2;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: a && b ? `ENFRENTAMIENTO: ${a.name.toUpperCase()} VS ${b.name.toUpperCase()}` : "ELIGE DOS PAÍSES",
+        v: a && b ? `${probA}% / ${100 - probA}%` : "—",
+        color: "#F5C542",
+        d: a && b ? `${warType} · ${year} · alianzas ${allyA}/${allyB} · eventos aleatorios ${wildcards ? "ON" : "OFF"} · velocidad ${speed}x` : "Busca y elige DOS países arriba (o toca aleatorio) para armar el enfrentamiento",
+      },
+      {
+        t: "SIMULACIÓN",
+        v: sim ? (sim.winner ? `GANA ${(sim.winner === "A" ? a?.code : b?.code) ?? ""}` : `DÍA ${sim.day}`) : "SIN INICIAR",
+        color: sim?.winner ? "#3DDC84" : "#7AB8FF",
+        d: sim ? `frente ${Math.round(sim.front)} · bajas ${(sim.casualtiesA + sim.casualtiesB).toLocaleString()} · $${sim.cost.toFixed(1)}B · escalada ${sim.escalada}/6` : "Configura el enfrentamiento y pulsa simular",
+        a: a && b && !sim ? "simular" : undefined,
+      },
+    ];
+    for (const p of POWERS.slice(0, 10)) {
+      filas.push({
+        t: p.name,
+        v: `${p.army}K TROPAS`,
+        p: Math.min(100, Math.round((p.budget / 916) * 100)),
+        color: "#7AB8FF",
+        d: `${p.air} aviones · ${p.naval} buques · ${p.missiles} misiles · $${p.budget}B${p.nuclear ? " · ☢ nuclear" : ""}${p.alliances.length ? ` · alianzas: ${p.alliances.join(", ")}` : ""}`,
+        a: "elegir",
+      });
+    }
+    return filas;
+  }, [a, b, probA, warType, year, allyA, allyB, wildcards, speed, sim]);
+  useSala3DContenido("warsim", "SIMULADOR DE GUERRAS", "#FF3B30", a && b ? `${a.code} vs ${b.code} · prob ${probA}% · ${warType}` : "Enfrenta potencias con datos reales", filas3D);
+
+  // v168: las acciones ejecutan los MISMOS handlers que los botones 2D
+  // («elegir» usa pick() como el autocompletado; «simular» llama a startSim)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "warsim") return;
+      if (det.accion === "elegir") {
+        const p = POWERS[det.idx - OFF_POTENCIAS];
+        if (p) pick(p);
+        return;
+      }
+      if (det.accion === "simular") startSim();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [a, b, sim, probA]);
 
   return (
     <div className="space-y-3">

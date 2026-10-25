@@ -16,6 +16,7 @@ import { Crosshair, Radio, Rocket, Timer, TrendingUp, Trophy, Waves } from "luci
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type OpEstado = "PLANIFICADA" | "EN CURSO" | "EXITO";
 
@@ -173,6 +174,58 @@ export function OpsPanel() {
   const exitos = useMemo(() => OPERACIONES.filter((o) => estados[o.id] === "EXITO").length, [estados]);
 
   const fase = (p: number) => (p < 34 ? 0 : p < 67 ? 1 : 2);
+
+  // v168: PARIDAD 2D→3D — la sala OPERACIONES emite las órdenes del día reales
+  // (estado, fase y progreso en vivo) y el canal de comunicaciones.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "TABLERO TÁCTICO · SECTORES A1–E3",
+        v: `${enCurso} EN CURSO`,
+        color: "#FFB020",
+        d: `${exitos}/4 objetivos cumplidos · columna en marcha y jets cruzando el tablero en vivo`,
+      },
+    ];
+    for (const op of OPERACIONES) {
+      const est = estados[op.id] ?? "PLANIFICADA";
+      const p = Math.round(prog[op.id] ?? 0);
+      filas.push({
+        t: op.nombre,
+        v: est === "EN CURSO" ? `FASE ${fase(p) + 1}/3 · ${p}%` : est,
+        p: est === "PLANIFICADA" ? undefined : Math.max(3, p),
+        color: est === "EXITO" ? "#3DDC84" : est === "EN CURSO" ? "#F5C542" : "#7AB8FF",
+        d: `${op.teatro} · primera victoria: ${op.recompensa} mon + ${op.xp} xp (repetir paga 40 mon)`,
+        a: est === "PLANIFICADA" ? "ejecutar" : undefined,
+      });
+    }
+    for (const entry of log.slice(0, 3)) {
+      filas.push({
+        t: entry,
+        color: "#7AB8FF",
+        d: "canal de comunicaciones · un mensaje nuevo cada 8 segundos",
+      });
+    }
+    return filas;
+  }, [estados, prog, enCurso, exitos, log]);
+  // v168: el raycast 3D lanza la MISMA operación que el botón EJECUTAR del 2D
+  // (offset 1: la fila 0 es la cabecera del tablero)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "operaciones" || det.accion !== "ejecutar") return;
+      const op = OPERACIONES[det.idx - 1];
+      if (op) lanzar(op);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [estados]);
+  useSala3DContenido(
+    "operaciones",
+    "SALA DE OPERACIONES",
+    "#FFB020",
+    `Tablero táctico en vivo · ${enCurso} en curso · ${exitos} objetivos cumplidos`,
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

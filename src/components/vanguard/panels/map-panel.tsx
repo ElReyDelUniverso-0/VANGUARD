@@ -43,6 +43,7 @@ import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type 
 // para tipar milUnits (el campo kind se consume en milCounts).
 import type { GlobeFlyTo, GlobeViewMode } from "@/components/vanguard/globe-map-3d";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const GlobeMap3D = dynamic(
   () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
@@ -437,6 +438,53 @@ export function MapPanel() {
     const c = CONFLICTS.find((x) => x.id === id);
     if (c) setFlyTo({ lat: c.lat, lng: c.lng, altitude: 1.55, nonce: Date.now() });
   };
+
+  // v168: PARIDAD 2D→3D — el tablero en volumen: DEFCON, modo activo y frentes reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const colorNivel: Record<AlertLevel, string> = { CRITICO: "#FF4D5E", TENSION: "#F5C542", INESTABILIDAD: "#7AB8FF", VIGILANCIA: "#7AB8FF" };
+    const filas: FilaContenido3D[] = [
+      {
+        t: `DEFCON ${defcon.n} · ${defcon.label}`,
+        color: defcon.color,
+        p: (6 - defcon.n) * 20,
+        d: `${stats.crit} zonas críticas · ${stats.zonas} zonas monitorizadas · ${stats.factions} facciones implicadas`,
+      },
+      {
+        t: `MODO ${mode}`,
+        v: `${visibleConflicts.length} ZONAS`,
+        color: modeDef.hex,
+        d: `${modeDef.desc} · ${cameras.length} cámaras propias en el tablero`,
+      },
+      ...[...visibleConflicts].sort((a, b) => b.intensity - a.intensity).slice(0, 10).map((c): FilaContenido3D => ({
+        t: c.name,
+        v: c.level,
+        p: c.intensity,
+        color: colorNivel[c.level],
+        d: `${c.country} · desde ${c.since} · ${c.summary}`,
+        a: "volar",
+      })),
+    ];
+    return filas;
+  }, [mode, modeDef, visibleConflicts, defcon, stats, cameras.length]);
+  useSala3DContenido(
+    "mapa",
+    "MAPA GLOBAL DE CONFLICTOS",
+    "#F5C542",
+    `DEFCON ${defcon.n} · ${modeDef.label} · ${visibleConflicts.length} zonas en pantalla`,
+    filas3D,
+  );
+  // v168: "volar" desde el 3D selecciona el mismo frente que la lista 2D
+  // (offset 2: DEFCON + modo ocupan 0-1, los frentes empiezan en idx 2)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "mapa" || d.accion !== "volar") return;
+      const item = [...visibleConflicts].sort((a, b) => b.intensity - a.intensity)[d.idx - 2];
+      if (item) handleSelect(item.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [visibleConflicts]);
 
   return (
     <div className="space-y-4">

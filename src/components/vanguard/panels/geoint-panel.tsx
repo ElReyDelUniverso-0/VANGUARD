@@ -12,6 +12,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarGeoint, type Deteccion } from "@/lib/geoint-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 function Huella({ det }: { det: Deteccion }) {
   const celdas = det.pixeles.split(";").filter(Boolean).map((s) => s.split(","));
@@ -39,6 +40,83 @@ export function GeointPanel() {
     Object.fromEntries(g.capas.map((c) => [c.id, c.activa]))
   );
   const [sel, setSel] = useState<Deteccion | null>(null);
+
+  // v168: PARIDAD 2D→3D — OJO-GEOINT emite sus filas reales a la sala de contenido
+  // (offsets estables: 1 cabecera · N_DET detecciones · 3 capas · 2 pases · foco)
+  const nDet3D = Math.min(5, g.detecciones.length);
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "OJO-GEOINT · NÚCLEO NEURONAL",
+        v: `${g.stats.imagenesHoy.toLocaleString("es")} IMG HOY`,
+        color: "#38BDF8",
+        d: `${g.stats.km2Cubiertos.toLocaleString("es")} km² cubiertos · ${g.stats.deteccionesIA} detecciones IA · ${g.stats.verificacionHumana} verificadas por humano`,
+      },
+    ];
+    for (const d of g.detecciones.slice(0, 5)) {
+      filas.push({
+        t: d.tipo,
+        v: `${d.confianza}%`,
+        p: d.confianza,
+        color: d.confianza >= 70 ? "#3DDC84" : d.confianza >= 45 ? "#F5C542" : "#FF4D5E",
+        d: `${d.zona} · hace ${d.haceMin} min · neurona: ${d.neurona} · ${d.revisadoPor} — pulsa para geolocalizar`,
+        a: "geolocalizar",
+      });
+    }
+    for (const c of g.capas.slice(0, 3)) {
+      filas.push({
+        t: `CAPA: ${c.nombre}`,
+        v: `${c.cobertura}%`,
+        color: capasOn[c.id] ? "#3DDC84" : "#7AB8FF",
+        d: capasOn[c.id] ? "capa activa del tablero — púlsala para apagarla" : "capa apagada — púlsala para activarla",
+        a: capasOn[c.id] ? "apagar capa" : "activar capa",
+      });
+    }
+    for (const p of g.pases.slice(0, 2)) {
+      filas.push({
+        t: `PASE: ${p.satelite}`,
+        v: `T−${p.enMin}′`,
+        color: p.enMin < 10 ? "#F5C542" : "#7AB8FF",
+        d: `${p.tipo} · ${p.resolucion} · sobre ${p.zona}`,
+      });
+    }
+    if (sel) {
+      filas.push({
+        t: `FOCO: ${sel.tipo}`,
+        v: `${sel.confianza}%`,
+        p: sel.confianza,
+        color: "#38BDF8",
+        d: `huella de píxeles en la ficha · ${sel.zona} · ${sel.revisadoPor} — vuelve a la lista`,
+        a: "volver a la lista",
+      });
+    }
+    return filas;
+  }, [g, capasOn, sel]);
+  useSala3DContenido(
+    "geoint",
+    "OJO-GEOINT",
+    "#38BDF8",
+    `inteligencia geoespacial asistida por IA · ${g.stats.deteccionesIA} detecciones · ${g.stats.imagenesHoy.toLocaleString("es")} imágenes hoy`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — geolocalizar/capas usan los MISMOS setters 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "geoint") return;
+      if (det.accion === "geolocalizar") {
+        const d = g.detecciones[det.idx - 1];
+        if (d) setSel(d);
+      } else if (det.accion === "apagar capa" || det.accion === "activar capa") {
+        const c = g.capas[det.idx - (1 + nDet3D)];
+        if (c) setCapasOn((s) => ({ ...s, [c.id]: !s[c.id] }));
+      } else if (det.accion === "volver a la lista") {
+        setSel(null);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [g, nDet3D]);
 
   return (
     <div className="space-y-4">

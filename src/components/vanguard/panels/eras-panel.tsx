@@ -4,7 +4,7 @@
 // hasta la era colonial, con fichas (imperios, inventos, "entonces vs ahora")
 // y mini-quiz por epoca con recompensa.
 
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Hourglass, CheckCircle2, XCircle, ArrowRight, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { ERAS, type EraItem } from "@/lib/archive-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 export function ErasPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
@@ -39,6 +40,77 @@ export function ErasPanel() {
       } else toast.success("¡Correcto de nuevo!");
     } else { sfx.error(); toast.error("Esa no era... revisa la ficha"); }
   };
+
+  // v168: PARIDAD 2D→3D — EPOCAS emite sus filas reales a la sala de contenido
+  // (offset: las épocas empiezan en idx 1; las opciones del quiz van al final)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "LÍNEA DE TIEMPO · DE LA CUEVA AL IMPERIO",
+        v: `${solved.length}/${ERAS.length} QUIZ`,
+        color: "#A855F7",
+        d: "cada época abre su ficha: imperios, inventos que heredamos y quiz con recompensa de +30 mon",
+      },
+    ];
+    for (const e of ERAS.slice(0, 6)) {
+      filas.push({
+        t: e.name,
+        v: e.period,
+        img: e.img ?? undefined,
+        color: solved.includes(e.id) ? "#3DDC84" : "#7AB8FF",
+        d: `${e.desc.split("\n\n")[0]} · pulsa para abrir la ficha`,
+        a: "abrir época",
+      });
+    }
+    if (sel) {
+      filas.push({
+        t: `IMPERIOS E INVENTOS DE ${sel.name.toUpperCase()}`,
+        color: "#F5C542",
+        d: `potencias: ${sel.empires.slice(0, 4).join(", ")} · heredamos: ${sel.inventions.slice(0, 5).join(", ")}`,
+      });
+      filas.push({
+        t: "ENTONCES VS AHORA",
+        color: "#7AB8FF",
+        d: `entonces: ${sel.thenNow.old} · ahora: ${sel.thenNow.now}`,
+      });
+      filas.push({ t: `QUIZ · ${sel.quiz.q}`, color: "#A855F7", d: answer === null ? "responde y gana +30 mon · +20 xp" : "respuesta revelada — cierra y abre otra época" });
+      for (const [i, o] of sel.quiz.options.entries()) {
+        const isRight = answer !== null && i === sel.quiz.answer;
+        const chosen = answer === i;
+        filas.push({
+          t: o,
+          color: isRight ? "#3DDC84" : chosen ? "#FF4D5E" : undefined,
+          d: isRight ? "respuesta correcta" : chosen ? "tu elección — fallo" : undefined,
+          a: answer === null ? "responder quiz" : undefined,
+        });
+      }
+    }
+    return filas;
+  }, [sel, answer, solved]);
+  useSala3DContenido(
+    "epocas",
+    "EPOCAS DE LA ANTIGUEDAD",
+    "#A855F7",
+    `de la cueva al imperio colonial · quiz resueltos ${solved.length}/${ERAS.length}`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — abrir época y responder quiz usan los MISMOS handlers 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "epocas") return;
+      if (det.accion === "abrir época") {
+        const e = ERAS[det.idx - 1];
+        if (e) pick(e);
+      } else if (det.accion === "responder quiz" && sel) {
+        const nOpts = sel.quiz.options.length;
+        const i = det.idx - (filas3D.length - nOpts);
+        if (i >= 0 && i < nOpts) answerQuiz(sel, i);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [sel, answer, solved, filas3D]);
 
   return (
     <div className="space-y-3">

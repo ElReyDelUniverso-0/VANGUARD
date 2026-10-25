@@ -10,6 +10,7 @@ import { BookMarked, Scale, Users, Landmark, Coins, Shield, Mountain, Globe2 } f
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarDossier, MUNDIAL_IDS, nombreDe, type Dossier } from "@/lib/mundial-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 
 function Bloque({ titulo, icono, acento, stats, delay }: { titulo: string; icono: React.ReactNode; acento: string; stats: Dossier["geografia"]; delay: number }) {
@@ -49,6 +50,85 @@ export function MundialPanel() {
   const d = useMemo(() => generarDossier(sel, dia), [sel, dia]);
   const d2 = useMemo(() => (comparar ? generarDossier(cmpId, dia) : null), [comparar, cmpId, dia]);
 
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el dossier vive en volumen: la ficha del
+  // país activo con su primera estadística real por sección (los
+  // mismos acentos de los Bloques 2D), naciones alternativas
+  // seleccionables desde el mundo y el estado del comparador
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const resto = MUNDIAL_IDS.filter((id) => id !== sel);
+    const secciones: Array<[string, Dossier["geografia"], string]> = [
+      ["GEOGRAFÍA", d.geografia, "#9AE04D"],
+      ["GENTE Y SOCIEDAD", d.gente, "#3DDCFF"],
+      ["GOBIERNO", d.gobierno, "#FFC94D"],
+      ["ECONOMÍA", d.economia, "#FF8A3D"],
+      ["MILITAR", d.militar, "#FF4D4D"],
+    ];
+    const filas: FilaContenido3D[] = [
+      {
+        t: `DOSSIER: ${d.nombre.toUpperCase()}`,
+        v: `RIESGO ${d.riesgo}`,
+        color: d.acento,
+        d: `${d.region} · capital ${d.capital} · ${d.trasfondo}`,
+      },
+      ...secciones.map(([k, stats, hex]) => ({
+        t: `${k} · ${stats[0].etiqueta.toUpperCase()}`,
+        v: stats[0].valor,
+        color: hex,
+        d: `Primera línea de la sección ${k.toLowerCase()} del dossier · el bloque completo está en el panel 2D`,
+      })),
+      {
+        t: `TRANSNACIONAL: ${d.transnacionales[0]}`,
+        color: "#FF4D5E",
+        d: `Problema transnacional real del dossier · ${Math.max(0, d.transnacionales.length - 1)} más en el panel`,
+      },
+      // offset 7: tras dossier (1) + 5 secciones + transnacional van las naciones alternativas
+      ...resto.slice(0, 4).map((id) => {
+        const dd = generarDossier(id, dia);
+        return {
+          t: dd.nombre.toUpperCase(),
+          v: `${dd.riesgo}`,
+          color: dd.riesgo >= 80 ? "#FF4D5E" : dd.riesgo >= 60 ? "#F5C542" : "#3DDC84",
+          d: `${dd.region} · capital ${dd.capital} · índice Vanguard ${dd.riesgo}`,
+          a: "ver nacion",
+        };
+      }),
+      {
+        t: `COMPARADOR: ${comparar ? "ACTIVO" : "APAGADO"}`,
+        a: "comparar",
+        color: comparar ? "#F5C542" : "#7AB8FF",
+        d: d2 ? `Cara a cara ${d.nombre} VS ${d2.nombre} · riesgo ${d.riesgo} ↔ ${d2.riesgo}` : "Alterna el modo cara a cara del panel (mismo botón 2D)",
+      },
+    ];
+    return filas;
+  }, [d, d2, sel, comparar, dia]);
+  useSala3DContenido(
+    "mundial",
+    "DOSSIER MUNDIAL DE NACIONES",
+    "#E8C56A",
+    `${MUNDIAL_IDS.length} naciones · activo: ${d.nombre} · índice Vanguard ${d.riesgo}`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la lista 2D
+  // (setSel) y el botón comparar del encabezado
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "mundial") return;
+      if (det.accion === "ver nacion") {
+        // offset 7: mismo orden que filas3D (dossier + 5 secciones + transnacional)
+        const resto = MUNDIAL_IDS.filter((id) => id !== sel);
+        const id = resto[det.idx - 7];
+        if (id) setSel(id);
+      } else if (det.accion === "comparar") {
+        setComparar((c) => !c);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [sel]);
 
   return (
     <div className="space-y-4">

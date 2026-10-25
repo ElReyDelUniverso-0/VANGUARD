@@ -8,7 +8,7 @@
 // letras, el aire, el color personal, el modo noche y —lo más
 // íntimo— APRENDE qué salas visitas y te las pone a mano.
 // ============================================================
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { IlustracionViva } from "@/components/vanguard/ilustraciones-vivas";
@@ -16,6 +16,7 @@ import { useCama, ESTILOS_TRANSICION, ACENTOS, type EstiloTransicion, type Densi
 import { ALL_TABS, TABS, type TabKey } from "@/components/vanguard/tab-nav";
 import { navigateTo } from "@/lib/nav";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { BedDouble, Sparkles, Palette, Type, Move3d, MoonStar, History, Star, RotateCcw, Play, Flame, Gauge } from "lucide-react";
 
 /** Variantes de la vista previa — espejo exacto de las de page.tsx */
@@ -54,6 +55,45 @@ export function CamaPanel() {
     if (estilo) setDemoEstilo(estilo);
     setDemoKey((k) => k + 1);
   };
+
+  // v168: PARIDAD 2D→3D — los ajustes en vivo de la cama suben a la sala.
+  // Offsets del oyente: 6 filas de ajustes y después las salas top («ir»)
+  const estiloNombre = ESTILOS_TRANSICION.find((e) => e.id === estiloActivo)?.nombre ?? estiloActivo;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: `TRANSICIÓN: ${String(estiloNombre).toUpperCase()}`, v: `${Math.round(cama.movimiento * 100)}%`, color: "#A855F7", d: "Cómo viajas entre secciones — cambia en vivo con vista previa" },
+      { t: "TAMAÑO DE LAS LETRAS", v: `${Math.round(cama.letraEscala * 100)}%`, p: Math.round(((cama.letraEscala - 0.85) / 0.45) * 100), color: "#F5C542", d: "Toda la casa crece o respira contigo: títulos, noticias, fichas y mapa" },
+      { t: `AIRE VISUAL: ${cama.densidad.toUpperCase()}`, color: "#3DDC84", d: "Compacta para leer más de un vistazo; amplia para descansar la vista" },
+      { t: "TU COLOR PERSONAL", v: cama.acento.toUpperCase(), color: cama.acento, d: "Se aplica a selección, bordes, brillos y transiciones en TODA la casa" },
+      { t: "MODO CAMA", v: cama.modoCama ? "ACTIVO" : "APAGADO", color: cama.modoCama ? "#3DDC84" : "#7AB8FF", d: "Tinte cálido de ocaso, movimiento suave y todo listo para descansar los ojos", a: "alternar modo cama" },
+      { t: "AUTO-CAMA (22:00 → 07:00)", v: cama.autoCama ? "ACTIVO" : "APAGADO", color: cama.autoCama ? "#3DDC84" : "#7AB8FF", d: "La casa se acuesta sola: a las 22:00 de TU reloj el modo cama se pone sin tocar nada", a: "alternar auto-cama" },
+    ];
+    for (const { key, n } of topSalas) {
+      filas.push({ t: `SALA ${(TABS[key]?.short ?? key).toUpperCase()}`, v: `×${n}`, color: "#F5C542", d: "Una de tus salas más visitadas — la casa aprendió tu camino", a: "ir" });
+    }
+    if (cama.favorito) filas.push({ t: `SALA DE SIEMPRE: ${(TABS[cama.favorito]?.short ?? cama.favorito).toUpperCase()}`, color: "#F5C542", d: `Tu sala favorita${cama.abrirFavorito ? " · se abre sola al arrancar" : ""}`, a: "ir" });
+    filas.push({ t: `${Object.values(cama.visitas).reduce((a, b) => a + b, 0)} VIAJES REGISTRADOS`, v: `${ALL_TABS.length} SALAS`, color: "#7AB8FF", d: "La casa aprende qué salas visitas y te las pone a mano" });
+    return filas;
+  }, [cama, topSalas, estiloNombre]);
+  useSala3DContenido("cama", "LA CAMA", "#A855F7", "La habitación donde Vanguard se adapta a ti — todo cambia EN VIVO", filas3D);
+
+  // v168: las acciones ejecutan los MISMOS handlers que los botones 2D
+  // (los «ir» replican navigateTo; los toggles llaman a los setters del store)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "cama") return;
+      if (det.accion === "alternar modo cama") { cama.setModoCama(!cama.modoCama); return; }
+      if (det.accion === "alternar auto-cama") { cama.setAutoCama(!cama.autoCama); return; }
+      if (det.accion === "ir") {
+        const entrada = topSalas[det.idx - 6];
+        if (entrada) navigateTo(entrada.key);
+        else if (cama.favorito) navigateTo(cama.favorito);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [cama, topSalas]);
 
   return (
     <div className="space-y-4">

@@ -20,6 +20,7 @@ import {
   type TipoNodo, type NodoExp, type AristaExp,
 } from "@/lib/expediente-data";
 import { useExpediente } from "@/lib/expediente-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 const W = 1200;
 const H = 760;
@@ -326,6 +327,71 @@ export function GrafoPanel() {
     if (!vecinosDeHover) return false;
     return id !== hoverId && !vecinosDeHover.has(id);
   };
+
+  // v168: PARIDAD 2D→3D — el GRAFO MUNDIAL emite sus filas reales a la sala de contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const nodoEnfoque = enfoque ? nodoPorId(enfoque) : null;
+    const filas: FilaContenido3D[] = [
+      {
+        t: "GRAFO MUNDIAL v1",
+        v: `${est.entidades} ENTIDADES`,
+        color: "#FFC94D",
+        d: `${est.aristas} conexiones · ${est.crisis + est.archivo} crisis · ${est.medios} salas · arrastra un nodo y toca para abrir su expediente`,
+      },
+      {
+        t: nodoEnfoque ? `ENFOQUE: ${nodoEnfoque.nombre.toUpperCase()}` : "SIN ENFOQUE",
+        v: nodoEnfoque ? TIPO_META[nodoEnfoque.tipo].tag : undefined,
+        color: nodoEnfoque ? nodoEnfoque.acento : "#7AB8FF",
+        d: nodoEnfoque
+          ? nodoEnfoque.resumen
+          : "toca un nodo del grafo para abrir su expediente completo",
+      },
+      {
+        t: `TU EXPEDIENTE`,
+        v: `${visitados.length} ABIERTAS`,
+        color: "#7AB8FF",
+        d: vigilados.length > 0
+          ? `${vigilados.length} vigiladas: ${vigilados.slice(0, 4).join(" · ")}`
+          : "vigila una entidad desde su ficha y aparecerá aquí",
+      },
+      {
+        t: soloNucleo ? "VISTA: NÚCLEO" : "VISTA: TODO",
+        v: `${nodosVisibles.length} NODOS`,
+        color: "#7AB8FF",
+        d: `física ${fisicaOn ? "activa a 60 fps" : "pausada"} · ${(Object.keys(TIPO_META) as TipoNodo[]).map((tk) => `${TIPO_META[tk].tag.toLowerCase()} ${est.porTipo[tk] ?? 0}`).join(" · ")}`,
+      },
+    ];
+    for (const { n, d } of topConectados.slice(0, 8)) {
+      filas.push({
+        t: n.nombre,
+        v: `${d} ENLACES`,
+        color: n.acento,
+        d: `${TIPO_META[n.tipo].tag.toLowerCase()} · ${n.resumen.slice(0, 90)} · pulsa para enfocarlo en el grafo`,
+        a: "enfocar",
+      });
+    }
+    return filas;
+  }, [est, enfoque, visitados.length, vigilados, soloNucleo, nodosVisibles, fisicaOn, topConectados]);
+  useSala3DContenido(
+    "grafo",
+    "GRAFO MUNDIAL",
+    "#FFC94D",
+    `buscador visual del conocimiento geopolítico · ${est.entidades} entidades · ${est.aristas} conexiones`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — los nodos top empiezan tras las 4 filas fijas
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "grafo" || det.accion !== "enfocar") return;
+      const n = Math.min(8, topConectados.length);
+      const start = filas3D.length - n;
+      const hit = topConectados[det.idx - start];
+      if (hit) setEnfoque(hit.n.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filas3D, topConectados, setEnfoque]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">

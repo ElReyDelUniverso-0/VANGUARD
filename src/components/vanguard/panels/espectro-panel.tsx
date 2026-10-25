@@ -18,6 +18,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { WorldMapSVG, type MapPing } from "@/components/vanguard/world-map-svg";
 import { getTension } from "@/lib/tension";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface Avion {
   id: string; callsign: string; tipo: string; lat: number; lon: number;
@@ -98,6 +99,70 @@ export function EspectroPanel() {
   const buqueSel = data?.buques.find((b) => `b-${b.id}` === sel?.id && sel.tipo === "buque");
   const milCount = data?.aviones.filter((a) => a.mil).length ?? 0;
   const guerraCount = data?.buques.filter((b) => b.guerra).length ?? 0;
+
+  // v168: PARIDAD 2D→3D — doctrina, canales reales, contactos militares y
+  // bandas HF suben en volumen (async: las filas aparecen cuando llega el barrido)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "DOCTRINA DEL ESPECTRO",
+        v: data?.fuentes.adsb ? "ADS-B REAL" : "SIMULADO",
+        color: data?.fuentes.adsb ? "#3DDC84" : "#F5C542",
+        d: data
+          ? `${milCount} aviones militares y ${guerraCount} buques de guerra alrededor de 5 zonas calientes · barrido cada 60 s`
+          : "escaneando el cielo y la flota — la guerra también se lee en el cielo y en el mar",
+      },
+    ];
+    // estados de carga reales (los mismos mensajes que el panel pinta en 2D)
+    if (!data) {
+      filas.push(
+        { t: "ESCANEANDO EL CIELO…", color: "#7AB8FF", d: "contactos aéreos: primero los militares — red ADS-B civil" },
+        { t: "RASTREANDO LA FLOTA…", color: "#7AB8FF", d: "contactos marítimos por los 6 canales que sostienen el comercio" },
+        { t: "SINTONIZANDO BANDAS…", color: "#7AB8FF", d: "espectro HF: actividad por banda + jamming coherente con la tensión" },
+      );
+    }
+    for (const c of data?.canales.slice(0, 6) ?? []) {
+      filas.push({
+        t: c.nombre.toUpperCase(),
+        v: c.riesgo,
+        color: c.riesgo === "CRITICO" ? "#FF4D5E" : c.riesgo === "ELEVADO" ? "#F5C542" : "#3DDC84",
+        d: c.nota,
+      });
+    }
+    for (const a of data?.aviones.filter((x) => x.mil).slice(0, 2) ?? []) {
+      filas.push({
+        t: `✈ ${a.callsign}`,
+        v: a.tipo,
+        color: "#FF4D5E",
+        d: `avión militar · alt ${a.altM ?? "?"} m · vel ${a.velKmh ?? "?"} km/h · ${a.fuente}`,
+      });
+    }
+    for (const b of data?.buques.filter((x) => x.guerra).slice(0, 2) ?? []) {
+      filas.push({
+        t: b.nombre,
+        v: `${b.velNudos} KN`,
+        color: "#38BDF8",
+        d: `buque de guerra · ${b.tipo} · bandera ${b.bandera} · canal ${b.canal}`,
+      });
+    }
+    for (const b of data?.bandas.slice(0, 1) ?? []) {
+      filas.push({
+        t: b.banda.toUpperCase(),
+        v: `${b.actividad}%`,
+        p: b.actividad,
+        color: b.jamming ? "#FF4D5E" : "#F5C542",
+        d: b.jamming ? "JAMMING detectado en esta banda del espectro" : "banda activa sin interferencias",
+      });
+    }
+    return filas;
+  }, [data, milCount, guerraCount]);
+  useSala3DContenido(
+    "espectro",
+    "ESPECTRO EN VIVO",
+    "#E8C56A",
+    `Tráfico aéreo y marítimo de las zonas calientes · ${data?.fuentes.adsb ? "ADS-B REAL (adsb.lol)" : "barrido simulado"} · barrido 60 s`,
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

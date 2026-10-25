@@ -13,6 +13,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { WorldMapSVG } from "@/components/vanguard/world-map-svg";
 import { generarCiber, rutasDeAtaques, TIPOS_ATAQUE, type Ataque } from "@/lib/ciber-data";
 import { getTension } from "@/lib/tension";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 
 function Contador({ valor, etiqueta, color }: { valor: number; etiqueta: string; color: string }) {
@@ -45,6 +46,54 @@ export function CiberPanel() {
   const estado = useMemo(() => generarCiber(ahora), [ahora]);
   const rutas = useMemo(() => rutasDeAtaques(estado.ataques), [estado]);
   const maxTop = Math.max(...estado.topOrigenes.map((o) => o.n), 1);
+
+  // v168: PARIDAD 2D→3D — la sala CIBER asciende con las filas reales del panel:
+  // DEFCON, rankings de objetivos/orígenes y el feed de intrusión en vivo.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `DEFCON CIBER ${estado.defconCiber}`,
+        v: estado.defconCiber >= 4 ? "PELIGRO" : "ACTIVO",
+        p: Math.min(100, estado.defconCiber * 20),
+        color: estado.defconCiber >= 4 ? "#FF4D5E" : "#3DDC84",
+        d: `${estado.totalHoy.toLocaleString("es-ES")} ataques hoy · ${estado.ataques.length} arcos vivos ahora · tensión ${Math.round(tension)}`,
+      },
+    ];
+    for (const o of estado.topObjetivos.slice(0, 3)) {
+      filas.push({
+        t: `OBJETIVO · ${o.nacion.nombre}`,
+        v: o.n.toLocaleString("es-ES"),
+        p: Math.round((o.n / maxTop) * 100),
+        color: "#FF6B4D",
+        d: `${o.nacion.bandera} está entre los países más atacados del mapa en vivo`,
+      });
+    }
+    for (const o of estado.topOrigenes.slice(0, 3)) {
+      filas.push({
+        t: `ORIGEN · ${o.nacion.nombre}`,
+        v: o.n.toLocaleString("es-ES"),
+        p: Math.round((o.n / maxTop) * 100),
+        color: "#B48CFF",
+        d: `${o.nacion.bandera} origina más intrusiones activas en este momento`,
+      });
+    }
+    for (const a of estado.ataques.slice(0, 3)) {
+      filas.push({
+        t: `${a.origen.bandera} → ${a.objetivo.bandera} ${a.tipo.nombre}`,
+        p: a.intensidad * 20,
+        color: a.tipo.color,
+        d: `${a.sector.emoji} ${a.sector.nombre} · intensidad ${a.intensidad}/5`,
+      });
+    }
+    return filas;
+  }, [estado, tension, maxTop]);
+  useSala3DContenido(
+    "ciber",
+    "CIBER — MAPA DE AMENAZAS EN VIVO",
+    "#3DDC97",
+    "La guerra que no hace ruido: intrusión por intrusión, nación a nación",
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

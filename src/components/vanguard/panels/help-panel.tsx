@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Newspaper, Map, Brain, Layers, Zap, Users, Bell, Flame, ChevronRight, ChevronDown, Lightbulb, Rocket, Award, Video, Castle, TrendingUp, Bomb, MessageCircle, Crosshair, Fingerprint, Satellite } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useT } from "@/lib/i18n";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface GuideSection {
   id: string;
@@ -297,6 +298,44 @@ const SECTIONS: GuideSection[] = [
 export function HelpPanel() {
   const [expandedId, setExpandedId] = useState<string | null>("getting-started");
   const { t } = useT();
+
+  // v168: PARIDAD 2D→3D — el manual completo en volumen: inicio rápido y secciones reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const colorSeccion = (c: string) =>
+      c === "red" ? "#FF4D5E" : c === "cyan" ? "#38BDF8" : c === "violet" ? "#A855F7" : c === "green" ? "#3DDC84" : "#F5C542";
+    const filas: FilaContenido3D[] = [
+      {
+        t: "INICIO RÁPIDO · 3 PASOS",
+        color: "#F5C542",
+        d: "1) Reclama tu bono de conexión diaria. 2) Visita el Briefing diario para el resumen global. 3) Completa misiones diarias para tus primeras monedas.",
+        a: "tutorial",
+      },
+      ...SECTIONS.slice(0, 11).map((s): FilaContenido3D => ({
+        t: s.title,
+        v: `${s.tips.length} TIPS`,
+        color: colorSeccion(s.color),
+        d: s.description,
+      })),
+    ];
+    return filas;
+  }, []);
+  useSala3DContenido(
+    "ayuda",
+    "CENTRO DE AYUDA",
+    "#F5C542",
+    `${SECTIONS.length} secciones de la guía completa · features, tips y atajos`,
+    filas3D,
+  );
+  // v168: "tutorial" desde el 3D lanza el mismo manual del comandante que el botón 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "ayuda" || d.accion !== "tutorial") return;
+      window.dispatchEvent(new CustomEvent("vanguard:open-tutorial"));
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   return (
     <div className="space-y-3">

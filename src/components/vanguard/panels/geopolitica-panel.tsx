@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 type RankRow = { iso3: string; name: string; value: number; year: string };
 type Quake = { mag: number; place: string; time: number; url: string; lat: number; lng: number; depth: number };
@@ -64,6 +65,71 @@ const METRIC_LABEL: Record<Metric, { t: string; sub: string; icon: React.ReactNo
   population: { t: "POBLACIÓN", sub: "habitantes · Banco Mundial", icon: <Users className="w-3.5 h-3.5" />, color: "#3DDC97" },
   gdp: { t: "POTENCIA ECONÓMICA", sub: "PIB en dólares · Banco Mundial", icon: <DollarSign className="w-3.5 h-3.5" />, color: "#FFD60A" },
 };
+
+// v168: PARIDAD 2D→3D — filas reales de GEOPOLÍTICA EN VIVO + registro paralelo
+// de acciones (mismo índice que filas3D) para el oyente de la sala de contenido.
+type RegistroGeo3D = { kind: string; iso?: string };
+function construirGeo3D(
+  data: GeoData | null, metric: Metric, rowsRank: RankRow[], maxValue: number,
+  countryMap: Map<string, CountryRow>, sourcesOk: number, sourcesTotal: number, loading: boolean,
+): { filas: FilaContenido3D[]; reg: RegistroGeo3D[] } {
+  const filas: FilaContenido3D[] = [];
+  const reg: RegistroGeo3D[] = [];
+  const emite = (f: FilaContenido3D, r: RegistroGeo3D = { kind: "" }) => { filas.push(f); reg.push(r); };
+  emite({
+    t: `FUENTES REALES: ${sourcesOk}/${sourcesTotal}`,
+    v: data ? `ACT. HACE ${agoTs(data.ts).toUpperCase()}` : loading ? "SINTONIZANDO…" : "SIN DATOS",
+    color: data ? "#38BDF8" : "#F5C542",
+    d: "Banco Mundial · USGS · Wikipedia · EEI — renovación automática cada 5 min",
+    a: "refrescar",
+  }, { kind: "refrescar" });
+  if (data?.iss) {
+    emite({
+      t: "EEI · ESTACIÓN ESPACIAL INTERNACIONAL",
+      v: `${Math.abs(data.iss.lat).toFixed(1)}°${data.iss.lat >= 0 ? "N" : "S"}`,
+      color: "#7AB8FF",
+      d: `sobre ${Math.abs(data.iss.lat).toFixed(1)}°${data.iss.lat >= 0 ? "N" : "S"} ${Math.abs(data.iss.lng).toFixed(1)}°${data.iss.lng >= 0 ? "E" : "O"} · ${fmt.format(data.iss.velocity)} km/h · ${fmt.format(data.iss.altitude)} km de altura`,
+    });
+  }
+  // ranking del métrico activo (mismo orden y barras que el panel 2D)
+  const meta = METRIC_LABEL[metric];
+  for (const r of rowsRank.slice(0, 5)) {
+    emite({
+      t: countryMap.get(r.iso3)?.name || r.name,
+      v: metric === "gdp" ? `$${fmt.format(r.value)}` : metric === "population" ? fmt.format(r.value) : `${r.value.toFixed(1)}%`,
+      p: Math.max(2, Math.round((r.value / (maxValue || 1)) * 100)),
+      color: meta.color,
+      d: `${meta.t.toLowerCase()} · año ${r.year} · pulsa para abrir su ficha geopolítica`,
+      a: "ficha",
+    }, { kind: "ficha", iso: r.iso3 });
+  }
+  // el planeta hoy: sismos M4.5+ de las últimas 24h (USGS)
+  for (const q of (data?.quakes ?? []).slice(0, 3)) {
+    emite({
+      t: q.place || "SIN LUGAR",
+      v: `M${q.mag.toFixed(1)}`,
+      color: q.mag >= 6.5 ? "#FF4D5E" : q.mag >= 5.5 ? "#F5C542" : "#7AB8FF",
+      d: `hace ${agoTs(q.time)} · profundidad ${q.depth.toFixed(0)} km · reporte USGS`,
+    });
+  }
+  // lo que el mundo mira (Wikipedia top 24h)
+  for (const t of (data?.trending ?? []).slice(0, 2)) {
+    emite({
+      t: t.title,
+      v: `${fmt.format(t.views)} vistas`,
+      color: "#7AB8FF",
+      d: "lo que el mundo mira en Wikipedia · últimas 24h",
+    });
+  }
+  // sin datos aún: las secciones reales del panel como filas de contexto
+  if (!data) {
+    emite({ t: "RANKINGS DE PODER", color: "#7AB8FF", d: "gasto militar %PIB · población · PIB — Banco Mundial (mrnev, último valor oficial)" });
+    emite({ t: "SISMOS M4.5+ · 24H", color: "#7AB8FF", d: "el planeta hoy según USGS — calma sísmica hasta que llegue la primera tanda" });
+    emite({ t: "DUELO VS + DESAFÍO GEO", color: "#7AB8FF", d: "¿quién gana? por población, PIB y gasto militar · quiz de geopolítica con récord local" });
+    emite({ t: "LO QUE EL MUNDO MIRA", color: "#7AB8FF", d: "los 10 temas que el planeta más consulta en Wikipedia (pageviews globales)" });
+  }
+  return { filas, reg };
+}
 
 export function GeopoliticaPanel() {
   const [data, setData] = useState<GeoData | null>(() => {
@@ -144,6 +210,33 @@ export function GeopoliticaPanel() {
 
   const sourcesOk = data ? Object.values(data.sources).filter(Boolean).length : 0;
   const sourcesTotal = data ? Math.max(1, Object.keys(data.sources).length) : 1;
+
+  // v168: PARIDAD 2D→3D — GEOPOLÍTICA emite sus filas reales a la sala de contenido
+  const geo3D = useMemo(
+    () => construirGeo3D(data, metric, rows, maxValue, countryMap, sourcesOk, sourcesTotal, loading),
+    [data, metric, rows, maxValue, countryMap, sourcesOk, sourcesTotal, loading],
+  );
+  const filas3D = useMemo<FilaContenido3D[]>(() => geo3D.filas, [geo3D]);
+  useSala3DContenido(
+    "geopolitica",
+    "GEOPOLÍTICA EN VIVO",
+    "#38BDF8",
+    data ? `${METRIC_LABEL[metric].t.toLowerCase()} · ${data.quakes.length} sismos M4.5+ en 24h · fuentes ${sourcesOk}/${sourcesTotal}` : "sintonizando el tablón del planeta — Banco Mundial · USGS · Wikipedia",
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — refrescar/ficha usan los handlers 2D reales
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "geopolitica") return;
+      const r = geo3D.reg[det.idx];
+      if (!r || r.kind !== det.accion) return;
+      if (r.kind === "refrescar") load();
+      else if (r.kind === "ficha" && r.iso) setFichaIso(r.iso);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [geo3D, load]);
 
   return (
     <div className="space-y-3">

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v168.0",
+    nombre: "LA PARIDAD TOTAL",
+    tipo: "mundo",
+    hitos: [
+      "LEY #25 CUMPLIDA — 98 paneles que vivían como estación informativa (letras + placas de datos) ahora emiten SU CONTENIDO REAL por el emisor v165: filas de cristal con título arriba, datos en filas, barra de volumen, imágenes texturizadas y ACCIONES REALES por raycast que ejecutan el MISMO handler que el botón 2D (comprar, invertir, votar, jugar, cobrar, reclamar, detonar, atacar…). 129 paneles emiten en total — el 3D alcanza al 2D",
+      "EL MAPA FUERA DE LA INTRO — la ceremonia ya no abre con el planeta de frente ni los teatros de guerra latiendo: la cámara nace en PANTALLA DE TÍTULO (logo dorado + estrellas, el planeta solo asoma como escenario) y el mundo real se enciende AL ENTRAR (encenderMundo: atmósfera + marcadores, paridad con el reencuentro); el cine sin WebGL pierde sus fases earth/conflict (8.3s → 6.8s)",
+      "CONTRATO DE ACCIONES BLINDADO — el string de la fila (a:) viaja VERBATIM al oyente del panel: convención minúsculas documentada; fix de paso en divisas (mandaba COMPRAR/VENDER en mayúsculas y el oyente nunca disparaba)",
+      "QA — npx tsc --noEmit = 0 en todo el repo; 129 emisores verificados; lint sin NINGÚN error nuevo (los 33 heredados de v167 no se tocan); guards de v167 (ciudadCerradaAlgunaVez + watchdog salaAnclaPendiente) intactos",
+    ],
+  },
+  {
     version: "v167.0",
     nombre: "EL ATERRIZAJE EDUCADO",
     tipo: "mundo",

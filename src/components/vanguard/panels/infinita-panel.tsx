@@ -22,6 +22,7 @@ import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { countryName } from "@/lib/world-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 interface Noticia {
   id: string;
@@ -178,6 +179,65 @@ export function InfinitaPanel() {
     const base = recientes.length >= 3 ? recientes : items.slice(0, 6);
     return base.slice(0, 8).map((n) => n.title);
   }, [items]);
+
+  // v168: PARIDAD 2D→3D — INFINITA VERDADES emite sus filas reales a la sala de contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "MURO INFINITO DE NOTICIAS",
+        v: `${filtradas.length} VERDADES`,
+        color: "#E8C56A",
+        d: `${items.length} cargadas del archivo · filtro: ${pais ? countryName(pais) : "mundo entero"}${q.trim() ? ` · búsqueda «${q.trim()}»` : ""} · auto-refresco cada 90s`,
+        a: hasMore && !cargando ? "cargar más" : undefined,
+      },
+    ];
+    for (const t of cinta.slice(0, 2)) {
+      filas.push({ t, color: "#FF4D5E", d: "última hora — cinta en vivo del centro de noticias" });
+    }
+    for (const qk of quakes) {
+      filas.push({
+        t: qk.place || "SIN LUGAR",
+        v: `M${qk.mag.toFixed(1)}`,
+        color: qk.mag >= 5.5 ? "#FF4D5E" : "#F5C542",
+        d: `el planeta tiembla · ${hace(new Date(qk.time).toISOString())} · profundidad ${qk.depth.toFixed(0)} km · USGS`,
+      });
+    }
+    for (const n of filtradas.slice(0, 5)) {
+      filas.push({
+        t: n.title,
+        v: n.source.toUpperCase().slice(0, 18),
+        img: n.imageUrl ?? undefined,
+        color: nuevosIds.has(n.id) ? "#F5C542" : "#7AB8FF",
+        d: `${n.tacticalTag ? `${n.tacticalTag} · ` : ""}${hace(n.publishedAt)}${n.summary ? ` — ${n.summary}` : ""}`.slice(0, 160),
+      });
+    }
+    // muro aún vacío: las secciones reales del panel como filas de contexto
+    if (items.length === 0) {
+      filas.push({ t: cargando ? "SINTONIZANDO EL MURO…" : "MURO EN ESPERA", color: "#F5C542", d: "primera página del archivo (/api/news) en camino — el muro nunca queda vacío mucho tiempo" });
+      filas.push({ t: "RELOJES DEL MANDO", color: "#7AB8FF", d: "hora exacta mundial: Washington · Bruselas · Moscú · Pekín · Jerusalén · Ciudad de México" });
+      filas.push({ t: "FILTROS POR BANDERA TÁCTICA", color: "#7AB8FF", d: "chips con bandera que filtran el muro al instante, más búsqueda por texto" });
+    }
+    return filas;
+  }, [filtradas, items.length, pais, q, hasMore, cargando, cinta, quakes, nuevosIds]);
+  useSala3DContenido(
+    "verdades",
+    "INFINITA VERDADES",
+    "#E8C56A",
+    `el mayor centro de noticias del mundo · ${filtradas.length} verdades en pantalla${pais ? ` · ${countryName(pais)}` : ""}`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — "cargar más" ejecuta la MISMA carga paginada
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "verdades" || det.accion !== "cargar más") return;
+      const np = page + 1;
+      setPage(np);
+      cargar(np);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [page, cargar]);
 
   return (
     <div className="space-y-4">

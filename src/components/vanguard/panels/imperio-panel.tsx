@@ -22,6 +22,7 @@ import {
   type Celda, type EstadoJuego, type TipoEdificio,
 } from "@/lib/imperio-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ---------- utilidades ----------
 
@@ -515,6 +516,141 @@ export function ImperioPanel() {
     }
     setSel(c.id);
   }
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el RTS sube en volumen. En FUNDAR emite las
+  // facciones reales y el récord; en JUEGO emite el HUD, los frentes vivos,
+  // el ranking y las investigaciones disponibles. Los frentes CONTRAATACAN,
+  // se recluta y se investiga por los MISMOS handlers del 2D.
+  // (los hooks viven aquí arriba: el return temprano de la pantalla de
+  // fundación está más abajo y nunca puede tapar un hook)
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (fase !== "juego" || !e || !jugador) {
+      const filas: FilaContenido3D[] = FACciones.map((f) => ({
+        t: f.nombre.toUpperCase(),
+        v: faccion === f.id ? "ELEGIDA" : `0${FACciones.indexOf(f) + 1}`,
+        color: faccion === f.id ? "#F5C542" : "#7AB8FF",
+        d: `«${f.lema}» · bono: ${f.bono} — la facción define cómo ganarás`,
+        a: "fundar imperio",
+      }));
+      filas.push({
+        t: "TU RÉCORD",
+        v: `${record.victorias}V / ${record.partidas}P`,
+        color: "#4DFFC4",
+        d: `mejor dominio: ${Math.round(record.mejor * 100)}% · tres maneras de ganar: último en pie, 75% del terreno o mayor territorio al apagarse el reloj`,
+      });
+      return filas;
+    }
+    const tierra = tierraTotal(e);
+    const cuota = porcentajeMundo(e, jugador.id);
+    const capR = capReserva(e, jugador);
+    const capV = capVivienda(e, jugador);
+    const frentes = e.frentes.filter((f) => f.atacante === jugador.id).slice(0, 3);
+    const filas: FilaContenido3D[] = [
+      {
+        t: `TU IMPERIO · ${FACciones[jugador.faccion].nombre.toUpperCase()}`,
+        v: `${(cuota * 100).toFixed(1)}%`,
+        p: Math.min(100, cuota * 100),
+        color: cuota >= META_DOMINIO ? "#3DDC84" : "#F5C542",
+        d: `oro ${Math.floor(jugador.oro)} · ciencia ${Math.floor(jugador.ciencia)} · civiles ${Math.floor(jugador.civiles)}/${capV} · reserva ${Math.floor(jugador.reserva)}/${capR} · reloj ${mmss(e.reloj)} · ${tierra} celdas de tierra`,
+        a: "reclutar",
+      },
+    ];
+    for (const f of frentes) {
+      const c = e.celdas[f.objetivo];
+      filas.push({
+        t: `FRENTE → (${c?.col},${c?.row})${f.naval ? " · NAVAL" : ""}`,
+        v: `${Math.ceil(f.tropas)} TROPAS`,
+        color: "#FF4D5E",
+        d: `orden actual: ${f.modo === "avanzar" ? "AVANZANDO" : "ASEDIO"} · contraatacar vuelca reservas frescas al asalto`,
+        a: "contraatacar",
+      });
+    }
+    const ranking = [...e.imperios].sort((a, b) => porcentajeMundo(e, b.id) - porcentajeMundo(e, a.id)).slice(0, 6);
+    // v168: las investigaciones ANTES del ranking — así quedan dentro de las 9
+    // filas que la sala 3D muestra tocables (MAX 9 en salas-3d.ts)
+    const disponibles = INVESTIGACIONES.filter(
+      (inv) => !jugador.completadas.includes(inv.id) && jugador.investigacion?.id !== inv.id && !jugador.investigacion && jugador.ciencia >= inv.costo,
+    ).slice(0, 2);
+    for (const inv of disponibles) {
+      filas.push({
+        t: inv.nombre.toUpperCase(),
+        v: `${inv.costo} C.`,
+        color: "#B18CFF",
+        d: `${inv.desc} · ${inv.segundos}s de investigación`,
+        a: "investigar",
+      });
+    }
+    for (const imp of ranking) {
+      const pctImp = porcentajeMundo(e, imp.id);
+      const tropas = imp.reserva + e.celdas.filter((c) => c.dueño === imp.id).reduce((a, c) => a + Math.max(0, c.guarnicion), 0);
+      filas.push({
+        t: imp.esJugador ? "TU IMPERIO" : imp.nombre,
+        v: `${(pctImp * 100).toFixed(1)}%`,
+        color: imp.color,
+        d: `${Math.round(tropas)} tropas${!imp.viva ? " · CAÍDO" : ""}${imp.esJugador ? " · tu trono" : ""}`,
+      });
+    }
+    return filas;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fase, ver, faccion, record]);
+  useSala3DContenido(
+    "imperio",
+    "IMPERIO · AUGE Y CAÍDA",
+    "#E8C56A",
+    fase === "juego" && e && jugador
+      ? `${tierraTotal(e)} celdas de tierra · 8 imperios · dominio ${(porcentajeMundo(e, jugador.id) * 100).toFixed(1)}% · reloj ${mmss(e.reloj)}`
+      : "funda un imperio sobre el continente — el trono no se hereda: se toma",
+    filas3D,
+  );
+
+  // v168: el 3D da órdenes del RTS por los MISMOS handlers del mapa 2D
+  useEffect(() => {
+    const onAccion = (ev: Event) => {
+      const d = (ev as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "imperio") return;
+      const st = juegoRef.current;
+      const jug = st?.imperios.find((i) => i.esJugador) ?? null;
+      if (!st || !jug) {
+        // pantalla de fundación: fundar con la facción elegida
+        if (d.accion === "fundar imperio") fundar();
+        return;
+      }
+      if (d.accion === "reclutar") {
+        const err = reclutar(st, jug);
+        if (err) mostrarError(err);
+        setVer((v) => v + 1);
+        return;
+      }
+      if (d.accion === "contraatacar") {
+        // offset: la fila 0 es TU IMPERIO; los frentes van delante del ranking
+        const frentes = st.frentes.filter((f) => f.atacante === jug.id).slice(0, 3);
+        const f = frentes[d.idx - 1];
+        if (f) {
+          const err = cambiarModoFrente(st, jug, f.id, "contraatacar");
+          if (err) mostrarError(err);
+          setVer((v) => v + 1);
+        }
+        return;
+      }
+      if (d.accion === "investigar") {
+        // offset: TU IMPERIO + frentes delante; el ranking (sin acción) va DESPUÉS
+        const frentesN = Math.min(3, st.frentes.filter((f) => f.atacante === jug.id).length);
+        const disponibles = INVESTIGACIONES.filter(
+          (inv) => !jug.completadas.includes(inv.id) && jug.investigacion?.id !== inv.id && !jug.investigacion && jug.ciencia >= inv.costo,
+        ).slice(0, 2);
+        const inv = disponibles[d.idx - 1 - frentesN];
+        if (inv) {
+          const err = lanzarInvestigacion(st, jug, inv.id);
+          if (err) mostrarError(err);
+          setVer((v) => v + 1);
+        }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [fase, faccion]);
 
   // ---------- pantallas ----------
 

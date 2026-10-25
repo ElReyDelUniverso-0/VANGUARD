@@ -8,7 +8,7 @@
 // arrastre en escritorio; captura compuesta descargable; modo DEMO si no
 // hay cámara. Todo transform/opacity a 60 fps.
 // ============================================================
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { CONFLICTS, type ConflictRegion } from "@/lib/game-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type EstadoCam = "apagada" | "pidiendo" | "activa" | "denegada" | "indisponible";
 
@@ -191,6 +192,73 @@ export function ModoArPanel() {
       toast.error("El navegador bloqueó la captura");
     }
   };
+
+  // v168: PARIDAD 2D→3D — el visor AR sube en volumen: cámara, armas del visor
+  // y los marcadores flotantes reales; todo ejecuta los mismos handlers 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "CAPA: CONFLICTOS EN VIVO",
+        v: estadoCam === "activa" ? "CÁMARA ACTIVA" : "MODO DEMO",
+        color: estadoCam === "activa" ? "#3DDC84" : "#F5C542",
+        d: "levanta la cámara y los conflictos del planeta aparecen flotando en tu calle · la imagen nunca sale de tu dispositivo",
+        a: estadoCam === "activa" ? "apagar camara" : estadoCam === "pidiendo" ? undefined : "abrir camara",
+      },
+      {
+        t: "ESCANEAR ZONA",
+        v: escaneando ? "…" : "RADAR",
+        color: "#38BDF8",
+        d: "barrido del visor: la retícula rastrea los marcadores del área",
+        a: escaneando ? undefined : "escanear zona",
+      },
+      {
+        t: "CAPTURAR AR",
+        v: "PNG",
+        color: "#E8C56A",
+        d: "compone tu mundo + la capa de conflicto en una imagen descargable",
+        a: "capturar ar",
+      },
+    ];
+    for (const f of flotantes) {
+      filas.push({
+        t: `${f.c.flag} ${f.c.name}`,
+        v: `INT ${f.c.intensity}%`,
+        p: f.c.intensity,
+        color: f.c.level === "CRITICO" ? "#FF4D5E" : f.c.level === "TENSION" ? "#F5C542" : "#7AB8FF",
+        d: `${f.c.summary} · ${f.c.country} · desde ${f.c.since} · ${f.c.casualties}`,
+        a: "fichar marcador",
+      });
+    }
+    return filas;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estadoCam, escaneando, filtro, yaw, pitch]);
+  useSala3DContenido(
+    "armodo",
+    "MODO AR · CONFLICTOS EN TU MUNDO",
+    "#38BDF8",
+    `${lista.length} marcadores flotando · ${giroDisponible ? "giroscopio conectado" : "arrastra para mirar"} · ${estadoCam === "activa" ? "AR real" : "modo demo"}`,
+    filas3D,
+  );
+
+  // v168: el 3D maneja la cámara, el radar y los marcadores con los MISMOS
+  // handlers que los botones y burbujas del visor 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "armodo") return;
+      if (d.accion === "abrir camara") { void encenderCamara(); return; }
+      if (d.accion === "apagar camara") { apagarCamara(); return; }
+      if (d.accion === "escanear zona") { escanear(); return; }
+      if (d.accion === "capturar ar") { capturar(); return; }
+      if (d.accion === "fichar marcador") {
+        // offset: 3 filas fijas (capa, escaneo, captura) delante de los marcadores
+        const f = flotantes[d.idx - 3];
+        if (f) setConflictoActivo(f.c.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [estadoCam, escaneando, filtro, yaw, pitch, encenderCamara, apagarCamara]);
 
   return (
     <div className="space-y-3">

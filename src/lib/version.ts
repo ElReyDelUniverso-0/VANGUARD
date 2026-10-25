@@ -229,6 +229,26 @@
 //     / 358px móvil; habitaciones por tiempo (8s sintéticos → 1/3) y por
 //     movimiento (5.3m reales → 3/3); consola 0 errores.
 // Herencia v166 LA CASA HABITADA y todo lo anterior.
-export const APP_VERSION = "v167.0";
-export const APP_CODENAME = "EL ATERRIZAJE EDUCADO";
+// v168.0: LA PARIDAD TOTAL — la ley #25 se cumple: el 2D es la verdad y
+//         el 3D la alcanza. Dos mandatos del Dueño en una ronda:
+// (1) PARIDAD 2D→3D DE LAS SALAS GENÉRICAS: 98 paneles que vivían como
+//     estación informativa (letras + placas) ahora EMITEN SU CONTENIDO
+//     REAL por el emisor v165 (use-sala3d-contenido): filas de cristal
+//     con título arriba, datos en filas, barra de volumen y ACCIONES
+//     REALES por raycast (comprar/invertir/votar/jugar/cobrar/reclamar…
+//     — el mismo handler que el botón 2D). 129 paneles emiten en total;
+//     el mundo asciende la sala genérica→contenido al vuelo. Fix de
+//     paso: divisas mandaba la acción en MAYÚSCULAS y el oyente esperaba
+//     minúsculas — contrato verbatim documentado.
+// (2) EL MAPA FUERA DE LA INTRO («elimina el mapa de la intro»): la
+//     ceremonia ya NO abre con el planeta de frente ni los marcadores de
+//     guerra latiendo. Cámara nace en PANTALLA DE TÍTULO (logo dorado +
+//     estrellas, planeta solo asoma abajo como escenario); fases
+//     «globo»/«marcadores» eliminadas (mundo-webgl) y «earth»/«conflict»
+//     eliminadas del cine sin WebGL (intro-cinematica, 8.3s→6.8s). El
+//     mundo real (atmósfera + teatros) se enciende AL ENTRAR
+//     (encenderMundo) — paridad exacta con el reencuentro.
+// Herencia v167 EL ATERRIZAJE EDUCADO (triple guard intacto) y todo lo anterior.
+export const APP_VERSION = "v168.0";
+export const APP_CODENAME = "LA PARIDAD TOTAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

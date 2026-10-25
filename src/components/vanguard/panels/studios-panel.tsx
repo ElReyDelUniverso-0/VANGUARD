@@ -7,7 +7,7 @@
 // posts de comunidad. Todo pasa por el AGENTE MODERADOR IA y todo es
 // comentable. Lo inapropiado se elimina solo, con motivo.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Newspaper, Flag as FlagIcon, Map as MapIcon, Music4, Sticker, MessagesSquare,
@@ -25,6 +25,7 @@ import {
   MapRender, type MapDesign, type MapItem, MAP_COLORS, MAP_ICONS,
   type UgcItem, type UgcPhoto,
 } from "@/components/vanguard/creador-parts";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import {
   STUDIO_GENRES, emptyPattern, playPreview, stopPreview, renderToWav, type StudioPattern,
 } from "@/lib/music-studio";
@@ -242,6 +243,21 @@ const NEWS_CATS = ["CONFLICTO", "POLÍTICA", "ECONOMÍA", "SOCIEDAD", "TECNOLOG�
 function NoticiasStudio() {
   const alias = useGameStore((s) => s.alias);
   const feed = useUgcFeed("noticia");
+
+  // v168: PARIDAD 2D→3D — el estudio ACTIVO emite su feed real a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "CANAL COMUNITARIO · NOTICIAS", v: `${feed.items.length} PUBLICACIONES`, color: "#F5C542", d: "Lo que la comunidad sube lo modera el agente IA al instante" },
+      { t: "PUBLICAR NOTICIA (+30 MONEDAS)", color: "#7AB8FF", d: "Titular + categoría + país + mínimo 80 caracteres + tus propias fotos" },
+      { t: "CATEGORÍAS DEL ESTUDIO", v: String(NEWS_CATS.length), color: "#7AB8FF", d: NEWS_CATS.join(" · ") },
+    ];
+    for (const it of feed.items.slice(0, 9)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}${it.summary ? ` · ${it.summary.slice(0, 130)}` : ""}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO NOTICIAS…" : "AÚN NO HAY NOTICIAS — SÉ EL PRIMER CORRESPONSAL", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Estudio de Noticias: escribe TU noticia del mundo con tus propias fotos", filas3D);
   const [title, setTitle] = useState("");
   const [cat, setCat] = useState("CONFLICTO");
   const [country, setCountry] = useState("");
@@ -345,6 +361,20 @@ function NoticiasStudio() {
 function BanderasStudio() {
   const alias = useGameStore((s) => s.alias);
   const feed = useUgcFeed("bandera");
+
+  // v168: PARIDAD 2D→3D — la galería de banderas real sube a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "GALERÍA DE BANDERAS", v: `${feed.items.length} DISEÑOS`, color: "#F5C542", d: "Cada bandera se guarda como diseño vivo — cualquiera la ve renderizada igual" },
+      { t: "DISEÑAR TU BANDERA", color: "#3DDC84", d: `Franjas (${FLAG_PALETTE.length} colores), disco, símbolo y lema de tu nación o facción` },
+    ];
+    for (const it of feed.items.slice(0, 9)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}${it.country ? ` · ${it.country.toUpperCase()}` : ""}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO BANDERAS…" : "NADIE HA IZADO UNA BANDERA — DISEÑA LA PRIMERA", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Diseña la bandera de tu nación y publícala a la galería mundial", filas3D);
   const [design, setDesign] = useState<FlagDesign>(defaultFlagDesign());
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
@@ -485,6 +515,21 @@ function MapasStudio() {
   const [busy, setBusy] = useState(false);
 
   const activeTool = MAP_TOOLS.find((t) => t.id === tool)!;
+
+  // v168: PARIDAD 2D→3D — el editor y los mapas de la comunidad suben a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "MAPAS DE LA COMUNIDAD", v: `${feed.items.length} MAPAS`, color: "#F5C542", d: "Análisis tácticos re-renderizados en vivo desde el diseño de cada autor" },
+      { t: "TU BORRADOR EN EL EDITOR", v: `${items.length} ELEMENTOS`, color: "#7AB8FF", d: `Herramienta activa: ${activeTool.label} — ${activeTool.hint}` },
+      { t: "PUBLICAR MAPA (+30 MONEDAS)", color: "#3DDC84", d: "Flechas de avance, marcadores de batalla, zonas de control y etiquetas" },
+    ];
+    for (const it of feed.items.slice(0, 8)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}${it.summary ? ` · ${it.summary.slice(0, 120)}` : ""}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO MAPAS…" : "AÚN NO HAY MAPAS — DIBUJA EL PRIMERO", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading, items.length, activeTool]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Dibuja flechas, marcadores y zonas sobre el mapa del mundo", filas3D);
 
   const onMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -643,6 +688,20 @@ function MusicaStudio() {
   // v115.0 SINGULARIDAD: las OBRAS DEL ARQUITECTO suenan aquí — el agente
   // autónomo compone en su bucle y sus partituras son jugables con un toque
   const obrasArq = useArquitecto((s) => s.obras);
+
+  // v168: PARIDAD 2D→3D — el estudio de música activo emite su feed real
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "MÚSICA DE LOS JUGADORES", v: `${feed.items.length} PISTAS`, color: "#F5C542", d: "Compuesta dentro de la página y renderizada a WAV real en el navegador" },
+      { t: "TU SECUENCIA EN EL EDITOR", v: `${pat.bpm} BPM · ${STUDIO_GENRES.length} GÉNEROS`, color: "#7AB8FF", d: `Voz melodía ${pat.voz ?? "sierra"} · 16 pasos × 5 pistas${obrasArq.length ? ` · ${obrasArq.length} obras del Arquitecto jugables` : ""}` },
+    ];
+    for (const it of feed.items.slice(0, 9)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}${it.summary ? ` · ${it.summary.slice(0, 120)}` : ""}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO PISTAS…" : "AÚN NO HAY COMPOSICIONES — ARMA LA PRIMERA MARCHA", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading, pat.bpm, pat.voz, obrasArq.length]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Compón música de conflicto con las voces V4 de la casa y publícala", filas3D);
 
   const set = (patch: Partial<StudioPattern>) => setPat((p) => ({ ...p, ...patch }));
   const toggleDrum = (row: "kick" | "snare" | "hat", i: number) =>
@@ -854,6 +913,20 @@ function MusicaStudio() {
 function StickersStudio() {
   const alias = useGameStore((s) => s.alias);
   const feed = useUgcFeed("sticker");
+
+  // v168: PARIDAD 2D→3D — el paquete de stickers real sube a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "PAQUETE COMUNITARIO DE STICKERS", v: `${feed.items.length} STICKERS`, color: "#F5C542", d: "Se muestran en la galería social y el agente IA filtra lo inapropiado" },
+      { t: "SUBIR STICKERS", color: "#3DDC84", d: "Countryballs, caritas y placas — las imágenes se comprimen solas" },
+    ];
+    for (const it of feed.items.slice(0, 9)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO STICKERS…" : "EL PAQUETE ESTÁ VACÍO — SUBE EL PRIMERO", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Stickers geopolíticos de la comunidad · el agente IA filtra al instante", filas3D);
   const [title, setTitle] = useState("");
   const [photos, setPhotos] = useState<UgcPhoto[]>([]);
   const [busy, setBusy] = useState(false);
@@ -921,6 +994,20 @@ function StickersStudio() {
 function ComunidadStudio() {
   const alias = useGameStore((s) => s.alias);
   const feed = useUgcFeed("post");
+
+  // v168: PARIDAD 2D→3D — el muro real de la comunidad sube a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "MURO DE LA COMUNIDAD", v: `${feed.items.length} POSTS`, color: "#F5C542", d: "AGENTE IA ACTIVO 24/7: cada post y foto pasa por el moderador" },
+      { t: "PUBLICAR POST (+30 MONEDAS)", color: "#3DDC84", d: "Di lo que ves en el mundo con fotos y videos de tu entorno" },
+    ];
+    for (const it of feed.items.slice(0, 9)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}${it.summary ? ` · ${it.summary.slice(0, 130)}` : ""}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO MURO…" : "EL MURO ESTÁ LIMPIO — PUBLICA EL PRIMER POST", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Publica en la comunidad: lo que los jugadores ven lo pueden subir", filas3D);
   const [text, setText] = useState("");
   const [photos, setPhotos] = useState<UgcPhoto[]>([]);
   const [sensitive, setSensitive] = useState(false);
@@ -1037,6 +1124,21 @@ function PrensaStudio() {
     try { return JSON.stringify({ logo, accent, articles }).length; } catch { return 0; }
   })();
   const articlesOk = articles.filter((a) => a.t.trim().length >= 4 && a.b.trim().length >= 40);
+
+  // v168: PARIDAD 2D→3D — el kiosco de periódicos real sube a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "KIOSCO DE PERIÓDICOS", v: `${feed.items.length} CABECERAS`, color: "#F5C542", d: "Periódicos fundados por operadores — la comunidad los lee, comenta y puntúa" },
+      { t: "FUNDAR TU PERIÓDICO", color: "#3DDC84", d: "Nombre, lema, logotipo, acento de marca y artículos con tono periodístico" },
+      { t: "TU REDACCIÓN", v: `${articlesOk.length} ARTÍCULOS`, color: "#7AB8FF", d: name.trim() ? `${name.trim().toUpperCase()}${motto ? ` · «${motto}»` : ""}` : "Sin cabecera en borrador — escribe nombre y lema" },
+    ];
+    for (const it of feed.items.slice(0, 8)) {
+      filas.push({ t: it.title.slice(0, 80), v: `♥ ${it.likes}`, color: "#7AB8FF", d: `por ${it.author}${it.summary ? ` · ${it.summary.slice(0, 120)}` : ""}` });
+    }
+    if (feed.items.length === 0) filas.push({ t: feed.loading ? "CARGANDO KIOSCO…" : "KIOSCO VACÍO — FUNDA EL PRIMER PERIÓDICO", color: "#F5C542" });
+    return filas;
+  }, [feed.items, feed.loading, articlesOk.length, name, motto]);
+  useSala3DContenido("studios", "ESTUDIOS CREADORES", "#A855F7", "Prensa libre: funda tu propio periódico dentro de Vanguard", filas3D);
   const canPost = name.trim().length >= 3 && motto.trim().length >= 4 && articlesOk.length >= 1 && jsonLen <= PAPER_JSON_MAX && !busy;
 
   const setArticle = (i: number, patch: Partial<PaperArticle>) =>

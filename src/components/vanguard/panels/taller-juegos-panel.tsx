@@ -9,7 +9,7 @@
 //  · JUGAR — galería del arcade comunitario: juegos del Taller con runtime
 //    nativo animado + juegos HTML legacy en sandbox.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
@@ -22,6 +22,7 @@ import {
 import { MOTORES, validarJuego, type MotorJuego, type JuegoDef, type PreguntaQuiz } from "@/lib/juegos";
 import { GameRuntime } from "@/components/vanguard/game-runtime";
 import { Countryball } from "@/components/vanguard/countryball";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type Modo = "jugar" | "crear";
 interface JuegoItem {
@@ -199,6 +200,110 @@ export function TallerJuegosPanel() {
 
   const juegosTaller = items.filter((it) => defDe(it) !== null);
   const juegosLegacy = items.filter((it) => defDe(it) === null && (it.gameHtml || it.gameUrl));
+
+  // v168: PARIDAD 2D→3D — el modo activo del taller manda: ARCADE emite los
+  // juegos reales (jugar de verdad), CREAR emite los motores y el botón publicar
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (jugando) {
+      return [
+        {
+          t: `JUGANDO · ${jugando.title}`,
+          v: "EN CURSO",
+          color: "#F5C542",
+          d: `por @${jugando.author} · el runtime corre dentro de Vanguard`,
+          a: "volver al arcade",
+        },
+        { t: jugando.summary || "Juego de la Ciudadela", color: "#7AB8FF", d: `firmado por @${jugando.author}` },
+        {
+          t: "ESTADÍSTICAS DEL JUEGO",
+          v: `${jugando.plays} JUGADAS`,
+          color: "#3DDC84",
+          d: `♥ ${jugando.likes} likes${jugando.ratingCount > 0 ? ` · ★ ${(jugando.ratingSum / jugando.ratingCount).toFixed(1)}` : ""} · ${jugando.plays} jugadas registradas`,
+        },
+        { t: "ARCADE DE LA CIUDADELA", v: "VOLVER", color: "#E8C56A", d: "al salir vuelves a la galería completa de la comunidad", a: "volver al arcade" },
+      ];
+    }
+    if (modo === "crear") {
+      const filas: FilaContenido3D[] = MOTORES.map((m) => ({
+        t: m.nombre.toUpperCase(),
+        v: `${m.min}–${m.max} EL`,
+        color: motor === m.id ? "#F5C542" : "#E8C56A",
+        d: m.desc,
+        a: motor ? undefined : "elegir motor",
+      }));
+      filas.push({
+        t: "PUBLICAR EN EL ARCADE",
+        v: "+50 MON",
+        color: "#3DDC84",
+        d: account
+          ? `se publicará firmado por @${account.username} · el agente moderador IA lo revisa · +25 XP`
+          : "publicar exige PASAPORTE (cuenta gratis de la Ciudadela) · mientras tanto puedes JUGAR todo",
+        a: motor && preview ? "publicar juego" : undefined,
+      });
+      return filas;
+    }
+    const filas: FilaContenido3D[] = [
+      {
+        t: "ARCADE DE LA CIUDADELA",
+        v: `${items.length} JUEGOS`,
+        color: "#E8C56A",
+        d: `orden: ${ordenar === "recent" ? "nuevos" : ordenar === "plays" ? "más jugados" : "top likes"} · juegos del taller + legacy del estudio clásico`,
+      },
+    ];
+    // estado vacío real: el mismo mensaje y el mismo botón que pinta el 2D
+    if (juegosTaller.length === 0 && juegosLegacy.length === 0) {
+      filas.push({
+        t: "EL ARCADE ESTÁ VACÍO",
+        v: "SÉ EL PRIMERO",
+        color: "#F5C542",
+        d: "nadie ha publicado un juego todavía — abre el taller y crea el primero sin código",
+        a: "crear juego",
+      });
+      return filas;
+    }
+    for (const it of [...juegosTaller, ...juegosLegacy].slice(0, 10)) {
+      const def = defDe(it);
+      filas.push({
+        t: it.title,
+        v: `${it.plays} JUGADAS`,
+        color: def ? "#F5C542" : "#7AB8FF",
+        d: def
+          ? `${MOTORES.find((m) => m.id === def.engine)?.nombre ?? def.engine} · por @${it.author} · ♥ ${it.likes}${it.ratingCount > 0 ? ` · ★ ${(it.ratingSum / it.ratingCount).toFixed(1)}` : ""}`
+          : `ESTUDIO CLÁSICO · por @${it.author}`,
+        a: "jugar",
+      });
+    }
+    return filas;
+  }, [modo, jugando, items, juegosTaller, juegosLegacy, ordenar, motor, preview, account]);
+  useSala3DContenido(
+    "taller",
+    "TALLER DE JUEGOS",
+    "#E8C56A",
+    modo === "crear"
+      ? `crea juegos SIN código con ${MOTORES.length} motores y publícalos en el arcade${motor && preview ? " · listo para publicar" : ""}`
+      : `${items.length} juegos en el arcade de la Ciudadela${jugando ? ` · jugando: ${jugando.title}` : ""}`,
+    filas3D,
+  );
+
+  // v168: el 3D juega, elige motor y publica por los MISMOS handlers del 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "taller") return;
+      if (d.accion === "jugar") {
+        // offset: la fila 0 es la cabecera del arcade
+        const it = [...juegosTaller, ...juegosLegacy].slice(0, 10)[d.idx - 1];
+        if (it) setJugando(it);
+        return;
+      }
+      if (d.accion === "elegir motor") { const m = MOTORES[d.idx]; if (m) setMotor(m.id); return; }
+      if (d.accion === "publicar juego") { void publicar(); return; }
+      if (d.accion === "volver al arcade") setJugando(null);
+      if (d.accion === "crear juego") setModo("crear");
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [modo, jugando, juegosTaller, juegosLegacy, motor, preview, account, publicar]);
 
   return (
     <div className="space-y-4 v101-panel">

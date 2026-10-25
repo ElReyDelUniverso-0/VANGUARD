@@ -24,6 +24,7 @@ import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { APP_VERSION_LABEL } from "@/lib/version";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { PortadaMundo, VitrinaSala } from "@/components/vanguard/portadas";
 
 // Atajos de cortesía para el operador recién llegado (el mundo de Vanguard en 8)
@@ -92,6 +93,59 @@ export function NuevaPanel() {
     const pool = sinVer.length > 0 ? sinVer : ALL_TABS;
     irA(pool[Math.floor(Math.random() * pool.length)]);
   };
+
+  // v168: PARIDAD 2D→3D — la página de inicio en volumen: recientes, mundos e índice reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `${TOTAL_TABS} PESTAÑAS · ${visited.length} DESCUBIERTAS`,
+        color: "#F5C542",
+        d: saludo,
+      },
+      ...descubiertos.slice(0, 3).map((k): FilaContenido3D => {
+        const def = TABS[k];
+        return {
+          t: tabLabel(lang, k, def.label).split(" (")[0],
+          v: "RECIENTE",
+          color: accentOfSection(sectionOfTab(k).key),
+          d: `${sectionOfTab(k).label} · ${TAB_SHORTS[lang]?.[k] ?? def.short}`,
+          a: "ir",
+        };
+      }),
+      ...SECTIONS.slice(0, 8).map((s): FilaContenido3D => ({
+        t: t(`sec.${s.key}`),
+        v: `${s.tabs.length} PESTAÑAS`,
+        color: accentOfSection(s.key),
+        d: s.desc,
+        a: "ir",
+      })),
+    ];
+    return filas;
+  }, [descubiertos, visited.length, lang, t, saludo]);
+  useSala3DContenido(
+    "nueva",
+    t("nueva.titulo").toUpperCase(),
+    "#F5C542",
+    `${TOTAL_TABS} pestañas por descubrir · ${visited.length} visitadas`,
+    filas3D,
+  );
+  // v168: "ir" desde el 3D navega a la misma pestaña/mundo que el botón 2D
+  // (offset 4: la fila del reloj + 3 recientes ocupan 0-3, los mundos empiezan en idx 4)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "nueva" || d.accion !== "ir") return;
+      if (d.idx >= 4) {
+        const s = SECTIONS[d.idx - 4];
+        if (s) irA(s.tabs[0].key);
+      } else {
+        const k = descubiertos[d.idx - 1];
+        if (k) irA(k);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [descubiertos]);
 
   return (
     <section className="space-y-5" aria-label={t("nueva.titulo")}>

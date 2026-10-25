@@ -4,7 +4,7 @@
 // 🛰️ ISS (wheretheiss.at) · ✈️ OpenSky Network · 🚀 Spaceflight News API
 // Datos reales de satélites, aviones sobre zonas calientes y señales espaciales.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { toast } from "sonner";
 import { Satellite, Plane as PlaneIcon, Rocket, RefreshCw, Radar, ScanLine, Radio } from "lucide-react";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface IssState {
   lat: number; lon: number; altKm: number; velKmh: number;
@@ -78,6 +79,72 @@ export function PulsoPanel() {
   };
 
   const iss = data?.iss ?? null;
+
+  // v168: PARIDAD 2D→3D — la sala PULSO emite el intel real del panel:
+  // satélite ISS, radar aéreo por zonas y señales espaciales recientes.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "RADAR PULSO MUNDIAL",
+        v: data ? "EN VIVO" : "CONECTANDO",
+        color: data ? "#38BDF8" : "#7AB8FF",
+        d: "fuentes públicas reales: wheretheiss.at · adsb.lol · spaceflightnewsapi.net",
+        a: "escanear ahora",
+      },
+    ];
+    if (iss) {
+      filas.push({
+        t: "ISS · POSICIÓN ORBITAL",
+        v: `${iss.lat > 0 ? "+" : ""}${iss.lat.toFixed(1)}° / ${iss.lon > 0 ? "+" : ""}${iss.lon.toFixed(1)}°`,
+        color: "#38BDF8",
+        d: `altitud ${iss.altKm} km · velocidad ${iss.velKmh.toLocaleString("es")} km/h · ${iss.visibility === "daylight" ? "DÍA" : iss.visibility === "eclipsed" ? "NOCHE" : "VISIBLE"}`,
+      });
+      filas.push({
+        t: "ISS · HUELLA SOBRE EL TERRENO",
+        v: `${iss.footprintKm.toLocaleString("es")} KM`,
+        p: Math.min(100, Math.round((iss.altKm / 450) * 100)),
+        color: "#7AB8FF",
+        d: "el satélite pasa ahora mismo sobre las zonas que el mapa vigila",
+      });
+    } else {
+      filas.push({ t: "SATÉLITE SIN CONTACTO", color: "#F5C542", d: "reintenta con el escaneo del radar" });
+    }
+    for (const z of (data?.zones ?? []).slice(0, 3)) {
+      filas.push({
+        t: `RADAR AÉREO · ${z.label}`,
+        v: `${z.total} AERONAVES`,
+        p: Math.min(100, z.total),
+        color: z.planes.some((p) => p.mil) ? "#F5C542" : "#7AB8FF",
+        d: `${z.planes.filter((p) => p.mil).length} aeronaves militares detectadas sobre la zona`,
+      });
+    }
+    for (const n of (data?.news ?? []).slice(0, 3)) {
+      filas.push({
+        t: n.title,
+        v: n.site,
+        color: "#7AB8FF",
+        d: `señal espacial publicada ${n.published}`,
+      });
+    }
+    return filas;
+  }, [data, iss]);
+  // v168: el raycast 3D ejecuta el MISMO escaneo recompensado que el botón 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "pulso" || det.accion !== "escanear ahora") return;
+      void scan();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [scan]);
+  useSala3DContenido(
+    "pulso",
+    "PULSO MUNDIAL",
+    "#38BDF8",
+    "Satélite espía, radar aéreo y señales espaciales — datos reales en vivo",
+    filas3D,
+  );
 
   return (
     <div className="flex flex-col gap-3">

@@ -19,6 +19,7 @@ import { Countryball } from "@/components/vanguard/countryball";
 import { SensitiveMedia, UgcComments, parseJSON, type UgcItem } from "@/components/vanguard/creador-parts";
 import { NEWS_CHANNELS } from "@/lib/rewards";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface UgcPhoto { src: string; credit?: string }
 
@@ -176,6 +177,76 @@ export function ForYouPanel() {
       toast("Enlace copiado — comparte VANGUARD con el mundo");
     } catch { /* cancelado */ }
   };
+
+  // v168: PARIDAD 2D→3D — el feed de la comunidad sube en volumen: la diapositiva
+  // EN VIVO y las publicaciones reales, con like por el MISMO toggleLike del 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "EN VIVO AHORA — EL MUNDO",
+        v: "LIVE",
+        color: "#FF4D5E",
+        d: `canales oficiales transmitiendo 24/7 · ${NEWS_CHANNELS.slice(0, 3).map((ch) => ch.name).join(" · ")}`,
+        a: "ir a en vivo",
+      },
+    ];
+    // estados reales del feed: cargando y vacío (los mismos mensajes del 2D)
+    if (loading) {
+      filas.push(
+        { t: "CARGANDO EL FEED DE LA COMUNIDAD…", color: "#7AB8FF", d: "videos, música, stickers y posts se mezclan en scroll vertical" },
+        { t: "PUBLICA EL TUYO", v: "CREADOR", color: "#E8C56A", d: "todo el contenido del feed lo publican jugadores como tú", a: "ir al estudio" },
+      );
+      return filas;
+    }
+    if (slides.length === 0) {
+      filas.push(
+        { t: "EL FEED ESTÁ VACÍO", v: "SÉ EL PRIMERO", color: "#F5C542", d: "nadie ha publicado todavía — abre el Estudio Comunitario y sube lo tuyo" },
+        { t: "IR AL ESTUDIO COMUNITARIO", v: "CREADOR", color: "#E8C56A", d: "publica videos, música, stickers o posts con tus fotos", a: "ir al estudio" },
+      );
+      return filas;
+    }
+    for (const s of slides.slice(0, 10)) {
+      const it = s.item;
+      filas.push({
+        t: `${KIND_LABEL[it.kind] ?? it.kind.toUpperCase()} · ${it.title}`,
+        v: `♥ ${likeCount[it.id] ?? it.likes}`,
+        color: liked[it.id] ? "#FF4D5E" : "#7AB8FF",
+        d: `@${it.author} · ${timeAgo(it.createdAt)}${it.country ? ` · ${it.country.toUpperCase()}` : ""}${it.sensitive ? " · 18+" : ""}`,
+        a: "like",
+      });
+    }
+    return filas;
+  }, [slides, liked, likeCount, loading]);
+  useSala3DContenido(
+    "foryou",
+    "PARA TI",
+    "#FF3B30",
+    `Scroll infinito de la comunidad · ${slides.length} publicaciones · +2 mon por contenido visto`,
+    filas3D,
+  );
+
+  // v168: el 3D da like / navega por los MISMOS handlers que la barra 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "foryou") return;
+      if (d.accion === "ir a en vivo") {
+        window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "envivo" }));
+        return;
+      }
+      if (d.accion === "ir al estudio") {
+        window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "creador" }));
+        return;
+      }
+      if (d.accion === "like") {
+        // offset: la fila 0 es la diapositiva EN VIVO
+        const s = slides.slice(0, 10)[d.idx - 1];
+        if (s) void toggleLike(s.item);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [slides, liked, toggleLike]);
 
   // ====== DIAPOSITIVAS ======
   const liveSlide = useMemo(() => (

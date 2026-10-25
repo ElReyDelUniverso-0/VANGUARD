@@ -27,6 +27,7 @@ import {
   CornerDownLeft, Globe2, RefreshCw, ThumbsUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ============================================================
 // STORE PERSISTENTE (alertas, recientes, cuota de recompensa)
@@ -1021,6 +1022,9 @@ export function GooglesPanel() {
   const addXp = useGameStore((s) => s.addXp);
   const addReciente = useGoogles((s) => s.addReciente);
   const registrarBusqueda = useGoogles((s) => s.registrarBusqueda);
+  // v168: datos reales del store para el espejo 3D
+  const recientes = useGoogles((s) => s.recientes);
+  const alertas = useGoogles((s) => s.alertas);
   const stats = useMemo(() => estadisticasIndice(), []);
 
   const buscar = (nq: string) => {
@@ -1085,6 +1089,117 @@ export function GooglesPanel() {
       setVista(doc.accion.producto as Vista);
     }
   };
+
+  // v168: PARIDAD 2D→3D — el buscador en volumen: filas del MODO ACTIVO con sus
+  // acciones reales. El paralelo acciones3DRef alinea cada fila con el handler
+  // EXACTO que ejecuta su botón 2D (abrir resultado/producto, buscar término).
+  const acciones3DRef = useRef<{ accion: string; run: () => void }[]>([]);
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    const acciones: { accion: string; run: () => void }[] = [];
+    if (vista === "resultados") {
+      const resp = buscarGoogles(q, filtro, 9);
+      filas.push({ t: `RESULTADOS · «${q}»`, v: `${resp.total}`, color: "#FFC94D", d: `${resp.total} resultados · ${(resp.ms / 1000).toFixed(2)} segundos · núcleo neuronal v3` });
+      acciones.push({ accion: "", run: () => {} });
+      for (const r of resp.resultados.slice(0, 8)) {
+        filas.push({
+          t: r.doc.titulo,
+          v: KIND_META[r.doc.kind].tag,
+          color: KIND_META[r.doc.kind].hex,
+          d: r.snippet,
+          a: "abrir",
+        });
+        acciones.push({ accion: "abrir", run: () => abrirDoc(r.doc) });
+      }
+    } else if (vista === "tendencias") {
+      const lista = [...TENDENCIAS].sort((a, b) => b.volumen - a.volumen).slice(0, 9);
+      filas.push({ t: "TENDENCIAS DEL PLANETA", v: `${TENDENCIAS.length} TÉRMINOS`, color: "#FF9E4A", d: "lo que el planeta entero está buscando ahora, ordenado por volumen" });
+      acciones.push({ accion: "", run: () => {} });
+      for (const tt of lista) {
+        filas.push({
+          t: tt.termino,
+          v: `${tt.volumen}k/h`,
+          p: Math.min(100, tt.volumen),
+          color: ESTADO_META[tt.estado]?.hex ?? "#FFC94D",
+          d: `${tt.region} · ${tt.estado} ${tt.delta > 0 ? "+" : ""}${tt.delta}% en 24 h`,
+          a: "buscar",
+        });
+        acciones.push({ accion: "buscar", run: () => buscar(tt.termino) });
+      }
+    } else if (vista === "alertas") {
+      filas.push({ t: "ALERTAS DEL ÍNDICE", v: `${alertas.length}`, color: "#FF6B4A", d: "vigilan un término: el mundo te avisa cuando aparece en el índice" });
+      acciones.push({ accion: "", run: () => {} });
+      for (const a of alertas.slice(0, 8)) {
+        const hits = buscarGoogles(a.termino, "todo", 1).total;
+        filas.push({
+          t: a.termino,
+          v: hits > 0 ? `${hits} HITS` : "SIN HITS",
+          color: hits > 0 ? "#FF6B4A" : "#7AB8FF",
+          d: `creada ${edadNoticia(new Date(a.creada).toISOString())}`,
+          a: "buscar",
+        });
+        acciones.push({ accion: "buscar", run: () => buscar(a.termino) });
+      }
+    } else if (vista === "academico") {
+      filas.push({ t: "ACADÉMICO VANGUARD", v: `${PAPERS.length} PAPERS`, color: "#F2C879", d: "ficción académica original del universo del juego · citas APA y MLA" });
+      acciones.push({ accion: "", run: () => {} });
+      for (const p of PAPERS.slice(0, 8)) {
+        filas.push({ t: p.titulo, v: `${p.citas} CITAS`, color: "#F2C879", d: `${p.autores.join(" · ")} — ${p.revista}, ${p.year}` });
+        acciones.push({ accion: "", run: () => {} });
+      }
+    } else if (vista === "traductor") {
+      filas.push({ t: "TRADUCTOR DEL NÚCLEO", v: "8 IDIOMAS", color: "#FFA24D", d: "caché de 24 h · glosario táctico de emergencia si el núcleo IA cae" });
+      acciones.push({ accion: "", run: () => {} });
+      for (const i of IDIOMAS_UI) {
+        filas.push({ t: i.nombre, color: "#7AB8FF", d: "idioma soportado por el traductor del mundo Vanguard" });
+        acciones.push({ accion: "", run: () => {} });
+      }
+    } else if (vista === "noticias") {
+      filas.push({ t: "EDICIÓN DE HOY", color: "#FF8A5C", d: "titulares de todos los frentes · red en vivo con archivo Vanguard de respaldo" });
+      acciones.push({ accion: "", run: () => {} });
+      for (const tg of TAGS_NEWS) {
+        filas.push({ t: `SECCIÓN ${tg}`, color: tg === "TODAS" ? "#FF8A5C" : "#7AB8FF", d: "filtro real de la edición de noticias" });
+        acciones.push({ accion: "", run: () => {} });
+      }
+    } else {
+      // portada: productos reales del buscador + índice + recientes
+      filas.push({ t: "EL GOOGLE DE LOS PROBLEMAS GEOPOLÍTICOS", v: `${stats.total} DOCS`, color: "#FFC94D", d: "todo el mundo Vanguard indexado: lugares, expedientes, teorías, papers y tendencias" });
+      acciones.push({ accion: "", run: () => {} });
+      for (const p of PRODUCTOS.slice(0, 9)) {
+        filas.push({ t: p.nombre, color: p.hex, d: p.desc, a: "abrir" });
+        acciones.push({ accion: "abrir", run: () => abrirProducto(p) });
+      }
+      for (const r of recientes.slice(0, 2)) {
+        filas.push({ t: r, v: "RECIENTE", color: "#7AB8FF", d: "tu búsqueda reciente en el índice", a: "buscar" });
+        acciones.push({ accion: "buscar", run: () => buscar(r) });
+      }
+    }
+    acciones3DRef.current = acciones;
+    return filas;
+  }, [vista, q, filtro, stats, alertas, recientes]);
+  useSala3DContenido(
+    "googles",
+    "GOOGLES",
+    "#FFC94D",
+    vista === "resultados"
+      ? `resultados para «${q}»`
+      : vista === "portada"
+      ? `${stats.total} documentos indexados por el núcleo v3`
+      : `modo ${vista} del buscador de Vanguard`,
+    filas3D,
+  );
+  // v168: acciones del 3D → los MISMOS handlers de los botones 2D (índice alineado por ref)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "googles") return;
+      const item = acciones3DRef.current[d.idx];
+      if (!item || item.accion !== d.accion) return;
+      item.run();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   return (
     <div className="relative min-h-[72vh] w-full flex flex-col">

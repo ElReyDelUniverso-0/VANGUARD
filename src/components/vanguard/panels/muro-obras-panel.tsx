@@ -25,6 +25,7 @@ import {
   Sparkles, Swords, PersonStanding, Wrench,
 } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { useGameStore } from "@/lib/game-store";
 import { useAnalista } from "@/lib/analista";
 import { toast } from "sonner";
@@ -386,6 +387,105 @@ export function MuroObrasPanel() {
   const totalObras = useMemo(() => Object.values(kinds).reduce((a, b) => a + b, 0), [kinds]);
   const podio = fama?.slice(0, 3) ?? [];
   const resto = fama?.slice(3) ?? [];
+
+  // v168: PARIDAD 2D→3D — la sala OBRAS emite la vitrina real: señales en tus
+  // obras, podio de la fama, filtros por tipo y las obras del muro.
+  const listaFiltros = useMemo(
+    () => ["todo", ...ORDEN_KINDS.filter((k) => (kinds[k] || 0) > 0)].slice(0, 5),
+    [kinds],
+  );
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    if (!miAutor) {
+      filas.push({
+        t: "CREA TU PASAPORTE PARA PUBLICAR",
+        v: "CUENTA",
+        color: "#FFC94D",
+        d: "con cuenta puedes publicar obras, recibir señales y subir al podio",
+        a: "crear pasaporte",
+      });
+    } else if (senales && senales.total > 0) {
+      filas.push({
+        t: `SEÑALES EN TUS OBRAS · ${senales.total}`,
+        v: "+NUEVAS",
+        color: "#FF6B60",
+        d: senales.obras.map((o) => `“${o.title.slice(0, 26)}” +${o.delta}`).join(" · ") || "me gusta y comentarios nuevos en tus obras",
+        a: "marcar vistas",
+      });
+    } else {
+      filas.push({
+        t: "SEÑALES EN TUS OBRAS",
+        v: "AL DÍA",
+        color: "#7AB8FF",
+        d: "cuando alguien dé me gusta o comente tu obra, la vitrina te lo contará al volver",
+      });
+    }
+    const coloresPodio = ["#FFC94D", "#C9D1E8", "#E0A458"];
+    for (const [i, c] of podio.entries()) {
+      filas.push({
+        t: `${i + 1} · ${c.author}`,
+        v: `${c.fama} FAMA`,
+        p: Math.min(100, Math.round((c.fama / Math.max(1, podio[0]?.fama ?? 1)) * 100)),
+        color: coloresPodio[i],
+        d: `${c.obras} obras · ${c.likes} me gusta · ${c.plays} jugadas · fama = me gusta ×3 + jugadas ×2 + obras ×5`,
+      });
+    }
+    for (const k of listaFiltros) {
+      filas.push({
+        t: k === "todo" ? "TODO EL MURO" : KIND_META[k]?.label ?? k,
+        v: k === "todo" ? String(totalObras) : String(kinds[k] ?? 0),
+        color: filtro === k ? "#FFC94D" : "#7AB8FF",
+        d: k === "todo" ? "todas las obras de la comunidad sin filtrar" : "filtra el muro por este tipo de obra",
+        a: "filtrar tipo",
+      });
+    }
+    for (const it of (items ?? []).slice(0, 3)) {
+      filas.push({
+        t: it.title,
+        v: KIND_META[it.kind]?.label ?? it.kind,
+        img: parsePhotos(it.photos)[0]?.src,
+        color: "#FFC94D",
+        d: `${it.author} · ${tiempoRel(it.createdAt)} · ${it.likes} me gusta · ${it.plays} jugadas${it.summary ? ` · ${it.summary.slice(0, 60)}` : ""}`.trim(),
+        a: it.kind === "juego" && parseJuegoDef(it.specs) ? "jugar obra" : "me gusta",
+      });
+    }
+    return filas;
+  }, [miAutor, senales, podio, listaFiltros, kinds, totalObras, filtro, items]);
+  // v168: el raycast 3D ejecuta las MISMAS acciones del muro 2D.
+  // offsets: señales 0 · podio 1-3 · filtros siguientes · obras al final.
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "obras") return;
+      if (det.accion === "crear pasaporte") {
+        pedirPasaporte(t("obras.pideCuentaMotivo"));
+        return;
+      }
+      if (det.accion === "marcar vistas") {
+        marcarVistas();
+        return;
+      }
+      if (det.accion === "filtrar tipo") {
+        const k = listaFiltros[det.idx - 1 - Math.min(podio.length, 3)];
+        if (k) setFiltro(k);
+        return;
+      }
+      const offsetObras = 1 + Math.min(podio.length, 3) + listaFiltros.length;
+      const it = (items ?? []).slice(0, 3)[det.idx - offsetObras];
+      if (!it) return;
+      if (det.accion === "me gusta") void like(it);
+      else if (det.accion === "jugar obra") jugarGame(it);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [items, podio, listaFiltros, miAutor, senales, jugandoId]);
+  useSala3DContenido(
+    "obras",
+    "MURO DE OBRAS",
+    "#FFC94D",
+    `La vitrina de la comunidad · ${totalObras} obras en el muro${senales?.total ? ` · ${senales.total} señales nuevas` : ""}`,
+    filas3D,
+  );
 
   // ================= RENDER =================
   return (

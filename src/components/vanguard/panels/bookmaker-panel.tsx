@@ -5,7 +5,7 @@
 // exacto), partidos EN VIVO minuto a minuto, cuotas que se mueven, combinadas,
 // cashout y liquidacion automatica. Monedas virtuales del juego.
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { Dice5, Coins, Radio, Clock, Ticket, TrendingUp, Ban, Flame, Zap, Gift, Star } from "lucide-react";
@@ -23,6 +23,7 @@ import {
   type BkEvent, type BkLeg, type BkTicket,
 } from "@/lib/bookmaker-sim";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const STAKE_CHIPS = [50, 100, 250, 500, 1000];
 
@@ -235,6 +236,132 @@ export function BookmakerPanel() {
   const openTickets = tickets.filter((t) => t.status === "ABIERTA");
   const histTickets = tickets.filter((t) => t.status !== "ABIERTA");
   const roi = stats.staked > 0 ? Math.round(((stats.payout - stats.staked) / stats.staked) * 100) : 0;
+
+  // v168: PARIDAD 2D→3D — la sub-pestaña activa manda: eventos EN VIVO/próximos/
+  // política o las boletas reales, más la boleta en curso; apostar, quitar
+  // selección y cashout ejecutan los MISMOS handlers del 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "JACKPOT FORTUNA",
+        v: jackpot.toLocaleString(),
+        color: "#F5C542",
+        d: "bote progresivo: combinada de 3+ con cuota ≥ 8.0 tiene un 6% de llevárselo · el 4% de cada apuesta lo engorda",
+      },
+      {
+        t: "BOLETA",
+        v: `${potential.toLocaleString()} MON`,
+        color: slip.length ? "#3DDC84" : "#7AB8FF",
+        d: slip.length
+          ? `${slip.map((l) => l.choiceLabel).join(" · ")} · cuota total ${totalOdd.toFixed(2)}${!freebet.used && stake <= BK_FREEBET_MONTO ? " · ¡la apuesta de hoy es GRATIS!" : ""}`
+          : "toca una cuota en el panel para agregar selección",
+        a: slip.length ? "apostar" : undefined,
+      },
+    ];
+    // piernas de la boleta (idx = 2 + i: jackpot + boleta delante)
+    slip.slice(0, 4).forEach((l) => {
+      filas.push({
+        t: l.choiceLabel,
+        v: l.odd.toFixed(2),
+        color: "#E8C56A",
+        d: `${l.eventTitle} · ${l.marketLabel} · quítala de la boleta`,
+        a: "quitar de la boleta",
+      });
+    });
+    if (sub === "vivo") {
+      if (live.length === 0) {
+        filas.push({ t: "SIN PARTIDOS EN VIVO", v: "PROXIMOS", color: "#7AB8FF", d: "mira la pestaña PRÓXIMOS: los partidos empiezan en minutos y las cuotas ya se mueven" });
+      }
+      for (const e of live.slice(0, 6)) {
+        filas.push({
+          t: e.title,
+          v: e.kind === "FUTBOL" ? `${e.hs}-${e.as}` : `MIN ${Math.floor(e.minute)}'`,
+          color: "#FF4D5E",
+          d: `${e.comp} · minuto ${Math.floor(e.minute)}${e.events[0] ? ` · ${e.events[0]}` : ""}`,
+        });
+      }
+    } else if (sub === "prox") {
+      for (const e of prox.slice(0, 6)) {
+        filas.push({
+          t: e.title,
+          v: countdown(e.startAt - Date.now()),
+          color: "#7AB8FF",
+          d: `${e.comp} · elige tu mercado en el panel y agrégalo a la boleta`,
+        });
+      }
+    } else if (sub === "politica") {
+      for (const e of polit.slice(0, 4)) {
+        filas.push({
+          t: e.title,
+          v: e.status === "EN_VIVO" ? "EN VIVO" : countdown(e.startAt - Date.now()),
+          color: e.status === "EN_VIVO" ? "#FF4D5E" : "#7AB8FF",
+          d: `${e.comp} · mercados de política y guerra del mundo Vanguard`,
+        });
+      }
+      for (const f of fin.slice(0, 2)) {
+        filas.push({
+          t: `FINAL · ${f.title}`,
+          v: f.kind === "FUTBOL" ? `${f.hs}-${f.as}` : (f.drawn ? f.sides[f.hs]?.slice(0, 6) : "—"),
+          color: "#7AB8FF",
+          d: "resultado reciente de la casa",
+        });
+      }
+    } else {
+      const mapEv: Record<string, BkEvent> = {};
+      for (const e of eventsRef.current) mapEv[e.id] = e;
+      if (openTickets.length === 0) {
+        filas.push({ t: "SIN APUESTAS ABIERTAS", v: "BOLETA", color: "#7AB8FF", d: "coloca tu primera boleta desde EN VIVO o PRÓXIMOS — hoy la casa puede pagar la gratis" });
+      }
+      for (const t of openTickets.slice(0, 4)) {
+        const cv = cashoutValue(t, mapEv);
+        filas.push({
+          t: `ABIERTA · ${t.legs.length > 1 ? `COMBINADA x${t.legs.length}` : "SIMPLE"}`,
+          v: `${t.potential} MON`,
+          color: "#F5C542",
+          d: `${t.legs.map((l) => `${l.eventTitle} · ${l.choiceLabel} @${l.odd}`).join(" + ")}${cv != null && cv > 0 ? ` · CASHOUT disponible: ${cv} mon` : ""}`,
+          a: cv != null && cv > 0 ? "cashout" : undefined,
+        });
+      }
+      for (const t of histTickets.slice(0, 2)) {
+        filas.push({
+          t: `${t.status}${t.cashedAtStatus ? " (CASHOUT)" : ""}`,
+          v: t.status === "PERDIDA" ? `-${t.stake}` : `+${t.payout}`,
+          color: t.status === "GANADA" || t.status === "COBRADA" ? "#3DDC84" : "#FF4D5E",
+          d: t.legs.map((l) => l.choiceLabel).join(" + "),
+        });
+      }
+    }
+    return filas;
+  }, [sub, live, prox, polit, fin, openTickets, histTickets, slip, stake, potential, totalOdd, jackpot, freebet]);
+  useSala3DContenido(
+    "bookmaker",
+    "BETNACION",
+    "#3DDC84",
+    `Casa de apuestas · jackpot ${jackpot.toLocaleString()} mon · ${openTickets.length} boletas abiertas · ROI ${roi}%`,
+    filas3D,
+  );
+
+  // v168: el 3D apuesta, retira y cobra por los MISMOS handlers del 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "bookmaker") return;
+      if (d.accion === "apostar") { placeBet(); return; }
+      if (d.accion === "quitar de la boleta") {
+        // offset: 2 filas fijas (jackpot + boleta) delante de las piernas
+        const l = slip.slice(0, 4)[d.idx - 2];
+        if (l) setSlip((p) => p.filter((x) => x !== l));
+        return;
+      }
+      if (d.accion === "cashout") {
+        // offset: jackpot + boleta + piernas de la slip delante de las boletas
+        const t = openTickets.slice(0, 4)[d.idx - 2 - slip.slice(0, 4).length];
+        if (t) doCashout(t);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [sub, slip, openTickets, placeBet]);
 
   const SubBtn = ({ id, label, badge }: { id: typeof sub; label: string; badge?: number }) => (
     <button

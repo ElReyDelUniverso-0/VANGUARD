@@ -13,6 +13,7 @@ import { WorldMapSVG } from "@/components/vanguard/world-map-svg";
 import { generarSismos, magColor, claseMag, trazoSismograma, type Temblor } from "@/lib/sismo-data";
 import type { ConflictRegion } from "@/lib/game-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 function Sismografo() {
   const [minuto, setMinuto] = useState(() => Math.floor(Date.now() / 60_000));
@@ -92,6 +93,54 @@ export function SismoPanel() {
     for (const q of visibles.slice(0, 90)) m[q.id] = magColor(q.mag);
     return m;
   }, [visibles]);
+
+  // v168: PARIDAD 2D→3D — los stats reales del monitor y el feed sísmico suben
+  // en volumen con el color de magnitud que ya pinta el mapa
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "EVENTOS EN VENTANA",
+        v: estado.temblores.length.toLocaleString("es-ES"),
+        color: "#F5C542",
+        d: `sismógrafo VGA-ATLANTICO dibujando en vivo · ${estado.hoy.toLocaleString("es-ES")} eventos hoy`,
+      },
+      {
+        t: "MAYOR MAGNITUD",
+        v: estado.mayor ? `M ${estado.mayor.mag.toFixed(1)}` : "—",
+        color: "#FF4D5E",
+        d: estado.mayor ? `${claseMag(estado.mayor.mag)} · ${estado.mayor.zona}` : "sin eventos en la ventana",
+      },
+      {
+        t: "ENERGÍA LIBERADA",
+        v: `${estado.energias}%`,
+        p: Math.min(100, estado.energias),
+        color: "#FF8A3D",
+        d: "porcentaje frente a la media anual del planeta",
+      },
+      {
+        t: "SEÑALES EN SITIOS DE PRUEBA",
+        v: String(estado.sospechosas.length),
+        color: estado.sospechosas.length > 0 ? "#FF4D5E" : "#7AB8FF",
+        d: "perfil sísmico de explosión (somero), no de falla — detección educativa",
+      },
+    ];
+    for (const q of visibles.slice(0, 8)) {
+      filas.push({
+        t: `M ${q.mag.toFixed(1)} · ${q.zona}`,
+        v: `${q.profundidad} KM`,
+        color: magColor(q.mag),
+        d: `${claseMag(q.mag)} · estación ${q.estacion} · ${new Date(q.ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}${q.sospechoso ? " · perfil de detonación" : ""}`,
+      });
+    }
+    return filas;
+  }, [estado, visibles]);
+  useSala3DContenido(
+    "sismo",
+    "SISMO — RED SISMOLÓGICA GLOBAL",
+    "#E8C56A",
+    `La tierra habla primero · ${estado.hoy.toLocaleString("es-ES")} eventos hoy · magnitud mínima M ${minMag}`,
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

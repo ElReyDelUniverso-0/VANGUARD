@@ -343,3 +343,35 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] El modal diario re-fire cada ~15s en headless — estudiar si en dispositivo real re-dispara (fueceso QA, no bug confirmado)
 - [ ] La ceremonia v166 (7s con TAP) vs la local (3s auto) — el Dueño pidió «elimina el mapa de la intro»; el remoto mantiene globo+marcadores: confirmar con el Dueño cuál quiere
 - [ ] Minimapa 3D / distritos con cielo propio / aterrizaje ceremonial (colas v158-v161 abiertas)
+
+## MENSAJE #16 · 2026-10-25 · tras Task ia2-v168.0
+Notas: Ronda de PARIDAD TOTAL — 98 paneles emitieron su contenido real (129 emisores totales) y la intro perdió el mapa (pantalla de título + encenderMundo al entrar). El 3D ya alcanza al 2D por ley #25.
+Salud: home=200 (21.5s cold dev) | health=200 {ok:true, db:"down" — ambiental, proveedor Postgres, no atribuible a esta ronda}
+
+📡 MENSAJE DEL AGENTE DE MEJORA · VANGUARD
+
+1. SONIDO DE CASCADA — tick sutil por fila revelada (stagger 130ms de la casa de vidrio) al ascender una sala contenido · Feedback sonoro diferencia ascenso de estación · Esfuerzo: S
+
+2. DENSIDAD ADAPTATIVA MÓVIL — las salas contenido con 9+ filas pueden saturar en móvil: limitar filas visibles por pantalla (ej. 6 + rotación) con el mismo patrón de la lista del mercado · Legibilidad primero (ley móvil) · Esfuerzo: M
+
+3. DETALLE POR PROXIMIDAD EN SALAS CONTENIDO — extender el detalle d de la fila a un volar-cerca (hoy vive solo en filas de estantería insignia) en las 129 salas emitidas · Consistencia de la casa entera · Esfuerzo: M
+
+4. PAGINACIÓN 3D UNIVERSAL — el SIGUIENTE de la sala BOLSA (10 de 34 activos) como componente reutilizable para cualquier emisor con más de N filas · Escala con el crecimiento de datos · Esfuerzo: M
+
+5. TELEMETRÍA DE ACCIONES 3D — contar cuántas acciones reales se disparan desde raycast 3D vs botón 2D (localStorage + panel de estadísticas) · Mide si la paridad se USA de verdad · Esfuerzo: S
+
+⭐ IDEA ESTRELLA: TELEMETRÍA DE ACCIONES 3D — la paridad ya existe; ahora hay que MEDIRLA. Un contador simple 3D-vs-2D le dice al Dueño si el mundo 3D es una alternativa real o solo un escaparate, sin tocar nada visual.
+
+---
+
+## v168.0 LA PARIDAD TOTAL (2026-10-25) — cola viva
+- [ ] QA real-en-móvil de las salas contenido ascendidas (el agente verifica por emulación; faltan dedos reales en las 129 salas — sobre todo las de acciones complejas: warsim, combat-simulator, world-conquest)
+- [ ] Sonido de cascada en el ascenso genérica→contenido (idea #1 del agente)
+- [ ] Densidad adaptativa móvil para emisores de 9+ filas (idea #2)
+- [ ] Detalle de proximidad universal en las 129 salas contenido (idea #3 — hoy el detalle d solo habla en estanterías insignia)
+- [ ] Paginación universal 3D para emisores largos (idea #4 — patrón BOLSA)
+- [ ] Telemetría de acciones 3D vs 2D (idea ⭐ del agente)
+- [ ] Las salas II/III del remoto (habitaciones) siguen sin repintar sus placas con vg:sala3d-datos en vivo (pendiente v167 — nacen con el payload del montaje)
+- [ ] Puertas tocables + recompensa HABITACIONES 3/3 (pendiente v167, extraerHabitacion vive en reflog 30e5258)
+- [ ] db:down en el proveedor — atención del Dueño fuera del repo (Postgres serverless / env de Vercel), documentado desde v167 Task 21-b
+- [ ] Minimapa 3D / distritos con cielo propio / aterrizaje ceremonial (colas v158-v161 abiertas)

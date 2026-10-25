@@ -6,13 +6,14 @@
 // estimación de bajas y UNA SOLA lección: estas armas no se usan porque no
 // hay victoria dentro de sus círculos. Objetivo didáctico, no lúdico.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Radiation, Crosshair, Wind, Flame, Biohazard, TriangleAlert } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { WorldMapSVG, projectLatLng } from "@/components/vanguard/world-map-svg";
 import { CABEZAS, CIUDADES, anillos as calcAnillos, bajas as calcBajas, formateaKm, formateaNum, type CiudadObjetivo } from "@/lib/detonacion-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 
 export function SimuladorPanel() {
@@ -39,6 +40,95 @@ export function SimuladorPanel() {
     setDetonada(false);
     setTimeout(() => setDetonada(true), 30);
   };
+
+  // v168: PARIDAD 2D→3D — arma, objetivo, anillos y bajas reales suben a la sala.
+  // Offsets fijos para el oyente: 3 filas de cabecera + CABEZAS + 5 ciudades
+  const OFF_ARMAS = 3;
+  const OFF_OBJETIVOS = OFF_ARMAS + CABEZAS.length;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `ARMA: ${cabeza.nombre.toUpperCase()}`,
+        v: cabeza.kt >= 1000 ? `${(cabeza.kt / 1000).toFixed(0)} MT` : `${cabeza.kt} KT`,
+        color: "#F5C542",
+        d: cabeza.descripcion,
+      },
+      {
+        t: "MODO DE DETONACIÓN",
+        v: airburst ? "EXPLOSIÓN AÉREA" : "SUPERFICIE",
+        color: "#F5C542",
+        d: "Elige cómo detona la cabeza seleccionada",
+      },
+      {
+        t: `OBJETIVO: ${objetivo?.nombre ?? "NINGUNO"}`,
+        v: objetivo?.pais ?? "—",
+        color: objetivo ? "#7AB8FF" : "#FF4D5E",
+        d: objetivo ? `pop ${objetivo.popMillones.toFixed(1)} M · densidad ${objetivo.densidadKm2}/km²` : "elige un objetivo para poder detonar",
+      },
+    ];
+    for (const c of CABEZAS) {
+      filas.push({
+        t: c.nombre,
+        v: c.kt >= 1000 ? `${(c.kt / 1000).toFixed(0)} MT` : `${c.kt} KT`,
+        color: c.id === cabezaId ? "#F5C542" : "#7AB8FF",
+        d: c.descripcion,
+        a: "elegir arma",
+      });
+    }
+    for (const ci of CIUDADES.slice(0, 5)) {
+      filas.push({
+        t: ci.nombre,
+        v: ci.pais,
+        color: objetivo?.nombre === ci.nombre ? "#F5C542" : "#7AB8FF",
+        d: `población ${ci.popMillones.toFixed(1)} M · densidad ${ci.densidadKm2}/km²`,
+        a: "elegir objetivo",
+      });
+    }
+    filas.push({
+      t: "☢ DETONAR ☢",
+      color: "#FF4D5E",
+      d: "Despliega los anillos de bola de fuego, onda, quemaduras y radiación sobre el mapa real",
+      a: "detonar",
+    });
+    if (detonada && est && objetivo) {
+      filas.push({
+        t: `BAJAS ESTIMADAS EN ${objetivo.nombre}`,
+        v: formateaNum(est.muertos),
+        color: "#FF4D5E",
+        d: `heridos ${formateaNum(est.heridos)} · nube de humo hasta ${est.alcanceHumo} km · el disuadido no es el que gana, es el que no dispara`,
+      });
+      filas.push({
+        t: "ANILLOS DE LA EXPLOSIÓN",
+        v: `${formateaKm(a.bolaFuego)} BOLA`,
+        color: "#F5C542",
+        d: `5 psi ${formateaKm(a.psi5)} · quemaduras 3.er grado ${formateaKm(a.termica3)} · radiación 500 rem ${formateaKm(a.radiacion)}`,
+      });
+    }
+    return filas;
+  }, [cabeza, cabezaId, airburst, objetivo, a, est, detonada]);
+  useSala3DContenido("simulador", "SIMULADOR DE DETONACIÓN", "#FF3B30", `Educativo · ${cabeza.nombre} sobre ${objetivo?.nombre ?? "sin objetivo"} · física simplificada`, filas3D);
+
+  // v168: las acciones ejecutan los MISMOS handlers que los botones 2D
+  // (selección de arma/objetivo y el botón DETONAR); idx - offset = elemento
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "simulador") return;
+      if (det.accion === "elegir arma") {
+        const c = CABEZAS[det.idx - OFF_ARMAS];
+        if (c) { setCabezaId(c.id); setDetonada(false); }
+        return;
+      }
+      if (det.accion === "elegir objetivo") {
+        const ci = CIUDADES.slice(0, 5)[det.idx - OFF_OBJETIVOS];
+        if (ci) { setObjetivo(ci); setDetonada(false); }
+        return;
+      }
+      if (det.accion === "detonar") detonar();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [cabeza, objetivo]);
 
   return (
     <div className="space-y-4">
