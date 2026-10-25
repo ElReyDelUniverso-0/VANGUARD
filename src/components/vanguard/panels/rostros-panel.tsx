@@ -15,6 +15,9 @@ import { motion } from "framer-motion";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+// v174 LAS INTROS GTA: la placa de cambio de personaje — cada rostro
+// elegido se presenta en la pantalla grande, como en GTA V.
+import { IntroGtaPersonaje } from "@/components/vanguard/intros-gta";
 import { projectLatLng } from "@/components/vanguard/world-map-svg";
 import worldPaths from "@/lib/world-paths.json";
 import { sfx } from "@/lib/sound";
@@ -53,6 +56,9 @@ export function RostrosPanel() {
   const [filtro, setFiltro] = useState<Filtro>("todos");
   const [cables, setCables] = useState<CableLectura[]>([]);
   const [cableSel, setCableSel] = useState<CableLectura | null>(null);
+  // v174 LAS INTROS GTA: la placa de presentación — cada vez que se elige
+  // otro rostro, la casa lo presenta en la pantalla grande (2D y mundo 3D).
+  const [introId, setIntroId] = useState<string | null>(null);
 
   const sel: Rostro = rostroDe(selId) ?? ROSTROS[0];
   const cm = CATEGORIAS_ROSTRO[sel.categoria];
@@ -114,6 +120,7 @@ export function RostrosPanel() {
   const elegir = (id: string) => {
     if (id === selId) return;
     setSelId(id);
+    setIntroId(id); // v174: la placa de presentación entra con el cambio
     sfx.campana(); // la campana de salón: cada expediente se abre con dignidad
   };
 
@@ -564,6 +571,17 @@ export function RostrosPanel() {
           </div>
         </div>
       </div>
+
+      {/* v174 LAS INTROS GTA — la placa de presentación del rostro elegido
+          (portal propio al body; también suena al abrir desde el mundo 3D) */}
+      {introId && rostroDe(introId) && (
+        <IntroGtaPersonaje
+          key={introId}
+          rostro={rostroDe(introId)!}
+          senales={senalesPor[introId] ?? 0}
+          onFin={() => setIntroId(null)}
+        />
+      )}
 
       {/* lectura interna */}
       {cableSel && <LectorNoticia cable={cableSel} onCerrar={() => setCableSel(null)} />}

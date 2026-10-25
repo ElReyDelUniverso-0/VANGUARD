@@ -431,3 +431,12 @@ Salud: home=200 | health v172.0 | db down (ambiental, proveedor Postgres — fue
 5. I18N DEL PULSO — la tarjeta de telemetría y las placas SIGUIENTE/ATRAS tienen textos ES fijos: entrar al sistema de i18n de la casa (8 idiomas) · Esfuerzo: S
 
 ⭐ IDEA ESTRELLA: EXPORT DE LA CUENTA — la telemetría local mide UN piloto; el export anónimo a /api/stats mide a la CIUDAD entera: «el 34% de las acciones de Vanguard ya nacen en 3D» es el número que decide dónde invertir las próximas rondas.
+
+## MENSAJE #18 · 2026-10-26 · tras Task 174 (LAS INTROS GTA)
+Notas: Tarjetería de cine estilo GTA V aterrizada (placa de personaje en ROSTROS + placa de misión en la SALA DE LECTURA). El cine de contenido abre una veta nueva: la presentación importa tanto que la información.
+Ideas heredadas de la ronda:
+1. PLACA DE CONFLICTO — la tercera tarjeta GTA: RUSIA ✕ UCRANIA con intensidad y frente al abrir fichas de conflicto (tarjeta-guerra / frentes) · la familia queda completa · Esfuerzo: M
+2. PLACA 3D EN EL MUNDO — al anclar una sala insignia, la placa de personaje/noticia proyectada como cartel de cine dentro del 3D (patrón v165, protocolo vg:sala3d-accion) · Esfuerzo: L
+3. CITA EN LA PLACA — la frase del rostro («la frase que manda») como cierre de la placa antes del expediente · Esfuerzo: S
+4. SONIDO DE MARCA — síntesis de un golpe de cine (bass hit) en sound.ts para las placas, distinto de la campana · Esfuerzo: S
+5. PLACA DE SALA 3D — intro corta al anclar cada sala del mundo (nombre + tipo + color de casa) — hace legible el mapa de salas · Esfuerzo: M

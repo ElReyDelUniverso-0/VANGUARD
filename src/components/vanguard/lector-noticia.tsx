@@ -27,6 +27,9 @@ import { Flag } from "@/lib/flags";
 import { navigateTo } from "@/lib/nav";
 import type { TabKey } from "./tab-nav";
 import { PortadaNoticia } from "./portada-noticia";
+// v174 LAS INTROS GTA: la tarjeta de misión al abrir un cable —
+// la placa de la Agencia entra ANTES de la sala de lectura.
+import { IntroGtaNoticia } from "./intros-gta";
 // v117.0 ATMÓSFERA: la NEURONA lee el cable — núcleo v4 determinista que
 // corre EN TU DISPOSITIVO (misma receta que el Monitor Global y la Mente:
 // rasgos → pesos → sigmoide → veredicto, reproducible en los 8 idiomas).
@@ -143,6 +146,32 @@ export function LectorNoticia({
     activarLectura();
     return () => desactivarLectura();
   }, [cable, activarLectura, desactivarLectura]);
+
+  // v174 LAS INTROS GTA: la placa de misión al abrir un cable —
+  // una vez por cable por sesión (quien ya la vio entra directo),
+  // tap = seguir leyendo, reduced-motion = no hay cine.
+  const [introViva, setIntroViva] = useState(false);
+  useEffect(() => {
+    if (!cable) {
+      setIntroViva(false);
+      return;
+    }
+    let visto = false;
+    let reducido = false;
+    try {
+      visto = sessionStorage.getItem("vg174-gta-ultimo") === cable.id;
+      reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch {
+      /* sin sesión: la placa suena, no se rompe */
+    }
+    if (visto || reducido) return;
+    try {
+      sessionStorage.setItem("vg174-gta-ultimo", cable.id);
+    } catch {
+      /* noop */
+    }
+    setIntroViva(true);
+  }, [cable]);
 
   useEffect(() => {
     if (!cable) return;
@@ -344,6 +373,13 @@ export function LectorNoticia({
       )},
       </AnimatePresence>,
       document.body
+      )}
+
+      {/* v174 LAS INTROS GTA — la placa de misión flota sobre la sala
+          (portal propio al body: la lección v116 de los ancestros con
+          transform vale para todo lo que flota en la casa) */}
+      {montado && introViva && cable && (
+        <IntroGtaNoticia key={cable.id} cable={cable} onFin={() => setIntroViva(false)} />
       )}
     </>
   );

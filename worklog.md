@@ -2743,3 +2743,21 @@ Work Log:
 
 Stage Summary:
 - v172.0 EL PULSO DE LA PARIDAD lista en ia2/v172.0: la paridad ya no solo existe — se MIDE (3D vs 2D con dos puntos únicos, sin doble conteo), el ascenso SUENA (cascada por fila) y ninguna fila del mundo se pierde (paginación universal patrón BOLSA, asunto del mundo). Bitácora + inbox actualizados; sugerencias nuevas en MENSAJE #17.
+
+---
+Task ID: 174
+Agent: ia1 (Z.ai — casa principal, obra en solitario)
+Task: v174.0 LAS INTROS GTA — orden del Dueño: «que Vanguard tenga intros hermosas, diferentes, como las de GTA pero de noticias, personajes».
+
+Work Log:
+- Inventario de intros existentes: intro-cinematica.tsx (v72, canvas boot) e intro-trailer.tsx (v134, estreno) — la nueva directiva es otra cosa: tarjetería DE CONTENIDO al abrir noticias y personajes.
+- Puntos de entrada exactos localizados: LectorNoticia (lector-noticia.tsx, todo cable del planeta abre ahí) y RostrosPanel (panels/rostros-panel.tsx, elegir() → sfx.campana()).
+- NUEVO src/components/vanguard/intros-gta.tsx: IntroGtaPersonaje (cambio de personaje GTA V: letterbox, bandera Ken Burns, nombre en dos tiempos — pila pequeña + apellido GIGANTE con sombra dura, color del corte de poder tronos/dinero/tribunal/nuevos, placa de ubicación con coordTxt real, barras PODER/ALCANCE/SEÑALES con scaleX var --vg-stat) e IntroGtaNoticia (tarjeta de inicio de misión: sello AGENCIA CENTRAL + punto EN VIVO, escalón+score del motor de impacto v173 con medidor, titular palabra a palabra recorte 16, placa fuente+Flag+tag). Portal propio al body (lección v116), z-300, tap=saltar, auto 2.1s/2.3s, reduced-motion → onFin inmediato + kill-switch CSS.
+- globals.css: sección v174.0 con 10 keyframes v174Gta* + clases + kill-switch reduced-motion (todo transform/opacity, barras con scaleX --vg-stat, nunca width).
+- lector-noticia.tsx: guard sessionStorage vg174-gta-ultimo (una vez por cable por sesión) + reduced-motion antes de montar IntroGtaNoticia como segundo portal; cable null → introViva false (muere con la sala).
+- rostros-panel.tsx: setIntroId(id) en elegir() — la placa suena tanto desde el 2D como desde las acciones del mundo 3D (abrir expediente → elegir, ley #25); render con rostroDe(introId) y senalesPor.
+- version.ts → v174.0 LAS INTROS GTA con crónica; bitacora.ts entrada v174 arriba; inbox actualizado.
+- QA: npx tsc --noEmit = 0; servidor dev + navegador (ver QA abajo); commit + push main.
+
+Stage Summary:
+- v174.0 LAS INTROS GTA en main: la casa tiene tarjetería de cine estilo GTA V para sus dos contenidos protagonistas (personajes del poder + noticias de impacto), capa pura sobre la verdad — ni el lector v116 ni el dossier v130 cambiaron de comportamiento. tsc 0, guards v167 intactos, rewrite /socket.io intacto.

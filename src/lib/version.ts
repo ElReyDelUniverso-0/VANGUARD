@@ -402,6 +402,34 @@
 //     marcador abre el lector en la Casa (protocolo Casa⇄Mundo, ley #25).
 // (5) NADA SE ROMPE: news-panel, OJO DE DIOS, verdades y las 129 salas 3D
 //     siguen vivos — el motor de impacto solo añade capa sobre la verdad.
-export const APP_VERSION = "v173.0";
-export const APP_CODENAME = "LA AGENCIA CENTRAL";
+
+// v174.0: LAS INTROS GTA (ronda del Dueño: «que Vanguard tenga intros
+//         hermosas, diferentes, como las de GTA pero de noticias,
+//         personajes») — la tarjetería de cine de la casa, montada sobre
+//         las dos puertas que ya existían (nada nuevo que aprender):
+// (1) LA PLACA DE PERSONAJE (intros-gta.tsx · IntroGtaPersonaje): el
+//     cambio de personaje de GTA V al elegir un rostro en LOS ROSTROS DEL
+//     PODER — letterbox de cine entra por arriba y por abajo, la bandera
+//     respira con zoom Ken Burns, el NOMBRE aterriza en dos tiempos
+//     (pila pequeña + apellido GIGANTE con sombra dura), el color del
+//     corte de poder (tronos/dinero/tribunal/nuevos) tiñe la escena, la
+//     placa de ubicación desliza con coordenadas reales al estilo carta
+//     naval y las tres barras de atributos (PODER/ALCANCE/SEÑALES EN
+//     VIVO) suben como las habilidades del juego. Suena al elegir desde
+//     el 2D y desde las acciones del mundo 3D (ley #25).
+// (2) LA PLACA DE NOTICIA (intros-gta.tsx · IntroGtaNoticia): la tarjeta
+//     de inicio de misión al abrir un cable en la SALA DE LECTURA —
+//     sello de LA AGENCIA CENTRAL con punto EN VIVO pulsando, el escalón
+//     del motor de impacto con su medidor llenándose (misma verdad que
+//     el ranking v173), el titular entrando PALABRA A PALABRA y la
+//     placa de fuente con bandera y credibilidad. Una vez por cable por
+//     sesión: quien ya la vio entra directo a leer.
+// (3) CONTRATO DE LA CASA intacto: portal propio al body (lección v116),
+//     solo transform/opacity (las barras escalan con scaleX, nunca width,
+//     var --vg-stat), tap = saltar siempre, reduced-motion = no hay cine
+//     (kill-switch CSS + guard JS), móvil primero, z-300 bajo el tráiler.
+// (4) NADA SE ROMPE: ni una línea del lector v116 ni del dossier v130
+//     cambió de comportamiento — las placas son capa pura sobre la verdad.
+export const APP_VERSION = "v174.0";
+export const APP_CODENAME = "LAS INTROS GTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

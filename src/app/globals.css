@@ -5752,3 +5752,38 @@ html[data-vg-modo="2d"] .v139-frente .v139-asta { opacity: 0.4; }
   .vg170-skel-dot { animation: none; }
   .vg170-riel-pill, .vg170-riel-sec, .vg170-riel-recpill, .vg170-riel-plegar { transition: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   v174.0 LAS INTROS GTA — la tarjetería de cine de la casa
+   Placa de personaje (cambio de GTA V) y placa de noticia (inicio
+   de misión). Contrato 60 FPS: solo transform/opacity (las barras
+   de stats y el medidor de impacto escalan con scaleX, nunca width).
+   reduced-motion: el cine no existe (kill-switch abajo).
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes v174GtaBarraSup { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes v174GtaBarraInf { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes v174GtaKen { from { transform: scale(1) rotate(-2deg); } to { transform: scale(1.14) rotate(1.5deg); } }
+@keyframes v174GtaLineaSup { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes v174GtaNombre { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes v174GtaSubrayado { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes v174GtaPlaca { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes v174GtaStat { from { transform: scaleX(0); } to { transform: scaleX(var(--vg-stat, 1)); } }
+@keyframes v174GtaPalabra { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes v174GtaPulso { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+.v174gta-barra-sup { transform-origin: center top; animation: v174GtaBarraSup 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-barra-inf { transform-origin: center bottom; animation: v174GtaBarraInf 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-ken { animation: v174GtaKen 2.6s ease-out both; }
+.v174gta-linea-sup { animation: v174GtaLineaSup 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-nombre { animation: v174GtaNombre 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-subrayado { transform-origin: left center; animation: v174GtaSubrayado 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-placa { animation: v174GtaPlaca 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-stat { transform-origin: left center; animation: v174GtaStat 0.95s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-palabra { display: inline-block; animation: v174GtaPalabra 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.v174gta-pulso { animation: v174GtaPulso 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .v174gta-barra-sup, .v174gta-barra-inf, .v174gta-ken, .v174gta-linea-sup,
+  .v174gta-nombre, .v174gta-subrayado, .v174gta-placa, .v174gta-stat,
+  .v174gta-palabra, .v174gta-pulso { animation-duration: 0.01s; animation-iteration-count: 1; }
+}

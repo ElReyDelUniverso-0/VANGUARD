@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v174.0",
+    nombre: "LAS INTROS GTA",
+    tipo: "luxe",
+    hitos: [
+      "LA PLACA DE PERSONAJE (intros-gta.tsx · IntroGtaPersonaje) — el cambio de personaje de GTA V aterrizó en LOS ROSTROS DEL PODER: letterbox de cine, bandera con zoom Ken Burns, NOMBRE en dos tiempos (pila pequeña + apellido GIGANTE), color del corte de poder, placa de ubicación con coordenadas reales y barras de atributos (PODER/ALCANCE/SEÑALES) como las habilidades del juego; suena al elegir desde el 2D y desde el mundo 3D",
+      "LA PLACA DE NOTICIA (intros-gta.tsx · IntroGtaNoticia) — la tarjeta de inicio de misión al abrir un cable en la SALA DE LECTURA: sello de LA AGENCIA CENTRAL con punto EN VIVO, escalón del motor de impacto con su medidor llenándose (misma verdad que el ranking), titular entrando palabra a palabra y placa de fuente con credibilidad; una vez por cable por sesión",
+      "CONTRATO DE LA CASA intacto — portal propio al body (lección v116), solo transform/opacity con scaleX (nunca width), tap = saltar siempre, reduced-motion = no hay cine, móvil primero; ni el lector v116 ni el dossier v130 cambiaron de comportamiento",
+    ],
+  },
+  {
     version: "v173.0",
     nombre: "LA AGENCIA CENTRAL",
     tipo: "nav",
