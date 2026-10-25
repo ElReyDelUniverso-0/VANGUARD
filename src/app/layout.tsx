@@ -315,6 +315,11 @@ try{
   var st=document.getElementById('vg-cortina-estado');
   var K='vg155-recarga';
   var pesado=(location.pathname==='/')||(location.pathname.indexOf('/vanguard2')===0);
+  // v169.0 LA CONSOLA PLANA: si el piloto eligió 2D, la cortina NO espera
+  // al universo WebGL (no monta) — se funde con la página lista
+  var modo2d=false;
+  try{ modo2d=(localStorage.getItem('vanguard-modo')==='2d'); }catch(e){}
+  if(modo2d) pesado=false;
   function apagar(){
     if(c.getAttribute('data-off')==='1') return;
     c.setAttribute('data-off','1'); c.className='vg-off';
@@ -355,7 +360,7 @@ try{
   var n=0;
   var ojo=window.setInterval(function(){
     n++;
-    if(window.__vgvivo===true||( !pesado && document.readyState==='complete')){ clearInterval(ojo); apagar(); return; }
+    if(window.__vgvivo===true||modo2d||(!pesado && document.readyState==='complete')){ clearInterval(ojo); apagar(); return; }
     if(pesado&&n===48) encender('Tarda más de lo normal — toca para despertarlo');
     if(pesado&&n>=80){ clearInterval(ojo); encender('El universo no responde — toca para despertarlo'); }
   },250);

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v169.0",
+    nombre: "LA CONSOLA PLANA",
+    tipo: "tecno",
+    hitos: [
+      "EL HOME 2D INVISIBLE, MUERTO — al entrar por primera vez al 2D desde la ciudad, la cadena 3D de la Casa (diorama→cuna→flotador, translateZ(-640px) rotateX(14deg)) podía proyectar el panel DETRÁS del cielo estrellado v138: home vacío con ~1500px de hueco inalcanzable (DOM sano, opacity 1, pintado fuera de vista). CURA: bajo data-vg-modo=\"2d\" la cadena se APLANA completa — la consola plana clásica nace plana, legible y completa desde el primer frame",
+      "EL INTERRUPTOR TIENE MEMORIA (cola v165) — recargar ya no devuelve al 3D contra tu elección: localStorage vanguard-modo; recargar en 2D nace en 2D (el universo ni monta), la cortina de boot no espera el latido WebGL y la consola da señal de vida propia (window.__vgvivo). Sin memoria guardada: la ciudad sigue siendo el hogar",
+      "QA E2E con navegador real sobre producción (next start, rss 198MB): boot directo a 2D con cortina fuera, home plano con héroe + manifiesto + ZONA CERO + rival + noticias reales alcanzables por scroll, pestaña WORLD CRISIS viva, tsc 0, build limpio",
+      "INFRA: scripts/serve.mjs (doble fork, PPID 1) — el servidor de producción sobrevive entre sesiones de shell y consume ~200MB frente a los ~1.8GB del dev (el OOM-killer ya no corta la ronda)",
+    ],
+  },
+  {
     version: "v167.0",
     nombre: "EL ATERRIZAJE EDUCADO",
     tipo: "mundo",

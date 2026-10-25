@@ -5480,3 +5480,24 @@ html[data-wgl-hud="1"] .vg141-modo-ui { display: none !important; }
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   v169.0 LA CONSOLA PLANA — el modo 2D es la consola plana
+   clásica: la cadena 3D de la Casa (diorama→cuna→flotador) se
+   APLANA COMPLETA bajo data-vg-modo="2d".
+   BUG (ronda 19): en la primera entrada a 2D la cadena podía
+   quedar en translateZ(-640px) rotateX(14deg) — el contenido
+   del panel quedaba DETRÁS del mundo v138 (cielo estrellado)
+   y el home nacía invisible con un hueco inalcanzable arriba.
+   La consola 2D ya no vuela: nace plana, legible y completa.
+   Contrato intacto: solo transform/animation (60 FPS).
+   ════════════════════════════════════════════════════════════ */
+html[data-vg-modo="2d"] .diorama-v137,
+html[data-vg-modo="2d"] .cuna-v139,
+html[data-vg-modo="2d"] .flotador-v138,
+html[data-vg-modo="2d"] .panel-stagger {
+  transform: none !important;
+  animation: none !important;
+  transform-style: flat !important;
+  perspective: none !important;
+}

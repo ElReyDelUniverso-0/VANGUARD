@@ -2623,3 +2623,19 @@ Work Log:
 
 Stage Summary:
 - /home/z/my-project/HANDOFF-VANGUARD.md listo: basta con que la otra IA lea ese archivo + los 3 archivos núcleo para editar Vanguard
+
+---
+Task ID: ia1-2d-1
+Agent: main (ia1 — ronda 2D del Dueño)
+Task: v169.0 LA CONSOLA PLANA — el Dueño: «Ve trabajando en lo 2D» (ia2 lleva el 3D en ia2/v168.0)
+
+Work Log:
+- Baseline: tsc 0, health v167.0, db up. Servidor: OOM-killer mataba next dev (1.8GB/3.9GB) — CURA INFRA: scripts/serve.mjs con doble fork real (detached+unref, PPID 1) sirviendo next start a ~200MB; sobrevive entre sesiones de shell (el agente-browser ya lo hacía, el server no).
+- QA E2E 2D (agent-browser sobre producción): intro → tap globo → bono diario reclamado (+40, racha 1) → tutorial SKIP → interruptor 2D.
+- BUG GRAVE #1 (ronda 19) — EL HOME 2D INVISIBLE: primera entrada al 2D desde la ciudad = panel VACÍO con ~1500px de hueco inalcanzable. Forense: DOM sano (contenido en offset 0, opacity 1, sin remount — marca data-marca viva), layout offsetTop correcto, pero gBCR mostraba el contenido ~1500px abajo: la cadena diorama-v137→cuna-v139→flotador-v138 (perspective + translateZ(-640px) rotateX(14deg) de v139Entra) proyectaba el panel DETRÁS del mundo v138 (cielo estrellado). Reproducido 2/2 veces. CURA: globals.css v169 — html[data-vg-modo="2d"] aplana la cadena completa (transform/animation none, transform-style flat, perspective none). El 2D es la «consola plana clásica» y ahora nace plana SIEMPRE.
+- BUG #2 (cola v165) — EL INTERRUPTOR SIN MEMORIA: recargar devolvía al 3D contra la elección. CURA: localStorage vanguard-modo (guardado en alternarModo y en vg:modo-3d; restauración en boot con dataset.vgModo + window.__vgvivo=true) + layout.tsx: la cortina no espera el latido WebGL si el modo guardado es 2d (modo2d ⇒ pesado=false).
+- QA post-cura (build limpio + next start): boot directo a 2D con cortina fuera (cortinaFuera:true, modo:2d), home PLANO y completo (héroe REAL-TIME INTELLIGENCE, manifiesto, ZONA CERO, TU RIVAL, noticias reales Al Jazeera/RT/France 24 con LEER), scroll 600/1600 legible, pestaña ANÁLISIS (WORLD CRISIS) viva, errores consola 0, bono diario NO re-fireó tras reclamar (test 15s — pista del inbox v167 cerrada).
+- Release: version.ts v169.0 LA CONSOLA PLANA (v168 reservado a ia2), bitacora.ts, inbox, este worklog. tsc 0 en los 4 pases.
+
+Stage Summary:
+- El 2D ahora es una consola de verdad: plana, completa, legible desde el primer frame y fiel a la elección del piloto. Ronda 19: 2 bugs graves más (total 6 en producción). Pendiente para ia1 2D: probar la restauración en dispositivo real; fade propio del 2D por pestaña; VER EN 3D por-edificio.

@@ -229,6 +229,34 @@
 //     / 358px móvil; habitaciones por tiempo (8s sintéticos → 1/3) y por
 //     movimiento (5.3m reales → 3/3); consola 0 errores.
 // Herencia v166 LA CASA HABITADA y todo lo anterior.
-export const APP_VERSION = "v167.0";
-export const APP_CODENAME = "EL ATERRIZAJE EDUCADO";
+// (v167.0 EL ATERRIZAJE EDUCADO pasó a la historia; ver la cola del archivo
+//  para la versión viva y su crónica completa.)
+
+// ════════════════════════════════════════════════════════════
+// v169.0 LA CONSOLA PLANA (ia1 · ronda 2D del Dueño: «ve trabajando en lo 2D»
+//         mientras ia2 lleva el 3D en su rama ia2/v168.0 — número libre v169).
+// RONDA 19 (continúa): dos bugs graves del mundo 2D, cazados en QA E2E con
+//         navegador real (agent-browser, producción next start, no dev).
+// (1) EL HOME 2D INVISIBLE: al entrar por primera vez al modo 2D desde la
+//     ciudad, la cadena 3D de la Casa (diorama-v137→cuna-v139→flotador-v138,
+//     perspective + translateZ(-640px) rotateX(14deg) de v139Entra) podía
+//     quedar proyectando el panel DETRÁS del mundo v138 (cielo estrellado):
+//     el home nacía VACÍO con ~1500px de hueco inalcanzable (DOM sano,
+//     opacity 1, layout en offset 0 — pero pintado fuera de vista). Cura:
+//     html[data-vg-modo="2d"] APLANA la cadena completa (transform/animation
+//     none, flat) — el 2D es la «consola plana clásica» y ahora NACE plana,
+//     legible y completa desde el primer frame. Contrato 60 FPS intacto.
+// (2) EL INTERRUPTOR SIN MEMORIA (cola v165): recargar devolvía siempre al
+//     3D contra la elección del piloto. Cura: localStorage vanguard-modo —
+//     recargar en 2D nace en 2D (el universo ni monta), la cortina de boot
+//     ya no espera el latido WebGL (layout.tsx: modo2d ⇒ pesado=false) y la
+//     consola da señal de vida propia (window.__vgvivo). Default sin
+//     memoria: la ciudad sigue siendo el hogar (3D).
+// QA v169 (agent-browser + next start, http 200, rss 198MB): boot directo a
+//     2D con cortina fuera, home plano con héroe+manifiesto+ZONA CERO+rival+
+//     noticias reales (Al Jazeera/RT/France 24) alcanzables por scroll,
+//     pestaña ANÁLISIS (WORLD CRISIS) viva, tsc 0, build limpio.
+// Herencia v168 (ia2, rama en vuelo) y todo lo anterior.
+export const APP_VERSION = "v169.0";
+export const APP_CODENAME = "LA CONSOLA PLANA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

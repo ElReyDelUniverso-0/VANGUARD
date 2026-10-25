@@ -971,6 +971,9 @@ export default function Home() {
         window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
       }
       document.documentElement.dataset.vgModo = a2D ? "2d" : "3d";
+      // v169.0 LA PREFERENCIA DEL PILOTO: el modo se recuerda —
+      // recargar en 2D nace en 2D (la consola ya no vuelve sola al universo)
+      try { localStorage.setItem("vanguard-modo", a2D ? "2d" : "3d"); } catch {}
       toast(a2D ? "VANGUARD 2D" : "VANGUARD 3D", {
         description: a2D
           ? "Consola plana clásica · el botón 3D (o VER EN 3D de cada módulo) te devuelve al universo"
@@ -978,6 +981,21 @@ export default function Home() {
       });
       return a2D;
     });
+  }, []);
+
+  // v169.0 RESTAURACIÓN DEL MODO: si el piloto eligió 2D, la consola plana
+  // nace en 2D — el universo ni siquiera monta ({!modo2D && <MundoWebGL/>}).
+  // Sin memoria: la ciudad sigue siendo el hogar (default 3D).
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("vanguard-modo") === "2d") {
+        setModo2D(true);
+        document.documentElement.dataset.vgModo = "2d";
+        // v169.0: la consola plana está VIVA — señal para la cortina y el
+        // vigilante de errores (el mundo WebGL no va a dar su latido)
+        (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
+      }
+    } catch {}
   }, []);
 
   // v165 — VER EN 3D desde CUALQUIER módulo 2D (botón del PanelHeader):
@@ -990,6 +1008,7 @@ export default function Home() {
           return v;
         }
         document.documentElement.dataset.vgModo = "3d";
+        try { localStorage.setItem("vanguard-modo", "3d"); } catch {}
         toast("VOLANDO AL MÓDULO EN 3D", { description: "El mundo despierta y tu sala se ancla con el contenido completo" });
         return false;
       });

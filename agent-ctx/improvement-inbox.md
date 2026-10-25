@@ -343,3 +343,10 @@ Salud: home=200 (368ms) | gateway=200 (347ms) | sitemap=200 (309ms) | api/news=2
 - [ ] El modal diario re-fire cada ~15s en headless — estudiar si en dispositivo real re-dispara (fueceso QA, no bug confirmado)
 - [ ] La ceremonia v166 (7s con TAP) vs la local (3s auto) — el Dueño pidió «elimina el mapa de la intro»; el remoto mantiene globo+marcadores: confirmar con el Dueño cuál quiere
 - [ ] Minimapa 3D / distritos con cielo propio / aterrizaje ceremonial (colas v158-v161 abiertas)
+
+## v169.0 LA CONSOLA PLANA (2026-10-25) — cola viva
+- [x] El interruptor 2D/3D guarda la preferencia en localStorage (v169 lo cumplió: recargar en 2D nace en 2D)
+- [ ] VER EN 3D: variante por-edificio (saltar directo a la sala del módulo sin pasar por la ciudad)
+- [ ] El 2D restaurado por localStorage: probar en dispositivo REAL del Dueño (QA fue headless)
+- [ ] La consola 2D plana: revisar que las animaciones de entrada por pestaña (panel-stagger) aún den vida sin la cadena 3D — quizá un fade ligero propio del 2D
+- [ ] Segunda pista 2D del inbox v167 cerrada: el modal diario NO re-fireó tras reclamar (15s test) — vigilar en dispositivo real
