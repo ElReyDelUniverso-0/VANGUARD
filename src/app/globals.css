@@ -4390,6 +4390,185 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   50%      { box-shadow: 0 0 0 12px rgba(0, 240, 255, 0); }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   v174.0 EL CINE DE VANGUARD — la entrada GTA de noticias.
+   Placas a pantalla completa: foto real + duotono del acento del
+   conflicto + tipografía condensada en itálica (Rajdhani) + barras
+   de cine + progreso GTA. Ken Burns en transform/opacity SOLO
+   (móvil primero, 60 FPS, cero lag). Tocar avanza · SALTAR siempre.
+   ═══════════════════════════════════════════════════════════════ */
+.vg174-cine {
+  position: fixed;
+  inset: 0;
+  z-index: 96;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.vg174-cine-card {
+  position: absolute;
+  inset: 0;
+  animation: vg174Entra 0.55s ease-out both;
+}
+.vg174-cine-foto {
+  position: absolute;
+  inset: -3%;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(0.38) contrast(1.14) brightness(0.7) saturate(1.05);
+  animation: vg174Ken 9s ease-out both;
+  will-change: transform;
+}
+/* el duotono del acento — cada conflicto con SU color (GTA-style) */
+.vg174-cine-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--vg174acc, #e8c476);
+  mix-blend-mode: overlay;
+  opacity: 0.36;
+  pointer-events: none;
+}
+.vg174-cine-lava {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(12deg, rgba(0, 0, 0, 0.93) 24%, rgba(0, 0, 0, 0.22) 64%, rgba(0, 0, 0, 0.55) 100%);
+}
+.vg174-cine-txt {
+  position: absolute;
+  left: clamp(18px, 6vw, 84px);
+  right: clamp(18px, 6vw, 84px);
+  bottom: clamp(92px, 21vh, 188px);
+  z-index: 2;
+  pointer-events: none;
+}
+.vg174-cine-txt em {
+  display: block;
+  font-family: var(--font-jetmono), monospace;
+  font-style: normal;
+  font-size: clamp(0.58rem, 2.4vw, 0.78rem);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--vg174acc, #e8c476);
+  margin-bottom: 10px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+  animation: vg174Sube 0.5s 0.16s ease-out both;
+}
+.vg174-cine-txt strong {
+  display: block;
+  font-family: var(--font-rajdhani), sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: clamp(2.05rem, 11vw, 5.4rem);
+  line-height: 0.96;
+  letter-spacing: 0.01em;
+  color: #fff;
+  text-shadow: 0 3px 24px rgba(0, 0, 0, 0.78);
+  animation: vg174Sube 0.55s 0.3s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+.vg174-cine-txt strong b {
+  color: var(--vg174acc, #e8c476);
+  font-weight: 700;
+}
+.vg174-cine-txt span {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-jetmono), monospace;
+  font-size: clamp(0.64rem, 2.6vw, 0.84rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.84);
+  animation: vg174Sube 0.55s 0.46s ease-out both;
+}
+.vg174-cine-dato {
+  position: absolute;
+  left: clamp(18px, 6vw, 84px);
+  right: clamp(18px, 6vw, 84px);
+  bottom: calc(9vh + 44px);
+  z-index: 2;
+  font-family: var(--font-jetmono), monospace;
+  font-style: normal;
+  font-size: clamp(0.54rem, 2.2vw, 0.7rem);
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.62);
+  border-left: 2px solid var(--vg174acc, #e8c476);
+  padding-left: 10px;
+  animation: vg174Sube 0.5s 0.6s ease-out both;
+}
+/* BARRAS DE CINE — el letterbox que firma la secuencia */
+.vg174-cine-barras i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 9vh;
+  background: #000;
+  z-index: 3;
+  pointer-events: none;
+}
+.vg174-cine-barras i:first-child { top: 0; }
+.vg174-cine-barras i:last-child { bottom: 0; }
+/* PROGRESO GTA — segmentos del relato ya vividos */
+.vg174-cine-progreso {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(9vh + 16px);
+  display: flex;
+  gap: 6px;
+  z-index: 4;
+  pointer-events: none;
+}
+.vg174-cine-progreso i {
+  width: 26px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: background 0.3s ease;
+}
+.vg174-cine-progreso i[data-on="1"] {
+  background: var(--vg174acc, #e8c476);
+  box-shadow: 0 0 8px rgba(232, 196, 118, 0.45);
+}
+.vg174-cine-saltar {
+  position: absolute;
+  top: calc(9vh + 14px);
+  right: 16px;
+  z-index: 5;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: #fff;
+  font-family: var(--font-jetmono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 10px 16px 10px 18px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  animation: vg174Sube 0.45s 0.8s ease-out both;
+}
+.vg174-cine-saltar:active { transform: scale(0.94); }
+@keyframes vg174Ken {
+  from { transform: scale(1.02) translateX(0); }
+  to   { transform: scale(1.15) translateX(-1.8%); }
+}
+@keyframes vg174Sube {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes vg174Entra {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vg174-cine-foto, .vg174-cine-card,
+  .vg174-cine-txt em, .vg174-cine-txt strong, .vg174-cine-txt span,
+  .vg174-cine-dato, .vg174-cine-saltar { animation: none !important; }
+}
+
 /* ---- 4. EL POPUP DEL CONFLICTO — junto al punto tocado ------- */
 .vg140-popup {
   position: fixed;

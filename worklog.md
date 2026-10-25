@@ -2743,3 +2743,20 @@ Work Log:
 
 Stage Summary:
 - v172.0 EL PULSO DE LA PARIDAD lista en ia2/v172.0: la paridad ya no solo existe — se MIDE (3D vs 2D con dos puntos únicos, sin doble conteo), el ascenso SUENA (cascada por fila) y ninguna fila del mundo se pierde (paginación universal patrón BOLSA, asunto del mundo). Bitácora + inbox actualizados; sugerencias nuevas en MENSAJE #17.
+
+---
+Task ID: ia1-v174.0
+Agent: ia1 (solitaria — el Dueño retiró al empleado 2; main manda)
+Task: v174.0 EL CINE DE VANGUARD — el Dueño: «vanguard dura horas cargando y ya no avanza y no hay intro como gta en vanguard». Dos frentes: ① diagnosticar y curar el cuelgue de carga, ② la intro GTA-style de noticias confirmada («sí a todo» ×3 en el plan v168).
+
+Work Log:
+- DIAGNÓSTICO DEL CUELGUE (causa raíz confirmada): health respondía (v173.0) pero al abrir el navegador la cortina quedaba clavada en «Desplegando el universo» — el server `next dev` moría SILENCIOSAMENTE por OOM-killer (sin traza en dev.log). Reproducido 2× en la misma ronda (la 2ª durante la prueba móvil 390px: ERR_CONNECTION_REFUSED). El teléfono del Dueño veía «cargando horas» porque el server YA NO EXISTÍA. CURA: build de producción (NODE_OPTIONS max-old-space 2600, EXIT 0) + node scripts/serve.mjs --prod — health v174.0 con RSS 197MB (vs 1.8GB del dev): inmune al OOM. La cortina v155 queda como red de seguridad del cliente (botón «toca para despertarlo»).
+- (1) EL CINE DE VANGUARD (mundo-webgl.tsx): nueva fase "cine" ANTES de la ceremonia — 6 PLACAS GTA-STYLE (CINE_PLACAS module-level): foto real local (/assets/real, /imagenes-reales — cero red) + duotono del acento de cada conflicto (oro/fuego/azul/violeta/cian/oro), ceja de agencia, título condensado en itálica con split blanco+acento, sub y dato duro. RUSIA—UCRANIA → LA REGIÓN EN LLAMAS → LA RUTA DEL PETRÓLEO → QUIÉN MANDA EN EL MUNDO → NO DUERME. REPORTA. → EL CENTRO DE NOTICIAS.
+- (2) INTERACCIÓN: auto-avance 2.15s (useEffect fase==="cine"), tocar avanza, SALTAR » siempre visible (stopPropagation), reduced-motion salta directo a la ceremonia, reencuentro (LLAVE_ENTRADA) NO repite cine. cineFinRef = guard anti-doble-fin (tap y auto-timer pueden chocar en la última placa — nacerLogo jamás corre 2×).
+- (3) ARQUITECTURA: la ceremonia sale de la secuencia de montaje y es función propia arrancarCeremonia() (despues T1..T4: estrellas/logo/tagline/hint) que el cine llama al terminar; deps del effect [soporte, aterrizajeCiudad, arrancarCeremonia, cineFin]. El raycast (onToque) y la rueda (onRueda) IGNORAN el cine (selector .vg174-cine en el closest de exclusión) — tocar una placa nunca dispara vuelos ni raycast.
+- (4) CSS (globals.css ~170 líneas): .vg174-cine fixed z-96 sobre la entrada (z-90); Ken Burns 9s solo transform; duotono por ::after mix-blend overlay con var(--vg174acc); letterbox 9vh; progreso GTA (segmentos data-on); Rajdhani itálica clamp(2.05rem,11vw,5.4rem); reduced-motion apaga animaciones.
+- (5) VERSIONADO: version.ts v174.0 EL CINE DE VANGUARD (crónica completa); bitacora.ts entrada v174.0.
+- QA E2E (agent-browser sobre PRODUCCIÓN): tsc 0; cine 6/6 placas con fotos reales + duotonos correctos (capturas qa-v174-*.png); relevo cine → ceremonia (estrellas + tagline + TAP TO ENTER) → ENTRAR → ciudad + Casa viva (cápsula true, modal reconexión, 0 errores consola); SALTAR → ceremonia en tagline; móvil 390px sin overflow; reencuentro sin cine; health v174.0 rss 197MB.
+
+Stage Summary:
+- MAIN = v174.0 EL CINE DE VANGUARD: la entrada abre como tráiler de noticias GTA-style (6 placas, acento por conflicto, SALTAR) y el cuelgue «horas cargando» está muerto de raíz (producción con doble fork, 197MB). Siguiente ronda sugerida: fichas coleccionables de conflictos (directiva confirmada del Dueño) o CAPA 2 del centro de noticias (red visual de conexiones).

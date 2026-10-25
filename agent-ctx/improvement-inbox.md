@@ -431,3 +431,17 @@ Salud: home=200 | health v172.0 | db down (ambiental, proveedor Postgres — fue
 5. I18N DEL PULSO — la tarjeta de telemetría y las placas SIGUIENTE/ATRAS tienen textos ES fijos: entrar al sistema de i18n de la casa (8 idiomas) · Esfuerzo: S
 
 ⭐ IDEA ESTRELLA: EXPORT DE LA CUENTA — la telemetría local mide UN piloto; el export anónimo a /api/stats mide a la CIUDAD entera: «el 34% de las acciones de Vanguard ya nacen en 3D» es el número que decide dónde invertir las próximas rondas.
+
+---
+## MENSAJE #18 · 2026-10-26 · Task ia1-v174.0
+Notas: Ronda «EL CINE DE VANGUARD» — la intro GTA-style aterriza (6 placas de noticias con acento por conflicto, SALTAR siempre) y el cuelgue del Dueño se cura de raíz: el dev moría por OOM-killer (server muerto = «horas cargando»); producción standalone con serve.mjs (197MB) es el nuevo suelo. QA E2E completo (cine, relevo, ciudad, móvil, reencuentro, SALTAR).
+Salud: home=200 | health v174.0 | prod rss 197MB | tsc 0
+
+📡 PRÓXIMAS PROPUESTAS (para la siguiente ronda del Dueño):
+1. FICHAS COLECCIONABLES DE CONFLICTOS (directiva confirmada del Dueño, sigue viva) — tarjetas/placas de cada guerra con noticias únicas, rareza, integradas a perfil/tienda · Esfuerzo: M
+2. CINE v2 — placas que PESCAN cables reales en vivo (la placa de RUSIA—UCRANIA muestra el titular real del día desde /api/news?modo=centro) · Esfuerzo: M
+3. SONIDO DEL CINE — golpe de percusión por placa (el mundo ya presta AudioContext; sonar("tic") hoy) + silencio honesto si no hay gesto · Esfuerzo: S
+4. PLACA FINAL TOCABLE — la última placa del cine («TOCA PARA DESPLEGAR EL UNIVERSO») salta directo a ENTRAR sin pasar por el hint · Esfuerzo: S
+5. RED VISUAL DE CONEXIONES (directiva del plan v168, sigue viva) — nodos IRÁN→Hezbollah→Houthis con grosor=peso, en 2D y como sala 3D · Esfuerzo: L
+
+⭐ IDEA ESTRELLA: CINE v2 EN VIVO — la intro GTA que PESCA la noticia real del día: la placa del conflicto muestra EL TITULAR DE HOY con su fuente; el cine deja de ser un tráiler fijo y se vuelve EL TELETIPO DEL MUNDO (nadie más tiene una intro que se actualiza sola cada día).

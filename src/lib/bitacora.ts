@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v174.0",
+    nombre: "EL CINE DE VANGUARD",
+    tipo: "mundo",
+    hitos: [
+      "EL CINE DE VANGUARD (mandato del Dueño: «intros hermosas, diferentes, como las de GTA pero de noticias y personajes») — la ceremonia de entrada abre con 6 PLACAS GTA-STYLE de noticias: foto real con duotono del acento de CADA conflicto (RUSIA—UCRANIA oro, LA REGIÓN EN LLAMAS fuego, LA RUTA DEL PETRÓLEO azul, QUIÉN MANDA violeta, NO DUERME. REPORTA. cian, EL CENTRO DE NOTICIAS oro), tipografía condensada en itálica (Rajdhani 700, hasta 5.4rem), ceja de agencia, dato duro con filo de acento, Ken Burns (solo transform/opacity: 60 FPS móvil), barras de cine letterbox, progreso GTA por segmentos y SALTAR siempre visible — tocar una placa avanza, auto-avance cada 2.15s, reduced-motion se lo salta",
+      "ARQUITECTURA DE LA ENTRADA — la ceremonia (estrellas → logo → tagline → hint) sale de la secuencia de montaje y es función propia (arrancarCeremonia) que el cine llama al terminar: cineFinRef guarda el anti-doble-fin (tap y auto-timer pueden chocar en la última placa; nacerLogo jamás corre dos veces); el reencuentro NO repite cine; el raycast y la rueda del mundo IGNORAN el cine (selector .vg174-cine) — tocar una placa nunca dispara vuelos",
+      "EL CUELGUE CAZADO (QA en vivo): el dev `next dev` (1.8GB RSS) moría silenciosamente por OOM-killer — el teléfono del Dueño se quedaba «cargando horas» porque el server YA NO EXISTÍA (reproducido 2× en la misma ronda). CURA: build de producción + scripts/serve.mjs --prod (doble fork huérfano PPID 1, ~197MB RSS, inmune al OOM) — la cortina v155 queda como red de seguridad del cliente",
+      "QA v174: tsc 0; cine verificado en escritorio y móvil 390px (sin overflow), relevo cine → ceremonia → TAP TO ENTER → ciudad → Casa viva (cápsula acoplada, 0 errores de consola), SALTAR funciona, reencuentro sin cine; health v174.0 en producción (rss 197MB); guards v167 intactos, ceremonia v168 intacta, fallback sin WebGL (v72) intacto",
+    ],
+  },
+  {
     version: "v173.0",
     nombre: "LA AGENCIA CENTRAL",
     tipo: "nav",

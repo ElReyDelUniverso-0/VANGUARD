@@ -402,6 +402,36 @@
 //     marcador abre el lector en la Casa (protocolo Casa⇄Mundo, ley #25).
 // (5) NADA SE ROMPE: news-panel, OJO DE DIOS, verdades y las 129 salas 3D
 //     siguen vivos — el motor de impacto solo añade capa sobre la verdad.
-export const APP_VERSION = "v173.0";
-export const APP_CODENAME = "LA AGENCIA CENTRAL";
+// v174.0 EL CINE DE VANGUARD — la entrada GTA de noticias + la cura del cuelgue.
+//     El Dueño: «vanguard dura horas cargando y ya no avanza y no hay intro
+//     como gta en vanguard». Dos frentes, una ronda:
+// (1) EL CINE DE VANGUARD (mundo-webgl): la ceremonia de entrada abre con 6
+//     PLACAS GTA-STYLE de noticias — foto real (/assets/real, /imagenes-reales,
+//     cero red) con duotono del acento de CADA conflicto, tipografía condensada
+//     en itálica (Rajdhani 700, clamp 2.05rem→5.4rem), ceja de agencia + dato
+//     duro con filo de acento, Ken Burns 9s (transform/opacity SOLO: 60 FPS
+//     móvil), barras de cine letterbox, progreso GTA por segmentos y SALTAR
+//     siempre visible. RUSIA—UCRANIA (oro) → LA REGIÓN EN LLAMAS (fuego) → LA
+//     RUTA DEL PETRÓLEO (azul) → QUIÉN MANDA (violeta) → NO DUERME. REPORTA.
+//     (cian) → EL CENTRO DE NOTICIAS (oro, puente al título). Auto-avance
+//     2.15s por placa; tocar avanza; reduced-motion se lo salta (honesto).
+// (2) LA ARQUITECTURA DE LA ENTRADA: la ceremonia (estrellas → logo → tagline
+//     → hint) sale de la secuencia de montaje y es función propia
+//     (arrancarCeremonia) que el cine llama al terminar — cineFinRef guard
+//     anti-doble-fin (tap y auto-timer pueden chocar en la última placa;
+//     nacerLogo jamás corre dos veces). Reencuentro NO repite cine.
+//     El raycast y la rueda IGNORAN el cine (selector .vg174-cine): tocar una
+//     placa nunca dispara vuelos del mundo.
+// (3) EL CUELGUE DEL SERVIDOR (causa raíz hallada en QA): el dev `next dev`
+//     (1.8GB RSS) murió silenciosamente (OOM-killer) durante la prueba móvil
+//     — el teléfono del Dueño se quedaba «cargando horas»: el server ya no
+//     existía. Cura: build de producción + scripts/serve.mjs --prod (doble
+//     fork huérfano hacia PPID 1, ~200MB RSS, inmune al OOM-killer, recreado
+//     en v169). El guard de la cortina (20s → «toca para despertarlo») queda
+//     como red de seguridad del cliente.
+// (4) NADA SE ROMPE: la ceremonia v168 intacta tras el cine, el fallback sin
+//     WebGL (v72) intacto, guards v167 (ciudadCerradaAlgunaVez + watchdog)
+//     intactos, rewrite /socket.io intacto, las 16 salas insignia intactas.
+export const APP_VERSION = "v174.0";
+export const APP_CODENAME = "EL CINE DE VANGUARD";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
