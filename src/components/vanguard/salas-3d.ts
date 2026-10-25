@@ -144,6 +144,9 @@ export interface SalaPerfil3D extends BaseSala3D {
   monedas: number;
   gemas: number;
   racha: number;
+  // v172 EL PULSO DE LA PARIDAD: el agente lleva su propia telemetría
+  acc3d?: number;
+  acc2d?: number;
 }
 // v147 PORTAL DE CUOTAS — el mercado de predicciones en volumen:
 // SÍ/NO gigantes con su cuota, fichas de apuesta tocables y el premio
@@ -247,6 +250,10 @@ export interface Sala3DInstancia {
   actualizar: (p: PayloadSala3D) => void;
   tic: (t: number, dt: number) => void;
   liberar: () => void;
+  // v172 PAGINACIÓN UNIVERSAL: la casa de vidrio pagea sus filas — el
+  // mundo llama aquí cuando el raycast toca la placa SIGUIENTE/ANTERIOR
+  // (accion "__pagina": asunto del mundo, nunca viaja a la Casa)
+  paginar?: (pagina: number) => void;
 }
 
 // contexto que presta el mundo (fuente, tweens, calidad)
@@ -263,6 +270,9 @@ export interface CtxSala3D {
     ms: number,
     opts?: { ease?: (t: number) => number; onUpdate?: () => void; onDone?: () => void },
   ) => void;
+  // v172 SONIDO DE CASCADA: una gota de cristal por fila revelada —
+  // el mundo presta su AudioContext (las salas no tienen uno propio)
+  sonar?: (tipo: "cascada", pitch?: number) => void;
 }
 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -1693,7 +1703,12 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
       const ret = { d: 0 };
       ctx.animarP(ret, { d: 1 }, Math.max(1, 80 + i * 130), {
         ease: easeOut,
-        onDone: () => ch.scale.setScalar(1),
+        onDone: () => {
+          ch.scale.setScalar(1);
+          // v172 SONIDO DE CASCADA: una gota de cristal por fila revelada
+          // (pitch ascendente 1 → ~1.7; solo filas reales, no placas de pie)
+          if (ch.userData.baseY !== undefined) ctx.sonar?.("cascada", 1 + i * 0.09);
+        },
       });
       ch.scale.setScalar(0.001);
     });
@@ -1753,6 +1768,13 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
   // nace encendido; cada habitación despierta sola cada ~6s ═══
   let reloj = 0;
 
+  // ═══ v172 PAGINACIÓN UNIVERSAL (patrón BOLSA) ═══
+  // ninguna fila se pierde: las que no caben en la casa esperan su página
+  // tras las placas SIGUIENTE/ATRAS — el mundo las pagea con __pagina
+  let pag = 0;
+  let totalPag = 1;
+  let ultimaC: SalaContenido3D | null = null;
+
   const pintar = (c: SalaContenido3D) => {
     // las filas viejas se desintegran (dispose completo)
     for (const hab of habs) {
@@ -1778,9 +1800,15 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
     }
 
     // reparto de filas por habitación: estanterías de 3 (7 máximo en móvil)
+    // v172: el slice se vuelve PÁGINA — densidad adaptativa (ley móvil):
+    // misma estantería, pero el resto es TOCABLE, no una confesión
     const MAX = ctx.movil ? 7 : 9;
     const w = 1.02, h = 0.115;
-    const visibles = (c.filas || []).slice(0, MAX);
+    ultimaC = c;
+    const todas = c.filas || [];
+    totalPag = Math.max(1, Math.ceil(todas.length / MAX));
+    if (pag >= totalPag) pag = totalPag - 1;
+    const visibles = todas.slice(pag * MAX, (pag + 1) * MAX);
     const POR_HAB = 3;
     visibles.forEach((f, gi) => {
       const hab = habs[Math.min(NHABS - 1, Math.floor(gi / POR_HAB))];
@@ -1884,12 +1912,37 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
       }
     });
 
-    // EL PIE — lo que quedó en el panel se confiesa en la pared del fondo
-    const resto = (c.filas || []).length - visibles.length;
-    if (resto > 0) {
-      const pie = texto3D(ctx, `+${resto} MAS EN EL PANEL`, { tam: 0.024, prof: 0.008, color: 0x7ab8ff, emis: 0.42 });
-      pie.grupo.position.set(-pie.ancho / 2, 0.05, -PROF + 0.16);
-      habs[NHABS - 1].filasWrap.add(pie.grupo);
+    // v172 LAS PLACAS DE PÁGINA — todo lo que no cabe ES TOCABLE (patrón
+    // BOLSA): SIGUIENTE/ATRAS como placas doradas al pie de la última
+    // habitación; el raycast las devuelve al mundo (accion "__pagina",
+    // asunto del mundo: nunca viaja a la Casa ni se cuenta como acción)
+    if (todas.length > MAX) {
+      const placaPag = (texto: string, destino: number, x: number) => {
+        const wrap = new THREE.Group();
+        const cuerpo = new THREE.Mesh(
+          reg.geo(new THREE.BoxGeometry(0.66, 0.14, 0.013)),
+          reg.mat(new THREE.MeshStandardMaterial({
+            color: 0x2a1a08, metalness: 0.88, roughness: 0.24, transparent: true, opacity: 0.82,
+            emissive: new THREE.Color(COL_ORO), emissiveIntensity: 0.3,
+          })),
+        );
+        const borde = new THREE.LineSegments(cuerpo.geometry, reg.mat(matFilo(COL_ORO, 0.95)));
+        wrap.add(cuerpo, borde);
+        const txt = texto3D(ctx, acotar(texto, 14), { tam: 0.036, prof: 0.012, color: COL_ORO, emis: 0.65 });
+        txt.grupo.position.set(-txt.ancho / 2, -0.01, 0.015);
+        wrap.add(txt.grupo);
+        const proxy = new THREE.Mesh(
+          reg.geo(new THREE.BoxGeometry(0.72, 0.19, 0.04)),
+          reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+        );
+        proxy.userData = { salaAccion: { tab: c.tab, accion: "__pagina", idx: destino } };
+        wrap.add(proxy);
+        proxies.push(proxy);
+        wrap.position.set(x, -0.52, -PROF / 2 + 0.22);
+        habs[NHABS - 1].filasWrap.add(wrap);
+      };
+      if (pag < totalPag - 1) placaPag(`SIGUIENTE ${pag + 2}/${totalPag}`, pag + 1, 0.42);
+      if (pag > 0) placaPag(`ATRAS ${pag}/${totalPag}`, pag - 1, -0.42);
     }
 
     // estado vacío: la casa confiesa que espera al panel
@@ -1956,6 +2009,16 @@ function construirContenido(ctx: CtxSala3D, p: SalaContenido3D): Sala3DInstancia
   return {
     grupo,
     proxies,
+    // v172: la página vive EN el mundo — pintar directo (la firma
+    // anti-churn de actualizar queda intacta: los datos no cambiaron)
+    paginar: (destino) => {
+      const MAXP = ctx.movil ? 7 : 9;
+      const total = Math.max(1, Math.ceil((ultimaC?.filas || []).length / MAXP));
+      const dest = Math.max(0, Math.min(total - 1, destino));
+      if (!ultimaC || dest === pag) return;
+      pag = dest;
+      pintar(ultimaC);
+    },
     actualizar: (nuevo) => {
       if (nuevo.tipo !== "contenido") return;
       const sig = JSON.stringify((nuevo.filas || []).map((f) => [f.t, f.v, f.p, f.img, f.color, f.d, f.a])) + `|${nuevo.resumen ?? ""}|${nuevo.mas ?? ""}`;
@@ -2588,6 +2651,18 @@ function construirPerfil(ctx: CtxSala3D, p: SalaPerfil3D): Sala3DInstancia {
     );
     linea.grupo.position.set(-linea.ancho / 2, -0.36, 0);
     botinWrap.add(linea.grupo);
+    // v172 EL PULSO DE LA PARIDAD — la cuenta del agente vive en su sala:
+    // verde si el mundo 3D manda, azul apagado si la Casa gana por ahora
+    if ((b.acc3d ?? 0) > 0 || (b.acc2d ?? 0) > 0) {
+      const manda3d = (b.acc3d ?? 0) >= (b.acc2d ?? 0);
+      const par = texto3D(
+        ctx,
+        acotar(`PARIDAD 3D ${b.acc3d ?? 0} / 2D ${b.acc2d ?? 0}`, 30),
+        { tam: 0.034, prof: 0.012, color: manda3d ? COL_VERDE : 0x9fb8dd, emis: 0.5 },
+      );
+      par.grupo.position.set(-par.ancho / 2, -0.5, 0);
+      botinWrap.add(par.grupo);
+    }
     grupo.add(botinWrap);
   };
   pintarBotin(p);
@@ -2613,7 +2688,7 @@ function construirPerfil(ctx: CtxSala3D, p: SalaPerfil3D): Sala3DInstancia {
     proxies,
     actualizar: (nuevo) => {
       if (nuevo.tipo !== "perfil") return;
-      const sig = `${nuevo.nivel}|${nuevo.xp}|${nuevo.monedas}|${nuevo.gemas}|${nuevo.racha}|${nuevo.nombre}`;
+      const sig = `${nuevo.nivel}|${nuevo.xp}|${nuevo.monedas}|${nuevo.gemas}|${nuevo.racha}|${nuevo.nombre}|${nuevo.acc3d ?? -1}|${nuevo.acc2d ?? -1}`;
       if (sig === sigKey) return;
       sigKey = sig;
       pintarBotin(nuevo);

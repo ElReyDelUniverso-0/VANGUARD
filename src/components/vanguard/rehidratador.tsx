@@ -23,6 +23,8 @@ import { useProfileStore } from "@/lib/profile-store";
 // v133.0: el store de los agentes entra a la disciplina de rehidratación
 import { useAgentesLibres } from "@/lib/agentes-autonomos";
 import { useFavoritos } from "@/lib/favoritos-store";
+// v172.0: la telemetría de la paridad entra a la disciplina de rehidratación
+import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -69,6 +71,12 @@ export function Rehidratador() {
     rehidratar(useFavoritos)
       .then(() => marcarHidratado("vg171-favoritos"))
       .catch(() => marcarHidratado("vg171-favoritos"));
+    // v172.0 EL PULSO DE LA PARIDAD: la cuenta 3D/2D también respeta la
+    // fila — sin este registro su cerradura bloquearía la persistencia
+    // (mismo bug cazado en el QA de v171)
+    rehidratar(useTelemetriaParidad)
+      .then(() => marcarHidratado("vg172-telemetria"))
+      .catch(() => marcarHidratado("vg172-telemetria"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

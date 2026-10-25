@@ -15,10 +15,12 @@ import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useProfileStore, BANNERS, FRAMES, FACTIONS, type BannerStyle, type FrameStyle } from "@/lib/profile-store";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
-import { UserCog, Check, Swords, ScrollText, Search, Signature, X } from "lucide-react";
+import { UserCog, Check, Swords, ScrollText, Search, Signature, X, Activity } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { TituloLetras3D } from "@/components/vanguard/letras-3d";
 import { useT } from "@/lib/i18n";
+// v172 EL PULSO DE LA PARIDAD — el agente lleva su propia cuenta 3D vs 2D
+import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
 
 export function PerfilPanel() {
   const {
@@ -44,11 +46,14 @@ export function PerfilPanel() {
   useEffect(() => {
     const emitir = () => {
       try {
+        // v172: el pulso de la paridad viaja con el agente a su sala
+        const tel = useTelemetriaParidad.getState();
         window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
           detail: {
             tab: "perfil", tipo: "perfil",
             nombre: (aliasAgente || "AGENTE").toUpperCase().slice(0, 14),
             nivel, xp, monedas: coins, gemas: gems, racha,
+            acc3d: tel.total3d, acc2d: tel.total2d,
           },
         }));
       } catch { /* el mundo 3D no bloquea el panel */ }
@@ -57,6 +62,24 @@ export function PerfilPanel() {
     const id = window.setInterval(emitir, 5000);
     return () => window.clearInterval(id);
   }, [aliasAgente, nivel, xp, coins, gems, racha]);
+
+  // ════════════════════════════════════════════════════════════
+  // v172 EL PULSO DE LA PARIDAD — la cuenta 3D vs 2D del agente:
+  // el raycast del mundo alimenta 3D, la caja de la Casa el 2D
+  // (selectores atómicos: solo este panel respira, la Casa no)
+  // ════════════════════════════════════════════════════════════
+  const total3d = useTelemetriaParidad((s) => s.total3d);
+  const total2d = useTelemetriaParidad((s) => s.total2d);
+  const hoy3d = useTelemetriaParidad((s) => s.hoy3d);
+  const hoy2d = useTelemetriaParidad((s) => s.hoy2d);
+  const porTab3d = useTelemetriaParidad((s) => s.porTab3d);
+  const ultima = useTelemetriaParidad((s) => s.ultima);
+  const reiniciarTel = useTelemetriaParidad((s) => s.reiniciar);
+  const pct3d = total3d + total2d > 0 ? Math.round((total3d / (total3d + total2d)) * 100) : 0;
+  const topTabs = useMemo(
+    () => Object.entries(porTab3d).sort((a, b) => b[1] - a[1]).slice(0, 4),
+    [porTab3d],
+  );
 
   const avatarList = useMemo(() => {
     const ql = qAvatar.trim().toLowerCase();
@@ -127,6 +150,46 @@ export function PerfilPanel() {
           </h3>
           <Input value={bioLocal} onChange={(e) => setBioLocal(e.target.value)} maxLength={90} className="font-mono text-xs h-9" placeholder="Ej: Observo los frentes antes que el mundo." aria-label="Bio del perfil" />
           <Button size="sm" onClick={saveBio} className="w-full font-mono text-[11px]">Guardar bio</Button>
+        </div>
+
+        {/* v172 EL PULSO DE LA PARIDAD — la paridad se mide, no se promete */}
+        <div className="hud-panel p-4 space-y-2">
+          <h3 className="font-orbitron text-xs tracking-widest uppercase text-gradient flex items-center gap-2">
+            <Activity className="w-4 h-4 text-amber" /> Pulso de la paridad
+          </h3>
+          <div className="flex items-end justify-between font-mono">
+            <div>
+              <div className="text-2xl font-bold text-emerald-400 leading-none">{total3d}</div>
+              <div className="text-[9px] text-muted-foreground uppercase tracking-wider">acciones en 3D</div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-sky-300 leading-none">{total2d}</div>
+              <div className="text-[9px] text-muted-foreground uppercase tracking-wider">acciones en 2D</div>
+            </div>
+          </div>
+          <div className="h-2 rounded-full overflow-hidden bg-black/40 border border-white/10" role="img" aria-label={`Paridad 3D ${pct3d}%`}>
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 to-sky-400 transition-all duration-500"
+              style={{ width: `${Math.max(pct3d, total3d > 0 ? 3 : 0)}%` }}
+            />
+          </div>
+          <p className="text-[10px] font-mono text-muted-foreground leading-snug">
+            {pct3d}% del pulso vive en el mundo 3D · hoy {hoy3d} en 3D / {hoy2d} en 2D
+            {ultima ? ` · última: ${ultima.verbo} (${ultima.fuente})` : ""}
+          </p>
+          {topTabs.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {topTabs.map(([k, n]) => (
+                <span key={k} className="px-1.5 py-0.5 rounded border border-white/10 bg-black/30 text-[9px] font-mono text-emerald-300/90">{k} ×{n}</span>
+              ))}
+            </div>
+          )}
+          <button
+            onClick={() => { reiniciarTel(); toast.info("Telemetría reiniciada"); }}
+            className="text-[9px] font-mono text-muted-foreground hover:text-foreground underline text-left"
+          >
+            reiniciar cuenta
+          </button>
         </div>
 
         {/* v114: FIRMA 3D — se forja en EXPERIMENTAL, se luce aquí */}

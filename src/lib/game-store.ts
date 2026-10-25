@@ -10,6 +10,9 @@ import { espejoXpa } from "@/lib/analista";
 import { protocoloMultiplier, trackProtocoloEarnings } from "@/lib/tension";
 // v84.0 FORTUNA DE GUERRA — golpe de fortuna ×2/×3/×5 + prima de guerra en TODO pago
 import { rollFortuna, emitirFortuna } from "@/lib/fortuna";
+// v172.0 EL PULSO DE LA PARIDAD — la caja de la Casa cuenta las acciones 2D
+// (los gastos con motivo «desde el mundo 3D» los cuenta el raycast: no doble-contar)
+import { contarGastoCasa } from "@/lib/telemetria-paridad";
 // v26: sonido especial de recompensa en cada moneda ganada
 import { sfx } from "@/lib/sound";
 import { estaHidratado } from "@/lib/storage-blindado";
@@ -947,6 +950,9 @@ export const useGameStore = create<GameState>()(
         }
       },
       spendCoins: (amount, reason) => {
+        // v172: cada gasto deliberado ES una acción 2D (comprar, invertir,
+        // apostar, desbloquear…) — el pulso de la paridad se mide aquí
+        try { contarGastoCasa(reason); } catch { /* medir nunca bloquea la caja */ }
         const s = get();
         // v15: el PROPIETARIO gasta sin límite — dinero infinito
         if (s.account?.isOwner) {

@@ -407,3 +407,16 @@ Salud: home=200 | health v171.0 | db up
 5. TELEMETRÍA DE NAVEGACIÓN — cuántos saltos por riel vs menú vs búsqueda (localStorage + stats) · Esfuerzo: S
 
 ⭐ IDEA ESTRELLA: FAVORITOS COMPARTIDOS RIEL↔VITRINA — un solo gesto fija una sala en TODA la casa: fila cero del riel, fila 0 de la vitrina y placa dorada en el edificio 3D. La casa entera aprende tus salas.
+
+## MENSAJE #17 · 2026-10-25 · tras Task ia2-v172.0
+Notas: Ronda «EL PULSO DE LA PARIDAD» — la cola viva del inbox #16 aterriza: telemetría 3D vs 2D (⭐ idea estrella: dos puntos únicos de medición, sin doble conteo), sonido de cascada por fila revelada y paginación 3D universal (el pie «+N MÁS» muere: placas SIGUIENTE/ATRAS tocables, asunto del mundo). Bug cazado en QA: la cerradura de storageBlindado bloqueaba la persistencia del nuevo store (mismo patrón del bug v171 — el rehidratador es la disciplina obligatoria de CADA store nuevo). QA E2E 2D con navegador real: compras contadas, contadores viven en PERFIL, sobreviven recarga. El camino 3D queda para la revisión cruzada del merge.
+Salud: home=200 | health v172.0 | db down (ambiental, proveedor Postgres — fuera del repo)
+
+📡 PRÓXIMAS PROPUESTAS (para la siguiente ronda del Dueño):
+1. PANELES DE TELEMETRÍA EN 3D — placa CSS3D dedicada junto al HUD con el pulso 3D/2D en vivo (hoy vive en PERFIL): el Dueño lo ve sin abrir módulo · Esfuerzo: S
+2. EXPORT DE LA CUENTA — la telemetria vg172 viaja a /api/stats una vez por sesión (agregado anónimo): el Dueño ve el pulso de TODOS los pilotos, no solo el suyo · Esfuerzo: M
+3. DETALLE POR PROXIMIDAD UNIVERSAL (idea #3 del inbox #16, sigue viva) — extender el detalle d de las filas a un volar-cerca con tarjeta grande en las 129 salas emitidas · Esfuerzo: M
+4. PUERTAS TOCABLES + recompensa HABITACIONES 3/3 (pendiente v167, extraerHabitacion en reflog 30e5258) · Esfuerzo: M
+5. I18N DEL PULSO — la tarjeta de telemetría y las placas SIGUIENTE/ATRAS tienen textos ES fijos: entrar al sistema de i18n de la casa (8 idiomas) · Esfuerzo: S
+
+⭐ IDEA ESTRELLA: EXPORT DE LA CUENTA — la telemetría local mide UN piloto; el export anónimo a /api/stats mide a la CIUDAD entera: «el 34% de las acciones de Vanguard ya nacen en 3D» es el número que decide dónde invertir las próximas rondas.

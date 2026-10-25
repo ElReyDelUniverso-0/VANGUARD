@@ -339,6 +339,36 @@
 //     edificio de este módulo en la ciudad» en vez de prometer un vuelo
 //     que no va a ocurrir (queja del QA del merge v168).
 // Herencia v170.0 LA CONSOLA HERMOSA y todo lo anterior.
-export const APP_VERSION = "v171.0";
-export const APP_CODENAME = "LA FILA CERO";
+
+// ════════════════════════════════════════════════════════════
+// v172.0 EL PULSO DE LA PARIDAD (ia2 · rama ia2/v172.0 — la cola viva del
+//         inbox #16, aprobada por el Dueño con «si a todo»). La paridad ya
+//         existe (v168) y ya vive en main (v171): ahora hay que MEDIRLA y
+//         sostenerla. Tres piezas:
+// (1) TELEMETRÍA 3D vs 2D (⭐ idea estrella del inbox #16): nuevo
+//     src/lib/telemetria-paridad.ts (zustand persist vg172-telemetria,
+//     storage blindado, rollover diario UTC) — dos puntos únicos de medición:
+//     el raycast del mundo (g.tipo === "sala", se saltan "fila" y "__pagina")
+//     cuenta 3D; la caja de la Casa (game-store.spendCoins) cuenta 2D y
+//     EXCLUYE los motivos «desde el mundo 3D» para no doble-contar. La
+//     cuenta vive en el PERFIL: bloque «Pulso de la paridad» en el panel 2D
+//     (totales, % del pulso, hoy, top salas 3D, última acción, reiniciar) y
+//     línea PARIDAD 3D/2D extruida en la sala insignia del agente (verde si
+//     el mundo manda, azul si la Casa gana por ahora). Sin tocar nada visual.
+// (2) SONIDO DE CASCADA (idea #1): el ascenso genérica→contenido suena —
+//     una gota de cristal (sine 640Hz·pitch, 70ms, ganancia susurrada) por
+//     cada fila revelada en el stagger 130ms de la casa de vidrio, con
+//     pitch ascendente 1→~1.7; el mundo presta su AudioContext por el nuevo
+//     CtxSala3D.sonar. Diferencia el ascenso de la estación informativa.
+// (3) PAGINACIÓN 3D UNIVERSAL + DENSIDAD ADAPTATIVA (ideas #4/#2): el pie
+//     honesto «+N MÁS EN EL PANEL» muere — todo lo que no cabe en la casa
+//     ES TOCABLE. Las placas doradas SIGUIENTE 2/3 · ATRAS 1/3 (patrón BOLSA)
+//     viven al pie de la última habitación; el raycast las resuelve EN EL
+//     MUNDO (accion "__pagina" → Sala3DInstancia.paginar → pintar la página,
+//     clamp + firma anti-churn intacta; nunca viaja a la Casa ni se cuenta
+//     como acción). Mismo estante (7 móvil / 9 escritorio) pero el resto
+//     alcanzable: densidad primero (ley móvil), cero filas perdidas.
+// Herencia v171.0 LA FILA CERO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v172.0";
+export const APP_CODENAME = "EL PULSO DE LA PARIDAD";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
