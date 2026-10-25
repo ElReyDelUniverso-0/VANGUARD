@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v173.0",
+    nombre: "LA AGENCIA CENTRAL",
+    tipo: "nav",
+    hitos: [
+      "EL MOTOR DE IMPACTO (src/lib/impacto.ts) — cada cable del planeta recibe puntuación 0-100 determinista (vocabulario de la guerra + etiqueta táctica + peso del país + credibilidad de la fuente + frescura) y escalón URGENTE → CRÍTICO → ALTO → DESARROLLO → CONTEXTO; la misma noticia puntúa siempre igual: la Agencia es auditable línea a línea",
+      "EL CENTRO MUNDIAL DE NOTICIAS (tab centro, primera de INICIO + baldosa del home) — el mandato del Dueño: «el mayor centro de noticias del mundo, en vivo por importancia e impacto, cada una con su pie de foto e información»: HÉROE DE IMPACTO con foto grande + pie de foto + medidor 0-100 + POR QUÉ IMPORTA, escalera con contadores, ranking en vivo con miniaturas/bandera/edad, pulso de la Agencia y refresco 60s con badge NUEVO; la SALA DE LECTURA (v116) abre cada cable",
+      "LA SALA DEL MAPA MUNDIAL (TipoSala3D «mapa», 16ª insignia) — EL MAPA QUE v168 RETIRÓ DE LA INTRO VUELVE COMO SALA COMPLETA en primera persona: el planeta real (textura equirectangular) inclinado como mesa de guerra, cada cable aterriza en SU país con viga cuya altura ES su impacto, orbe con el color del escalón, anillo de alarma si nació hace <2h, foto texturizada (top 6, dieta móvil) y pie de foto revelado POR PROXIMIDAD; barrido de escáner, retícula de carta naval, cartel EN VIVO latiendo; tocar un marcador abre el lector (Casa⇄Mundo, ley #25)",
+      "/api/news ENRIQUECIDA (aditivo, nada se rompe) — impacto, tier, pie de foto y «por qué importa» en TODA respuesta; ?modo=centro sirve el ranking con héroe y pulso (urgentes, países, cable más fresco, impacto medio); i18n de la tab en los 8 idiomas; QA E2E: API con 48 cables ranqueados (1 urgente, 7 críticos, 12 países, héroe IRÁN imp 80), sala 3D viva con fotos reales texturizadas, móvil 390px sin overflow, tsc 0, build limpio, health v173.0",
+    ],
+  },
+  {
     version: "v172.0",
     nombre: "EL PULSO DE LA PARIDAD",
     tipo: "mundo",

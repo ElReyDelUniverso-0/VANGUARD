@@ -12,7 +12,7 @@ import {
   SignalHigh,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass,
+  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass, Siren,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -62,6 +62,9 @@ interface WorldTile {
 
 // ====== MENÚ LLAMATIVO: los mundos principales ======
 const WORLD_TILES: WorldTile[] = [
+  // v172.0 LA AGENCIA CENTRAL — el CENTRO MUNDIAL abre el muro: la missión
+  // del Dueño (el mayor centro de noticias, en vivo por impacto + mapa 3D)
+  { tab: "centro", title: "CENTRO MUNDIAL DE NOTICIAS", desc: "El mayor centro de noticias del mundo: en vivo POR IMPORTANCIA E IMPACTO, cada cable con su pie de foto e información, y EL MAPA MUNDIAL 3D en primera persona con gráficos de guerra", icon: <Siren className="w-6 h-6" />, hex: "#FF3B30" },
   // v115.0 SINGULARIDAD — el 16º mundo abre el muro: el agente autónomo
   { tab: "arquitecto", title: "ARQUITECTO", desc: "El agente autónomo de Vanguard: se promptea a sí mismo y trabaja sin fin — instala módulos funcionales, compone obras para la radio, firma doctrinas, vigila el frente y nunca se detiene (con o sin tu ayuda)", icon: <Bot className="w-6 h-6" />, hex: "#00FFA3" },
   // v113.0 LETRAS VIVAS — la página de los imposibles

@@ -41,6 +41,7 @@ export type TipoSala3D =
   | "conflictos"
   | "memes"
   | "noticias"
+  | "mapa"
   | "quiz"
   | "votaciones"
   | "perfil"
@@ -111,6 +112,35 @@ export interface SalaNoticias3D extends BaseSala3D {
   espectadores?: number;  // operadores conectados AHORA (presencia real)
   ultimo?: boolean;       // el cable más nuevo es de ÚLTIMA HORA
   ultimoTitulo?: string;  // el titular caliente que enciende el faro
+}
+// v172.0 LA AGENCIA CENTRAL — LA SALA DEL MAPA MUNDIAL: el mapa que v168
+// retiró de la intro VUELVE como sala completa en primera persona (ley del
+// Dueño: «mapas interactivos 3D que uno pueda ver en primera persona para
+// ver gráficos de guerra y noticias en vivo»). Cada cable ranqueado por el
+// motor de impacto aterriza en SU país real como marcador vivo: viga cuya
+// altura ES su impacto, orbe con el color de su escalón, foto texturizada
+// y pie de foto revelado POR PROXIMIDAD. Tocar un marcador abre la
+// SALA DE LECTURA de la Casa (2D = verdad).
+export interface MarcadorMapa3D {
+  id: string;
+  titulo: string;
+  fuente: string;
+  tier: string;      // URGENTE / CRÍTICO / ALTO / DESARROLLO / CONTEXTO
+  impacto: number;   // 0..100 (motor impacto.ts)
+  color: string;     // hex del escalón
+  pais: string;
+  edad: string;
+  lat: number;
+  lng: number;
+  img?: string;
+  pie?: string;
+  enVivo?: boolean;  // nacido hace <2h
+}
+export interface SalaMapa3D extends BaseSala3D {
+  tipo: "mapa";
+  marcadores: MarcadorMapa3D[];
+  urgenteTitulo?: string; // el titular del héroe bajo el título
+  espectadores?: number;
 }
 // v145.1 EXAMEN HOLOGRÁFICO — la pregunta y las respuestas A·D en volumen
 export interface SalaQuiz3D extends BaseSala3D {
@@ -231,6 +261,7 @@ export type PayloadSala3D =
   | SalaConflictos3D
   | SalaMemes3D
   | SalaNoticias3D
+  | SalaMapa3D
   | SalaQuiz3D
   | SalaVotaciones3D
   | SalaPerfil3D
@@ -3668,6 +3699,349 @@ function construirRanking(ctx: CtxSala3D, p: SalaRanking3D): Sala3DInstancia {
 }
 
 // ────────────────────────────────────────────────────────────
+// v172.0 LA SALA DEL MAPA MUNDIAL — la mesa de guerra de la AGENCIA
+// CENTRAL: el planeta entero en proyección equirectangular (textura
+// REAL del planeta) sobre una mesa inclinada hacia el piloto. Cada
+// cable del motor de impacto aterriza en SU país como marcador vivo:
+// la viga CRECE con su impacto, el orbe lleva el color de su escalón,
+// la foto texturizada flota encima y APROXIMARSE revela el pie de
+// foto (v165). Tocar un marcador abre la lectura en la Casa.
+// ────────────────────────────────────────────────────────────
+function construirMapa(ctx: CtxSala3D, p: SalaMapa3D): Sala3DInstancia {
+  const reg = registrar();
+  const grupo = new THREE.Group();
+  const proxies: THREE.Mesh[] = [];
+  const tics: ((t: number, dt: number) => void)[] = [];
+  const tmpW = new THREE.Vector3();
+  const detQ = new THREE.Quaternion();
+  const detE = new THREE.Euler();
+  // la desintegración honesta — lo que sale de la sala, libera su GPU
+  const limpiarMapa = (o: THREE.Object3D) => {
+    o.traverse((x) => {
+      const m = x as THREE.Mesh;
+      if (m.geometry) m.geometry.dispose();
+      const mat = m.material as THREE.Material | undefined;
+      if (mat) mat.dispose();
+    });
+  };
+
+  const titulo = texto3D(ctx, acotar(p.titulo, 24), { tam: 0.14, prof: 0.05, color: p.color, emis: 0.55 });
+  titulo.grupo.position.set(-titulo.ancho / 2, 1.0, 0);
+  animarTitulo(tics, titulo, 1.0);
+  grupo.add(titulo.grupo);
+
+  const DESPLAZ = ctx.movil ? 0.04 : 0.22;
+
+  // LA MESA DE GUERRA — el planeta real (textura equirectangular 2:1)
+  // inclinado como tablero de mando; el piloto vuela SOBRE él en primera persona
+  const mapa = new THREE.Group();
+  mapa.position.set(DESPLAZ, 0.12, 0);
+  mapa.rotation.x = -0.62; // tablero inclinado: se lee desde el vuelo y de pie
+  mapa.scale.setScalar(ctx.movil ? 0.8 : 0.94);
+  grupo.add(mapa);
+
+  const MAPA_W = 3.3, MAPA_H = 1.65;
+  const placa = new THREE.Mesh(
+    reg.geo(new THREE.PlaneGeometry(MAPA_W, MAPA_H)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.92 })),
+  );
+  try {
+    new TextureLoader().setCrossOrigin("anonymous").load(
+      "/assets/globe/earth-dark.jpg",
+      (tex) => { (placa.material as THREE.MeshBasicMaterial).map = tex; (placa.material as THREE.MeshBasicMaterial).needsUpdate = true; },
+      undefined,
+      () => { /* la reserva ya es el fondo oscuro del material */ },
+    );
+  } catch { /* sin textura: el tablero queda de cristal */ }
+  mapa.add(placa);
+  const bordeMapa = new THREE.LineSegments(placa.geometry, reg.mat(matFilo(p.color, 0.85)));
+  bordeMapa.position.z = 0.001;
+  mapa.add(bordeMapa);
+
+  // LA RETÍCULA — graticule cada 30° (el tablero de mando se lee como carta naval)
+  const reticula: number[] = [];
+  for (let lng = -180; lng <= 180; lng += 30) {
+    const x = ((lng + 180) / 360 - 0.5) * MAPA_W;
+    reticula.push(x, -MAPA_H / 2, 0.002, x, MAPA_H / 2, 0.002);
+  }
+  for (let lat = -90; lat <= 90; lat += 30) {
+    const y = ((lat + 90) / 180 - 0.5) * MAPA_H;
+    reticula.push(-MAPA_W / 2, y, 0.002, MAPA_W / 2, y, 0.002);
+  }
+  const geoRet = reg.geo(new THREE.BufferGeometry());
+  geoRet.setAttribute("position", new THREE.Float32BufferAttribute(reticula, 3));
+  mapa.add(new THREE.LineSegments(geoRet, reg.mat(new THREE.LineBasicMaterial({ color: p.color, transparent: true, opacity: 0.14 }))));
+
+  // EL BARRIDO — línea de escáner que cruza el tablero una y otra vez
+  const barrido = new THREE.Mesh(
+    reg.geo(new THREE.PlaneGeometry(0.05, MAPA_H)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: 0x3ddcff, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false })),
+  );
+  barrido.position.z = 0.004;
+  mapa.add(barrido);
+  tics.push((t) => {
+    const fase = (t * 0.09) % 1;
+    barrido.position.x = -MAPA_W / 2 + fase * MAPA_W;
+    (barrido.material as THREE.MeshBasicMaterial).opacity = 0.16 + Math.sin(t * 2.4) * 0.1;
+  });
+
+  // LA NUBE DE MARCADORES — se repinta entera cuando cambia el ranking
+  const nube = new THREE.Group();
+  mapa.add(nube);
+  const pulsoMats: THREE.MeshStandardMaterial[] = [];
+  const vivos: { anillo: THREE.Mesh; fase: number }[] = [];
+  const orbes: THREE.Mesh[] = [];
+  const fotos: THREE.Mesh[] = [];
+
+  const limpiarNube = () => {
+    while (nube.children.length) {
+      const c = nube.children[0] as THREE.Group;
+      nube.remove(c);
+      limpiarMapa(c);
+    }
+    pulsoMats.length = 0;
+    vivos.length = 0;
+    orbes.length = 0;
+    fotos.length = 0;
+  };
+
+  const pintarMarcadores = (ms: MarcadorMapa3D[]) => {
+    limpiarNube();
+    const lista = (ms || []).slice(0, 12);
+    lista.forEach((m, i) => {
+      const col = new THREE.Color(m.color || "#ff4d5e");
+      const g = new THREE.Group();
+      // jitter determinista por índice: países que comparten coordenadas no se tapan
+      const jx = ((i % 5) - 2) * 0.016, jy = (Math.floor(i / 5) - 1) * 0.016;
+      const x = ((m.lng + 180) / 360 - 0.5) * MAPA_W + jx;
+      const y = ((m.lat + 90) / 180 - 0.5) * MAPA_H + jy;
+      g.position.set(x, y, 0);
+
+      // LA VIGA DE IMPACTO — su altura ES la gravedad del cable (gráfico de guerra)
+      const h = 0.1 + (m.impacto / 100) * 0.34;
+      const viga = new THREE.Mesh(
+        reg.geo(new THREE.CylinderGeometry(0.007, 0.014, h, 6)),
+        reg.mat(new THREE.MeshStandardMaterial({
+          color: col, emissive: col, emissiveIntensity: 0.75,
+          metalness: 0.4, roughness: 0.3, transparent: true, opacity: 0.88,
+        })),
+      );
+      viga.rotation.x = Math.PI / 2; // crece DESDE el tablero, hacia el piloto
+      viga.position.z = h / 2 + 0.004;
+      g.add(viga);
+      pulsoMats.push(viga.material as THREE.MeshStandardMaterial);
+
+      // EL ORBE — el corazón del marcador
+      const orbe = new THREE.Mesh(
+        reg.geo(new THREE.IcosahedronGeometry(0.02, 0)),
+        reg.mat(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.0, metalness: 0.5, roughness: 0.25 })),
+      );
+      orbe.position.z = h + 0.026;
+      orbe.userData = { salaAccion: { tab: p.tab, accion: "abrir", idx: i } };
+      g.add(orbe);
+      orbes.push(orbe);
+      proxies.push(orbe);
+
+      // EL ANILLO — los nacidos hace <2h laten como alarma
+      const anillo = new THREE.Mesh(
+        reg.geo(new THREE.TorusGeometry(0.03, 0.0035, 6, 22)),
+        reg.mat(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: m.enVivo ? 0.85 : 0.3, blending: THREE.AdditiveBlending, depthWrite: false })),
+      );
+      anillo.position.z = 0.006;
+      g.add(anillo);
+      if (m.enVivo) vivos.push({ anillo, fase: i });
+
+      // EL RÓTULO DEL PAÍS — letra pequeña del tablero
+      const rot = texto3D(ctx, acotar(m.pais, 12), { tam: 0.024, prof: 0.008, color: col.getHex(), emis: 0.55 });
+      rot.grupo.position.set(-rot.ancho / 2, -0.026, 0.012);
+      g.add(rot.grupo);
+
+      // LA FOTO DEL CABLE — plano texturizado flotando sobre la viga
+      // (solo los 6 primeros y en calidad alta: la dieta móvil manda)
+      if (m.img && i < 6 && !ctx.calidadBaja) {
+        const foto = planoImagen3D(m.img, m.tier, m.color, m.fuente, 0.4, 0.225);
+        foto.position.set(0, 0.02, h + 0.16);
+        g.add(foto);
+        fotos.push(foto);
+      }
+
+      // EL PROXY DE APERTURA — tocar la columna entera abre el cable
+      const proxy = new THREE.Mesh(
+        reg.geo(new THREE.BoxGeometry(0.09, 0.09, h + 0.14)),
+        reg.mat(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })),
+      );
+      proxy.position.z = (h + 0.14) / 2;
+      proxy.userData = { salaAccion: { tab: p.tab, accion: "abrir", idx: i } };
+      g.add(proxy);
+      proxies.push(proxy);
+
+      nube.add(g);
+    });
+  };
+  pintarMarcadores(p.marcadores);
+
+  // EL DETALLE POR PROXIMIDAD (v165) — una placa compartida flotante que
+  // revela PIE DE FOTO + IMPACTO del marcador más cercano (letra que va y viene)
+  let detWrap = new THREE.Group();
+  const DET_DIST = 0.85;
+  let detIdx = -1;
+  let detOp = 0;
+  grupo.add(detWrap);
+  const matarDetalle = () => {
+    grupo.remove(detWrap);
+    detWrap.traverse((x) => {
+      const mm = x as THREE.Mesh;
+      if (mm.geometry) mm.geometry.dispose();
+      const material = mm.material as THREE.Material | undefined;
+      if (material) material.dispose();
+    });
+    detWrap = new THREE.Group();
+    grupo.add(detWrap);
+  };
+  const pintarDetalle = (m: MarcadorMapa3D, i: number) => {
+    matarDetalle();
+    detIdx = i;
+    const col = new THREE.Color(m.color || "#ff4d5e");
+    const placaDet = placaHolo(0.94, 0.3, col.getHex());
+    placaDet.cuerpo.position.set(0, 0, 0);
+    placaDet.borde.position.set(0, 0, 0);
+    // la opacidad BASE queda grabada: el fundido por proximidad es
+    // base × detOp (nunca multiplicativo en cadena — bug cazado en QA mental)
+    detWrap.traverse((x) => {
+      const material = (x as THREE.Mesh).material as THREE.Material & { opacity?: number } | undefined;
+      if (material && typeof material.opacity === "number") (x as THREE.Mesh).userData.opBase = material.opacity;
+    });
+    detWrap.add(placaDet.cuerpo, placaDet.borde);
+    const cab = texto3D(ctx, `${m.tier} ${m.impacto} · ${m.fuente} ${m.edad}`, { tam: 0.022, prof: 0.008, color: col.getHex(), emis: 0.7 });
+    cab.grupo.position.set(-cab.ancho / 2, 0.082, 0.008);
+    detWrap.add(cab.grupo);
+    const linea = texto3D(ctx, acotar(m.titulo, 46), { tam: 0.026, prof: 0.009, color: 0xffffff, emis: 0.4 });
+    linea.grupo.position.set(-linea.ancho / 2, 0.036, 0.008);
+    detWrap.add(linea.grupo);
+    const pie = texto3D(ctx, acotar(m.pie || m.pais, 58), { tam: 0.02, prof: 0.007, color: COL_ORO, emis: 0.5 });
+    pie.grupo.position.set(-pie.ancho / 2, -0.05, 0.008);
+    detWrap.add(pie.grupo);
+    detWrap.traverse((x) => {
+      const material = (x as THREE.Mesh).material as THREE.Material & { opacity?: number } | undefined;
+      if (material && typeof material.opacity === "number" && (x as THREE.Mesh).userData.opBase === undefined) (x as THREE.Mesh).userData.opBase = material.opacity;
+    });
+    detWrap.position.y = 0.12;
+  };
+  // el detalle se apaga si la señal dice esperar (blindaje: el primer
+  // vg:sala3d llega SIN marcadores — los datos viven llegan después)
+  const marcadores0 = p.marcadores || [];
+  if (!marcadores0.length) detIdx = -2;
+
+  // EL CARTEL EN VIVO + el estado de la Agencia (idéntico latido de cabina)
+  const enVivo = texto3D(ctx, "EN VIVO", { tam: 0.05, prof: 0.02, color: 0xff3d55, emis: 1.0 });
+  enVivo.grupo.position.set(0.6 - enVivo.ancho, 1.12, 0);
+  grupo.add(enVivo.grupo);
+  const penna = new THREE.Mesh(
+    reg.geo(new THREE.CylinderGeometry(0.007, 0.007, 0.08, 6)),
+    reg.mat(new THREE.MeshBasicMaterial({ color: 0xff3d55 })),
+  );
+  penna.position.set(0.56, 1.1, 0);
+  grupo.add(penna);
+
+  // EL ESTADO — X marcadores geolocalizados / espera
+  let estadoWrap = new THREE.Group();
+  estadoWrap.position.set(DESPLAZ, -0.62, 0.05);
+  grupo.add(estadoWrap);
+  const pintarEstado = (n: number) => {
+    grupo.remove(estadoWrap);
+    estadoWrap.traverse((x) => {
+      const mm = x as THREE.Mesh;
+      if (mm.geometry) mm.geometry.dispose();
+      const material = mm.material as THREE.Material | undefined;
+      if (material) material.dispose();
+    });
+    estadoWrap = new THREE.Group();
+    estadoWrap.position.set(DESPLAZ, -0.62, 0.05);
+    const txt = n > 0
+      ? `${n} MARCADORES GELOCALIZADOS · MOTOR DE IMPACTO ACTIVO`
+      : "SINTONIZANDO LA RED MUNDIAL…";
+    const t = texto3D(ctx, txt, { tam: 0.026, prof: 0.01, color: 0x3fd6ff, emis: 0.6 });
+    t.grupo.position.set(-t.ancho / 2, 0, 0);
+    estadoWrap.add(t.grupo);
+    grupo.add(estadoWrap);
+  };
+  pintarEstado(marcadores0.length);
+
+  const polvoMapa = polvo(ctx.calidadBaja ? 45 : 80, p.color, 1.8, 1.6);
+  polvoMapa.position.set(DESPLAZ, -0.85, 0);
+  grupo.add(polvoMapa);
+
+  tics.push((t, dt) => {
+    polvoMapa.rotation.y += dt * 0.14;
+    // el latido del cartel EN VIVO (1.4 Hz de cabina)
+    const latido = 0.62 + Math.max(0, Math.sin(t * 8.8)) * 0.55;
+    for (const m of enVivo.mats) {
+      m.emissiveIntensity = latido;
+      m.opacity = 0.72 + latido * 0.28;
+    }
+    // vigas que respiran, orbes que giran, alarmas que laten, fotos que flotan
+    const ola = 0.55 + Math.sin(t * 2.2) * 0.3;
+    for (const m of pulsoMats) m.emissiveIntensity = ola;
+    for (const o of orbes) o.rotation.y += dt * 1.2;
+    vivos.forEach((v, i) => {
+      const s = 1 + Math.sin(t * 5.5 + v.fase * 1.7) * 0.35;
+      v.anillo.scale.setScalar(s);
+      (v.anillo.material as THREE.MeshBasicMaterial).opacity = 0.5 + Math.sin(t * 5.5 + i) * 0.35;
+    });
+    fotos.forEach((f, i) => { f.position.z = f.userData.z0 ?? (f.userData.z0 = f.position.z); f.position.z = f.userData.z0 + Math.sin(t * 1.4 + i) * 0.012; });
+    // LA PROXIMIDAD — el marcador más cercano revela su pie de foto
+    if (nube.children.length && ctx.camara && detIdx !== -2) {
+      let mejor = -1;
+      let mejorD = DET_DIST;
+      nube.children.forEach((c, i) => {
+        c.getWorldPosition(tmpW);
+        const d = tmpW.distanceTo(ctx.camara!);
+        if (d < mejorD) { mejorD = d; mejor = i; }
+      });
+      if (mejor === -1) {
+        detOp = Math.max(0, detOp - dt * 3);
+      } else {
+        if (mejor !== detIdx && p.marcadores[mejor]) pintarDetalle(p.marcadores[mejor], mejor);
+        detOp = Math.min(1, detOp + dt * 3);
+        const c = nube.children[mejor];
+        c.getWorldPosition(tmpW);
+        detWrap.position.set(tmpW.x, tmpW.y + 0.14, tmpW.z + 0.05);
+        // billboard yaw: la placa mira al piloto sin marear la casa
+        grupo.getWorldQuaternion(detQ);
+        detE.setFromQuaternion(detQ, "YXZ");
+        detWrap.rotation.y = Math.atan2(ctx.camara.x - tmpW.x, ctx.camara.z - tmpW.z) - detE.y;
+      }
+      detWrap.traverse((x) => {
+        const material = (x as THREE.Mesh).material as (THREE.Material & { opacity: number }) | undefined;
+        const base = (x as THREE.Mesh).userData.opBase;
+        if (material && typeof base === "number") material.opacity = base * detOp;
+      });
+      detWrap.visible = detOp > 0.02;
+    }
+  });
+
+  return {
+    grupo,
+    proxies,
+    actualizar: (nuevo) => {
+      if (nuevo.tipo !== "mapa") return;
+      const sig = (nuevo.marcadores || []).map((m) => `${m.id}:${m.impacto}:${m.enVivo ? 1 : 0}`).join(";") + `|${nuevo.urgenteTitulo ?? ""}`;
+      if (sig === mapa.userData.sig) return;
+      mapa.userData.sig = sig;
+      pintarMarcadores(nuevo.marcadores || []);
+      pintarEstado((nuevo.marcadores || []).length);
+      detIdx = -1; // la placa renace con el nuevo ranking
+    },
+    tic: (t, dt) => { for (const f of tics) f(t, dt); },
+    liberar: () => {
+      matarDetalle();
+      reg.liberar(); titulo.mats.forEach((m) => m.dispose());
+      limpiarMapa(estadoWrap);
+    },
+  };
+}
+
+// ────────────────────────────────────────────────────────────
 // EL DESPACHADOR — construye la sala según su tipo
 // ────────────────────────────────────────────────────────────
 export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstancia {
@@ -3676,6 +4050,7 @@ export function construirSala3D(ctx: CtxSala3D, p: PayloadSala3D): Sala3DInstanc
     case "conflictos": return construirConflictos(ctx, p);
     case "memes": return construirMemes(ctx, p);
     case "noticias": return construirNoticias(ctx, p);
+    case "mapa": return construirMapa(ctx, p);
     case "quiz": return construirQuiz(ctx, p);
     case "votaciones": return construirVotaciones(ctx, p);
     case "perfil": return construirPerfil(ctx, p);

@@ -214,6 +214,8 @@ const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
 
 // PORTADA / INICIO
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
+// v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias por impacto
+const CentroPanel = dynamic(() => import("@/components/vanguard/panels/centro-panel").then((m) => m.CentroPanel), { ssr: false, loading: PanelSkeleton });
 // v105.0 LA REDACCIÓN — el lugar optimizado para leer el mundo
 const RedaccionPanel = dynamic(() => import("@/components/vanguard/panels/redaccion-panel").then((m) => m.RedaccionPanel), { ssr: false, loading: PanelSkeleton });
 // v106.0 PESTAÑAS DE CROMO: la NUEVA PESTAÑA (elegir destino con ómnibox) + la
@@ -412,6 +414,8 @@ const TIPO_SALA_3D: Record<string, string> = {
   crisis: "conflictos", salaguerra: "conflictos",
   memes: "memes",
   noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
+  // v172.0 LA AGENCIA CENTRAL: la insignia del mapa mundial en primera persona
+  centro: "mapa",
   // v147 — segunda ola: el mercado de apuestas, la corona de hitos y la vitrina
   predicciones: "predicciones", logros: "logros", tienda: "tienda",
   // v148 — tercera ola: el tablero de misiones y el podio global
@@ -489,6 +493,8 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "operaciones" && <OpsPanel />}
         {tab === "misiones" && <MissionsPanel />}
         {tab === "noticias" && <NewsPanel />}
+        {/* v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias */}
+        {tab === "centro" && <CentroPanel />}
         {tab === "redaccion" && <RedaccionPanel />}
         {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
         {tab === "nueva" && <NuevaPanel />}

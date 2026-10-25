@@ -151,7 +151,10 @@ export type TabKey =
   // v130.0 LOS ROSTROS DEL PODER: el dossier de las personas que mueven el mundo
   | "rostros"
   // v131.0 EL GOBIERNO LIBRE: la credencial exclusiva + los agentes autónomos
-  | "agentes";
+  | "agentes"
+  // v172.0 LA AGENCIA CENTRAL: el centro mundial de noticias por importancia
+  // e impacto, cada cable con su pie de foto e info + EL MAPA MUNDIAL 3D
+  | "centro";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -256,6 +259,8 @@ export const TABS: Record<TabKey, TabDef> = {
 
   mapa:          { key: "mapa",          label: "Mapa mundial",      short: "MAPA", icon: <Map className="w-3.5 h-3.5" />, color: "amber" },
   noticias:      { key: "noticias",      label: "Noticias",          short: "NOTICIAS", icon: <Newspaper className="w-3.5 h-3.5" />, color: "amber" },
+  // v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias por impacto
+  centro:        { key: "centro",        label: "CENTRO MUNDIAL (noticias en vivo por importancia e impacto + mapa 3D)", short: "CENTRO", icon: <Siren className="w-3.5 h-3.5" />, color: "red" },
   galeria:       { key: "galeria",       label: "Galería OSINT",     short: "GALERÍA", icon: <Images className="w-3.5 h-3.5" />, color: "violet" },
   briefings:     { key: "briefings",     label: "Briefings clasificados", short: "BRIEFINGS", icon: <FileText className="w-3.5 h-3.5" />, color: "cyan" },
   camaras:       { key: "camaras",       label: "Cámaras CCTV",      short: "CÁMARAS", icon: <Video className="w-3.5 h-3.5" />, color: "cyan" },
@@ -397,8 +402,9 @@ export const SECTIONS: SectionDef[] = [
     // qué cambió desde la última visita, con fechas y fuentes verificables.
     key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
     // v105.0 LA REDACCIÓN abre el INICIO: primero se lee, después se explora
-    desc: "LA REDACCIÓN (el lugar optimizado para leer el mundo), portada con noticias en vivo, EL MUNDO CAMBIA (informe de regreso con fechas y fuentes), muro infinito de verdades y verificación",
-    tabs: [TABS.inicio, TABS.redaccion, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
+    // v172.0 LA AGENCIA CENTRAL manda: el CENTRO MUNDIAL abre la sección
+    desc: "EL CENTRO MUNDIAL DE NOTICIAS (en vivo por importancia e impacto, pie de foto e info, mapa 3D), LA REDACCIÓN (el lugar optimizado para leer el mundo), portada con noticias en vivo, EL MUNDO CAMBIA, muro infinito de verdades y verificación",
+    tabs: [TABS.centro, TABS.inicio, TABS.redaccion, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",
