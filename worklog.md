@@ -2710,7 +2710,7 @@ Stage Summary:
 ---
 Task ID: ia1-solo-1
 Agent: main (ia1 — única casa: el Dueño retiró al empleado 2, Vanguard es obra de una sola casa)
-Task: v172.0 LA AGENCIA CENTRAL — «que Vanguard sea el mayor centro de noticias del mundo, con noticias en vivo por importancia e impacto, cada una con su pie de foto e información, y mapas interactivos 3D en primera persona para ver gráficos de guerra y noticias en vivo» + rescatar lo bueno eliminado
+Task: v173.0 LA AGENCIA CENTRAL (RENUMERADA: el remoto tomó v172.0 con EL PULSO DE LA PARIDAD de ia2 antes del retiro — integrada por rebase conservando telemetría 3D/2D + cascada + paginación 3D universal; crónica v171→v172→v173) — «que Vanguard sea el mayor centro de noticias del mundo, con noticias en vivo por importancia e impacto, cada una con su pie de foto e información, y mapas interactivos 3D en primera persona para ver gráficos de guerra y noticias en vivo» + rescatar lo bueno eliminado
 
 Work Log:
 - Baseline: main en v171.0 (4fdf3ff), tsc 0; git fetch trajo rama remota ia2/v172.0 (IGNORADA por orden del Dueño — solo main manda). El número v172.0 se toma para main.
