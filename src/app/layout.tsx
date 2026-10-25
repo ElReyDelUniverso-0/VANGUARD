@@ -274,9 +274,9 @@ export default function RootLayout({
             El Dueño (móvil) pasó 3 días viendo NADA: el servidor dev moría
             de OOM y su teléfono se quedaba en negro sin decir nada. Esta
             cortina es HTML/CSS PURO: se pinta ANTES de que exista JavaScript,
-            siempre. Si el universo tarda >12s en dar señal de vida
-            (window.__vgvivo, la pone el primer frame del mundo 3D, el
-            fallback sin WebGL y el motor de /vanguard2), ofrece el botón
+            siempre. Si una página pesada tarda >12s en dar señal de vida
+            (window.__vgvivo — desde v173.0 solo /vanguard2 lo exige: la casa
+            plana se funde sola al cargar), ofrece el botón
             «TOCA PARA DESPERTARLO» (recarga con guardia anti-bucle). Si el
             fallo es de chunks viejos (despliegue nuevo), UNA recarga sola
             por minuto. En las páginas ligeras (portales) se retira sola al
@@ -314,7 +314,9 @@ try{
   var btn=document.getElementById('vg-cortina-btn');
   var st=document.getElementById('vg-cortina-estado');
   var K='vg155-recarga';
-  var pesado=(location.pathname==='/')||(location.pathname.indexOf('/vanguard2')===0);
+  // v173.0 LA CASA EN VIVO: el modo 3D se retiró — la portada es la consola
+  // plana viva y ya no exige señal del universo; solo /vanguard2 sigue pesado
+  var pesado=(location.pathname.indexOf('/vanguard2')===0);
   // v169.0 LA CONSOLA PLANA: si el piloto eligió 2D, la cortina NO espera
   // al universo WebGL (no monta) — se funde con la página lista
   var modo2d=false;

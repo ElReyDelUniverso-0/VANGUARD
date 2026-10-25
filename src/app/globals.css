@@ -5753,12 +5753,88 @@ html[data-vg-modo="2d"] .v139-frente .v139-asta { opacity: 0.4; }
   .vg170-riel-pill, .vg170-riel-sec, .vg170-riel-recpill, .vg170-riel-plegar { transition: none; }
 }
 
+/* ════════════════════════════════════════════════════════════
+   v173.0 LA CASA EN VIVO — animaciones del mercado
+   Cinta que camina (marquee), pulso de conexión, flash de tick
+   verde/rojo estilo terminal y scroll fino de la watchlist.
+   ════════════════════════════════════════════════════════════ */
+@keyframes vg173-camina {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.vg173-marquee {
+  animation: vg173-camina 48s linear infinite;
+}
+.vg173-cinta:hover .vg173-marquee {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vg173-marquee { animation: none; }
+}
+@keyframes vg173-late {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.72); }
+}
+.vg173-pulso {
+  animation: vg173-late 1.6s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(38, 166, 154, 0.8);
+}
+@keyframes vg173-flash-arriba {
+  0% { background-color: rgba(38, 166, 154, 0.16); }
+  100% { background-color: transparent; }
+}
+@keyframes vg173-flash-abajo {
+  0% { background-color: rgba(239, 83, 80, 0.16); }
+  100% { background-color: transparent; }
+}
+.vg173-flash-up {
+  animation: vg173-flash-arriba 0.9s ease-out;
+}
+.vg173-flash-down {
+  animation: vg173-flash-abajo 0.9s ease-out;
+}
+.vg173-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+}
+.vg173-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.vg173-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 3px;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   v173.0 LA CASA EN VIVO — EL TERMINAL NO FLOTA
+   El diorama v137/v138/v139 (cuerpos flotantes con perspectiva)
+   fue afinado para la portada de la ciudad; con el terminal de
+   mercado como héroe, la proyección 3D lo sacaba del viewport en
+   móvil. Un terminal en vivo es una consola ESTABLE: sin vaivén,
+   sin respiración, sin profundidad — datos firmes en pantalla.
+   ════════════════════════════════════════════════════════════ */
+html[data-vg-3d="on"] .flotador-v138:has(.vg173-terminal) {
+  animation: none !important;
+  transform: none !important;
+}
+/* la CUNA también se estabiliza donde vive el terminal: una cuna que
+   respira sobre un escenario de 20.000px proyecta el módulo superior
+   (el mercado) fuera del viewport al compás del ciclo — un terminal
+   de datos exige horizonte firme. El resto del diorama (cielo, suelo,
+   flotadores de otros módulos) sigue vivo. */
+html[data-vg-3d="on"] .cuna-v139:has(.vg173-terminal) {
+  animation: none !important;
+  transform: none !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════
-   v174.0 LAS INTROS GTA — la tarjetería de cine de la casa
+   v175.0 LAS INTROS GTA — la tarjetería de cine de la casa
    Placa de personaje (cambio de GTA V) y placa de noticia (inicio
    de misión). Contrato 60 FPS: solo transform/opacity (las barras
    de stats y el medidor de impacto escalan con scaleX, nunca width).
    reduced-motion: el cine no existe (kill-switch abajo).
+   Las clases v174gta-* conservan su nombre (patrón vg172-telemetria).
    ═══════════════════════════════════════════════════════════════ */
 @keyframes v174GtaBarraSup { from { transform: translateY(-100%); } to { transform: translateY(0); } }
 @keyframes v174GtaBarraInf { from { transform: translateY(100%); } to { transform: translateY(0); } }

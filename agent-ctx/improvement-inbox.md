@@ -432,11 +432,24 @@ Salud: home=200 | health v172.0 | db down (ambiental, proveedor Postgres — fue
 
 ⭐ IDEA ESTRELLA: EXPORT DE LA CUENTA — la telemetría local mide UN piloto; el export anónimo a /api/stats mide a la CIUDAD entera: «el 34% de las acciones de Vanguard ya nacen en 3D» es el número que decide dónde invertir las próximas rondas.
 
-## MENSAJE #18 · 2026-10-26 · tras Task 174 (LAS INTROS GTA)
-Notas: Tarjetería de cine estilo GTA V aterrizada (placa de personaje en ROSTROS + placa de misión en la SALA DE LECTURA). El cine de contenido abre una veta nueva: la presentación importa tanto que la información.
+## MENSAJE #18 · 2026-10-25 · tras Task ia2-v173.0
+Notas: Ronda «LA CASA EN VIVO» — orden directa del Dueño aterrizada: el universo 3D se retiró COMPLETO (11.800+ líneas; 129 paneles intactos gracias al emisor dormido con firma) y la portada ahora es un terminal de mercado real keyless (Binance + Yahoo, 32 activos, velas 1m con volumen, cinta marquee, watchlist con chispas, flash por tick cada 5s). Lección de la ronda: una cuna que respira sobre un escenario de 20.000px proyecta su módulo superior fuera del viewport — los terminales de datos exigen horizonte firme (fix :has bajo data-vg-3d).
+Salud: home=200 | health v173.0 | /api/mercado 32 activos reales | db down (ambiental)
+
+📡 PRÓXIMAS PROPUESTAS (para la siguiente ronda del Dueño):
+1. GRÁFICOS POR SALA — llevar GraficoVivo (velas en vivo) dentro de los paneles BOLSA/MERCADOS/HACIENDA: cada fila con chispa viva y click → velas del activo · Esfuerzo: M
+2. ALERTAS DE PRECIO — «avísame si BTC cruza 85k»: reglas locales con toast + campana al cruzarse (el latido ya está en la casa) · Esfuerzo: S
+3. WATCHLIST PERSISTENTE — fijar activos con estrella (patrón favoritos v171) y orden arrastrable · Esfuerzo: S
+4. LIENZO DE MERCADO GLOBAL — mapa de burbujas por Δ% (cripto/acciones/índices) estilo heatmap de los grandes · Esfuerzo: M
+5. HEALTH DEL MERCADO — /api/health con fuente y latencia de cada grifo (binance/yahoo/sim) para vigilar degradaciones · Esfuerzo: S
+
+⭐ IDEA ESTRELLA: GRÁFICOS POR SALA — el motor de velas ya vive en la casa; llevarlo a los paneles económicos convierte CADA sala en un terminal: la casa entera respira al pulso del mercado.
+
+## MENSAJE #19 · 2026-10-26 · tras Task 175 (LAS INTROS GTA, renumerada)
+Notas: Tarjetería de cine estilo GTA V aterrizada (placa de personaje en ROSTROS + placa de misión en la SALA DE LECTURA). El cine de contenido abre una veta nueva: la presentación importa tanto que la información. Compatible con LA CASA EN VIVO: las placas viven en las puertas 2D que sobrevivieron a la cirugía.
 Ideas heredadas de la ronda:
 1. PLACA DE CONFLICTO — la tercera tarjeta GTA: RUSIA ✕ UCRANIA con intensidad y frente al abrir fichas de conflicto (tarjeta-guerra / frentes) · la familia queda completa · Esfuerzo: M
-2. PLACA 3D EN EL MUNDO — al anclar una sala insignia, la placa de personaje/noticia proyectada como cartel de cine dentro del 3D (patrón v165, protocolo vg:sala3d-accion) · Esfuerzo: L
-3. CITA EN LA PLACA — la frase del rostro («la frase que manda») como cierre de la placa antes del expediente · Esfuerzo: S
-4. SONIDO DE MARCA — síntesis de un golpe de cine (bass hit) en sound.ts para las placas, distinto de la campana · Esfuerzo: S
-5. PLACA DE SALA 3D — intro corta al anclar cada sala del mundo (nombre + tipo + color de casa) — hace legible el mapa de salas · Esfuerzo: M
+2. CITA EN LA PLACA — la frase del rostro («la frase que manda») como cierre de la placa antes del expediente · Esfuerzo: S
+3. SONIDO DE MARCA — síntesis de un golpe de cine (bass hit) en sound.ts para las placas, distinto de la campana · Esfuerzo: S
+4. PLACA AL ABRIR PANELES — intro corta de identidad al entrar a cada módulo insignia (nombre + color de casa, 900ms, una vez por sesión) — hace legible la navegación · Esfuerzo: M
+5. PLACA DEL MERCADO — al tocar un activo de la watchlist, placa de misión con el ticker y su Δ% en vivo antes del gráfico · Esfuerzo: S

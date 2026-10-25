@@ -2745,19 +2745,53 @@ Stage Summary:
 - v172.0 EL PULSO DE LA PARIDAD lista en ia2/v172.0: la paridad ya no solo existe — se MIDE (3D vs 2D con dos puntos únicos, sin doble conteo), el ascenso SUENA (cascada por fila) y ninguna fila del mundo se pierde (paginación universal patrón BOLSA, asunto del mundo). Bitácora + inbox actualizados; sugerencias nuevas en MENSAJE #17.
 
 ---
-Task ID: 174
-Agent: ia1 (Z.ai — casa principal, obra en solitario)
-Task: v174.0 LAS INTROS GTA — orden del Dueño: «que Vanguard tenga intros hermosas, diferentes, como las de GTA pero de noticias, personajes».
+Task ID: ia2-v173.0
+Agent: ia2 (main · Z)
+Task: v173.0 LA CASA EN VIVO — orden directa del Dueño: «los mejores gráficos, que se actualice solo, busca apis, copia otros sitios parecidos sin vergüenza y elimina ese modo 3D»
 
 Work Log:
-- Inventario de intros existentes: intro-cinematica.tsx (v72, canvas boot) e intro-trailer.tsx (v134, estreno) — la nueva directiva es otra cosa: tarjetería DE CONTENIDO al abrir noticias y personajes.
-- Puntos de entrada exactos localizados: LectorNoticia (lector-noticia.tsx, todo cable del planeta abre ahí) y RostrosPanel (panels/rostros-panel.tsx, elegir() → sfx.campana()).
-- NUEVO src/components/vanguard/intros-gta.tsx: IntroGtaPersonaje (cambio de personaje GTA V: letterbox, bandera Ken Burns, nombre en dos tiempos — pila pequeña + apellido GIGANTE con sombra dura, color del corte de poder tronos/dinero/tribunal/nuevos, placa de ubicación con coordTxt real, barras PODER/ALCANCE/SEÑALES con scaleX var --vg-stat) e IntroGtaNoticia (tarjeta de inicio de misión: sello AGENCIA CENTRAL + punto EN VIVO, escalón+score del motor de impacto v173 con medidor, titular palabra a palabra recorte 16, placa fuente+Flag+tag). Portal propio al body (lección v116), z-300, tap=saltar, auto 2.1s/2.3s, reduced-motion → onFin inmediato + kill-switch CSS.
-- globals.css: sección v174.0 con 10 keyframes v174Gta* + clases + kill-switch reduced-motion (todo transform/opacity, barras con scaleX --vg-stat, nunca width).
-- lector-noticia.tsx: guard sessionStorage vg174-gta-ultimo (una vez por cable por sesión) + reduced-motion antes de montar IntroGtaNoticia como segundo portal; cable null → introViva false (muere con la sala).
-- rostros-panel.tsx: setIntroId(id) en elegir() — la placa suena tanto desde el 2D como desde las acciones del mundo 3D (abrir expediente → elegir, ley #25); render con rostroDe(introId) y senalesPor.
-- version.ts → v174.0 LAS INTROS GTA con crónica; bitacora.ts entrada v174 arriba; inbox actualizado.
-- QA: npx tsc --noEmit = 0; servidor dev + navegador (ver QA abajo); commit + push main.
+- Estado heredado verificado: main=v171.0 + ia2/v172.0 sin mergear (d951727) → revisión pre-merge (diff 10f +387, guards v167 intactos, tsc 0) → merge --no-ff a main (543ac5d) y push. Abierta ia2/v173.0.
+- MAPEO 3D: el universo = mundo-webgl.tsx (6.411 líneas) + salas-3d.ts (3.691) + mundos-3d.ts (1.184) + hud-3d + ciudad-hero + intro-cinematica (muere con el mundo; su dynamic import en page.tsx estaba huérfano). NO tocar: escenas-3d/letras-3d (decoración de paneles 2D), zona-cero-3d/teatro-guerra/hangar (piezas propias con three propio), vanguard2 (ruta aparte). Descubrimiento clave: use-sala3d-contenido es un EMISOR puro consumido por 129 paneles → se duerme con la misma firma (tipo FilaContenido3D definido local) y ni un panel cambia.
+- CIRUGÍA page.tsx: scripts/v173_cirugia_page.py (51 operaciones regex atómicas con conteos esperados; 3 iteraciones por anclas exactas; -29.359 bytes). Extirpado: ceremonia/v148, host* y portales v143-v145, holo v157, modo mundo v141, interruptor 2D/3D v165, restauración v169, VER EN 3D, dispatchs vg:sala3d*, effects de ciudad, NavZonas portal. Montado: MercadoVivo como héroe de portada (reemplaza CiudadHero), NavZonas plana (nav-zonas.tsx nueva, 4 zonas sin MUNDO), rail/StatsTicker plano.
+- git rm de 6 archivos del universo; panel-header sin botón 3D; cortina de arranque (layout.tsx) ya no exige latido en "/" (solo /vanguard2 es pesada) → boot funde sola. three se queda en package.json (piezas propias).
+- /api/mercado NUEVA: Binance (batch 24hr 4s TTL + klines 1m para chispa 60s) + Yahoo chart (30s TTL por símbolo, un endpoint da precio+Δ%+velas) → 32 activos keyless; fallback simulado sembrado (mulberry32 por símbolo+minuto); velas con cache 45s. Conectividad verificada con curl antes de codificar.
+- Hook useMercadoVivo (latido 5s, visibilitychange, flash dirs con timers) + hub mercado-vivo.tsx (cinta marquee 48s pausa-hover, GraficoVivo lightweight-charts v4 ya instalado: velas 1m + volumen + fitContent + update de última vela por tick, watchlist con Chispa SVG, tabs por clase, pastillas) + CSS (marquee/pulso/flash/scroll).
+- QA E2E (agent-browser, build standalone + serve.mjs): cortina funde sola OK; hub 32 filas + 48 chips + canvas; BTC real $80-81k moviéndose entre polls; click NVDA → gráfico cambia ($210.96 yahoo); cero fósiles 3D en DOM; navegación HOY/ANÁLISIS OK; móvil 390px sin overflow; desktop y móvil con capturas en agent-ctx/.
+- BUG CAZADO EN QA (el de la ronda): el hub era INVISIBLE en móvil con layout perfecto (offsetHeight 865, chart 280, todo visible según computed). Causa real: la cuna-v139 del diorama respira (rotateX) sobre un escenario de 20.000px → proyecta el módulo superior fuera del viewport al compás del ciclo (por eso los rects fantasma cambiaban: -9.999 → -17.829 → -11.998). FIX: .flotador-v138:has(.vg173-terminal) y .cuna-v139:has(.vg173-terminal) estabilizados (animation/transform none bajo data-vg-3d) — un terminal de datos no flota. Verificado en móvil: top -147, enViewport true, captura perfecta.
+- version.ts → v173.0 LA CASA EN VIVO (crónica completa); bitacora.ts entrada v173 (tipo tecno, 5 hitos); tsc 0 · lint 0 · build limpio · health v173.0.
 
 Stage Summary:
-- v174.0 LAS INTROS GTA en main: la casa tiene tarjetería de cine estilo GTA V para sus dos contenidos protagonistas (personajes del poder + noticias de impacto), capa pura sobre la verdad — ni el lector v116 ni el dossier v130 cambiaron de comportamiento. tsc 0, guards v167 intactos, rewrite /socket.io intacto.
+- Producción v173.0 LA CASA EN VIVO: Vanguard es una consola de mercado plana con datos reales keyless (Binance + Yahoo) actualizándose sola cada 5s, gráficos de velas nivel TradingView y CERO modo 3D. El three.js restante es de piezas propias (teatro, hangar, zona-cero), no del modo.
+- Nota para ia1: el emisor universal duerme pero conserva firma — si alguna ronda futura quiere «salas», hay que reconstruir el receptor, no los paneles. La cola del inbox #17 queda intacta salvo su idea #3 (proximidad 3D), que muere con el universo.
+
+---
+Task ID: ia2-v174.0-merge
+Agent: ia2 (main · Z)
+Task: merge de ia2/v174.0 (LA CASA EN VIVO) a main con integración de la ronda remota v173.0 LA AGENCIA CENTRAL (ia1, publicada en paralelo mientras esta ronda navegaba)
+
+Work Log:
+- Push rechazado (origin/main avanzó a 0582671): ia1 renumeró su ronda a v173.0 y publicó en paralelo (ley v170/v172 de nuevo). Renumeración: mi ronda pasa a v174.0 (rama renombrada ia2/v174.0).
+- git merge origin/main: 4 conflictos resueltos — page.tsx (su re-añadido de TIPO_SALA_3D con `centro: "mapa"` pierde: la orden vigente del Dueño elimina el modo 3D), salas-3d.ts modify/delete → git rm (su SALA DEL MAPA 3D muere con el universo; anotado con honestidad en la bitácora), version.ts (crónicas fusionadas: su v173 AGENCIA + mi v174 CASA EN VIVO, APP_VERSION=v174.0) y bitacora.ts (dos entradas: v173 AGENCIA con nota honesta en el hito del mapa 3D + v174).
+- Su obra 2D se conserva ÍNTEGRA: motor de impacto (impacto.ts), /api/news ?modo=centro, EL CENTRO MUNDIAL (tab + panel + baldosa), i18n honestado («+ mapa 3D» fuera de las etiquetas — el mapa 3D ya no existe).
+- QA del merge: tsc 0, build limpio (1 reintento por timeout ambiental de fonts.gstatic), health v174.0, home 200, /api/mercado 32 activos, /api/news?modo=centro sirviendo ranking (héroe URGENTE imp 93 en vivo), portada con hub en viewport, tab CENTRO MUNDIAL abriendo con héroe de impacto real.
+
+Stage Summary:
+- main = v174.0 LA CASA EN VIVO: consola de mercado plana (mis ronda) + Agencia Central de noticias 2D (su ronda), cero modo 3D. La casa es de una sola obra ahora, y respira a dos pulsos: mercado (5s) y noticias (60s).
+
+---
+Task ID: 175
+Agent: ia1 (Z.ai — casa principal)
+Task: v175.0 LAS INTROS GTA (RENUMERADA: el remoto tomó v174.0 con LA CASA EN VIVO mientras esta ronda navegaba — ley v170/v172) — orden del Dueño: «que Vanguard tenga intros hermosas, diferentes, como las de GTA pero de noticias, personajes».
+
+Work Log:
+- Inventario de intros existentes: intro-trailer.tsx (v134, estreno; la intro-cinematica v72 murió con el universo en LA CASA EN VIVO) — la directiva es otra cosa: tarjetería DE CONTENIDO al abrir noticias y personajes.
+- Puntos de entrada exactos localizados: LectorNoticia (lector-noticia.tsx, todo cable del planeta abre ahí) y RostrosPanel (panels/rostros-panel.tsx, elegir() → sfx.campana()).
+- NUEVO src/components/vanguard/intros-gta.tsx: IntroGtaPersonaje (cambio de personaje GTA V: letterbox, bandera Ken Burns, nombre en dos tiempos — pila pequeña + apellido GIGANTE con sombra dura, color del corte de poder tronos/dinero/tribunal/nuevos, placa de ubicación con coordTxt real, barras PODER/ALCANCE/SEÑALES con scaleX var --vg-stat) e IntroGtaNoticia (tarjeta de inicio de misión: sello AGENCIA CENTRAL + punto EN VIVO, escalón+score del motor de impacto con medidor, titular palabra a palabra recorte 16, placa fuente+Flag+tag). Portal propio al body (lección v116), z-300, tap=saltar, auto 2.1s/2.3s, reduced-motion → onFin inmediato + kill-switch CSS.
+- globals.css: sección v175.0 (clases v174gta-* conservan nombre, patrón vg172-telemetria) con 10 keyframes v174Gta* + kill-switch reduced-motion; merge con las animaciones de mercado vg173 del remoto.
+- lector-noticia.tsx: guard sessionStorage vg174-gta-ultimo (una vez por cable por sesión) + reduced-motion antes de montar IntroGtaNoticia como segundo portal; cable null → introViva false (muere con la sala).
+- rostros-panel.tsx: setIntroId(id) en elegir() — la placa suena en la consola al elegir cada rostro (el oyente vg:sala3d-accion duerme con el universo retirado); render con rostroDe(introId) y senalesPor.
+- version.ts → v175.0 LAS INTROS GTA (crónica renumerada); bitacora.ts entrada arriba (ajustada a la casa sin 3D); inbox #19 (ideas 3D de la cola muertas con el universo).
+- QA: npx tsc --noEmit = 0; build limpio; navegador real (capturas qa-v174-*): placa de Putin (letterbox+stats+ubicación Kremlin) y placa URGENTE 82 Gaza (agencia+medidor+titular escalonado+AL JAZEERA) capturadas; auto-descarte verificado; guard de sesión verificado (reabrir el mismo cable no repite la placa); 0 errores de consola; commit + push main.
+
+Stage Summary:
+- v175.0 LAS INTROS GTA en main: la casa tiene tarjetería de cine estilo GTA V para sus dos contenidos protagonistas (personajes del poder + noticias de impacto), capa pura sobre la verdad — ni el lector v116 ni el dossier v130 cambiaron de comportamiento, y la ronda es 100% compatible con LA CASA EN VIVO (sin modo 3D). tsc 0, guards v167 intactos, rewrite /socket.io intacto.
