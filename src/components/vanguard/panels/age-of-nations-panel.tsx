@@ -25,6 +25,7 @@ import {
   type AoNMode, type AoNState,
 } from "@/lib/age-engine";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // v14 — AGE OF NATIONS EN 3D: el tablero SVG se sustituye por el globo real
 const GlobeMap3D = dynamic(
@@ -118,6 +119,91 @@ export function AgeOfNationsPanel() {
     }
     setSel(id);
   };
+
+  // v168: PARIDAD 2D→3D — la partida real (o el setup de naciones) sube a la sala.
+  // Offsets del oyente: en setup, los modos van en idx 0-1 y las naciones desde 2;
+  // en juego, las provincias propias empiezan en idx 3
+  const misProvincias = useMemo(
+    () => (state ? Object.entries(state.provs).filter(([, p]) => p.owner === state.playerNation).slice(0, 8) : []),
+    [state]
+  );
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    if (!state) {
+      filas.push(
+        { t: "MODO CONQUISTA", v: mode === "CONQUISTA" ? "SELECCIONADO" : "DISPONIBLE", color: mode === "CONQUISTA" ? "#F5C542" : "#7AB8FF", d: "Recluta ejércitos, fortifica fronteras y anexiona provincias vecinas: gana controlando 15 de 24", a: "elegir modo" },
+        { t: "GUERRAS SANTAS", v: mode === "CRUZADA" ? "SELECCIONADO" : "DISPONIBLE", color: mode === "CRUZADA" ? "#F5C542" : "#7AB8FF", d: "Elige una fe, convierte provincias con misioneros y conquista en nombre de tu religión", a: "elegir modo" },
+      );
+      AON_NATION_DEFS.forEach((def, i) => {
+        filas.push({ t: def.name, v: `${def.provs.length} PROVINCIAS`, color: nationPick === i ? "#F5C542" : "#7AB8FF", d: `${def.blurb} · con: ${def.provs.map((pid) => AON_TERRITORY_NAMES[pid]).join(", ")}`, a: "elegir nación" });
+      });
+      filas.push({ t: "COMENZAR LA HISTORIA", color: "#3DDC84", d: `Nación elegida: ${AON_NATION_DEFS[nationPick].name} · era nueva con guardado automático`, a: "comenzar" });
+      return filas;
+    }
+    const totalMias = Object.values(state.provs).filter((p) => p.owner === state.playerNation).length;
+    const miReligion = state.nations[state.playerNation].religion;
+    const comparte = religionShare(state)[miReligion] ?? 0;
+    filas.push(
+      {
+        t: `TURNO ${state.turn}`,
+        v: `${state.gold} ORO`,
+        color: "#F5C542",
+        d: `${state.actions} acciones restantes · +${provIncome(state, state.playerNation, state.tax)} oro/turno · impuestos ${state.tax === 1 ? "bajos" : state.tax === 2 ? "medios" : "altos"}`,
+        a: "terminar turno",
+      },
+      {
+        t: state.mode === "CONQUISTA" ? "DOMINIO" : "TU FE",
+        v: state.mode === "CONQUISTA" ? `${Math.round((totalMias / 24) * 100)}%` : `${comparte}/24`,
+        p: state.mode === "CONQUISTA" ? Math.round((totalMias / 24) * 100) : Math.round((comparte / 24) * 100),
+        color: "#3DDC84",
+        d: `${totalMias}/24 provincias propias · ${nationsAlive(state).length} naciones vivas · ${state.nations[state.playerNation].name}`,
+      },
+    );
+    for (const [pid, p] of misProvincias) {
+      filas.push({
+        t: (AON_TERRITORY_NAMES[pid] ?? pid).toUpperCase(),
+        v: `${p.troops} TROPAS`,
+        color: sel === pid ? "#F5C542" : "#3DDC84",
+        d: `tu provincia · fort ▲${p.fort} · pop ${p.pop}${moving === pid ? " · ORIGEN DE MOVIMIENTO" : ""}`,
+        a: "seleccionar",
+      });
+    }
+    return filas;
+  }, [state, mode, nationPick, sel, moving, misProvincias]);
+  useSala3DContenido(
+    "edad",
+    state && state.mode === "CRUZADA" ? "GUERRAS SANTAS" : "AGE OF NATIONS",
+    "#FF3B30",
+    state ? `Turno ${state.turn} · ${state.nations[state.playerNation].name} · ${Object.values(state.provs).filter((p) => p.owner === state.playerNation).length}/24 provincias` : "Estrategia por turnos · conquista y guerras de religión",
+    filas3D,
+  );
+
+  // v168: las acciones ejecutan los MISMOS handlers que los botones 2D
+  // (el «terminar turno» replica exactamente el onClick del botón ENDER TURNO)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "edad") return;
+      if (det.accion === "elegir modo") { sfx.hover(); setMode(det.idx === 1 ? "CRUZADA" : "CONQUISTA"); return; }
+      if (det.accion === "elegir nación") { sfx.hover(); setNationPick(det.idx - 2); return; }
+      if (det.accion === "comenzar") { start(); return; }
+      if (det.accion === "seleccionar") {
+        const entrada = misProvincias[det.idx - 3];
+        if (entrada) onProvClick(entrada[0]);
+        return;
+      }
+      if (det.accion === "terminar turno") {
+        const s2 = stateRef.current;
+        if (s2) {
+          endTurn(s2); sfx.tab(); persist(s2);
+          if (s2.status !== "JUGANDO") applyRewards(s2);
+          else toast.info(`Turno ${s2.turn} · +${provIncome(s2, s2.playerNation, s2.tax)} oro`);
+        }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [state, moving, mode, nationPick, misProvincias, persist, applyRewards]);
 
   const actionBtn = (label: string, icon: React.ReactNode, fn: () => void, disabled?: boolean, tone?: string) => (
     <Button size="sm" onClick={fn} disabled={disabled}

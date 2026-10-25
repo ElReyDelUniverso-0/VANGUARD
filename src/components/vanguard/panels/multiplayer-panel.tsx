@@ -28,6 +28,7 @@ import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { DesafioCodigo } from "@/components/vanguard/desafio-codigo";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 // v14 — MAPA MULTIJUGADOR EN 3D: globo real en lugar del SVG plano
 const GlobeMap3D = dynamic(
@@ -217,6 +218,98 @@ export function MultiplayerPanel() {
       </AnimatePresence>
     </div>
   );
+}
+
+// ============================================================
+// v168: PARIDAD 2D→3D — construye las filas reales del modo GUERRA para la
+// sala de contenido, junto con un registro paralelo de acciones (mismo índice
+// que filas3D) para que el oyente ejecute el handler 2D exacto.
+// ============================================================
+type RegistroGuerra3D = { kind: string; terrId?: string; from?: string; to?: string };
+function construirGuerra3D(
+  st: MpState | null, myId: string, connected: boolean, slowNet: boolean,
+  claimedByMe: boolean, reserves: number, selected: string | null, attackTargets: string[],
+): { filas: FilaContenido3D[]; reg: RegistroGuerra3D[] } {
+  const filas: FilaContenido3D[] = [];
+  const reg: RegistroGuerra3D[] = [];
+  const emite = (f: FilaContenido3D, r: RegistroGuerra3D = { kind: "" }) => { filas.push(f); reg.push(r); };
+  if (!st) {
+    emite({
+      t: connected ? "SINCRONIZANDO PARTIDA GLOBAL…" : slowNet ? "SERVIDOR EN MANTENIMIENTO" : "CONECTANDO AL SERVIDOR :3003",
+      color: connected ? "#F5C542" : "#FF4D5E",
+      d: "reintentos automáticos cada 5s · tu progreso está a salvo",
+    });
+    emite({ t: "MUNDO DE GUERRA GLOBAL", color: "#7AB8FF", d: "LOBBY → REFUERZOS → GUERRA → FIN · contra operadores reales con revancha y chat" });
+    emite({ t: "DUELO DE TRIVIA 1v1", color: "#7AB8FF", d: "7 preguntas · 9 segundos por pregunta · matchmaking con bot de élite" });
+    emite({ t: "RANKING ELO MUNDIAL", color: "#7AB8FF", d: "board global persistido: guerras, duelos, capturas y casos resueltos" });
+    return { filas, reg };
+  }
+  const fase = st.phase === "LOBBY" ? "SALA DE ESPERA"
+    : st.phase === "REINFORCE" ? `RONDA ${st.round} · REFUERZOS`
+    : st.phase === "WAR" ? `RONDA ${st.round} · GUERRA`
+    : "PARTIDA TERMINADA";
+  const humanos = Object.values(st.players).filter((p) => !p.isBot).length;
+  emite({
+    t: `FASE: ${fase}`,
+    v: `${humanos} ${humanos === 1 ? "HUMANO" : "HUMANOS"}`,
+    color: st.phase === "WAR" ? "#FF4D5E" : st.phase === "ENDED" ? "#F5C542" : "#7AB8FF",
+    d: st.phase === "LOBBY" ? "reclama un territorio libre para entrar en la partida"
+      : st.phase === "REINFORCE" ? "despliega reservas en tus territorios (click o DESPLEGAR TODO)"
+      : st.phase === "WAR" ? "selecciona un territorio tuyo (3+ tropas) y ataca un vecino · +2 gemas por captura"
+      : `victoria de ${st.winnerName ?? "?"} · vota revancha para repetir`,
+  });
+  // acciones reales según la fase (los mismos handlers que los botones 2D) —
+  // van ANTES del marcador para quedar dentro de las filas tocables de la sala
+  if (st.phase === "LOBBY" && !claimedByMe) {
+    const libres = st.territoryMeta.filter((t) => !st.territories[t.id]?.owner).slice(0, 6);
+    for (const t of libres) {
+      emite({ t: t.name, v: t.continent, color: "#7AB8FF", d: "territorio libre — elige tu base de origen", a: "reclamar" }, { kind: "reclamar", terrId: t.id });
+    }
+  }
+  if (st.phase === "REINFORCE" && claimedByMe && reserves > 0) {
+    const mios = st.territoryMeta.filter((t) => st.territories[t.id]?.owner === myId).slice(0, 6);
+    for (const t of mios) {
+      emite({ t: t.name, v: `${st.territories[t.id]?.troops ?? 0}t`, color: "#3DDC84", d: `${reserves} reservas por desplegar`, a: "desplegar" }, { kind: "desplegar", terrId: t.id });
+    }
+  }
+  if (st.phase === "WAR" && selected) {
+    const desde = st.territoryMeta.find((x) => x.id === selected);
+    for (const tid of attackTargets.slice(0, 6)) {
+      const meta = st.territoryMeta.find((x) => x.id === tid);
+      if (!meta || !desde) continue;
+      emite({
+        t: `ATACAR ${meta.name}`,
+        v: `${st.territories[tid]?.troops ?? 0}t def`,
+        color: "#FF4D5E",
+        d: `desde ${desde.name} · capturar da +2 gemas`,
+        a: "atacar",
+      }, { kind: "atacar", from: selected, to: tid });
+    }
+  }
+  if (st.phase === "ENDED") {
+    emite({ t: `VICTORIA: ${st.winnerName ?? "?"}`, v: "DOMINIO GLOBAL", color: "#F5C542", d: `revancha ${st.rematch?.votes ?? 0}/${st.rematch?.needed ?? 1} votos`, a: "revancha" }, { kind: "revancha" });
+  }
+  // dominio por jugador (mismo orden que el marcador 2D: por territorios)
+  const counts: Record<string, { n: number; troops: number }> = {};
+  for (const tr of Object.values(st.territories)) {
+    if (!tr.owner) continue;
+    counts[tr.owner] = counts[tr.owner] ?? { n: 0, troops: 0 };
+    counts[tr.owner].n += 1;
+    counts[tr.owner].troops += tr.troops;
+  }
+  const jugadores = Object.values(st.players)
+    .map((p) => ({ p, c: counts[p.id] ?? { n: 0, troops: 0 } }))
+    .sort((a, b) => b.c.n - a.c.n)
+    .slice(0, 8);
+  for (const { p, c } of jugadores) {
+    emite({
+      t: `${p.name}${p.isBot ? " · IA" : p.id === myId ? " · TÚ" : ""}`,
+      v: `${c.n} terr · ${c.troops}t`,
+      color: p.color,
+      d: `${p.isBot ? "operativo IA" : p.connected ? "operador conectado" : "operador desconectado"}${p.gemsEarned > 0 ? ` · ${p.gemsEarned} gemas ganadas` : ""}`,
+    });
+  }
+  return { filas, reg };
 }
 
 // ============================================================
@@ -434,6 +527,35 @@ function GuerraMode({ alias }: { alias: string }) {
     sfx.unlock();
     toast.success(`${t("mp.characterSet")}: ${countryName(code)}`);
   };
+
+  // v168: PARIDAD 2D→3D — el modo GUERRA emite sus filas reales a la sala de contenido
+  const guerra3D = useMemo(
+    () => construirGuerra3D(state, myId, connected, slowNet, claimedByMe, me?.reserves ?? 0, selected, attackTargets),
+    [state, myId, connected, slowNet, claimedByMe, me, selected, attackTargets],
+  );
+  const filas3D = useMemo<FilaContenido3D[]>(() => guerra3D.filas, [guerra3D]);
+  useSala3DContenido(
+    "multijugador",
+    "MULTIJUGADOR ONLINE",
+    "#FF3B30",
+    state ? `Mundo de Guerra global · fase ${state.phase} · ${Object.values(state.players).filter((p) => !p.isBot).length} humanos en sala` : "conectando al servidor de partidas :3003",
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — el registro paralelo mapea idx→handler 2D real
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "multijugador") return;
+      const r = guerra3D.reg[det.idx];
+      if (!r || r.kind !== det.accion) return;
+      if (r.kind === "reclamar" && r.terrId) claim(r.terrId);
+      else if (r.kind === "desplegar" && r.terrId) deploy(r.terrId, 1);
+      else if (r.kind === "atacar" && r.from && r.to) attack(r.from, r.to);
+      else if (r.kind === "revancha") requestRematch();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [guerra3D, claim, deploy, attack, requestRematch]);
 
   const secondsLeft = (target: number) => Math.max(0, Math.ceil((target - now) / 1000));
 
@@ -921,6 +1043,80 @@ function DueloMode({ alias }: { alias: string }) {
     getRealtime()?.emit("duel:answer", { idx });
   };
 
+  // v168: PARIDAD 2D→3D — filas reales del modo DUELO para la sala de contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    if (!duel) {
+      filas.push({
+        t: searching ? "BUSCANDO RIVAL…" : "DUELO DE TRIVIA 1v1",
+        color: searching ? "#F5C542" : "#7AB8FF",
+        d: "7 preguntas · 9 segundos por pregunta · 500 puntos base + hasta 400 por velocidad",
+        a: searching ? undefined : "buscar rival",
+      });
+      filas.push({ t: "VICTORIA", v: "+120 mon · +2 gemas", color: "#3DDC84", d: "ELO +22 · +80 XP" });
+      filas.push({ t: "EMPATE", v: "+60 mon", color: "#F5C542", d: "ELO +5 · +40 XP" });
+      filas.push({ t: "DERROTA", v: "+30 mon", color: "#FF4D5E", d: "premio de participación · ELO -14" });
+      return filas;
+    }
+    filas.push({
+      t: `${duel.me.name} vs ${duel.rival.name}${duel.rival.isBot ? " (IA)" : ""}`,
+      v: `${duel.me.score}–${duel.rival.score}`,
+      color: "#F5C542",
+      d: `pregunta ${Math.max(1, duel.qIdx + 1)}/${duel.total} · fase ${duel.phase}`,
+    });
+    if (duel.result) {
+      const win = duel.result.outcome === "WIN";
+      const tie = duel.result.outcome === "TIE";
+      filas.push({
+        t: win ? "¡VICTORIA!" : tie ? "EMPATE" : "DERROTA",
+        v: `ELO ${duel.result.eloDelta > 0 ? "+" : ""}${duel.result.eloDelta}`,
+        color: win ? "#3DDC84" : tie ? "#F5C542" : "#FF4D5E",
+        d: `aciertos ${duel.me.correct}/${duel.total} vs ${duel.rival.correct}/${duel.total}${duel.result.walkover ? " · por abandono del rival" : ""}`,
+        a: "buscar rival",
+      });
+      return filas;
+    }
+    if ((duel.phase === "QUESTION" || duel.phase === "REVEAL") && duel.question) {
+      const q = duel.question;
+      filas.push({ t: q.text, color: "#7AB8FF", d: `categoría ${q.cat} · 9 segundos por pregunta` });
+      for (let i = 0; i < q.opts.length; i++) {
+        const correcta = duel.phase === "REVEAL" && q.a === i;
+        const miEleccion = chosen?.q === duel.qIdx && chosen.idx === i;
+        filas.push({
+          t: `${["A", "B", "C", "D"][i]} · ${q.opts[i]}`,
+          color: correcta ? "#3DDC84" : miEleccion && duel.phase === "REVEAL" ? "#FF4D5E" : undefined,
+          d: correcta ? "respuesta correcta" : miEleccion && duel.phase === "REVEAL" ? "tu elección — fallo" : duel.phase === "QUESTION" && !duel.me.answered ? "pulsa para responder" : undefined,
+          a: duel.phase === "QUESTION" && !duel.me.answered ? "responder" : undefined,
+        });
+      }
+    } else if (duel.phase === "COUNTDOWN") {
+      filas.push({ t: `DUELO CONTRA ${duel.rival.name}`, color: "#7AB8FF", d: duel.rival.isBot ? "operativo IA de élite" : "operador humano conectado" });
+    }
+    return filas;
+  }, [duel, searching, chosen]);
+  useSala3DContenido(
+    "multijugador",
+    "MULTIJUGADOR ONLINE",
+    "#FF3B30",
+    duel ? `duelo de trivia 1v1 · ${duel.me.score}–${duel.rival.score} · pregunta ${Math.max(1, duel.qIdx + 1)}/${duel.total}` : "duelo de trivia 1v1 · busca rival y gana por velocidad",
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — offset: la opción i de question.opts es idx i+2
+  // (fila 0 marcador + fila 1 pregunta); "buscar rival" no usa item
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "multijugador") return;
+      if (det.accion === "responder") {
+        if (duel?.phase === "QUESTION" && duel.question && det.idx >= 2) answer(det.idx - 2);
+      } else if (det.accion === "buscar rival") {
+        queue();
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [duel, answer, queue]);
+
   // ================== RENDER ==================
   if (!duel) {
     return (
@@ -1155,6 +1351,54 @@ function RankingMode({ alias }: { alias: string }) {
       .catch(() => { if (alive) { setError(true); setLoading(false); } });
     return () => { alive = false; };
   }, []);
+
+  // v168: PARIDAD 2D→3D — filas reales del ranking ELO (offset: la fila 0 es la
+  // cabecera con la acción de actualizar; el board empieza en idx 1)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "RANKING MUNDIAL ELO",
+        v: error ? "SIN DATOS" : `${board?.length ?? 0} OPERADORES`,
+        color: error ? "#FF4D5E" : "#F5C542",
+        d: "victoria guerra +30 · duelo ganado +22 · caso resuelto +12",
+        a: "actualizar",
+      },
+    ];
+    if (board && board.length > 0) {
+      const maxElo = board[0]?.elo || 1;
+      for (const row of board.slice(0, 12)) {
+        filas.push({
+          t: row.username,
+          v: `${row.elo} ELO`,
+          p: Math.max(4, Math.round((row.elo / maxElo) * 100)),
+          color: row.username === myName ? "#F5C542" : "#7AB8FF",
+          d: `${row.wins}V/${row.losses}D guerras · ${row.duelsWon}V/${row.duelsLost}D duelos · ${row.captures} capturas · ${row.detectiveSolved} casos`,
+        });
+      }
+    } else {
+      filas.push({ t: "NADIE HA JUGADO AÚN", color: "#7AB8FF", d: "sé el primero en el board mundial — juega una guerra o un duelo" });
+      filas.push({ t: loading ? "CARGANDO BOARD…" : "BOARD VACÍO", color: loading ? "#F5C542" : "#7AB8FF", d: "el top 25 + tu fila aparecen en cuanto haya resultados" });
+      filas.push({ t: "JUEGA UNA GUERRA O UN DUELO", color: "#7AB8FF", d: "cada resultado se registra solo en /api/mp/stats — sin papeleo" });
+    }
+    return filas;
+  }, [board, error, myName, loading]);
+  useSala3DContenido(
+    "multijugador",
+    "MULTIJUGADOR ONLINE",
+    "#FF3B30",
+    error ? "ranking no disponible — reintenta la carga" : "ranking mundial ELO · guerras, duelos y casos resueltos",
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — "actualizar" recarga el board como el botón 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "multijugador" || det.accion !== "actualizar") return;
+      load();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [load]);
 
   return (
     <div className="space-y-3">

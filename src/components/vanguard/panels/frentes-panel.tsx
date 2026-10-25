@@ -14,6 +14,7 @@ import {
   puntosFrente, areaOcupada, deltas, controlDe, LOCALIDADES, EJES_PRESION, TEATRO_W, TEATRO_H,
 } from "@/lib/frente-zonas-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -52,6 +53,64 @@ export function FrentesPanel() {
   const areaHoy = areaOcupada(dia1);
   const dl = useMemo(() => deltas(diasTotales), []);
   const deltaHoy = dl[dia1 - 1]?.delta ?? 0;
+
+  // v168: PARIDAD 2D→3D — el día seleccionado, la variación, el territorio y las
+  // localidades con su control REAL suben a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `DÍA ${dia1 + 1}/${diasTotales}`,
+        v: `${deltaHoy > 0 ? "+" : ""}${deltaHoy.toLocaleString("es-ES")} km²`,
+        color: deltaHoy > 0 ? "#FF4D5E" : deltaHoy < 0 ? "#3DDC84" : "#7AB8FF",
+        d: deltaHoy > 0 ? "la fuerza roja amplió la zona ocupada" : deltaHoy < 0 ? "la fuerza azul recuperó terreno" : "la línea se mantuvo sin cambios",
+      },
+      {
+        t: "REPRODUCCIÓN HISTÓRICA",
+        v: reproduciendo ? "REPRODUCIENDO" : "PAUSADO",
+        color: reproduciendo ? "#F5C542" : "#7AB8FF",
+        d: "Recorre los 14 días de la línea del frente con un toque",
+        a: "reproducir",
+      },
+      {
+        t: "TERRITORIO OCUPADO",
+        v: `${areaHoy.toLocaleString("es-ES")} km²`,
+        p: Math.min(100, Math.round((areaHoy / 24000) * 100)),
+        color: "#FF4D5E",
+        d: "Teatro ficticio VALLE DEL KARSK · espejo metodológico",
+      },
+    ];
+    for (const loc of LOCALIDADES.slice(0, 6)) {
+      const ctrl = controlDe(loc, dia1);
+      filas.push({
+        t: loc.nombre,
+        v: ctrl === 2 ? "CONTROLADO" : ctrl === 1 ? "DISPUTADO" : "OCUPADO",
+        color: ctrl === 2 ? "#7AB8FF" : ctrl === 1 ? "#F5C542" : "#FF4D5E",
+        d: `Estado de la localidad según la línea del frente del día ${dia1 + 1}`,
+      });
+    }
+    for (const e of EJES_PRESION.slice(0, 4)) {
+      filas.push({
+        t: `EJE · ${e.nombre}`,
+        v: `FUERZA ${Math.round(e.fuerza * 100)}%`,
+        p: Math.round(e.fuerza * 100),
+        color: "#FF4D5E",
+        d: "Flechas de presión roja sobre la línea del frente",
+      });
+    }
+    return filas;
+  }, [dia1, deltaHoy, areaHoy, reproduciendo]);
+  useSala3DContenido("frentes", "LÍNEA DEL FRENTE", "#38BDF8", `Zonas de control · día ${dia1 + 1}/${diasTotales} · ${deltaHoy > 0 ? "+" : ""}${deltaHoy.toLocaleString("es-ES")} km² hoy`, filas3D);
+
+  // v168: «reproducir» ejecuta el MISMO toggle que el botón 2D de reproducción
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "frentes" || det.accion !== "reproducir") return;
+      setReproduciendo((v) => !v);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   const pathFrente = linea.map(([x, y], i) => `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
   const pathOcupado = `${pathFrente} L ${TEATRO_W} ${TEATRO_H} L ${TEATRO_W} 0 Z`;

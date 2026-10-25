@@ -9,7 +9,7 @@
 // (3) RADAR DE ALERTAS AUTOMÁTICAS (v85): tensión global, noticias
 //     críticas y nómina lista para cobrar — con anti-spam por regla.
 // ============================================================
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { getTension } from "@/lib/tension";
 import { loadEmpleos, acumularNomina, DEPARTAMENTOS, LS_EMPLEOS } from "@/lib/empleos";
 
@@ -307,6 +308,98 @@ export function TelegramPanel() {
 
   const ok = status?.configured && status?.chatConfigured;
   const botListo = own.token.trim().length >= 20 && own.chatId.trim().length > 0;
+
+  // v168: PARIDAD 2D→3D — la sala TELEGRAM emite el estado real del bot, del
+  // radar y de sus reglas; las filas activan los MISMOS toggles que el 2D.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const reglas: { k: keyof RadarRules; t: string; d: string }[] = [
+      { k: "tension", t: "🚨 Escalada global", d: "tensión ≥ 75 · máx 1 cada 30 min" },
+      { k: "noticias", t: "📰 Última hora", d: "noticia crítica nueva · máx 1 cada 15 min" },
+      { k: "nomina", t: "💼 Nómina lista", d: "≥ 120ⓒ sin cobrar · máx 1 cada 60 min" },
+    ];
+    const tiposPuente: { k: string; l: string }[] = [
+      { k: "incidentes", l: "🚨 Incidentes documentados en el mapa" },
+      { k: "memorial", l: "🕯️ Memorial: homenajes y velas" },
+      { k: "denuncias", l: "⚖️ Denuncias nuevas en foros" },
+      { k: "directos", l: "📡 Directos y streams en vivo" },
+    ];
+    const filas: FilaContenido3D[] = [
+      {
+        t: "TU BOT PERSONAL",
+        v: botListo ? "CONECTADO" : "SIN CONFIGURAR",
+        color: botListo ? "#3DDC84" : "#F5C542",
+        d: "token y chat_id viven solo en este navegador · viajan únicamente a api.telegram.org",
+      },
+      {
+        t: "RADAR DE ALERTAS AUTOMÁTICAS",
+        v: radarOn ? "ACTIVO" : "APAGADO",
+        color: radarOn ? "#3DDC84" : "#7AB8FF",
+        d: radarOn ? "revisa el planeta cada 3 minutos con freno anti-spam por regla" : "guarda tu bot y actívalo para recibir alertas",
+      },
+    ];
+    for (const r of reglas) {
+      filas.push({
+        t: r.t,
+        v: rules[r.k] ? "ON" : "OFF",
+        color: rules[r.k] ? "#3DDC84" : "#7AB8FF",
+        d: r.d,
+        a: "alternar regla",
+      });
+    }
+    filas.push({
+      t: "CHEQUEO MANUAL DEL RADAR",
+      v: checking ? "ESCANEANDO…" : botListo ? "LISTO" : "SIN BOT",
+      color: botListo ? "#F5C542" : "#7AB8FF",
+      d: "revisa ahora mismo tensión, noticias críticas y nómina",
+      a: "escanear ahora",
+    });
+    for (const a of tiposPuente) {
+      filas.push({
+        t: a.l,
+        v: alerts[a.k] ? "ON" : "OFF",
+        color: alerts[a.k] ? "#3DDC84" : "#7AB8FF",
+        d: "tipo de alerta que envía el puente del servidor al grupo",
+        a: "alternar alerta",
+      });
+    }
+    for (const it of log.items.slice(0, 2)) {
+      filas.push({
+        t: it.text,
+        v: it.kind,
+        color: "#38BDF8",
+        d: `enviada ${new Date(it.ts).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" })} · ${log.total} alertas en total desde este dispositivo`,
+      });
+    }
+    return filas;
+  }, [botListo, radarOn, rules, alerts, log, checking]);
+  // v168: el raycast 3D ejecuta los MISMOS controles que el panel 2D
+  // (offsets: reglas en idx 2-4, chequeo en 5, alertas del puente en 6-9)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "telegram") return;
+      if (det.accion === "alternar regla") {
+        const ks: (keyof RadarRules)[] = ["tension", "noticias", "nomina"];
+        const k = ks[det.idx - 2];
+        if (k) toggleRadarRule(k);
+      } else if (det.accion === "escanear ahora") {
+        void chequearManual();
+      } else if (det.accion === "alternar alerta") {
+        const ks = ["incidentes", "memorial", "denuncias", "directos"];
+        const k = ks[det.idx - 6];
+        if (k) toggleAlert(k);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [rules, alerts, own]);
+  useSala3DContenido(
+    "telegram",
+    "BOT DE TELEGRAM · ALERTAS DE CONFLICTO EN TU BOLSILLO",
+    "#38BDF8",
+    botListo ? "Bot personal conectado · radar de alertas listo" : "Crea tu bot en 2 minutos y recibe las alertas del mundo",
+    filas3D,
+  );
 
   return (
     <div className="space-y-3">

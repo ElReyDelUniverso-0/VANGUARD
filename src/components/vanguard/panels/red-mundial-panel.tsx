@@ -29,6 +29,7 @@ import {
   Network, Map as MapIcon, Radio, Handshake, ChevronRight, Globe2, Fingerprint,
   Landmark, ShieldCheck, Crown,
 } from "lucide-react";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // icono por servicio (siglas del mundo)
 const ICONO: Record<string, React.ReactNode> = {
@@ -159,6 +160,57 @@ export function RedMundialPanel() {
       const { cx, cy } = arcoDe(hub, b);
       return { ...r, xa: hub, xb: b, cx, cy };
     });
+  }, []);
+
+  // v168: PARIDAD 2D→3D — el pacto, los expedientes reales y el pulso de cables
+  // suben en volumen; abrir un expediente usa el MISMO elegir() con su campana
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "PACTO UKUSA 1946",
+        v: "5/9/14 OJOS",
+        color: "#D4AF37",
+        d: "Londres y Washington se reparten el planeta en zonas de escucha — el arco del Atlántico termina en Washington: la puerta de LA COMUNIDAD",
+      },
+    ];
+    for (const s of SERVICIOS.slice(0, 10)) {
+      filas.push({
+        t: `${s.sigla} — ${s.pais}`,
+        v: `DESDE ${s.fundacion}`,
+        color: CATEGORIA_RED_META[s.categoria].color,
+        d: `${s.nombreEs} · ${s.sede} · ${s.mision}`,
+        a: "abrir expediente",
+      });
+    }
+    for (const c of cablesSel.slice(0, 1)) {
+      filas.push({
+        t: c.title,
+        v: c.tacticalTag ?? "SEÑAL",
+        color: "#D4AF37",
+        d: `el pulso real de ${sel.sigla} en los cables de ahora · fuente: ${c.source} · leer en la sala interna`,
+      });
+    }
+    return filas;
+  }, [sel, cablesSel]);
+  useSala3DContenido(
+    "redmundial",
+    "LA RED MUNDIAL",
+    "#D4AF37",
+    `${COLECCION_MUNDO.total} expedientes del mundo · ${COLECCION_MUNDO.naciones} naciones · ${COLECCION_MUNDO.enAlianza} en los Cinco Ojos${totalSenales > 0 ? ` · ${totalSenales} señales vivas` : ""}`,
+    filas3D,
+  );
+
+  // v168: el 3D abre expedientes por el MISMO elegir() (con su campana de salón)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "redmundial" || d.accion !== "abrir expediente") return;
+      // offset: la fila 0 es el pacto UKUSA
+      const s = SERVICIOS.slice(0, 10)[d.idx - 1];
+      if (s) elegir(s.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
   }, []);
 
   return (

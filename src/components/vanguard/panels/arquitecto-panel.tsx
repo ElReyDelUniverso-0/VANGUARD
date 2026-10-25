@@ -30,6 +30,7 @@ import { misionesDelDia, MISIONES } from "@/lib/agente-nucleo";
 import { playPreview, stopPreview } from "@/lib/music-studio";
 import { navigateTo } from "@/lib/nav";
 import { APP_VERSION_LABEL } from "@/lib/version";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const ACC = "#00FFA3"; // verde matriz — la singularidad de Vanguard
 const ACC_SUELVE = "rgba(0,255,163,0.14)";
@@ -320,6 +321,67 @@ export function ArquitectoPanel() {
     setOrden("");
     if (!arq.activo) arq.arrancar();
   };
+
+  // v168: PARIDAD 2D→3D — el taller de la IA en volumen: motor, obra y fundaciones reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `MOTOR ${arq.fase}`,
+        v: arq.activo ? "EN MARCHA" : "EN PAUSA",
+        color: faseColor,
+        d: arq.perpetuo ? "modo perpetuo ON — sigue trabajando mientras navegas la casa" : "modo perpetuo OFF — trabaja solo con la sala abierta",
+      },
+      { t: "CICLOS COMPLETADOS", v: `${c.ciclos}`, color: ACC, d: `${c.ia} con IA real · ${c.locales} embebidos sin red` },
+      { t: "MÓDULOS INSTALADOS", v: `${arq.modulos.length}`, color: ACC, d: "cada módulo instalado funciona de verdad dentro de la sala" },
+      ...arq.obras.slice(0, 2).map((o): FilaContenido3D => ({
+        t: o.titulo,
+        v: `${o.bpm} BPM`,
+        color: "#FF5EDB",
+        d: `obra compuesta por el agente · voz ${o.voz} · suena aquí mismo`,
+        a: "escuchar",
+      })),
+      ...arq.doctrinas.slice(0, 2).map((d): FilaContenido3D => ({
+        t: d.titulo,
+        color: "#FFC94D",
+        d: d.cuerpo,
+      })),
+      ...arq.satelites.slice(0, 3).map((s): FilaContenido3D => ({
+        t: s.nombre,
+        color: "#B48CFF",
+        d: `«${s.lema}» — sala satélite fundada por el agente`,
+        a: "entrar",
+      })),
+    ];
+    return filas;
+  }, [arq, faseColor, c]);
+  useSala3DContenido(
+    "arquitecto",
+    "ARQUITECTO",
+    ACC,
+    `ciclo #${c.ciclos} · ${arq.modulos.length} módulos · ${arq.obras.length} obras · fase ${arq.fase}`,
+    filas3D,
+  );
+  // v168: acciones del 3D → los MISMOS handlers de los botones 2D.
+  // offset: 3 filas de estado (0-2), obras 3-4, doctrinas siguen, satélites al final
+  // (los offsets se recalculan de la misma forma que al construir las filas)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "arquitecto") return;
+      const nObras = Math.min(arq.obras.length, 2);
+      const nDoct = Math.min(arq.doctrinas.length, 2);
+      if (d.accion === "escuchar") {
+        const item = arq.obras.slice(0, 2)[d.idx - 3];
+        if (item) escucharObra(item.id, item.patron);
+      }
+      if (d.accion === "entrar") {
+        const item = arq.satelites.slice(0, 3)[d.idx - (3 + nObras + nDoct)];
+        if (item) navigateTo(salaDeSatelite(item.id) as Parameters<typeof navigateTo>[0]);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [arq, obraSonando]);
 
   return (
     <div className="mx-auto max-w-5xl px-2 pb-14">

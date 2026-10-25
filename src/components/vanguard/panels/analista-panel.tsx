@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner";
 import { navigateTo } from "@/lib/nav";
 import { useT } from "@/lib/i18n";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const ICONO_INSIGNIA: Record<string, React.ReactNode> = {
   FolderOpen: <FolderOpen className="h-4 w-4" />, Archive: <Archive className="h-4 w-4" />,
@@ -63,6 +64,67 @@ export function AnalistaPanel() {
   };
 
   const siguienteRango = RANGOS_ANALISTA.find((r) => r.n === nivel + 1);
+
+  // v168: PARIDAD 2D→3D — la sala ANALISTA emite el perfil real: nivel, ELO,
+  // contadores honestos, insignias y los retos semanales reclamables.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `RANGO · ${rango.nombre}`,
+        v: `NIVEL ${nivel}/30`,
+        p: Math.max(3, pct),
+        color: rango.acento,
+        d: `ELO ${elo} · ${tier.nombre} · ${a.xpa}/${nivel * XP_NIVEL} XPA${siguienteRango ? ` · siguiente: ${siguienteRango.nombre}` : ""}`,
+      },
+    ];
+    const contadores: [string, number][] = [
+      ["expedientes", a.exped], ["oscura", a.oscura], ["sims lab", a.lab],
+      ["análisis", a.mente], ["obras", a.crea], ["aciertos", a.quizOk],
+    ];
+    for (const [label, n] of contadores) {
+      filas.push({ t: label.toUpperCase(), v: String(n), color: "#7AB8FF", d: "contador honesto computado de acciones reales" });
+    }
+    filas.push({
+      t: "INSIGNIAS",
+      v: `${desbloqueadas}/${insignias.length}`,
+      p: Math.round((desbloqueadas / Math.max(1, insignias.length)) * 100),
+      color: "#F5C542",
+      d: "cada insignia cuenta lo que HICISTE, no lo que prometes",
+    });
+    for (const r of retos) {
+      const prog = Math.min(a.progreso[r.tipo] || 0, r.meta);
+      const listo = prog >= r.meta;
+      const cobrado = a.claimed.includes(r.id);
+      filas.push({
+        t: r.titulo,
+        v: `${prog}/${r.meta}`,
+        p: Math.round((prog / r.meta) * 100),
+        color: listo && !cobrado ? "#FFD166" : cobrado ? "#3DDC84" : "#7AB8FF",
+        d: `${r.desc} · +${r.coins}ⓒ +${r.xpa} XPA`,
+        a: listo && !cobrado ? "reclamar recompensa" : undefined,
+      });
+    }
+    return filas;
+  }, [a, nivel, rango, elo, tier, pct, insignias, desbloqueadas, retos, siguienteRango]);
+  // v168: el raycast 3D reclama el MISMO reto semanal que el botón 2D
+  // (offset 8: rango + 6 contadores + insignias preceden a los retos)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "analista" || det.accion !== "reclamar recompensa") return;
+      const r = retos[det.idx - 8];
+      if (r) reclamar(r);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [retos, a]);
+  useSala3DContenido(
+    "analista",
+    "PERFIL DE ANALISTA",
+    "#F5C542",
+    `Nivel ${nivel}/30 · ELO ${elo} · ${desbloqueadas}/${insignias.length} insignias`,
+    filas3D,
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">

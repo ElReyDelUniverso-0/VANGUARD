@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Flag, Users, MapPin, Crown, UserPlus, Loader2, Swords, Landmark, Check, Inbox, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { TituloEpico } from "@/components/vanguard/titulo-epico";
 import { cn } from "@/lib/utils";
 
@@ -266,6 +267,106 @@ export function MiPaisPanel() {
   };
 
   // ---------- render ----------
+  // v168: PARIDAD 2D→3D — la sala MI PAÍS emite el modo real: el asistente de
+  // fundación (paso a paso) o tu nación proclamada con stats, unión y reclutas.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (!mia) {
+      const pasos: [string, string][] = [
+        ["IDENTIDAD DE LA NACIÓN", "nombre, gentilicio, capital y lema"],
+        ["BANDERA NACIONAL", "dos tintas y símbolo central con brillo real"],
+        ["GOBIERNO Y TERRITORIO", `${f.gobierno} · ${f.region}`],
+        ["FIGURAS PÚBLICAS", f.presidente ? `líder: ${f.presidente}` : "presidente y gabinete generable al azar"],
+      ];
+      const filas: FilaContenido3D[] = [
+        {
+          t: `ASISTENTE DE FUNDACIÓN · PASO ${paso}/4`,
+          v: pasos[paso - 1][0],
+          color: "#FFC46B",
+          d: pasos[paso - 1][1],
+        },
+      ];
+      pasos.forEach(([titulo, det], i) => {
+        filas.push({
+          t: `${i + 1} · ${titulo}`,
+          color: paso === i + 1 ? "#FFC46B" : "#7AB8FF",
+          d: det,
+          a: "ir al paso",
+        });
+      });
+      return filas;
+    }
+    const filas: FilaContenido3D[] = [
+      {
+        t: mia.nombre.toUpperCase(),
+        v: mia.gobierno,
+        color: "#FFC46B",
+        d: `${mia.gentilicio || "—"} · ${mia.region || "—"}${mia.capital ? ` · capital: ${mia.capital}` : ""}${mia.lema ? ` · “${mia.lema}”` : ""}`,
+      },
+      { t: "POBLACIÓN", v: compact.format(mia.pob), p: Math.min(100, Math.round((mia.pob / 142_000_000) * 100)), color: "#FFC46B", d: "estadística de nación derivada del nombre — mismas reglas para todos" },
+      { t: "PIB (M USD)", v: compact.format(mia.pib), p: Math.min(100, Math.round((mia.pib / 2_400_000) * 100)), color: "#7DFF9B", d: "tamaño económico de tu país en el mapa de naciones" },
+      { t: "EJÉRCITO", v: compact.format(mia.ejercito), p: Math.min(100, Math.round((mia.ejercito / 910_000) * 100)), color: "#FF7A5C", d: "fuerza militar disponible de tu nación" },
+      mia.union
+        ? { t: `UNIÓN · ${mia.union}`, v: "MIEMBRO", color: "#A855F7", d: "tu nación pertenece a esta unión o cartel", a: "salir de la unión" }
+        : { t: "SIN UNIÓN", v: "LIBRE", color: "#7AB8FF", d: "funda la tuya o únete a las del mundo con un toque" },
+      {
+        t: "RECLUTAMIENTO RELÁMPAGO",
+        v: reclutando ? "ENVIANDO…" : "INVITAR",
+        color: "#FF7A5C",
+        d: "invita a un guerrero aleatorio en línea; si acepta, entra a tu unión",
+        a: "invitar guerrero aleatorio",
+      },
+    ];
+    for (const u of uniones.slice(0, 4)) {
+      filas.push({
+        t: u.nombre,
+        v: `[${u.tipo}]`,
+        color: "#A855F7",
+        d: `${u.miembros} miembro(s) · funda: ${u.fundador}${u.lema ? ` · “${u.lema}”` : ""}`,
+        a: mia.union !== u.nombre ? "unirse" : undefined,
+      });
+    }
+    for (const inv of invitaciones.slice(0, 2)) {
+      filas.push({
+        t: `${inv.nacion || "Una nación misteriosa"} te quiere en su bando`,
+        v: "INVITACIÓN",
+        color: "#F5C542",
+        d: inv.union ? `unión: ${inv.union}` : "alianza directa entre naciones",
+        a: "aceptar invitación",
+      });
+    }
+    return filas;
+  }, [mia, paso, f, uniones, invitaciones, reclutando]);
+  // v168: el raycast 3D ejecuta las MISMAS acciones del panel 2D
+  // (offsets: nación+stats+unión+recluta = filas 0-5; uniones 6-9; invitaciones al final)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "mipais") return;
+      if (det.accion === "ir al paso") {
+        if (det.idx >= 1 && det.idx <= 4) setPaso(det.idx);
+      } else if (det.accion === "salir de la unión") {
+        void accionUnion("salir");
+      } else if (det.accion === "invitar guerrero aleatorio") {
+        void reclutar();
+      } else if (det.accion === "unirse") {
+        const u = uniones.slice(0, 4)[det.idx - 6];
+        if (u) void accionUnion("unirse", u.nombre);
+      } else if (det.accion === "aceptar invitación") {
+        const ninv = Math.min(invitaciones.length, 2);
+        const inv = invitaciones.slice(0, 2)[det.idx - (filas3D.length - ninv)];
+        if (inv) void aceptar(inv);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [mia, uniones, invitaciones, filas3D]);
+  useSala3DContenido(
+    "mipais",
+    "MI PAÍS",
+    "#FFC46B",
+    mia ? `${mia.nombre} · ${mia.gobierno} · ${mia.union ? `unión: ${mia.union}` : "sin unión"}` : "Simulador de nación — funda, une y conquista",
+    filas3D,
+  );
   return (
     <div className="space-y-4">
       <PanelHeader title="MI PAÍS" subtitle="Simulador de nación" />

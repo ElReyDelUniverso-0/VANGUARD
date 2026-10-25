@@ -4,7 +4,7 @@
 // operación en globo 3D, lider (foto real cuando existe), estructura,
 // cronología y análisis de ingresos. Contenido histórico/educativo.
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Network, MapPin, Coins, Clock, X, AlertTriangle } from "lucide-react";
@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { CARTELS, type CartelItem } from "@/lib/archive-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // v14 — mapa de presencia en 3D
 const GlobeMap3D = dynamic(
@@ -28,6 +29,50 @@ export function CartelesPanel() {
   const [sel, setSel] = useState<CartelItem | null>(null);
 
   const open = (c: CartelItem) => { sfx.tab(); setSel(c); };
+
+  // v168: PARIDAD 2D→3D — la sala CARTELES emite las fichas reales del archivo
+  // histórico (foto real del líder incluida); cada fila abre la misma ficha
+  // que el botón 2D.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "ARCHIVO HISTÓRICO-EDUCATIVO",
+        v: `${CARTELS.length} FICHAS`,
+        color: "#A855F7",
+        d: "Estructura, rutas y caída · las cifras de ingresos son estimaciones públicas",
+      },
+    ];
+    for (const c of CARTELS.slice(0, 7)) {
+      filas.push({
+        t: c.name,
+        v: c.founded,
+        img: c.leader.img,
+        color: "#A855F7",
+        d: `${c.origin} · ${c.income} · líder: ${c.leader.name}`,
+        a: "abrir ficha",
+      });
+    }
+    return filas;
+  }, []);
+  // v168: el raycast 3D dispara la MISMA apertura que el botón 2D
+  // (offset 1: la fila 0 es la cabecera del archivo, las fichas empiezan en idx 1)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "carteles" || det.accion !== "abrir ficha") return;
+      const c = CARTELS[det.idx - 1];
+      if (c) open(c);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
+  useSala3DContenido(
+    "carteles",
+    "CARTELES & CRIMEN ORGANIZADO",
+    "#A855F7",
+    "Archivos históricos: estructura, rutas y caída",
+    filas3D,
+  );
 
   return (
     <div className="space-y-3">

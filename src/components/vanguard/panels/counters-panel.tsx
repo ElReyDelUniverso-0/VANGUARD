@@ -4,13 +4,14 @@
 // en vivo (tasas reales ONU), bajas historicas por guerra acumulandose en
 // pantalla y estadisticas de crimen global.
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skull, Activity, Baby, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { WAR_DEATHS, LIVE_RATES, GLOBAL_CRIME } from "@/lib/archive-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 function fmt(n: number): string {
   return Math.floor(n).toLocaleString("en-US").replace(/,/g, " ");
@@ -26,6 +27,25 @@ export function CountersPanel() {
   }, []);
 
   const secs = (Date.now() - start.current) / 1000;
+
+  // v168: PARIDAD 2D→3D — los contadores reales suben a la sala 3D; el pulso de
+  // 100 ms del panel saturaría el mundo, así que la emisión va en bloques de 10 s
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const decena = Math.floor(secs / 10) * 10;
+    const filas: FilaContenido3D[] = [
+      { t: "MUERTES MUNDIALES (esta sesión)", v: fmt(decena * LIVE_RATES.deathsPerSec), p: Math.min(100, (decena * LIVE_RATES.deathsPerSec) / 600), color: "#FF4D5E", d: `${LIVE_RATES.deathsPerSec} por segundo · ~2 por latido · tasas reales ONU/WHO` },
+      { t: "NACIMIENTOS (esta sesión)", v: fmt(decena * LIVE_RATES.birthsPerSec), color: "#3DDC84", d: `${LIVE_RATES.birthsPerSec} por segundo` },
+      { t: "POBLACIÓN MUNDIAL EST.", v: fmt(LIVE_RATES.popStart + decena * (LIVE_RATES.birthsPerSec - LIVE_RATES.deathsPerSec)), color: "#7AB8FF", d: `+${(LIVE_RATES.birthsPerSec - LIVE_RATES.deathsPerSec).toFixed(2)} hab/seg · ~80 M/año` },
+    ];
+    for (const w of WAR_DEATHS) {
+      filas.push({ t: `${w.name} · ${w.years}`, v: fmt(w.total), p: Math.round((w.total / 75_000_000) * 100), color: w.color, d: `${w.note} · media: ${fmt(w.perDay)}/día` });
+    }
+    for (const c of GLOBAL_CRIME) {
+      filas.push({ t: c.label, v: c.value, color: "#FF4D5E", d: c.note });
+    }
+    return filas;
+  }, [secs]);
+  useSala3DContenido("contadores", "CONTADORES MUNDIALES", "#FF3B30", `Cada segundo cuenta · ${fmt(secs * LIVE_RATES.deathsPerSec)} muertes en esta sesión`, filas3D);
 
   return (
     <div className="space-y-3">

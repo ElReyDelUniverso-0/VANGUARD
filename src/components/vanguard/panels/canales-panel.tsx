@@ -13,6 +13,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { CANALES, canalDe, generarMensajes, horaCorta, type MensajeCanal } from "@/lib/canales-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 export function CanalesPanel() {
   const [mensajes, setMensajes] = useState<MensajeCanal[]>([]);
@@ -54,6 +55,57 @@ export function CanalesPanel() {
   };
 
   const verificados = visibles.filter((m) => m.coincideCable).length;
+
+  // v168: PARIDAD 2D→3D — la escucha abierta en volumen: canales y mensajes contrastados reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "ESCUCHA GLOBAL · TODOS LOS CANALES",
+        v: `${visibles.length} MENSAJES`,
+        color: "#A855F7",
+        d: "flujo en vivo de la escucha del planeta · refresco cada 30 s",
+      },
+      {
+        t: "MENSAJES CONTRASTADOS CONTRA LA CASA",
+        v: `${verificados}`,
+        color: "#3DDC84",
+        d: "coinciden con un cable verificado del motor de PULSOS de Vanguard",
+      },
+      ...CANALES.slice(0, 6).map((c): FilaContenido3D => ({
+        t: c.nombre,
+        v: `${(c.subs / 1000).toFixed(0)}K`,
+        color: c.color,
+        d: `${c.tipo.toLowerCase()} · ${c.verificado ? "verificado" : "sin verificar"} · ${noLeidos(c.id)} sin leer`,
+        a: "filtrar",
+      })),
+      ...visibles.slice(0, 3).map((m): FilaContenido3D => ({
+        t: m.texto,
+        v: horaCorta(m.ts),
+        color: m.coincideCable ? "#3DDC84" : "#F5C542",
+        d: `${canalDe(m.canal).nombre} · ${m.vistas.toLocaleString("es-ES")} vistas · ${m.reenvios.toLocaleString("es-ES")} reenvíos`,
+      })),
+    ];
+    return filas;
+  }, [mensajes, visibles, verificados, leidos]);
+  useSala3DContenido(
+    "canales",
+    "CANALES OSINT EN VIVO",
+    "#A855F7",
+    `${visibles.length} mensajes en la escucha · ${verificados} contrastados contra la casa`,
+    filas3D,
+  );
+  // v168: "filtrar" desde el 3D entra al mismo canal que el botón 2D
+  // (offset 2: las dos filas fijas ocupan 0-1, los canales empiezan en idx 2)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "canales" || d.accion !== "filtrar") return;
+      const item = CANALES[d.idx - 2];
+      if (item) { setCanalFiltro(item.id); marcarLeidos(item.id); }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [mensajes]);
 
   return (
     <div className="space-y-4">

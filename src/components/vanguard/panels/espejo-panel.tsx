@@ -25,6 +25,7 @@ import { evaluarNeuronal, fnvHash, predecir, bucketMinutos } from "@/lib/neurona
 import { dayKeyUtc } from "@/lib/googles";
 // v122 SEÑALES REALES: los cables de la casa junto al espejo SIM (separación honesta)
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const ESTADO_META = {
   confirmado: { label: "CONFIRMADO", color: "#4DFFC4" },
@@ -206,6 +207,73 @@ export function EspejoPanel() {
     const id = setInterval(cargar, 300000);
     return () => { vivo = false; clearInterval(id); };
   }, []);
+
+  // v168: PARIDAD 2D→3D — la sala ESPEJO emite la crisis activa: las seis salas
+  // con su titular (desplegables), la matriz de verificación y los cables reales.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = crisis.perspectivas.map((p) => {
+      const medio = medioPorId(p.medio);
+      return {
+        t: `${medio.emoji} ${medio.nombre}`,
+        v: medio.tipo,
+        color: medio.color,
+        d: `“${p.titular}” · nota de la mesa: ${p.nota}`,
+        a: "desplegar sala",
+      };
+    });
+    crisis.hechos.slice(0, 3).forEach((h, i) => {
+      const conv = convergencia[i];
+      filas.push({
+        t: h.texto,
+        v: `${conv.menciona}/${conv.total} SALAS`,
+        p: Math.round((conv.menciona / Math.max(1, conv.total)) * 100),
+        color: ESTADO_META[h.estado].color,
+        d: conv.disputan > 0 ? `${conv.disputan} salas la disputan abiertamente` : "convergencia entre salas sin disputa",
+      });
+    });
+    filas.push({
+      t: "NÚCLEO NEURONAL",
+      v: `RIESGO ${Math.round(veredicto.riesgo)}`,
+      p: Math.round(veredicto.riesgo),
+      color: "#B48CFF",
+      d: `${veredicto.sentimiento} · tensión ${Math.round(veredicto.tension)} · confianza ${Math.round(veredicto.confianza)} · proyección: ${proyeccion.escenarios[0]?.nombre ?? "—"} ${proyeccion.escenarios[0]?.probabilidad ?? 0}%`,
+    });
+    for (const cab of cablesReales.slice(0, 2)) {
+      filas.push({
+        t: cab.title,
+        v: cab.tacticalTag ?? "INFO",
+        color: cab.tacticalTag === "ALERTA" ? "#FF6B60" : "#7DD3FC",
+        d: `REAL · cable de la casa: ${cab.source}`,
+        a: "leer cable",
+      });
+    }
+    return filas;
+  }, [crisis, convergencia, veredicto, proyeccion, cablesReales]);
+  // v168: el raycast 3D despliega la MISMA sala de medio que el botón 2D y
+  // abre el MISMO lector de cables (las filas de cable van al final del array)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "espejo") return;
+      if (det.accion === "desplegar sala") {
+        const p = crisis.perspectivas[det.idx];
+        if (p) setAbierto((v) => (v === p.medio ? null : p.medio));
+      } else if (det.accion === "leer cable") {
+        const ncables = Math.min(cablesReales.length, 2);
+        const cab = cablesReales[det.idx - (filas3D.length - ncables)];
+        if (cab) setCableSelReal(cab);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [crisis, cablesReales, filas3D]);
+  useSala3DContenido(
+    "espejo",
+    "EL ESPEJO DE VANGUARD",
+    "#FBBF24",
+    `Una misma noticia, distintas perspectivas · ${crisis.nombre} · tensión ${tensionActual(crisis)}`,
+    filas3D,
+  );
 
   const vigila = vigilados.some((v) => v.toLowerCase() === crisis.nombre.toLowerCase());
 

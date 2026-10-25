@@ -95,7 +95,7 @@ export function DivisasPanel() {
         v: c.live >= 100 ? c.live.toFixed(0) : c.live.toFixed(2),
         color: c.dir > 0 ? "#3DDC84" : c.dir < 0 ? "#FF4D5E" : "#9FB8DD",
         d: `${c.currency} (${c.symbol}) · 1 USD = ${c.live.toFixed(2)} ${c.code}${units > 0 ? ` · tienes ${Math.round(units)} u.` : ""}`,
-        a: units > 0 ? "VENDER" : "COMPRAR",
+        a: units > 0 ? "vender" : "comprar", // v168: la accion viaja VERBATIM al listener (minúscula = contrato)
       };
     });
     filas.push({

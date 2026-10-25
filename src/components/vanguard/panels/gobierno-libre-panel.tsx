@@ -10,7 +10,7 @@
 // Doctrina: las personas deben SABER que están en un lugar
 // exclusivo — y la Casa demuestra que se mantiene sola.
 // ============================================================
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -24,6 +24,7 @@ import {
   BadgeCheck, Bot, Gem, Landmark, Map, Newspaper, Pause, Play, ScrollText,
   ShieldCheck, Sparkles, Users,
 } from "lucide-react";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 // color de cada agente — el uniforme del cuerpo
 const COLOR_AGENTE: Record<string, string> = {
@@ -112,6 +113,71 @@ export function GobiernoLibrePanel() {
   const desdeTxt = credencial
     ? new Date(credencial.desde).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" })
     : "—";
+
+  // v168: PARIDAD 2D→3D — EL GOBIERNO LIBRE emite sus filas reales a la sala de contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `CREDENCIAL ${credencial ? credencial.numero : "EMITIENDO…"}`,
+        v: `${visitas} ${visitas === 1 ? "VISITA" : "VISITAS"}`,
+        p: pctNivel,
+        color: "#D4AF37",
+        d: `nivel de despacho: ${actual.nivel} — ${actual.sello} · desde ${desdeTxt}${siguiente ? ` · siguiente nivel en ${siguiente.min - visitas} visitas` : " · nivel máximo"}`,
+      },
+      {
+        t: "EL PALACIO LIBRE",
+        color: "#7AB8FF",
+        d: "todo lo que tiene un Estado sin la parte pesada: información abierta, puerta que se recibe por llegar, mantenimiento autónomo y precio cero",
+      },
+      {
+        t: `CUERPO DE AGENTES: ${activos ? "EN SERVICIO" : "EN PAUSA"}`,
+        v: `${pulidos} PULIDOS`,
+        color: activos ? "#3DDC84" : "#F5C542",
+        d: "cinco agentes con ciclos reales — ronda, pulso, mapa, memoria y galería — la Casa se mantiene sola",
+        a: activos ? "pausar agentes" : "activar agentes",
+      },
+    ];
+    for (const a of AGENTES_LIBRES) {
+      filas.push({
+        t: a.nombre,
+        v: `${ciclos[a.id] ?? 0} PULIDOS`,
+        color: COLOR_AGENTE[a.id] ?? "#D4AF37",
+        d: `${a.especialidad} · ${a.rol} · ciclo cada ${a.cicloSeg}s · «${a.lema}»`,
+      });
+    }
+    filas.push({
+      t: "EL PULIDO EN VIVO",
+      v: `${log.length} ENTRADAS`,
+      color: "#7AB8FF",
+      d: log.length > 0
+        ? `última: ${AGENTES_LIBRES.find((a) => a.id === log[0].agente)?.nombre ?? log[0].agente} — ${log[0].accion}`
+        : "el cuerpo está formándose — la primera ronda del Vigía llega pronto",
+    });
+    filas.push({
+      t: "LA CADENA DE MANDO",
+      color: "#7AB8FF",
+      d: "el dueño manda (tú), el cuerpo trabaja (5 agentes) y la constitución: todo libre, todo con fuente, todo visible",
+    });
+    return filas;
+  }, [credencial, visitas, actual, siguiente, pctNivel, desdeTxt, activos, pulidos, ciclos, log]);
+  useSala3DContenido(
+    "agentes",
+    "EL GOBIERNO LIBRE",
+    "#38BDF8",
+    `tu credencial exclusiva y los agentes que pulen Vanguard · ${pulidos} pulidos · cuerpo ${activos ? "en servicio" : "en pausa"}`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — pausar/activar usa el MISMO toggle del cuerpo
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "agentes") return;
+      if (det.accion === "pausar agentes" && activos) { toggleAgentes(); sfx.campana(); }
+      else if (det.accion === "activar agentes" && !activos) { toggleAgentes(); sfx.campana(); }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [activos, toggleAgentes]);
 
   return (
     <div className="space-y-5">

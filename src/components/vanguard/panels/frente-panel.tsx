@@ -6,7 +6,7 @@
 // JUGABLE: el operador llama strikes de artillería y drones (coste en monedas,
 // recompensa por efectividad). Datos de frente + bajas en vivo + bitácora.
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Flag } from "@/lib/flags";
@@ -17,6 +17,7 @@ import {
   Flame, Crosshair, Skull, Activity, Radio, Target, ShieldAlert, Coins, Box, Volume2, VolumeX,
 } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // v66.0 TERCERA DIMENSIÓN — vista 3D orbitable del combate (Three.js, carga diferida:
 // lee el MISMO stateRef del canvas 2D, sin lógica ni economía duplicada)
@@ -1079,6 +1080,86 @@ export function FrentePanel() {
   }, [spendCoins, pushLog]);
 
   const cb = useGameStore((s) => s.coins);
+
+  // v168: PARIDAD 2D→3D — el frente activo, su control, el arsenal del operador
+  // y los teatros disponibles suben en volumen; dron, MLRS y cambio de frente
+  // ejecutan los MISMOS handlers del 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: front.name.toUpperCase(),
+        v: `INT ${front.intensity}%`,
+        p: front.intensity,
+        color: "#FF4D5E",
+        d: `${front.note} · teatro ${front.terrain.toUpperCase()} · bajas estimadas ${casualties.toLocaleString("es")}`,
+      },
+      {
+        t: `CONTROL: ${front.sideA.name.toUpperCase()} / ${front.sideB.name.toUpperCase()}`,
+        v: `${control.toFixed(0)}%`,
+        p: control,
+        color: "#7AB8FF",
+        d: `unidades: ${front.unitsA} vs ${front.unitsB} · momentum aliado ${(stateRef.current.momentum * 100).toFixed(0)}%`,
+      },
+      {
+        t: "DRON TÁCTICO · 30 ◉",
+        v: `${cb.toLocaleString("es")} ◉`,
+        color: "#FF3B30",
+        d: "strike automático sobre la columna enemiga · hasta 4 blancos · paga por bajas",
+        a: "dron",
+      },
+      {
+        t: "SALVA MLRS ×6 · 45 ◉",
+        v: "6 COHETES",
+        color: "#E8C56A",
+        d: "cohetes con arco balístico que buscan blancos al caer",
+        a: "mlrs",
+      },
+    ];
+    if (frontMeteo) {
+      filas.push({
+        t: "METEO OPERATIVA",
+        v: frontMeteo.drone === "OK" ? "VUELA" : frontMeteo.drone === "RIESGO" ? "RIESGO" : "EN TIERRA",
+        color: frontMeteo.drone === "OK" ? "#3DDC84" : frontMeteo.drone === "RIESGO" ? "#F5C542" : "#FF4D5E",
+        d: `${frontMeteo.temp !== null ? `${frontMeteo.temp}°C` : "—"} · ${frontMeteo.cond} · viento ${frontMeteo.wind !== null ? `${frontMeteo.wind} m/s` : "—"} · Open-Meteo real`,
+      });
+    }
+    for (const f of FRONTS.slice(0, 6)) {
+      const activo = f.id === front.id;
+      filas.push({
+        t: f.name,
+        v: `INT ${f.intensity}%`,
+        p: f.intensity,
+        color: activo ? "#F5C542" : "#7AB8FF",
+        d: `${f.sideA.name} vs ${f.sideB.name} · ${f.terrain}${activo ? " · ENLACE ACTIVO — esta es tu vista táctica" : ""}`,
+        a: "cambiar frente",
+      });
+    }
+    return filas;
+  }, [front, frontIdx, casualties, control, frontMeteo, cb, hud]);
+  useSala3DContenido(
+    "frente",
+    front.name.toUpperCase(),
+    "#FF3B30",
+    `Vista táctica en vivo · clic = artillería (15 ◉) · dron 30 ◉ · MLRS ×6 45 ◉ · combo y fiebre de combate`,
+    filas3D,
+  );
+
+  // v168: el 3D dispara las armas y cambia de teatro por los MISMOS handlers del 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "frente") return;
+      if (d.accion === "dron") { droneStrike(); return; }
+      if (d.accion === "mlrs") { mlrsBarrage(); return; }
+      if (d.accion === "cambiar frente") {
+        // offset: frente activo + control + dron + MLRS (+ meteo si hay) delante
+        const f = FRONTS.slice(0, 6)[d.idx - 4 - (frontMeteo ? 1 : 0)];
+        if (f) setFrontIdx(FRONTS.indexOf(f));
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [front, frontMeteo, droneStrike, mlrsBarrage]);
 
   return (
     <div className="space-y-4">

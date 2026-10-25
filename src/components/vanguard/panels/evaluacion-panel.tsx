@@ -11,6 +11,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarEvaluacion, ultimasFechas, fechaLarga } from "@/lib/evaluacion-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 export function EvaluacionPanel() {
   const fechas = useMemo(() => ultimasFechas(14), []);
@@ -23,6 +24,52 @@ export function EvaluacionPanel() {
   }, []);
 
   const ev = useMemo(() => generarEvaluacion(fecha), [fecha]);
+
+  // v168: PARIDAD 2D→3D — el informe diario en volumen: hallazgos, teatros y archivo reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `INFORME N.º ${ev.numero}`,
+        v: fecha,
+        color: "#F5C542",
+        d: `${fechaLarga(fecha)} · informe diario de operaciones con fuentes abiertas`,
+      },
+      ...ev.hallazgos.slice(0, 4).map((h): FilaContenido3D => ({
+        t: h.titulo,
+        color: "#7AB8FF",
+        d: h.cuerpo,
+      })),
+      ...ev.teatros.slice(0, 4).map((teatro): FilaContenido3D => ({
+        t: teatro.nombre,
+        color: "#38BDF8",
+        d: `Evaluación del terreno controlado: ${teatro.terreno}`,
+      })),
+      {
+        t: "ARCHIVO · 14 DÍAS DE INFORMES",
+        a: "hoy",
+        color: "#F5C542",
+        d: ev.notaMetodo,
+      },
+    ];
+    return filas;
+  }, [ev, fecha]);
+  useSala3DContenido(
+    "evaluacion",
+    "EVALUACIÓN DE CAMPAÑA DIARIA",
+    "#F5C542",
+    `N.º ${ev.numero} · ${ev.hallazgos.length} hallazgos · ${ev.teatros.length} teatros evaluados`,
+    filas3D,
+  );
+  // v168: "hoy" desde el 3D abre el mismo informe que el primer botón del archivo 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "evaluacion" || d.accion !== "hoy") return;
+      if (fechas[0]) setFecha(fechas[0]);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [fechas]);
 
   return (
     <div className="space-y-4">

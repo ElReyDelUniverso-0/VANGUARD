@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import type { Globe3DMarker, GlobeFlyTo, GlobeViewMode } from "@/components/vanguard/globe-map-3d";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const GlobeMap3D = dynamic(
   () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
@@ -214,6 +215,97 @@ export function PlanetaPanel() {
   }), [layers, quakes, iss]);
 
   const alive = (layers?.sources.eonet ? 1 : 0) + (layers?.sources.aurora ? 1 : 0) + (quakes.length ? 1 : 0) + (iss ? 1 : 0);
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el planeta vivo en volumen: las 4 capas
+  // reales (alternables desde el mundo), los eventos NASA abiertos
+  // (con su fuente oficial), el sismo top USGS y la EEI en directo
+  // ════════════════════════════════════════════════════════════
+  const CAPAS = ["evt", "aur", "qk", "iss"] as const;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const capasInfo: Array<{ k: LayerKey; label: string; sub: string; color: string }> = [
+      { k: "evt", label: "EVENTOS NASA", sub: `${counts.evt} activos`, color: "#22D3EE" },
+      { k: "aur", label: "AURORAS", sub: layers?.auroraMax ? `pico ${layers.auroraMax}%` : "sin pico", color: "#C084FC" },
+      { k: "qk", label: "SISMOS M4.5+", sub: `${counts.qk} en 24h`, color: "#F59E0B" },
+      { k: "iss", label: "EEI EN DIRECTO", sub: iss ? `${Math.round(iss.altitude)} km` : "adquiriendo…", color: "#3DDC97" },
+    ];
+    // las 4 capas encabezan la lista: idx del 3D = posición en CAPAS (sin offset)
+    const filas: FilaContenido3D[] = capasInfo.map((l) => ({
+      t: l.label,
+      v: l.sub,
+      color: l.color,
+      d: `Capa ${on[l.k] ? "ENCENDIDA" : "APAGADA"} · mismo botón del control de capas 2D`,
+      a: "alternar capa",
+    }));
+    // offset 4: tras las 4 capas van los eventos NASA abiertos
+    for (const ev of (layers?.events ?? []).slice(0, 5)) {
+      filas.push({
+        t: ev.title,
+        v: agoTs(ev.date),
+        color: CAT_COLOR[ev.category] ?? "#22D3EE",
+        d: `${ev.categoryLabel} · evento natural abierto en NASA EONET · fuente oficial al pulsar`,
+        a: "abrir fuente nasa",
+      });
+    }
+    const q0 = quakes[0];
+    if (q0) {
+      filas.push({
+        t: `M${q0.mag.toFixed(1)} · ${q0.place}`,
+        v: `${q0.depth.toFixed(0)} km`,
+        color: quakeColor(q0.mag),
+        d: `Sismo más fuerte de USGS últimas 24h · ${quakes.length} sismos M4.5+ vigilados`,
+        a: "abrir fuente usgs",
+      });
+    }
+    if (iss) {
+      filas.push({
+        t: "EEI EN DIRECTO",
+        v: `${Math.round(iss.altitude)} km`,
+        color: "#3DDC97",
+        d: `Sobre ${iss.lat.toFixed(1)}, ${iss.lng.toFixed(1)} · ${Math.round(iss.velocity).toLocaleString("es")} km/h · poll cada 6 s`,
+      });
+    }
+    filas.push({
+      t: "REFRESCAR CAPAS",
+      a: "refrescar",
+      color: "#7AB8FF",
+      d: `Señal: ${alive}/4 capas · reintenta NASA, USGS y EEI (mismo botón del encabezado)`,
+    });
+    return filas;
+  }, [layers, quakes, iss, on, counts, alive]);
+  useSala3DContenido(
+    "planeta",
+    "PLANETA VIVO — EL MAPA DE TODO",
+    "#38BDF8",
+    `${alive}/4 capas con señal · ${counts.evt + counts.aur + counts.qk + counts.iss} puntos · NASA + NOAA + USGS`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // toggle de capas, fuentes oficiales (NASA/USGS) y refresco
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "planeta") return;
+      if (det.accion === "alternar capa") {
+        // sin offset: las capas encabezan filas3D
+        const k = CAPAS[det.idx];
+        if (k) setOn((s) => ({ ...s, [k]: !s[k] }));
+      } else if (det.accion === "abrir fuente nasa") {
+        // offset 4: tras las 4 capas van los eventos NASA
+        const ev = layers?.events[det.idx - 4];
+        if (ev?.link) window.open(ev.link, "_blank", "noopener");
+      } else if (det.accion === "abrir fuente usgs") {
+        // offset dinámico: 4 capas + hasta 5 eventos NASA preceden al sismo top
+        const q = quakes[det.idx - 4 - Math.min(layers?.events.length ?? 0, 5)];
+        if (q?.url) window.open(q.url, "_blank", "noopener");
+      } else if (det.accion === "refrescar") {
+        load();
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [layers, quakes]);
 
   return (
     <div className="space-y-4">

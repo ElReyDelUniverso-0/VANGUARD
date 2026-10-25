@@ -24,6 +24,7 @@ import {
   IMAGENES_REALES, IMAGENES_CATS, buscarImagenes, imagenesDeCat,
   type ImagenReal, type ImagenCat,
 } from "@/lib/imagenes-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const LS_VISTAS = "vg-imagenes-v98";
 const RECOMPENSA_DIA = 5; // máx. de fotos nuevas que pagan al día
@@ -130,6 +131,55 @@ export function ImagenesPanel() {
     };
     return map[c] || c;
   };
+
+  // v168: PARIDAD 2D→3D — la sala IMÁGENES emite las fotos reales que el panel
+  // ya muestra (con su miniatura); cada fila abre el MISMO lightbox que el 2D.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "BUSCADOR VISUAL · FOTOS REALES",
+        v: `${lista.length} RESULTADOS`,
+        color: "#38BDF8",
+        d: q ? `búsqueda: “${q}”` : `colección: ${cat === "todo" ? "todo el archivo" : catLabel(cat)}`,
+      },
+      {
+        t: "RECOMPENSA DEL DÍA",
+        v: `${Math.min(cobradas.length, RECOMPENSA_DIA)}/${RECOMPENSA_DIA}`,
+        color: "#3DDC84",
+        d: "abre fotos nuevas para cobrar +4 mon y +3 XP por cada una",
+      },
+    ];
+    for (const im of lista.slice(0, 8)) {
+      filas.push({
+        t: im.label,
+        v: catLabel(im.cat),
+        img: im.src,
+        color: "#7AB8FF",
+        d: `${im.fuente} · ${im.nota}`,
+        a: "abrir foto",
+      });
+    }
+    return filas;
+  }, [lista, q, cat, cobradas]);
+  // v168: el raycast 3D abre el MISMO lightbox que el botón 2D
+  // (offset 2: cabecera + recompensa preceden a las fotos)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "imagenes" || det.accion !== "abrir foto") return;
+      const im = lista[det.idx - 2];
+      if (im) { setSel(im); cobrarVista(im); }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [lista, cobrarVista]);
+  useSala3DContenido(
+    "imagenes",
+    "IMÁGENES DE VANGUARD",
+    "#38BDF8",
+    "La búsqueda visual de la plataforma — fotos reales del mundo",
+    filas3D,
+  );
 
   return (
     <div className="space-y-3">

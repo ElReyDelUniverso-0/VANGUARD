@@ -18,6 +18,7 @@ import { Camera, EyeOff, Eye, X, Radio, AlertTriangle, MapPin, Skull, ExternalLi
 
 import { isStrict18 } from "@/lib/safety";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const LS_SALA18 = "vanguard_sala18_ok";
 
@@ -118,6 +119,65 @@ export function IncidentesPanel() {
       })),
     [list]
   );
+
+  // v168: PARIDAD 2D→3D — la leyenda de tipos, los filtros y la lista compacta
+  // suben en volumen; filtrar y abrir la ficha ejecuta las mismas funciones 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const tipos = Object.entries(INCIDENT_TYPE_META);
+    const filas: FilaContenido3D[] = tipos.map(([k, m]) => ({
+      t: m.label.toUpperCase(),
+      v: String(INCIDENTS.filter((i) => i.type === k).length),
+      color: type === k ? "#F5C542" : m.color,
+      d: type === k ? "filtro activo en el globo y la lista" : `filtrar el mapa por ${m.label.toLowerCase()}`,
+      a: "filtrar tipo",
+    }));
+    filas.push({
+      t: "TODOS LOS TIPOS",
+      v: String(INCIDENTS.length),
+      color: type === "TODOS" ? "#F5C542" : "#7AB8FF",
+      d: `quitar el filtro · ${INCIDENTS.filter((i) => i.status === "ACTIVO").length} incidentes activos ahora mismo`,
+      a: "filtrar todos",
+    });
+    for (const inc of list.slice(0, 5)) {
+      const m = INCIDENT_TYPE_META[inc.type];
+      filas.push({
+        t: inc.name,
+        v: inc.status === "ACTIVO" ? "ACTIVO" : "DOC.",
+        color: m.color,
+        d: `${m.label} · ${inc.country} · desde ${inc.since} · ${inc.summary}`,
+        a: "ver incidente",
+      });
+    }
+    return filas;
+  }, [type, list]);
+  useSala3DContenido(
+    "incidentes",
+    "MAPA DE INCIDENTES · QUÉ ESTÁ PASANDO AHORA",
+    "#FF3B30",
+    `${INCIDENTS.length} incidentes documentados · ${INCIDENTS.filter((i) => i.status === "ACTIVO").length} activos · con cámaras de seguridad`,
+    filas3D,
+  );
+
+  // v168: el 3D filtra y abre fichas por las MISMAS funciones que el 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "incidentes") return;
+      if (d.accion === "filtrar tipo") {
+        const k = Object.keys(INCIDENT_TYPE_META)[d.idx];
+        if (k) setType(k);
+        return;
+      }
+      if (d.accion === "filtrar todos") { setType("TODOS"); return; }
+      if (d.accion === "ver incidente") {
+        // offset: las filas de tipos + la fila TODOS van delante de la lista
+        const inc = list.slice(0, 5)[d.idx - Object.keys(INCIDENT_TYPE_META).length - 1];
+        if (inc) setSelected(inc);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [list]);
 
   return (
     <div className="space-y-3">

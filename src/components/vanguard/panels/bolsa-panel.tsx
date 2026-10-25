@@ -6,7 +6,7 @@
 // las operaciones reales de los jugadores: comprar sube, vender baja.
 // Crear una moneda cuesta 100 monedas Vanguard (sumidero de economía).
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Coins, TrendingUp, TrendingDown, Plus, Loader2, Wallet, ArrowUpRight, ArrowDownRight, BadgeDollarSign,
@@ -19,6 +19,7 @@ import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/components/vanguard/creador-parts";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface Currency {
   id: string; code: string; name: string; symbol: string; country: string; creator: string;
@@ -136,6 +137,65 @@ export function BolsaPanel() {
 
   const myPositions = positions.filter((p) => p.user === (alias || "ANÓNIMO"));
   const sel = currencies.find((c) => c.code === selected);
+
+  // v168: PARIDAD 2D→3D — la casa de cambio en volumen: mercado, tape y portafolio reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "FUNDA TU PROPIA MONEDA",
+        v: `ⓥ${createCost}`,
+        color: "#F5C542",
+        d: "elige ticker, nombre, supply y país; la bolsa la cotiza a ⓥ10 y el mercado la mueve",
+      },
+      ...myPositions.slice(0, 3).map((p): FilaContenido3D => {
+        const cur = currencies.find((c) => c.code === p.code);
+        return {
+          t: `${cur?.symbol ?? "🪙"} ${p.code}`,
+          v: `≈ ⓥ${cur ? Math.round(cur.price * p.amount) : 0}`,
+          color: "#7AB8FF",
+          d: `tu posición: ${p.amount} unidades`,
+        };
+      }),
+      ...recent.slice(0, 3).map((r): FilaContenido3D => ({
+        t: `@${r.user}`,
+        v: r.side === "BUY" ? "COMPRÓ" : "VENDIÓ",
+        color: r.side === "BUY" ? "#3DDC84" : "#FF4D5E",
+        d: `${r.amount} ${r.code} a ⓥ${r.price.toFixed(2)} · ${timeAgo(r.createdAt)}`,
+      })),
+      ...currencies.slice(0, 5).map((c): FilaContenido3D => {
+        const delta = ((c.price - c.basePrice) / c.basePrice) * 100;
+        return {
+          t: `${c.code} · ${c.name}`,
+          v: `ⓥ${c.price.toFixed(2)}`,
+          p: Math.max(3, Math.min(100, 50 + delta * 4)),
+          color: delta >= 0 ? "#3DDC84" : "#FF4D5E",
+          d: `por @${c.creator} · ${c.holders} tenedores · ${c.trades} operaciones · vol ${c.volume.toLocaleString()}`,
+          a: "comprar",
+        };
+      }),
+    ];
+    return filas;
+  }, [currencies, recent, myPositions, createCost]);
+  useSala3DContenido(
+    "bolsamonedas",
+    "BOLSA DE MONEDAS",
+    "#F5C542",
+    `${currencies.length} monedas listadas · el precio lo mueven las operaciones reales`,
+    filas3D,
+  );
+  // v168: "comprar" desde el 3D ejecuta la MISMA operación que el botón 2D (usa la cantidad
+  // actual del panel). offset variable: 1 fundación + min(3 posiciones) + min(3 tape)
+  const offMercado3D = 1 + Math.min(myPositions.length, 3) + Math.min(recent.length, 3);
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "bolsamonedas" || d.accion !== "comprar") return;
+      const item = currencies[d.idx - offMercado3D];
+      if (item) void trade(item.code, "BUY");
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [currencies, offMercado3D, amount, busy]);
 
   return (
     <div className="space-y-4">

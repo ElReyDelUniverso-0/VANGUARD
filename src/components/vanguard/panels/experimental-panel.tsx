@@ -19,7 +19,7 @@
 // drag/rotación vía refs imperativas + CSS vars, sin re-render.
 // ============================================================
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useReducedMotion } from "framer-motion";
 import { Eraser, FlaskConical, RotateCw, Type, Signature, Download, MapPin, Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,7 @@ import { SelloVivo } from "../escenas-3d";
 // v117.0 ATMÓSFERA: la FORJA BAUTIZA las regiones de la megalópolis —
 // el nombre popular que escribas aquí luce en la ciudad del INICIO
 import { REGIONES_CIUDAD, bautizarRegion, quitarBautismo, leerBautizos, type BautismoRegion } from "../megalopolis";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // v114: los materiales VÁLIDOS salen del propio motor (8: +vidrio/oro/glitch)
 const MATERIALES_VALIDOS = MATERIALES_LETRA.map((m) => m.id) as MaterialLetra[];
@@ -374,6 +375,71 @@ export function ExperimentalPanel() {
     const unicas = Array.from(new Set(todas)).slice(0, 14);
     return unicas;
   })();
+
+  // v168: PARIDAD 2D→3D — la página de los imposibles en volumen: forja, órbita, lluvia y bautizos reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `FORJA DE LETRAS · ${textoForja}`,
+        v: conf.material.toUpperCase(),
+        color: ACC,
+        d: `profundidad ${conf.profundidad} · tamaño ${conf.tamano} · giro ${conf.giro ? "ON" : "OFF"} · la escena se arrastra para rotarla`,
+        a: "exportar",
+      },
+      {
+        t: "GIRO ORBITAL DE LA FORJA",
+        v: conf.giro ? "ON" : "OFF",
+        color: conf.giro ? ACC : "#7AB8FF",
+        d: "activa el giro perpetuo de tus letras en volumen",
+        a: "giro",
+      },
+      {
+        t: "ÓRBITA DE PALABRAS",
+        v: `${palabrasOrbita.length} PALABRAS`,
+        color: ACC,
+        d: `tus palabras viven sobre una esfera de datos: ${palabrasOrbita.slice(0, 5).join(" · ")}`,
+      },
+      {
+        t: "LLUVIA DE LETRAS",
+        color: ACC,
+        d: "tu alfabeto llueve sobre la matriz (canvas propio, se apaga al salir)",
+      },
+      ...REGIONES_CIUDAD.map((r): FilaContenido3D => {
+        const b = bautizos[r.id];
+        return {
+          t: r.nombre,
+          v: b ? `★ ${b.nombre}` : "SIN BAUTIZO",
+          color: r.acc2,
+          d: b ? `bautizada por ${b.autor} — luce en la ciudad del INICIO` : "escribe un nombre popular y la ciudad lo luce",
+          a: "elegir",
+        };
+      }),
+    ];
+    return filas;
+  }, [conf, bautizos, textoForja, palabrasOrbita]);
+  useSala3DContenido(
+    "experimental",
+    "EXPERIMENTAL",
+    ACC,
+    "la página de los imposibles: forja de letras, órbita, lluvia y bautizo de la ciudad",
+    filas3D,
+  );
+  // v168: acciones del 3D → los MISMOS handlers de los botones 2D
+  // ("exportar" en la fila 0; "giro" en la 1; "elegir" región: offset 4)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "experimental") return;
+      if (d.accion === "exportar") exportarPNG();
+      if (d.accion === "giro") setConf((c) => ({ ...c, giro: !c.giro }));
+      if (d.accion === "elegir") {
+        const item = REGIONES_CIUDAD[d.idx - 4];
+        if (item) setRegionElegida(item.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [conf]);
 
   return (
     <div className="mx-auto max-w-5xl px-2 pb-14">

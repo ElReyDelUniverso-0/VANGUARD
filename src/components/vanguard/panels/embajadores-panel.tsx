@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 // v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
 import { LatidoSocial } from "@/components/vanguard/latido-social";
 
@@ -170,6 +171,54 @@ export function EmbajadoresPanel() {
 
   const myCountryCandidates = myCountry ? byCountry[myCountry] ?? [] : [];
   const leaderOf = (list: Candidate[]) => [...list].sort((a, b) => b.votes - a.votes)[0];
+
+  // v168: PARIDAD 2D→3D — el estado real de la elección sube a la sala: cuenta
+  // dedicada, ciclo y candidatos con sus votos; el modo ROL/RANKING emite sus listas
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: myCountry ? `CUENTA DEDICADA: ${countryName(myCountry).toUpperCase()}` : "SIN PAÍS ASIGNADO",
+        v: `NIVEL ${level}`,
+        color: myCountry ? "#3DDC84" : "#F5C542",
+        d: myCountry ? (level >= 3 ? "Puedes presentarte como candidato de tu país" : "Necesitas nivel 3 para presentarte") : "Dedica tu cuenta a un país para votar y presentarte",
+      },
+      {
+        t: `CICLO ${cyc.cycle} EN CURSO`,
+        v: `${cyc.daysLeft} DÍAS`,
+        p: Math.min(100, Math.max(2, 100 - (cyc.daysLeft / 60) * 100)),
+        color: "#F5C542",
+        d: `${candidates.length} candidatos · ${Object.keys(byCountry).length} países en disputa`,
+      },
+    ];
+    if (tab === "ELECCION") {
+      for (const c of candidates.slice(0, 10)) {
+        const yaVotado = myVoteCountry[c.country] === c.id;
+        filas.push({ t: `${c.alias} · ${countryName(c.country)}`, v: `${c.votes} VOTOS`, color: yaVotado ? "#3DDC84" : "#7AB8FF", d: `“${c.slogan}”`, a: yaVotado ? undefined : "votar" });
+      }
+      if (candidates.length === 0) filas.push({ t: "NADIE SE HA PRESENTADO AÚN", color: "#F5C542", d: "Sé el primero: dedica tu cuenta y preséntate" });
+    } else if (tab === "ROL") {
+      for (const r of AMBASSADOR_REQUIREMENTS) filas.push({ t: r.req, color: "#7AB8FF", d: "Requisito para presentarte a la elección" });
+      for (const p of AMBASSADOR_PRIVILEGES) filas.push({ t: p.priv, color: "#3DDC84", d: p.reward ? `Privilegio del electo · ${p.reward}` : "Privilegio del embajador electo" });
+    } else {
+      const ranking = [...candidates].sort((a, b) => b.votes - a.votes).slice(0, 8);
+      for (const c of ranking) filas.push({ t: `${c.alias} · ${countryName(c.country)}`, v: `${c.votes} 🗳️`, color: "#F5C542", d: `“${c.slogan}”` });
+      if (ranking.length === 0) filas.push({ t: "AÚN SIN RESULTADOS ESTE CICLO", color: "#7AB8FF", d: "El ranking se llena con los votos de la comunidad" });
+    }
+    return filas;
+  }, [tab, candidates, myVoteCountry, myCountry, level, byCountry, cyc.cycle, cyc.daysLeft]);
+  useSala3DContenido("embajadores", "EMBAJADORES", "#3DDC97", `Elige quién defiende a tu país · ciclo ${cyc.cycle} · ${cyc.daysLeft} días restantes`, filas3D);
+
+  // v168: «votar» ejecuta la MISMA función que el botón 2D (offset 2: cabecera)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "embajadores" || det.accion !== "votar") return;
+      const c = candidates[det.idx - 2];
+      if (c) vote(c);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [tab, candidates, myVoteCountry, myCountry, alias]);
 
   return (
     <div className="space-y-3">

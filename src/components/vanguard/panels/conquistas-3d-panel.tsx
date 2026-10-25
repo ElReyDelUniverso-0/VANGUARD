@@ -4,7 +4,7 @@
 // sobre el globo (globe.gl). Roma, Mongoles, Napoleon, WWII y Colonizacion.
 // Cada paso: arcos de avance + ciudades tomadas + narracion historica.
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Globe2, Play, Pause, ChevronLeft, ChevronRight, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { sfx } from "@/lib/sound";
 import GlobeFactory from "globe.gl";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface Step {
   year: string;
@@ -164,6 +165,43 @@ export function Conquistas3DPanel() {
   }, [playing, camp.id]);
 
   const current = camp.steps[Math.min(step, camp.steps.length - 1)];
+
+  // v168: PARIDAD 2D→3D — las campañas históricas reales del globo en volumen
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = CAMPAIGNS.map((c): FilaContenido3D => ({
+      t: c.name,
+      v: `${c.steps.length} PASOS`,
+      color: c.color,
+      d: c.desc,
+      a: "ver",
+    }));
+    for (const s of camp.steps.slice(0, 5)) {
+      filas.push({
+        t: `${s.year} · ${s.title}`,
+        color: camp.color,
+        d: `${s.text} · ciudades: ${s.points.map((p) => p.name).join(", ") || "—"}`,
+      });
+    }
+    return filas;
+  }, [camp]);
+  useSala3DContenido(
+    "conquistas3d",
+    "CONQUISTAS 3D EXPLICADAS",
+    "#38BDF8",
+    `${CAMPAIGNS.length} campañas paso a paso · viendo: ${camp.name} (${step + 1}/${camp.steps.length})`,
+    filas3D,
+  );
+  // v168: "ver" desde el 3D carga la misma campaña que el botón 2D (offset 0: filas 0-4)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "conquistas3d" || d.accion !== "ver") return;
+      const item = CAMPAIGNS[d.idx];
+      if (item) { sfx.tab(); setCamp(item); setStep(0); setPlaying(true); }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
 
   return (
     <div className="space-y-3">

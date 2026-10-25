@@ -4,13 +4,14 @@
 // política exterior): número con lema, ensayos destacados con autor ficticio,
 // debate a dos voces y cita para enmarcar. La revista del analista paciente.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Feather, Quote, BookOpen, Timer, Swords } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { numeroActual, numerosAtras, type Ensayo } from "@/lib/revista-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const TONO_COLOR: Record<Ensayo["tono"], string> = {
   DISUASIÓN: "#FF6B4D",
@@ -24,6 +25,61 @@ export function ExtranjeraPanel() {
   const numero = useMemo(() => numeroActual(), []);
   const atras = useMemo(() => numerosAtras(3), []);
   const [abierto, setAbierto] = useState(0);
+
+  // v168: PARIDAD 2D→3D — el número de la revista en volumen: ensayos, cita y debate reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `N.º ${numero.numero} · «${numero.lema}»`,
+        v: numero.volumen,
+        color: "#F5C542",
+        d: numero.editorial,
+      },
+      {
+        t: `«${numero.citaDestacada.texto}»`,
+        color: "#7AB8FF",
+        d: `— ${numero.citaDestacada.autor}`,
+      },
+      ...numero.ensayos.slice(0, 6).map((e): FilaContenido3D => ({
+        t: e.titulo,
+        v: `${e.lecturaMin}′`,
+        color: TONO_COLOR[e.tono],
+        d: `${e.destacado ? "PORTADA · " : ""}por ${e.autor}, ${e.cargo} · fricción ${e.riesgo}/100`,
+        a: "leer",
+      })),
+      {
+        t: `DEBATE DEL NÚMERO · «${numero.debate.pregunta}»`,
+        color: "#FF6B4D",
+        d: `A favor: ${numero.debate.pro.autor} · en contra: ${numero.debate.contra.autor}`,
+      },
+      ...atras.map((n): FilaContenido3D => ({
+        t: `HEMEROTECA · N.º ${n.numero}`,
+        v: n.volumen,
+        color: "#7AB8FF",
+        d: `«${n.lema}»`,
+      })),
+    ];
+    return filas;
+  }, [numero, atras]);
+  useSala3DContenido(
+    "extranjera",
+    "ASUNTOS EXTERIORES",
+    "#F5C542",
+    `N.º ${numero.numero} · ${numero.ensayos.length} ensayos · edición bimestral`,
+    filas3D,
+  );
+  // v168: "leer" desde el 3D abre el mismo ensayo que el botón 2D
+  // (offset 2: portada y cita ocupan las filas 0-1, los ensayos empiezan en idx 2)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "extranjera" || d.accion !== "leer") return;
+      const item = numero.ensayos[d.idx - 2];
+      if (item) setAbierto(numero.ensayos.indexOf(item));
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [numero]);
 
   return (
     <div className="space-y-4">

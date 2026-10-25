@@ -17,6 +17,7 @@ import { useAnalista } from "@/lib/analista";
 import { useCalma } from "@/lib/calma";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import {
   pulsoActual, proximoPulsoMs, eventosPulso, pensamientoMente, riesgoPulso,
   TIPO_COLOR, type EventoPulso, type TipoPulso,
@@ -289,6 +290,119 @@ export function MentePanel() {
     pasos: string[];
     confianzaRed: number;
   } | undefined;
+
+  // v168: PARIDAD 2D→3D — la sala MENTE emite las filas de la sala activa
+  // (pulso, charla o análisis): el mismo modo que el usuario ve en 2D.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (sala === "pulso") {
+      const filas: FilaContenido3D[] = [
+        {
+          t: `PULSO Nº ${bucket} · LA MENTE PIENSA`,
+          v: `RIESGO ${riesgoMedio}/100`,
+          p: riesgoMedio,
+          color: riesgoMedio >= 70 ? "#FF3B30" : riesgoMedio >= 45 ? "#FFA030" : "#3DDC84",
+          d: `“${pensamiento}” · el mundo se actualiza solo cada 5 minutos, eventos nuevos garantizados`,
+        },
+      ];
+      for (const ev of eventos.slice(0, 5)) {
+        filas.push({
+          t: ev.titulo,
+          v: ev.tipo,
+          p: ev.riesgo,
+          color: TIPO_COLOR[ev.tipo],
+          d: `${ev.hora} · riesgo ${ev.riesgo}/100 · el mundo se actualiza solo cada 5 minutos`,
+        });
+      }
+      return filas;
+    }
+    if (sala === "charla") {
+      const filas: FilaContenido3D[] = [
+        {
+          t: investigarModo ? "INVESTIGACIÓN EN VIVO ACTIVA" : "CHARLA CON LA MENTE",
+          v: investigarModo ? "RED REAL" : "DIÁLOGO",
+          color: MENTE_ACC,
+          d: investigarModo
+            ? "la pregunta saldrá a la red real y volverá con hallazgos, medio y fecha"
+            : "activa la investigación en vivo para preguntarle a la red real",
+          a: "alternar investigacion",
+        },
+      ];
+      if (chat.length === 0) {
+        filas.push(
+          { t: "HÁBLAME", color: MENTE_ACC, d: "pregúntame por un lugar, un frente, una decisión — o por lo que acabo de ver" },
+          { t: "RECOMPENSA DE CHARLA", v: "+2ⓒ +2 XP", color: "#F5C542", d: "por abrir la charla con LA MENTE cada día" },
+          { t: "SIN SILENCIO", color: "#7AB8FF", d: "si el núcleo cae, la red local responde igual — la sala nunca calla" },
+        );
+      } else {
+        for (const c of chat.slice(-5).reverse()) {
+          filas.push({
+            t: `${c.role === "user" ? "TÚ" : "LA MENTE"}: ${c.text.slice(0, 90)}`,
+            color: c.role === "user" ? "#F5C542" : MENTE_ACC,
+            d: c.role === "mente" ? (c.web ? "respuesta con investigación en la red real" : c.ia === false ? "respuesta de la red neuronal local" : "respuesta del núcleo IA") : "mensaje del operador",
+          });
+        }
+      }
+      return filas;
+    }
+    // sala === "analisis"
+    const filas: FilaContenido3D[] = [
+      {
+        t: "FIRMAR EXPEDIENTE NEURONAL",
+        v: exp ? (exp.ia === true ? "NÚCLEO IA" : "RED LOCAL") : cargando ? "LEYENDO…" : "EN ESPERA",
+        color: MENTE_ACC,
+        d: "pega un titular, un cable o un rumor y las 8 neuronas firman el expediente",
+      },
+    ];
+    if (exp) {
+      filas.push(
+        { t: "RESUMEN DEL EXPEDIENTE", color: "#7AB8FF", d: String(exp.resumen ?? "—") },
+        {
+          t: "RIESGO DEL EPISODIO",
+          v: `${Number(exp.riesgo)}/100`,
+          p: Number(exp.riesgo),
+          color: Number(exp.riesgo) >= 70 ? "#FF3B30" : Number(exp.riesgo) >= 45 ? "#FFA030" : "#3DDC84",
+          d: `confianza ${String(exp.confianza)}/100 · recomendación: ${String(exp.recomendacion ?? "—")}`,
+        },
+      );
+      for (const e of pred?.escenarios.slice(0, 3) ?? []) {
+        filas.push({
+          t: e.nombre,
+          v: `${e.probabilidad}%`,
+          p: e.probabilidad,
+          color: e === pred?.escenarios[0] ? MENTE_ACC : "#7AB8FF",
+          d: `proyección · horizonte ${pred?.horizonte} · señal: ${e.señal}`,
+        });
+      }
+    } else {
+      filas.push(
+        { t: "ANÁLISIS EXPLICABLE", color: "#7AB8FF", d: "escenarios con probabilidad y razonamiento de la red paso a paso" },
+        { t: "PERFIL DE ANALISTA", v: "+3ⓒ +2 XP", color: "#F5C542", d: "cada expediente nuevo alimenta tu perfil (máx 5 recompensas al día)" },
+        { t: "CONEXIÓN CON LA REDACCIÓN", color: "#7AB8FF", d: "“INVESTIGAR ESTO” aterriza aquí listo para firmar" },
+      );
+    }
+    return filas;
+  }, [sala, bucket, eventos, pensamiento, riesgoMedio, chat, investigarModo, exp, cargando, pred]);
+  // v168: el raycast 3D activa/desactiva la MISMA investigación en vivo del 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "mente" || det.accion !== "alternar investigacion") return;
+      setInvestigarModo((v) => !v);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
+  useSala3DContenido(
+    "mente",
+    "LA MENTE DE VANGUARD",
+    MENTE_ACC,
+    sala === "pulso"
+      ? `El cerebro central · pulso nº ${bucket} · riesgo medio ${riesgoMedio}/100`
+      : sala === "charla"
+        ? "El cerebro central conversa — habla con la mente que vigila el mundo"
+        : "El cerebro central firma expedientes neuronales explicables",
+    filas3D,
+  );
 
   return (
     <div className="space-y-3">

@@ -25,6 +25,7 @@ import {
   simular, escenarioPorId, LAB_ESCENARIOS, PERTURBACIONES, NIVELES_ESCALADA,
   resumenLab, type ConfigLab, type ResultadoLab,
 } from "@/lib/whatif";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const RECOMPENSA = { coins: 5, xp: 4, maxDia: 3 };
 const LS_CLAVE = "vg-lab-v100";
@@ -238,6 +239,81 @@ export function LaboratorioPanel() {
       setCompartiendo(false);
     }
   };
+
+  // v168: PARIDAD 2D→3D — el escenario activo, la perturbación y los resultados
+  // reales (estado final + Monte Carlo) suben a la sala 3D.
+  // Offsets del oyente: 3 filas de cabecera y después los LAB_ESCENARIOS
+  const OFF_ESCENARIOS = 3;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const pert = PERTURBACIONES.find((p) => p.id === perturbacion);
+    const filas: FilaContenido3D[] = [
+      {
+        t: `ESCENARIO: ${esc.nombre.toUpperCase()}`,
+        v: `TENSIÓN ${esc.tensionBase}`,
+        p: esc.tensionBase,
+        color: "#F5C542",
+        d: `${esc.region} · ${esc.A.nombre} vs ${esc.B.nombre} · ${esc.resumen}`,
+      },
+      {
+        t: `PERTURBACIÓN: ${pert ? pert.nombre.toUpperCase() : "NINGUNA"}`,
+        v: perturbacion ? `DOSIS ${dosis}/5` : "ELIGE UNA",
+        color: perturbacion ? "#3DDC84" : "#F5C542",
+        d: perturbacion ? `${pert?.descripcion} · horizonte ${horizonte} días · SIMULACIÓN, no predicción` : "Elige primero una perturbación: ¿qué pasa si...?",
+      },
+      {
+        t: "SIMULAR ¿Y SI...?",
+        v: calculando ? "SIMULANDO…" : resultado ? "RE-SIMULAR" : "LISTO",
+        color: "#38BDF8",
+        d: "Motor de factores múltiples + Monte Carlo de 24 semillas, día a día",
+        a: "simular",
+      },
+    ];
+    for (const c of LAB_ESCENARIOS) {
+      filas.push({
+        t: c.nombre,
+        v: c.region.toUpperCase(),
+        color: c.id === crisisId ? "#F5C542" : "#7AB8FF",
+        d: `tensión base ${c.tensionBase} · frente inicial ${c.frenteBase}% bajo control de ${c.B.nombre}`,
+        a: "elegir escenario",
+      });
+    }
+    if (resultado && terminado) {
+      filas.push({
+        t: `ESTADO FINAL: ${resultado.fin.nombre.toUpperCase()}`,
+        v: `DÍA ${resultado.fin.dia}`,
+        color: resultado.fin.ganador === "A" ? "#3DDC84" : resultado.fin.ganador === "B" ? "#FF4D5E" : "#F5C542",
+        d: resultado.fin.detalle,
+      });
+      for (const m of resultado.monteCarlo.filter((x) => x.probabilidad > 0).sort((x, y) => y.probabilidad - x.probabilidad).slice(0, 2)) {
+        filas.push({
+          t: `MONTE CARLO · ${m.nombre}`,
+          v: `${m.probabilidad}%`,
+          p: m.probabilidad,
+          color: "#7AB8FF",
+          d: `Probabilidad del desenlace entre los 24 mundos simulados`,
+        });
+      }
+    }
+    return filas;
+  }, [esc, perturbacion, dosis, horizonte, crisisId, calculando, resultado, terminado]);
+  useSala3DContenido("laboratorio", "LABORATORIO DEL DESTINO", "#38BDF8", `${esc.nombre} · ${perturbacion ? `perturbación activa (dosis ${dosis})` : "sin perturbación"} · SIMULACIÓN, no predicción`, filas3D);
+
+  // v168: las acciones ejecutan los MISMOS handlers que los botones 2D
+  // («elegir escenario» replica el onClick del chip; «simular» llama a correr)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "laboratorio") return;
+      if (det.accion === "elegir escenario") {
+        const c = LAB_ESCENARIOS[det.idx - OFF_ESCENARIOS];
+        if (c) { setCrisisId(c.id); setResultado(null); setPerturbacion(null); setVengoDelEspejo(false); }
+        return;
+      }
+      if (det.accion === "simular") correr();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [esc, correr]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">

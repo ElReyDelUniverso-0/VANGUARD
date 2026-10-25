@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { FUSION_RECIPES, type FusionRecipe } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const rarityColor: Record<string, string> = {
   COMUN: "text-muted-foreground border-border",
@@ -71,6 +72,55 @@ export function FusionPanel() {
       });
     }, 1500);
   };
+
+  // v168: PARIDAD 2D→3D — el inventario real y las recetas reales suben en
+  // volumen; cada receta fusionable ejecuta su fusión desde el mundo
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    // inventario real (cap 5 filas, para que las 4 recetas queden tocables) + las recetas
+    for (const i of inventory.slice(0, 5)) {
+      filas.push({
+        t: i.label,
+        v: `x${i.quantity}`,
+        color: i.rarity === "LEGENDARIO" ? "#F5C542" : i.rarity === "EPICO" ? "#A855F7" : "#7AB8FF",
+        d: `material ${i.rarity.toLowerCase()} del inventario · ${i.quantity} en tu bodega (la fusión los consume)`,
+      });
+    }
+    for (const r of FUSION_RECIPES) {
+      const puede = r.inputs.every((inp) => {
+        const it = inventory.find((i) => i.label === inp.label);
+        return it && it.quantity >= inp.quantity;
+      }) && coins >= r.cost;
+      filas.push({
+        t: r.name,
+        v: `${r.cost} MON`,
+        color: puede ? "#3DDC84" : "#FF4D5E",
+        d: `${r.description} · produce ${r.output.quantity}x ${r.output.label} (+${r.xpReward} XP)`,
+        a: puede ? "iniciar fusion" : undefined,
+      });
+    }
+    return filas;
+  }, [inventory, coins]);
+  useSala3DContenido(
+    "fusion",
+    "SALA DE FUSION",
+    "#A855F7",
+    `Sintetiza inteligencia · ${coins} monedas · ${inventory.length} materiales en el inventario`,
+    filas3D,
+  );
+
+  // v168: el 3D fusiona por el MISMO handleFusion que el botón 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "fusion" || d.accion !== "iniciar fusion") return;
+      // offset: hasta 5 filas de inventario van delante de las recetas
+      const receta = FUSION_RECIPES[d.idx - Math.min(inventory.length, 5)];
+      if (receta) handleFusion(receta);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [inventory, coins, handleFusion]);
 
   return (
     <div className="space-y-3">

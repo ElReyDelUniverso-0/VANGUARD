@@ -12,6 +12,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { estrategiaDeHoy } from "@/lib/estrategia-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const RAMA_COLOR: Record<string, string> = {
   ATAQUE: "#FF6B4D",
@@ -34,6 +35,56 @@ export function EstrategiaGlobalPanel() {
 
   const doctrina = hoy.doctrinas[docSel];
   const escenario = hoy.escenarios[escSel];
+
+  // v168: PARIDAD 2D→3D — la escuela del mando en volumen: OODA, wargames y tabla real
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      ...hoy.ooda.map((f, i): FilaContenido3D => ({
+        t: `${i + 1} · ${f.fase}`,
+        color: "#7AB8FF",
+        d: f.texto,
+      })),
+      ...hoy.escenarios.slice(0, 4).map((e, i): FilaContenido3D => ({
+        t: e.titulo,
+        v: `${e.turns} TURNOS`,
+        p: e.dificultad * 20,
+        color: i === escSel ? "#F5C542" : "#A855F7",
+        d: `dificultad ${e.dificultad}/5 · regla especial: ${e.reglaEspecial} · ${e.fuerzas.azul} contra ${e.fuerzas.rojo}`,
+        a: "elegir",
+      })),
+      {
+        t: `DOCTRINA EN CLASE · ${doctrina.nombre}`,
+        color: RAMA_COLOR[doctrina.rama] ?? "#A855F7",
+        d: `${doctrina.principio} · contra-doctrina histórica: ${doctrina.contra}`,
+      },
+      ...hoy.generales.slice(0, 3).map((g, i): FilaContenido3D => ({
+        t: `${i + 1}. ${g.nombre}`,
+        v: `${g.victorias} V`,
+        color: "#F5C542",
+        d: `doctrina favorita: ${g.doctrinaFav}`,
+      })),
+    ];
+    return filas;
+  }, [hoy, doctrina, escSel]);
+  useSala3DContenido(
+    "estrategia",
+    "ESTRATEGIA GLOBAL",
+    "#A855F7",
+    `${hoy.doctrinas.length} doctrinas · ${hoy.escenarios.length} wargames · el ranking donde TU compites`,
+    filas3D,
+  );
+  // v168: "elegir" desde el 3D selecciona el mismo wargame que la mesa 2D
+  // (offset 4: las 4 fases OODA ocupan 0-3, los escenarios empiezan en idx 4)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "estrategia" || d.accion !== "elegir") return;
+      const item = hoy.escenarios[d.idx - 4];
+      if (item) setEscSel(hoy.escenarios.indexOf(item));
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [hoy]);
 
   return (
     <div className="space-y-4">

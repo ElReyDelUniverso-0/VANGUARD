@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, Skull, Radio, AlertTriangle, ChevronRight } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
+import { useEffect } from "react";
 
 // ---------- planos SVG por modelo (vista lateral, estilo museo) ----------
 function DroneDiagram({ model, activePart }: { model: DroneModel; activePart: number | null }) {
@@ -133,6 +135,76 @@ export function DronGuerraPanel() {
   const model = DRONE_MODELS[modelIdx];
 
   const facts = useMemo(() => DRONE_CASUALTY_FACTS, []);
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — el museo de drones vive en volumen: los
+  // 4 sistemas reales (seleccionables desde el mundo), la ficha
+  // técnica del activo, sus piezas inspeccionables y una cifra
+  // documentada de víctimas
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    // los 4 drones encabezan la lista: idx del 3D = índice en DRONE_MODELS (sin offset)
+    const filas: FilaContenido3D[] = DRONE_MODELS.map((m, i) => ({
+      t: m.name.toUpperCase(),
+      v: m.kind,
+      color: i === modelIdx ? "#F5C542" : "#FF4D5E",
+      d: `${m.origin} · usuarios: ${m.users} · alcance ${m.reach} · costo ${m.cost}`,
+      a: "ver dron",
+    }));
+    filas.push({
+      t: `FICHA TÉCNICA: ${model.name.toUpperCase()}`,
+      v: model.warhead,
+      color: "#FF4D5E",
+      d: `origen ${model.origin} · clase ${model.kind} · alcance ${model.reach} · velocidad ${model.speed} · carga ${model.warhead}`,
+    });
+    // offset 5: tras 4 drones + ficha van las piezas del modelo activo
+    filas.push(
+      ...model.parts.slice(0, 4).map((p, i) => ({
+        t: `${i + 1}· ${p.name}`,
+        color: activePart === i ? "#F5C542" : "#7AB8FF",
+        d: p.desc,
+        a: "inspeccionar pieza",
+      })),
+    );
+    const f = facts[0];
+    if (f) {
+      filas.push({
+        t: `${f.stat} — ${f.label}`,
+        color: "#FF4D5E",
+        d: `Fuente: ${f.source} · las 4 cifras duras están en el panel`,
+      });
+    }
+    return filas;
+  }, [model, modelIdx, activePart, facts]);
+  useSala3DContenido(
+    "dronguerra",
+    "GUERRA DE DRONES · MILES MUEREN DESDE EL CIELO",
+    "#FF4D5E",
+    `${DRONE_MODELS.length} sistemas con plano técnico · activo: ${model.name}`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que los
+  // botones 2D: selector de modelos y fichas de piezas (con toggle)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "dronguerra") return;
+      if (det.accion === "ver dron") {
+        // sin offset: los drones encabezan filas3D → idx = índice en DRONE_MODELS
+        if (DRONE_MODELS[det.idx]) {
+          setModelIdx(det.idx);
+          setActivePart(null);
+        }
+      } else if (det.accion === "inspeccionar pieza") {
+        // offset 5: 4 drones + ficha técnica preceden a las piezas
+        const i = det.idx - 5;
+        if (i >= 0 && i < model.parts.length) setActivePart(activePart === i ? null : i);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [model, activePart]);
 
   return (
     <div className="space-y-3">

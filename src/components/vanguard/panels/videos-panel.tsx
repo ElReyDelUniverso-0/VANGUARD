@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { Countryball, COUNTRYBALLS, renderWithStickers } from "@/components/vanguard/countryball";
 import { SmilePlus } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const CAT_COLOR: Record<string, string> = {
   COMBATE: "text-red-hud border-red-hud bg-red-hud/20",
@@ -387,6 +388,136 @@ export function VideosPanel() {
     sfx.tab();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — GLOBALVISION en volumen, filas del MODO
+  // activo: parrilla (emisiones reales, reproducibles desde el mundo)
+  // o reproductor (emisión actual + volver + like + suscribirse)
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    if (view === "watch" && video) {
+      const ch = channelOf(video.channelId);
+      const relacionados = TV_VIDEOS.filter(
+        (v) => v.id !== video.id && (v.category === video.category || v.channelId === video.channelId)
+      ).slice(0, 4);
+      filas.push(
+        {
+          t: `REPRODUCIENDO: ${video.title.toUpperCase()}`,
+          v: video.live ? "EN VIVO" : formatDuration(video.durationSec),
+          color: "#FF4D5E",
+          d: `${ch.name} · ${formatViews(video.views)} vistas · ${video.desc}`,
+          img: video.thumb || undefined,
+        },
+        {
+          t: "VOLVER AL FEED",
+          a: "volver al feed",
+          color: "#7AB8FF",
+          d: "Mismo botón 2D: regresa a la parrilla de emisiones",
+        },
+        {
+          t: `ME GUSTA (${formatViews(video.likes)})`,
+          a: "me gusta",
+          color: "#3DDC84",
+          d: "Misma reacción 2D: registra tu like en la emisora",
+        },
+        {
+          t: `${subscribedChannels.includes(ch.id) ? "DEJAR DE SEGUIR" : "SUSCRIBIRSE A"} ${ch.name.toUpperCase()}`,
+          a: "suscribirse",
+          color: subscribedChannels.includes(ch.id) ? "#F5C542" : "#FF4D5E",
+          d: `${formatViews(ch.subs)} suscriptores · alterna la suscripción como el botón 2D`,
+        },
+      );
+      // offset 4: repro + volver + me gusta + suscribirse preceden a relacionados
+      for (const v of relacionados) {
+        filas.push({
+          t: v.title,
+          img: v.thumb || undefined,
+          v: formatViews(v.views),
+          color: "#7AB8FF",
+          d: `Siguiente emisión · ${channelOf(v.channelId).name}`,
+          a: "reproducir",
+        });
+      }
+    } else {
+      filas.push({
+        t: `PARRILLA GLOBALVISION: ${feedVideos.length} EMISIONES`,
+        v: `${liveNow.length} EN VIVO`,
+        color: "#FF4D5E",
+        d: `Filtro ${filter}${channelFilter ? ` · canal ${channelOf(channelFilter).name}` : ""} · ${subscribedChannels.length} suscripciones · ${myVideos.length} tuyas`,
+      });
+      // offset 1: la cabecera precede a las emisiones de la parrilla
+      for (const v of filtered.slice(0, 8)) {
+        filas.push({
+          t: v.title,
+          img: v.thumb || undefined,
+          v: v.live ? "EN VIVO" : formatDuration(v.durationSec),
+          color: v.live ? "#FF4D5E" : v.channelId === "mi-canal" ? "#F5C542" : "#7AB8FF",
+          d: `${channelOf(v.channelId).name} · ${formatViews(v.views)} vistas · ${formatViews(v.likes)} likes${v.channelId === "mi-canal" ? " · TU VIDEO" : ""}`,
+          a: "reproducir",
+        });
+      }
+      filas.push({
+        t: "PUBLICAR VIDEO",
+        a: "abrir publicador",
+        color: "#FF4D5E",
+        d: "Sube tu emisión real (+50 gemas, +10 XP) · abre el mismo diálogo 2D",
+      });
+    }
+    return filas;
+  }, [view, video, videoId, feedVideos, filtered, filter, channelFilter, subscribedChannels, myVideos, liveNow, channelOf]);
+  useSala3DContenido(
+    "videos",
+    "GLOBALVISION",
+    "#FF4D5E",
+    view === "watch" && video
+      ? `Reproduciendo: ${video.title} · ${channelOf(video.channelId).name}`
+      : `La emisora de los países · ${TV_VIDEOS.length + myVideos.length} emisiones · ${liveNow.length} en vivo · reproducción real`,
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // openVideo (reproducir), volver al feed, reactVideo, toggleSubscribe y publicador
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "videos") return;
+      if (det.accion === "reproducir") {
+        if (view === "watch" && video) {
+          const relacionados = TV_VIDEOS.filter(
+            (v) => v.id !== video.id && (v.category === video.category || v.channelId === video.channelId)
+          ).slice(0, 4);
+          // offset 4: repro + volver + me gusta + suscribirse preceden a relacionados
+          const r = relacionados[det.idx - 4];
+          if (r) openVideo(r.id);
+        } else {
+          // offset 1: la cabecera precede a la parrilla
+          const v = filtered[det.idx - 1];
+          if (v) openVideo(v.id);
+        }
+      } else if (det.accion === "volver al feed") {
+        setView("feed");
+        setVideoId(null);
+      } else if (det.accion === "me gusta") {
+        if (video) {
+          reactVideo(video.id, "like");
+          sfx.success();
+        }
+      } else if (det.accion === "suscribirse") {
+        if (video) {
+          const ch = channelOf(video.channelId);
+          const sub = toggleSubscribe(ch.id);
+          toast.success(sub ? `Suscrito a ${ch.name}` : `Suscripcion cancelada: ${ch.name}`);
+          sfx.unlock();
+        }
+      } else if (det.accion === "abrir publicador") {
+        setPublishOpen(true);
+        sfx.click();
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [view, video, filtered]);
 
   // ====== WATCH VIEW ======
   if (view === "watch" && video) {

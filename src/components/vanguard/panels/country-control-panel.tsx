@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { CONQUERABLE_COUNTRIES, realLoot, fmtBudget, type ConquerableCountry } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 export function CountryControlPanel() {
   const { coins, spendCoins, addCoins, addXp } = useGameStore();
@@ -20,6 +21,31 @@ export function CountryControlPanel() {
 
   const totalConquered = conquered.size;
   const totalReward = totalConquered * 50;
+
+  // v168: PARIDAD 2D→3D — las estadísticas reales y los países conquistables suben a la sala
+  // Las filas de países empiezan en idx 3 (las 3 primeras son stats): el oyente compensa -3
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const dominio = Math.round((totalConquered / CONQUERABLE_COUNTRIES.length) * 100);
+    const filas: FilaContenido3D[] = [
+      { t: "CONQUISTADOS", v: `${totalConquered}/${CONQUERABLE_COUNTRIES.length}`, p: dominio, color: "#F5C542", d: "Territorios bajo tu control en esta campaña" },
+      { t: "BONUS TOTAL", v: `+${totalReward}`, color: "#3DDC84", d: "50 monedas de bonus por cada país conquistado" },
+      { t: "DOMINIO GLOBAL", v: `${dominio}%`, color: "#7AB8FF", d: "El costo de ataque es defensa × 2 monedas" },
+    ];
+    CONQUERABLE_COUNTRIES.forEach((country) => {
+      const conquistado = conquered.has(country.id);
+      const cost = Math.round(country.defense * 2);
+      filas.push({
+        t: country.name,
+        v: conquistado ? "CONQUISTADO" : `DEF ${country.defense} · ${cost}ⓒ`,
+        p: conquistado ? 100 : Math.min(100, country.defense * 10),
+        color: conquistado ? "#3DDC84" : "#7AB8FF",
+        d: `${country.region} · recompensa ${country.reward}ⓒ${country.realBudgetB != null ? ` · botín real +${realLoot(country)} (presupuesto Banco Mundial)` : ""}`,
+        a: conquistado ? undefined : "atacar",
+      });
+    });
+    return filas;
+  }, [conquered, totalConquered, totalReward]);
+  useSala3DContenido("conquista", "CONTROL DE PAISES", "#E8C56A", `Conquista territorios · ${totalConquered}/${CONQUERABLE_COUNTRIES.length} países · +${totalReward} bonus`, filas3D);
 
   const handleConquer = (country: ConquerableCountry) => {
     if (conquered.has(country.id)) return;
@@ -59,6 +85,18 @@ export function CountryControlPanel() {
       }
     }, 300);
   };
+
+  // v168: «atacar» ejecuta la MISMA handleConquer que el botón 2D (idx - 3 = país)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "conquista" || det.accion !== "atacar") return;
+      const country = CONQUERABLE_COUNTRIES[det.idx - 3];
+      if (country) handleConquer(country);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [conquered, coins, handleConquer]);
 
   return (
     <div className="space-y-3">

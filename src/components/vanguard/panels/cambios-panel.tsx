@@ -16,6 +16,7 @@ import { useRetention } from "@/lib/retention";
 import { informeRegreso, ausenciaTxt, type InformeRegreso } from "@/lib/regreso";
 import { TIPO_COLOR } from "@/lib/mente-data";
 import { useT } from "@/lib/i18n";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 // v110.0 MATRIZ 2100 — BITÁCORA: las ACTUALIZACIONES de Vanguard por fin visibles
 import { bitacoraViva, BITACORA_COLOR } from "@/lib/bitacora";
 // v133.0 EL ACABADO REAL — la bitácora de la casa luce también los pulidos
@@ -87,6 +88,66 @@ export function CambiosPanel() {
       return new Date(iso).toLocaleString("es", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
     } catch { return iso; }
   };
+
+  // v168: PARIDAD 2D→3D — el informe de regreso en volumen: pulsos, noticias y rotaciones reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: informe ? (informe.firstVisit ? t("regreso.primeraVisita") : `${informe.total} CAMBIOS DESDE TU ÚLTIMA VISITA`) : "CALCULANDO INFORME…",
+        v: informe && !informe.firstVisit ? ausenciaTxt(informe.awayMs) : undefined,
+        color: "#F5C542",
+        d: informe
+          ? `visitas: ${informe.visitCount} · ${informe.pulsosEscaneados} pulsos escaneados · riesgo medio ${informe.riesgoMedio}/100`
+          : "escaneando el mundo desde tu última visita",
+      },
+      ...(informe?.pulsos ?? []).slice(0, 4).map((ev): FilaContenido3D => ({
+        t: ev.titulo,
+        v: `R${ev.riesgo}`,
+        p: ev.riesgo,
+        color: ev.riesgo > 60 ? "#FF4D5E" : ev.riesgo > 35 ? "#F5C542" : "#3DDC84",
+        d: `${ev.tipo} · ${ev.hora} · pulso del mundo (SIM)`,
+      })),
+      ...(noticiasNuevas ?? []).slice(0, 3).map((n): FilaContenido3D => ({
+        t: n.title,
+        v: "FUENTE REAL",
+        color: "#3DDC84",
+        d: `${n.source} · ${fechaTxt(n.publishedAt)}${n.tacticalTag ? ` · ${n.tacticalTag}` : ""}`,
+        a: "leer",
+      })),
+      ...(informe
+        ? ([
+            { t: `EXPEDIENTE DEL DÍA · ${informe.rotaciones.expediente.titulo}`, color: "#A855F7", d: `${informe.rotaciones.expediente.agencia} · rota cada día` },
+            { t: `ALEJANDRÍA OSCURA · ${informe.rotaciones.oscura.titulo}`, color: "#FF4D5E", d: `${informe.rotaciones.oscura.coleccion} · rota cada día` },
+          ] as FilaContenido3D[])
+        : []),
+      {
+        t: "LOS PULIDOS DEL CUERPO",
+        v: `${pulidosCuerpo}`,
+        color: "#F5C542",
+        d: logCuerpo.length > 0 ? logCuerpo[0].accion : "los cinco agentes despertarán solos en los primeros minutos",
+      },
+    ];
+    return filas;
+  }, [informe, noticiasNuevas, logCuerpo, pulidosCuerpo, t]);
+  useSala3DContenido(
+    "cambios",
+    t("regreso.informeTitulo").toUpperCase(),
+    "#F5C542",
+    informe ? (informe.firstVisit ? "primera visita — la casa se abre ante ti" : `${informe.total} cambios · ausencia ${ausenciaTxt(informe.awayMs)}`) : "calculando el informe…",
+    filas3D,
+  );
+  // v168: "leer" desde el 3D abre la misma fuente real que la tarjeta 2D
+  // (offset fijo 5: portada + 4 pulsos ocupan 0-4, las noticias empiezan en idx 5)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "cambios" || d.accion !== "leer") return;
+      const item = (noticiasNuevas ?? [])[d.idx - 5];
+      if (item?.url) window.open(item.url, "_blank", "noopener,noreferrer");
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [noticiasNuevas]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">

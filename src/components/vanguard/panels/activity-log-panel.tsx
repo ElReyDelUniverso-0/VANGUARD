@@ -5,9 +5,10 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { ScrollText, Coins, Gem, Star, Trophy, Target, Flame, Award, Trash2, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const iconForMsg = (msg: string) => {
   if (msg.includes("monedas") && msg.startsWith("+")) return <Coins className="w-3.5 h-3.5 text-amber" />;
@@ -35,6 +36,63 @@ export function ActivityLogPanel() {
 
   const totalGains = log.reduce((acc, e) => acc + Math.max(0, e.delta ?? 0), 0);
   const totalSpends = log.reduce((acc, e) => acc + Math.min(0, e.delta ?? 0), 0);
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — la bitácora vive en volumen: los tres
+  // totales de la cuenta y las últimas entradas REALES del log
+  // (mismo filtro que la UI 2D), con su delta y su timestamp
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const visibles = log.filter((entry) => {
+      if (filter === "ALL") return true;
+      if (filter === "GAINS") return (entry.delta ?? 0) > 0;
+      if (filter === "SPENDS") return (entry.delta ?? 0) < 0;
+      return true;
+    });
+    const filas: FilaContenido3D[] = [
+      {
+        t: `EVENTOS REGISTRADOS: ${log.length}`,
+        v: `${visibles.length} VISIBLES`,
+        color: "#38BDF8",
+        d: `Filtro activo: ${filter === "ALL" ? "todo" : filter === "GAINS" ? "ganancias" : "gastos"} · más reciente primero`,
+      },
+      {
+        t: "GANANCIAS ACUMULADAS",
+        v: `+${totalGains}`,
+        color: "#3DDC84",
+        d: "Suma de todos los deltas positivos de la bitácora",
+      },
+      {
+        t: "GASTOS ACUMULADOS",
+        v: `${totalSpends}`,
+        color: "#FF4D5E",
+        d: "Suma de todos los deltas negativos de la bitácora",
+      },
+    ];
+    for (const entry of visibles.slice(0, 9)) {
+      const delta = entry.delta ?? 0;
+      filas.push({
+        t: entry.msg,
+        v: delta !== 0 ? `${delta > 0 ? "+" : ""}${delta}` : undefined,
+        color: delta > 0 ? "#3DDC84" : delta < 0 ? "#FF4D5E" : "#7AB8FF",
+        d: new Date(entry.ts).toLocaleString("es", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          day: "2-digit",
+          month: "2-digit",
+        }),
+      });
+    }
+    return filas;
+  }, [log, filter, totalGains, totalSpends]);
+  useSala3DContenido(
+    "registro",
+    "REGISTRO DE ACTIVIDAD",
+    "#38BDF8",
+    `Bitácora de comando · ${log.length} eventos · +${totalGains} / ${totalSpends}`,
+    filas3D,
+  );
 
   return (
     <div className="space-y-3">

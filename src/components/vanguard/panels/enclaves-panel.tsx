@@ -4,12 +4,13 @@
 // entiende en 5 claves con mapa esquemático, actores con alineación y
 // escenarios. El veredicto lo firma el núcleo neuronal.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { KeyRound, MapPin, Users, Compass } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarEnClave, fechaHoy } from "@/lib/enclaves-data";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { cn } from "@/lib/utils";
 
 const TIPO_PUNTO: Record<string, { color: string; r: number }> = {
@@ -24,6 +25,39 @@ export function EnClavePanel() {
   const dossiers = useMemo(() => generarEnClave(hoy, 4), [hoy]);
   const [idx, setIdx] = useState(0);
   const d = dossiers[idx];
+
+  // v168: PARIDAD 2D→3D — el caso activo y sus 5 claves reales suben a la sala 3D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = dossiers.map((dd, i) => ({
+      t: `CASO · ${dd.tema}`,
+      v: dd.region.toUpperCase(),
+      color: i === idx ? "#F5C542" : "#7AB8FF",
+      d: `riesgo ${dd.veredicto.riesgo} · ${dd.veredicto.sentimiento} · confianza ${dd.veredicto.confianza}% del núcleo neuronal`,
+      a: "abrir caso",
+    }));
+    filas.push({
+      t: `EN UN MINUTO: ${d.tema.toUpperCase()}`,
+      color: "#F5C542",
+      d: d.unMinuto,
+    });
+    for (const c of d.claves) {
+      filas.push({ t: `${c.numero} · ${c.titulo}`, d: c.cuerpo, color: "#7AB8FF" });
+    }
+    return filas;
+  }, [dossiers, idx, d]);
+  useSala3DContenido("enclaves", "EL MUNDO EN CLAVE", "#FF3B30", `Explicador diario · ${d.region} · riesgo ${d.veredicto.riesgo}`, filas3D);
+
+  // v168: «abrir caso» ejecuta el MISMO selector que los botones 2D (fila = dossier, idx directo)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "enclaves" || det.accion !== "abrir caso") return;
+      const dossier = dossiers[det.idx];
+      if (dossier) setIdx(det.idx);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [dossiers]);
 
   return (
     <div className="space-y-4">

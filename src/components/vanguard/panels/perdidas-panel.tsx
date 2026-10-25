@@ -11,6 +11,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { generarPerdidas, totalesPorLado, ESTADOS_META, type EstadoEquipo } from "@/lib/perdidas-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ---------- contador que RUEDA ----------
 function Contador({ valor }: { valor: number }) {
@@ -85,6 +86,52 @@ export function PerdidasPanel() {
     });
 
   const colorLado = (l: "AZUL" | "ROJO") => (l === "AZUL" ? "#3DDCFF" : "#FF6B6B");
+
+  // v168: PARIDAD 2D→3D — la sala PÉRDIDAS emite el libro contable real:
+  // total documentado y cada categoría con su contador y evidencias.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const maxSub = Math.max(...filtrados.map((c) => c.items.reduce((s, it) => s + it.total, 0)), 1);
+    const filas: FilaContenido3D[] = [
+      {
+        t: "LIBRO CONTABLE · SOLO EVIDENCIA",
+        v: `${total} UNIDADES`,
+        p: 100,
+        color: "#FF4D5E",
+        d: `fuerza azul ${azul} · fuerza roja ${rojo} · ${fotos.toLocaleString("es-ES")} evidencias fotográficas`,
+      },
+    ];
+    for (const c of filtrados.slice(0, 9)) {
+      const sub = c.items.reduce((s, it) => s + it.total, 0);
+      filas.push({
+        t: c.nombre,
+        v: String(sub),
+        p: Math.round((sub / maxSub) * 100),
+        color: sub > 0 ? "#FF4D5E" : "#7AB8FF",
+        d: `${c.items.length} modelos documentados · despliega el detalle por estado`,
+        a: "desplegar categoría",
+      });
+    }
+    return filas;
+  }, [filtrados, azul, rojo, total, fotos]);
+  // v168: el raycast 3D despliega la MISMA categoría que el botón 2D
+  // (offset 1: la fila 0 es el total del libro contable)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "perdidas" || det.accion !== "desplegar categoría") return;
+      const cat = filtrados[det.idx - 1];
+      if (cat) toggle(cat.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filtrados, toggle]);
+  useSala3DContenido(
+    "perdidas",
+    "PÉRDIDAS CONFIRMADAS",
+    "#FF3B30",
+    "Registro visual: solo se cuenta lo documentado con evidencia",
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

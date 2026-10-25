@@ -25,6 +25,7 @@ import {
   hoyKey, COOLDOWN_TURNO_MS, RANGOS,
   type EmpleosState, type Aptitud, type Departamento, type TareaTurno,
 } from "@/lib/empleos";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const COLOR_CLS: Record<Departamento["color"], { text: string; border: string; bg: string }> = {
   amber: { text: "text-amber", border: "border-amber-hud", bg: "bg-amber-hud/20" },
@@ -378,6 +379,71 @@ export function EmpleosPanel() {
 
   const cooldownRestante = Math.max(0, COOLDOWN_TURNO_MS - (Date.now() - st.lastShiftTs));
   const cooldownPct = cooldownRestante > 0 ? (cooldownRestante / COOLDOWN_TURNO_MS) * 100 : 0;
+
+  // v168: PARIDAD 2D→3D — el puesto real (nómina viva, turno, escala de carrera)
+  // o la entrevista abierta suben a la sala 3D según el estado del panel
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [];
+    if (!depto) {
+      filas.push({ t: "VANGUARD CONTRATA PERSONAL", v: `${DEPARTAMENTOS.length} OFICINAS`, color: "#F5C542", d: "Ocho preguntas de entrevista real: entrarás al departamento según lo que se te dé bien" });
+      for (const dep of DEPARTAMENTOS) {
+        filas.push({ t: dep.nombre, v: `${dep.sueldoBase.toFixed(1)}ⓒ/MIN`, color: "#7AB8FF", d: `${APTITUD_META[dep.apt].nombre} · ${dep.desc}` });
+      }
+      if (st.entrevistas > 0) filas.push({ t: "CARRERAS ANTERIORES", v: String(st.entrevistas), color: "#7AB8FF", d: `Experiencia conservada: ${Math.floor(st.xpLaboral * 0.5)} XP laboral` });
+    } else {
+      filas.push(
+        {
+          t: "NÓMINA ACUMULADA (TOPE 6 H)",
+          v: `${Math.floor(nominaViva)}ⓒ`,
+          p: Math.min(100, Math.round(((nominaViva / sueldoMin) / 360) * 100)),
+          color: "#3DDC84",
+          d: `${sueldoMin.toFixed(2)}ⓒ/min · ${sueldoHora.toFixed(0)}ⓒ/hora · la nómina corre aunque cierres Vanguard`,
+          a: "cobrar",
+        },
+        {
+          t: "TURNO OPERATIVO · 3 TAREAS",
+          v: cooldownRestante > 0 ? `EN ${Math.ceil(cooldownRestante / 60000)} MIN` : "DISPONIBLE",
+          color: cooldownRestante > 0 ? "#7AB8FF" : "#F5C542",
+          d: `turnos ${st.turnosTotales} · aciertos ${st.aciertosTotales} · hoy ${st.diaActual === hoyKey() ? st.shiftsHoy : 0}`,
+          a: cooldownRestante > 0 ? undefined : "cumplir turno",
+        },
+        {
+          t: `${rango.actual.nombre.toUpperCase()} · XP LABORAL ${st.xpLaboral}`,
+          color: "#F5C542",
+          d: rango.siguiente ? `${rango.siguiente.xp - st.xpLaboral} XP para ascender a ${rango.siguiente.nombre}` : "rango máximo alcanzado",
+        },
+      );
+      for (const r of RANGOS) {
+        filas.push({
+          t: r.nombre,
+          v: `${r.xp} XP`,
+          p: Math.min(100, Math.round((st.xpLaboral / r.xp) * 100)),
+          color: st.xpLaboral >= r.xp ? "#3DDC84" : "#7AB8FF",
+          d: `+${Math.round((r.mult - 1) * 100)}% de sueldo`,
+        });
+      }
+    }
+    return filas;
+  }, [depto, st, nominaViva, sueldoMin, sueldoHora, rango, cooldownRestante]);
+  useSala3DContenido(
+    "empleos",
+    "EMPLEOS DE VANGUARD",
+    "#E8C56A",
+    depto ? `${depto.nombre} · ${sueldoMin.toFixed(2)}ⓒ/min · nómina ${Math.floor(nominaViva)}ⓒ` : "entrevista de ingreso abierta · el mundo contrata",
+    filas3D,
+  );
+
+  // v168: las acciones ejecutan las MISMAS funciones que los botones 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "empleos") return;
+      if (det.accion === "cobrar") cobrar();
+      if (det.accion === "cumplir turno") iniciarTurno();
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [depto, st]);
 
   return (
     <div className="space-y-3">

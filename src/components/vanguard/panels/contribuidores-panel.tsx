@@ -27,6 +27,7 @@ import {
   CONTRIB_REWARDS, RANKS, rankOf, MOD_REWARD, VERIFY_REWARD, VERIFY_DUDA_REWARD, VERIFY_NOSE_REWARD,
 } from "@/lib/rewards";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ============ TIPOS ============
 interface ContributionRow {
@@ -117,6 +118,90 @@ export function ContribuidoresPanel() {
   }, [loadBoard, loadNotifs]);
 
   const rank = board?.me.rank ?? rankOf(0);
+
+  // v168: PARIDAD 2D→3D — la sala CONTRIBUIDORES emite la tarjeta de rango real,
+  // las pestañas del panel y, en el modo TRABAJOS, los 7 trabajos elegibles.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const descJob: Record<string, string> = {
+      reporte: "reporta eventos del mundo con fuente verificable",
+      ficha: "escribe fichas de países para la enciclopedia",
+      verificar: "vota la verdad de las noticias: 5 usuarios, 70% decide",
+      traduccion: "traduce contenido para el mundo",
+      moderar: "modera la cola de la comunidad",
+      analisis: "firma análisis de conflictos con contexto",
+      prediccion: "crea predicciones con fecha de resolución",
+    };
+    const filas: FilaContenido3D[] = [
+      board
+        ? {
+            t: `RANGO · ${board.me.rank.current ? `${board.me.rank.current.badge} ${board.me.rank.current.name}` : "SIN RANGO"}`,
+            v: `${board.me.approved} APROBADAS`,
+            p: Math.max(3, Math.round((board.me.rank.progress ?? 0) * 100)),
+            color: "#3DDC84",
+            d: `${board.me.pending} en revisión · ${board.me.rejected} rechazadas · ${board.me.coinsEarned} mon ganadas${board.me.badges.includes("elite") ? " · FACT-CHECKER ELITE (voto x2)" : ""}`,
+          }
+        : { t: "CARGANDO TU EXPEDIENTE…", color: "#7AB8FF", d: "conectando con la comunidad de contribuidores" },
+    ];
+    const pestanas: { k: "misenvios" | "ranking" | "rangos" | "alertas" | "admin"; l: string; d: string }[] = [
+      { k: "misenvios", l: "📤 MIS ENVÍOS", d: "tus contribuciones y su estado de revisión" },
+      { k: "ranking", l: "🏆 RANKING", d: board ? `top del mes · lidera ${board.topMonth[0]?.author ?? "—"} con ${board.topMonth[0]?.count ?? 0} aprobadas` : "top del mes y hall de la fama" },
+      { k: "rangos", l: "🎖️ RANGOS & RECOMPENSAS", d: "hitos Novato → Pillar y sus recompensas en monedas" },
+      { k: "alertas", l: `🔔 ALERTAS${unread ? ` (${unread})` : ""}`, d: "notificaciones del equipo de revisión" },
+      { k: "admin", l: "⚙️ ADMIN", d: "cola de aprobación y anti-spam" },
+    ];
+    for (const p of pestanas) {
+      filas.push({ t: p.l, color: tab === p.k ? "#3DDC84" : "#7AB8FF", d: p.d, a: "abrir pestaña" });
+    }
+    if (tab === "trabajos") {
+      for (const j of JOB_TYPES) {
+        const coins = CONTRIB_REWARDS[j.k === "verificar" || j.k === "moderar" ? "reporte" : j.k]?.coins ?? 50;
+        filas.push({
+          t: j.label,
+          v: `+${coins} MON`,
+          color: job === j.k ? "#F5C542" : "#7AB8FF",
+          d: descJob[j.k] ?? "trabajo de la comunidad",
+          a: "elegir trabajo",
+        });
+      }
+    } else {
+      for (const n of notifs.slice(0, 2)) {
+        filas.push({
+          t: n.title,
+          color: n.read ? "#7AB8FF" : "#F5C542",
+          d: `${n.body} · ${timeAgo(n.createdAt)}`,
+          a: "abrir alertas",
+        });
+      }
+    }
+    return filas;
+  }, [board, tab, job, notifs, unread]);
+  // v168: el raycast 3D ejecuta la MISMA navegación que el panel 2D
+  // (offsets: pestañas 1-5 · trabajos 6-12 solo en el modo TRABAJOS)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "contribuidores") return;
+      if (det.accion === "abrir pestaña") {
+        const ks = ["misenvios", "ranking", "rangos", "alertas", "admin"] as const;
+        const k = ks[det.idx - 1];
+        if (k) setTab(k);
+      } else if (det.accion === "elegir trabajo" && tab === "trabajos") {
+        const j = JOB_TYPES[det.idx - 6];
+        if (j) setJob(j.k);
+      } else if (det.accion === "abrir alertas") {
+        setTab("alertas");
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [tab]);
+  useSala3DContenido(
+    "contribuidores",
+    "COMUNIDAD DE CONTRIBUIDORES",
+    "#3DDC97",
+    "Construye VANGUARD y gana monedas — 7 trabajos disponibles",
+    filas3D,
+  );
 
   return (
     <div className="space-y-4" id="contribuidores">

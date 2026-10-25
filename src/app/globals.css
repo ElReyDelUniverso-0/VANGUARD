@@ -4272,8 +4272,6 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 }
 .vg140-entrada[data-fase="negro"] .vg140-negro { opacity: 1; }
 .vg140-entrada[data-fase="estrellas"] .vg140-negro { opacity: 0.55; }
-.vg140-entrada[data-fase="globo"] .vg140-negro { opacity: 0.16; }
-.vg140-entrada[data-fase="marcadores"] .vg140-negro,
 .vg140-entrada[data-fase="logo"] .vg140-negro,
 .vg140-entrada[data-fase="tagline"] .vg140-negro,
 .vg140-entrada[data-fase="hint"] .vg140-negro { opacity: 0.06; }
@@ -4290,8 +4288,6 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   opacity: 0;
 }
 .vg140-entrada[data-fase="estrellas"] .vg140-estrellas-dom i,
-.vg140-entrada[data-fase="globo"] .vg140-estrellas-dom i,
-.vg140-entrada[data-fase="marcadores"] .vg140-estrellas-dom i,
 .vg140-entrada[data-fase="logo"] .vg140-estrellas-dom i,
 .vg140-entrada[data-fase="tagline"] .vg140-estrellas-dom i,
 .vg140-entrada[data-fase="hint"] .vg140-estrellas-dom i {

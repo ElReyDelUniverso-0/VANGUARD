@@ -22,6 +22,7 @@ import { sfx } from "@/lib/sound";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ================= tipos espejo del servidor =================
 interface DetSuspect { arch: string; name: string; desc: string; motive: string }
@@ -289,6 +290,132 @@ export function DetectivePanel() {
   };
 
   const secondsLeft = (target: number) => Math.max(0, Math.ceil((target - now) / 1000));
+
+  // v168: PARIDAD 2D→3D — la sala DETECTIVE emite el modo real: la lista de
+  // casos abiertos o el caso en juego (fase, ubicaciones, sospechosos, pistas).
+  // OJO: este bloque vive ANTES del return temprano de la lista de casos.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (!selected) {
+      const filas: FilaContenido3D[] = [];
+      for (const r of rooms.slice(0, 7)) {
+        filas.push({
+          t: `${r.title} · ${r.country}`,
+          v: `${r.stake} MON`,
+          color: r.phase === "VEREDICTO" ? "#3DDC84" : r.phase === "LOBBY" ? "#7AB8FF" : "#F5C542",
+          d: `${r.tagline} · ${r.year} · ${PHASE_LABEL[r.phase] ?? r.phase} · ${r.humans} humano(s) de ${r.players} · dificultad ${"★".repeat(r.difficulty)}`,
+          a: "entrar al caso",
+        });
+      }
+      if (filas.length === 0) {
+        filas.push({ t: "ABIENDO LOS ARCHIVOS NACION…", color: "#7AB8FF", d: "esperando salas del servidor de deducción social" });
+      }
+      filas.push({
+        t: "TU EXPEDIENTE DE DETECTIVE",
+        v: `${stats.solved}/${stats.cases}`,
+        color: "#A855F7",
+        d: `casos ${stats.cases} · resueltos ${stats.solved} · fianzas perdidas ${stats.lost} mon · ganado ${stats.earned} mon · escapes como instigador ${stats.escapes}`,
+      });
+      return filas;
+    }
+    // modo caso abierto
+    const faseCaso = state?.phase ?? "LOBBY";
+    const unido = me.inMatch;
+    const puedeActuar = unido && (faseCaso === "INVESTIGACION" || faseCaso === "DELIBERACION") && me.actions > 0;
+    const sospechosos = state?.suspects ?? [];
+    const tablero = state?.board ?? [];
+    const filas: FilaContenido3D[] = [
+      {
+        t: (state?.title ?? "CASO CLASIFICADO").toUpperCase(),
+        v: PHASE_LABEL[faseCaso] ?? faseCaso,
+        color: faseCaso === "JUICIO" ? "#FF4D5E" : faseCaso === "VEREDICTO" ? "#3DDC84" : "#F5C542",
+        d: state ? `${state.tagline} · fianza ${state.stake} mon · ${unido ? `${me.actions} acciones` : "espectador"} · ${state.players.length} en la sala` : "sincronizando con el servidor…",
+      },
+    ];
+    for (const loc of (state?.locations ?? []).slice(0, 4)) {
+      filas.push({
+        t: loc.name,
+        v: `${loc.cluesLeft} PISTAS`,
+        color: puedeActuar && loc.cluesLeft > 0 ? "#F5C542" : "#7AB8FF",
+        d: loc.desc,
+        a: puedeActuar && loc.cluesLeft > 0 ? "registrar ubicación" : undefined,
+      });
+    }
+    for (const s of sospechosos.slice(0, 4)) {
+      const pistas = tablero.filter((c) => c.suspectId === s.arch);
+      filas.push({
+        t: s.name,
+        v: `${pistas.length} PISTAS`,
+        color: me.myVote === s.arch ? "#FF4D5E" : "#7AB8FF",
+        d: `${s.desc} · motivo: ${s.motive} · ${pistas.filter((c) => c.reliability === "ALTA").length} fuertes`,
+        a: faseCaso === "JUICIO" && unido && !me.myVote ? "acusar" : puedeActuar ? "interrogar" : undefined,
+      });
+    }
+    for (const clue of tablero.slice(0, 2)) {
+      filas.push({
+        t: clue.text,
+        v: `FIA. ${clue.reliability}`,
+        color: clue.reliability === "ALTA" ? "#3DDC84" : clue.reliability === "MEDIA" ? "#F5C542" : "#FF4D5E",
+        d: `${clue.anonymous ? "fuente anónima — posible engaño del instigador · " : ""}pista contra ${sospechosos.find((s) => s.arch === clue.suspectId)?.name ?? "?"}`,
+      });
+    }
+    if (state?.verdict) {
+      filas.push({
+        t: state.verdict.correct ? "CASO RESUELTO" : "VEREDICTO ERRÓNEO",
+        v: state.verdict.correct ? "JUSTICIA" : "INSTIGADOR GANA",
+        color: state.verdict.correct ? "#3DDC84" : "#FF4D5E",
+        d: state.verdict.recap,
+      });
+    }
+    return filas;
+  }, [selected, rooms, state, me, stats]);
+  // v168: el raycast 3D ejecuta las MISMAS acciones del panel 2D.
+  // offsets (modo caso): cabecera 0 · ubicaciones 1-4 · sospechosos 5-8 · pistas al final.
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "detective") return;
+      if (det.accion === "entrar al caso") {
+        const r = rooms[det.idx];
+        if (!r) return;
+        // misma regla del botón 2D: en DELIBERACIÓN/JUICIO se observa, en el resto se paga fianza
+        if (r.phase === "DELIBERACION" || r.phase === "JUICIO") openCase(r.caseId);
+        else joinCase(r);
+        return;
+      }
+      const nlocs = Math.min((state?.locations ?? []).length, 4);
+      if (det.accion === "registrar ubicación") {
+        const loc = (state?.locations ?? []).slice(0, 4)[det.idx - 1];
+        if (!loc || !state) return;
+        act("det:search", { locationId: loc.id }, (r) => {
+          if (r?.ok) sfx.beep();
+          else toast.error(r?.reason ?? "No se pudo registrar");
+        });
+      } else if (det.accion === "interrogar" || det.accion === "acusar") {
+        const s = (state?.suspects ?? []).slice(0, 4)[det.idx - 1 - nlocs];
+        if (!s || !state) return;
+        if (det.accion === "interrogar") {
+          act("det:interrogate", { suspectId: s.arch }, (r) => {
+            if (!r?.ok) toast.error(r?.reason ?? "No se pudo interrogar");
+            else sfx.click();
+          });
+        } else {
+          act("det:vote", { suspectId: s.arch }, (r) => {
+            if (r?.ok) { toast.success("Acusacion emitida. Que empiece el veredicto"); sfx.alarm(); }
+            else toast.error(r?.reason ?? "No se pudo votar");
+          });
+        }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [rooms, state, me, alias]);
+  useSala3DContenido(
+    "detective",
+    "ARCHIVOS NACION — DETECTIVE",
+    "#A855F7",
+    selected ? (state ? `${state.title} · ${PHASE_LABEL[state.phase] ?? state.phase}` : "Caso clasificado — sincronizando…") : "Deducción social multijugador: fianza, pistas y juicio final",
+    filas3D,
+  );
 
   // ================= LISTA DE CASOS =================
   if (!selected) {

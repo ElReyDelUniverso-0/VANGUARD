@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { activarNucleo, nucleoListo, razonado, estadoNucleo, suscribirNucleo, type NucleoEstado } from "@/lib/nucleo-navegador";
 import { toast } from "sonner";
 import { intervenirNucleo, dialogarNucleo, decretoNucleo, intervencionFinta, decretoFinta, cargarMemoria, guardarRecuerdo, textoMemoria, type Recuerdo } from "@/lib/consejo-nucleo";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type ConsejeroId = "estratega" | "canciller" | "general" | "analista";
 
@@ -548,6 +549,74 @@ export function ConsejoIaPanel() {
   const onNucleoListo = useCallback(() => {
     setOrigen((o) => (o === "embebida" ? o : "embebida"));
   }, []);
+
+  // v168: PARIDAD 2D→3D — la sala delibera en volumen: los 4 consejeros con su
+  // intervención real, el decreto firmado y los temas sugeridos; convocar y
+  // cumplir el decreto ejecutan los MISMOS handlers del 2D
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "CONVOCAR AL CONSEJO",
+        v: fase === "sala" ? "LISTO" : "EN CURSO",
+        color: fase === "sala" ? "#00E5FF" : "#7AB8FF",
+        d: tema ? `crisis planteada: ${tema}` : "plantea la crisis ante el consejo — los 4 consejeros deliberan en vivo y firman un decreto que paga monedas",
+        a: fase === "sala" ? "convocar consejo" : undefined,
+      },
+    ];
+    for (const c of CONSEJEROS) {
+      const inter = intervenciones.find((i) => i.id === c.id);
+      const voto = votos.find((v) => v.id === c.id);
+      filas.push({
+        t: c.nombre,
+        v: voto ? `${voto.voto} ${voto.confianza}%` : inter ? "INTERVIENE" : c.rol.split(" ·")[0].toUpperCase(),
+        color: voto?.voto === "A FAVOR" ? "#3DDC84" : voto?.voto === "EN CONTRA" ? "#FF4D5E" : c.hex,
+        d: inter?.texto ?? `${c.rol} · «${c.lema}»`,
+      });
+    }
+    if (decreto) {
+      filas.push({
+        t: decreto.titulo,
+        v: decreto.veredicto,
+        color: "#F5C542",
+        d: `${decreto.texto}${decreto.acciones.length > 0 ? ` · acciones: ${decreto.acciones.join(" / ")}` : ""}`,
+        a: "cumplir decreto",
+      });
+    }
+    for (const t of TEMAS_SUGERIDOS.slice(0, 3)) {
+      filas.push({
+        t: t.toUpperCase(),
+        color: "#7AB8FF",
+        d: "tema sugerido — tócalo para plantearlo en la sala",
+        a: "plantear tema",
+      });
+    }
+    return filas;
+  }, [fase, tema, intervenciones, votos, decreto]);
+  useSala3DContenido(
+    "consejoia",
+    "CONSEJO DE ACERO",
+    "#00E5FF",
+    `Deliberación con IA en vivo · fase: ${fase} · ${origen === "ia" ? "NÚCLEO GLM" : origen === "embebida" ? "reserva embebida en tu navegador" : "núcleo local"}`,
+    filas3D,
+  );
+
+  // v168: el 3D convoca, plantea temas y cumple el decreto por los MISMOS
+  // handlers que los botones 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "consejoia") return;
+      if (d.accion === "convocar consejo") { void deliberar(); return; }
+      if (d.accion === "cumplir decreto") { cumplirDecreto(); return; }
+      if (d.accion === "plantear tema") {
+        // offset: fila 0 (convocar) + 4 consejeros + decreto si existe
+        const t = TEMAS_SUGERIDOS.slice(0, 3)[d.idx - 5 - (decreto ? 1 : 0)];
+        if (t) setTema(t);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [fase, tema, intervenciones, votos, decreto, deliberar, cumplirDecreto]);
 
   return (
     <section className="mt-4 space-y-4" aria-label="Consejo de Acero: deliberación con IA en vivo">

@@ -26,6 +26,7 @@ import {
   type PaseTV, type ComentarioTV,
 } from "@/lib/pantalla-data";
 import { usePantalla, TV_REWARD } from "@/lib/pantalla-store";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 type VistaTV = "feed" | "siguiendo" | "vivo";
 
@@ -733,6 +734,44 @@ export function PantallaPanel() {
     sfx.click();
     if (on) recompensaTV(p.id);
   }, [toggleLike, recompensaTV]);
+
+  // v168: PARIDAD 2D→3D — el feed real de VANGUARD TV sube a la sala 3D con sus
+  // miniaturas, duraciones y estado EN VIVO; «ver» abre la MISMA sala de proyección
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: `FEED · ${feed.length} PASES EN PANTALLA`,
+        v: vista === "feed" ? "PARA TI" : vista === "siguiendo" ? "SIGUIENDO" : "EN VIVO",
+        color: "#F5C542",
+        d: `${tendencias.length} tendencias del día · scroll con snap · teclas ↑↓ M L C`,
+      },
+    ];
+    for (const p of feed.slice(0, 10)) {
+      filas.push({
+        t: p.titulo.slice(0, 80),
+        v: p.enVivo ? "● EN VIVO" : duracionTxt(p.duracion),
+        img: p.img,
+        color: p.enVivo ? "#FF4D5E" : "#7AB8FF",
+        d: `${canalNombre(p.canalId)} · ${compacto(p.vistas)} vistas · hace ${haceTxt(p.haceHoras)}${p.descripcion ? ` · ${p.descripcion.slice(0, 130)}` : ""}`,
+        a: "ver",
+      });
+    }
+    return filas;
+  }, [feed, vista, tendencias]);
+  useSala3DContenido("pantalla", "VANGUARD TV", "#FFC94D", `${feed.length} pases en pantalla · ${tendencias.length} tendencias · vista ${vista}`, filas3D);
+
+  // v168: «ver» ejecuta el MISMO setSala que los botones 2D de proyección
+  // (la fila 0 es la cabecera del feed: se compensa restando 1)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "pantalla" || det.accion !== "ver") return;
+      const pase = feed[det.idx - 1];
+      if (pase) { setSala(pase); sfx.tab(); }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [feed]);
 
   return (
     <div className="space-y-4">

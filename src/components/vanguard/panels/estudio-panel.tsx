@@ -10,7 +10,7 @@
 //
 // Publicación real vía /api/upload (mp4/webm + miniatura) → public/uploads.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGameStore } from "@/lib/game-store";
@@ -23,6 +23,7 @@ import {
   Scissors, Trash2, Film, Play, Pause, UploadCloud, Upload, Move, SlidersHorizontal,
 } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 // ================= ENGINE: countryballs de bandera real en canvas =================
 
@@ -754,6 +755,146 @@ export function EstudioPanel() {
   }, [exportUrl, publishing, trimStart, trimEnd, stickers, cbAvatar, publishBlob]);
 
   const sel = stickers.find((s) => s.id === selId) ?? null;
+
+  // ════════════════════════════════════════════════════════════
+  // v168: PARIDAD 2D→3D — ESTUDIO TOTAL en volumen, filas del MODO
+  // activo: crear (escenas, plantillas, GRABAR Y PUBLICAR) o editar
+  // (reproducir, exportar con audio, publicar y filtros reales)
+  // ════════════════════════════════════════════════════════════
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    if (mode === "crear") {
+      const filas: FilaContenido3D[] = [
+        {
+          t: "MODO: CREAR DESDE CERO",
+          v: recording ? `GRABANDO ${recSecs}s` : "LISTO",
+          color: recording ? "#FF4D5E" : "#F5C542",
+          d: `Escenografía: ${SCENES.find((s) => s.id === scene)?.label} · paleta ${pal.label} · titulares: ${title}`,
+        },
+        ...SCENES.map((sc) => ({
+          t: `ESCENA: ${sc.label}`,
+          color: scene === sc.id ? "#F5C542" : "#7AB8FF",
+          d: sc.desc,
+          a: "usar escena",
+        })),
+        ...TEMPLATES.slice(0, 2).map((tp) => ({
+          t: `PLANTILLA: ${tp.label}`,
+          color: "#7AB8FF",
+          d: `${tp.title} — ${tp.subtitle} · titulares, paleta y escena de un clic`,
+          a: "aplicar plantilla",
+        })),
+        {
+          t: recording ? `DETENER GRABACIÓN (${recSecs}s)` : "GRABAR Y PUBLICAR (8s)",
+          a: recording ? "detener grabacion" : "grabar",
+          color: "#FF4D5E",
+          d: canRecord
+            ? "Graba 8 s del lienzo y publica en GlobalVision automáticamente (mismo botón 2D)"
+            : "Grabación no disponible en este navegador — la previsualización sigue activa",
+        },
+        {
+          t: "CAMBIAR A MODO EDITAR",
+          a: "ir a editar",
+          color: "#7AB8FF",
+          d: "Sube tu propio video: recorte, 8 filtros, velocidad y stickers",
+        },
+      ];
+      return filas;
+    }
+    const filasEd: FilaContenido3D[] = [
+      {
+        t: "MODO: EDITAR MI VIDEO",
+        v: videoUrl ? fmt(duration) : "SIN VIDEO",
+        color: "#F5C542",
+        d: videoUrl
+          ? `${videoName} · recorte ${fmt(trimStart)}→${fmt(trimEnd)} · filtro ${FILTERS.find((f) => f.id === filter)?.label} · velocidad ×${speed}`
+          : "Sube un video (mp4/webm/mov, máx 30 MB) con la zona de carga del panel",
+      },
+    ];
+    if (videoUrl) {
+      filasEd.push(
+        {
+          t: playing ? "PAUSAR" : "REPRODUCIR",
+          a: "alternar reproduccion",
+          color: "#7AB8FF",
+          d: "Mismo botón 2D del reproductor de edición",
+        },
+        {
+          t: `EXPORTAR ${fmt(trimEnd - trimStart)}`,
+          a: "exportar",
+          color: "#FF4D5E",
+          d: exporting ? `Exportando… ${Math.round(exportPct)}%` : "Renderiza el recorte CON AUDIO (mismo botón 2D)",
+        },
+      );
+    }
+    if (exportUrl) {
+      filasEd.push({
+        t: "PUBLICAR EN GLOBALVISION",
+        a: "publicar",
+        color: "#3DDC84",
+        d: publishing ? "Publicando…" : "Publica el video editado en la emisora (mismo botón 2D)",
+      });
+    }
+    filasEd.push({ t: "CAMBIAR A MODO CREAR", a: "ir a crear", color: "#7AB8FF", d: "Vuelve al estudio de grabación con escenografías animadas" });
+    for (const f of FILTERS.slice(0, 4)) {
+      filasEd.push({
+        t: `FILTRO: ${f.label.toUpperCase()}`,
+        color: filter === f.id ? "#F5C542" : "#7AB8FF",
+        d: "Ajuste de color del video (mismos botones 2D)",
+        a: "usar filtro",
+      });
+    }
+    return filasEd;
+  }, [mode, scene, pal, recording, recSecs, title, videoUrl, videoName, duration, trimStart, trimEnd, filter, speed, playing, exporting, exportPct, exportUrl, publishing, canRecord]);
+  useSala3DContenido(
+    "estudio",
+    "ESTUDIO TOTAL",
+    "#FF3B30",
+    mode === "crear"
+      ? `Creando: ${SCENES.find((s) => s.id === scene)?.label} · ${recording ? `grabando (${recSecs}s)` : "listo para grabar 8s"}`
+      : videoUrl
+        ? `Editando ${videoName} · recorte ${fmt(trimStart)}→${fmt(trimEnd)} · ×${speed}`
+        : "Edita tu propio video: sube, recorta, filtra y exporta con audio",
+    filas3D,
+  );
+
+  // v168: oyente de acciones del mundo 3D — mismos handlers que la UI 2D:
+  // setScene, applyTemplate, startRec/stopRec, togglePlay, exportEdited,
+  // publishEdited y el cambio de modo
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "estudio") return;
+      if (det.accion === "usar escena") {
+        // offset 1: la fila de modo precede a las escenas
+        const sc = SCENES[det.idx - 1];
+        if (sc) setScene(sc.id);
+      } else if (det.accion === "aplicar plantilla") {
+        // offset 5: modo + 4 escenas preceden a las plantillas
+        const tp = TEMPLATES[det.idx - 5];
+        if (tp) applyTemplate(tp);
+      } else if (det.accion === "grabar") {
+        startRec();
+      } else if (det.accion === "detener grabacion") {
+        stopRec();
+      } else if (det.accion === "ir a editar") {
+        setMode("editar");
+      } else if (det.accion === "ir a crear") {
+        setMode("crear");
+      } else if (det.accion === "alternar reproduccion") {
+        togglePlay();
+      } else if (det.accion === "exportar") {
+        exportEdited();
+      } else if (det.accion === "publicar") {
+        publishEdited();
+      } else if (det.accion === "usar filtro") {
+        // offset: modo(1) + reproducir/exportar (2 con video) + publicar (1 si hay export) + cambiar modo(1)
+        const offset = 2 + (videoUrl ? 2 : 0) + (exportUrl ? 1 : 0);
+        const f = FILTERS[det.idx - offset];
+        if (f) setFilter(f.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [videoUrl, exportUrl, recording, exportEdited, publishEdited]);
 
   // ================= INTERFAZ =================
   return (

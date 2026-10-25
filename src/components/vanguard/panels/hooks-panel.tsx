@@ -28,9 +28,22 @@ import {
   type WheelPrize,
 } from "@/lib/hooks-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 const SEG = 360 / WHEEL_PRIZES.length;
 const SEG_COLORS = ["#f5a623", "#1f2937", "#22d3ee", "#1f2937", "#ef4444", "#1f2937", "#a855f7", "#facc15"];
+
+// v168: fila compartida del AIRDROP horario — las tres vistas la emiten con
+// sus filas reales (el emisor vive en la vista activa, nunca hay disputa)
+function filaAirdrop3D(ready: boolean): FilaContenido3D {
+  return {
+    t: "AIRDROP HORARIO",
+    v: ready ? "DISPONIBLE" : "EN ESPERA",
+    color: ready ? "#F5C542" : "#7AB8FF",
+    d: ready ? "+30 monedas y +2 gemas esperándote — reclámalos ahora" : "un paquete cada hora: monedas, gemas y suerte",
+    a: ready ? "reclamar airdrop" : undefined,
+  };
+}
 
 function prizeLabel(p: WheelPrize): string {
   return p.label;
@@ -152,6 +165,8 @@ function WheelView() {
   const gems = useGameStore((s) => s.gems);
   const spinWheel = useGameStore((s) => s.spinWheel);
   const buyExtraSpin = useGameStore((s) => s.buyExtraSpin);
+  const lastAirdropAt = useGameStore((s) => s.lastAirdropAt); // v168
+  const claimAirdrop = useGameStore((s) => s.claimAirdrop); // v168
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<WheelPrize | null>(null);
@@ -187,6 +202,55 @@ function WheelView() {
       });
     }, 3200);
   };
+
+  // v168: PARIDAD 2D→3D — la RULETA emite sus filas reales a la sala de contenido
+  const ready3D = lastAirdropAt === null ? true : Date.now() - lastAirdropAt >= AIRDROP_INTERVAL_MS;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [filaAirdrop3D(ready3D)];
+    filas.push({
+      t: freeAvailable ? "GIRO GRATIS DISPONIBLE" : "GIRO GRATIS USADO HOY",
+      v: `${gems} GEMAS`,
+      color: freeAvailable ? "#F5C542" : "#7AB8FF",
+      d: `1 giro gratis cada día · extras a ${EXTRA_SPIN_COST_GEMS} gemas · cada giro da +15 PX de pase`,
+      a: freeAvailable && !spinning ? "girar" : undefined,
+    });
+    if (gems >= EXTRA_SPIN_COST_GEMS && !spinning) {
+      filas.push({ t: "GIRO EXTRA", v: `${EXTRA_SPIN_COST_GEMS} GEMAS`, color: "#7AB8FF", d: "paga gemas por otro giro de la ruleta", a: "giro extra" });
+    }
+    if (result && !spinning) {
+      filas.push({ t: `ÚLTIMO PREMIO: ${result.label}`, color: "#3DDC84", d: result.kind === "JACKPOT" ? "¡bote de 250 monedas + 1 gema + XP!" : "caído en la ruleta de hoy" });
+    }
+    for (const p of WHEEL_PRIZES) {
+      filas.push({
+        t: p.label,
+        color: SEG_COLORS[p.id] ?? "#7AB8FF",
+        d: p.kind === "JACKPOT" ? "el bote: 250 monedas + 1 gema + XP" : "premio de la tabla de la ruleta",
+      });
+    }
+    return filas;
+  }, [ready3D, freeAvailable, gems, spinning, result]);
+  useSala3DContenido(
+    "gancho",
+    "CENTRO DE GANANCIAS",
+    "#E8C56A",
+    `ruleta diaria · ${freeAvailable ? "giro gratis disponible" : "giro gratis usado hoy"} · ${gems} gemas`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — girar/reclamar usan las MISMAS funciones del store
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "gancho") return;
+      if (det.accion === "reclamar airdrop") {
+        const res = claimAirdrop();
+        if (res) { sfx.success(); toast.success(`AIRDROP RECLAMADO: +${res.coins} monedas, +${res.gems} gemas`); }
+      }
+      else if (det.accion === "girar") doSpin(false);
+      else if (det.accion === "giro extra") doSpin(true);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [claimAirdrop, doSpin, freeAvailable, gems, spinning]);
 
   return (
     <div className="grid lg:grid-cols-2 gap-4">
@@ -320,6 +384,8 @@ function CratesView() {
   const coins = useGameStore((s) => s.coins);
   const gems = useGameStore((s) => s.gems);
   const openCrate = useGameStore((s) => s.openCrate);
+  const lastAirdropAt = useGameStore((s) => s.lastAirdropAt); // v168
+  const claimAirdrop = useGameStore((s) => s.claimAirdrop); // v168
   const [opening, setOpening] = useState<CrateTier | null>(null);
   const [loot, setLoot] = useState<CrateLootResult | null>(null);
 
@@ -348,6 +414,51 @@ function CratesView() {
       }
     }, 1400);
   };
+
+  // v168: PARIDAD 2D→3D — los CAJONES emiten sus filas reales a la sala de contenido
+  const ready3D = lastAirdropAt === null ? true : Date.now() - lastAirdropAt >= AIRDROP_INTERVAL_MS;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [filaAirdrop3D(ready3D)];
+    for (const c of CRATES) {
+      const free = freeCrates[c.tier] ?? 0;
+      filas.push({
+        t: c.name,
+        v: free > 0 ? `X${free} GRATIS` : c.costCoins > 0 ? `${c.costCoins} MON` : `${c.costGems} GEMAS`,
+        color: c.tier === "COMUN" ? "#94a3b8" : c.tier === "ELITE" ? "#22d3ee" : "#f5a623",
+        d: `${c.desc} · contenido: ${c.loot.coins[0]}-${c.loot.coins[1]} mon · ${c.loot.gems[0]}-${c.loot.gems[1]} gemas · ${c.loot.xp[0]}-${c.loot.xp[1]} XP${c.loot.boostChance > 0 ? ` · boost ${Math.round(c.loot.boostChance * 100)}%` : ""}`,
+        a: opening ? undefined : "abrir cajón",
+      });
+    }
+    if (loot) {
+      filas.push({ t: `BOTÍN: ${getCrateDef(loot.tier).name}`, v: `+${loot.coins} MON`, color: "#3DDC84", d: `+${loot.gems} gemas · +${loot.xp} XP${loot.boost ? " · BOOST x2 XP+MON 30 min activado" : ""}` });
+    }
+    filas.push({ t: "CÓMO GANAR CAJONES GRATIS", color: "#7AB8FF", d: "domina el mundo en MUNDO DE GUERRA (+1 LEGENDARIA), sube niveles del pase y participa en eventos · abrir da +12 PX de pase" });
+    return filas;
+  }, [ready3D, freeCrates, opening, loot]);
+  useSala3DContenido(
+    "gancho",
+    "CENTRO DE GANANCIAS",
+    "#E8C56A",
+    `cajones de suministros · ${coins} monedas · ${gems} gemas`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — offset: los cajones empiezan en idx 1 (tras el airdrop)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "gancho") return;
+      if (det.accion === "reclamar airdrop") {
+        const res = claimAirdrop();
+        if (res) { sfx.success(); toast.success(`AIRDROP RECLAMADO: +${res.coins} monedas, +${res.gems} gemas`); }
+      }
+      else if (det.accion === "abrir cajón") {
+        const c = CRATES[det.idx - 1];
+        if (c) handleOpen(c.tier);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [claimAirdrop, handleOpen, opening]);
 
   return (
     <div className="space-y-4">
@@ -478,6 +589,8 @@ function PassView() {
   const conquestCapturesTotal = useGameStore((s) => s.conquestCapturesTotal);
   const betStats = useGameStore((s) => s.betStats);
   const stakeEarnedTotal = useGameStore((s) => s.stakeEarnedTotal);
+  const lastAirdropAt = useGameStore((s) => s.lastAirdropAt); // v168
+  const claimAirdrop = useGameStore((s) => s.claimAirdrop); // v168
 
   const currentTier = passTierFor(passXp);
   const nextTier = PASS_TIERS.find((p) => p.tier === currentTier + 1);
@@ -485,6 +598,59 @@ function PassView() {
   const progressPct = nextTier
     ? Math.min(100, Math.round(((passXp - prevNeeded) / (nextTier.xpNeeded - prevNeeded)) * 100))
     : 100;
+
+  // v168: PARIDAD 2D→3D — el PASE emite sus filas reales a la sala de contenido
+  const ready3D = lastAirdropAt === null ? true : Date.now() - lastAirdropAt >= AIRDROP_INTERVAL_MS;
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [filaAirdrop3D(ready3D)];
+    filas.push({
+      t: `PASE VANGUARD · ${passSeasonLabel()}`,
+      v: `NIVEL ${currentTier}/12`,
+      p: progressPct,
+      color: "#E8C56A",
+      d: `${passXp} PX de temporada · ${conquestCapturesTotal} capturas · ${conquestWins} dominios · ${betStats.placed} apuestas · ${stakeEarnedTotal} mon en staking`,
+    });
+    for (const t of PASS_TIERS.slice(0, 8)) {
+      const unlocked = currentTier >= t.tier;
+      const freeClaimed = passClaimedFree.includes(t.tier);
+      const eliteClaimed = passClaimedElite.includes(t.tier);
+      filas.push({
+        t: `NIVEL ${t.tier}`,
+        v: !unlocked ? `${t.xpNeeded} PX` : freeClaimed && eliteClaimed ? "RECLAMADO" : "ABIERTO",
+        color: unlocked ? "#3DDC84" : "#7AB8FF",
+        d: `gratis: +${t.free.coins} mon${t.free.gems ? ` · ${t.free.gems}g` : ""}${t.free.crate ? ` · 1 cajón ${t.free.crate}` : ""} · elite: +${t.elite.coins} mon · ${t.elite.gems}g${t.elite.crate ? ` · 1 cajón ${t.elite.crate}` : ""}`,
+        a: unlocked && !freeClaimed ? "reclamar nivel" : undefined,
+      });
+    }
+    return filas;
+  }, [ready3D, currentTier, progressPct, passXp, passClaimedFree, passClaimedElite, conquestCapturesTotal, conquestWins, betStats.placed, stakeEarnedTotal]);
+  useSala3DContenido(
+    "gancho",
+    "CENTRO DE GANANCIAS",
+    "#E8C56A",
+    `pase vanguard · ${passSeasonLabel()} · nivel ${currentTier}/12 · ${passXp} PX`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — offset: los niveles empiezan en idx 2 (airdrop + cabecera)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "gancho") return;
+      if (det.accion === "reclamar airdrop") {
+        const res = claimAirdrop();
+        if (res) { sfx.success(); toast.success(`AIRDROP RECLAMADO: +${res.coins} monedas, +${res.gems} gemas`); }
+      }
+      else if (det.accion === "reclamar nivel") {
+        const t = PASS_TIERS[det.idx - 2];
+        if (t) {
+          const ok = claimPassTier(t.tier, "FREE");
+          if (ok) { sfx.success(); toast.success(`Recompensa GRATIS del nivel ${t.tier} reclamada`); }
+        }
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [claimAirdrop, claimPassTier, passClaimedFree, currentTier]);
 
   return (
     <div className="space-y-4">

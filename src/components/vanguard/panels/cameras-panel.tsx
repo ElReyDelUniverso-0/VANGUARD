@@ -25,6 +25,7 @@ import {
   Sun, Crown, Download, MapPin, Activity, PackageOpen, ShieldCheck, Gem,
 } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 // v122.0 PULIDO REAL: la CIUDAD VIGILADA — skyline procedural con el reloj
 // real del visitante (día/noche) y el dron de la red barriendo en bucle
 import { MiniCiudadVigilada } from "@/components/vanguard/mini-ciudad-vigilada";
@@ -403,6 +404,70 @@ export function CamerasPanel() {
   const liveCam = cameras.find((c) => c.id === liveCamId) ?? null;
 
   const rateSum = cameras.reduce((acc, c) => acc + cameraIncomeRate(c), 0);
+
+  // v168: PARIDAD 2D→3D — la red de vigilancia en volumen: modelos, nodos y élite reales
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: "CÁMARAS ACTIVAS", v: `${cameras.length}`, color: "#38BDF8", d: "tus nodos generan intel 24/7 según los frentes cercanos" },
+      { t: "INTEL/MIN GLOBAL", v: rateSum.toFixed(1), p: Math.min(100, rateSum * 5), color: "#F5C542", d: `${totalEvents} eventos captados · ${totalIncome} monedas generadas en total` },
+      {
+        t: "PASE ELITE VANGUARD",
+        v: elite ? "ACTIVO · X2" : `${ELITE_PASS.costCoins} MON`,
+        color: elite ? "#F5C542" : "#7AB8FF",
+        d: elite ? "ingresos x2 · gemas diarias · 15% de descuento en cámaras" : "ingresos x2 durante 7 días · gemas diarias · 15% de descuento en cámaras",
+        a: elite ? "reclamar" : "activar",
+      },
+      ...CAMERA_MODELS.slice(0, 4).map((m): FilaContenido3D => {
+        const disc = elite ? ELITE_PASS.discountPct : 0;
+        const cc = Math.round(m.costCoins * (1 - disc / 100));
+        return {
+          t: m.name,
+          v: `${cc} MON`,
+          color: "#38BDF8",
+          d: `${m.description} · radio ${m.radiusDeg}° · cap ${m.capacity} · ${m.coinsPerMin} MON/MIN base`,
+          a: "desplegar",
+        };
+      }),
+      ...cameras.slice(0, 4).map((cam): FilaContenido3D => {
+        const model = getCameraModel(cam.modelId);
+        return {
+          t: cam.name,
+          v: `${cameraIncomeRate(cam).toFixed(1)}/MIN`,
+          color: "#38BDF8",
+          d: `${cam.id} · ${model.name} · ${cam.eventsCaught} eventos · ${cam.totalEarned} MON generadas`,
+          a: "ver en vivo",
+        };
+      }),
+    ];
+    return filas;
+  }, [cameras, rateSum, elite, totalEvents, totalIncome]);
+  useSala3DContenido(
+    "camaras",
+    "RED DE CÁMARAS DE VIGILANCIA",
+    "#38BDF8",
+    `${cameras.length} cámaras activas · ${rateSum.toFixed(1)} intel/min · ${elite ? "ELITE x2" : "sin élite"}`,
+    filas3D,
+  );
+  // v168: acciones del 3D → los MISMOS handlers de los botones 2D
+  // (offset 3: las 3 filas de estado/élite ocupan 0-2; modelos 3-6; tus cámaras desde idx 7)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "camaras") return;
+      if (d.accion === "reclamar") claimEliteDaily();
+      if (d.accion === "activar") activateElite("COINS");
+      if (d.accion === "desplegar") {
+        const item = CAMERA_MODELS.slice(0, 4)[d.idx - 3];
+        if (item) { setDeployModel(item); setPendingSpot(null); }
+      }
+      if (d.accion === "ver en vivo") {
+        const item = cameras.slice(0, 4)[d.idx - 7];
+        if (item) setLiveCamId(item.id);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [cameras, elite]);
 
   return (
     <div className="space-y-4">

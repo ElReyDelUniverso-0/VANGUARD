@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Binoculars, Gauge, Radar, ShieldAlert } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { getTension } from "@/lib/tension";
 import { cn } from "@/lib/utils";
 
@@ -243,6 +244,44 @@ export function CentinelaPanel() {
       return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
     }).join(" ");
   }, [hist]);
+
+  // v168: PARIDAD 2D→3D — la sala CENTINELA emite el índice real del planeta,
+  // las 8 regiones con su nivel y señal del día, y la lista del vigía.
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "ÍNDICE DEL MUNDO",
+        v: `${tension}/100`,
+        p: tension,
+        color: tension >= 78 ? "#FF4655" : tension >= 58 ? "#FFB020" : tension >= 38 ? "#38BDF8" : "#3DDC97",
+        d: `${criticos} regiones críticas · ${elevados} en nivel ELEVADO · próxima ventana de riesgo ${proximaVentana}`,
+      },
+    ];
+    for (const rg of regiones) {
+      filas.push({
+        t: rg.r.nombre,
+        v: rg.nivel,
+        p: rg.indice,
+        color: rg.color,
+        d: `${rg.r.nota} · señal del día: ${rg.razon}`,
+      });
+    }
+    for (const v of vigia.slice(0, 2)) {
+      filas.push({
+        t: v,
+        color: "#FFB020",
+        d: "qué vigilar las próximas 24 horas · la lista rota cada día a las 00:00 UTC",
+      });
+    }
+    return filas;
+  }, [tension, regiones, criticos, elevados, proximaVentana, vigia]);
+  useSala3DContenido(
+    "centinela",
+    "CENTINELA · ALERTA TEMPRANA",
+    "#FFB020",
+    "El índice de riesgo del planeta, antes de que sea titular",
+    filas3D,
+  );
 
   return (
     <div className="space-y-4">

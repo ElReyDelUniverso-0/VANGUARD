@@ -28,6 +28,7 @@ import {
 import { BITACORA } from "@/lib/bitacora";
 import { cn, q2 } from "@/lib/utils";
 import { sfx } from "@/lib/sound";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import {
   Gem, Hammer, ScrollText, Hourglass, Images, Sparkles, Feather, Check, Minimize2,
 } from "lucide-react";
@@ -61,6 +62,55 @@ export function AtelierPanel() {
     luxe.setAcabado(id);
     sfx.campana(); // Ley 2: la casa suena a lujo en cada gesto
   };
+
+  // v168: PARIDAD 2D→3D — las cinco leyes vivas del atelier suben a la sala.
+  // Offset del oyente: 5 filas de cabecera y después los ACABADOS («elegir acabado»)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      { t: `ACABADO VIGENTE: ${acabado.nombre.toUpperCase()}`, color: "#D4AF37", d: `${acabado.material} · toca cada acabado y la casa entera cambia de piel en vivo` },
+      {
+        t: `EDICIÓN LIMITADA: ${edicion.nombre.toUpperCase()}`,
+        v: unidad ? `Nº ${String(unidad).padStart(4, "0")}` : "—",
+        p: Math.round((edicion.reclamadas / edicion.total) * 100),
+        color: "#D4AF37",
+        d: `«${edicion.lema}» · quedan ${restantes.toLocaleString("es")} de ${edicion.total.toLocaleString("es")} piezas · cierra en ${ahora ? cuentaAtras(edicion.hasta, ahora) : "—"}`,
+      },
+      {
+        t: `TU SERIE: ${luxe.serie ? luxe.serie : "FORJANDO…"}`,
+        color: "#F5C542",
+        d: luxe.serie ? `grabada el ${forjaFecha} · grano Nº ${grano.semilla % 9973} · pieza única que no se repite ni se vende` : "tu placa se graba al cruzar la puerta de la Casa",
+      },
+      { t: `MODO GALERÍA: ${luxe.galeria ? "ABIERTO" : "CERRADO"}`, color: "#7AB8FF", d: "Ley del espacio negativo: retira avisos, contadores y adornos en TODAS las salas", a: "alternar galería" },
+      { t: `${horas.toLocaleString("es")} HORAS DE FORJA`, v: `${BITACORA.length} ENTREGAS`, color: "#D4AF37", d: FIRMA_CASA.lema },
+    ];
+    for (const acab of ACABADOS) {
+      filas.push({
+        t: acab.nombre,
+        v: acab.material.toUpperCase(),
+        color: luxe.acabado === acab.id ? "#3DDC84" : "#7AB8FF",
+        d: `${acab.desc} · la luz responde: el brillo de los títulos de la Casa cambia con él`,
+        a: "elegir acabado",
+      });
+    }
+    return filas;
+  }, [luxe, acabado, edicion, unidad, grano, restantes, forjaFecha, horas, ahora]);
+  useSala3DContenido("atelier", "EL ATELIER", "#D4AF37", "La sala donde la Casa se cuida: materia, escasez, artesanía e historia", filas3D);
+
+  // v168: las acciones ejecutan los MISMOS handlers que los botones 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "atelier") return;
+      if (det.accion === "elegir acabado") {
+        const acab = ACABADOS[det.idx - 5];
+        if (acab) elegirAcabado(acab.id);
+        return;
+      }
+      if (det.accion === "alternar galería") { luxe.setGaleria(!luxe.galeria); sfx.campana(); }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [luxe]);
 
   return (
     <div className="space-y-4">

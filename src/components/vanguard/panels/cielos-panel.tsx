@@ -12,6 +12,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { WorldMapSVG } from "@/components/vanguard/world-map-svg";
 import { VUELO_TIPOS, generarCielos, tipoDe, pingsDeVuelos, rutasDeVuelos, fmtRumbo, fmtAlt, type Vuelo } from "@/lib/cielos-data";
 import { cn } from "@/lib/utils";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 export function CielosPanel() {
   const [ahora, setAhora] = useState(() => Date.now());
@@ -34,6 +35,60 @@ export function CielosPanel() {
   const rutas = useMemo(() => rutasDeVuelos(visibles), [visibles]);
 
   const toggleTipo = (id: string) => setTipoFiltro((t) => (t === id ? null : id));
+
+  // v168: PARIDAD 2D→3D — CIELOS emite sus filas reales a la sala de contenido
+  // (offset: los vuelos empiezan en idx 1, mismo orden que la lista 2D)
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "CIELOS · ADS-B MILITAR",
+        v: `${visibles.length} EN EL AIRE`,
+        color: "#A855F7",
+        d: `${sky.oscuros} sin señal · ciclo de patrulla en vivo · filtro: ${tipoFiltro ? tipoDe(tipoFiltro).nombre : "todos los tipos"}${verOscuros ? "" : " · ocultando las que no hablan"}`,
+      },
+    ];
+    for (const v of visibles.slice(0, 8)) {
+      const t = tipoDe(v.tipo);
+      filas.push({
+        t: `${v.callsign}${v.oscuro ? " · SIN SEÑAL" : ""}`,
+        v: `${v.vel} kt`,
+        p: Math.max(3, Math.round(v.progreso * 100)),
+        color: v.oscuro ? "#FF4D5E" : t.color,
+        d: `${v.modelo} · ${fmtAlt(v.alt)} · rumbo ${fmtRumbo(v.rumbo)} · ${v.zona} · base ${v.base}`,
+        a: "fichar vuelo",
+      });
+    }
+    if (seleccionado) {
+      filas.push({
+        t: `FICHA: ${seleccionado.callsign}`,
+        v: `${seleccionado.vel} kt`,
+        color: "#F5C542",
+        d: `facción ${seleccionado.faccion} · ${seleccionado.modelo} · zona ${seleccionado.zona} · base ${seleccionado.base} · ${seleccionado.oscuro ? "transpondedor apagado" : "señal activa"}`,
+      });
+    }
+    if (visibles.length === 0) {
+      filas.push({ t: "SIN SEÑALES CON ESE FILTRO", color: "#7AB8FF", d: "cambia el filtro de tipo o vuelve a mostrar las que deciden no hablar" });
+    }
+    return filas;
+  }, [visibles, sky.oscuros, tipoFiltro, verOscuros, seleccionado]);
+  useSala3DContenido(
+    "cielos",
+    "CIELOS — RASTREADOR DE VUELOS MILITARES",
+    "#A855F7",
+    `${visibles.length} señales en el aire · ${sky.oscuros} sin señal · cada señal ADS-B militar del planeta`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — fichar vuelo usa el MISMO toggle de selección 2D
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "cielos" || det.accion !== "fichar vuelo") return;
+      const v = visibles[det.idx - 1];
+      if (v) setSel(v.id === sel ? null : v.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [visibles, sel]);
 
   return (
     <div className="space-y-4">

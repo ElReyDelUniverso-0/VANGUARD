@@ -6,7 +6,7 @@
 // con fuentes (ONU, HRW, Amnistía, OSCE, ACLED) y puente
 // directo al sistema de DENUNCIAS de los foros.
 // ============================================================
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { WAR_ABUSES, ABUSE_TYPES, type WarAbuse } from "@/lib/dark-data";
@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 const LS_ABUSE_DOC = "vanguard_abuse_doc_cd"; // cooldown de recompensa por documentar
 
@@ -109,6 +110,62 @@ export function AbusosPanel() {
       setSending(false);
     }
   };
+
+  // v168: PARIDAD 2D→3D — CRÍMENES Y ABUSOS emite sus filas reales a la sala de contenido
+  const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const filas: FilaContenido3D[] = [
+      {
+        t: "ARCHIVO DEL LADO OSCURO",
+        v: `${filtered.length} CASOS`,
+        color: "#FF3B30",
+        d: `${WAR_ABUSES.length} casos documentados con fuente primaria (ONU · HRW · Amnistía · OSCE · ACLED) — descripciones sobrias pero verificadas: pueden herir tu sensibilidad`,
+      },
+      { t: "CONFLICTOS ACTIVOS MONITORIZADOS", v: "12", color: "#FF4D5E", d: "frentes del archivo con casos documentados y citados" },
+      { t: "MUERTOS VIOLENTOS EN SUDÁN", v: ">28.000", color: "#FF4D5E", d: "cifra ACLED citada por el archivo" },
+      { t: "MUERTOS EN GAZA", v: ">50.000", color: "#FF4D5E", d: "Gaza MoH · cifra ONU fiable" },
+      { t: "DESPLAZADOS SOLO EN SUDÁN", v: "12 M", color: "#FF4D5E", d: "UNHCR · la crisis de desplazamiento más grande del planeta" },
+    ];
+    for (const a of filtered.slice(0, 7)) {
+      filas.push({
+        t: a.title,
+        v: a.war,
+        color: a.verified ? "#3DDC84" : "#FF4D5E",
+        d: `${ABUSE_TYPES[a.type].label} · ${a.location} · ${a.deaths} · ${a.summary}`.slice(0, 170),
+        a: "ver caso",
+      });
+    }
+    if (selected) {
+      filas.push({
+        t: `CASO ABIERTO: ${selected.title}`,
+        color: "#F5C542",
+        d: `fuentes: ${selected.sources.map((s) => s.org).join(" · ")} — llévalo al sistema de denuncias de los foros`,
+        a: "documentar en foros",
+      });
+    }
+    return filas;
+  }, [filtered, selected]);
+  useSala3DContenido(
+    "abusos",
+    "CRÍMENES Y ABUSOS · LO QUE PREFIEREN QUE NO VEAS",
+    "#FF3B30",
+    `${WAR_ABUSES.length} casos documentados con fuente primaria · ${filtered.length} en vista`,
+    filas3D,
+  );
+  // v168: oyente de acciones 3D — offset: los casos empiezan en idx 5 (tras cabecera + 4 contadores)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (det?.tab !== "abusos") return;
+      if (det.accion === "ver caso") {
+        const a = filtered[det.idx - 5];
+        if (a) setSelected(a);
+      } else if (det.accion === "documentar en foros" && selected) {
+        documentar(selected);
+      }
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [filtered, selected]);
 
   return (
     <div className="space-y-3">
