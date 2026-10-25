@@ -154,7 +154,10 @@ export type TabKey =
   | "agentes"
   // v172.0 LA AGENCIA CENTRAL: el centro mundial de noticias por importancia
   // e impacto, cada cable con su pie de foto e info + EL MAPA MUNDIAL 3D
-  | "centro";
+  | "centro"
+  // v176.0 LAS FICHAS DE GUERRA: la colección coleccionable de conflictos
+  // mundiales — una carta por frente vivo, rareza según su impacto de hoy
+  | "fichas";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -261,6 +264,8 @@ export const TABS: Record<TabKey, TabDef> = {
   noticias:      { key: "noticias",      label: "Noticias",          short: "NOTICIAS", icon: <Newspaper className="w-3.5 h-3.5" />, color: "amber" },
   // v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias por impacto
   centro:        { key: "centro",        label: "CENTRO MUNDIAL (noticias en vivo por importancia e impacto + mapa 3D)", short: "CENTRO", icon: <Siren className="w-3.5 h-3.5" />, color: "red" },
+  // v176.0 LAS FICHAS DE GUERRA — la colección coleccionable de conflictos
+  fichas:        { key: "fichas",        label: "LA COLECCIÓN DE GUERRA (fichas coleccionables de cada conflicto: rareza viva, stats y la noticia única de cada frente)", short: "FICHAS", icon: <Layers className="w-3.5 h-3.5" />, color: "violet" },
   galeria:       { key: "galeria",       label: "Galería OSINT",     short: "GALERÍA", icon: <Images className="w-3.5 h-3.5" />, color: "violet" },
   briefings:     { key: "briefings",     label: "Briefings clasificados", short: "BRIEFINGS", icon: <FileText className="w-3.5 h-3.5" />, color: "cyan" },
   camaras:       { key: "camaras",       label: "Cámaras CCTV",      short: "CÁMARAS", icon: <Video className="w-3.5 h-3.5" />, color: "cyan" },
@@ -403,8 +408,8 @@ export const SECTIONS: SectionDef[] = [
     key: "inicio", label: "INICIO", short: "INICIO", icon: <Home className="w-4 h-4" />, color: "amber",
     // v105.0 LA REDACCIÓN abre el INICIO: primero se lee, después se explora
     // v172.0 LA AGENCIA CENTRAL manda: el CENTRO MUNDIAL abre la sección
-    desc: "EL CENTRO MUNDIAL DE NOTICIAS (en vivo por importancia e impacto, pie de foto e info, mapa 3D), LA REDACCIÓN (el lugar optimizado para leer el mundo), portada con noticias en vivo, EL MUNDO CAMBIA, muro infinito de verdades y verificación",
-    tabs: [TABS.centro, TABS.inicio, TABS.redaccion, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
+    desc: "EL CENTRO MUNDIAL DE NOTICIAS (en vivo por importancia e impacto, pie de foto e info, mapa 3D), LA COLECCIÓN DE GUERRA (las fichas coleccionables de cada conflicto vivo), LA REDACCIÓN (el lugar optimizado para leer el mundo), portada con noticias en vivo, EL MUNDO CAMBIA, muro infinito de verdades y verificación",
+    tabs: [TABS.centro, TABS.fichas, TABS.inicio, TABS.redaccion, TABS.cambios, TABS.verdades, TABS.verifica, TABS.noticias],
   },
   {
     key: "juego", label: "JUEGO", short: "JUEGO", icon: <Castle className="w-4 h-4" />, color: "red",

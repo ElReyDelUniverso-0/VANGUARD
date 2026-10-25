@@ -432,16 +432,37 @@ Salud: home=200 | health v172.0 | db down (ambiental, proveedor Postgres — fue
 
 ⭐ IDEA ESTRELLA: EXPORT DE LA CUENTA — la telemetría local mide UN piloto; el export anónimo a /api/stats mide a la CIUDAD entera: «el 34% de las acciones de Vanguard ya nacen en 3D» es el número que decide dónde invertir las próximas rondas.
 
----
-## MENSAJE #18 · 2026-10-26 · Task ia1-v174.0
-Notas: Ronda «EL CINE DE VANGUARD» — la intro GTA-style aterriza (6 placas de noticias con acento por conflicto, SALTAR siempre) y el cuelgue del Dueño se cura de raíz: el dev moría por OOM-killer (server muerto = «horas cargando»); producción standalone con serve.mjs (197MB) es el nuevo suelo. QA E2E completo (cine, relevo, ciudad, móvil, reencuentro, SALTAR).
-Salud: home=200 | health v174.0 | prod rss 197MB | tsc 0
+## MENSAJE #18 · 2026-10-25 · tras Task ia2-v173.0
+Notas: Ronda «LA CASA EN VIVO» — orden directa del Dueño aterrizada: el universo 3D se retiró COMPLETO (11.800+ líneas; 129 paneles intactos gracias al emisor dormido con firma) y la portada ahora es un terminal de mercado real keyless (Binance + Yahoo, 32 activos, velas 1m con volumen, cinta marquee, watchlist con chispas, flash por tick cada 5s). Lección de la ronda: una cuna que respira sobre un escenario de 20.000px proyecta su módulo superior fuera del viewport — los terminales de datos exigen horizonte firme (fix :has bajo data-vg-3d).
+Salud: home=200 | health v173.0 | /api/mercado 32 activos reales | db down (ambiental)
 
 📡 PRÓXIMAS PROPUESTAS (para la siguiente ronda del Dueño):
-1. FICHAS COLECCIONABLES DE CONFLICTOS (directiva confirmada del Dueño, sigue viva) — tarjetas/placas de cada guerra con noticias únicas, rareza, integradas a perfil/tienda · Esfuerzo: M
-2. CINE v2 — placas que PESCAN cables reales en vivo (la placa de RUSIA—UCRANIA muestra el titular real del día desde /api/news?modo=centro) · Esfuerzo: M
-3. SONIDO DEL CINE — golpe de percusión por placa (el mundo ya presta AudioContext; sonar("tic") hoy) + silencio honesto si no hay gesto · Esfuerzo: S
-4. PLACA FINAL TOCABLE — la última placa del cine («TOCA PARA DESPLEGAR EL UNIVERSO») salta directo a ENTRAR sin pasar por el hint · Esfuerzo: S
-5. RED VISUAL DE CONEXIONES (directiva del plan v168, sigue viva) — nodos IRÁN→Hezbollah→Houthis con grosor=peso, en 2D y como sala 3D · Esfuerzo: L
+1. GRÁFICOS POR SALA — llevar GraficoVivo (velas en vivo) dentro de los paneles BOLSA/MERCADOS/HACIENDA: cada fila con chispa viva y click → velas del activo · Esfuerzo: M
+2. ALERTAS DE PRECIO — «avísame si BTC cruza 85k»: reglas locales con toast + campana al cruzarse (el latido ya está en la casa) · Esfuerzo: S
+3. WATCHLIST PERSISTENTE — fijar activos con estrella (patrón favoritos v171) y orden arrastrable · Esfuerzo: S
+4. LIENZO DE MERCADO GLOBAL — mapa de burbujas por Δ% (cripto/acciones/índices) estilo heatmap de los grandes · Esfuerzo: M
+5. HEALTH DEL MERCADO — /api/health con fuente y latencia de cada grifo (binance/yahoo/sim) para vigilar degradaciones · Esfuerzo: S
 
-⭐ IDEA ESTRELLA: CINE v2 EN VIVO — la intro GTA que PESCA la noticia real del día: la placa del conflicto muestra EL TITULAR DE HOY con su fuente; el cine deja de ser un tráiler fijo y se vuelve EL TELETIPO DEL MUNDO (nadie más tiene una intro que se actualiza sola cada día).
+⭐ IDEA ESTRELLA: GRÁFICOS POR SALA — el motor de velas ya vive en la casa; llevarlo a los paneles económicos convierte CADA sala en un terminal: la casa entera respira al pulso del mercado.
+
+## MENSAJE #19 · 2026-10-26 · tras Task 175 (LAS INTROS GTA, renumerada)
+Notas: Tarjetería de cine estilo GTA V aterrizada (placa de personaje en ROSTROS + placa de misión en la SALA DE LECTURA). El cine de contenido abre una veta nueva: la presentación importa tanto que la información. Compatible con LA CASA EN VIVO: las placas viven en las puertas 2D que sobrevivieron a la cirugía.
+Ideas heredadas de la ronda:
+1. PLACA DE CONFLICTO — la tercera tarjeta GTA: RUSIA ✕ UCRANIA con intensidad y frente al abrir fichas de conflicto (tarjeta-guerra / frentes) · la familia queda completa · Esfuerzo: M
+2. CITA EN LA PLACA — la frase del rostro («la frase que manda») como cierre de la placa antes del expediente · Esfuerzo: S
+3. SONIDO DE MARCA — síntesis de un golpe de cine (bass hit) en sound.ts para las placas, distinto de la campana · Esfuerzo: S
+4. PLACA AL ABRIR PANELES — intro corta de identidad al entrar a cada módulo insignia (nombre + color de casa, 900ms, una vez por sesión) — hace legible la navegación · Esfuerzo: M
+5. PLACA DEL MERCADO — al tocar un activo de la watchlist, placa de misión con el ticker y su Δ% en vivo antes del gráfico · Esfuerzo: S
+
+## MENSAJE #20 · 2026-10-26 · tras Task 176 (LAS FICHAS DE GUERRA)
+Notas: La orden del Dueño «fichas coleccionables de conflictos mundiales, de noticias únicas de cada guerra» aterrizó como el álbum de la Agencia: 9 cartas vivas (VG-01…VG-09) cuya rareza la decrece el motor de impacto con los cables REALES de cada guerra, la noticia única de cada frente con foto+pie+por qué importa, sellos fechados persistentes y la TERCERA PLACA GTA (los dos bandos A ✕ B) que completa la familia v175. El tablero respira: hoy 2 LEYENDAS (Ucrania IMP 95), mañana quizá silencio — la colección cuenta la guerra con la verdad del escáner.
+Salud: home=200 | health v176.0 | /api/news?modo=centro alimentando el tablero | tsc 0 | build EXIT 0 | overflow 390px=false
+
+📡 PRÓXIMAS PROPUESTAS (para la siguiente ronda del Dueño):
+1. FICHA COLECCIONABLE DEL ROSTRO — la misma tarjetería para LOS ROSTROS DEL PODER: carta VG-P01… de cada líder con su placa ya hecha (el sistema v176 reutilizado, solo datos) · Esfuerzo: M
+2. SELLOS DE BRONCE/PLATA/ORO — hitos de colección (3/9, 6/9, 9/9) con recompensa del cofre y placa de consecución · Esfuerzo: S
+3. EL MOMENTO DE LA RAREZA — si una ficha sube a LEYENDA estando en tu álbum, toast «TU FICHA VG-01 SUBIÓ A LEYENDA» (el álbum como cartera viva) · Esfuerzo: S
+4. COMPARTIR LA CARTA — export PNG de la ficha descubierta (patrón tarjeta-guerra v64: html-to-image + Web Share API) — la colección como invitación · Esfuerzo: M
+5. FICHAS HISTÓRICAS — extensión al ARCHIVO MUNDIAL: guerras cerradas (Vietnam, Irak 2003, Falklands) como cartas de serie histórica con su bibliografía · Esfuerzo: L
+
+⭐ IDEA ESTRELLA: FICHA COLECCIONABLE DEL ROSTRO — la placa de personaje v175 ya existe; con el motor v176 (datos+álbum+rareza por señales del rostro en vivo) la colección crece a LOS ROSTROS DEL PODER sin tocar ni una línea de la tarjetería: dos colecciones gemelas (guerras + poder) sobre un solo motor.

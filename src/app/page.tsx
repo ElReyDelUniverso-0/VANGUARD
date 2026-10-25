@@ -20,13 +20,8 @@ import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
 import { RielSeccion } from "@/components/vanguard/riel-seccion";
 import { toast } from "sonner";
 import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
-// v72.0 INFINITA VERDADES: la intro cinematográfica VUELVE (letras 3D realistas,
-// luna llena y ocaso cálido). Una vez por sesión, saltable, reduced-motion off.
-const IntroCinematica = dynamic(() => import("@/components/vanguard/intro-cinematica").then((m) => m.IntroCinematica), { ssr: false });
 // v140.0 MUNDO WEBGL: el MOD de videojuego — el usuario vive dentro de un
 // mundo Three.js y la navegación es VUELO DE CÁMARA entre 5 zonas.
-const MundoWebGL = dynamic(() => import("@/components/vanguard/mundo-webgl").then((m) => m.MundoWebGL), { ssr: false });
-const NavZonas = dynamic(() => import("@/components/vanguard/mundo-webgl").then((m) => m.NavZonas), { ssr: false });
 // v110.0 MATRIZ 2100 — motor 3D global (ajustes → CSS vars + paralaje)
 const Motor3D = dynamic(() => import("@/components/vanguard/motor-3d").then((m) => m.Motor3D), { ssr: false });
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
@@ -67,7 +62,9 @@ import { GoogleBar } from "@/components/vanguard/google-bar";
 import { CineVivo } from "@/components/vanguard/cine-vivo";
 // v120.0 GRAN SALTO 3D: la ciudad viva REINA en la portada — cielo real
 // (día/noche según tu reloj), región rotativa a mano y VANGUARD en letras 3D
-import { CiudadHero } from "@/components/vanguard/ciudad-hero";
+import { NavZonas } from "@/components/vanguard/nav-zonas";
+// v173.0 LA CASA EN VIVO: el mercado real (Binance + Yahoo, keyless) es el héroe
+const MercadoVivo = dynamic(() => import("@/components/vanguard/mercado-vivo"), { ssr: false });
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 import { SectionSearch } from "@/components/vanguard/section-search";
 import { AccountModal } from "@/components/vanguard/account-modal";
@@ -147,6 +144,7 @@ const ZONAS_WGL: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, per
 const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
   // INICIO
   redaccion: () => import("@/components/vanguard/panels/redaccion-panel"),
+  fichas: () => import("@/components/vanguard/panels/fichas-panel"),
   noticias: () => import("@/components/vanguard/panels/news-panel"),
   cambios: () => import("@/components/vanguard/panels/cambios-panel"),
   verdades: () => import("@/components/vanguard/panels/infinita-panel"),
@@ -216,6 +214,8 @@ const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
 const NewsPanel = dynamic(() => import("@/components/vanguard/panels/news-panel").then((m) => m.NewsPanel), { ssr: false, loading: PanelSkeleton });
 // v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias por impacto
 const CentroPanel = dynamic(() => import("@/components/vanguard/panels/centro-panel").then((m) => m.CentroPanel), { ssr: false, loading: PanelSkeleton });
+// v176.0 LAS FICHAS DE GUERRA — la colección coleccionable de conflictos
+const FichasPanel = dynamic(() => import("@/components/vanguard/panels/fichas-panel").then((m) => m.FichasPanel), { ssr: false, loading: PanelSkeleton });
 // v105.0 LA REDACCIÓN — el lugar optimizado para leer el mundo
 const RedaccionPanel = dynamic(() => import("@/components/vanguard/panels/redaccion-panel").then((m) => m.RedaccionPanel), { ssr: false, loading: PanelSkeleton });
 // v106.0 PESTAÑAS DE CROMO: la NUEVA PESTAÑA (elegir destino con ómnibox) + la
@@ -402,57 +402,7 @@ const MaquinaPanel = dynamic(() => import("@/components/vanguard/panels/maquina-
 const EstrategiaGlobalPanel = dynamic(() => import("@/components/vanguard/panels/estrategia-panel").then((m) => m.EstrategiaGlobalPanel), { ssr: false, loading: PanelSkeleton });
 const VideosPanel = dynamic(() => import("@/components/vanguard/panels/videos-panel").then((m) => m.VideosPanel), { ssr: false, loading: PanelSkeleton });
 
-// ══════════════════════════════════════════════════════════════
-// v143.0 LA CASA EN EL MUNDO — las salas viven DENTRO del mundo 3D.
-// SALAS: el catálogo entero de paneles — UNA sola fuente de verdad.
-// ════════════════════════════════════════════════════════════
-// v145 SALAS EN VOLUMEN: qué salas son INSIGNIA (constructor 3D propio
-// con el contenido real: gráficos, mesa de conflictos, galería) — todas
-// las demás nacen con su placa 3D genérica.
-const TIPO_SALA_3D: Record<string, string> = {
-  bolsa: "economia",
-  crisis: "conflictos", salaguerra: "conflictos",
-  memes: "memes",
-  noticias: "noticias", quiz: "quiz", encuestas: "votaciones", perfil: "perfil",
-  // v172.0 LA AGENCIA CENTRAL: la insignia del mapa mundial en primera persona
-  centro: "mapa",
-  // v147 — segunda ola: el mercado de apuestas, la corona de hitos y la vitrina
-  predicciones: "predicciones", logros: "logros", tienda: "tienda",
-  // v148 — tercera ola: el tablero de misiones y el podio global
-  misiones: "misiones", ranking: "ranking",
-  // v165 — mercados/hacienda/divisas dejan la insignia ECONOMIA: sus paneles
-  // emiten CONTENIDO COMPLETO (cotizaciones, bóvedas, casa de cambio) y la
-  // sala genérica ASCIENDE al contenido real — el encabezado vacío murió
-};
 
-// v148 — LAS LETRAS INFORMATIVAS: cada módulo se describe en el mundo 3D
-// con su rótulo volumétrico (el nombre + lo que hace, en letras extruidas).
-// Fuente honesta: el label del tab (partiendo su paréntesis) y la desc de
-// la sección — ninguna sala de Vanguard vuelve a ser un portal mudo.
-function lineasInformativas(tab: TabKey): string[] {
-  const crudo = TABS[tab]?.label ?? "";
-  const enParentesis = (/\(([^)]+)\)/.exec(crudo)?.[1] ?? "").replace(/\s+/g, " ").trim();
-  const bruto = crudo.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim();
-  const desc = (sectionOfTab(tab).desc || "").replace(/\s*\(([^)]*)\)\s*/g, " ").replace(/\s+/g, " ").trim();
-  const fuentes = [enParentesis, ...desc.split(/[.;:]|—/).map((s) => s.trim())]
-    .filter((s) => s.length >= 14);
-  const lineas: string[] = bruto ? [bruto] : [];
-  for (const f of fuentes) {
-    if (lineas.length >= 3) break;
-    if (f.length <= 46) { lineas.push(f); continue; }
-    const palabras = f.split(" ");
-    let actual = "";
-    for (const w of palabras) {
-      if ((actual + " " + w).trim().length > 46) {
-        if (actual) lineas.push(actual.trim());
-        actual = w;
-        if (lineas.length >= 3) break;
-      } else actual = (actual + " " + w).trim();
-    }
-    if (actual && lineas.length < 3) lineas.push(actual.trim());
-  }
-  return lineas.slice(0, 3);
-}
 // SALAVIVA: el cuerpo de la Casa. El MISMO árbol vive en dos hogares:
 //  · dentro de la CÁPSULA holográfica del mundo WebGL (portal React a
 //    la pantalla CSS3D acoplada a la zona donde aterriza la cámara), o
@@ -463,10 +413,8 @@ function Salas({ tab }: { tab: TabKey }) {
     <PanelErrorBoundary resetKey={tab} moduleName={`panel ${tab}`}>
         {tab === "inicio" && (
           <>
-            {/* v120.0 GRAN SALTO 3D: la MEGALÓPOLIS viva abre la portada —
-                ciclo día/noche EN TIEMPO REAL, región que gira (sola cada
-                día, a mano con fundido) y letras 3D volumétricas */}
-            <CiudadHero />
+            {/* v173.0 LA CASA EN VIVO: cinta de tickers + velas 1m en vivo + watchlist */}
+            <MercadoVivo />
             {/* v67.0 EL HANGAR: el costo del mundo y tu rival, siempre a la vista */}
             <CostoGuerra />
             <RivalStrip />
@@ -495,6 +443,8 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "noticias" && <NewsPanel />}
         {/* v172.0 LA AGENCIA CENTRAL — el centro mundial de noticias */}
         {tab === "centro" && <CentroPanel />}
+        {/* v176.0 LAS FICHAS DE GUERRA — la colección coleccionable de conflictos */}
+        {tab === "fichas" && <FichasPanel />}
         {tab === "redaccion" && <RedaccionPanel />}
         {/* v106.0 PESTAÑAS DE CROMO — la página para ELEGIR destino */}
         {tab === "nueva" && <NuevaPanel />}
@@ -738,55 +688,12 @@ export default function Home() {
   // se aparta (mandato: "un modo pantalla completa, que el menú de arriba opaque")
   const [inmersion, setInmersion] = useState(false);
   const inmersionRef = useRef(false);
-  // v140 MUNDO WEBGL: la zona del mundo donde está la cámara (navbar sincronizado)
-  const [wglZona, setWglZona] = useState(1);
-  // v141 MODO MUNDO: la Casa entera se aparta y solo queda el universo 3D —
-  // tocar un portal o un título de letras 3D = volar a ese mundo y abrir su sala
-  const [modoMundo, setModoMundo] = useState(false);
-  const modoMundoRef = useRef(false);
-  // v165 EL INTERRUPTOR 2D ↔ 3D: el Dueño pidió poder poner Vanguard en 2D
-  // (consola plana clásica, mundo dormido) o en 3D (el universo completo) —
-  // y en 2D, saltar CUALQUIER módulo a su sala 3D con el botón VER EN 3D
-  const [modo2D, setModo2D] = useState(false);
-  // v143 LA CASA EN EL MUNDO: los hogares 3D del contenido. El mundo WebGL
-  // (mundo-webgl.tsx) crea la CÁPSULA de contenido y la CONSOLA de vuelo y
-  // los ofrece por window + evento; si existen, las salas y la navbar viven
-  // DENTRO del universo 3D vía portal. Si no (sin WebGL), DOM plano de siempre.
-  const [hostCapsula, setHostCapsula] = useState<HTMLElement | null>(null);
-  const [hostNav, setHostNav] = useState<HTMLElement | null>(null);
-  // v145 — LA VENTANA HOLO: el menú y la búsqueda viven DENTRO del universo
-  const [hostVentana, setHostVentana] = useState<HTMLElement | null>(null);
-  // v145 P2 — LOS WIDGETS FLOTANTES: radio (der) y estado (izq) en el plano de mando
-  const [hostWidIzq, setHostWidIzq] = useState<HTMLElement | null>(null);
-  const [hostWidDer, setHostWidDer] = useState<HTMLElement | null>(null);
-  // v144 HOLOGRAMA TOTAL: el RAIL del estado — la franja viva de la Casa como
-  // tira holográfica CSS3D acoplada a la cámara (StatsTicker + LiveTitle)
-  const [hostRail, setHostRail] = useState<HTMLElement | null>(null);
-  // ════════════════════════════════════════════════════════
-  // v159 LA DIETA HUD — «no veo nada de sentido, todo desordenado»:
-  // en móvil con el universo 3D vivo, los widgets planos (PULSO, RADIO,
-  // cofre) y la barra de zonas DOM SE RETIRAN: la ciudad 3D es el menú,
-  // el HUD 3D es el casco. Una pantalla móvil = un foco, cero sopa.
-  // ════════════════════════════════════════════════════════
-  const [movilVp, setMovilVp] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 700px)");
-    const on = () => setMovilVp(mq.matches);
-    on();
-    mq.addEventListener?.("change", on);
-    return () => mq.removeEventListener?.("change", on);
-  }, []);
-  const capsulaMovil = !!hostCapsula && movilVp;
   const [accountOpen, setAccountOpen] = useState(false);
   // v102.0 LA CIUDADELA — gate del pasaporte: cualquier panel pide cuenta con
   // window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }))
   const [gatePasaporte, setGatePasaporte] = useState<string | null>(null);
   const authRefresh = useGameStore((s) => s.authRefresh);
   const alias = useGameStore((s) => s.alias);
-  // v148 — LAS DATOS VIVAS del agente: alimentan las placas de la estación informativa 3D
-  const nivelAgente = useGameStore((s) => s.level);
-  const monedasAgente = useGameStore((s) => s.coins);
-  const gemasAgente = useGameStore((s) => s.gems);
   const { t } = useT();
   const initPlayer = useGameStore((s) => s.initPlayer);
   const checkAchievements = useGameStore((s) => s.checkAchievements);
@@ -811,13 +718,6 @@ export default function Home() {
   // Explorador — la NUEVA no cuenta: abrir pestañas no paga el mapa. Escena para
   // la radio + scroll arriba (la franja nunca tapa el inicio del panel).
   const handleTabChange = useCallback((k: TabKey) => {
-    // v141: si venimos del MODO MUNDO, la Casa vuelve a su sitio (sin bucles:
-    // vg:wgl-modo-sync solo re-pone la pose, no re-dispara eventos)
-    if (modoMundoRef.current) {
-      modoMundoRef.current = false;
-      setModoMundo(false);
-      window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
-    }
     // v125.0 CORRECCIÓN TOTAL — RESOLUTOR DE SALA: si llega la CLAVE DE SECCIÓN
     // (los 16 mundos del mega-menú; el swipe de borde las usaba directo) y esa
     // clave no tiene panel propio, se resuelve a su PRIMERA PESTAÑA real. Antes:
@@ -829,14 +729,6 @@ export default function Home() {
     // v124.0 CAVIAR: entrar a una sala suena a lujo — la campana de oro del
     // salón (dos notas con cola de sala) sustituye al toque de madera.
     sfx.campana();
-    // v140 MUNDO WEBGL: si esta sala vive en una ZONA del mundo 3D, la cámara
-    // VUELA hasta ella (mapa espejo del componente — import liviano a propósito:
-    // three.js no puede entrar al bundle principal de la página).
-    // v171: el mapa vive en ZONAS_WGL (una sola verdad compartida con VER EN 3D).
-    const zWgl = ZONAS_WGL[k as string];
-    if (typeof zWgl === "number") {
-      window.dispatchEvent(new CustomEvent("vg:wgl-ir-a", { detail: { zona: zWgl } }));
-    }
     // v118: dirección del movimiento (adelante por defecto, atrás si
     // volvemos a la pestaña previa del historial, o la que fuerza el swipe)
     const hist = historialTabsRef.current;
@@ -875,226 +767,14 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pestanas, tab, recordTabVisit, t]);
 
-  // v140 MUNDO WEBGL: la cámara manda — cuando el mundo vuela a otra zona
-  // (marcador tocado, entrada, vuelos), el navbar y la Casa se sincronizan.
-  // Un conflicto tocado en el globo aterriza en el COMMAND CENTER (crisis).
-  // v141: el mundo también manda el MODO MUNDO y las salas entradas por portal.
-  useEffect(() => {
-    const onZona = (e: Event) => {
-      const z = (e as CustomEvent).detail?.zona;
-      if (typeof z === "number") setWglZona(z);
-    };
-    const onConflicto = () => {
-      handleTabChange("crisis");
-    };
-    const onModo = (e: Event) => {
-      const on = !!(e as CustomEvent).detail?.on;
-      modoMundoRef.current = on;
-      setModoMundo(on);
-    };
-    const TAB_POR_ZONA_WGL: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
-    const onSala = (e: Event) => {
-      const z = (e as CustomEvent).detail?.zona;
-      if (typeof z !== "number" || !TAB_POR_ZONA_WGL[z]) return;
-      modoMundoRef.current = false;
-      setModoMundo(false);
-      handleTabChange(TAB_POR_ZONA_WGL[z]);
-    };
-    window.addEventListener("vg:wgl-zona", onZona);
-    window.addEventListener("vg:wgl-conflicto", onConflicto);
-    window.addEventListener("vg:wgl-modo", onModo);
-    window.addEventListener("vg:wgl-sala", onSala);
-    return () => {
-      window.removeEventListener("vg:wgl-zona", onZona);
-      window.removeEventListener("vg:wgl-conflicto", onConflicto);
-      window.removeEventListener("vg:wgl-modo", onModo);
-      window.removeEventListener("vg:wgl-sala", onSala);
-    };
-  }, [handleTabChange]);
 
-  // v143 LA CASA EN EL MUNDO: recoger los hogares 3D del mundo (cápsula de
-  // contenido + consola de vuelo). El mundo nace en un useLayoutEffect hijo
-  // (antes del primer pintado); aquí —layout effect padre— ya existen. Los
-  // eventos cubren el ciclo de vida posterior (HMR, destrucción del mundo).
-  useLayoutEffect(() => {
-    const w = window as unknown as { __vgCapsulaHost?: HTMLElement | null; __vgNavHost?: HTMLElement | null; __vgRailHost?: HTMLElement | null };
-    setHostCapsula(w.__vgCapsulaHost ?? null);
-    setHostNav(w.__vgNavHost ?? null);
-    setHostRail(w.__vgRailHost ?? null);
-    const onCapsula = (e: Event) => setHostCapsula(((e as CustomEvent).detail as HTMLElement | null) ?? null);
-    const onNav = (e: Event) => setHostNav(((e as CustomEvent).detail as HTMLElement | null) ?? null);
-    const onRail = (e: Event) => setHostRail(((e as CustomEvent).detail as HTMLElement | null) ?? null);
-    const w2 = window as unknown as { __vgVentanaHost?: HTMLElement | null };
-    setHostVentana(w2.__vgVentanaHost ?? null);
-    const onVentana = (e: Event) => setHostVentana(((e as CustomEvent).detail as HTMLElement | null) ?? null);
-    window.addEventListener("vg:wgl-ventanahost", onVentana);
-    const w3 = window as unknown as { __vgWidIzqHost?: HTMLElement | null; __vgWidDerHost?: HTMLElement | null };
-    setHostWidIzq(w3.__vgWidIzqHost ?? null);
-    setHostWidDer(w3.__vgWidDerHost ?? null);
-    const onWids = (e: Event) => {
-      const d = (e as CustomEvent).detail;
-      setHostWidIzq(d?.izq ?? null);
-      setHostWidDer(d?.der ?? null);
-    };
-    window.addEventListener("vg:wgl-widhosts", onWids);
-    window.addEventListener("vg:wgl-capsula", onCapsula);
-    window.addEventListener("vg:wgl-navhost", onNav);
-    window.addEventListener("vg:wgl-railhost", onRail);
-    return () => {
-      window.removeEventListener("vg:wgl-ventanahost", onVentana);
-      window.removeEventListener("vg:wgl-widhosts", onWids);
-      window.removeEventListener("vg:wgl-capsula", onCapsula);
-      window.removeEventListener("vg:wgl-navhost", onNav);
-      window.removeEventListener("vg:wgl-railhost", onRail);
-    };
-  }, []);
 
-  // v145 — LA ORDEN DE PROYECCIÓN: menú, búsqueda o CUALQUIER modal abierto
-  // = el holograma sale de la pantalla; cerrados = la ventana se repliega
-  useEffect(() => {
-    if (!hostVentana) return;
-    const on = menuOpen || searchOpen || accountOpen || settingsOpen || logOpen;
-    window.dispatchEvent(new CustomEvent("vg:holo-ventana", { detail: { on } }));
-  }, [menuOpen, searchOpen, accountOpen, settingsOpen, logOpen, hostVentana]);
 
-  // v143: cada sala que abre la cámara aterriza LEYENDO desde arriba —
-  // el scroll de la cápsula 3D vuelve al techo con cada vuelo
-  useEffect(() => {
-    if (hostCapsula) hostCapsula.scrollTo({ top: 0 });
-  }, [tab, hostCapsula]);
 
-  // ════════════════════════════════════════════════════════════
-  // v148 ARRANQUE 3D PURO — el Dueño: «arrancan 2D aún». Ahora NO:
-  // la Casa DOM nace DORMIDA y solo despierta cuando el universo está
-  // listo (ceremonia terminada / reencuentro / sin WebGL). El negro y
-  // las estrellas de la ceremonia SON la pantalla de carga.
-  // ════════════════════════════════════════════════════════════
-  const [ceremonia, setCeremonia] = useState(true);
-  useEffect(() => {
-    const onEstado = (e: Event) => setCeremonia(!!(e as CustomEvent).detail?.on);
-    window.addEventListener("vg:wgl-entrada-estado", onEstado);
-    // red de seguridad: si nada habla en 12s, la Casa se levanta sola
-    const red = window.setTimeout(() => setCeremonia(false), 12000);
-    return () => { window.removeEventListener("vg:wgl-entrada-estado", onEstado); clearTimeout(red); };
-  }, []);
-  const ocultarCasa = ceremonia && !hostCapsula && !modoMundo;
 
-  // ════════════════════════════════════════════════════════════
-  // v145 SALAS EN VOLUMEN — la sala activa se publica al mundo 3D:
-  // el CONTENIDO REAL de cada rama nace en volumen (el gráfico de la
-  // economía en 3D, las letras en 3D, la sala de conflictos 3D, el
-  // estudio de memes 3D). Insignia con constructor propio + TODAS las
-  // demás ramas con su placa 3D genérica. Re-dispatch cuando nace el
-  // mundo (hostCapsula) para ganar la carrera de arranque.
-  // v148: el payload lleva las LETRAS INFORMATIVAS (qué es este módulo)
-  // y las DATOS VIVAS del agente — la estación informativa las extruye.
-  // ════════════════════════════════════════════════════════════
-  const statsAgente = useMemo(() => [
-    { k: "AGENTE", v: alias || "RECLUTA" },
-    { k: "NIVEL", v: String(nivelAgente) },
-    { k: "MONEDAS", v: String(monedasAgente) },
-    { k: "GEMAS", v: String(gemasAgente) },
-  ], [alias, nivelAgente, monedasAgente, gemasAgente]);
 
-  useEffect(() => {
-    const seccion = sectionOfTab(tab);
-    const hex = accentOfSection(seccion.key);
-    window.dispatchEvent(new CustomEvent("vg:sala3d", {
-      detail: {
-        tab,
-        titulo: TABS[tab]?.short ?? String(tab),
-        color: parseInt(hex.replace("#", ""), 16) || 0x7ab8ff,
-        tipo: TIPO_SALA_3D[tab as string] ?? "generica",
-        lineas: lineasInformativas(tab),
-        stats: statsAgente,
-      },
-    }));
-  }, [tab, hostCapsula, statsAgente]);
 
-  // v148 — EL PULSO DE DATOS: las stats del agente laten y la estación
-  // informativa repinta sus placas SIN rebote (vg:sala3d-datos → actualizar)
-  useEffect(() => {
-    if (TIPO_SALA_3D[tab as string]) return; // insignia: sus paneles mandan sus datos
-    const seccion = sectionOfTab(tab);
-    const hex = accentOfSection(seccion.key);
-    window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
-      detail: {
-        tab,
-        titulo: TABS[tab]?.short ?? String(tab),
-        color: parseInt(hex.replace("#", ""), 16) || 0x7ab8ff,
-        tipo: "generica",
-        lineas: lineasInformativas(tab),
-        stats: statsAgente,
-      },
-    }));
-  }, [tab, hostCapsula, statsAgente]);
 
-  // ════════════════════════════════════════════════════════════
-  // v157 HOLO TOTAL — «los módulos ya 100% 3D, nada 2D»: TODOS los módulos
-  // nacen en 3D puro (genéricas incluidas) — la consola DOM se guarda y el
-  // chip la devuelve con un toque. dataset.vgHolo es la fuente única.
-  // ════════════════════════════════════════════════════════════
-  const insigniaTab = !!TIPO_SALA_3D[tab as string];
-  const [holoOn, setHoloOn] = useState(false);
-  useEffect(() => {
-    const on = !!hostCapsula && !modoMundo;
-    setHoloOn(on);
-    document.documentElement.dataset.vgHolo = on ? "1" : "0";
-    window.dispatchEvent(new CustomEvent("vg:sala3d-holo", { detail: { on } }));
-    return () => { document.documentElement.dataset.vgHolo = "0"; };
-  }, [tab, hostCapsula, insigniaTab, modoMundo]);
-  const toggleHolo = useCallback(() => {
-    setHoloOn((v) => {
-      const n = !v;
-      document.documentElement.dataset.vgHolo = n ? "1" : "0";
-      window.dispatchEvent(new CustomEvent("vg:sala3d-holo", { detail: { on: n } }));
-      return n;
-    });
-  }, []);
-
-  // ══════════════════════════════════════════════════════════
-  // v165 EL INTERRUPTOR 2D ↔ 3D — el Dueño manda: «pueda poner el
-  // vanguard 2D o 3D». A 2D: el universo WebGL DUERME (remontado limpio)
-  // y la consola plana clásica manda. A 3D: el mundo remonta, el
-  // reencuentro evita repetir la ceremonia y la sala del módulo activo
-  // se ancla sola (el dispatch vg:sala3d corre al nacer la cápsula).
-  // ══════════════════════════════════════════════════════════
-  const alternarModo = useCallback(() => {
-    setModo2D((v) => {
-      const a2D = !v;
-      if (a2D && modoMundoRef.current) {
-        // el MODO MUNDO muere con el universo (cero capas peleando)
-        modoMundoRef.current = false;
-        setModoMundo(false);
-        window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
-      }
-      document.documentElement.dataset.vgModo = a2D ? "2d" : "3d";
-      // v169.0 LA PREFERENCIA DEL PILOTO: el modo se recuerda —
-      // recargar en 2D nace en 2D (la consola ya no vuelve sola al universo)
-      try { localStorage.setItem("vanguard-modo", a2D ? "2d" : "3d"); } catch {}
-      toast(a2D ? "VANGUARD 2D" : "VANGUARD 3D", {
-        description: a2D
-          ? "Consola plana clásica · el botón 3D (o VER EN 3D de cada módulo) te devuelve al universo"
-          : "El universo completo de vuelta · tu módulo activo aterriza en su sala 3D",
-      });
-      return a2D;
-    });
-  }, []);
-
-  // v169.0 RESTAURACIÓN DEL MODO: si el piloto eligió 2D, la consola plana
-  // nace en 2D — el universo ni siquiera monta ({!modo2D && <MundoWebGL/>}).
-  // Sin memoria: la ciudad sigue siendo el hogar (default 3D).
-  useEffect(() => {
-    try {
-      if (localStorage.getItem("vanguard-modo") === "2d") {
-        setModo2D(true);
-        document.documentElement.dataset.vgModo = "2d";
-        // v169.0: la consola plana está VIVA — señal para la cortina y el
-        // vigilante de errores (el mundo WebGL no va a dar su latido)
-        (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
-      }
-    } catch {}
-  }, []);
 
   // v170.0 PREFETCH DE MÓDULOS: el riel y la franja piden el chunk al pasar
   // el ratón (vg:prefetch-tab) — abrir una sala pasa a ser instantáneo.
@@ -1108,32 +788,6 @@ export default function Home() {
     return () => window.removeEventListener("vg:prefetch-tab", alPrefetch);
   }, []);
 
-  // v165 — VER EN 3D desde CUALQUIER módulo 2D (botón del PanelHeader):
-  // despierta el mundo y la sala del módulo activo se ancla sola
-  // v171 TOAST HONESTO: solo 4 salas viven en una ZONA del universo (ZONAS_WGL)
-  // — si la sala activa no tiene zona, el mundo aterriza en la CIUDAD y la
-  // sala se toca por raycast (edificio). El toast ya no promete un vuelo que
-  // no va a ocurrir (queja del QA del merge v168).
-  useEffect(() => {
-    const ir3D = () => {
-      setModo2D((v) => {
-        if (!v) {
-          toast.info("Ya estás en el universo 3D", { description: "El chip «Solo 3D» guarda la consola dentro del mundo" });
-          return v;
-        }
-        document.documentElement.dataset.vgModo = "3d";
-        try { localStorage.setItem("vanguard-modo", "3d"); } catch {}
-        if (ZONAS_WGL[tab as string]) {
-          toast("VOLANDO AL MÓDULO EN 3D", { description: "El mundo despierta y tu sala se ancla con el contenido completo" });
-        } else {
-          toast("EL UNIVERSO DESPIERTA", { description: "Toca el edificio de este módulo en la ciudad para entrar a su sala 3D" });
-        }
-        return false;
-      });
-    };
-    window.addEventListener("vg:modo-3d", ir3D);
-    return () => window.removeEventListener("vg:modo-3d", ir3D);
-  }, [tab]); // v171: el toast depende de la sala ACTIVA (sin closure viejo)
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
   // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.
@@ -1246,122 +900,13 @@ export default function Home() {
     handleTabChange("nueva");
   }, [handleTabChange]);
 
-  // ════════════════════════════════════════════════════════
-  // v144 HOLOGRAMA TOTAL — EL PUENTE DE MANDO.
-  // La Casa alimenta al puente 3D (pestañas + etiquetas i18n) y obedece sus
-  // mandos: cada placa del puente despacha vg:holo-accion y aquí se ejecuta.
-  // (tras cerrarPestana y abrirNueva: las deps existen aquí)
-  // ════════════════════════════════════════════════════════
-  // ════════════════════════════════════════════════════════
-  // v154 LA CIUDAD-MENÚ — el MENÚ de Vanguard es una CIUDAD 3D:
-  // ① la Casa envía el catálogo de secciones al mundo (cada una con su
-  //   color de identidad) para que el universo levante sus edificios;
-  // ② MENU (placa del puente, tecla M, botones del chrome) YA NO abre el
-  //   panel DOM: abre la ciudad de secciones — un edificio con figura 3D
-  //   por sección, y ENTRAS a cada uno como si fuera una ciudad. El
-  //   MegaMenu DOM queda como respaldo si el mundo 3D no está vivo.
-  // ════════════════════════════════════════════════════════
-  const abrirMenu = useCallback(() => {
-    if (hostCapsula) window.dispatchEvent(new CustomEvent("vg:ciudad-toggle"));
-    else setMenuOpen(true);
-  }, [hostCapsula]);
+  const abrirMenu = useCallback(() => setMenuOpen(true), []);
 
-  // el catálogo de secciones viaja al mundo 3D (se envía al montar el
-  // puente y cada vez que el idioma renombra las secciones)
-  // v162 LA MEGAPÓLIS: viajan TODAS las pestañas de cada sección (antes
-  // solo 5) — los 147 módulos del sitio tienen casa en la ciudad
-  useEffect(() => {
-    if (!hostCapsula) return;
-    const secciones = SECTIONS.map((s) => ({
-      key: s.key,
-      label: s.short,
-      color: accentOfSection(s.key),
-      tabs: s.tabs.slice(0, 24).map((tb) => ({ key: tb.key as string, label: tb.short })),
-    }));
-    window.dispatchEvent(new CustomEvent("vg:holo-ciudad", { detail: { secciones } }));
-  }, [hostCapsula]);
 
-  useEffect(() => {
-    if (!hostCapsula) return;
-    const onHolo = (e: Event) => {
-      const d = (e as CustomEvent).detail || {};
-      const acc = String(d.accion ?? "");
-      const key = d.key as TabKey | undefined;
-      switch (acc) {
-        case "tab": if (key) handleTabChange(key); break;
-        case "cerrar": if (key) cerrarPestana(key); break;
-        case "nueva": abrirNueva(); break;
-        case "buscar": setSearchOpen(true); break;
-        case "menu": abrirMenu(); break;
-        case "cuenta": setAccountOpen(true); break;
-        case "ajustes": setSettingsOpen(true); break;
-      }
-    };
-    window.addEventListener("vg:holo-accion", onHolo);
-    return () => window.removeEventListener("vg:holo-accion", onHolo);
-  }, [hostCapsula, handleTabChange, cerrarPestana, abrirNueva, abrirMenu]);
 
-  // ════════════════════════════════════════════════════════
-  // v161 LA CIUDAD VIVA — LA RECOMPENSA DEL EXPLORADOR: hallar TODOS los
-  // datos ocultos de la ciudad paga en monedas y XP (una vez por sesión;
-  // el mundo 3D hace de árbitro, la Casa paga y lo celebra).
-  // ════════════════════════════════════════════════════════
-  useEffect(() => {
-    if (!hostCapsula) return;
-    const onRecompensa = (e: Event) => {
-      const d = (e as CustomEvent).detail || {};
-      const coins = Number(d.coins ?? 150);
-      const xp = Number(d.xp ?? 50);
-      const st = useGameStore.getState();
-      st.addCoins(coins, "Expedición completa en la Ciudad");
-      st.addXp(xp);
-      toast.success(`EXPEDICIÓN COMPLETA · +${coins} monedas +${xp} XP`, {
-        description: "Hallaste todos los datos ocultos de la ciudad",
-      });
-    };
-    window.addEventListener("vg:ciudad-recompensa", onRecompensa);
-    return () => window.removeEventListener("vg:ciudad-recompensa", onRecompensa);
-  }, [hostCapsula]);
 
-  // las PESTAÑAS abiertas viajan al puente (placas 3D con letras extruidas)
-  useEffect(() => {
-    if (!hostCapsula) return;
-    const lista = pestanas.map((k) => ({
-      key: k as string,
-      label: TABS[k]?.short ?? k,
-      color: accentOfSection(sectionOfTab(k).key),
-    }));
-    window.dispatchEvent(new CustomEvent("vg:holo-pestanas", { detail: { lista, activa: tab } }));
-  }, [pestanas, tab, hostCapsula]);
 
-  // las ETIQUETAS del puente en el idioma de la Casa (8 idiomas)
-  useEffect(() => {
-    if (!hostCapsula) return;
-    window.dispatchEvent(new CustomEvent("vg:holo-etiquetas", { detail: {
-      buscar: t("holo.buscar"),
-      menu: t("holo.menu"),
-      cuenta: t("holo.cuenta"),
-      ajustes: t("holo.ajustes"),
-      nueva: "+",
-      hintEntrar: t("holo.entrar"),
-      salir: t("holo.salir"),
-      hintMundo: t("holo.hintMundo"),
-      pieIzq: `${t("footer.system")} · ${APP_VERSION_LABEL}`,
-      pieDer: "WASD VUELO · ARRASTRA MIRAR · M MENU",
-    } }));
-  }, [hostCapsula, t]);
 
-  // el TÍTULO DE LA PÁGINA también es holograma — pulsa con la Casa viva
-  useEffect(() => {
-    if (!hostCapsula) return;
-    const marcos = ["\u25E4", "\u25E2", "\u25E3", "\u25E5"];
-    let i = 0;
-    const id = window.setInterval(() => {
-      i++;
-      document.title = `${marcos[i % marcos.length]} VANGUARD \u00B7 HOLOGRAMA`;
-    }, 1600);
-    return () => window.clearInterval(id);
-  }, [hostCapsula]);
 
   // v107.0 GRUPOS DE CROMO: reordenar arrastrando + cerrar VARIAS (grupos y
   // "cerrar las demás") en UNA sola escritura de estado — cerrar de a una con
@@ -1600,18 +1145,6 @@ export default function Home() {
   }, [t]);
 
   // v141: Esc también sale del MODO MUNDO (el mundo re-centra su pose solo)
-  useEffect(() => {
-    if (!modoMundo) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        modoMundoRef.current = false;
-        setModoMundo(false);
-        window.dispatchEvent(new CustomEvent("vg:wgl-modo-sync", { detail: { on: false } }));
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [modoMundo]);
 
   // Esc sale de la inmersión; si el usuario sale del fullscreen nativo con Esc,
   // fullscreenchange mantiene el estado coherente.
@@ -1698,11 +1231,6 @@ export default function Home() {
         <i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i />
         <b className="v139-asta" />
       </div>
-      {/* v72.0: intro cinematográfica — ahora vive DENTRO de MundoWebGL como
-          fallback honesto sin WebGL (v140): la entrada AAA la reemplaza.
-          v165: con el INTERRUPTOR en 2D el mundo duerme — la consola plana
-          manda; al volver a 3D el mundo remonta y reencuentra al piloto. */}
-      {!modo2D && <MundoWebGL tabInicial={tab} />}
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
@@ -1712,11 +1240,10 @@ export default function Home() {
       <MotorLuxe />
       {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
       <MotorArquitecto />
-      {/* v108.0 MODO INMERSIÓN / v141 MODO MUNDO / v144 HOLOGRAMA TOTAL:
-          con el mundo WebGL vivo (hostCapsula) EL CHROME PLANO ENTERO se
-          aparta — el puente de mando 3D (mundo-webgl) lo reemplaza completo.
-          Sin WebGL: display:contents cuando no — cero cajas fantasma. */}
-      <div className={ocultarCasa || inmersion || modoMundo || hostCapsula ? "hidden" : "contents vg-casco-v140"}>
+      {/* v108.0 MODO INMERSIÓN: pantalla completa honesta de la consola plana.
+          v173.0: el mundo WebGL se retiró — el chrome plano ES la casa y solo
+          duerme si el piloto pide inmersión. Cero cajas fantasma. */}
+      <div className={inmersion ? "hidden" : "contents vg-casco-v140"}>
       <HudHeader
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenLog={() => setLogOpen(true)}
@@ -1748,23 +1275,11 @@ export default function Home() {
       <EasterEggs />
       </div>
 
-      {/* v144 HOLOGRAMA TOTAL: la franja viva (StatsTicker + LiveTitle) vive
-          DENTRO del universo — el RAIL holográfico CSS3D acoplado a la cámara.
-          Sin mundo: DOM plano de siempre. */}
-      {hostRail ? (
-        createPortal(
-          <>
-            <LiveTitle />
-            <StatsTicker />
-          </>,
-          hostRail,
-        )
-      ) : (
-        <div className={ocultarCasa || hostCapsula || inmersion || modoMundo ? "hidden" : "contents"}>
-          <LiveTitle />
-          <StatsTicker />
-        </div>
-      )}
+      {/* v173.0: la franja viva vuelve al DOM plano — el rail holográfico murió con el universo */}
+      <div className={inmersion ? "hidden" : "contents"}>
+        <LiveTitle />
+        <StatsTicker />
+      </div>
 
       {/* v108: píldora flotante para salir de la inmersión — siempre a mano */}
       {inmersion && (
@@ -1797,22 +1312,11 @@ export default function Home() {
       <TransicionMaestra tabKey={tab} label={APP_VERSION_LABEL} />
       <CineVivo />
 
-      {/* v143 LA CASA EN EL MUNDO: con WebGL vivo, el CUERPO de la Casa
-          (SalaViva) vive DENTRO del universo — portal React hacia la CÁPSULA
-          CSS3D que el mundo acopla a la zona donde aterriza la cámara.
-          Sin WebGL, el MISMO árbol vive en el main plano (fallback honesto). */}
-      {hostCapsula
-        ? createPortal(
-            <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion || modoMundo} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />,
-            hostCapsula,
-          )
-        : (
-          <main className={ocultarCasa ? "hidden" : "contents"} aria-label="Contenido de Vanguard">
-            <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion || modoMundo} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
-          </main>
-        )}
+      <main className="contents" aria-label="Contenido de Vanguard">
+        <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
+      </main>
 
-      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${ocultarCasa || inmersion || modoMundo || hostCapsula ? "hidden" : ""}`}>
+      <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion ? "hidden" : ""}`}>
         <div className="hairline-gradient absolute top-0 left-0 right-0 opacity-70" aria-hidden />
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] sm:text-xs font-mono text-muted-foreground">
           <div className="flex items-center gap-2">
@@ -1834,112 +1338,30 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* v140 MUNDO WEBGL: EL NAVBAR DE ZONAS — los 4 íconos siempre visibles;
-          tocarlos no cambia de página: vuela la cámara a esa zona del mundo.
-          v141: el 5º botón MUNDO aparta la Casa y deja solo el universo 3D.
-          v143: con mundo vivo, la consola FLOTA EN EL ESPACIO (CSS3D acoplada
-          a la cámara — respira con el warp); sin mundo, DOM fijo de siempre. */}
-      {/* v159 DIETA HUD: en móvil la barra de zonas DOM se retira — LA CIUDAD
-          es el menú de secciones (aterrizaje automático + botón MENU del casco);
-          sin WebGL o en escritorio la barra sigue como respaldo */}
-      {!capsulaMovil && (hostNav
-        ? createPortal(
-            <NavZonas flotante zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
-              const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
-              const destino = mapa[z];
-              if (destino) handleTabChange(destino);
-            }} />,
-            hostNav,
-          )
-        : (
-          <NavZonas zona={wglZona} modo={modoMundo} onMundo={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))} onIr={(z) => {
-            const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" };
-            const destino = mapa[z];
-            if (destino) handleTabChange(destino);
-          }} />
-        ))}
+      {/* v173.0: navbar de zonas plana — 4 accesos rápidos; el MUNDO se retiró con el universo */}
+      <NavZonas activa={ZONAS_WGL[tab as string] ?? 0} onIr={(z) => { const mapa: Record<number, TabKey> = { 1: "inicio", 2: "crisis", 3: "arcade", 4: "perfil" }; const destino = mapa[z]; if (destino) handleTabChange(destino); }} />
 
-      {/* v165 EL INTERRUPTOR 2D ↔ 3D — fijo, en TODAS las pantallas y
-          modos (ciudad incluida): un toque alterna la consola plana y el
-          universo. El modo activo brilla en oro. */}
-      {!ceremonia && (
-        <button
-          type="button"
-          className="vg165-switch"
-          data-wgl-panel
-          onClick={alternarModo}
-          aria-pressed={!modo2D}
-          aria-label={modo2D ? "Activar Vanguard 3D" : "Activar Vanguard 2D"}
-          title={modo2D ? "Volver al universo 3D" : "Consola plana 2D"}
-        >
-          <span className={!modo2D ? "" : "vg165-on"}>2D</span>
-          <i aria-hidden />
-          <span className={!modo2D ? "vg165-on" : ""}>3D</span>
-        </button>
-      )}
 
-      {/* v157 HOLO TOTAL — el chip vive en TODOS los módulos: la sala
-          volumétrica ES el módulo; un toque devuelve la consola de datos
-          (2D), otro la guarda otra vez. Pequeño, holo, zona de pulgar. */}
-      {hostCapsula && !modoMundo && !inmersion && !ceremonia && (
-        <button
-          type="button"
-          className="vg156-holo-chip"
-          data-wgl-panel
-          onClick={toggleHolo}
-          aria-pressed={holoOn}
-          aria-label={holoOn ? "Mostrar panel de datos" : "Volver al módulo 3D"}
-        >
-          <span className="vg156-holo-ico" aria-hidden />
-          {holoOn ? "Ver datos" : "Solo 3D"}
-        </button>
-      )}
 
-      {/* v141 MODO MUNDO: el único HUD visible — salir + la invitación a entrar */}
-      {modoMundo && (
-        <div className="vg141-modo-ui">
-          <button
-            type="button"
-            className="vg141-modo-salir"
-            onClick={() => window.dispatchEvent(new CustomEvent("vg:wgl-modo-toggle"))}
-            data-wgl-panel
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
-              <polyline points="4 14 10 14 10 20" />
-              <polyline points="20 10 14 10 14 4" />
-              <line x1="14" y1="10" x2="21" y2="3" />
-              <line x1="3" y1="21" x2="10" y2="14" />
-            </svg>
-            SALIR DEL MUNDO
-            <span>Esc</span>
-          </button>
-          <p className="vg141-modo-hint">TOCA UN PORTAL · ENTRA A UN MUNDO 3D</p>
-        </div>
-      )}
 
       {/* v145: con mundo vivo, el MENÚ es una PROYECCIÓN en el espacio
           (ventana holo acoplada a la cámara); sin mundo, capa plana de siempre */}
-      {hostVentana
-        ? createPortal(
-            <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />,
-            hostVentana,
-          )
-        : <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />}
+      <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav.
           v145: también proyectada en la ventana holo cuando el universo vive */}
-      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} contenedor={hostVentana} />
-      <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} contenedor={hostVentana} />
+      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
+      <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} />
       {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
-      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} contenedor={hostVentana} />
-      <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} contenedor={hostVentana} />
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <ActivityLogModal open={logOpen} onOpenChange={setLogOpen} />
       {/* v145 P2: con mundo vivo, la RADIO y el ESTADO del enlace viven en
           las esquinas 3D del plano de mando (mini-pantallas CSS3D) */}
       {/* v159 DIETA HUD: en cápsula móvil, PULSO/RADIO/cofre se retiran —
           sus datos viven en el HUD 3D y en las esquinas del plano de mando;
           la pantalla móvil queda con UNA capa de información, no cinco */}
-      {!capsulaMovil && (hostWidIzq ? createPortal(<RealtimeStatus />, hostWidIzq) : <RealtimeStatus />)}
-      {!capsulaMovil && (hostWidDer ? createPortal(<MusicPlayer />, hostWidDer) : <MusicPlayer />)}
-      {!capsulaMovil && <FortunaLluvia />}
+      <RealtimeStatus />
+      <MusicPlayer />
+      <FortunaLluvia />
       <ConnectionWatchdog />
       {/* v34 — recepción del recluta: procesa ?ref= y da bono de bienvenida */}
       <ReferralLanding />

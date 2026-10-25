@@ -369,6 +369,47 @@
 //     como acción). Mismo estante (7 móvil / 9 escritorio) pero el resto
 //     alcanzable: densidad primero (ley móvil), cero filas perdidas.
 // Herencia v171.0 LA FILA CERO y todo lo anterior. Guards v167 intactos.
+// ════════════════════════════════════════════════════════════
+// v174.0 LA CASA EN VIVO (ia2 · REENUMERADA: el remoto tomó v173.0 con LA
+//         AGENCIA CENTRAL mientras esta ronda navegaba — misma ley v170/v172.
+//         ORDEN DIRECTA del Dueño:
+//         «los mejores gráficos, que se actualice solo, copia los sitios
+//         parecidos sin vergüenza y ELIMINA ese modo 3D»). Nota: la ronda
+//         v173.0 remota (LA AGENCIA CENTRAL) trajo una SALA 3D de mapa
+//         mundial — muere con el universo por la misma orden; su obra 2D
+//         (motor de impacto, EL CENTRO MUNDIAL, /api/news enriquecida) se
+//         conserva íntegra. Dos cirugías:
+// (0) ADIÓS AL UNIVERSO: mundo-webgl.tsx (6.411 líneas), salas-3d.ts,
+//     mundos-3d.ts, hud-3d.ts, ciudad-hero.tsx e intro-cinematica.tsx
+//     salen del repo; page.tsx pierde 29 KB de maquinaria 3D en 51
+//     operaciones atómicas (ceremonia, cápsula, holo, modo mundo,
+//     interruptor 2D/3D, VER EN 3D, portales, dispatchs vg:sala3d*).
+//     El emisor use-sala3d-contenido duerme con la MISMA firma — 129
+//     paneles sin cambiar un byte. NavZonas se trasplanta a nav-zonas.tsx
+//     (4 zonas, sin botón MUNDO). La cortina de arranque ya no espera al
+//     universo: la casa plana se funde sola (solo /vanguard2 sigue pesado).
+// (1) MERCADO REAL EN VIVO (los grifos de los grandes sitios, sin keys):
+//     NUEVA /api/mercado — cripto vía Binance (batch 24hr + klines 1m),
+//     acciones/índices/divisas vía Yahoo Finance chart — cache en memoria
+//     (4s cripto / 30s yahoo / 45s velas) y fallback simulado sembrado si
+//     un grifo se corta: 32 activos (10 cripto, 10 acciones, 6 índices,
+//     6 divisas) con chispa de 60 puntos. NUEVO hook useMercadoVivo
+//     (latido 5s, pausa honesta con la pestaña dormida, flash sube/baja).
+// (2) EL HUB «MERCADO EN VIVO» — héroe de la portada: cinta de tickers
+//     que camina sola (marquee 48s, pausa al hover), gráfico de velas 1m
+//     con volumen (lightweight-charts, el motor open-source de TradingView,
+//     ya estaba en el package.json), lista de seguimiento con chispas SVG,
+//     pestañas por clase y flash verde/rojo en cada tick. QA con navegador
+//     real: BTC $80-81k en vivo, velas reales de Binance, watchlist 32
+//     activos, click NVDA cambia el gráfico, móvil 390px sin overflow.
+// (3) LA LECCIÓN DEL DIORAMA: la cuna-v139 respira (rotateX) sobre un
+//     escenario de 20.000px y proyecta el módulo superior FUERA del
+//     viewport al compás del ciclo (medidas fantasma -9.999/-17.829).
+//     Un terminal de datos exige horizonte firme: flotador y cuna se
+//     estabilizan donde vive .vg173-terminal (:has, gate data-vg-3d).
+// Herencia v172.0 y todo lo anterior. El three.js que queda es de las
+// piezas propias (teatro-guerra, hangar, zona-cero, globos): no es el modo.
+// ════════════════════════════════════════════════════════════
 
 // v173.0: LA AGENCIA CENTRAL (RENUMERADA: el remoto tomó v172.0 con EL PULSO DE LA PARIDAD antes del retiro del empleado 2 — la crónica queda v171 → v172 → v173) — el mandato del Dueño: «que Vanguard sea el
 //         MAYOR CENTRO DE NOTICIAS DEL MUNDO, con noticias en vivo por
@@ -402,36 +443,71 @@
 //     marcador abre el lector en la Casa (protocolo Casa⇄Mundo, ley #25).
 // (5) NADA SE ROMPE: news-panel, OJO DE DIOS, verdades y las 129 salas 3D
 //     siguen vivos — el motor de impacto solo añade capa sobre la verdad.
-// v174.0 EL CINE DE VANGUARD — la entrada GTA de noticias + la cura del cuelgue.
-//     El Dueño: «vanguard dura horas cargando y ya no avanza y no hay intro
-//     como gta en vanguard». Dos frentes, una ronda:
-// (1) EL CINE DE VANGUARD (mundo-webgl): la ceremonia de entrada abre con 6
-//     PLACAS GTA-STYLE de noticias — foto real (/assets/real, /imagenes-reales,
-//     cero red) con duotono del acento de CADA conflicto, tipografía condensada
-//     en itálica (Rajdhani 700, clamp 2.05rem→5.4rem), ceja de agencia + dato
-//     duro con filo de acento, Ken Burns 9s (transform/opacity SOLO: 60 FPS
-//     móvil), barras de cine letterbox, progreso GTA por segmentos y SALTAR
-//     siempre visible. RUSIA—UCRANIA (oro) → LA REGIÓN EN LLAMAS (fuego) → LA
-//     RUTA DEL PETRÓLEO (azul) → QUIÉN MANDA (violeta) → NO DUERME. REPORTA.
-//     (cian) → EL CENTRO DE NOTICIAS (oro, puente al título). Auto-avance
-//     2.15s por placa; tocar avanza; reduced-motion se lo salta (honesto).
-// (2) LA ARQUITECTURA DE LA ENTRADA: la ceremonia (estrellas → logo → tagline
-//     → hint) sale de la secuencia de montaje y es función propia
-//     (arrancarCeremonia) que el cine llama al terminar — cineFinRef guard
-//     anti-doble-fin (tap y auto-timer pueden chocar en la última placa;
-//     nacerLogo jamás corre dos veces). Reencuentro NO repite cine.
-//     El raycast y la rueda IGNORAN el cine (selector .vg174-cine): tocar una
-//     placa nunca dispara vuelos del mundo.
-// (3) EL CUELGUE DEL SERVIDOR (causa raíz hallada en QA): el dev `next dev`
-//     (1.8GB RSS) murió silenciosamente (OOM-killer) durante la prueba móvil
-//     — el teléfono del Dueño se quedaba «cargando horas»: el server ya no
-//     existía. Cura: build de producción + scripts/serve.mjs --prod (doble
-//     fork huérfano hacia PPID 1, ~200MB RSS, inmune al OOM-killer, recreado
-//     en v169). El guard de la cortina (20s → «toca para despertarlo») queda
-//     como red de seguridad del cliente.
-// (4) NADA SE ROMPE: la ceremonia v168 intacta tras el cine, el fallback sin
-//     WebGL (v72) intacto, guards v167 (ciudadCerradaAlgunaVez + watchdog)
-//     intactos, rewrite /socket.io intacto, las 16 salas insignia intactas.
-export const APP_VERSION = "v174.0";
-export const APP_CODENAME = "EL CINE DE VANGUARD";
+
+// v175.0: LAS INTROS GTA (ia1 · REENUMERADA: el remoto tomó v174.0 con LA
+//         CASA EN VIVO mientras esta ronda navegaba — misma ley v170/v172.
+//         Ronda del Dueño: «que Vanguard tenga intros hermosas, diferentes,
+//         como las de GTA pero de noticias, personajes») — la tarjetería de
+//         cine de la casa, montada sobre las dos puertas que ya existían
+//         (nada nuevo que aprender):
+// (1) LA PLACA DE PERSONAJE (intros-gta.tsx · IntroGtaPersonaje): el
+//     cambio de personaje de GTA V al elegir un rostro en LOS ROSTROS DEL
+//     PODER — letterbox de cine entra por arriba y por abajo, la bandera
+//     respira con zoom Ken Burns, el NOMBRE aterriza en dos tiempos
+//     (pila pequeña + apellido GIGANTE con sombra dura), el color del
+//     corte de poder (tronos/dinero/tribunal/nuevos) tiñe la escena, la
+//     placa de ubicación desliza con coordenadas reales al estilo carta
+//     naval y las tres barras de atributos (PODER/ALCANCE/SEÑALES EN
+//     VIVO) suben como las habilidades del juego. Suena en la consola al
+//     elegir cada rostro (el oyente vg:sala3d-accion del panel duerme con
+//     el universo retirado — cuando despierte, la placa ya sabe sonar).
+// (2) LA PLACA DE NOTICIA (intros-gta.tsx · IntroGtaNoticia): la tarjeta
+//     de inicio de misión al abrir un cable en la SALA DE LECTURA —
+//     sello de LA AGENCIA CENTRAL con punto EN VIVO pulsando, el escalón
+//     del motor de impacto con su medidor llenándose (misma verdad que
+//     el ranking), el titular entrando PALABRA A PALABRA y la
+//     placa de fuente con bandera y credibilidad. Una vez por cable por
+//     sesión: quien ya la vio entra directo a leer.
+// (3) CONTRATO DE LA CASA intacto: portal propio al body (lección v116),
+//     solo transform/opacity (las barras escalan con scaleX, nunca width,
+//     var --vg-stat), tap = saltar siempre, reduced-motion = no hay cine
+//     (kill-switch CSS + guard JS), móvil primero, z-300 bajo el tráiler;
+//     las clases v174gta-* conservan su nombre (patrón vg172-telemetria).
+// (4) NADA SE ROMPE: ni una línea del lector v116 ni del dossier v130
+//     cambió de comportamiento — las placas son capa pura sobre la verdad;
+//     compatible con LA CASA EN VIVO (sin modo 3D): las placas no tocan
+//     el universo, solo las puertas 2D que sobrevivieron a la cirugía.
+// v176.0: LAS FICHAS DE GUERRA (ia1 · la ronda del Dueño: «sí a todo — haz
+//         tarjetas de placas también, crea fichas coleccionables de conflictos
+//         mundiales, de noticias únicas de cada guerra») — la tercera tarjeta
+//         de la familia GTA (idea #1 del inbox #19) y el álbum que la guarda:
+// (1) EL CATÁLOGO (src/lib/fichas-guerra-data.ts): las 9 guerras del mapa
+//     conflictTag de /api/news (ukraine, gaza, lebanon, sudan, redsea, korea,
+//     taiwan, hormuz, sahel) como FICHAS COLECCIONABLES VG-01…VG-09: bandos,
+//     teatro, coordenadas, inicio histórico verificable y contexto — los datos
+//     históricos son fijos y citables; lo que respira lo pone el feed real.
+// (2) LA RAREZA VIVA — la decrece el motor de impacto con los cables de HOY
+//     de ESA guerra (LEYENDA ≥80 · ÉPICA ≥64 · RARA ≥48 · COMÚN ≥32 ·
+//     SILENCIO sin señales): la misma verdad del ranking del Centro Mundial,
+//     una sola fuente, cero invención — sin cables, la carta duerme, no miente.
+// (3) LA NOTICIA ÚNICA — cada ficha porta el cable de mayor impacto de SU
+//     guerra con foto + pie + POR QUÉ IMPORTA + las señales del día (los
+//     cables de esa guerra) + el lector v116 — «noticias únicas de cada guerra».
+// (4) EL ÁLBUM (vg176-fichas): abrir una ficha la DESCUBRE — sello con fecha
+//     e intensidad del día, progreso X/9, contador de aperturas; persistencia
+//     con el escudo de la casa (storageBlindado) y REGISTRO EN EL REHIDRATADOR
+//     (la lección v171/v172: sin registro, la cerradura bloquea la escritura).
+// (5) LA PLACA DE CONFLICTO (intros-gta.tsx · IntroGtaConflicto) — la tercera
+//     tarjeta GTA: letterbox, los DOS BANDOS frente a frente (A ✕ B), sello
+//     de rareza de la colección, medidor de intensidad con la misma verdad
+//     del ranking, placa del teatro con coordenadas y las barras PULSO/
+//     FRESCURA/INTENSIDAD subiendo como las habilidades del juego; una vez
+//     por ficha por sesión (vg176-ficha-*, patrón vg174-gta-ultimo), tap =
+//     saltar, reduced-motion = no hay cine, portal al body, z-300.
+// (6) LA PUERTA — tab FICHAS en la sección INICIO junto al CENTRO MUNDIAL,
+//     prefetch real, i18n en 8 idiomas; el feed refresca cada 60s y la caché
+//     local sostiene el álbum si la red se corta.
+// Herencia v175.0 y todo lo anterior — 100% 2D, compatible con LA CASA EN VIVO.
+export const APP_VERSION = "v176.0";
+export const APP_CODENAME = "LAS FICHAS DE GUERRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

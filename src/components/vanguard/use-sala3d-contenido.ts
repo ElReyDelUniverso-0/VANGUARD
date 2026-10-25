@@ -1,60 +1,45 @@
 "use client";
 
 // ============================================================
-// v148.0 — EMISOR UNIVERSAL DE SALAS DE CONTENIDO
-// El puente entre los paneles DOM y el mundo 3D para TODAS las
-// ramas sin constructor insignia: el panel manda sus filas reales
-// (texto, valor, barra, imagen) por vg:sala3d-datos con tipo
-// «contenido» y el mundo las levanta en volumen (salas-3d.ts,
-// construirContenido). Con firma anti-churn: solo emite cuando
-// los datos CAMBIAN de verdad.
+// v173.0 — EL EMISOR DUERME (el universo 3D se retiró)
+// Antes: puente entre los paneles DOM y el mundo WebGL — cada
+// panel emitía sus filas por vg:sala3d-datos y el mundo las
+// levantaba en volumen. Hoy el mundo ya no existe, pero los 129
+// paneles de la Casa siguen llamando a este hook: lo mantenemos
+// con la MISMA firma (cero cambios en los paneles) y el emisor
+// en reposo. El tipo FilaContenido3D vive aquí desde v173
+// (antes venía de salas-3d.ts, retirado con el universo).
 // ============================================================
-import { useEffect, useRef } from "react";
-import type { FilaContenido3D } from "./salas-3d";
 
-// v165: los paneles importan la fila de aquí — el emisor es la puerta única
-export type { FilaContenido3D } from "./salas-3d";
+// La fila que los paneles entregan (convención v148/v165, intacta)
+export interface FilaContenido3D {
+  t: string;              // texto de la fila
+  v?: string;             // valor (oro, a la derecha)
+  p?: number;             // barra 0..100 (volumen proporcional)
+  img?: string;           // url de imagen
+  color?: string;         // acento hexadecimal de la fila
+  d?: string;             // v165 EL DETALLE — info que la proximidad revelaba
+  a?: string;             // v165 LA ACCIÓN — comprar/invertir/vender…
+}
 
 export function emitirSalaContenido(
-  tab: string,
-  titulo: string,
-  colorHex: string,
-  resumen: string,
-  filas: FilaContenido3D[],
+  _tab: string,
+  _titulo: string,
+  _colorHex: string,
+  _resumen: string,
+  _filas: FilaContenido3D[],
 ) {
-  try {
-    const color = parseInt(colorHex.replace("#", ""), 16) || 0x7ab8ff;
-    window.dispatchEvent(new CustomEvent("vg:sala3d-datos", {
-      detail: { tab, titulo, color, tipo: "contenido", resumen, filas },
-    }));
-  } catch { /* el mundo no está: el panel vive igual */ }
+  // v173.0: el mundo 3D se retiró — emisor en reposo.
+  // La firma se conserva para que los 129 paneles no cambien ni un byte.
 }
 
 export function useSala3DContenido(
-  tab: string,
-  titulo: string,
-  colorHex: string,
-  resumen: string,
-  filas: FilaContenido3D[],
+  _tab: string,
+  _titulo: string,
+  _colorHex: string,
+  _resumen: string,
+  _filas: FilaContenido3D[],
 ) {
-  const sig = `${resumen}|${JSON.stringify(filas)}`;
-  const last = useRef("");
-  const vivo = useRef({ tab, titulo, colorHex, resumen, filas });
-  vivo.current = { tab, titulo, colorHex, resumen, filas };
-  useEffect(() => {
-    if (last.current === sig) return;
-    last.current = sig;
-    emitirSalaContenido(tab, titulo, colorHex, resumen, filas);
-  }, [sig, tab, titulo, colorHex]);
-  // la carrera de arranque: si el mundo nace DESPUÉS de este panel, el
-  // evento se perdió — al aparecer la cápsula se re-emite el contenido vivo
-  useEffect(() => {
-    const reemit = () => {
-      last.current = "";
-      const v = vivo.current;
-      emitirSalaContenido(v.tab, v.titulo, v.colorHex, v.resumen, v.filas);
-    };
-    window.addEventListener("vg:wgl-capsula", reemit);
-    return () => window.removeEventListener("vg:wgl-capsula", reemit);
-  }, []);
+  // v173.0: sin universo que escuchar, el hook es un no-op honesto.
+  // (El anti-churn, el JSON.stringify y los listeners murieron con él.)
 }
