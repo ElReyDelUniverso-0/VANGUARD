@@ -2708,6 +2708,26 @@ Stage Summary:
 - El riel cierra el círculo de navegación: fila cero persistente con los favoritos del dueño, veracidad en 8 idiomas y un mundo 3D que ya ejecuta la economía real (v168 fusionado). Pendiente para próximas rondas 2D: modo lectura (tipografía óptima en noticias), command palette con acciones, riel sincronizado con grupos de cromo, QA de la restauración 2D en dispositivo real.
 
 ---
+Task ID: ia1-solo-1
+Agent: main (ia1 — única casa: el Dueño retiró al empleado 2, Vanguard es obra de una sola casa)
+Task: v173.0 LA AGENCIA CENTRAL (RENUMERADA: el remoto tomó v172.0 con EL PULSO DE LA PARIDAD de ia2 antes del retiro — integrada por rebase conservando telemetría 3D/2D + cascada + paginación 3D universal; crónica v171→v172→v173) — «que Vanguard sea el mayor centro de noticias del mundo, con noticias en vivo por importancia e impacto, cada una con su pie de foto e información, y mapas interactivos 3D en primera persona para ver gráficos de guerra y noticias en vivo» + rescatar lo bueno eliminado
+
+Work Log:
+- Baseline: main en v171.0 (4fdf3ff), tsc 0; git fetch trajo rama remota ia2/v172.0 (IGNORADA por orden del Dueño — solo main manda). El número v172.0 se toma para main.
+- (1) MOTOR DE IMPACTO — nuevo src/lib/impacto.ts (~330 líneas): scoreImpacto 0-100 determinista (30 pesos de vocabulario de guerra ES/EN + etiqueta táctica + conflictTag +10 + peso de ~70 países + credibilidad de fuente + decaimiento por frescura), TIERS URGENTE≥80/CRÍTICO≥64/ALTO≥48/DESARROLLO≥32/CONTEXTO, pieDeFoto táctico honesto (tag·país—cobertura fuente·edad), resumenDe (summary real del RSS v105 o «POR QUÉ IMPORTA» redactado por plantilla determinista), COORDS de ~66 países para el mapa, pulsoDe (contadores por tier + países + fresco + impacto medio). Puro y compartido 2D/3D — una sola verdad.
+- (2) /api/news ENRIQUECIDA: función despachar() en las 4 salidas (archivo paginado, caché, GDELT crudo, upserts) — campos impacto/tier/pie/resumen/coords/paisNombre/edad ADITIVOS en toda respuesta (portada, OJO DE DIOS, verdades y las 129 salas 3D no se rompen); ?modo=centro → ranking por impacto con urgente (héroe) + pulso. Verificado en vivo: 48 cables, 1 urgente (CENTCOM/Irán imp 80), 7 críticos, 12 países, fresco 30 min.
+- (3) EL CENTRO MUNDIAL (2D) — nuevo panels/centro-panel.tsx (~430 líneas): HÉROE DE IMPACTO (foto grande + pie de foto con Camera icon + sello tier pulsante + medidor 0-100 + POR QUÉ IMPORTA + LEER INFORME/VER EN EL MAPA 3D), PULSO de 4 celdas (urgentes/países/más fresco/impacto medio), ESCALERA con contadores clicables, RANKING EN VIVO (miniatura + pie + bandera + barra de impacto + edad, badge NUEVO con toast), refresco 60s, caché local vanguard-centro-cache, LectorNoticia v116 (2D=verdad). Emite la sala mapa cada 30s (marcadores dedup por país, top 12) y escucha vg:sala3d-accion abrir→lector.
+- (4) LA SALA DEL MAPA MUNDIAL (3D) — TipoSala3D "mapa" + SalaMapa3D/MarcadorMapa3D + construirMapa (~330 líneas en salas-3d.ts): mesa de guerra inclinada (-0.62 rad) con textura REAL earth-dark.jpg (equirectangular), retícula cada 30°, borde de filo neón, barrido de escáner; cada marcador = viga cuya altura ES el impacto (0.10+0.34×score) + orbe icosaédrico girando + anillo de alarma pulsante si <2h + rótulo de país extruido + foto texturizada planoImagen3D (top 6, dieta móvil calidadBaja) + proxy raycast; PLACA DE PROXIMIDAD v165 compartida con billboard yaw que revela tier+impacto+fuente+edad / titular / PIE DE FOTO con fundido base×detOp (bug multiplicativo cazado en QA mental y corregido); cartel EN VIVO latiendo 1.4Hz + estado de Agencia; actualización por firma (id:impacto:enVivo) sin rebote; liberar completo (reg + mats + detalle).
+- (5) CABLEADO: tab-nav (TabKey "centro" + TABS.centro Siren/red + PRIMERA de la sección INICIO con desc nueva), page.tsx (dynamic import + render + TIPO_SALA_3D.centro="mapa" — 16ª insignia), home-panel (baldosa CENTRO MUNDIAL DE NOTICIAS abre el muro), i18n-tabs (label+short en los 8 idiomas), version.ts v172.0 LA AGENCIA CENTRAL, bitacora.ts entrada completa.
+- RESCATE COMPATIBLE: el mapa que v168 retiró de la intro VUELVE como SALA COMPLETA — cero bloqueo de ceremonia, todo el espectáculo dentro del mundo (el Dueño: «si eliminaste algo bueno agrégalo pero compatible con lo nuevo»).
+- INFRA QA: el dev de este sandbox OOMea (next dev 2.3GB vs 4GB RAM — dmesg lo confirmó) y el lanzador .zscripts corre la build standalone vieja; protocolo de la casa: bun run build (EXIT 0) + node scripts/serve.mjs --prod (~180MB, health v172.0).
+- BUG CAZADO EN QA: montarSala fallo TypeError (reading 'length') — el primer vg:sala3d llega SIN marcadores (llegan después por sala3d-datos); blindado con (p.marcadores || []) en construcción/actualizar/pintarEstado. tsc 0 tras el fix, rebuild EXIT 0.
+- QA E2E (agent-browser sobre producción): API centro con pulso real (12 países, impacto medio 50) → consola 2D: tab centro primera del riel, héroe IMPACTO 77 + POR QUÉ IMPORTA + escalera URGENTE/CRÍTICO/ALTO/DESARROLLO/CONTEXTO + RANKING EN VIVO + PULSO, lector abre por LEER INFORME → MUNDO 3D: ciudad viva → CAPTURA DE LA SALA DEL MAPA: planeta real con vigas en MÉXICO/MALÍ/SIRIA/YEMEN/IRÁN, FOTOS REALES texturizadas (jets, buque, portaviones), etiquetas de país, EN VIVO latiendo, pestaña CENTRO activa, raycast del engine verificado (clic abrió portal ARCADE — maquinaria v158/v165 viva) → MÓVIL 390px: héroe con pie de foto, sin overflow (390/390) → consola sin errores de sala tras el fix. tsc 0, build limpio, health v172.0.
+
+Stage Summary:
+- MAIN = v172.0 LA AGENCIA CENTRAL: Vanguard ya ES un centro de noticias mundial ranqueado por impacto (2D) con su mesa de guerra geolocalizada en primera persona (3D) — y el mapa rescatado vive como sala, no como ceremonia. El empleado 2 queda retirado: obra de una sola casa. Siguientes rondas: modo lectura óptimo en el lector, command palette con acciones, alertas push de cables URGENTES (tier≥80) al HUD, quiz de impacto («¿qué cable pesa más?»), y la sala de la AGENCIA en la ciudad (edificio propio).
+
+---
 Task ID: ia2-v172.0
 Agent: ia2 (nueva instancia, sandbox reiniciado — repo re-clonado desde main 4fdf3ff)
 Task: v172.0 EL PULSO DE LA PARIDAD — la cola viva del inbox #16 aprobada por el Dueño («si a todo»): ① telemetría 3D vs 2D (⭐ idea estrella), ② sonido de cascada, ③ paginación 3D universal (densidad adaptativa). NOTA: el merge ia2/v168.0→main ya lo ejecutó ia1 (ed18e77, revisión cruzada APROBADA, QA E2E con raycast real: +1 USDX @ 114.11) — main avanzó a v170/v171 antes de esta rama; numeración v172.0 verificada con git log ANTES de abrir (trampa de numeración).
@@ -2743,3 +2763,17 @@ Work Log:
 Stage Summary:
 - Producción v173.0 LA CASA EN VIVO: Vanguard es una consola de mercado plana con datos reales keyless (Binance + Yahoo) actualizándose sola cada 5s, gráficos de velas nivel TradingView y CERO modo 3D. El three.js restante es de piezas propias (teatro, hangar, zona-cero), no del modo.
 - Nota para ia1: el emisor universal duerme pero conserva firma — si alguna ronda futura quiere «salas», hay que reconstruir el receptor, no los paneles. La cola del inbox #17 queda intacta salvo su idea #3 (proximidad 3D), que muere con el universo.
+
+---
+Task ID: ia2-v174.0-merge
+Agent: ia2 (main · Z)
+Task: merge de ia2/v174.0 (LA CASA EN VIVO) a main con integración de la ronda remota v173.0 LA AGENCIA CENTRAL (ia1, publicada en paralelo mientras esta ronda navegaba)
+
+Work Log:
+- Push rechazado (origin/main avanzó a 0582671): ia1 renumeró su ronda a v173.0 y publicó en paralelo (ley v170/v172 de nuevo). Renumeración: mi ronda pasa a v174.0 (rama renombrada ia2/v174.0).
+- git merge origin/main: 4 conflictos resueltos — page.tsx (su re-añadido de TIPO_SALA_3D con `centro: "mapa"` pierde: la orden vigente del Dueño elimina el modo 3D), salas-3d.ts modify/delete → git rm (su SALA DEL MAPA 3D muere con el universo; anotado con honestidad en la bitácora), version.ts (crónicas fusionadas: su v173 AGENCIA + mi v174 CASA EN VIVO, APP_VERSION=v174.0) y bitacora.ts (dos entradas: v173 AGENCIA con nota honesta en el hito del mapa 3D + v174).
+- Su obra 2D se conserva ÍNTEGRA: motor de impacto (impacto.ts), /api/news ?modo=centro, EL CENTRO MUNDIAL (tab + panel + baldosa), i18n honestado («+ mapa 3D» fuera de las etiquetas — el mapa 3D ya no existe).
+- QA del merge: tsc 0, build limpio (1 reintento por timeout ambiental de fonts.gstatic), health v174.0, home 200, /api/mercado 32 activos, /api/news?modo=centro sirviendo ranking (héroe URGENTE imp 93 en vivo), portada con hub en viewport, tab CENTRO MUNDIAL abriendo con héroe de impacto real.
+
+Stage Summary:
+- main = v174.0 LA CASA EN VIVO: consola de mercado plana (mis ronda) + Agencia Central de noticias 2D (su ronda), cero modo 3D. La casa es de una sola obra ahora, y respira a dos pulsos: mercado (5s) y noticias (60s).

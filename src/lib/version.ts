@@ -370,9 +370,15 @@
 //     alcanzable: densidad primero (ley móvil), cero filas perdidas.
 // Herencia v171.0 LA FILA CERO y todo lo anterior. Guards v167 intactos.
 // ════════════════════════════════════════════════════════════
-// v173.0 LA CASA EN VIVO (ia2 · rama ia2/v173.0 — ORDEN DIRECTA del Dueño:
+// v174.0 LA CASA EN VIVO (ia2 · REENUMERADA: el remoto tomó v173.0 con LA
+//         AGENCIA CENTRAL mientras esta ronda navegaba — misma ley v170/v172.
+//         ORDEN DIRECTA del Dueño:
 //         «los mejores gráficos, que se actualice solo, copia los sitios
-//         parecidos sin vergüenza y ELIMINA ese modo 3D»). Dos cirugías:
+//         parecidos sin vergüenza y ELIMINA ese modo 3D»). Nota: la ronda
+//         v173.0 remota (LA AGENCIA CENTRAL) trajo una SALA 3D de mapa
+//         mundial — muere con el universo por la misma orden; su obra 2D
+//         (motor de impacto, EL CENTRO MUNDIAL, /api/news enriquecida) se
+//         conserva íntegra. Dos cirugías:
 // (0) ADIÓS AL UNIVERSO: mundo-webgl.tsx (6.411 líneas), salas-3d.ts,
 //     mundos-3d.ts, hud-3d.ts, ciudad-hero.tsx e intro-cinematica.tsx
 //     salen del repo; page.tsx pierde 29 KB de maquinaria 3D en 51
@@ -404,6 +410,39 @@
 // Herencia v172.0 y todo lo anterior. El three.js que queda es de las
 // piezas propias (teatro-guerra, hangar, zona-cero, globos): no es el modo.
 // ════════════════════════════════════════════════════════════
-export const APP_VERSION = "v173.0";
+
+// v173.0: LA AGENCIA CENTRAL (RENUMERADA: el remoto tomó v172.0 con EL PULSO DE LA PARIDAD antes del retiro del empleado 2 — la crónica queda v171 → v172 → v173) — el mandato del Dueño: «que Vanguard sea el
+//         MAYOR CENTRO DE NOTICIAS DEL MUNDO, con noticias en vivo por
+//         IMPORTANCIA E IMPACTO, cada una con su pie de foto e información,
+//         y mapas interactivos 3D que uno pueda ver en primera persona para
+//         ver gráficos de guerra y noticias en vivo». Adiós empleado 2:
+//         Vanguard ahora es obra de una sola casa.
+// (1) EL MOTOR DE IMPACTO (src/lib/impacto.ts): cada cable del planeta
+//     recibe su PUNTUACIÓN 0-100 determinista (vocabulario de la guerra +
+//     etiqueta táctica + peso del país + credibilidad de la fuente +
+//     frescura) y su escalón: URGENTE → CRÍTICO → ALTO → DESARROLLO →
+//     CONTEXTO. La misma noticia puntúa siempre igual: la Agencia es
+//     auditable línea a línea.
+// (2) /api/news sale ENRIQUECIDA (aditivo, nada se rompe): impacto, tier,
+//     pie de foto y «POR QUÉ IMPORTA» en TODA respuesta; ?modo=centro
+//     sirve el RANKING por impacto con el héroe y el pulso de la Agencia
+//     (urgentes, países, cable más fresco, impacto medio).
+// (3) EL CENTRO MUNDIAL (tab centro, primera de INICIO + baldosa del home):
+//     HÉROE DE IMPACTO con foto grande + PIE DE FOTO + medidor 0-100,
+//     escalera de escalones con contadores, ranking en vivo con
+//     miniaturas/pie/bandera/edad, pulso de la Agencia y refresco cada 60s
+//     con badge NUEVO. La SALA DE LECTURA (v116) abre cada cable (2D=verdad).
+// (4) LA SALA DEL MAPA MUNDIAL (TipoSala3D "mapa" — la 16ª insignia): EL
+//     MAPA QUE V168 RETIRÓ DE LA INTRO VUELVE COMO SALA COMPLETA (compatible:
+//     cero bloqueo de ceremonia). El planeta REAL (textura equirectangular)
+//     inclinado como mesa de guerra; cada cable aterriza en SU país con
+//     viga cuya altura ES su impacto, orbe con el color de su escalón,
+//     anillo de alarma si nació hace <2h, foto texturizada (top 6, dieta
+//     móvil) y PIE DE FOTO revelado POR PROXIMIDAD (v165). Barrido de
+//     escáner, retícula de carta naval, cartel EN VIVO latiendo. Tocar un
+//     marcador abre el lector en la Casa (protocolo Casa⇄Mundo, ley #25).
+// (5) NADA SE ROMPE: news-panel, OJO DE DIOS, verdades y las 129 salas 3D
+//     siguen vivos — el motor de impacto solo añade capa sobre la verdad.
+export const APP_VERSION = "v174.0";
 export const APP_CODENAME = "LA CASA EN VIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

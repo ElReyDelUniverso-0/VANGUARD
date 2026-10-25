@@ -23,6 +23,17 @@ export interface EntradaBitacora {
 export const BITACORA: EntradaBitacora[] = [
   {
     version: "v173.0",
+    nombre: "LA AGENCIA CENTRAL",
+    tipo: "nav",
+    hitos: [
+      "EL MOTOR DE IMPACTO (src/lib/impacto.ts) — cada cable del planeta recibe puntuación 0-100 determinista (vocabulario de la guerra + etiqueta táctica + peso del país + credibilidad de la fuente + frescura) y escalón URGENTE → CRÍTICO → ALTO → DESARROLLO → CONTEXTO; la misma noticia puntúa siempre igual: la Agencia es auditable línea a línea",
+      "EL CENTRO MUNDIAL DE NOTICIAS (tab centro, primera de INICIO + baldosa del home) — el mandato del Dueño: «el mayor centro de noticias del mundo, en vivo por importancia e impacto, cada una con su pie de foto e información»: HÉROE DE IMPACTO con foto grande + pie de foto + medidor 0-100 + POR QUÉ IMPORTA, escalera con contadores, ranking en vivo con miniaturas/bandera/edad, pulso de la Agencia y refresco 60s con badge NUEVO; la SALA DE LECTURA (v116) abre cada cable",
+      "LA SALA DEL MAPA MUNDIAL (TipoSala3D «mapa», 16ª insignia) — EL MAPA QUE v168 RETIRÓ DE LA INTRO VUELVE COMO SALA COMPLETA en primera persona: el planeta real (textura equirectangular) inclinado como mesa de guerra, cada cable aterriza en SU país con viga cuya altura ES su impacto, orbe con el color del escalón, anillo de alarma si nació hace <2h, foto texturizada (top 6, dieta móvil) y pie de foto revelado POR PROXIMIDAD; barrido de escáner, retícula de carta naval, cartel EN VIVO latiendo; tocar un marcador abre el lector (Casa⇄Mundo, ley #25). NOTA v174: esta sala 3D MUERE con la orden directa posterior del Dueño («elimina ese modo 3D») — el mapa volverá cuando la casa pida mapas 2D vivos",
+      "/api/news ENRIQUECIDA (aditivo, nada se rompe) — impacto, tier, pie de foto y «por qué importa» en TODA respuesta; ?modo=centro sirve el ranking con héroe y pulso (urgentes, países, cable más fresco, impacto medio); i18n de la tab en los 8 idiomas; QA E2E: API con 48 cables ranqueados (1 urgente, 7 críticos, 12 países, héroe IRÁN imp 80), QA de su era: sala 3D viva con fotos reales texturizadas, móvil 390px sin overflow, tsc 0, build limpio",
+    ],
+  },
+  {
+    version: "v174.0",
     nombre: "LA CASA EN VIVO",
     tipo: "tecno",
     hitos: [
@@ -30,7 +41,7 @@ export const BITACORA: EntradaBitacora[] = [
       "MERCADO REAL EN VIVO SIN API KEYS — los mismos grifos que beben los grandes: /api/mercado sirve 32 activos (cripto por Binance, acciones/índices/divisas por Yahoo Finance chart) con cache en memoria (4s/30s/45s) y fallback simulado sembrado si un upstream se corta; el hook useMercadoVivo late cada 5s, duerme con la pestaña y reparte flash sube/baja por activo",
       "EL HUB «MERCADO EN VIVO» COMO HÉROE DE PORTADA — cinta de tickers que camina sola (pausa al hover), gráfico de velas 1m con volumen sobre lightweight-charts (el motor open-source de TradingView, que ya dormía en el package.json), lista de seguimiento con chispas SVG de 60 puntos, pestañas TODAS/CRIPTO/ACCIONES/ÍNDICES/DIVISAS y pastillas por activo; QA con navegador real: BTC $80-81k en vivo con velas reales de Binance, click en NVDA cambia el gráfico, móvil 390px sin overflow",
       "LA LECCIÓN DEL DIORAMA — la cuna-v139 respira sobre un escenario de 20.000px y proyecta el módulo superior fuera del viewport al compás del ciclo (medidas fantasma -9.999 → -17.829 entre evals: el ciclo, no el layout). Un terminal de datos exige horizonte firme: flotador y cuna se estabilizan donde vive .vg173-terminal (:has bajo data-vg-3d); el cielo, el suelo y los demás cuerpos flotantes siguen vivos",
-      "QA v173: tsc 0, lint 0, build limpio, health v173.0, cortina de arranque se funde sola (la casa ya no espera a ningún universo), cero fósiles 3D en el DOM (switch/holo-chip/modo-ui/ir3d/nav-mundo = 0), cero errores de consola, home 200, /api/mercado 32 activos reales (10 binance + 22 yahoo)",
+      "QA v174: tsc 0, lint 0, build limpio, health v174.0, cortina de arranque se funde sola (la casa ya no espera a ningún universo), cero fósiles 3D en el DOM (switch/holo-chip/modo-ui/ir3d/nav-mundo = 0), cero errores de consola, home 200, /api/mercado 32 activos reales (10 binance + 22 yahoo)",
     ],
   },
   {

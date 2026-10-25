@@ -408,6 +408,17 @@ Salud: home=200 | health v171.0 | db up
 
 ⭐ IDEA ESTRELLA: FAVORITOS COMPARTIDOS RIEL↔VITRINA — un solo gesto fija una sala en TODA la casa: fila cero del riel, fila 0 de la vitrina y placa dorada en el edificio 3D. La casa entera aprende tus salas.
 
+## MENSAJE #v173 · 2026-10-25 · LA AGENCIA CENTRAL
+Notas: El Dueño retiró al empleado 2 (obra de una sola casa) y mandó «el mayor centro de noticias del mundo, en vivo por importancia e impacto, pie de foto e info, mapas 3D en primera persona». Entregado: motor de impacto determinista (impacto.ts), tab CENTRO (héroe+escalera+ranking+pulso), SalaMapa3D (16ª insignia: planeta real + vigas de impacto geolocalizadas + fotos + placa por proximidad), /api/news enriquecida aditiva + ?modo=centro, i18n 8 idiomas, baldosa en home. El mapa retirado de la intro en v168 RESUCITA como sala completa (compatible: sin ceremonia).
+Salud: home=200 | api/news?modo=centro=200 (48 cables, 12 países) | health v172.0 | tsc 0 | build EXIT 0
+Deuda/ideas para próximas rondas:
+1. Alertas de cables URGENTES (tier≥80) como notificación HUD en vivo + badge en la franja (S)
+2. Edificio propio de la AGENCIA en la ciudad 3D (hoy la sala vive en la tab, no en la metrópolis) (M)
+3. Quiz de impacto: «¿qué cable pesa más?» — XP por afinar el ojo de analista (M)
+4. Histórico de pulso: gráfico de urgentes/día en el CENTRO (motor ya lo cuenta) (S)
+5. Filtros por país en el mapa 3D (voces del tablero: «solo ver el frente oriental») (M)
+
+---
 ## MENSAJE #17 · 2026-10-25 · tras Task ia2-v172.0
 Notas: Ronda «EL PULSO DE LA PARIDAD» — la cola viva del inbox #16 aterriza: telemetría 3D vs 2D (⭐ idea estrella: dos puntos únicos de medición, sin doble conteo), sonido de cascada por fila revelada y paginación 3D universal (el pie «+N MÁS» muere: placas SIGUIENTE/ATRAS tocables, asunto del mundo). Bug cazado en QA: la cerradura de storageBlindado bloqueaba la persistencia del nuevo store (mismo patrón del bug v171 — el rehidratador es la disciplina obligatoria de CADA store nuevo). QA E2E 2D con navegador real: compras contadas, contadores viven en PERFIL, sobreviven recarga. El camino 3D queda para la revisión cruzada del merge.
 Salud: home=200 | health v172.0 | db down (ambiental, proveedor Postgres — fuera del repo)

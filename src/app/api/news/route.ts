@@ -2,6 +2,12 @@ import { NextResponse, after } from "next/server";
 import { db } from "@/lib/db";
 import { asegurarTabla } from "@/lib/db-ddl";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
+// v172.0 LA AGENCIA CENTRAL — el motor de impacto tiñe TODA respuesta:
+// cada cable sale con impacto 0-100, tier (URGENTE→CONTEXTO), pie de foto
+// e información «por qué importa». ADITIVO: los consumidores viejos
+// (portada, OJO DE DIOS, muro infinito, salas 3D) siguen leyendo sus
+// campos de siempre — nada se rompe, todo se enriquece.
+import { enriquecerLista, pulsoDe, type EntradaImpacto } from "@/lib/impacto";
 
 // GDELT 2.0 Doc API - free, no key
 const GDELT_URL = "https://api.gdeltproject.org/api/v2/doc/doc";
@@ -229,11 +235,28 @@ async function getCuratedFallback(): Promise<GdeltArticle[]> {
   return list.map((a, i) => ({ ...a, sourcecountry: CURATED_COUNTRY[i] ?? a.sourcecountry }));
 }
 
+// v172.0 EL DESPACHO RANQUEADO — salida común de la ruta: enriquece con el
+// motor de impacto y, si ?modo=centro, devuelve el ranking por importancia
+// con el héroe (la #1) y el pulso de la Agencia (contadores por tier).
+function despachar(modo: string, items: Record<string, unknown>[], extra: Record<string, unknown> = {}) {
+  const ricos = enriquecerLista(items as unknown as EntradaImpacto[]);
+  if (modo !== "centro") return NextResponse.json({ items: ricos, ...extra });
+  const orden = [...ricos].sort((a, b) => b.impacto - a.impacto || a.edadMin - b.edadMin);
+  return NextResponse.json({
+    items: orden,
+    urgente: orden[0] ?? null,
+    pulso: pulsoDe(ricos),
+    source: extra.source ?? "CENTRO",
+  });
+}
+
 export async function GET(req: Request) {
   // v56.0 OJO DE DIOS TOTAL: paginación del archivo histórico para el MURO
   // INFINITO. ?page=1,2,3... sirve el archivo completo de la BD por lotes;
   // sin ?page (o page=0) se conserva el comportamiento original (portada).
+  // v172.0 LA AGENCIA CENTRAL: ?modo=centro → ranking por importancia e impacto.
   const url = new URL(req.url);
+  const modo = url.searchParams.get("modo") || "";
   const page = Math.max(0, parseInt(url.searchParams.get("page") || "0", 10) || 0);
   const limit = Math.min(30, Math.max(5, parseInt(url.searchParams.get("limit") || "15", 10) || 15));
   if (page > 0) {
@@ -244,14 +267,9 @@ export async function GET(req: Request) {
         take: limit + 1,
       });
       const hasMore = rows.length > limit;
-      return NextResponse.json({
-        items: rows.slice(0, limit).map((it, i) =>
-          withFallbackImage(withCuratedImage({ ...it, sourceCountry: it.sourceCountry ?? guessCountry(it.title) }), i)
-        ),
-        page,
-        hasMore,
-        source: "ARCHIVO",
-      });
+      return despachar(modo, rows.slice(0, limit).map((it, i) =>
+        withFallbackImage(withCuratedImage({ ...it, sourceCountry: it.sourceCountry ?? guessCountry(it.title) }), i) as unknown as Record<string, unknown>
+      ), { page, hasMore, source: "ARCHIVO" });
     } catch (e) {
       console.error("news archive page error", e);
       return NextResponse.json({ items: [], page, hasMore: false, source: "ERROR" }, { status: 200 });
@@ -283,19 +301,16 @@ export async function GET(req: Request) {
         // Vercel → las noticias llevaban días sin actualizarse.
         after(() => refreshGdeltInBackground());
       }
-      return NextResponse.json({
-        items: cached.slice(0, 48).map((it, i) =>
-          withFallbackImage(
-            {
-              ...withCuratedImage(it),
-              // v20: bandera del país deducible también para filas cacheadas sin sourceCountry
-              sourceCountry: it.sourceCountry ?? guessCountry(it.title),
-            },
-            i
-          )
-        ),
-        source: "CACHE",
-      });
+      return despachar(modo, cached.slice(0, 48).map((it, i) =>
+        withFallbackImage(
+          {
+            ...withCuratedImage(it),
+            // v20: bandera del país deducible también para filas cacheadas sin sourceCountry
+            sourceCountry: it.sourceCountry ?? guessCountry(it.title),
+          },
+          i
+        ) as unknown as Record<string, unknown>
+      ), { source: "CACHE" });
     }
 
     // No cache at all — fetch synchronously (first run)
@@ -368,33 +383,27 @@ export async function GET(req: Request) {
     // se quedaría SIN noticias. Última línea de defensa: servir los artículos
     // en crudo (GDELT o curados) sin persistencia — la casa nunca calla.
     if (items.length === 0 && allArticles.length > 0) {
-      return NextResponse.json({
-        items: allArticles.slice(0, 30).map((a, i) =>
-          withFallbackImage(
-            {
-              id: a.url,
-              externalId: a.url,
-              title: a.title,
-              url: a.url.startsWith("http") ? a.url : "#",
-              source: a.domain ?? "vanguard-cmd",
-              imageUrl: a.socialimage ?? null,
-              publishedAt: parseGdeltDate(a.seendate),
-              language: a.language ?? "es",
-              conflictTag: conflictTag(a.title),
-              tacticalTag: classifyTag(a.title),
-              sourceCountry: guessCountry(a.title, a.sourcecountry),
-              createdAt: new Date(),
-            },
-            i
-          )
-        ),
-        source: articles.length > 0 ? "GDELT" : "CURATED",
-      });
+      return despachar(modo, allArticles.slice(0, 30).map((a, i) =>
+        withFallbackImage(
+          {
+            id: a.url,
+            externalId: a.url,
+            title: a.title,
+            url: a.url.startsWith("http") ? a.url : "#",
+            source: a.domain ?? "vanguard-cmd",
+            imageUrl: a.socialimage ?? null,
+            publishedAt: parseGdeltDate(a.seendate),
+            language: a.language ?? "es",
+            conflictTag: conflictTag(a.title),
+            tacticalTag: classifyTag(a.title),
+            sourceCountry: guessCountry(a.title, a.sourcecountry),
+            createdAt: new Date(),
+          },
+          i
+        ) as unknown as Record<string, unknown>
+      ), { source: articles.length > 0 ? "GDELT" : "CURATED" });
     }
-    return NextResponse.json({
-      items: items.slice(0, 30).map((it, i) => withFallbackImage(withCuratedImage(it), i)),
-      source: articles.length > 0 ? "GDELT" : "CURATED",
-    });
+    return despachar(modo, items.slice(0, 30).map((it, i) => withFallbackImage(withCuratedImage(it), i) as unknown as Record<string, unknown>), { source: articles.length > 0 ? "GDELT" : "CURATED" });
   } catch (e) {
     console.error("news route error", e);
     return NextResponse.json({ items: [], source: "ERROR", error: String(e) }, { status: 500 });
