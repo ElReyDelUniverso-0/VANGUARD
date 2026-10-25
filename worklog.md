@@ -2813,3 +2813,19 @@ Work Log:
 
 Stage Summary:
 - v176.0 LAS FICHAS DE GUERRA en local (pendiente push): la colección coleccionable del mundo — 9 cartas vivas con rareza que respira con las noticias de cada guerra, la noticia única de cada frente, el álbum persistente con sellos fechados y la tercera placa GTA que completa la familia (personaje · noticia · conflicto). 100% 2D, compatible con LA CASA EN VIVO; tsc 0, build limpio, health v176.0.
+
+---
+Task ID: ia1-v177.0
+Agent: ia1 (solitaria)
+Task: v177.0 EL CINE DE LA CASA — integración de la verdad remota (v173→v176, main manda) + port del cine GTA al arranque 2D + server producción como suelo. Continuación directa de la queja del Dueño (cuelgue + intro GTA).
+
+Work Log:
+- DIVERGENCIA MAYOR HALLADA AL PUSH: el remoto avanzó a v176 mientras esta ronda trabajaba — v173 LA CASA EN VIVO RETIRÓ EL UNIVERSO 3D (11.800+ líneas, orden del Dueño), v174 LAS INTROS GTA (placas de personaje en ROSTROS + noticia en LECTOR), v176 LAS FICHAS DE GUERRA (coleccionables — directiva confirmada). El cine local vivía dentro de mundo-webgl (muerto en remoto).
+- MERGE HONESTO (ley v170/v172): origin/main adoptado como verdad — mundo-webgl.tsx eliminado (git rm, modify/delete), version.ts/bitacora.ts/worklog.md/inbox con la verdad remota; mi CSS .vg174-cine sobrevivió al auto-merge de globals.css (cero duplicados). tsc 0 tras el merge.
+- PORT DEL CINE (nuevo cine-entrada.tsx, ~130 líneas): las 6 placas GTA renacen en la PUERTA 2D del arranque — useSyncExternalStore como guard de montaje (lección set-state-in-effect de v176), portal al body + z-300 (lección v116; el z-96 en árbol montaba stacking context ajeno y los widgets z-30..46 pintaban encima — cazado en QA móvil con captura), auto-avance 2.15s, tocar avanza, SALTAR con stopPropagation, fundido de salida vg174-saliendo, once-per-session vg-cine-entrada-v177, reduced-motion sin cine, la consola vive detrás.
+- BUGS CAZADOS EN QA: (1) lint react-hooks/set-state-in-effect en el guard de montaje → patrón useSyncExternalStore; (2) widgets flotantes (temporada/pulso, z-30..46) sobre el cine → portal+300 (0 widgets encima verificado por query); (3) overflow 1298/1280 en desktop detectado — PREEXISTENTE de la consola (v138-mundo capa 2199px), no es regresión de esta ronda (móvil 390px limpio, la puerta que manda).
+- INFRA: rebuild standalone (NODE_OPTIONS 2600, 81s, EXIT 0) + serve.mjs --prod → health v177.0 rss 211MB. El dev OOM-killed ya no existe como camino: producción es el suelo.
+- QA E2E final (agent-browser sobre producción): cine 6 placas con duotonos correctos en móvil 390px (captura qa-v177-movil-final.png: LA RUTA DEL PETRÓLEO azul, letterbox limpio, 0 widgets encima), SALTAR → casa viva, recarga → sin cine (guard), 0 errores consola, tsc 0, lint 0, health v177.0.
+
+Stage Summary:
+- MAIN = v177.0 EL CINE DE LA CASA: la verdad remota integrada (fichas v176 + intros v174 + casa 2D v173) y el arranque tiene SU tráiler GTA de noticias (6 placas, acento por conflicto, SALTAR). El cuelgue del Dueño muere doble: server producción (211MB) + cine DOM liviano. La familia GTA queda completa: arranque (cine) + personaje (rostros) + noticia (lector) + conflicto (fichas).

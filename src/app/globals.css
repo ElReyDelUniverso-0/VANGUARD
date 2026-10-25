@@ -4400,7 +4400,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 .vg174-cine {
   position: fixed;
   inset: 0;
-  z-index: 96;
+  z-index: 300;
   overflow: hidden;
   background: #000;
   cursor: pointer;
@@ -4568,6 +4568,8 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   .vg174-cine-txt em, .vg174-cine-txt strong, .vg174-cine-txt span,
   .vg174-cine-dato, .vg174-cine-saltar { animation: none !important; }
 }
+/* v177: la salida del cine de arranque — fundido honesto (solo opacity) */
+.vg174-cine.vg174-saliendo { opacity: 0; transition: opacity 0.45s ease; }
 
 /* ---- 4. EL POPUP DEL CONFLICTO — junto al punto tocado ------- */
 .vg140-popup {

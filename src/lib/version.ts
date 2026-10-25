@@ -508,6 +508,32 @@
 //     prefetch real, i18n en 8 idiomas; el feed refresca cada 60s y la caché
 //     local sostiene el álbum si la red se corta.
 // Herencia v175.0 y todo lo anterior — 100% 2D, compatible con LA CASA EN VIVO.
-export const APP_VERSION = "v176.0";
-export const APP_CODENAME = "LAS FICHAS DE GUERRA";
+// v177.0 EL CINE DE LA CASA — el cierre de la queja del Dueño («vanguard dura
+// horas cargando y ya no avanza y no hay intro como gta en vanguard»), en dos
+// actos sobre la verdad integrada (main remoto v173→v176):
+// (1) EL CUELGUE, CURADO DE RAÍZ: el server `next dev` (1.8GB RSS) moría
+//     silenciosamente por OOM-killer — el teléfono veía «cargando horas»
+//     porque el server YA NO EXISTÍA (reproducido 2× en QA con navegador
+//     real). Cura: build de producción + scripts/serve.mjs --prod (doble fork
+//     huérfano PPID 1, ~197MB RSS, inmune al OOM). La cortina v155 queda de
+//     red de seguridad del cliente.
+// (2) EL CINE DE LA CASA (nuevo cine-entrada.tsx): la entrada GTA de noticias
+//     renace en la PUERTA 2D del arranque — port del cine que nació con la
+//     ceremonia del mundo 3D retirado. 6 PLACAS a pantalla completa: foto
+//     real con duotono del acento de CADA conflicto (RUSIA—UCRANIA oro, LA
+//     REGIÓN EN LLAMAS fuego, LA RUTA DEL PETRÓLEO azul, QUIÉN MANDA violeta,
+//     NO DUERME. REPORTA. cian, EL CENTRO DE NOTICIAS oro), tipografía
+//     condensada en itálica (Rajdhani hasta 5.4rem), ceja de agencia, dato
+//     duro con filo de acento, Ken Burns (solo transform/opacity: 60 FPS
+//     móvil), barras letterbox, progreso GTA y SALTAR siempre. Una vez por
+//     sesión (vg-cine-entrada-v177), reduced-motion no ve cine, la consola
+//     vive detrás (nada se bloquea), tocar avanza (auto 2.15s por placa).
+//     Convive con la familia GTA existente (v174 remota: personaje en ROSTROS
+//     + noticia en el LECTOR; v176: conflicto en FICHAS) — ahora el arranque
+//     TAMBIÉN tiene su tráiler de cine.
+// (3) NADA SE ROMPE: fichas de guerra v176, centro mundial v173, intros GTA
+//     v174, cortina v155, guards y álbum intactos; el cine comparte el CSS
+//     .vg174-cine (ya fusionado en globals.css) — cero duplicados.
+export const APP_VERSION = "v177.0";
+export const APP_CODENAME = "EL CINE DE LA CASA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

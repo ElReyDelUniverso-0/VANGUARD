@@ -52,6 +52,8 @@ const RostrosPanel = dynamic(() => import("@/components/vanguard/panels/rostros-
 // v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
 const GobiernoLibrePanel = dynamic(() => import("@/components/vanguard/panels/gobierno-libre-panel").then((m) => m.GobiernoLibrePanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
+// v177.0 EL CINE DE LA CASA — la entrada GTA de noticias al arranque (una vez por sesión)
+import { CineEntrada } from "@/components/vanguard/cine-entrada";
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
 import { MotorLuxe } from "@/components/vanguard/motor-luxe";
@@ -1234,6 +1236,10 @@ export default function Home() {
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
+      {/* v177.0 EL CINE DE LA CASA — la entrada GTA de noticias al ARRANQUE
+          (port del cine v174 del mundo retirado; una vez por sesión, SALTAR
+          siempre, reduced-motion no ve cine). La consola vive detrás. */}
+      <CineEntrada />
       {/* v121.0 LA CAMA MÁS CÓMODA: el motor de personalización — letra, acento,
           movimiento, densidad y modo cama a CSS vars en :root (cero re-render) */}
       <MotorCama />

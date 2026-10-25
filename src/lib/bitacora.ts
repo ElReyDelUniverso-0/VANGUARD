@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v177.0",
+    nombre: "EL CINE DE LA CASA",
+    tipo: "mundo",
+    hitos: [
+      "EL CUELGUE, CURADO DE RAÍZ (la queja del Dueño: «dura horas cargando y ya no avanza») — el server `next dev` moría silenciosamente por OOM-killer y el teléfono quedaba cargando contra un server MUERTO (reproducido 2× en QA con navegador real). Cura de infra: build de producción + scripts/serve.mjs --prod (doble fork huérfano PPID 1, ~197MB RSS frente a los 1.8GB del dev — inmune al OOM); la cortina v155 queda como red de seguridad del cliente",
+      "EL CINE DE LA CASA (la otra mitad de la queja: «no hay intro como gta») — la entrada GTA de noticias renace en la PUERTA 2D del arranque (port del cine v174 que nació con la ceremonia del mundo 3D retirado): 6 placas a pantalla completa con foto real + duotono del acento de cada conflicto (RUSIA—UCRANIA oro, LA REGIÓN EN LLAMAS fuego, LA RUTA DEL PETRÓLEO azul, QUIÉN MANDA violeta, NO DUERME. REPORTA. cian, EL CENTRO DE NOTICIAS oro), tipografía condensada en itálica, ceja de agencia + dato duro, Ken Burns 60 FPS móvil, barras letterbox, progreso GTA y SALTAR siempre — una vez por sesión, reduced-motion no ve cine, la consola vive detrás",
+      "LA FAMILIA GTA COMPLETA — el cine del arranque convive con las placas v174 (personaje en LOS ROSTROS DEL PODER + noticia en la SALA DE LECTURA) y la placa de conflicto v176 (FICHAS DE GUERRA): Vanguard abre como tráiler de cine, anuncia al poder como GTA V y estampa cada noticia y cada carta — compartiendo el CSS .vg174-cine fusionado (cero duplicados)",
+      "INTEGRACIÓN HONESTA (ley v170/v172) — main local había navegado con el mundo 3D vivo mientras el remoto aterrizaba v173 LA CASA EN VIVO (adiós al 3D, orden del Dueño), v174 LAS INTROS GTA y v176 LAS FICHAS DE GUERRA: merge resuelto con el remoto como verdad (mundo-webgl retirado) y el cine re-nacido en la puerta 2D; QA: tsc 0, build limpio, cine verificado en escritorio y móvil 390px, SALTAR y auto-avance ok, health v177.0 en producción",
+    ],
+  },
+  {
     version: "v176.0",
     nombre: "LAS FICHAS DE GUERRA",
     tipo: "nav",
