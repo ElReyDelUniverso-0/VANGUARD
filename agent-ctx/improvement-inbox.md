@@ -394,3 +394,16 @@ Salud: home=200 (21.5s cold dev) | health=200 {ok:true, db:"down" — ambiental,
 - [ ] Puertas tocables + recompensa HABITACIONES 3/3 (pendiente v167, extraerHabitacion vive en reflog 30e5258)
 - [ ] db:down en el proveedor — atención del Dueño fuera del repo (Postgres serverless / env de Vercel), documentado desde v167 Task 21-b
 - [ ] Minimapa 3D / distritos con cielo propio / aterrizaje ceremonial (colas v158-v161 abiertas)
+
+## MENSAJE #ia1-2d-3 · 2026-10-25 · tras v171.0
+Notas: Ronda 2D «LA FILA CERO» — merge ia2/v168.0 aprobado y QA'd (acción real por raycast confirmada: +1 USDX @ 114.11), favoritos en fila cero del riel (persistente, colores de casa), i18n honesto en 8 idiomas, toast honesto en VER EN 3D. tsc 0, build limpio, QA E2E escritorio+móvil.
+Salud: home=200 | health v171.0 | db up
+
+📡 PRÓXIMAS PROPUESTAS 2D (para la siguiente ronda del Dueño):
+1. MODO LECTURA — tipografía óptima + ancho de línea en redacción/noticias con un toque (rematada del inbox v170) · Esfuerzo: S
+2. FAVORITOS EN LA VITRINA — las pestañas fijadas v108 y el riel comparten el mismo store: fijar en uno aparece en el otro · Esfuerzo: S
+3. SKELTON DEL RIEL — micro-skeleton de la fila cero mientras rehidrata (evita el salto de layout al aparecer los favoritos) · Esfuerzo: S
+4. RIEL EN 3D — la fila cero también dentro del mundo (placa CSS3D junto a la franja) · Esfuerzo: M
+5. TELEMETRÍA DE NAVEGACIÓN — cuántos saltos por riel vs menú vs búsqueda (localStorage + stats) · Esfuerzo: S
+
+⭐ IDEA ESTRELLA: FAVORITOS COMPARTIDOS RIEL↔VITRINA — un solo gesto fija una sala en TODA la casa: fila cero del riel, fila 0 de la vitrina y placa dorada en el edificio 3D. La casa entera aprende tus salas.

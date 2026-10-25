@@ -55,6 +55,7 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { GUERRAS } from "@/lib/guerras-activas-data";
 import { APP_VERSION } from "@/lib/version";
+import { translate, useLangStore } from "@/lib/i18n";
 // v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
 import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
 import { construirHud3D, type Hud3D } from "./hud-3d";
@@ -5699,6 +5700,10 @@ type Fase = "negro" | "estrellas" | "logo" | "tagline" | "hint" | "volando" | "f
 export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
   const lienzoRef = useRef<HTMLCanvasElement>(null);
   const mundoRef = useRef<MundoWGL | null>(null);
+  // v171: el hint de la intro en el IDIOMA DEL PILOTO (8 idiomas reales —
+  // antes era español hardcodeado y convivió con el holo.entrar inglés viejo)
+  const lang = useLangStore((s) => s.lang);
+  const textoEntrar = translate(lang, "holo.entrar");
   // v144: la placa ENTRAR del puente vive fuera del ciclo de render — el
   // raycast del mundo la llama vía ref (el callback cambia con la fase)
   const entrarRef = useRef<(() => void) | null>(null);
@@ -6179,7 +6184,7 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
               onClick={entrar}
               data-visible={fase === "hint" ? "1" : "0"}
             >
-              Toca para entrar
+              {textoEntrar || "Toca para entrar"}
             </button>
           </div>
         </div>

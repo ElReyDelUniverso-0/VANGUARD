@@ -2673,3 +2673,36 @@ Work Log:
 
 Stage Summary:
 - Producción v168.0 LA PARIDAD TOTAL: la ley #25 se cumple — el 3D alcanza al 2D. 129 paneles emiten contenido real (filas de cristal con acciones reales por raycast) y la intro ya no abre con el mapa (pantalla de título + encenderMundo al entrar; cine 6.8s). Sin Work Log antes de este commit en el repo remoto (la ronda anterior se cortó antes del cierre; este commit restaura la continuidad de la bitácora).
+
+---
+Task ID: ia1-merge-1
+Agent: main (ia1 — integración y revisión cruzada)
+Task: merge ia2/v168.0 LA PARIDAD TOTAL a main — revisión cruzada + QA E2E del mundo fusionado
+
+Work Log:
+- Fetch: origin/main traía v169.0+v170.0 (mis rondas 2D, sesiones previas); origin/ia2/v168.0 traía el trabajo de ia2 (98b64dd): 98 paneles → 129 emisores de contenido real + EL MAPA FUERA DE LA INTRO (107 archivos, +7512/-211).
+- Revisión de código: mundo-webgl (ceremonia corta estrellas→logo→tagline→hint 4.0s, encenderMundo() al ENTRAR con paridad de reencuentro, cámara nace en pantalla de título), bookmaker como panel muestra (patrón emisor FilaContenido3D con acciones a: verbate del 2D), guards v167 verificados por ia2 (ciudadCerradaAlgunaVez ×3 + watchdog ×4).
+- Merge: código auto-merged LIMPIO (0 conflictos en .tsx/.ts de código); 4 conflictos solo de metadatos: version.ts (resuelto: v170.0 vivo + crónica v168 en orden cronológico v167→v168→v169→v170), bitacora.ts (v170>v169>v168>v167), worklog.md (ambas entradas), improvement-inbox.md (ambos mensajes).
+- tsc --noEmit = 0 en el merge completo; npm run build limpio; push a main (ed18e77).
+- INFRA: scripts/serve.mjs se perdió con el sandbox anterior (scripts/ en .gitignore, jamás se commiteó) — RECREADO según especificación v169 (doble fork detached+unref → next start PPID 1) y persistido con git add -f. health v170.0, db up, rss 205MB.
+- QA E2E navegador real (producción next start, 3840×2160→dpr): ceremonia SIN mapa (0 fases globo/marcadores, hint a los 4s) → entrar → CIUDAD VIVA (teletipo con titular real, órbitas v163, HALLADOS 0/12, bono diario +40) → toggle 2D (vg165-switch) → consola plana v169/v170 INTACTA (riel sincronizado, GEO MARKET abrió pestaña, riel mostró hermanos MERCADO + aurora verde) → VER EN 3D → raycast edificio COMANDO → ¿ENTRAR? → SÍ → sala BRIEFING embebida → pestaña MERCADO en franja CSS3D → SALA MERCADO ASCENDIDA (filas de cristal USD +0.45% / CHF −0.90% / JPY +1.20% con sparklines en vivo, BOLSA ORBITAL de fondo) → TAP en fila USD → TOAST «INVERTIDO DESDE EL MUNDO 3D: +1 USDX @ 114.11» (saldo MON 290→175, cartera USDX 1) — LA ACCIÓN REAL POR RAYCAST VIVA EN MAIN.
+- Consola: 0 errores (solo warnings heredados THREE.Clock/VRAM v157/rAF v148).
+- Detectado para la ronda siguiente: hint en inglés de la intro quedó con string viejo «TOUCH THE GLOBE TO ENTER» (ia2 arregló solo el español); toast de ir3D promete «VOLANDO AL MÓDULO» aunque el tab no esté mapeado en TAB_ZONA (aterriza en zona 1 por diseño v167).
+
+Stage Summary:
+- MAIN = v168(via merge)+v169+v170: la ley #25 es ley de producción — 129 salas emiten contenido real y las ACCIONES REALES por raycast ejecutan la economía del 2D. ia2 tiene luz verde para su próxima rama (v171 reservado a ia1).
+
+---
+Task ID: ia1-2d-3
+Agent: main (ia1 — ronda 2D del Dueño)
+Task: v171.0 LA FILA CERO — el Dueño: «más hermoso, más fácil de navegar, fluido» (ronda 3)
+
+Work Log:
+- Baseline: tsc 0 tras el merge v168, health v170.0, servidor serve.mjs --prod (203MB).
+- (1) FAVORITOS — FILA CERO DEL RIEL (idea estrella del inbox v170): nuevo src/lib/favoritos-store.ts (zustand persist, key vg171-favoritos, storageBlindado); riel-seccion.tsx: estrella en cada píldora (click de la estrella NO navega — stopPropagation), los fijados viven ANTES que los hermanos con el punto de color de SU casa (patrón pestañas fijadas v108, sin duplicados; los hermanos fijados se retiran de su fila natural), recientes ya no repiten lo favorito, tope 6 en fila. rehidratador.tsx: useFavoritos entra a la disciplina de rehidratación (cerradura abierta post-montaje — BUG cazado en QA: sin registro, la cerradura de storageBlindado bloqueaba la persistencia). CSS v171 en globals.css (estrella 16px, oro + drop-shadow, píldora favorita con borde/acento de su casa; solo transform/opacity — contrato del riel intacto).
+- (2) VERDAD EN LOS IDIOMAS: holo.entrar corregido en los 8 idiomas (ya no dice «TOCA EL GLOBO» — el globo ya no participa de la intro desde v168); el hint de la intro consume i18n real (useLangStore + translate en mundo-webgl; antes «Toca para entrar» hardcodeado).
+- (3) TOAST HONESTO en VER EN 3D (page.tsx): ZONAS_WGL extraído a constante de módulo (una sola verdad con el volar-a de la Casa); si la sala activa no vive en una zona del universo, el toast dice «Toca el edificio de este módulo en la ciudad» en vez de prometer un vuelo que no va a ocurrir; deps del listener [tab] (sin closure viejo).
+- QA E2E (agent-browser + next start, db up): favorito fijado con click real → fila cero «MARKET» con punto verde + storage {"favoritos":["bolsa"]} → segundo favorito en OTRA sección (empleos, SOCIAL) → RELOAD → fila cero MARKET+JOBS con colores de sus casas (verde rgb(74,222,128) / violeta rgb(167,139,250)), 2 estrellas doradas → móvil 390px: riel visible, 14 estrellas, SIN overflow-x → consola 0 errores (solo warnings heredados VRAM/Clock) → intro re-armada (sessionStorage limpio): hint «TAP TO ENTER» en el idioma del piloto (el navegador QA quedó en en — el i18n manda). tsc 0 (3 pases), build limpio ×2, health v171.0.
+
+Stage Summary:
+- El riel cierra el círculo de navegación: fila cero persistente con los favoritos del dueño, veracidad en 8 idiomas y un mundo 3D que ya ejecuta la economía real (v168 fusionado). Pendiente para próximas rondas 2D: modo lectura (tipografía óptima en noticias), command palette con acciones, riel sincronizado con grupos de cromo, QA de la restauración 2D en dispositivo real.

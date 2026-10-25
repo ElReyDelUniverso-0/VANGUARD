@@ -22,6 +22,7 @@ import { useCama } from "@/lib/cama-store";
 import { useProfileStore } from "@/lib/profile-store";
 // v133.0: el store de los agentes entra a la disciplina de rehidratación
 import { useAgentesLibres } from "@/lib/agentes-autonomos";
+import { useFavoritos } from "@/lib/favoritos-store";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -63,6 +64,11 @@ export function Rehidratador() {
     rehidratar(useAgentesLibres)
       .then(() => marcarHidratado("vg-agentes-libres-v131"))
       .catch(() => marcarHidratado("vg-agentes-libres-v131"));
+    // v171.0 LA FILA CERO: los favoritos del riel entran a la disciplina de
+    // rehidratación — sus cerraduras abren tras el montaje (cero #418)
+    rehidratar(useFavoritos)
+      .then(() => marcarHidratado("vg171-favoritos"))
+      .catch(() => marcarHidratado("vg171-favoritos"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

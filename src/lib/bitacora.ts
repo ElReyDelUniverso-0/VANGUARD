@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v171.0",
+    nombre: "LA FILA CERO",
+    tipo: "nav",
+    hitos: [
+      "PARIDAD EN PRODUCCIÓN (merge ia2/v168.0, revisión cruzada aprobada) — QA E2E del mundo fusionado: ceremonia sin mapa (4s), ciudad viva, salas ascendidas con filas de cristal en vivo (USD +0.45% / CHF −0.90% / JPY +1.20% con sparklines) y LA PRIMERA ACCIÓN REAL POR RAYCAST confirmada en main: «INVERTIDO DESDE EL MUNDO 3D: +1 USDX @ 114.11» (MON 290→175, cartera USDX 1). scripts/serve.mjs recreado (doble fork PPID 1, ~200MB) y persistido en el repo",
+      "LOS FAVORITOS — FILA CERO DEL RIEL (idea estrella del inbox v170): la estrella de cada píldora fija el módulo al inicio del riel para siempre (vg171-favoritos, storage blindado); los fijados viajan con el punto de color de su casa aunque vivan en otra sección; sin duplicados (patrón pestañas fijadas v108); recientes ya no repiten lo favorito — tus salas de siempre a un toque, sin menú y sin búsqueda",
+      "VERDAD EN LOS IDIOMAS — holo.entrar corregido en los 8 idiomas (ya no dice «TOCA EL GLOBO»: el globo ya no participa de la intro desde v168); el hint de la intro usa el i18n del piloto (antes español hardcodeado); TOAST HONESTO en VER EN 3D: sin zona mapeada dice «toca el edificio de este módulo en la ciudad» (queja del QA del merge cerrada)",
+    ],
+  },
+  {
     version: "v170.0",
     nombre: "LA CONSOLA HERMOSA",
     tipo: "nav",

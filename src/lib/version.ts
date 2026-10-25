@@ -316,6 +316,29 @@
 //     E2E verificado con hover real (+2 chunks en performance), 0 errores
 //     de consola, tsc 0, build limpio.
 // Herencia v169.0 LA CONSOLA PLANA y todo lo anterior.
-export const APP_VERSION = "v170.0";
-export const APP_CODENAME = "LA CONSOLA HERMOSA";
+
+// v171.0: LA FILA CERO (ia1 · ronda 2D, mandato vigente «más hermoso, más
+//         fácil de navegar, fluido»). Tres piezas:
+// (1) MERGE ia2/v168.0 (revisión cruzada aprobada): la ley #25 aterriza en
+//     main — 129 emisores de contenido real + acciones reales por raycast
+//     (QA E2E: «INVERTIDO DESDE EL MUNDO 3D: +1 USDX @ 114.11», saldo
+//     MON 290→175) + el mapa fuera de la intro. scripts/serve.mjs recreado
+//     (doble fork PPID 1) y persistido con git add -f.
+// (2) LOS FAVORITOS — FILA CERO DEL RIEL (idea estrella del inbox v170):
+//     la estrella de cada píldora fija el módulo al INICIO del riel para
+//     siempre (persistente vg171-favoritos, storage blindado); los fijados
+//     viajan con el punto de color de su casa aunque vivan en otra
+//     sección (patrón pestañas fijadas v108, sin duplicados); recientes ya
+//     no muestran lo que es favorito. El círculo de navegación se cierra:
+//     tus salas de siempre a un toque, sin menú y sin búsqueda.
+// (3) VERDAD EN LOS IDIOMAS: holo.entrar en los 8 idiomas ya no dice
+//     «TOCA EL GLOBO» (el globo ya no participa de la intro desde v168);
+//     el hint de la intro ahora usa el i18n real del piloto (antes
+//     hardcodeado en español); TOAST HONESTO en VER EN 3D: si la sala no
+//     vive en una ZONA del universo (ZONAS_WGL), el toast dice «toca el
+//     edificio de este módulo en la ciudad» en vez de prometer un vuelo
+//     que no va a ocurrir (queja del QA del merge v168).
+// Herencia v170.0 LA CONSOLA HERMOSA y todo lo anterior.
+export const APP_VERSION = "v171.0";
+export const APP_CODENAME = "LA FILA CERO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

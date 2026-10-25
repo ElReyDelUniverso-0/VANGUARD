@@ -10,11 +10,17 @@
 // pasar el ratón — abrir una sala es instantáneo (chunk ya en memoria).
 // Contrato de rendimiento: solo transform/opacity, scroll horizontal con
 // rueda propia, reduced-motion respeta, cero re-render de la Casa.
+//
+// v171.0 LOS FAVORITOS — FILA CERO. La estrella de cada píldora fija el
+// módulo al inicio del riel (aunque viva en OTRA sección: viaja con el
+// punto de color de su casa). Persistente (vg171-favoritos, storage
+// blindado). El círculo de navegación se cierra: tus salas de siempre a
+// un toque, sin menú y sin búsqueda.
 // ══════════════════════════════════════════════════════════════════════
 
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ChevronsDownUp, ChevronsUpDown, History } from "lucide-react";
+import { ChevronsDownUp, ChevronsUpDown, History, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   TABS,
@@ -25,6 +31,7 @@ import {
 } from "@/components/vanguard/tab-nav";
 import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
 import { useCama } from "@/lib/cama-store";
+import { useFavoritos } from "@/lib/favoritos-store";
 
 // el prefetch es UNA VEZ por módulo y por sesión (los chunks se quedan)
 const prefetchados = new Set<string>();
@@ -38,6 +45,8 @@ export function RielSeccion({
 }) {
   const { t, lang } = useT();
   const recientes = useCama((s) => s.recientes);
+  const favoritos = useFavoritos((s) => s.favoritos);
+  const toggleFav = useFavoritos((s) => s.toggleFav);
   const [montado, setMontado] = useState(false);
   const [plegado, setPlegado] = useState(false);
 
@@ -70,22 +79,34 @@ export function RielSeccion({
         activa: false,
       }));
     }
-    return seccion.tabs.map((tb) => {
-      const def = TABS[tb.key];
-      return {
-        k: tb.key,
-        etiqueta: (def ? tabLabel(lang, tb.key, def.label) : tb.key).split(" (")[0],
-        acc,
-        activa: tb.key === tab,
-      };
-    });
-  }, [esNueva, seccion, tab, lang, acc, t]);
+    return seccion.tabs
+      .filter((tb) => !montado || !favoritos.includes(tb.key)) // v171: fijados van a fila 0
+      .map((tb) => {
+        const def = TABS[tb.key];
+        return {
+          k: tb.key,
+          etiqueta: (def ? tabLabel(lang, tb.key, def.label) : tb.key).split(" (")[0],
+          acc,
+          activa: tb.key === tab,
+        };
+      });
+  }, [esNueva, seccion, tab, lang, acc, t, montado, favoritos]);
+
+  // v171 FAVORITOS — FILA CERO: los módulos fijados viven ANTES que los
+  // hermanos (incluidos los de esta sección, patrón pestañas fijadas v108),
+  // con el punto de color de SU casa (aunque sea otra)
+  const filaFavoritos = useMemo(() => {
+    if (!montado) return [];
+    return favoritos
+      .filter((k) => k !== tab && TABS[k as TabKey])
+      .slice(0, 6);
+  }, [montado, favoritos, tab]);
 
   // RECIENTES (solo escritorio; el camino de la casa ya lo aprende La Cama)
   const filaRecientes = useMemo(() => {
     if (!montado) return [];
-    return recientes.filter((k) => k !== tab).slice(0, 6);
-  }, [montado, recientes, tab]);
+    return recientes.filter((k) => k !== tab && !favoritos.includes(k)).slice(0, 6);
+  }, [montado, recientes, tab, favoritos]);
 
   // PREFETCH al hover: el módulo se baja ANTES de que lo pidas
   const alAguantar = useCallback((k: TabKey) => {
@@ -125,6 +146,36 @@ export function RielSeccion({
         {!plegado && (
           <div className="vg170-riel-scroll" onWheel={alRodar}>
             <div className="vg170-riel-fila">
+              {/* v171 FILA CERO — los favoritos del dueño (color de su casa) */}
+              {filaFavoritos.map((k) => {
+                const def = TABS[k as TabKey];
+                const suAcc = accentOfSection(sectionOfTab(k as TabKey).key);
+                return (
+                  <motion.button
+                    key={`fav-${k}`}
+                    type="button"
+                    onMouseEnter={() => alAguantar(k as TabKey)}
+                    onTouchStart={() => alAguantar(k as TabKey)}
+                    onClick={() => onChange(k as TabKey)}
+                    className="vg170-riel-pill vg171-fav-pill"
+                    style={{ "--pill-acc": suAcc } as React.CSSProperties}
+                    whileTap={{ scale: 0.94 }}
+                    title={(def ? tabLabel(lang, k as TabKey, def.label) : k).split(" (")[0]}
+                  >
+                    <i className="vg171-fav-dot" style={{ background: suAcc }} aria-hidden />
+                    {TAB_SHORTS[lang]?.[k as TabKey] ?? def?.short ?? ""}
+                    <span
+                      role="button"
+                      tabIndex={-1}
+                      className="vg171-fav vg171-fav-on"
+                      aria-label="Quitar de favoritos"
+                      onClick={(e) => { e.stopPropagation(); toggleFav(k); }}
+                    >
+                      <Star className="w-3 h-3" aria-hidden />
+                    </span>
+                  </motion.button>
+                );
+              })}
               {pastillas.map((p) => (
                 <motion.button
                   key={p.k}
@@ -138,6 +189,20 @@ export function RielSeccion({
                   aria-current={p.activa ? "page" : undefined}
                 >
                   {p.etiqueta}
+                  {/* v171 LA ESTRELLA — fija el módulo en la fila cero del riel.
+                      El click de la estrella NO navega (stopPropagation). */}
+                  {!esNueva && (
+                    <span
+                      role="button"
+                      tabIndex={-1}
+                      className={cn("vg171-fav", favoritos.includes(p.k) && "vg171-fav-on")}
+                      aria-label={favoritos.includes(p.k) ? "Quitar de favoritos" : "Fijar en favoritos"}
+                      onMouseEnter={() => alAguantar(p.k)}
+                      onClick={(e) => { e.stopPropagation(); toggleFav(p.k); }}
+                    >
+                      <Star className="w-3 h-3" aria-hidden />
+                    </span>
+                  )}
                 </motion.button>
               ))}
             </div>

@@ -130,6 +130,13 @@ function PanelSkeleton() {
 }
 
 // ══════════════════════════════════════════════════════════
+// v171.0 MAPA DE ZONAS DEL MUNDO (sin importar three) — las 4 salas que
+// viven en una ZONA del universo 3D. Antes duplicado en dos sitios (ir-a
+// y VER EN 3D): una sola verdad para el toast honesto.
+// ══════════════════════════════════════════════════════════
+const ZONAS_WGL: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, perfil: 4 };
+
+// ══════════════════════════════════════════════════════════
 // v170.0 PREFETCH DE MÓDULOS — EL ASCENSOR PRIVADO.
 // El riel de sección y la franja despachan vg:prefetch-tab al pasar el
 // ratón: el chunk del módulo se baja ANTES del click. Abrir una sala
@@ -819,8 +826,8 @@ export default function Home() {
     // v140 MUNDO WEBGL: si esta sala vive en una ZONA del mundo 3D, la cámara
     // VUELA hasta ella (mapa espejo del componente — import liviano a propósito:
     // three.js no puede entrar al bundle principal de la página).
-    const zonaWgl: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, perfil: 4 };
-    const zWgl = zonaWgl[k as string];
+    // v171: el mapa vive en ZONAS_WGL (una sola verdad compartida con VER EN 3D).
+    const zWgl = ZONAS_WGL[k as string];
     if (typeof zWgl === "number") {
       window.dispatchEvent(new CustomEvent("vg:wgl-ir-a", { detail: { zona: zWgl } }));
     }
@@ -1097,6 +1104,10 @@ export default function Home() {
 
   // v165 — VER EN 3D desde CUALQUIER módulo 2D (botón del PanelHeader):
   // despierta el mundo y la sala del módulo activo se ancla sola
+  // v171 TOAST HONESTO: solo 4 salas viven en una ZONA del universo (ZONAS_WGL)
+  // — si la sala activa no tiene zona, el mundo aterriza en la CIUDAD y la
+  // sala se toca por raycast (edificio). El toast ya no promete un vuelo que
+  // no va a ocurrir (queja del QA del merge v168).
   useEffect(() => {
     const ir3D = () => {
       setModo2D((v) => {
@@ -1106,13 +1117,17 @@ export default function Home() {
         }
         document.documentElement.dataset.vgModo = "3d";
         try { localStorage.setItem("vanguard-modo", "3d"); } catch {}
-        toast("VOLANDO AL MÓDULO EN 3D", { description: "El mundo despierta y tu sala se ancla con el contenido completo" });
+        if (ZONAS_WGL[tab as string]) {
+          toast("VOLANDO AL MÓDULO EN 3D", { description: "El mundo despierta y tu sala se ancla con el contenido completo" });
+        } else {
+          toast("EL UNIVERSO DESPIERTA", { description: "Toca el edificio de este módulo en la ciudad para entrar a su sala 3D" });
+        }
         return false;
       });
     };
     window.addEventListener("vg:modo-3d", ir3D);
     return () => window.removeEventListener("vg:modo-3d", ir3D);
-  }, []);
+  }, [tab]); // v171: el toast depende de la sala ACTIVA (sin closure viejo)
 
   // CERRAR pestaña: la vecina de la derecha hereda el foco (o la de la izquierda);
   // si se cierra la última, se abre la NUEVA — el navegador nunca se queda ciego.

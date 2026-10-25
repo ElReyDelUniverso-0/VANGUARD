@@ -5651,6 +5651,38 @@ html[data-wgl="on"] .vg170-aurora { opacity: 0 !important; transition: none; }
 .vg170-riel-recpill:hover { background: rgba(255,255,255,0.06); color: #fff; transform: translateY(-1px); }
 @media (max-width: 900px) { .vg170-riel-rec { display: none; } }
 
+/* ── v171.0 LOS FAVORITOS — FILA CERO DEL RIEL ───────────────────────
+   La estrella fija el módulo al inicio del riel (persistente). La
+   píldora favorita de OTRA sección viaja con el punto de color de su
+   casa (vg171-fav-dot) y el borde del oro del dueño. Solo
+   transform/opacity: el contrato de rendimiento del riel intacto. */
+.vg171-fav {
+  display: inline-grid; place-items: center;
+  width: 16px; height: 16px;
+  margin-left: 2px;
+  border-radius: 4px;
+  color: rgba(255,255,255,0.28);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.18s ease, transform 0.15s ease, filter 0.18s ease;
+}
+.vg171-fav:hover { color: #FFC94D; transform: scale(1.15); }
+.vg171-fav:active { transform: scale(0.85); }
+.vg171-fav-on { color: #FFC94D; filter: drop-shadow(0 0 4px rgba(255,201,77,0.55)); }
+.vg170-riel-pill-act .vg171-fav-on { color: #0B0B12; filter: none; }
+.vg171-fav-pill {
+  border-color: color-mix(in srgb, var(--pill-acc, #FFC94D) 55%, transparent) !important;
+  background: color-mix(in srgb, var(--pill-acc, #FFC94D) 12%, rgba(255,255,255,0.03));
+  color: rgba(255,255,255,0.85);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--pill-acc, #FFC94D) 22%, transparent);
+}
+.vg171-fav-pill:hover { border-color: var(--pill-acc, #FFC94D) !important; }
+.vg171-fav-dot {
+  width: 5px; height: 5px; border-radius: 999px;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--pill-acc, #FFC94D);
+}
+
 .vg170-riel-plegar {
   display: grid; place-items: center;
   width: 24px; height: 24px;
