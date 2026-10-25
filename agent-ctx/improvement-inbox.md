@@ -466,3 +466,15 @@ Salud: home=200 | health v176.0 | /api/news?modo=centro alimentando el tablero |
 5. FICHAS HISTÓRICAS — extensión al ARCHIVO MUNDIAL: guerras cerradas (Vietnam, Irak 2003, Falklands) como cartas de serie histórica con su bibliografía · Esfuerzo: L
 
 ⭐ IDEA ESTRELLA: FICHA COLECCIONABLE DEL ROSTRO — la placa de personaje v175 ya existe; con el motor v176 (datos+álbum+rareza por señales del rostro en vivo) la colección crece a LOS ROSTROS DEL PODER sin tocar ni una línea de la tarjetería: dos colecciones gemelas (guerras + poder) sobre un solo motor.
+
+---
+## MENSAJE #19 · 2026-10-26 · Task ia1-v177.0
+Notas: Ronda «EL CINE DE LA CASA» — integración de la verdad remota (v173 retiró el 3D por orden del Dueño; v174/v176 aterrizaron intros GTA y fichas) y port del cine al arranque 2D con las lecciones de la casa (useSyncExternalStore, portal+z-300). Server de producción como suelo (211MB, inmune OOM).
+Salud: home=200 | health v177.0 | prod rss 211MB | tsc 0 | lint 0
+
+📡 PRÓXIMAS PROPUESTAS:
+1. CINE v2 EN VIVO (⭐ sigue viva) — las placas del cine pescan EL titular real del día de cada conflicto desde /api/news?modo=centro: la intro se actualiza sola cada día · Esfuerzo: M
+2. OVERFLOW DESKTOP PREEXISTENTE — scrollWidth 1298/1280 (capa v138-mundo 2199px) en la consola plana: cazar y sellar (overflow-x clip en el wrapper honesto) · Esfuerzo: S
+3. PLACA FINAL TOCABLE — la última placa del cine («TOCA PARA DESPLEGAR LA CASA») abre directamente la baldosa del CENTRO MUNDIAL · Esfuerzo: S
+4. SONIDO DE SALA OSCURA — arranque del cine con golpe grave (la familia GTA ya suena en rostros/lector) · Esfuerzo: S
+5. RED VISUAL DE CONEXIONES (directiva v168 viva) — nodos con peso de relación como panel 2D del CENTRO (el 3D ya no existe; la red nace plana) · Esfuerzo: L
