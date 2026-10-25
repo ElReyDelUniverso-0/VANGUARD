@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v172.0",
+    nombre: "EL PULSO DE LA PARIDAD",
+    tipo: "mundo",
+    hitos: [
+      "TELEMETRÍA 3D vs 2D (⭐ idea estrella del inbox #16) — la paridad se MIDE: nuevo telemetria-paridad.ts (vg172-telemetria, storage blindado + rehidratador, rollover diario UTC) con DOS puntos únicos de medición: el raycast del mundo (g.tipo === \"sala\", se saltan \"fila\" y \"__pagina\") cuenta 3D y la caja de la Casa (spendCoins) cuenta 2D excluyendo los motivos «desde el mundo 3D» (cero doble-conteo). La cuenta vive en el PERFIL: tarjeta «Pulso de la paridad» (totales, % del pulso, hoy, top salas 3D, última acción, reiniciar) y línea PARIDAD 3D/2D extruida en la sala insignia del agente (verde si el mundo manda, azul si la Casa gana por ahora)",
+      "SONIDO DE CASCADA (idea #1) — el ascenso genérica→contenido SUENA: una gota de cristal (sine 640Hz·pitch, 70ms, ganancia susurrada) por cada fila revelada en el stagger 130ms de la casa de vidrio, pitch ascendente 1→~1.7; el mundo presta su AudioContext por el nuevo CtxSala3D.sonar — el ascenso se diferencia del zumbido de la estación informativa",
+      "PAGINACIÓN 3D UNIVERSAL + DENSIDAD ADAPTATIVA (ideas #4/#2) — el pie «+N MÁS EN EL PANEL» muere: todo lo que no cabe en la casa ES TOCABLE. Placas doradas SIGUIENTE 2/3 · ATRAS 1/3 (patrón BOLSA) al pie de la última habitación; el raycast las resuelve EN EL MUNDO (accion \"__pagina\" → paginar → pintar la página con clamp, firma anti-churn intacta; nunca viaja a la Casa ni se cuenta como acción). Mismo estante 7 móvil / 9 escritorio, cero filas perdidas",
+      "BUG CAZADO EN QA (herencia v171): el store de telemetría nacía con la cerradura de storageBlindado CERRADA — sin registro en el rehidratador la cuenta jamás persistía (mismo bug de favoritos v171). Registrado y verificado E2E: compra real en la TIENDA contó 2D, sobrevivió a la recarga (vg172-telemetria en localStorage)",
+      "QA v172: tsc 0, build limpio, guards v167 intactos (ciudadCerradaAlgunaVez ×3, watchdog ×4), 129 emisores vivos, health v172.0, consola sin errores — el camino real 2D (menu → SHOP → comprar ×2 → PERFIL → contadores → reiniciar → recarga) verificado con navegador real; el camino 3D (cascada, placas de página, telemetría por raycast) queda para la revisión cruzada del merge, como v168",
+    ],
+  },
+  {
     version: "v171.0",
     nombre: "LA FILA CERO",
     tipo: "nav",

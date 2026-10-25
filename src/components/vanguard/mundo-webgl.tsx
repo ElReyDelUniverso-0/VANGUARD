@@ -58,6 +58,8 @@ import { APP_VERSION } from "@/lib/version";
 import { translate, useLangStore } from "@/lib/i18n";
 // v145 SALAS EN VOLUMEN: el CONTENIDO real de cada sala como escena 3D
 import { construirSala3D, type PayloadSala3D, type Sala3DInstancia, type CtxSala3D } from "./salas-3d";
+// v172 EL PULSO DE LA PARIDAD: el raycast del mundo se cuenta (3D)
+import { contarAccion } from "@/lib/telemetria-paridad";
 import { construirHud3D, type Hud3D } from "./hud-3d";
 // v148 MUNDOS PROPIOS: cada sección recibe SU PROPIO universo — telón que
 // aísla del planeta compartido, plataforma, paisaje vivo y frases 3D
@@ -1226,6 +1228,8 @@ class MundoWGL {
       movil: this.esMovil(),
       camara: this.camara.position, // v165: la proximidad lee la cámara VIVA
       animarP: (obj, to, ms, opts) => this.animarP(obj as ObjNum, to, ms, opts),
+      // v172: el mundo presta su voz — la cascada del ascenso
+      sonar: (tp, p) => sonar(tp, p),
     };
     try {
       this.salaInst = construirSala3D(ctx, p);
@@ -5893,6 +5897,17 @@ export function MundoWebGL({ tabInicial }: { tabInicial?: string }) {
         sonar("click");
         try {
           const acc = JSON.parse(g.key ?? "{}");
+          // v172 PAGINACIÓN UNIVERSAL: las placas SIGUIENTE/ATRAS son un
+          // asunto DEL MUNDO — pintan la página aquí, nunca viajan a la Casa
+          if (acc?.accion === "__pagina") {
+            m.salaInst?.paginar?.(acc.idx);
+            return;
+          }
+          // v172 EL PULSO DE LA PARIDAD: el raycast del mundo se cuenta
+          // (punto único; "fila" sin acción y navegación no son acciones)
+          if (acc?.tab && acc?.accion && acc.accion !== "fila") {
+            contarAccion(acc.tab, acc.accion, "3d");
+          }
           window.dispatchEvent(new CustomEvent("vg:sala3d-accion", { detail: acc }));
         } catch { /* llave corrupta: silencio honesto */ }
         return;
@@ -6234,14 +6249,23 @@ function IntroFallback() {
 // onda del teatro grave. Todo try/catch: sin audio la Casa sigue.
 // ────────────────────────────────────────────────────────────
 let ctxAudio: AudioContext | null = null;
-function sonar(tipo: "ping" | "whoosh" | "onda" | "freno" | "tic" | "click" | "clank") {
+function sonar(tipo: "ping" | "whoosh" | "onda" | "freno" | "tic" | "click" | "clank" | "cascada", pitch = 1) {
   try {
     ctxAudio = ctxAudio || new (window.AudioContext || (window as never as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (!ctxAudio || ctxAudio.state === "suspended") return;
     const t = ctxAudio.currentTime;
     const g = ctxAudio.createGain();
     g.connect(ctxAudio.destination);
-    if (tipo === "tic") {
+    if (tipo === "cascada") {
+      // v172: la CASCADA DEL ASCENSO — una gota de cristal por fila revelada
+      // (sine corto, ganancia susurrada, pitch ascendente por índice de fila)
+      const o = ctxAudio.createOscillator();
+      o.type = "sine";
+      o.frequency.setValueAtTime(640 * Math.max(0.5, Math.min(2.2, pitch)), t);
+      g.gain.setValueAtTime(0.016, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+      o.connect(g); o.start(t); o.stop(t + 0.08);
+    } else if (tipo === "tic") {
       // v144: el SUSURRO del puente — la placa avisa que está viva bajo el dedo
       const o = ctxAudio.createOscillator();
       o.type = "square";
