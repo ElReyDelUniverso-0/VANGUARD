@@ -67,6 +67,7 @@ export function SectionSearch({
   onClose,
   onChange,
   contenedor,
+  consultaInicial,
 }: {
   open: boolean;
   onClose: () => void;
@@ -74,7 +75,14 @@ export function SectionSearch({
   // v145: contenedor opcional — con el universo 3D vivo la paleta se
   // proyecta DENTRO de la ventana holo (CSS3D) en vez de plana sobre el body
   contenedor?: HTMLElement | null;
+  // v179.0 VG-ASSIST: consulta pre-cargada ("busca Irán" del agente de voz)
+  consultaInicial?: string;
 }) {
+  // la consulta del agente viaja por ref: el effect de open la consume UNA vez
+  const consultaPendiente = useRef<string>("");
+  useEffect(() => {
+    if (consultaInicial && open) consultaPendiente.current = consultaInicial;
+  }, [consultaInicial, open]);
   const { t, lang } = useT();
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
@@ -179,7 +187,9 @@ export function SectionSearch({
         const arr = JSON.parse(localStorage.getItem(LS_RECENT) || "[]");
         setRecent(Array.isArray(arr) ? arr.slice(0, 6) : []);
       } catch { setRecent([]); }
-      setQ("");
+      // v179: si el agente de voz trajo consulta, entra pre-cargada (una sola vez)
+      setQ(consultaPendiente.current);
+      consultaPendiente.current = "";
       setIdx(0);
     }, 0);
     // enfocar tras el mount del overlay

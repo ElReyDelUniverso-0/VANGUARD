@@ -69,6 +69,7 @@ import { NavZonas } from "@/components/vanguard/nav-zonas";
 const MercadoVivo = dynamic(() => import("@/components/vanguard/mercado-vivo"), { ssr: false });
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 import { SectionSearch } from "@/components/vanguard/section-search";
+import { AsistenteVoz } from "@/components/vanguard/asistente-voz";
 import { AccountModal } from "@/components/vanguard/account-modal";
 import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
@@ -769,6 +770,32 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pestanas, tab, recordTabVisit, t]);
 
+  // ═══ v179.0 VG-ASSIST — EL AGENTE DE VOZ: la Casa obedece la voz ═══
+  // El orbe transcribe (Web Speech API), el cerebro (/api/asistente) interpreta
+  // y la MANOS ejecuta aquí: navegar a una sala, abrir la paleta con la consulta
+  // pre-cargada o desplegar el menú completo. Evento único: vg:asistente-accion.
+  const [consultaAsistente, setConsultaAsistente] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    const obedece = (e: Event) => {
+      const a = (e as CustomEvent<{ tipo?: string; destino?: string; consulta?: string }>).detail || {};
+      if (a.tipo === "navegar" && a.destino) {
+        handleTabChange(a.destino as TabKey);
+      } else if (a.tipo === "buscar") {
+        setConsultaAsistente(a.consulta || "");
+        setSearchOpen(true);
+      } else if (a.tipo === "menu") {
+        setMenuOpen(true);
+      }
+      // tipo "hablar": la respuesta hablada ES la acción, nada que tocar
+    };
+    window.addEventListener("vg:asistente-accion", obedece);
+    return () => window.removeEventListener("vg:asistente-accion", obedece);
+  }, [handleTabChange]);
+  // contexto del piloto: la pestaña viva viaja al orbe (el cerebro la usa)
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("vg:asistente-contexto", { detail: { tab } }));
+  }, [tab]);
+
 
 
 
@@ -1364,7 +1391,7 @@ export default function Home() {
       <MegaMenu open={menuOpen} onChange={handleTabChange} onClose={() => setMenuOpen(false)} onOpenSearch={() => setSearchOpen(true)} />
       {/* v47.0: paleta de búsqueda — Ctrl+K, tecla / o botón Buscar del nav.
           v145: también proyectada en la ventana holo cuando el universo vive */}
-      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} />
+      <SectionSearch open={searchOpen} onClose={() => setSearchOpen(false)} onChange={(tab) => handleTabChange(tab as TabKey)} consultaInicial={consultaAsistente} />
       <AccountModal open={accountOpen} onClose={() => { setAccountOpen(false); setGatePasaporte(null); }} gate={gatePasaporte} />
       {/* v55.0: DailyLoginModal ahora vive en RetentionLayer (layout global) */}
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
@@ -1384,6 +1411,8 @@ export default function Home() {
       <TutorialModal />
       {/* v105.0 EL NAVEGADOR — brújula global "¿qué quiero hacer hoy?" */}
       <Navegador />
+      {/* v179.0 VG-ASSIST — el orbe Siri de Vanguard: toca y habla, la Casa obedece */}
+      <AsistenteVoz />
     </div>
   );
 }

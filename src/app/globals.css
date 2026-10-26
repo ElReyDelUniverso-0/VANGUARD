@@ -6077,3 +6077,96 @@ html[data-vg-3d="on"] .cuna-v139:has(.vg173-terminal) {
 @media (prefers-reduced-motion: reduce) {
   .v176ficha, .v176ficha-nueva, .v176ficha-sello { animation: none; }
 }
+
+/* ═══════════ v179.0 VG-ASSIST — EL AGENTE DE VOZ ═══════════
+   El orbe Siri de la Casa: gradiente vivo ámbar/verde HUD.
+   Contrato de la casa: solo transform/opacity (v171). */
+.vg179-orbe {
+  background: radial-gradient(circle at 32% 28%, rgba(74, 222, 128, 0.16), transparent 42%),
+    radial-gradient(circle at 68% 74%, rgba(245, 197, 66, 0.14), transparent 46%),
+    rgba(11, 11, 18, 0.92);
+  border: 1px solid rgba(245, 197, 66, 0.45);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), inset 0 0 18px rgba(245, 197, 66, 0.08);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.vg179-orbe:hover { border-color: rgba(245, 197, 66, 0.75); }
+.vg179-orbe-activo {
+  border-color: rgba(74, 222, 128, 0.8);
+  box-shadow: 0 0 28px rgba(74, 222, 128, 0.35), 0 6px 24px rgba(0, 0, 0, 0.55),
+    inset 0 0 22px rgba(74, 222, 128, 0.14);
+}
+.vg179-nucleo {
+  position: absolute;
+  inset: 7px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+}
+.vg179-nucleo-gira {
+  position: absolute;
+  inset: -55%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(245, 197, 66, 0.95),
+    rgba(74, 222, 128, 0.55),
+    rgba(245, 197, 66, 0.18),
+    rgba(74, 222, 128, 0.85),
+    rgba(245, 197, 66, 0.95)
+  );
+  filter: blur(9px);
+  animation: vg179Girar 7s linear infinite;
+}
+.vg179-orbe-activo .vg179-nucleo-gira { animation-duration: 2.2s; filter: blur(7px); }
+@keyframes vg179Girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+/* ondas de escucha */
+.vg179-onda {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgba(74, 222, 128, 0.55);
+  animation: vg179Onda 1.5s ease-out infinite;
+  pointer-events: none;
+}
+.vg179-onda-2 { animation-delay: 0.75s; }
+@keyframes vg179Onda {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(1.75); opacity: 0; }
+}
+/* ecualizador de habla */
+.vg179-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 18px;
+  position: relative;
+  z-index: 10;
+}
+.vg179-barras i {
+  width: 3px;
+  border-radius: 2px;
+  background: #4ade80;
+  animation: vg179Barra 0.9s ease-in-out infinite;
+}
+.vg179-barras i:nth-child(1) { height: 40%; animation-delay: 0s; }
+.vg179-barras i:nth-child(2) { height: 75%; animation-delay: 0.12s; }
+.vg179-barras i:nth-child(3) { height: 100%; animation-delay: 0.24s; }
+.vg179-barras i:nth-child(4) { height: 68%; animation-delay: 0.36s; }
+.vg179-barras i:nth-child(5) { height: 42%; animation-delay: 0.48s; }
+@keyframes vg179Barra {
+  0%, 100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(1); }
+}
+/* panel de entrada */
+@keyframes vg179PanelEntra {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.vg179-panel { animation: vg179PanelEntra 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vg179-nucleo-gira, .vg179-onda, .vg179-barras i, .vg179-panel { animation: none; }
+}

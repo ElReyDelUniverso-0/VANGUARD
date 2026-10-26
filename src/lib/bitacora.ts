@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v179.0",
+    nombre: "EL AGENTE DE VOZ",
+    tipo: "ia",
+    hitos: [
+      "VG-ASSIST, EL SIRI DE LA CASA (el Dueño: «hace que Vanguard tenga un modo voz para entrar en la pestaña y un agente como Siri») — un orbe flotante en toda la app: tocas y HABLAS, Vanguard obedece. Núcleo de gradiente cónico vivo ámbar/verde HUD, estados reales dibujados (escuchando = ondas expansivas, pensando = giro, hablando = ecualizador), nunca pisa la NavZonas ni el footer",
+      "EL OÍDO EN EL APARATO — Web Speech API nativa (gratis, cero servidor) con resultados intermedios en vivo: ves tu propia voz escrita mientras hablas, como Siri. Los 8 idiomas de la Casa mapeados (es-ES, en-US, pt-BR, fr-FR, de-DE, it-IT, ru-RU, zh-CN). Interrupción real: si el agente está hablando y vuelves a pulsar, la boca calla y las orejas abren",
+      "EL CEREBRO CON WHITELIST REAL (/api/asistente) — LLM que interpreta la INTENCIÓN (no palabras clave) y solo puede navegar a claves del vocabulario verdadero (i18n-tabs = fuente única con la paleta, validado server-side: el destino jamás se inventa); MURO 20 órdenes/min por IP + reloj de 15s; si la IA no responde, intérprete determinista de respaldo (abre/busca/menú por vocabulario) — el agente nunca se queda mudo",
+      "LAS MANOS OBEDECEN (page.tsx) — evento único vg:asistente-accion: «abre la colección de guerra» navega por el RESOLUTOR DE SALA v125, «busca Irán» abre la paleta de comandos con la consulta PRE-CARGADA (prop consultaInicial de la SectionSearch, consumida una sola vez por ref), «menú» despliega el MegaMenu; la pestaña viva viaja al agente como contexto (vg:asistente-contexto)",
+      "LA BOCA DEL PILOTO — speechSynthesis del aparato con la voz del idioma elegido, rate 1.18 (rápida: el ADN del tráiler v178.1) y pitch 0.95; la respuesta se confirma por voz mientras la acción YA se ve en pantalla",
+      "MODO TEXTO HONESTO — sin micrófono o permiso denegado, el aviso es real (no un error mudo) y la orden escrita del panel funciona igual: QA del agente posible en cualquier navegador; orbe ocultable por sesión (vg179-asistente-oculto)",
+      "INFRA: EL VIGILANTE REVIVIDO Y CONSAGRADO — el guardián anti-OOM de v178.1 quedó fuera del commit tras el checkpoint del sandbox y su proceso murió: recreado (scripts/vigilante.mjs, umbral 900MB, relevo ordenado) y capturado en este release; el server relevo manual con RSS 2490MB → 199MB limpio",
+    ],
+  },
+  {
     version: "v178.0",
     nombre: "EL DESPERTADOR",
     tipo: "tecno",

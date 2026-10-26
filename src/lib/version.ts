@@ -559,8 +559,29 @@
 //     como gta»); ahora es DIARIA con fecha LOCAL del aparato
 //     (vg-cine-entrada-v178-YYYY-MM-DD): el Dueño ve SU intro GTA cada día
 //     que abre Vanguard, sin repetir el mismo día. Reduced-motion sin cine.
-// Herencia v177.0 y todo lo anterior — cortina v155 de red de seguridad,
+// v179.0 EL AGENTE DE VOZ — VG-ASSIST, el Siri de la Casa. El Dueño pidió
+// «un modo voz para entrar en la pestaña y un agente como Siri».
+// (1) EL ORBE (asistente-voz.tsx): botón flotante en toda la app (abajo a la
+//     derecha, nunca pisa la NavZonas) con núcleo de gradiente cónico vivo
+//     ámbar/verde HUD; estados reales: escuchando (ondas) → pensando (giro)
+//     → hablando (ecualizador). Panel con transcripción en vivo + orden
+//     escrita de respaldo: el agente NUNCA se queda mudo (sin mic o permiso
+//     denegado → aviso honesto + modo texto).
+// (2) EL OÍDO: Web Speech API del aparato (gratis, sin servidor) en los 8
+//     idiomas de la Casa (es-ES, en-US, pt-BR, fr-FR, de-DE, it-IT, ru-RU,
+//     zh-CN) con resultados intermedios en vivo.
+// (3) EL CEREBRO (/api/asistente): LLM con whitelist REAL de salas (i18n-tabs
+//     es la fuente única — el destino validado server-side jamás inventa
+//     claves), MURO 20/min por IP y reloj 15s; sin IA disponible → intérprete
+//     determinista (abre/busca/menú por vocabulario). Devuelve hablar + accion
+//     { navegar | buscar | menu | hablar }.
+// (4) LAS MANOS (page.tsx): evento vg:asistente-accion — navegar resuelve por
+//     el RESOLUTOR DE SALA v125, buscar abre la paleta con consultaInicial
+//     pre-cargada (consumo de una sola vez por ref), menú despliega el Mega.
+// (5) LA BOCA: speechSynthesis del aparato, voz del idioma del piloto,
+//     rate 1.18 (rápida, el ADN del tráiler), pitch 0.95.
+// Herencia v178.0 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v178.0";
-export const APP_CODENAME = "EL DESPERTADOR";
+export const APP_VERSION = "v179.0";
+export const APP_CODENAME = "EL AGENTE DE VOZ";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
