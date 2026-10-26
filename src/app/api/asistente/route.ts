@@ -9,8 +9,16 @@ import { TAB_LABELS } from "@/lib/i18n-tabs";
 // v180.0 VANGUARD AUTOMÁTICO: «léeme las noticias» ya NO solo navega —
 // el cerebro pregunta al motor en vivo y devuelve un BRIEFING HABLADO con
 // los cables reales del momento (determinista, ANTES del LLM: cero alucinación).
+// v181.0 EL AGENTE TOTAL: «van por ti a lugares solo por decirle y puedes
+// editar y mirar Vanguard solo hablando» — dos poderes nuevos DETERMINISTAS:
+//  · tipo "ficha": «muéstrame la ficha de Ucrania» → abre la CARTA de la
+//    colección (vg:asistente-ficha la descubre como si se tocara a mano)
+//  · tipo "idioma": «cambia el idioma a inglés» → cambia el idioma de la
+//    Casa en vivo (store del idioma) y el agente confirma EN EL NUEVO idioma
+//  · «edita mi perfil» → sala PERFIL (Personalizar Perfil)
 // Reglas de acero:
 //  · el destino SOLO puede ser una clave del vocabulario real (TAB_LABELS.es)
+//  · el conflicto SOLO puede ser una clave real del feed (/api/news)
 //  · MURO 20 peticiones por IP y minuto (la voz no es gratis)
 //  · sin SDK disponible → intérprete determinista local (nunca se queda mudo)
 // POST { texto, lang, tab, tabs?: [{key,label}] }
@@ -21,6 +29,55 @@ export const maxDuration = 30;
 
 const VOCAB = TAB_LABELS.es; // clave -> etiqueta en español (fuente única con la paleta)
 const CLAVES_VALIDAS = new Set(Object.keys(VOCAB));
+
+// v181.0 — LOS 9 CONFLICTOS REALES del feed (catálogo v176, claves estables de
+// /api/news conflictTag). Espejo HONESTO: la voz solo puede abrir cartas que
+// existen — jamás inventa una ficha. El nombre es SOLO para confirmar hablando.
+const CONFLICTOS: { id: string; nombre: string; alias: string[] }[] = [
+  { id: "ukraine", nombre: "VG-01 RUSIA—UCRANIA", alias: ["ucrania", "ukraine", "rusia", "russia", "zelenski", "zelensky", "putin", "kiev", "donesk", "donetsk", "vg-01", "vg01", "vg 01"] },
+  { id: "gaza", nombre: "VG-02 ISRAEL—GAZA", alias: ["gaza", "palestina", "palestine", "hamas", "israel", "netanyahu", "rafah", "vg-02", "vg02", "vg 02"] },
+  { id: "lebanon", nombre: "VG-03 ISRAEL—HEZBOLÁ", alias: ["libano", "líbano", "lebanon", "beirut", "hezbola", "hezbolá", "hezbollah", "nasrallah", "vg-03", "vg03", "vg 03"] },
+  { id: "sudan", nombre: "VG-04 SUDÁN: SAF—FRS", alias: ["sudan", "sudán", "darfur", "jartum", "khartoum", "saf", "frs", "rsf", "vg-04", "vg04", "vg 04"] },
+  { id: "redsea", nombre: "VG-05 EL MAR ROJO", alias: ["mar rojo", "red sea", "huties", "hutíes", "houthi", "houthis", "yemen", "sanaa", "bab el mandeb", "vg-05", "vg05", "vg 05"] },
+  { id: "korea", nombre: "VG-06 LAS DOS COREAS", alias: ["corea", "korea", "kim", "pyongyang", "pyongyang", "seul", "seúl", "seoul", "norcorea", "corea del norte", "vg-06", "vg06", "vg 06"] },
+  { id: "taiwan", nombre: "VG-07 EL ESTRECHO DE TAIWÁN", alias: ["taiwan", "taiwán", "taipei", "formosa", "vg-07", "vg07", "vg 07"] },
+  { id: "hormuz", nombre: "VG-08 ORMUZ—IRÁN", alias: ["hormuz", "ormuz", "iran", "irán", "iran", "teheran", "teherán", "persia", "golfo persico", "golfo pérsico", "vg-08", "vg08", "vg 08"] },
+  { id: "sahel", nombre: "VG-09 EL SAHEL", alias: ["sahel", "mali", "malí", "niger", "níger", "burkina", "jnim", "eigs", "vg-09", "vg09", "vg 09"] },
+];
+
+function buscaConflicto(t: string): { id: string; nombre: string } | null {
+  for (const c of CONFLICTOS) {
+    for (const a of c.alias) {
+      if (t === a) return c;
+      if (a.length >= 5 && t.includes(a)) return c;
+      if (a.length < 5 && new RegExp("(^|\\s)" + a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "($|\\s)").test(t)) return c;
+    }
+  }
+  return null;
+}
+
+// v181.0 — LOS 8 IDIOMAS de la Casa (Lang de i18n.ts): «cambia el idioma»
+const IDIOMAS: { id: string; alias: string[] }[] = [
+  { id: "es", alias: ["espanol", "español", "castellano", "spanish"] },
+  { id: "en", alias: ["ingles", "inglés", "english", "inglés"] },
+  { id: "pt", alias: ["portugues", "portugués", "brasil", "brazilian"] },
+  { id: "fr", alias: ["frances", "francés", "french"] },
+  { id: "de", alias: ["aleman", "alemán", "german"] },
+  { id: "it", alias: ["italiano", "italian"] },
+  { id: "ru", alias: ["ruso", "russian"] },
+  { id: "zh", alias: ["chino", "chinese", "mandarin", "mandarín"] },
+];
+
+function buscaIdioma(t: string): string | null {
+  for (const i of IDIOMAS) for (const a of i.alias) if (t.includes(a)) return i.id;
+  return null;
+}
+
+const CONFIRMA_IDIOMA: Record<string, string> = {
+  es: "Hecho. Español activo.", en: "Done. English active.", pt: "Feito. Português ativo.",
+  fr: "Fait. Français actif.", de: "Erledigt. Deutsch aktiv.", it: "Fatto. Italiano attivo.",
+  ru: "Готово. Русский активен.", zh: "完成。中文已激活。",
+};
 
 const LANG_NOMBRE: Record<string, string> = {
   es: "español", en: "inglés", pt: "portugués", fr: "francés",
@@ -35,11 +92,15 @@ Devuelve UN JSON EXACTO con:
   · {"tipo":"navegar","destino":"CLAVE"} si quiere ir a una sección — CLAVE debe ser EXACTAMENTE una de: [CLAVES]
   · {"tipo":"buscar","consulta":"texto"} si quiere buscar algo concreto (un país, un conflicto, un término)
   · {"tipo":"menu"} si quiere ver el menú completo o el índice
+  · {"tipo":"ficha","destino":"CONFLICTO"} si quiere VER la ficha/carta coleccionable de un conflicto — CONFLICTO debe ser EXACTAMENTE uno de: [ukraine, gaza, lebanon, sudan, redsea, korea, taiwan, hormuz, sahel]
+  · {"tipo":"idioma","destino":"es|en|pt|fr|de|it|ru|zh"} si pide cambiar el idioma de la plataforma
   · {"tipo":"hablar"} si solo pregunta algo y la respuesta te basta
 
 REGLAS:
 - Si pide noticias / qué pasa en el mundo / últimas horas → navegar a "centro" (CENTRO MUNDIAL) y en "hablar" resume que abres el centro de impacto en vivo.
-- Si menciona un país o conflicto concreto con "ficha" o "colección" → navegar a "fichas".
+- Si menciona un país o conflicto concreto con "ficha", "carta" o "colección", o pide «muéstrame/enséñame» un conflicto → tipo "ficha" con SU clave de conflicto.
+- Si pide cambiar/poner el idioma (inglés, chino, portugués…) → tipo "idioma" con su código.
+- Si pide editar/personalizar/configurar su perfil → navegar a "perfil" (Personalizar Perfil).
 - Si pide una sección por nombre o sinónimo razonable, elige SU clave. Si no está seguro, usa "buscar" con el término.
 - NUNCA inventes claves fuera de la lista. NUNCA prometas acciones que no existen.
 - Devuelve EXACTAMENTE: {"hablar":"...","accion":{...}}`;
@@ -57,8 +118,28 @@ function heuristica(
   const es = lang === "es";
   const pedidoBusca = /^(busca|buscar|encuentra|buscame|búscame|search)\b/.test(t) || /\b(buscame|búscame|busca)\s+(.{2,})/.test(texto.toLowerCase());
 
-  // "abre X" / "ir a X" / "muestra X" → buscar la sección cuyo nombre encaje
-  const patronAbrir = t.match(/(?:abre|abrir|entra|ir\s+a|vamos\s+a|muestra|ense|llevame|lleva\s+me|ve\s+a|open|go\s+to)\s+(?:la\s+|el\s+|los\s+|las\s+)?([a-z0-9ñáéíóúü\s]{3,40})/);
+  // v181.0: ① IDIOMA — «cambia el idioma a inglés» en la red de seguridad
+  if (/\b(cambia|cambiar|cambiale|pon|poner|ponle|idioma|language)\b/.test(t)) {
+    const idi = buscaIdioma(t);
+    if (idi) {
+      if (idi === lang) {
+        return { hablar: es ? "Ya hablamos en ese idioma, piloto." : "Already speaking that language, pilot.", accion: { tipo: "hablar" } };
+      }
+      return { hablar: CONFIRMA_IDIOMA[idi], accion: { tipo: "idioma", destino: idi } };
+    }
+  }
+
+  // v181.0: ② FICHA — «muéstrame la ficha de Ucrania» abre la CARTA entera
+  const conf = buscaConflicto(t);
+  if (conf && /\b(ficha|fichas|carta|cartas|coleccion|muestrame|ensename|mira|abre|abrir)\b/.test(t)) {
+    return {
+      hablar: es ? `Abriendo la ficha ${conf.nombre}.` : `Opening card ${conf.nombre}.`,
+      accion: { tipo: "ficha", destino: conf.id },
+    };
+  }
+
+  // "abre X" / "ir a X" / "muestra X" / "edita mi perfil" → buscar la sección cuyo nombre encaje
+  const patronAbrir = t.match(/(?:abre|abrir|entra|ir\s+a|vamos\s+a|muestra|ense|llevame|lleva\s+me|ve\s+a|edita|editar|personaliza|configura|open|go\s+to)\s+(?:la\s+|el\s+|los\s+|las\s+|mi\s+|tu\s+)?([a-z0-9ñáéíóúü\s]{3,40})/);
   const objetivo = patronAbrir?.[1]?.trim() ?? "";
 
   if (objetivo) {
@@ -132,11 +213,54 @@ export async function POST(req: NextRequest) {
   const tabActual = String(body.tab || "inicio").slice(0, 30);
   if (!texto) return NextResponse.json({ error: "Falta el texto de la orden" }, { status: 400 });
 
+  // ═══ v181.0 EL AGENTE TOTAL — dos ramas DETERMINISTAS antes del LLM ═══
+  // La voz que VA por ti a los lugares y MIRA Vanguard contigo: abrir una
+  // carta concreta de la colección y cambiar el idioma de la Casa. Cero
+  // alucinación: si el conflicto o el idioma no existen, la rama no dispara.
+  const tNorm = norm(texto);
+  const es = lang === "es";
+
+  // ① IDIOMA: «cambia el idioma a inglés» / «habla chino»
+  const posibleIdioma =
+    /\b(cambia|cambiar|cambiale|cambie|pon|poner|ponle|switch)\b/.test(tNorm) ||
+    /\b(habla|hablar|responde)\b.*\b(idioma|ingles|espanol|english|chino|ruso|frances|aleman|italiano|portugues)\b/.test(tNorm) ||
+    /\b(idioma|language|lenguaje)\b/.test(tNorm) ||
+    (/\b(quiero|dame)\b/.test(tNorm) && !!buscaIdioma(tNorm));
+  const idiomaP = posibleIdioma ? buscaIdioma(tNorm) : null;
+  if (idiomaP) {
+    if (idiomaP === lang) {
+      return NextResponse.json({
+        hablar: es ? "Ya hablamos en ese idioma, piloto." : "Already speaking that language, pilot.",
+        ai: false,
+        accion: { tipo: "hablar" },
+      });
+    }
+    return NextResponse.json({
+      hablar: CONFIRMA_IDIOMA[idiomaP],
+      ai: false,
+      accion: { tipo: "idioma", destino: idiomaP },
+    });
+  }
+
+  // ② FICHA: «muéstrame la ficha de Ucrania» / «abre gaza» / «la carta VG-05»
+  const pideCarta =
+    /\b(ficha|fichas|carta|cartas|coleccion)\b/.test(tNorm) ||
+    /\b(muestrame|ensename|mirame|mira|abre|abrir)\b/.test(tNorm);
+  if (pideCarta) {
+    const conf = buscaConflicto(tNorm);
+    if (conf) {
+      return NextResponse.json({
+        hablar: es ? `Abriendo la ficha ${conf.nombre}.` : `Opening card ${conf.nombre}.`,
+        ai: false,
+        accion: { tipo: "ficha", destino: conf.id },
+      });
+    }
+  }
+
   // ═══ v180.0 VANGUARD AUTOMÁTICO — BRIEFING DETERMINISTA ANTES DEL LLM ═══
   // «léeme las noticias» / «¿qué pasa?» → el motor EN VIVO responde con cables
   // REALES (títulos, países e impacto del centro mundial). Cero alucinación:
   // la rama no toca el LLM y si el motor duerme, se dice la verdad.
-  const tNorm = norm(texto);
   const pidePulso =
     /\b(lee(me)?|leeme|briefing|informe|pulso|novedades|noticias|news|que\s+pasa|que\s+hay|actualidad|ultimas?\s+horas?|resumen)\b/.test(tNorm);
   if (pidePulso) {
@@ -219,10 +343,16 @@ export async function POST(req: NextRequest) {
       };
       const hablar = (parsed.hablar || "").trim().slice(0, 220);
       const a = parsed.accion || {};
-      const tipo = ["navegar", "buscar", "menu", "hablar"].includes(a.tipo || "") ? a.tipo! : "hablar";
+      const tipo = ["navegar", "buscar", "menu", "hablar", "ficha", "idioma"].includes(a.tipo || "") ? a.tipo! : "hablar";
 
       if (tipo === "navegar" && a.destino && CLAVES_VALIDAS.has(a.destino)) {
         return NextResponse.json({ hablar, ai: true, accion: { tipo: "navegar", destino: a.destino } });
+      }
+      if (tipo === "ficha" && a.destino && CONFLICTOS.some((c) => c.id === a.destino)) {
+        return NextResponse.json({ hablar, ai: true, accion: { tipo: "ficha", destino: a.destino } });
+      }
+      if (tipo === "idioma" && a.destino && IDIOMAS.some((i) => i.id === a.destino)) {
+        return NextResponse.json({ hablar: CONFIRMA_IDIOMA[a.destino] || hablar, ai: true, accion: { tipo: "idioma", destino: a.destino } });
       }
       if (tipo === "buscar" && (a.consulta || "").trim().length >= 2) {
         return NextResponse.json({ hablar, ai: true, accion: { tipo: "buscar", consulta: a.consulta!.trim().slice(0, 40) } });

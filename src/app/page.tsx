@@ -73,7 +73,7 @@ import { AsistenteVoz } from "@/components/vanguard/asistente-voz";
 import { CentinelaImpacto } from "@/components/vanguard/centinela-impacto";
 import { AccountModal } from "@/components/vanguard/account-modal";
 import { useGameStore } from "@/lib/game-store";
-import { useT } from "@/lib/i18n";
+import { useT, useLangStore, type Lang } from "@/lib/i18n";
 import { initSound, sfx } from "@/lib/sound";
 // v18 CRECIMIENTO: modulo viral en la portada (compartir + referidos + PWA)
 import { GrowthShare } from "@/components/vanguard/growth-share";
@@ -774,7 +774,9 @@ export default function Home() {
   // ═══ v179.0 VG-ASSIST — EL AGENTE DE VOZ: la Casa obedece la voz ═══
   // El orbe transcribe (Web Speech API), el cerebro (/api/asistente) interpreta
   // y la MANOS ejecuta aquí: navegar a una sala, abrir la paleta con la consulta
-  // pre-cargada o desplegar el menú completo. Evento único: vg:asistente-accion.
+  // pre-cargada, desplegar el menú completo — y desde v181.0 ABRIR UNA FICHA
+  // de la colección (la voz mira Vanguard contigo) y CAMBIAR EL IDIOMA de la
+  // Casa en vivo (la voz edita la plataforma). Evento único: vg:asistente-accion.
   const [consultaAsistente, setConsultaAsistente] = useState<string | undefined>(undefined);
   useEffect(() => {
     const obedece = (e: Event) => {
@@ -786,6 +788,25 @@ export default function Home() {
         setSearchOpen(true);
       } else if (a.tipo === "menu") {
         setMenuOpen(true);
+      } else if (a.tipo === "ficha" && a.destino) {
+        // v181: la voz ABRIR LA CARTA — navegamos a la colección y dejamos la
+        // orden pendiente (bandera + evento retrasado): la sala recoge la
+        // orden tanto si ya vivía como si nace ahora. Descubre con placa GTA,
+        // sello y sonido — EXACTAMENTE como tocarla a mano.
+        try {
+          (window as unknown as { __vgFichaPendiente?: string }).__vgFichaPendiente = a.destino;
+        } catch {}
+        handleTabChange("fichas" as TabKey);
+        window.setTimeout(() => {
+          try {
+            window.dispatchEvent(new CustomEvent("vg:asistente-ficha", { detail: { key: a.destino } }));
+          } catch {}
+        }, 500);
+      } else if (a.tipo === "idioma" && a.destino) {
+        // v181: la voz EDITA la Casa — el idioma cambia en vivo (store persistente)
+        try {
+          useLangStore.getState().setLang(a.destino as Lang);
+        } catch {}
       }
       // tipo "hablar": la respuesta hablada ES la acción, nada que tocar
     };

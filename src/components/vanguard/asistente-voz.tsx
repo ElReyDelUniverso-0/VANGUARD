@@ -107,6 +107,10 @@ const TXT = {
     es: "LÉEME EL MUNDO", en: "READ THE WORLD", pt: "LÊ O MUNDO", fr: "LIS LE MONDE",
     de: "LIES DIE WELT", it: "LEGGI IL MONDO", ru: "ПРОЧТИ МИР", zh: "读世界",
   } as Record<string, string>,
+  chipFicha: {
+    es: "FICHA UCRAINA", en: "UKRAINE CARD", pt: "CARTÃO UCRÂNIA", fr: "FICHE UKRAINE",
+    de: "KARTE UKRAINE", it: "CARTA UCRAINA", ru: "КАРТА УКРАИНЫ", zh: "乌克兰卡",
+  } as Record<string, string>,
   chipVozOn: {
     es: "VOZ DE ALERTAS: ON", en: "ALERT VOICE: ON", pt: "VOZ DE ALERTAS: ON", fr: "VOIX D'ALERTE: ON",
     de: "ALARMSTIMME: AN", it: "VOCE ALLERTE: ON", ru: "ГОЛОС ТРЕВОГИ: ВКЛ", zh: "警报语音: 开",
@@ -394,7 +398,7 @@ export function AsistenteVoz() {
             )}
           </div>
 
-          {/* v180: comandos rápidos + interruptor honesto de las alertas por voz */}
+          {/* v181: comandos rápidos de los poderes nuevos + interruptor honesto de las alertas */}
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-t border-amber-hud/15">
             <button
               onClick={() => void despachar(lang === "es" ? "léeme las noticias" : "read me the news")}
@@ -402,6 +406,13 @@ export function AsistenteVoz() {
               aria-label="Pedir briefing del mundo por voz"
             >
               {TXT.chipLeer[lang] || TXT.chipLeer.es}
+            </button>
+            <button
+              onClick={() => void despachar(lang === "es" ? "muéstrame la ficha de Ucrania" : "show me the Ukraine card")}
+              className="flex-1 min-w-0 px-2 py-1 rounded-lg border border-violet-400/30 bg-violet-400/5 text-[10px] font-mono tracking-wide text-violet-300 hover:bg-violet-400/15 truncate"
+              aria-label="Abrir la ficha de Ucrania de la colección por voz"
+            >
+              {TXT.chipFicha[lang] || TXT.chipFicha.es}
             </button>
             <button
               onClick={() => {

@@ -1,4 +1,22 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v181.0 EL AGENTE TOTAL — «agente que van por ti a lugares solo por decirle
+//         y puedes editar y mira vanguard solo hablando» + «el otro vanguard
+//         tiene el mismo bug: se queda cargando y nunca termina»:
+// (1) LA VOZ VA POR TI A LOS LUGARES: rama determinista "ficha" — «muéstrame
+//     la ficha de Ucrania / abre gaza / la carta VG-05» navega a LA COLECCIÓN
+//     DE GUERRA y ABRIR LA CARTA con su ceremonia completa (descubrir, sello
+//     fechado, placa GTA de conflicto, sonido): mirar Vanguard solo hablando.
+// (2) LA VOZ EDITA LA CASA: rama determinista "idioma" — «cambia el idioma a
+//     inglés» cambia el idioma de la plataforma EN VIVO (store persistente) y
+//     el agente confirma EN EL NUEVO idioma; «edita mi perfil» → sala PERFIL.
+// (3) EL RESCATE TOTAL (bug del otro aparato): ④ cheque de capacidades ES5
+//     puro ANTES del bundle (Promise/Map/Set/fetch) — navegador que no puede
+//     parsear recibe mensaje honesto, no una cortina eterna; ⑤ VIGÍA
+//     POST-CORTINA fuera de React: si __vgvivo no llega (20s/68s), barra
+//     honesta con RECARGAR que se retira sola si la casa respira tarde.
+// (4) VIGILANTE EXTERNO por cron (30 min): health + RSS + relevo — el server
+//     zombi (RSS 2176MB con vigilante muerto, la causa real del «cargando y
+//     nunca termina» de hoy) ya no vuelve a quedar solo.
 // v159.0: EL ATERRIZAJE — «recuerda que soy de móvil, aún no veo nada de
 //         sentido, todo desordenado». Diagnóstico con capturas reales de
 //         iPhone: la intro nacía casi negra, el piloto aterrizaba en una SOPA
@@ -603,6 +621,6 @@
 //     el panel con su impacto en color.
 // Herencia v179.0 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v180.0";
-export const APP_CODENAME = "VANGUARD AUTOMÁTICO";
+export const APP_VERSION = "v181.0";
+export const APP_CODENAME = "EL AGENTE TOTAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

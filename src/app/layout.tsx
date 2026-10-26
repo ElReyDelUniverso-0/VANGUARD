@@ -293,6 +293,19 @@ export default function RootLayout({
             y tope duro de 20s: la cortina JAMÁS es eterna; ③ en el universo
             pesado el ojo ya no muere a los 20s (si __vgvivo llega tarde, la
             cortina se funde igual) y recibe tope duro de 60s.
+
+            v181.0 EL RESCATE TOTAL — «el otro vanguard se queda cargando y
+            nunca termina»: los dos Huecos que v178 no cubría. ④ NAVEGADOR
+            VIEJO: si el aparato no puede NI PARSEAR el bundle, NADA de React
+            corre — ningún rescate interno existiría. Cheque de capacidades
+            (Promise/Map/Set/fetch/addEventListener) en ES5 PURO, antes del
+            bundle: mensaje honesto «demasiado antiguo» y fin (nada de
+            recargas en bucle con esperanza falsa). ⑤ EL VIGÍA POST-CORTINA:
+            la cortina se levanta con el DOM (v178) — si el bundle murió
+            después, el piloto queda en una casa MUDA sin explicación. Un
+            vigía externo a React vigila la señal __vgvivo: si no llega
+            (20s ligeras / 68s pesadas), levanta una barra honesta con
+            RECARGAR — y se retira sola si la casa respira tarde.
             ════════════════════════════════════════════════════════════ */}
         <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
           <style dangerouslySetInnerHTML={{ __html: `
@@ -326,6 +339,27 @@ try{
   var btn=document.getElementById('vg-cortina-btn');
   var st=document.getElementById('vg-cortina-estado');
   var K='vg155-recarga';
+  var esI=(navigator.language||'es').toLowerCase().indexOf('es')===0;
+  // v181.0 EL RESCATE TOTAL — ④ EL CHEQUE DE CAPACIDADES (ES5 puro, corre
+  // SIEMPRE, ni un byte del bundle hace falta): si el navegador no puede
+  // ejecutar la Casa, se lo decimos a la cara en vez de dejar una cortina
+  // muda o una casa muerta. Nada de bucles de recarga con esperanza falsa.
+  var sinSoporte=false;
+  try{
+    if(typeof Promise==='undefined') sinSoporte=true;
+    else if(typeof Map==='undefined'||typeof Set==='undefined') sinSoporte=true;
+    else if(typeof window.fetch==='undefined') sinSoporte=true;
+    else if(!window.addEventListener||!document.querySelector) sinSoporte=true;
+  }catch(e){ sinSoporte=true; }
+  if(sinSoporte){
+    try{
+      if(st) st.textContent=esI?'Este navegador es demasiado antiguo para VANGUARD':'This browser is too old for VANGUARD';
+      var nota=document.createElement('div'); nota.className='vg-nojs';
+      nota.textContent=esI?'Actualiza Chrome o Samsung Internet para entrar al universo.':'Update your browser to enter the universe.';
+      c.appendChild(nota);
+    }catch(e){}
+    return;
+  }
   // v173.0 LA CASA EN VIVO: el modo 3D se retiró — la portada es la consola
   // plana viva y ya no exige señal del universo; solo /vanguard2 sigue pesado
   var pesado=(location.pathname.indexOf('/vanguard2')===0);
@@ -339,6 +373,10 @@ try{
     c.setAttribute('data-off','1'); c.className='vg-off';
     c.style.opacity='0';
     setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },800);
+    // v181.0: la casa queda sola ante el peligro — el vigía confirma que
+    // respira (20s en rutas ligeras; 68s en el universo pesado, tras su
+    // tope de 60s: si despierta a los 50s la barra se retira sola)
+    setTimeout(vigia,pesado?68000:20000);
     // v155.1: si la pestaña durmió durante el fundido (móvil bloqueado,
     // throttling de timers), la retiramos al despertar — nunca queda un
     // nodo muerto flotando en el DOM
@@ -356,6 +394,29 @@ try{
   function recargar(){
     try{ sessionStorage.setItem(K,String(Date.now())); }catch(e){}
     location.reload();
+  }
+  // v181.0 EL RESCATE TOTAL — ⑤ EL VIGÍA POST-CORTINA: v178 levanta la
+  // cortina en cuanto el DOM existe; si el bundle murió DESPUÉS (parse error,
+  // chunk muerto en un aparato que QA no cubre), el piloto queda en una casa
+  // muda. Este vigía vive FUERA de React: si __vgvivo no llega, levanta una
+  // barra honesta con RECARGAR — y se retira sola si la casa respira tarde.
+  function vigia(){
+    try{
+      if(window.__vgvivo===true) return;
+      var b=document.createElement('div');
+      b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:rgba(7,6,6,.94);border-top:1px solid rgba(232,196,118,.4);color:#e8c476;font:600 11px/1.5 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap';
+      var sp=document.createElement('span');
+      sp.textContent=esI?'Vanguard no terminó de despertar en este navegador':'Vanguard did not finish waking on this browser';
+      var bt=document.createElement('button');
+      bt.textContent=esI?'RECARGAR':'RELOAD';
+      bt.style.cssText='border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.08);padding:6px 14px;letter-spacing:.2em;font:inherit;border-radius:2px';
+      bt.addEventListener('click',recargar);
+      b.appendChild(sp); b.appendChild(bt); document.body.appendChild(b);
+      var ch=window.setInterval(function(){
+        if(window.__vgvivo===true&&b.parentNode){ b.parentNode.removeChild(b); window.clearInterval(ch); }
+      },1000);
+      window.setTimeout(function(){ window.clearInterval(ch); },120000);
+    }catch(e){}
   }
   window.addEventListener('error',function(e){
     if(window.__vgvivo===true||c.getAttribute('data-off')==='1') return;

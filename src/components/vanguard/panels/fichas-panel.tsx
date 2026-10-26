@@ -167,6 +167,38 @@ export function FichasPanel() {
     setAbierta(g.ficha.key);
   };
 
+  // ── v181.0 VG-ASSIST: «muéstrame la ficha de Ucrania» — LA VOZ ABRE LA CARTA ──
+  // page.tsx deja la orden en __vgFichaPendiente + dispara vg:asistente-ficha;
+  // la sala la recoge en ambos caminos (ya vivía / nace ahora) y la ejecuta con
+  // la MISMA ceremonia de un toque manual: descubrir, sello, placa GTA, sonido.
+  const abrirRef = useRef(abrir);
+  useEffect(() => { abrirRef.current = abrir; });
+  useEffect(() => {
+    const consume = (key?: string) => {
+      if (!key) return;
+      const g = guiasRef.current.find((x) => x.ficha.key === key);
+      if (g) abrirRef.current(g);
+    };
+    const w = window as unknown as { __vgFichaPendiente?: string };
+    const t = setTimeout(() => {
+      if (w.__vgFichaPendiente) {
+        const k = w.__vgFichaPendiente;
+        w.__vgFichaPendiente = undefined;
+        consume(k);
+      }
+    }, 60);
+    const escucha = (e: Event) => {
+      const k = (e as CustomEvent<{ key?: string }>).detail?.key;
+      w.__vgFichaPendiente = undefined;
+      consume(k);
+    };
+    window.addEventListener("vg:asistente-ficha", escucha);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("vg:asistente-ficha", escucha);
+    };
+  }, []);
+
   const abiertaGui = guias.find((g) => g.ficha.key === abierta) ?? null;
 
   // la ficha que el detalle está mostrando, ya descubierta (el estado del álbum al momento)

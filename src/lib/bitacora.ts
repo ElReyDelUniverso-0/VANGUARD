@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v181.0",
+    nombre: "EL AGENTE TOTAL",
+    tipo: "ia",
+    hitos: [
+      "LA VOZ VA POR TI A LOS LUGARES Y MIRA CONTIGO (el Dueño: «agente que van por ti a lugares solo por decirle y puedes editar y mira vanguard solo hablando») — VG-ASSIST ya no solo lleva a salas: «muéstrame la ficha de Ucrania» / «abre gaza» / «la carta VG-05» navega a LA COLECCIÓN DE GUERRA y ABRIR LA CARTA con la ceremonia completa de un toque manual (descubrir, sello fechado, placa GTA de conflicto, sonido de estampa) — la rama es DETERMINISTA sobre los 9 conflictos REALES del feed (espejo honesto del catálogo v176): la voz jamás inventa una ficha",
+      "LA VOZ EDITA LA CASA — «cambia el idioma a inglés» (o chino, ruso, portugués…) cambia el idioma de la plataforma EN VIVO vía el store persistente del idioma y el agente confirma EN EL NUEVO idioma («Done. English active.»); «edita mi perfil» / «personaliza» / «configura» caen en la sala PERFIL (Personalizar Perfil); chips del panel: FICHA UCRAINA se une a LÉEME EL MUNDO y VOZ DE ALERTAS",
+      "EL RESCATE TOTAL — el Dueño: «el otro vanguard tiene el mismo bug: se queda cargando y nunca termina». Los dos huecos que la cortina v178 no cubría, muertos: ④ EL CHEQUE DE CAPACIDADES (ES5 puro, corre SIEMPRE, ni un byte del bundle hace falta): un aparato que no puede NI PARSEAR el bundle (Promise/Map/Set/fetch ausentes) recibe el mensaje honesto «Este navegador es demasiado antiguo para VANGUARD» en vez de una cortina eterna — nada de recargas en bucle con esperanza falsa; ⑤ EL VIGÍA POST-CORTINA (fuera de React, inmune a la muerte del bundle): si __vgvivo no llega a los 20s (rutas ligeras) o 68s (universo pesado), levanta una barra honesta «Vanguard no terminó de despertar» con RECARGAR — y se retira sola si la casa respira tarde",
+      "LA CAUSA REAL DE HOY CAZADA VIVA: server zombi con RSS 2176MB y vigilante MUERTO (nadie relevaba) — el aparato del Dueño abría Vanguard contra un server hinchado: «cargando y nunca termina». Cura doble: vigilante relanzado (PID 1) + VIGILANTE EXTERNO por cron cada 30 min (health + RSS + relevo ordenado): el server ya no vuelve a quedar solo",
+      "QA E2E sobre producción — cerebro ×7 deterministas («muéstrame la ficha de Ucrania»→VG-01 abierta con descubrimiento y placa, «abre gaza»→VG-02, «cambia el idioma a inglés»→idioma EN vivo confirmado en inglés, «cambia a español» de vuelta, «edita mi perfil»→PERFIL, «léeme las noticias»→briefing intacto, «abre la colección de guerra»→sala fichas sin carta); cortina v181 verificada en móvil 390px, vigía ausente con casa viva, guards v167 + rewrite /socket.io intactos; tsc 0, lint 0 en tocados, build EXIT 0, health v181.0",
+    ],
+  },
+  {
     version: "v180.0",
     nombre: "VANGUARD AUTOMÁTICO",
     tipo: "ia",
