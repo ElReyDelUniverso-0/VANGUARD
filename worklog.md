@@ -2906,3 +2906,19 @@ Work Log:
 
 Stage Summary:
 - QA E2E (producción, móvil 390): cerebro ×9 por curl (VG-01/VG-02/VG-05 con nombre completo, idioma en↔es con confirmación en el idioma nuevo, perfil por LLM, colección→sala SIN abrir carta, Japón→buscar honesto, briefing v180 intacto 48 cables/11 países); navegador real: cortina fundida + CASA VIVA, cine GTA saltado, bono cerrado, chip FICHA UCRAINA → álbum + VG-01 abierta y DESCUBIERTA persistida (vg176-fichas=[ukraine]) con POR QUÉ IMPORTA, orden escrita «cambia el idioma a español» → UI repintada ES + chips ES, «edita mi perfil» → PERFIL, barra vigía ABSENTE (0 en DOM real — el textContent la cantaba falsa por el script inline, cazado), overflow 390/390 y 1280/1280, 0 errores consola; guards v167 + rewrite /socket.io intactos; tsc 0, lint 0 en tocados, build EXIT 0; push 940ec29.
+
+---
+Task ID: ia1-v182.0
+Agent: ia1 (solitaria)
+Task: v182.0 EL ÚLTIMO RESCATE — el Dueño: «El vanguard no termina de cargar, se queda en iniciando universo» (3ª vez del mismo bug, CON el server v181.0 sano: health ok, RSS 206MB, UN solo next-server, HTML servido con marcadores v181 + no-store, cortina QA <5s en ambas rutas).
+
+Work Log:
+- DIAGNÓSTICO REAL: el agujero final era que TODO el rescate v178/v181 vive en timers de JavaScript — si el hilo principal del aparato del Dueño muere o bloquea (pestaña congelada por el SO al reabrir tras horas, chunk que spinea el hilo en un móvil viejo), los timers NUNCA corren y ningún rescate JS se ejecuta: cortina eterna de verdad.
+- LA CURA (layout.tsx): <meta http-equiv=refresh> de 70s — si la cortina sigue viva a los 70s (pasado el tope pesado de 60s), el NAVEGADOR mismo recarga: HTML puro, sin ni un byte de JS, inmune al hilo muerto, timers congelados y React ausente. apagar() lo desarma AL INSTANTE y recargar() también antes de recargar.
+- BUG CAZADO POR EL PROPIO QA EN VIVO: la 1ª implementación ponía el meta en el JSX — React 19 ELEVA los <meta> al <head> en la hidratación (verificado en navegador: meta conectado a HEAD con content=70 tras un arranque SANO = recarga fantasma cada 70s en toda la Casa). Reimplementado: el meta nace en JS vanilla sobre document.head, fuera del árbol de React — la hidratación no puede resucitarlo. SSR HTML verificado: 0 etiquetas meta reales (las 4 coincidencias grep son strings del guión).
+- GUARDIA ANTI-BUCLE: el guión lee vg155-recarga al parsear — rescate reciente <90s ⇒ el meta nace a 300s (un reintento lento cada 5 min, jamás bucle vertiginoso).
+- QA E2E (navegador real): arranque sano / ⇒ cortina FUERA + metaRescate MUERTO + metaEnHead NO + casa viva (31 paneles) + 0 errores consola; /vanguard2 ⇒ ídem (vivo true); escenario roto (chunks abortados, casa muda): en / el error-rescue disparó recargar() (guard 60s) y la cortina se levantó con el DOM; en /vanguard2 pesado CAZADO VIVO: cortina VIVA + meta ARMADO en head con content=300 — la guardia anti-bucle trabajando en directo tras el recargar por errores de chunk; vigía v181 intacto; guards v167 + rewrite /socket.io intactos; server relevado tras build: health v182.0 rss 203MB.
+- Protocolo: tsc 0, lint 0 en tocados (layout.tsx, version.ts, bitacora.ts), build EXIT 0; commit df419cd push a origin/main.
+
+Stage Summary:
+- v182.0 push df419cd en origin/main: la cortina ya NO depende del hilo del aparato — el último rescate es del NAVEGADOR (meta refresh 70s/300s, HTML puro). El bug que volvió 3 veces queda cerrado en todas las capas conocidas: server sano (vigilante + watchman), timers (topes duros v178), bundle muerto (cheque capacidades + vigía v181), hilo muerto (meta refresh v182). Mensaje práctico al Dueño: cerrar la pestaña congelada desde recientes y reabrir; si un día se congela, a los 70s el navegador se rescata solo.

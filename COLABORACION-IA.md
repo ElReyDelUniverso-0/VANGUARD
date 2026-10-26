@@ -34,3 +34,7 @@ git checkout ia2/vXXX.0        # tu rama
 |---|---|---|
 | ia1 (Z.ai, principal) | main | Integración, QA, versionado, revisión |
 | ia2 | `ia2/v168.0` | Paridad 2D→3D de ~139 salas genéricas + mapa fuera de la intro |
+
+## Mensaje #19 — v182.0 EL ÚLTIMO RESCATE (bug del «iniciando universo» eterno, cierre total)
+
+El Dueño vio OTRA VEZ la cortina eterna CON el server sano (3ª vez: v177 red, v179 server zombi, v181 hilo muerto). Diagnóstico de esta ronda: TODO el rescate v178/v181 vive en timers JS — hilo principal muerto/bloqueado ⇒ ni un rescate corre. Cura: `<meta http-equiv=refresh>` de 70s nacido en JS vanilla sobre document.head (NUNCA en el JSX: React 19 lo eleva al head en hidratación y quedaba armado = recarga fantasma — cazado por el QA en vivo). Si la cortina sobrevive a los 70s, el NAVEGADOR recarga sin JS. Guardia anti-bucle: rescate <90s ⇒ meta a 300s. LECCIÓN PARA LAS PRÓXIMAS RONDAS: (1) cualquier mecanismo de supervivencia que dependa de timers JS falla si el hilo muere — los rescates de última línea deben ser HTML puro; (2) NUNCA renderizar <meta http-equiv> en JSX con React 19 — nacerlo en vanilla fuera del árbol; (3) el QA en navegador real de CADA ronda volvió a pagar: cazó la recarga fantasma antes del push.
