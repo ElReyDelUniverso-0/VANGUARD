@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v182.0",
+    nombre: "EL ÚLTIMO RESCATE",
+    tipo: "tecno",
+    hitos: [
+      "EL BUG QUE VOLVIÓ TRES VECES, CERRADO CON HTML PURO (el Dueño: «no termina de cargar, se queda en iniciando universo» CON el server sano: health v181.0, RSS 206MB, UN solo next-server, HTML servido con los marcadores v181 y no-store, ambas rutas QA en navegador real levantando la cortina en <5s) — diagnóstico: TODO el rescate v178/v181 vive en timers de JavaScript; si el hilo principal del aparato del Dueño muere o bloquea (pestaña congelada por el SO al reabrir tras horas, un chunk que spinea el hilo en un móvil viejo), los timers NUNCA corren y ningún rescate JS se ejecuta: la cortina queda eterna de verdad",
+      "EL ÚLTIMO RESCATE: <meta http-equiv=refresh> de 70s — si la cortina sigue viva a los 70s (pasado el tope pesado de 60s), el NAVEGADOR mismo recarga: HTML puro, sin ni un byte de JavaScript, inmune al hilo muerto, a los timers congelados y a React ausente. Nace en JS vanilla sobre document.head, NUNCA en el JSX: el QA real cazó a React 19 ELEVANDO el <meta> del JSX al <head> en la hidratación (quedaba armado tras un arranque sano = recarga fantasma cada 70s en toda la Casa); en vanilla, la hidratación no puede resucitarlo. apagar() lo desarma AL INSTANTE (cortina vive ≤20s ligera / ≤60s pesada) y recargar() también antes de recargar",
+      "GUARDIA ANTI-BUCLE del meta: el guión de la cortina lee vg155-recarga al parsear — si hace <90s ya hubo un rescate (botón o meta), el meta pasa de 70s a 300s: un reintento lento cada 5 min como máximo, jamás un bucle vertiginoso de recargas; si la casa despierta, apagar() lo mata igual",
+      "QA v182: tsc 0, lint 0 en tocados, build EXIT 0, health v182.0; cortina con meta de rescate verificado en el HTML servido (/, /vanguard2), arranque sano lo retira (cortina FUERA del DOM, meta muerto), sin errores de consola, guards v167 + rewrite /socket.io intactos",
+    ],
+  },
+  {
     version: "v181.0",
     nombre: "EL AGENTE TOTAL",
     tipo: "ia",

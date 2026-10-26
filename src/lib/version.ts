@@ -619,8 +619,22 @@
 //     toque) y «VOZ DE ALERTAS ON/OFF» (vg180-voz-alertas: la voz del radar
 //     se puede callar, el radar no); los cables del briefing se pintan en
 //     el panel con su impacto en color.
-// Herencia v179.0 y todo lo anterior — cortina v155 de red de seguridad,
+// v182.0 EL ÚLTIMO RESCATE — el Dueño lo vio OTRA VEZ: «no termina de
+//         cargar, se queda en iniciando universo» CON el server sano (health
+//         v181.0, RSS 206MB, HTML servido con los marcadores v181 y no-store)
+//         y con la cortina v181 de tope duro 20s/60s. El agujero final: TODO
+//         el rescate v178/v181 vive en TIMERS DE JAVASCRIPT — si el hilo
+//         principal del aparato muere o bloquea (pestaña congelada por el SO,
+//         chunk que spinea el hilo en un móvil viejo), los timers nunca
+//         corren y ningún rescate JS se ejecuta. La cura es HTML PURO: un
+//         <meta http-equiv=refresh> de 70s DENTRO de la cortina — pasado el
+//         tope pesado de 60s, el NAVEGADOR mismo recarga sin depender del
+//         hilo, de timers ni de React. Arranque sano: apagar() mata el meta
+//         al instante (≤20s/≤60s) y el refresh jamás dispara. Guardia
+//         anti-bucle: si hace <90s ya hubo un rescate, el meta se estira a
+//         300s (un reintento lento cada 5 min, nunca un bucle vertiginoso).
+// Herencia v181.0 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v181.0";
-export const APP_CODENAME = "EL AGENTE TOTAL";
+export const APP_VERSION = "v182.0";
+export const APP_CODENAME = "EL ÚLTIMO RESCATE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

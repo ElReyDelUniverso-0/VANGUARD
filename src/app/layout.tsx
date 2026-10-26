@@ -306,8 +306,30 @@ export default function RootLayout({
             vigía externo a React vigila la señal __vgvivo: si no llega
             (20s ligeras / 68s pesadas), levanta una barra honesta con
             RECARGAR — y se retira sola si la casa respira tarde.
+
+            v182.0 EL ÚLTIMO RESCATE — el Dueño lo vio OTRA VEZ: «no termina
+            de cargar, se queda en iniciando universo» CON el server sano y
+            la cortina v181 con tope duro de 20s/60s. El agujero que queda:
+            TODO el rescate v178/v181 vive en timers de JavaScript — si el
+            hilo principal del aparato MUERE o bloquea (pestaña congelada
+            por el SO, un chunk que spinea el hilo en un móvil viejo), los
+            timers nunca corren y NINGÚN rescate JS se ejecuta: cortina
+            eterna de verdad. La cura es HTML PURO, sin ni un byte de JS:
+            un <meta http-equiv=refresh> DENTRO de la cortina. Si la cortina
+            sigue viva a los 70s (pasado el tope pesado de 60s), el NAVEGADOR
+            mismo recarga — no depende del hilo, ni de timers, ni de React.
+            Arranque sano: apagar() retira la cortina (y el meta dentro) en
+            ≤20s/≤60s y el refresh jamás dispara. Guardia anti-bucle: si
+            hace <90s ya hubo un rescate, el guión estira el meta a 300s
+            (un reintento lento cada 5 min, nunca un bucle vertiginoso).
             ════════════════════════════════════════════════════════════ */}
         <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
+          {/* v182.0 EL ÚLTIMO RESCATE: el meta http-equiv=refresh NO vive aquí
+              en el JSX — React 19 ELEVA los <meta> al <head> en la hidratación
+              (QA lo cazó vivo: una recarga fantasma cada 70s en una casa
+              sana). Lo crea el guión vanilla de abajo en document.head, fuera
+              del árbol de React: nadie puede resucitarlo salvo el navegador
+              con la cortina muerta. */}
           <style dangerouslySetInnerHTML={{ __html: `
             #vg-cortina{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(120% 90% at 50% 110%,#14100a 0%,#070606 55%,#050404 100%);transition:opacity .65s ease;font-family:var(--font-orbitron),system-ui,sans-serif}
             #vg-cortina.vg-off{opacity:0;pointer-events:none}
@@ -360,6 +382,21 @@ try{
     }catch(e){}
     return;
   }
+  // v182.0 EL ÚLTIMO RESCATE — el meta http-equiv=refresh nace AQUÍ, en JS
+  // vanilla sobre document.head (NUNCA en el JSX: React 19 eleva los <meta>
+  // al head en la hidratación y quedaba armado tras un arranque sano =
+  // recarga fantasma cada 70s; QA lo cazó). Si la cortina sigue viva a los
+  // 70s (pasado el tope pesado de 60s), el NAVEGADOR recarga solo: HTML
+  // puro, sin timers, sin hilo, sin React. Guardia anti-bucle: si hace <90s
+  // ya hubo un rescate, el meta nace a 300s (un reintento lento cada 5 min).
+  // apagar() lo desarma al instante en un arranque sano.
+  try{
+    var ultR=Number(sessionStorage.getItem(K)||0);
+    var mt=document.createElement('meta');
+    mt.id='vg-rescate-meta'; mt.httpEquiv='refresh';
+    mt.content=(ultR&&(Date.now()-ultR)<90000)?'300':'70';
+    if(document.head) document.head.appendChild(mt);
+  }catch(e){}
   // v173.0 LA CASA EN VIVO: el modo 3D se retiró — la portada es la consola
   // plana viva y ya no exige señal del universo; solo /vanguard2 sigue pesado
   var pesado=(location.pathname.indexOf('/vanguard2')===0);
@@ -371,6 +408,9 @@ try{
   function apagar(){
     if(c.getAttribute('data-off')==='1') return;
     c.setAttribute('data-off','1'); c.className='vg-off';
+    // v182.0: la casa despertó — el meta de rescate muere YA (la retirada
+    // del div ya lo llevaría, pero esto lo desarma al instante)
+    try{ var mt=document.getElementById('vg-rescate-meta'); if(mt&&mt.parentNode) mt.parentNode.removeChild(mt); }catch(e){}
     c.style.opacity='0';
     setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },800);
     // v181.0: la casa queda sola ante el peligro — el vigía confirma que
@@ -393,6 +433,7 @@ try{
   }
   function recargar(){
     try{ sessionStorage.setItem(K,String(Date.now())); }catch(e){}
+    try{ var mt=document.getElementById('vg-rescate-meta'); if(mt&&mt.parentNode) mt.parentNode.removeChild(mt); }catch(e){}
     location.reload();
   }
   // v181.0 EL RESCATE TOTAL — ⑤ EL VIGÍA POST-CORTINA: v178 levanta la
