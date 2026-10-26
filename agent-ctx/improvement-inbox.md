@@ -488,3 +488,14 @@ Salud: home=200 (57ms) | health v178.0 rss 199MB | cortina <2s | overflow móvil
 3. SONIDO DE SALA OSCURA — arranque del cine con golpe grave (la familia GTA ya suena en rostros/lector) · Esfuerzo: S
 4. RED VISUAL DE CONEXIONES (directiva v168 viva) — nodos con peso de relación como panel 2D del CENTRO (el 3D ya no existe; la red nace plana) · Esfuerzo: L
 5. TELEMETRÍA DE CORTINA — contador anónimo de rescates (cuántas veces se muestra el botón «despierta») para medir en producción si queda algún camino lento · Esfuerzo: S
+
+## MENSAJE #29 · 2026-10-26 · v181.0 EL AGENTE TOTAL
+Notas: el Dueño pidió que el agente «vaya por ti a lugares solo por decirle y puedas editar y mirar Vanguard solo hablando» + reportó el bug eterno en otro aparato. La voz ya abre fichas concretas de la colección (ceremonia completa) y cambia el idioma de la Casa en vivo; el bug eterno murió por partida doble (cheque de capacidades ES5 + vigía post-cortina; la causa real era el server zombi a 2176MB con vigilante muerto — watchman externo por cron 30 min cubierto).
+Salud: home=200 | health v181.0 rss 199MB | tsc 0 | lint 0 | push 940ec29
+
+📡 PRÓXIMAS PROPUESTAS:
+1. WAKE-WORD «VANGUARD» (⭐ sigue viva del inbox #18) — el orbe despierta al oír su nombre sin tocar nada (Web Speech continua con presupuesto de batería honesto) · Esfuerzo: L
+2. LEER LA FICHA EN VOZ ALTA — con la carta abierta: «léela» → la boca narra POR QUÉ IMPORTA y las señales (la boca ya existe, falta el gancho de la sala) · Esfuerzo: S
+3. MODO MANOS LIBRES TOTAL — conversación continua: el agente escucha la respuesta siguiente tras hablar (turn-taking tipo Siri, cola de órdenes) · Esfuerzo: M
+4. TELEMETRÍA DE RESCATE (sigue viva del #28) — contador anónimo de cuántas veces actúan el vigía v181 y el botón «despierta» v178: medir en producción si queda algún camino mudo · Esfuerzo: S
+5. FICHA COLECCIONABLE DEL ROSTRO (⭐ idea estrella viva del #18) — la tarjetería v176 para LOS ROSTROS DEL PODER: dos colecciones gemelas sobre un solo motor · Esfuerzo: M

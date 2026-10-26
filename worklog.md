@@ -2860,3 +2860,49 @@ Work Log:
 
 Stage Summary:
 - download/VANGUARD_promo_TikTok_9x16.mp4 (28.5s · 1080×1920 · 4.8MB) + VANGUARD_promo_YouTube_16x9.mp4 (25s · 1920×1080 · 2.9MB): 100% contenido real grabado de la app, voz masculina española rápida, texto GTA quemado, CTA de instalación. Vigilante activo en producción (anti-OOM). v178.0 recuperado e intacto en main.
+
+---
+Task ID: ia1-v179.0 (RESPESCADa — la crónica original se la comió la reversión del workspace; el código ya estaba en origin/main 045a36e)
+Agent: ia1 (solitaria)
+Task: v179.0 EL AGENTE DE VOZ — el Dueño: «hace que Vanguard tenga un modo voz para entrar en la pestaña y un agente como Siri».
+
+Work Log:
+- VG-ASSIST, el Siri de la Casa (asistente-voz.tsx): orbe flotante en toda la app (portal al body z-47, móvil bottom 84px+safe-area — QA cazó 15px de solape con la NavZonas y se curó), núcleo conic-gradient ámbar/verde girando, estados reales: escuchando (ondas) → pensando → hablando (ecualizador 5 barras), panel con transcripción en vivo + orden escrita de respaldo (el agente NUNCA se queda mudo), oculto por sesión vg179-asistente-oculto, tipos TS propios de Web Speech API, dict local TXT 8 idiomas (i18n.ts de 4800 líneas intacto), patrón casa setTimeout(0).
+- OÍDO: Web Speech API nativa (gratis, en el aparato), interim results, interrupción tipo Siri (hablar de nuevo corta la boca), 8 idiomas mapeados.
+- CEREBRO (/api/asistente): POST {texto,lang,tab} → LLM (thinking disabled, timeout 15s) devuelve {hablar, accion:{tipo:navegar|buscar|menu|hablar}}; whitelist REAL = TAB_LABELS.es de i18n-tabs.ts (fuente única con la paleta — destino validado server-side, jamás inventa claves); MURO 20/min por IP; fallback heuristica() determinista (norm sin acentos, abre/busca/menú).
+- MANOS (page.tsx): listener vg:asistente-accion (navegar→RESOLUTOR v125, buscar→paleta con consultaInicial pre-cargada por ref, menú→MegaMenu); contexto de pestaña via vg:asistente-contexto.
+- BOCA: speechSynthesis rate 1.18 (ADN tráiler) pitch 0.95, voz del idioma del piloto.
+- QA E2E: cerebro ×5 («abre la colección de guerra»→fichas, «busca Irán»→paleta pre-cargada, «qué pasa hoy»→centro, «abre el menú»→MegaMenu, «abre fichas»→fichas), mic denegado→aviso honesto + modo texto, móvil 390px sin solape (orbe 578-636 vs nav 647), desktop OK, 0 errores consola.
+
+Stage Summary:
+- v179.0 push 045a36e en origin/main: VG-ASSIST opera la Casa por voz con whitelist real y modo texto de respaldo; tsc 0, lint 0, build EXIT 0, health v179.0.
+
+---
+Task ID: ia1-v180.0 (RESPESCADa — la crónica original se la comió la reversión del workspace; el código ya estaba en origin/main 0742817)
+Agent: ia1 (solitaria)
+Task: v180.0 VANGUARD AUTOMÁTICO — el Dueño: «haz que Vanguard sea automático, que no necesite que una persona necesariamente esté buscando, porque se puede perder; solo busca noticias y ahí están los ayudantes».
+
+Work Log:
+- EL CENTINELA DE IMPACTO (centinela-impacto.tsx): radar autónomo en toda la app que sondea /api/news?modo=centro cada 60s con DEDUPE REAL por id (localStorage vg180-vistos tope 300) y SIEMBRA SILENCIOSA en la 1ª vuelta; cable NUEVO impacto ≥64 = toast con titular real + VG-ASSIST lo ANUNCIA POR VOZ (vg:asistente-anunciar), máx 2 toasts/sondeo y 1 voz cada 45s; pausa con pestaña oculta — el radar avisa, nunca bombardea.
+- EL BRIEFING HABLADO (/api/asistente): «léeme las noticias» / «¿qué pasa?» → rama DETERMINISTA antes del LLM que pregunta al motor en vivo y devuelve hablar + briefing[] con cables REALES (título/país/impacto/tier/edad) + navega al CENTRO MUNDIAL — cero alucinación: la IA no redacta la guerra, la lee.
+- PANEL DEL AGENTE: chips «LÉEME EL MUNDO» + «VOZ DE ALERTAS ON/OFF» (vg180-voz-alertas honesto) + cables del briefing pintados con impacto en color (rojo ≥80 / ámbar ≥64).
+- INFRA: 2ª reversión de workspace en plena ronda — v179 ya estaba en origin/main (045a36e) = cero pérdida; reset de recuperación; server zombi (escuchaba sin build) ejecutado y relevado por el propio VIGILANTE (primer turno real del guardián).
+
+Stage Summary:
+- v180.0 push 0742817 en origin/main: las noticias BUSCAN al piloto (radar 60s + anuncio por voz + briefing determinista); tsc 0, build EXIT 0, health v180.0 rss 203MB.
+
+---
+Task ID: ia1-v181.0
+Agent: ia1 (solitaria)
+Task: v181.0 EL AGENTE TOTAL — el Dueño: «ahora po, agente que van por ti a lugares solo por decirle y puedes editar y mira vanguard solo hablando» + «el otro vanguard tiene el mismo bug: se queda cargando y nunca termina».
+
+Work Log:
+- RECUPERACIÓN DE TURNO: workspace en checkpoint viejo (4b4273d, era v173) con server ZOMBI sirviendo v173.0 a RSS 2176MB y VIGILANTE MUERTO — exactamente el escenario del «cargando y nunca termina» del Dueño: su aparato abría Vanguard contra un server hinchado. Respaldo db/custom.db + git reset --hard origin/main (v180.0) + DB restaurada + rebuild + serve.mjs --prod + vigilante relanzado (PPID 1).
+- ① LA VOZ MIRA CONTIGO (route.ts + page.tsx + fichas-panel.tsx): rama DETERMINISTA "ficha" — espejo honesto de los 9 conflictos reales del feed (CONFLICTOS con alias multiidioma: ucrania/rusia/putin→ukraine, gaza/palestina/israel→gaza, irán/teherán→hormuz, hutíes/yemen→redsea, VG-01…VG-09…) y buscaConflicto() con matching por palabra (aliases cortos con word-boundary); «muéstrame la ficha de Ucrania» → {tipo:"ficha",destino:"ukraine"} → page.tsx deja __vgFichaPendiente + navega a fichas + dispara vg:asistente-ficha (500ms); fichas-panel escucha el evento Y revisa la bandera al montar (la sala recoge la orden viva o naciente) y ejecuta abrir() ORIGINAL: descubrir + sello + placa GTA + sonido = EXACTAMENTE un toque manual. La voz JAMÁS inventa fichas: «ficha de Japón» → búsqueda honesta de "Japón".
+- ② LA VOZ EDITA LA CASA (route.ts + page.tsx): rama determinista "idioma" (IDIOMAS 8 aliases) — «cambia el idioma a inglés» → {tipo:"idioma",destino:"en"} → useLangStore.setLang EN VIVO (persistente vanguard-lang-v1) y el cerebro confirma EN EL NUEVO idioma (CONFIRMA_IDIOMA: «Done. English active.»); si ya está en ese idioma, lo dice sin mover nada; «edita/personaliza/configura mi perfil» → sala PERFIL (verbos añadidos al patronAbrir + artículo mi/tu); SYSTEM del LLM ampliado con las reglas ficha/idioma/perfil + validación server-side de ambos destinos; chip violeta «FICHA UCRAINA» (8 idiomas) junto a LÉEME EL MUNDO.
+- ③ EL RESCATE TOTAL (layout.tsx, los dos huecos que v178 no cubría): ④ CHEQUE DE CAPACIDADES ES5 PURO antes del bundle (Promise/Map/Set/fetch/addEventListener): un aparato que no puede NI PARSEAR el bundle no ejecuta NINGÚN rescate interno — ahora recibe «Este navegador es demasiado antiguo para VANGUARD» con la nota de actualizar (es/en por navigator.language) y CERO bucles de recarga; ⑤ VIGÍA POST-CORTINA fuera de React: la cortina v178 se levanta con el DOM — si el bundle muere después, el piloto queda en una casa MUDA; el vigía (setTimeout tras apagar: 20s ligeras / 68s pesadas) vigila __vgvivo y levanta barra honesta «Vanguard no terminó de despertar en este navegador» + RECARGAR, con auto-retiro cada 1s si la casa respira tarde (tope 120s).
+- ⑥ WATCHMAN EXTERNO: cron cada 30 min (turno del agente fuera del sandbox) — verifica /api/health (ok + db up + RSS) y releva via serve.mjs si el server está muerto/hinchado; el server zombi de hoy no vuelve a quedar solo.
+- version.ts → v181.0 EL AGENTE TOTAL; bitacora.ts entrada con 5 hitos; QA: ver abajo.
+
+Stage Summary:
+- QA E2E (producción, móvil 390): cerebro ×9 por curl (VG-01/VG-02/VG-05 con nombre completo, idioma en↔es con confirmación en el idioma nuevo, perfil por LLM, colección→sala SIN abrir carta, Japón→buscar honesto, briefing v180 intacto 48 cables/11 países); navegador real: cortina fundida + CASA VIVA, cine GTA saltado, bono cerrado, chip FICHA UCRAINA → álbum + VG-01 abierta y DESCUBIERTA persistida (vg176-fichas=[ukraine]) con POR QUÉ IMPORTA, orden escrita «cambia el idioma a español» → UI repintada ES + chips ES, «edita mi perfil» → PERFIL, barra vigía ABSENTE (0 en DOM real — el textContent la cantaba falsa por el script inline, cazado), overflow 390/390 y 1280/1280, 0 errores consola; guards v167 + rewrite /socket.io intactos; tsc 0, lint 0 en tocados, build EXIT 0; push 940ec29.
