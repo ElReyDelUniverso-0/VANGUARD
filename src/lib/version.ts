@@ -580,8 +580,29 @@
 //     pre-cargada (consumo de una sola vez por ref), menú despliega el Mega.
 // (5) LA BOCA: speechSynthesis del aparato, voz del idioma del piloto,
 //     rate 1.18 (rápida, el ADN del tráiler), pitch 0.95.
-// Herencia v178.0 y todo lo anterior — cortina v155 de red de seguridad,
+// v180.0 VANGUARD AUTOMÁTICO — EL RADAR QUE TE BUSCA. El Dueño: «haz que
+// Vanguard sea automático, que no necesite que una persona necesariamente
+// esté buscando, porque se puede perder; solo busca noticias y ahí están
+// los ayudantes». Tres piezas:
+// (1) EL CENTINELA DE IMPACTO (centinela-impacto.tsx): radar autónomo en
+//     toda la app — sondea /api/news?modo=centro cada 60s, dedupe real por
+//     id (localStorage vg180-vistos, tope 300), SIEMBRA SILENCIOSA en la
+//     primera vuelta (el archivo previo no es «noticia nueva para ti») y
+//     cuando aterriza un cable NUEVO ≥64 (CRÍTICO/URGENTE): toast con el
+//     titular real + VG-ASSIST lo ANUNCIA POR VOZ (vg:asistente-anunciar),
+//     máx 2 toasts por sondeo y 1 voz cada 45s (nada de bombardeo); se
+//     pausa con la pestaña oculta (el radar respira).
+// (2) EL BRIEFING HABLADO (/api/asistente): «léeme las noticias» / «¿qué
+//     pasa?» → rama DETERMINISTA antes del LLM que pregunta al motor en
+//     vivo y devuelve hablar + briefing[] con los cables reales (título,
+//     país, impacto, tier, edad) + navega al CENTRO MUNDIAL. Cero
+//     alucinación: los cables no los redacta la IA, los entrega el motor.
+// (3) EL PANEL DEL AGENTE: chips nuevos — «LÉEME EL MUNDO» (briefing a un
+//     toque) y «VOZ DE ALERTAS ON/OFF» (vg180-voz-alertas: la voz del radar
+//     se puede callar, el radar no); los cables del briefing se pintan en
+//     el panel con su impacto en color.
+// Herencia v179.0 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v179.0";
-export const APP_CODENAME = "EL AGENTE DE VOZ";
+export const APP_VERSION = "v180.0";
+export const APP_CODENAME = "VANGUARD AUTOMÁTICO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

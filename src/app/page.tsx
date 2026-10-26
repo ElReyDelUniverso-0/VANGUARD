@@ -70,6 +70,7 @@ const MercadoVivo = dynamic(() => import("@/components/vanguard/mercado-vivo"), 
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 import { SectionSearch } from "@/components/vanguard/section-search";
 import { AsistenteVoz } from "@/components/vanguard/asistente-voz";
+import { CentinelaImpacto } from "@/components/vanguard/centinela-impacto";
 import { AccountModal } from "@/components/vanguard/account-modal";
 import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
@@ -1413,6 +1414,8 @@ export default function Home() {
       <Navegador />
       {/* v179.0 VG-ASSIST — el orbe Siri de Vanguard: toca y habla, la Casa obedece */}
       <AsistenteVoz />
+      {/* v180.0 VANGUARD AUTOMÁTICO — el radar que te busca: nada se pierde sin buscar */}
+      <CentinelaImpacto />
     </div>
   );
 }

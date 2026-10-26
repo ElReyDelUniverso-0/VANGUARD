@@ -5,7 +5,10 @@ import { TAB_LABELS } from "@/lib/i18n-tabs";
 // v179.0 VG-ASSIST — EL AGENTE DE VOZ: el oído y la boca de Vanguard.
 // El cliente transcribe la voz del piloto (Web Speech API) y manda el texto.
 // Este route es el CEREBRO: interpreta la intención y devuelve
-//   { hablar, ai, accion: { tipo: "navegar"|"buscar"|"menu"|"hablar", destino?, consulta? } }
+//   { hablar, ai, accion: { tipo: "navegar"|"buscar"|"menu"|"hablar", destino?, consulta? }, briefing? }
+// v180.0 VANGUARD AUTOMÁTICO: «léeme las noticias» ya NO solo navega —
+// el cerebro pregunta al motor en vivo y devuelve un BRIEFING HABLADO con
+// los cables reales del momento (determinista, ANTES del LLM: cero alucinación).
 // Reglas de acero:
 //  · el destino SOLO puede ser una clave del vocabulario real (TAB_LABELS.es)
 //  · MURO 20 peticiones por IP y minuto (la voz no es gratis)
@@ -128,6 +131,62 @@ export async function POST(req: NextRequest) {
   const lang = LANG_NOMBRE[String(body.lang || "es")] ? String(body.lang || "es") : "es";
   const tabActual = String(body.tab || "inicio").slice(0, 30);
   if (!texto) return NextResponse.json({ error: "Falta el texto de la orden" }, { status: 400 });
+
+  // ═══ v180.0 VANGUARD AUTOMÁTICO — BRIEFING DETERMINISTA ANTES DEL LLM ═══
+  // «léeme las noticias» / «¿qué pasa?» → el motor EN VIVO responde con cables
+  // REALES (títulos, países e impacto del centro mundial). Cero alucinación:
+  // la rama no toca el LLM y si el motor duerme, se dice la verdad.
+  const tNorm = norm(texto);
+  const pidePulso =
+    /\b(lee(me)?|leeme|briefing|informe|pulso|novedades|noticias|news|que\s+pasa|que\s+hay|actualidad|ultimas?\s+horas?|resumen)\b/.test(tNorm);
+  if (pidePulso) {
+    try {
+      const ctrl = new AbortController();
+      const reloj = setTimeout(() => ctrl.abort(), 9000);
+      const rNoticias = await fetch(new URL("/api/news?modo=centro", req.nextUrl.origin), {
+        signal: ctrl.signal,
+        cache: "no-store",
+      });
+      clearTimeout(reloj);
+      if (rNoticias.ok) {
+        const d = (await rNoticias.json()) as {
+          items?: { id: string; title?: string; paisNombre?: string; impacto?: number | string; tier?: string; edad?: string }[];
+          pulso?: { total?: number; paises?: number; urgente?: number; critico?: number };
+        };
+        const items = (d.items || [])
+          .map((c) => ({ ...c, imp: Number(c.impacto) || 0 }))
+          .sort((a, b) => b.imp - a.imp)
+          .slice(0, 4);
+        const p = d.pulso || {};
+        if (items.length) {
+          const es = lang === "es";
+          const cabecera = es
+            ? `Pulso del mundo: ${p.total ?? items.length} cables en vivo, ${p.paises ?? "-"} países.`
+            : `World pulse: ${p.total ?? items.length} live cables, ${p.paises ?? "-"} countries.`;
+          const lineas = items.map(
+            (c) => `${c.paisNombre || "MUNDO"} (${c.imp}) — ${(c.title || "").slice(0, 80)}`
+          );
+          const hablar =
+            (cabecera + " " + lineas.slice(0, 3).join(". ")).slice(0, 480) +
+            (es ? ". Te dejo en el Centro Mundial." : ". Taking you to the World Center.");
+          return NextResponse.json({
+            hablar,
+            ai: false,
+            accion: { tipo: "navegar", destino: "centro" },
+            briefing: items.map((c) => ({
+              titulo: (c.title || "").slice(0, 110),
+              pais: c.paisNombre || "MUNDO",
+              impacto: c.imp,
+              tier: c.tier || "alto",
+              edad: c.edad || "",
+            })),
+          });
+        }
+      }
+    } catch {
+      // motor dormido → cae al LLM/heurística de abajo (honestidad siempre)
+    }
+  }
 
   // vocabulario que el LLM puede pisar (claves reales + etiqueta en español)
   const vocabLineas = Object.entries(VOCAB)

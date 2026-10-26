@@ -103,6 +103,18 @@ const TXT = {
     ru: "Мозг не ответил — попробуйте снова.",
     zh: "大脑没有响应 — 请重试。",
   } as Record<string, string>,
+  chipLeer: {
+    es: "LÉEME EL MUNDO", en: "READ THE WORLD", pt: "LÊ O MUNDO", fr: "LIS LE MONDE",
+    de: "LIES DIE WELT", it: "LEGGI IL MONDO", ru: "ПРОЧТИ МИР", zh: "读世界",
+  } as Record<string, string>,
+  chipVozOn: {
+    es: "VOZ DE ALERTAS: ON", en: "ALERT VOICE: ON", pt: "VOZ DE ALERTAS: ON", fr: "VOIX D'ALERTE: ON",
+    de: "ALARMSTIMME: AN", it: "VOCE ALLERTE: ON", ru: "ГОЛОС ТРЕВОГИ: ВКЛ", zh: "警报语音: 开",
+  } as Record<string, string>,
+  chipVozOff: {
+    es: "VOZ DE ALERTAS: OFF", en: "ALERT VOICE: OFF", pt: "VOZ DE ALERTAS: OFF", fr: "VOIX D'ALERTE: OFF",
+    de: "ALARMSTIMME: AUS", it: "VOCE ALLERTE: OFF", ru: "ГОЛОС ТРЕВОГИ: ВЫКЛ", zh: "警报语音: 关",
+  } as Record<string, string>,
   placeholder: {
     es: "o escribe la orden… (ej: abre fichas)", en: "or type the order… (e.g. open fichas)",
     pt: "ou escreve a ordem…", fr: "ou écris l'ordre…", de: "oder Befehl tippen…",
@@ -122,6 +134,10 @@ export function AsistenteVoz() {
   const [aviso, setAviso] = useState(""); // errores honestos
   const [escrito, setEscrito] = useState("");
   const [abierto, setAbierto] = useState(false); // panel desplegado
+  // v180: briefing del centro mundial (los cables reales que el agente leyó)
+  const [briefing, setBriefing] = useState<{ titulo: string; pais: string; impacto: number; tier: string; edad?: string }[]>([]);
+  // v180: voz de las alertas del Centinela (ON por defecto, honesta: se puede callar)
+  const [vozAlertas, setVozAlertas] = useState(true);
 
   const reconRef = useRef<Reconocedor | null>(null);
   const estadoRef = useRef<Estado>("dormido");
@@ -134,7 +150,10 @@ export function AsistenteVoz() {
   }, []);
   useEffect(() => {
     const t = setTimeout(() => {
-      try { if (sessionStorage.getItem("vg179-asistente-oculto") === "1") setOculto(true); } catch {}
+      try {
+        if (sessionStorage.getItem("vg179-asistente-oculto") === "1") setOculto(true);
+        if (localStorage.getItem("vg180-voz-alertas") === "0") setVozAlertas(false);
+      } catch {}
     }, 0);
     return () => clearTimeout(t);
   }, []);
@@ -184,6 +203,7 @@ export function AsistenteVoz() {
     setParcial("");
     setAviso("");
     setRespuesta("");
+    setBriefing([]);
     estadoRef.current = "pensando";
     setEstado("pensando");
     try {
@@ -195,6 +215,7 @@ export function AsistenteVoz() {
       const j = (await r.json()) as {
         hablar?: string;
         accion?: { tipo?: string; destino?: string; consulta?: string };
+        briefing?: { titulo: string; pais: string; impacto: number; tier: string; edad?: string }[];
         error?: string;
       };
       if (!r.ok || j.error) {
@@ -205,6 +226,7 @@ export function AsistenteVoz() {
       }
       const accion = j.accion || { tipo: "hablar" };
       setRespuesta(j.hablar || "");
+      if (j.briefing?.length) setBriefing(j.briefing); // v180: el panel muestra los cables reales
       // MANOS: la Casa obedece ANTES de hablar (la voz confirma lo que ya ves)
       try {
         window.dispatchEvent(new CustomEvent("vg:asistente-accion", { detail: accion }));
@@ -281,6 +303,19 @@ export function AsistenteVoz() {
     }
   }, [lang, despachar]);
 
+  // contexto del piloto + ANUNCIOS DEL CENTINELA (v180: las noticias te buscan)
+  useEffect(() => {
+    const anuncia = (e: Event) => {
+      const d = (e as CustomEvent<{ texto?: string; auto?: boolean }>).detail || {};
+      if (!d.texto) return;
+      setRespuesta(d.texto);
+      setBriefing([]);
+      hablar(d.texto); // la boca del radar: el cable URGENTE se anuncia solo
+    };
+    window.addEventListener("vg:asistente-anunciar", anuncia);
+    return () => window.removeEventListener("vg:asistente-anunciar", anuncia);
+  }, [hablar]);
+
   const ocultar = useCallback(() => {
     try { sessionStorage.setItem("vg179-asistente-oculto", "1"); } catch {}
     try { reconRef.current?.abort(); } catch {}
@@ -344,6 +379,45 @@ export function AsistenteVoz() {
                 {tieneVoz ? TXT.escucha[lang] : TXT.micNo[lang]}
               </p>
             )}
+            {/* v180: los cables REALES del briefing (el mundo leído por el agente) */}
+            {briefing.length > 0 && (
+              <ul className="mt-1.5 space-y-1 border-t border-amber-hud/15 pt-1.5">
+                {briefing.slice(0, 4).map((b, i) => (
+                  <li key={i} className="text-[11px] leading-snug flex gap-1.5 items-start">
+                    <span className={cn("shrink-0 font-mono font-bold px-1 rounded", Number(b.impacto) >= 80 ? "text-red-400" : Number(b.impacto) >= 64 ? "text-amber" : "text-muted-foreground")}>
+                      {b.impacto}
+                    </span>
+                    <span className="text-foreground/85"><b className="text-amber/90">{b.pais}</b> — {b.titulo}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* v180: comandos rápidos + interruptor honesto de las alertas por voz */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-t border-amber-hud/15">
+            <button
+              onClick={() => void despachar(lang === "es" ? "léeme las noticias" : "read me the news")}
+              className="flex-1 min-w-0 px-2 py-1 rounded-lg border border-green-hud/30 bg-green-hud/5 text-[10px] font-mono tracking-wide text-green-hud hover:bg-green-hud/15 truncate"
+              aria-label="Pedir briefing del mundo por voz"
+            >
+              {TXT.chipLeer[lang] || TXT.chipLeer.es}
+            </button>
+            <button
+              onClick={() => {
+                const nv = !vozAlertas;
+                setVozAlertas(nv);
+                try { localStorage.setItem("vg180-voz-alertas", nv ? "1" : "0"); } catch {}
+              }}
+              className={cn(
+                "shrink-0 px-2 py-1 rounded-lg border text-[10px] font-mono tracking-wide",
+                vozAlertas ? "border-amber-hud/40 text-amber hover:bg-amber-hud/10" : "border-muted-foreground/30 text-muted-foreground hover:bg-white/5"
+              )}
+              aria-label="Activar o silenciar la voz de las alertas automáticas"
+              title={vozAlertas ? "El radar habla — toca para silenciarlo" : "El radar está mudo — toca para despertar su voz"}
+            >
+              {(vozAlertas ? TXT.chipVozOn : TXT.chipVozOff)[lang] || (vozAlertas ? TXT.chipVozOn.es : TXT.chipVozOff.es)}
+            </button>
           </div>
 
           {/* orden escrita: el agente NUNCA se queda mudo */}

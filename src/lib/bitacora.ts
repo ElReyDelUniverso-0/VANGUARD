@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v180.0",
+    nombre: "VANGUARD AUTOMÁTICO",
+    tipo: "ia",
+    hitos: [
+      "EL RADAR QUE TE BUSCA (el Dueño: «haz que Vanguard sea automático, que no necesite que una persona necesariamente esté buscando, porque se puede perder; solo busca noticias y ahí están los ayudantes») — las noticias dejan de esperar al buscador: el CENTINELA DE IMPACTO vive en toda la app y caza los cables nuevos sin que nadie mueva un dedo",
+      "EL CENTINELA DE IMPACTO (centinela-impacto.tsx) — sondea el centro mundial cada 60s con DEDUPE REAL por id de cable (localStorage vg180-vistos, tope 300) y SIEMBRA SILENCIOSA en la primera vuelta (el archivo que ya estaba no es «noticia nueva para ti», es el mundo girando antes de llegar); cable NUEVO con impacto ≥64 (CRÍTICO/URGENTE) = toast con el titular real + VG-ASSIST lo anuncia POR VOZ; máx 2 toasts por sondeo, 1 voz cada 45s — el radar avisa, nunca bombardea; pausa con la pestaña oculta",
+      "EL BRIEFING HABLADO (/api/asistente) — «léeme las noticias» / «¿qué pasa?» cae en una rama DETERMINISTA que corre ANTES del LLM: pregunta al motor en vivo y devuelve los cables REALES del momento (título, país, impacto, tier, edad) como briefing[] + los SPOKEN en ≤480 caracteres + navega al CENTRO MUNDIAL; cero alucinación — la IA no redacta la guerra, la lee",
+      "EL PANEL DEL AGENTE SE VISTA DE RADAR — chip «LÉEME EL MUNDO» (briefing a un toque, sin ni hablar) + chip «VOZ DE ALERTAS ON/OFF» (vg180-voz-alertas: la voz del radar es honesta — se puede silenciar, el radar no se apaga); los 4 cables del briefing se pintan en el panel con su número de impacto en color (rojo ≥80, ámbar ≥64)",
+      "QA v180 + INFRA BAJO FUEGO — el workspace se revirtió a checkpoint EN PLENA RONDA (2ª vez): v179.0 ya estaba empujada a origin/main (045a36e) = cero pérdida; reset de recuperación + DB restaurada + server zombi (escuchaba sin build) ejecutado y relevado; el vigilante detectó el server MUERTO y despertó con su relevo solo — el guardián ya trabajó su primer turno real; tsc 0, lint 0 en tocados, build EXIT 0, health v180.0",
+    ],
+  },
+  {
     version: "v179.0",
     nombre: "EL AGENTE DE VOZ",
     tipo: "ia",
