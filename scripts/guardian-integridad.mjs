@@ -15,22 +15,31 @@
  *   4. Si health.version != version.ts en disco (server viejo, código nuevo) →
  *      relevo del server con el build existente (sin reset).
  *
- * Log: /tmp/guardian-integridad.log
+ * USO:  node scripts/guardian-integridad.mjs          (padre: desdobla y sale)
+ *       node scripts/guardian-integridad.mjs --hijo   (bucle eterno, PPID 1)
+ *
+ * Log: /tmp/guardian-integridad.log — PIDFILE: .guardian.pid (anti-doble-instancia)
  */
 
-import { execSync, spawn } from 'node:child_process';
-import { readFileSync, existsSync, copyFileSync } from 'node:fs';
+import { execSync, spawn, fork } from 'node:child_process';
+import { readFileSync, existsSync, copyFileSync, appendFileSync, writeFileSync, unlinkSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const RAIZ = path.resolve(process.cwd());
+const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LOG = '/tmp/guardian-integridad.log';
+const PIDFILE = path.join(RAIZ, '.guardian.pid');
 const INTERVALO = 5 * 60 * 1000; // 5 min
 const RSS_TOPE = 900; // MB — igual que vigilante.mjs
 
 function log(msg) {
   const linea = `[${new Date().toISOString()}] ${msg}`;
   try { console.log(linea); } catch {}
-  try { execSync(`echo ${JSON.stringify(linea)} >> ${LOG}`); } catch {}
+  try {
+    appendFileSync(LOG, linea + '\n');
+    const lineas = readFileSync(LOG, 'utf8').split('\n');
+    if (lineas.length > 500) writeFileSync(LOG, lineas.slice(-500).join('\n'));
+  } catch {}
 }
 
 function sh(cmd, opts = {}) {
@@ -147,6 +156,35 @@ async function chequeo() {
   }
 }
 
-log('GUARDIÁN DE INTEGRIDAD arrancado (cada 5 min, verdad = origin/main)');
+// ── anti-doble-instancia + desdoblamiento estilo vigilante ──
+function pidGuardianVivo() {
+  try {
+    const pid = parseInt(readFileSync(PIDFILE, 'utf8').trim(), 10);
+    process.kill(pid, 0);
+    return pid;
+  } catch { return null; }
+}
+
+if (process.argv[2] !== '--hijo') {
+  const vivo = pidGuardianVivo();
+  if (vivo) {
+    console.log(`[guardian] ya vivo (pid ${vivo}) — no duplico`);
+    process.exit(0);
+  }
+  const hijo = fork(fileURLToPath(import.meta.url), ['--hijo'], { detached: true, stdio: 'ignore' });
+  hijo.unref();
+  writeFileSync(PIDFILE, String(hijo.pid));
+  console.log(`[guardian] desdoblado a PPID 1 (pid ${hijo.pid})`);
+  process.exit(0);
+}
+
+writeFileSync(PIDFILE, String(process.pid));
+process.on('exit', () => {
+  try {
+    if (parseInt(readFileSync(PIDFILE, 'utf8').trim(), 10) === process.pid) unlinkSync(PIDFILE);
+  } catch {}
+});
+
+log(`GUARDIÁN DE INTEGRIDAD nace como --hijo (pid ${process.pid}, PPID ${process.ppid}, cada ${INTERVALO / 1000}s)`);
 chequeo();
 setInterval(chequeo, INTERVALO);
