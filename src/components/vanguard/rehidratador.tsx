@@ -27,6 +27,8 @@ import { useFavoritos } from "@/lib/favoritos-store";
 import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
 // v176.0: el álbum de LAS FICHAS DE GUERRA entra a la disciplina de rehidratación
 import { useColeccionFichas } from "@/lib/fichas-guerra-data";
+// v183.0: LA GLORIA (sellos dorados, títulos, vitrina, racha del cazador) entra a la fila
+import { useGloria } from "@/lib/gloria";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -84,6 +86,11 @@ export function Rehidratador() {
     rehidratar(useColeccionFichas)
       .then(() => marcarHidratado("vg176-fichas"))
       .catch(() => marcarHidratado("vg176-fichas"));
+    // v183.0 LA GLORIA: sin este registro la cerradura del escudo bloquearía
+    // los sellos dorados, los títulos y la vitrina (mismo patrón v171/v172/v176)
+    rehidratar(useGloria)
+      .then(() => marcarHidratado("vg183-gloria"))
+      .catch(() => marcarHidratado("vg183-gloria"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

@@ -41,6 +41,11 @@ import {
   type FichaGuerra,
   type RarezaFicha,
 } from "@/lib/fichas-guerra-data";
+// v183.0 LA GLORIA — presumir, exclusivo, emocionante, adicto
+import { Sparkles, Share2 } from "lucide-react";
+import { useGloria, ctxDe, proximoTitulo, TITULOS_GLORIA, type SelloDorado } from "@/lib/gloria";
+import { pintarFicha, compartirImagen, type DatosPresumir } from "@/lib/gloria-compartir";
+import { APP_VERSION_LABEL } from "@/lib/version";
 
 type Cable = NoticiaRanqueada;
 
@@ -155,6 +160,40 @@ export function FichasPanel() {
       try { sfx.reward(); } catch { /* coleccionar suena si el aparato deja */ }
       toast.success(`FICHA ${g.ficha.serie} DESCUBIERTA — ${g.ficha.nombre}`);
     }
+
+    // ══ v183.0 LA GLORIA — el momento que solo tú viviste ══
+    try {
+      const gl = useGloria.getState();
+      // LA RACHA DEL CAZADOR — abrir ≥1 ficha al día sostiene la llama
+      const dia = gl.marcarDia();
+      if (dia.rachaSubio && dia.racha > 1) {
+        try { sfx.coin(); } catch { /* silencio honesto */ }
+        toast.success(`RACHA DEL CAZADOR · ${dia.racha} DÍAS SEGUIDOS`);
+      }
+      // EL SELLO DORADO 1/1 — la guerra en LEYENDA (≥80) en TU hora exacta
+      if (g.rareza === "leyenda" && g.intensidad >= 80) {
+        const oroNuevo = gl.sellarDorado(g.ficha.key, g.intensidad);
+        if (oroNuevo) {
+          try { sfx.achievement(); } catch { /* silencio honesto */ }
+          const hora = useGloria.getState().sellos[g.ficha.key]?.hora ?? "";
+          toast.success(`★ SELLO DORADO 1/1 · ${g.ficha.serie} CAPTADA A LAS ${hora}`, {
+            description: "NADIE MÁS EN EL MUNDO TIENE ESTE SELLO — LA GUERRA ARDÍA EN LEYENDA Y SOLO TÚ ESTABAS AQUÍ",
+            duration: 7000,
+          });
+        }
+      }
+      // LOS TÍTULOS GLORIA — hitos reales, el próximo siempre muerde
+      const descubiertasN = Object.keys(coleccion.descubiertas).length + (eraNueva ? 1 : 0);
+      const aperturasN = coleccion.aperturas + 1;
+      const nuevos = useGloria.getState().syncTitulos(ctxDe(descubiertasN, aperturasN, useGloria.getState()));
+      for (const id of nuevos) {
+        const t = TITULOS_GLORIA.find((x) => x.id === id);
+        if (t) {
+          try { sfx.levelUp(); } catch { /* silencio honesto */ }
+          toast.success(`TÍTULO GLORIA DESBLOQUEADO · ${t.nombre}`, { description: t.nota, duration: 7000 });
+        }
+      }
+    } catch { /* la gloria jamás bloquea la colección */ }
     // la placa de conflicto: una vez por ficha por sesión (patrón vg174-gta-ultimo)
     if (!placaVistaRef.current.has(g.ficha.key) && typeof window !== "undefined") {
       const yaVista = window.sessionStorage.getItem(`vg176-ficha-${g.ficha.key}`);
@@ -201,6 +240,19 @@ export function FichasPanel() {
 
   const abiertaGui = guias.find((g) => g.ficha.key === abierta) ?? null;
 
+  // ══ v183.0 LA GLORIA — el escaparate respira con el álbum ══
+  const gloria = useGloria();
+  const ctxGloria = useMemo(
+    () => ctxDe(nDescubiertas, coleccion.aperturas, { sellos: gloria.sellos, rachaDias: gloria.rachaDias }),
+    [nDescubiertas, coleccion.aperturas, gloria.sellos, gloria.rachaDias],
+  );
+  const proximo = useMemo(() => proximoTitulo(ctxGloria), [ctxGloria]);
+  const tituloActivoInfo = useMemo(
+    () => TITULOS_GLORIA.find((t) => t.id === gloria.tituloActivo) ?? null,
+    [gloria.tituloActivo],
+  );
+  const nOro = useMemo(() => Object.keys(gloria.sellos).length, [gloria.sellos]);
+
   // la ficha que el detalle está mostrando, ya descubierta (el estado del álbum al momento)
   return (
     <div className="space-y-4">
@@ -231,6 +283,51 @@ export function FichasPanel() {
         LA RAREZA RESPIRA CON LAS NOTICIAS: HOY LEYENDA, MAÑANA QUIZÁ SILENCIO.
       </p>
 
+      {/* ══════ v183.0 LA GLORIA — racha del cazador + oro + el próximo título ══════ */}
+      <div className="border border-amber-hud/30 bg-card p-3" style={{ boxShadow: "0 0 24px -14px #F5C54255" }}>
+        <div className="flex items-center justify-between gap-2">
+          <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] text-amber-hud">
+            <Sparkles className="h-3 w-3" /> LA GLORIA DEL AGENTE
+          </p>
+          {tituloActivoInfo && (
+            <span className="border px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em]" style={{ color: tituloActivoInfo.color, borderColor: `${tituloActivoInfo.color}55`, background: `${tituloActivoInfo.color}10` }}>
+              TÍTULO: {tituloActivoInfo.nombre}
+            </span>
+          )}
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+          <div>
+            <p className="font-mono text-lg font-bold leading-none text-amber-hud">{gloria.rachaDias}</p>
+            <p className="mt-1 text-[8.5px] tracking-[0.16em] text-muted-foreground">RACHA DEL CAZADOR</p>
+          </div>
+          <div>
+            <p className="font-mono text-lg font-bold leading-none text-amber">★ {nOro}</p>
+            <p className="mt-1 text-[8.5px] tracking-[0.16em] text-muted-foreground">SELLOS DORADOS 1/1</p>
+          </div>
+          <div>
+            <p className="font-mono text-lg font-bold leading-none text-violet-300">{gloria.titulos.length}/12</p>
+            <p className="mt-1 text-[8.5px] tracking-[0.16em] text-muted-foreground">TÍTULOS GLORIA</p>
+          </div>
+        </div>
+        {proximo && (
+          <div className="mt-2.5 border-t border-border/50 pt-2">
+            <div className="flex items-center justify-between font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted-foreground">
+              <span>PRÓXIMO TÍTULO · {proximo.titulo.nombre}</span>
+              <span style={{ color: proximo.titulo.color }}>{Math.round(proximo.progreso * 100)}%</span>
+            </div>
+            <div className="mt-1 h-[4px] overflow-hidden rounded-sm bg-white/10" aria-hidden>
+              <div className="h-full rounded-sm transition-all duration-500" style={{ width: `${Math.max(3, Math.round(proximo.progreso * 100))}%`, background: proximo.titulo.color, boxShadow: `0 0 8px ${proximo.titulo.color}55` }} />
+            </div>
+            <p className="mt-1 text-[8.5px] text-muted-foreground">{proximo.titulo.nota}</p>
+          </div>
+        )}
+        {!proximo && (
+          <p className="mt-2 border-t border-border/50 pt-2 text-center font-mono text-[8.5px] uppercase tracking-[0.18em] text-amber-hud">
+            LOS 12 TÍTULOS SON TUYOS — LEYENDA DE LA CASA, LA GLORIA ESTÁ COMPLETA
+          </p>
+        )}
+      </div>
+
       {/* ══════ LAS FICHAS — el tablero de cartas ══════ */}
       {cargando && !items.length ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -244,6 +341,7 @@ export function FichasPanel() {
               guia={g}
               descubiertaTs={descubiertas[g.ficha.key]?.ts ?? null}
               descubiertaIntensidad={descubiertas[g.ficha.key]?.intensidad ?? null}
+              selloDorado={gloria.sellos[g.ficha.key] ?? null}
               onAbrir={() => abrir(g)}
             />
           ))}
@@ -254,6 +352,7 @@ export function FichasPanel() {
       <DetalleFicha
         guia={abiertaGui}
         selloTs={abiertaGui ? (coleccion.descubiertas[abiertaGui.ficha.key]?.ts ?? null) : null}
+        selloDorado={abiertaGui ? (gloria.sellos[abiertaGui.ficha.key] ?? null) : null}
         onCerrar={() => setAbierta(null)}
         onLeer={(c) => setLectura(aCableLectura(c))}
       />
@@ -304,11 +403,13 @@ function TarjetaFicha({
   guia,
   descubiertaTs,
   descubiertaIntensidad,
+  selloDorado,
   onAbrir,
 }: {
   guia: GuiaFicha;
   descubiertaTs: number | null;
   descubiertaIntensidad: number | null;
+  selloDorado: SelloDorado | null;
   onAbrir: () => void;
 }) {
   const { ficha, rareza, top, pulso, intensidad, frescuraMin } = guia;
@@ -391,7 +492,11 @@ function TarjetaFicha({
           <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-amber">{ficha.inicioTxt}</p>
           <p className="truncate font-mono text-[8.5px] tracking-[0.14em] text-muted-foreground">{ficha.teatro}</p>
         </div>
-        {descubiertaTs ? (
+        {selloDorado ? (
+          <span className="v183oro flex shrink-0 items-center gap-1 border px-1.5 py-0.5 font-mono text-[8.5px] font-bold uppercase tracking-[0.14em]" style={{ color: "#F5C542", borderColor: "#F5C54255", background: "#F5C54210", boxShadow: "0 0 14px -4px #F5C54266" }}>
+            <Sparkles className="h-2.5 w-2.5" /> DORADO {selloDorado.hora}
+          </span>
+        ) : descubiertaTs ? (
           <span className="v176ficha-sello flex shrink-0 items-center gap-1 border border-violet-400/50 bg-violet-400/10 px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.14em] text-violet-300">
             <Stamp className="h-2.5 w-2.5" /> {selloFecha(descubiertaTs)}
           </span>
@@ -430,21 +535,55 @@ function BarraFicha({ etiqueta, valor, valorTxt, hex }: { etiqueta: string; valo
 function DetalleFicha({
   guia,
   selloTs,
+  selloDorado,
   onCerrar,
   onLeer,
 }: {
   guia: GuiaFicha | null;
   selloTs: number | null;
+  selloDorado: SelloDorado | null;
   onCerrar: () => void;
   onLeer: (c: Cable) => void;
 }) {
-  // el panel entero vive detrás de dynamic(..., { ssr: false }): aquí
-  // document SIEMPRE existe — el portal al body no necesita guard de montaje
+  // v183.0 LA GLORIA — el estado del botón PRESUMIR (hooks antes del return temprano)
+  const [presumiendo, setPresumiendo] = useState(false);
   if (!guia) return null;
 
   const { ficha, rareza, top, pulso, intensidad, frescuraMin, cables } = guia;
   const hex = RAREZAS[rareza].hex;
   const silencio = rareza === "silencio";
+
+  // ══ v183.0 PRESUMIR — la ficha sale de la Casa como imagen ══
+  const presumir = async () => {
+    if (presumiendo) return;
+    setPresumiendo(true);
+    try {
+      try { sfx.coin(); } catch { /* silencio honesto */ }
+      const datos: DatosPresumir = {
+        serie: ficha.serie,
+        nombre: ficha.nombre,
+        bandos: [ficha.bandos[0].nombre, ficha.bandos[1].nombre],
+        teatro: ficha.teatro,
+        hex,
+        rarezaLabel: RAREZAS[rareza].label,
+        intensidad,
+        pulso,
+        titular: top?.title ?? null,
+        fuente: top?.source ?? null,
+        selloFecha: selloTs ? selloFecha(selloTs) : null,
+        selloDorado,
+        version: APP_VERSION_LABEL,
+      };
+      const url = pintarFicha(datos);
+      const r = await compartirImagen(url, `VANGUARD-${ficha.serie}.png`);
+      useGloria.getState().contarCompartido();
+      if (r === "share") toast.success("FICHA COMPARTIDA — LA GLORIA SALE DE LA CASA");
+      else if (r === "descarga") toast.success("PNG DESCARGADO — PRESUME LA FICHA DONDE QUIERAS");
+      else toast.error("ESTE APARATO NO PUDO GENERAR LA IMAGEN");
+    } finally {
+      setPresumiendo(false);
+    }
+  };
 
   return createPortal(
     <div
@@ -560,11 +699,14 @@ function DetalleFicha({
               {selloTs && (
                 <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-violet-300">SELLO</dt><dd className="text-violet-300 font-mono text-[10px]">DESCUBIERTA EL {selloFecha(selloTs).toUpperCase()} · CON INTENSIDAD {intensidad}/100</dd></div>
               )}
+              {selloDorado && (
+                <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">ORO</dt><dd className="font-mono text-[10px] text-amber">★ SELLO DORADO 1/1 · CAPTADA A LAS {selloDorado.hora} · IMP {selloDorado.intensidad} — NADIE MÁS LO TIENE</dd></div>
+              )}
             </dl>
           </div>
 
-          {/* el estado del álbum */}
-          <div className={cn("flex items-center justify-center gap-2 border-t px-3 py-2.5", silencio ? "border-border/40" : "border-border/60")} style={{ background: `${hex}08` }}>
+          {/* el estado del álbum + LA GLORIA: presumir */}
+          <div className={cn("flex flex-wrap items-center justify-center gap-2 border-t px-3 py-2.5", silencio ? "border-border/40" : "border-border/60")} style={{ background: `${hex}08` }}>
             {selloTs ? (
               <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-violet-300">
                 <Stamp className="h-3 w-3" /> EN TU COLECCIÓN DESDE EL {selloFecha(selloTs).toUpperCase()}
@@ -574,6 +716,15 @@ function DetalleFicha({
                 CARTA EN VISTA — TOCA OTRA PARA SEGUIR COLECCIONANDO
               </span>
             )}
+            <button
+              onClick={presumir}
+              disabled={presumiendo}
+              className="flex items-center gap-1.5 border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.18em] transition-transform active:scale-[0.97] disabled:opacity-60"
+              style={{ color: "#F5C542", borderColor: "#F5C54255", background: "#F5C54212" }}
+              aria-label="Presumir ficha: generar imagen y compartir"
+            >
+              <Share2 className="h-3 w-3" /> {presumiendo ? "PINTANDO…" : "PRESUMIR FICHA"}
+            </button>
           </div>
         </div>
 

@@ -15,12 +15,18 @@ import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { useProfileStore, BANNERS, FRAMES, FACTIONS, type BannerStyle, type FrameStyle } from "@/lib/profile-store";
 import { useGameStore } from "@/lib/game-store";
 import { toast } from "sonner";
-import { UserCog, Check, Swords, ScrollText, Search, Signature, X, Activity } from "lucide-react";
+import { sfx } from "@/lib/sound";
+import { UserCog, Check, Swords, ScrollText, Search, Signature, X, Activity, Trophy, Sparkles, Share2, Lock } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { TituloLetras3D } from "@/components/vanguard/letras-3d";
 import { useT } from "@/lib/i18n";
 // v172 EL PULSO DE LA PARIDAD — el agente lleva su propia cuenta 3D vs 2D
 import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
+// v183.0 LA GLORIA — presunción, exclusividad, adicción: la vitrina del agente
+import { FICHAS_GUERRA, useColeccionFichas } from "@/lib/fichas-guerra-data";
+import { useGloria, TITULOS_GLORIA, proximoTitulo, ctxDe } from "@/lib/gloria";
+import { pintarVitrina, compartirImagen } from "@/lib/gloria-compartir";
+import { APP_VERSION_LABEL } from "@/lib/version";
 
 export function PerfilPanel() {
   const {
@@ -43,6 +49,46 @@ export function PerfilPanel() {
   const xp = useGameStore((s) => s.xp);
   const racha = useGameStore((s) => s.streak);
   const aliasAgente = useGameStore((s) => s.alias);
+
+  // ══ v183.0 LA GLORIA — el escaparate del agente ══
+  const gloria = useGloria();
+  const coleccion = useColeccionFichas();
+  const nDescubiertas = useMemo(() => Object.keys(coleccion.descubiertas).length, [coleccion.descubiertas]);
+  const ctxG = useMemo(
+    () => ctxDe(nDescubiertas, coleccion.aperturas, { sellos: gloria.sellos, rachaDias: gloria.rachaDias }),
+    [nDescubiertas, coleccion.aperturas, gloria.sellos, gloria.rachaDias],
+  );
+  const tituloInfo = useMemo(() => TITULOS_GLORIA.find((t) => t.id === gloria.tituloActivo) ?? null, [gloria.tituloActivo]);
+  const prox = useMemo(() => proximoTitulo(ctxG), [ctxG]);
+  const nOro = useMemo(() => Object.keys(gloria.sellos).length, [gloria.sellos]);
+  const [presumiendoV, setPresumiendoV] = useState(false);
+  const presumirVitrina = async () => {
+    if (presumiendoV) return;
+    setPresumiendoV(true);
+    try {
+      const fichas = gloria.vitrina.flatMap((k) => {
+        const f = FICHAS_GUERRA.find((x) => x.key === k);
+        return f ? [{ serie: f.serie, nombre: f.nombre, hex: f.color, dorada: !!gloria.sellos[f.key] }] : [];
+      });
+      const url = pintarVitrina({
+        tituloActivo: tituloInfo?.nombre ?? null,
+        colorTitulo: tituloInfo?.color ?? "#F5C542",
+        fichas,
+        racha: gloria.rachaDias,
+        sellos: nOro,
+        descubiertas: nDescubiertas,
+        total: FICHAS_GUERRA.length,
+        version: APP_VERSION_LABEL,
+      });
+      const r = await compartirImagen(url, "VANGUARD-vitrina.png");
+      useGloria.getState().contarCompartido();
+      if (r === "share") toast.success("VITRINA COMPARTIDA — LA GLORIA SALE DE LA CASA");
+      else if (r === "descarga") toast.success("PNG DESCARGADO — PRESUME TU VITRINA DONDE QUIERAS");
+      else toast.error("ESTE APARATO NO PUDO GENERAR LA IMAGEN");
+    } finally {
+      setPresumiendoV(false);
+    }
+  };
   useEffect(() => {
     const emitir = () => {
       try {
@@ -118,6 +164,12 @@ export function PerfilPanel() {
           </div>
           <div className="pt-10 px-5 pb-5">
             <div className="font-orbitron font-bold tracking-wider text-lg text-gradient">AGENTE VANGUARD</div>
+            {/* v183.0: el título GLORIA vestido — la primera impresión del perfil */}
+            {tituloInfo && (
+              <div className="mt-1.5 inline-flex items-center gap-1.5 border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.16em]" style={{ color: tituloInfo.color, borderColor: `${tituloInfo.color}55`, background: `${tituloInfo.color}10` }}>
+                <Sparkles className="h-2.5 w-2.5" /> {tituloInfo.nombre}
+              </div>
+            )}
             <div className="text-[10px] font-mono text-muted-foreground mb-2 flex items-center gap-1.5">
               <Flag code={favCountry} size={16} />
               {countryName(favCountry)} · {favFaction}
@@ -141,6 +193,81 @@ export function PerfilPanel() {
               <span className="text-[10px] font-mono text-muted-foreground">país favorito · {countryName(favCountry)}</span>
             </div>
           </div>
+        </div>
+
+        {/* ══ v183.0 LA VITRINA DE LA GLORIA — presunción, exclusividad, adicción ══ */}
+        <div className="hud-panel p-4 space-y-3" style={{ boxShadow: "0 0 28px -18px #F5C54255" }}>
+          <h3 className="font-orbitron text-xs tracking-widest uppercase text-gradient flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-amber" /> La vitrina de la gloria
+          </h3>
+          {/* los 12 títulos — solo los GANADOS se visten */}
+          <div className="flex flex-wrap gap-1.5">
+            {TITULOS_GLORIA.map((t) => {
+              const ganado = gloria.titulos.includes(t.id);
+              const activo = gloria.tituloActivo === t.id;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    if (ganado) { gloria.elegirTitulo(activo ? null : t.id); try { sfx.coin(); } catch { /* noop */ } }
+                    else toast.info(`BLOQUEADO — ${t.nota}`);
+                  }}
+                  className="flex items-center gap-1 border px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.12em] transition-colors"
+                  style={ganado
+                    ? { color: t.color, borderColor: activo ? t.color : `${t.color}44`, background: activo ? `${t.color}18` : "transparent" }
+                    : { color: "#4A5160", borderColor: "#2A2F3A" }}
+                  aria-pressed={activo}
+                  aria-label={ganado ? `Vestir título ${t.nombre}` : `Título bloqueado: ${t.nota}`}
+                >
+                  {ganado ? <Sparkles className="h-2.5 w-2.5" /> : <Lock className="h-2.5 w-2.5" />} {t.nombre}
+                </button>
+              );
+            })}
+          </div>
+          {prox && (
+            <p className="text-[9px] font-mono text-muted-foreground leading-snug">
+              PRÓXIMO TÍTULO · <span style={{ color: prox.titulo.color }}>{prox.titulo.nombre}</span> ({Math.round(prox.progreso * 100)}%) — {prox.titulo.nota}
+            </p>
+          )}
+          {/* los 3 huecos de la vitrina */}
+          <div className="grid grid-cols-3 gap-2">
+            {([0, 1, 2] as const).map((slot) => {
+              const key = gloria.vitrina[slot];
+              const f = FICHAS_GUERRA.find((x) => x.key === key) ?? null;
+              return (
+                <div key={slot} className="border p-2 text-center" style={{ borderColor: f ? `${f.color}55` : "#2A2F3A", background: f ? `${f.color}0D` : "transparent" }}>
+                  <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-muted-foreground">HUECO {slot + 1}</p>
+                  {f ? (
+                    <>
+                      <p className="mt-1 text-[11px] font-black uppercase leading-tight">{f.nombre}</p>
+                      <p className="mt-0.5 font-mono text-[8px]" style={{ color: f.color }}>
+                        {f.serie}{gloria.sellos[f.key] ? " ★ DORADO" : ""}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-2 text-[9px] font-mono text-muted-foreground">VACÍO</p>
+                  )}
+                  <select
+                    value={key ?? ""}
+                    onChange={(e) => gloria.ponerVitrina(slot, e.target.value || null)}
+                    className="mt-1.5 w-full border border-border/60 bg-black/40 px-1 py-0.5 font-mono text-[8.5px]"
+                    aria-label={`Elegir ficha para el hueco ${slot + 1}`}
+                  >
+                    <option value="">— elegir —</option>
+                    {FICHAS_GUERRA.filter((x) => !!coleccion.descubiertas[x.key]).map((x) => (
+                      <option key={x.key} value={x.key}>{x.serie} · {x.nombre}{gloria.sellos[x.key] ? " ★" : ""}</option>
+                    ))}
+                  </select>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[9px] font-mono text-muted-foreground">
+            RACHA {gloria.rachaDias} DÍA{gloria.rachaDias === 1 ? "" : "S"} · ★ {nOro} SELLO{nOro === 1 ? "" : "S"} DORADO{nOro === 1 ? "" : "S"} · {nDescubiertas}/{FICHAS_GUERRA.length} FICHAS · {gloria.compartido} PRESUMIDA{gloria.compartido === 1 ? "" : "S"}
+          </p>
+          <Button size="sm" variant="outline" onClick={presumirVitrina} disabled={presumiendoV} className="w-full font-mono text-[11px] flex items-center gap-1.5">
+            <Share2 className="w-3.5 h-3.5" /> {presumiendoV ? "Pintando…" : "Presumir vitrina (PNG)"}
+          </Button>
         </div>
 
         {/* bio */}

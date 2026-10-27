@@ -635,6 +635,30 @@
 //         300s (un reintento lento cada 5 min, nunca un bucle vertiginoso).
 // Herencia v181.0 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v182.0";
-export const APP_CODENAME = "EL ÚLTIMO RESCATE";
+// v183.0 LA GLORIA — Orden del Dueño: «creal algo que haga que las personas
+//         las necesite presumir exclusivo algo emocionante que las personas
+//         se vuelvan adicta estilo vanguard». La capa de gloria sobre LAS
+//         FICHAS DE GUERRA v176 (la colección viva del linaje):
+// (1) EL SELLO DORADO 1/1 — abrir una ficha mientras SU guerra arde en
+//     LEYENDA (impacto ≥80) graba TU hora exacta («SELLO DORADO · VG-01
+//     captada 21:47 · IMP 87»): la rareza viva es efímera, si no abres la
+//     carta en esa hora el sello NUNCA vuelve a existir — nadie más en el
+//     mundo puede tener el tuyo. Exclusividad honesta: tu sello = tu
+//     momento de la historia, cero invención.
+// (2) PRESUMIR — botón PRESUMIR FICHA: canvas nativo → PNG 640×800 con la
+//     carta completa (bandos, LA NOTICIA ÚNICA, sello) → navigator.share
+//     con Files (WhatsApp/X/lo que haya) y descarga de respaldo; y en el
+//     PERFIL la VITRINA DE LA GLORIA: 12 títulos (solo se visten los
+//     ganados), 3 huecos de fichas elegidas, cifras de oro y PRESUMIR
+//     VITRINA (PNG del escaparate entero).
+// (3) ADICTO — LA RACHA DEL CAZADOR (abrir ≥1 ficha al día sostiene la
+//     llama, el bucle Duolingo de la casa), 12 TÍTULOS GLORIA con el
+//     PRÓXIMO TÍTULO siempre mostrando su progreso (el casi-alcanzado
+//     que muerde) y el FOMO de la hora dorada. Ceremonia: toasts + sfx
+//     achievement/levelUp. Persistencia vg183-gloria con el escudo de la
+//     casa + registro en rehidratador (la lección v171/v172/v176).
+// Herencia v182.0 y todo lo anterior — cortina v155 de red de seguridad,
+// guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
+export const APP_VERSION = "v183.0";
+export const APP_CODENAME = "LA GLORIA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

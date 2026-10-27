@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v183.0",
+    nombre: "LA GLORIA",
+    tipo: "reten",
+    hitos: [
+      "EL SELLO DORADO 1/1 — abrir una ficha mientras SU guerra arde en LEYENDA (impacto ≥80) graba TU hora exacta: «★ SELLO DORADO · VG-01 CAPTADA A LAS 21:47 · IMP 87». La rareza viva es efímera: si no abres la carta en esa hora, ese sello NUNCA vuelve a existir — nadie más en el mundo puede tener el tuyo. Exclusividad honesta: tu sello = tu momento de la historia, cero invención (la intensidad la mide el mismo motor de impacto del Centro Mundial)",
+      "PRESUMIR FICHA — el botón PRESUMIR FICHA en el detalle: canvas nativo (cero dependencias) pinta la carta completa en PNG 640×800 (bandos, LA NOTICIA ÚNICA con su fuente, el sello — dorado si lo tienes) y sale de la Casa por navigator.share con Files (WhatsApp/X/lo que el aparato tenga) con descarga directa de respaldo. La colección por fin viaja fuera",
+      "LA VITRINA DE LA GLORIA en el PERFIL — los 12 TÍTULOS GLORIA (RECLUTA DEL ARCHIVO → LEYENDA DE LA CASA) con sus requisitos reales sobre la colección: solo se VISTEN los ganados, el activo luce bajo el nombre del agente en la vista previa; 3 huecos de VITRINA para las fichas elegidas (solo descubiertas, con su ★ dorado), cifras de racha/oro/colección/presunción y PRESUMIR VITRINA: el escaparate entero como PNG",
+      "ADICTO HONESTO — LA RACHA DEL CAZADOR: abrir ≥1 ficha al día sostiene la llama (el bucle Duolingo de la casa, aplicado a la colección viva, con mejor racha histórica); el PRÓXIMO TÍTULO siempre visible con su progreso (el casi-alcanzado que muerde) en la COLECCIÓN y en el PERFIL; ceremonia completa: toasts + sfx achievement/levelUp/coin en cada sello dorado, racha subida y título nuevo",
+      "PERSISTENCIA CON EL ESCUDO — vg183-gloria (zustand persist + storageBlindado) registrado en el rehidratador (la lección v171/v172/v176: sin registro, la cerradura bloquea la escritura); la GLORIA respira con los estados vivos de la colección v176 y jamás bloquea la apertura de una ficha (todo try/catch)",
+    ],
+  },
+  {
     version: "v182.0",
     nombre: "EL ÚLTIMO RESCATE",
     tipo: "tecno",
