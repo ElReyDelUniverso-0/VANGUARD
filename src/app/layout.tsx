@@ -333,6 +333,21 @@ export default function RootLayout({
           <style dangerouslySetInnerHTML={{ __html: `
             #vg-cortina{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(120% 90% at 50% 110%,#14100a 0%,#070606 55%,#050404 100%);transition:opacity .65s ease;font-family:var(--font-orbitron),system-ui,sans-serif}
             #vg-cortina.vg-off{opacity:0;pointer-events:none}
+            /* v184.0 LA CORTINA DE PIEDRA — la ley contra la cortina CONGELADA.
+               El Dueño la vio de nuevo (captura real 2026-10-27: «se queda así
+               y ya no termina», cortina viva SIN botón y SIN mensaje = los
+               timers del ojo NUNCA corrieron: el aparato congeló/mató la
+               pestaña a mitad de carga y Chrome pintó el último fotograma =
+               la cortina, eterna). Ni el meta refresh ni los timers pueden
+               salvar un renderer muerto… pero la OPACIDAD la anima el hilo
+               DEL COMPOSITOR, que sigue vivo aunque el hilo principal esté
+               muerto o congelado: a los 75s la cortina se funde SOLA, sin
+               JS, sin timers, sin React — y deja ver la casa prerenderizada
+               detrás. En un arranque sano esto jamás se ve: apagar() retira
+               el nodo entero en ≤1s. pointer-events:none garantiza que una
+               cortina invisible jamás tape un toque. */
+            #vg-cortina{animation:vgCortinaPiedra 1.2s ease 75s forwards}
+            @keyframes vgCortinaPiedra{to{opacity:0;visibility:hidden;pointer-events:none}}
             #vg-cortina .vg-faro{width:9px;height:9px;border-radius:50%;background:#e8c476;box-shadow:0 0 0 0 rgba(232,196,118,.55);animation:vgFaro 1.6s ease-out infinite}
             #vg-cortina .vg-marca{font-size:clamp(30px,9vw,60px);font-weight:800;letter-spacing:.4em;color:#e8c476;text-shadow:0 0 26px rgba(232,196,118,.28);margin-right:-.4em}
             #vg-cortina .vg-estado{font-family:var(--font-jetmono),monospace;font-size:11px;letter-spacing:.32em;color:rgba(232,196,118,.72);text-transform:uppercase;text-align:center;padding:0 18px}
@@ -390,8 +405,17 @@ try{
   // puro, sin timers, sin hilo, sin React. Guardia anti-bucle: si hace <90s
   // ya hubo un rescate, el meta nace a 300s (un reintento lento cada 5 min).
   // apagar() lo desarma al instante en un arranque sano.
+  // v184.0 CORTINA DE PIEDRA — BUG CAZADO EN LA GUERRA: la guardia anti-bucle
+  // SOLO registraba las recargas del BOTÓN (recargar()), pero el meta que
+  // recarga SOLO no dejaba rastro → una carga atascada se reanimaba cada 70s
+  // ETERNA (el Dueño: «al principio sí carga, después entra una segunda
+  // pantalla y no termina nunca»). Cura: CADA arranque estampa su hora en
+  // sessionStorage — si esta carga nació <90s tras la anterior, ALGUIEN está
+  // reanimando en bucle (meta o error) → el meta nace a 300s. Máximo un
+  // ciclo extra a 70s; después, un reintento lento cada 5 min. Jamás bucle.
   try{
     var ultR=Number(sessionStorage.getItem(K)||0);
+    try{ sessionStorage.setItem(K,String(Date.now())); }catch(e){}
     var mt=document.createElement('meta');
     mt.id='vg-rescate-meta'; mt.httpEquiv='refresh';
     mt.content=(ultR&&(Date.now()-ultR)<90000)?'300':'70';
@@ -465,10 +489,30 @@ try{
     var m=esRecurso?String((e.target.src||e.target.href||'')):String((e&&e.message)||'')+' '+String((e&&e.filename)||'');
     if(esRecurso||/chunk|import|module|Failed to fetch|NetworkError|Load failed/i.test(m)){
       var ult=0; try{ ult=Number(sessionStorage.getItem(K)||0); }catch(_){}
+      // v184.0: K ahora se estampa en CADA arranque — este umbral compara
+      // contra el ARRANQUE de esta página (una recarga de error exige que
+      // esta carga lleve viva >60s: adiós a los bucles de reanimación)
       if(Date.now()-ult>60000){ recargar(); return; }
     }
     encender('Fallo de carga — toca para recargar');
   },true);
+  // v184.0 LA RESURRECCIÓN — la cura del fotograma congelado del Dueño: el
+  // aparato congeló/mató la pestaña A MITAD DE CARGA (cortina viva) y al
+  // volver el último fotograma pintado era la cortina, eterna. En el instante
+  // en que la pestaña VUELVE a primer plano (visibilitychange→visible), si la
+  // cortina sigue viva la matamos YA: la casa prerenderizada está detrás y es
+  // mejor cara viva que cortina muerta. Si el renderer murió del todo, Chrome
+  // recarga la página al tocar — y el nuevo arranque ya nace con la guardia
+  // v184 anti-bucle. Cubre también el caso timers famélicos: tras horas
+  // congelado, el ojo expirado dispara apagar() igual — doble red.
+  document.addEventListener('visibilitychange',function(){
+    try{
+      if(document.visibilityState!=='visible') return;
+      if(window.__vgvivo===true) return;
+      if(c.getAttribute('data-off')==='1') return;
+      apagar();
+    }catch(e){}
+  });
   window.addEventListener('unhandledrejection',function(){
     if(window.__vgvivo!==true&&c.getAttribute('data-off')!=='1') encender('Fallo de carga — toca para recargar');
   });

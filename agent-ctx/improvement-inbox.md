@@ -510,3 +510,14 @@ Salud: home=200 | health v183.0 rss 199MB | tsc 0 | lint 0 | QA E2E con sello do
 3. NIVEL DE GLORIA EN LA SALA 3D — el agente de energía luce su título activo extruido sobre su icosaedro (paridad con el perfil 2D) · Esfuerzo: M
 4. SEGUNDO SELLO: LA FIRMA DEL TITULAR — el sello guarda también el id del cable con el que se capturó: presumir muestra EL titular exacto de TU hora (la historia que solo tú leíste en vivo) · Esfuerzo: S
 5. TELEMETRÍA DE PRESUNCIÓN — contar shares por ficha en la telemetría batched para medir qué frentes la gente presume más · Esfuerzo: S
+
+## MENSAJE #31 · 2026-10-28 · v184.0 LA CORTINA DE PIEDRA
+Notas: el Dueño volvió a ver la cortina eterna CON CAPTURA REAL (Chrome móvil 2026-10-27: «al principio sí carga, después entra una segunda pantalla de carga y no termina nunca»). La captura delató la causa: cortina con texto ORIGINAL, sin botón, sin mensaje = los timers NUNCA corrieron (pestaña congelada/muerta a mitad de carga; Chrome pinta el último fotograma). Tres curas en la cortina (CSS compositor 75s, anti-bucle verdadero del meta, resurrección por visibilitychange) + cura del db:down de Vercel (db al bundle + /tmp escribible). Además el Dueño compartió su token de GitHub en el chat: recordar regenerarlo al cerrar la ronda.
+Salud: home=200 | health v184.0 | tsc 0 | lint 0 | build EXIT 0 (pendiente push)
+
+📡 PRÓXIMAS PROPUESTAS:
+1. TELEMETRÍA DE RESCATE (⭐ sigue viva del #28/#29, sube a #1 con este bug) — contador anónimo de cuántas veces actúan el ojo v178, el vigía v181, el meta v182 y la cortina de piedra v184: medir en producción qué camino salva a los pilotos de verdad · Esfuerzo: S
+2. CORTINA CON HORA HONESTA — el texto de la cortina muestra los segundos transcurridos (CSS counter no puede; un span ligero que solo corre si hay hilo — si se congela, la hora queda fija y DELATA la pestaña muerta en la captura del Dueño) · Esfuerzo: S
+3. FICHA DEL ROSTRO EN LA VITRINA (viva del #29/#30) — los ROSTROS DEL PODER como segunda colección gemela sobre el motor gloria · Esfuerzo: M
+4. LA HORA DORADA EN EL RADAR (viva del #30) — el centinela avisa por voz cuando una guerra cruza ≥80 · Esfuerzo: S
+5. SW PWA DE REANUDACIÓN — un service worker mínimo que, al reabrir la PWA tras discard del renderer, fuerce navigation preload y HTML fresco (reduce los fotogramas congelados en el aparato del Dueño) · Esfuerzo: M

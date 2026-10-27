@@ -3014,3 +3014,20 @@ Work Log:
 Stage Summary:
 - v183.1 EL RELEVO en main: ninguna pestaña vuelve a nacer en el pasado (relevo por versión con anti-bucle) y la BD despierta de verdad en Vercel (db:"up" real, sin servicios externos, fiel a la casa SQLite de 38 modelos). La cortina v183 ya era inmortalmente vigilada (botón 10s, tope 20s, meta 70s): lo que faltaba era el relevo de las pestañas del pasado y el latido de la BD.
 - Despliegue automático de los 3 proyectos Vercel conectados al repo; verificación en vivo de vanguard-kq9r tras el push.
+---
+Task ID: ia1-v184.0
+Agent: ia1 (solitaria, sesión del Dueño por chat)
+Task: v184.0 LA CORTINA DE PIEDRA — el Dueño volvió a ver la cortina eterna con CAPTURA REAL (Chrome móvil, 2026-10-27: «al principio sí carga, después entra una segunda pantalla de carga y no termina nunca») y pidió los pasos exactos. Diagnóstico con la captura + caza de un bug real en el guard v182 + cura del db:down de producción.
+
+Work Log:
+- REPRODUCCIÓN EN VIVO (agent-browser, móvil 390): / y /vanguard2 arrancan sanos en escritorio (cortina fuera, __vgvivo, canvas, APIs 200) — el fallo vive en el aparato del Dueño. La CAPTURA delata la causa: cortina con texto ORIGINAL, SIN botón y SIN mensaje = los timers del ojo NUNCA corrieron (pestaña congelada/muerta a mitad de carga; Chrome pinta el último fotograma). Health de producción: db:"down" (2 capas: SQLite fuera del bundle serverless + FS de Vercel de solo lectura).
+- BUG REAL CAZADO EN EL GUARD v182: la guardia anti-bucle SOLO registraba las recargas del BOTÓN (recargar() estampa sessionStorage), pero el meta http-equiv que recarga SOLO no dejaba rastro → una carga atascada se reanimaba cada 70s ETERNA. Es la «segunda pantalla que nunca termina» del Dueño.
+- FIX 1 (layout.tsx): LA CORTINA DE PIEDRA — animation CSS en #vg-cortina (delay 75s, fill forwards, opacity+visibility+pointer-events): la anima el hilo del COMPOSITOR, vivo aunque el hilo principal esté muerto → la cortina se funde SOLA y deja ver la casa prerenderizada; en arranque sano apagar() retira el nodo en ≤1s y la animación jamás se ve.
+- FIX 2 (layout.tsx): ANTI-BUCLE VERDADERO — CADA arranque estampa su hora en sessionStorage (K); si la carga anterior nació <90s atrás, el meta nace a 300s (máximo un ciclo extra a 70s, luego reintento lento cada 5 min). El umbral del error-handler recargar() ahora compara contra el arranque de la página.
+- FIX 3 (layout.tsx): LA RESURRECCIÓN — visibilitychange→visible con cortina viva ⇒ apagar() YA (mejor cara viva que cortina muerta); si la casa está muda de verdad, el vigía v181 aparece a los 20s con su RECARGAR.
+- FIX 4 (next.config.ts + src/lib/db.ts + package.json): LA BD SOBREVIVE A VERCEL — outputFileTracingIncludes trae db/** al bundle; db.ts (antes de instanciar Prisma) detecta DATABASE_URL apuntando a archivo no escribible/inexistente y copia la SQLite a /tmp/vanguard.db apuntando el env ahí, todo try/catch; build copia db → .next/standalone/db.
+- Versión: APP_VERSION v184.0 · LA CORTINA DE PIEDRA + bitacora.ts (entrada completa) + inbox #31.
+- Protocolo: tsc --noEmit 0, lint 0 en tocados, build EXIT 0, QA navegador real sobre build (cortina ≤1s, meta desarmado, /vanguard2 despierta, 0 errores consola), guards v167 + rewrite /socket.io intactos.
+
+Stage Summary:
+- v184.0 cierra el bucle de la cortina eterna por TODOS los caminos: hilo vivo (ojo v178 + vigía v181), hilo muerto (meta v182 + piedra v184), pestaña congelada y vueltas a la vida (resurrección v184), bucles de reanimación (anti-bucle verdadero v184). Y la BD ya viaja con la casa en Vercel (db:up esperado tras el push). Nota de seguridad: el token de GitHub del Dueño quedó expuesto en el chat — regenerar al cerrar la ronda.

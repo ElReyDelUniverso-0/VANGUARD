@@ -674,6 +674,32 @@
 //     db/custom.db (que viaja en el output tracing), usa tal cual si es
 //     escribible (casa local) y si es de solo lectura se copia a /tmp y el
 //     cliente apunta allí: db:"up" real en producción, sin servicios externos.
-export const APP_VERSION = "v183.1";
-export const APP_CODENAME = "EL RELEVO";
+// v184.0 LA CORTINA DE PIEDRA — el Dueño la vio OTRA VEZ con captura real
+//         (2026-10-27, Chrome móvil): «al principio sí carga, después entra
+//         una segunda pantalla de carga y no termina nunca» — cortina viva
+//         con el texto ORIGINAL, SIN botón y SIN mensaje de fallo = los
+//         timers del ojo NUNCA corrieron. Diagnóstico: el aparato congeló o
+//         mató la pestaña A MITAD DE CARGA y Chrome pintó el ÚLTIMO
+//         fotograma (la cortina) — un renderer muerto no corre timers, así
+//         que ni el ojo v178, ni el vigía v181, ni el meta v182, ni el
+//         relevo v183.1 podían salvarla. TRES curas en la cortina:
+// (1) LA CORTINA DE PIEDRA (CSS del compositor): la opacidad la anima el
+//     hilo del COMPOSITOR, que sigue vivo aunque el hilo principal esté
+//     muerto — animation con delay 75s + fill forwards funde la cortina
+//     SOLA, sin JS, y deja ver la casa prerenderizada detrás. En un
+//     arranque sano jamás se ve: apagar() retira el nodo en ≤1s.
+// (2) EL ANTI-BUCLE VERDADERO — bug real cazado en el código: la guardia
+//     v182 solo registraba las recargas del BOTÓN (recargar()), pero el
+//     meta que recarga SOLO no dejaba rastro → una carga atascada se
+//     reanimaba cada 70s ETERNA. Cura: CADA arranque estampa su hora en
+//     sessionStorage; si la carga anterior nació <90s atrás, el meta nace
+//     a 300s — máximo un ciclo extra, luego un reintento lento cada 5 min.
+// (3) LA RESURRECCIÓN (visibilitychange→visible): si la pestaña vuelve a
+//     primer plano con la cortina viva, se mata YA — mejor cara viva que
+//     cortina muerta; si la casa de verdad está muda, el vigía honesto
+//     aparece 20s después con su RECARGAR.
+// Herencia v183.1 y todo lo anterior — cortina v155 de red de seguridad,
+// guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
+export const APP_VERSION = "v184.0";
+export const APP_CODENAME = "LA CORTINA DE PIEDRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

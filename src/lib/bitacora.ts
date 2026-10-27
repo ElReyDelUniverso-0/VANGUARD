@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v184.0",
+    nombre: "LA CORTINA DE PIEDRA",
+    tipo: "tecno",
+    hitos: [
+      "EL BUG VUELVE CON CAPTURA REAL (el Dueño, 2026-10-27, Chrome móvil: «al principio sí carga, después entra una segunda pantalla de carga y no termina nunca») — la captura dice TODO: cortina viva con el texto ORIGINAL, SIN botón de rescate y SIN mensaje de fallo = los timers del ojo NUNCA corrieron en esa carga. Diagnóstico: el aparato congeló o mató la pestaña A MITAD DE CARGA y Chrome pintó el ÚLTIMO fotograma (la cortina) — un renderer muerto no corre timers, así que ni el ojo v178, ni el vigía v181, ni el meta v182, ni el relevo v183.1 podían salvarla",
+      "LA CORTINA DE PIEDRA (CSS del compositor): la opacidad la anima el hilo del COMPOSITOR, que sigue vivo aunque el hilo principal esté muerto o congelado — animation con delay de 75s + fill forwards funde la cortina SOLA (sin JS, sin timers, sin React) y deja ver la casa prerenderizada detrás; pointer-events:none en el fundido garantiza que una cortina invisible jamás tape un toque. En un arranque sano jamás se ve: apagar() retira el nodo entero en ≤1s",
+      "EL ANTI-BUCLE VERDADERO — bug real cazado en el código v182: la guardia SOLO registraba las recargas del BOTÓN (recargar() estampa sessionStorage), pero el meta que recarga SOLO no dejaba rastro → una carga atascada se reanimaba cada 70s ETERNA (cada reanimación era «la segunda pantalla que nunca termina» del Dueño). Cura: CADA arranque estampa su hora; si la carga anterior nació <90s atrás, el meta nace a 300s — máximo un ciclo extra a 70s, luego un reintento lento cada 5 min, jamás un bucle",
+      "LA RESURRECCIÓN (visibilitychange→visible): si la pestaña vuelve a primer plano con la cortina aún viva, se mata AL INSTANTE — mejor cara viva (la casa prerenderizada) que cortina muerta; si la casa de verdad está muda, el vigía v181 aparece 20s después con su barra honesta de RECARGAR. Cubre el caso del fotograma congelado del Dueño en el instante exacto en que vuelve a mirar",
+      "QA v184: tsc 0, lint 0 en tocados, build EXIT 0; navegador real sobre el build: arranque sano retira la cortina (≤1s, nodo fuera del DOM, meta rescate desarmado, animación de piedra inofensiva), /vanguard2 levanta y despierta (__vgvivo, canvas vivo), 0 errores de consola; guards v167 + rewrite /socket.io intactos",
+    ],
+  },
+  {
     version: "v183.1",
     nombre: "EL RELEVO",
     tipo: "tecno",

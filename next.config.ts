@@ -2,12 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  // v183.1 EL RELEVO — la BD viaja con el lambda: db/custom.db (4.6MB,
-  // comprometida al repo) se incluye en el output tracing para que el
-  // runtime de Vercel la encuentre; combinado con el resolver de src/lib/db.ts
-  // (copia a /tmp cuando el FS es de solo lectura) hace db:"up" en producción.
+  // v184.0 CORTINA DE PIEDRA — LA BD VIAJA CON LA CASA: Vercel servía
+  // «db: down» porque la SQLite (db/custom.db) no entraba en el bundle del
+  // serverless (outputFileTracing no la ve: Prisma la abre por env var).
+  // Con esta línea el archivo entra en TODAS las rutas API; en runtime
+  // db.ts la copia a /tmp (el FS de Vercel es de solo lectura) y apunta
+  // DATABASE_URL ahí. La verdad sigue siendo localStorage; la BD es la
+  // memoria del Centro Mundial (cables, visitas, presencia).
   outputFileTracingIncludes: {
-    "/**": ["./db/custom.db"],
+    "/api/**/*": ["./db/**/*"],
+    "/*": ["./db/**/*"],
   },
   /* v70.0 CLASICO PURO: la portada "/" vuelve a ser la app clasica completa.
      La experiencia nexo (v68/v69) fue eliminada por decision del comandante. */
