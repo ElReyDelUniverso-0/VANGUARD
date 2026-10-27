@@ -2922,3 +2922,18 @@ Work Log:
 
 Stage Summary:
 - v182.0 push df419cd en origin/main: la cortina ya NO depende del hilo del aparato — el último rescate es del NAVEGADOR (meta refresh 70s/300s, HTML puro). El bug que volvió 3 veces queda cerrado en todas las capas conocidas: server sano (vigilante + watchman), timers (topes duros v178), bundle muerto (cheque capacidades + vigía v181), hilo muerto (meta refresh v182). Mensaje práctico al Dueño: cerrar la pestaña congelada desde recientes y reabrir; si un día se congela, a los 70s el navegador se rescata solo.
+
+---
+Task ID: ia1-v182.0-rescate2
+Agent: ia1 (solitaria)
+Task: REVERSACIÓN #3 del workspace cazada en vivo + entrega del video al Dueño («Aun no sigue desplegando universo y no termina» + «dame los videos que hiciste como archivo directo»).
+
+Work Log:
+- Sandbox caído 5 turnos consecutivos (07:42→09:12) — vigilante externo sin poder ejecutar; el vigilante interno siguió de guardia.
+- Al volver el sandbox: health = v173.0 rss 2152MB uptime 690s — EL ZOMBI VOLVIÓ: workspace revertido al checkpoint 4b4273d (v173.0, la versión CON la cortina eterna), .next sin BUILD_ID, vigilante MUERTO. EXPLICACIÓN EXACTA del «aun sigue desplegando universo» del Dueño: su aparato cargaba contra el zombi v173, no contra v182.
+- RECETA CASA aplicada: cp db/custom.db → /tmp (respaldo 4.6MB) → git reset --hard origin/main (0a6cedd, v182.0) → DB restaurada → pkill next-server → npm run build EXIT 0 → serve.mjs --prod → health v182.0 rss 195MB → vigilante relanzado (pid 1578, --hijo PPID 1).
+- VIDEO PARA EL DUEÑO: grabación real con agent-browser (viewport móvil 390×844, 30fps), 2 segmentos concatenados + conversión ffmpeg H.264 yuv420p faststart: toma 1 (10.8s) Centro Mundial scroll; toma 2 (31.2s) LA COLECCIÓN DE GUERRA + ficha VG-01 RUSIA—UCRANIA descubierta con ceremonia + VG-ASSIST abierto + orden escrita «muéstrame la ficha de Ucrania» + el agente navegando solo; fallas de grabación cazadas (broken pipe 1er take, timeout ffmpeg) — archivo final COMPLETO verificado con ffprobe.
+- Entregado: /home/z/my-project/download/VANGUARD-DEMO-v182.mp4 (2.35MB, 41.97s) — el Dueño ve Vanguard funcionando por primera vez sin depender de su conexión.
+
+Stage Summary:
+- Vanguard de vuelta en v182.0 sobre server sano (rss 195MB) con vigilante vivo; el bug del «iniciando universo» era OTRA VEZ la reversión del workspace (3ª): la cura definitiva pendiente es proteger el workspace contra el checkpoint externo. Video demo entregado como archivo directo.
