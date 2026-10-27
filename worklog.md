@@ -3031,3 +3031,17 @@ Work Log:
 
 Stage Summary:
 - v184.0 cierra el bucle de la cortina eterna por TODOS los caminos: hilo vivo (ojo v178 + vigía v181), hilo muerto (meta v182 + piedra v184), pestaña congelada y vueltas a la vida (resurrección v184), bucles de reanimación (anti-bucle verdadero v184). Y la BD ya viaja con la casa en Vercel (db:up esperado tras el push). Nota de seguridad: el token de GitHub del Dueño quedó expuesto en el chat — regenerar al cerrar la ronda.
+
+---
+Task ID: ia1-v184.0-push
+Agent: ia1 (solitaria)
+Task: Cierre de la ronda v184.0 LA CORTINA DE PIEDRA — push verificado en producción.
+
+Work Log:
+- SINCRONIZACIÓN CON EL RELEVO: durante el push, origin/main había avanzado a v183.1 EL RELEVO (otro agente trabajó el MISMO bug del Dueño: relevo de pestañas por versión en el latido + cura de BD en Vercel con lección chmod 644). Rebase de v184.0 sobre v183.1: se adoptó el resolver v183.1 de src/lib/db.ts y su outputFileTracingIncludes "/**" (más probados), se conservaron ÍNTEGRAS las 3 curas de cortina de v184 (piedra compositor, anti-bucle verdadero, resurrección) + la copia db al standalone del build.
+- Conflictos resueltos a mano en version.ts/bitacora.ts/worklog.md (v184.0 y v183.1 conviven como hermanos; duplicado de import en db.ts limpiado — tsc 0 real).
+- QA post-rebase: tsc 0, lint 0 en 6 tocados, build EXIT 0, server local fresh: health v184.0 db:up (uptime 6), navegador real / y /vanguard2 (cortina fuera, meta desarmado, __vgvivo, canvas vivo, 0 errores).
+- PUSH 7bce7c3 en origin/main → VERCEL EN VIVO verificado por sondeo (~2.5 min): health "version":"v184.0" + **db:"up"** (¡el db:down de producción MURIÓ!) + home 200; HTML de producción con vgCortinaPiedra×3 y LA RESURRECCIÓN×2; el setItem anti-bucle vive minificado (verificado por patrón relajado).
+
+Stage Summary:
+- La cortina eterna quedó cerrada por TODOS los caminos: hilo vivo (ojo v178/vigía v181/relevo v183.1), hilo muerto (meta v182/piedra v184), pestaña congelada que vuelve (resurrección v184), bucles de reanimación (anti-bucle verdadero v184 + guardia de relevo v183.1). BD viva en producción. PENDIENTE DE SEGURIDAD: el token de GitHub del Dueño quedó expuesto en el chat — regenerar en GitHub → Settings → Developer settings al cerrar la sesión.
