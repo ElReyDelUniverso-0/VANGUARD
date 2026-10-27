@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // v183.1 EL RELEVO — la BD viaja con el lambda: db/custom.db (4.6MB,
+  // comprometida al repo) se incluye en el output tracing para que el
+  // runtime de Vercel la encuentre; combinado con el resolver de src/lib/db.ts
+  // (copia a /tmp cuando el FS es de solo lectura) hace db:"up" en producción.
+  outputFileTracingIncludes: {
+    "/**": ["./db/custom.db"],
+  },
   /* v70.0 CLASICO PURO: la portada "/" vuelve a ser la app clasica completa.
      La experiencia nexo (v68/v69) fue eliminada por decision del comandante. */
   typescript: {

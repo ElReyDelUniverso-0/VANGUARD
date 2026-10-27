@@ -19,12 +19,28 @@
 //     resetea: el navegador congeló los timers, no hubo caída real.
 //   · /api/health ahora responde 200 mientras el proceso Next viva (la BD va
 //     en el payload), así que el overlay solo aparece con el server MUERTO.
+// v183.1 EL RELEVO — LA PESTAÑA VIEJA SE CURA SOLA: el Dueño volvió a ver
+// «Desplegando el universo» horas en su móvil con el despliegue SANO (QA
+// fresco en vivo: cortina disipada <6s, 0 errores, APIs 200) — la pestaña
+// que su teléfono mantenía abierta era de una versión ANTERIOR y NADA en el
+// código la avisaba de que detrás había una casa nueva: cada despliegue
+// nuevo dejaba pestañas viejas mirando una cortina que ya nadie levantaba.
+// Cura: la sonda ahora lee la versión del latido; la primera respuesta fija
+// la versión con la que esta pestaña nació y CUALQUIER versión distinta
+// posterior (despliegue nuevo mientras dormías) levanta una píldora honesta
+// «VANGUARD SE ACTUALIZÓ» y recarga UNA vez con guardia anti-bucle de 90s
+// (sessionStorage) — al volver a la pestaña (visibilitychange ya sondea) el
+// relevo dispara solo: ninguna pestaña vuelve a quedarse en el pasado.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { peekRealtime } from "@/lib/realtime";
+
+const K_RELEVO = "vg183-relevo"; // marca anti-bucle de la recarga por versión
 
 export function ConnectionWatchdog() {
   const [down, setDown] = useState(false);
+  const [relevo, setRelevo] = useState(false);
+  const versionTab = useRef<string | null>(null); // versión con la que nació esta pestaña
 
   useEffect(() => {
     let alive = true;
@@ -32,28 +48,61 @@ export function ConnectionWatchdog() {
     let reloaded = false;
     let confirming = false;
 
-    // sonda única: true si el server o el socket responden
-    const probe = async (): Promise<boolean> => {
-      if (peekRealtime()?.connected) return true;
+    // sonda única: estado del server + versión del latido
+    const probe = async (): Promise<{ ok: boolean; version?: string }> => {
+      if (peekRealtime()?.connected) return { ok: true };
       try {
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), 10000);
         const res = await fetch("/api/health", { cache: "no-store", signal: ctrl.signal });
         clearTimeout(t);
-        return res.ok;
+        if (!res.ok) return { ok: false };
+        let version: string | undefined;
+        try {
+          version = (await res.json())?.version;
+        } catch {
+          // latido sin JSON: el proceso vive igual
+        }
+        return { ok: true, version };
       } catch {
-        return false;
+        return { ok: false };
       }
+    };
+
+    // v183.1: versión nueva desplegada mientras esta pestaña dormía → relevo
+    const quizaRelevo = () => {
+      if (!alive || relevo) return;
+      try {
+        const ult = Number(sessionStorage.getItem(K_RELEVO) || 0);
+        if (ult && Date.now() - ult < 90000) return; // guardia anti-bucle
+        sessionStorage.setItem(K_RELEVO, String(Date.now()));
+      } catch {
+        // sessionStorage ausente: recargar igual (el guard del meta v182 cubre)
+      }
+      setRelevo(true);
+      setTimeout(() => {
+        try {
+          window.location.reload();
+        } catch {
+          // noop
+        }
+      }, 1500);
     };
 
     const ping = async () => {
       // pestaña oculta: el navegador congela timers y las peticiones vuelven raras;
       // no pinguear ni contar fallo (evita falsos "caído" al volver a la pestaña)
       if (typeof document !== "undefined" && document.hidden) return;
-      const ok = await probe();
+      const r = await probe();
       if (!alive) return;
-      if (ok) {
+      if (r.ok) {
         fails = 0;
+        // v183.1 EL RELEVO: primera respuesta fija el nacimiento de la pestaña;
+        // cualquier versión distinta después = despliegue nuevo → recargar una vez
+        if (typeof r.version === "string" && r.version) {
+          if (versionTab.current === null) versionTab.current = r.version;
+          else if (r.version !== versionTab.current) quizaRelevo();
+        }
         setDown((prev) => {
           // recarga solo cuando pasamos de caído → arriba y no acabamos de recargar
           if (prev && !reloaded) {
@@ -73,7 +122,7 @@ export function ConnectionWatchdog() {
           confirming = false;
           if (!alive) return;
           const ok2 = await probe();
-          if (ok2) {
+          if (ok2.ok) {
             fails = 0;
             setDown(false);
             return;
@@ -86,6 +135,7 @@ export function ConnectionWatchdog() {
     const iv = setInterval(ping, 30_000);
     const onOnline = () => void ping();
     // v84: volver a la pestaña NO es una caída — resetea el contador y sondea
+    // (v183.1: y si despertamos en un despliegue nuevo, el relevo dispara aquí)
     const onVisible = () => {
       if (document.hidden) return;
       fails = 0;
@@ -103,6 +153,19 @@ export function ConnectionWatchdog() {
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
+
+  if (relevo) {
+    // v183.1: píldora honesta del relevo — visible 1.5s mientras recarga
+    return (
+      <div
+        className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[9999] rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-widest font-bold bg-black/90 backdrop-blur-md"
+        style={{ borderColor: "rgba(232,196,118,.5)", color: "#e8c476" }}
+        role="status"
+      >
+        Vanguard se actualizó · Recargando…
+      </div>
+    );
+  }
 
   if (!down) return null;
   return (

@@ -659,6 +659,21 @@
 //     casa + registro en rehidratador (la lección v171/v172/v176).
 // Herencia v182.0 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v183.0";
-export const APP_CODENAME = "LA GLORIA";
+// v183.1 EL RELEVO — el Dueño (móvil) volvió a ver «Desplegando el universo»
+//         horas con el despliegue SANO: la pestaña que su teléfono mantenía
+//         viva era de una versión anterior y jamás se enteraba de que detrás
+//         había una casa nueva. Dos curas:
+// (1) EL RELEVO DE PESTAÑAS (connection-watchdog.tsx): la sonda de /api/health
+//     lee la versión del latido — la primera respuesta fija el nacimiento de
+//     la pestaña y cualquier versión distinta posterior (despliegue nuevo)
+//     levanta la píldora «VANGUARD SE ACTUALIZÓ» y recarga UNA vez con
+//     guardia anti-bucle de 90s: ninguna pestaña vuelve a nacer en el pasado.
+// (2) LA BD RESPIRA EN VERCEL (src/lib/db.ts + next.config.ts): el lambda es
+//     de solo lectura y el .env no viaja — DATABASE_URL moría y /api/health
+//     reportaba db:"down" con 48 rutas en fail-soft. El resolver ahora busca
+//     db/custom.db (que viaja en el output tracing), usa tal cual si es
+//     escribible (casa local) y si es de solo lectura se copia a /tmp y el
+//     cliente apunta allí: db:"up" real en producción, sin servicios externos.
+export const APP_VERSION = "v183.1";
+export const APP_CODENAME = "EL RELEVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -22,6 +22,15 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v183.1",
+    nombre: "EL RELEVO",
+    tipo: "tecno",
+    hitos: [
+      "EL RELEVO DE PESTAÑAS — el Dueño (móvil) volvió a ver «Desplegando el universo» horas con el despliegue SANO: su pestaña era de una versión anterior y nada la avisaba de que detrás había casa nueva. La sonda del latido ahora lee la versión: primera respuesta = nacimiento de la pestaña; versión distinta después (despliegue nuevo) = píldora «VANGUARD SE ACTUALIZÓ» + recarga UNA vez con guardia anti-bucle de 90s. Al volver a la pestaña el relevo dispara solo: ninguna pestaña nace en el pasado",
+      "LA BD RESPIRA EN VERCEL — el lambda es de solo lectura y el .env no viaja: DATABASE_URL moría y /api/health reportaba db:\"down\" con 48 rutas API en fail-soft. Resolver honesto en src/lib/db.ts: busca db/custom.db (que ahora viaja en el output tracing del lambda), la usa tal cual si es escribible (casa local, cero cambios) y si es de solo lectura se copia a /tmp y el cliente apunta allí — db:\"up\" real en producción sin servicios externos, fiel a la casa SQLite de 38 modelos",
+    ],
+  },
+  {
     version: "v183.0",
     nombre: "LA GLORIA",
     tipo: "reten",
