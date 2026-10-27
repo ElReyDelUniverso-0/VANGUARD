@@ -700,6 +700,29 @@
 //     aparece 20s después con su RECARGAR.
 // Herencia v183.1 y todo lo anterior — cortina v155 de red de seguridad,
 // guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
-export const APP_VERSION = "v184.0";
-export const APP_CODENAME = "LA CORTINA DE PIEDRA";
+// v185.0 EL SOCORRISTA — la cura de la SEGUNDA PANTALLA real: la cortina
+//         v184 ya muere sola (piedra CSS a 75s), pero DETRÁS está la casa
+//         prerenderizada llena de «Cargando módulo...» (paneles dynamic
+//         ssr:false). Si el bundle de la Casa nunca baja (señal móvil
+//         estancada — HTML de 535 KB + chunks de 1.1–1.3 MB) o la
+//         hidratación muere en silencio, el Dueño se queda mirando ESO
+//         para siempre: la barra vigía v181 era pequeña y nadie la veía.
+//         Tres curas coordinadas, todas fuera de React:
+// (1) LA SEÑAL TEMPRANA __vgcasa (page.tsx + vanguard2.tsx): dispara en
+//     cuanto el bundle LLEGA Y PARSEA — distingue «el bundle no llega» de
+//     «el bundle llegó y la casa está hidratando» (recargar una hidratación
+//     en marcha tiraría el progreso de la descarga).
+// (2) EL SOCORRISTA (script inline de layout.tsx): a los 50s sin __vgcasa
+//     (100s en pesado) = el bundle nunca llegó → SOCORRO A PANTALLA
+//     COMPLETA dorado con ENTRAR DE NUEVO + UNA reanimación automática
+//     con guardia sessionStorage de 3 min (jamás un bucle); a los 90s con
+//     __vgcasa pero sin __vgvivo (150s en pesado) = hidratación atascada →
+//     socorro SIN auto-recarga. Si la casa despierta tarde, el socorro se
+//     retira solo (vigía cada 1s, tope 3 min).
+// (3) EL PROGRESO VERDADERO (la cortina): mientras la descarga avanza, el
+//     estado dice los KB REALES llegados (performance API) — «Descargando
+//     la casa · 412 KB» — en vez de una mentira eterna; se retira en
+//     cuanto enciende el botón de rescate (sus mensajes mandan).
+export const APP_VERSION = "v185.0";
+export const APP_CODENAME = "EL SOCORRISTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

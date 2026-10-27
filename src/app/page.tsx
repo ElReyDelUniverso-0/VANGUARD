@@ -108,6 +108,22 @@ const PlanetaPanel = dynamic(() => import("@/components/vanguard/panels/planeta-
 // v33 ESCUELA DE GUERRA — manual del comandante
 const TutorialModal = dynamic(() => import("@/components/vanguard/tutorial-modal").then((m) => m.TutorialModal), { ssr: false });
 
+// ══════════════════════════════════════════════════════════
+// v185.0 EL SOCORRISTA — SEÑAL TEMPRANA DE VIDA (fuera de React).
+// __vgvivo solo dispara cuando el árbol GIGANTE termina de hidratarse
+// (useEffect): en un aparato lento eso llega muy tarde, y si el bundle
+// jamás baja, la casa prerenderizada queda eterna llena de «Cargando
+// módulo...» — LA SEGUNDA PANTALLA que el Dueño vio (2026-10-27). Esta
+// línea corre en cuanto el bundle de la Casa LLEGA Y PARSEA: el
+// socorrista (script inline de layout.tsx) distingue «el bundle no
+// llega» de «el bundle llegó y la casa está hidratando» y solo
+// re-anima el primer caso — recargar una hidratación en marcha sería
+// tirar el progreso de la descarga.
+// ══════════════════════════════════════════════════════════
+if (typeof window !== "undefined") {
+  (window as unknown as { __vgcasa?: boolean }).__vgcasa = true;
+}
+
 // ============ MOTOR DE CARGA PEREZOSA v17 ============
 // v170.0 ESQUELETO HERMOSO: el «Cargando módulo...» de puntos planos era
 // la cara aburrida de la casa — ahora el skeleton respira con el acento

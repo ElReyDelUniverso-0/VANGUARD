@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v185.0",
+    nombre: "EL SOCORRISTA",
+    tipo: "tecno",
+    hitos: [
+      "LA SEGUNDA PANTALLA REAL, IDENTIFICADA (el Dueño, 2026-10-27: «al principio sí carga, después una segunda pantalla de carga y no termina» con v184 ya en producción) — la cortina v178/v184 ya muere sola (20s/60s + piedra CSS), así que lo que el Dueño veía DETRÁS era la casa prerenderizada llena de «Cargando módulo...»: paneles dynamic ssr:false que dependen de la hidratación. Con HTML de 535 KB y chunks de 1.1–1.3 MB, una señal móvil estancada deja el bundle sin llegar y la casa muda ETERNA — y el único salvavidas era la barra vigía v181, tan pequeña que nadie la ve",
+      "LA SEÑAL TEMPRANA __vgcasa (page.tsx + vanguard2.tsx): una línea fuera de React que dispara cuando el bundle LLEGA Y PARSEA — el socorrista distingue «el bundle no llega» (reanimar SÍ ayuda: otra conexión puede traerlo) de «el bundle llegó y la casa hidrata» (recargar tiraría el progreso de la descarga: NO reanimar)",
+      "EL SOCORRISTA (script inline de layout.tsx, fuera de React): a los 50s sin __vgcasa (100s en pesado) levanta UN SOCORRO A PANTALLA COMPLETA dorado — «La casa no llega a tu aparato · ENTRAR DE NUEVO» — imposible de no ver, con UNA reanimación automática a los 4s con guardia sessionStorage de 3 min (jamás un bucle v184-style); a los 90s con __vgcasa pero sin __vgvivo (150s en pesado) = hidratación atascada → socorro SIN auto-recarga. Si la casa despierta tarde, el socorro se retira SOLO (sondeo 1s, tope 3 min) y sustituye a la barra vigía (nunca doble rescate en pantalla)",
+      "EL PROGRESO VERDADERO (la cortina): mientras la descarga avanza, el estado dice los KB REALES de scripts/css llegados (performance API, same-origin) — «Descargando la casa · 412 KB» — en vez de «Desplegando el universo» congelado; se retira en cuanto enciende el botón de rescate (sus mensajes mandan). En señal lenta el Dueño VE que algo avanza — y si los KB se quedan quietos, sabe que es la señal, no la casa",
+      "QA v185: tsc 0, lint 0 en tocados, build EXIT 0; arranque sano verificado sobre el build (cortina fuera ≤1s, socorro jamás aparece con casa viva, señales __vgcasa y __vgvivo presentes); guards v167 + rewrite /socket.io + piedra v184 + relevo v183.1 intactos",
+    ],
+  },
+  {
     version: "v184.0",
     nombre: "LA CORTINA DE PIEDRA",
     tipo: "tecno",

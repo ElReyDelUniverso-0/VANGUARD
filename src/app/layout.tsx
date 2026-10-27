@@ -469,6 +469,7 @@ try{
     try{
       if(window.__vgvivo===true) return;
       var b=document.createElement('div');
+      b.id='vg-vigia';
       b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:rgba(7,6,6,.94);border-top:1px solid rgba(232,196,118,.4);color:#e8c476;font:600 11px/1.5 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap';
       var sp=document.createElement('span');
       sp.textContent=esI?'Vanguard no terminó de despertar en este navegador':'Vanguard did not finish waking on this browser';
@@ -483,6 +484,63 @@ try{
       window.setTimeout(function(){ window.clearInterval(ch); },120000);
     }catch(e){}
   }
+  // v185.0 EL SOCORRISTA — EL RESCATE DE LA SEGUNDA PANTALLA (la Casa).
+  // La cortina ya muere sola (20s/60s v178 + piedra v184), pero DETRÁS está
+  // la casa prerenderizada llena de «Cargando módulo...» — y si el bundle
+  // nunca baja (señal móvil estancada) o la hidratación muere en silencio,
+  // el Dueño se queda mirando ESO eternamente: la barra vigía v181 es
+  // pequeña y nadie la ve. El socorrista vive FUERA de React, distingue las
+  // dos muertes con la señal temprana __vgcasa (el bundle llegó y parseó)
+  // y levanta UN SOCORRO A PANTALLA COMPLETA, imposible de no ver. Nada de
+  // bucles: UNA sola reanimación automática con guardia sessionStorage de
+  // 3 min; después el mando es del Dueño (botón ENTRAR DE NUEVO).
+  var KS='vg185-socorro';
+  function quitarVigia(){
+    try{ var v=document.getElementById('vg-vigia'); if(v&&v.parentNode) v.parentNode.removeChild(v); }catch(e){}
+  }
+  function socorrer(modo){ // modo 1: el bundle no llega · modo 2: hidratación atascada
+    try{
+      if(window.__vgvivo===true) return;
+      quitarVigia();
+      if(document.getElementById('vg-socorro')) return;
+      var s=document.createElement('div');
+      s.id='vg-socorro';
+      s.style.cssText='position:fixed;inset:0;z-index:2147482999;background:rgba(5,4,4,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#e8c476;font-family:system-ui,sans-serif;text-align:center;padding:26px';
+      var t=document.createElement('div');
+      t.style.cssText='font:700 15px/1.5 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase';
+      t.textContent=esI?(modo===1?'La casa no llega a tu aparato':'La casa despertó a medias'):(modo===1?'The house never reached your device':'The house woke up halfway');
+      var p=document.createElement('div');
+      p.style.cssText='font:400 12px/1.6 system-ui,sans-serif;color:rgba(232,196,118,.78);max-width:340px';
+      p.textContent=esI?(modo===1?'La descarga se atascó en esta señal. Toca ENTRAR DE NUEVO: un reintento suele abrir al primer toque.':'La descarga llegó pero la casa sigue despertando. Si en un minuto no hay casa viva, toca ENTRAR DE NUEVO.'):(modo===1?'The download stalled on this signal. Tap ENTER AGAIN: one retry usually opens on the first try.':'The download arrived but the house is still waking. If nothing changes in a minute, tap ENTER AGAIN.');
+      var bt=document.createElement('button');
+      bt.textContent=esI?'ENTRAR DE NUEVO':'ENTER AGAIN';
+      bt.style.cssText='border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.08);padding:14px 26px;letter-spacing:.24em;font:700 12px system-ui,sans-serif;border-radius:2px;text-transform:uppercase;margin-top:6px';
+      bt.addEventListener('click',recargar);
+      s.appendChild(t); s.appendChild(p); s.appendChild(bt);
+      document.body.appendChild(s);
+      // la casa despertó tarde → el socorro se retira solo (jamás tapa una casa viva)
+      var q=window.setInterval(function(){
+        if(window.__vgvivo===true&&s.parentNode){ s.parentNode.removeChild(s); window.clearInterval(q); }
+      },1000);
+      window.setTimeout(function(){ window.clearInterval(q); },180000);
+      // modo 1 (bundle no llega): UNA reanimación automática con guardia —
+      // recargar re-pide los chunks por otra conexión; si vuelve a atascarse
+      // el guard lo impide y el mando pasa al Dueño
+      if(modo===1){
+        var ultS=0; try{ ultS=Number(sessionStorage.getItem(KS)||0); }catch(_){}
+        if(!ultS||Date.now()-ultS>180000){
+          try{ sessionStorage.setItem(KS,String(Date.now())); }catch(e){}
+          window.setTimeout(recargar,4000);
+        }
+      }
+    }catch(e){}
+  }
+  // en pesado los topes son más largos: el bundle del universo pesa y su
+  // cortina ya aguanta 60s (v178) — socorrista a 100s/150s, nunca antes
+  var tSoc1=pesado?100000:50000;
+  var tSoc2=pesado?150000:90000;
+  window.setTimeout(function(){ if(window.__vgcasa!==true&&window.__vgvivo!==true) socorrer(1); },tSoc1);
+  window.setTimeout(function(){ if(window.__vgcasa===true&&window.__vgvivo!==true) socorrer(2); },tSoc2);
   window.addEventListener('error',function(e){
     if(window.__vgvivo===true||c.getAttribute('data-off')==='1') return;
     var esRecurso=e&&e.target&&e.target.tagName&&(e.target.tagName==='SCRIPT'||e.target.tagName==='LINK');
@@ -520,6 +578,33 @@ try{
   var n=0;
   var ojo=window.setInterval(function(){
     n++;
+    // v185.0 EL PROGRESO VERDADERO: mientras la cortina vive y el rescate
+    // no ha encendido, el estado deja de mentir con un texto fijo y dice
+    // los KB REALES de scripts/css llegados (performance API, same-origin:
+    // transferSize honesto). En una señal lenta el Dueño VE la descarga
+    // avanzar en vez de mirar «Desplegando el universo» congelado.
+    if(n%8===0&&st&&(!btn||btn.getAttribute('data-on')!=='1')){
+      try{
+        if(window.performance&&performance.getEntriesByType){
+          var rs=performance.getEntriesByType('resource')||[];
+          var kb=0;
+          for(var i=0;i<rs.length;i++){
+            var it=rs[i];
+            // v185.1: SIN regex — este script vive dentro de un template
+            // literal JSX y las barras invertidas se consumen (\\/ llega
+            // como / y // abre un comentario: SyntaxError mata el script
+            // ENTERO y la cortina se vuelve eterna). indexOf es a prueba
+            // de escapes.
+            var nm=String((it&&it.name)||'');
+            if(it&&(nm.indexOf('/_next/')>-1||nm.slice(-3)==='.js'||nm.slice(-4)==='.css')){
+              var tr=(typeof it.transferSize==='number')?it.transferSize:(it.encodedBodySize||0);
+              if(tr>0) kb+=tr;
+            }
+          }
+          if(kb>0) st.textContent=esI?('Descargando la casa · '+Math.round(kb/1024)+' KB'):('Downloading the house · '+Math.round(kb/1024)+' KB');
+        }
+      }catch(e){}
+    }
     // v178.0: la casa plana vive en cuanto el DOM existe — el HTML
     // prerenderizado YA ES la casa entera; esperar al evento load era
     // dejar la cortina rehén del recurso más lento de la red del móvil

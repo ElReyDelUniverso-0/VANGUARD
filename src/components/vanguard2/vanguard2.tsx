@@ -11,6 +11,14 @@ import { MotorV2 } from "./motor";
 import { constructorDe, construirHub, construirIndice } from "./mundos";
 import { mutarLedger } from "./progreso";
 
+// v185.0 EL SOCORRISTA — señal temprana en la ruta PESADA: dispara cuando
+// el bundle del universo 3D llega y parsea (antes de que el motor nazca).
+// El socorrista de layout.tsx la usa para no re-animar una carga que ya
+// trajo su código (en pesado el tope de cortina es 60s y el bundle pesa).
+if (typeof window !== "undefined") {
+  (window as unknown as { __vgcasa?: boolean }).__vgcasa = true;
+}
+
 export default function Vanguard2() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState<string | null>(null);
