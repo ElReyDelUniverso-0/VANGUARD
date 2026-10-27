@@ -2937,3 +2937,19 @@ Work Log:
 
 Stage Summary:
 - Vanguard de vuelta en v182.0 sobre server sano (rss 195MB) con vigilante vivo; el bug del «iniciando universo» era OTRA VEZ la reversión del workspace (3ª): la cura definitiva pendiente es proteger el workspace contra el checkpoint externo. Video demo entregado como archivo directo.
+
+---
+Task ID: ia1-v182.0-rescate5-guardian
+Agent: ia1 (solitaria)
+Task: Sandbox 5.5h caído (12:13→17:43) + 5ª REVERSIÓN cazada al volver (server v173.0 rss 620, código en checkpoint 4b4273d) + cura ESTRUCTURAL: guardián de integridad + videos a prueba de reversiones.
+
+Work Log:
+- 17:43 sandbox de vuelta: health v173.0 rss 620 uptime 5s + version.ts v173.0 + HEAD 4b4273d — 5ª reversión confirmada (la 2ª con .git rebobinado).
+- RECETA CASA #5: DB respaldada → ls-remote verificó remoto real 2abfe76 (v182.0) → fetch+reset --hard → DB restaurada → pkill zombi → build EXIT 0 → serve.mjs --prod → health v182.0 rss 200 → vigilante relanzado (PID 1652).
+- PÉRDIDA CAZADA: download/ y /tmp borrados por la reversión — los videos del Dueño desaparecieron. Cura: carpeta media/ (NO gitignoreada) para persistir los MP4 en el repo; download/ sigue siendo la entrega al Dueño.
+- NUEVO scripts/guardian-integridad.mjs (git add -f): chequeo cada 5 min con origin/main como ÚNICA VERDAD — fetch + compara APP_VERSION disco vs remoto; si difieren y el árbol está LIMPIO → receta casa automática (respaldo db → reset → restaurar db → build → relevo → relanza vigilante); PROTECCIÓN de rondas: con trabajo local sin commit NO toca nada; relevo server si health.version != disco o rss >= 900. Arrancado nohup PPID 1 (PID 1730): primer chequeo «sano vv182.0 rss:179».
+- VIDEO REGRABADO (toma continua sin cortes, 3min29s, 390×844): arranque frío (cortina fuera ~2s) → scroll Centro Mundial → THE WAR COLLECTION → ceremonia descubrimiento VG-01 RUSIA—UCRANIA → panel VG-ASSIST → orden escrita «show me the ukraine ficha» → ficha abierta. ffmpeg ultrafast (el standard tardó >3min con el sandbox cargado; lección: con build+server+guardián vivos, usar -preset ultrafast en 2º plano). Entregado: download/VANGUARD-DEMO-COMPLETA-v182.mp4 + media/ (persistente).
+- Cifras: health v182.0 rss 200, vigilante PID 1652, guardián PID 1730.
+
+Stage Summary:
+- 5ª reversión neutralizada + cura estructural en marcha: el guardián de integridad aplica la receta casa SOLO cada 5 min (con protección de trabajo local), y los videos viven en media/ trackeada — ya no puede perderse la entrega del Dueño. Pendiente: push de esta ronda (guardián + media/ + worklog) para blindar todo contra la 6ª reversión.
