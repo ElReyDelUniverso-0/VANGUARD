@@ -3116,3 +3116,20 @@ Work Log:
 
 Stage Summary:
 - v188.0 EL PACIENTE en producción: la reanimación automática ya JAMÁS tira una descarga viva — espera con KB visibles y solo patea cuando el chorro está muerto de verdad; la batería baja se dice a la cara. El bucle de 30s del Dueño tiene los días contados.
+
+---
+
+Task ID: v189.0-adios-al-cine
+Agent: main (Z)
+Task: EL DUEÑO YA NO CONFÍA («vanguard sigue igual, no has solucionado nada») — la pieza que ÉL nombró como raíz del mal (la cinemática GTA) seguía viva tras tres curas sucesivas; decisión definitiva y endurecimiento de los rescates
+
+Work Log:
+- COORDINACIÓN: git fetch antes de tocar — origin/main traía c2ab6b2 (v188.0 EL PACIENTE, otro linaje) ya en producción (health v188.0 · db:up). Los cambios v189 se hicieron SOBRE v188.
+- ① EL FIN DEL CINE: <CineEntrada /> retirado del árbol (page.tsx, import + montaje) — ningún aparato volverá a ver su consola despierta tapada por placas oscuras/barras/1.3MB de fotos que en señal mala parecen otra pantalla de carga eterna. cine-entrada.tsx conserva el hallazgo v187 como registro con bandera ⚠️ NO REMONTAR SIN MANDATO; si algún día vuelve, será OPT-IN con botón dentro de la consola, jamás automático.
+- ② EL ERROR NO ES VIDA (layout inline): vgCargaTerminada contaba TODO fin de recurso como vida del chorro — un 404 de chunks muertos «alimentaba» al paciente y el socorro esperaba eterno frente a un cadáver. Ahora el recurso roto (e.type==='error') marca data-vghecho (deja de contar pendiente) pero NO refresca vgUltCarga: el chorro muere honesto a los 15s y el bote reanima solo atascos reales (tope 3 intacto).
+- ③ EL BOTÓN DE LA SALIDA LIMPIA (socorro modo 1, bote agotado n>=3): botón dorado «ACTUALIZAR AHORA» — limpia caches API (best-effort) y location.replace('/?vg189='+Date.now()): pedir la casa CON OTRO NOMBRE baja HTML fresco con chunks vivos en vez de reintentar eternamente los mismos 404 de un documento viejo guardado en el aparato.
+- QA: tsc 0, build EXIT 0, check-inline.js recreado en el repo (gitignore lo tragaba — force-add) → 20 inline SYNTAX_OK + 8 marcadores OK (VER v189.0, data-vgmal, ?vg189=) + CINE AUSENTE del HTML prerenderizado; navegador real sesión virgen: .vg174-cine=0, cortina disuelta, 0 socorro/vigía, 51 recursos data-vghecho, casa viva; E2E rescate: chunks bloqueados + bote sembrado n=3 → socorro a 30s con ENTRAR + ACTUALIZAR AHORA, testigo capturó «Uncaught Error: qa-v189-block @ chunks/271686525c5cabb0.js», clic UPDATE NOW → URL /?vg179...=timestamp (documento fresco verificado). Falsa alarma QA: en la 1ª prueba la casa despertó (chunks desde caché HTTP inmutable, el route no intercepta caché) — el socorrista hizo lo CORRECTO: no rescatar una casa viva.
+- Hallazgo de auditoría de recargas: todos los reload tienen guardia (meta 70s→300s v184, bote 3/10min v186, relevo 90s v183.1, watchdog reloaded flag); el error-listener recarga solo si la página vivió >60s — sin bucles rápidos posibles.
+
+Stage Summary:
+- v189.0 ADIÓS AL CINE en producción: la causa raíz nombrada por el Dueño está MUERTA de verdad, un 404 ya no puede alimentar al paciente eternamente y el aparato con documento viejo tiene una salida limpia de un toque. Pendiente: el Dueño cierra TODAS las pestañas y prueba; si algo apareciera, la placa de versión (cortina/socorro) dirá v189.0 y el CÓDIGO dirá la herida exacta.

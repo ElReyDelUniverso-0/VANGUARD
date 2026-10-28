@@ -786,6 +786,29 @@
 //     energía frena el CPU y la señal; «conéctalo y abrirá rápido».
 // (4) AVISO HONESTO DE FASE: si __vgcasa llega con el socorro vivo, el
 //     texto cambia a «la descarga llegó entera — la casa está despertando».
-export const APP_VERSION = "v188.0";
-export const APP_CODENAME = "EL PACIENTE";
+// v189.0 ADIÓS AL CINE — el Dueño ya no tiene confianza («vanguard sigue
+//         igual, no has solucionado nada») y la pieza que él mismo nombró
+//         como la raíz del mal SEGUÍA VIVA: tres curas sucesivas (v178
+//         diaria, v187 honesta, v188 paciente) no le devolvieron la fe.
+//         La decisión definitiva no es otra cinemática más lista: es
+//         QUITARLA. Curas:
+// (1) EL FIN DEL CINE: <CineEntrada /> retirado del árbol (page.tsx) —
+//     ningún aparato volverá a ver su consola despierta tapada por placas
+//     oscuras, barras de progreso ni 1.3MB de fotos que en señal mala
+//     llegan negras y PARECEN otra pantalla de carga eterna. La casa
+//     despierta y YA ESTÁ. Si algún día vuelve, será OPT-IN con un botón
+//     dentro de la consola — jamás automática al arranque.
+// (2) EL ERROR NO ES VIDA (layout inline): vgCargaTerminada marcaba TODO
+//     fin de recurso como vida del chorro — incluso un 404 «alimentaba»
+//     al paciente y el socorro esperaba eterno frente a un cadáver.
+//     Ahora un recurso que termina ROTO deja de contar como pendiente
+//     pero NO refresca la hora de vida: el chorro muere honesto a los
+//     15s y el bote puede reanimar un atasco real (con su tope de 3).
+// (3) EL BOTÓN DE LA SALIDA LIMPIA: si el bote se agotó (3 reanimaciones),
+//     el socorro ofrece «ACTUALIZAR AHORA» — limpia caches API y pide la
+//     casa con otro nombre (?vg189=hora): el navegador baja HTML fresco
+//     con chunks vivos en vez de reintentar eternamente los mismos 404
+//     de un documento viejo guardado en el aparato.
+export const APP_VERSION = "v189.0";
+export const APP_CODENAME = "ADIÓS AL CINE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

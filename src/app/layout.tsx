@@ -456,6 +456,13 @@ try{
       var u=String(tg.src||tg.href||'');
       if(u.indexOf('/_next/')<0) return;
       tg.setAttribute('data-vghecho','1');
+      // v189.0 EL ERROR NO ES VIDA — un recurso que TERMINA ROTO (404 de
+      // chunks muertos, red cortada) deja de contar como pendiente (arriba)
+      // pero JAMÁS refresca la hora de vida del chorro: si el aparato pide
+      // chunks muertos de un HTML viejo, el chorro muere honesto a los 15s
+      // y el bote puede reanimar — sin esta cura, cada 404 «alimentaba» al
+      // paciente y el socorro esperaba eterno frente a un cadáver.
+      if(e.type==='error'){ tg.setAttribute('data-vgmal','1'); return; }
       vgCargas++; vgUltCarga=Date.now();
     }catch(e2){}
   }
@@ -694,6 +701,28 @@ try{
           if(!t2||Date.now()-t2>600000){ t2=Date.now(); n2=0; try{ sessionStorage.setItem('vg186-t',String(t2)); }catch(e2){} }
           if(n2<3){ try{ sessionStorage.setItem('vg186-n',String(n2+1)); }catch(e3){} puedeAuto=true; }
         }catch(e4){}
+        // v189.0 EL BOTÓN DE LA SALIDA LIMPIA — si el bote se agotó (3
+        // reanimaciones usadas), ya no es señal lenta: este aparato casi
+        // seguro guarda un DOCUMENTO VIEJO que pide chunks MUERTOS (404 de
+        // un despliegue anterior). Reintentar igual es bajar los mismos 404
+        // para siempre. La cura real: pedir la casa CON OTRO NOMBRE
+        // (?vg189=hora — el navegador baja HTML fresco con chunks vivos)
+        // y limpiar las caches API por si algún SW/Cache guardó restos.
+        if(!puedeAuto){
+          try{
+            var bt2=document.createElement('button');
+            bt2.textContent=esI?'ACTUALIZAR AHORA':'UPDATE NOW';
+            bt2.style.cssText='border:1px solid #e8c476;color:#070606;background:#e8c476;padding:13px 24px;letter-spacing:.2em;font:700 11px system-ui,sans-serif;border-radius:2px;text-transform:uppercase;margin-top:2px';
+            bt2.addEventListener('click',function(){
+              try{
+                if(window.caches&&caches.keys){ caches.keys().then(function(ks){ ks.forEach(function(k){ try{ caches.delete(k); }catch(eC2){} }); }).catch(function(){}); }
+              }catch(eC){}
+              try{ sessionStorage.setItem('vg187-sufrio',String(Date.now())); }catch(eC3){}
+              try{ location.replace('/?vg189='+Date.now()); }catch(eC4){ location.replace('/'); }
+            });
+            s.appendChild(bt2);
+          }catch(eC1){}
+        }
         // v188.0 EL PACIENTE — el reintento ya NO patea la descarga por la
         // calle: si el chorro está VIVO (algo de _next terminó hace <15s, o
         // la primera ola aún viaja), el socorro ESPERA y dice los KB reales;

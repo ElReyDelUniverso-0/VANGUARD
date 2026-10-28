@@ -52,8 +52,7 @@ const RostrosPanel = dynamic(() => import("@/components/vanguard/panels/rostros-
 // v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
 const GobiernoLibrePanel = dynamic(() => import("@/components/vanguard/panels/gobierno-libre-panel").then((m) => m.GobiernoLibrePanel), { ssr: false, loading: PanelSkeleton });
 import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
-// v177.0 EL CINE DE LA CASA — la entrada GTA de noticias al arranque (una vez por sesión)
-import { CineEntrada } from "@/components/vanguard/cine-entrada";
+// v189.0: la importación del cine murió con el cine — adiós para siempre
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
 import { MotorLuxe } from "@/components/vanguard/motor-luxe";
@@ -1310,10 +1309,15 @@ export default function Home() {
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
       <Motor3D />
-      {/* v177.0 EL CINE DE LA CASA — la entrada GTA de noticias al ARRANQUE
-          (port del cine v174 del mundo retirado; una vez por sesión, SALTAR
-          siempre, reduced-motion no ve cine). La consola vive detrás. */}
-      <CineEntrada />
+      {/* v189.0 EL FIN DEL CINE — la cinemática GTA de entrada está RETIRADA
+          del árbol para siempre. El Dueño la nombró como la raíz del mal
+          («desde ese día no ha vuelto a cargar bien vanguard») y tres curas
+          sucesivas (v178 diaria, v187 honesta, v188 paciente) no le devolvieron
+          la confianza: ningún aparato volverá a ver su consola despierta
+          tapada por una pantalla que se pueda confundir con carga. La casa
+          despierta y YA ESTÁ: sin telón, sin placas, sin 1.3MB de fotos
+          compitiendo con la señal. Si algún día vuelve, será OPT-IN con un
+          botón dentro de la consola — jamás automática al arranque. */}
       {/* v121.0 LA CAMA MÁS CÓMODA: el motor de personalización — letra, acento,
           movimiento, densidad y modo cama a CSS vars en :root (cero re-render) */}
       <MotorCama />

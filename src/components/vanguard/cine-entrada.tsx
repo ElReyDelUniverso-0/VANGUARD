@@ -1,6 +1,17 @@
 "use client";
 
 // ============================================================
+// ⚠️ v189.0 RETIRADO DEL ÁRBOL — ESTE COMPONENTE YA NO SE MONTA.
+// page.tsx retiró <CineEntrada /> en v189.0 (ADIÓS AL CINE): el Dueño
+// nombró esta cinemática como la raíz del mal («desde ese día no ha
+// vuelto a cargar bien vanguard») y ningún aparato volverá a ver su
+// consola despierta tapada por nada que se pueda confundir con carga.
+// NO volver a montar sin mandato expreso del Dueño; si regresa, será
+// OPT-IN con un botón dentro de la consola — jamás automática.
+// El archivo se conserva como registro histórico del hallazgo v187.
+// ============================================================
+
+// ============================================================
 // v177.0 EL CINE DE LA CASA — la entrada GTA de noticias al ARRANQUE.
 // Port del cine v174 (nació con la ceremonia del mundo 3D retirado;
 // el Dueño ordenó «adiós al modo 3D» y el cine renace en la puerta 2D).

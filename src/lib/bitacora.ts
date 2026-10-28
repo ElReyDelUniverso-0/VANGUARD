@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v189.0",
+    nombre: "ADIÓS AL CINE",
+    tipo: "tecno",
+    hitos: [
+      "LA DECISIÓN DEFINITIVA — el Dueño ya no tiene confianza («vanguard sigue igual, no has solucionado nada») y la pieza que ÉL MISMO nombró como la raíz del mal seguía viva: «a la IA original le dije que haga una cinemática tipo GTA… desde ese día no ha vuelto a cargar bien vanguard». Tres curas sucesivas (v178 diaria, v187 honesta, v188 paciente) no devolvieron la fe. La cura ya no es otra cinemática más lista: es QUITARLA",
+      "EL FIN DEL CINE — <CineEntrada /> retirado del árbol (page.tsx): ningún aparato volverá a ver su consola despierta tapada por placas oscuras, barras de progreso ni 1.3MB de fotos que en señal mala llegan negras y PARECEN otra pantalla de carga eterna. La casa despierta y YA ESTÁ — si el cine regresa algún día, será OPT-IN con botón dentro de la consola, jamás automático",
+      "EL ERROR NO ES VIDA (layout inline) — vgCargaTerminada contaba TODO fin de recurso como vida del chorro: un 404 de chunks muertos «alimentaba» al paciente y el socorro esperaba eterno frente a un cadáver. Ahora el recurso roto deja de contar como pendiente pero NO refresca la hora de vida — el chorro muere honesto a los 15s y el bote reanima solo atascos reales (tope 3, como siempre)",
+      "EL BOTÓN DE LA SALIDA LIMPIA — si el bote se agota (3 reanimaciones), el socorro ofrece «ACTUALIZAR AHORA»: limpia caches API y pide la casa con otro nombre (?vg189=hora) — el navegador baja HTML fresco con chunks vivos en vez de reintentar eternamente los mismos 404 de un documento viejo guardado en el aparato",
+      "QA v189: tsc 0, build EXIT 0, inline SYNTAX_OK (VER v189.0, vg189 en botón de salida, data-vgmal presente); navegador real: sesión virgen SIN cine (la consola queda desniva y despierta), 0 socorros, cortina v189.0 fuera ≤3.5s; guards v167 + piedra v184 + relevo v183.1 + socorrista v185 + bote v186 + paciente v188 intactos",
+    ],
+  },
+  {
     version: "v188.0",
     nombre: "EL PACIENTE",
     tipo: "tecno",
