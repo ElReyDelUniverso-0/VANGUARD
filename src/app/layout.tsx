@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Orbitron, Rajdhani, JetBrains_Mono } from "next/font/google";
+// v194.0 LA CASA PESO PLUMA — UNA sola familia de Google baja con la casa:
+// Orbitron (la marca). Geist/Geist_Mono/Rajdhani/JetBrains_Mono se jubilan:
+// eran 12 archivos woff2 (166KB) peleándose con el JS crítico en señal lenta.
+// El texto nace en system-ui (cero bytes de red) y el mono en ui-monospace.
+import { Orbitron } from "next/font/google";
 
 // v34 SEO GLOBAL: la URL canónica DEBE apuntar a un dominio real. vanguard.world
 // aún no tiene DNS (NXDOMAIN): si el canonical apuntara ahí, Google no podría
@@ -17,57 +21,38 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 // v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
 // cortina) — cada captura del Dueño diagnostica sola (¿pestaña vieja o build nuevo?)
 import { APP_VERSION } from "@/lib/version";
-import { RetentionLayer } from "@/components/vanguard/retention-layer";
+// v194.0: las 5 capas globales de ambiente (agentes, nexus, retención,
+// pulso, regreso) viajan ahora en CAPAS GLOBALES EN DIFERIDO — chunks
+// aparte que bajan tras __vgvivo cuando el hilo queda idle.
+import { CapasGlobales } from "@/components/vanguard/capas-globales";
 // v151.0 VANGUARD-2: guardia de ruta — /vanguard2 es un universo 3D puro,
 // ninguna capa DOM de la Casa monta encima (mandato: cero 2D en el nuevo Vanguard)
 import { SoloCasa } from "@/components/vanguard2/solo-casa";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
-import { MotorAgentes } from "@/components/vanguard/motor-agentes";
+
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
 // v148: el import del tráiler se retira — el estreno es la ceremonia 3D del mundo
 // v135.0 NEXUS-HYPNOS: el motor de tensión global — la Casa entera respira
 // con el pulso del planeta (html[data-tension] + --vg-tension, cero re-render)
-import { MotorNexus } from "@/components/vanguard/motor-nexus";
+
 // v99.0 MENTE VIVA: el pulso autónomo global (el mundo se actualiza solo)
-import { PulsoAuto } from "@/components/vanguard/pulso-auto";
+
 // v101.0 EL REGRESO — PILAR 1: banner global "el mundo cambió" en todas las páginas
-import { RegresoBanner } from "@/components/vanguard/regreso-banner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 // ====== v13 CENTRO DE MANDO: tipografia militar/tecnica ======
+// v194.0: una sola variante 700 (antes eran 5 pesos = 5+ archivos);
+// el navegador sintetiza el resto y la marca se ve igual de firme.
 const orbitron = Orbitron({
   variable: "--font-orbitron",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800", "900"],
+  weight: "700",
   display: "swap",
 });
 
-// v193.0 LA CASA LIGERA — la familia Inter se jubila: el texto base ahora
-// nace en Geist Sans (ya viajaba en la casa); una familia menos que bajar
-// en cada visita con señal lenta.
-const rajdhani = Rajdhani({
-  variable: "--font-rajdhani",
-  subsets: ["latin", "latin-ext"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
-const jetMono = JetBrains_Mono({
-  variable: "--font-jetmono",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-});
+// v193.0 la Inter se jubiló · v194.0 Rajdhani y JetBrains_Mono también: el
+// --font-tech y el --font-mono viven ahora en system-ui/ui-monospace.
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -267,7 +252,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${rajdhani.variable} ${jetMono.variable} antialiased bg-background text-foreground min-h-screen`}
+        className={`${orbitron.variable} antialiased bg-background text-foreground min-h-screen`}
       >
         {/* ════════════════════════════════════════════════════════════
             v155.0 LA CORTINA DE ARRANQUE — la ley contra la pantalla muerta.
@@ -368,14 +353,14 @@ export default function RootLayout({
             @keyframes vgCortinaPiedra{to{opacity:0;visibility:hidden;pointer-events:none}}
             #vg-cortina .vg-faro{width:9px;height:9px;border-radius:50%;background:#e8c476;box-shadow:0 0 0 0 rgba(232,196,118,.55);animation:vgFaro 1.6s ease-out infinite}
             #vg-cortina .vg-marca{font-size:clamp(30px,9vw,60px);font-weight:800;letter-spacing:.4em;color:#e8c476;text-shadow:0 0 26px rgba(232,196,118,.28);margin-right:-.4em}
-            #vg-cortina .vg-estado{font-family:var(--font-jetmono),monospace;font-size:11px;letter-spacing:.32em;color:rgba(232,196,118,.72);text-transform:uppercase;text-align:center;padding:0 18px}
+            #vg-cortina .vg-estado{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.32em;color:rgba(232,196,118,.72);text-transform:uppercase;text-align:center;padding:0 18px}
             #vg-cortina .vg-estado::after{content:'';animation:vgPuntos 1.2s steps(4,end) infinite}
             #vg-cortina .vg-barra{width:170px;height:2px;overflow:hidden;border-radius:2px;background:rgba(232,196,118,.14)}
             #vg-cortina .vg-barra i{display:block;width:40%;height:100%;background:linear-gradient(90deg,transparent,#e8c476,transparent);animation:vgBrillo 1.15s linear infinite}
             #vg-cortina-btn{display:none;margin-top:6px;border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.07);padding:15px 24px;letter-spacing:.24em;font-size:12px;font-weight:600;border-radius:2px;text-transform:uppercase;font-family:inherit}
             #vg-cortina-btn[data-on="1"]{display:inline-block;animation:vgAparecer .5s ease-out}
             #vg-cortina .vg-nojs{color:rgba(232,196,118,.8);font-size:12px;letter-spacing:.2em;text-align:center;padding:0 24px}
-            #vg-cortina .vg-ver{font-family:var(--font-jetmono),monospace;font-size:9px;letter-spacing:.3em;color:rgba(232,196,118,.42);text-transform:uppercase}
+            #vg-cortina .vg-ver{font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.3em;color:rgba(232,196,118,.42);text-transform:uppercase}
             @keyframes vgFaro{0%{box-shadow:0 0 0 0 rgba(232,196,118,.5)}100%{box-shadow:0 0 0 18px rgba(232,196,118,0)}}
             @keyframes vgBrillo{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
             @keyframes vgPuntos{0%{content:''}25%{content:'·'}50%{content:'··'}75%{content:'···'}}
@@ -857,33 +842,15 @@ try{
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}
         {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados
             entran tras la hidratación de React; adiós al error #418 para siempre */}
+        {/* v133.0→v194.0: agentes, nexus, retención, pulso y regreso
+            viven en CapasGlobales — en diferido, jamás peleando con la
+            hidratación. El Rehidratador QUEDA FUERA: los valores guardados
+            entran temprano como siempre. */}
         <SoloCasa>
           <Rehidratador />
         </SoloCasa>
-        {/* v133.0: el cuerpo de agentes autónomos — la Casa se pule sola
-            en cualquier sala, sin que nadie tenga que visitar su sala */}
         <SoloCasa>
-          <MotorAgentes />
-        </SoloCasa>
-        {/* v134.0 EL ESTRENO — RETIRADO EN v148: la ceremonia de entrada del
-            mundo WebGL (negro → estrellas → globo → logo 3D → placa ENTRAR)
-            ES el estreno ahora; el tráiler DOM era la última capa 2D del
-            arranque (mandato del Dueño: «arrancan 2D aún») */}
-        {/* v135.0 NEXUS-HYPNOS: el pulso del planeta viste la Casa entera */}
-        <SoloCasa>
-          <MotorNexus />
-        </SoloCasa>
-        {/* v55.0 TEMPORADA CERO: capa global de retención en TODAS las páginas */}
-        <SoloCasa>
-          <RetentionLayer />
-        </SoloCasa>
-        {/* v99.0 MENTE VIVA: el pulso autónomo — Vanguard se actualiza sola en TODAS las páginas */}
-        <SoloCasa>
-          <PulsoAuto />
-        </SoloCasa>
-        {/* v101.0 EL REGRESO — PILAR 1: el mundo cambió mientras no mirabas (banner de regreso) */}
-        <SoloCasa>
-          <RegresoBanner />
+          <CapasGlobales />
         </SoloCasa>
         <Toaster />
         <Sonner />

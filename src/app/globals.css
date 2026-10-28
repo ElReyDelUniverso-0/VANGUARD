@@ -6,10 +6,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-jetmono), var(--font-geist-mono), monospace;
-  --font-display: var(--font-orbitron), var(--font-geist-sans), sans-serif;
-  --font-tech: var(--font-rajdhani), var(--font-geist-sans), sans-serif;
+  /* v194.0 LA CASA PESO PLUMA: system-ui nace con la casa (cero bytes de red).
+     Solo Orbitron viaja de Google — la marca; todo lo demás es del sistema. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-display: var(--font-orbitron), system-ui, sans-serif;
+  --font-tech: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   /* v124.0 CAVIAR — la tipografía de la alta clase: serif de colección
      (Didot en iOS, Bodoni en Windows, Playfair si existe, Georgia de guardián) */
   --font-caviar: Didot, "Bodoni MT", "Playfair Display", "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -495,9 +497,9 @@
   --hud-grid: rgba(200, 110, 40, 0.05); /* rejilla con tinte de brasa */
 }
 
-.font-display { font-family: var(--font-orbitron), var(--font-geist-sans), sans-serif; }
-.font-tech { font-family: var(--font-rajdhani), var(--font-geist-sans), sans-serif; }
-.font-jet { font-family: var(--font-jetmono), monospace; }
+.font-display { font-family: var(--font-orbitron), system-ui, sans-serif; }
+.font-tech { font-family: var(--font-tech); }
+.font-jet { font-family: var(--font-mono); }
 
 .text-electric { color: var(--vg-electric); }
 .text-crisis { color: var(--vg-crisis); }
@@ -4451,7 +4453,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 }
 .vg174-cine-txt em {
   display: block;
-  font-family: var(--font-jetmono), monospace;
+  font-family: var(--font-mono);
   font-style: normal;
   font-size: clamp(0.58rem, 2.4vw, 0.78rem);
   letter-spacing: 0.42em;
@@ -4463,7 +4465,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 }
 .vg174-cine-txt strong {
   display: block;
-  font-family: var(--font-rajdhani), sans-serif;
+  font-family: var(--font-tech), sans-serif;
   font-weight: 700;
   font-style: italic;
   text-transform: uppercase;
@@ -4481,7 +4483,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 .vg174-cine-txt span {
   display: block;
   margin-top: 12px;
-  font-family: var(--font-jetmono), monospace;
+  font-family: var(--font-mono);
   font-size: clamp(0.64rem, 2.6vw, 0.84rem);
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -4494,7 +4496,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   right: clamp(18px, 6vw, 84px);
   bottom: calc(9vh + 44px);
   z-index: 2;
-  font-family: var(--font-jetmono), monospace;
+  font-family: var(--font-mono);
   font-style: normal;
   font-size: clamp(0.54rem, 2.2vw, 0.7rem);
   letter-spacing: 0.3em;
@@ -4546,7 +4548,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   left: 16px;
   z-index: 5;
   pointer-events: none;
-  font-family: var(--font-jetmono), monospace;
+  font-family: var(--font-mono);
   text-transform: uppercase;
   animation: vg174Sube 0.45s 0.55s ease-out both;
 }
@@ -4581,7 +4583,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   background: rgba(232, 196, 118, 0.1);
   border: 1px solid rgba(232, 196, 118, 0.6);
   color: #e8c476;
-  font-family: var(--font-jetmono), monospace;
+  font-family: var(--font-mono);
   font-size: clamp(0.62rem, 2.6vw, 0.78rem);
   letter-spacing: 0.26em;
   text-transform: uppercase;
@@ -5665,7 +5667,7 @@ html[data-wgl-hud="1"] .vg141-modo-ui { display: none !important; }
   gap: 14px;
   background: radial-gradient(ellipse at center, rgba(6, 10, 18, 0.86), rgba(3, 5, 10, 0.96));
   backdrop-filter: blur(6px);
-  font-family: var(--font-rajdhani), "Rajdhani", sans-serif;
+  font-family: var(--font-tech), "Arial Narrow", sans-serif;
   animation: vg148-fadein 0.4s ease-out;
 }
 .vg148-ctxperdido strong {
@@ -6216,7 +6218,7 @@ html[data-vg-3d="on"] .cuna-v139:has(.vg173-terminal) {
 .vg191-teatro{position:fixed;inset:0;z-index:47;pointer-events:none;animation:vg191Teatro 2.8s ease forwards}
 .vg191-teatro b{display:block;height:9vh;background:#050404;border-bottom:1px solid rgba(232,196,118,.35);transform:translateY(-100%);animation:vg191Barra 2.8s cubic-bezier(.7,0,.3,1) forwards}
 .vg191-teatro i{display:block;height:9vh;background:#050404;border-top:1px solid rgba(232,196,118,.35);transform:translateY(100%);animation:vg191BarraAbajo 2.8s cubic-bezier(.7,0,.3,1) forwards}
-.vg191-teatro span{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#e8c476;font-family:var(--font-rajdhani),system-ui,sans-serif;font-weight:700;font-size:clamp(13px,2.6vw,20px);line-height:1.5;letter-spacing:.22em;text-transform:uppercase;padding:0 8vw;opacity:0;animation:vg191Texto 2.8s ease forwards;text-shadow:0 0 22px rgba(232,196,118,.25)}
+.vg191-teatro span{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#e8c476;font-family:var(--font-tech),system-ui,sans-serif;font-weight:700;font-size:clamp(13px,2.6vw,20px);line-height:1.5;letter-spacing:.22em;text-transform:uppercase;padding:0 8vw;opacity:0;animation:vg191Texto 2.8s ease forwards;text-shadow:0 0 22px rgba(232,196,118,.25)}
 .vg191-teatro em{display:block;font-style:normal;font-size:.55em;letter-spacing:.4em;color:rgba(232,196,118,.65);margin-bottom:.7em}
 @keyframes vg191Teatro{0%,88%{opacity:1}100%{opacity:0}}
 @keyframes vg191Barra{0%{transform:translateY(-100%)}12%,86%{transform:translateY(0)}100%{transform:translateY(-100%)}}

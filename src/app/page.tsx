@@ -33,6 +33,8 @@ const ActivityLogModal = dynamic(() => import("@/components/vanguard/activity-lo
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 // v14: reestructuración — portada INICIO con noticias primero + menú llamativo
 import { HomePanel } from "@/components/vanguard/home-panel";
+// v194.0 LA CASA PESO PLUMA: los motores de ambiente montan TARDÍO
+import { MontajeTardio } from "@/components/vanguard/montaje-tardio";
 const MegaMenu = dynamic(() => import("@/components/vanguard/mega-menu").then((m) => m.MegaMenu), { ssr: false });
 // v121.0 LA CAMA MÁS CÓMODA: ATLAS MUNDIAL (el modo que faltaba: cada país y
 // cada persona importante con su ubicación) + LA CAMA (la habitación de
@@ -445,16 +447,16 @@ function Salas({ tab }: { tab: TabKey }) {
                 viven ENTRE los bloques de la casa — satélite, globo y ciudad
                 procedurales + la hora real del visitante */}
             <FranjaIlustrada titulo="EL MUNDO NO SE DETIENE" />
-            {/* v46.0: la meta comunitaria encima de todo — cada visitante ve el objetivo y su recompensa */}
-            <GoalBanner />
-            {/* v49.0: misión de difusión 200 enlaces — progreso real desde la BD, recompensa global al llegar */}
-            <ShareGoalBanner />
-            {/* v18: sección de crecimiento bajo la portada — conversión de visitantes a embajadores */}
-            <GrowthShare />
+            {/* v46.0→v194.0: meta comunitaria, crecimiento y misión 100 —
+                retención que no pelea con la hidratación (montaje tardío) */}
+            <MontajeTardio>
+              <GoalBanner />
+              <ShareGoalBanner />
+              <GrowthShare />
+              <Mission100 />
+            </MontajeTardio>
             {/* v34: kit de reclutamiento (mensajes para copiar + medidor de agentes) y FAQ SEO */}
             <PromoKit />
-            {/* v37 MISIÓN 100: arsenal de 100 enlaces + contador global en vivo */}
-            <Mission100 />
             <SeoFaq />
           </>
         )}
@@ -1311,7 +1313,9 @@ export default function Home() {
       </div>
       {/* v110.0 MATRIZ 2100: MOTOR 3D GLOBAL — traduce los ajustes del usuario a
           CSS vars en :root y alimenta el paralaje con el puntero (rAF, 60 FPS) */}
-      <Motor3D />
+      <MontajeTardio tope={9000}>
+        <Motor3D />
+      </MontajeTardio>
       {/* v189.0 EL FIN DEL CINE — la cinemática GTA de entrada está RETIRADA
           del árbol para siempre. El Dueño la nombró como la raíz del mal
           («desde ese día no ha vuelto a cargar bien vanguard») y tres curas
@@ -1323,8 +1327,10 @@ export default function Home() {
           botón dentro de la consola — jamás automática al arranque. */}
       {/* v121.0 LA CAMA MÁS CÓMODA: el motor de personalización — letra, acento,
           movimiento, densidad y modo cama a CSS vars en :root (cero re-render) */}
-      <MotorCama />
-      <MotorLuxe />
+      <MontajeTardio tope={9000}>
+        <MotorCama />
+        <MotorLuxe />
+      </MontajeTardio>
       {/* v191.0 EL PULSO TEATRAL: cada 6 min, 2.8s de teatro que no pide
           permiso pero jamás estorba — barras de cine + titular del mundo.
           Sin fotos que bajar, pointer-events none, se retira solo. */}
@@ -1401,7 +1407,9 @@ export default function Home() {
       {/* v121.0 TRANSICIÓN MAESTRA: el dueño ELIGE cómo viaja entre salas
           (deslizar · cine 3D · telón · hiperespacio · disolver) + sello vivo */}
       <TransicionMaestra tabKey={tab} label={APP_VERSION_LABEL} />
-      <CineVivo />
+      <MontajeTardio>
+        <CineVivo />
+      </MontajeTardio>
 
       <main className="contents" aria-label="Contenido de Vanguard">
         <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
@@ -1461,9 +1469,11 @@ export default function Home() {
       {/* v105.0 EL NAVEGADOR — brújula global "¿qué quiero hacer hoy?" */}
       <Navegador />
       {/* v179.0 VG-ASSIST — el orbe Siri de Vanguard: toca y habla, la Casa obedece */}
-      <AsistenteVoz />
       {/* v180.0 VANGUARD AUTOMÁTICO — el radar que te busca: nada se pierde sin buscar */}
-      <CentinelaImpacto />
+      <MontajeTardio>
+        <AsistenteVoz />
+        <CentinelaImpacto />
+      </MontajeTardio>
     </div>
   );
 }

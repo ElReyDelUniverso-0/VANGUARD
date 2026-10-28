@@ -916,6 +916,6 @@
 //      TU SALA en un solo toque desde la portada; «cambiar de sala» siempre
 //      visible. Navegación por evento interno vanguard:navigate — jamás
 //      recarga (ley v190). Bajo la portada viva, obra v191/v193 intacta.
-export const APP_VERSION = "v193.1";
-export const APP_CODENAME = "VIGO Y LA PUERTA";
+export const APP_VERSION = "v194.0";
+export const APP_CODENAME = "LA CASA PESO PLUMA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
