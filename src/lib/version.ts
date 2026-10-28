@@ -898,6 +898,24 @@
 //         archivos (menos puntos de estancamiento); las visitas siguientes
 //         salen del caché inmutable de /_next/static. La cortina, el vigía,
 //         el socorrista y la ley NADA SE RECARGA SOLO quedan intactos.
-export const APP_VERSION = "v193.0";
-export const APP_CODENAME = "LA CASA LIGERA";
+// v193.1 VIGO Y LA PUERTA — «hazlo más fácil de entrar y una marca única de
+//         vanguard que sea icónica, llamativa y fácil de recordar hasta
+//         personaje de vanguard»:
+//   ① VIGO, EL CENTINELA DE VANGUARD (vigo.tsx): el personaje de la casa —
+//      hexágono dorado con UN SOLO OJO-RADAR que barre el mundo, baliza
+//      verde de guardia, flota como un satélite centinela; SVG inline puro
+//      (cero bytes de red, ley ADIÓS AL CINE), respeta reduced-motion y
+//      jamás parece pantalla de carga (lección v177–v189); su cara vive
+//      también en el favicon (icon.svg): la marca se reconoce antes de
+//      entrar. Voz propia del CENTINELA SOLO con gesto del Dueño (respeta
+//      MUTE, ley de voces v192).
+//   ② LA PUERTA DE VIGO (puerta-vigo.tsx): la entrada que dirige a lo que
+//      importa — «¿QUÉ TE IMPORTA HOY?» con 5 salas grandes (GUERRA HOY /
+//      PARA TI / TV EN VIVO / MAPA 3D / MEMES); la elección queda en TU
+//      aparato (vg193-tu-sala) y desde entonces el botón GIGANTE entra a
+//      TU SALA en un solo toque desde la portada; «cambiar de sala» siempre
+//      visible. Navegación por evento interno vanguard:navigate — jamás
+//      recarga (ley v190). Bajo la portada viva, obra v191/v193 intacta.
+export const APP_VERSION = "v193.1";
+export const APP_CODENAME = "VIGO Y LA PUERTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

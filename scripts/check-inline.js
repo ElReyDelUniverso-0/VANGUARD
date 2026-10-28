@@ -12,7 +12,17 @@ const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
 
-const esperada = process.argv[2] || "v189.0";
+// v193.1: el default se lee del código (src/lib/version.ts) — ninguna
+// versión futura volver a dejar el guardián ciego al subir de número.
+function versionDelCodigo() {
+  try {
+    const vt = fs.readFileSync(path.join(process.cwd(), "src", "lib", "version.ts"), "utf8");
+    const m = vt.match(/APP_VERSION\s*=\s*"(v[\d.]+)"/);
+    if (m) return m[1];
+  } catch {}
+  return "v189.0";
+}
+const esperada = process.argv[2] || versionDelCodigo();
 const htmlPath = path.join(process.cwd(), ".next", "server", "app", "index.html");
 if (!fs.existsSync(htmlPath)) {
   console.error("FALTA: " + htmlPath + " (¿build de producción?)");

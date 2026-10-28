@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v193.1",
+    nombre: "VIGO Y LA PUERTA",
+    tipo: "nav",
+    hitos: [
+      "MANDATO DEL DUEÑO: «hazlo más fácil de entrar y una marca única de Vanguard que sea icónica, llamativa y fácil de recordar, hasta personaje de Vanguard» — dos piezas nuevas sobre LA CASA LIGERA (el rendimiento ya lo entregó v193.0: mi obra añade cero bytes de red)",
+      "VIGO, EL CENTINELA DE VANGUARD — el personaje de la casa nace: hexágono dorado con UN SOLO OJO-RADAR que barre el mundo (anillo dashed girando + arco de barrido), baliza verde de guardia, luces de estado en los hombros y la V de Vanguard grabada en el pecho; flota como un satélite centinela con su sombra respirando debajo; SVG inline puro (cero imágenes, ley ADIÓS AL CINE), parpadea honesto cada 6s, respeta prefers-reduced-motion y jamás aparece durante la carga (lección v177–v189: nada que parezca proceso)",
+      "LA MARCA EN CADA PESTAÑA — el favicon icon.svg ahora es la cara de Vigo: antena con baliza verde, ojo-radar dorado y la estrella norte de la vanguardia; la marca se reconoce ANTES de entrar a la casa",
+      "LA PUERTA DE VIGO — la entrada que dirige: bajo la portada viva, el centinela pregunta «¿QUÉ TE IMPORTA HOY?» y ofrece 5 salas grandes (GUERRA HOY / PARA TI / TV EN VIVO / MAPA 3D / MEMES); un toque te lleva YA y la elección queda en TU aparato (localStorage vg193-tu-sala); en la próxima visita la puerta recuerda y el botón GIGANTE «ENTRAR A TU SALA» abre en un solo toque; «cambiar de sala» siempre a mano; navegación por el evento interno vanguard:navigate — jamás una recarga (ley v190)",
+      "VOZ CON MODALES — el botón «VIGO SALUDA» da el saludo del CENTINELA con la voz propia del Consejo de Voces (v192): SOLO con gesto del Dueño, respeta MUTE y una sola voz activa; sin gesto, Vigo calla",
+    ],
+  },
+  {
     version: "v193.0",
     nombre: "LA CASA LIGERA",
     tipo: "tecno",

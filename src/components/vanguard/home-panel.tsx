@@ -35,6 +35,9 @@ import { PortadasInicio } from "@/components/vanguard/portadas-inicio";
 // v193.0 LA CASA LIGERA — la cinemática viaja en su propio chunk: baja solo
 // cuando se va a estrenar (jamás durante la carga, ley v192 intacta)
 const CinematicaVanguard = dynamic(() => import("@/components/vanguard/cinematica-vanguard").then((m) => m.CinematicaVanguard), { ssr: false });
+// v193.1 VIGO Y LA PUERTA — el personaje de la casa pregunta qué te importa
+// y te lleva a tu sala en un toque (la elección queda en TU aparato)
+import { PuertaVigo } from "@/components/vanguard/puerta-vigo";
 
 interface NewsItem {
   id: string;
@@ -368,6 +371,12 @@ export function HomePanel() {
         alias={alias || ""}
         onVerCinematica={() => setCine(true)}
       />
+
+      {/* ====== v193.1 LA PUERTA DE VIGO — la entrada que dirige: el centinela
+          pregunta qué te importa (guerra hoy / para ti / TV / mapa 3D / memes),
+          guarda tu sala en TU aparato y desde entonces ENTRAR es un solo toque.
+          Evento interno vanguard:navigate — jamás recarga (ley v190). ====== */}
+      <PuertaVigo />
 
       {/* ====== ÚLTIMA HORA — LAS NOTICIAS PRIMERO ====== */}
       <div>
