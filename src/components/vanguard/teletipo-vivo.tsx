@@ -13,6 +13,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Radio, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { pedirNoticias } from "@/lib/noticias-cache";
 
 // ————— tipos —————
 export interface CableVivo {
@@ -24,17 +25,18 @@ export interface CableVivo {
 }
 
 // ————— caché compartida de noticias (varias instancias, 1 fetch / 90s) —————
+// v196: la descarga vive en EL POZO ÚNICO (lib/noticias-cache) — el teletipo
+// solo transforma el agua en titulares; cero fetch directo a /api/news.
 let __noticiasCache: { ts: number; titulares: string[] } | null = null;
 let __noticiasPromesa: Promise<string[]> | null = null;
 function cargarTitulares(): Promise<string[]> {
   if (__noticiasCache && Date.now() - __noticiasCache.ts < 90_000) return Promise.resolve(__noticiasCache.titulares);
   if (!__noticiasPromesa) {
-    __noticiasPromesa = fetch("/api/news", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("http"))))
-      .then((d: { items?: { title: string; publishedAt: string }[] }) => {
-        const items = Array.isArray(d.items) ? d.items : [];
+    __noticiasPromesa = pedirNoticias()
+      .then((bruto) => {
+        const items = Array.isArray(bruto) ? (bruto as { title?: string; publishedAt?: string }[]) : [];
         const tit = items
-          .map((i) => ({ t: (i.title || "").trim(), f: new Date(i.publishedAt).getTime() }))
+          .map((i) => ({ t: (i.title || "").trim(), f: new Date(i.publishedAt ?? "").getTime() }))
           .filter((i) => i.t.length > 18 && Number.isFinite(i.f))
           .sort((a, b) => b.f - a.f)
           .slice(0, 18)
@@ -313,7 +315,12 @@ function useFlujoVivo(max: number, intervaloMs: number, activo: boolean) {
 // ————— MODO CINTA: marquee de última hora —————
 export function TeletipoCinta({ className }: { className?: string }) {
   const [activo, setActivo] = useState(false);
-  useEffect(() => setActivo(true), []);
+  // v196: activación tras el primer frame (patrón de la casa — evita el
+  // render en cascada que el lint marca y de paso ahorra un render)
+  useEffect(() => {
+    const t = setTimeout(() => setActivo(true), 0);
+    return () => clearTimeout(t);
+  }, []);
   const cables = useFlujoVivo(16, 5200, activo);
   const cinta = useMemo(() => {
     // cinta estable: mezcla proporcional (agencias primero, luego interceptos)
@@ -378,10 +385,18 @@ export function TeletipoFeed({
   titulo?: string;
 }) {
   const [activo, setActivo] = useState(false);
-  useEffect(() => setActivo(true), []);
+  // v196: activación tras el primer frame (patrón de la casa — evita el
+  // render en cascada que el lint marca y de paso ahorra un render)
+  useEffect(() => {
+    const t = setTimeout(() => setActivo(true), 0);
+    return () => clearTimeout(t);
+  }, []);
   const cables = useFlujoVivo(max, intervaloMs, activo);
   const [total, setTotal] = useState(0);
-  useEffect(() => setTotal(cables.length), [cables.length]);
+  useEffect(() => {
+    const t = setTimeout(() => setTotal(cables.length), 0);
+    return () => clearTimeout(t);
+  }, [cables.length]);
 
   return (
     <section className={cn("hud-panel p-0 overflow-hidden", className)} aria-label="Teletipo de mensajes en vivo">

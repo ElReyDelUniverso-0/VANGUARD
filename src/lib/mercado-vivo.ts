@@ -23,7 +23,11 @@ export type Ticker = {
 };
 export type Direccion = "sube" | "baja" | null;
 
-const INTERVALO = 5000;
+// v196.0 EL POZO ÚNICO — MERCADO A DIETA: 5s ahogaba el aparato (21 peticiones
+// en los primeros 40s). 9s sigue viéndose VIVO en la cinta (el flash de
+// sube/baja dura 900ms y el precio no es trading real) y recorta a la mitad
+// las peticiones y la batería gastada. Pausa en pestaña oculta: intacta.
+const INTERVALO = 9000;
 const VIDA_FLASH = 900;
 
 export function useMercadoVivo() {

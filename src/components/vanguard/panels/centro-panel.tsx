@@ -25,6 +25,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Activity, ArrowUpRight, Camera, Globe2, Loader2, Radio, RefreshCw, Satellite, Siren } from "lucide-react";
+import { pedirNoticias, pulsoCentro } from "@/lib/noticias-cache";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Flag } from "@/lib/flags";
@@ -65,9 +66,9 @@ export function CentroPanel() {
   const cargar = useCallback(async (silencioso = false) => {
     if (!silencioso) setCargando(true);
     try {
-      const r = await fetch("/api/news?modo=centro", { cache: "no-store" });
-      const j = await r.json();
-      const lista: Cable[] = Array.isArray(j?.items) ? j.items : [];
+      // v196: por el pozo único (balde CENTRO) — GUERRA HOY, el Centinela y
+      // las fichas beben la misma agua; si es fresca, cero red
+      const lista = (await pedirNoticias(false, "centro")) as Cable[];
       if (lista.length) {
         // el badge NUEVO solo cuenta cables nacidos después de la primera carga
         let n = 0;
@@ -84,7 +85,7 @@ export function CentroPanel() {
         setItems(lista);
         try { localStorage.setItem("vanguard-centro-cache", JSON.stringify(lista.slice(0, 40))); } catch { /* lleno */ }
       }
-      setPulso(j?.pulso ?? null);
+      setPulso((pulsoCentro() as typeof pulso) ?? null);
     } catch {
       // la caché local sostiene la sala — la Agencia nunca calla
     } finally {

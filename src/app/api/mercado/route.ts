@@ -257,7 +257,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ ok: true, ts: Date.now(), activo, velas });
     }
     const lista = await tickers();
-    return NextResponse.json({ ok: true, ts: Date.now(), activos: lista });
+    // v196.0 EL POZO ÚNICO — MERCADO A DIETA: el latido general viaja cada 9s;
+    // la chispa de la cinta se dibuja igual con 14 puntos que con 60, pero la
+    // respuesta cae de ~32KB a ~12KB (≈21MB/hora quemados en móvil → ~7MB).
+    // El gráfico detallado NO se toca: pide ?id= y recibe la historia completa.
+    const ligera = lista.map((t) => ({ ...t, ch: Array.isArray(t.ch) ? t.ch.slice(-14) : t.ch }));
+    return NextResponse.json({ ok: true, ts: Date.now(), activos: ligera });
   } catch (e) {
     return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : "fallo de mercado" }, { status: 500 });
   }

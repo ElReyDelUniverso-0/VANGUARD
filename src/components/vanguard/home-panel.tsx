@@ -40,6 +40,8 @@ const CinematicaVanguard = dynamic(() => import("@/components/vanguard/cinematic
 import { PuertaVigo } from "@/components/vanguard/puerta-vigo";
 // v195.0 TU LADO — el muelle de atajos que aprende tu uso
 import { AtajosVanguard } from "@/components/vanguard/atajos-vanguard";
+// v196.0 EL POZO ÚNICO — la portada es el MAESTRO del pozo de noticias
+import { pedirNoticias } from "@/lib/noticias-cache";
 
 interface NewsItem {
   id: string;
@@ -209,15 +211,15 @@ export function HomePanel() {
       } catch { /* sin caché: sigue la carga de red */ }
     }, 0);
     const load = (attempt: number) => {
-      fetch("/api/news", { cache: "no-store" })
-        .then((r) => {
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          return r.json();
-        })
-        .then((data) => {
+      // v196: por el pozo único — el montaje bebe sin fuerza (si el agua es
+      // fresca, cero red: volver a la portada es instantáneo) y el latido de
+      // 60s es el MAESTRO que renueva el pozo para TODA la casa.
+      pedirNoticias(attempt > 0 ? false : esMaestro)
+        .then((lista) => {
           if (!alive) return;
+          const data = { items: lista };
           if (Array.isArray(data.items) && data.items.length > 0) {
-            const top = data.items.slice(0, 20); // v116: más señales en la portada (héroe + 4 + 8 + reserva)
+            const top = (data.items as NewsItem[]).slice(0, 20); // v116: más señales en la portada (héroe + 4 + 8 + reserva)
             setItems(top);
             setNewsOffline(false);
             try {
@@ -241,7 +243,9 @@ export function HomePanel() {
           }
         });
     };
+    let esMaestro = false; // el montaje bebe; el intervalo RENUEVA el pozo
     load(0);
+    esMaestro = true;
     const t = setInterval(() => load(0), 60_000);
     return () => {
       alive = false;
@@ -252,23 +256,19 @@ export function HomePanel() {
   }, [reloadTick]);
 
   // reloj vivo
+  // v196.0 EL POZO ÚNICO — UN SOLO CORAZÓN POR SEGUNDO: el reloj y la cuenta
+  // atrás de la crisis vivían en DOS intervalos separados y cada uno
+  // repintaba la portada entera cada segundo (2 renders/s de regalo). Ahora
+  // un único latido actualiza los dos estados en el mismo tick — misma
+  // hora en pantalla, la mitad de trabajo para el aparato.
   useEffect(() => {
+    const target = nextCrisisDate();
     const tick = () => {
       const d = new Date();
       setClock(
         d.toLocaleTimeString("es-ES", { hour12: false }) + " local · " +
         d.toLocaleTimeString("es-ES", { hour12: false, timeZone: "UTC" }) + " UTC"
       );
-    };
-    tick();
-    const t = setInterval(tick, 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  // cuenta atrás de la crisis semanal (domingo 20:00)
-  useEffect(() => {
-    const target = nextCrisisDate();
-    const tick = () => {
       const ms = Math.max(0, target.getTime() - Date.now());
       const h = Math.floor(ms / 3_600_000);
       const m = Math.floor((ms % 3_600_000) / 60_000);

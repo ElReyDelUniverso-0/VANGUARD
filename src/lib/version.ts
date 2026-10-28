@@ -962,6 +962,43 @@
 //      (vg196-voz-ajustes) y manda sobre el Consejo de Voces; botón PROBAR
 //      VOZ y RESTAURAR. El ayudante que escucha y entiende (VG-ASSIST)
 //      intacto: micrófono → /api/asistente → obedece → responde con voz.
-export const APP_VERSION = "v196.0";
-export const APP_CODENAME = "LA VOZ QUE SE PROGRAMA";
+// (su export v196.0 quedó registrado aquí; el export activo está al final)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// v197.0 EL POZO ÚNICO — mandato del Dueño («optimiza más vanguard, no
+//         elimines nada importante, busca lo que ocupa más espacio
+//         innecesario y lo mal optimizado, y que vanguard corra más rápido»),
+//         sobre v195.0 TU LADO de la ley hermana (fetch antes de tocar; su
+//         obra intacta). Autopsia con navegador y perfil limpio sobre la casa
+//         viva: primera visita = 1714KB (1147KB de JS en 74 archivos) PERO el
+//         verdadero ahogo estaba en los DATOS del runtime: /api/news caía 8
+//         veces en los primeros 40s (481KB — news-strip, hud-header,
+//         home-panel y teletipo cada uno pedía SU copia) y /api/mercado 21
+//         veces (610KB — latido cada 5s con 60 puntos de historia por activo,
+//         ~23MB/hora quemados en móvil). Cura en 5 frentes SIN borrar nada
+//         importante (los videos y subidas del Dueño NO se tocan):
+//   ① EL POZO DE NOTICIAS (lib/noticias-cache.ts): una sola fuente de agua
+//      para toda la casa — TTL de 45s (dentro de la ventana, cero red), vuelo
+//      compartido (dos peticiones a la vez = UNA viaja), errores compartidos
+//      (se acabó la tormenta de reintentos en señal débil). Migrados:
+//      news-strip, hud-header, home-panel (su latido de 60s es el MAESTRO que
+//      trae agua fresca) y teletipo-vivo. La API no cambia un byte.
+//   ② MERCADO A DIETA (api/mercado + lib/mercado-vivo): la chispa de la cinta
+//      se dibuja igual con 14 puntos que con 60 → respuesta 32KB→~12KB; el
+//      latido 5s→9s (la pausa en pestaña oculta quedaba intacta). El gráfico
+//      detallado sigue pidiendo ?id= con su historia completa de velas.
+//   ③ UN SOLO CORAZÓN POR SEGUNDO (home-panel): el reloj y la cuenta atrás de
+//      la crisis tenían DOS intervalos de 1s y cada uno repintaba la portada
+//      entera — ahora un único latido actualiza los dos estados (misma hora
+//      en pantalla, la mitad de renders).
+//   ④ TEXTURAS DEL GLOBO A DIETA: 4096px es sobremedida para una esfera que
+//      en pantalla mide ~600px — earth-blue-marble 1427KB→208KB y
+//      earth-night 698KB→85KB (2048px, quality 78, ojo no nota diferencia).
+//      El mapa 3D baja de 2.1MB a 0.3MB al abrir OSINT/TIERRA.
+//   ⑤ LO QUE NO SE TOCA: los videos del Dueño (V-0XX.mp4) y las subidas del
+//      pueblo (uploads/) quedan INTACTOS — contenido, no basura; el watchdog
+//      (ping 30s), presence y visitas se quedan (vigías de la casa); el CSS
+//      y el prerender SSR no se podan (riesgo de romper leyes > ganancia).
+export const APP_VERSION = "v197.0";
+export const APP_CODENAME = "EL POZO ÚNICO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

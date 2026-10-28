@@ -23,6 +23,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Camera, Layers, Satellite, Stamp, X } from "lucide-react";
+import { pedirNoticias } from "@/lib/noticias-cache";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Flag } from "@/lib/flags";
@@ -91,9 +92,9 @@ export function FichasPanel() {
   const cargar = useCallback(async (silencioso = false) => {
     if (!silencioso) setCargando(true);
     try {
-      const r = await fetch("/api/news?modo=centro", { cache: "no-store" });
-      const j = await r.json();
-      const lista: Cable[] = Array.isArray(j?.items) ? j.items : [];
+      // v196: por el pozo único (balde CENTRO) — las fichas beben la misma
+      // agua que el Centinela y GUERRA HOY; si es fresca, cero red
+      const lista = (await pedirNoticias(false, "centro")) as Cable[];
       if (lista.length) {
         setItems(lista);
         try { localStorage.setItem("vanguard-fichas-cache", JSON.stringify(lista.slice(0, 48))); } catch { /* lleno */ }

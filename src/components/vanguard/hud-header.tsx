@@ -23,6 +23,7 @@ import { TituloLetras3D } from "@/components/vanguard/letras-3d";
 // cero enlaces externos) + chip vivo de EL ARQUITECTO (navega a su sala)
 import { useArquitecto } from "@/lib/arquitecto";
 import { navigateTo } from "@/lib/nav";
+import { pedirNoticias } from "@/lib/noticias-cache";
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 import { Radio, Bot } from "lucide-react";
 // v126.0 LA CASA · ATELIER — la serie grabada del visitante (Ley de la artesanía)
@@ -115,10 +116,10 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
     let viva = true;
     const pide = async () => {
       try {
-        const r = await fetch("/api/news", { signal: AbortSignal.timeout(12000) });
-        const j = await r.json();
-        if (!viva || !Array.isArray(j?.items)) return;
-        const cs: CableLectura[] = j.items.slice(0, 8).map((it: Record<string, unknown>) => ({
+        // v196: por el pozo único — misma agua para toda la casa
+        const items = await pedirNoticias();
+        if (!viva || !Array.isArray(items)) return;
+        const cs: CableLectura[] = (items as Record<string, unknown>[]).slice(0, 8).map((it: Record<string, unknown>) => ({
           id: String(it.id ?? it.url ?? Math.random().toString(36).slice(2)),
           title: String(it.title ?? ""),
           url: String(it.url ?? ""),

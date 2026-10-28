@@ -19,6 +19,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { storageBlindado } from "@/lib/storage-blindado";
 import { bitacoraViva } from "@/lib/bitacora";
 import { edicionVigente } from "@/lib/luxe";
+import { pedirNoticias } from "@/lib/noticias-cache";
 
 export interface AgenteLibre {
   id: string;
@@ -265,9 +266,9 @@ export function instalarMotorAgentes(): MotorDetener {
         const j = await r.json();
         detalle = j?.version ? `salud OK · ${j.version}` : "salud OK";
       } else if (a.id === "editor") {
-        const r = await fetch("/api/news", { cache: "no-store" });
-        const j = await r.json();
-        const n = Array.isArray(j?.items) ? j.items.length : 0;
+        // v196: por el pozo único — el editor solo CUENTA cables; si el agua
+        // es fresca, cero red y la cifra sigue siendo la real
+        const n = (await pedirNoticias()).length;
         detalle = n > 0 ? `${n} cables en la red` : "la red en silencio";
       } else if (a.id === "cartografo") {
         detalle = "34 pines sobre sus sedes reales";

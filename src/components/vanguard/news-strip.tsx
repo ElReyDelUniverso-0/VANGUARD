@@ -9,6 +9,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Newspaper, Clock, ArrowUpRight } from "lucide-react";
+import { pedirNoticias } from "@/lib/noticias-cache";
 
 interface Item {
   id: string;
@@ -32,11 +33,11 @@ export function NewsStrip() {
 
   useEffect(() => {
     let alive = true;
-    fetch("/api/news", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => {
-        if (alive && Array.isArray(d?.items) && d.items.length > 0) {
-          setItems(d.items.slice(0, 5));
+    // v196: por el pozo único — si el agua está fresca, cero red
+    pedirNoticias()
+      .then((lista) => {
+        if (alive && Array.isArray(lista) && lista.length > 0) {
+          setItems((lista as Item[]).slice(0, 5));
         }
       })
       .catch(() => {});

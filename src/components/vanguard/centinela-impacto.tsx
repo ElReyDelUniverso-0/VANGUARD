@@ -14,6 +14,7 @@
 
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { pedirNoticias } from "@/lib/noticias-cache";
 
 const LS_VISTOS = "vg180-vistos";
 const LS_VOZ = "vg180-voz-alertas";
@@ -82,18 +83,15 @@ export function CentinelaImpacto() {
     const sondea = async () => {
       if (muerto || document.hidden) return; // pestaña oculta: el radar respira
       try {
-        const r = await fetch("/api/news?modo=centro", { cache: "no-store" });
-        if (!r.ok) return;
-        const d = (await r.json()) as {
-          items?: {
-            id: string;
-            title?: string;
-            paisNombre?: string;
-            impacto?: number | string;
-            tier?: string;
-          }[];
-        };
-        const items = d.items || [];
+        // v196: por el pozo único (balde CENTRO) — el Centinela bebe la misma
+        // agua que las fichas y GUERRA HOY; si es fresca, cero red
+        const items = (await pedirNoticias(false, "centro")) as {
+          id: string;
+          title?: string;
+          paisNombre?: string;
+          impacto?: number | string;
+          tier?: string;
+        }[];
         if (!items.length) return;
 
         if (!sembrado) {
