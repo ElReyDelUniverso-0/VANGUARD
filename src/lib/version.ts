@@ -860,6 +860,19 @@
 //     Ley de la casa respetada: jamás antes de 75s de vida, jamás con
 //     la pestaña oculta ni movimiento reducido ni la casa muerta,
 //     pointer-events none, 0 bytes de red, se retira solo.
-export const APP_VERSION = "v191.0";
-export const APP_CODENAME = "EL ALGORITMO";
+// v192.0 EL ESTRENO — el Dueño pidió cinemáticas, portadas distintas y
+//         voces de agentes claras/diferentes/menos robóticas, y aquí van
+//         las TRES con las leyes respetadas: (1) EL CONSEJO DE VOCES —
+//         cada agente con voz PROPIA (pitch/rate/voiceURI distinta por
+//         reparto estable, rate humano 0.86–1.06, preferencia por
+//         neuronales): CENTINELA grave, LA ANALISTA brillante, VG-ASSIST
+//         de mando, EL NARRADOR de radio; (2) PORTADAS VIVAS — cuatro
+//         portadas cinematográficas seleccionables para el inicio con
+//         AUTO-rotación CSS (NADA se recarga solo) y cero imágenes;
+//         (3) LA CINEMÁTICA DEL ESTRENO — tráiler de la Casa que JAMÁS
+//         corre durante la carga, se estrena UNA vez por versión solo si
+//         la casa despertó sana, SALTAR GIGANTE siempre y cero bytes de
+//         red: los agentes se presentan hablando con sus voces nuevas.
+export const APP_VERSION = "v192.0";
+export const APP_CODENAME = "EL ESTRENO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

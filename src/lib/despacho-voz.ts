@@ -1,15 +1,17 @@
 // ============================================================
-// v119.0 CRONOTEATRO — LA VOZ DEL PARTE
+// v119.0 CRONOTEATRO — LA VOZ DEL PARTE · v191.0 CONSEJO DE VOCES
 // Los DESPACHOS DEL FRENTE se leen en voz alta: la casa narra
-// su propio parte de campaña. Síntesis del navegador (es-ES,
-// ritmo de operador de radio), cero servicios externos, cero
-// coste, cero copyright — la voz nace en la máquina del
-// comandante. Respeta el MUTE global de la casa: si Vanguard
-// está silenciado, el parte no habla.
+// su propio parte de campaña. Síntesis del navegador, cero
+// servicios externos, cero coste, cero copyright.
+// v191: el narrador YA NO usa la voz genérica — tiene voz PROPIA
+// (grave, pausada, de operador de radio) dentro del Consejo de
+// Voces de Vanguard (src/lib/voces-agentes.ts). Respeta el MUTE
+// global de la casa: si Vanguard está silenciado, no habla.
 // Contrato: una sola voz activa; cambiar de día la corta.
 // ============================================================
 
 import { isMuted } from "./sound";
+import { hablarAgente } from "./voces-agentes";
 import type { Despacho } from "./frente-zonas-data";
 
 let hablando = false;
@@ -33,6 +35,7 @@ export function callarVoz() {
 
 /**
  * Narra el parte del día: «Día 12 de campaña. 06:40, Sector Norte: ...».
+ * v191: con la voz PROPIA del NARRADOR (Consejo de Voces).
  * Devuelve false si la casa está silenciada o la voz no existe.
  */
 export function narrarDespachos(dia: number, despachos: Despacho[]): boolean {
@@ -44,14 +47,10 @@ export function narrarDespachos(dia: number, despachos: Despacho[]): boolean {
     ...despachos.map((d) => `${d.hora}. ${d.sector.toLowerCase()}: ${d.texto}`),
     "Fin del parte. Vanguard, cronoteatro.",
   ];
-  const u = new SpeechSynthesisUtterance(frases.join(" "));
-  u.lang = "es-ES";
-  u.rate = 0.97;
-  u.pitch = 0.88;
-  u.volume = 0.9;
-  u.onend = () => { hablando = false; };
-  u.onerror = () => { hablando = false; };
-  window.speechSynthesis.speak(u);
-  hablando = true;
-  return true;
+  const ok = hablarAgente("narrador", frases.join(" "), {
+    onend: () => { hablando = false; },
+    onerror: () => { hablando = false; },
+  });
+  hablando = ok;
+  return ok;
 }

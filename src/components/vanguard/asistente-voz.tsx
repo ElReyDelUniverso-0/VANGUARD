@@ -14,6 +14,8 @@ import { createPortal } from "react-dom";
 import { Mic, X, Send, Loader2, Volume2 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+// v191 EL CONSEJO DE VOCES — VG-ASSIST y el CENTINELA con voz PROPIA
+import { hablarAgente } from "@/lib/voces-agentes";
 
 // ── tipos mínimos de la Web Speech API (sin @types externos) ──
 interface SRResultadoItem {
@@ -173,32 +175,18 @@ export function AsistenteVoz() {
 
   const tieneVoz = useMemo(() => ctorSR() !== null, []);
 
-  // ── BOCA: habla la respuesta con la voz del aparato ──
+  // ── BOCA: habla la respuesta con la voz PROPIA de VG-ASSIST (v191 —
+  //    antes: rate 1.18 con la primera voz del aparato, apresurada y
+  //    robótica; ahora el Consejo de Voces le da identidad clara y humana) ──
   const hablar = useCallback((texto: string) => {
-    try {
-      const synth = window.speechSynthesis;
-      if (!synth || !texto) return;
-      synth.cancel();
-      const u = new SpeechSynthesisUtterance(texto);
-      const idioma = LANG_SR[lang] || "es-ES";
-      u.lang = idioma;
-      u.rate = 1.18; // rápida y llamativa (el ADN del tráiler)
-      u.pitch = 0.95; // tirando a voz masculina
-      const voces = synth.getVoices();
-      const exacta = voces.find((v) => v.lang.replace("_", "-") === idioma);
-      const base = voces.find((v) => v.lang.startsWith(lang));
-      if (exacta) u.voice = exacta;
-      else if (base) u.voice = base;
-      u.onend = () => { estadoRef.current = "dormido"; setEstado("dormido"); };
-      u.onerror = () => { estadoRef.current = "dormido"; setEstado("dormido"); };
-      estadoRef.current = "hablando";
-      setEstado("hablando");
-      synth.speak(u);
-    } catch {
-      estadoRef.current = "dormido";
-      setEstado("dormido");
-    }
-  }, [lang]);
+    if (!texto) return;
+    estadoRef.current = "hablando";
+    setEstado("hablando");
+    hablarAgente("assist", texto, {
+      onend: () => { estadoRef.current = "dormido"; setEstado("dormido"); },
+      onerror: () => { estadoRef.current = "dormido"; setEstado("dormido"); },
+    });
+  }, []);
 
   // ── CEREBRO → MANOS: manda el texto y ejecuta la acción que vuelva ──
   const despachar = useCallback(async (texto: string) => {
@@ -314,7 +302,8 @@ export function AsistenteVoz() {
       if (!d.texto) return;
       setRespuesta(d.texto);
       setBriefing([]);
-      hablar(d.texto); // la boca del radar: el cable URGENTE se anuncia solo
+      // v191: la boca del radar tiene voz PROPIA — grave, de CENTINELA
+      hablarAgente("centinela", d.texto); // el cable URGENTE se anuncia solo
     };
     window.addEventListener("vg:asistente-anunciar", anuncia);
     return () => window.removeEventListener("vg:asistente-anunciar", anuncia);

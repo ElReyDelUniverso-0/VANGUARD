@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Castle, Radar, Rocket, Swords, Joystick, Fingerprint, Coins, TrendingUp,
-  Newspaper, ChevronRight, Menu, Clock, Zap, ShieldAlert, Gift, BookOpen,
+  Newspaper, ChevronRight, Menu, Zap, ShieldAlert, Gift, BookOpen,
   SignalHigh,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { APP_VERSION_LABEL } from "@/lib/version";
 import { LaunchCountdown } from "@/components/vanguard/launch-countdown";
 import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";
@@ -30,6 +29,9 @@ import { Escena3D, escenaDePanel, hashDe } from "@/components/vanguard/escenas-3
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 // v116.0 — portada 3D viva para el héroe (adiós al <img> plano)
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
+// v191.0 EL ESTRENO — portadas vivas seleccionables + cinemática legal
+import { PortadasInicio } from "@/components/vanguard/portadas-inicio";
+import { CinematicaVanguard } from "@/components/vanguard/cinematica-vanguard";
 
 interface NewsItem {
   id: string;
@@ -170,6 +172,8 @@ export function HomePanel() {
   const [crisisIn, setCrisisIn] = useState("");
   // v116: la SALA DE LECTURA — el cable abierto dentro de la casa
   const [lector, setLector] = useState<CableLectura | null>(null);
+  // v191: el cine del estreno (una vez por versión + botón VER CINEMÁTICA)
+  const [cine, setCine] = useState(false);
 
   // tensión mundial = intensidad media de los conflictos activos
   const tension = useMemo(
@@ -346,87 +350,21 @@ export function HomePanel() {
       {/* v31: cuenta atrás al GRAN ESTRENO MUNDIAL */}
       <LaunchCountdown />
 
-      {/* ====== HERO: identidad + estado (v16: anillo aurora giratorio) ====== */}
-      <div className="hero-ring">
-        <div className="hud-panel hud-corner p-5 sm:p-7 section-gradient relative overflow-hidden">
-          <div className="radar-sweep opacity-40" aria-hidden />
-          <div className="absolute -top-16 -right-10 w-64 h-64 rounded-full blur-3xl opacity-30 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(232, 197, 106,0.5), transparent 70%)" }} aria-hidden />
-          <div className="absolute -bottom-20 -left-10 w-56 h-56 rounded-full blur-3xl opacity-25 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(168,85,247,0.4), transparent 70%)" }} aria-hidden />
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-5">
-          <div>
-            <div className="text-[10px] font-mono uppercase tracking-[0.35em] text-cyan-hud mb-2">
-              Centro de mando global
-            </div>
-            <h1
-              className="glitch font-display text-3xl sm:text-5xl font-black tracking-wider text-soft"
-              data-text="VANGUARD"
-              style={{ textShadow: "0 0 26px rgba(232, 197, 106,0.35)" }}
-            >
-              VANGUARD
-            </h1>
-            <div className="mt-1.5 flex items-center gap-2">
-              <span className="text-gradient font-mono text-[10px] font-bold uppercase tracking-[0.3em]">
-                {APP_VERSION_LABEL}
-              </span>
-              <span className="h-px w-16 bg-gradient-to-r from-[#E8C56A]/60 to-transparent" aria-hidden />
-            </div>
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-              El mundo en tiempo real: noticias, guerra, economía e inteligencia
-              en una sola plataforma. Todos los mapas, ahora en 3D.
-            </p>
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] font-mono text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5 glass rounded-sm px-2 py-1">
-                <Clock className="w-3 h-3 text-cyan-hud" /> {clock}
-              </span>
-              <span className="inline-flex items-center gap-1.5 glass rounded-sm px-2 py-1">
-                <Zap className="w-3 h-3 text-amber" /> Nivel {level} · {coins} mon
-              </span>
-              {streak > 0 && (
-                <span className="inline-flex items-center gap-1.5 glass rounded-sm px-2 py-1">
-                  Racha {streak} días
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1.5 glass rounded-sm px-2 py-1 text-foreground">
-                Agente {alias || "sin registrar"}
-              </span>
-            </div>
-          </div>
-
-          {/* termómetro de tensión mundial (v16: cristal + glow) */}
-          <div className="min-w-[240px] hud-corner p-4 glass border-amber-hud relative overflow-hidden">
-            <div className="absolute -right-8 -top-8 w-24 h-24 rounded-full blur-2xl opacity-40 pointer-events-none" style={{ background: tensionColor }} aria-hidden />
-            <div className="relative z-10">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                Tensión mundial
-              </span>
-              <ShieldAlert className="w-4 h-4" style={{ color: tensionColor }} />
-            </div>
-            <div className="mt-1 flex items-end gap-2">
-              <span className="font-tech text-4xl font-bold leading-none" style={{ color: tensionColor, textShadow: `0 0 18px ${tensionColor}66` }}>
-                {tension}
-              </span>
-              <span className="text-[10px] font-mono text-muted-foreground mb-1">/ 100</span>
-            </div>
-            <div className="mt-2 h-2.5 rounded-full bg-black/50 overflow-hidden border border-border/60 relative">
-              <motion.div
-                className="h-full rounded-full relative"
-                style={{ background: `linear-gradient(90deg, #3DDC97, #E8C56A, #FF8A3B, #FF3B30)`, boxShadow: `0 0 12px ${tensionColor}88` }}
-                initial={{ width: 0 }}
-                animate={{ width: `${tension}%` }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
-              >
-                <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white blink-soft" />
-              </motion.div>
-            </div>
-            <div className="mt-1.5 text-[9px] font-mono text-muted-foreground">
-              {CONFLICTS.length} conflictos activos monitorizados
-            </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
+      {/* ====== v191.0 PORTADAS VIVAS — el héroe del inicio ya no es fijo:
+          cuatro portadas cinematográficas seleccionables (amanecer, ciudad,
+          alerta roja, órbita) + botón VER CINEMÁTICA + prueba de voces.
+          El héroe v16 queda jubilado con honor. Cero imágenes pesadas. ====== */}
+      <PortadasInicio
+        tension={tension}
+        tensionColor={tensionColor}
+        conflictos={CONFLICTS.length}
+        clock={clock}
+        level={level}
+        coins={coins}
+        streak={streak}
+        alias={alias || ""}
+        onVerCinematica={() => setCine(true)}
+      />
 
       {/* ====== ÚLTIMA HORA — LAS NOTICIAS PRIMERO ====== */}
       <div>
@@ -783,6 +721,10 @@ export function HomePanel() {
       {/* v116: LA SALA DE LECTURA — el cable abierto dentro de la casa,
           nunca una pestaña externa (mandato del comandante) */}
       <LectorNoticia cable={lector} onCerrar={() => setLector(null)} />
+
+      {/* v191: LA CINEMÁTICA DEL ESTRENO — se auto-estrena UNA sola vez
+          (casa despierta y sesión sana) y siempre queda el botón en portada */}
+      <CinematicaVanguard abierto={cine} alCerrar={() => setCine(false)} />
     </div>
   );
 }

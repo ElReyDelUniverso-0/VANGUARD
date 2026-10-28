@@ -58,6 +58,19 @@ export const BITACORA: EntradaBitacora[] = [
     ],
   },
   {
+    version: "v192.0",
+    nombre: "EL ESTRENO",
+    tipo: "reten",
+    hitos: [
+      "EL DUEÑO LO PIDIÓ («haz unas cinemáticas y diferentes portadas — el inicio es aburrido — y las voces de los agentes no me gustan: que tengan diferentes voces, más claras y menos robóticas») y v191 cumple las TRES: cinemática, portadas vivas y Consejo de Voces",
+      "EL CONSEJO DE VOCES — cada agente de Vanguard tiene voz PROPIA: CENTINELA (grave 0.72, radar), LA ANALISTA (clara y brillante 1.22, briefings), VG-ASSIST (neutral de mando, órdenes) y EL NARRADOR (operador de radio, parte del frente); voces DISTINTAS por reparto estable de voiceURI (si el aparato tiene ≥2 voces en español nadie comparte), preferencia por neuronales (Google/Natural), rate humano 0.86–1.06 (adiós al 1.18 apresurado) y una sola voz activa en la casa",
+      "PORTADAS VIVAS — el héroe del inicio ya no es fijo: CUATRO portadas cinematográficas seleccionables (AMANECER TÁCTICO, CIUDAD CERO, ALERTA ROJA, ÓRBITA SECRETA) con AUTO-rotación de 9s que solo cambia CSS (NADA se recarga solo), elección guardada (vg191-portada), chips del agente + reloj + tensión mundial integrados y cero imágenes (todo CSS/SVG: la lección v189 de los 1.3MB de fotos está escrita en piedra)",
+      "LA CINEMÁTICA DEL ESTRENO — el tráiler de la Casa que cumple las leyes v187/v189 al pie de la letra: JAMÁS durante la carga (solo document.readyState complete + 1.6s), UNA sola vez por versión (vg191-cine-visto), NO se estrena si la sesión sufrió (vg186-n / vg187-sufrio), se cancela si el Dueño ya interactúa, SALTAR GIGANTE arriba y abajo + tecla Esc, subtítulos siempre y CERO bytes de red (CSS/SVG + WebAudio de la casa)",
+      "LAS VOCES SON PROTAGONISTAS: en el cine CENTINELA, LA ANALISTA y VG-ASSIST se presentan cada uno con su voz y subtítulo; botón PROBAR VOCES en la portada para oír el Consejo completo cuando el Dueño quiera",
+      "QA v191: tsc 0, lint 0, dev.log limpio, navegador: portadas cambian con ‹ › y AUTO, cinemática saltable al instante, PROBAR VOCES encadena las tres voces, guards v167 + piedra v184 + relevo v183.1 + socorrista v185 + leyes v190 intactos",
+    ],
+  },
+  {
     version: "v188.0",
     nombre: "EL PACIENTE",
     tipo: "tecno",

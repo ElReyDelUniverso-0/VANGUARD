@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v122 INTEL EN VIVO: los cables REALES de la casa leídos DENTRO del briefing
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+// v191 EL CONSEJO DE VOCES — el briefing habla con la voz PROPIA de LA ANALISTA
+import { hablarAgente, pararVoces } from "@/lib/voces-agentes";
 
 const levelColor: Record<AlertLevel, string> = {
   CRITICO: "text-red-hud border-red-hud bg-red-hud/30",
@@ -122,14 +124,15 @@ export function DailyBriefingPanel() {
   const dateStr = now.toLocaleDateString("es", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
   const timeStr = now.toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" });
 
-  // v13 — BRIEFING EN AUDIO (text-to-speech del navegador)
+  // v13 — BRIEFING EN AUDIO — v191: con la voz PROPIA de LA ANALISTA
+  // (clara y brillante, del Consejo de Voces — ya no la voz genérica)
   const speakBriefing = () => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       toast.error("Tu navegador no soporta síntesis de voz");
       return;
     }
     if (ttsState === "playing") {
-      window.speechSynthesis.cancel();
+      pararVoces();
       setTtsState("idle");
       return;
     }
@@ -140,16 +143,17 @@ export function DailyBriefingPanel() {
       "Los frentes prioritarios:",
       ...briefing.topConflicts.map((c, i) => `${i + 1}. ${c.name}. Intensidad ${c.intensity} de 100. ${c.summary}`),
     ];
-    const u = new SpeechSynthesisUtterance(lines.join(" "));
-    u.lang = "es-ES";
-    u.rate = 1.02;
-    u.pitch = 0.95;
-    u.onend = () => setTtsState("idle");
-    u.onerror = () => setTtsState("idle");
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
+    const ok = hablarAgente("analista", lines.join(" "), {
+      onend: () => setTtsState("idle"),
+      onerror: () => setTtsState("idle"),
+    });
+    if (!ok) {
+      setTtsState("idle");
+      toast.error("La casa está silenciada — activa el sonido para oír el briefing");
+      return;
+    }
     setTtsState("playing");
-    toast.success("Escuchando el briefing — los 10 puntos que debes saber hoy");
+    toast.success("La Analista lee el briefing — los 10 puntos que debes saber hoy");
   };
 
   return (
