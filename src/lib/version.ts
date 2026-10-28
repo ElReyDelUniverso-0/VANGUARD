@@ -944,6 +944,24 @@
 //      cuenta, pregúntale de qué lado está de cualquier problema, también
 //      apostar, agrega atajos, agrega más redes, fortalece las ya hechas
 //      y busca bugs».
-export const APP_VERSION = "v195.0";
-export const APP_CODENAME = "TU LADO";
+// v196.0 LA VOZ QUE SE PROGRAMA — Mandato del Dueño: «mejórame la voz, esa
+//      voz se traba, es robótica; inspírate en la voz de ChatGPT: real,
+//      original, suave, sutil, que las personas la quieran escuchar, que la
+//      puedan programar, como un ayudante de Vanguard que escuche y
+//      entienda». Cura del motor v191 en 4 frentes: (1) TROCEO — el texto
+//      viaja en frases ≤190 chars encadenadas sin costuras (Chrome cortaba
+//      toda emisión >15s y el onend nunca llegaba: la voz moría a media
+//      frase); (2) RESPIRO — 70ms entre cancel() y speak() (Chrome se
+//      enganchaba y escupía audio roto); (3) VIGÍA ANTI-TRABA cada 2.5s —
+//      trozo que excede su tiempo estimado se salta y el discurso SE CURA
+//      SOLO, voz pausada por el aparato se despierta; (4) ANTI-ROBÓTICA —
+//      eSpeak/Compact/Pico penalizados, neuronales (Google/Natural/
+//      Enhanced/Premium) mandan, pitch/rate calmados cerca de lo humano.
+//      LA VOZ SE PROGRAMA: panel en VG-ASSIST (engranaje) — voz concreta,
+//      velocidad, tono, volumen y pausas naturales, se graba en el aparato
+//      (vg196-voz-ajustes) y manda sobre el Consejo de Voces; botón PROBAR
+//      VOZ y RESTAURAR. El ayudante que escucha y entiende (VG-ASSIST)
+//      intacto: micrófono → /api/asistente → obedece → responde con voz.
+export const APP_VERSION = "v196.0";
+export const APP_CODENAME = "LA VOZ QUE SE PROGRAMA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -11,11 +11,22 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Mic, X, Send, Loader2, Volume2 } from "lucide-react";
+import { Mic, X, Send, Loader2, Volume2, Settings2, Play, RotateCcw } from "lucide-react";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 // v191 EL CONSEJO DE VOCES — VG-ASSIST y el CENTINELA con voz PROPIA
-import { hablarAgente } from "@/lib/voces-agentes";
+// v196 LA VOZ SE PROGRAMA — la persona elige voz, velocidad, tono, volumen
+import {
+  hablarAgente,
+  leerAjustes,
+  guardarAjustes,
+  restablecerAjustes,
+  vocesLista,
+  type AjustesVoz,
+  type VozLista,
+} from "@/lib/voces-agentes";
+
+const AJUSTES_INICIALES: AjustesVoz = { vozURI: null, velocidad: 1, tono: 1, volumen: 0.9, pausas: true };
 
 // ── tipos mínimos de la Web Speech API (sin @types externos) ──
 interface SRResultadoItem {
@@ -126,6 +137,52 @@ const TXT = {
     pt: "ou escreve a ordem…", fr: "ou écris l'ordre…", de: "oder Befehl tippen…",
     it: "o scrivi l'ordine…", ru: "или напишите приказ…", zh: "或输入指令…",
   } as Record<string, string>,
+  // v196 LA VOZ SE PROGRAMA — panel de la voz del ayudante
+  vTitulo: {
+    es: "LA VOZ SE PROGRAMA", en: "PROGRAM THE VOICE", pt: "PROGRAME A VOZ", fr: "PROGRAMMEZ LA VOIX",
+    de: "STIMME PROGRAMMIEREN", it: "PROGRAMMA LA VOCE", ru: "НАСТРОЙ ГОЛОС", zh: "声音可编程",
+  } as Record<string, string>,
+  vAuto: {
+    es: "Automática · la mejor de tu aparato", en: "Automatic · best on your device",
+    pt: "Automática · a melhor do aparelho", fr: "Auto · la meilleure de l'appareil",
+    de: "Automatisch · beste deines Geräts", it: "Automatica · la migliore del dispositivo",
+    ru: "Авто · лучшая на устройстве", zh: "自动 · 设备最佳",
+  } as Record<string, string>,
+  vVel: { es: "VELOCIDAD", en: "SPEED", pt: "VELOCIDADE", fr: "VITESSE", de: "TEMPO", it: "VELOCITÀ", ru: "СКОРОСТЬ", zh: "速度" } as Record<string, string>,
+  vTono: { es: "TONO", en: "PITCH", pt: "TONALIDADE", fr: "TON", de: "TONLAGE", it: "TONO", ru: "ТОН", zh: "音调" } as Record<string, string>,
+  vVol: { es: "VOLUMEN", en: "VOLUME", pt: "VOLUME", fr: "VOLUME", de: "LAUTSTÄRKE", it: "VOLUME", ru: "ГРОМКОСТЬ", zh: "音量" } as Record<string, string>,
+  vPausas: {
+    es: "PAUSAS NATURALES", en: "NATURAL PAUSES", pt: "PAUSAS NATURAIS", fr: "PAUSES NATURELLES",
+    de: "NATÜRLICHE PAUSEN", it: "PAUSE NATURALI", ru: "ЕСТЕСТВЕННЫЕ ПАУЗЫ", zh: "自然停顿",
+  } as Record<string, string>,
+  vProbar: {
+    es: "PROBAR VOZ", en: "TEST VOICE", pt: "TESTAR VOZ", fr: "TESTER LA VOIX",
+    de: "STIMME TESTEN", it: "PROVA VOCE", ru: "ПРОВЕРИТЬ ГОЛОС", zh: "试听",
+  } as Record<string, string>,
+  vRestaurar: {
+    es: "RESTAURAR", en: "RESET", pt: "RESTAURAR", fr: "RÉINITIALISER",
+    de: "ZURÜCKSETZEN", it: "RIPRISTINA", ru: "СБРОС", zh: "恢复",
+  } as Record<string, string>,
+  vSinVoces: {
+    es: "Tu aparato aún no lista voces — reintenta en unos segundos.",
+    en: "Your device hasn't listed voices yet — retry in a few seconds.",
+    pt: "O aparelho ainda não lista vozes — tenta em segundos.",
+    fr: "L'appareil n'a pas encore listé de voix — réessaie.",
+    de: "Dein Gerät listet noch keine Stimmen — versuch es gleich nochmal.",
+    it: "Il dispositivo non ha ancora voci — riprova tra poco.",
+    ru: "Устройство ещё не дало голоса — повторите позже.",
+    zh: "设备尚未列出语音 — 请稍后重试。",
+  } as Record<string, string>,
+  vFrase: {
+    es: "Así suena tu ayudante ahora. Voz clara, suave y a tu servicio, comandante.",
+    en: "This is how your assistant sounds now. Clear, soft, at your service, commander.",
+    pt: "Assim soa teu ajudante agora. Voz clara e suave, à tua ordem.",
+    fr: "Voici ma voix maintenant. Claire, douce, à votre service.",
+    de: "So klingt dein Helfer jetzt. Klar, sanft, zu deinen Diensten.",
+    it: "Così suona il tuo assistente. Voce chiara e morbida, ai tuoi ordini.",
+    ru: "Так звучит твой помощник. Ясно, мягко, к твоим услугам.",
+    zh: "这就是你的助手现在的声音。清晰柔和，听你指挥。",
+  } as Record<string, string>,
 };
 
 type Estado = "dormido" | "escuchando" | "pensando" | "hablando";
@@ -144,6 +201,10 @@ export function AsistenteVoz() {
   const [briefing, setBriefing] = useState<{ titulo: string; pais: string; impacto: number; tier: string; edad?: string }[]>([]);
   // v180: voz de las alertas del Centinela (ON por defecto, honesta: se puede callar)
   const [vozAlertas, setVozAlertas] = useState(true);
+  // v196 LA VOZ SE PROGRAMA — panel de ajustes de la voz
+  const [panelVoz, setPanelVoz] = useState(false);
+  const [ajustes, setAjustes] = useState<AjustesVoz>(AJUSTES_INICIALES);
+  const [voces, setVoces] = useState<VozLista[]>([]);
 
   const reconRef = useRef<Reconocedor | null>(null);
   const estadoRef = useRef<Estado>("dormido");
@@ -172,6 +233,22 @@ export function AsistenteVoz() {
     window.addEventListener("vg:asistente-contexto", lee);
     return () => window.removeEventListener("vg:asistente-contexto", lee);
   }, []);
+  // v196: ajustes REALES al despertar (lo grabado en el aparato manda)
+  useEffect(() => {
+    const t = setTimeout(() => setAjustes(leerAjustes()), 0);
+    return () => clearTimeout(t);
+  }, []);
+  // v196: catálogo de voces al abrir el panel (llegan TARDE en Chrome)
+  useEffect(() => {
+    if (!panelVoz) return;
+    let intentos = 0;
+    const t = setInterval(() => {
+      setVoces(vocesLista());
+      if (vocesLista().length > 0 || ++intentos > 15) clearInterval(t);
+    }, 600);
+    setVoces(vocesLista());
+    return () => clearInterval(t);
+  }, [panelVoz]);
 
   const tieneVoz = useMemo(() => ctorSR() !== null, []);
 
@@ -187,6 +264,17 @@ export function AsistenteVoz() {
       onerror: () => { estadoRef.current = "dormido"; setEstado("dormido"); },
     });
   }, []);
+
+  // ── v196 PROGRAMAR LA VOZ: cada cambio se graba en el aparato y el
+  //    motor lo obedece al instante (voz elegida, velocidad, tono, volumen) ──
+  const ponAjustes = useCallback((parche: Partial<AjustesVoz>, probar = false) => {
+    const n = { ...leerAjustes(), ...parche };
+    guardarAjustes(n);
+    setAjustes(n);
+    if (probar) {
+      window.setTimeout(() => hablar(TXT.vFrase[lang] || TXT.vFrase.es), 150);
+    }
+  }, [hablar, lang]);
 
   // ── CEREBRO → MANOS: manda el texto y ejecuta la acción que vuelva ──
   const despachar = useCallback(async (texto: string) => {
@@ -341,13 +429,24 @@ export function AsistenteVoz() {
               <span className={cn("w-2 h-2 rounded-full", estado === "dormido" ? "bg-muted-foreground" : "bg-green-hud blink-soft")} />
               <span className="font-mono text-[11px] tracking-[0.18em] text-amber">{TXT.llave[lang] || TXT.llave.es}</span>
             </div>
-            <button
-              onClick={() => setAbierto(false)}
-              className="p-1 rounded hover:bg-white/5 text-muted-foreground hover:text-foreground"
-              aria-label="Cerrar panel"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center gap-0.5">
+              {/* v196 LA VOZ SE PROGRAMA — el engranaje abre los ajustes de voz */}
+              <button
+                onClick={() => setPanelVoz((v) => !v)}
+                className={cn("p-1 rounded hover:bg-white/5", panelVoz ? "text-amber" : "text-muted-foreground hover:text-foreground")}
+                aria-label="Programar la voz"
+                title="Programar la voz"
+              >
+                <Settings2 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => setAbierto(false)}
+                className="p-1 rounded hover:bg-white/5 text-muted-foreground hover:text-foreground"
+                aria-label="Cerrar panel"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
           <div className="px-3 py-2.5 min-h-[64px] max-h-[150px] overflow-y-auto">
@@ -386,6 +485,86 @@ export function AsistenteVoz() {
               </ul>
             )}
           </div>
+
+          {/* v196 LA VOZ SE PROGRAMA — voz, velocidad, tono, volumen, pausas */}
+          {panelVoz && (
+            <div className="px-3 py-2.5 border-t border-amber-hud/15 space-y-2.5 max-h-[280px] overflow-y-auto">
+              <p className="font-mono text-[10px] tracking-[0.18em] text-amber/90">{TXT.vTitulo[lang] || TXT.vTitulo.es}</p>
+              <div>
+                <select
+                  value={ajustes.vozURI || "auto"}
+                  onChange={(e) => ponAjustes({ vozURI: e.target.value === "auto" ? null : e.target.value }, true)}
+                  className="w-full bg-black/30 border border-amber-hud/25 rounded-lg px-2 py-1.5 text-[11px] text-foreground focus:outline-none focus:border-amber-hud/50"
+                  aria-label="Elegir la voz"
+                >
+                  <option value="auto">{TXT.vAuto[lang] || TXT.vAuto.es}</option>
+                  {voces.map((v) => (
+                    <option key={v.uri} value={v.uri}>
+                      {v.nombre} · {v.etiqueta} · {v.lang}
+                    </option>
+                  ))}
+                </select>
+                {voces.length === 0 && (
+                  <p className="mt-1 text-[10px] leading-snug text-muted-foreground">{TXT.vSinVoces[lang] || TXT.vSinVoces.es}</p>
+                )}
+              </div>
+              <div className="grid grid-cols-[70px_1fr_44px] items-center gap-2">
+                <span className="font-mono text-[9px] tracking-wider text-muted-foreground">{TXT.vVel[lang] || TXT.vVel.es}</span>
+                <input
+                  type="range" min={0.7} max={1.3} step={0.05} value={ajustes.velocidad}
+                  onChange={(e) => ponAjustes({ velocidad: Number(e.target.value) })}
+                  className="w-full accent-amber" aria-label="Velocidad de la voz"
+                />
+                <span className="font-mono text-[10px] text-amber/90 text-right">×{ajustes.velocidad.toFixed(2)}</span>
+              </div>
+              <div className="grid grid-cols-[70px_1fr_44px] items-center gap-2">
+                <span className="font-mono text-[9px] tracking-wider text-muted-foreground">{TXT.vTono[lang] || TXT.vTono.es}</span>
+                <input
+                  type="range" min={0.75} max={1.25} step={0.05} value={ajustes.tono}
+                  onChange={(e) => ponAjustes({ tono: Number(e.target.value) })}
+                  className="w-full accent-amber" aria-label="Tono de la voz"
+                />
+                <span className="font-mono text-[10px] text-amber/90 text-right">×{ajustes.tono.toFixed(2)}</span>
+              </div>
+              <div className="grid grid-cols-[70px_1fr_44px] items-center gap-2">
+                <span className="font-mono text-[9px] tracking-wider text-muted-foreground">{TXT.vVol[lang] || TXT.vVol.es}</span>
+                <input
+                  type="range" min={0.3} max={1} step={0.05} value={ajustes.volumen}
+                  onChange={(e) => ponAjustes({ volumen: Number(e.target.value) })}
+                  className="w-full accent-amber" aria-label="Volumen de la voz"
+                />
+                <span className="font-mono text-[10px] text-amber/90 text-right">{Math.round(ajustes.volumen * 100)}%</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => ponAjustes({ pausas: !ajustes.pausas })}
+                  className={cn(
+                    "flex-1 min-w-0 px-2 py-1 rounded-lg border text-[10px] font-mono tracking-wide truncate",
+                    ajustes.pausas
+                      ? "border-green-hud/30 bg-green-hud/5 text-green-hud hover:bg-green-hud/15"
+                      : "border-muted-foreground/30 text-muted-foreground hover:bg-white/5"
+                  )}
+                  aria-label="Activar o desactivar las pausas naturales"
+                >
+                  {TXT.vPausas[lang] || TXT.vPausas.es}: {ajustes.pausas ? "ON" : "OFF"}
+                </button>
+                <button
+                  onClick={() => hablar(TXT.vFrase[lang] || TXT.vFrase.es)}
+                  className="flex-1 min-w-0 px-2 py-1 rounded-lg border border-amber-hud/40 text-[10px] font-mono tracking-wide text-amber hover:bg-amber-hud/10 flex items-center justify-center gap-1 truncate"
+                  aria-label="Probar la voz"
+                >
+                  <Play className="w-3 h-3 shrink-0" /> {TXT.vProbar[lang] || TXT.vProbar.es}
+                </button>
+                <button
+                  onClick={() => { restablecerAjustes(); setAjustes(leerAjustes()); }}
+                  className="shrink-0 px-2 py-1 rounded-lg border border-muted-foreground/30 text-[10px] font-mono tracking-wide text-muted-foreground hover:bg-white/5 flex items-center justify-center gap-1"
+                  aria-label="Restaurar la voz de fábrica"
+                >
+                  <RotateCcw className="w-3 h-3" /> {TXT.vRestaurar[lang] || TXT.vRestaurar.es}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* v181: comandos rápidos de los poderes nuevos + interruptor honesto de las alertas */}
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-t border-amber-hud/15">
