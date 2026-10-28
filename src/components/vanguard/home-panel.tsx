@@ -38,6 +38,8 @@ const CinematicaVanguard = dynamic(() => import("@/components/vanguard/cinematic
 // v193.1 VIGO Y LA PUERTA — el personaje de la casa pregunta qué te importa
 // y te lleva a tu sala en un toque (la elección queda en TU aparato)
 import { PuertaVigo } from "@/components/vanguard/puerta-vigo";
+// v195.0 TU LADO — el muelle de atajos que aprende tu uso
+import { AtajosVanguard } from "@/components/vanguard/atajos-vanguard";
 
 interface NewsItem {
   id: string;
@@ -98,6 +100,9 @@ const WORLD_TILES: WorldTile[] = [
   // v104.0 LA VITRINA — el muro de obras de la comunidad
   { tab: "obras", title: "MURO DE OBRAS", desc: "La vitrina de la comunidad: un muro con TODO lo que la gente crea — juegos, escenarios, encuestas, música, periódicos — con Paseo de la Fama, señales de tus obras y el agente que evalúa cada pieza", icon: <Crown className="w-6 h-6" />, hex: "#FFC94D" },
   { tab: "foryou", title: "PARA TI", desc: "El feed de la comunidad: videos, música y stickers de los jugadores en scroll infinito — como TikTok, pero de guerra", icon: <Flame className="w-6 h-6" />, hex: "#FF3B30" },
+  // v195.0 TU LADO — la pregunta de la casa y las redes oficiales
+  { tab: "lados", title: "¿DE QUÉ LADO ESTÁS?", desc: "Declara tu bando en los problemas del mundo: el pueblo se parte en % vivo, apuesta por tu lado con cuotas honestas y al cierre EL MUNDO DECIDE", icon: <Scale className="w-6 h-6" />, hex: "#FF4D5E" },
+  { tab: "redes", title: "REDES DE VANGUARD", desc: "La casa en el mundo: Telegram oficial vivo, 8 canales más en camino y comparte Vanguard con enlaces reales — +5 monedas por traer gente", icon: <Share2 className="w-6 h-6" />, hex: "#38BDF8" },
   { tab: "mundo", title: "MUNDO DE GUERRA", desc: "Conquista los 24 territorios en el globo 3D contra 3 IA", icon: <Castle className="w-6 h-6" />, hex: "#FF3B30" },
   { tab: "bookmaker", title: "BETNACIÓN", desc: "Cuotas vivas, combinadas y cashout como una casa real", icon: <Coins className="w-6 h-6" />, hex: "#3DDC97" },
   { tab: "bolsa", title: "BOLSA GEOPOLÍTICA", desc: "Invierte en monedas de países: gana o pierde al instante", icon: <TrendingUp className="w-6 h-6" />, hex: "#E8C56A" },
@@ -195,10 +200,14 @@ export function HomePanel() {
     let retry: ReturnType<typeof setTimeout> | null = null;
     // v132.0: la caché local entra AQUÍ — tras la hidratación de React (la
     // portada pinta las últimas buenas al instante, sin desajuste posible)
-    try {
-      const arr = JSON.parse(localStorage.getItem("vanguard-news-cache") || "[]");
-      if (Array.isArray(arr) && arr.length > 0) setItems(arr.slice(0, 12));
-    } catch { /* sin caché: sigue la carga de red */ }
+    // v195: la lectura pasa a setTimeout 0 (patrón de la casa v132/v193) —
+    // setState síncrono dentro del efecto dispara renders en cascada.
+    const cacheTimer = setTimeout(() => {
+      try {
+        const arr = JSON.parse(localStorage.getItem("vanguard-news-cache") || "[]");
+        if (Array.isArray(arr) && arr.length > 0) setItems(arr.slice(0, 12));
+      } catch { /* sin caché: sigue la carga de red */ }
+    }, 0);
     const load = (attempt: number) => {
       fetch("/api/news", { cache: "no-store" })
         .then((r) => {
@@ -237,6 +246,7 @@ export function HomePanel() {
     return () => {
       alive = false;
       clearInterval(t);
+      clearTimeout(cacheTimer);
       if (retry) clearTimeout(retry);
     };
   }, [reloadTick]);
@@ -377,6 +387,11 @@ export function HomePanel() {
           guarda tu sala en TU aparato y desde entonces ENTRAR es un solo toque.
           Evento interno vanguard:navigate — jamás recarga (ley v190). ====== */}
       <PuertaVigo />
+
+      {/* ====== v195.0 TU LADO — EL MUELLE DE ATAJOS: seis salas de la casa
+          a un toque y tu uso real las reordena (vg195-atajos-usage).
+          Evento interno vanguard:navigate — jamás recarga (ley v190). ====== */}
+      <AtajosVanguard />
 
       {/* ====== ÚLTIMA HORA — LAS NOTICIAS PRIMERO ====== */}
       <div>

@@ -2,19 +2,25 @@
 
 // Vanguard v15 — MODAL DE CUENTA: registro, inicio de sesión y perfil
 // con guardado en la nube. La cuenta DUENO (propietario) tiene acceso total.
+// v195.0 TU LADO — EL REGISTRO QUE PREGUNTA: al crear cuenta, la casa te
+// hace SU pregunta («¿de qué lado estás?» en 3 problemas del mundo vivo)
+// y te deja elegir tu BANDERA — entras con identidad (+5 monedas por voto).
+// Se puede saltar SIEMPRE: pedir tu lado jamás bloquea la entrada.
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useGameStore } from "@/lib/game-store";
-import { useProfileStore } from "@/lib/profile-store";
+import { useProfileStore, FACTIONS } from "@/lib/profile-store";
+import { LADOS } from "@/lib/lados-data";
+import { navigateTo } from "@/lib/nav";
 import { Countryball } from "@/components/vanguard/countryball";
 import { countryName } from "@/lib/world-data";
 import { toast } from "sonner";
-import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, Gem, Trophy, Swords, ShieldCheck } from "lucide-react";
+import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, Gem, Trophy, Swords, ShieldCheck, Scale, Check, Flag } from "lucide-react";
 
-type Mode = "LOGIN" | "REGISTER" | "PROFILE";
+type Mode = "LOGIN" | "REGISTER" | "PROFILE" | "ONBOARD";
 
 export function AccountModal({ open, onClose, gate, contenedor }: { open: boolean; onClose: () => void; gate?: string | null; contenedor?: HTMLElement | null }) {
   // v102.0 LA CIUDADELA — modo GATE: el modal se abre PIDIENDO pasaporte
@@ -48,6 +54,13 @@ export function AccountModal({ open, onClose, gate, contenedor }: { open: boolea
   const authLogout = useGameStore((s) => s.authLogout);
   const claimLaunchPack = useGameStore((s) => s.claimLaunchPack);
   const pushCloudSave = useGameStore((s) => s.pushCloudSave);
+  const votarLado = useGameStore((s) => s.votarLado);
+  const setFavFaction = useProfileStore((s) => s.setFavFaction);
+
+  // v195 TU LADO — el onboarding tras crear cuenta
+  const [paso, setPaso] = useState(0); // 0-2: problemas · 3: bandera · 4: fin
+  const problemasOnboard = LADOS.slice(0, 3);
+  const banderas = FACTIONS;
 
   const handleOpenChange = (v: boolean) => {
     if (v) {
@@ -55,6 +68,7 @@ export function AccountModal({ open, onClose, gate, contenedor }: { open: boolea
     } else {
       setModeOverride(null);
       setError(null);
+      setPaso(0);
       onClose();
     }
   };
@@ -73,6 +87,12 @@ export function AccountModal({ open, onClose, gate, contenedor }: { open: boolea
         toast.success("¡Cuenta creada! +300 monedas de bienvenida");
         claimLaunchPack();
         toast("PACK DE LANZAMIENTO reclamado: +1500 mon, +15 gemas, 3 cajones y ELITE 7 días");
+        // v195 TU LADO: la casa hace su pregunta antes de dejarte entrar
+        setModeOverride("ONBOARD");
+        setPaso(0);
+        setUsername("");
+        setPassword("");
+        return; // no cerramos: el onboarding toma la mano
       } else {
         toast.success(isOwner ? "Acceso total de propietario concedido" : `Bienvenido, ${username.toUpperCase()}`);
       }
@@ -83,6 +103,26 @@ export function AccountModal({ open, onClose, gate, contenedor }: { open: boolea
     } else {
       setError(res.error ?? "Error desconocido");
     }
+  };
+
+  // v195 TU LADO — flujos del onboarding
+  const elegirLado = (problemaId: string, lado: "A" | "B") => {
+    if (votarLado(problemaId, lado)) {
+      toast.success("Bando declarado: +5 monedas");
+    }
+    setPaso((p) => p + 1);
+  };
+
+  const elegirBandera = (f: string) => {
+    setFavFaction(f);
+    toast.success(`Tu bandera: ${f}`);
+    setPaso((p) => p + 1);
+  };
+
+  const saltarOnboard = () => {
+    setModeOverride(null);
+    setPaso(0);
+    onClose();
   };
 
   const doLogout = async () => {
@@ -102,10 +142,20 @@ export function AccountModal({ open, onClose, gate, contenedor }: { open: boolea
       <DialogContent contenedor={contenedor} className="hud-panel border-amber-hud max-w-sm" aria-describedby="acc-desc">
         <DialogHeader>
           <DialogTitle className="font-display tracking-widest uppercase text-sm text-soft">
-            {gate && !account ? "PASAPORTE DE LA CIUDADELA" : mode === "PROFILE" ? "Mi cuenta" : mode === "LOGIN" ? "Iniciar sesión" : "Crear cuenta"}
+            {mode === "ONBOARD"
+              ? "¿DE QUÉ LADO ESTÁS?"
+              : gate && !account
+                ? "PASAPORTE DE LA CIUDADELA"
+                : mode === "PROFILE"
+                  ? "Mi cuenta"
+                  : mode === "LOGIN"
+                    ? "Iniciar sesión"
+                    : "Crear cuenta"}
           </DialogTitle>
           <DialogDescription id="acc-desc" className="text-[11px] text-muted-foreground">
-            {gate && !account ? (
+            {mode === "ONBOARD" ? (
+              "La casa te pregunta tu bando: entras con identidad — tu progreso ya vive en la nube."
+            ) : gate && !account ? (
               gate
             ) : mode === "PROFILE" ? (
               "Tu progreso se guarda automáticamente en la nube."
@@ -115,17 +165,99 @@ export function AccountModal({ open, onClose, gate, contenedor }: { open: boolea
           </DialogDescription>
         </DialogHeader>
 
-        {gate && !account && (
-          <div className="flex items-start gap-2 border border-amber-hud/50 bg-amber-hud/10 px-3 py-2 rounded-sm">
-            <ShieldCheck className="w-4 h-4 text-amber shrink-0 mt-0.5" />
-            <p className="text-[10px] font-mono text-amber leading-relaxed">
-              LA CIUDADELA: los muros de acero protegen el arcade y la comunidad. Con pasaporte publicas juegos firmados,
-              guardas tu progreso en la nube y nadie puede suplantarte.
-            </p>
+        {mode === "ONBOARD" ? (
+          /* v195 TU LADO — el registro te pregunta tu bando */
+          <div className="space-y-3" data-vg195-onboard={paso}>
+            {paso < 3 ? (() => {
+              const p = problemasOnboard[paso];
+              return (
+                <>
+                  <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-amber">
+                    <Scale className="w-3.5 h-3.5" />
+                    Pregunta {paso + 1} de 3
+                  </div>
+                  <h4 className="font-display text-[15px] font-bold tracking-wide text-foreground leading-snug">
+                    {p.pregunta}
+                  </h4>
+                  <p className="text-[10px] font-mono text-muted-foreground leading-relaxed">{p.contexto}</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {(["A", "B"] as const).map((lado) => {
+                      const esA = lado === "A";
+                      const color = esA ? p.colorA : p.colorB;
+                      return (
+                        <button
+                          key={lado}
+                          onClick={() => elegirLado(p.id, lado)}
+                          className="text-left rounded-sm border bg-black/30 p-2.5 min-h-[46px] transition-colors hover:bg-black/60"
+                          style={{ borderColor: `${color}55` }}
+                        >
+                          <span className="font-display text-[12px] font-bold tracking-wide" style={{ color }}>
+                            {esA ? p.ladoA : p.ladoB}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })() : paso === 3 ? (
+              <>
+                <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-amber">
+                  <Flag className="w-3.5 h-3.5" />
+                  Elige tu bandera
+                </div>
+                <p className="text-[10px] font-mono text-muted-foreground leading-relaxed">
+                  Tu bandera se luce en tu perfil y en la comunidad — puedes cambiarla cuando quieras.
+                </p>
+                <div className="grid grid-cols-1 gap-1.5 max-h-56 overflow-y-auto">
+                  {banderas.map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => elegirBandera(f)}
+                      className="text-left rounded-sm border border-border/50 bg-black/30 px-2.5 py-2 font-mono text-[11px] uppercase tracking-wider text-foreground transition-colors hover:bg-black/60"
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 text-green-hud">
+                  <Check className="w-5 h-5" />
+                  <span className="font-display text-sm font-bold uppercase tracking-widest">Tu lado está declarado</span>
+                </div>
+                <p className="text-[10px] font-mono text-muted-foreground leading-relaxed">
+                  Ya eres parte del pueblo de Vanguard: tus bandos viven en TU aparato, tus monedas en tu cuenta
+                  y tu progreso en la nube. En la sala ¿DE QUÉ LADO ESTÁS? hay más problemas del mundo esperando tu bando.
+                </p>
+                <div className="grid grid-cols-1 gap-2">
+                  <Button
+                    onClick={() => { saltarOnboard(); navigateTo("lados"); }}
+                    className="w-full font-mono uppercase tracking-widest bg-amber-hud/40 border border-amber-hud text-amber hover:bg-amber-hud/60"
+                  >
+                    <Scale className="w-4 h-4 mr-1.5" /> Ir a ¿de qué lado estás?
+                  </Button>
+                  <Button
+                    onClick={saltarOnboard}
+                    variant="outline"
+                    className="w-full font-mono uppercase tracking-widest border-border text-foreground hover:bg-secondary"
+                  >
+                    Entrar a Vanguard
+                  </Button>
+                </div>
+              </>
+            )}
+            {paso < 4 && (
+              <button
+                onClick={saltarOnboard}
+                className="w-full text-center text-[9px] font-mono uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Saltar por ahora — decidiré dentro
+              </button>
+            )}
           </div>
-        )}
-
-        {mode !== "PROFILE" ? (
+        ) : gate && !account ? (
           <div className="space-y-3">
             <div>
               <label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground" htmlFor="acc-user">

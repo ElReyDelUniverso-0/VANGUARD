@@ -18,11 +18,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  Siren, Flame, MonitorPlay, Radar, Laugh, DoorOpen, Repeat, Volume2, VolumeX,
+  Siren, Flame, MonitorPlay, Radar, Laugh, DoorOpen, Repeat, Volume2, VolumeX, UserPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigateTo } from "@/lib/nav";
 import type { TabKey } from "@/components/vanguard/tab-nav";
+import { useGameStore } from "@/lib/game-store";
 import { hablarAgente, pararVoces } from "@/lib/voces-agentes";
 import { Vigo } from "@/components/vanguard/vigo";
 
@@ -48,6 +49,17 @@ export function PuertaVigo() {
   const [sala, setSala] = useState<Sala | null>(null);
   const [listo, setListo] = useState(false);
   const [hablando, setHablando] = useState(false);
+  // v195 TU LADO: la puerta también invita a crear cuenta — sin pasaporte
+  // no hay lado que declarar ni progreso que guardar en la nube.
+  const account = useGameStore((s) => s.account);
+
+  const abrirCuenta = useCallback(() => {
+    // v195: el centinela pide el pasaporte con SU motivo — el modal abre
+    // directamente en CREAR CUENTA (registro primero, no login).
+    window.dispatchEvent(new CustomEvent("vanguard:pasaporte", {
+      detail: { motivo: "El centinela Vigo te invita: crea tu cuenta gratis en 10 segundos — +300 monedas, progreso en la nube y tu lado declarado en los problemas del mundo." },
+    }));
+  }, []);
 
   // la sala guardada manda (post-hidratación, patrón v132/v179/v191: setTimeout 0)
   useEffect(() => {
@@ -209,6 +221,24 @@ export function PuertaVigo() {
           )}
         </div>
       </div>
+
+      {/* v195 TU LADO — la invitación del centinela a los sin pasaporte */}
+      {!account && listo && (
+        <div className="mt-3 rounded-md border border-dashed border-amber-hud/40 bg-amber-hud/5 px-3 py-2.5 flex items-center justify-between gap-2 flex-wrap">
+          <p className="text-[10px] font-mono text-amber leading-relaxed min-w-0">
+            <b className="text-foreground">¿Sin cuenta?</b> Créala gratis en 10 segundos: +300 monedas, guardas tu progreso en la nube y declaras tu lado en los problemas del mundo.
+          </p>
+          <button
+            onClick={abrirCuenta}
+            className="shrink-0 inline-flex items-center gap-1.5 min-h-[34px] px-3 rounded-md border border-amber-hud/60 bg-amber-hud/15 font-mono text-[10px] uppercase tracking-widest text-amber hover:bg-amber-hud/30 transition-colors"
+            aria-label="Crear cuenta gratis en Vanguard"
+            data-vg195-cta-cuenta="1"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            Crear cuenta
+          </button>
+        </div>
+      )}
     </section>
   );
 }

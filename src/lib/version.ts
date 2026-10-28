@@ -916,6 +916,34 @@
 //      TU SALA en un solo toque desde la portada; «cambiar de sala» siempre
 //      visible. Navegación por evento interno vanguard:navigate — jamás
 //      recarga (ley v190). Bajo la portada viva, obra v191/v193 intacta.
-export const APP_VERSION = "v194.0";
-export const APP_CODENAME = "LA CASA PESO PLUMA";
+//   ① EL REGISTRO QUE PREGUNTA TU LADO: al crear cuenta, la casa te hace
+//      SU pregunta — «¿DE QUÉ LADO ESTÁS?» en 3 problemas del mundo vivo,
+//      eliges tu BANDERA y entras ya con identidad (+5 monedas por voto).
+//      Se puede saltar siempre: pedir lado jamás bloquea la entrada.
+//   ② ¿DE QUÉ LADO ESTÁS? (lados-panel.tsx + lados-data.ts): la sala de
+//      bandos — 14 problemas del mundo con DOS lados, el pueblo se parte
+//      en % vivo (simulación determinista, patrón de encuestas), declaras
+//      tu lado (+5 mon, +5 XP) y APOSTAR por él con cuotas honestas
+//      (margen de la casa 0.95, tope 3.40); «EL MUNDO DECIDE» al cierre
+//      del ciclo — se suele ir con la mayoría pero NO siempre (ruido
+//      determinista por ciclo); pago fijado en el momento de apostar.
+//   ③ REDES DE VANGUARD (redes-panel.tsx + redes-data.ts): la vitrina de
+//      las redes — Telegram OFICIAL conectado a su sala, 8 canales más
+//      listos para que el Dueño pegue su URL real, y COMPARTIR VANGUARD
+//      con enlaces REALES que ya funcionan (WhatsApp/X/Telegram/Facebook/
+//      Reddit/copiar) con recompensa por compartir. Las existentes se
+//      fortalecen: la sala Telegram queda a un toque.
+//   ④ ATAJOS DE VANGUARD (atajos-vanguard.tsx + nav.ts): el muelle que
+//      aprende — 6 atajos fijos de la casa y tu USO real reordena el
+//      muelle (vg195-atajos-usage cuenta cada navigateTo); navegación por
+//      el evento interno vanguard:navigate — jamás recarga (ley v190).
+//      El teclado 1-9/0 ya existía: no se toca, no se duplica.
+//   ⑤ CAZA DE BUGS: tsc completo en 0 errores; verificación de la ley v190
+//      y del flujo de cuentas en navegador real sobre build de producción.
+//      Mandato del Dueño: «mejora el que las personas se registren con su
+//      cuenta, pregúntale de qué lado está de cualquier problema, también
+//      apostar, agrega atajos, agrega más redes, fortalece las ya hechas
+//      y busca bugs».
+export const APP_VERSION = "v195.0";
+export const APP_CODENAME = "TU LADO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

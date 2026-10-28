@@ -327,6 +327,10 @@ export interface GameState {
   betStats: { placed: number; won: number; wagered: number; payout: number };
   lastFreeBetDate: string | null;
 
+  // ====== v195 TU LADO: tu bando declarado + apuestas por tu lado ======
+  ladoVotos: Record<string, "A" | "B">;
+  ladosApuestas: Record<string, { lado: "A" | "B"; monto: number; cuota: number; ts: number; resuelto: boolean; gano?: boolean; pago?: number }>;
+
   // ====== PASE VANGUARD v8 ======
   passXp: number;
   passSeason: number; // indice de temporada al que pertenece el XP
@@ -386,6 +390,10 @@ export interface GameState {
   likeThread: (threadId: string) => void; // toggle, hilos seed o propios
   viewThread: (threadId: string) => void;
   votePoll: (pollId: string, optionIdx: number, rewardCoins?: number) => boolean;
+  // v195 TU LADO: declarar bando (+5 mon, +5 XP), apostar por él y cobrar al veredicto
+  votarLado: (id: string, lado: "A" | "B") => boolean;
+  apostarLado: (id: string, lado: "A" | "B", monto: number, cuota: number) => boolean;
+  resolverLado: (id: string, ladoGanador: "A" | "B") => { gano: boolean; pago: number } | null;
   reactVideo: (videoId: string, r: "like" | "dislike") => void;
   toggleSubscribe: (channelId: string) => boolean;
   recordWatch: (videoId: string) => void;
@@ -677,6 +685,10 @@ export const useGameStore = create<GameState>()(
 
       betStats: { placed: 0, won: 0, wagered: 0, payout: 0 },
       lastFreeBetDate: null,
+
+      // v195 TU LADO
+      ladoVotos: {},
+      ladosApuestas: {},
 
       passXp: 0,
       passSeason: passSeasonIndex(),
@@ -1271,6 +1283,46 @@ export const useGameStore = create<GameState>()(
         set((st) => ({
           forumThreads: st.forumThreads.map((t) => (t.id === threadId ? { ...t, views: t.views + 1 } : t)),
         }));
+      },
+
+      // ====== v195 TU LADO: declarar bando y apostar por él ======
+      votarLado: (id, lado) => {
+        const s = get();
+        if (s.ladoVotos[id]) return false;
+        set((st) => ({
+          ladoVotos: { ...st.ladoVotos, [id]: lado },
+          log: [{ ts: Date.now(), msg: `Declaraste tu lado en ${id} (+5 monedas, +5 XP)`, delta: 5 }, ...st.log].slice(0, 50),
+        }));
+        get().addCoins(5, "Tu lado declarado");
+        get().addXp(5);
+        return true;
+      },
+
+      apostarLado: (id, lado, monto, cuota) => {
+        const s = get();
+        if (s.ladoVotos[id] !== lado) return false; // solo apuestas POR tu bando
+        if (s.ladosApuestas[id]) return false;      // una apuesta por problema y ciclo
+        if (monto < 10 || monto > s.coins) return false;
+        if (!s.spendCoins(monto, "Apuesta por tu lado")) return false;
+        set((st) => ({
+          ladosApuestas: { ...st.ladosApuestas, [id]: { lado, monto, cuota, ts: Date.now(), resuelto: false } },
+        }));
+        return true;
+      },
+
+      resolverLado: (id, ladoGanador) => {
+        const s = get();
+        const ap = s.ladosApuestas[id];
+        if (!ap || ap.resuelto) return null;
+        const gano = ap.lado === ladoGanador;
+        const pago = gano ? Math.round(ap.monto * ap.cuota) : 0;
+        set((st) => ({
+          ladosApuestas: { ...st.ladosApuestas, [id]: { ...ap, resuelto: true, gano, pago } },
+          log: [{ ts: Date.now(), msg: gano ? `El mundo decidió a tu favor en ${id}: +${pago} monedas` : `El mundo decidió en contra en ${id}: pierdes ${ap.monto} monedas`, delta: gano ? pago : -ap.monto }, ...st.log].slice(0, 50),
+        }));
+        if (gano) get().addCoins(pago, "El mundo decidió a tu favor");
+        get().recordBet(ap.monto, gano, pago);
+        return { gano, pago };
       },
 
       votePoll: (pollId, optionIdx, rewardCoins = 5) => {
@@ -2097,6 +2149,8 @@ export const useGameStore = create<GameState>()(
             forumLikedReplies: s.forumLikedReplies,
             forumViewedIds: s.forumViewedIds,
             pollVotes: s.pollVotes,
+            ladoVotos: s.ladoVotos,
+            ladosApuestas: s.ladosApuestas,
             videoReactions: s.videoReactions,
             subscribedChannels: s.subscribedChannels,
             watchHistory: s.watchHistory,
@@ -2242,6 +2296,8 @@ export const useGameStore = create<GameState>()(
           eliteLastClaimDate: null,
           conquestSave: null,
           conquestWins: 0,
+          ladoVotos: {},
+          ladosApuestas: {},
           marketHoldings: {},
           marketTrades: [],
           marketRealized: 0,

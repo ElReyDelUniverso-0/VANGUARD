@@ -44,6 +44,8 @@ export type TabKey =
   | "minijuego" | "registro" | "torneos" | "retos" | "estadisticas" | "amigos"
   | "notificaciones" | "racha" | "ayuda" | "camaras" | "combate" | "historia"
   | "muertes" | "apuestas" | "conquista" | "foros" | "encuestas" | "videos"
+  // v195 TU LADO: la pregunta de la casa y las redes oficiales
+  | "lados" | "redes"
   | "mundo" | "bolsa" | "salas" | "multijugador" | "gancho" | "ranking"
   // v79 IA: el Consejo de Acero entra en SOCIAL
   | "consejoia"
@@ -342,6 +344,8 @@ export const TABS: Record<TabKey, TabDef> = {
   bolsa:         { key: "bolsa",         label: "Mercado geopolítico", short: "MERCADO", icon: <CircleDollarSign className="w-3.5 h-3.5" />, color: "green" },
   predicciones:  { key: "predicciones",  label: "Predicciones",      short: "PREDIC", icon: <BarChart3 className="w-3.5 h-3.5" />, color: "amber" },
   apuestas:      { key: "apuestas",      label: "Apuestas de guerra", short: "APUESTAS", icon: <Dice5 className="w-3.5 h-3.5" />, color: "amber" },
+  // v195 TU LADO: la pregunta de la casa — declara tu bando y apuesta por él
+  lados:         { key: "lados",         label: "¿De qué lado estás?", short: "TU LADO", icon: <Scale className="w-3.5 h-3.5" />, color: "red" },
   estadisticas:  { key: "estadisticas",  label: "Estadísticas",      short: "ESTADÍS", icon: <TrendingUp className="w-3.5 h-3.5" />, color: "cyan" },
 
   logros:        { key: "logros",        label: "Logros",            short: "LOGROS", icon: <Award className="w-3.5 h-3.5" />, color: "green" },
@@ -355,6 +359,8 @@ export const TABS: Record<TabKey, TabDef> = {
   consejoia:     { key: "consejoia",     label: "Consejo de Acero (IA)", short: "CONSEJO", icon: <Bot className="w-3.5 h-3.5" />, color: "cyan" },
   salas:         { key: "salas",         label: "Salas sociales",    short: "SALAS", icon: <MessageCircle className="w-3.5 h-3.5" />, color: "violet" },
   encuestas:     { key: "encuestas",     label: "Encuestas",         short: "ENCUESTAS", icon: <Vote className="w-3.5 h-3.5" />, color: "green" },
+  // v195 TU LADO: las redes oficiales de Vanguard + compartir con recompensa
+  redes:         { key: "redes",         label: "Redes de Vanguard", short: "REDES", icon: <Share2 className="w-3.5 h-3.5" />, color: "cyan" },
   amigos:        { key: "amigos",        label: "Amigos",            short: "AMIGOS", icon: <Users className="w-3.5 h-3.5" />, color: "cyan" },
   torneos:       { key: "torneos",       label: "Torneos",           short: "TORNEOS", icon: <Trophy className="w-3.5 h-3.5" />, color: "amber" },
   notificaciones:{ key: "notificaciones",label: "Alertas",           short: "ALERTAS", icon: <Bell className="w-3.5 h-3.5" />, color: "amber" },
@@ -418,8 +424,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "mercado", label: "MERCADO", short: "MERCADO", icon: <CircleDollarSign className="w-4 h-4" />, color: "green",
-    desc: "Exchange, apuestas, predicciones y espionaje — gana o pierde monedas",
-    tabs: [TABS.bolsa, TABS.hacienda, TABS.divisas, TABS.bookmaker, TABS.apuestas, TABS.predicciones, TABS.espionaje, TABS.gancho],
+    desc: "Exchange, apuestas, ¿de qué lado estás?, predicciones y espionaje — gana o pierde monedas",
+    tabs: [TABS.bolsa, TABS.hacienda, TABS.divisas, TABS.bookmaker, TABS.apuestas, TABS.lados, TABS.predicciones, TABS.espionaje, TABS.gancho],
   },
   {
     // v48.0 COHERENCIA: Guerras históricas y Figuras y bajas viven aquí — son
@@ -466,8 +472,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",
-    desc: "Empleos con sueldos reales, crisis mundial, embajadores, salas, encuestas del mundo y comunidad",
-    tabs: [TABS.empleos, TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.amigos, TABS.torneos, TABS.perfil],
+    desc: "Empleos con sueldos reales, crisis mundial, embajadores, salas, encuestas del mundo, redes oficiales y comunidad",
+    tabs: [TABS.empleos, TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.redes, TABS.amigos, TABS.torneos, TABS.perfil],
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",

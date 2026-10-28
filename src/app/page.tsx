@@ -374,6 +374,9 @@ const ForumPanel = dynamic(() => import("@/components/vanguard/panels/forum-pane
 const ConsejoIaPanel = dynamic(() => import("@/components/vanguard/panels/consejo-ia-panel").then((m) => m.ConsejoIaPanel), { ssr: false, loading: PanelSkeleton });
 const SalasPanel = dynamic(() => import("@/components/vanguard/panels/salas-panel").then((m) => m.SalasPanel), { ssr: false, loading: PanelSkeleton });
 const PollsPanel = dynamic(() => import("@/components/vanguard/panels/polls-panel").then((m) => m.PollsPanel), { ssr: false, loading: PanelSkeleton });
+// v195 TU LADO: la pregunta de la casa y las redes oficiales
+const LadosPanel = dynamic(() => import("@/components/vanguard/panels/lados-panel").then((m) => m.LadosPanel), { ssr: false, loading: PanelSkeleton });
+const RedesPanel = dynamic(() => import("@/components/vanguard/panels/redes-panel").then((m) => m.RedesPanel), { ssr: false, loading: PanelSkeleton });
 // v85.0 EL MUNDO DENTRO
 const EmpleosPanel = dynamic(() => import("@/components/vanguard/panels/empleos-panel").then((m) => m.EmpleosPanel), { ssr: false, loading: PanelSkeleton });
 const ModoArPanel = dynamic(() => import("@/components/vanguard/panels/modo-ar-panel").then((m) => m.ModoArPanel), { ssr: false, loading: PanelSkeleton });
@@ -515,6 +518,7 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "historia" && <HistoricalWarsPanel />}
         {tab === "muertes" && <FamousDeathsPanel />}
         {tab === "apuestas" && <WarBettingPanel />}
+        {tab === "lados" && <LadosPanel />}
         {tab === "conquista" && <CountryControlPanel />}
         {tab === "mundo" && <WorldConquestPanel />}
         {tab === "multijugador" && <MultiplayerPanel />}
@@ -611,6 +615,7 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "mapascrea" && <CreadorMapasPanel />}
         {tab === "salas" && <SalasPanel />}
         {tab === "encuestas" && <PollsPanel />}
+        {tab === "redes" && <RedesPanel />}
         {tab === "videos" && <VideosPanel />}
         {tab === "estudio" && <EstudioPanel />}
         {tab === "directos" && <DirectosPanel />}
