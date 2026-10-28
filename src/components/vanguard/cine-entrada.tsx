@@ -14,6 +14,19 @@
 // Dueño ve SU intro GTA cada día que abre Vanguard, sin repetir el mismo día),
 // reduced-motion no ve cine, solo transform/opacity (60 FPS móvil),
 // tocar avanza, la consola vive detrás (nada se bloquea al saltar).
+//
+// v187.0 EL CINE HONESTO — el Dueño soltó la pieza que faltaba: «le dije a
+// la IA original que al principio haga una cinemática tipo GTA cuando esté
+// cargando — desde ese día no ha vuelto a cargar bien vanguard». El cine
+// arranca 900ms DESPUÉS de que la casa despierta: el Dueño ve su consola un
+// segundo, el cine la tapa entera (placas oscuras + barras de progreso +
+// 1.3MB de fotos que en su señal llegan negras) y PARECE otra pantalla de
+// carga eterna. El cine no era la carga — pero nadie podía distinguirlo.
+// Curas: cartel permanente «LA CASA YA ESTÁ DESPIERTA» + SALTAR GIGANTE en
+// la barra letterbox (pulgar) + placas de 1.5s (9s totales) + el cine SE
+// CALLA si esta sesión ya sufrió (socorro/vigía/bote) o la casa tardó >12s
+// en despertar — nadie que esperó un rescate quiere una pantalla más que
+// se pueda confundir con carga.
 // ============================================================
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
@@ -30,7 +43,34 @@ const esServidor = () => false;
 // móvil es semanal y una vez por sesión eterna = «no hay intro como gta»);
 // fecha LOCAL del aparato (en-CA = YYYY-MM-DD), el día del Dueño manda
 const CLAVE_SESION = `vg-cine-entrada-v178-${new Date().toLocaleDateString("en-CA")}`;
-const CINE_MS = 2150;
+// v187: placas de 1.5s — 6 placas ≈ 9s totales (antes 2.15s ≈ 13s):
+// el cine ya no compite con la paciencia del Dueño ni se disfraza de carga
+const CINE_MS = 1500;
+
+// v187.0 EL CINE SE CALLA SI HUBO SUFRIMIENTO — dos preguntas con respuesta
+// honesta: ¿esta sesión ya pasó por un rescate? ¿la casa tardó demasiado en
+// despertar? Si cualquiera es sí, el cine NO juega hoy: la casa se abre
+// directa. Ventana de 10 min para las marcas (vg187-sufrio lo estampa el
+// socorrista y el vigía; vg186-n/vg186-t es el contador del bote v186;
+// vg155-recarga es el sello de arranque de ESTA carga — su diferencia con
+// ahora es el tiempo real que costó llegar a la hidratación).
+function sesionSufrio(): boolean {
+  try {
+    const t = Number(sessionStorage.getItem("vg187-sufrio") || 0);
+    if (t && Date.now() - t < 600000) return true;
+    const n = Number(sessionStorage.getItem("vg186-n") || 0);
+    const tt = Number(sessionStorage.getItem("vg186-t") || 0);
+    if (n >= 1 && tt && Date.now() - tt < 600000) return true;
+  } catch {}
+  return false;
+}
+function arranqueLento(): boolean {
+  try {
+    const t0 = Number(sessionStorage.getItem("vg155-recarga") || 0);
+    if (t0 && Date.now() - t0 > 12000) return true;
+  } catch {}
+  return false;
+}
 
 const CINE_PLACAS: { foto: string; ceja: string; titulo: string; tituloAcc: string; sub: string; dato: string; acento: string }[] = [
   { foto: "/assets/real/tanks-1.jpg", ceja: "VANGUARD · CONFLICTOS EN VIVO", titulo: "RUSIA —", tituloAcc: "UCRANIA", sub: "El frente que no duerme", dato: "1.100+ KM DE FRENTE · DÍA 1.350+", acento: "#e8c476" },
@@ -56,6 +96,9 @@ export function CineEntrada() {
     let visto = false;
     try { visto = sessionStorage.getItem(CLAVE_SESION) === "1"; } catch {}
     if (reducido || visto) return;
+    // v187.0: sesión sufrida o arranque lento → cine fuera hoy. La casa
+    // despierta y BASTA: cero pantallas que se puedan confundir con carga.
+    if (sesionSufrio() || arranqueLento()) return;
     // el arranque respira primero: la Casa pinta, la cortina se funde,
     // y ENTONCES se apagan las luces del cine (como en una sala oscura)
     const t = window.setTimeout(() => {
@@ -120,13 +163,22 @@ export function CineEntrada() {
         <i className="vg174-cine-dato" aria-hidden>{placa.dato}</i>
       </div>
       <div className="vg174-cine-barras" aria-hidden><i /><i /></div>
+      {/* v187.0 EL CARTEL HONESTO — arriba a la izquierda, permanente:
+          nadie volverá a confundir el cine con una pantalla de carga */}
+      <div className="vg174-cine-carte" aria-hidden>
+        <em>EL CINE DE ENTRADA · {idx + 1} DE {CINE_PLACAS.length}</em>
+        <b>LA CASA YA ESTÁ DESPIERTA</b>
+      </div>
       <div className="vg174-cine-progreso" aria-hidden>
         {CINE_PLACAS.map((_, i) => (
           <i key={i} data-on={i <= idx ? "1" : "0"} />
         ))}
       </div>
-      <button type="button" className="vg174-cine-saltar" onClick={saltar}>
-        Saltar »
+      {/* v187.0 EL SALTO GIGANTE — vive DENTRO de la barra letterbox inferior
+          (9vh negros casi vacíos): zona del pulgar, imposible de no ver.
+          Sustituye a la píldora «Saltar »» escondida arriba a la derecha. */}
+      <button type="button" className="vg174-cine-fuera" onClick={saltar}>
+        Saltar el cine »»
       </button>
     </div>,
     document.body,

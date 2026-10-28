@@ -4536,26 +4536,62 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
   background: var(--vg174acc, #e8c476);
   box-shadow: 0 0 8px rgba(232, 196, 118, 0.45);
 }
-.vg174-cine-saltar {
+/* v187.0 EL CARTEL HONESTO — arriba a la izquierda, permanente: dice qué
+   es (EL CINE DE ENTRADA), cuántas placas quedan y que la casa YA despertó.
+   La cura del malentendido de la era v177: un cine tapando la consola
+   recién despierta con barras de progreso PARECE una pantalla de carga. */
+.vg174-cine-carte {
   position: absolute;
-  top: calc(9vh + 14px);
-  right: 16px;
+  top: calc(9vh + 12px);
+  left: 16px;
+  z-index: 5;
+  pointer-events: none;
+  font-family: var(--font-jetmono), monospace;
+  text-transform: uppercase;
+  animation: vg174Sube 0.45s 0.55s ease-out both;
+}
+.vg174-cine-carte em {
+  display: block;
+  font-style: normal;
+  font-size: clamp(0.55rem, 2.2vw, 0.68rem);
+  letter-spacing: 0.32em;
+  color: var(--vg174acc, #e8c476);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+.vg174-cine-carte b {
+  display: block;
+  margin-top: 4px;
+  font-size: clamp(0.56rem, 2.3vw, 0.7rem);
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.93);
+  font-weight: 600;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+/* v187.0 EL SALTO GIGANTE — vive DENTRO de la barra letterbox inferior
+   (9vh negros casi vacíos): zona del pulgar, borde dorado, imposible de
+   no ver. Sustituye a la píldora «Saltar »» escondida arriba a la derecha
+   que nadie tocaba mientras el cine parecía una carga eterna. */
+.vg174-cine-fuera {
+  position: absolute;
+  bottom: 1.6vh;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 5;
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  color: #fff;
+  background: rgba(232, 196, 118, 0.1);
+  border: 1px solid rgba(232, 196, 118, 0.6);
+  color: #e8c476;
   font-family: var(--font-jetmono), monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.3em;
+  font-size: clamp(0.62rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  padding: 10px 16px 10px 18px;
+  padding: 12px 28px;
   border-radius: 999px;
-  backdrop-filter: blur(4px);
   cursor: pointer;
-  animation: vg174Sube 0.45s 0.8s ease-out both;
+  white-space: nowrap;
+  animation: vg174Sube 0.45s 0.9s ease-out both;
 }
-.vg174-cine-saltar:active { transform: scale(0.94); }
+.vg174-cine-fuera:active { transform: translateX(-50%) scale(0.94); }
 @keyframes vg174Ken {
   from { transform: scale(1.02) translateX(0); }
   to   { transform: scale(1.15) translateX(-1.8%); }
@@ -4571,7 +4607,7 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 @media (prefers-reduced-motion: reduce) {
   .vg174-cine-foto, .vg174-cine-card,
   .vg174-cine-txt em, .vg174-cine-txt strong, .vg174-cine-txt span,
-  .vg174-cine-dato, .vg174-cine-saltar { animation: none !important; }
+  .vg174-cine-dato, .vg174-cine-carte, .vg174-cine-fuera { animation: none !important; }
 }
 /* v177: la salida del cine de arranque — fundido honesto (solo opacity) */
 .vg174-cine.vg174-saliendo { opacity: 0; transition: opacity 0.45s ease; }

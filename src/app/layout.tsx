@@ -403,6 +403,39 @@ try{
     }catch(e){}
     return;
   }
+  // v187.0 EL TESTIGO — la primera herida de esta pestaña queda ESCRITA.
+  // El modo 2 del socorrista (hidratación atascada) muere en silencio en
+  // aparatos que QA no cubre (la tablet del Dueño): este testigo captura el
+  // PRIMER error de script y la PRIMERA promesa rota, con la primera línea
+  // del stack, y lo guarda en sessionStorage. El socorro lo pinta como
+  // «CÓDIGO: …» — la próxima captura del Dueño trae la CAUSA, no una
+  // adivinanza. Sin regex (barras dentro del template literal), indexOf.
+  function testigo(m){
+    try{
+      var t=String(m||'');
+      if(!t||t.indexOf('ResizeObserver')>-1) return;
+      sessionStorage.setItem('vg187-err',t.slice(0,170));
+    }catch(e){}
+  }
+  window.addEventListener('error',function(e){
+    try{
+      var m=(e&&e.message)||'';
+      if(!m&&e&&e.target&&e.target.tagName) m='RECURSO '+(e.target.src||e.target.href||e.target.tagName);
+      if(!m) return;
+      var s=(e&&e.error&&e.error.stack)||'';
+      if(s) m=m+' @ '+String(s).slice(0,110);
+      testigo(m);
+    }catch(x){}
+  },true);
+  window.addEventListener('unhandledrejection',function(e){
+    try{
+      var r=e&&e.reason;
+      var m=(r&&(r.message||r.name))||String(r||'PROMESA ROTA');
+      var s=(r&&r.stack)||'';
+      if(s) m=m+' @ '+String(s).slice(0,110);
+      testigo(m);
+    }catch(x){}
+  });
   // v182.0 EL ÚLTIMO RESCATE — el meta http-equiv=refresh nace AQUÍ, en JS
   // vanilla sobre document.head (NUNCA en el JSX: React 19 eleva los <meta>
   // al head en la hidratación y quedaba armado tras un arranque sano =
@@ -488,6 +521,8 @@ try{
       bt.style.cssText='border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.08);padding:6px 14px;letter-spacing:.2em;font:inherit;border-radius:2px';
       bt.addEventListener('click',recargar);
       b.appendChild(sp); b.appendChild(sv); b.appendChild(bt); document.body.appendChild(b);
+      // v187.0: la barra del vigía también marca la sesión como sufrida
+      try{ sessionStorage.setItem('vg187-sufrio',String(Date.now())); }catch(eV){}
       var ch=window.setInterval(function(){
         if(window.__vgvivo===true&&b.parentNode){ b.parentNode.removeChild(b); window.clearInterval(ch); }
       },1000);
@@ -531,6 +566,20 @@ try{
       vr.textContent='VANGUARD '+VER;
       s.appendChild(t); s.appendChild(p); s.appendChild(bt); s.appendChild(vr);
       document.body.appendChild(s);
+      // v187.0: la sesión queda marcada como SUFRIDA (el cine de entrada se
+      // calla hoy — nadie que esperó un rescate quiere una pantalla más que
+      // se pueda confundir con carga) y el testigo muestra la herida
+      // capturada como CÓDIGO legible en la propia placa de socorro.
+      try{ sessionStorage.setItem('vg187-sufrio',String(Date.now())); }catch(eS){}
+      try{
+        var er=sessionStorage.getItem('vg187-err');
+        if(er){
+          var ec=document.createElement('div');
+          ec.style.cssText='font:500 9px/1.6 ui-monospace,monospace;letter-spacing:.04em;color:rgba(232,196,118,.55);max-width:340px;word-break:break-all;margin-top:2px';
+          ec.textContent='CÓDIGO: '+er;
+          s.appendChild(ec);
+        }
+      }catch(eE){}
       // la casa despertó tarde → el socorro se retira solo (jamás tapa una casa viva)
       var q=window.setInterval(function(){
         if(window.__vgvivo===true&&s.parentNode){ s.parentNode.removeChild(s); window.clearInterval(q); }

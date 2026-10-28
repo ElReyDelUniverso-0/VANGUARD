@@ -741,6 +741,30 @@
 //     también en el vigía y en el socorro) — cada captura del Dueño
 //     diagnostica sola: ¿pestaña vieja sin el build nuevo o build nuevo
 //     atascado? Adiós a adivinar la versión por el texto.
-export const APP_VERSION = "v186.0";
-export const APP_CODENAME = "EL SALVAVIDAS";
+// v187.0 EL CINE HONESTO — el Dueño soltó LA PIEZA QUE FALTABA: «a la IA
+//         original le dije que al principio haga una cinemática tipo GTA
+//         cuando esté cargando — desde ese día no ha vuelto a cargar bien
+//         vanguard». La cinemática (cine-entrada.tsx, v177) arranca 900ms
+//         DESPUÉS de que la casa despierta: el Dueño ve su consola un
+//         segundo («casi vi la pantalla normal por un segundo»), el cine la
+//         tapa entera — placas oscuras + barras de progreso + 1.3MB de
+//         fotos que en su señal llegan negras — y PARECE otra pantalla de
+//         carga eterna. El cine no era la carga, pero nadie podía
+//         distinguirlo. Tres curas:
+// (1) EL CINE HONESTO: cartel permanente «EL CINE DE ENTRADA · n de 6 — LA
+//     CASA YA ESTÁ DESPIERTA» y botón GIGANTE «SALTAR EL CINE» dentro de la
+//     barra letterbox inferior (zona del pulgar, imposible de no ver); las
+//     placas respiran 1.5s (9s totales, antes 13s).
+// (2) EL CINE SE CALLA SI HUBO SUFRIMIENTO: si esta sesión ya pasó por
+//     socorro/vigía/bote (vg187-sufrio / vg186-n, ventana 10 min) o la casa
+//     tardó >12s en despertar (vg155-recarga = sello de arranque de ESTA
+//     carga), el cine NO juega hoy — la casa se abre directa, sin una
+//     pantalla más que se pueda confundir con carga.
+// (3) EL TESTIGO: el primer error de script y la primera promesa rota de
+//     cada pestaña quedan escritos (vg187-err, con la 1a línea del stack,
+//     sin regex — indexOf a prueba de template literals) y el socorrista
+//     los muestra como «CÓDIGO: …» — la próxima captura del Dueño trae la
+//     CAUSA real de su aparato, no una adivinanza.
+export const APP_VERSION = "v187.0";
+export const APP_CODENAME = "EL CINE HONESTO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

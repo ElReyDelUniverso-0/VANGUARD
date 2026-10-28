@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v187.0",
+    nombre: "EL CINE HONESTO",
+    tipo: "tecno",
+    hitos: [
+      "EL DUEÑO SOLTÓ LA PIEZA QUE FALTABA («a la IA original le dije que al principio haga una cinemática tipo GTA cuando esté cargando — desde ese día no ha vuelto a cargar bien vanguard»): la cinemática arranca 900ms después de que la casa despierta — consola un segundo, cine encima (placas oscuras + barras de progreso + 1.3MB de fotos que en su señal llegan negras) = PARECE otra pantalla de carga eterna. El cine no era la carga, pero nadie podía distinguirlo",
+      "EL CINE HONESTO — cartel permanente «EL CINE DE ENTRADA · n de 6 · LA CASA YA ESTÁ DESPIERTA» y botón GIGANTE «SALTAR EL CINE» dentro de la barra letterbox inferior (zona del pulgar); placas de 1.5s (9s totales, antes 13s) — jamás volverá a parecerse a una carga",
+      "EL CINE SE CALLA SI HUBO SUFRIMIENTO — si la sesión ya pasó por socorro/vigía/bote (vg187-sufrio o vg186-n, ventana de 10 min) o la casa tardó >12s en despertar (vg155-recarga = sello de arranque), el cine no juega hoy: la casa se abre directa, sin una pantalla más que confundir con carga",
+      "EL TESTIGO — el primer error de script y la primera promesa rota de cada pestaña quedan escritos en vg187-err (con la 1a línea del stack) y el socorrista los pinta como «CÓDIGO: …»: la próxima captura del Dueño trae la CAUSA real de su aparato, no una adivinanza",
+      "QA v187: tsc 0, build EXIT 0, inline SYNTAX_OK; navegador real: cine con cartel + salto gigante, semilla vg187-sufrio silencia el cine tras una recarga, arranque sano intacto; guards v167 + piedra v184 + relevo v183.1 + socorrista v185 + bote v186 intactos",
+    ],
+  },
+  {
     version: "v186.0",
     nombre: "EL SALVAVIDAS",
     tipo: "tecno",

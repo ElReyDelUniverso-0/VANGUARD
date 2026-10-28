@@ -3065,3 +3065,37 @@ Stage Summary:
 - Producción v185.0 EL SOCORRISTA operativa: NINGUNA pantalla de arranque puede ya quedar eterna sin rescate visible — cortina (muerte propia + piedra) y CASA (socorrista a pantalla completa) cubiertas por separado, con diagnóstico honesto (progreso KB real + dos mensajes distintos según la muerte).
 - Pendiente para el Dueño: probar de nuevo ahora (cerrar TODAS las pestañas viejas de VANGUARD antes); si su señal está estancada verá «Descargando la casa · N KB» y a los 50s el socorro con ENTRAR DE NUEVO — un toque y entra.
 - Deuda técnica vista de pasada: HTML de / pesa 535KB (candidato a podar RSC payload); setVisitas-en-effect preexistente en vanguard2 dispara eslint nuevo.
+
+---
+Task ID: v186.0-salvavidas
+Agent: main (Z — turno continuo tras v185.0)
+Task: v186.0 EL SALVAVIDAS — el Dueño probó v185 con captura real (tablet Android, Chrome, 11:03): «casi vi la pantalla normal por un segundo pero aun sigue», captura = cortina con texto ORIGINAL sin progreso ni botón
+
+Work Log:
+- Lectura de la captura: (a) su frase prueba que UN reintento SÍ abrió la casa (la puerta funciona, algo la mata después: señal/memoria); (b) la cortina sin placa de versión = imposible saber si era pestaña vieja o build nuevo atascado — carencia diagnóstica.
+- ① EL BOTE: socorrista modo 1 rema hasta 3 reanimaciones automáticas por ventana de 10 min (vg186-n/vg186-t en sessionStorage: tope duro, ventana que expira, rastro; a la 4ª el mando pasa al Dueño con ENTRAR DE NUEVO). Carril rápido: 30s en vez de 50s cuando la sesión ya se atascó (rnBote>=1 leído al arranque).
+- ② LA PLACA: «despliegue v186.0» en la cortina (span vg-cortina-ver bajo el estado) + en la barra del vigía + dentro del socorro; la versión viaja al inline vía ${APP_VERSION} interpolado en build (import en layout.tsx desde version.ts).
+- QA: tsc 0, build EXIT 0, inline SYNTAX_OK con VER interpolada verificada (var VER='v186.0'); navegador real local: arranque sano intacto (cortina fuera, casa+vivo, sin falsos rescates) — NOTA: la sesión por defecto del navegador quedó envenenada por la carrera del reinicio del servidor (casa:false persistente sin errores; sesión aislada fresca = todo verde; no es bug del repo, es estado del navegador); bote probado en sesión VIRGEN con chunks abortados y contador sembrado n=1: socorro a ~32s con placa VANGUARD v186.0 + botón + n→2 (reanimación contada). Producción: push a661835 → health v186.0; HTML en vivo con vg-cortina-ver + vg186-n; QA vivo: casa+vivo, cortina fuera, 0 errores.
+- Captura del socorro con placa: /tmp/vg186-socorro-placa.png (para el Dueño si la pide).
+
+Stage Summary:
+- Producción v186.0 EL SALVAVIDAS: la puerta ya probada que abre (reintento) ahora rema sola hasta 3 veces con carril rápido, y toda pantalla de rescate lleva placa de versión — el próximo pantallazo del Dueño se diagnostica solo.
+- Protocolo dado al Dueño: cerrar TODAS las pestañas VANGUARD (deslizarlas fuera) → pestaña nueva → escribir la dirección → esperar 90s sin tocar → mandar foto (la placa dirá la verdad).
+- Deuda vista: HTML 535KB sigue (podar RSC payload); sesión de navegador envenenada tras reinicio del server local = recordar sesiones aisladas en QA.
+
+---
+
+Task ID: v187.0-cine-honesto
+Agent: main (Z)
+Task: EL DUEÑO SOLTÓ LA CAUSA RAÍZ: «a la IA original le dije que al principio haga una cinemática tipo GTA cuando esté cargando — desde ese día no ha vuelto a cargar bien vanguard» (+ «pasaron como 20 segundos cargó de nuevo, pensé que se solucionó, después volví a cargar y no, siempre carga»)
+
+Work Log:
+- LECTURA DE LA CAUSA: la cinemática (cine-entrada.tsx v177) arranca 900ms DESPUÉS de que la casa despierta → el Dueño ve su consola UN SEGUNDO («casi vi la pantalla normal por un segundo»), el cine la tapa entera — placas oscuras + barras de progreso + 1.3MB de fotos (verificado: tanks 311KB, kremlin 342KB, city 210KB…) que en su señal llegan NEGRAS — y PARECE otra pantalla de carga eterna. El cine no era la carga, pero nadie podía distinguirlo. Coincide exacto con su cronología (el cine nació v177, el «no carga bien» también).
+- ① EL CINE HONESTO: cartel permanente «EL CINE DE ENTRADA · n de 6 · LA CASA YA ESTÁ DESPIERTA» (vg174-cine-carte) + botón GIGANTE «SALTAR EL CINE»» dentro de la barra letterbox inferior (pulgar, vg174-cine-fuera; fuera la píldora «Saltar »» escondida arriba a la derecha) + placas de 1.5s (9s totales, antes 13s).
+- ② EL CINE SE CALLA SI HUBO SUFRIMIENTO: sesionSufrio() (vg187-sufrio del socorrista/vigía o vg186-n del bote, ventana 10 min) o arranqueLento() (vg155-recarga = sello de arranque de ESTA carga; >12s = no cine hoy) → la casa se abre directa.
+- ③ EL TESTIGO (layout inline): window.onerror + unhandledrejection capturan la PRIMERA herida (msg + 1a línea de stack, sin regex — indexOf) en vg187-err; el socorro la pinta como «CÓDIGO: …» → la próxima captura del Dueño trae la CAUSA de su aparato. socorrer() y vigia() estampan vg187-sufrio.
+- QA: tsc 0, build EXIT 0, inline SYNTAX_OK (node --check) + VER interpolada v187.0 + 4 marcas OK. Navegador real: cine nace con cartel (texto verificado «EL CINE DE ENTRADA · 1 DE 6»), SALTAR GIGANTE lo dispara al instante (casa viva), ciclo natural completo ~9s sin falsos rescates; semilla vg187-sufrio → recarga → cine SILENCIADO y casa directa; TESTIGO verificado EN VIVO: un chunk abortado de verdad quedó escrito en vg187-err («RECURSO …/chunks/37dabf1f18f78e71.js») y la casa que sobrevive NO genera rescate falso. guards v167 + piedra v184 + relevo v183.1 + socorrista v185 + bote v186 intactos. Nota: eval del daemon agent-browser quedó roto a mitad de QA (bug de la herramienta, no del sitio) — snapshot/get count/find text siguieron OK.
+
+Stage Summary:
+- Producción v187.0 EL CINE HONESTO: la cinemática GTA ya jamás se disfraza de carga (cartel + salto gigante + 9s + se calla si hubo rescate/espera larga) y cada pestaña escribe su primera herida para que el socorro la muestre como CÓDIGO.
+- Pendiente para el Dueño: cerrar TODAS las pestañas, probar; si vuelve a colgarse, la captura del socorro ahora dirá CÓDIGO: … — enviar esa foto.
