@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v188.0",
+    nombre: "EL PACIENTE",
+    tipo: "tecno",
+    hitos: [
+      "EL BUCLE DE INANICIÓN CAZADO CON LA CAPTURA DEL DUEÑO (cortina v187 + batería 4%: «entro, aparece la pestaña normal y otra vez entra la pantalla de carga; 30 segundos después pasa lo mismo») — el bote v186 recargaba a los ~34s y TIRABA la descarga a medio camino; una respuesta sin TERMINAR no se cachea, así que cada reintento volvía a bajar 1.8MB DE CERO en una señal que necesita más de 34s: matemática de nunca terminar",
+      "EL PACIENTE — instrumentos de vida del chorro: cada script/estilo de _next que TERMINA estampa hora (capture: los eventos de recurso no burbujean), los pendientes se cuentan; el socorro modo 1 ya no recarga a los 4s — ESPERA mientras el chorro viva (algo terminó hace <15s, o la primera ola aún viaja, tope 75s), dice «Descarga: X KB llegados · el chorro sigue vivo» y solo reanima cuando está ESTANCADO de verdad",
+      "UNA SOLA FUENTE DE KB — la cortina y el socorro dicen la misma verdad (kbCasa, performance API, indexOf, jamás regex en el template literal); aviso honesto de fase: si el bundle llega con el socorro vivo, el texto pasa a «la casa está despertando»",
+      "LA NOTA DE BATERÍA — con menos de 15% y sin cargador (Battery API), la cortina y el socorro lo dicen a la cara: el ahorro de energía de Android frena el CPU y la señal; «conéctalo y Vanguard abrirá rápido»",
+      "QA v188: tsc 0, build EXIT 0, inline SYNTAX_OK (VER v188.0 interpolada, pacient/kbCasa/notaBateria presentes); navegador real: arranque sano intacto (cortina fuera ≤3.5s, sin socorro ni recargas), socorro con KB vivos verificado con chunks saboteados; guards v167 + piedra v184 + relevo v183.1 + socorrista v185 + bote v186 + cine honesto v187 intactos",
+    ],
+  },
+  {
     version: "v187.0",
     nombre: "EL CINE HONESTO",
     tipo: "tecno",

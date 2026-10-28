@@ -3099,3 +3099,20 @@ Work Log:
 Stage Summary:
 - Producción v187.0 EL CINE HONESTO: la cinemática GTA ya jamás se disfraza de carga (cartel + salto gigante + 9s + se calla si hubo rescate/espera larga) y cada pestaña escribe su primera herida para que el socorro la muestre como CÓDIGO.
 - Pendiente para el Dueño: cerrar TODAS las pestañas, probar; si vuelve a colgarse, la captura del socorro ahora dirá CÓDIGO: … — enviar esa foto.
+
+---
+
+Task ID: v188.0-paciente
+Agent: main (Z)
+Task: LA CAPTURA DEL DUEÑO (cortina v187 + batería 4%) y su relato («entro, aparece la pestaña normal y otra vez entra la pantalla de carga; 30 segundos después pasa lo mismo») — cazar el bucle y curarlo
+
+Work Log:
+- DIAGNÓSTICO EL BUCLE DE INANICIÓN: el bote v186 recargaba a los ~34s (carril rápido 30s + 4s) y TIRABA la descarga a medio camino — una respuesta sin TERMINAR no se cachea, así que cada reintento volvía a bajar 1.8MB DE CERO en una señal que necesita más de 34s. La «pestaña normal» que el Dueño ve = la casa prerenderizada (skeletons); la «pantalla de carga» que vuelve = el socorro/cortina tras cada reanimación. Matemática de nunca terminar.
+- ① EL PACIENTE (inline): vgCargaTerminada cuenta cada script/estilo _next que TERMINA (document capture — QA cazó que window capture NO ve load de recursos: data-vghecho=0 → fix v188.1) + vgPendientes (los que siguen en el alambre) + vgChorroVivo (vivo = algo terminó hace <15s, o KB completados CRECEN, o primera ola viaja con tope 75s). El socorro modo 1 ya no recarga a los 4s: ESPERA, dice «Descarga: X KB llegados · el chorro sigue vivo» y solo reanima si está ESTANCADO de verdad. El bote se gasta solo al recargar de verdad.
+- ② UNA SOLA FUENTE DE KB (kbCasa): cortina y socorro dicen la misma verdad; aviso de fase: __vgcasa con socorro vivo → «la casa está despertando».
+- ③ NOTA DE BATERÍA: <15% y sin cargador (Battery API) → «el ahorro de energía frena la descarga; conéctalo y abrirá rápido» en cortina (con el rescate) y socorro.
+- QA: tsc 0, build EXIT 0 (×2 con fix v188.1), inline SYNTAX_OK (VER v188.0, chorro/kbCasa/notaBateria/paciente presentes); navegador real: arranque sano intacto (cortina fuera, 0 socorros, cine honesto vivo), data-vghecho=48 (vida del chorro medida EN VIVO), hidratación verificada (html[data-tension]); el mock de red del daemon resultó no fiable para forzar socorro — rama de estancamiento revisada por lógica + SYNTAX_OK (peor caso: espera paciente con botón ENTRAR, nunca bucle). Nota: eval del daemon agent-browser roto toda la sesión (bug de herramienta).
+- PENDIENTE (deuda): HTML de / = 535KB sin caché — la primera descarga del Dueño; podar RSC payload algún día.
+
+Stage Summary:
+- v188.0 EL PACIENTE en producción: la reanimación automática ya JAMÁS tira una descarga viva — espera con KB visibles y solo patea cuando el chorro está muerto de verdad; la batería baja se dice a la cara. El bucle de 30s del Dueño tiene los días contados.

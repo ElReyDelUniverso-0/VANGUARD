@@ -436,6 +436,95 @@ try{
       testigo(m);
     }catch(x){}
   });
+  // v188.0 EL PACIENTE — instrumentos de vida del CHORRO de descarga.
+  // La captura del Dueño (cortina v187 a los 30s, batería al 4%) y su relato
+  // («30 segundos después pasa lo mismo») cazaron el bucle de inanición:
+  // el bote v186 recargaba a los ~34s y TIRABA la descarga a medio camino —
+  // y una respuesta sin TERMINAR no se cachea: cada reintento volvía a
+  // bajar 1.8MB DE CERO en una señal que necesita más de 34s. Matemática
+  // de nunca terminar. Cura: saber si el chorro está VIVO antes de pisar.
+  // vgCargaTerminada cuenta cada script/estilo de _next que TERMINA (load o
+  // error — capture: los eventos de recurso no burbujean) y estampa hora;
+  // vgPendientes cuenta los que siguen en el alambre; vgChorroVivo decide
+  // con una ley honesta: vivo = algo terminó hace <15s, o la primera ola
+  // aún viaja (nada terminó pero hay pendientes — tope 75s sin NADA).
+  var vgCargas=0, vgUltCarga=0, vgT0=Date.now();
+  function vgCargaTerminada(e){
+    try{
+      var tg=e&&e.target; if(!tg||!tg.tagName) return;
+      if(tg.tagName!=='SCRIPT'&&tg.tagName!=='LINK') return;
+      var u=String(tg.src||tg.href||'');
+      if(u.indexOf('/_next/')<0) return;
+      tg.setAttribute('data-vghecho','1');
+      vgCargas++; vgUltCarga=Date.now();
+    }catch(e2){}
+  }
+  window.addEventListener('load',vgCargaTerminada,true);
+  // v188.1 QA: window capture NO ve los load de recursos (data-vghecho=0
+  // cazado en navegador real) — el truco documentado es DOCUMENT capture.
+  document.addEventListener('load',vgCargaTerminada,true);
+  document.addEventListener('error',vgCargaTerminada,true);
+  function vgPendientes(){
+    try{
+      var n=0,i,els=document.getElementsByTagName('script'),ls=document.getElementsByTagName('link');
+      for(i=0;i<els.length;i++){ var u1=String(els[i].src||''); if(u1.indexOf('/_next/')>-1&&!els[i].getAttribute('data-vghecho')) n++; }
+      for(i=0;i<ls.length;i++){ var u2=String(ls[i].href||''); if(u2.indexOf('/_next/')>-1&&!ls[i].getAttribute('data-vghecho')) n++; }
+      return n;
+    }catch(e){ return -1; }
+  }
+  function vgChorroVivo(){
+    try{
+      // segunda señal de vida, a prueba de eventos: si los KB completados
+      // CRECEN desde el último chequeo, el chorro está vivo sin discusión
+      var kb=kbCasa();
+      if(kb>=0){
+        if(vgUltKB<0) vgUltKB=kb;
+        else if(kb>vgUltKB){ vgUltKB=kb; vgUltCarga=Date.now(); }
+      }
+    }catch(eX){}
+    try{
+      if(vgCargas===0) return vgPendientes()!==0&&(Date.now()-vgT0)<75000;
+      return (Date.now()-vgUltCarga)<15000;
+    }catch(e){ return true; }
+  }
+  var vgUltKB=-1;
+  // v188.0: los KB REALES en UNA sola fuente — la cortina (v185) y el
+  // socorro paciente dicen lo mismo (performance API, indexOf, jamás regex).
+  function kbCasa(){
+    try{
+      if(!window.performance||!performance.getEntriesByType) return -1;
+      var rs=performance.getEntriesByType('resource')||[];
+      var kb=0;
+      for(var i=0;i<rs.length;i++){
+        var it=rs[i];
+        var nm=String((it&&it.name)||'');
+        if(it&&(nm.indexOf('/_next/')>-1||nm.slice(-3)==='.js'||nm.slice(-4)==='.css')){
+          var tr=(typeof it.transferSize==='number')?it.transferSize:(it.encodedBodySize||0);
+          if(tr>0) kb+=tr;
+        }
+      }
+      return Math.round(kb/1024);
+    }catch(e){ return -1; }
+  }
+  // v188.0 LA NOTA DE BATERÍA — la captura del Dueño venía con 4%: el ahorro
+  // de energía de Android frena el CPU y la señal. Si el aparato está bajo
+  // y sin cargador, se lo decimos a la cara (en la cortina y en el socorro).
+  function notaBateria(el){
+    try{
+      if(!navigator.getBattery||!el) return;
+      navigator.getBattery().then(function(b){
+        try{
+          if(b&&b.level<0.15&&!b.charging){
+            var d=document.createElement('div');
+            d.style.cssText='font:400 11px/1.6 system-ui,sans-serif;color:rgba(255,152,92,.9);max-width:340px;text-align:center';
+            d.textContent=esI?('Tu aparato está con '+Math.round(b.level*100)+'% de batería y sin cargador: el ahorro de energía frena la descarga. Conéctalo y Vanguard abrirá rápido.'):'Low battery with no charger: power saving slows the download. Plug in and Vanguard opens fast.';
+            el.appendChild(d);
+          }
+        }catch(eB2){}
+      }).catch(function(){});
+    }catch(eB){}
+  }
+  var batDicha=false;
   // v182.0 EL ÚLTIMO RESCATE — el meta http-equiv=refresh nace AQUÍ, en JS
   // vanilla sobre document.head (NUNCA en el JSX: React 19 eleva los <meta>
   // al head en la hidratación y quedaba armado tras un arranque sano =
@@ -493,6 +582,8 @@ try{
     if(c.getAttribute('data-off')==='1') return;
     if(st&&msg) st.textContent=msg;
     if(btn) btn.setAttribute('data-on','1');
+    // v188.0: la nota de batería entra con el primer rescate de la cortina
+    if(!batDicha){ batDicha=true; notaBateria(c); }
   }
   function recargar(){
     try{ sessionStorage.setItem(K,String(Date.now())); }catch(e){}
@@ -556,7 +647,7 @@ try{
       t.textContent=esI?(modo===1?'La casa no llega a tu aparato':'La casa despertó a medias'):(modo===1?'The house never reached your device':'The house woke up halfway');
       var p=document.createElement('div');
       p.style.cssText='font:400 12px/1.6 system-ui,sans-serif;color:rgba(232,196,118,.78);max-width:340px';
-      p.textContent=esI?(modo===1?'La descarga se atascó en esta señal. Toca ENTRAR DE NUEVO: un reintento suele abrir al primer toque.':'La descarga llegó pero la casa sigue despertando. Si en un minuto no hay casa viva, toca ENTRAR DE NUEVO.'):(modo===1?'The download stalled on this signal. Tap ENTER AGAIN: one retry usually opens on the first try.':'The download arrived but the house is still waking. If nothing changes in a minute, tap ENTER AGAIN.');
+      p.textContent=esI?(modo===1?'La descarga va lenta con esta señal. Vanguard espera paciente y solo se reanima si se estanca de verdad; también puedes tocar ENTRAR DE NUEVO.':'La descarga llegó pero la casa sigue despertando. Si en un minuto no hay casa viva, toca ENTRAR DE NUEVO.'):(modo===1?'The download is slow on this signal. Vanguard waits patiently and only relaunches if it truly stalls; you can also tap ENTER AGAIN.':'The download arrived but the house is still waking. If nothing changes in a minute, tap ENTER AGAIN.');
       var bt=document.createElement('button');
       bt.textContent=esI?'ENTRAR DE NUEVO':'ENTER AGAIN';
       bt.style.cssText='border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.08);padding:14px 26px;letter-spacing:.24em;font:700 12px system-ui,sans-serif;border-radius:2px;text-transform:uppercase;margin-top:6px';
@@ -580,8 +671,13 @@ try{
           s.appendChild(ec);
         }
       }catch(eE){}
+      notaBateria(s);
       // la casa despertó tarde → el socorro se retira solo (jamás tapa una casa viva)
+      var aviso2=false;
       var q=window.setInterval(function(){
+        try{
+          if(window.__vgcasa===true&&!aviso2){ aviso2=true; p.textContent=esI?'La descarga llegó entera — la casa está despertando. Unos segundos más…':'The download arrived — the house is waking. A few more seconds…'; }
+        }catch(eQ2){}
         if(window.__vgvivo===true&&s.parentNode){ s.parentNode.removeChild(s); window.clearInterval(q); }
       },1000);
       window.setTimeout(function(){ window.clearInterval(q); },180000);
@@ -598,7 +694,32 @@ try{
           if(!t2||Date.now()-t2>600000){ t2=Date.now(); n2=0; try{ sessionStorage.setItem('vg186-t',String(t2)); }catch(e2){} }
           if(n2<3){ try{ sessionStorage.setItem('vg186-n',String(n2+1)); }catch(e3){} puedeAuto=true; }
         }catch(e4){}
-        if(puedeAuto) window.setTimeout(recargar,4000);
+        // v188.0 EL PACIENTE — el reintento ya NO patea la descarga por la
+        // calle: si el chorro está VIVO (algo de _next terminó hace <15s, o
+        // la primera ola aún viaja), el socorro ESPERA y dice los KB reales;
+        // solo cuando está estancado de verdad (nada termina en 15s, o 75s
+        // sin una sola terminación) llega la reanimación. El bote se gasta
+        // solo al recargar de verdad: adiós a la inanición de 1.8MB.
+        if(puedeAuto){
+          var pk=document.createElement('div');
+          pk.style.cssText='font:500 10px/1.6 system-ui,sans-serif;letter-spacing:.14em;color:rgba(232,196,118,.62);text-transform:uppercase';
+          s.appendChild(pk);
+          try{
+            var kbA=kbCasa();
+            pk.textContent=(kbA>=0?('Descarga: '+kbA+' KB llegados'):'Descarga en curso')+(vgChorroVivo()?' · el chorro sigue vivo':'');
+          }catch(eP0){}
+          var paciente=window.setInterval(function(){
+            try{
+              if(window.__vgvivo===true||!document.getElementById('vg-socorro')||window.__vgcasa===true){ window.clearInterval(paciente); return; }
+              var vivo=vgChorroVivo();
+              try{
+                var kb2=kbCasa();
+                pk.textContent=(kb2>=0?('Descarga: '+kb2+' KB llegados'):'Descarga en curso')+(vivo?' · el chorro sigue vivo':' · estancado, reanimando…');
+              }catch(eP1){}
+              if(!vivo){ window.clearInterval(paciente); recargar(); }
+            }catch(eP2){}
+          },8000);
+        }
       }
     }catch(e){}
   }
@@ -661,24 +782,11 @@ try{
     // avanzar en vez de mirar «Desplegando el universo» congelado.
     if(n%8===0&&st&&(!btn||btn.getAttribute('data-on')!=='1')){
       try{
-        if(window.performance&&performance.getEntriesByType){
-          var rs=performance.getEntriesByType('resource')||[];
-          var kb=0;
-          for(var i=0;i<rs.length;i++){
-            var it=rs[i];
-            // v185.1: SIN regex — este script vive dentro de un template
-            // literal JSX y las barras invertidas se consumen (\\/ llega
-            // como / y // abre un comentario: SyntaxError mata el script
-            // ENTERO y la cortina se vuelve eterna). indexOf es a prueba
-            // de escapes.
-            var nm=String((it&&it.name)||'');
-            if(it&&(nm.indexOf('/_next/')>-1||nm.slice(-3)==='.js'||nm.slice(-4)==='.css')){
-              var tr=(typeof it.transferSize==='number')?it.transferSize:(it.encodedBodySize||0);
-              if(tr>0) kb+=tr;
-            }
-          }
-          if(kb>0) st.textContent=esI?('Descargando la casa · '+Math.round(kb/1024)+' KB'):('Downloading the house · '+Math.round(kb/1024)+' KB');
-        }
+        // v188.0: una sola fuente de KB (kbCasa) — la cortina y el socorro
+        // paciente dicen la misma verdad. indexOf, jamás regex en este
+        // template literal (lección v185.1: las barras se consumen).
+        var kb=kbCasa();
+        if(kb>0) st.textContent=esI?('Descargando la casa · '+kb+' KB'):('Downloading the house · '+kb+' KB');
       }catch(e){}
     }
     // v178.0: la casa plana vive en cuanto el DOM existe — el HTML

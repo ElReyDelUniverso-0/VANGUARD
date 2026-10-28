@@ -765,6 +765,27 @@
 //     sin regex — indexOf a prueba de template literals) y el socorrista
 //     los muestra como «CÓDIGO: …» — la próxima captura del Dueño trae la
 //     CAUSA real de su aparato, no una adivinanza.
-export const APP_VERSION = "v187.0";
-export const APP_CODENAME = "EL CINE HONESTO";
+// v188.0 EL PACIENTE — la captura del Dueño (cortina v187, batería 4%) y su
+//         relato («entro, aparece la pestaña normal y otra vez entra la
+//         pantalla de carga; 30 segundos después pasa lo mismo») cazaron el
+//         BUCLE DE INANICIÓN: el bote v186 recargaba a los ~34s y TIRABA la
+//         descarga a medio camino — y una respuesta sin TERMINAR no se
+//         cachea: cada reintento volvía a bajar 1.8MB DE CERO en una señal
+//         que necesita más de 34s. Matemática de nunca terminar. Curas:
+// (1) EL PACIENTE: instrumentos de vida del chorro (vgCargaTerminada cuenta
+//     cada script/estilo _next que TERMINA, capture; vgPendientes los que
+//     siguen en el alambre; vgChorroVivo = algo terminó hace <15s, o la
+//     primera ola aún viaja con tope de 75s). El socorro modo 1 ya no
+//     recarga a los 4s: ESPERA mientras el chorro viva, dice «Descarga:
+//     X KB llegados · el chorro sigue vivo» y solo reanima si está
+//     ESTANCADO de verdad. El bote se gasta solo al recargar de verdad.
+// (2) UNA SOLA FUENTE DE KB (kbCasa): la cortina y el socorro dicen la
+//     misma verdad (performance API, indexOf, jamás regex — lección v185.1).
+// (3) LA NOTA DE BATERÍA: si el aparato está <15% y sin cargador (Battery
+//     API), la cortina y el socorro lo dicen a la cara — el ahorro de
+//     energía frena el CPU y la señal; «conéctalo y abrirá rápido».
+// (4) AVISO HONESTO DE FASE: si __vgcasa llega con el socorro vivo, el
+//     texto cambia a «la descarga llegó entera — la casa está despertando».
+export const APP_VERSION = "v188.0";
+export const APP_CODENAME = "EL PACIENTE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
