@@ -3133,3 +3133,24 @@ Work Log:
 
 Stage Summary:
 - v189.0 ADIÓS AL CINE en producción: la causa raíz nombrada por el Dueño está MUERTA de verdad, un 404 ya no puede alimentar al paciente eternamente y el aparato con documento viejo tiene una salida limpia de un toque. Pendiente: el Dueño cierra TODAS las pestañas y prueba; si algo apareciera, la placa de versión (cortina/socorro) dirá v189.0 y el CÓDIGO dirá la herida exacta.
+
+---
+Task ID: fix-carga-v190
+Agent: Z.ai (GLM) — sesión web-49b4ed47
+Task: «Ya olvidate de los videos, ahora soluciona el problema de la carga de vanguard, hasta ahora vanguard es injugable» — cazar y matar el bucle de recarga de 30 segundos.
+
+Work Log:
+- Diagnóstico en vivo: /api/health → {ok:true, db:"down", version:"v188.0"}; HTML en vivo 566KB; 34 chunks JS ≈2.2MB. En la señal del Dueño la descarga necesita >34s.
+- Autopsia del bucle de 30s EXACTOS en el código v188: (1) carril rápido v186 tSoc1=rnBote>=1?30000:50000 → socorro a los 30s exactos en sesiones ya atascadas (sessionStorage persistente); (2) paciente 8s → if(!vgChorroVivo()) recargar() automático; (3) meta http-equiv=refresh nacía a 70s y podía matar el propio HTML aún en vuelo; (4) handler de errores recargaba solo con >60s de vida. Cada recarga tiraba la descarga (respuesta sin terminar no se cachea) → reintento desde CERO → bucle eterno.
+- Hallazgo extra: window.__vgcasa se leía desde v185 pero NADIE la seteaba (socorro modo 1 mentía con la descarga completa).
+- Obstáculo de entorno: el worktree fue revertido por snapshot del sandbox (HEAD=c2ab6b2 pero archivos v183) → git reset --hard + backup; daemons vigilante/guardián (PIDs 2506/4232) ya muertos.
+- COLISIÓN EN VIVO: la otra IA push-eó su v189.0 «ADIÓS AL CINE» (847e3ce) mientras yo editaba; mi push fue rechazado. Fusión por rebase: su ley (cine fuera del árbol, error≠vida, botón ACTUALIZAR AHORA) + mi ley (nada se recarga solo).
+- v190.0 LA DOBLE LEY (7fb761b): ① bote y paciente ejecutivos muertos — socorro = monitor honesto (KB reales cada 5s) que JAMÁS recarga; ② carril rápido de 30s muerto (tSoc1 fijo 50s/100s); ③ meta de rescate SIEMPRE a 300s; ④ errores de módulo no recargan; ⑤ __vgcasa por fin nace (vgPendientes()===0); ⑥ ACTUALIZAR AHORA (ley hermana) siempre visible en el socorro; su cine fuera + data-vgmal conservados.
+- QA: tsc 0, build EXIT 0 (35s), inline SYNTAX_OK (VER v190.0) + leyes verificadas por script (scripts/qa_inline_v189.py), 9/9 marcadores verificados en el HTML en vivo.
+- Verificación con navegador real: marcador plantado en window sobrevivió 55s (el bucle viejo recargaba a los 30s), __vgvivo=true, __vgcasa=true, cortina fuera, sin socorro, 0 errores de página. Evidencia: download/qa-v190-vanguard-vivo.png.
+
+Stage Summary:
+- DEPLOY EN VIVO: https://vanguard-kq9r.vercel.app/ sirviendo v190.0 «LA DOBLE LEY» (health verificado).
+- EL BUCLE DE 30s ESTÁ MUERTO: demostrado con marcador anti-reload en navegador real.
+- db:"down" sigue (Supabase caído/pausado en Vercel): NO bloquea el arranque (health 200), solo funcionalidades de BD; requiere revisar env var DATABASE_URL / plan de Supabase desde el panel de Vercel (fuera de alcance de repo).
+- Convivencia con la otra IA: fusión respetuosa vía rebase; sus contribuciones intactas y acreditadas.
