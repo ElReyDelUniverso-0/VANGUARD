@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v191.0",
+    nombre: "EL ALGORITMO",
+    tipo: "nav",
+    hitos: [
+      "MANDATO DEL DUEÑO: «haz que Vanguard tenga un algoritmo como TikTok, mejora los videos, los en vivo, los memes; que Vanguard produzca contenido nuevo y tenga animaciones en cierto tiempo» — cuatro motores nuevos sobre la Doble Ley",
+      "EL ALGORITMO — PARA TI puntúa como TikTok: engaño (log de likes) + frescura (vida media 10h) + afinidad aprendida en TU aparato (localStorage vg191-perfil: cada tipo que miras y cada autor que te gusta pesa más) − visto-hace-poco, con entrelazado de diversidad (jamás 3 tarjetas del mismo tipo seguidas); cada tarjeta lleva el chip honesto «PORQUE MIRAS MEMES / PORQUE TE GUSTA @X / RECIÉN LLEGADO» — el algoritmo da la cara, no es caja negra",
+      "EL PRODUCTOR — Vanguard fabrica contenido NUEVO SOLO: primera hornada al abrir (confronta VS + pregunta al mundo + efeméride real de Wikimedia + cable caliente de GDELT por impacto) y 1 pulso nuevo cada 4 min con la pestaña visible (latido que respeta el sueño del aparato); caché en localStorage: recargar no vacía el feed — PARA TI JAMÁS vuelve a amanecer vacío",
+      "MEJORAS DE MÓDULOS — la galería de MEMES comunitaria (/api/memes con likes reales) y la TV de Vanguard (views/likes reales) ENTRAN al algoritmo; tres vistas con control segmentado (PARA TI · RECIENTE · EN VIVO); DOBLE TOQUE = CORAZÓN con ráfaga animada (el gesto TikTok); autoplay mudo del slide activo (política de móviles, solo el activo monta su iframe); chips «VER EN PARA TI» en GlobalVision y EN VIVO MUNDIAL",
+      "EL PULSO TEATRAL — animaciones en cierto tiempo: cada 6 min, 2.8s de barras de cine + titular real del mundo que entran, hablan y se van SOLOS; ley de la casa respetada (lección v177–v189): jamás antes de 75s de vida, jamás con la pestaña oculta ni movimiento reducido ni la casa muerta, pointer-events none, 0 bytes de fotos que bajar, solo transform/opacity a 60 FPS",
+    ],
+  },
+  {
     version: "v189.0",
     nombre: "ADIÓS AL CINE",
     tipo: "tecno",

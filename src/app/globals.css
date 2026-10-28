@@ -6206,3 +6206,25 @@ html[data-vg-3d="on"] .cuna-v139:has(.vg173-terminal) {
 @media (prefers-reduced-motion: reduce) {
   .vg179-nucleo-gira, .vg179-onda, .vg179-barras i, .vg179-panel { animation: none; }
 }
+
+/* ═══════════════ v191.0 EL ALGORITMO ═══════════════
+   EL PULSO TEATRAL — animación periódica de Vanguard.
+   Ley de la casa (v177–v189): NINGUNA animación tapa la casa ni
+   se parece a una carga. Este telón: 2.8s, se va solo, sin fotos
+   que bajar (0 bytes de red), pointer-events:none, solo
+   transform/opacity (60 FPS móvil), z bajo los diálogos. */
+.vg191-teatro{position:fixed;inset:0;z-index:47;pointer-events:none;animation:vg191Teatro 2.8s ease forwards}
+.vg191-teatro b{display:block;height:9vh;background:#050404;border-bottom:1px solid rgba(232,196,118,.35);transform:translateY(-100%);animation:vg191Barra 2.8s cubic-bezier(.7,0,.3,1) forwards}
+.vg191-teatro i{display:block;height:9vh;background:#050404;border-top:1px solid rgba(232,196,118,.35);transform:translateY(100%);animation:vg191BarraAbajo 2.8s cubic-bezier(.7,0,.3,1) forwards}
+.vg191-teatro span{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#e8c476;font-family:var(--font-rajdhani),system-ui,sans-serif;font-weight:700;font-size:clamp(13px,2.6vw,20px);line-height:1.5;letter-spacing:.22em;text-transform:uppercase;padding:0 8vw;opacity:0;animation:vg191Texto 2.8s ease forwards;text-shadow:0 0 22px rgba(232,196,118,.25)}
+.vg191-teatro em{display:block;font-style:normal;font-size:.55em;letter-spacing:.4em;color:rgba(232,196,118,.65);margin-bottom:.7em}
+@keyframes vg191Teatro{0%,88%{opacity:1}100%{opacity:0}}
+@keyframes vg191Barra{0%{transform:translateY(-100%)}12%,86%{transform:translateY(0)}100%{transform:translateY(-100%)}}
+@keyframes vg191BarraAbajo{0%{transform:translateY(100%)}12%,86%{transform:translateY(0)}100%{transform:translateY(100%)}}
+@keyframes vg191Texto{0%{opacity:0;transform:translateY(calc(-50% + 14px))}18%,80%{opacity:1;transform:translateY(-50%)}100%{opacity:0;transform:translateY(calc(-50% - 10px))}}
+
+/* EL CORAZÓN DEL DOBLE TOQUE — la ráfaga TikTok del feed Para Ti */
+.vg191-corazon{animation:vg191Burst .9s ease forwards;filter:drop-shadow(0 0 18px rgba(255,77,94,.6))}
+@keyframes vg191Burst{0%{transform:scale(.4);opacity:0}25%{transform:scale(1.25);opacity:1}60%{transform:scale(1);opacity:1}100%{transform:scale(1.15) translateY(-26px);opacity:0}}
+
+@media (prefers-reduced-motion:reduce){.vg191-teatro,.vg191-corazon{animation:none !important;display:none !important}}

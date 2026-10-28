@@ -3154,3 +3154,22 @@ Stage Summary:
 - EL BUCLE DE 30s ESTÁ MUERTO: demostrado con marcador anti-reload en navegador real.
 - db:"down" sigue (Supabase caído/pausado en Vercel): NO bloquea el arranque (health 200), solo funcionalidades de BD; requiere revisar env var DATABASE_URL / plan de Supabase desde el panel de Vercel (fuera de alcance de repo).
 - Convivencia con la otra IA: fusión respetuosa vía rebase; sus contribuciones intactas y acreditadas.
+
+---
+
+Task ID: v191.0-el-algoritmo
+Agent: main (Z)
+Task: Mandato del Dueño — «algoritmo como TikTok, mejora videos/en vivo/memes, que Vanguard produzca contenido nuevo y tenga animaciones en cierto tiempo» (con otra IA trabajando en paralelo)
+
+Work Log:
+- COORDINACIÓN: git fetch primero — la otra IA había pusheado v190.0 LA DOBLE LEY (fusión de las dos leyes v189 hermanas: cine muerto + nada se recarga solo). v191 se construyó SOBRE v190. Producción verificada v190.0 antes de empezar.
+- EXPLORACIÓN: foryou-panel v28 existía pero solo ordenaba por fecha (cronómetro, no algoritmo) y amanecía VACÍO sin UGC; /api/memes (galería con likes reales), /api/news (GDELT+impacto), /api/efemerides (Wikimedia onthisday), TV_VIDEOS (estática con views/likes) — combustible identificado.
+- ① EL ALGORITMO (src/lib/algoritmo-feed.ts): puntuación = engaño (log1+likes·1.6) + frescura (0.5^(h/10)·2.2) + afinidad (pesoTipo/pesoAutor aprendidos en vg191-perfil, solo localStorage) − visto<8h (−1.8), base propia para pulso/vivo; entrelazado de diversidad (jamás 3 del mismo tipo seguidas); chip honesto POR QUÉ en cada tarjeta; API: notaVista/notaLike/notaComentario/marcarVista/ordenarAlgoritmo/ordenarReciente.
+- ② EL PRODUCTOR (src/lib/productor-vivo.ts): hornadas de PULSOS — confronta VS (local, jamás falla), pregunta al mundo (local), dato de efemérides (fetch), meme del día de la galería (fetch), cable caliente por impacto (fetch); primera hornada garantizada al abrir + latido cada 4 min SOLO con pestaña visible (dormida → reintento 15s); caché vg191-pulsos tope 40 (recargar no vacía); vg191-cada para afincar ritmo en QA.
+- ③ FORYOU-PANEL v2: control segmentado PARA TI/RECIENTE/EN VIVO; fuentes mezcladas (UGC + memes galería + TV + pulsos + slide EN VIVO pinned); doble toque = corazón con ráfaga .vg191-corazon (umbral 320ms); autoplay MUDO del slide activo (política móviles); chips por-qué; counters optimistas; sala3D filas desde el algoritmo (paridad 3D/2D intacta); comentarios/monedas/compartir intactos.
+- ④ EL PULSO TEATRAL (src/components/vanguard/pulso-teatral.tsx + CSS .vg191-teatro): cada 6 min (vg191-anim), 2.8s de barras de cine + titular REAL de /api/news (fallback fijo); guardas: ≥75s de vida, visible, sin reduced-motion, __vgvivo true, pointer-events none, z-47 bajo diálogos, 0 bytes de red, solo transform/opacity; montado en page.tsx con dynamic ssr:false.
+- ⑤ CRUCES: GlobalVision (videos-panel) + EN VIVO MUNDIAL (en-vivo-panel) con chips «VER EN PARA TI» (vanguard:navigate foryou).
+- QA: tsc 0 (1 fix: cast __vgvivo), build EXIT 0 ×2, check-inline v191.0 TODO OK (20 SYNTAX_OK + marcadores + cine ausente); navegador real: 28→32 tarjetas (latido del productor verificado con vg191-cada=9000), chips por-qué, RECIENTE (chip LO MÁS NUEVO PRIMERO), EN VIVO (canales + Al Jazeera), doble toque → .vg191-corazon vivo, PULSO TEATRAL cazado a los 75s con titular REAL de GDELT («LA AGENCIA · VANGUARD EN VIVO / JAFAR PANAHI…»); nota QA: la primera programación del teatro lee el ritmo al montar (max(75s, ritmo)); los botones segmentados se eligen por texto exacto en pruebas (el HUD tiene su propio «PARA TI»).
+
+Stage Summary:
+- v191.0 EL ALGORITMO: PARA TI ya es TikTok de verdad — ranking con afinidad aprendida en el aparato del Dueño, el productor fabrica pulsos cada pocos minutos, los memes/videos/en-vivo entran al algoritmo, doble toque = corazón, y cada 6 minutos Vanguard se anima con un telón de 2.8s que no estorba a nadie.

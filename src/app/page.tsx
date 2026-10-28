@@ -287,6 +287,8 @@ const GobiernoPanel = dynamic(() => import("@/components/vanguard/panels/gobiern
 const BolsaPanel = dynamic(() => import("@/components/vanguard/panels/bolsa-panel").then((m) => m.BolsaPanel), { ssr: false, loading: PanelSkeleton });
 // v28 PARA TI — feed vertical estilo TikTok con el contenido de la comunidad
 const ForYouPanel = dynamic(() => import("@/components/vanguard/panels/foryou-panel").then((m) => m.ForYouPanel), { ssr: false, loading: PanelSkeleton });
+// v191.0 EL PULSO TEATRAL — animaciones de Vanguard en cierto tiempo (jamás bloquean, jamás parecen carga)
+const PulsoTeatral = dynamic(() => import("@/components/vanguard/pulso-teatral").then((m) => m.PulsoTeatral), { ssr: false });
 // v97.0 PANTALLA TOTAL: la plataforma de video de Vanguard (feed vertical + sala de proyección)
 const PantallaPanel = dynamic(() => import("@/components/vanguard/panels/pantalla-panel").then((m) => m.PantallaPanel), { ssr: false, loading: PanelSkeleton });
 // v24 VERDAD CRUDA — el lado oscuro de los conflictos
@@ -1322,6 +1324,10 @@ export default function Home() {
           movimiento, densidad y modo cama a CSS vars en :root (cero re-render) */}
       <MotorCama />
       <MotorLuxe />
+      {/* v191.0 EL PULSO TEATRAL: cada 6 min, 2.8s de teatro que no pide
+          permiso pero jamás estorba — barras de cine + titular del mundo.
+          Sin fotos que bajar, pointer-events none, se retira solo. */}
+      <PulsoTeatral />
       {/* v115.0 SINGULARIDAD: el ARQUITECTO trabaja en PERPETUO desde cualquier sala */}
       <MotorArquitecto />
       {/* v108.0 MODO INMERSIÓN: pantalla completa honesta de la consola plana.

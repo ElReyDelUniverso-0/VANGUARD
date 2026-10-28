@@ -832,6 +832,34 @@
 //     último _next termina, la casa anuncia «la descarga llegó entera».
 // v190.0 LA DOBLE LEY — fusión de las dos leyes v189 hermanas: el cine
 //         muere (ADIÓS AL CINE) y NADA se recarga solo (LA LEY SAGRADA).
-export const APP_VERSION = "v190.0";
-export const APP_CODENAME = "LA DOBLE LEY";
+// v191.0 EL ALGORITMO — mandato del Dueño: «haz que Vanguard tenga un
+//         algoritmo como TikTok, mejora los videos, los en vivo, los
+//         memes; que Vanguard produzca contenido nuevo y tenga
+//         animaciones en cierto tiempo». Cuatro motores:
+// (1) EL ALGORITMO (lib/algoritmo-feed.ts): PARA TI puntúa como TikTok —
+//     engaño (log de likes) + frescura (vida media 10h) + afinidad
+//     aprendida en localStorage (lo que miras y te gusta pesa más,
+//     perfil que NADIE más ve) − visto-hace-poco, con entrelazado de
+//     diversidad (jamás 3 tarjetas del mismo tipo seguidas) y chip
+//     HONESTO «porque miras MEMES» en cada tarjeta — el algoritmo da
+//     la cara, no es una caja negra.
+// (2) EL PRODUCTOR (lib/productor-vivo.ts): Vanguard fabrica PULSOS
+//     nuevos con el tiempo — efemérides reales de Wikimedia, el meme
+//     del día de la galería, el cable caliente de GDELT por impacto,
+//     confrontas VS y preguntas al mundo — primera hornada al abrir y
+//     1 pulso nuevo cada 4 min con la pestaña visible: el feed JAMÁS
+//     vuelve a amanecer vacío.
+// (3) MEJORAS videos/en vivo/memes: la galería de memes comunitaria y
+//     la TV de Vanguard ENTRAN al algoritmo con sus likes/views reales;
+//     tres vistas (PARA TI / RECIENTE / EN VIVO) con control segmentado;
+//     doble toque = corazón con ráfaga (el gesto TikTok); autoplay mudo
+//     del slide activo (política de móviles); chips de cruce en
+//     GlobalVision y EN VIVO MUNDIAL hacia PARA TI.
+// (4) EL PULSO TEATRAL (pulso-teatral.tsx): animaciones en cierto
+//     tiempo — cada 6 min, 2.8s de barras de cine + titular del mundo.
+//     Ley de la casa respetada: jamás antes de 75s de vida, jamás con
+//     la pestaña oculta ni movimiento reducido ni la casa muerta,
+//     pointer-events none, 0 bytes de red, se retira solo.
+export const APP_VERSION = "v191.0";
+export const APP_CODENAME = "EL ALGORITMO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

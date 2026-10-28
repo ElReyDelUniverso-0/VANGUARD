@@ -9,7 +9,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
   Signal, Search, ThumbsUp, ThumbsDown, Share2, BellRing, BellOff,
   Eye, ChevronDown, ChevronUp, History, Flame, Radio, ArrowLeft, BadgeCheck, X, Volume2, Play,
-  UploadCloud, Video as VideoIcon, Loader2, Download,
+  UploadCloud, Video as VideoIcon, Loader2, Download, Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -539,6 +539,14 @@ export function VideosPanel() {
         color="red"
         right={
           <div className="flex items-center gap-2">
+            {/* v191.0 EL ALGORITMO: los videos de la emisora viven también en PARA TI */}
+            <Button
+              size="sm"
+              onClick={() => { sfx.click(); window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "foryou" })); }}
+              className="h-8 px-2.5 font-mono text-[10px] uppercase bg-amber-hud/15 border border-amber-hud/50 text-amber-hud hover:bg-amber-hud/25"
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1" /> VER EN PARA TI
+            </Button>
             <Button
               size="sm"
               onClick={() => { setPublishOpen(true); sfx.click(); }}

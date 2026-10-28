@@ -118,6 +118,13 @@ export function EnVivoPanel() {
         color="red"
         right={
           <div className="flex items-center gap-2 text-[10px] font-mono">
+            {/* v191.0 EL ALGORITMO: los canales en vivo viven también en PARA TI */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "foryou" }))}
+              className="flex items-center gap-1.5 px-2 py-1 border border-amber-hud/50 rounded-sm bg-amber-hud/10 text-amber-hud uppercase hover:bg-amber-hud/20"
+            >
+              <Sparkles className="w-3 h-3" /> PARA TI
+            </button>
             <span className="flex items-center gap-1.5 px-2 py-1 border border-red-hud/50 rounded-sm bg-red-hud/10">
               <span className="w-2 h-2 rounded-full bg-red-hud blink-soft" />
               <Eye className="w-3 h-3 text-red-hud" />
