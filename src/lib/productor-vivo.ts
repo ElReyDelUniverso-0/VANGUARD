@@ -129,7 +129,7 @@ async function recetaMemeComunitario(): Promise<TarjetaFeed | null> {
     const r = await fetch("/api/memes?sort=top&limit=12", { cache: "no-store" });
     if (!r.ok) return null;
     const j = (await r.json()) as {
-      memes?: { id: string; likes: number; createdAt: string; composicion?: string; texto?: string; autor?: string }[];
+      memes?: { id: string; likes: number; createdAt: string; composicion?: string; composition?: string; texto?: string; caption?: string; autor?: string; author?: string }[];
     };
     const memes = j.memes ?? [];
     if (memes.length === 0) return null;
@@ -137,8 +137,8 @@ async function recetaMemeComunitario(): Promise<TarjetaFeed | null> {
     return {
       id: `pulso-memedia-${m.id}`,
       tipo: "pulso",
-      titulo: `EL MEME DEL DÍA — EL PUEBLO YA RÍE (${m.likes} LIKES) · ABRE LA GALERÍA DE MEMES`,
-      autor: m.autor || "LA COMUNIDAD",
+      titulo: `EL MEME DEL DÍA — ${String(m.caption || m.texto || m.composition || m.composicion || "EL PUEBLO YA RÍE").slice(0, 90).toUpperCase()} (${m.likes} LIKES)`,
+      autor: m.author || m.autor || "LA COMUNIDAD",
       ts: Date.now(),
       likes: m.likes ?? 0,
       datos: { receta: "memedia", memeId: m.id },

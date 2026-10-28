@@ -127,13 +127,14 @@ export function ForYouPanel() {
       setLikeCount((m) => ({ ...m, ...likes }));
 
       // ③ MEJORA MEMES — la galería comunitaria entra al algoritmo
-      type MemeRow = { id: string; likes: number; createdAt: string; texto?: string; composicion?: string; autor?: string };
+      // (la API real habla inglés: caption/composition/author — aceptamos ambos dialectos)
+      type MemeRow = { id: string; likes: number; createdAt: string; texto?: string; composicion?: string; autor?: string; caption?: string; composition?: string; author?: string };
       const filas: MemeRow[] = (memesR?.memes ?? []) as MemeRow[];
       setMemes(filas.map((m) => ({
         id: `meme-${m.id}`,
         tipo: "meme" as const,
-        titulo: String(m.texto || m.composicion || "MEME DE LA COMUNIDAD").slice(0, 120).toUpperCase(),
-        autor: m.autor || "LA COMUNIDAD",
+        titulo: String(m.caption || m.texto || m.composition || m.composicion || "MEME DE LA COMUNIDAD").slice(0, 120).toUpperCase(),
+        autor: m.author || m.autor || "LA COMUNIDAD",
         ts: +new Date(m.createdAt),
         likes: m.likes ?? 0,
         datos: { memeId: m.id },
