@@ -34,6 +34,18 @@ export const BITACORA: EntradaBitacora[] = [
     ],
   },
   {
+    version: "v190.0",
+    nombre: "LA DOBLE LEY",
+    tipo: "tecno",
+    hitos: [
+      "FUSIÓN DE LAS DOS LEYES v189 HERMANAS: el cine muere (ADIÓS AL CINE, 1.3MB de fotos fuera del arranque) y NADA se recarga solo (LA LEY SAGRADA) — la otra IA quitó la pieza que el Dueño nombró raíz del mal; esta ley garantiza que lo que baje, NADIE lo tira",
+      "EL FIN DEL BUCLE DE 30 SEGUNDOS: el Dueño lo dictó («entro carga bien y después vuelve a cargar y 30 segundos exactos recarga de nuevo: injugable») — la autopsia halló TRES gatillos de recarga peleándose con una señal lenta: el carril rápido v186 ponía el socorro a los 30s EXACTOS en sesiones ya atascadas, el bote/paciente recargaban al detectar estancamiento, y el meta de rescate mataba a los 70s un HTML que aún bajaba. Cada recarga tiraba la descarga y el reintento empezaba de CERO: matemática de nunca terminar",
+      "LA LEY SAGRADA: NADA SE RECARGA SOLO. JAMÁS. El bote v186 y su reanimación ejecutiva mueren; el socorro modo 1 es un monitor honesto que dice los KB reales cada 5s («el chorro sigue vivo» / «señal lenta — la descarga NO se suelta: sigue») y JAMÁS recarga; el reintento vuelve a ser un botón del Dueño",
+      "UNA DESCARGA QUE NADIE TIRA SIEMPRE TERMINA: el meta de rescate nace SIEMPRE a 300s (solo dispara si JavaScript jamás ejecutó), los errores de módulo ya no recargan (la casa hidrata con lo que llegó) y el carril rápido de 30s está muerto",
+      "__vgcasa POR FIN NACE: v185 la leía pero NADIE la seteaba (el socorro decía «la casa no llega» CON la descarga ya completa) — ahora cuando el último _next termina, la casa anuncia «la descarga llegó entera — la casa está despertando»",
+    ],
+  },
+  {
     version: "v188.0",
     nombre: "EL PACIENTE",
     tipo: "tecno",

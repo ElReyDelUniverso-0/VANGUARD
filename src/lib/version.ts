@@ -809,6 +809,29 @@
 //     casa con otro nombre (?vg189=hora): el navegador baja HTML fresco
 //     con chunks vivos en vez de reintentar eternamente los mismos 404
 //     de un documento viejo guardado en el aparato.
-export const APP_VERSION = "v189.0";
-export const APP_CODENAME = "ADIÓS AL CINE";
+// v189.0 LA LEY SAGRADA — «entro carga bien y después vuelve a cargar y 30
+//         segundos exactos recarga de nuevo: injugable». La autopsia halló
+//         TRES gatillos de recarga peleándose con una señal lenta: carril
+//         rápido v186 (socorro a los 30s EXACTOS en sesiones ya atascadas),
+//         bote/paciente que RECARGABAN al detectar estancamiento, y meta de
+//         rescate a 70s que mataba el HTML aún en vuelo. Cada recarga tiraba
+//         la descarga (una respuesta sin terminar no se cachea) y el
+//         reintento empezaba DE CERO: matemática de nunca terminar. La cura
+//         es una LEY: NADA SE RECARGA SOLO. JAMÁS.
+// (1) BOTE Y PACIENTE EJECUTIVOS MUERTOS: el socorro modo 1 es un monitor
+//     honesto (KB reales cada 5s: «el chorro sigue vivo» / «señal lenta —
+//     la descarga NO se suelta: sigue») que JAMÁS recarga; el reintento
+//     vuelve a ser un botón del Dueño (ENTRAR DE NUEVO).
+// (2) CARRIL RÁPIDO DE 30s MUERTO: era el gatillo exacto del bucle.
+// (3) META DE RESCATE SIEMPRE A 300s: solo dispara si JavaScript jamás
+//     ejecutó (hilo muerto); apagar() lo desarma en ≤20s/≤60s.
+// (4) ERRORES DE MÓDULO NO RECARGAN: la casa hidrata con lo que llegó; el
+//     fallo se dice a la cara y el reintento es del Dueño.
+// (5) __vgcasa POR FIN NACE: v185 la leía pero NADIE la seteaba (el socorro
+//     decía «la casa no llega» CON la descarga ya completa) — cuando el
+//     último _next termina, la casa anuncia «la descarga llegó entera».
+// v190.0 LA DOBLE LEY — fusión de las dos leyes v189 hermanas: el cine
+//         muere (ADIÓS AL CINE) y NADA se recarga solo (LA LEY SAGRADA).
+export const APP_VERSION = "v190.0";
+export const APP_CODENAME = "LA DOBLE LEY";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -325,6 +325,24 @@ export default function RootLayout({
             ≤20s/≤60s y el refresh jamás dispara. Guardia anti-bucle: si
             hace <90s ya hubo un rescate, el guión estira el meta a 300s
             (un reintento lento cada 5 min, nunca un bucle vertiginoso).
+
+            v189.0 LA LEY SAGRADA — «entro carga bien y después vuelve a
+            cargar y 30 segundos exactos recarga de nuevo: injugable». La
+            autopsia del bucle encontró TRES gatillos de recarga peleándose
+            con una señal lenta: el carril rápido v186 ponía el socorro a
+            los 30s EXACTOS en sesiones ya atascadas; el bote/paciente
+            recargaban al detectar estancamiento; el meta de rescate mataba
+            a los 70s un HTML que aún bajaba. Cada recarga TIRABA la
+            descarga (una respuesta sin terminar no se cachea) y el
+            reintento empezaba de CERO: matemática de nunca terminar. LA
+            CURA ES UNA LEY: NADA SE RECARGA SOLO. JAMÁS. ① el bote y el
+            paciente ya no recargan: solo dicen la verdad de la descarga
+            (KB reales) y esperan — una descarga que nadie tira SIEMPRE
+            termina; ② el carril rápido de 30s muere; ③ el meta nace
+            SIEMPRE a 300s (solo dispara si JavaScript jamás ejecutó);
+            ④ los errores de módulo ya no recargan: la casa hidrata con lo
+            que llegó; ⑤ __vgcasa por fin NACE (nadie la seteaba desde
+            v185): cuando el último _next termina, la casa lo anuncia.
             ════════════════════════════════════════════════════════════ */}
         <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
           {/* v182.0 EL ÚLTIMO RESCATE: el meta http-equiv=refresh NO vive aquí
@@ -464,6 +482,10 @@ try{
       // paciente y el socorro esperaba eterno frente a un cadáver.
       if(e.type==='error'){ tg.setAttribute('data-vgmal','1'); return; }
       vgCargas++; vgUltCarga=Date.now();
+      // v189.0: __vgcasa por fin NACE — v185 la leía pero NADIE la seteaba
+      // (el socorro decía «la casa no llega» CON la descarga ya completa).
+      // Cuando el último _next termina, la casa anuncia que llegó entera.
+      if(vgPendientes()===0){ try{ window.__vgcasa=true; }catch(eV3){} }
     }catch(e2){}
   }
   window.addEventListener('load',vgCargaTerminada,true);
@@ -548,12 +570,18 @@ try{
   // sessionStorage — si esta carga nació <90s tras la anterior, ALGUIEN está
   // reanimando en bucle (meta o error) → el meta nace a 300s. Máximo un
   // ciclo extra a 70s; después, un reintento lento cada 5 min. Jamás bucle.
+  //
+  // v189.0 LA LEY SAGRADA: el meta nace SIEMPRE a 300s. Los 70s podían
+  // reventar la PRIMERA descarga del propio HTML aún en vuelo (señal lenta
+  // = el documento mismo tarda >70s: el meta lo mataba y el bucle giraba).
+  // A 300s solo dispara si JavaScript JAMÁS ejecutó (cortina eterna de
+  // verdad, hilo muerto): en todo arranque con JS vivo, apagar() lo
+  // desarma en ≤20s/≤60s.
   try{
-    var ultR=Number(sessionStorage.getItem(K)||0);
     try{ sessionStorage.setItem(K,String(Date.now())); }catch(e){}
     var mt=document.createElement('meta');
     mt.id='vg-rescate-meta'; mt.httpEquiv='refresh';
-    mt.content=(ultR&&(Date.now()-ultR)<90000)?'300':'70';
+    mt.content='300';
     if(document.head) document.head.appendChild(mt);
   }catch(e){}
   // v173.0 LA CASA EN VIVO: el modo 3D se retiró — la portada es la consola
@@ -688,82 +716,66 @@ try{
         if(window.__vgvivo===true&&s.parentNode){ s.parentNode.removeChild(s); window.clearInterval(q); }
       },1000);
       window.setTimeout(function(){ window.clearInterval(q); },180000);
-      // modo 1 (bundle no llega): EL BOTE SALVAVIDAS v186 — hasta TRES
-      // reanimaciones automáticas por ventana de 10 min (el Dueño cazó en
-      // vivo que un reintento SÍ abre: «casi vi la pantalla normal»), cada
-      // una estampada; a la cuarta, el mando pasa al Dueño para siempre.
-      // Nada de bucles infinitos: tope duro, ventana que expira, rastro.
+      // v189.0 LA LEY SAGRADA — el BOTE v186 y su reanimación automática
+      // MURIERON. El relato del Dueño lo sentenció («30 segundos exactos y
+      // recarga de nuevo: injugable»): toda recarga tira la descarga, y en
+      // una señal lenta el reintento vuelve a necesitar más tiempo del que
+      // el sistema le da — bucle eterno. El socorro modo 1 ahora es un
+      // MONITOR HONESTO que JAMÁS recarga: dice los KB reales cada 5s
+      // («el chorro sigue vivo» / «señal lenta — la descarga NO se suelta:
+      // sigue») y espera. Una descarga que nadie tira SIEMPRE termina; el
+      // reintento es del Dueño (botón ENTRAR DE NUEVO).
       if(modo===1){
-        var puedeAuto=false;
+        // v189.0 EL BOTÓN DE LA SALIDA LIMPIA (ley hermana «ADIÓS AL CINE»)
+        // — ya no hay bote que se agote: este botón vive SIEMPRE en el
+        // socorro. Si el aparato guarda un DOCUMENTO VIEJO que pide chunks
+        // MUERTOS (404 de un despliegue anterior), reintentar igual es bajar
+        // los mismos 404 para siempre: la cura real es pedir la casa CON
+        // OTRO NOMBRE (?vg189=hora — el navegador baja HTML fresco con
+        // chunks vivos) y limpiar las caches API por si algún SW/Cache
+        // guardó restos. Es MANUAL: la ley jamás recarga sola.
         try{
-          var n2=Number(sessionStorage.getItem('vg186-n')||0);
-          var t2=Number(sessionStorage.getItem('vg186-t')||0);
-          if(!t2||Date.now()-t2>600000){ t2=Date.now(); n2=0; try{ sessionStorage.setItem('vg186-t',String(t2)); }catch(e2){} }
-          if(n2<3){ try{ sessionStorage.setItem('vg186-n',String(n2+1)); }catch(e3){} puedeAuto=true; }
-        }catch(e4){}
-        // v189.0 EL BOTÓN DE LA SALIDA LIMPIA — si el bote se agotó (3
-        // reanimaciones usadas), ya no es señal lenta: este aparato casi
-        // seguro guarda un DOCUMENTO VIEJO que pide chunks MUERTOS (404 de
-        // un despliegue anterior). Reintentar igual es bajar los mismos 404
-        // para siempre. La cura real: pedir la casa CON OTRO NOMBRE
-        // (?vg189=hora — el navegador baja HTML fresco con chunks vivos)
-        // y limpiar las caches API por si algún SW/Cache guardó restos.
-        if(!puedeAuto){
-          try{
-            var bt2=document.createElement('button');
-            bt2.textContent=esI?'ACTUALIZAR AHORA':'UPDATE NOW';
-            bt2.style.cssText='border:1px solid #e8c476;color:#070606;background:#e8c476;padding:13px 24px;letter-spacing:.2em;font:700 11px system-ui,sans-serif;border-radius:2px;text-transform:uppercase;margin-top:2px';
-            bt2.addEventListener('click',function(){
-              try{
-                if(window.caches&&caches.keys){ caches.keys().then(function(ks){ ks.forEach(function(k){ try{ caches.delete(k); }catch(eC2){} }); }).catch(function(){}); }
-              }catch(eC){}
-              try{ sessionStorage.setItem('vg187-sufrio',String(Date.now())); }catch(eC3){}
-              try{ location.replace('/?vg189='+Date.now()); }catch(eC4){ location.replace('/'); }
-            });
-            s.appendChild(bt2);
-          }catch(eC1){}
-        }
-        // v188.0 EL PACIENTE — el reintento ya NO patea la descarga por la
-        // calle: si el chorro está VIVO (algo de _next terminó hace <15s, o
-        // la primera ola aún viaja), el socorro ESPERA y dice los KB reales;
-        // solo cuando está estancado de verdad (nada termina en 15s, o 75s
-        // sin una sola terminación) llega la reanimación. El bote se gasta
-        // solo al recargar de verdad: adiós a la inanición de 1.8MB.
-        if(puedeAuto){
-          var pk=document.createElement('div');
-          pk.style.cssText='font:500 10px/1.6 system-ui,sans-serif;letter-spacing:.14em;color:rgba(232,196,118,.62);text-transform:uppercase';
-          s.appendChild(pk);
-          try{
-            var kbA=kbCasa();
-            pk.textContent=(kbA>=0?('Descarga: '+kbA+' KB llegados'):'Descarga en curso')+(vgChorroVivo()?' · el chorro sigue vivo':'');
-          }catch(eP0){}
-          var paciente=window.setInterval(function(){
+          var bt2=document.createElement('button');
+          bt2.textContent=esI?'ACTUALIZAR AHORA':'UPDATE NOW';
+          bt2.style.cssText='border:1px solid #e8c476;color:#070606;background:#e8c476;padding:13px 24px;letter-spacing:.2em;font:700 11px system-ui,sans-serif;border-radius:2px;text-transform:uppercase;margin-top:2px';
+          bt2.addEventListener('click',function(){
             try{
-              if(window.__vgvivo===true||!document.getElementById('vg-socorro')||window.__vgcasa===true){ window.clearInterval(paciente); return; }
-              var vivo=vgChorroVivo();
-              try{
-                var kb2=kbCasa();
-                pk.textContent=(kb2>=0?('Descarga: '+kb2+' KB llegados'):'Descarga en curso')+(vivo?' · el chorro sigue vivo':' · estancado, reanimando…');
-              }catch(eP1){}
-              if(!vivo){ window.clearInterval(paciente); recargar(); }
-            }catch(eP2){}
-          },8000);
-        }
+              if(window.caches&&caches.keys){ caches.keys().then(function(ks){ ks.forEach(function(k){ try{ caches.delete(k); }catch(eC2){} }); }).catch(function(){}); }
+            }catch(eC){}
+            try{ sessionStorage.setItem('vg187-sufrio',String(Date.now())); }catch(eC3){}
+            try{ location.replace('/?vg189='+Date.now()); }catch(eC4){ location.replace('/'); }
+          });
+          s.appendChild(bt2);
+        }catch(eC1){}
+        // v190.0 LA LEY SAGRADA — monitor honesto que JAMÁS recarga: dice
+        // los KB reales cada 5s y espera. Una descarga que nadie tira
+        // SIEMPRE termina; el reintento es del Dueño (ENTRAR DE NUEVO /
+        // ACTUALIZAR AHORA).
+        var pk=document.createElement('div');
+        pk.style.cssText='font:500 10px/1.6 system-ui,sans-serif;letter-spacing:.14em;color:rgba(232,196,118,.62);text-transform:uppercase';
+        s.appendChild(pk);
+        var pintaChorro=function(vivo){
+          try{
+            var kb2=kbCasa();
+            pk.textContent=(kb2>=0?('Descarga: '+kb2+' KB llegados'):'Descarga en curso')+(vivo?' · el chorro sigue vivo':' · señal lenta — la descarga NO se suelta: sigue');
+          }catch(eP1){}
+        };
+        pintaChorro(vgChorroVivo());
+        var paciente=window.setInterval(function(){
+          try{
+            if(window.__vgvivo===true||!document.getElementById('vg-socorro')){ window.clearInterval(paciente); return; }
+            pintaChorro(vgChorroVivo());
+          }catch(eP2){}
+        },5000);
       }
     }catch(e){}
   }
   // en pesado los topes son más largos: el bundle del universo pesa y su
   // cortina ya aguanta 60s (v178) — socorrista a 100s/150s, nunca antes.
-  // v186.0 CARRIL RÁPIDO: si esta sesión YA se atascó antes (bote usado),
-  // el socorro llega a los 30s en vez de 50s — el Dueño no espera lo que
-  // ya se sabe atascado. Contador leído del bote (vg186-n, ventana 10 min).
-  var rnBote=0;
-  try{
-    rnBote=Number(sessionStorage.getItem('vg186-n')||0);
-    var rtBote=Number(sessionStorage.getItem('vg186-t')||0);
-    if(rtBote&&Date.now()-rtBote>600000) rnBote=0;
-  }catch(eR){}
-  var tSoc1=pesado?100000:(rnBote>=1?30000:50000);
+  // v189.0: el CARRIL RÁPIDO de 30s v186 MURIÓ con la ley — era el gatillo
+  // exacto del bucle («30 segundos exactos y recarga de nuevo»). El socorro
+  // ya no recarga NADA: es un monitor con botón manual; su timing sobra.
+  var tSoc1=pesado?100000:50000;
   var tSoc2=pesado?150000:90000;
   window.setTimeout(function(){ if(window.__vgcasa!==true&&window.__vgvivo!==true) socorrer(1); },tSoc1);
   window.setTimeout(function(){ if(window.__vgcasa===true&&window.__vgvivo!==true) socorrer(2); },tSoc2);
@@ -771,12 +783,14 @@ try{
     if(window.__vgvivo===true||c.getAttribute('data-off')==='1') return;
     var esRecurso=e&&e.target&&e.target.tagName&&(e.target.tagName==='SCRIPT'||e.target.tagName==='LINK');
     var m=esRecurso?String((e.target.src||e.target.href||'')):String((e&&e.message)||'')+' '+String((e&&e.filename)||'');
+    // v189.0 LA LEY SAGRADA: un módulo caído JAMÁS recarga solo — tirar la
+    // descarga en una señal lenta era el otro motor del bucle (v184 pedía
+    // >60s de vida, pero con señal muy lenta el umbral se cruzaba igual y
+    // la descarga moría a mitad). La casa hidrata con lo que llegó; el
+    // fallo se dice a la cara y el reintento es del Dueño.
     if(esRecurso||/chunk|import|module|Failed to fetch|NetworkError|Load failed/i.test(m)){
-      var ult=0; try{ ult=Number(sessionStorage.getItem(K)||0); }catch(_){}
-      // v184.0: K ahora se estampa en CADA arranque — este umbral compara
-      // contra el ARRANQUE de esta página (una recarga de error exige que
-      // esta carga lleve viva >60s: adiós a los bucles de reanimación)
-      if(Date.now()-ult>60000){ recargar(); return; }
+      encender('Un módulo falló — la descarga sigue; toca para reintentar');
+      return;
     }
     encender('Fallo de carga — toca para recargar');
   },true);
