@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v186.0",
+    nombre: "EL SALVAVIDAS",
+    tipo: "tecno",
+    hitos: [
+      "EL DUEÑO PROBÓ v185 CON CAPTURA REAL (tablet Android, Chrome: «casi vi la pantalla normal por un segundo pero aun sigue») — su frase es la prueba de que UN REINTENTO SÍ ABRE (vio la casa un segundo antes de volver a caer) y su captura mostró la carencia diagnóstica: la cortina no dice QUÉ versión carga, imposible saber si era una pestaña vieja o el build nuevo atascado",
+      "EL BOTE SALVAVIDAS — el socorrista modo 1 (bundle no llega) rema ahora hasta TRES reanimaciones automáticas por ventana de 10 min (vg186-n/vg186-t en sessionStorage: tope duro, ventana que expira, rastro completo); a la cuarta el mando pasa al Dueño con ENTRAR DE NUEVO. Carril rápido: si la sesión ya se atascó, el socorro llega a los 30s en vez de 50s — nadie espera lo que ya se sabe atascado. Jamás bucles: 3 reanimaciones máximo y silencio",
+      "LA PLACA DE VERSIÓN — la cortina lleva «despliegue v186.0» grabado bajo el estado (viaja también en la barra del vigía y en el socorro, inyectada en el inline desde version.ts en build): cada captura del Dueño diagnostica sola — pestaña vieja (placa vieja o ninguna) frente a build nuevo atascado (placa nueva + progreso KB). El diagnóstico remoto deja de ser adivinanza",
+      "QA v186: tsc 0, build EXIT 0, inline SYNTAX_OK (node --check sobre el HTML construido); navegador real: placa visible en la cortina, bote probado con contador sembrado (socorro a los 30s, reanimación contada), arranque sano intacto (cortina fuera ≤3.5s, sin falsos rescates); guards v167 + piedra v184 + relevo v183.1 + socorrista v185 intactos",
+    ],
+  },
+  {
     version: "v185.0",
     nombre: "EL SOCORRISTA",
     tipo: "tecno",

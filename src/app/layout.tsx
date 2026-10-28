@@ -14,6 +14,9 @@ const SITE_DESC =
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+// v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
+// cortina) — cada captura del Dueño diagnostica sola (¿pestaña vieja o build nuevo?)
+import { APP_VERSION } from "@/lib/version";
 import { RetentionLayer } from "@/components/vanguard/retention-layer";
 // v151.0 VANGUARD-2: guardia de ruta — /vanguard2 es un universo 3D puro,
 // ninguna capa DOM de la Casa monta encima (mandato: cero 2D en el nuevo Vanguard)
@@ -357,6 +360,7 @@ export default function RootLayout({
             #vg-cortina-btn{display:none;margin-top:6px;border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.07);padding:15px 24px;letter-spacing:.24em;font-size:12px;font-weight:600;border-radius:2px;text-transform:uppercase;font-family:inherit}
             #vg-cortina-btn[data-on="1"]{display:inline-block;animation:vgAparecer .5s ease-out}
             #vg-cortina .vg-nojs{color:rgba(232,196,118,.8);font-size:12px;letter-spacing:.2em;text-align:center;padding:0 24px}
+            #vg-cortina .vg-ver{font-family:var(--font-jetmono),monospace;font-size:9px;letter-spacing:.3em;color:rgba(232,196,118,.42);text-transform:uppercase}
             @keyframes vgFaro{0%{box-shadow:0 0 0 0 rgba(232,196,118,.5)}100%{box-shadow:0 0 0 18px rgba(232,196,118,0)}}
             @keyframes vgBrillo{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
             @keyframes vgPuntos{0%{content:''}25%{content:'·'}50%{content:'··'}75%{content:'···'}}
@@ -367,11 +371,13 @@ export default function RootLayout({
           <span className="vg-marca">VANGUARD</span>
           <span className="vg-barra"><i /></span>
           <span className="vg-estado" id="vg-cortina-estado">Desplegando el universo</span>
+          <span className="vg-ver" id="vg-cortina-ver">despliegue {APP_VERSION}</span>
           <button id="vg-cortina-btn" type="button">El universo no responde · Toca para despertarlo</button>
           <noscript><span className="vg-nojs">VANGUARD necesita JavaScript activado para desplegar el universo 3D.</span></noscript>
         </div>
         <script dangerouslySetInnerHTML={{ __html: `(function(){
 try{
+  var VER='${APP_VERSION}';
   var c=document.getElementById('vg-cortina'); if(!c) return;
   var btn=document.getElementById('vg-cortina-btn');
   var st=document.getElementById('vg-cortina-estado');
@@ -473,11 +479,15 @@ try{
       b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:rgba(7,6,6,.94);border-top:1px solid rgba(232,196,118,.4);color:#e8c476;font:600 11px/1.5 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap';
       var sp=document.createElement('span');
       sp.textContent=esI?'Vanguard no terminó de despertar en este navegador':'Vanguard did not finish waking on this browser';
+      // v186.0: la placa de versión viaja en el vigía también
+      var sv=document.createElement('span');
+      sv.style.cssText='opacity:.55;font-size:9px;letter-spacing:.18em';
+      sv.textContent=VER;
       var bt=document.createElement('button');
       bt.textContent=esI?'RECARGAR':'RELOAD';
       bt.style.cssText='border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.08);padding:6px 14px;letter-spacing:.2em;font:inherit;border-radius:2px';
       bt.addEventListener('click',recargar);
-      b.appendChild(sp); b.appendChild(bt); document.body.appendChild(b);
+      b.appendChild(sp); b.appendChild(sv); b.appendChild(bt); document.body.appendChild(b);
       var ch=window.setInterval(function(){
         if(window.__vgvivo===true&&b.parentNode){ b.parentNode.removeChild(b); window.clearInterval(ch); }
       },1000);
@@ -516,28 +526,45 @@ try{
       bt.textContent=esI?'ENTRAR DE NUEVO':'ENTER AGAIN';
       bt.style.cssText='border:1px solid #e8c476;color:#e8c476;background:rgba(232,196,118,.08);padding:14px 26px;letter-spacing:.24em;font:700 12px system-ui,sans-serif;border-radius:2px;text-transform:uppercase;margin-top:6px';
       bt.addEventListener('click',recargar);
-      s.appendChild(t); s.appendChild(p); s.appendChild(bt);
+      var vr=document.createElement('div');
+      vr.style.cssText='font:500 9px system-ui,sans-serif;letter-spacing:.28em;color:rgba(232,196,118,.45);text-transform:uppercase;margin-top:4px';
+      vr.textContent='VANGUARD '+VER;
+      s.appendChild(t); s.appendChild(p); s.appendChild(bt); s.appendChild(vr);
       document.body.appendChild(s);
       // la casa despertó tarde → el socorro se retira solo (jamás tapa una casa viva)
       var q=window.setInterval(function(){
         if(window.__vgvivo===true&&s.parentNode){ s.parentNode.removeChild(s); window.clearInterval(q); }
       },1000);
       window.setTimeout(function(){ window.clearInterval(q); },180000);
-      // modo 1 (bundle no llega): UNA reanimación automática con guardia —
-      // recargar re-pide los chunks por otra conexión; si vuelve a atascarse
-      // el guard lo impide y el mando pasa al Dueño
+      // modo 1 (bundle no llega): EL BOTE SALVAVIDAS v186 — hasta TRES
+      // reanimaciones automáticas por ventana de 10 min (el Dueño cazó en
+      // vivo que un reintento SÍ abre: «casi vi la pantalla normal»), cada
+      // una estampada; a la cuarta, el mando pasa al Dueño para siempre.
+      // Nada de bucles infinitos: tope duro, ventana que expira, rastro.
       if(modo===1){
-        var ultS=0; try{ ultS=Number(sessionStorage.getItem(KS)||0); }catch(_){}
-        if(!ultS||Date.now()-ultS>180000){
-          try{ sessionStorage.setItem(KS,String(Date.now())); }catch(e){}
-          window.setTimeout(recargar,4000);
-        }
+        var puedeAuto=false;
+        try{
+          var n2=Number(sessionStorage.getItem('vg186-n')||0);
+          var t2=Number(sessionStorage.getItem('vg186-t')||0);
+          if(!t2||Date.now()-t2>600000){ t2=Date.now(); n2=0; try{ sessionStorage.setItem('vg186-t',String(t2)); }catch(e2){} }
+          if(n2<3){ try{ sessionStorage.setItem('vg186-n',String(n2+1)); }catch(e3){} puedeAuto=true; }
+        }catch(e4){}
+        if(puedeAuto) window.setTimeout(recargar,4000);
       }
     }catch(e){}
   }
   // en pesado los topes son más largos: el bundle del universo pesa y su
-  // cortina ya aguanta 60s (v178) — socorrista a 100s/150s, nunca antes
-  var tSoc1=pesado?100000:50000;
+  // cortina ya aguanta 60s (v178) — socorrista a 100s/150s, nunca antes.
+  // v186.0 CARRIL RÁPIDO: si esta sesión YA se atascó antes (bote usado),
+  // el socorro llega a los 30s en vez de 50s — el Dueño no espera lo que
+  // ya se sabe atascado. Contador leído del bote (vg186-n, ventana 10 min).
+  var rnBote=0;
+  try{
+    rnBote=Number(sessionStorage.getItem('vg186-n')||0);
+    var rtBote=Number(sessionStorage.getItem('vg186-t')||0);
+    if(rtBote&&Date.now()-rtBote>600000) rnBote=0;
+  }catch(eR){}
+  var tSoc1=pesado?100000:(rnBote>=1?30000:50000);
   var tSoc2=pesado?150000:90000;
   window.setTimeout(function(){ if(window.__vgcasa!==true&&window.__vgvivo!==true) socorrer(1); },tSoc1);
   window.setTimeout(function(){ if(window.__vgcasa===true&&window.__vgvivo!==true) socorrer(2); },tSoc2);

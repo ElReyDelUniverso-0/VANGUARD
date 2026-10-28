@@ -723,6 +723,24 @@
 //     estado dice los KB REALES llegados (performance API) — «Descargando
 //     la casa · 412 KB» — en vez de una mentira eterna; se retira en
 //     cuanto enciende el botón de rescate (sus mensajes mandan).
-export const APP_VERSION = "v185.0";
-export const APP_CODENAME = "EL SOCORRISTA";
+// Herencia v185.1 y todo lo anterior — cortina v155 de red de seguridad,
+// guards v167 intactos, rewrite /socket.io intacto, 100% 2D fiel a la Casa.
+// v186.0 EL SALVAVIDAS — el Dueño probó v185 CON captura real: «casi vi la
+//         pantalla normal por un segundo pero aun sigue» (tablet Android,
+//         Chrome). La captura dice: cortina viva, texto ORIGINAL, sin
+//         progreso KB, sin botón — y su frase dice lo más importante: UN
+//         REINTENTO SÍ ABRIÓ (vio la casa un segundo) antes de morir de
+//         nuevo. Dos curas:
+// (1) EL BOTE SALVAVIDAS: si un reintento puede abrir, el socorrista modo 1
+//     ahora rema hasta TRES veces por ventana de 10 min (vg186-n/vg186-t en
+//     sessionStorage, tope duro, ventana que expira, rastro completo) — a la
+//     cuarta, el mando pasa al Dueño (botón ENTRAR DE NUEVO). Carril rápido:
+//     si la sesión ya se atascó antes, el socorro llega a los 30s en vez de
+//     50s — nadie espera lo que ya se sabe atascado.
+// (2) LA PLACA DE VERSIÓN: la cortina lleva «despliegue v186.0» grabado (viaja
+//     también en el vigía y en el socorro) — cada captura del Dueño
+//     diagnostica sola: ¿pestaña vieja sin el build nuevo o build nuevo
+//     atascado? Adiós a adivinar la versión por el texto.
+export const APP_VERSION = "v186.0";
+export const APP_CODENAME = "EL SALVAVIDAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
