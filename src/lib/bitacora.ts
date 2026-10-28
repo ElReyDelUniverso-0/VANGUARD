@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v193.0",
+    nombre: "LA CASA LIGERA",
+    tipo: "tecno",
+    hitos: [
+      "MANDATO DEL DUEÑO: «vanguard dura horas cargando; debe cargar en menos de 5 segundos» — la autopsia del despliegue vivo midió ~1.2 MB de primera visita (845 KB de JS en 34 archivos + 88 KB de HTML + 77 KB de CSS + 188 KB de fuentes): en señal móvil estancada eso son minutos-horas y un solo chunk perdido mata la hidratación",
+      "DICCIONARIOS DIFERIDOS — el bundle inicial solo lleva ES; EN/PT/FR/DE/IT/RU/ZH (~4100 líneas, el chunk más pesado de la casa) ahora viven en src/lib/i18n/lang-*.ts y bajan SOLO si el agente elige ese idioma; mientras viajan translate() cae a es (fallback intacto) y al aterrizar dicVersion repinta los textos sin recargar NADA",
+      "15 PIEZAS EN DIFERIDO — modales (Ajustes, Registro, Mi Cuenta, Buscador de secciones, MegaMenu), overlays (CineVivo, AsistenteVoz, CentinelaImpacto, TransicionMaestra) y banners bajo el doblez (GrowthShare, GoalBanner, ShareGoalBanner, ReferralLanding, PromoKit, Mission100, SeoFaq) viajan en su propio chunk y bajan solo cuando se usan; la CINEMÁTICA DEL ESTRENO también (ley v192 intacta: jamás corre durante la carga)",
+      "INTER SE JUBILA — la familia Inter salía volando en cada visita por la cadena --font-sans; el texto base nace en Geist Sans: una familia de fuentes menos cruzando la señal lenta",
+      "LEYES RESPECTADAS — NADA SE RECARGA SOLO (v189/v190): ni un solo reload nuevo; cortina v155→v190, vigía v181, socorrista v185 y relevo v183.1 intactos; el cambio es puro adelgazamiento del paquete crítico: menos KB y menos archivos que estancarse",
+    ],
+  },
+  {
     version: "v191.0",
     nombre: "EL ALGORITMO",
     tipo: "nav",

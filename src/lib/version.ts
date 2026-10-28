@@ -873,6 +873,31 @@
 //         corre durante la carga, se estrena UNA vez por versión solo si
 //         la casa despertó sana, SALTAR GIGANTE siempre y cero bytes de
 //         red: los agentes se presentan hablando con sus voces nuevas.
-export const APP_VERSION = "v192.0";
-export const APP_CODENAME = "EL ESTRENO";
+// v193.0 LA CASA LIGERA — el Dueño fijó la ley del arranque: «vanguard dura
+//         horas cargando; debe cargar en menos de 5 segundos». La autopsia
+//         del despliegue vivo midió la casa entera: 845 KB de JS en 34
+//         archivos + 88 KB de HTML + 77 KB de CSS + 188 KB de fuentes =
+//         ~1.2 MB que una señal móvil estancada tarda horas en bajar (y un
+//         solo chunk perdido deja la hidratación muerta para siempre). Cura
+//         en tres frentes, sin tocar las leyes v187/v189/v190:
+//         (1) DICCIONARIOS DIFERIDOS — el bundle inicial solo lleva ES; los
+//             otros 7 idiomas (EN/PT/FR/DE/IT/RU/ZH, ~4100 líneas) viven en
+//             src/lib/i18n/lang-*.ts y bajan SOLO si el agente elige ese
+//             idioma; mientras viajan, translate() cae a es y al aterrizar
+//             dicVersion repinta sin recargar NADA (ley sagrada intacta).
+//         (2) 15 PIEZAS EN DIFERIDO — modales (Ajustes/Registro/Cuenta/
+//             Buscador/Menú), overlays (CineVivo, AsistenteVoz,
+//             CentinelaImpacto, TransicionMaestra) y banners bajo el doblez
+//             (Growth/Goal/ShareGoal/Referral/PromoKit/Mission100/SeoFaq)
+//             viajan en su propio chunk y bajan solo cuando se usan; la
+//             CINEMÁTICA también (ley v192: jamás corre durante la carga).
+//         (3) INTER SE JUBILA — la familia Inter salía volando en cada
+//             visita por la cadena --font-sans; el texto base nace en Geist
+//             Sans y una familia de fuentes menos cruce la señal.
+//         Resultado: la primera visita baja ~35-40% menos KB y con menos
+//         archivos (menos puntos de estancamiento); las visitas siguientes
+//         salen del caché inmutable de /_next/static. La cortina, el vigía,
+//         el socorrista y la ley NADA SE RECARGA SOLO quedan intactos.
+export const APP_VERSION = "v193.0";
+export const APP_CODENAME = "LA CASA LIGERA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

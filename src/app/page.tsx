@@ -25,13 +25,15 @@ import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
 // v110.0 MATRIZ 2100 — motor 3D global (ajustes → CSS vars + paralaje)
 const Motor3D = dynamic(() => import("@/components/vanguard/motor-3d").then((m) => m.Motor3D), { ssr: false });
 import { PanelErrorBoundary } from "@/components/vanguard/panel-error-boundary";
-import { SettingsModal } from "@/components/vanguard/settings-modal";
-import { ActivityLogModal } from "@/components/vanguard/activity-log-modal";
 import { StatsTicker } from "@/components/vanguard/stats-ticker";
+// v193.0 LA CASA LIGERA — modales y overlays en diferido: viajan en SU
+// propio chunk y bajan solo cuando se abren; el arranque pesa menos KB.
+const SettingsModal = dynamic(() => import("@/components/vanguard/settings-modal").then((m) => m.SettingsModal), { ssr: false });
+const ActivityLogModal = dynamic(() => import("@/components/vanguard/activity-log-modal").then((m) => m.ActivityLogModal), { ssr: false });
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 // v14: reestructuración — portada INICIO con noticias primero + menú llamativo
 import { HomePanel } from "@/components/vanguard/home-panel";
-import { MegaMenu } from "@/components/vanguard/mega-menu";
+const MegaMenu = dynamic(() => import("@/components/vanguard/mega-menu").then((m) => m.MegaMenu), { ssr: false });
 // v121.0 LA CAMA MÁS CÓMODA: ATLAS MUNDIAL (el modo que faltaba: cada país y
 // cada persona importante con su ubicación) + LA CAMA (la habitación de
 // personalización total) + TRANSICIÓN MAESTRA (5 estilos de viaje) + el
@@ -51,7 +53,7 @@ const SalaGuerraPanel = dynamic(() => import("@/components/vanguard/panels/sala-
 const RostrosPanel = dynamic(() => import("@/components/vanguard/panels/rostros-panel").then((m) => m.RostrosPanel), { ssr: false, loading: PanelSkeleton });
 // v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
 const GobiernoLibrePanel = dynamic(() => import("@/components/vanguard/panels/gobierno-libre-panel").then((m) => m.GobiernoLibrePanel), { ssr: false, loading: PanelSkeleton });
-import { TransicionMaestra } from "@/components/vanguard/transicion-maestra";
+const TransicionMaestra = dynamic(() => import("@/components/vanguard/transicion-maestra").then((m) => m.TransicionMaestra), { ssr: false });
 // v189.0: la importación del cine murió con el cine — adiós para siempre
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
@@ -60,30 +62,29 @@ import { FranjaIlustrada } from "@/components/vanguard/ilustraciones-vivas";
 import { useCama } from "@/lib/cama-store";
 // v96.0 GOOGLE VIVO: barra estructura Google + transición de cine + motor CineVivo
 import { GoogleBar } from "@/components/vanguard/google-bar";
-import { CineVivo } from "@/components/vanguard/cine-vivo";
+const CineVivo = dynamic(() => import("@/components/vanguard/cine-vivo").then((m) => m.CineVivo), { ssr: false });
 // v120.0 GRAN SALTO 3D: la ciudad viva REINA en la portada — cielo real
 // (día/noche según tu reloj), región rotativa a mano y VANGUARD en letras 3D
 import { NavZonas } from "@/components/vanguard/nav-zonas";
 // v173.0 LA CASA EN VIVO: el mercado real (Binance + Yahoo, keyless) es el héroe
 const MercadoVivo = dynamic(() => import("@/components/vanguard/mercado-vivo"), { ssr: false });
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
-import { SectionSearch } from "@/components/vanguard/section-search";
-import { AsistenteVoz } from "@/components/vanguard/asistente-voz";
-import { CentinelaImpacto } from "@/components/vanguard/centinela-impacto";
-import { AccountModal } from "@/components/vanguard/account-modal";
+const SectionSearch = dynamic(() => import("@/components/vanguard/section-search").then((m) => m.SectionSearch), { ssr: false });
+const AsistenteVoz = dynamic(() => import("@/components/vanguard/asistente-voz").then((m) => m.AsistenteVoz), { ssr: false });
+const CentinelaImpacto = dynamic(() => import("@/components/vanguard/centinela-impacto").then((m) => m.CentinelaImpacto), { ssr: false });
+const AccountModal = dynamic(() => import("@/components/vanguard/account-modal").then((m) => m.AccountModal), { ssr: false });
 import { useGameStore } from "@/lib/game-store";
 import { useT, useLangStore, type Lang } from "@/lib/i18n";
 import { initSound, sfx } from "@/lib/sound";
-// v18 CRECIMIENTO: modulo viral en la portada (compartir + referidos + PWA)
-import { GrowthShare } from "@/components/vanguard/growth-share";
-// v46.0 OBJETIVO MUNDIAL: meta comunitaria con recompensa para todos (motor de reclutamiento)
-import { GoalBanner } from "@/components/vanguard/goal-banner";
-import { ShareGoalBanner } from "@/components/vanguard/share-goal";
-// v34 LLAMADO A LAS ARMAS: recepción de invitados ?ref=, kit de reclutamiento y FAQ SEO
-import { ReferralLanding } from "@/components/vanguard/referral-landing";
-import { PromoKit } from "@/components/vanguard/promo-kit";
-import { Mission100 } from "@/components/vanguard/mission-100";
-import { SeoFaq } from "@/components/vanguard/seo-faq";
+// v193.0 LA CASA LIGERA — banners de crecimiento y SEO en diferido: viven
+// bajo el doblez de la portada; nadie los necesita en los primeros 5 segundos.
+const GrowthShare = dynamic(() => import("@/components/vanguard/growth-share").then((m) => m.GrowthShare), { ssr: false });
+const GoalBanner = dynamic(() => import("@/components/vanguard/goal-banner").then((m) => m.GoalBanner), { ssr: false });
+const ShareGoalBanner = dynamic(() => import("@/components/vanguard/share-goal").then((m) => m.ShareGoalBanner), { ssr: false });
+const ReferralLanding = dynamic(() => import("@/components/vanguard/referral-landing").then((m) => m.ReferralLanding), { ssr: false });
+const PromoKit = dynamic(() => import("@/components/vanguard/promo-kit").then((m) => m.PromoKit), { ssr: false });
+const Mission100 = dynamic(() => import("@/components/vanguard/mission-100").then((m) => m.Mission100), { ssr: false });
+const SeoFaq = dynamic(() => import("@/components/vanguard/seo-faq").then((m) => m.SeoFaq), { ssr: false });
 // v26 RADIO VANGUARD: música de conflicto global (widget flotante, solo cliente)
 import { ensurePlayerCounted } from "@/lib/realtime";
 import { startPresenceHeartbeat, LiveTitle } from "@/components/vanguard/presence-ping";

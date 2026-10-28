@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Orbitron, Inter, Rajdhani, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron, Rajdhani, JetBrains_Mono } from "next/font/google";
 
 // v34 SEO GLOBAL: la URL canónica DEBE apuntar a un dominio real. vanguard.world
 // aún no tiene DNS (NXDOMAIN): si el canonical apuntara ahí, Google no podría
@@ -52,12 +52,9 @@ const orbitron = Orbitron({
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
+// v193.0 LA CASA LIGERA — la familia Inter se jubila: el texto base ahora
+// nace en Geist Sans (ya viajaba en la casa); una familia menos que bajar
+// en cada visita con señal lenta.
 const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
   subsets: ["latin", "latin-ext"],
@@ -270,7 +267,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${inter.variable} ${rajdhani.variable} ${jetMono.variable} antialiased bg-background text-foreground min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${rajdhani.variable} ${jetMono.variable} antialiased bg-background text-foreground min-h-screen`}
       >
         {/* ════════════════════════════════════════════════════════════
             v155.0 LA CORTINA DE ARRANQUE — la ley contra la pantalla muerta.

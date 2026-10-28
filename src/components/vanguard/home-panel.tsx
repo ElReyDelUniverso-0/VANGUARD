@@ -29,9 +29,12 @@ import { Escena3D, escenaDePanel, hashDe } from "@/components/vanguard/escenas-3
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 // v116.0 — portada 3D viva para el héroe (adiós al <img> plano)
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
+import dynamic from "next/dynamic";
 // v191.0 EL ESTRENO — portadas vivas seleccionables + cinemática legal
 import { PortadasInicio } from "@/components/vanguard/portadas-inicio";
-import { CinematicaVanguard } from "@/components/vanguard/cinematica-vanguard";
+// v193.0 LA CASA LIGERA — la cinemática viaja en su propio chunk: baja solo
+// cuando se va a estrenar (jamás durante la carga, ley v192 intacta)
+const CinematicaVanguard = dynamic(() => import("@/components/vanguard/cinematica-vanguard").then((m) => m.CinematicaVanguard), { ssr: false });
 
 interface NewsItem {
   id: string;
