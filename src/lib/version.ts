@@ -999,6 +999,39 @@
 //      pueblo (uploads/) quedan INTACTOS — contenido, no basura; el watchdog
 //      (ping 30s), presence y visitas se quedan (vigías de la casa); el CSS
 //      y el prerender SSR no se podan (riesgo de romper leyes > ganancia).
-export const APP_VERSION = "v198.0";
-export const APP_CODENAME = "EL SEMÁFORO DE SALA";
+//
+// v199.0 EL TURBO — «que vanguard corra más rápido» sin borrar NADA importante
+//      (pedido literal del Dueño; auditoría de espacio y optimización).
+//   ① EL HALLAZGO MAYOR — CACHÉ DE MEDIA: desde v125 TODOS los videos
+//      (/videos 16MB), imágenes reales (/imagenes-reales 15MB), ilustraciones
+//      (13MB), posters y uploads caían bajo el no-store global: CADA re-visita
+//      revalidaba 30+ MB contra el servidor antes de pintar un solo video.
+//      Ahora viajan con Cache-Control public, max-age=1 día +
+//      stale-while-revalidate=7 días (next.config headers): la segunda visita
+//      abre PARA TI, VANGUARD TV y las imágenes desde el disco al instante.
+//      El HTML y las API conservan su no-cache — ley v125 «contra la página
+//      vieja» intacta (el Dueño siempre ve la versión nueva de la app).
+//   ② IMÁGENES REALES RECOMPRIMIDAS (solo .jpg, dimensiones intactas):
+//      35 de 50 archivos con ffmpeg q5 — SSIM verificado ≈0.99 (el ojo no
+//      nota la diferencia). 14.6MB→11.7MB: 2.9MB menos en la primera visita
+//      móvil. Ninguna imagen creció; las 15 que no mejoraban quedaron intactas.
+//   ③ AUDITORÍA REALIZADA (sin acción porque ya están sanos): los 3 deps
+//      pesados (three+globe.gl 1.2MB, maplibre 1.1MB, chunk three 348KB) ya
+//      viven en chunks perezosos — no se descargan hasta abrir PLANETA/TERRA;
+//      primer load de la casa = 1.77MB raw / ~550KB gzip (razonable para la
+//      Casa completa); assets sin huérfanos reales (solo hangar.jpg 111KB,
+//      se deja por futuro uso); cortina v186 duplicada en payload RSC (~27KB)
+//      NO se toca: tocar la cadena de arranque v178-v189 arriesga las leyes
+//      por 7KB gzip reales; socket.io-client viaja en el bundle inicial (~40KB)
+//      porque realtime.ts es import estático de la Casa — diferirlo obligaría
+//      a refactor async en 10 consumidores (riesgo v190 > 40KB).
+//   ④ DEPS MUERTAS DETECTADAS (no se quitan del package.json para no pisar
+//      al otro agente: jamás se importan en src/ — @huggingface/transformers,
+//      @mdxeditor/editor, pagedjs, react-syntax-highlighter — solo engordan
+//      el npm install, cero impacto en runtime).
+//   ⑤ LO QUE NO SE TOCA: videos del Dueño (re-encode CRF probado, demasiado
+//      lento en sandbox y contenido sagrado), boot chain, leyes v178-v190,
+//      ni una sola función de la Casa.
+export const APP_VERSION = "v199.0";
+export const APP_CODENAME = "EL TURBO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -58,8 +58,22 @@ const nextConfig: NextConfig = {
       // SIEMPRE se revalida (el navegador y cualquier gateway nunca muestran una
       // versión caducada — la causa «a veces no se actualiza»). Los assets de
       // /_next/static conservan su caché inmutable de fábrica (no se tocan).
+      // v199.0 EL TURBO — CACHÉ DE MEDIA: los videos, imágenes reales,
+      // ilustraciones, pósters y uploads antes caían bajo el no-store global
+      // (cada re-visita revalidaba 30+ MB contra el servidor: segundos de
+      // espera que no hacían falta). Ahora viajan con caché de 1 día +
+      // stale-while-revalidate de 7 días: la SEGUNDA visita abre los paneles
+      // de video/imágenes al instante desde el disco, y cualquier cambio en
+      // los archivos se propaga en horas, no nunca-jamás. El HTML y las API
+      // conservan su no-cache (ley v125 intacta).
       {
-        source: "/((?!_next/static|_next/image|favicon|assets/).*)",
+        source: "/:carpeta(videos|imagenes-reales|ilustraciones|posters|uploads|assets)/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
+      },
+      {
+        source: "/((?!_next/static|_next/image|favicon|assets/|videos/|imagenes-reales/|ilustraciones/|posters/|uploads/).*)",
         headers: [
           { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
           { key: "Pragma", value: "no-cache" },
