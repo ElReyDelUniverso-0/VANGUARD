@@ -166,6 +166,60 @@ export function restablecerAjustes(): void {
   guardarAjustes({ ...AJUSTES_DEFECTO });
 }
 
+// ── v201.0 EL PERMISO DE HABLAR — la casa pide permiso ANTES de hablar ──
+// Los navegadores bloquean la síntesis de voz hasta que la persona toca la
+// pantalla (política de autoplay): por eso el Centinela callaba sin decir
+// por qué y la primera alerta se perdía. La cura es doble:
+//   ① La CASA pregunta con una tarjeta honesta («VANGUARD QUIERE HABLAR»)
+//     y el toque de ACTIVAR es el gesto que abre la boca del aparato.
+//   ② El discurso AUTOMÁTICO (radar, anuncios) respeta el permiso: sin él
+//     no intenta hablar en falso — y la tarjeta aparece en el instante
+//     justo en que llega la primera alerta que sí merece ser oída.
+// El habla PEDIDA (pulsar el orbe, una orden) SIEMPRE funciona: ese toque
+// ya ES el permiso del aparato. Solo lo PROACTIVO se puerta.
+
+const LS_PERMISO = "vg201-permiso-hablar";
+
+export type PermisoHablar = "concedido" | "silencio" | "sin-responder";
+
+/** Lee el permiso guardado en el aparato (cacheado por sesión de página). */
+let cachePermiso: PermisoHablar | null = null;
+export function leerPermisoHablar(): PermisoHablar {
+  if (cachePermiso) return cachePermiso;
+  let p: PermisoHablar = "sin-responder";
+  if (typeof window !== "undefined") {
+    try {
+      const v = localStorage.getItem(LS_PERMISO);
+      if (v === "1") p = "concedido";
+      else if (v === "0") p = "silencio";
+    } catch { /* almacenamiento ausente: sin-responder */ }
+  }
+  cachePermiso = p;
+  return p;
+}
+
+function ponPermiso(v: "1" | "0"): void {
+  cachePermiso = v === "1" ? "concedido" : "silencio";
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(LS_PERMISO, v); } catch {}
+  try { window.dispatchEvent(new CustomEvent("vg:permiso-hablar")); } catch {}
+}
+
+/** La persona concedió la voz (su toque abre la boca del aparato). */
+export function darPermisoHablar(): void {
+  ponPermiso("1");
+}
+
+/** La persona eligió el silencio: la casa no vuelve a preguntar sola. */
+export function negarPermisoHablar(): void {
+  ponPermiso("0");
+}
+
+/** ¿La voz puede sonar sin que nadie la pida en este momento? */
+export function puedeHablarSolo(): boolean {
+  return leerPermisoHablar() === "concedido";
+}
+
 // ── estado del aparato: las voces llegan TARDE en Chrome (evento) ──
 let cacheVoces: SpeechSynthesisVoice[] = [];
 let listenerPuesto = false;
@@ -340,6 +394,8 @@ export interface HablarOpts {
   onerror?: () => void;
   /** false = encola detrás de la voz actual en vez de cortarla */
   interrumpir?: boolean;
+  /** v201: true = discurso PROACTIVO (radar, anuncios) — exige permiso */
+  automatico?: boolean;
 }
 
 interface Trabajo {
@@ -469,6 +525,9 @@ export function hablarAgente(id: VozAgenteId, texto: string, opts: HablarOpts = 
   if (!limpio) { opts.onerror?.(); return false; }
   const synth = window.speechSynthesis;
   if (isMuted()) { try { synth.cancel(); } catch {} limpiarCola(); opts.onend?.(); return false; }
+  // v201 EL PERMISO DE HABLAR: lo proactivo calla honestamente hasta que
+  // la persona concede la voz (la tarjeta se lo pide por nosotros).
+  if (opts.automatico && !puedeHablarSolo()) return false;
   const trozos = trocearTexto(limpio);
   if (trozos.length === 0) { opts.onerror?.(); return false; }
   const trabajo: Trabajo = {

@@ -73,6 +73,9 @@ const MercadoVivo = dynamic(() => import("@/components/vanguard/mercado-vivo"), 
 // v47.0 BUSCADOR DE SECCIONES: paleta para saltar a cualquiera de las 81 secciones
 const SectionSearch = dynamic(() => import("@/components/vanguard/section-search").then((m) => m.SectionSearch), { ssr: false });
 const AsistenteVoz = dynamic(() => import("@/components/vanguard/asistente-voz").then((m) => m.AsistenteVoz), { ssr: false });
+// v201.0 LA VOZ VIVA — la tarjeta del PERMISO DE HABLAR: la casa pide voz
+// con una notificación honesta y el toque del Dueño abre la boca del aparato.
+const PermisoVoz = dynamic(() => import("@/components/vanguard/permiso-voz").then((m) => m.PermisoVoz), { ssr: false });
 const CentinelaImpacto = dynamic(() => import("@/components/vanguard/centinela-impacto").then((m) => m.CentinelaImpacto), { ssr: false });
 const AccountModal = dynamic(() => import("@/components/vanguard/account-modal").then((m) => m.AccountModal), { ssr: false });
 import { useGameStore } from "@/lib/game-store";
@@ -1511,6 +1514,7 @@ export default function Home() {
       {/* v180.0 VANGUARD AUTOMÁTICO — el radar que te busca: nada se pierde sin buscar */}
       <MontajeTardio>
         <AsistenteVoz />
+        <PermisoVoz />
         <CentinelaImpacto />
       </MontajeTardio>
     </div>
