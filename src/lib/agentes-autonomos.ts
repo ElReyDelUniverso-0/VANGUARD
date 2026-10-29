@@ -19,7 +19,8 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { storageBlindado } from "@/lib/storage-blindado";
 import { bitacoraViva } from "@/lib/bitacora";
 import { edicionVigente } from "@/lib/luxe";
-import { pedirNoticias } from "@/lib/noticias-cache";
+import { pedirNoticias, noticiasEnCache } from "@/lib/noticias-cache";
+import { esSalaNoticias } from "@/lib/semaforo-sala";
 
 export interface AgenteLibre {
   id: string;
@@ -256,6 +257,10 @@ export function instalarMotorAgentes(): MotorDetener {
   const ejecutar = async (a: AgenteLibre) => {
     const estado = useAgentesLibres.getState();
     if (!estado.activos) return;
+    // v198.0 SEMÁFORO DE SALA: nadie mira → el cuerpo descansa. Con la
+    // pestaña oculta los ciclos no queman red ni batería (el mundo de la
+    // Casa no corre para un público que no está).
+    if (typeof document !== "undefined" && document.hidden) return;
     const acciones = ACCIONES_AGENTE[a.id] ?? ["pulido de rutina"];
     const accion = acciones[estado.ciclosPorAgente[a.id] % acciones.length];
     let detalle: string | undefined;
@@ -267,9 +272,17 @@ export function instalarMotorAgentes(): MotorDetener {
         detalle = j?.version ? `salud OK · ${j.version}` : "salud OK";
       } else if (a.id === "editor") {
         // v196: por el pozo único — el editor solo CUENTA cables; si el agua
-        // es fresca, cero red y la cifra sigue siendo la real
-        const n = (await pedirNoticias()).length;
-        detalle = n > 0 ? `${n} cables en la red` : "la red en silencio";
+        // es fresca, cero red y la cifra sigue siendo la real.
+        // v198 SEMÁFORO: fuera de las salas de noticias el editor NO fuerza
+        // agua nueva — cuenta la que ya hay en el pozo (o el silencio);
+        // al entrar a una sala de noticias el pozo se renueva igual que siempre.
+        if (esSalaNoticias()) {
+          const n = (await pedirNoticias()).length;
+          detalle = n > 0 ? `${n} cables en la red` : "la red en silencio";
+        } else {
+          const n = noticiasEnCache()?.length ?? 0;
+          detalle = n > 0 ? `${n} cables en la red` : "la red en silencio";
+        }
       } else if (a.id === "cartografo") {
         detalle = "34 pines sobre sus sedes reales";
       } else if (a.id === "archivista") {

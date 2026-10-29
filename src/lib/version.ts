@@ -999,6 +999,6 @@
 //      pueblo (uploads/) quedan INTACTOS — contenido, no basura; el watchdog
 //      (ping 30s), presence y visitas se quedan (vigías de la casa); el CSS
 //      y el prerender SSR no se podan (riesgo de romper leyes > ganancia).
-export const APP_VERSION = "v197.0";
-export const APP_CODENAME = "EL POZO ÚNICO";
+export const APP_VERSION = "v198.0";
+export const APP_CODENAME = "EL SEMÁFORO DE SALA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

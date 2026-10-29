@@ -15,10 +15,15 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { pedirNoticias } from "@/lib/noticias-cache";
+import { esSalaNoticias } from "@/lib/semaforo-sala";
 
 const LS_VISTOS = "vg180-vistos";
 const LS_VOZ = "vg180-voz-alertas";
 const CADA_MS = 60_000;
+// v198.0 SEMÁFORO DE SALA: fuera de las salas de noticias el radar respira
+// 3× más lento (sigue velando — las noticias te buscan en toda la casa —
+// pero no quema datos mientras miras ARCHIVO SECRETO o el ARCADE).
+const CADA_MS_OTRAS_SALAS = 180_000;
 const COOLDOWN_MS = 45_000; // máx 1 anuncio de voz cada 45s (nada de bombardeo)
 const UMBRAL = 64; // CRÍTICO ≥64 (URGENTE ≥80 entra sobrado)
 
@@ -42,6 +47,9 @@ export function CentinelaImpacto() {
     let muerto = false;
     let ultimoAnuncio = 0;
     let sembrado = false;
+    // v198: la marca del último sondeo que viajó de verdad (el semáforo
+    // alarga el ciclo fuera de las salas de noticias)
+    let ultimoSondeoReal = 0;
     const vistos = leeVistos();
 
     const vozAlertas = () => {
@@ -82,6 +90,10 @@ export function CentinelaImpacto() {
 
     const sondea = async () => {
       if (muerto || document.hidden) return; // pestaña oculta: el radar respira
+      // v198 SEMÁFORO: en salas sin noticias el ciclo se alarga a 3 min —
+      // el radar nunca apaga los ojos, solo deja de pisar el acelerador
+      if (!esSalaNoticias() && Date.now() - ultimoSondeoReal < CADA_MS_OTRAS_SALAS) return;
+      ultimoSondeoReal = Date.now();
       try {
         // v196: por el pozo único (balde CENTRO) — el Centinela bebe la misma
         // agua que las fichas y GUERRA HOY; si es fresca, cero red

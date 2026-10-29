@@ -16,33 +16,63 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { LaunchCountdown } from "@/components/vanguard/launch-countdown";
 import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";
 import { CONFLICTS } from "@/lib/game-data";
 import { navigateTo, openMainMenu } from "@/lib/nav";
-import { ManifiestoMundo } from "@/components/vanguard/panels/empleos-panel";
+// v198.0 LA CASA LIGERA: el manifiesto tiene casa propia — este import ya NO
+// arrastra el panel de empleos completo al arranque de la portada
+import { ManifiestoMundo } from "@/components/vanguard/manifiesto-mundo";
 import type { TabKey } from "@/components/vanguard/tab-nav";
 // v110.0 MATRIZ 2100 — escenas 3D procedurales (nada plano, nada IA)
+// v198.0: Escena3D es ahora un PORTAL — el motor real (600 líneas) baja como
+// chunk aparte cuando la primera escena pinta; la firma pesa 2KB
 import { Escena3D, escenaDePanel, hashDe } from "@/components/vanguard/escenas-3d";
 // v116.0 MEGALÓPOLIS — SALA DE LECTURA: los cables se leen DENTRO de Vanguard
-import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+import type { CableLectura } from "@/components/vanguard/lector-noticia";
 // v116.0 — portada 3D viva para el héroe (adiós al <img> plano)
 import { PortadaNoticia } from "@/components/vanguard/portada-noticia";
 import dynamic from "next/dynamic";
+// v198.0 LA CASA LIGERA — los bloques de ambiente de la portada viajan en SU
+// propio chunk y bajan cuando toca pintarlos: el esqueleto holo cubre el
+// espacio (cero salto de layout) y el bloque aterriza detrás.
+const LectorNoticia = dynamic(
+  () => import("@/components/vanguard/lector-noticia").then((m) => m.LectorNoticia),
+  { ssr: false }
+);
 // v191.0 EL ESTRENO — portadas vivas seleccionables + cinemática legal
-import { PortadasInicio } from "@/components/vanguard/portadas-inicio";
+const PortadasInicio = dynamic(
+  () => import("@/components/vanguard/portadas-inicio").then((m) => m.PortadasInicio),
+  { ssr: false, loading: () => <BloqueEsqueleto h="h-44 sm:h-60" /> }
+);
 // v193.0 LA CASA LIGERA — la cinemática viaja en su propio chunk: baja solo
 // cuando se va a estrenar (jamás durante la carga, ley v192 intacta)
 const CinematicaVanguard = dynamic(() => import("@/components/vanguard/cinematica-vanguard").then((m) => m.CinematicaVanguard), { ssr: false });
 // v193.1 VIGO Y LA PUERTA — el personaje de la casa pregunta qué te importa
 // y te lleva a tu sala en un toque (la elección queda en TU aparato)
-import { PuertaVigo } from "@/components/vanguard/puerta-vigo";
+const PuertaVigo = dynamic(
+  () => import("@/components/vanguard/puerta-vigo").then((m) => m.PuertaVigo),
+  { ssr: false, loading: () => <BloqueEsqueleto h="h-24" /> }
+);
 // v195.0 TU LADO — el muelle de atajos que aprende tu uso
-import { AtajosVanguard } from "@/components/vanguard/atajos-vanguard";
+const AtajosVanguard = dynamic(
+  () => import("@/components/vanguard/atajos-vanguard").then((m) => m.AtajosVanguard),
+  { ssr: false, loading: () => <BloqueEsqueleto h="h-20" /> }
+);
+// v31 cuenta atrás al GRAN ESTRENO — ligera pero su chunk viaja aparte
+const LaunchCountdown = dynamic(
+  () => import("@/components/vanguard/launch-countdown").then((m) => m.LaunchCountdown),
+  { ssr: false, loading: () => <BloqueEsqueleto h="h-16" /> }
+);
+
+/** v198: esqueleto holo genérico — misma familia visual, altura configurable */
+function BloqueEsqueleto({ h }: { h: string }) {
+  return (
+    <div aria-hidden className={`${h} w-full rounded-md border border-amber-hud/20 bg-gradient-to-br from-amber-hud/5 via-transparent to-transparent animate-pulse`} />
+  );
+}
 // v196.0 EL POZO ÚNICO — la portada es el MAESTRO del pozo de noticias
 import { pedirNoticias } from "@/lib/noticias-cache";
-
 interface NewsItem {
   id: string;
   title: string;

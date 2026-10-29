@@ -8,12 +8,14 @@
 // ============================================================
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
+// v198.0: el manifiesto vive en su propia casa — este panel ya no lo reparte
+import { ManifiestoMundo } from "@/components/vanguard/manifiesto-mundo";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Briefcase, Coins, Clock, CheckCircle2, XCircle, TrendingUp, LogOut,
-  FileSignature, Zap, Star, ChevronsUp, Wallet, Play, Building2, Quote,
+  FileSignature, Zap, Star, ChevronsUp, Wallet, Play, Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -35,22 +37,8 @@ const COLOR_CLS: Record<Departamento["color"], { text: string; border: string; b
 };
 
 // ====== MANIFIESTO — la idea que ordena todo Vanguard v85 ======
-export function ManifiestoMundo() {
-  return (
-    <div className="relative overflow-hidden border border-amber-hud/40 bg-gradient-to-br from-amber-hud/15 via-transparent to-transparent p-4">
-      <Quote className="absolute top-2 right-3 w-8 h-8 text-amber-hud/15 rotate-180" aria-hidden />
-      <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-amber-hud mb-1.5">manifiesto vanguard</p>
-      <p className="text-sm sm:text-base font-black leading-snug text-foreground">
-        Vanguard no es parte del mundo.
-        <span className="text-amber"> El mundo está dentro de Vanguard.</span>
-      </p>
-      <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
-        Cada frente, cada estrecho, cada crisis en vivo corre por aquí. Y ahora también
-        trabaja aquí: oficinas, nóminas, turnos y carreras. Tu sueldo lo paga el planeta.
-      </p>
-    </div>
-  );
-}
+// v198.0: mudado a @/components/vanguard/manifiesto-mundo (la portada lo
+// importaba desde aquí y arrastraba el panel completo al arranque).
 
 // ====== ENTREVISTA DE INGRESO ======
 function Entrevista({ onContratado }: { onContratado: (depto: Departamento, scores: Record<Aptitud, number>) => void }) {

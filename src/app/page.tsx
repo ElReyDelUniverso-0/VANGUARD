@@ -793,6 +793,10 @@ export default function Home() {
       sessionStorage.setItem("vg-sala-activa", sectionOfTab(k).key);
     } catch { /* noop */ }
     window.dispatchEvent(new CustomEvent("vanguard:escena", { detail: sectionOfTab(k).key }));
+    // v198.0 EL SEMÁFORO DE SALA: la sala nueva se publica para TODA la
+    // casa — los latidos de datos (HUD, Centinela, agentes) lo leen y
+    // solo disparan red si SU agua la pide la sala donde estás.
+    window.dispatchEvent(new CustomEvent("vanguard:sala", { detail: k }));
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pestanas, tab, recordTabVisit, t]);
 
@@ -871,6 +875,36 @@ export default function Home() {
     };
     window.addEventListener("vg:prefetch-tab", alPrefetch);
     return () => window.removeEventListener("vg:prefetch-tab", alPrefetch);
+  }, []);
+
+  // v198.0 PREFETCH EN PLENA CALMA: cuando la casa ya respira y el hilo
+  // queda idle, bajamos los chunks de las salas que ESTE visitante más usa
+  // (vg195-atajos-usage) — entrar a tu sala favorita ya no descarga nada:
+  // el módulo abre al instante, como una lámpara que ya estaba tibia.
+  useEffect(() => {
+    let cancelado = false;
+    const bajarFavoritas = () => {
+      if (cancelado) return;
+      let claves: string[] = [];
+      try {
+        const raw = localStorage.getItem("vg195-atajos-usage");
+        const uso = raw ? (JSON.parse(raw) as Record<string, number>) : {};
+        claves = Object.keys(uso).sort((a, b) => (uso[b] ?? 0) - (uso[a] ?? 0));
+      } catch { /* sin historial: caemos a las de siempre */ }
+      const defecto = ["noticias", "salaguerra", "arcade", "perfil", "crisis", "centro"];
+      claves = [...new Set([...claves, ...defecto])].slice(0, 8);
+      for (const k of claves) {
+        const bajar = PREFETCH_MODULOS[k as TabKey];
+        if (bajar) void bajar().catch(() => { /* el chunk llegará al click */ });
+      }
+    };
+    const arrancar = () => {
+      const w = window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void };
+      if (typeof w.requestIdleCallback === "function") w.requestIdleCallback(bajarFavoritas, { timeout: 15000 });
+      else window.setTimeout(bajarFavoritas, 4000);
+    };
+    const t = window.setTimeout(arrancar, 6000);
+    return () => { cancelado = true; window.clearTimeout(t); };
   }, []);
 
 

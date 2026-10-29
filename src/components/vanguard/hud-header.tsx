@@ -24,7 +24,15 @@ import { TituloLetras3D } from "@/components/vanguard/letras-3d";
 import { useArquitecto } from "@/lib/arquitecto";
 import { navigateTo } from "@/lib/nav";
 import { pedirNoticias } from "@/lib/noticias-cache";
-import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
+import { esSalaNoticias, onSalaCambia } from "@/lib/semaforo-sala";
+import type { CableLectura } from "@/components/vanguard/lector-noticia";
+// v198.0 LA CASA LIGERA: la sala de lectura del HUD es un modal — su chunk
+// baja cuando lo ABRES, no en el arranque de toda la casa
+import dynamic from "next/dynamic";
+const LectorNoticia = dynamic(
+  () => import("@/components/vanguard/lector-noticia").then((m) => m.LectorNoticia),
+  { ssr: false }
+);
 import { Radio, Bot } from "lucide-react";
 // v126.0 LA CASA · ATELIER — la serie grabada del visitante (Ley de la artesanía)
 // v133.0 EL ACABADO REAL — la placa luce el Nº de unidad de la EDICIÓN
@@ -112,12 +120,18 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
 
   // v117 MINI-NOTICIERO: 6 titulares de la casa, rotan cada 7 s — leerlos
   // abre la SALA DE LECTURA interna (portada 3D + contexto + NEURONA)
+  // v198.0 SEMÁFORO DE SALA: el latido de 180s SOLO viaja si la sala donde
+  // estás MUESTRA cables (inicio/noticias/centro/briefing...). En otra sala
+  // (p.ej. ARCHIVO SECRETO) la red de noticias duerme: los cables ya
+  // recogidos siguen rotando igual y al volver a una sala de noticias el
+  // agua fresca llega AL INSTANTE (despertar y mirar, sin esperar el ciclo).
   useEffect(() => {
     let viva = true;
-    const pide = async () => {
+    const pide = async (forzar = false) => {
       try {
+        if (forzar && (!esSalaNoticias() || document.hidden)) return;
         // v196: por el pozo único — misma agua para toda la casa
-        const items = await pedirNoticias();
+        const items = await pedirNoticias(forzar);
         if (!viva || !Array.isArray(items)) return;
         const cs: CableLectura[] = (items as Record<string, unknown>[]).slice(0, 8).map((it: Record<string, unknown>) => ({
           id: String(it.id ?? it.url ?? Math.random().toString(36).slice(2)),
@@ -140,9 +154,10 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
         /* la casa no se queja: el noticiero espera la próxima señal */
       }
     };
-    pide();
-    const iv = setInterval(pide, 180_000);
-    return () => { viva = false; clearInterval(iv); };
+    void pide();
+    const bajaSala = onSalaCambia(() => { void pide(true); });
+    const iv = setInterval(() => { void pide(true); }, 180_000);
+    return () => { viva = false; clearInterval(iv); bajaSala(); };
   }, []);
   useEffect(() => {
     if (cables.length < 2) return;
