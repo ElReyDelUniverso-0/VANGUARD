@@ -203,6 +203,11 @@ export default async function GuerraHoyPage() {
                   <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
                     {it.source} · {hace(new Date(it.publishedAt))}
                   </span>
+                  {it.url && it.url !== "#" && (
+                    <a href={it.url} target="_blank" rel="noopener noreferrer nofollow" className="ml-auto font-mono text-[10px] text-amber-500/70 hover:text-amber-400 uppercase tracking-wider shrink-0">
+                      Fuente ↗
+                    </a>
+                  )}
                 </div>
                 <h2 className="text-sm sm:text-base font-bold leading-snug">{it.title}</h2>
                 {it.summary && (
@@ -211,12 +216,15 @@ export default async function GuerraHoyPage() {
               </div>
             </article>
           );
-          return it.url && it.url !== "#" ? (
-            <a key={it.id} href={it.url} target="_blank" rel="noopener noreferrer nofollow">
+          // v202.0 PUERTAS ABIERTAS: el titular abre la puerta de la noticia
+          // (/noticia/[id], indexable con su propia metadata) — antes el click
+          // entero se regalaba a la fuente externa con nofollow y Google no
+          // encontraba ninguna página de Vanguard. La fuente sigue disponible
+          // con el enlace pequeño «FUENTE ↗».
+          return (
+            <Link key={it.id} href={`/noticia/${it.id}`} className="block">
               {inner}
-            </a>
-          ) : (
-            <div key={it.id}>{inner}</div>
+            </Link>
           );
         })}
       </section>

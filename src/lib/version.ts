@@ -1081,6 +1081,25 @@
 //   ⑤ LO QUE NO SE TOCA: cadena de arranque, cortina, watchdog v200,
 //      leyes del reloj, y el habla PEDIDA (orbe/órdenes) funciona igual
 //      que siempre — solo lo PROACTIVO pide permiso.
-export const APP_VERSION = "v201.0";
-export const APP_CODENAME = "LA VOZ VIVA";
+//
+// v202.0 PUERTAS ABIERTAS — mandato del Dueño («ya está publicada en search
+// pero no entra nadie… ¿de qué le sirve tener todo el contenido del mundo si
+// nadie lo ve ni entra?»). Autopsia del tráfico: el SEO técnico ya estaba
+// fino (título, descripción, OG, twitter card, canonical, sitemap, robots,
+// RSS y token de verificación de Google), pero TODAS las noticias de la
+// primera página /guerra-hoy regalaban el click a la fuente externa con
+// rel="nofollow" — Google no tenía NINGUNA página de Vanguard a la que
+// llevar gente que busca «guerra hoy», y el sitemap solo anunciaba 5 URLs.
+// Cura sin borrar nada: ① PUERTA POR NOTICIA — /noticia/[id] server-rendered
+// con metadata propia por cable (título, resumen, imagen, canonical,
+// publishedTime), JSON-LD NewsArticle (Google News/Discover), bandera real,
+// cables relacionados (más puertas internas) y CTA «ENTRAR AL MUNDO EN VIVO»;
+// not-found amable si un cable salió del aire; ② SITEMAP DINÁMICO — las
+// últimas 50 noticias entran al sitemap (5 → 55+ URLs, refrescadas en cada
+// rastreo); ③ RSS /feed.xml — cada ítem apunta a SU noticia, no todas a la
+// misma página; ④ /guerra-hoy — el titular abre la puerta interna y la fuente
+// externa queda como enlace pequeño «FUENTE ↗». Lo que NO se toca: cortina,
+// watchdog v200, semáforo v198, pozo v197, turbo v199, voz v201.
+export const APP_VERSION = "v202.0";
+export const APP_CODENAME = "PUERTAS ABIERTAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

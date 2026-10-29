@@ -3,6 +3,9 @@ import { db } from "@/lib/db";
 // v35 — RSS /feed.xml: lectores de noticias y agregadores pueden suscribirse
 // al canal de conflictos de VANGUARD. Cada ítem enlaza a la página SEO
 // /guerra-hoy (que a su vez empuja al visitante hacia la app).
+// v202.0 PUERTAS ABIERTAS: cada ítem del canal ahora apunta a SU PROPIA
+// noticia (/noticia/[id]) — los agregadores y Google News llegan directo a
+// la puerta indexable de cada cable, no todas a la misma página.
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +34,8 @@ export async function GET() {
 
   const entries = items
     .map((it) => {
-      const link = `${SITE_URL}/guerra-hoy`;
+      // v202.0: puerta propia por cable (antes: todas a /guerra-hoy)
+      const link = `${SITE_URL}/noticia/${it.id}`;
       return `    <item>
       <title>${esc(it.title)}</title>
       <link>${esc(link)}</link>
