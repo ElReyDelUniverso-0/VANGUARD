@@ -31,6 +31,20 @@
 // «VANGUARD SE ACTUALIZÓ» y recarga UNA vez con guardia anti-bucle de 90s
 // (sessionStorage) — al volver a la pestaña (visibilitychange ya sondea) el
 // relevo dispara solo: ninguna pestaña vuelve a quedarse en el pasado.
+// v199.0 EL RELEVO HONESTO — EL DUEÑO LO SENTENCIÓ: «entro y carga normal
+//   dura como 5 segundos y al rato vuelve a cargar de nuevo y ahí dura dos
+//   minutos — la gente se aburrirá y cerrará Vanguard». Autopsia: el relevo
+//   v183.1 recargaba SOLO al ver versión distinta — cada despliegue nuevo
+//   pateaba con una recarga a todo el que estuviera dentro (a ~30s de
+//   entrar), y quien entraba en pleno despliegue aterrizaba DOS veces (la
+//   segunda contra un server propagándose: minutos). Cura sin borrar nada:
+//   ① el relevo JAMÁS recarga solo — píldora no bloqueante con botón
+//   ACTUALIZAR y el mando es del Dueño; ② ANTI-VAHO: se exigen 2 cruces de
+//   versión SEGUIDOS (en pleno despliegue las instancias viejas/nuevas
+//   conviven y la versión alterna — un cruce solo ya no molesta); ③ la
+//   recarga manual conserva la guardia anti-bucle de 90s. El relevo de
+//   caída real (down→up tras el overlay RECONECTANDO) se queda: solo dispara
+//   cuando el server estuvo MUERTO de verdad y el piloto ya vio la cortina.
 
 import { useEffect, useRef, useState } from "react";
 import { peekRealtime } from "@/lib/realtime";
@@ -47,6 +61,7 @@ export function ConnectionWatchdog() {
     let fails = 0;
     let reloaded = false;
     let confirming = false;
+    let cruces = 0; // v199.0 anti-vaho: versiones distintas SEGUIDAS vistas
 
     // sonda única: estado del server + versión del latido
     const probe = async (): Promise<{ ok: boolean; version?: string }> => {
@@ -69,24 +84,12 @@ export function ConnectionWatchdog() {
       }
     };
 
-    // v183.1: versión nueva desplegada mientras esta pestaña dormía → relevo
+    // v199.0 EL RELEVO HONESTO: versión nueva desplegada mientras esta pestaña
+    // dormía → SOLO se ofrece la píldora (botón ACTUALIZAR). JAMÁS recarga
+    // sola: cada despliegue nuevo ya no patea a nadie de la casa.
     const quizaRelevo = () => {
-      if (!alive || relevo) return;
-      try {
-        const ult = Number(sessionStorage.getItem(K_RELEVO) || 0);
-        if (ult && Date.now() - ult < 90000) return; // guardia anti-bucle
-        sessionStorage.setItem(K_RELEVO, String(Date.now()));
-      } catch {
-        // sessionStorage ausente: recargar igual (el guard del meta v182 cubre)
-      }
+      if (!alive) return;
       setRelevo(true);
-      setTimeout(() => {
-        try {
-          window.location.reload();
-        } catch {
-          // noop
-        }
-      }, 1500);
     };
 
     const ping = async () => {
@@ -97,11 +100,19 @@ export function ConnectionWatchdog() {
       if (!alive) return;
       if (r.ok) {
         fails = 0;
-        // v183.1 EL RELEVO: primera respuesta fija el nacimiento de la pestaña;
-        // cualquier versión distinta después = despliegue nuevo → recargar una vez
+        // v199.0: primera respuesta fija el nacimiento de la pestaña; una
+        // versión distinta después = despliegue nuevo → píldora honesta con
+        // ACTUALIZAR (el Dueño manda). Anti-vaho: durante un despliegue las
+        // instancias viejas/nuevas conviven y la versión puede alternar —
+        // se exigen 2 cruces SEGUIDOS antes de ofrecer la píldora.
         if (typeof r.version === "string" && r.version) {
           if (versionTab.current === null) versionTab.current = r.version;
-          else if (r.version !== versionTab.current) quizaRelevo();
+          else if (r.version !== versionTab.current) {
+            cruces += 1;
+            if (cruces >= 2) quizaRelevo();
+          } else {
+            cruces = 0;
+          }
         }
         setDown((prev) => {
           // recarga solo cuando pasamos de caído → arriba y no acabamos de recargar
@@ -155,14 +166,36 @@ export function ConnectionWatchdog() {
   }, []);
 
   if (relevo) {
-    // v183.1: píldora honesta del relevo — visible 1.5s mientras recarga
+    // v199.0: píldora honesta del relevo — NO bloquea, NO recarga sola:
+    // anuncia la casa nueva y el ACTUALIZAR es del Dueño (una sola pulsación,
+    // con guardia anti-bucle de 90s para nada raro del aparato)
     return (
       <div
-        className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[9999] rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-widest font-bold bg-black/90 backdrop-blur-md"
+        className="fixed bottom-3 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 rounded-full border px-4 py-2 font-mono text-[10px] uppercase tracking-widest font-bold bg-black/90 backdrop-blur-md"
         style={{ borderColor: "rgba(232,196,118,.5)", color: "#e8c476" }}
         role="status"
       >
-        Vanguard se actualizó · Recargando…
+        <span>Vanguard se actualizó</span>
+        <button
+          onClick={() => {
+            try {
+              const ult = Number(sessionStorage.getItem(K_RELEVO) || 0);
+              if (ult && Date.now() - ult < 90000) return; // guardia anti-bucle
+              sessionStorage.setItem(K_RELEVO, String(Date.now()));
+            } catch {
+              // sessionStorage ausente: recargar igual (el guard del meta v182 cubre)
+            }
+            try {
+              window.location.reload();
+            } catch {
+              // noop
+            }
+          }}
+          className="rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-widest font-bold transition-colors hover:bg-[rgba(232,196,118,.15)]"
+          style={{ borderColor: "rgba(232,196,118,.7)", color: "#e8c476" }}
+        >
+          Actualizar
+        </button>
       </div>
     );
   }

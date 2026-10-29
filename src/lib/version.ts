@@ -1032,6 +1032,22 @@
 //   ⑤ LO QUE NO SE TOCA: videos del Dueño (re-encode CRF probado, demasiado
 //      lento en sandbox y contenido sagrado), boot chain, leyes v178-v190,
 //      ni una sola función de la Casa.
-export const APP_VERSION = "v199.0";
-export const APP_CODENAME = "EL TURBO";
+// v200.0 EL RELEVO HONESTO (choque de número con EL TURBO resuelto como en
+//      v197: el turbo queda v199.0, el relevo sube a v200.0) — el Dueño lo
+//      sentenció («entro y carga normal
+//      dura como 5 segundos y al rato vuelve a cargar de nuevo y ahí dura dos
+//      minutos — la gente se aburrirá y cerrará Vanguard»). Autopsia: el
+//      relevo v183.1 del watchdog recargaba SOLO al ver versión distinta en
+//      /api/health — cada despliegue nuevo pateaba con una recarga a todo el
+//      que estuviera dentro (a ~30s de entrar), y quien entraba en pleno
+//      despliegue aterrizaba DOS veces (la segunda contra un server
+//      propagándose: minutos). Cura en connection-watchdog.tsx SIN borrar
+//      nada: ① el relevo JAMÁS recarga solo — píldora no bloqueante «Vanguard
+//      se actualizó» con botón ACTUALIZAR y el mando es del Dueño; ②
+//      ANTI-VAHO: 2 cruces de versión SEGUIDOS antes de ofrecer la píldora
+//      (en pleno despliegue las instancias viejas/nuevas conviven); ③ guardia
+//      anti-bucle de 90s en la recarga manual; ④ el relevo de caída real
+//      (down→up tras el overlay RECONECTANDO) se queda intacto.
+export const APP_VERSION = "v200.0";
+export const APP_CODENAME = "EL RELEVO HONESTO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
