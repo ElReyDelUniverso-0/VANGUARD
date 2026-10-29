@@ -87,7 +87,7 @@ const LANG_NOMBRE: Record<string, string> = {
 const SYSTEM = `Eres VG-ASSIST, el agente de voz de VANGUARD (plataforma mundial de conflictos geopolíticos, noticias en vivo y simulación). El piloto te habla y tú interpretas SU INTENCIÓN.
 
 Devuelve UN JSON EXACTO con:
-- "hablar": tu respuesta SPOKEN en {IDIOMA}, máximo 140 caracteres, tono de oficial de inteligencia: directo, frío, sin relleno. Nada de markdown ni emojis.
+- "hablar": tu respuesta SPOKEN en {IDIOMA}, máximo 220 caracteres, tono de oficial de inteligencia: directo, frío, sin relleno. Nada de markdown ni emojis.
 - "accion": un objeto:
   · {"tipo":"navegar","destino":"CLAVE"} si quiere ir a una sección — CLAVE debe ser EXACTAMENTE una de: [CLAVES]
   · {"tipo":"buscar","consulta":"texto"} si quiere buscar algo concreto (un país, un conflicto, un término)
@@ -99,6 +99,9 @@ Devuelve UN JSON EXACTO con:
 REGLAS:
 - Si pide noticias / qué pasa en el mundo / últimas horas → navegar a "centro" (CENTRO MUNDIAL) y en "hablar" resume que abres el centro de impacto en vivo.
 - Si menciona un país o conflicto concreto con "ficha", "carta" o "colección", o pide «muéstrame/enséñame» un conflicto → tipo "ficha" con SU clave de conflicto.
+- Si pide el MAPA del mundo o ver mapas → navegar a "maps" (Google Maps de Conflictos). Si pide CREAR un mapa o editar mapas → navegar a "studios". Si pide el mapa de incidentes → navegar a "incidentes".
+- Si pide BANDERAS (ver/crear banderas) o música o contenido de creadores → navegar a "studios" (Estudios Creadores: noticias, banderas, mapas, música).
+- Si pide crear su nación / Age of Nations → navegar a "edad".
 - Si pide cambiar/poner el idioma (inglés, chino, portugués…) → tipo "idioma" con su código.
 - Si pide editar/personalizar/configurar su perfil → navegar a "perfil" (Personalizar Perfil).
 - Si pide una sección por nombre o sinónimo razonable, elige SU clave. Si no está seguro, usa "buscar" con el término.
@@ -255,6 +258,42 @@ export async function POST(req: NextRequest) {
         accion: { tipo: "ficha", destino: conf.id },
       });
     }
+  }
+
+  // ═══ v201.0 LA VOZ VIVA — MAPAS y BANDERAS antes del LLM ═══
+  // «abre el mapa» / «crea un mapa» / «muestra las banderas» / «naciones»:
+  // la voz vuela a las salas de cartografía SIN esperar a la IA. Cero
+  // alucinación: solo salas que existen en la Casa.
+  const pideMapa = /\b(mapa|mapas)\b/.test(tNorm);
+  const pideBanderas = /\b(bandera|banderas|flags?)\b/.test(tNorm);
+  const creaEnEstudios = /\b(crea|crear|haz|hacer|dibuja|dibujar|pinta|pintar|edita|editar|disena|fabrica|construye)\b/.test(tNorm) || /\bmusica\b/.test(tNorm);
+  if (pideMapa && /\b(incidente|incidentes|incidencia)\b/.test(tNorm)) {
+    return NextResponse.json({
+      hablar: es ? "Abriendo el mapa de incidentes en vivo." : "Opening the live incidents map.",
+      ai: false,
+      accion: { tipo: "navegar", destino: "incidentes" },
+    });
+  }
+  if (pideBanderas || (pideMapa && creaEnEstudios) || (!pideMapa && creaEnEstudios && /\b(estudios?|creador|contenido)\b/.test(tNorm))) {
+    return NextResponse.json({
+      hablar: es ? "Abriendo los Estudios Creadores: noticias, banderas, mapas y música a tu mano." : "Opening Creator Studios: news, flags, maps and music at your command.",
+      ai: false,
+      accion: { tipo: "navegar", destino: "studios" },
+    });
+  }
+  if (pideMapa) {
+    return NextResponse.json({
+      hablar: es ? "Abriendo el mapa mundial de conflictos." : "Opening the world conflict map.",
+      ai: false,
+      accion: { tipo: "navegar", destino: "maps" },
+    });
+  }
+  if (/\b(naciones|age\s*of\s*nations|aof)\b/.test(tNorm)) {
+    return NextResponse.json({
+      hablar: es ? "Abriendo Age of Nations: tu nación te espera, comandante." : "Opening Age of Nations: your nation awaits, commander.",
+      ai: false,
+      accion: { tipo: "navegar", destino: "edad" },
+    });
   }
 
   // ═══ v180.0 VANGUARD AUTOMÁTICO — BRIEFING DETERMINISTA ANTES DEL LLM ═══

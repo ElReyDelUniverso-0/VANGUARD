@@ -21,6 +21,7 @@ import {
   leerAjustes,
   guardarAjustes,
   restablecerAjustes,
+  puedeHablarSolo,
   vocesLista,
   type AjustesVoz,
   type VozLista,
@@ -123,6 +124,15 @@ const TXT = {
   chipFicha: {
     es: "FICHA UCRAINA", en: "UKRAINE CARD", pt: "CARTÃO UCRÂNIA", fr: "FICHE UKRAINE",
     de: "KARTE UKRAINE", it: "CARTA UCRAINA", ru: "КАРТА УКРАИНЫ", zh: "乌克兰卡",
+  } as Record<string, string>,
+  // v201 LA VOZ VIVA — poderes nuevos: mapa y banderas a la orden
+  chipMapa: {
+    es: "MAPA", en: "MAP", pt: "MAPA", fr: "CARTE",
+    de: "KARTE", it: "MAPPA", ru: "КАРТА", zh: "地图",
+  } as Record<string, string>,
+  chipBanderas: {
+    es: "BANDERAS", en: "FLAGS", pt: "BANDEIRAS", fr: "DRAPEAUX",
+    de: "FLAGGEN", it: "BANDIERE", ru: "ФЛАГИ", zh: "旗帜",
   } as Record<string, string>,
   chipVozOn: {
     es: "VOZ DE ALERTAS: ON", en: "ALERT VOICE: ON", pt: "VOZ DE ALERTAS: ON", fr: "VOIX D'ALERTE: ON",
@@ -384,18 +394,26 @@ export function AsistenteVoz() {
   }, [lang, despachar]);
 
   // contexto del piloto + ANUNCIOS DEL CENTINELA (v180: las noticias te buscan)
+  // v201 EL PERMISO DE HABLAR: el radar JAMÁS habla en falso — sin permiso
+  // no intenta síntesis que el aparato va a bloquear; en su lugar pide la
+  // tarjeta (la alerta queda pendiente y se oye al activar la voz).
   useEffect(() => {
     const anuncia = (e: Event) => {
       const d = (e as CustomEvent<{ texto?: string; auto?: boolean }>).detail || {};
       if (!d.texto) return;
       setRespuesta(d.texto);
       setBriefing([]);
-      // v191: la boca del radar tiene voz PROPIA — grave, de CENTINELA
-      hablarAgente("centinela", d.texto); // el cable URGENTE se anuncia solo
+      if (!puedeHablarSolo()) {
+        try {
+          window.dispatchEvent(new CustomEvent("vg:pide-permiso-hablar", { detail: { texto: d.texto } }));
+        } catch {}
+        return;
+      }
+      hablarAgente("centinela", d.texto, { automatico: true }); // el cable URGENTE se anuncia solo
     };
     window.addEventListener("vg:asistente-anunciar", anuncia);
     return () => window.removeEventListener("vg:asistente-anunciar", anuncia);
-  }, [hablar]);
+  }, []);
 
   const ocultar = useCallback(() => {
     try { sessionStorage.setItem("vg179-asistente-oculto", "1"); } catch {}
@@ -596,6 +614,24 @@ export function AsistenteVoz() {
               title={vozAlertas ? "El radar habla — toca para silenciarlo" : "El radar está mudo — toca para despertar su voz"}
             >
               {(vozAlertas ? TXT.chipVozOn : TXT.chipVozOff)[lang] || (vozAlertas ? TXT.chipVozOn.es : TXT.chipVozOff.es)}
+            </button>
+          </div>
+
+          {/* v201 LA VOZ VIVA — poderes nuevos: mapa y banderas a la orden */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-t border-amber-hud/15">
+            <button
+              onClick={() => void despachar(lang === "es" ? "abre el mapa del mundo" : "open the world map")}
+              className="flex-1 min-w-0 px-2 py-1 rounded-lg border border-cyan-400/30 bg-cyan-400/5 text-[10px] font-mono tracking-wide text-cyan-300 hover:bg-cyan-400/15 truncate"
+              aria-label="Abrir el mapa de conflictos por voz"
+            >
+              {TXT.chipMapa[lang] || TXT.chipMapa.es}
+            </button>
+            <button
+              onClick={() => void despachar(lang === "es" ? "muestra las banderas" : "show me the flags")}
+              className="flex-1 min-w-0 px-2 py-1 rounded-lg border border-fuchsia-400/30 bg-fuchsia-400/5 text-[10px] font-mono tracking-wide text-fuchsia-300 hover:bg-fuchsia-400/15 truncate"
+              aria-label="Abrir las banderas de los estudios por voz"
+            >
+              {TXT.chipBanderas[lang] || TXT.chipBanderas.es}
             </button>
           </div>
 

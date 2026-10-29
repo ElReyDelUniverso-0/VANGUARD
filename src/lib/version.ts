@@ -1048,6 +1048,39 @@
 //      (en pleno despliegue las instancias viejas/nuevas conviven); ③ guardia
 //      anti-bucle de 90s en la recarga manual; ④ el relevo de caída real
 //      (down→up tras el overlay RECONECTANDO) se queda intacto.
-export const APP_VERSION = "v200.0";
-export const APP_CODENAME = "EL RELEVO HONESTO";
+//
+// v201.0 LA VOZ VIVA — «que hable más» + «una notificación para darle
+//      permiso de hablar» + «que pueda crear mapas, tener todas las
+//      banderas» (pedido literal del Dueño; la voz ya estaba bien, ahora
+//      VIVE). Cero funciones borradas, leyes v178-v200 intactas.
+//   ① EL PERMISO DE HABLAR (lo que el Dueño pidió): los navegadores
+//      BLOQUEAN la síntesis hasta que la persona toca la pantalla — el
+//      Centinela intentaba hablar y el aparato lo callaba sin decir por
+//      qué. Ahora la CASA pregunta: tarjeta honesta «VANGUARD QUIERE
+//      HABLAR» (permiso-voz.tsx) que sale a los 5s, o AL INSTANTE cuando
+//      llega la primera alerta urgente. ACTIVAR = el toque que abre la
+//      boca del aparato y VG-ASSIST saluda en voz alta (y oye la alerta
+//      pendiente). MANTENER EN SILENCIO = no vuelve a preguntar sola.
+//      Guardado en vg201-permiso-hablar + evento vg:permiso-hablar.
+//   ② HABLA MÁS: motor con puerta automática (hablarAgente automatico:
+//      true → exige permiso, fin de los intentos en falso); saludo
+//      hablado al conceder; LLM de VG-ASSIST ahora responde hasta 220
+//      caracteres (antes 140); el radar respeta también el mute (regla
+//      v119 intacta).
+//   ③ MÁS PODERES (mapas y banderas): ramas DETERMINISTAS nuevas en el
+//      cerebro sin LLM — «abre el mapa» → maps (Google Maps de
+//      Conflictos), «mapa de incidentes» → incidentes, «crea un mapa» /
+//      «banderas» / «música» → studios (Estudios Creadores),
+//      «naciones» → edad (Age of Nations). Chips nuevos en el panel del
+//      orbe: MAPA y BANDERAS. El SYSTEM del LLM aprende las mismas rutas.
+//   ④ BUG BUSCADO Y HALLADO (falso positivo descartado con pruebas): se
+//      auditó page.tsx y route.ts línea a línea — un artefacto de lectura
+//      (sanitizador ANSI) simulaba identifiers rotos; verificación con
+//      node + bytes crudos confirmó el código SANO. Nada que parchear:
+//      la v200 del otro agente está limpia.
+//   ⑤ LO QUE NO SE TOCA: cadena de arranque, cortina, watchdog v200,
+//      leyes del reloj, y el habla PEDIDA (orbe/órdenes) funciona igual
+//      que siempre — solo lo PROACTIVO pide permiso.
+export const APP_VERSION = "v201.0";
+export const APP_CODENAME = "LA VOZ VIVA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
