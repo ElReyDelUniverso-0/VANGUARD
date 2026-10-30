@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import FrenteTotalSim from "@/components/vanguard/frente-total-sim";
 import { FRENTES } from "@/lib/frentes-data";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
 // v53.0 FRENTE TOTAL — /ver-guerra. Lo que pidió el comando: VER GUERRA de
 // verdad. Nunca visto en una página de conflictos: un solo canvas donde los
@@ -63,12 +64,12 @@ export default function VerGuerraPage() {
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: jsonLdSeguro({
             "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: faqs.map((f) => ({

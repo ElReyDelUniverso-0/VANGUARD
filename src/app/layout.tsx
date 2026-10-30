@@ -21,6 +21,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 // v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
 // cortina) — cada captura del Dueño diagnostica sola (¿pestaña vieja o build nuevo?)
 import { APP_VERSION } from "@/lib/version";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v194.0: las 5 capas globales de ambiente (agentes, nexus, retención,
 // pulso, regreso) viajan ahora en CAPAS GLOBALES EN DIFERIDO — chunks
 // aparte que bajan tras __vgvivo cuando el hilo queda idle.
@@ -836,7 +837,7 @@ try{
 })();` }} />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
         />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}

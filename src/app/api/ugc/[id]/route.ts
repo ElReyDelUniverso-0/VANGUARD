@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
+import { verifySessionToken, SESSION_COOKIE, firmaBorrado } from "@/lib/auth-server";
+import { muro, claveCliente } from "@/lib/fortaleza";
 
 // v26 — Interacciones con el contenido de la comunidad.
 // PATCH { action, voter, value?, label?, optionIdx? }
@@ -10,12 +12,18 @@ import { moderateUgc } from "@/lib/ai-moderate";
 //   play     → +1 reproducción (juegos y música)
 //   votePoll → votar opción de encuesta (1 voto por votante)
 //   report   → reportar: vuelve a PENDIENTE y el agente lo re-analiza al leerlo
-// DELETE ?author= → el autor elimina su propio envío
+// DELETE ?tk= → el autor elimina su envío con su permiso HMAC (v204)
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
+    // MURO v204 — 40 interacciones (likes/ratings/votos) por IP y minuto:
+    // antes el voter era autodeclarado y un guion podía inflar todo sin freno
+    const veredictoMuro = muro(`ugc-act:${claveCliente(req)}`, 40, 60_000);
+    if (!veredictoMuro.permitido) {
+      return NextResponse.json({ error: `Demasiadas interacciones — espera ${Math.ceil(veredictoMuro.espera / 60)} min.` }, { status: 429 });
+    }
     const { id } = await ctx.params;
     const body = await req.json();
     const action = String(body.action || "");
@@ -136,12 +144,30 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
 export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
+    // MURO v204 — 10 intentos de borrado por IP y minuto
+    const veredictoMuro = muro(`ugc-del:${claveCliente(req)}`, 10, 60_000);
+    if (!veredictoMuro.permitido) {
+      return NextResponse.json({ error: "Demasiados intentos — espera un momento" }, { status: 429 });
+    }
     const { id } = await ctx.params;
     const url = new URL(req.url);
-    const author = url.searchParams.get("author") || "";
     const item = await db.ugcItem.findUnique({ where: { id } });
     if (!item) return NextResponse.json({ error: "Contenido no encontrado" }, { status: 404 });
-    if (item.author !== author) return NextResponse.json({ error: "Solo el autor puede eliminar su envío" }, { status: 403 });
+    // v204 EL ESCUDO — fin del IDOR: antes bastaba pasar ?author= con el nombre
+    // público del autor para borrarle el contenido a otro. Ahora vale:
+    //   ① el permiso tk (HMAC que el servidor entregó al autor al publicar), o
+    //   ② la sesión firmada del propio autor, o
+    //   ③ la sesión del DUEÑO.
+    const tk = url.searchParams.get("tk") || "";
+    let ses: string | null = null;
+    try {
+      ses = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+    } catch { ses = null; }
+    const permitidoPorToken = tk.length === 32 && tk === firmaBorrado(item.id);
+    const permitidoPorSesion = !!ses && (ses === item.author || ses === "DUENO");
+    if (!permitidoPorToken && !permitidoPorSesion) {
+      return NextResponse.json({ error: "Solo el autor puede eliminar su envío" }, { status: 403 });
+    }
     await db.ugcItem.delete({ where: { id } });
     return NextResponse.json({ deleted: true });
   } catch (e) {

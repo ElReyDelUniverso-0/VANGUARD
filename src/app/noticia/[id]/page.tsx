@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
 // v202.0 PUERTAS ABIERTAS — cada noticia es UNA PUERTA propia de entrada.
 // Antes: todas las noticias regalaban el click a la fuente externa con
@@ -161,7 +162,7 @@ export default async function NoticiaPage({
     <main className="min-h-screen bg-zinc-950 text-zinc-200">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
       {/* barra superior */}

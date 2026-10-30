@@ -228,6 +228,10 @@ export function LaboratorioPanel() {
         }),
       });
       const data = await res.json();
+      // v204 EL ESCUDO: guardar el permiso de borrado que entrega el servidor
+      if (data?.tk && data?.item?.id) {
+        try { window.localStorage.setItem(`vg-del-${data.item.id}`, String(data.tk)); } catch { /* noop */ }
+      }
       if (!res.ok) { toast.error(data.error || "No se pudo compartir el escenario"); return; }
       if (data.eliminated) { toast.error(`El agente IA lo rechazó: ${data.reason}`); return; }
       useAnalista.getState().registrar("escenario"); // PILAR 2: insignia ESCENÓGRAFO

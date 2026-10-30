@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { streamBonusCoins } from "@/lib/rewards";
 import { upsertProfile, notify } from "@/lib/contrib-server";
+import { muro, claveCliente } from "@/lib/fortaleza";
 
 // GET /api/live/streams/[id] — detalle de stream
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -20,7 +21,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 }
 
 // PATCH /api/live/streams/[id] — acciones: join | leave | end | poll-create | poll-vote
+// v204 EL ESCUDO: muro anti-flood — 40 acciones por IP y minuto (antes un
+// guion podía inflar viewers con "join" infinitos o terminar directos ajenos).
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const veredictoMuro = muro(`live-act:${claveCliente(req)}`, 40, 60_000);
+  if (!veredictoMuro.permitido) {
+    return NextResponse.json({ error: "Demasiadas acciones en la sala — espera un momento" }, { status: 429 });
+  }
   const { id } = await params;
   const body = await req.json().catch(() => null);
   const action = body?.action;

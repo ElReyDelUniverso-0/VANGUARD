@@ -2,11 +2,18 @@ import { NextResponse } from "next/server";
 
 // ============================================================
 // /api/telegram/webhook — receptor de updates del bot de Telegram
-// Configúralo con: https://api.telegram.org/bot<TOKEN>/setWebhook?url=<TU-DOMINIO>/api/telegram/webhook
+// Configúralo con: https://api.telegram.org/bot<TOKEN>/setWebhook?url=<TU-DOMINIO>/api/telegram/webhook&secret_token=<TELEGRAM_WEBHOOK_SECRET>
+// v204 EL ESCUDO: si TELEGRAM_WEBHOOK_SECRET está definido, Telegram debe
+// firmar cada update con el header X-Telegram-Bot-Api-Secret-Token — así un
+// desconocido no puede hacerse pasar por Telegram y usar el bot como altavoz.
 // ============================================================
 
 export async function POST(req: Request) {
   try {
+    const secreto = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (secreto && req.headers.get("x-telegram-bot-api-secret-token") !== secreto) {
+      return NextResponse.json({ ok: false }, { status: 401 });
+    }
     const update = (await req.json()) as {
       message?: { chat?: { id?: number; title?: string }; text?: string; from?: { first_name?: string } };
     };

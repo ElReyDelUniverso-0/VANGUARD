@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
 import { muro, claveCliente } from "@/lib/fortaleza";
-import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth-server";
+import { verifySessionToken, SESSION_COOKIE, firmaBorrado } from "@/lib/auth-server";
 import { validarJuego, esJuegoTaller } from "@/lib/juegos";
 
 // v26 — COMUNIDAD CREADORA: todo lo sube la gente.
@@ -278,7 +278,10 @@ export async function POST(req: Request) {
     }
 
     const reward = kind === "juego" ? 50 : kind === "escenario" ? 35 : kind === "periodico" ? 40 : 30;
-    return NextResponse.json({ item, verdict: mod.verdict, reason: mod.reason, ai: mod.ai, reward }, { status: 201 });
+    // v204 EL ESCUDO: el autor se lleva su permiso de borrado (tk) — sin él,
+    // NADIE puede eliminar el contenido fingiendo ser el autor (antes bastaba
+    // con pasar ?author=, que es público). El cliente lo guarda en su localStorage.
+    return NextResponse.json({ item, verdict: mod.verdict, reason: mod.reason, ai: mod.ai, reward, tk: firmaBorrado(item.id) }, { status: 201 });
   } catch (e) {
     console.error("ugc POST error", e);
     return NextResponse.json({ error: "El estudio no pudo procesar el envío" }, { status: 500 });

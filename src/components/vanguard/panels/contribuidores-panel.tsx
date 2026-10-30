@@ -54,7 +54,9 @@ interface LeaderboardData {
 }
 interface NotifRow { id: string; title: string; body: string; icon: string; read: boolean; createdAt: string; }
 
-const ADMIN_KEY = "VANGUARD-2026"; // demo: en producción vive en .env + NextAuth
+// v204 EL ESCUDO: la clave de administrador ya NO vive en el cliente (antes
+// estaba aquí y se leía en el bundle y en pantalla). Ahora valida el SERVIDOR:
+// sesión del DUEÑO o VANGUARD_ADMIN_KEY en variables de entorno.
 
 const JOB_TYPES = [
   { k: "reporte", icon: <Radio className="w-3.5 h-3.5" />, label: "REPORTERO" },
@@ -1114,6 +1116,12 @@ function AdminTab({ alias, onAction }: { alias: string; onAction: () => void }) 
     fetch("/api/contrib/leaderboard").then((r) => r.json()).then((d) => setTypeCounts(d.typeCounts ?? [])).catch(() => {});
   }, [filterType, filterStatus]);
   useEffect(() => { if (unlocked) load(); }, [unlocked, load]);
+  // v204 EL ESCUDO: si entras con la cuenta del DUEÑO, el panel se abre solo
+  useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => {
+      if (d?.account?.isOwner) { setUnlocked(true); toast.success("DUEÑO reconocido — acceso total"); }
+    }).catch(() => {});
+  }, []);
 
   const act = async (id: string, action: "aprobar" | "rechazar") => {
     let reason = "";
@@ -1134,8 +1142,8 @@ function AdminTab({ alias, onAction }: { alias: string; onAction: () => void }) 
         <div className="text-[11px] font-mono font-bold text-red-hud">⚙️ PANEL ADMIN DE CONTRIBUCIONES</div>
         <p className="text-[10px] font-mono text-muted-foreground">Cola de aprobación, filtros por tipo/estado, bonus manual, estadísticas y estado del anti-spam.</p>
         <Input type="password" value={key} onChange={(e) => setKey(e.target.value)} placeholder="Clave de administrador" className="text-xs text-center" />
-        <Button size="sm" onClick={() => { if (key === ADMIN_KEY) { setUnlocked(true); toast.success("Acceso concedido"); } else toast.error("Clave incorrecta (demo: VANGUARD-2026)"); }} className="w-full">ENTRAR</Button>
-        <p className="text-[9px] font-mono text-muted-foreground">Demo: la clave es VANGUARD-2026 · en producción vive en variables de entorno con NextAuth.</p>
+        <Button size="sm" onClick={() => { if (key.trim().length >= 8) { setUnlocked(true); toast.success("Clave en mano — la Ciudadela la verifica en cada acción"); } else toast.error("Escribe la clave de administrador (mínimo 8 caracteres)"); }} className="w-full">ENTRAR</Button>
+        <p className="text-[9px] font-mono text-muted-foreground">Con la sesión del DUEÑO entras directo. Sin sesión, la clave debe coincidir con VANGUARD_ADMIN_KEY del servidor — nunca vive en el navegador.</p>
       </div>
     );
   }

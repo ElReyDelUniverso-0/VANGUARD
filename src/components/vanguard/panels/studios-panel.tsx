@@ -175,9 +175,13 @@ function useUgcFeed(kind: string) {
 
   const remove = async (item: UgcItem) => {
     try {
-      const res = await fetch(`/api/ugc/${item.id}?author=${encodeURIComponent(alias || "")}`, { method: "DELETE" });
+      // v204 EL ESCUDO: se presenta el permiso tk (entregado al publicar) —
+      // ya no hay ?author= que cualquiera pueda falsificar
+      const tk = typeof window !== "undefined" ? window.localStorage.getItem(`vg-del-${item.id}`) || "" : "";
+      const res = await fetch(`/api/ugc/${item.id}?tk=${encodeURIComponent(tk)}`, { method: "DELETE" });
       if (res.ok) {
         toast.success("Eliminado");
+        try { window.localStorage.removeItem(`vg-del-${item.id}`); } catch { /* noop */ }
         setItems((arr) => arr.filter((i) => i.id !== item.id));
       } else {
         toast.error("Solo el autor puede eliminar");
@@ -197,6 +201,10 @@ async function publishUgc(payload: Record<string, unknown>): Promise<boolean> {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    // v204 EL ESCUDO: guardar el permiso de borrado que entrega el servidor
+    if (data?.tk && data?.item?.id) {
+      try { window.localStorage.setItem(`vg-del-${data.item.id}`, String(data.tk)); } catch { /* noop */ }
+    }
     if (data.eliminated) {
       toast.error(`ELIMINADO POR EL AGENTE IA — ${data.reason ?? "contenido inapropiado"}`);
       sfx.error();

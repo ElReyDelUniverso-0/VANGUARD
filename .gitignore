@@ -76,3 +76,6 @@ worklog.md
 qa-v96-*.png
 download/
 .srv.pid
+
+# v204 EL ESCUDO — los backups de la SQLite NUNCA viajan al repo
+db/*.backup-*

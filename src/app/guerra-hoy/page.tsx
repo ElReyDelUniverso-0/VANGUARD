@@ -6,6 +6,7 @@ import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/pres
 import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getWorldPower, fmtUsd, fmtPersonas } from "@/lib/worldpower";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { getEonet, haceEonet, catColor } from "@/lib/eonet";
 import { getFx, fmtFx } from "@/lib/fx";
 // v63.0 PRIMERA PÁGINA — datos estáticos de la biblioteca (server-safe)
@@ -120,7 +121,7 @@ export default async function GuerraHoyPage() {
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
       <header className="border-b border-amber-500/30 bg-black/40 px-5 py-6 max-w-5xl mx-auto">

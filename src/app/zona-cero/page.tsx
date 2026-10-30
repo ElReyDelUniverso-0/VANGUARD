@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ZonaCeroTabs } from "@/components/vanguard/zona-cero-tabs";
 import { ZonaCeroGeo } from "@/components/vanguard/zona-cero-geo";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
 // v54.0 ZONA CERO — TEATRO GLOBAL. Tres simuladores en una página:
 // · TEATRO GLOBAL 3D (nuevo): mesa de guerra MUNDIAL a nivel de PAÍSES —
@@ -51,7 +52,7 @@ export default function ZonaCeroPage() {
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
       <header className="border-b border-red-500/30 bg-black/50 px-5 pt-7 pb-5 max-w-6xl mx-auto">

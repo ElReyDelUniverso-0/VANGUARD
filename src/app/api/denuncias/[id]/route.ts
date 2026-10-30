@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { muro, claveCliente } from "@/lib/fortaleza";
 
 // PATCH /api/denuncias/[id] — votar o cambiar estado (moderación)
 // { action: "vote" | "status", voter?, status? }
+// v204 EL ESCUDO: muro anti-flood — 20 acciones por IP y minuto.
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
+    const veredictoMuro = muro(`den-act:${claveCliente(req)}`, 20, 60_000);
+    if (!veredictoMuro.permitido) {
+      return NextResponse.json({ error: "Demasiadas acciones seguidas — espera un momento" }, { status: 429 });
+    }
     const { id } = await ctx.params;
     const body = await req.json();
     const action = String(body.action ?? "");

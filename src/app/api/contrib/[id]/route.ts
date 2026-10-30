@@ -2,18 +2,47 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { CONTRIB_REWARDS, MOD_REWARD } from "@/lib/rewards";
 import { upsertProfile, notify } from "@/lib/contrib-server";
+import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth-server";
+import { muro, claveCliente } from "@/lib/fortaleza";
+import { createHash } from "crypto";
 
-// Clave de administrador (demo). En producción va en .env + NextAuth.
-const ADMIN_KEY = "VANGUARD-2026";
+// v204.0 EL ESCUDO — la clave demo pública ("VANGUARD-2026") se retira.
+// Ahora el admin es:
+//   ① la sesión del DUEÑO (cuenta con isOwner — p.ej. DUENO), o
+//   ② VANGUARD_ADMIN_KEY definida en variables de entorno (Vercel).
+// Si no hay ninguna de las dos, la puerta queda CERRADA (fail-closed).
+const ADMIN_KEY = process.env.VANGUARD_ADMIN_KEY ?? "";
+
+function claveValida(candidata: unknown): boolean {
+  if (!ADMIN_KEY) return false;
+  const a = createHash("sha256").update(String(candidata ?? "")).digest();
+  const b = createHash("sha256").update(ADMIN_KEY).digest();
+  return a.equals(b); // comparación sin fuga de tiempo
+}
 
 // PATCH /api/contrib/[id] — moderación: aprobar | rechazar | bonus
 // Puede: admin con clave, o Editor Senior (500+ aprobadas) como moderador.
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  // MURO v204 — 10 acciones de moderación por IP y minuto
+  const veredictoMuro = muro(`contrib-mod:${claveCliente(req)}`, 10, 60_000);
+  if (!veredictoMuro.permitido) {
+    return NextResponse.json({ error: `Demasiadas acciones — espera ${Math.ceil(veredictoMuro.espera / 60)} min.` }, { status: 429 });
+  }
   const { id } = await params;
   const body = await req.json().catch(() => null);
   const action = String(body?.action || "");
   const moderator = String(body?.moderator || "Admin").slice(0, 24);
-  const isAdmin = body?.adminKey === ADMIN_KEY;
+  // v204 EL ESCUDO: clave en variables de entorno O sesión del DUEÑO
+  let isAdmin = claveValida(body?.adminKey);
+  if (!isAdmin) {
+    try {
+      const ses = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+      if (ses) {
+        const cuenta = await db.account.findUnique({ where: { username: ses } });
+        if (cuenta?.isOwner) isAdmin = true;
+      }
+    } catch { /* sin sesión: no es admin */ }
+  }
 
   const item = await db.contribution.findUnique({ where: { id } });
   if (!item) return NextResponse.json({ error: "Contribución no encontrada" }, { status: 404 });

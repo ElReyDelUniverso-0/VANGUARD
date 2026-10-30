@@ -1128,6 +1128,52 @@
 // misma página; ④ /guerra-hoy — el titular abre la puerta interna y la fuente
 // externa queda como enlace pequeño «FUENTE ↗». Lo que NO se toca: cortina,
 // watchdog v200, semáforo v198, pozo v197, turbo v199, voz v201.
-export const APP_VERSION = "v203.0";
-export const APP_CODENAME = "EL NOTICIERO";
+// v204.0 EL ESCUDO — mandato del Dueño («busca errores de código, debilidades
+// que tiene Vanguard en ataques cibernéticos, busca API keys»). Auditoría de
+// seguridad completa de la casa (73 rutas API, 558 archivos TS). Hallazgos y
+// cura, sin tocar ni la ley v125 (HTML no-cache) ni el turbo v199 ni la voz:
+// ① CLAVE DE ADMIN PÚBLICA — "VANGUARD-2026" estaba en el código servidor Y
+//    en el panel cliente (se leía en el bundle y hasta en pantalla): cualquiera
+//    podía aprobar contribuciones, dar badges y regalar monedas. Cura:
+//    fail-closed — ahora solo la sesión del DUEÑO (isOwner) o la variable de
+//    entorno VANGUARD_ADMIN_KEY abren la puerta; el servidor compara con
+//    SHA-256 (sin fuga de tiempo) y la clave JAMÁS vive en el cliente.
+// ② IDOR DE BORRADO — /api/ugc/[id] DELETE aceptaba ?author= con el nombre
+//    público del autor: cualquiera borraba contenido ajeno. Cura: permiso tk
+//    HMAC-SHA256 (firmaBorrado) que el servidor entrega al publicar y el
+//    autor guarda en su localStorage; también valen la sesión del autor
+//    firmado o la del DUEÑO. El parámetro author se retira.
+// ③ BASE DE DATOS CON CREDENCIALES PÚBLICAS — db/custom.db (por diseño
+//    v183.1) llevaba la tabla Account con 4 hashes scrypt a la vista del
+//    mundo + un backup doble. Cura: tabla Account PURGADA (el DUEÑO se
+//    recrea solo en el arranque), backup eliminado del repo y regla
+//    db/*.backup-* en .gitignore para siempre.
+// ④ SECRETOS DE RESERVA QUEMADOS — AUTH_SECRET ("vanguard-launch-2026...")
+//    y OWNER_PASSWORD ("vanguard2026") eran públicos: quien los leyera
+//    forjaba sesiones y entraba de DUEÑO. Cura: rotados + aviso en consola
+//    si el servidor arranca sin AUTH_SECRET + resincronización automática
+//    de la contraseña del DUEÑO cuando OWNER_PASSWORD existe en el entorno.
+// ⑤ HARDENING DE SESIÓN — firma comparada en tiempo constante (timingSafeEqual)
+//    y cookie vg_session con `secure` en producción.
+// ⑥ MUROS ANTI-FLOOD — likes de memes, interacciones UGC, verificaciones
+//    (¡pagaban monedas!), votos de embajadores, denuncias, acciones de
+//    directos y moderación: muro por IP (20-40/min) — antes un guion podía
+//    inflar likes, viewers, votos y cosechar monedas sin freno.
+// ⑦ XSS POR JSON-LD — JSON.stringify no escapa `<`: un titular con
+//    </script> podía romper el documento. Cura: jsonLdSeguro() escapa
+//    \u003c en las 6 incrustaciones (layout, guerra-hoy, ver-guerra ×2,
+//    zona-cero, noticia).
+// ⑧ TELEGRAM — el webhook aceptaba updates falsos de cualquiera; ahora
+//    verifica X-Telegram-Bot-Api-Secret-Token si TELEGRAM_WEBHOOK_SECRET
+//    está definido.
+// ⑨ DEPENDENCIAS — 26 vulnerabilidades (2 críticas) → 7 (0 críticas):
+//    npm audit fix + next-auth (muerta, nunca importada) desinstalada.
+//    Las 7 restantes son transitivas de librerías 3D/IA (sharp/libvips,
+//    transformers, prismjs) sin superficie real aquí — documentadas.
+// ACCIÓN DEL DUEÑO (2 minutos): en Vercel → Settings → Environment Variables
+// define AUTH_SECRET, OWNER_PASSWORD, VANGUARD_ADMIN_KEY (y opcional
+// TELEGRAM_WEBHOOK_SECRET). QA: tsc 0 · build EXIT 0 · 73 rutas API ·
+// login/registro/save intactos · delete UGC con tk · muros activos.
+export const APP_VERSION = "v204.0";
+export const APP_CODENAME = "EL ESCUDO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

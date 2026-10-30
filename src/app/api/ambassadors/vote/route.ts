@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { electionCycle } from "@/lib/dark-data";
+import { muro, claveCliente } from "@/lib/fortaleza";
 
 // POST /api/ambassadors/vote — votar a un candidato (1 voto por país por ciclo)
 // { candidateId, voter }
+// v204 EL ESCUDO: muro anti-flood — 20 votos por IP y minuto.
 export async function POST(req: Request) {
   try {
+    const veredictoMuro = muro(`emb-vote:${claveCliente(req)}`, 20, 60_000);
+    if (!veredictoMuro.permitido) {
+      return NextResponse.json({ error: "Demasiados votos seguidos — espera un momento" }, { status: 429 });
+    }
     const body = await req.json();
     const candidateId = String(body.candidateId ?? "");
     const voter = String(body.voter ?? "").trim();

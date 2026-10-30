@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { muro, claveCliente } from "@/lib/fortaleza";
 import { recordVerifyResult, upsertProfile, notify } from "@/lib/contrib-server";
 
 // GET /api/verify — cola de noticias a verificar (no resueltas primero)
@@ -19,6 +20,12 @@ export async function GET(req: Request) {
 // POST /api/verify — votar si una noticia es real/falsa/dudosa/no-sé
 // 10 usuarios verifican; el 70%+ decide; los que aciertan ganan +10 (x2 para elite).
 export async function POST(req: Request) {
+  // MURO v204 — 20 verificaciones por IP y minuto (cada acierto paga monedas:
+  // sin muro era una granja de monedas para un guion)
+  const veredictoMuro = muro(`verify:${claveCliente(req)}`, 20, 60_000);
+  if (!veredictoMuro.permitido) {
+    return NextResponse.json({ error: "Demasiadas verificaciones seguidas" }, { status: 429 });
+  }
   const body = await req.json().catch(() => null);
   const newsId = String(body?.newsId || "");
   const voter = String(body?.voter || "").slice(0, 24);
