@@ -1200,26 +1200,44 @@
 //    abrir el modo 3D — arranque igual que v199), maplibre se destruye al
 //    salir (map.remove + marcadores), atribución legal compacta en el mapa,
 //    v125/v199/v204 sin tocar. QA: tsc 0 · build EXIT 0 · health v205.0.
+// v206.0 MÁS PUERTAS (v206.1: pulido de títulos) — de la ley hermana.
 //
-// v206.0 MÁS PUERTAS — continuación del mandato del Dueño («dame más pasos
-// para que la gente entre por todos lados y más personas entren en mi
-// Google search»), sobre v205.0 EL MUNDO 3D de la ley hermana (intacto).
-// Nadie busca «Vanguard»: la gente busca «guerra en Ucrania hoy», «noticias
-// Gaza». La BD tenía 1.694 cables clasificados por teatro y ni una sola
-// página que los aprovechara. Cura:
-//  ① /conflicto/[tag] — página server-rendered POR TEATRO (ukraine, gaza,
-//    hormuz, taiwan, sahel, redsea, korea, sudan, lebanon) con contador de
-//    cables, últimos 40 hacia su /noticia/[id], JSON-LD CollectionPage +
-//    ItemList (con jsonLdSeguro v204), chips a otros teatros y CTA hacia la
-//    app. URL desconocida = 404 limpio (nada vacío para Google).
-//  ② /privacidad — política de privacidad honesta e indexable: Publisher
-//    Center (Google News) la exige para validar la publicación.
-//  ③ sitemap — teatros con ≥5 cables (hourly, 0.8) + /privacidad: el mapa
-//    pasa de 55 a 65+ URLs anunciadas por rastreo.
-//  ④ /guerra-hoy — chips «Teatros en vivo» para descubrimiento interno.
-//  ⑤ TEATROS en src/lib/teatros.ts — fuente única (página + sitemap + chips).
-// Leyes intactas: cortina, watchdog v200, semáforo v198, pozo v197, turbo
-// v199, voz v201/v203, escudo v204, mundo 3D v205.
-export const APP_VERSION = "v206.0";
-export const APP_CODENAME = "MÁS PUERTAS";
+// v207.0 INFINITO — mandato del Dueño («sigue puliendo más Vanguard, haz que
+// Vanguard siempre se actualice sola y que sea ilimitado»), sobre v206.0/v206.1
+// de la ley hermana (intactas). Tres pilares:
+// ① SE ACTUALIZA SOLA (src/lib/auto-despliegue.ts + /api/system +
+//    auto-actualizacion.tsx, nuevos): el corazón de Vanguard mira el repo
+//    público (raw.githubusercontent, sin API key) como mucho 1 vez cada
+//    5 min; si hay versión más nueva y VERCEL_DEPLOY_HOOK_URL existe en el
+//    entorno, LANZA EL REDEPLOY ELLA MISMA (una sola vez por versión). El
+//    cliente pregunta a /api/system cada 4 min (y al volver a la pestaña) y
+//    muestra un aviso no bloqueante «NUEVA VERSIÓN DETECTADA — ACTUALIZAR
+//    AHORA»: la recarga SIEMPRE la decide el usuario (ley v190: nada se
+//    recarga solo; ley v189: opt-in). El aviso vive en CapasGlobales →
+//    diferido, jamás en el arranque. Sin hook configurado, el aviso igual
+//    avisa cuando el despliegue llegue. El cron diario de agent-ping también
+//    corre la mirada (compararVersiones numérico: v207.0 / v207.1.2).
+// ② ILIMITADO — los topes artificiales caen: feed UGC 80 → 300 por pedido,
+//    galería de memes 96 → 300, sitemap: el archivo de noticias pasa a
+//    TAKE_NOTICIAS 500 (sobre las teatros v206 de la ley hermana), las 251
+//    BANDERAS todas a la vista (antes 120), la voz lee el pulso completo
+//    (220 → 480 caracteres). Y el más grande: EL DUEÑO ES ILIMITADO —
+//    sesionDuenoReq() en auth-server verifica su sesión firmada y CRUZA LOS
+//    MUROS anti-flood en 9 rutas (ugc POST/PATCH/DELETE, memes, verify,
+//    embajadores, denuncias, live, moderación): los muros existen para el
+//    spam, no para su rey. Registro/login/lockout intactos.
+// ③ MAPAS 3D PULIDOS (ciudades-3d.tsx): 20 → 32 CIUDADES (Caracas, La
+//    Habana, Brasilia, Toronto, Viena, Estocolmo, Teherán, Bangkok, Yakarta,
+//    Sídney, Lagos, Nairobi) y 25 → 40 LUGARES IMPORTANTES con coordenadas
+//    reales (estrecho de Taiwán, Bósforo-Dardanelos, Bering, Diego García,
+//    Cabo de Buena Esperanza, Tres Gargantas, Pituffik/Thule, canal de Kiel,
+//    Vaticano, Downing Street, Zhongnanhai, Casa Rosada, La Moneda, Ópera
+//    de Sídney, Acrópolis, Petra) + ◎ TU POSICIÓN REAL: botón GPS opt-in
+//    (geolocation del navegador), marca cian pulsante, vuelo a tu punto y
+//    ficha con precisión en metros; si el permiso se deniega, aviso honesto
+//    que no bloquea el mapa.
+// QA: tsc 0 · build EXIT 0 · /api/system honesto · DUEÑO cruza muros ·
+// v190/v189/v125/v199/v204/v205/v206 intactas.
+export const APP_VERSION = "v207.0";
+export const APP_CODENAME = "INFINITO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

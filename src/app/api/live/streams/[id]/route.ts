@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { streamBonusCoins } from "@/lib/rewards";
 import { upsertProfile, notify } from "@/lib/contrib-server";
 import { muro, claveCliente } from "@/lib/fortaleza";
+import { sesionDuenoReq } from "@/lib/auth-server";
 
 // GET /api/live/streams/[id] — detalle de stream
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -24,7 +25,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 // v204 EL ESCUDO: muro anti-flood — 40 acciones por IP y minuto (antes un
 // guion podía inflar viewers con "join" infinitos o terminar directos ajenos).
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const veredictoMuro = muro(`live-act:${claveCliente(req)}`, 40, 60_000);
+  // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+  const veredictoMuro = sesionDuenoReq(req)
+    ? { permitido: true, espera: 0 }
+    : muro(`live-act:${claveCliente(req)}`, 40, 60_000);
   if (!veredictoMuro.permitido) {
     return NextResponse.json({ error: "Demasiadas acciones en la sala — espera un momento" }, { status: 429 });
   }

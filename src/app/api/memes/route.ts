@@ -18,7 +18,8 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const sort = url.searchParams.get("sort") === "top" ? "top" : "recent";
-    const limit = Math.min(parseInt(url.searchParams.get("limit") || "48", 10) || 48, 96);
+    // v207.0 INFINITO: hasta 300 memes por pedido — la galería no se corta
+    const limit = Math.min(parseInt(url.searchParams.get("limit") || "48", 10) || 48, 300);
 
     const [memes, total, today, likesAgg] = await Promise.all([
       db.meme.findMany({

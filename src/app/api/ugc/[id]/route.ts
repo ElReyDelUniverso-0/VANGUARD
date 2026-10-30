@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
-import { verifySessionToken, SESSION_COOKIE, firmaBorrado } from "@/lib/auth-server";
+import { verifySessionToken, SESSION_COOKIE, firmaBorrado, sesionDuenoReq } from "@/lib/auth-server";
 import { muro, claveCliente } from "@/lib/fortaleza";
 
 // v26 — Interacciones con el contenido de la comunidad.
@@ -20,7 +20,10 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   try {
     // MURO v204 — 40 interacciones (likes/ratings/votos) por IP y minuto:
     // antes el voter era autodeclarado y un guion podía inflar todo sin freno
-    const veredictoMuro = muro(`ugc-act:${claveCliente(req)}`, 40, 60_000);
+    // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+    const veredictoMuro = sesionDuenoReq(req)
+      ? { permitido: true, espera: 0 }
+      : muro(`ugc-act:${claveCliente(req)}`, 40, 60_000);
     if (!veredictoMuro.permitido) {
       return NextResponse.json({ error: `Demasiadas interacciones — espera ${Math.ceil(veredictoMuro.espera / 60)} min.` }, { status: 429 });
     }
@@ -145,7 +148,10 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     // MURO v204 — 10 intentos de borrado por IP y minuto
-    const veredictoMuro = muro(`ugc-del:${claveCliente(req)}`, 10, 60_000);
+    // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+    const veredictoMuro = sesionDuenoReq(req)
+      ? { permitido: true, espera: 0 }
+      : muro(`ugc-del:${claveCliente(req)}`, 10, 60_000);
     if (!veredictoMuro.permitido) {
       return NextResponse.json({ error: "Demasiados intentos — espera un momento" }, { status: 429 });
     }

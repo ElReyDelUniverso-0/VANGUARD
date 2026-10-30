@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { muro, claveCliente } from "@/lib/fortaleza";
+import { sesionDuenoReq } from "@/lib/auth-server";
 
 // PATCH /api/denuncias/[id] — votar o cambiar estado (moderación)
 // { action: "vote" | "status", voter?, status? }
 // v204 EL ESCUDO: muro anti-flood — 20 acciones por IP y minuto.
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const veredictoMuro = muro(`den-act:${claveCliente(req)}`, 20, 60_000);
+    // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+    const veredictoMuro = sesionDuenoReq(req)
+      ? { permitido: true, espera: 0 }
+      : muro(`den-act:${claveCliente(req)}`, 20, 60_000);
     if (!veredictoMuro.permitido) {
       return NextResponse.json({ error: "Demasiadas acciones seguidas — espera un momento" }, { status: 429 });
     }

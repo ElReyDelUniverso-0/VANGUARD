@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { muro, claveCliente } from "@/lib/fortaleza";
+import { sesionDuenoReq } from "@/lib/auth-server";
 
 // v25 — Like/unlike de un meme (toggle por votante, 1 like por usuario).
 // v204 EL ESCUDO: muro anti-flood — 40 likes por IP y minuto.
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const veredictoMuro = muro(`meme-act:${claveCliente(req)}`, 40, 60_000);
+    // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+    const veredictoMuro = sesionDuenoReq(req)
+      ? { permitido: true, espera: 0 }
+      : muro(`meme-act:${claveCliente(req)}`, 40, 60_000);
     if (!veredictoMuro.permitido) {
       return NextResponse.json({ error: "Demasiados likes seguidos — respira un momento" }, { status: 429 });
     }

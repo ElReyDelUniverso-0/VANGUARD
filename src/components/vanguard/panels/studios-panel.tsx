@@ -383,8 +383,8 @@ function NoticiasStudio() {
 // crear mapas, tener todas las banderas». Las 251 banderas REALES del
 // planeta (flagcdn) en una galería buscable: toca una y queda ASOCIADA a
 // tu diseño (el select «Nación asociada» se rellena solo). Búsqueda por
-// nombre, código ISO y región; render perezoso (loading lazy) y tope de
-// 120 a la vista para que ni un móvil antiguo se resienta.
+// nombre, código ISO y región; render perezoso (loading lazy).
+// v207.0 INFINITO: se muestran TODAS (251) — ni una bandera se queda fuera.
 function normVg(s: string): string {
   return (s || "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").trim();
 }
@@ -404,7 +404,8 @@ function BanderasDelMundo({ onElegir }: { onElegir: (code: string, nombre: strin
     });
   }, [q, region]);
 
-  const visibles = lista.slice(0, 120);
+  // v207.0 INFINITO: sin tope — las 251 banderas, todas a la vista
+  const visibles = lista;
 
   return (
     <div className="hud-panel p-3 border-amber-hud/40" data-vg203-banderas-mundo="1">
@@ -453,9 +454,9 @@ function BanderasDelMundo({ onElegir }: { onElegir: (code: string, nombre: strin
           ))}
         </div>
       )}
-      {lista.length > 120 && (
+      {lista.length > 0 && (
         <p className="mt-1.5 text-[9px] font-mono text-muted-foreground text-center">
-          Se muestran 120 de {lista.length} — afina la búsqueda o elige región
+          {lista.length} {lista.length === 1 ? "bandera" : "banderas"} en pantalla — ilimitado
         </p>
       )}
     </div>

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { CONTRIB_REWARDS, MOD_REWARD } from "@/lib/rewards";
 import { upsertProfile, notify } from "@/lib/contrib-server";
-import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth-server";
+import { verifySessionToken, SESSION_COOKIE, sesionDuenoReq } from "@/lib/auth-server";
 import { muro, claveCliente } from "@/lib/fortaleza";
 import { createHash } from "crypto";
 
@@ -24,7 +24,10 @@ function claveValida(candidata: unknown): boolean {
 // Puede: admin con clave, o Editor Senior (500+ aprobadas) como moderador.
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   // MURO v204 — 10 acciones de moderación por IP y minuto
-  const veredictoMuro = muro(`contrib-mod:${claveCliente(req)}`, 10, 60_000);
+  // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+  const veredictoMuro = sesionDuenoReq(req)
+    ? { permitido: true, espera: 0 }
+    : muro(`contrib-mod:${claveCliente(req)}`, 10, 60_000);
   if (!veredictoMuro.permitido) {
     return NextResponse.json({ error: `Demasiadas acciones — espera ${Math.ceil(veredictoMuro.espera / 60)} min.` }, { status: 429 });
   }

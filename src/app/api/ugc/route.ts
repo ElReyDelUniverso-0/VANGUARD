@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
 import { muro, claveCliente } from "@/lib/fortaleza";
-import { verifySessionToken, SESSION_COOKIE, firmaBorrado } from "@/lib/auth-server";
+import { verifySessionToken, SESSION_COOKIE, firmaBorrado, sesionDuenoReq } from "@/lib/auth-server";
 import { validarJuego, esJuegoTaller } from "@/lib/juegos";
 
 // v26 — COMUNIDAD CREADORA: todo lo sube la gente.
@@ -46,7 +46,8 @@ export async function GET(req: Request) {
     const sort = url.searchParams.get("sort") || "recent";
     const author = url.searchParams.get("author") || "";
     const mine = url.searchParams.get("mine") === "1";
-    const limit = Math.min(parseInt(url.searchParams.get("limit") || "40", 10) || 40, 80);
+    // v207.0 INFINITO: el feed entrega hasta 300 piezas por pedido — sin sed
+    const limit = Math.min(parseInt(url.searchParams.get("limit") || "40", 10) || 40, 300);
 
     const where: Record<string, unknown> = {};
     // el feed público solo muestra APROBADO; "mis envíos" muestra todo (el autor revisa su cola)
@@ -94,7 +95,10 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     // v102 MURO DE ACERO — 30 envíos por IP y hora (además del anti-spam por autor)
-    const veredictoMuro = muro(`ugc:${claveCliente(req)}`, 30, 3600_000);
+    // v207.0 INFINITO: la sesión del DUEÑO cruza los muros — su rey no tiene topes
+    const veredictoMuro = sesionDuenoReq(req)
+      ? { permitido: true, espera: 0 }
+      : muro(`ugc:${claveCliente(req)}`, 30, 3600_000);
     if (!veredictoMuro.permitido) {
       return NextResponse.json(
         { error: `Muro de la Ciudadela: demasiados envíos desde tu conexión — vuelve en ${Math.ceil(veredictoMuro.espera / 60)} min.` },

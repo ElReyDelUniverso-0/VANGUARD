@@ -5,9 +5,9 @@ import { TEATROS } from "@/lib/teatros";
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
 // v34: la URL canónica debe apuntar a un dominio real (vanguard.world aún sin DNS)
-// v202.0 PUERTAS ABIERTAS: el sitemap ahora incluye las últimas 50 noticias
-// como URLs propias (/noticia/[id]) — 50 puertas más para Google, refrescadas
-// en cada rastreo. Si la BD falla, las puertas estáticas quedan intactas.
+// v202.0 PUERTAS ABIERTAS: el sitemap incluye las noticias como URLs propias
+// (/noticia/[id]) — refrescadas en cada rastreo.
+// v207.0 INFINITO: 50 → 500 puertas — Google puede entrar a TODO el archivo. Si la BD falla, las puertas estáticas quedan intactas.
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const rows = await db.newsItem.findMany({
       orderBy: { publishedAt: "desc" },
-      take: 50,
+      take: 500,
       select: { id: true, publishedAt: true },
     });
     noticias = rows.map((r) => ({
@@ -93,7 +93,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      // v206.0: privacidad pública — confianza para Google News (Publisher Center)
+      // v207.0: privacidad pública — confianza para Google News (Publisher Center)
       url: `${SITE_URL}/privacidad`,
       lastModified: new Date(),
       changeFrequency: "yearly",

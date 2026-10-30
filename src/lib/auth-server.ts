@@ -138,3 +138,26 @@ export interface AccountPublic {
 export function publicAccount(a: { username: string; isOwner: boolean }): AccountPublic {
   return { username: a.username, isOwner: a.isOwner };
 }
+
+// v207.0 INFINITO — EL DUEÑO ES ILIMITADO: la sesión firmada del propietario
+// cruza los muros anti-flood (los muros existen para el spam, no para su rey).
+// Acepta Request normal (lee la cabecera cookie) y NextRequest (req.cookies).
+export function sesionDuenoReq(req: Request): boolean {
+  try {
+    const viaObjeto = (req as Request & { cookies?: { get?: (n: string) => { value?: string } | undefined } }).cookies;
+    const cruda = viaObjeto?.get?.(SESSION_COOKIE)?.value;
+    const token =
+      cruda ??
+      (req.headers
+        .get("cookie")
+        ?.split(";")
+        .map((c) => c.trim())
+        .find((c) => c.startsWith(`${SESSION_COOKIE}=`))
+        ?.slice(SESSION_COOKIE.length + 1) ??
+        undefined);
+    if (!token) return false;
+    return verifySessionToken(decodeURIComponent(token)) === OWNER_USERNAME;
+  } catch {
+    return false;
+  }
+}

@@ -39,19 +39,31 @@ const CIUDADES: Ciudad[] = [
   { nombre: "Bogotá", pais: "Colombia", lat: 4.7110, lng: -74.0721, bearing: 10 },
   { nombre: "Lima", pais: "Perú", lat: -12.0464, lng: -77.0428, bearing: 20 },
   { nombre: "Santiago", pais: "Chile", lat: -33.4489, lng: -70.6693, bearing: 30 },
+  { nombre: "Caracas", pais: "Venezuela", lat: 10.4806, lng: -66.9036, bearing: 15 },
+  { nombre: "La Habana", pais: "Cuba", lat: 23.1136, lng: -82.3666, bearing: 20 },
+  { nombre: "Brasilia", pais: "Brasil", lat: -15.7939, lng: -47.8828, bearing: 25 },
   { nombre: "Miami", pais: "EE. UU.", lat: 25.7617, lng: -80.1918, bearing: 15 },
   { nombre: "Los Ángeles", pais: "EE. UU.", lat: 34.0522, lng: -118.2437, bearing: 25 },
+  { nombre: "Toronto", pais: "Canadá", lat: 43.6532, lng: -79.3832, bearing: 20 },
   { nombre: "París", pais: "Francia", lat: 48.8566, lng: 2.3522, bearing: 20 },
   { nombre: "Londres", pais: "Reino Unido", lat: 51.5074, lng: -0.1278, bearing: 30 },
   { nombre: "Berlín", pais: "Alemania", lat: 52.5200, lng: 13.4050, bearing: 10 },
   { nombre: "Roma", pais: "Italia", lat: 41.9028, lng: 12.4964, bearing: 20 },
+  { nombre: "Viena", pais: "Austria", lat: 48.2082, lng: 16.3738, bearing: 15 },
+  { nombre: "Estocolmo", pais: "Suecia", lat: 59.3293, lng: 18.0686, bearing: 25 },
   { nombre: "Estambul", pais: "Turquía", lat: 41.0082, lng: 28.9784, bearing: 40 },
+  { nombre: "Teherán", pais: "Irán", lat: 35.6892, lng: 51.3890, bearing: 20 },
   { nombre: "Dubái", pais: "EAU", lat: 25.1972, lng: 55.2744, bearing: 30 },
   { nombre: "Tokio", pais: "Japón", lat: 35.6762, lng: 139.6503, bearing: 25 },
   { nombre: "Seúl", pais: "Corea del Sur", lat: 37.5665, lng: 126.9780, bearing: 20 },
+  { nombre: "Bangkok", pais: "Tailandia", lat: 13.7563, lng: 100.5018, bearing: 15 },
+  { nombre: "Yakarta", pais: "Indonesia", lat: -6.2088, lng: 106.8456, bearing: 20 },
+  { nombre: "Sídney", pais: "Australia", lat: -33.8688, lng: 151.2093, bearing: 30 },
   { nombre: "Moscú", pais: "Rusia", lat: 55.7558, lng: 37.6173, bearing: 35 },
   { nombre: "Kiev", pais: "Ucrania", lat: 50.4501, lng: 30.5234, bearing: 15 },
   { nombre: "El Cairo", pais: "Egipto", lat: 30.0444, lng: 31.2357, bearing: 10 },
+  { nombre: "Lagos", pais: "Nigeria", lat: 6.5244, lng: 3.3792, bearing: 20 },
+  { nombre: "Nairobi", pais: "Kenia", lat: -1.2921, lng: 36.8219, bearing: 15 },
 ];
 
 const LUGARES: Lugar[] = [
@@ -80,6 +92,23 @@ const LUGARES: Lugar[] = [
   { nombre: "Estrecho de Gibraltar", pais: "España/Marruecos", lat: 35.9500, lng: -5.6000, zoom: 10.5, tipo: "estrategico", dato: "14 km separan Europa de África y el Atlántico del Mediterráneo." },
   { nombre: "Puente de Kerch", pais: "Ucrania/Rusia", lat: 45.3054, lng: 36.5328, zoom: 12.5, tipo: "estrategico", dato: "19 km sobre el estrecho que une el mar Negro con el de Azov." },
   { nombre: "Chernóbil", pais: "Ucrania", lat: 51.3892, lng: 30.0993, zoom: 13.5, tipo: "estrategico", dato: "El accidente nuclear de 1986; hoy es zona de exclusión." },
+  // v207.0 INFINITO — el atlas crece: +15 lugares, mismo rigor de coordenadas
+  { nombre: "Estrecho de Taiwán", pais: "Taiwán/China", lat: 24.5000, lng: 119.5000, zoom: 8.5, tipo: "estrategico", dato: "100 millas de agua donde se cruzan una de las rutas comerciales y las mayores tensiones del siglo." },
+  { nombre: "Bósforo y Dardanelos", pais: "Turquía", lat: 41.1190, lng: 29.0720, zoom: 10, tipo: "estrategico", dato: "Las dos llaves turcas que abren el mar Negro al Mediterráneo (Convención de Montreux)." },
+  { nombre: "Estrecho de Bering", pais: "EE. UU./Rusia", lat: 65.8000, lng: -168.9000, zoom: 6.5, tipo: "estrategico", dato: "Solo 82 km separan América de Asia por aquí; dos islas se ven una a otra." },
+  { nombre: "Diego García", pais: "Í. Ó. Británicas", lat: -7.3195, lng: 72.4228, zoom: 12, tipo: "estrategico", dato: "Atolón del Índico con base aérea naval conjunta de EE. UU. y Reino Unido: el portaaviones que no se mueve." },
+  { nombre: "Cabo de Buena Esperanza", pais: "Sudáfrica", lat: -34.3568, lng: 18.4740, zoom: 11.5, tipo: "estrategico", dato: "El paso legendario cuando Suez se cierra: ruta clásica entre Europa y Asia." },
+  { nombre: "Represa de las Tres Gargantas", pais: "China", lat: 30.8230, lng: 111.0034, zoom: 13.5, tipo: "estrategico", dato: "La central eléctrica más potente del planeta (22.500 MW) sobre el Yangtsé." },
+  { nombre: "Base de Pituffik (Thule)", pais: "Groenlandia", lat: 76.5313, lng: -68.7064, zoom: 11, tipo: "estrategico", dato: "La base militar más al norte de EE. UU.: radar de alerta temprana sobre el Ártico." },
+  { nombre: "Canal de Kiel", pais: "Alemania", lat: 54.3600, lng: 9.7000, zoom: 10.5, tipo: "estrategico", dato: "El canal artificial más transitado del mundo: atajo del Báltico al mar del Norte." },
+  { nombre: "Vaticano", pais: "Santa Sede", lat: 41.9029, lng: 12.4534, zoom: 16.5, tipo: "sede", dato: "El estado más pequeño del mundo (0,44 km²) y cabeza de la Iglesia católica." },
+  { nombre: "10 Downing Street", pais: "Reino Unido", lat: 51.5033, lng: -0.1276, zoom: 17.5, tipo: "sede", dato: "La puerta negra del Primer Ministro británico desde 1735." },
+  { nombre: "Zhongnanhai", pais: "China", lat: 39.9119, lng: 116.3933, zoom: 15.8, tipo: "sede", dato: "El complejo junto a la Ciudad Prohibida donde gobierna el Partido." },
+  { nombre: "Casa Rosada", pais: "Argentina", lat: -34.6085, lng: -58.3688, zoom: 17, tipo: "sede", dato: "Sede del gobierno argentino, balcón de los discursos históricos." },
+  { nombre: "Palacio de La Moneda", pais: "Chile", lat: -33.4436, lng: -70.6542, zoom: 17.2, tipo: "sede", dato: "Palacio de gobierno chileno, diseñado por Joaquín Toesca, terminado en 1805." },
+  { nombre: "Ópera de Sídney", pais: "Australia", lat: -33.8568, lng: 151.2153, zoom: 16.8, tipo: "monumento", dato: "Las velas blancas de Utzon (1973), Patrimonio de la Humanidad." },
+  { nombre: "Acrópolis de Atenas", pais: "Grecia", lat: 37.9715, lng: 23.7267, zoom: 16.8, tipo: "monumento", dato: "El Partenón corona la cuna de la democracia desde el siglo V a.C." },
+  { nombre: "Petra", pais: "Jordania", lat: 30.3285, lng: 35.4444, zoom: 15.5, tipo: "monumento", dato: "La ciudad nabatea tallada en roca rosada hace más de 2.000 años." },
 ];
 
 const COLOR_TIPO: Record<Lugar["tipo"], string> = {
@@ -136,6 +165,11 @@ export default function Ciudades3D() {
   const [lugar, setLugar] = useState<Lugar | null>(null);
   const [listo, setListo] = useState(false);
   const [fallo, setFallo] = useState<string | null>(null);
+  // v207.0 INFINITO — TU POSICIÓN REAL: GPS opt-in (ley v189: nunca bloquea)
+  const [gpsEstado, setGpsEstado] = useState<"apagado" | "buscando" | "listo" | "fallo">("apagado");
+  const [gpsError, setGpsError] = useState<string>("");
+  const [fichaGps, setFichaGps] = useState<{ precision: number } | null>(null);
+  const gpsRef = useRef<Marker | null>(null);
 
   // ---- arranque del motor (una sola vez) ----
   useEffect(() => {
@@ -154,6 +188,8 @@ export default function Ciudades3D() {
         attributionControl: { compact: true },
       });
     } catch {
+      // ruta de error del arranque del motor: anunciar es lo honesto (v205)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFallo("Tu navegador no pudo encender el motor 3D (WebGL). La casa sigue viva en 2D.");
       return;
     }
@@ -188,6 +224,10 @@ export default function Ciudades3D() {
     return () => {
       for (const m of marcadoresRef.current) m.remove();
       marcadoresRef.current = [];
+      if (gpsRef.current) {
+        gpsRef.current.remove();
+        gpsRef.current = null;
+      }
       mapa.remove();
       mapaRef.current = null;
       setListo(false);
@@ -248,7 +288,57 @@ export default function Ciudades3D() {
     setLugar(l);
     volar(l.lat, l.lng, l.zoom, 35);
   };
-  seleccionRef.current = seleccionar;
+  // v207.0: el ref se alimenta en efecto (regla react-hooks/refs) — mismo
+  // comportamiento: la marca fresca siempre disponible para los marcadores.
+  useEffect(() => {
+    seleccionRef.current = seleccionar;
+  });
+
+  // ---- TU POSICIÓN REAL (v207.0): GPS del navegador, opt-in, optativo ----
+  const buscarMiPosicion = () => {
+    if (!mapaRef.current) return;
+    if (!("geolocation" in navigator)) {
+      setGpsEstado("fallo");
+      setGpsError("Este navegador no ofrece GPS.");
+      return;
+    }
+    setGpsEstado("buscando");
+    setGpsError("");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const mapa = mapaRef.current;
+        if (!mapa) return;
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const precision = Math.round(pos.coords.accuracy || 0);
+        // marca cian pulsante en el punto real
+        if (gpsRef.current) gpsRef.current.remove();
+        const el = document.createElement("div");
+        el.style.cssText =
+          "width:18px;height:18px;border-radius:9999px;background:rgba(66,220,255,0.35);border:2px solid #42DCFF;box-shadow:0 0 14px #42DCFF;position:relative";
+        const nucleo = document.createElement("div");
+        nucleo.style.cssText =
+          "position:absolute;inset:4px;border-radius:9999px;background:#42DCFF";
+        el.appendChild(nucleo);
+        gpsRef.current = new maplibregl.Marker({ element: el })
+          .setLngLat([lng, lat])
+          .addTo(mapa);
+        setGpsEstado("listo");
+        volar(lat, lng, 16.5, 0);
+        setLugar(null);
+        setFichaGps({ precision });
+      },
+      (err) => {
+        setGpsEstado("fallo");
+        setGpsError(
+          err.code === err.PERMISSION_DENIED
+            ? "Permiso de ubicación denegado — la casa sigue viva sin él."
+            : "La señal de ubicación no llegó — inténtalo de nuevo."
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 30_000 }
+    );
+  };
 
   // ---- vista ----
   return (
@@ -272,6 +362,12 @@ export default function Ciudades3D() {
           <Chip on={satelite} onClick={() => setSatelite((v) => !v)}>SATÉLITE</Chip>
           <Chip on={edificios} onClick={() => setEdificios((v) => !v)}>EDIFICIOS 3D</Chip>
           <Chip on={relieve} onClick={() => setRelieve((v) => !v)}>RELIEVE</Chip>
+          <Chip
+            on={gpsEstado === "listo"}
+            onClick={() => (gpsEstado !== "buscando" ? buscarMiPosicion() : undefined)}
+          >
+            {gpsEstado === "buscando" ? "◎ BUSCANDO…" : "◎ MI POSICIÓN"}
+          </Chip>
         </div>
 
         {/* leyenda de lugares */}
@@ -308,6 +404,28 @@ export default function Ciudades3D() {
             <div className="text-[13px] font-bold text-amber leading-tight mt-0.5">{lugar.nombre}</div>
             <div className="text-[9px] font-mono text-muted-foreground">{lugar.pais} · {lugar.lat.toFixed(4)}°, {lugar.lng.toFixed(4)}°</div>
             <p className="text-[10px] text-foreground/80 leading-snug mt-1">{lugar.dato}</p>
+          </div>
+        )}
+
+        {/* v207.0 INFINITO — ficha de TU POSICIÓN REAL */}
+        {fichaGps && !lugar && gpsEstado === "listo" && (
+          <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-xs z-10 hud-panel p-3 border-[#42DCFF]/60 bg-black/80 backdrop-blur-sm" data-vg207-gps="1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-[#42DCFF]">tu posición real</span>
+              <button onClick={() => setFichaGps(null)} className="text-[10px] font-mono text-muted-foreground hover:text-amber" aria-label="cerrar ficha de posición">✕</button>
+            </div>
+            <div className="text-[13px] font-bold text-[#42DCFF] leading-tight mt-0.5">◎ Aquí estás tú</div>
+            <div className="text-[9px] font-mono text-muted-foreground">
+              precisión GPS ± {fichaGps.precision} m · coordenadas del planeta real
+            </div>
+          </div>
+        )}
+
+        {/* error honesto del GPS (nunca bloquea el mapa) */}
+        {gpsEstado === "fallo" && (
+          <div className="absolute top-12 left-2 z-10 max-w-[240px] bg-black/85 border border-white/20 rounded-sm px-2.5 py-1.5 text-[9px] font-mono text-amber leading-snug">
+            {gpsError}
+            <button onClick={() => setGpsEstado("apagado")} className="ml-2 underline hover:text-foreground">ok</button>
           </div>
         )}
       </div>

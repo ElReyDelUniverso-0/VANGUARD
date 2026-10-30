@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { asegurarTabla } from "@/lib/db-ddl";
+import { chequearDespliegue } from "@/lib/auto-despliegue";
 
 // v42.2 AGENTE AUTO DE PROMOCIÓN — el agente que el comandante pidió:
 // "cuando termines una tarea, el agente manda el siguiente mensaje solo".
@@ -103,6 +104,21 @@ export async function GET(req: Request) {
   _lastRun = Date.now();
   const results = await runPings();
   await recordRun(results);
+  // v207.0 INFINITO: la corrida diaria del agente TAMBIÉN mira si hay versión
+  // nueva en el repo y, con VERCEL_DEPLOY_HOOK_URL configurado, lanza el
+  // redeploy sola — Vanguard se actualiza aunque nadie la visite.
+  let despliegue: Record<string, unknown> | null = null;
+  try {
+    const estado = await chequearDespliegue();
+    despliegue = {
+      local: estado.local,
+      remota: estado.remota,
+      hayNueva: estado.hayNueva,
+      hookDisparado: estado.hookDisparado,
+    };
+  } catch {
+    despliegue = null; // la mirada al repo jamás tumba el ping
+  }
   const okCount = results.filter((r) => r.ok).length;
   return NextResponse.json({
     ok: true,
@@ -111,5 +127,6 @@ export async function GET(req: Request) {
     channelsOk: okCount,
     channels: results.length,
     results,
+    despliegue,
   });
 }

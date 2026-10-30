@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { muro, claveCliente } from "@/lib/fortaleza";
+import { sesionDuenoReq } from "@/lib/auth-server";
 import { recordVerifyResult, upsertProfile, notify } from "@/lib/contrib-server";
 
 // GET /api/verify — cola de noticias a verificar (no resueltas primero)
@@ -22,7 +23,10 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   // MURO v204 — 20 verificaciones por IP y minuto (cada acierto paga monedas:
   // sin muro era una granja de monedas para un guion)
-  const veredictoMuro = muro(`verify:${claveCliente(req)}`, 20, 60_000);
+  // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
+  const veredictoMuro = sesionDuenoReq(req)
+    ? { permitido: true, espera: 0 }
+    : muro(`verify:${claveCliente(req)}`, 20, 60_000);
   if (!veredictoMuro.permitido) {
     return NextResponse.json({ error: "Demasiadas verificaciones seguidas" }, { status: 429 });
   }

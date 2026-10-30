@@ -408,7 +408,8 @@ function crearInforme(semilla: string): CreacionInforme {
 
   const actores = [crisis.A.nombre, crisis.B.nombre];
   const cuerpo = [
-    `PULSO LEÍDO — "${texto.slice(0, 220)}"`,
+    // v207.0 INFINITO: la voz lee el pulso completo (era 220, hoy sin corte práctico)
+    `PULSO LEÍDO — "${texto.slice(0, 480)}"`,
     ``,
     `LECTURA NEURONAL (núcleo v4, 8 neuronas):`,
     `· riesgo ${v.riesgo}/100 · tensión ${v.tension}/100 · confianza ${v.confianza}/100`,

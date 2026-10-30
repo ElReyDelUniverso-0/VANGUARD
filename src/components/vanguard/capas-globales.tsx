@@ -30,6 +30,11 @@ const RegresoBanner = dynamic(
   () => import("@/components/vanguard/regreso-banner").then((m) => m.RegresoBanner),
   { ssr: false }
 );
+// v207.0 INFINITO: el corazón que mira el repo y ofrece la recarga opt-in
+const AutoActualizacion = dynamic(
+  () => import("@/components/vanguard/auto-actualizacion").then((m) => m.AutoActualizacion),
+  { ssr: false }
+);
 
 export function CapasGlobales() {
   return (
@@ -45,6 +50,8 @@ export function CapasGlobales() {
       <PulsoAuto />
       {/* v101.0 EL REGRESO — PILAR 1: el mundo cambió mientras no mirabas */}
       <RegresoBanner />
+      {/* v207.0 INFINITO: Vanguard se actualiza sola — aviso opt-in, nada se recarga sin permiso (v190) */}
+      <AutoActualizacion />
     </MontajeTardio>
   );
 }
