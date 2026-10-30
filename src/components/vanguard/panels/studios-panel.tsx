@@ -33,6 +33,18 @@ import {
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v115.0 SINGULARIDAD: las obras del ARQUITECTO suenan en el estudio de música
 import { useArquitecto } from "@/lib/arquitecto";
+// v205.0 EL MUNDO 3D — CIUDADES 3D reales (satélite + edificios + relieve).
+// Lazy con ssr:false: el motor de mapas solo baja cuando se abre el modo 3D.
+import dynamic from "next/dynamic";
+
+const Ciudades3D = dynamic(
+  () => import("@/components/vanguard/ciudades-3d"),
+  { ssr: false, loading: () => (
+    <div className="hud-panel p-8 text-center text-[11px] font-mono text-muted-foreground uppercase tracking-widest">
+      encendiendo el motor de ciudades 3D…
+    </div>
+  ) }
+);
 
 type StudioTab = "noticias" | "prensa" | "banderas" | "mapas" | "musica" | "stickers" | "comunidad";
 
@@ -613,6 +625,8 @@ function MapasStudio() {
   const [title, setTitle] = useState("");
   const [arrowStart, setArrowStart] = useState<{ x: number; y: number } | null>(null);
   const [busy, setBusy] = useState(false);
+  // v205.0 EL MUNDO 3D — el estudio vuela: 2D táctico clásico o ciudades 3D reales
+  const [modo3D, setModo3D] = useState(false);
 
   const activeTool = MAP_TOOLS.find((t) => t.id === tool)!;
 
@@ -679,6 +693,24 @@ function MapasStudio() {
   };
 
   return (
+    <div className="space-y-3">
+      {/* v205.0 EL MUNDO 3D — interruptor 2D ⇄ 3D del Estudio de Mapas */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <button onClick={() => setModo3D(false)} aria-pressed={!modo3D}
+          className={cn("px-3 py-1.5 text-[10px] font-mono uppercase border rounded-sm transition-colors",
+            !modo3D ? "border-amber-hud text-amber bg-amber-hud/20" : "border-amber-hud/25 text-muted-foreground hover:border-amber-hud")}>
+          🗺️ 2D TÁCTICO
+        </button>
+        <button onClick={() => setModo3D(true)} aria-pressed={modo3D}
+          className={cn("px-3 py-1.5 text-[10px] font-mono uppercase border rounded-sm transition-colors",
+            modo3D ? "border-cyan-hud text-cyan-hud bg-cyan-hud/20" : "border-cyan-hud/25 text-muted-foreground hover:border-cyan-hud")}>
+          🏙️ CIUDADES 3D
+        </button>
+        <span className="text-[9px] font-mono text-muted-foreground ml-auto hidden sm:block">
+          {modo3D ? "satélite real · edificios 3D de OSM · relieve del planeta · lugares importantes" : "flechas, marcadores y zonas sobre el mundo"}
+        </span>
+      </div>
+      {modo3D ? <Ciudades3D /> : (
     <div className="grid lg:grid-cols-[380px_1fr] gap-4">
       <div className="space-y-2.5 hud-panel p-3 border-amber-hud/40">
         <div className="flex items-center gap-2">
@@ -773,6 +805,8 @@ function MapasStudio() {
           ))}
         </div>
       </div>
+    </div>
+      )}
     </div>
   );
 }

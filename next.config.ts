@@ -67,7 +67,7 @@ const nextConfig: NextConfig = {
       // los archivos se propaga en horas, no nunca-jamás. El HTML y las API
       // conservan su no-cache (ley v125 intacta).
       {
-        source: "/:carpeta(videos|imagenes-reales|ilustraciones|posters|uploads|assets)/:path*",
+        source: "/:carpeta(videos|imagenes-reales|ilustraciones|posters|uploads|assets|vendor)/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
         ],

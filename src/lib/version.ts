@@ -1174,6 +1174,32 @@
 // define AUTH_SECRET, OWNER_PASSWORD, VANGUARD_ADMIN_KEY (y opcional
 // TELEGRAM_WEBHOOK_SECRET). QA: tsc 0 · build EXIT 0 · 73 rutas API ·
 // login/registro/save intactos · delete UGC con tk · muros activos.
-export const APP_VERSION = "v204.0";
-export const APP_CODENAME = "EL ESCUDO";
+// v205.0 EL MUNDO 3D — mandato del Dueño («que Vanguard tenga mapas 3D de
+// Google Maps, lugares importantes y ciudades 3D, y las ubicaciones más
+// realistas»). El ESTUDIO DE MAPAS ahora vuela: interruptor 2D TÁCTICO ⇄
+// CIUDADES 3D dentro del subtab Mapas:
+// ① CIUDADES 3D REALES (src/components/vanguard/ciudades-3d.tsx, nuevo):
+//    MapLibre GL (dep ya presente, ahora viva) con teselas LIBRES y SIN API
+//    KEY — satélite Esri World Imagery (ubicaciones reales a color),
+//    EDIFICIOS 3D de OpenStreetMap vía OpenFreeMap (fill-extrusion con las
+//    alturas reales render_height, al estilo Google Maps 3D) y RELIEVE del
+//    planeta con Terrain-RGB terrarium de AWS Open Data (Everest incluido).
+// ② 20 CIUDADES en chips: NY, Madrid, CDMX, Buenos Aires, Bogotá, Lima,
+//    Santiago, Miami, LA, París, Londres, Berlín, Roma, Estambul, Dubái,
+//    Tokio, Seúl, Moscú, Kiev, El Cairo — vuelo de cámara cinematográfico
+//    (pitch 60, bearing propio, 2.2s, reduced-motion respeta).
+// ③ 25 LUGARES IMPORTANTES con coordenadas reales: monumentos (Eiffel,
+//    Libertad, Guiza, Coliseo, Machu Picchu, Cristo, Muralla, Taj Mahal,
+//    Burj Khalifa, Kaaba, Everest, Isla de Pascua), SEDES DE PODER (Casa
+//    Blanca, Pentágono, ONU, OTAN, Kremlin) y PUNTOS ESTRATÉGICOS (Suez,
+//    Panamá, Ormuz, Bab el-Mandeb, Malaca, Gibraltar, Kerch, Chernóbil) —
+//    marcadores por color + ficha con dato real + vuelo directo.
+// ④ MODO OSCURO TÁCTICO: apaga el satélite y queda agua/vias cian estilo
+//    sala de guerra; interruptores SATÉLITE / EDIFICIOS 3D / RELIEVE en vivo.
+// ⑤ LEYES DE LA CASA INTACTAS: dynamic ssr:false (el motor solo baja al
+//    abrir el modo 3D — arranque igual que v199), maplibre se destruye al
+//    salir (map.remove + marcadores), atribución legal compacta en el mapa,
+//    v125/v199/v204 sin tocar. QA: tsc 0 · build EXIT 0 · health v205.0.
+export const APP_VERSION = "v205.0";
+export const APP_CODENAME = "EL MUNDO 3D";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
