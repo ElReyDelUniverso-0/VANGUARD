@@ -812,9 +812,24 @@ export default function Home() {
   const [consultaAsistente, setConsultaAsistente] = useState<string | undefined>(undefined);
   useEffect(() => {
     const obedece = (e: Event) => {
-      const a = (e as CustomEvent<{ tipo?: string; destino?: string; consulta?: string }>).detail || {};
+      const a = (e as CustomEvent<{ tipo?: string; destino?: string; consulta?: string; subtab?: string }>).detail || {};
       if (a.tipo === "navegar" && a.destino) {
         handleTabChange(a.destino as TabKey);
+        // v203.0 LA VOZ ATERRIZA DONDE TOCA: «muestra las banderas» / «crea
+        // un mapa» llega a ESTUDIOS y abre el SUB-ESTUDIO correcto (banderas
+        // o mapas). Doble canal honesto: sessionStorage (por si el panel monta
+        // después) + evento inmediato y retrasado (por si ya vivía).
+        if (a.destino === "studios" && a.subtab) {
+          const sub = String(a.subtab).slice(0, 20);
+          try { sessionStorage.setItem("vg203-studios-subtab", sub); } catch { /* noop */ }
+          const avisa = () => {
+            try {
+              window.dispatchEvent(new CustomEvent("vg:studios-subtab", { detail: { tab: sub } }));
+            } catch { /* noop */ }
+          };
+          avisa();
+          window.setTimeout(avisa, 400);
+        }
       } else if (a.tipo === "buscar") {
         setConsultaAsistente(a.consulta || "");
         setSearchOpen(true);

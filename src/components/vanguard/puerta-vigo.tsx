@@ -151,7 +151,7 @@ export function PuertaVigo() {
               aria-label={hablando ? "Silenciar a Vigo" : "Vigo te saluda con la voz del Centinela"}
             >
               {hablando ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-              {habandoLabel(hablando)}
+              {hablandoLabel(hablando)}
             </button>
           </div>
 
@@ -243,6 +243,6 @@ export function PuertaVigo() {
   );
 }
 
-function habandoLabel(hablando: boolean) {
+function hablandoLabel(hablando: boolean) {
   return hablando ? "Callar" : "Vigo saluda";
 }

@@ -16,6 +16,7 @@ import {
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Countryball } from "@/components/vanguard/countryball";
 import { WORLD_FLAGS, countryName } from "@/lib/world-data";
+import { Flag } from "@/lib/flags";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { cn } from "@/lib/utils";
@@ -358,6 +359,89 @@ function NoticiasStudio() {
 }
 
 // ============ ESTUDIO DE BANDERAS ============
+// v203.0 TODAS LAS BANDERAS DEL MUNDO — el mandato del Dueño: «que pueda
+// crear mapas, tener todas las banderas». Las 251 banderas REALES del
+// planeta (flagcdn) en una galería buscable: toca una y queda ASOCIADA a
+// tu diseño (el select «Nación asociada» se rellena solo). Búsqueda por
+// nombre, código ISO y región; render perezoso (loading lazy) y tope de
+// 120 a la vista para que ni un móvil antiguo se resienta.
+function normVg(s: string): string {
+  return (s || "").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "").trim();
+}
+
+const REGIONES_BANDERA = ["África", "América", "Asia", "Europa", "Oceanía", "Antártida"];
+
+function BanderasDelMundo({ onElegir }: { onElegir: (code: string, nombre: string) => void }) {
+  const [q, setQ] = useState("");
+  const [region, setRegion] = useState("");
+
+  const lista = useMemo(() => {
+    const t = normVg(q);
+    return WORLD_FLAGS.filter((f) => {
+      if (region && f.region !== region) return false;
+      if (!t) return true;
+      return normVg(f.name).includes(t) || f.code.includes(t) || normVg(f.region).includes(t);
+    });
+  }, [q, region]);
+
+  const visibles = lista.slice(0, 120);
+
+  return (
+    <div className="hud-panel p-3 border-amber-hud/40" data-vg203-banderas-mundo="1">
+      <div className="flex items-center gap-2 flex-wrap">
+        <FlagIcon className="w-4 h-4 text-amber" />
+        <h3 className="text-[12px] font-bold uppercase text-amber tracking-wide">Banderas del mundo</h3>
+        <span className="text-[10px] font-mono text-muted-foreground">{WORLD_FLAGS.length} reales · toca una para asociarla</span>
+      </div>
+      <div className="mt-2 flex gap-1.5 flex-wrap items-center">
+        <input
+          value={q} onChange={(e) => setQ(e.target.value)} maxLength={40}
+          placeholder="Buscar país, código ISO o región…"
+          className="flex-1 min-w-[140px] bg-secondary border border-amber-hud/30 rounded-sm px-2 py-1.5 text-[11px] font-mono"
+          aria-label="Buscar banderas del mundo"
+        />
+        <button
+          onClick={() => setRegion("")}
+          className={cn("px-1.5 py-0.5 text-[9px] font-mono border rounded-sm transition-colors",
+            !region ? "bg-amber-hud/40 border-amber-hud text-amber" : "border-amber-hud/25 text-muted-foreground hover:border-amber-hud")}
+        >
+          TODAS
+        </button>
+        {REGIONES_BANDERA.map((r) => (
+          <button key={r} onClick={() => setRegion(region === r ? "" : r)}
+            className={cn("px-1.5 py-0.5 text-[9px] font-mono border rounded-sm transition-colors",
+              region === r ? "bg-amber-hud/40 border-amber-hud text-amber" : "border-amber-hud/25 text-muted-foreground hover:border-amber-hud")}>
+            {r.toUpperCase()}
+          </button>
+        ))}
+      </div>
+      {lista.length === 0 ? (
+        <p className="mt-2 text-[11px] text-muted-foreground text-center py-3">Ninguna bandera responde a esa búsqueda.</p>
+      ) : (
+        <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-1.5 max-h-[340px] overflow-y-auto pr-1">
+          {visibles.map((f) => (
+            <button
+              key={f.code}
+              onClick={() => onElegir(f.code, f.name)}
+              className="group flex flex-col items-center gap-1 p-1.5 border border-border/60 bg-black/20 hover:border-amber-hud/70 hover:bg-black/40 rounded-sm transition-colors"
+              title={`Bandera de ${f.name} (${f.code.toUpperCase()}) — asociar a tu diseño`}
+              aria-label={`Bandera de ${f.name}`}
+            >
+              <Flag code={f.code} size={52} className="group-hover:scale-105 transition-transform" />
+              <span className="text-[9px] font-mono text-muted-foreground group-hover:text-amber leading-tight text-center truncate w-full">{f.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {lista.length > 120 && (
+        <p className="mt-1.5 text-[9px] font-mono text-muted-foreground text-center">
+          Se muestran 120 de {lista.length} — afina la búsqueda o elige región
+        </p>
+      )}
+    </div>
+  );
+}
+
 function BanderasStudio() {
   const alias = useGameStore((s) => s.alias);
   const feed = useUgcFeed("bandera");
@@ -473,6 +557,14 @@ function BanderasStudio() {
         <CountrySelect label="Nación asociada" value={country} onChange={setCountry} />
       </div>
       <div className="space-y-2">
+        {/* v203: TODAS LAS BANDERAS DEL MUNDO — 251 reales, buscables, un toque las asocia */}
+        <BanderasDelMundo
+          onElegir={(code, nombre) => {
+            setCountry(code);
+            sfx.reward();
+            toast.success(`Bandera de ${nombre} asociada a tu diseño`);
+          }}
+        />
         <div className="flex items-center justify-between">
           <h3 className="text-[11px] font-mono uppercase text-cyan-hud flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5" /> Galería de banderas de la comunidad
@@ -1421,6 +1513,29 @@ export function StudiosPanel() {
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: "creadores.estudio" }));
     return () => { window.dispatchEvent(new CustomEvent("vanguard:subescena", { detail: null })); };
+  }, []);
+
+  // v203.0 LA VOZ ATERRIZA DONDE TOCA — «muestra las banderas» / «crea un
+  // mapa» navega a ESTUDIOS y ADEMÁS abre el sub-estudio correcto: page.tsx
+  // escribe vg203-studios-subtab y dispara vg:studios-subtab; aquí se lee al
+  // montar (orden panel-primero) y se escucha (orden evento-primero).
+  useEffect(() => {
+    const aplica = (v: unknown) => {
+      if (typeof v === "string" && STUDIO_TABS.some((t) => t.id === v)) setTab(v as StudioTab);
+    };
+    try {
+      const g = sessionStorage.getItem("vg203-studios-subtab");
+      if (g) {
+        aplica(g);
+        sessionStorage.removeItem("vg203-studios-subtab");
+      }
+    } catch { /* almacenamiento ausente: solo el evento */ }
+    const f = (e: Event) => {
+      const d = (e as CustomEvent<{ tab?: string }>).detail || {};
+      if (d.tab) aplica(d.tab);
+    };
+    window.addEventListener("vg:studios-subtab", f);
+    return () => window.removeEventListener("vg:studios-subtab", f);
   }, []);
 
   return (

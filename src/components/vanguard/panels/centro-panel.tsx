@@ -35,6 +35,10 @@ import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-n
 import {
   TIERS, type NoticiaRanqueada, type PulsoAgencia, type TierImpacto,
 } from "@/lib/impacto";
+// v203.0 EL NOTICIERO — Vanguard HABLA de las noticias: botón del piloto
+// (siempre suena) + pulso automático honesto cuando el permiso v201 vive
+import { narrarNoticiero, pararNoticiero } from "@/lib/noticiero";
+import { pararVoces } from "@/lib/voces-agentes";
 
 type Cable = NoticiaRanqueada;
 
@@ -62,6 +66,9 @@ export function CentroPanel() {
   const [nuevos, setNuevos] = useState(0);
   const idConocidos = useRef<Set<string>>(new Set());
   const primeraCarga = useRef(true);
+  // v203 EL NOTICIERO: estado del botón + el primer pulso ya salió
+  const [narrando, setNarrando] = useState(false);
+  const primeraVoz = useRef(true);
 
   const cargar = useCallback(async (silencioso = false) => {
     if (!silencioso) setCargando(true);
@@ -84,6 +91,13 @@ export function CentroPanel() {
         }
         setItems(lista);
         try { localStorage.setItem("vanguard-centro-cache", JSON.stringify(lista.slice(0, 40))); } catch { /* lleno */ }
+        // v203: al ATERRIZAR en GUERRA HOY con permiso de hablar concedido,
+        // LA ANALISTA cuenta los titulares pesados UNA vez por visita (el
+        // cooldown de 4 min de narrarNoticiero manda — nunca bombardea)
+        if (primeraVoz.current && lista.length > 0) {
+          primeraVoz.current = false;
+          void narrarNoticiero(lista, { auto: true, onend: () => setNarrando(false) });
+        }
       }
       setPulso((pulsoCentro() as typeof pulso) ?? null);
     } catch {
@@ -96,8 +110,29 @@ export function CentroPanel() {
   useEffect(() => {
     cargar(true);
     const id = window.setInterval(() => cargar(true), 60000);
-    return () => window.clearInterval(id);
+    return () => {
+      window.clearInterval(id);
+      pararNoticiero(); // al salir de la sala, la boca calla (una sola voz viva)
+    };
   }, [cargar]);
+
+  // v203: EL BOTÓN NOTICIERO — el toque del piloto ES el permiso: el guion
+  // suena siempre que haya titulares; segunda pulsación lo calla
+  const noticiero = useCallback(() => {
+    if (narrando) {
+      pararVoces();
+      setNarrando(false);
+      return;
+    }
+    const ok = narrarNoticiero(items, {
+      auto: false,
+      maximo: 5,
+      onend: () => setNarrando(false),
+      onerror: () => setNarrando(false),
+    });
+    if (ok) setNarrando(true);
+    else toast.error(items.length ? "La casa está silenciada — activa el sonido" : "Aún no hay cables que contar");
+  }, [items, narrando]);
 
   // ════════════════════════════════════════════════════════════
   // PARIDAD 3D — LA SALA DEL MAPA MUNDIAL: los cables ranqueados
@@ -197,6 +232,20 @@ export function CentroPanel() {
         subtitle="En vivo · por importancia e impacto · el mayor centro del mundo"
         icon={<Siren className="w-4 h-4" />}
         color="red"
+        right={
+          <button
+            onClick={noticiero}
+            className={cn(
+              "mt-1 px-2 py-0.5 border font-mono text-[9px] uppercase tracking-widest vg-transition flex items-center gap-1",
+              narrando ? "border-red-hud/70 text-red-hud" : "border-electric-hud/70 text-electric hover:bg-electric-hud/10"
+            )}
+            aria-label="Escuchar el noticiero de Vanguard"
+            data-vg203-noticiero="1"
+          >
+            <Radio className={cn("w-3 h-3", narrando && "blink-soft")} />
+            {narrando ? "■ PARAR" : "▶ NOTICIERO"}
+          </button>
+        }
       />
 
       {/* ══════ EL HÉROE DE IMPACTO ══════ */}

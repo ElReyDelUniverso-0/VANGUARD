@@ -89,7 +89,7 @@ const SYSTEM = `Eres VG-ASSIST, el agente de voz de VANGUARD (plataforma mundial
 Devuelve UN JSON EXACTO con:
 - "hablar": tu respuesta SPOKEN en {IDIOMA}, máximo 220 caracteres, tono de oficial de inteligencia: directo, frío, sin relleno. Nada de markdown ni emojis.
 - "accion": un objeto:
-  · {"tipo":"navegar","destino":"CLAVE"} si quiere ir a una sección — CLAVE debe ser EXACTAMENTE una de: [CLAVES]
+  · {"tipo":"navegar","destino":"CLAVE","subtab":"banderas|mapas"} si quiere ir a una sección — CLAVE debe ser EXACTAMENTE una de: [CLAVES]; subtab SOLO cuando destino es "studios": "banderas" si pide ver banderas, "mapas" si pide crear/editar mapas
   · {"tipo":"buscar","consulta":"texto"} si quiere buscar algo concreto (un país, un conflicto, un término)
   · {"tipo":"menu"} si quiere ver el menú completo o el índice
   · {"tipo":"ficha","destino":"CONFLICTO"} si quiere VER la ficha/carta coleccionable de un conflicto — CONFLICTO debe ser EXACTAMENTE uno de: [ukraine, gaza, lebanon, sudan, redsea, korea, taiwan, hormuz, sahel]
@@ -99,8 +99,8 @@ Devuelve UN JSON EXACTO con:
 REGLAS:
 - Si pide noticias / qué pasa en el mundo / últimas horas → navegar a "centro" (CENTRO MUNDIAL) y en "hablar" resume que abres el centro de impacto en vivo.
 - Si menciona un país o conflicto concreto con "ficha", "carta" o "colección", o pide «muéstrame/enséñame» un conflicto → tipo "ficha" con SU clave de conflicto.
-- Si pide el MAPA del mundo o ver mapas → navegar a "maps" (Google Maps de Conflictos). Si pide CREAR un mapa o editar mapas → navegar a "studios". Si pide el mapa de incidentes → navegar a "incidentes".
-- Si pide BANDERAS (ver/crear banderas) o música o contenido de creadores → navegar a "studios" (Estudios Creadores: noticias, banderas, mapas, música).
+- Si pide el MAPA del mundo o ver mapas → navegar a "maps" (Google Maps de Conflictos). Si pide CREAR un mapa o editar mapas → navegar a "studios" con subtab "mapas". Si pide el mapa de incidentes → navegar a "incidentes".
+- Si pide BANDERAS (ver todas las banderas del mundo o crear banderas) → navegar a "studios" con subtab "banderas". Si pide música o contenido de creadores → navegar a "studios".
 - Si pide crear su nación / Age of Nations → navegar a "edad".
 - Si pide cambiar/poner el idioma (inglés, chino, portugués…) → tipo "idioma" con su código.
 - Si pide editar/personalizar/configurar su perfil → navegar a "perfil" (Personalizar Perfil).
@@ -263,7 +263,9 @@ export async function POST(req: NextRequest) {
   // ═══ v201.0 LA VOZ VIVA — MAPAS y BANDERAS antes del LLM ═══
   // «abre el mapa» / «crea un mapa» / «muestra las banderas» / «naciones»:
   // la voz vuela a las salas de cartografía SIN esperar a la IA. Cero
-  // alucinación: solo salas que existen en la Casa.
+  // alucinación: solo salas que existen en la Casa. v203: además el destino
+  // lleva SUBTAB — «banderas» abre el estudio de banderas y «crea mapa» el
+  // de mapas DENTRO de Estudios Creadores (la voz aterriza donde toca).
   const pideMapa = /\b(mapa|mapas)\b/.test(tNorm);
   const pideBanderas = /\b(bandera|banderas|flags?)\b/.test(tNorm);
   const creaEnEstudios = /\b(crea|crear|haz|hacer|dibuja|dibujar|pinta|pintar|edita|editar|disena|fabrica|construye)\b/.test(tNorm) || /\bmusica\b/.test(tNorm);
@@ -275,10 +277,17 @@ export async function POST(req: NextRequest) {
     });
   }
   if (pideBanderas || (pideMapa && creaEnEstudios) || (!pideMapa && creaEnEstudios && /\b(estudios?|creador|contenido)\b/.test(tNorm))) {
+    const esMapaEstudio = !pideBanderas && pideMapa && creaEnEstudios;
     return NextResponse.json({
-      hablar: es ? "Abriendo los Estudios Creadores: noticias, banderas, mapas y música a tu mano." : "Opening Creator Studios: news, flags, maps and music at your command.",
+      hablar: es
+        ? esMapaEstudio
+          ? "Abriendo el estudio de mapas: flechas, marcadores y zonas a tu mano."
+          : "Abriendo los Estudios Creadores: las 251 banderas del mundo y tus diseños."
+        : esMapaEstudio
+          ? "Opening the map studio: arrows, markers and zones at your command."
+          : "Opening Creator Studios: all 251 world flags and your designs.",
       ai: false,
-      accion: { tipo: "navegar", destino: "studios" },
+      accion: { tipo: "navegar", destino: "studios", subtab: esMapaEstudio ? "mapas" : "banderas" },
     });
   }
   if (pideMapa) {
@@ -378,14 +387,16 @@ export async function POST(req: NextRequest) {
     if (match) {
       const parsed = JSON.parse(match[0]) as {
         hablar?: string;
-        accion?: { tipo?: string; destino?: string; consulta?: string };
+        accion?: { tipo?: string; destino?: string; consulta?: string; subtab?: string };
       };
       const hablar = (parsed.hablar || "").trim().slice(0, 220);
       const a = parsed.accion || {};
       const tipo = ["navegar", "buscar", "menu", "hablar", "ficha", "idioma"].includes(a.tipo || "") ? a.tipo! : "hablar";
+      // v203: subtab solo vale para estudios y solo banderas|mapas
+      const subtab = a.destino === "studios" && (a.subtab === "banderas" || a.subtab === "mapas") ? a.subtab : undefined;
 
       if (tipo === "navegar" && a.destino && CLAVES_VALIDAS.has(a.destino)) {
-        return NextResponse.json({ hablar, ai: true, accion: { tipo: "navegar", destino: a.destino } });
+        return NextResponse.json({ hablar, ai: true, accion: { tipo: "navegar", destino: a.destino, ...(subtab ? { subtab } : {}) } });
       }
       if (tipo === "ficha" && a.destino && CONFLICTOS.some((c) => c.id === a.destino)) {
         return NextResponse.json({ hablar, ai: true, accion: { tipo: "ficha", destino: a.destino } });

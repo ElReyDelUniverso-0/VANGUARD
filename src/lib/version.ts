@@ -1082,6 +1082,34 @@
 //      leyes del reloj, y el habla PEDIDA (orbe/órdenes) funciona igual
 //      que siempre — solo lo PROACTIVO pide permiso.
 //
+// v203.0 EL NOTICIERO — mandato del Dueño («la voz de Vanguard está bien
+// pero lo que me gustaría es que hable más... que hable más de noticias y
+// más... que pula aún más, que sea desarrollo, busca bug, corrige y
+// mejora»). Sobre v201 LA VOZ VIVA y v202 PUERTAS ABIERTAS (intactas).
+// Cura en cuatro frentes, sin borrar nada:
+//  ① EL NOTICIERO HABLADO (src/lib/noticiero.ts, nuevo): LA ANALISTA narra
+//    un digest natural de los cables más pesados — apertura rotatoria (5
+//    fórmulas × 4 cierres, nunca suena igual), titular principal con país e
+//    impacto, «también en la agencia» y cierre. Auto HONESTO: exige permiso
+//    v201 + interruptor vg180 ON + pestaña visible + cooldown propio de 4
+//    min + titulares NUEVOS (memoria viva: nunca repite cables). El botón
+//    «▶ NOTICIERO» del Centro Mundial suena siempre: el toque es el permiso.
+//  ② LATIDO DEL RADAR: cada 5 sondeos reales del Centinela (~5 min en salas
+//    de noticias, ~15 fuera — semáforo v198 manda) el noticiero sale solo.
+//  ③ TODAS LAS BANDERAS DEL MUNDO: galería buscable con las 251 banderas
+//    REALES (flagcdn) en el Estudio de Banderas — búsqueda por nombre/ISO/
+//    región, filtro por continente, un toque asocia la bandera al diseño
+//    (el select «Nación asociada» se rellena solo). Tope 120 a la vista.
+//  ④ LA VOZ ATERRIZA DONDE TOCA: «muestra las banderas» / «crea un mapa»
+//    lleva SUBTAB (banderas|mapas) — page.tsx dispara vg:studios-subtab y
+//    el Estudio Creador abre SU sub-estudio (antes caía siempre en noticias).
+// PULIDO Y BUGS: ⑤ la alerta del Centinela ya no promete «Abriendo el
+//    centro mundial» que nunca ocurría (honestidad de acero) y estrena 3
+//    fórmulas rotatorias; ⑥ el noticiero se calla al salir de la sala
+//    (una sola voz viva); ⑦ habandoLabel → hablandoLabel (honesto).
+// Leyes intactas: cortina, v190 nada se recarga solo, v189 sin bloqueo,
+// v125 HTML no-cache, semáforo v198, pozo v197, turbo v199, relevo v200,
+// voz v201, puertas v202.
 // v202.0 PUERTAS ABIERTAS — mandato del Dueño («ya está publicada en search
 // pero no entra nadie… ¿de qué le sirve tener todo el contenido del mundo si
 // nadie lo ve ni entra?»). Autopsia del tráfico: el SEO técnico ya estaba
@@ -1100,6 +1128,6 @@
 // misma página; ④ /guerra-hoy — el titular abre la puerta interna y la fuente
 // externa queda como enlace pequeño «FUENTE ↗». Lo que NO se toca: cortina,
 // watchdog v200, semáforo v198, pozo v197, turbo v199, voz v201.
-export const APP_VERSION = "v202.0";
-export const APP_CODENAME = "PUERTAS ABIERTAS";
+export const APP_VERSION = "v203.0";
+export const APP_CODENAME = "EL NOTICIERO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

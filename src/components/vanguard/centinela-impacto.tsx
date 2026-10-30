@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { pedirNoticias } from "@/lib/noticias-cache";
 import { esSalaNoticias } from "@/lib/semaforo-sala";
+import { narrarNoticiero } from "@/lib/noticiero";
 
 const LS_VISTOS = "vg180-vistos";
 const LS_VOZ = "vg180-voz-alertas";
@@ -47,6 +48,7 @@ export function CentinelaImpacto() {
     let muerto = false;
     let ultimoAnuncio = 0;
     let sembrado = false;
+    let vueltas = 0; // v203: sondeos reales — cada 5, LA ANALISTA narra el noticiero
     // v198: la marca del último sondeo que viajó de verdad (el semáforo
     // alarga el ciclo fuera de las salas de noticias)
     let ultimoSondeoReal = 0;
@@ -60,6 +62,15 @@ export function CentinelaImpacto() {
       }
     };
 
+    // v203 EL NOTICIERO — la alerta ya no suena siempre igual: 3 fórmulas
+    // rotan por minuto. Y HONESTIDAD DE ACERO: se quitó «Abriendo el centro
+    // mundial» — el anuncio NO navega a ninguna parte, y la voz de la casa
+    // jamás promete una acción que no ocurre.
+    const FORMULAS: ((s: string, p: string, t: string, i: number) => string)[] = [
+      (s, p, t, i) => `Alerta ${s.toLowerCase()}. ${p}. ${t}. Impacto ${i} sobre 100.`,
+      (s, p, t, i) => `Radar encendido: ${p}. ${t}. Nivel ${s.toLowerCase()}, impacto ${i}.`,
+      (s, p, t, i) => `Última hora en ${p}: ${t}. Severidad ${s.toLowerCase()}, impacto ${i}.`,
+    ];
     const anuncia = (pais: string, titulo: string, impacto: number, tier: string) => {
       const esUrgente = impacto >= 80;
       const sello = esUrgente ? "URGENTE" : "CRÍTICO";
@@ -73,13 +84,11 @@ export function CentinelaImpacto() {
       if (ahora - ultimoAnuncio < COOLDOWN_MS) return;
       ultimoAnuncio = ahora;
       try {
+        const formula = FORMULAS[Math.floor(ahora / 60_000) % FORMULAS.length];
         window.dispatchEvent(
           new CustomEvent("vg:asistente-anunciar", {
             detail: {
-              texto:
-                `Alerta ${sello.toLowerCase()}. ${pais}. ` +
-                titulo.slice(0, 110) +
-                `. Impacto ${impacto}. Abriendo el centro mundial.`,
+              texto: formula(sello, pais, titulo.slice(0, 110), impacto),
               auto: true,
             },
           })
@@ -134,6 +143,14 @@ export function CentinelaImpacto() {
         // el más pesado primero; máximo 2 toasts por sondeo (nada de spam)
         frescos.sort((a, b) => b.imp - a.imp);
         for (const f of frescos.slice(0, 2)) anuncia(f.pais, f.titulo, f.imp, f.tier);
+
+        // v203 EL NOTICIERO HABLADO: cada 5 sondeos REALES (~5 min en salas
+        // de noticias, ~15 min fuera — el semáforo v198 manda), LA ANALISTA
+        // cuenta los titulares más pesados. Auto honesto: narrarNoticiero
+        // exige permiso v201 + interruptor v180 + pestaña visible + titulares
+        // NUEVOS (nunca repite cables — memoria viva de las últimas horas).
+        vueltas++;
+        if (vueltas % 5 === 0) void narrarNoticiero(items, { auto: true });
       } catch {
         // red dormida: el radar reintenta en el próximo ciclo, sin ruido
       }
