@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
+import { TEATROS } from "@/lib/teatros";
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -27,6 +28,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   } catch {
     /* sitemap estático ante fallo de BD */
+  }
+
+  // v206.0 MÁS PUERTAS: una página por TEATRO DE GUERRA (/conflicto/[tag]) —
+  // solo teatros con cables vivos hoy (nada vacío para Google) — y la
+  // política de privacidad que exige Publisher Center.
+  let teatros: MetadataRoute.Sitemap = [];
+  try {
+    const conVida = await db.newsItem.groupBy({
+      by: ["conflictTag"],
+      where: { conflictTag: { not: null } },
+      _count: { conflictTag: true },
+    });
+    const vivas = new Set(
+      conVida
+        .filter((g) => g._count.conflictTag >= 5 && g.conflictTag && TEATROS[g.conflictTag])
+        .map((g) => g.conflictTag as string)
+    );
+    teatros = Object.keys(TEATROS)
+      .filter((k) => vivas.has(k))
+      .map((k) => ({
+        url: `${SITE_URL}/conflicto/${k}`,
+        lastModified: new Date(),
+        changeFrequency: "hourly" as const,
+        priority: 0.8,
+      }));
+  } catch {
+    /* sin teatros dinámicos ante fallo de BD */
   }
 
   return [
@@ -64,6 +92,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.6,
     },
+    {
+      // v206.0: privacidad pública — confianza para Google News (Publisher Center)
+      url: `${SITE_URL}/privacidad`,
+      lastModified: new Date(),
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    ...teatros,
     ...noticias,
   ];
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { TEATROS } from "@/lib/teatros";
 import { PlayerPing } from "@/components/vanguard/player-ping";
 import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/presence-ping";
 import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
@@ -93,6 +94,22 @@ const TAG_COLOR: Record<string, string> = {
 
 export default async function GuerraHoyPage() {
   const { items, agents } = await getNews();
+  // v206.0 MÁS PUERTAS — teatros con cables vivos para los chips de puerta
+  let teatrosVivos: { key: string; nombre: string }[] = [];
+  try {
+    const conVida = await db.newsItem.groupBy({
+      by: ["conflictTag"],
+      where: { conflictTag: { not: null } },
+      _count: { conflictTag: true },
+    });
+    teatrosVivos = Object.entries(TEATROS)
+      .filter(([k]) =>
+        conVida.some((g) => g.conflictTag === k && g._count.conflictTag >= 5)
+      )
+      .map(([k, t]) => ({ key: k, nombre: t.nombre }));
+  } catch {
+    /* sin chips ante fallo de BD */
+  }
   // v44.0 PODER MUNDIAL — gasto militar y personal armado REALES (Banco Mundial)
   const power = await getWorldPower();
   // v47.0 RADAR TOTAL — eventos naturales en vivo (NASA) + divisas en crisis (FX real)
@@ -177,6 +194,23 @@ export default async function GuerraHoyPage() {
       </section>
 
       <section className="max-w-5xl mx-auto px-5 py-8 grid gap-4">
+        {/* v206.0 MÁS PUERTAS — teatros de guerra: una página por conflicto */}
+        {teatrosVivos.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+              Teatros en vivo:
+            </span>
+            {teatrosVivos.map((t) => (
+              <Link
+                key={t.key}
+                href={`/conflicto/${t.key}`}
+                className="border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-2.5 py-1 text-[12px] text-zinc-300 bg-zinc-900/40 transition-colors"
+              >
+                {t.nombre}
+              </Link>
+            ))}
+          </div>
+        )}
         {items.length === 0 && (
           <div className="border border-border rounded-md p-8 text-center text-sm text-zinc-400">
             El canal se está sincronizando con los frentes del mundo. Entra al mando

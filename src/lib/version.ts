@@ -1200,6 +1200,26 @@
 //    abrir el modo 3D — arranque igual que v199), maplibre se destruye al
 //    salir (map.remove + marcadores), atribución legal compacta en el mapa,
 //    v125/v199/v204 sin tocar. QA: tsc 0 · build EXIT 0 · health v205.0.
-export const APP_VERSION = "v205.0";
-export const APP_CODENAME = "EL MUNDO 3D";
+//
+// v206.0 MÁS PUERTAS — continuación del mandato del Dueño («dame más pasos
+// para que la gente entre por todos lados y más personas entren en mi
+// Google search»), sobre v205.0 EL MUNDO 3D de la ley hermana (intacto).
+// Nadie busca «Vanguard»: la gente busca «guerra en Ucrania hoy», «noticias
+// Gaza». La BD tenía 1.694 cables clasificados por teatro y ni una sola
+// página que los aprovechara. Cura:
+//  ① /conflicto/[tag] — página server-rendered POR TEATRO (ukraine, gaza,
+//    hormuz, taiwan, sahel, redsea, korea, sudan, lebanon) con contador de
+//    cables, últimos 40 hacia su /noticia/[id], JSON-LD CollectionPage +
+//    ItemList (con jsonLdSeguro v204), chips a otros teatros y CTA hacia la
+//    app. URL desconocida = 404 limpio (nada vacío para Google).
+//  ② /privacidad — política de privacidad honesta e indexable: Publisher
+//    Center (Google News) la exige para validar la publicación.
+//  ③ sitemap — teatros con ≥5 cables (hourly, 0.8) + /privacidad: el mapa
+//    pasa de 55 a 65+ URLs anunciadas por rastreo.
+//  ④ /guerra-hoy — chips «Teatros en vivo» para descubrimiento interno.
+//  ⑤ TEATROS en src/lib/teatros.ts — fuente única (página + sitemap + chips).
+// Leyes intactas: cortina, watchdog v200, semáforo v198, pozo v197, turbo
+// v199, voz v201/v203, escudo v204, mundo 3D v205.
+export const APP_VERSION = "v206.0";
+export const APP_CODENAME = "MÁS PUERTAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
