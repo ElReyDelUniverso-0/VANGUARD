@@ -90,7 +90,9 @@ export async function generateMetadata({
   const teatro = TEATROS[tag];
   if (!teatro) return { title: "Teatro no disponible · VANGUARD" };
   const { total } = await getCables(tag);
-  const title = `Guerra en ${teatro.nombre}: noticias del conflicto en vivo hoy | VANGUARD`;
+  // v206.1: sin «| VANGUARD» — el title.template del layout (%s · VANGUARD)
+  // ya añade la marca; duplicarla era redundante en resultados.
+  const title = `Guerra en ${teatro.nombre}: noticias del conflicto en vivo hoy`;
   const desc = `${teatro.resumen} ${total} cables verificados en la agencia — seguimiento en vivo con mapa OSINT 3D. Gratis, en español.`;
   return {
     title,

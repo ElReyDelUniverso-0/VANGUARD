@@ -93,7 +93,9 @@ export async function generateMetadata({
   if (!it) {
     return { title: "Cable no disponible · VANGUARD" };
   }
-  const titulo = `${it.title} | VANGUARD`;
+  // v206.1: sin «| VANGUARD» — el title.template del layout (%s · VANGUARD)
+  // ya añade la marca; duplicarla era redundante en resultados.
+  const titulo = it.title;
   const desc =
     it.summary ||
     `${it.title} — cable de ${it.source} en VANGUARD, la plataforma de conflictos mundiales en tiempo real: mapa OSINT 3D, noticias en vivo y guerra global multijugador. Gratis, en español.`;
