@@ -3299,3 +3299,11 @@ Stage Summary:
 **Leyes intactas:** cortina, watchdog v200, semáforo v198, pozo v197, turbo v199, voz v201/v203, escudo v204, mundo 3D v205, puertas v202/v206, infinito v207.
 **QA:** tsc 0 · eslint 0 (cine, cara, page, version) · build EXIT 0 38/38. Push 283629a..e0139ae.
 **Verificación en vivo:** pendiente tras propagación (health v208.0, chips en portada).
+
+## v212.0 A LA VISTA — modo completo arreglado + intro al arranque + móvil digno
+**Fecha:** 2026-10-31 · **Mandato del Dueño:** «cuando lo pongo modo completo se bugea y no aparece nada; la intro está bien pero es muy rápida y no aparece al inicio cuando Vanguard está cargando; hay muchos botones y se están opacando; haz que se vea bien en celulares pequeños».
+**① Modo completo (autopsia):** desde v173 (adiós al universo 3D) la SalaViva es TODO el contenido; `oculta={inmersion}` la escondía con display:none al entrar en inmersión → pantalla negra con la píldora de salida. Cura: `oculta={false}` — la sala vive siempre; la inmersión aparta cabecera/ticker/footer y pide fullscreen nativo (mejor esfuerzo), Esc y fullscreenchange siguen saliendo limpio.
+**② Intro al arranque:** el mandato expreso del Dueño anula el retiro v189 con salvavidas íntegros: arranca al instante (tick 0 por ley v176), z 2147483200 (encima de la cortina — la intro ES la cara de la carga), cartel honesto dinámico con pulso 600ms sobre window.__vgvivo («VANGUARD ESTÁ DESPERTANDO» ⇄ «LA CASA YA ESTÁ DESPIERTA»), placas 1.5→2.4s («muy rápida»), retirada sola a los 12s si no despierta (cortina de rescate libre), reduced-motion/sesión-sufrida/una-vez-al-día intactos, chip ◉ ESTRENO a demanda.
+**③ Móvil digno:** chips v208 compactos y fondo rgba(4,4,7,.97) (legibilidad total), pulso teatral ausente ≤480px, opacity/filter 1 forzado ≤640px.
+**Leyes intactas:** watchdog v200, semáforo v198, pozo v197, turbo v199, escudo v204, 3D v205, puertas v202/v206, infinito v207, vértigo v211.
+**QA:** tsc 0 · eslint 0 (curado react-hooks/set-state-in-effect con tick 0) · build EXIT 0 40/40. Push 1a0531d..cc8f9bc.
