@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { INITIAL_NOTIFICATIONS, type Notification } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
@@ -32,11 +32,36 @@ const typeIcon: Record<string, React.ReactNode> = {
   FRIEND: <Users className="w-3.5 h-3.5" />,
 };
 
+// v208.0 LA LUPA — el tablón ya no se despiesta con F5: lo LEÍDO y lo
+// OCULTO sobreviven al refresco (patrón reciente de section-search:
+// setState en effect con setTimeout(0), sin mismatch de hidratación).
+const LS_NOTIF_LEIDAS = "vg-notif-leidas-v1";
+const LS_NOTIF_OCULTAS = "vg-notif-ocultas-v1";
+
+function guardarIds(key: string, ids: string[]) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(ids.slice(0, 200)));
+  } catch { /* sin storage: la sala vive igual */ }
+}
+
 export function NotificationsPanel() {
   const { log } = useGameStore();
   const [dismissed, setDismissed] = useState<string[]>([]);
   const [readIds, setReadIds] = useState<string[]>([]);
   const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
+
+  // v208.0: recuperación tras montaje (una sola vez) — sin mismatch SSR
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        const leidas = JSON.parse(window.localStorage.getItem(LS_NOTIF_LEIDAS) || "[]");
+        const ocultas = JSON.parse(window.localStorage.getItem(LS_NOTIF_OCULTAS) || "[]");
+        if (Array.isArray(leidas)) setReadIds(leidas.slice(0, 200));
+        if (Array.isArray(ocultas)) setDismissed(ocultas.slice(0, 200));
+      } catch { /* primera visita: todo en blanco */ }
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
 
   // Derive achievement notifications from game log + initial notifications
   const achievementNotifs: Notification[] = useMemo(() => {
@@ -89,20 +114,36 @@ export function NotificationsPanel() {
   );
 
   const markRead = (id: string) => {
-    setReadIds((prev) => [...prev, id]);
+    setReadIds((prev) => {
+      const next = prev.includes(id) ? prev : [...prev, id];
+      guardarIds(LS_NOTIF_LEIDAS, next);
+      return next;
+    });
   };
 
   const markAllRead = () => {
-    setReadIds(allNotifications.map((n) => n.id));
+    setReadIds((prev) => {
+      const next = [...new Set([...prev, ...allNotifications.map((n) => n.id)])];
+      guardarIds(LS_NOTIF_LEIDAS, next);
+      return next;
+    });
     toast.success(`${unreadCount} notificaciones marcadas como leidas`);
   };
 
   const remove = (id: string) => {
-    setDismissed((prev) => [...prev, id]);
+    setDismissed((prev) => {
+      const next = prev.includes(id) ? prev : [...prev, id];
+      guardarIds(LS_NOTIF_OCULTAS, next);
+      return next;
+    });
   };
 
   const clearAll = () => {
-    setDismissed(allNotifications.map((n) => n.id));
+    setDismissed((prev) => {
+      const next = [...new Set([...prev, ...allNotifications.map((n) => n.id)])];
+      guardarIds(LS_NOTIF_OCULTAS, next);
+      return next;
+    });
     toast.success("Notificaciones eliminadas");
   };
 

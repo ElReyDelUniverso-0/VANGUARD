@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Newspaper, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2, BookOpen, FlaskConical } from "lucide-react";
+import { Newspaper, RefreshCw, Radio, Clock, MessageSquare, Send, BadgeCheck, ShieldAlert, Zap, BrainCircuit, Loader2, BookOpen, FlaskConical, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ interface NewsItem {
   tacticalTag: string | null;
   conflictTag: string | null;
   sourceCountry?: string | null;
+  summary?: string | null;
 }
 
 // v13 — credibilidad por fuente (agencias primarias vs agregadores)
@@ -153,6 +154,8 @@ export function NewsPanel() {
   const [lector, setLector] = useState<CableLectura | null>(null);
   const [source, setSource] = useState("");
   const [filter, setFilter] = useState<string>("ALL");
+  // v208.0 LA LUPA — filtro de texto rápido sobre los cables cargados
+  const [texto, setTexto] = useState("");
   const [commentOpen, setCommentOpen] = useState<string | null>(null);
   // v135 EFECTO MARIPOSA: el cable que está siendo proyectado en la Cámara
   const [cableSim, setCableSim] = useState<CableSim | null>(null);
@@ -425,7 +428,17 @@ export function NewsPanel() {
     }
   };
 
-  const filtered = filter === "ALL" ? items : items.filter((i) => i.tacticalTag === filter);
+  // v208.0 LA LUPA: el filtro de tag y el de texto se SUMAN (tag → texto)
+  const baseFiltrada = filter === "ALL" ? items : items.filter((i) => i.tacticalTag === filter);
+  const aguja = texto.trim().toLowerCase();
+  const filtered = aguja
+    ? baseFiltrada.filter((i) =>
+        i.title.toLowerCase().includes(aguja) ||
+        (i.summary || "").toLowerCase().includes(aguja) ||
+        (i.conflictTag || "").toLowerCase().includes(aguja) ||
+        (i.source || "").toLowerCase().includes(aguja)
+      )
+    : baseFiltrada;
   const tags = ["ALL", "ALERTA", "DIPLOMACIA", "ECONOMIA", "HUMANITARIO", "ANALISIS"];
   // v82.0: cables de las últimas 2h = ÚLTIMA HORA (borde rojo pulsante)
   const esUltimaHora = (iso: string) => Date.now() - new Date(iso).getTime() < 2 * 3600_000;
@@ -482,7 +495,18 @@ export function NewsPanel() {
           )}
         </div>
         <span className="text-muted-foreground">·</span>
-        <span className="text-muted-foreground">{items.length} cables</span>
+        <span className="text-muted-foreground">{filtered.length === items.length ? `${items.length} cables` : `${filtered.length} / ${items.length} cables`}</span>
+        {/* v208.0 LA LUPA — la lupa también vive en la sala de lectura */}
+        <span className="flex items-center gap-1 border border-border bg-background/60 px-1.5 py-0.5">
+          <Search className="w-2.5 h-2.5 text-muted-foreground shrink-0" aria-hidden />
+          <input
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            placeholder="lupa en cables…"
+            className="w-20 sm:w-32 bg-transparent outline-none text-[10px] font-mono placeholder:text-muted-foreground/60"
+            aria-label="Filtrar cables por texto"
+          />
+        </span>
         <span className="text-muted-foreground">·</span>
         <span className="flex items-center gap-1 text-amber">
           <Radio className="w-3 h-3" /> actualizacion auto 60s

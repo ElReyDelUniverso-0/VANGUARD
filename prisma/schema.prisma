@@ -160,6 +160,13 @@ model NewsItem {
   sourceCountry String? // v20: código ISO del país del conflicto (bandera real)
   summary     String?
   createdAt   DateTime @default(now())
+
+  // v208.0 LA LUPA — TODA lectura del archivo (sitemap take 500, feed.xml,
+  // portada 72, teatros groupBy, LA LUPA orderBy) ordena o filtra por
+  // publishedAt / conflictTag: sin índice cada puerta de Google era un
+  // full scan de la tabla.
+  @@index([publishedAt])
+  @@index([conflictTag, publishedAt])
 }
 
 // ====== Dron Strike 3D — Ranking global ======

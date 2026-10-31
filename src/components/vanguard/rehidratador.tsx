@@ -97,6 +97,11 @@ export function Rehidratador() {
         // v42 TU IDIOMA, TU GUERRA — ahora SÍ respetando lo guardado:
         // si el visitante eligió idioma a mano (autoDetected=false) no se toca.
         ensureLangDetected();
+        // v208.0 LA LUPA — el <html lang> despierta con el idioma guardado
+        // (los lectores de pantalla lo leen ANTES de cualquier elección nueva)
+        try {
+          document.documentElement.lang = useLangStore.getState().lang;
+        } catch { /* sin documento: nada que anunciar */ }
       })
       .catch(() => marcarHidratado("vanguard-lang-v1")); // el idioma jamás tumba la página
   }, []);

@@ -110,11 +110,10 @@ export default async function GuerraHoyPage() {
   } catch {
     /* sin chips ante fallo de BD */
   }
-  // v44.0 PODER MUNDIAL — gasto militar y personal armado REALES (Banco Mundial)
-  const power = await getWorldPower();
-  // v47.0 RADAR TOTAL — eventos naturales en vivo (NASA) + divisas en crisis (FX real)
-  const eonet = await getEonet();
-  const fx = await getFx();
+  // v208.0 LA LUPA — los tres servicios externos bajan EN PARALELO (antes
+  // en serie: con cada uno a 9s de deadline, el peor caso regalaba 27s de
+  // TTFB muerto ante Google; en paralelo el límite es el más lento, no la suma)
+  const [power, eonet, fx] = await Promise.all([getWorldPower(), getEonet(), getFx()]);
 
   const jsonLd = {
     "@context": "https://schema.org",

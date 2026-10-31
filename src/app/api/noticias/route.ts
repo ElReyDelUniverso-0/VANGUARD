@@ -153,6 +153,60 @@ export async function GET(req: Request) {
   const porque = url.searchParams.get("porque");
   const investiga = url.searchParams.get("investiga");
 
+  // ---------- LA LUPA (v208.0): el archivo de noticias por fin es buscable ----------
+  // GET ?q=<término> → busca REAL en la BD (título, resumen, teatro, país):
+  // una sola consulta, sin IA, sin caché — la BD es la caché. Ranking propio:
+  // las agujas que caen en el TÍTULAR pesan 3, en el cuerpo 1.
+  const lup = url.searchParams.get("q");
+  if (lup) {
+    const q = clean(lup, 80);
+    if (q.length < 2) {
+      return NextResponse.json({ ok: true, items: [], total: 0, modo: "lupa" });
+    }
+    // agujas: máximo 4 palabras — «ataque drone kiev» ya cubre el 99% del pulso
+    const agujas = q.split(/\s+/).filter(Boolean).slice(0, 4);
+    try {
+      const rows = await db.newsItem.findMany({
+        where: {
+          OR: agujas.flatMap((aguja) => [
+            { title: { contains: aguja } },
+            { summary: { contains: aguja } },
+            { conflictTag: { contains: aguja } },
+            { sourceCountry: { contains: aguja } },
+          ]),
+        },
+        orderBy: { publishedAt: "desc" },
+        take: 80,
+      });
+      const bajos = agujas.map((a) => a.toLowerCase());
+      const puntaje = (titulo: string, resumen: string | null): number =>
+        bajos.reduce((acc, aguja) => {
+          if (titulo.toLowerCase().includes(aguja)) acc += 3;
+          else if ((resumen || "").toLowerCase().includes(aguja)) acc += 1;
+          return acc;
+        }, 0);
+      const items = rows
+        .map((r) => ({ r, p: puntaje(r.title, r.summary) }))
+        .sort((a, b) => b.p - a.p || b.r.publishedAt.getTime() - a.r.publishedAt.getTime())
+        .slice(0, 40)
+        .map(({ r }) => ({
+          id: r.id,
+          t: r.title,
+          s: r.summary || "",
+          f: r.source,
+          img: r.imageUrl || "",
+          fecha: r.publishedAt.toISOString(),
+          tag: r.tacticalTag || "INFO",
+          conflicto: r.conflictTag || "",
+          pais: r.sourceCountry || "",
+        }));
+      return NextResponse.json({ ok: true, items, total: items.length, modo: "lupa" });
+    } catch (e) {
+      console.error("noticias lupa error", e);
+      return NextResponse.json({ ok: false, items: [], error: "archivo no disponible" }, { status: 200 });
+    }
+  }
+
   // ---------- ¿POR QUÉ IMPORTA? ----------
   if (porque) {
     const titulo = clean(porque, 300);

@@ -1256,6 +1256,52 @@
 //    Complementa al Atelier de acabados (el metal manda aparte).
 // Ambos montados diferidos (MontajeTardio 9s + dynamic ssr:false), cero
 // recargas (ley v200), cero bloqueo (ley v189), ceremonia oculta respetada.
-export const APP_VERSION = "v208.0";
-export const APP_CODENAME = "EL ESTRENO";
+// (sus constantes vivían aquí; el export único sigue al final, sobre v209.0)
+//
+// v209.0 LA LUPA — de la ley hermana de LA LUPA (rebautizada al rebasar sobre v208.0 EL ESTRENO): mandato del Dueño («sigue puliendo»), auditoría de
+// pulido completa de la casa (10 heridas localizadas, 9 curadas):
+// ① LA LUPA (el nombre lo dice): el ARCHIVO DE NOTICIAS por fin es
+//    buscable. /api/noticias?q= busca REAL en la BD (título, resumen,
+//    teatro, país — 1.694 cables) con ranking propio (agujas en el
+//    titular pesan 3, en el cuerpo 1). LA PALETA Ctrl+K (section-search)
+//    ahora dispara la búsqueda server con debounce 350ms y muestra hasta
+//    8 cables REALES arriba de todo, cada uno saltando a /noticia/[id]
+//    con ROUTER (antes window.location.href recargaba el SPA entero,
+//    contra la ley «la navegación jamás recarga»). Y la sala de lectura
+//    (news-panel) gana su filtro de texto «lupa en cables…» que se suma
+//    a los filtros de tag. 500+ piezas indexadas por sitemap que nadie
+//    podía buscar: ya no.
+// ② ICONOS PWA REALES: manifest con solo SVG = Chrome no la instalaba
+//    como app e iOS mostraba CAPTURA de página en vez de la marca (no
+//    soporta SVG como apple-touch-icon). Vigo dorado ahora vive en
+//    /icons/{icon-192,icon-512,icon-maskable-512,apple-touch-icon}.png
+//    (maskable con safe zone al 78%), manifest + layout + JSON-LD logo
+//    actualizados, favicon.ico de respaldo para navegadores viejos.
+// ③ VELOCIDAD DE PUERTAS: /guerra-hoy bajaba 3 servicios externos EN
+//    SERIE (WorldPower → EONET → FX, cada uno con deadline propio: peor
+//    caso 27s de TTFB muerto ante Google) → Promise.all (el límite es el
+//    más lento, no la suma). Y las 3 puertas force-dynamic (/guerra-hoy,
+//    /noticia/[id], /conflicto/[tag]) estrenan loading.tsx con esqueleto
+//    de la casa: sala visible desde el primer byte, adiós bloque blanco.
+// ④ TABLÓN PERSISTENTE: lo LEÍDO y lo OCULTO de notificaciones
+//    sobrevivían solo hasta el F5 (useState desnudo) → localStorage
+//    (vg-notif-leidas/ocultas-v1, tope 200) con recuperación tras montaje
+//    sin mismatch de hidratación (patrón setTimeout(0) de la casa).
+// ⑤ ÍNDICES DE BD: NewsItem no tenía NI UN @@index — sitemap (take 500),
+//    feed.xml, portada, teatros groupBy y LA LUPA hacían full scan en
+//    cada puerta de Google → @@index([publishedAt]) +
+//    @@index([conflictTag, publishedAt]) aplicados con prisma db push
+//    sobre la BD real (1.694 cables intactos).
+// ⑥ ACCESIBILIDAD: /vanguard2 recuperó el pellizco de zoom (maximumScale:1
+//    + userScalable:false violaban WCAG 1.4.4) y el <html lang> ahora
+//    acompaña el idioma elegido EN VIVO (setLang) y al despertar
+//    (rehidratador) — los lectores de pantalla ya no siguen pronunciando
+//    español tras cambiar a inglés.
+// ⑦ NOTICIAS RELACIONADAS DE VERDAD: /noticia/[id] mostraba «últimas 5
+//    sin más» (un cable de Gaza rodeado de Taiwán) → primero las del
+//    MISMO teatro (conflictTag + índice nuevo), relleno solo si faltan.
+// QA: tsc 0 · build EXIT 0 · /api/noticias?q= probado · índices verificados
+// en BD real · iconos PNG verificados (contenido + color de marca).
+export const APP_VERSION = "v209.0";
+export const APP_CODENAME = "LA LUPA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

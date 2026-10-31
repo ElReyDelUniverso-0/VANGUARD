@@ -8,24 +8,33 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import { SECTIONS } from "./tab-nav";
 import { VitrinaSala } from "./portadas";
 import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
 
-// v102: cabecera de cada grupo en los resultados (pestañas / páginas / expedientes / oscura)
+// v102: cabecera de cada grupo en los resultados (lupa / pestañas / páginas / expedientes / oscura)
 const GRUPO_LABEL: Record<Item["kind"], string> = {
+  noticia: "ARCHIVO DE NOTICIAS · LA LUPA",
   page: "PÁGINAS GLOBALES",
   tab: "PESTAÑAS DE VANGUARD",
   exp: "EXPEDIENTES SECRETOS",
   osc: "ALEJANDRÍA OSCURA",
 };
+
+function fechaCorta(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return `${d.getDate()}/${d.getMonth() + 1}`;
+  } catch { return ""; }
+}
 
 /** v102: resalta la coincidencia en el resultado (como los buscadores de verdad) */
 function Resaltar({ texto, q }: { texto: string; q: string }) {
@@ -58,7 +67,8 @@ interface Item {
   sectionLabel: string;
   icon_color: string;
   // v58.0 BUSCADOR TOTAL: pestaña | página global | expediente secreto | v60 entrada oscura
-  kind: "tab" | "page" | "exp" | "osc";
+  // v208.0 LA LUPA: + cable real del archivo de noticias (BD, búsqueda server)
+  kind: "tab" | "page" | "exp" | "osc" | "noticia";
   href?: string;
 }
 
@@ -84,9 +94,44 @@ export function SectionSearch({
     if (consultaInicial && open) consultaPendiente.current = consultaInicial;
   }, [consultaInicial, open]);
   const { t, lang } = useT();
+  const router = useRouter();
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
   const [recent, setRecent] = useState<string[]>([]);
+  // v208.0 LA LUPA — el archivo de noticias (GDELT + 15 medios) entra en la
+  // paleta: búsqueda SERVER real con debounce, máx 8 resultados arriba de todo.
+  const [noticias, setNoticias] = useState<{
+    id: string; t: string; s: string; f: string; fecha: string; conflicto: string; pais: string;
+  }[]>([]);
+  const [lupaEstado, setLupaEstado] = useState<"idle" | "buscando" | "sin-red">("idle");
+
+  useEffect(() => {
+    const query = q.trim();
+    if (query.length < 2) {
+      // patrón de la casa: setState en effect SOLO vía setTimeout(0)
+      const t = setTimeout(() => { setNoticias([]); setLupaEstado("idle"); }, 0);
+      return () => clearTimeout(t);
+    }
+    let vivo = true;
+    const ctrl = new AbortController();
+    const corte = setTimeout(() => ctrl.abort(), 6000);
+    const t = setTimeout(() => {
+      setLupaEstado("buscando");
+      fetch(`/api/noticias?q=${encodeURIComponent(query)}`, { signal: ctrl.signal })
+        .then((r) => r.json())
+        .then((j) => {
+          if (!vivo) return;
+          setNoticias(Array.isArray(j.items) ? j.items.slice(0, 8) : []);
+          setLupaEstado("idle");
+        })
+        .catch(() => {
+          if (!vivo) return;
+          setNoticias([]);
+          setLupaEstado("sin-red");
+        });
+    }, 350);
+    return () => { vivo = false; clearTimeout(corte); clearTimeout(t); };
+  }, [q]);
   // v47.1: la paleta va en PORTAL a <body> — el wrapper raíz (.z-10) atrapaba
   // el z-index en su contexto de apilamiento y los modales Radix la tapaban.
   const [portalReady, setPortalReady] = useState(false);
@@ -205,12 +250,26 @@ export function SectionSearch({
         .filter((x): x is Item => Boolean(x));
       return recItems.length > 0 ? recItems : totalIndex.slice(0, 12);
     }
-    return totalIndex
+    // v208.0 LA LUPA: los cables REALES de la BD van primero — el archivo
+    // tenía 500+ piezas indexadas por sitemap y la paleta no veía ni una.
+    const conLupa: Item[] = noticias.map((n) => ({
+      key: `nt:${n.id}`,
+      label: n.t,
+      short: n.s,
+      icon: <Newspaper className="w-4 h-4" />,
+      sectionKey: "lupa",
+      sectionLabel: `${n.f}${n.fecha ? ` · ${fechaCorta(n.fecha)}` : ""}${n.conflicto ? ` · ${n.conflicto.toUpperCase()}` : ""}`,
+      icon_color: "text-cyan-hud",
+      kind: "noticia" as const,
+      href: `/noticia/${n.id}`,
+    }));
+    const locales = totalIndex
       .filter((a) =>
         norm(`${a.label} ${a.short} ${a.sectionLabel} ${a.key}`).includes(query)
       )
       .slice(0, 20);
-  }, [q, totalIndex, recent]);
+    return [...conLupa, ...locales];
+  }, [q, totalIndex, recent, noticias]);
 
   // reset del cursor al filtrar (patrón setTimeout(0) para lint)
   useEffect(() => {
@@ -245,9 +304,11 @@ export function SectionSearch({
   }, [idx, open]);
 
   const pick = (item: Item) => {
-    // v58.0: las páginas globales navegan directamente
-    if (item.kind === "page" && item.href) {
-      window.location.href = item.href;
+    // v208.0: páginas globales y cables navegan con ROUTER (el bundle ya
+    // está en el navegador — window.location recargaba TODO el SPA, contra
+    // la ley «la navegación jamás recarga» de atajos-vanguard).
+    if ((item.kind === "page" || item.kind === "noticia") && item.href) {
+      router.push(item.href);
       onClose();
       return;
     }
@@ -284,9 +345,9 @@ export function SectionSearch({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Busca TODO… secciones, expedientes secretos, páginas globales"
+            placeholder="Busca TODO… noticias, secciones, expedientes, páginas"
             className="flex-1 bg-transparent outline-none text-sm font-mono placeholder:text-zinc-600"
-            aria-label="Buscar sección"
+            aria-label="Buscar en todo Vanguard"
           />
           <button onClick={onClose} aria-label="Cerrar buscador" className="text-zinc-500 hover:text-zinc-200">
             <X className="w-4 h-4" aria-hidden />
@@ -342,9 +403,20 @@ export function SectionSearch({
               </div>
             );
           })}
-          {results.length === 0 && (
+          {results.length === 0 && lupaEstado !== "buscando" && (
             <p className="px-3 py-6 text-center text-sm text-zinc-500">
-              Nada con «{q}» en el índice. Prueba con otra palabra.
+              Nada con «{q}» en el índice ni en el archivo de noticias. Prueba con otra palabra.
+            </p>
+          )}
+          {/* v208.0 LA LUPA — estado honesto de la búsqueda del archivo */}
+          {q.trim().length >= 2 && lupaEstado === "buscando" && (
+            <p className="px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-cyan-hud/80">
+              ◎ La Lupa busca en el archivo de noticias…
+            </p>
+          )}
+          {q.trim().length >= 2 && lupaEstado === "sin-red" && noticias.length === 0 && (
+            <p className="px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-zinc-600">
+              ◎ La Lupa no pudo llegar al archivo ahora — solo resultados locales
             </p>
           )}
 
@@ -368,7 +440,11 @@ export function SectionSearch({
           <span>↑↓ navegar</span>
           <span>⏎ abrir</span>
           <span>esc cerrar</span>
-          <span className="ml-auto">{results.length} / {totalIndex.length} en el índice</span>
+          <span className="ml-auto">
+            {q.trim().length >= 2
+              ? `la lupa ${noticias.length > 0 ? `· ${noticias.length} cables` : "· archivo sin agujas"}`
+              : `${results.length} / ${totalIndex.length} en el índice`}
+          </span>
         </div>
       </div>
     </div>,

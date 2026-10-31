@@ -74,6 +74,11 @@ export const useLangStore = create<LangState>()(
       dicVersion: 0,
       setLang: (lang) => {
         set({ lang, autoDetected: false });
+        // v208.0 LA LUPA — el <html lang> acompaña la elección: los lectores
+        // de pantalla seguían pronunciando español tras cambiar el idioma.
+        try {
+          if (typeof document !== "undefined") document.documentElement.lang = lang;
+        } catch { /* sin documento: nada que anunciar */ }
         asegurarDiccionario(lang);
       },
     }),

@@ -110,9 +110,14 @@ export const metadata: Metadata = {
   verification: {
     google: "0ZwaEFYOrfzU-l1mpA9H5Ze-j8fgNUFhBjdkYBKvuZ4",
   },
+  // v208.0 LA LUPA — icon: SVG moderno + PNG de respaldo; apple: PNG real
+  // (iOS jamás aceptó SVG como apple-touch-icon: mostraba captura, no marca)
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icon.svg" }],
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png" }],
   },
   manifest: "/manifest.webmanifest",
   // Tarjeta grande al compartir por WhatsApp/X/Telegram: clave para viralidad
@@ -200,7 +205,7 @@ const jsonLd = {
       "@id": `${SITE_URL}/#org`,
       name: "Vanguard Command",
       url: SITE_URL,
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/icons/icon-512.png` },
     },
     {
       // v34: FAQPage — preguntas frecuentes visibles en la portada (SeoFaq).

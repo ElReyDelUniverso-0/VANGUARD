@@ -35,6 +35,7 @@ type NewsRow = {
   imageUrl: string | null;
   publishedAt: Date;
   tacticalTag: string | null;
+  conflictTag: string | null;
   sourceCountry: string | null;
   summary: string | null;
 };
@@ -48,13 +49,27 @@ async function getCable(id: string): Promise<NewsRow | null> {
   }
 }
 
-async function getRelacionadas(id: string, n = 5): Promise<NewsRow[]> {
+// v208.0 LA LUPA — «relacionadas» ahora significa RELACIONADAS: primero
+// las mismas del MISMO teatro (conflictTag, índice nuevo), y solo se rellena
+// con las últimas si el teatro no da suficientes. Antes: «últimas 5 sin más»
+// — un cable de Gaza terminaba rodeado de noticias de Taiwán.
+async function getRelacionadas(id: string, tag: string | null, n = 5): Promise<NewsRow[]> {
   try {
-    const rows = await db.newsItem.findMany({
+    const mismas = tag
+      ? await db.newsItem.findMany({
+          where: { conflictTag: tag, id: { not: id } },
+          orderBy: { publishedAt: "desc" },
+          take: n,
+        })
+      : [];
+    if (mismas.length >= n) return mismas as NewsRow[];
+    const vistas = new Set(mismas.map((r) => r.id));
+    const relleno = await db.newsItem.findMany({
+      where: { id: { not: id } },
       orderBy: { publishedAt: "desc" },
-      take: n + 1,
+      take: n * 2,
     });
-    return (rows as NewsRow[]).filter((r) => r.id !== id).slice(0, n);
+    return [...(mismas as NewsRow[]), ...(relleno as NewsRow[]).filter((r) => !vistas.has(r.id))].slice(0, n);
   } catch {
     return [];
   }
@@ -134,7 +149,7 @@ export default async function NoticiaPage({
   const it = await getCable(id);
   if (!it) notFound();
 
-  const relacionadas = await getRelacionadas(id);
+  const relacionadas = await getRelacionadas(id, it.conflictTag ?? null);
   const tag = (it.tacticalTag || "INFO").toUpperCase();
   const img = imgDe(it);
   const fecha = new Date(it.publishedAt);

@@ -12,11 +12,12 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+// v208.0 LA LUPA — el zoom vuelve: maximumScale:1 + userScalable:false
+// impedían el pellizco de zoom (WCAG 1.4.4) y iOS amplificaba cualquier
+// input al enfocar; los lienzos WebGL gestionan su gesto con touch-action.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: "#02040a",
 };
 

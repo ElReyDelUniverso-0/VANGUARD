@@ -23,6 +23,27 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/svg+xml",
         purpose: "any",
       },
+      // v208.0 LA LUPA — iconos PNG reales: Chrome exigía bitmap para el
+      // check de instalabilidad e iOS NO soporta SVG como apple-touch-icon
+      // (mostraba una captura de la página en vez de la marca).
+      {
+        src: "/icons/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icons/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icons/icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
     ],
   };
 }
