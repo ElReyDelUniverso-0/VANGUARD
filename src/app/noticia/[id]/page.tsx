@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+// v211.0 EL VÉRTIGO — el up next (fórmula YouTube) en la sala de lectura
+import { SiguienteChip } from "@/components/noticia/siguiente-chip";
 
 // v202.0 PUERTAS ABIERTAS — cada noticia es UNA PUERTA propia de entrada.
 // Antes: todas las noticias regalaban el click a la fuente externa con
@@ -150,6 +152,10 @@ export default async function NoticiaPage({
   if (!it) notFound();
 
   const relacionadas = await getRelacionadas(id, it.conflictTag ?? null);
+  // v211.0 EL VÉRTIGO — la fórmula YouTube: el «SIGUIENTE» ya viene elegido
+  // de la server page (mismo teatro primero, la lógica de LA LUPA) y el chip
+  // client solo lo muestra cuando el lector ya pasó la mitad del artículo.
+  const siguiente = relacionadas[0] ?? null;
   const tag = (it.tacticalTag || "INFO").toUpperCase();
   const img = imgDe(it);
   const fecha = new Date(it.publishedAt);
@@ -191,12 +197,21 @@ export default async function NoticiaPage({
           >
             ◉ VANGUARD
           </Link>
-          <Link
-            href="/guerra-hoy"
-            className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300"
-          >
-            Primera página
-          </Link>
+          <div className="flex items-center gap-4">
+            {/* v211.0 EL VÉRTIGO — la puerta del feed infinito siempre a la vista */}
+            <Link
+              href="/vertigo"
+              className="font-mono text-[10px] uppercase tracking-widest text-amber-500/90 hover:text-amber-300"
+            >
+              VÉRTIGO ▸▸
+            </Link>
+            <Link
+              href="/guerra-hoy"
+              className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300"
+            >
+              Primera página
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -332,6 +347,12 @@ export default async function NoticiaPage({
           </section>
         )}
       </article>
+
+      {/* v211.0 EL VÉRTIGO — up next de la fórmula YouTube: aparece al 50% de
+          lectura, navega con ROUTER al toque, jamás auto-navega (ley v190) */}
+      {siguiente && (
+        <SiguienteChip id={siguiente.id} titulo={siguiente.title} />
+      )}
     </main>
   );
 }

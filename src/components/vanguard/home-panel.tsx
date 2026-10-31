@@ -393,6 +393,30 @@ export function HomePanel() {
         </p>
       </Link>
 
+      {/* v211.0 EL VÉRTIGO — la fórmula TikTok de la Casa: el feed infinito */}
+      <Link
+        href="/vertigo"
+        className="group block border border-amber-500/40 bg-gradient-to-r from-amber-950/50 via-zinc-950/40 to-transparent rounded-md p-4 hover:border-amber-400/80 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-0.5">
+            ▸▸ Infinito
+          </span>
+          <span className="font-display text-lg sm:text-xl font-black tracking-wide text-soft group-hover:text-amber-200 transition-colors">
+            EL VÉRTIGO — el mundo en deslizamientos
+          </span>
+        </div>
+        <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
+          Cada cable del planeta a pantalla completa: deslizas y la siguiente
+          pieza del mundo encaja sola, sin fin. Doble toque para latir ❤️, un
+          toque para leer el cable completo. La fórmula que no te deja con
+          ganas de más — porque nunca se acaba.
+        </p>
+        <p className="mt-1.5 font-mono text-[10px] text-amber uppercase tracking-widest">
+          Entrar al vértigo →
+        </p>
+      </Link>
+
       {/* v31: cuenta atrás al GRAN ESTRENO MUNDIAL */}
       <LaunchCountdown />
 

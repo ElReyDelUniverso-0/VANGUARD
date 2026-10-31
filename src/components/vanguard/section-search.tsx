@@ -186,6 +186,13 @@ export function SectionSearch({
         sectionLabel: "PÁGINA GLOBAL · misión diaria", icon_color: "text-red-hud",
         kind: "page", href: "/mision",
       },
+      {
+        // v211.0 EL VÉRTIGO — el feed infinito entra al buscador total
+        key: "pg:vertigo", label: "EL VÉRTIGO — feed infinito del mundo", short: "vertigo feed infinito tiktok",
+        icon: <Newspaper className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el mundo en deslizamientos", icon_color: "text-amber",
+        kind: "page", href: "/vertigo",
+      },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({
       key: `exp:${e.id}`,
@@ -365,6 +372,28 @@ export function SectionSearch({
             <p className="px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-zinc-500">
               {totalIndex.length} destinos — secciones, expedientes y páginas
             </p>
+          )}
+          {/* v211.0 EL VÉRTIGO — la fórmula Google: TENDENCIAS en el estado
+              vacío. Nadie abre un buscador a ciegas: Google te muestra lo
+              que el mundo busca. Aquí: los teatros vivos y las agujas
+              calientes de la Casa, un toque y la Lupa sale a cazar. */}
+          {q.trim() === "" && (
+            <div className="px-2.5 py-2">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+                <Newspaper className="w-3 h-3 text-amber" aria-hidden /> Tendencias — la casa busca contigo
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {["Ucrania", "Gaza", "Ormuz", "Taiwán", "Sahel", "Mar Rojo", "dron", "OTAN"].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setQ(t)}
+                    className="px-2.5 py-1 rounded-sm border border-zinc-800 bg-zinc-900/60 text-zinc-300 text-[11px] hover:border-amber-500/60 hover:text-amber-300 transition-colors"
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
           {results.map((a, i) => {
             const nuevoGrupo = i === 0 || results[i - 1].kind !== a.kind;

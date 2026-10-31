@@ -79,6 +79,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // v211.0 EL VÉRTIGO — el feed infinito: puerta para el público de
+      // deslizamiento (la fórmula TikTok indexable por Google)
+      url: `${SITE_URL}/vertigo`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    },
+    {
       // v53: FRENTE TOTAL — el planeta en guerra en directo (10 frentes a la vez)
       url: `${SITE_URL}/ver-guerra`,
       lastModified: new Date(),

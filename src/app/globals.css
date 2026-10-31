@@ -6332,3 +6332,23 @@ html[data-cara="gloria"] .aurora-orb-4 { background: radial-gradient(circle, rgb
 @media (prefers-reduced-motion: reduce) {
   .vg208-estreno, .vg208-cara-chip, .vg208-cara-menu, .vg208-cara-opcion { transition: none; }
 }
+
+/* ─── v211.0 EL VÉRTIGO — utilidades del feed infinito ───
+   no-scrollbar: el feed desliza con el gesto nativo pero sin la barra
+   del navegador rompiendo la pieza (TikTok no tiene scrollbar visible).
+   animate-ping-once: la ráfaga de corazón late UNA vez y se apaga sola
+   (respeta prefers-reduced-motion). */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes vg-ping-once {
+  0% { transform: scale(0.4); opacity: 0; }
+  35% { transform: scale(1.15); opacity: 1; }
+  70% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+.animate-ping-once { animation: vg-ping-once 0.9s ease-out 1 both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping-once { animation: none; opacity: 0.9; }
+}

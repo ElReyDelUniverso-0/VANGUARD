@@ -1333,6 +1333,47 @@
 // QA: tsc 0 repo · build EXIT 0 · 404 de la casa servido (200 HTML de
 // marca en URL muerta) · /offline 200 · /sw.js 200 JS · feed alternates
 // en head · navegación normal intacta (sin worker interferencias).
-export const APP_VERSION = "v210.0";
-export const APP_CODENAME = "EL REFUGIO";
+// v211.0 EL VÉRTIGO — mandato del Dueño («ve puliendo vanguard y haz que
+// Vanguard sea único, fácil de recordar y hermoso, práctico, y que nunca
+// se quede el usuario con más ganas; copia los formatos ganadores de
+// Google, YouTube, TikTok e Instagram — la FÓRMULA, no solo el look»).
+// Las cuatro fórmulas ganadoras del planeta, aplicadas de verdad:
+// ① TIKTOK — EL VÉRTIGO (/vertigo): el feed infinito a pantalla completa.
+//    Cada cable ocupa TODO el viewport; el scroll-snap encaja una pieza
+//    por deslizamiento (el gesto nativo del celular ya era el gesto
+//    TikTok). Server page baja 48 cables de la BD (primera pieza con el
+//    primer byte, indexable, JSON-LD CollectionPage) y el feed client
+//    pide MÁS al archivo por cursor publishedAt (/api/vertigo, muro
+//    30/min, no-store) cuando te acercas al final — y si el archivo se
+//    agota, RECICLA las vistos mezcladas: JAMÁS existe un cartel de
+//    «no hay más» (el mandato literal: nunca se queden con más ganas).
+//    Riel de progreso lateral, contador pieza/piezas, teclado ↑/↓/Esc,
+//    «LEER COMPLETO» navega con ROUTER (ley: la navegación jamás recarga),
+//    imagen lazy desde la 3ª pieza, noscript honesto, no-scrollbar propio.
+// ② INSTAGRAM — EL LATIDO: doble toque (o doble clic) sobre la pieza =
+//    ❤️ con ráfaga animada (vg-ping-once, se apaga sola, reduced-motion
+//    respeta); el conteo vive en tu aparato (localStorage vg-vertigo-*),
+//    botón ❤️ dedicado en la columna de señales + chip al teatro
+//    (/conflicto/[tag]) — engagement sin cuentas, sin servidores.
+// ③ YOUTUBE — EL SIGUIENTE: en /noticia/[id] nadie más muere al final del
+//    artículo: SiguienteChip aparece fijo abajo-derecha cuando el lector
+//    pasó el 50% de la página con el titular del próximo cable (mismo
+//    teatro primero — la selección reuse la lógica de relacionadas de LA
+//    LUPA); un toque y el ROUTER lleva; JAMÁS auto-navega ni cuenta atrás
+//    (ley v190: la decisión es del lector). Y la barra de la sala de
+//    lectura estrena el enlace VÉRTIGO ▸▸ permanente.
+// ④ GOOGLE — TENDENCIAS: la paleta Ctrl+K ya no recibe a nadie a ciegas:
+//    en el estado vacío muestra chips de TENDENCIAS (Ucrania, Gaza,
+//    Ormuz, Taiwán, Sahel, Mar Rojo, dron, OTAN) — un toque llena la
+//    Lupa y sale a cazar al archivo. Y EL VÉRTIGO entra al índice total
+//    del buscador (pg:vertigo, navega con router).
+// PUERTAS: banner EL VÉRTIGO en la portada del SPA (home-panel, bajo
+// ZONA CERO), banner hermano en /guerra-hoy (la puerta de Google), enlace
+// en la barra de cada /noticia y /vertigo en el sitemap (hourly 0.9).
+// QA: tsc 0 repo · eslint 0 tocados · build EXIT 0 · health v211.0 db up
+// · /vertigo 200 con feed + noscript · /api/vertigo?antes= 24 items +
+// honesto 400 sin cursor · sitemap con /vertigo · SIGUIENTE presente en
+// /noticia (chip client diferido al 50% de scroll) · tendencias en paleta.
+export const APP_VERSION = "v211.0";
+export const APP_CODENAME = "EL VÉRTIGO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

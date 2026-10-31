@@ -167,7 +167,30 @@ export default async function GuerraHoyPage() {
       </header>
 
       {/* v52.0 ZONA CERO — el espectáculo: la ciudad que cae en vivo */}
-      <section className="max-w-5xl mx-auto px-5 pt-6">
+      <section className="max-w-5xl mx-auto px-5 pt-6 grid gap-4">
+        {/* v211.0 EL VÉRTIGO — la fórmula TikTok: el feed infinito en la puerta
+            de Google (el visitante de «guerra hoy» es puro deslizamiento) */}
+        <Link
+          href="/vertigo"
+          className="group block border border-amber-500/50 bg-gradient-to-r from-amber-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-amber-400 transition-colors"
+        >
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-1">
+              ▸▸ Infinito
+            </span>
+            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-amber-200 transition-colors">
+              EL VÉRTIGO — el mundo en deslizamientos
+            </span>
+          </div>
+          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
+            Cada cable a pantalla completa, uno por deslizamiento, sin fin:
+            doble toque para latir ❤️, un toque para leer el cable completo.
+            El archivo entero convertido en feed que nunca se acaba.
+          </p>
+          <p className="mt-2 font-mono text-[11px] text-amber-300 uppercase tracking-widest">
+            Entrar al vértigo →
+          </p>
+        </Link>
         <Link
           href="/zona-cero"
           className="group block border border-red-500/50 bg-gradient-to-r from-red-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-red-400 transition-colors"
