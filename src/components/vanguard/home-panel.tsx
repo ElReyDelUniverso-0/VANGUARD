@@ -23,6 +23,8 @@ import { navigateTo, openMainMenu } from "@/lib/nav";
 // v198.0 LA CASA LIGERA: el manifiesto tiene casa propia — este import ya NO
 // arrastra el panel de empleos completo al arranque de la portada
 import { ManifiestoMundo } from "@/components/vanguard/manifiesto-mundo";
+// v214.0 LA PUERTA — la franja «TU MODO» baja en chunk aparte (dieta de la casa)
+const ModoActivo = dynamic(() => import("@/components/vanguard/modo-activo").then((m) => m.ModoActivo), { ssr: false });
 import type { TabKey } from "@/components/vanguard/tab-nav";
 // v110.0 MATRIZ 2100 — escenas 3D procedurales (nada plano, nada IA)
 // v198.0: Escena3D es ahora un PORTAL — el motor real (600 líneas) baja como
@@ -417,6 +419,9 @@ export function HomePanel() {
           Entrar al teatro de guerra →
         </p>
       </Link>
+
+      {/* v214.0 LA PUERTA — la franja TU MODO: tu puerta de cada día (o la oferta de elegir) */}
+      <ModoActivo />
 
       {/* v211.0 EL VÉRTIGO — la fórmula TikTok de la Casa: el feed infinito */}
       <Link

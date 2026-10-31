@@ -131,6 +131,19 @@ export function PermisoVoz() {
     return () => window.removeEventListener("vg:permiso-hablar", sync);
   }, []);
 
+  // v214.0 LA PUERTA — mientras el ritual de entrada está abierto, esta
+  // tarjeta se aparta: el permiso se pregunta ALLÍ (paso 1), no dos veces.
+  // Al cerrarse el ritual sin responder, aquí no renace sola (v201: la casa
+  // no insiste) — volverá con la próxima alerta o en la próxima visita.
+  useEffect(() => {
+    const ritual = (e: Event) => {
+      const abierto = !!(e as CustomEvent<{ abierto?: boolean }>).detail?.abierto;
+      if (abierto) setVisible(false);
+    };
+    window.addEventListener("vg:ritual-abierto", ritual);
+    return () => window.removeEventListener("vg:ritual-abierto", ritual);
+  }, []);
+
   // cortesía: si nadie responde en 45s, la tarjeta se aparta sola (vuelve con la próxima alerta)
   useEffect(() => {
     if (!visible) return;

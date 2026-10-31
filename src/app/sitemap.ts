@@ -95,6 +95,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // v214.0 LA PUERTA — el selector de modo + cuenta: la puerta de
+      // entrada elegible (VÉRTIGO / EN VIVO / GUERRA HOY / ZONA CERO…)
+      url: `${SITE_URL}/modo`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
       // v53: FRENTE TOTAL — el planeta en guerra en directo (10 frentes a la vez)
       url: `${SITE_URL}/ver-guerra`,
       lastModified: new Date(),

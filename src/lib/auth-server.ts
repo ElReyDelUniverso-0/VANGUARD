@@ -133,10 +133,12 @@ export async function ensureOwnerAccount() {
 export interface AccountPublic {
   username: string;
   isOwner: boolean;
+  // v214.0 LA PUERTA — el modo elegido en el ritual ("" = aún sin elegir)
+  modo: string;
 }
 
-export function publicAccount(a: { username: string; isOwner: boolean }): AccountPublic {
-  return { username: a.username, isOwner: a.isOwner };
+export function publicAccount(a: { username: string; isOwner: boolean; modo?: string }): AccountPublic {
+  return { username: a.username, isOwner: a.isOwner, modo: a.modo ?? "" };
 }
 
 // v207.0 INFINITO — EL DUEÑO ES ILIMITADO: la sesión firmada del propietario

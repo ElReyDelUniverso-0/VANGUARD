@@ -200,6 +200,13 @@ export function SectionSearch({
         sectionLabel: "PÁGINA GLOBAL · la redacción abierta 24 h", icon_color: "text-red-hud",
         kind: "page", href: "/en-vivo",
       },
+      {
+        // v214.0 LA PUERTA — el modo y la cuenta entran al índice total
+        key: "pg:modo", label: "TU MODO — elige qué hacer en Vanguard (voz, cuenta y puerta)", short: "modo cuenta registro ritual puerta elegir qué hacer voz",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · tu puerta de entrada", icon_color: "text-amber",
+        kind: "page", href: "/modo",
+      },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({
       key: `exp:${e.id}`,

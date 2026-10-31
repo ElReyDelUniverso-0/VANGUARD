@@ -1,4 +1,21 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v214.0 LA PUERTA — mandato del Dueño: «agrega el permiso de hablar con la
+//         voz de Vanguard y hacer que las personas se registren (hacer cuenta)
+//         y poner un modo de seleccionar dónde quiere ir o qué quieren hacer».
+//         EL RITUAL DE ENTRADA en 3 pasos (portada, una vez por aparato):
+//         ① LA VOZ — el permiso v201 se pregunta aquí (su tarjeta se aparta
+//           mientras el ritual vive; mismo storage vg201-permiso-hablar).
+//         ② TU CUENTA — crear/entrar con las APIs v15/204 intactas; el
+//           registro puede nacer CON modo. ③ TU MODO — «¿qué quieres hacer
+//           en Vanguard?» (6 puertas reales: /vertigo, /en-vivo, /guerra-hoy,
+//           /zona-cero, /mision, /): vg-modo en el aparato + Account.modo en
+//           la nube vía POST /api/auth/modo (muro objeto, DUEÑO ilimitado).
+//         + /modo: la casa permanente del selector (modo + cuenta), franja
+//           TU MODO en portada, pg:modo en Ctrl+K, /modo en sitemap (0.6).
+//         Leyes intactas: v189/v190 (nada bloquea, nada navega solo — el
+//         salto al modo SIEMPRE es un toque), v201 (una sola voz, el habla
+//         pedida funciona, la proactiva respeta el permiso), v105 (el
+//         Navegador manda DENTRO del SPA; los modos mandan ENTRE páginas).
 // v181.0 EL AGENTE TOTAL — «agente que van por ti a lugares solo por decirle
 //         y puedes editar y mira vanguard solo hablando» + «el otro vanguard
 //         tiene el mismo bug: se queda cargando y nunca termina»:
@@ -1456,6 +1473,6 @@
 //  visible en cada cable; /api/pulso y /en-vivo excluyen las curadas
 //  de respaldo — la última hora no lleva relleno. QA: tsc 0, build ok,
 //  /api/pulso items reales sin curated-*, banner, calientes, muro.
-export const APP_VERSION = "v213.0";
-export const APP_CODENAME = "EL PULSO";
+export const APP_VERSION = "v214.0";
+export const APP_CODENAME = "LA PUERTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

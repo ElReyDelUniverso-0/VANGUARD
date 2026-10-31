@@ -208,6 +208,11 @@ model Account {
   savedAt     DateTime  @default(now())
   createdAt   DateTime  @default(now())
   lastLoginAt DateTime?
+  // v214.0 LA PUERTA — el modo que la persona eligió en el ritual de
+  // entrada (vertigo | envivo | guerra | zonacero | misiones | todo):
+  // su «¿qué quiero hacer en Vanguard?» guardado en la nube, no solo
+  // en el aparato. Vacío = aún no eligió (o entró como invitado).
+  modo        String    @default("")
 }
 
 // ====== v17 MULTIJUGADOR TERMINADO — ranking ELO global persistido ======

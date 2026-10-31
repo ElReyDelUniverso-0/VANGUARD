@@ -8,6 +8,9 @@ import {
   sessionCookieOptions, ensureOwnerAccount, publicAccount,
 } from "@/lib/auth-server";
 import { muro, claveCliente, sanitizarLinea } from "@/lib/fortaleza";
+// v214.0 LA PUERTA — el registro puede nacer CON modo: el ritual de
+// entrada pregunta «¿qué quieres hacer en Vanguard?» y lo guarda de una vez.
+import { esModoValido } from "@/lib/modos";
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,8 +45,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Ese nombre de cuenta ya existe." }, { status: 409 });
     }
 
+    // v214.0 LA PUERTA — modo inicial opcional (el ritual lo manda si ya eligió)
+    const modoCrudo = typeof body.modo === "string" ? sanitizarLinea(body.modo, 32).trim().toLowerCase() : "";
+    if (modoCrudo && !esModoValido(modoCrudo)) {
+      return NextResponse.json({ ok: false, error: "Modo desconocido." }, { status: 400 });
+    }
+
     const account = await db.account.create({
-      data: { username, passHash: hashPassword(password), lastLoginAt: new Date() },
+      data: { username, passHash: hashPassword(password), lastLoginAt: new Date(), modo: modoCrudo },
     });
 
     const res = NextResponse.json({ ok: true, account: publicAccount(account) });
