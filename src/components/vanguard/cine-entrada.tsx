@@ -1,16 +1,20 @@
 "use client";
 
 // ============================================================
-// ⚠️ HISTORIAL v189.0 — RETIRO AUTOMÁTICO + REGRESO OPT-IN v208.0.
-// page.tsx retiró <CineEntrada /> en v189.0 (ADIÓS AL CINE): el Dueño
-// nombró esta cinemática como la raíz del mal («desde ese día no ha
-// vuelto a cargar bien vanguard»). La ley v189: «si regresa, será OPT-IN
-// con un botón dentro de la consola — jamás automática».
-// v208.0 EL ESTRENO: el cine CUMPLE la ley y regresa — <CineEntrada optIn />
-// NO arranca solo, NO marca la sesión, NO obedece a timers: proyecta únicamente
-// cuando el visitante pulsa el botón ◉ ESTRENO (portal abajo-derecha, sobre el
-// reproductor de música). SALTAR gigante v187 intacto; cartel «LA CASA YA ESTÁ
-// DESPIERTA» intacto. El modo automático queda retirado para siempre.
+// ⚠️ HISTORIAL v189 → v212.0 A LA VISTA — LA INTRO VUELVE AL ARRANQUE.
+// El cine auto se retiró en v189 (se confundía con la carga). El Dueño
+// LO PIDE DE VUELTA expresamente: «la intro está bien pero es muy rápida
+// y no aparece al inicio cuando Vanguard está cargando». La cura v187 se
+// conserva y se extiende: ① el cine ES la cara de la carga — arranca al
+// instante, ENCIMA de la cortina (z 2147483200); ② cartel HONESTO DINÁMICO:
+// «VANGUARD ESTÁ DESPERTANDO» mientras window.__vgvivo no llega, y
+// «LA CASA YA ESTÁ DESPIERTA» al despertar — nunca se puede confundir con
+// un cuelgue porque dice la verdad en cada segundo; ③ placas más lentas
+// (2.4s — mandato «es muy rápido»); ④ si a los 12s la casa NO despierta,
+// el cine SE RETIRA SOLO: la cortina de rescate (botón VER) queda a la
+// vista; ⑤ SALTAR gigante v187 intacto; ⑥ sessionSufrio() y una recarga
+// lenta ya sufrida = cine fuera; ⑦ reduced-motion no lo ve; ⑧ UNA vez al
+// día (v178); ⑨ el botón ◉ ESTRENO sigue para repetirla a demanda.
 // ============================================================
 
 // ============================================================
@@ -56,9 +60,9 @@ const esServidor = () => false;
 // móvil es semanal y una vez por sesión eterna = «no hay intro como gta»);
 // fecha LOCAL del aparato (en-CA = YYYY-MM-DD), el día del Dueño manda
 const CLAVE_SESION = `vg-cine-entrada-v178-${new Date().toLocaleDateString("en-CA")}`;
-// v187: placas de 1.5s — 6 placas ≈ 9s totales (antes 2.15s ≈ 13s):
-// el cine ya no compite con la paciencia del Dueño ni se disfraza de carga
-const CINE_MS = 1500;
+// v212.0: placas de 2.4s — el Dueño la quiere menos rápida («es muy rápido»);
+// 6 placas ≈ 14.4s totales con SALTAR gigante siempre a un toque
+const CINE_MS = 2400;
 
 // v187.0 EL CINE SE CALLA SI HUBO SUFRIMIENTO — dos preguntas con respuesta
 // honesta: ¿esta sesión ya pasó por un rescate? ¿la casa tardó demasiado en
@@ -110,8 +114,10 @@ export function CineEntrada({ optIn = false }: { optIn?: boolean } = {}) {
   }, []);
 
   useEffect(() => {
-    // v208.0 OPT-IN: en modo estreno el cine JAMÁS se auto-dispara —
-    // ni timers, ni clave diaria, ni cortesías: solo el botón.
+    // v212.0 A LA VISTA: la intro VUELVE AL ARRANQUE (mandato del Dueño) —
+    // arranca AL INSTANTE mientras la casa carga: el cine ES la cara de la
+    // carga. Salvavidas intactos: reduced-motion, sesión sufrida (rescate o
+    // recarga lenta ya padecida) y una vez al día.
     if (!montado || optIn) return;
     // reduced-motion: el cine no es para todos los aparatos — entrar directo
     let reducido = false;
@@ -119,17 +125,16 @@ export function CineEntrada({ optIn = false }: { optIn?: boolean } = {}) {
     let visto = false;
     try { visto = sessionStorage.getItem(CLAVE_SESION) === "1"; } catch {}
     if (reducido || visto) return;
-    // v187.0: sesión sufrida o arranque lento → cine fuera hoy. La casa
-    // despierta y BASTA: cero pantallas que se puedan confundir con carga.
+    // v187: sesión que ya sufrió (rescate/recarga lenta) → cine fuera hoy:
+    // nadie que esperó un rescate quiere una pantalla más encima
     if (sesionSufrio() || arranqueLento()) return;
-    // el arranque respira primero: la Casa pinta, la cortina se funde,
-    // y ENTONCES se apagan las luces del cine (como en una sala oscura)
+    // ley v176: el setState no vive síncrono en el effect — tick 0 = instantáneo
     const t = window.setTimeout(() => {
       setEnPantalla(true);
       try { sessionStorage.setItem(CLAVE_SESION, "1"); } catch {}
-    }, 900);
+    }, 0);
     return () => window.clearTimeout(t);
-  }, [montado]);
+  }, [montado, optIn]);
 
   const fin = useCallback(() => {
     if (finRef.current) return;
@@ -163,6 +168,28 @@ export function CineEntrada({ optIn = false }: { optIn?: boolean } = {}) {
     try { sfx.click(); } catch {}
     fin();
   }, [fin]);
+
+  // v212.0 CARTEL HONESTO DINÁMICO + RETIRADA DE RESCATE — mientras el cine
+  // está en pantalla, un pulso barato (600ms) mira window.__vgvivo: si la
+  // casa despierta, el cartel dice «LA CASA YA ESTÁ DESPIERTA»; mientras
+  // carga, «VANGUARD ESTÁ DESPERTANDO». Y si a los 12s NO despierta, el
+  // cine se retira SOLO: la cortina de rescate (con su botón VER) queda a
+  // la vista — jamás una pantalla que tape un rescate.
+  const [despierta, setDespierta] = useState(false);
+  const inicioRef = useRef(0);
+  useEffect(() => {
+    if (!enPantalla || saliendo) return;
+    inicioRef.current = Date.now();
+    const pulso = window.setInterval(() => {
+      const viva = (window as unknown as { __vgvivo?: boolean }).__vgvivo === true;
+      if (viva) setDespierta(true);
+      if (!viva && Date.now() - inicioRef.current > 12000) {
+        window.clearInterval(pulso);
+        fin();
+      }
+    }, 600);
+    return () => window.clearInterval(pulso);
+  }, [enPantalla, saliendo, fin]);
 
   if (!montado) return null;
   if (!enPantalla) {
@@ -198,11 +225,11 @@ export function CineEntrada({ optIn = false }: { optIn?: boolean } = {}) {
         <i className="vg174-cine-dato" aria-hidden>{placa.dato}</i>
       </div>
       <div className="vg174-cine-barras" aria-hidden><i /><i /></div>
-      {/* v187.0 EL CARTEL HONESTO — arriba a la izquierda, permanente:
-          nadie volverá a confundir el cine con una pantalla de carga */}
+      {/* v212.0: el cartel dice la verdad en cada segundo — mientras carga
+          anuncia el despertar; al despertar, confirma que la casa vive */}
       <div className="vg174-cine-carte" aria-hidden>
         <em>EL CINE DE ENTRADA · {idx + 1} DE {CINE_PLACAS.length}</em>
-        <b>LA CASA YA ESTÁ DESPIERTA</b>
+        <b>{despierta ? "LA CASA YA ESTÁ DESPIERTA" : "VANGUARD ESTÁ DESPERTANDO"}</b>
       </div>
       <div className="vg174-cine-progreso" aria-hidden>
         {CINE_PLACAS.map((_, i) => (

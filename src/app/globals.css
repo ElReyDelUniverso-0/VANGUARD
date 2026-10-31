@@ -4407,7 +4407,10 @@ html[data-wgl-volando="1"] .vg140-warp { opacity: 0.55; }
 .vg174-cine {
   position: fixed;
   inset: 0;
-  z-index: 300;
+  /* v212.0 A LA VISTA: encima de la cortina de arranque (2147483000) —
+     la intro ES la cara de la carga (mandato del Dueño); se retira sola a
+     los 12s si el aparato no despierta, dejando la cortina de rescate libre */
+  z-index: 2147483200;
   overflow: hidden;
   background: #000;
   cursor: pointer;
@@ -6351,4 +6354,38 @@ html[data-cara="gloria"] .aurora-orb-4 { background: radial-gradient(circle, rgb
 
 @media (prefers-reduced-motion: reduce) {
   .animate-ping-once { animation: none; opacity: 0.9; }
+}
+
+/* ============================================================
+   v212.0 A LA VISTA — mandato del Dueño: «hay muchos botones y se están
+   opacando; haz que Vanguard se vea bien en celulares pequeños».
+   ① los chips v208 se COMPACTAN y suben su fondo a casi sólido (legibilidad
+     total sobre cualquier orbe aurora); ② el pulso teatral (2.8s cada 6 min)
+     no existe en pantalla chica — menos ruido sobre el contenido; ③ nada de
+     esto toca la estructura de widgets de otras leyes: solo presentación.
+   ============================================================ */
+@media (max-width: 480px) {
+  .vg208-estreno {
+    bottom: 4.3rem;
+    right: 0.4rem;
+    padding: 0.3rem 0.55rem;
+    background: rgba(4, 4, 7, 0.97);
+  }
+  .vg208-estreno em { display: none; } /* solo «Ver la intro» — 1 línea */
+  .vg208-cara-lote { bottom: 6.6rem; right: 0.4rem; }
+  .vg208-cara-chip {
+    font-size: 9px;
+    padding: 0.26rem 0.5rem;
+    background: rgba(4, 4, 7, 0.97);
+  }
+  [data-vg-retencion="pulso"] { display: none !important; }
+}
+
+/* ② botones flotantes SIEMPRE legibles en móvil: cero veladuras sobre
+   los chips de acción (la opacidad de reposo era la queja del Dueño) */
+@media (max-width: 640px) {
+  .vg208-estreno, .vg208-cara-chip, .vg208-cara-menu {
+    opacity: 1;
+    filter: none;
+  }
 }

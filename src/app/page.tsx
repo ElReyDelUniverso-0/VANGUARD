@@ -1391,11 +1391,16 @@ export default function Home() {
         <MotorCama />
         <MotorLuxe />
       </MontajeTardio>
-      {/* v208.0 EL ESTRENO: el cine OPT-IN (ley v189 — jamás automático) +
-          LAS CARAS (ASALTO/SIGILO/GLORIA, guardadas en el aparato). Ambos
-          viven diferidos: entran cuando la casa ya respira. */}
+      {/* v208.0 → v212.0 EL ESTRENO: la intro VUELVE AL ARRANQUE por mandato
+          expreso del Dueño («la intro está bien pero es muy rápida y no
+          aparece al inicio cuando Vanguard está cargando») — el cine ES la
+          cara de la carga ahora, encima de la cortina, con cartel honesto
+          dinámico («VANGUARD ESTÁ DESPERTANDO» → «LA CASA YA ESTÁ DESPIERTA»),
+          placas más lentas (2.4s), SALTAR gigante y retirada sola a los 12s
+          si el aparato no despierta (la cortina de rescate queda a la vista).
+          El botón ◉ ESTRENO sigue para repetirla a demanda (ley v189). */}
       <MontajeTardio tope={9000}>
-        <CineEntrada optIn />
+        <CineEntrada />
         <CaraPortada />
       </MontajeTardio>
       {/* v191.0 EL PULSO TEATRAL: cada 6 min, 2.8s de teatro que no pide
@@ -1478,8 +1483,14 @@ export default function Home() {
         <CineVivo />
       </MontajeTardio>
 
+      {/* v212.0 A LA VISTA — ARREGLO DEL MODO COMPLETO (inmersión v108):
+          desde v173 (adiós al universo 3D) la sala entera era el contenido,
+          y oculta={inmersion} la escondía entera con display:none — el modo
+          completo quedaba en pantalla negra con la píldora de salida. La
+          inmersión APARTA cabecera/ticker/footer (arriba), no apaga el mundo.
+          La sala vive siempre: oculta={false}. */}
       <main className="contents" aria-label="Contenido de Vanguard">
-        <SalaViva tab={tab} dirMov={dirMov} oculta={inmersion} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
+        <SalaViva tab={tab} dirMov={dirMov} oculta={false} variantesSala={variantesSala} alTocarBorde={alTocarBorde} alSoltarBorde={alSoltarBorde} />
       </main>
 
       <footer className={`mt-auto hud-panel border-t border-amber-hud py-3 px-4 relative ${inmersion ? "hidden" : ""}`}>

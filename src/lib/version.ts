@@ -1374,6 +1374,29 @@
 // · /vertigo 200 con feed + noscript · /api/vertigo?antes= 24 items +
 // honesto 400 sin cursor · sitemap con /vertigo · SIGUIENTE presente en
 // /noticia (chip client diferido al 50% de scroll) · tendencias en paleta.
-export const APP_VERSION = "v211.0";
-export const APP_CODENAME = "EL VÉRTIGO";
+//
+// v212.0 A LA VISTA — mandato del Dueño (4 frentes en un solo mensaje:
+// «cuando lo pongo modo completo se bugea y no aparece nada; la intro
+// está bien pero es muy rápida y no aparece al inicio cuando Vanguard
+// está cargando; hay muchos botones y se están opacando; haz que se vea
+// bien en celulares pequeños»):
+//  ① MODO COMPLETO ARREGLADO: desde v173 (adiós al universo 3D) la sala
+//    entera era el contenido y oculta={inmersion} la escondía con
+//    display:none — inmersión = pantalla negra con la píldora de salida.
+//    Cura: la sala vive SIEMPRE (oculta={false}); la inmersión sigue
+//    apartando cabecera/ticker/footer y pidiendo fullscreen nativo.
+//  ② LA INTRO VUELVE AL ARRANQUE (mandato expreso anula el retiro v189,
+//    con los salvavidas v187 íntegros): arranca AL INSTANTE y es la cara
+//    de la carga — z 2147483200 (encima de la cortina); cartel honesto
+//    DINÁMICO (VANGUARD ESTÁ DESPERTANDO ⇄ LA CASA YA ESTÁ DESPIERTA vía
+//    pulso de 600ms sobre window.__vgvivo); placas 1.5s → 2.4s («muy
+//    rápida»); se retira sola a los 12s si la casa no despierta (la
+//    cortina de rescate queda libre); reduced-motion/sesión sufrida/
+//    una vez al día intactos; el chip ◉ ESTRENO sigue para repetirla.
+//  ③ MÓVIL DIGNO: chips v208 compactos (solo «Ver la intro»), fondos casi
+//    sólidos (rgba .97 — adiós veladuras), el pulso teatral no existe en
+//    ≤480px (menos ruido sobre el contenido), opacity/filter forzados a 1
+//    en los chips en ≤640px.
+export const APP_VERSION = "v212.0";
+export const APP_CODENAME = "A LA VISTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
