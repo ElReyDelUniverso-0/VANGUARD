@@ -6230,3 +6230,105 @@ html[data-vg-3d="on"] .cuna-v139:has(.vg173-terminal) {
 @keyframes vg191Burst{0%{transform:scale(.4);opacity:0}25%{transform:scale(1.25);opacity:1}60%{transform:scale(1);opacity:1}100%{transform:scale(1.15) translateY(-26px);opacity:0}}
 
 @media (prefers-reduced-motion:reduce){.vg191-teatro,.vg191-corazon{animation:none !important;display:none !important}}
+
+/* ============================================================
+   v208.0 EL ESTRENO — cine OPT-IN + LAS CARAS DE VANGUARD
+   Ley v189 intacta: el cine jamás se auto-dispara; el botón ◉ ESTRENO
+   (portal abajo-derecha, sobre el reproductor de música) proyecta la
+   intro solo cuando el visitante la pide. Las CARAS recolorean las
+   nubes aurora (ASALTO = default sin overrides; SIGILO = verde noche;
+   GLORIA = oro imperial) — aditivo, cero recargas (ley v200).
+   ============================================================ */
+.vg208-estreno {
+  position: fixed;
+  right: 0.5rem;
+  bottom: 6.5rem;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 9999px;
+  background: rgba(5, 5, 8, 0.88);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1.2;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.vg208-estreno:hover { border-color: rgba(232, 197, 106, 0.8); background: rgba(212, 175, 55, 0.12); }
+.vg208-estreno em { font-style: normal; font-size: 8px; letter-spacing: 0.22em; color: rgba(232, 197, 106, 0.75); }
+.vg208-estreno b { font-size: 11px; letter-spacing: 0.12em; color: #e8c56a; }
+@media (min-width: 640px) { .vg208-estreno { right: 0.75rem; } }
+
+.vg208-cara-lote {
+  position: fixed;
+  right: 0.5rem;
+  bottom: 9.4rem;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+@media (min-width: 640px) { .vg208-cara-lote { right: 0.75rem; } }
+.vg208-cara-chip {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 9999px;
+  background: rgba(5, 5, 8, 0.88);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(232, 197, 106, 0.9);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.vg208-cara-chip:hover { border-color: rgba(232, 197, 106, 0.8); background: rgba(212, 175, 55, 0.12); }
+.vg208-cara-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 178px;
+  border: 1px solid rgba(120, 120, 140, 0.4);
+  border-radius: 0.6rem;
+  background: rgba(5, 5, 8, 0.94);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  box-shadow: 0 18px 50px -18px rgba(0, 0, 0, 0.9);
+}
+.vg208-cara-opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.45rem 0.7rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  text-align: left;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  transition: background-color 0.15s ease;
+}
+.vg208-cara-opcion:last-child { border-bottom: 0; }
+.vg208-cara-opcion:hover { background: rgba(212, 175, 55, 0.1); }
+.vg208-cara-opcion b { font-size: 11px; letter-spacing: 0.16em; color: #e8c56a; }
+.vg208-cara-opcion[data-k="sigilo"] b { color: var(--hud-green, #3DDC97); }
+.vg208-cara-opcion[data-k="gloria"] b { color: #ffd97a; }
+.vg208-cara-opcion span { font-size: 9px; letter-spacing: 0.04em; color: rgba(160, 160, 175, 0.9); }
+
+/* LAS CARAS — recoloreo de las nubes aurora (capas de ambiente) */
+html[data-cara="sigilo"] .aurora-orb-1 { background: radial-gradient(circle, rgba(61, 220, 151, 0.13) 0%, transparent 66%); }
+html[data-cara="sigilo"] .aurora-orb-2 { background: radial-gradient(circle, rgba(56, 189, 248, 0.10) 0%, transparent 66%); }
+html[data-cara="sigilo"] .aurora-orb-3 { background: radial-gradient(circle, rgba(18, 120, 88, 0.15) 0%, transparent 66%); }
+html[data-cara="sigilo"] .aurora-orb-4 { background: radial-gradient(circle, rgba(80, 200, 170, 0.08) 0%, transparent 66%); }
+html[data-cara="gloria"] .aurora-orb-1 { background: radial-gradient(circle, rgba(255, 200, 80, 0.20) 0%, transparent 66%); }
+html[data-cara="gloria"] .aurora-orb-2 { background: radial-gradient(circle, rgba(212, 175, 55, 0.17) 0%, transparent 66%); }
+html[data-cara="gloria"] .aurora-orb-3 { background: radial-gradient(circle, rgba(255, 240, 200, 0.14) 0%, transparent 66%); }
+html[data-cara="gloria"] .aurora-orb-4 { background: radial-gradient(circle, rgba(255, 160, 40, 0.13) 0%, transparent 66%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .vg208-estreno, .vg208-cara-chip, .vg208-cara-menu, .vg208-cara-opcion { transition: none; }
+}

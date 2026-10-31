@@ -1,14 +1,16 @@
 "use client";
 
 // ============================================================
-// ⚠️ v189.0 RETIRADO DEL ÁRBOL — ESTE COMPONENTE YA NO SE MONTA.
+// ⚠️ HISTORIAL v189.0 — RETIRO AUTOMÁTICO + REGRESO OPT-IN v208.0.
 // page.tsx retiró <CineEntrada /> en v189.0 (ADIÓS AL CINE): el Dueño
 // nombró esta cinemática como la raíz del mal («desde ese día no ha
-// vuelto a cargar bien vanguard») y ningún aparato volverá a ver su
-// consola despierta tapada por nada que se pueda confundir con carga.
-// NO volver a montar sin mandato expreso del Dueño; si regresa, será
-// OPT-IN con un botón dentro de la consola — jamás automática.
-// El archivo se conserva como registro histórico del hallazgo v187.
+// vuelto a cargar bien vanguard»). La ley v189: «si regresa, será OPT-IN
+// con un botón dentro de la consola — jamás automática».
+// v208.0 EL ESTRENO: el cine CUMPLE la ley y regresa — <CineEntrada optIn />
+// NO arranca solo, NO marca la sesión, NO obedece a timers: proyecta únicamente
+// cuando el visitante pulsa el botón ◉ ESTRENO (portal abajo-derecha, sobre el
+// reproductor de música). SALTAR gigante v187 intacto; cartel «LA CASA YA ESTÁ
+// DESPIERTA» intacto. El modo automático queda retirado para siempre.
 // ============================================================
 
 // ============================================================
@@ -92,15 +94,25 @@ const CINE_PLACAS: { foto: string; ceja: string; titulo: string; tituloAcc: stri
   { foto: "/assets/real/jet-1.jpg", ceja: "VANGUARD · TU TURNO", titulo: "EL CENTRO", tituloAcc: "DE NOTICIAS", sub: "Del planeta, en primera persona", dato: "TOCA PARA DESPLEGAR LA CASA", acento: "#e8c476" },
 ];
 
-export function CineEntrada() {
+export function CineEntrada({ optIn = false }: { optIn?: boolean } = {}) {
   const montado = useSyncExternalStore(sinSuscripcion, esCliente, esServidor);
   const [enPantalla, setEnPantalla] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
   const [idx, setIdx] = useState(0);
   const finRef = useRef(false);
 
+  const estrenar = useCallback(() => {
+    try { sfx.click(); } catch {}
+    finRef.current = false;
+    setIdx(0);
+    setSaliendo(false);
+    setEnPantalla(true);
+  }, []);
+
   useEffect(() => {
-    if (!montado) return;
+    // v208.0 OPT-IN: en modo estreno el cine JAMÁS se auto-dispara —
+    // ni timers, ni clave diaria, ni cortesías: solo el botón.
+    if (!montado || optIn) return;
     // reduced-motion: el cine no es para todos los aparatos — entrar directo
     let reducido = false;
     try { reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch {}
@@ -152,7 +164,19 @@ export function CineEntrada() {
     fin();
   }, [fin]);
 
-  if (!montado || !enPantalla) return null;
+  if (!montado) return null;
+  if (!enPantalla) {
+    // v208.0 OPT-IN: el botón ESTRENO — el cine solo proyecta a petición
+    // (portal a body: dentro del diorama el fixed hereda transform — lección v116)
+    if (!optIn) return null;
+    return createPortal(
+      <button type="button" className="vg208-estreno" onClick={estrenar}>
+        <em>◉ ESTRENO</em>
+        <b>Ver la intro</b>
+      </button>,
+      document.body,
+    );
+  }
   const placa = CINE_PLACAS[Math.min(idx, CINE_PLACAS.length - 1)];
 
   // PORTAL AL BODY (lección v116 de la casa): dentro del árbol de la Casa el

@@ -56,10 +56,13 @@ const RostrosPanel = dynamic(() => import("@/components/vanguard/panels/rostros-
 // v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
 const GobiernoLibrePanel = dynamic(() => import("@/components/vanguard/panels/gobierno-libre-panel").then((m) => m.GobiernoLibrePanel), { ssr: false, loading: PanelSkeleton });
 const TransicionMaestra = dynamic(() => import("@/components/vanguard/transicion-maestra").then((m) => m.TransicionMaestra), { ssr: false });
-// v189.0: la importación del cine murió con el cine — adiós para siempre
+// v189.0: el cine automático murió — v208.0 EL ESTRENO lo revive OPT-IN
+// (botón ◉ ESTRENO; jamás auto-arranca) — dinámico ssr:false, peso diferido
+const CineEntrada = dynamic(() => import("@/components/vanguard/cine-entrada").then((m) => m.CineEntrada), { ssr: false });
 import { MotorCama } from "@/components/vanguard/motor-cama";
 // v126.0 LA CASA · ATELIER — motor del lujo: acabado, MODO GALERÍA y serie grabada
 import { MotorLuxe } from "@/components/vanguard/motor-luxe";
+import { CaraPortada } from "@/components/vanguard/cara-portada";
 import { FranjaIlustrada } from "@/components/vanguard/ilustraciones-vivas";
 import { useCama } from "@/lib/cama-store";
 // v96.0 GOOGLE VIVO: barra estructura Google + transición de cine + motor CineVivo
@@ -1387,6 +1390,13 @@ export default function Home() {
       <MontajeTardio tope={9000}>
         <MotorCama />
         <MotorLuxe />
+      </MontajeTardio>
+      {/* v208.0 EL ESTRENO: el cine OPT-IN (ley v189 — jamás automático) +
+          LAS CARAS (ASALTO/SIGILO/GLORIA, guardadas en el aparato). Ambos
+          viven diferidos: entran cuando la casa ya respira. */}
+      <MontajeTardio tope={9000}>
+        <CineEntrada optIn />
+        <CaraPortada />
       </MontajeTardio>
       {/* v191.0 EL PULSO TEATRAL: cada 6 min, 2.8s de teatro que no pide
           permiso pero jamás estorba — barras de cine + titular del mundo.

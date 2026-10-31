@@ -1238,6 +1238,24 @@
 //    que no bloquea el mapa.
 // QA: tsc 0 · build EXIT 0 · /api/system honesto · DUEÑO cruza muros ·
 // v190/v189/v125/v199/v204/v205/v206 intactas.
-export const APP_VERSION = "v207.0";
-export const APP_CODENAME = "INFINITO";
+//
+// v208.0 EL ESTRENO — mandato del Dueño («sigue puliendo vanguard» + su
+// «Si a todo» a las cinemáticas y portadas). Dos piezas, ambas aprobadas
+// por las leyes de la casa:
+//  ① EL CINE REGRESA OPT-IN (ley v189 se cumple a la letra: «con un botón
+//    dentro de la consola — jamás automática»): CineEntrada({ optIn:true })
+//    NO arranca solo, NO marca sesión, NO obedece timers — proyecta la intro
+//    GTA (6 placas, cartel «LA CASA YA ESTÁ DESPIERTA», SALTAR gigante)
+//    SOLO cuando el visitante pulsa ◉ ESTRENO (chip abajo-derecha sobre el
+//    reproductor de música). El modo automático queda retirado para siempre.
+//  ② LAS CARAS DE VANGUARD (cara-portada.tsx nuevo): cada visitante elige
+//    el ambiente — ASALTO (brasa y carmesí, default), SIGILO (verde noche y
+//    cian) o GLORIA (oro imperial) — recoloreando las nubes aurora; guardado
+//    en SU aparato (localStorage vg-cara), DOM directo sin setState en
+//    effects (ley v176), chip «CARA · ASALTO ▴» con menú de 3 opciones.
+//    Complementa al Atelier de acabados (el metal manda aparte).
+// Ambos montados diferidos (MontajeTardio 9s + dynamic ssr:false), cero
+// recargas (ley v200), cero bloqueo (ley v189), ceremonia oculta respetada.
+export const APP_VERSION = "v208.0";
+export const APP_CODENAME = "EL ESTRENO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
