@@ -594,17 +594,28 @@ try{
     // del div ya lo llevaría, pero esto lo desarma al instante)
     try{ var mt=document.getElementById('vg-rescate-meta'); if(mt&&mt.parentNode) mt.parentNode.removeChild(mt); }catch(e){}
     c.style.opacity='0';
-    setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },800);
+    // v211.1 LA CORTINA ZOMBI — bug cazado en la guerra de QA (iPhone emulado,
+    // /vertigo): en las rutas NUEVAS con hidratación pesada (el feed client de
+    // EL VÉRTIGO llega tarde), apagar() retiraba el div a los 800ms ANTES de
+    // que React hidratará → mismatch de hidratación → React re-renderizaba el
+    // árbol CLIENTE y RECREABA la cortina de cero: visible, «Desplegando el
+    // universo» para siempre, y el script de la cortina apuntando a un nodo
+    // MUERTO (su c ya no es el que se ve). Cura de la casa: el div de la
+    // cortina lo renderiza el LAYOUT — es propiedad de React — así que NADIE
+    // lo remueve jamás: apagar() solo lo esconde (opacity 0 → display:none).
+    // Un nodo escondido mantiene el árbol idéntico para la hidratación y no
+    // puede volver como zombi. Coste: un div display:none en la memoria.
+    setTimeout(function(){ if(c&&c.parentNode) c.style.display='none'; },800);
     // v181.0: la casa queda sola ante el peligro — el vigía confirma que
     // respira (20s en rutas ligeras; 68s en el universo pesado, tras su
     // tope de 60s: si despierta a los 50s la barra se retira sola)
     setTimeout(vigia,pesado?68000:20000);
-    // v155.1: si la pestaña durmió durante el fundido (móvil bloqueado,
-    // throttling de timers), la retiramos al despertar — nunca queda un
-    // nodo muerto flotando en el DOM
+    // v155.1→v211.1: si la pestaña durmió durante el fundido, al despertar
+    // solo confirmamos que quede ESCONDIDO — jamás removido (ley v211.1:
+    // React es el dueño del div; el script solo lo viste de negro)
     document.addEventListener('visibilitychange',function(){
       if(document.visibilityState==='visible'&&c&&c.parentNode&&c.getAttribute('data-off')==='1'){
-        setTimeout(function(){ if(c&&c.parentNode) c.parentNode.removeChild(c); },150);
+        setTimeout(function(){ if(c&&c.parentNode) c.style.display='none'; },150);
       }
     });
   }

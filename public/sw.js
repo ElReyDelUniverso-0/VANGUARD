@@ -13,7 +13,7 @@
 //    worker con cache-first; todo lo demás pasa intacto a la caché HTTP.
 //  · APIs: JAMÁS se cachean — /api/ pasa siempre por la red (datos vivos).
 
-const CACHE = "vg-refugio-v210";
+const CACHE = "vg-refugio-v211";
 const REFUGIO = "/offline";
 
 self.addEventListener("install", (evento) => {
@@ -46,14 +46,22 @@ self.addEventListener("fetch", (evento) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // NAVEGACIÓN (HTML): red siempre. Sin red → el refugio.
+  // NAVEGACIÓN (HTML): red siempre. Sin red → el refugio. (v211.2: el catch
+  // de abajo también protege si la propia búsqueda del refugio truena).
   if (req.mode === "navigate") {
     evento.respondWith(
-      fetch(req).catch(() =>
-        caches
-          .match(REFUGIO)
-          .then((r) => r || refugioDeEmergencia())
-      )
+      (async () => {
+        try {
+          return await fetch(req);
+        } catch (e) {
+          try {
+            const r = await caches.match(REFUGIO);
+            return r || refugioDeEmergencia();
+          } catch (e2) {
+            return refugioDeEmergencia();
+          }
+        }
+      })()
     );
     return;
   }
@@ -63,6 +71,13 @@ self.addEventListener("fetch", (evento) => {
 
   // Activos mudos inmutables: cache-first (el hash cambia con cada build,
   // así que una entrada vieja nunca miente sobre la versión).
+  // v211.2 EL SILENCIO NO ROMPE — bug cazado en QA: si CUALQUIER paso del
+  // worker truena (caches.match rechazado en una carrera de activación,
+  // storage ocupado, lo que sea), respondWith con promesa rota MATA el
+  // recurso entero — y un chunk muerto = React que jamás hidrata (la Casa
+  // muda tras la cortina). Ley del refugio al cuadrado: el worker es una
+  // RED DE SEGURIDAD, NO una dependencia — cualquier tropiezo devuelve el
+  // pedido a la red directa, como si el worker no existiera.
   if (
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.startsWith("/icons/") ||
@@ -71,17 +86,28 @@ self.addEventListener("fetch", (evento) => {
     url.pathname === "/favicon.ico"
   ) {
     evento.respondWith(
-      caches.match(req).then(
-        (hit) =>
-          hit ||
-          fetch(req).then((res) => {
+      (async () => {
+        try {
+          const hit = await caches.match(req);
+          if (hit) return hit;
+          const res = await fetch(req);
+          try {
             if (res && res.ok && res.type === "basic") {
               const copia = res.clone();
-              caches.open(CACHE).then((c) => c.put(req, copia));
+              await caches.open(CACHE).then((c) => c.put(req, copia));
             }
-            return res;
-          })
-      )
+          } catch (eC) {
+            /* el guardado nunca puede tumbar la respuesta */
+          }
+          return res;
+        } catch (eF) {
+          try {
+            return await fetch(req);
+          } catch (eG) {
+            return new Response("", { status: 504 });
+          }
+        }
+      })()
     );
     return;
   }

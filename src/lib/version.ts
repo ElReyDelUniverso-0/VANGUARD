@@ -1397,6 +1397,31 @@
 //    sólidos (rgba .97 — adiós veladuras), el pulso teatral no existe en
 //    ≤480px (menos ruido sobre el contenido), opacity/filter forzados a 1
 //    en los chips en ≤640px.
-export const APP_VERSION = "v212.0";
+// v212.1 LA CORTINA ZOMBI + EL SILENCIO NO ROMPE — parche de guerra de la
+// ley hermana (rebasa sobre v212.0 A LA VISTA intacto), cazado VIVO durante
+// la toma de fotos oficiales para el TikTok del Dueño (iPhone emulado,
+// sesión larga de navegación — la vida real destapa lo que el build limpio
+// no ve):
+//  ① LA CORTINA ZOMBI: /vertigo (rutas NUEVAS con hidratación pesada) se
+//    quedaba ETERNA en «Desplegando el universo» CON el feed vivo debajo.
+//    Cadena exacta: apagar() REMOVÍA el div de la cortina a los 800ms →
+//    React hidrataba DESPUÉS (48 piezas client de EL VÉRTIGO tardan), no
+//    encontraba el div que su árbol espera → mismatch → re-render cliente
+//    → la cortina RE-NACÍA de cero, zombi, sin nadie que la apagara (el
+//    script del layout seguía apuntando al nodo viejo detachado);
+//    /guerra-hoy nunca la sufrió (su hidratación ligera gana la carrera).
+//    Cura: ley nueva — el div de la cortina lo renderiza el layout, es
+//    propiedad de React, JAMÁS se remueve; apagar() solo lo esconde
+//    (opacity→display:none). Un zombi ya no puede nacer. QA: /vertigo
+//    3/3 cargas con cortina fundida sola · / y /guerra-hoy intactos.
+//  ② EL SILENCIO NO ROMPE: el service worker (v210) podía matar un chunk
+//    entero si cualquier paso interno truena — respondWith con promesa
+//    rota mata el recurso y un chunk muerto = React que JAMÁS hidrata
+//    (fibers=0 verificado, Casa muda, sin un solo error en consola).
+//    Cura: el worker entero en async/try/catch con retorno a red directa
+//    en cada paso (match, fetch y el guardado en caché son no-fatales) —
+//    una red de seguridad no puede ser la que corta la luz; caché renueva
+//    a vg-refugio-v211. QA: /vertigo hidrata CON worker activo (fibers>0).
+export const APP_VERSION = "v212.1";
 export const APP_CODENAME = "A LA VISTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
