@@ -168,6 +168,31 @@ export default async function GuerraHoyPage() {
 
       {/* v52.0 ZONA CERO — el espectáculo: la ciudad que cae en vivo */}
       <section className="max-w-5xl mx-auto px-5 pt-6 grid gap-4">
+        {/* v213.0 EL PULSO — la sala de ÚLTIMA HORA en la puerta de Google:
+            quien busca «guerra hoy» quiere AHORA, y aquí está AHORA */}
+        <Link
+          href="/en-vivo"
+          className="group block border border-red-500/50 bg-gradient-to-r from-red-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-red-400 transition-colors"
+        >
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-red-300 border border-red-500/50 bg-red-500/10 rounded px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+              En vivo · directo
+            </span>
+            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-red-200 transition-colors">
+              EL PULSO — última hora, minuto a minuto
+            </span>
+          </div>
+          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
+            La redacción de Vanguard abierta 24 horas: cables reales entrando
+            solos con su hora, su fuente y su sello de exactitud. Lo más
+            caliente por impacto, el medidor del planeta y ÚLTIMA HORA cuando
+            el mundo se mueve — sondeo cada 30 s, la página jamás se recarga.
+          </p>
+          <p className="mt-2 font-mono text-[11px] text-red-300 uppercase tracking-widest">
+            Abrir la sala en vivo →
+          </p>
+        </Link>
         {/* v211.0 EL VÉRTIGO — la fórmula TikTok: el feed infinito en la puerta
             de Google (el visitante de «guerra hoy» es puro deslizamiento) */}
         <Link

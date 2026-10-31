@@ -193,6 +193,13 @@ export function SectionSearch({
         sectionLabel: "PÁGINA GLOBAL · el mundo en deslizamientos", icon_color: "text-amber",
         kind: "page", href: "/vertigo",
       },
+      {
+        // v213.0 EL PULSO — la sala EN VIVO entra al índice total
+        key: "pg:envivo", label: "EL PULSO — sala EN VIVO, última hora minuto a minuto", short: "en vivo ultima hora directo pulso breaking",
+        icon: <Newspaper className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la redacción abierta 24 h", icon_color: "text-red-hud",
+        kind: "page", href: "/en-vivo",
+      },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({
       key: `exp:${e.id}`,

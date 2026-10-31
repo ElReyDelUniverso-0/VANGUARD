@@ -615,6 +615,12 @@ const RSS_SOURCES = [
   { url: "https://feeds.npr.org/1004/rss.xml", source: "NPR World" },
   { url: "https://www.elmundo.es/rss/internacional.xml", source: "El Mundo" },
   { url: "https://feeds.foxnews.com/foxnews/world", source: "Fox News World" },
+  // v213.0 EL PULSO — 3 frentes de PRIMICIA: la redacción sale a la calle
+  // con los medios que dan la noticia PRIMERO (guerra + breaking desk).
+  // Promise.allSettled tolera cualquiera caído: añadir es gratis.
+  { url: "https://kyivindependent.com/feed/", source: "Kyiv Independent" },
+  { url: "https://www.bnonews.com/feed/", source: "BNO News" },
+  { url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100727362", source: "CNBC World" },
 ];
 
 interface RssArticle {

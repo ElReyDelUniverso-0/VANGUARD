@@ -79,6 +79,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // v213.0 EL PULSO — la sala EN VIVO: la redacción abierta 24 h,
+      // revalidate 30 — Google News encuentra última hora con fuente
+      url: `${SITE_URL}/en-vivo`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    },
+    {
       // v211.0 EL VÉRTIGO — el feed infinito: puerta para el público de
       // deslizamiento (la fórmula TikTok indexable por Google)
       url: `${SITE_URL}/vertigo`,

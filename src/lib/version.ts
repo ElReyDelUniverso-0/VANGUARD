@@ -1422,6 +1422,40 @@
 //    en cada paso (match, fetch y el guardado en caché son no-fatales) —
 //    una red de seguridad no puede ser la que corta la luz; caché renueva
 //    a vg-refugio-v211. QA: /vertigo hidrata CON worker activo (fibers>0).
-export const APP_VERSION = "v212.1";
-export const APP_CODENAME = "A LA VISTA";
+//
+// v213.0 EL PULSO (sobre v212.1 A LA VISTA de la ley hermana, intacto) —
+//  mandato del Dueño: «que Vanguard se vuelva MÁS EXACTO, que sea EL
+//  PRIMERO en dar noticias — importantes y de MORBO — bien
+//  estructuradas, que te lo diga TODO sin salir de Vanguard; el mapa
+//  3D bien definido, el Ojo de Dios con MÁS información, todo EN VIVO,
+//  EN DIRECTO». Cuatro frentes:
+//  ① LA SALA EN VIVO (/en-vivo): la redacción abierta 24 h — línea del
+//    tiempo minuto a minuto (solo cables REALES, jamás relleno curado),
+//    banner ● ÚLTIMA HORA cuando el cable más nuevo tiene ≤ 15 min,
+//    MEDIDOR del planeta (hoy/última hora/urgentes/teatros/países),
+//    LO MÁS CALIENTE por impacto 0-100 (el morbo con regla), filtros
+//    TODO/URGENTE/teatro, hora exacta + sello de credibilidad
+//    (AGENCIA A++ … FUENTE C) y VER FUENTE ↗ en cada cable. Sondeo
+//    /api/pulso cada 30 s solo con la pestaña visible — la página
+//    JAMÁS se recarga (ley v190), los cables entran solos con su
+//    destello ● NUEVO. Server-render con JSON-LD, revalidate 30.
+//  ② EL PRIMERO DE VERDAD: /api/pulso MIRA la edad del cable más nuevo
+//    — si lleva > 4 min sin entrar nada, el propio latido manda a la
+//    redacción a la calle (after() → /api/news: GDELT + 18 medios RSS
+//    en paralelo, candado anti-estampida de 3 min). A la red RSS se
+//    suman 3 frentes de primicia (Kyiv Independent, BNO News, CNBC
+//    World). Más visitas = redacción más despierta = primicia.
+//  ③ OJO DE DIOS MÁS INFORMADO: franja «EL PULSO · ÚLTIMA HORA REAL»
+//    (pulso-ojo.tsx) arriba del panel — el Ojo LEE el mundo: los 4
+//    cables más frescos con tier de impacto + medidor en vivo.
+//  ④ MAPA 3D BIEN DEFINIDO: LEYENDA DEL PLANETA (leyenda-planeta.tsx)
+//    en el globo del Ojo — cada marca explicada: unidades (jet/tanque/
+//    soldado), anillo de batalla, arcos de ataque y pines de cables
+//    por impacto (URGENTE→CONTEXTO). Nada indefinido.
+//  EXACTITUD: motor de impacto v172 estrena cred (credibilidad 0-9)
+//  visible en cada cable; /api/pulso y /en-vivo excluyen las curadas
+//  de respaldo — la última hora no lleva relleno. QA: tsc 0, build ok,
+//  /api/pulso items reales sin curated-*, banner, calientes, muro.
+export const APP_VERSION = "v213.0";
+export const APP_CODENAME = "EL PULSO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

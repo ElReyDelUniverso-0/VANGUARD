@@ -22,6 +22,10 @@ import { AtlasSecreto } from "@/components/vanguard/atlas-secreto";
 import { TeletipoFeed } from "@/components/vanguard/teletipo-vivo";
 // v87.0 EL DESPERTAR — signos vitales del planeta: el Ojo toma el pulso del mundo
 import { SignosVitales } from "@/components/vanguard/signos-vitales";
+// v213.0 EL PULSO — la franja de ÚLTIMA HORA REAL: el Ojo LEE el mundo
+import { PulsoOjo } from "@/components/vanguard/pulso-ojo";
+// v213.0 EL PULSO — la leyenda del planeta: cada marca del globo definida
+import { LeyendaPlaneta } from "@/components/vanguard/leyenda-planeta";
 // v135.0 NEXUS-HYPNOS — ENJAMBRE DE OJOS: la esfera de micro-pantallas flotantes
 // que orbita en 3D con audio espacial al interceptar (todo dato interno de la Casa)
 import { EnjambreOjos, type TransmisionOjo } from "@/components/vanguard/enjambre-ojos";
@@ -426,6 +430,10 @@ export function OjoDiosPanel() {
           respiran y un electrocardiograma que nunca deja de correr */}
       <SignosVitales online={totalOnline} />
 
+      {/* v213.0 EL PULSO — ÚLTIMA HORA REAL: los cables más frescos del planeta
+          entran al Ojo solos (sondeo 60 s); el Ojo ya no solo mira, LEE */}
+      <PulsoOjo />
+
       {/* v135.0 ENJAMBRE DE OJOS — la esfera 3D de transmisiones: feed del Mundo
           de Guerra + cables OSINT reales + directos observados, orbitando como
           un enjambre de micro-pantallas; hover = interceptar (blip espacial) */}
@@ -559,6 +567,9 @@ export function OjoDiosPanel() {
                 )}
                 <span className="text-muted-foreground w-full sm:w-auto">{t("god.unidades.hint")}</span>
               </div>
+              {/* v213.0 EL PULSO — leyenda del planeta: CADA marca del globo
+                  definida (unidades, anillo de batalla, pines por impacto) */}
+              <LeyendaPlaneta />
             </>
           ) : (
           <>

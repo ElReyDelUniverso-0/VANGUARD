@@ -255,6 +255,9 @@ export interface NoticiaRanqueada extends EntradaImpacto {
   paisNombre: string;
   edadMin: number;
   edad: string;
+  // v213.0 EL PULSO — credibilidad de la fuente 0-9 (la escala de la casa):
+  // sello de EXACTITUD visible en la sala EN VIVO (AGENCIA A++ = 9).
+  cred: number;
 }
 
 export function enriquecer(e: EntradaImpacto): NoticiaRanqueada {
@@ -270,6 +273,7 @@ export function enriquecer(e: EntradaImpacto): NoticiaRanqueada {
     paisNombre: nombrePais(e.sourceCountry),
     edadMin: min,
     edad: edadLegible(min),
+    cred: credibilidadFuente(e.source),
   };
 }
 

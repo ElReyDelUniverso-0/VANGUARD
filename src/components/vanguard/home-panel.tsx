@@ -369,6 +369,31 @@ export function HomePanel() {
       {/* v85.0 EL MUNDO DENTRO — manifiesto de identidad */}
       <ManifiestoMundo />
 
+      {/* v213.0 EL PULSO — la sala de ÚLTIMA HORA: el primero en dar noticias */}
+      <Link
+        href="/en-vivo"
+        className="group block border border-red-500/40 bg-gradient-to-r from-red-950/50 via-zinc-950/40 to-transparent rounded-md p-4 hover:border-red-400/80 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-red-300 border border-red-500/50 bg-red-500/10 rounded px-2 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+            En vivo · directo
+          </span>
+          <span className="font-display text-lg sm:text-xl font-black tracking-wide text-soft group-hover:text-red-200 transition-colors">
+            EL PULSO — última hora del mundo, minuto a minuto
+          </span>
+        </div>
+        <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
+          La redacción de Vanguard abierta 24 horas: cada cable real entra solo,
+          con su hora, su fuente y su sello de exactitud (AGENCIA A++ … FUENTE
+          C). Lo más caliente por impacto 0-100, el medidor del planeta y el
+          banner de ÚLTIMA HORA — sin recargar jamás la página.
+        </p>
+        <p className="mt-1.5 font-mono text-[10px] text-red-300 uppercase tracking-widest">
+          Abrir la sala en vivo →
+        </p>
+      </Link>
+
       {/* v52.0 ZONA CERO — la ciudad que cae en vivo */}
       <Link
         href="/zona-cero"

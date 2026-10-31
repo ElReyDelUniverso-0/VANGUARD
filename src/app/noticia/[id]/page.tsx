@@ -198,6 +198,13 @@ export default async function NoticiaPage({
             ◉ VANGUARD
           </Link>
           <div className="flex items-center gap-4">
+            {/* v213.0 EL PULSO — la sala EN VIVO a un toque de cada cable */}
+            <Link
+              href="/en-vivo"
+              className="font-mono text-[10px] uppercase tracking-widest text-red-400/90 hover:text-red-300"
+            >
+              EN VIVO ●
+            </Link>
             {/* v211.0 EL VÉRTIGO — la puerta del feed infinito siempre a la vista */}
             <Link
               href="/vertigo"
