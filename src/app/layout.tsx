@@ -349,6 +349,18 @@ export default function RootLayout({
           <style dangerouslySetInnerHTML={{ __html: `
             #vg-cortina{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(120% 90% at 50% 110%,#14100a 0%,#070606 55%,#050404 100%);transition:opacity .65s ease;font-family:var(--font-orbitron),system-ui,sans-serif}
             #vg-cortina.vg-off{opacity:0;pointer-events:none}
+            /* v213.1 LA CORTINA VIVA — mitad que faltaba del zombi v212.1: apagar()
+               mutaba className y style.opacity/style.display, atributos que REACT
+               SÍ renderiza en este div (el layout es su dueño desde v212.1) → en
+               rutas de hidratación pesada (/en-vivo, /vertigo: 60 cables) el
+               mismatch recreaba el div y la cortina renacía eterna (apagar() ya
+               corrió sobre un nodo muerto, ni el tope de 20s la mataba: QA vivo
+               lo cazó con cronómetro: VIVO@26s). Cura: el guión SOLO toca
+               atributos que React no conoce — data-vg-off / data-vg-gone — y el
+               CSS hace el resto. Un atributo extra jamás es mismatch: la
+               hidratación reutiliza el nodo, el guión y React comparten casa. */
+            #vg-cortina[data-vg-off="1"]{opacity:0;pointer-events:none}
+            #vg-cortina[data-vg-gone="1"]{display:none}
             /* v184.0 LA CORTINA DE PIEDRA — la ley contra la cortina CONGELADA.
                El Dueño la vio de nuevo (captura real 2026-10-27: «se queda así
                y ya no termina», cortina viva SIN botón y SIN mensaje = los
@@ -588,12 +600,17 @@ try{
   try{ modo2d=(localStorage.getItem('vanguard-modo')==='2d'); }catch(e){}
   if(modo2d) pesado=false;
   function apagar(){
-    if(c.getAttribute('data-off')==='1') return;
-    c.setAttribute('data-off','1'); c.className='vg-off';
+    // v213.1: re-anclar c al nodo VIVO — si una hidratación histórica lo
+    // reemplazó, el tope de 20s mata a la cortina que SE VE, no al cadáver
+    var cLive=document.getElementById('vg-cortina');
+    if(cLive) c=cLive;
+    if(!c||c.getAttribute('data-off')==='1') return;
+    c.setAttribute('data-off','1'); c.setAttribute('data-vg-off','1');
     // v182.0: la casa despertó — el meta de rescate muere YA (la retirada
     // del div ya lo llevaría, pero esto lo desarma al instante)
     try{ var mt=document.getElementById('vg-rescate-meta'); if(mt&&mt.parentNode) mt.parentNode.removeChild(mt); }catch(e){}
-    c.style.opacity='0';
+    // v213.1: la opacidad la pinta el CSS con data-vg-off (transition .65s
+    // intacta) — tocar style.opacity aquí era semilla de mismatch de hidratación
     // v211.1 LA CORTINA ZOMBI — bug cazado en la guerra de QA (iPhone emulado,
     // /vertigo): en las rutas NUEVAS con hidratación pesada (el feed client de
     // EL VÉRTIGO llega tarde), apagar() retiraba el div a los 800ms ANTES de
@@ -605,7 +622,10 @@ try{
     // lo remueve jamás: apagar() solo lo esconde (opacity 0 → display:none).
     // Un nodo escondido mantiene el árbol idéntico para la hidratación y no
     // puede volver como zombi. Coste: un div display:none en la memoria.
-    setTimeout(function(){ if(c&&c.parentNode) c.style.display='none'; },800);
+    // v213.1: display también por atributo (data-vg-gone) — style.display era
+    // la otra semilla de mismatch. El fundido (opacity .65s) termina y a los
+    // 800ms el display:none entra por CSS, sin tocar atributos de React.
+    setTimeout(function(){ var l=document.getElementById('vg-cortina'); if(l&&l.parentNode) l.setAttribute('data-vg-gone','1'); },800);
     // v181.0: la casa queda sola ante el peligro — el vigía confirma que
     // respira (20s en rutas ligeras; 68s en el universo pesado, tras su
     // tope de 60s: si despierta a los 50s la barra se retira sola)
@@ -615,7 +635,7 @@ try{
     // React es el dueño del div; el script solo lo viste de negro)
     document.addEventListener('visibilitychange',function(){
       if(document.visibilityState==='visible'&&c&&c.parentNode&&c.getAttribute('data-off')==='1'){
-        setTimeout(function(){ if(c&&c.parentNode) c.style.display='none'; },150);
+        setTimeout(function(){ var l=document.getElementById('vg-cortina'); if(l&&l.parentNode) l.setAttribute('data-vg-gone','1'); },150);
       }
     });
   }
