@@ -35,6 +35,11 @@ const AutoActualizacion = dynamic(
   () => import("@/components/vanguard/auto-actualizacion").then((m) => m.AutoActualizacion),
   { ssr: false }
 );
+// v210.0 EL REFUGIO: inscripción del service worker (red de seguridad offline)
+const RegistroSW = dynamic(
+  () => import("@/components/vanguard/registro-sw").then((m) => m.RegistroSW),
+  { ssr: false }
+);
 
 export function CapasGlobales() {
   return (
@@ -52,6 +57,8 @@ export function CapasGlobales() {
       <RegresoBanner />
       {/* v207.0 INFINITO: Vanguard se actualiza sola — aviso opt-in, nada se recarga sin permiso (v190) */}
       <AutoActualizacion />
+      {/* v210.0 EL REFUGIO: service worker conservador — activos mudos + refugio sin conexión; HTML jamás cacheado (v125), nada se recarga solo (v190) */}
+      <RegistroSW />
     </MontajeTardio>
   );
 }

@@ -90,7 +90,14 @@ export const metadata: Metadata = {
   creator: "Vanguard Command",
   publisher: "Vanguard Command",
   category: "news",
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    // v210.0 EL REFUGIO: autodescubrimiento del feed — lectores RSS y
+    // agregadores de noticias detectan /feed.xml solos al abrir la Casa.
+    types: {
+      "application/rss+xml": "/feed.xml",
+    },
+  },
   // Robots: indexacion total con fragmentos grandes en resultados
   robots: {
     index: true,

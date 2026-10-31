@@ -1302,6 +1302,37 @@
 //    MISMO teatro (conflictTag + índice nuevo), relleno solo si faltan.
 // QA: tsc 0 · build EXIT 0 · /api/noticias?q= probado · índices verificados
 // en BD real · iconos PNG verificados (contenido + color de marca).
-export const APP_VERSION = "v209.0";
-export const APP_CODENAME = "LA LUPA";
+// v210.0 EL REFUGIO — mandato del Dueño («sigue puliendo», tercera vuelta).
+// Auditoría de red de seguridad: la Casa construía puertas de entrada
+// (v206) pero tenía el suelo agujereado — quien caía en una URL muerta o
+// perdía la red caía fuera de la Casa. 4 heridas curadas:
+// ① NOT-FOUND DE LA CASA: Next.js servía su 404 de fábrica (página blanca,
+//    sin marca, sin salidas) — perdía visitantes y rompía la sala. Ahora
+//    not-found.tsx del refugio: estilo house (zinc-950 + ámbar), «esta sala
+//    no existe» honesto, botones a portada / guerra-hoy / zona-cero, chips
+//    a los 6 teatros vivos (fuente única TEATROS de v206) y la pista
+//    Ctrl+K. noindex + follow: Google sigue el rastro hacia salas vivas.
+// ② SERVICE WORKER CONSERVADOR: la PWA no tenía worker — sin red, la Casa
+//    entera desaparecía. public/sw.js nuevo: activos MUDOS inmutables
+//    (/_next/static con hash, /icons, /vendor, favicon) en cache-first
+//    para que la segunda visita vuele; NAVEGACIONES SIEMPRE POR RED (ley
+//    v125: el HTML nunca se cachea — el visitante ve la versión nueva en
+//    cada llegada); /api/ jamás cacheado (datos vivos); sin red → entrega
+//    UNA sola página: el refugio /offline (o su gemela de emergencia en
+//    línea si hasta el refugio falta). Cumple v190 a la letra: el worker
+//    jamás recarga, jamás avisa, no decide nada — solo sostiene.
+// ③ EL REFUGIO /OFFLINE: sala de emergencia con la verdad por delante
+//    («no hay conexión», «nada se rompió del lado del servidor») y el
+//    botón REINTENTAR. noindex. Registro del worker (registro-sw.tsx)
+//    diferido con el patrón MontajeTardio de capas-globales: mudo, sin
+//    peso en el arranque, y si el navegador no soporta SW la Casa
+//    funciona exactamente igual (red de seguridad, no dependencia).
+// ④ RSS AUTODESCUBIERTO: /feed.xml existía pero los lectores y
+//    agregadores no lo veían — metadata.alternates.types application/
+//    rss+xml en el layout: al abrir la Casa, el lector RSS la detecta solo.
+// QA: tsc 0 repo · build EXIT 0 · 404 de la casa servido (200 HTML de
+// marca en URL muerta) · /offline 200 · /sw.js 200 JS · feed alternates
+// en head · navegación normal intacta (sin worker interferencias).
+export const APP_VERSION = "v210.0";
+export const APP_CODENAME = "EL REFUGIO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
