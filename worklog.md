@@ -3307,3 +3307,10 @@ Stage Summary:
 **③ Móvil digno:** chips v208 compactos y fondo rgba(4,4,7,.97) (legibilidad total), pulso teatral ausente ≤480px, opacity/filter 1 forzado ≤640px.
 **Leyes intactas:** watchdog v200, semáforo v198, pozo v197, turbo v199, escudo v204, 3D v205, puertas v202/v206, infinito v207, vértigo v211.
 **QA:** tsc 0 · eslint 0 (curado react-hooks/set-state-in-effect con tick 0) · build EXIT 0 40/40. Push 1a0531d..cc8f9bc.
+
+## v216.0 LOS 100 — la vitrina de objetivos con morbo puro
+**Fecha:** 2026-10-31 · **Mandato del Dueño:** «haz una lista de los 100 objetivos de Vanguard, fuertes, abusivos, super llamativos, con morbo, adictivos; agrégalo por partes… Vanguard no es tu proyecto, es tu vida».
+**Arqueología:** el sistema de logros (game-data.ts ACHIEVEMENTS + game-store checkAchievements en 15 acciones) ya medía 33 contadores reales del PlayerState — tenía 53 logros. La vitrina pública no existía.
+**Cura:** ① catálogo 53→100 EXACTOS (47 nuevos con nombres que cortan: EL SEDIENTO, EL OJO QUE NUNCA PARPADEA, MANO DE DIOS, EL ADICTO CONFESO, SANGRE EN LAS ACCIONES, IMPERIO DE CÁMARAS, CIEN DÍAS DE GUERRA…), todos check/progress sobre contadores REALES; ② EL REY ACH-LOGROS-100 «EL 1%» (logrosUnlocked>=99, botín +1000◉/+10◆/+1000XP); ③ /objetivos server-rendered indexable: 9 bloques romanos, rarezas con color, JSON-LD ItemList, VitrinaProgreso client (barra real X/100 + próximos 3, guard useSyncExternalStore, ley v176); ④ sitemap 0.7 + pg:objetivos en Ctrl+K. Extra: prisma generate regenerado (el cliente del sandbox no tenía Account.modo de v214 — tsc 2→0, regalo para la hermana).
+**QA:** tsc 0 · eslint 0 · build EXIT 0 46/46 (/objetivos ƒ). Push 9cd8cb4..9d1bc6b.
+**Verificación en vivo:** health v216.0 + /objetivos 200 con las 100 tarjetas.
