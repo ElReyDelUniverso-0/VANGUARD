@@ -1,4 +1,44 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v215.0 EL MUNDO — mandato del Dueño: «mejora las guerras 3D, osea como los
+//         teatros; Vanguard debe ser un MUNDO 3D donde se vea EN VIVO las
+//         guerras de todo el mundo, ciudades y lugares importantes 3D; un
+//         modo de espiar el gobierno; un modo traductor en los idiomas de
+//         Vanguard; la más alta calidad, fuerza y nunca errores».
+// ① /mundo — EL MUNDO 3D: el planeta entero girando (motor GlobeMap3D de la
+//    casa, globe.gl + polígonos reales): teatros de guerra ENCIENDIDOS por
+//    cables reales de 24 h (anillo pulsante, color por intensidad, el último
+//    titular en su etiqueta), 28 PLAZAS DEL PODER (gobiernos, ONU, OTAN y
+//    gargantas: Ormuz, Babel-Mandeb, Suez, Panamá, Malaca, Zaporiyia,
+//    Ártico), 6 ARCOS de fricción (Rusia▸Ucrania, Irán▸Israel, China▸Taiwán,
+//    Coreas, Yemen▸Mar Rojo, Pakistán▸India) y territorios teñidos por
+//    tensión. Vista OSCURIDAD/SATÉLITE/NOCHE·ciudades; sondeo /api/mundo
+//    cada 60 s (solo con pestaña visible), ?teatro= enfoca, la rotación se
+//    detiene al seleccionar (reactividad nueva en GlobeMap3D, sin tocar a
+//    nadie), reduced-motion respeta la calma, la página JAMÁS se recarga
+//    (ley v190). Server-render con instantánea en el primer byte + JSON-LD
+//    CollectionPage + noscript honesto. /api/mundo: muro objeto 30/min.
+// ② /espia — MODO ESPÍA (radar de gobiernos): la honestidad como técnica —
+//    espía SOLO lo que los gobiernos PUBLICAN: ① índice de tensión por
+//    teatro (24 h contra media de 7 días, tendencia ▲▼▶), ② escuchas
+//    oficiales RSS (ONU Noticias, OTAN, Defensa EEUU, Casa Blanca, Acción
+//    Exterior UE) con reloj de 4.5 s, caché de módulo 10 min y «SIN SEÑAL»
+//    honesto (nunca un titular inventado), ③ movimientos de gobierno de la
+//    BD real (olor a gobierno/diplomacia). Sondeo manual (botón) — nada
+//    automático que no sea dato. revalidate 180.
+// ③ /traductor — MODO TRADUCTOR: los 8 idiomas de Vanguard (ES·EN·PT·FR·DE
+//    ·IT·ZH·RU) en UNA fuente (lib/idiomas.ts, compartida con /api/traductor
+//    y el chip); estudio completo (texto libre ⇄ con núcleo IA + glosario de
+//    emergencia) y «LAS ÚLTIMAS NOTICIAS EN TU IDIOMA» (cables reales de
+//    /api/pulso traducidos al vuelo). /api/traductor entra al muro (20/min,
+//    ley v211) y deja de tener su catálogo duplicado. Chip TRADUCIR ⇄ en
+//    CADA /noticia (recuerda tu idioma en vg-traductor-idioma).
+// PUERTAS: banners EL MUNDO en portada y /guerra-hoy, «VER EN EL MUNDO 3D»
+//    en cada /conflicto/[tag] (→ /mundo?teatro=), MUNDO ● en la barra de
+//    cada noticia, barra compartida de las 3 puertas nuevas (barra-mundo),
+//    pg:mundo/pg:espia/pg:traductor en Ctrl+K, sitemap 0.9/0.8/0.7.
+// Leyes intactas: v125, v189, v190, v200, v201, v211 (muro objeto), v213,
+//    v214. QA: tsc 0 · eslint 0 · build EXIT 0 · /mundo, /espia, /traductor,
+//    /api/mundo, chip y sitemap verificados con servidor vivo.
 // v214.0 LA PUERTA — mandato del Dueño: «agrega el permiso de hablar con la
 //         voz de Vanguard y hacer que las personas se registren (hacer cuenta)
 //         y poner un modo de seleccionar dónde quiere ir o qué quieren hacer».
@@ -1473,6 +1513,6 @@
 //  visible en cada cable; /api/pulso y /en-vivo excluyen las curadas
 //  de respaldo — la última hora no lleva relleno. QA: tsc 0, build ok,
 //  /api/pulso items reales sin curated-*, banner, calientes, muro.
-export const APP_VERSION = "v214.0";
-export const APP_CODENAME = "LA PUERTA";
+export const APP_VERSION = "v215.0";
+export const APP_CODENAME = "EL MUNDO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

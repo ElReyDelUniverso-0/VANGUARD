@@ -196,12 +196,21 @@ export default async function ConflictoPage({
             Este teatro se traza en el <strong className="text-amber-300">mapa OSINT 3D</strong> de
             Vanguard, con alertas en vivo y sala de guerra multijugador. Gratis, sin instalar nada.
           </p>
-          <Link
-            href="/"
-            className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm uppercase tracking-wider rounded px-5 py-2.5 transition-colors"
-          >
-            Entrar al mundo en vivo →
-          </Link>
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* v215.0 EL MUNDO — el teatro vive EN el planeta 3D */}
+            <Link
+              href={`/mundo?teatro=${tag}`}
+              className="border border-amber-500/50 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 font-mono text-[11px] uppercase tracking-widest rounded px-4 py-2.5 transition-colors"
+            >
+              Ver en el mundo 3D ▸
+            </Link>
+            <Link
+              href="/"
+              className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm uppercase tracking-wider rounded px-5 py-2.5 transition-colors"
+            >
+              Entrar al mundo en vivo →
+            </Link>
+          </div>
         </div>
 
         {/* cables del teatro */}

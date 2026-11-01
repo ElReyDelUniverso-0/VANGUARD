@@ -6,6 +6,8 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v211.0 EL VÉRTIGO — el up next (fórmula YouTube) en la sala de lectura
 import { SiguienteChip } from "@/components/noticia/siguiente-chip";
+// v215.0 MODO TRADUCTOR — el cable en los 8 idiomas de Vanguard
+import { TraductorChip } from "@/components/noticia/traductor-chip";
 
 // v202.0 PUERTAS ABIERTAS — cada noticia es UNA PUERTA propia de entrada.
 // Antes: todas las noticias regalaban el click a la fuente externa con
@@ -212,6 +214,13 @@ export default async function NoticiaPage({
             >
               VÉRTIGO ▸▸
             </Link>
+            {/* v215.0 EL MUNDO — el planeta en 3D a un toque de cada cable */}
+            <Link
+              href="/mundo"
+              className="font-mono text-[10px] uppercase tracking-widest text-amber-400/90 hover:text-amber-300"
+            >
+              MUNDO ●
+            </Link>
             <Link
               href="/guerra-hoy"
               className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300"
@@ -249,6 +258,9 @@ export default async function NoticiaPage({
             {it.summary}
           </p>
         )}
+
+        {/* v215.0 MODO TRADUCTOR — el cable en los idiomas de Vanguard */}
+        <TraductorChip titulo={it.title} resumen={it.summary ?? ""} />
 
         <img
           src={img}

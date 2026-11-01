@@ -659,6 +659,17 @@ try{
   function vigia(){
     try{
       if(window.__vgvivo===true) return;
+      // v215.0 LA SEÑAL HONESTA POR RUTA — bug cazado en QA del Mundo: en las
+      // páginas SERVER (/mundo, /espia, /traductor, /en-vivo, /guerra-hoy,
+      // /vertigo, /noticia…) el contenido visible NACE del HTML del servidor;
+      // si la cortina ya se fundió, la casa respira — hidrate o no el bundle.
+      // El vigía solo juzga a quien lo necesita de verdad: la Casa SPA ("/")
+      // y el universo /vanguard2, donde sin hidratación la pantalla es vacío.
+      var esSPA=(location.pathname==='/'||location.pathname.indexOf('/vanguard2')===0);
+      if(!esSPA){
+        var cL=document.getElementById('vg-cortina');
+        if(!cL||cL.getAttribute('data-off')==='1') return;
+      }
       var b=document.createElement('div');
       b.id='vg-vigia';
       b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:rgba(7,6,6,.94);border-top:1px solid rgba(232,196,118,.4);color:#e8c476;font:600 11px/1.5 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap';

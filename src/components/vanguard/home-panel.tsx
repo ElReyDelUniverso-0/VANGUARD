@@ -396,6 +396,31 @@ export function HomePanel() {
         </p>
       </Link>
 
+      {/* v215.0 EL MUNDO — el planeta 3D en vivo: la casa entera en un globo */}
+      <Link
+        href="/mundo"
+        className="group block border border-amber-500/40 bg-gradient-to-r from-amber-950/50 via-zinc-950/40 to-transparent rounded-md p-4 hover:border-amber-400/80 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />
+            En vivo · 3D
+          </span>
+          <span className="font-display text-lg sm:text-xl font-black tracking-wide text-soft group-hover:text-amber-200 transition-colors">
+            EL MUNDO 3D — el planeta entero, girando en vivo
+          </span>
+        </div>
+        <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
+          Todas las guerras del mundo encendidas en un globo 3D: teatros con sus
+          cables reales de 24 h, gobiernos, la ONU y la OTAN, y las gargantas
+          estratégicas (Ormuz, Suez, Babel-Mandeb…). Arrastra, acércate, toca
+          cualquier marca — y espía a los gobiernos en MODO ESPÍA.
+        </p>
+        <p className="mt-1.5 font-mono text-[10px] text-amber-300 uppercase tracking-widest">
+          Abrir el mundo →
+        </p>
+      </Link>
+
       {/* v52.0 ZONA CERO — la ciudad que cae en vivo */}
       <Link
         href="/zona-cero"

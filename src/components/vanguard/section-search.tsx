@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -206,6 +206,27 @@ export function SectionSearch({
         icon: <Globe className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · tu puerta de entrada", icon_color: "text-amber",
         kind: "page", href: "/modo",
+      },
+      {
+        // v215.0 EL MUNDO — el planeta 3D en vivo entra al índice total
+        key: "pg:mundo", label: "EL MUNDO 3D — el planeta en vivo: guerras, gobiernos y gargantas", short: "mundo 3d globo planeta guerras en vivo mapa tierra",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el planeta girando en vivo", icon_color: "text-amber",
+        kind: "page", href: "/mundo",
+      },
+      {
+        // v215.0 MODO ESPÍA — el radar de gobiernos entra al índice total
+        key: "pg:espia", label: "MODO ESPÍA — radar de gobiernos, escuchas oficiales y tensión", short: "espia gobierno radar escuchas osint inteligencia oficiales",
+        icon: <Eye className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · lo que los gobiernos publican", icon_color: "text-red-hud",
+        kind: "page", href: "/espia",
+      },
+      {
+        // v215.0 MODO TRADUCTOR — los 8 idiomas de Vanguard al índice total
+        key: "pg:traductor", label: "MODO TRADUCTOR — las noticias del mundo en tu idioma", short: "traductor idiomas traducir ingles chino ruso frances portugues",
+        icon: <Languages className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · 8 idiomas, cero barreras", icon_color: "text-amber",
+        kind: "page", href: "/traductor",
       },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({

@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { createZAI } from "@/lib/zai-server";
+// v215.0: el catálogo de idiomas vive en UNA sola fuente compartida con
+// /traductor y el chip de noticia; el traductor entra al muro de la casa.
+import { IDIOMAS_VANGUARD, NOMBRES_IDIOMA } from "@/lib/idiomas";
+import { muro, claveCliente } from "@/lib/fortaleza";
 
 // v94.0 GOOGLES TOTAL — TRADUCTOR DE VANGUARD
 // El traductor de la suite: 8 idiomas del juego (es/en/pt/fr/de/it/zh/ru).
@@ -13,18 +17,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export const IDIOMAS: Array<{ code: string; nombre: string }> = [
-  { code: "es", nombre: "Español" },
-  { code: "en", nombre: "Inglés" },
-  { code: "pt", nombre: "Portugués" },
-  { code: "fr", nombre: "Francés" },
-  { code: "de", nombre: "Alemán" },
-  { code: "it", nombre: "Italiano" },
-  { code: "zh", nombre: "Chino" },
-  { code: "ru", nombre: "Ruso" },
-];
+export const IDIOMAS = IDIOMAS_VANGUARD;
 
-const NOMBRES: Record<string, string> = Object.fromEntries(IDIOMAS.map((i) => [i.code, i.nombre]));
+const NOMBRES = NOMBRES_IDIOMA;
 
 interface RespTraductor {
   traduccion: string;
@@ -82,6 +77,15 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  // v215.0 lección heredada: muro() devuelve VeredictoMuro (objeto), no booleano.
+  // 20/min por cliente: el humano traduce con calma, el scraper se estrella.
+  const veredictoMuro = muro(`traductor:${claveCliente(req)}`, 20, 60_000);
+  if (!veredictoMuro.permitido) {
+    return NextResponse.json(
+      { error: "El traductor respira — espera un momento", ia: false, ms: 0 },
+      { status: 429 }
+    );
+  }
   const t0 = Date.now();
   let body: { texto?: string; de?: string; a?: string } = {};
   try { body = await req.json(); } catch { /* cuerpo vacío */ }

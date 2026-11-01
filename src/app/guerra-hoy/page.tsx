@@ -193,6 +193,30 @@ export default async function GuerraHoyPage() {
             Abrir la sala en vivo →
           </p>
         </Link>
+        {/* v215.0 EL MUNDO — el planeta 3D en vivo en la puerta de Google */}
+        <Link
+          href="/mundo"
+          className="group block border border-amber-500/50 bg-gradient-to-r from-amber-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-amber-400 transition-colors"
+        >
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />
+              En vivo · 3D
+            </span>
+            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-amber-200 transition-colors">
+              EL MUNDO 3D — el planeta, girando en vivo
+            </span>
+          </div>
+          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
+            Todas las guerras del mundo encendidas en un globo 3D: teatros con
+            sus cables de 24 h, gobiernos, ONU, OTAN y las gargantas
+            estratégicas del planeta. Arrastra para rotar, toca cualquier marca
+            — o espía a los gobiernos en el MODO ESPÍA.
+          </p>
+          <p className="mt-2 font-mono text-[11px] text-amber-300 uppercase tracking-widest">
+            Abrir el mundo →
+          </p>
+        </Link>
         {/* v211.0 EL VÉRTIGO — la fórmula TikTok: el feed infinito en la puerta
             de Google (el visitante de «guerra hoy» es puro deslizamiento) */}
         <Link

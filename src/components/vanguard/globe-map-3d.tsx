@@ -268,6 +268,20 @@ export function GlobeMap3D({
     }
   }, [viewMode]);
 
+  // ===== v215.0 EL MUNDO — rotación viva: autoRotate/rotateSpeed reaccionan
+  // en caliente (el globo se detiene cuando seleccionas un teatro y respira
+  // de nuevo al soltarlo). Los paneles que pasan constantes no cambian nada.
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    try {
+      globe.controls().autoRotate = autoRotate && !document.hidden;
+      globe.controls().autoRotateSpeed = rotateSpeed;
+    } catch {
+      /* noop */
+    }
+  }, [autoRotate, rotateSpeed]);
+
   // ===== v31 vuelo de camara (vistas rapidas / conflicto seleccionado) =====
   useEffect(() => {
     const globe = globeRef.current;

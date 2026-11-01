@@ -95,6 +95,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // v215.0 EL MUNDO — el planeta 3D en vivo: guerras, gobiernos y
+      // gargantas estratégicas en un globo interactivo
+      url: `${SITE_URL}/mundo`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    },
+    {
+      // v215.0 MODO ESPÍA — radar de gobiernos en fuentes abiertas
+      url: `${SITE_URL}/espia`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.8,
+    },
+    {
+      // v215.0 MODO TRADUCTOR — las noticias del mundo en 8 idiomas
+      url: `${SITE_URL}/traductor`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
       // v214.0 LA PUERTA — el selector de modo + cuenta: la puerta de
       // entrada elegible (VÉRTIGO / EN VIVO / GUERRA HOY / ZONA CERO…)
       url: `${SITE_URL}/modo`,
