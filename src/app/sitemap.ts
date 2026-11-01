@@ -87,6 +87,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      // v216.0 LOS 100 — la vitrina de objetivos: la puerta de la adicción
+      url: `${SITE_URL}/objetivos`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v211.0 EL VÉRTIGO — el feed infinito: puerta para el público de
       // deslizamiento (la fórmula TikTok indexable por Google)
       url: `${SITE_URL}/vertigo`,

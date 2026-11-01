@@ -1513,6 +1513,30 @@
 //  visible en cada cable; /api/pulso y /en-vivo excluyen las curadas
 //  de respaldo — la última hora no lleva relleno. QA: tsc 0, build ok,
 //  /api/pulso items reales sin curated-*, banner, calientes, muro.
-export const APP_VERSION = "v215.0";
-export const APP_CODENAME = "EL MUNDO";
+//
+// v216.0 LOS 100 — mandato del Dueño («haz una lista de los 100 objetivos
+// de Vanguard, fuertes, abusivos, super llamativos, con morbo, adictivos;
+// agrégalo por partes»). La vitrina que engancha y no suelta:
+//  ① EL CATÁLOGO: 53 → 100 EXACTOS en game-data.ts (47 objetivos nuevos),
+//    todos cableados a contadores REALES del PlayerState (viewedNews,
+//    streak, betsWon, marketTrades, mpCaptures, cameraIncome, logros…)
+//    — progreso de verdad, no carteles. Nombres que cortan: EL SEDIENTO,
+//    EL OJO QUE NUNCA PARPADEA, MANO DE DIOS, EL ADICTO CONFESO, EL MÁS
+//    RICO DEL MUNDO, SANGRE EN LAS ACCIONES, IMPERIO DE CÁMARAS…
+//  ② EL REY: ACH-LOGROS-100 «EL 1%» — solo cae cuando los otros 99 son
+//    tuyos (check logrosUnlocked>=99; el snapshot de checkAchievements
+//    lo desbloquea en el siguiente chequeo — estable y honesto).
+//    Botín supremo: +1000 mon◉ +10 gemas +1000 XP.
+//  ③ LA VITRINA /objetivos: página server-rendered e indexable — 100
+//    tarjetas en 9 bloques (El ascenso, El sediento, Sin parpadear, La
+//    conquista, El dinero, El vicio, Los ojos, La voz, La leyenda),
+//    rarezas con color (COMUN/RARO/EPICO/LEGENDARIO), botín a la vista,
+//    JSON-LD ItemList (jsonLdSeguro), canonical y bloque client
+//    VitrinaProgreso (progreso real del store, diferido, cero mismatch,
+//    ley v176 sin setState en effects).
+//  ④ PUERTAS: sitemap weekly 0.7 + pg:objetivos en la paleta Ctrl+K.
+// Los 100 también lucen en el panel de logros del SPA SIN tocar nada:
+// achievements-panel itera ACHIEVEMENTS — los nuevos aparecen solos.
+export const APP_VERSION = "v216.0";
+export const APP_CODENAME = "LOS 100";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

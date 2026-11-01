@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -199,6 +199,13 @@ export function SectionSearch({
         icon: <Newspaper className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la redacción abierta 24 h", icon_color: "text-red-hud",
         kind: "page", href: "/en-vivo",
+      },
+      {
+        // v216.0 LOS 100 — la vitrina de objetivos entra al índice total
+        key: "pg:objetivos", label: "LOS 100 OBJETIVOS — la vitrina que casi nadie termina (¿llegarás al 1%?)", short: "objetivos logros desafios recompensas monedas gemas 1% vitrina",
+        icon: <Trophy className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la vitrina de la adicción", icon_color: "text-amber",
+        kind: "page", href: "/objetivos",
       },
       {
         // v214.0 LA PUERTA — el modo y la cuenta entran al índice total
