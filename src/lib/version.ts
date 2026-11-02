@@ -1,4 +1,25 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v217.0 LA EMISORA — mandato del Dueño: «ve mejorando la voz de Vanguard,
+//         que hable más de guerra, tenga más información que explique y
+//         pueda cambiar la voz; agrega el permiso de uno enviar audios a
+//         Vanguard y uno crear una cuenta de verdad de Vanguard».
+// ① EMISOR DE GUERRA (src/lib/emisor-guerra.ts): el parte que EXPLICA —
+//    datos REALES de la BD (cables/24h por teatro con groupBy + último
+//    titular) + dossier del teatrólogo (qué es y por qué pesa cada frente:
+//    Ucrania, Gaza, Ormuz, Taiwán, Sahel, Mar Rojo, Coreas, Sudán, Líbano).
+// ② CONSEJO DE VOCES +2: COMANDANTE (grave, voz de mando) y CORRESPONSAL
+//    (terreno, rápida). /audios muestra los 6 chips: tocar = probar y
+//    dejar elegida; el ajuste fino sigue en VG-ASSIST (v196).
+// ③ /audios — LA EMISORA: PARTE DE GUERRA COMPLETO al aire (hablarAgente,
+//    anti-traba v196, respeta MUTE) + GRABADOR: permiso de micrófono
+//    (getUserMedia, vigía 12 s), MediaRecorder ≤90 s, envío base64 →
+//    POST /api/audios (muro 10/h, techo 3 MB) → bytes en MediaFile
+//    (kind="audio") + rótulo en AudioComandante (nuevo modelo); GET lista
+//    30 con URL /api/media/[id]; muro con reproductor en la página.
+// ④ CUENTA REAL: ya viva desde v15/v102/v195 (API auth + modal CREAR
+//    CUENTA +300 mon + ritual v213); en /audios su puerta explicada con
+//    CTA, y el nombre de la cuenta firma los audios.
+// ⑤ PUERTAS: sitemap daily 0.7 + chip de voz nueva en el Consejo.
 // v215.0 EL MUNDO — mandato del Dueño: «mejora las guerras 3D, osea como los
 //         teatros; Vanguard debe ser un MUNDO 3D donde se vea EN VIVO las
 //         guerras de todo el mundo, ciudades y lugares importantes 3D; un
@@ -1537,6 +1558,6 @@
 //  ④ PUERTAS: sitemap weekly 0.7 + pg:objetivos en la paleta Ctrl+K.
 // Los 100 también lucen en el panel de logros del SPA SIN tocar nada:
 // achievements-panel itera ACHIEVEMENTS — los nuevos aparecen solos.
-export const APP_VERSION = "v216.0";
-export const APP_CODENAME = "LOS 100";
+export const APP_VERSION = "v217.0";
+export const APP_CODENAME = "LA EMISORA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

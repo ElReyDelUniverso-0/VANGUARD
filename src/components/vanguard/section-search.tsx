@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -206,6 +206,13 @@ export function SectionSearch({
         icon: <Trophy className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la vitrina de la adicción", icon_color: "text-amber",
         kind: "page", href: "/objetivos",
+      },
+      {
+        // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
+        key: "pg:audios", label: "EMISORA DE GUERRA — el parte hablado y manda tu audio a Vanguard", short: "audios voz micro grabar radio emisora comandante parte hablar escuchar",
+        icon: <Mic className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la emisora de la casa", icon_color: "text-amber",
+        kind: "page", href: "/audios",
       },
       {
         // v214.0 LA PUERTA — el modo y la cuenta entran al índice total

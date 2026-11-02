@@ -94,6 +94,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
+      url: `${SITE_URL}/audios`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
       // v211.0 EL VÉRTIGO — el feed infinito: puerta para el público de
       // deslizamiento (la fórmula TikTok indexable por Google)
       url: `${SITE_URL}/vertigo`,

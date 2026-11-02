@@ -656,3 +656,17 @@ model MediaFile {
   data      Bytes
   createdAt DateTime @default(now())
 }
+
+// v217.0 LA EMISORA — audios que los comandantes mandan a Vanguard.
+// Los bytes viven en MediaFile (kind="audio", techo 4 MB del sistema);
+// aquí solo el rótulo del muro: quién mandó, qué dice y cuánto dura.
+model AudioComandante {
+  id        String   @id @default(cuid())
+  autor     String   // nombre del comandante (o INVITADO)
+  titulo    String   // lo que quiere que Vanguard sepa
+  duracion  Int      // segundos grabados (techo 90)
+  mediaId   String   // MediaFile.id — el audio en sí
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

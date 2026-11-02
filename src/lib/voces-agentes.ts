@@ -35,7 +35,16 @@
 
 import { isMuted } from "./sound";
 
-export type VozAgenteId = "centinela" | "analista" | "assist" | "narrador";
+// v217.0 LA EMISORA — el Consejo crece: COMANDANTE (voz de mando, grave y
+// seca, para el parte de guerra) y CORRESPONSAL (voz de terreno, rápida,
+// la que relata desde el frente). Mismo motor, mismas leyes.
+export type VozAgenteId =
+  | "centinela"
+  | "analista"
+  | "assist"
+  | "narrador"
+  | "comandante"
+  | "corresponsal";
 
 export interface PerfilVoz {
   id: VozAgenteId;
@@ -96,6 +105,28 @@ export const VOCES_ROSTER: Record<VozAgenteId, PerfilVoz> = {
     rate: 0.9,
     langs: ["es-ES", "es-ES", "es-MX", "es-419", "es"],
     offset: 3,
+  },
+  comandante: {
+    id: "comandante",
+    nombre: "COMANDANTE",
+    rol: "Emisora de guerra · el parte completo",
+    color: "#FFD34D",
+    frase: "Aquí el comandante. El frente habla y yo lo relato. Atención.",
+    pitch: 0.62,
+    rate: 0.86,
+    langs: ["es-ES", "es-ES", "es-MX", "es-419", "es"],
+    offset: 4,
+  },
+  corresponsal: {
+    id: "corresponsal",
+    nombre: "CORRESPONSAL",
+    rol: "Desde el terreno · relato rápido",
+    color: "#4DE0FF",
+    frase: "Aquí el corresponsal de Vanguard, desde donde el mundo se mueve.",
+    pitch: 1.0,
+    rate: 1.02,
+    langs: ["es-419", "es-MX", "es-ES", "es-419", "es"],
+    offset: 5,
   },
 };
 
