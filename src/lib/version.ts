@@ -1590,6 +1590,28 @@
 //  ④ PUERTAS: sitemap weekly 0.7 + pg:objetivos en la paleta Ctrl+K.
 // Los 100 también lucen en el panel de logros del SPA SIN tocar nada:
 // achievements-panel itera ACHIEVEMENTS — los nuevos aparecen solos.
-export const APP_VERSION = "v222.0";
-export const APP_CODENAME = "LA PLUMA";
+//
+// v223.0 EL BARÓMETRO — AGENT 2 tarea 5 (TURNO AUTOMÁTICO, cron 500735):
+//  mandato cola (e) «nuevas fuentes públicas respetando cuotas/licencias»
+//  + cierre del eslabón MAPAS que v220 dejó pendiente: mapa →
+//  acontecimiento → país → INDICADORES → fuente.
+//  ① FUENTE NUEVA: API v2 del Banco Mundial (gratuita, SIN clave,
+//    licencia CC BY 4.0). Resumen propio de qué mide cada indicador +
+//    año del dato + ENLACE AL ORIGINAL (datos.bancomundial.org) —
+//    atribución preservada, nada presentado como propio.
+//  ② src/lib/nucleo/indicadores.ts: 4 indicadores VERIFICADOS en vivo
+//    (SP.POP.TOTL población · NY.GDP.MKTP.CD PIB · MS.MIL.XPND.GD.ZS
+//    gasto militar % PIB · SM.POP.TOTL stock migratorio) para las 15
+//    naciones de RELACION_PAIS_TEATRO (ISO3_POR_ISO2, Taiwán declarado
+//    aunque el Banco Mundial no lo cubra). CUOTA: 4 peticiones por
+//    refresco (batch multi-país + mrnev=1) con cache 6 h (5 min si la
+//    red falla). CERO valores en el código: los números SOLO entran
+//    por la API; sin cobertura o sin red → nota honesta, nada fingido.
+//  ③ ficha vg:pais (relaciones.ts + /nucleo server): bloque
+//    «INDICADORES REALES» con valores formateados en español, año y
+//    enlace verificable al original; /api/nucleo/entidad lo sirve por
+//    contrato (aditivo). fnt:indicadores en la frontera pública
+//    (patrón fnt:escuchas: fuente real sin proveedor de búsqueda).
+export const APP_VERSION = "v223.0";
+export const APP_CODENAME = "EL BARÓMETRO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

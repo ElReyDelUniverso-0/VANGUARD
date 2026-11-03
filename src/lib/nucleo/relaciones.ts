@@ -25,6 +25,7 @@ import {
   cronologiaDeAcontecimiento,
 } from "./acontecimientos";
 import { geografiaDeTeatro, metaGeografia, type GeografiaTeatro } from "./geografia";
+import { indicadoresDePais, type FichaIndicadores } from "./indicadores";
 import {
   idEntidad,
   partesDeId,
@@ -259,6 +260,7 @@ export interface FichaEntidad {
   vive?: string; // dónde vive de verdad (transparencia)
   total?: number; // conteo real asociado (cables, etc.)
   geografia?: GeografiaTeatro; // mapa del frente con procedencia (v220 EL CARTÓGRAFO)
+  indicadores?: FichaIndicadores; // barómetro real del Banco Mundial (v223 EL BARÓMETRO)
 }
 
 /** Cables reales recientes por filtros — helper interno con fallo honesto. */
@@ -303,6 +305,10 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
     if (!p && total === 0) {
       return { ok: false, error: `País sin ficha ni cables en el archivo: ${clave.toUpperCase()}` };
     }
+    // v223 EL BARÓMETRO: indicadores reales del Banco Mundial para las
+    // naciones del eslabón MAPAS. null = país fuera del eslabón (sin
+    // bloque, sin ruido); el bloque NUNCA inventa: sin datos → nota.
+    const barometro = await indicadoresDePais(clave);
     return {
       ok: true,
       entidad: { id: idEntidad("pais", clave), tipo, nombre: p?.nombre ?? clave.toUpperCase() },
@@ -321,6 +327,7 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
       enlaces: enlacesDePais(clave),
       cables: lista,
       vive: p ? "Atlas de naciones (fnt:atlas)" : "Archivo de cables (fnt:cables)",
+      ...(barometro ? { indicadores: barometro } : {}),
     };
   }
 

@@ -26,6 +26,8 @@ El Núcleo es la capa compartida del ecosistema Vanguard. Cualquier módulo
 | `fuentes.ts` | `FUENTES_PUBLICAS` / `FUENTES_PRIVADAS` + el contrato `ProveedorBusqueda` / `ResultadoNucleo`. |
 | `busqueda.ts` | El motor server-only: 9 proveedores públicos en paralelo, guarda de frontera, fallo honesto. |
 | `acontecimientos.ts` | **v219 EL HISTORIADOR**: la semilla de los 9 acontecimientos reales (fecha histórica pública), la siembra idempotente con enlaces `regla:teatro` y las consultas de cronología. |
+| `geografia.ts` | **v220 EL CARTÓGRAFO**: la geografía de los teatros con procedencia/precisión (cero coordenadas inventadas). |
+| `indicadores.ts` | **v223 EL BARÓMETRO**: los indicadores REALES del Banco Mundial (CC BY 4.0, con enlace al original) para las naciones del eslabón MAPAS. Batch de 4 peticiones + cache 6 h; sin cobertura o sin red → nota honesta. |
 | `relaciones.ts` | Geografía real país↔teatro, `enlacesDeRegion/Pais/Cable/Modulo` y `fichaEntidad(id)`. |
 | `../api/nucleo/*` | Las 4 APIs: `busqueda?q=`, `entidad?id=`, `modulos`, `acontecimientos` — todas con muro (ley v211). |
 | `../../app/nucleo/page.tsx` | El salón central: censo, mapa de entidades, búsqueda, ficha de entidad (`?id=`), frontera de datos. |

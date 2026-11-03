@@ -149,6 +149,31 @@ async function parteA() {
     afirmar(mundo.includes("useMemo"), "el globo vivo re-digiere sus datos en cada toque");
     afirmar(mundo.includes('ssr: false'), "el globo ya no viaja diferido (dynamic ssr:false)");
   });
+
+  await verificar("EL BARÓMETRO: catálogo sin un solo valor inventado y mapa honesto (v223)", () => {
+    const rutaInd = join(RAIZ, "src/lib/nucleo/indicadores.ts");
+    const ind = existsSync(rutaInd) ? readFileSync(rutaInd, "utf8") : "";
+    afirmar(ind.length > 0, "src/lib/nucleo/indicadores.ts no existe");
+    // los 4 códigos verificados en vivo contra la API v2 del Banco Mundial
+    for (const codigo of ["SP.POP.TOTL", "NY.GDP.MKTP.CD", "MS.MIL.XPND.GD.ZS", "SM.POP.TOTL"]) {
+      afirmar(ind.includes(`"${codigo}"`), `falta el indicador ${codigo}`);
+    }
+    // CERO números como datos: ningún campo valor/texto lleva literal —
+    // los números SOLO entran por la API (ley: no se inventan hechos)
+    afirmar(!/valor:\s*["']?\d/.test(ind) && !/texto:\s*["']?\d/.test(ind), "el catálogo lleva valores escritos a mano — invención");
+    afirmar(ind.includes("CC BY 4.0"), "sin licencia declarada en el módulo");
+    afirmar(ind.includes("datos.bancomundial.org"), "sin enlace al original en el módulo");
+    // el mapa ISO3 cubre EXACTAMENTE las naciones del eslabón MAPAS
+    const rel = readFileSync(join(RAIZ, "src/lib/nucleo/relaciones.ts"), "utf8");
+    const bloqueRel = (rel.match(/RELACION_PAIS_TEATRO[^{]*\{([\s\S]*?)\};/) ?? [])[1] ?? "";
+    const eslabon = new Set([...bloqueRel.matchAll(/"([a-z]{2})"/g)].map((m) => m[1]));
+    const mapa = new Set([...ind.matchAll(/^\s{2}([a-z]{2}): "[A-Z]{3}",$/gm)].map((m) => m[1]));
+    afirmar(eslabon.size > 0, "no se pudo leer RELACION_PAIS_TEATRO");
+    for (const iso of eslabon) afirmar(mapa.has(iso), `el eslabón pide ${iso} y el barómetro no lo cubre`);
+    for (const iso of mapa) afirmar(eslabon.has(iso), `el barómetro cubre ${iso} fuera del eslabón MAPAS`);
+    // la frontera declara la fuente nueva
+    afirmar(fuentes.includes("fnt:indicadores"), "fnt:indicadores no está en la frontera pública");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -168,10 +193,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v222.0", async () => {
+  await verificar("servidor vivo y en v223.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v222"), `versión ${r.json?.version} ≠ v222`);
+    afirmar(String(r.json?.version).startsWith("v223"), `versión ${r.json?.version} ≠ v223`);
   });
 
   // censo por API
@@ -297,9 +322,42 @@ async function parteB() {
     afirmar((r.json.cables ?? []).every((c) => c.ruta.startsWith("/noticia/")), "cable sin ruta de noticia");
   });
 
+  // ── v223.0 EL BARÓMETRO: indicadores reales del Banco Mundial ──
+  await verificar("EL BARÓMETRO: ficha vg:pais:ua lleva INDICADORES REALES con atribución", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:pais:ua")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    const ind = r.json.indicadores;
+    afirmar(!!ind, "la ficha de país no lleva el bloque de indicadores");
+    afirmar(ind.fuente?.licencia?.includes("CC BY 4.0"), "sin licencia CC BY 4.0 declarada");
+    afirmar(/bancomundial\.org|worldbank\.org/.test(ind.fuente?.enlace ?? ""), "fuente sin enlace al original");
+    if (ind.valores.length > 0) {
+      // con red: cada valor lleva año plausible y enlace verificable al original
+      const hoy = new Date().getFullYear();
+      for (const v of ind.valores) {
+        afirmar(v.anio >= 2015 && v.anio <= hoy + 1, `año imposible (${v.anio}) en ${v.codigo}`);
+        afirmar(typeof v.texto === "string" && v.texto.length > 0, `valor sin texto en ${v.codigo}`);
+        afirmar(v.enlaceOriginal?.includes("bancomundial.org"), `sin enlace al original en ${v.codigo}`);
+      }
+      const pob = ind.valores.find((v) => v.codigo === "SP.POP.TOTL");
+      if (pob) afirmar(/\d/.test(pob.texto), "población sin dígitos");
+    } else {
+      // sin red AHORA MISMO: la ficha lo DECLARA — nada fingido
+      afirmar(typeof ind.nota === "string" && ind.nota.length > 10, "sin valores y sin nota honesta");
+    }
+  });
+
   await verificar("entidad inválida → 404 honesto", async () => {
     const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:basura:x")}`);
     afirmar(r.status === 404, `status ${r.status} ≠ 404`);
+  });
+
+  await verificar("EL BARÓMETRO: Taiwán declara la ausencia del Banco Mundial (se declara, no se finge)", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:pais:tw")}`);
+    afirmar(r.status === 200 && r.json?.ok, `ficha tw no ok (${r.status})`);
+    const ind = r.json.indicadores;
+    afirmar(!!ind, "tw sin bloque de indicadores");
+    afirmar(ind.valores.length === 0, `el Banco Mundial no cubre TWN pero llegaron ${ind.valores.length} valores — algo se inventa`);
+    afirmar(typeof ind.nota === "string" && ind.nota.length > 10, "ausencia sin nota que la explique");
   });
 
   await verificar("ficha vg:simulacion:ver-guerra — el módulo vive en el censo", async () => {
@@ -398,6 +456,14 @@ async function parteB() {
     afirmar(r.status === 200, "no 200");
     afirmar(r.texto.includes("FICHA DE ENTIDAD"), "sin ficha renderizada");
     afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin enlaces contextuales");
+  });
+
+  await verificar("EL BARÓMETRO: /nucleo?id=vg:pais:ua renderiza INDICADORES REALES server-side", async () => {
+    const r = await pedir(`/nucleo?id=${encodeURIComponent("vg:pais:ua")}`);
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("INDICADORES REALES"), "sin bloque de indicadores en el HTML");
+    afirmar(r.texto.includes("CC BY 4.0"), "sin licencia visible en la ficha");
+    afirmar(r.texto.includes("bancomundial.org"), "sin enlace al original en el HTML");
   });
 
   await verificar("los chips contextuales viven en /conflicto/ukraine", async () => {

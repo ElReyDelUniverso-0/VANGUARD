@@ -52,6 +52,13 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     publica_tipo: "pais",
   },
   {
+    id: "fnt:indicadores",
+    nombre: "Barómetro del Banco Mundial",
+    descripcion:
+      "Indicadores REALES del Banco Mundial (población, PIB, gasto militar, migración) para las naciones de los teatros: resumen propio de la casa, año del dato y enlace al original. Licencia CC BY 4.0 — atribución preservada. Sirve en la ficha vg:pais (v223 EL BARÓMETRO).",
+    publica_tipo: "pais",
+  },
+  {
     id: "fnt:fuentes",
     nombre: "Medios y agencias",
     descripcion:

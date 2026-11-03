@@ -11,6 +11,7 @@ import { MODULOS_NUCLEO, modulosPorCategoria, moduloPorId } from "@/lib/nucleo/r
 import { FUENTES_PUBLICAS, FUENTES_PRIVADAS } from "@/lib/nucleo/fuentes";
 import { TIPOS_ENTIDAD, ETIQUETA_TIPO, idEntidad, type TipoEntidad } from "@/lib/nucleo/tipos";
 import { fichaEntidad, type FichaEntidad } from "@/lib/nucleo/relaciones";
+import { FUENTE_INDICADORES } from "@/lib/nucleo/indicadores";
 import { NucleoBusqueda } from "@/components/vanguard/nucleo-busqueda";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 
@@ -193,6 +194,46 @@ function Ficha({ ficha }: { ficha: FichaEntidad }) {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+      {f.indicadores && (
+        <div className="mt-4">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud/80">
+            INDICADORES REALES
+          </p>
+          {f.indicadores.valores.length > 0 ? (
+            <ul className="mt-1.5 space-y-1">
+              {f.indicadores.valores.map((i) => (
+                <li key={i.codigo} className="flex flex-wrap items-baseline gap-x-2 text-xs">
+                  <span className="text-zinc-400">{i.nombre}</span>
+                  <a
+                    href={i.enlaceOriginal}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="text-zinc-100 hover:text-amber underline decoration-zinc-600 underline-offset-2"
+                  >
+                    {i.texto}
+                    <span className="text-zinc-500 font-mono text-[10px] ml-1">({i.anio})</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            f.indicadores.nota && (
+              <p className="mt-1 text-xs text-zinc-400 italic">{f.indicadores.nota}</p>
+            )
+          )}
+          <p className="mt-1.5 font-mono text-[9px] uppercase tracking-widest text-zinc-600">
+            fuente: {f.indicadores.fuente.licencia} ·{" "}
+            <a
+              href={f.indicadores.fuente.enlace || FUENTE_INDICADORES.enlace}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="underline decoration-zinc-700 underline-offset-2 hover:text-zinc-400"
+            >
+              datos.bancomundial.org ↗
+            </a>
+          </p>
         </div>
       )}
       {f.enlaces && <EnlacesNucleo enlaces={f.enlaces} titulo="CONECTA CON EL NÚCLEO" />}
