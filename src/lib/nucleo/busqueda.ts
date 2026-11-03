@@ -123,7 +123,7 @@ const PROVEEDORES: ProveedorBusqueda[] = [
         },
       });
       return rows.map((n) => ({
-        entidad: { id: idEntidad("acontecimiento", n.id), tipo: "acontecimiento" as const, nombre: n.title },
+        entidad: { id: idEntidad("noticia", n.id), tipo: "noticia" as const, nombre: n.title },
         titulo: n.title,
         subtitulo: `${n.source}${n.conflictTag ? ` · ${n.conflictTag.toUpperCase()}` : ""}`,
         ruta: `/noticia/${n.id}`,
@@ -132,7 +132,29 @@ const PROVEEDORES: ProveedorBusqueda[] = [
       }));
     },
   },
-  // 5. DOCUMENTOS — expedientes + alejandría oscura (catálogos reales)
+  // 5. ACONTECIMIENTOS — los hechos reales que reúnen varias noticias
+  //    (tabla Acontecimiento; filtro en memoria sobre `busca` normalizado
+  //    para que «invasion» encuentre «Invasión» sin depender del LIKE).
+  {
+    fuente: fuentePublica("fnt:acontecimientos"),
+    async buscar(q, limite) {
+      const filas = await db.acontecimiento.findMany({
+        select: { id: true, slug: true, titulo: true, resumen: true, estado: true, teatroTag: true, ocurridoDesde: true, busca: true },
+      });
+      return filas
+        .filter((a) => a.busca.includes(q) || normalizar(`${a.titulo} ${a.resumen}`).includes(q))
+        .slice(0, limite)
+        .map((a) => ({
+          entidad: { id: a.id, tipo: "acontecimiento" as const, nombre: a.titulo },
+          titulo: `Acontecimiento: ${a.titulo}`,
+          subtitulo: `${a.estado.toUpperCase()} · desde ${a.ocurridoDesde?.toISOString().slice(0, 10) ?? "fecha sin precisión"}${a.teatroTag ? ` · teatro ${a.teatroTag}` : ""}`,
+          ruta: `/nucleo?id=${encodeURIComponent(a.id)}`,
+          fecha: a.ocurridoDesde?.toISOString(),
+          origen: "fnt:acontecimientos",
+        }));
+    },
+  },
+  // 6. DOCUMENTOS — expedientes + alejandría oscura (catálogos reales)
   {
     fuente: fuentePublica("fnt:documentos"),
     async buscar(q, limite) {
@@ -162,7 +184,7 @@ const PROVEEDORES: ProveedorBusqueda[] = [
       return [...exps, ...oscs].slice(0, limite);
     },
   },
-  // 6. ANÁLISIS — la verdad cruda (verificaciones de la comunidad)
+  // 7. ANÁLISIS — la verdad cruda (verificaciones de la comunidad)
   {
     fuente: fuentePublica("fnt:verificaciones"),
     async buscar(q, limite) {
@@ -182,7 +204,7 @@ const PROVEEDORES: ProveedorBusqueda[] = [
       }));
     },
   },
-  // 7. AUDIOS — el muro de la emisora (contenido público de la comunidad)
+  // 8. AUDIOS — el muro de la emisora (contenido público de la comunidad)
   {
     fuente: fuentePublica("fnt:audios"),
     async buscar(q, limite) {
@@ -202,7 +224,7 @@ const PROVEEDORES: ProveedorBusqueda[] = [
       }));
     },
   },
-  // 8. MEDIOS — quién firma las noticias (fuentes reales del archivo)
+  // 9. MEDIOS — quién firma las noticias (fuentes reales del archivo)
   {
     fuente: fuentePublica("fnt:fuentes"),
     async buscar(q, limite) {
@@ -247,6 +269,7 @@ export interface RespuestaBusquedaNucleo {
 const ORDEN_ORIGEN = [
   "fnt:modulos",
   "fnt:teatros",
+  "fnt:acontecimientos",
   "fnt:atlas",
   "fnt:cables",
   "fnt:documentos",

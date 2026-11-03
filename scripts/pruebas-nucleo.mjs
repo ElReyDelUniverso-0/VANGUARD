@@ -98,18 +98,18 @@ async function parteA() {
     }
   });
 
-  await verificar("8 tipos de entidad con la fórmula vg:<tipo>:<clave>", () => {
+  await verificar("9 tipos de entidad con la fórmula vg:<tipo>:<clave>", () => {
     const tipos = readFileSync(join(RAIZ, "src/lib/nucleo/tipos.ts"), "utf8");
-    for (const t of ["pais", "region", "acontecimiento", "documento", "fuente", "mapa", "analisis", "simulacion"]) {
+    for (const t of ["pais", "region", "acontecimiento", "documento", "fuente", "mapa", "analisis", "simulacion", "noticia"]) {
       afirmar(tipos.includes(`"${t}"`), `falta el tipo ${t}`);
     }
     afirmar(tipos.includes("vg:${tipo}"), "la fórmula de id estable no está en tipos.ts");
   });
 
-  await verificar("frontera: fuentes privadas declaradas y públicas ≥ 9", () => {
+  await verificar("frontera: fuentes privadas declaradas y públicas ≥ 10", () => {
     for (const p of PRIVADAS) afirmar(fuentes.includes(`"${p}"`), `fuente privada no declarada: ${p}`);
     const publicas = fntPublicas.filter((f) => !PRIVADAS.includes(f));
-    afirmar(publicas.length >= 9, `solo ${publicas.length} fuentes públicas`);
+    afirmar(publicas.length >= 10, `solo ${publicas.length} fuentes públicas`);
   });
 
   await verificar("sin proveedor para fuentes privadas en busqueda.ts", () => {
@@ -138,10 +138,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v218.0", async () => {
+  await verificar("servidor vivo y en v219.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v218"), `versión ${r.json?.version} ≠ v218`);
+    afirmar(String(r.json?.version).startsWith("v219"), `versión ${r.json?.version} ≠ v219`);
   });
 
   // censo por API
@@ -155,6 +155,7 @@ async function parteB() {
 
   // búsqueda real
   let primerCable = null;
+  let cableConTeatro = null;
   await verificar("GET /api/nucleo/busqueda?q=ucrania — resultados REALES", async () => {
     const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ucrania")}`);
     afirmar(r.status === 200 && r.json?.ok === true, "no ok");
@@ -163,6 +164,9 @@ async function parteB() {
     const cables = rdos.filter((x) => x.ruta?.startsWith("/noticia/"));
     afirmar(cables.length >= 1, "ningún cable real del archivo");
     primerCable = cables[0]?.ruta ?? null;
+    cableConTeatro = (cables.find((x) => String(x.subtitulo).includes("UKRAINE")) ?? cables[0])?.ruta ?? null;
+    const a = rdos.find((x) => x.entidad?.tipo === "acontecimiento");
+    afirmar(Boolean(a), "el acontecimiento de la invasión no aparece en la búsqueda");
     const teatro = rdos.find((x) => x.entidad?.tipo === "region");
     afirmar(Boolean(teatro), "el teatro de Ucrania no aparece como región");
     afirmar(rdos.every((x) => x.origen?.startsWith("fnt:")), "resultado sin fuente declarada");
@@ -188,6 +192,14 @@ async function parteB() {
   await verificar("búsqueda sin resultados = vacío honesto", async () => {
     const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("zzqqxxw")}`);
     afirmar(r.status === 200 && r.json?.ok === true && (r.json.resultados?.length ?? 0) === 0, "no vacío honesto");
+  });
+
+  await verificar("búsqueda halla el ACONTECIMIENTO incluso sin tildes (busca normalizado)", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("invasion rusa")}`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const a = (r.json.resultados ?? []).find((x) => x.entidad?.id === "vg:acontecimiento:invasion-rusa-de-ucrania");
+    afirmar(Boolean(a), "el acontecimiento de Ucrania no aparece buscando sin tilde");
+    afirmar(a?.origen === "fnt:acontecimientos", "el acontecimiento no declara su fuente");
   });
 
   await verificar("búsqueda corta → 400 (nada de ruido)", async () => {
@@ -224,6 +236,45 @@ async function parteB() {
     afirmar(r.status === 200 && r.json?.ok && r.json.modulo?.id === "mod:ver-guerra", "entidad de módulo rota");
   });
 
+  // el historiador: acontecimiento que reúne noticias
+  await verificar("GET /api/nucleo/acontecimientos — 9 hechos reales con fecha y fuente", async () => {
+    const r = await pedir("/api/nucleo/acontecimientos");
+    afirmar(r.status === 200 && r.json?.ok, "no ok");
+    afirmar(r.json.total === 9, `total ${r.json.total} ≠ 9 (semilla duplicada o incompleta)`);
+    for (const h of r.json.hechos ?? []) {
+      afirmar(h.id?.startsWith("vg:acontecimiento:"), `id inestable: ${h.id}`);
+      afirmar(typeof h.ocurridoDesde === "string" && h.ocurridoDesde.length >= 10, `${h.slug} sin fecha de inicio del hecho`);
+      afirmar(h.noticiasEnArchivo === null || h.noticiasEnArchivo >= 0, "conteo negativo");
+    }
+    const uc = (r.json.hechos ?? []).find((h) => h.slug === "invasion-rusa-de-ucrania");
+    afirmar(uc?.noticiasEnArchivo >= 1, "el acontecimiento de Ucrania no tiene cables reales");
+  });
+
+  await verificar("ficha vg:acontecimiento:invasion-rusa-de-ucrania — cronología real + enlaces 200", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:acontecimiento:invasion-rusa-de-ucrania")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    afirmar((r.json.meta ?? []).some((m) => m.k === "El hecho empezó" && String(m.v).includes("2022")), "sin fecha del HECHO");
+    const cron = r.json.cables ?? [];
+    afirmar(cron.length >= 1, "cronología vacía — la regla:teatro no enlazó");
+    afirmar(cron.every((c) => c.ruta.startsWith("/noticia/")), "cronología con pieza sin página");
+    const fechas = cron.map((c) => c.fecha).sort();
+    afirmar(String(fechas[fechas.length - 1]) >= String(fechas[0]), "cronología desordenada");
+    for (const e of (r.json.enlaces ?? []).slice(0, 4)) {
+      const dest = await pedir(e.ruta);
+      afirmar(dest.status === 200, `enlace roto ${e.ruta} → ${dest.status}`);
+    }
+  });
+
+  await verificar("ficha vg:noticia:<id> — el cable individual con su acontecimiento", async () => {
+    if (!cableConTeatro) throw new Error("sin cable de teatro de la prueba de búsqueda");
+    const idCable = cableConTeatro.split("/").pop();
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent(`vg:noticia:${idCable}`)}`);
+    afirmar(r.status === 200 && r.json?.ok, `ficha de noticia no ok (${r.status})`);
+    afirmar(r.json.entidad?.tipo === "noticia", "tipo equivocado");
+    const etiquetas = (r.json.enlaces ?? []).map((e) => e.etiqueta);
+    afirmar(etiquetas.some((t) => t.includes("ACONTECIMIENTO")), "el cable no conecta con su acontecimiento");
+  });
+
   // navegación
   await verificar("/nucleo responde con censo, entidades y frontera", async () => {
     const r = await pedir("/nucleo");
@@ -246,11 +297,18 @@ async function parteB() {
     afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "chips ausentes en la ficha de teatro");
   });
 
-  await verificar("los chips contextuales viven en /noticia/[id]", async () => {
+  await verificar("los chips contextuales viven en /noticia/[id] con su ACONTECIMIENTO", async () => {
     if (!primerCable) throw new Error("sin cable de la prueba anterior");
     const r = await pedir(primerCable);
     afirmar(r.status === 200, `cable ${primerCable} no 200`);
     afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "chips ausentes en el cable");
+  });
+
+  await verificar("el cable del teatro anuncia PARTE DE: EL ACONTECIMIENTO (server-rendered)", async () => {
+    if (!cableConTeatro) throw new Error("sin cable con teatro de la búsqueda");
+    const r = await pedir(cableConTeatro);
+    afirmar(r.status === 200, `cable ${cableConTeatro} no 200`);
+    afirmar(r.texto.includes("PARTE DE: EL ACONTECIMIENTO"), "sin chip del acontecimiento en el cable");
   });
 
   await verificar("sitemap anuncia /nucleo a Google", async () => {

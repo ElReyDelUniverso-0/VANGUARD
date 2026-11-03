@@ -1,6 +1,6 @@
 # EL NÚCLEO DE VANGUARD — guía del sistema central
 
-> v218.0 · El corazón que conecta los módulos sin acoplarlos.
+> v219.0 · El corazón que conecta los módulos sin acoplarlos.
 > Ley de la casa: **todo conectado, nada aislado; nada privado, nada inventado.**
 
 ## Qué es
@@ -21,14 +21,32 @@ El Núcleo es la capa compartida del ecosistema Vanguard. Cualquier módulo
 
 | Archivo | Qué vive ahí |
 | --- | --- |
-| `tipos.ts` | Los 8 tipos de entidad, la fórmula de id `vg:…`, tipos de relación y `normalizar()`. |
+| `tipos.ts` | Los 9 tipos de entidad, la fórmula de id `vg:…`, tipos de relación y `normalizar()`. |
 | `registro.ts` | `MODULOS_NUCLEO`: el censo de módulos + consultas puras (por id, por ruta, dependencias). |
 | `fuentes.ts` | `FUENTES_PUBLICAS` / `FUENTES_PRIVADAS` + el contrato `ProveedorBusqueda` / `ResultadoNucleo`. |
-| `busqueda.ts` | El motor server-only: 8 proveedores públicos en paralelo, guarda de frontera, fallo honesto. |
+| `busqueda.ts` | El motor server-only: 9 proveedores públicos en paralelo, guarda de frontera, fallo honesto. |
+| `acontecimientos.ts` | **v219 EL HISTORIADOR**: la semilla de los 9 acontecimientos reales (fecha histórica pública), la siembra idempotente con enlaces `regla:teatro` y las consultas de cronología. |
 | `relaciones.ts` | Geografía real país↔teatro, `enlacesDeRegion/Pais/Cable/Modulo` y `fichaEntidad(id)`. |
-| `../api/nucleo/*` | Las 3 APIs: `busqueda?q=`, `entidad?id=`, `modulos` — todas con muro (ley v211). |
+| `../api/nucleo/*` | Las 4 APIs: `busqueda?q=`, `entidad?id=`, `modulos`, `acontecimientos` — todas con muro (ley v211). |
 | `../../app/nucleo/page.tsx` | El salón central: censo, mapa de entidades, búsqueda, ficha de entidad (`?id=`), frontera de datos. |
-| `../../../scripts/pruebas-nucleo.mjs` | Las pruebas: censo, búsqueda, relaciones, navegación, muro. |
+| `../../../scripts/pruebas-nucleo.mjs` | Las pruebas: censo, búsqueda, relaciones, historiador, navegación, muro. |
+
+## El eslabón NOTICIA ↔ ACONTECIMIENTO (v219)
+
+Una **noticia** (`vg:noticia:<id>`, la tabla `NewsItem`) es una FUENTE de
+información. Un **acontecimiento** (`vg:acontecimiento:<slug>`, la tabla
+`Acontecimiento`) es el HECHO real que reúne varias noticias. Reglas:
+
+- Los acontecimientos sembrados son hechos históricos públicos (con fecha
+  `ocurridoDesde`); las noticias llevan su fecha de `publishedAt` — nunca se
+  confunden el momento del hecho con el de su publicación.
+- La tabla `NoticiaAcontecimiento` guarda cada asociación con su `metodo`
+  (`regla:teatro` | `manual`): la procedencia de la asociación no se destruye
+  nunca, y la atribución original de cada cable (su `source`) queda intacta.
+- La siembra corre IDEMPOTENTE en el arranque del servidor
+  (`instrumentation-node.ts`) y re-enlaza los cables nuevos del sync.
+- Un cable sin acontecimiento asociado simplemente no lleva el chip
+  «PARTE DE» — no se fuerza ninguna relación.
 
 ## CÓMO AÑADIR UN MÓDULO NUEVO (4 pasos, sin tocar todo el sistema)
 

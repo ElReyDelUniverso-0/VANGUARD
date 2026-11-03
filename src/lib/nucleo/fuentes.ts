@@ -28,6 +28,13 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     nombre: "Archivo de cables",
     descripcion:
       "NewsItem en la BD: GDELT + 18 medios RSS, con sourceCountry, conflictTag y fecha. La materia prima de la redacción.",
+    publica_tipo: "noticia",
+  },
+  {
+    id: "fnt:acontecimientos",
+    nombre: "Registro de acontecimientos",
+    descripcion:
+      "Acontecimiento en la BD: hechos reales (fecha histórica pública) que reúnen varias noticias, sembrados desde los teatros con enlaces regla:teatro.",
     publica_tipo: "acontecimiento",
   },
   {

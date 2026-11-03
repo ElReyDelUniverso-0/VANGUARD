@@ -9,7 +9,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { APP_VERSION_LABEL } from "@/lib/version";
 import { MODULOS_NUCLEO, modulosPorCategoria, moduloPorId } from "@/lib/nucleo/registro";
 import { FUENTES_PUBLICAS, FUENTES_PRIVADAS } from "@/lib/nucleo/fuentes";
-import { TIPOS_ENTIDAD, ETIQUETA_TIPO, type TipoEntidad } from "@/lib/nucleo/tipos";
+import { TIPOS_ENTIDAD, ETIQUETA_TIPO, idEntidad, type TipoEntidad } from "@/lib/nucleo/tipos";
 import { fichaEntidad, type FichaEntidad } from "@/lib/nucleo/relaciones";
 import { NucleoBusqueda } from "@/components/vanguard/nucleo-busqueda";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -19,7 +19,7 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 // El mapa que conecta TODO sin aislar nada:
 //   · el censo de módulos (categoría, ruta, permisos, estado,
 //     dependencias) — descubrir funciones sin saturar la interfaz;
-//   · las 8 entidades compartidas con ids estables y conteos
+//   · las 9 entidades compartidas con ids estables y conteos
 //     REALES de la BD (nada de datos ficticios);
 //   · la búsqueda global sobre fuentes autorizadas;
 //   · la ficha de entidad /nucleo?id=vg:<tipo>:<clave> con sus
@@ -78,9 +78,10 @@ async function conteosReales() {
     mediosUnicos: 0,
     audiosTotal: 0,
     verifTotal: 0,
+    acontecimientos: 0,
   };
   try {
-    const [cablesTotal, cables24h, paisesRows, mediosRows, audiosTotal, verifTotal] =
+    const [cablesTotal, cables24h, paisesRows, mediosRows, audiosTotal, verifTotal, acontecimientos] =
       await Promise.all([
         db.newsItem.count(),
         db.newsItem.count({
@@ -90,6 +91,7 @@ async function conteosReales() {
         db.newsItem.findMany({ distinct: ["source"], select: { source: true }, take: 800 }),
         db.audioComandante.count(),
         db.newsVerify.count(),
+        db.acontecimiento.count(),
       ]);
     return {
       cablesTotal,
@@ -98,6 +100,7 @@ async function conteosReales() {
       mediosUnicos: mediosRows.length,
       audiosTotal,
       verifTotal,
+      acontecimientos,
     };
   } catch {
     return vacio;
@@ -305,6 +308,12 @@ export default async function NucleoPage({
             />
             <TarjetaEntidad
               tipo="acontecimiento"
+              cifra={`${conteos.acontecimientos}`}
+              detalle="Hechos reales con fecha histórica pública que reúnen varias noticias"
+              ejemplo={{ href: `/nucleo?id=${idEntidad("acontecimiento", "invasion-rusa-de-ucrania")}`, etiqueta: "ficha del acontecimiento" }}
+            />
+            <TarjetaEntidad
+              tipo="noticia"
               cifra={conteos.cablesTotal.toLocaleString("es")}
               detalle={`${conteos.cables24h} cables reales en las últimas 24 h — cada uno con su página`}
               ejemplo={{ href: "/en-vivo", etiqueta: "la sala en vivo" }}

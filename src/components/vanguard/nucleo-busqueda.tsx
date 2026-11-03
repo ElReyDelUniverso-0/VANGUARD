@@ -36,6 +36,7 @@ const COLOR_TIPO: Record<TipoEntidad, string> = {
   pais: "text-emerald-400 border-emerald-500/40",
   region: "text-red-hud border-red-hud/40",
   acontecimiento: "text-cyan-hud border-cyan-hud/40",
+  noticia: "text-cyan-hud border-cyan-hud/40",
   documento: "text-amber border-amber/40",
   fuente: "text-zinc-300 border-zinc-600",
   mapa: "text-sky-300 border-sky-400/40",

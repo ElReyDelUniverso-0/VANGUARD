@@ -670,3 +670,55 @@ model AudioComandante {
 
   @@index([createdAt])
 }
+
+// ====== v219.0 EL HISTORIADOR — el eslabón noticia ↔ acontecimiento ======
+// Una NOTICIA (cable) es una fuente de información; un ACONTECIMIENTO
+// reúne varias noticias relacionadas del mismo hecho. El id del
+// acontecimiento es estable (vg:acontecimiento:<slug>) y jamás se recicla.
+// `ocurridoDesde` marca cuándo EMPEZÓ el hecho (fecha histórica pública);
+// `publishedAt` de los cables marca cuándo se PUBLICARON — nunca se
+// confunden (mandato del sistema). La tabla de enlace guarda la
+// procedencia de cada asociación (regla o manual) sin destruir la
+// atribución original de cada cable.
+model Acontecimiento {
+  id                String    @id // = vg:acontecimiento:<slug> (estable)
+  slug              String    @unique
+  titulo            String
+  resumen           String // resumen PROPIO de Vanguard, no copia
+  busca             String // título+resumen normalizados para buscar en memoria
+  tipo              String    @default("conflicto") // conflicto | crisis | proceso
+  estado            String    @default("activo") // activo | escalada | desescalada | cerrado
+  teatroTag         String? // slug del teatro si el hecho tiene frente (/conflicto/[tag])
+  paisCodes         String    @default("[]") // JSON array ISO-2 de países implicados
+  ocurridoDesde     DateTime? // cuándo empezó el HECHO (fuera de la BD)
+  precisionTemporal String? // nota honesta de incertidumbre temporal
+  procedencia       String // de dónde sale este registro (fuentes declaradas)
+  actualizadoEn     DateTime  @updatedAt
+  creadoEn          DateTime  @default(now())
+
+  @@index([teatroTag])
+}
+
+// Enlace noticia ↔ acontecimiento con procedencia de la asociación.
+// NO lleva FK a NewsItem: los cables rotan con el sync, el registro de
+// asociación sobrevive; las consultas hacen el join en código.
+model NoticiaAcontecimiento {
+  id                String   @id @default(cuid())
+  acontecimientoId  String // Acontecimiento.id (vg:acontecimiento:<slug>)
+  noticiaExternalId String // NewsItem.externalId (estable)
+  metodo            String // regla:teatro | regla:clave | manual
+  creadoEn          DateTime @default(now())
+
+  @@unique([acontecimientoId, noticiaExternalId])
+  @@index([noticiaExternalId])
+}
+
+// v219.0 — contador operativo en SQL crudo (k → n), lo usan 10 rutas
+// (visits, presence, gdelt refresh…). Declarado para que db push lo
+// respete; los accesos siguen siendo raw SQL.
+model SiteCounter {
+  k String @id
+  n BigInt @default(0)
+
+  @@map("site_counter")
+}

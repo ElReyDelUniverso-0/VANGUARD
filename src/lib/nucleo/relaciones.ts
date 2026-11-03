@@ -19,6 +19,12 @@ import { EXPEDIENTES } from "@/lib/expedientes-datos";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { MODULOS_NUCLEO, moduloPorId, type ModuloNucleo } from "./registro";
 import {
+  slugAcontecimientoDeTeatro,
+  idAcontecimiento,
+  acontecimientoPorSlug,
+  cronologiaDeAcontecimiento,
+} from "./acontecimientos";
+import {
   idEntidad,
   partesDeId,
   type EnlaceContextual,
@@ -59,7 +65,17 @@ function nombrePais(iso: string): string {
 export function enlacesDeRegion(slug: string): EnlaceContextual[] {
   const t = TEATROS[slug];
   if (!t) return [];
-  const enlaces: EnlaceContextual[] = [
+  const enlaces: EnlaceContextual[] = [];
+  const slugAcon = slugAcontecimientoDeTeatro(slug);
+  if (slugAcon) {
+    enlaces.push({
+      etiqueta: "EL ACONTECIMIENTO ▸",
+      ruta: `/nucleo?id=${idAcontecimiento(slugAcon)}`,
+      motivo: "El hecho real que reúne todos los cables de este frente",
+      tipoRelacion: "pertenece_a",
+    });
+  }
+  enlaces.push(
     {
       etiqueta: "LA FICHA DEL FRENTE ▸",
       ruta: `/conflicto/${slug}`,
@@ -90,7 +106,7 @@ export function enlacesDeRegion(slug: string): EnlaceContextual[] {
       motivo: "La emisora explica este teatro con datos reales",
       tipoRelacion: "analizado_en",
     },
-  ];
+  );
   for (const iso of paisesDeTeatro(slug).slice(0, 3)) {
     enlaces.push({
       etiqueta: `FICHA DE ${nombrePais(iso).toUpperCase()} ▸`,
@@ -153,6 +169,15 @@ export function enlacesDeCable(cable: {
   source: string;
 }): EnlaceContextual[] {
   const enlaces: EnlaceContextual[] = [];
+  const slugAcon = slugAcontecimientoDeTeatro(cable.conflictTag);
+  if (slugAcon) {
+    enlaces.push({
+      etiqueta: "PARTE DE: EL ACONTECIMIENTO ▸",
+      ruta: `/nucleo?id=${idAcontecimiento(slugAcon)}`,
+      motivo: "Este cable pertenece a un hecho mayor que reúne varias noticias",
+      tipoRelacion: "pertenece_a",
+    });
+  }
   if (cable.conflictTag && TEATROS[cable.conflictTag]) {
     enlaces.push(
       {
@@ -317,8 +342,66 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
     };
   }
 
-  // ── ACONTECIMIENTO (cable) ──
+  // ── ACONTECIMIENTO (el hecho real que reúne varias noticias) ──
   if (tipo === "acontecimiento") {
+    try {
+      const a = await acontecimientoPorSlug(clave);
+      if (!a) return { ok: false, error: `Acontecimiento no registrado: ${clave}` };
+      const cron = await cronologiaDeAcontecimiento(a);
+      const enlaces: EnlaceContextual[] = [];
+      if (a.teatroTag && TEATROS[a.teatroTag]) {
+        enlaces.push(
+          {
+            etiqueta: `EL TEATRO ${TEATROS[a.teatroTag].nombre.toUpperCase()} ▸`,
+            ruta: `/conflicto/${a.teatroTag}`,
+            motivo: "El frente donde vive este hecho, con sus cables en vivo",
+            tipoRelacion: "pertenece_a",
+          },
+          {
+            etiqueta: "VER EN EL MUNDO 3D ▸",
+            ruta: `/mundo?teatro=${a.teatroTag}`,
+            motivo: "Dónde arde este hecho en el globo",
+            tipoRelacion: "visible_en",
+          }
+        );
+      }
+      for (const iso of a.paisCodes.slice(0, 3)) {
+        enlaces.push({
+          etiqueta: `FICHA DE ${nombrePais(iso).toUpperCase()} ▸`,
+          ruta: `/nucleo?id=${idEntidad("pais", iso)}`,
+          motivo: "País implicado en este acontecimiento",
+          tipoRelacion: "implica_pais",
+        });
+      }
+      enlaces.push({
+        etiqueta: "ÚLTIMA HORA ▸",
+        ruta: "/en-vivo",
+        motivo: "La redacción abierta 24 h sigue este hecho minuto a minuto",
+        tipoRelacion: "pertenece_a",
+      });
+      return {
+        ok: true,
+        entidad: { id: a.id, tipo, nombre: a.titulo },
+        descripcion: a.resumen,
+        meta: [
+          { k: "Estado", v: a.estado.toUpperCase() },
+          { k: "El hecho empezó", v: a.ocurridoDesde ? a.ocurridoDesde.slice(0, 10) : "sin fecha precisa" },
+          { k: "Noticias en el archivo", v: String(cron.total) },
+          { k: "Países implicados", v: a.paisCodes.map(nombrePais).join(", ") || "—" },
+          { k: "Precisión temporal", v: a.precisionTemporal ?? "—" },
+        ],
+        enlaces,
+        cables: cron.lista,
+        vive: "Registro de acontecimientos (fnt:acontecimientos)",
+        total: cron.total,
+      };
+    } catch {
+      return { ok: false, error: "El registro de acontecimientos no responde" };
+    }
+  }
+
+  // ── NOTICIA / CABLE (una fuente de información del archivo) ──
+  if (tipo === "noticia") {
     try {
       const n = await db.newsItem.findUnique({
         where: { id: clave },
@@ -338,11 +421,11 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
         : { lista: [], total: 0 };
       return {
         ok: true,
-        entidad: { id: idEntidad("acontecimiento", n.id), tipo, nombre: n.title },
+        entidad: { id: idEntidad("noticia", n.id), tipo, nombre: n.title },
         descripcion: n.summary || "Cable del archivo sin resumen — entra y lee la pieza completa.",
         meta: [
           { k: "Fuente", v: n.source },
-          { k: "Fecha", v: n.publishedAt.toISOString().slice(0, 16).replace("T", " ") },
+          { k: "Publicada", v: n.publishedAt.toISOString().slice(0, 16).replace("T", " ") },
           ...(n.conflictTag ? [{ k: "Conflicto", v: n.conflictTag.toUpperCase() }] : []),
           ...(n.sourceCountry ? [{ k: "País", v: nombrePais(n.sourceCountry) }] : []),
         ],

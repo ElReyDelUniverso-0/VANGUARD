@@ -11,7 +11,9 @@
 // Lo leen el servidor (búsqueda, fichas, APIs) y las pruebas.
 // ============================================================
 
-/** Los 8 tipos de entidad compartida del ecosistema. */
+/** Los 9 tipos de entidad compartida del ecosistema.
+ * v219: se separa NOTICIA (el cable, fuente de información) de
+ * ACONTECIMIENTO (el hecho real que reúne varias noticias). */
 export const TIPOS_ENTIDAD = [
   "pais",
   "region",
@@ -21,6 +23,7 @@ export const TIPOS_ENTIDAD = [
   "mapa",
   "analisis",
   "simulacion",
+  "noticia",
 ] as const;
 
 export type TipoEntidad = (typeof TIPOS_ENTIDAD)[number];
@@ -30,6 +33,7 @@ export const ETIQUETA_TIPO: Record<TipoEntidad, string> = {
   pais: "PAÍS",
   region: "REGIÓN / TEATRO",
   acontecimiento: "ACONTECIMIENTO",
+  noticia: "NOTICIA / CABLE",
   documento: "DOCUMENTO",
   fuente: "FUENTE",
   mapa: "MAPA",

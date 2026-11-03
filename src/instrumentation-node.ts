@@ -3,6 +3,9 @@
 //    (antes un rejection soltaba el proceso en dev y "la página se caía")
 // 2) purga periódica de mapas en memoria (presence de streams, salas de juego)
 // 3) pragmas SQLite al boot (ver lib/db.ts)
+// 4) v219 EL HISTORIADOR — siembra IDEMPOTENTE del registro de
+//    acontecimientos al arranque (si la BD ya viene sembrada del repo,
+//    no toca nada; si el disco es de solo lectura, lo declara y sigue).
 export function registerNode() {
   const root = process.cwd();
   const log = (kind: string, err: unknown) => {
@@ -32,6 +35,22 @@ export function registerNode() {
     }
   }, 10 * 60_000);
   timer.unref?.();
+
+  // v219: siembra idempotente de acontecimientos (no bloquea el arranque;
+  // el fallo se declara en el log — jamás finge éxito ni tumba el server).
+  void (async () => {
+    try {
+      const { sembrarAcontecimientos } = await import("@/lib/nucleo/acontecimientos");
+      const r = await sembrarAcontecimientos();
+      if (r.creados.length > 0 || r.enlacesNuevos > 0) {
+        console.log(
+          `[VANGUARD-HISTORIADOR] ${new Date().toISOString()} sembrados ${r.creados.length} acontecimientos (${r.creados.join(", ")}) + ${r.enlacesNuevos} enlaces nuevos`
+        );
+      }
+    } catch (err) {
+      log("HISTORIADOR", err);
+    }
+  })();
 
   console.log(`[VANGUARD-BOOT] ${new Date().toISOString()} cwd=${root}`);
 }
