@@ -200,6 +200,23 @@ export function GlobeMap3D({
       .atmosphereAltitude(0.2)
       .showGraticules(false);
 
+    // v222.0 LA PLUMA — DPR del móvil CAPADO: un aparato con DPR 3
+    // renderizaba 9× los píxeles CSS (GPU al horno, batería fuera,
+    // tironeos al rotar). 2× es indistinguible a la vista y deja el
+    // planeta a 60 fps en el bolsillo. El escritorio (DPR 1) no cambia.
+    try {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      (
+        globe as unknown as {
+          renderer: () => { setPixelRatio: (n: number) => void };
+        }
+      )
+        .renderer()
+        .setPixelRatio(dpr);
+    } catch {
+      /* si el renderer no expone el API, el globo vive como siempre */
+    }
+
     globeRef.current = globe;
     globe.controls().autoRotate = autoRotate;
     globe.controls().autoRotateSpeed = rotateSpeed;

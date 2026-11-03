@@ -138,6 +138,17 @@ async function parteA() {
     afirmar(!/korea:\s*\{\s*sala:/.test(geo), "¡korea tiene sala fingida!");
     afirmar(geo.includes("NO tiene sala de guerra propia"), "la ausencia de sala de Corea no se declara");
   });
+
+  await verificar("LA PLUMA: la casa pesa poco en el bolsillo (v222)", () => {
+    const conflicto = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
+    afirmar(conflicto.includes('loading="lazy"'), "las imágenes de /conflicto no van diferidas — el móvil las descarga ocultas");
+    afirmar(conflicto.includes('decoding="async"'), "las imágenes de /conflicto bloquean la decodificación");
+    const globo = readFileSync(join(RAIZ, "src/components/vanguard/globe-map-3d.tsx"), "utf8");
+    afirmar(globo.includes("setPixelRatio") && globo.includes("devicePixelRatio"), "el globo no capa el DPR del móvil (GPU a 9× en DPR 3)");
+    const mundo = readFileSync(join(RAIZ, "src/app/mundo/mundo-3d-vivo.tsx"), "utf8");
+    afirmar(mundo.includes("useMemo"), "el globo vivo re-digiere sus datos en cada toque");
+    afirmar(mundo.includes('ssr: false'), "el globo ya no viaja diferido (dynamic ssr:false)");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -157,10 +168,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v221.0", async () => {
+  await verificar("servidor vivo y en v222.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v221"), `versión ${r.json?.version} ≠ v221`);
+    afirmar(String(r.json?.version).startsWith("v222"), `versión ${r.json?.version} ≠ v222`);
   });
 
   // censo por API

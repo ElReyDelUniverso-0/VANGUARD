@@ -13,7 +13,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Globe3DArc, Globe3DMarker, GlobeFlyTo, GlobeViewMode } from "@/components/vanguard/globe-map-3d";
 import {
   ARCAS_MUNDO,
@@ -119,81 +119,96 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
     };
   }, []);
 
-  const teatros = snap?.teatros ?? [];
+  // v222.0 LA PLUMA — el planeta dejo de re-digerir en cada toque: los
+  // datos derivados del globo (marcadores, arcos, territorios) viven en
+  // useMemo, así globe.gl solo re-digiere cuando llega un sondeo nuevo
+  // (60 s) — no cuando abres una pestaña, cambias de vista o seleccionas.
+  const teatros = useMemo(() => snap?.teatros ?? [], [snap]);
   const teatroSel = seleccion?.kind === "teatro" ? teatros.find((t) => t.slug === seleccion.slug) ?? null : null;
   const plazaSel = seleccion?.kind === "plaza" ? PLAZAS_MUNDO.find((p) => p.id === seleccion.id) ?? null : null;
 
-  const seleccionarTeatro = (slug: string) => {
-    const t = snap?.teatros.find((x) => x.slug === slug);
-    if (!t) return;
-    setSeleccion({ kind: "teatro", slug });
-    setFlyTo({ lat: t.lat, lng: t.lng, altitude: 1.35, nonce: Date.now() });
-  };
+  const seleccionarTeatro = useCallback(
+    (slug: string) => {
+      const t = snap?.teatros.find((x) => x.slug === slug);
+      if (!t) return;
+      setSeleccion({ kind: "teatro", slug });
+      setFlyTo({ lat: t.lat, lng: t.lng, altitude: 1.35, nonce: Date.now() });
+    },
+    [snap]
+  );
 
-  const seleccionarPlaza = (id: string) => {
+  const seleccionarPlaza = useCallback((id: string) => {
     const p = PLAZAS_MUNDO.find((x) => x.id === id);
     if (!p) return;
     setSeleccion({ kind: "plaza", id });
     setFlyTo({ lat: p.lat, lng: p.lng, altitude: 0.95, nonce: Date.now() });
-  };
+  }, []);
 
-  // ---- datos derivados del globo ----
-  const markers: Globe3DMarker[] = [];
-  for (const t of teatros) {
-    markers.push({
-      id: `teatro-${t.slug}`,
-      lat: t.lat,
-      lng: t.lng,
-      color: colorPorCables(t.n),
-      size: t.n > 0 ? 0.34 + Math.min(0.3, t.n / 150) : 0.2,
-      alt: t.n > 0 ? 0.05 + Math.min(0.06, t.n / 800) : 0.03,
-      ring: t.n > 0,
-      ringMax: t.n > 0 ? 3 + Math.min(5, Math.floor(t.n / 12)) : undefined,
-      labelTag: t.n > 0 ? `TEATRO EN VIVO · ${t.n} cables hoy` : "TEATRO · sin cables en 24 h",
-      label: t.ultimo ? `${t.nombre} — ${recortar(t.ultimo.t, 90)}` : t.nombre,
-      onClick: () => seleccionarTeatro(t.slug),
-    });
-  }
-  for (const p of PLAZAS_MUNDO) {
-    markers.push({
-      id: `plaza-${p.id}`,
-      lat: p.lat,
-      lng: p.lng,
-      color: p.tipo === "organizacion" ? COLOR_ORG : p.tipo === "estrategico" ? COLOR_GARGANTA : COLOR_PLAZA,
-      size: 0.16,
-      alt: 0.03,
-      labelTag:
-        p.tipo === "organizacion"
-          ? "ORGANIZACIÓN"
-          : p.tipo === "estrategico"
-            ? "GARGANTA ESTRATÉGICA"
-            : "GOBIERNO",
-      label: `${p.nombre} — ${p.detalle}`,
-      onClick: () => seleccionarPlaza(p.id),
-    });
-  }
+  // ---- datos derivados del globo (memoizados: identidad estable) ----
+  const markers: Globe3DMarker[] = useMemo(() => {
+    const lista: Globe3DMarker[] = [];
+    for (const t of teatros) {
+      lista.push({
+        id: `teatro-${t.slug}`,
+        lat: t.lat,
+        lng: t.lng,
+        color: colorPorCables(t.n),
+        size: t.n > 0 ? 0.34 + Math.min(0.3, t.n / 150) : 0.2,
+        alt: t.n > 0 ? 0.05 + Math.min(0.06, t.n / 800) : 0.03,
+        ring: t.n > 0,
+        ringMax: t.n > 0 ? 3 + Math.min(5, Math.floor(t.n / 12)) : undefined,
+        labelTag: t.n > 0 ? `TEATRO EN VIVO · ${t.n} cables hoy` : "TEATRO · sin cables en 24 h",
+        label: t.ultimo ? `${t.nombre} — ${recortar(t.ultimo.t, 90)}` : t.nombre,
+        onClick: () => seleccionarTeatro(t.slug),
+      });
+    }
+    for (const p of PLAZAS_MUNDO) {
+      lista.push({
+        id: `plaza-${p.id}`,
+        lat: p.lat,
+        lng: p.lng,
+        color: p.tipo === "organizacion" ? COLOR_ORG : p.tipo === "estrategico" ? COLOR_GARGANTA : COLOR_PLAZA,
+        size: 0.16,
+        alt: 0.03,
+        labelTag:
+          p.tipo === "organizacion"
+            ? "ORGANIZACIÓN"
+            : p.tipo === "estrategico"
+              ? "GARGANTA ESTRATÉGICA"
+              : "GOBIERNO",
+        label: `${p.nombre} — ${p.detalle}`,
+        onClick: () => seleccionarPlaza(p.id),
+      });
+    }
+    return lista;
+  }, [teatros, seleccionarTeatro, seleccionarPlaza]);
 
-  const arcs: Globe3DArc[] = ARCAS_MUNDO.map((a) => ({
-    startLat: a.desde.lat,
-    startLng: a.desde.lng,
-    endLat: a.hasta.lat,
-    endLng: a.hasta.lng,
-    color: a.color,
-    dashTime: 2600,
-    stroke: 0.6,
-  }));
+  const arcs: Globe3DArc[] = useMemo(
+    () =>
+      ARCAS_MUNDO.map((a) => ({
+        startLat: a.desde.lat,
+        startLng: a.desde.lng,
+        endLat: a.hasta.lat,
+        endLng: a.hasta.lng,
+        color: a.color,
+        dashTime: 2600,
+        stroke: 0.6,
+      })),
+    []
+  );
 
   // territorios del juego teñidos por la intensidad del teatro más caliente
-  const maxN: Record<string, number> = {};
-  for (const t of teatros) {
-    if (t.n <= 0) continue;
-    const tid = TEATRO_TERRITORIO[t.slug];
-    if (!tid) continue;
-    maxN[tid] = Math.max(maxN[tid] ?? 0, t.n);
-  }
-  const territoryColors: Record<string, string> | null = Object.keys(maxN).length
-    ? Object.fromEntries(Object.entries(maxN).map(([tid, n]) => [tid, colorPorCables(n)]))
-    : null;
+  const territoryColors: Record<string, string> | null = useMemo(() => {
+    const maxN: Record<string, number> = {};
+    for (const t of teatros) {
+      if (t.n <= 0) continue;
+      const tid = TEATRO_TERRITORIO[t.slug];
+      if (!tid) continue;
+      maxN[tid] = Math.max(maxN[tid] ?? 0, t.n);
+    }
+    if (!Object.keys(maxN).length) return null;
+    return Object.fromEntries(Object.entries(maxN).map(([tid, n]) => [tid, colorPorCables(n)]));
+  }, [teatros]);
 
   const highlightTerritory =
     seleccion?.kind === "teatro" ? TEATRO_TERRITORIO[seleccion.slug] ?? null : null;

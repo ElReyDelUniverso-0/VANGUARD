@@ -231,6 +231,13 @@ export default async function ConflictoPage({
                   alt={it.title}
                   width={120}
                   height={90}
+                  // v222.0 LA PLUMA — diferidas y async: en el móvil estas
+                  // imágenes están ocultas (hidden sm:block) pero el navegador
+                  // las DESCARGABA igual (40 remotas de golpe); loading="lazy"
+                  // las mantiene fuera del cable hasta que hacen falta y el
+                  // costo de datos del teatro en el bolsillo cae al mínimo.
+                  loading="lazy"
+                  decoding="async"
                   className="hidden sm:block w-[120px] h-[90px] object-cover shrink-0"
                 />
                 <div className="p-3 flex flex-col gap-1 min-w-0">

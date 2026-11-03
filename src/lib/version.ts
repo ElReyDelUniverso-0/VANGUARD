@@ -1590,6 +1590,6 @@
 //  ④ PUERTAS: sitemap weekly 0.7 + pg:objetivos en la paleta Ctrl+K.
 // Los 100 también lucen en el panel de logros del SPA SIN tocar nada:
 // achievements-panel itera ACHIEVEMENTS — los nuevos aparecen solos.
-export const APP_VERSION = "v221.0";
-export const APP_CODENAME = "LA LUPA";
+export const APP_VERSION = "v222.0";
+export const APP_CODENAME = "LA PLUMA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
