@@ -1,0 +1,8 @@
+file 'f01-gancho.mp4'
+file 'f02-cine.mp4'
+file 'f03-mercado.mp4'
+file 'f04-guerra.mp4'
+file 'f05-envivo.mp4'
+file 'f06-inmersion.mp4'
+file 'f07-objetivos.mp4'
+file 'f08-cierre.mp4'

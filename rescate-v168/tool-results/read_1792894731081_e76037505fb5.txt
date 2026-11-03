@@ -1,0 +1,609 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→// ============================================================
+     4→     4→// VANGUARD v85.0 EL MUNDO DENTRO — EMPLEOS
+     5→     5→// "Vanguard no es parte del mundo: el mundo está dentro de Vanguard."
+     6→     6→// Los operadores trabajan por sueldos: entrevista de aptitud →
+     7→     7→// departamento → nómina por minuto → turnos → ascensos.
+     8→     8→// ============================================================
+     9→     9→import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+    10→    10→import { PanelHeader } from "@/components/vanguard/panel-header";
+    11→    11→import { cn } from "@/lib/utils";
+    12→    12→import { toast } from "sonner";
+    13→    13→import { motion, AnimatePresence } from "framer-motion";
+    14→    14→import {
+    15→    15→  Briefcase, Coins, Clock, CheckCircle2, XCircle, TrendingUp, LogOut,
+    16→    16→  FileSignature, Zap, Star, ChevronsUp, Wallet, Play, Building2, Quote,
+    17→    17→} from "lucide-react";
+    18→    18→import { Button } from "@/components/ui/button";
+    19→    19→import { HeroOro } from "@/components/vanguard/hero-oro";
+    20→    20→import { useGameStore } from "@/lib/game-store";
+    21→    21→import { sfx } from "@/lib/sound";
+    22→    22→import {
+    23→    23→  ENTREVISTA, DEPARTAMENTOS, APTITUD_META, rangoDe, sueldoPorMin,
+    24→    24→  loadEmpleos, saveEmpleos, acumularNomina, tareasDelTurno, pagoTurno,
+    25→    25→  hoyKey, COOLDOWN_TURNO_MS, RANGOS,
+    26→    26→  type EmpleosState, type Aptitud, type Departamento, type TareaTurno,
+    27→    27→} from "@/lib/empleos";
+    28→    28→
+    29→    29→const COLOR_CLS: Record<Departamento["color"], { text: string; border: string; bg: string }> = {
+    30→    30→  amber: { text: "text-amber", border: "border-amber-hud", bg: "bg-amber-hud/20" },
+    31→    31→  cyan: { text: "text-cyan-hud", border: "border-cyan-hud", bg: "bg-cyan-hud/20" },
+    32→    32→  green: { text: "text-green-hud", border: "border-green-hud", bg: "bg-green-hud/20" },
+    33→    33→  violet: { text: "text-violet-hud", border: "border-violet-hud", bg: "bg-violet-hud/20" },
+    34→    34→};
+    35→    35→
+    36→    36→// ====== MANIFIESTO — la idea que ordena todo Vanguard v85 ======
+    37→    37→export function ManifiestoMundo() {
+    38→    38→  return (
+    39→    39→    <div className="relative overflow-hidden border border-amber-hud/40 bg-gradient-to-br from-amber-hud/15 via-transparent to-transparent p-4">
+    40→    40→      <Quote className="absolute top-2 right-3 w-8 h-8 text-amber-hud/15 rotate-180" aria-hidden />
+    41→    41→      <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-amber-hud mb-1.5">manifiesto vanguard</p>
+    42→    42→      <p className="text-sm sm:text-base font-black leading-snug text-foreground">
+    43→    43→        Vanguard no es parte del mundo.
+    44→    44→        <span className="text-amber"> El mundo está dentro de Vanguard.</span>
+    45→    45→      </p>
+    46→    46→      <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
+    47→    47→        Cada frente, cada estrecho, cada crisis en vivo corre por aquí. Y ahora también
+    48→    48→        trabaja aquí: oficinas, nóminas, turnos y carreras. Tu sueldo lo paga el planeta.
+    49→    49→      </p>
+    50→    50→    </div>
+    51→    51→  );
+    52→    52→}
+    53→    53→
+    54→    54→// ====== ENTREVISTA DE INGRESO ======
+    55→    55→function Entrevista({ onContratado }: { onContratado: (depto: Departamento, scores: Record<Aptitud, number>) => void }) {
+    56→    56→  const [paso, setPaso] = useState(0);
+    57→    57→  const [scores, setScores] = useState<Record<Aptitud, number>>({ TACTICA: 0, GEOGRAFIA: 0, ANALISIS: 0, DIPLOMACIA: 0 });
+    58→    58→  const [elegida, setElegida] = useState<number | null>(null);
+    59→    59→  const [mostrandoPorQue, setMostrandoPorQue] = useState(false);
+    60→    60→
+    61→    61→  const preg = ENTREVISTA[paso];
+    62→    62→  const total = ENTREVISTA.length;
+    63→    63→
+    64→    64→  const responder = (idx: number) => {
+    65→    65→    if (mostrandoPorQue) return;
+    66→    66→    setElegida(idx);
+    67→    67→    setMostrandoPorQue(true);
+    68→    68→    if (idx === preg.best) sfx.success();
+    69→    69→    else sfx.click();
+    70→    70→  };
+    71→    71→
+    72→    72→  const avanzar = () => {
+    73→    73→    const gain = elegida === preg.best ? 1 : 0;
+    74→    74→    const next = { ...scores, [preg.apt]: scores[preg.apt] + gain };
+    75→    75→    setScores(next);
+    76→    76→    setMostrandoPorQue(false);
+    77→    77→    setElegida(null);
+    78→    78→    if (paso + 1 >= total) {
+    79→    79→      // ganador: aptitud con más aciertos; desempate por orden canónico
+    80→    80→      const orden: Aptitud[] = ["TACTICA", "GEOGRAFIA", "ANALISIS", "DIPLOMACIA"];
+    81→    81→      let mejor: Aptitud = "TACTICA";
+    82→    82→      let max = -1;
+    83→    83→      for (const a of orden) {
+    84→    84→        if (next[a] > max) { max = next[a]; mejor = a; }
+    85→    85→      }
+    86→    86→      const depto = DEPARTAMENTOS.find((d) => d.apt === mejor) ?? DEPARTAMENTOS[0];
+    87→    87→      sfx.unlock();
+    88→    88→      onContratado(depto, next);
+    89→    89→    } else {
+    90→    90→      setPaso((p) => p + 1);
+    91→    91→    }
+    92→    92→  };
+    93→    93→
+    94→    94→  return (
+    95→    95→    <div className="hud-corner p-4">
+    96→    96→      <div className="flex items-center justify-between gap-2 mb-3">
+    97→    97→        <p className="text-[10px] font-mono uppercase tracking-wider text-amber flex items-center gap-1.5">
+    98→    98→          <FileSignature className="w-3.5 h-3.5" /> entrevista de ingreso · recursos humanos vanguard
+    99→    99→        </p>
+   100→   100→        <span className="text-[10px] font-mono text-muted-foreground">{paso + 1}/{total}</span>
+   101→   101→      </div>
+   102→   102→      <div className="flex gap-1 mb-4">
+   103→   103→        {ENTREVISTA.map((_, i) => (
+   104→   104→          <div key={i} className={cn("h-1 flex-1", i < paso ? "bg-green-hud" : i === paso ? "bg-amber-hud animate-pulse" : "bg-border")} />
+   105→   105→        ))}
+   106→   106→      </div>
+   107→   107→      <AnimatePresence mode="wait">
+   108→   108→        <motion.div
+   109→   109→          key={paso}
+   110→   110→          initial={{ opacity: 0, x: 24 }}
+   111→   111→          animate={{ opacity: 1, x: 0 }}
+   112→   112→          exit={{ opacity: 0, x: -24 }}
+   113→   113→          transition={{ duration: 0.22 }}
+   114→   114→        >
+   115→   115→          <h3 className="text-sm font-bold text-foreground leading-snug mb-3">{preg.q}</h3>
+   116→   116→          <div className="space-y-1.5">
+   117→   117→            {preg.opts.map((opt, i) => (
+   118→   118→              <button
+   119→   119→                key={i}
+   120→   120→                onClick={() => responder(i)}
+   121→   121→                disabled={mostrandoPorQue}
+   122→   122→                className={cn(
+   123→   123→                  "w-full text-left border px-2.5 py-2 text-xs leading-snug transition-colors",
+   124→   124→                  !mostrandoPorQue && "border-border hover:border-amber-hud hover:bg-amber-hud/10 cursor-pointer",
+   125→   125→                  mostrandoPorQue && i === preg.best && "border-green-hud bg-green-hud/15 text-foreground",
+   126→   126→                  mostrandoPorQue && i === elegida && i !== preg.best && "border-red-hud bg-red-hud/10",
+   127→   127→                  mostrandoPorQue && i !== preg.best && i !== elegida && "border-border/40 text-muted-foreground/60"
+   128→   128→                )}
+   129→   129→              >
+   130→   130→                <span className="font-mono text-[10px] text-muted-foreground mr-1.5">{String.fromCharCode(65 + i)}.</span>
+   131→   131→                {opt}
+   132→   132→                {mostrandoPorQue && i === preg.best && <CheckCircle2 className="w-3.5 h-3.5 text-green-hud inline ml-1.5 -mt-0.5" />}
+   133→   133→                {mostrandoPorQue && i === elegida && i !== preg.best && <XCircle className="w-3.5 h-3.5 text-red-hud inline ml-1.5 -mt-0.5" />}
+   134→   134→              </button>
+   135→   135→            ))}
+   136→   136→          </div>
+   137→   137→          {mostrandoPorQue && (
+   138→   138→            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-3 border border-amber-hud/40 bg-amber-hud/10 p-2.5">
+   139→   139→              <p className="text-[11px] text-foreground/90 leading-relaxed">
+   140→   140→                <span className="text-amber font-bold">{APTITUD_META[preg.apt].icono} {APTITUD_META[preg.apt].nombre}:</span>{" "}
+   141→   141→                {preg.porQue}
+   142→   142→              </p>
+   143→   143→              <Button size="sm" onClick={avanzar} className="mt-2 h-7 w-full font-mono text-[10px] uppercase bg-amber-hud/80 border border-amber-hud text-black hover:bg-amber-hud">
+   144→   144→                {paso + 1 >= total ? "VER MI CONTRATO →" : "SIGUIENTE PREGUNTA →"}
+   145→   145→              </Button>
+   146→   146→            </motion.div>
+   147→   147→          )}
+   148→   148→        </motion.div>
+   149→   149→      </AnimatePresence>
+   150→   150→    </div>
+   151→   151→  );
+   152→   152→}
+   153→   153→
+   154→   154→// ====== CONTRATO ACEPTADO ======
+   155→   155→function ContratoOferta({ depto, scores, onFirmar }: { depto: Departamento; scores: Record<Aptitud, number>; onFirmar: () => void }) {
+   156→   156→  const c = COLOR_CLS[depto.color];
+   157→   157→  return (
+   158→   158→    <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="hud-corner p-4 space-y-3">
+   159→   159→      <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">departamento asignado según tu perfil</p>
+   160→   160→      <div className={cn("flex items-center gap-3 border p-3", c.border, c.bg)}>
+   161→   161→        <span className="text-3xl" aria-hidden>{depto.icono}</span>
+   162→   162→        <div className="flex-1 min-w-0">
+   163→   163→          <p className={cn("text-base font-black uppercase leading-tight", c.text)}>{depto.nombre}</p>
+   164→   164→          <p className="text-[10px] font-mono text-muted-foreground uppercase">aptitud dominante · {APTITUD_META[depto.apt].nombre}</p>
+   165→   165→        </div>
+   166→   166→        <div className="text-right flex-shrink-0">
+   167→   167→          <p className={cn("text-lg font-black font-mono", c.text)}>{depto.sueldoBase.toFixed(1)}ⓒ</p>
+   168→   168→          <p className="text-[9px] font-mono text-muted-foreground uppercase">por minuto</p>
+   169→   169→        </div>
+   170→   170→      </div>
+   171→   171→      <p className="text-xs text-muted-foreground leading-relaxed">{depto.desc}</p>
+   172→   172→      <div className="grid grid-cols-2 gap-1.5">
+   173→   173→        {(Object.keys(scores) as Aptitud[]).map((a) => (
+   174→   174→          <div key={a} className="border border-border/60 p-1.5">
+   175→   175→            <div className="flex items-center justify-between text-[9px] font-mono uppercase text-muted-foreground mb-1">
+   176→   176→              <span>{APTITUD_META[a].icono} {APTITUD_META[a].nombre}</span>
+   177→   177→              <span className="text-foreground font-bold">{scores[a]}/2</span>
+   178→   178→            </div>
+   179→   179→            <div className="h-1 bg-border overflow-hidden">
+   180→   180→              <motion.div
+   181→   181→                initial={{ width: 0 }}
+   182→   182→                animate={{ width: `${(scores[a] / 2) * 100}%` }}
+   183→   183→                transition={{ duration: 0.7, delay: 0.15 }}
+   184→   184→                className={cn("h-full", a === depto.apt ? "bg-green-hud" : "bg-muted-foreground/50")}
+   185→   185→              />
+   186→   186→            </div>
+   187→   187→          </div>
+   188→   188→        ))}
+   189→   189→      </div>
+   190→   190→      <Button onClick={onFirmar} className={cn("w-full h-10 font-mono text-[11px] uppercase border text-black hover:brightness-110", c.bg, c.border)}>
+   191→   191→        <FileSignature className="w-4 h-4 mr-1.5" /> FIRMAR CONTRATO Y EMPEZAR A COBRAR
+   192→   192→      </Button>
+   193→   193→      <p className="text-[9px] font-mono text-muted-foreground text-center uppercase">
+   194→   194→        la nómina corre aunque cierres vanguard · tope 6 h acumuladas
+   195→   195→      </p>
+   196→   196→    </motion.div>
+   197→   197→  );
+   198→   198→}
+   199→   199→
+   200→   200→// ====== TURNO DE TRABAJO ======
+   201→   201→function TurnoActivo({ depto, tareas, onFin }: { depto: Departamento; tareas: TareaTurno[]; onFin: (aciertos: number) => void }) {
+   202→   202→  const [paso, setPaso] = useState(0);
+   203→   203→  const [aciertos, setAciertos] = useState(0);
+   204→   204→  const [elegida, setElegida] = useState<number | null>(null);
+   205→   205→  const c = COLOR_CLS[depto.color];
+   206→   206→  const t = tareas[paso];
+   207→   207→
+   208→   208→  const responder = (i: number) => {
+   209→   209→    if (elegida !== null) return;
+   210→   210→    setElegida(i);
+   211→   211→    if (i === t.best) {
+   212→   212→      setAciertos((a) => a + 1);
+   213→   213→      sfx.success();
+   214→   214→    } else sfx.error();
+   215→   215→    setTimeout(() => {
+   216→   216→      if (paso + 1 >= tareas.length) onFin(aciertos + (i === t.best ? 1 : 0));
+   217→   217→      else { setPaso((p) => p + 1); setElegida(null); }
+   218→   218→    }, 750);
+   219→   219→  };
+   220→   220→
+   221→   221→  return (
+   222→   222→    <div className={cn("hud-corner p-3 border", c.border)}>
+   223→   223→      <div className="flex items-center justify-between mb-2">
+   224→   224→        <p className={cn("text-[10px] font-mono uppercase tracking-wider flex items-center gap-1.5", c.text)}>
+   225→   225→          <Zap className="w-3.5 h-3.5" /> TURNO EN CURSO · {depto.nombre}
+   226→   226→        </p>
+   227→   227→        <span className="text-[10px] font-mono text-muted-foreground">tarea {paso + 1}/{tareas.length}</span>
+   228→   228→      </div>
+   229→   229→      <h4 className="text-sm font-bold text-foreground leading-snug mb-2.5">{t.q}</h4>
+   230→   230→      <div className="space-y-1.5">
+   231→   231→        {t.opts.map((opt, i) => (
+   232→   232→          <button
+   233→   233→            key={i}
+   234→   234→            onClick={() => responder(i)}
+   235→   235→            disabled={elegida !== null}
+   236→   236→            className={cn(
+   237→   237→              "w-full text-left border px-2.5 py-2 text-xs transition-colors",
+   238→   238→              elegida === null && "border-border hover:border-amber-hud cursor-pointer",
+   239→   239→              elegida !== null && i === t.best && "border-green-hud bg-green-hud/15",
+   240→   240→              elegida !== null && i === elegida && i !== t.best && "border-red-hud bg-red-hud/10",
+   241→   241→              elegida !== null && i !== t.best && i !== elegida && "border-border/40 text-muted-foreground/60"
+   242→   242→            )}
+   243→   243→          >
+   244→   244→            {opt}
+   245→   245→          </button>
+   246→   246→        ))}
+   247→   247→      </div>
+   248→   248→    </div>
+   249→   249→  );
+   250→   250→}
+   251→   251→
+   252→   252→// ====== PANEL PRINCIPAL ======
+   253→   253→export function EmpleosPanel() {
+   254→   254→  const coins = useGameStore((s) => s.coins);
+   255→   255→  const addCoins = useGameStore((s) => s.addCoins);
+   256→   256→  const addXp = useGameStore((s) => s.addXp);
+   257→   257→  const [st, setSt] = useState<EmpleosState>(() => loadEmpleos());
+   258→   258→  const [tareaAbierta, setTareaAbierta] = useState(false);
+   259→   259→  const [resumenTurno, setResumenTurno] = useState<{ aciertos: number; pago: { base: number; propina: number; bonoPerfecta: number; total: number; xpGanada: number; perfecta: boolean } } | null>(null);
+   260→   260→  const [tick, setTick] = useState(0);
+   261→   261→  const [confirmarRenuncia, setConfirmarRenuncia] = useState(false);
+   262→   262→  const [oferta, setOferta] = useState<{ depto: Departamento; scores: Record<Aptitud, number> } | null>(null);
+   263→   263→  const stRef = useRef(st);
+   264→   264→  stRef.current = st;
+   265→   265→
+   266→   266→  const depto = useMemo(() => DEPARTAMENTOS.find((d) => d.id === st.depto) ?? null, [st.depto]);
+   267→   267→
+   268→   268→  // nómina corre en vivo: acumula al abrir, cobre con tictac visual cada 1 s
+   269→   269→  useEffect(() => {
+   270→   270→    if (!depto) return;
+   271→   271→    setSt((s) => {
+   272→   272→      const next = acumularNomina(s, depto);
+   273→   273→      saveEmpleos(next);
+   274→   274→      return next;
+   275→   275→    });
+   276→   276→    const t = setInterval(() => setTick((x) => x + 1), 1000);
+   277→   277→    return () => clearInterval(t);
+   278→   278→  }, [depto]);
+   279→   279→
+   280→   280→  const sueldoMin = depto ? sueldoPorMin(depto, st.xpLaboral) : 0;
+   281→   281→  const rango = rangoDe(st.xpLaboral);
+   282→   282→  const sueldoHora = sueldoMin * 60;
+   283→   283→
+   284→   284→  // proyección visual: lo que llevaría la nómina si siguiera corriendo ahora mismo
+   285→   285→  const nominaViva = useMemo(() => {
+   286→   286→    void tick;
+   287→   287→    if (!depto || !st.lastAccrueTs) return st.nominaPendiente;
+   288→   288→    const mins = Math.max(0, Math.floor((Date.now() - st.lastAccrueTs) / 60000));
+   289→   289→    const yaMin = st.nominaPendiente / sueldoMin || 0;
+   290→   290→    const pagables = Math.min(mins, Math.max(0, 360 - yaMin));
+   291→   291→    return st.nominaPendiente + pagables * sueldoMin;
+   292→   292→  }, [tick, depto, st.lastAccrueTs, st.nominaPendiente, sueldoMin]);
+   293→   293→
+   294→   294→  const actualizar = useCallback((next: EmpleosState) => {
+   295→   295→    saveEmpleos(next);
+   296→   296→    setSt(next);
+   297→   297→  }, []);
+   298→   298→
+   299→   299→  const cobrar = () => {
+   300→   300→    if (!depto) return;
+   301→   301→    let s = acumularNomina(stRef.current, depto);
+   302→   302→    const monto = Math.round(s.nominaPendiente);
+   303→   303→    if (monto <= 0) {
+   304→   304→      toast.info("La nómina está vacía: vuelve más tarde, sigue corriendo.");
+   305→   305→      return;
+   306→   306→    }
+   307→   307→    s = { ...s, nominaPendiente: 0, cobradoTotal: s.cobradoTotal + monto };
+   308→   308→    actualizar(s);
+   309→   309→    addCoins(monto, `NÓMINA · ${depto.nombre}`);
+   310→   310→    sfx.coin();
+   311→   311→    toast.success(`Nómina cobrada: +${monto}ⓒ — ${depto.nombre}`);
+   312→   312→  };
+   313→   313→
+   314→   314→  const firmar = () => {
+   315→   315→    if (!oferta) return;
+   316→   316→    const s = loadEmpleos();
+   317→   317→    actualizar({
+   318→   318→      ...s,
+   319→   319→      depto: oferta.depto.id,
+   320→   320→      entrevistas: s.entrevistas + 1,
+   321→   321→      nominaPendiente: 0,
+   322→   322→      lastAccrueTs: Date.now(),
+   323→   323→    });
+   324→   324→    setOferta(null);
+   325→   325→    sfx.unlock();
+   326→   326→    toast.success(`Contrato firmado: ${oferta.depto.nombre} · ${oferta.depto.sueldoBase.toFixed(1)}ⓒ/min`);
+   327→   327→  };
+   328→   328→
+   329→   329→  const iniciarTurno = () => {
+   330→   330→    if (!depto) return;
+   331→   331→    if (Date.now() - st.lastShiftTs < COOLDOWN_TURNO_MS) {
+   332→   332→      toast.error("Aún estás de guardia pasiva: el próximo turno abre en unos minutos.");
+   333→   333→      return;
+   334→   334→    }
+   335→   335→    setResumenTurno(null);
+   336→   336→    setTareaAbierta(true);
+   337→   337→    sfx.click();
+   338→   338→  };
+   339→   339→
+   340→   340→  const finTurno = (aciertos: number) => {
+   341→   341→    if (!depto) return;
+   342→   342→    const dia = hoyKey();
+   343→   343→    const n = st.diaActual === dia ? st.shiftsHoy : 0;
+   344→   344→    const pago = pagoTurno(depto, st.xpLaboral, aciertos, 3);
+   345→   345→    let s: EmpleosState = {
+   346→   346→      ...st,
+   347→   347→      lastShiftTs: Date.now(),
+   348→   348→      shiftsHoy: st.diaActual === dia ? st.shiftsHoy + 1 : 1,
+   349→   349→      diaActual: dia,
+   350→   350→      turnosTotales: st.turnosTotales + 1,
+   351→   351→      aciertosTotales: st.aciertosTotales + aciertos,
+   352→   352→      xpLaboral: st.xpLaboral + pago.xpGanada,
+   353→   353→    };
+   354→   354→    // racha laboral: primer turno del día mantiene la racha viva
+   355→   355→    if (s.lastDiaTurno !== dia) {
+   356→   356→      const ayer = hoyKey(Date.now() - 86400000);
+   357→   357→      const racha = s.lastDiaTurno === ayer ? s.diasTrabajados + 1 : 1;
+   358→   358→      s = { ...s, diasTrabajados: racha, lastDiaTurno: dia };
+   359→   359→      if (racha > 0 && racha % 3 === 0) {
+   360→   360→        addCoins(60 * (racha / 3), `Racha laboral ${racha} días`);
+   361→   361→        toast.success(`Racha laboral de ${racha} días: bonus +${60 * (racha / 3)}ⓒ`);
+   362→   362→      }
+   363→   363→    }
+   364→   364→    actualizar(s);
+   365→   365→    addCoins(pago.total, `Turno completado · ${depto.nombre}`);
+   366→   366→    addXp(pago.xpGanada);
+   367→   367→    setTareaAbierta(false);
+   368→   368→    setResumenTurno({ aciertos, pago });
+   369→   369→    sfx.coin();
+   370→   370→  };
+   371→   371→
+   372→   372→  const renunciar = () => {
+   373→   373→    const s: EmpleosState = { ...st, depto: null, xpLaboral: Math.floor(st.xpLaboral * 0.5), nominaPendiente: 0, lastAccrueTs: 0 };
+   374→   374→    actualizar(s);
+   375→   375→    setConfirmarRenuncia(false);
+   376→   376→    toast.info("Renuncia aceptada: media experiencia conservada. La entrevista te espera.");
+   377→   377→  };
+   378→   378→
+   379→   379→  const cooldownRestante = Math.max(0, COOLDOWN_TURNO_MS - (Date.now() - st.lastShiftTs));
+   380→   380→  const cooldownPct = cooldownRestante > 0 ? (cooldownRestante / COOLDOWN_TURNO_MS) * 100 : 0;
+   381→   381→
+   382→   382→  return (
+   383→   383→    <div className="space-y-3">
+   384→   384→      <HeroOro panel="empleos" />
+   385→   385→      <PanelHeader
+   386→   386→        title="Empleos de Vanguard"
+   387→   387→        subtitle={depto ? `${depto.nombre} · ${(rango.actual.mult * 100).toFixed(0)}% de sueldo · racha ${st.diasTrabajados} d` : "entrevista de ingreso abierta · el mundo contrata"}
+   388→   388→        icon={<Briefcase className="w-4 h-4 text-amber" />}
+   389→   389→        color="amber"
+   390→   390→        right={
+   391→   391→          depto ? (
+   392→   392→            <div className="text-right">
+   393→   393→              <p className="text-[10px] font-mono text-amber leading-none">{sueldoMin.toFixed(2)}ⓒ/min</p>
+   394→   394→              <p className="text-[9px] font-mono text-muted-foreground mt-0.5">{rango.actual.nombre}</p>
+   395→   395→            </div>
+   396→   396→          ) : undefined
+   397→   397→        }
+   398→   398→      />
+   399→   399→
+   400→   400→      <ManifiestoMundo />
+   401→   401→
+   402→   402→      {/* ===== SIN CONTRATO: ENTREVISTA ===== */}
+   403→   403→      {!depto && !oferta && (
+   404→   404→        <>
+   405→   405→          <div className="hud-corner p-3 flex items-start gap-2.5">
+   406→   406→            <Building2 className="w-5 h-5 text-amber mt-0.5 flex-shrink-0" />
+   407→   407→            <div className="flex-1 min-w-0">
+   408→   408→              <p className="text-xs font-bold text-foreground leading-tight">Vanguard contrata personal</p>
+   409→   409→              <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
+   410→   410→                Ocho preguntas. Respuestas reales de sala de situación. Según lo que se te dé bien
+   411→   411→                entrarás al <span className="text-amber">Estado Mayor</span>, <span className="text-cyan-hud">Cartografía</span>,{" "}
+   412→   412→                <span className="text-green-hud">Escucha SIGINT</span> o <span className="text-violet-hud">Cancillería</span> —
+   413→   413→                cada oficina con sueldo por minuto, turnos pagados y ascensos.
+   414→   414→              </p>
+   415→   415→              {st.entrevistas > 0 && (
+   416→   416→                <p className="text-[9px] font-mono text-muted-foreground uppercase mt-1">
+   417→   417→                  carreras anteriores: {st.entrevistas} · experiencia conservada: {Math.floor(st.xpLaboral * 0.5)} XP laboral
+   418→   418→                </p>
+   419→   419→              )}
+   420→   420→            </div>
+   421→   421→          </div>
+   422→   422→          <Entrevista
+   423→   423→            onContratado={(depto2, scores) => setOferta({ depto: depto2, scores })}
+   424→   424→          />
+   425→   425→        </>
+   426→   426→      )}
+   427→   427→
+   428→   428→      {/* ===== OFERTA DE CONTRATO ===== */}
+   429→   429→      {oferta && <ContratoOferta depto={oferta.depto} scores={oferta.scores} onFirmar={firmar} />}
+   430→   430→
+   431→   431→      {/* ===== CON CONTRATO: PUESTO DE TRABAJO ===== */}
+   432→   432→      {depto && (
+   433→   433→        <>
+   434→   434→          {/* NÓMINA VIVA */}
+   435→   435→          <motion.div
+   436→   436→            initial={{ opacity: 0, y: 10 }}
+   437→   437→            animate={{ opacity: 1, y: 0 }}
+   438→   438→            className={cn("hud-corner p-4 border", COLOR_CLS[depto.color].border)}
+   439→   439→          >
+   440→   440→            <div className="flex items-start justify-between gap-3 mb-2">
+   441→   441→              <div className="flex items-center gap-2.5 min-w-0">
+   442→   442→                <span className="text-2xl flex-shrink-0" aria-hidden>{depto.icono}</span>
+   443→   443→                <div className="min-w-0">
+   444→   444→                  <p className={cn("text-sm font-black uppercase leading-tight", COLOR_CLS[depto.color].text)}>{depto.nombre}</p>
+   445→   445→                  <p className="text-[9px] font-mono text-muted-foreground uppercase">
+   446→   446→                    {rango.actual.nombre} · XP laboral {st.xpLaboral}
+   447→   447→                    {rango.siguiente ? ` · ${rango.siguiente.xp - st.xpLaboral} para ${rango.siguiente.nombre}` : " · rango máximo"}
+   448→   448→                  </p>
+   449→   449→                </div>
+   450→   450→              </div>
+   451→   451→              <div className="text-right flex-shrink-0">
+   452→   452→                <p className="text-[9px] font-mono text-muted-foreground uppercase">tu sueldo</p>
+   453→   453→                <p className={cn("text-sm font-black font-mono", COLOR_CLS[depto.color].text)}>
+   454→   454→                  {sueldoMin.toFixed(2)}ⓒ<span className="text-[9px] text-muted-foreground">/min</span>
+   455→   455→                </p>
+   456→   456→                <p className="text-[9px] font-mono text-muted-foreground">{sueldoHora.toFixed(0)}ⓒ/hora</p>
+   457→   457→              </div>
+   458→   458→            </div>
+   459→   459→
+   460→   460→            {/* barra de nómina acumulada (tope 6h) */}
+   461→   461→            <div className="relative h-9 border border-border/60 bg-secondary/40 overflow-hidden mb-2">
+   462→   462→              <motion.div
+   463→   463→                className={cn("absolute inset-y-0 left-0", COLOR_CLS[depto.color].bg)}
+   464→   464→                animate={{ width: `${Math.min(100, ((nominaViva / sueldoMin) / 360) * 100)}%` }}
+   465→   465→                transition={{ duration: 0.6 }}
+   466→   466→              />
+   467→   467→              <div className="relative z-10 h-full flex items-center justify-between px-2.5">
+   468→   468→                <span className="text-[9px] font-mono uppercase text-muted-foreground">nómina acumulada · tope 6 h</span>
+   469→   469→                <motion.span
+   470→   470→                  key={Math.floor(nominaViva * 10)}
+   471→   471→                  initial={{ opacity: 0.6 }}
+   472→   472→                  animate={{ opacity: 1 }}
+   473→   473→                  className={cn("font-mono font-black text-sm", COLOR_CLS[depto.color].text)}
+   474→   474→                >
+   475→   475→                  {Math.floor(nominaViva)}ⓒ
+   476→   476→                </motion.span>
+   477→   477→              </div>
+   478→   478→            </div>
+   479→   479→
+   480→   480→            <div className="flex items-center gap-2">
+   481→   481→              <Button onClick={cobrar} className={cn("flex-1 h-9 font-mono text-[11px] uppercase border", COLOR_CLS[depto.color].bg, COLOR_CLS[depto.color].border, "text-foreground hover:brightness-125")}>
+   482→   482→                <Wallet className="w-4 h-4 mr-1.5" /> COBRAR NÓMINA
+   483→   483→              </Button>
+   484→   484→              <div className="border border-border/60 px-2 py-1.5 text-center">
+   485→   485→                <p className="text-[9px] font-mono text-muted-foreground uppercase leading-none">cobrado total</p>
+   486→   486→                <p className="text-xs font-mono font-bold text-amber mt-0.5">{st.cobradoTotal.toLocaleString("es")}ⓒ</p>
+   487→   487→              </div>
+   488→   488→            </div>
+   489→   489→          </motion.div>
+   490→   490→
+   491→   491→          {/* TURNO */}
+   492→   492→          <div className="hud-corner p-3">
+   493→   493→            <div className="flex items-center justify-between gap-2 mb-2">
+   494→   494→              <p className="text-[10px] font-mono uppercase tracking-wider text-amber flex items-center gap-1.5">
+   495→   495→                <Clock className="w-3.5 h-3.5" /> turno operativo · 3 tareas de tu oficina
+   496→   496→              </p>
+   497→   497→              {cooldownRestante > 0 && (
+   498→   498→                <span className="text-[9px] font-mono text-muted-foreground uppercase">
+   499→   499→                  próximo turno {Math.ceil(cooldownRestante / 60000)} min
+   500→   500→                </span>
+   501→   501→              )}
+   502→   502→            </div>
+   503→   503→            {cooldownRestante > 0 && (
+   504→   504→              <div className="h-1 bg-border overflow-hidden mb-2.5">
+   505→   505→                <div className="h-full bg-amber-hud/70 transition-all duration-1000" style={{ width: `${cooldownPct}%` }} />
+   506→   506→              </div>
+   507→   507→            )}
+   508→   508→            {!tareaAbierta ? (
+   509→   509→              <>
+   510→   510→                <div className="grid grid-cols-3 gap-1.5 mb-2.5">
+   511→   511→                  <div className="border border-border/60 p-1.5 text-center">
+   512→   512→                    <p className="text-[9px] font-mono text-muted-foreground uppercase leading-none">turnos</p>
+   513→   513→                    <p className="text-sm font-black font-mono text-foreground mt-1">{st.turnosTotales}</p>
+   514→   514→                  </div>
+   515→   515→                  <div className="border border-border/60 p-1.5 text-center">
+   516→   516→                    <p className="text-[9px] font-mono text-muted-foreground uppercase leading-none">aciertos</p>
+   517→   517→                    <p className="text-sm font-black font-mono text-green-hud mt-1">{st.aciertosTotales}</p>
+   518→   518→                  </div>
+   519→   519→                  <div className="border border-border/60 p-1.5 text-center">
+   520→   520→                    <p className="text-[9px] font-mono text-muted-foreground uppercase leading-none">hoy</p>
+   521→   521→                    <p className="text-sm font-black font-mono text-amber mt-1">{st.diaActual === hoyKey() ? st.shiftsHoy : 0}</p>
+   522→   522→                  </div>
+   523→   523→                </div>
+   524→   524→                <Button onClick={iniciarTurno} disabled={cooldownRestante > 0} className={cn("w-full h-9 font-mono text-[11px] uppercase border", COLOR_CLS[depto.color].bg, COLOR_CLS[depto.color].border, "text-foreground hover:brightness-125 disabled:opacity-40")}>
+   525→   525→                  <Play className="w-4 h-4 mr-1.5" /> CUMPLIR TURNO (sueldo + propina)
+   526→   526→                </Button>
+   527→   527→              </>
+   528→   528→            ) : (
+   529→   529→              <TurnoActivo depto={depto} tareas={tareasDelTurno(depto, hoyKey(), st.diaActual === hoyKey() ? st.shiftsHoy : 0)} onFin={finTurno} />
+   530→   530→            )}
+   531→   531→
+   532→   532→            {/* resumen del turno terminado */}
+   533→   533→            <AnimatePresence>
+   534→   534→              {resumenTurno && (
+   535→   535→                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-2.5 border border-green-hud/60 bg-green-hud/10 p-2.5">
+   536→   536→                  <p className="text-[10px] font-mono uppercase text-green-hud flex items-center gap-1.5 mb-1">
+   537→   537→                    <CheckCircle2 className="w-3.5 h-3.5" /> turno completado · {resumenTurno.aciertos}/3 aciertos
+   538→   538→                    {resumenTurno.pago.perfecta && <span className="text-amber">· TURNO PERFECTO</span>}
+   539→   539→                  </p>
+   540→   540→                  <p className="text-xs text-foreground font-mono">
+   541→   541→                    +{resumenTurno.pago.total}ⓒ <span className="text-muted-foreground">({resumenTurno.pago.base} base + {resumenTurno.pago.propina} propina{resumenTurno.pago.bonoPerfecta > 0 ? ` + ${resumenTurno.pago.bonoPerfecta} perfecto` : ""})</span>
+   542→   542→                    {" "}· <span className="text-amber">+{resumenTurno.pago.xpGanada} XP laboral</span>
+   543→   543→                  </p>
+   544→   544→                </motion.div>
+   545→   545→              )}
+   546→   546→            </AnimatePresence>
+   547→   547→          </div>
+   548→   548→
+   549→   549→          {/* ASCENSOS */}
+   550→   550→          <div className="hud-corner p-3">
+   551→   551→            <p className="text-[10px] font-mono uppercase tracking-wider text-amber flex items-center gap-1.5 mb-2.5">
+   552→   552→              <ChevronsUp className="w-3.5 h-3.5" /> escala de carrera · cada rango sube el sueldo
+   553→   553→            </p>
+   554→   554→            <div className="space-y-1">
+   555→   555→              {RANGOS.map((r, i) => {
+   556→   556→                const logrado = st.xpLaboral >= r.xp;
+   557→   557→                const esActual = rango.idx === i;
+   558→   558→                return (
+   559→   559→                  <div key={r.nombre} className={cn("flex items-center gap-2 border px-2 py-1.5", esActual ? "border-amber-hud bg-amber-hud/10" : logrado ? "border-green-hud/40" : "border-border/50 opacity-60")}>
+   560→   560→                    {esActual ? <Star className="w-3.5 h-3.5 text-amber flex-shrink-0" /> : logrado ? <CheckCircle2 className="w-3.5 h-3.5 text-green-hud flex-shrink-0" /> : <span className="w-3.5 h-3.5 flex-shrink-0 border border-border flex-shrink-0" />}
+   561→   561→                    <span className={cn("text-[11px] font-mono font-bold flex-1", esActual ? "text-amber" : "text-foreground/80")}>{r.nombre}</span>
+   562→   562→                    <span className="text-[10px] font-mono text-muted-foreground">{r.xp} XP</span>
+   563→   563→                    <span className="text-[10px] font-mono text-green-hud font-bold w-12 text-right">+{Math.round((r.mult - 1) * 100)}%</span>
+   564→   564→                  </div>
+   565→   565→                );
+   566→   566→              })}
+   567→   567→            </div>
+   568→   568→            {rango.siguiente && (
+   569→   569→              <div className="mt-2">
+   570→   570→                <div className="flex items-center justify-between text-[9px] font-mono text-muted-foreground uppercase mb-1">
+   571→   571→                  <span>progreso a {rango.siguiente.nombre}</span>
+   572→   572→                  <span>{Math.round(rango.progreso * 100)}%</span>
+   573→   573→                </div>
+   574→   574→                <div className="h-1.5 bg-border overflow-hidden">
+   575→   575→                  <motion.div className="h-full bg-amber-hud" animate={{ width: `${rango.progreso * 100}%` }} transition={{ duration: 0.5 }} />
+   576→   576→                </div>
+   577→   577→              </div>
+   578→   578→            )}
+   579→   579→          </div>
+   580→   580→
+   581→   581→          {/* RENUNCIA */}
+   582→   582→          <div className="hud-corner p-3 flex items-center gap-3">
+   583→   583→            <TrendingUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+   584→   584→            <p className="text-[10px] text-muted-foreground leading-relaxed flex-1">
+   585→   585→              ¿Otra vocación? Renunciar conserva la mitad de tu XP laboral y reabre la entrevista:
+   586→   586→              el Estado Mayor, Cartografía, SIGINT y Cancillería aceptan traslados.
+   587→   587→            </p>
+   588→   588→            {!confirmarRenuncia ? (
+   589→   589→              <Button size="sm" variant="ghost" onClick={() => { setConfirmarRenuncia(true); sfx.click(); }} className="h-7 font-mono text-[10px] uppercase text-red-hud hover:bg-red-hud/20 flex-shrink-0">
+   590→   590→                <LogOut className="w-3.5 h-3.5 mr-1" /> renunciar
+   591→   591→              </Button>
+   592→   592→            ) : (
+   593→   593→              <div className="flex gap-1.5 flex-shrink-0">
+   594→   594→                <Button size="sm" onClick={renunciar} className="h-7 font-mono text-[10px] uppercase bg-red-hud/30 border border-red-hud text-red-hud hover:bg-red-hud/50">confirmar</Button>
+   595→   595→                <Button size="sm" variant="ghost" onClick={() => setConfirmarRenuncia(false)} className="h-7 font-mono text-[10px] uppercase">no</Button>
+   596→   596→              </div>
+   597→   597→            )}
+   598→   598→          </div>
+   599→   599→        </>
+   600→   600→      )}
+   601→   601→
+   602→   602→      {/* saldo de referencia */}
+   603→   603→      <p className="text-[9px] font-mono text-muted-foreground text-center uppercase">
+   604→   604→        saldo en caja: {coins.toLocaleString("es")}ⓒ · los pagos de nómina también pueden recibir GOLPE DE FORTUNA
+   605→   605→      </p>
+   606→   606→    </div>
+   607→   607→  );
+   608→   608→}
+   609→   609→

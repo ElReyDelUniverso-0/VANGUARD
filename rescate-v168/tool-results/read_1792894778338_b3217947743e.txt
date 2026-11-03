@@ -1,0 +1,523 @@
+     1→"use client";
+     2→
+     3→// Vanguard v12 — BETNACION: casa de apuestas estilo sportsbook real.
+     4→// Mercados definidos (1X2, doble oportunidad, over/under, handicap, marcador
+     5→// exacto), partidos EN VIVO minuto a minuto, cuotas que se mueven, combinadas,
+     6→// cashout y liquidacion automatica. Monedas virtuales del juego.
+     7→
+     8→import { useState, useEffect, useRef, useCallback } from "react";
+     9→import { PanelHeader } from "@/components/vanguard/panel-header";
+    10→import { VIcon } from "@/components/vanguard/vanguard-icon";
+    11→import { Dice5, Coins, Radio, Clock, Ticket, TrendingUp, Ban, Flame, Zap, Gift, Star } from "lucide-react";
+    12→import { cn } from "@/lib/utils";
+    13→import { Button } from "@/components/ui/button";
+    14→import { toast } from "sonner";
+    15→import { motion } from "framer-motion";
+    16→import { sfx } from "@/lib/sound";
+    17→import { useGameStore } from "@/lib/game-store";
+    18→import { getTension } from "@/lib/tension";
+    19→import {
+    20→  generateEvents, advanceEvent, refreshOdds, choiceWon, settleWinnerEvent,
+    21→  cashoutValue, loadTickets, saveTickets, loadEvents, saveEvents,
+    22→  BK_FREEBET_MONTO, BK_JACKPOT_BASE, loadFreebet, saveFreebet, bkHoy, loadJackpot, saveJackpot,
+    23→  type BkEvent, type BkLeg, type BkTicket,
+    24→} from "@/lib/bookmaker-sim";
+    25→import { HeroOro } from "@/components/vanguard/hero-oro";
+    26→
+    27→const STAKE_CHIPS = [50, 100, 250, 500, 1000];
+    28→
+    29→interface BkStats { staked: number; payout: number; bets: number; wins: number; }
+    30→function loadStats(): BkStats {
+    31→  try { return JSON.parse(localStorage.getItem("vanguard-bk-stats") ?? "") as BkStats; }
+    32→  catch { return { staked: 0, payout: 0, bets: 0, wins: 0 }; }
+    33→}
+    34→
+    35→function countdown(ms: number): string {
+    36→  if (ms <= 0) return "EN JUEGO";
+    37→  const s = Math.floor(ms / 1000);
+    38→  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    39→}
+    40→
+    41→export function BookmakerPanel() {
+    42→  const coins = useGameStore((s) => s.coins);
+    43→  const spendCoins = useGameStore((s) => s.spendCoins);
+    44→  const addCoins = useGameStore((s) => s.addCoins);
+    45→  const addXp = useGameStore((s) => s.addXp);
+    46→  const recordBet = useGameStore((s) => s.recordBet);
+    47→
+    48→  const [sub, setSub] = useState<"vivo" | "prox" | "politica" | "tickets">("vivo");
+    49→  const [events, setEvents] = useState<BkEvent[]>([]);
+    50→  const [tickets, setTickets] = useState<BkTicket[]>([]);
+    51→  const [slip, setSlip] = useState<BkLeg[]>([]);
+    52→  const [stake, setStake] = useState(100);
+    53→  const [marketSel, setMarketSel] = useState<Record<string, string>>({});
+    54→  const [stats, setStats] = useState<BkStats>({ staked: 0, payout: 0, bets: 0, wins: 0 });
+    55→  const [flash, setFlash] = useState<string | null>(null); // evento con gol reciente
+    56→
+    57→  // ====== v84.0 FORTUNA: apuesta gratis diaria + JACKPOT progresivo ======
+    58→  const hoyStr = bkHoy();
+    59→  const [freebet, setFreebet] = useState(() => {
+    60→    const f = loadFreebet();
+    61→    return f.date === bkHoy() ? f : { date: bkHoy(), used: false };
+    62→  });
+    63→  const [jackpot, setJackpot] = useState<number>(() => loadJackpot());
+    64→  const jackpotRef = useRef(jackpot);
+    65→  useEffect(() => { jackpotRef.current = jackpot; }, [jackpot]);
+    66→
+    67→  const eventsRef = useRef<BkEvent[]>([]);
+    68→  const ticketsRef = useRef<BkTicket[]>([]);
+    69→  const tick = useRef(0);
+    70→  useEffect(() => { ticketsRef.current = tickets; }, [tickets]);
+    71→
+    72→  // ====== INIT: cargar o generar jornada ======
+    73→  useEffect(() => {
+    74→    // v84: los mercados de GUERRA nacen con la tensión global real del planeta
+    75→    let evs = loadEvents();
+    76→    if (!evs) evs = generateEvents(Date.now(), getTension());
+    77→    // reembolsar tickets abiertos de una jornada anterior (evento inexistente)
+    78→    const tks = loadTickets();
+    79→    const ids = new Set(evs.map((e) => e.id));
+    80→    const refunded = tks.filter((t) => t.status === "ABIERTA" && t.legs.some((l) => !ids.has(l.eventId)));
+    81→    if (refunded.length > 0) {
+    82→      for (const t of tks) {
+    83→        if (t.status === "ABIERTA" && t.legs.some((l) => !ids.has(l.eventId))) {
+    84→          t.status = "COBRADA"; t.payout = t.stake;
+    85→        }
+    86→      }
+    87→      const total = refunded.reduce((a, t) => a + t.stake, 0);
+    88→      addCoins(total, "Reembolso jornada anterior BETNACION");
+    89→      toast.info(`Jornada rotada: ${refunded.length} apuesta(s) reembolsada(s)`, { description: `+${total} mon de vuelta` });
+    90→      saveTickets(tks);
+    91→    }
+    92→    eventsRef.current = evs;
+    93→    setEvents([...evs]);
+    94→    ticketsRef.current = tks;
+    95→    setTickets(tks);
+    96→    setStats(loadStats());
+    97→  }, [addCoins]);
+    98→
+    99→  // ====== MOTOR EN VIVO (1s) ======
+   100→  useEffect(() => {
+   101→    const iv = setInterval(() => {
+   102→      tick.current++;
+   103→      const evs = eventsRef.current;
+   104→      if (!evs.length) return;
+   105→      const next = evs.map((e) => {
+   106→        const c = { ...e, corners: [...e.corners] as [number, number], cards: [...e.cards] as [number, number], xg: [...e.xg] as [number, number] };
+   107→        const before = c.status;
+   108→        const goalsBefore = c.hs + c.as;
+   109→        advanceEvent(c, 1);
+   110→        if (c.status === "EN_VIVO" && tick.current % 2 === 0) refreshOdds(c);
+   111→        if (before !== "FINALIZADO" && c.status === "FINALIZADO" && c.kind !== "FUTBOL") settleWinnerEvent(c);
+   112→        if (c.status === "EN_VIVO" && c.hs + c.as > goalsBefore) setFlash(c.id);
+   113→        return c;
+   114→      });
+   115→      eventsRef.current = next;
+   116→      setEvents(next);
+   117→      if (tick.current % 3 === 0) saveEvents(next);
+   118→      settleOpenTickets(next);
+   119→      if (flash) setTimeout(() => setFlash(null), 2500);
+   120→    }, 1000);
+   121→    return () => clearInterval(iv);
+   122→    // eslint-disable-next-line react-hooks/exhaustive-deps
+   123→  }, []);
+   124→
+   125→  // ====== LIQUIDACION AUTOMATICA (pura: efectos fuera del updater) ======
+   126→  const settleOpenTickets = useCallback((evs: BkEvent[]) => {
+   127→    const map: Record<string, BkEvent> = {};
+   128→    for (const e of evs) map[e.id] = e;
+   129→    const prev = ticketsRef.current;
+   130→    let changed = false;
+   131→    let payoutDelta = 0, winsDelta = 0;
+   132→    const next = prev.map((t) => {
+   133→      if (t.status !== "ABIERTA") return t;
+   134→      if (!t.legs.every((l) => map[l.eventId] && map[l.eventId].status === "FINALIZADO")) return t;
+   135→      changed = true;
+   136→      const won = t.legs.every((l) => choiceWon(map[l.eventId], l) === true);
+   137→      if (won) {
+   138→        // v84 FORTUNA: BONUS DE COMBINADA — más piernas, más premio (x3 +6% · x5 +12%)
+   139→        const bonus = t.legs.length >= 5 ? 0.12 : t.legs.length >= 3 ? 0.06 : 0;
+   140→        const pago = Math.round(t.potential * (1 + bonus));
+   141→        payoutDelta += pago; winsDelta += 1;
+   142→        addCoins(pago, `Apuesta GANADA BETNACION x${t.legs.length}${bonus > 0 ? ` · BONUS +${Math.round(bonus * 100)}%` : ""}`);
+   143→        addXp(35);
+   144→        recordBet(t.stake, true, pago);
+   145→        sfx.coin();
+   146→        toast.success(`¡APUESTA GANADA! +${pago} mon`, { description: `${t.legs.map((l) => `${l.choiceLabel} @${l.odd}`).join(" · ")}${bonus > 0 ? ` · BONUS COMBINADA +${Math.round(bonus * 100)}%` : ""}` });
+   147→        // v84 FORTUNA: JACKPOT — combinada de 3+ con cuota total ≥ 8.0 tiene un
+   148→        // 6% de llevarse el bote progresivo (se alimenta con el 4% de cada apuesta)
+   149→        const cuotaTotal = t.stake > 0 ? t.potential / t.stake : 0;
+   150→        if (t.legs.length >= 3 && cuotaTotal >= 8 && Math.random() < 0.06) {
+   151→          const bote = jackpotRef.current;
+   152→          addCoins(bote, "★ JACKPOT FORTUNA BETNACION ★");
+   153→          saveJackpot(BK_JACKPOT_BASE);
+   154→          setJackpot(BK_JACKPOT_BASE);
+   155→          sfx.achievement();
+   156→          toast.success(`★ ¡JACKPOT DE LA FORTUNA! +${bote.toLocaleString()} mon ★`, { description: "La combinada perfecta se lleva el bote progresivo — el bote se reinicia a 5.000" });
+   157→        }
+   158→        return { ...t, status: "GANADA" as const, payout: pago, settledAt: Date.now() };
+   159→      }
+   160→      recordBet(t.stake, false, 0);
+   161→      sfx.error();
+   162→      toast.error("Apuesta perdida", { description: t.legs.map((l) => l.choiceLabel).join(" · ") });
+   163→      return { ...t, status: "PERDIDA" as const, payout: 0, settledAt: Date.now() };
+   164→    });
+   165→    if (!changed) return;
+   166→    ticketsRef.current = next;
+   167→    saveTickets(next);
+   168→    setTickets(next);
+   169→    if (payoutDelta > 0 || winsDelta > 0) {
+   170→      setStats((s) => { const ns = { ...s, payout: s.payout + payoutDelta, wins: s.wins + winsDelta }; localStorage.setItem("vanguard-bk-stats", JSON.stringify(ns)); return ns; });
+   171→    }
+   172→  }, [addCoins, addXp, recordBet]);
+   173→
+   174→  // ====== BOLETA ======
+   175→  const addLeg = (e: BkEvent, mKey: string, mLabel: string, cKey: string, cLabel: string, odd: number) => {
+   176→    sfx.beep();
+   177→    setSlip((prev) => {
+   178→      const filtered = prev.filter((l) => l.eventId !== e.id); // 1 seleccion por evento
+   179→      const leg: BkLeg = { eventId: e.id, eventTitle: e.title, marketKey: mKey, marketLabel: mLabel, choiceKey: cKey, choiceLabel: cLabel, odd };
+   180→      return [...filtered, leg].slice(0, 8);
+   181→    });
+   182→  };
+   183→  const totalOdd = slip.reduce((a, l) => a * l.odd, 1);
+   184→  const potential = Math.round(stake * totalOdd);
+   185→
+   186→  const placeBet = () => {
+   187→    if (!slip.length) return;
+   188→    if (stake < 10) { toast.error("Apuesta minima: 10 mon"); return; }
+   189→    // v84 FORTUNA: APUESTA GRATIS DIARIA — la primera apuesta del día de hasta
+   190→    // 75ⓒ la paga la casa: cero riesgo para el comandante
+   191→    const gratis = !freebet.used && stake <= BK_FREEBET_MONTO;
+   192→    if (gratis) {
+   193→      const nf = { date: hoyStr, used: true };
+   194→      saveFreebet(nf);
+   195→      setFreebet(nf);
+   196→    } else {
+   197→      if (coins < stake) { toast.error("Monedas insuficientes"); return; }
+   198→      spendCoins(stake, `Apuesta BETNACION x${slip.length}`);
+   199→    }
+   200→    const t: BkTicket = {
+   201→      id: `T-${Date.now()}-${Math.floor(Math.random() * 1e4)}`,
+   202→      placedAt: Date.now(), legs: [...slip], stake,
+   203→      potential: Math.round(stake * totalOdd), status: "ABIERTA", payout: 0,
+   204→    };
+   205→    const next = [t, ...loadTickets()];
+   206→    saveTickets(next); setTickets(next); setSlip([]);
+   207→    setStats((s) => { const ns = { ...s, staked: s.staked + stake, bets: s.bets + 1 }; localStorage.setItem("vanguard-bk-stats", JSON.stringify(ns)); return ns; });
+   208→    // v84: el 4% de cada apuesta engorda el JACKPOT progresivo
+   209→    const nj = jackpotRef.current + Math.round(stake * 0.04);
+   210→    saveJackpot(nj);
+   211→    setJackpot(nj);
+   212→    sfx.coin();
+   213→    toast.success(`Apuesta colocada · cuota ${totalOdd.toFixed(2)}${gratis ? " · ¡GRATIS!" : ""}`, { description: `Pago potencial: ${t.potential} mon` });
+   214→  };
+   215→
+   216→  // ====== CASHOUT ======
+   217→  const doCashout = (t: BkTicket) => {
+   218→    const map: Record<string, BkEvent> = {};
+   219→    for (const e of eventsRef.current) map[e.id] = e;
+   220→    const val = cashoutValue(t, map);
+   221→    if (val == null) return;
+   222→    const next = loadTickets().map((x) => x.id === t.id ? { ...x, status: "COBRADA" as const, payout: val, cashedAtStatus: "EN VIVO" } : x);
+   223→    saveTickets(next); setTickets(next);
+   224→    addCoins(val, "CASHOUT BETNACION");
+   225→    recordBet(t.stake, val > t.stake, val);
+   226→    sfx.coin();
+   227→    toast.info(`CASHOUT cobrado: +${val} mon`, { description: val > t.stake ? "Cerraste con ganancia" : "Cerraste limitando perdida" });
+   228→  };
+   229→
+   230→  // ====== LISTAS ======
+   231→  const live = events.filter((e) => e.status === "EN_VIVO" && e.kind === "FUTBOL");
+   232→  const prox = events.filter((e) => e.status === "PROXIMO" && e.kind === "FUTBOL").sort((a, b) => a.startAt - b.startAt);
+   233→  const polit = events.filter((e) => e.kind !== "FUTBOL");
+   234→  const fin = events.filter((e) => e.status === "FINALIZADO").slice(0, 4);
+   235→  const openTickets = tickets.filter((t) => t.status === "ABIERTA");
+   236→  const histTickets = tickets.filter((t) => t.status !== "ABIERTA");
+   237→  const roi = stats.staked > 0 ? Math.round(((stats.payout - stats.staked) / stats.staked) * 100) : 0;
+   238→
+   239→  const SubBtn = ({ id, label, badge }: { id: typeof sub; label: string; badge?: number }) => (
+   240→    <button
+   241→      onClick={() => { sfx.tab(); setSub(id); }}
+   242→      className={cn(
+   243→        "relative px-3 py-1.5 rounded-sm font-mono text-[10px] font-bold uppercase tracking-widest border whitespace-nowrap",
+   244→        sub === id ? "text-amber border-amber-hud bg-amber-hud/30" : "border-border/60 text-muted-foreground hover:text-foreground"
+   245→      )}
+   246→    >
+   247→      {label}
+   248→      {badge ? <span className="ml-1.5 px-1 rounded-sm bg-red-hud/40 text-red-hud text-[9px]">{badge}</span> : null}
+   249→    </button>
+   250→  );
+   251→
+   252→  const OddsGrid = ({ e }: { e: BkEvent }) => {
+   253→    const sel = marketSel[e.id] ?? e.markets[0].key;
+   254→    const m = e.markets.find((mk) => mk.key === sel) ?? e.markets[0];
+   255→    const isExact = m.key === "EXACTO";
+   256→    return (
+   257→      <div>
+   258→        <div className="flex gap-1 flex-wrap mb-1.5">
+   259→          {e.markets.filter((mk) => mk.key !== "EXACTO" || sel === "EXACTO").map((mk) => (
+   260→            <button
+   261→              key={mk.key}
+   262→              onClick={() => { sfx.hover(); setMarketSel((s) => ({ ...s, [e.id]: mk.key })); }}
+   263→              className={cn(
+   264→                "px-1.5 py-0.5 text-[9px] font-mono uppercase rounded-sm border",
+   265→                sel === mk.key ? "text-cyan-hud border-cyan-hud bg-cyan-hud/20" : "border-border/50 text-muted-foreground"
+   266→              )}
+   267→            >
+   268→              {mk.key === "WINNER" ? "GANADOR" : mk.label}
+   269→            </button>
+   270→          ))}
+   271→          {!isExact && e.markets.some((mk) => mk.key === "EXACTO") && (
+   272→            <button onClick={() => setMarketSel((s) => ({ ...s, [e.id]: "EXACTO" }))}
+   273→              className={cn("px-1.5 py-0.5 text-[9px] font-mono rounded-sm border", sel === "EXACTO" ? "text-cyan-hud border-cyan-hud bg-cyan-hud/20" : "border-border/50 text-muted-foreground")}>
+   274→              EXACTO
+   275→            </button>
+   276→          )}
+   277→        </div>
+   278→        <div className={cn("grid gap-1", m.choices.length === 2 ? "grid-cols-2" : isExact ? "grid-cols-3 sm:grid-cols-6" : "grid-cols-3")}>
+   279→          {m.choices.map((c) => {
+   280→            const picked = slip.some((l) => l.eventId === e.id && l.marketKey === m.key && l.choiceKey === c.key);
+   281→            return (
+   282→              <button
+   283→                key={c.key}
+   284→                onClick={() => addLeg(e, m.key, m.key === "WINNER" ? "GANADOR" : m.label, c.key, c.label, c.odd)}
+   285→                className={cn(
+   286→                  "px-1.5 py-1.5 rounded-sm border text-left transition-colors",
+   287→                  picked ? "border-amber-hud bg-amber-hud/30 text-amber" : "border-border/60 bg-secondary/40 hover:border-amber-hud/50"
+   288→                )}
+   289→              >
+   290→                <div className="text-[8px] sm:text-[9px] font-mono text-muted-foreground uppercase leading-tight truncate">{c.label}</div>
+   291→                <div className={cn("text-xs sm:text-sm font-mono font-bold", picked ? "text-amber" : "text-foreground")}>{c.odd.toFixed(2)}</div>
+   292→              </button>
+   293→            );
+   294→          })}
+   295→        </div>
+   296→      </div>
+   297→    );
+   298→  };
+   299→
+   300→  const EventCard = ({ e }: { e: BkEvent }) => (
+   301→    <div className={cn("hud-corner border bg-secondary/20 p-3", flash === e.id && "border-red-hud shadow-[0_0_18px_rgba(239,68,68,0.35)]")}>
+   302→      <div className="flex items-center justify-between gap-2 mb-1.5">
+   303→        <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest truncate">{e.comp}</span>
+   304→        {e.status === "EN_VIVO" && (
+   305→          <span className="flex items-center gap-1 text-[9px] font-mono font-bold text-red-hud">
+   306→            <Radio className="w-2.5 h-2.5 blink-soft" /> {Math.floor(e.minute)}&apos;
+   307→          </span>
+   308→        )}
+   309→        {e.status === "PROXIMO" && (
+   310→          <span className="flex items-center gap-1 text-[9px] font-mono text-cyan-hud">
+   311→            <Clock className="w-2.5 h-2.5" /> {countdown(e.startAt - Date.now())}
+   312→          </span>
+   313→        )}
+   314→        {e.status === "FINALIZADO" && <span className="text-[9px] font-mono text-muted-foreground">FINAL</span>}
+   315→      </div>
+   316→      <div className="flex items-center justify-between gap-2 mb-2">
+   317→        <div className="font-mono text-xs sm:text-sm font-bold text-foreground">{e.title}</div>
+   318→        {(e.status !== "PROXIMO") && (
+   319→          <div className={cn("font-mono text-lg font-bold", e.status === "EN_VIVO" ? "text-red-hud" : "text-muted-foreground")}>
+   320→            {e.kind === "FUTBOL" ? `${e.hs}-${e.as}` : (e.drawn ? e.sides[e.hs]?.slice(0, 6) : "—")}
+   321→          </div>
+   322→        )}
+   323→      </div>
+   324→      {e.status === "FINALIZADO" && e.kind === "FUTBOL" && (
+   325→        <div className="flex gap-2 text-[9px] font-mono text-muted-foreground mb-1.5">
+   326→          <span>CORNERS {e.corners[0]}-{e.corners[1]}</span><span>TARJ. {e.cards[0]}-{e.cards[1]}</span>
+   327→        </div>
+   328→      )}
+   329→      {e.status !== "FINALIZADO" && <OddsGrid e={e} />}
+   330→      {e.status === "FINALIZADO" && (
+   331→        <div className="text-[10px] font-mono text-muted-foreground truncate">{e.events[0]}</div>
+   332→      )}
+   333→      {e.status === "EN_VIVO" && e.events[0] && (
+   334→        <div className="mt-1.5 text-[9px] font-mono text-muted-foreground/80 truncate">{e.events[0]}</div>
+   335→      )}
+   336→    </div>
+   337→  );
+   338→
+   339→  return (
+   340→    <div className="space-y-3">
+   341→      <HeroOro panel="bookmaker" />
+   342→      <PanelHeader
+   343→        title="BETNACION"
+   344→        subtitle="Casa de apuestas · cuotas en vivo · mercados definidos"
+   345→        icon={<Dice5 className="w-4 h-4" />}
+   346→        color="green"
+   347→        right={
+   348→          <div className="flex items-center gap-2">
+   349→            {/* v84: JACKPOT progresivo visible siempre */}
+   350→            <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full border border-amber-hud/70 bg-amber-hud/10 font-mono text-[10px] font-bold text-amber">
+   351→              <Star className="w-3 h-3 blink-soft" /> JACKPOT {jackpot.toLocaleString()}
+   352→            </span>
+   353→            <div className="flex items-center gap-1.5 font-mono text-xs text-amber"><VIcon k="M" className="w-3.5 h-3.5" />{coins.toLocaleString()}</div>
+   354→          </div>
+   355→        }
+   356→      />
+   357→
+   358→      {/* v84 FORTUNA: banner de la apuesta gratis diaria */}
+   359→      {!freebet.used && (
+   360→        <div className="hud-corner border border-amber-hud bg-amber-hud/10 px-3 py-2 flex items-center gap-2.5">
+   361→          <Gift className="w-4 h-4 text-amber shrink-0" />
+   362→          <div className="min-w-0">
+   363→            <div className="font-mono text-[11px] font-bold text-amber uppercase tracking-widest">APUESTA GRATIS DE HOY · {BK_FREEBET_MONTO} MON</div>
+   364→            <div className="text-[10px] text-muted-foreground">La casa pone el dinero: apuesta hasta {BK_FREEBET_MONTO}ⓒ sin riesgo, vale hasta medianoche.</div>
+   365→          </div>
+   366→        </div>
+   367→      )}
+   368→
+   369→      {/* stats de la casa */}
+   370→      <div className="grid grid-cols-4 gap-2">
+   371→        {[
+   372→          { l: "APOSTADO", v: stats.staked.toLocaleString(), c: "text-foreground" },
+   373→          { l: "DEVUELTO", v: stats.payout.toLocaleString(), c: "text-green-hud" },
+   374→          { l: "ROI", v: `${roi > 0 ? "+" : ""}${roi}%`, c: roi >= 0 ? "text-green-hud" : "text-red-hud" },
+   375→          { l: "GANADAS", v: `${stats.wins}/${stats.bets}`, c: "text-cyan-hud" },
+   376→        ].map((s) => (
+   377→          <div key={s.l} className="hud-corner border bg-secondary/20 p-2 text-center">
+   378→            <div className="text-[8px] font-mono text-muted-foreground uppercase">{s.l}</div>
+   379→            <div className={cn("text-xs sm:text-sm font-mono font-bold", s.c)}>{s.v}</div>
+   380→          </div>
+   381→        ))}
+   382→      </div>
+   383→
+   384→      <div className="flex gap-1.5 flex-wrap">
+   385→        <SubBtn id="vivo" label="EN VIVO" badge={live.length} />
+   386→        <SubBtn id="prox" label="PROXIMOS" badge={prox.length} />
+   387→        <SubBtn id="politica" label="POLITICA & GUERRA" badge={polit.length} />
+   388→        <SubBtn id="tickets" label="MIS APUESTAS" badge={openTickets.length} />
+   389→      </div>
+   390→
+   391→      <div className="grid lg:grid-cols-[1fr_320px] gap-3 items-start">
+   392→        <div className="space-y-2">
+   393→          {sub === "vivo" && (
+   394→            live.length ? <div className="grid md:grid-cols-2 gap-2">{live.map((e) => <EventCard key={e.id} e={e} />)}</div>
+   395→              : <div className="hud-corner border p-8 text-center text-xs font-mono text-muted-foreground uppercase">Sin partidos en vivo · mira PROXIMOS</div>
+   396→          )}
+   397→          {sub === "prox" && (
+   398→            <div className="grid md:grid-cols-2 gap-2">
+   399→              {prox.map((e) => <EventCard key={e.id} e={e} />)}
+   400→            </div>
+   401→          )}
+   402→          {sub === "politica" && (
+   403→            <div className="grid md:grid-cols-2 gap-2">
+   404→              {polit.map((e) => <EventCard key={e.id} e={e} />)}
+   405→              <div className="md:col-span-2 hud-corner border p-3">
+   406→                <div className="text-[10px] font-mono text-muted-foreground uppercase mb-2 flex items-center gap-1"><Flame className="w-3 h-3 text-amber" /> RESULTADOS RECIENTES</div>
+   407→                <div className="space-y-1">
+   408→                  {fin.map((f) => (
+   409→                    <div key={f.id} className="flex justify-between text-[10px] font-mono">
+   410→                      <span className="text-foreground truncate">{f.title}</span>
+   411→                      <span className="text-muted-foreground">{f.kind === "FUTBOL" ? `${f.hs}-${f.as}` : f.sides[f.hs]}</span>
+   412→                    </div>
+   413→                  ))}
+   414→                  {!fin.length && <div className="text-[10px] font-mono text-muted-foreground">Sin resultados todavia</div>}
+   415→                </div>
+   416→              </div>
+   417→            </div>
+   418→          )}
+   419→          {sub === "tickets" && (
+   420→            <div className="space-y-2">
+   421→              {openTickets.map((t) => {
+   422→                const map: Record<string, BkEvent> = {};
+   423→                for (const e of eventsRef.current) map[e.id] = e;
+   424→                const cv = cashoutValue(t, map);
+   425→                return (
+   426→                  <div key={t.id} className="hud-corner border border-amber-hud/50 bg-secondary/20 p-3">
+   427→                    <div className="flex items-center justify-between mb-1.5">
+   428→                      <span className="text-[9px] font-mono text-amber font-bold uppercase flex items-center gap-1"><Ticket className="w-3 h-3" /> ABIERTA {t.legs.length > 1 ? `COMBINADA x${t.legs.length}` : "SIMPLE"}</span>
+   429→                      <span className="text-[10px] font-mono text-muted-foreground">cuota {t.legs.reduce((a, l) => a * l.odd, 1).toFixed(2)}</span>
+   430→                    </div>
+   431→                    {t.legs.map((l, i) => (
+   432→                      <div key={i} className="flex justify-between text-[10px] font-mono py-0.5 border-b border-border/30">
+   433→                        <span className="text-foreground truncate">{l.eventTitle} · {l.choiceLabel}</span>
+   434→                        <span className="text-amber">{l.odd.toFixed(2)}</span>
+   435→                      </div>
+   436→                    ))}
+   437→                    <div className="flex items-center justify-between mt-2 gap-2">
+   438→                      <span className="text-[10px] font-mono text-muted-foreground">{t.stake} mon → {t.potential} mon</span>
+   439→                      {cv != null && cv > 0 && (
+   440→                        <Button size="sm" onClick={() => doCashout(t)} className="h-6 text-[10px] font-mono bg-green-hud/30 text-green-hud border border-green-hud hover:bg-green-hud/50">
+   441→                          <Zap className="w-3 h-3 mr-1" /> CASHOUT {cv} mon
+   442→                        </Button>
+   443→                      )}
+   444→                    </div>
+   445→                  </div>
+   446→                );
+   447→              })}
+   448→              {!openTickets.length && <div className="hud-corner border p-6 text-center text-xs font-mono text-muted-foreground uppercase">Sin apuestas abiertas</div>}
+   449→              {histTickets.slice(0, 12).map((t) => (
+   450→                <div key={t.id} className={cn("border p-2.5 flex items-center justify-between gap-2", t.status === "GANADA" ? "border-green-hud/50 bg-green-hud/10" : t.status === "PERDIDA" ? "border-red-hud/40 bg-red-hud/5" : "border-border/50")}>
+   451→                  <div className="min-w-0">
+   452→                    <div className="text-[10px] font-mono font-bold uppercase" style={{ color: t.status === "GANADA" ? "#4ade80" : t.status === "PERDIDA" ? "#f87171" : "#22d3ee" }}>{t.status}{t.cashedAtStatus ? " (CASHOUT)" : ""}</div>
+   453→                    <div className="text-[9px] font-mono text-muted-foreground truncate">{t.legs.map((l) => l.choiceLabel).join(" + ")}</div>
+   454→                  </div>
+   455→                  <div className={cn("text-xs font-mono font-bold whitespace-nowrap", t.status === "GANADA" || t.status === "COBRADA" ? "text-green-hud" : "text-red-hud")}>
+   456→                    {t.status === "PERDIDA" ? `-${t.stake}` : `+${t.payout}`}
+   457→                  </div>
+   458→                </div>
+   459→              ))}
+   460→            </div>
+   461→          )}
+   462→        </div>
+   463→
+   464→        {/* BOLETA */}
+   465→        <div className="hud-corner border border-amber-hud bg-background/90 p-3 lg:sticky lg:top-32">
+   466→          <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-amber mb-2 flex items-center gap-1">
+   467→            <Ticket className="w-3.5 h-3.5" /> BOLETA {slip.length > 1 && <span className="text-cyan-hud">· COMBINADA</span>}
+   468→          </div>
+   469→          {slip.length === 0 ? (
+   470→            <div className="text-[10px] font-mono text-muted-foreground py-3 text-center">Toca una cuota para agregar</div>
+   471→          ) : (
+   472→            <div className="space-y-1 mb-2 max-h-52 overflow-y-auto thin-scroll">
+   473→              {slip.map((l) => (
+   474→                <div key={`${l.eventId}-${l.marketKey}`} className="flex items-start justify-between gap-2 text-[10px] font-mono border-b border-border/30 pb-1">
+   475→                  <div className="min-w-0">
+   476→                    <div className="text-foreground truncate">{l.choiceLabel}</div>
+   477→                    <div className="text-muted-foreground/70 truncate">{l.eventTitle} · {l.marketLabel}</div>
+   478→                  </div>
+   479→                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+   480→                    <span className="text-amber font-bold">{l.odd.toFixed(2)}</span>
+   481→                    <button onClick={() => setSlip((p) => p.filter((x) => x !== l))} aria-label="Quitar"><Ban className="w-3 h-3 text-red-hud/70" /></button>
+   482→                  </div>
+   483→                </div>
+   484→              ))}
+   485→            </div>
+   486→          )}
+   487→          <div className="flex gap-1 mb-2">
+   488→            {STAKE_CHIPS.map((v) => (
+   489→              <button key={v} onClick={() => { sfx.hover(); setStake(v); }}
+   490→                className={cn("flex-1 py-1 text-[10px] font-mono border rounded-sm", stake === v ? "border-amber-hud text-amber bg-amber-hud/20" : "border-border/50 text-muted-foreground")}>
+   491→                {v}
+   492→              </button>
+   493→            ))}
+   494→            <button onClick={() => setStake(Math.max(10, Math.floor(coins / 2)))} className="flex-1 py-1 text-[10px] font-mono border border-border/50 rounded-sm text-muted-foreground">½</button>
+   495→          </div>
+   496→          <input
+   497→            type="number" min={10} value={stake}
+   498→            onChange={(e) => setStake(Math.max(10, Math.floor(Number(e.target.value) || 10)))}
+   499→            className="w-full bg-secondary/40 border border-border/60 rounded-sm px-2 py-1.5 text-xs font-mono text-foreground mb-2"
+   500→            placeholder="Monto (mon)"
+   501→          />
+   502→          <div className="flex justify-between text-[10px] font-mono mb-2">
+   503→            <span className="text-muted-foreground">CUOTA TOTAL</span>
+   504→            <span className="text-cyan-hud font-bold">{totalOdd.toFixed(2)}</span>
+   505→          </div>
+   506→          <div className="flex justify-between text-[10px] font-mono mb-2">
+   507→            <span className="text-muted-foreground">PAGO POTENCIAL</span>
+   508→            <motion.span key={potential} initial={{ scale: 1.15 }} animate={{ scale: 1 }} className="text-green-hud font-bold flex items-center gap-1">
+   509→              <Coins className="w-3 h-3" />{potential.toLocaleString()}
+   510→            </motion.span>
+   511→          </div>
+   512→          <Button onClick={placeBet} disabled={!slip.length} className="w-full font-mono font-bold uppercase tracking-widest bg-amber-hud/30 border border-amber-hud text-amber hover:bg-amber-hud/50">
+   513→            APOSTAR {stake} MON
+   514→          </Button>
+   515→          <div className="mt-2 text-[8px] font-mono text-muted-foreground/60 leading-relaxed">
+   516→            +18 · MONEDAS VIRTUALES SIN VALOR REAL · JUEGA RESPONSABLE · LAS CUOTAS PUEDEN CAMBIAR EN VIVO
+   517→          </div>
+   518→        </div>
+   519→      </div>
+   520→    </div>
+   521→  );
+   522→}
+   523→

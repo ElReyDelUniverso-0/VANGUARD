@@ -1,0 +1,940 @@
+     1→"use client";
+     2→
+     3→// v93.0 VANGUARD EARTH — "el googles de Vanguard"
+     4→// Espejo del simulador de satélite espía de navegador (globo 3D con contactos
+     5→// en vivo de aviones, buques, satélites, sismos, drones y cámaras públicas,
+     6→// rastreo con estela, 7 vistas de sensor, HUD militar con detecciones,
+     7→// analista por texto, director de escenas, crónicas guiadas y reset al
+     8→// planeta completo). Estructura aprendida del original; contenido, código y
+     9→// arte 100% Vanguard: el núcleo es determinista e inspeccionable.
+    10→// v114.0 ECLIPSE — TERMINADOR SOLAR REAL sobre el globo: una cúpula shader
+    11→// (esfera levemente mayor) oscurece el hemisferio NOCTURNO con crepúsculo
+    12→// suave, gobernada por la MISMA matemática solar del mini-mapa (lib/sol.ts).
+    13→// El uniforme se repasa cada 60 s (el sol anda 0.25°/min) — cero rAF nuestro.
+    14→
+    15→import { useEffect, useMemo, useRef, useState } from "react";
+    16→import { motion, AnimatePresence } from "framer-motion";
+    17→import {
+    18→  Earth, Search, Plane, Ship, Satellite, Bug, Waves, Camera, Wind,
+    19→  Crosshair, Plus, Minus, RotateCcw, Layers, BookOpen, Clapperboard,
+    20→  Dices, X, Play, Pause, Trash2, Send, Eye, Video, Navigation, Sparkles,
+    21→} from "lucide-react";
+    22→import { PanelHeader } from "@/components/vanguard/panel-header";
+    23→import { HeroOro } from "@/components/vanguard/hero-oro";
+    24→import { toast } from "sonner";
+    25→import { cn } from "@/lib/utils";
+    26→import {
+    27→  LUGARES, lugarPorId, contactosEn, estelaDe, pasesSobre, cuentaAtras, veredictoDe,
+    28→  SENSORES, MISIONES, CRONICAS, preguntar, buscarLugar, vientoEn, texturaPorHora,
+    29→  distanciaKm, hhmmUTC, type Contacto, type RespuestaAnalista,
+    30→} from "@/lib/tierra-data";
+    31→import { solAhora, direccionSolGlobo } from "@/lib/sol"; // v114: la misma noche del mini-mapa
+    32→
+    33→// ---------- formas encadenadas mínimas de globe.gl (solo lo que usamos) ----------
+    34→type GLike = {
+    35→  width: (n: number) => GLike; height: (n: number) => GLike;
+    36→  backgroundColor: (s: string) => GLike;
+    37→  globeImageUrl: (s: string) => GLike; bumpImageUrl: (s: string) => GLike;
+    38→  showAtmosphere: (b: boolean) => GLike; atmosphereColor: (s: string) => GLike; atmosphereAltitude: (n: number) => GLike;
+    39→  showGraticules: (b: boolean) => GLike;
+    40→  pointOfView: (p?: { lat?: number; lng?: number; altitude?: number }, ms?: number) => { lat: number; lng: number; altitude: number };
+    41→  controls: () => { autoRotate: boolean; autoRotateSpeed: number; enableDamping: boolean; minDistance: number; maxDistance: number };
+    42→  pointsData: (d: unknown[]) => GLike;
+    43→  pointLat: (f: (d: object) => number) => GLike; pointLng: (f: (d: object) => number) => GLike;
+    44→  pointAltitude: (f: (d: object) => number) => GLike; pointColor: (f: (d: object) => string) => GLike;
+    45→  pointRadius: (f: (d: object) => number) => GLike; pointLabel: (f: (d: object) => string) => GLike;
+    46→  onPointClick: (f: (d: object) => void) => GLike;
+    47→  htmlElementsData: (d: unknown[]) => GLike;
+    48→  htmlLat: (f: (d: object) => number) => GLike; htmlLng: (f: (d: object) => number) => GLike;
+    49→  htmlAltitude: (f: (d: object) => number) => GLike; htmlElement: (f: (d: object) => HTMLElement) => GLike;
+    50→  htmlTransitionDuration: (n: number) => GLike;
+    51→  ringsData: (d: unknown[]) => GLike;
+    52→  ringLat: (f: (d: object) => number) => GLike; ringLng: (f: (d: object) => number) => GLike;
+    53→  ringColor: (f: (d: object) => (t: number) => string) => GLike;
+    54→  ringMaxRadius: (f: (d: object) => number) => GLike;
+    55→  ringPropagationSpeed: (n: number) => GLike; ringRepeatPeriod: (n: number) => GLike;
+    56→  pathsData: (d: unknown[]) => GLike;
+    57→  pathPoints: (f: (d: object) => unknown) => GLike;
+    58→  pathPointLat: (f: (d: object) => number) => GLike; pathPointLng: (f: (d: object) => number) => GLike;
+    59→  pathPointAlt: (f: (d: object) => number) => GLike;
+    60→  pathColor: (f: (d: object) => string) => GLike; pathStroke: (n: number) => GLike;
+    61→  pathDashLength: (n: number) => GLike; pathDashGap: (n: number) => GLike; pathDashAnimateTime: (n: number) => GLike;
+    62→  pathTransitionDuration: (n: number) => GLike;
+    63→  getScreenCoords: (lat: number, lng: number, alt?: number) => { x: number; y: number };
+    64→  customLayerData: (d: unknown[]) => GLike; // v114: capa custom del terminador
+    65→  customThreeObject: (o: unknown) => GLike;
+    66→  _destructor?: () => void;
+    67→};
+    68→
+    69→const TEXTURAS: Record<string, string> = {
+    70→  satelite: "/assets/globe/earth-blue-marble.jpg",
+    71→  noche: "/assets/globe/earth-night.jpg",
+    72→  tactico: "/assets/globe/earth-dark.jpg",
+    73→};
+    74→
+    75→const COLOR_TIPO: Record<Contacto["tipo"], string> = {
+    76→  avion: "#FFD27A", buque: "#6EE7FF", satelite: "#C9A0FF", dron: "#FF8A5C", sismo: "#FF5A5A", camara: "#9BFFB0",
+    77→};
+    78→const ICONO_TIPO: Record<Contacto["tipo"], React.ReactNode> = {
+    79→  avion: <Plane className="w-3 h-3" />, buque: <Ship className="w-3 h-3" />, satelite: <Satellite className="w-3 h-3" />,
+    80→  dron: <Bug className="w-3 h-3" />, sismo: <Waves className="w-3 h-3" />, camara: <Camera className="w-3 h-3" />,
+    81→};
+    82→const ALT_VUELO: Record<Contacto["tipo"], number> = {
+    83→  avion: 0.55, buque: 0.5, satelite: 1.9, dron: 0.5, sismo: 0.7, camara: 0.45,
+    84→};
+    85→
+    86→const LS_KEY = "vg-tierra-v93";
+    87→
+    88→function altDePunto(c: Contacto): number {
+    89→  switch (c.tipo) {
+    90→    case "satelite": return 0.24 + Math.min(0.3, (c.altKm - 420) / 1400);
+    91→    case "avion": return 0.075;
+    92→    case "buque": return 0.015;
+    93→    case "dron": return 0.045;
+    94→    default: return 0.02;
+    95→  }
+    96→}
+    97→
+    98→// etiqueta al pasar el ratón por un contacto (estilo HUD)
+    99→function tooltipDe(c: Contacto, dist: number | null): string {
+   100→  const col = COLOR_TIPO[c.tipo];
+   101→  return `
+   102→  <div style="font-family:monospace;background:#0b0e14ee;border:1px solid ${col};padding:6px 9px;border-radius:2px">
+   103→    <b style="color:${col}">${c.callsign}</b><br/>
+   104→    <span style="color:#e5e7eb">${c.nombre}</span><br/>
+   105→    <span style="color:#94a3b8;font-size:10px">${c.clase.toUpperCase()} · ${c.vel ? `${c.vel} km/h · rumbo ${c.rumbo}°` : "estático"}${dist !== null ? ` · a ${dist.toLocaleString("es")} km` : ""}</span>
+   106→  </div>`;
+   107→}
+   108→
+   109→// __SEGUE__
+   110→export function TierraPanel() {
+   111→  const [t, setT] = useState(() => Date.now());
+   112→  const [capas, setCapas] = useState<Record<string, boolean>>({
+   113→    aviones: true, buques: true, satelites: true, drones: true, sismos: true, camaras: true,
+   114→    terminador: true, // v114: la noche real puesta donde la pone el Sol
+   115→  });
+   116→  const [vientos, setVientos] = useState(false);
+   117→  const [sensorId, setSensorId] = useState("normal");
+   118→  const [hudOn, setHudOn] = useState(true);
+   119→  const [detOn, setDetOn] = useState(true);
+   120→  const [tracked, setTracked] = useState<string | null>(null);
+   121→  const [sel, setSel] = useState<Contacto | null>(null);
+   122→  const [cockpit, setCockpit] = useState(false);
+   123→  const [autoGiro, setAutoGiro] = useState(true);
+   124→  const [textura, setTextura] = useState<"auto" | "satelite" | "noche" | "tactico">("auto");
+   125→  const [centro, setCentro] = useState({ lat: 22, lng: 12, alt: 2.5 });
+   126→  const [rosterOn, setRosterOn] = useState(true);
+   127→  const [q, setQ] = useState("");
+   128→  const [resp, setResp] = useState<RespuestaAnalista | null>(null);
+   129→  const [cronica, setCronica] = useState<{ id: string; idx: number } | null>(null);
+   130→  const [escenas, setEscenas] = useState<Array<{ lat: number; lng: number; alt: number; sensor: string }>>([]);
+   131→  const [hechas, setHechas] = useState<string[]>([]);
+   132→  const [manualOn, setManualOn] = useState(false);
+   133→
+   134→  const wrapRef = useRef<HTMLDivElement>(null);
+   135→  const gRef = useRef<GLike | null>(null);
+   136→  // v114: la cúpula del terminador (mesh + refresco del uniforme solar)
+   137→  const termRef = useRef<{ mesh: { visible: boolean }; actualizaSol: () => void } | null>(null);
+   138→  const canvasRef = useRef<HTMLCanvasElement>(null);
+   139→  const centroRef = useRef(centro);
+   140→  const selRef = useRef<Contacto | null>(null);
+   141→  const cronicaRef = useRef(cronica);
+   142→
+   143→  useEffect(() => { centroRef.current = centro; }, [centro]);
+   144→  useEffect(() => { selRef.current = sel; }, [sel]);
+   145→  useEffect(() => { cronicaRef.current = cronica; }, [cronica]);
+   146→
+   147→  // reloj del mundo: 5 s (los contactos viajan solos entre ticks)
+   148→  useEffect(() => {
+   149→    const iv = setInterval(() => setT(Date.now()), 5000);
+   150→    return () => clearInterval(iv);
+   151→  }, []);
+   152→
+   153→  // persistencia local (misiones hechas + escenas del director)
+   154→  useEffect(() => {
+   155→    try {
+   156→      const raw = localStorage.getItem(LS_KEY);
+   157→      if (raw) {
+   158→        const d = JSON.parse(raw) as { hechas?: string[]; escenas?: typeof escenas };
+   159→        if (d.hechas) setHechas(d.hechas);
+   160→        if (d.escenas) setEscenas(d.escenas);
+   161→      }
+   162→    } catch { /* noop */ }
+   163→  }, []);
+   164→  const guardar = (h: string[], e: typeof escenas) => {
+   165→    try { localStorage.setItem(LS_KEY, JSON.stringify({ hechas: h, escenas: e })); } catch { /* noop */ }
+   166→  };
+   167→
+   168→  const contactos = useMemo(() => contactosEn(t), [t]);
+   169→  const visibles = useMemo(() => contactos.filter((c) => capas[c.tipo === "avion" ? "aviones" : c.tipo === "buque" ? "buques" : c.tipo === "satelite" ? "satelites" : c.tipo === "dron" ? "drones" : c.tipo === "sismo" ? "sismos" : "camaras"]), [contactos, capas]);
+   170→  const contados = useMemo(() => {
+   171→    const por = (tp: Contacto["tipo"]) => contactos.filter((c) => c.tipo === tp).length;
+   172→    return { total: contactos.length, avion: por("avion"), buque: por("buque"), satelite: por("satelite"), dron: por("dron"), sismo: por("sismo"), camara: por("camara") };
+   173→  }, [contactos]);
+   174→  const trackedC = useMemo(() => contactos.find((c) => c.id === tracked) ?? null, [contactos, tracked]);
+   175→  const roster = useMemo(() => {
+   176→    const { lat, lng } = centroRef.current;
+   177→    return visibles
+   178→      .filter((c) => c.tipo !== "sismo")
+   179→      .map((c) => ({ c, d: distanciaKm(lat, lng, c.lat, c.lng) }))
+   180→      .sort((a, b) => a.d - b.d)
+   181→      .slice(0, 30);
+   182→  }, [visibles, Math.round(centro.lat), Math.round(centro.lng)]);
+   183→
+   184→  const sensor = SENSORES.find((s) => s.id === sensorId) ?? SENSORES[0];
+   185→  const texturaURL = textura === "auto" ? TEXTURAS[texturaPorHora(t)] : TEXTURAS[textura];
+   186→
+   187→  // ---------- vuelo cinematográfico ----------
+   188→  const vuelaA = (lat: number, lng: number, alt: number, ms = 1500) => {
+   189→    setCentro({ lat, lng, alt });
+   190→    gRef.current?.pointOfView({ lat, lng, altitude: alt }, ms);
+   191→  };
+   192→
+   193→  const autoGiroRef = useRef(autoGiro);
+   194→  useEffect(() => {
+   195→    autoGiroRef.current = autoGiro;
+   196→    const g = gRef.current;
+   197→    if (g) g.controls().autoRotate = autoGiro;
+   198→  }, [autoGiro]);
+   199→
+   200→  // ---------- init del globo ----------
+   201→  useEffect(() => {
+   202→    const el = wrapRef.current;
+   203→    if (!el) return;
+   204→    let muerto = false;
+   205→    let g: GLike | null = null;
+   206→    (async () => {
+   207→      const Globe = (await import("globe.gl")).default;
+   208→      if (muerto || !wrapRef.current) return;
+   209→      const W = el.clientWidth || 900;
+   210→      const H = el.clientHeight || 620;
+   211→      g = new Globe(el, { animateIn: true })
+   212→        .width(W).height(H)
+   213→        .backgroundColor("rgba(0,0,0,0)")
+   214→        .globeImageUrl(TEXTURAS.satelite)
+   215→        .bumpImageUrl("/assets/globe/earth-topology.png")
+   216→        .showAtmosphere(true).atmosphereColor("#ffb347").atmosphereAltitude(0.22)
+   217→        .showGraticules(true) as unknown as GLike;
+   218→      gRef.current = g;
+   219→      g.pointOfView({ lat: 22, lng: 12, altitude: 2.5 }, 0);
+   220→      const c = g.controls();
+   221→      c.autoRotate = true; c.autoRotateSpeed = 0.35; c.enableDamping = true;
+   222→      c.minDistance = 155; c.maxDistance = 900;
+   223→
+   224→      // ── v114 TERMINADOR SOLAR: cúpula shader con la noche real ──
+   225→      // Esfera 100.7 (la textura vive en 100, la atmósfera en 122): la GPU
+   226→      // oscurece los fragmentos cuyo normal se aleja del sol (crepúsculo
+   227→      // suave). El uniforme lo alimenta lib/sol.ts cada 60 s — cero rAF.
+   228→      try {
+   229→        const THREE = await import("three");
+   230→        if (!muerto && gRef.current) {
+   231→          const uni = { uSol: { value: new THREE.Vector3(1, 0, 0) } };
+   232→          const mat = new THREE.ShaderMaterial({
+   233→            transparent: true,
+   234→            depthWrite: false,
+   235→            uniforms: uni,
+   236→            vertexShader: `
+   237→              varying vec3 vN;
+   238→              void main() {
+   239→                vN = normalize(mat3(modelMatrix) * normal);
+   240→                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+   241→              }`,
+   242→            fragmentShader: `
+   243→              varying vec3 vN;
+   244→              uniform vec3 uSol;
+   245→              void main() {
+   246→                float d = dot(normalize(vN), normalize(uSol));
+   247→                float noche = smoothstep(0.10, -0.16, d); // crepúsculo suave
+   248→                vec3 col = vec3(0.004, 0.012, 0.030);     // azul noche profundo
+   249→                gl_FragColor = vec4(col, noche * 0.66);
+   250→              }`,
+   251→          });
+   252→          const mesh = new THREE.Mesh(new THREE.SphereGeometry(100.7, 96, 96), mat);
+   253→          const actualizaSol = () => {
+   254→            const { dec, lngSub } = solAhora();
+   255→            const s = direccionSolGlobo(dec, lngSub);
+   256→            uni.uSol.value.set(s.x, s.y, s.z);
+   257→          };
+   258→          actualizaSol();
+   259→          gRef.current.customLayerData([{}]).customThreeObject(() => mesh);
+   260→          termRef.current = { mesh, actualizaSol };
+   261→          const ivSol = setInterval(() => {
+   262→            if (muerto) return;
+   263→            actualizaSol();
+   264→          }, 60_000);
+   265→          // el intervalo muere con el panel (el destructor limpia el DOM)
+   266→          (el as unknown as { _termIv?: ReturnType<typeof setInterval> })._termIv = ivSol;
+   267→        }
+   268→      } catch { /* sin terminador si three no llega — el globo sigue vivo */ }
+   269→      // arrastrar apaga el autogiro unos segundos (sensación Googles)
+   270→      el.addEventListener("mousedown", () => {
+   271→        if (!g) return;
+   272→        g.controls().autoRotate = false;
+   273→        clearTimeout((el as unknown as { _giroT?: ReturnType<typeof setTimeout> })._giroT);
+   274→        (el as unknown as { _giroT?: ReturnType<typeof setTimeout> })._giroT = setTimeout(() => {
+   275→          if (g) g.controls().autoRotate = autoGiroRef.current;
+   276→        }, 6000);
+   277→      });
+   278→    })();
+   279→    return () => {
+   280→      muerto = true;
+   281→      const ivTerm = (el as unknown as { _termIv?: ReturnType<typeof setInterval> })._termIv;
+   282→      if (ivTerm) clearInterval(ivTerm);
+   283→      termRef.current = null;
+   284→      try { g?._destructor?.(); } catch { /* noop */ }
+   285→      el.innerHTML = "";
+   286→      gRef.current = null;
+   287→    };
+   288→  }, []);
+   289→
+   290→  // resize
+   291→  useEffect(() => {
+   292→    const el = wrapRef.current;
+   293→    if (!el) return;
+   294→    const onR = () => {
+   295→      const g = gRef.current;
+   296→      if (g) { g.width(el.clientWidth || 900); g.height(el.clientHeight || 620); }
+   297→    };
+   298→    window.addEventListener("resize", onR);
+   299→    return () => window.removeEventListener("resize", onR);
+   300→  }, []);
+   301→
+   302→  // textura en caliente
+   303→  useEffect(() => { gRef.current?.globeImageUrl(texturaURL); }, [texturaURL]);
+   304→
+   305→  // v114: la cúpula del terminador obedece a SU chip (y repasa el sol al volver)
+   306→  useEffect(() => {
+   307→    const term = termRef.current;
+   308→    if (!term) return;
+   309→    term.mesh.visible = capas.terminador !== false;
+   310→    if (term.mesh.visible) term.actualizaSol();
+   311→  }, [capas.terminador]);
+   312→
+   313→  // ---------- contacto seleccionado ----------
+   314→  const alSeleccionar = (c: Contacto) => {
+   315→    setSel(c);
+   316→    vuelaA(c.lat, c.lng, ALT_VUELO[c.tipo], 1200);
+   317→  };
+   318→  const alSeleccionarRef = useRef(alSeleccionar);
+   319→  useEffect(() => { alSeleccionarRef.current = alSeleccionar; });
+   320→
+   321→  // ---------- puntos + anillos + estelas + detecciones ----------
+   322→  useEffect(() => {
+   323→    const g = gRef.current;
+   324→    if (!g) return;
+   325→    const prio = (c: Contacto) => (c.id === tracked ? 0 : c.id === sel?.id ? 1 : 2);
+   326→    const pts = [...visibles].sort((a, b) => prio(a) - prio(b)).slice(0, 96);
+   327→    g.pointsData(pts)
+   328→      .pointLat((d) => (d as Contacto).lat)
+   329→      .pointLng((d) => (d as Contacto).lng)
+   330→      .pointAltitude((d) => altDePunto(d as Contacto))
+   331→      .pointColor((d) => COLOR_TIPO[(d as Contacto).tipo])
+   332→      .pointRadius((d) => {
+   333→        const c = d as Contacto;
+   334→        if (c.id === tracked) return 0.72;
+   335→        if (c.id === sel?.id) return 0.62;
+   336→        if (c.tipo === "sismo") return 0.2 + (Number(c.nombre.match(/M([\d.]+)/)?.[1] ?? 4) - 3) * 0.16;
+   337→        return 0.4;
+   338→      })
+   339→      .pointLabel((d) => tooltipDe(d as Contacto, null))
+   340→      .onPointClick((d) => alSeleccionarRef.current(d as Contacto));
+   341→
+   342→    // anillos: sismos + rastreado
+   343→    const rings: Array<{ lat: number; lng: number; col: string; max: number }> = [];
+   344→    if (capas.sismos) {
+   345→      for (const c of visibles.filter((x) => x.tipo === "sismo")) {
+   346→        rings.push({ lat: c.lat, lng: c.lng, col: COLOR_TIPO.sismo, max: 3 + (Number(c.nombre.match(/M([\d.]+)/)?.[1] ?? 4) - 3) * 2.2 });
+   347→      }
+   348→    }
+   349→    if (trackedC) rings.push({ lat: trackedC.lat, lng: trackedC.lng, col: "#FFC94D", max: 5 });
+   350→    if (sel && sel.id !== tracked) rings.push({ lat: sel.lat, lng: sel.lng, col: COLOR_TIPO[sel.tipo], max: 3.4 });
+   351→    g.ringsData(rings)
+   352→      .ringLat((r) => (r as { lat: number }).lat)
+   353→      .ringLng((r) => (r as { lng: number }).lng)
+   354→      .ringColor((r) => (tt: number) => `${(r as { col: string }).col}${Math.round((1 - tt) * 110 + 30).toString(16).padStart(2, "0")}`)
+   355→      .ringMaxRadius((r) => (r as { max: number }).max)
+   356→      .ringPropagationSpeed(2.4)
+   357→      .ringRepeatPeriod(1100);
+   358→
+   359→    // estelas del rastreado / seleccionado
+   360→    const foco = trackedC ?? sel;
+   361→    g.pathsData(foco ? [{ puntos: estelaDe(foco, t) }] : [])
+   362→      .pathPoints((d) => (d as { puntos: Array<[number, number, number]> }).puntos)
+   363→      .pathPointLat((p) => (p as unknown as [number, number, number])[0])
+   364→      .pathPointLng((p) => (p as unknown as [number, number, number])[1])
+   365→      .pathPointAlt((p) => (p as unknown as [number, number, number])[2])
+   366→      .pathColor(() => "#FFC94D")
+   367→      .pathStroke(0.55)
+   368→      .pathDashLength(0.055)
+   369→      .pathDashGap(0.009)
+   370→      .pathDashAnimateTime(11000)
+   371→      .pathTransitionDuration(600);
+   372→
+   373→    // overlay de detecciones (cajas con esquinas + ID, estilo HUD militar)
+   374→    if (detOn) {
+   375→      const dets = pts.slice(0, 30);
+   376→      g.htmlElementsData(dets)
+   377→        .htmlLat((d) => (d as Contacto).lat)
+   378→        .htmlLng((d) => (d as Contacto).lng)
+   379→        .htmlAltitude((d) => altDePunto(d as Contacto) + 0.02)
+   380→        .htmlTransitionDuration(400)
+   381→        .htmlElement((d) => {
+   382→          const c = d as Contacto;
+   383→          const div = document.createElement("div");
+   384→          div.className = "ve-det" + (c.id === tracked ? " ve-det-rastro" : "");
+   385→          div.style.setProperty("--det-col", COLOR_TIPO[c.tipo]);
+   386→          div.innerHTML = `<span>${c.callsign}</span>`;
+   387→          div.addEventListener("click", (ev) => { ev.stopPropagation(); alSeleccionarRef.current(c); });
+   388→          return div;
+   389→        });
+   390→    } else {
+   391→      g.htmlElementsData([]);
+   392→    }
+   393→  }, [visibles, tracked, trackedC, sel, t, capas.sismos, detOn]);
+   394→
+   395→  // ---------- bucle de rastreo (seguimiento cinemático) ----------
+   396→  useEffect(() => {
+   397→    if (!tracked) return;
+   398→    const iv = setInterval(() => {
+   399→      const g = gRef.current;
+   400→      const c = contactosEn(Date.now()).find((x) => x.id === tracked);
+   401→      if (!g || !c) return;
+   402→      const alt = cockpit ? 0.24 : tracked.startsWith("sat") ? 1.9 : 0.5;
+   403→      g.pointOfView({ lat: c.lat, lng: c.lng, altitude: alt }, 850);
+   404→      setCentro({ lat: c.lat, lng: c.lng, alt });
+   405→      setSel(c);
+   406→    }, 950);
+   407→    return () => clearInterval(iv);
+   408→  }, [tracked, cockpit]);
+   409→
+   410→  // ---------- capa de vientos (partículas deterministas) ----------
+   411→  useEffect(() => {
+   412→    const canvas = canvasRef.current;
+   413→    if (!canvas || !vientos) return;
+   414→    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+   415→    if (reduce) return;
+   416→    const ctx = canvas.getContext("2d");
+   417→    if (!ctx) return;
+   418→    const N = 300;
+   419→    const parts = Array.from({ length: N }, () => ({
+   420→      lat: -70 + Math.random() * 140,
+   421→      lng: -180 + Math.random() * 360,
+   422→      vida: 20 + Math.random() * 80,
+   423→    }));
+   424→    let raf = 0;
+   425→    const paso = () => {
+   426→      const g = gRef.current;
+   427→      const el = wrapRef.current;
+   428→      if (!g || !el) { raf = requestAnimationFrame(paso); return; }
+   429→      const dpr = Math.min(2, window.devicePixelRatio || 1);
+   430→      const W = el.clientWidth, H = el.clientHeight;
+   431→      if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; }
+   432→      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+   433→      ctx.clearRect(0, 0, W, H);
+   434→      const now = Date.now();
+   435→      const pov = g.pointOfView();
+   436→      for (const p of parts) {
+   437→        const w = vientoEn(p.lat, p.lng, now);
+   438→        const nLat = p.lat + w.v * 0.28;
+   439→        const nLng = p.lng + (w.u * 0.28) / Math.max(0.2, Math.cos((p.lat * Math.PI) / 180));
+   440→        // visible solo en la cara que mira a la cámara
+   441→        const dLat = nLat - pov.lat, dLng = nLng - pov.lng;
+   442→        const ang = Math.sqrt(dLat * dLat + dLng * dLng * Math.cos((pov.lat * Math.PI) / 180) ** 2);
+   443→        if (ang < 92) {
+   444→          const a = g.getScreenCoords(p.lat, p.lng, 0.015);
+   445→          const b = g.getScreenCoords(nLat, nLng, 0.015);
+   446→          if (a && b && a.x > -20 && a.x < W + 20 && a.y > -20 && a.y < H + 20) {
+   447→            ctx.strokeStyle = `rgba(255,214,150,${0.16 + 0.3 * Math.min(1, p.vida / 60)})`;
+   448→            ctx.lineWidth = 1.1;
+   449→            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+   450→          }
+   451→        }
+   452→        p.lat = nLat; p.lng = nLng; p.vida -= 1;
+   453→        if (p.vida <= 0 || Math.abs(p.lat) > 88) { p.lat = -70 + Math.random() * 140; p.lng = -180 + Math.random() * 360; p.vida = 40 + Math.random() * 80; }
+   454→      }
+   455→      raf = requestAnimationFrame(paso);
+   456→    };
+   457→    raf = requestAnimationFrame(paso);
+   458→    return () => cancelAnimationFrame(raf);
+   459→  }, [vientos]);
+   460→
+   461→  // ---------- pases satelitales sobre la vista seleccionada ----------
+   462→  const [pases, setPases] = useState<ReturnType<typeof pasesSobre>>([]);
+   463→  useEffect(() => {
+   464→    setPases(pasesSobre(centro.lat, centro.lng, Date.now(), 3));
+   465→  }, [sel, Math.round(centro.lat), Math.round(centro.lng)]);
+   466→
+   467→  // ---------- acciones del operador ----------
+   468→  const resetGlobo = (silencio = false) => {
+   469→    setTracked(null); setSel(null); setCockpit(false); setCronica(null);
+   470→    vuelaA(22, 12, 2.5, 1400);
+   471→    if (!silencio) toast.success("PLANETA COMPLETO", { description: "Vista global restaurada. Sin rastros, sin ruido." });
+   472→  };
+   473→
+   474→  const zoom = (dir: 1 | -1) => {
+   475→    const g = gRef.current;
+   476→    if (!g) return;
+   477→    const alt = g.pointOfView().altitude;
+   478→    g.pointOfView({ altitude: Math.min(4, Math.max(0.22, alt * (dir > 0 ? 0.55 : 1.8))) }, 420);
+   479→  };
+   480→
+   481→  const rastrear = (c: Contacto | null) => {
+   482→    setTracked(c ? c.id : null);
+   483→    setCockpit(false);
+   484→    if (c) toast.success(`RASTREANDO ${c.callsign}`, { description: "La cámara lo sigue. Tecla C para modo cockpit · Esc para soltar." });
+   485→  };
+   486→
+   487→  const analistaPregunta = (texto?: string) => {
+   488→    const pregunta = (texto ?? q).trim();
+   489→    if (!pregunta) return;
+   490→    const r = preguntar(pregunta, { lat: centro.lat, lng: centro.lng }, Date.now());
+   491→    setResp(r);
+   492→    if (r.vueloA) vuelaA(r.vueloA.lat, r.vueloA.lng, r.vueloA.alt, 1600);
+   493→    if (r.resaltar) {
+   494→      const c = contactosEn(Date.now()).find((x) => x.id === r.resaltar);
+   495→      if (c) setSel(c);
+   496→    }
+   497→    setQ("");
+   498→  };
+   499→
+   500→  const lanzarMision = (m: typeof MISIONES[number]) => {
+   501→    setCapas((prev) => ({ ...prev, ...m.capas }));
+   502→    setVientos(false);
+   503→    setSensorId(m.sensor);
+   504→    vuelaA(m.vuelo.lat, m.vuelo.lng, m.vuelo.alt, 1700);
+   505→    if (!hechas.includes(m.id)) {
+   506→      const h = [...hechas, m.id];
+   507→      setHechas(h); guardar(h, escenas);
+   508→    }
+   509→    toast.success(`MISIÓN · ${m.titulo}`, { description: m.desc.slice(0, 110) + "…" });
+   510→  };
+   511→
+   512→  const jugarCronica = (id: string, idx = 0) => {
+   513→    const cr = CRONICAS.find((c) => c.id === id);
+   514→    if (!cr) return;
+   515→    if (idx >= cr.paradas.length) {
+   516→      setCronica(null);
+   517→      toast.success(`CRÓNICA COMPLETADA · ${cr.titulo}`, { description: "Seis paradas, cero tregua. El planeta sigue abierto." });
+   518→      return;
+   519→    }
+   520→    const parada = cr.paradas[idx];
+   521→    const lugar = lugarPorId(parada.lugarId);
+   522→    setCronica({ id, idx });
+   523→    if (lugar) vuelaA(lugar.lat, lugar.lng, lugar.alt, 2200);
+   524→  };
+   525→  useEffect(() => {
+   526→    if (!cronica) return;
+   527→    const iv = setTimeout(() => jugarCronica(cronica.id, cronica.idx + 1), 7200);
+   528→    return () => clearTimeout(iv);
+   529→  }, [cronica]);
+   530→
+   531→  const anadirEscena = () => {
+   532→    const e = { lat: Number(centro.lat.toFixed(2)), lng: Number(centro.lng.toFixed(2)), alt: Number(centro.alt.toFixed(2)), sensor: sensorId };
+   533→    const es = [...escenas, e].slice(-8);
+   534→    setEscenas(es); guardar(hechas, es);
+   535→    toast.success("VISTA AÑADIDA AL DIRECTOR", { description: `${escenas.length + 1}/8 escenas guardadas en tu mesa de edición.` });
+   536→  };
+   537→  const reproducirEscenas = () => {
+   538→    if (!escenas.length) { toast.info("SIN ESCENAS", { description: "Añade al menos una vista con AÑADIR VISTA." }); return; }
+   539→    toast.success("DIRECCIÓN DE ESCENAS", { description: `Reproduciendo ${escenas.length} vistas cinematográficas.` });
+   540→    escenas.forEach((e, i) => {
+   541→      setTimeout(() => {
+   542→        setSensorId(e.sensor);
+   543→        vuelaA(e.lat, e.lng, e.alt, 2600);
+   544→      }, i * 3400);
+   545→    });
+   546→  };
+   547→
+   548→  // ---------- atajos de teclado (1-7 sensores · H HUD · D detección · C cockpit · R reset · Esc soltar) ----------
+   549→  useEffect(() => {
+   550→    const onKey = (ev: KeyboardEvent) => {
+   551→      const tag = (ev.target as HTMLElement)?.tagName;
+   552→      if (tag === "INPUT" || tag === "TEXTAREA") return;
+   553→      if (ev.key >= "1" && ev.key <= "7") {
+   554→        const s = SENSORES[Number(ev.key) - 1];
+   555→        setSensorId(s.id);
+   556→        toast.info(`SENSOR · ${s.nombre}`, { description: s.nota.slice(0, 90) });
+   557→      } else if (ev.key === "h" || ev.key === "H") setHudOn((v) => !v);
+   558→      else if (ev.key === "d" || ev.key === "D") setDetOn((v) => !v);
+   559→      else if (ev.key === "r" || ev.key === "R") resetGlobo();
+   560→      else if (ev.key === "g" || ev.key === "G") {
+   561→        setCapas({ aviones: true, buques: true, satelites: true, drones: true, sismos: true, camaras: true, terminador: true });
+   562→        setDetOn(true); setHudOn(true);
+   563→        toast.success("CONTEXTO GLOBAL ACTIVADO", { description: "Todo encendido. Tecla R para volver a la vista limpia." });
+   564→      } else if (ev.key === "c" || ev.key === "C") {
+   565→        const avion = contactosEn(Date.now()).filter((c) => c.tipo === "avion")
+   566→          .sort((a, b) => distanciaKm(centroRef.current.lat, centroRef.current.lng, a.lat, a.lng) - distanciaKm(centroRef.current.lat, centroRef.current.lng, b.lat, b.lng))[0];
+   567→        if (avion) { setSel(avion); setTracked(avion.id); setCockpit(true); vuelaA(avion.lat, avion.lng, 0.24, 1400); toast.success("MODO COCKPIT", { description: `Vuelas con ${avion.callsign}: la cámara cabalga su morro hasta que sueltes.` }); }
+   568→      } else if (ev.key === "Escape") { setTracked(null); setCockpit(false); setSel(null); setCronica(null); }
+   569→    };
+   570→    window.addEventListener("keydown", onKey);
+   571→    return () => window.removeEventListener("keydown", onKey);
+   572→  }, [escenas, hechas]);
+   573→
+   574→  const cronicaActiva = cronica ? CRONICAS.find((c) => c.id === cronica.id) : null;
+   575→
+   576→  // ============ RENDER ============
+   577→  return (
+   578→    <div className="space-y-4">
+   579→      <PanelHeader
+   580→        title="VANGUARD EARTH"
+   581→        subtitle="El googles de Vanguard: simulador de satélite espía con contactos en vivo, sensores y vuelo cinematográfico por todo el planeta"
+   582→        icon={<Earth className="w-4 h-4 text-amber" />}
+   583→        color="amber"
+   584→        right={
+   585→          <span className="text-[9px] font-mono uppercase px-2 py-1 border border-amber-hud/60 text-amber bg-amber-hud/10">
+   586→            EN VIVO · {hhmmUTC(t)}
+   587→          </span>
+   588→        }
+   589→      />
+   590→      <HeroOro panel="tierra" />
+   591→
+   592→      {/* STATS EN VIVO */}
+   593→      <div className="grid grid-cols-3 sm:grid-cols-7 gap-2">
+   594→        {[
+   595→          { k: "CONTACTOS", v: contados.total, b: "border-amber-hud/50" }, { k: "AVIONES", v: contados.avion, b: "border-yellow-500/40" },
+   596→          { k: "BUQUES", v: contados.buque, b: "border-cyan-hud/50" }, { k: "SATÉLITES", v: contados.satelite, b: "border-violet-hud/50" },
+   597→          { k: "DRONES", v: contados.dron, b: "border-orange-500/40" }, { k: "SISMOS 1H", v: contados.sismo, b: "border-red-hud/50" },
+   598→          { k: "CÁMARAS", v: contados.camara, b: "border-green-hud/50" },
+   599→        ].map((s) => (
+   600→          <div key={s.k} className={cn("hud-panel px-2 py-1.5 text-center border", s.b)}>
+   601→            <div className="text-[8px] font-mono text-muted-foreground tracking-widest">{s.k}</div>
+   602→            <div className="text-sm font-bold text-amber">{s.v}</div>
+   603→          </div>
+   604→        ))}
+   605→      </div>
+   606→
+   607→      {/* MISIONES (los primeros cinco minutos) */}
+   608→      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+   609→        {MISIONES.map((m, i) => (
+   610→          <motion.button
+   611→            key={m.id}
+   612→            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+   613→            onClick={() => lanzarMision(m)}
+   614→            className={cn(
+   615→              "text-left px-3 py-2 border hud-panel hover:border-amber transition-colors group",
+   616→              hechas.includes(m.id) ? "border-green-hud/60" : "border-amber-hud/40",
+   617→            )}
+   618→          >
+   619→            <div className="flex items-center gap-1.5">
+   620→              <Sparkles className="w-3 h-3 text-amber group-hover:scale-125 transition-transform" />
+   621→              <span className="text-[10px] font-black tracking-wider text-amber">{m.titulo}</span>
+   622→              {hechas.includes(m.id) && <span className="text-[8px] text-green ml-auto">✓ HECHA</span>}
+   623→            </div>
+   624→            <p className="text-[9px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">{m.desc}</p>
+   625→          </motion.button>
+   626→        ))}
+   627→      </div>
+   628→
+   629→      {/* ============ EL PLANETA ============ */}
+   630→      <div
+   631→        className="relative w-full rounded-sm overflow-hidden border border-amber-hud/40 bg-black"
+   632→        style={{ height: "min(74vh, 700px)", minHeight: 460 }}
+   633→        aria-label="Vanguard Earth: globo 3D con contactos en vivo"
+   634→      >
+   635→        {/* globo con el filtro del sensor activo */}
+   636→        <div className="absolute inset-0" style={{ filter: sensor.css === "none" ? undefined : sensor.css }}>
+   637→          <div ref={wrapRef} className="absolute inset-0" />
+   638→        </div>
+   639→
+   640→        {/* overlays de sensor (CRT / NVG / FLIR / ESPECTRAL) */}
+   641→        {sensor.overlay !== "ninguno" && <div className={cn("absolute inset-0 pointer-events-none", `ve-ov-${sensor.overlay}`)} />}
+   642→        {vientos && <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />}
+   643→
+   644→        {/* HUD militar */}
+   645→        {hudOn && (
+   646→          <div className="absolute inset-0 pointer-events-none ve-hud">
+   647→            <div className="absolute top-2 left-2 right-2 flex items-center justify-between font-mono text-[9px] tracking-widest text-amber/90">
+   648→              <span>VANGUARD EARTH · SENSOR {sensor.nombre} · 21º ESPEJO</span>
+   649→              <span className="flex items-center gap-1.5">
+   650→                {tracked && <span className="ve-rec" />}{tracked ? `REC · ${trackedC?.callsign ?? ""}` : hhmmUTC(t)}
+   651→              </span>
+   652→            </div>
+   653→            <div className="ve-esquina absolute top-8 left-2" /><div className="ve-esquina absolute top-8 right-2 rotate-90" />
+   654→            <div className="ve-esquina absolute bottom-12 right-2 rotate-180" /><div className="ve-esquina absolute bottom-12 left-2 -rotate-90" />
+   655→            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ve-cruz" />
+   656→            <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between font-mono text-[9px] text-amber/80">
+   657→              <span>LAT {centro.lat.toFixed(2)}° · LNG {centro.lng.toFixed(2)}° · ALT R×{centro.alt.toFixed(2)}</span>
+   658→              <span>{trackedC ? `OBJ ${trackedC.callsign}: ${trackedC.vel} km/h · RUMBO ${trackedC.rumbo}°` : `CAPAS ${Object.values(capas).filter(Boolean).length}/6 · ${vientos ? "VIENTOS ON" : "VIENTOS OFF"}`}</span>
+   659→            </div>
+   660→          </div>
+   661→        )}
+   662→
+   663→        {/* barra de búsqueda + analista (arriba) */}
+   664→        <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[min(92%,560px)] flex gap-1.5 z-20">
+   665→          <form
+   666→            className="flex-1 flex"
+   667→            onSubmit={(e) => { e.preventDefault(); analistaPregunta(); }}
+   668→          >
+   669→            <input
+   670→              value={q}
+   671→              onChange={(e) => setQ(e.target.value)}
+   672→              placeholder="Busca un lugar, coordenadas (41, 28) o pregunta al analista…"
+   673→              className="flex-1 bg-black/75 border border-amber-hud/50 px-3 py-1.5 text-[11px] font-mono text-amber placeholder:text-muted-foreground/70 focus:outline-none focus:border-amber"
+   674→            />
+   675→            <button type="submit" className="bg-amber/90 text-black px-2.5 border border-amber hover:bg-amber transition-colors" title="Preguntar al analista local">
+   676→              <Send className="w-3.5 h-3.5" />
+   677→            </button>
+   678→          </form>
+   679→          <button
+   680→            onClick={() => {
+   681→              const lugar = LUGARES[Math.floor(Math.random() * LUGARES.length)];
+   682→              vuelaA(lugar.lat, lugar.lng, lugar.alt, 1900);
+   683→              setResp({ titulo: `SUERTE DE VANGUARD · ${lugar.nombre.toUpperCase()}`, lineas: [lugar.nota] });
+   684→              toast.info("SUERTE DE VANGUARD", { description: `El dado ha caído en ${lugar.nombre}.` });
+   685→            }}
+   686→            className="bg-black/75 border border-amber-hud/50 text-amber px-2 hover:border-amber transition-colors"
+   687→            title="Suerte de Vanguard: vuela a un lugar al azar"
+   688→          >
+   689→            <Dices className="w-4 h-4" />
+   690→          </button>
+   691→        </div>
+   692→
+   693→        {/* respuesta del analista */}
+   694→        <AnimatePresence>
+   695→          {resp && (
+   696→            <motion.div
+   697→              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+   698→              className="absolute bottom-11 left-2 right-2 sm:left-auto sm:right-14 sm:w-[340px] z-30 bg-black/85 border border-amber-hud/60 p-2.5"
+   699→            >
+   700→              <div className="flex items-start justify-between gap-2">
+   701→                <div className="text-[10px] font-black tracking-wider text-amber">{resp.titulo}</div>
+   702→                <button onClick={() => setResp(null)} className="text-muted-foreground hover:text-amber"><X className="w-3 h-3" /></button>
+   703→              </div>
+   704→              <ul className="mt-1 space-y-1">
+   705→                {resp.lineas.map((l, i) => <li key={i} className="text-[10px] text-foreground/90 leading-snug">{l}</li>)}
+   706→              </ul>
+   707→            </motion.div>
+   708→          )}
+   709→        </AnimatePresence>
+   710→
+   711→        {/* roster de contactos (izquierda) */}
+   712→        {rosterOn ? (
+   713→          <div className="absolute top-16 bottom-24 left-2 w-[200px] z-10">
+   714→            <div className="h-full bg-black/80 border border-amber-hud/40 flex flex-col">
+   715→              <div className="px-2 py-1.5 border-b border-amber-hud/40 flex items-center justify-between">
+   716→                <span className="text-[9px] font-black tracking-widest text-amber">CONTACTOS · {roster.length}</span>
+   717→                <button onClick={() => setRosterOn(false)} className="text-muted-foreground hover:text-amber"><X className="w-3 h-3" /></button>
+   718→              </div>
+   719→              <div className="flex-1 overflow-y-auto max-h-full ve-scroll">
+   720→                {roster.map(({ c, d }) => (
+   721→                  <button
+   722→                    key={c.id}
+   723→                    onClick={() => alSeleccionar(c)}
+   724→                    className={cn("w-full text-left px-2 py-1.5 border-b border-amber-hud/15 hover:bg-amber/10 transition-colors", sel?.id === c.id && "bg-amber/15")}
+   725→                  >
+   726→                    <div className="flex items-center gap-1.5">
+   727→                      <span style={{ color: COLOR_TIPO[c.tipo] }}>{ICONO_TIPO[c.tipo]}</span>
+   728→                      <span className="text-[10px] font-mono text-foreground">{c.callsign}</span>
+   729→                      {tracked === c.id && <span className="ml-auto text-[7px] font-black text-amber ve-lateja">RASTREO</span>}
+   730→                    </div>
+   731→                    <div className="text-[8px] text-muted-foreground font-mono">
+   732→                      {c.clase.toUpperCase()} · {d.toLocaleString("es")} km {c.vel ? `· ${c.vel} km/h` : ""}
+   733→                    </div>
+   734→                  </button>
+   735→                ))}
+   736→              </div>
+   737→            </div>
+   738→          </div>
+   739→        ) : (
+   740→          <button onClick={() => setRosterOn(true)} className="absolute top-16 left-2 z-10 bg-black/80 border border-amber-hud/50 text-amber text-[9px] font-black px-2 py-1.5 tracking-widest hover:border-amber">
+   741→            CONTACTOS ({roster.length})
+   742→          </button>
+   743→        )}
+   744→
+   745→        {/* ficha del contacto seleccionado (derecha) */}
+   746→        <AnimatePresence>
+   747→          {sel && (
+   748→            <motion.div
+   749→              key={sel.id}
+   750→              initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 16 }}
+   751→              className="absolute top-16 right-2 w-[240px] z-20 bg-black/85 border border-amber-hud/60 p-2.5 max-h-[62%] overflow-y-auto ve-scroll"
+   752→            >
+   753→              <div className="flex items-start justify-between gap-2">
+   754→                <div>
+   755→                  <div className="text-[11px] font-black flex items-center gap-1.5" style={{ color: COLOR_TIPO[sel.tipo] }}>
+   756→                    {ICONO_TIPO[sel.tipo]} {sel.callsign}
+   757→                  </div>
+   758→                  <div className="text-[10px] text-foreground/90">{sel.nombre}</div>
+   759→                </div>
+   760→                <button onClick={() => setSel(null)} className="text-muted-foreground hover:text-amber"><X className="w-3 h-3" /></button>
+   761→              </div>
+   762→              <div className="mt-1.5 space-y-0.5">
+   763→                {sel.meta.map((m, i) => <p key={i} className="text-[9px] text-muted-foreground font-mono leading-snug">{m}</p>)}
+   764→              </div>
+   765→              {(() => {
+   766→                const v = veredictoDe(sel);
+   767→                return (
+   768→                  <div className="mt-2 border border-amber-hud/30 p-1.5">
+   769→                    <div className="text-[8px] font-black tracking-widest text-amber">VEREDICTO NEURONAL</div>
+   770→                    {([["RIESGO", v.riesgo, "bg-red-500"], ["TENSIÓN", v.tension, "bg-amber-500"], ["CONFIANZA", v.confianza, "bg-green-500"]] as const).map(([k, val, col]) => (
+   771→                      <div key={k} className="flex items-center gap-1.5 mt-0.5">
+   772→                        <span className="text-[8px] font-mono text-muted-foreground w-14">{k}</span>
+   773→                        <div className="flex-1 h-1.5 bg-white/10"><div className={cn("h-full", col)} style={{ width: `${val}%` }} /></div>
+   774→                        <span className="text-[8px] font-mono text-foreground">{val}</span>
+   775→                      </div>
+   776→                    ))}
+   777→                    <div className="text-[8px] text-muted-foreground mt-1">{v.sentimiento} · núcleo neuronal v3 local</div>
+   778→                  </div>
+   779→                );
+   780→              })()}
+   781→              {pases.length > 0 && (
+   782→                <div className="mt-2 border border-violet-hud/40 p-1.5">
+   783→                  <div className="text-[8px] font-black tracking-widest text-violet">PASES SOBRE TU VISTA</div>
+   784→                  {pases.map((p) => (
+   785→                    <div key={p.sat} className="text-[9px] font-mono text-muted-foreground mt-0.5">
+   786→                      {p.sat} → {cuentaAtras(p.enMs)} · {p.maxGrados}°
+   787→                    </div>
+   788→                  ))}
+   789→                </div>
+   790→              )}
+   791→              {sel.img && (
+   792→                <div className="mt-2">
+   793→                  <div className="text-[8px] font-black tracking-widest text-green mb-1 flex items-center gap-1"><Video className="w-3 h-3" /> ALIMENTACIÓN EN VIVO</div>
+   794→                  <img src={sel.img} alt={`Cámara ${sel.callsign}`} className="w-full border border-green-hud/50 ve-crt-soft" />
+   795→                </div>
+   796→              )}
+   797→              <div className="mt-2 flex gap-1.5">
+   798→                {tracked === sel.id ? (
+   799→                  <button onClick={() => rastrear(null)} className="flex-1 border border-red-hud/60 text-red text-[9px] font-black py-1.5 tracking-widest hover:bg-red/10">SOLTAR</button>
+   800→                ) : (
+   801→                  <button onClick={() => rastrear(sel)} className="flex-1 border border-amber-hud/60 text-amber text-[9px] font-black py-1.5 tracking-widest hover:bg-amber/10">RASTREAR</button>
+   802→                )}
+   803→                {tracked === sel.id && sel.tipo === "avion" && (
+   804→                  <button
+   805→                    onClick={() => { setCockpit((v) => !v); vuelaA(sel.lat, sel.lng, 0.24, 1200); }}
+   806→                    className={cn("border text-[9px] font-black py-1.5 px-2 tracking-widest", cockpit ? "bg-amber text-black border-amber" : "border-cyan-hud/60 text-cyan hover:bg-cyan/10")}
+   807→                    title="La cámara cabalga el morro del avión"
+   808→                  >
+   809→                    COCKPIT
+   810→                  </button>
+   811→                )}
+   812→              </div>
+   813→            </motion.div>
+   814→          )}
+   815→        </AnimatePresence>
+   816→
+   817→        {/* controles (abajo derecha) */}
+   818→        <div className="absolute bottom-11 right-2 z-20 flex flex-col gap-1">
+   819→          <button onClick={() => zoom(1)} className="ve-btn" title="Acercar"><Plus className="w-3.5 h-3.5" /></button>
+   820→          <button onClick={() => zoom(-1)} className="ve-btn" title="Alejar"><Minus className="w-3.5 h-3.5" /></button>
+   821→          <button onClick={() => setAutoGiro((v) => !v)} className={cn("ve-btn", autoGiro && "ve-btn-on")} title="Auto-giro del planeta"><Navigation className="w-3.5 h-3.5" /></button>
+   822→          <button onClick={() => resetGlobo()} className="ve-btn" title="Reset al planeta completo (R)"><RotateCcw className="w-3.5 h-3.5" /></button>
+   823→        </div>
+   824→
+   825→        {/* consola inferior: capas + sensores + director */}
+   826→        <div className="absolute bottom-0 left-0 right-0 z-20 bg-black/85 border-t border-amber-hud/40 px-2 py-1.5 flex flex-wrap items-center gap-1">
+   827→          {(["aviones", "buques", "satelites", "drones", "sismos", "camaras"] as const).map((k) => (
+   828→            <button
+   829→              key={k}
+   830→              onClick={() => setCapas((p) => ({ ...p, [k]: !p[k] }))}
+   831→              className={cn("ve-chip", capas[k] && "ve-chip-on")}
+   832→            >
+   833→              {k.toUpperCase()}
+   834→            </button>
+   835→          ))}
+   836→          <button onClick={() => setVientos((v) => !v)} className={cn("ve-chip", vientos && "ve-chip-on")} title="Vientos en vivo sobre el planeta"><Wind className="w-3 h-3" /> VIENTOS</button>
+   837→          <button
+   838→            onClick={() => setCapas((p) => ({ ...p, terminador: !p.terminador }))}
+   839→            className={cn("ve-chip", capas.terminador && "ve-chip-on")}
+   840→            title="Terminador solar: la noche real, donde la pone el Sol ahora mismo (v114)"
+   841→          >
+   842→            <Earth className="w-3 h-3" /> TERMINADOR
+   843→          </button>
+   844→          <span className="w-px h-4 bg-amber-hud/30 mx-0.5" />
+   845→          {SENSORES.map((s, i) => (
+   846→            <button key={s.id} onClick={() => setSensorId(s.id)} title={`${s.nota} (tecla ${i + 1})`} className={cn("ve-chip", sensorId === s.id && "ve-chip-on")}>
+   847→              {i + 1}·{s.nombre}
+   848→            </button>
+   849→          ))}
+   850→          <span className="w-px h-4 bg-amber-hud/30 mx-0.5" />
+   851→          <button onClick={() => setHudOn((v) => !v)} className={cn("ve-chip", hudOn && "ve-chip-on")} title="HUD militar (H)">HUD</button>
+   852→          <button onClick={() => setDetOn((v) => !v)} className={cn("ve-chip", detOn && "ve-chip-on")} title="Cajas de detección (D)">DETECCIÓN</button>
+   853→          <button onClick={anadirEscena} className="ve-chip" title="Director: guardar la vista actual"><Clapperboard className="w-3 h-3" /> AÑADIR VISTA</button>
+   854→          <button onClick={reproducirEscenas} className="ve-chip" title="Director: reproducir tus escenas"><Play className="w-3 h-3" /> REPRODUCIR ({escenas.length})</button>
+   855→          {escenas.length > 0 && (
+   856→            <button onClick={() => { setEscenas([]); guardar(hechas, []); }} className="ve-chip text-red" title="Borrar escenas"><Trash2 className="w-3 h-3" /></button>
+   857→          )}
+   858→        </div>
+   859→
+   860→        {/* reproductor de crónicas */}
+   861→        <AnimatePresence>
+   862→          {cronicaActiva && (
+   863→            <motion.div
+   864→              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+   865→              className="absolute bottom-12 left-1/2 -translate-x-1/2 w-[min(94%,620px)] z-30 bg-black/90 border border-amber-hud/70 p-3"
+   866→            >
+   867→              <div className="flex items-center justify-between gap-2">
+   868→                <div className="text-[10px] font-black tracking-widest text-amber">CRÓNICA · {cronicaActiva.titulo} ({cronica!.idx + 1}/{cronicaActiva.paradas.length})</div>
+   869→                <button onClick={() => setCronica(null)} className="text-muted-foreground hover:text-red"><X className="w-3.5 h-3.5" /></button>
+   870→              </div>
+   871→              <p className="text-[11px] text-foreground/90 mt-1 leading-snug">{cronicaActiva.paradas[cronica!.idx].texto}</p>
+   872→              <div className="flex items-center gap-1.5 mt-2">
+   873→                {cronicaActiva.paradas.map((_, i) => (
+   874→                  <div key={i} className={cn("h-1 flex-1 transition-colors", i <= cronica!.idx ? "bg-amber" : "bg-white/15")} />
+   875→                ))}
+   876→              </div>
+   877→            </motion.div>
+   878→          )}
+   879→        </AnimatePresence>
+   880→      </div>
+   881→
+   882→      {/* CRÓNICAS GUIADAS */}
+   883→      <div className="space-y-2">
+   884→        <div className="flex items-center gap-2">
+   885→          <BookOpen className="w-4 h-4 text-amber" />
+   886→          <h3 className="text-sm font-black tracking-widest text-amber">CRÓNICAS GUIADAS · VUELA LA HISTORIA</h3>
+   887→        </div>
+   888→        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+   889→          {CRONICAS.map((cr, i) => (
+   890→            <motion.div key={cr.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="hud-panel border border-amber-hud/30 p-3">
+   891→              <div className="text-[11px] font-black text-amber">{cr.titulo}</div>
+   892→              <div className="text-[9px] text-muted-foreground italic mb-2">{cr.lema}</div>
+   893→              <p className="text-[10px] text-foreground/80 leading-snug line-clamp-2 mb-2">{cr.paradas[0].texto}</p>
+   894→              <div className="flex items-center justify-between">
+   895→                <span className="text-[8px] font-mono text-muted-foreground">{cr.paradas.length} PARADAS · ~7 s CADA UNA</span>
+   896→                <button onClick={() => jugarCronica(cr.id, 0)} className="flex items-center gap-1 text-[9px] font-black tracking-widest text-amber hover:text-foreground transition-colors">
+   897→                  <Play className="w-3 h-3" /> VOLAR
+   898→                </button>
+   899→              </div>
+   900→            </motion.div>
+   901→          ))}
+   902→        </div>
+   903→      </div>
+   904→
+   905→      {/* MANUAL DEL OPERADOR */}
+   906→      <div className="hud-panel border border-amber-hud/30">
+   907→        <button onClick={() => setManualOn((v) => !v)} className="w-full flex items-center justify-between px-3 py-2 hover:bg-amber/5 transition-colors">
+   908→          <span className="text-[11px] font-black tracking-widest text-amber flex items-center gap-2"><Eye className="w-3.5 h-3.5" /> MANUAL DEL OPERADOR · CÓMO SE MIRA UN PLANETA</span>
+   909→          <span className="text-[9px] font-mono text-muted-foreground">{manualOn ? "CERRAR ▲" : "ABRIR ▼"}</span>
+   910→        </button>
+   911→        {manualOn && (
+   912→          <div className="px-3 pb-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+   913→            <div className="border border-amber-hud/20 p-2.5">
+   914→              <div className="text-[10px] font-black text-amber mb-1">LOS PRIMEROS CINCO MINUTOS</div>
+   915→              <ol className="text-[10px] text-foreground/85 space-y-1 list-decimal list-inside leading-snug">
+   916→                <li>Elige una MISIÓN de la fila superior: contactos, órbita, superficie o exploración libre.</li>
+   917→                <li>Pulsa cualquier contacto del globo o de la lista: la cámara lo encierra y sube su ficha.</li>
+   918→                <li>Pulsa RASTREAR: la cámara lo sigue y dibuja su estela ámbar.</li>
+   919→                <li>Tecla C con un avión rastreado: modo cockpit, la cámara cabalga su morro.</li>
+   920→                <li>Cambia de sensor con 1-7: CRT, NVG, FLIR, TÉRMICO… el planeta entero se re-renderiza.</li>
+   921→                <li>Enciende VIENTOS y mira los alisios dibujarse sobre el mar.</li>
+   922→                <li>Pregunta al ANALISTA: «cuántos contactos», «cuándo pasa un satélite», «riesgo de Sarn».</li>
+   923→                <li>R resetea al planeta completo. Nunca estás perdido más de dos segundos.</li>
+   924→              </ol>
+   925→            </div>
+   926→            <div className="border border-amber-hud/20 p-2.5">
+   927→              <div className="text-[10px] font-black text-amber mb-1">HABLA CON EL PLANETA</div>
+   928→              <p className="text-[10px] text-foreground/85 leading-snug">La barra superior entiende recuentos («cuántos aviones»), búsquedas («Ormuz», «41, 28»), órbitas («cuándo pasa un satélite»), veredictos («riesgo del Valle del Karsk») y órdenes de vuelo («llévame a Magallanes»). El analista corre en el núcleo neuronal v3 local: sin nube, sin esperas, sin que nadie escuche la conversación.</p>
+   929→              <div className="text-[10px] font-black text-amber mb-1 mt-2">QUÉ HAY EN VIVO</div>
+   930→              <p className="text-[10px] text-foreground/85 leading-snug">{contados.total} contactos ahora mismo: {contados.avion} aviones con transpondedor, {contados.buque} buques en ruta, {contados.satelite} satélites en órbita, {contados.dron} drones orbitando zonas calientes, {contados.sismo} sismos de la última hora y {contados.camara} cámaras públicas proyectadas sobre sus ciudades.</p>
+   931→              <div className="text-[10px] font-black text-amber mb-1 mt-2">BAJO EL CAPÓ</div>
+   932→              <p className="text-[10px] text-foreground/85 leading-snug">Todo es determinista: FNV-1a + mulberry32 + círculo máximo. La misma hora produce el mismo planeta, siempre. Como el proyecto que lo inspiró, cada línea es inspeccionable — pero aquí el mundo entero es de Vanguard.</p>
+   933→            </div>
+   934→          </div>
+   935→        )}
+   936→      </div>
+   937→    </div>
+   938→  );
+   939→}
+   940→

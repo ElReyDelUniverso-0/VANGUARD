@@ -1,0 +1,560 @@
+     1→"use client";
+     2→
+     3→// Vanguard v102.0 LA CIUDADELA — TALLER DE JUEGOS.
+     4→// El comandante pidió: "que se pueda publicar juegos dentro de Vanguard o
+     5→// que se puedan crear dentro de Vanguard". Este panel une las dos mitades:
+     6→//  · CREAR — eliges motor (QUIZ / ORDENA LA HISTORIA / VERDAD O MENTIRA),
+     7→//    rellenas el formulario, previsualizas en vivo y publicas.
+     8→//    PUBLICAR EXIGE PASAPORTE (cuenta de la Ciudadela) — petición explícita.
+     9→//  · JUGAR — galería del arcade comunitario: juegos del Taller con runtime
+    10→//    nativo animado + juegos HTML legacy en sandbox.
+    11→
+    12→import { useCallback, useEffect, useState } from "react";
+    13→import { motion, AnimatePresence } from "framer-motion";
+    14→import { cn } from "@/lib/utils";
+    15→import { useGameStore } from "@/lib/game-store";
+    16→import { useProfileStore } from "@/lib/profile-store";
+    17→import { toast } from "sonner";
+    18→import {
+    19→  Hammer, Play, Plus, Trash2, Eye, Rocket, Gamepad2, Heart, Users,
+    20→  ChevronLeft, ChevronRight, ShieldCheck, Sparkles, Wrench, ListOrdered, HelpCircle, Scale,
+    21→} from "lucide-react";
+    22→import { MOTORES, validarJuego, type MotorJuego, type JuegoDef, type PreguntaQuiz } from "@/lib/juegos";
+    23→import { GameRuntime } from "@/components/vanguard/game-runtime";
+    24→import { Countryball } from "@/components/vanguard/countryball";
+    25→
+    26→type Modo = "jugar" | "crear";
+    27→interface JuegoItem {
+    28→  id: string;
+    29→  title: string;
+    30→  summary: string;
+    31→  author: string;
+    32→  authorBall: string;
+    33→  specs: string;
+    34→  gameHtml: string;
+    35→  gameUrl: string;
+    36→  plays: number;
+    37→  likes: number;
+    38→  ratingSum: number;
+    39→  ratingCount: number;
+    40→  createdAt: string;
+    41→}
+    42→
+    43→const INICIO_QUIZ: PreguntaQuiz = { q: "", o: ["", "", "", ""], a: 0 };
+    44→
+    45→export function TallerJuegosPanel() {
+    46→  const account = useGameStore((s) => s.account);
+    47→  const addCoins = useGameStore((s) => s.addCoins);
+    48→  const addXp = useGameStore((s) => s.addXp);
+    49→  const cbAvatar = useProfileStore((s) => s.cbAvatar);
+    50→
+    51→  const [modo, setModo] = useState<Modo>("jugar");
+    52→  const [items, setItems] = useState<JuegoItem[]>([]);
+    53→  const [cargando, setCargando] = useState(true);
+    54→  const [ordenar, setOrdenar] = useState<"recent" | "plays" | "top">("recent");
+    55→  const [jugando, setJugando] = useState<JuegoItem | null>(null);
+    56→
+    57→  // ---- creador ----
+    58→  const [motor, setMotor] = useState<MotorJuego | null>(null);
+    59→  const [preguntas, setPreguntas] = useState<PreguntaQuiz[]>([{ ...INICIO_QUIZ }]);
+    60→  const [pasos, setPasos] = useState<string[]>(["", "", "", ""]);
+    61→  const [afirmaciones, setAfirmaciones] = useState<{ t: string; v: boolean }[]>([
+    62→    { t: "", v: true }, { t: "", v: false }, { t: "", v: true }, { t: "", v: true }, { t: "", v: false },
+    63→  ]);
+    64→  const [titulo, setTitulo] = useState("");
+    65→  const [resumen, setResumen] = useState("");
+    66→  const [preview, setPreview] = useState(false);
+    67→  const [publicando, setPublicando] = useState(false);
+    68→
+    69→  const cargar = useCallback(async (sort: string) => {
+    70→    setCargando(true);
+    71→    try {
+    72→      const res = await fetch(`/api/juegos?sort=${sort}&limit=48`, { cache: "no-store" });
+    73→      const data = await res.json();
+    74→      setItems(Array.isArray(data.items) ? data.items : []);
+    75→    } catch {
+    76→      setItems([]);
+    77→    }
+    78→    setCargando(false);
+    79→  }, []);
+    80→
+    81→  useEffect(() => {
+    82→    let vivo = true;
+    83→    (async () => {
+    84→      await cargar(ordenar);
+    85→      if (!vivo) return;
+    86→    })();
+    87→    return () => { vivo = false; };
+    88→  }, [ordenar, cargar]);
+    89→
+    90→  // v104.0 LA VITRINA — REMEZCLAR un juego de la comunidad: el Muro entrega el
+    91→  // def aquí y el Taller abre EN MODO CREAR con todo precargado. El remix es
+    92→  // una obra nueva del operador: título firmado como REMIX y sin límites.
+    93→  useEffect(() => {
+    94→    try {
+    95→      const raw = sessionStorage.getItem("vg-taller-remix");
+    96→      if (!raw) return;
+    97→      sessionStorage.removeItem("vg-taller-remix");
+    98→      const r = JSON.parse(raw) as { def: JuegoDef; titulo?: string; resumen?: string; autor?: string };
+    99→      if (!r?.def?.engine) return;
+   100→      const motorR = r.def.engine as MotorJuego;
+   101→      const datos = (r.def.data || {}) as {
+   102→        quiz?: { preguntas?: PreguntaQuiz[] };
+   103→        ordena?: { pasos?: { t: string }[] };
+   104→        vof?: { afirmaciones?: { t: string; v: boolean }[] };
+   105→      };
+   106→      if (motorR === "quiz" && Array.isArray(datos.quiz?.preguntas)) {
+   107→        setPreguntas(datos.quiz!.preguntas!.map((p) => ({ q: p.q || "", o: (p.o || ["", "", "", ""]).slice(0, 4), a: Math.max(0, Math.min(3, Number(p.a) || 0)) })));
+   108→      }
+   109→      if (motorR === "ordena" && Array.isArray(datos.ordena?.pasos)) {
+   110→        setPasos(datos.ordena!.pasos!.slice(0, 8).map((p) => String(p.t || "")));
+   111→      }
+   112→      if (motorR === "vof" && Array.isArray(datos.vof?.afirmaciones)) {
+   113→        setAfirmaciones(datos.vof!.afirmaciones!.slice(0, 10).map((a) => ({ t: String(a.t || ""), v: a.v === true })));
+   114→      }
+   115→      setMotor(motorR);
+   116→      setTitulo(r.titulo ? `REMIX de "${r.titulo}"` : "");
+   117→      setResumen(r.resumen ? `${r.resumen} (REMIX del original de @${r.autor || "creador"})` : "");
+   118→      setModo("crear");
+   119→      toast(`REMIX del juego de @${r.autor || "creador"} — el Taller está listo: ajusta y publica tu versión`, { duration: 4200, icon: "🔧" });
+   120→    } catch { /* remix corrupto: se ignora en silencio */ }
+   121→  }, []);
+   122→
+   123→  const pedirPasaporte = (motivo: string) => {
+   124→    window.dispatchEvent(new CustomEvent("vanguard:pasaporte", { detail: { motivo } }));
+   125→  };
+   126→
+   127→  // ---- validar el juego del creador ----
+   128→  const construirDef = (): JuegoDef | null => {
+   129→    if (motor === "quiz") {
+   130→      const limpias = preguntas
+   131→        .map((p) => ({ q: p.q.trim(), o: p.o.map((o) => o.trim()), a: p.a }))
+   132→        .filter((p) => p.q && p.o.filter(Boolean).length >= 2);
+   133→      return { engine: "quiz", data: { quiz: { preguntas: limpias } } };
+   134→    }
+   135→    if (motor === "ordena") return { engine: "ordena", data: { ordena: { pasos: pasos.map((t) => ({ t: t.trim() })).filter((p) => p.t) } } };
+   136→    if (motor === "vof") return { engine: "vof", data: { vof: { afirmaciones: afirmaciones.map((a) => ({ t: a.t.trim(), v: a.v })).filter((a) => a.t) } } };
+   137→    return null;
+   138→  };
+   139→
+   140→  const publicar = async () => {
+   141→    if (!account) {
+   142→      pedirPasaporte("Los juegos de la Ciudadela solo los publica una cuenta firmada — crea tu pasaporte gratis y publica el tuyo.");
+   143→      return;
+   144→    }
+   145→    if (!motor) return;
+   146→    if (titulo.trim().length < 3) { toast.error("Ponle un título de al menos 3 letras"); return; }
+   147→    if (resumen.trim().length < 10) { toast.error("Cuenta en el resumen de qué va tu juego (10+ letras)"); return; }
+   148→    const def = construirDef();
+   149→    if (!def) { toast.error("Elige un motor primero"); return; }
+   150→    const check = validarJuego(def);
+   151→    if (!check.ok) { toast.error(check.error); return; }
+   152→
+   153→    setPublicando(true);
+   154→    try {
+   155→      const res = await fetch("/api/ugc", {
+   156→        method: "POST",
+   157→        headers: { "Content-Type": "application/json" },
+   158→        body: JSON.stringify({
+   159→          kind: "juego",
+   160→          author: account.username,
+   161→          authorBall: cbAvatar,
+   162→          title: titulo.trim().slice(0, 120),
+   163→          summary: resumen.trim().slice(0, 300),
+   164→          specs: check.json,
+   165→        }),
+   166→      });
+   167→      const data = await res.json();
+   168→      if (res.status === 401 || data.necesitaPasaporte) {
+   169→        pedirPasaporte("Tu sesión expiró — entra de nuevo con tu pasaporte para publicar.");
+   170→        return;
+   171→      }
+   172→      if (!res.ok || data.eliminated) {
+   173→        toast.error(data.reason ?? data.error ?? "El agente moderador rechazó el envío");
+   174→        return;
+   175→      }
+   176→      toast.success(`🎮 ¡${data.item.title} publicado en el arcade!`, { description: `+${data.reward ?? 50} monedas · el agente IA lo aprobó (${data.verdict})` });
+   177→      addCoins(data.reward ?? 50, "juego-publicado");
+   178→      addXp(25);
+   179→      // limpiar el taller
+   180→      setTitulo(""); setResumen(""); setMotor(null); setPreview(false);
+   181→      setPreguntas([{ ...INICIO_QUIZ }]); setPasos(["", "", "", ""]);
+   182→      setAfirmaciones([{ t: "", v: true }, { t: "", v: false }, { t: "", v: true }, { t: "", v: true }, { t: "", v: false }]);
+   183→      setModo("jugar");
+   184→      cargar(ordenar);
+   185→    } catch {
+   186→      toast.error("La Ciudadela no pudo procesar el envío — inténtalo de nuevo");
+   187→    } finally {
+   188→      setPublicando(false);
+   189→    }
+   190→  };
+   191→
+   192→  const defDe = (it: JuegoItem): JuegoDef | null => {
+   193→    try {
+   194→      const def = JSON.parse(it.specs) as JuegoDef;
+   195→      if (def?.engine && def?.data) return def;
+   196→      return null;
+   197→    } catch { return null; }
+   198→  };
+   199→
+   200→  const juegosTaller = items.filter((it) => defDe(it) !== null);
+   201→  const juegosLegacy = items.filter((it) => defDe(it) === null && (it.gameHtml || it.gameUrl));
+   202→
+   203→  return (
+   204→    <div className="space-y-4 v101-panel">
+   205→      {/* ===== CABECERA ===== */}
+   206→      <div className="hud-panel border-amber-hud/50 p-4 relative overflow-hidden">
+   207→        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-amber-hud/10 blur-2xl pointer-events-none" aria-hidden />
+   208→        <div className="flex items-start gap-3">
+   209→          <div className="w-11 h-11 rounded-sm border border-amber-hud bg-amber-hud/15 flex items-center justify-center shrink-0 v102-latido">
+   210→            <Hammer className="w-5 h-5 text-amber" />
+   211→          </div>
+   212→          <div className="min-w-0">
+   213→            <h2 className="font-display text-base font-bold uppercase tracking-[0.2em] text-amber leading-tight">
+   214→              TALLER DE JUEGOS
+   215→            </h2>
+   216→            <p className="text-[11px] font-mono text-muted-foreground leading-relaxed mt-0.5">
+   217→              Crea juegos SIN código con tres motores, publícalos en el arcade de la Ciudadela y juega a los de la comunidad.
+   218→            </p>
+   219→          </div>
+   220→        </div>
+   221→
+   222→        {/* estado del pasaporte */}
+   223→        <div className={cn(
+   224→          "mt-3 flex items-center gap-2 px-3 py-2 rounded-sm border text-[10px] font-mono uppercase tracking-widest",
+   225→          account ? "border-green-hud/50 bg-green-hud/10 text-green-hud" : "border-amber-hud/50 bg-amber-hud/10 text-amber"
+   226→        )}>
+   227→          <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+   228→          {account
+   229→            ? <>Pasaporte activo: <b className="ml-1">{account.username}</b> — puedes publicar juegos</>
+   230→            : <>Sin pasaporte: puedes JUGAR todo lo que quieras · publicar exige cuenta (gratis)</>}
+   231→        </div>
+   232→      </div>
+   233→
+   234→      {/* ===== SELECTOR DE MODO ===== */}
+   235→      <div className="grid grid-cols-2 gap-2">
+   236→        {([["jugar", "ARCADE", <Play key="p" className="w-4 h-4" />], ["crear", "CREAR JUEGO", <Wrench key="c" className="w-4 h-4" />]] as const).map(([m, label, icon]) => (
+   237→          <button
+   238→            key={m}
+   239→            onClick={() => setModo(m as Modo)}
+   240→            className={cn(
+   241→              "relative flex items-center justify-center gap-2 px-4 py-2.5 rounded-sm border font-mono text-[11px] font-bold uppercase tracking-widest transition-colors",
+   242→              modo === m
+   243→                ? "border-amber-hud text-amber bg-amber-hud/20"
+   244→                : "border-border/60 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
+   245→            )}
+   246→          >
+   247→            {modo === m && (
+   248→              <motion.div layoutId="taller-modo" className="absolute inset-0 rounded-sm bg-amber-hud/10"
+   249→                transition={{ type: "spring", stiffness: 380, damping: 30 }} />
+   250→            )}
+   251→            <span className="relative z-10 inline-flex items-center gap-2">{icon}{label}</span>
+   252→          </button>
+   253→        ))}
+   254→      </div>
+   255→
+   256→      <AnimatePresence mode="wait">
+   257→        {/* ================= MODO JUGAR ================= */}
+   258→        {modo === "jugar" && (
+   259→          <motion.div key="jugar" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }} className="space-y-3">
+   260→            {jugando && (() => {
+   261→              const def = defDe(jugando);
+   262→              return (
+   263→                <div className="space-y-2">
+   264→                  <button onClick={() => setJugando(null)} className="font-mono text-[10px] uppercase tracking-widest text-electric hover:text-foreground transition-colors inline-flex items-center gap-1">
+   265→                    <ChevronLeft className="w-3.5 h-3.5" /> Volver al arcade
+   266→                  </button>
+   267→                  <p className="font-display uppercase tracking-[0.2em] text-sm text-foreground">{jugando.title}</p>
+   268→                  {def ? (
+   269→                    <GameRuntime def={def} idJuego={jugando.id} />
+   270→                  ) : (
+   271→                    <div className="hud-panel border-amber-hud/50 p-3">
+   272→                      <p className="text-[10px] font-mono text-muted-foreground mb-2">Juego del estudio clásico (sandbox):</p>
+   273→                      {jugando.gameUrl ? (
+   274→                        <a href={jugando.gameUrl} target="_blank" rel="noopener noreferrer" className="font-mono text-[11px] text-electric underline break-all">
+   275→                          {jugando.gameUrl}
+   276→                        </a>
+   277→                      ) : (
+   278→                        <iframe
+   279→                          title={jugando.title}
+   280→                          srcDoc={jugando.gameHtml}
+   281→                          sandbox="allow-scripts"
+   282→                          className="w-full h-[420px] rounded-sm border border-border/60 bg-black"
+   283→                        />
+   284→                      )}
+   285→                    </div>
+   286→                  )}
+   287→                </div>
+   288→              );
+   289→            })()}
+   290→
+   291→            {!jugando && (
+   292→              <>
+   293→                <div className="flex items-center gap-2 overflow-x-auto thin-scroll pb-1">
+   294→                  {([["recent", "NUEVOS"], ["plays", "MÁS JUGADOS"], ["top", "TOP LIKES"]] as const).map(([s, label]) => (
+   295→                    <button key={s} onClick={() => setOrdenar(s)}
+   296→                      className={cn(
+   297→                        "px-3 py-1.5 rounded-full border font-mono text-[10px] uppercase tracking-widest whitespace-nowrap transition-colors",
+   298→                        ordenar === s ? "border-amber-hud text-amber bg-amber-hud/15" : "border-border/60 text-muted-foreground hover:text-foreground"
+   299→                      )}>
+   300→                      {label}
+   301→                    </button>
+   302→                  ))}
+   303→                  <span className="ml-auto font-mono text-[9px] text-muted-foreground/70 whitespace-nowrap">{items.length} juegos</span>
+   304→                </div>
+   305→
+   306→                {cargando && (
+   307→                  <div className="hud-panel border-border/50 p-6 text-center font-mono text-[11px] text-muted-foreground">
+   308→                    Cargando el arcade de la Ciudadela…
+   309→                  </div>
+   310→                )}
+   311→
+   312→                {!cargando && juegosTaller.length === 0 && juegosLegacy.length === 0 && (
+   313→                  <div className="hud-panel border-border/50 p-8 text-center">
+   314→                    <Gamepad2 className="w-10 h-10 mx-auto text-muted-foreground/40 mb-3" />
+   315→                    <p className="font-mono text-[12px] text-muted-foreground mb-3">El arcade está vacío — sé el PRIMERO en publicar un juego.</p>
+   316→                    <button onClick={() => setModo("crear")} className="v102-cta font-mono uppercase tracking-widest text-[11px] px-5 py-2.5 rounded-sm border border-amber-hud text-amber bg-amber-hud/20 hover:bg-amber-hud/40 transition-colors">
+   317→                      <Hammer className="inline w-3.5 h-3.5 mr-1.5" /> Abrir el taller
+   318→                    </button>
+   319→                  </div>
+   320→                )}
+   321→
+   322→                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+   323→                  {juegosTaller.map((it, i) => {
+   324→                    const def = defDe(it)!;
+   325→                    const motorMeta = MOTORES.find((m) => m.id === def.engine);
+   326→                    return (
+   327→                      <motion.div key={it.id}
+   328→                        initial={{ opacity: 0, y: 14 }}
+   329→                        animate={{ opacity: 1, y: 0 }}
+   330→                        transition={{ delay: Math.min(0.05 * i, 0.4) }}
+   331→                        className="hud-panel border-border/60 p-3.5 hover:border-amber-hud/60 transition-colors v102-tarjeta">
+   332→                        <div className="flex items-start gap-2.5 mb-2">
+   333→                          <div className="w-9 h-9 rounded-sm border border-amber-hud/40 bg-amber-hud/10 flex items-center justify-center shrink-0">
+   334→                            {def.engine === "quiz" ? <HelpCircle className="w-4 h-4 text-amber" />
+   335→                              : def.engine === "ordena" ? <ListOrdered className="w-4 h-4 text-cyan-hud" />
+   336→                              : <Scale className="w-4 h-4 text-violet-hud" />}
+   337→                          </div>
+   338→                          <div className="min-w-0 flex-1">
+   339→                            <p className="text-[13px] font-bold text-foreground truncate">{it.title}</p>
+   340→                            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground truncate">
+   341→                              {motorMeta?.nombre ?? def.engine} · {it.author}
+   342→                            </p>
+   343→                          </div>
+   344→                          <Countryball code={it.authorBall || "us"} size={22} />
+   345→                        </div>
+   346→                        {it.summary && <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2 mb-2">{it.summary}</p>}
+   347→                        <div className="flex items-center gap-3 font-mono text-[9px] text-muted-foreground/80 mb-2.5">
+   348→                          <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" /> {it.plays} jugadas</span>
+   349→                          <span className="inline-flex items-center gap-1"><Heart className="w-3 h-3" /> {it.likes}</span>
+   350→                          {it.ratingCount > 0 && <span>★ {(it.ratingSum / it.ratingCount).toFixed(1)}</span>}
+   351→                        </div>
+   352→                        <button onClick={() => setJugando(it)}
+   353→                          className="w-full font-mono uppercase tracking-widest text-[10px] py-2 rounded-sm border border-amber-hud/70 text-amber bg-amber-hud/15 hover:bg-amber-hud/35 transition-colors">
+   354→                          ▶ Jugar
+   355→                        </button>
+   356→                      </motion.div>
+   357→                    );
+   358→                  })}
+   359→                  {juegosLegacy.map((it) => (
+   360→                    <div key={it.id} className="hud-panel border-border/60 p-3.5">
+   361→                      <p className="text-[13px] font-bold text-foreground truncate">{it.title}</p>
+   362→                      <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-2">ESTUDIO CLÁSICO · {it.author}</p>
+   363→                      <button onClick={() => setJugando(it)}
+   364→                        className="w-full font-mono uppercase tracking-widest text-[10px] py-2 rounded-sm border border-border/60 text-muted-foreground hover:text-amber hover:border-amber-hud/60 transition-colors">
+   365→                        ▶ Jugar
+   366→                      </button>
+   367→                    </div>
+   368→                  ))}
+   369→                </div>
+   370→              </>
+   371→            )}
+   372→          </motion.div>
+   373→        )}
+   374→
+   375→        {/* ================= MODO CREAR ================= */}
+   376→        {modo === "crear" && (
+   377→          <motion.div key="crear" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }} className="space-y-3">
+   378→            {/* paso 1: motor */}
+   379→            {!motor && (
+   380→              <>
+   381→                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">PASO 1 · elige el motor de tu juego</p>
+   382→                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+   383→                  {MOTORES.map((m, i) => (
+   384→                    <motion.button key={m.id}
+   385→                      initial={{ opacity: 0, y: 12 }}
+   386→                      animate={{ opacity: 1, y: 0 }}
+   387→                      transition={{ delay: i * 0.06 }}
+   388→                      onClick={() => setMotor(m.id)}
+   389→                      className="hud-panel border-border/60 p-4 text-left hover:border-amber-hud/70 hover:bg-amber-hud/5 transition-colors v102-tarjeta">
+   390→                      <div className="mb-2">
+   391→                        {m.id === "quiz" ? <HelpCircle className="w-6 h-6 text-amber" />
+   392→                          : m.id === "ordena" ? <ListOrdered className="w-6 h-6 text-cyan-hud" />
+   393→                          : <Scale className="w-6 h-6 text-violet-hud" />}
+   394→                      </div>
+   395→                      <p className="font-display text-[12px] font-bold uppercase tracking-widest text-foreground mb-1">{m.nombre}</p>
+   396→                      <p className="text-[11px] text-muted-foreground leading-snug">{m.desc}</p>
+   397→                      <p className="font-mono text-[9px] text-muted-foreground/70 mt-2 uppercase tracking-widest">{m.min}–{m.max} elementos</p>
+   398→                    </motion.button>
+   399→                  ))}
+   400→                </div>
+   401→              </>
+   402→            )}
+   403→
+   404→            {/* paso 2: contenido */}
+   405→            {motor && !preview && (
+   406→              <>
+   407→                <div className="flex items-center justify-between">
+   408→                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+   409→                    PASO 2 · rellena tu {MOTORES.find((m) => m.id === motor)?.nombre}
+   410→                  </p>
+   411→                  <button onClick={() => { setMotor(null); setPreview(false); }} className="font-mono text-[10px] text-electric hover:text-foreground uppercase tracking-widest">
+   412→                    cambiar motor
+   413→                  </button>
+   414→                </div>
+   415→
+   416→                {/* QUIZ editor */}
+   417→                {motor === "quiz" && (
+   418→                  <div className="space-y-2.5">
+   419→                    {preguntas.map((p, pi) => (
+   420→                      <div key={pi} className="hud-panel border-border/60 p-3 space-y-2">
+   421→                        <div className="flex items-center justify-between">
+   422→                          <span className="font-mono text-[9px] uppercase tracking-widest text-amber">Pregunta {pi + 1}</span>
+   423→                          {preguntas.length > 1 && (
+   424→                            <button onClick={() => setPreguntas((arr) => arr.filter((_, k) => k !== pi))}
+   425→                              aria-label="Quitar pregunta" className="text-red-hud/70 hover:text-red-hud transition-colors">
+   426→                              <Trash2 className="w-3.5 h-3.5" />
+   427→                            </button>
+   428→                          )}
+   429→                        </div>
+   430→                        <input value={p.q} onChange={(e) => setPreguntas((arr) => arr.map((x, k) => k === pi ? { ...x, q: e.target.value } : x))}
+   431→                          placeholder="Escribe la pregunta…" maxLength={160}
+   432→                          className="w-full bg-secondary/60 border border-border rounded-sm px-2.5 py-2 text-[12px] font-mono outline-none focus:border-amber-hud/70 transition-colors" />
+   433→                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+   434→                          {p.o.map((o, oi) => (
+   435→                            <label key={oi} className={cn(
+   436→                              "flex items-center gap-1.5 px-2 py-1.5 rounded-sm border transition-colors cursor-pointer",
+   437→                              p.a === oi ? "border-green-hud/70 bg-green-hud/10" : "border-border/70 hover:border-amber-hud/50"
+   438→                            )}>
+   439→                              <input type="radio" name={`correcta-${pi}`} checked={p.a === oi}
+   440→                                onChange={() => setPreguntas((arr) => arr.map((x, k) => k === pi ? { ...x, a: oi } : x))}
+   441→                                className="accent-[#4ADE80]" aria-label={`Opción ${oi + 1} correcta`} />
+   442→                              <input value={o} onChange={(e) => setPreguntas((arr) => arr.map((x, k) => k === pi ? { ...x, o: x.o.map((oo, k2) => k2 === oi ? e.target.value : oo) } : x))}
+   443→                                placeholder={`Opción ${oi + 1}`} maxLength={90}
+   444→                                className="flex-1 bg-transparent text-[11px] font-mono outline-none min-w-0" />
+   445→                            </label>
+   446→                          ))}
+   447→                        </div>
+   448→                        <p className="font-mono text-[9px] text-muted-foreground/70">toca el círculo verde para marcar la respuesta CORRECTA</p>
+   449→                      </div>
+   450→                    ))}
+   451→                    {preguntas.length < 12 && (
+   452→                      <button onClick={() => setPreguntas((arr) => [...arr, { ...INICIO_QUIZ }])}
+   453→                        className="w-full py-2.5 rounded-sm border border-dashed border-amber-hud/50 text-amber font-mono text-[10px] uppercase tracking-widest hover:bg-amber-hud/10 transition-colors">
+   454→                        <Plus className="inline w-3.5 h-3.5 mr-1" /> Añadir pregunta ({preguntas.length}/12)
+   455→                      </button>
+   456→                    )}
+   457→                  </div>
+   458→                )}
+   459→
+   460→                {/* ORDENA editor */}
+   461→                {motor === "ordena" && (
+   462→                  <div className="space-y-2.5">
+   463→                    <p className="text-[11px] font-mono text-muted-foreground">Escribe los eventos EN ORDEN cronológico (el jugador los recibirá revueltos):</p>
+   464→                    {pasos.map((t, pi) => (
+   465→                      <div key={pi} className="flex items-center gap-2">
+   466→                        <span className="w-6 h-6 rounded-full border border-cyan-hud/60 text-cyan-hud text-[10px] font-mono flex items-center justify-center shrink-0">{pi + 1}</span>
+   467→                        <input value={t} onChange={(e) => setPasos((arr) => arr.map((x, k) => k === pi ? e.target.value : x))}
+   468→                          placeholder={`Evento ${pi + 1} (cronológico)…`} maxLength={160}
+   469→                          className="flex-1 bg-secondary/60 border border-border rounded-sm px-2.5 py-2 text-[12px] font-mono outline-none focus:border-cyan-hud/70 transition-colors" />
+   470→                        {pasos.length > 4 && (
+   471→                          <button onClick={() => setPasos((arr) => arr.filter((_, k) => k !== pi))}
+   472→                            aria-label="Quitar evento" className="text-red-hud/70 hover:text-red-hud transition-colors shrink-0">
+   473→                            <Trash2 className="w-3.5 h-3.5" />
+   474→                          </button>
+   475→                        )}
+   476→                      </div>
+   477→                    ))}
+   478→                    {pasos.length < 8 && (
+   479→                      <button onClick={() => setPasos((arr) => [...arr, ""])}
+   480→                        className="w-full py-2.5 rounded-sm border border-dashed border-cyan-hud/50 text-cyan-hud font-mono text-[10px] uppercase tracking-widest hover:bg-cyan-hud/10 transition-colors">
+   481→                        <Plus className="inline w-3.5 h-3.5 mr-1" /> Añadir evento ({pasos.length}/8)
+   482→                      </button>
+   483→                    )}
+   484→                  </div>
+   485→                )}
+   486→
+   487→                {/* VOF editor */}
+   488→                {motor === "vof" && (
+   489→                  <div className="space-y-2.5">
+   490→                    {afirmaciones.map((a, pi) => (
+   491→                      <div key={pi} className="flex items-center gap-2">
+   492→                        <span className="w-6 h-6 rounded-full border border-violet-hud/60 text-violet-hud text-[10px] font-mono flex items-center justify-center shrink-0">{pi + 1}</span>
+   493→                        <input value={a.t} onChange={(e) => setAfirmaciones((arr) => arr.map((x, k) => k === pi ? { ...x, t: e.target.value } : x))}
+   494→                          placeholder="Escribe la afirmación…" maxLength={160}
+   495→                          className="flex-1 bg-secondary/60 border border-border rounded-sm px-2.5 py-2 text-[12px] font-mono outline-none focus:border-violet-hud/70 transition-colors" />
+   496→                        <button onClick={() => setAfirmaciones((arr) => arr.map((x, k) => k === pi ? { ...x, v: !x.v } : x))}
+   497→                          className={cn(
+   498→                            "shrink-0 px-2.5 py-1.5 rounded-sm border font-mono text-[9px] uppercase tracking-widest transition-colors",
+   499→                            a.v ? "border-green-hud/70 text-green-hud bg-green-hud/10" : "border-red-hud/70 text-red-hud bg-red-hud/10"
+   500→                          )}>
+   501→                          {a.v ? "VERDAD" : "MENTIRA"}
+   502→                        </button>
+   503→                      </div>
+   504→                    ))}
+   505→                    <p className="font-mono text-[9px] text-muted-foreground/70">toca el sello VERDAD/MENTIRA para cambiar la respuesta de cada afirmación</p>
+   506→                  </div>
+   507→                )}
+   508→
+   509→                {/* ficha del juego */}
+   510→                <div className="hud-panel border-amber-hud/40 p-3 space-y-2">
+   511→                  <p className="font-mono text-[9px] uppercase tracking-widest text-amber">FICHA DEL JUEGO</p>
+   512→                  <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Título del juego…" maxLength={120}
+   513→                    className="w-full bg-secondary/60 border border-border rounded-sm px-2.5 py-2 text-[12px] font-mono outline-none focus:border-amber-hud/70 transition-colors" />
+   514→                  <textarea value={resumen} onChange={(e) => setResumen(e.target.value)} placeholder="Resumen: de qué va tu juego (aparece en la tarjeta del arcade)…" maxLength={300} rows={2}
+   515→                    className="w-full bg-secondary/60 border border-border rounded-sm px-2.5 py-2 text-[12px] font-mono outline-none focus:border-amber-hud/70 transition-colors resize-none" />
+   516→                </div>
+   517→
+   518→                <button onClick={() => {
+   519→                  const check = validarJuego(construirDef());
+   520→                  if (!check.ok) { toast.error(check.error); return; }
+   521→                  setPreview(true);
+   522→                }} className="v102-cta w-full font-mono uppercase tracking-widest text-[11px] py-3 rounded-sm border border-amber-hud text-amber bg-amber-hud/20 hover:bg-amber-hud/40 transition-colors">
+   523→                  <Eye className="inline w-4 h-4 mr-1.5" /> Previsualizar mi juego
+   524→                </button>
+   525→              </>
+   526→            )}
+   527→
+   528→            {/* paso 3: preview + publicar */}
+   529→            {motor && preview && (
+   530→              <>
+   531→                <div className="flex items-center justify-between">
+   532→                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">PASO 3 · pruébalo como lo vivirá la comunidad</p>
+   533→                  <button onClick={() => setPreview(false)} className="font-mono text-[10px] text-electric hover:text-foreground uppercase tracking-widest">
+   534→                    volver a editar
+   535→                  </button>
+   536→                </div>
+   537→                <GameRuntime def={construirDef()!} idJuego={`preview:${titulo || "sin-titulo"}`} compacto />
+   538→                <div className="hud-panel border-amber-hud p-3.5">
+   539→                  <div className="flex items-start gap-2 mb-2">
+   540→                    <Sparkles className="w-4 h-4 text-amber shrink-0 mt-0.5" />
+   541→                    <p className="text-[11px] font-mono text-muted-foreground leading-relaxed">
+   542→                      {account
+   543→                        ? <>Se publicará firmado por <b className="text-foreground">{account.username}</b> · el agente moderador IA lo revisará · recompensa: <b className="text-amber">+50 monedas +25 XP</b></>
+   544→                        : "Publicar exige PASAPORTE (cuenta gratis de la Ciudadela) — te pediremos crear una al publicar."}
+   545→                    </p>
+   546→                  </div>
+   547→                  <button onClick={publicar} disabled={publicando}
+   548→                    className="w-full font-mono uppercase tracking-widest text-[12px] font-bold py-3 rounded-sm border border-amber-hud text-black bg-amber hover:bg-amber-hud transition-colors disabled:opacity-60">
+   549→                    <Rocket className="inline w-4 h-4 mr-1.5" /> {publicando ? "Publicando…" : "Publicar en el arcade"}
+   550→                  </button>
+   551→                </div>
+   552→              </>
+   553→            )}
+   554→          </motion.div>
+   555→        )}
+   556→      </AnimatePresence>
+   557→    </div>
+   558→  );
+   559→}
+   560→

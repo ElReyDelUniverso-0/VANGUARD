@@ -1,0 +1,626 @@
+     1→"use client";
+     2→
+     3→// ============================================================
+     4→// VANGUARD v85.0 EL MUNDO DENTRO — BOT DE TELEGRAM
+     5→// (1) PUENTE DEL SERVIDOR (v24): token del entorno del servidor → grupo.
+     6→// (2) TU BOT PERSONAL (v85): el usuario crea SU bot con @BotFather, pega
+     7→//     token + chat_id AQUÍ y las alertas salen directas del navegador
+     8→//     vía api.telegram.org (CORS abierto) — sin servidor y sin secretos.
+     9→// (3) RADAR DE ALERTAS AUTOMÁTICAS (v85): tensión global, noticias
+    10→//     críticas y nómina lista para cobrar — con anti-spam por regla.
+    11→// ============================================================
+    12→import { useCallback, useEffect, useRef, useState } from "react";
+    13→import { PanelHeader } from "@/components/vanguard/panel-header";
+    14→import { cn } from "@/lib/utils";
+    15→import { toast } from "sonner";
+    16→import { motion } from "framer-motion";
+    17→import {
+    18→  Send, Bot, CircleCheck, CircleAlert, Copy, ExternalLink, Bell, Users,
+    19→  Radar, KeyRound, MessageSquare, History, Trash2, Wallet,
+    20→} from "lucide-react";
+    21→import { Button } from "@/components/ui/button";
+    22→import { Input } from "@/components/ui/input";
+    23→import { HeroOro } from "@/components/vanguard/hero-oro";
+    24→import { getTension } from "@/lib/tension";
+    25→import { loadEmpleos, acumularNomina, DEPARTAMENTOS, LS_EMPLEOS } from "@/lib/empleos";
+    26→
+    27→interface TgStatus {
+    28→  configured: boolean;
+    29→  chatConfigured: boolean;
+    30→  botName: string | null;
+    31→  commands: { cmd: string; desc: string }[];
+    32→}
+    33→
+    34→const LS_TG_ALERTS = "vanguard_tg_alerts_v1";
+    35→const LS_TG_OWN = "vanguard-tg-own-v85"; // bot personal: { token, chatId }
+    36→const LS_TG_RADAR = "vanguard-tg-radar-v85"; // reglas: { tension, noticias, nomina }
+    37→const LS_TG_SENT = "vanguard-tg-sent-v85"; // log: { total, items: [{ts, kind, text}] }
+    38→const LS_TG_LAST = "vanguard-tg-last-v85"; // anti-spam: { [regla]: ts }
+    39→const LS_TG_SEEN = "vanguard-tg-seen-v85"; // noticias ya alertadas (huellas)
+    40→
+    41→interface OwnBot { token: string; chatId: string }
+    42→interface RadarRules { tension: boolean; noticias: boolean; nomina: boolean }
+    43→interface SentItem { ts: number; kind: string; text: string }
+    44→interface SentLog { total: number; items: SentItem[] }
+    45→
+    46→function loadJSON<T>(key: string, fallback: T): T {
+    47→  try {
+    48→    const raw = localStorage.getItem(key);
+    49→    if (raw) return { ...fallback, ...(JSON.parse(raw) as object) } as T;
+    50→  } catch { /* noop */ }
+    51→  return fallback;
+    52→}
+    53→
+    54→function saveJSON(key: string, v: unknown) {
+    55→  try { localStorage.setItem(key, JSON.stringify(v)); } catch { /* noop */ }
+    56→}
+    57→
+    58→// envía con el BOT PERSONAL del usuario (directo, sin servidor)
+    59→async function enviarPersonal(bot: OwnBot, text: string): Promise<void> {
+    60→  const res = await fetch(`https://api.telegram.org/bot${bot.token.trim()}/sendMessage`, {
+    61→    method: "POST",
+    62→    headers: { "Content-Type": "application/json" },
+    63→    body: JSON.stringify({
+    64→      chat_id: bot.chatId.trim(),
+    65→      text: text.slice(0, 3900),
+    66→      parse_mode: "HTML",
+    67→      disable_web_page_preview: false,
+    68→    }),
+    69→    signal: AbortSignal.timeout(9000),
+    70→  });
+    71→  const data = (await res.json()) as { ok?: boolean; description?: string };
+    72→  if (!data.ok) throw new Error(data.description ?? "Telegram rechazó el envío");
+    73→}
+    74→
+    75→function huella(s: string): string {
+    76→  return s.toLowerCase().replace(/[^a-z0-9áéíóúñü ]/g, "").split(/\s+/).slice(0, 9).join(" ");
+    77→}
+    78→
+    79→const APP_URL = "https://vanguard-kq9r.vercel.app";
+    80→
+    81→export function TelegramPanel() {
+    82→  const [status, setStatus] = useState<TgStatus | null>(null);
+    83→  const [sending, setSending] = useState(false);
+    84→  const [alerts, setAlerts] = useState<Record<string, boolean>>({
+    85→    incidentes: true,
+    86→    memorial: true,
+    87→    denuncias: true,
+    88→    directos: false,
+    89→  });
+    90→
+    91→  // bot personal
+    92→  const [own, setOwn] = useState<OwnBot>({ token: "", chatId: "" });
+    93→  const [ownSaved, setOwnSaved] = useState(false);
+    94→  const [ownBusy, setOwnBusy] = useState(false);
+    95→  const [showToken, setShowToken] = useState(false);
+    96→
+    97→  // radar de alertas
+    98→  const [rules, setRules] = useState<RadarRules>({ tension: true, noticias: true, nomina: true });
+    99→  const [radarOn, setRadarOn] = useState(false);
+   100→  const [log, setLog] = useState<SentLog>({ total: 0, items: [] });
+   101→  const [checking, setChecking] = useState(false);
+   102→  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+   103→
+   104→  useEffect(() => {
+   105→    try {
+   106→      const raw = localStorage.getItem(LS_TG_ALERTS);
+   107→      if (raw) setAlerts(JSON.parse(raw));
+   108→    } catch { /* noop */ }
+   109→    setOwn(loadJSON<OwnBot>(LS_TG_OWN, { token: "", chatId: "" }));
+   110→    setRules(loadJSON<RadarRules>(LS_TG_RADAR, { tension: true, noticias: true, nomina: true }));
+   111→    setLog(loadJSON<SentLog>(LS_TG_SENT, { total: 0, items: [] }));
+   112→    fetch("/api/telegram")
+   113→      .then((r) => r.json())
+   114→      .then(setStatus)
+   115→      .catch(() => setStatus({ configured: false, chatConfigured: false, botName: null, commands: [] }));
+   116→  }, []);
+   117→
+   118→  const toggleAlert = (k: string) => {
+   119→    const next = { ...alerts, [k]: !alerts[k] };
+   120→    setAlerts(next);
+   121→    try { localStorage.setItem(LS_TG_ALERTS, JSON.stringify(next)); } catch { /* noop */ }
+   122→  };
+   123→
+   124→  const copy = (t: string, label: string) => {
+   125→    navigator.clipboard?.writeText(t).then(
+   126→      () => toast.success(`${label} copiado`),
+   127→      () => toast.error("No se pudo copiar")
+   128→    );
+   129→  };
+   130→
+   131→  // ===== bot personal: guardar + probar =====
+   132→  const guardarBot = () => {
+   133→    if (own.token.trim().length < 20 || !own.chatId.trim()) {
+   134→      toast.error("Falta el token del bot o el chat_id");
+   135→      return;
+   136→    }
+   137→    saveJSON(LS_TG_OWN, own);
+   138→    setOwnSaved(true);
+   139→    toast.success("Bot personal guardado en este dispositivo");
+   140→    sfxOk();
+   141→  };
+   142→
+   143→  const probarBot = async () => {
+   144→    setOwnBusy(true);
+   145→    try {
+   146→      await enviarPersonal(own, [
+   147→        "🛰️ <b>VANGUARD · ALERTA DE PRUEBA</b>",
+   148→        "",
+   149→        "Tu bot personal está conectado al radar de conflictos.",
+   150→        `Desde ahora: escaladas, noticias críticas y nómina llegarán aquí.`,
+   151→        "",
+   152→        `— ${APP_URL}`,
+   153→      ].join("\n"));
+   154→      toast.success("📨 Mensaje recibido en tu chat — bot operativa");
+   155→      registrar("prueba", "Alerta de prueba enviada");
+   156→    } catch (e) {
+   157→      toast.error(e instanceof Error ? e.message : "No se pudo enviar");
+   158→    } finally {
+   159→      setOwnBusy(false);
+   160→    }
+   161→  };
+   162→
+   163→  const sfxOk = () => { try { (window as unknown as { dispatchEvent: (e: Event) => void }).dispatchEvent(new Event("vanguard:tg-ok")); } catch { /* noop */ } };
+   164→
+   165→  const registrar = (kind: string, text: string) => {
+   166→    setLog((prev) => {
+   167→      const next: SentLog = {
+   168→        total: prev.total + 1,
+   169→        items: [{ ts: Date.now(), kind, text }, ...prev.items].slice(0, 10),
+   170→      };
+   171→      saveJSON(LS_TG_SENT, next);
+   172→      return next;
+   173→    });
+   174→  };
+   175→
+   176→  // ===== radar: chequeo de las 3 reglas =====
+   177→  const chequear = useCallback(async () => {
+   178→    const rulesNow = loadJSON<RadarRules>(LS_TG_RADAR, { tension: true, noticias: true, nomina: true });
+   179→    const last = loadJSON<Record<string, number>>(LS_TG_LAST, {});
+   180→    const now = Date.now();
+   181→    const listo = (regla: string, minMs: number) => now - (last[regla] ?? 0) >= minMs;
+   182→    const marcar = (regla: string) => saveJSON(LS_TG_LAST, { ...loadJSON<Record<string, number>>(LS_TG_LAST, {}), [regla]: now });
+   183→    let envios = 0;
+   184→
+   185→    // 1) TENSIÓN GLOBAL ≥ 75 — cada 30 min como máximo
+   186→    if (rulesNow.tension && listo("tension", 30 * 60000)) {
+   187→      try {
+   188→        const t = getTension();
+   189→        if (t >= 75) {
+   190→          await enviarPersonal(own, [
+   191→            `🚨 <b>VANGUARD · ESCALADA GLOBAL</b>`,
+   192→            ``,
+   193→            `Tensión del planeta: <b>${t}/100</b> — zona PROTOCOLO ROJO.`,
+   194→            `Las primas de guerra están activas (+15% en todo pago).`,
+   195→            ``,
+   196→            `<a href="${APP_URL}">Abrir Vanguard</a>`,
+   197→          ].join("\n"));
+   198→          marcar("tension");
+   199→          registrar("tension", `Escalada global: tensión ${t}/100`);
+   200→          envios++;
+   201→        }
+   202→      } catch { /* silencioso */ }
+   203→    }
+   204→
+   205→    // 2) NOTICIAS CRÍTICAS — cada 15 min, sin repetir titulares
+   206→    if (rulesNow.noticias && listo("noticias", 15 * 60000)) {
+   207→      try {
+   208→        const res = await fetch("/api/news", { signal: AbortSignal.timeout(9000) });
+   209→        const data = (await res.json()) as { items?: { title?: string; url?: string }[] };
+   210→        const items = (data.items ?? []).slice(0, 8);
+   211→        const seen = loadJSON<Record<string, number>>(LS_TG_SEEN, {});
+   212→        const frescas = items.filter((n) => n.title && !seen[huella(n.title)]);
+   213→        const criticas = frescas.filter((n) => {
+   214→          const t = (n.title ?? "").toLowerCase();
+   215→          return ["ataque", "missil", "misil", "bombarde", "nuclear", "escalada", "guerra", "muertos", "evacuac", "bloqueo", "golpe de estado"].some((k) => t.includes(k));
+   216→        });
+   217→        if (criticas.length > 0) {
+   218→          const n = criticas[0];
+   219→          await enviarPersonal(own, [
+   220→            `📰 <b>VANGUARD · ÚLTIMA HORA</b>`,
+   221→            ``,
+   222→            `<b>${(n.title ?? "").slice(0, 180)}</b>`,
+   223→            n.url ?? "",
+   224→            ``,
+   225→            `<a href="${APP_URL}">Ver el mundo en Vanguard</a>`,
+   226→          ].join("\n"));
+   227→          const nuevas: Record<string, number> = { ...seen };
+   228→          for (const c of criticas) nuevas[huella(c.title ?? "")] = now;
+   229→          // poda: conserva 120 huellas
+   230→          const claves = Object.entries(nuevas).sort((a, b) => b[1] - a[1]).slice(0, 120);
+   231→          saveJSON(LS_TG_SEEN, Object.fromEntries(claves));
+   232→          marcar("noticias");
+   233→          registrar("noticias", `Última hora: ${(n.title ?? "").slice(0, 60)}…`);
+   234→          envios++;
+   235→        }
+   236→      } catch { /* silencioso */ }
+   237→    }
+   238→
+   239→    // 3) NÓMINA LISTA — cada 60 min
+   240→    if (rulesNow.nomina && listo("nomina", 60 * 60000)) {
+   241→      try {
+   242→        const st = loadJSON<import("@/lib/empleos").EmpleosState>(LS_EMPLEOS, {} as import("@/lib/empleos").EmpleosState);
+   243→        const depto = DEPARTAMENTOS.find((d) => d.id === st.depto);
+   244→        if (depto && st.lastAccrueTs) {
+   245→          const s = acumularNomina(st, depto);
+   246→          if (s.nominaPendiente >= 120) {
+   247→            await enviarPersonal(own, [
+   248→              `💼 <b>VANGUARD · NÓMINA DISPONIBLE</b>`,
+   249→              ``,
+   250→              `Tu puesto en <b>${depto.nombre}</b> acumuló <b>${Math.floor(s.nominaPendiente)}ⓒ</b> sin cobrar.`,
+   251→              `La nómina corre aunque no entres — pero tope 6 h.`,
+   252→              ``,
+   253→              `<a href="${APP_URL}">Cobrar en Vanguard</a>`,
+   254→            ].join("\n"));
+   255→            marcar("nomina");
+   256→            registrar("nomina", `Nómina lista: ${Math.floor(s.nominaPendiente)}ⓒ · ${depto.nombre}`);
+   257→            envios++;
+   258→          }
+   259→        }
+   260→      } catch { /* silencioso */ }
+   261→    }
+   262→
+   263→    return envios;
+   264→  }, [own]);
+   265→
+   266→  const chequearManual = async () => {
+   267→    setChecking(true);
+   268→    try {
+   269→      const n = await chequear();
+   270→      if (n > 0) toast.success(`Radar: ${n} alerta(s) enviada(s) a tu Telegram`);
+   271→      else toast.info("Radar: nada nuevo que alertar ahora mismo");
+   272→    } catch {
+   273→      toast.error("El radar falló: revisa token y chat_id");
+   274→    } finally {
+   275→      setChecking(false);
+   276→    }
+   277→  };
+   278→
+   279→  // motor del radar: cada 3 min mientras Vanguard esté abierto
+   280→  useEffect(() => {
+   281→    if (!radarOn) {
+   282→      if (timerRef.current) clearInterval(timerRef.current);
+   283→      timerRef.current = null;
+   284→      return;
+   285→    }
+   286→    if (timerRef.current) clearInterval(timerRef.current);
+   287→    timerRef.current = setInterval(() => {
+   288→      if (document.visibilityState !== "visible") return;
+   289→      chequear().catch(() => { /* noop */ });
+   290→    }, 3 * 60000);
+   291→    return () => {
+   292→      if (timerRef.current) clearInterval(timerRef.current);
+   293→    };
+   294→  }, [radarOn, chequear]);
+   295→
+   296→  const toggleRadarRule = (k: keyof RadarRules) => {
+   297→    const next = { ...rules, [k]: !rules[k] };
+   298→    setRules(next);
+   299→    saveJSON(LS_TG_RADAR, next);
+   300→  };
+   301→
+   302→  const limpiarLog = () => {
+   303→    const empty: SentLog = { total: 0, items: [] };
+   304→    setLog(empty);
+   305→    saveJSON(LS_TG_SENT, empty);
+   306→  };
+   307→
+   308→  const ok = status?.configured && status?.chatConfigured;
+   309→  const botListo = own.token.trim().length >= 20 && own.chatId.trim().length > 0;
+   310→
+   311→  return (
+   312→    <div className="space-y-3">
+   313→      <HeroOro panel="telegram" />
+   314→      <PanelHeader
+   315→        title="Bot de Telegram · Alertas de conflicto en tu bolsillo"
+   316→        subtitle={botListo ? "bot personal conectado · radar de alertas listo" : status ? (ok ? `bot del servidor @${status.botName ?? "?"} conectado` : "crea tu bot personal en 2 minutos") : "consultando estado..."}
+   317→        icon={<Bot className="w-4 h-4 text-cyan-hud" />}
+   318→        color="cyan"
+   319→      />
+   320→
+   321→      {/* ===== v85: TU BOT PERSONAL ===== */}
+   322→      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="hud-corner p-3 space-y-2.5 border-cyan-hud/60">
+   323→        <p className="text-[10px] font-mono uppercase tracking-wider text-cyan-hud flex items-center gap-1.5">
+   324→          <KeyRound className="w-3.5 h-3.5" /> TU BOT PERSONAL (v85) · alertas directas a tu telegram
+   325→        </p>
+   326→        <p className="text-[11px] text-muted-foreground leading-relaxed">
+   327→          Crea tu propio bot con <span className="text-cyan-hud font-bold">@BotFather</span> (comando{" "}
+   328→          <span className="font-mono text-green-hud">/newbot</span>), pega aquí su token y el chat_id donde
+   329→          quieres recibir las alertas. Los mensajes salen <b>directos de tu bot</b>: sin servidores,
+   330→          sin secretos compartidos.
+   331→        </p>
+   332→        <div className="space-y-1.5">
+   333→          <div className="relative">
+   334→            <Input
+   335→              value={own.token}
+   336→              onChange={(e) => { setOwn((o) => ({ ...o, token: e.target.value })); setOwnSaved(false); }}
+   337→              placeholder="token del bot · ej. 7284915:AAH8s…"
+   338→              type={showToken ? "text" : "password"}
+   339→              className="h-9 pr-16 bg-background/60 border-border font-mono text-xs"
+   340→            />
+   341→            <button
+   342→              onClick={() => setShowToken((v) => !v)}
+   343→              className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] font-mono uppercase text-muted-foreground hover:text-cyan-hud"
+   344→              aria-label="Mostrar u ocultar token"
+   345→            >
+   346→              {showToken ? "ocultar" : "ver"}
+   347→            </button>
+   348→          </div>
+   349→          <Input
+   350→            value={own.chatId}
+   351→            onChange={(e) => { setOwn((o) => ({ ...o, chatId: e.target.value })); setOwnSaved(false); }}
+   352→            placeholder="chat_id · tu chat (o -100… para grupo)"
+   353→            className="h-9 bg-background/60 border-border font-mono text-xs"
+   354→          />
+   355→        </div>
+   356→        <div className="flex items-center gap-2 flex-wrap">
+   357→          <Button size="sm" onClick={guardarBot} className="h-8 font-mono text-[10px] uppercase bg-cyan-hud/30 border border-cyan-hud text-cyan-hud hover:bg-cyan-hud/50">
+   358→            guardar
+   359→          </Button>
+   360→          <Button size="sm" onClick={probarBot} disabled={!botListo || ownBusy} className="h-8 font-mono text-[10px] uppercase bg-green-hud/30 border border-green-hud text-green-hud hover:bg-green-hud/50 disabled:opacity-40">
+   361→            <Send className="w-3 h-3 mr-1" /> {ownBusy ? "enviando…" : "enviar prueba"}
+   362→          </Button>
+   363→          {botListo && ownSaved && (
+   364→            <span className="text-[9px] font-mono uppercase text-green-hud flex items-center gap-1">
+   365→              <CircleCheck className="w-3 h-3" /> listo
+   366→            </span>
+   367→          )}
+   368→        </div>
+   369→        <p className="text-[9px] font-mono text-muted-foreground uppercase leading-relaxed">
+   370→          el token vive solo en TU navegador (localStorage de este dispositivo) y viaja únicamente a api.telegram.org
+   371→        </p>
+   372→      </motion.div>
+   373→
+   374→      {/* ===== v85: RADAR DE ALERTAS AUTOMÁTICAS ===== */}
+   375→      <div className="hud-corner p-3 space-y-2.5">
+   376→        <div className="flex items-center justify-between gap-2">
+   377→          <p className="text-[10px] font-mono uppercase tracking-wider text-cyan-hud flex items-center gap-1.5">
+   378→            <Radar className="w-3.5 h-3.5" /> radar de alertas automáticas
+   379→          </p>
+   380→          <button
+   381→            onClick={() => { setRadarOn((v) => !v); if (!botListo) toast.error("Primero guarda tu bot personal (token + chat_id)"); }}
+   382→            disabled={!botListo}
+   383→            className={cn(
+   384→              "text-[10px] font-mono uppercase px-2.5 py-1.5 border transition-colors disabled:opacity-40",
+   385→              radarOn ? "border-green-hud text-green-hud bg-green-hud/20" : "border-border text-muted-foreground hover:text-foreground"
+   386→            )}
+   387→          >
+   388→            {radarOn ? "● radar activo" : "○ activar radar"}
+   389→          </button>
+   390→        </div>
+   391→        <p className="text-[10px] text-muted-foreground leading-relaxed">
+   392→          Mientras Vanguard esté abierto, el radar revisa cada 3 minutos el planeta y manda a tu
+   393→          Telegram lo que importa — con freno anti-spam por regla.
+   394→        </p>
+   395→        <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+   396→          {([
+   397→            { k: "tension", icon: "🚨", t: "Escalada global", d: "tensión ≥ 75 · máx 1 cada 30 min" },
+   398→            { k: "noticias", icon: "📰", t: "Última hora", d: "noticia crítica nueva · máx 1 cada 15 min" },
+   399→            { k: "nomina", icon: "💼", t: "Nómina lista", d: "≥ 120ⓒ sin cobrar · máx 1 cada 60 min" },
+   400→          ] as { k: keyof RadarRules; icon: string; t: string; d: string }[]).map((r) => (
+   401→            <button
+   402→              key={r.k}
+   403→              onClick={() => toggleRadarRule(r.k)}
+   404→              className={cn(
+   405→                "border p-2 text-left transition-colors",
+   406→                rules[r.k] ? "border-green-hud/60 bg-green-hud/10" : "border-border/60 text-muted-foreground"
+   407→              )}
+   408→            >
+   409→              <p className="text-[10px] font-mono font-bold uppercase flex items-center gap-1">
+   410→                <span className={cn("w-1.5 h-1.5 rounded-full", rules[r.k] ? "bg-green-hud" : "bg-muted-foreground/40")} />
+   411→                {r.icon} {r.t}
+   412→              </p>
+   413→              <p className="text-[9px] font-mono text-muted-foreground mt-0.5 leading-snug">{r.d}</p>
+   414→            </button>
+   415→          ))}
+   416→        </div>
+   417→        <div className="flex items-center gap-2 flex-wrap">
+   418→          <Button size="sm" onClick={chequearManual} disabled={!botListo || checking} className="h-7 font-mono text-[10px] uppercase bg-amber-hud/30 border border-amber-hud text-amber hover:bg-amber-hud/50 disabled:opacity-40">
+   419→            <Radar className="w-3 h-3 mr-1" /> {checking ? "escaneando…" : "escanear ahora"}
+   420→          </Button>
+   421→          <span className="text-[9px] font-mono text-muted-foreground uppercase">
+   422→            {log.total} alertas enviadas desde este dispositivo
+   423→          </span>
+   424→        </div>
+   425→
+   426→        {log.items.length > 0 && (
+   427→          <div className="border border-border/60 p-2 space-y-1 max-h-36 overflow-y-auto">
+   428→            <div className="flex items-center justify-between">
+   429→              <p className="text-[9px] font-mono uppercase text-muted-foreground flex items-center gap-1">
+   430→                <History className="w-3 h-3" /> registro de envíos
+   431→              </p>
+   432→              <button onClick={limpiarLog} className="text-[9px] font-mono uppercase text-red-hud hover:underline flex items-center gap-1">
+   433→                <Trash2 className="w-3 h-3" /> limpiar
+   434→              </button>
+   435→            </div>
+   436→            {log.items.map((it, i) => (
+   437→              <div key={i} className="flex items-baseline gap-2 text-[10px] font-mono">
+   438→                <span className="text-muted-foreground whitespace-nowrap">
+   439→                  {new Date(it.ts).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit" })}
+   440→                </span>
+   441→                <span className="text-cyan-hud uppercase">{it.kind}</span>
+   442→                <span className="text-foreground/80 truncate">{it.text}</span>
+   443→              </div>
+   444→            ))}
+   445→          </div>
+   446→        )}
+   447→      </div>
+   448→
+   449→      {/* ===== Estado del puente del servidor (v24) ===== */}
+   450→      <div className="hud-corner p-3 flex items-start gap-3">
+   451→        {ok ? <CircleCheck className="w-5 h-5 text-green-hud mt-0.5 flex-shrink-0" /> : <CircleAlert className="w-5 h-5 text-amber mt-0.5 flex-shrink-0" />}
+   452→        <div className="flex-1 min-w-0">
+   453→          <p className="text-xs font-bold text-foreground">
+   454→            {ok ? "Puente del servidor vinculado a un grupo" : "Puente del servidor (opcional)"}
+   455→          </p>
+   456→          <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
+   457→            {ok
+   458→              ? "Las alertas del servidor se envían al grupo vía /api/telegram."
+   459→              : "El puente del servidor requiere variables de entorno (TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID). Para uso personal, tu bot de arriba hace lo mismo sin tocar el servidor."}
+   460→          </p>
+   461→        </div>
+   462→        <span className={cn("text-[9px] font-mono px-2 py-1 border uppercase flex-shrink-0", ok ? "border-green-hud text-green-hud" : "border-amber-hud text-amber")}>
+   463→          {ok ? "en línea" : "sin token"}
+   464→        </span>
+   465→      </div>
+   466→
+   467→      {/* Guía de configuración del puente (compacta) */}
+   468→      {!ok && (
+   469→        <div className="hud-corner p-3 space-y-2.5">
+   470→          <p className="text-[10px] font-mono uppercase text-cyan-hud tracking-wider">configuración del puente (opcional, para grupos)</p>
+   471→          {[
+   472→            { n: 1, t: "Crea el bot", d: "Habla con @BotFather → /newbot → copia el token (formato 123456:ABC-DEF...)." },
+   473→            { n: 2, t: "Añádelo a tu grupo", d: "Agrega el bot como miembro del grupo donde llegarán las alertas." },
+   474→            { n: 3, t: "Obtén el chat_id", d: "Añade @RawDataBot al grupo y copia el campo chat.id (negativo para grupos)." },
+   475→            { n: 4, t: "Configura el servidor", d: "Pon TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID en el entorno del servidor." },
+   476→          ].map((s) => (
+   477→            <div key={s.n} className="flex items-start gap-2.5">
+   478→              <span className="w-6 h-6 flex-shrink-0 flex items-center justify-center border border-cyan-hud/50 text-cyan-hud font-mono text-[10px] font-bold">{s.n}</span>
+   479→              <div>
+   480→                <p className="text-[11px] font-bold text-foreground leading-tight">{s.t}</p>
+   481→                <p className="text-[10px] text-muted-foreground leading-snug">{s.d}</p>
+   482→              </div>
+   483→            </div>
+   484→          ))}
+   485→          <div className="border border-border/60 bg-secondary/40 p-2 font-mono text-[10px] text-green-hud overflow-x-auto">
+   486→            <div className="flex items-center justify-between gap-2">
+   487→              <span className="whitespace-nowrap">TELEGRAM_BOT_TOKEN=123456:ABC-DEF...</span>
+   488→              <button onClick={() => copy("TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234...\nTELEGRAM_CHAT_ID=-1001234567890", ".env")} aria-label="Copiar variables" className="text-muted-foreground hover:text-cyan-hud flex-shrink-0">
+   489→                <Copy className="w-3 h-3" />
+   490→              </button>
+   491→            </div>
+   492→            <div>TELEGRAM_CHAT_ID=-1001234567890</div>
+   493→          </div>
+   494→        </div>
+   495→      )}
+   496→
+   497→      {/* Tipos de alerta del servidor */}
+   498→      <div className="hud-corner p-3">
+   499→        <p className="text-[10px] font-mono uppercase text-cyan-hud tracking-wider mb-2 flex items-center gap-1.5">
+   500→          <Bell className="w-3 h-3" /> tipos de alerta que envía el puente del servidor
+   501→        </p>
+   502→        <div className="grid grid-cols-2 gap-1.5">
+   503→          {[
+   504→            { k: "incidentes", l: "🚨 Incidentes documentados en el mapa" },
+   505→            { k: "memorial", l: "🕯️ Memorial: homenajes y velas" },
+   506→            { k: "denuncias", l: "⚖️ Denuncias nuevas en foros" },
+   507→            { k: "directos", l: "📡 Directos y streams en vivo" },
+   508→          ].map((a) => (
+   509→            <button
+   510→              key={a.k}
+   511→              onClick={() => toggleAlert(a.k)}
+   512→              className={cn(
+   513→                "flex items-center gap-2 px-2 py-1.5 border text-left transition-colors",
+   514→                alerts[a.k] ? "border-green-hud/60 bg-green-hud/10 text-foreground" : "border-border/60 text-muted-foreground"
+   515→              )}
+   516→            >
+   517→              <span className={cn("w-2 h-2 rounded-full flex-shrink-0", alerts[a.k] ? "bg-green-hud" : "bg-muted-foreground/40")} />
+   518→              <span className="text-[10px] font-mono uppercase leading-tight">{a.l}</span>
+   519→            </button>
+   520→          ))}
+   521→        </div>
+   522→      </div>
+   523→
+   524→      {/* Envío de prueba por el puente */}
+   525→      <div className="hud-corner p-3">
+   526→        <p className="text-[10px] font-mono uppercase text-cyan-hud tracking-wider mb-2 flex items-center gap-1.5">
+   527→          <Send className="w-3 h-3" /> enviar alerta de prueba al grupo (puente del servidor)
+   528→        </p>
+   529→        <div className="flex items-center gap-2 flex-wrap">
+   530→          {[
+   531→            { kind: "incidente" as const, label: "🚨 incidente", cls: "bg-red-hud/30 border-red-hud text-red-hud hover:bg-red-hud/50" },
+   532→            { kind: "memorial" as const, label: "🕯️ memorial", cls: "bg-violet-hud/30 border-violet-hud text-violet-hud hover:bg-violet-hud/50" },
+   533→            { kind: "denuncia" as const, label: "⚖️ denuncia", cls: "bg-amber-hud/30 border-amber-hud text-amber hover:bg-amber-hud/50" },
+   534→          ].map((b) => (
+   535→            <Button
+   536→              key={b.kind}
+   537→              size="sm"
+   538→              onClick={async () => {
+   539→                setSending(true);
+   540→                try {
+   541→                  const res = await fetch("/api/telegram", {
+   542→                    method: "POST",
+   543→                    headers: { "Content-Type": "application/json" },
+   544→                    body: JSON.stringify({
+   545→                      kind: b.kind,
+   546→                      title: b.kind === "incidente" ? "Prueba: Frente de Pokrovsk reporta bombardeos" : b.kind === "memorial" ? "Homenaje del día en el Memorial" : "Nueva denuncia verificable en foros",
+   547→                      detail: "Mensaje de prueba enviado desde el panel TELEGRAM de VANGUARD.",
+   548→                      location: "Sistema de alertas VANGUARD",
+   549→                    }),
+   550→                  });
+   551→                  const data = await res.json();
+   552→                  if (!res.ok) throw new Error(data.error ?? "Error");
+   553→                  toast.success("📨 Alerta enviada al grupo vinculado");
+   554→                } catch (e) {
+   555→                  toast.error(e instanceof Error ? e.message : "No se pudo enviar");
+   556→                } finally {
+   557→                  setSending(false);
+   558→                }
+   559→              }}
+   560→              disabled={sending}
+   561→              className={cn("h-7 font-mono text-[10px] uppercase border", b.cls)}
+   562→            >
+   563→              {b.label}
+   564→            </Button>
+   565→          ))}
+   566→          <span className="text-[9px] font-mono text-muted-foreground uppercase ml-auto">usa /api/telegram (POST)</span>
+   567→        </div>
+   568→      </div>
+   569→
+   570→      {/* Bot standalone + webhook */}
+   571→      <div className="grid sm:grid-cols-2 gap-2">
+   572→        <div className="hud-corner p-3">
+   573→          <p className="text-[10px] font-mono uppercase text-cyan-hud tracking-wider mb-1.5 flex items-center gap-1.5">
+   574→            <Users className="w-3 h-3" /> bot interactivo (standalone)
+   575→          </p>
+   576→          <p className="text-[10px] text-muted-foreground leading-relaxed">
+   577→            El script <span className="text-green-hud font-mono">scripts/telegram-bot.mjs</span> corre con long-polling y
+   578→            responde comandos en tu grupo: /alertas, /resumen, /incidentes, /memorial, /ayuda.
+   579→          </p>
+   580→          <div className="border border-border/60 bg-secondary/40 p-2 mt-1.5 font-mono text-[9px] text-green-hud overflow-x-auto flex items-center justify-between gap-2">
+   581→            <span className="whitespace-nowrap">node scripts/telegram-bot.mjs</span>
+   582→            <button onClick={() => copy("node scripts/telegram-bot.mjs", "comando")} aria-label="Copiar comando" className="text-muted-foreground hover:text-cyan-hud flex-shrink-0">
+   583→              <Copy className="w-3 h-3" />
+   584→            </button>
+   585→          </div>
+   586→        </div>
+   587→        <div className="hud-corner p-3">
+   588→          <p className="text-[10px] font-mono uppercase text-cyan-hud tracking-wider mb-1.5 flex items-center gap-1.5">
+   589→            <MessageSquare className="w-3 h-3" /> webhook (producción)
+   590→          </p>
+   591→          <p className="text-[10px] text-muted-foreground leading-relaxed">
+   592→            Para grupos grandes: registra el webhook con tu dominio y Telegram llamará a tu servidor en cada mensaje.
+   593→          </p>
+   594→          <a
+   595→            href="https://core.telegram.org/bots/api#setwebhook"
+   596→            target="_blank"
+   597→            rel="noreferrer"
+   598→            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase text-cyan-hud hover:underline mt-1.5"
+   599→          >
+   600→            <ExternalLink className="w-3 h-3" /> documentación setWebhook
+   601→          </a>
+   602→        </div>
+   603→      </div>
+   604→
+   605→      {/* Comandos */}
+   606→      {status?.commands && (
+   607→        <div className="hud-corner p-3">
+   608→          <p className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1.5">comandos que entiende el bot</p>
+   609→          <div className="grid sm:grid-cols-2 gap-1">
+   610→            {status.commands.map((c) => (
+   611→              <div key={c.cmd} className="flex items-baseline gap-2 text-[10px] font-mono">
+   612→                <span className="text-cyan-hud">{c.cmd}</span>
+   613→                <span className="text-muted-foreground">{c.desc}</span>
+   614→              </div>
+   615→            ))}
+   616→          </div>
+   617→        </div>
+   618→      )}
+   619→
+   620→      <p className="text-[9px] font-mono text-muted-foreground text-center uppercase flex items-center justify-center gap-1">
+   621→        <Wallet className="w-3 h-3" /> el radar también vigila tu nómina de Empleos — nunca más dinero olvidado
+   622→      </p>
+   623→    </div>
+   624→  );
+   625→}
+   626→

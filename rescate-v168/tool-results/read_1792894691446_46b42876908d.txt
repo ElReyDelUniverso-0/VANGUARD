@@ -1,0 +1,1361 @@
+     1→"use client";
+     2→
+     3→// Vanguard v17 — MULTIJUGADOR TERMINADO: 3 modos en un solo panel.
+     4→//  · GUERRA  — Mundo de Guerra global (LOBBY -> REFUERZOS -> GUERRA -> FIN)
+     5→//              + CHAT DE GUERRA en vivo + PARTIDA RAPIDA + REVANCHA con votos
+     6→//              + resultados enviados al ranking ELO global (/api/mp/stats).
+     7→//  · DUELO   — DUELO DE TRIVIA PvP 1v1 en tiempo real (matchmaking con bot,
+     8→//              7 preguntas, puntos por velocidad, recompensas + ELO).
+     9→//  · RANKING — Board mundial ELO persistido en SQLite (top 25 + tu fila).
+    10→import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+    11→import dynamic from "next/dynamic";
+    12→import { PanelHeader } from "@/components/vanguard/panel-header";
+    13→import {
+    14→  Users, Timer, Crosshair, Swords, Trophy, Crown, Gem, LogIn, RefreshCw,
+    15→  MessageSquare, Zap, Send, Radio, Medal, ShieldAlert, ChevronRight, Target, WifiOff, UserRound, QrCode,
+    16→} from "lucide-react";
+    17→import { cn } from "@/lib/utils";
+    18→import { Button } from "@/components/ui/button";
+    19→import { useGameStore } from "@/lib/game-store";
+    20→import { useProfileStore } from "@/lib/profile-store";
+    21→import { countryName } from "@/lib/world-data";
+    22→import { Countryball, STICKER_CODES } from "@/components/vanguard/countryball";
+    23→import { useT } from "@/lib/i18n";
+    24→import { getRealtime, peekRealtime } from "@/lib/realtime";
+    25→import { sfx } from "@/lib/sound";
+    26→import { toast } from "sonner";
+    27→import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-3d";
+    28→import { motion, AnimatePresence } from "framer-motion";
+    29→import { HeroOro } from "@/components/vanguard/hero-oro";
+    30→import { DesafioCodigo } from "@/components/vanguard/desafio-codigo";
+    31→
+    32→// v14 — MAPA MULTIJUGADOR EN 3D: globo real en lugar del SVG plano
+    33→const GlobeMap3D = dynamic(
+    34→  () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
+    35→  { ssr: false, loading: () => (
+    36→    <div className="hud-corner p-10 flex items-center justify-center text-[11px] font-mono text-muted-foreground uppercase tracking-widest">
+    37→      Cargando motor 3D...
+    38→    </div>
+    39→  ) }
+    40→);
+    41→
+    42→interface TerrMeta { id: string; name: string; continent: string; lat: number; lng: number; adj: string[]; }
+    43→interface MpPlayerInfo {
+    44→  id: string; name: string; color: string; isBot: boolean; avatar?: string;
+    45→  reserves: number; connected: boolean; captures: number; gemsEarned: number;
+    46→}
+    47→interface MpChatMsg { id: string; name: string; color: string; body: string; ts: number; sys?: boolean }
+    48→interface MpState {
+    49→  phase: "LOBBY" | "REINFORCE" | "WAR" | "ENDED";
+    50→  round: number;
+    51→  phaseEnds: number;
+    52→  startAt: number | null;
+    53→  territories: Record<string, { owner: string | null; troops: number }>;
+    54→  players: Record<string, MpPlayerInfo>;
+    55→  log: { ts: number; msg: string; color?: string }[];
+    56→  chat: MpChatMsg[];
+    57→  rematch: { votes: number; needed: number };
+    58→  lastBattle: {
+    59→    seq: number; from: string; to: string; attacker: string; attackerName: string; defenderName: string;
+    60→    atkRoll: number; defRoll: number; atkLosses: number; defLosses: number; captured: boolean;
+    61→    attackerColor: string; defenderColor: string;
+    62→  } | null;
+    63→  winnerId: string | null;
+    64→  winnerName: string | null;
+    65→  winnerSeq: number;
+    66→  resetAt: number | null;
+    67→  territoryMeta: TerrMeta[];
+    68→}
+    69→
+    70→// ===== tipos del DUELO 1v1 =====
+    71→interface DuelSideInfo {
+    72→  name: string; score: number; correct: number; answered: boolean; lastGain: number; isBot?: boolean;
+    73→}
+    74→interface DuelState {
+    75→  id: number;
+    76→  phase: "COUNTDOWN" | "QUESTION" | "REVEAL" | "ENDED";
+    77→  qIdx: number; total: number; phaseEnds: number;
+    78→  question: { text: string; opts: string[]; cat: string; a?: number } | null;
+    79→  me: DuelSideInfo; rival: DuelSideInfo;
+    80→  result: { outcome: "WIN" | "LOSS" | "TIE"; walkover: boolean; eloDelta: number } | null;
+    81→}
+    82→
+    83→interface RankRow {
+    84→  username: string; elo: number; wins: number; losses: number; draws: number;
+    85→  captures: number; duelsWon: number; duelsLost: number; duelsPlayed: number;
+    86→  mpGames: number; detectiveSolved: number; bestDuelStreak: number;
+    87→}
+    88→
+    89→type Mode = "guerra" | "duelo" | "ranking" | "desafio";
+    90→
+    91→const CONTINENTS = ["NORTEAMÉRICA", "SUDAMÉRICA", "EUROPA", "ÁFRICA", "ASIA", "OCEANÍA"];
+    92→
+    93→// registro fire-and-forget al ranking global
+    94→function postMpResult(username: string, kind: string, extra?: Record<string, unknown>) {
+    95→  if (!username) return;
+    96→  fetch("/api/mp/stats", {
+    97→    method: "POST",
+    98→    headers: { "Content-Type": "application/json" },
+    99→    body: JSON.stringify({ username: username.toUpperCase().slice(0, 18), kind, ...extra }),
+   100→  }).catch(() => { /* ranking no crítico */ });
+   101→}
+   102→
+   103→function useMyMpId() {
+   104→  return useMemo(() => {
+   105→    if (typeof window === "undefined") return "srv";
+   106→    let id = localStorage.getItem("vanguard-mp-uid");
+   107→    if (!id) {
+   108→      id = `mp-${crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
+   109→      localStorage.setItem("vanguard-mp-uid", id);
+   110→    }
+   111→    return id;
+   112→  }, []);
+   113→}
+   114→
+   115→// ============================================================
+   116→// v21 PULIDO: estado de conexión global + insignia en vivo.
+   117→// Un solo oyente compartido por todos los modos; botón de reintento manual.
+   118→// ============================================================
+   119→function useMpConnected() {
+   120→  // v21: valor inicial perezoso (sin setState síncrono en el effect)
+   121→  const [connected, setConnected] = useState(() => !!peekRealtime()?.connected);
+   122→  useEffect(() => {
+   123→    const s = getRealtime();
+   124→    if (!s) return;
+   125→    const on = () => setConnected(true);
+   126→    const off = () => setConnected(false);
+   127→    s.on("connect", on);
+   128→    s.on("disconnect", off);
+   129→    return () => {
+   130→      s.off("connect", on);
+   131→      s.off("disconnect", off);
+   132→    };
+   133→  }, []);
+   134→  return { connected, retry: () => getRealtime()?.connect() };
+   135→}
+   136→
+   137→// v23: catálogo de personajes-país para el multijugador (países de conflictos + populares)
+   138→const MP_CHAR_CODES: string[] = Array.from(new Set(["do", "us", ...STICKER_CODES])).sort();
+   139→
+   140→function ConnectionBadge() {
+   141→  const { connected, retry } = useMpConnected();
+   142→  const { t } = useT();
+   143→  return connected ? (
+   144→    <span className="flex items-center gap-1.5 text-[9px] font-mono px-2 py-1 border border-green-hud text-green-hud bg-green-hud/20 uppercase">
+   145→      <span className="w-1.5 h-1.5 rounded-full bg-green-hud blink-soft" />
+   146→      {t("mp.liveBadge")}
+   147→    </span>
+   148→  ) : (
+   149→    <button
+   150→      onClick={retry}
+   151→      title="Reintentar conexión ahora"
+   152→      className="flex items-center gap-1.5 text-[9px] font-mono px-2 py-1 border border-red-hud text-red-hud bg-red-hud/20 uppercase blink-soft"
+   153→    >
+   154→      <span className="w-1.5 h-1.5 rounded-full bg-red-hud" />
+   155→      {t("mp.reconnectBadge")}
+   156→    </button>
+   157→  );
+   158→}
+   159→
+   160→// ============================================================
+   161→// PANEL PRINCIPAL CON SELECTOR DE MODO
+   162→// ============================================================
+   163→export function MultiplayerPanel() {
+   164→  const alias = useGameStore((s) => s.alias);
+   165→  const { t } = useT();
+   166→  const [mode, setMode] = useState<Mode>("guerra");
+   167→
+   168→  const MODES: { id: Mode; label: string; icon: ReactNode }[] = [
+   169→    { id: "guerra", label: t("mp.war"), icon: <Swords className="w-3.5 h-3.5" /> },
+   170→    { id: "duelo", label: t("mp.duel"), icon: <Zap className="w-3.5 h-3.5" /> },
+   171→    { id: "ranking", label: t("mp.ranking"), icon: <Medal className="w-3.5 h-3.5" /> },
+   172→    { id: "desafio", label: "DESAFÍO", icon: <QrCode className="w-3.5 h-3.5" /> },
+   173→  ];
+   174→
+   175→  return (
+   176→    <div className="space-y-3">
+   177→      <HeroOro panel="multijugador" />
+   178→      <PanelHeader
+   179→        title={t("mp.title")}
+   180→        subtitle="Mundo de Guerra GLOBAL + Duelos 1v1 + Ranking ELO + DESAFÍO POR CÓDIGO asíncrono · contra operadores reales"
+   181→        icon={<Users className="w-4 h-4 text-red-hud" />}
+   182→        color="red"
+   183→        right={<ConnectionBadge />}
+   184→      />
+   185→
+   186→      {/* selector de modo */}
+   187→      <div className="hud-corner p-1 flex items-center gap-1">
+   188→        {MODES.map((m) => (
+   189→          <button
+   190→            key={m.id}
+   191→            onClick={() => { sfx.tab(); setMode(m.id); }}
+   192→            className={cn(
+   193→              "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 font-mono text-[10px] uppercase tracking-widest border transition-colors rounded-sm",
+   194→              mode === m.id
+   195→                ? "border-red-hud bg-red-hud/20 text-foreground"
+   196→                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-background/60"
+   197→            )}
+   198→          >
+   199→            {m.icon} {m.label}
+   200→          </button>
+   201→        ))}
+   202→      </div>
+   203→
+   204→      <AnimatePresence mode="wait" initial={false}>
+   205→        <motion.div
+   206→          key={mode}
+   207→          initial={{ opacity: 0, y: 6 }}
+   208→          animate={{ opacity: 1, y: 0 }}
+   209→          exit={{ opacity: 0, y: -4 }}
+   210→          transition={{ duration: 0.14 }}
+   211→        >
+   212→          {mode === "guerra" && <GuerraMode alias={alias} />}
+   213→          {mode === "duelo" && <DueloMode alias={alias} />}
+   214→          {mode === "ranking" && <RankingMode alias={alias} />}
+   215→          {mode === "desafio" && <DesafioCodigo alias={alias} />}
+   216→        </motion.div>
+   217→      </AnimatePresence>
+   218→    </div>
+   219→  );
+   220→}
+   221→
+   222→// ============================================================
+   223→// MODO GUERRA (v7 + chat v17 + revancha v17 + partida rápida v17)
+   224→// ============================================================
+   225→function GuerraMode({ alias }: { alias: string }) {
+   226→  const recordMpCapture = useGameStore((s) => s.recordMpCapture);
+   227→  const recordMpWin = useGameStore((s) => s.recordMpWin);
+   228→  const mpStats = useGameStore((s) => s.mpStats);
+   229→  const myId = useMyMpId();
+   230→  const { t } = useT();
+   231→  // v23 PERSONAJES-PAÍS: la countryball del perfil representa al comandante en la guerra
+   232→  const cbAvatar = useProfileStore((s) => s.cbAvatar);
+   233→  const setCbAvatar = useProfileStore((s) => s.setCbAvatar);
+   234→
+   235→  const [state, setState] = useState<MpState | null>(null);
+   236→  const [connected, setConnected] = useState(false);
+   237→  const [selected, setSelected] = useState<string | null>(null);
+   238→  const [now, setNow] = useState(Date.now());
+   239→  const [chatDraft, setChatDraft] = useState("");
+   240→  const [myElo, setMyElo] = useState<number | null>(null);
+   241→  const lastBattleSeq = useRef(0);
+   242→  const winnerSeqSeen = useRef(0);
+   243→  const participatedRef = useRef(false);
+   244→  const chatInputRef = useRef<HTMLInputElement | null>(null);
+   245→  const chatListRef = useRef<HTMLDivElement | null>(null);
+   246→  const myNameRef = useRef(alias || "OPERADOR");
+   247→  const myAvatarRef = useRef(cbAvatar); // v23: avatar país en el handshake
+   248→  const dropRef = useRef(false); // v21: avisa al reconectar si hubo caída
+   249→  const [slowNet, setSlowNet] = useState(false); // v21: aviso de servidor lento/caído
+   250→  useEffect(() => { myNameRef.current = alias || "OPERADOR"; }, [alias]);
+   251→  useEffect(() => { myAvatarRef.current = cbAvatar; }, [cbAvatar]);
+   252→  useEffect(() => {
+   253→    const t = setTimeout(() => setSlowNet(true), 8000);
+   254→    return () => clearTimeout(t);
+   255→  }, []);
+   256→
+   257→  // ===== reloj local para cuentas atras =====
+   258→  useEffect(() => {
+   259→    const t = setInterval(() => setNow(Date.now()), 1000);
+   260→    return () => clearInterval(t);
+   261→  }, []);
+   262→
+   263→  // ===== ELO propio para la cabecera =====
+   264→  useEffect(() => {
+   265→    const name = (alias || "").toUpperCase().slice(0, 18);
+   266→    if (!name) return;
+   267→    fetch(`/api/mp/stats?alias=${encodeURIComponent(name)}`)
+   268→      .then((r) => (r.ok ? r.json() : null))
+   269→      .then((d) => { if (d?.profile) setMyElo(d.profile.elo); })
+   270→      .catch(() => {});
+   271→  }, [alias]);
+   272→
+   273→  // ===== conexion y estado del juego =====
+   274→  useEffect(() => {
+   275→    const socket = getRealtime();
+   276→    if (!socket) return;
+   277→
+   278→    const onConnect = () => {
+   279→      setConnected(true);
+   280→      if (dropRef.current) {
+   281→        dropRef.current = false;
+   282→        setSlowNet(false);
+   283→        toast.success("Reconectado a la guerra global — sincronizando estado…");
+   284→      }
+   285→      socket.emit("mp:join", { playerId: myId, name: myNameRef.current, avatar: myAvatarRef.current }, (res: { state?: MpState } | undefined) => {
+   286→        if (res?.state) setState(res.state);
+   287→      });
+   288→    };
+   289→    const onDisconnect = () => {
+   290→      setConnected(false);
+   291→      dropRef.current = true;
+   292→      toast.warning("Conexión perdida — reconexión automática en marcha…");
+   293→    };
+   294→    const onState = (s: MpState) => {
+   295→      setState(s);
+   296→      // recompensas por captura propia (una sola vez por batalla)
+   297→      const lb = s.lastBattle;
+   298→      if (lb && lb.seq > lastBattleSeq.current) {
+   299→        lastBattleSeq.current = lb.seq;
+   300→        if (lb.attacker === myId) {
+   301→          participatedRef.current = true;
+   302→          if (lb.captured) {
+   303→            recordMpCapture(2);
+   304→            postMpResult(myNameRef.current, "CAPTURE");
+   305→            toast.success(`¡Territorio capturado! +2 gemas, +5 monedas`);
+   306→            sfx.unlock();
+   307→          } else {
+   308→            toast.error(`Asalto repelido en defensa enemiga`);
+   309→            sfx.error();
+   310→          }
+   311→        }
+   312→      }
+   313→      // victoria propia + registro de resultado en el ranking ELO
+   314→      if (s.winnerSeq > winnerSeqSeen.current) {
+   315→        winnerSeqSeen.current = s.winnerSeq;
+   316→        if (participatedRef.current) {
+   317→          const iWon = s.winnerId === myId;
+   318→          postMpResult(myNameRef.current, iWon ? "MP_WIN" : "MP_LOSS");
+   319→          if (iWon) {
+   320→            recordMpWin();
+   321→            toast.success("DOMINIO GLOBAL conseguido: +25 gemas, +200 monedas · ELO +30");
+   322→          } else {
+   323→            toast.info(`Victoria de ${s.winnerName ?? "?"} — resultado registrado en el ranking`);
+   324→          }
+   325→        } else if (s.winnerId === myId) {
+   326→          recordMpWin();
+   327→          toast.success("DOMINIO GLOBAL conseguido: +25 gemas, +200 monedas");
+   328→        }
+   329→      }
+   330→      // autoscroll del chat
+   331→      requestAnimationFrame(() => {
+   332→        const el = chatListRef.current;
+   333→        if (el) el.scrollTop = el.scrollHeight;
+   334→      });
+   335→    };
+   336→
+   337→    socket.on("connect", onConnect);
+   338→    socket.on("disconnect", onDisconnect);
+   339→    socket.on("mp:state", onState);
+   340→    if (socket.connected) onConnect();
+   341→
+   342→    return () => {
+   343→      socket.off("connect", onConnect);
+   344→      socket.off("disconnect", onDisconnect);
+   345→      socket.off("mp:state", onState);
+   346→    };
+   347→  }, [myId, recordMpCapture, recordMpWin]);
+   348→
+   349→  const me = state?.players[myId];
+   350→  const myTerritories = useMemo(
+   351→    () => (state ? state.territoryMeta.filter((t) => state.territories[t.id]?.owner === myId) : []),
+   352→    [state, myId]
+   353→  );
+   354→  // v23: nombre -> avatar país para el chat y banners (hook antes del early return)
+   355→  const avatarByName = useMemo(() => {
+   356→    const m = new Map<string, string>();
+   357→    if (state) for (const p of Object.values(state.players)) if (p.avatar) m.set(p.name, p.avatar);
+   358→    return m;
+   359→  }, [state]);
+   360→  const claimedByMe = myTerritories.length > 0;
+   361→  const claimable = state?.phase === "LOBBY";
+   362→
+   363→  // objetivos de ataque: adyacentes al seleccionado que no son mios
+   364→  const attackTargets = useMemo(() => {
+   365→    if (!state || !selected) return [];
+   366→    const t = state.territoryMeta.find((x) => x.id === selected);
+   367→    if (!t) return [];
+   368→    return t.adj.filter((a) => state.territories[a] && state.territories[a].owner !== myId);
+   369→  }, [state, selected, myId]);
+   370→
+   371→  const emit = (event: string, payload: unknown, cb?: (r: { ok: boolean; reason?: string }) => void) => {
+   372→    const socket = getRealtime();
+   373→    socket.emit(event, payload, cb);
+   374→  };
+   375→
+   376→  const claim = (terrId: string) => {
+   377→    emit("mp:claim", { terrId }, (r) => {
+   378→      if (r?.ok) { participatedRef.current = true; toast.success(`Base establecida. La partida arranca en segundos`); sfx.unlock(); }
+   379→      else toast.error(r?.reason ?? "No se pudo reclamar");
+   380→    });
+   381→  };
+   382→
+   383→  // v17: PARTIDA RAPIDA — reclama un territorio libre al azar
+   384→  const quickMatch = () => {
+   385→    if (!state) return;
+   386→    const free = state.territoryMeta.filter((t) => !state.territories[t.id]?.owner);
+   387→    if (free.length === 0) { toast.error("No quedan territorios libres"); return; }
+   388→    claim(free[Math.floor(Math.random() * free.length)].id);
+   389→  };
+   390→
+   391→  const deploy = (terrId: string, qty = 1) => {
+   392→    emit("mp:deploy", { terrId, qty }, (r) => {
+   393→      if (!r?.ok) toast.error(r?.reason ?? "Despliegue rechazado");
+   394→      else { participatedRef.current = true; sfx.click(); }
+   395→    });
+   396→  };
+   397→
+   398→  const deployAll = () => {
+   399→    emit("mp:deployAll", {}, (r) => {
+   400→      if (r?.ok) { participatedRef.current = true; toast.success("Reservas desplegadas en tus territorios"); sfx.success(); }
+   401→      else toast.error(r?.reason ?? "Nada que desplegar");
+   402→    });
+   403→  };
+   404→
+   405→  const attack = (from: string, to: string) => {
+   406→    emit("mp:attack", { from, to }, (r) => {
+   407→      if (!r?.ok) toast.error(r?.reason ?? "Ataque invalido");
+   408→      else participatedRef.current = true;
+   409→    });
+   410→    setSelected(null);
+   411→  };
+   412→
+   413→  const sendChat = () => {
+   414→    const body = chatDraft.trim();
+   415→    if (!body) return;
+   416→    emit("mp:chat", { body }, (r) => {
+   417→      if (!r?.ok) toast.error(r?.reason ?? "No se pudo enviar");
+   418→      else setChatDraft("");
+   419→    });
+   420→  };
+   421→
+   422→  const requestRematch = () => {
+   423→    emit("mp:rematch", {}, (r) => {
+   424→      if (!r?.ok) toast.error(r?.reason ?? "No disponible");
+   425→      else sfx.click();
+   426→    });
+   427→  };
+   428→
+   429→  // v23: elige tu personaje-país y sincronízalo con la partida en vivo
+   430→  const pickCharacter = (code: string) => {
+   431→    setCbAvatar(code);
+   432→    myAvatarRef.current = code;
+   433→    emit("mp:join", { playerId: myId, name: myNameRef.current, avatar: code }, () => {});
+   434→    sfx.unlock();
+   435→    toast.success(`${t("mp.characterSet")}: ${countryName(code)}`);
+   436→  };
+   437→
+   438→  const secondsLeft = (target: number) => Math.max(0, Math.ceil((target - now) / 1000));
+   439→
+   440→  // ================== RENDER ===================
+   441→  if (!state) {
+   442→    return (
+   443→      <div className="hud-corner p-10 text-center">
+   444→        {connected ? (
+   445→          <>
+   446→            <RefreshCw className="w-8 h-8 mx-auto mb-3 text-amber animate-spin" />
+   447→            <p className="text-sm font-mono text-muted-foreground uppercase">
+   448→              Sincronizando partida global...
+   449→            </p>
+   450→          </>
+   451→        ) : (
+   452→          <>
+   453→            <WifiOff className="w-8 h-8 mx-auto mb-3 text-red-hud" />
+   454→            <p className="text-sm font-mono text-muted-foreground uppercase">
+   455→              {slowNet ? "Servidor de partidas en mantenimiento" : "Conectando al servidor de partidas :3003..."}
+   456→            </p>
+   457→            <p className="text-[10px] font-mono text-muted-foreground/70 uppercase mt-1 mb-4">
+   458→              reintentos automáticos cada 5s · tu progreso está a salvo
+   459→            </p>
+   460→            <Button
+   461→              size="sm"
+   462→              variant="outline"
+   463→              onClick={() => getRealtime()?.connect()}
+   464→              className="font-mono text-[10px] uppercase tracking-widest border-cyan-hud text-cyan-hud hover:bg-cyan-hud/10"
+   465→            >
+   466→              Reintentar ahora
+   467→            </Button>
+   468→          </>
+   469→        )}
+   470→      </div>
+   471→    );
+   472→  }
+   473→
+   474→  const playerList = Object.values(state.players);
+   475→  const countsByOwner: Record<string, { n: number; troops: number }> = {};
+   476→  for (const [tid, t] of Object.entries(state.territories)) {
+   477→    if (!t.owner) continue;
+   478→    countsByOwner[t.owner] = countsByOwner[t.owner] ?? { n: 0, troops: 0 };
+   479→    countsByOwner[t.owner].n += 1;
+   480→    countsByOwner[t.owner].troops += t.troops;
+   481→  }
+   482→
+   483→  return (
+   484→    <div className="space-y-3">
+   485→      {/* barra de fase */}
+   486→      <div className="hud-corner p-2 flex items-center gap-3 text-[10px] font-mono flex-wrap">
+   487→        <span className={cn(
+   488→          "px-2 py-0.5 border font-bold uppercase tracking-wider",
+   489→          state.phase === "LOBBY" && "border-cyan-hud text-cyan-hud bg-cyan-hud/20",
+   490→          state.phase === "REINFORCE" && "border-green-hud text-green-hud bg-green-hud/20",
+   491→          state.phase === "WAR" && "border-red-hud text-red-hud bg-red-hud/20 blink-soft",
+   492→          state.phase === "ENDED" && "border-amber-hud text-amber bg-amber-hud/20"
+   493→        )}>
+   494→          {state.phase === "LOBBY" && t("mp.waitingRoom")}
+   495→          {state.phase === "REINFORCE" && `${t("mp.roundLabel")} ${state.round} · ${t("mp.reinforce")}`}
+   496→          {state.phase === "WAR" && `${t("mp.roundLabel")} ${state.round} · ${t("mp.warPhase")}`}
+   497→          {state.phase === "ENDED" && t("mp.ended")}
+   498→        </span>
+   499→        {(state.phase === "REINFORCE" || state.phase === "WAR") && (
+   500→          <span className="text-foreground flex items-center gap-1">
+   501→            <Timer className="w-3 h-3 text-amber" /> {secondsLeft(state.phaseEnds)}s
+   502→          </span>
+   503→        )}
+   504→        {state.phase === "LOBBY" && state.startAt && (
+   505→          <span className="text-foreground flex items-center gap-1">
+   506→            <Timer className="w-3 h-3 text-amber" /> despliegue en {secondsLeft(state.startAt)}s
+   507→          </span>
+   508→        )}
+   509→        <span className="text-muted-foreground">·</span>
+   510→        <span className="text-muted-foreground">{playerList.filter((p) => !p.isBot).length} {playerList.filter((p) => !p.isBot).length === 1 ? t("mp.players") : t("mp.playersPl")} · {playerList.filter((p) => p.isBot).length} {playerList.filter((p) => p.isBot).length === 1 ? t("mp.ais") : t("mp.aisPl")}</span>
+   511→        {myElo != null && (
+   512→          <span className="text-amber flex items-center gap-1"><Medal className="w-3 h-3" /> ELO {myElo}</span>
+   513→        )}
+   514→        {me && (
+   515→          <span className="ml-auto flex items-center gap-2">
+   516→            {me.avatar && <Countryball code={me.avatar} size={20} />}
+   517→            <span className="uppercase" style={{ color: me.color }}>{me.name}</span>
+   518→            {claimedByMe && state.phase === "REINFORCE" && (
+   519→              <span className="text-green-hud flex items-center gap-1">
+   520→                <Gem className="w-3 h-3" /> {me.reserves} {t("mp.reserves")}
+   521→              </span>
+   522→            )}
+   523→          </span>
+   524→        )}
+   525→      </div>
+   526→
+   527→      {/* ===== v23: PICKER DE PERSONAJE-PAÍS (solo en sala de espera) ===== */}
+   528→      {claimable && (
+   529→        <div className="hud-corner p-3">
+   530→          <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+   531→            <p className="text-[11px] font-mono uppercase text-amber flex items-center gap-1.5">
+   532→              <UserRound className="w-3.5 h-3.5" /> {t("mp.character")}
+   533→            </p>
+   534→            <span className="text-[10px] font-mono text-muted-foreground flex items-center gap-1.5">
+   535→              {t("mp.characterNow")}:
+   536→              <Countryball code={cbAvatar} size={22} />
+   537→              <span className="text-foreground font-bold">{countryName(cbAvatar)}</span>
+   538→            </span>
+   539→          </div>
+   540→          <p className="text-[10px] text-muted-foreground font-mono mb-2">{t("mp.characterDesc")}</p>
+   541→          <div className="grid grid-cols-8 sm:grid-cols-12 lg:grid-cols-[repeat(17,minmax(0,1fr))] gap-1 max-h-32 overflow-y-auto thin-scroll">
+   542→            {MP_CHAR_CODES.map((code) => (
+   543→              <button
+   544→                key={code}
+   545→                onClick={() => pickCharacter(code)}
+   546→                title={countryName(code)}
+   547→                aria-label={countryName(code)}
+   548→                className={cn(
+   549→                  "flex items-center justify-center p-1 border rounded-sm transition-all hover:border-amber-hud hover:bg-amber-hud/10",
+   550→                  cbAvatar === code ? "border-amber-hud bg-amber-hud/20 glow-amber" : "border-border/50"
+   551→                )}
+   552→              >
+   553→                <Countryball code={code} size={24} />
+   554→              </button>
+   555→            ))}
+   556→          </div>
+   557→        </div>
+   558→      )}
+   559→
+   560→      {/* ===== LOBBY ===== */}
+   561→      {claimable && (
+   562→        <div className="hud-corner p-3">
+   563→          <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+   564→            <p className="text-[11px] font-mono uppercase text-amber flex items-center gap-1.5">
+   565→              <LogIn className="w-3.5 h-3.5" /> Recluta tu territorio de origen — la partida arranca automaticamente
+   566→            </p>
+   567→            {!claimedByMe && (
+   568→              <Button
+   569→                size="sm"
+   570→                onClick={quickMatch}
+   571→                className="h-7 font-mono text-[9px] uppercase tracking-widest border-electric-hud text-electric bg-electric/20 hover:bg-electric/40"
+   572→              >
+   573→                <Zap className="w-3 h-3 mr-1" /> {t("mp.quickMatch")}
+   574→              </Button>
+   575→            )}
+   576→          </div>
+   577→          {claimedByMe ? (
+   578→            <p className="text-xs font-mono text-green-hud">
+   579→              Base establecida en <b>{myTerritories[0].name}</b>. Esperando despliegue...
+   580→            </p>
+   581→          ) : (
+   582→            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1.5 max-h-56 overflow-y-auto thin-scroll">
+   583→              {state.territoryMeta
+   584→                .slice()
+   585→                .sort((a, b) => CONTINENTS.indexOf(a.continent) - CONTINENTS.indexOf(b.continent))
+   586→                .map((t) => {
+   587→                  const taken = state.territories[t.id]?.owner;
+   588→                  return (
+   589→                    <button
+   590→                      key={t.id}
+   591→                      onClick={() => claim(t.id)}
+   592→                      disabled={!!taken}
+   593→                      className={cn(
+   594→                        "p-2 border text-left transition-colors",
+   595→                        taken
+   596→                          ? "border-border/40 opacity-40 cursor-not-allowed"
+   597→                          : "border-border hover:border-amber-hud hover:bg-amber-hud/10 cursor-pointer"
+   598→                      )}
+   599→                    >
+   600→                      <span className="text-[10px] font-mono font-bold text-foreground block truncate">{t.name}</span>
+   601→                      <span className="text-[8px] font-mono text-muted-foreground uppercase">
+   602→                        {t.continent} {taken ? "· OCUPADO" : ""}
+   603→                      </span>
+   604→                    </button>
+   605→                  );
+   606→                })}
+   607→            </div>
+   608→          )}
+   609→        </div>
+   610→      )}
+   611→
+   612→      {/* ===== MAPA DE GUERRA GLOBAL ===== */}
+   613→      <div className="grid lg:grid-cols-3 gap-3">
+   614→        <div className="lg:col-span-2">
+   615→          <MpMap
+   616→            state={state}
+   617→            myId={myId}
+   618→            selected={selected}
+   619→            attackTargets={attackTargets}
+   620→            onSelect={(tid) => {
+   621→              if (!state) return;
+   622→              const terr = state.territories[tid];
+   623→              if (!terr) return;
+   624→              if (state.phase === "REINFORCE" && terr.owner === myId && (me?.reserves ?? 0) > 0) {
+   625→                deploy(tid, 1);
+   626→                return;
+   627→              }
+   628→              if (state.phase === "WAR") {
+   629→                if (terr.owner === myId && terr.troops >= 3) {
+   630→                  setSelected(tid === selected ? null : tid);
+   631→                  return;
+   632→                }
+   633→                if (selected && attackTargets.includes(tid)) {
+   634→                  attack(selected, tid);
+   635→                  return;
+   636→                }
+   637→              }
+   638→              sfx.click();
+   639→            }}
+   640→          />
+   641→          {/* ayuda contextual de fase */}
+   642→          <div className="mt-2 flex flex-wrap items-center gap-2">
+   643→            <div className="px-3 py-1.5 border rounded-sm text-[10px] font-mono uppercase tracking-wider border-amber-hud bg-amber-hud/20 text-amber">
+   644→              {state.phase === "LOBBY" && (claimedByMe
+   645→                ? "Esperando inicio de partida..."
+   646→                : "Elige tu territorio de origen arriba")}
+   647→              {state.phase === "REINFORCE" && (claimedByMe
+   648→                ? `Click en tus territorios para desplegar (${me?.reserves} reservas) · o usa DESPLEGAR TODO`
+   649→                : "Estas de espectador esta ronda — entraras en la siguiente")}
+   650→              {state.phase === "WAR" && (claimedByMe
+   651→                ? "Selecciona territorio tuyo (3+ tropas) y ataca un vecino · +2 gemas por captura"
+   652→                : "Observando — podras unirte cuando acabe la partida")}
+   653→              {state.phase === "ENDED" && `${state.winnerName ?? "?"} ${t("mp.worldConquered")} — ${secondsLeft(state.resetAt ?? Date.now())}s`}
+   654→            </div>
+   655→            {claimedByMe && state.phase === "REINFORCE" && (me?.reserves ?? 0) > 0 && (
+   656→              <Button
+   657→                size="sm"
+   658→                onClick={deployAll}
+   659→                className="h-8 font-mono text-[10px] uppercase border-green-hud text-green-hud bg-green-hud/20 hover:bg-green-hud/40"
+   660→              >
+   661→                {t("mp.deployAll")}
+   662→              </Button>
+   663→            )}
+   664→            {state.phase === "WAR" && selected && (
+   665→              <Button
+   666→                size="sm"
+   667→                onClick={() => setSelected(null)}
+   668→                variant="outline"
+   669→                className="h-8 font-mono text-[10px] uppercase border-border text-muted-foreground"
+   670→              >
+   671→                Cancelar seleccion
+   672→              </Button>
+   673→            )}
+   674→            {/* v17: REVANCHA */}
+   675→            {state.phase === "ENDED" && (
+   676→              <Button
+   677→                size="sm"
+   678→                onClick={requestRematch}
+   679→                className="h-8 font-mono text-[10px] uppercase border-electric-hud text-electric bg-electric/20 hover:bg-electric/40"
+   680→              >
+   681→                <RefreshCw className="w-3 h-3 mr-1" />
+   682→                {t("mp.rematch")} ({state.rematch?.votes ?? 0}/{state.rematch?.needed ?? 1})
+   683→              </Button>
+   684→            )}
+   685→          </div>
+   686→
+   687→          {/* banner de ultima batalla */}
+   688→          <AnimatePresence>
+   689→            {state.lastBattle && (
+   690→              <motion.div
+   691→                key={state.lastBattle.seq}
+   692→                initial={{ opacity: 0, y: 10 }}
+   693→                animate={{ opacity: 1, y: 0 }}
+   694→                className={cn(
+   695→                  "mt-2 hud-corner p-3 border",
+   696→                  state.lastBattle.captured ? "border-green-hud bg-green-hud/10" : "border-red-hud bg-red-hud/10"
+   697→                )}
+   698→              >
+   699→                <div className="flex items-center justify-between gap-2 flex-wrap">
+   700→                  <div className="flex items-center gap-2">
+   701→                    {avatarByName.get(state.lastBattle.attackerName) && (
+   702→                      <Countryball code={avatarByName.get(state.lastBattle.attackerName) as string} size={20} />
+   703→                    )}
+   704→                    {state.lastBattle.captured
+   705→                      ? <Trophy className="w-4 h-4 text-green-hud" />
+   706→                      : <Swords className="w-4 h-4 text-red-hud" />}
+   707→                    <span className="text-xs font-mono font-bold uppercase">
+   708→                      {state.lastBattle.attackerName}
+   709→                      <span style={{ color: state.lastBattle.attackerColor }}> ● </span>
+   710→                      → {state.territoryMeta.find((t) => t.id === state.lastBattle?.to)?.name}
+   711→                      {state.lastBattle.captured ? " — ¡CAPTURADO!" : " — repelido"}
+   712→                    </span>
+   713→                  </div>
+   714→                  <div className="flex items-center gap-3 text-[10px] font-mono">
+   715→                    <span className="text-amber">ATK {state.lastBattle.atkRoll}</span>
+   716→                    <span className="text-cyan-hud">DEF {state.lastBattle.defRoll}</span>
+   717→                    <span className="text-red-hud">-{state.lastBattle.atkLosses} atk</span>
+   718→                    <span className="text-green-hud">-{state.lastBattle.defLosses} def</span>
+   719→                  </div>
+   720→                </div>
+   721→              </motion.div>
+   722→            )}
+   723→          </AnimatePresence>
+   724→        </div>
+   725→
+   726→        {/* ===== PANEL LATERAL: jugadores + bitacora + CHAT ===== */}
+   727→        <div className="space-y-3">
+   728→          {/* marcador */}
+   729→          <div className="hud-corner p-3">
+   730→            <p className="text-[10px] font-mono uppercase text-muted-foreground tracking-widest mb-2 flex items-center gap-1.5">
+   731→              <Crown className="w-3 h-3 text-amber" /> Dominio del mundo
+   732→            </p>
+   733→            <div className="space-y-1.5">
+   734→              {playerList
+   735→                .map((p) => ({ p, c: countsByOwner[p.id] ?? { n: 0, troops: 0 } }))
+   736→                .sort((a, b) => b.c.n - a.c.n)
+   737→                .map(({ p, c }) => (
+   738→                  <div key={p.id} className="flex items-center gap-2">
+   739→                    {p.avatar ? (
+   740→                      <Countryball code={p.avatar} size={20} angry={p.isBot} className="flex-shrink-0" />
+   741→                    ) : (
+   742→                      <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: p.color }} />
+   743→                    )}
+   744→                    <span className={cn(
+   745→                      "text-[10px] font-mono uppercase truncate flex-1",
+   746→                      p.id === myId ? "text-amber font-bold" : "text-foreground/80",
+   747→                      !p.connected && !p.isBot && "opacity-50 line-through"
+   748→                    )}>
+   749→                      {p.name === "DUENO" && <Crown className="w-3 h-3 text-amber inline -mt-0.5" />}{" "}
+   750→                      {p.name} {p.isBot && <span className="text-[8px] text-muted-foreground">{t("mp.ais")}</span>}
+   751→                      {p.id === myId && <span className="text-[8px] text-muted-foreground"> ({t("mp.you")})</span>}
+   752→                    </span>
+   753→                    <span className="text-[10px] font-mono text-foreground">{c.n}</span>
+   754→                    <span className="text-[9px] font-mono text-muted-foreground w-8 text-right">{c.troops}t</span>
+   755→                    {p.gemsEarned > 0 && (
+   756→                      <span className="text-[9px] font-mono text-green-hud flex items-center gap-0.5">
+   757→                        <Gem className="w-2.5 h-2.5" />{p.gemsEarned}
+   758→                      </span>
+   759→                    )}
+   760→                  </div>
+   761→                ))}
+   762→            </div>
+   763→            <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-between text-[9px] font-mono text-muted-foreground uppercase">
+   764→              <span>tus capturas: {mpStats.captures}</span>
+   765→              <span className="text-green-hud flex items-center gap-0.5"><Gem className="w-2.5 h-2.5" />{mpStats.gemsEarned} gemas</span>
+   766→            </div>
+   767→          </div>
+   768→
+   769→          {/* bitacora */}
+   770→          <div className="hud-corner p-3">
+   771→            <p className="text-[10px] font-mono uppercase text-muted-foreground tracking-widest mb-2 flex items-center gap-1.5">
+   772→              <Crosshair className="w-3 h-3 text-red-hud" /> Bitacora de guerra global
+   773→            </p>
+   774→            <div className="space-y-1 max-h-44 overflow-y-auto thin-scroll pr-1">
+   775→              {[...state.log].reverse().map((l, i) => (
+   776→                <p key={`${l.ts}-${i}`} className="text-[10px] font-mono leading-snug" style={{ color: l.color ?? "#9ca3af" }}>
+   777→                  <span className="text-muted-foreground/50">{new Date(l.ts).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit", second: "2-digit" })} </span>
+   778→                  {l.msg}
+   779→                </p>
+   780→              ))}
+   781→            </div>
+   782→          </div>
+   783→
+   784→          {/* v17: CHAT DE GUERRA */}
+   785→          <div className="hud-corner p-3">
+   786→            <p className="text-[10px] font-mono uppercase text-muted-foreground tracking-widest mb-2 flex items-center gap-1.5">
+   787→              <MessageSquare className="w-3 h-3 text-cyan-hud" /> Chat de guerra
+   788→              <span className="text-[8px] text-muted-foreground/60 normal-case">· coordina ataques con tus aliados</span>
+   789→            </p>
+   790→            <div ref={chatListRef} className="space-y-1 max-h-40 overflow-y-auto thin-scroll pr-1 mb-2">
+   791→              {(state.chat ?? []).map((c) => (
+   792→                <p key={c.id} className="text-[10px] font-mono leading-snug">
+   793→                  {!c.sys && avatarByName.get(c.name) && (
+   794→                    <Countryball code={avatarByName.get(c.name) as string} size={14} className="inline-block align-middle mr-1" />
+   795→                  )}
+   796→                  <span style={{ color: c.sys ? "#22d3ee" : c.color }} className="font-bold">
+   797→                    {c.sys ? "◈ " : ""}{c.name}:{" "}
+   798→                  </span>
+   799→                  <span className={c.sys ? "text-cyan-hud/80 italic" : "text-foreground/80"}>{c.body}</span>
+   800→                </p>
+   801→              ))}
+   802→              {(state.chat ?? []).length === 0 && (
+   803→                <p className="text-[10px] font-mono text-muted-foreground italic">Sin mensajes — escribe el primero</p>
+   804→              )}
+   805→            </div>
+   806→            <div className="flex items-center gap-1.5">
+   807→              <input
+   808→                ref={chatInputRef}
+   809→                value={chatDraft}
+   810→                onChange={(e) => setChatDraft(e.target.value)}
+   811→                onKeyDown={(e) => { if (e.key === "Enter") sendChat(); }}
+   812→                maxLength={160}
+   813→                placeholder={t("mp.chatPh")}
+   814→                className="flex-1 bg-background/70 border border-border rounded-sm px-2 py-1.5 text-[11px] font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-electric-hud"
+   815→                aria-label={t("mp.sendMsg")}
+   816→              />
+   817→              <Button
+   818→                size="sm"
+   819→                onClick={sendChat}
+   820→                className="h-8 w-8 p-0 border-electric-hud text-electric bg-electric/20 hover:bg-electric/40"
+   821→                aria-label="Enviar mensaje"
+   822→              >
+   823→                <Send className="w-3.5 h-3.5" />
+   824→              </Button>
+   825→            </div>
+   826→          </div>
+   827→        </div>
+   828→      </div>
+   829→    </div>
+   830→  );
+   831→}
+   832→
+   833→// ============================================================
+   834→// v17 — MODO DUELO: DUELO DE TRIVIA PvP 1v1
+   835→// ============================================================
+   836→const DUEL_DURATION: Record<DuelState["phase"], number> = {
+   837→  COUNTDOWN: 3200, QUESTION: 9000, REVEAL: 2800, ENDED: 14000,
+   838→};
+   839→
+   840→function DueloMode({ alias }: { alias: string }) {
+   841→  const addCoins = useGameStore((s) => s.addCoins);
+   842→  const addGems = useGameStore((s) => s.addGems);
+   843→  const addXp = useGameStore((s) => s.addXp);
+   844→  const myId = useMyMpId();
+   845→
+   846→  const [duel, setDuel] = useState<DuelState | null>(null);
+   847→  const [searching, setSearching] = useState(false);
+   848→  const [chosen, setChosen] = useState<{ q: number; idx: number } | null>(null);
+   849→  const rewardedRef = useRef<number>(0);
+   850→  const myNameRef = useRef(alias || "OPERADOR");
+   851→  useEffect(() => { myNameRef.current = alias || "OPERADOR"; }, [alias]);
+   852→
+   853→  // suscripcion al duelo
+   854→  useEffect(() => {
+   855→    const socket = getRealtime();
+   856→    if (!socket) return;
+   857→    const onState = (s: DuelState) => {
+   858→      setDuel(s);
+   859→      setSearching(false);
+   860→      if (s.phase === "QUESTION" && s.me && !s.me.answered) {
+   861→        // nueva pregunta disponible
+   862→      }
+   863→      if (s.phase === "ENDED" && s.result && rewardedRef.current !== s.id) {
+   864→        rewardedRef.current = s.id;
+   865→        const { outcome, walkover } = s.result;
+   866→        if (outcome === "WIN") {
+   867→          addCoins(120, "Duelo 1v1 ganado");
+   868→          addGems(2, "Duelo 1v1 ganado");
+   869→          addXp(80);
+   870→          toast.success(walkover ? "Rival desconectado — victoria por abandono: +120 mon, +2 gemas" : "DUELO GANADO: +120 monedas, +2 gemas, +80 XP · ELO +22");
+   871→          sfx.achievement?.();
+   872→        } else if (outcome === "LOSS") {
+   873→          addCoins(30, "Duelo 1v1 participado");
+   874→          addXp(20);
+   875→          toast.info(walkover ? "Abandonaste el duelo — premio de consuelo: +30 mon" : "Duelo perdido — premio de participación: +30 mon, +20 XP");
+   876→        } else {
+   877→          addCoins(60, "Duelo 1v1 empatado");
+   878→          addXp(40);
+   879→          toast.info("EMPATE — +60 monedas, +40 XP · ELO +5");
+   880→        }
+   881→        postMpResult(myNameRef.current,
+   882→          outcome === "WIN" ? "DUEL_WIN" : outcome === "LOSS" ? "DUEL_LOSS" : "DUEL_TIE",
+   883→          { streak: outcome === "WIN" ? (s.me.correct ?? 0) : 0 });
+   884→      }
+   885→    };
+   886→    const onClosed = () => { setDuel(null); setSearching(false); };
+   887→    socket.on("duel:state", onState);
+   888→    socket.on("duel:closed", onClosed);
+   889→    return () => {
+   890→      socket.off("duel:state", onState);
+   891→      socket.off("duel:closed", onClosed);
+   892→    };
+   893→  }, [addCoins, addGems, addXp]);
+   894→
+   895→  // si me voy del panel a mitad de duelo, el rival gana por abandono
+   896→  useEffect(() => {
+   897→    return () => {
+   898→      const socket = getRealtime();
+   899→      socket?.emit("duel:quit");
+   900→    };
+   901→  }, []);
+   902→
+   903→  const queue = useCallback(() => {
+   904→    const socket = getRealtime();
+   905→    setDuel(null);
+   906→    setSearching(true);
+   907→    socket.emit("duel:queue", { playerId: myId, name: myNameRef.current }, (r: { ok: boolean; reason?: string } | undefined) => {
+   908→      if (!r?.ok) { setSearching(false); toast.error(r?.reason ?? "No se pudo entrar a la cola"); }
+   909→    });
+   910→  }, [myId]);
+   911→
+   912→  const cancelQueue = () => {
+   913→    getRealtime()?.emit("duel:cancel");
+   914→    setSearching(false);
+   915→  };
+   916→
+   917→  const answer = (idx: number) => {
+   918→    if (!duel || duel.phase !== "QUESTION" || duel.me.answered) return;
+   919→    setChosen({ q: duel.qIdx, idx });
+   920→    sfx.click();
+   921→    getRealtime()?.emit("duel:answer", { idx });
+   922→  };
+   923→
+   924→  // ================== RENDER ==================
+   925→  if (!duel) {
+   926→    return (
+   927→      <div className="space-y-3">
+   928→        {searching ? (
+   929→          <div className="hud-corner p-10 text-center">
+   930→            <Radio className="w-8 h-8 mx-auto mb-3 text-electric animate-pulse" />
+   931→            <p className="text-sm font-mono text-foreground uppercase mb-1">Buscando rival...</p>
+   932→            <p className="text-[10px] font-mono text-muted-foreground mb-4">Si no hay humanos libres, entra un bot de élite en 5s</p>
+   933→            <Button size="sm" variant="outline" onClick={cancelQueue} className="font-mono text-[10px] uppercase border-border text-muted-foreground">
+   934→              Cancelar búsqueda
+   935→            </Button>
+   936→          </div>
+   937→        ) : (
+   938→          <div className="hud-corner p-5 sm:p-8 text-center">
+   939→            <div className="w-14 h-14 mx-auto mb-3 rounded-full border-2 border-electric flex items-center justify-center bg-electric/10">
+   940→              <Zap className="w-7 h-7 text-electric" />
+   941→            </div>
+   942→            <h3 className="font-display text-lg font-bold uppercase tracking-widest text-foreground mb-1">Duelo de Trivia 1v1</h3>
+   943→            <p className="text-xs font-mono text-muted-foreground max-w-md mx-auto mb-5">
+   944→              7 preguntas · 9 segundos por pregunta · 500 puntos base + hasta 400 por velocidad.
+   945→              Gana el mejor marcador. Si tu rival se desconecta, ganas por abandono.
+   946→            </p>
+   947→            <Button onClick={queue} className="font-mono text-xs uppercase tracking-widest border-electric-hud text-electric bg-electric/20 hover:bg-electric/40 h-10 px-6">
+   948→              <Target className="w-4 h-4 mr-2" /> Buscar rival
+   949→            </Button>
+   950→            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-lg mx-auto text-left">
+   951→              <div className="border border-green-hud/40 bg-green-hud/5 p-3 rounded-sm">
+   952→                <p className="text-[9px] font-mono uppercase text-green-hud tracking-widest mb-1">Victoria</p>
+   953→                <p className="text-[10px] font-mono text-foreground">+120 mon · +2 gemas · +80 XP · ELO +22</p>
+   954→              </div>
+   955→              <div className="border border-amber-hud/40 bg-amber-hud/5 p-3 rounded-sm">
+   956→                <p className="text-[9px] font-mono uppercase text-amber tracking-widest mb-1">Empate</p>
+   957→                <p className="text-[10px] font-mono text-foreground">+60 mon · +40 XP · ELO +5</p>
+   958→              </div>
+   959→              <div className="border border-red-hud/40 bg-red-hud/5 p-3 rounded-sm">
+   960→                <p className="text-[9px] font-mono uppercase text-red-hud tracking-widest mb-1">Derrota</p>
+   961→                <p className="text-[10px] font-mono text-foreground">+30 mon · +20 XP · ELO -14</p>
+   962→              </div>
+   963→            </div>
+   964→          </div>
+   965→        )}
+   966→      </div>
+   967→    );
+   968→  }
+   969→
+   970→  // ---- partida activa ----
+   971→  const { phase, question, me, rival } = duel;
+   972→
+   973→  if (phase === "ENDED" && duel.result) {
+   974→    const win = duel.result.outcome === "WIN";
+   975→    const tie = duel.result.outcome === "TIE";
+   976→    return (
+   977→      <div className={cn(
+   978→        "hud-corner p-6 sm:p-10 text-center border",
+   979→        win && "border-green-hud bg-green-hud/5",
+   980→        tie && "border-amber-hud bg-amber-hud/5",
+   981→        !win && !tie && "border-red-hud bg-red-hud/5"
+   982→      )}>
+   983→        <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 220 }}>
+   984→          <Trophy className={cn("w-12 h-12 mx-auto mb-3", win ? "text-green-hud" : tie ? "text-amber" : "text-red-hud")} />
+   985→          <h3 className={cn(
+   986→            "font-display text-2xl font-black uppercase tracking-widest mb-1",
+   987→            win ? "text-green-hud" : tie ? "text-amber" : "text-red-hud"
+   988→          )}>
+   989→            {win ? "¡Victoria!" : tie ? "Empate" : "Derrota"}
+   990→          </h3>
+   991→          {duel.result.walkover && (
+   992→            <p className="text-[10px] font-mono text-muted-foreground uppercase mb-1">victoria por abandono del rival</p>
+   993→          )}
+   994→          <p className="text-xs font-mono text-foreground mb-1">{me.name} <b>{me.score}</b> — <b>{rival.score}</b> {rival.name}</p>
+   995→          <p className="text-[10px] font-mono text-muted-foreground mb-5">
+   996→            aciertos {me.correct}/{duel.total} vs {rival.correct}/{duel.total} · ELO {duel.result.eloDelta > 0 ? "+" : ""}{duel.result.eloDelta}
+   997→          </p>
+   998→        </motion.div>
+   999→        <div className="flex items-center justify-center gap-2 flex-wrap">
+  1000→          <Button onClick={queue} className="font-mono text-[10px] uppercase tracking-widest border-electric-hud text-electric bg-electric/20 hover:bg-electric/40">
+  1001→            <Zap className="w-3.5 h-3.5 mr-1" /> Nueva partida
+  1002→          </Button>
+  1003→        </div>
+  1004→      </div>
+  1005→    );
+  1006→  }
+  1007→
+  1008→  return (
+  1009→    <div className="space-y-3">
+  1010→      {/* marcador en vivo */}
+  1011→      <div className="hud-corner p-2 flex items-center justify-between text-[10px] font-mono">
+  1012→        <span className="flex items-center gap-1.5">
+  1013→          <span className="w-1.5 h-1.5 rounded-full bg-green-hud blink-soft" />
+  1014→          <b className="text-foreground">{me.score}</b> pts · {me.name} <span className="text-muted-foreground">(TU)</span>
+  1015→        </span>
+  1016→        <span className="text-muted-foreground uppercase">
+  1017→          PREGUNTA {Math.max(1, duel.qIdx + 1)}/{duel.total} · {phase === "COUNTDOWN" ? "PREPARANDO" : phase === "QUESTION" ? "¡RESPONDE!" : "REVELACIÓN"}
+  1018→        </span>
+  1019→        <span className="flex items-center gap-1.5">
+  1020→          {rival.name} <span className="text-muted-foreground">{rival.isBot && "IA"}</span> <b className="text-foreground">{rival.score}</b> pts
+  1021→        </span>
+  1022→      </div>
+  1023→
+  1024→      {/* barra de tiempo */}
+  1025→      <DuelTimerBar phase={phase} ends={duel.phaseEnds} duration={DUEL_DURATION[phase]} />
+  1026→
+  1027→      {phase === "COUNTDOWN" && (
+  1028→        <div className="hud-corner p-10 text-center">
+  1029→          <Radio className="w-8 h-8 mx-auto mb-3 text-electric animate-pulse" />
+  1030→          <p className="font-display text-xl font-bold text-foreground uppercase tracking-widest">Duelo contra {rival.name}</p>
+  1031→          <p className="text-[10px] font-mono text-muted-foreground uppercase mt-1">{rival.isBot ? "operativo IA de élite" : "operador humano conectado"}</p>
+  1032→        </div>
+  1033→      )}
+  1034→
+  1035→      {phase === "QUESTION" && question && (
+  1036→        <div className="hud-corner p-4 sm:p-5">
+  1037→          <div className="flex items-center gap-2 mb-3">
+  1038→            <span className="px-2 py-0.5 border border-cyan-hud text-cyan-hud bg-cyan-hud/10 text-[9px] font-mono uppercase tracking-widest rounded-sm">
+  1039→              {question.cat}
+  1040→            </span>
+  1041→            {me.answered && <span className="text-[9px] font-mono text-green-hud uppercase">respuesta registrada</span>}
+  1042→            {rival.answered && !me.answered && <span className="text-[9px] font-mono text-red-hud uppercase blink-soft">¡{rival.name} ya respondió!</span>}
+  1043→          </div>
+  1044→          <p className="font-display text-base sm:text-lg font-bold text-foreground mb-4 leading-snug">{question.text}</p>
+  1045→          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+  1046→            {question.opts.map((opt, i) => {
+  1047→              const isChosen = chosen?.q === duel.qIdx && chosen.idx === i;
+  1048→              return (
+  1049→                <button
+  1050→                  key={i}
+  1051→                  onClick={() => answer(i)}
+  1052→                  disabled={me.answered}
+  1053→                  className={cn(
+  1054→                    "text-left px-3 py-3 border font-mono text-xs transition-colors rounded-sm",
+  1055→                    isChosen
+  1056→                      ? "border-electric bg-electric/25 text-foreground font-bold"
+  1057→                      : me.answered
+  1058→                        ? "border-border/40 opacity-40 cursor-not-allowed text-muted-foreground"
+  1059→                        : "border-border text-foreground/90 hover:border-electric-hud hover:bg-electric/10 cursor-pointer"
+  1060→                  )}
+  1061→                >
+  1062→                  <span className="text-muted-foreground mr-2">{["A", "B", "C", "D"][i]}</span>
+  1063→                  {opt}
+  1064→                </button>
+  1065→              );
+  1066→            })}
+  1067→          </div>
+  1068→        </div>
+  1069→      )}
+  1070→
+  1071→      {phase === "REVEAL" && question && (
+  1072→        <div className="hud-corner p-4 sm:p-5">
+  1073→          <p className="font-display text-base sm:text-lg font-bold text-foreground mb-4 leading-snug">{question.text}</p>
+  1074→          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+  1075→            {question.opts.map((opt, i) => {
+  1076→              const isCorrect = question.a === i;
+  1077→              const isMyPick = chosen?.q === duel.qIdx && chosen.idx === i;
+  1078→              return (
+  1079→                <div
+  1080→                  key={i}
+  1081→                  className={cn(
+  1082→                    "px-3 py-2.5 border font-mono text-xs rounded-sm",
+  1083→                    isCorrect && "border-green-hud bg-green-hud/15 text-green-hud font-bold",
+  1084→                    !isCorrect && isMyPick && "border-red-hud bg-red-hud/10 text-red-hud",
+  1085→                    !isCorrect && !isMyPick && "border-border/40 text-muted-foreground opacity-60"
+  1086→                  )}
+  1087→                >
+  1088→                  <span className="mr-2">{["A", "B", "C", "D"][i]}</span>
+  1089→                  {opt}
+  1090→                  {isCorrect && <ShieldAlert className="w-3 h-3 inline ml-2 -mt-0.5" />}
+  1091→                  {isMyPick && !isCorrect && <span className="text-[9px] uppercase ml-2">tu elección</span>}
+  1092→                </div>
+  1093→              );
+  1094→            })}
+  1095→          </div>
+  1096→          <div className="mt-3 flex items-center justify-between text-[10px] font-mono">
+  1097→            <span className={me.lastGain > 0 ? "text-green-hud" : "text-muted-foreground"}>
+  1098→              +{me.lastGain} pts {me.lastGain > 0 ? "· ¡punto!" : "· fallo"}
+  1099→            </span>
+  1100→            <span className={rival.lastGain > 0 ? "text-amber" : "text-muted-foreground"}>
+  1101→              rival: +{rival.lastGain} pts
+  1102→            </span>
+  1103→          </div>
+  1104→        </div>
+  1105→      )}
+  1106→    </div>
+  1107→  );
+  1108→}
+  1109→
+  1110→// barra de progreso del tiempo (10Hz, solo este componente se actualiza)
+  1111→function DuelTimerBar({ phase, ends, duration }: { phase: DuelState["phase"]; ends: number; duration: number }) {
+  1112→  const [now, setNow] = useState(Date.now());
+  1113→  useEffect(() => {
+  1114→    if (phase === "ENDED") return;
+  1115→    const t = setInterval(() => setNow(Date.now()), 100);
+  1116→    return () => clearInterval(t);
+  1117→  }, [phase]);
+  1118→  const frac = Math.max(0, Math.min(1, (ends - now) / duration));
+  1119→  const urgent = frac < 0.3 && phase === "QUESTION";
+  1120→  return (
+  1121→    <div className="h-1.5 w-full bg-black/60 border border-border overflow-hidden rounded-sm" role="progressbar" aria-label="tiempo restante">
+  1122→      <div
+  1123→        className={cn("h-full transition-[width] duration-100 ease-linear", urgent ? "bg-red-hud" : "bg-gradient-to-r from-electric to-neon")}
+  1124→        style={{ width: `${frac * 100}%` }}
+  1125→      />
+  1126→    </div>
+  1127→  );
+  1128→}
+  1129→
+  1130→// ============================================================
+  1131→// v17 — MODO RANKING: board mundial ELO (SQLite via /api/mp/stats)
+  1132→// ============================================================
+  1133→function RankingMode({ alias }: { alias: string }) {
+  1134→  const [board, setBoard] = useState<RankRow[] | null>(null);
+  1135→  const [error, setError] = useState(false);
+  1136→  const [loading, setLoading] = useState(true);
+  1137→  const myName = (alias || "").toUpperCase().slice(0, 18);
+  1138→
+  1139→  const load = useCallback(() => {
+  1140→    setLoading(true);
+  1141→    setError(false);
+  1142→    fetch("/api/mp/stats")
+  1143→      .then((r) => { if (!r.ok) throw new Error("fail"); return r.json(); })
+  1144→      .then((d) => setBoard(d.board ?? []))
+  1145→      .catch(() => setError(true))
+  1146→      .finally(() => setLoading(false));
+  1147→  }, []);
+  1148→
+  1149→  // primera carga sin spinner síncrono (evita renders en cascada)
+  1150→  useEffect(() => {
+  1151→    let alive = true;
+  1152→    fetch("/api/mp/stats")
+  1153→      .then((r) => { if (!r.ok) throw new Error("fail"); return r.json(); })
+  1154→      .then((d) => { if (alive) { setBoard(d.board ?? []); setLoading(false); } })
+  1155→      .catch(() => { if (alive) { setError(true); setLoading(false); } });
+  1156→    return () => { alive = false; };
+  1157→  }, []);
+  1158→
+  1159→  return (
+  1160→    <div className="space-y-3">
+  1161→      <div className="hud-corner p-3">
+  1162→        <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+  1163→          <p className="text-[11px] font-mono uppercase text-amber flex items-center gap-1.5">
+  1164→            <Medal className="w-3.5 h-3.5" /> Ranking mundial ELO — multijugador
+  1165→          </p>
+  1166→          <Button size="sm" variant="outline" onClick={load} className="h-7 font-mono text-[9px] uppercase border-border text-muted-foreground">
+  1167→            <RefreshCw className={cn("w-3 h-3 mr-1", loading && "animate-spin")} /> Actualizar
+  1168→          </Button>
+  1169→        </div>
+  1170→
+  1171→        {/* como funciona el ELO */}
+  1172→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-4">
+  1173→          <div className="border border-green-hud/30 bg-green-hud/5 px-2 py-1.5 rounded-sm">
+  1174→            <p className="text-[8px] font-mono uppercase text-muted-foreground tracking-widest">Victoria guerra</p>
+  1175→            <p className="text-[10px] font-mono text-green-hud font-bold">ELO +30</p>
+  1176→          </div>
+  1177→          <div className="border border-electric/30 bg-electric/5 px-2 py-1.5 rounded-sm">
+  1178→            <p className="text-[8px] font-mono uppercase text-muted-foreground tracking-widest">Duelo ganado</p>
+  1179→            <p className="text-[10px] font-mono text-electric font-bold">ELO +22</p>
+  1180→          </div>
+  1181→          <div className="border border-amber-hud/30 bg-amber-hud/5 px-2 py-1.5 rounded-sm">
+  1182→            <p className="text-[8px] font-mono uppercase text-muted-foreground tracking-widest">Caso resuelto</p>
+  1183→            <p className="text-[10px] font-mono text-amber font-bold">ELO +12</p>
+  1184→          </div>
+  1185→          <div className="border border-red-hud/30 bg-red-hud/5 px-2 py-1.5 rounded-sm">
+  1186→            <p className="text-[8px] font-mono uppercase text-muted-foreground tracking-widest">Derrotas</p>
+  1187→            <p className="text-[10px] font-mono text-red-hud font-bold">-16 / -14</p>
+  1188→          </div>
+  1189→        </div>
+  1190→
+  1191→        {loading && board == null && (
+  1192→          <div className="space-y-1.5">
+  1193→            {[...Array(6)].map((_, i) => (
+  1194→              <div key={i} className="h-8 bg-background/60 border border-border/40 rounded-sm animate-pulse" />
+  1195→            ))}
+  1196→          </div>
+  1197→        )}
+  1198→
+  1199→        {error && (
+  1200→          <div className="text-center py-8">
+  1201→            <p className="text-xs font-mono text-red-hud uppercase mb-3">No se pudo cargar el ranking</p>
+  1202→            <Button size="sm" onClick={load} className="font-mono text-[10px] uppercase border-electric-hud text-electric bg-electric/20">
+  1203→              <RefreshCw className="w-3 h-3 mr-1" /> Reintentar
+  1204→            </Button>
+  1205→          </div>
+  1206→        )}
+  1207→
+  1208→        {!loading && !error && board != null && board.length === 0 && (
+  1209→          <p className="text-xs font-mono text-muted-foreground text-center py-8 uppercase">
+  1210→            Nadie ha jugado aún — sé el primero en el board mundial
+  1211→          </p>
+  1212→        )}
+  1213→
+  1214→        {!loading && !error && board != null && board.length > 0 && (
+  1215→          <div className="overflow-x-auto">
+  1216→            <table className="w-full text-[10px] font-mono">
+  1217→              <thead>
+  1218→                <tr className="text-muted-foreground uppercase tracking-widest border-b border-border/60">
+  1219→                  <th className="text-left py-2 px-1">#</th>
+  1220→                  <th className="text-left py-2 px-1">Operador</th>
+  1221→                  <th className="text-right py-2 px-1">ELO</th>
+  1222→                  <th className="text-right py-2 px-1 hidden sm:table-cell">Guerras</th>
+  1223→                  <th className="text-right py-2 px-1 hidden sm:table-cell">Duelos</th>
+  1224→                  <th className="text-right py-2 px-1 hidden md:table-cell">Capturas</th>
+  1225→                  <th className="text-right py-2 px-1 hidden md:table-cell">Casos</th>
+  1226→                </tr>
+  1227→              </thead>
+  1228→              <tbody>
+  1229→                {board.map((row, i) => (
+  1230→                  <tr
+  1231→                    key={row.username}
+  1232→                    className={cn(
+  1233→                      "border-b border-border/30",
+  1234→                      row.username === myName && "bg-amber-hud/10 text-amber font-bold"
+  1235→                    )}
+  1236→                  >
+  1237→                    <td className="py-2 px-1">
+  1238→                      {i === 0 ? <Crown className="w-3.5 h-3.5 text-amber" /> : i < 3 ? <Medal className={cn("w-3 h-3", i === 1 ? "text-zinc-300" : "text-orange-400")} /> : <span className="text-muted-foreground">{i + 1}</span>}
+  1239→                    </td>
+  1240→                    <td className="py-2 px-1 uppercase truncate max-w-[120px]">
+  1241→                      {row.username}{row.username === myName && <span className="text-[8px] text-muted-foreground"> (TU)</span>}
+  1242→                    </td>
+  1243→                    <td className="py-2 px-1 text-right font-bold text-foreground">{row.elo}</td>
+  1244→                    <td className="py-2 px-1 text-right text-muted-foreground hidden sm:table-cell">{row.wins}V/{row.losses}D</td>
+  1245→                    <td className="py-2 px-1 text-right text-muted-foreground hidden sm:table-cell">{row.duelsWon}V/{row.duelsLost}D</td>
+  1246→                    <td className="py-2 px-1 text-right text-muted-foreground hidden md:table-cell">{row.captures}</td>
+  1247→                    <td className="py-2 px-1 text-right text-muted-foreground hidden md:table-cell">{row.detectiveSolved}</td>
+  1248→                  </tr>
+  1249→                ))}
+  1250→              </tbody>
+  1251→            </table>
+  1252→            {myName && !board.some((r) => r.username === myName) && (
+  1253→              <p className="text-[9px] font-mono text-muted-foreground pt-2 uppercase">
+  1254→                <ChevronRight className="w-3 h-3 inline -mt-0.5" /> Juega una guerra o un duelo para entrar al board
+  1255→              </p>
+  1256→            )}
+  1257→          </div>
+  1258→        )}
+  1259→      </div>
+  1260→    </div>
+  1261→  );
+  1262→}
+  1263→
+  1264→// ================= GLOBO 3D DEL MULTIJUGADOR =================
+  1265→function MpMap({
+  1266→  state, myId, selected, attackTargets, onSelect,
+  1267→}: {
+  1268→  state: MpState;
+  1269→  myId: string;
+  1270→  selected: string | null;
+  1271→  attackTargets: string[];
+  1272→  onSelect: (tid: string) => void;
+  1273→}) {
+  1274→  // color de cada territorio segun dueno
+  1275→  const territoryColors = useMemo(() => {
+  1276→    const m: Record<string, string> = {};
+  1277→    for (const t of state.territoryMeta) {
+  1278→      const owner = state.territories[t.id]?.owner;
+  1279→      m[t.id] = owner ? state.players[owner]?.color ?? "#52525b" : "#52525b";
+  1280→    }
+  1281→    return m;
+  1282→  }, [state.territoryMeta, state.territories, state.players]);
+  1283→
+  1284→  const territoryNames = useMemo(() => {
+  1285→    const m: Record<string, string> = {};
+  1286→    for (const t of state.territoryMeta) m[t.id] = t.name;
+  1287→    return m;
+  1288→  }, [state.territoryMeta]);
+  1289→
+  1290→  const selectedTerr = selected ? state.territoryMeta.find((t) => t.id === selected) : null;
+  1291→
+  1292→  const markers = useMemo(() => {
+  1293→    const arr: Globe3DMarker[] = state.territoryMeta.flatMap((t) => {
+  1294→      const terr = state.territories[t.id];
+  1295→      if (!terr) return [];
+  1296→      const owner = terr.owner;
+  1297→      const color = owner ? state.players[owner]?.color ?? "#52525b" : "#52525b";
+  1298→      const isMine = owner === myId;
+  1299→      const isSel = selected === t.id;
+  1300→      const isTarget = attackTargets.includes(t.id);
+  1301→      return [{
+  1302→        id: t.id,
+  1303→        lat: t.lat,
+  1304→        lng: t.lng,
+  1305→        color,
+  1306→        size: 0.26 + Math.min(terr.troops, 20) * 0.012,
+  1307→        alt: 0.015,
+  1308→        ring: isSel || isTarget || isMine,
+  1309→        ringMax: isTarget ? 5 : 3,
+  1310→        label: `${t.name} — ${terr.troops} tropas${isMine ? " · TUYO" : owner ? "" : " · NEUTRAL"}`,
+  1311→        labelTag: isMine ? "TU FRENTE" : owner ? state.players[owner]?.name ?? "" : "NEUTRAL",
+  1312→        onClick: () => onSelect(t.id),
+  1313→      }];
+  1314→    });
+  1315→    return arr;
+  1316→  }, [state, myId, selected, attackTargets, onSelect]);
+  1317→
+  1318→  const arcs = useMemo(() => {
+  1319→    if (!selectedTerr) return [] as Globe3DArc[];
+  1320→    return attackTargets.flatMap((a) => {
+  1321→      const to = state.territoryMeta.find((t) => t.id === a);
+  1322→      if (!to) return [];
+  1323→      return [{
+  1324→        startLat: selectedTerr.lat,
+  1325→        startLng: selectedTerr.lng,
+  1326→        endLat: to.lat,
+  1327→        endLng: to.lng,
+  1328→        color: ["#FF3B30", "#FF3B3066"] as [string, string],
+  1329→        stroke: 0.9,
+  1330→        dashTime: 1600,
+  1331→      }];
+  1332→    });
+  1333→  }, [selectedTerr, attackTargets, state.territoryMeta]);
+  1334→
+  1335→  return (
+  1336→    <div className="hud-corner relative overflow-hidden">
+  1337→      <GlobeMap3D
+  1338→        territoryColors={territoryColors}
+  1339→        territoryNames={territoryNames}
+  1340→        highlightTerritory={selected}
+  1341→        onTerritoryClick={(tid) => {
+  1342→          if (tid) onSelect(tid);
+  1343→        }}
+  1344→        markers={markers}
+  1345→        arcs={arcs}
+  1346→        height="min(58vh, 560px)"
+  1347→        minHeight={300}
+  1348→        autoRotate={false}
+  1349→        pov={{ lat: 24, lng: 12, altitude: 2.05 }}
+  1350→        ariaLabel="Mapa de guerra global 3D multijugador"
+  1351→      />
+  1352→      <div className="absolute bottom-2 left-2 text-[10px] font-mono font-bold text-amber bg-background/85 px-2 py-1 hud-corner border-amber-hud">
+  1353→        MULTIJUGADOR · RONDA {state.round} · {state.phase}
+  1354→      </div>
+  1355→      <div className="absolute bottom-2 right-2 text-[9px] font-mono text-muted-foreground bg-background/85 px-2 py-1 rounded-sm">
+  1356→        ■ NEUTRAL · arrastra para girar · clic para actuar
+  1357→      </div>
+  1358→    </div>
+  1359→  );
+  1360→}
+  1361→

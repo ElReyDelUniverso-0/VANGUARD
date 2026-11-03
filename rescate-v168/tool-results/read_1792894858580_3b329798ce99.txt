@@ -1,0 +1,613 @@
+     1→"use client";
+     2→
+     3→// v99.0 MENTE VIVA — LA MENTE DE VANGUARD (panel del cerebro central).
+     4→// Tres salas en una: PULSO (el mundo se actualiza solo cada 5 min y la MENTE
+     5→// piensa en voz alta), CHARLA (conversa con ella) y ANÁLISIS (firma expedientes
+     6→// completos con proyección explicable de cualquier titular que le pongas).
+     7→// Todo con respaldo determinista local: la sala NUNCA queda en silencio.
+     8→
+     9→import { useEffect, useMemo, useRef, useState } from "react";
+    10→import { toast } from "sonner";
+    11→import { Brain, Send, Loader2, Eye, Timer, MessageSquare, ScanSearch, Sparkles, Zap, RefreshCw, Globe2 } from "lucide-react";
+    12→import { cn } from "@/lib/utils";
+    13→import { useGameStore } from "@/lib/game-store";
+    14→// v101.0 EL REGRESO — PILAR 2: cada análisis alimenta el PERFIL DE ANALISTA
+    15→import { useAnalista } from "@/lib/analista";
+    16→// v105.0 LA REDACCIÓN: calma mientras escribes — nada interrumpe el diálogo
+    17→import { useCalma } from "@/lib/calma";
+    18→import { PanelHeader } from "@/components/vanguard/panel-header";
+    19→import { HeroOro } from "@/components/vanguard/hero-oro";
+    20→import {
+    21→  pulsoActual, proximoPulsoMs, eventosPulso, pensamientoMente, riesgoPulso,
+    22→  TIPO_COLOR, type EventoPulso, type TipoPulso,
+    23→} from "@/lib/mente-data";
+    24→
+    25→type Sala = "pulso" | "charla" | "analisis";
+    26→
+    27→const LS_MENTE = "vg-mente-v99";
+    28→const LS_CHAT = "vg-mente-chat-v99";
+    29→const MENTE_ACC = "#BEF264";
+    30→
+    31→type ChatMsg = { role: "user" | "mente"; text: string; ia?: boolean; web?: boolean; hallazgos?: { titulo: string; fuente: string; fecha: string }[]; claves?: string[]; confianza?: number };
+    32→
+    33→function leerMente(): { recompensados: string[]; dia: string; n: number; chatDia: string; chatHecho: boolean } {
+    34→  try {
+    35→    const raw = JSON.parse(localStorage.getItem(LS_MENTE) || "{}");
+    36→    const dia = new Date().toISOString().slice(0, 10);
+    37→    return {
+    38→      recompensados: Array.isArray(raw.recompensados) ? raw.recompensados : [],
+    39→      dia: typeof raw.dia === "string" ? raw.dia : "",
+    40→      n: typeof raw.n === "number" ? raw.n : 0,
+    41→      chatDia: typeof raw.chatDia === "string" ? raw.chatDia : "",
+    42→      chatHecho: raw.chatHecho === true,
+    43→    };
+    44→  } catch {
+    45→    return { recompensados: [], dia: "", n: 0, chatDia: "", chatHecho: false };
+    46→  }
+    47→}
+    48→
+    49→function RiesgoBar({ riesgo, color }: { riesgo: number; color?: string }) {
+    50→  return (
+    51→    <div className="h-1.5 rounded-full bg-white/10 overflow-hidden w-full">
+    52→      <div
+    53→        className="h-full rounded-full transition-transform duration-700 origin-left"
+    54→        style={{ width: "100%", transform: `scaleX(${riesgo / 100})`, background: color || (riesgo >= 70 ? "#FF3B30" : riesgo >= 45 ? "#FFA030" : "#4ADE80") }}
+    55→      />
+    56→    </div>
+    57→  );
+    58→}
+    59→
+    60→function ChipTipo({ tipo }: { tipo: TipoPulso }) {
+    61→  const c = TIPO_COLOR[tipo];
+    62→  return (
+    63→    <span
+    64→      className="px-1.5 py-0.5 rounded font-mono text-[9px] font-bold tracking-wider shrink-0"
+    65→      style={{ color: c, background: `${c}1f`, border: `1px solid ${c}44` }}
+    66→    >
+    67→      {tipo}
+    68→    </span>
+    69→  );
+    70→}
+    71→
+    72→function EventoCard({ ev, i }: { ev: EventoPulso; i: number }) {
+    73→  return (
+    74→    <div
+    75→      className="v99-entra rounded-lg border border-white/10 bg-black/40 p-2.5 flex flex-col gap-1.5"
+    76→      style={{ animationDelay: `${i * 70}ms` }}
+    77→    >
+    78→      <div className="flex items-center gap-2">
+    79→        <ChipTipo tipo={ev.tipo} />
+    80→        <span className="ml-auto font-mono text-[9px] text-muted-foreground">{ev.hora}</span>
+    81→      </div>
+    82→      <p className="text-[12px] leading-snug text-foreground/90">{ev.titulo}</p>
+    83→      <div className="flex items-center gap-2 mt-0.5">
+    84→        <RiesgoBar riesgo={ev.riesgo} color={TIPO_COLOR[ev.tipo]} />
+    85→        <span className="font-mono text-[9px] text-muted-foreground shrink-0">riesgo {ev.riesgo}</span>
+    86→      </div>
+    87→    </div>
+    88→  );
+    89→}
+    90→
+    91→function CerebroVivo() {
+    92→  // red neuronal decorativa: 8 nodos (las 8 neuronas del núcleo) + sinapsis
+    93→  const nodos: { x: number; y: number; d: number }[] = useMemo(
+    94→    () => [
+    95→      { x: 50, y: 14, d: 0 }, { x: 18, y: 34, d: 300 }, { x: 82, y: 34, d: 600 },
+    96→      { x: 8, y: 62, d: 900 }, { x: 50, y: 54, d: 450 }, { x: 92, y: 62, d: 1200 },
+    97→      { x: 28, y: 84, d: 1500 }, { x: 72, y: 84, d: 1800 },
+    98→    ],
+    99→    []
+   100→  );
+   101→  const lineas = useMemo(
+   102→    () => [
+   103→      [0, 1], [0, 2], [1, 3], [2, 5], [1, 4], [2, 4], [3, 6], [5, 7], [4, 6], [4, 5], [3, 4], [0, 4],
+   104→    ],
+   105→    []
+   106→  );
+   107→  return (
+   108→    <div className="relative h-28 w-28 shrink-0">
+   109→      <svg viewBox="0 0 100 100" className="w-full h-full">
+   110→        {lineas.map(([a, b], i) => (
+   111→          <line
+   112→            key={i}
+   113→            x1={nodos[a].x} y1={nodos[a].y} x2={nodos[b].x} y2={nodos[b].y}
+   114→            stroke={MENTE_ACC} strokeWidth="0.6"
+   115→            className="v99-sinapsis"
+   116→            style={{ animationDelay: `${i * 180}ms`, opacity: 0.5 }}
+   117→          />
+   118→        ))}
+   119→        {nodos.map((n, i) => (
+   120→          <circle
+   121→            key={i} cx={n.x} cy={n.y} r="3.2"
+   122→            fill={MENTE_ACC}
+   123→            className="v99-latido"
+   124→            style={{ animationDelay: `${n.d}ms`, transformOrigin: `${n.x}px ${n.y}px` }}
+   125→          />
+   126→        ))}
+   127→      </svg>
+   128→      <Brain className="absolute inset-0 m-auto w-7 h-7" style={{ color: MENTE_ACC }} strokeWidth={1.5} />
+   129→    </div>
+   130→  );
+   131→}
+   132→
+   133→export function MentePanel() {
+   134→  const addCoins = useGameStore((s) => s.addCoins);
+   135→  const addXp = useGameStore((s) => s.addXp);
+   136→
+   137→  const [sala, setSala] = useState<Sala>("pulso");
+   138→  const [now, setNow] = useState<number>(() => Date.now());
+   139→
+   140→  // ---- charla ----
+   141→  const [chat, setChat] = useState<ChatMsg[]>([]);
+   142→  const [input, setInput] = useState("");
+   143→  const [pensando, setPensando] = useState(false);
+   144→  const chatFin = useRef<HTMLDivElement | null>(null);
+   145→  // v105.0: modo INVESTIGAR — la pregunta sale a la red real y vuelve con fuentes
+   146→  const [investigarModo, setInvestigarModo] = useState(false);
+   147→  const activarLectura = useCalma((s) => s.activarLectura);
+   148→  const desactivarLectura = useCalma((s) => s.desactivarLectura);
+   149→
+   150→  // ---- análisis ----
+   151→  const [texto, setTexto] = useState("");
+   152→  const [exp, setExp] = useState<Record<string, unknown> | null>(null);
+   153→  const [cargando, setCargando] = useState(false);
+   154→
+   155→  // reloj global: 1 tick/seg (cuenta atrás + pulso)
+   156→  useEffect(() => {
+   157→    const id = setInterval(() => setNow(Date.now()), 1000);
+   158→    return () => clearInterval(id);
+   159→  }, []);
+   160→
+   161→  // chat persistido
+   162→  useEffect(() => {
+   163→    try {
+   164→      const raw = JSON.parse(localStorage.getItem(LS_CHAT) || "[]") as ChatMsg[];
+   165→      if (Array.isArray(raw)) setChat(raw.slice(-24));
+   166→    } catch { /* chat fresco */ }
+   167→  }, []);
+   168→
+   169→  // v105.0: "INVESTIGAR ESTO" desde LA REDACCIÓN aterriza aquí
+   170→  useEffect(() => {
+   171→    try {
+   172→      const raw = sessionStorage.getItem("vg-mente-investigar");
+   173→      if (raw) {
+   174→        const d = JSON.parse(raw) as { q?: string };
+   175→        if (d.q && d.q.length > 3) {
+   176→          setSala("charla"); // aterrizar directo en la sala de conversa
+   177→          setInvestigarModo(true);
+   178→          setInput(d.q);
+   179→          toast("INVESTIGACIÓN lista en el compositor — pulsa enviar y LA MENTE sale a la red real", { description: "Hallazgos con medio y fecha, cero enlaces" });
+   180→        }
+   181→        sessionStorage.removeItem("vg-mente-investigar");
+   182→      }
+   183→    } catch { /* sin pedido */ }
+   184→  }, []);
+   185→
+   186→  const bucket = pulsoActual(now);
+   187→  const restante = Math.floor(proximoPulsoMs(now) / 1000);
+   188→  const restanteTxt = `${String(Math.floor(restante / 60)).padStart(2, "0")}:${String(restante % 60).padStart(2, "0")}`;
+   189→  const progreso = 1 - proximoPulsoMs(now) / (5 * 60_000);
+   190→
+   191→  const eventos = useMemo(() => eventosPulso(bucket), [bucket]);
+   192→  const pensamiento = useMemo(() => pensamientoMente(bucket), [bucket]);
+   193→  const riesgoMedio = useMemo(() => riesgoPulso(bucket), [bucket]);
+   194→  const historia = useMemo(
+   195→    () => [bucket - 1, bucket - 2, bucket - 3].flatMap((b) => eventosPulso(b).map((e) => ({ ...e, ev: b }))),
+   196→    [bucket]
+   197→  );
+   198→
+   199→  useEffect(() => {
+   200→    chatFin.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+   201→  }, [chat.length, pensando]);
+   202→
+   203→  async function enviar() {
+   204→    const msg = input.trim();
+   205→    if (!msg || pensando) return;
+   206→    setInput("");
+   207→    const siguiente: ChatMsg[] = [...chat, { role: "user", text: msg }];
+   208→    setChat(siguiente);
+   209→    setPensando(true);
+   210→    try {
+   211→      // recompensa de primera charla del día
+   212→      const m = leerMente();
+   213→      const dia = new Date().toISOString().slice(0, 10);
+   214→      if (m.chatDia !== dia) {
+   215→        addCoins(2, "Abrir la charla con LA MENTE");
+   216→        addXp(2);
+   217→        toast.success("LA MENTE te escucha: +2ⓒ +2 XP por abrir la charla");
+   218→        localStorage.setItem(LS_MENTE, JSON.stringify({ ...m, chatDia: dia, chatHecho: true }));
+   219→      }
+   220→      // v105.0: INVESTIGAR sale a la red real — dialogo conversa con el núcleo
+   221→      const modo = investigarModo ? "investigar" : "dialogo";
+   222→      const cuerpo = investigarModo
+   223→        ? { modo, pregunta: msg }
+   224→        : { modo, mensaje: msg, historial: siguiente.slice(-6).map((c) => ({ role: c.role === "user" ? "user" : "assistant", content: c.text })) };
+   225→      const res = await fetch("/api/mente", {
+   226→        method: "POST",
+   227→        headers: { "Content-Type": "application/json" },
+   228→        body: JSON.stringify(cuerpo),
+   229→      });
+   230→      const data = await res.json();
+   231→      const respuesta: string = data.respuesta || data.error || "…";
+   232→      const conIa: ChatMsg[] = [...siguiente, {
+   233→        role: "mente",
+   234→        text: respuesta,
+   235→        ia: data.ia === true,
+   236→        web: data.web === true,
+   237→        hallazgos: Array.isArray(data.hallazgos) ? data.hallazgos : undefined,
+   238→        claves: Array.isArray(data.claves) ? data.claves : undefined,
+   239→        confianza: typeof data.confianza === "number" ? data.confianza : undefined,
+   240→      }];
+   241→      setChat(conIa);
+   242→      localStorage.setItem(LS_CHAT, JSON.stringify(conIa.slice(-24)));
+   243→    } catch {
+   244→      toast.error("LA MENTE no responde — el pulso sigue de todos modos");
+   245→    } finally {
+   246→      setPensando(false);
+   247→    }
+   248→  }
+   249→
+   250→  async function analizar() {
+   251→    const t = texto.trim();
+   252→    if (t.length < 10 || cargando) return;
+   253→    setCargando(true);
+   254→    setExp(null);
+   255→    try {
+   256→      const res = await fetch("/api/mente", {
+   257→        method: "POST",
+   258→        headers: { "Content-Type": "application/json" },
+   259→        body: JSON.stringify({ modo: "expediente", texto: t }),
+   260→      });
+   261→      const data = await res.json();
+   262→      if (!data.ok) throw new Error(data.error || "sin análisis");
+   263→      setExp(data);
+   264→      useAnalista.getState().registrar("mente"); // v101.0 PILAR 2: PERFIL DE ANALISTA
+   265→      // recompensa OPERADOR NEURONAL: análisis distinto, máx 5/día
+   266→      const m = leerMente();
+   267→      const dia = new Date().toISOString().slice(0, 10);
+   268→      const hoy = m.dia === dia ? m.n : 0;
+   269→      const clave = `${dia}:${t.length}:${t.slice(0, 40)}`;
+   270→      if (hoy < 5 && !m.recompensados.includes(clave)) {
+   271→        addCoins(3, "Expediente firmado por LA MENTE");
+   272→        addXp(2);
+   273→        localStorage.setItem(LS_MENTE, JSON.stringify({
+   274→          ...m, dia, n: hoy + 1, recompensados: [...m.recompensados, clave].slice(-40),
+   275→        }));
+   276→        toast.success(`Expediente firmado: +3ⓒ +2 XP (${Math.min(5, hoy + 1)}/5 hoy)`);
+   277→      }
+   278→    } catch (e) {
+   279→      toast.error(e instanceof Error ? e.message : "El análisis no pudo firmarse");
+   280→    } finally {
+   281→      setCargando(false);
+   282→    }
+   283→  }
+   284→
+   285→  const prob = exp?.probabilidades as Record<string, number> | undefined;
+   286→  const pred = exp?.prediccion as {
+   287→    horizonte: string;
+   288→    escenarios: { nombre: string; probabilidad: number; señal: string }[];
+   289→    pasos: string[];
+   290→    confianzaRed: number;
+   291→  } | undefined;
+   292→
+   293→  return (
+   294→    <div className="space-y-3">
+   295→      <HeroOro panel="mente" prioritaria />
+   296→
+   297→      <PanelHeader
+   298→        title="LA MENTE DE VANGUARD"
+   299→        subtitle="El cerebro central · pulso de 5 minutos · se actualiza sola"
+   300→        icon={<Brain className="w-4 h-4" />}
+   301→        color="cyan"
+   302→        right={
+   303→          <div className="flex items-center gap-1.5 font-mono text-[9px] px-2 py-1 rounded-full border" style={{ color: MENTE_ACC, borderColor: `${MENTE_ACC}55` }}>
+   304→            <span className="w-1.5 h-1.5 rounded-full vg-acc-dot" style={{ background: MENTE_ACC }} />
+   305→            PULSO Nº {bucket}
+   306→          </div>
+   307→        }
+   308→      />
+   309→
+   310→      {/* conmutador de salas */}
+   311→      <div className="grid grid-cols-3 gap-1.5">
+   312→        {([
+   313→          { k: "pulso", label: "PULSO", icon: <Timer className="w-3.5 h-3.5" /> },
+   314→          { k: "charla", label: "CHARLA", icon: <MessageSquare className="w-3.5 h-3.5" /> },
+   315→          { k: "analisis", label: "ANÁLISIS", icon: <ScanSearch className="w-3.5 h-3.5" /> },
+   316→        ] as { k: Sala; label: string; icon: React.ReactNode }[]).map((s) => (
+   317→          <button
+   318→            key={s.k}
+   319→            onClick={() => setSala(s.k)}
+   320→            className={cn(
+   321→              "flex items-center justify-center gap-1.5 rounded-lg border py-2 font-mono text-[11px] font-bold tracking-wider transition-all",
+   322→              sala === s.k ? "text-black" : "text-muted-foreground border-white/10 bg-black/30 hover:border-white/25"
+   323→            )}
+   324→            style={sala === s.k ? { background: MENTE_ACC, borderColor: MENTE_ACC } : undefined}
+   325→          >
+   326→            {s.icon} {s.label}
+   327→          </button>
+   328→        ))}
+   329→      </div>
+   330→
+   331→      {/* ---------------- SALA PULSO ---------------- */}
+   332→      {sala === "pulso" && (
+   333→        <div className="space-y-3">
+   334→          {/* contador vivo */}
+   335→          <div className="rounded-xl border border-white/10 bg-black/40 p-4 flex items-center gap-4">
+   336→            <CerebroVivo />
+   337→            <div className="flex-1 min-w-0">
+   338→              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Vanguard se actualiza sola</p>
+   339→              <p className="font-mono text-2xl font-bold tabular-nums" style={{ color: MENTE_ACC }}>
+   340→                {restanteTxt}
+   341→              </p>
+   342→              <p className="text-[10px] text-muted-foreground font-mono">próximo pulso del mundo · eventos nuevos garantizados</p>
+   343→              <div className="h-1.5 rounded-full bg-white/10 overflow-hidden mt-2">
+   344→                <div className="h-full rounded-full origin-left" style={{ width: "100%", transform: `scaleX(${progreso})`, background: MENTE_ACC, transition: "transform 1s linear" }} />
+   345→              </div>
+   346→            </div>
+   347→          </div>
+   348→
+   349→          {/* pensamiento del instante */}
+   350→          <div className="rounded-xl border p-3.5 relative overflow-hidden" style={{ borderColor: `${MENTE_ACC}44`, background: `${MENTE_ACC}0d` }} key={bucket}>
+   351→            <div className="v99-entra">
+   352→              <p className="font-mono text-[9px] uppercase tracking-widest mb-1 flex items-center gap-1.5" style={{ color: MENTE_ACC }}>
+   353→                <Sparkles className="w-3 h-3" /> ESTOY PENSANDO EN… · {new Date(now).toISOString().slice(11, 16)} UTC
+   354→              </p>
+   355→              <p className="text-[13px] leading-relaxed text-foreground/90 italic">&ldquo;{pensamiento}&rdquo;</p>
+   356→            </div>
+   357→          </div>
+   358→
+   359→          {/* riesgo medio del mundo */}
+   360→          <div className="rounded-xl border border-white/10 bg-black/40 p-3.5 flex items-center gap-3">
+   361→            <Eye className="w-4 h-4 text-muted-foreground shrink-0" />
+   362→            <div className="flex-1">
+   363→              <div className="flex items-center justify-between mb-1.5">
+   364→                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">riesgo medio del mundo en este pulso</p>
+   365→                <p className="font-mono text-sm font-bold" style={{ color: riesgoMedio >= 70 ? "#FF3B30" : riesgoMedio >= 45 ? "#FFA030" : "#4ADE80" }}>{riesgoMedio}/100</p>
+   366→              </div>
+   367→              <RiesgoBar riesgo={riesgoMedio} />
+   368→            </div>
+   369→          </div>
+   370→
+   371→          {/* lo que veo ahora */}
+   372→          <div>
+   373→            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">lo que veo ahora · {eventos.length} señales en el pulso</p>
+   374→            <div className="grid sm:grid-cols-2 gap-2">
+   375→              {eventos.map((ev, i) => <EventoCard key={ev.id} ev={ev} i={i} />)}
+   376→            </div>
+   377→          </div>
+   378→
+   379→          {/* el mundo mientras no mirabas */}
+   380→          <div>
+   381→            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">el mundo mientras no mirabas · 3 pulsos atrás</p>
+   382→            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+   383→              {historia.map((ev, i) => <EventoCard key={`${ev.id}-${ev.ev}`} ev={ev} i={i % 3} />)}
+   384→            </div>
+   385→          </div>
+   386→        </div>
+   387→      )}
+   388→
+   389→      {/* ---------------- SALA CHARLA ---------------- */}
+   390→      {sala === "charla" && (
+   391→        <div className="rounded-xl border border-white/10 bg-black/40 flex flex-col" style={{ minHeight: 420 }}>
+   392→          <div className="flex-1 overflow-y-auto p-3 space-y-2.5 max-h-[52vh]">
+   393→            {chat.length === 0 && (
+   394→              <div className="text-center py-8 space-y-2">
+   395→                <CerebroVivo />
+   396→                <p className="text-[13px] text-foreground/80 italic">Háblame. Pregúntame por un lugar, un frente, una decisión — o por lo que acabo de ver.</p>
+   397→                <p className="text-[10px] text-muted-foreground font-mono">LA MENTE contesta en su voz · si el núcleo cae, la red local responde igual</p>
+   398→              </div>
+   399→            )}
+   400→            {chat.map((c, i) => (
+   401→              <div key={i} className={cn("v99-msg flex", c.role === "user" ? "justify-end" : "justify-start")}>
+   402→                <div
+   403→                  className={cn(
+   404→                    "max-w-[88%] rounded-xl px-3 py-2 text-[12.5px] leading-relaxed border",
+   405→                    c.role === "user" ? "bg-amber/10 border-amber/30 text-foreground" : "bg-black/60 text-foreground/90"
+   406→                  )}
+   407→                  style={c.role === "mente" ? { borderColor: `${MENTE_ACC}44` } : undefined}
+   408→                >
+   409→                  {c.role === "mente" && (
+   410→                    <p className="font-mono text-[8.5px] uppercase tracking-widest mb-1 flex items-center gap-1 flex-wrap" style={{ color: MENTE_ACC }}>
+   411→                      <Brain className="w-2.5 h-2.5" /> LA MENTE{" "}
+   412→                      {c.web ? (
+   413→                        <span className="px-1.5 py-0.5 rounded-full" style={{ background: `${MENTE_ACC}1f`, color: MENTE_ACC }}>· investigación en vivo</span>
+   414→                      ) : c.ia === false ? (
+   415→                        <span className="text-muted-foreground">· red local</span>
+   416→                      ) : (
+   417→                        <span className="text-muted-foreground">· núcleo IA</span>
+   418→                      )}
+   419→                    </p>
+   420→                  )}
+   421→                  <p className="whitespace-pre-wrap">{c.text}</p>
+   422→                  {c.role === "mente" && c.hallazgos && c.hallazgos.length > 0 && (
+   423→                    <div className="mt-2 space-y-1">
+   424→                      <p className="font-mono text-[8px] uppercase tracking-widest text-muted-foreground">hallazgos reales · medio y fecha</p>
+   425→                      {c.hallazgos.map((h, j) => (
+   426→                        <div key={j} className="rounded-md bg-black/50 border border-white/10 px-2 py-1">
+   427→                          <p className="text-[11px] leading-snug text-foreground/80">{h.titulo}</p>
+   428→                          <p className="font-mono text-[8px] text-muted-foreground mt-0.5">{h.fuente}{h.fecha ? ` · ${h.fecha}` : ""}</p>
+   429→                        </div>
+   430→                      ))}
+   431→                    </div>
+   432→                  )}
+   433→                  {c.role === "mente" && c.claves && c.claves.length > 0 && (
+   434→                    <div className="mt-2 flex flex-col gap-0.5">
+   435→                      {c.claves.map((k, j) => (
+   436→                        <p key={j} className="text-[11px] text-foreground/75 flex gap-1"><span style={{ color: MENTE_ACC }}>▸</span>{k}</p>
+   437→                      ))}
+   438→                    </div>
+   439→                  )}
+   440→                  {c.role === "mente" && typeof c.confianza === "number" && c.confianza > 0 && (
+   441→                    <p className="font-mono text-[8px] text-muted-foreground mt-1.5">confianza en los hallazgos: {c.confianza}/100</p>
+   442→                  )}
+   443→                </div>
+   444→              </div>
+   445→            ))}
+   446→            {pensando && (
+   447→              <div className="flex justify-start">
+   448→                <div className="rounded-xl px-3 py-2 border bg-black/60 flex items-center gap-2" style={{ borderColor: `${MENTE_ACC}44` }}>
+   449→                  <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: MENTE_ACC }} />
+   450→                  <span className="text-[11px] text-muted-foreground font-mono">
+   451→                    {investigarModo ? "LA MENTE está recorriendo la red real…" : "LA MENTE está siguiendo el patrón…"}
+   452→                  </span>
+   453→                </div>
+   454→              </div>
+   455→            )}
+   456→            <div ref={chatFin} />
+   457→          </div>
+   458→          {/* v105.0 compositor: interruptor INVESTIGAR + calma al escribir */}
+   459→          <div className="p-2.5 border-t border-white/10 space-y-1.5">
+   460→            <button
+   461→              onClick={() => setInvestigarModo(!investigarModo)}
+   462→              className={cn(
+   463→                "w-full rounded-lg border py-1.5 font-mono text-[9.5px] font-bold tracking-wider flex items-center justify-center gap-1.5 transition-all",
+   464→                investigarModo ? "text-black" : "text-muted-foreground border-white/10 bg-black/30 hover:border-white/25"
+   465→              )}
+   466→              style={investigarModo ? { background: MENTE_ACC, borderColor: MENTE_ACC } : undefined}
+   467→            >
+   468→              <Globe2 className="w-3.5 h-3.5" />
+   469→              {investigarModo ? "INVESTIGACIÓN EN VIVO ACTIVA — la respuesta saldrá de la red real" : "ACTIVAR INVESTIGACIÓN EN VIVO — pregunta a la red real"}
+   470→            </button>
+   471→            <div className="flex gap-2">
+   472→              <textarea
+   473→                value={input}
+   474→                onChange={(e) => setInput(e.target.value)}
+   475→                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); enviar(); } }}
+   476→                onFocus={() => activarLectura()}
+   477→                onBlur={() => desactivarLectura()}
+   478→                rows={2}
+   479→                placeholder={investigarModo ? "¿Qué investigar en el mundo real? Ej.: últimas noticias del estrecho de Ormuz…" : "Escríbele a LA MENTE…"}
+   480→                className="flex-1 min-w-0 bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-amber/50 resize-none"
+   481→              />
+   482→              <button
+   483→                onClick={enviar}
+   484→                disabled={pensando || !input.trim()}
+   485→                className="rounded-lg px-3.5 font-bold text-black transition-transform active:scale-95 disabled:opacity-40 self-stretch"
+   486→                style={{ background: MENTE_ACC }}
+   487→              >
+   488→                <Send className="w-4 h-4" />
+   489→              </button>
+   490→            </div>
+   491→          </div>
+   492→        </div>
+   493→      )}
+   494→
+   495→      {/* ---------------- SALA ANÁLISIS ---------------- */}
+   496→      {sala === "analisis" && (
+   497→        <div className="space-y-3">
+   498→          <div className="rounded-xl border border-white/10 bg-black/40 p-3.5 space-y-2.5">
+   499→            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">pégale un titular, un cable o un rumor — LA MENTE firma el expediente</p>
+   500→            <textarea
+   501→              value={texto}
+   502→              onChange={(e) => setTexto(e.target.value)}
+   503→              rows={3}
+   504→              placeholder="Ej.: convoy sin rotación cruza el estrecho de Ormuz mientras tres salas OSINT discrepan sobre el cargamento…"
+   505→              className="w-full bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-amber/50 resize-none"
+   506→            />
+   507→            <button
+   508→              onClick={analizar}
+   509→              disabled={cargando || texto.trim().length < 10}
+   510→              className="w-full rounded-lg py-2.5 font-mono text-[12px] font-bold tracking-widest text-black transition-transform active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2"
+   511→              style={{ background: MENTE_ACC }}
+   512→            >
+   513→              {cargando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+   514→              {cargando ? "LAS 8 NEURONAS ESTÁN LEYENDO…" : "FIRMAR EXPEDIENTE NEURONAL"}
+   515→            </button>
+   516→          </div>
+   517→
+   518→          {exp && (
+   519→            <div className="v99-entra rounded-xl border border-white/10 bg-black/40 p-4 space-y-3.5">
+   520→              <div className="flex items-center gap-2 flex-wrap">
+   521→                <span className="font-mono text-[9px] px-2 py-0.5 rounded-full border" style={{ color: MENTE_ACC, borderColor: `${MENTE_ACC}55` }}>
+   522→                  {exp.ia === true ? "FIRMADO POR EL NÚCLEO IA" : "RED NEURONAL LOCAL"}
+   523→                </span>
+   524→                <span className="font-mono text-[9px] px-2 py-0.5 rounded-full border border-white/20 text-muted-foreground">{String(exp.sentimiento)}</span>
+   525→                <span className="ml-auto font-mono text-[9px] text-muted-foreground">confianza {String(exp.confianza)}/100</span>
+   526→              </div>
+   527→
+   528→              <p className="text-[13px] leading-relaxed text-foreground/90">{String(exp.resumen)}</p>
+   529→
+   530→              <div>
+   531→                <div className="flex items-center justify-between mb-1.5">
+   532→                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">riesgo del episodio</p>
+   533→                  <p className="font-mono text-xs font-bold text-red-hud">{String(exp.riesgo)}/100</p>
+   534→                </div>
+   535→                <RiesgoBar riesgo={Number(exp.riesgo)} />
+   536→              </div>
+   537→
+   538→              <div className="grid sm:grid-cols-2 gap-3">
+   539→                <div>
+   540→                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-1.5">actores</p>
+   541→                  <div className="flex flex-wrap gap-1.5">
+   542→                    {(exp.actores as string[]).map((a, i) => (
+   543→                      <span key={i} className="px-2 py-0.5 rounded-full bg-white/5 border border-white/15 text-[10.5px]">{a}</span>
+   544→                    ))}
+   545→                  </div>
+   546→                </div>
+   547→                <div>
+   548→                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-1.5">conexiones temáticas</p>
+   549→                  <div className="flex flex-wrap gap-1.5">
+   550→                    {(exp.conexiones as string[]).map((a, i) => (
+   551→                      <span key={i} className="px-2 py-0.5 rounded-full border text-[10.5px]" style={{ color: MENTE_ACC, borderColor: `${MENTE_ACC}44`, background: `${MENTE_ACC}0f` }}>{a}</span>
+   552→                    ))}
+   553→                  </div>
+   554→                </div>
+   555→              </div>
+   556→
+   557→              {prob && (
+   558→                <div className="space-y-1.5">
+   559→                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">probabilidades de sentimiento</p>
+   560→                  {([["escalada", "#FF3B30"], ["tension", "#FFA030"], ["estable", "#4ADE80"], ["detente", "#7FE3FF"]] as [string, string][]).map(([k, c]) => (
+   561→                    <div key={k} className="flex items-center gap-2">
+   562→                      <span className="font-mono text-[9px] w-20 text-muted-foreground uppercase">{k}</span>
+   563→                      <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+   564→                        <div className="h-full rounded-full origin-left transition-transform duration-700" style={{ width: "100%", transform: `scaleX(${(Number(prob[k]) || 0) / 100})`, background: c }} />
+   565→                      </div>
+   566→                      <span className="font-mono text-[9px] w-8 text-right text-muted-foreground">{prob[k]}%</span>
+   567→                    </div>
+   568→                  ))}
+   569→                </div>
+   570→              )}
+   571→
+   572→              <div className="rounded-lg border border-white/10 p-2.5 space-y-1.5">
+   573→                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">clave estratégica</p>
+   574→                <p className="text-[12.5px] text-foreground/90">{String(exp.clave)}</p>
+   575→                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground pt-1">recomendación al operador</p>
+   576→                <p className="text-[12.5px]" style={{ color: MENTE_ACC }}>{String(exp.recomendacion)}</p>
+   577→              </div>
+   578→
+   579→              {pred && (
+   580→                <div className="rounded-lg border p-3 space-y-2.5" style={{ borderColor: `${MENTE_ACC}44`, background: `${MENTE_ACC}08` }}>
+   581→                  <p className="font-mono text-[10px] uppercase tracking-widest flex items-center gap-1.5" style={{ color: MENTE_ACC }}>
+   582→                    <RefreshCw className="w-3 h-3" /> PROYECCIÓN DE LA MENTE · horizonte {pred.horizonte}
+   583→                  </p>
+   584→                  <div className="space-y-1.5">
+   585→                    {pred.escenarios.map((e, i) => (
+   586→                      <div key={i} className="flex items-center gap-2">
+   587→                        <span className="font-mono text-[9.5px] w-[148px] shrink-0 truncate" style={{ color: i === 0 ? MENTE_ACC : undefined }}>{e.nombre}</span>
+   588→                        <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+   589→                          <div className="h-full rounded-full origin-left transition-transform duration-700" style={{ width: "100%", transform: `scaleX(${e.probabilidad / 100})`, background: i === 0 ? MENTE_ACC : "#ffffff55" }} />
+   590→                        </div>
+   591→                        <span className="font-mono text-[9px] w-9 text-right text-muted-foreground">{e.probabilidad}%</span>
+   592→                      </div>
+   593→                    ))}
+   594→                  </div>
+   595→                  <p className="text-[10.5px] text-muted-foreground">señal principal: {pred.escenarios[0]?.señal}</p>
+   596→                  <details className="group">
+   597→                    <summary className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground cursor-pointer hover:text-foreground">razonamiento de la red (explicable)</summary>
+   598→                    <ol className="mt-1.5 space-y-1 list-decimal list-inside">
+   599→                      {pred.pasos.map((p, i) => (
+   600→                        <li key={i} className="text-[11px] text-muted-foreground font-mono">{p}</li>
+   601→                      ))}
+   602→                    </ol>
+   603→                  </details>
+   604→                </div>
+   605→              )}
+   606→            </div>
+   607→          )}
+   608→        </div>
+   609→      )}
+   610→    </div>
+   611→  );
+   612→}
+   613→

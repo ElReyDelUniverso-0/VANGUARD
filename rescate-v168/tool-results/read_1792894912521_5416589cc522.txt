@@ -1,0 +1,582 @@
+     1→"use client";
+     2→
+     3→// v72.0 INFINITA VERDADES — MI PAÍS · SIMULADOR DE NACIÓN.
+     4→// El comandante pidió: "crear simulador de país, mi país, cartel/unión, elegir
+     5→// su territorio, cada figura pública, y poder invitar jugadores aleatorios".
+     6→//  · CREACIÓN EN 4 PASOS: Identidad → Bandera (2 tintas + símbolo, SVG con brillo
+     7→//    real, nada plano) → Territorio (gobierno, región del mundo, capital) →
+     8→//    Figuras públicas (presidente + gabinete generado, todo editable).
+     9→//  · ESTADÍSTICAS DE NACIÓN: población/PIB/ejército derivados del nombre en el
+    10→//    servidor — mismas reglas para todos.
+    11→//  · UNIÓN / CARTEL: funda el tuyo o únete a los del mundo (miembros en vivo).
+    12→//  · RECLUTAR ALIADO ALEATORIO: invita a un guerrero EN LÍNEA al azar; si te
+    13→//    invitan, la invitación llega aquí y con ACEPTAR entras a su unión.
+    14→//  · REGLA DE ORO: título grande → ilustración → texto fácil.
+    15→
+    16→import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+    17→import { Flag, Users, MapPin, Crown, UserPlus, Loader2, Swords, Landmark, Check, Inbox, LogOut } from "lucide-react";
+    18→import { toast } from "sonner";
+    19→import { PanelHeader } from "@/components/vanguard/panel-header";
+    20→import { TituloEpico } from "@/components/vanguard/titulo-epico";
+    21→import { cn } from "@/lib/utils";
+    22→
+    23→// ---------- tipos ----------
+    24→interface Ministro {
+    25→  rol: string;
+    26→  nombre: string;
+    27→}
+    28→interface Nacion {
+    29→  uid: string;
+    30→  nombre: string;
+    31→  gentilicio: string;
+    32→  lema: string;
+    33→  c1: string;
+    34→  c2: string;
+    35→  simbolo: string;
+    36→  gobierno: string;
+    37→  region: string;
+    38→  capital: string;
+    39→  presidente: string;
+    40→  ministros: Ministro[];
+    41→  union: string | null;
+    42→  pob: number;
+    43→  pib: number;
+    44→  ejercito: number;
+    45→}
+    46→interface UnionRow {
+    47→  nombre: string;
+    48→  tipo: string;
+    49→  lema: string;
+    50→  fundador: string;
+    51→  miembros: number;
+    52→}
+    53→interface Invitacion {
+    54→  id: number;
+    55→  de: string;
+    56→  nacion: string;
+    57→  union: string;
+    58→}
+    59→
+    60→// ---------- datos ----------
+    61→const GOBIERNOS = ["REPÚBLICA", "DEMOCRACIA", "MONARQUÍA", "JUNTA MILITAR", "TECNOCRACIA", "CARTEL", "EMIRATO", "CONFEDERACIÓN"];
+    62→const REGIONES = ["América del Norte", "América del Sur", "Europa", "África", "Oriente Medio", "Asia", "Oceanía", "Ártico"];
+    63→const SIMBOLOS = ["★", "☭", "⚜", "☀", "⚔", "✠", "♛", "🦅", "🐉", "🔥", "🕊", "⚓"];
+    64→const TIPOS_UNION = ["ALIANZA", "CARTEL", "UNIÓN", "COALICIÓN"];
+    65→const NOMBRES = ["Valeria", "Adrián", "Kofi", "Mei", "Sasha", "Ingrid", "Rashid", "Camila", "Nikolái", "Fátima", "Diego", "Yuki", "Amara", "Leonel", "Priya", "Elena", "Óscar", "Zara"];
+    66→const APELLIDOS = ["Vargas", "Okafor", "Tanaka", "Petrov", "Silva", "Herrera", "Kowalski", "Marchetti", "Dubois", "Nakamura", "Haddad", "Rojas", "Lindqvist", "Costa", "Ibrahim", "Moreau", "Castillo", "Volkov"];
+    67→const ROLES = ["Ministro de Defensa", "Ministra de Exterior", "Ministro de Economía", "Directora de Inteligencia"];
+    68→
+    69→const compact = new Intl.NumberFormat("es", { notation: "compact", maximumFractionDigits: 1 });
+    70→
+    71→function uidLocal(): string {
+    72→  try {
+    73→    let id = localStorage.getItem("vanguard-mp-uid");
+    74→    if (!id) {
+    75→      id = `mp-${crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
+    76→      localStorage.setItem("vanguard-mp-uid", id);
+    77→    }
+    78→    return id;
+    79→  } catch {
+    80→    return `anon-${Math.random().toString(36).slice(2)}`;
+    81→  }
+    82→}
+    83→
+    84→function generarGabinete(): Ministro[] {
+    85→  const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+    86→  return ROLES.map((rol) => ({ rol, nombre: `${pick(NOMBRES)} ${pick(APELLIDOS)}` }));
+    87→}
+    88→
+    89→// ---------- bandera SVG con brillo (nada plano) ----------
+    90→function Bandera({ c1, c2, simbolo, className }: { c1: string; c2: string; simbolo: string; className?: string }) {
+    91→  const id = useMemo(() => `fb${Math.random().toString(36).slice(2, 8)}`, []);
+    92→  return (
+    93→    <svg viewBox="0 0 60 40" className={className} role="img" aria-label="Bandera de mi país">
+    94→      <defs>
+    95→        <linearGradient id={`${id}s`} x1="0" y1="0" x2="0" y2="1">
+    96→          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.34" />
+    97→          <stop offset="38%" stopColor="#ffffff" stopOpacity="0.06" />
+    98→          <stop offset="62%" stopColor="#000000" stopOpacity="0.05" />
+    99→          <stop offset="100%" stopColor="#000000" stopOpacity="0.30" />
+   100→        </linearGradient>
+   101→      </defs>
+   102→      <rect width="60" height="20" fill={c1} />
+   103→      <rect y="20" width="60" height="20" fill={c2} />
+   104→      <text x="30" y="21.5" textAnchor="middle" dominantBaseline="middle" fontSize="13" fill="#ffffff" stroke="rgba(0,0,0,0.45)" strokeWidth="0.55" paintOrder="stroke" style={{ fontFamily: "sans-serif" }}>
+   105→        {simbolo}
+   106→      </text>
+   107→      <rect width="60" height="40" fill={`url(#${id}s)`} />
+   108→      <rect width="60" height="40" fill="none" stroke="rgba(0,0,0,0.55)" strokeWidth="1" />
+   109→    </svg>
+   110→  );
+   111→}
+   112→
+   113→// ---------- barra de estadística ----------
+   114→function StatBar({ label, valor, pct, color }: { label: string; valor: string; pct: number; color: string }) {
+   115→  return (
+   116→    <div>
+   117→      <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+   118→        <span>{label}</span>
+   119→        <span className="text-foreground tabular-nums">{valor}</span>
+   120→      </div>
+   121→      <div className="mt-1 h-1.5 rounded-full bg-black/50 overflow-hidden border border-white/5">
+   122→        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${Math.max(4, Math.min(100, pct))}%`, background: color, boxShadow: `0 0 10px ${color}` }} />
+   123→      </div>
+   124→    </div>
+   125→  );
+   126→}
+   127→
+   128→// ---------- panel ----------
+   129→export function MiPaisPanel() {
+   130→  const [uid, setUid] = useState("");
+   131→  const [mia, setMia] = useState<Nacion | null>(null);
+   132→  const [top, setTop] = useState<Nacion[]>([]);
+   133→  const [uniones, setUniones] = useState<UnionRow[]>([]);
+   134→  const [invitaciones, setInvitaciones] = useState<Invitacion[]>([]);
+   135→  const [cargando, setCargando] = useState(true);
+   136→
+   137→  // wizard
+   138→  const [paso, setPaso] = useState(1);
+   139→  const [f, setF] = useState({
+   140→    nombre: "", gentilicio: "", lema: "",
+   141→    c1: "#c8102e", c2: "#ffd60a", simbolo: "★",
+   142→    gobierno: "REPÚBLICA", region: "América del Sur", capital: "",
+   143→    presidente: "", ministros: [] as Ministro[],
+   144→  });
+   145→  const [guardando, setGuardando] = useState(false);
+   146→
+   147→  // unión
+   148→  const [uNombre, setUNombre] = useState("");
+   149→  const [uTipo, setUTipo] = useState("ALIANZA");
+   150→  const [uLema, setULema] = useState("");
+   151→  const [reclutando, setReclutando] = useState(false);
+   152→  const vivoRef = useRef(true);
+   153→
+   154→  const refrescar = useCallback(async (u: string) => {
+   155→    try {
+   156→      const r = await fetch(`/api/naciones?uid=${encodeURIComponent(u)}`, { cache: "no-store" });
+   157→      const d = await r.json();
+   158→      if (!vivoRef.current) return;
+   159→      setMia(d?.mia ?? null);
+   160→      setTop(Array.isArray(d?.top) ? d.top : []);
+   161→      setUniones(Array.isArray(d?.uniones) ? d.uniones : []);
+   162→    } catch { /* aguanta */ }
+   163→  }, []);
+   164→
+   165→  useEffect(() => {
+   166→    vivoRef.current = true;
+   167→    const u = uidLocal();
+   168→    setUid(u);
+   169→    refrescar(u);
+   170→    setCargando(false);
+   171→    return () => { vivoRef.current = false; };
+   172→  }, [refrescar]);
+   173→
+   174→  // buzón de invitaciones (polling cada 12s)
+   175→  useEffect(() => {
+   176→    if (!uid) return;
+   177→    let alive = true;
+   178→    const poll = async () => {
+   179→      try {
+   180→        const r = await fetch(`/api/reclutar?uid=${encodeURIComponent(uid)}`, { cache: "no-store" });
+   181→        const d = await r.json();
+   182→        if (alive) setInvitaciones(Array.isArray(d?.items) ? d.items : []);
+   183→      } catch { /* silencio */ }
+   184→    };
+   185→    poll();
+   186→    const t = setInterval(poll, 12_000);
+   187→    return () => { alive = false; clearInterval(t); };
+   188→  }, [uid]);
+   189→
+   190→  const proclamar = async () => {
+   191→    if (f.nombre.trim().length < 2) { toast.error("Tu país necesita un nombre"); setPaso(1); return; }
+   192→    setGuardando(true);
+   193→    try {
+   194→      const r = await fetch("/api/naciones", {
+   195→        method: "POST",
+   196→        headers: { "Content-Type": "application/json" },
+   197→        body: JSON.stringify({ action: "guardar", uid, nacion: f }),
+   198→      });
+   199→      const d = await r.json();
+   200→      if (d?.ok) {
+   201→        setMia(d.mia);
+   202→        toast.success(`¡${f.nombre} proclamado! Ya figura en el mapa de naciones.`);
+   203→        refrescar(uid);
+   204→      } else {
+   205→        toast.error(d?.error || "No se pudo proclamar la nación");
+   206→      }
+   207→    } catch {
+   208→      toast.error("Red intermitente — intenta de nuevo");
+   209→    } finally {
+   210→      setGuardando(false);
+   211→    }
+   212→  };
+   213→
+   214→  const accionUnion = async (action: string, union?: string) => {
+   215→    try {
+   216→      const r = await fetch("/api/naciones", {
+   217→        method: "POST",
+   218→        headers: { "Content-Type": "application/json" },
+   219→        body: JSON.stringify({ action, uid, union: union ?? { nombre: uNombre, tipo: uTipo, lema: uLema } }),
+   220→      });
+   221→      const d = await r.json();
+   222→      if (d?.ok) {
+   223→        toast.success(action === "crear_union" ? `¡${d.union} fundada!` : action === "salir" ? "Saliste de la unión" : `Te uniste a ${d.union}`);
+   224→        setUNombre(""); setULema("");
+   225→        refrescar(uid);
+   226→      } else {
+   227→        toast.error(d?.error || "No se pudo completar");
+   228→      }
+   229→    } catch {
+   230→      toast.error("Red intermitente — intenta de nuevo");
+   231→    }
+   232→  };
+   233→
+   234→  const reclutar = async () => {
+   235→    setReclutando(true);
+   236→    try {
+   237→      const r = await fetch("/api/reclutar", {
+   238→        method: "POST",
+   239→        headers: { "Content-Type": "application/json" },
+   240→        body: JSON.stringify({ action: "invitar", uid }),
+   241→      });
+   242→      const d = await r.json();
+   243→      if (d?.ok) toast.success(`Invitación enviada a un guerrero en línea (${String(d.objetivo).slice(0, 10)}…). Si acepta, se une a tu causa.`);
+   244→      else toast.error(d?.error || "No se pudo enviar la invitación");
+   245→    } catch {
+   246→      toast.error("Red intermitente — intenta de nuevo");
+   247→    } finally {
+   248→      setReclutando(false);
+   249→    }
+   250→  };
+   251→
+   252→  const aceptar = async (inv: Invitacion) => {
+   253→    try {
+   254→      const r = await fetch("/api/reclutar", {
+   255→        method: "POST",
+   256→        headers: { "Content-Type": "application/json" },
+   257→        body: JSON.stringify({ action: "aceptar", uid, id: inv.id }),
+   258→      });
+   259→      const d = await r.json();
+   260→      setInvitaciones((prev) => prev.filter((i) => i.id !== inv.id));
+   261→      if (d?.ok) {
+   262→        toast.success(inv.union ? `¡Bienvenido a ${inv.union}!` : `Te aliaste con ${inv.nacion}`);
+   263→        refrescar(uid);
+   264→      }
+   265→    } catch { /* silencio */ }
+   266→  };
+   267→
+   268→  // ---------- render ----------
+   269→  return (
+   270→    <div className="space-y-4">
+   271→      <PanelHeader title="MI PAÍS" subtitle="Simulador de nación" />
+   272→
+   273→      <TituloEpico
+   274→        titulo="MI PAÍS"
+   275→        volanta="Simulador de nación — funda, une y conquista"
+   276→        imagen="/ilustraciones/mi-pais.jpg"
+   277→        escena="ciudad"
+   278→        semilla={88}
+   279→        texto="Proclama tu propia nación: ponle nombre y bandera, elige su gobierno y territorio, nombra a sus figuras públicas, fúndala en una unión o cartel… y recluta aliados al azar entre los guerreros que están en línea ahora mismo."
+   280→        altura={270}
+   281→      />
+   282→
+   283→      {cargando ? (
+   284→        <div className="hud-panel p-8 flex items-center justify-center gap-2 text-muted-foreground">
+   285→          <Loader2 className="w-4 h-4 animate-spin" /> Cargando tu expediente de fundador…
+   286→        </div>
+   287→      ) : !mia ? (
+   288→        /* ==================== WIZARD DE CREACIÓN ==================== */
+   289→        <section className="hud-panel p-4 md:p-5" aria-label="Crear mi país">
+   290→          {/* pasos */}
+   291→          <div className="flex items-center gap-1.5 mb-4" aria-hidden>
+   292→            {[1, 2, 3, 4].map((n) => (
+   293→              <div key={n} className={cn("h-1 flex-1 rounded-full transition-all duration-500", paso >= n ? "bg-gradient-to-r from-[#ffc46b] to-[#ff8a2a] shadow-[0_0_8px_rgba(255,138,42,0.5)]" : "bg-white/10")} />
+   294→            ))}
+   295→          </div>
+   296→          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber mb-3">PASO {paso} DE 4</p>
+   297→
+   298→          {paso === 1 ? (
+   299→            <div className="space-y-3.5">
+   300→              <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2"><Flag className="w-4 h-4 text-amber" /> Identidad de la nación</h3>
+   301→              <input value={f.nombre} onChange={(e) => setF({ ...f, nombre: e.target.value.slice(0, 32) })} placeholder="Nombre del país (ej. NUEVA ESPERANZA)" aria-label="Nombre del país" className="w-full bg-black/40 border border-white/10 focus:border-amber-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none transition-colors min-h-[44px]" />
+   302→              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+   303→                <input value={f.gentilicio} onChange={(e) => setF({ ...f, gentilicio: e.target.value.slice(0, 24) })} placeholder="Gentilicio (ej. esperanzano)" aria-label="Gentilicio" className="w-full bg-black/40 border border-white/10 focus:border-amber-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none transition-colors min-h-[44px]" />
+   304→                <input value={f.capital} onChange={(e) => setF({ ...f, capital: e.target.value.slice(0, 28) })} placeholder="Capital (ej. Puerto Libre)" aria-label="Capital" className="w-full bg-black/40 border border-white/10 focus:border-amber-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none transition-colors min-h-[44px]" />
+   305→              </div>
+   306→              <input value={f.lema} onChange={(e) => setF({ ...f, lema: e.target.value.slice(0, 80) })} placeholder="Lema nacional (ej. Ni un paso atrás)" aria-label="Lema nacional" className="w-full bg-black/40 border border-white/10 focus:border-amber-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none transition-colors min-h-[44px]" />
+   307→            </div>
+   308→          ) : null}
+   309→
+   310→          {paso === 2 ? (
+   311→            <div className="space-y-3.5">
+   312→              <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2"><Flag className="w-4 h-4 text-amber" /> Bandera nacional</h3>
+   313→              <div className="flex items-center gap-4 flex-wrap">
+   314→                <Bandera c1={f.c1} c2={f.c2} simbolo={f.simbolo} className="w-40 h-auto rounded-sm shadow-[0_10px_28px_rgba(0,0,0,0.6)]" />
+   315→                <div className="flex items-center gap-3">
+   316→                  <label className="flex flex-col gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+   317→                    Tinta 1
+   318→                    <input type="color" value={f.c1} onChange={(e) => setF({ ...f, c1: e.target.value })} aria-label="Color 1 de la bandera" className="w-12 h-10 bg-transparent cursor-pointer" />
+   319→                  </label>
+   320→                  <label className="flex flex-col gap-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+   321→                    Tinta 2
+   322→                    <input type="color" value={f.c2} onChange={(e) => setF({ ...f, c2: e.target.value })} aria-label="Color 2 de la bandera" className="w-12 h-10 bg-transparent cursor-pointer" />
+   323→                  </label>
+   324→                </div>
+   325→              </div>
+   326→              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Símbolo en el centro</p>
+   327→              <div className="flex flex-wrap gap-1.5">
+   328→                {SIMBOLOS.map((s) => (
+   329→                  <button key={s} onClick={() => setF({ ...f, simbolo: s })} aria-pressed={f.simbolo === s}
+   330→                    className={cn("w-10 h-10 text-lg rounded-sm border transition-all active:scale-90 min-h-[40px]",
+   331→                      f.simbolo === s ? "border-amber-hud bg-amber-hud/20 shadow-[0_0_12px_rgba(255,138,42,0.3)]" : "border-white/10 bg-black/30 hover:border-amber-hud/50")}>
+   332→                    {s}
+   333→                  </button>
+   334→                ))}
+   335→              </div>
+   336→            </div>
+   337→          ) : null}
+   338→
+   339→          {paso === 3 ? (
+   340→            <div className="space-y-3.5">
+   341→              <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2"><Landmark className="w-4 h-4 text-amber" /> Gobierno y territorio</h3>
+   342→              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Forma de gobierno</p>
+   343→              <div className="flex flex-wrap gap-1.5">
+   344→                {GOBIERNOS.map((g) => (
+   345→                  <button key={g} onClick={() => setF({ ...f, gobierno: g })} aria-pressed={f.gobierno === g}
+   346→                    className={cn("px-2.5 py-1.5 text-[10px] font-mono uppercase tracking-widest border rounded-sm transition-all active:scale-95 min-h-[32px]",
+   347→                      f.gobierno === g ? "text-amber border-amber-hud bg-amber-hud/20 shadow-[0_0_14px_rgba(255,138,42,0.25)]" : "text-muted-foreground border-white/10 hover:border-amber-hud/40")}>
+   348→                    {g}
+   349→                  </button>
+   350→                ))}
+   351→              </div>
+   352→              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" /> Región del mundo</p>
+   353→              <div className="flex flex-wrap gap-1.5">
+   354→                {REGIONES.map((r) => (
+   355→                  <button key={r} onClick={() => setF({ ...f, region: r })} aria-pressed={f.region === r}
+   356→                    className={cn("px-2.5 py-1.5 text-[10px] font-mono uppercase tracking-widest border rounded-sm transition-all active:scale-95 min-h-[32px]",
+   357→                      f.region === r ? "text-cyan-hud border-cyan-hud bg-cyan-hud/20 shadow-[0_0_14px_rgba(212, 175, 55,0.25)]" : "text-muted-foreground border-white/10 hover:border-cyan-hud/40")}>
+   358→                    {r}
+   359→                  </button>
+   360→                ))}
+   361→              </div>
+   362→            </div>
+   363→          ) : null}
+   364→
+   365→          {paso === 4 ? (
+   366→            <div className="space-y-3.5">
+   367→              <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2"><Crown className="w-4 h-4 text-amber" /> Figuras públicas</h3>
+   368→              <input value={f.presidente} onChange={(e) => setF({ ...f, presidente: e.target.value.slice(0, 32) })} placeholder={f.gobierno === "MONARQUÍA" ? "Nombre del Rey / la Reina" : f.gobierno === "CARTEL" ? "Nombre del Jefe" : "Nombre del Presidente"} aria-label="Nombre del líder" className="w-full bg-black/40 border border-white/10 focus:border-amber-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none transition-colors min-h-[44px]" />
+   369→              {f.ministros.length === 0 ? (
+   370→                <button onClick={() => setF({ ...f, ministros: generarGabinete() })}
+   371→                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[48px] rounded-sm border border-amber-hud/50 bg-amber-hud/10 hover:bg-amber-hud/20 transition-all active:scale-[0.98] text-sm font-semibold text-amber">
+   372→                  <UserPlus className="w-4 h-4" /> Generar gabinete automáticamente
+   373→                </button>
+   374→              ) : (
+   375→                <div className="space-y-2">
+   376→                  {f.ministros.map((m, i) => (
+   377→                    <div key={i} className="flex items-center gap-2">
+   378→                      <span className="w-44 shrink-0 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{m.rol}</span>
+   379→                      <input value={m.nombre} onChange={(e) => setF({ ...f, ministros: f.ministros.map((mm, j) => (j === i ? { ...mm, nombre: e.target.value.slice(0, 28) } : mm)) })}
+   380→                        aria-label={`Nombre de ${m.rol}`}
+   381→                        className="flex-1 bg-black/40 border border-white/10 focus:border-amber-hud/60 rounded-sm px-2.5 py-2 text-[13px] outline-none transition-colors min-h-[40px]" />
+   382→                    </div>
+   383→                  ))}
+   384→                  <button onClick={() => setF({ ...f, ministros: generarGabinete() })} className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud hover:text-foreground transition-colors">
+   385→                    ⟳ regenerar gabinete
+   386→                  </button>
+   387→                </div>
+   388→              )}
+   389→              {/* vista previa final */}
+   390→              <div className="rounded-sm border border-amber-hud/30 bg-black/40 p-4 mt-2">
+   391→                <Bandera c1={f.c1} c2={f.c2} simbolo={f.simbolo} className="w-full h-24 object-cover rounded-sm" />
+   392→                <p className="font-display font-black uppercase text-lg mt-3 text-foreground">{f.nombre || "SIN NOMBRE"}</p>
+   393→                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{f.gobierno} · {f.region} {f.capital ? `· Capital: ${f.capital}` : ""}</p>
+   394→              </div>
+   395→            </div>
+   396→          ) : null}
+   397→
+   398→          {/* navegación del wizard */}
+   399→          <div className="flex items-center justify-between gap-2 mt-5">
+   400→            <button onClick={() => setPaso((p) => Math.max(1, p - 1))} disabled={paso === 1}
+   401→              className="px-4 py-2.5 min-h-[44px] text-xs font-mono uppercase tracking-widest border border-white/10 rounded-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all">
+   402→              ← atrás
+   403→            </button>
+   404→            {paso < 4 ? (
+   405→              <button onClick={() => setPaso((p) => Math.min(4, p + 1))}
+   406→                className="px-5 py-2.5 min-h-[44px] text-xs font-mono uppercase tracking-widest rounded-sm text-black bg-gradient-to-b from-[#ffc46b] to-[#ff8a2a] border border-[#ffd9a0]/60 shadow-[0_4px_18px_rgba(255,138,42,0.3)] hover:brightness-110 active:scale-95 transition-all font-bold">
+   407→                siguiente →
+   408→              </button>
+   409→            ) : (
+   410→              <button onClick={proclamar} disabled={guardando}
+   411→                className="px-5 py-2.5 min-h-[44px] text-xs font-mono uppercase tracking-widest rounded-sm text-black bg-gradient-to-b from-[#7dff9b] to-[#00c853] border border-[#b9ffd0]/60 shadow-[0_4px_18px_rgba(0,200,83,0.3)] hover:brightness-110 active:scale-95 transition-all font-bold disabled:opacity-60 inline-flex items-center gap-2">
+   412→                {guardando ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+   413→                ¡Proclamar nación!
+   414→              </button>
+   415→            )}
+   416→          </div>
+   417→        </section>
+   418→      ) : (
+   419→        /* ==================== MI PAÍS PROCLAMADO ==================== */
+   420→        <>
+   421→          {/* tarjeta de la nación — imagen primero */}
+   422→          <section className="hud-panel overflow-hidden" aria-label={`Mi país ${mia.nombre}`}>
+   423→            <div className="relative h-28" style={{ background: `linear-gradient(120deg, ${mia.c1}, ${mia.c2})` }}>
+   424→              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.25),transparent_55%)]" aria-hidden />
+   425→              <Bandera c1={mia.c1} c2={mia.c2} simbolo={mia.simbolo} className="absolute left-4 bottom-[-18px] w-28 rounded-sm shadow-[0_12px_30px_rgba(0,0,0,0.7)] border border-black/40" />
+   426→              <span className="absolute right-3 top-3 font-mono text-[9px] uppercase tracking-widest bg-black/50 text-amber px-2 py-1 border border-amber-hud/40">{mia.gobierno}</span>
+   427→            </div>
+   428→            <div className="p-4 pt-8">
+   429→              <h3 className="font-display font-black uppercase text-xl text-foreground">{mia.nombre}</h3>
+   430→              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">
+   431→                {mia.gentilicio || "—" } {mia.region ? `· ${mia.region}` : ""} {mia.capital ? `· Capital: ${mia.capital}` : ""}
+   432→              </p>
+   433→              {mia.lema ? <p className="text-[13px] italic text-foreground/80 mt-2">“{mia.lema}”</p> : null}
+   434→
+   435→              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+   436→                <StatBar label="Población" valor={compact.format(mia.pob)} pct={(mia.pob / 142_000_000) * 100} color="#ffc46b" />
+   437→                <StatBar label="PIB (M USD)" valor={compact.format(mia.pib)} pct={(mia.pib / 2_400_000) * 100} color="#7dff9b" />
+   438→                <StatBar label="Ejército" valor={compact.format(mia.ejercito)} pct={(mia.ejercito / 910_000) * 100} color="#ff7a5c" />
+   439→              </div>
+   440→
+   441→              <div className="mt-4 rounded-sm border border-white/5 bg-black/30 p-3">
+   442→                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-1.5 flex items-center gap-1">
+   443→                  <Crown className="w-3 h-3 text-amber" /> Figuras públicas
+   444→                </p>
+   445→                <p className="text-[13px] text-foreground">{mia.presidente || "Líder sin nombre"} <span className="text-muted-foreground">— {mia.gobierno === "MONARQUÍA" ? "Sobrano" : mia.gobierno === "CARTEL" ? "Jefe máximo" : "Presidente"}</span></p>
+   446→                {mia.ministros.length > 0 ? (
+   447→                  <ul className="mt-2 space-y-1">
+   448→                    {mia.ministros.map((m, i) => (
+   449→                      <li key={i} className="text-[12px] text-foreground/80 flex items-center gap-2">
+   450→                        <span className="w-1.5 h-1.5 rounded-full bg-amber shadow-[0_0_6px_rgba(255,138,42,0.8)]" aria-hidden />
+   451→                        {m.nombre} <span className="text-muted-foreground">— {m.rol}</span>
+   452→                      </li>
+   453→                    ))}
+   454→                  </ul>
+   455→                ) : null}
+   456→              </div>
+   457→            </div>
+   458→          </section>
+   459→
+   460→          {/* UNIÓN / CARTEL */}
+   461→          <section className="hud-panel p-4" aria-label="Unión o cartel">
+   462→            <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2 mb-3">
+   463→              <Users className="w-4 h-4 text-violet-hud" /> Unión / Cartel
+   464→            </h3>
+   465→            {mia.union ? (
+   466→              <div className="flex items-center justify-between gap-2 rounded-sm border border-violet-hud/40 bg-violet-hud/10 px-3.5 py-3">
+   467→                <div>
+   468→                  <p className="font-display font-bold text-sm text-foreground">{mia.union}</p>
+   469→                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">tu nación pertenece a esta unión</p>
+   470→                </div>
+   471→                <button onClick={() => accionUnion("salir")} className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] text-[10px] font-mono uppercase tracking-widest border border-red-hud/50 text-red-hud hover:bg-red-hud/10 rounded-sm transition-all active:scale-95">
+   472→                  <LogOut className="w-3.5 h-3.5" /> salir
+   473→                </button>
+   474→              </div>
+   475→            ) : (
+   476→              <div className="space-y-3">
+   477→                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+   478→                  <input value={uNombre} onChange={(e) => setUNombre(e.target.value.slice(0, 32))} placeholder="Nombre de la unión" aria-label="Nombre de la unión" className="bg-black/40 border border-white/10 focus:border-violet-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none min-h-[44px]" />
+   479→                  <input value={uLema} onChange={(e) => setULema(e.target.value.slice(0, 80))} placeholder="Lema de la unión" aria-label="Lema de la unión" className="bg-black/40 border border-white/10 focus:border-violet-hud/60 rounded-sm px-3 py-2.5 text-sm outline-none min-h-[44px]" />
+   480→                  <div className="flex flex-wrap gap-1 items-center">
+   481→                    {TIPOS_UNION.map((t) => (
+   482→                      <button key={t} onClick={() => setUTipo(t)} aria-pressed={uTipo === t}
+   483→                        className={cn("px-2 py-1.5 text-[9px] font-mono uppercase tracking-widest border rounded-sm transition-all active:scale-95",
+   484→                          uTipo === t ? "text-violet-hud border-violet-hud bg-violet-hud/20" : "text-muted-foreground border-white/10 hover:border-violet-hud/40")}>
+   485→                        {t}
+   486→                      </button>
+   487→                    ))}
+   488→                  </div>
+   489→                </div>
+   490→                <button onClick={() => accionUnion("crear_union")} disabled={uNombre.trim().length < 2}
+   491→                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 min-h-[46px] rounded-sm border border-violet-hud/50 bg-violet-hud/10 hover:bg-violet-hud/20 text-sm font-semibold text-violet-hud transition-all active:scale-[0.98] disabled:opacity-40">
+   492→                  <Users className="w-4 h-4" /> Fundar {uTipo.toLowerCase()} {uNombre ? `“${uNombre}”` : ""}
+   493→                </button>
+   494→              </div>
+   495→            )}
+   496→
+   497→            {/* uniones del mundo */}
+   498→            {uniones.length > 0 ? (
+   499→              <div className="mt-3">
+   500→                <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Uniones y carteles del mundo — únete con un toque</p>
+   501→                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+   502→                  {uniones.map((u) => (
+   503→                    <div key={u.nombre} className="flex items-center justify-between gap-2 rounded-sm border border-white/10 bg-black/30 px-3 py-2.5">
+   504→                      <div className="min-w-0">
+   505→                        <p className="text-[13px] font-semibold text-foreground truncate">{u.nombre} <span className="font-mono text-[8px] uppercase text-violet-hud">[{u.tipo}]</span></p>
+   506→                        <p className="font-mono text-[9px] text-muted-foreground truncate">{u.miembros} miembro(s) · funda: {u.fundador}</p>
+   507→                      </div>
+   508→                      {mia.union !== u.nombre ? (
+   509→                        <button onClick={() => accionUnion("unirse", u.nombre)} className="shrink-0 px-2.5 py-1.5 min-h-[32px] text-[9px] font-mono uppercase tracking-widest border border-green-hud/50 text-green-hud hover:bg-green-hud/10 rounded-sm transition-all active:scale-95">
+   510→                          unir
+   511→                        </button>
+   512→                      ) : (
+   513→                        <span className="shrink-0 font-mono text-[9px] uppercase tracking-widest text-green-hud">✓ dentro</span>
+   514→                      )}
+   515→                    </div>
+   516→                  ))}
+   517→                </div>
+   518→              </div>
+   519→            ) : null}
+   520→          </section>
+   521→
+   522→          {/* RECLUTAR ALIADO ALEATORIO + buzón */}
+   523→          <section className="hud-panel p-4" aria-label="Reclutamiento aleatorio">
+   524→            <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2 mb-3">
+   525→              <Swords className="w-4 h-4 text-red-hud" /> Reclutamiento relámpago
+   526→            </h3>
+   527→            <button onClick={reclutar} disabled={reclutando}
+   528→              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 min-h-[52px] rounded-sm text-black font-bold text-sm uppercase tracking-widest bg-gradient-to-b from-[#ffc46b] to-[#ff8a2a] border border-[#ffd9a0]/60 shadow-[0_6px_24px_rgba(255,138,42,0.35),inset_0_1px_0_rgba(255,255,255,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-60">
+   529→              {reclutando ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+   530→              Invitar a un guerrero aleatorio en línea
+   531→            </button>
+   532→            <p className="mt-2 text-[11px] text-muted-foreground">Se elige al azar entre los guerreros conectados ahora mismo. Si acepta, entrará a tu unión.</p>
+   533→
+   534→            {invitaciones.length > 0 ? (
+   535→              <div className="mt-3 space-y-2">
+   536→                <p className="font-mono text-[10px] uppercase tracking-widest text-amber flex items-center gap-1.5">
+   537→                  <Inbox className="w-3.5 h-3.5" /> Te invitan ({invitaciones.length})
+   538→                </p>
+   539→                {invitaciones.map((inv) => (
+   540→                  <div key={inv.id} className="flex items-center justify-between gap-2 rounded-sm border border-amber-hud/40 bg-amber-hud/10 px-3.5 py-3 animate-in fade-in duration-300">
+   541→                    <div className="min-w-0">
+   542→                      <p className="text-[13px] font-semibold text-foreground truncate">{inv.nacion || "Una nación misteriosa"} te quiere en su bando</p>
+   543→                      {inv.union ? <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">unión: {inv.union}</p> : null}
+   544→                    </div>
+   545→                    <button onClick={() => aceptar(inv)} className="shrink-0 px-3 py-2 min-h-[40px] text-[10px] font-mono uppercase tracking-widest rounded-sm text-black bg-gradient-to-b from-[#7dff9b] to-[#00c853] font-bold hover:brightness-110 active:scale-95 transition-all">
+   546→                      aceptar
+   547→                    </button>
+   548→                  </div>
+   549→                ))}
+   550→              </div>
+   551→            ) : null}
+   552→          </section>
+   553→        </>
+   554→      )}
+   555→
+   556→      {/* NACIONES DEL MUNDO */}
+   557→      {top.length > 0 ? (
+   558→        <section className="hud-panel p-4" aria-label="Naciones del mundo">
+   559→          <h3 className="font-display font-bold uppercase text-sm flex items-center gap-2 mb-3">
+   560→            <Flag className="w-4 h-4 text-amber" /> Naciones del mundo <span className="font-mono text-[9px] text-muted-foreground">({top.length})</span>
+   561→          </h3>
+   562→          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+   563→            {top.map((n) => (
+   564→              <div key={n.uid} className={cn("rounded-sm border p-3 transition-all hover:-translate-y-0.5",
+   565→                mia && n.uid === uid ? "border-amber-hud/60 bg-amber-hud/5 shadow-[0_0_18px_rgba(255,138,42,0.15)]" : "border-white/10 bg-black/30 hover:border-amber-hud/40")}>
+   566→                <div className="flex items-center gap-2.5">
+   567→                  <Bandera c1={n.c1} c2={n.c2} simbolo={n.simbolo} className="w-12 h-auto rounded-[2px] shadow-[0_4px_10px_rgba(0,0,0,0.6)]" />
+   568→                  <div className="min-w-0">
+   569→                    <p className="text-[13px] font-bold text-foreground truncate">{n.nombre}{mia && n.uid === uid ? <span className="ml-1.5 font-mono text-[8px] uppercase text-amber">· tuya</span> : null}</p>
+   570→                    <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground truncate">{n.gobierno} · {n.region || "—"}</p>
+   571→                  </div>
+   572→                </div>
+   573→                {n.union ? <p className="font-mono text-[9px] uppercase tracking-widest text-violet-hud mt-2 truncate">⚑ {n.union}</p> : null}
+   574→              </div>
+   575→            ))}
+   576→          </div>
+   577→        </section>
+   578→      ) : null}
+   579→    </div>
+   580→  );
+   581→}
+   582→

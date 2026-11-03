@@ -1,0 +1,626 @@
+     1→"use client";
+     2→
+     3→// Vanguard v8 — CENTRO DE GANANCIAS: la sala de maquinas que hace volver cada dia.
+     4→// Ruleta diaria (1 giro gratis + extras con gemas), cajones de suministros (gacha),
+     5→// airdrop horario y Pase Vanguard de temporada con 12 niveles.
+     6→
+     7→import { useEffect, useMemo, useState } from "react";
+     8→import { motion, AnimatePresence } from "framer-motion";
+     9→import {
+    10→  Gift, Dices, Package, Crown, Coins, Gem, Zap, Clock, Sparkles, Check, Lock, TrendingUp, Star,
+    11→} from "lucide-react";
+    12→import { cn } from "@/lib/utils";
+    13→import { PanelHeader } from "@/components/vanguard/panel-header";
+    14→import { useGameStore } from "@/lib/game-store";
+    15→import { sfx } from "@/lib/sound";
+    16→import { toast } from "sonner";
+    17→import {
+    18→  WHEEL_PRIZES,
+    19→  CRATES,
+    20→  getCrateDef,
+    21→  PASS_TIERS,
+    22→  passTierFor,
+    23→  passSeasonLabel,
+    24→  AIRDROP_INTERVAL_MS,
+    25→  EXTRA_SPIN_COST_GEMS,
+    26→  type CrateTier,
+    27→  type CrateLootResult,
+    28→  type WheelPrize,
+    29→} from "@/lib/hooks-data";
+    30→import { HeroOro } from "@/components/vanguard/hero-oro";
+    31→
+    32→const SEG = 360 / WHEEL_PRIZES.length;
+    33→const SEG_COLORS = ["#f5a623", "#1f2937", "#22d3ee", "#1f2937", "#ef4444", "#1f2937", "#a855f7", "#facc15"];
+    34→
+    35→function prizeLabel(p: WheelPrize): string {
+    36→  return p.label;
+    37→}
+    38→
+    39→export function HooksPanel() {
+    40→  const [view, setView] = useState<"RULETA" | "CAJONES" | "PASE">("RULETA");
+    41→
+    42→  return (
+    43→    <div className="space-y-4">
+    44→      <HeroOro panel="gancho" />
+    45→      <PanelHeader
+    46→        title="Centro de Ganancias"
+    47→        subtitle="Ruleta diaria · cajones de suministros · airdrop horario · Pase Vanguard de temporada"
+    48→        icon={<Gift className="w-4 h-4 text-amber" />}
+    49→        color="amber"
+    50→      />
+    51→
+    52→      <AirdropCard />
+    53→
+    54→      {/* selector de vista */}
+    55→      <div className="flex items-center gap-1.5 flex-wrap">
+    56→        {(
+    57→          [
+    58→            { k: "RULETA", label: "Ruleta diaria", icon: <Dices className="w-3.5 h-3.5" /> },
+    59→            { k: "CAJONES", label: "Cajones", icon: <Package className="w-3.5 h-3.5" /> },
+    60→            { k: "PASE", label: "Pase Vanguard", icon: <Crown className="w-3.5 h-3.5" /> },
+    61→          ] as const
+    62→        ).map((t) => (
+    63→          <button
+    64→            key={t.k}
+    65→            onClick={() => { sfx.tab(); setView(t.k); }}
+    66→            className={cn(
+    67→              "flex items-center gap-1.5 px-3 py-1.5 border rounded-sm text-[10px] font-mono font-bold uppercase tracking-wider transition-colors",
+    68→              view === t.k
+    69→                ? "border-amber-hud text-amber bg-amber-hud/30"
+    70→                : "border-border/60 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
+    71→            )}
+    72→          >
+    73→            {t.icon} {t.label}
+    74→          </button>
+    75→        ))}
+    76→      </div>
+    77→
+    78→      {view === "RULETA" && <WheelView />}
+    79→      {view === "CAJONES" && <CratesView />}
+    80→      {view === "PASE" && <PassView />}
+    81→    </div>
+    82→  );
+    83→}
+    84→
+    85→// =================== AIRDROP HORARIO ===================
+    86→function AirdropCard() {
+    87→  const lastAirdropAt = useGameStore((s) => s.lastAirdropAt);
+    88→  const claimAirdrop = useGameStore((s) => s.claimAirdrop);
+    89→  const gems = useGameStore((s) => s.gems);
+    90→  const [, tick] = useState(0);
+    91→
+    92→  useEffect(() => {
+    93→    const t = setInterval(() => tick((n) => n + 1), 1000);
+    94→    return () => clearInterval(t);
+    95→  }, []);
+    96→
+    97→  const now = Date.now();
+    98→  const elapsed = lastAirdropAt === null ? AIRDROP_INTERVAL_MS : now - lastAirdropAt;
+    99→  const ready = elapsed >= AIRDROP_INTERVAL_MS;
+   100→  const remainMs = Math.max(0, AIRDROP_INTERVAL_MS - elapsed);
+   101→  const mm = String(Math.floor(remainMs / 60000)).padStart(2, "0");
+   102→  const ss = String(Math.floor((remainMs % 60000) / 1000)).padStart(2, "0");
+   103→
+   104→  const handleClaim = () => {
+   105→    const res = claimAirdrop();
+   106→    if (res) {
+   107→      sfx.success();
+   108→      toast.success(`AIRDROP RECLAMADO: +${res.coins} monedas, +${res.gems} gemas`);
+   109→    }
+   110→  };
+   111→
+   112→  return (
+   113→    <div className={cn("hud-corner p-3 flex items-center justify-between gap-3 flex-wrap border", ready ? "border-amber-hud bg-amber-hud/10 glow-amber" : "bg-secondary/40 border-border")}>
+   114→      <div className="flex items-center gap-3">
+   115→        <div className={cn("w-10 h-10 border flex items-center justify-center rounded-sm", ready ? "border-amber-hud text-amber troop-pulse" : "border-border text-muted-foreground")}>
+   116→          <Clock className="w-5 h-5" />
+   117→        </div>
+   118→        <div>
+   119→          <div className="text-xs font-mono font-bold uppercase text-foreground flex items-center gap-1.5">
+   120→            Airdrop horario
+   121→            {ready && <span className="text-[8px] px-1 py-0.5 border border-amber-hud text-amber bg-amber-hud/30 blink-soft">DISPONIBLE</span>}
+   122→          </div>
+   123→          <div className="text-[10px] font-mono text-muted-foreground">
+   124→            {ready ? "+30 monedas y +2 gemas esperandote — reclama ahora" : `Proximo paquete en ${mm}:${ss}`}
+   125→          </div>
+   126→        </div>
+   127→      </div>
+   128→      <div className="flex items-center gap-2">
+   129→        <span className="text-[10px] font-mono text-muted-foreground hidden sm:flex items-center gap-1">
+   130→          <Gem className="w-3 h-3 text-cyan-hud" /> {gems}
+   131→        </span>
+   132→        <button
+   133→          onClick={handleClaim}
+   134→          disabled={!ready}
+   135→          className={cn(
+   136→            "px-4 py-2 border rounded-sm text-[10px] font-mono font-bold uppercase tracking-wider transition-colors",
+   137→            ready
+   138→              ? "border-amber-hud bg-amber-hud/30 text-amber hover:bg-amber-hud/50"
+   139→              : "border-border/50 text-muted-foreground opacity-50 cursor-not-allowed"
+   140→          )}
+   141→        >
+   142→          {ready ? "Reclamar" : "En espera"}
+   143→        </button>
+   144→      </div>
+   145→    </div>
+   146→  );
+   147→}
+   148→
+   149→// =================== RULETA ===================
+   150→function WheelView() {
+   151→  const lastWheelDate = useGameStore((s) => s.lastWheelDate);
+   152→  const gems = useGameStore((s) => s.gems);
+   153→  const spinWheel = useGameStore((s) => s.spinWheel);
+   154→  const buyExtraSpin = useGameStore((s) => s.buyExtraSpin);
+   155→  const [rotation, setRotation] = useState(0);
+   156→  const [spinning, setSpinning] = useState(false);
+   157→  const [result, setResult] = useState<WheelPrize | null>(null);
+   158→
+   159→  const todayKey = useMemo(() => {
+   160→    const d = new Date();
+   161→    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+   162→  }, []);
+   163→  const freeAvailable = lastWheelDate !== todayKey;
+   164→
+   165→  const doSpin = (paid: boolean) => {
+   166→    if (spinning) return;
+   167→    const prize = paid ? buyExtraSpin() : spinWheel();
+   168→    if (!prize) {
+   169→      if (paid) toast.error("Gem insuficientes para un giro extra");
+   170→      return;
+   171→    }
+   172→    setSpinning(true);
+   173→    setResult(null);
+   174→    sfx.tab();
+   175→    // segmento i ocupa [i*SEG, (i+1)*SEG); el puntero esta arriba (0 grados)
+   176→    const target = 360 * 5 + (360 - (prize.id * SEG + SEG / 2));
+   177→    setRotation((r) => {
+   178→      const base = Math.ceil(r / 360) * 360;
+   179→      return base + target;
+   180→    });
+   181→    setTimeout(() => {
+   182→      setSpinning(false);
+   183→      setResult(prize);
+   184→      sfx.success();
+   185→      toast.success(`RULETA: ${prizeLabel(prize)}`, {
+   186→        description: prize.kind === "JACKPOT" ? "¡BOTE de 250 monedas + gema + XP!" : undefined,
+   187→      });
+   188→    }, 3200);
+   189→  };
+   190→
+   191→  return (
+   192→    <div className="grid lg:grid-cols-2 gap-4">
+   193→      {/* rueda */}
+   194→      <div className="hud-corner p-4 bg-secondary/40 flex flex-col items-center">
+   195→        <div className="relative" style={{ width: 260, height: 260 }}>
+   196→          {/* puntero */}
+   197→          <div className="absolute left-1/2 -translate-x-1/2 -top-2 z-10" style={{ transform: "translateX(-50%)" }}>
+   198→            <div className="w-0 h-0 border-l-[9px] border-r-[9px] border-t-[16px] border-l-transparent border-r-transparent border-t-amber drop-shadow-[0_0_6px_rgba(245,166,35,0.8)]" />
+   199→          </div>
+   200→          <motion.svg
+   201→            viewBox="0 0 200 200"
+   202→            className="w-full h-full"
+   203→            animate={{ rotate: rotation }}
+   204→            transition={{ duration: 3, ease: [0.15, 0.9, 0.25, 1] }}
+   205→          >
+   206→            {WHEEL_PRIZES.map((p, i) => {
+   207→              const a0 = (i * SEG - 90) * (Math.PI / 180);
+   208→              const a1 = ((i + 1) * SEG - 90) * (Math.PI / 180);
+   209→              const x0 = 100 + 95 * Math.cos(a0);
+   210→              const y0 = 100 + 95 * Math.sin(a0);
+   211→              const x1 = 100 + 95 * Math.cos(a1);
+   212→              const y1 = 100 + 95 * Math.sin(a1);
+   213→              const mid = ((i + 0.5) * SEG - 90) * (Math.PI / 180);
+   214→              const lx = 100 + 62 * Math.cos(mid);
+   215→              const ly = 100 + 62 * Math.sin(mid);
+   216→              return (
+   217→                <g key={p.id}>
+   218→                  <path
+   219→                    d={`M 100 100 L ${x0.toFixed(2)} ${y0.toFixed(2)} A 95 95 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`}
+   220→                    fill={SEG_COLORS[i]}
+   221→                    stroke="#0b0f1c"
+   222→                    strokeWidth="1.5"
+   223→                  />
+   224→                  <text
+   225→                    x={lx} y={ly}
+   226→                    textAnchor="middle"
+   227→                    dominantBaseline="middle"
+   228→                    fontSize="8.5"
+   229→                    fontFamily="monospace"
+   230→                    fontWeight="bold"
+   231→                    fill="#0b0f1c"
+   232→                    transform={`rotate(${(i * SEG + SEG / 2)}, ${lx}, ${ly})`}
+   233→                  >
+   234→                    {p.label}
+   235→                  </text>
+   236→                </g>
+   237→              );
+   238→            })}
+   239→            <circle cx="100" cy="100" r="14" fill="#0b0f1c" stroke="#f5a623" strokeWidth="2" />
+   240→            <circle cx="100" cy="100" r="5" fill="#f5a623" />
+   241→          </motion.svg>
+   242→        </div>
+   243→
+   244→        <AnimatePresence>
+   245→          {result && !spinning && (
+   246→            <motion.div
+   247→              key={result.id + result.label}
+   248→              initial={{ opacity: 0, y: 8 }}
+   249→              animate={{ opacity: 1, y: 0 }}
+   250→              exit={{ opacity: 0 }}
+   251→              className="mt-3 px-4 py-2 border border-green-hud bg-green-hud/20 text-green-hud text-xs font-mono font-bold uppercase tracking-wider text-center"
+   252→            >
+   253→              {result.kind === "JACKPOT" ? "¡BOTE DE 250 MON!" : `+ ${result.label}`}
+   254→            </motion.div>
+   255→          )}
+   256→        </AnimatePresence>
+   257→      </div>
+   258→
+   259→      {/* panel derecho */}
+   260→      <div className="space-y-3">
+   261→        <div className="hud-corner p-4 bg-secondary/40">
+   262→          <div className="text-[10px] font-mono text-muted-foreground uppercase mb-1">Estado del agente</div>
+   263→          <div className="flex items-center gap-4 text-xs font-mono">
+   264→            <span className={cn("flex items-center gap-1.5", freeAvailable ? "text-amber font-bold" : "text-muted-foreground")}>
+   265→              <Sparkles className="w-3.5 h-3.5" />
+   266→              {freeAvailable ? "GIRO GRATIS DISPONIBLE" : "Giro gratis usado hoy"}
+   267→            </span>
+   268→          </div>
+   269→          <div className="grid grid-cols-2 gap-2 mt-3">
+   270→            <button
+   271→              onClick={() => doSpin(false)}
+   272→              disabled={spinning || !freeAvailable}
+   273→              className={cn(
+   274→                "px-4 py-3 border rounded-sm text-xs font-mono font-bold uppercase tracking-wider transition-colors",
+   275→                freeAvailable && !spinning
+   276→                  ? "border-amber-hud bg-amber-hud/30 text-amber hover:bg-amber-hud/50 glow-amber"
+   277→                  : "border-border/50 text-muted-foreground opacity-50 cursor-not-allowed"
+   278→              )}
+   279→            >
+   280→              {spinning ? "Girando..." : "Giro gratis"}
+   281→            </button>
+   282→            <button
+   283→              onClick={() => doSpin(true)}
+   284→              disabled={spinning || gems < EXTRA_SPIN_COST_GEMS}
+   285→              className={cn(
+   286→                "px-4 py-3 border rounded-sm text-xs font-mono font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5",
+   287→                !spinning && gems >= EXTRA_SPIN_COST_GEMS
+   288→                  ? "border-cyan-hud bg-cyan-hud/20 text-cyan-hud hover:bg-cyan-hud/40"
+   289→                  : "border-border/50 text-muted-foreground opacity-50 cursor-not-allowed"
+   290→              )}
+   291→            >
+   292→              <Gem className="w-3.5 h-3.5" /> Extra {EXTRA_SPIN_COST_GEMS}
+   293→            </button>
+   294→          </div>
+   295→          <div className="text-[9px] font-mono text-muted-foreground mt-2">
+   296→            1 giro gratis cada dia · extras a {EXTRA_SPIN_COST_GEMS} gemas · cada giro otorga +15 PX de Pase Vanguard
+   297→          </div>
+   298→        </div>
+   299→
+   300→        <div className="hud-corner p-3 bg-secondary/40">
+   301→          <div className="text-[10px] font-mono text-muted-foreground uppercase mb-2">Tabla de premios</div>
+   302→          <div className="grid grid-cols-2 gap-1.5">
+   303→            {WHEEL_PRIZES.map((p) => (
+   304→              <div key={p.id} className="flex items-center gap-2 text-[10px] font-mono">
+   305→                <span className="w-2 h-2 rounded-sm flex-shrink-0" style={{ background: SEG_COLORS[p.id] }} />
+   306→                <span className={cn(p.kind === "JACKPOT" ? "text-amber font-bold" : "text-foreground/80")}>{p.label}</span>
+   307→                {p.kind === "JACKPOT" && <Star className="w-3 h-3 text-amber" />}
+   308→              </div>
+   309→            ))}
+   310→          </div>
+   311→        </div>
+   312→      </div>
+   313→    </div>
+   314→  );
+   315→}
+   316→
+   317→// =================== CAJONES ===================
+   318→function CratesView() {
+   319→  const freeCrates = useGameStore((s) => s.freeCrates);
+   320→  const coins = useGameStore((s) => s.coins);
+   321→  const gems = useGameStore((s) => s.gems);
+   322→  const openCrate = useGameStore((s) => s.openCrate);
+   323→  const [opening, setOpening] = useState<CrateTier | null>(null);
+   324→  const [loot, setLoot] = useState<CrateLootResult | null>(null);
+   325→
+   326→  const handleOpen = (tier: CrateTier) => {
+   327→    if (opening) return;
+   328→    const def = getCrateDef(tier);
+   329→    const hasFree = (freeCrates[tier] ?? 0) > 0;
+   330→    if (!hasFree && def.costCoins > 0 && coins < def.costCoins) {
+   331→      toast.error("Monedas insuficientes para este cajon");
+   332→      return;
+   333→    }
+   334→    if (!hasFree && def.costGems > 0 && gems < def.costGems) {
+   335→      toast.error("Gem insuficientes para este cajon");
+   336→      return;
+   337→    }
+   338→    setOpening(tier);
+   339→    setLoot(null);
+   340→    setTimeout(() => {
+   341→      const res = openCrate(tier);
+   342→      setOpening(null);
+   343→      if (res) {
+   344→        setLoot(res);
+   345→        sfx.success();
+   346→      } else {
+   347→        toast.error("No se pudo abrir el cajon");
+   348→      }
+   349→    }, 1400);
+   350→  };
+   351→
+   352→  return (
+   353→    <div className="space-y-4">
+   354→      <div className="grid sm:grid-cols-3 gap-3">
+   355→        {CRATES.map((c) => {
+   356→          const free = freeCrates[c.tier] ?? 0;
+   357→          const isOpening = opening === c.tier;
+   358→          return (
+   359→            <motion.div
+   360→              key={c.tier}
+   361→              whileHover={{ y: -3 }}
+   362→              className={cn("hud-corner p-4 bg-secondary/40 border flex flex-col", c.accent, isOpening && "troop-pulse", isOpening && c.glow)}
+   363→            >
+   364→              <div className="flex items-center justify-between mb-2">
+   365→                <span className="text-[9px] font-mono px-1.5 py-0.5 border border-current uppercase font-bold" style={{ color: c.tier === "COMUN" ? "#94a3b8" : c.tier === "ELITE" ? "#22d3ee" : "#f5a623" }}>
+   366→                  {c.rarity}
+   367→                </span>
+   368→                {free > 0 && (
+   369→                  <span className="text-[9px] font-mono px-1.5 py-0.5 border border-green-hud text-green-hud bg-green-hud/20 font-bold uppercase blink-soft">
+   370→                    x{free} gratis
+   371→                  </span>
+   372→                )}
+   373→              </div>
+   374→              <Package className={cn("w-9 h-9 mb-2", c.tier === "COMUN" ? "text-muted-foreground" : c.tier === "ELITE" ? "text-cyan-hud" : "text-amber")} />
+   375→              <div className="text-xs font-mono font-bold uppercase text-foreground">{c.name}</div>
+   376→              <div className="text-[10px] font-mono text-muted-foreground leading-snug mt-1 mb-3 flex-1">{c.desc}</div>
+   377→              <div className="text-[9px] font-mono text-muted-foreground uppercase mb-2">
+   378→                Contenido: {c.loot.coins[0]}-{c.loot.coins[1]} mon · {c.loot.gems[0]}-{c.loot.gems[1]} gemas · {c.loot.xp[0]}-{c.loot.xp[1]} XP
+   379→                {c.loot.boostChance > 0 && <span> · boost {Math.round(c.loot.boostChance * 100)}%</span>}
+   380→              </div>
+   381→              <button
+   382→                onClick={() => handleOpen(c.tier)}
+   383→                disabled={!!opening}
+   384→                className={cn(
+   385→                  "w-full px-3 py-2.5 border rounded-sm text-[11px] font-mono font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5",
+   386→                  free > 0
+   387→                    ? "border-green-hud bg-green-hud/25 text-green-hud hover:bg-green-hud/45"
+   388→                    : "border-amber-hud bg-amber-hud/20 text-amber hover:bg-amber-hud/40",
+   389→                  opening && opening !== c.tier && "opacity-40"
+   390→                )}
+   391→              >
+   392→                {isOpening ? (
+   393→                  "Abriendo..."
+   394→                ) : free > 0 ? (
+   395→                  <><Check className="w-3.5 h-3.5" /> Abrir gratis</>
+   396→                ) : c.costCoins > 0 ? (
+   397→                  <><Coins className="w-3.5 h-3.5" /> Abrir · {c.costCoins} mon</>
+   398→                ) : (
+   399→                  <><Gem className="w-3.5 h-3.5" /> Abrir · {c.costGems} gemas</>
+   400→                )}
+   401→              </button>
+   402→            </motion.div>
+   403→          );
+   404→        })}
+   405→      </div>
+   406→
+   407→      <div className="hud-corner p-3 bg-secondary/30 text-[10px] font-mono text-muted-foreground flex items-start gap-2">
+   408→        <TrendingUp className="w-3.5 h-3.5 text-amber flex-shrink-0 mt-0.5" />
+   409→        <span>
+   410→          Los cajones GRATIS se ganan dominando el mundo en MUNDO DE GUERRA (+1 LEGENDARIA), subiendo niveles del Pase Vanguard y en eventos.
+   411→          Abrir cajones otorga +12 PX de pase. El boost x2 XP+MON dura 30 minutos.
+   412→        </span>
+   413→      </div>
+   414→
+   415→      {/* overlay de botin */}
+   416→      <AnimatePresence>
+   417→        {loot && (
+   418→          <motion.div
+   419→            initial={{ opacity: 0 }}
+   420→            animate={{ opacity: 1 }}
+   421→            exit={{ opacity: 0 }}
+   422→            onClick={() => setLoot(null)}
+   423→            className="fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center p-4"
+   424→          >
+   425→            <motion.div
+   426→              initial={{ scale: 0.7, rotate: -4 }}
+   427→              animate={{ scale: 1, rotate: 0 }}
+   428→              transition={{ type: "spring", stiffness: 220, damping: 16 }}
+   429→              className={cn(
+   430→                "hud-corner max-w-sm w-full p-6 text-center border-2 bg-secondary/60",
+   431→                loot.tier === "LEGENDARIA" ? "border-amber-hud" : loot.tier === "ELITE" ? "border-cyan-hud" : "border-border"
+   432→              )}
+   433→            >
+   434→              <Package className={cn("w-14 h-14 mx-auto mb-3", loot.tier === "LEGENDARIA" ? "text-amber" : loot.tier === "ELITE" ? "text-cyan-hud" : "text-muted-foreground")} />
+   435→              <div className="text-[9px] font-mono uppercase tracking-[0.3em] text-muted-foreground mb-1">{getCrateDef(loot.tier).name}</div>
+   436→              <h3 className="text-lg font-mono font-bold tracking-widest uppercase text-foreground mb-4">Botin obtenido</h3>
+   437→              <div className="grid grid-cols-3 gap-2 mb-4">
+   438→                <LootStat icon={<Coins className="w-4 h-4 text-amber" />} value={`+${loot.coins}`} label="monedas" />
+   439→                <LootStat icon={<Gem className="w-4 h-4 text-cyan-hud" />} value={`+${loot.gems}`} label="gemas" />
+   440→                <LootStat icon={<Zap className="w-4 h-4 text-green-hud" />} value={`+${loot.xp}`} label="XP" />
+   441→              </div>
+   442→              {loot.boost && (
+   443→                <div className="mb-4 px-3 py-2 border border-violet-hud text-violet-hud text-[10px] font-mono font-bold uppercase blink-soft">
+   444→                  BOOST x2 XP + MON · 30 min activado
+   445→                </div>
+   446→              )}
+   447→              <button
+   448→                onClick={() => setLoot(null)}
+   449→                className="px-4 py-2 border border-amber-hud bg-amber-hud/30 text-amber rounded-sm text-xs font-mono font-bold uppercase hover:bg-amber-hud/50"
+   450→              >
+   451→                Recoger botin
+   452→              </button>
+   453→            </motion.div>
+   454→          </motion.div>
+   455→        )}
+   456→      </AnimatePresence>
+   457→    </div>
+   458→  );
+   459→}
+   460→
+   461→function LootStat({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+   462→  return (
+   463→    <div className="hud-corner p-2 bg-background/60">
+   464→      <div className="flex items-center justify-center mb-0.5">{icon}</div>
+   465→      <div className="text-sm font-mono font-bold text-foreground leading-none">{value}</div>
+   466→      <div className="text-[8px] font-mono text-muted-foreground uppercase">{label}</div>
+   467→    </div>
+   468→  );
+   469→}
+   470→
+   471→// =================== PASE VANGUARD ===================
+   472→function PassView() {
+   473→  const passXp = useGameStore((s) => s.passXp);
+   474→  const passClaimedFree = useGameStore((s) => s.passClaimedFree);
+   475→  const passClaimedElite = useGameStore((s) => s.passClaimedElite);
+   476→  const claimPassTier = useGameStore((s) => s.claimPassTier);
+   477→  const conquestWins = useGameStore((s) => s.conquestWins);
+   478→  const conquestCapturesTotal = useGameStore((s) => s.conquestCapturesTotal);
+   479→  const betStats = useGameStore((s) => s.betStats);
+   480→  const stakeEarnedTotal = useGameStore((s) => s.stakeEarnedTotal);
+   481→
+   482→  const currentTier = passTierFor(passXp);
+   483→  const nextTier = PASS_TIERS.find((p) => p.tier === currentTier + 1);
+   484→  const prevNeeded = currentTier > 0 ? PASS_TIERS[currentTier - 1].xpNeeded : 0;
+   485→  const progressPct = nextTier
+   486→    ? Math.min(100, Math.round(((passXp - prevNeeded) / (nextTier.xpNeeded - prevNeeded)) * 100))
+   487→    : 100;
+   488→
+   489→  return (
+   490→    <div className="space-y-4">
+   491→      {/* progreso de temporada */}
+   492→      <div className="hud-corner p-4 bg-secondary/40 border-amber-hud">
+   493→        <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
+   494→          <div className="flex items-center gap-2">
+   495→            <Crown className="w-4 h-4 text-amber" />
+   496→            <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber">Pase Vanguard · {passSeasonLabel()}</span>
+   497→          </div>
+   498→          <span className="text-[10px] font-mono text-muted-foreground">
+   499→            Nivel <span className="text-amber font-bold">{currentTier}</span>/12 · {passXp} PX de temporada
+   500→          </span>
+   501→        </div>
+   502→        <div className="h-3 bg-secondary rounded-sm overflow-hidden relative">
+   503→          <motion.div
+   504→            className="h-full bg-gradient-to-r from-amber-hud to-red-hud"
+   505→            animate={{ width: `${progressPct}%` }}
+   506→            transition={{ type: "spring", stiffness: 80, damping: 20 }}
+   507→          />
+   508→          {nextTier && (
+   509→            <span className="absolute inset-0 flex items-center justify-center text-[9px] font-mono text-foreground/90 font-bold">
+   510→              {passXp - prevNeeded} / {nextTier.xpNeeded - prevNeeded} PX → nivel {nextTier.tier}
+   511→            </span>
+   512→          )}
+   513→        </div>
+   514→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-[10px] font-mono text-muted-foreground">
+   515→          <PassSource icon={<CastleLite />} label="Capturas" value={`${conquestCapturesTotal} · +4 PX c/u`} />
+   516→          <PassSource icon={<Crown className="w-3 h-3 text-amber" />} label="Dominios" value={`${conquestWins} · +150 PX`} />
+   517→          <PassSource icon={<Dices className="w-3 h-3 text-amber" />} label="Apuestas" value={`${betStats.placed} · +4/10 PX`} />
+   518→          <PassSource icon={<TrendingUp className="w-3 h-3 text-amber" />} label="Staking" value={`${stakeEarnedTotal} mon ganados`} />
+   519→        </div>
+   520→      </div>
+   521→
+   522→      {/* niveles */}
+   523→      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+   524→        {PASS_TIERS.map((t) => {
+   525→          const unlocked = currentTier >= t.tier;
+   526→          const freeClaimed = passClaimedFree.includes(t.tier);
+   527→          const eliteClaimed = passClaimedElite.includes(t.tier);
+   528→          return (
+   529→            <div
+   530→              key={t.tier}
+   531→              className={cn(
+   532→                "hud-corner p-3 border bg-secondary/40",
+   533→                unlocked ? "border-amber-hud" : "border-border/50 opacity-70"
+   534→              )}
+   535→            >
+   536→              <div className="flex items-center justify-between mb-2">
+   537→                <span className={cn("text-[10px] font-mono font-bold uppercase", unlocked ? "text-amber" : "text-muted-foreground")}>
+   538→                  Nivel {t.tier}
+   539→                </span>
+   540→                {unlocked ? (
+   541→                  <span className="text-[8px] font-mono px-1 py-0.5 border border-green-hud text-green-hud uppercase font-bold">Abierto</span>
+   542→                ) : (
+   543→                  <span className="text-[8px] font-mono px-1 py-0.5 border border-border text-muted-foreground uppercase flex items-center gap-1">
+   544→                    <Lock className="w-2.5 h-2.5" /> {t.xpNeeded} PX
+   545→                  </span>
+   546→                )}
+   547→              </div>
+   548→              <div className="grid grid-cols-2 gap-2">
+   549→                <button
+   550→                  onClick={() => {
+   551→                    const ok = claimPassTier(t.tier, "FREE");
+   552→                    if (ok) { sfx.success(); toast.success(`Recompensa GRATIS del nivel ${t.tier} reclamada`); }
+   553→                  }}
+   554→                  disabled={!unlocked || freeClaimed}
+   555→                  className={cn(
+   556→                    "px-2 py-2 border rounded-sm text-[9px] font-mono font-bold uppercase transition-colors",
+   557→                    freeClaimed
+   558→                      ? "border-border/50 text-muted-foreground"
+   559→                      : unlocked
+   560→                      ? "border-green-hud bg-green-hud/20 text-green-hud hover:bg-green-hud/40"
+   561→                      : "border-border/50 text-muted-foreground opacity-50 cursor-not-allowed"
+   562→                  )}
+   563→                >
+   564→                  {freeClaimed ? "Reclamado" : (
+   565→                    <>
+   566→                      Gratis<br />
+   567→                      <span className="normal-case">+{t.free.coins} mon{t.free.gems ? ` · ${t.free.gems}g` : ""}{t.free.crate ? ` · 1 cajón ${t.free.crate}` : ""}</span>
+   568→                    </>
+   569→                  )}
+   570→                </button>
+   571→                <button
+   572→                  onClick={() => {
+   573→                    const ok = claimPassTier(t.tier, "ELITE");
+   574→                    if (ok) { sfx.success(); toast.success(`Recompensa ELITE del nivel ${t.tier} reclamada`); }
+   575→                    else toast.info("La via ELITE esta reservada para operadores con Pase ELITE activo");
+   576→                  }}
+   577→                  disabled={!unlocked || eliteClaimed}
+   578→                  className={cn(
+   579→                    "px-2 py-2 border rounded-sm text-[9px] font-mono font-bold uppercase transition-colors",
+   580→                    eliteClaimed
+   581→                      ? "border-border/50 text-muted-foreground"
+   582→                      : unlocked
+   583→                      ? "border-amber-hud bg-amber-hud/20 text-amber hover:bg-amber-hud/40"
+   584→                      : "border-border/50 text-muted-foreground opacity-50 cursor-not-allowed"
+   585→                  )}
+   586→                >
+   587→                  {eliteClaimed ? "Reclamado" : (
+   588→                    <>
+   589→                      Elite<br />
+   590→                      <span className="normal-case">+{t.elite.coins} mon · {t.elite.gems}g{t.elite.crate ? ` · 1 cajon ${t.elite.crate}` : ""}</span>
+   591→                    </>
+   592→                  )}
+   593→                </button>
+   594→              </div>
+   595→            </div>
+   596→          );
+   597→        })}
+   598→      </div>
+   599→
+   600→      <div className="hud-corner p-3 bg-secondary/30 text-[10px] font-mono text-muted-foreground flex items-start gap-2">
+   601→        <Gift className="w-3.5 h-3.5 text-amber flex-shrink-0 mt-0.5" />
+   602→        <span>
+   603→          La via ELITE se activa con el Pase ELITE (tienda). El PX de temporada se gana jugando: capturas (+4), dominio mundial (+150),
+   604→          ruleta (+15), cajones (+12), staking (+8) y apuestas. Cada mes arranca una temporada nueva y las recompensas se reinician.
+   605→        </span>
+   606→      </div>
+   607→    </div>
+   608→  );
+   609→}
+   610→
+   611→function PassSource({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+   612→  return (
+   613→    <div className="flex items-center gap-2 hud-corner px-2 py-1.5 bg-background/50">
+   614→      {icon}
+   615→      <div className="leading-tight">
+   616→        <div className="text-[8px] uppercase text-muted-foreground/70">{label}</div>
+   617→        <div className="text-[9px] text-foreground/80">{value}</div>
+   618→      </div>
+   619→    </div>
+   620→  );
+   621→}
+   622→
+   623→function CastleLite() {
+   624→  return <Crown className="w-3 h-3 text-amber" />;
+   625→}
+   626→

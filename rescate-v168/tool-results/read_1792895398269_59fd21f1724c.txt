@@ -1,0 +1,604 @@
+     1→"use client";
+     2→
+     3→// ============================================================
+     4→// VANGUARD v85.0 EL MUNDO DENTRO — CONSTRUCTOR DE MAPAS
+     5→// Los operadores crean SUS PROPIOS mapas de conflictos sobre la
+     6→// cartografía real de Vanguard: pintan zonas por facción, trazan
+     7→// frentes, colocan HQ/batallas/flotas, etiquetan, guardan una
+     8→// galería y EXPORTAN PNG o código de mapa compartible.
+     9→// ============================================================
+    10→import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+    11→import { PanelHeader } from "@/components/vanguard/panel-header";
+    12→import { cn } from "@/lib/utils";
+    13→import { toast } from "sonner";
+    14→import { motion, AnimatePresence } from "framer-motion";
+    15→import {
+    16→  PenTool, Circle, GitBranch, MapPin, Type, Eraser, Undo2, Save, FolderOpen,
+    17→  Trash2, Download, Share2, ClipboardPaste, Flag, Layers,
+    18→} from "lucide-react";
+    19→import { Button } from "@/components/ui/button";
+    20→import { Input } from "@/components/ui/input";
+    21→import { HeroOro } from "@/components/vanguard/hero-oro";
+    22→import worldPaths from "@/lib/world-paths.json";
+    23→import { sfx } from "@/lib/sound";
+    24→
+    25→const WIDTH = 1000;
+    26→const HEIGHT = 500;
+    27→
+    28→// ===== facciones preinstaladas =====
+    29→interface Faccion { nombre: string; color: string }
+    30→const FAC_PRESET: Faccion[] = [
+    31→  { nombre: "ALIANZA AMANECER", color: "#FFB020" },
+    32→  { nombre: "COALICIÓN OCASO", color: "#FF3B30" },
+    33→  { nombre: "BLOQUE NEUTRAL", color: "#22D3EE" },
+    34→  { nombre: "MOVIMIENTO LIBRE", color: "#A78BFA" },
+    35→];
+    36→
+    37→type Herramienta = "zona" | "frente" | "marcador" | "etiqueta" | "borrar";
+    38→
+    39→const MARCAS = [
+    40→  { t: "hq", glyph: "⬢", label: "HQ" },
+    41→  { t: "batalla", glyph: "✕", label: "BATALLA" },
+    42→  { t: "flota", glyph: "⚓", label: "FLOTA" },
+    43→  { t: "aerea", glyph: "▲", label: "BASE AÉREA" },
+    44→  { t: "capital", glyph: "★", label: "CAPITAL" },
+    45→] as const;
+    46→
+    47→interface Zona { id: string; f: number; x: number; y: number; r: number }
+    48→interface Frente { id: string; f: number; pts: number[][]; done: boolean }
+    49→interface Marca { id: string; f: number; tipo: string; glyph: string; x: number; y: number }
+    50→interface Texto { id: string; t: string; x: number; y: number }
+    51→
+    52→interface MapaDatos {
+    53→  n: string;
+    54→  facciones: Faccion[];
+    55→  z: Zona[];
+    56→  fr: Frente[];
+    57→  m: Marca[];
+    58→  t: Texto[];
+    59→}
+    60→
+    61→const LS_GALERIA = "vanguard-mapas-v85";
+    62→
+    63→function cargarGaleria(): MapaDatos[] {
+    64→  try {
+    65→    const raw = localStorage.getItem(LS_GALERIA);
+    66→    if (raw) return JSON.parse(raw) as MapaDatos[];
+    67→  } catch { /* noop */ }
+    68→  return [];
+    69→}
+    70→
+    71→function guardarGaleria(g: MapaDatos[]) {
+    72→  try { localStorage.setItem(LS_GALERIA, JSON.stringify(g.slice(0, 12))); } catch { /* noop */ }
+    73→}
+    74→
+    75→let seq = 0;
+    76→const nid = () => `e${Date.now().toString(36)}${(seq++).toString(36)}`;
+    77→
+    78→export function CreadorMapasPanel() {
+    79→  const svgRef = useRef<SVGSVGElement | null>(null);
+    80→  const [nombre, setNombre] = useState("OPERACIÓN LUNA NUEVA");
+    81→  const [facciones, setFacciones] = useState<Faccion[]>(FAC_PRESET);
+    82→  const [factiva, setFactiva] = useState(0);
+    83→  const [herr, setHerr] = useState<Herramienta>("zona");
+    84→  const [pincel, setPincel] = useState(26);
+    85→  const [marcaSel, setMarcaSel] = useState<string>("hq");
+    86→  const [zonas, setZonas] = useState<Zona[]>([]);
+    87→  const [frentes, setFrentes] = useState<Frente[]>([]);
+    88→  const [marcas, setMarcas] = useState<Marca[]>([]);
+    89→  const [textos, setTextos] = useState<Texto[]>([]);
+    90→  const [frenteAbierto, setFrenteAbierto] = useState<number[][]>([]);
+    91→  const [etiquetaPend, setEtiquetaPend] = useState<{ x: number; y: number } | null>(null);
+    92→  const [textoPend, setTextoPend] = useState("");
+    93→  const [galeria, setGaleria] = useState<MapaDatos[]>([]);
+    94→  const [importando, setImportando] = useState(false);
+    95→  const [codigoImport, setCodigoImport] = useState("");
+    96→
+    97→  const land = worldPaths.landPath as string;
+    98→  const borders = worldPaths.borderPath as string;
+    99→  const graticule = worldPaths.graticulePath as string;
+   100→
+   101→  const datos: MapaDatos = useMemo(
+   102→    () => ({ n: nombre, facciones, z: zonas, fr: frentes.filter((f) => f.done), m: marcas, t: textos }),
+   103→    [nombre, facciones, zonas, frentes, marcas, textos]
+   104→  );
+   105→
+   106→  // ===== coordenadas del clic → viewBox =====
+   107→  const coords = (e: React.MouseEvent<SVGSVGElement>) => {
+   108→    const svg = svgRef.current;
+   109→    if (!svg) return null;
+   110→    const rect = svg.getBoundingClientRect();
+   111→    return {
+   112→      x: ((e.clientX - rect.left) / rect.width) * WIDTH,
+   113→      y: ((e.clientY - rect.top) / rect.height) * HEIGHT,
+   114→    };
+   115→  };
+   116→
+   117→  const clickMapa = (e: React.MouseEvent<SVGSVGElement>) => {
+   118→    const c = coords(e);
+   119→    if (!c) return;
+   120→    const f = factiva;
+   121→    switch (herr) {
+   122→      case "zona":
+   123→        setZonas((z) => [...z, { id: nid(), f, x: c.x, y: c.y, r: pincel }]);
+   124→        sfx.click();
+   125→        break;
+   126→      case "frente":
+   127→        setFrenteAbierto((pts) => [...pts, [c.x, c.y]]);
+   128→        sfx.click();
+   129→        break;
+   130→      case "marcador": {
+   131→        const def = MARCAS.find((m) => m.t === marcaSel) ?? MARCAS[0];
+   132→        setMarcas((ms) => [...ms, { id: nid(), f, tipo: def.t, glyph: def.glyph, x: c.x, y: c.y }]);
+   133→        sfx.click();
+   134→        break;
+   135→      }
+   136→      case "etiqueta":
+   137→        setEtiquetaPend(c);
+   138→        setTextoPend("");
+   139→        break;
+   140→      case "borrar":
+   141→        // prioridad: marca > texto > frente cerrado > zona
+   142→        const hitMarca = marcas.findIndex((m) => Math.hypot(m.x - c.x, m.y - c.y) < 14);
+   143→        if (hitMarca >= 0) { setMarcas((ms) => ms.filter((_, i) => i !== hitMarca)); sfx.error(); return; }
+   144→        const hitTexto = textos.findIndex((t) => Math.hypot(t.x - c.x, t.y - c.y) < 16);
+   145→        if (hitTexto >= 0) { setTextos((ts) => ts.filter((_, i) => i !== hitTexto)); sfx.error(); return; }
+   146→        const hitFrente = frentes.findIndex((fr) => fr.pts.some((p) => Math.hypot(p[0] - c.x, p[1] - c.y) < 12));
+   147→        if (hitFrente >= 0) { setFrentes((fs) => fs.filter((_, i) => i !== hitFrente)); sfx.error(); return; }
+   148→        const hitZona = zonas.findIndex((z) => Math.hypot(z.x - c.x, z.y - c.y) < z.r + 4);
+   149→        if (hitZona >= 0) { setZonas((zs) => zs.filter((_, i) => i !== hitZona)); sfx.error(); return; }
+   150→        break;
+   151→    }
+   152→  };
+   153→
+   154→  const terminarFrente = () => {
+   155→    if (frenteAbierto.length < 2) {
+   156→      toast.error("Un frente necesita al menos 2 puntos");
+   157→      return;
+   158→    }
+   159→    setFrentes((fs) => [...fs, { id: nid(), f: factiva, pts: frenteAbierto, done: true }]);
+   160→    setFrenteAbierto([]);
+   161→    sfx.success();
+   162→    toast.success("Frente trazado y fijado");
+   163→  };
+   164→
+   165→  const deshacer = () => {
+   166→    if (frenteAbierto.length > 0) {
+   167→      setFrenteAbierto((pts) => pts.slice(0, -1));
+   168→      return;
+   169→    }
+   170→    if (zonas.length) { setZonas((z) => z.slice(0, -1)); sfx.error(); return; }
+   171→    if (marcas.length) { setMarcas((m) => m.slice(0, -1)); sfx.error(); return; }
+   172→    if (textos.length) { setTextos((t) => t.slice(0, -1)); sfx.error(); return; }
+   173→    if (frentes.length) { setFrentes((f) => f.slice(0, -1)); sfx.error(); return; }
+   174→  };
+   175→
+   176→  const limpiar = () => {
+   177→    setZonas([]); setFrentes([]); setMarcas([]); setTextos([]); setFrenteAbierto([]);
+   178→    toast.info("Tablero limpio: nueva operación");
+   179→  };
+   180→
+   181→  // ===== galería =====
+   182→  useEffect(() => { setGaleria(cargarGaleria()); }, []);
+   183→
+   184→  const guardar = () => {
+   185→    const g = [{ ...datos }, ...galeria.filter((m) => m.n !== nombre)].slice(0, 12);
+   186→    guardarGaleria(g);
+   187→    setGaleria(g);
+   188→    sfx.unlock();
+   189→    toast.success(`Mapa "${nombre}" guardado en tu cartoteca`);
+   190→  };
+   191→
+   192→  const abrir = (m: MapaDatos) => {
+   193→    setNombre(m.n);
+   194→    setFacciones(m.facciones ?? FAC_PRESET);
+   195→    setZonas(m.z ?? []);
+   196→    setFrentes((m.fr ?? []).map((f) => ({ ...f, done: true })));
+   197→    setMarcas(m.m ?? []);
+   198→    setTextos(m.t ?? []);
+   199→    setFrenteAbierto([]);
+   200→    sfx.click();
+   201→    toast.success(`Mapa "${m.n}" cargado`);
+   202→  };
+   203→
+   204→  const borrarDeGaleria = (n: string) => {
+   205→    const g = galeria.filter((m) => m.n !== n);
+   206→    guardarGaleria(g);
+   207→    setGaleria(g);
+   208→  };
+   209→
+   210→  // ===== export PNG =====
+   211→  const exportarPng = () => {
+   212→    const svg = svgRef.current;
+   213→    if (!svg) return;
+   214→    const xml = new XMLSerializer().serializeToString(svg);
+   215→    const svg64 = window.btoa(unescape(encodeURIComponent(xml)));
+   216→    const img = new Image();
+   217→    img.onload = () => {
+   218→      const canvas = document.createElement("canvas");
+   219→      canvas.width = 2000;
+   220→      canvas.height = 1000;
+   221→      const ctx = canvas.getContext("2d");
+   222→      if (!ctx) return;
+   223→      ctx.fillStyle = "#070912";
+   224→      ctx.fillRect(0, 0, 2000, 1000);
+   225→      ctx.drawImage(img, 0, 0, 2000, 1000);
+   226→      ctx.fillStyle = "rgba(255,176,32,0.9)";
+   227→      ctx.font = "bold 26px monospace";
+   228→      ctx.fillText(`VANGUARD · ${nombre.toUpperCase()} · CONSTRUCTOR DE MAPAS v85`, 24, 972);
+   229→      try {
+   230→        const a = document.createElement("a");
+   231→        a.href = canvas.toDataURL("image/png");
+   232→        a.download = `vanguard-mapa-${nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+   233→        a.click();
+   234→        toast.success("Mapa exportado en PNG (2000×1000)");
+   235→      } catch {
+   236→        toast.error("El navegador bloqueó la exportación");
+   237→      }
+   238→    };
+   239→    img.onerror = () => toast.error("No se pudo rasterizar el mapa");
+   240→    img.src = `data:image/svg+xml;base64,${svg64}`;
+   241→  };
+   242→
+   243→  // ===== código de mapa =====
+   244→  const codigo = useMemo(() => {
+   245→    try {
+   246→      return `VGMAP85.${window.btoa(unescape(encodeURIComponent(JSON.stringify(datos))))}`;
+   247→    } catch {
+   248→      return "";
+   249→    }
+   250→  }, [datos]);
+   251→
+   252→  const copiarCodigo = () => {
+   253→    navigator.clipboard?.writeText(codigo).then(
+   254→      () => toast.success("Código de mapa copiado: pégalo donde quieras"),
+   255→      () => toast.error("No se pudo copiar")
+   256→    );
+   257→  };
+   258→
+   259→  const importarCodigo = () => {
+   260→    try {
+   261→      const raw = codigoImport.trim();
+   262→      if (!raw.startsWith("VGMAP85.")) throw new Error("formato");
+   263→      const datosImport = JSON.parse(decodeURIComponent(escape(window.atob(raw.slice(8))))) as MapaDatos;
+   264→      abrir(datosImport);
+   265→      setImportando(false);
+   266→      setCodigoImport("");
+   267→    } catch {
+   268→      toast.error("Código de mapa inválido");
+   269→    }
+   270→  };
+   271→
+   272→  const col = (f: number) => facciones[f]?.color ?? "#FFB020";
+   273→
+   274→  const herramientas: { t: Herramienta; icon: React.ReactNode; label: string }[] = [
+   275→    { t: "zona", icon: <Circle className="w-3.5 h-3.5" />, label: "Zona" },
+   276→    { t: "frente", icon: <GitBranch className="w-3.5 h-3.5" />, label: "Frente" },
+   277→    { t: "marcador", icon: <MapPin className="w-3.5 h-3.5" />, label: "Marca" },
+   278→    { t: "etiqueta", icon: <Type className="w-3.5 h-3.5" />, label: "Texto" },
+   279→    { t: "borrar", icon: <Eraser className="w-3.5 h-3.5" />, label: "Borrar" },
+   280→  ];
+   281→
+   282→  return (
+   283→    <div className="space-y-3">
+   284→      <HeroOro panel="mapascrea" />
+   285→      <PanelHeader
+   286→        title="Constructor de Mapas"
+   287→        subtitle={`${zonas.length} zonas · ${frentes.length} frentes · ${marcas.length} marcas · ${galeria.length} guardados`}
+   288→        icon={<PenTool className="w-4 h-4 text-violet-hud" />}
+   289→        color="violet"
+   290→        right={
+   291→          <Button size="sm" onClick={guardar} className="h-8 px-2.5 font-mono text-[10px] uppercase bg-violet-hud/80 border border-violet-hud text-black hover:bg-violet-hud">
+   292→            <Save className="w-3.5 h-3.5 mr-1" /> GUARDAR
+   293→          </Button>
+   294→        }
+   295→      />
+   296→
+   297→      {/* nombre + facciones */}
+   298→      <div className="hud-corner p-3 space-y-2.5">
+   299→        <div className="flex items-center gap-2">
+   300→          <Flag className="w-4 h-4 text-violet-hud flex-shrink-0" />
+   301→          <Input
+   302→            value={nombre}
+   303→            onChange={(e) => setNombre(e.target.value.slice(0, 42))}
+   304→            placeholder="Nombre de tu operación…"
+   305→            className="h-9 bg-background/60 border-border font-mono text-xs uppercase"
+   306→          />
+   307→        </div>
+   308→        <p className="text-[10px] font-mono uppercase tracking-wider text-violet-hud">facciones de tu mundo</p>
+   309→        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+   310→          {facciones.map((f, i) => (
+   311→            <div key={i} className={cn("border p-1.5", i === factiva ? "border-violet-hud bg-violet-hud/15" : "border-border/60")}>
+   312→              <button onClick={() => setFactiva(i)} className="w-full text-left" aria-label={`Seleccionar facción ${f.nombre}`}>
+   313→                <div className="flex items-center gap-1.5">
+   314→                  <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: f.color, boxShadow: `0 0 8px ${f.color}` }} />
+   315→                  <input
+   316→                    value={f.nombre}
+   317→                    onChange={(e) => setFacciones((fs) => fs.map((x, j) => (j === i ? { ...x, nombre: e.target.value.slice(0, 22) } : x)))}
+   318→                    className="w-full bg-transparent text-[10px] font-mono font-bold uppercase text-foreground outline-none min-w-0"
+   319→                    aria-label={`Nombre de facción ${i + 1}`}
+   320→                  />
+   321→                </div>
+   322→                <p className="text-[8px] font-mono text-muted-foreground uppercase mt-0.5">
+   323→                  {zonas.filter((z) => z.f === i).length + marcas.filter((m) => m.f === i).length} elementos · {i === factiva ? "ACTIVA" : "toca para usar"}
+   324→                </p>
+   325→              </button>
+   326→            </div>
+   327→          ))}
+   328→        </div>
+   329→      </div>
+   330→
+   331→      {/* herramientas */}
+   332→      <div className="hud-corner p-3">
+   333→        <div className="flex items-center gap-1.5 flex-wrap mb-2.5">
+   334→          {herramientas.map((h) => (
+   335→            <button
+   336→              key={h.t}
+   337→              onClick={() => { setHerr(h.t); sfx.click(); }}
+   338→              className={cn(
+   339→                "px-2.5 py-1.5 border text-[10px] font-mono uppercase flex items-center gap-1.5 transition-colors",
+   340→                herr === h.t ? "border-violet-hud text-violet-hud bg-violet-hud/20" : "border-border text-muted-foreground hover:text-foreground"
+   341→              )}
+   342→            >
+   343→              {h.icon} {h.label}
+   344→            </button>
+   345→          ))}
+   346→          <div className="ml-auto flex items-center gap-1.5">
+   347→            {frenteAbierto.length > 0 && (
+   348→              <Button size="sm" onClick={terminarFrente} className="h-7 font-mono text-[10px] uppercase bg-green-hud/30 border border-green-hud text-green-hud hover:bg-green-hud/50">
+   349→                fijar frente ({frenteAbierto.length} pts)
+   350→              </Button>
+   351→            )}
+   352→            <Button size="sm" variant="ghost" onClick={deshacer} className="h-7 font-mono text-[10px] uppercase">
+   353→              <Undo2 className="w-3.5 h-3.5 mr-1" /> deshacer
+   354→            </Button>
+   355→            <Button size="sm" variant="ghost" onClick={limpiar} className="h-7 font-mono text-[10px] uppercase text-red-hud hover:bg-red-hud/20">
+   356→              <Trash2 className="w-3.5 h-3.5 mr-1" /> limpiar
+   357→            </Button>
+   358→          </div>
+   359→        </div>
+   360→
+   361→        {herr === "zona" && (
+   362→          <div className="flex items-center gap-2 flex-wrap">
+   363→            <span className="text-[9px] font-mono uppercase text-muted-foreground">pincel:</span>
+   364→            {[14, 26, 42, 60].map((r) => (
+   365→              <button
+   366→                key={r}
+   367→                onClick={() => setPincel(r)}
+   368→                className={cn(
+   369→                  "px-2 py-1 border text-[9px] font-mono uppercase",
+   370→                  pincel === r ? "border-violet-hud text-violet-hud bg-violet-hud/20" : "border-border text-muted-foreground"
+   371→                )}
+   372→              >
+   373→                {r < 20 ? "pequeño" : r < 30 ? "medio" : r < 50 ? "grande" : "región"}
+   374→              </button>
+   375→            ))}
+   376→            <span className="text-[9px] font-mono text-muted-foreground">· toca el mapa para pintar territorio de {facciones[factiva]?.nombre}</span>
+   377→          </div>
+   378→        )}
+   379→        {herr === "marcador" && (
+   380→          <div className="flex items-center gap-1.5 flex-wrap">
+   381→            {MARCAS.map((m) => (
+   382→              <button
+   383→                key={m.t}
+   384→                onClick={() => setMarcaSel(m.t)}
+   385→                className={cn(
+   386→                  "px-2 py-1 border text-[9px] font-mono uppercase flex items-center gap-1",
+   387→                  marcaSel === m.t ? "border-violet-hud text-violet-hud bg-violet-hud/20" : "border-border text-muted-foreground"
+   388→                )}
+   389→              >
+   390→                <span className="text-xs">{m.glyph}</span> {m.label}
+   391→              </button>
+   392→            ))}
+   393→          </div>
+   394→        )}
+   395→        {herr === "frente" && (
+   396→          <p className="text-[9px] font-mono text-muted-foreground uppercase">
+   397→            toca el mapa punto a punto para trazar la línea del frente · FIJAR al terminar
+   398→          </p>
+   399→        )}
+   400→        {herr === "etiqueta" && (
+   401→          <p className="text-[9px] font-mono text-muted-foreground uppercase">toca el mapa y escribe la etiqueta del lugar</p>
+   402→        )}
+   403→        {herr === "borrar" && (
+   404→          <p className="text-[9px] font-mono text-muted-foreground uppercase">toca cualquier elemento del mapa para eliminarlo</p>
+   405→        )}
+   406→      </div>
+   407→
+   408→      {/* etiqueta pendiente */}
+   409→      <AnimatePresence>
+   410→        {etiquetaPend && (
+   411→          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="hud-corner p-3 flex items-center gap-2">
+   412→            <Type className="w-4 h-4 text-violet-hud flex-shrink-0" />
+   413→            <Input
+   414→              autoFocus
+   415→              value={textoPend}
+   416→              onChange={(e) => setTextoPend(e.target.value)}
+   417→              onKeyDown={(e) => {
+   418→                if (e.key === "Enter" && textoPend.trim()) {
+   419→                  setTextos((ts) => [...ts, { id: nid(), t: textoPend.trim().slice(0, 28), x: etiquetaPend.x, y: etiquetaPend.y }]);
+   420→                  setEtiquetaPend(null);
+   421→                  sfx.success();
+   422→                }
+   423→                if (e.key === "Escape") setEtiquetaPend(null);
+   424→              }}
+   425→              placeholder="Nombre del lugar… (Enter para fijar)"
+   426→              className="h-8 bg-background/60 border-border font-mono text-xs uppercase"
+   427→            />
+   428→            <Button size="sm" onClick={() => {
+   429→              if (!textoPend.trim()) return;
+   430→              setTextos((ts) => [...ts, { id: nid(), t: textoPend.trim().slice(0, 28), x: etiquetaPend.x, y: etiquetaPend.y }]);
+   431→              setEtiquetaPend(null);
+   432→              sfx.success();
+   433→            }} className="h-8 font-mono text-[10px] uppercase bg-violet-hud/30 border border-violet-hud text-violet-hud">
+   434→              fijar
+   435→            </Button>
+   436→          </motion.div>
+   437→        )}
+   438→      </AnimatePresence>
+   439→
+   440→      {/* ===== MAPA EDITABLE ===== */}
+   441→      <div className="border border-violet-hud/50 overflow-hidden">
+   442→        <svg
+   443→          ref={svgRef}
+   444→          xmlns="http://www.w3.org/2000/svg"
+   445→          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+   446→          onClick={clickMapa}
+   447→          className="w-full block cursor-crosshair"
+   448→          style={{ aspectRatio: "2/1" }}
+   449→        >
+   450→          <defs>
+   451→            <radialGradient id="cm-ocean" cx="50%" cy="34%" r="95%">
+   452→              <stop offset="0%" stopColor="#0d1120" />
+   453→              <stop offset="62%" stopColor="#070912" />
+   454→              <stop offset="100%" stopColor="#180d0a" />
+   455→            </radialGradient>
+   456→            <linearGradient id="cm-land" x1="0" y1="0" x2="0" y2="1">
+   457→              <stop offset="0%" stopColor="#171d30" />
+   458→              <stop offset="100%" stopColor="#0d1120" />
+   459→            </linearGradient>
+   460→            <pattern id="cm-grid" width="25" height="25" patternUnits="userSpaceOnUse">
+   461→              <path d="M 25 0 L 0 0 0 25" fill="none" stroke="rgba(167,139,250,0.06)" strokeWidth="0.5" />
+   462→            </pattern>
+   463→          </defs>
+   464→          <rect width={WIDTH} height={HEIGHT} fill="url(#cm-ocean)" />
+   465→          <rect width={WIDTH} height={HEIGHT} fill="url(#cm-grid)" />
+   466→          <path d={graticule} fill="none" stroke="rgba(167,139,250,0.08)" strokeWidth="0.4" />
+   467→          <path d={land} fill="url(#cm-land)" stroke="rgba(217,167,32,0.4)" strokeWidth="0.7" />
+   468→          <path d={borders} fill="none" stroke="rgba(150,150,170,0.14)" strokeWidth="0.4" />
+   469→
+   470→          {/* zonas pintadas */}
+   471→          {zonas.map((z) => (
+   472→            <circle
+   473→              key={z.id}
+   474→              cx={z.x}
+   475→              cy={z.y}
+   476→              r={z.r}
+   477→              fill={col(z.f)}
+   478→              fillOpacity={0.3}
+   479→              stroke={col(z.f)}
+   480→              strokeWidth={1.2}
+   481→              strokeOpacity={0.85}
+   482→            />
+   483→          ))}
+   484→          {/* frentes */}
+   485→          {frentes.map((fr) => (
+   486→            <g key={fr.id}>
+   487→              <polyline
+   488→                points={fr.pts.map((p) => p.join(",")).join(" ")}
+   489→                fill="none"
+   490→                stroke={col(fr.f)}
+   491→                strokeWidth={2.4}
+   492→                strokeDasharray="7 4"
+   493→                strokeLinejoin="round"
+   494→              />
+   495→              {fr.pts.map((p, i) => (
+   496→                <circle key={i} cx={p[0]} cy={p[1]} r={2.6} fill={col(fr.f)} />
+   497→              ))}
+   498→            </g>
+   499→          ))}
+   500→          {/* frente en construcción */}
+   501→          {frenteAbierto.length > 0 && (
+   502→            <g>
+   503→              <polyline points={frenteAbierto.map((p) => p.join(",")).join(" ")} fill="none" stroke="#ffffff" strokeWidth={1.6} strokeDasharray="4 4" opacity={0.8} />
+   504→              {frenteAbierto.map((p, i) => (
+   505→                <circle key={i} cx={p[0]} cy={p[1]} r={3.2} fill="#ffffff" opacity={0.9} />
+   506→              ))}
+   507→            </g>
+   508→          )}
+   509→          {/* marcadores */}
+   510→          {marcas.map((m) => (
+   511→            <g key={m.id}>
+   512→              <text x={m.x} y={m.y + 5} textAnchor="middle" fontSize={15} fill={col(m.f)} stroke="#070912" strokeWidth={0.7} paintOrder="stroke" fontWeight="bold">
+   513→                {m.glyph}
+   514→              </text>
+   515→              {m.tipo === "capital" && (
+   516→                <circle cx={m.x} cy={m.y} r={11} fill="none" stroke={col(m.f)} strokeWidth={1} strokeDasharray="3 3" opacity={0.7} />
+   517→              )}
+   518→            </g>
+   519→          ))}
+   520→          {/* etiquetas */}
+   521→          {textos.map((t) => (
+   522→            <text key={t.id} x={t.x} y={t.y} textAnchor="middle" fontSize={10} fill="#ffffff" stroke="#070912" strokeWidth={0.8} paintOrder="stroke" fontFamily="monospace" style={{ textTransform: "uppercase" }}>
+   523→              {t.t.toUpperCase()}
+   524→            </text>
+   525→          ))}
+   526→        </svg>
+   527→      </div>
+   528→
+   529→      {/* export + código */}
+   530→      <div className="grid sm:grid-cols-2 gap-2">
+   531→        <div className="hud-corner p-3 space-y-2">
+   532→          <p className="text-[10px] font-mono uppercase tracking-wider text-violet-hud flex items-center gap-1.5">
+   533→            <Download className="w-3.5 h-3.5" /> exportar tu mundo
+   534→          </p>
+   535→          <div className="flex items-center gap-2 flex-wrap">
+   536→            <Button size="sm" onClick={exportarPng} className="h-8 font-mono text-[10px] uppercase bg-violet-hud/30 border border-violet-hud text-violet-hud hover:bg-violet-hud/50">
+   537→              <Download className="w-3.5 h-3.5 mr-1" /> PNG 2000×1000
+   538→            </Button>
+   539→            <Button size="sm" variant="ghost" onClick={copiarCodigo} className="h-8 font-mono text-[10px] uppercase">
+   540→              <Share2 className="w-3.5 h-3.5 mr-1" /> copiar código
+   541→            </Button>
+   542→            <Button size="sm" variant="ghost" onClick={() => setImportando((v) => !v)} className="h-8 font-mono text-[10px] uppercase">
+   543→              <ClipboardPaste className="w-3.5 h-3.5 mr-1" /> importar
+   544→            </Button>
+   545→          </div>
+   546→          <p className="text-[9px] font-mono text-muted-foreground leading-relaxed">
+   547→            El código VGMAP85 lleva tu mapa completo (facciones, zonas, frentes y marcas): pégalo en
+   548→            otro dispositivo e IMPORTE para continuar la guerra donde la dejaste.
+   549→          </p>
+   550→        </div>
+   551→        <AnimatePresence>
+   552→          {importando && (
+   553→            <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="hud-corner p-3 space-y-2">
+   554→              <p className="text-[10px] font-mono uppercase tracking-wider text-violet-hud">pegar código VGMAP85</p>
+   555→              <Input
+   556→                value={codigoImport}
+   557→                onChange={(e) => setCodigoImport(e.target.value)}
+   558→                placeholder="VGMAP85.eyJ…"
+   559→                className="h-8 bg-background/60 border-border font-mono text-[10px]"
+   560→              />
+   561→              <Button size="sm" onClick={importarCodigo} className="h-7 w-full font-mono text-[10px] uppercase bg-violet-hud/30 border border-violet-hud text-violet-hud">
+   562→                cargar mapa del código
+   563→              </Button>
+   564→            </motion.div>
+   565→          )}
+   566→        </AnimatePresence>
+   567→      </div>
+   568→
+   569→      {/* galería */}
+   570→      <div className="hud-corner p-3">
+   571→        <p className="text-[10px] font-mono uppercase tracking-wider text-violet-hud flex items-center gap-1.5 mb-2">
+   572→          <FolderOpen className="w-3.5 h-3.5" /> tu cartoteca ({galeria.length}/12)
+   573→        </p>
+   574→        {galeria.length === 0 ? (
+   575→          <p className="text-[10px] font-mono text-muted-foreground uppercase py-3 text-center">
+   576→            sin mapas guardados todavía · pinta tu primer frente arriba
+   577→          </p>
+   578→        ) : (
+   579→          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+   580→            {galeria.map((m) => (
+   581→              <div key={m.n} className="flex items-center gap-2 border border-border/60 p-2">
+   582→                <Layers className="w-4 h-4 text-violet-hud flex-shrink-0" />
+   583→                <button onClick={() => abrir(m)} className="flex-1 min-w-0 text-left">
+   584→                  <p className="text-[11px] font-mono font-bold uppercase text-foreground truncate">{m.n}</p>
+   585→                  <p className="text-[9px] font-mono text-muted-foreground">
+   586→                    {(m.z ?? []).length} zonas · {(m.fr ?? []).length} frentes · {(m.m ?? []).length} marcas
+   587→                  </p>
+   588→                </button>
+   589→                <button onClick={() => borrarDeGaleria(m.n)} className="text-red-hud hover:bg-red-hud/20 p-1" aria-label={`Borrar mapa ${m.n}`}>
+   590→                  <Trash2 className="w-3.5 h-3.5" />
+   591→                </button>
+   592→              </div>
+   593→            ))}
+   594→          </div>
+   595→        )}
+   596→      </div>
+   597→
+   598→      <p className="text-[9px] font-mono text-muted-foreground text-center uppercase">
+   599→        cada mapa es tuyo: vive en tu dispositivo y viaja en código o PNG — el mundo dentro de Vanguard también se dibuja
+   600→      </p>
+   601→    </div>
+   602→  );
+   603→}
+   604→

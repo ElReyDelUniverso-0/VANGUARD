@@ -1,0 +1,901 @@
+     1→"use client";
+     2→
+     3→// Vanguard v6 — MUNDO DE GUERRA: mini-juego de conquista estilo Risk sobre el mapa mundial real.
+     4→// Controlas un pais/territorio, te expandes por adyacencias, 3 IA enemigas con doctrinas propias.
+     5→import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+     6→import dynamic from "next/dynamic";
+     7→import { motion, AnimatePresence } from "framer-motion";
+     8→import {
+     9→  Swords, Shield, Flag, Coins, Globe2, Play, RotateCcw, ChevronRight, X,
+    10→  Crosshair, Trophy, Skull, Layers, Zap,
+    11→} from "lucide-react";
+    12→import { cn } from "@/lib/utils";
+    13→import { PanelHeader } from "@/components/vanguard/panel-header";
+    14→import { FlagBadge } from "@/components/vanguard/flag-badge";
+    15→import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-3d";
+    16→import { useGameStore } from "@/lib/game-store";
+    17→import {
+    18→  TERRITORIES, FACTIONS, getTerritory, incomeFor, resolveBattle,
+    19→  createInitialSnapshot, CAPTURE_REWARD, COMMANDERS, getCommander,
+    20→  type ConquestSnapshot, type FactionId,
+    21→} from "@/lib/conquest-data";
+    22→import { HeroOro } from "@/components/vanguard/hero-oro";
+    23→
+    24→// v14 — MAPA DE GUERRA EN 3D: globo real (globe.gl) en lugar del SVG plano
+    25→const GlobeMap3D = dynamic(
+    26→  () => import("@/components/vanguard/globe-map-3d").then((m) => m.GlobeMap3D),
+    27→  { ssr: false, loading: () => (
+    28→    <div className="hud-corner p-10 flex items-center justify-center text-[11px] font-mono text-muted-foreground uppercase tracking-widest">
+    29→      Cargando motor 3D...
+    30→    </div>
+    31→  ) }
+    32→);
+    33→
+    34→const CONTINENT_COLOR: Record<string, string> = {
+    35→  "NORTEAMÉRICA": "#E8C56A",
+    36→  "SUDAMÉRICA": "#38BDF8",
+    37→  "EUROPA": "#A855F7",
+    38→  "ÁFRICA": "#3DDC97",
+    39→  "ASIA": "#FF3B30",
+    40→  "OCEANÍA": "#FFD166",
+    41→};
+    42→
+    43→const TERRITORY_NAMES: Record<string, string> = Object.fromEntries(
+    44→  TERRITORIES.map((t) => [t.id, t.name])
+    45→);
+    46→
+    47→const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    48→
+    49→export function WorldConquestPanel() {
+    50→  const save = useGameStore((s) => s.conquestSave);
+    51→  const setConquestSave = useGameStore((s) => s.setConquestSave);
+    52→  const recordConquestWin = useGameStore((s) => s.recordConquestWin);
+    53→  const recordConquestCaptureStat = useGameStore((s) => s.recordConquestCaptureStat);
+    54→  const addPassXp = useGameStore((s) => s.addPassXp);
+    55→  const addCoins = useGameStore((s) => s.addCoins);
+    56→  const addXp = useGameStore((s) => s.addXp);
+    57→  const coins = useGameStore((s) => s.coins);
+    58→
+    59→  const [snap, setSnap] = useState<ConquestSnapshot | null>(save ?? null);
+    60→  const [homePick, setHomePick] = useState<string | null>(null);
+    61→  const [commanderPick, setCommanderPick] = useState<string | null>(null);
+    62→  const [selected, setSelected] = useState<string | null>(null);
+    63→  const [battle, setBattle] = useState<{
+    64→    fromName: string; toName: string; atkRoll: number; defRoll: number;
+    65→    defLosses: number; atkLosses: number; captured: boolean; attacker: FactionId; defender: FactionId;
+    66→  } | null>(null);
+    67→  const [aiThinking, setAiThinking] = useState<FactionId | null>(null);
+    68→  const [busy, setBusy] = useState(false);
+    69→  const busyRef = useRef(false);
+    70→
+    71→  // persistir cada cambio
+    72→  useEffect(() => {
+    73→    setConquestSave(snap);
+    74→  }, [snap, setConquestSave]);
+    75→
+    76→  const phase: "REINFORCE" | "ATTACK" | "IDLE" | "OVER" =
+    77→    !snap ? "IDLE" : snap.finished ? "OVER" : (aiThinking !== null || busy) ? "ATTACK" : snap.reserves > 0 ? "REINFORCE" : "ATTACK";
+    78→
+    79→  const playerTerritories = useMemo(
+    80→    () => (snap ? TERRITORIES.filter((t) => snap.territories[t.id].owner === 0) : []),
+    81→    [snap]
+    82→  );
+    83→
+    84→  // ====== acciones del jugador ======
+    85→  const startCampaign = useCallback(() => {
+    86→    if (!homePick || !commanderPick) return;
+    87→    const s = createInitialSnapshot(homePick, commanderPick);
+    88→    setSnap(s);
+    89→    setSelected(null);
+    90→  }, [homePick, commanderPick]);
+    91→
+    92→  const deployTroop = useCallback((tid: string) => {
+    93→    setSnap((prev) => {
+    94→      if (!prev || prev.reserves <= 0) return prev;
+    95→      const terr = prev.territories[tid];
+    96→      if (!terr || terr.owner !== 0) return prev;
+    97→      return {
+    98→        ...prev,
+    99→        reserves: prev.reserves - 1,
+   100→        territories: { ...prev.territories, [tid]: { ...terr, troops: terr.troops + 1 } },
+   101→      };
+   102→    });
+   103→  }, []);
+   104→
+   105→  const deployAll = useCallback(() => {
+   106→    setSnap((prev) => {
+   107→      if (!prev || prev.reserves <= 0) return prev;
+   108→      const own = TERRITORIES.filter((t) => prev.territories[t.id].owner === 0);
+   109→      if (own.length === 0) return prev;
+   110→      const next = { ...prev.territories };
+   111→      let r = prev.reserves;
+   112→      // priorizar fronteras
+   113→      const frontier = own.filter((t) => t.adj.some((a) => next[a].owner !== 0));
+   114→      const pool = frontier.length > 0 ? frontier : own;
+   115→      let i = 0;
+   116→      while (r > 0) {
+   117→        const t = pool[i % pool.length];
+   118→        next[t.id] = { ...next[t.id], troops: next[t.id].troops + 1 };
+   119→        r -= 1;
+   120→        i += 1;
+   121→      }
+   122→      return { ...prev, reserves: 0, territories: next };
+   123→    });
+   124→  }, []);
+   125→
+   126→  const doAttack = useCallback((fromId: string, toId: string) => {
+   127→    if (!snap) return;
+   128→    const cmd = getCommander(snap.commander);
+   129→    const from = snap.territories[fromId];
+   130→    const to = snap.territories[toId];
+   131→    if (!from || !to || from.owner !== 0 || from.troops < 2) return;
+   132→    const atkForce = from.troops - 1;
+   133→    const res = resolveBattle(atkForce, to.troops, cmd?.atkMult ?? 1, 1);
+   134→    const next = { ...snap.territories };
+   135→    let captures = snap.captures;
+   136→    let finished = false;
+   137→    let victory = false;
+   138→    const log = [...snap.log];
+   139→
+   140→    if (res.captured) {
+   141→      next[toId] = { owner: 0, troops: Math.max(1, atkForce - res.atkLosses) };
+   142→      next[fromId] = { owner: 0, troops: 1 };
+   143→      captures += 1;
+   144→      log.unshift({
+   145→        ts: Date.now(),
+   146→        msg: `TOMASTE ${getTerritory(toId).name.toUpperCase()} (${res.atkLosses} bajas propias, ${res.defLosses} enemigas)`,
+   147→        faction: 0,
+   148→      });
+   149→    } else {
+   150→      next[fromId] = { owner: 0, troops: Math.max(1, from.troops - res.atkLosses) };
+   151→      next[toId] = { owner: to.owner, troops: Math.max(0, to.troops - res.defLosses) };
+   152→      if (next[toId].troops <= 0) {
+   153→        // defensa aniquilada -> captura automatica con supervivientes minimos
+   154→        next[toId] = { owner: 0, troops: Math.max(1, atkForce - res.atkLosses) };
+   155→        next[fromId] = { owner: 0, troops: 1 };
+   156→        captures += 1;
+   157→        res.captured = true;
+   158→      }
+   159→      log.unshift({
+   160→        ts: Date.now(),
+   161→        msg: res.captured
+   162→          ? `TOMASTE ${getTerritory(toId).name.toUpperCase()} en combate callejero (${res.atkLosses} bajas propias)`
+   163→          : `Asalto rechazado en ${getTerritory(toId).name} (${res.atkLosses} bajas propias)`,
+   164→        faction: 0,
+   165→      });
+   166→    }
+   167→    log.splice(14);
+   168→
+   169→    finished = TERRITORIES.every((t) => next[t.id].owner === 0);
+   170→    victory = finished;
+   171→    if (!finished && TERRITORIES.filter((t) => next[t.id].owner === 0).length === 0) {
+   172→      finished = true;
+   173→      victory = false;
+   174→    }
+   175→
+   176→    setBattle({
+   177→      fromName: getTerritory(fromId).name, toName: getTerritory(toId).name,
+   178→      atkRoll: res.atkRoll, defRoll: res.defRoll, defLosses: res.defLosses,
+   179→      atkLosses: res.atkLosses, captured: res.captured, attacker: 0, defender: to.owner,
+   180→    });
+   181→    if (res.captured) {
+   182→      const coinReward = Math.round(CAPTURE_REWARD.coins * (cmd?.coinMult ?? 1));
+   183→      addCoins(coinReward, `Territorio conquistado: ${getTerritory(toId).name}`);
+   184→      addXp(CAPTURE_REWARD.xp);
+   185→      recordConquestCaptureStat();
+   186→      addPassXp(4);
+   187→    }
+   188→    if (finished && victory) {
+   189→      setTimeout(() => recordConquestWin(), 400);
+   190→    }
+   191→    setSnap({ ...snap, territories: next, captures, log, finished, victory });
+   192→  }, [snap, addCoins, addXp, recordConquestWin, recordConquestCaptureStat, addPassXp]);
+   193→
+   194→  // ====== turno de la IA ======
+   195→  const endTurn = useCallback(async () => {
+   196→    if (!snap || busyRef.current || snap.finished) return;
+   197→    busyRef.current = true;
+   198→    setBusy(true);
+   199→    setSelected(null);
+   200→    let s: ConquestSnapshot = { ...snap, territories: { ...snap.territories }, log: [...snap.log] };
+   201→
+   202→    for (const f of [1, 2, 3] as FactionId[]) {
+   203→      const ownedIds = TERRITORIES.filter((t) => s.territories[t.id].owner === f).map((t) => t.id);
+   204→      if (ownedIds.length === 0) continue;
+   205→      setAiThinking(f);
+   206→      await sleep(700);
+   207→
+   208→      // refuerzos
+   209→      const inc = incomeFor(s.territories, f);
+   210→      let reserves = inc;
+   211→      const logF = [...s.log];
+   212→      logF.unshift({ ts: Date.now(), msg: `${FACTIONS[f].name}: +${inc} refuerzos`, faction: f });
+   213→      const terrs = { ...s.territories };
+   214→      const frontier = ownedIds.filter((id) => getTerritory(id).adj.some((a) => terrs[a].owner !== f));
+   215→      const pool = frontier.length > 0 ? frontier : ownedIds;
+   216→      let i = 0;
+   217→      while (reserves > 0) {
+   218→        const id = pool[i % pool.length];
+   219→        terrs[id] = { ...terrs[id], troops: terrs[id].troops + 1 };
+   220→        reserves -= 1;
+   221→        i += 1;
+   222→      }
+   223→
+   224→      // ataques (hasta 3, contra el vecino mas debil con ventaja)
+   225→      let attacks = 0;
+   226→      while (attacks < 3) {
+   227→        let best: { from: string; to: string; ratio: number } | null = null;
+   228→        for (const id of ownedIds) {
+   229→          const src = terrs[id];
+   230→          if (src.owner !== f || src.troops < 3) continue;
+   231→          for (const adj of getTerritory(id).adj) {
+   232→            const dst = terrs[adj];
+   233→            if (!dst || dst.owner === f || dst.owner === null) continue;
+   234→            const ratio = (src.troops - 1) / Math.max(1, dst.troops);
+   235→            if (ratio >= 1.35 && (!best || ratio > best.ratio)) {
+   236→              best = { from: id, to: adj, ratio };
+   237→            }
+   238→          }
+   239→        }
+   240→        if (!best) break;
+   241→        const from = terrs[best.from];
+   242→        const to = terrs[best.to];
+   243→        const atkForce = from.troops - 1;
+   244→        // v8: la defensa del JUGADOR aplica el multiplicador del comandante elegido
+   245→        const playerDefMult = to.owner === 0 ? (getCommander(snap?.commander)?.defMult ?? 1) : 1;
+   246→        const res = resolveBattle(atkForce, to.troops, 1, playerDefMult);
+   247→        if (res.captured) {
+   248→          terrs[best.to] = { owner: f, troops: Math.max(1, atkForce - res.atkLosses) };
+   249→          terrs[best.from] = { owner: f, troops: 1 };
+   250→          ownedIds.push(best.to);
+   251→          logF.unshift({
+   252→            ts: Date.now(),
+   253→            msg: `${FACTIONS[f].short} TOMO ${getTerritory(best.to).name.toUpperCase()}${to.owner === 0 ? " (¡TUYO!)" : ""}`,
+   254→            faction: f,
+   255→          });
+   256→        } else {
+   257→          terrs[best.from] = { owner: f, troops: Math.max(1, from.troops - res.atkLosses) };
+   258→          terrs[best.to] = { owner: to.owner, troops: Math.max(1, to.troops - res.defLosses) };
+   259→          logF.unshift({
+   260→            ts: Date.now(),
+   261→            msg: `${FACTIONS[f].short} fallo el asalto a ${getTerritory(best.to).name}${to.owner === 0 ? " (tu territorio aguanta)" : ""}`,
+   262→            faction: f,
+   263→          });
+   264→        }
+   265→        attacks += 1;
+   266→        await sleep(450);
+   267→      }
+   268→      logF.splice(14);
+   269→      s = { ...s, territories: terrs, log: logF };
+   270→      setSnap(s);
+   271→      await sleep(350);
+   272→    }
+   273→
+   274→    // derrotas / nueva ronda
+   275→    const ownedByPlayer = TERRITORIES.filter((t) => s.territories[t.id].owner === 0).length;
+   276→    let finished = false;
+   277→    let victory = false;
+   278→    if (ownedByPlayer === 0) { finished = true; victory = false; }
+   279→    if (TERRITORIES.every((t) => s.territories[t.id].owner === 0)) { finished = true; victory = true; }
+   280→    const income = incomeFor(s.territories, 0) + (getCommander(snap?.commander)?.incomeBonus ?? 0);
+   281→    const log = [...s.log];
+   282→    if (!finished) {
+   283→      log.unshift({ ts: Date.now(), msg: `RONDA ${s.turn + 1} — Recibes ${income} refuerzos. Turno de ${FACTIONS[0].name}.`, faction: 0 });
+   284→    }
+   285→    setSnap({ ...s, turn: s.turn + 1, activeFaction: 0, reserves: income, finished, victory, log });
+   286→    setAiThinking(null);
+   287→    setBusy(false);
+   288→    busyRef.current = false;
+   289→  }, [snap]);
+   290→
+   291→  const newCampaign = useCallback(() => {
+   292→    setSnap(null);
+   293→    setHomePick(null);
+   294→    setSelected(null);
+   295→    setBattle(null);
+   296→  }, []);
+   297→
+   298→  // limpiar banner de batalla
+   299→  useEffect(() => {
+   300→    if (!battle) return;
+   301→    const t = setTimeout(() => setBattle(null), 3600);
+   302→    return () => clearTimeout(t);
+   303→  }, [battle]);
+   304→
+   305→  const selectedTerr = selected ? TERRITORIES.find((t) => t.id === selected) : null;
+   306→  const canAttackFrom = (tid: string) => phase === "ATTACK" && snap?.territories[tid].owner === 0 && snap?.territories[tid].troops >= 2;
+   307→  const attackTargets = useMemo(() => {
+   308→    if (!selectedTerr || !snap || !canAttackFrom(selectedTerr.id)) return [];
+   309→    return selectedTerr.adj.filter((a) => snap.territories[a].owner !== 0);
+   310→  }, [selectedTerr, snap]);
+   311→
+   312→  // ====== render ======
+   313→  if (!snap) {
+   314→    return (
+   315→      <HomeSelect
+   316→        homePick={homePick}
+   317→        setHomePick={setHomePick}
+   318→        commanderPick={commanderPick}
+   319→        setCommanderPick={setCommanderPick}
+   320→        onStart={startCampaign}
+   321→        coins={coins}
+   322→      />
+   323→    );
+   324→  }
+   325→
+   326→  const totalPlayer = playerTerritories.length;
+   327→  const domainPct = Math.round((totalPlayer / TERRITORIES.length) * 100);
+   328→
+   329→  return (
+   330→    <div className="space-y-4">
+   331→      <HeroOro panel="mundo" />
+   332→      <PanelHeader
+   333→        title="Mundo de Guerra"
+   334→        subtitle={`Ronda ${snap.turn} · ${TERRITORIES.length} territorios · comandante ${getCommander(snap.commander)?.name ?? "SIN ASIGNAR"}`}
+   335→        icon={<Globe2 className="w-4 h-4 text-amber" />}
+   336→        color="amber"
+   337→        right={
+   338→          <div className="flex items-center gap-2">
+   339→            <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
+   340→              <Coins className="w-3.5 h-3.5 text-amber" /> {coins}
+   341→            </div>
+   342→            <button
+   343→              onClick={newCampaign}
+   344→              className="flex items-center gap-1 px-2 py-1 border border-red-hud/60 text-red-hud rounded-sm text-[10px] font-mono font-bold uppercase hover:bg-red-hud/20"
+   345→            >
+   346→              <RotateCcw className="w-3 h-3" /> Nueva
+   347→            </button>
+   348→          </div>
+   349→        }
+   350→      />
+   351→
+   352→      {/* barra de estado de facciones */}
+   353→      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+   354→        {FACTIONS.map((f) => {
+   355→          const count = TERRITORIES.filter((t) => snap.territories[t.id].owner === f.id).length;
+   356→          const troops = TERRITORIES.filter((t) => snap.territories[t.id].owner === f.id)
+   357→            .reduce((acc, t) => acc + snap.territories[t.id].troops, 0);
+   358→          const isTurn = aiThinking === f.id;
+   359→          return (
+   360→            <div
+   361→              key={f.id}
+   362→              className={cn(
+   363→                "hud-corner p-2.5 bg-secondary/40 border transition-all",
+   364→                f.borderClass,
+   365→                isTurn && "ring-1 ring-white/40 scale-[1.02]"
+   366→              )}
+   367→            >
+   368→              <div className="flex items-center justify-between gap-1 mb-1">
+   369→                <span className={cn("text-[10px] font-mono font-bold uppercase truncate", f.colorClass)}>
+   370→                  {f.id === 0 ? f.name : f.short}
+   371→                </span>
+   372→                {isTurn && <Zap className="w-3 h-3 troop-pulse text-white" />}
+   373→              </div>
+   374→              <div className="flex items-end gap-2">
+   375→                <div>
+   376→                  <div className="text-[8px] font-mono text-muted-foreground uppercase">Territorios</div>
+   377→                  <div className={cn("text-lg font-mono font-bold leading-none", f.colorClass)}>{count}</div>
+   378→                </div>
+   379→                <div>
+   380→                  <div className="text-[8px] font-mono text-muted-foreground uppercase">Tropas</div>
+   381→                  <div className="text-lg font-mono font-bold leading-none text-foreground">{troops}</div>
+   382→                </div>
+   383→              </div>
+   384→            </div>
+   385→          );
+   386→        })}
+   387→      </div>
+   388→
+   389→      <div className="grid lg:grid-cols-3 gap-4">
+   390→        {/* MAPA DE GUERRA */}
+   391→        <div className="lg:col-span-2">
+   392→          <WarMap3D
+   393→            snap={snap}
+   394→            selected={selected}
+   395→            attackTargets={attackTargets}
+   396→            aiThinking={aiThinking}
+   397→            onTerritoryClick={(tid) => {
+   398→              if (phase === "OVER" || busy) return;
+   399→              const terr = snap.territories[tid];
+   400→              if (phase === "REINFORCE") {
+   401→                if (terr.owner === 0 && snap.reserves > 0) deployTroop(tid);
+   402→                return;
+   403→              }
+   404→              if (terr.owner === 0 && canAttackFrom(tid)) {
+   405→                setSelected(tid === selected ? null : tid);
+   406→                return;
+   407→              }
+   408→              if (selected && attackTargets.includes(tid)) {
+   409→                doAttack(selected, tid);
+   410→              }
+   411→            }}
+   412→          />
+   413→          {/* fase + acciones */}
+   414→          <div className="mt-2 flex flex-wrap items-center gap-2">
+   415→            <div className={cn(
+   416→              "px-3 py-1.5 border rounded-sm text-[11px] font-mono font-bold uppercase tracking-wider",
+   417→              phase === "REINFORCE" ? "border-green-hud bg-green-hud/20 text-green-hud"
+   418→                : phase === "OVER" ? "border-red-hud bg-red-hud/20 text-red-hud"
+   419→                : "border-amber-hud bg-amber-hud/20 text-amber"
+   420→            )}>
+   421→              {phase === "REINFORCE" && `FASE REFUERZOS — ${snap.reserves} tropas por desplegar (click en tus territorios)`}
+   422→              {phase === "ATTACK" && !busy && "FASE ATAQUE — elige un territorio tuyo (2+ tropas) y luego un vecino enemigo"}
+   423→              {busy && aiThinking !== null && `TURNO ENEMIGO — ${FACTIONS[aiThinking].name} moviendo...`}
+   424→              {phase === "OVER" && (snap.victory ? "CAMPAÑA COMPLETADA — DOMINIO MUNDIAL" : "CAMPAÑA PERDIDA — tu imperio ha caído")}
+   425→            </div>
+   426→            {phase === "REINFORCE" && (
+   427→              <button
+   428→                onClick={deployAll}
+   429→                className="px-3 py-1.5 border border-green-hud text-green-hud rounded-sm text-[10px] font-mono font-bold uppercase hover:bg-green-hud/20"
+   430→              >
+   431→                Desplegar todo
+   432→              </button>
+   433→            )}
+   434→            {phase === "ATTACK" && !busy && (
+   435→              <button
+   436→                onClick={endTurn}
+   437→                className="flex items-center gap-1.5 px-3 py-1.5 border border-red-hud bg-red-hud/20 text-red-hud rounded-sm text-[10px] font-mono font-bold uppercase hover:bg-red-hud/40"
+   438→              >
+   439→                <ChevronRight className="w-3.5 h-3.5" /> Terminar turno
+   440→              </button>
+   441→            )}
+   442→          </div>
+   443→
+   444→          {/* banner de batalla */}
+   445→          <AnimatePresence>
+   446→            {battle && (
+   447→              <motion.div
+   448→                initial={{ opacity: 0, y: 12, scale: 0.98 }}
+   449→                animate={{ opacity: 1, y: 0, scale: 1 }}
+   450→                exit={{ opacity: 0, y: -10 }}
+   451→                className={cn(
+   452→                  "mt-2 hud-corner p-3 border",
+   453→                  battle.captured ? "border-green-hud bg-green-hud/10" : "border-red-hud bg-red-hud/10"
+   454→                )}
+   455→              >
+   456→                <div className="flex items-center justify-between gap-2 flex-wrap">
+   457→                  <div className="flex items-center gap-2">
+   458→                    {battle.captured
+   459→                      ? <Trophy className="w-4 h-4 text-green-hud" />
+   460→                      : <Skull className="w-4 h-4 text-red-hud" />}
+   461→                    <span className="text-xs font-mono font-bold uppercase text-foreground">
+   462→                      {battle.fromName} → {battle.toName} {battle.captured ? "— ¡TERRITORIO TOMADO!" : "— asalto rechazado"}
+   463→                    </span>
+   464→                  </div>
+   465→                  <div className="flex items-center gap-3 text-[10px] font-mono">
+   466→                    <span className="text-amber">ATK {battle.atkRoll.toFixed(1)}</span>
+   467→                    <span className="text-cyan-hud">DEF {battle.defRoll.toFixed(1)}</span>
+   468→                    <span className="text-green-hud">-{battle.defLosses} enemigos</span>
+   469→                    <span className="text-red-hud">-{battle.atkLosses} tuyos</span>
+   470→                  </div>
+   471→                </div>
+   472→              </motion.div>
+   473→            )}
+   474→          </AnimatePresence>
+   475→        </div>
+   476→
+   477→        {/* PANEL LATERAL */}
+   478→        <div className="space-y-3">
+   479→          {/* dominio */}
+   480→          <div className="hud-corner p-3 bg-secondary/40">
+   481→            <div className="flex items-center justify-between mb-1.5">
+   482→              <span className="text-[10px] font-mono text-muted-foreground uppercase">Dominio global</span>
+   483→              <span className="text-xs font-mono font-bold text-amber">{domainPct}%</span>
+   484→            </div>
+   485→            <div className="h-2 bg-secondary rounded-full overflow-hidden">
+   486→              <motion.div
+   487→                className="h-full bg-gradient-to-r from-amber-hud to-red-hud"
+   488→                animate={{ width: `${domainPct}%` }}
+   489→                transition={{ type: "spring", stiffness: 80, damping: 20 }}
+   490→              />
+   491→            </div>
+   492→            <div className="text-[9px] font-mono text-muted-foreground mt-1.5">
+   493→              {totalPlayer}/{TERRITORIES.length} territorios · {snap.captures} conquistas · +5 mon / +3 XP por captura
+   494→            </div>
+   495→          </div>
+   496→
+   497→          {/* territorio seleccionado */}
+   498→          {selectedTerr && (
+   499→            <div className="hud-corner p-3 bg-secondary/40 border-amber-hud">
+   500→              <div className="flex items-start justify-between">
+   501→                <div>
+   502→                  <div className="text-xs font-mono font-bold text-foreground">{selectedTerr.name}</div>
+   503→                  <div className="text-[9px] font-mono text-muted-foreground uppercase">
+   504→                    {selectedTerr.continent} · tropas {snap.territories[selectedTerr.id].troops}
+   505→                  </div>
+   506→                </div>
+   507→                <button onClick={() => setSelected(null)} className="text-muted-foreground hover:text-foreground">
+   508→                  <X className="w-3.5 h-3.5" />
+   509→                </button>
+   510→              </div>
+   511→              {attackTargets.length > 0 && (
+   512→                <div className="mt-2 space-y-1">
+   513→                  <div className="text-[9px] font-mono text-red-hud uppercase font-bold">Objetivos vecinos:</div>
+   514→                  {attackTargets.map((a) => {
+   515→                    const t = snap.territories[a];
+   516→                    const f = FACTIONS[t.owner];
+   517→                    const atkForce = snap.territories[selectedTerr.id].troops - 1;
+   518→                    // probabilidad aproximada: fuerza de ataque vs defensa x1.15
+   519→                    const odds = Math.round((atkForce / (atkForce + t.troops * 1.15)) * 100);
+   520→                    return (
+   521→                      <button
+   522→                        key={a}
+   523→                        onClick={() => doAttack(selectedTerr.id, a)}
+   524→                        disabled={busy}
+   525→                        className="w-full flex items-center justify-between gap-2 px-2 py-1.5 border border-red-hud/50 rounded-sm hover:bg-red-hud/20 transition-colors text-left disabled:opacity-40"
+   526→                      >
+   527→                        <span className="text-[10px] font-mono text-foreground truncate">{getTerritory(a).name}</span>
+   528→                        <span className="text-[9px] font-mono text-muted-foreground whitespace-nowrap flex items-center gap-1.5">
+   529→                          <span className={cn("font-bold", odds >= 60 ? "text-green-hud" : odds >= 35 ? "text-amber" : "text-red-hud")}>
+   530→                            {odds}%
+   531→                          </span>
+   532→                          {f.short} · {t.troops} tropas
+   533→                        </span>
+   534→                      </button>
+   535→                    );
+   536→                  })}
+   537→                </div>
+   538→              )}
+   539→            </div>
+   540→          )}
+   541→
+   542→          {/* log de guerra */}
+   543→          <div className="hud-corner bg-secondary/40">
+   544→            <div className="p-2.5 border-b border-amber-hud/30">
+   545→              <span className="text-[10px] font-mono text-muted-foreground uppercase">Bitácora de guerra</span>
+   546→            </div>
+   547→            <div className="max-h-64 overflow-y-auto thin-scroll divide-y divide-border/30">
+   548→              {snap.log.map((l, i) => {
+   549→                const f = FACTIONS[l.faction];
+   550→                return (
+   551→                  <div key={`${l.ts}-${i}`} className="px-2.5 py-1.5 text-[10px] font-mono leading-snug flex gap-1.5">
+   552→                    <span className={cn("font-bold whitespace-nowrap", f.colorClass)}>{f.short}</span>
+   553→                    <span className={cn("text-foreground/90", l.msg.includes("¡TUYO!") && "text-red-hud font-bold")}>
+   554→                      {l.msg}
+   555→                    </span>
+   556→                  </div>
+   557→                );
+   558→              })}
+   559→            </div>
+   560→          </div>
+   561→        </div>
+   562→      </div>
+   563→
+   564→      {/* overlay fin de campana */}
+   565→      <AnimatePresence>
+   566→        {snap.finished && (
+   567→          <motion.div
+   568→            initial={{ opacity: 0 }}
+   569→            animate={{ opacity: 1 }}
+   570→            exit={{ opacity: 0 }}
+   571→            className="fixed inset-0 z-50 bg-background/90 backdrop-blur-sm flex items-center justify-center p-4"
+   572→          >
+   573→            <motion.div
+   574→              initial={{ scale: 0.9, y: 20 }}
+   575→              animate={{ scale: 1, y: 0 }}
+   576→              className={cn(
+   577→                "hud-corner max-w-md w-full p-6 text-center border-2",
+   578→                snap.victory ? "border-amber-hud bg-amber-hud/10" : "border-red-hud bg-red-hud/10"
+   579→              )}
+   580→            >
+   581→              {snap.victory ? (
+   582→                <Trophy className="w-12 h-12 text-amber mx-auto mb-3" />
+   583→              ) : (
+   584→                <Skull className="w-12 h-12 text-red-hud mx-auto mb-3" />
+   585→              )}
+   586→              <h3 className="text-xl font-mono font-bold tracking-widest text-foreground uppercase mb-1">
+   587→                {snap.victory ? "Dominio Mundial" : "Imperio Destruido"}
+   588→              </h3>
+   589→              <p className="text-xs font-mono text-muted-foreground mb-4">
+   590→                {snap.victory
+   591→                  ? `Has conquistado los ${TERRITORIES.length} territorios en ${snap.turn} rondas. Recompensa: +500 monedas, +250 XP, +3 gemas y 1 CAJÓN LEGENDARIA gratuito.`
+   592→                  : `Tu imperio cayó en la ronda ${snap.turn}. Los generales enemigos reparten tu territorio.`}
+   593→              </p>
+   594→              <button
+   595→                onClick={newCampaign}
+   596→                className="px-4 py-2 border border-amber-hud bg-amber-hud/30 text-amber rounded-sm text-xs font-mono font-bold uppercase hover:bg-amber-hud/50"
+   597→              >
+   598→                Nueva campaña
+   599→              </button>
+   600→            </motion.div>
+   601→          </motion.div>
+   602→        )}
+   603→      </AnimatePresence>
+   604→    </div>
+   605→  );
+   606→}
+   607→
+   608→// ====== MAPA DE GUERRA 3D (v14): globo real con territorios por faccion ======
+   609→function WarMap3D({
+   610→  snap, selected, attackTargets, aiThinking, onTerritoryClick,
+   611→}: {
+   612→  snap: ConquestSnapshot;
+   613→  selected: string | null;
+   614→  attackTargets: string[];
+   615→  aiThinking: FactionId | null;
+   616→  onTerritoryClick: (id: string) => void;
+   617→}) {
+   618→  // color de cada territorio segun su faccion propietaria
+   619→  const territoryColors = useMemo(() => {
+   620→    const m: Record<string, string> = {};
+   621→    for (const t of TERRITORIES) m[t.id] = FACTIONS[snap.territories[t.id].owner].color;
+   622→    return m;
+   623→  }, [snap]);
+   624→
+   625→  const selectedTerr = selected ? getTerritory(selected) : null;
+   626→
+   627→  // nodos de territorio: tropas + capital + objetivos, como pilares sobre el globo
+   628→  const markers = useMemo(() => {
+   629→    const arr: Globe3DMarker[] = TERRITORIES.map((t) => {
+   630→      const st = snap.territories[t.id];
+   631→      const f = FACTIONS[st.owner];
+   632→      const isTarget = attackTargets.includes(t.id);
+   633→      const isSel = selected === t.id;
+   634→      const isCapital = snap.playerHome === t.id && st.owner === 0;
+   635→      return {
+   636→        id: t.id,
+   637→        lat: t.lat,
+   638→        lng: t.lng,
+   639→        color: f.color,
+   640→        size: 0.3 + Math.min(0.34, st.troops * 0.03),
+   641→        alt: 0.02,
+   642→        ring: isTarget || isSel || isCapital,
+   643→        ringMax: isTarget ? 5.5 : 3.2,
+   644→        label: `${t.name} — ${st.troops} tropas${isCapital ? " · CAPITAL" : ""}`,
+   645→        labelTag: f.id === 0 ? "TU IMPERIO" : f.name,
+   646→        onClick: () => onTerritoryClick(t.id),
+   647→      };
+   648→    });
+   649→    return arr;
+   650→  }, [snap, selected, attackTargets, onTerritoryClick]);
+   651→
+   652→  // flechas de asalto hacia los objetivos del territorio seleccionado
+   653→  const arcs = useMemo(() => {
+   654→    if (!selectedTerr) return [] as Globe3DArc[];
+   655→    return attackTargets.map((a) => {
+   656→      const to = getTerritory(a);
+   657→      return {
+   658→        startLat: selectedTerr.lat,
+   659→        startLng: selectedTerr.lng,
+   660→        endLat: to.lat,
+   661→        endLng: to.lng,
+   662→        color: ["#FF3B30", "#FF3B3066"] as [string, string],
+   663→        stroke: 0.9,
+   664→        dashTime: 1600,
+   665→      };
+   666→    });
+   667→  }, [selectedTerr, attackTargets]);
+   668→
+   669→  return (
+   670→    <div className="hud-corner relative overflow-hidden">
+   671→      <GlobeMap3D
+   672→        territoryColors={territoryColors}
+   673→        territoryNames={TERRITORY_NAMES}
+   674→        highlightTerritory={selected}
+   675→        onTerritoryClick={(tid) => {
+   676→          if (tid) onTerritoryClick(tid);
+   677→        }}
+   678→        markers={markers}
+   679→        arcs={arcs}
+   680→        height="min(56vh, 540px)"
+   681→        minHeight={300}
+   682→        autoRotate={false}
+   683→        pov={{ lat: 24, lng: 12, altitude: 2.05 }}
+   684→        ariaLabel="Mapa de guerra 3D: territorios coloreados por facción"
+   685→      />
+   686→      {/* leyenda facciones */}
+   687→      <div className="absolute top-2 left-2 bg-background/85 px-2 py-1.5 hud-corner border-amber-hud pointer-events-none">
+   688→        <div className="text-[9px] font-mono text-muted-foreground uppercase mb-1">Facciones</div>
+   689→        <div className="text-[8px] font-mono text-amber mb-1.5 flex items-center gap-1">
+   690→          <span className="w-2 h-2 rounded-sm bg-amber-hud blink-soft" /> TU CAPITAL PULSA EN AZUL
+   691→        </div>
+   692→        {FACTIONS.map((f) => (
+   693→          <div key={f.id} className="flex items-center gap-1.5 text-[9px] font-mono">
+   694→            <span className="w-2 h-2 rounded-sm" style={{ background: f.color }} />
+   695→            <span className={cn("uppercase", aiThinking === f.id ? f.colorClass + " font-bold" : "text-muted-foreground")}>
+   696→              {f.id === 0 ? "TU IMPERIO" : f.name}
+   697→            </span>
+   698→          </div>
+   699→        ))}
+   700→      </div>
+   701→      <div className="absolute bottom-2 right-2 text-[10px] font-mono text-amber bg-background/80 px-2 py-1 hud-corner border-amber-hud">
+   702→        RONDA {snap.turn} · {aiThinking !== null ? FACTIONS[aiThinking].name : "TU TURNO"}
+   703→      </div>
+   704→      <div className="absolute bottom-2 left-2 text-[9px] font-mono text-muted-foreground bg-background/70 px-2 py-1 rounded-sm">
+   705→        Arrastra para girar el globo · clic en un territorio para actuar
+   706→      </div>
+   707→    </div>
+   708→  );
+   709→}
+   710→
+   711→// ====== pantalla de seleccion de origen ======
+   712→function HomeSelect({
+   713→  homePick, setHomePick, commanderPick, setCommanderPick, onStart, coins,
+   714→}: {
+   715→  homePick: string | null;
+   716→  setHomePick: (id: string) => void;
+   717→  commanderPick: string | null;
+   718→  setCommanderPick: (id: string) => void;
+   719→  onStart: () => void;
+   720→  coins: number;
+   721→}) {
+   722→  const byContinent = useMemo(() => {
+   723→    const m: Record<string, typeof TERRITORIES> = {};
+   724→    for (const t of TERRITORIES) {
+   725→      (m[t.continent] ??= []).push(t);
+   726→    }
+   727→    return m;
+   728→  }, []);
+   729→
+   730→  // v14: colores por continente para la vista previa 3D
+   731→  const previewColors = useMemo(() => {
+   732→    const m: Record<string, string> = {};
+   733→    for (const t of TERRITORIES) m[t.id] = CONTINENT_COLOR[t.continent] ?? "#E8C56A";
+   734→    return m;
+   735→  }, []);
+   736→
+   737→  return (
+   738→    <div className="space-y-4">
+   739→      <PanelHeader
+   740→        title="Mundo de Guerra"
+   741→        subtitle="Mini-juego de conquista global estilo tablero — elige tu nación de origen y domina los 24 territorios"
+   742→        icon={<Globe2 className="w-4 h-4 text-amber" />}
+   743→        color="amber"
+   744→        right={
+   745→          <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
+   746→            <Coins className="w-3.5 h-3.5 text-amber" /> {coins}
+   747→          </div>
+   748→        }
+   749→      />
+   750→
+   751→      {/* v14: vista previa 3D con TU PAÍS resaltado antes de iniciar */}
+   752→      <div className="hud-corner relative overflow-hidden">
+   753→        <GlobeMap3D
+   754→          territoryColors={previewColors}
+   755→          territoryNames={TERRITORY_NAMES}
+   756→          highlightTerritory={homePick}
+   757→          onTerritoryClick={(tid) => {
+   758→            if (tid) setHomePick(tid);
+   759→          }}
+   760→          markers={
+   761→            homePick
+   762→              ? [{
+   763→                  id: "cap",
+   764→                  lat: getTerritory(homePick).lat,
+   765→                  lng: getTerritory(homePick).lng,
+   766→                  color: "#E8C56A",
+   767→                  size: 0.55,
+   768→                  alt: 0.05,
+   769→                  ring: true,
+   770→                  ringMax: 4,
+   771→                  label: `TU PAÍS: ${getTerritory(homePick).name}`,
+   772→                  labelTag: "CAPITAL",
+   773→                }]
+   774→              : []
+   775→          }
+   776→          height="min(44vh, 430px)"
+   777→          minHeight={240}
+   778→          autoRotate
+   779→          rotateSpeed={0.5}
+   780→          ariaLabel="Globo 3D para elegir tu nación de origen"
+   781→        />
+   782→        <div className="absolute bottom-2 left-2 text-[9px] font-mono text-muted-foreground bg-background/80 px-2 py-1 hud-corner border-amber-hud">
+   783→          Toca una región del globo para elegir tu nación
+   784→        </div>
+   785→        {homePick && (
+   786→          <div className="absolute top-2 left-2 text-[10px] font-mono font-bold text-amber bg-background/80 px-2 py-1 hud-corner border-amber-hud">
+   787→            TU PAÍS: {getTerritory(homePick).name.toUpperCase()}
+   788→          </div>
+   789→        )}
+   790→      </div>
+   791→
+   792→      <div className="hud-corner p-4 bg-secondary/40">
+   793→        <div className="grid sm:grid-cols-3 gap-3 mb-4">
+   794→          <HowTo icon={<Flag className="w-4 h-4 text-amber" />} title="1 · Elige origen" desc="Tu capital inicia con 12 tropas. Las 3 IA enemigas se reparten el resto del planeta." />
+   795→          <HowTo icon={<Shield className="w-4 h-4 text-cyan-hud" />} title="2 · Elige comandante" desc="Cada comandante otorga una pasiva permanente: ataque, defensa, logística o botín." />
+   796→          <HowTo icon={<Swords className="w-4 h-4 text-red-hud" />} title="3 · Conquista" desc="Ataca vecinos con ventaja. Capturar da monedas y +4 PX de Pase Vanguard. Domina el 100% para el cajón LEGENDARIA." />
+   797→        </div>
+   798→
+   799→        <div className="text-[10px] font-mono text-muted-foreground uppercase mb-2">
+   800→          Naciones de origen · {homePick ? "1 seleccionada" : "ninguna"}
+   801→        </div>
+   802→        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-[320px] overflow-y-auto thin-scroll pr-1">
+   803→          {Object.entries(byContinent).map(([cont, list]) => (
+   804→            <div key={cont} className="space-y-1">
+   805→              <div className="flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-widest">
+   806→                <span className="w-1.5 h-1.5 rounded-sm" style={{ background: CONTINENT_COLOR[cont] }} />
+   807→                <span style={{ color: CONTINENT_COLOR[cont] }}>{cont}</span>
+   808→              </div>
+   809→              {list.map((t) => (
+   810→                <button
+   811→                  key={t.id}
+   812→                  onClick={() => setHomePick(t.id)}
+   813→                  className={cn(
+   814→                    "w-full text-left px-2 py-1.5 border rounded-sm text-[10px] font-mono transition-colors flex items-center justify-between gap-1",
+   815→                    homePick === t.id
+   816→                      ? "border-amber-hud bg-amber-hud/30 text-amber font-bold"
+   817→                      : "border-border/50 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
+   818→                  )}
+   819→                >
+   820→                  <span className="truncate">{t.name}</span>
+   821→                  <Layers className="w-3 h-3 opacity-50 flex-shrink-0" />
+   822→                </button>
+   823→              ))}
+   824→            </div>
+   825→          ))}
+   826→        </div>
+   827→
+   828→        <div className="text-[10px] font-mono text-muted-foreground uppercase mb-2 mt-4">
+   829→          Comandante · {commanderPick ? (getCommander(commanderPick)?.name ?? "") : "ninguno seleccionado"}
+   830→        </div>
+   831→        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+   832→          {COMMANDERS.map((c) => (
+   833→            <button
+   834→              key={c.id}
+   835→              onClick={() => setCommanderPick(c.id)}
+   836→              className={cn(
+   837→                "text-left px-2.5 py-2 border rounded-sm transition-colors",
+   838→                commanderPick === c.id
+   839→                  ? "border-amber-hud bg-amber-hud/30 text-amber"
+   840→                  : "border-border/50 text-muted-foreground hover:text-foreground hover:border-amber-hud/40"
+   841→              )}
+   842→            >
+   843→              <div className="text-[10px] font-mono font-bold uppercase truncate">{c.name}</div>
+   844→              <div className="text-[9px] font-mono leading-snug mt-0.5">{c.doctrine}</div>
+   845→            </button>
+   846→          ))}
+   847→        </div>
+   848→
+   849→        <div className="mt-4 flex items-center justify-between gap-3 flex-wrap">
+   850→          <div className="text-[10px] font-mono text-muted-foreground">
+   851→            {homePick && commanderPick ? (
+   852→              <>
+   853→                Capital: <span className="text-amber font-bold">{getTerritory(homePick).name}</span> · comandante <span className="text-amber font-bold">{getCommander(commanderPick)?.name}</span>
+   854→              </>
+   855→            ) : (
+   856→              "Selecciona nación y comandante para comenzar la campaña"
+   857→            )}
+   858→          </div>
+   859→          <button
+   860→            onClick={onStart}
+   861→            disabled={!homePick || !commanderPick}
+   862→            className={cn(
+   863→              "flex items-center gap-2 px-4 py-2 border rounded-sm text-xs font-mono font-bold uppercase tracking-wider transition-colors",
+   864→              homePick && commanderPick
+   865→                ? "border-green-hud bg-green-hud/20 text-green-hud hover:bg-green-hud/40"
+   866→                : "border-border/50 text-muted-foreground opacity-50 cursor-not-allowed"
+   867→            )}
+   868→          >
+   869→            <Play className="w-4 h-4" /> Iniciar campaña
+   870→          </button>
+   871→        </div>
+   872→      </div>
+   873→
+   874→      {/* facciones IA */}
+   875→      <div className="grid sm:grid-cols-3 gap-2">
+   876→        {FACTIONS.slice(1).map((f) => (
+   877→          <div key={f.id} className={cn("hud-corner p-3 bg-secondary/40 border", f.borderClass)}>
+   878→            <div className="flex items-center gap-2 mb-1">
+   879→              <Crosshair className={cn("w-4 h-4", f.colorClass)} />
+   880→              <span className={cn("text-xs font-mono font-bold uppercase", f.colorClass)}>{f.name}</span>
+   881→            </div>
+   882→            <div className="text-[10px] font-mono text-muted-foreground">{f.doctrine}</div>
+   883→          </div>
+   884→        ))}
+   885→      </div>
+   886→    </div>
+   887→  );
+   888→}
+   889→
+   890→function HowTo({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+   891→  return (
+   892→    <div className="hud-corner p-3 bg-background/60">
+   893→      <div className="flex items-center gap-2 mb-1">
+   894→        {icon}
+   895→        <span className="text-[11px] font-mono font-bold uppercase text-foreground">{title}</span>
+   896→      </div>
+   897→      <div className="text-[10px] font-mono text-muted-foreground leading-relaxed">{desc}</div>
+   898→    </div>
+   899→  );
+   900→}
+   901→
