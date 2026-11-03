@@ -119,6 +119,25 @@ async function parteA() {
     }
     afirmar(busq.includes("esFuentePublica"), "falta la guarda de frontera");
   });
+
+  await verificar("el cartógrafo cita sus fuentes y NO inventa coordenadas", () => {
+    const geoPath = join(RAIZ, "src/lib/nucleo/geografia.ts");
+    afirmar(existsSync(geoPath), "src/lib/nucleo/geografia.ts no existe");
+    const geo = readFileSync(geoPath, "utf8");
+    for (const trozo of ["TEATRO_3D", "guerras-activas-data", "NO cartografía oficial"]) {
+      afirmar(geo.includes(trozo), `el cartógrafo no declara su procedencia: falta «${trozo}»`);
+    }
+    afirmar(!/lat:\s*-?\d/.test(geo), "¡el cartógrafo declara coordenadas literales — está inventando puntos!");
+  });
+
+  await verificar("salas solo donde existen — la ausencia de Corea se declara, no se finge", () => {
+    const geo = readFileSync(join(RAIZ, "src/lib/nucleo/geografia.ts"), "utf8");
+    for (const sala of ['"ucrania"', '"oriente"', '"sudan"', '"sahel"', '"taiwan"']) {
+      afirmar(geo.includes(`sala: ${sala}`), `falta la sala ${sala} en el mapeo`);
+    }
+    afirmar(!/korea:\s*\{\s*sala:/.test(geo), "¡korea tiene sala fingida!");
+    afirmar(geo.includes("NO tiene sala de guerra propia"), "la ausencia de sala de Corea no se declara");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -138,10 +157,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v219.0", async () => {
+  await verificar("servidor vivo y en v220.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v219"), `versión ${r.json?.version} ≠ v219`);
+    afirmar(String(r.json?.version).startsWith("v220"), `versión ${r.json?.version} ≠ v220`);
   });
 
   // censo por API
@@ -263,6 +282,44 @@ async function parteB() {
       const dest = await pedir(e.ruta);
       afirmar(dest.status === 200, `enlace roto ${e.ruta} → ${dest.status}`);
     }
+  });
+
+  await verificar("el cartógrafo: la ficha lleva la GEOGRAFÍA del frente con fuente OSINT", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:acontecimiento:invasion-rusa-de-ucrania")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    const meta = r.json.meta ?? [];
+    const puntos = meta.find((m) => m.k === "Puntos del frente");
+    afirmar(Boolean(puntos) && puntos.v.startsWith("12 ciudades"), `puntos del frente: ${puntos?.v ?? "ausente"}`);
+    afirmar((meta.find((m) => m.k === "Fuente del mapa")?.v ?? "").includes("ISW"), "sin la fuente OSINT que la sala declara");
+    afirmar((meta.find((m) => m.k === "Precisión del mapa")?.v ?? "").includes("NO cartografía oficial"), "sin precisión del mapa declarada");
+    afirmar((r.json.enlaces ?? []).some((e) => e.ruta === "/ver-guerra" && e.etiqueta.includes("MAPA")), "sin enlace al mapa del frente");
+    const geo = r.json.geografia;
+    afirmar(geo?.salaGuerra === "ucrania" && Array.isArray(geo?.puntos) && geo.puntos.length === 12, "geografía estructurada rota");
+    afirmar(geo.puntos.every((p) => typeof p.lat === "number" && typeof p.lng === "number"), "punto sin coordenada");
+    afirmar(typeof geo.fuenteDatos === "string" && geo.fuenteDatos.length > 10, "fuente del mapa vacía");
+  });
+
+  await verificar("el cartógrafo: la sala del eje reparte ciudades por tablero (sin fingir)", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:acontecimiento:guerra-israel-gaza")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    const meta = r.json.meta ?? [];
+    const puntos = meta.find((m) => m.k === "Puntos del frente");
+    afirmar(Boolean(puntos) && puntos.v.startsWith("5 ciudades"), `tablero gaza: ${puntos?.v ?? "ausente"}`);
+    afirmar((meta.find((m) => m.k === "Fuente del mapa")?.v ?? "").includes("OCHA"), "sin la fuente de la sala oriente");
+    const nombres = (r.json.geografia?.puntos ?? []).map((p) => p.nombre);
+    afirmar(nombres.includes("Gaza (ciudad)") && nombres.includes("Jerusalén"), "ciudades del tablero gaza ausentes");
+    afirmar(!nombres.includes("Beirut"), "¡Beirut se coló en el tablero gaza!");
+    afirmar(!nombres.includes("Damasco"), "¡Damasco (sin teatro núcleo) se coló!");
+  });
+
+  await verificar("el cartógrafo: korea sin sala de guerra se DECLARA, no se finge", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:acontecimiento:ensayos-de-corea-del-norte")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    const meta = r.json.meta ?? [];
+    afirmar((meta.find((m) => m.k === "Mapa del frente")?.v ?? "").includes("sin sala de guerra propia"), "no declara la ausencia de sala");
+    afirmar((meta.find((m) => m.k === "Centro del teatro")?.v ?? "").length > 0, "korea sí tiene centro en el globo (TEATRO_3D)");
+    const geo = r.json.geografia;
+    afirmar(geo?.salaGuerra === null && (geo?.puntos?.length ?? 1) === 0, "geografía fingida para un teatro sin sala");
   });
 
   await verificar("ficha vg:noticia:<id> — el cable individual con su acontecimiento", async () => {

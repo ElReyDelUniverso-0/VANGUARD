@@ -24,6 +24,7 @@ import {
   acontecimientoPorSlug,
   cronologiaDeAcontecimiento,
 } from "./acontecimientos";
+import { geografiaDeTeatro, metaGeografia, type GeografiaTeatro } from "./geografia";
 import {
   idEntidad,
   partesDeId,
@@ -257,6 +258,7 @@ export interface FichaEntidad {
   modulo?: ModuloNucleo; // si la entidad es la cara de un módulo
   vive?: string; // dónde vive de verdad (transparencia)
   total?: number; // conteo real asociado (cables, etc.)
+  geografia?: GeografiaTeatro; // mapa del frente con procedencia (v220 EL CARTÓGRAFO)
 }
 
 /** Cables reales recientes por filtros — helper interno con fallo honesto. */
@@ -348,6 +350,7 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
       const a = await acontecimientoPorSlug(clave);
       if (!a) return { ok: false, error: `Acontecimiento no registrado: ${clave}` };
       const cron = await cronologiaDeAcontecimiento(a);
+      const geo = a.teatroTag ? geografiaDeTeatro(a.teatroTag) : null;
       const enlaces: EnlaceContextual[] = [];
       if (a.teatroTag && TEATROS[a.teatroTag]) {
         enlaces.push(
@@ -364,6 +367,14 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
             tipoRelacion: "visible_en",
           }
         );
+        if (geo?.salaGuerra) {
+          enlaces.push({
+            etiqueta: "EL MAPA DEL FRENTE ▸",
+            ruta: "/ver-guerra",
+            motivo: `Ciudades, frentes y zonas de control del teatro en la sala de guerra «${geo.salaGuerra}» (estimación OSINT, no cartografía oficial)`,
+            tipoRelacion: "visible_en",
+          });
+        }
       }
       for (const iso of a.paisCodes.slice(0, 3)) {
         enlaces.push({
@@ -389,11 +400,13 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
           { k: "Noticias en el archivo", v: String(cron.total) },
           { k: "Países implicados", v: a.paisCodes.map(nombrePais).join(", ") || "—" },
           { k: "Precisión temporal", v: a.precisionTemporal ?? "—" },
+          ...(geo ? metaGeografia(geo) : []),
         ],
         enlaces,
         cables: cron.lista,
         vive: "Registro de acontecimientos (fnt:acontecimientos)",
         total: cron.total,
+        ...(geo ? { geografia: geo } : {}),
       };
     } catch {
       return { ok: false, error: "El registro de acontecimientos no responde" };
