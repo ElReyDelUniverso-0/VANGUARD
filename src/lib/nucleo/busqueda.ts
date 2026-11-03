@@ -1,5 +1,15 @@
 // ============================================================
 // v218.0 EL NÚCLEO — BÚSQUEDA GLOBAL (server-only)
+// v221.0 LA LUPA — la búsqueda entiende la pregunta:
+//   · la parte en TÉRMINOS («ukraine drones» ya encuentra)
+//   · PUNTÚA cada candidato: frase exacta > todos los términos >
+//     algunos términos — y ordena lo mejor primero
+//   · los CABLES se escanean en memoria con la normalización de
+//     la casa: «artico» encuentra «ártico» (el LIKE de SQLite no
+//     normaliza tildes — bug real verificado contra el archivo)
+//   · los FRENTES de la sala de guerra (v220 EL CARTÓGRAFO) son
+//     buscables: «bajmut» lleva al mapa, con su fuente OSINT citada
+//   · filtro honesto por tipo de entidad (&tipo=noticia)
 // Una pregunta → todos los proveedores públicos de la casa
 // contestan EN PARALELO bajo el mismo contrato (ProveedorBusqueda).
 //
@@ -22,6 +32,7 @@ import { PAISES_ATLAS } from "@/lib/atlas-data";
 import { EXPEDIENTES } from "@/lib/expedientes-datos";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { MODULOS_NUCLEO } from "./registro";
+import { geografiaDeTeatro } from "./geografia";
 import {
   FUENTES_PUBLICAS,
   esFuentePublica,
@@ -29,7 +40,39 @@ import {
   type ProveedorBusqueda,
   type ResultadoNucleo,
 } from "./fuentes";
-import { idEntidad, normalizar } from "./tipos";
+import { idEntidad, normalizar, type TipoEntidad } from "./tipos";
+
+// ── LA LUPA: partir la pregunta y puntuar candidatos ────────
+
+/** Los términos de la pregunta (≥ 2 letras; q ya llega normalizado). */
+function terminosDe(q: string): string[] {
+  return q.split(/\s+/).filter((t) => t.length >= 2);
+}
+
+/** Puntos con los que un texto responde a la pregunta. 0 = no pinta.
+ *  el texto ES la frase          → 180 (match exacto)
+ *  frase completa presente       → 120 (la pregunta textual)
+ *  todos los términos            → 40 + 6 por término
+ *  solo algunos términos         → 8 por término acertado
+ * El orden canónico entre fuentes (ORDEN_ORIGEN) no cambia: esto
+ * ordena DENTRO de cada fuente, nunca entre fuentes. */
+function puntua(texto: string, frase: string, terminos: string[]): number {
+  const t = normalizar(texto);
+  if (!t) return 0;
+  if (frase && t.includes(frase)) return t === frase ? 180 : 120;
+  if (terminos.length === 0) return 0;
+  const aciertos = terminos.filter((x) => t.includes(x)).length;
+  if (aciertos === 0) return 0;
+  return aciertos === terminos.length ? 40 + 6 * aciertos : 8 * aciertos;
+}
+
+/** Ordena por puntos (empate = orden de inserción, estable) y recorta. */
+function mejores<T>(candidatos: { cosa: T; puntos: number }[], limite: number): T[] {
+  return candidatos
+    .sort((a, b) => b.puntos - a.puntos)
+    .slice(0, limite)
+    .map((c) => c.cosa);
+}
 
 // ── helpers ─────────────────────────────────────────────────
 
@@ -39,10 +82,6 @@ function slugMedio(s: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 48);
-}
-
-function incluye(haystack: string, aguja: string): boolean {
-  return normalizar(haystack).includes(aguja);
 }
 
 /** Lookup por id — jamás índices posicionales (el censo puede reordenarse). */
@@ -59,60 +98,100 @@ const PROVEEDORES: ProveedorBusqueda[] = [
   {
     fuente: fuentePublica("fnt:modulos"),
     async buscar(q, limite) {
-      return MODULOS_NUCLEO.filter((m) =>
-        incluye(`${m.nombre} ${m.lema} ${m.descripcion} ${m.alias} ${m.ruta}`, q)
-      )
-        .slice(0, limite)
-        .map((m) => ({
-          moduloId: m.id,
-          titulo: m.nombre,
-          subtitulo: `${m.lema} — ${m.ruta}`,
-          ruta: m.ruta,
-          origen: "fnt:modulos",
-        }));
+      const terminos = terminosDe(q);
+      return mejores(
+        MODULOS_NUCLEO.map((m) => ({
+          cosa: m,
+          puntos: puntua(`${m.nombre} ${m.lema} ${m.descripcion} ${m.alias} ${m.ruta}`, q, terminos),
+        })).filter((c) => c.puntos > 0),
+        limite
+      ).map((m) => ({
+        moduloId: m.id,
+        titulo: m.nombre,
+        subtitulo: `${m.lema} — ${m.ruta}`,
+        ruta: m.ruta,
+        origen: "fnt:modulos",
+      }));
     },
   },
-  // 2. TEATROS — las regiones de guerra con página propia
+  // 2. TEATROS — las regiones de guerra con página propia, más SUS
+  //    FRENTES (v221): las ciudades que la sala de guerra (v129)
+  //    documenta se vuelven buscables y llevan al mapa. La fuente
+  //    OSINT se CITA en el subtítulo — procedencia a la vista.
   {
     fuente: fuentePublica("fnt:teatros"),
     async buscar(q, limite) {
-      return Object.entries(TEATROS)
-        .filter(([slug, t]) => incluye(`${slug} ${t.nombre} ${t.resumen}`, q))
-        .slice(0, limite)
-        .map(([slug, t]) => ({
-          entidad: { id: idEntidad("region", slug), tipo: "region" as const, nombre: t.nombre },
-          titulo: `Teatro: ${t.nombre}`,
-          subtitulo: t.resumen,
-          ruta: `/conflicto/${slug}`,
-          origen: "fnt:teatros",
-        }));
+      const terminos = terminosDe(q);
+      const candidatos: { cosa: ResultadoNucleo; puntos: number }[] = [];
+      for (const [slug, t] of Object.entries(TEATROS)) {
+        const pTeatro = puntua(`${slug} ${t.nombre} ${t.resumen}`, q, terminos);
+        if (pTeatro > 0) {
+          candidatos.push({
+            cosa: {
+              entidad: { id: idEntidad("region", slug), tipo: "region" as const, nombre: t.nombre },
+              titulo: `Teatro: ${t.nombre}`,
+              subtitulo: t.resumen,
+              ruta: `/conflicto/${slug}`,
+              origen: "fnt:teatros",
+            },
+            puntos: pTeatro,
+          });
+        }
+        // frentes documentados del teatro (geografía v220: cero
+        // coordenadas inventadas — solo se proyecta la sala de la casa)
+        const geo = geografiaDeTeatro(slug);
+        for (const punto of geo.puntos) {
+          const p = puntua(`${punto.nombre} ${punto.estado}`, q, terminos);
+          if (p > 0) {
+            candidatos.push({
+              cosa: {
+                entidad: { id: idEntidad("region", slug), tipo: "region" as const, nombre: t.nombre },
+                titulo: `Frente: ${punto.nombre} — ${punto.estado}`,
+                subtitulo: `Mapa OSINT del teatro ${t.nombre} · fuente: ${geo.fuenteDatos ?? "sala de guerra de la casa"}`,
+                ruta: "/ver-guerra",
+                origen: "fnt:teatros",
+              },
+              puntos: p,
+            });
+          }
+        }
+      }
+      return mejores(candidatos, limite);
     },
   },
   // 3. PAÍSES — el atlas de naciones
   {
     fuente: fuentePublica("fnt:atlas"),
     async buscar(q, limite) {
-      return PAISES_ATLAS.filter((p) =>
-        incluye(`${p.nombre} ${p.capital} ${p.lider} ${p.gobierno}`, q)
-      )
-        .slice(0, limite)
-        .map((p) => ({
-          entidad: { id: idEntidad("pais", p.id), tipo: "pais" as const, nombre: p.nombre },
-          titulo: p.nombre,
-          subtitulo: `${p.capital} · ${p.gobierno}`,
-          ruta: `/nucleo?id=${idEntidad("pais", p.id)}`,
-          origen: "fnt:atlas",
-        }));
+      const terminos = terminosDe(q);
+      return mejores(
+        PAISES_ATLAS.map((p) => ({
+          cosa: p,
+          puntos: puntua(`${p.nombre} ${p.capital} ${p.lider} ${p.gobierno}`, q, terminos),
+        })).filter((c) => c.puntos > 0),
+        limite
+      ).map((p) => ({
+        entidad: { id: idEntidad("pais", p.id), tipo: "pais" as const, nombre: p.nombre },
+        titulo: p.nombre,
+        subtitulo: `${p.capital} · ${p.gobierno}`,
+        ruta: `/nucleo?id=${idEntidad("pais", p.id)}`,
+        origen: "fnt:atlas",
+      }));
     },
   },
-  // 4. CABLES — el archivo real (BD)
+  // 4. CABLES — el archivo real (BD), escaneado EN MEMORIA
+  //    (v221 LA LUPA: normalizar() de la casa sobre título+resumen —
+  //    «artico» encuentra «ártico», cosa que el LIKE de SQLite no hace;
+  //    multi-término: los que citan TODOS los términos quedan arriba;
+  //    y EL TÍTULO MANDA: el título puntúa doble frente al resumen —
+  //    un cable que cita la pregunta en su titular es más relevante
+  //    que uno que la menciona de pasada; a igualdad, el más reciente).
   {
     fuente: fuentePublica("fnt:cables"),
     async buscar(q, limite) {
-      const rows = await db.newsItem.findMany({
-        where: { OR: [{ title: { contains: q } }, { summary: { contains: q } }] },
+      const terminos = terminosDe(q);
+      const filas = await db.newsItem.findMany({
         orderBy: { publishedAt: "desc" },
-        take: limite,
         select: {
           id: true,
           title: true,
@@ -122,7 +201,17 @@ const PROVEEDORES: ProveedorBusqueda[] = [
           conflictTag: true,
         },
       });
-      return rows.map((n) => ({
+      return mejores(
+        filas
+          .map((n) => ({
+            cosa: n,
+            puntos:
+              puntua(n.title, q, terminos) * 2 +
+              puntua(n.summary ?? "", q, terminos),
+          }))
+          .filter((c) => c.puntos > 0),
+        limite
+      ).map((n) => ({
         entidad: { id: idEntidad("noticia", n.id), tipo: "noticia" as const, nombre: n.title },
         titulo: n.title,
         subtitulo: `${n.source}${n.conflictTag ? ` · ${n.conflictTag.toUpperCase()}` : ""}`,
@@ -133,68 +222,102 @@ const PROVEEDORES: ProveedorBusqueda[] = [
     },
   },
   // 5. ACONTECIMIENTOS — los hechos reales que reúnen varias noticias
-  //    (tabla Acontecimiento; filtro en memoria sobre `busca` normalizado
-  //    para que «invasion» encuentre «Invasión» sin depender del LIKE).
+  //    (tabla Acontecimiento; LA LUPA puntuó también aquí: frase >
+  //    todos los términos > algunos — «invasion rusa» sigue hallando
+  //    «Invasión rusa» y ahora «rusa ucrania» también lo encuentra).
   {
     fuente: fuentePublica("fnt:acontecimientos"),
     async buscar(q, limite) {
+      const terminos = terminosDe(q);
       const filas = await db.acontecimiento.findMany({
         select: { id: true, slug: true, titulo: true, resumen: true, estado: true, teatroTag: true, ocurridoDesde: true, busca: true },
       });
-      return filas
-        .filter((a) => a.busca.includes(q) || normalizar(`${a.titulo} ${a.resumen}`).includes(q))
-        .slice(0, limite)
-        .map((a) => ({
-          entidad: { id: a.id, tipo: "acontecimiento" as const, nombre: a.titulo },
-          titulo: `Acontecimiento: ${a.titulo}`,
-          subtitulo: `${a.estado.toUpperCase()} · desde ${a.ocurridoDesde?.toISOString().slice(0, 10) ?? "fecha sin precisión"}${a.teatroTag ? ` · teatro ${a.teatroTag}` : ""}`,
-          ruta: `/nucleo?id=${encodeURIComponent(a.id)}`,
-          fecha: a.ocurridoDesde?.toISOString(),
-          origen: "fnt:acontecimientos",
-        }));
+      return mejores(
+        filas
+          .map((a) => ({
+            cosa: a,
+            // el título manda (v221): doble peso frente al resumen
+            puntos:
+              puntua(a.titulo, q, terminos) * 2 +
+              puntua(`${a.resumen} ${a.busca}`, q, terminos),
+          }))
+          .filter((c) => c.puntos > 0),
+        limite
+      ).map((a) => ({
+        entidad: { id: a.id, tipo: "acontecimiento" as const, nombre: a.titulo },
+        titulo: `Acontecimiento: ${a.titulo}`,
+        subtitulo: `${a.estado.toUpperCase()} · desde ${a.ocurridoDesde?.toISOString().slice(0, 10) ?? "fecha sin precisión"}${a.teatroTag ? ` · teatro ${a.teatroTag}` : ""}`,
+        ruta: `/nucleo?id=${encodeURIComponent(a.id)}`,
+        fecha: a.ocurridoDesde?.toISOString(),
+        origen: "fnt:acontecimientos",
+      }));
     },
   },
-  // 6. DOCUMENTOS — expedientes + alejandría oscura (catálogos reales)
+  // 6. DOCUMENTOS — expedientes + alejandría oscura (catálogos reales),
+  //    ambos catálogos compiten por puntos en una sola cola.
   {
     fuente: fuentePublica("fnt:documentos"),
     async buscar(q, limite) {
-      const exps: ResultadoNucleo[] = EXPEDIENTES.filter((e) =>
-        incluye(`${e.titulo} ${e.agencia} ${e.cat} ${e.rareza}`, q)
-      ).map((e) => ({
-        entidad: { id: idEntidad("documento", `exp-${e.id}`), tipo: "documento" as const, nombre: e.titulo },
-        titulo: e.titulo,
-        subtitulo: `ARCHIVO SECRETO · ${e.agencia} · ${e.year} · ${e.rareza}`,
-        ruta: `/nucleo?id=${idEntidad("documento", `exp-${e.id}`)}`,
-        origen: "fnt:documentos",
-      }));
-      const oscs: ResultadoNucleo[] = [
+      const terminos = terminosDe(q);
+      const candidatos: { cosa: ResultadoNucleo; puntos: number }[] = [];
+      for (const e of EXPEDIENTES) {
+        const p = puntua(`${e.titulo} ${e.agencia} ${e.cat} ${e.rareza}`, q, terminos);
+        if (p > 0) {
+          candidatos.push({
+            cosa: {
+              entidad: { id: idEntidad("documento", `exp-${e.id}`), tipo: "documento" as const, nombre: e.titulo },
+              titulo: e.titulo,
+              subtitulo: `ARCHIVO SECRETO · ${e.agencia} · ${e.year} · ${e.rareza}`,
+              ruta: `/nucleo?id=${idEntidad("documento", `exp-${e.id}`)}`,
+              origen: "fnt:documentos",
+            },
+            puntos: p,
+          });
+        }
+      }
+      const oscura = [
         ...TEORIAS.map((x) => ({ id: x.id, titulo: x.titulo, fuente: x.fuente, sala: "TEORÍAS" })),
         ...ARMAS.map((x) => ({ id: x.id, titulo: x.titulo, fuente: x.fuente, sala: "ARMAS" })),
         ...CIVILIZACIONES.map((x) => ({ id: x.id, titulo: x.titulo, fuente: x.fuente, sala: "CIVILIZACIONES" })),
         ...DOCS.map((x) => ({ id: x.id, titulo: x.titulo, fuente: x.fuente, sala: "DOCUMENTOS" })),
-      ]
-        .filter((x) => incluye(`${x.titulo} ${x.fuente}`, q))
-        .map((x) => ({
-          entidad: { id: idEntidad("documento", `osc-${x.id}`), tipo: "documento" as const, nombre: x.titulo },
-          titulo: x.titulo,
-          subtitulo: `ALEJANDRÍA OSCURA · ${x.sala} · ${x.fuente}`,
-          ruta: `/nucleo?id=${idEntidad("documento", `osc-${x.id}`)}`,
-          origen: "fnt:documentos",
-        }));
-      return [...exps, ...oscs].slice(0, limite);
+      ];
+      for (const x of oscura) {
+        const p = puntua(`${x.titulo} ${x.fuente}`, q, terminos);
+        if (p > 0) {
+          candidatos.push({
+            cosa: {
+              entidad: { id: idEntidad("documento", `osc-${x.id}`), tipo: "documento" as const, nombre: x.titulo },
+              titulo: x.titulo,
+              subtitulo: `ALEJANDRÍA OSCURA · ${x.sala} · ${x.fuente}`,
+              ruta: `/nucleo?id=${idEntidad("documento", `osc-${x.id}`)}`,
+              origen: "fnt:documentos",
+            },
+            puntos: p,
+          });
+        }
+      }
+      return mejores(candidatos, limite);
     },
   },
-  // 7. ANÁLISIS — la verdad cruda (verificaciones de la comunidad)
+  // 7. ANÁLISIS — la verdad cruda (verificaciones de la comunidad),
+  //    escaneo en memoria con la normalización de la casa.
   {
     fuente: fuentePublica("fnt:verificaciones"),
     async buscar(q, limite) {
-      const rows = await db.newsVerify.findMany({
-        where: { headline: { contains: q } },
+      const terminos = terminosDe(q);
+      const filas = await db.newsVerify.findMany({
         orderBy: { createdAt: "desc" },
-        take: limite,
         select: { id: true, headline: true, source: true, truth: true, resolved: true },
       });
-      return rows.map((v) => ({
+      return mejores(
+        filas
+          .map((v) => ({
+            cosa: v,
+            puntos: puntua(`${v.headline} ${v.source}`, q, terminos),
+          }))
+          .filter((c) => c.puntos > 0),
+        limite
+      ).map((v) => ({
         entidad: { id: idEntidad("analisis", v.id), tipo: "analisis" as const, nombre: v.headline },
         titulo: v.headline,
         subtitulo: `VERDAD CRUDA · ${v.resolved ? `veredicto: ${v.truth || "sin resolver"}` : "en votación"} · ${v.source}`,
@@ -208,13 +331,20 @@ const PROVEEDORES: ProveedorBusqueda[] = [
   {
     fuente: fuentePublica("fnt:audios"),
     async buscar(q, limite) {
-      const rows = await db.audioComandante.findMany({
-        where: { OR: [{ titulo: { contains: q } }, { autor: { contains: q } }] },
+      const terminos = terminosDe(q);
+      const filas = await db.audioComandante.findMany({
         orderBy: { createdAt: "desc" },
-        take: limite,
         select: { id: true, autor: true, titulo: true, duracion: true, createdAt: true },
       });
-      return rows.map((a) => ({
+      return mejores(
+        filas
+          .map((a) => ({
+            cosa: a,
+            puntos: puntua(`${a.titulo} ${a.autor}`, q, terminos),
+          }))
+          .filter((c) => c.puntos > 0),
+        limite
+      ).map((a) => ({
         entidad: { id: idEntidad("documento", `aud-${a.id}`), tipo: "documento" as const, nombre: a.titulo },
         titulo: a.titulo,
         subtitulo: `EMISORA · audio de ${a.autor} · ${a.duracion}s`,
@@ -224,21 +354,24 @@ const PROVEEDORES: ProveedorBusqueda[] = [
       }));
     },
   },
-  // 9. MEDIOS — quién firma las noticias (fuentes reales del archivo)
+  // 9. MEDIOS — quién firma las noticias (fuentes reales del archivo,
+  //    distintas en memoria y puntuadas con la lupa).
   {
     fuente: fuentePublica("fnt:fuentes"),
     async buscar(q, limite) {
-      const rows = await db.newsItem.findMany({
-        where: { source: { contains: q } },
-        distinct: ["source"],
-        select: { source: true },
-        take: limite,
-      });
-      return rows.map((r) => {
-        const slug = slugMedio(r.source);
+      const terminos = terminosDe(q);
+      const filas = await db.newsItem.findMany({ select: { source: true } });
+      const unicos = [...new Set(filas.map((f) => f.source))];
+      return mejores(
+        unicos
+          .map((s) => ({ cosa: s, puntos: puntua(s, q, terminos) }))
+          .filter((c) => c.puntos > 0),
+        limite
+      ).map((r) => {
+        const slug = slugMedio(r);
         return {
-          entidad: { id: idEntidad("fuente", `med-${slug}`), tipo: "fuente" as const, nombre: r.source },
-          titulo: r.source,
+          entidad: { id: idEntidad("fuente", `med-${slug}`), tipo: "fuente" as const, nombre: r },
+          titulo: r,
           subtitulo: "Medio que firma cables del archivo",
           ruta: `/nucleo?id=${idEntidad("fuente", `med-${slug}`)}`,
           origen: "fnt:fuentes",
@@ -260,6 +393,10 @@ export interface FuenteConsultada {
 export interface RespuestaBusquedaNucleo {
   ok: boolean;
   q: string;
+  /** v221 LA LUPA: los términos en que se partió la pregunta. */
+  terminos: string[];
+  /** v221: filtro por tipo aplicado (null = sin filtro). */
+  tipo: TipoEntidad | null;
   resultados: ResultadoNucleo[];
   fuentes: FuenteConsultada[]; // TODAS las públicas consultadas (honestidad)
   generado: string;
@@ -280,16 +417,20 @@ const ORDEN_ORIGEN = [
 
 export async function buscarEnNucleo(
   qRaw: string,
-  limite = 24
+  limite = 24,
+  tipoFiltro: TipoEntidad | null = null
 ): Promise<RespuestaBusquedaNucleo> {
   const q = sanitizarLinea(qRaw, 64);
   const norm = normalizar(q);
+  const terminos = terminosDe(norm);
   const generado = new Date().toISOString();
 
   if (norm.length < 2) {
     return {
       ok: false,
       q,
+      terminos,
+      tipo: tipoFiltro,
       resultados: [],
       fuentes: [],
       generado,
@@ -323,7 +464,7 @@ export async function buscarEnNucleo(
     else a.fallo = true; // no respondió: se declara, jamás se inventa
   }
 
-  const resultados: ResultadoNucleo[] = [];
+  let resultados: ResultadoNucleo[] = [];
   for (const origen of ORDEN_ORIGEN) {
     for (const r of porOrigen.get(origen) ?? []) {
       if (resultados.length >= limite) break;
@@ -331,7 +472,19 @@ export async function buscarEnNucleo(
     }
   }
 
-  return { ok: true, q, resultados, fuentes: asientos, generado };
+  // v221 LA LUPA — filtro honesto por tipo: solo entidades de ese tipo
+  // sobreviven. Los módulos del censo (sin entidad) solo pasan con
+  // tipo=mapa, que es su publica_tipo declarado en fuentes.ts.
+  if (tipoFiltro) {
+    resultados = resultados.filter(
+      (r) =>
+        r.entidad
+          ? r.entidad.tipo === tipoFiltro
+          : tipoFiltro === "mapa" && Boolean(r.moduloId)
+    );
+  }
+
+  return { ok: true, q, terminos, tipo: tipoFiltro, resultados, fuentes: asientos, generado };
 }
 
 /** Para el mapa de entidades de /nucleo: qué proveedores hay por fuente. */

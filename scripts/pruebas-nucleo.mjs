@@ -157,10 +157,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v220.0", async () => {
+  await verificar("servidor vivo y en v221.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v220"), `versión ${r.json?.version} ≠ v220`);
+    afirmar(String(r.json?.version).startsWith("v221"), `versión ${r.json?.version} ≠ v221`);
   });
 
   // censo por API
@@ -224,6 +224,47 @@ async function parteB() {
   await verificar("búsqueda corta → 400 (nada de ruido)", async () => {
     const r = await pedir("/api/nucleo/busqueda?q=a");
     afirmar(r.status === 400, `status ${r.status} ≠ 400`);
+  });
+
+  // v221 LA LUPA — la búsqueda entiende la pregunta
+  const sinTilde = (s) =>
+    String(s).toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+
+  await verificar("LA LUPA: multi-término — «ukraine drones» halla cables que citan AMBOS arriba", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ukraine drones")}`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    afirmar(Array.isArray(r.json.terminos) && r.json.terminos.join(" ") === "ukraine drones", "la pregunta no se declara partida en términos");
+    const cables = (r.json.resultados ?? []).filter((x) => x.ruta?.startsWith("/noticia/"));
+    afirmar(cables.length >= 1, "ningún cable con ambos términos");
+    const top = sinTilde(cables[0].titulo);
+    afirmar(top.includes("ukraine") && top.includes("drone"), `el primer cable no cita ambos términos: ${cables[0].titulo}`);
+  });
+
+  await verificar("LA LUPA: «artico» encuentra el cable con «ártico» (tildes del archivo)", async () => {
+    const r = await pedir("/api/nucleo/busqueda?q=artico");
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const d = (r.json.resultados ?? []).find((x) => x.ruta?.startsWith("/noticia/") && sinTilde(x.titulo).includes("artico"));
+    afirmar(Boolean(d), "el escaneo normalizado no encuentra títulos con tilde");
+  });
+
+  await verificar("LA LUPA: «bajmut» lleva al MAPA DEL FRENTE con su fuente OSINT citada", async () => {
+    const r = await pedir("/api/nucleo/busqueda?q=bajmut");
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const f = (r.json.resultados ?? []).find((x) => x.titulo?.startsWith("Frente:") && x.ruta === "/ver-guerra");
+    afirmar(Boolean(f), "la ciudad del frente (sala de guerra v129/v220) no es buscable");
+    afirmar(f.origen === "fnt:teatros", "el frente no declara su fuente");
+    afirmar(String(f.subtitulo).includes("OSINT"), "el frente no cita la procedencia del mapa");
+  });
+
+  await verificar("LA LUPA: filtro &tipo=noticia honesto y 400 en tipo desconocido", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ucrania")}&tipo=noticia`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const rdos = r.json.resultados ?? [];
+    afirmar(rdos.length >= 1, "el filtro se llevó todo");
+    afirmar(rdos.every((x) => x.entidad?.tipo === "noticia"), "se coló un resultado de otro tipo");
+    afirmar(r.json.tipo === "noticia", "el filtro aplicado no se declara en la respuesta");
+    const malo = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ucrania")}&tipo=basura`);
+    afirmar(malo.status === 400, `tipo inválido → ${malo.status} ≠ 400`);
   });
 
   // relaciones: ficha de entidad y sus enlaces vivos
