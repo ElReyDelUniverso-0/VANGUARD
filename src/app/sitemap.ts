@@ -101,6 +101,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v218.0 EL NÚCLEO — el censo de módulos y la búsqueda global
+      url: `${SITE_URL}/nucleo`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v211.0 EL VÉRTIGO — el feed infinito: puerta para el público de
       // deslizamiento (la fórmula TikTok indexable por Google)
       url: `${SITE_URL}/vertigo`,

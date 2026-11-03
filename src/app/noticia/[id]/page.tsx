@@ -8,6 +8,9 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { SiguienteChip } from "@/components/noticia/siguiente-chip";
 // v215.0 MODO TRADUCTOR — el cable en los 8 idiomas de Vanguard
 import { TraductorChip } from "@/components/noticia/traductor-chip";
+// v218.0 EL NÚCLEO — enlaces contextuales calculados en el mismo render
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { enlacesDeCable } from "@/lib/nucleo/relaciones";
 
 // v202.0 PUERTAS ABIERTAS — cada noticia es UNA PUERTA propia de entrada.
 // Antes: todas las noticias regalaban el click a la fuente externa con
@@ -322,6 +325,12 @@ export default async function NoticiaPage({
             .
           </p>
         </div>
+
+        {/* v218.0 EL NÚCLEO — la conexión explícita del cable con la casa */}
+        <EnlacesNucleo
+          enlaces={enlacesDeCable({ id: it.id, conflictTag: it.conflictTag ?? null, source: it.source })}
+          titulo="CONECTA CON EL NÚCLEO"
+        />
 
         {/* cables relacionados — más puertas internas */}
         {relacionadas.length > 0 && (

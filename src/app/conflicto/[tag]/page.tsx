@@ -5,6 +5,9 @@ import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { TEATROS } from "@/lib/teatros";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
+// v218.0 EL NÚCLEO — enlaces contextuales calculados en el mismo render
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { enlacesDeRegion } from "@/lib/nucleo/relaciones";
 
 // v206.0 MÁS PUERTAS — una página indexable POR TEATRO DE GUERRA.
 // Nadie busca «Vanguard»: la gente busca «guerra en Ucrania hoy»,
@@ -274,6 +277,9 @@ export default async function ConflictoPage({
             .
           </p>
         </div>
+
+        {/* v218.0 EL NÚCLEO — la conexión explícita con el resto de la casa */}
+        <EnlacesNucleo enlaces={enlacesDeRegion(tag)} titulo="CONECTA CON EL NÚCLEO" />
 
         {/* otros teatros — más puertas internas */}
         <section className="mt-10">

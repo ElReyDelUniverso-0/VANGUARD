@@ -1,0 +1,291 @@
+#!/usr/bin/env node
+// ============================================================
+// v218.0 EL NÚCLEO — PRUEBAS DEL SISTEMA CENTRAL
+//   node scripts/pruebas-nucleo.mjs [http://localhost:3000]
+//
+// PARTE A — CENSO (offline, lee el código: nada de servidores):
+//   ids únicos · rutas reales en src/app · dependencias existentes
+//   · 8 tipos de entidad · frontera pública/privada declarada.
+// PARTE B — VIVO (contra el servidor):
+//   búsqueda real y sin fuentes privadas · fichas de entidad con
+//   enlaces que responden 200 · navegación (/nucleo, sitemap,
+//   chips en /conflicto y /noticia) · muro 429 (ley v211) ·
+//   cero fuga de campos privados (passHash/saveJson).
+// Sale con código 1 si ALGO falla (el Dueño manda: si las pruebas
+// básicas fallan, no se continúa con cambios masivos).
+// ============================================================
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+const RAIZ = process.cwd();
+const BASE = (process.argv[2] || "http://localhost:3000").replace(/\/$/, "");
+const PRIVADAS = ["fnt:cuentas", "fnt:jugadores", "fnt:telemetria", "fnt:conversacion"];
+const CAMPOS_PRIVADOS = ["passHash", "saveJson", "lastLoginAt"];
+
+let pasan = 0;
+let fallan = 0;
+const fallos = [];
+
+function verificar(nombre, fn) {
+  return Promise.resolve()
+    .then(fn)
+    .then(() => {
+      pasan++;
+      console.log(`  ✓ ${nombre}`);
+    })
+    .catch((e) => {
+      fallan++;
+      fallos.push(`${nombre} — ${e?.message ?? e}`);
+      console.error(`  ✗ ${nombre} — ${e?.message ?? e}`);
+    });
+}
+
+function afirmar(cond, mensaje) {
+  if (!cond) throw new Error(mensaje);
+}
+
+async function pedir(ruta, init = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 30000);
+  try {
+    const r = await fetch(`${BASE}${ruta}`, { signal: ctrl.signal, ...init });
+    const texto = await r.text();
+    let json = null;
+    try { json = JSON.parse(texto); } catch { /* HTML */ }
+    return { status: r.status, texto, json };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// PARTE A — EL CENSO, OFFLINE
+// ─────────────────────────────────────────────────────────────
+const rutaRegistro = join(RAIZ, "src/lib/nucleo/registro.ts");
+const rutaFuentes = join(RAIZ, "src/lib/nucleo/fuentes.ts");
+const registro = existsSync(rutaRegistro) ? readFileSync(rutaRegistro, "utf8") : "";
+const fuentes = existsSync(rutaFuentes) ? readFileSync(rutaFuentes, "utf8") : "";
+
+const ids = [...registro.matchAll(/id: "(mod:[a-z0-9-]+)"/g)].map((m) => m[1]);
+const rutas = [...registro.matchAll(/ruta: "([^"]+)"/g)].map((m) => m[1]);
+const deps = [...registro.matchAll(/"((?:mod|fnt):[a-z0-9:-]+)"/g)].map((m) => m[1]);
+const fntPublicas = [...fuentes.matchAll(/id: "(fnt:[a-z0-9-]+)"/g)].map((m) => m[1]);
+
+async function parteA() {
+  console.log("\nPARTE A — CENSO DEL NÚCLEO (offline)");
+
+  await verificar("el censo existe y tiene ≥ 18 módulos", () => {
+    afirmar(registro.length > 0, "src/lib/nucleo/registro.ts no existe");
+    afirmar(ids.length >= 18, `solo ${ids.length} módulos en el censo`);
+  });
+
+  await verificar("ids de módulo únicos", () => {
+    const dup = ids.filter((x, i) => ids.indexOf(x) !== i);
+    afirmar(dup.length === 0, `ids duplicados: ${dup.join(", ")}`);
+  });
+
+  await verificar("cada ruta del censo existe de verdad en src/app/", () => {
+    for (const r of rutas) {
+      const rel = r === "/" ? "src/app/page.tsx" : `src/app${r}/page.tsx`;
+      afirmar(existsSync(join(RAIZ, rel)), `ruta ${r} sin ${rel}`);
+    }
+  });
+
+  await verificar("todas las dependencias existen (mod:/fnt:)", () => {
+    for (const d of deps) {
+      if (d.startsWith("mod:")) afirmar(ids.includes(d), `dependencia inexistente: ${d}`);
+      else afirmar(fntPublicas.includes(d) || PRIVADAS.includes(d), `fuente no declarada: ${d}`);
+    }
+  });
+
+  await verificar("8 tipos de entidad con la fórmula vg:<tipo>:<clave>", () => {
+    const tipos = readFileSync(join(RAIZ, "src/lib/nucleo/tipos.ts"), "utf8");
+    for (const t of ["pais", "region", "acontecimiento", "documento", "fuente", "mapa", "analisis", "simulacion"]) {
+      afirmar(tipos.includes(`"${t}"`), `falta el tipo ${t}`);
+    }
+    afirmar(tipos.includes("vg:${tipo}"), "la fórmula de id estable no está en tipos.ts");
+  });
+
+  await verificar("frontera: fuentes privadas declaradas y públicas ≥ 9", () => {
+    for (const p of PRIVADAS) afirmar(fuentes.includes(`"${p}"`), `fuente privada no declarada: ${p}`);
+    const publicas = fntPublicas.filter((f) => !PRIVADAS.includes(f));
+    afirmar(publicas.length >= 9, `solo ${publicas.length} fuentes públicas`);
+  });
+
+  await verificar("sin proveedor para fuentes privadas en busqueda.ts", () => {
+    const busq = readFileSync(join(RAIZ, "src/lib/nucleo/busqueda.ts"), "utf8");
+    for (const p of PRIVADAS) {
+      afirmar(!busq.includes(`fuentePublica("${p}")`), `¡una fuente privada tiene proveedor: ${p}!`);
+    }
+    afirmar(busq.includes("esFuentePublica"), "falta la guarda de frontera");
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// PARTE B — LA CASA VIVA
+// ─────────────────────────────────────────────────────────────
+async function parteB() {
+  console.log("\nPARTE B — BÚSQUEDA, NAVEGACIÓN Y RELACIONES (vivo)");
+
+  // calentamiento: si una pasada anterior dejó el muro en castigo, se espera
+  // en limpio (la prueba nunca debe pelear con la ley v211, debe verificarla)
+  try {
+    const sonda = await pedir("/api/nucleo/busqueda?q=calentamiento");
+    if (sonda.status === 429) {
+      console.log("  … muro en castigo de una pasada anterior: esperando 61 s");
+      await new Promise((r) => setTimeout(r, 61000));
+    }
+  } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
+
+  // salud
+  await verificar("servidor vivo y en v218.0", async () => {
+    const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
+    afirmar(r.json?.ok === true, "health no responde ok");
+    afirmar(String(r.json?.version).startsWith("v218"), `versión ${r.json?.version} ≠ v218`);
+  });
+
+  // censo por API
+  await verificar("GET /api/nucleo/modulos — censo público completo", async () => {
+    const r = await pedir("/api/nucleo/modulos");
+    afirmar(r.status === 200 && r.json?.ok, "no 200/ok");
+    afirmar(r.json.totales.modulos >= 18, "censo incompleto");
+    afirmar(r.json.modulos.some((m) => m.id === "mod:nucleo"), "el núcleo no se registra a sí mismo");
+    afirmar(r.json.fuentesPrivadas.length === 4, "la frontera privada no está declarada");
+  });
+
+  // búsqueda real
+  let primerCable = null;
+  await verificar("GET /api/nucleo/busqueda?q=ucrania — resultados REALES", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ucrania")}`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const rdos = r.json.resultados ?? [];
+    afirmar(rdos.length >= 3, `solo ${rdos.length} resultados`);
+    const cables = rdos.filter((x) => x.ruta?.startsWith("/noticia/"));
+    afirmar(cables.length >= 1, "ningún cable real del archivo");
+    primerCable = cables[0]?.ruta ?? null;
+    const teatro = rdos.find((x) => x.entidad?.tipo === "region");
+    afirmar(Boolean(teatro), "el teatro de Ucrania no aparece como región");
+    afirmar(rdos.every((x) => x.origen?.startsWith("fnt:")), "resultado sin fuente declarada");
+  });
+
+  await verificar("la búsqueda NUNCA toca fuentes privadas ni filtra campos", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ucrania")}`);
+    const crudo = r.texto;
+    for (const p of PRIVADAS) afirmar(!crudo.includes(`"${p}"`), `fuente privada en respuesta: ${p}`);
+    for (const c of CAMPOS_PRIVADOS) afirmar(!crudo.includes(c), `campo privado filtrado: ${c}`);
+    for (const f of r.json.fuentes ?? []) {
+      afirmar(!PRIVADAS.includes(f.id), `la búsqueda consultó una fuente privada: ${f.id}`);
+    }
+  });
+
+  await verificar("búsqueda halla DOCUMENTOS del catálogo (exp-…)", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("stargate")}`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const d = (r.json.resultados ?? []).find((x) => x.entidad?.id?.startsWith("vg:documento:exp-"));
+    afirmar(Boolean(d), "el expediente STARGATE no aparece");
+  });
+
+  await verificar("búsqueda sin resultados = vacío honesto", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("zzqqxxw")}`);
+    afirmar(r.status === 200 && r.json?.ok === true && (r.json.resultados?.length ?? 0) === 0, "no vacío honesto");
+  });
+
+  await verificar("búsqueda corta → 400 (nada de ruido)", async () => {
+    const r = await pedir("/api/nucleo/busqueda?q=a");
+    afirmar(r.status === 400, `status ${r.status} ≠ 400`);
+  });
+
+  // relaciones: ficha de entidad y sus enlaces vivos
+  await verificar("ficha vg:region:ukraine — enlaces que RESPONDEN 200", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:region:ukraine")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    const enlaces = r.json.enlaces ?? [];
+    afirmar(enlaces.length >= 4, `solo ${enlaces.length} enlaces`);
+    for (const e of enlaces.slice(0, 6)) {
+      const dest = await pedir(e.ruta);
+      afirmar(dest.status === 200, `enlace roto ${e.ruta} → ${dest.status}`);
+    }
+  });
+
+  await verificar("ficha vg:pais:ua — metadatos reales del atlas + cables", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:pais:ua")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha no ok");
+    afirmar((r.json.meta ?? []).some((m) => m.k === "Capital"), "sin capital del atlas");
+    afirmar((r.json.cables ?? []).every((c) => c.ruta.startsWith("/noticia/")), "cable sin ruta de noticia");
+  });
+
+  await verificar("entidad inválida → 404 honesto", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:basura:x")}`);
+    afirmar(r.status === 404, `status ${r.status} ≠ 404`);
+  });
+
+  await verificar("ficha vg:simulacion:ver-guerra — el módulo vive en el censo", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:ver-guerra")}`);
+    afirmar(r.status === 200 && r.json?.ok && r.json.modulo?.id === "mod:ver-guerra", "entidad de módulo rota");
+  });
+
+  // navegación
+  await verificar("/nucleo responde con censo, entidades y frontera", async () => {
+    const r = await pedir("/nucleo");
+    afirmar(r.status === 200, "no 200");
+    for (const trozo of ["NÚCLEO", "CENSO DE MÓDULOS", "MAPA DE ENTIDADES", "FRONTERA DE DATOS"]) {
+      afirmar(r.texto.includes(trozo), `falta «${trozo}» en la página`);
+    }
+  });
+
+  await verificar("/nucleo?id=… renderiza la ficha server-side", async () => {
+    const r = await pedir(`/nucleo?id=${encodeURIComponent("vg:region:ukraine")}`);
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("FICHA DE ENTIDAD"), "sin ficha renderizada");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin enlaces contextuales");
+  });
+
+  await verificar("los chips contextuales viven en /conflicto/ukraine", async () => {
+    const r = await pedir("/conflicto/ukraine");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "chips ausentes en la ficha de teatro");
+  });
+
+  await verificar("los chips contextuales viven en /noticia/[id]", async () => {
+    if (!primerCable) throw new Error("sin cable de la prueba anterior");
+    const r = await pedir(primerCable);
+    afirmar(r.status === 200, `cable ${primerCable} no 200`);
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "chips ausentes en el cable");
+  });
+
+  await verificar("sitemap anuncia /nucleo a Google", async () => {
+    const r = await pedir("/sitemap.xml");
+    afirmar(r.status === 200 && r.texto.includes("/nucleo"), "sitemap sin /nucleo");
+  });
+
+  // compatibilidad: las rutas de la casa siguen vivas
+  await verificar("compatibilidad: las rutas existentes siguen en pie", async () => {
+    for (const ruta of ["/", "/en-vivo", "/vertigo", "/audios", "/modo", "/objetivos", "/mundo"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `ruta ${ruta} → ${r.status}`);
+    }
+  });
+
+  // el muro al final: quema la cuota de esta IP
+  await verificar("muro v211: la ráfaga recibe 429", async () => {
+    let vio429 = false;
+    for (let i = 0; i < 40; i++) {
+      const r = await pedir(`/api/nucleo/busqueda?q=prueba${i}`);
+      if (r.status === 429) { vio429 = true; break; }
+    }
+    afirmar(vio429, "40 búsquedas seguidas sin 429 — el muro no existe");
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+const t0 = Date.now();
+await parteA();
+await parteB();
+console.log(`\n════════════════════════════════════════`);
+console.log(`  PASAN ${pasan} · FALLAN ${fallan} · ${Date.now() - t0} ms`);
+if (fallan > 0) {
+  console.log("\n  EL DUEÑO MANDÓ: si las pruebas básicas fallan, no hay cambios masivos.");
+  fallos.forEach((f) => console.log(`   · ${f}`));
+  process.exit(1);
+}
+console.log("  EL NÚCLEO ESTÁ EN PIE: censo, búsqueda, relaciones y navegación ✓");

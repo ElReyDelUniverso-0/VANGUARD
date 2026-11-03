@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -213,6 +213,13 @@ export function SectionSearch({
         icon: <Mic className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la emisora de la casa", icon_color: "text-amber",
         kind: "page", href: "/audios",
+      },
+      {
+        // v218.0 EL NÚCLEO — el censo de módulos y la búsqueda global
+        key: "pg:nucleo", label: "EL NÚCLEO — el censo de módulos, entidades y la búsqueda global de la casa", short: "nucleo mapa modulos arquitectura entidades busqueda global sistema censo",
+        icon: <Network className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el mapa que conecta todo", icon_color: "text-amber",
+        kind: "page", href: "/nucleo",
       },
       {
         // v214.0 LA PUERTA — el modo y la cuenta entran al índice total

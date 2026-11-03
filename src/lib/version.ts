@@ -1,4 +1,36 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v218.0 EL NÚCLEO — mandato del Dueño: «diseña e implementa gradualmente el
+//         NÚCLEO CENTRAL de Vanguard… cada nueva función pueda conectarse al
+//         resto del ecosistema sin crear una página aislada».
+// ① REGISTRO CENTRAL DE MÓDULOS (src/lib/nucleo/registro.ts): censo de 20
+//    módulos reales con nombre, descripción, categoría (REDACCION/MUNDO/
+//    SIMULACION/COMUNIDAD/SISTEMA), ruta, permisos (publico/cuenta/dueno),
+//    estado (VIVO/BETA/PLAN) y dependencias explícitas mod:/fnt:.
+// ② ENTIDADES COMPARTIDAS (tipos.ts + fuentes.ts): 8 tipos (país, región,
+//    acontecimiento, documento, fuente, mapa, análisis, simulación) con
+//    IDENTIFICADOR ESTABLE vg:<tipo>:<clave>, relaciones tipadas y la
+//    frontera de datos: 9 fuentes públicas vs 4 privadas (cuentas,
+//    jugadores, telemetría, chat — JAMÁS en búsqueda ni API).
+// ③ INTERFAZ COMÚN (ProveedorBusqueda/ResultadoNucleo): los módulos
+//    publican y consultan por contrato, sin conocerse internamente. El
+//    motor (busqueda.ts) corre 8 proveedores en paralelo con guarda de
+//    frontera (esFuentePublica) y fallo honesto por fuente.
+// ④ BÚSQUEDA GLOBAL: /api/nucleo/busqueda?q= (muro 30/min) + isla client
+//    en /nucleo — SOLO fuentes autorizadas y reales (BD + catálogos);
+//    pie por pieza declara qué fuente contestó y cuál falló.
+// ⑤ FICHAS Y ENLACES CONTEXTUALES: /nucleo?id=vg:… y /api/nucleo/entidad
+//    (muro 60/min) con metadatos reales + chips «CONECTA CON EL NÚCLEO»
+//    server-rendered en /conflicto/[tag] y /noticia/[id]. Geografía real
+//    país↔teatro (RELACION_PAIS_TEATRO).
+// ⑥ NAVEGACIÓN: /nucleo server-rendered e indexable (censo agrupado,
+//    mapa de entidades con conteos REALES de la BD, frontera declarada,
+//    guía de extensión) + pg:nucleo en Ctrl+K + sitemap weekly 0.7.
+// ⑦ CÓMO EXTENDER: src/lib/nucleo/README.md — 4 pasos para añadir un
+//    módulo sin tocar el sistema. Compatibilidad total: ninguna ruta
+//    movida, ninguna función tocada, cero cambios de esquema de BD.
+// ⑧ PRUEBAS: scripts/pruebas-nucleo.mjs — censo íntegro (ids únicos,
+//    rutas reales, dependencias existentes), búsqueda real sin fuentes
+//    privadas, fichas con enlaces 200, navegación y muro 429.
 // v217.0 LA EMISORA — mandato del Dueño: «ve mejorando la voz de Vanguard,
 //         que hable más de guerra, tenga más información que explique y
 //         pueda cambiar la voz; agrega el permiso de uno enviar audios a
@@ -1558,6 +1590,6 @@
 //  ④ PUERTAS: sitemap weekly 0.7 + pg:objetivos en la paleta Ctrl+K.
 // Los 100 también lucen en el panel de logros del SPA SIN tocar nada:
 // achievements-panel itera ACHIEVEMENTS — los nuevos aparecen solos.
-export const APP_VERSION = "v217.0";
-export const APP_CODENAME = "LA EMISORA";
+export const APP_VERSION = "v218.0";
+export const APP_CODENAME = "EL NÚCLEO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
