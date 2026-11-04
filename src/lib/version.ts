@@ -2176,6 +2176,35 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v244.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v243.0 LA POLÍTICA VIVA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v244.0";
-export const APP_CODENAME = "LA FAMILIA REUNIDA";
+// v245.0: LA QUINTA ESCUCHA — el radar /espia se ensancha y una mina
+//     latente sale del árbol.
+// (1) LA QUINTA FUENTE — el elemento más antiguo de la cola («nuevas
+//     fuentes con cuota», presente desde v238) se paga: OPCW (Organización
+//     para la Prohibición de las Armas Químicas, La Haya) entra en
+//     ESCUCHAS_FUENTES con la regla de la casa cumplida: verificada ANTES
+//     de entrar (2026-11-04: 200 con 10 items reales — títulos, enlaces y
+//     pubDate que el parser lee tal cual), misma cuota de siempre (4
+//     titulares por fuente) y SIN SEÑAL honesto si calla. El radar OSINT
+//     de la casa escucha ahora 5 señales oficiales.
+// (2) LA MINA LATENTE — al leer el módulo se caza un defecto dormido
+//     desde v242: la línea de movimientos decía TAG_COLOR.tag] (clave
+//     estática inexistente + un corchete suelto que tsc y SWC se tragan
+//     SOLO con el texto exacto de esa plantilla — bisect documentado: con
+//     texto corto tsc grita TS1005, con el texto de producción calla).
+//     El compilado real (z[a.tag]||z.INFO) siempre fue el correcto — el
+//     runtime sirvió colores verdaderos las tres rondas — y la fuente
+//     vuelve a decir lo que el runtime lleva haciendo desde v242. La
+//     tierra que podía reventar el build en cualquier edición futura
+//     queda desactivada.
+// (3) EL CENSO AL DÍA — fnt:escuchas y el registro del módulo espía citan
+//     a la OPCW (descripción + alias de búsqueda); la metadata de la sala
+//     declara las 5 señales y el header ya no mentiría con un «de 4»
+//     heredado cuando la red no responde.
+// QA: tsc 0 en tocados (3 avisos PREEXISTENTES de andamiaje .next/types —
+//     meteo/ZONES, og/size, traductor/IDIOMAS — quedan en cola para su
+//     ronda propia) · eslint 0 · build EXIT 0 · health v245.0 db up · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v244.0 LA FAMILIA REUNIDA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v245.0";
+export const APP_CODENAME = "LA QUINTA ESCUCHA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -90,7 +90,7 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     id: "fnt:escuchas",
     nombre: "Escuchas oficiales",
     descripcion:
-      "RSS públicos de gobiernos y organismos (ONU, OMS, ReliefWeb) que el MODO ESPÍA ya verifica antes de mostrar.",
+      "RSS públicos de gobiernos y organismos (ONU, OMS, ReliefWeb, OPCW) que el MODO ESPÍA ya verifica antes de mostrar.",
     publica_tipo: "documento",
   },
   {

@@ -31,7 +31,7 @@ const SITE_URL =
 export const metadata: Metadata = {
   title: "MODO ESPÍA — radar de gobiernos en fuentes abiertas | VANGUARD",
   description:
-    "Espía lo que los gobiernos PUBLICAN: escuchas oficiales de la ONU Noticias, la Sala de Prensa de la ONU, ReliefWeb (OCHA) y la OMS, índice de tensión por teatro de guerra y los movimientos de gobierno del día. Todo de fuentes abiertas (OSINT), gratis y en español.",
+    "Espía lo que los gobiernos PUBLICAN: escuchas oficiales de la ONU Noticias, la Sala de Prensa de la ONU, ReliefWeb (OCHA), la OMS y la OPCW (armas químicas), índice de tensión por teatro de guerra y los movimientos de gobierno del día. Todo de fuentes abiertas (OSINT), gratis y en español.",
   alternates: { canonical: `${SITE_URL}/espia` },
   openGraph: {
     title: "MODO ESPÍA — radar de gobiernos · VANGUARD",
@@ -145,7 +145,7 @@ export default async function EspiaPage() {
             <strong className="text-zinc-300">lo que los gobiernos y las organizaciones PUBLICAN</strong> —
             sus boletines oficiales, sus declaraciones, sus decretos. Nada se
             invade, nada se hackea: si ellos lo emiten, aquí se oye. Hoy el
-            radar tiene {fuentesVivas} de {escuchas.length || 4} señales oficiales abiertas.
+            radar tiene {fuentesVivas} de {escuchas.length || 5} señales oficiales abiertas.
           </p>
           <div className="mt-3">
             <SondeoEspia generado={generado} />
@@ -254,7 +254,13 @@ export default async function EspiaPage() {
           </div>
         </section>
 
-        {/* MOVIMIENTOS DE GOBIERNO */}
+        {/* MOVIMIENTOS DE GOBIERNO
+            v245.0 LA QUINTA ESCUCHA — reparación honesta: la fuente decía
+            TAG_COLOR.tag] (clave estática inexistente + un corchete suelto
+            que tsc y SWC se tragaban SOLO con el texto exacto de esta
+            plantilla — con texto corto tsc grita TS1005). El compilado real
+            (z[a.tag]||z.INFO) siempre fue el correcto: el runtime sirvió
+            colores verdaderos desde v242 — la fuente vuelve a decirlo. */}
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-8">
           <h2 className="font-mono text-[11px] uppercase tracking-widest text-zinc-400">
             03 · Movimientos de gobierno — los cables que huelen a poder

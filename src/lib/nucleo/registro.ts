@@ -149,13 +149,13 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     nombre: "MODO ESPÍA",
     lema: "Lo que los gobiernos publican",
     descripcion:
-      "Índice de tensión por teatro (24 h contra la media de 7 días) y escuchas oficiales RSS verificadas una a una: ONU, ReliefWeb, OMS. SIN SEÑAL honesto cuando no hay nada.",
+      "Índice de tensión por teatro (24 h contra la media de 7 días) y escuchas oficiales RSS verificadas una a una: ONU, ReliefWeb, OMS, OPCW. SIN SEÑAL honesto cuando no hay nada.",
     categoria: "MUNDO",
     ruta: "/espia",
     permiso: "publico",
     estado: "VIVO",
     dependencias: ["fnt:escuchas", "fnt:cables", "fnt:teatros"],
-    alias: "espia gobierno radar escuchas osint inteligencia onu oms",
+    alias: "espia gobierno radar escuchas osint inteligencia onu oms opcw desarme",
   },
   // ── SIMULACIÓN ─────────────────────────────────────────────
   {

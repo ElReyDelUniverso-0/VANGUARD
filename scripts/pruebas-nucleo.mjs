@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v244.0", async () => {
+  await verificar("servidor vivo y en v245.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v244"), `versión ${r.json?.version} ≠ v244`);
+    afirmar(String(r.json?.version).startsWith("v245"), `versión ${r.json?.version} ≠ v245`);
   });
 
   // censo por API
@@ -1429,6 +1429,46 @@ async function parteB() {
       }
       afirmar(conMotor === 0, `${conMotor} chunks del HTML crítico de ${ruta} llevan el motor — la ley v222 violada`);
     }
+  });
+
+  // ── v245.0 LA QUINTA ESCUCHA: el radar se ensancha con la OPCW (el
+  // elemento más antiguo de la cola: «nuevas fuentes con cuota») y una
+  // mina latente sale del árbol — el defecto dormido desde v242
+  // TAG_COLOR.tag] (que tsc y SWC se tragaban SOLO con el texto exacto
+  // de esa plantilla) vuelve a decir lo que el compilado siempre hizo:
+  // z[a.tag]||z.INFO.
+  await verificar("LA QUINTA ESCUCHA: la OPCW declarada con cuota y la mina desactivada (v245)", () => {
+    const lib = readFileSync(join(RAIZ, "src/lib/espia.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/espia/page.tsx"), "utf8");
+    // la quinta fuente con su URL REAL verificada (200 · 10 items reales) —
+    // ancla en la DECLARACIÓN (lección v243: el comentario no vale)
+    const bloque = lib.slice(lib.indexOf("export const ESCUCHAS_FUENTES"), lib.indexOf("export interface ItemEscucha"));
+    const nFuentes = (bloque.match(/id: "/g) || []).length;
+    afirmar(nFuentes === 5, `la red del radar declara ${nFuentes} señales, no 5`);
+    afirmar(bloque.includes('id: "opcw"'), "la OPCW no vive en ESCUCHAS_FUENTES");
+    afirmar(bloque.includes("https://www.opcw.org/rss.xml"), "la URL de la OPCW no es la verificada");
+    // la cuota de la casa sigue: 4 titulares por fuente, nunca relleno
+    afirmar(lib.includes("items.length >= 4"), "la cuota de 4 titulares por fuente desapareció");
+    // la mina latente desactivada: la fuente dice lo que el compilado hizo
+    afirmar(pag.includes("TAG_COLOR[m.tag]"), "la línea de movimientos sigue sin leer el tag del movimiento");
+    afirmar(!pag.includes("TAG_COLOR.tag] ||"), "el corchete suelto sigue en el árbol");
+    // el header no hereda el «de 4»
+    afirmar(pag.includes("escuchas.length || 5"), "el header seguiría diciendo «de 4 señales» sin red");
+    // el censo cita a la quinta (descripción y alias)
+    const fuentes = readFileSync(join(RAIZ, "src/lib/nucleo/fuentes.ts"), "utf8");
+    const registro = readFileSync(join(RAIZ, "src/lib/nucleo/registro.ts"), "utf8");
+    afirmar(fuentes.includes("OPCW"), "fnt:escuchas no cita a la OPCW");
+    afirmar(registro.includes("onu oms opcw"), "el alias del módulo espía no cita a la OPCW");
+  });
+
+  await verificar("LA QUINTA ESCUCHA viva: /espia declara la red ampliada en el SSR (v245)", async () => {
+    const r = await pedir("/espia");
+    afirmar(r.status === 200, `espia no 200 (${r.status})`);
+    // la OPCW aparece VIVA o SIN SEÑAL — pero aparece: la red del radar
+    // se declara entera, nunca se esconde una fuente caída
+    afirmar(r.texto.includes("OPCW"), "la OPCW no aparece en el SSR del radar");
+    afirmar(r.texto.includes("DESARME"), "la etiqueta del desarme no viaja en el SSR");
+    afirmar(r.texto.includes("señales oficiales abiertas"), "el contador de señales desapareció del header");
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──

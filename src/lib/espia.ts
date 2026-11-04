@@ -30,6 +30,14 @@ export const ESCUCHAS_FUENTES: FuenteEscucha[] = [
   { id: "onu-prensa", nombre: "Sala de Prensa de la ONU", etiqueta: "ORGANIZACIÓN MUNDIAL · PRENSA", url: "https://press.un.org/en/rss.xml" },
   { id: "ocha", nombre: "ReliefWeb — OCHA", etiqueta: "HUMANITARIO · NACIONES UNIDAS", url: "https://reliefweb.int/updates/rss.xml" },
   { id: "oms", nombre: "OMS", etiqueta: "ORGANIZACIÓN MUNDIAL · SALUD", url: "https://www.who.int/rss-feeds/news-english.xml" },
+  // v245.0 LA QUINTA ESCUCHA — OPCW (Organización para la Prohibición de
+  // las Armas Químicas, La Haya): el organismo que verifica el convenio de
+  // desarme químico, pertinente a cada teatro que huela a ataque químico.
+  // Verificada antes de entrar (regla de la casa: nada se adivina):
+  // 2026-11-04 respondió 200 con 10 items reales — títulos, enlaces y
+  // pubDate que el parser de abajo lee tal cual (RSS 2.0 con <item>).
+  // Misma cuota que el resto: 4 titulares por fuente y SIN SEÑAL honesto.
+  { id: "opcw", nombre: "OPCW", etiqueta: "DESARME · ARMAS QUÍMICAS", url: "https://www.opcw.org/rss.xml" },
 ];
 
 export interface ItemEscucha {

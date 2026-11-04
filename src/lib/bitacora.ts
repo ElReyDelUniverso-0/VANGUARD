@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v245.0",
+    nombre: "LA QUINTA ESCUCHA — el radar de gobiernos se ensancha con la OPCW y una mina latente del árbol se desactiva",
+    hitos: [
+      "LA QUINTA FUENTE — OPCW (Organización para la Prohibición de las Armas Químicas, La Haya) entra en ESCUCHAS_FUENTES: el elemento más antiguo de la cola («nuevas fuentes con cuota», desde v238) se paga con un organismo real, verificado ANTES de entrar (2026-11-04: 200 con 10 items reales que el parser lee tal cual), misma cuota de siempre — 4 titulares por fuente — y SIN SEÑAL honesto si calla; el radar OSINT escucha 5 señales",
+      "LA MINA LATENTE — defecto dormido desde v242 cazado al leer el módulo: la línea de movimientos decía TAG_COLOR.tag] (clave estática inexistente + corchete suelto que tsc y SWC se tragan SOLO con el texto exacto de esa plantilla — bisect documentado: con texto corto tsc grita TS1005, con el de producción calla); el compilado (z[a.tag]||z.INFO) siempre fue el correcto — la fuente vuelve a decir lo que el runtime lleva sirviendo desde v242",
+      "EL CENSO AL DÍA — fnt:escuchas y el registro del módulo espía citan a la OPCW (descripción + alias de búsqueda); la metadata de la sala declara las 5 señales y el header ya no mentiría con un «de 4» heredado cuando la red no responde",
+      "QA v245: tsc 0 en tocados (3 avisos PREEXISTENTES de andamiaje .next/types — meteo/ZONES, og/size, traductor/IDIOMAS — en cola para ronda propia), eslint 0, build EXIT 0, health v245.0 db up, pruebas 114/114 (+2 LA QUINTA ESCUCHA), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v244.0",
     nombre: "LA FAMILIA REUNIDA — la deuda v240 se paga: la familia del motor 3D deja de viajar replicada y el instrumento de medición se corrige a sí mismo",
     hitos: [
