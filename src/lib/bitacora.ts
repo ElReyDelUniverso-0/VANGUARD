@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v262.0",
+    nombre: "EL CANAL QUE PESA — la expansión llega a la Primera página (/guerra-hoy, v35+v202+v206+v208+v213+v239+v251, la puerta de Google para «guerra hoy»): sus chips de teatro eran los más pobres de la casa — solo el nombre, un teatro con 173 cables y señal de hoy se veía igual que uno muerto desde hace semanas. La misma groupBy, dos medidas; los chips declaran peso y edad; y el canal gana su declaración de frescura",
+    hitos: [
+      "LA MISMA GROUPBY, DOS MEDIDAS — _count + _max.publishedAt en la consulta que ya existía (cero roundtrips de más, el patrón del espejo v256 y el puente v257); sin BD la página vive igual: sin chips, sin fingir edades",
+      "LOS CHIPS HABLAN — «Ucrania · 173» + «● última señal hace N», compuestos COMPLETOS en JS (lección v256); amber < 48 h con la MISMA regla de frescura de la casa, zinc si no; title con hora exacta por Intl — cero fechas a mano, guardia v234 en pie",
+      "LA SEÑAL MÁS FRESCA DEL CANAL — derivada de items[0] de la muestra 24 (los más nuevos primero): «la señal más fresca del canal: [fuente] — última señal hace N»; cero consultas extra; sin cables la línea ni se pinta (vacío honesto)",
+      "QA v262: tsc 0 TOTAL, eslint 0, build EXIT 0, health v262.0 db up, pruebas 150/150 (+2 EL CANAL QUE PESA: estática — el _max en la misma groupBy, el chip con peso y edad compuestos en JS, el umbral 48 h heredado, la hora Intl y la guardia v234; viva — el SSR sirve «Ucrania · 173», «● última señal hace» y «la señal más fresca del canal» con las anclas v206 y la cabeza GUERRA HOY en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v261.0",
     nombre: "LA SALA COMPLETA — la expansión llega a la sala del teatro (/conflicto/[tag], v206+v215+v218+v222+v227+v238): la cabecera medía «N cables en la agencia» pero la puerta solo encendía los primeros 40 — ucrania guardaba 173 cables y 133 no tenían puerta. El archivo se pagina EN EL SERVIDOR con la count real de la BD, cero JavaScript, y fuera de rango jamás sirve una sala vacía",
     hitos: [

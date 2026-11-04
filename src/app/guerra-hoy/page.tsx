@@ -101,19 +101,37 @@ const TAG_COLOR: Record<string, string> = {
 
 export default async function GuerraHoyPage() {
   const { items, agents } = await getNews();
+  // v262.0 EL CANAL QUE PESA — la señal más fresca del canal, derivada de la
+  // cabeza de la muestra (los 24 más nuevos primero): cero consultas, la
+  // misma gramática de la sala /en-vivo (v259) y del espejo (v256).
+  const masFresca = items[0] ?? null;
   // v206.0 MÁS PUERTAS — teatros con cables vivos para los chips de puerta
-  let teatrosVivos: { key: string; nombre: string }[] = [];
+  // v262.0 — la MISMA groupBy, DOS medidas (el patrón del espejo v256 y el
+  // puente v257): cuántos cables pesa cada teatro y CUÁNDO sonó por última
+  // vez — cero roundtrips de más. Antes los chips solo decían el nombre:
+  // un teatro con 173 cables y señal de hoy se veía igual que uno muerto
+  // desde hace semanas.
+  let teatrosVivos: { key: string; nombre: string; n: number; ultima: Date | null }[] = [];
   try {
     const conVida = await db.newsItem.groupBy({
       by: ["conflictTag"],
       where: { conflictTag: { not: null } },
       _count: { conflictTag: true },
+      _max: { publishedAt: true },
     });
     teatrosVivos = Object.entries(TEATROS)
       .filter(([k]) =>
         conVida.some((g) => g.conflictTag === k && g._count.conflictTag >= 5)
       )
-      .map(([k, t]) => ({ key: k, nombre: t.nombre }));
+      .map(([k, t]) => {
+        const g = conVida.find((x) => x.conflictTag === k);
+        return {
+          key: k,
+          nombre: t.nombre,
+          n: g?._count.conflictTag ?? 0,
+          ultima: g?._max.publishedAt ? new Date(g._max.publishedAt) : null,
+        };
+      });
   } catch {
     /* sin chips ante fallo de BD */
   }
@@ -283,21 +301,52 @@ export default async function GuerraHoyPage() {
       </section>
 
       <section className="max-w-5xl mx-auto px-5 py-8 grid gap-4">
+        {/* v262.0 EL CANAL QUE PESA — la declaración de frescura del canal:
+            compuesta COMPLETA en JS antes del JSX (lección v256) */}
+        {masFresca && (() => {
+          const lineaFresca = `la señal más fresca del canal: ${masFresca.source} — última señal ${hace(new Date(masFresca.publishedAt))}`;
+          return (
+            <p
+              title={`El cable más nuevo del canal: ${masFresca.title} · ${new Date(masFresca.publishedAt).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })}`}
+              className="font-mono text-[10px] uppercase tracking-widest text-zinc-500"
+            >
+              {lineaFresca}
+            </p>
+          );
+        })()}
         {/* v206.0 MÁS PUERTAS — teatros de guerra: una página por conflicto */}
         {teatrosVivos.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
               Teatros en vivo:
             </span>
-            {teatrosVivos.map((t) => (
-              <Link
-                key={t.key}
-                href={`/conflicto/${t.key}`}
-                className="border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-2.5 py-1 text-[12px] text-zinc-300 bg-zinc-900/40 transition-colors"
-              >
-                {t.nombre}
-              </Link>
-            ))}
+            {teatrosVivos.map((t) => {
+              // v262.0 — cada chip declara SU peso (la count real que la BD
+              // ya tenía) y SU edad (la MISMA regla de frescura del espejo
+              // v256 y el puente v257: amber < 48 h, zinc si no); las líneas
+              // se componen COMPLETAS en JS — cero <!-- --> del SSR
+              const edadMin = t.ultima
+                ? Math.round((Date.now() - t.ultima.getTime()) / 60000)
+                : null;
+              const fresca = edadMin !== null && edadMin < 48 * 60;
+              const chip = `${t.nombre} · ${t.n}`;
+              const edad = t.ultima ? `● última señal ${hace(t.ultima)}` : null;
+              return (
+                <Link
+                  key={t.key}
+                  href={`/conflicto/${t.key}`}
+                  title={t.ultima ? `Última señal del teatro: ${t.ultima.toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })}` : undefined}
+                  className="border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-2.5 py-1 text-[12px] text-zinc-300 bg-zinc-900/40 transition-colors"
+                >
+                  {chip}
+                  {edad && (
+                    <span className={`ml-1.5 font-mono text-[9px] uppercase tracking-wider ${fresca ? "text-amber-300" : "text-zinc-500"}`}>
+                      {edad}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         )}
         {items.length === 0 && (

@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v261.0", async () => {
+  await verificar("servidor vivo y en v262.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v261"), `versión ${r.json?.version} ≠ v261`);
+    afirmar(String(r.json?.version).startsWith("v262"), `versión ${r.json?.version} ≠ v262`);
   });
 
   // censo por API
@@ -2010,6 +2010,45 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v262.0 EL CANAL QUE PESA: los chips de la Primera página hablan ──
+  // /guerra-hoy (v35+v202+v206+v208+v213+v239+v251) es la puerta de Google
+  // para «guerra hoy» y sus chips solo decían el nombre: la MISMA groupBy
+  // gana DOS medidas (patrón v256/v257), cada chip declara peso y edad, y
+  // el canal gana su declaración de frescura (gramática v259).
+  await verificar("EL CANAL QUE PESA estática: la misma groupBy con dos medidas y los chips compuestos en JS (v262)", () => {
+    const canal = readFileSync(join(RAIZ, "src/app/guerra-hoy/page.tsx"), "utf8");
+    // la MISMA groupBy, DOS medidas (cero roundtrips de más)
+    afirmar(canal.includes("_count: { conflictTag: true }"), "la count del teatro no viaja en la groupBy");
+    afirmar(canal.includes("_max: { publishedAt: true }"), "sin la última señal en la MISMA groupBy (roundtrips de más)");
+    // los chips hablan: peso + edad, compuestos COMPLETOS en JS (lección v256)
+    afirmar(canal.includes("const chip = `${t.nombre} · ${t.n}`"), "el chip no declara su peso compuesto en JS");
+    afirmar(canal.includes("`● última señal ${hace(t.ultima)}`"), "el chip no declara la edad de su teatro");
+    afirmar(canal.includes("edadMin < 48 * 60"), "el umbral de frescura no es el de la casa (48 h, v256/v257)");
+    afirmar(canal.includes('fresca ? "text-amber-300" : "text-zinc-500"'), "el color de la edad no usa la regla de la casa");
+    // la señal más fresca del canal: la cabeza de la muestra, cero consultas
+    afirmar(canal.includes("const masFresca = items[0] ?? null"), "la señal más fresca no se deriva de la cabeza de la muestra");
+    afirmar(canal.includes("la señal más fresca del canal"), "el canal no declara su señal más fresca");
+    // la hora exacta del patrón Intl, cero fechas a mano
+    afirmar(canal.includes('toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })'), "la hora exacta del title no se formatea con Intl");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(canal), "¡el canal escribe fechas a mano en la ronda v262!");
+  });
+
+  await verificar("EL CANAL QUE PESA viva: los chips del SSR declaran peso y edad, y el canal declara su señal más fresca (v262)", async () => {
+    const r = await pedir("/guerra-hoy");
+    afirmar(r.status === 200, `/guerra-hoy no 200 en v262 (${r.status})`);
+    // el chip con peso real de la BD (medido: ukraine 173) y su edad
+    afirmar(r.texto.includes("Ucrania · 173"), "el chip de Ucrania no declara su peso real");
+    afirmar(/última señal hace/.test(r.texto), "la edad de los teatros no viaja en el SSR");
+    afirmar(r.texto.includes("Teatros en vivo"), "la fila de chips v206 desapareció");
+    afirmar(r.texto.includes('href="/conflicto/ukraine"'), "la puerta a la sala del teatro desapareció");
+    // la declaración de frescura del canal (gramática v259)
+    afirmar(r.texto.includes("la señal más fresca del canal"), "el SSR no sirve la declaración de frescura");
+    // las anclas de la Primera página siguen en pie
+    afirmar(r.texto.includes("GUERRA HOY"), "la cabeza del canal desapareció");
+    afirmar(r.texto.includes("historias en seguimiento"), "el contador de historias desapareció");
+    afirmar(r.texto.includes("/noticia/"), "la puerta de lectura v202 desapareció");
   });
 
   // ── v261.0 LA SALA COMPLETA: el archivo del teatro se pagina en el

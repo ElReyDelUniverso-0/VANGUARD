@@ -2628,7 +2628,38 @@
 //     distintos con su anterior, la 99 es 404 limpio y las anclas v227/
 //     v238/v218 en pie) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
-// Herencia v260.0 LA SALA DEL TEATRO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v261.0";
-export const APP_CODENAME = "LA SALA COMPLETA";
+// v262.0 EL CANAL QUE PESA — la expansión funcional módulo a módulo llega a
+//         la Primera página: /guerra-hoy (v35 + v42 + v44 + v52 + v63 +
+//         v202 + v206 + v208 + v213 + v239 + v251) es la puerta de Google
+//         para «guerra hoy», y sus chips de teatro eran los más pobres de
+//         la casa: solo decían el nombre — un teatro con 173 cables y
+//         señal de hoy se veía IGUAL que uno muerto desde hace semanas.
+//         El espejo (v256), el puente (v257) y la sala completa (v261) ya
+//         hablaban; el canal guardaba silencio.
+// (1) LA MISMA GROUPBY, DOS MEDIDAS — el patrón v256/v257 en la Primera
+//     página: `_count` + `_max.publishedAt` en la consulta que YA existía
+//     (cero roundtrips de más); sin BD, la página vive igual: sin chips,
+//     sin fingir edades (ley de la casa).
+// (2) LOS CHIPS HABLAN — cada chip declara SU peso («Ucrania · 173») y SU
+//     edad («● última señal hace N»), compuestos COMPLETOS en JS (lección
+//     v256); amber < 48 h, zinc si no — la MISMA regla de frescura del
+//     espejo y el puente, cero reglas nuevas; title con la hora exacta
+//     por Intl (patrón refugio v251 / espejo v256 / puente v257 / sala
+//     v259) — cero fechas escritas a mano, guardia v234 en pie.
+// (3) LA SEÑAL MÁS FRESCA DEL CANAL — derivada de la cabeza de la muestra
+//     (items[0], los 24 más nuevos primero): «la señal más fresca del
+//     canal: [fuente] — última señal hace N», la gramática que la casa
+//     empezó en el espejo y siguió por puente, sala y puerta — cero
+//     consultas extra; sin cables la línea ni se pinta (vacío honesto).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v262.0 db up ·
+//     pruebas 150/150 (+2 EL CANAL QUE PESA: estática — el _max en la
+//     misma groupBy, el chip con peso y edad compuestos en JS, el umbral
+//     48 h heredado, la hora Intl y la guardia v234; viva — el SSR de la
+//     Primera página sirve «Ucrania · 173», «● última señal hace» y «la
+//     señal más fresca del canal» con las anclas v206 (Teatros en vivo,
+//     /conflicto/ukraine) y la cabeza GUERRA HOY en pie) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v261.0 LA SALA COMPLETA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v262.0";
+export const APP_CODENAME = "EL CANAL QUE PESA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
