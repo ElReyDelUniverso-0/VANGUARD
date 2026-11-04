@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v299.0", async () => {
+  await verificar("servidor vivo y en v300.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v299"), `versión ${r.json?.version} ≠ v299`);
+    afirmar(String(r.json?.version).startsWith("v300"), `versión ${r.json?.version} ≠ v300`);
   });
 
   // censo por API
@@ -2689,16 +2689,52 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v299.0"'), "la fuente única de versión no es v299.0");
+    afirmar(version.includes('APP_VERSION = "v300.0"'), "la fuente única de versión no es v300.0 (avanza con la guardia)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA VOZ DE VANGUARD"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v299.0"), "la v299.0 no viaja en el home");
+    afirmar(r.texto.includes("LA GUARDIA DEL OÍDO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v300.0"), "la v300.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v299"), "el health no canta v299");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v300"), "el health no canta v300");
+  });
+
+  // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
+  // permiso es RECUPERABLE dentro del panel del orbe, el cofre guarda su
+  // carril de 8px y las dos puertas del micrófono (tarjeta v299 + fila
+  // v300) coexisten ──
+  await verificar("LA GUARDIA DEL OÍDO estática: permiso recuperable en el panel, carril del cofre fijado y dos puertas coexistiendo (v300)", () => {
+    const orbe = readFileSync(join(RAIZ, "src/components/vanguard/asistente-voz.tsx"), "utf8");
+    const cofre = readFileSync(join(RAIZ, "src/components/vanguard/retention-layer.tsx"), "utf8");
+    const oido = readFileSync(join(RAIZ, "src/components/vanguard/permiso-mic.tsx"), "utf8");
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    // la fila permanente: estado REAL del aparato + PEDIR PERMISO con getUserMedia
+    afirmar(orbe.includes("navigator.permissions"), "la fila de micrófono no consulta el estado real del aparato");
+    afirmar(orbe.includes("perms?.query"), "la fila no usa la API de permisos");
+    afirmar(orbe.includes('name: "microphone"'), "la fila no pregunta por el MICRÓFONO");
+    afirmar(orbe.includes("p.onchange"), "el estado del permiso no vive (sin onchange la fila miente)");
+    afirmar(orbe.includes("getUserMedia({ audio: true })"), "PEDIR PERMISO no abre el diálogo real del navegador");
+    afirmar(orbe.includes("getTracks().forEach((t) => t.stop())"), "el pedido no suelta el micrófono al instante");
+    afirmar(orbe.includes("ESTADO_MIC"), "el estado del micrófono no tiene lengua propia");
+    afirmar(orbe.includes('permisoMic !== "sin-api"'), "la fila no sabe callarse en aparatos sin API de permisos");
+    afirmar(orbe.includes('toast } from "sonner"'), "el aviso del permiso concedido no viaja por el canal de la casa");
+    // el cofre en SU carril: la queja del Dueño no puede regresar
+    afirmar(cofre.includes('data-vg-retencion="cofre"'), "el cofre perdió su marca de retención");
+    afirmar(cofre.includes("fixed bottom-2 right-2 z-30"), "el cofre no vive en su carril de 8px (¿volvió a tapar la radio?)");
+    // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
+    afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
+    afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
+    afirmar(version.includes('APP_VERSION = "v300.0"'), "la fuente única de versión no es v300.0");
+  });
+
+  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v300 y el home guarda la crónica del oído (v300)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("v300.0"), "la v300.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v300"), "el health no canta v300");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

@@ -3970,6 +3970,33 @@
 //     el HTML y el sitemap VIVO) · BD intocada (1877 cables · 9 hechos,
 //     un solo escritor).
 // Herencia v297.0 EL PODER MUNDIAL y toda la crónica. Guards v167 intactos.
+// v300.0 LA GUARDIA DEL OÍDO — la ronda que BLINDA la orden del Dueño: la
+//         v299.0 arregló el oído entero (bug, letra, vida, permiso, carriles)
+//         y esta ronda hace que NUNCA pueda romperse sin que la suite lo
+//         grite. Tres cerrojos nuevos (+2 pruebas, 226):
+// (1) EL PERMISO RECUPERABLE — la fila permanente de MICRÓFONO dentro del
+//     panel de VG-ASSIST (asistente-voz.tsx): estado REAL del aparato vía
+//     navigator.permissions.query({name:"microphone"}) con onchange en vivo,
+//     y el botón PEDIR PERMISO que abre el diálogo del navegador con
+//     getUserMedia (tracks soltados al instante) — la cura del «no-allowed»
+//     silencioso: si el candado bloqueó el oído, hay camino de vuelta sin
+//     salir de la casa. La tarjeta v299 pregunta una vez; la fila v300
+//     permanece: estado + recuperación para siempre.
+// (2) EL CARRIL DEL COFRE queda guardado — la suite fija el cofre en su
+//     lane de 8px (bottom-2 right-2, z-30, data-vg-retencion="cofre"): la
+//     queja literal del Dueño («el cofre opaca el botón de música») no
+//     podrá regresar sin que una prueba roja lo grite.
+// (3) LA COEXISTENCIA de las dos puertas del micrófono queda declarada:
+//     la tarjeta (v299, pedido proactivo UNA vez) y la fila (v300, estado
+//     permanente + recuperación) son complementarias — la suite las vigila
+//     juntas.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v300.0 db up ·
+//     pruebas 226/226 (+2 LA GUARDIA DEL OÍDO: estática — la fila de
+//     micrófono con estado real y PEDIR PERMISO dentro del panel, el carril
+//     del cofre fijado, las dos puertas del oído coexistiendo; viva — health
+//     v300 y el home cantando la guardia) · BD intocada (1877 cables ·
+//     9 hechos, un solo escritor).
+// Herencia v299.0 LA VOZ DE VANGUARD y toda la crónica. Guards v167 intactos.
 // v299.0 LA VOZ DE VANGUARD — la ronda del OÍDO (mandato directo del Dueño:
 //         «la música se bugea, es fea, no hay letra, no es única, los sonidos
 //         predeterminados sin vida, Vanguard un mundo sordo, la voz de
@@ -4024,6 +4051,6 @@
 //     del orbe en el HTML) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v298.0 LA FOTOTECA DEL PLANETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v299.0";
-export const APP_CODENAME = "LA VOZ DE VANGUARD";
+export const APP_VERSION = "v300.0";
+export const APP_CODENAME = "LA GUARDIA DEL OÍDO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

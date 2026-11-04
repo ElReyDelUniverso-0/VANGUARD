@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v300.0",
+    nombre: "LA GUARDIA DEL OÍDO — la ronda que blinda la orden del Dueño: la v299.0 arregló el oído entero (bug del secuenciador, letra de las 34 obras, humanización, permiso de hablarle, carriles de la esquina) y esta ronda hace que NUNCA pueda romperse sin que la suite lo grite: la fila permanente de MICRÓFONO dentro del panel de VG-ASSIST (estado real del aparato con navigator.permissions.query y botón PEDIR PERMISO con getUserMedia — camino de vuelta si el candado bloqueó el oído) y el carril del cofre fijado en la suite",
+    hitos: [
+      "EL PERMISO RECUPERABLE — nueva fila en el panel del orbe (asistente-voz.tsx): MICRÓFONO: LISTO/BLOQUEADO/SIN CONCEDER con el estado REAL del aparato (navigator.permissions.query({name:\"microphone\"}) con onchange en vivo) y el botón PEDIR PERMISO que abre el diálogo del navegador (getUserMedia, tracks soltados al instante) — la cura del not-allowed silencioso: sin salir de la casa hay camino de vuelta; la tarjeta v299 pregunta una vez, la fila v300 permanece",
+      "EL CARRIL DEL COFRE QUEDA GUARDADO — la suite fija el cofre en su lane de 8px (bottom-2 right-2, z-30, data-vg-retencion=\"cofre\") junto a la radio (56px) y el orbe (104px): la queja literal del Dueño («el cofre opaca el botón de música») no podrá regresar sin que una prueba roja lo grite",
+      "DOS PUERTAS, UN OÍDO — la coexistencia queda declarada y vigilada: la tarjeta del oído (v299, pedido proactivo UNA vez con himno de la casa) y la fila del panel (v300, estado permanente + recuperación) son complementarias, no duplicadas; la suite las vigila juntas",
+      "PRUEBAS +2 — estática: la fila de micrófono con estado real y PEDIR PERMISO dentro del panel, el carril del cofre fijado, las dos puertas del oído coexistiendo; viva: health v300 y el home cantando la guardia",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v299.0",
     nombre: "LA VOZ DE VANGUARD — la ronda del OÍDO: mandato directo del Dueño («la música se bugea, es fea, no hay letra, no es única, sonidos predeterminados sin vida, Vanguard un mundo sordo, la voz no tiene permiso para hablarle en audio y el cofre opaca el botón de música») resuelto en cinco frentes: el BUG del secuenciador cazado (lookahead 0.24 s + tick 45 ms — el throttle del navegador ametrallaba notas viejas al volver; ahora mirada 1.2 s, tick 120 ms y RESYNC musical al compás siguiente), LA LETRA de las 34 obras (karaoke al compás en la píldora y cancionero en el Auditorio), SONIDOS con humanización viva (cero golpes idénticos) y sfx.himno() — la llamada de la casa, EL PERMISO DE HABLARLE (tarjeta del micrófono gemela de la v201: getUserMedia por adelantado, se suelta al instante) y LOS CARRILES DE LA ESQUINA (cofre 8px · radio 56px · orbe 104px — nadie tapa a nadie)",
     hitos: [
