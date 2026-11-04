@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v240.0", async () => {
+  await verificar("servidor vivo y en v241.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v240"), `versión ${r.json?.version} ≠ v240`);
+    afirmar(String(r.json?.version).startsWith("v241"), `versión ${r.json?.version} ≠ v241`);
   });
 
   // censo por API
@@ -1215,6 +1215,45 @@ async function parteB() {
     for (const ruta of ["/zona-cero", "/ver-guerra", "/mundo", "/"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `sala del planeta rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v241.0 EL UNIVERSO ABIERTO: el módulo más huérfano del censo (0
+  // CONECTA, 0 noscript, 0 JSON-LD pese a indexable) se conecta con la casa
+  // sin tocar su ley estructural («cero chrome DOM»): todo vive en el
+  // JSON-LD y en el noscript — invisible cuando el lienzo corre.
+  await verificar("EL UNIVERSO ABIERTO: la ficha y las puertas viven en el server (v241)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/vanguard2/page.tsx"), "utf8");
+    // la ficha para Google (patrón v215)
+    afirmar(pag.includes("jsonLdSeguro") && pag.includes('"WebApplication"'), "sin la ficha WebApplication del universo");
+    afirmar(pag.includes("application/ld+json"), "el JSON-LD no viaja como ld+json");
+    // el noscript con las puertas (patrón v230) y el componente de la casa
+    afirmar(pag.includes("<noscript>") && pag.includes("EnlacesNucleo"), "el noscript no usa las puertas de la casa");
+    // CERO puertas inventadas: cada ruta citada existe en el censo de rutas
+    for (const ruta of ['"/"', '"/mundo"', '"/ver-guerra"', '"/espia"', '"/nucleo"', '"/guerra-hoy"']) {
+      afirmar(pag.includes(`ruta: ${ruta}`), `la puerta ${ruta} no está en las puertas del universo`);
+    }
+    // la ley estructural del lienzo queda intacta: el chrome NO entra en el canvas
+    const lienzo = readFileSync(join(RAIZ, "src/components/vanguard2/vanguard2.tsx"), "utf8");
+    afirmar(!lienzo.includes("EnlacesNucleo"), "¡el lienzo de VANGUARD-2 fue tocado con chrome DOM!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página del universo escribe fechas a mano!");
+  });
+
+  await verificar("EL UNIVERSO ABIERTO viva: /vanguard2 sirve ficha y puertas en el SSR (v241)", async () => {
+    const r = await pedir("/vanguard2");
+    afirmar(r.status === 200, `no 200 (${r.status})`);
+    afirmar(r.texto.includes("application/ld+json") && r.texto.includes("WebApplication"), "el SSR no lleva la ficha del universo");
+    afirmar(r.texto.includes("<noscript"), "el SSR no lleva el noscript");
+    afirmar(r.texto.includes("PUERTAS DEL UNIVERSO"), "las puertas del universo no viven en el SSR");
+    for (const puerta of ["/guerra-hoy", "/nucleo", "/ver-guerra"]) {
+      afirmar(r.texto.includes(`href="${puerta}"`), `la puerta ${puerta} no viaja en el HTML`);
+    }
+  });
+
+  await verificar("EL UNIVERSO ABIERTO: las puertas del universo responden 200 (v241)", async () => {
+    for (const ruta of ["/", "/mundo", "/ver-guerra", "/espia", "/nucleo", "/guerra-hoy"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta del universo rota ${ruta} → ${r.status}`);
     }
   });
 

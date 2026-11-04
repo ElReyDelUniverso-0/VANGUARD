@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v241.0",
+    nombre: "EL UNIVERSO ABIERTO — VANGUARD-2 se conecta con la casa sin tocar su ley de lienzo (/vanguard2, módulo a módulo)",
+    hitos: [
+      "LA AUDITORÍA — vuelta a la directiva módulo a módulo: auditoría de patrones por sala del censo (EnlacesNucleo/noscript/JSON-LD); /mision es utilitaria noindex por ley propia (respetada), /espia ya lleva ficha; el más huérfano: /vanguard2 — 0 CONECTA, 0 noscript, 0 JSON-LD PERO declarado indexable: Google la indexa y no encuentra nada estructurado, y sin JS el visitante recibe el vacío",
+      "LA LEY DEL LIENZO SE RESPETA — VANGUARD-2 es 100% canvas («cero chrome DOM», su comentario fundacional): todo lo nuevo vive donde no estorba; con JS encendido el lienzo sigue siendo TODO lo que hay",
+      "LA FICHA DEL UNIVERSO (patrón v215) — JSON-LD WebApplication server-rendered con jsonLdSeguro: qué es el universo, gratis, en español, publisher VANGUARD",
+      "LAS PUERTAS DEL UNIVERSO (patrón v230/v234/v236) — noscript con EnlacesNucleo reutilizado y 6 puertas REALES del censo (/, /mundo, /ver-guerra, /espia, /nucleo, /guerra-hoy) con su motivo a la vista: el visitante sin JS y el crawler reciben el mapa del universo — sin JS el 3D no puede nacer y la casa lo dice",
+      "QA v241: tsc 0, eslint 0, build EXIT 0, health v241.0 db up, pruebas 103/103 (+3 EL UNIVERSO ABIERTO: ficha y puertas server por regex, cero puertas inventadas, ley del lienzo intacta; viva — SSR con JSON-LD, noscript y puertas; viva las 6 puertas 200 una a una), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v240.0",
     nombre: "EL REPARTO — la ley v222 llega a zona-cero: three deja el HTML crítico y la familia se cuenta como es (zona-cero, medido)",
     hitos: [

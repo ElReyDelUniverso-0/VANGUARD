@@ -2065,6 +2065,35 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v240.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v239.0 EL FRENTE LIGERO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v240.0";
-export const APP_CODENAME = "EL REPARTO";
+// v241.0: EL UNIVERSO ABIERTO — vuelta a la directiva módulo a módulo tras
+//     tres rondas de rendimiento (v238-v240). La auditoría de patrones de
+//     la casa por sala del censo: /mision es utilitaria noindex (su ley
+//     propia, respetada), /espia ya lleva JSON-LD; el módulo más huérfano
+//     es /vanguard2 — 0 CONECTA, 0 noscript, 0 JSON-LD PERO declarado
+//     indexable (robots index:true): Google la indexa y no encuentra nada
+//     estructurado, y un visitante sin JS recibe el vacío absoluto.
+// (1) LA LEY ESTRUCTURAL SE RESPETA — vanguard2 es 100% lienzo («cero
+//     chrome DOM», su comentario fundacional): todo lo nuevo vive donde no
+//     estorba. Con JS encendido el canvas sigue siendo TODO lo que hay.
+// (2) LA FICHA DEL UNIVERSO (patrón v215) — JSON-LD WebApplication server-
+//     rendered con jsonLdSeguro: name, description honesta (noticias en
+//     vivo, conflictos documentados, quiz, encuestas, logros y economía de
+//     la guerra en mundos 3D), url, inLanguage es, offers price 0,
+//     operatingSystem Web, publisher VANGUARD.
+// (3) LAS PUERTAS DEL UNIVERSO (patrón v230/v234/v236) — noscript server-
+//     rendered con EnlacesNucleo reutilizado y 6 puertas REALES del censo
+//     (/, /mundo, /ver-guerra, /espia, /nucleo, /guerra-hoy) con su motivo
+//     de conexión a la vista: el visitante sin JS y el crawler reciben el
+//     mapa del universo; sin JS el 3D no puede nacer y la casa lo dice.
+// (4) PRUEBAS +3 (103/103): estática — ficha WebApplication con
+//     jsonLdSeguro, noscript con EnlacesNucleo, CERO puertas inventadas
+//     (cada ruta citada verificada), la ley del lienzo intacta (vanguard2.tsx
+//     sin chrome DOM), anti-fechas; viva — /vanguard2 200 con JSON-LD,
+//     noscript y puertas en el SSR; viva las 6 puertas responden 200 una
+//     a una. Salud v240→v241.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v241.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v240.0 EL REPARTO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v241.0";
+export const APP_CODENAME = "EL UNIVERSO ABIERTO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
