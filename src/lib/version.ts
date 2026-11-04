@@ -1840,6 +1840,31 @@
 //     catalogo con las nuevas claves) — nada se rompe aguas abajo.
 // Herencia v232.0 LA CENTRAL DE ALARMAS (la hermana, intacta) y todo lo
 //     anterior. Guards v167 intactos.
-export const APP_VERSION = "v233.0";
-export const APP_CODENAME = "LA BALANZA";
+// v234.0: LA ONDA — la emisora conecta con toda la casa (/audios,
+//     primer módulo de la cola del worklog v231; la EMISORA v217 de la
+//     casa hermana queda INTACTA — grabador, voces y al-aire sin tocar):
+// (1) EL ÚLTIMO HECHO A LA VISTA — el parte ya NARRABA el último titular
+//     de cada frente pero en pantalla era invisible: TeatroDelParte gana
+//     ultimoId (el id del cable sale de la MISMA consulta — cero datos
+//     nuevos) y la tarjeta muestra «ÚLTIMO HECHO: … ▸» hacia /noticia/[id].
+// (2) LAS TRES PUERTAS DEL FRENTE — el nombre del frente abre SU SALA
+//     REAL /conflicto/[tag] (el parte solo incluye teatros con cables en
+//     24 h — la puerta jamás 404); cada tarjeta gana la onda corta «ver
+//     en el mundo 3D ▸» a /mundo?teatro= (param real de v215); el último
+//     hecho abre su cable. Guardas honestas: sin titular no hay puerta.
+// (3) LA PÁGINA SE CONECTA (patrón v230/v233) — CONECTA CON EL NÚCLEO
+//     con las 4 puertas reales de la onda (EL ARCHIVO DE CABLES, LAS
+//     SALAS DE GUERRA, EL MAPA DEL FRENTE, LA BÚSQUEDA) server-rendered;
+//     JSON-LD WebPage honesto con jsonLdSeguro (patrón v204); noscript
+//     con las puertas esenciales (guerra-hoy, núcleo, conflicto).
+// (4) PRUEBAS +3 (82/82): estática (ultimoId de la misma consulta, las
+//     tres puertas del frente, guardas, cero conteos/fechas a mano,
+//     jsonLdSeguro+CONECTA+noscript); viva /audios (puertas y conexión
+//     en el SSR); viva las 5 puertas respondiendo 200. Salud v233→v234.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v234.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor). API aditiva: el parte
+//     solo GANA ultimoId — nada se rompe aguas abajo.
+// Herencia v233.0 LA BALANZA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v234.0";
+export const APP_CODENAME = "LA ONDA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

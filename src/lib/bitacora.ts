@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v234.0",
+    nombre: "LA ONDA — la emisora conecta con toda la casa (/audios)",
+    hitos: [
+      "EL ÚLTIMO HECHO A LA VISTA — el parte ya narraba el último titular de cada frente pero en pantalla era invisible: la tarjeta ahora lo muestra y abre SU cable (/noticia/[id] con el id real de la misma consulta — cero datos nuevos)",
+      "LAS TRES PUERTAS DEL FRENTE — el nombre abre su sala real /conflicto/[tag] (el parte solo incluye teatros con cables — la puerta jamás 404), la onda corta «ver en el mundo 3D ▸» lleva a /mundo?teatro= y el último hecho abre su cable; sin titular no hay puerta (honesto)",
+      "LA PÁGINA SE CONECTA (patrón v230/v233) — CONECTA CON EL NÚCLEO con las 4 puertas reales de la onda (archivo, salas, mapa del frente, búsqueda), JSON-LD WebPage honesto con jsonLdSeguro y noscript con las puertas esenciales; la EMISORA v217 de la casa hermana queda intacta (grabador, voces, al-aire)",
+      "QA v234: tsc 0, eslint 0, build EXIT 0, health v234.0 db up, pruebas 82/82 (+3 LA ONDA), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v233.0",
     nombre: "LA BALANZA — las variables explicadas y la cadena de procedencia navegable (/escenarios)",
     hitos: [

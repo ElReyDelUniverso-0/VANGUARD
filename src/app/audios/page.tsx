@@ -1,11 +1,56 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { teatrosDelParte, componerParte } from "@/lib/emisor-guerra";
+import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { EmisoraCliente } from "./emisora-cliente";
 import { GrabadorAudio } from "./grabador";
 import { db } from "@/lib/db";
 
+// ============================================================
+// v217.0 LA EMISORA — la página del parte hablado.
+// v234.0 LA ONDA — la página se conecta con la casa: JSON-LD
+// honesto (WebPage, patrón v204 con jsonLdSeguro), noscript con
+// las puertas esenciales y CONECTA CON EL NÚCLEO (patrón v230,
+// EnlacesNucleo reutilizado): la emisora ya no es una isla — la
+// onda lleva al archivo, a las salas, al mapa y a la búsqueda.
+// El grabador y la emisión (v217) quedan INTACTOS.
+// ============================================================
+
 export const dynamic = "force-dynamic";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+
+/** v234.0 — las puertas REALES de la onda (censo v230: cero rutas
+ * inventadas; cada destino responde 200 con datos reales). */
+const conectaNucleo: EnlaceContextual[] = [
+  {
+    etiqueta: "EL ARCHIVO DE CABLES ▸",
+    ruta: "/nucleo?tipo=noticia",
+    motivo: "Los cables reales que el Comandante narra — cada uno con su fuente",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "LAS SALAS DE GUERRA ▸",
+    ruta: "/mundo",
+    motivo: "El globo 3D EN VIVO donde los frentes del parte arden de verdad",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "EL MAPA DEL FRENTE ▸",
+    ruta: "/ver-guerra",
+    motivo: "El mural FRENTE TOTAL con los frentes documentados de cada teatro",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "El buscador global de todas las entidades documentadas de la casa",
+    tipoRelacion: "visible_en",
+  },
+];
 
 export const metadata: Metadata = {
   title: "Emisora de Guerra — audios y el parte hablado de Vanguard",
@@ -27,8 +72,22 @@ export default async function AudiosPage() {
   const total24h = teatros.reduce((a, t) => a + t.cables, 0);
   const texto = componerParte(teatros, total24h).join(" ");
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Emisora de Guerra de Vanguard",
+    description:
+      "El parte de guerra hablado con datos reales: teatros, cables de 24 horas y contextos explicados. Elige la voz, escucha el frente y manda tu propio audio.",
+    url: `${SITE_URL}/audios`,
+    isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
+  };
+
   return (
     <main className="min-h-screen bg-[#040407] text-[#f5f3ee] px-4 py-10 sm:py-14">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
+      />
       <div className="mx-auto max-w-3xl">
         <p className="text-[11px] tracking-[0.35em] text-[#ff2a3c] font-bold">◉ EMISORA DE GUERRA · EN VIVO</p>
         <h1 className="mt-2 text-3xl sm:text-4xl font-black tracking-wide">
@@ -72,6 +131,27 @@ export default async function AudiosPage() {
         <p className="mt-8 text-[11px] text-[#6b665e]">
           Vanguard narra solo lo que sus cables sostienen. Sin invención, sin rumor: fuente, mapa y voz.
         </p>
+
+        {/* v234.0 — la onda llega al núcleo (patrón v230) */}
+        <EnlacesNucleo titulo="CONECTA CON EL NÚCLEO" enlaces={conectaNucleo} />
+
+        <noscript>
+          <p className="mt-6 rounded-lg border border-white/10 bg-white/[.03] p-4 text-xs leading-relaxed text-[#b9b4aa]">
+            Sin JavaScript la emisora no puede sonar, pero la casa sigue en pie: lee el{" "}
+            <Link href="/guerra-hoy" className="text-[#ffd34d] underline">
+              parte escrito de GUERRA HOY
+            </Link>
+            , entra a{" "}
+            <Link href="/nucleo" className="text-[#ffd34d] underline">
+              LA BÚSQUEDA DEL NÚCLEO
+            </Link>{" "}
+            o escucha los frentes sala a sala en{" "}
+            <Link href="/conflicto/ukraine" className="text-[#ffd34d] underline">
+              /conflicto/ukraine
+            </Link>
+            .
+          </p>
+        </noscript>
       </div>
     </main>
   );

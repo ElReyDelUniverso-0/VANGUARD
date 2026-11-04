@@ -4,7 +4,14 @@
 // Consejo) y pone el parte de guerra AL AIRE con el motor v196 (anti-traba,
 // respeta MUTE). Cero setState en effects (ley v176): los chips son estado
 // de interacción pura, nada se autoejecuta al montar.
+// v234.0 LA ONDA — las tarjetas de frente dejan de ser datos muertos: el
+// nombre abre LA SALA REAL del teatro (/conflicto/[tag] — el parte solo
+// incluye teatros con cables, la puerta nunca 404), el ÚLTIMO HECHO se
+// muestra y abre SU cable (/noticia/[id] con el id real de la consulta),
+// y cada frente gana la onda corta al globo (/mundo?teatro=). Puertas
+// honestas: sin titular no hay puerta, jamás se finge.
 import { useState } from "react";
+import Link from "next/link";
 import { VOCES_ROSTER, hablarAgente, pararVoces, type VozAgenteId } from "@/lib/voces-agentes";
 import type { TeatroDelParte } from "@/lib/emisor-guerra";
 
@@ -76,12 +83,37 @@ export function EmisoraCliente({ textoParte, teatros }: { textoParte: string; te
         {teatros.slice(0, 6).map((t) => (
           <div key={t.tag} className="rounded-lg border border-white/10 bg-white/[.02] p-3">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-bold tracking-wide">{t.nombre}</span>
+              {/* v234.0 — el frente abre su sala real (siempre tiene cables:
+               * el parte solo incluye teatros con registro en 24 h) */}
+              <Link
+                href={`/conflicto/${t.tag}`}
+                className="text-sm font-bold tracking-wide hover:text-[#ff2a3c] transition-colors underline decoration-white/10 underline-offset-4 hover:decoration-[#ff2a3c]/60"
+                title={`La sala real del frente: ${t.nombre} en /conflicto/${t.tag}`}
+              >
+                {t.nombre}
+              </Link>
               <span className="shrink-0 rounded-full border border-[#ff2a3c]/40 px-2 py-0.5 text-[10px] text-[#ff2a3c]">
                 {t.cables} cables/24h
               </span>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-[#b9b4aa]">{t.dossier}</p>
+            {/* v234.0 — el último hecho narrado, ahora a la vista y con puerta */}
+            {t.ultimoTitular && t.ultimoId && (
+              <Link
+                href={`/noticia/${t.ultimoId}`}
+                className="mt-1.5 block truncate text-[11px] italic text-[#8d8779] hover:text-[#ffd34d] transition-colors"
+                title={`Último hecho del frente — abrir el cable: ${t.ultimoTitular}`}
+              >
+                ⏱ Último hecho: {t.ultimoTitular} ▸
+              </Link>
+            )}
+            <Link
+              href={`/mundo?teatro=${encodeURIComponent(t.tag)}`}
+              className="mt-1.5 inline-block font-mono text-[10px] uppercase tracking-widest text-[#7a94b8] hover:text-[#ffd34d] transition-colors"
+              title={`Ver ${t.nombre} en el globo 3D EN VIVO`}
+            >
+              ver en el mundo 3D ▸
+            </Link>
           </div>
         ))}
       </div>

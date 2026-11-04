@@ -1,6 +1,13 @@
 // ============================================================
 // v217.0 LA EMISORA DE GUERRA — el parte que EXPLICA, no el que
-// solo lista. Por qué existía un vacío: el despacho v119 narraba
+// solo lista.
+// v234.0 LA ONDA — el parte gana EL ID del último hecho de cada
+// frente (TeatroDelParte.ultimoId): la onda de la emisora llega
+// a la casa entera — el titular narrado se vuelve una puerta
+// real a /noticia/[id], la sala de cada frente a /conflicto/[tag]
+// y el globo a /mundo?teatro=. Cero datos nuevos inventados: el
+// id ya vivía en la fila que la consulta ya leía.
+// Por qué existía un vacío: el despacho v119 narraba
 // el cronoteatro (sector/hora) y el briefing v203 daba el resumen
 // del día, pero NADIE contaba EL GUERRA COMPLETA: qué frente
 // arde, cuántos cables lo sostienen, cuál es el último hecho y
@@ -25,6 +32,9 @@ export interface TeatroDelParte {
   nombre: string;
   cables: number;
   ultimoTitular: string | null;
+  /** v234.0 — el id del cable del último hecho (la puerta honesta
+   * a /noticia/[id]; null = sin titular dominante, sin puerta). */
+  ultimoId: string | null;
   dossier: string;
 }
 
@@ -79,13 +89,14 @@ export async function teatrosDelParte(): Promise<TeatroDelParte[]> {
     const ultimo = await db.newsItem.findFirst({
       where: { conflictTag: tag },
       orderBy: { publishedAt: "desc" },
-      select: { title: true },
+      select: { title: true, id: true },
     });
     partes.push({
       tag,
       nombre: NOMBRE[tag],
       cables: g._count._all,
       ultimoTitular: ultimo?.title ?? null,
+      ultimoId: ultimo?.id ?? null,
       dossier: DOSSIER[tag] ?? "",
     });
   }

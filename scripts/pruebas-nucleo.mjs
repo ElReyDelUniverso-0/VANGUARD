@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v233.0", async () => {
+  await verificar("servidor vivo y en v234.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v233"), `versión ${r.json?.version} ≠ v233`);
+    afirmar(String(r.json?.version).startsWith("v234"), `versión ${r.json?.version} ≠ v234`);
   });
 
   // censo por API
@@ -880,6 +880,45 @@ async function parteB() {
     afirmar(central.includes("ÚLTIMA HORA"), "el toast ÚLTIMA HORA no vive en la Central");
     const centro = fs.readFileSync("src/components/vanguard/panels/centro-panel.tsx", "utf8");
     afirmar(centro.includes("useAlarma.getState().limpiar()"), "el CENTRO no revisa la campana");
+  });
+
+  // ── v234.0 LA ONDA: la emisora conecta con toda la casa ──
+  await verificar("LA ONDA: el parte lleva el id del último hecho y las puertas son las reales (v234)", () => {
+    const emisor = readFileSync(join(RAIZ, "src/lib/emisor-guerra.ts"), "utf8");
+    afirmar(emisor.includes("ultimoId"), "el parte no lleva el id del último hecho");
+    afirmar(emisor.includes("select: { title: true, id: true }"), "el id no sale de la MISMA consulta (nada inventado)");
+    const emisora = readFileSync(join(RAIZ, "src/app/audios/emisora-cliente.tsx"), "utf8");
+    // las tres puertas del frente: sala real, cable del hecho, globo
+    for (const trozo of ["/conflicto/${t.tag}", "/noticia/${t.ultimoId}", "/mundo?teatro="]) {
+      afirmar(emisora.includes(trozo), `la emisora no declara la puerta «${trozo}»`);
+    }
+    // la puerta del último hecho es CONDICIONAL (sin titular no hay puerta)
+    afirmar(emisora.includes("t.ultimoTitular && t.ultimoId"), "la puerta del último hecho no tiene guarda honesta");
+    // cero conteos a mano en la emisora (los cables/24h vienen de la BD)
+    afirmar(!/\d+ cables\//.test(emisora), "¡la emisora escribe conteos de cables a mano!");
+    const pag = readFileSync(join(RAIZ, "src/app/audios/page.tsx"), "utf8");
+    for (const trozo of ["jsonLdSeguro", "CONECTA CON EL NÚCLEO", "noscript", "/nucleo?tipo=noticia", "/ver-guerra"]) {
+      afirmar(pag.includes(trozo), `la página de la emisora no declara «${trozo}»`);
+    }
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página de la emisora escribe fechas a mano!");
+  });
+
+  await verificar("LA ONDA viva: /audios sirve las puertas del frente y la conexión con el núcleo (v234)", async () => {
+    const r = await pedir("/audios");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "los frentes no abren su sala real");
+    afirmar(r.texto.includes("/noticia/"), "el último hecho no abre su cable");
+    afirmar(r.texto.includes("/mundo?teatro="), "sin la onda corta al globo");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin la conexión con el núcleo");
+    afirmar(r.texto.includes("EL ARCHIVO DE CABLES"), "sin la puerta del archivo");
+    afirmar(r.texto.includes("application/ld+json"), "sin JSON-LD honesto");
+  });
+
+  await verificar("LA ONDA: las puertas de la emisora responden 200 una a una (v234)", async () => {
+    for (const ruta of ["/mundo?teatro=ukraine", "/conflicto/gaza", "/nucleo?tipo=noticia", "/ver-guerra", "/guerra-hoy"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta de la onda rota ${ruta} → ${r.status}`);
+    }
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──
