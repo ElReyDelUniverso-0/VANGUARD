@@ -250,6 +250,17 @@ async function parteA() {
     afirmar(busq.includes("tipoFiltro ? limite : 8"), "el motor no pide el límite completo cuando hay filtro");
     afirmar(busq.includes(".slice(0, limite)"), "el motor no recorta después del filtro");
   });
+
+  await verificar("EL DESPLIEGUE: /conflicto proyecta los frentes del teatro sin inventar nada (v227)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
+    // la sección usa SOLO el catálogo de la casa (cero coordenadas propias)
+    for (const trozo of ["puntosDelNucleo", "geografiaDeTeatro", "idPunto", "NO cartografía oficial"]) {
+      afirmar(pag.includes(trozo), `la página del teatro no declara «${trozo}»`);
+    }
+    afirmar(!/lat:\s*-?\d/.test(pag) && !/lng:\s*-?\d/.test(pag), "¡la página del teatro declara coordenadas literales!");
+    // el teatro sin sala declara la ausencia, no la finge
+    afirmar(pag.includes("no inventa puntos"), "la ausencia de frentes no se declara honesta");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -269,10 +280,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v226.0", async () => {
+  await verificar("servidor vivo y en v227.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v226"), `versión ${r.json?.version} ≠ v226`);
+    afirmar(String(r.json?.version).startsWith("v227"), `versión ${r.json?.version} ≠ v227`);
   });
 
   // censo por API
@@ -728,6 +739,27 @@ async function parteB() {
     const r = await pedir("/conflicto/ukraine");
     afirmar(r.status === 200, "no 200");
     afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "chips ausentes en la ficha de teatro");
+  });
+
+  // ── v227.0 EL DESPLIEGUE: el teatro lista SUS frentes documentados ──
+  await verificar("EL DESPLIEGUE: /conflicto/ukraine lista sus 12 frentes con ficha, fuente y mapa", async () => {
+    const r = await pedir("/conflicto/ukraine");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("Los frentes del teatro"), "sin la sección de frentes del teatro");
+    afirmar(/documentados<[^>]*>|documentados<\/h2>/.test(r.texto) || r.texto.includes("documentados"), "sin el conteo de frentes");
+    afirmar(r.texto.includes("Bajmut"), "Bajmut no aparece en el despliegue del teatro");
+    afirmar(r.texto.includes("id=vg%3Apunto%3A"), "los frentes no llevan a su ficha vg:punto");
+    afirmar(r.texto.includes("ISW"), "sin la fuente OSINT de la sala citada");
+    afirmar(r.texto.includes("NO cartografía oficial"), "sin la precisión declarada");
+    afirmar(r.texto.includes("/ver-guerra"), "sin enlace al mapa del frente");
+  });
+
+  await verificar("EL DESPLIEGUE: /conflicto/korea declara la ausencia de frentes (nada fingido)", async () => {
+    const r = await pedir("/conflicto/korea");
+    afirmar(r.status === 200, `korea → ${r.status} (el teatro tiene cables, la puerta debe abrirse)`);
+    afirmar(r.texto.includes("Sin frentes documentados"), "la ausencia de sala no se declara");
+    afirmar(r.texto.includes("no inventa puntos"), "la razón de la ausencia no se explica");
+    afirmar(/Los frentes del teatro — \d+/.test(r.texto) === false, "¡korea finge una lista de frentes!");
   });
 
   await verificar("los chips contextuales viven en /noticia/[id] con su ACONTECIMIENTO", async () => {
