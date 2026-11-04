@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v268.0",
+    nombre: "EL RITMO DE LA CASA — la expansión completa la trilogía de la vitrina (/objetivos: v235 el botín, v267 el cableado, v268 el ritmo): 19 misiones vivas (MISSION_TEMPLATES — 9 diarias, 5 semanales, 2 especiales y 3 capítulos de campaña) que solo vivían en el panel client-side del aparato, ahora servidas en server con censo y botín derivados y puertas reales de campaña a las salas del archivo",
+    hitos: [
+      "LA JORNADA SE SIRVE EN SERVER — sección LA JORNADA entre el cableado y los bloques: censo por ritmo y botín por ritmo derivados de MISSION_TEMPLATES con filter/reduce — cero cifras escritas a mano (herencia v235); si el catálogo cambia, la jornada cambia sola",
+      "LOS CAPÍTULOS ABREN SUS SALAS — STORY_KIEV→ukraine, STORY_GAZA→gaza, STORY_SUDAN→sudan: los capítulos de campaña llevan puertas reales a /conflicto/[tag] con el conflictTag ya declarado en la fuente; capítulo sin conflictTag no pinta puerta (vacío honesto)",
+      "LA GRAMÁTICA DE LA CASA — la línea compuesta COMPLETA en JS (lección v256): «La jornada de la casa — 19 misiones vivas: 9 cada día, 5 cada semana, 2 especiales y 3 capítulos de campaña»; cada celda de botín con la cifra es-ES de la casa; cero fechas a mano (guardia v234)",
+      "QA v268: tsc 0 TOTAL, eslint 0, build EXIT 0, health v268.0 db up, pruebas 162/162 (+2 EL RITMO DE LA CASA: estática — la fuente intacta, el censo y el botín derivados, las puertas reales y la guardia v234; viva — el SSR sirve «LA JORNADA» con «19 misiones vivas», el botín derivado, las 3 salas de campaña y las anclas v235/v267 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v267.0",
     nombre: "EL CABLEADO DEL APARATO — la expansión vuelve a la vitrina (/objetivos, v216+v235): desde v235 dice «los 100 se cazan aquí» pero nunca declaró QUÉ alimenta cada bloque — el mapa bloque→señal vivía escondido dentro de las funciones check/progress del catálogo. La fuente manda: el mapa se declara en game-data.ts y la vitrina lo sirve",
     hitos: [

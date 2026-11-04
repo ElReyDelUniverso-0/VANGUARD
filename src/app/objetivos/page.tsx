@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ACHIEVEMENTS, CABLEADO_BLOQUES } from "@/lib/game-data";
+import { ACHIEVEMENTS, CABLEADO_BLOQUES, MISSION_TEMPLATES } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VitrinaProgreso } from "@/components/vanguard/vitrina-progreso";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -32,6 +32,15 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // estado, verificadas una a una contra los logros reales) y esta
 // vitrina lo sirve: cada bloque declara «se alimenta de:» con los
 // contadores reales del aparato. Cero campos inventados.
+//
+// v268.0 EL RITMO DE LA CASA — la vitrina contaba el botín (v235) y el
+// cableado (v267) pero nunca el RITMO: MISSION_TEMPLATES (19 misiones
+// vivas del aparato — 9 diarias, 5 semanales, 2 especiales y 3
+// capítulos de campaña) solo vivía en el panel client-side. LA JORNADA
+// lo sirve en server: censo y botín derivados con filter/reduce (cero
+// cifras a mano) y los capítulos de campaña con puertas reales a las
+// salas del archivo (/conflicto/ukraine, /conflicto/gaza,
+// /conflicto/sudan — el conflictTag ya declarado en la fuente).
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +115,40 @@ const SENALES = new Set(
 
 // La línea de la sección compuesta COMPLETA en JS (lección v256).
 const lineaCableado = `El cableado del aparato — ${SENALES} señales del estado alimentan los ${CABLEADO_BLOQUES.length} bloques de la vitrina`;
+
+// ── v268.0 EL RITMO DE LA CASA — TODO derivado de MISSION_TEMPLATES, nada a mano ──
+// La vitrina contaba el botín (v235) y el cableado (v267) pero nunca el
+// RITMO: la casa tiene 19 misiones vivas (9 diarias, 5 semanales, 2
+// especiales y 3 capítulos de campaña) que el aparato rota cada día —
+// y los capítulos llevan puertas reales a las salas del archivo
+// (/conflicto/[tag]). Censo y botín salen de la fuente con filter/reduce;
+// si el catálogo cambia, la jornada cambia sola.
+const MISIONES = MISSION_TEMPLATES;
+
+const RITMO_NOMBRES: Record<string, string> = {
+  DAILY: "cada día",
+  WEEKLY: "cada semana",
+  SPECIAL: "especiales",
+  STORY: "la campaña",
+};
+
+const CENSO_RITMO = ["DAILY", "WEEKLY", "SPECIAL", "STORY"].map((cat) => ({
+  cat,
+  n: MISIONES.filter((m) => m.category === cat).length,
+  botin: MISIONES.filter((m) => m.category === cat).reduce(
+    (t, m) => ({
+      monedas: t.monedas + m.coinReward,
+      gemas: t.gemas + m.gemReward,
+      xp: t.xp + m.xpReward,
+    }),
+    { monedas: 0, gemas: 0, xp: 0 },
+  ),
+}));
+
+const CAPITULOS = MISIONES.filter((m) => m.category === "STORY");
+
+// La línea de la sección compuesta COMPLETA en JS (lección v256).
+const lineaRitmo = `La jornada de la casa — ${MISIONES.length} misiones vivas: ${CENSO_RITMO[0].n} cada día, ${CENSO_RITMO[1].n} cada semana, ${CENSO_RITMO[2].n} especiales y ${CENSO_RITMO[3].n} capítulos de campaña`;
 
 // ── v235.0 EL MAPA DE CAZA — solo rutas reales de la casa ──
 // La ley: los 100 objetivos se cazan en los paneles del aparato (la
@@ -367,6 +410,53 @@ export default function ObjetivosPage() {
                 </article>
               );
             })}
+          </div>
+        </section>
+
+        {/* v268.0 LA JORNADA — el ritmo de la casa (misiones reales del aparato) */}
+        <section
+          aria-label="La jornada de la casa"
+          className="mt-8 border border-zinc-800 rounded-md p-5 bg-zinc-900/40"
+        >
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-emerald-300">
+            LA JORNADA · el ritmo de la casa
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+            {`${lineaRitmo}. Se caza en el aparato: cada acción del día registra progreso de verdad — cero suerte, cero carteles.`}
+          </p>
+          {/* el botín del ritmo — derivado del catálogo, cero cifras a mano */}
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            {CENSO_RITMO.map((b) => {
+              const lineaBotin = `+${cifra.format(b.botin.monedas)} mon◉ · +${b.botin.gemas} gemas · +${b.botin.xp} XP`;
+              return (
+                <div key={b.cat} className="border border-zinc-800 bg-zinc-900 rounded px-2 py-3">
+                  <div className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+                    {`${RITMO_NOMBRES[b.cat] ?? b.cat} ×${b.n}`}
+                  </div>
+                  <div className="mt-1.5 font-mono text-[10px] leading-relaxed text-amber">{lineaBotin}</div>
+                </div>
+              );
+            })}
+          </div>
+          {/* los capítulos de campaña — puertas reales a las salas del archivo */}
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {CAPITULOS.map((m) => (
+              <article
+                key={m.code}
+                className="border border-zinc-800 rounded-md p-3 bg-zinc-900/60"
+              >
+                <h3 className="text-sm font-bold leading-snug text-zinc-100">{m.title}</h3>
+                <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{m.description}</p>
+                {m.conflictTag && (
+                  <Link
+                    href={`/conflicto/${m.conflictTag}`}
+                    className="mt-2 inline-block font-mono text-[10px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+                  >
+                    {`la sala del capítulo: /conflicto/${m.conflictTag} ▸`}
+                  </Link>
+                )}
+              </article>
+            ))}
           </div>
         </section>
 

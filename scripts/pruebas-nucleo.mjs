@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v267.0", async () => {
+  await verificar("servidor vivo y en v268.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v267"), `versión ${r.json?.version} ≠ v267`);
+    afirmar(String(r.json?.version).startsWith("v268"), `versión ${r.json?.version} ≠ v268`);
   });
 
   // censo por API
@@ -2012,6 +2012,54 @@ async function parteB() {
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
   });
 
+  // ── v268.0 EL RITMO DE LA CASA: las 19 misiones del aparato viajan en SSR ──
+  // La vitrina contaba el botín (v235) y el cableado (v267) pero nunca el
+  // RITMO: MISSION_TEMPLATES (19 misiones — 9 diarias, 5 semanales, 2
+  // especiales, 3 capítulos de campaña) solo vivía client-side.
+  await verificar("EL RITMO DE LA CASA estática: censo y botín derivados de la fuente, capítulos con puertas reales (v268)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/objetivos/page.tsx"), "utf8");
+    // la fuente intacta: 19 misiones con code y category
+    afirmar(fuente.includes("export const MISSION_TEMPLATES"), "la fuente de misiones no existe");
+    const iniM = fuente.indexOf("export const MISSION_TEMPLATES");
+    const bloqueM = fuente.slice(iniM, fuente.indexOf("];", iniM) + 2);
+    const nMisiones = (bloqueM.match(/code: "/g) || []).length;
+    afirmar(nMisiones >= 19, `el catálogo de misiones se encoge (${nMisiones})`);
+    // la vitrina consume la fuente y deriva TODO con filter/reduce
+    afirmar(pag.includes("import { ACHIEVEMENTS, CABLEADO_BLOQUES, MISSION_TEMPLATES } from \"@/lib/game-data\""), "la vitrina no consume MISSION_TEMPLATES");
+    afirmar(pag.includes("MISIONES.filter((m) => m.category === cat)"), "el censo por ritmo no se deriva (filter)");
+    afirmar(pag.includes("monedas: t.monedas + m.coinReward"), "el botín del ritmo no se suma del catálogo (reduce)");
+    afirmar(pag.includes("MISIONES.filter((m) => m.category === \"STORY\")"), "los capítulos no salen del catálogo");
+    // la línea de la sección compuesta COMPLETA en JS (lección v256)
+    afirmar(pag.includes("const lineaRitmo = `La jornada de la casa — ${MISIONES.length} misiones vivas: ${CENSO_RITMO[0].n} cada día, ${CENSO_RITMO[1].n} cada semana, ${CENSO_RITMO[2].n} especiales y ${CENSO_RITMO[3].n} capítulos de campaña`"), "la línea del ritmo no se compone COMPLETA en JS");
+    // los capítulos abren sus salas: puerta real con el conflictTag de la fuente + vacío honesto
+    afirmar(pag.includes("href={`/conflicto/${m.conflictTag}`}"), "los capítulos no abren sus salas");
+    afirmar(pag.includes("{m.conflictTag && ("), "el capítulo sin sala pinta puerta falsa");
+    afirmar(pag.includes("LA JORNADA"), "la cabeza de la jornada desapareció");
+    // cero fechas escritas a mano (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la vitrina escribe fechas a mano en la ronda v268!");
+  });
+
+  await verificar("EL RITMO DE LA CASA viva: el SSR sirve la jornada, el botín derivado y las salas de campaña (v268)", async () => {
+    const r = await pedir("/objetivos");
+    afirmar(r.status === 200, `/objetivos no 200 en v268 (${r.status})`);
+    afirmar(r.texto.includes("LA JORNADA"), "la jornada no viaja en el SSR");
+    afirmar(r.texto.includes("19 misiones vivas: 9 cada día, 5 cada semana, 2 especiales y 3 capítulos de campaña"), "la línea derivada del ritmo no viaja");
+    afirmar(r.texto.includes("cada día ×9"), "el censo del ritmo diario no viaja");
+    afirmar(r.texto.includes("la campaña ×3"), "el censo de la campaña no viaja");
+    // el botín derivado (280 mon la jornada diaria, 1100 la semanal — sumas reales del catálogo)
+    afirmar(r.texto.includes("+280 mon◉"), "el botín diario derivado no viaja");
+    afirmar(r.texto.includes("+1100 mon◉"), "el botín semanal derivado no viaja (cifra es-ES real)");
+    // las puertas de campaña: las 3 salas reales del archivo
+    for (const sala of ["/conflicto/ukraine", "/conflicto/gaza", "/conflicto/sudan"]) {
+      afirmar(r.texto.includes(`la sala del capítulo: ${sala}`), `la campaña no abre ${sala}`);
+    }
+    afirmar(r.texto.includes("Capitulo 1 — Kiev bajo asedio"), "el capítulo 1 no viaja");
+    // las anclas v235 y v267 siguen en pie
+    afirmar(r.texto.includes("La balanza del botín"), "la balanza v235 desapareció");
+    afirmar(r.texto.includes("EL CABLEADO DEL APARATO"), "el cableado v267 desapareció");
+  });
+
   // ── v267.0 EL CABLEADO DEL APARATO: qué señal del estado alimenta cada bloque ──
   // La vitrina dice desde v235 «los 100 se cazan aquí» pero nunca declaró
   // QUÉ alimenta cada bloque. La directiva v266 manda: el mapa se declara
@@ -2042,7 +2090,7 @@ async function parteB() {
     }
     afirmar(parejasTotales >= 37, `el cableado se encoge (${parejasTotales} parejas)`);
     // la vitrina consume la fuente y compone las líneas COMPLETAS en JS (lección v256)
-    afirmar(pag.includes('import { ACHIEVEMENTS, CABLEADO_BLOQUES } from "@/lib/game-data"'), "la vitrina no consume el cableado de la fuente");
+    afirmar(pag.includes('import { ACHIEVEMENTS, CABLEADO_BLOQUES, MISSION_TEMPLATES } from "@/lib/game-data"'), "la vitrina no consume el cableado de la fuente");
     afirmar(pag.includes("const lineaCableado = `El cableado del aparato — ${SENALES} señales del estado alimentan los ${CABLEADO_BLOQUES.length} bloques de la vitrina`"), "la línea del cableado no se compone COMPLETA en JS");
     afirmar(pag.includes('const alimento = c.alimento.map((a) => a.nombre).join(" · ")'), "el alimento de cada bloque no se compone en JS");
     afirmar(pag.includes("EL CABLEADO DEL APARATO"), "la cabeza del cableado desapareció");

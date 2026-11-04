@@ -2806,6 +2806,35 @@
 //     v235 en pie) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v266.0 EL TELETIPO DE LA CASA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v267.0";
-export const APP_CODENAME = "EL CABLEADO DEL APARATO";
+// v268.0 EL RITMO DE LA CASA — la expansión funcional módulo a módulo
+//         completa la trilogía de la vitrina (/objetivos: v235 el botín,
+//         v267 el cableado, v268 el ritmo): la casa tiene 19 misiones
+//         vivas (MISSION_TEMPLATES — 9 diarias, 5 semanales, 2 especiales
+//         y 3 capítulos de campaña) que solo vivían en el panel
+//         client-side del aparato; la vitrina pública jamás las sirvió.
+// (1) LA JORNADA SE SIRVE EN SERVER — sección entre el cableado y los
+//     bloques: censo por ritmo (DAILY/WEEKLY/SPECIAL/STORY) y botín por
+//     ritmo derivados de la fuente con filter/reduce — cero cifras
+//     escritas a mano (la prueba estática lo vigila, herencia v235).
+// (2) LOS CAPÍTULOS ABREN SUS SALAS — los 3 capítulos de campaña
+//     (STORY_KIEV→ukraine, STORY_GAZA→gaza, STORY_SUDAN→sudan) llevan
+//     puertas reales a /conflicto/[tag] con el conflictTag ya declarado
+//     en la fuente — la campaña conecta la vitrina con el archivo;
+//     capítulo sin conflictTag no pinta puerta (vacío honesto).
+// (3) LA GRAMÁTICA DE LA CASA — la línea de la sección compuesta
+//     COMPLETA en JS (lección v256): «La jornada de la casa — 19
+//     misiones vivas: 9 cada día, 5 cada semana, 2 especiales y 3
+//     capítulos de campaña»; cada celda de botín compuesta en JS con la
+//     cifra es-ES de la casa. Cero fechas a mano, guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v268.0 db up ·
+//     pruebas 162/162 (+2 EL RITMO DE LA CASA: estática — la fuente
+//     MISSION_TEMPLATES intacta, el censo y el botín derivados, las
+//     puertas reales de los capítulos, el vacío honesto y la guardia
+//     v234; viva — el SSR sirve «LA JORNADA» con «19 misiones vivas»,
+//     el botín del ritmo derivado, las 3 salas de campaña y las anclas
+//     v235/v267 en pie) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v267.0 EL CABLEADO DEL APARATO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v268.0";
+export const APP_CODENAME = "EL RITMO DE LA CASA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
