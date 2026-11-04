@@ -2542,6 +2542,34 @@
 //     v211/v231/v250 en pie) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v257.0 LA EDAD DEL FRENTE y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v258.0";
-export const APP_CODENAME = "EL VÉRTIGO QUE HABLA";
+// v259.0 EL TEATRO CON NOMBRE — la expansión funcional módulo a módulo llega
+//         a la tercera sala de guerra: /en-vivo (v213 EL PULSO + v254 EL
+//         LATIDO QUE RESPETA) medía el planeta en cinco cifras y filtraba
+//         por tags crudos («gaza · 18»), y su propio stat frescoMin viajaba
+//         en el payload sin ser leído NINGUNA vez — la sala no decía ni el
+//         nombre de sus teatros ni cuán fresca era su señal más nueva.
+// (1) LA SEÑAL MÁS FRESCA DE LA SALA — derivada del cable [0] de la
+//     muestra (los más nuevos primero, pulso v213): «la señal más fresca
+//     de la sala: [fuente] — última señal hace X», la MISMA gramática que
+//     el espejo (v256) y el puente (v257) enseñaron, ahora viva en la
+//     sala que nunca se recarga (el reloj de 1 s la mantiene al día).
+//     Amber con la MISMA regla del rompiendo (≤ 15 min), zinc si no —
+//     cero reglas nuevas; title con la hora exacta por Intl (patrón
+//     refugio v251 / espejo v256 / puente v257); sin cables la línea ni
+//     se pinta (vacío honesto). Cero consultas: viaja en la instantánea.
+// (2) LOS TEATROS CON NOMBRE — los chips de filtro y los de la línea del
+//     tiempo leen el catálogo canónico de la casa (src/lib/teatros.ts, la
+//     misma fuente única que viste /conflicto/[tag] y el sitemap): «GAZA
+//     E ISRAEL · 18» en vez de «gaza · 18». Fallback honesto: un tag
+//     desconocido viaja tal cual — nunca se inventa un nombre.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v259.0 db up ·
+//     pruebas 144/144 (+2 EL TEATRO CON NOMBRE: estática — el catálogo
+//     con su fallback, la línea compuesta COMPLETA en JS antes del JSX
+//     (lección v256), el umbral 15 min y el vacío honesto; viva — el SSR
+//     de la sala sirve la declaración y el nombre humano con las anclas
+//     v213/v254 en pie) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v258.0 EL VÉRTIGO QUE HABLA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v259.0";
+export const APP_CODENAME = "EL TEATRO CON NOMBRE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

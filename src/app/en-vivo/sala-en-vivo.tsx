@@ -11,6 +11,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+// v259.0 EL TEATRO CON NOMBRE — el catálogo canónico de la casa (la misma
+// fuente única que viste /conflicto/[tag] y el sitemap): los teatros de la
+// sala dejan de ser tags crudos y hablan humano. Fallback honesto: si un
+// tag no estuviera en el catálogo, viaja tal cual — nunca se inventa.
+import { TEATROS } from "@/lib/teatros";
 
 export interface CableVivo {
   id: string;
@@ -182,6 +187,16 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
     ? cables[0]
     : null;
 
+  // v259.0 EL TEATRO CON NOMBRE — la señal más fresca de la sala, derivada
+  // del cable [0] de la muestra (los más nuevos primero, pulso v213): la
+  // MISMA gramática «última señal hace N» que el espejo (v256) y el puente
+  // (v257) enseñaron, ahora en la tercera sala de guerra. Cero consultas:
+  // viaja en la instantánea. El reloj de la sala (1 s) la mantiene viva.
+  // Sin cables: la línea ni se pinta (vacío honesto). El texto se compone
+  // COMPLETO en JS antes del JSX (lección v256: React intercala comentarios
+  // SSR entre estático e interpolación y partiría la frase).
+  const masFresca = cables[0] ?? null;
+
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-200">
       {/* ===== cabecera de la sala ===== */}
@@ -258,6 +273,23 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
             </div>
           ))}
         </section>
+        {/* v259.0 — la declaración de frescura de la sala: amber con la MISMA
+            regla del rompiendo (≤ 15 min), zinc si no; el title lleva la hora
+            exacta formateada por Intl (patrón refugio v251 / espejo v256 /
+            puente v257) — cero fechas escritas a mano, guardia v234 en pie. */}
+        {masFresca && (() => {
+          const frescoMin = Math.max(0, Math.round((Date.now() - new Date(masFresca.fecha).getTime()) / 60000));
+          const lineaFresca = `la señal más fresca de la sala: ${masFresca.f} — última señal ${edadViva(masFresca.fecha).toLowerCase()}`;
+          return (
+            <p
+              title={`El cable más nuevo de la muestra: ${masFresca.t} · ${new Date(masFresca.fecha).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })}`}
+              suppressHydrationWarning
+              className={`mt-3 font-mono text-[10px] uppercase tracking-widest ${frescoMin <= 15 ? "text-amber-300" : "text-zinc-500"}`}
+            >
+              {lineaFresca}
+            </p>
+          );
+        })()}
         <p className="mt-2 font-mono text-[9px] uppercase tracking-widest text-zinc-600 text-right flex items-center justify-end gap-3 flex-wrap">
           <span>
             {pausado
@@ -337,7 +369,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
               onClick={() => { setFiltro("teatro"); setTeatroElegido(tag); }}
               className={`px-3 py-1 rounded-full font-mono text-[10px] uppercase tracking-widest border transition-colors ${filtro === "teatro" && teatroElegido === tag ? "border-cyan-400 text-cyan-300 bg-cyan-400/10" : "border-zinc-700 text-zinc-400 hover:border-zinc-500"}`}
             >
-              {tag} · {n}
+              {TEATROS[tag]?.nombre ?? tag} · {n}
             </button>
           ))}
         </section>
@@ -378,7 +410,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
                       href={`/conflicto/${c.conflicto}`}
                       className="font-mono text-[8px] uppercase tracking-widest text-cyan-300/90 hover:text-cyan-200 border border-cyan-400/30 rounded px-1.5 py-0.5"
                     >
-                      {c.conflicto}
+                      {TEATROS[c.conflicto]?.nombre ?? c.conflicto}
                     </Link>
                   )}
                   {esNuevo && (

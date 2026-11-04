@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v259.0",
+    nombre: "EL TEATRO CON NOMBRE — la expansión llega a la tercera sala de guerra (/en-vivo, v213 EL PULSO + v254 EL LATIDO QUE RESPETA): su propio stat frescoMin viajaba en el payload sin ser leído nunca y sus teatros eran tags crudos — ahora la sala declara «la señal más fresca de la sala: [fuente] — última señal hace X» con la MISMA gramática del espejo (v256) y el puente (v257), y sus chips leen el catálogo canónico de la casa (GAZA E ISRAEL · 18, no «gaza · 18»)",
+    hitos: [
+      "LA SEÑAL MÁS FRESCA DE LA SALA — derivada del cable [0] de la muestra (los más nuevos primero): la gramática de las dos salas de guerra, ahora viva en la que nunca se recarga (el reloj de 1 s la mantiene al día); amber con la MISMA regla del rompiendo (≤ 15 min), zinc si no — cero reglas nuevas; title con hora exacta por Intl; sin cables la línea ni se pinta; cero consultas extra",
+      "LOS TEATROS CON NOMBRE — chips de filtro y de la línea del tiempo leyendo src/lib/teatros.ts (la misma fuente única de /conflicto/[tag] y el sitemap); fallback honesto: tag desconocido viaja tal cual — nunca se inventa un nombre",
+      "QA v259: tsc 0 TOTAL, eslint 0, build EXIT 0, health v259.0 db up, pruebas 144/144 (+2 EL TEATRO CON NOMBRE: estática — el catálogo con su fallback, la línea compuesta COMPLETA en JS antes del JSX (lección v256), el umbral 15 min y el vacío honesto; viva — el SSR de la sala sirve la declaración y el nombre humano con las anclas v213/v254 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v258.0",
     nombre: "EL VÉRTIGO QUE HABLA — la expansión llega al feed (/vertigo, fórmula TikTok de la casa): tenía corazón, teatro, país, compartir y reanudar, pero era el único módulo vivo MUDO — ahora el feed habla con la misma boca v252 (speechSynthesis del aparato) y la voz pertenece a la pieza: al deslizar, calla",
     hitos: [

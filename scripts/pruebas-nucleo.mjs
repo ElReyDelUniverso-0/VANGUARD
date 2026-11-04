@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v258.0", async () => {
+  await verificar("servidor vivo y en v259.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v258"), `versión ${r.json?.version} ≠ v258`);
+    afirmar(String(r.json?.version).startsWith("v259"), `versión ${r.json?.version} ≠ v259`);
   });
 
   // censo por API
@@ -2010,6 +2010,44 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v259.0 EL TEATRO CON NOMBRE: la tercera sala de guerra habla humano ──
+  // /en-vivo (v213 EL PULSO + v254 EL LATIDO QUE RESPETA) medía el planeta
+  // en cinco cifras y filtraba por tags crudos; su propio stat frescoMin
+  // viajaba en el payload sin ser leído NINGUNA vez. Ahora declara «la
+  // señal más fresca de la sala: [fuente] — última señal hace X» (la MISMA
+  // gramática del espejo v256 y del puente v257) y sus teatros leen el
+  // catálogo canónico de la casa (src/lib/teatros.ts, la fuente única de
+  // /conflicto/[tag] y el sitemap) — con fallback honesto, nunca inventado.
+  await verificar("EL TEATRO CON NOMBRE estática: la sala declara su señal más fresca y sus teatros hablan humano (v259)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/en-vivo/sala-en-vivo.tsx"), "utf8");
+    // los teatros con nombre del catálogo canónico, con fallback honesto
+    afirmar(sala.includes('from "@/lib/teatros"'), "la sala no lee el catálogo canónico de teatros");
+    afirmar(sala.includes("TEATROS[tag]?.nombre ?? tag"), "los chips de filtro no hablan humano ni con fallback honesto");
+    afirmar(sala.includes("TEATROS[c.conflicto]?.nombre ?? c.conflicto"), "los chips de la línea del tiempo no hablan humano");
+    // la declaración de frescura: gramática v256/v257, compuesta COMPLETA en JS
+    afirmar(sala.includes("const masFresca = cables[0] ?? null"), "la señal más fresca no se deriva de la cabeza de la muestra");
+    afirmar(sala.includes("la señal más fresca de la sala"), "la sala no declara su señal más fresca");
+    afirmar(sala.includes("edadViva(masFresca.fecha).toLowerCase()"), "la edad no se compone COMPLETA en JS antes del JSX (lección v256)");
+    afirmar(sala.includes('frescoMin <= 15 ? "text-amber-300" : "text-zinc-500"'), "el color de la declaración no usa la MISMA regla del rompiendo");
+    afirmar(sala.includes('toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })'), "la hora exacta del title no se formatea con Intl");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas a mano en la ronda v259!");
+  });
+
+  await verificar("EL TEATRO CON NOMBRE vivo: el SSR de la sala sirve la declaración y el nombre humano (v259)", async () => {
+    const r = await pedir("/en-vivo");
+    afirmar(r.status === 200, `en-vivo no 200 en v259 (${r.status})`);
+    afirmar(r.texto.includes("la señal más fresca de la sala"), "el SSR no sirve la declaración de frescura");
+    // la edad puede ser «hace N» o «ahora mismo» según la señal — la gramática manda
+    afirmar(/última señal (hace|ahora)/.test(r.texto), "la gramática de las tres salas no viaja en el SSR");
+    // nombre humano medido en la muestra 60 de esta ronda: gaza → «Gaza e Israel»
+    afirmar(r.texto.includes("Gaza e Israel"), "el teatro del catálogo no viaja con su nombre humano");
+    // las anclas de la sala siguen en pie
+    afirmar(r.texto.includes("PAUSAR EL LATIDO"), "el botón del latido desapareció");
+    afirmar(r.texto.includes("sondeado hace"), "el reloj del sondeo desapareció");
+    afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la cabeza de la sala desapareció");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "en-vivo: CONECTA ausente del SSR");
   });
 
   // ── v258.0 EL VÉRTIGO QUE HABLA: la cuarta señal — el feed más vivo de
