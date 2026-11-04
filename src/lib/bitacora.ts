@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v238.0",
+    nombre: "EL VELOCÍMETRO — /mundo y /conflicto medidos en móvil y la primera dieta que los números mandaron (medir primero)",
+    hitos: [
+      "EL INSTRUMENTO (scripts/velocimetro.mjs) — la visita fría de un móvil medida de verdad: documento comprimido + TTFB + todos los subrecursos del HTML clasificados + lazy aparte + censo de build de la familia three.js con marcadores de CÓDIGO (la bitácora dice «THREE.» y no es código); toda medición declara la versión que midió — la lección del zombi: un servidor viejo que sobrevive al pkill retiene el puerto y se medía código viejo sin saberlo",
+      "LA LÍNEA BASE MEDIDA — /mundo 572 KB (3G lenta: 3 s), /conflicto/ukraine 612 KB críticos + 1165 KB lazy (3G: 10 s), / 823 KB (3G: 4 s); el globo JAMÁS viaja en el HTML crítico (next/dynamic ssr:false) y el planeta three.js entero cuesta 1080 KB comprimidos bajo demanda en 21 chunks",
+      "LA DIETA QUE LOS NÚMEROS MANDARON — los 6 fallbacks del teatro pesaban 1,2 MB para un hueco de 120×90 px: variantes ligeras 480w q80 (−87 %); medido con servidor verificado fresco: lazy 1165→154 KB, sala completa 1777→766 KB (−57 %), 3G lenta 10 s→4 s; los ORIGINALES siguen sirviendo a sus otros 7 consumidores (la casa no borra)",
+      "QA v238: tsc 0, eslint 0, build EXIT 0, health v238.0 db up, pruebas 94/94 (+3 EL VELOCÍMETRO: instrumento honesto, thumbs más ligeras por fs, SSR con thumbs, presupuestos anti-inflación del HTML), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v237.0",
     nombre: "EL RELIEVE — el globo recupera la dieta pendiente y las pieles dejan de repetirse a mano (módulo globo 3D)",
     hitos: [

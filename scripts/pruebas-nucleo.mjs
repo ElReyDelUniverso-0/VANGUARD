@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v237.0", async () => {
+  await verificar("servidor vivo y en v238.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v237"), `versión ${r.json?.version} ≠ v237`);
+    afirmar(String(r.json?.version).startsWith("v238"), `versión ${r.json?.version} ≠ v238`);
   });
 
   // censo por API
@@ -1061,6 +1061,51 @@ async function parteB() {
     for (const ruta of ["/", "/mundo", "/ver-guerra"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `sala del globo rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v238.0 EL VELOCÍMETRO: medir primero, presupuestos contra la inflación ──
+  await verificar("EL VELOCÍMETRO: instrumento honesto y dieta de las salas (v238)", () => {
+    const inst = readFileSync(join(RAIZ, "scripts/velocimetro.mjs"), "utf8");
+    // el detector de three es de CÓDIGO (sobrevive a la minificación), jamás texto
+    afirmar(inst.includes("WebGLRenderer|PerspectiveCamera"), "el detector de three no usa marcadores de código");
+    afirmar(inst.includes("const ES_THREE"), "sin detector nombrado de three en el velocímetro");
+    // toda medición declara la versión que midió (lección del zombi)
+    afirmar(inst.includes("api/health") && inst.includes("versionMedida"), "el velocímetro no declara la versión que mide");
+    // las 6 thumbs del teatro existen y pesan MENOS que sus originales (fs, no cifras a mano)
+    for (const n of ["drone-1", "city-1", "ship-1", "fire-1", "jet-1", "tanks-1"]) {
+      const thumb = join(RAIZ, `public/assets/real/thumbs/${n}.webp`);
+      const original = join(RAIZ, `public/assets/real/${n}.jpg`);
+      afirmar(existsSync(thumb), `falta la variante ligera ${n}.webp`);
+      afirmar(existsSync(original), `¡el original ${n}.jpg fue borrado! (la casa no borra obra)`);
+      afirmar(statSync(thumb).size < statSync(original).size, `la thumb ${n} no es más ligera que su original`);
+    }
+    // la sala del teatro cita las thumbs y no los originales
+    const sala = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
+    afirmar(sala.includes("/assets/real/thumbs/"), "el teatro no sirve las variantes ligeras");
+    afirmar(!sala.includes('"/assets/real/drone-1.jpg"'), "el teatro todavía cita el fallback pesado a mano");
+  });
+
+  await verificar("EL VELOCÍMETRO viva: el teatro sirve thumbs y la sala sigue en pie (v238)", async () => {
+    const r = await pedir("/conflicto/ukraine");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("/assets/real/thumbs/"), "el SSR no cita las thumbs");
+    afirmar(!r.texto.includes('"/assets/real/drone-1.jpg"'), "el SSR todavía sirve el fallback pesado");
+    const thumb = await pedir("/assets/real/thumbs/drone-1.webp");
+    afirmar(thumb.status === 200, `thumb → ${thumb.status}`);
+    afirmar(String(thumb.headers?.["content-type"] || "").includes("image/webp"), "content-type de la thumb no es webp");
+    // presupuestos contra la inflación (línea base v238 con margen generoso):
+    // el documento del teatro y del planeta no pueden engordar callados
+    const docTeatro = await pedir("/conflicto/ukraine");
+    afirmar(docTeatro.texto.length < 1_200_000, `el HTML del teatro engordó (${(docTeatro.texto.length / 1024).toFixed(0)} KB crudo)`);
+    const docMundo = await pedir("/mundo");
+    afirmar(docMundo.texto.length < 900_000, `el HTML del mundo engordó (${(docMundo.texto.length / 1024).toFixed(0)} KB crudo)`);
+  });
+
+  await verificar("EL VELOCÍMETRO: las salas medidas siguen respondiendo 200 (v238)", async () => {
+    for (const ruta of ["/mundo", "/conflicto/ukraine", "/", "/guerra-hoy"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `sala medida rota ${ruta} → ${r.status}`);
     }
   });
 

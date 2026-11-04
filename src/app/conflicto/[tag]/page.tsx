@@ -30,13 +30,19 @@ export const dynamic = "force-dynamic";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
+// v238.0 EL VELOCÍMETRO — la medición móvil mandó: los 6 fallbacks
+// originales pesaban 1,2 MB en la red para un hueco de 120×90 px (el
+// velocímetro midió 1165 KB de lazy en una visita fría del teatro). El
+// hueco se sirve ahora con las variantes ligeras (480w, q80, ~158 KB en
+// total, −87 %) — los ORIGINALES no se tocan: siguen sirviendo a sus
+// otros consumidores (noticia, guerra-hoy, cine, biblioteca…).
 const FALLBACK_IMGS = [
-  "/assets/real/drone-1.jpg",
-  "/assets/real/city-1.jpg",
-  "/assets/real/ship-1.jpg",
-  "/assets/real/fire-1.jpg",
-  "/assets/real/jet-1.jpg",
-  "/assets/real/tanks-1.jpg",
+  "/assets/real/thumbs/drone-1.webp",
+  "/assets/real/thumbs/city-1.webp",
+  "/assets/real/thumbs/ship-1.webp",
+  "/assets/real/thumbs/fire-1.webp",
+  "/assets/real/thumbs/jet-1.webp",
+  "/assets/real/thumbs/tanks-1.webp",
 ];
 
 type NewsRow = {

@@ -1952,6 +1952,41 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v237.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v236.0 EL GLOSARIO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v237.0";
-export const APP_CODENAME = "EL RELIEVE";
+// v238.0: EL VELOCÍMETRO — /mundo y /conflicto MEDIDOS en condiciones de
+//     móvil (la cola llevaba «medir primero» desde v235; nada se toca sin
+//     números) + el primer arreglo que los números exigieron:
+// (1) EL INSTRUMENTO (scripts/velocimetro.mjs) — mide la visita fría de
+//     un móvil: documento comprimido, TTFB, TODOS los subrecursos del
+//     HTML clasificados (JS/CSS/fuentes/imágenes), las imágenes lazy
+//     aparte (bajo demanda) y un CENSO DE BUILD de la familia three.js
+//     (los chunks con código WebGLRenderer/PerspectiveCamera — jamás
+//     texto: la bitácora dice «THREE.» y no es código). Toda medición
+//     declara la versión que midió (lección del zombi: un servidor viejo
+//     que sobrevive al pkill retiene el puerto y se medía CÓDIGO VIEJO
+//     sin saberlo — EADDRINUSE en el log lo delató).
+// (2) LA LÍNEA BASE MEDIDA (v238, visita fría, comprimido): /mundo 572 KB
+//     (3G lenta: 3 s) · /conflicto/ukraine 612 KB críticos + 1165 KB de
+//     lazy (3G: 10 s) · / 823 KB (3G: 4 s) · el planeta three.js entero:
+//     1080 KB comprimidos en 21 chunks, sobre-coste bajo demanda de las
+//     salas que montan globo. Ya vivían bien: el globo entra con
+//     next/dynamic ssr:false (three JAMÁS en el HTML crítico), las
+//     imágenes del teatro son lazy+hidden (v222), DPR capado (v222).
+// (3) LA DIETA QUE LOS NÚMEROS MANDARON — los 6 fallbacks de imagen del
+//     teatro pesaban 1,2 MB de red para un hueco de 120×90 px: variantes
+//     ligeras 480w q80 en /assets/real/thumbs/ (~158 KB, −87 %); el slot
+//     de /conflicto las sirve y los ORIGINALES siguen sirviendo a sus
+//     otros 7 consumidores (la casa no borra). Medido tras el cambio con
+//     servidor verificado fresco: lazy 1165→154 KB, sala completa
+//     1777→766 KB (−57 %), 3G lenta 10 s→4 s.
+// (4) PRUEBAS +3 (94/94): estática (instrumento honesto — marcadores de
+//     código, versión declarada; las 6 thumbs existen y pesan menos que
+//     sus originales por fs.statSync; el teatro cita thumbs y no
+//     originales); viva (SSR con thumbs, thumb 200 image/webp,
+//     PRESUPUESTOS: el HTML del teatro y del mundo no engordan callados);
+//     viva las salas medidas 200. Salud v237→v238.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v238.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v237.0 EL RELIEVE y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v238.0";
+export const APP_CODENAME = "EL VELOCÍMETRO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
