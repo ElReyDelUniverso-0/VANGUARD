@@ -261,6 +261,20 @@ async function parteA() {
     // el teatro sin sala declara la ausencia, no la finge
     afirmar(pag.includes("no inventa puntos"), "la ausencia de frentes no se declara honesta");
   });
+
+  await verificar("EL ATLAS: la ficha vg:pais proyecta el atlas + los frentes sin inventar nada (v228)", () => {
+    const rel = readFileSync(join(RAIZ, "src/lib/nucleo/relaciones.ts"), "utf8");
+    // el meta rico sale de la PROYECCIÓN del atlas (cero datos escritos a mano)
+    for (const trozo of ["fmtMillones(p.poblacion)", "fmtKm2(p.superficie)", "p.idiomas", "p.moneda"]) {
+      afirmar(rel.includes(trozo), `la ficha del país no proyecta el atlas: falta «${trozo}»`);
+    }
+    // los frentes salen del catálogo de la casa con su relación declarada
+    afirmar(rel.includes("puntosDelNucleo()"), "los frentes del país no salen del catálogo de la casa");
+    afirmar(rel.includes('"punto_de"'), "los frentes no viajan con su relación punto_de");
+    afirmar(rel.includes("/ver-guerra"), "sin el enlace a la sala de guerra");
+    // anti-invención: CERO nombres de frentes escritos a mano en las relaciones
+    afirmar(!/Bajmut|Avdíivka|Kupiansk|Járkov|Donetsk/.test(rel), "¡relaciones.ts escribe nombres de frentes a mano!");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -280,10 +294,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v227.0", async () => {
+  await verificar("servidor vivo y en v228.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v227"), `versión ${r.json?.version} ≠ v227`);
+    afirmar(String(r.json?.version).startsWith("v228"), `versión ${r.json?.version} ≠ v228`);
   });
 
   // censo por API
@@ -760,6 +774,30 @@ async function parteB() {
     afirmar(r.texto.includes("Sin frentes documentados"), "la ausencia de sala no se declara");
     afirmar(r.texto.includes("no inventa puntos"), "la razón de la ausencia no se explica");
     afirmar(/Los frentes del teatro — \d+/.test(r.texto) === false, "¡korea finge una lista de frentes!");
+  });
+
+  // ── v228.0 EL ATLAS: fichas de país más ricas ──
+  await verificar("EL ATLAS: la ficha de Ucrania muestra población, superficie, moneda y SUS frentes (v228)", async () => {
+    const r = await pedir(`/nucleo?id=${encodeURIComponent("vg:pais:ua")}`);
+    afirmar(r.status === 200, "no 200");
+    // la ficha rica del atlas (documentada, edición 2026)
+    afirmar(r.texto.includes("Población"), "sin población del atlas");
+    afirmar(r.texto.includes("millones"), "población sin el formato del atlas");
+    afirmar(r.texto.includes("km²"), "sin superficie del atlas");
+    afirmar(r.texto.includes("Grivna"), "sin la moneda documentada del atlas");
+    // los frentes del teatro del país, hacia su ficha y con su fuente
+    afirmar(r.texto.includes("FRENTE:"), "sin los frentes del teatro del país");
+    afirmar(r.texto.includes("id=vg%3Apunto%3A"), "los frentes no llevan a su ficha vg:punto");
+    afirmar(r.texto.includes("ISW"), "sin la fuente OSINT citada en los frentes");
+    afirmar(r.texto.includes("/ver-guerra"), "sin enlace a la sala de guerra");
+  });
+
+  await verificar("EL ATLAS: Brasil sin teatro declara ficha rica SIN fingir frentes (v228)", async () => {
+    const r = await pedir(`/nucleo?id=${encodeURIComponent("vg:pais:br")}`);
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("Población"), "sin la ficha rica del atlas");
+    afirmar(r.texto.includes("millones"), "sin el formato del atlas");
+    afirmar(!r.texto.includes("FRENTE:"), "¡Brasil finge frentes sin teatro!");
   });
 
   await verificar("los chips contextuales viven en /noticia/[id] con su ACONTECIMIENTO", async () => {

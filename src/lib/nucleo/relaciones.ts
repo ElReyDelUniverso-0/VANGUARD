@@ -14,7 +14,7 @@
 
 import { db } from "@/lib/db";
 import { TEATROS } from "@/lib/teatros";
-import { PAISES_ATLAS } from "@/lib/atlas-data";
+import { PAISES_ATLAS, fmtMillones, fmtKm2 } from "@/lib/atlas-data";
 import { EXPEDIENTES } from "@/lib/expedientes-datos";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { MODULOS_NUCLEO, moduloPorId, type ModuloNucleo } from "./registro";
@@ -25,7 +25,7 @@ import {
   cronologiaDeAcontecimiento,
 } from "./acontecimientos";
 import { geografiaDeTeatro, metaGeografia, type GeografiaTeatro } from "./geografia";
-import { puntoPorClave } from "./puntos";
+import { puntoPorClave, puntosDelNucleo, idPunto } from "./puntos";
 import { indicadoresDePais, type FichaIndicadores } from "./indicadores";
 import {
   idEntidad,
@@ -141,6 +141,27 @@ export function enlacesDePais(iso: string): EnlaceContextual[] {
         tipoRelacion: "visible_en",
       }
     );
+    // v228.0 EL ATLAS — los frentes documentados donde este país
+    // opera: chips del catálogo de la casa (v225) hacia su FICHA
+    // vg:punto. Procedencia a la vista; CERO nombres escritos a mano
+    // aquí (la prueba anti-invención lo vigila).
+    const geoPais = geografiaDeTeatro(teatro);
+    if (geoPais.salaGuerra) {
+      enlaces.push({
+        etiqueta: "EL MAPA DEL FRENTE ▸",
+        ruta: "/ver-guerra",
+        motivo: `La sala de guerra «${geoPais.salaGuerra}» traza el teatro de ${nombre} (estimación OSINT, no cartografía oficial)`,
+        tipoRelacion: "visible_en",
+      });
+    }
+    for (const p of puntosDelNucleo().filter((x) => x.teatro === teatro).slice(0, 4)) {
+      enlaces.push({
+        etiqueta: `FRENTE: ${p.nombre.toUpperCase()} ▸`,
+        ruta: `/nucleo?id=${encodeURIComponent(idPunto(p.clave))}`,
+        motivo: `Frente documentado del teatro ${p.teatroNombre} — estado: ${p.estado}. Fuente: ${p.fuenteDatos ?? "sala de guerra de la casa"}. Estimación OSINT, no cartografía oficial.`,
+        tipoRelacion: "punto_de",
+      });
+    }
   }
   enlaces.push(
     {
@@ -333,6 +354,12 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
             { k: "Líder", v: p.lider },
             { k: "Gobierno", v: p.gobierno },
             { k: "Región", v: p.region },
+            // v228.0 EL ATLAS — el resto de la ficha del atlas v121
+            // (documentada, edición 2026) ahora también en el núcleo
+            { k: "Población", v: `~${fmtMillones(p.poblacion)}` },
+            { k: "Superficie", v: fmtKm2(p.superficie) },
+            { k: "Idiomas", v: p.idiomas },
+            { k: "Moneda", v: p.moneda },
             { k: "Cables en archivo", v: String(total) },
           ]
         : [{ k: "Código ISO", v: clave.toUpperCase() }, { k: "Cables en archivo", v: String(total) }],

@@ -1679,6 +1679,22 @@
 //    sala existe. CERO coordenadas en la página.
 //  ③ Teatro sin sala (korea): la ausencia se DECLARA («la casa no
 //    inventa puntos»), jamás fingida.
-export const APP_VERSION = "v227.0";
-export const APP_CODENAME = "EL DESPLIEGUE";
+// v228.0 EL ATLAS — AGENT 2, TURNO AUTOMÁTICO (cron 500735) + directiva
+//  del Dueño («expándelo ronda a ronda, módulo a módulo» + MEGA-PROMPT
+//  MAESTRO v2.0 como carta de expansión): módulo expandido: /nucleo —
+//  LAS FICHAS DE PAÍS MÁS RICAS (abundancia por país, REGLA #3).
+//  ① La ficha vg:pais muestra TODA la ficha del atlas v121 que quedaba
+//    fuera del núcleo: Población (~fmtMillones), Superficie (fmtKm2),
+//    Idiomas y Moneda — 66 naciones documentadas (edición 2026).
+//    CERO datos nuevos inventados: solo proyección del atlas.
+//  ② enlacesDePais: los FRENTES del teatro del país (hasta 4) como
+//    chips con relación punto_de hacia su ficha vg:punto (motivo con
+//    estado + fuente OSINT citada + precisión) y «EL MAPA DEL FRENTE ▸»
+//    a /ver-guerra cuando la sala existe. País sin teatro (Brasil):
+//    cero frentes — la ausencia se declara, no se finge.
+//  ③ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 67/67 (+3 EL ATLAS:
+//    estática de proyección anti-invención; ua con población, moneda,
+//    frentes e ISW; br rica sin fingir frentes) · BD intocada.
+export const APP_VERSION = "v228.0";
+export const APP_CODENAME = "EL ATLAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
