@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v254.0",
+    nombre: "EL LATIDO QUE RESPETA — la sala en vivo /en-vivo gana la pausa del latido (el visitante congela y reanuda el sondeo con SU mano) y la pila de los cables que llegaron mientras leías, con la subida a UN toque",
+    hitos: [
+      "LA PAUSA DEL LATIDO — botón honesto junto al reloj (PAUSAR ❚❚ / REANUDAR ▸, aria-pressed): el sondeo duerme y reintenta en 5 s; al reanudar la MISMA cadena retoma el pulso — cero cadenas dobles, cero timers huérfanos; la sala dice la verdad: «latido en pausa · última señal hace Ns»; el latido lee el REF, jamás la cáscara vieja del closure",
+      "LA PILA DE LOS QUE LLEGARON MIENTRAS LEÍAS — si los nuevos llegan lejos de la cabeza (scrollY > 480) la sala los CUENTA y ofrece la subida con UN toque: «▲ N cables nuevos mientras leías — subir» (fixed, aria-live, salto suave, limpieza al volver arriba); nada se navega solo (ley v190) y en el SSR la pila no existe (cero mismatch)",
+      "QA v254: tsc 0 TOTAL, eslint 0, build EXIT 0, health v254.0 db up, pruebas 134/134 (+2 EL LATIDO QUE RESPETA: estática — el ref leído por el latido, los dos estados del botón, el guardián de posición, la pila con su salto y su limpieza; viva — el SSR sirve PAUSAR EL LATIDO y NO la pila, anclas EL PULSO/CONECTA/sondeado en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v253.0",
     nombre: "LA FORMA DE LA SEMANA — el radar /espia deja de dar solo números: el índice de tensión de cada teatro se dibuja con 7 barras reales (cubo rodante de 24 h) y una tira nueva EL PULSO DEL PLANETA respira los cuatro números del instante",
     hitos: [

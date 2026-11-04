@@ -2414,6 +2414,31 @@
 //     siguen en pie) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v252.0 LA SALA QUE HABLA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v253.0";
-export const APP_CODENAME = "LA FORMA DE LA SEMANA";
+// v254.0 EL LATIDO QUE RESPETA — la expansión funcional módulo a módulo
+//         llega a la sala en vivo (/en-vivo, v213+v242): el latido sondeaba
+//         cada 30 s y los cables entraban solos — pero el timeline se
+//         MOVÍA bajo el visitante que estaba leyendo lejos de la cabeza,
+//         y nadie podía congelar el pulso con su mano.
+// (1) LA PAUSA DEL LATIDO — botón honesto junto al reloj: «PAUSAR EL
+//     LATIDO ❚❚» / «REANUDAR EL LATIDO ▸» con aria-pressed; en pausa el
+//     sondeo duerme y reintenta en 5 s (la MISMA cadena retoma el pulso
+//     al reanudar — cero cadenas dobles, cero timers huérfanos); la sala
+//     dice la verdad mientras tanto: «latido en pausa · última señal
+//     hace Ns». El latido lee el REF, jamás la cáscara vieja del closure.
+// (2) LA PILA DE LOS QUE LLEGARON MIENTRAS LEÍAS — si los nuevos llegan
+//     con el visitante lejos de la cabeza (scrollY > 480), la sala los
+//     CUENTA y ofrece la subida con UN toque: «▲ N cables nuevos mientras
+//     leías — subir» (fixed abajo, aria-live, salto suave, la cuenta se
+//     limpia al volver cerca de la cabeza). Nada se navega solo (ley
+//     v190); en el SSR la pila no existe (cero mismatch de hidratación).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v254.0 db up ·
+//     pruebas 134/134 (+2 EL LATIDO QUE RESPETA: estática — el ref de la
+//     pausa leído por el latido, los dos estados del botón, el guardián
+//     de posición 480, la pila con su salto suave y su limpieza; viva —
+//     el SSR sirve PAUSAR EL LATIDO y NO sirve la pila, las anclas
+//     EL PULSO/CONECTA/sondeado en pie) · BD intocada (1877 cables ·
+//     9 hechos, un solo escritor).
+// Herencia v253.0 LA FORMA DE LA SEMANA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v254.0";
+export const APP_CODENAME = "EL LATIDO QUE RESPETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v253.0", async () => {
+  await verificar("servidor vivo y en v254.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v253"), `versión ${r.json?.version} ≠ v253`);
+    afirmar(String(r.json?.version).startsWith("v254"), `versión ${r.json?.version} ≠ v254`);
   });
 
   // censo por API
@@ -1530,6 +1530,45 @@ async function parteB() {
     // sin fechas escritas a mano en la tira (guardia v234)
     const desde = r.texto.indexOf("EL PULSO");
     afirmar(!/20\d\d-\d\d-\d\d/.test(r.texto.slice(desde, desde + 4000)), "fechas escritas a mano en el pulso (guardia v234)");
+  });
+
+  // ── v254.0 EL LATIDO QUE RESPETA: la sala en vivo gana las dos señales
+  // que le faltaban al latido — la PAUSA (el visitante congela el sondeo
+  // con SU mano, el latido lee el ref para no quedar preso de la cáscara
+  // vieja del closure) y LA PILA DE LOS QUE LLEGARON MIENTRAS LEÍAS
+  // (si estás lejos de la cabeza, los nuevos no se te esconden: la sala
+  // los cuenta y te ofrece la subida con UN toque — nada automático,
+  // ley v190; cero mismatch: en el SSR la cuenta es 0 y la pila no existe).
+  await verificar("EL LATIDO QUE RESPETA estática: pausa con ref y pila de los nuevos con su salto (v254)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/en-vivo/sala-en-vivo.tsx"), "utf8");
+    // la pausa: el latido lee el REF (jamás la cáscara vieja) y reintenta pronto
+    afirmar(sala.includes("pausaRef.current"), "el latido no lee el ref de la pausa (cáscara vieja del closure)");
+    afirmar(sala.includes("if (pausaRef.current) {"), "el latido no duerme cuando el visitante lo pausó");
+    afirmar(sala.includes("pausaRef.current = nuevo"), "el toggle no alimenta al ref — el latido seguiría en su cáscara");
+    afirmar(sala.includes("PAUSAR EL LATIDO") && sala.includes("REANUDAR EL LATIDO"), "los dos estados del botón del latido no viven en la sala");
+    afirmar(sala.includes("aria-pressed={pausado}"), "el botón del latido sin su estado comunicado");
+    afirmar(sala.includes("latido en pausa"), "la sala no dice la verdad sobre el latido pausado");
+    // la pila: solo lejos de la cabeza, subida con UN toque, limpieza al volver
+    afirmar(sala.includes("abajoRef.current") && sala.includes("window.scrollY > 480"), "el guardián de la posición no vive en la sala");
+    afirmar(sala.includes("setNuevosEspera((n) => n + nuevos.length)"), "los nuevos lejanos no se cuentan — se esconderían");
+    afirmar(sala.includes("if (!lejos) setNuevosEspera(0)"), "la cuenta no se limpia al volver a la cabeza");
+    afirmar(sala.includes("window.scrollTo({ top: 0, behavior: \"smooth\" })"), "la subida de la pila no es un salto suave");
+    afirmar(sala.includes("mientras leías"), "la pila no dice cuándo llegaron los cables");
+    // ley v190: en el SSR la pila no existe (cero mismatch) y el chrome sigue fuera
+    afirmar(!sala.includes("EnlacesNucleo"), "¡el chrome entró dentro de la sala client!");
+  });
+
+  await verificar("EL LATIDO QUE RESPETA viva: la sala SSR anuncia la pausa y sigue en pie (v254)", async () => {
+    const r = await pedir("/en-vivo");
+    afirmar(r.status === 200, `en-vivo no 200 en v254 (${r.status})`);
+    afirmar(r.texto.includes("PAUSAR EL LATIDO"), "el botón de la pausa no viaja en el SSR de la sala");
+    afirmar(r.texto.includes("cables en sala"), "el contador de la sala desapareció del SSR");
+    // la pila NO existe en el SSR (la cuenta nace en 0 — cero mismatch)
+    afirmar(!r.texto.includes("mientras leías"), "la pila se pintó en el SSR — mismatch latente");
+    // las viejas anclas de la sala siguen en pie
+    afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la cabeza de la sala desapareció");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "en-vivo: CONECTA ausente del SSR");
+    afirmar(r.texto.includes("sondeado hace"), "el reloj del sondeo desapareció del SSR");
   });
 
   // ── v246.0 EL ANDAMIAJE EN SILENCIO: las rutas API solo exportan

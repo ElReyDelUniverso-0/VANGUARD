@@ -81,6 +81,17 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
   const [filtro, setFiltro] = useState<"todo" | "urgente" | "teatro">("todo");
   const [teatroElegido, setTeatroElegido] = useState("");
   const vistos = useRef<Set<string>>(new Set(iniciales.map((c) => c.id)));
+  // v254.0 EL LATIDO QUE RESPETA — la pausa es honesta: el visitante
+  // congela el sondeo con SU mano y lo reanuda con SU mano (ley v190:
+  // nada se para ni se reanuda solo). El ref evita la cáscara vieja
+  // del closure — el latido SIEMPRE lee el estado real de la pausa.
+  const [pausado, setPausado] = useState(false);
+  const pausaRef = useRef(false);
+  // la pila de los que llegaron mientras leías: si el visitante está
+  // bajado en la línea del tiempo, los nuevos no se le esconden — la
+  // sala los cuenta y le ofrece la subida con UN toque (nada automático).
+  const [nuevosEspera, setNuevosEspera] = useState(0);
+  const abajoRef = useRef(false);
 
   // el reloj de la sala: segundos vivos (la edad de los cables se mueve con él)
   useEffect(() => {
@@ -97,12 +108,18 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
   }, []);
 
   // EL LATIDO: sondeo cada 30 s, solo con la pestaña visible; la página
-  // nunca se recarga — los cables entran solos (ley v190).
+  // nunca se recarga — los cables entran solos (ley v190). v254: si el
+  // visitante puso el latido EN PAUSA, el sondeo duerme y reintenta en
+  // 5 s — al reanudar, la misma cadena retoma el pulso sin cadenas dobles.
   useEffect(() => {
     let vivo = true;
     let timer = 0;
     const sondear = async () => {
       if (!vivo) return;
+      if (pausaRef.current) {
+        timer = window.setTimeout(sondear, 5000); // en pausa: reintentar pronto
+        return;
+      }
       if (typeof document !== "undefined" && document.visibilityState !== "visible") {
         timer = window.setTimeout(sondear, 5000); // dormida: reintentar pronto
         return;
@@ -117,6 +134,9 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
             if (nuevos.length > 0) {
               setFlash(new Set(nuevos.map((c) => c.id)));
               window.setTimeout(() => setFlash(new Set()), 5000);
+              // llegaron mientras leías (lejos de la cabeza): contarlos,
+              // no escondértelos — la subida es UN toque tuyo (ley v190)
+              if (abajoRef.current) setNuevosEspera((n) => n + nuevos.length);
             }
             setCables(j.items);
             if (Array.isArray(j.calientes)) setCalientes(j.calientes);
@@ -129,6 +149,20 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
     };
     timer = window.setTimeout(sondear, 30_000);
     return () => { vivo = false; window.clearTimeout(timer); };
+  }, []);
+
+  // el guardián de la posición: ¿está el visitante lejos de la cabeza?
+  // (la pila solo se ofrece si los nuevos llegaron fuera de su vista;
+  // al volver cerca de la cabeza, la cuenta se limpia sola)
+  useEffect(() => {
+    const enScroll = () => {
+      const lejos = window.scrollY > 480;
+      abajoRef.current = lejos;
+      if (!lejos) setNuevosEspera(0);
+    };
+    enScroll();
+    window.addEventListener("scroll", enScroll, { passive: true });
+    return () => window.removeEventListener("scroll", enScroll);
   }, []);
 
   // los teatros vivos de la muestra (chips de filtro, top 6 por cables)
@@ -224,8 +258,24 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
             </div>
           ))}
         </section>
-        <p className="mt-2 font-mono text-[9px] uppercase tracking-widest text-zinc-600 text-right">
-          sondeado hace {sondeadoHace}s · {cables.length} cables en sala
+        <p className="mt-2 font-mono text-[9px] uppercase tracking-widest text-zinc-600 text-right flex items-center justify-end gap-3 flex-wrap">
+          <span>
+            {pausado
+              ? `latido en pausa · última señal hace ${sondeadoHace}s · ${cables.length} cables en sala`
+              : `sondeado hace ${sondeadoHace}s · ${cables.length} cables en sala`}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              const nuevo = !pausado;
+              pausaRef.current = nuevo; // el latido lee el ref, no la cáscara
+              setPausado(nuevo);
+            }}
+            aria-pressed={pausado}
+            className={`font-mono text-[9px] uppercase tracking-widest rounded px-2 py-0.5 border transition-colors ${pausado ? "border-amber-500/60 text-amber-300 hover:bg-amber-500/10" : "border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-300"}`}
+          >
+            {pausado ? "REANUDAR EL LATIDO ▸" : "PAUSAR EL LATIDO ❚❚"}
+          </button>
         </p>
 
         {/* ===== LO MÁS CALIENTE (el morbo con regla: impacto 0-100) ===== */}
@@ -373,6 +423,24 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
             );
           })}
         </section>
+
+        {/* ===== v254.0 LA PILA DE LOS QUE LLEGARON MIENTRAS LEÍAS —
+            solo existe si llegaron lejos de tu vista y nunca se navega
+            sola: la subida es UN toque del visitante (ley v190). Cero
+            mismatch: en el SSR la cuenta es 0 y la pila no existe. */}
+        {nuevosEspera > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setNuevosEspera(0);
+            }}
+            aria-live="polite"
+            className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 font-mono text-[10px] uppercase tracking-widest rounded-full border border-amber-500/70 bg-amber-500/15 text-amber-200 px-4 py-2 shadow-lg shadow-black/50 hover:bg-amber-500/25 transition-colors"
+          >
+            ▲ {nuevosEspera} cable{nuevosEspera === 1 ? "" : "s"} nuevo{nuevosEspera === 1 ? "" : "s"} mientras leías — subir
+          </button>
+        )}
 
         {/* ===== salidas de la sala ===== */}
         <footer className="mt-10 border-t border-zinc-800 pt-5 text-center space-y-2">
