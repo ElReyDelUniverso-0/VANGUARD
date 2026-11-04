@@ -63,6 +63,56 @@ async function conteosPorTeatro(): Promise<Record<string, MedicionTeatro> | null
   }
 }
 
+// v266.0 EL TELETIPO DE LA CASA — un despacho: un cable REAL de la propia
+// agencia en uno de los frentes documentados del mural. El teletipo del
+// lienzo (GDELT/Google Noticias vía /api/geo-tablero) vive en el navegador:
+// sin JavaScript no viaja despacho alguno. El cable de la casa SÍ viaja:
+// los más frescos de los 5 frentes documentados, servidos en SSR.
+type DespachoRow = {
+  id: string;
+  title: string;
+  source: string;
+  sourceCountry: string | null;
+  publishedAt: Date;
+  conflictTag: string;
+};
+
+// v266.0 — acotado: los 8 despachos más frescos de los frentes
+// documentados, campos mínimos (el censo de conteosPorTeatro sigue siendo
+// la única query de métricas; esta trae las filas que el teletipo pinta).
+// Sin BD: sin teletipo de la casa (vacío honesto, ley de la casa).
+async function despachosDeLaCasa(): Promise<DespachoRow[]> {
+  try {
+    const filas = await db.newsItem.findMany({
+      where: { conflictTag: { in: Object.values(FRENTE_A_TEATRO) } },
+      orderBy: { publishedAt: "desc" },
+      take: 8,
+      select: {
+        id: true,
+        title: true,
+        source: true,
+        sourceCountry: true,
+        publishedAt: true,
+        conflictTag: true,
+      },
+    });
+    return filas.flatMap((f) =>
+      f.conflictTag
+        ? [{
+            id: f.id,
+            title: f.title,
+            source: f.source,
+            sourceCountry: f.sourceCountry,
+            publishedAt: f.publishedAt,
+            conflictTag: f.conflictTag,
+          }]
+        : [],
+    );
+  } catch {
+    return [];
+  }
+}
+
 // v257.0 LA EDAD DEL FRENTE — la edad del último cable, derivada al vuelo de
 // los milisegundos reales (force-dynamic: cada visita recalcula). Cero fechas
 // escritas a mano — la guardia v234 sigue pasando.
@@ -119,7 +169,7 @@ const faqs = [
   },
   {
     q: "¿Qué tiene de real si es una animación?",
-    a: "Tres cosas son 100% reales: los despachos del teletipo (titulares de GDELT y Google Noticias sobre cada región), el aéreo militar (aeronaves militares ahora mismo en el aire según el rastro ADS-B público de adsb.lol, con sus matrículas verdaderas) y los datos de contexto de cada frente. Además, cada titular violento real dispara una operación dentro del mural: lo que pasa en el mundo se ve aquí.",
+    a: "Cuatro cosas son 100% reales: los despachos del teletipo (titulares de GDELT y Google Noticias sobre cada región), el aéreo militar (aeronaves militares ahora mismo en el aire según el rastro ADS-B público de adsb.lol, con sus matrículas verdaderas), los datos de contexto de cada frente y el cable de la propia agencia: los despachos más frescos de los frentes documentados, servidos desde el archivo de la casa en la sección «EL TELETIPO DE LA AGENCIA». Además, cada titular violento real dispara una operación dentro del mural: lo que pasa en el mundo se ve aquí.",
   },
   {
     q: "¿Puedo interactuar o solo mirar?",
@@ -133,6 +183,12 @@ const faqs = [
 
 export default async function VerGuerraPage() {
   const conteos = await conteosPorTeatro();
+  // v266.0 EL TELETIPO DE LA CASA — los despachos más frescos de la propia
+  // agencia (los frentes documentados del mural), servidos en SSR: cero
+  // JavaScript para leer el cable de la casa.
+  const despachos = await despachosDeLaCasa();
+  // lección v256: la línea de la sección se compone COMPLETA en JS
+  const lineaTeletipo = `el cable de la casa — ${despachos.length} despachos reales de los frentes documentados`;
   // v257.0 LA EDAD DEL FRENTE — la señal más fresca de los frentes
   // documentados, derivada de las mediciones ya hechas: cero consultas extra.
   const fresca = (() => {
@@ -322,6 +378,50 @@ export default async function VerGuerraPage() {
           </p>
         )}
       </section>
+
+      {/* v266.0 EL TELETIPO DE LA CASA — los despachos reales de la propia
+          agencia en SSR: el mural tiene su teletipo GDELT client-side, pero
+          el cable de la casa no viajaba sin JavaScript. Sin BD la sección ni
+          se pinta (vacío honesto, ley de la casa). */}
+      {despachos.length > 0 && (
+        <section className="max-w-6xl mx-auto px-5 py-8" aria-label="El teletipo de la agencia">
+          <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">
+            EL TELETIPO DE LA AGENCIA
+          </h2>
+          <p className="mt-1 text-sm text-zinc-500 leading-relaxed max-w-3xl">
+            Los despachos más frescos de los frentes documentados, servidos
+            desde el propio archivo de la casa — sin JavaScript, directo del
+            servidor. El teletipo del mural (GDELT y Google Noticias) vive
+            dentro del lienzo; este es el cable de la agencia.
+          </p>
+          <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-zinc-400">
+            {lineaTeletipo}
+          </p>
+          <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
+            {despachos.map((d) => (
+              <li key={d.id}>
+                <Link
+                  href={`/noticia/${d.id}`}
+                  title={`Despacho real de la agencia (${d.source}): ${horaExacta(new Date(d.publishedAt))}`}
+                  className="group block border border-zinc-800 hover:border-amber-500/50 rounded-md p-3 bg-zinc-900/40 transition-colors"
+                >
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-mono text-[9px] uppercase tracking-widest border border-amber-500/40 text-amber-300 bg-amber-500/10 rounded px-1.5 py-0.5">
+                      {nombreDeTag[d.conflictTag] ?? d.conflictTag}
+                    </span>
+                    <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                      {d.source} · hace {textoEdad(Date.now() - new Date(d.publishedAt).getTime())}
+                    </span>
+                  </div>
+                  <h3 className="mt-1 text-sm font-bold leading-snug text-zinc-200 group-hover:text-amber-300 transition-colors">
+                    {d.title}
+                  </h3>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="max-w-6xl mx-auto px-5 py-8">
         <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">

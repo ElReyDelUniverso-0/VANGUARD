@@ -2744,6 +2744,36 @@
 //     «sus palabras:» y la señal fresca de Gaza) · BD intocada (1877
 //     cables · 9 hechos, un solo escritor).
 // Herencia v264.0 EL ÍNDICE DEL PLANETA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v265.0";
-export const APP_CODENAME = "EL PÓRTICO DE LAS SALAS";
+// v266.0 EL TELETIPO DE LA CASA — la expansión funcional módulo a módulo
+//         vuelve al mural FRENTE TOTAL (/ver-guerra, v53+v229+v257): su
+//         teletipo (GDELT/Google Noticias vía /api/geo-tablero) vive en el
+//         navegador (frente-total-sim, fetch client-side) — sin JavaScript
+//         no viaja despacho alguno, mientras la casa tiene SU propia
+//         agencia con 481 cables etiquetados de los 5 frentes documentados.
+// (1) EL CABLE DE LA CASA VIAJA EN SSR — despachosDeLaCasa(): los 8 cables
+//     más frescos de los frentes documentados (where conflictTag in
+//     Object.values(FRENTE_A_TEATRO), orderBy publishedAt desc, take 8,
+//     campos mínimos) sirven en una sección server-rendered — sin JS se
+//     lee, con JS el mural sigue mandando el espectáculo.
+// (2) LA GRAMÁTICA DE LA CASA — cada despacho declara su frente (chip con
+//     el nombre humano del mapeo v229), su fuente y su edad (textoEdad, la
+//     misma que el puente v257); title con la hora exacta por Intl; la
+//     línea de la sección compuesta COMPLETA en JS (lección v256): «el
+//     cable de la casa — N despachos reales de los frentes documentados».
+//     Cero fechas a mano, guardia v234 en pie.
+// (3) LA HONESTIDAD CRECE — sin BD la sección ni se pinta (vacío honesto);
+//     la FAQ de la página pasa de «Tres cosas son 100% reales» a «Cuatro»
+//     (sumando el cable de la agencia — la declaración crece, no se
+//     recorta); las anclas v229 (chips, no inventa puertas) y v257 (edad
+//     del frente) intactas.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v266.0 db up ·
+//     pruebas 158/158 (+2 EL TELETIPO DE LA CASA: estática — el archivo
+//     acotado a los frentes documentados y frescos primero, el vacío
+//     honesto, la línea compuesta en JS, las puertas /noticia, el chip del
+//     frente y la guardia v234; viva — el SSR sirve «EL TELETIPO DE LA
+//     AGENCIA» con despachos reales y las anclas v229/v257 en pie) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v265.0 EL PÓRTICO DE LAS SALAS y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v266.0";
+export const APP_CODENAME = "EL TELETIPO DE LA CASA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

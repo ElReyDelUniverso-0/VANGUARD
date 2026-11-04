@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v265.0", async () => {
+  await verificar("servidor vivo y en v266.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v265"), `versión ${r.json?.version} ≠ v265`);
+    afirmar(String(r.json?.version).startsWith("v266"), `versión ${r.json?.version} ≠ v266`);
   });
 
   // censo por API
@@ -2010,6 +2010,45 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v266.0 EL TELETIPO DE LA CASA: los despachos reales de la agencia en SSR ──
+  // El mural tiene su teletipo GDELT client-side (frente-total-sim, fetch
+  // /api/geo-tablero): sin JavaScript no viaja despacho alguno. La casa
+  // tiene SU propia agencia (481 cables etiquetados de los 5 frentes
+  // documentados): los 8 más frescos viajan ahora en el SSR.
+  await verificar("EL TELETIPO DE LA CASA estática: el archivo de la agencia en SSR, acotado y compuesto en JS (v266)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/ver-guerra/page.tsx"), "utf8");
+    // los despachos salen del archivo de la casa: acotados a los frentes documentados, frescos primero
+    afirmar(pag.includes("where: { conflictTag: { in: Object.values(FRENTE_A_TEATRO) } }"), "los despachos no se acotan a los frentes documentados del mural");
+    afirmar(pag.includes("orderBy: { publishedAt: \"desc\" }"), "los despachos no llegan frescos primero");
+    afirmar(pag.includes("take: 8"), "el teletipo de la casa no está acotado");
+    // vacío honesto: sin despachos la sección ni se pinta
+    afirmar(pag.includes("{despachos.length > 0 && ("), "la sección del teletipo no respeta el vacío honesto");
+    // lección v256: la línea de la sección compuesta COMPLETA en JS
+    afirmar(pag.includes("const lineaTeletipo = `el cable de la casa — ${despachos.length} despachos reales de los frentes documentados`"), "la línea del teletipo no se compone COMPLETA en JS");
+    afirmar(pag.includes("{lineaTeletipo}"), "la sección no sirve la línea compuesta");
+    // las puertas: cada despacho lleva a su cable y declara su frente
+    afirmar(pag.includes("href={`/noticia/${d.id}`}"), "la puerta al despacho real desapareció");
+    afirmar(pag.includes("{nombreDeTag[d.conflictTag] ?? d.conflictTag}"), "el despacho no declara su frente");
+    // la edad con la gramática de la casa (textoEdad), la hora exacta con Intl
+    afirmar(pag.includes("textoEdad(Date.now() - new Date(d.publishedAt).getTime())"), "la edad del despacho no usa la gramática de la casa");
+    afirmar(pag.includes("horaExacta(new Date(d.publishedAt))"), "la hora exacta del despacho no usa el aparato Intl");
+    afirmar(pag.includes("EL TELETIPO DE LA AGENCIA"), "la cabeza del teletipo de la agencia desapareció");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡ver-guerra escribe fechas a mano en la ronda v266!");
+  });
+
+  await verificar("EL TELETIPO DE LA CASA viva: el SSR sirve despachos reales de la agencia con sus puertas (v266)", async () => {
+    const r = await pedir("/ver-guerra");
+    afirmar(r.status === 200, `/ver-guerra no 200 en v266 (${r.status})`);
+    afirmar(r.texto.includes("EL TELETIPO DE LA AGENCIA"), "el teletipo de la agencia no viaja en el SSR");
+    afirmar(r.texto.includes("el cable de la casa"), "la línea del teletipo no viaja en el SSR");
+    afirmar(r.texto.includes("despachos reales"), "el peso del teletipo no se declara");
+    afirmar(r.texto.includes("/noticia/"), "ningún despacho real lleva a su cable");
+    // las anclas del puente y la edad del frente (v229/v257) siguen en pie
+    afirmar(r.texto.includes("cables en la agencia"), "el puente v229 desapareció");
+    afirmar(r.texto.includes("no inventa puertas"), "la honestidad v229 desapareció");
+    afirmar(r.texto.includes("● última señal"), "la edad del frente v257 desapareció");
   });
 
   // ── v265.0 EL PÓRTICO DE LAS SALAS: la puerta que las 9 salas nunca tuvieron ──

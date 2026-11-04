@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v266.0",
+    nombre: "EL TELETIPO DE LA CASA — la expansión vuelve al mural FRENTE TOTAL (/ver-guerra): su teletipo GDELT vive en el navegador — sin JavaScript no viaja despacho alguno, mientras la casa tiene SU propia agencia con 481 cables etiquetados de los 5 frentes documentados. Los 8 despachos más frescos viajan ahora en el SSR",
+    hitos: [
+      "EL CABLE DE LA CASA VIAJA EN SSR — despachosDeLaCasa(): los 8 cables más frescos de los frentes documentados (where conflictTag in FRENTE_A_TEATRO, frescos primero, take 8, campos mínimos) sirven en una sección server-rendered — sin JS se lee, con JS el mural sigue mandando el espectáculo",
+      "LA GRAMÁTICA DE LA CASA — cada despacho declara su frente (chip con el nombre humano del mapeo v229), su fuente y su edad (textoEdad v257); la hora exacta por Intl; la línea compuesta COMPLETA en JS (lección v256): «el cable de la casa — N despachos reales»; cero fechas a mano (guardia v234)",
+      "LA HONESTIDAD CRECE — sin BD la sección ni se pinta (vacío honesto); la FAQ pasa de «Tres cosas son 100% reales» a «Cuatro» (sumando el cable de la agencia, la declaración crece); las anclas v229 y v257 intactas",
+      "QA v266: tsc 0 TOTAL, eslint 0, build EXIT 0, health v266.0 db up, pruebas 158/158 (+2 EL TELETIPO DE LA CASA: estática — el archivo acotado a los frentes documentados y frescos primero, el vacío honesto, la línea compuesta en JS, las puertas /noticia, el chip del frente y la guardia v234; viva — el SSR sirve «EL TELETIPO DE LA AGENCIA» con despachos reales y las anclas v229/v257 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v265.0",
     nombre: "EL PÓRTICO DE LAS SALAS — la expansión llega a la puerta que las salas nunca tuvieron: desde v206 cada teatro vive en /conflicto/[tag], pero la raíz /conflicto era un 404 — las 9 salas solo se alcanzaban por puertas laterales. El pórtico las sirve EN SERVER: cards del catálogo canónico, UNA groupBy con dos medidas, cero números a mano",
     hitos: [
