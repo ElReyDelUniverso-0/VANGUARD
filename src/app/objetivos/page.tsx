@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ACHIEVEMENTS } from "@/lib/game-data";
+import { ACHIEVEMENTS, CABLEADO_BLOQUES } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VitrinaProgreso } from "@/components/vanguard/vitrina-progreso";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -23,6 +23,15 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // vive la materia prima (los cables en /vertigo, el planeta en /mundo,
 // el frente en /ver-guerra). ③ CONECTA CON EL NÚCLEO (patrón
 // v230/v233/v234) + noscript con las puertas esenciales.
+//
+// v267.0 EL CABLEADO DEL APARATO — desde v235 la vitrina dice «los 100
+// se cazan aquí» pero nunca declaró QUÉ alimenta cada bloque: el mapa
+// bloque→señal vivía escondido dentro de las funciones check/progress
+// del catálogo. La directiva v266 manda: el mapa se declara EN LA
+// FUENTE (CABLEADO_BLOQUES, game-data.ts — 9 bloques, 35 señales del
+// estado, verificadas una a una contra los logros reales) y esta
+// vitrina lo sirve: cada bloque declara «se alimenta de:» con los
+// contadores reales del aparato. Cero campos inventados.
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +96,16 @@ const CENSO_RAREZA = RAREZAS.map((rareza) => ({
 
 // El formato de la casa para las cifras grandes (es-ES: 26.240).
 const cifra = new Intl.NumberFormat("es-ES");
+
+// ── v267.0 EL CABLEADO — TODO derivado del mapa de la fuente, nada a mano ──
+// Las señales distintas del estado (35) salen del propio CABLEADO_BLOQUES
+// con Set/flatMap: si la fuente cambia, la línea cambia sola.
+const SENALES = new Set(
+  CABLEADO_BLOQUES.flatMap((c) => c.alimento.map((a) => a.campo)),
+).size;
+
+// La línea de la sección compuesta COMPLETA en JS (lección v256).
+const lineaCableado = `El cableado del aparato — ${SENALES} señales del estado alimentan los ${CABLEADO_BLOQUES.length} bloques de la vitrina`;
 
 // ── v235.0 EL MAPA DE CAZA — solo rutas reales de la casa ──
 // La ley: los 100 objetivos se cazan en los paneles del aparato (la
@@ -315,6 +334,39 @@ export default function ObjetivosPage() {
                 <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{t.verdad}</p>
               </Link>
             ))}
+          </div>
+        </section>
+
+        {/* v267.0 EL CABLEADO DEL APARATO — qué señal alimenta cada bloque */}
+        <section
+          aria-label="El cableado del aparato"
+          className="mt-8 border border-zinc-800 rounded-md p-5 bg-zinc-900/40"
+        >
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-violet-hud">
+            EL CABLEADO DEL APARATO · qué alimenta cada bloque
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+            {`${lineaCableado}. Cada señal es un contador real del aparato: por cada pareja bloque-señal existe un objetivo del catálogo que la lee de verdad. El mapa vive en la fuente (game-data.ts), no en esta vitrina.`}
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {CABLEADO_BLOQUES.map((c) => {
+              const meta = BLOQUES.find((b) => b.key === c.bloque);
+              const etiqueta = meta ? `${c.bloque} · ${meta.titulo}` : c.bloque;
+              const alimento = c.alimento.map((a) => a.nombre).join(" · ");
+              return (
+                <article
+                  key={c.bloque}
+                  className="border border-zinc-800 rounded-md p-3 bg-zinc-900/60"
+                >
+                  <h3 className="font-mono text-[11px] uppercase tracking-widest text-zinc-100">
+                    {etiqueta}
+                  </h3>
+                  <p className="mt-1.5 font-mono text-[10px] leading-relaxed text-cyan-hud">
+                    {`se alimenta de: ${alimento}`}
+                  </p>
+                </article>
+              );
+            })}
           </div>
         </section>
 

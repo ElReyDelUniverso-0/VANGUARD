@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v266.0", async () => {
+  await verificar("servidor vivo y en v267.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v266"), `versión ${r.json?.version} ≠ v266`);
+    afirmar(String(r.json?.version).startsWith("v267"), `versión ${r.json?.version} ≠ v267`);
   });
 
   // censo por API
@@ -2010,6 +2010,59 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v267.0 EL CABLEADO DEL APARATO: qué señal del estado alimenta cada bloque ──
+  // La vitrina dice desde v235 «los 100 se cazan aquí» pero nunca declaró
+  // QUÉ alimenta cada bloque. La directiva v266 manda: el mapa se declara
+  // EN LA FUENTE (CABLEADO_BLOQUES, game-data.ts) y la vitrina lo sirve.
+  await verificar("EL CABLEADO DEL APARATO estática: la fuente declara el mapa y la vitrina lo sirve compuesto en JS (v267)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/objetivos/page.tsx"), "utf8");
+    // el mapa vive EN LA FUENTE, con las 9 parejas de bloques declaradas
+    afirmar(fuente.includes("export const CABLEADO_BLOQUES"), "el mapa de alimentación no vive en la fuente única");
+    const bloques = ["PROGRESO", "INTEL", "COMBATE", "GUERRA", "MERCADO", "GANANCIAS", "VIGILANCIA", "SOCIAL", "ESPECIAL"];
+    const ini = fuente.indexOf("export const CABLEADO_BLOQUES");
+    const mapa = fuente.slice(ini, fuente.indexOf("];", ini) + 2);
+    for (const b of bloques) {
+      afirmar(mapa.includes(`bloque: "${b}"`), `el cableado no declara el bloque ${b}`);
+    }
+    // CRUCE HONESTO: por cada pareja (bloque, campo) declarada debe existir
+    // un logro real con esa category que lea ese s.<campo> — el mapa no
+    // puede declarar ficción
+    const logros = fuente.split("\n").filter((l) => l.includes("category:") && l.includes("check:"));
+    const parejas = [...mapa.matchAll(/\{ bloque: "(\w+)", alimento: \[(.*?)\] \}/g)];
+    let parejasTotales = 0;
+    for (const [, bloque, alimento] of parejas) {
+      for (const campo of [...alimento.matchAll(/campo: "(\w+)"/g)].map((m) => m[1])) {
+        parejasTotales++;
+        const evidencia = logros.some((l) => l.includes(`category: "${bloque}"`) && l.includes(`s.${campo}`));
+        afirmar(evidencia, `la pareja ${bloque}←${campo} no tiene logro real que la respalde`);
+      }
+    }
+    afirmar(parejasTotales >= 37, `el cableado se encoge (${parejasTotales} parejas)`);
+    // la vitrina consume la fuente y compone las líneas COMPLETAS en JS (lección v256)
+    afirmar(pag.includes('import { ACHIEVEMENTS, CABLEADO_BLOQUES } from "@/lib/game-data"'), "la vitrina no consume el cableado de la fuente");
+    afirmar(pag.includes("const lineaCableado = `El cableado del aparato — ${SENALES} señales del estado alimentan los ${CABLEADO_BLOQUES.length} bloques de la vitrina`"), "la línea del cableado no se compone COMPLETA en JS");
+    afirmar(pag.includes('const alimento = c.alimento.map((a) => a.nombre).join(" · ")'), "el alimento de cada bloque no se compone en JS");
+    afirmar(pag.includes("EL CABLEADO DEL APARATO"), "la cabeza del cableado desapareció");
+    afirmar(pag.includes("se alimenta de: "), "los bloques no declaran su alimento");
+    // cero fechas escritas a mano (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la vitrina escribe fechas a mano en la ronda v267!");
+  });
+
+  await verificar("EL CABLEADO DEL APARATO viva: el SSR sirve el mapa de alimentación con las anclas v235 en pie (v267)", async () => {
+    const r = await pedir("/objetivos");
+    afirmar(r.status === 200, `/objetivos no 200 en v267 (${r.status})`);
+    afirmar(r.texto.includes("EL CABLEADO DEL APARATO"), "el cableado no viaja en el SSR");
+    afirmar(r.texto.includes("35 señales del estado alimentan los 9 bloques"), "la línea derivada del mapa no viaja (35 señales · 9 bloques)");
+    afirmar(r.texto.includes("se alimenta de: nivel · pestañas visitadas"), "PROGRESO no declara su alimento real");
+    afirmar(r.texto.includes("se alimenta de: cámaras operando · eventos captados"), "VIGILANCIA no declara su alimento real");
+    afirmar(r.texto.includes("El mapa vive en la fuente"), "la vitrina no dice dónde vive el mapa");
+    // las anclas v235 (balanza, censo, mapa de caza) siguen en pie
+    afirmar(r.texto.includes("La balanza del botín"), "la balanza v235 desapareció");
+    afirmar(r.texto.includes("El mapa de caza"), "el mapa de caza v235 desapareció");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "la conexión con el núcleo desapareció");
   });
 
   // ── v266.0 EL TELETIPO DE LA CASA: los despachos reales de la agencia en SSR ──

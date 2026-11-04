@@ -2774,6 +2774,38 @@
 //     AGENCIA» con despachos reales y las anclas v229/v257 en pie) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v265.0 EL PÓRTICO DE LAS SALAS y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v266.0";
-export const APP_CODENAME = "EL TELETIPO DE LA CASA";
+// v267.0 EL CABLEADO DEL APARATO — la expansión funcional módulo a módulo
+//         vuelve a la vitrina (/objetivos, v216+v235): desde v235 dice
+//         «los 100 se cazan aquí» pero nunca declaró QUÉ alimenta cada
+//         bloque — el mapa bloque→señal vivía escondido dentro de las
+//         funciones check/progress del catálogo (100 logros, 9 bloques).
+// (1) LA FUENTE MANDA — el mapa se declara EN LA FUENTE, nunca inventado
+//     en la página (directiva v266): CABLEADO_BLOQUES en game-data.ts —
+//     9 bloques, 37 parejas bloque→señal, 35 señales distintas del
+//     AchievementState, todas extraídas del catálogo real con cruce
+//     bidireccional verificado (0 parejas sin evidencia, 0 campos
+//     usados-no-declarados).
+// (2) LA VITRINA LO SIRVE — sección EL CABLEADO DEL APARATO entre el
+//     mapa de caza y los bloques: cada bloque declara «se alimenta de:»
+//     con los contadores reales del aparato (nivel, racha, informes
+//     leídos, cámaras operando…); la línea de la sección compuesta
+//     COMPLETA en JS (lección v256): «El cableado del aparato — 35
+//     señales del estado alimentan los 9 bloques de la vitrina»,
+//     derivada con Set/flatMap del propio mapa — si la fuente cambia,
+//     la línea cambia sola. Cero fechas a mano, guardia v234 en pie.
+// (3) LA TRANSPARENCIA ES LA LEY — la vitrina no inventa el mapa: lo
+//     sirve y explica dónde vive («El mapa vive en la fuente
+//     (game-data.ts), no en esta vitrina»); la suite lo custodia: por
+//     cada pareja declarada debe existir un logro real con esa category
+//     que lea ese s.<campo>.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v267.0 db up ·
+//     pruebas 160/160 (+2 EL CABLEADO DEL APARATO: estática — la fuente
+//     declara el mapa, el cruce bloque→señal contra el catálogo real,
+//     las líneas compuestas en JS, la guardia v234; viva — el SSR sirve
+//     «EL CABLEADO DEL APARATO» con «se alimenta de:» y las anclas
+//     v235 en pie) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v266.0 EL TELETIPO DE LA CASA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v267.0";
+export const APP_CODENAME = "EL CABLEADO DEL APARATO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

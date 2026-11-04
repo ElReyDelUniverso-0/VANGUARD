@@ -1417,6 +1417,31 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: "ACH-LOGROS-100", title: "EL 1%", description: "Desbloquea los otros 99 objetivos. Quien lo consigue ya no compite: preside.", category: "ESPECIAL", icon: "crown", rarity: "LEGENDARIO", xpReward: 1000, coinReward: 1000, gemReward: 10, check: (s) => s.logrosUnlocked >= 99, progress: (s) => ({ current: Math.min(s.logrosUnlocked, 99), target: 99 }) },
 ];
 
+// ── v267.0 EL CABLEADO DEL APARATO — qué señal del estado alimenta cada bloque ──
+// La ley de la casa: el mapa se declara EN LA FUENTE, nunca se inventa en la
+// página (directiva v266). Cada bloque de la vitrina declara los contadores de
+// AchievementState que sus propios logros consumen en check/progress — el mapa
+// es legible línea a línea y la suite lo cruza contra el catálogo: por cada
+// pareja (bloque, campo) debe existir un logro con esa category que lea ese
+// s.<campo>. Si el catálogo cambia, el cableado se re-declara aquí — no en la
+// vitrina. Una entrada por línea: el cruce de la suite la lee entera.
+export interface CableadoBloque {
+  bloque: string;
+  alimento: { campo: string; nombre: string }[];
+}
+
+export const CABLEADO_BLOQUES: CableadoBloque[] = [
+  { bloque: "PROGRESO", alimento: [{ campo: "level", nombre: "nivel" }, { campo: "visitedTabs", nombre: "pestañas visitadas" }] },
+  { bloque: "INTEL", alimento: [{ campo: "readBriefings", nombre: "informes leídos" }, { campo: "viewedNews", nombre: "cables revisados" }, { campo: "viewedPhotos", nombre: "fotos verificadas" }, { campo: "quizCorrect", nombre: "aciertos del quiz" }, { campo: "fusionCount", nombre: "fusiones de intel" }, { campo: "predictions", nombre: "predicciones" }, { campo: "openedMaps", nombre: "frentes abiertos" }, { campo: "unlockedBriefings", nombre: "briefings desbloqueados" }] },
+  { bloque: "COMBATE", alimento: [{ campo: "streak", nombre: "racha de días" }, { campo: "minigameBestScore", nombre: "récord del minijuego" }] },
+  { bloque: "GUERRA", alimento: [{ campo: "conquestTerritories", nombre: "territorios controlados" }, { campo: "conquestCaptures", nombre: "territorios conquistados" }, { campo: "conquestCapturesTotal", nombre: "capturas totales" }, { campo: "conquestWins", nombre: "dominios del planeta" }, { campo: "mpCaptures", nombre: "capturas multijugador" }, { campo: "mpWins", nombre: "dominios multijugador" }] },
+  { bloque: "MERCADO", alimento: [{ campo: "marketTrades", nombre: "operaciones de mercado" }, { campo: "marketProfit", nombre: "beneficio de mercado" }, { campo: "stakeCount", nombre: "posiciones de staking" }] },
+  { bloque: "GANANCIAS", alimento: [{ campo: "wheelSpins", nombre: "giros de la ruleta" }, { campo: "crateOpens", nombre: "cajones abiertos" }, { campo: "betsWon", nombre: "apuestas ganadas" }, { campo: "passTierReached", nombre: "nivel del pase" }] },
+  { bloque: "VIGILANCIA", alimento: [{ campo: "camerasPlaced", nombre: "cámaras operando" }, { campo: "cameraEvents", nombre: "eventos captados" }] },
+  { bloque: "SOCIAL", alimento: [{ campo: "openedMaps", nombre: "frentes abiertos" }, { campo: "claimedMissions", nombre: "misiones reclamadas" }, { campo: "myVideos", nombre: "vídeos publicados" }, { campo: "myPolls", nombre: "encuestas publicadas" }, { campo: "myPhotos", nombre: "fotos publicadas" }] },
+  { bloque: "ESPECIAL", alimento: [{ campo: "coins", nombre: "monedas acumuladas" }, { campo: "gems", nombre: "gemas acumuladas" }, { campo: "unlockedBriefings", nombre: "briefings desbloqueados" }, { campo: "logrosUnlocked", nombre: "objetivos cazados" }, { campo: "cameraIncome", nombre: "ingresos de la red de cámaras" }] },
+];
+
 
 // ====== Daily Challenges (rotating mini-quests) ======
 export interface DailyChallenge {

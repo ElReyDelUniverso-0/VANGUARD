@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v267.0",
+    nombre: "EL CABLEADO DEL APARATO — la expansión vuelve a la vitrina (/objetivos, v216+v235): desde v235 dice «los 100 se cazan aquí» pero nunca declaró QUÉ alimenta cada bloque — el mapa bloque→señal vivía escondido dentro de las funciones check/progress del catálogo. La fuente manda: el mapa se declara en game-data.ts y la vitrina lo sirve",
+    hitos: [
+      "LA FUENTE MANDA — CABLEADO_BLOQUES en game-data.ts (directiva v266: el mapa se declara en la fuente, nunca inventado en la página): 9 bloques, 37 parejas bloque→señal, 35 señales distintas del AchievementState, extraídas del catálogo real con cruce bidireccional verificado (0 parejas sin evidencia, 0 campos usados-no-declarados)",
+      "LA VITRINA LO SIRVE — sección EL CABLEADO DEL APARATO entre el mapa de caza y los bloques: cada bloque declara «se alimenta de:» con los contadores reales del aparato (nivel, racha de días, informes leídos, cámaras operando…); la línea compuesta COMPLETA en JS (lección v256), derivada con Set/flatMap del propio mapa — si la fuente cambia, la línea cambia sola",
+      "LA TRANSPARENCIA ES LA LEY — la vitrina no inventa el mapa: lo sirve y dice dónde vive («El mapa vive en la fuente (game-data.ts), no en esta vitrina»); la suite lo custodia: por cada pareja declarada debe existir un logro real con esa category que lea ese s.<campo>",
+      "QA v267: tsc 0 TOTAL, eslint 0, build EXIT 0, health v267.0 db up, pruebas 160/160 (+2 EL CABLEADO DEL APARATO: estática — la fuente declara el mapa, el cruce bloque→señal contra el catálogo real, las líneas compuestas en JS y la guardia v234; viva — el SSR sirve «EL CABLEADO DEL APARATO» con «se alimenta de:» y las anclas v235 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v266.0",
     nombre: "EL TELETIPO DE LA CASA — la expansión vuelve al mural FRENTE TOTAL (/ver-guerra): su teletipo GDELT vive en el navegador — sin JavaScript no viaja despacho alguno, mientras la casa tiene SU propia agencia con 481 cables etiquetados de los 5 frentes documentados. Los 8 despachos más frescos viajan ahora en el SSR",
     hitos: [
