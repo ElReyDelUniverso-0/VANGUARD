@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v271.0",
+    nombre: "EL CANAL CLASIFICADO — la expansión llega al canal RSS (/feed.xml, v35+v202): el <item> no declaraba <category> y los agregadores no podían filtrar por teatro; cada cable etiquetado declara ahora SU teatro (conflictTag crudo + nombre humano del catálogo canónico TEATROS) y el cable sin teatro no pinta categoría de ficción",
+    hitos: [
+      "LA CATEGORÍA VIAJA — dos <category> por ítem etiquetado: el conflictTag crudo y el nombre humano de TEATROS (teatros.ts, la fuente única desde v206 — directiva v266: el mapa vive en la fuente, el canal no inventa)",
+      "VACÍO HONESTO — el cable sin teatro no declara categoría alguna (17 de los 30 servidos); un tag futuro fuera del catálogo cae al crudo sin fingir nombre",
+      "LA GUARDIA — la suite custodia que cada categoría servida sea del catálogo canónico (9 tags + 9 nombres humanos) y que el par crudo+humano de gaza y taiwan viaja en el XML real",
+      "QA v271: tsc 0 TOTAL, eslint 0, build EXIT 0, health v271.0 db up, pruebas 168/168 (+2 EL CANAL CLASIFICADO: estática — la categoría del conflictTag con nombre humano de la fuente, vacío honesto, guardia v234; viva — 26 categorías canónicas de 13 cables etiquetados, content-type rss+xml), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v270.0",
     nombre: "EL SEGUNDO CATÁLOGO — la vitrina /objetivos sirvió el botín (v235), el cableado (v267) y el ritmo (v268), pero la casa tiene DOS catálogos de misiones y DAILY_CHALLENGES (los 9 retos DC-1→DC-9 del aparato) seguía client-side: su censo y su botín viajan ahora en SSR, derivados de la fuente",
     hitos: [

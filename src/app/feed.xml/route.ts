@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { TEATROS } from "@/lib/teatros";
 
 // v35 — RSS /feed.xml: lectores de noticias y agregadores pueden suscribirse
 // al canal de conflictos de VANGUARD. Cada ítem enlaza a la página SEO
@@ -6,6 +7,12 @@ import { db } from "@/lib/db";
 // v202.0 PUERTAS ABIERTAS: cada ítem del canal ahora apunta a SU PROPIA
 // noticia (/noticia/[id]) — los agregadores y Google News llegan directo a
 // la puerta indexable de cada cable, no todas a la misma página.
+// v271.0 EL CANAL CLASIFICADO: cada ítem etiquetado declara SU teatro — el
+// conflictTag crudo y el nombre humano del catálogo canónico (TEATROS,
+// teatros.ts, la fuente única de las puertas desde v206 — directiva v266:
+// el mapa vive en la fuente, el canal no inventa). El cable sin teatro no
+// declara categoría alguna (vacío honesto) — la casa no le pone etiquetas
+// de ficción a lo que no las tiene.
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +29,7 @@ function esc(s: string): string {
 }
 
 export async function GET() {
-  let items: { id: string; title: string; url: string; source: string; summary: string | null; publishedAt: Date }[] = [];
+  let items: { id: string; title: string; url: string; source: string; summary: string | null; conflictTag: string | null; publishedAt: Date }[] = [];
   try {
     items = await db.newsItem.findMany({
       orderBy: { publishedAt: "desc" },
@@ -36,13 +43,18 @@ export async function GET() {
     .map((it) => {
       // v202.0: puerta propia por cable (antes: todas a /guerra-hoy)
       const link = `${SITE_URL}/noticia/${it.id}`;
+      // v271.0 EL CANAL CLASIFICADO: el teatro del cable viaja en <category>
+      // (crudo + nombre humano de la fuente); sin teatro, sin categoría
+      const categorias = it.conflictTag
+        ? `\n      <category>${esc(it.conflictTag)}</category>\n      <category>${esc(TEATROS[it.conflictTag]?.nombre ?? it.conflictTag)}</category>`
+        : "";
       return `    <item>
       <title>${esc(it.title)}</title>
       <link>${esc(link)}</link>
       <guid isPermaLink="false">vanguard-news-${esc(it.id)}</guid>
       <source>${esc(it.source)}</source>
       <pubDate>${new Date(it.publishedAt).toUTCString()}</pubDate>
-      ${it.summary ? `<description>${esc(it.summary)}</description>` : ""}
+      ${it.summary ? `<description>${esc(it.summary)}</description>` : ""}${categorias}
     </item>`;
     })
     .join("\n");

@@ -2896,6 +2896,33 @@
 //     anclas v235/v267/v268 en pie) · BD intocada (1877 cables · 9
 //     hechos, un solo escritor).
 // Herencia v269.0 EL MAPA DEL ARCHIVO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v270.0";
-export const APP_CODENAME = "EL SEGUNDO CATÁLOGO";
+// v271.0 EL CANAL CLASIFICADO — la expansión funcional módulo a módulo
+//         llega al canal RSS (/feed.xml, v35+v202): la candidata que la
+//         v269 dejó medida — el <item> no declaraba <category> y los
+//         agregadores no podían filtrar por teatro. Medido antes de
+//         elegir: de los 30 cables que el canal sirve, 13 llevan
+//         conflictTag (11 gaza · 2 taiwan) y el archivo tiene 481
+//         etiquetados en 9 teatros.
+// (1) LA CATEGORÍA VIAJA — cada ítem etiquetado declara SU teatro en dos
+//     <category>: el conflictTag crudo (ukraine, gaza, taiwan…) y el
+//     nombre humano del catálogo canónico TEATROS (teatros.ts, la fuente
+//     única de las puertas desde v206 — directiva v266: el mapa vive en
+//     la fuente, el canal no inventa).
+// (2) VACÍO HONESTO — el cable sin teatro no declara categoría alguna:
+//     la casa no le pone etiquetas de ficción a lo que no las tiene; un
+//     tag futuro fuera del catálogo cae al crudo (`?? it.conflictTag`),
+//     sin fingir un nombre que no existe.
+// (3) LA GUARDIA — la suite custodia que cada categoría servida sea del
+//     catálogo canónico (los 9 tags crudos y los 9 nombres humanos) y
+//     que el par crudo+humano de gaza y taiwan viaja en el XML real.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v271.0 db up ·
+//     pruebas 168/168 (+2 EL CANAL CLASIFICADO: estática — la categoría
+//     viene del conflictTag con el nombre humano de TEATROS, el vacío
+//     honesto y la guardia v234; viva — el RSS sirve 26 categorías
+//     canónicas de 13 cables etiquetados con content-type rss+xml y el
+//     par crudo+humano de gaza y taiwan) · BD intocada (1877 cables · 9
+//     hechos, un solo escritor).
+// Herencia v270.0 EL SEGUNDO CATÁLOGO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v271.0";
+export const APP_CODENAME = "EL CANAL CLASIFICADO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

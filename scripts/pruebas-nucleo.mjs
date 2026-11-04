@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v270.0", async () => {
+  await verificar("servidor vivo y en v271.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v270"), `versión ${r.json?.version} ≠ v270`);
+    afirmar(String(r.json?.version).startsWith("v271"), `versión ${r.json?.version} ≠ v271`);
   });
 
   // censo por API
@@ -2010,6 +2010,44 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v271.0 EL CANAL CLASIFICADO: el feed declara el teatro de cada cable ──
+  // La candidata que la v269 dejó medida: el <item> del canal no llevaba
+  // <category> — los agregadores no podían filtrar por teatro.
+  await verificar("EL CANAL CLASIFICADO estática: la categoría viene del conflictTag y el nombre humano del catálogo canónico (v271)", () => {
+    const feed = readFileSync(join(RAIZ, "src/app/feed.xml/route.ts"), "utf8");
+    // la fuente manda (directiva v266): el nombre humano viene de TEATROS, no se inventa
+    afirmar(feed.includes('import { TEATROS } from "@/lib/teatros"'), "el canal no consume el catálogo canónico");
+    afirmar(feed.includes("conflictTag: string | null"), "el conflictTag no viaja en el tipo del feed");
+    afirmar(feed.includes("const categorias = it.conflictTag"), "la categoría no se compone desde el cable real");
+    afirmar(feed.includes("<category>${esc(it.conflictTag)}</category>"), "el conflictTag crudo no viaja en <category>");
+    afirmar(feed.includes("TEATROS[it.conflictTag]?.nombre ?? it.conflictTag"), "el nombre humano no viene de la fuente (o el tag desconocido no cae honesto)");
+    // vacío honesto: el cable sin teatro no declara categoría de ficción
+    afirmar(feed.includes('        : "";'), "un cable sin teatro pinta categoría falsa");
+    // cero fechas escritas a mano (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(feed), "¡el canal escribe fechas a mano en la ronda v271!");
+  });
+
+  await verificar("EL CANAL CLASIFICADO viva: el RSS sirve categorías reales, canónicas y honestas (v271)", async () => {
+    const r = await pedir("/feed.xml");
+    afirmar(r.status === 200, `/feed.xml no 200 en v271 (${r.status})`);
+    afirmar((r.headers["content-type"] || "").includes("application/rss+xml"), "el canal no viaja como RSS");
+    afirmar(r.texto.includes('<rss version="2.0">'), "la cabeza del canal desapareció");
+    afirmar(r.texto.includes("VANGUARD — Conflictos Mundiales en Vivo"), "el título del canal desapareció");
+    afirmar(r.texto.includes("/noticia/"), "las puertas /noticia desaparecieron del canal");
+    // las categorías reales de los 30 cables servidos (BD medida: 13 etiquetados)
+    const valores = [...r.texto.matchAll(/<category>([^<]+)<\/category>/g)].map((m) => m[1]);
+    afirmar(valores.length >= 10, `el canal clasifica menos de lo medido (${valores.length} categorías)`);
+    const CANONICOS = new Set([
+      "ukraine", "gaza", "hormuz", "taiwan", "sahel", "redsea", "korea", "sudan", "lebanon",
+      "Ucrania", "Gaza e Israel", "Ormuz y el Golfo", "Taiwán y el Pacífico", "El Sahel", "Mar Rojo", "Las Coreas", "Sudán", "Líbano",
+    ]);
+    for (const v of valores) {
+      afirmar(CANONICOS.has(v), `categoría fuera del catálogo canónico: «${v}»`);
+    }
+    afirmar(valores.includes("gaza") && valores.includes("Gaza e Israel"), "el par crudo+humano de gaza no viaja");
+    afirmar(valores.includes("taiwan") && valores.includes("Taiwán y el Pacífico"), "el par crudo+humano de taiwan no viaja");
   });
 
   // ── v270.0 EL SEGUNDO CATÁLOGO: los 9 retos diarios del aparato viajan en SSR ──
