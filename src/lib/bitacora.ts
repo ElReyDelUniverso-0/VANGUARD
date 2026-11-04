@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v278.0",
+    nombre: "LA MEMORIA EN EL PLANETA — el archivo de la historia (v274, 10 guerras reales con lat/lng EN la fuente) enciende el globo de /mundo: la puerta ?guerra= nace del patrón propio ?teatro= (v264) y se valida contra la fuente real por id exacto; las 10 guerras viajan como marcas rosas con su periodo compuesto desde los años reales y su desenlace verbatim; /historia abre la puerta de vuelta desde cada carta — la memoria no late, permanece",
+    hitos: [
+      "LA PUERTA NACE DEL PATRÓN PROPIO — ?guerra= validada contra HISTORICAL_WARS.find por id exacto (longitud ≤ 40): la casa no inventa la guerra que la URL pide; la pedida que no existe se declara honesta y si la fuente crece mañana la puerta la recibe sola",
+      "LA CAPA DE MEMORIA EN EL GLOBO — marcas rosas sin anillo (el pulso es de las de hoy, la memoria permanece), periodo compuesto desde los años reales («264 a. C. – 146 a. C.», guardia v234), pestaña MEMORIA que no depende de la señal viva (funciona con la BD fría), flyTo a las coordenadas reales y auto-rotado detenido mientras una memoria está abierta; la fuente completa jamás cruza al cliente (solo el mapa slim)",
+      "LAS PUERTAS DE VUELTA — /historia abre /mundo?guerra=<id> desde cada carta («Encenderla en el globo ▸», enlace que funciona sin JavaScript); /mundo declara la sección server con la línea derivada (lección v256), la ficha de la guerra pedida y la puerta de vuelta a /historia#<id>; cero cifras nuevas a mano (herencia v235/v268/v270/v273/v275/v276/v277)",
+      "PRUEBAS +2 (182/182) — estática: la fuente de 10 guerras con lat/lng intacta, la puerta validada contra la fuente, el mapa slim derivado, la capa y la pestaña en el globo, las puertas de vuelta y la guardia v234; viva: /mundo?guerra=HW-PUNIC con periodo y coordenadas reales, la puerta fallida honesta y las anclas v264/v274/v275/v277 en pie",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v277.0",
     nombre: "EL JUICIO DE LOS LIBROS — la taquilla de /historia (v275) crece por dentro: sus 8 cuotas se cruzan con el desenlace real del archivo (v274) por nombre exacto; 4 de 8 encuentran veredicto (Punicas, Cruzadas, Cien Años, Guerra Fria) y 4 no (Termopilas, Waterloo, WWII Europa, Vietnam — la casa no inventa el cruce que la fuente no declara); cada carta compone «los libros dicen: <outcome verbatim>» bajo sus cuotas — la casa dijo X%, los libros escribieron Y",
     hitos: [

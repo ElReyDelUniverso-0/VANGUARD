@@ -9,6 +9,15 @@
 //  · territorios que se tiñen por intensidad; vista OSCURIDAD/SATÉLITE/NOCHE
 //  · sondeo /api/mundo cada 60 s con pestaña visible — la página jamás
 //    se recarga (ley v190) y respeta prefers-reduced-motion (ley de la casa)
+//
+// v278.0 LA MEMORIA EN EL PLANETA — el archivo de la historia (v274)
+// enciende el globo: las 10 guerras reales de HISTORICAL_WARS (lat/lng
+// EN la fuente) viajan como marcas rosas con SU periodo compuesto desde
+// los años reales (guardia v234) y SU desenlace; la puerta ?guerra= nace
+// seleccionada y enfocada (mismo patrón ?teatro= de la v264) y el planeta
+// se detiene mientras una memoria está abierta. La capa NO depende de la
+// señal viva: funciona incluso con la BD fría. La fuente completa no
+// cruza al cliente — solo el mapa slim que la página server ya compuso.
 // ════════════════════════════════════════════════════════════════
 
 import dynamic from "next/dynamic";
@@ -47,31 +56,66 @@ const GlobeMap3D = dynamic(
 const COLOR_PLAZA = "#7DD3FC";
 const COLOR_ORG = "#C4B5FD";
 const COLOR_GARGANTA = "#FBBF24";
+const COLOR_MEMORIA = "#F472B6";
+
+// v278.0 — la capa de memoria: el mapa slim que la página server compone
+// desde HISTORICAL_WARS (la fuente completa jamás cruza al cliente)
+export interface GuerraMemoria {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  region: string;
+  periodo: string;
+  outcome: string;
+}
 
 type Seleccion =
   | { kind: "teatro"; slug: string }
   | { kind: "plaza"; id: string }
+  | { kind: "guerra"; id: string }
   | null;
 
 interface Props {
   inicial: InstantaneaMundo | null;
   teatroInicial: string | null;
+  guerras: GuerraMemoria[];
+  guerraInicialId: string | null;
 }
 
-export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
+export function Mundo3DVivo({ inicial, teatroInicial, guerras, guerraInicialId }: Props) {
   // ?teatro=ukraine — el teatro pedido nace seleccionado (estado inicial,
   // sin efectos: el compilador de React veta los setState en cascada)
   const teatroInicialValido =
     teatroInicial && inicial?.teatros.some((t) => t.slug === teatroInicial)
       ? teatroInicial
       : null;
+  // v278.0 — ?guerra=HW-PUNIC — la memoria pedida nace seleccionada y la
+  // pestaña de memoria abre sola (validada contra el mapa slim real)
+  const guerraInicialValida = guerraInicialId
+    ? (guerras.find((g) => g.id === guerraInicialId) ?? null)
+    : null;
   const [snap, setSnap] = useState<InstantaneaMundo | null>(inicial);
   const [seleccion, setSeleccion] = useState<Seleccion>(
-    teatroInicialValido ? { kind: "teatro", slug: teatroInicialValido } : null
+    teatroInicialValido
+      ? { kind: "teatro", slug: teatroInicialValido }
+      : guerraInicialValida
+        ? { kind: "guerra", id: guerraInicialValida.id }
+        : null
   );
-  const [pestana, setPestana] = useState<"teatros" | "lugares">("teatros");
+  const [pestana, setPestana] = useState<"teatros" | "lugares" | "memoria">(
+    guerraInicialValida ? "memoria" : "teatros"
+  );
   const [modo, setModo] = useState<GlobeViewMode>("oscuridad");
   const [flyTo, setFlyTo] = useState<GlobeFlyTo | null>(() => {
+    if (guerraInicialValida) {
+      return {
+        lat: guerraInicialValida.lat,
+        lng: guerraInicialValida.lng,
+        altitude: 1.1,
+        nonce: 1,
+      };
+    }
     const t = teatroInicialValido
       ? inicial?.teatros.find((x) => x.slug === teatroInicialValido)
       : null;
@@ -126,6 +170,7 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
   const teatros = useMemo(() => snap?.teatros ?? [], [snap]);
   const teatroSel = seleccion?.kind === "teatro" ? teatros.find((t) => t.slug === seleccion.slug) ?? null : null;
   const plazaSel = seleccion?.kind === "plaza" ? PLAZAS_MUNDO.find((p) => p.id === seleccion.id) ?? null : null;
+  const guerraSel = seleccion?.kind === "guerra" ? guerras.find((g) => g.id === seleccion.id) ?? null : null;
 
   const seleccionarTeatro = useCallback(
     (slug: string) => {
@@ -143,6 +188,19 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
     setSeleccion({ kind: "plaza", id });
     setFlyTo({ lat: p.lat, lng: p.lng, altitude: 0.95, nonce: Date.now() });
   }, []);
+
+  // v278.0 — tocar una memoria del globo o de la pestaña: el planeta vuela
+  // hasta sus coordenadas reales y la pestaña de memoria abre sola
+  const seleccionarGuerra = useCallback(
+    (id: string) => {
+      const g = guerras.find((x) => x.id === id);
+      if (!g) return;
+      setSeleccion({ kind: "guerra", id });
+      setPestana("memoria");
+      setFlyTo({ lat: g.lat, lng: g.lng, altitude: 1.1, nonce: Date.now() });
+    },
+    [guerras]
+  );
 
   // ---- datos derivados del globo (memoizados: identidad estable) ----
   const markers: Globe3DMarker[] = useMemo(() => {
@@ -180,8 +238,24 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
         onClick: () => seleccionarPlaza(p.id),
       });
     }
+    // v278.0 LA MEMORIA EN EL PLANETA — las guerras del archivo con sus
+    // coordenadas reales de la fuente (sin anillo: no es señal viva,
+    // es memoria — el pulso es de las de hoy)
+    for (const g of guerras) {
+      lista.push({
+        id: `guerra-${g.id}`,
+        lat: g.lat,
+        lng: g.lng,
+        color: COLOR_MEMORIA,
+        size: 0.22,
+        alt: 0.03,
+        labelTag: "GUERRA HISTÓRICA · EL ARCHIVO",
+        label: `${g.name} — ${g.periodo}`,
+        onClick: () => seleccionarGuerra(g.id),
+      });
+    }
     return lista;
-  }, [teatros, seleccionarTeatro, seleccionarPlaza]);
+  }, [teatros, seleccionarTeatro, seleccionarPlaza, seleccionarGuerra, guerras]);
 
   const arcs: Globe3DArc[] = useMemo(
     () =>
@@ -299,6 +373,10 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
             <span className="w-2 h-2 rounded-full inline-block" style={{ background: COLOR_GARGANTA }} />
             garganta estratégica
           </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full inline-block" style={{ background: COLOR_MEMORIA }} />
+            guerra histórica (el archivo)
+          </span>
         </div>
       </div>
 
@@ -315,8 +393,8 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
           )}
         </div>
 
-        {/* pestañas */}
-        <div className="mt-2 grid grid-cols-2 gap-1">
+        {/* pestañas (v278: teatros, lugares y la memoria del archivo) */}
+        <div className="mt-2 grid grid-cols-3 gap-1">
           <button
             type="button"
             onClick={() => setPestana("teatros")}
@@ -338,6 +416,17 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
             }`}
           >
             Lugares ({PLAZAS_MUNDO.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setPestana("memoria")}
+            className={`font-mono text-[9px] uppercase tracking-widest rounded px-2 py-1.5 border transition-colors ${
+              pestana === "memoria"
+                ? "border-pink-400/70 bg-pink-500/10 text-pink-300"
+                : "border-zinc-800 text-zinc-500 hover:text-zinc-300"
+            }`}
+          >
+            Memoria ({guerras.length})
           </button>
         </div>
 
@@ -401,6 +490,43 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
           </ul>
         )}
 
+        {/* v278.0 LA MEMORIA — las guerras del archivo; a diferencia de los
+            teatros, esta pestaña NO depende de la señal viva: funciona con
+            la BD fría (la memoria no se apaga con el presente) */}
+        {pestana === "memoria" && (
+          <ul className="mt-2 space-y-1 max-h-[46vh] overflow-y-auto pr-1">
+            {guerras.map((g) => {
+              const activa = seleccion?.kind === "guerra" && seleccion.id === g.id;
+              return (
+                <li key={g.id}>
+                  <button
+                    type="button"
+                    onClick={() => seleccionarGuerra(g.id)}
+                    className={`w-full text-left rounded border px-2.5 py-2 transition-colors ${
+                      activa
+                        ? "border-pink-400/60 bg-pink-500/10"
+                        : "border-zinc-800 hover:border-zinc-600 bg-zinc-950/40"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0 inline-block"
+                        style={{ background: COLOR_MEMORIA }}
+                      />
+                      <span className="flex-1 text-[13px] font-bold text-soft truncate">
+                        {g.name}
+                      </span>
+                      <span className="font-mono text-[10px] text-zinc-500 shrink-0">
+                        {g.periodo}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
         {/* LUGARES */}
         {snap && pestana === "lugares" && (
           <ul className="mt-2 grid grid-cols-2 gap-1 max-h-[46vh] overflow-y-auto pr-1">
@@ -439,7 +565,7 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
         )}
 
         {/* SELECCIÓN */}
-        {(teatroSel || plazaSel) && (
+        {(teatroSel || plazaSel || guerraSel) && (
           <div className="mt-3 border-t border-zinc-800 pt-3">
             {teatroSel && (
               <div>
@@ -488,6 +614,29 @@ export function Mundo3DVivo({ inicial, teatroInicial }: Props) {
                   className="inline-block mt-2 font-mono text-[10px] uppercase tracking-widest text-cyan-400 hover:text-cyan-300"
                 >
                   Espiar lo que publica ▸
+                </Link>
+              </div>
+            )}
+            {guerraSel && (
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-widest text-pink-300">
+                  Guerra histórica · el archivo
+                </p>
+                <p className="mt-1 font-display text-lg font-black text-soft">{guerraSel.name}</p>
+                <p className="font-mono text-[10px] text-zinc-500">
+                  {`${guerraSel.periodo} · ${guerraSel.region}`}
+                </p>
+                <p className="mt-1 font-mono text-[9px] text-zinc-500">
+                  {`${guerraSel.lat.toFixed(1)}°, ${guerraSel.lng.toFixed(1)}°`}
+                </p>
+                <p className="mt-1.5 text-[12px] text-muted-foreground leading-snug">
+                  {guerraSel.outcome}
+                </p>
+                <Link
+                  href={`/historia#${guerraSel.id}`}
+                  className="inline-block mt-2 font-mono text-[10px] uppercase tracking-widest text-pink-400 hover:text-pink-300"
+                >
+                  Su ficha en el archivo ▸
                 </Link>
               </div>
             )}

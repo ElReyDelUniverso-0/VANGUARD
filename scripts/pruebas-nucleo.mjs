@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v277.0", async () => {
+  await verificar("servidor vivo y en v278.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v277"), `versión ${r.json?.version} ≠ v277`);
+    afirmar(String(r.json?.version).startsWith("v278"), `versión ${r.json?.version} ≠ v278`);
   });
 
   // censo por API
@@ -2010,6 +2010,76 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v278.0 LA MEMORIA EN EL PLANETA: el archivo (lat/lng de la fuente) enciende el globo de /mundo ──
+  // La cabeza de la cola de la v277 (la «evaluación aparte» pagada): el
+  // archivo de la historia tiene lat/lng reales en la fuente y /mundo ya
+  // validaba ?teatro= (v264) — la misma puerta ahora abre ?guerra=.
+  // Medido con simulador contra la fuente: 10 guerras, arco 264 a. C. → 1991.
+  await verificar("LA MEMORIA EN EL PLANETA estática: la puerta ?guerra= validada contra la fuente y las marcas del archivo en el globo (v278)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const mundo = readFileSync(join(RAIZ, "src/app/mundo/page.tsx"), "utf8");
+    const globo = readFileSync(join(RAIZ, "src/app/mundo/mundo-3d-vivo.tsx"), "utf8");
+    const historiap = readFileSync(join(RAIZ, "src/app/historia/page.tsx"), "utf8");
+    // la fuente intacta: las 10 guerras con sus coordenadas reales
+    afirmar(fuente.includes("export const HISTORICAL_WARS"), "la fuente de guerras no existe");
+    const iniH = fuente.indexOf("export const HISTORICAL_WARS");
+    const finH = fuente.indexOf("];", iniH);
+    const bloqueH = fuente.slice(iniH, finH === -1 ? fuente.length : finH + 2);
+    afirmar(bloqueH.length > 5000 && bloqueH.length < 8000, `el slice del archivo midió mal (${bloqueH.length})`);
+    for (const id of ["HW-PUNIC", "HW-ROMAN-GAUL", "HW-CRUSADES", "HW-HUNDRED", "HW-NAPOLONIC", "HW-WW1", "HW-WW2", "HW-VIETNAM", "HW-COLD", "HW-GERMANIC"]) {
+      afirmar(bloqueH.includes(`id: "${id}"`), `falta la guerra ${id} en la fuente`);
+    }
+    const nCoord = (bloqueH.match(/lat: -?\d+\.\d,/g) ?? []).length;
+    afirmar(nCoord === 10, `las coordenadas del archivo no están completas (${nCoord}/10)`);
+    // la puerta en /mundo: validada contra la fuente real (nada de inventar)
+    afirmar(mundo.includes("guerra?: string"), "la puerta ?guerra= no está declarada en /mundo");
+    afirmar(mundo.includes("HISTORICAL_WARS.find((g) => g.id === candidatoGuerra)"), "la puerta no se valida contra la fuente real por id exacto");
+    afirmar(mundo.includes("candidatoGuerra = guerra && guerra.length <= 40"), "la puerta no acota la longitud del pedido");
+    afirmar(mundo.includes("GUERRAS_MEMORIA = HISTORICAL_WARS.map"), "la memoria no viaja desde la fuente (map derivado)");
+    afirmar(mundo.includes("periodo: `${ano(g.yearStart)} – ${ano(g.yearEnd)}`"), "el periodo no se compone desde los años reales");
+    afirmar(mundo.includes("const lineaMemoria = `La memoria en el planeta — ${GUERRAS_MEMORIA.length} guerras históricas del archivo encendidas en el globo con sus coordenadas reales, de ${ano(ANO_INICIO_MEMORIA)} a ${ano(ANO_FIN_MEMORIA)}: tócalas en el planeta o pide la tuya con ?guerra=`"), "la línea de la memoria no se compone COMPLETA en JS");
+    afirmar(mundo.includes("no encontró ninguna guerra del archivo"), "la puerta fallida no se declara honesta");
+    // el globo: la capa de memoria (marcas rosas, pestaña, selección)
+    afirmar(globo.includes('{ kind: "guerra"; id: string }'), "el globo no conoce la selección de guerra");
+    afirmar(globo.includes("id: `guerra-${g.id}`"), "las marcas de memoria no están en el globo");
+    afirmar(globo.includes('"GUERRA HISTÓRICA · EL ARCHIVO"'), "la etiqueta de memoria no viaja");
+    afirmar(globo.includes("setPestana(\"memoria\")"), "la pestaña de memoria no abre con la guerra");
+    afirmar(globo.includes("const COLOR_MEMORIA = \"#F472B6\""), "el color de la memoria no está");
+    // las puertas de vuelta desde /historia
+    afirmar(historiap.includes("href={`/mundo?guerra=${g.id}`}"), "las cartas del archivo no abren su puerta al globo");
+    // guardia v234 en ambas salas
+    afirmar(!/20\d\d-\d\d-\d\d/.test(mundo), "¡/mundo escribe fechas a mano en la ronda v278!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(historiap), "¡/historia escribe fechas a mano en la ronda v278!");
+  });
+
+  await verificar("LA MEMORIA EN EL PLANETA viva: /mundo?guerra=HW-PUNIC enciende la guerra y /historia abre sus puertas (v278)", async () => {
+    const r = await pedir("/mundo?guerra=HW-PUNIC");
+    afirmar(r.status === 200, `/mundo?guerra= no 200 (${r.status})`);
+    afirmar(r.texto.includes('aria-label="La memoria en el planeta — el archivo de la historia en el globo"'), "la sección de memoria no viaja en el SSR");
+    afirmar(r.texto.includes("La memoria en el planeta — 10 guerras históricas del archivo encendidas en el globo con sus coordenadas reales, de 264 a. C. a 1991: tócalas en el planeta o pide la tuya con ?guerra="), "la línea derivada de la memoria no viaja (o las cifras no coinciden con la fuente)");
+    // la guerra pedida con su periodo compuesto y sus coordenadas reales
+    // la cabeza y el periodo son nodos distintos (trampa v258, pagada en v274):
+    // el aserto usa lo que el SSR realmente renderiza
+    afirmar(r.texto.includes("Guerras Punicas"), "la guerra pedida no viaja");
+    afirmar(r.texto.includes("264 a. C. – 146 a. C."), "el periodo compuesto no viaja");
+    afirmar(r.texto.includes("Mediterraneo — 37.0°, 14.0°"), "la línea región+coordenadas reales no viaja compuesta");
+    afirmar(r.texto.includes("desenlace: Victoria romana · Cartago destruida en 146 a.C."), "el desenlace de la guerra pedida no viaja");
+    afirmar(r.texto.includes("/historia#HW-PUNIC"), "la puerta de vuelta al archivo no viaja");
+    // la puerta inválida se declara honesta
+    const r2 = await pedir("/mundo?guerra=GUERRA-QUE-NO-ES");
+    afirmar(r2.status === 200, `/mundo con puerta inválida no 200 (${r2.status})`);
+    afirmar(r2.texto.includes("no encontró ninguna guerra del archivo"), "la puerta fallida no se declara honesta en el SSR");
+    // /historia abre las puertas al globo (primera y última del canon)
+    const r3 = await pedir("/historia");
+    afirmar(r3.status === 200, `/historia no 200 en v278 (${r3.status})`);
+    afirmar(r3.texto.includes("/mundo?guerra=HW-PUNIC"), "la puerta de las Punicas no está en el archivo");
+    afirmar(r3.texto.includes("/mundo?guerra=HW-GERMANIC"), "la puerta de las Germanicas no está en el archivo");
+    // las anclas de la casa en pie (v264/v274/v275/v277)
+    afirmar(r2.texto.includes("El índice del planeta"), "el índice del planeta cayó (v264)");
+    afirmar(r3.texto.includes("La taquilla del archivo — 8 conflictos con cuota abierta en 4 categorías"), "la línea de la taquilla cayó (v275)");
+    afirmar(r3.texto.includes("El juicio de los libros — 4 de 8 cuotas encuentran su desenlace en el archivo"), "el juicio cayó (v277)");
   });
 
   // ── v277.0 EL JUICIO DE LOS LIBROS: las cuotas de la taquilla se cruzan con el desenlace del archivo (/historia) ──

@@ -3144,6 +3144,50 @@
 //     anclas v274/v275 en pie) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v276.0 LA ESCUADRA DE LA CASA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v277.0";
-export const APP_CODENAME = "EL JUICIO DE LOS LIBROS";
+// v278.0 LA MEMORIA EN EL PLANETA — la cola de la v277 pedía «evaluación
+//         aparte» y la ronda la paga: el archivo de la historia (v274,
+//         10 guerras reales con lat/lng EN la fuente — Punicas 37.0,14.0
+//         · Galia 47.0,2.0 · Cruzadas 31.8,35.2 · Cien Años 47.0,2.5 ·
+//         Napoleónicas 50.8,4.3 · WWI 49.5,2.8 · WWII 50.0,10.0 ·
+//         Vietnam 16.0,107.0 · Fría 50.0,30.0 · Germanicas 51.0,10.0)
+//         enciende el globo de /mundo.
+// (1) LA PUERTA ?guerra= NACE DEL PATRÓN PROPIO — /mundo ya validaba
+//     ?teatro= (v264): el mismo camino ahora valida ?guerra= contra la
+//     fuente real (HISTORICAL_WARS.find por id exacto, longitud ≤ 40) —
+//     la casa no inventa la guerra que la URL pide; la pedida que no
+//     existe se declara honesta («La puerta ?guerra=X no encontró
+//     ninguna guerra del archivo»), y si la fuente crece mañana la
+//     puerta la recibe sola.
+// (2) LA CAPA DE MEMORIA EN EL GLOBO — las 10 guerras viajan como marcas
+//     rosas (COLOR_MEMORIA) con SU periodo compuesto desde los años
+//     reales («264 a. C. – 146 a. C.» — el negativo es antes de Cristo,
+//     guardia v234) y SU desenlace verbatim; sin anillo: el pulso es de
+//     las guerras de hoy, la memoria no late — permanece. La pestaña
+//     MEMORIA del panel NO depende de la señal viva (funciona con la BD
+//     fría); tocar una marca o un botón vuela el planeta hasta sus
+//     coordenadas (flyTo altitud 1.1) y el auto-rotado se detiene
+//     mientras una memoria está abierta. La fuente completa jamás cruza
+//     al cliente: solo el mapa slim que la página server compone.
+// (3) LAS PUERTAS DE VUELTA — /historia abre /mundo?guerra=<id> desde
+//     cada carta («Encenderla en el globo ▸», enlace server-rendered
+//     que funciona sin JavaScript); /mundo declara la sección server LA
+//     MEMORIA EN EL PLANETA con la línea derivada (lección v256), la
+//     ficha de la guerra pedida (coordenadas compuestas 37.0°, 14.0°) y
+//     la puerta de vuelta a /historia#<id>; noscript honesto en ambas
+//     salas. Directiva v266: el archivo vive en la fuente, no en la
+//     sala. Cero cifras nuevas a mano, cero fechas a mano.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /mundo y ○ /historia en
+//     la tabla) · health v278.0 db up · pruebas 182/182 (+2 LA MEMORIA
+//     EN EL PLANETA: estática — la fuente de 10 guerras con lat/lng
+//     intacta, la puerta validada contra la fuente real, el mapa slim
+//     derivado, el periodo compuesto desde los años reales, la capa y
+//     la pestaña en el globo, las puertas de vuelta en /historia y la
+//     guardia v234 en ambas salas; viva — /mundo?guerra=HW-PUNIC 200 con
+//     la guerra, su periodo compuesto y sus coordenadas reales, la
+//     puerta fallida declarada honesta, /historia abriendo las 10
+//     puertas y las anclas v264/v274/v275/v277 en pie) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v277.0 EL JUICIO DE LOS LIBROS y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v278.0";
+export const APP_CODENAME = "LA MEMORIA EN EL PLANETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

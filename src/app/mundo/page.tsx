@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HISTORICAL_WARS } from "@/lib/game-data";
 import { buildInstantaneaMundo, type InstantaneaMundo } from "@/lib/mundo-datos";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
@@ -22,6 +23,17 @@ import { Mundo3DVivo } from "./mundo-3d-vivo";
 // se declara honesto (medido en esta ronda: la BD lleva 96 h sin cable
 // nuevo — las 9 salas quedan abiertas y el índice lo declara): la puerta
 // no se apaga porque la señal pause.
+//
+// v278.0 LA MEMORIA EN EL PLANETA — el archivo de la historia (v274,
+// 10 guerras reales con lat/lng EN LA FUENTE) enciende el globo: cada
+// guerra del archivo viaja como marca del planeta con SUS coordenadas
+// reales, y la puerta ?guerra= nace seleccionada y enfocada (mismo
+// patrón ?teatro= de la v264). La validación es contra la fuente real
+// (HISTORICAL_WARS.find por id exacto) — la puerta no inventa guerras:
+// la pedida que no existe se declara honesta. /historia abre la puerta
+// de vuelta desde cada carta. Directiva v266: el archivo vive en la
+// fuente (game-data.ts), no en esta sala. Cero fechas a mano — los
+// periodos se componen desde los años reales (guardia v234).
 
 export const revalidate = 60;
 
@@ -54,13 +66,46 @@ function hace(fecha: string): string {
   return `${Math.floor(h / 24)} d`;
 }
 
+// ── v278.0 LA MEMORIA EN EL PLANETA — TODO derivado de HISTORICAL_WARS, nada a mano ──
+// el año compuesto honesto (misma gramática que /historia): el negativo
+// es antes de Cristo y se compone desde el número real de la fuente
+function ano(n: number): string {
+  return n < 0 ? `${-n} a. C.` : `${n}`;
+}
+
+// la capa de memoria que viaja al globo: slim por diseño (el cliente
+// recibe lo que pinta, la fuente completa no cruza a la batería client)
+const GUERRAS_MEMORIA = HISTORICAL_WARS.map((g) => ({
+  id: g.id,
+  name: g.name,
+  lat: g.lat,
+  lng: g.lng,
+  region: g.region,
+  periodo: `${ano(g.yearStart)} – ${ano(g.yearEnd)}`,
+  outcome: g.outcome,
+}));
+
+const ANO_INICIO_MEMORIA = HISTORICAL_WARS.reduce((min, g) => (g.yearStart < min ? g.yearStart : min), 0);
+const ANO_FIN_MEMORIA = HISTORICAL_WARS.reduce((max, g) => (g.yearEnd > max ? g.yearEnd : max), 0);
+
+// lección v256: la línea se compone COMPLETA en JS — un solo nodo, si la
+// fuente cambia la línea cambia sola
+const lineaMemoria = `La memoria en el planeta — ${GUERRAS_MEMORIA.length} guerras históricas del archivo encendidas en el globo con sus coordenadas reales, de ${ano(ANO_INICIO_MEMORIA)} a ${ano(ANO_FIN_MEMORIA)}: tócalas en el planeta o pide la tuya con ?guerra=`;
+
 interface Props {
-  searchParams: Promise<{ teatro?: string }>;
+  searchParams: Promise<{ teatro?: string; guerra?: string }>;
 }
 
 export default async function MundoPage({ searchParams }: Props) {
-  const { teatro } = await searchParams;
+  const { teatro, guerra } = await searchParams;
   const teatroInicial = teatro && teatro.length <= 32 ? teatro.slice(0, 32) : null;
+  // v278.0 — la puerta de la memoria: validada contra la fuente real por
+  // id exacto (la casa no inventa la guerra que la URL pide); la pedida
+  // que no existe se declara honesta en la sección de abajo
+  const candidatoGuerra = guerra && guerra.length <= 40 ? guerra.slice(0, 40) : null;
+  const guerraPedida = candidatoGuerra
+    ? (HISTORICAL_WARS.find((g) => g.id === candidatoGuerra) ?? null)
+    : null;
 
   let teatros = 0;
   let hoy = 0;
@@ -120,7 +165,12 @@ export default async function MundoPage({ searchParams }: Props) {
 
         {/* el globo + el panel vivo */}
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-10">
-          <Mundo3DVivo inicial={inicial} teatroInicial={teatroInicial} />
+          <Mundo3DVivo
+            inicial={inicial}
+            teatroInicial={teatroInicial}
+            guerras={GUERRAS_MEMORIA}
+            guerraInicialId={guerraPedida?.id ?? null}
+          />
         </section>
 
         {/* v264.0 EL ÍNDICE DEL PLANETA — los teatros del mapa con puerta:
@@ -181,6 +231,60 @@ export default async function MundoPage({ searchParams }: Props) {
             </div>
           </section>
         )}
+
+        {/* v278.0 LA MEMORIA EN EL PLANETA — el archivo (10 guerras reales
+            con lat/lng en la fuente) encendido en el globo: la puerta
+            ?guerra= nace seleccionada (patrón ?teatro= v264) y la pedida
+            que no existe se declara honesta. La capa no depende de la
+            señal viva: funciona incluso con la BD fría. Directiva v266:
+            el archivo vive en la fuente (game-data.ts), no en esta sala. */}
+        <section
+          className="max-w-7xl mx-auto px-4 sm:px-5 pb-12"
+          aria-label="La memoria en el planeta — el archivo de la historia en el globo"
+        >
+          <h2 className="font-mono text-[11px] uppercase tracking-widest text-pink-300 border-b border-zinc-800 pb-2">
+            {lineaMemoria}
+          </h2>
+          {guerraPedida ? (
+            <article className="mt-3 border border-pink-500/40 bg-zinc-900/40 rounded-md p-4">
+              <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                <h3 className="font-display font-bold text-soft">{guerraPedida.name}</h3>
+                <span className="font-mono text-[10px] text-zinc-500 whitespace-nowrap">
+                  {`${ano(guerraPedida.yearStart)} – ${ano(guerraPedida.yearEnd)}`}
+                </span>
+              </div>
+              <p className="mt-1 font-mono text-[10px] text-zinc-500">
+                {`${guerraPedida.region} — ${guerraPedida.lat.toFixed(1)}°, ${guerraPedida.lng.toFixed(1)}°`}
+              </p>
+              <p className="mt-2 text-[12px] text-muted-foreground leading-relaxed">
+                {guerraPedida.summary}
+              </p>
+              <p className="mt-2 font-mono text-[10px] text-cyan-hud">
+                {`desenlace: ${guerraPedida.outcome}`}
+              </p>
+              <p className="mt-2.5 flex gap-4 flex-wrap font-mono text-[10px] uppercase tracking-widest">
+                <Link
+                  href={`/historia#${guerraPedida.id}`}
+                  className="text-pink-400 hover:text-pink-300 transition-colors"
+                >
+                  Su ficha en el archivo ▸
+                </Link>
+                <Link href="/mundo" className="text-zinc-500 hover:text-zinc-300 transition-colors">
+                  Ver el planeta sin puerta ▸
+                </Link>
+              </p>
+            </article>
+          ) : (
+            <p className="mt-3 text-[12px] text-muted-foreground leading-relaxed">
+              {candidatoGuerra
+                ? `La puerta ?guerra=${candidatoGuerra} no encontró ninguna guerra del archivo — las ${GUERRAS_MEMORIA.length} del archivo viven en /historia, cada una con su puerta al globo.`
+                : `Las ${GUERRAS_MEMORIA.length} marcas rosas del globo son el archivo de la historia, cada una con sus coordenadas reales de la fuente: toca una (o pídela con ?guerra=) y el planeta te lleva a ella; cada carta de /historia abre su puerta al globo.`}
+            </p>
+          )}
+          <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-zinc-600">
+            El archivo vive en la fuente (game-data.ts), no en esta sala — directiva v266.
+          </p>
+        </section>
 
         {/* la casa completa — sin salir de Vanguard */}
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-12 grid gap-3 sm:grid-cols-3">
@@ -264,6 +368,11 @@ export default async function MundoPage({ searchParams }: Props) {
             o entra a la sala{" "}
             <Link href="/en-vivo" className="text-amber-400 underline">
               /en-vivo
+            </Link>
+            ; el archivo de la historia (las {GUERRAS_MEMORIA.length} guerras con sus años y
+            su desenlace, y su puerta al globo) funciona sin JavaScript en{" "}
+            <Link href="/historia" className="text-amber-400 underline">
+              /historia
             </Link>
             .
           </p>

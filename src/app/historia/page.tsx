@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { HISTORICAL_WARS, WAR_BETS } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -44,6 +45,11 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // archivo declara otros nombres, el vacío se declara tal cual). La línea
 // compuesta COMPLETA en JS (lección v256); el desenlace viaja verbatim;
 // cero fechas a mano, guardia v234 en pie.
+//
+// v278.0 LA MEMORIA EN EL PLANETA — el archivo enciende el globo de
+// /mundo: cada carta de guerra abre su puerta /mundo?guerra=<id> y el
+// planeta vuela hasta sus coordenadas reales (lat/lng EN la fuente).
+// Las puertas son enlaces server-rendered: funcionan sin JavaScript.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -241,6 +247,14 @@ export default function HistoriaPage() {
                       <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
                         {`por qué importa: ${g.significance}`}
                       </p>
+                      {/* v278.0 LA MEMORIA EN EL PLANETA — la puerta al globo:
+                          enlace server-rendered, funciona sin JavaScript */}
+                      <Link
+                        href={`/mundo?guerra=${g.id}`}
+                        className="mt-2.5 inline-block font-mono text-[10px] uppercase tracking-widest text-pink-400 hover:text-pink-300 transition-colors"
+                      >
+                        Encenderla en el globo ▸
+                      </Link>
                     </article>
                   );
                 })}
@@ -298,7 +312,7 @@ export default function HistoriaPage() {
 
         <noscript>
           <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-            {`El archivo funciona sin JavaScript: las ${GUERRAS.length} guerras, sus años, su desenlace y su coste —y las ${APUESTAS.length} cuotas de la taquilla, ${CON_VEREDICTO.length} con veredicto de los libros— están arriba, servidos en el HTML. Las salas en vivo (primera página, globo 3D, vértigo) piden JavaScript.`}
+            {`El archivo funciona sin JavaScript: las ${GUERRAS.length} guerras, sus años, su desenlace y su coste —y las ${APUESTAS.length} cuotas de la taquilla, ${CON_VEREDICTO.length} con veredicto de los libros— están arriba, servidos en el HTML, y cada guerra abre su puerta al globo (/mundo?guerra=) desde aquí. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
           </p>
         </noscript>
       </div>
