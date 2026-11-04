@@ -15,20 +15,50 @@ import {
 } from "@/lib/nucleo/acontecimientos";
 
 // v230.0 EL ESPEJO — el conteo REAL por teatro (una sola query groupBy).
-// Sin BD la página vive igual: sin chips, sin fingir conteos (ley de la casa).
-async function conteosPorTeatro(): Promise<Record<string, number> | null> {
+// v256.0 LA ÚLTIMA SEÑAL — la MISMA query también trae el momento del último
+// cable de cada teatro (_max.publishedAt): el espejo deja de dar solo el
+// número acumulado y dice CUÁNDO sonó la última vez. Sin BD la página vive
+// igual: sin chips, sin fingir conteos (ley de la casa).
+interface MedicionTeatro {
+  conteo: number;
+  ultima: Date | null;
+}
+async function conteosPorTeatro(): Promise<Record<string, MedicionTeatro> | null> {
   try {
     const filas = await db.newsItem.groupBy({
       by: ["conflictTag"],
       _count: { _all: true },
+      _max: { publishedAt: true },
       where: { conflictTag: { in: Object.keys(TEATROS) } },
     });
-    const mapa: Record<string, number> = {};
-    for (const f of filas) if (f.conflictTag) mapa[f.conflictTag] = f._count._all;
+    const mapa: Record<string, MedicionTeatro> = {};
+    for (const f of filas)
+      if (f.conflictTag)
+        mapa[f.conflictTag] = { conteo: f._count._all, ultima: f._max.publishedAt };
     return mapa;
   } catch {
     return null;
   }
+}
+
+// v256.0 LA ÚLTIMA SEÑAL — la edad del último cable, derivada al vuelo de
+// los milisegundos reales (la página es force-dynamic: cada visita la
+// recalcula). Cero fechas escritas a mano — la guardia v234 sigue pasando.
+function textoEdad(ms: number): string {
+  const minutos = Math.floor(ms / 60000);
+  if (minutos < 60) return "hace minutos";
+  const horas = Math.floor(minutos / 60);
+  if (horas < 48) return `hace ${horas} h`;
+  return `hace ${Math.floor(horas / 24)} días`;
+}
+
+// v256.0 — la hora exacta de la última señal, formateada con el aparato
+// (mismo patrón que el refugio v251): derivada del dato real, nunca a mano.
+function horaExacta(d: Date): string {
+  return new Intl.DateTimeFormat("es-ES", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(d);
 }
 
 export const dynamic = "force-dynamic";
@@ -55,7 +85,7 @@ const SITE_URL =
 export const metadata: Metadata = {
   title: "TEATRO GLOBAL 3D — mesa de guerra mundial con países, frentes y trincheras | VANGUARD",
   description:
-    "El simulador de guerra completo: mesa 3D del mundo con los 5 teatros reales de conflicto, aeronaves militares reales en vuelo, marcadores de países y arcos de misiles; más el frente táctico 3D con trincheras, morteros, francotiradores, convoyes, paracaidistas y derribos antiaéreos. Gratis, en español, sin instalar nada.",
+    "El simulador de guerra completo: mesa 3D del mundo con los 5 teatros reales de conflicto y la hora de su última señal real, aeronaves militares reales en vuelo, marcadores de países y arcos de misiles; más el frente táctico 3D con trincheras, morteros, francotiradores, convoyes, paracaidistas y derribos antiaéreos. Gratis, en español, sin instalar nada.",
   alternates: { canonical: "/zona-cero" },
   openGraph: {
     title: "TEATRO GLOBAL 3D — la mesa de guerra mundial · VANGUARD",
@@ -81,8 +111,21 @@ export default async function ZonaCeroPage() {
   // responde, la sección se declara ausente en lugar de fingir datos.
   const conteos = await conteosPorTeatro();
   const totalReal = conteos
-    ? Object.keys(TEATROS).reduce((acc, t) => acc + (conteos[t] ?? 0), 0)
+    ? Object.keys(TEATROS).reduce((acc, t) => acc + (conteos[t]?.conteo ?? 0), 0)
     : null;
+  // v256.0 LA ÚLTIMA SEÑAL — la señal más fresca de todos los teatros,
+  // derivada de las mediciones ya hechas: cero consultas extra.
+  const fresca = (() => {
+    if (!conteos) return null;
+    const ahora = Date.now();
+    let mejor: { tag: string; edad: number } | null = null;
+    for (const [tag, m] of Object.entries(conteos)) {
+      if (!m.ultima) continue;
+      const edad = ahora - m.ultima.getTime();
+      if (!mejor || edad < mejor.edad) mejor = { tag, edad };
+    }
+    return mejor;
+  })();
   return (
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
@@ -135,14 +178,38 @@ export default async function ZonaCeroPage() {
             <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-amber-300">
               {totalReal} cables verificados en {Object.keys(TEATROS).length} teatros documentados
             </p>
+            {fresca && (() => {
+              const linea = `la señal más fresca del archivo: ${TEATROS[fresca.tag]?.nombre ?? fresca.tag} — última señal ${textoEdad(fresca.edad)}`;
+              return (
+                <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-zinc-400">
+                  {linea}
+                </p>
+              );
+            })()}
             <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {Object.entries(TEATROS).map(([tag, t]) => {
-                const n = conteos[tag];
+                const medicion = conteos[tag];
+                const n = medicion?.conteo;
                 const slug = slugAcontecimientoDeTeatro(tag);
+                // v256.0 LA ÚLTIMA SEÑAL — la edad del último cable del teatro,
+                // derivada al vuelo; sin cable no hay línea (vacío honesto).
+                const ultima = medicion?.ultima ?? null;
+                const edad = ultima ? Date.now() - ultima.getTime() : null;
                 return (
                   <article key={tag} className="border border-zinc-800 rounded-md p-4 bg-zinc-900/40">
                     <h3 className="font-orbitron text-sm font-black text-white">{t.nombre}</h3>
                     <p className="mt-1.5 text-[12px] text-zinc-400 leading-relaxed">{t.resumen}</p>
+                    {ultima && edad !== null && (() => {
+                      const linea = `● última señal ${textoEdad(edad)}`;
+                      return (
+                        <p
+                          title={`Último cable de este teatro: ${horaExacta(ultima)}`}
+                          className={`mt-2 font-mono text-[10px] uppercase tracking-widest ${edad < 48 * 3_600_000 ? "text-amber-300" : "text-zinc-500"}`}
+                        >
+                          {linea}
+                        </p>
+                      );
+                    })()}
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {typeof n === "number" && n > 0 && (
                         <Link

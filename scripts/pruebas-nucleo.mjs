@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v255.0", async () => {
+  await verificar("servidor vivo y en v256.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v255"), `versión ${r.json?.version} ≠ v255`);
+    afirmar(String(r.json?.version).startsWith("v256"), `versión ${r.json?.version} ≠ v256`);
   });
 
   // censo por API
@@ -1607,6 +1607,43 @@ async function parteB() {
     afirmar(r.texto.includes("contador global en vivo"), "el contador global desapareció");
     afirmar(r.texto.includes("Arsenal —"), "el arsenal desapareció del SSR");
     afirmar(r.texto.includes("QR de reclutamiento"), "el QR de reclutamiento desapareció del SSR");
+  });
+
+  // ── v256.0 LA ÚLTIMA SEÑAL: el espejo deja de ser un número mudo —
+  // cada teatro del espejo dice CUÁNDO sonó su último cable real (el
+  // conteo y el max viajan en la MISMA query groupBy, cero roundtrips
+  // extra) y la señal más fresca del archivo se declara arriba, derivada
+  // de las mediciones ya hechas. Cero fechas escritas a mano (v234).
+  await verificar("LA ÚLTIMA SEÑAL estática: el espejo mide la edad, no solo el acumulado (v256)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/zona-cero/page.tsx"), "utf8");
+    // dos medidas en la MISMA query groupBy
+    afirmar(pag.includes("_max: { publishedAt: true }"), "la última señal no viaja en la misma query groupBy");
+    afirmar(pag.includes("conteo: f._count._all"), "el conteo real se perdió al añadir la señal");
+    afirmar(pag.includes("ultima: f._max.publishedAt"), "la señal no sale del max real de la BD");
+    // la edad se deriva al vuelo de los milisegundos reales — cero fechas a mano
+    afirmar(pag.includes("Math.floor(ms / 60000)"), "la edad no se deriva de los milisegundos reales");
+    afirmar(pag.includes("Math.floor(horas / 24)"), "los días no se derivan de las horas");
+    afirmar(pag.includes("Intl.DateTimeFormat"), "la hora exacta no se formatea con el aparato (patrón refugio v251)");
+    // la línea honesta en la tarjeta y la señal más fresca declarada
+    afirmar(pag.includes("última señal"), "la tarjeta no dice la edad de su teatro");
+    afirmar(pag.includes("la señal más fresca del archivo"), "la señal más fresca no se declara");
+    afirmar(pag.includes("edad < 48 * 3_600_000"), "el umbral de frescura desapareció");
+    // la vacío honesto: teatro sin cables, línea sin pintar
+    afirmar(pag.includes("medicion?.ultima ?? null"), "el vacío honesto ya no se protege");
+    // guardia v234 en pie tras la ronda
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡el espejo escribe fechas a mano en la ronda v256!");
+  });
+
+  await verificar("LA ÚLTIMA SEÑAL viva: el SSR del espejo sirve la edad real de cada teatro (v256)", async () => {
+    const r = await pedir("/zona-cero");
+    afirmar(r.status === 200, `/zona-cero no 200 en v256 (${r.status})`);
+    afirmar(r.texto.includes("última señal hace"), "el SSR no sirve la edad de ninguna señal");
+    afirmar(r.texto.includes("la señal más fresca del archivo"), "la señal más fresca no viaja en el SSR");
+    // las anclas viejas del espejo siguen en pie
+    afirmar(r.texto.includes("LA GUERRA REAL DETRÁS DEL ESPEJO"), "la sección del espejo desapareció");
+    afirmar(r.texto.includes("cables en la agencia"), "los chips de conteo real desaparecieron");
+    afirmar(r.texto.includes("cables verificados en"), "el total real del espejo desapareció");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "el teatro real perdió su sala");
   });
 
   // ── v246.0 EL ANDAMIAJE EN SILENCIO: las rutas API solo exportan

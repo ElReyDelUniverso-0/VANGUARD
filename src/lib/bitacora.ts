@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v256.0",
+    nombre: "LA ÚLTIMA SEÑAL — la expansión llega al espejo (/zona-cero, v230): la sección LA GUERRA REAL DETRÁS DEL ESPEJO decía CUÁNTO hay en cada teatro (conteo acumulado) pero jamás CUÁNDO sonó la última vez — ahora cada tarjeta dice la edad real de su última señal y el espejo declara la señal más fresca del archivo",
+    hitos: [
+      "LA MISMA QUERY, DOS MEDIDAS — la groupBy del espejo también trae _max.publishedAt: conteo + última señal en UNA consulta (cero roundtrips extra); sin BD la página vive igual: sin chips, sin fingir edades",
+      "LA EDAD EN CADA TARJETA — «● última señal hace N h / hace N días» derivada al vuelo de los milisegundos reales (force-dynamic); amber si < 48 h, zinc si no; title con la hora exacta formateada por Intl (patrón refugio v251) — cero fechas a mano (guardia v234); teatro sin cables: la línea ni se pinta",
+      "LA SEÑAL MÁS FRESCA DEL ARCHIVO — sobre el total: «la señal más fresca del archivo: [teatro] — última señal hace X», derivada de las mediciones ya hechas (cero consultas extra)",
+      "QA v256: tsc 0 TOTAL, eslint 0, build EXIT 0, health v256.0 db up, pruebas 138/138 (+2 LA ÚLTIMA SEÑAL: estática — el max en la misma query, la edad derivada de milisegundos, la señal más fresca, guardias de fechas; viva — el SSR del espejo sirve «última señal hace» y las anclas v230 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v255.0",
     nombre: "TU MISIÓN — el módulo más antiguo (/mision, MISIÓN 100 del v37) recibe su expansión: la misión medía el esfuerzo de TODA la casa, pero el propio comandante nunca vio el suyo — barra personal, plataformas cubiertas y siguiente enlace sugerido",
     hitos: [

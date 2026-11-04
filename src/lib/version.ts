@@ -2465,6 +2465,31 @@
 //     anclas Misión 100/contador global/código de guerra en pie) ·
 //     BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v254.0 EL LATIDO QUE RESPETA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v255.0";
-export const APP_CODENAME = "TU MISIÓN";
+// v256.0 LA ÚLTIMA SEÑAL — la expansión funcional módulo a módulo llega al
+//         espejo: /zona-cero (v230 EL ESPEJO) decía CUÁNTO hay en cada
+//         teatro real (conteo acumulado de cables) pero jamás CUÁNDO sonó
+//         la última vez — un teatro con 900 cables cuyo último cable tiene
+//         tres semanas se veía igual de encendido que uno con cables de hoy.
+// (1) LA MISMA QUERY, DOS MEDIDAS — la groupBy del espejo también trae
+//     `_max: { publishedAt: true }`: conteo + última señal en UNA consulta
+//     (cero roundtrips extra). Sin BD la página vive igual: sin chips, sin
+//     fingir edades (ley de la casa).
+// (2) LA EDAD EN CADA TARJETA — «● última señal hace N h / hace N días»,
+//     derivada al vuelo de los milisegundos reales (force-dynamic: cada
+//     visita recalcula); amber si la señal tiene menos de 48 h, zinc si
+//     no; title con la hora exacta formateada por Intl (patrón refugio
+//     v251) — cero fechas escritas a mano, la guardia v234 sigue pasando.
+//     Teatro sin cables: la línea ni se pinta (vacío honesto).
+// (3) LA SEÑAL MÁS FRESCA DEL ARCHIVO — sobre el total del espejo: «la
+//     señal más fresca del archivo: [teatro] — última señal hace X»,
+//     derivada de las mediciones ya hechas (cero consultas extra).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v256.0 db up ·
+//     pruebas 138/138 (+2 LA ÚLTIMA SEÑAL: estática — el max en la misma
+//     query, la edad derivada de milisegundos, la señal más fresca y las
+//     guardias de fechas; viva — el SSR del espejo sirve «última señal
+//     hace» y la señal más fresca con las anclas v230 en pie) ·
+//     BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v255.0 TU MISIÓN y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v256.0";
+export const APP_CODENAME = "LA ÚLTIMA SEÑAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
