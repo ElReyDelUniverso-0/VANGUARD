@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v281.0", async () => {
+  await verificar("servidor vivo y en v282.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v281"), `versión ${r.json?.version} ≠ v281`);
+    afirmar(String(r.json?.version).startsWith("v282"), `versión ${r.json?.version} ≠ v282`);
   });
 
   // censo por API
@@ -2112,6 +2112,68 @@ async function parteB() {
     afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
     afirmar(r.texto.includes('href="/historia"'), "la puerta al archivo no viaja");
     afirmar(r.texto.includes("La sala funciona sin JavaScript"), "el noscript compuesto no viaja");
+  });
+
+  // ── v282.0 LOS SENTIDOS DE LA SALA: la segunda capa de /servicios ──
+  // La «Queda» de la v281 se paga: los TRES exports hermanos de
+  // agencias-data suben al server. Medido con el motor real al abrir
+  // (tsx): SENTIDOS 5 (HUMINT·SIGINT·GEOINT·OSINT·FININT), ALIADAS 1
+  // (FEMA), COLECCION 18·16·2·1882·2020·6 — la sala no escribe una
+  // cifra: la sirve de la fuente (ya derivada con Set+filter+reduce).
+  await verificar("LOS SENTIDOS DE LA SALA estática: los tres hermanos, las líneas compuestas y las cifras servidas de COLECCION (v282)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
+    // los TRES exports hermanos viajan (nada a mano)
+    afirmar(sala.includes("ALIADAS,\n  SENTIDOS,\n  COLECCION,"), "los tres imports hermanos de agencias-data no viajan (v282)");
+    // las tres líneas compuestas COMPLETAS en JS (lección v256)
+    afirmar(sala.includes("const lineaSentidos = `Los sentidos del oficio — ${SENTIDOS.length}"), "lineaSentidos no se compone desde el length real");
+    afirmar(sala.includes("SENTIDOS.map((s) => s.sigla).join(\" · \")"), "las siglas de los sentidos no viajan derivadas");
+    afirmar(sala.includes("const lineaManos = `La sala anexa — ${ALIADAS.length}"), "lineaManos no se compone desde el length real");
+    afirmar(sala.includes("ALIADAS.map((a) => a.sigla).join(\" · \")"), "las siglas de las manos no viajan derivadas");
+    afirmar(sala.includes("const lineaCifras = `La colección en cifras — ${COLECCION.total}"), "lineaCifras no se compone desde COLECCION");
+    // la sala NO escribe las cifras: las sirve de COLECCION (ya derivada en la fuente)
+    afirmar(sala.includes("COLECCION.enCorredor} sedes en el corredor"), "el censo del corredor no viaja desde COLECCION");
+    afirmar(sala.includes("COLECCION.masAntigua.fundacion} (${COLECCION.masAntigua.sigla})"), "el arco de fundación no viaja desde COLECCION");
+    afirmar(sala.includes("COLECCION.creadasPost11S} nacidas tras el 11-S"), "el post 11-S no viaja desde COLECCION");
+    afirmar(sala.includes("COLECCION.fueraCorredor.join(\" · \")"), "los huérfanos del corredor no viajan derivados");
+    // la casa no inventa el arco: ninguna línea nueva escribe 1882 ni 2020 a mano
+    afirmar(!/const linea\w+ = [^;]*\b1882\b/.test(sala), "¡el arco 1882 está escrito a mano en una línea (debe salir de COLECCION)!");
+    afirmar(!/const linea\w+ = [^;]*\b2020\b/.test(sala), "¡el año 2020 está escrito a mano en una línea (debe salir de COLECCION)!");
+    // las dos secciones nuevas + el strip + el noscript crecido
+    afirmar(sala.includes("LOS SENTIDOS DE LA INTELIGENCIA"), "la sección de los sentidos no está declarada");
+    afirmar(sala.includes("SALA ANEXA — LAS MANOS QUE ACTÚAN"), "la sala anexa no está declarada");
+    afirmar(sala.includes("{`${lineaCifras}.`}"), "el strip de cifras no se pinta compuesto");
+    afirmar(sala.includes("los ${SENTIDOS.length} sentidos del oficio y la sala anexa (${ALIADAS.map((a) => a.sigla).join(\" · \")}) también viajan en el HTML"), "el noscript no creció compuesto");
+    // las anclas v281 en pie + guardia v234
+    afirmar(sala.includes("const lineaSala = `La sala de los servicios — ${COMUNIDAD.length + RED.length}"), "la línea v281 de la sala se rompió");
+    afirmar(sala.includes("BLOQUES.find((b) => b.cat === cat)?.leyenda"), "las leyendas de la fuente se rompieron");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas a mano en la ronda v282!");
+  });
+
+  await verificar("LOS SENTIDOS DE LA SALA viva: el SSR sirve los sentidos, las manos y las cifras derivadas (v282)", async () => {
+    const r = await pedir("/servicios");
+    afirmar(r.status === 200, `/servicios no 200 en v282 (${r.status})`);
+    // los cinco sentidos, verbatim de la fuente
+    afirmar(r.texto.includes("LOS SENTIDOS DE LA INTELIGENCIA"), "la sección de los sentidos no viaja");
+    afirmar(r.texto.includes("5 disciplinas del oficio"), "el censo derivado de los sentidos no viaja");
+    afirmar(r.texto.includes("HUMINT"), "HUMINT no viaja");
+    afirmar(r.texto.includes("FININT"), "FININT no viaja");
+    afirmar(r.texto.includes("El oficio más antiguo: personas que hablan con personas"), "el texto de HUMINT no viaja verbatim");
+    afirmar(r.texto.includes("leer el mundo entero con paciencia de relojero"), "el texto de OSINT no viaja verbatim");
+    // la sala anexa, verbatim de la fuente
+    afirmar(r.texto.includes("SALA ANEXA — LAS MANOS QUE ACTÚAN"), "la sala anexa no viaja");
+    afirmar(r.texto.includes("Federal Emergency Management Agency"), "FEMA no viaja con su nombre de la fuente");
+    afirmar(r.texto.includes("es la mano que actúa cuando los ojos ya vieron el desastre"), "la nota de FEMA no viaja verbatim");
+    // la colección en cifras, servida de COLECCION (16 corredor · ONI 1882 · DELTA 7 2020)
+    afirmar(r.texto.includes("La colección en cifras — 18 expedientes oficiales, 16 sedes en el corredor"), "la línea de cifras no viaja compuesta");
+    afirmar(r.texto.includes("fundada en 1882 (ONI) y la más joven en 2020 (DELTA 7)"), "el arco derivado no viaja en la línea de cifras");
+    afirmar(r.texto.includes("6 nacidas tras el 11-S"), "el post 11-S derivado no viaja");
+    afirmar(r.texto.includes("fuera del corredor: 16ª AF · DELTA 7"), "los huérfanos derivados no viajan");
+    // el noscript crecido y las anclas v281 en pie
+    afirmar(r.texto.includes("los 5 sentidos del oficio y la sala anexa (FEMA) también viajan en el HTML"), "el noscript crecido no viaja");
+    afirmar(r.texto.includes("LA COMUNIDAD"), "la ancla v281 de la comunidad se rompió");
+    afirmar(r.texto.includes("LA RED MUNDIAL"), "la ancla v281 de la red se rompió");
+    afirmar(r.texto.includes("Semper Occultus"), "la ancla v281 del lema de MI6 se rompió");
+    afirmar(r.texto.includes("de 1882 a 2020"), "la ancla v281 del arco en lineaSala se rompió");
   });
 
   // ── v279.0 EL QUIZ DEL FRENTE: la segunda capa del quiz del peso — parejas por teatro (/en-vivo) ──

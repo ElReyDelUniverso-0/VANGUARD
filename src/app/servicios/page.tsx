@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { AGENCIAS, CATEGORIA_META } from "@/lib/agencias-data";
+import {
+  AGENCIAS,
+  CATEGORIA_META,
+  ALIADAS,
+  SENTIDOS,
+  COLECCION,
+} from "@/lib/agencias-data";
 import { SERVICIOS, CATEGORIA_RED_META, BLOQUES } from "@/lib/agencias-mundo-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -24,6 +30,18 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // final (patrón v275/v276). Directiva v266: el mapa vive en la
 // fuente (agencias-data.ts / agencias-mundo-data.ts), no en esta
 // sala. Cero fechas a mano, guardia v234 en pie.
+//
+// v282.0 LOS SENTIDOS DE LA SALA — la segunda capa de la sala (la
+// «Queda» de la v281): los TRES exports hermanos de agencias-data
+// suben al server. SENTIDOS (los cinco sentidos del oficio —
+// HUMINT·SIGINT·GEOINT·OSINT·FININT), ALIADAS (la sala anexa de
+// las manos que actúan, FEMA) y COLECCION (las cifras derivadas
+// de la colección: total, corredor, arco de fundación, post 11-S).
+// Cada expediente viaja VERBATIM de la fuente (directiva v266);
+// las líneas se componen COMPLETAS en JS (lección v256); cero
+// cifras escritas a mano — el número de sentidos y de manos sale
+// de los .length reales y las cifras de COLECCION, ya derivada
+// en la fuente con Set + filter + reduce.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -93,6 +111,12 @@ const leyendaDe = (cat: string): string =>
 const lineaSala = `La sala de los servicios — ${COMUNIDAD.length + RED.length} expedientes reales de inteligencia: los ${COMUNIDAD.length} ojos de la Comunidad de EE. UU. y los ${RED.length} servicios del resto del planeta, de ${FUNDACION_MIN} a ${FUNDACION_MAX}`;
 const lineaComunidad = `La comunidad — ${COMUNIDAD.length} agencias oficiales bajo la supervisión de la ODNI en ${censoComunidad.length} categorías: cada expediente cuenta su origen, su oficio y su territorio`;
 const lineaRed = `La red mundial — ${RED.length} servicios extranjeros de ${NACIONES_RED} naciones en ${censoRed.length} bloques: cada uno con su bandera, su lema y su expediente`;
+
+// ── la segunda capa (v282): sentidos, manos y cifras — TODO desde la
+// fuente, nada a mano (las cifras ya viven derivadas en COLECCION) ──
+const lineaSentidos = `Los sentidos del oficio — ${SENTIDOS.length} disciplinas que cruzan los expedientes: ${SENTIDOS.map((s) => s.sigla).join(" · ")}`;
+const lineaManos = `La sala anexa — ${ALIADAS.length} ${ALIADAS.length === 1 ? "expediente" : "expedientes"} fuera del censo de ${COLECCION.total}: ${ALIADAS.map((a) => a.sigla).join(" · ")}`;
+const lineaCifras = `La colección en cifras — ${COLECCION.total} expedientes oficiales, ${COLECCION.enCorredor} sedes en el corredor, fundada en ${COLECCION.masAntigua.fundacion} (${COLECCION.masAntigua.sigla}) y la más joven en ${COLECCION.masJoven.fundacion} (${COLECCION.masJoven.sigla}), ${COLECCION.creadasPost11S} nacidas tras el 11-S; fuera del corredor: ${COLECCION.fueraCorredor.join(" · ")}`;
 
 const ENLACES_NUCLEO: EnlaceContextual[] = [
   {
@@ -200,6 +224,8 @@ export default function ServiciosPage() {
             <span className="text-zinc-600">{` · ${COMUNIDAD.length} agencias de EE. UU.`}</span>
           </h2>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaComunidad}.`}</p>
+          {/* la colección en cifras (v282) — COLECCION ya vive derivada en la fuente */}
+          <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">{`${lineaCifras}.`}</p>
           {censoComunidad.map((c) => {
             const items = COMUNIDAD.filter((a) => a.categoria === c.cat);
             if (items.length === 0) return null;
@@ -312,6 +338,49 @@ export default function ServiciosPage() {
           })}
         </section>
 
+        {/* ── LOS SENTIDOS DEL OFICIO (v282) — el censo conceptual de la fuente ── */}
+        <section className="mt-12" aria-label="Los sentidos de la inteligencia">
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
+            <span className="text-cyan-hud">LOS SENTIDOS DE LA INTELIGENCIA</span>
+            <span className="text-zinc-600">{` · ${SENTIDOS.length} disciplinas del oficio`}</span>
+          </h2>
+          <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaSentidos}.`}</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {SENTIDOS.map((s) => (
+              <article
+                key={s.id}
+                className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60"
+              >
+                <h3 className="font-mono text-[11px] font-bold tracking-widest text-zinc-100">{s.sigla}</h3>
+                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-zinc-500">{s.nombre}</p>
+                <p className="mt-2 text-xs text-zinc-400 leading-relaxed">{s.texto}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* ── LA SALA ANEXA (v282) — las manos que actúan, verbatim de la fuente ── */}
+        <section className="mt-12" aria-label="La sala anexa">
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
+            <span className="text-emerald-400">SALA ANEXA — LAS MANOS QUE ACTÚAN</span>
+            <span className="text-zinc-600">{` · ${ALIADAS.length} ${ALIADAS.length === 1 ? "expediente" : "expedientes"} fuera del censo de ${COLECCION.total}`}</span>
+          </h2>
+          <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaManos}.`}</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {ALIADAS.map((a) => (
+              <article
+                key={a.id}
+                id={a.id}
+                className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60 scroll-mt-20"
+              >
+                <h3 className="text-sm font-bold leading-snug text-zinc-100">{a.sigla}</h3>
+                <p className="mt-1 text-xs text-zinc-300">{a.nombre}</p>
+                <p className="mt-2 text-xs text-zinc-400 leading-relaxed">{a.nota}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         {/* la puerta honesta al aparato (patrón v275/v276) */}
         <p className="mt-8 text-xs text-zinc-500 leading-relaxed">
           El salón interactivo de las dos salas — el pulso en vivo, los mapas del corredor y del mundo, los arcos de la alianza — vive en el aparato (la primera página de la casa). Los expedientes viven en las fuentes (agencias-data.ts, agencias-mundo-data.ts), no en esta sala.
@@ -324,7 +393,7 @@ export default function ServiciosPage() {
 
         <noscript>
           <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-            {`La sala funciona sin JavaScript: los ${COMUNIDAD.length + RED.length} expedientes —los ${COMUNIDAD.length} de la Comunidad de EE. UU. y los ${RED.length} de la red mundial, de ${NACIONES_RED} naciones— están arriba, servidos en el HTML, con su fundación, su sede, su lema, su misión y sus fichas. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
+            {`La sala funciona sin JavaScript: los ${COMUNIDAD.length + RED.length} expedientes —los ${COMUNIDAD.length} de la Comunidad de EE. UU. y los ${RED.length} de la red mundial, de ${NACIONES_RED} naciones— están arriba, servidos en el HTML, con su fundación, su sede, su lema, su misión y sus fichas; los ${SENTIDOS.length} sentidos del oficio y la sala anexa (${ALIADAS.map((a) => a.sigla).join(" · ")}) también viajan en el HTML. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
           </p>
         </noscript>
       </div>

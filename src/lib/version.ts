@@ -3294,6 +3294,34 @@
 //     censo derivado y las anclas /historia y sitemap en pie) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v280.0 EL CONTRARRELOJ DEL PESO y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v281.0";
-export const APP_CODENAME = "LA SALA DE LOS SERVICIOS";
+//
+// v282.0 LOS SENTIDOS DE LA SALA — la segunda capa de la sala de los
+// servicios (la «Queda» de la v281): los TRES exports hermanos de
+// agencias-data (líneas 442-527) suben al server junto a los 36
+// expedientes. ① SENTIDOS (5): los cinco sentidos del oficio —
+// HUMINT · SIGINT · GEOINT · OSINT · FININT —, cada tarjeta con su
+// sigla, su nombre y su texto VERBATIM de la fuente (directiva v266).
+// ② ALIADAS (1): la sala anexa de las manos que actúan — FEMA, con su
+// nota completa («No es uno de los 18 ojos: es la mano que actúa
+// cuando los ojos ya vieron el desastre»), vocabulario de la propia
+// fuente. ③ COLECCION: la colección en cifras bajo la comunidad —
+// total 18, sedes en el corredor 16, arco de fundación ONI 1882 →
+// DELTA 7 2020, 6 nacidas tras el 11-S, fuera del corredor
+// 16ª AF · DELTA 7 —, TODO ya derivado en la fuente con
+// Set + filter + reduce (la sala no escribe una cifra: la sirve).
+// Medido con el motor real al abrir (tsx): SENTIDOS 5, ALIADAS 1
+// (FEMA), COLECCION 18·16·2·1882·2020·6. Las tres líneas nuevas se
+// componen COMPLETAS en JS (lección v256); cero fechas a mano
+// (guardia v234); el noscript crece con los sentidos y las manos,
+// también compuesto. PRUEBAS 190/190 (+2: estática — los tres
+// imports, las tres líneas compuestas, el strip de cifras desde
+// COLECCION, el vocabulario de la fuente, la guardia v234; viva —
+// LOS SENTIDOS DE LA INTELIGENCIA con HUMINT...FININT, SALA ANEXA
+// con FEMA verbatim, la línea de cifras con 16 sedes y el arco, el
+// noscript crecido y las anclas v281 en pie). QA: tsc 0 TOTAL ·
+// eslint 0 · build EXIT 0 · health v282.0 db up · BD intocada
+// (1877 cables · 9 hechos, un solo escritor) · cierre doble.
+// Herencia v281.0 LA SALA DE LOS SERVICIOS y toda la crónica.
+export const APP_VERSION = "v282.0";
+export const APP_CODENAME = "LOS SENTIDOS DE LA SALA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

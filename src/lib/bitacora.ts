@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v282.0",
+    nombre: "LOS SENTIDOS DE LA SALA — la segunda capa de la sala de los servicios (la «Queda» de la v281): los TRES exports hermanos de agencias-data suben al server junto a los 36 expedientes",
+    hitos: [
+      "LOS SENTIDOS DEL OFICIO — SENTIDOS (5): HUMINT · SIGINT · GEOINT · OSINT · FININT, cada tarjeta con su sigla, su nombre y su texto VERBATIM de la fuente (directiva v266)",
+      "LA SALA ANEXA — ALIADAS (1): las manos que actúan, FEMA, con su nota completa — «No es uno de los 18 ojos: es la mano que actúa cuando los ojos ya vieron el desastre» —, vocabulario de la propia fuente",
+      "LA COLECCIÓN EN CIFRAS — COLECCION ya derivada en la fuente (Set + filter + reduce): 18 expedientes oficiales, 16 sedes en el corredor, arco ONI 1882 → DELTA 7 2020, 6 nacidas tras el 11-S, fuera del corredor 16ª AF · DELTA 7; la sala no escribe una cifra: la sirve",
+      "LÍNEAS COMPUESTAS EN JS (lección v256) — lineaSentidos, lineaManos y lineaCifras viajan completas; el noscript crece con los sentidos y las manos, también compuesto; medido con el motor real al abrir (tsx)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v281.0",
     nombre: "LA SALA DE LOS SERVICIOS — la expansión módulo a módulo abre una puerta nueva: /servicios, la sala server que sirve los DOS catálogos de inteligencia que solo vivían client-side (AGENCIAS v127 — los 18 ojos de la Comunidad de EE. UU. — y SERVICIOS v128 — los 18 servicios extranjeros), invisibles para el SSR y para Google",
     hitos: [
