@@ -31,6 +31,25 @@ const SITE_URL =
 //   ahí una thumb de 480w sería mentirle al crawler y borrosa en pantalla.
 // · FALLBACK_THUMBS (WebP 480w de v238) viste SOLO las cards relacionadas
 //   (slots de 96×72 px) — el mismo patrón honesto de /conflicto y /guerra-hoy.
+//
+// v247.0 LA CARGA JUSTA — la medición mandó: la página /noticia típica
+// cargaba ~342 KB de imágenes TODAS eager (hero JPG de 70–210 KB + 5 thumbs
+// sin pereza) y la metadata og/twitter declaraba 1200×630, una dimensión
+// que NINGÚN archivo de la casa tenía (1600×1067, 842×1264 vertical…).
+// Tres curas medidas (scripts/hornear-og.mjs es el horno, sharp la lumbre):
+// · FALLBACK_OG (WebP 1200×630 EXACTO, q72 — city-1: 210 KB → 40 KB, −81%)
+//   viste el HERO de la página: el slot era w-full max-h-420 object-cover,
+//   o sea que el navegador ya recortaba en pantalla — ahora el archivo
+//   viaja recortado. El hero lleva fetchpriority="high" porque ES el LCP.
+// · Las cards relacionadas llevan loading="lazy": están bajo el primer
+//   scroll (y ocultas en móvil) — dejaron de competir con el primer paint.
+// · La metadata social SIGUE en JPG (compatibilidad de crawlers, v239
+//   intacto) pero ahora declara las dimensiones REALES de cada archivo,
+//   medidas con sharp y congeladas en DIMS_REALES — el 1200×630 inventado
+//   queda fuera de la ruta de fallback. Para una imageUrl externa que la
+//   casa no conozca, dimsDe() devuelve null y las claves width/height se
+//   OMITEN — declarar ciegas sería volver a mentir (censo v247: 0 externas
+//   en la BD hoy; las 20 locales están en la tabla).
 const FALLBACK_IMGS = [
   "/assets/real/drone-1.jpg",
   "/assets/real/city-1.jpg",
@@ -48,6 +67,74 @@ const FALLBACK_THUMBS = [
   "/assets/real/thumbs/jet-1.webp",
   "/assets/real/thumbs/tanks-1.webp",
 ];
+
+// v247.0 LA CARGA JUSTA — la piel hero: 1200×630 exactos, horneados desde
+// la JPG original (misma fotografía, recorte que el navegador ya hacía).
+const FALLBACK_OG = [
+  "/assets/real/og/drone-1.webp",
+  "/assets/real/og/city-1.webp",
+  "/assets/real/og/ship-1.webp",
+  "/assets/real/og/fire-1.webp",
+  "/assets/real/og/jet-1.webp",
+  "/assets/real/og/tanks-1.webp",
+];
+
+// v247.0 — dimensiones REALES de los archivos locales, medidas con sharp
+// por scripts/hornear-og.mjs (la tabla se regenera con esa corrida). Es la
+// verdad que og/twitter declaran desde esta ronda: cada cifra corresponde
+// a un archivo que existe — cero dims inventadas en la ruta local.
+const DIMS_REALES: Record<string, { w: number; h: number }> = {
+  "arty-1": { w: 1600, h: 900 },
+  "carrier-1": { w: 1300, h: 1300 },
+  "city-1": { w: 842, h: 1264 },
+  "city-2": { w: 1600, h: 1067 },
+  "desert-1": { w: 1280, h: 782 },
+  "desert-2": { w: 1280, h: 782 },
+  "drone-1": { w: 1600, h: 1067 },
+  "drone-2": { w: 1600, h: 1115 },
+  "fire-1": { w: 1600, h: 900 },
+  "fire-2": { w: 1600, h: 776 },
+  "heli-1": { w: 1200, h: 856 },
+  "heli-2": { w: 1200, h: 856 },
+  "jet-1": { w: 1600, h: 900 },
+  "jet-2": { w: 1200, h: 800 },
+  "missile-1": { w: 1200, h: 675 },
+  "missile-2": { w: 1296, h: 721 },
+  "parade-1": { w: 1600, h: 900 },
+  "radar-1": { w: 1600, h: 900 },
+  "ship-1": { w: 1280, h: 720 },
+  "ship-2": { w: 1104, h: 1100 },
+  "sub-1": { w: 1300, h: 925 },
+  "tanks-1": { w: 1300, h: 928 },
+  "tanks-2": { w: 1600, h: 901 },
+  "wall-1": { w: 1600, h: 899 },
+};
+
+function stemDe(url: string): string | null {
+  const m = url.match(/^\/assets\/real\/([a-z0-9-]+)\.jpg$/);
+  return m ? m[1] : null;
+}
+
+// v247.0 — el hero que la página sirve: si el cable cae en fallback o su
+// foto es una de las JPG locales conocidas, viaja la variante og WebP
+// (misma fotografía, 1200×630, una fracción del peso); si es una URL que
+// la casa no conoce (externa), viaja tal cual — tocarla sería adivinar.
+function heroDe(it: NewsRow | null, i = 0): string {
+  if (it?.imageUrl) {
+    const stem = stemDe(it.imageUrl);
+    if (stem && DIMS_REALES[stem]) return `/assets/real/og/${stem}.webp`;
+    return it.imageUrl;
+  }
+  return FALLBACK_OG[i % FALLBACK_OG.length];
+}
+
+// v247.0 — dims reales de la imagen que declara la metadata social (la JPG
+// original, no la piel og). null = URL desconocida para la casa: se omiten
+// width/height antes que declarar cifras inventadas.
+function dimsDe(url: string): { w: number; h: number } | null {
+  const stem = stemDe(url);
+  return (stem && DIMS_REALES[stem]) || null;
+}
 
 type NewsRow = {
   id: string;
@@ -144,6 +231,10 @@ export async function generateMetadata({
     `${it.title} — cable de ${it.source} en VANGUARD, la plataforma de conflictos mundiales en tiempo real: mapa OSINT 3D, noticias en vivo y guerra global multijugador. Gratis, en español.`;
   const img = imgDe(it);
   const url = `${SITE_URL}/noticia/${it.id}`;
+  // v247.0 LA CARGA JUSTA — las dims que se declaran son las del archivo:
+  // medidas para toda la ruta local (DIMS_REALES), omitidas si la URL es
+  // desconocida — el 1200×630 inventado que v239 heredó muere aquí.
+  const dims = dimsDe(img);
   return {
     title: titulo,
     description: desc.slice(0, 300),
@@ -155,7 +246,13 @@ export async function generateMetadata({
       description: desc.slice(0, 300),
       siteName: "VANGUARD — Conflictos Mundiales en Tiempo Real",
       locale: "es_ES",
-      images: [{ url: img, width: 1200, height: 630, alt: it.title }],
+      images: [
+        {
+          url: img,
+          ...(dims ? { width: dims.w, height: dims.h } : {}),
+          alt: it.title,
+        },
+      ],
       publishedTime: new Date(it.publishedAt).toISOString(),
     },
     twitter: {
@@ -183,7 +280,12 @@ export default async function NoticiaPage({
   // client solo lo muestra cuando el lector ya pasó la mitad del artículo.
   const siguiente = relacionadas[0] ?? null;
   const tag = (it.tacticalTag || "INFO").toUpperCase();
+  // v247.0 LA CARGA JUSTA — dos URLs, dos deberes (el patrón v239 afinado):
+  // img para la metadata social (JPG original, dims reales), hero para el
+  // <img> de la página (piel og WebP 1200×630, una fracción del peso).
   const img = imgDe(it);
+  const hero = heroDe(it);
+  const heroDims = hero === it.imageUrl && it.imageUrl ? dimsDe(it.imageUrl) : { w: 1200, h: 630 };
   const fecha = new Date(it.publishedAt);
 
   const jsonLd = {
@@ -286,11 +388,16 @@ export default async function NoticiaPage({
         {/* v215.0 MODO TRADUCTOR — el cable en los idiomas de Vanguard */}
         <TraductorChip titulo={it.title} resumen={it.summary ?? ""} />
 
+        {/* v247.0 LA CARGA JUSTA — el hero ES el LCP: fetchpriority high, la
+            piel og WebP (1200×630 reales cuando la casa conoce la foto) y
+            decoding async. Para una URL desconocida las dims se omiten —
+            declarar a ciegas era la mentira que esta ronda mató. */}
         <img
-          src={img}
+          src={hero}
           alt={it.title}
-          width={1200}
-          height={630}
+          {...(heroDims ? { width: heroDims.w, height: heroDims.h } : {})}
+          fetchPriority="high"
+          decoding="async"
           className="mt-6 w-full rounded-md border border-zinc-800 object-cover max-h-[420px]"
         />
 
@@ -366,11 +473,16 @@ export default async function NoticiaPage({
                   href={`/noticia/${r.id}`}
                   className="group flex gap-3 items-start border border-zinc-800 hover:border-amber-500/50 rounded-md p-3 bg-zinc-900/40 transition-colors"
                 >
+                  {/* v247.0 LA CARGA JUSTA — perezosas: viven bajo el primer
+                      scroll (y ocultas en móvil), dejaron de competir con
+                      el LCP del hero por el ancho de banda inicial. */}
                   <img
                     src={thumbDe(r, i + 1)}
                     alt={r.title}
                     width={96}
                     height={72}
+                    loading="lazy"
+                    decoding="async"
                     className="hidden sm:block w-[96px] h-[72px] object-cover rounded shrink-0"
                   />
                   <div className="min-w-0">

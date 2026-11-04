@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v246.0", async () => {
+  await verificar("servidor vivo y en v247.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v246"), `versión ${r.json?.version} ≠ v246`);
+    afirmar(String(r.json?.version).startsWith("v247"), `versión ${r.json?.version} ≠ v247`);
   });
 
   // censo por API
@@ -1113,23 +1113,31 @@ async function parteB() {
   // sus slots son pequeños (220×140 y 96×72) — las thumbs de v238 visten
   // estas salas; la metadata social y el hero conservan el ORIGINAL
   // (og/twitter declaran 1200×630: una thumb ahí es mentirle al crawler).
+  // v247.0 LA CARGA JUSTA afina el reparto a TRES pieles, ninguna mentirosa:
+  // la metadata social viste el ORIGINAL (dims reales declaradas), el hero
+  // de la página viste la piel og WebP 1200×630 (el slot ya recortaba en
+  // pantalla) y las thumbs visten las cards — la JPG pesada no viaja más
+  // como src en ninguna sala.
   await verificar("EL FRENTE LIGERO: las dos pieles viven separadas y honestas (v239)", () => {
     // /guerra-hoy: la lista entera en thumbs, cero fallback pesado a mano
     const frente = readFileSync(join(RAIZ, "src/app/guerra-hoy/page.tsx"), "utf8");
     afirmar(frente.includes("/assets/real/thumbs/"), "guerra-hoy no sirve las variantes ligeras");
     afirmar(!frente.includes('"/assets/real/drone-1.jpg"'), "guerra-hoy todavía cita el fallback pesado a mano");
     afirmar(frente.includes("/api/og"), "la metadata social de guerra-hoy dejó de usar /api/og");
-    // /noticia: DOS arrays — el original para metadata/hero, la thumb para relacionadas
+    // /noticia: TRES arrays desde v247 — el original para la metadata social,
+    // la piel og para el hero, la thumb para las relacionadas
     const sala = readFileSync(join(RAIZ, "src/app/noticia/[id]/page.tsx"), "utf8");
     afirmar(sala.includes("FALLBACK_THUMBS") && sala.includes("FALLBACK_IMGS"), "noticia no declara las dos pieles");
     afirmar(sala.includes("thumbDe") && sala.includes("imgDe"), "noticia perdió uno de los dos vestidores");
     // la metadata social (og/twitter/JSON-LD) se viste con el ORIGINAL —
     // imgDe alimenta openGraph y el JSON-LD; thumbDe solo las relacionadas
-    afirmar(/images:\s*\[\{\s*url:\s*img/.test(sala), "el og:image de noticia no viste con el original");
+    // (v247: el ancla tolera el formato multilínea, la intención es la misma)
+    afirmar(/images:\s*\[\s*\{\s*url:\s*img,/.test(sala), "el og:image de noticia no viste con el original");
     afirmar(/image:\s*\[new URL\(img,\s*SITE_URL\)\.toString\(\)\]/.test(sala), "el JSON-LD de noticia no anuncia el original");
     afirmar(/src=\{thumbDe\(r,\s*i \+ 1\)\}/.test(sala), "las relacionadas de noticia no visten con la thumb");
-    // el hero (w-full, og declara 1200×630) NO puede vestirse de thumb
-    afirmar(/src=\{img\}/.test(sala), "el hero de noticia dejó de citar al vestidor del original");
+    // el hero (w-full) viste la piel og WebP de v247 — nunca la thumb
+    afirmar(/src=\{hero\}/.test(sala), "el hero de noticia dejó de citar a la piel og");
+    afirmar(/fetchPriority="high"/.test(sala), "el hero de noticia perdió su prioridad LCP");
     afirmar(!/src=\{img\b[^}]*\}[^>]*96/.test(sala), "un slot de 96 px viste el original — la dieta se coló donde no iba");
   });
 
@@ -1140,16 +1148,25 @@ async function parteB() {
     afirmar(frente.texto.includes("/assets/real/thumbs/"), "el SSR de guerra-hoy no cita las thumbs");
     const crudos = frente.texto.match(/\/assets\/real\/[a-z0-9-]+\.jpg/g) || [];
     afirmar(crudos.length === 0, `guerra-hoy todavía sirve JPG crudo (${[...new Set(crudos)].join(", ")})`);
-    // la puerta del cable: relacionadas en thumbs Y hero/JSON-LD en original —
-    // el id sale del SSR de guerra-hoy (BD real, jamás escrito a mano)
+    // la puerta del cable: relacionadas en thumbs, metadata en el original
+    // absoluto (metadataBase) y hero en la piel og — el id sale del SSR de
+    // guerra-hoy (BD real, jamás escrito a mano)
     const idCable = (frente.texto.match(/\/noticia\/(cm[a-z0-9]+)/) || [])[1];
     afirmar(Boolean(idCable), "guerra-hoy no expone ninguna puerta /noticia/<id>");
     const sala = await pedir(`/noticia/${idCable}`);
     afirmar(sala.status === 200, `la sala del cable no 200 (${sala.status})`);
     afirmar(sala.texto.includes("/assets/real/thumbs/"), "las relacionadas no visten thumbs en el SSR");
-    afirmar(sala.texto.includes("/assets/real/drone-1.jpg"), "el hero/JSON-LD dejó el original — la dieta se pasó de raya");
+    // v247: la metadata social sigue en el ORIGINAL (la JPG, absoluto o
+    // relativo) — jamás con la thumb; y la JPG pesada ya no viaja como src
+    const ogMeta = (sala.texto.match(/<meta property="og:image" content="([^"]+)"/) || [])[1] ?? "";
+    afirmar(ogMeta.length > 0, "el cable no declara og:image");
+    afirmar(!ogMeta.includes("/thumbs/"), "el og:image viste con la thumb — la dieta se coló en la metadata");
+    afirmar(/\/assets\/real\/[a-z0-9-]+\.jpg/.test(ogMeta), `el og:image dejó el original: ${ogMeta}`);
     const crudosSala = sala.texto.match(/src="\/assets\/real\/[a-z0-9-]+\.jpg"/g) || [];
-    afirmar(crudosSala.length === 1, `el original debe aparecer UNA vez (hero), no ${crudosSala.length}`);
+    afirmar(crudosSala.length === 0, `la JPG pesada todavía viaja como src (${[...new Set(crudosSala)].join(", ")})`);
+    const heroOg = (sala.texto.match(/<img[^>]*\/assets\/real\/og\/[a-z0-9-]+\.webp[^>]*>/) || [])[0] ?? "";
+    afirmar(heroOg.length > 0, "el hero no viste la piel og webp en el SSR");
+    afirmar(/fetchpriority="high"/i.test(heroOg), "el hero og webp llegó sin prioridad LCP al SSR");
   });
 
   await verificar("EL FRENTE LIGERO: las salas vestidas siguen respondiendo 200 (v239)", async () => {
@@ -1509,6 +1526,66 @@ async function parteB() {
     const t = await pedir("/api/traductor");
     afirmar(t.status === 200, `traductor no 200 (${t.status})`);
     afirmar(t.json?.ok === true && Array.isArray(t.json?.idiomas) && t.json.idiomas.length >= 8, "traductor sin su lista de idiomas");
+  });
+
+  // ── v247.0 LA CARGA JUSTA: /noticia baja de 342 KB a 40 KB de imágenes
+  // iniciales — la medición mandó: hero JPG de 70–210 KB eager + 5 thumbs
+  // sin pereza, y una metadata og que declaraba 1200×630 que NINGÚN archivo
+  // cumplía. El horno (scripts/hornear-og.mjs) deja pieles og 1200×630
+  // exactas, el hero viaja en WebP con fetchPriority=high (ES el LCP), las
+  // thumbs van lazy y la metadata declara las dimensiones REALES o nada.
+  await verificar("LA CARGA JUSTA: la fuente del hero LCP y las thumbs perezosas (v247)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/noticia/[id]/page.tsx"), "utf8");
+    // el hero ES el LCP: prioridad alta y decodificación async en la fuente
+    afirmar(pag.includes('fetchPriority="high"'), "el hero no declara fetchPriority=high");
+    afirmar(pag.includes('decoding="async"'), "el hero no declara decoding=async");
+    afirmar(pag.includes('loading="lazy"'), "las thumbs no declaran pereza");
+    // dims reales o nada: la propagación condicional, jamás cifras inventadas
+    afirmar(pag.includes("...(dims ? { width: dims.w, height: dims.h } : {})"), "la propagación condicional de dims reales desapareció");
+    // el caso más flagrante de la mentira vieja: city-1 es 842×1264 VERTICAL
+    afirmar(pag.includes('"city-1": { w: 842, h: 1264 }'), "la tabla de dims reales no lleva el caso vertical city-1");
+    // la piel og existe como constante con sus 6 fallbacks
+    afirmar(pag.includes("/assets/real/og/drone-1.webp"), "FALLBACK_OG no lleva la piel og del fallback");
+  });
+
+  await verificar("LA CARGA JUSTA: el horno dejó pieles og y cada una pesa menos que su JPG (v247)", () => {
+    const dirOg = join(RAIZ, "public/assets/real/og");
+    afirmar(existsSync(dirOg), "el horno no dejó pieles: falta public/assets/real/og");
+    const pieles = readdirSync(dirOg).filter((f) => f.endsWith(".webp"));
+    afirmar(pieles.length >= 24, `solo ${pieles.length} pieles og — horno incompleto`);
+    for (const piel of pieles) {
+      const stem = piel.replace(/\.webp$/, "");
+      const jpg = join(RAIZ, "public/assets/real", `${stem}.jpg`);
+      afirmar(existsSync(jpg), `piel huérfana sin JPG original: ${stem}`);
+      afirmar(statSync(join(dirOg, piel)).size < statSync(jpg).size, `la piel ${stem} pesa igual o más que su JPG original`);
+    }
+  });
+
+  await verificar("LA CARGA JUSTA viva: hero en piel og WebP, thumbs perezosas y dims reales declaradas (v247)", async () => {
+    // la lupa elige un cable SIN imagen (1.857 de 1.877 caen al fallback):
+    // su hero es la piel og y su metadata social declara las dims de drone-1
+    const lupa = await pedir(`/api/noticias?q=${encodeURIComponent("el")}`);
+    afirmar(lupa.status === 200 && lupa.json?.ok === true, "la lupa no responde");
+    const items = lupa.json?.items ?? [];
+    const sinImg = items.find((x) => !x.img);
+    afirmar(Boolean(sinImg), "ningún cable sin imagen en la lupa");
+    const r = await pedir(`/noticia/${sinImg.id}`);
+    afirmar(r.status === 200, `/noticia/${sinImg.id} no 200 (${r.status})`);
+    // el hero viaja en la piel og, JAMÁS en la JPG pesada original
+    // (React 19 escribe el atributo en camelCase — case-insensitive en HTML,
+    // pero el SSR de la casa hay que leerlo tal cual lo escribe)
+    const hero = r.texto.match(/<img[^>]*fetchpriority="high"[^>]*>/i)?.[0] ?? "";
+    afirmar(hero.length > 0, "el hero llegó sin fetchpriority=high al SSR");
+    const srcHero = hero.match(/src="([^"]+)"/)?.[1] ?? "";
+    afirmar(/^\/assets\/real\/og\/[a-z0-9-]+\.webp$/.test(srcHero), `el hero no viaja en piel og: ${srcHero}`);
+    // las thumbs relacionadas son perezosas (5 en la sala típica)
+    const perezosas = (r.texto.match(/loading="lazy"/g) ?? []).length;
+    afirmar(perezosas >= 5, `solo ${perezosas} thumbs perezosas en el SSR`);
+    // la metadata social declara dimensiones REALES: el 1200×630 inventado murió
+    const pares = [...r.texto.matchAll(/og:image:width" content="(\d+)"\/><meta property="og:image:height" content="(\d+)"/g)].map((m) => `${m[1]}x${m[2]}`);
+    afirmar(pares.length >= 1, "og:image sin dimensiones declaradas");
+    afirmar(!pares.includes("1200x630"), "el 1200×630 inventado sigue declarado en la metadata");
+    afirmar(pares.includes("1600x1067"), `el fallback drone-1 no declara sus dims reales (1600×1067): ${pares.join(",") || "ninguna"}`);
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──

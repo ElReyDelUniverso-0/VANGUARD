@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v247.0",
+    nombre: "LA CARGA JUSTA — /noticia baja de 342 KB a 40 KB de imágenes iniciales (−88%) y la metadata social deja de declarar dimensiones que ningún archivo tenía",
+    hitos: [
+      "LA MEDIDA QUE MANDÓ — página /noticia típica (cable de Gaza): hero city-1.jpg 210 KB + 5 thumbs 140 KB = 342 KB de imágenes, TODAS eager (cero loading/fetchpriority en la sala); el censo de la BD mata el «si los orígenes externos traen miniaturas» de la cola: 0 de 1.877 cables llevan imagen externa http — el coste era 100% de la casa (20 locales /assets, 1.857 nulas que caen al fallback)",
+      "EL HORNO (scripts/hornear-og.mjs, sharp 0.34.3 que la casa ya tenía) — 24 JPG reales horneadas en /assets/real/og/*.webp a 1200×630 EXACTOS (fit cover, q72): el recorte que el navegador ya hacía en pantalla (slot max-h-420 object-cover) ahora viaja hecho — city-1 210→40 KB (−81%), media −65%",
+      "EL HERO ES EL LCP — la página sirve la piel og WebP (FALLBACK_OG o mapeo stem por DIMS_REALES), con fetchPriority=\"high\" y decoding=\"async\"; las 5 cards relacionadas van loading=\"lazy\" (viven bajo el primer scroll y ocultas en móvil): dejaron de competir con el primer paint — carga inicial de imágenes 342 KB → 40 KB (−88%), el resto detrás del scroll",
+      "LA VERDAD DECLARADA — og/twitter declaraban 1200×630 y NINGÚN archivo lo cumplía (1600×1067, 842×1264 vertical, 1280×720…): DIMS_REALES congela las dimensiones REALES medidas de los 24 locales y la metadata social las declara tal cual (siguen en JPG, compatibilidad de crawlers v239 intacta); para una URL desconocida las claves width/height se OMITEN antes que inventar (censo: 0 externas hoy)",
+      "QA v247: tsc 0 TOTAL (el silencio v246 se mantiene), eslint 0, build EXIT 0, health v247.0 db up, pruebas 119/119 (+3 LA CARGA JUSTA: estática — horno, fetchPriority, lazy y dims reales con anclas exactas; viva — hero og/*.webp en SSR, og:image:width 1600 real, 5 lazy en página), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v246.0",
     nombre: "EL ANDAMIAJE EN SILENCIO — la ronda propia que la cola pedía: las rutas API solo exportan handlers y su configuración, y tsc calla entero por primera vez en rondas",
     hitos: [

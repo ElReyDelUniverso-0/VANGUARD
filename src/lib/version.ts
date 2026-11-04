@@ -2230,6 +2230,29 @@
 //     {ok,idiomas≥8}) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v245.0 LA QUINTA ESCUCHA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v246.0";
-export const APP_CODENAME = "EL ANDAMIAJE EN SILENCIO";
+// v247.0: LA CARGA JUSTA — el módulo /noticia paga su partida de la cola:
+//     el sobre-coste de imágenes (342 KB medidos) baja a 40 KB (−88%).
+// (1) LA MEDIDA QUE MANDÓ — página /noticia típica: hero JPG de 70–210 KB
+//     + 5 thumbs eager = 342 KB de imágenes compitiendo con el primer
+//     paint; censo de la BD: 0/1877 cables con imagen externa http — el
+//     «si los orígenes externos traen miniaturas» de la cola estaba
+//     resuelto por el censo: el coste era 100% de la casa.
+// (2) EL HORNO — scripts/hornear-og.mjs (sharp, dependencia real de la
+//     casa) hornea /assets/real/og/*.webp a 1200×630 EXACTOS (fit cover,
+//     q72): el recorte que el navegador ya hacía en pantalla viaja hecho
+//     en el archivo — city-1 210→40 KB (−81%), media de 24 archivos −65%.
+// (3) EL HERO ES EL LCP — fetchPriority="high" + decoding="async"; las
+//     5 thumbs relacionadas loading="lazy" (bajo el scroll, ocultas en
+//     móvil). La metadata social sigue en JPG (crawlers, v239 intacto)
+//     pero ahora declara las dimensiones REALES (DIMS_REALES, medidas con
+//     sharp) — el 1200×630 inventado que ningún archivo cumplía muere;
+//     URL desconocida → width/height se omiten antes que mentir.
+// QA: tsc 0 TOTAL (el silencio v246 se mantiene) · eslint 0 · build
+//     EXIT 0 · health v247.0 db up · pruebas 119/119 (+3 LA CARGA JUSTA:
+//     estática con anclas exactas y viva — hero og/*.webp en SSR,
+//     og:image:width 1600 real, 5 lazy) · BD intocada (1877 cables ·
+//     9 hechos, un solo escritor).
+// Herencia v246.0 EL ANDAMIAJE EN SILENCIO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v247.0";
+export const APP_CODENAME = "LA CARGA JUSTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
