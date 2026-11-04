@@ -2018,6 +2018,53 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v239.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v238.0 EL VELOCÍMETRO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v239.0";
-export const APP_CODENAME = "EL FRENTE LIGERO";
+// v240.0: EL REPARTO — la cola señalaba «la familia three.js replicada en
+//     21 chunks, dedup o shared chunk, ronda futura con el velocímetro
+//     delante». Esta es esa ronda, y los números mandaron otra vez:
+// (1) EL CENSO HONESTO — el «censo de three» del velocímetro (marcador
+//     WebGLRenderer|PerspectiveCamera) contaba un FALSO POSITIVO: el chunk
+//     de 280 KB gzip es MAPLIBRE (maplibre ×357, regl ×59 — ni una clase
+//     de three). El marcador fino (ACESFilmicToneMapping, constante del
+//     núcleo que sobrevive a la minificación y que maplibre NO contiene)
+//     revela la verdad: el núcleo de three viaja en 4 chunks — 55dbcfe0
+//     (382 KB gzip: three+globe.gl+tween+controles, bajo demanda de los
+//     globos), b53f84af (84 KB) y 37dabf1f (100 KB) — y las constantes del
+//     núcleo viven en TRES chunks: three está DUPLICADO en el build.
+// (2) LA VIOLACIÓN MEDIDA — el SSR por sala delata al culpable: /, /mundo
+//     y /ver-guerra NO declaran ninguno de los gigantes (los globos entran
+//     a la hidratación, ley v222 intacta), pero /zona-cero llevaba DOS
+//     chunks con three ESTÁTICOS en su HTML crítico: zona-cero-tabs
+//     importaba TeatroGlobal3D y ZonaCero3D SIN dynamic — la ley v222
+//     («three JAMÁS en el HTML crítico») no cubría a zona-cero. Línea
+//     base medida: /zona-cero 800,1 KB con 631,1 KB de JS (3G: 4 s).
+// (3) EL REPARTO — los dos teatros 3D de zona-cero cargan ahora bajo
+//     demanda (next/dynamic ssr:false, el patrón de los globos desde
+//     v222) con pantalla de carga honesta; el lienzo 2D clásico sigue
+//     ESTÁTICO (canvas barato, no le debe nada a three) y el modo «2d»
+//     NO BAJA THREE JAMÁS. Medido tras el cambio (health v240.0):
+//     /zona-cero 800,1→593,1 KB (−26 %), JS 631,1→425,0 KB (−206 KB),
+//     3G lenta 4 s→3 s.
+// (4) LA DEUDA DOCUMENTADA, NO ESCONDIDA — Turbopack no expone
+//     splitChunks y las 3 copias del núcleo siguen en el build (bajo
+//     demanda y cacheadas tras el primer teatro): dedup real queda en la
+//     cola. El censo del velocímetro se corrige de palabra: 22 chunks por
+//     marcador laxo ≈ 1067 KB, 4 chunks de three REAL (~569 KB gzip) +
+//     maplibre 280 KB que NO es three.
+// (5) PRUEBAS +3 (100/100): estática — dynamic con ssr:false para ambos
+//     teatros, CERO import estático de los pesados (regex), el lienzo 2D
+//     sigue estático, la ley v222 citada donde se aplica; viva — el HTML
+//     crítico de /zona-cero se examina CHUNK POR CHUNK (todos los JS que
+//     declara se descargan y NINGUNO lleva el MOTOR de three — marcadores
+//     WebGLRenderer/ShaderMaterial/BufferGeometry, ×0 también en maplibre,
+//     que falsea «PerspectiveCamera» ×2: por eso el censo laxo mentía);
+//     excepción documentada: UNA constante suelta de three viaja en el
+//     chunk GLOBAL compartido (~75 KB con zustand, pegado de Turbopack que
+//     / y /mundo ya cargaban — deuda del empaquetador, no de zona-cero);
+//     los tres modos del selector siguen en el SSR; viva las salas del
+//     planeta 200. Salud v239→v240.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v240.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v239.0 EL FRENTE LIGERO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v240.0";
+export const APP_CODENAME = "EL REPARTO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

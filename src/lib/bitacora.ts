@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v240.0",
+    nombre: "EL REPARTO — la ley v222 llega a zona-cero: three deja el HTML crítico y la familia se cuenta como es (zona-cero, medido)",
+    hitos: [
+      "EL CENSO HONESTO — el «censo de three» contaba un FALSO POSITIVO: el chunk de 280 KB gzip es MAPLIBRE (maplibre ×357, ni una clase de three); con el marcador fino (ACESFilmicToneMapping, constante del núcleo que maplibre no contiene) la verdad: three viaja en 4 chunks y sus constantes viven en TRES — three está DUPLICADO en el build",
+      "LA VIOLACIÓN MEDIDA — /, /mundo y /ver-guerra no declaran ningún gigante (globos bajo demanda, v222 intacta), pero /zona-cero llevaba DOS chunks con three ESTÁTICOS en su HTML crítico: los tabs importaban los dos teatros 3D sin dynamic; línea base: 800,1 KB con 631,1 KB de JS (3G: 4 s)",
+      "EL REPARTO — los dos teatros 3D cargan bajo demanda (next/dynamic ssr:false, patrón de los globos) y el modo «2d clásica» NO BAJA THREE JAMÁS; medido tras el cambio: /zona-cero 800,1→593,1 KB (−26 %), JS 631,1→425,0 KB (−206 KB), 3G lenta 4 s→3 s",
+      "LA DEUDA DOCUMENTADA — Turbopack no expone splitChunks: las 3 copias del núcleo siguen en el build bajo demanda (cacheadas tras el primer teatro); el dedup real queda en la cola, con el censo corregido: 4 chunks de three real (~569 KB gzip) + maplibre 280 KB que no es three",
+      "QA v240: tsc 0, eslint 0, build EXIT 0, health v240.0 db up, pruebas 100/100 (+3 EL REPARTO: dynamic + ssr:false por regex y cero import estático de los pesados; viva — el HTML crítico de zona-cero se examina CHUNK POR CHUNK y NINGÚN JS declarado lleva el MOTOR de three — la única constante suelta viaja en el chunk global ~75 KB que ya cargaban / y /mundo: pegado de Turbopack documentado), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v239.0",
     nombre: "EL FRENTE LIGERO — la dieta de v238 viste la primera página y las puertas de los cables (guerra-hoy + noticia, medido)",
     hitos: [

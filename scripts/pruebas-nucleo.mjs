@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v239.0", async () => {
+  await verificar("servidor vivo y en v240.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v239"), `versión ${r.json?.version} ≠ v239`);
+    afirmar(String(r.json?.version).startsWith("v240"), `versión ${r.json?.version} ≠ v240`);
   });
 
   // censo por API
@@ -1160,6 +1160,62 @@ async function parteB() {
     const thumb = await pedir("/assets/real/thumbs/tanks-1.webp");
     afirmar(thumb.status === 200, `thumb de la lista → ${thumb.status}`);
     afirmar(String(thumb.headers?.["content-type"] || "").includes("image/webp"), "content-type de la thumb no es webp");
+  });
+
+  // ── v240.0 EL REPARTO: la ley v222 (three JAMÁS en el HTML crítico) llega
+  // a /zona-cero — los dos teatros 3D viajaban ESTÁTICOS en la primera
+  // pintura; ahora cargan bajo demanda y el modo 2D no baja three jamás.
+  await verificar("EL REPARTO: los teatros de zona-cero cargan bajo demanda (v240)", () => {
+    const tabs = readFileSync(join(RAIZ, "src/components/vanguard/zona-cero-tabs.tsx"), "utf8");
+    // la ley se declara donde se aplica
+    afirmar(tabs.includes("v222"), "tabs no cita la ley que aplica");
+    // dynamic con ssr:false presente para AMBOS teatros (patrón de los globos)
+    afirmar((tabs.match(/dynamic\(/g) || []).length >= 2, "faltan cargas bajo demanda en los tabs");
+    afirmar((tabs.match(/ssr:\s*false/g) || []).length >= 2, "los teatros 3D no se cargan con ssr:false");
+    // CERO import estático de los dos teatros pesados (three viaja en ellos)
+    afirmar(!/import\s*\{[^}]*TeatroGlobal3D[^}]*\}\s*from\s*"\.\/teatro-global-3d"/.test(tabs),
+      "¡TeatroGlobal3D sigue importado ESTÁTICAMENTE!");
+    afirmar(!/import\s*\{[^}]*ZonaCero3D[^}]*\}\s*from\s*"\.\/zona-cero-3d"/.test(tabs),
+      "¡ZonaCero3D sigue importado ESTÁTICAMENTE!");
+    // el lienzo 2D sigue estático: canvas barato, no le debe nada a three
+    afirmar(/import\s*\{\s*ZonaCeroSim\s*\}\s*from\s*"\.\/zona-cero-sim"/.test(tabs),
+      "el lienzo 2D clásico dejó de ser estático");
+  });
+
+  await verificar("EL REPARTO viva: /zona-cero sin three en el HTML crítico (v240)", async () => {
+    const r = await pedir("/zona-cero");
+    afirmar(r.status === 200, `no 200 (${r.status})`);
+    // los tabs siguen server-rendered con sus tres modos
+    afirmar(r.texto.includes("Teatro global 3D") && r.texto.includes("Frente táctico 3D") && r.texto.includes("Ciudad 2D clásica"),
+      "los tres modos del selector no viven en el SSR");
+    // LA LEY: cada JS que el HTML crítico declara se descarga y se examina —
+    // NINGUNO puede llevar el MOTOR de three. Marcadores de CLASES que
+    // sobreviven a la minificación y que las otras librerías WebGL NO
+    // contienen (maplibre falsea «PerspectiveCamera» ×2 — por eso el censo
+    // laxo mentía; WebGLRenderer/ShaderMaterial/BufferGeometry: ×0 en
+    // maplibre, verificado en el build). Excepción documentada: una
+    // CONSTANTE suelta de three (ACESFilmicToneMapping) viaja en el chunk
+    // GLOBAL compartido (~75 KB con zustand — pegado de Turbopack que / y
+    // /mundo ya cargaban antes de esta ronda; deuda del empaquetador, no
+    // de zona-cero, y no se puede recortar sin splitChunks).
+    const jsUrls = [...new Set([
+      ...(r.texto.match(/src="(\/_next\/static\/chunks\/[^"]+\.js)"/g) || []),
+      ...(r.texto.match(/href="(\/_next\/static\/chunks\/[^"]+\.js)"/g) || []),
+    ].map((s) => s.replace(/^[a-z]+="/, "").replace(/"$/, "")))];
+    afirmar(jsUrls.length >= 5, `el HTML crítico declara muy pocos JS (${jsUrls.length}) — medición rota`);
+    let conMotor = 0;
+    for (const url of jsUrls) {
+      const js = await pedir(url);
+      if (js.status === 200 && /WebGLRenderer|ShaderMaterial|BufferGeometry/.test(js.texto)) conMotor++;
+    }
+    afirmar(conMotor === 0, `${conMotor} chunks del HTML crítico de /zona-cero llevan el MOTOR de three — la ley v222 sigue violada`);
+  });
+
+  await verificar("EL REPARTO: las salas del planeta siguen respondiendo 200 (v240)", async () => {
+    for (const ruta of ["/zona-cero", "/ver-guerra", "/mundo", "/"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `sala del planeta rota ${ruta} → ${r.status}`);
+    }
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──

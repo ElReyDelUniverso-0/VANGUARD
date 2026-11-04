@@ -6,11 +6,38 @@
 // antiaéreos) o CIUDAD 2D CLÁSICA (el lienzo original). Solo se monta el
 // teatro activo para no gastar batería ni GPU del móvil.
 
+// v240.0 EL REPARTO — la ley v222 llega a zona-cero: three JAMÁS en el HTML
+// crítico. Hasta hoy los DOS teatros 3D viajaban ESTÁTICOS en la primera
+// pintura (~183 KB gzip de three medidos en el SSR) aunque el lector solo
+// abriera uno — o ninguno: el modo «2d clásica» pagaba three sin mirarlo.
+// Ahora cargan bajo demanda (next/dynamic ssr:false, el patrón de los
+// globos desde v222); el lienzo 2D sigue ESTÁTICO porque no le debe nada
+// a three. Solo se monta el teatro activo: batería, GPU y AHORA también
+// los bytes.
+
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Box, Map as MapIcon, Globe2 } from "lucide-react";
-import { TeatroGlobal3D } from "./teatro-global-3d";
-import { ZonaCero3D } from "./zona-cero-3d";
 import { ZonaCeroSim } from "./zona-cero-sim";
+
+const CargandoTeatro = () => (
+  <div className="w-full flex items-center justify-center" style={{ minHeight: 420 }}>
+    <div className="text-center">
+      <div className="w-10 h-10 mx-auto mb-3 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
+      <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">cargando teatro 3D WebGL...</p>
+    </div>
+  </div>
+);
+
+const TeatroGlobal3D = dynamic(
+  () => import("./teatro-global-3d").then((m) => m.TeatroGlobal3D),
+  { ssr: false, loading: () => <CargandoTeatro /> }
+);
+
+const ZonaCero3D = dynamic(
+  () => import("./zona-cero-3d").then((m) => m.ZonaCero3D),
+  { ssr: false, loading: () => <CargandoTeatro /> }
+);
 
 export function ZonaCeroTabs() {
   const [mode, setMode] = useState<"global" | "3d" | "2d">("global");
