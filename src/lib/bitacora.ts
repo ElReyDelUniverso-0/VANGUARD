@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v235.0",
+    nombre: "EL BOTÍN — la vitrina cuenta lo que vale la caza y muestra el camino (/objetivos)",
+    hitos: [
+      "LA BALANZA DEL BOTÍN — la página nunca dijo cuánto vale el botín entero: ahora lo suma pieza a pieza del catálogo real con reduce (monedas, gemas, XP) y lo declara junto al censo por rareza (COMUN/RARO/EPICO/LEGENDARIO ×N con filter); CERO números escritos a mano — si el catálogo cambia, la balanza cambia sola",
+      "EL MAPA DE CAZA — 100 tarjetas pero ninguna decía dónde se caza: sección nueva con solo rutas reales de la casa y etiquetas honestas (EL APARATO donde los 100 se registran en sus paneles; LA SALA DEL VÉRTIGO como materia prima de los INTEL; EL GLOBO 3D; EL MAPA DEL FRENTE) — cada puerta dice la verdad sobre lo que hay detrás",
+      "CONECTA CON EL NÚCLEO (patrón v230/v233/v234) — EnlacesNucleo con las 4 puertas reales de la vitrina server-rendered + noscript con las puertas esenciales; VitrinaProgreso v216 y el catálogo ACHIEVEMENTS intactos (todo aditivo)",
+      "QA v235: tsc 0, eslint 0, build EXIT 0, health v235.0 db up, pruebas 85/85 (+3 EL BOTÍN), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "luxe",
+  },
+  {
     version: "v234.0",
     nombre: "LA ONDA — la emisora conecta con toda la casa (/audios)",
     hitos: [

@@ -1865,6 +1865,33 @@
 //     (1877 cables · 9 hechos, un solo escritor). API aditiva: el parte
 //     solo GANA ultimoId — nada se rompe aguas abajo.
 // Herencia v233.0 LA BALANZA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v234.0";
-export const APP_CODENAME = "LA ONDA";
+// v235.0: EL BOTÍN — la vitrina cuenta lo que vale la caza y muestra el
+//     camino (/objetivos, segundo módulo de la cola; VitrinaProgreso v216
+//     y el catálogo ACHIEVEMENTS quedan INTACTOS — todo es aditivo):
+// (1) LA BALANZA DEL BOTÍN — la página nunca dijo cuánto vale el botín
+//     entero: ahora lo suma PIEZA A PIEZA del catálogo real con reduce
+//     (monedas, gemas, XP) y lo declara junto al censo por rareza
+//     (COMUN/RARO/EPICO/LEGENDARIO ×N con filter) — CERO números escritos
+//     a mano: si el catálogo cambia, la balanza cambia sola (la prueba
+//     estática lo vigila con regex).
+// (2) EL MAPA DE CAZA — 100 tarjetas pero ninguna decía DÓNDE se caza:
+//     sección nueva con solo rutas reales de la casa y etiquetas honestas
+//     (EL APARATO / donde los 100 se registran de verdad en sus paneles;
+//     LA SALA DEL VÉRTIGO / la materia prima de los INTEL; EL GLOBO 3D;
+//     EL MAPA DEL FRENTE) — la ley: cada puerta dice la verdad sobre lo
+//     que hay detrás.
+// (3) CONECTA CON EL NÚCLEO (patrón v230/v233/v234) — EnlacesNucleo con
+//     las 4 puertas reales de la vitrina (vértigo, globo, búsqueda,
+//     primera página) server-rendered; noscript con las puertas
+//     esenciales (aparato, vértigo, guerra-hoy).
+// (4) PRUEBAS +3 (85/85): estática (totales con reduce y censo con
+//     filter — regex anti-cifras a mano; mapa de caza solo rutas reales;
+//     EnlacesNucleo + noscript); viva /objetivos (balanza, censo, mapa y
+//     conexión en el SSR); viva las puertas respondiendo 200. Salud
+//     v234→v235.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v235.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v234.0 LA ONDA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v235.0";
+export const APP_CODENAME = "EL BOTÍN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

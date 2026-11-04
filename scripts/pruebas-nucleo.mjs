@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v234.0", async () => {
+  await verificar("servidor vivo y en v235.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v234"), `versión ${r.json?.version} ≠ v234`);
+    afirmar(String(r.json?.version).startsWith("v235"), `versión ${r.json?.version} ≠ v235`);
   });
 
   // censo por API
@@ -918,6 +918,50 @@ async function parteB() {
     for (const ruta of ["/mundo?teatro=ukraine", "/conflicto/gaza", "/nucleo?tipo=noticia", "/ver-guerra", "/guerra-hoy"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `puerta de la onda rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v235.0 EL BOTÍN: la vitrina cuenta lo que vale la caza y muestra el camino ──
+  await verificar("EL BOTÍN: la balanza suma el catálogo real y el mapa de caza solo tiene rutas reales (v235)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/objetivos/page.tsx"), "utf8");
+    // la balanza se DERIVA: reduce para el botín, filter para el censo — nada a mano
+    afirmar(pag.includes("ACHIEVEMENTS.reduce"), "el botín no se suma del catálogo (reduce)");
+    afirmar(pag.includes("ACHIEVEMENTS.filter"), "el censo por rareza no sale del catálogo (filter)");
+    // cero cifras de botín escritas a mano (solo expresiones {…} y el 100 estructural)
+    const cuerpo = pag.split("export default function")[1] || "";
+    afirmar(!/\+\s?\d[\d.]{2,}\s?(mon|gemas|XP)/.test(cuerpo), "¡la balanza escribe cifras a mano!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la vitrina escribe fechas a mano!");
+    // el mapa de caza: SOLO rutas reales de la casa, cada una con su verdad
+    for (const ruta of ['ruta: "/"', 'ruta: "/vertigo"', 'ruta: "/mundo"', 'ruta: "/ver-guerra"']) {
+      afirmar(pag.includes(ruta), `el mapa de caza no declara la ruta real ${ruta}`);
+    }
+    afirmar(pag.includes("Los 100 se cazan aquí"), "el mapa no dice la verdad del aparato");
+    // conexión con el núcleo (patrón v230) + noscript
+    for (const trozo of ["EnlacesNucleo", "CONECTA CON EL NÚCLEO", "noscript", "jsonLdSeguro"]) {
+      afirmar(pag.includes(trozo), `la vitrina no declara «${trozo}»`);
+    }
+  });
+
+  await verificar("EL BOTÍN viva: /objetivos sirve la balanza, el censo y las puertas en el SSR (v235)", async () => {
+    const r = await pedir("/objetivos");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("La balanza del botín"), "sin la balanza del botín");
+    afirmar(r.texto.includes("mon◉ en total"), "sin el total de monedas derivado");
+    afirmar(r.texto.includes("gemas en total"), "sin el total de gemas derivado");
+    afirmar(r.texto.includes("El mapa de caza"), "sin el mapa de caza");
+    afirmar(r.texto.includes("EL APARATO"), "sin la puerta del aparato");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin la conexión con el núcleo");
+    afirmar(r.texto.includes("application/ld+json"), "sin JSON-LD honesto");
+    // el censo por rareza en el SSR (las 4 rarezas con su ×N derivado)
+    for (const metal of ["COMUN ×", "RARO ×", "EPICO ×", "LEGENDARIO ×"]) {
+      afirmar(r.texto.includes(metal), `el censo no muestra ${metal}N`);
+    }
+  });
+
+  await verificar("EL BOTÍN: las puertas del mapa de caza responden 200 una a una (v235)", async () => {
+    for (const ruta of ["/", "/vertigo", "/mundo", "/ver-guerra", "/nucleo", "/guerra-hoy"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta de la vitrina rota ${ruta} → ${r.status}`);
     }
   });
 
