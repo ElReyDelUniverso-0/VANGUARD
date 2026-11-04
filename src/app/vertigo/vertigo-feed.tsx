@@ -26,6 +26,11 @@ import { TEATROS } from "@/lib/teatros";
 // cada pieza enlaza a SU FICHA vg:pais en el núcleo (ficha honesta para
 // toda ISO con cables — jamás 404) y el feed gana LA SALA DEL MUNDO.
 import { nombrePais } from "@/lib/impacto";
+// v250.0 EL VÉRTIGO QUE RECUERDA — la fórmula TikTok gana sus dos señales
+// que faltaban: COMPARTIR (la tercera señal de la columna — la pieza viaja
+// con su URL real de sala de lectura) y REANUDAR (continue-watching: la
+// marca del deslizamiento vive en tu aparato y al volver el feed te deja
+// donde te quedaste, dentro de lo ya cargado, sin recargas y sin preguntas).
 
 export type CableVertigo = {
   id: string;
@@ -96,6 +101,41 @@ export function VertigoFeed({
   const [corazones, setCorazones] = useState<Record<string, number>>({});
   const ultimoTap = useRef(0);
   const ultimoTapId = useRef("");
+
+  // ————— v250.0 COMPARTIR: la tercera señal de la columna —————
+  // Hoja nativa de compartir si el aparato la trae (Web Share API);
+  // portapapeles + aviso «Copiado» si no; y última red honesta (prompt de
+  // copia manual) si el aparato no deja ni lo uno ni lo otro. El enlace
+  // es SIEMPRE el real: la sala de lectura del cable (/noticia/<id>).
+  const [copiadoId, setCopiadoId] = useState("");
+  const copiadoTimer = useRef(0);
+  // ————— v250.0 REANUDAR: el aviso que se dice una vez —————
+  const [reanudadoDe, setReanudadoDe] = useState(0);
+
+  useEffect(() => () => window.clearTimeout(copiadoTimer.current), []);
+
+  const compartirPieza = useCallback(async (c: CableVertigo) => {
+    const url = `${window.location.origin}/noticia/${c.id}`;
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: c.t, url });
+        return;
+      } catch (e) {
+        // cancelar la hoja nativa no es un error; cualquier otro fallo
+        // cae al portapapeles
+        if ((e as DOMException)?.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiadoId(c.id);
+      window.clearTimeout(copiadoTimer.current);
+      copiadoTimer.current = window.setTimeout(() => setCopiadoId(""), 2200);
+    } catch {
+      // sin permiso de portapapeles: la última red decide
+      window.prompt("Copia el enlace de la pieza:", url);
+    }
+  }, []);
 
   // ————— corazón: contar y ráfaga visual —————
   const latirAhora = useCallback((id: string) => {
@@ -217,6 +257,48 @@ export function VertigoFeed({
     }, 0);
     return () => window.clearTimeout(t);
   }, []);
+
+  // ————— v250.0 REANUDAR: el vértigo te deja donde te quedaste —————
+  // La marca (vg-vertigo-ultimo) vive en el aparato. Al volver, el feed
+  // salta a la pieza guardada SOLO si ya viaja cargada (jamás inventa un
+  // salto a piezas que no trajo) y lo dice una vez, arriba, sin ruido.
+  const reanudoHecho = useRef(false);
+  useEffect(() => {
+    if (reanudoHecho.current) return;
+    reanudoHecho.current = true;
+    let marca: { id: string; i: number; t: number } | null = null;
+    try {
+      const raw = window.localStorage.getItem("vg-vertigo-ultimo");
+      if (raw) marca = JSON.parse(raw);
+    } catch {
+      /* sin almacenamiento: el vértigo empieza de cero */
+    }
+    if (!marca?.id) return;
+    const pos = iniciales.findIndex((c) => c.id === marca.id);
+    if (pos > 0 && pos < iniciales.length && contRef.current) {
+      contRef.current.scrollTop = pos * contRef.current.clientHeight;
+      setIdx(pos);
+      setReanudadoDe(pos);
+      const aviso = window.setTimeout(() => setReanudadoDe(0), 4500);
+      return () => window.clearTimeout(aviso);
+    }
+  }, [iniciales]);
+
+  // ————— v250.0 LA MARCA: cada pieza que pisas queda anotada —————
+  // Una escritura por cambio de pieza (el gesto del snap), no por evento
+  // de scroll: el aparato no sufre y la marca es siempre la última pisada.
+  useEffect(() => {
+    const c = cables[idx];
+    if (!c) return;
+    try {
+      window.localStorage.setItem(
+        "vg-vertigo-ultimo",
+        JSON.stringify({ id: c.id, i: idx, t: Date.now() })
+      );
+    } catch {
+      /* sin almacenamiento: la marca vive solo en la pantalla */
+    }
+  }, [idx, cables]);
 
   const riel = useMemo(() => Math.min(cables.length, 60), [cables.length]);
   const progreso = cables.length > 0 ? Math.min((idx / cables.length) * 100, 100) : 0;
@@ -361,6 +443,23 @@ export function VertigoFeed({
                     </span>
                   </Link>
                 )}
+                {/* v250.0 — COMPARTIR: la tercera señal (fórmula TikTok) */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    compartirPieza(c);
+                  }}
+                  aria-label="Compartir este cable"
+                  className="flex flex-col items-center gap-1 text-zinc-300 hover:text-amber-300 transition-colors"
+                >
+                  <span className="text-2xl">
+                    {copiadoId === c.id ? "✅" : "📤"}
+                  </span>
+                  <span className="font-mono text-[9px] uppercase tracking-wider">
+                    {copiadoId === c.id ? "Copiado" : "Enviar"}
+                  </span>
+                </button>
               </div>
 
               {/* la información — abajo, estilo pieza */}
@@ -464,6 +563,16 @@ export function VertigoFeed({
           </p>
         </div>
       </div>
+
+      {/* v250.0 — el aviso de reanudación: una vez, arriba, sin ruido */}
+      {reanudadoDe > 0 && (
+        <p
+          aria-live="polite"
+          className="absolute top-14 left-1/2 -translate-x-1/2 z-30 font-mono text-[10px] uppercase tracking-widest text-zinc-950 bg-amber-400 rounded-full px-4 py-1.5 pointer-events-none"
+        >
+          Reanudado donde lo dejaste
+        </p>
+      )}
 
       {/* progreso global — una línea fina arriba */}
       <div aria-hidden className="absolute top-0 inset-x-0 z-40 h-[2px] bg-transparent">

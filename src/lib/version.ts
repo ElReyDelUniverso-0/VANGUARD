@@ -2313,6 +2313,30 @@
 //     sirve audio/*; si no, el vacío honesto en pie) · BD intocada (1877
 //     cables · 9 hechos, un solo escritor).
 // Herencia v248.0 EL FOTOGRAMA LIGERO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v249.0";
-export const APP_CODENAME = "EL MURO DE PIEDRA";
+// ── v250.0 EL VÉRTIGO QUE RECUERDA — la expansión funcional módulo a módulo
+//     llega a /vertigo (v211 EL VÉRTIGO + v231 EL LATIDO): la fórmula TikTok
+//     gana sus dos señales que faltaban.
+// (1) COMPARTIR — la tercera señal de la columna derecha (latido ❤️ · teatro
+//     🗺️ · país 🌐 · AHORA enviar 📤): la pieza viaja con su URL real de sala
+//     de lectura (/noticia/<id>) — hoja nativa Web Share API si el aparato la
+//     trae, portapapeles + aviso «Copiado» si no, y última red honesta
+//     (prompt de copia manual) si el aparato no deja ni lo uno ni lo otro.
+//     stopPropagation: compartir jamás dispara el doble toque de la pieza.
+// (2) REANUDAR — continue-watching: la marca del deslizamiento (cable ·
+//     índice · instante) vive en el aparato (localStorage vg-vertigo-ultimo,
+//     una escritura por cambio de pieza — no por evento de scroll) y al
+//     volver el feed salta a la pieza guardada SOLO si ya viaja cargada
+//     (jamás inventa un salto a piezas que no trajo), con aviso de una vez
+//     arriba: «Reanudado donde lo dejaste». Todo client-side tras montaje:
+//     cero mismatch de hidratación, cero recargas (ley v190).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v250.0 db up ·
+//     pruebas 126/126 (+2 EL VÉRTIGO QUE RECUERDA: estática — Web Share con
+//     portapapeles y última red, la tercera señal con aria-label, la marca
+//     en el aparato, el salto acotado a lo cargado, el aviso y el
+//     stopPropagation; viva — el SSR sirve la señal de compartir en cada
+//     pieza y las estaciones v231 siguen en pie) · BD intocada (1877
+//     cables · 9 hechos, un solo escritor).
+// Herencia v249.0 EL MURO DE PIEDRA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v250.0";
+export const APP_CODENAME = "EL VÉRTIGO QUE RECUERDA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

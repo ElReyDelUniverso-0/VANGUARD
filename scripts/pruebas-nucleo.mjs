@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v249.0", async () => {
+  await verificar("servidor vivo y en v250.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v249"), `versión ${r.json?.version} ≠ v249`);
+    afirmar(String(r.json?.version).startsWith("v250"), `versión ${r.json?.version} ≠ v250`);
   });
 
   // censo por API
@@ -1783,6 +1783,34 @@ async function parteB() {
     } else {
       afirmar(r.texto.includes("El muro está en pie y vacío"), "muro vacío sin estado honesto");
     }
+  });
+
+  // ── v250.0 EL VÉRTIGO QUE RECUERDA: compartir y reanudar (fórmula completa) ──
+  await verificar("EL VÉRTIGO QUE RECUERDA: compartir con salida honesta y reanudar sin recargar (v250)", () => {
+    const feed = readFileSync(join(RAIZ, "src/app/vertigo/vertigo-feed.tsx"), "utf8");
+    // COMPARTIR: Web Share API, portapapeles de respaldo y última red —
+    // y la pieza viaja con su sala de lectura real
+    afirmar(feed.includes("navigator.share"), "sin Web Share API (fórmula TikTok incompleta)");
+    afirmar(feed.includes("navigator.clipboard.writeText"), "sin portapapeles de respaldo");
+    afirmar(feed.includes("Copiado"), "sin aviso de copia");
+    afirmar(feed.includes("/noticia/${c.id}"), "el enlace compartido no es la sala de lectura real");
+    afirmar(feed.includes('aria-label="Compartir este cable"'), "la columna no tiene la tercera señal");
+    // REANUDAR: la marca vive en el aparato y el salto está acotado a lo cargado
+    afirmar(feed.includes("vg-vertigo-ultimo"), "sin marca de posición en el aparato");
+    afirmar(/scrollTop\s*=\s*pos\s*\*\s*contRef\.current\.clientHeight/.test(feed), "el salto de reanudación no está");
+    afirmar(feed.includes("pos < iniciales.length"), "el salto no está acotado a lo ya cargado");
+    afirmar(feed.includes("Reanudado donde lo dejaste"), "sin aviso de reanudación");
+    afirmar(feed.includes("stopPropagation"), "compartir dispara el doble toque de la pieza");
+  });
+
+  await verificar("EL VÉRTIGO QUE RECUERDA vivo: el SSR sirve la tercera señal y las estaciones v231 siguen en pie (v250)", async () => {
+    const r = await pedir("/vertigo");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes('aria-label="Compartir este cable"'), "el SSR no sirve la señal de compartir");
+    afirmar(r.texto.includes("Enviar"), "el SSR no sirve la etiqueta de compartir");
+    afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
+    afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
+    afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
   });
 
   // el muro al final: quema la cuota de esta IP

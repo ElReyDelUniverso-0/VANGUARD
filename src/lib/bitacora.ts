@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v250.0",
+    nombre: "EL VÉRTIGO QUE RECUERDA — la fórmula TikTok de /vertigo se completa: compartir (tercera señal de la columna, Web Share API con salida honesta) y reanudar donde lo dejaste (continue-watching sin recargas)",
+    hitos: [
+      "COMPARTIR — la columna derecha de la pieza gana su tercera señal (latido ❤️ · teatro 🗺️ · país 🌐 · enviar 📤): la pieza viaja con su URL real de sala de lectura (/noticia/<id>) — hoja nativa Web Share API si el aparato la trae, portapapeles + aviso «Copiado» si no, y última red honesta (prompt de copia manual) si el aparato no deja ni lo uno ni lo otro; stopPropagation: compartir jamás dispara el doble toque",
+      "REANUDAR — la marca del deslizamiento (cable · índice · instante) vive en el aparato (localStorage vg-vertigo-ultimo, una escritura por cambio de pieza — no por evento de scroll): al volver, el feed salta a la pieza guardada SOLO si ya viaja cargada (jamás inventa un salto a piezas que no trajo) y lo dice una vez, arriba: «Reanudado donde lo dejaste»; todo client-side tras montaje — cero mismatch de hidratación, cero recargas (ley v190)",
+      "QA v250: tsc 0 TOTAL, eslint 0, build EXIT 0, health v250.0 db up, pruebas 126/126 (+2 EL VÉRTIGO QUE RECUERDA: estática — Web Share con portapapeles y última red, la tercera señal con aria-label, la marca en el aparato, el salto acotado a lo cargado, el aviso y el stopPropagation; viva — el SSR sirve la señal de compartir en cada pieza y las estaciones v231 siguen en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v249.0",
     nombre: "EL MURO DE PIEDRA — el muro de las voces se talla en el servidor: las voces reales de la BD se sirven en el SSR de /audios, audibles sin JavaScript, y la voz recién mandada entra sin recargar",
     hitos: [
