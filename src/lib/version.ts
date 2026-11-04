@@ -3225,6 +3225,42 @@
 //     el toggle POR TEATRO ▸ y las anclas v272/v213 en pie) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v278.0 LA MEMORIA EN EL PLANETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v279.0";
-export const APP_CODENAME = "EL QUIZ DEL FRENTE";
+// v280.0 EL CONTRARRELOJ DEL PESO — la otra mitad de la cola v272
+//         aterriza: el quiz del peso gana el modo contrarreloj — 60 s
+//         contra el archivo (el interrogatorio contrarreloj del linaje,
+//         v61) sobre el POOL ACTIVO (sala general o frente), y la cota
+//         de parejas crece 8 → 12 (más combustible sin consultas
+//         nuevas: la instantánea ya servía los 60 cables; medido con el
+//         motor real al abrir: aguanta exactamente 12 parejas con pesos
+//         DISTINTOS — 60vs58 · 58vs57 · 57vs56 · 53vs52 · 51vs49 ·
+//         47vs46 · 43vs42 · 41vs40 · 39vs38 · 38vs35 · 34vs33 · 32vs30).
+// (1) EL RELOJ VIVE FUERA DE REACT — ley v176 (nada de setState en
+//     effects): intervalo a nivel de módulo (tick 250 ms), React solo
+//     escucha con useSyncExternalStore y caché por tick (getSnapshot
+//     estable entre avisos); el servidor pinta la fase «quieto» — el
+//     botón CONTRARRELOJ ▸ y la invitación compuesta viajan en el SSR.
+// (2) TRES FASES HONESTAS — quieto (invitación + botón), marcha
+//     (cuenta atrás compuesta: «quedan Ns · X aciertos del sprint»,
+//     aria-live), fin («LA CAMPANA SONÓ — X aciertos en 60 s» + récord
+//     compuesto + OTRO SPRINT ▸). Las parejas del pool activo no
+//     cambian durante la marcha (los botones de modo se duermen con
+//     disabled); el veredicto sigue siendo el motor v172, no la casa.
+// (3) EL RÉCORD DEL SPRINT ENTRA EN EL BOTÍN — sprintRecord en el
+//     mini-store v216 con cerradura v132 (los botines viejos despiertan
+//     con 0 — migración por defaults), JAMÁS la BD (un solo escritor,
+//     leyes v245/v246). La campana la toca el reloj del módulo, que
+//     escribe el récord máximo y despierta a los oyentes.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /en-vivo en pie) ·
+//     health v280.0 db up · pruebas 186/186 (+2 EL CONTRARRELOJ DEL
+//     PESO: estática — la cota 12 en el servidor, la constante del
+//     reloj 60000 con su linaje v61, el store del sprint a nivel de
+//     módulo (tick + caché + suscripción), el sprintRecord en el botín
+//     con migración por defaults, el anotarSprintAcierto en apostar,
+//     las tres fases con sus líneas compuestas y la guardia v234; viva
+//     — el SSR sirve «CONTRARRELOJ ▸», la invitación compuesta «60 s
+//     contra el archivo» y las anclas v272/v279/v213 en pie) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v279.0 EL QUIZ DEL FRENTE y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v280.0";
+export const APP_CODENAME = "EL CONTRARRELOJ DEL PESO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

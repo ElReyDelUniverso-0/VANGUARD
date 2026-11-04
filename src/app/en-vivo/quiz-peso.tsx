@@ -31,6 +31,18 @@
 //    derivados en el servidor de la MISMA instantánea. El frente habla
 //    en una línea compuesta en JS (lección v256); la sala huérfana (un
 //    solo cable) se declara sin par posible — vacío honesto derivado.
+//
+// v280.0 EL CONTRARRELOJ DEL PESO — LA TERCERA CAPA (la otra mitad de
+//    la cola v272): 60 s contra el archivo (el interrogatorio
+//    contrarreloj del linaje, v61) sobre el POOL ACTIVO (sala o
+//    frente). El reloj vive FUERA de React (ley v176: nada de setState
+//    en effects — intervalo a nivel de módulo, React solo escucha con
+//    useSyncExternalStore, patrón v216). El servidor pinta la fase
+//    «quieto» (el botón viaja en el SSR); la marcha y el final son del
+//    navegador. El récord del sprint entra en el botín (cerradura v132,
+//    JAMÁS la BD). Y la cota de parejas crece 8 → 12 (la cola lo pedía:
+//    más combustible sin consultas nuevas — el servidor ya sirvió los
+//    60 cables, la derivación es la misma).
 // ══════════════════════════════════════════════════════════════════════
 
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -53,13 +65,14 @@ export interface ParTeatro extends ParPeso {
 const CLAVE_PESO = "vg-quiz-peso";
 
 interface BotinPeso {
-  racha: number;    // aciertos consecutivos de la ronda en curso
-  record: number;   // la mejor racha de la casa (este navegador)
-  jugadas: number;  // apuestas totales
-  aciertos: number; // apuestas ganadas
+  racha: number;       // aciertos consecutivos de la ronda en curso
+  record: number;      // la mejor racha de la casa (este navegador)
+  jugadas: number;     // apuestas totales
+  aciertos: number;    // apuestas ganadas
+  sprintRecord: number; // v280.0 — el mejor contrarreloj de la casa (aciertos en 60 s)
 }
 
-const BOTIN_LIMPIO: BotinPeso = { racha: 0, record: 0, jugadas: 0, aciertos: 0 };
+const BOTIN_LIMPIO: BotinPeso = { racha: 0, record: 0, jugadas: 0, aciertos: 0, sprintRecord: 0 };
 
 // ── EL MINI-STORE DEL BOTÍN (fuera de React, patrón v216) ─────────────
 // El valor nace de localStorage con caché por crudo (getSnapshot debe
@@ -80,6 +93,7 @@ function leerBotin(): BotinPeso {
         record: g?.record ?? 0,
         jugadas: g?.jugadas ?? 0,
         aciertos: g?.aciertos ?? 0,
+        sprintRecord: g?.sprintRecord ?? 0, // v280.0 — los botines viejos despiertan con 0
       };
     } catch {
       valorCache = BOTIN_LIMPIO; // botín corrupto: la casa empieza limpia
@@ -110,6 +124,92 @@ function guardarBotin(nuevo: BotinPeso): void {
   for (const fn of oyentes) fn();
 }
 
+// ── EL RELOJ DEL CONTRARRELOJ (fuera de React, patrón v216) ───────────
+// v280.0 — ley v176: nada de setState en effects; el intervalo vive en
+// el módulo y React solo escucha (useSyncExternalStore con caché por
+// tick: getSnapshot estable entre avisos). El servidor, sin ventana,
+// pinta la fase «quieto» — cero mismatch, cero parpadeo #418.
+const DURACION_SPRINT = 60000; // 60 s — el interrogatorio contrarreloj del linaje (v61)
+
+interface SprintVivo {
+  fase: "quieto" | "marcha" | "fin";
+  quedanMs: number;
+  aciertos: number;
+}
+
+const SPRINT_QUIETO: SprintVivo = { fase: "quieto", quedanMs: 0, aciertos: 0 };
+let sprintFinMs: number | null = null;
+let sprintTerminado = false;
+let sprintAciertos = 0;
+let sprintCache: SprintVivo = SPRINT_QUIETO;
+let sprintTimer: ReturnType<typeof setInterval> | null = null;
+const sprintOyentes = new Set<() => void>();
+
+function sprintAvisar(): void {
+  for (const fn of sprintOyentes) fn();
+}
+
+function sprintRecalcular(): void {
+  if (sprintFinMs !== null) {
+    const restan = sprintFinMs - Date.now();
+    if (restan <= 0) {
+      // la campana: el récord entra en el botín (la cerradura v132 decide)
+      sprintFinMs = null;
+      sprintTerminado = true;
+      if (sprintTimer) {
+        clearInterval(sprintTimer);
+        sprintTimer = null;
+      }
+      sprintCache = { fase: "fin", quedanMs: 0, aciertos: sprintAciertos };
+      const b = leerBotin();
+      guardarBotin({ ...b, sprintRecord: Math.max(b.sprintRecord, sprintAciertos) });
+      return;
+    }
+    sprintCache = { fase: "marcha", quedanMs: restan, aciertos: sprintAciertos };
+    return;
+  }
+  sprintCache = sprintTerminado
+    ? { fase: "fin", quedanMs: 0, aciertos: sprintAciertos }
+    : SPRINT_QUIETO;
+}
+
+function tickSprint(): void {
+  sprintRecalcular();
+  sprintAvisar();
+}
+
+function sprintSnapshot(): SprintVivo {
+  return sprintCache;
+}
+
+function sprintSuscribir(fn: () => void): () => void {
+  sprintOyentes.add(fn);
+  return () => {
+    sprintOyentes.delete(fn);
+  };
+}
+
+function arrancarSprint(): void {
+  sprintTerminado = false;
+  sprintAciertos = 0;
+  sprintFinMs = Date.now() + DURACION_SPRINT;
+  if (!sprintTimer) sprintTimer = setInterval(tickSprint, 250);
+  sprintRecalcular();
+  sprintAvisar();
+}
+
+// el quiz llama aquí con cada acierto mientras el reloj corre
+function anotarSprintAcierto(): void {
+  if (sprintFinMs === null) return;
+  sprintAciertos += 1;
+  sprintCache = {
+    fase: "marcha",
+    quedanMs: Math.max(0, sprintFinMs - Date.now()),
+    aciertos: sprintAciertos,
+  };
+  sprintAvisar();
+}
+
 // ── EL SELLO DEL PESO — la etiqueta canónica del motor, nunca inventada ──
 function etiquetaTier(tier: CableVivo["tier"]): string {
   return TIERS[tier as TierImpacto]?.label ?? "CONTEXTO";
@@ -136,8 +236,9 @@ export default function QuizPeso({
   const [ronda, setRonda] = useState(0);
   const [apostada, setApostada] = useState<"a" | "b" | null>(null);
   const [modo, setModo] = useState<"sala" | "teatro">("sala");
-  // ley v176: el botín viene del store externo — cero setState en effects
+  // ley v176: el botín y el reloj vienen de stores externos — cero setState en effects
   const botin = useSyncExternalStore(suscribir, leerBotin, () => BOTIN_LIMPIO);
+  const sprint = useSyncExternalStore(sprintSuscribir, sprintSnapshot, () => SPRINT_QUIETO);
   const montado = useSyncExternalStore(sinSuscripcion, esCliente, esServidor);
 
   // LA CERRADURA v132 se abre post-montaje: desde aquí el botín sale
@@ -166,18 +267,24 @@ export default function QuizPeso({
   const nombresFrente = parejasTeatro.map((p) => p.teatro.toUpperCase()).join(" · ");
   const lineaTeatro = `EL QUIZ POR TEATRO — ${parejasTeatro.length} ${parejasTeatro.length === 1 ? "sala" : "salas"} del frente con par en la instantánea: ${nombresFrente || "ninguna todavía"}${salasSinPar > 0 ? ` · ${salasSinPar} ${salasSinPar === 1 ? "sala" : "salas"} sin par posible` : ""}`;
 
+  // v280.0 — LA LÍNEA DEL SPRINT, compuesta desde la constante del reloj
+  // (el linaje la bautizó en la v61: interrogatorio contrarreloj 60 s)
+  const lineaSprint = `contrarreloj: ${DURACION_SPRINT / 1000} s contra el archivo — cuántos pesos aciertas antes de que suene la campana`;
+
   function apostar(lado: "a" | "b") {
     if (apostada) return; // la ronda ya está servida
     const pesoApostado = lado === "a" ? par.a.impacto : par.b.impacto;
     const pesoRival = lado === "a" ? par.b.impacto : par.a.impacto;
     const acierto = pesoApostado > pesoRival;
     const nuevaRacha = acierto ? botin.racha + 1 : 0;
+    if (acierto) anotarSprintAcierto(); // v280.0 — el reloj anota si corre
     setApostada(lado);
     guardarBotin({
       racha: nuevaRacha,
       record: Math.max(botin.record, nuevaRacha),
       jugadas: botin.jugadas + 1,
       aciertos: botin.aciertos + (acierto ? 1 : 0),
+      sprintRecord: botin.sprintRecord, // v280.0 — el récord del sprint viaja intacto
     });
   }
 
@@ -238,7 +345,8 @@ export default function QuizPeso({
               type="button"
               onClick={() => cambiarModo("sala")}
               aria-pressed={modo === "sala"}
-              className={`rounded border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest ${
+              disabled={sprint.fase === "marcha"}
+              className={`rounded border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-50 ${
                 modo === "sala"
                   ? "border-amber-hud bg-amber-hud/15 text-amber-400"
                   : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-amber-hud/40 hover:text-amber-400"
@@ -250,13 +358,62 @@ export default function QuizPeso({
               type="button"
               onClick={() => cambiarModo("teatro")}
               aria-pressed={modo === "teatro"}
-              className={`rounded border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest ${
+              disabled={sprint.fase === "marcha"}
+              className={`rounded border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-50 ${
                 modo === "teatro"
                   ? "border-violet-hud bg-violet-hud/15 text-violet-300"
                   : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-hud/40 hover:text-violet-300"
               }`}
             >
               POR TEATRO ▸
+            </button>
+          </div>
+        )}
+
+        {/* v280.0 — EL CONTRARRELOJ: 60 s contra el archivo (linaje v61)
+            sobre el pool activo. El reloj vive fuera de React (patrón
+            v216); el SSR pinta el botón y la invitación compuesta. */}
+        {sprint.fase === "quieto" && (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={arrancarSprint}
+              aria-label="Arrancar el contrarreloj del peso"
+              className="rounded border border-violet-hud/60 bg-violet-hud/10 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-violet-300 hover:bg-violet-hud/20"
+            >
+              CONTRARRELOJ ▸
+            </button>
+            <p className="font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+              {lineaSprint}
+            </p>
+          </div>
+        )}
+        {sprint.fase === "marcha" && (
+          <p
+            className="mt-3 font-mono text-sm font-bold uppercase tracking-wider text-violet-300"
+            aria-live="polite"
+          >
+            contrarreloj: quedan {Math.ceil(sprint.quedanMs / 1000)} s · {sprint.aciertos}{" "}
+            {sprint.aciertos === 1 ? "acierto" : "aciertos"} del sprint
+          </p>
+        )}
+        {sprint.fase === "fin" && (
+          <div className="mt-3 rounded-lg border border-violet-hud/40 bg-violet-hud/5 p-3">
+            <p className="font-mono text-sm font-bold uppercase tracking-wider text-violet-300">
+              ○ LA CAMPANA SONÓ — {sprint.aciertos} {sprint.aciertos === 1 ? "acierto" : "aciertos"} en{" "}
+              {DURACION_SPRINT / 1000} s
+            </p>
+            <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+              récord del contrarreloj: {Math.max(botin.sprintRecord, sprint.aciertos)} aciertos en{" "}
+              {DURACION_SPRINT / 1000} s
+            </p>
+            <button
+              type="button"
+              onClick={arrancarSprint}
+              aria-label="Arrancar otro contrarreloj del peso"
+              className="mt-2 rounded border border-zinc-700 bg-zinc-800 px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-200 hover:border-violet-hud/50 hover:text-violet-300"
+            >
+              OTRO SPRINT ▸
             </button>
           </div>
         )}
@@ -343,8 +500,9 @@ export default function QuizPeso({
         )}
 
         <p className="mt-6 text-[11px] leading-relaxed text-zinc-600">
-          La racha vive en tu navegador y en ninguna otra parte — la casa no
-          apunta tu botín en su libro (un solo escritor). El peso de cada cable
+          La racha y el récord del contrarreloj viven en tu navegador y en
+          ninguna otra parte — la casa no apunta tu botín en su libro (un solo
+          escritor). El peso de cada cable
           lo midió el motor de impacto de la Agencia: vocabulario, etiqueta
           táctica, país, credibilidad de la fuente y frescura, auditable línea a línea.
         </p>

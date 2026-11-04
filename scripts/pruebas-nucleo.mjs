@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v279.0", async () => {
+  await verificar("servidor vivo y en v280.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v279"), `versión ${r.json?.version} ≠ v279`);
+    afirmar(String(r.json?.version).startsWith("v280"), `versión ${r.json?.version} ≠ v280`);
   });
 
   // censo por API
@@ -2012,6 +2012,54 @@ async function parteB() {
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
   });
 
+  // ── v280.0 EL CONTRARRELOJ DEL PESO: 60 s contra el archivo — la tercera capa del quiz (/en-vivo) ──
+  // La otra mitad de la cola v272: modo contrarreloj sobre el pool activo
+  // y cota 8 → 12 (más combustible sin consultas nuevas). Medido con el
+  // motor real al abrir: la instantánea aguanta exactamente 12 parejas.
+  await verificar("EL CONTRARRELOJ DEL PESO estática: el reloj fuera de React, el récord en el botín y las tres fases (v280)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/en-vivo/page.tsx"), "utf8");
+    const quiz = readFileSync(join(RAIZ, "src/app/en-vivo/quiz-peso.tsx"), "utf8");
+    // la cota crecida en el servidor (la cola v272 lo pedía)
+    afirmar(pag.includes("parejasPeso.length < 12"), "la cota del quiz no creció a 12");
+    // el reloj: constante declarada y store a nivel de módulo (ley v176)
+    afirmar(quiz.includes("const DURACION_SPRINT = 60000;"), "la duración del sprint no está declarada");
+    afirmar(quiz.includes("let sprintTimer: ReturnType<typeof setInterval> | null = null;"), "el intervalo del sprint no vive a nivel de módulo");
+    afirmar(quiz.includes("function tickSprint(): void {"), "el tick del reloj no existe");
+    afirmar(quiz.includes("setInterval(tickSprint, 250)"), "el reloj no corre a 250 ms");
+    afirmar(quiz.includes("useSyncExternalStore(sprintSuscribir, sprintSnapshot, () => SPRINT_QUIETO)"), "React no escucha el reloj con snapshot de servidor");
+    afirmar(quiz.includes('sprintCache = { fase: "fin", quedanMs: 0, aciertos: sprintAciertos };'), "la campana no cierra la fase fin");
+    // el récord del sprint en el botín (migración por defaults, cerradura v132)
+    afirmar(quiz.includes("sprintRecord: number;"), "el botín no conoce el récord del sprint");
+    afirmar(quiz.includes("sprintRecord: g?.sprintRecord ?? 0,"), "los botines viejos no despiertan con 0 (migración por defaults)");
+    afirmar(quiz.includes("guardarBotin({ ...b, sprintRecord: Math.max(b.sprintRecord, sprintAciertos) });"), "la campana no escribe el récord máximo en el botín");
+    // el quiz anota al reloj y las fases componen sus líneas
+    afirmar(quiz.includes("if (acierto) anotarSprintAcierto();"), "el quiz no anota los aciertos del sprint");
+    afirmar(quiz.includes("const lineaSprint = `contrarreloj: ${DURACION_SPRINT / 1000} s contra el archivo"), "la invitación del sprint no se compone desde la constante");
+    afirmar(quiz.includes("Math.ceil(sprint.quedanMs / 1000)"), "la cuenta atrás no se compone en segundos");
+    afirmar(quiz.includes("CONTRARRELOJ ▸"), "el botón del sprint no está");
+    afirmar(quiz.includes("OTRO SPRINT ▸"), "el botón de la revancha no está");
+    afirmar(quiz.includes('aria-label="Arrancar el contrarreloj del peso"'), "el sprint no tiene su aria-label");
+    afirmar(quiz.includes('aria-live="polite"'), "la cuenta atrás no es accesible (aria-live)");
+    afirmar(quiz.includes('disabled={sprint.fase === "marcha"}'), "el modo no se duerme durante la marcha");
+    // guardia v234
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡/en-vivo escribe fechas a mano en la ronda v280!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(quiz), "¡el quiz escribe fechas a mano en la ronda v280!");
+  });
+
+  await verificar("EL CONTRARRELOJ DEL PESO viva: el SSR sirve el botón del sprint y la invitación compuesta (v280)", async () => {
+    const r = await pedir("/en-vivo");
+    afirmar(r.status === 200, `/en-vivo no 200 en v280 (${r.status})`);
+    afirmar(r.texto.includes("CONTRARRELOJ ▸"), "el botón del sprint no viaja en el SSR");
+    afirmar(r.texto.includes("contrarreloj: 60 s contra el archivo — cuántos pesos aciertas antes de que suene la campana"), "la invitación compuesta no viaja (o la constante cambió)");
+    afirmar(r.texto.includes('aria-label="Arrancar el contrarreloj del peso"'), "el aria-label del sprint no viaja");
+    // la cota crecida: la línea v272 sigue compuesta desde la fuente
+    afirmar(/EL QUIZ DEL PESO — \d+ parejas reales del archivo miden tu ojo/.test(r.texto), "la línea del quiz cayó");
+    // las anclas de la casa en pie (v279/v272/v213)
+    afirmar(/EL QUIZ POR TEATRO — \d+ sala[s]? del frente con par en la instantánea/.test(r.texto), "la línea del frente cayó (v279)");
+    afirmar(r.texto.includes("¿Qué cable pesa más?"), "la pregunta del peso cayó (v272)");
+    afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la sala del pulso cayó (v213)");
+  });
+
   // ── v279.0 EL QUIZ DEL FRENTE: la segunda capa del quiz del peso — parejas por teatro (/en-vivo) ──
   // La cabeza de la cola v272: los dos cables más pesados de UNA sala,
   // derivados de la MISMA instantánea (conflictTag ya viajaba en el
@@ -2398,7 +2446,7 @@ async function parteB() {
     const quiz = readFileSync(join(RAIZ, "src/app/en-vivo/quiz-peso.tsx"), "utf8");
     // cero consultas de más: las parejas se derivan de la instantánea YA servida (herencia v256/v262)
     afirmar(pag.includes("const ordenadosPeso = [...iniciales].sort"), "las parejas no se derivan de la instantánea ya servida");
-    afirmar(pag.includes("parejasPeso.length < 8"), "el quiz no pone cota a sus parejas");
+    afirmar(pag.includes("parejasPeso.length < 12"), "el quiz no pone cota a sus parejas (v280: la cota creció 8 → 12 para el contrarreloj)");
     afirmar(pag.includes("a.impacto !== b.impacto"), "el quiz admite parejas sin veredicto (pesos iguales)");
     afirmar(pag.includes("<QuizPeso parejas={parejasPeso} parejasTeatro={parejasTeatro} salasSinPar={salasSinPar} />"), "el quiz no viaja montado bajo la sala (v279: creció con el modo teatro)");
     // el veredicto no es una opinión: es el motor canónico (directiva v266 — la fuente manda)

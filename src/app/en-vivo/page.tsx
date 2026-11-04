@@ -95,9 +95,12 @@ export default async function EnVivoPage() {
   // casa jamás pregunta lo que no tiene respuesta. El peso ya viajaba en
   // el payload de la sala (v213); el veredicto solo se revela tras la
   // apuesta, y la racha vive en el navegador (un solo escritor, v245).
+  // v280.0 — la cota crece 8 → 12 (la cola v272 lo pedía para el modo
+  // contrarreloj: más combustible sin consultas nuevas; medido con el
+  // motor real al abrir: la instantánea aguanta exactamente 12).
   const parejasPeso: ParPeso[] = [];
   const ordenadosPeso = [...iniciales].sort((x, y) => y.impacto - x.impacto);
-  for (let i = 0; i + 1 < ordenadosPeso.length && parejasPeso.length < 8; i += 2) {
+  for (let i = 0; i + 1 < ordenadosPeso.length && parejasPeso.length < 12; i += 2) {
     const a = ordenadosPeso[i];
     const b = ordenadosPeso[i + 1];
     if (a.impacto !== b.impacto) parejasPeso.push({ a, b });

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v280.0",
+    nombre: "EL CONTRARRELOJ DEL PESO — la otra mitad de la cola v272 aterriza: el quiz del peso gana el modo contrarreloj — 60 s contra el archivo (el interrogatorio contrarreloj del linaje, v61) sobre el POOL ACTIVO (sala general o frente); la cota de parejas crece 8 → 12 (más combustible sin consultas nuevas); el reloj vive FUERA de React (ley v176) y el récord del sprint entra en el botín con cerradura v132, JAMÁS la BD",
+    hitos: [
+      "EL RELOJ VIVE FUERA DE REACT — intervalo a nivel de módulo (tick 250 ms), React solo escucha con useSyncExternalStore y caché por tick (getSnapshot estable entre avisos, patrón v216); el servidor pinta la fase «quieto»: el botón CONTRARRELOJ ▸ y la invitación compuesta («contrarreloj: 60 s contra el archivo») viajan en el SSR",
+      "TRES FASES HONESTAS — quieto (invitación + botón), marcha (cuenta atrás compuesta «quedan Ns · X aciertos del sprint», aria-live), fin («LA CAMPANA SONÓ — X aciertos en 60 s» + récord + OTRO SPRINT ▸); el pool activo no cambia durante la marcha (modo dormido con disabled); el veredicto sigue siendo el motor de impacto v172",
+      "LA COTA CRECE 8 → 12 — la cola v272 lo pedía para el contrarreloj: más combustible sin consultas nuevas (herencia v256/v262); medido con el motor real al abrir: la instantánea aguanta exactamente 12 parejas con pesos DISTINTOS (60vs58 · 58vs57 · 57vs56 · 53vs52 · 51vs49 · 47vs46 · 43vs42 · 41vs40 · 39vs38 · 38vs35 · 34vs33 · 32vs30)",
+      "QA v280: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /en-vivo en pie), health v280.0 db up, pruebas 186/186 (+2 EL CONTRARRELOJ DEL PESO: estática — cota 12, constante del reloj, store a nivel de módulo, sprintRecord con migración por defaults, anotar en apostar, tres fases compuestas, guardia v234; viva — CONTRARRELOJ ▸ y la invitación en el SSR, anclas v272/v279/v213 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v279.0",
     nombre: "EL QUIZ DEL FRENTE — la segunda capa de la cola v272 aterriza: el quiz del peso (v272) con un modo nuevo — parejas POR TEATRO: los dos cables más pesados de UNA sala (conflictTag, ya presente en el payload v213), derivados en el servidor de la MISMA instantánea del pulso; la sala huérfana se declara sin par posible — vacío honesto derivado, la casa no lo inventa",
     hitos: [
