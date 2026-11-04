@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v235.0", async () => {
+  await verificar("servidor vivo y en v236.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v235"), `versión ${r.json?.version} ≠ v235`);
+    afirmar(String(r.json?.version).startsWith("v236"), `versión ${r.json?.version} ≠ v236`);
   });
 
   // censo por API
@@ -962,6 +962,51 @@ async function parteB() {
     for (const ruta of ["/", "/vertigo", "/mundo", "/ver-guerra", "/nucleo", "/guerra-hoy"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `puerta de la vitrina rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v236.0 EL GLOSARIO: el traductor muestra sus tuercas y abre sus cables ──
+  await verificar("EL GLOSARIO: fuente única consumida por la API y la vitrina, puerta del cable (v236)", () => {
+    const lib = readFileSync(join(RAIZ, "src/lib/glosario-tactico.ts"), "utf8");
+    afirmar(lib.includes("export const GLOSARIO_TACTICO"), "el inventario no vive en su fuente única");
+    afirmar(lib.includes("export function paresGlosario"), "sin la función de pares para la vitrina");
+    // la API ya NO define su propio inventario: consume la fuente única
+    const api = readFileSync(join(RAIZ, "src/app/api/traductor/route.ts"), "utf8");
+    afirmar(api.includes('from "@/lib/glosario-tactico"'), "la API no consume la fuente única");
+    afirmar(!api.includes('"alto el fuego": "ceasefire"'), "¡la API duplica el inventario!");
+    afirmar(api.includes("GLOSARIO_TACTICO"), "la vía 3 no usa el glosario de la fuente");
+    const pag = readFileSync(join(RAIZ, "src/app/traductor/page.tsx"), "utf8");
+    afirmar(pag.includes("paresGlosario"), "la vitrina no pinta el glosario");
+    afirmar(pag.includes("PARES_GLOSARIO.length"), "el conteo del glosario no es derivado");
+    // cero fechas escritas a mano en la página
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página del traductor escribe fechas a mano!");
+    // la puerta del cable en el estudio (client) — con el id real del pulso
+    const estudio = readFileSync(join(RAIZ, "src/app/traductor/traductor-estudio.tsx"), "utf8");
+    afirmar(estudio.includes("/noticia/${c.id}"), "los cables vivos siguen siendo datos muertos");
+    // conexión con el núcleo (patrón v230) + noscript + JSON-LD intacto
+    for (const trozo of ["EnlacesNucleo", "CONECTA CON EL NÚCLEO", "noscript", "/nucleo?tipo=noticia", "jsonLdSeguro"]) {
+      afirmar(pag.includes(trozo), `la página del traductor no declara «${trozo}»`);
+    }
+  });
+
+  await verificar("EL GLOSARIO viva: /traductor sirve el inventario completo y la conexión en el SSR (v236)", async () => {
+    const r = await pedir("/traductor");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("El glosario táctico"), "sin la sección del glosario");
+    afirmar(r.texto.includes("términos es"), "sin el conteo derivado de términos");
+    // pares REALES de la fuente única en el SSR (muestra del inventario)
+    for (const par of ["alto el fuego ⇄ ceasefire", "guerra ⇄ war", "armas nucleares ⇄ nuclear weapons"]) {
+      afirmar(r.texto.includes(par), `el par «${par}» no vive en el SSR`);
+    }
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin la conexión con el núcleo");
+    afirmar(r.texto.includes("EL ARCHIVO DE CABLES"), "sin la puerta del archivo");
+    afirmar(r.texto.includes("application/ld+json"), "sin JSON-LD honesto");
+  });
+
+  await verificar("EL GLOSARIO: las puertas del traductor responden 200 una a una (v236)", async () => {
+    for (const ruta of ["/nucleo?tipo=noticia", "/vertigo", "/nucleo", "/guerra-hoy", "/en-vivo"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta del traductor rota ${ruta} → ${r.status}`);
     }
   });
 

@@ -3,6 +3,9 @@ import { createZAI } from "@/lib/zai-server";
 // v215.0: el catálogo de idiomas vive en UNA sola fuente compartida con
 // /traductor y el chip de noticia; el traductor entra al muro de la casa.
 import { IDIOMAS_VANGUARD, NOMBRES_IDIOMA } from "@/lib/idiomas";
+// v236.0 EL GLOSARIO: el inventario de emergencia vive en SU fuente única
+// (src/lib/glosario-tactico.ts) — la misma que pinta la vitrina /traductor.
+import { GLOSARIO_TACTICO } from "@/lib/glosario-tactico";
 import { muro, claveCliente } from "@/lib/fortaleza";
 
 // v94.0 GOOGLES TOTAL — TRADUCTOR DE VANGUARD
@@ -42,23 +45,9 @@ function fnv(str: string): string {
 }
 
 // ---- glosario de emergencia (es ↔ en) — el traductor nunca calla ----
-const GLOSARIO: Record<string, string> = {
-  "alto el fuego": "ceasefire", "alto al fuego": "ceasefire", guerra: "war", paz: "peace",
-  frontera: "border", frente: "front", batalla: "battle", ejército: "army",
-  flota: "fleet", submarino: "submarine", portaviones: "aircraft carrier",
-  misil: "missile", misiles: "missiles", dron: "drone", drones: "drones",
-  sanción: "sanction", sanciones: "sanctions", embargo: "embargo",
-  refugiados: "refugees", refugiado: "refugee", evacuación: "evacuation",
-  negociación: "negotiation", tratado: "treaty", cumbre: "summit",
-  espionaje: "espionage", inteligencia: "intelligence", satélite: "satellite",
-  petróleo: "oil", trigo: "wheat", grano: "grain",
-  convoy: "convoy", ataque: "attack", defensa: "defense", aliado: "ally",
-  aliados: "allies", diplomacia: "diplomacy", embajada: "embassy",
-  estrecho: "strait", canal: "canal", puerto: "port",
-  seguridad: "security", amenaza: "threat", crisis: "crisis", conflicto: "conflict",
-  operador: "operator", comandante: "commandant", informes: "reports",
-  "armas nucleares": "nuclear weapons", nuclear: "nuclear",
-};
+// v236.0: el inventario vive ahora en src/lib/glosario-tactico.ts (fuente
+// única compartida con la vitrina); aquí solo se consume.
+const GLOSARIO = GLOSARIO_TACTICO;
 
 function viaGlosario(texto: string, de: string, a: string): string {
   const dir = de.startsWith("es") && a === "en" ? "es-en" : de === "en" && a.startsWith("es") ? "en-es" : null;

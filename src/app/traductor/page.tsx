@@ -3,6 +3,9 @@ import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
 import { IDIOMAS_VANGUARD } from "@/lib/idiomas";
+import { paresGlosario } from "@/lib/glosario-tactico";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { TraductorEstudio } from "./traductor-estudio";
 
 // v215.0 MODO TRADUCTOR — «un modo traductor en los idiomas de Vanguard».
@@ -10,6 +13,17 @@ import { TraductorEstudio } from "./traductor-estudio";
 // núcleo de /api/traductor (IA + glosario táctico) y baja los últimos
 // cables REALES de la sala EN VIVO para leerlos en tu lengua. El mundo
 // entero sin salir de Vanguard — ni una barrera de idioma.
+//
+// v236.0 EL GLOSARIO — el traductor muestra sus tuercas y abre sus
+// cables. ① EL GLOSARIO TÁCTICO A LA VISTA: el inventario de emergencia
+// (vía 3 de la API — si el núcleo IA se apaga, el traductor nunca
+// calla) vivía enterrado en route.ts; ahora es fuente única en
+// src/lib/glosario-tactico.ts y esta página lo renderiza COMPLETO con
+// su conteo derivado — cero términos escritos a mano (patrón v233: la
+// maquinaria editorial se muestra y se discute). ② LA PUERTA DEL
+// CABLE: cada cable vivo del estudio abre SU sala /noticia/[id] — el
+// id real viaja con el pulso (datos muertos → puertas). ③ CONECTA CON
+// EL NÚCLEO (patrón v230/v233/v234/v235) + noscript.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -28,6 +42,37 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+// ── v236.0 EL GLOSARIO TÁCTICO — la fuente única, mostrada entera ──
+const PARES_GLOSARIO = paresGlosario();
+
+// ── v236.0 CONECTA CON EL NÚCLEO (patrón v230) — solo rutas reales ──
+const ENLACES_NUCLEO: EnlaceContextual[] = [
+  {
+    etiqueta: "EL ARCHIVO DE CABLES ▸",
+    ruta: "/nucleo?tipo=noticia",
+    motivo: "la materia prima entera que el traductor trabaja",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "LA SALA DEL VÉRTIGO ▸",
+    ruta: "/vertigo",
+    motivo: "el flujo infinito de cables — la fuente que alimenta la traducción",
+    tipoRelacion: "fuente_de",
+  },
+  {
+    etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "busca el despacho original antes de traducirlo",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "PRIMERA PÁGINA ▸",
+    ruta: "/guerra-hoy",
+    motivo: "la guerra de hoy que da contexto a cada palabra",
+    tipoRelacion: "pertenece_a",
+  },
+];
 
 export default function TraductorPage() {
   const jsonLd = {
@@ -73,6 +118,38 @@ export default function TraductorPage() {
           <TraductorEstudio />
         </section>
 
+        {/* v236.0 EL GLOSARIO TÁCTICO — la maquinaria de emergencia a la vista */}
+        <section
+          aria-label="El glosario táctico"
+          className="max-w-4xl mx-auto px-4 sm:px-5 pb-10"
+        >
+          <div className="border border-sky-500/30 rounded-md bg-zinc-900/40 p-4">
+            <div className="flex items-baseline justify-between gap-2 flex-wrap">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-sky-300">
+                El glosario táctico · lo que Vanguard nunca traduce mal
+              </p>
+              <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+                {PARES_GLOSARIO.length} términos es ⇄ en
+              </span>
+            </div>
+            <p className="mt-2 text-[13px] text-muted-foreground leading-relaxed">
+              Si el núcleo de IA alguna vez queda sin conexión, el traductor no
+              se queda mudo: sustituye este inventario geopolítico local y lo
+              declara con su nota. No es un secreto — es el plan B, a la vista.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {PARES_GLOSARIO.map(({ es, en }) => (
+                <span
+                  key={es}
+                  className="font-mono text-[10px] rounded border border-zinc-700 bg-zinc-950/70 px-2 py-1 text-zinc-300"
+                >
+                  {`${es} ⇄ ${en}`}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="max-w-4xl mx-auto px-4 sm:px-5 pb-14 grid gap-3 sm:grid-cols-2">
           <Link
             href="/en-vivo"
@@ -103,6 +180,35 @@ export default function TraductorPage() {
             </p>
           </Link>
         </section>
+
+        {/* v236.0 CONECTA CON EL NÚCLEO (patrón v230) */}
+        <section className="max-w-4xl mx-auto px-4 sm:px-5 pb-14">
+          <EnlacesNucleo enlaces={ENLACES_NUCLEO} titulo="CONECTA CON EL NÚCLEO" />
+        </section>
+
+        {/* v236.0 noscript — las puertas esenciales sin JS */}
+        <noscript>
+          <div className="border-t border-zinc-800 bg-zinc-900/80 px-5 py-8 text-center">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-sky-300">
+              ◉ VANGUARD · MODO TRADUCTOR
+            </p>
+            <p className="mt-2 text-sm text-zinc-400 max-w-md mx-auto">
+              El estudio de traducción necesita JavaScript. Las puertas de la
+              casa siguen abiertas:
+            </p>
+            <p className="mt-3 flex flex-wrap justify-center gap-3 text-sm">
+              <Link href="/en-vivo" className="text-sky-300 underline">
+                LA SALA EN VIVO
+              </Link>
+              <Link href="/guerra-hoy" className="text-sky-300 underline">
+                PRIMERA PÁGINA
+              </Link>
+              <Link href="/nucleo" className="text-sky-300 underline">
+                LA BÚSQUEDA
+              </Link>
+            </p>
+          </div>
+        </noscript>
       </main>
     </>
   );

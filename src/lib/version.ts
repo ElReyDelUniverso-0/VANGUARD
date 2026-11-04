@@ -1892,6 +1892,34 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v235.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v234.0 LA ONDA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v235.0";
-export const APP_CODENAME = "EL BOTÍN";
+// v236.0: EL GLOSARIO — el traductor muestra sus tuercas y abre sus
+//     cables (/traductor, tercer módulo de la cola; el estudio v215 y la
+//     API de traducción quedan INTACTOS en comportamiento — todo aditivo):
+// (1) EL GLOSARIO TÁCTICO A LA VISTA — el inventario de emergencia (vía 3
+//     de la API: si el núcleo IA se apaga, el traductor nunca calla) vivía
+//     enterrado en route.ts; ahora es FUENTE ÚNICA en
+//     src/lib/glosario-tactico.ts (GLOSARIO_TACTICO + paresGlosario()), la
+//     API lo consume sin cambiar su comportamiento y la página /traductor
+//     lo renderiza COMPLETO con su conteo derivado — cero términos ni
+//     cifras escritas a mano (patrón v233: la maquinaria editorial se
+//     muestra y se discute).
+// (2) LA PUERTA DEL CABLE — los cables vivos del estudio eran datos
+//     muertos (título sin enlace): ahora cada uno abre SU sala
+//     /noticia/[id]; el id real viaja con /api/pulso y la sala EN VIVO
+//     solo sirve cables con origen real (externalId curated-* jamás
+//     pasan) — la puerta jamás 404 por construcción.
+// (3) CONECTA CON EL NÚCLEO (patrón v230) — EnlacesNucleo con las 4
+//     puertas reales del traductor (EL ARCHIVO DE CABLES, LA SALA DEL
+//     VÉRTIGO, LA BÚSQUEDA, PRIMERA PÁGINA) + noscript con las puertas
+//     esenciales; el JSON-LD WebApplication v215 queda intacto.
+// (4) PRUEBAS +3 (88/88): estática (fuente única consumida por la API y
+//     la vitrina, conteo derivado — regex anti-cifras a mano, puerta
+//     /noticia/${c.id}, CONECTA+noscript); viva /traductor (glosario
+//     completo en el SSR con pares reales, conexión, JSON-LD); viva las
+//     puertas 200 una a una. Salud v235→v236.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v236.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v235.0 EL BOTÍN y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v236.0";
+export const APP_CODENAME = "EL GLOSARIO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

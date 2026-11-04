@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v236.0",
+    nombre: "EL GLOSARIO — el traductor muestra sus tuercas y abre sus cables (/traductor)",
+    hitos: [
+      "EL GLOSARIO TÁCTICO A LA VISTA — el inventario de emergencia de la API (si el núcleo IA se apaga, el traductor nunca calla) vivía enterrado en route.ts: ahora es fuente única en src/lib/glosario-tactico.ts, la API lo consume sin cambiar su comportamiento y la página lo renderiza COMPLETO con conteo derivado (patrón v233: la maquinaria editorial se muestra y se discute)",
+      "LA PUERTA DEL CABLE — los cables vivos del estudio eran datos muertos: cada título abre ahora SU sala /noticia/[id]; el id real viaja con /api/pulso y la sala EN VIVO solo sirve cables con origen real — la puerta jamás 404 por construcción",
+      "CONECTA CON EL NÚCLEO (patrón v230) — EnlacesNucleo con las 4 puertas reales del traductor (archivo, vértigo, búsqueda, primera página) + noscript; el JSON-LD WebApplication y el estudio v215 quedan intactos",
+      "QA v236: tsc 0, eslint 0, build EXIT 0, health v236.0 db up, pruebas 88/88 (+3 EL GLOSARIO), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "ia",
+  },
+  {
     version: "v235.0",
     nombre: "EL BOTÍN — la vitrina cuenta lo que vale la caza y muestra el camino (/objetivos)",
     hitos: [

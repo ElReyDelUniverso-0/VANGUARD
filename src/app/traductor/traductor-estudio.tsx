@@ -6,9 +6,14 @@
 // (POST /api/traductor — IA con glosario táctico de emergencia) y
 // baja los últimos cables REALES de /api/pulso para traducirlos al
 // vuelo: «las noticias en vivo, en tu idioma». 8 idiomas, cero excusas.
+// v236.0 LA PUERTA DEL CABLE: cada cable vivo abre SU sala
+// /noticia/[id] — el id real viaja con el pulso (la sala EN VIVO solo
+// sirve cables con origen real, externalId curated-* jamás pasan), así
+// que la puerta jamás 404 por construcción.
 // ════════════════════════════════════════════════════════════════
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { IDIOMAS_VANGUARD, nombreIdiomaMayus } from "@/lib/idiomas";
 
 interface RespTraduccion {
@@ -226,7 +231,13 @@ export function TraductorEstudio() {
             const tr = traducciones[c.id];
             return (
               <div key={c.id} className="px-3.5 py-3">
-                <p className="text-[13px] leading-snug text-zinc-200">{c.title}</p>
+                {/* v236.0: el título deja de ser dato muerto — abre SU sala */}
+                <Link
+                  href={`/noticia/${c.id}`}
+                  className="text-[13px] leading-snug text-zinc-200 hover:text-sky-200 transition-colors"
+                >
+                  {c.title}
+                </Link>
                 <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-zinc-500">
                   {c.source}
                 </p>
