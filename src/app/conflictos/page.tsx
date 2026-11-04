@@ -13,6 +13,14 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // (/conflicto/[tag], v206) y el mapa (/mundo, v215). La puerta solo se
 // abre donde existe: teatros del mapa con cables reales en la BD — los
 // demás se declaran honestos (nunca puertas muertas, ley v206).
+//
+// v285.0 EL TABLERO EN EL GLOBO — LA SEGUNDA CAPA (cola de la v284): la
+// coordenada real de cada dossier se compone en la ficha («48.5°, 37.5°»,
+// desde los lat/lng de la fuente) y cada región CON PULSO abre la puerta
+// al globo («Encenderla en el globo ▸» → /mundo?teatro=<id> — el patrón
+// ?guerra= de la v278 heredado de la ?teatro= de la v264): el globo la
+// enciende porque el pulso que la puerta pide es el mismo que el tablero
+// ya midió — cero consultas nuevas, cero puertas muertas.
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
@@ -110,13 +118,21 @@ export default async function ConflictosPage() {
                   aria-label={c.name}
                 >
                   <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                    {c.level} · intensidad {c.intensity}/100
+                    {c.level} · intensidad {c.intensity}/100 · {c.lat.toFixed(1)}°, {c.lng.toFixed(1)}°
                   </p>
                   <h2 className="mt-1 flex items-center gap-2 text-base font-semibold text-zinc-100">
                     <FlagBadge code={c.flag} />
                     {c.name}
                   </h2>
                   <p className="mt-2 flex-1 text-xs leading-relaxed text-zinc-400">{c.summary}</p>
+                  {cables > 0 && (
+                    <Link
+                      href={`/mundo?teatro=${c.id}`}
+                      className="mt-2 font-mono text-[11px] font-bold uppercase tracking-widest text-zinc-400 hover:text-amber-400 hover:underline"
+                    >
+                      Encenderla en el globo ▸
+                    </Link>
+                  )}
                   {sala ? (
                     <Link
                       href={`/conflicto/${c.id}`}
@@ -144,7 +160,9 @@ export default async function ConflictosPage() {
             Los dossiers viajan verbatim de la fuente (game-data.ts), no de esta
             sala — y las puertas solo se abren donde el mapa ya tiene sala: el
             pulso lo escribe el archivo, nunca esta página. Las salas de teatro
-            viven en /conflicto/[tag]; el planeta, en /mundo.
+            viven en /conflicto/[tag]; y cada región con pulso enciende el
+            planeta con la puerta ?teatro= del globo (la misma que la v264
+            abrió para las guerras de hoy y la v278 para la memoria).
           </p>
           <noscript>
             <p className="mt-2 font-mono text-[11px] uppercase tracking-wider text-zinc-500">

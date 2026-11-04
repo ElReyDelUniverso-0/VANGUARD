@@ -3396,6 +3396,37 @@
 //     cables del archivo» y el sitemap vivo anunciando la sala) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v283.0 LA ARMERÍA DEL ARCHIVO y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v284.0";
-export const APP_CODENAME = "EL TABLERO DE LOS CONFLICTOS";
+// v285.0 EL TABLERO EN EL GLOBO — la segunda capa del tablero (la cola
+//         de la v284 se paga): la coordenada real de cada dossier se
+//         compone en la ficha («48.5°, 37.5°», desde los lat/lng de la
+//         fuente — las 33 regiones la traen) y cada región CON PULSO
+//         abre la puerta al globo («Encenderla en el globo ▸» →
+//         /mundo?teatro=<id>): el patrón ?guerra= de la v278 heredado
+//         de la ?teatro= de la v264, ahora para las 9 regiones vivas
+//         del tablero (ukraine, gaza, hormuz, taiwan, korea, redsea,
+//         sahel, sudan, lebanon — el mismo pulso que la puerta pide es
+//         el que el tablero ya midió: cero consultas nuevas, cero
+//         puertas muertas).
+// (1) LA COORDINADA SE COMPONE, NO SE ESCRIBE — toFixed(1) sobre los
+//     números reales de la fuente (guardia v234: la cifra viaja como
+//     dato; la trampa v258 vigilada: los dos números son nodos
+//     distintos y el aserto los pela o los busca por valor).
+// (2) LA PUERTA HEREDA EL LINAJE — v264 abrió ?teatro= para las
+//     guerras de hoy, v278 abrió ?guerra= para la memoria y ahora el
+//     tablero la reutiliza para sus regiones vivas; la puerta vive
+//     junto a la de la sala (el globo y el archivo son dos destinos,
+//     no uno). El ciber quedó MEDIDO Y DIFERIDO esta ronda: su fuente
+//     se declara ficticia («Todo ficticio y propio del mundo Vanguard»,
+//     v90) y las salas server de la casa no indexan ficción como hecho
+//     — la sala nunca miente.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /conflictos en pie) ·
+//     health v285.0 db up · pruebas 196/196 (+2 EL TABLERO EN EL
+//     GLOBO: estática — la puerta condicionada al pulso, el linaje
+//     declarado, la coordenada compuesta y la guardia v234; viva — el
+//     SSR sirve las 9 puertas al globo, la puerta de Ucrania y su
+//     coordenada «48.5°, 37.5°», y las anclas v284 en pie) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v284.0 EL TABLERO DE LOS CONFLICTOS y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v285.0";
+export const APP_CODENAME = "EL TABLERO EN EL GLOBO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

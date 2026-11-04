@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v285.0",
+    nombre: "EL TABLERO EN EL GLOBO — la segunda capa del tablero (la cola de la v284 se paga): la coordenada real de cada dossier se compone en la ficha desde los lat/lng de la fuente y cada región CON PULSO abre la puerta al globo («Encenderla en el globo ▸» → /mundo?teatro=<id> — el patrón ?guerra= de la v278 heredado de la ?teatro= de la v264); el ciber quedó medido y diferido: su fuente se declara ficticia (v90) y las salas server no indexan ficción como hecho",
+    hitos: [
+      "LA COORDINADA SE COMPONE, NO SE ESCRIBE — toFixed(1) sobre los números reales de la fuente (las 33 regiones traen lat/lng); «48.5°, 37.5°» para Ucrania, compuesto, no escrito (guardia v234)",
+      "LA PUERTA HEREDA EL LINAJE — v264 abrió ?teatro= para las guerras de hoy, v278 abrió ?guerra= para la memoria y el tablero la reutiliza para sus 9 regiones vivas; la puerta vive junto a la de la sala (el globo y el archivo son dos destinos, no uno); cero consultas nuevas: el pulso que la puerta pide es el que el tablero ya midió",
+      "EL CIBER, MEDIDO Y DIFERIDO — su fuente se declara ficticia («Todo ficticio y propio del mundo Vanguard», v90): las salas server de la casa no indexan ficción como hecho — la sala nunca miente; queda en la cola con la declaración por delante",
+      "QA v285: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /conflictos en pie), health v285.0 db up, pruebas 196/196 (+2: estática — la puerta condicionada al pulso, el linaje declarado, la coordenada compuesta, guardia v234; viva — las 9 puertas al globo en el SSR, la puerta de Ucrania con su coordenada, anclas v284 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v284.0",
     nombre: "EL TABLERO DE LOS CONFLICTOS — la cabeza de la cola de la v283 aterriza: CONFLICTS (33 regiones con dossier real: nivel, intensidad, resumen, lat/lng, coste humano) sube al server como /conflictos, el índice que conecta el catálogo de la casa con las salas de teatro vivas y el mapa; la puerta solo se abre donde existe (teatro del mapa con cables reales) — nunca puertas muertas",
     hitos: [

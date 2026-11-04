@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v284.0", async () => {
+  await verificar("servidor vivo y en v285.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v284"), `versión ${r.json?.version} ≠ v284`);
+    afirmar(String(r.json?.version).startsWith("v285"), `versión ${r.json?.version} ≠ v285`);
   });
 
   // censo por API
@@ -2112,6 +2112,50 @@ async function parteB() {
     afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
     afirmar(r.texto.includes('href="/historia"'), "la puerta al archivo no viaja");
     afirmar(r.texto.includes("La sala funciona sin JavaScript"), "el noscript compuesto no viaja");
+  });
+
+  // ── v285.0 EL TABLERO EN EL GLOBO: la segunda capa del tablero — coordenadas compuestas y puerta ?teatro= por región viva (/conflictos) ──
+  // La cola de la v284 se paga: la coordenada real se compone desde la
+  // fuente y cada región con pulso abre el globo (patrón v278 ← v264).
+  await verificar("EL TABLERO EN EL GLOBO estática: la puerta heredada y la coordenada compuesta (v285)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/conflictos/page.tsx"), "utf8");
+    // la puerta al globo: condicionada al pulso real (cero puertas muertas)
+    afirmar(sala.includes("href={`/mundo?teatro=${c.id}`}"), "la puerta al globo no apunta a /mundo?teatro=");
+    afirmar(sala.includes("{cables > 0 && ("), "la puerta al globo no exige pulso vivo (sería una puerta muerta)");
+    afirmar(sala.includes("Encenderla en el globo ▸"), "la etiqueta de la puerta al globo no es la del linaje (v278)");
+    // la coordenada compuesta desde la fuente (guardia v234: nada escrito)
+    afirmar(sala.includes("{c.lat.toFixed(1)}°, {c.lng.toFixed(1)}°"), "la coordenada no se compone desde los números reales");
+    afirmar(sala.includes("· {c.lat.toFixed(1)}°, {c.lng.toFixed(1)}°"), "la coordenada no viaja en la línea de la ficha");
+    // el linaje declarado en la sala
+    afirmar(sala.includes("la puerta ?teatro= del globo"), "el linaje de la puerta no se declara en la sala");
+    afirmar(sala.includes("la v278 para la memoria"), "el linaje de la memoria no se declara");
+    // guardia v234
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/conflictos escribe fechas a mano en la ronda v285!");
+    afirmar(!/const linea\w+ = [^;]*\b19\d\d\b/.test(sala), "¡el tablero escribe años a mano en su línea (v285)!");
+  });
+
+  await verificar("EL TABLERO EN EL GLOBO viva: las 9 puertas al globo y la coordenada de Ucrania en el SSR (v285)", async () => {
+    const r = await pedir("/conflictos");
+    afirmar(r.status === 200, `/conflictos no 200 en v285 (${r.status})`);
+    // las 9 regiones vivas abren el globo (el pulso que la puerta pide
+    // es el que el tablero ya midió — la BD fría es determinista)
+    afirmar(r.texto.includes("/mundo?teatro=ukraine"), "la puerta al globo de Ucrania no viaja");
+    afirmar(r.texto.includes("/mundo?teatro=gaza"), "la puerta al globo de Gaza no viaja");
+    afirmar(r.texto.includes("/mundo?teatro=lebanon"), "la puerta al globo del Líbano no viaja");
+    // el conteo crudo cuenta DOS veces (markup + payload RSC del HTML):
+    // el aserto se hace sobre los ids ÚNICOS de las puertas — las 9 exactas
+    const idsPuerta = new Set([...r.texto.matchAll(/\/mundo\?teatro=([a-z_]+)/g)].map((m) => m[1]));
+    afirmar(idsPuerta.size === 9, `las puertas al globo no son las 9 regiones vivas (${idsPuerta.size}/9)`);
+    for (const id of ["ukraine", "gaza", "hormuz", "taiwan", "korea", "redsea", "sahel", "sudan", "lebanon"]) {
+      afirmar(idsPuerta.has(id), `falta la puerta al globo de ${id}`);
+    }
+    // la coordenada compuesta de Ucrania (48.5, 37.5 — nodos distintos,
+    // trampa v258: se pelan los comentarios RSC antes del aserto)
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("48.5°, 37.5°"), "la coordenada de Ucrania no viaja compuesta");
+    afirmar(limpio.includes("CRITICO ×9"), "el chip del censo cayó (v284)");
+    afirmar(limpio.includes("173 cables del archivo"), "la puerta a la sala cayó (v284)");
+    afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
   });
 
   // ── v284.0 EL TABLERO DE LOS CONFLICTOS: las 33 regiones de la fuente ganan su índice server (/conflictos) ──
