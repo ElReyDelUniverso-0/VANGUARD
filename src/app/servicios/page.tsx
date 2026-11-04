@@ -8,7 +8,7 @@ import {
   COLECCION,
   PULSO_KEYWORDS,
 } from "@/lib/agencias-data";
-import { SERVICIOS, CATEGORIA_RED_META, BLOQUES, PULSO_KEYWORDS_MUNDO } from "@/lib/agencias-mundo-data";
+import { SERVICIOS, CATEGORIA_RED_META, BLOQUES, REDES, TERMINAL_PUENTE, COLECCION_MUNDO, PULSO_KEYWORDS_MUNDO } from "@/lib/agencias-mundo-data";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -70,6 +70,20 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 //    servicios citados por 5 titulares (ASIS 1 · CNI 4) — el pulso es
 //    el que el archivo dice, no el que la casa querría.
 //    DE LA FUENTE, solo agencias con menciones.
+//
+// v291.0 EL PACTO QUE UNE LAS DOS SALAS — LA QUINTA CAPA de la sala
+//    (los TRES exports hermanos que quedaban en agencias-mundo-data
+//    suben al server, el patrón de la v282): COLECCION_MUNDO (las
+//    cifras de la red, ya derivadas en la fuente con Set + filter +
+//    reduce), REDES (los cinco arcos del pacto UKUSA que nacen del
+//    hub de Londres, verbatim de la fuente) y TERMINAL_PUENTE (la
+//    coordenada de Washington, D.C., la terminal del puente atlántico
+//    con la sala hermana). Nada a mano: las cifras se SIRVEN de
+//    COLECCION_MUNDO (herencia v282), las siglas de los arcos se
+//    derivan de SERVICIOS por id, la coordenada se COMPONE desde
+//    TERMINAL_PUENTE (el camino del globo, v285) y la etiqueta del
+//    pacto viaja VERBATIM de la fuente (directiva v266). Cero años a
+//    mano — la guardia del arco v282/v288 crece a (19|20)\d\d.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -141,6 +155,25 @@ const leyendaDe = (cat: string): string =>
 const lineaSala = `La sala de los servicios — ${COMUNIDAD.length + RED.length} expedientes reales de inteligencia: los ${COMUNIDAD.length} ojos de la Comunidad de EE. UU. y los ${RED.length} servicios del resto del planeta, de ${FUNDACION_MIN} a ${FUNDACION_MAX}`;
 const lineaComunidad = `La comunidad — ${COMUNIDAD.length} agencias oficiales bajo la supervisión de la ODNI en ${censoComunidad.length} categorías: cada expediente cuenta su origen, su oficio y su territorio`;
 const lineaRed = `La red mundial — ${RED.length} servicios extranjeros de ${NACIONES_RED} naciones en ${censoRed.length} bloques: cada uno con su bandera, su lema y su expediente`;
+
+// ── la quinta capa (v291): el pacto y las cifras de la red — TODO
+// desde la fuente, nada a mano (las cifras ya viven derivadas en
+// COLECCION_MUNDO y los arcos en REDES, verbatim) ──
+const lineaCifrasRed = `La red mundial en cifras — ${COLECCION_MUNDO.total} expedientes de ${COLECCION_MUNDO.naciones} naciones, ${COLECCION_MUNDO.enAlianza} en la alianza de los Cinco Ojos; el más viejo: ${COLECCION_MUNDO.masAntiguo.sigla} (${COLECCION_MUNDO.masAntiguo.fundacion}) — el más joven: ${COLECCION_MUNDO.masJoven.sigla} (${COLECCION_MUNDO.masJoven.fundacion})`;
+
+// los arcos del pacto: la sigla se deriva de SERVICIOS por id (nada
+// escrito a mano); el destino "washington" es la terminal del puente
+// (TERMINAL_PUENTE), la puerta con la sala hermana de la Comunidad
+const siglaDe = (id: string): string => RED.find((s) => s.id === id)?.sigla ?? id;
+const arcosPacto = REDES.map((r) => ({
+  de: siglaDe(r.de),
+  a: r.a === "washington" ? null : siglaDe(r.a),
+  etiqueta: r.etiqueta,
+  puente: r.puente === true,
+}));
+const nPuentes = arcosPacto.filter((r) => r.puente).length;
+const hubPacto = arcosPacto[0]?.de ?? "";
+const lineaPacto = `El pacto que une las dos salas — ${REDES.length} arcos nacen del hub de Londres (${hubPacto}) y ${nPuentes} cruza el Atlántico hasta Washington (${TERMINAL_PUENTE.lat}°, ${TERMINAL_PUENTE.lng}°), la terminal del puente con la Comunidad`;
 
 // ── la segunda capa (v282): sentidos, manos y cifras — TODO desde la
 // fuente, nada a mano (las cifras ya viven derivadas en COLECCION) ──
@@ -361,6 +394,8 @@ export default async function ServiciosPage() {
             <span className="text-zinc-600">{` · ${RED.length} servicios de ${NACIONES_RED} naciones`}</span>
           </h2>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaRed}.`}</p>
+          {/* la red mundial en cifras (v291) — COLECCION_MUNDO ya vive derivada en la fuente */}
+          <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">{`${lineaCifrasRed}.`}</p>
           {censoRed.map((c) => {
             const items = RED.filter((s) => s.categoria === c.cat);
             if (items.length === 0) return null;
@@ -415,6 +450,34 @@ export default async function ServiciosPage() {
               </div>
             );
           })}
+        </section>
+
+        {/* v291.0 — EL PACTO QUE UNE LAS DOS SALAS: los arcos de la
+            fuente verbatim (directiva v266); las siglas derivadas de
+            SERVICIOS por id; la terminal compuesta desde
+            TERMINAL_PUENTE (el camino del globo, v285). */}
+        <section className="mt-12" aria-label={lineaPacto}>
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
+            <span className="text-amber">EL PACTO QUE UNE LAS DOS SALAS</span>
+            <span className="text-zinc-600">{` · ${REDES.length} arcos del pacto`}</span>
+          </h2>
+          <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaPacto}.`}</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {arcosPacto.map((r, i) => (
+              <article
+                key={`arco-${i}-${r.de}-${r.a ?? "washington"}`}
+                className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60"
+              >
+                <p className="font-mono text-[10px] uppercase tracking-widest text-amber">{r.etiqueta}</p>
+                <p className="mt-1 text-xs text-zinc-300">
+                  {`${r.de} ▸ ${r.a ?? `Washington, D.C. (${TERMINAL_PUENTE.lat}°, ${TERMINAL_PUENTE.lng}°)`}`}
+                </p>
+                {r.puente && (
+                  <p className="mt-1 font-mono text-[10px] text-cyan-hud">el puente atlántico — la terminal vive en LA COMUNIDAD, la sala hermana</p>
+                )}
+              </article>
+            ))}
+          </div>
         </section>
 
         {/* ── LOS SENTIDOS DEL OFICIO (v282) — el censo conceptual de la fuente ── */}
@@ -544,7 +607,7 @@ export default async function ServiciosPage() {
 
         <noscript>
           <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-            {`La sala funciona sin JavaScript: los ${COMUNIDAD.length + RED.length} expedientes —los ${COMUNIDAD.length} de la Comunidad de EE. UU. y los ${RED.length} de la red mundial, de ${NACIONES_RED} naciones— están arriba, servidos en el HTML, con su fundación, su sede, su lema, su misión y sus fichas; los ${SENTIDOS.length} sentidos del oficio y la sala anexa (${ALIADAS.map((a) => a.sigla).join(" · ")}) también viajan en el HTML${pulso.length > 0 ? `, con el pulso del archivo por agencia (${pulso.length} de ${COMUNIDAD.length} agencias citadas)` : ""}. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
+            {`La sala funciona sin JavaScript: los ${COMUNIDAD.length + RED.length} expedientes —los ${COMUNIDAD.length} de la Comunidad de EE. UU. y los ${RED.length} de la red mundial, de ${NACIONES_RED} naciones— están arriba, servidos en el HTML, con su fundación, su sede, su lema, su misión y sus fichas; los ${SENTIDOS.length} sentidos del oficio y la sala anexa (${ALIADAS.map((a) => a.sigla).join(" · ")}) también viajan en el HTML${pulso.length > 0 ? `, con el pulso del archivo por agencia (${pulso.length} de ${COMUNIDAD.length} agencias citadas)` : ""}, con las cifras de la red (${COLECCION_MUNDO.total} expedientes de ${COLECCION_MUNDO.naciones} naciones) y los ${REDES.length} arcos del pacto UKUSA. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
           </p>
         </noscript>
       </div>

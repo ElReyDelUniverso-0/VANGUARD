@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v291.0",
+    nombre: "EL PACTO QUE UNE LAS DOS SALAS — la quinta capa de /servicios (los TRES exports hermanos que quedaban en agencias-mundo-data suben al server, el patrón de la v282): COLECCION_MUNDO (las cifras de la red servidas, nada a mano), REDES (los cinco arcos del pacto UKUSA desde el hub de Londres, verbatim) y TERMINAL_PUENTE (la coordenada de Washington, D.C., compuesta — el camino del globo, v285); la sala no escribe un número ni un año",
+    hitos: [
+      "LAS CIFRAS SE SIRVEN — «La red mundial en cifras — 18 expedientes de 12 naciones, 6 en la alianza de los Cinco Ojos; el más viejo: MI6 (1909) — el más joven: CNI (2002)»: todo de COLECCION_MUNDO, ya derivada en la fuente (herencia v282)",
+      "LOS ARCOS VERBATIM — cinco tarjetas con SU etiqueta de la fuente (UKUSA 1946 ×4 + EL PACTO QUE UNE LAS DOS SALAS); las siglas derivadas de SERVICIOS por id, el destino «washington» compuesto desde TERMINAL_PUENTE (38.8977°, -77.0365°) — el puente atlántico declarado como la puerta con la sala hermana",
+      "LA GUARDIA DEL ARCO CRECE — ninguna linea* de la sala puede contener un año literal (19|20)\\d\\d: 1909, 1946 y 2002 viven en la fuente, no en la sala (v282→v288→v291)",
+      "QA v291: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /servicios en pie), health v291.0 db up, pruebas 208/208 (+2), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v290.0",
     nombre: "EL PULSO POR PALABRAS — la tercera capa del tablero (la cola de la v289 se paga y la clasificación pendiente se resuelve): las 6 GUERRAS de la fuente (v129, dossiers reales de las guerras del planeta) cruzan el archivo con SUS keywords y el algoritmo del canon; el pulso por conflictTag cuenta los etiquetados y este cuenta los que CITAN a cada guerra — incluidos los que nadie etiquetó; 6 de 6 guerras citadas por 398 titulares medidos contra la BD fría",
     hitos: [

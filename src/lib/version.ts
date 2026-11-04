@@ -3476,6 +3476,33 @@
 //     9 hechos, un solo escritor).
 // Herencia v287.0 EL PULSO DEL ARCHIVO POR ROSTRO y toda la crónica.
 // Guards v167 intactos.
+// v291.0 EL PACTO QUE UNE LAS DOS SALAS — la quinta capa de
+//         /servicios (los TRES exports hermanos que quedaban en
+//         agencias-mundo-data suben al server, el patrón de la v282):
+//         COLECCION_MUNDO (las cifras de la red: 18 expedientes · 12
+//         naciones · 6 en los Cinco Ojos · MI6 1909 → CNI 2002),
+//         REDES (los cinco arcos del pacto UKUSA que nacen del hub de
+//         Londres, verbatim de la fuente) y TERMINAL_PUENTE (la
+//         coordenada de Washington, D.C. — 38.8977, -77.0365 — la
+//         terminal del puente atlántico con la sala hermana).
+// (1) NADA A MANO — las cifras se SIRVEN de COLECCION_MUNDO (la
+//     herencia v282), las siglas de los arcos se derivan de
+//     SERVICIOS por id, la coordenada se COMPONE desde
+//     TERMINAL_PUENTE (el camino del globo, v285) y la etiqueta del
+//     pacto viaja VERBATIM de la fuente (directiva v266).
+// (2) LA LÍNEA DEL PACTO SE COMPONE COMPLETA EN JS (lección v256):
+//     «El pacto que une las dos salas — 5 arcos nacen del hub de
+//     Londres (MI6) y 1 cruza el Atlántico hasta Washington
+//     (38.8977°, -77.0365°), la terminal del puente con la
+//     Comunidad»; el número de puentes sale del filter, el hub de la
+//     primera arista — si la fuente crece, la línea crece sola.
+// (3) LA GUARDIA DEL ARCO CRECE — ninguna linea* de la sala puede
+//     contener un año literal (19|20)\d\d: 1909, 1946 y 2002 viven
+//     en la fuente, no en la sala.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /servicios en pie) ·
+//     health v291.0 db up · pruebas 208/208 (+2) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v290.0 EL PULSO POR PALABRAS y toda la crónica. Guards v167 intactos.
 // v287.0 EL PULSO DEL ARCHIVO POR ROSTRO — la tercera capa de
 //         /rostros (la cola de la v286 se paga): los
 //         PULSO_KEYWORDS_ROSTROS de la fuente cruzan el archivo real
@@ -3579,6 +3606,6 @@
 //     119) y las anclas v284/v285 en pie) · BD intocada (1877 cables ·
 //     9 hechos, un solo escritor).
 // Herencia v289.0 EL PULSO DE LA RED MUNDIAL y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v290.0";
-export const APP_CODENAME = "EL PULSO POR PALABRAS";
+export const APP_VERSION = "v291.0";
+export const APP_CODENAME = "EL PACTO QUE UNE LAS DOS SALAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

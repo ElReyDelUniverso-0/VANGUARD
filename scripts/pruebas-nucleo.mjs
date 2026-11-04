@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v290.0", async () => {
+  await verificar("servidor vivo y en v291.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v290"), `versión ${r.json?.version} ≠ v290`);
+    afirmar(String(r.json?.version).startsWith("v291"), `versión ${r.json?.version} ≠ v291`);
   });
 
   // censo por API
@@ -2378,6 +2378,57 @@ async function parteB() {
     // las anclas v284/v285 en pie
     afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
+  });
+
+  // ── v291.0 EL PACTO QUE UNE LAS DOS SALAS: los tres exports hermanos restantes de agencias-mundo-data suben al server (/servicios, quinta capa) ──
+  // COLECCION_MUNDO (cifras servidas), REDES (arcos verbatim) y
+  // TERMINAL_PUENTE (coordenada compuesta — el camino del globo, v285).
+  // Medido con el motor real al abrir (tsx): 18 · 12 · 6 · MI6 1909 ·
+  // CNI 2002 · 5 arcos desde el hub mi6 · 1 puente.
+  await verificar("EL PACTO QUE UNE LAS DOS SALAS estática: los tres hermanos, las siglas derivadas y la guardia del arco crecida (v291)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/agencias-mundo-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
+    // los tres exports hermanos intactos en la fuente
+    afirmar(fuente.includes("export const REDES"), "la fuente de arcos no existe");
+    afirmar(fuente.includes("export const TERMINAL_PUENTE"), "la terminal del puente no existe");
+    afirmar(fuente.includes("export const COLECCION_MUNDO"), "las cifras de la red no existen");
+    // la sala consume los tres
+    afirmar(sala.includes("REDES, TERMINAL_PUENTE, COLECCION_MUNDO"), "los tres hermanos no viajan al server");
+    // las siglas derivadas de SERVICIOS por id (nada a mano)
+    afirmar(sala.includes("const siglaDe = (id: string): string => RED.find((s) => s.id === id)?.sigla ?? id"), "las siglas de los arcos no se derivan por id");
+    afirmar(sala.includes("const arcosPacto = REDES.map"), "los arcos no se derivan de la fuente");
+    afirmar(sala.includes('r.a === "washington" ? null : siglaDe(r.a)'), "la terminal del puente no se distingue del resto de arcos");
+    // las dos líneas compuestas COMPLETAS en JS (lección v256)
+    afirmar(sala.includes("const lineaPacto = `El pacto que une las dos salas — ${REDES.length} arcos nacen del hub de Londres (${hubPacto}) y ${nPuentes} cruza el Atlántico hasta Washington (${TERMINAL_PUENTE.lat}°, ${TERMINAL_PUENTE.lng}°), la terminal del puente con la Comunidad`"), "la línea del pacto no se compone COMPLETA en JS");
+    afirmar(sala.includes("const lineaCifrasRed = `La red mundial en cifras — ${COLECCION_MUNDO.total} expedientes de ${COLECCION_MUNDO.naciones} naciones, ${COLECCION_MUNDO.enAlianza} en la alianza"), "la línea de cifras no se sirve de COLECCION_MUNDO");
+    // la sección + la terminal compuesta (el camino del globo, v285)
+    afirmar(sala.includes("EL PACTO QUE UNE LAS DOS SALAS"), "la sección del pacto no viaja");
+    afirmar(sala.includes("TERMINAL_PUENTE.lat}°, ${TERMINAL_PUENTE.lng}°"), "la coordenada no se compone desde la fuente (v285)");
+    afirmar(sala.includes("el puente atlántico — la terminal vive en LA COMUNIDAD"), "el puente no se declara como la puerta con la sala hermana");
+    // el noscript crece compuesto
+    afirmar(sala.includes("y los ${REDES.length} arcos del pacto UKUSA"), "el noscript no creció con el pacto");
+    // guardias: fechas a mano y AÑOS en las líneas — la guardia del arco crece a (19|20)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/servicios escribe fechas a mano en la ronda v291!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año a mano en su línea (1909/1946/2002 viven en la fuente, v291)!");
+  });
+
+  await verificar("EL PACTO QUE UNE LAS DOS SALAS viva: la línea derivada, los arcos verbatim y las anclas v288/v289 (v291)", async () => {
+    const r = await pedir("/servicios");
+    afirmar(r.status === 200, `/servicios no 200 en v291 (${r.status})`);
+    // las dos líneas compuestas COMPLETAS (derivadas de la fuente real)
+    afirmar(r.texto.includes("El pacto que une las dos salas — 5 arcos nacen del hub de Londres (MI6) y 1 cruza el Atlántico hasta Washington (38.8977°, -77.0365°), la terminal del puente con la Comunidad"), "la línea del pacto no viaja (¿cambió la fuente?)");
+    afirmar(r.texto.includes("La red mundial en cifras — 18 expedientes de 12 naciones, 6 en la alianza de los Cinco Ojos; el más viejo: MI6 (1909) — el más joven: CNI (2002)"), "la línea de cifras no viaja (¿cambió la fuente?)");
+    // los arcos verbatim + la terminal compuesta (los comentarios RSC se pelan)
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("UKUSA 1946"), "la etiqueta del pacto no viaja verbatim (v266)");
+    afirmar(limpio.includes("MI6 ▸ GCHQ"), "el arco del hub no viaja con sus siglas derivadas");
+    afirmar(limpio.includes("Washington, D.C. (38.8977°, -77.0365°)"), "la terminal no viaja compuesta");
+    afirmar(limpio.includes("el puente atlántico — la terminal vive en LA COMUNIDAD"), "el puente atlántico no se declara");
+    // el noscript crecido
+    afirmar(limpio.includes("y los 5 arcos del pacto UKUSA"), "el noscript no creció con el pacto");
+    // las anclas v288/v289 en pie
+    afirmar(r.texto.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "el pulso por agencia cayó (v288)");
+    afirmar(r.texto.includes("El pulso de la red mundial — 2 de 18 servicios citados por 5 titulares del archivo"), "el pulso de la red cayó (v289)");
   });
 
   // ── v289.0 EL PULSO DE LA RED MUNDIAL: los keywords de los 18 servicios extranjeros cruzan el mismo archivo (/servicios) ──
