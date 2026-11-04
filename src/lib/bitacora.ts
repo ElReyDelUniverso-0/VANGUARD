@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v281.0",
+    nombre: "LA SALA DE LOS SERVICIOS — la expansión módulo a módulo abre una puerta nueva: /servicios, la sala server que sirve los DOS catálogos de inteligencia que solo vivían client-side (AGENCIAS v127 — los 18 ojos de la Comunidad de EE. UU. — y SERVICIOS v128 — los 18 servicios extranjeros), invisibles para el SSR y para Google",
+    hitos: [
+      "LOS 36 EXPEDIENTES EN SERVER — cada uno con SUS datos de la fuente (fundación, sede, personal, especialidad, dominio, lema, misión, fichas, linaje — verbatim, nada inventado); medido con el motor real al abrir (tsx): 18 + 18 = 36, arco de fundación 1882 (ONI) → 2020, 12 naciones en la red",
+      "LOS CENSOS DERIVADOS — comunidad en 6 categorías (1·1·4·5·4·3) y red en 5 bloques (6·4·3·3·2) con Set + filter en el ORDEN DE LA FUENTE, las leyendas de los bloques viajan desde BLOQUES (directiva v266); las líneas compuestas COMPLETAS en JS (lección v256)",
+      "LA PUERTA HONESTA — el salón interactivo (pulso, mapas, arcos) sigue en el aparato con la puerta declarada (patrón v275/v276); sitemap indexa la sala (patrón v274); nacida de la RESURRECCIÓN del sandbox (el canon sobrevivió porque estaba empujado)",
+      "QA v281: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /servicios en la tabla), health v281.0 db up, pruebas 188/188 (+2: estática — las dos fuentes, los censos derivados, las líneas compuestas, la placa derivada, la guardia v234; viva — el SSR sirve LA COMUNIDAD, LA RED MUNDIAL, MI6 y CIA, el censo derivado y las anclas en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v280.0",
     nombre: "EL CONTRARRELOJ DEL PESO — la otra mitad de la cola v272 aterriza: el quiz del peso gana el modo contrarreloj — 60 s contra el archivo (el interrogatorio contrarreloj del linaje, v61) sobre el POOL ACTIVO (sala general o frente); la cota de parejas crece 8 → 12 (más combustible sin consultas nuevas); el reloj vive FUERA de React (ley v176) y el récord del sprint entra en el botín con cerradura v132, JAMÁS la BD",
     hitos: [

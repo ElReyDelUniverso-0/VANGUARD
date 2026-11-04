@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v280.0", async () => {
+  await verificar("servidor vivo y en v281.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v280"), `versión ${r.json?.version} ≠ v280`);
+    afirmar(String(r.json?.version).startsWith("v281"), `versión ${r.json?.version} ≠ v281`);
   });
 
   // censo por API
@@ -2058,6 +2058,60 @@ async function parteB() {
     afirmar(/EL QUIZ POR TEATRO — \d+ sala[s]? del frente con par en la instantánea/.test(r.texto), "la línea del frente cayó (v279)");
     afirmar(r.texto.includes("¿Qué cable pesa más?"), "la pregunta del peso cayó (v272)");
     afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la sala del pulso cayó (v213)");
+  });
+
+  // ── v281.0 LA SALA DE LOS SERVICIOS: los 36 expedientes de inteligencia (/servicios) ──
+  // Las dos fuentes que solo vivían client-side (AGENCIAS v127 +
+  // SERVICIOS v128) suben a server. Medido con el motor real al abrir
+  // (tsx): 18 + 18 = 36, fundación 1882 → 2020, 12 naciones, censos
+  // 1·1·4·5·4·3 y 6·4·3·3·2 en el orden de la fuente.
+  await verificar("LA SALA DE LOS SERVICIOS estática: las dos fuentes, los censos derivados y las líneas compuestas (v281)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    // las DOS fuentes viajan (nada a mano)
+    afirmar(sala.includes('from "@/lib/agencias-data"'), "la sala no importa la fuente de la Comunidad (v127)");
+    afirmar(sala.includes('from "@/lib/agencias-mundo-data"'), "la sala no importa la fuente de la Red (v128)");
+    // los censos derivados con Set + filter en el orden de la fuente
+    afirmar(sala.includes("[...new Set(COMUNIDAD.map((a) => a.categoria))]"), "el censo de la comunidad no se deriva con Set");
+    afirmar(sala.includes("[...new Set(RED.map((s) => s.categoria))]"), "el censo de la red no se deriva con Set");
+    afirmar(sala.includes("COMUNIDAD.filter((a) => a.categoria === c).length"), "el censo de la comunidad no cuenta con filter");
+    afirmar(sala.includes("RED.filter((s) => s.categoria === c).length"), "el censo de la red no cuenta con filter");
+    // el arco de fundación derivado (guardia v234) y las naciones derivadas
+    afirmar(sala.includes("x.fundacion < min ? x.fundacion : min"), "el arco de fundación no se deriva con reduce");
+    afirmar(sala.includes("Infinity,"), "el mínimo del arco arranca en 0 — ningún año real bajaría de él (bug cazado en QA viva de la v281)");
+    afirmar(sala.includes("new Set(RED.map((s) => s.pais)).size"), "las naciones de la red no se derivan");
+    // las líneas compuestas COMPLETAS en JS (lección v256)
+    afirmar(sala.includes("const lineaSala = `La sala de los servicios — ${COMUNIDAD.length + RED.length}"), "la línea de la sala no se compone en JS");
+    afirmar(sala.includes("${FUNDACION_MIN} a ${FUNDACION_MAX}"), "el arco de la línea no viaja derivado");
+    // la placa y las leyendas viven en la fuente (directiva v266)
+    afirmar(sala.includes("String(n).padStart(2, \"0\")"), "la placa no se compone desde el num real");
+    afirmar(sala.includes("BLOQUES.find((b) => b.cat === cat)?.leyenda"), "las leyendas de los bloques no viajan desde la fuente");
+    // la puerta honesta al aparato (patrón v275/v276)
+    afirmar(sala.includes("vive en el aparato"), "la puerta honesta al aparato no está declarada");
+    // el sitemap indexa la sala (patrón v274)
+    afirmar(mapa.includes("${SITE_URL}/servicios"), "el sitemap no anuncia la sala");
+    // guardia v234
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala de los servicios escribe fechas a mano en la ronda v281!");
+  });
+
+  await verificar("LA SALA DE LOS SERVICIOS viva: el SSR sirve los 36 expedientes y los censos derivados (v281)", async () => {
+    const r = await pedir("/servicios");
+    afirmar(r.status === 200, `/servicios no 200 en v281 (${r.status})`);
+    afirmar(/La sala de los servicios — 36 expedientes reales de inteligencia/.test(r.texto), "la línea compuesta de la sala no viaja (o la fuente cambió)");
+    afirmar(/de 1882 a 2020/.test(r.texto), "el arco de fundación derivado no viaja");
+    afirmar(r.texto.includes("LA COMUNIDAD"), "la sección de la Comunidad no viaja");
+    afirmar(r.texto.includes("LA RED MUNDIAL"), "la sección de la Red no viaja");
+    // los expedientes reales de las fuentes, verbatim
+    afirmar(r.texto.includes("Secret Intelligence Service (SIS)"), "MI6 no viaja con su nombre de la fuente");
+    afirmar(r.texto.includes("Central Intelligence Agency"), "la CIA no viaja con su nombre de la fuente");
+    afirmar(r.texto.includes("Semper Occultus"), "el lema de MI6 no viaja verbatim");
+    // el censo derivado en los chips (orden de la fuente)
+    afirmar(r.texto.includes("LA ALIANZA ×6"), "el chip del censo de la alianza no viaja");
+    afirmar(r.texto.includes("SERVICIO ARMADO ×5"), "el chip del censo armado no viaja");
+    // las puertas y el vacío honesto
+    afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
+    afirmar(r.texto.includes('href="/historia"'), "la puerta al archivo no viaja");
+    afirmar(r.texto.includes("La sala funciona sin JavaScript"), "el noscript compuesto no viaja");
   });
 
   // ── v279.0 EL QUIZ DEL FRENTE: la segunda capa del quiz del peso — parejas por teatro (/en-vivo) ──

@@ -137,6 +137,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v281.0 LA SALA DE LOS SERVICIOS — los 36 expedientes reales de
+      // inteligencia de las fuentes (AGENCIAS v127 + SERVICIOS v128)
+      // servidos en server: la Comunidad de EE. UU. y la red del resto
+      // del planeta, indexables para las búsquedas de servicios
+      // (CIA, MI6, Mossad, FSB...)
+      url: `${SITE_URL}/servicios`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
       url: `${SITE_URL}/audios`,
       lastModified: new Date(),

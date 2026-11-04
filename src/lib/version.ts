@@ -3261,6 +3261,39 @@
 //     contra el archivo» y las anclas v272/v279/v213 en pie) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v279.0 EL QUIZ DEL FRENTE y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v280.0";
-export const APP_CODENAME = "EL CONTRARRELOJ DEL PESO";
+// v281.0 LA SALA DE LOS SERVICIOS — la expansión módulo a módulo abre
+// una puerta nueva: /servicios, la sala server que sirve los DOS
+// catálogos de inteligencia de la casa que solo vivían en paneles
+// client-side del aparato (AGENCIAS v127 — los 18 ojos de la Comunidad
+// de EE. UU. bajo la ODNI — y SERVICIOS v128 — los 18 servicios
+// extranjeros, expediente a expediente, nación por nación), invisibles
+// para el SSR y para Google. Medido con el motor real al abrir (tsx):
+// 18 + 18 = 36 expedientes, comunidad en 6 categorías (CORONA 1 ·
+// EXTERIOR 1 · PENTÁGONO 4 · ARMADO 5 · ESCUDO 4 · MINISTERIO 3), red
+// en 5 bloques (ALIANZA 6 · BLOQUE 4 · LEVANTE 3 · CONTINENTAL 3 ·
+// SUBCONTINENTE 2), arco de fundación 1882 (ONI) → 2020, 12 naciones
+// en la red. Cada expediente viaja con SUS datos de la fuente (lema,
+// misión, fichas, linaje — verbatim); los censos por categoría, el
+// arco de fundación y las naciones derivados con Set + filter +
+// reduce (cero cifras a mano, herencia v235/v274); las líneas
+// compuestas COMPLETAS en JS (lección v256); las leyendas de los
+// bloques viajan desde la fuente (directiva v266); el salón
+// interactivo sigue en el aparato con la puerta honesta declarada
+// (patrón v275/v276); sitemap indexa la sala (patrón v274). Nacida de
+// la RESURRECCIÓN del sandbox: el volumen volvió a un snapshot v173
+// y el canon sobrevivió porque estaba empujado (la lección de siempre:
+// el canon que no se empuja no existe) — main restaurada a origin/main
+// (v280.0, 5810d5b) y la ronda continuó sobre el canon real.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /servicios en la
+//     tabla) · health v281.0 db up · pruebas 188/188 (+2 LA SALA DE
+//     LOS SERVICIOS: estática — las dos fuentes importadas, los censos
+//     derivados con Set/filter, las líneas compuestas en JS, la
+//     placa derivada del num real, las puertas del núcleo, la
+//     procedencia y la guardia v234; viva — el SSR sirve la sala con
+//     «LA COMUNIDAD», «LA RED MUNDIAL», MI6 y CIA en el HTML, el
+//     censo derivado y las anclas /historia y sitemap en pie) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v280.0 EL CONTRARRELOJ DEL PESO y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v281.0";
+export const APP_CODENAME = "LA SALA DE LOS SERVICIOS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

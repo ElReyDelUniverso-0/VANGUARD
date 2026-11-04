@@ -1,0 +1,16 @@
+import { AGENCIAS, CATEGORIA_META } from "../src/lib/agencias-data";
+import { SERVICIOS, CATEGORIA_RED_META, BLOQUES } from "../src/lib/agencias-mundo-data";
+console.log("AGENCIAS:", AGENCIAS.length, "· SERVICIOS:", SERVICIOS.length, "· TOTAL:", AGENCIAS.length + SERVICIOS.length);
+const catsA = [...new Set(AGENCIAS.map(a => a.categoria))];
+console.log("cats comunidad (orden fuente):", catsA.map(c => `${CATEGORIA_META[c].etiqueta} ×${AGENCIAS.filter(a=>a.categoria===c).length}`).join(" · "));
+const catsS = [...new Set(SERVICIOS.map(s => s.categoria))];
+console.log("cats red (orden fuente):", catsS.map(c => `${CATEGORIA_RED_META[c].etiqueta} ×${SERVICIOS.filter(s=>s.categoria===c).length}`).join(" · "));
+const fondA = AGENCIAS.map(a=>a.fundacion), fondS = SERVICIOS.map(s=>s.fundacion);
+const min = Math.min(...fondA, ...fondS), max = Math.max(...fondA, ...fondS);
+console.log("fundación min:", min, "max:", max);
+console.log("países red:", new Set(SERVICIOS.map(s=>s.pais)).size);
+const viejo = [...AGENCIAS,...SERVICIOS].filter(x=>x.fundacion===min).map(x=>x.sigla);
+const nuevo = [...AGENCIAS,...SERVICIOS].filter(x=>x.fundacion===max).map(x=>x.sigla);
+console.log("más viejo:", viejo.join(","), "· más nuevo:", nuevo.join(","));
+console.log("BLOQUES leyendas:", BLOQUES.length);
+console.log("nums únicos comunidad:", new Set(AGENCIAS.map(a=>a.num)).size, "· red:", new Set(SERVICIOS.map(s=>s.num)).size);
