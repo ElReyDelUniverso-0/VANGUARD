@@ -4142,6 +4142,42 @@
 //     lo respira) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v301.0 LA BIBLIOTECA OSCURA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v302.0";
-export const APP_CODENAME = "EL MUNDO RESPIRA";
+// v303.0 LA PLANTILLA COMPLETA — la expansión del módulo EMPLEOS (la mina
+//         primera de la cola del almacén en cuatro «Queda»s seguidas): la
+//         sala de juego ya existía (pestaña del aparato desde la v85) —
+//         esta ronda la EXPANDE, la ACTUALIZA y la DESARROLLA (la directiva
+//         del autociclo: «ve a cada módulo y expándelo»):
+// (1) CUATRO OFICINAS NUEVAS (4 → 8 departamentos, 24 → 48 tareas reales):
+//     LOGÍSTICA (Táctica, 2.1ⓒ/min — convoys, stocks, el invierno),
+//     TRANSMISIONES (Geografía, 2.2 — repetidores, jamming, el espectro),
+//     CONTRAINTELIGENCIA (Análisis, 2.7 — desertores, filtraciones,
+//     desinformación) y PRENSA DE GUERRA (Diplomacia, 2.2 — partes,
+//     corresponsales, el frente que todos ven).
+// (2) VACANTES DE RRHH (cura estructural): la entrevista ya no entrega la
+//     PRIMERA oficina de la aptitud ganada (los nuevos eran inalcanzables
+//     — find d.apt === mejor) — ahora la aptitud abre el selector de
+//     VACANTES (VacantesChooser) con TODAS las oficinas de esa aptitud y
+//     el operador elige la suya; si solo hay una, entra directo.
+// (3) EL CONTRATO DE LA SEMANA: encargo determinista por (oficina,
+//     semana ISO — weekKeyOf, la fórmula probada de retention v58) que
+//     comparte TODA la plantilla: N turnos con M perfectos → bono
+//     300..700ⓒ; helpers PUROS probados (contratoDeSemana, claveContrato,
+//     8 títulos de encargo), progreso en EmpleosState (4 campos nuevos,
+//     retrocompatible por el spread de loadEmpleos), tarjeta propia en el
+//     panel (data-vg-contrato) con barra de progreso y cobro idempotente,
+//     fila en la sala 3D con acción «cobrar bono».
+// (4) LA ESCALA DE CARRERA SUBE: +2 rangos (SUBDIRECTOR 2200 XP ×2.8 ·
+//     MARISCAL DE LA CASA 3400 XP ×3.6) — 7 escalones.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ en la tabla) ·
+//     health v303.0 db up · pruebas 232/232 (+2 LA PLANTILLA COMPLETA:
+//     estática — las 8 oficinas censadas con sus 48 tareas (56 q: = 8 de
+//     entrevista + 48 de turno), los 7 rangos ascendentes, los helpers
+//     puros del contrato (weekKeyOf/contratoDeSemana/claveContrato + 8
+//     títulos), los 4 campos de estado retrocompatibles, el selector de
+//     vacantes y la tarjeta del contrato en el panel; viva — el home canta
+//     LA PLANTILLA COMPLETA v303.0 y el health la firma) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v302.0 EL MUNDO RESPIRA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v303.0";
+export const APP_CODENAME = "LA PLANTILLA COMPLETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

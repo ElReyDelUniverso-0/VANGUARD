@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v303.0",
+    nombre: "LA PLANTILLA COMPLETA — la expansión del módulo EMPLEOS (la mina primera de la cola del almacén en cuatro «Queda»s seguidas): la sala de juego ya existía como pestaña del aparato desde la v85 y esta ronda la expande — cuatro oficinas nuevas (Logística, Transmisiones, Contrainteligencia y Prensa de Guerra: 8 departamentos, 48 tareas reales de doctrina), VACANTES de RRHH (la aptitud ganada abre el selector de TODAS sus oficinas: los nuevos ya son alcanzables), el CONTRATO DE LA SEMANA (encargo determinista por oficina y semana ISO con bono de 300-700ⓒ, tarjeta propia con progreso y cobro idempotente) y +2 rangos (SUBDIRECTOR · MARISCAL DE LA CASA)",
+    hitos: [
+      "CUATRO OFICINAS NUEVAS — Logística (Táctica, convoys y el invierno), Transmisiones (Geografía, repetidores y jamming), Contrainteligencia (Análisis, desertores y desinformación) y Prensa de Guerra (Diplomacia, el frente que todos ven); 24 tareas nuevas escritas con la misma doctrina real de la casa — la sala 3D censa «VANGUARD CONTRATA PERSONAL · 8 OFICINAS» derivada",
+      "VACANTES DE RRHH — cura estructural: la entrevista ya no entrega la primera oficina de la aptitud (find d.apt === mejor dejaba los nuevos inalcanzables); la aptitud abre el selector VacantesChooser con todas sus oficinas y el operador elige; si solo hay una, entra directo",
+      "EL CONTRATO DE LA SEMANA — encargo determinista por (oficina, semana ISO) compartido por toda la plantilla: N turnos con M perfectos → bono 300..700ⓒ; helpers puros probados (weekKeyOf con la fórmula de retention v58, contratoDeSemana con 8 títulos de encargo, claveContrato), 4 campos nuevos en EmpleosState retrocompatibles, tarjeta data-vg-contrato con barra y cobro idempotente, fila en la sala 3D con acción «cobrar bono»",
+      "LA ESCALA DE CARRERA SUBE — +2 rangos: SUBDIRECTOR (2200 XP, ×2.8) y MARISCAL DE LA CASA (3400 XP, ×3.6); 7 escalones de RECLUTA a MARISCAL",
+    ],
+    tipo: "reten",
+  },
+  {
     version: "v302.0",
     nombre: "EL MUNDO RESPIRA — la cola viva del oído (v300) se sirve: el ambiente del mundo con la radio APAGADA. La v299 le dio voz al mundo mientras la Radio suena; esta ronda le da aliento cuando la radio descansa — drone que sigue la tensión real, aliento de ~14 s, latido distante que acelera cuando el mundo arde y señal lejana de cable que llega, todo 100% sintetizado (cero assets, cero copyright). Con candado de gesto (ley v217), cesión honesta a la radio (el mundo jamás pisa la obra), sin ráfagas (lección v299) y botón MUNDO en la píldora con el 4.º modo del panel",
     hitos: [

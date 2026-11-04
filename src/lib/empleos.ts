@@ -141,6 +141,9 @@ export interface Departamento {
   tareas: TareaTurno[];
 }
 
+// v303.0 LA PLANTILLA COMPLETA: cuatro oficinas nuevas — el mundo dentro
+// de Vanguard crece (la entrevista abre VACANTES: varias oficinas por
+// aptitud, RRHH te deja elegir la tuya)
 export const DEPARTAMENTOS: Departamento[] = [
   {
     id: "estadomayor",
@@ -210,6 +213,75 @@ export const DEPARTAMENTOS: Departamento[] = [
       { q: "La oposición del rival te invita a hablar. ¿Vas?", opts: ["No: solo se habla con gobiernos", "Sí, pero escuchando sin prometer nada", "Sí y prometes apoyo", "Sí y lo publicas todo"], best: 1 },
     ],
   },
+  // ══════════ v303.0 LA PLANTILLA COMPLETA — las cuatro oficinas nuevas ══════════
+  {
+    id: "logistica",
+    nombre: "Logística",
+    apt: "TACTICA",
+    sueldoBase: 2.1,
+    color: "amber",
+    icono: "🚚",
+    desc: "Los generales planean, la Logística decide si el plan puede existir. Cada litro de gasóleo, cada caja de munición y cada comida pasa por tu mesa.",
+    tareas: [
+      { q: "El frente consume 40 t diarias y el puente ferroviario acaba de caer. ¿Primera medida?", opts: ["Abrir corredor de camiones por el paso alternativo y calcular cuántas horas cuesta cada vuelta", "Esperar a que reconstruyan el puente", "Reducir el consumo del frente por decreto", "Pedir al frente que avance más despacio"], best: 0 },
+      { q: "Un convoy de combustible elige entre ruta corta vigilada por drones o larga y silenciosa. ¿Qué manda?", opts: ["La corta: el tiempo también es combustible", "La larga: el combustible que llega vale más que el que arde en el camino", "Dividir el convoy en dos mitades iguales", "Ir siempre de noche por la corta"], best: 1 },
+      { q: "El almacén de avanzada reporta 60% de cartuchería con humedad. ¿Qué ordenas?", opts: ["Devolverla toda al fabricante", "Rotar el stock — primero lo viejo — y secar los búnkeres con ventilación forzada", "Usarla igual en entrenamiento", "Racionar el fuego de toda la línea"], best: 1 },
+      { q: "Tres batallones piden el mismo ferrocarril para moverse. ¿Qué criterio manda?", opts: ["El que mejor promesa devuelve", "El que está en contacto con el enemigo ahora mismo", "El que más titulares generaría", "El más lejano del frente"], best: 1 },
+      { q: "La columna avanza más rápido que su propio combustible. ¿Qué haces?", opts: ["Acelerar la columna para terminar antes", "Pausar en cada objetivo con depósitos: avanzar sin gasolina es regalar blindados", "Abandonar la mitad de los vehículos", "Requisar el combustible de la población"], best: 1 },
+      { q: "El invierno llega en seis semanas y el frío duplica el consumo de gasóleo. ¿Tu plan?", opts: ["Comprar a los aliados cuando ya nieve", "Preposicionar depósitos, ropa y anticongelante antes del primer hielo", "Esperar: este invierno será blando", "Agrupar a las tropas para compartir el calor"], best: 1 },
+    ],
+  },
+  {
+    id: "transmisiones",
+    nombre: "Transmisiones",
+    apt: "GEOGRAFIA",
+    sueldoBase: 2.2,
+    color: "cyan",
+    icono: "📶",
+    desc: "El mapa también se cruza con ondas. Ningún mando existe en la batalla si no le llega una señal: tú tiendes la red que sostiene al ejército.",
+    tareas: [
+      { q: "Debes unir dos comandos separados por 90 km de montaña. ¿Primera opción?", opts: ["Repetidores en las cumbres intermedias: la señal salta de cima en cima", "Un cable directo por el valle entero", "Mensajeros a caballo", "Esperar a que el tiempo aclare"], best: 0 },
+      { q: "El enemigo escucha todo lo que emitimos en HF. ¿Qué mitiga sin apagar la red?", opts: ["Cifrado con claves rotadas a diario y vocabulario de código", "Hablar más bajito cerca del micrófono", "Emitir solo de noche", "Bajar la potencia a la mitad"], best: 0 },
+      { q: "Una antena clave debe sobrevivir al invierno del desfiladero. ¿Qué emplazamiento eliges?", opts: ["La cumbre expuesta: mejor radioeléctrica", "La ladera protegida del viento dominante, a media altura", "El fondo del valle cerrado", "Sobre la superficie del lago helado"], best: 1 },
+      { q: "El mapa radioeléctrico muestra un silencio total sobre una región activa. ¿Qué sospechas primero?", opts: ["Que no queda nadie", "Que el enemigo está tapando la zona con jamming", "Que vendieron el cobre de las antenas", "Que es fin de semana"], best: 1 },
+      { q: "Dos unidades usan la misma frecuencia y se pisan. ¿Arreglo de red?", opts: ["Un plan de frecuencias por zonas y horarios: la disciplina del espectro", "Que transmitan más fuerte", "Apagar toda la red al mediodía", "Dejar Morse solo para los jueves"], best: 0 },
+      { q: "La única fibra de la región cruza el único puente del río. ¿Qué le añades?", opts: ["Nada: la fibra no se rompe sola", "Una ruta alternativa por otro cruce: el redondeo es lo que salva la red", "Un cartel de cable protegido", "Más tensión en el tendido"], best: 1 },
+    ],
+  },
+  {
+    id: "contraintel",
+    nombre: "Contrainteligencia",
+    apt: "ANALISIS",
+    sueldoBase: 2.7,
+    color: "green",
+    icono: "🕵️",
+    desc: "La oficina que no existe en los organigramas. Cada desertor, cada filtro y cada coincidencia sospechosa pasa por tu mesa antes de pasar a la historia.",
+    tareas: [
+      { q: "Un desertor trae mapas exactos de las líneas enemigas. ¿Qué haces antes de celebrar?", opts: ["Verificarlo contra nuestras fotos y preguntar qué ganaría el enemigo si lo creemos", "Abrazarlo y anunciarlo en el parte", "Mandarlo al frente de inmediato", "Devolverlo a su país con las gracias"], best: 0 },
+      { q: "Tres funcionarios tenían acceso al documento filtrado. ¿Primera medida?", opts: ["Detener al que caiga primero", "Comparar la copia filtrada: cada archivo arrastra el rastro de sus versiones", "Castigar a los tres por igual", "Cerrar el archivo para siempre"], best: 1 },
+      { q: "La radio enemiga anuncia detalles de una ofensiva nuestra que aún no existe. ¿Lectura?", opts: ["Tienen un espía en el estado mayor", "Siembran desinformación: quieren que movamos el plan real", "Adivinaron por estadística", "Un periodista inventó bien"], best: 1 },
+      { q: "El enemigo pide canjear — específicamente — a un prisionero sin rango. ¿Qué deduces?", opts: ["Que hubo un gesto humanitario", "Que ese prisionero vale más de lo que parece: quien pide, habla", "Que no hay nada detrás", "Que el prisionero es famoso en la tele"], best: 1 },
+      { q: "Detectas un patrón: cada vez que la cantina enemiga duplica pedidos, hay ataque al día siguiente. ¿Qué es?", opts: ["Una casualidad del hambre", "Un indicador logístico delatable: la comida precede al combate", "Una maldición de la casa", "Un error del archivo"], best: 1 },
+      { q: "Tu agente dentro del enemigo pide dinero extra sin motivo claro. ¿Qué haces?", opts: ["Se lo das sin hacer preguntas", "Probarlo: le pasa una información falsa que solo él puede entregar", "Cortar la relación de inmediato", "Duplicarle el sueldo por lealtad"], best: 1 },
+    ],
+  },
+  {
+    id: "prensa",
+    nombre: "Prensa de Guerra",
+    apt: "DIPLOMACIA",
+    sueldoBase: 2.2,
+    color: "violet",
+    icono: "📰",
+    desc: "El frente que todos ven. Cada parte, cada foto y cada silencio deliberado es un movimiento táctico: tú redactas la guerra que el mundo cree ver.",
+    tareas: [
+      { q: "Tu bando libera una ciudad y el enemigo la bombardea esa misma noche. ¿Qué cuenta el parte?", opts: ["Los dos hechos, con orden y prueba: la liberación y el castigo enemigo sobre civiles", "Solo la liberación", "Esconder el bombardeo", "Culpar a una tormenta"], best: 0 },
+      { q: "Un corresponsal neutral publica fotos reales que dañan tu causa. ¿Respuesta de oficina seria?", opts: ["Prohibirle publicar", "Responder con datos verificables y abrir la zona a más prensa", "Fabricar fotos mejores", "Expulsarlo del país"], best: 1 },
+      { q: "El enemigo anuncia una victoria que no ocurrió. ¿Qué hace la prensa de la casa?", opts: ["Gritar mentiroso sin pruebas", "Mostrar el mapa, las fechas y las imágenes del lugar tal como está", "Anunciar una victoria mayor", "Callar durante tres días"], best: 1 },
+      { q: "Un soldado tuyo narra su guerra en redes con detalles operativos. ¿Primera medida?", opts: ["Cárcel inmediata", "Instrucción de seguridad de la información y guías claras de qué no se publica", "Felicitación por el alcance", "Copiarle la idea oficial"], best: 1 },
+      { q: "Dos aliados se acusan en público por una zona compartida. ¿Qué hace la prensa de la coalición?", opts: ["Tomar partido por el más ruidoso", "Apegarse a los hechos compartidos y anunciar la mesa donde se discute", "Silenciar toda la información", "Elegir bando según la audiencia"], best: 1 },
+      { q: "El mundo se cansa del frente: cae el interés por la guerra. ¿Qué hace la oficina?", opts: ["Inventar un escándalo nuevo", "Contar las historias humanas reales del frente: la gente sigue a la gente", "Bajar el volumen de los partes", "Repetir los comunicados viejos"], best: 1 },
+    ],
+  },
 ];
 
 // ====== RANGOS LABORALES ======
@@ -219,6 +291,9 @@ export const RANGOS: { nombre: string; xp: number; mult: number }[] = [
   { nombre: "ESPECIALISTA", xp: 320, mult: 1.42 },
   { nombre: "JEFE DE SECCIÓN", xp: 700, mult: 1.75 },
   { nombre: "DIRECTOR", xp: 1300, mult: 2.2 },
+  // v303.0 LA PLANTILLA COMPLETA: la escala de carrera sigue subiendo
+  { nombre: "SUBDIRECTOR", xp: 2200, mult: 2.8 },
+  { nombre: "MARISCAL DE LA CASA", xp: 3400, mult: 3.6 },
 ];
 
 export function rangoDe(xp: number) {
@@ -252,6 +327,11 @@ export interface EmpleosState {
   diasTrabajados: number; // días distintos con ≥1 turno
   lastDiaTurno: string;
   entrevistas: number;
+  // v303.0 CONTRATO DE LA SEMANA: el encargo de la oficina con bono propio
+  contratoKey: string; // clave del contrato en curso (deptoId:semanaISO)
+  contratoTurnos: number;
+  contratoPerfectos: number;
+  contratoCobrado: boolean;
 }
 
 export const LS_EMPLEOS = "vanguard-empleos-v85";
@@ -270,6 +350,10 @@ export const EMPLEOS_INICIAL: EmpleosState = {
   diasTrabajados: 0,
   lastDiaTurno: "",
   entrevistas: 0,
+  contratoKey: "",
+  contratoTurnos: 0,
+  contratoPerfectos: 0,
+  contratoCobrado: false,
 };
 
 export function loadEmpleos(): EmpleosState {
@@ -342,4 +426,61 @@ export function pagoTurno(depto: Departamento, xp: number, aciertos: number, tot
 export function hoyKey(now = Date.now()): string {
   const d = new Date(now);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// ══════════ v303.0 EL CONTRATO DE LA SEMANA ══════════
+// El encargo semanal de la oficina: determinista por (departamento,
+// semana ISO) — toda la plantilla de una oficina comparte contrato, el
+// mundo no negocia el encargo. Progreso y bono viven en EmpleosState.
+export interface ContratoSemanal {
+  titulo: string;
+  turnos: number; // turnos a cumplir esta semana (3..5)
+  perfectos: number; // turnos perfectos mínimos (1..2)
+  bono: number; // ⓒ al completar (300..700)
+}
+
+const TITULOS_CONTRATO = [
+  "LA OFENSIVA SEMANAL",
+  "EL CINTURÓN DE ACERO",
+  "LA VIGILIA DE LOS PUENTES",
+  "EL PAQUETE DEL ESTADO MAYOR",
+  "LA CACERÍA DEL RUMOR",
+  "LA RED QUE NO DUERME",
+  "LA BATALLA DEL PAPEL",
+  "EL CORREDOR DEL HIELO",
+];
+
+// semana ISO (la fórmula probada de la casa — retention.ts, v58)
+export function weekKeyOf(now: Date = new Date()): string {
+  const date = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const dayNum = date.getUTCDay() || 7; // lunes=1..domingo=7
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum); // jueves de esta semana ISO
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  return `${date.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+function hashContrato(clave: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < clave.length; i++) {
+    h ^= clave.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+// el contrato de la semana: PURO y DETERMINISTA — misma oficina y misma
+// semana devuelven SIEMPRE el mismo encargo (la fila del tablón v58)
+export function contratoDeSemana(deptoId: string, wk: string): ContratoSemanal {
+  const h = hashContrato(`${deptoId}:${wk}`);
+  return {
+    titulo: TITULOS_CONTRATO[h % TITULOS_CONTRATO.length],
+    turnos: [3, 4, 5][(h >> 3) % 3],
+    perfectos: [1, 1, 2][(h >> 6) % 3],
+    bono: 300 + ((h >> 9) % 5) * 100, // 300..700ⓒ
+  };
+}
+
+export function claveContrato(deptoId: string, wk: string): string {
+  return `${deptoId}:${wk}`;
 }

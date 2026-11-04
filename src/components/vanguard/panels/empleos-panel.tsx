@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Briefcase, Coins, Clock, CheckCircle2, XCircle, TrendingUp, LogOut,
-  FileSignature, Zap, Star, ChevronsUp, Wallet, Play, Building2,
+  FileSignature, Zap, Star, ChevronsUp, Wallet, Play, Building2, ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -24,8 +24,8 @@ import { sfx } from "@/lib/sound";
 import {
   ENTREVISTA, DEPARTAMENTOS, APTITUD_META, rangoDe, sueldoPorMin,
   loadEmpleos, saveEmpleos, acumularNomina, tareasDelTurno, pagoTurno,
-  hoyKey, COOLDOWN_TURNO_MS, RANGOS,
-  type EmpleosState, type Aptitud, type Departamento, type TareaTurno,
+  hoyKey, COOLDOWN_TURNO_MS, RANGOS, weekKeyOf, contratoDeSemana, claveContrato,
+  type EmpleosState, type Aptitud, type Departamento, type TareaTurno, type ContratoSemanal,
 } from "@/lib/empleos";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
@@ -41,7 +41,7 @@ const COLOR_CLS: Record<Departamento["color"], { text: string; border: string; b
 // importaba desde aquí y arrastraba el panel completo al arranque).
 
 // ====== ENTREVISTA DE INGRESO ======
-function Entrevista({ onContratado }: { onContratado: (depto: Departamento, scores: Record<Aptitud, number>) => void }) {
+function Entrevista({ onAptitud }: { onAptitud: (apt: Aptitud, scores: Record<Aptitud, number>) => void }) {
   const [paso, setPaso] = useState(0);
   const [scores, setScores] = useState<Record<Aptitud, number>>({ TACTICA: 0, GEOGRAFIA: 0, ANALISIS: 0, DIPLOMACIA: 0 });
   const [elegida, setElegida] = useState<number | null>(null);
@@ -65,16 +65,17 @@ function Entrevista({ onContratado }: { onContratado: (depto: Departamento, scor
     setMostrandoPorQue(false);
     setElegida(null);
     if (paso + 1 >= total) {
-      // ganador: aptitud con más aciertos; desempate por orden canónico
+      // ganador: aptitud con más aciertos; desempate por orden canónico.
+      // v303: la aptitud abre VACANTES — RRHH ofrece TODAS las oficinas de
+      // esa aptitud y el operador elige la suya (nadie queda en la primera)
       const orden: Aptitud[] = ["TACTICA", "GEOGRAFIA", "ANALISIS", "DIPLOMACIA"];
       let mejor: Aptitud = "TACTICA";
       let max = -1;
       for (const a of orden) {
         if (next[a] > max) { max = next[a]; mejor = a; }
       }
-      const depto = DEPARTAMENTOS.find((d) => d.apt === mejor) ?? DEPARTAMENTOS[0];
       sfx.unlock();
-      onContratado(depto, next);
+      onAptitud(mejor, next);
     } else {
       setPaso((p) => p + 1);
     }
@@ -238,6 +239,39 @@ function TurnoActivo({ depto, tareas, onFin }: { depto: Departamento; tareas: Ta
   );
 }
 
+// ====== v303 VACANTES — RRHH ofrece TODAS las oficinas de la aptitud ganada
+function VacantesChooser({ vacantes, scores, onElegir }: { vacantes: Departamento[]; scores: Record<Aptitud, number>; onElegir: (d: Departamento) => void }) {
+  const apt = vacantes[0]?.apt;
+  return (
+    <div className="hud-corner p-4" data-vg-vacantes>
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <p className="text-[10px] font-mono uppercase tracking-wider text-amber flex items-center gap-1.5">
+          <Building2 className="w-3.5 h-3.5" /> vacantes de {apt ? APTITUD_META[apt].nombre.toLowerCase() : "entrada"} · recursos humanos vanguard
+        </p>
+        <span className="text-[10px] font-mono text-green-hud">{Object.values(scores).reduce((a, b) => a + b, 0)}/8 aciertos</span>
+      </div>
+      <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">
+        Tu perfil abre <span className="text-amber">{vacantes.length} oficinas</span>. RRHH te deja elegir: misma aptitud, oficios distintos.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {vacantes.map((d) => (
+          <button
+            key={d.id}
+            onClick={() => { sfx.click(); onElegir(d); }}
+            className={cn("text-left border p-3 transition-colors hover:brightness-125", COLOR_CLS[d.color].border, COLOR_CLS[d.color].bg)}
+          >
+            <p className="flex items-center gap-1.5 text-xs font-black uppercase text-foreground">
+              <span aria-hidden>{d.icono}</span> {d.nombre}
+            </p>
+            <p className="text-[10px] font-mono text-amber mt-1">{d.sueldoBase.toFixed(1)}ⓒ/min · {APTITUD_META[d.apt].nombre}</p>
+            <p className="text-[10px] text-muted-foreground leading-snug mt-1">{d.desc}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ====== PANEL PRINCIPAL ======
 export function EmpleosPanel() {
   const coins = useGameStore((s) => s.coins);
@@ -248,7 +282,8 @@ export function EmpleosPanel() {
   const [resumenTurno, setResumenTurno] = useState<{ aciertos: number; pago: { base: number; propina: number; bonoPerfecta: number; total: number; xpGanada: number; perfecta: boolean } } | null>(null);
   const [tick, setTick] = useState(0);
   const [confirmarRenuncia, setConfirmarRenuncia] = useState(false);
-  const [oferta, setOferta] = useState<{ depto: Departamento; scores: Record<Aptitud, number> } | null>(null);
+  // v303: la entrevista abre VACANTES — la aptitud ganada ofrece todas sus oficinas
+  const [oferta, setOferta] = useState<{ vacantes: Departamento[]; scores: Record<Aptitud, number>; elegida: Departamento | null } | null>(null);
   const stRef = useRef(st);
   stRef.current = st;
 
@@ -301,18 +336,24 @@ export function EmpleosPanel() {
   };
 
   const firmar = () => {
-    if (!oferta) return;
+    const elegida = oferta?.elegida ?? oferta?.vacantes[0];
+    if (!elegida) return;
     const s = loadEmpleos();
     actualizar({
       ...s,
-      depto: oferta.depto.id,
+      depto: elegida.id,
       entrevistas: s.entrevistas + 1,
       nominaPendiente: 0,
       lastAccrueTs: Date.now(),
+      // contrato nuevo para la oficina que estrena plantilla (semana en curso)
+      contratoKey: claveContrato(elegida.id, weekKeyOf()),
+      contratoTurnos: 0,
+      contratoPerfectos: 0,
+      contratoCobrado: false,
     });
     setOferta(null);
     sfx.unlock();
-    toast.success(`Contrato firmado: ${oferta.depto.nombre} · ${oferta.depto.sueldoBase.toFixed(1)}ⓒ/min`);
+    toast.success(`Contrato firmado: ${elegida.nombre} · ${elegida.sueldoBase.toFixed(1)}ⓒ/min`);
   };
 
   const iniciarTurno = () => {
@@ -326,11 +367,50 @@ export function EmpleosPanel() {
     sfx.click();
   };
 
+  // v303 EL CONTRATO DE LA SEMANA: el encargo determinista de la oficina
+  // (misma semana ISO para toda la plantilla) con su progreso vivo
+  const wk = weekKeyOf();
+  const contratoVigente = useMemo(() => {
+    if (!depto) return null;
+    const clave = claveContrato(depto.id, wk);
+    const encargo = contratoDeSemana(depto.id, wk);
+    const enCurso = st.contratoKey === clave;
+    return {
+      clave,
+      contrato: encargo,
+      turnos: enCurso ? st.contratoTurnos : 0,
+      perfectos: enCurso ? st.contratoPerfectos : 0,
+      cobrado: enCurso ? st.contratoCobrado : false,
+      listo: (enCurso ? st.contratoTurnos : 0) >= encargo.turnos && (enCurso ? st.contratoPerfectos : 0) >= encargo.perfectos,
+    };
+  }, [depto, wk, st.contratoKey, st.contratoTurnos, st.contratoPerfectos, st.contratoCobrado]);
+
+  const cobrarContrato = () => {
+    if (!depto || !contratoVigente) return;
+    if (contratoVigente.cobrado) {
+      toast.info("El bono de esta semana ya está en tu caja: el encargo se renueva el lunes.");
+      return;
+    }
+    if (!contratoVigente.listo) {
+      toast.error(`Encargo incompleto: faltan turnos o turnos perfectos. La semana no se negocia.`);
+      return;
+    }
+    const s = { ...stRef.current, contratoCobrado: true };
+    actualizar(s);
+    addCoins(contratoVigente.contrato.bono, `CONTRATO DE LA SEMANA · ${depto.nombre}`);
+    sfx.reward();
+    toast.success(`Contrato cumplido: ${contratoVigente.contrato.titulo} · +${contratoVigente.contrato.bono}ⓒ`);
+  };
+
   const finTurno = (aciertos: number) => {
     if (!depto) return;
     const dia = hoyKey();
     const n = st.diaActual === dia ? st.shiftsHoy : 0;
     const pago = pagoTurno(depto, st.xpLaboral, aciertos, 3);
+    // v303: el turno cuenta para el CONTRATO DE LA SEMANA — si la clave
+    // cambió (nueva semana o nueva oficina), el progreso arranca en cero
+    const clave = claveContrato(depto.id, wk);
+    const enCurso = st.contratoKey === clave;
     let s: EmpleosState = {
       ...st,
       lastShiftTs: Date.now(),
@@ -339,6 +419,10 @@ export function EmpleosPanel() {
       turnosTotales: st.turnosTotales + 1,
       aciertosTotales: st.aciertosTotales + aciertos,
       xpLaboral: st.xpLaboral + pago.xpGanada,
+      contratoKey: clave,
+      contratoTurnos: (enCurso ? st.contratoTurnos : 0) + 1,
+      contratoPerfectos: (enCurso ? st.contratoPerfectos : 0) + (pago.perfecta ? 1 : 0),
+      contratoCobrado: enCurso ? st.contratoCobrado : false,
     };
     // racha laboral: primer turno del día mantiene la racha viva
     if (s.lastDiaTurno !== dia) {
@@ -389,6 +473,14 @@ export function EmpleosPanel() {
           a: "cobrar",
         },
         {
+          // v303: el contrato de la semana sube a la sala 3D con su progreso
+          t: `CONTRATO SEMANAL · ${contratoVigente?.contrato.titulo ?? ""}`,
+          v: contratoVigente?.cobrado ? "BONO COBRADO" : `${contratoVigente?.turnos ?? 0}/${contratoVigente?.contrato.turnos ?? 0} TURNOS`,
+          color: contratoVigente?.cobrado ? "#3DDC84" : "#F5C542",
+          d: `${contratoVigente?.contrato.turnos ?? 0} turnos (${contratoVigente?.contrato.perfectos ?? 0} perfectos) → bono de ${contratoVigente?.contrato.bono ?? 0}ⓒ · renueva el lunes`,
+          a: contratoVigente?.listo && !contratoVigente.cobrado ? "cobrar bono" : undefined,
+        },
+        {
           t: "TURNO OPERATIVO · 3 TAREAS",
           v: cooldownRestante > 0 ? `EN ${Math.ceil(cooldownRestante / 60000)} MIN` : "DISPONIBLE",
           color: cooldownRestante > 0 ? "#7AB8FF" : "#F5C542",
@@ -412,7 +504,7 @@ export function EmpleosPanel() {
       }
     }
     return filas;
-  }, [depto, st, nominaViva, sueldoMin, sueldoHora, rango, cooldownRestante]);
+  }, [depto, st, nominaViva, sueldoMin, sueldoHora, rango, cooldownRestante, contratoVigente]);
   useSala3DContenido(
     "empleos",
     "EMPLEOS DE VANGUARD",
@@ -427,6 +519,7 @@ export function EmpleosPanel() {
       const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
       if (det?.tab !== "empleos") return;
       if (det.accion === "cobrar") cobrar();
+      if (det.accion === "cobrar bono") cobrarContrato();
       if (det.accion === "cumplir turno") iniciarTurno();
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
@@ -461,10 +554,10 @@ export function EmpleosPanel() {
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-foreground leading-tight">Vanguard contrata personal</p>
               <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
-                Ocho preguntas. Respuestas reales de sala de situación. Según lo que se te dé bien
-                entrarás al <span className="text-amber">Estado Mayor</span>, <span className="text-cyan-hud">Cartografía</span>,{" "}
-                <span className="text-green-hud">Escucha SIGINT</span> o <span className="text-violet-hud">Cancillería</span> —
-                cada oficina con sueldo por minuto, turnos pagados y ascensos.
+                Ocho preguntas. Respuestas reales de sala de situación. Tu perfil abre VACANTES en
+                las <span className="text-amber">ocho oficinas</span> de la casa — Estado Mayor, Cartografía y SIGINT,
+                Cancillería, Logística, Transmisiones, Contrainteligencia y Prensa de Guerra — cada
+                una con sueldo por minuto, turnos pagados, contrato semanal y ascensos.
               </p>
               {st.entrevistas > 0 && (
                 <p className="text-[9px] font-mono text-muted-foreground uppercase mt-1">
@@ -474,13 +567,22 @@ export function EmpleosPanel() {
             </div>
           </div>
           <Entrevista
-            onContratado={(depto2, scores) => setOferta({ depto: depto2, scores })}
+            onAptitud={(apt, scores) => setOferta({ vacantes: DEPARTAMENTOS.filter((d) => d.apt === apt), scores, elegida: null })}
           />
         </>
       )}
 
-      {/* ===== OFERTA DE CONTRATO ===== */}
-      {oferta && <ContratoOferta depto={oferta.depto} scores={oferta.scores} onFirmar={firmar} />}
+      {/* ===== v303 OFERTA: VACANTES + CONTRATO ===== */}
+      {oferta && !oferta.elegida && oferta.vacantes.length > 1 && (
+        <VacantesChooser
+          vacantes={oferta.vacantes}
+          scores={oferta.scores}
+          onElegir={(deptoElegido) => setOferta({ ...oferta, elegida: deptoElegido })}
+        />
+      )}
+      {oferta && (oferta.elegida || oferta.vacantes.length === 1) && (
+        <ContratoOferta depto={(oferta.elegida ?? oferta.vacantes[0])!} scores={oferta.scores} onFirmar={firmar} />
+      )}
 
       {/* ===== CON CONTRATO: PUESTO DE TRABAJO ===== */}
       {depto && (
@@ -541,6 +643,49 @@ export function EmpleosPanel() {
               </div>
             </div>
           </motion.div>
+
+          {/* v303 CONTRATO DE LA SEMANA — el encargo determinista con bono propio */}
+          {contratoVigente && (
+            <div className="hud-corner p-3 border border-amber-hud/40" data-vg-contrato>
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <p className="text-[10px] font-mono uppercase tracking-wider text-amber flex items-center gap-1.5">
+                  <ClipboardList className="w-3.5 h-3.5" /> contrato de la semana · {contratoVigente.contrato.titulo}
+                </p>
+                <span className="text-[9px] font-mono text-muted-foreground">{wk}</span>
+              </div>
+              <p className="text-[10px] font-mono text-muted-foreground leading-snug">
+                encargo de la oficina: <span className="text-foreground">{contratoVigente.contrato.turnos} turnos</span> con un mínimo de{" "}
+                <span className="text-foreground">{contratoVigente.contrato.perfectos} perfecto{contratoVigente.contrato.perfectos === 1 ? "" : "s"}</span> → bono de{" "}
+                <span className="text-amber">{contratoVigente.contrato.bono}ⓒ</span>
+              </p>
+              <div className="relative h-6 border border-border/60 bg-secondary/40 overflow-hidden my-1.5">
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-amber-hud/25"
+                  animate={{ width: `${Math.min(100, (contratoVigente.turnos / contratoVigente.contrato.turnos) * 100)}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+                <div className="relative z-10 h-full flex items-center justify-between px-2">
+                  <span className="text-[9px] font-mono uppercase text-muted-foreground">
+                    {contratoVigente.turnos}/{contratoVigente.contrato.turnos} turnos · {contratoVigente.perfectos}/{contratoVigente.contrato.perfectos} perfectos
+                  </span>
+                  {contratoVigente.cobrado && <span className="text-[9px] font-mono text-green-hud uppercase">bono cobrado</span>}
+                </div>
+              </div>
+              <Button
+                onClick={cobrarContrato}
+                disabled={!contratoVigente.listo || contratoVigente.cobrado}
+                className={cn(
+                  "w-full h-8 font-mono text-[10px] uppercase border",
+                  contratoVigente.listo && !contratoVigente.cobrado
+                    ? "bg-amber-hud/40 border-amber-hud text-foreground hover:brightness-125"
+                    : "bg-secondary/40 border-border/60 text-muted-foreground disabled:opacity-60"
+                )}
+              >
+                <Coins className="w-3.5 h-3.5 mr-1.5" />
+                {contratoVigente.cobrado ? "BONO COBRADO · RENUEVA EL LUNES" : contratoVigente.listo ? `COBRAR BONO (${contratoVigente.contrato.bono}ⓒ)` : "ENCARGO EN CURSO"}
+              </Button>
+            </div>
+          )}
 
           {/* TURNO */}
           <div className="hud-corner p-3">
@@ -637,7 +782,7 @@ export function EmpleosPanel() {
             <TrendingUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <p className="text-[10px] text-muted-foreground leading-relaxed flex-1">
               ¿Otra vocación? Renunciar conserva la mitad de tu XP laboral y reabre la entrevista:
-              el Estado Mayor, Cartografía, SIGINT y Cancillería aceptan traslados.
+              las ocho oficinas de la casa aceptan traslados.
             </p>
             {!confirmarRenuncia ? (
               <Button size="sm" variant="ghost" onClick={() => { setConfirmarRenuncia(true); sfx.click(); }} className="h-7 font-mono text-[10px] uppercase text-red-hud hover:bg-red-hud/20 flex-shrink-0">

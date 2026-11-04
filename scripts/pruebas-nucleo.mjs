@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v302.0", async () => {
+  await verificar("servidor vivo y en v303.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v302"), `versión ${r.json?.version} ≠ v302`);
+    afirmar(String(r.json?.version).startsWith("v303"), `versión ${r.json?.version} ≠ v303`);
   });
 
   // censo por API
@@ -2689,16 +2689,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0 (avanza con el mundo que respira)");
+    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL MUNDO RESPIRA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v302.0"), "la v302.0 no viaja en el home");
+    afirmar(r.texto.includes("LA PLANTILLA COMPLETA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v302"), "el health no canta v302");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no canta v303");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2726,15 +2726,15 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0");
+    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
   });
 
-  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v302 y el home guarda la crónica del oído (v300→v302)", async () => {
+  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v303 y el home guarda la crónica del oído (v300→v303)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v302.0"), "la v302.0 no viaja en el home");
+    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v302"), "el health no canta v302");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no canta v303");
   });
 
   // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
@@ -2788,7 +2788,7 @@ async function parteB() {
     afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0");
+    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
@@ -2847,16 +2847,92 @@ async function parteB() {
     afirmar(pill.includes("resumeAmbienteSiQuerido"), "la píldora no despierta al mundo al primer gesto");
     afirmar(pill.includes("toggleMundo"), "la píldora no puede mover el mundo (toggleMundo falta)");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0");
+    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
   });
 
-  await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302)", async () => {
+  await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302→v303)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL MUNDO RESPIRA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v302.0"), "la v302.0 no viaja en el home");
+    afirmar(r.texto.includes("LA PLANTILLA COMPLETA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v302"), "el health no respira v302");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no respira v303");
+  });
+
+  // ── v303.0 LA PLANTILLA COMPLETA: la expansión del módulo EMPLEOS — 8
+  // oficinas con 48 tareas, VACANTES de RRHH (los nuevos alcanzables), el
+  // CONTRATO DE LA SEMANA determinista y +2 rangos ──
+  await verificar("LA PLANTILLA COMPLETA estática: 8 oficinas censadas con sus 48 tareas, el contrato de la semana puro, el estado retrocompatible y el panel con vacantes y tarjeta (v303)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/empleos.ts"), "utf8");
+    const panel = readFileSync(join(RAIZ, "src/components/vanguard/panels/empleos-panel.tsx"), "utf8");
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    // el censo de la plantilla: 8 oficinas (un sueldoBase NUMÉRICO por
+    // departamento — la declaración de la interfaz no es una oficina)
+    const nOficinas = (fuente.match(/sueldoBase: [\d.]+/g) ?? []).length;
+    afirmar(nOficinas === 8, `la plantilla censó ${nOficinas} oficinas ≠ 8`);
+    for (const id of ["estadomayor", "cartografia", "sigint", "cancilleria", "logistica", "transmisiones", "contraintel", "prensa"]) {
+      afirmar(fuente.includes(`id: "${id}"`), `falta la oficina ${id} en la plantilla`);
+    }
+    // las tareas: 56 preguntas = 8 de entrevista + 48 de turno (6 por oficina)
+    const nQ = (fuente.match(/q: "/g) ?? []).length;
+    afirmar(nQ === 56, `las preguntas censadas ${nQ} ≠ 56 (8 entrevista + 48 turnos)`);
+    // cada oficina lleva 6 tareas (la ronda no entregó oficinas cojas):
+    // el bloque de cada oficina va desde su id hasta el id siguiente
+    const IDS_OFICINAS = ["estadomayor", "cartografia", "sigint", "cancilleria", "logistica", "transmisiones", "contraintel", "prensa"];
+    for (const id of IDS_OFICINAS) {
+      const ini = fuente.indexOf(`id: "${id}"`);
+      afirmar(ini > 0, `la oficina ${id} no se encontró`);
+      const sig = fuente.indexOf('id: "', ini + 10);
+      const bloque = fuente.slice(ini, sig > 0 ? sig : undefined);
+      const nT = (bloque.match(/\{ q: "/g) ?? []).length;
+      afirmar(nT === 6, `la oficina ${id} quedó con ${nT} tareas ≠ 6`);
+    }
+    // la escala de carrera: 7 rangos ascendentes con multiplicador creciente
+    const iniR = fuente.indexOf("export const RANGOS");
+    const finR = fuente.indexOf("export function rangoDe");
+    const rangos = (fuente.slice(iniR, finR).match(/xp: (\d+), mult: ([\d.]+)/g) ?? []).map((s) => {
+      const m = s.match(/xp: (\d+), mult: ([\d.]+)/);
+      return { xp: Number(m[1]), mult: Number(m[2]) };
+    });
+    afirmar(rangos.length === 7, `los rangos censados ${rangos.length} ≠ 7`);
+    for (let i = 1; i < rangos.length; i++) {
+      afirmar(rangos[i].xp > rangos[i - 1].xp && rangos[i].mult > rangos[i - 1].mult, "la escala de carrera no asciende (XP o multiplicador)");
+    }
+    afirmar(fuente.includes("MARISCAL DE LA CASA") && fuente.includes("SUBDIRECTOR"), "los dos rangos nuevos no existen");
+    // el contrato de la semana: helpers puros y deterministas
+    afirmar(fuente.includes("export function weekKeyOf"), "weekKeyOf no existe (semana sin clave ISO)");
+    afirmar(fuente.includes("export function contratoDeSemana"), "contratoDeSemana no es puro/exportado");
+    afirmar(fuente.includes("export function claveContrato"), "claveContrato no existe (el progreso sin llave)");
+    afirmar(fuente.includes("export interface ContratoSemanal"), "el contrato sin su forma");
+    afirmar(fuente.includes("bono: 300 + ((h >> 9) % 5) * 100"), "el bono del contrato no es determinista derivado del hash");
+    // los 8 títulos de encargo (cada título entre comillas: 16 comillas)
+    const iniT = fuente.indexOf("const TITULOS_CONTRATO");
+    const finT = fuente.indexOf("];", iniT);
+    const nTitulos = (fuente.slice(iniT, finT).match(/"/g) ?? []).length / 2;
+    afirmar(nTitulos === 8, `los títulos de encargo censados ${nTitulos} ≠ 8`);
+    // el estado retrocompatible: los 4 campos nuevos con sus defaults
+    for (const campo of ["contratoKey: \"\"", "contratoTurnos: 0", "contratoPerfectos: 0", "contratoCobrado: false"]) {
+      afirmar(fuente.includes(campo), `el estado no arranca con ${campo}`);
+    }
+    // el panel: vacantes de RRHH + tarjeta del contrato + cobro y fila 3D
+    afirmar(panel.includes("function VacantesChooser"), "el selector de vacantes no existe (los nuevos inalcanzables)");
+    afirmar(panel.includes("DEPARTAMENTOS.filter((d) => d.apt === apt)"), "la entrevista no abre TODAS las vacantes de la aptitud");
+    afirmar(panel.includes("data-vg-contrato"), "la tarjeta del contrato no tiene su marca");
+    afirmar(panel.includes("CONTRATO DE LA SEMANA") || panel.includes("contrato de la semana"), "el contrato no canta su nombre en el panel");
+    afirmar(panel.includes("cobrarContrato"), "el cobro del bono no existe");
+    afirmar(panel.includes("cobrar bono"), "la sala 3D no puede cobrar el bono");
+    afirmar(panel.includes("ocho oficinas"), "la casa sigue contando cuatro oficinas");
+    // la versión camina con la casa
+    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
+  });
+
+  await verificar("LA PLANTILLA COMPLETA viva: el home firma la ronda y el health la contrata (v303)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA PLANTILLA COMPLETA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no contrata v303");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──
