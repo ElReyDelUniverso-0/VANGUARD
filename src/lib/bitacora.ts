@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v270.0",
+    nombre: "EL SEGUNDO CATÁLOGO — la vitrina /objetivos sirvió el botín (v235), el cableado (v267) y el ritmo (v268), pero la casa tiene DOS catálogos de misiones y DAILY_CHALLENGES (los 9 retos DC-1→DC-9 del aparato) seguía client-side: su censo y su botín viajan ahora en SSR, derivados de la fuente",
+    hitos: [
+      "EL SEGUNDO CATÁLOGO SE SIRVE EN SERVER — sección entre la jornada y los bloques: los 9 retos con id, título, descripción y botín reales de la fuente; censo (330 XP · 280 mon) y meta mayor derivados con reduce — cero cifras escritas a mano (herencia v235/v268); si el catálogo cambia, la línea cambia sola",
+      "LA META SE DECLARA — cada reto compone en JS «botín: +XP · +mon · meta: N» con su target real (1→5): la síntesis avanzada (DC-7) solo pide una fusión y lo dice a la vista",
+      "LA PROCEDENCIA ES LA LEY — «el catálogo vive en la fuente (game-data.ts), no en esta vitrina» (directiva v266); la línea se compone COMPLETA en JS (lección v256); cero fechas a mano (guardia v234)",
+      "QA v270: tsc 0 TOTAL, eslint 0, build EXIT 0, health v270.0 db up, pruebas 166/166 en el árbol fusionado (+2 EL SEGUNDO CATÁLOGO: estática — la fuente DAILY_CHALLENGES intacta con sus 9 retos, botín y meta derivados, línea compuesta en JS; viva — «9 retos diarios con 330 XP y 280 mon», las cabezas reales y las anclas v235/v267/v268 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v269.0",
     nombre: "EL MAPA DEL ARCHIVO — la expansión llega al mapa que Google rastrea: el sitemap servía solo la cabeza del archivo (cota v207: 500 puertas /noticia sobre un archivo medido de 1877 — 1377 puertas indexables quedaban fuera) y las páginas profundas del archivo que la sala v261 hizo canónicas no viajaban al mapa. El tamaño de página vive ahora en la fuente y el lastModified declara la última señal real (turno 475802, AGENT 1)",
     hitos: [

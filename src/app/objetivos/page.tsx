@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ACHIEVEMENTS, CABLEADO_BLOQUES, MISSION_TEMPLATES } from "@/lib/game-data";
+import { ACHIEVEMENTS, CABLEADO_BLOQUES, DAILY_CHALLENGES, MISSION_TEMPLATES } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VitrinaProgreso } from "@/components/vanguard/vitrina-progreso";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -41,6 +41,17 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // cifras a mano) y los capítulos de campaña con puertas reales a las
 // salas del archivo (/conflicto/ukraine, /conflicto/gaza,
 // /conflicto/sudan — el conflictTag ya declarado en la fuente).
+//
+// v270.0 EL SEGUNDO CATÁLOGO (renumerada en vuelo: el turno paralelo tomó
+// v269.0 EL MAPA DEL ARCHIVO — protocolo canon-repo, dos escritores, un
+// canon) — la vitrina servía UNO de los dos
+// catálogos de misiones de la casa: MISSION_TEMPLATES (la jornada,
+// v268) viaja en SSR pero DAILY_CHALLENGES — los 9 retos DC-1→DC-9
+// del aparato — seguía client-side, invisible para el SSR y para
+// Google. EL SEGUNDO CATÁLOGO lo sirve en server: id, título,
+// descripción y botín reales de la fuente, censo y meta mayor
+// derivados con reduce (cero cifras a mano) y la procedencia
+// declarada (directiva v266).
 
 export const dynamic = "force-dynamic";
 
@@ -149,6 +160,23 @@ const CAPITULOS = MISIONES.filter((m) => m.category === "STORY");
 
 // La línea de la sección compuesta COMPLETA en JS (lección v256).
 const lineaRitmo = `La jornada de la casa — ${MISIONES.length} misiones vivas: ${CENSO_RITMO[0].n} cada día, ${CENSO_RITMO[1].n} cada semana, ${CENSO_RITMO[2].n} especiales y ${CENSO_RITMO[3].n} capítulos de campaña`;
+
+// ── v270.0 EL SEGUNDO CATÁLOGO — TODO derivado de DAILY_CHALLENGES, nada a mano ──
+// La casa tiene DOS catálogos de misiones: MISSION_TEMPLATES (la jornada,
+// v268) y DAILY_CHALLENGES — los retos DC-1→DC-9 del aparato, que solo
+// vivían en el panel client-side. Botín y meta mayor salen de la fuente
+// con reduce; si el catálogo cambia, el catálogo cambia solo.
+const RETOS = DAILY_CHALLENGES;
+
+const BOTIN_RETOS = RETOS.reduce(
+  (t, r) => ({ xp: t.xp + r.xpReward, monedas: t.monedas + r.coinReward }),
+  { xp: 0, monedas: 0 },
+);
+
+const META_MAYOR = RETOS.reduce((max, r) => (r.target > max ? r.target : max), 0);
+
+// La línea de la sección compuesta COMPLETA en JS (lección v256).
+const lineaCatalogo = `El segundo catálogo de la casa — ${RETOS.length} retos diarios con ${cifra.format(BOTIN_RETOS.xp)} XP y ${cifra.format(BOTIN_RETOS.monedas)} mon de botín, metas de 1 a ${META_MAYOR}`;
 
 // ── v235.0 EL MAPA DE CAZA — solo rutas reales de la casa ──
 // La ley: los 100 objetivos se cazan en los paneles del aparato (la
@@ -457,6 +485,34 @@ export default function ObjetivosPage() {
                 )}
               </article>
             ))}
+          </div>
+        </section>
+
+        {/* v270.0 EL SEGUNDO CATÁLOGO — los retos diarios del aparato, en SSR */}
+        <section
+          aria-label="El segundo catálogo de la casa"
+          className="mt-8 border border-zinc-800 rounded-md p-5 bg-zinc-900/40"
+        >
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-cyan-hud">
+            EL SEGUNDO CATÁLOGO · los retos de la jornada diaria
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+            {`${lineaCatalogo}. Cada reto es un objetivo real del aparato con su meta y su botín a la vista — y el catálogo vive en la fuente (game-data.ts), no en esta vitrina.`}
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {RETOS.map((r) => {
+              const lineaBotinReto = `botín: +${r.xpReward} XP · +${r.coinReward} mon · meta: ${r.target}`;
+              return (
+                <article
+                  key={r.id}
+                  className="border border-zinc-800 rounded-md p-3 bg-zinc-900/60"
+                >
+                  <h3 className="text-sm font-bold leading-snug text-zinc-100">{`${r.id} · ${r.title}`}</h3>
+                  <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{r.description}</p>
+                  <div className="mt-2 font-mono text-[10px] text-amber">{lineaBotinReto}</div>
+                </article>
+              );
+            })}
           </div>
         </section>
 

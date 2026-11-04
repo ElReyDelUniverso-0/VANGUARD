@@ -2867,6 +2867,35 @@
 //     1 no se anuncia dos veces) · BD intocada (1877 cables · 9 hechos,
 //     un solo escritor).
 // Herencia v268.0 EL RITMO DE LA CASA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v269.0";
-export const APP_CODENAME = "EL MAPA DEL ARCHIVO";
+// v270.0 EL SEGUNDO CATÁLOGO (renumerada en vuelo: el turno paralelo 500735 tomó
+//         v269.0 EL MAPA DEL ARCHIVO — protocolo canon-repo, dos escritores, un
+//         canon; ninguna expansión se tira) — la expansión funcional módulo a módulo
+//         vuelve a la vitrina (/objetivos): la casa tiene DOS catálogos
+//         de misiones y la vitrina solo servía uno — MISSION_TEMPLATES
+//         (la jornada, v268) viaja en SSR pero DAILY_CHALLENGES (los 9
+//         retos DC-1→DC-9 del aparato) seguía client-side, invisible
+//         para el SSR y para Google.
+// (1) EL SEGUNDO CATÁLOGO SE SIRVE EN SERVER — sección entre la jornada
+//     y los bloques: los 9 retos con su id, título, descripción y botín
+//     reales de la fuente; censo y botín derivados con reduce — cero
+//     cifras escritas a mano (herencia v235/v268): 330 XP y 280 mon
+//     hoy, y si el catálogo cambia, la línea cambia sola.
+// (2) LA META SE DECLARA — cada reto compone su celda en JS con el
+//     target real (1→5): «botín: +50 XP · +45 mon · meta: 1» (DC-7, la
+//     síntesis avanzada que solo pide una fusión, lo dice a la vista).
+// (3) LA PROCEDENCIA ES LA LEY — la vitrina declara dónde vive el
+//     catálogo («el catálogo vive en la fuente (game-data.ts), no en
+//     esta vitrina», directiva v266) y la línea se compone COMPLETA en
+//     JS (lección v256). Cero fechas a mano, guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v270.0 db up ·
+//     pruebas 166/166 en el árbol fusionado (+2 EL SEGUNDO CATÁLOGO: estática — la fuente
+//     DAILY_CHALLENGES intacta con sus 9 retos, el botín y la meta
+//     mayor derivados, la línea compuesta en JS y la guardia v234;
+//     viva — el SSR sirve «EL SEGUNDO CATÁLOGO» con «9 retos diarios
+//     con 330 XP y 280 mon», las cabezas reales de la fuente y las
+//     anclas v235/v267/v268 en pie) · BD intocada (1877 cables · 9
+//     hechos, un solo escritor).
+// Herencia v269.0 EL MAPA DEL ARCHIVO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v270.0";
+export const APP_CODENAME = "EL SEGUNDO CATÁLOGO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
