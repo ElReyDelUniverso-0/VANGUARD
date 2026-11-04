@@ -1653,6 +1653,19 @@
 //    a SU FICHA (la ficha lleva al mapa — antes iban directo a
 //    /ver-guerra sin ficha). Filtro &tipo=punto gratis por la
 //    whitelist. /nucleo: tarjeta PUNTO DEL FRENTE con conteo real.
-export const APP_VERSION = "v225.0";
-export const APP_CODENAME = "EL FRENTE";
+// v226.0 EL TAMIZ — AGENT 2 tarea (c), TURNO AUTOMÁTICO (cron 500735):
+//  la isla de /nucleo aprovecha el contrato que LA LUPA (v221) ya
+//  declaraba y la búsqueda quedaba sin usar en la interfaz.
+//  ① nucleo-busqueda.tsx: chips de filtro por tipo de entidad (TODO +
+//    los 10 de TIPOS_ENTIDAD, aria-pressed, colores COLOR_TIPO) que
+//    envían &tipo= al motor; los TÉRMINOS de la pregunta y el filtro
+//    APLICADO (lo que respondió el motor, no el estado local) se
+//    declaran a la vista; el vacío con filtro explica cómo salir.
+//  ② /nucleo acepta ?tipo= en la URL (shareable): whitelist
+//    TIPOS_ENTIDAD — un tipo desconocido se IGNORA, jamás se finge.
+//  ③ motor (busqueda.ts): con filtro, cada fuente aporta hasta el
+//    límite completo y el recorte va DESPUÉS del tamiz — antes el chip
+//    solo enseñaba lo que sobró del top-24 sin filtrar (≤ 8 por fuente).
+export const APP_VERSION = "v226.0";
+export const APP_CODENAME = "EL TAMIZ";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

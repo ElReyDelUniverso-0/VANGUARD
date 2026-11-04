@@ -6,12 +6,17 @@
 // 350 ms, abort a 6 s — el patrón de la paleta v208). Server
 // renderiza la página; esta isla SOLO la búsqueda interactiva.
 // Estados honestos: buscando, sin red, vacío — jamás relleno.
+// v226.0 EL TAMIZ — la isla aprovecha el contrato de LA LUPA
+// (v221): chips de filtro por tipo de entidad (&tipo=, whitelist
+// TIPOS_ENTIDAD — un tipo desconocido nunca se finge), los
+// TÉRMINOS en que el motor partió la pregunta se declaran a la
+// vista y el filtro inicial puede llegar por la URL (?tipo=).
 // ============================================================
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, Radio, AlertTriangle } from "lucide-react";
-import { ETIQUETA_TIPO, type TipoEntidad } from "@/lib/nucleo/tipos";
+import { ETIQUETA_TIPO, TIPOS_ENTIDAD, type TipoEntidad } from "@/lib/nucleo/tipos";
 import { cn } from "@/lib/utils";
 
 interface Rdo {
@@ -27,6 +32,8 @@ interface Rdo {
 interface Resp {
   ok: boolean;
   q: string;
+  terminos?: string[];
+  tipo?: string | null;
   resultados?: Rdo[];
   fuentes?: { id: string; nombre: string; n: number; fallo?: boolean }[];
   error?: string;
@@ -45,8 +52,21 @@ const COLOR_TIPO: Record<TipoEntidad, string> = {
   punto: "text-lime-300 border-lime-400/40",
 };
 
-export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: string }) {
+export function NucleoBusqueda({
+  consultaInicial = "",
+  tipoInicial = null,
+}: {
+  consultaInicial?: string;
+  tipoInicial?: TipoEntidad | null;
+}) {
+  // el filtro inicial solo vale si la whitelist lo reconoce —
+  // un tipo desconocido en la URL se ignora, jamás se finge
   const [q, setQ] = useState(consultaInicial);
+  const [tipo, setTipo] = useState<TipoEntidad | null>(
+    tipoInicial && (TIPOS_ENTIDAD as readonly string[]).includes(tipoInicial)
+      ? tipoInicial
+      : null
+  );
   const [resp, setResp] = useState<Resp | null>(null);
   const [estado, setEstado] = useState<"idle" | "buscando" | "sin-red">("idle");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +93,8 @@ export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: str
     const corte = setTimeout(() => ctrl.abort(), 6000);
     const t = setTimeout(() => {
       setEstado("buscando");
-      fetch(`/api/nucleo/busqueda?q=${encodeURIComponent(query)}`, { signal: ctrl.signal })
+      const filtro = tipo ? `&tipo=${encodeURIComponent(tipo)}` : "";
+      fetch(`/api/nucleo/busqueda?q=${encodeURIComponent(query)}${filtro}`, { signal: ctrl.signal })
         .then((r) => r.json())
         .then((j: Resp) => {
           if (!vivo) return;
@@ -91,10 +112,15 @@ export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: str
       clearTimeout(corte);
       clearTimeout(t);
     };
-  }, [q]);
+  }, [q, tipo]);
 
   const resultados = resp?.ok ? resp.resultados ?? [] : [];
   const fuentes = resp?.ok ? resp.fuentes ?? [] : [];
+  // lo que el motor APLICÓ de verdad (la respuesta manda, no el estado local)
+  const tipoAplicado =
+    resp?.ok && resp.tipo && (TIPOS_ENTIDAD as readonly string[]).includes(resp.tipo)
+      ? (resp.tipo as TipoEntidad)
+      : null;
 
   return (
     <div className="rounded-xl border border-amber-hud/50 bg-zinc-950/80">
@@ -114,6 +140,51 @@ export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: str
           </span>
         )}
       </div>
+
+      {/* v226 EL TAMIZ — chips de filtro por tipo (whitelist de la casa) */}
+      <div
+        className="flex flex-wrap gap-1.5 border-b border-zinc-800 px-4 py-2"
+        role="group"
+        aria-label="Filtrar por tipo de entidad"
+      >
+        <button
+          type="button"
+          onClick={() => setTipo(null)}
+          aria-pressed={tipo === null}
+          className={cn(
+            "rounded-sm border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest transition-colors",
+            tipo === null
+              ? "border-amber text-amber"
+              : "border-zinc-700 text-zinc-500 hover:text-zinc-300"
+          )}
+        >
+          TODO
+        </button>
+        {TIPOS_ENTIDAD.map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTipo(t)}
+            aria-pressed={tipo === t}
+            className={cn(
+              "rounded-sm border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest transition-colors",
+              tipo === t
+                ? COLOR_TIPO[t]
+                : "border-zinc-700 text-zinc-500 hover:text-zinc-300"
+            )}
+          >
+            {ETIQUETA_TIPO[t]}
+          </button>
+        ))}
+      </div>
+
+      {/* honestidad de la LUPA: en qué términos partió la pregunta y qué filtro aplicó */}
+      {resp?.ok && (resp.terminos?.length ?? 0) > 0 && q.trim().length >= 2 && (
+        <p className="border-b border-zinc-800 px-4 py-1.5 font-mono text-[9px] uppercase tracking-widest text-zinc-600">
+          ◎ términos: {resp.terminos!.join(" · ")}
+          {tipoAplicado && <> — filtro: {ETIQUETA_TIPO[tipoAplicado]}</>}
+        </p>
+      )}
 
       <div className="max-h-[420px] overflow-y-auto p-2">
         {q.trim().length < 2 && (
@@ -137,7 +208,7 @@ export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: str
           </p>
         )}
         {resultados.map((r, i) => {
-          const tipo = r.entidad?.tipo;
+          const tipoRdo = r.entidad?.tipo;
           return (
             <Link
               key={`${r.origen}-${r.moduloId ?? r.entidad?.id ?? i}`}
@@ -146,14 +217,14 @@ export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: str
             >
               <span className="flex items-center gap-2 min-w-0">
                 <span className="block truncate text-[13px] font-bold text-zinc-100">{r.titulo}</span>
-                {tipo && (
+                {tipoRdo && (
                   <span
                     className={cn(
                       "shrink-0 rounded-sm border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest",
-                      COLOR_TIPO[tipo]
+                      COLOR_TIPO[tipoRdo]
                     )}
                   >
-                    {ETIQUETA_TIPO[tipo]}
+                    {ETIQUETA_TIPO[tipoRdo]}
                   </span>
                 )}
               </span>
@@ -165,7 +236,9 @@ export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: str
         })}
         {resp?.ok && q.trim().length >= 2 && resultados.length === 0 && estado === "idle" && (
           <p className="px-3 py-6 text-center text-sm text-zinc-500">
-            Nada con «{resp.q}» en las fuentes del núcleo. Prueba con otra palabra.
+            Nada con «{resp.q}»
+            {tipoAplicado ? ` en ${ETIQUETA_TIPO[tipoAplicado]}` : ""} en las fuentes del núcleo.
+            Prueba con otra palabra o quita el filtro.
           </p>
         )}
       </div>

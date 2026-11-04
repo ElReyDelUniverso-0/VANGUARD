@@ -224,6 +224,32 @@ async function parteA() {
       afirmar(rel.includes(trozo), `la ficha vg:punto no declara «${trozo}»`);
     }
   });
+
+  await verificar("EL TAMIZ: la isla usa terminos/tipo de LA LUPA y la página valida contra la whitelist (v226)", () => {
+    const rutaIsla = join(RAIZ, "src/components/vanguard/nucleo-busqueda.tsx");
+    afirmar(existsSync(rutaIsla), "src/components/vanguard/nucleo-busqueda.tsx no existe");
+    const isla = readFileSync(rutaIsla, "utf8");
+    // los chips existen y van por el contrato &tipo= de la LUPA
+    for (const trozo of [
+      'aria-label="Filtrar por tipo de entidad"',
+      "aria-pressed",
+      "ETIQUETA_TIPO",
+      "TIPOS_ENTIDAD",
+      "&tipo=",
+      "terminos",
+    ]) {
+      afirmar(isla.includes(trozo), `la isla no aprovecha la LUPA: falta «${trozo}»`);
+    }
+    // un tipo desconocido en la URL jamás se finge como filtro
+    afirmar(isla.includes("includes(tipoInicial)"), "la isla no valida el tipo inicial contra la whitelist");
+    const pag = readFileSync(join(RAIZ, "src/app/nucleo/page.tsx"), "utf8");
+    afirmar(pag.includes("tipoInicial"), "la página no pasa el filtro inicial a la isla");
+    afirmar(pag.includes("(TIPOS_ENTIDAD as readonly string[]).includes(tipoParam)"), "la página no valida ?tipo= contra la whitelist");
+    // el motor recorta DESPUÉS del tamiz (el chip enseña hasta el límite del tipo)
+    const busq = readFileSync(join(RAIZ, "src/lib/nucleo/busqueda.ts"), "utf8");
+    afirmar(busq.includes("tipoFiltro ? limite : 8"), "el motor no pide el límite completo cuando hay filtro");
+    afirmar(busq.includes(".slice(0, limite)"), "el motor no recorta después del filtro");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -243,10 +269,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v225.0", async () => {
+  await verificar("servidor vivo y en v226.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v225"), `versión ${r.json?.version} ≠ v225`);
+    afirmar(String(r.json?.version).startsWith("v226"), `versión ${r.json?.version} ≠ v226`);
   });
 
   // censo por API
@@ -399,6 +425,40 @@ async function parteB() {
     afirmar(r.json.tipo === "noticia", "el filtro aplicado no se declara en la respuesta");
     const malo = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ucrania")}&tipo=basura`);
     afirmar(malo.status === 400, `tipo inválido → ${malo.status} ≠ 400`);
+  });
+
+  // ── v226.0 EL TAMIZ: los chips de /nucleo usan el contrato de LA LUPA ──
+  await verificar("EL TAMIZ: el filtro por tipo entrega hasta el LÍMITE COMPLETO del tipo (no lo que sobró del top-24)", async () => {
+    // «ukraine» (como la prueba multi-término de LA LUPA): centenares de
+    // cables lo citan — con el recorte viejo antes del tamiz solo cabían 8.
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("ukraine")}&tipo=noticia`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const rdos = r.json.resultados ?? [];
+    afirmar(rdos.every((x) => x.entidad?.tipo === "noticia"), "se coló un resultado de otro tipo");
+    afirmar(rdos.length >= 10, `solo ${rdos.length} noticias — el tamiz sigue recortando antes de filtrar`);
+    afirmar(r.json.tipo === "noticia", "el filtro aplicado no se declara");
+    afirmar((r.json.terminos ?? []).join(" ") === "ukraine", "los términos de la pregunta no se declaran");
+  });
+
+  await verificar("EL TAMIZ: /nucleo renderiza los chips de filtro por tipo (SSR)", async () => {
+    const r = await pedir("/nucleo");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes('aria-label="Filtrar por tipo de entidad"'), "sin el grupo de chips");
+    for (const etiqueta of [">TODO<", ">NOTICIA / CABLE<", ">PUNTO DEL FRENTE<", ">SIMULACIÓN<", ">PAÍS<"]) {
+      afirmar(r.texto.includes(etiqueta), `falta el chip ${etiqueta}`);
+    }
+    afirmar(r.texto.includes('aria-pressed="true"'), "ningún chip activo por defecto");
+    // sin filtro: el TODO activo y ningún chip de tipo encendido
+    afirmar(/aria-pressed="true"[^>]*>[^<]*NOTICIA \/ CABLE/.test(r.texto) === false, "un chip de tipo arranca encendido sin ?tipo=");
+  });
+
+  await verificar("EL TAMIZ: /nucleo?tipo=noticia arranca con la NOTICIA activa — y basura se ignora (nada fingido)", async () => {
+    const r = await pedir("/nucleo?tipo=noticia");
+    afirmar(r.status === 200, "no 200");
+    afirmar(/aria-pressed="true"[^>]*>[^<]*NOTICIA \/ CABLE/.test(r.texto), "el chip NOTICIA no arranca activo con ?tipo=noticia");
+    const b = await pedir("/nucleo?tipo=basura");
+    afirmar(b.status === 200, `un tipo desconocido revienta la página (${b.status})`);
+    afirmar(/aria-pressed="true"[^>]*>[^<]*NOTICIA \/ CABLE/.test(b.texto) === false, "un tipo desconocido activó un chip — se finge un filtro");
   });
 
   // relaciones: ficha de entidad y sus enlaces vivos

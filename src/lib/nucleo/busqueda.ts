@@ -451,7 +451,10 @@ export async function buscarEnNucleo(
       if (!esFuentePublica(prov.fuente.id)) {
         throw new Error(`fuente no autorizada: ${prov.fuente.id}`);
       }
-      const res = await prov.buscar(norm, 8);
+      // v226 EL TAMIZ: con filtro por tipo, cada fuente aporta hasta el
+      // límite completo — si no, el chip solo enseñaría lo que sobró del
+      // reparto sin filtrar (el contrato v221 recortaba ANTES del tamiz).
+      const res = await prov.buscar(norm, tipoFiltro ? limite : 8);
       return { prov, res };
     })
   );
@@ -470,9 +473,12 @@ export async function buscarEnNucleo(
   }
 
   let resultados: ResultadoNucleo[] = [];
+  // v226 EL TAMIZ: si hay filtro, la asamblea NO recorta — el tamiz
+  // recorta después (hasta el límite del tipo pedido, no del todo mixto).
+  const tope = tipoFiltro ? Number.POSITIVE_INFINITY : limite;
   for (const origen of ORDEN_ORIGEN) {
     for (const r of porOrigen.get(origen) ?? []) {
-      if (resultados.length >= limite) break;
+      if (resultados.length >= tope) break;
       resultados.push(r);
     }
   }
@@ -480,13 +486,16 @@ export async function buscarEnNucleo(
   // v221 LA LUPA — filtro honesto por tipo: solo entidades de ese tipo
   // sobreviven. Los módulos del censo (sin entidad) solo pasan con
   // tipo=mapa, que es su publica_tipo declarado en fuentes.ts.
+  // v226 EL TAMIZ: el recorte al límite va DESPUÉS del filtro.
   if (tipoFiltro) {
-    resultados = resultados.filter(
-      (r) =>
-        r.entidad
-          ? r.entidad.tipo === tipoFiltro
-          : tipoFiltro === "mapa" && Boolean(r.moduloId)
-    );
+    resultados = resultados
+      .filter(
+        (r) =>
+          r.entidad
+            ? r.entidad.tipo === tipoFiltro
+            : tipoFiltro === "mapa" && Boolean(r.moduloId)
+      )
+      .slice(0, limite);
   }
 
   return { ok: true, q, terminos, tipo: tipoFiltro, resultados, fuentes: asientos, generado };

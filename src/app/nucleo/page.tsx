@@ -250,11 +250,17 @@ function Ficha({ ficha }: { ficha: FichaEntidad }) {
 export default async function NucleoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; id?: string }>;
+  searchParams: Promise<{ q?: string; id?: string; tipo?: string }>;
 }) {
   const sp = await searchParams;
   const qInicial = typeof sp.q === "string" ? sp.q.slice(0, 64) : "";
   const idEnt = typeof sp.id === "string" ? sp.id.slice(0, 80) : "";
+  // v226 EL TAMIZ — el filtro puede venir en la URL (?tipo=noticia):
+  // whitelist de la casa; un tipo desconocido se IGNORA, jamás se finge
+  const tipoParam = typeof sp.tipo === "string" ? sp.tipo : "";
+  const tipoInicial = (TIPOS_ENTIDAD as readonly string[]).includes(tipoParam)
+    ? (tipoParam as TipoEntidad)
+    : null;
 
   const [conteos, ficha] = await Promise.all([
     conteosReales(),
@@ -325,9 +331,10 @@ export default async function NucleoPage({
           </p>
           <p className="mt-1 text-xs text-zinc-500 mb-3">
             Pregunta a las {FUENTES_PUBLICAS.length} fuentes públicas a la vez. Las fuentes
-            privadas (cuentas, perfiles, telemetría, chat) no existen para la búsqueda.
+            privadas (cuentas, perfiles, telemetría, chat) no existen para la búsqueda. Los
+            chips filtran la respuesta por los {TIPOS_ENTIDAD.length} tipos de entidad.
           </p>
-          <NucleoBusqueda consultaInicial={qInicial} />
+          <NucleoBusqueda consultaInicial={qInicial} tipoInicial={tipoInicial} />
         </section>
 
         {/* MAPA DE ENTIDADES */}
