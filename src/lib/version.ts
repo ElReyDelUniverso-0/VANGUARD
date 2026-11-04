@@ -3744,6 +3744,69 @@
 //     y el sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v293.0 EL ARCHIVO MUNDIAL y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v294.0";
-export const APP_CODENAME = "EL ATLAS DEL PLANETA";
+// v295.0 LA VERDAD CRUDA — el almacén menor clasificado: el censo de la
+//         «Queda» de la v294 cayó casi entero en negativo — diez fuentes
+//         más medidas y caídas con ficción, simulación determinista o
+//         creación propia declarados en su propia cabeza (geoint, lados,
+//         monitor, enclaves, perdidas «ficción plausible», sismo
+//         «ficticios», mundial «ficticio», tierra «creación propia»,
+//         cielos, dark–menores) — y destapó la veta documentada que
+//         dormía desde la v24: dark-data (49 KB), «datos documentados
+//         de abusos, incidentes, memorial y drones; todas las entradas
+//         citan fuentes públicas (ONU, CPJ, RSF, ACLED, HRW, OSCE)»,
+//         SIN "use client", consumida en server SOLO por tres rutas API
+//         mientras su plato completo viaja en siete paneles client de
+//         la portada. La sala nueva /verdad-cruda levanta el registro
+//         documental, patrón /historia (v274) · /armeria (v283) ·
+//         /archivo-mundial (v293) · /atlas (v294): prerenderizada ○,
+//         sin cliente, sin BD. El botín: 12 abusos de guerra
+//         verificados uno a uno con su FUENTE CITADA verbatim
+//         (Kramatorsk, Bucha, Mariúpol, Gaza, Sudán, Myanmar — el
+//         honor de la cita real, v292), agrupados por guerra EN EL
+//         ORDEN DE LA FUENTE con chips «UCRANIA ×5» en un solo nodo;
+//         el memorial de 10 periodistas caídos documentados por CPJ ·
+//         RSF · IPI con su nota verbatim, agrupado por las guerras que
+//         la propia fuente declara (MEMORIAL_WARS); 14 incidentes con
+//         su estado, su costa y sus fuentes, agrupados por tipo en el
+//         orden de la fuente con la etiqueta de la fuente; 4 sistemas
+//         de dron con su anatomía completa (Shahed-136, FPV, Bayraktar
+//         TB2, Lancet-3); 4 cifras del coste con su fuente.
+// (1) LA CLASIFICACIÓN MANDA — el registro documental sube; la
+//     mecánica de juego y el índice de metraje NO: RECRUIT_SIDES (el
+//     reclutamiento 3D del aparato), ELECTION_*/AMBASSADOR_* (el
+//     ciclo electoral) y SALA_ROJA_ITEMS (el índice de metraje
+//     gráfico — se declara la puerta honesta, no se indexa) se
+//     quedan donde viven.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «La verdad cruda de las guerras — 12 abusos
+//     documentados con su fuente citada en 5 guerras, 10 periodistas
+//     caídos en el memorial, 14 incidentes documentados, 4 sistemas
+//     de dron con su anatomía y 4 cifras del coste»; las guerras, los
+//     tipos y las categorías en el ORDEN DE LA FUENTE con sus chips
+//     en un solo nodo (lección v274); cero años escritos en líneas
+//     (la guardia del arco), las fechas viajan como dato de la fuente
+//     (guardia v234, el precedente «2,5 M a.C.» de la v293).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /verdad-cruda
+//     (monthly, 0.6) y la paleta Ctrl+K la lleva (pg:verdad-cruda,
+//     icono Eye — ya importado, cero cambios de import); JSON-LD
+//     CollectionPage + ItemList con los 12 abusos; noscript honesto
+//     con la línea compuesta; puerta al aparato (los paneles
+//     interactivos, la sala roja, el reclutamiento 3D).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /verdad-cruda en la
+//     tabla) · health v295.0 db up · pruebas 216/216 (+2 LA VERDAD
+//     CRUDA: estática — la fuente documentada intacta (12/10/14/4/4
+//     censados por bloque), las 5 guerras presentes, la fuente
+//     completa (todos los abusos con fuentes y verified, todos los
+//     incidentes con fuentes, todo el memorial con documentedBy), la
+//     sala derivada (línea compuesta, chips en un nodo, fuentes
+//     citadas verbatim, memoria de juego y metraje FUERA), las
+//     puertas (sitemap + paleta) y las guardias; viva — el SSR sirve
+//     la línea derivada completa, «UCRANIA ×5», Kramatorsk con su
+//     «ONU/OHCHR — Informe OHCHR Ucrania #12», Viktoria Roshchyna con
+//     «CPJ · RSF · IPI», el Shahed con su «≈2.000 km», la cifra
+//     «9.000+» con «ONU/OHCHR 2025» y el sitemap VIVO) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v294.0 EL ATLAS DEL PLANETA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v295.0";
+export const APP_CODENAME = "LA VERDAD CRUDA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

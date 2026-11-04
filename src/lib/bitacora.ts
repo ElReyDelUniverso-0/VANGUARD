@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v295.0",
+    nombre: "LA VERDAD CRUDA — el almacén menor clasificado: el censo de la «Queda» de la v294 cayó casi entero en negativo (geoint, lados, monitor, enclaves, perdidas, sismo, mundial, tierra, cielos — ficción, simulación determinista o creación propia declarados en su propia cabeza) y destapó la veta documentada que dormía desde la v24: dark-data (49 KB, «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED, HRW, OSCE)») sube como sala server /verdad-cruda — 12 abusos de guerra verificados con su fuente citada verbatim, el memorial de 10 periodistas caídos (CPJ · RSF · IPI), 14 incidentes documentados, 4 sistemas de dron con su anatomía y 4 cifras del coste; la mecánica de juego y el índice de metraje (sala roja, reclutamiento 3D, ciclo electoral) NO suben",
+    hitos: [
+      "LA CLASIFICACIÓN MANDA — diez ficheros menores medidos y caídos en negativo (ficción plausible, simulación determinista, creación propia) y una veta documentada REAL que sube; el registro documental entra en server, el índice de metraje y la mecánica de juego se quedan en el aparato con su puerta honesta declarada",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256); las guerras, los tipos y las categorías del memorial EN EL ORDEN DE LA FUENTE con chips «UCRANIA ×5» en un solo nodo (lección v274); cada entrada con su FUENTE CITADA verbatim (el honor de la cita real, v292); las fechas viajan como dato de la fuente (guardia v234)",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /verdad-cruda (monthly, 0.6), paleta Ctrl+K (pg:verdad-cruda, icono Eye ya importado), JSON-LD CollectionPage + ItemList con los 12 abusos, noscript honesto, puerta al aparato (los paneles interactivos)",
+      "PRUEBAS +2 — estática: la fuente documentada intacta (12/10/14/4/4 censados por bloque), todos los abusos con fuentes y verified, la sala derivada y las guardias; viva: la línea derivada completa, «UCRANIA ×5», Kramatorsk con ONU/OHCHR, Roshchyna con CPJ · RSF · IPI, el Shahed con su alcance y el sitemap VIVO",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v294.0",
     nombre: "EL ATLAS DEL PLANETA — el censo fuera de la cola: las cinco cabezas restantes del almacén (imperio, conquest, hooks, social, camera) caen TODAS en la clasificación — ficción y juego declarados en su propia fuente — y el censo sistemático destapa la veta que ninguna «Queda» nombró: atlas-data (v121, REAL, «datos verificados hasta octubre 2025») sube como sala server /atlas — 66 naciones con capital, población, superficie, moneda, gobierno y líder real; 69 personas del poder con su sede real (la fuente dice 70, el dato dice 69) y 15 rutas del poder resueltas por id; la zona IANA es real, el reloj vive en el aparato",
     hitos: [

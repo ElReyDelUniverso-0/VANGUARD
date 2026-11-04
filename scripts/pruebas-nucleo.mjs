@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v294.0", async () => {
+  await verificar("servidor vivo y en v295.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v294"), `versión ${r.json?.version} ≠ v294`);
+    afirmar(String(r.json?.version).startsWith("v295"), `versión ${r.json?.version} ≠ v295`);
   });
 
   // censo por API
@@ -2378,6 +2378,121 @@ async function parteB() {
     // las anclas v284/v285 en pie
     afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
+  });
+
+  // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──
+  // El almacén menor clasificado: diez fuentes caídas en negativo y la
+  // veta documentada (fuentes públicas citadas) que sube.
+  await verificar("LA VERDAD CRUDA estática: la fuente documentada intacta y todo derivado (v295)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/dark-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/verdad-cruda/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: los cinco bloques con sus censos reales
+    afirmar(fuente.includes("export const WAR_ABUSES"), "la fuente de abusos no existe");
+    const iniA = fuente.indexOf("export const WAR_ABUSES");
+    const finA = fuente.indexOf("export interface IncidentCamera");
+    const bloqueA = fuente.slice(iniA, finA);
+    const nAb = (bloqueA.match(/id: "ab-/g) ?? []).length;
+    afirmar(nAb === 12, `el censo de abusos midió mal (${nAb}/12)`);
+    for (const g of ["UCRANIA", "GAZA", "SUDÁN", "MYANMAR", "GLOBAL"]) {
+      afirmar(bloqueA.includes(`war: "${g}"`), `falta la guerra ${g} en la fuente`);
+    }
+    const iniI = fuente.indexOf("export const INCIDENTS");
+    const finI = fuente.indexOf("export interface FallenJournalist");
+    const nInc = (fuente.slice(iniI, finI).match(/id: "inc-/g) ?? []).length;
+    afirmar(nInc === 14, `el censo de incidentes midió mal (${nInc}/14)`);
+    const iniM = fuente.indexOf("export const MEMORIAL_FALLEN");
+    const finM = fuente.indexOf("export const MEMORIAL_WARS");
+    const nMem = (fuente.slice(iniM, finM).match(/id: "mj-/g) ?? []).length;
+    afirmar(nMem === 10, `el censo del memorial midió mal (${nMem}/10)`);
+    const iniD = fuente.indexOf("export const DRONE_MODELS");
+    const finD = fuente.indexOf("export const DRONE_CASUALTY_FACTS");
+    const nDr = (fuente.slice(iniD, finD).match(/id: "/g) ?? []).length;
+    afirmar(nDr === 4, `el censo de drones midió mal (${nDr}/4)`);
+    const iniC = fuente.indexOf("export const DRONE_CASUALTY_FACTS");
+    const finC = fuente.indexOf("export interface RecruitSide");
+    const nCi = (fuente.slice(iniC, finC).match(/stat: "/g) ?? []).length;
+    afirmar(nCi === 4, `el censo de cifras midió mal (${nCi}/4)`);
+    // la fuente completa: todas las entradas documentadas (la cabeza de la
+    // fuente lo declara: «todas las entradas citan fuentes públicas»)
+    afirmar((bloqueA.match(/verified: true/g) ?? []).length === 12, "los abusos no están todos verificados");
+    afirmar((bloqueA.match(/sources: \[/g) ?? []).length === 12, "hay abusos sin fuente citada");
+    afirmar((fuente.slice(iniI, finI).match(/sources: \[/g) ?? []).length === 14, "hay incidentes sin fuente citada");
+    afirmar((fuente.slice(iniM, finM).match(/documentedBy: "/g) ?? []).length === 10, "hay caídos sin quién los documente");
+    // la sala: los imports, la línea compuesta, los chips, las fuentes verbatim
+    for (const imp of ["WAR_ABUSES,", "INCIDENTS,", "MEMORIAL_FALLEN,", "MEMORIAL_WARS,", "DRONE_MODELS,", "DRONE_CASUALTY_FACTS,", "INCIDENT_TYPE_META,", "ABUSE_TYPES,"]) {
+      afirmar(sala.includes(imp), `la sala no consume ${imp.replace(",", "")}`);
+    }
+    afirmar(
+      sala.includes("for (const a of WAR_ABUSES) if (!GUERRAS.includes(a.war)) GUERRAS.push(a.war)"),
+      "las guerras no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("for (const i of INCIDENTS) if (!TIPOS.includes(i.type)) TIPOS.push(i.type)"),
+      "los tipos no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("Object.keys(MEMORIAL_WARS).filter((w) =>"),
+      "el memorial no sigue el orden que la propia fuente declara",
+    );
+    afirmar(
+      sala.includes("const lineaVerdad = `La verdad cruda de las guerras — ${WAR_ABUSES.length} abusos documentados con su fuente citada en ${GUERRAS.length} guerras"),
+      "la línea no se compone COMPLETA en JS",
+    );
+    afirmar(
+      sala.includes("`" + "${guerra} ×${WAR_ABUSES.filter((a) => a.war === guerra).length}`"),
+      "el chip de guerra no compone guerra y conteo en un nodo",
+    );
+    afirmar(
+      sala.includes("`" + "${INCIDENT_TYPE_META[t].label} ×${INCIDENTS.filter((i) => i.type === t).length}`"),
+      "el chip de incidente no compone etiqueta y conteo en un nodo",
+    );
+    afirmar(sala.includes("${s.org} — ${s.label}"), "la fuente citada del abuso no viaja verbatim");
+    afirmar(sala.includes("documentado por: {f.documentedBy}"), "el memorial no cita quién lo documenta");
+    afirmar(sala.includes("NO suben a esta sala"), "la sala no declara lo que se queda en el aparato");
+    // la clasificación manda: mecánica de juego e índice de metraje FUERA
+    // (el CÓDIGO real decide: los comentarios que documentan la exclusión
+    // no cuentan — se pelan antes del aserto, lección v258 sobre la fuente)
+    const salaSinComentarios = sala.replace(/\/\/[^\n]*/g, "");
+    afirmar(!salaSinComentarios.includes("SALA_ROJA_ITEMS"), "¡el índice de metraje (sala roja) no sube a la sala!");
+    afirmar(!salaSinComentarios.includes("RECRUIT_SIDES"), "¡el reclutamiento 3D no sube a la sala!");
+    afirmar(!salaSinComentarios.includes("ELECTION_") && !salaSinComentarios.includes("AMBASSADOR_"), "¡el ciclo electoral no sube a la sala!");
+    // las puertas de la casa
+    afirmar(mapa.includes("/verdad-cruda"), "el sitemap no anuncia la verdad cruda");
+    afirmar(paleta.includes('key: "pg:verdad-cruda"'), "la paleta Ctrl+K no lleva la verdad cruda");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas ISO a mano en la ronda v295!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v295)!");
+  });
+
+  await verificar("LA VERDAD CRUDA viva: la línea derivada, los chips, las fuentes citadas y el memorial (v295)", async () => {
+    const r = await pedir("/verdad-cruda");
+    afirmar(r.status === 200, `/verdad-cruda no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA VERDAD CRUDA DE LAS GUERRAS"), "el título no viaja");
+    // la línea compuesta COMPLETA (12 · 5 · 10 · 14 · 4 · 4 — derivados de la fuente)
+    afirmar(
+      r.texto.includes("La verdad cruda de las guerras — 12 abusos documentados con su fuente citada en 5 guerras, 10 periodistas caídos en el memorial, 14 incidentes documentados, 4 sistemas de dron con su anatomía y 4 cifras del coste"),
+      "la línea derivada no viaja (o la fuente cambió)",
+    );
+    // los comentarios RSC y las etiquetas se pelan: los asertos miran el
+    // TEXTO servido (lección v258 creciendo en la v294)
+    const texto = r.texto.replace(/<[^>]+>/g, "");
+    afirmar(texto.includes("UCRANIA ×5"), "el chip de Ucrania no viaja");
+    afirmar(texto.includes("Guerra de Ucrania ×6"), "el chip del memorial no viaja");
+    afirmar(texto.includes("Ataque / bombardeo ×4"), "el chip de incidentes no viaja");
+    afirmar(texto.includes("Ataque a la estación de Kramatorsk"), "el abuso de Kramatorsk no viaja");
+    afirmar(texto.includes("ONU/OHCHR — Informe OHCHR Ucrania #12"), "la fuente citada verbatim no viaja");
+    afirmar(texto.includes("Viktoria Roshchyna"), "la reportera del memorial no viaja");
+    afirmar(texto.includes("CPJ · RSF · IPI"), "quién documenta no viaja");
+    afirmar(texto.includes("458"), "el conteo documentado de Bucha no viaja");
+    afirmar(texto.includes("Shahed-136 / Gerán-2"), "el dron no viaja");
+    afirmar(texto.includes("≈2.000 km"), "el alcance del Shahed no viaja");
+    afirmar(texto.includes("9.000+"), "la cifra del coste no viaja");
+    afirmar(texto.includes("ONU/OHCHR 2025"), "la fuente de la cifra no viaja");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/verdad-cruda"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v294.0 EL ATLAS DEL PLANETA: atlas-data (v121, REAL) gana su sala server (/atlas) ──

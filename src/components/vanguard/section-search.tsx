@@ -243,6 +243,13 @@ export function SectionSearch({
         kind: "page", href: "/atlas",
       },
       {
+        // v295.0 LA VERDAD CRUDA — la fuente dark-data (v24, documentada), en server
+        key: "pg:verdad-cruda", label: "LA VERDAD CRUDA — 12 abusos de guerra verificados con su fuente citada (ONU, CPJ, RSF, ACLED), el memorial de 10 periodistas caídos, 14 incidentes documentados y la anatomía de la guerra de drones", short: "verdad cruda abusos guerras documentados memorial periodistas caidos kramatorsk bucha mariupol fuentes onu cpj rsf drones shahed fpv bayraktar lancet coste",
+        icon: <Eye className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la verdad cruda de la casa", icon_color: "text-amber",
+        kind: "page", href: "/verdad-cruda",
+      },
+      {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server
         key: "pg:rostros", label: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder: tronos, dinero, tribunal y nuevos, con cargo, sede, ruta y frase", short: "rostros poder tronos presidentes banqueros tribunal silicio ia fichas galeria mandato",
         icon: <Users className="w-4 h-4" />, sectionKey: "global",

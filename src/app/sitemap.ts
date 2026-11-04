@@ -192,6 +192,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v295.0 LA VERDAD CRUDA — la fuente dark-data (v24, documentada,
+      // «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED,
+      // HRW, OSCE)») servida en server: 12 abusos de guerra verificados
+      // con su fuente citada, el memorial de 10 periodistas caídos, 14
+      // incidentes documentados, 4 sistemas de dron con su anatomía y
+      // las cifras del coste, indexable para las búsquedas de
+      // documentación de guerra (Kramatorsk, Bucha, Mariúpol, memorial
+      // de prensa, guerra de drones...)
+      url: `${SITE_URL}/verdad-cruda`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
       // censo de poder de la fuente (ROSTROS) servidas en server:
       // los tronos, el dinero, el tribunal y los nuevos, indexables
