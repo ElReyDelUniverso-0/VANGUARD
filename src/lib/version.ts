@@ -1920,6 +1920,38 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v236.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v235.0 EL BOTÍN y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v236.0";
-export const APP_CODENAME = "EL GLOSARIO";
+// v237.0: EL RELIEVE — el globo recupera la dieta pendiente y las pieles
+//     del planeta dejan de repetirse a mano (la deuda marcada en la cola
+//     desde v235; los cuatro globos de la casa quedan INTACTOS en
+//     comportamiento — todo aditivo):
+// (1) EL RELIEVE A DIETA — el heightmap earth-topology (2048x1024 gris,
+//     378 KB en PNG) quedó FUERA de la dieta v199 (EL TURBO: blue-marble
+//     1427→208 KB, night 698→85 KB con quality 78). Ahora viaja como
+//     earth-topology.webp q95: 123.964 bytes (−67,2 %), error medido
+//     píxel a píxel contra el original — Δmedio 0.28/255, Δmax 7/255 en
+//     crestas: el ojo no nota diferencia y el relieve queda intacto. El
+//     NEGATIVO ORIGINAL (PNG) no se borra jamás: sigue servido como
+//     constancia y la prueba lo vigila. Hereda la caché de /assets de
+//     v199 (max-age 1 día + SWR 7 días — el patrón :path* cubre webp).
+// (2) FUENTE ÚNICA DE LAS PIELES (src/lib/globe-assets.ts) — la casa
+//     jamás duplica una constante: el mapa VIEW_TEXTURES vivía ESCRITO
+//     DOS VECES (globe-3d, globe-map-3d), el tipo GlobeViewMode también,
+//     la ruta del bump map 4 VECES y earth-dark a mano en conquistas.
+//     Ahora las cuatro salas 3D consumen TEXTURA_RELIEVE + TEXTURAS_VISTA
+//     + GlobeViewMode del lib (cliente-seguro: constantes puras, cero
+//     imports); los dos componentes re-exportan el tipo para no romper a
+//     nadie (planeta-panel, mundo-3d-vivo, cameras-panel y map-panel
+//     siguen importando GlobeViewMode de globe-map-3d, sin tocar).
+// (3) PRUEBAS +3 (91/91): estática (fuente única — cero rutas /assets/
+//     globe/ fuera del lib por regex; el negativo PNG sigue en disco y
+//     el webp pesa MENOS que el PNG — fs.statSync, sin cifras a mano;
+//     anti-fechas en el lib); viva el activo (webp 200 con content-type
+//     image/webp y menos bytes que el PNG; el PNG 200 — nada borrado);
+//     viva las salas (/, /mundo, /ver-guerra responden 200). Salud
+//     v236→v237.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v237.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v236.0 EL GLOSARIO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v237.0";
+export const APP_CODENAME = "EL RELIEVE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -10,6 +10,11 @@ import type { ConflictRegion } from "@/lib/game-data";
 import type { PlacedCamera } from "@/lib/game-store";
 import type { MapRoute } from "@/components/vanguard/world-map-svg";
 import { CieloOcaso } from "@/components/vanguard/cielo-ocaso";
+import {
+  TEXTURA_RELIEVE,
+  TEXTURAS_VISTA,
+  type GlobeViewMode,
+} from "@/lib/globe-assets"; // v237 EL RELIEVE: fuente única de las pieles
 
 const LEVEL_HEX: Record<string, string> = {
   CRITICO: "#ef4444",
@@ -20,19 +25,15 @@ const LEVEL_HEX: Record<string, string> = {
 
 // v31 — texturas por modo de vista: tactico oscuro, satelite real (NASA
 // Blue Marble) o planeta de noche con luces de ciudades.
-export type GlobeViewMode = "oscuridad" | "satelite" | "noche";
+// v237 EL RELIEVE — el tipo y el mapa viven en su FUENTE ÚNICA
+// (@/lib/globe-assets); aquí solo se re-exporta para no romper a nadie.
+export type { GlobeViewMode } from "@/lib/globe-assets";
 export interface GlobeFlyTo {
   lat: number;
   lng: number;
   altitude?: number;
   nonce: number;
 }
-const VIEW_TEXTURES: Record<GlobeViewMode, string> = {
-  oscuridad: "/assets/globe/earth-dark.jpg",
-  satelite: "/assets/globe/earth-blue-marble.jpg",
-  noche: "/assets/globe/earth-night.jpg",
-};
-
 interface GlobePoint {
   id: string;
   lat: number;
@@ -121,8 +122,8 @@ export function Globe3D({
       .width(W)
       .height(H)
       .backgroundColor("rgba(0,0,0,0)")
-      .globeImageUrl(VIEW_TEXTURES[viewMode])
-      .bumpImageUrl("/assets/globe/earth-topology.png")
+      .globeImageUrl(TEXTURAS_VISTA[viewMode])
+      .bumpImageUrl(TEXTURA_RELIEVE)
       .showAtmosphere(true)
       .atmosphereColor("#ff9f45")
       .atmosphereAltitude(0.18)
@@ -159,7 +160,7 @@ export function Globe3D({
     const globe = globeRef.current;
     if (!globe) return;
     try {
-      globe.globeImageUrl(VIEW_TEXTURES[viewMode]);
+      globe.globeImageUrl(TEXTURAS_VISTA[viewMode]);
     } catch {
       /* noop */
     }

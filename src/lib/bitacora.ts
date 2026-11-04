@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v237.0",
+    nombre: "EL RELIEVE — el globo recupera la dieta pendiente y las pieles dejan de repetirse a mano (módulo globo 3D)",
+    hitos: [
+      "EL RELIEVE A DIETA — el heightmap earth-topology (378 KB en PNG) quedó fuera de la dieta v199 EL TURBO: ahora viaja como WebP q95 de 124 KB (−67 %) con el error medido píxel a píxel contra el original (Δmedio 0.28/255, Δmax 7/255 en crestas — el ojo no nota diferencia); el NEGATIVO ORIGINAL no se borra jamás: sigue servido como constancia y la prueba lo vigila",
+      "FUENTE ÚNICA DE LAS PIELES (src/lib/globe-assets.ts) — la casa jamás duplica una constante: el mapa de texturas vivía escrito DOS veces (globe-3d, globe-map-3d), el tipo GlobeViewMode también, la ruta del bump map 4 veces y earth-dark a mano en conquistas; ahora las 4 salas 3D consumen TEXTURA_RELIEVE + TEXTURAS_VISTA + GlobeViewMode del lib puro cliente-seguro, con re-export compatible (cero consumidores tocados)",
+      "QA v237: tsc 0, eslint 0, build EXIT 0, health v237.0 db up, pruebas 91/91 (+3 EL RELIEVE: fuente única por regex, negativo PNG intacto y webp más ligero con fs.statSync, activo vivo con content-type, salas /, /mundo y /ver-guerra 200), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v236.0",
     nombre: "EL GLOSARIO — el traductor muestra sus tuercas y abre sus cables (/traductor)",
     hitos: [

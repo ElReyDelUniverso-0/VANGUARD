@@ -8,6 +8,11 @@ import { useEffect, useRef } from "react";
 import GlobeFactory from "globe.gl";
 import { GLOBE_COUNTRY_POLYS, hexA, type CountryFeature } from "@/lib/world-geo";
 import { CieloOcaso } from "@/components/vanguard/cielo-ocaso";
+import {
+  TEXTURA_RELIEVE,
+  TEXTURAS_VISTA,
+  type GlobeViewMode,
+} from "@/lib/globe-assets"; // v237 EL RELIEVE: fuente única de las pieles
 
 export interface Globe3DMarker {
   id: string;
@@ -54,18 +59,16 @@ interface PolyDatum extends CountryFeature {
 
 // v31 — modos de vista del planeta: mapa oscuro tactico, imagen satelital
 // real (NASA Blue Marble) o la noche con luces de ciudades.
-export type GlobeViewMode = "oscuridad" | "satelite" | "noche";
+// v237 EL RELIEVE — el tipo vive en su FUENTE ÚNICA (@/lib/globe-assets);
+// aquí solo se re-exporta para no romper a nadie (el censo importaba de
+// este archivo).
+export type { GlobeViewMode } from "@/lib/globe-assets";
 export interface GlobeFlyTo {
   lat: number;
   lng: number;
   altitude?: number;
   nonce: number;
 }
-const VIEW_TEXTURES: Record<GlobeViewMode, string> = {
-  oscuridad: "/assets/globe/earth-dark.jpg",
-  satelite: "/assets/globe/earth-blue-marble.jpg",
-  noche: "/assets/globe/earth-night.jpg",
-};
 
 interface GlobePolygonsLike {
   polygonsData: (d: PolyDatum[]) => GlobePolygonsLike;
@@ -193,8 +196,8 @@ export function GlobeMap3D({
       .width(W)
       .height(H)
       .backgroundColor("rgba(0,0,0,0)")
-      .globeImageUrl(VIEW_TEXTURES[viewMode])
-      .bumpImageUrl("/assets/globe/earth-topology.png")
+      .globeImageUrl(TEXTURAS_VISTA[viewMode])
+      .bumpImageUrl(TEXTURA_RELIEVE)
       .showAtmosphere(true)
       .atmosphereColor(atmosphereColor)
       .atmosphereAltitude(0.2)
@@ -279,7 +282,7 @@ export function GlobeMap3D({
     const globe = globeRef.current;
     if (!globe) return;
     try {
-      globe.globeImageUrl(VIEW_TEXTURES[viewMode]);
+      globe.globeImageUrl(TEXTURAS_VISTA[viewMode]);
     } catch {
       /* noop */
     }

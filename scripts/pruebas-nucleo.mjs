@@ -14,7 +14,7 @@
 // Sale con código 1 si ALGO falla (el Dueño manda: si las pruebas
 // básicas fallan, no se continúa con cambios masivos).
 // ============================================================
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const RAIZ = process.cwd();
@@ -52,7 +52,8 @@ async function pedir(ruta, init = {}) {
     const texto = await r.text();
     let json = null;
     try { json = JSON.parse(texto); } catch { /* HTML */ }
-    return { status: r.status, texto, json };
+    // v237: headers viajan también (content-type/length de los activos) — aditivo
+    return { status: r.status, texto, json, headers: Object.fromEntries(r.headers) };
   } finally {
     clearTimeout(t);
   }
@@ -304,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v236.0", async () => {
+  await verificar("servidor vivo y en v237.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v236"), `versión ${r.json?.version} ≠ v236`);
+    afirmar(String(r.json?.version).startsWith("v237"), `versión ${r.json?.version} ≠ v237`);
   });
 
   // censo por API
@@ -1007,6 +1008,59 @@ async function parteB() {
     for (const ruta of ["/nucleo?tipo=noticia", "/vertigo", "/nucleo", "/guerra-hoy", "/en-vivo"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `puerta del traductor rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v237.0 EL RELIEVE: el globo a dieta y las pieles en su fuente única ──
+  await verificar("EL RELIEVE: fuente única de las pieles, cero rutas repetidas a mano (v237)", () => {
+    const lib = readFileSync(join(RAIZ, "src/lib/globe-assets.ts"), "utf8");
+    afirmar(lib.includes("export const TEXTURA_RELIEVE"), "el relieve no vive en su fuente única");
+    afirmar(lib.includes("export const TEXTURAS_VISTA"), "sin el mapa de pieles en la fuente");
+    afirmar(lib.includes("export type GlobeViewMode"), "sin el tipo de vista en la fuente");
+    afirmar(lib.includes("TEXTURA_RELIEVE_ORIGINAL"), "el negativo original no está declarado");
+    // cero fechas escritas a mano en el lib (ley de la casa)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(lib), "¡el lib de pieles escribe fechas a mano!");
+    // las 4 salas 3D consumen la fuente — y NINGUNA conserva la ruta a mano
+    const salas = [
+      "src/components/vanguard/globe-3d.tsx",
+      "src/components/vanguard/globe-map-3d.tsx",
+      "src/components/vanguard/panels/tierra-panel.tsx",
+      "src/components/vanguard/panels/conquistas-3d-panel.tsx",
+    ];
+    for (const sala of salas) {
+      const code = readFileSync(join(RAIZ, sala), "utf8");
+      afirmar(code.includes('from "@/lib/globe-assets"'), `${sala} no consume la fuente única`);
+      afirmar(!code.includes("/assets/globe/"), `¡${sala} todavía escribe la ruta de la piel a mano!`);
+      afirmar(!code.includes("VIEW_TEXTURES"), `¡${sala} conserva el mapa duplicado!`);
+    }
+    // el tipo sigue exportándose desde los dos componentes (compatibilidad)
+    for (const sala of ["src/components/vanguard/globe-3d.tsx", "src/components/vanguard/globe-map-3d.tsx"]) {
+      const code = readFileSync(join(RAIZ, sala), "utf8");
+      afirmar(code.includes("export type { GlobeViewMode }"), `${sala} no re-exporta el tipo para sus consumidores`);
+    }
+    // el negativo ORIGINAL sigue en disco y el webp pesa MENOS (fs, no cifras a mano)
+    const png = join(RAIZ, "public/assets/globe/earth-topology.png");
+    const webp = join(RAIZ, "public/assets/globe/earth-topology.webp");
+    afirmar(existsSync(png), "¡el negativo PNG fue borrado! (la casa no borra obra)");
+    afirmar(existsSync(webp), "el relieve a dieta no existe");
+    afirmar(statSync(webp).size < statSync(png).size, "el webp no es más ligero que el PNG");
+  });
+
+  await verificar("EL RELIEVE viva: el webp se sirve ligero y el negativo sigue servido (v237)", async () => {
+    const webp = await pedir("/assets/globe/earth-topology.webp");
+    afirmar(webp.status === 200, `webp → ${webp.status}`);
+    const tipo = String(webp.headers?.["content-type"] || "");
+    afirmar(tipo.includes("image/webp"), `content-type del webp: ${tipo}`);
+    const png = await pedir("/assets/globe/earth-topology.png");
+    afirmar(png.status === 200, `el negativo PNG ya no se sirve (${png.status})`);
+    afirmar(Number(webp.headers?.["content-length"] || 0) < Number(png.headers?.["content-length"] || 1),
+      "el webp viaja más pesado que el PNG — la dieta es mentira");
+  });
+
+  await verificar("EL RELIEVE: las salas 3D de la casa responden 200 (v237)", async () => {
+    for (const ruta of ["/", "/mundo", "/ver-guerra"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `sala del globo rota ${ruta} → ${r.status}`);
     }
   });
 

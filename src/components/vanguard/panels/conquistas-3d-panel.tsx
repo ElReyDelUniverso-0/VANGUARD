@@ -12,6 +12,10 @@ import { Button } from "@/components/ui/button";
 import { sfx } from "@/lib/sound";
 import GlobeFactory from "globe.gl";
 import { HeroOro } from "@/components/vanguard/hero-oro";
+import {
+  TEXTURA_RELIEVE,
+  TEXTURAS_VISTA,
+} from "@/lib/globe-assets"; // v237 EL RELIEVE: fuente única de las pieles
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 interface Step {
@@ -121,8 +125,8 @@ export function Conquistas3DPanel() {
       const g = new GlobeFactory(el, { animateIn: true })
         .width(w).height(h)
         .backgroundColor("rgba(0,0,0,0)")
-        .globeImageUrl("/assets/globe/earth-dark.jpg")
-        .bumpImageUrl("/assets/globe/earth-topology.png")
+        .globeImageUrl(TEXTURAS_VISTA.oscuridad)
+        .bumpImageUrl(TEXTURA_RELIEVE)
         .atmosphereColor("#f59e0b").atmosphereAltitude(0.16);
       globeRef.current = g;
       const paint = () => {

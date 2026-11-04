@@ -24,6 +24,10 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
+  TEXTURA_RELIEVE,
+  TEXTURAS_VISTA,
+} from "@/lib/globe-assets"; // v237 EL RELIEVE: fuente única de las pieles
+import {
   LUGARES, lugarPorId, contactosEn, estelaDe, pasesSobre, cuentaAtras, veredictoDe,
   SENSORES, MISIONES, CRONICAS, preguntar, buscarLugar, vientoEn, texturaPorHora,
   distanciaKm, hhmmUTC, type Contacto, type RespuestaAnalista,
@@ -67,10 +71,12 @@ type GLike = {
   _destructor?: () => void;
 };
 
+// v237 EL RELIEVE — las rutas viven en su FUENTE ÚNICA (@/lib/globe-assets);
+// el nombre «tactico» de esta sala mapea al modo «oscuridad» de la casa.
 const TEXTURAS: Record<string, string> = {
-  satelite: "/assets/globe/earth-blue-marble.jpg",
-  noche: "/assets/globe/earth-night.jpg",
-  tactico: "/assets/globe/earth-dark.jpg",
+  satelite: TEXTURAS_VISTA.satelite,
+  noche: TEXTURAS_VISTA.noche,
+  tactico: TEXTURAS_VISTA.oscuridad,
 };
 
 const COLOR_TIPO: Record<Contacto["tipo"], string> = {
@@ -267,7 +273,7 @@ export function TierraPanel() {
         .width(W).height(H)
         .backgroundColor("rgba(0,0,0,0)")
         .globeImageUrl(TEXTURAS.satelite)
-        .bumpImageUrl("/assets/globe/earth-topology.png")
+        .bumpImageUrl(TEXTURA_RELIEVE)
         .showAtmosphere(true).atmosphereColor("#ffb347").atmosphereAltitude(0.22)
         .showGraticules(true) as unknown as GLike;
       gRef.current = g;
