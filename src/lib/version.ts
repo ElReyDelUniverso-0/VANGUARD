@@ -3970,6 +3970,60 @@
 //     el HTML y el sitemap VIVO) · BD intocada (1877 cables · 9 hechos,
 //     un solo escritor).
 // Herencia v297.0 EL PODER MUNDIAL y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v298.0";
-export const APP_CODENAME = "LA FOTOTECA DEL PLANETA";
+// v299.0 LA VOZ DE VANGUARD — la ronda del OÍDO (mandato directo del Dueño:
+//         «la música se bugea, es fea, no hay letra, no es única, los sonidos
+//         predeterminados sin vida, Vanguard un mundo sordo, la voz de
+//         Vanguard no tiene permiso para hablarle en audio y el cofre opaca
+//         el botón de música — arregla todo eso»). Cinco frentes, un solo
+//         oído:
+// (1) EL BUG CAZADO Y MUERTO (conflict-music.ts) — el secuenciador miraba
+//     0.24 s adelante con un tick de 45 ms: en segundo plano el navegador
+//     throttea el timer, nextTime quedaba en el pasado y al volver el
+//     catch-up AMETRALLABA decenas de notas viejas — EL BUG QUE SE OÍA.
+//     Ahora: mirada de 1.2 s (MIRADA_ADELANTE_S), tick de 120 ms (TICK_MS)
+//     y RESYNC MUSICAL — si el reloj murió, la obra salta AL COMPÁS
+//     SIGUIENTE (helpers puros siguienteCompas/debeResync, probados).
+//     Además: CARRERA DE FUNDIDOS eliminada (fadeSeq — el crossfade viejo
+//     se retira si llega un mando nuevo) y el arranque limpio LEVANTA el
+//     master si un fundido lo dejó en el suelo (pausar durante un fundido
+//     dejaba la radio MUDA).
+// (2) LA LETRA DE LA CASA (letra-vanguard.ts NUEVO) — las 34 obras de la
+//     ORQUESTA DE ORO cantan SU letra propia (intro · verso · verso II ·
+//     respiro · puente · cadencia), sincronizada al compás real por el
+//     secuenciador (parteDeCompas, UNA fuente para letra y canto). El
+//     karaoke vive en la píldora (data-vg-letra) y en el Auditorio el
+//     CANCIONERO (data-vg-cancionero) con la parte en marcha iluminada.
+// (3) SONIDOS CON VIDA (sound.ts) — cada golpe llevaba frecuencia y
+//     ganancia IDÉNTICAS (robot): ahora HUMANIZACIÓN viva (velocidad ±8%,
+//     afinación ±0.4-1.2%) en playTone/playWood/playBell. Y nace
+//     sfx.himno(): la LLAMADA DE LA CASA (motivo Gloria raíz·raíz·raíz→
+//     octava→5ª) que suena cuando el oído recibe su permiso.
+// (4) EL PERMISO DE HABLARLE (permiso-mic.tsx NUEVO) — la tarjeta gemela
+//     de la v201: Vanguard pide el MICRÓFONO por adelantado con un gesto
+//     limpio (getUserMedia + soltar tracks al instante) para que tocar el
+//     orbe sea hablar y no negociar con el candado. Coordinada con la
+//     boca (la boca manda, luego el oído) y con el ritual v214; el orbe
+//     llama a la tarjeta AL INSTANTE si topa un not-allowed.
+// (5) LOS CARRILES DE LA ESQUINA — el cofre (8px), la radio (56px) y el
+//     orbe (104px) convivían en el MISMO borde y se tapaban (el Dueño lo
+//     cantó: «el cofre opaca el botón de música»): ahora cada uno tiene
+//     SU carril en móvil y escritorio, y las tarjetas de permiso escalan
+//     por encima sin pisar nada.
+// BONUS EL MUNDO ESCUCHA — setPulsoMundo(tensión real / 100) cada 5 s
+//     mientras suena la Radio: el drone se abre (filtro +0..300 Hz) y el
+//     corazón de la sala late al empezar sección cuando el mundo arde.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ en la tabla) ·
+//     health v299.0 db up · pruebas 224/224 (+2 LA VOZ DE VANGUARD:
+//     estática — la LETRA cubre las 34 obras (verso A no vacío, la
+//     herencia A2/B cae a la línea previa, parteDeCompas mapea el ciclo
+//     real del motor), los helpers puros del RESYNC (siguienteCompas
+//     alinea al compás, debeResync marca el retraso muerto), el motor
+//     declara mirada 1.2 s, los carriles separados (cofre 8px · radio
+//     sm:bottom-14 · orbe 104px) y la tarjeta del oído con su himno;
+//     viva — la píldora sirve data-vg-letra, el cancionero y el carril
+//     del orbe en el HTML) · BD intocada (1877 cables · 9 hechos, un
+//     solo escritor).
+// Herencia v298.0 LA FOTOTECA DEL PLANETA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v299.0";
+export const APP_CODENAME = "LA VOZ DE VANGUARD";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

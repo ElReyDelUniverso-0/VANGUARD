@@ -174,7 +174,7 @@ export function PermisoVoz() {
 
   return createPortal(
     <div
-      className="fixed left-1/2 -translate-x-1/2 bottom-[calc(96px+env(safe-area-inset-bottom,0px))] sm:bottom-8 z-[48] w-[min(92vw,430px)] vg201-permiso"
+      className="fixed left-1/2 -translate-x-1/2 bottom-[calc(176px+env(safe-area-inset-bottom,0px))] sm:bottom-8 z-[48] w-[min(92vw,430px)] vg201-permiso"
       data-vg-permiso-voz
       role="dialog"
       aria-label={TXT.titulo[lang] || TXT.titulo.es}

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v299.0",
+    nombre: "LA VOZ DE VANGUARD — la ronda del OÍDO: mandato directo del Dueño («la música se bugea, es fea, no hay letra, no es única, sonidos predeterminados sin vida, Vanguard un mundo sordo, la voz no tiene permiso para hablarle en audio y el cofre opaca el botón de música») resuelto en cinco frentes: el BUG del secuenciador cazado (lookahead 0.24 s + tick 45 ms — el throttle del navegador ametrallaba notas viejas al volver; ahora mirada 1.2 s, tick 120 ms y RESYNC musical al compás siguiente), LA LETRA de las 34 obras (karaoke al compás en la píldora y cancionero en el Auditorio), SONIDOS con humanización viva (cero golpes idénticos) y sfx.himno() — la llamada de la casa, EL PERMISO DE HABLARLE (tarjeta del micrófono gemela de la v201: getUserMedia por adelantado, se suelta al instante) y LOS CARRILES DE LA ESQUINA (cofre 8px · radio 56px · orbe 104px — nadie tapa a nadie)",
+    hitos: [
+      "EL BUG QUE SE OÍA — conflict-music.ts: el catch-up del secuenciador disparaba decenas de notas viejas cuando la pestaña dormía; RESYNC MUSICAL (helpers puros siguienteCompas/debeResync probados en la suite) salta al compás siguiente sin ráfaga; CARRERA DE FUNDIDOS eliminada con fadeSeq y el arranque limpio levanta el master que un fundido dejó en el suelo (pausar durante el crossfade dejaba la radio MUDA)",
+      "LA LETRA DE LA CASA — letra-vanguard.ts NUEVO: intro · verso · verso II · respiro · puente · cadencia para las 34 obras, sincronizadas por parteDeCompas (UNA fuente para letra y canto); el secuenciador canta con subscribeLetra/getLetraActual; karaoke en la píldora (data-vg-letra) y CANCIONERO en el Auditorio (data-vg-cancionero) con la parte en marcha iluminada; letra propia de Vanguard, cero assets, cero copyright",
+      "EL PERMISO DE HABLARLE — permiso-mic.tsx NUEVO, la tarjeta gemela de la v201: Vanguard pide el micrófono POR ADELANTADO (getUserMedia con un gesto limpio, tracks soltados al instante — Vanguard solo escucha cuando el piloto pulsa el orbe); coordinada con la boca (v201 manda, el oído espera su turno) y con el ritual v214; el orbe la llama AL INSTANTE si topa un not-allowed; al conceder suena sfx.himno() — la LLAMADA DE LA CASA (motivo Gloria: raíz·raíz·raíz→octava→5ª)",
+      "EL MUNDO SIERVE EL OÍDO — sound.ts con HUMANIZACIÓN viva (velocidad ±8%, afinación ±0.4-1.2% en cada golpe: cero sonidos idénticos); setPulsoMundo(tensión real) cada 5 s: el drone se abre y el corazón de la sala late cuando el mundo arde; y LOS CARRILES — cofre 8px, radio 56px, orbe 104px, tarjetas de permiso escalando por encima: la esquina respira y nadie opaca a nadie",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v298.0",
     nombre: "LA FOTOTECA DEL PLANETA — la capa REAL del aparato (v98 ORO TOTAL) sale del juego al server: imagenes-data (14 KB, «IMÁGENES REALES... cada entrada es una FOTO REAL descargada y servida localmente») clasificada fina y verificada CONTRA EL DISCO (50 fotos existen en public/imagenes-reales/, 11,8 MB) sube como sala server /galeria — las 50 fotografías con su etiqueta, su nota editorial y su fuente declarada verbatim en 5 categorías en el orden de la fuente (armas, archivo, poder, lugares, civilizaciones); el visor interactivo con búsqueda se queda en el aparato",
     hitos: [

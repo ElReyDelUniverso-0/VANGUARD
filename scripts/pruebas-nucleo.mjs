@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v298.0", async () => {
+  await verificar("servidor vivo y en v299.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v298"), `versión ${r.json?.version} ≠ v298`);
+    afirmar(String(r.json?.version).startsWith("v299"), `versión ${r.json?.version} ≠ v299`);
   });
 
   // censo por API
@@ -2643,6 +2643,62 @@ async function parteB() {
     // el sitemap vivo anuncia la sala
     const rs = await pedir("/sitemap.xml");
     afirmar(rs.status === 200 && rs.texto.includes("/galeria"), "el sitemap vivo no anuncia la sala");
+  });
+
+  // ── v299.0 LA VOZ DE VANGUARD: la ronda del OÍDO — bug muerto, letra, permiso de hablarle y carriles ──
+  await verificar("LA VOZ DE VANGUARD estática: la LETRA cubre las 34 obras, el RESYNC es puro y los carriles separan la esquina (v299)", () => {
+    const letra = readFileSync(join(RAIZ, "src/lib/letra-vanguard.ts"), "utf8");
+    const motor = readFileSync(join(RAIZ, "src/lib/conflict-music.ts"), "utf8");
+    const pill = readFileSync(join(RAIZ, "src/components/vanguard/music-player.tsx"), "utf8");
+    const orbe = readFileSync(join(RAIZ, "src/components/vanguard/asistente-voz.tsx"), "utf8");
+    const oido = readFileSync(join(RAIZ, "src/components/vanguard/permiso-mic.tsx"), "utf8");
+    const boca = readFileSync(join(RAIZ, "src/components/vanguard/permiso-voz.tsx"), "utf8");
+    const sfx = readFileSync(join(RAIZ, "src/lib/sound.ts"), "utf8");
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    // la letra cubre TODAS las obras del motor (34 censadas del propio motor)
+    const ids = [...motor.matchAll(/^\s{4}id: "([a-z0-9-]+)",$/gm)].map((m) => m[1]);
+    afirmar(ids.length === 34, `el motor censó ${ids.length} obras ≠ 34`);
+    for (const id of ids) {
+      afirmar(letra.includes(`\n  ${id}: {`), `la obra ${id} no tiene letra`);
+    }
+    const nVersos = (letra.match(/\n    A: "/g) ?? []).length; // 4 espacios = las obras; la etiqueta "A: VERSO" (2 espacios) queda fuera
+    afirmar(nVersos === 34, `los versos A censados ${nVersos} ≠ 34 (cada obra canta)`);
+    // UNA fuente para letra y canto: el motor importa parteDeCompas y canta en el compás
+    afirmar(motor.includes('from "@/lib/letra-vanguard"'), "el motor no canta con la letra de la casa");
+    afirmar(motor.includes("cantaLetra(t.id, parte, lineaDeParte(l, parte))"), "el secuenciador no canta la línea del compás");
+    afirmar(letra.includes("export function parteDeCompas"), "parteDeCompas no es la fuente única");
+    // el resync musical: helpers PUROS + mirada 1.2 s + tick 120 ms + carrera de fundidos
+    afirmar(motor.includes("export function siguienteCompas"), "siguienteCompas no es puro/exportado");
+    afirmar(motor.includes("export function debeResync"), "debeResync no es puro/exportado");
+    afirmar(motor.includes("MIRADA_ADELANTE_S = 1.2"), "la mirada del secuenciador sigue en 0.24 s (el bug vive)");
+    afirmar(motor.includes("TICK_MS = 120"), "el tick sigue en 45 ms (el bug vive)");
+    afirmar(motor.includes("const miSeq = ++fadeSeq"), "la carrera de fundidos sigue viva");
+    afirmar(motor.includes("master.gain.cancelScheduledValues"), "el arranque limpio no levanta el master (radio muda tras fundido)");
+    // el pulso del mundo: la casa escucha la tensión real
+    afirmar(motor.includes("export function setPulsoMundo"), "setPulsoMundo no existe (mundo sordo)");
+    afirmar(pill.includes("setPulsoMundo"), "la radio no alimenta el pulso del mundo");
+    // los carriles de la esquina: cofre 8px · radio 56px · orbe 104px · tarjetas que no pisan
+    afirmar(pill.includes("fixed bottom-14 right-2 sm:bottom-14 sm:right-3 z-40"), "la radio no vive en su carril de 56px");
+    afirmar(orbe.includes("bottom-[calc(104px+env(safe-area-inset-bottom,0px))]"), "el orbe no vive en su carril de 104px");
+    afirmar(boca.includes("bottom-[calc(176px+env(safe-area-inset-bottom,0px))]"), "la tarjeta de la boca pisa el carril del orbe");
+    // el oído: permiso por adelantado, se suelta al instante, himno de la casa
+    afirmar(oido.includes("navigator.mediaDevices.getUserMedia({ audio: true })"), "el permiso del oído no pide el micrófono");
+    afirmar(oido.includes("stream.getTracks().forEach((tr) => tr.stop())"), "el oído no suelta el micrófono al instante");
+    afirmar(oido.includes("sfx.himno()"), "el oído no abre con la llamada de la casa");
+    afirmar(oido.includes('"vg:pide-permiso-mic"'), "el oído no responde al grito del orbe");
+    afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
+    afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
+    afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
+    afirmar(version.includes('APP_VERSION = "v299.0"'), "la fuente única de versión no es v299.0");
+  });
+
+  await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA VOZ DE VANGUARD"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v299.0"), "la v299.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v299"), "el health no canta v299");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

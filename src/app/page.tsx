@@ -79,6 +79,8 @@ const AsistenteVoz = dynamic(() => import("@/components/vanguard/asistente-voz")
 // v201.0 LA VOZ VIVA — la tarjeta del PERMISO DE HABLAR: la casa pide voz
 // con una notificación honesta y el toque del Dueño abre la boca del aparato.
 const PermisoVoz = dynamic(() => import("@/components/vanguard/permiso-voz").then((m) => m.PermisoVoz), { ssr: false });
+// v299.0 LA VOZ DE VANGUARD — el permiso de HABLARLE: la tarjeta del oído
+const PermisoMic = dynamic(() => import("@/components/vanguard/permiso-mic").then((m) => m.PermisoMic), { ssr: false });
 // v214.0 LA PUERTA — el ritual de entrada en 3 pasos: permiso de voz →
 // cuenta → modo («¿qué quieres hacer en Vanguard?»). Una vez por aparato.
 const RitualEntrada = dynamic(() => import("@/components/vanguard/ritual-entrada").then((m) => m.RitualEntrada), { ssr: false });
@@ -1554,6 +1556,7 @@ export default function Home() {
       <MontajeTardio>
         <AsistenteVoz />
         <PermisoVoz />
+        <PermisoMic />
         <RitualEntrada />
         <CentinelaImpacto />
       </MontajeTardio>

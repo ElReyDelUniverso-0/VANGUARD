@@ -4,6 +4,12 @@
 // campanas FM con cola de sala y arpegios con séptima. Todo pasa por una
 // mini-cadena compartida (HPF → ganancia → salida + reverb corta) para que la
 // interfaz suene DENTRO del mismo mundo que la Radio.
+// v299.0 LA VOZ DE VANGUARD — el Dueño: "sonidos predeterminados, sin vida".
+// CAUSA: cada golpe sonaba IDÉNTICO al anterior (misma frecuencia, misma
+// ganancia — robot). Ahora cada toque lleva HUMANIZACIÓN viva: veloz de
+// golpe (velocidad ±8%) y afinación viva (±0.4%) — como dedos, no como
+// máquina. Y nace sfx.himno(): la LLAMADA DE LA CASA (motivo Gloria:
+// raíz·raíz·raíz→octava→5ª) para los permisos de la voz.
 import { resumeMusicIfWanted } from "@/lib/conflict-music";
 
 let ctx: AudioContext | null = null;
@@ -92,11 +98,14 @@ function playTone(freq: number, duration: number, type: OscillatorType = "sine",
     if (c.state === "suspended") c.resume();
     const osc = c.createOscillator();
     const g = c.createGain();
+    // v299 HUMANIZACIÓN: ninguna nota vive dos veces igual
+    const f = freq * (1 + (Math.random() - 0.5) * 0.008);
+    const g2 = gain * (0.92 + Math.random() * 0.16);
     osc.type = type;
-    osc.frequency.value = freq;
+    osc.frequency.value = f;
     const t0 = c.currentTime + when;
     g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+    g.gain.linearRampToValueAtTime(g2, t0 + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
     osc.connect(g);
     g.connect(bus(c));
@@ -116,10 +125,13 @@ function playWood(freq: number, duration: number, gain = 0.05, when = 0) {
     const o = c.createOscillator();
     const g = c.createGain();
     o.type = "triangle";
-    o.frequency.setValueAtTime(freq * 1.04, t0);
-    o.frequency.exponentialRampToValueAtTime(freq, t0 + duration * 0.6);
+    // v299 HUMANIZACIÓN: el dedo nunca cae dos veces en el mismo sitio
+    const fV = freq * (1 + (Math.random() - 0.5) * 0.012);
+    const gV = gain * (0.9 + Math.random() * 0.2);
+    o.frequency.setValueAtTime(fV * 1.04, t0);
+    o.frequency.exponentialRampToValueAtTime(fV, t0 + duration * 0.6);
     g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(gain, t0 + 0.004);
+    g.gain.linearRampToValueAtTime(gV, t0 + 0.004);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
     o.connect(g);
     g.connect(bus(c));
@@ -132,14 +144,14 @@ function playWood(freq: number, duration: number, gain = 0.05, when = 0) {
     for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
     const s = c.createBufferSource();
     s.buffer = buf;
-    const f = c.createBiquadFilter();
-    f.type = "bandpass";
-    f.frequency.value = freq * 4;
+    const flt = c.createBiquadFilter(); // v300.0: era «f» — colisionaba con la humanización de arriba y el árbol no compilaba
+    flt.type = "bandpass";
+    flt.frequency.value = freq * 4;
     const sg = c.createGain();
     sg.gain.setValueAtTime(gain * 0.5, t0);
     sg.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.012);
-    s.connect(f);
-    f.connect(sg);
+    s.connect(flt);
+    flt.connect(sg);
     sg.connect(bus(c));
     s.start(t0);
   } catch {}
@@ -157,15 +169,18 @@ function playBell(freq: number, duration: number, gain = 0.05, when = 0) {
     const modG = c.createGain();
     const g = c.createGain();
     car.type = "sine";
-    car.frequency.value = freq;
+    // v299 HUMANIZACIÓN: la campana nunca se afinca dos veces igual
+    const fV = freq * (1 + (Math.random() - 0.5) * 0.006);
+    const gV = gain * (0.92 + Math.random() * 0.16);
+    car.frequency.value = fV;
     mod.type = "sine";
-    mod.frequency.value = freq * 2.005;
-    modG.gain.setValueAtTime(freq * 1.8, t0);
-    modG.gain.exponentialRampToValueAtTime(freq * 0.15, t0 + Math.min(0.3, duration));
+    mod.frequency.value = fV * 2.005;
+    modG.gain.setValueAtTime(fV * 1.8, t0);
+    modG.gain.exponentialRampToValueAtTime(fV * 0.15, t0 + Math.min(0.3, duration));
     mod.connect(modG);
     modG.connect(car.frequency);
     g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(gain, t0 + 0.006);
+    g.gain.linearRampToValueAtTime(gV, t0 + 0.006);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
     car.connect(g);
     g.connect(bus(c));
@@ -287,6 +302,19 @@ export const sfx = {
   },
   droneLeak: () => {
     playTone(160, 0.16, "triangle", 0.04);
+  },
+  // ---- v299.0 LA LLAMADA DE LA CASA (sfx.himno) ----
+  // El MOTIVO GLORIA de la orquesta en versión de interfaz:
+  // raíz · raíz · raíz → octava → 5ª. La firma de 3 notas que hace a
+  // Vanguard reconocible: suena cuando la Casa recibe un permiso
+  // (voz, micrófono) — el umbral se cruza con música propia.
+  himno: () => {
+    const raiz = 220; // La3 — el registro de la llamada
+    playWood(raiz, 0.09, 0.05);
+    playWood(raiz, 0.09, 0.05, 0.14);
+    playBell(raiz, 0.12, 0.05, 0.28);
+    playBell(raiz * 2, 0.26, 0.055, 0.42); // octava
+    playBell(raiz * 1.5, 0.4, 0.05, 0.58); // 5ª — la firma queda
   },
 };
 

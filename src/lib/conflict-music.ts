@@ -36,6 +36,25 @@
 //     insignia nuevas: orquesta · serena · sala · frontera.
 // API intacta (startMusic/stopMusic/volumen/espectro/escena/suscripción) — la
 // Radio y el resto de la app no notan el cambio de orquesta.
+// v299.0 LA VOZ DE VANGUARD — LA RONDA DEL OÍDO (el Dueño: "la música se
+// bugea, no hay letra, es predeterminada, Vanguard es un mundo sordo"):
+//   1. EL BUG CAZADO: lookahead de 0.24 s con setInterval(45 ms) — en
+//      segundo plano el navegador throttea el timer, nextTime queda en el
+//      pasado y al volver, el catch-up AMETRALLABA decenas de notas viejas.
+//      Ahora: mirada de 1.2 s, tick de 120 ms y RESYNC MUSICAL (si el reloj
+//      murió, se salta AL COMPÁS SIGUIENTE — cero ráfaga, la obra sigue).
+//   2. CARRERA DE FUNDIDOS: cada crossfade lleva su número (fadeSeq) — si
+//      llega otro mando antes del timeout, el viejo SE RETIRA; y el arranque
+//      limpio levanta el master si un fundido lo dejó en el suelo (pausar
+//      durante un fundido dejaba la radio MUDA).
+//   3. LA LETRA: cada obra canta SU línea por compás (letra-vanguard.ts) —
+//      subscribeLetra/getLetraActual para el karaoke de la Radio.
+//   4. EL PULSO DEL MUNDO: setPulsoMundo(tensión) — el drone se abre y el
+//      corazón de la sala late cuando el mundo se enciende (adiós al mundo
+//      sordo). API intacta: startMusic/stopMusic/volumen/espectro/escena.
+
+// v299 LA LETRA DE LA CASA — una fuente para la letra y su canto
+import { letraDe, lineaDeParte, parteDeCompas } from "@/lib/letra-vanguard";
 
 type Pattern = string; // "x...x..." — x = golpe, . = silencio, o = acento
 
@@ -894,6 +913,59 @@ function notify() {
   subscribers.forEach((s) => s());
 }
 
+// ── v299 LA LETRA EN MARCHA: la línea que suena AHORA (karaoke de la casa) ──
+export interface LetraEnMarcha { id: string; parte: string; texto: string }
+let letraActual: LetraEnMarcha = { id: "", parte: "", texto: "" };
+const letraSubs = new Set<() => void>();
+
+function cantaLetra(id: string, parte: string, texto: string) {
+  if (letraActual.id === id && letraActual.parte === parte && letraActual.texto === texto) return;
+  letraActual = { id, parte, texto };
+  letraSubs.forEach((s) => s());
+}
+
+function apagaLetra() {
+  if (!letraActual.texto) return;
+  letraActual = { id: "", parte: "", texto: "" };
+  letraSubs.forEach((s) => s());
+}
+
+export function subscribeLetra(cb: () => void): () => void {
+  letraSubs.add(cb);
+  return () => {
+    letraSubs.delete(cb);
+  };
+}
+
+export function getLetraActual(): LetraEnMarcha {
+  return letraActual;
+}
+
+// ── v299 EL PULSO DEL MUNDO: la Casa escucha la tensión real (mundo sordo,
+//    no más): el drone se abre y late un tom de sala cuando el mundo arde ──
+let pulsoMundo = 0;
+export function setPulsoMundo(v: number) {
+  pulsoMundo = Math.max(0, Math.min(1, Number.isFinite(v) ? v : 0));
+}
+function getPulso(): number {
+  return pulsoMundo;
+}
+
+// ── v299 carrera de fundidos + filtro del drone (se abre con el pulso) ──
+let fadeSeq = 0;
+let droneFiltro: BiquadFilterNode | null = null;
+
+// ── v299 RESYNC MUSICAL (helpers PUROS, probados en la suite): ──
+// el compás siguiente limpio y la regla que decide si el reloj murió
+export function siguienteCompas(step: number): number {
+  return Math.ceil(step / 16) * 16;
+}
+export function debeResync(retrasoSeg: number, stepDurSeg: number): boolean {
+  return retrasoSeg > stepDurSeg * 6;
+}
+const MIRADA_ADELANTE_S = 1.2; // antes 0.24 — el margen que mata el bug
+const TICK_MS = 120; // antes 45 — menos despertares, más margen
+
 // ---- impulso de reverb v2: sala cálida con cola que se oscurece ----
 function buildReverbImpulse(c: AudioContext): AudioBuffer {
   const dur = 3.0;
@@ -1149,14 +1221,14 @@ function playShaker(c: AudioContext, t: number, accent: boolean) {
   s.stop(t + 0.06);
 }
 
-function playTom(c: AudioContext, t: number, freq: number) {
+function playTom(c: AudioContext, t: number, freq: number, gain = 0.3) {
   if (!master) return;
   const o = c.createOscillator();
   const g = c.createGain();
   o.type = "sine";
   o.frequency.setValueAtTime(freq, t);
   o.frequency.exponentialRampToValueAtTime(freq * 0.55, t + 0.2);
-  g.gain.setValueAtTime(0.3, t);
+  g.gain.setValueAtTime(gain, t);
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
   o.connect(g); g.connect(master);
   if (reverbBus) g.connect(reverbBus);
@@ -1511,6 +1583,7 @@ function startDrone(t: TrackDef) {
   const dFilter = c.createBiquadFilter();
   dFilter.type = "lowpass";
   dFilter.frequency.value = 340;
+  droneFiltro = dFilter; // v299: el pulso del mundo abrirá este filtro
   droneOsc = c.createOscillator();
   droneOsc.type = "sine";
   droneOsc.frequency.value = st(0, t.root * 4 * t.drone);
@@ -1549,7 +1622,7 @@ function stopDrone() {
   try {
     droneOsc?.stop(); droneOsc2?.stop(); droneLfo?.stop(); droneAir?.stop();
   } catch { /* noop */ }
-  droneOsc = null; droneOsc2 = null; droneLfo = null; droneAir = null; droneGain = null;
+  droneOsc = null; droneOsc2 = null; droneLfo = null; droneAir = null; droneGain = null; droneFiltro = null;
 }
 
 // ---------- EL COMPOSITOR: motivo → secuencia → cadencia ----------
@@ -1579,7 +1652,14 @@ function scheduler() {
   const vari = variacionDiaria();
   const leadArr = getLead(t);
   const leadType: LeadType = t.leadType ?? (t.cat === "guerra" ? "brass" : t.cat === "vanguard" ? "fm" : "glass");
-  while (nextTime < c.currentTime + 0.24) {
+  // ── v299 RESYNC MUSICAL: si el timer durmió (pestaña en fondo, móvil),
+  // nextTime quedó en el pasado — el catch-up ametrallaba notas viejas:
+  // EL BUG QUE SE OÍA. Se salta al compás siguiente y la obra sigue limpia.
+  if (debeResync(c.currentTime - nextTime, stepDur)) {
+    step = siguienteCompas(step + 1);
+    nextTime = c.currentTime + 0.12;
+  }
+  while (nextTime < c.currentTime + MIRADA_ADELANTE_S) {
     const i = step % 16;
     const barAbs = Math.floor(step / 16);
     const barInCycle = barAbs % 16;
@@ -1660,6 +1740,23 @@ function scheduler() {
       playPad(c, time, chord, t.root, barDur, lvl, t.rich === true);
     }
 
+    // ── v299 LA LETRA: la línea propia del compás — la Radio canta ──
+    if (i === 0) {
+      const parte = parteDeCompas(cycle, barInCycle);
+      if (parte) {
+        const l = letraDe(t.id);
+        if (l) cantaLetra(t.id, parte, lineaDeParte(l, parte));
+      }
+      // ── v299 EL PULSO DEL MUNDO: el drone se abre con la tensión real y
+      // el corazón de la sala late al empezar sección (adiós al mundo sordo)
+      if (droneFiltro) {
+        try { droneFiltro.frequency.setTargetAtTime(340 + getPulso() * 300, time, 0.6); } catch { /* noop */ }
+      }
+      if (getPulso() > 0.3 && !intro && (barInCycle === 0 || barInCycle === 8)) {
+        playTom(c, time, st(chord[0], t.root * 4), 0.05 + getPulso() * 0.06);
+      }
+    }
+
     // ── LA VOZ DORADA: motivo → variante → puente → cadencia
     if (!intro && !(breath && i > 12)) {
       let deg = leadArr[i];
@@ -1692,7 +1789,9 @@ function arranque(c: AudioContext, def: TrackDef) {
     delayR.delayTime.value = dt;
   }
   startDrone(def);
-  timer = setInterval(scheduler, 45);
+  // v299: tick de 120 ms + mirada de 1.2 s — el reloj sobrevive al throttle
+  // del navegador y el resync musical limpia lo que se quede atrás
+  timer = setInterval(scheduler, TICK_MS);
 }
 
 export function startMusic(trackId?: string, fundidoSeg?: number) {
@@ -1706,9 +1805,13 @@ export function startMusic(trackId?: string, fundidoSeg?: number) {
   // (τ = fundido/3) — el anochecer de la SESIÓN INTELIGENTE se OYE llegar.
   const yaSonaba = timer !== null;
   if (yaSonaba && master) {
+    // v299 CARRERA DE FUNDIDOS: cada crossfade lleva su número — si llega
+    // otro mando antes del timeout, el viejo SE RETIRA en vez de pelear.
+    const miSeq = ++fadeSeq;
     if (fundidoSeg && fundidoSeg >= 2) {
       master.gain.setTargetAtTime(0, c.currentTime, fundidoSeg / 4);
       setTimeout(() => {
+        if (miSeq !== fadeSeq) return; // un fundido más nuevo manda
         const cc = getCtx();
         if (!cc || !master) return;
         stopMusic();
@@ -1721,6 +1824,7 @@ export function startMusic(trackId?: string, fundidoSeg?: number) {
     }
     master.gain.setTargetAtTime(0, c.currentTime, 0.26);
     setTimeout(() => {
+      if (miSeq !== fadeSeq) return; // un fundido más nuevo manda
       const cc = getCtx();
       if (!cc || !master) return;
       stopMusic();
@@ -1731,8 +1835,16 @@ export function startMusic(trackId?: string, fundidoSeg?: number) {
     notify();
     return;
   }
+  fadeSeq++; // v299: un fundido pendiente queda anulado
   stopMusic();
   arranque(c, def);
+  // v299: si un fundido anterior dejó el master en el suelo (pausar durante
+  // el crossfade), el arranque limpio LO LEVANTA — antes la radio quedaba
+  // muda hasta el próximo fundido: parte del "se bugea".
+  if (master) {
+    master.gain.cancelScheduledValues(c.currentTime);
+    master.gain.setTargetAtTime(volume * 0.5, c.currentTime, 0.08);
+  }
   notify();
 }
 
@@ -1748,6 +1860,7 @@ export function stopMusic() {
   if (timer) clearInterval(timer);
   timer = null;
   stopDrone();
+  apagaLetra(); // v299: la letra duerme con la obra
   notify();
 }
 
@@ -1828,13 +1941,16 @@ export function resumeMusicIfWanted(): boolean {
 
 // v109: diagnóstico de solo-lectura para QA automatizado (no toca la UI):
 // si `step` avanza, el secuenciador está programando notas reales.
-export function __qaEngineDebug(): { step: number; playing: boolean; trackId: string | null; state: string; eq: { bajo: number; medio: number; alto: number } } {
+export function __qaEngineDebug(): { step: number; playing: boolean; trackId: string | null; state: string; eq: { bajo: number; medio: number; alto: number }; letra: { parte: string; texto: string }; pulso: number; mirada: number } {
   return {
     step,
     playing: timer !== null,
     trackId: current?.id ?? null,
     state: ctx?.state ?? "sin-ctx",
     eq: { ...eqValores },
+    letra: { parte: letraActual.parte, texto: letraActual.texto }, // v299
+    pulso: pulsoMundo, // v299
+    mirada: MIRADA_ADELANTE_S, // v299
   };
 }
 // puente de QA (solo lectura)

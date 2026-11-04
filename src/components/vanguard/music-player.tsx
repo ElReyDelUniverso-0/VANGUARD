@@ -14,7 +14,7 @@
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import {
-  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X, Repeat, SlidersHorizontal,
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X, Repeat, SlidersHorizontal, Quote,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -23,8 +23,11 @@ import {
   setMusicVolume, getMusicVolume, subscribeMusic, getMusicSpectrum,
   aplicarEscena, setEscenaActiva, getEscenaActiva, edicionDeHoy, EDICIONES_TOTAL,
   setEqBand, franjaMusical, type BandaEq,
+  setPulsoMundo, subscribeLetra, getLetraActual, type LetraEnMarcha, // v299
   type EscenaKey, type TrackCat,
 } from "@/lib/conflict-music";
+// v299 LA LETRA DE LA CASA: la obra canta su línea por compás
+import { letraDe, lineaDeParte, PARTES_ORDEN, ETIQUETA_PARTE, type ParteLetra } from "@/lib/letra-vanguard";
 import { Escena3D, hashDe, type VarianteEscena } from "@/components/vanguard/escenas-3d";
 import { sfx } from "@/lib/sound";
 import { getTension } from "@/lib/tension";
@@ -168,6 +171,9 @@ export function MusicPlayer() {
   // v115: la era global del Motor 3D — la radio la siente al cambiar
   const era3d = useEstilo3D((s) => s.era);
   const tierRef = useRef<number>(tierOf(getTension()));
+  // v299 LA LETRA: la línea que la obra canta ahora (karaoke de la casa)
+  const [letra, setLetra] = useState<LetraEnMarcha>(() => getLetraActual());
+  useEffect(() => subscribeLetra(() => setLetra(getLetraActual())), []);
 
   const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
     try {
@@ -182,6 +188,20 @@ export function MusicPlayer() {
     setEqBand("medio", saved.eq.medio);
     setEqBand("alto", saved.eq.alto);
   }, []);
+
+  // v299 EL MUNDO ESCUCHA: mientras la Radio suena, la Casa mide la tensión
+  // real del mundo cada 5 s — el drone se abre y late el corazón de la sala
+  // cuando el mundo arde (adiós al mundo sordo).
+  useEffect(() => {
+    if (!playing && !wantOn) return;
+    const siente = () => setPulsoMundo(Math.max(0, Math.min(1, getTension() / 100)));
+    siente();
+    const iv = setInterval(siente, 5000);
+    return () => {
+      clearInterval(iv);
+      setPulsoMundo(0); // la sala se calma cuando la radio calla
+    };
+  }, [playing, wantOn]);
 
   // v114 ERA POR SUB-SALA: al abrir el Auditorio la casa viste "emisora.auditorio"
   // (o "emisora.coleccion" si estás en la colección); al cerrar, vuelve la era
@@ -278,7 +298,10 @@ export function MusicPlayer() {
     if (!prev || prev === era3d) return; // primer render o misma era
     if (!cont) return; // solo manda cuando la sesión inteligente conduce
     const familiaEra: Record<EraKey, TrackCat> = { "1950": "guerra", "1980": "guerra", "2020": "vanguard", "2100": "ambiente" };
-    avanzarSesion(familiaEra[era3d]);
+    // v299 QA: patrón verificado de la casa — setState síncrono en effect
+    // sale del hilo con setTimeout(0) (la regla react-hooks/set-state-in-effect)
+    const t = setTimeout(() => avanzarSesion(familiaEra[era3d]), 0);
+    return () => clearTimeout(t);
   }, [era3d, cont]);
 
   const toggleCont = () => {
@@ -413,7 +436,7 @@ export function MusicPlayer() {
       });
     }, 30000);
     return () => clearInterval(iv);
-  }, [auto, playing]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [auto, playing]);
 
   // AUDITORIO: Esc sale (como el modo inmersión)
   useEffect(() => {
@@ -513,6 +536,48 @@ export function MusicPlayer() {
           <div className="hud-panel border-amber-hud/60 rounded-sm px-4 py-3">
             <Spectrum bars={32} big />
           </div>
+
+          {/* v299 LA LETRA DE LA OBRA — el cancionero en vivo: la parte que
+              suena se ilumina (karaoke de la casa); letra propia, cero assets */}
+          {(() => {
+            const l = letraDe(cur.id);
+            if (!l) return null;
+            const partes = PARTES_ORDEN.filter((p) => l[p]);
+            return (
+              <div className="hud-panel border-amber-hud/60 rounded-sm px-4 py-3" data-vg-cancionero>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-amber/80">LA LETRA</span>
+                  <span className="text-[8px] font-mono text-muted-foreground/70 uppercase tracking-widest">letra propia de Vanguard</span>
+                </div>
+                <ul className="space-y-1.5">
+                  {partes.map((p) => {
+                    const enMarcha = playing && letra.id === cur.id && letra.parte === p;
+                    return (
+                      <li key={p} className="flex items-start gap-2">
+                        <span
+                          className={cn(
+                            "shrink-0 mt-[1px] w-[64px] text-right text-[7.5px] font-mono uppercase tracking-[0.18em]",
+                            enMarcha ? "text-amber" : "text-muted-foreground/50"
+                          )}
+                        >
+                          {ETIQUETA_PARTE[p as ParteLetra]}
+                        </span>
+                        <Quote className={cn("shrink-0 w-3 h-3 mt-[1px]", enMarcha ? "text-amber" : "text-muted-foreground/40")} aria-hidden />
+                        <span
+                          className={cn(
+                            "min-w-0 text-[12px] leading-snug font-mono",
+                            enMarcha ? "text-amber italic" : "text-muted-foreground"
+                          )}
+                        >
+                          {lineaDeParte(l, p)}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })()}
 
           {/* controles */}
           <div className="flex items-center justify-center gap-3">
@@ -715,8 +780,11 @@ export function MusicPlayer() {
     );
   }
 
+  // v299 CARRILES DE LA ESQUINA: cofre en 8px · radio en 56px · orbe en
+  // 104px — antes la radio convivía con el COFRE en el mismo carril
+  // (sm:bottom-3 vs bottom-2) y se tapaban: el Dueño lo cantó.
   return (
-    <div className="fixed bottom-14 right-2 sm:bottom-3 sm:right-3 z-40 select-none">
+    <div className="fixed bottom-14 right-2 sm:bottom-14 sm:right-3 z-40 select-none">
       <div
         className={cn(
           "hud-panel border-amber-hud overflow-hidden transition-all",
@@ -812,6 +880,17 @@ export function MusicPlayer() {
             {expanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
           </button>
         </div>
+
+        {/* v299 LA LETRA: la línea que la obra canta ahora — karaoke en la píldora */}
+        {playing && letra.texto && (
+          <div className="px-2 pb-1.5 pt-1 flex items-center gap-1.5 border-t border-amber-hud/20" data-vg-letra>
+            <Quote className="w-2.5 h-2.5 text-amber/70 shrink-0" aria-hidden />
+            <span className="min-w-0 flex-1 text-[9.5px] font-mono italic text-amber/90 truncate leading-tight">{letra.texto}</span>
+            <span className="hidden sm:inline shrink-0 text-[7px] font-mono uppercase tracking-[0.22em] text-muted-foreground/80">
+              {ETIQUETA_PARTE[letra.parte as ParteLetra] ?? ""}
+            </span>
+          </div>
+        )}
 
         {/* expansión: espectro grande + MODO CINE + MODO ESCENA + entrada al AUDITORIO */}
         {expanded && (

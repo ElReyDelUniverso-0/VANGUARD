@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Mic, X, Send, Loader2, Volume2, Settings2, Play, RotateCcw } from "lucide-react";
+import { toast } from "sonner"; // v300.0: el aviso del permiso concedido viaja por el canal de la casa
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 // v191 EL CONSEJO DE VOCES — VG-ASSIST y el CENTINELA con voz PROPIA
@@ -193,6 +194,35 @@ const TXT = {
     ru: "Так звучит твой помощник. Ясно, мягко, к твоим услугам.",
     zh: "这就是你的助手现在的声音。清晰柔和，听你指挥。",
   } as Record<string, string>,
+  // ── v300.0 EL PERMISO REAL DEL MICRÓFONO — el Dueño: «no hay un permiso
+  //    para hablarle en audio». La cura: pedirlo DE VERDAD (getUserMedia),
+  //    mostrar su estado y dar la llave para recuperarlo si estaba bloqueado.
+  micTitulo: {
+    es: "MICRÓFONO", en: "MICROPHONE", pt: "MICROFONE", fr: "MICRO",
+    de: "MIKROFON", it: "MICROFONO", ru: "МИКРОФОН", zh: "麦克风",
+  } as Record<string, string>,
+  micPedir: {
+    es: "PEDIR PERMISO", en: "ASK PERMISSION", pt: "PEDIR PERMISSÃO", fr: "DEMANDER",
+    de: "ERLAUBNIS FRAGEN", it: "CHIEDI PERMESSO", ru: "ПОПРОСИТЬ", zh: "请求权限",
+  } as Record<string, string>,
+  micOk: {
+    es: "Micrófono concedido — pulsa el orbe y háblame.",
+    en: "Microphone granted — tap the orb and speak.",
+    pt: "Microfone concedido — toca no orbe e fala.",
+    fr: "Micro accordé — touchez l'orbe et parlez.",
+    de: "Mikrofon erlaubt — tippe den Orbis und sprich.",
+    it: "Microfono concesso — tocca l'orbe e parla.",
+    ru: "Микрофон разрешён — коснитесь орба и говорите.",
+    zh: "麦克风已授权 — 点击球体即可说话。",
+  } as Record<string, string>,
+};
+
+// el estado REAL del permiso, en la lengua del piloto
+const ESTADO_MIC: Record<string, Record<string, string>> = {
+  concedido: { es: "LISTO", en: "READY", pt: "PRONTO", fr: "PRÊT", de: "BEREIT", it: "PRONTO", ru: "ГОТОВ", zh: "就绪" },
+  denegado: { es: "BLOQUEADO", en: "BLOCKED", pt: "BLOQUEADO", fr: "BLOQUÉ", de: "BLOCKIERT", it: "BLOCCATO", ru: "ЗАБЛОКИРОВАН", zh: "已阻止" },
+  preguntar: { es: "SIN CONCEDER", en: "NOT GRANTED", pt: "SEM CONCEDER", fr: "NON ACCORDÉ", de: "NICHT ERTEILT", it: "NON CONCESSO", ru: "НЕ ДАНО", zh: "未授权" },
+  consultando: { es: "…", en: "…", pt: "…", fr: "…", de: "…", it: "…", ru: "…", zh: "…" },
 };
 
 type Estado = "dormido" | "escuchando" | "pensando" | "hablando";
@@ -261,6 +291,49 @@ export function AsistenteVoz() {
   }, [panelVoz]);
 
   const tieneVoz = useMemo(() => ctorSR() !== null, []);
+
+  // ── v300.0 EL PERMISO REAL DEL MICRÓFONO — el estado de verdad del aparato,
+  //    consultado con la API de permisos y con camino de vuelta si cayó: el
+  //    botón PEDIR abre el diálogo del navegador (getUserMedia) y lo suelta
+  //    enseguida — la conversación por voz deja de ser un lottery silencioso.
+  type PermisoMic = "consultando" | "concedido" | "denegado" | "preguntar" | "sin-api";
+  const [permisoMic, setPermisoMic] = useState<PermisoMic>("consultando");
+  const pidiendoRef = useRef(false);
+  const pintaMic = useCallback((s: string): PermisoMic =>
+    s === "granted" ? "concedido" : s === "denied" ? "denegado" : "preguntar", []);
+  useEffect(() => {
+    const perms = typeof navigator !== "undefined" ? navigator.permissions : undefined;
+    if (!perms?.query) { setPermisoMic("sin-api"); return; }
+    let vivo = true;
+    perms.query({ name: "microphone" as PermissionName })
+      .then((p) => {
+        if (!vivo) return;
+        setPermisoMic(pintaMic(p.state));
+        p.onchange = () => setPermisoMic(pintaMic(p.state));
+      })
+      .catch(() => { if (vivo) setPermisoMic("sin-api"); });
+    return () => { vivo = false; };
+  }, [pintaMic]);
+  const pedirMic = useCallback(async () => {
+    if (pidiendoRef.current) return;
+    pidiendoRef.current = true;
+    try {
+      const st = await navigator.mediaDevices?.getUserMedia({ audio: true });
+      try { st?.getTracks().forEach((t) => t.stop()); } catch {}
+      if (st) {
+        setPermisoMic("concedido");
+        setAviso("");
+        toast.success(TXT.micOk[lang] || TXT.micOk.es);
+      } else {
+        setPermisoMic("sin-api");
+      }
+    } catch {
+      setPermisoMic("denegado");
+      setAviso(TXT.micDenegado[lang] || TXT.micDenegado.es);
+    } finally {
+      pidiendoRef.current = false;
+    }
+  }, [lang]);
 
   // ── BOCA: habla la respuesta con la voz PROPIA de VG-ASSIST (v191 —
   //    antes: rate 1.18 con la primera voz del aparato, apresurada y
@@ -372,6 +445,9 @@ export function AsistenteVoz() {
     r.onerror = (e: SRError) => {
       if (e.error === "not-allowed" || e.error === "service-not-allowed") {
         setAviso(TXT.micDenegado[lang] || TXT.micDenegado.es);
+        // v299: el oído topó la cerradura — la tarjeta del permiso sale AL
+        // INSTANTE (el gesto del orbe ya no se pierde en un aviso de texto)
+        try { window.dispatchEvent(new CustomEvent("vg:pide-permiso-mic")); } catch {}
       } else if (e.error === "no-speech") {
         setAviso(lang === "es" ? "No te oí. Pulsa y habla de nuevo." : "No speech caught. Tap and try again.");
       } else if (e.error !== "aborted") {
@@ -431,8 +507,10 @@ export function AsistenteVoz() {
     : (parcial || "");
 
   return createPortal(
+    // v299 CARRILES DE LA ESQUINA: el orbe sube a SU carril (104px) —
+    // antes convivía con la radio (56px) y se tapaban en el mismo borde.
     <div
-      className="fixed z-[47] right-3 bottom-[calc(84px+env(safe-area-inset-bottom,0px))] sm:right-5 sm:bottom-5"
+      className="fixed z-[47] right-3 bottom-[calc(104px+env(safe-area-inset-bottom,0px))] sm:right-5 sm:bottom-[104px]"
       data-vg-asistente
     >
       {/* PANEL del agente (encima del orbe) */}
@@ -503,6 +581,33 @@ export function AsistenteVoz() {
               </ul>
             )}
           </div>
+
+          {/* v300.0 EL PERMISO REAL DEL MICRÓFONO — estado de verdad + la llave
+              para abrirlo: sin este row, un «no-allowed» del navegador deja a
+              VG-ASSIST mudo para siempre y la persona no sabe por qué */}
+          {permisoMic !== "sin-api" && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-t border-amber-hud/15">
+              <span
+                className={cn(
+                  "w-1.5 h-1.5 rounded-full shrink-0",
+                  permisoMic === "concedido" ? "bg-green-hud" : permisoMic === "denegado" ? "bg-red-hud" : "bg-amber-hud animate-pulse"
+                )}
+                aria-hidden
+              />
+              <span className="flex-1 min-w-0 font-mono text-[10px] tracking-[0.14em] text-muted-foreground truncate">
+                {TXT.micTitulo[lang] || TXT.micTitulo.es}: {(ESTADO_MIC[permisoMic]?.[lang]) || ESTADO_MIC[permisoMic]?.es || "…"}
+              </span>
+              {(permisoMic === "denegado" || permisoMic === "preguntar") && (
+                <button
+                  onClick={() => void pedirMic()}
+                  className="shrink-0 px-2 py-0.5 rounded-lg border border-green-hud/40 bg-green-hud/10 text-[10px] font-mono tracking-wide text-green-hud hover:bg-green-hud/20 active:scale-[0.97] transition"
+                  aria-label={TXT.micPedir[lang] || TXT.micPedir.es}
+                >
+                  {TXT.micPedir[lang] || TXT.micPedir.es}
+                </button>
+              )}
+            </div>
+          )}
 
           {/* v196 LA VOZ SE PROGRAMA — voz, velocidad, tono, volumen, pausas */}
           {panelVoz && (
