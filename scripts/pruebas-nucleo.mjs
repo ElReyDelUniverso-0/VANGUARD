@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v282.0", async () => {
+  await verificar("servidor vivo y en v283.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v282"), `versión ${r.json?.version} ≠ v282`);
+    afirmar(String(r.json?.version).startsWith("v283"), `versión ${r.json?.version} ≠ v283`);
   });
 
   // censo por API
@@ -2112,6 +2112,72 @@ async function parteB() {
     afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
     afirmar(r.texto.includes('href="/historia"'), "la puerta al archivo no viaja");
     afirmar(r.texto.includes("La sala funciona sin JavaScript"), "el noscript compuesto no viaja");
+  });
+
+  // ── v283.0 LA ARMERÍA DEL ARCHIVO: las 12 armas reales de la fuente ganan su sala server (/armeria) ──
+  // La cabeza de la cola de la v282: la armería (arsenal-data, la fuente
+  // más grande sin vestir) servida en server, patrón /historia (v274).
+  // Medido con la fuente real al abrir: 12 armas, 79 piezas de despiece,
+  // 8 orígenes, 12 fotos Wikimedia reales.
+  await verificar("LA ARMERÍA DEL ARCHIVO estática: la fuente intacta, la línea derivada y las puertas de la casa (v283)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/arsenal-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/armeria/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: las 12 armas uno a uno (el borde del slice custodiado)
+    afirmar(fuente.includes("export const ARSENAL"), "la fuente de armas no existe");
+    const iniA = fuente.indexOf("export const ARSENAL");
+    const finA = fuente.indexOf("];", iniA);
+    const bloqueA = fuente.slice(iniA, finA === -1 ? fuente.length : finA + 2);
+    afirmar(bloqueA.length > 20000 && bloqueA.length < 40000, `el slice del arsenal midió mal (${bloqueA.length})`);
+    for (const id of ["ak47", "m4", "fpv", "shahed", "bayraktar", "javelin", "himars", "lancet", "t90", "leopard2", "rpg7", "m777"]) {
+      afirmar(bloqueA.includes(`id: "${id}"`), `falta el arma ${id} en la fuente`);
+    }
+    // la sala: todo derivado, nada a mano (directiva v266 + lección v256)
+    afirmar(sala.includes('import { ARSENAL } from "@/lib/arsenal-data"'), "la sala no consume la fuente canónica");
+    afirmar(sala.includes("const ORIGINS = new Set(ARSENAL.map((w) => w.origin))"), "los orígenes no se derivan con Set");
+    afirmar(sala.includes("const PIEZAS = ARSENAL.reduce((acc, w) => acc + w.assembly.length, 0)"), "el despiece no se deriva con reduce");
+    afirmar(sala.includes("const ULTIMA = ARSENAL[ARSENAL.length - 1]"), "el extremo de la línea no sale de la fuente");
+    afirmar(sala.includes("const lineaArmeria = `La armería del archivo — ${ARSENAL.length} armas reales con su foto, su despiece de ${PIEZAS} piezas"), "la línea de la armería no se compone COMPLETA en JS");
+    afirmar(sala.includes("desde ${ARSENAL[0].short} hasta ${ULTIMA.short}, nacidas en ${ORIGINS.size} orígenes"), "la línea no viaja de extremo a extremo de la fuente");
+    // el verbatim de la fuente en cada ficha
+    afirmar(sala.includes("{w.function}"), "la función no viaja verbatim");
+    afirmar(sala.includes("{w.impact}"), "el impacto no viaja verbatim");
+    afirmar(sala.includes('src={w.photo}'), "la foto real de la fuente no viaja");
+    afirmar(sala.includes("{w.origin} · {w.era}"), "el origen y la era no viajan tal como la fuente los declara");
+    afirmar(sala.includes("despiece: {w.assembly.length} piezas · ficha técnica: {Object.keys(w.specs).length}"), "el despiece y la ficha no se cuentan desde la fuente");
+    // las puertas de la casa
+    afirmar(mapa.includes("/armeria"), "el sitemap no anuncia la armería");
+    afirmar(paleta.includes('key: "pg:armeria"'), "la paleta Ctrl+K no lleva la armería");
+    afirmar(paleta.includes('kind: "page", href: "/armeria"'), "la paleta no abre la sala");
+    afirmar(sala.includes("vive en el aparato"), "la puerta al salón interactivo no se declara honesta");
+    // la lección de las guardias del arco (v282), generalizada: ni años a mano
+    afirmar(!/const linea\w+ = [^;]*\b19\d\d\b/.test(sala), "¡la armería escribe años a mano en su línea!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/armeria escribe fechas a mano en la ronda v283!");
+  });
+
+  await verificar("LA ARMERÍA DEL ARCHIVO viva: el SSR sirve la línea derivada, la AK-47 verbatim y el sitemap anuncia la sala (v283)", async () => {
+    const r = await pedir("/armeria");
+    afirmar(r.status === 200, `/armeria no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA ARMERÍA DEL ARCHIVO"), "el título de la sala no viaja");
+    // la línea compuesta COMPLETA desde la fuente (12 · 79 · AK-47 · M777 · 8)
+    afirmar(r.texto.includes("La armería del archivo — 12 armas reales con su foto, su despiece de 79 piezas y su impacto con datos, desde AK-47 hasta M777, nacidas en 8 orígenes"), "la línea derivada no viaja (o la fuente cambió)");
+    // la primera ficha verbatim (los datos son de la fuente, no a mano)
+    afirmar(r.texto.includes("AK-47 (Kalashnikov)"), "la primera arma no viaja");
+    // el origen y la era son nodos distintos en el HTML (trampa v258, pagada
+    // en v274): el aserto usa los valores verbatim de la fuente por separado
+    afirmar(r.texto.includes("URSS"), "el origen de la fuente no viaja");
+    afirmar(r.texto.includes("1947 · presente"), "la era de la fuente no viaja verbatim");
+    // el despiece viaja contado desde la fuente — los comentarios RSC
+    // separan los nodos (trampa v258): se pelan antes del aserto
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(/despiece: \d+ piezas · ficha técnica: \d+/.test(limpio), "el despiece no viaja contado desde la fuente");
+    afirmar(r.texto.includes("Shahed-136"), "un arma del medio del archivo no viaja");
+    afirmar(r.texto.includes("M777"), "el arma que cierra el archivo no viaja");
+    // la puerta honesta al aparato y el sitemap vivo
+    afirmar(r.texto.includes("vive en el aparato"), "la puerta al aparato no viaja");
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/armeria"), "el sitemap vivo no anuncia la armería");
   });
 
   // ── v282.0 LOS SENTIDOS DE LA SALA: la segunda capa de /servicios ──

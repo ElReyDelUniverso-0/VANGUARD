@@ -148,6 +148,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v283.0 LA ARMERÍA DEL ARCHIVO — las 12 armas reales de la
+      // fuente (ARSENAL) servidas en server: la AK-47 y el Shahed que
+      // explican los conflictos de hoy, indexables para las búsquedas
+      // de armas (AK-47, Javelin, HIMARS, despiece...)
+      url: `${SITE_URL}/armeria`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
       url: `${SITE_URL}/audios`,
       lastModified: new Date(),

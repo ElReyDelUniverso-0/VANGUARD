@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -213,6 +213,13 @@ export function SectionSearch({
         icon: <Landmark className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la memoria de la casa", icon_color: "text-amber",
         kind: "page", href: "/historia",
+      },
+      {
+        // v283.0 LA ARMERÍA DEL ARCHIVO — las 12 armas reales de la fuente, en server
+        key: "pg:armeria", label: "LA ARMERÍA DEL ARCHIVO — las 12 armas reales que explican los conflictos: ficha, foto, despiece e impacto", short: "armeria armas ak47 shahed javelin himars dron despiece tanque rifle impacto",
+        icon: <Crosshair className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la armería de la casa", icon_color: "text-amber",
+        kind: "page", href: "/armeria",
       },
       {
         // v217.0 LA EMISORA — la guerra en voz alta + muro de audios

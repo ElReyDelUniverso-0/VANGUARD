@@ -3322,6 +3322,39 @@
 // eslint 0 · build EXIT 0 · health v282.0 db up · BD intocada
 // (1877 cables · 9 hechos, un solo escritor) · cierre doble.
 // Herencia v281.0 LA SALA DE LOS SERVICIOS y toda la crónica.
-export const APP_VERSION = "v282.0";
-export const APP_CODENAME = "LOS SENTIDOS DE LA SALA";
+// v283.0 LA ARMERÍA DEL ARCHIVO — la cabeza de la cola de la v282
+//         aterriza: la armería (arsenal-data, la fuente más grande sin
+//         vestir — 12 armas reales, 28 KB client-side puros) gana su
+//         sala server /armeria, patrón /historia (v274): prerenderizada
+//         ○, sin cliente, sin BD, indexable para Google.
+// (1) LAS FICHAS VIAJAN VERBATIM — cada arma con su foto real (Wikimedia),
+//     su origen y su era tal como la fuente los declara, su función y su
+//     impacto VERBATIM (directiva v266: la casa no inventa); el salón
+//     interactivo (selector + despiece paso a paso) vive en el aparato y
+//     la puerta se declara honesta (patrón v275/v276).
+// (2) TODO DERIVADO, NADA A MANO — la línea de la casa compuesta COMPLETA
+//     en JS (lección v256): «La armería del archivo — 12 armas reales con
+//     su foto, su despiece de 79 piezas y su impacto con datos, desde
+//     AK-47 hasta M777, nacidas en 8 orígenes» — ARSENAL.length,
+//     reduce de assembly.length, Set de origins y los shorts de los
+//     extremos de la fuente; despiece y ficha técnica contados por arma
+//     (assembly.length, Object.keys(specs).length); cero años escritos
+//     (la era viaja como dato de la fuente, guardia v234 — la lección de
+//     las guardias del arco de la v282, generalizada).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /armeria (monthly, 0.6)
+//     y la paleta Ctrl+K la lleva (pg:armeria, icono Crosshair); JSON-LD
+//     CollectionPage + ItemList con numberOfItems de la fuente; noscript
+//     honesto con la línea compuesta.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /armeria en la tabla) ·
+//     health v283.0 db up · pruebas 192/192 (+2 LA ARMERÍA DEL ARCHIVO:
+//     estática — la fuente intacta uno a uno (12 ids), el conteo de
+//     piezas derivado, la línea compuesta en JS sin cifras escritas, el
+//     verbatim de función e impacto, las puertas (sitemap + paleta) y la
+//     guardia v234; viva — el SSR sirve la línea derivada, la AK-47 con
+//     su ficha verbatim, el despiece contado, la puerta al aparato y el
+//     sitemap vivo anunciando la sala) · BD intocada (1877 cables · 9
+//     hechos, un solo escritor).
+// Herencia v282.0 LOS SENTIDOS DE LA SALA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v283.0";
+export const APP_CODENAME = "LA ARMERÍA DEL ARCHIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

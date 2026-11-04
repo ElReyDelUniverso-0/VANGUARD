@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v283.0",
+    nombre: "LA ARMERÍA DEL ARCHIVO — la cabeza de la cola de la v282 aterriza: la armería (arsenal-data, la fuente más grande sin vestir) gana su sala server /armeria con las 12 armas reales del archivo (AK-47, Shahed-136, Javelin, HIMARS...), su foto real, su despiece contado desde los pasos de la fuente y su impacto verbatim; el salón interactivo vive en el aparato y la puerta se declara honesta",
+    hitos: [
+      "LAS FICHAS VIAJAN VERBATIM — foto real (Wikimedia), origen y era tal como la fuente los declara, función e impacto VERBATIM (directiva v266); patrón /historia (v274): sala server prerenderizada ○, sin cliente, sin BD, indexable",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256): «La armería del archivo — 12 armas reales con su foto, su despiece de 79 piezas y su impacto con datos, desde AK-47 hasta M777, nacidas en 8 orígenes» (length + reduce + Set + shorts de los extremos); cero años escritos (guardia v234, la lección de las guardias del arco v282 generalizada)",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /armeria (monthly, 0.6), paleta Ctrl+K (pg:armeria, Crosshair), JSON-LD ItemList con numberOfItems de la fuente, noscript honesto con la línea compuesta",
+      "QA v283: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /armeria), health v283.0 db up, pruebas 192/192 (+2: estática — la fuente intacta uno a uno, el conteo derivado, la línea compuesta, el verbatim, las puertas, guardia v234; viva — la línea derivada, la AK-47 verbatim, el despiece contado, la puerta al aparato y el sitemap vivo), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v282.0",
     nombre: "LOS SENTIDOS DE LA SALA — la segunda capa de la sala de los servicios (la «Queda» de la v281): los TRES exports hermanos de agencias-data suben al server junto a los 36 expedientes",
     hitos: [
