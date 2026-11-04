@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v285.0", async () => {
+  await verificar("servidor vivo y en v286.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v285"), `versión ${r.json?.version} ≠ v285`);
+    afirmar(String(r.json?.version).startsWith("v286"), `versión ${r.json?.version} ≠ v286`);
   });
 
   // censo por API
@@ -2285,6 +2285,68 @@ async function parteB() {
     afirmar(r.texto.includes("vive en el aparato"), "la puerta al aparato no viaja");
     const rs = await pedir("/sitemap.xml");
     afirmar(rs.status === 200 && rs.texto.includes("/armeria"), "el sitemap vivo no anuncia la armería");
+  });
+
+  // ── v286.0 LOS ROSTROS DEL PODER: la galería de los rostros sube a server (/rostros) ──
+  // personas-data (ROSTROS, 34 fichas reales — TRONOS 12 · DINERO 10 ·
+  // TRIBUNAL 6 · NUEVOS 6, 20 campos por expediente) solo vivía
+  // client-side (rostros-panel, intros-gta). Medido con el motor real
+  // al abrir (tsx): 34 fichas · 18 naciones · poder 58–98 · frase y
+  // lat/lng en las 34 — la sala no escribe una cifra: la sirve de
+  // COLECCION_ROSTROS (ya derivada en la fuente con Set+filter+reduce).
+  await verificar("LOS ROSTROS DEL PODER estática: la fuente, el censo derivado, las leyendas de la fuente, las líneas compuestas y las cifras servidas (v286)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/rostros/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente viaja (nada a mano)
+    afirmar(sala.includes('from "@/lib/personas-data"'), "la sala no importa la fuente de los rostros");
+    afirmar(sala.includes("ROSTROS,\n  COLECCION_ROSTROS,\n  CATEGORIAS_ROSTRO,"), "los tres exports de la fuente no viajan");
+    // el censo derivado con Set + filter en el orden de la fuente
+    afirmar(sala.includes("[...new Set(ROSTROS.map((r) => r.categoria))]"), "el censo no se deriva con Set");
+    afirmar(sala.includes("ROSTROS.filter((r) => r.categoria === c).length"), "el censo no cuenta con filter");
+    afirmar(sala.includes("new Set(ROSTROS.map((r) => r.pais)).size"), "las naciones no se derivan");
+    // las leyendas e iconos viven en la fuente (directiva v266)
+    afirmar(sala.includes("CATEGORIAS_ROSTRO[c].leyenda"), "las leyendas no viajan desde la fuente");
+    afirmar(sala.includes("CATEGORIAS_ROSTRO[c].etiqueta"), "las etiquetas no viajan desde la fuente");
+    // las líneas compuestas COMPLETAS en JS (lección v256)
+    afirmar(sala.includes("const lineaRostros = `La galería de los rostros — ${ROSTROS.length}"), "la línea de la galería no se compone en JS");
+    afirmar(sala.includes("censoRostros.map((c) => `${c.etiqueta} ×${c.n}`).join(\" · \")"), "los censos no viajan derivados en la línea");
+    // la placa y las cifras servidas de COLECCION_ROSTROS (herencia v282)
+    afirmar(sala.includes('String(n).padStart(2, "0")'), "la placa no se compone desde el num real");
+    afirmar(sala.includes("const lineaCifras = `La colección en cifras — ${COLECCION_ROSTROS.total}"), "la línea de cifras no se compone desde COLECCION_ROSTROS");
+    afirmar(sala.includes("COLECCION_ROSTROS.masPoderoso.nombre"), "la ficha más poderosa no viaja derivada");
+    // las DOS guardias heredadas: cero años a mano en las líneas + guardia v234
+    afirmar(!/const linea\w+ = [^;]*\b\d{4}\b/.test(sala), "¡una línea de la sala escribe un año a mano (debe salir de la fuente)!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas ISO a mano en la ronda v286!");
+    // las puertas de la casa (patrón v274/v275)
+    afirmar(mapa.includes("${SITE_URL}/rostros"), "el sitemap no anuncia la galería");
+    afirmar(paleta.includes('key: "pg:rostros"'), "la paleta Ctrl+K no lleva a la galería");
+    afirmar(sala.includes("vive en el aparato"), "la puerta honesta al aparato no está declarada");
+  });
+
+  await verificar("LOS ROSTROS DEL PODER viva: el SSR sirve las fichas verbatim, los censos derivados y el sitemap anuncia la sala (v286)", async () => {
+    const r = await pedir("/rostros");
+    afirmar(r.status === 200, `/rostros no 200 en v286 (${r.status})`);
+    afirmar(r.texto.includes("LOS ROSTROS DEL PODER"), "el título de la galería no viaja");
+    // la línea compuesta COMPLETA desde la fuente (34 · 18 · censos)
+    afirmar(r.texto.includes("La galería de los rostros — 34 fichas reales del poder en 18 naciones"), "la línea derivada no viaja (o la fuente cambió)");
+    afirmar(r.texto.includes("LOS TRONOS ×12"), "el censo de los tronos no viaja derivado");
+    afirmar(r.texto.includes("EL DINERO ×10"), "el censo del dinero no viaja derivado");
+    // las fichas verbatim de la fuente (los datos son de la fuente, no a mano)
+    afirmar(r.texto.includes("Donald J. Trump"), "la ficha más poderosa no viaja");
+    afirmar(r.texto.includes("47.º Presidente de los Estados Unidos"), "el cargo verbatim no viaja");
+    afirmar(r.texto.includes("Yo solo puedo arreglarlo."), "la frase verbatim no viaja");
+    afirmar(r.texto.includes("La desaparición de la URSS fue la mayor catástrofe geopolítica del siglo XX."), "la frase de la fuente no viaja verbatim");
+    // la línea de cifras servida de COLECCION_ROSTROS
+    afirmar(r.texto.includes("La colección en cifras — 34 fichas de 18 naciones"), "la línea de cifras no viaja compuesta");
+    // la placa derivada del num real + el legendario de la fuente
+    afirmar(r.texto.includes("01 · "), "la placa derivada no viaja");
+    afirmar(r.texto.includes("Jefes de Estado y monarcas"), "la leyenda de la fuente no viaja");
+    // las puertas y el sitemap vivo
+    afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
+    afirmar(r.texto.includes("Esta sala funciona sin JavaScript"), "el noscript compuesto no viaja");
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/rostros"), "el sitemap vivo no anuncia la galería");
   });
 
   // ── v282.0 LOS SENTIDOS DE LA SALA: la segunda capa de /servicios ──

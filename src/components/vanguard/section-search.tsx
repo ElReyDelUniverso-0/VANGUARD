@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -227,6 +227,13 @@ export function SectionSearch({
         icon: <Activity className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · el tablero de la casa", icon_color: "text-amber",
         kind: "page", href: "/conflictos",
+      },
+      {
+        // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server
+        key: "pg:rostros", label: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder: tronos, dinero, tribunal y nuevos, con cargo, sede, ruta y frase", short: "rostros poder tronos presidentes banqueros tribunal silicio ia fichas galeria mandato",
+        icon: <Users className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la galería de los rostros", icon_color: "text-amber",
+        kind: "page", href: "/rostros"
       },
       {
         // v217.0 LA EMISORA — la guerra en voz alta + muro de audios

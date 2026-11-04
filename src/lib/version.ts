@@ -3396,37 +3396,50 @@
 //     cables del archivo» y el sitemap vivo anunciando la sala) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v283.0 LA ARMERÍA DEL ARCHIVO y toda la crónica. Guards v167 intactos.
-// v285.0 EL TABLERO EN EL GLOBO — la segunda capa del tablero (la cola
-//         de la v284 se paga): la coordenada real de cada dossier se
-//         compone en la ficha («48.5°, 37.5°», desde los lat/lng de la
-//         fuente — las 33 regiones la traen) y cada región CON PULSO
-//         abre la puerta al globo («Encenderla en el globo ▸» →
-//         /mundo?teatro=<id>): el patrón ?guerra= de la v278 heredado
-//         de la ?teatro= de la v264, ahora para las 9 regiones vivas
-//         del tablero (ukraine, gaza, hormuz, taiwan, korea, redsea,
-//         sahel, sudan, lebanon — el mismo pulso que la puerta pide es
-//         el que el tablero ya midió: cero consultas nuevas, cero
-//         puertas muertas).
-// (1) LA COORDINADA SE COMPONE, NO SE ESCRIBE — toFixed(1) sobre los
-//     números reales de la fuente (guardia v234: la cifra viaja como
-//     dato; la trampa v258 vigilada: los dos números son nodos
-//     distintos y el aserto los pela o los busca por valor).
-// (2) LA PUERTA HEREDA EL LINAJE — v264 abrió ?teatro= para las
-//     guerras de hoy, v278 abrió ?guerra= para la memoria y ahora el
-//     tablero la reutiliza para sus regiones vivas; la puerta vive
-//     junto a la de la sala (el globo y el archivo son dos destinos,
-//     no uno). El ciber quedó MEDIDO Y DIFERIDO esta ronda: su fuente
-//     se declara ficticia («Todo ficticio y propio del mundo Vanguard»,
-//     v90) y las salas server de la casa no indexan ficción como hecho
-//     — la sala nunca miente.
-// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /conflictos en pie) ·
-//     health v285.0 db up · pruebas 196/196 (+2 EL TABLERO EN EL
-//     GLOBO: estática — la puerta condicionada al pulso, el linaje
-//     declarado, la coordenada compuesta y la guardia v234; viva — el
-//     SSR sirve las 9 puertas al globo, la puerta de Ucrania y su
-//     coordenada «48.5°, 37.5°», y las anclas v284 en pie) · BD
-//     intocada (1877 cables · 9 hechos, un solo escritor).
-// Herencia v284.0 EL TABLERO DE LOS CONFLICTOS y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v285.0";
-export const APP_CODENAME = "EL TABLERO EN EL GLOBO";
+//
+// v286.0 LOS ROSTROS DEL PODER — la galería de los rostros sube a
+// server (patrón /historia v274 · /servicios v281 · /armeria v283):
+// personas-data.ts — ROSTROS, 34 fichas reales del censo de poder
+// (TRONOS 12 · DINERO 10 · TRIBUNAL 6 · NUEVOS 6), con 20 campos por
+// expediente — solo vivía client-side (rostros-panel, intros-gta),
+// invisible para el SSR y para Google. Nació v284 en vuelo y el
+// número envejeció DOS VECES — la COLISIÓN DOBLE: primero con el
+// tablero de la v284 (1ca93e9) y, durante el rebase de esa colisión,
+// con el globo de la v285 (6501d17); el protocolo de la casa se
+// ejecutó dos veces (stash → pull --ff-only → pop → conservar AMBOS
+// trabajos → renumerar) y la galería sube como v286 sobre el canon
+// real — el número libre se verifica en el instante del commit, y
+// si envejece, se renumera, nunca se pelea.
+// ① LA SALA NUEVA /rostros: expediente VERBATIM de la fuente
+// (directiva v266) — cargo, organización, sede · ciudad · país,
+// mandato, alcance, poder (58–98, derivado), ruta, frase («Yo solo
+// puedo arreglarlo.» la primera), señas, guardia, sucesión y notas;
+// agrupada por las CUATRO categorías en el ORDEN DE LA FUENTE con su
+// leyenda e icono desde CATEGORIAS_ROSTRO (directiva v266).
+// ② TODO DERIVADO, NADA A MANO — censo con Set + filter, naciones
+// con Set (18), placa padStart del num real, y las cifras mayores
+// SERVIDAS de COLECCION_ROSTROS (ya derivada en la fuente): la línea
+// de cifras nombra la ficha más poderosa (Donald J. Trump, 98 —
+// 47.º Presidente de los Estados Unidos) sin que la sala escriba un
+// número; las DOS guardias heredadas: ninguna linea* contiene un año
+// literal (v282/v283/v284) y guardia v234 de fechas.
+// ③ LAS PUERTAS DE LA CASA — sitemap anuncia /rostros (monthly 0.6,
+// patrón v274) y la paleta Ctrl+K la lleva (pg:rostros, icono
+// Users); la puerta honesta al aparato declarada (patrón
+// v275/v276): el mapa de señales y el pulso siguen en la primera
+// página; noscript compuesto. Medido con el motor real al abrir
+// (tsx): ROSTROS 34 · censos 12·10·6·6 · naciones 18 · poder 58–98 ·
+// frase en las 34 · lat/lng en las 34.
+// PRUEBAS 198/198 (+2: estática — la fuente, el censo derivado, las
+// leyendas de la fuente, la placa, las líneas compuestas, las cifras
+// servidas de COLECCION_ROSTROS, las puertas y las dos guardias;
+// viva — /rostros 200 con la línea derivada completa, LOS TRONOS
+// ×12, Trump y Putin verbatim con su frase, la placa 01, la puerta
+// al aparato y el sitemap VIVO anunciando la sala). QA: tsc 0 TOTAL
+// · eslint 0 · build EXIT 0 (○ /rostros y ƒ /conflictos en la
+// tabla) · health v286.0 db up · BD intocada (1877 cables · 9
+// hechos, un solo escritor) · cierre doble. Herencia v285.0 EL
+// TABLERO EN EL GLOBO y toda la crónica.
+export const APP_VERSION = "v286.0";
+export const APP_CODENAME = "LOS ROSTROS DEL PODER";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

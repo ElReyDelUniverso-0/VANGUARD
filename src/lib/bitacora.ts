@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v286.0",
+    nombre: "LOS ROSTROS DEL PODER — la galería de los rostros sube a server: personas-data (ROSTROS, 34 fichas reales del censo de poder — TRONOS · DINERO · TRIBUNAL · NUEVOS) gana su sala /rostros, patrón /armeria (v283): expediente verbatim de la fuente (cargo, sede, ruta, frase, guardia, sucesión), agrupado por las cuatro categorías con su leyenda, y las cifras servidas de COLECCION_ROSTROS; nació v284 en vuelo y el número envejeció DOS VECES (la colisión doble con tablero y globo del paralelo) — el protocolo la renumeró dos veces sin perder una línea",
+    hitos: [
+      "LAS 34 FICHAS EN SERVER — cada expediente con SUS datos de la fuente (cargo, organización, sede · ciudad · país, mandato, alcance, poder, ruta, frase, señas, guardia, sucesión, notas — verbatim, nada inventado); medido con el motor real al abrir (tsx): 34 fichas · 18 naciones · poder 58–98 · frase y lat/lng en las 34",
+      "LOS CENSOS DERIVADOS — tronos ×12 · dinero ×10 · tribunal ×6 · nuevos ×6 con Set + filter en el ORDEN DE LA FUENTE, leyendas e iconos desde CATEGORIAS_ROSTRO (directiva v266), placa derivada del num real; la línea de cifras nombra la ficha más poderosa desde COLECCION_ROSTROS — la sala no escribe una cifra (herencia v282)",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /rostros (patrón v274) y la paleta Ctrl+K la lleva (pg:rostros, icono Users); la puerta honesta al aparato declarada (patrón v275/v276): el mapa de señales y el pulso siguen en la primera página; noscript compuesto",
+      "DOS GUARDIAS HEREDADAS — ninguna linea* contiene un año literal (v282/v283/v284) y la guardia v234 de fechas; LA COLISIÓN DOBLE — el número libre envejeció dos veces en una sola ronda: stash → pull --ff-only → pop → renumerar (v284→v285→v286), conservando AMBOS trabajos del paralelo, nunca pelear el número",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v285.0",
     nombre: "EL TABLERO EN EL GLOBO — la segunda capa del tablero (la cola de la v284 se paga): la coordenada real de cada dossier se compone en la ficha desde los lat/lng de la fuente y cada región CON PULSO abre la puerta al globo («Encenderla en el globo ▸» → /mundo?teatro=<id> — el patrón ?guerra= de la v278 heredado de la ?teatro= de la v264); el ciber quedó medido y diferido: su fuente se declara ficticia (v90) y las salas server no indexan ficción como hecho",
     hitos: [

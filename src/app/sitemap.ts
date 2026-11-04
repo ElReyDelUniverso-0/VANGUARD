@@ -169,6 +169,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
+      // censo de poder de la fuente (ROSTROS) servidas en server:
+      // los tronos, el dinero, el tribunal y los nuevos, indexables
+      // para las búsquedas de poder (presidente, banquero, tribunal...)
+      url: `${SITE_URL}/rostros`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6
+    },
+    {
       // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
       url: `${SITE_URL}/audios`,
       lastModified: new Date(),
