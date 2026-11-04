@@ -1,0 +1,267 @@
+"use client";
+
+// ══════════════════════════════════════════════════════════════════════
+// v272.0 EL QUIZ DEL PESO — ¿QUÉ CABLE PESA MÁS?
+// El motor de impacto v172 da a cada cable real su peso 0-100
+// (determinista y auditable); este quiz pone a prueba el ojo del
+// comandante: dos cables REALES de la instantánea del pulso, una
+// apuesta, el veredicto con el peso revelado de ambos.
+//
+// DISCIPLINA DE LA CASA:
+//  · Las parejas nacen en el servidor de la MISMA instantánea (cero
+//    consultas de más, herencia v256/v262) y solo viajan parejas con
+//    pesos DISTINTOS: la casa jamás pregunta lo que no tiene respuesta.
+//  · El veredicto no es una opinión: es el impacto real del motor v172
+//    (la fuente manda — directiva v266: las etiquetas vienen de TIERS,
+//    este componente no inventa).
+//  · Ley v176: nada de setState en effects — el botín vive FUERA de
+//    React (mini-store propio con useSyncExternalStore, patrón v216):
+//    el servidor pinta los ceros, el navegador despierta el botín
+//    post-montaje con el servidor-snapshot de React — cero mismatch,
+//    cero parpadeo #418.
+//  · Cerradura v132: ninguna escritura sale antes de hidratar (el
+//    progreso del visitante es sagrado) y JAMÁS toca la BD (leyes
+//    v245/v246: un solo escritor).
+//  · Cero red: la sala ya sirvió la comida — este componente no hace
+//    fetch ni consulta la casa por cable.
+// ══════════════════════════════════════════════════════════════════════
+
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { TIERS, type TierImpacto } from "@/lib/impacto";
+import { estaHidratado, marcarHidratado, storageBlindado } from "@/lib/storage-blindado";
+import type { CableVivo } from "./sala-en-vivo";
+
+export interface ParPeso {
+  a: CableVivo;
+  b: CableVivo;
+}
+
+// la clave del botín en el navegador (cerradura v132 por clave)
+const CLAVE_PESO = "vg-quiz-peso";
+
+interface BotinPeso {
+  racha: number;    // aciertos consecutivos de la ronda en curso
+  record: number;   // la mejor racha de la casa (este navegador)
+  jugadas: number;  // apuestas totales
+  aciertos: number; // apuestas ganadas
+}
+
+const BOTIN_LIMPIO: BotinPeso = { racha: 0, record: 0, jugadas: 0, aciertos: 0 };
+
+// ── EL MINI-STORE DEL BOTÍN (fuera de React, patrón v216) ─────────────
+// El valor nace de localStorage con caché por crudo (getSnapshot debe
+// ser estable: el mismo crudo devuelve el mismo objeto) y los oyentes
+// se avisan en cada apuesta. El servidor, sin ventana, pinta los ceros.
+let crudoCache: string | null = null;
+let valorCache: BotinPeso = BOTIN_LIMPIO;
+const oyentes = new Set<() => void>();
+
+function leerBotin(): BotinPeso {
+  const crudo = storageBlindado.getItem(CLAVE_PESO);
+  if (crudo !== crudoCache) {
+    crudoCache = crudo;
+    try {
+      const g = crudo ? (JSON.parse(crudo) as Partial<BotinPeso>) : null;
+      valorCache = {
+        racha: g?.racha ?? 0,
+        record: g?.record ?? 0,
+        jugadas: g?.jugadas ?? 0,
+        aciertos: g?.aciertos ?? 0,
+      };
+    } catch {
+      valorCache = BOTIN_LIMPIO; // botín corrupto: la casa empieza limpia
+    }
+  }
+  return valorCache;
+}
+
+function suscribir(fn: () => void): () => void {
+  oyentes.add(fn);
+  if (typeof window !== "undefined") {
+    // otra pestaña jugando el mismo quiz también avisa
+    window.addEventListener("storage", fn);
+    return () => {
+      oyentes.delete(fn);
+      window.removeEventListener("storage", fn);
+    };
+  }
+  return () => {
+    oyentes.delete(fn);
+  };
+}
+
+function guardarBotin(nuevo: BotinPeso): void {
+  if (!estaHidratado(CLAVE_PESO)) return; // cerradura v132: nada sale antes de hidratar
+  storageBlindado.setItem(CLAVE_PESO, JSON.stringify(nuevo));
+  crudoCache = null; // invalida la caché y despierta a los oyentes
+  for (const fn of oyentes) fn();
+}
+
+// ── EL SELLO DEL PESO — la etiqueta canónica del motor, nunca inventada ──
+function etiquetaTier(tier: CableVivo["tier"]): string {
+  return TIERS[tier as TierImpacto]?.label ?? "CONTEXTO";
+}
+
+function colorTier(tier: CableVivo["tier"]): string {
+  const clase = TIERS[tier as TierImpacto]?.clase ?? "text-muted-foreground";
+  return clase.split(" ")[0] ?? "text-muted-foreground";
+}
+
+const sinSuscripcion = () => () => {};
+const esCliente = () => true;
+const esServidor = () => false;
+
+export default function QuizPeso({ parejas }: { parejas: ParPeso[] }) {
+  const [ronda, setRonda] = useState(0);
+  const [apostada, setApostada] = useState<"a" | "b" | null>(null);
+  // ley v176: el botín viene del store externo — cero setState en effects
+  const botin = useSyncExternalStore(suscribir, leerBotin, () => BOTIN_LIMPIO);
+  const montado = useSyncExternalStore(sinSuscripcion, esCliente, esServidor);
+
+  // LA CERRADURA v132 se abre post-montaje: desde aquí el botín sale
+  // a localStorage (las apuestas son eventos del usuario — imposibles
+  // antes de hidratar — pero la cerradura formaliza la disciplina).
+  useEffect(() => {
+    marcarHidratado(CLAVE_PESO);
+  }, []);
+
+  // VACÍO HONESTO: sin al menos dos parejas servidas no hay quiz —
+  // la casa no pinta un juego sin cables reales detrás.
+  if (parejas.length < 2) return null;
+
+  const par = parejas[ronda % parejas.length];
+
+  // LA LÍNEA DE LA CASA compuesta COMPLETA en JS (lección v256): si el
+  // archivo cambia, la cifra cambia sola — cero cifras escritas a mano.
+  const lineaQuiz = `EL QUIZ DEL PESO — ${parejas.length} parejas reales del archivo miden tu ojo`;
+
+  function apostar(lado: "a" | "b") {
+    if (apostada) return; // la ronda ya está servida
+    const pesoApostado = lado === "a" ? par.a.impacto : par.b.impacto;
+    const pesoRival = lado === "a" ? par.b.impacto : par.a.impacto;
+    const acierto = pesoApostado > pesoRival;
+    const nuevaRacha = acierto ? botin.racha + 1 : 0;
+    setApostada(lado);
+    guardarBotin({
+      racha: nuevaRacha,
+      record: Math.max(botin.record, nuevaRacha),
+      jugadas: botin.jugadas + 1,
+      aciertos: botin.aciertos + (acierto ? 1 : 0),
+    });
+  }
+
+  function siguiente() {
+    setApostada(null);
+    setRonda((r) => (r + 1) % parejas.length);
+  }
+
+  // el veredicto: el peso real del motor decide, no la casa
+  const acierto = apostada
+    ? (apostada === "a" ? par.a.impacto : par.b.impacto) >
+      (apostada === "a" ? par.b.impacto : par.a.impacto)
+    : false;
+  const pesoGanador = Math.max(par.a.impacto, par.b.impacto);
+  const tierGanador = par.a.impacto >= par.b.impacto ? par.a.tier : par.b.tier;
+
+  return (
+    <section
+      className="border-t border-zinc-800 bg-zinc-950 px-4 sm:px-5 py-12"
+      aria-label={lineaQuiz}
+    >
+      <div className="max-w-7xl mx-auto">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
+          ◈ VANGUARD · LA SALA EN VIVO
+        </p>
+        <h2 className="mt-2 text-xl font-bold text-zinc-100">¿Qué cable pesa más?</h2>
+        <p className="mt-1 text-sm text-zinc-400">{lineaQuiz}</p>
+        {montado ? (
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+            racha {botin.racha} · récord {botin.record} · {botin.aciertos} de {botin.jugadas} apuestas
+          </p>
+        ) : (
+          <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
+            el botín despierta al hidratarse
+          </p>
+        )}
+
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {(["a", "b"] as const).map((lado) => {
+            const c = par[lado];
+            const pesoEste = lado === "a" ? par.a.impacto : par.b.impacto;
+            // las parejas viajan con pesos DISTINTOS: el ganador es único
+            const ganoEste = apostada ? pesoEste === pesoGanador : false;
+            const perdiEste = apostada ? lado === apostada && !acierto : false;
+            return (
+              <article
+                key={`${par.a.id}-${lado}`}
+                className={`rounded-lg border p-4 transition-colors ${
+                  apostada
+                    ? ganoEste
+                      ? "border-emerald-500/60 bg-emerald-500/5"
+                      : perdiEste
+                        ? "border-red-hud/60 bg-red-hud/5"
+                        : "border-zinc-800 bg-zinc-900/40"
+                    : "border-zinc-800 bg-zinc-900/40 hover:border-amber-hud/50"
+                }`}
+              >
+                <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                  {c.conflicto ? `TEATRO · ${c.conflicto.toUpperCase()}` : `SEÑAL · ${c.tag}`}
+                </p>
+                <h3 className="mt-2 text-sm font-semibold leading-snug text-zinc-100">{c.t}</h3>
+                <p className="mt-2 font-mono text-[11px] text-zinc-500">{c.f}</p>
+
+                {apostada ? (
+                  <p className={`mt-3 font-mono text-sm font-bold ${colorTier(c.tier)}`}>
+                    PESO REAL: {c.impacto}/100 · {etiquetaTier(c.tier)}
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => apostar(lado)}
+                    aria-label={`Apuesto por este cable: ${c.t}`}
+                    className="mt-3 w-full rounded border border-amber-hud/60 bg-amber-hud/10 px-3 py-2 font-mono text-xs font-bold uppercase tracking-widest text-amber-400 hover:bg-amber-hud/20"
+                  >
+                    PESA MÁS ▸
+                  </button>
+                )}
+              </article>
+            );
+          })}
+        </div>
+
+        {apostada && (
+          <div className="mt-5 rounded-lg border border-zinc-800 bg-zinc-900/60 p-4">
+            <p className={`font-mono text-sm font-bold uppercase tracking-wider ${acierto ? "text-emerald-400" : "text-red-hud"}`}>
+              {acierto
+                ? "○ OJO DE ÁGUILA — la casa pesó contigo"
+                : "○ LA CASA PESÓ EL OTRO CABLE"}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-zinc-400">
+              El veredicto no es una opinión: es el motor de impacto de la Agencia (v172),
+              determinista y auditable línea a línea. El cable que pesa lleva{" "}
+              <span className="font-mono text-zinc-200">
+                {pesoGanador}/100 · {etiquetaTier(tierGanador)}
+              </span>
+              .
+            </p>
+            <button
+              type="button"
+              onClick={siguiente}
+              aria-label="Siguiente ronda del quiz del peso"
+              className="mt-3 rounded border border-zinc-700 bg-zinc-800 px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-zinc-200 hover:border-amber-hud/50 hover:text-amber-400"
+            >
+              SIGUIENTE RONDA ▸
+            </button>
+          </div>
+        )}
+
+        <p className="mt-6 text-[11px] leading-relaxed text-zinc-600">
+          La racha vive en tu navegador y en ninguna otra parte — la casa no
+          apunta tu botín en su libro (un solo escritor). El peso de cada cable
+          lo midió el motor de impacto de la Agencia: vocabulario, etiqueta
+          táctica, país, credibilidad de la fuente y frescura, auditable línea a línea.
+        </p>
+      </div>
+    </section>
+  );
+}

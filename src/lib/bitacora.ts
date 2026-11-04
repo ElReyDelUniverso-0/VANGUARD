@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v272.0",
+    nombre: "EL QUIZ DEL PESO — ¿qué cable pesa más? El legado del linaje perdido (v174–v176) llega al canon: el MOTOR DE IMPACTO (v172) ya medía cada cable y la CENTRAL DE ALARMAS (v232) ya avisaba lo urgente, pero nada conectaba el motor con el juicio del visitante — dos cables reales del archivo, una apuesta, el veredicto determinista del motor",
+    hitos: [
+      "LAS PAREJAS NACEN DE LA MISMA INSTANTÁNEA — /en-vivo (v213) deriva las parejas del pulso ya servido (cero consultas de más, herencia v256/v262): cables reales ordenados por impacto, en parejas con pesos DISTINTOS (la casa jamás pregunta lo que no tiene respuesta), cota de 8 por instantánea",
+      "EL VEREDICTO ES EL MOTOR — la apuesta se resuelve con el impacto real 0-100 y las etiquetas canónicas de TIERS (directiva v266: el quiz consume la fuente, no inventa); revelación post-apuesta con el peso y el escalón de ambos cables",
+      "LA RACHA VIVE EN EL NAVEGADOR — cerradura v132 (nada se escribe antes de hidratar, cero parpadeo #418) y JAMÁS en la BD (leyes v245/v246: un solo escritor); racha, récord y aciertos del navegador, sagrados",
+      "QA v272: tsc 0 TOTAL, eslint 0, build EXIT 0, health v272.0 db up, pruebas 170/170 (+2 EL QUIZ DEL PESO: estática — las parejas nacen de la instantánea con pesos distintos y cota, el veredicto es el motor canónico, la cerradura v132 custodia el botín y el quiz no toca red ni BD; viva — la sala sirve la cabeza compuesta con la cifra real, los botones de apuesta y las anclas v213/v242 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v271.0",
     nombre: "EL CANAL CLASIFICADO — la expansión llega al canal RSS (/feed.xml, v35+v202): el <item> no declaraba <category> y los agregadores no podían filtrar por teatro; cada cable etiquetado declara ahora SU teatro (conflictTag crudo + nombre humano del catálogo canónico TEATROS) y el cable sin teatro no pinta categoría de ficción",
     hitos: [

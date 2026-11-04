@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v271.0", async () => {
+  await verificar("servidor vivo y en v272.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v271"), `versión ${r.json?.version} ≠ v271`);
+    afirmar(String(r.json?.version).startsWith("v272"), `versión ${r.json?.version} ≠ v272`);
   });
 
   // censo por API
@@ -2010,6 +2010,43 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v272.0 EL QUIZ DEL PESO: dos cables reales, una apuesta, el veredicto del motor ──
+  // El legado del linaje perdido v174–v176: la CENTRAL DE ALARMAS (v232)
+  // ya avisa y el MOTOR DE IMPACTO (v172) ya ranquea — nada conectaba el
+  // motor con el juicio del visitante. Las parejas nacen de la MISMA
+  // instantánea del pulso (cero consultas de más) y la racha vive en el
+  // navegador (cerradura v132) — la BD JAMÁS (un solo escritor, v245/v246).
+  await verificar("EL QUIZ DEL PESO estática: las parejas nacen de la instantánea y el veredicto es el motor (v272)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/en-vivo/page.tsx"), "utf8");
+    const quiz = readFileSync(join(RAIZ, "src/app/en-vivo/quiz-peso.tsx"), "utf8");
+    // cero consultas de más: las parejas se derivan de la instantánea YA servida (herencia v256/v262)
+    afirmar(pag.includes("const ordenadosPeso = [...iniciales].sort"), "las parejas no se derivan de la instantánea ya servida");
+    afirmar(pag.includes("parejasPeso.length < 8"), "el quiz no pone cota a sus parejas");
+    afirmar(pag.includes("a.impacto !== b.impacto"), "el quiz admite parejas sin veredicto (pesos iguales)");
+    afirmar(pag.includes("<QuizPeso parejas={parejasPeso} />"), "el quiz no viaja montado bajo la sala");
+    // el veredicto no es una opinión: es el motor canónico (directiva v266 — la fuente manda)
+    afirmar(quiz.includes('import { TIERS, type TierImpacto } from "@/lib/impacto"'), "el quiz no consume el motor canónico (TIERS)");
+    afirmar(quiz.includes("pesoApostado > pesoRival"), "el veredicto no compara el peso real del motor");
+    afirmar(quiz.includes("TIERS[tier as TierImpacto]?.label"), "las etiquetas del peso no vienen de la fuente canónica");
+    // la racha vive en el navegador con cerradura v132, jamás en la BD (leyes v245/v246)
+    afirmar(quiz.includes("marcarHidratado(CLAVE_PESO)"), "la cerradura v132 no custodia el botín del quiz");
+    afirmar(quiz.includes("estaHidratado(CLAVE_PESO)"), "el botín se escribe sin pasar por la cerradura");
+    afirmar(!quiz.includes("db.") && !quiz.includes("fetch("), "el quiz toca la red o la BD — la sala ya le sirvió la comida");
+    // cero fechas escritas a mano (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(quiz), "¡el quiz escribe fechas a mano en la ronda v272!");
+  });
+
+  await verificar("EL QUIZ DEL PESO viva: la sala sirve el quiz con parejas reales y las anclas en pie (v272)", async () => {
+    const r = await pedir("/en-vivo");
+    afirmar(r.status === 200, `/en-vivo no 200 en v272 (${r.status})`);
+    afirmar(/EL QUIZ DEL PESO — \d+ parejas reales del archivo miden tu ojo/.test(r.texto), "la cabeza compuesta del quiz no viaja (o la cifra no es derivada)");
+    afirmar(r.texto.includes("¿Qué cable pesa más?"), "la pregunta del quiz desapareció");
+    afirmar((r.texto.match(/PESA MÁS ▸/g) || []).length >= 2, "los botones de apuesta no viajan en el SSR");
+    // las anclas de la sala en pie (v213 arriba, CONECTA v242 abajo)
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "el CONECTA de v242 desapareció tras montar el quiz");
+    afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la sala de v213 murió bajo el quiz");
   });
 
   // ── v271.0 EL CANAL CLASIFICADO: el feed declara el teatro de cada cable ──

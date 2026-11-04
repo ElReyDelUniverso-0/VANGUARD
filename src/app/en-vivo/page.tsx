@@ -5,6 +5,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { SalaEnVivo, type CableVivo, type StatsVivo } from "./sala-en-vivo";
+import QuizPeso, { type ParPeso } from "./quiz-peso";
 
 // v213.0 EL PULSO — LA SALA EN VIVO (la puerta del «EL PRIMERO»).
 // Página server: baja la instantánea (solo cables REALES enriquecidos
@@ -88,6 +89,20 @@ export default async function EnVivoPage() {
     console.error("en-vivo page error", e);
   }
 
+  // v272.0 EL QUIZ DEL PESO — las parejas nacen de la MISMA instantánea
+  // (cero consultas de más, herencia v256/v262): cables reales ya medidos
+  // por el motor de impacto v172, en parejas con pesos DISTINTOS — la
+  // casa jamás pregunta lo que no tiene respuesta. El peso ya viajaba en
+  // el payload de la sala (v213); el veredicto solo se revela tras la
+  // apuesta, y la racha vive en el navegador (un solo escritor, v245).
+  const parejasPeso: ParPeso[] = [];
+  const ordenadosPeso = [...iniciales].sort((x, y) => y.impacto - x.impacto);
+  for (let i = 0; i + 1 < ordenadosPeso.length && parejasPeso.length < 8; i += 2) {
+    const a = ordenadosPeso[i];
+    const b = ordenadosPeso[i + 1];
+    if (a.impacto !== b.impacto) parejasPeso.push({ a, b });
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -126,6 +141,9 @@ export default async function EnVivoPage() {
         </main>
       </noscript>
       <SalaEnVivo iniciales={iniciales} calientesIniciales={calientes} statsIniciales={stats} />
+      {/* v272.0 EL QUIZ DEL PESO — dos cables reales, una apuesta, el
+          veredicto del motor; vive bajo la sala y sobre el CONECTA. */}
+      <QuizPeso parejas={parejasPeso} />
       {/* v242.0 CONECTA CON EL NÚCLEO — server-rendered, vive bajo la sala:
           la sala manda en pantalla (min-h-screen) y las puertas esperan
           abajo, sin meter chrome dentro del componente client (ley v190). */}
