@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v261.0",
+    nombre: "LA SALA COMPLETA — la expansión llega a la sala del teatro (/conflicto/[tag], v206+v215+v218+v222+v227+v238): la cabecera medía «N cables en la agencia» pero la puerta solo encendía los primeros 40 — ucrania guardaba 173 cables y 133 no tenían puerta. El archivo se pagina EN EL SERVIDOR con la count real de la BD, cero JavaScript, y fuera de rango jamás sirve una sala vacía",
+    hitos: [
+      "LA PAGINACIÓN DEL ARCHIVO — la count real (v209) manda el número de páginas, findMany salta con skip y cada página es una URL limpia /conflicto/[tag]?page=N: Links de servidor con aria-current, «◀ anterior» y «siguiente ▶»; el nav declara «página P de M — N cables en el archivo del teatro»; una sola sala ni pinta el nav (cero ruido)",
+      "FUERA DE RANGO ES CORTINA SIN SALA — página no entera, menor que 1 o mayor que el archivo real: la cortina de la casa, jamás una sala vacía indexable (Next 16 sirve el notFound en streaming con 200 en TODA la casa — tag desconocido de v206 y /noticia inexistente incluidos, medido en esta ronda; lo que la ley v206 protege es que el vacío no viaja)",
+      "LA ÚLTIMA SEÑAL DEL ARCHIVO — findFirst sobre TODO el teatro en el mismo Promise.all (una fila con índice, cero roundtrips de más): la cabecera dice la verdad en la página 1 y en la 5",
+      "CANONICAL POR PÁGINA — cada página del archivo se canónica a sí misma (la 1 al limpio) y el title lleva « — página N»: Google indexa el archivo entero, no solo la cabeza",
+      "QA v261: tsc 0 TOTAL, eslint 0, build EXIT 0, health v261.0 db up, pruebas 148/148 (+2 LA SALA COMPLETA: estática — el skip, la count que manda las páginas, el notFound fuera de rango, la última señal con findFirst y la canonical por página; viva — ukraine declara «página 1 de 5», la 2 sirve cables distintos con su anterior, la 99 y la abc sirven la cortina sin sala, anclas v227/v238/v218 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v260.0",
     nombre: "LA SALA DEL TEATRO — la expansión llega a la puerta de lectura (/noticia/[id], v202+v208+v211+v252, la página más vestida de la casa): el visitante de Google no sabía CUÁNTO pesaba el teatro del cable ni a qué sala pertenecían las relacionadas — ahora el cable declara «N cables en este teatro — entrar a la sala» con UNA count real, cada related lleva el nombre humano del catálogo canónico con su puerta (gramática v259) y la firma gana la hora exacta del patrón Intl de la casa",
     hitos: [

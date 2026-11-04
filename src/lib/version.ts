@@ -2592,7 +2592,43 @@
 //     y la hora Intl; viva — el SSR de un cable real de /conflicto/ukraine
 //     sirve el conteo y el nombre humano con las anclas v202/v208/v211/v252
 //     en pie) · BD intocada (1877 cables · 9 hechos, un solo escritor).
-// Herencia v259.0 EL TEATRO CON NOMBRE y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v260.0";
-export const APP_CODENAME = "LA SALA DEL TEATRO";
+// v261.0 LA SALA COMPLETA — la expansión funcional módulo a módulo llega a
+//         la sala del teatro: /conflicto/[tag] (v206 + v215 + v218 + v222 +
+//         v227 + v238) medía su archivo en la cabecera («N cables en la
+//         agencia») pero solo encendía los primeros 40 — la sala de ucrania
+//         guardaba 173 cables y 133 no tenían puerta: existían en la BD y
+//         nadie podía llegar a ellos. La brecha que la cola v260 dejó
+//         anotada al cerrar el círculo v259→v260 (el conteo ya viaja, el
+//         resto del archivo no).
+// (1) LA PAGINACIÓN DEL ARCHIVO — EN EL SERVIDOR, CERO JS: la count real
+//     (v209) manda el número de páginas (Math.ceil sobre PAGE_SIZE 40),
+//     findMany salta con skip y cada página es una URL limpia
+//     (/conflicto/[tag]?page=N): Links de servidor con aria-current, «◀
+//     anterior» y «siguiente ▶»; una sola sala (paginas ≤ 1) ni pinta el
+//     nav — cero ruido. El nav declara su lugar: «página P de M — N cables
+//     en el archivo del teatro».
+// (2) FUERA DE RANGO ES CORTINA SIN SALA — página no entera, menor que 1 o
+//     mayor que el archivo real: la cortina de la casa, jamás una sala
+//     vacía indexable. (Medido en esta ronda: Next 16 sirve el notFound en
+//     streaming con 200 en TODA la casa — un tag desconocido de v206 y una
+//     /noticia inexistente se comportan igual; lo que la ley v206 protege
+//     es que el vacío no viaja.)
+// (3) LA ÚLTIMA SEÑAL DEL ARCHIVO — la cabecera medía items[0] de la
+//     página; desde v261 mide findFirst sobre TODO el teatro (una fila con
+//     índice, en el mismo Promise.all — cero roundtrips de más): la misma
+//     verdad en la página 1 y en la 5.
+// (4) CANONICAL POR PÁGINA — cada página del archivo se canónica a sí
+//     misma (la 1, al limpio) y el title lleva « — página N»: Google puede
+//     indexar el archivo entero, no solo la cabeza.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v261.0 db up ·
+//     pruebas 148/148 (+2 LA SALA COMPLETA: estática — el skip, la count
+//     que manda las páginas, el 404 fuera de rango, la última señal del
+//     archivo con findFirst y la canonical por página; viva — ukraine
+//     declara «página 1 de 5» con su puerta a la 2, la 2 sirve cables
+//     distintos con su anterior, la 99 es 404 limpio y las anclas v227/
+//     v238/v218 en pie) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v260.0 LA SALA DEL TEATRO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v261.0";
+export const APP_CODENAME = "LA SALA COMPLETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

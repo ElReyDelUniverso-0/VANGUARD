@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v260.0", async () => {
+  await verificar("servidor vivo y en v261.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v260"), `versión ${r.json?.version} ≠ v260`);
+    afirmar(String(r.json?.version).startsWith("v261"), `versión ${r.json?.version} ≠ v261`);
   });
 
   // censo por API
@@ -2010,6 +2010,70 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v261.0 LA SALA COMPLETA: el archivo del teatro se pagina en el
+  // servidor, cero JS ──
+  // /conflicto/[tag] (v206+v215+v218+v222+v227+v238) medía «N cables en la
+  // agencia» pero solo encendía 40 — ucrania guardaba 173 y 133 no tenían
+  // puerta. La count real manda las páginas, fuera de rango es 404 limpio,
+  // la última señal se mide sobre TODO el archivo y cada página es
+  // canónica a sí misma.
+  await verificar("LA SALA COMPLETA estática: el archivo se pagina en el servidor con la count real, cero JS (v261)", () => {
+    const sala = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
+    // la paginación server-side: skip, count y páginas derivadas
+    afirmar(sala.includes("searchParams"), "la sala no recibe la página pedida");
+    afirmar(sala.includes("const PAGE_SIZE = 40"), "sin tamaño de página declarado");
+    afirmar(sala.includes("skip: (page - 1) * PAGE_SIZE"), "la paginación no salta las páginas anteriores");
+    afirmar(sala.includes("Math.ceil(total / PAGE_SIZE)"), "sin el número de páginas derivado de la count real");
+    afirmar(sala.includes("?page="), "sin puertas a las páginas siguientes");
+    afirmar(sala.includes('aria-current={p === page ? "page" : undefined}'), "la página activa no se declara (aria-current)");
+    // fuera de rango es 404 limpio — nada vacío para Google
+    afirmar(sala.includes("if (!Number.isInteger(pedida) || pedida < 1) notFound()"), "una página mal pedida no es 404 limpio");
+    afirmar(sala.includes("if (pedida > paginas) notFound()"), "una página más allá del archivo no es 404 limpio");
+    // la última señal del ARCHIVO, no la de la página
+    afirmar(sala.includes("db.newsItem.findFirst"), "la última señal de la cabecera no consulta el archivo entero");
+    afirmar(sala.includes("const fechaUltima = ultimaSenal ?? (items[0] ? new Date(items[0].publishedAt) : null)"), "la cabecera sigue midiendo la cabeza de la página");
+    // lección v256: la cabecera también se compone COMPLETA en JS
+    afirmar(sala.includes("{fechaUltima && ` · última señal hace ${hace(fechaUltima)}`}"), "la cabecera no compone su línea COMPLETA en JS");
+    // canonical por página (Google indexa el archivo entero)
+    afirmar(sala.includes("alternates: { canonical: canon }"), "sin canonical por página");
+    afirmar(sala.includes('` — página ${page}`'), "el title no declara la página");
+    // lección v256: la línea del nav se compone COMPLETA en JS antes del JSX
+    afirmar(sala.includes("const lineaPaginacion = `página ${page} de ${paginas} — ${total} cables en el archivo del teatro`"), "la línea del nav no se compone COMPLETA en JS (SSR intercalaría <!-- -->)");
+    afirmar(sala.includes("{lineaPaginacion}"), "el nav no sirve la línea compuesta");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas a mano en la ronda v261!");
+  });
+
+  await verificar("LA SALA COMPLETA viva: ukraine pagina su archivo real, la 2 sirve otros cables y la cortina no sirve sala (v261)", async () => {
+    const p1 = await pedir("/conflicto/ukraine");
+    afirmar(p1.status === 200, `/conflicto/ukraine no 200 (${p1.status})`);
+    // 173 cables reales / 40 por página = 5 páginas (medido en la BD de esta ronda)
+    afirmar(p1.texto.includes("página 1 de 5"), "la sala no declara su paginación real");
+    afirmar(p1.texto.includes("173 cables en el archivo del teatro"), "el nav no declara el peso real del archivo");
+    afirmar(p1.texto.includes('href="/conflicto/ukraine?page=2"'), "sin puerta a la página 2");
+    afirmar(p1.texto.includes("siguiente ▶"), "sin la señal de la página siguiente");
+    // la página 2: otros cables, con su anterior y su lugar declarado
+    const p2 = await pedir("/conflicto/ukraine?page=2");
+    afirmar(p2.status === 200, `página 2 → ${p2.status} (el archivo tiene 5 páginas)`);
+    afirmar(p2.texto.includes("página 2 de 5"), "la segunda página no declara su lugar");
+    afirmar(p2.texto.includes("◀ anterior"), "sin la puerta de vuelta");
+    afirmar(p2.texto.includes('href="/conflicto/ukraine"'), "el anterior no vuelve al limpio");
+    afirmar(p2.texto.includes('href="/conflicto/ukraine?page=3"'), "sin puerta a la página 3");
+    // fuera de rango: la cortina de la casa, sin sala — NADA de contenido
+    // indexable (Next 16 sirve el notFound en streaming con 200 en TODA la
+    // casa: un tag desconocido de v206 y una /noticia inexistente se
+    // comportan igual, medido en esta ronda — lo que importa es que la sala
+    // vacía jamás viaja: ni paginación, ni cables, ni nav)
+    const fuera = await pedir("/conflicto/ukraine?page=99");
+    afirmar(!fuera.texto.includes("página 1 de 5") && !fuera.texto.includes("cables en el archivo"), "¡la página 99 sirve una sala vacía!");
+    afirmar(!fuera.texto.includes("Los frentes del teatro"), "¡la página 99 sirve el despliegue de una sala que no existe!");
+    const mala = await pedir("/conflicto/ukraine?page=abc");
+    afirmar(!mala.texto.includes("página 1 de 5") && !mala.texto.includes("cables en el archivo"), "¡la página abc sirve una sala vacía!");
+    // las anclas de la sala siguen en pie
+    afirmar(p1.texto.includes("Los frentes del teatro"), "el despliegue v227 desapareció");
+    afirmar(p1.texto.includes("CONECTA CON EL NÚCLEO"), "el núcleo v218 desapareció");
+    afirmar(p1.texto.includes("/assets/real/thumbs/"), "las thumbs v238 desaparecieron");
   });
 
   // ── v260.0 LA SALA DEL TEATRO: la puerta de lectura declara el peso de su

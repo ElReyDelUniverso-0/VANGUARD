@@ -82,42 +82,76 @@ function imgDe(it: NewsRow, i: number): string {
   return it.imageUrl || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
 }
 
-async function getCables(tag: string): Promise<{ total: number; items: NewsRow[] }> {
+// v261.0 LA SALA COMPLETA — el archivo del teatro se pagina EN EL SERVIDOR:
+// la sala de ucrania guarda 173 cables pero la puerta solo encendía los
+// primeros 40 — los otros 133 existían en la BD y no tenían puerta. La
+// count real (v209) manda el número de páginas, findMany salta con skip,
+// y la última señal de la cabecera se mide sobre TODO el archivo
+// (findFirst), no sobre la cabeza de la página: la misma verdad en la
+// página 1 y en la 5. Cero JavaScript: Links de servidor, nada más.
+const PAGE_SIZE = 40;
+
+async function getCables(
+  tag: string,
+  page: number,
+): Promise<{ total: number; items: NewsRow[]; ultimaSenal: Date | null }> {
   try {
-    const [total, items] = await Promise.all([
+    const [total, items, ultima] = await Promise.all([
       db.newsItem.count({ where: { conflictTag: tag } }),
       db.newsItem.findMany({
         where: { conflictTag: tag },
         orderBy: { publishedAt: "desc" },
-        take: 40,
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+      }),
+      // v261.0: la última señal del archivo entero — una fila con índice
+      db.newsItem.findFirst({
+        where: { conflictTag: tag },
+        orderBy: { publishedAt: "desc" },
+        select: { publishedAt: true },
       }),
     ]);
-    return { total, items: items as NewsRow[] };
+    return {
+      total,
+      items: items as NewsRow[],
+      ultimaSenal: ultima ? new Date(ultima.publishedAt) : null,
+    };
   } catch {
-    return { total: 0, items: [] };
+    return { total: 0, items: [], ultimaSenal: null };
   }
 }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ tag: string }>;
+  searchParams: Promise<{ page?: string }>;
 }): Promise<Metadata> {
   const { tag } = await params;
   const teatro = TEATROS[tag];
   if (!teatro) return { title: "Teatro no disponible · VANGUARD" };
-  const { total } = await getCables(tag);
+  const { total } = await getCables(tag, 1);
+  // v261.0 — cada página del archivo se canónica a sí misma (la 1, al
+  // limpio): Google puede indexar el archivo entero, no solo la cabeza.
+  const pedida = Number.parseInt((await searchParams).page ?? "1", 10);
+  const page = Number.isInteger(pedida) && pedida > 1 ? pedida : 1;
+  const canon =
+    page > 1
+      ? `${SITE_URL}/conflicto/${tag}?page=${page}`
+      : `${SITE_URL}/conflicto/${tag}`;
+  const sufijo = page > 1 ? ` — página ${page}` : "";
   // v206.1: sin «| VANGUARD» — el title.template del layout (%s · VANGUARD)
   // ya añade la marca; duplicarla era redundante en resultados.
-  const title = `Guerra en ${teatro.nombre}: noticias del conflicto en vivo hoy`;
+  const title = `Guerra en ${teatro.nombre}: noticias del conflicto en vivo hoy${sufijo}`;
   const desc = `${teatro.resumen} ${total} cables verificados en la agencia — seguimiento en vivo con mapa OSINT 3D. Gratis, en español.`;
   return {
     title,
     description: desc.slice(0, 300),
-    alternates: { canonical: `${SITE_URL}/conflicto/${tag}` },
+    alternates: { canonical: canon },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/conflicto/${tag}`,
+      url: canon,
       title,
       description: desc.slice(0, 300),
       siteName: "VANGUARD — Conflictos Mundiales en Tiempo Real",
@@ -130,16 +164,26 @@ export async function generateMetadata({
 
 export default async function ConflictoPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tag: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { tag } = await params;
   const teatro = TEATROS[tag];
   if (!teatro) notFound();
 
-  const { total, items } = await getCables(tag);
+  // v261.0 LA SALA COMPLETA — la página pedida: entera y ≥ 1, o 404
+  // limpio (una sala vacía para Google jamás).
+  const pedida = Number.parseInt((await searchParams).page ?? "1", 10);
+  if (!Number.isInteger(pedida) || pedida < 1) notFound();
+
+  const { total, items, ultimaSenal } = await getCables(tag, pedida);
   // Sin cables vivos la puerta no se abre (nada vacío para Google)
   if (items.length === 0) notFound();
+  const paginas = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (pedida > paginas) notFound();
+  const page = pedida;
 
   // v227.0 EL DESPLIEGUE — los frentes documentados del teatro (sala
   // OSINT v129 proyectada por v220 como entidades v225). CERO
@@ -147,7 +191,13 @@ export default async function ConflictoPage({
   const frentes = puntosDelNucleo().filter((p) => p.teatro === tag);
   const geoTeatro = geografiaDeTeatro(tag);
 
-  const ultimo = items[0];
+  // v261.0 — la línea del nav se compone COMPLETA en JS antes del JSX
+  // (lección v256: React SSR intercala <!-- --> entre texto e interpolación)
+  const lineaPaginacion = `página ${page} de ${paginas} — ${total} cables en el archivo del teatro`;
+
+  // v261.0: la última señal del ARCHIVO, no la de esta página — la
+  // cabecera dice la verdad en la página 1 y en la última
+  const fechaUltima = ultimaSenal ?? (items[0] ? new Date(items[0].publishedAt) : null);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -203,7 +253,8 @@ export default async function ConflictoPage({
               Teatro en vivo
             </span>
             <span className="font-mono text-[11px] text-zinc-500 uppercase tracking-wider">
-              {total} cables en la agencia · última señal hace {hace(new Date(ultimo.publishedAt))}
+              {total} cables en la agencia
+              {fechaUltima && ` · última señal hace ${hace(fechaUltima)}`}
             </span>
           </div>
           <h1 className="mt-3 text-3xl sm:text-4xl font-bold leading-tight text-zinc-100">
@@ -327,6 +378,54 @@ export default async function ConflictoPage({
             );
           })}
         </section>
+
+        {/* v261.0 LA SALA COMPLETA — el resto del archivo, a un toque: cero JS, la count real manda */}
+        {paginas > 1 && (
+          <nav
+            aria-label="Paginación del archivo del teatro"
+            className="mt-8 border-t border-zinc-800 pt-4"
+          >
+            <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+              {lineaPaginacion}
+            </p>
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              {page > 1 && (
+                <Link
+                  href={
+                    page - 1 === 1
+                      ? `/conflicto/${tag}`
+                      : `/conflicto/${tag}?page=${page - 1}`
+                  }
+                  className="border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-3 py-1.5 text-sm text-zinc-300 bg-zinc-900/40 transition-colors"
+                >
+                  ◀ anterior
+                </Link>
+              )}
+              {Array.from({ length: paginas }, (_, i) => i + 1).map((p) => (
+                <Link
+                  key={p}
+                  href={p === 1 ? `/conflicto/${tag}` : `/conflicto/${tag}?page=${p}`}
+                  aria-current={p === page ? "page" : undefined}
+                  className={
+                    p === page
+                      ? "border border-amber-500/50 bg-amber-500/10 text-amber-300 rounded px-3 py-1.5 text-sm font-bold"
+                      : "border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-3 py-1.5 text-sm text-zinc-400 bg-zinc-900/40 transition-colors"
+                  }
+                >
+                  {p}
+                </Link>
+              ))}
+              {page < paginas && (
+                <Link
+                  href={`/conflicto/${tag}?page=${page + 1}`}
+                  className="border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-3 py-1.5 text-sm text-zinc-300 bg-zinc-900/40 transition-colors"
+                >
+                  siguiente ▶
+                </Link>
+              )}
+            </div>
+          </nav>
+        )}
 
         {/* texto indexable de contexto */}
         <div className="mt-8 text-[13px] text-zinc-500 leading-relaxed">
