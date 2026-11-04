@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v301.0",
+    nombre: "LA BIBLIOTECA OSCURA — la mina que la «Queda» de la v300 señaló (oscura-data, ya servida en /guerra-hoy desde la v63, pendiente solo de sala propia) gana su sala server /oscura: 43 entradas con veredicto REAL/MITO/PARCIAL y fuente real (14 teorías · 11 armas-idea · 10 civilizaciones · 8 documentos desclasificados), las 43 con su url de archivo público (CIA Reading Room, National Archives, NSA, FBI Vault, World History Encyclopedia...) y cada entrada abierta a su documento original con enlace real — lo que el teaser de la guerra hoy y la pestaña del aparato no daban",
+    hitos: [
+      "LA SALA NUEVA — /oscura, patrón /historia (v274) · /armeria (v283) · /archivo-mundial (v293) · /atlas (v294) · /verdad-cruda (v295) · /divisas (v296) · /poder (v297) · /galeria (v298): prerenderizada, sin cliente, sin BD, indexable; el sistema del veredicto completo (dónde nació · lo que se cuenta · lo que dicen los documentos), las rarezas como rótulos y CADA ENTRADA ABIERTA a su documento original",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256): «La biblioteca oscura — 43 entradas con su fuente real citada: 14 teorías con veredicto, 11 armas-idea que cambiaron la guerra, 10 civilizaciones que aterraron al mundo y desaparecieron, y 8 documentos desclasificados»; veredictos y rarezas EN EL ORDEN DE LA FUENTE con chips en un solo nodo (lección v274); el color del veredicto es regla derivada; sin años escritos en líneas y sin fechas ISO en la sala",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /oscura (monthly, 0.6), paleta Ctrl+K (pg:oscura, icono EyeOff — un token añadido al import de lucide, el eco de la Camera de la v298), JSON-LD CollectionPage + ItemList de CreativeWork con las 43 entradas, noscript honesto, puertas honestas al aparato (la pestaña de la Alejandría Oscura, donde cada lectura paga) y al mando (/guerra-hoy)",
+      "PRUEBAS +2 — estática: el dataset intacto (43 entradas censadas por colección, las 43 con url pública y fuente, cero url local, veredictos y rarezas dentro de sus dominios), la sala derivada, sin cliente ni fetch, las puertas y las guardias; viva: la línea derivada completa, «REAL ×6», «MITO ×3», «PARCIAL ×5», «LEGENDARIO ×4», «REPTILIANOS», «VENONA», «GATEWAY EXPERIENCE», «fuente: CIA Reading Room» y el sitemap VIVO",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v300.0",
     nombre: "LA GUARDIA DEL OÍDO — la ronda que blinda la orden del Dueño: la v299.0 arregló el oído entero (bug del secuenciador, letra de las 34 obras, humanización, permiso de hablarle, carriles de la esquina) y esta ronda hace que NUNCA pueda romperse sin que la suite lo grite: la fila permanente de MICRÓFONO dentro del panel de VG-ASSIST (estado real del aparato con navigator.permissions.query y botón PEDIR PERMISO con getUserMedia — camino de vuelta si el candado bloqueó el oído) y el carril del cofre fijado en la suite",
     hitos: [

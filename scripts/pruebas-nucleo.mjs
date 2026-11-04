@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v300.0", async () => {
+  await verificar("servidor vivo y en v301.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v300"), `versión ${r.json?.version} ≠ v300`);
+    afirmar(String(r.json?.version).startsWith("v301"), `versión ${r.json?.version} ≠ v301`);
   });
 
   // censo por API
@@ -2689,16 +2689,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v300.0"'), "la fuente única de versión no es v300.0 (avanza con la guardia)");
+    afirmar(version.includes('APP_VERSION = "v301.0"'), "la fuente única de versión no es v301.0 (avanza con la biblioteca)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA GUARDIA DEL OÍDO"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v300.0"), "la v300.0 no viaja en el home");
+    afirmar(r.texto.includes("LA BIBLIOTECA OSCURA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v301.0"), "la v301.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v300"), "el health no canta v300");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v301"), "el health no canta v301");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2726,15 +2726,90 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v300.0"'), "la fuente única de versión no es v300.0");
+    afirmar(version.includes('APP_VERSION = "v301.0"'), "la fuente única de versión no es v301.0");
   });
 
-  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v300 y el home guarda la crónica del oído (v300)", async () => {
+  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v301 y el home guarda la crónica del oído (v300→v301)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v300.0"), "la v300.0 no viaja en el home");
+    afirmar(r.texto.includes("v301.0"), "la v301.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v300"), "el health no canta v300");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v301"), "el health no canta v301");
+  });
+
+  // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
+  // con veredicto REAL/MITO/PARCIAL y fuente real») gana su sala server
+  // (/oscura) — el teaser de /guerra-hoy la presenta, el aparato la juega
+  // (cada lectura paga), la sala abre CADA entrada a su documento
+  // original con enlace real ──
+  await verificar("LA BIBLIOTECA OSCURA estática: la fuente intacta (43 entradas con fuente real), la sala derivada y las puertas (v301)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/oscura-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/oscura/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: las 4 colecciones con su censo real
+    const nT = (fuente.match(/id: "t-/g) ?? []).length;
+    const nA = (fuente.match(/id: "a-/g) ?? []).length;
+    const nC = (fuente.match(/id: "c-/g) ?? []).length;
+    const nD = (fuente.match(/id: "d-/g) ?? []).length;
+    afirmar(nT === 14, `teorías ${nT} ≠ 14`);
+    afirmar(nA === 11, `armas-idea ${nA} ≠ 11`);
+    afirmar(nC === 10, `civilizaciones ${nC} ≠ 10`);
+    afirmar(nD === 8, `documentos ${nD} ≠ 8`);
+    // las 43 con url pública y fuente declarada: cero url local (el claim REAL se mide)
+    const nUrls = (fuente.match(/url: "https?:\/\//g) ?? []).length;
+    afirmar(nUrls === 43, `urls públicas ${nUrls} ≠ 43 (cada entrada abre su documento)`);
+    afirmar(!/url: "\//.test(fuente), "hay urls locales en la fuente (el claim REAL se mide)");
+    afirmar((fuente.match(/fuente: "/g) ?? []).length === 43, "la fuente declarada no cubre las 43");
+    // los veredictos y las rarezas dentro de sus dominios, cero ISO en el dataset
+    for (const v of fuente.match(/veredicto: "[A-Z]+"/g) ?? []) {
+      afirmar(/veredicto: "(REAL|MITO|PARCIAL)"/.test(v), `veredicto fuera de dominio: ${v}`);
+    }
+    for (const r2 of fuente.match(/rareza: "[A-Z]+"/g) ?? []) {
+      afirmar(/rareza: "(COMUN|RARO|EPICO|LEGENDARIO)"/.test(r2), `rareza fuera de dominio: ${r2}`);
+    }
+    afirmar(!/20\d\d-\d\d-\d\d/.test(fuente), "ISO en el dataset (guardia v234)");
+    // la sala derivada: import canónico, server pura, línea compuesta en JS
+    afirmar(sala.includes('import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data"'), "la sala no importa la fuente canónica");
+    afirmar(!sala.includes('"use client"') && !sala.includes("useEffect") && !sala.includes("fetch("), "la sala no es server pura (el código pelado decide, lección v295)");
+    const linea = (sala.match(/const lineaOscura = `([^`]+)`;/) ?? ["", ""])[1];
+    afirmar(linea.includes("${TOTAL}") && linea.includes("${TEORIAS.length}") && linea.includes("${ARMAS.length}") && linea.includes("${CIVILIZACIONES.length}") && linea.includes("${DOCS.length}"), "la línea compuesta no se deriva del dato (lección v256)");
+    afirmar(!/\d{4}/.test(linea), "año escrito en la línea compuesta (guardia del arco)");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "ISO en la sala (guardia v234)");
+    afirmar(sala.includes("!VEREDICTOS.includes"), "los veredictos no se derivan en el orden de la fuente (lección v274)");
+    afirmar(sala.includes("${v} ×${TEORIAS.filter"), "los chips del veredicto no están en un solo nodo (lección v274)");
+    afirmar(sala.includes("function clasesVeredicto"), "el color del veredicto no es regla derivada");
+    afirmar((sala.match(/rel="noopener noreferrer"/g) ?? []).length >= 4, "las entradas no abren su documento con enlace real");
+    afirmar(sala.includes("numberOfItems: TOTAL") && sala.includes('"@type": "CollectionPage"'), "el JSON-LD no censa las 43 entradas");
+    afirmar(sala.includes("esta sala funciona sin JavaScript — {lineaOscura}"), "el noscript no canta la línea");
+    // las puertas: sitemap + paleta
+    afirmar(mapa.includes("url: `${SITE_URL}/oscura`"), "el sitemap no anuncia /oscura");
+    afirmar(paleta.includes('key: "pg:oscura"') && paleta.includes('href: "/oscura"'), "la paleta no lleva a /oscura");
+    afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
+    // la versión camina con la casa
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    afirmar(version.includes('APP_VERSION = "v301.0"'), "la fuente única de versión no es v301.0");
+  });
+
+  await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
+    const r = await pedir("/oscura");
+    afirmar(r.status === 200, `/oscura no 200 (${r.status})`);
+    // el trap RSC (lección v295): React separa los nodos de texto con
+    // comentarios — se pelan ANTES de asertar las líneas compuestas
+    const plano = r.texto.replace(/<!-- -->/g, "");
+    afirmar(plano.includes("LA BIBLIOTECA OSCURA"), "la sala no canta su nombre");
+    afirmar(plano.includes("43 entradas con su fuente real citada"), "la línea compuesta no viaja en el SSR");
+    afirmar(plano.includes("MITO ×3") && plano.includes("PARCIAL ×5") && plano.includes("REAL ×6"), "los chips del veredicto no viajan censados");
+    afirmar(plano.includes("LEGENDARIO ×4") && plano.includes("EPICO ×6"), "los chips de rareza no viajan censados");
+    afirmar(plano.includes("LAS TEORÍAS CON VEREDICTO ×14") && plano.includes("LAS ARMAS-IDEA ×11") && plano.includes("LAS CIVILIZACIONES QUE DESAPARECIERON ×10") && plano.includes("LOS DOCUMENTOS DESCLASIFICADOS ×8"), "las colecciones no viajan censadas");
+    afirmar(plano.includes("REPTILIANOS") && plano.includes("VENONA") && plano.includes("GATEWAY EXPERIENCE"), "las entradas no viajan en el SSR");
+    afirmar(plano.includes("fuente: CIA Reading Room"), "la fuente real no viaja en el SSR");
+    afirmar(plano.includes('rel="noopener noreferrer"') && plano.includes("cia.gov/readingroom"), "el documento original no abre su enlace real");
+    afirmar(plano.includes("Alejandría Oscura") && plano.includes("/guerra-hoy"), "las puertas honestas no viajan");
+    afirmar(plano.includes("application/ld+json") && plano.includes('"@type":"CollectionPage"'), "el JSON-LD no viaja");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/oscura"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

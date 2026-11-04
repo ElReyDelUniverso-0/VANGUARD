@@ -243,6 +243,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v301.0 LA BIBLIOTECA OSCURA — la biblioteca de la v63 sale del
+      // teaser de /guerra-hoy a su sala server: 43 entradas con veredicto
+      // REAL/MITO/PARCIAL y fuente real (14 teorías · 11 armas-idea ·
+      // 10 civilizaciones · 8 documentos desclasificados), cada entrada
+      // abierta a su documento original (CIA, National Archives, NSA,
+      // FBI Vault...), indexable para las búsquedas de documentos
+      // desclasificados (MK-ULTRA, Tartessos, Gateway, HAARP...)
+      url: `${SITE_URL}/oscura`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
       // censo de poder de la fuente (ROSTROS) servidas en server:
       // los tronos, el dinero, el tribunal y los nuevos, indexables

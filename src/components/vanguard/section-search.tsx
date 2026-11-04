@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText, Camera } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, EyeOff, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -268,6 +268,14 @@ export function SectionSearch({
         icon: <Camera className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la fototeca", icon_color: "text-cyan-hud",
         kind: "page", href: "/galeria",
+      },
+      {
+        // v301.0 LA BIBLIOTECA OSCURA — la biblioteca de la v63 (oscura-data, REAL),
+        // en server
+        key: "pg:oscura", label: "BIBLIOTECA OSCURA — 43 secretos con veredicto REAL/MITO/PARCIAL y su documento desclasificado original: 14 teorías, 11 armas-idea, 10 civilizaciones que desaparecieron y 8 documentos (CIA, National Archives, NSA, FBI Vault)", short: "biblioteca oscura alejandria teorias veredicto mito real parcial documentos desclasificados cia nsa fbi mk-ultra tartessos gateway haarp venona arco compuesto fuego griego sumeria etruscos",
+        icon: <EyeOff className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la biblioteca oscura", icon_color: "text-red-hud",
+        kind: "page", href: "/oscura",
       },
       {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server

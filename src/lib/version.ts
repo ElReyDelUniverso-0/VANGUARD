@@ -3921,6 +3921,55 @@
 //     el sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v296.0 LAS DIVISAS DEL PLANETA y toda la crónica. Guards v167 intactos.
+// v301.0 LA BIBLIOTECA OSCURA — la mina que la «Queda» de la v300 señaló
+//         (oscura-data, ya servida en /guerra-hoy desde la v63, pendiente
+//         solo de sala propia) gana su sala server. La fuente declara en
+//         su propia cabeza: «contenido verificado: cada teoría con
+//         veredicto REAL/MITO/PARCIAL y fuente real» — y el censo de esta
+//         ronda lo mide: 43 entradas (14 teorías · 11 armas-idea · 10
+//         civilizaciones · 8 documentos desclasificados), las 43 con su
+//         url de archivo público y su fuente declarada (CIA Reading Room,
+//         National Archives, NSA, FBI Vault, World History Encyclopedia,
+//         NSArchive, Smithsonian, The Black Vault...).
+// (1) LA SALA NUEVA: /oscura — patrón /historia (v274) · /armeria (v283)
+//     · /archivo-mundial (v293) · /atlas (v294) · /verdad-cruda (v295) ·
+//     /divisas (v296) · /poder (v297) · /galeria (v298): prerenderizada,
+//     sin cliente, sin BD, indexable. Lo que la sala añade sobre el
+//     teaser de /guerra-hoy y la pestaña oscura del aparato: el sistema
+//     del veredicto completo (dónde nació · lo que se cuenta · lo que
+//     dicen los documentos), las rarezas como rótulos del archivo y CADA
+//     ENTRADA ABIERTA a su documento original con enlace real
+//     (noopener noreferrer).
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «La biblioteca oscura — 43 entradas con su fuente
+//     real citada: 14 teorías con veredicto, 11 armas-idea que cambiaron
+//     la guerra, 10 civilizaciones que aterraron al mundo y desaparecieron,
+//     y 8 documentos desclasificados»; veredictos y rarezas EN EL ORDEN
+//     DE LA FUENTE con chips en un solo nodo (lección v274); el color del
+//     veredicto es regla derivada (el código del teaser de la casa, ahora
+//     con su propia función); sin años escritos en líneas (guardia del
+//     arco) y sin fechas ISO en la sala (guardia v234).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /oscura (monthly, 0.6)
+//     y la paleta Ctrl+K la lleva (pg:oscura, icono EyeOff — un token
+//     añadido al import de lucide, el eco de la Camera de la v298);
+//     JSON-LD CollectionPage + ItemList de CreativeWork (name +
+//     description) con las 43 entradas; noscript honesto con la línea
+//     compuesta; puertas honestas al aparato (la pestaña de la Alejandría
+//     Oscura, donde cada lectura paga) y al mando (/guerra-hoy, donde la
+//     casa la presenta).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /oscura en la tabla) ·
+//     health v301.0 db up · pruebas 228/228 (+2 LA BIBLIOTECA OSCURA:
+//     estática — el dataset intacto (43 entradas censadas por colección,
+//     las 43 con url pública y fuente, cero url local, los tres
+//     veredictos y las cuatro rarezas dentro de sus dominios), la sala
+//     derivada (línea compuesta, chips en un nodo, la función del
+//     veredicto, los enlaces con noopener), sin cliente ni fetch, las
+//     puertas (sitemap + paleta) y las guardias; viva — el SSR sirve la
+//     línea derivada completa, «REAL ×6», «MITO ×3», «PARCIAL ×5»,
+//     «LEGENDARIO ×4», «REPTILIANOS», «VENONA», «GATEWAY EXPERIENCE»,
+//     «fuente: CIA Reading Room» y el sitemap VIVO) · BD intocada (1877
+//     cables · 9 hechos, un solo escritor).
+// Herencia v300.0 LA GUARDIA DEL OÍDO y toda la crónica. Guards v167 intactos.
 // v298.0 LA FOTOTECA DEL PLANETA — la capa REAL del aparato sale del
 //         juego al server: la «Queda» de la v297 pedía clasificación
 //         fina para imagenes-data (14 KB, v98 ORO TOTAL, «IMÁGENES
@@ -4051,6 +4100,6 @@
 //     del orbe en el HTML) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v298.0 LA FOTOTECA DEL PLANETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v300.0";
-export const APP_CODENAME = "LA GUARDIA DEL OÍDO";
+export const APP_VERSION = "v301.0";
+export const APP_CODENAME = "LA BIBLIOTECA OSCURA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
