@@ -10,6 +10,13 @@
 // cable que cita «Kiev» o «Hezbolá» gana una puerta a su sala SIN que nadie
 // escriba en la BD (la casa no clasifica a mano — un solo escritor —, solo
 // abre la puerta y declara qué palabras la abrieron).
+// v269.0 EL MAPA DEL ARCHIVO — el tamaño de página del archivo vive en la
+// FUENTE (una sola verdad): la sala /conflicto/[tag] pagina con él desde
+// v261 (40 por página) y ahora el sitemap deriva con el mismo número las
+// páginas profundas que anuncia a Google. Si el archivo cambia de dieta,
+// se cambia aquí una vez y sala y mapa siguen la misma ley.
+export const PAGE_SIZE_ARCHIVO = 40;
+
 export const TEATROS: Record<
   string,
   { nombre: string; resumen: string; claves: string[] }

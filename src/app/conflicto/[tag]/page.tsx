@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
-import { TEATROS } from "@/lib/teatros";
+import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 // v218.0 EL NÚCLEO — enlaces contextuales calculados en el mismo render
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -101,7 +101,9 @@ function imgDe(it: NewsRow, i: number): string {
 // y la última señal de la cabecera se mide sobre TODO el archivo
 // (findFirst), no sobre la cabeza de la página: la misma verdad en la
 // página 1 y en la 5. Cero JavaScript: Links de servidor, nada más.
-const PAGE_SIZE = 40;
+// v269: el tamaño vive en la FUENTE (lib/teatros) — sala y sitemap
+// derivan con el mismo número, una sola verdad para todo el archivo.
+const PAGE_SIZE = PAGE_SIZE_ARCHIVO;
 
 async function getCables(
   tag: string,

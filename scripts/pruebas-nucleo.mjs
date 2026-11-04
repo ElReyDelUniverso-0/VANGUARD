@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v268.0", async () => {
+  await verificar("servidor vivo y en v269.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v268"), `versión ${r.json?.version} ≠ v268`);
+    afirmar(String(r.json?.version).startsWith("v269"), `versión ${r.json?.version} ≠ v269`);
   });
 
   // censo por API
@@ -2060,6 +2060,31 @@ async function parteB() {
     afirmar(r.texto.includes("EL CABLEADO DEL APARATO"), "el cableado v267 desapareció");
   });
 
+  // ── v269.0 EL MAPA DEL ARCHIVO: el sitemap anuncia el archivo entero ──
+  // La cota de v207 (500) se quedó corta: el archivo medido es 1877 y 1377
+  // puertas /noticia quedaban fuera del mapa de Google. Y las páginas
+  // profundas del archivo (v261, canónicas cada una) no viajaban al mapa.
+  // El tamaño de página vive en la FUENTE (teatros.ts): sala y mapa derivan
+  // con el mismo número.
+  await verificar("EL MAPA DEL ARCHIVO estática: el sitemap anuncia el archivo entero y las páginas profundas derivadas de la count real (v269)", () => {
+    const sm = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const cat = readFileSync(join(RAIZ, "src/lib/teatros.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
+    // la fuente única del tamaño de página: el catálogo declara, sala y mapa consumen
+    afirmar(cat.includes("export const PAGE_SIZE_ARCHIVO = 40"), "el catálogo no declara el tamaño de página del archivo");
+    afirmar(sala.includes("const PAGE_SIZE = PAGE_SIZE_ARCHIVO"), "la sala no consume el tamaño de la fuente única");
+    afirmar(sm.includes("PAGE_SIZE_ARCHIVO"), "el sitemap no consume el tamaño de la fuente única");
+    // el archivo entero: la cota declarada (2000) supera el archivo medido (1877)
+    afirmar(sm.includes("const PUERTAS_NOTICIA = 2000"), "el sitemap no declara la cota del archivo entero");
+    afirmar(!sm.includes("take: 500"), "el sitemap sigue cortando el archivo a la cota vieja");
+    // las páginas profundas: derivadas de la count real, nunca inventadas
+    afirmar(sm.includes("Math.ceil(g._count.conflictTag / PAGE_SIZE_ARCHIVO)"), "las páginas profundas no se derivan de la count real");
+    afirmar(sm.includes("?page=${p}"), "sin puertas a las páginas profundas del archivo");
+    // lastModified honesto: la última señal real del teatro, no una fecha fingida (guardia v234)
+    afirmar(sm.includes("_max: { publishedAt: true }"), "la groupBy del mapa no mide la última señal");
+    afirmar(sm.includes("new Date(ultima)"), "el mapa no usa la última señal real como lastModified");
+  });
+
   // ── v267.0 EL CABLEADO DEL APARATO: qué señal del estado alimenta cada bloque ──
   // La vitrina dice desde v235 «los 100 se cazan aquí» pero nunca declaró
   // QUÉ alimenta cada bloque. La directiva v266 manda: el mapa se declara
@@ -2363,7 +2388,7 @@ async function parteB() {
     const sala = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
     // la paginación server-side: skip, count y páginas derivadas
     afirmar(sala.includes("searchParams"), "la sala no recibe la página pedida");
-    afirmar(sala.includes("const PAGE_SIZE = 40"), "sin tamaño de página declarado");
+    afirmar(sala.includes("const PAGE_SIZE = PAGE_SIZE_ARCHIVO"), "sin tamaño de página declarado en la fuente única (v269)");
     afirmar(sala.includes("skip: (page - 1) * PAGE_SIZE"), "la paginación no salta las páginas anteriores");
     afirmar(sala.includes("Math.ceil(total / PAGE_SIZE)"), "sin el número de páginas derivado de la count real");
     afirmar(sala.includes("?page="), "sin puertas a las páginas siguientes");
@@ -2593,6 +2618,18 @@ async function parteB() {
     afirmar(r.texto.includes('aria-label="Compartir este cable"'), "el SSR no sirve la salida");
     // las pieles v247 siguen en pie en la misma sala
     afirmar(r.texto.includes("fetchPriority"), "el hero perdió su prioridad LCP");
+  });
+
+  // ── v269.0 EL MAPA DEL ARCHIVO viva: el mapa de Google sirve el archivo entero ──
+  await verificar("EL MAPA DEL ARCHIVO viva: el sitemap sirve las puertas del archivo y las páginas profundas (v269)", async () => {
+    const r = await pedir("/sitemap.xml");
+    afirmar(r.status === 200, "el sitemap no responde");
+    const puertas = (r.texto.match(/\/noticia\//g) || []).length;
+    afirmar(puertas >= 1800, `el mapa solo anuncia ${puertas} puertas de noticia — el archivo entero no viaja`);
+    // ucrania (173 cables medidos en v261 → 5 páginas) declara sus páginas profundas
+    afirmar(r.texto.includes("/conflicto/ukraine?page=2"), "el mapa no anuncia la página profunda de ucrania");
+    // la página 1 no se anuncia dos veces (su canónica es al limpio — v261)
+    afirmar(!r.texto.includes("/conflicto/ukraine?page=1"), "el mapa anuncia la página 1 dos veces");
   });
 
   // el muro al final: quema la cuota de esta IP

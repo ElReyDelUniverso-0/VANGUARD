@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
-import { TEATROS } from "@/lib/teatros";
+import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -13,11 +13,17 @@ const SITE_URL =
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // v202.0: puertas por noticia — cada cable vivo es una URL indexable
+  // v269.0 EL MAPA DEL ARCHIVO: la cota de v207 (500) se quedó corta — el
+  // archivo medido de la casa es 1877 y 1377 puertas quedaban fuera del
+  // mapa que Google rastrea. La cota manda sobre el archivo entero: 2000
+  // (Google acepta 50.000 URLs por sitemap — el archivo cabe de sobra y
+  // crece tranquilo). Si la BD falla, las puertas estáticas quedan intactas.
+  const PUERTAS_NOTICIA = 2000;
   let noticias: MetadataRoute.Sitemap = [];
   try {
     const rows = await db.newsItem.findMany({
       orderBy: { publishedAt: "desc" },
-      take: 500,
+      take: PUERTAS_NOTICIA,
       select: { id: true, publishedAt: true },
     });
     noticias = rows.map((r) => ({
@@ -39,6 +45,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       by: ["conflictTag"],
       where: { conflictTag: { not: null } },
       _count: { conflictTag: true },
+      // v269: la misma groupBy mide la última señal real de cada teatro
+      // (patrón v256/v262 — cero consultas de más): el lastModified del
+      // mapa declara la última señal, no una fecha fingida (guardia v234).
+      _max: { publishedAt: true },
     });
     const vivas = new Set(
       conVida
@@ -47,12 +57,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
     teatros = Object.keys(TEATROS)
       .filter((k) => vivas.has(k))
-      .map((k) => ({
-        url: `${SITE_URL}/conflicto/${k}`,
-        lastModified: new Date(),
-        changeFrequency: "hourly" as const,
-        priority: 0.8,
-      }));
+      .flatMap((k) => {
+        // v269.0 EL MAPA DEL ARCHIVO — las páginas profundas que la sala
+        // v261 hizo canónicas viajan ahora al mapa: derivadas de la count
+        // real con el tamaño de la fuente única (PAGE_SIZE_ARCHIVO), nunca
+        // inventadas. La página 1 ya viaja limpia (su canónica es al
+        // limpio — v261); de la 2 en adelante se anuncia cada una.
+        const g = conVida.find((x) => x.conflictTag === k);
+        const paginas = g
+          ? Math.max(1, Math.ceil(g._count.conflictTag / PAGE_SIZE_ARCHIVO))
+          : 1;
+        const ultima = g?._max.publishedAt;
+        const urls: MetadataRoute.Sitemap = [
+          {
+            url: `${SITE_URL}/conflicto/${k}`,
+            lastModified: ultima ? new Date(ultima) : new Date(),
+            changeFrequency: "hourly" as const,
+            priority: 0.8,
+          },
+        ];
+        for (let p = 2; p <= paginas; p++) {
+          urls.push({
+            url: `${SITE_URL}/conflicto/${k}?page=${p}`,
+            lastModified: ultima ? new Date(ultima) : new Date(),
+            changeFrequency: "daily" as const,
+            priority: 0.6,
+          });
+        }
+        return urls;
+      });
   } catch {
     /* sin teatros dinámicos ante fallo de BD */
   }

@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v269.0",
+    nombre: "EL MAPA DEL ARCHIVO — la expansión llega al mapa que Google rastrea: el sitemap servía solo la cabeza del archivo (cota v207: 500 puertas /noticia sobre un archivo medido de 1877 — 1377 puertas indexables quedaban fuera) y las páginas profundas del archivo que la sala v261 hizo canónicas no viajaban al mapa. El tamaño de página vive ahora en la fuente y el lastModified declara la última señal real (turno 475802, AGENT 1)",
+    hitos: [
+      "EL ARCHIVO ENTERO EN EL MAPA — PUERTAS_NOTICIA = 2000 declarada (Google acepta 50.000 URLs por sitemap): las 1877 puertas /noticia viajan al mapa; si la BD falla, las puertas estáticas quedan intactas (herencia v207)",
+      "LAS PÁGINAS PROFUNDAS VIAJAN — la misma groupBy gana _max.publishedAt (patrón v256/v262, cero consultas de más) y cada teatro vivo deriva sus páginas con Math.ceil(count / PAGE_SIZE): /conflicto/[tag]?page=N se anuncia desde la 2 en adelante — la página 1 ya viaja limpia (su canónica es al limpio, v261)",
+      "EL lastModified HONESTO — el mapa declara la última señal real de cada teatro (guardia v234): un teatro mudo 105 h no le miente a Google con un «ahora»",
+      "EL TAMAÑO VIVE EN LA FUENTE — PAGE_SIZE_ARCHIVO = 40 declarado en el catálogo (teatros.ts): sala y sitemap derivan con el mismo número; la guardia v261 de la suite se actualiza y custodia el acoplamiento",
+      "QA v269: tsc 0 TOTAL, eslint 0, build EXIT 0, health v269.0 db up, pruebas 162/162 (+2 EL MAPA DEL ARCHIVO: estática — la fuente declara el tamaño, la cota, las páginas derivadas de la count real y el lastModified honesto; viva — el sitemap sirve ≥1800 puertas /noticia, ukraine?page=2 viaja y la página 1 no se anuncia dos veces), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v268.0",
     nombre: "EL RITMO DE LA CASA — la expansión completa la trilogía de la vitrina (/objetivos: v235 el botín, v267 el cableado, v268 el ritmo): 19 misiones vivas (MISSION_TEMPLATES — 9 diarias, 5 semanales, 2 especiales y 3 capítulos de campaña) que solo vivían en el panel client-side del aparato, ahora servidas en server con censo y botín derivados y puertas reales de campaña a las salas del archivo",
     hitos: [

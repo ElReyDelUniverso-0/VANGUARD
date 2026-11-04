@@ -2835,6 +2835,38 @@
 //     v235/v267 en pie) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v267.0 EL CABLEADO DEL APARATO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v268.0";
-export const APP_CODENAME = "EL RITMO DE LA CASA";
+// ── v269.0 EL MAPA DEL ARCHIVO (turno 475802, AGENT 1) ──────────────────
+// El mapa que Google rastrea servía solo la cabeza del archivo: la cota de
+// v207 (500 puertas /noticia) se quedó corta ante el archivo medido (1877
+// cables — 1377 puertas indexables quedaban FUERA del sitemap), y las
+// páginas profundas del archivo que la sala v261 hizo canónicas
+// (/conflicto/[tag]?page=N) no viajaban al mapa. La casa no se deja
+// indexar a medias.
+// (1) EL ARCHIVO ENTERO EN EL MAPA: PUERTAS_NOTICIA = 2000 (la cota se
+//     declara, no se adivina; Google acepta 50.000 URLs por sitemap — el
+//     archivo cabe de sobra y crece tranquilo). Si la BD falla, las
+//     puertas estáticas quedan intactas (ley de la casa, herencia v207).
+// (2) LAS PÁGINAS PROFUNDAS VIAJAN: la misma groupBy gana
+//     _max.publishedAt (patrón v256/v262 — cero consultas de más) y cada
+//     teatro vivo deriva sus páginas con Math.ceil(count / PAGE_SIZE) —
+//     la página 1 ya viaja limpia (su canónica es al limpio, v261); de la
+//     2 en adelante se anuncia cada una con changeFrequency daily.
+// (3) EL lastModified HONESTO: el mapa declara la ÚLTIMA SEÑAL REAL de
+//     cada teatro (guardia v234 — cero fechas fingidas: un teatro mudo
+//     105 h no le miente a Google con un «ahora»).
+// (4) EL TAMAÑO VIVE EN LA FUENTE: PAGE_SIZE_ARCHIVO = 40 se declara en el
+//     catálogo (teatros.ts, la fuente única de las puertas desde v206) y
+//     sala y sitemap consumen el mismo número — una sola verdad para todo
+//     el archivo; la guardia v261 de la suite se actualiza al literal de
+//     la fuente y custodia el acoplamiento.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v269.0 db up ·
+//     pruebas 162/162 (+2 EL MAPA DEL ARCHIVO: estática — la fuente
+//     declara el tamaño, la cota del archivo entero, las páginas derivadas
+//     de la count real y el lastModified honesto; viva — el sitemap sirve
+//     ≥1800 puertas /noticia, /conflicto/ukraine?page=2 viaja y la página
+//     1 no se anuncia dos veces) · BD intocada (1877 cables · 9 hechos,
+//     un solo escritor).
+// Herencia v268.0 EL RITMO DE LA CASA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v269.0";
+export const APP_CODENAME = "EL MAPA DEL ARCHIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
