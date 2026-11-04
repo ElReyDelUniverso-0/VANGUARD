@@ -7,7 +7,10 @@ import { db } from "@/lib/db";
 // Cada compartida luce distinta y actualizada → la página RESALTA en el chat.
 
 export const dynamic = "force-dynamic";
-export const size = { width: 1200, height: 630 };
+// v246.0 EL ANDAMIAJE EN SILENCIO — «size» era un hábito de la convención
+// opengraph-image.tsx; aquí es una constante interna de la ruta (la usa el
+// ImageResponse de abajo) y deja de ser pública del módulo. Vive igual.
+const size = { width: 1200, height: 630 };
 
 async function getStats() {
   try {

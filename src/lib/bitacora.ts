@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v246.0",
+    nombre: "EL ANDAMIAJE EN SILENCIO — la ronda propia que la cola pedía: las rutas API solo exportan handlers y su configuración, y tsc calla entero por primera vez en rondas",
+    hitos: [
+      "EL AVISO MUERE — tres rondas arrastrando el parloteo de andamiaje (.next/types: meteo/ZONES, og/size, traductor/IDIOMAS): Next.js 16 exige que un módulo de ruta exporte SOLO handlers y claves de configuración; los tres valores eran constantes internas con un «export» de más (el de og, hábito de la convención opengraph-image.tsx; el del traductor, alias re-exportado del catálogo de @/lib/idiomas que el cliente ya importa directo)",
+      "CERO BORRADO (ley MEGA-PROMPT) — las tres constantes siguen vivas con su uso interno intacto (meteo mapea sus 8 zonas, og viste su ImageResponse 1200×630, el GET del traductor sigue sirviendo la lista en su JSON): solo dejan de ser públicas del módulo",
+      "EL RESULTADO MEDIDO — npx tsc --noEmit responde CERO LÍNEAS por primera vez en rondas: el proyecto entero, andamiaje incluido, calla; el aviso queda fuera de la cola para siempre",
+      "QA v246: tsc 0 TOTAL, eslint 0, build EXIT 0, health v246.0 db up, pruebas 116/116 (+2 EL ANDAMIAJE EN SILENCIO: estática — rutas sin export de valores y constantes presentes (cero borrado), handlers y dynamic en pie; viva — meteo {ok,zones[8]}, og image/*, traductor {ok,idiomas≥8}), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v245.0",
     nombre: "LA QUINTA ESCUCHA — el radar de gobiernos se ensancha con la OPCW y una mina latente del árbol se desactiva",
     hitos: [

@@ -16,7 +16,10 @@ interface Zone {
 }
 
 // mismas zonas que los frentes de frente-panel.tsx + 2 puntos calientes extra
-export const ZONES: Zone[] = [
+// v246.0 EL ANDAMIAJE EN SILENCIO — una ruta solo exporta handlers y su
+// configuración (dynamic/revalidate/runtime): ZONES deja de ser pública
+// del módulo (nadie la importaba desde fuera; la constante vive igual).
+const ZONES: Zone[] = [
   { id: "donbas", name: "Donbás", lat: 48.0, lng: 37.8 },
   { id: "gaza", name: "Gaza", lat: 31.5, lng: 34.47 },
   { id: "sahel", name: "Sahel", lat: 14.5, lng: -1.5 },

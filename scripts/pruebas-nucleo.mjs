@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v245.0", async () => {
+  await verificar("servidor vivo y en v246.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v245"), `versión ${r.json?.version} ≠ v245`);
+    afirmar(String(r.json?.version).startsWith("v246"), `versión ${r.json?.version} ≠ v246`);
   });
 
   // censo por API
@@ -1469,6 +1469,46 @@ async function parteB() {
     afirmar(r.texto.includes("OPCW"), "la OPCW no aparece en el SSR del radar");
     afirmar(r.texto.includes("DESARME"), "la etiqueta del desarme no viaja en el SSR");
     afirmar(r.texto.includes("señales oficiales abiertas"), "el contador de señales desapareció del header");
+  });
+
+  // ── v246.0 EL ANDAMIAJE EN SILENCIO: las rutas API solo exportan
+  // handlers y su configuración (dynamic/revalidate/runtime/maxDuration) —
+  // el aviso .next/types que tres rondas arrastraron (meteo/ZONES,
+  // og/size, traductor/IDIOMAS) muere sin borrar nada: las constantes
+  // siguen vivas, solo dejan de ser públicas del módulo.
+  await verificar("EL ANDAMIAJE EN SILENCIO: las rutas solo exportan handlers y config — nada borrado (v246)", () => {
+    const meteo = readFileSync(join(RAIZ, "src/app/api/meteo/route.ts"), "utf8");
+    const og = readFileSync(join(RAIZ, "src/app/api/og/route.tsx"), "utf8");
+    const trad = readFileSync(join(RAIZ, "src/app/api/traductor/route.ts"), "utf8");
+    // los tres valores dejaron de ser públicos del módulo
+    afirmar(!meteo.includes("export const ZONES"), "meteo sigue publicando ZONES");
+    afirmar(!og.includes("export const size"), "og sigue publicando size");
+    afirmar(!trad.includes("export const IDIOMAS"), "traductor sigue publicando IDIOMAS");
+    // la ley MEGA-PROMPT: cero borrado — las constantes viven igual
+    afirmar(meteo.includes("const ZONES: Zone[]"), "ZONES desapareció de meteo (habría violado la ley de no borrar)");
+    afirmar(og.includes("const size = { width: 1200, height: 630 }"), "size desapareció de og");
+    afirmar(trad.includes("const IDIOMAS = IDIOMAS_VANGUARD"), "IDIOMAS desapareció del traductor");
+    // los handlers y su configuración siguen en pie
+    for (const [nombre, txt] of [["meteo", meteo], ["og", og], ["traductor", trad]]) {
+      afirmar(txt.includes("export const dynamic"), `${nombre} perdió su dynamic`);
+      afirmar(txt.includes("export async function GET"), `${nombre} perdió su GET`);
+    }
+  });
+
+  await verificar("EL ANDAMIAJE EN SILENCIO viva: las tres rutas responden igual que ayer (v246)", async () => {
+    // meteo: mismo contrato { ok, zones[8] } (cacheada u honesta con fallbacks)
+    const m = await pedir("/api/meteo");
+    afirmar(m.status === 200, `meteo no 200 (${m.status})`);
+    afirmar(m.json?.ok === true, "meteo sin ok");
+    afirmar(Array.isArray(m.json?.zones) && m.json.zones.length === 8, "meteo no sirve sus 8 zonas");
+    // og: la imagen viva sigue naciendo
+    const o = await pedir("/api/og");
+    afirmar(o.status === 200, `og no 200 (${o.status})`);
+    afirmar(String(o.headers?.["content-type"] || "").startsWith("image/"), "og no devuelve imagen");
+    // traductor: el GET del catálogo sigue sirviendo la lista entera
+    const t = await pedir("/api/traductor");
+    afirmar(t.status === 200, `traductor no 200 (${t.status})`);
+    afirmar(t.json?.ok === true && Array.isArray(t.json?.idiomas) && t.json.idiomas.length >= 8, "traductor sin su lista de idiomas");
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──

@@ -2205,6 +2205,31 @@
 //     ronda propia) · eslint 0 · build EXIT 0 · health v245.0 db up · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v244.0 LA FAMILIA REUNIDA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v245.0";
-export const APP_CODENAME = "LA QUINTA ESCUCHA";
+// v246.0: EL ANDAMIAJE EN SILENCIO — la ronda propia que la cola pedía:
+//     las rutas API solo exportan handlers y su configuración.
+// (1) EL AVISO MUERE — tres rondas arrastrando el mismo parloteo de
+//     andamiaje (.next/types: meteo/ZONES, og/size, traductor/IDIOMAS):
+//     Next.js 16 exige que un módulo de ruta exporte SOLO handlers y
+//     claves de configuración; los tres valores eran constantes internas
+//     con un «export» de más (el de og, hábito de la convención
+//     opengraph-image.tsx; el del traductor, un alias re-exportado del
+//     catálogo de @/lib/idiomas que el cliente ya importa directo).
+// (2) CERO BORRADO (ley MEGA-PROMPT) — las tres constantes siguen vivas
+//     y con su uso interno intacto (meteo mapea sus 8 zonas, og viste su
+//     ImageResponse 1200×630, el GET del traductor sigue sirviendo la
+//     lista entera en su JSON): solo dejan de ser públicas del módulo.
+// (3) EL RESULTADO MEDIDO — `npx tsc --noEmit` responde CERO LÍNEAS por
+//     primera vez en rondas: el proyecto entero, andamiaje incluido,
+//     calla. El aviso queda fuera de la cola para siempre.
+// QA: tsc 0 TOTAL (0 líneas, primera vez en rondas) · eslint 0 (3 tocados;
+//     scripts/*.mjs fuera de eslint por diseño) · build EXIT 0 · health
+//     v246.0 db up · pruebas 116/116 (+2 EL ANDAMIAJE EN SILENCIO:
+//     estática — las tres rutas sin export de valores, las constantes
+//     presentes (cero borrado), handlers y dynamic en pie; viva —
+//     /api/meteo {ok,zones[8]}, /api/og image/*, /api/traductor
+//     {ok,idiomas≥8}) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v245.0 LA QUINTA ESCUCHA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v246.0";
+export const APP_CODENAME = "EL ANDAMIAJE EN SILENCIO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

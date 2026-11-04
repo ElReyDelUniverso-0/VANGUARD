@@ -20,7 +20,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export const IDIOMAS = IDIOMAS_VANGUARD;
+// v246.0 EL ANDAMIAJE EN SILENCIO — IDIOMAS era un alias re-exportado del
+// catálogo de @/lib/idiomas (el cliente ya importa IDIOMAS_VANGUARD directo
+// de allí); una ruta solo exporta handlers y su configuración. El alias
+// local sigue vivo y el GET sigue sirviendo la lista en su JSON.
+const IDIOMAS = IDIOMAS_VANGUARD;
 
 const NOMBRES = NOMBRES_IDIOMA;
 
