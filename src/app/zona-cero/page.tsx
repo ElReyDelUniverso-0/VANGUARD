@@ -3,6 +3,35 @@ import Link from "next/link";
 import { ZonaCeroTabs } from "@/components/vanguard/zona-cero-tabs";
 import { ZonaCeroGeo } from "@/components/vanguard/zona-cero-geo";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+// v230.0 EL ESPEJO — la ficción muestra la guerra real que la alimenta:
+// teatros documentados con cables reales de la agencia y fichas del
+// acontecimiento, más las puertas honestas al núcleo.
+import { db } from "@/lib/db";
+import { TEATROS } from "@/lib/teatros";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import {
+  slugAcontecimientoDeTeatro,
+  idAcontecimiento,
+} from "@/lib/nucleo/acontecimientos";
+
+// v230.0 EL ESPEJO — el conteo REAL por teatro (una sola query groupBy).
+// Sin BD la página vive igual: sin chips, sin fingir conteos (ley de la casa).
+async function conteosPorTeatro(): Promise<Record<string, number> | null> {
+  try {
+    const filas = await db.newsItem.groupBy({
+      by: ["conflictTag"],
+      _count: { _all: true },
+      where: { conflictTag: { in: Object.keys(TEATROS) } },
+    });
+    const mapa: Record<string, number> = {};
+    for (const f of filas) if (f.conflictTag) mapa[f.conflictTag] = f._count._all;
+    return mapa;
+  } catch {
+    return null;
+  }
+}
+
+export const dynamic = "force-dynamic";
 
 // v54.0 ZONA CERO — TEATRO GLOBAL. Tres simuladores en una página:
 // · TEATRO GLOBAL 3D (nuevo): mesa de guerra MUNDIAL a nivel de PAÍSES —
@@ -47,7 +76,13 @@ const jsonLd = {
   isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
 };
 
-export default function ZonaCeroPage() {
+export default async function ZonaCeroPage() {
+  // v230.0 EL ESPEJO — los conteos reales llegan del archivo; si la BD no
+  // responde, la sección se declara ausente en lugar de fingir datos.
+  const conteos = await conteosPorTeatro();
+  const totalReal = conteos
+    ? Object.keys(TEATROS).reduce((acc, t) => acc + (conteos[t] ?? 0), 0)
+    : null;
   return (
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
@@ -79,6 +114,98 @@ export default function ZonaCeroPage() {
 
       <section className="max-w-6xl mx-auto px-3 sm:px-5 pt-6">
         <ZonaCeroGeo />
+      </section>
+
+      {/* v230.0 EL ESPEJO — la ficción muestra la guerra real que la alimenta.
+          Los teatros salen del catálogo documentado (TEATROS, cero nombres a
+          mano), el conteo es REAL de la BD y las fechas históricas viven en el
+          registro de acontecimientos (v219) — nunca escritas a mano aquí. */}
+      <section className="max-w-6xl mx-auto px-5 py-8">
+        <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">
+          LA GUERRA REAL DETRÁS DEL ESPEJO
+        </h2>
+        <p className="mt-1 text-sm text-zinc-500 leading-relaxed max-w-3xl">
+          El lienzo simula una guerra ficticia (Eje del Norte contra Coalición
+          Sur), pero el radar que la alimenta escanea el mundo REAL. Estos son
+          los teatros documentados por la agencia ahora mismo, con sus cables
+          verificados — la ficción es el espejo, esto es lo que refleja.
+        </p>
+        {conteos ? (
+          <>
+            <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-amber-300">
+              {totalReal} cables verificados en {Object.keys(TEATROS).length} teatros documentados
+            </p>
+            <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {Object.entries(TEATROS).map(([tag, t]) => {
+                const n = conteos[tag];
+                const slug = slugAcontecimientoDeTeatro(tag);
+                return (
+                  <article key={tag} className="border border-zinc-800 rounded-md p-4 bg-zinc-900/40">
+                    <h3 className="font-orbitron text-sm font-black text-white">{t.nombre}</h3>
+                    <p className="mt-1.5 text-[12px] text-zinc-400 leading-relaxed">{t.resumen}</p>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {typeof n === "number" && n > 0 && (
+                        <Link
+                          href={`/conflicto/${tag}`}
+                          title={`${n} cables reales de este teatro en la agencia de Vanguard, con su fuente y su sello de exactitud`}
+                          className="font-mono text-[10px] uppercase tracking-widest border border-amber-500/40 text-amber-300 hover:bg-amber-500/10 rounded px-2 py-1 transition-colors"
+                        >
+                          {n} cables en la agencia ▸
+                        </Link>
+                      )}
+                      {slug && (
+                        <Link
+                          href={`/nucleo?id=${encodeURIComponent(idAcontecimiento(slug))}`}
+                          title="El hecho real que reúne los cables de este teatro, con su fecha histórica pública y su cronología"
+                          className="font-mono text-[10px] uppercase tracking-widest border border-zinc-700 text-zinc-300 hover:border-sky-400/50 hover:text-sky-300 rounded px-2 py-1 transition-colors"
+                        >
+                          EL ACONTECIMIENTO ▸
+                        </Link>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-widest text-zinc-600 leading-relaxed">
+            El archivo no responde en este momento — la casa no finge conteos: sin datos reales, sin chips.
+          </p>
+        )}
+      </section>
+
+      {/* v230.0 EL ESPEJO — la sala conecta explícitamente con el núcleo */}
+      <section className="max-w-6xl mx-auto px-5 pb-4">
+        <EnlacesNucleo
+          titulo="CONECTA CON EL NÚCLEO"
+          enlaces={[
+            {
+              etiqueta: "EL FRENTE TOTAL ▸",
+              ruta: "/ver-guerra",
+              motivo: "El mural donde los 10 frentes del planeta arden a la vez, disparados por titulares reales",
+              tipoRelacion: "visible_en",
+            },
+            {
+              etiqueta: "EL MUNDO 3D ▸",
+              ruta: "/mundo",
+              motivo: "El planeta girando con los teatros de guerra documentados y su tensión del día",
+              tipoRelacion: "visible_en",
+            },
+            {
+              etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+              ruta: "/nucleo",
+              motivo: "Todo el archivo público de la casa, con filtros por tipo de entidad",
+              tipoRelacion: "pertenece_a",
+            },
+            {
+              etiqueta: "LOS ESCENARIOS ▸",
+              ruta: "/escenarios",
+              motivo: "El escenario del planeta con las piezas separadas — datos, supuestos, variables y reglas: nunca predicción",
+              tipoRelacion: "simulado_en",
+            },
+          ]}
+        />
       </section>
 
       <section className="max-w-6xl mx-auto px-5 py-8 grid md:grid-cols-3 gap-4">
@@ -196,7 +323,9 @@ export default function ZonaCeroPage() {
             ni muestra imágenes reales de víctimas. Los despachos del radio y las
             operaciones marcadas como REALES sí provienen de titulares verificados
             enlazados a sus medios originales vía GDELT; las aeronaves del teatro
-            global provienen del feed público ADS-B de adsb.lol.
+            global provienen del feed público ADS-B de adsb.lol; los conteos de
+            cables de la sección LA GUERRA REAL son del archivo verificado de la
+            propia agencia.
           </p>
         </div>
       </section>

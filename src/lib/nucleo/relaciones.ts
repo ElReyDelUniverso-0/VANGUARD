@@ -235,6 +235,52 @@ export function enlacesDeCable(cable: {
   return enlaces;
 }
 
+// v230.0 EL ESPEJO — la materia prima de cada módulo con su puerta REAL de la
+// casa. Solo fuentes con ruta documentada: una fnt: sin puerta se omite
+// (jamás se inventa una puerta — la prueba estática lo vigila).
+const PUERTA_DE_FUENTE: Record<
+  string,
+  { etiqueta: string; ruta: string; motivo: string }
+> = {
+  "fnt:cables": {
+    etiqueta: "EL ARCHIVO DE CABLES ▸",
+    ruta: "/nucleo?tipo=noticia",
+    motivo:
+      "Los cables reales del archivo, cada uno con su fuente y su sello de exactitud",
+  },
+  "fnt:teatros": {
+    etiqueta: "LAS SALAS DE GUERRA ▸",
+    ruta: "/mundo",
+    motivo: "Los teatros reales documentados girando en el globo de la casa",
+  },
+  "fnt:acontecimientos": {
+    etiqueta: "LOS ACONTECIMIENTOS ▸",
+    ruta: "/nucleo?tipo=acontecimiento",
+    motivo: "Los hechos reales con fecha histórica pública que reúnen los cables",
+  },
+  "fnt:audios": {
+    etiqueta: "LA EMISORA ▸",
+    ruta: "/audios",
+    motivo: "El parte hablado que se alimenta de esta fuente",
+  },
+  "fnt:escuchas": {
+    etiqueta: "LA ESCUCHA EN VIVO ▸",
+    ruta: "/en-vivo",
+    motivo: "Las interceptaciones en directo que nacen de esta fuente",
+  },
+  "fnt:indicadores": {
+    etiqueta: "LAS FICHAS DE PAÍS ▸",
+    ruta: "/nucleo?tipo=pais",
+    motivo:
+      "Los indicadores crudos (Banco Mundial) viven en las fichas de país del núcleo",
+  },
+  "fnt:modulos": {
+    etiqueta: "EL CENSO DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "El inventario completo de módulos de la casa",
+  },
+};
+
 /** Enlaces contextuales de un módulo: a dónde conecta el censo. */
 export function enlacesDeModulo(mod: ModuloNucleo): EnlaceContextual[] {
   const enlaces: EnlaceContextual[] = [
@@ -258,7 +304,20 @@ export function enlacesDeModulo(mod: ModuloNucleo): EnlaceContextual[] {
       }
     }
   }
-  return enlaces.slice(0, 6);
+  // v230.0 EL ESPEJO — las fuentes fnt: del módulo con su puerta REAL de la
+  // casa. Una fnt: sin puerta documentada se omite (nunca se inventa).
+  for (const dep of mod.dependencias) {
+    const puerta = PUERTA_DE_FUENTE[dep];
+    if (puerta) {
+      enlaces.push({
+        etiqueta: puerta.etiqueta,
+        ruta: puerta.ruta,
+        motivo: `Materia prima de ${mod.nombre}: ${puerta.motivo}`,
+        tipoRelacion: "documenta",
+      });
+    }
+  }
+  return enlaces.slice(0, 8);
 }
 
 // ── LA FICHA DE ENTIDAD (server, con BD) ────────────────────

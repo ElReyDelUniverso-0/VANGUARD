@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v229.0", async () => {
+  await verificar("servidor vivo y en v230.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v229"), `versión ${r.json?.version} ≠ v229`);
+    afirmar(String(r.json?.version).startsWith("v230"), `versión ${r.json?.version} ≠ v230`);
   });
 
   // censo por API
@@ -820,6 +820,54 @@ async function parteB() {
     afirmar(r.texto.includes("no inventa puertas"), "sin la declaración honesta de los frentes sin teatro");
     afirmar(r.texto.includes("SOMALIA") && r.texto.includes("HAITÍ"), "la lista honesta no nombra los frentes del catálogo");
     afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin el bloque de puertas al núcleo");
+  });
+
+  // ── v230.0 EL ESPEJO: la ficción muestra la guerra real que la alimenta ──
+  await verificar("EL ESPEJO: /zona-cero proyecta la guerra real sin fingir ni fechas (v230)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/zona-cero/page.tsx"), "utf8");
+    // los teatros salen del catálogo de la casa y el conteo es REAL de la BD
+    for (const trozo of ["TEATROS", "slugAcontecimientoDeTeatro", "groupBy", "no finge conteos"]) {
+      afirmar(pag.includes(trozo), `el espejo no declara «${trozo}»`);
+    }
+    // anti-invención: CERO fechas históricas escritas a mano (viven en la semilla v219)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página del espejo escribe fechas históricas a mano!");
+    // la ficción se declara: el aviso artístico original queda intacto
+    afirmar(pag.includes("no representa a ningún ejército real"), "el aviso de ficción fue tocado");
+    // el censo declara las dependencias reales del simulador
+    const reg = readFileSync(join(RAIZ, "src/lib/nucleo/registro.ts"), "utf8");
+    afirmar(/id: "mod:zona-cero"[\s\S]*?dependencias: \["fnt:teatros", "fnt:cables"\]/.test(reg),
+      "mod:zona-cero sin sus dependencias reales fnt:teatros + fnt:cables");
+    // la materia prima: solo puertas REALES (nunca /conflicto sin tag, que sería 404)
+    const rel = readFileSync(join(RAIZ, "src/lib/nucleo/relaciones.ts"), "utf8");
+    afirmar(rel.includes("PUERTA_DE_FUENTE"), "sin el mapa de puertas de la materia prima");
+    afirmar(!rel.includes('ruta: "/conflicto",'), "¡puerta inventada a /conflicto sin tag!");
+  });
+
+  await verificar("EL ESPEJO vivo: /zona-cero con teatros reales, acontecimiento y puertas al núcleo (v230)", async () => {
+    const r = await pedir("/zona-cero");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("LA GUERRA REAL DETRÁS DEL ESPEJO"), "sin la sección de la guerra real");
+    afirmar(r.texto.includes("cables en la agencia"), "sin los chips de conteo real");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "el teatro real no tiene su sala");
+    afirmar(r.texto.includes("id=vg%3Aacontecimiento%3A"), "sin las fichas del acontecimiento en el espejo");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin el bloque de puertas al núcleo");
+    afirmar(r.texto.includes("/ver-guerra"), "sin la puerta al mural FRENTE TOTAL");
+  });
+
+  await verificar("LA MATERIA PRIMA: toda ficha de módulo proyecta sus fuentes fnt: (v230)", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:zona-cero")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha del simulador no ok");
+    const enlaces = r.json.enlaces ?? [];
+    const archivo = enlaces.find((e) => e.etiqueta === "EL ARCHIVO DE CABLES ▸");
+    afirmar(!!archivo, "la ficha no muestra su materia prima (fnt:cables)");
+    afirmar(archivo?.ruta === "/nucleo?tipo=noticia", "la puerta del archivo no es la real");
+    const salas = enlaces.find((e) => e.etiqueta === "LAS SALAS DE GUERRA ▸");
+    afirmar(salas?.ruta === "/mundo", "la puerta de las salas no es la real");
+    // y las puertas de la materia prima RESPONDEN 200
+    for (const e of enlaces.filter((x) => x.tipoRelacion === "documenta")) {
+      const dest = await pedir(e.ruta);
+      afirmar(dest.status === 200, `puerta de materia prima rota ${e.ruta} → ${dest.status}`);
+    }
   });
 
   await verificar("los chips contextuales viven en /noticia/[id] con su ACONTECIMIENTO", async () => {

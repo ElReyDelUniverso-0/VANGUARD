@@ -182,7 +182,10 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     ruta: "/zona-cero",
     permiso: "publico",
     estado: "VIVO",
-    dependencias: [],
+    // v230.0 EL ESPEJO — dependencias declaradas: el simulador pulsa los
+    // teatros reales (fnt:teatros) y su radar de despachos + la sección de
+    // la guerra real viven de los cables (fnt:cables). Antes: vacías.
+    dependencias: ["fnt:teatros", "fnt:cables"],
     alias: "zona cero ciudad en directo simulacion bloques",
     idEntidadComo: "vg:simulacion:zona-cero",
   },

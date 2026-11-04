@@ -1711,6 +1711,33 @@
 //  ④ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 69/69 (+2 EL PUENTE:
 //    estática anti-fechas y mapeo; viva /ver-guerra con chips reales,
 //    acontecimiento y declaración honesta) · BD intocada (1877 · 9).
-export const APP_VERSION = "v229.0";
-export const APP_CODENAME = "EL PUENTE";
+// v230.0 EL ESPEJO — AGENT 2, TURNO AUTOMÁTICO (cron 500735), directiva
+//  del Dueño (módulo a módulo): módulo expandido: /zona-cero — el simulador
+//  (v54) vivía aislado del núcleo: cero puertas a los teatros reales que
+//  alimentan su radar.
+//  ① LA GUERRA REAL DETRÁS DEL ESPEJO (página async, una query groupBy):
+//    los 9 teatros del catálogo documentado (TEATROS, cero nombres a mano)
+//    con conteo REAL de cables hacia /conflicto/[tag] + «EL ACONTECIMIENTO ▸»
+//    hacia su ficha vg:acontecimiento (fechas históricas v219, jamás escritas
+//    a mano). Sin BD la sección se declara ausente — nunca conteos fingidos.
+//  ② MATERIA PRIMA PARA TODA LA CASA (relaciones.ts): PUERTA_DE_FUENTE mapea
+//    cada fnt: del censo a su puerta REAL (cables→/nucleo?tipo=noticia,
+//    teatros→/mundo, acontecimientos→/nucleo?tipo=acontecimiento, audios,
+//    escuchas, indicadores, módulos); enlacesDeModulo ahora proyecta las
+//    fnt: del módulo (tope 6→8, solo expansión). Toda ficha vg:simulacion:*
+//    y vg:mapa:* gana sus chips de materia prima.
+//  ③ censo honesto: mod:zona-cero declara dependencias fnt:teatros +
+//    fnt:cables (antes: vacías) — el radar de GDELT y la sección real viven
+//    de ellas; la ficha vg:simulacion:zona-cero las proyecta gratis.
+//  ④ Bloque CONECTA CON EL NÚCLEO en /zona-cero: /ver-guerra, /mundo,
+//    /nucleo, /escenarios (anti-predicción en el motivo).
+//  ⑤ Higiene del repo: el auto-commit del sistema había metido la copia de
+//    rescate de la BD (5,3 MB) y un tmp vacío; reset mixto (los archivos
+//    quedan en DISCO) + .gitignore: media/rescate-db-*/ y tmp/ — la ley v204
+//    extendida: los rescates viven en el disco, la BD sana ya viaja en
+//    db/custom.db.
+//  ⑥ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 72/72 (+3 EL ESPEJO) ·
+//    BD intocada (1877 · 9).
+export const APP_VERSION = "v230.0";
+export const APP_CODENAME = "EL ESPEJO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

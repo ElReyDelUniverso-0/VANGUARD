@@ -79,3 +79,9 @@ download/
 
 # v204 EL ESCUDO — los backups de la SQLite NUNCA viajan al repo
 db/*.backup-*
+
+# v230 EL ORDEN — la ley v204 extendida: los rescates de la SQLite viven en el
+# DISCO, jamás viajan al repo (la BD sana ya viaja en db/custom.db — una copia
+# es redundancia de 5 MB). tmp/ es scratch: lo ya trackeado queda, lo nuevo no entra.
+media/rescate-db-*/
+tmp/
