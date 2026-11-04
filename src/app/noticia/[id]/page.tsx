@@ -13,6 +13,9 @@ import { VozCable } from "./voz-cable";
 // v218.0 EL NÚCLEO — enlaces contextuales calculados en el mismo render
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { enlacesDeCable } from "@/lib/nucleo/relaciones";
+// v260.0 LA SALA DEL TEATRO — el catálogo canónico de la casa (la misma
+// fuente única que la sala en vivo v259): las relacionadas hablan humano.
+import { TEATROS } from "@/lib/teatros";
 
 // v202.0 PUERTAS ABIERTAS — cada noticia es UNA PUERTA propia de entrada.
 // Antes: todas las noticias regalaban el click a la fuente externa con
@@ -186,6 +189,19 @@ async function getRelacionadas(id: string, tag: string | null, n = 5): Promise<N
   }
 }
 
+// v260.0 LA SALA DEL TEATRO — cuántos cables comparten el teatro del
+// cable: UNA count con índice (v209), cero invención. Si la BD no
+// responde, la página vive sin la línea (ley de la casa); sin tag,
+// ni pregunta (cero consultas de más).
+async function getConteoTeatro(tag: string | null): Promise<number> {
+  if (!tag) return 0;
+  try {
+    return await db.newsItem.count({ where: { conflictTag: tag } });
+  } catch {
+    return 0;
+  }
+}
+
 function imgDe(it: NewsRow | null, i = 0): string {
   return it?.imageUrl || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
 }
@@ -276,7 +292,10 @@ export default async function NoticiaPage({
   const it = await getCable(id);
   if (!it) notFound();
 
-  const relacionadas = await getRelacionadas(id, it.conflictTag ?? null);
+  const [relacionadas, conteoTeatro] = await Promise.all([
+    getRelacionadas(id, it.conflictTag ?? null),
+    getConteoTeatro(it.conflictTag ?? null),
+  ]);
   // v211.0 EL VÉRTIGO — la fórmula YouTube: el «SIGUIENTE» ya viene elegido
   // de la server page (mismo teatro primero, la lógica de LA LUPA) y el chip
   // client solo lo muestra cuando el lector ya pasó la mitad del artículo.
@@ -374,6 +393,10 @@ export default async function NoticiaPage({
               month: "long",
               year: "numeric",
             })}
+            {" · "}
+            {/* v260.0 — la hora exacta de la señal, el patrón Intl de la
+                casa (refugio v251 / espejo v256 / puente v257 / sala v259) */}
+            {fecha.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
           </span>
         </div>
 
@@ -384,6 +407,21 @@ export default async function NoticiaPage({
         {it.summary && (
           <p className="mt-4 text-base sm:text-lg text-zinc-300 leading-relaxed border-l-2 border-amber-500/50 pl-4">
             {it.summary}
+          </p>
+        )}
+
+        {/* v260.0 LA SALA DEL TEATRO — el cable declara cuántos compañeros
+            tiene en su teatro y abre la puerta a su sala: UNA count real
+            (índice v209), amber-cyan como los chips de conflicto de la casa;
+            sin teatro o sin BD la línea ni se pinta (vacío honesto). */}
+        {conteoTeatro > 0 && it.conflictTag && (
+          <p className="mt-4 font-mono text-[10px] uppercase tracking-widest">
+            <Link
+              href={`/conflicto/${it.conflictTag}`}
+              className="text-cyan-300/90 hover:text-cyan-200 underline underline-offset-2"
+            >
+              {conteoTeatro} cables en este teatro — entrar a la sala →
+            </Link>
           </p>
         )}
 
@@ -496,9 +534,22 @@ export default async function NoticiaPage({
                     className="hidden sm:block w-[96px] h-[72px] object-cover rounded shrink-0"
                   />
                   <div className="min-w-0">
-                    <div className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
-                      {(r.tacticalTag || "INFO").toUpperCase()} · {r.source} ·
-                      hace {hace(new Date(r.publishedAt))}
+                    <div className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider flex items-center gap-2 flex-wrap">
+                      <span>
+                        {(r.tacticalTag || "INFO").toUpperCase()} · {r.source} ·
+                        hace {hace(new Date(r.publishedAt))}
+                      </span>
+                      {/* v260.0 — cada related declara SU teatro con el nombre
+                          humano del catálogo canónico (gramática v259) y abre
+                          su puerta; fallback honesto: tag desconocido, tal cual */}
+                      {r.conflictTag && (
+                        <Link
+                          href={`/conflicto/${r.conflictTag}`}
+                          className="text-cyan-300/90 hover:text-cyan-200 border border-cyan-400/30 rounded px-1 py-0.5"
+                        >
+                          {TEATROS[r.conflictTag]?.nombre ?? r.conflictTag}
+                        </Link>
+                      )}
                     </div>
                     <div className="mt-1 text-sm font-bold leading-snug text-zinc-200 group-hover:text-amber-300 transition-colors">
                       {r.title}

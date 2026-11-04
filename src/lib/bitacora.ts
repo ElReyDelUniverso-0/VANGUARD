@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v260.0",
+    nombre: "LA SALA DEL TEATRO — la expansión llega a la puerta de lectura (/noticia/[id], v202+v208+v211+v252, la página más vestida de la casa): el visitante de Google no sabía CUÁNTO pesaba el teatro del cable ni a qué sala pertenecían las relacionadas — ahora el cable declara «N cables en este teatro — entrar a la sala» con UNA count real, cada related lleva el nombre humano del catálogo canónico con su puerta (gramática v259) y la firma gana la hora exacta del patrón Intl de la casa",
+    hitos: [
+      "EL CONTEO DEL TEATRO — getConteoTeatro: UNA count con índice (v209) en Promise.all con las relacionadas; «N cables en este teatro — entrar a la sala →» bajo el resumen; sin tag o sin BD la línea ni se pinta (vacío honesto)",
+      "LAS RELACIONADAS HABLAN HUMANO — cada card declara su teatro con TEATROS[tag]?.nombre ?? tag y abre su puerta /conflicto/[tag]; fallback honesto: tag desconocido viaja tal cual — nunca se inventa un nombre",
+      "LA HORA EXACTA EN LA FIRMA — Intl es-ES hora:minuto junto a la fecha (patrón refugio v251 / espejo v256 / puente v257 / sala v259); cero fechas escritas a mano, guardia v234 en pie",
+      "QA v260: tsc 0 TOTAL, eslint 0, build EXIT 0, health v260.0 db up, pruebas 146/146 (+2 LA SALA DEL TEATRO: estática — la count con su try/catch, el vacío honesto, el catálogo con su fallback y la hora Intl; viva — el SSR de un cable real de /conflicto/ukraine sirve el conteo y el nombre humano con las anclas v202/v208/v211/v252 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v259.0",
     nombre: "EL TEATRO CON NOMBRE — la expansión llega a la tercera sala de guerra (/en-vivo, v213 EL PULSO + v254 EL LATIDO QUE RESPETA): su propio stat frescoMin viajaba en el payload sin ser leído nunca y sus teatros eran tags crudos — ahora la sala declara «la señal más fresca de la sala: [fuente] — última señal hace X» con la MISMA gramática del espejo (v256) y el puente (v257), y sus chips leen el catálogo canónico de la casa (GAZA E ISRAEL · 18, no «gaza · 18»)",
     hitos: [

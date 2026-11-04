@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v259.0", async () => {
+  await verificar("servidor vivo y en v260.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v259"), `versión ${r.json?.version} ≠ v259`);
+    afirmar(String(r.json?.version).startsWith("v260"), `versión ${r.json?.version} ≠ v260`);
   });
 
   // censo por API
@@ -2010,6 +2010,46 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v260.0 LA SALA DEL TEATRO: la puerta de lectura declara el peso de su
+  // teatro y las relacionadas hablan humano ──
+  // /noticia/[id] (v202+v208+v211+v252, la página más vestida de la casa)
+  // no decía CUÁNTO pesaba el teatro del cable ni a qué sala iban las
+  // relacionadas: UNA count con índice (v209), el catálogo canónico (v259)
+  // y la hora exacta del patrón Intl de la casa.
+  await verificar("LA SALA DEL TEATRO estática: la count real, el catálogo humano y la hora Intl (v260)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/noticia/[id]/page.tsx"), "utf8");
+    // la count con índice y su vacío honesto (sin tag ni BD, la línea ni se pinta)
+    afirmar(pag.includes("async function getConteoTeatro"), "la count del teatro no vive en su fuente");
+    afirmar(pag.includes("db.newsItem.count({ where: { conflictTag: tag } })"), "el conteo no consulta la BD real");
+    afirmar(pag.includes("if (!tag) return 0;"), "sin tag se consulta de más — cero consultas de más");
+    afirmar(pag.includes("conteoTeatro > 0 && it.conflictTag"), "la línea del conteo no tiene su vacío honesto");
+    afirmar(pag.includes("Promise.all(["), "la count y las relacionadas no corren en paralelo (roundtrips de más)");
+    afirmar(pag.includes("cables en este teatro"), "la puerta de lectura no declara el peso de su teatro");
+    // el catálogo canónico con su fallback honesto (gramática v259)
+    afirmar(pag.includes('from "@/lib/teatros"'), "la puerta de lectura no lee el catálogo canónico");
+    afirmar(pag.includes("TEATROS[r.conflictTag]?.nombre ?? r.conflictTag"), "las relacionadas no hablan humano");
+    // la hora exacta: el patrón Intl de la casa, cero fechas a mano
+    afirmar(pag.includes('toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })'), "la firma no lleva la hora exacta del patrón Intl");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la puerta de lectura escribe fechas a mano en la ronda v260!");
+  });
+
+  await verificar("LA SALA DEL TEATRO viva: un cable real de ucrania declara su conteo y sus relacionadas hablan humano (v260)", async () => {
+    // determinista: un cable sacado de /conflicto/ukraine TIENE el tag por construcción
+    const sala = await pedir("/conflicto/ukraine");
+    afirmar(sala.status === 200, `/conflicto/ukraine no 200 (${sala.status})`);
+    const m = sala.texto.match(/\/noticia\/[a-z0-9]+/i);
+    afirmar(Boolean(m), "la sala del teatro no expone ninguna puerta /noticia/<id>");
+    const r = await pedir(m[0]);
+    afirmar(r.status === 200, `la puerta ${m[0]} no responde`);
+    afirmar(r.texto.includes("cables en este teatro"), "el SSR no sirve el conteo del teatro");
+    afirmar(r.texto.includes('href="/conflicto/ukraine"'), "la puerta a la sala del teatro no viaja en el HTML");
+    afirmar(r.texto.includes("Ucrania"), "las relacionadas no llevan el nombre humano del catálogo");
+    // las anclas de la puerta de lectura siguen en pie
+    afirmar(r.texto.includes('aria-label="Escuchar este cable"'), "la voz v252 desapareció");
+    afirmar(r.texto.includes("fetchPriority"), "el hero v247 perdió su prioridad LCP");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "el núcleo v218 desapareció");
   });
 
   // ── v259.0 EL TEATRO CON NOMBRE: la tercera sala de guerra habla humano ──

@@ -2570,6 +2570,29 @@
 //     v213/v254 en pie) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v258.0 EL VÉRTIGO QUE HABLA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v259.0";
-export const APP_CODENAME = "EL TEATRO CON NOMBRE";
+// v260.0 LA SALA DEL TEATRO — la expansión funcional módulo a módulo llega
+//         a la puerta de lectura: /noticia/[id] (v202 + v208 + v211 + v252)
+//         era la página más vestida de la casa, pero el visitante que
+//         llegaba de Google no sabía CUÁNTO pesaba el teatro del cable ni
+//         a qué sala pertenecían las relacionadas — la segunda capa que la
+//         cola v259 dejó anotada.
+// (1) EL CONTEO DEL TEATRO — UNA count con índice (v209) en Promise.all con
+//     las relacionadas (cero roundtrips de más): «N cables en este teatro —
+//     entrar a la sala →» bajo el resumen, la puerta /conflicto/[tag] con
+//     el número real. Sin tag o sin BD la línea ni se pinta (vacío honesto).
+// (2) LAS RELACIONADAS HABLAN HUMANO — cada card declara SU teatro con el
+//     nombre del catálogo canónico (src/lib/teatros.ts, gramática v259) y
+//     abre su puerta: fallback honesto, tag desconocido viaja tal cual.
+// (3) LA HORA EXACTA EN LA FIRMA — el patrón Intl de la casa (refugio v251
+//     / espejo v256 / puente v257 / sala v259): la firma lleva hora:minuto
+//     junto a la fecha — cero fechas escritas a mano, guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v260.0 db up ·
+//     pruebas 146/146 (+2 LA SALA DEL TEATRO: estática — la count con su
+//     try/catch, la línea con su vacío honesto, el catálogo con su fallback
+//     y la hora Intl; viva — el SSR de un cable real de /conflicto/ukraine
+//     sirve el conteo y el nombre humano con las anclas v202/v208/v211/v252
+//     en pie) · BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v259.0 EL TEATRO CON NOMBRE y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v260.0";
+export const APP_CODENAME = "LA SALA DEL TEATRO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
