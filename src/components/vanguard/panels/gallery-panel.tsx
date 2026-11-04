@@ -3,7 +3,7 @@
 // Vanguard v7 — Galeria OSINT + FOTOS DEL JUGADOR: publica tus propias fotos
 // (+15 monedas, +5 XP) con subida real a /uploads/fotos y miniatura reducida en cliente.
 import { useRef, useState } from "react";
-import { PHOTOS, CONFLICTS, type AlertLevel } from "@/lib/game-data";
+import { PHOTOS, CONFLICTS, pielDeFoto, type AlertLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
@@ -387,8 +387,11 @@ export function GalleryPanel() {
             >
               <div className="aspect-square relative bg-gradient-to-br from-secondary to-background overflow-hidden">
                 { }
+                {/* v248.0 EL FOTOGRAMA LIGERO — la tarjeta viste la piel 640×360
+                    (object-cover recortaba en pantalla igual); el visor de la
+                    ficha sigue sirviendo el negativo JPG completo. */}
                 <img
-                  src={p.image}
+                  src={pielDeFoto(p.image)}
                   alt={p.title}
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

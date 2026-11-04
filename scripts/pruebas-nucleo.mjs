@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v247.0", async () => {
+  await verificar("servidor vivo y en v248.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v247"), `versión ${r.json?.version} ≠ v247`);
+    afirmar(String(r.json?.version).startsWith("v248"), `versión ${r.json?.version} ≠ v248`);
   });
 
   // censo por API
@@ -1586,6 +1586,57 @@ async function parteB() {
     afirmar(pares.length >= 1, "og:image sin dimensiones declaradas");
     afirmar(!pares.includes("1200x630"), "el 1200×630 inventado sigue declarado en la metadata");
     afirmar(pares.includes("1600x1067"), `el fallback drone-1 no declara sus dims reales (1600×1067): ${pares.join(",") || "ninguna"}`);
+  });
+
+  // ── v248.0 EL FOTOGRAMA LIGERO: los paneles SPA pagan su dieta — la
+  // tarjeta de la galería y las thumbs del feed social visten la piel
+  // 640×360 (−86% medida) y el visor de la ficha conserva el negativo.
+  await verificar("EL FOTOGRAMA LIGERO: la tarjeta viste piel y el visor conserva el negativo (v248)", () => {
+    const datos = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    // el helper existe y es la fuente única del mapa stem→piel
+    afirmar(datos.includes("export function pielDeFoto"), "pielDeFoto no está exportada en game-data");
+    afirmar(datos.includes('"/assets/real/paneles/"'), "el mapa de piel no apunta a paneles/");
+    // las fotos sintéticas y las ajenas no tienen piel: vuelven tal cual
+    afirmar(datos.includes('!image.endsWith(".jpg")'), "el guardia de piel no excluye lo que no es JPG local");
+    const galeria = readFileSync(join(RAIZ, "src/components/vanguard/panels/gallery-panel.tsx"), "utf8");
+    // la TARJETA viste la piel
+    afirmar(galeria.includes("src={pielDeFoto(p.image)}"), "la tarjeta de la galería no viste la piel");
+    // el VISOR conserva el negativo original (la JPG, detrás del click)
+    afirmar(galeria.includes("src={photo.image}"), "el visor dejó de servir el negativo original");
+  });
+
+  await verificar("EL FOTOGRAMA LIGERO: el feed social viste piel y el horno dejó la familia entera (v248)", () => {
+    const social = readFileSync(join(RAIZ, "src/lib/social-data.ts"), "utf8");
+    // cero thumbs sembradas en JPG crudo: las 6 visten paneles/*.webp
+    const crudas = (social.match(/thumb: "\/assets\/real\/[a-z0-9-]+\.jpg"/g) ?? []).length;
+    afirmar(crudas === 0, `${crudas} thumbs del feed siguen en JPG crudo`);
+    const enPiel = (social.match(/thumb: "\/assets\/real\/paneles\/[a-z0-9-]+\.webp"/g) ?? []).length;
+    afirmar(enPiel === 6, `se esperaban 6 emisiones en piel, hay ${enPiel}`);
+    // la familia horneada: ≥24 pieles, cada una más ligera que su JPG,
+    // ninguna huérfana (misma auditoría que la familia og de v247)
+    const dirPaneles = join(RAIZ, "public/assets/real/paneles");
+    afirmar(existsSync(dirPaneles), "el horno no dejó pieles: falta public/assets/real/paneles");
+    const pieles = readdirSync(dirPaneles).filter((f) => f.endsWith(".webp"));
+    afirmar(pieles.length >= 24, `solo ${pieles.length} pieles de panel — horno incompleto`);
+    for (const piel of pieles) {
+      const stem = piel.replace(/\.webp$/, "");
+      const jpg = join(RAIZ, "public/assets/real", `${stem}.jpg`);
+      afirmar(existsSync(jpg), `piel de panel huérfana sin JPG original: ${stem}`);
+      afirmar(statSync(join(dirPaneles, piel)).size < statSync(jpg).size, `la piel de panel ${stem} pesa igual o más que su JPG`);
+    }
+  });
+
+  await verificar("EL FOTOGRAMA LIGERO viva: la piel se sirve y el negativo sigue en pie (v248)", async () => {
+    // la piel viaja ligera y con su tipo correcto
+    const piel = await pedir("/assets/real/paneles/tanks-2.webp");
+    afirmar(piel.status === 200, `la piel tanks-2 → ${piel.status}`);
+    afirmar((piel.headers["content-type"] ?? "").includes("image/webp"), `la piel no viaja como image/webp: ${piel.headers["content-type"]}`);
+    const bytesPiel = Number(piel.headers["content-length"] ?? 0);
+    afirmar(bytesPiel > 0 && bytesPiel < 60 * 1024, `la piel pesa ${bytesPiel} B — fuera del rango horneado`);
+    // el negativo original sigue en pie (ley MEGA-PROMPT: nadie lo borra)
+    const negativo = await pedir("/assets/real/tanks-2.jpg");
+    afirmar(negativo.status === 200, `el negativo original → ${negativo.status}`);
+    afirmar(Number(negativo.headers["content-length"] ?? 0) > Number(piel.headers["content-length"] ?? 0), "el negativo pesa igual o menos que la piel — el horno no recortó nada");
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──

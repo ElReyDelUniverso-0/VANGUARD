@@ -1060,6 +1060,25 @@ export const PHOTOS: PhotoItem[] = [
   { id: "P-REAL-24", conflictId: "taiwan", title: "Centro de radar REAL", caption: "Estacion de radar y mando con pantallas activas — imagen real.", severity: "VIGILANCIA", context: "Instalacion C2. Material real de archivo abierto.", bda: "Vigilancia electronica sostenida.", seed: "real-radar-1", image: "/assets/real/radar-1.jpg", real: true },
 ];
 
+// v248.0 EL FOTOGRAMA LIGERO — las TARJETAS visten la piel, el visor guarda
+// el negativo. Cada foto real con JPG local (/assets/real/<stem>.jpg) tiene
+// una piel 640×360 horneada en /assets/real/paneles/<stem>.webp (q72, recorte
+// attention — el hueco de la tarjeta hace object-cover en pantalla, así que
+// el archivo viaja ya recortado y pesa ~86% menos). Las fotos sintéticas
+// (/assets/osint/*.png) y las subidas de los vecinos no tienen piel: vuelven
+// tal cual. La JPG original NADIE la toca (ley MEGA-PROMPT): el modal de la
+// galería (el visor de la ficha, detrás del click) y la metadata social
+// (v247) siguen sirviendo el negativo completo. Pieles horneadas por
+// scripts/hornear-pieles-panel.mjs (idempotente) y auditadas por la suite.
+export function pielDeFoto(image?: string): string | undefined {
+  if (!image || !image.startsWith("/assets/real/") || !image.endsWith(".jpg")) {
+    return image;
+  }
+  return image
+    .replace("/assets/real/", "/assets/real/paneles/")
+    .replace(/\.jpg$/, ".webp");
+}
+
 export const RANKS = [
   { name: "RECLUTA", minLevel: 1, color: "text-muted-foreground" },
   { name: "CABO", minLevel: 3, color: "text-green-hud" },

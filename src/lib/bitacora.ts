@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v248.0",
+    nombre: "EL FOTOGRAMA LIGERO — la dieta llega a los paneles SPA: las tarjetas de la galería y las thumbs del feed social visten pieles 640×360 (−86%) y el visor conserva el negativo",
+    hitos: [
+      "LA MEDIDA MOVIÓ EL OBJETIVO — la cola de v247 señalaba «/guerra-hoy y /conflicto heredan el patrón de las pieles (solo hero pendiente, medir antes)»: medida hecha, y esas salas ya visten thumbs 480w de v238/v239 — su SSR no lleva un solo JPG crudo. El censo real de /assets/real/*.jpg encontró la deuda donde nadie miraba: los PANELES SPA — la galería de fotogramas verificados (24 JPG reales, 3,69 MB en el archivo) y las 6 emisiones sembradas del feed social (958 KB) pintadas por videos-panel y foryou-panel",
+      "EL SEGUNDO HORNO (scripts/hornear-pieles-panel.mjs) — 24 JPG horneadas en /assets/real/paneles/*.webp a 640×360 EXACTOS (fit cover attention, q72): el recorte que el object-cover hacía en pantalla viaja hecho en el archivo — 3,69 MB → 516 KB (−86%), tanks-1 304→51 KB, city-1 210→20 KB; las familias og/ (v247) y thumbs/ (v238) siguen vivas para SUS consumidores",
+      "LA PIEL Y EL NEGATIVO — pielDeFoto() en game-data.ts (fuente única del mapa stem→piel; las sintéticas /assets/osint y las subidas de los vecinos vuelven tal cual): la TARJETA de la galería viste la piel, el VISOR del modal conserva la JPG completa detrás del click (una foto por click, la pide quien la quiere); las 6 thumbs del feed apuntan a la piel explícitamente (poster de foryou incluido) — la JPG original NADIE la borra (ley MEGA-PROMPT): visor + metadata social + horno",
+      "QA v248: tsc 0 TOTAL (el silencio v246 se mantiene), eslint 0, build EXIT 0, health v248.0 db up, pruebas 122/122 (+3 EL FOTOGRAMA LIGERO: estática — helper y guardia, tarjeta en piel, visor en negativo, 6 emisiones en piel, familia ≥24 auditada piel a piel contra su JPG; viva — paneles/tanks-2.webp 200 image/webp ligera y el negativo tanks-2.jpg sigue 200), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v247.0",
     nombre: "LA CARGA JUSTA — /noticia baja de 342 KB a 40 KB de imágenes iniciales (−88%) y la metadata social deja de declarar dimensiones que ningún archivo tenía",
     hitos: [

@@ -233,7 +233,7 @@ export const TV_VIDEOS: TvVideo[] = [
   // ============ v9: EMISIONES DESDE FOTOS REALES (material verificado) ============
   {
     id: "V-019", title: "ANALISIS: columna acorazada real — identificacion por silueta", channelId: "ua-tv",
-    category: "COMBATE", durationSec: 30, views: 382000, likes: 31200, daysAgo: 0, thumb: "/assets/real/tanks-2.jpg",
+    category: "COMBATE", durationSec: 30, views: 382000, likes: 31200, daysAgo: 0, thumb: "/assets/real/paneles/tanks-2.webp", // v248 piel 640×360 (la JPG queda para el visor y la metadata)
     desc: "Recorrido de cámara sobre una columna de tanques REAL captada por la red OSINT. Identificación de chasis, orden de marcha y carga logística.",
     comments: [
       { author: "TRACKPAD", body: "El tercer vehiculo es el mando. Se ve la antena abatible al cruzar el puente.", likes: 214, hoursAgo: 6 },
@@ -242,7 +242,7 @@ export const TV_VIDEOS: TvVideo[] = [
   },
   {
     id: "V-020", title: "EN VUELO: interceptor real en patrulla de ADIZ", channelId: "tw-tv",
-    category: "COMBATE", durationSec: 26, views: 271000, likes: 22400, daysAgo: 1, thumb: "/assets/real/jet-1.jpg",
+    category: "COMBATE", durationSec: 26, views: 271000, likes: 22400, daysAgo: 1, thumb: "/assets/real/paneles/jet-1.webp", // v248 piel 640×360
     desc: "Fotografia real de caza en vuelo convertida en emisora con desplazamiento lateral: analisis de carga de pylons y matricula de cola.",
     comments: [
       { author: "PILOT_X", body: "Lleva tanques externos: mision CAP larga, no scramble corto.", likes: 156, hoursAgo: 20 },
@@ -250,7 +250,7 @@ export const TV_VIDEOS: TvVideo[] = [
   },
   {
     id: "V-021", title: "OSINT: dron tactico real sobre zona de operaciones", channelId: "vg-official",
-    category: "TECNOLOGIA", durationSec: 24, views: 198000, likes: 18100, daysAgo: 1, thumb: "/assets/real/drone-1.jpg",
+    category: "TECNOLOGIA", durationSec: 24, views: 198000, likes: 18100, daysAgo: 1, thumb: "/assets/real/paneles/drone-1.webp", // v248 piel 640×360
     desc: "Material real de dron militar en zona de operaciones. Zoom sobre la berma del sensor y antena de enlace de malla.",
     comments: [
       { author: "DRONE_GIRL", body: "La antena de malla confirma que vuela autonomo parte de la ruta.", likes: 132, hoursAgo: 16 },
@@ -258,7 +258,7 @@ export const TV_VIDEOS: TvVideo[] = [
   },
   {
     id: "V-022", title: "DEPLOYMENT: destructor real en el estrecho", channelId: "us-tv",
-    category: "COMBATE", durationSec: 28, views: 224000, likes: 19700, daysAgo: 2, thumb: "/assets/real/ship-1.jpg",
+    category: "COMBATE", durationSec: 28, views: 224000, likes: 19700, daysAgo: 2, thumb: "/assets/real/paneles/ship-1.webp", // v248 piel 640×360
     desc: "Emision desde fotografia real de destructor en patrulla: estela, rumbo estimado y radar de barrido activo.",
     comments: [
       { author: "SONAR_3", body: "La estela corta indica velocidad de crucero de escolta. Van acompañados.", likes: 118, hoursAgo: 30 },
@@ -266,7 +266,7 @@ export const TV_VIDEOS: TvVideo[] = [
   },
   {
     id: "V-023", title: "URBANO: la capital de noche bajo alerta — material real", channelId: "il-tv",
-    category: "DIPLOMACIA", durationSec: 22, views: 158000, likes: 12400, daysAgo: 2, thumb: "/assets/real/city-2.jpg",
+    category: "DIPLOMACIA", durationSec: 22, views: 158000, likes: 12400, daysAgo: 2, thumb: "/assets/real/paneles/city-2.webp", // v248 piel 640×360
     desc: "Panorama urbano real de la capital: rutina de noche, ventanas iluminadas y el contrapeso silencioso de la defensa antiaerea.",
     comments: [
       { author: "SKYLINE_7", body: "La torre del este apagada desde el martes. Rotacion de energia.", likes: 87, hoursAgo: 26 },
@@ -274,7 +274,7 @@ export const TV_VIDEOS: TvVideo[] = [
   },
   {
     id: "V-024", title: "INCIDENTE: refineria real en llamas — que sabemos hasta ahora", channelId: "ng-tv",
-    category: "HUMANITARIO", durationSec: 20, views: 341000, likes: 27600, daysAgo: 0, thumb: "/assets/real/fire-1.jpg",
+    category: "HUMANITARIO", durationSec: 20, views: 341000, likes: 27600, daysAgo: 0, thumb: "/assets/real/paneles/fire-1.webp", // v248 piel 640×360
     desc: "Fotografia real nocturna del incendio industrial: lectura de columnas de humo, direccion del viento y radio de evacuacion estimado.",
     comments: [
       { author: "OILWATCH", body: "La columna cae hacia el sur: los tanques del extremo opuesto aun estan a tiempo.", likes: 143, hoursAgo: 8 },

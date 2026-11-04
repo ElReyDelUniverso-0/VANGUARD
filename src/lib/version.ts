@@ -2253,6 +2253,36 @@
 //     og:image:width 1600 real, 5 lazy) · BD intocada (1877 cables ·
 //     9 hechos, un solo escritor).
 // Herencia v246.0 EL ANDAMIAJE EN SILENCIO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v247.0";
-export const APP_CODENAME = "LA CARGA JUSTA";
+// v248.0 EL FOTOGRAMA LIGERO — la dieta módulo a módulo continúa: la cola de
+//     v247 señalaba «/guerra-hoy y /conflicto heredan el patrón de las pieles
+//     si sus JPG crudos quieren dieta propia (solo hero pendiente, MEDIR
+//     ANTES)» — y la medida movió el objetivo con honestidad: esas salas ya
+//     visten thumbs 480w (v238/v239), su SSR no lleva un solo JPG crudo. El
+//     censo real de /assets/real/*.jpg encontró la deuda donde nadie miraba:
+//     los PANELES SPA — la galería de fotogramas verificados (24 JPG reales,
+//     3,69 MB en el archivo) y las 6 emisiones sembradas del feed social.
+// (1) LA MEDIDA — grid de gallery-panel: p.image servía el JPG crudo lazy
+//     (tanks-1 304 KB, city-1 210 KB…) en huecos aspect-square de 150-250 px
+//     que object-cover recortaba en pantalla; social-data sembraba 6 thumbs
+//     crudas (958 KB) que videos-panel y foryou-panel pintan en cards.
+// (2) EL SEGUNDO HORNO — scripts/hornear-pieles-panel.mjs hornea
+//     /assets/real/paneles/*.webp a 640×360 EXACTOS (fit cover attention,
+//     q72): 24 pieles, 3,69 MB → 516 KB (−86%). Las og/ (v247) y thumbs/
+//     (v238) siguen vivas para SUS consumidores.
+// (3) LA PIEL Y EL NEGATIVO — pielDeFoto() en game-data.ts (fuente única del
+//     mapa stem→piel; las sintéticas /assets/osint y las subidas de los
+//     vecinos vuelven tal cual): la TARJETA viste la piel, el VISOR del
+//     modal conserva la JPG completa detrás del click (una foto por click,
+//     la pide quien la quiere). Las 6 thumbs del feed apuntan a la piel
+//     explícitamente (poster de foryou incluido). La JPG original NADIE la
+//     borra: visor + metadata social (v247) + horno.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v248.0 db up ·
+//     pruebas 122/122 (+3 EL FOTOGRAMA LIGERO: estática — helper y guardia,
+//     tarjeta en piel, visor en negativo, 6 emisiones en piel, familia
+//     ≥24 auditada piel a piel; viva — paneles/tanks-2.webp 200 image/webp
+//     ligera y tanks-2.jpg sigue 200) · BD intocada (1877 cables · 9
+//     hechos, un solo escritor).
+// Herencia v247.0 LA CARGA JUSTA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v248.0";
+export const APP_CODENAME = "EL FOTOGRAMA LIGERO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
