@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v232.0", async () => {
+  await verificar("servidor vivo y en v233.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v232"), `versión ${r.json?.version} ≠ v232`);
+    afirmar(String(r.json?.version).startsWith("v233"), `versión ${r.json?.version} ≠ v233`);
   });
 
   // censo por API
@@ -871,9 +871,7 @@ async function parteB() {
   });
 
   // ── v232.0 LA CENTRAL DE ALARMAS: la campana del HUD llama a la primicia ──
-  await verificar("v232 LA CENTRAL DE ALARMAS: /api/health sirve la versión y la ley de la alarma vive en el árbol", async () => {
-    const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
-    afirmar(String(r.json?.version).startsWith("v232"), "health sin v232");
+  await verificar("v232 LA CENTRAL DE ALARMAS: la ley de la alarma vive en el árbol", async () => {
     const fs = await import("node:fs");
     const alarma = fs.readFileSync("src/lib/alarma.ts", "utf8");
     afirmar(alarma.includes("UMBRAL_ALARMA = TIERS.critico.min"), "la ley de la alarma no es el escalón CRÍTICO");
@@ -882,6 +880,56 @@ async function parteB() {
     afirmar(central.includes("ÚLTIMA HORA"), "el toast ÚLTIMA HORA no vive en la Central");
     const centro = fs.readFileSync("src/components/vanguard/panels/centro-panel.tsx", "utf8");
     afirmar(centro.includes("useAlarma.getState().limpiar()"), "el CENTRO no revisa la campana");
+  });
+
+  // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──
+  await verificar("LA BALANZA: variables explicadas, anclas al catálogo y puertas honestas (v233)", () => {
+    const vars = readFileSync(join(RAIZ, "src/lib/nucleo/simulacion/variables.ts"), "utf8");
+    // las 4 variables se explican a sí mismas (estructura, no datos a mano)
+    for (const trozo of ["mueve:", "fuente:", "ancla:", "cero:", "dos:", "puerta:"]) {
+      const veces = vars.split(trozo).length - 1;
+      afirmar(veces >= 4, `«${trozo}» no está en las 4 variables (${veces}/4)`);
+    }
+    // las puertas de las variables son las REALES del censo v230 — cero inventadas
+    for (const ruta of ["/nucleo?tipo=acontecimiento", "/nucleo?tipo=noticia", "/ver-guerra", "/nucleo?tipo=pais"]) {
+      afirmar(vars.includes(`ruta: "${ruta}"`), `la puerta ${ruta} no vive en el catálogo de variables`);
+    }
+    // las anclas editoriales suben al catálogo decoradas (valor de reglas.ts, texto nuevo)
+    const idx = readFileSync(join(RAIZ, "src/lib/nucleo/simulacion/index.ts"), "utf8");
+    for (const trozo of ["ANCLAS", "anclasDelCatalogo", "anclas: anclasDelCatalogo()"]) {
+      afirmar(idx.includes(trozo), `el catálogo no declara «${trozo}»`);
+    }
+    // el id del acontecimiento viaja REAL de la semilla (jamás derivado del slug del teatro)
+    const datos = readFileSync(join(RAIZ, "src/lib/nucleo/simulacion/datos.ts"), "utf8");
+    afirmar(datos.includes("ACONTECIMIENTO_POR_TEATRO"), "el id del acontecimiento no sale de la semilla v219");
+    // la isla abre las puertas con guardas honestas (404 evitado, no fingido)
+    const isla = readFileSync(join(RAIZ, "src/components/vanguard/escenario-controles.tsx"), "utf8");
+    for (const trozo of ["/conflicto/${r.slug}", "encodeURIComponent(r.puertaAcontecimiento)", "/ver-guerra", "/nucleo?tipo=pais"]) {
+      afirmar(isla.includes(trozo), `la isla no declara la puerta «${trozo}»`);
+    }
+  });
+
+  await verificar("LA BALANZA viva: /escenarios sirve las variables explicadas, las anclas y la cadena (v233)", async () => {
+    const r = await pedir("/escenarios");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("LAS VARIABLES — explicadas una a una"), "sin la sección de variables explicadas");
+    afirmar(r.texto.includes("LAS ANCLAS — las decisiones editoriales"), "sin la sección de anclas");
+    afirmar(r.texto.includes("ANCLAS.TIEMPO_DIAS"), "las anclas no se declaran por su nombre");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin la cadena de procedencia navegable");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "el teatro con cables no abre su sala real");
+    afirmar(r.texto.includes("/ver-guerra"), "sin puerta al mapa del frente");
+    afirmar(r.texto.includes("/nucleo?tipo=pais"), "sin puerta a las fichas de país");
+    afirmar(r.texto.includes("vg%3Aacontecimiento%3A"), "el factor tiempo no abre su acontecimiento documentado");
+  });
+
+  await verificar("LA BALANZA: las puertas de la cadena responden 200 una a una (v233)", async () => {
+    for (const ruta of ["/conflicto/ukraine", "/ver-guerra", "/nucleo?tipo=pais", "/nucleo?tipo=noticia", "/nucleo?tipo=acontecimiento"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta de la cadena rota ${ruta} → ${r.status}`);
+    }
+    // la ficha del acontecimiento de Ucrania con el id REAL de la semilla v219
+    const ficha = await pedir(`/nucleo?id=${encodeURIComponent("vg:acontecimiento:invasion-rusa-de-ucrania")}`);
+    afirmar(ficha.status === 200, "la ficha del acontecimiento documentado no responde");
   });
 
   // ── v231.0 EL LATIDO: el vértigo conecta cada pieza con su país y su sala ──

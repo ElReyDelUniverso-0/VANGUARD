@@ -1,5 +1,9 @@
 // ============================================================
 // v224.0 EL ESTRATEGA — REGLAS (separadas de DATOS y RESULTADOS)
+// v233.0 LA BALANZA — el resultado gana la puerta HONESTA al
+// acontecimiento documentado del teatro (id real de la semilla
+// v219 — jamás derivado del slug del teatro): la cadena de
+// procedencia se vuelve navegable factor a factor.
 // El motor aritmético del escenario: funciones PURAS y
 // DETERMINISTAS. Aquí NO hay reloj, ni BD, ni red, ni azar, ni
 // eval: los datos entran hechos por parámetro y salen los
@@ -45,6 +49,10 @@ export interface DatoTeatro {
   procedencias: string[];
   /** El año del dato del Banco Mundial usado (honestidad). */
   anioIndicadores: number | null;
+  /** v233.0 — id estable del acontecimiento documentado de este
+   * teatro (vg:acontecimiento:<slug> de la semilla v219) o null
+   * si el teatro no tiene hecho sembrado: la puerta honesta. */
+  idAcontecimiento: string | null;
 }
 
 /** El desglose de un teatro evaluado: cada factor con su crudo, su
@@ -70,6 +78,9 @@ export interface ResultadoTeatro {
   total: number | null;
   /** Factores excluidos por falta de dato — declarados, no fingidos. */
   faltantes: string[];
+  /** v233.0 — puerta honesta al acontecimiento documentado (id real
+   * de la semilla; null = sin hecho sembrado, sin puerta). */
+  puertaAcontecimiento: string | null;
 }
 
 const dias = (n: number) => `${Math.round(n).toLocaleString("es-ES")} días`;
@@ -163,7 +174,15 @@ export function evaluarTeatro(dato: DatoTeatro, pesos: Record<string, number>): 
   }
 
   const total = pesoVivo > 0 ? a1(suma / pesoVivo) : null;
-  return { slug: dato.slug, nombre: dato.nombre, factores, pesos, total, faltantes };
+  return {
+    slug: dato.slug,
+    nombre: dato.nombre,
+    factores,
+    pesos,
+    total,
+    faltantes,
+    puertaAcontecimiento: dato.idAcontecimiento,
+  };
 }
 
 /** Ordena: mayor presión primero; los sin puntuación al final, con

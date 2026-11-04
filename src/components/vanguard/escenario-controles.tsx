@@ -2,6 +2,13 @@
 
 // ============================================================
 // v224.0 EL ESTRATEGA — LA ISLA DEL ESCENARIO (client)
+// v233.0 LA BALANZA — la cadena de procedencia se vuelve
+// NAVEGABLE: el nombre de cada teatro abre su sala real
+// (/conflicto/[slug], solo con cables — la puerta 404 se evita,
+// no se finge); cada factor con dato abre su origen (el
+// acontecimiento documentado con id REAL de la semilla, el mapa
+// de frentes, las fichas de país); cada peso declara qué
+// significan 0 y 2 y enlaza el dato que multiplica.
 // Los ÚNICOS mandos de la simulación: 4 deslizadores de peso y
 // el botón RECALCULAR. Todo lo demás (datos, supuestos, reglas)
 // vive en el servidor — la ley del mandato: sin ejecutar código
@@ -21,11 +28,35 @@ const BARRA = (v: number | null) => ({
 
 function FilaTeatro({ r }: { r: ResultadoTeatro }) {
   const sinDato = r.total === null;
+  // v233.0 — puertas HONESTAS: el teatro abre su sala solo si
+  // tiene cables (0 cables = 404 real en /conflicto — se evita, no
+  // se finge); el acontecimiento abre con el id REAL de la
+  // semilla (null = sin hecho sembrado = sin puerta); frentes y
+  // capacidad abren su origen solo cuando el dato existe.
+  const conCables = r.factores.cobertura.valor !== null && r.factores.cobertura.valor > 0;
+  const puertas: Record<keyof ResultadoTeatro["factores"], string | null> = {
+    tiempo: r.puertaAcontecimiento
+      ? `/nucleo?id=${encodeURIComponent(r.puertaAcontecimiento)}`
+      : null,
+    cobertura: conCables ? `/conflicto/${r.slug}` : null,
+    frentes: r.factores.frentes.valor !== null ? "/ver-guerra" : null,
+    capacidad: r.factores.capacidad.valor !== null ? "/nucleo?tipo=pais" : null,
+  };
   return (
     <li className="rounded-md border border-zinc-800 bg-zinc-900/50 p-3">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-bold text-zinc-100">
-          {r.nombre}
+          {conCables ? (
+            <Link
+              href={`/conflicto/${r.slug}`}
+              className="hover:text-amber transition-colors underline decoration-zinc-700 underline-offset-4 hover:decoration-amber-hud"
+              title={`La sala real del teatro: ${r.nombre} en /conflicto/${r.slug}`}
+            >
+              {r.nombre}
+            </Link>
+          ) : (
+            r.nombre
+          )}
           <span className="ml-2 font-mono text-[9px] uppercase tracking-widest text-zinc-500">
             {r.slug}
           </span>
@@ -48,7 +79,8 @@ function FilaTeatro({ r }: { r: ResultadoTeatro }) {
         />
       </div>
 
-      {/* el desglose: cada factor con su crudo y su valor — nada de caja negra */}
+      {/* el desglose: cada factor con su crudo y su valor — nada de caja negra.
+       * v233.0: el factor CON dato abre su origen (la cadena navegable). */}
       <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-4">
         {(
           [
@@ -57,22 +89,37 @@ function FilaTeatro({ r }: { r: ResultadoTeatro }) {
             ["frentes", r.factores.frentes],
             ["capacidad", r.factores.capacidad],
           ] as const
-        ).map(([clave, f]) => (
-          <div key={clave} title={`${f.crudo} · ${f.ancla}`}>
-            <p className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
-              {clave} {f.valor === null ? "· sin dato" : ""}
-            </p>
-            <div className="mt-0.5 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
-              <div
-                className={`h-full rounded-full ${f.valor === null ? "bg-zinc-700" : "bg-cyan-500/70"}`}
-                style={BARRA(f.valor)}
-              />
+        ).map(([clave, f]) => {
+          const puerta = puertas[clave];
+          return (
+            <div key={clave} title={`${f.crudo} · ${f.ancla}`}>
+              <p className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+                {puerta && f.valor !== null ? (
+                  <Link
+                    href={puerta}
+                    className="uppercase hover:text-amber transition-colors"
+                    title={`Ver el dato de ${clave} en su origen: ${f.crudo}`}
+                  >
+                    {clave} ▸
+                  </Link>
+                ) : (
+                  <>
+                    {clave} {f.valor === null ? "· sin dato" : ""}
+                  </>
+                )}
+              </p>
+              <div className="mt-0.5 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+                <div
+                  className={`h-full rounded-full ${f.valor === null ? "bg-zinc-700" : "bg-cyan-500/70"}`}
+                  style={BARRA(f.valor)}
+                />
+              </div>
+              <p className="mt-0.5 truncate text-[10px] text-zinc-400" title={f.crudo}>
+                {f.crudo}
+              </p>
             </div>
-            <p className="mt-0.5 truncate text-[10px] text-zinc-400" title={f.crudo}>
-              {f.crudo}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {r.faltantes.length > 0 && (
@@ -155,23 +202,37 @@ export function EscenarioControles({ inicial }: { inicial: Escenario }) {
         </p>
         <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {escenario.variables.catalogo.map((v) => (
-            <label key={v.id} className="block">
-              <span className="flex items-baseline justify-between gap-2">
-                <span className="text-xs font-bold text-zinc-200">{v.nombre}</span>
-                <span className="font-mono text-xs text-amber">{(pesos[v.id] ?? v.porDefecto).toFixed(1)}</span>
+            <div key={v.id}>
+              <label className="block">
+                <span className="flex items-baseline justify-between gap-2">
+                  <span className="text-xs font-bold text-zinc-200">{v.nombre}</span>
+                  <span className="font-mono text-xs text-amber">{(pesos[v.id] ?? v.porDefecto).toFixed(1)}</span>
+                </span>
+                <input
+                  type="range"
+                  min={v.min}
+                  max={v.max}
+                  step={v.paso}
+                  value={pesos[v.id] ?? v.porDefecto}
+                  onChange={(e) => setPesos({ ...pesos, [v.id]: Number(e.target.value) })}
+                  className="mt-1.5 w-full accent-amber-500"
+                  aria-label={v.nombre}
+                />
+                <span className="mt-0.5 block text-[11px] text-zinc-500 leading-snug">{v.descripcion}</span>
+              </label>
+              {/* v233.0 — los extremos explicados y la puerta del dato */}
+              <span className="mt-0.5 block text-[10px] text-zinc-600 leading-snug">
+                {v.cero} · {v.dos}
+                {" · "}
+                <Link
+                  href={v.puerta.ruta}
+                  className="text-cyan-hud/80 hover:text-amber transition-colors"
+                  title={`El dato que multiplica este peso vive en ${v.puerta.etiqueta}`}
+                >
+                  {v.puerta.etiqueta} ▸
+                </Link>
               </span>
-              <input
-                type="range"
-                min={v.min}
-                max={v.max}
-                step={v.paso}
-                value={pesos[v.id] ?? v.porDefecto}
-                onChange={(e) => setPesos({ ...pesos, [v.id]: Number(e.target.value) })}
-                className="mt-1.5 w-full accent-amber-500"
-                aria-label={v.nombre}
-              />
-              <span className="mt-0.5 block text-[11px] text-zinc-500 leading-snug">{v.descripcion}</span>
-            </label>
+            </div>
           ))}
         </div>
 

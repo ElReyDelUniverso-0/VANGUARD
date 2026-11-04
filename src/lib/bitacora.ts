@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v233.0",
+    nombre: "LA BALANZA — las variables explicadas y la cadena de procedencia navegable (/escenarios)",
+    hitos: [
+      "LAS VARIABLES EXPLICADAS — cada peso del ESTRATEGA declara qué factor mueve, de dónde sale su dato (fnt:acontecimientos/cables/teatros/indicadores), contra qué ancla editorial satura, qué significan 0 y 2, y la PUERTA REAL del núcleo donde vive el dato (censo v230: LOS ACONTECIMIENTOS, EL ARCHIVO DE CABLES, EL MAPA DEL FRENTE, LAS FICHAS DE PAÍS — cero rutas inventadas)",
+      "LAS ANCLAS A LA VISTA — las 4 decisiones editoriales (3 650 días · 500 cables · 12 frentes · 10 % PIB) salen del tooltip a su propia sección con texto: por qué logaritmo, por qué techo, qué pasa sin sala OSINT; los valores siguen viviendo en ANCLAS de reglas.ts y anclasDelCatalogo() solo los enaltece",
+      "LA CADENA NAVEGABLE — el id del acontecimiento documentado viaja con cada teatro desde la semilla v219 (jamás derivado del slug): el nombre del teatro abre su sala real /conflicto/[slug] (solo con cables — el 404 se evita, no se finge), el factor tiempo abre la ficha vg:acontecimiento, frentes abre /ver-guerra y capacidad las fichas de país — cada puerta SOLO cuando el dato existe",
+      "CONECTA CON EL NÚCLEO (patrón v230) — /escenarios cierra con las 5 puertas de la cadena server-rendered, cero JS; bajo cada deslizador, los extremos explicados y la puerta al dato",
+      "QA v233: tsc 0, eslint 0, build EXIT 0, health v233.0 db up, pruebas 79/79 (+4 LA BALANZA: estática, viva la página, viva las puertas — y la lealtad v232 evolucionada), API aditiva (POST /api/nucleo/simulacion solo gana campos), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v232.0",
     nombre: "LA CENTRAL DE ALARMAS (RENUMERADA dos veces: esta casa trabajó sobre el árbol local v173 sin ver las 103 rondas del remoto que consumieron v174-v231 — integrada sobre origin/main con el siguiente número libre)",
     tipo: "nav",

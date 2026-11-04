@@ -3,10 +3,18 @@ import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { APP_VERSION_LABEL } from "@/lib/version";
 import { ejecutarEscenario, catalogoSimulacion } from "@/lib/nucleo/simulacion";
+import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { EscenarioControles } from "@/components/vanguard/escenario-controles";
 
 // ============================================================
 // v224.0 EL ESTRATEGA — LA PUERTA DEL ESCENARIO (/escenarios)
+// v233.0 LA BALANZA — las VARIABLES se explican una a una (qué
+// mueve, de dónde sale el dato, contra qué ancla satura, qué
+// significan 0 y 2, y la puerta real del núcleo); las ANCLAS
+// editoriales salen del tooltip a su propia sección con texto;
+// CONECTA CON EL NÚCLEO abre la cadena de procedencia (patrón
+// v230). Todo aditivo: la casa jamás quita, solo agranda.
 // Tarea (f) del mandato: «simulación pequeña verificable:
 // datos/supuestos/variables/reglas/resultados SEPARADOS, nunca
 // presentarla como predicción, sin ejecutar código arbitrario».
@@ -20,6 +28,41 @@ export const dynamic = "force-dynamic";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+
+/** v233.0 — las puertas REALES de la cadena de procedencia (el
+ * mismo censo de puertas de v230: cero rutas inventadas). */
+const conectaNucleo: EnlaceContextual[] = [
+  {
+    etiqueta: "EL ARCHIVO DE CABLES ▸",
+    ruta: "/nucleo?tipo=noticia",
+    motivo: "El archivo vivo donde vive el factor cobertura — cada cable con su fuente",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "LOS ACONTECIMIENTOS ▸",
+    ruta: "/nucleo?tipo=acontecimiento",
+    motivo: "Los hechos históricos documentados que arrancan el reloj del factor tiempo",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "EL MAPA DEL FRENTE ▸",
+    ruta: "/ver-guerra",
+    motivo: "El mural FRENTE TOTAL donde arden los frentes del factor frentes",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "LAS FICHAS DE PAÍS ▸",
+    ruta: "/nucleo?tipo=pais",
+    motivo: "Las fichas donde vive el gasto militar del Banco Mundial del factor capacidad",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "El buscador global de todas las entidades documentadas de la casa",
+    tipoRelacion: "visible_en",
+  },
+];
 
 export const metadata: Metadata = {
   title: "EL ESTRATEGA — escenarios de presión por teatro, nunca predicciones",
@@ -143,6 +186,68 @@ export default async function EscenariosPage() {
           </div>
         </section>
 
+        {/* LAS VARIABLES — explicadas una a una (v233.0 LA BALANZA) */}
+        <section className="mt-12" aria-label="Las variables explicadas">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            LAS VARIABLES — explicadas una a una
+          </p>
+          <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">
+            Los 4 pesos son lo ÚNICO que mueve el usuario. Cada uno multiplica un factor del desglose:
+            esto es lo que mueve, de dónde sale su dato, contra qué ancla satura y qué significan sus extremos.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            {cat.variables.map((v) => (
+              <article key={v.id} className="rounded-md border border-zinc-800 bg-zinc-900/50 p-4">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-amber/70">{v.id}</p>
+                <p className="mt-1 text-sm font-bold text-zinc-100">{v.nombre}</p>
+                <p className="mt-1.5 text-xs text-zinc-300 leading-relaxed">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-cyan-hud/80">qué mueve: </span>
+                  {v.mueve}
+                </p>
+                <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-cyan-hud/80">de dónde sale el dato: </span>
+                  {v.fuente}
+                </p>
+                <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-amber/70">ancla: </span>
+                  {v.ancla}
+                </p>
+                <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">
+                  {v.cero} · {v.dos}
+                </p>
+                <Link
+                  href={v.puerta.ruta}
+                  className="mt-2 inline-flex items-center rounded-sm border border-zinc-700 bg-zinc-900/70 px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-widest text-zinc-300 transition-colors hover:border-amber-hud hover:text-amber"
+                  title={`El dato que multiplica este peso vive aquí: ${v.puerta.etiqueta}`}
+                >
+                  {v.puerta.etiqueta} ▸
+                </Link>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* LAS ANCLAS — las decisiones editoriales a la vista (v233.0) */}
+        <section className="mt-12" aria-label="Las anclas del modelo">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            LAS ANCLAS — las decisiones editoriales del modelo
+          </p>
+          <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">
+            Los techos donde cada factor satura a 100. NO son datos: son decisiones editoriales de la casa,
+            visibles en el desglose de cada teatro y discutibles — cambiarlas cambia el resultado, por eso
+            están declaradas aquí y viven en ANCLAS de reglas.ts.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {cat.anclas.map((a) => (
+              <article key={a.id} className="rounded-md border border-zinc-800 bg-zinc-900/50 p-4">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud/80">{a.id}</p>
+                <p className="mt-1 font-orbitron text-lg font-black text-amber">{a.valor}</p>
+                <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{a.texto}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         {/* LOS SUPUESTOS — uno a uno */}
         <section className="mt-12" aria-label="Supuestos declarados">
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
@@ -185,6 +290,12 @@ export default async function EscenariosPage() {
             </ul>
           </div>
         </section>
+
+        {/* v233.0 — la cadena de procedencia, navegable (patrón v230) */}
+        <EnlacesNucleo
+          titulo="CONECTA CON EL NÚCLEO"
+          enlaces={conectaNucleo}
+        />
       </div>
     </main>
   );

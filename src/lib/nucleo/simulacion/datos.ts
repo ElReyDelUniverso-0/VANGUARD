@@ -17,7 +17,7 @@
 
 import { db } from "@/lib/db";
 import { TEATROS } from "@/lib/teatros";
-import { SEMILLA_ACONTECIMIENTOS } from "../acontecimientos";
+import { SEMILLA_ACONTECIMIENTOS, ACONTECIMIENTO_POR_TEATRO, idAcontecimiento } from "../acontecimientos";
 import { geografiaDeTeatro } from "../geografia";
 import { RELACION_PAIS_TEATRO } from "../relaciones";
 import { indicadoresNumericosDePais } from "../indicadores";
@@ -105,6 +105,12 @@ export async function recogerDatos(): Promise<{
       procedencias.push("fnt:indicadores — gasto militar % PIB del Banco Mundial (CC BY 4.0)");
     }
 
+    // v233.0 LA BALANZA — el id REAL del acontecimiento sembrado
+    // (vg:acontecimiento:<slug>); null si el teatro no tiene hecho
+    // sembrado: sin puerta, jamás una inventada.
+    const slugAcon = ACONTECIMIENTO_POR_TEATRO[slug] ?? null;
+    const idAcon = slugAcon ? idAcontecimiento(slugAcon) : null;
+
     datos.push({
       slug,
       nombre: t.nombre,
@@ -114,6 +120,7 @@ export async function recogerDatos(): Promise<{
       gastoMilitarPct: mediaGasto === null ? null : Math.round(mediaGasto * 100) / 100,
       procedencias,
       anioIndicadores,
+      idAcontecimiento: idAcon,
     });
   }
 

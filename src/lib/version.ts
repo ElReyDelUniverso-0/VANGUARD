@@ -1796,6 +1796,50 @@
 //     los vistos del primer barrido); ② re-alarma tras leer(); ③
 //     re-alarma tras limpiar() — leer/limpiar pliegan los ids a vistos.
 // Herencia v231.0 EL LATIDO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v232.0";
-export const APP_CODENAME = "LA CENTRAL DE ALARMAS";
+// v233.0: LA BALANZA — las variables explicadas y la cadena navegable
+//     (/escenarios, primer pendiente marcado de la cola del worklog v231:
+//     «/escenarios (variables explicadas)»). El ESTRATEGA v224 ya separaba
+//     datos/supuestos/variables/reglas/resultados; faltaba que CADA PIEZA
+//     se explicara y que la procedencia fuera NAVEGABLE, no un tooltip:
+// (1) LAS VARIABLES EXPLICADAS — VariableSimulacion gana mueve/fuente/
+//     ancla/cero/dos/puerta (aditivo; sigue puro dato sin BD/red/React):
+//     qué factor del desglose mueve cada peso, de dónde sale el dato que
+//     multiplica (fnt:acontecimientos/cables/teatros/indicadores con su
+//     detalle), contra qué ancla satura, qué significa 0 y qué significa
+//     2, y la PUERTA REAL del núcleo donde vive el dato — el censo de
+//     puertas de v230: LOS ACONTECIMIENTOS, EL ARCHIVO DE CABLES, EL
+//     MAPA DEL FRENTE, LAS FICHAS DE PAÍS. Cero rutas inventadas.
+// (2) LAS ANCLAS AL CATÁLOGO — las 4 decisiones editoriales (3 650 días,
+//     500 cables, 12 frentes, 10 % PIB) salen del tooltip a su sección
+//     con texto: por qué logaritmo, por qué techo, qué pasa sin sala
+//     OSINT, por qué media del Banco Mundial. Los valores siguen viviendo
+//     en ANCLAS de reglas.ts (pura) — anclasDelCatalogo() solo los
+//     ENALTECE (la casa jamás duplica una constante).
+// (3) LA CADENA NAVEGABLE — el id del acontecimiento documentado viaja
+//     con cada teatro (DatoTeatro.idAcontecimiento ← ACONTECIMIENTO_POR_
+//     TEATRO de la semilla v219, JAMÁS derivado del slug del teatro) y
+//     ResultadoTeatro.puertaAcontecimiento lo entrega a la isla: el
+//     nombre del teatro abre SU sala real /conflicto/[slug] (solo con
+//     cables — 0 cables es 404 real, la puerta se evita, no se finge);
+//     el factor tiempo abre /nucleo?id=vg:acontecimiento:<slug real>;
+//     frentes abre /ver-guerra; capacidad abre /nucleo?tipo=pais — cada
+//     uno SOLO cuando el dato existe (sin dato = sin puerta, declarado).
+// (4) LOS MANDOS EXPLICADOS — bajo cada deslizador: qué significan sus
+//     extremos (cero · dos) y la puerta al dato que multiplica.
+// (5) CONECTA CON EL NÚCLEO (patrón v230) — /escenarios cierra con las
+//     5 puertas de la cadena de procedencia (archivo, acontecimientos,
+//     frente, fichas de país, búsqueda) server-rendered, cero JS.
+// (6) PRUEBAS +3 (79/79): estática (estructura de las 4 variables, las
+//     4 puertas reales, anclasDelCatalogo, idAcontecimiento desde la
+//     semilla, guardas de la isla); viva /escenarios (secciones, puertas
+//     y cadena en el SSR); viva las 5 puertas + la ficha del hecho
+//     documentado respondiendo 200. Salud v232→v233.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v233.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor). API aditiva: el POST
+//     /api/nucleo/simulacion solo GANA campos (puertaAcontecimiento,
+//     catalogo con las nuevas claves) — nada se rompe aguas abajo.
+// Herencia v232.0 LA CENTRAL DE ALARMAS (la hermana, intacta) y todo lo
+//     anterior. Guards v167 intactos.
+export const APP_VERSION = "v233.0";
+export const APP_CODENAME = "LA BALANZA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
