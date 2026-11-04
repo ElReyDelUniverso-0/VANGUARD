@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v263.0",
+    nombre: "EL ARCHIVO QUE CRECE — la expansión vuelve a la sala del teatro (/conflicto/[tag]) y abre el archivo que nadie veía: 1396 cables sin etiqueta (74 % del archivo) no tenían puerta a ninguna sala aunque sus propias palabras citaran el teatro (214 censados con claves reales de los 9). El catálogo canónico lleva sus claves y la sala cruza EN LECTURA, sin escribir en la BD",
+    hitos: [
+      "EL CATÁLOGO LLEVA SUS CLAVES — TEATROS gana claves por teatro (lugares y actores en español, la lengua del archivo): la misma fuente única de /conflicto, el sitemap y los nombres humanos de v259/v260 ahora también sabe reconocer lo suyo",
+      "EL HALLAZGO ES EN LECTURA — pool acotado de los 1000 sin etiqueta más recientes (UNA consulta, campos mínimos) y cruce con las claves en JS (toLowerCase: acentos y mayúsculas, cero trucos SQL); hasta 6 candidatos por sala, cada uno declara QUÉ palabras abrieron su puerta («citan: kiev · zelenski») — derivación transparente, cero invención",
+      "SOLO LA CABEZA PAGA — los candidatos viajan únicamente en la página 1: las páginas hondas del archivo (v261) no pagan la consulta; vacío honesto: sala sin candidatos ni pinta la sección",
+      "QA v263: tsc 0 TOTAL, eslint 0, build EXIT 0, health v263.0 db up, pruebas 152/152 (+2 EL ARCHIVO QUE CRECE: estática — las 9 claves canónicas, el pool acotado, el cruce toLowerCase, la página 1 exclusiva, la línea compuesta en JS y la guardia v234; viva — ukraine sirve la sección con «SIN ETIQUETA» y «citan:», la página 2 no la repite y las anclas v261 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v262.0",
     nombre: "EL CANAL QUE PESA — la expansión llega a la Primera página (/guerra-hoy, v35+v202+v206+v208+v213+v239+v251, la puerta de Google para «guerra hoy»): sus chips de teatro eran los más pobres de la casa — solo el nombre, un teatro con 173 cables y señal de hoy se veía igual que uno muerto desde hace semanas. La misma groupBy, dos medidas; los chips declaran peso y edad; y el canal gana su declaración de frescura",
     hitos: [

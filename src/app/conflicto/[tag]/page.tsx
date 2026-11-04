@@ -57,6 +57,18 @@ type NewsRow = {
   summary: string | null;
 };
 
+// v263.0 EL ARCHIVO QUE CRECE — un candidato: un cable SIN etiqueta cuyas
+// propias palabras citan el teatro. La sala no reclama el cable: declara
+// QUÉ palabras abrieron la puerta y el visitante juzga.
+type CandidatoRow = {
+  id: string;
+  title: string;
+  source: string;
+  sourceCountry: string | null;
+  publishedAt: Date;
+};
+type Candidato = { row: CandidatoRow; citadas: string[] };
+
 // v206.0: TEATROS vive en src/lib/teatros.ts — fuente única compartida con
 // sitemap.ts (las puertas anunciadas a Google salen del mismo mapa).
 
@@ -118,6 +130,49 @@ async function getCables(
     };
   } catch {
     return { total: 0, items: [], ultimaSenal: null };
+  }
+}
+
+// v263.0 EL ARCHIVO QUE CRECE — los 1396 cables sin etiqueta (74 % del
+// archivo) no tenían puerta a ninguna sala, aunque sus propias palabras
+// citaran el teatro. El hallazgo se hace EN LECTURA, sin escribir en la BD
+// (la casa no clasifica a mano — un solo escritor): un pool acotado de los
+// 1000 sin etiqueta más recientes (una consulta, campos mínimos), y el
+// cruce con las claves canónicas del catálogo en JS — acentos y mayúsculas
+// resueltos con toLowerCase, cero trucos SQL. La sala pinta hasta 6
+// candidatos y declara QUÉ palabras abrieron cada puerta: derivación
+// transparente, cero invención. Pool vacío o BD caída: la sección ni se
+// pinta (vacío honesto, ley de la casa).
+const POOL_SIN_ETIQUETA = 1000;
+
+async function getCandidatos(claves: string[]): Promise<Candidato[]> {
+  if (claves.length === 0) return [];
+  try {
+    const pool = await db.newsItem.findMany({
+      where: { conflictTag: null },
+      orderBy: { publishedAt: "desc" },
+      take: POOL_SIN_ETIQUETA,
+      select: {
+        id: true,
+        title: true,
+        source: true,
+        sourceCountry: true,
+        publishedAt: true,
+        summary: true,
+      },
+    });
+    return pool
+      .map((r) => {
+        const texto = `${r.title} ${r.summary ?? ""}`.toLowerCase();
+        const citadas = claves.filter((k) => texto.includes(k));
+        return citadas.length > 0
+          ? { row: r as CandidatoRow, citadas: citadas.slice(0, 2) }
+          : null;
+      })
+      .filter((c): c is Candidato => c !== null)
+      .slice(0, 6);
+  } catch {
+    return [];
   }
 }
 
@@ -194,6 +249,11 @@ export default async function ConflictoPage({
   // v261.0 — la línea del nav se compone COMPLETA en JS antes del JSX
   // (lección v256: React SSR intercala <!-- --> entre texto e interpolación)
   const lineaPaginacion = `página ${page} de ${paginas} — ${total} cables en el archivo del teatro`;
+
+  // v263.0 — los candidatos solo viajan en la cabeza de la sala (página 1):
+  // las páginas hondas del archivo no pagan la consulta.
+  const candidatos = page === 1 ? await getCandidatos(teatro.claves) : [];
+  const lineaCandidatos = `El archivo que crece — ${candidatos.length} cables sin etiqueta citan esta sala`;
 
   // v261.0: la última señal del ARCHIVO, no la de esta página — la
   // cabecera dice la verdad en la página 1 y en la última
@@ -425,6 +485,53 @@ export default async function ConflictoPage({
               )}
             </div>
           </nav>
+        )}
+
+        {/* v263.0 EL ARCHIVO QUE CRECE — cables sin etiqueta que citan esta
+            sala: la derivación es transparente (qué palabras abrieron cada
+            puerta) y la casa no escribe en el archivo, solo abre la puerta.
+            Vacío honesto: sin candidatos la sección ni se pinta. */}
+        {candidatos.length > 0 && (
+          <section
+            className="mt-8"
+            aria-label="Cables sin etiqueta que citan esta sala"
+          >
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-zinc-500 border-b border-zinc-800 pb-2">
+              {lineaCandidatos}
+            </h2>
+            <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+              Hallados entre los {POOL_SIN_ETIQUETA} cables sin etiqueta más
+              recientes del archivo: las palabras del propio cable — lugares y
+              actores de {teatro.nombre} — abren la puerta. La casa no escribe
+              en el archivo (un solo escritor): solo abre la puerta y declara
+              qué la abrió.
+            </p>
+            <ul className="mt-3 space-y-2">
+              {candidatos.map((c) => (
+                <li key={c.row.id}>
+                  <Link
+                    href={`/noticia/${c.row.id}`}
+                    className="group block border border-zinc-800 hover:border-amber-500/50 rounded-md p-3 bg-zinc-900/40 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono text-[9px] uppercase tracking-widest border rounded px-1.5 py-0.5 text-zinc-400 border-zinc-600 bg-zinc-800/60">
+                        SIN ETIQUETA
+                      </span>
+                      <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
+                        {c.row.source} · hace {hace(new Date(c.row.publishedAt))}
+                      </span>
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-cyan-hud">
+                        citan: {c.citadas.join(" · ")}
+                      </span>
+                    </div>
+                    <h3 className="mt-1 text-sm font-bold leading-snug text-zinc-200 group-hover:text-amber-300 transition-colors">
+                      {c.row.title}
+                    </h3>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
 
         {/* texto indexable de contexto */}

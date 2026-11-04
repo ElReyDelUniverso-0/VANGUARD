@@ -2660,6 +2660,33 @@
 //     /conflicto/ukraine) y la cabeza GUERRA HOY en pie) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v261.0 LA SALA COMPLETA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v262.0";
-export const APP_CODENAME = "EL CANAL QUE PESA";
+// v263.0 EL ARCHIVO QUE CRECE — la expansión funcional módulo a módulo
+//         vuelve a la sala del teatro y abre el archivo que nadie veía:
+//         1396 cables SIN etiqueta (74 % del archivo) no tenían puerta a
+//         ninguna sala, aunque sus propias palabras citaran el teatro
+//         (censados en esta ronda: 214 citan claves reales de los 9).
+// (1) EL CATÁLOGO LLEVA SUS CLAVES — TEATROS gana `claves` por teatro
+//     (lugares y actores en español, la lengua del archivo): la misma
+//     fuente única de /conflicto, el sitemap y los nombres humanos de
+//     v259/v260 ahora también sabe reconocer lo suyo.
+// (2) EL HALLAZGO ES EN LECTURA — la casa no clasifica a mano (un solo
+//     escritor): pool acotado de los 1000 sin etiqueta más recientes (UNA
+//     consulta, campos mínimos) y cruce con las claves en JS — acentos y
+//     mayúsculas con toLowerCase, cero trucos SQL. Hasta 6 candidatos por
+//     sala; cada uno declara QUÉ palabras abrieron su puerta («citan:
+//     kiev · zelenski») — derivación transparente, cero invención.
+// (3) SOLO LA CABEZA PAGA — los candidatos viajan únicamente en la página
+//     1 (page === 1): las páginas hondas del archivo (v261) no pagan la
+//     consulta. Vacío honesto: sala sin candidatos (pool sin match) ni
+//     pinta la sección.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v263.0 db up ·
+//     pruebas 152/152 (+2 EL ARCHIVO QUE CRECE: estática — las 9 claves
+//     canónicas, el pool acotado, el cruce toLowerCase, la página 1
+//     exclusiva, la línea compuesta en JS y la guardia v234; viva —
+//     ukraine sirve la sección con «SIN ETIQUETA» y «citan:», la página 2
+//     no la repite y las anclas v261 (página 1 de 5, Los frentes) en pie) ·
+//     BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v262.0 EL CANAL QUE PESA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v263.0";
+export const APP_CODENAME = "EL ARCHIVO QUE CRECE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v262.0", async () => {
+  await verificar("servidor vivo y en v263.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v262"), `versión ${r.json?.version} ≠ v262`);
+    afirmar(String(r.json?.version).startsWith("v263"), `versión ${r.json?.version} ≠ v263`);
   });
 
   // censo por API
@@ -2010,6 +2010,60 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v263.0 EL ARCHIVO QUE CRECE: los sin etiqueta citan su sala ──
+  // El 74 % del archivo (1396 cables) no tenía puerta a ninguna sala aunque
+  // sus propias palabras citaran el teatro. El catálogo canónico lleva sus
+  // CLAVES, la sala las cruza EN LECTURA (pool acotado, cero escritura en la
+  // BD) y pinta hasta 6 candidatos declarando qué palabras abrieron cada
+  // puerta. Solo en la página 1: las hondas no pagan la consulta.
+  await verificar("EL ARCHIVO QUE CRECE estática: claves canónicas, pool acotado y candidatos compuestos en JS (v263)", () => {
+    const cat = readFileSync(join(RAIZ, "src/lib/teatros.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/conflicto/[tag]/page.tsx"), "utf8");
+    // el catálogo canónico lleva las claves de sus 9 teatros (una sola fuente)
+    afirmar((cat.match(/claves: \[/g) || []).length === 9, "el catálogo no lleva las claves de sus 9 teatros");
+    afirmar(cat.includes('"kremlin"'), "las claves de ucrania no citan al Kremlin");
+    afirmar(cat.includes('"babel-mandeb"'), "las claves de redsea no citan Babel-Mandeb");
+    afirmar(cat.includes('"hezbolá"'), "las claves de lebanon no citan a Hezbolá");
+    afirmar(cat.includes('"jartum"'), "las claves de sudan no citan Jartum");
+    // el hallazgo es EN LECTURA: pool acotado de sin etiqueta, cero escritura
+    afirmar(sala.includes("const POOL_SIN_ETIQUETA = 1000"), "el pool de sin etiqueta no está acotado ni declarado");
+    afirmar(sala.includes("conflictTag: null"), "el pool no consulta los cables sin etiqueta");
+    // el cruce en JS: acentos y mayúsculas con toLowerCase, cero trucos SQL
+    afirmar(sala.includes("const texto = `${r.title} ${r.summary ?? \"\"}`.toLowerCase()"), "el cruce no normaliza el texto del cable con toLowerCase");
+    afirmar(sala.includes("citadas.length > 0"), "sin el filtro honesto de claves citadas");
+    afirmar(sala.includes(".slice(0, 6)"), "la sala no acota sus candidatos a 6");
+    // solo la cabeza de la sala paga la consulta
+    afirmar(sala.includes("page === 1 ? await getCandidatos(teatro.claves) : []"), "las páginas hondas del archivo pagan la consulta de candidatos");
+    // lección v256: la línea de la sección se compone COMPLETA en JS
+    afirmar(sala.includes("const lineaCandidatos = `El archivo que crece — ${candidatos.length} cables sin etiqueta citan esta sala`"), "la línea de candidatos no se compone COMPLETA en JS");
+    afirmar(sala.includes("{lineaCandidatos}"), "la sección no sirve la línea compuesta");
+    // vacío honesto: sin candidatos la sección ni se pinta
+    afirmar(sala.includes("candidatos.length > 0 && ("), "la sección no respeta el vacío honesto");
+    // la derivación transparente: cada candidato declara qué abrió la puerta
+    afirmar(sala.includes("citan: {c.citadas.join(\" · \")}"), "el candidato no declara qué palabras abrieron su puerta");
+    afirmar(sala.includes("SIN ETIQUETA"), "el candidato no declara que carece de etiqueta");
+    afirmar(sala.includes("La casa no escribe"), "la declaración de un solo escritor no viaja en la sección");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas a mano en la ronda v263!");
+  });
+
+  await verificar("EL ARCHIVO QUE CRECE viva: la sala de ucrania abre puertas a los sin etiqueta y las páginas hondas no pagan la sección (v263)", async () => {
+    const r = await pedir("/conflicto/ukraine");
+    afirmar(r.status === 200, `/conflicto/ukraine no 200 en v263 (${r.status})`);
+    // la sección viaja con su línea compuesta y sus chips transparentes
+    afirmar(r.texto.includes("El archivo que crece"), "la sección de candidatos no viaja en el SSR");
+    afirmar(r.texto.includes("sin etiqueta citan esta sala"), "la línea de candidatos no declara su peso");
+    afirmar(r.texto.includes("SIN ETIQUETA"), "los candidatos no declaran que carecen de etiqueta");
+    afirmar(r.texto.includes("citan:"), "los candidatos no declaran qué palabras abrieron su puerta");
+    // las anclas de la sala completa (v261) siguen en pie
+    afirmar(r.texto.includes("página 1 de 5"), "la paginación v261 desapareció");
+    afirmar(r.texto.includes("Los frentes del teatro"), "el despliegue v227 desapareció");
+    // las páginas hondas no pagan la sección (solo la cabeza de la sala)
+    const r2 = await pedir("/conflicto/ukraine?page=2");
+    afirmar(r2.status === 200, `/conflicto/ukraine?page=2 no 200 en v263 (${r2.status})`);
+    afirmar(!r2.texto.includes("El archivo que crece"), "la sección de candidatos se repite en las páginas hondas");
+    afirmar(r2.texto.includes("página 2 de 5"), "la paginación v261 no sobrevive en la página 2");
   });
 
   // ── v262.0 EL CANAL QUE PESA: los chips de la Primera página hablan ──
