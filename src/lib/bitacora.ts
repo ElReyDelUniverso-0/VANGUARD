@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v302.0",
+    nombre: "EL MUNDO RESPIRA — la cola viva del oído (v300) se sirve: el ambiente del mundo con la radio APAGADA. La v299 le dio voz al mundo mientras la Radio suena; esta ronda le da aliento cuando la radio descansa — drone que sigue la tensión real, aliento de ~14 s, latido distante que acelera cuando el mundo arde y señal lejana de cable que llega, todo 100% sintetizado (cero assets, cero copyright). Con candado de gesto (ley v217), cesión honesta a la radio (el mundo jamás pisa la obra), sin ráfagas (lección v299) y botón MUNDO en la píldora con el 4.º modo del panel",
+    hitos: [
+      "EL MOTOR (nuevo src/lib/ambiente-mundo.ts) — drone grave D2 + quinta con deriva y filtro que se abre con getTension (hermano del pulso v299), aliento de ruido marrón bandpass con LFO a la misma escala que la base (el mundo respira, nunca grita), latido distante 58→38 Hz con eco y señal FM en Re6; los helpers puros probados: caracterMundo (dormido · respira · late · arde), intensidadAmbiente, siguienteLatido (30 s → 10 s) y siguienteSenal (45 s → 20 s)",
+      "LAS LEYES DEL OÍDO — candado de gesto (el AudioContext nace dentro del clic o al primer gesto con resumeAmbienteSiQuerido); cesión a la radio (si la obra suena, el mundo se aparta a «en-espera» y vuelve cuando la radio descansa si el Dueño lo dejó); sin ráfagas (el latido no acumula deuda: el próximo golpe se cuenta desde AHORA — lección v299 aplicada al planeta); estado honesto apagado · en-espera · vivo con suscripción",
+      "LA PÍLDORA Y EL 4.º MODO — botón MUNDO (Waves, data-vg-mundo) en la fila de la radio en cyan (el color de la familia ambiente), EL MUNDO RESPIRA junto a CINE/ESCENA/SESIÓN con estado honesto (· ON · · EN ESPERA), toasts que dicen la verdad y persistencia propia vg_ambiente_v302; los carriles de la v299 intactos — la esquina respira sin pisar a nadie",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v301.0",
     nombre: "LA BIBLIOTECA OSCURA — la mina que la «Queda» de la v300 señaló (oscura-data, ya servida en /guerra-hoy desde la v63, pendiente solo de sala propia) gana su sala server /oscura: 43 entradas con veredicto REAL/MITO/PARCIAL y fuente real (14 teorías · 11 armas-idea · 10 civilizaciones · 8 documentos desclasificados), las 43 con su url de archivo público (CIA Reading Room, National Archives, NSA, FBI Vault, World History Encyclopedia...) y cada entrada abierta a su documento original con enlace real — lo que el teaser de la guerra hoy y la pestaña del aparato no daban",
     hitos: [

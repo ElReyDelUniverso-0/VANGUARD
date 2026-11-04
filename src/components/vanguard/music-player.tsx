@@ -14,7 +14,7 @@
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import {
-  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X, Repeat, SlidersHorizontal, Quote,
+  Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X, Repeat, SlidersHorizontal, Quote, Waves,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -31,6 +31,8 @@ import { letraDe, lineaDeParte, PARTES_ORDEN, ETIQUETA_PARTE, type ParteLetra } 
 import { Escena3D, hashDe, type VarianteEscena } from "@/components/vanguard/escenas-3d";
 import { sfx } from "@/lib/sound";
 import { getTension } from "@/lib/tension";
+// v302 EL MUNDO RESPIRA: el ambiente del mundo cuando la radio descansa
+import { estadoAmbiente, toggleAmbiente, resumeAmbienteSiQuerido, subscribeAmbiente, type EstadoAmbiente } from "@/lib/ambiente-mundo";
 import { useT } from "@/lib/i18n";
 // v115.0 SINGULARIDAD: la radio SIENTE el cambio de era (1950↔2100) — la
 // sesión inteligente funde 7 s hacia la familia que pide la nueva época
@@ -174,6 +176,9 @@ export function MusicPlayer() {
   // v299 LA LETRA: la línea que la obra canta ahora (karaoke de la casa)
   const [letra, setLetra] = useState<LetraEnMarcha>(() => getLetraActual());
   useEffect(() => subscribeLetra(() => setLetra(getLetraActual())), []);
+  // v302 EL MUNDO RESPIRA: el estado honesto del ambiente (apagado · en-espera · vivo)
+  const [mundo, setMundo] = useState<EstadoAmbiente>(() => estadoAmbiente());
+  useEffect(() => subscribeAmbiente(() => setMundo(estadoAmbiente())), []);
 
   const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
     try {
@@ -187,6 +192,18 @@ export function MusicPlayer() {
     setEqBand("bajo", saved.eq.bajo);
     setEqBand("medio", saved.eq.medio);
     setEqBand("alto", saved.eq.alto);
+  }, []);
+
+  // v302: si el Dueño dejó el MUNDO encendido, respira al primer gesto
+  // (mismo candado de autoplay que la radio — ley v217)
+  useEffect(() => {
+    const despierta = () => resumeAmbienteSiQuerido();
+    window.addEventListener("pointerdown", despierta, { once: true });
+    window.addEventListener("keydown", despierta, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", despierta);
+      window.removeEventListener("keydown", despierta);
+    };
   }, []);
 
   // v299 EL MUNDO ESCUCHA: mientras la Radio suena, la Casa mide la tensión
@@ -228,6 +245,22 @@ export function MusicPlayer() {
       startMusic(trk);
       setWantOn(true);
       persist(true, vol, trk);
+    }
+  };
+
+  // v302 EL MUNDO RESPIRA: el botón del ambiente — un clic es un gesto
+  // limpio (el AudioContext nace dentro); si la radio suena, el mundo
+  // queda EN ESPERA y lo dice, jamás pisa la obra
+  const toggleMundo = () => {
+    const sonaba = playing;
+    const on = toggleAmbiente();
+    sfx.click();
+    if (on && sonaba) {
+      toast.info("El mundo espera a la radio", { description: "Cuando la obra descanse, el mundo volverá a respirar" });
+    } else if (on) {
+      toast.info("El mundo respira", { description: "Aliento, drone y latido según la tensión real del planeta" });
+    } else {
+      toast.info("El mundo descansa", { description: "La sala vuelve al silencio" });
     }
   };
 
@@ -683,6 +716,30 @@ export function MusicPlayer() {
                 </span>
               </div>
             )}
+            {/* v302 EL MUNDO RESPIRA — el 4.º modo: el ambiente del mundo
+                sin radio, con el carácter real del planeta */}
+            <button
+              onClick={toggleMundo}
+              aria-pressed={mundo !== "apagado"}
+              className={cn(
+                "flex items-center gap-2 px-3 py-2 border rounded-sm transition-colors text-left",
+                mundo === "vivo"
+                  ? "border-cyan-400 bg-cyan-400/15"
+                  : mundo === "en-espera"
+                    ? "border-cyan-400/50 bg-cyan-400/5"
+                    : "border-border/60 hover:border-amber-hud/60 hover:bg-amber-hud/10"
+              )}
+            >
+              <Waves className={cn("w-4 h-4 shrink-0", mundo === "vivo" ? "text-cyan-300 blink-soft" : mundo === "en-espera" ? "text-cyan-300/70" : "text-muted-foreground")} />
+              <span className="min-w-0">
+                <span className={cn("block text-[10px] font-mono font-bold uppercase tracking-wider", mundo === "vivo" ? "text-cyan-300" : "text-foreground")}>
+                  EL MUNDO RESPIRA {mundo === "vivo" ? "· ON" : mundo === "en-espera" ? "· EN ESPERA" : ""}
+                </span>
+                <span className="block text-[8px] font-mono text-muted-foreground leading-snug">
+                  el ambiente sin radio: aliento, drone y latido según la tensión real
+                </span>
+              </span>
+            </button>
           </div>
 
           {/* v111 ECUALIZADOR DE SALA — 3 bandas ±12 dB sobre la cadena de estudio */}
@@ -861,6 +918,22 @@ export function MusicPlayer() {
             />
             <Volume2 className="w-3 h-3 text-amber shrink-0" />
           </div>
+
+          {/* v302 EL MUNDO RESPIRA — el ambiente cuando la radio descansa:
+              aliento, drone y latido según la tensión real; el mundo jamás
+              pisa la obra (cesión honesta, estado en-espera) */}
+          <button
+            onClick={toggleMundo}
+            aria-label="El mundo respira — ambiente del mundo sin radio"
+            title="El mundo respira — aliento, drone y latido sin radio"
+            data-vg-mundo
+            className={cn(
+              "w-6 h-6 flex items-center justify-center shrink-0 transition-colors",
+              mundo === "vivo" ? "text-cyan-300" : mundo === "en-espera" ? "text-cyan-300/60" : "text-muted-foreground hover:text-amber"
+            )}
+          >
+            <Waves className={cn("w-3.5 h-3.5", mundo === "vivo" && "blink-soft")} />
+          </button>
 
           {/* v109: MODO AUDITORIO */}
           <button

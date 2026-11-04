@@ -4100,6 +4100,48 @@
 //     del orbe en el HTML) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v298.0 LA FOTOTECA DEL PLANETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v301.0";
-export const APP_CODENAME = "LA BIBLIOTECA OSCURA";
+// v302.0 EL MUNDO RESPIRA — la cola viva del oído (v300) se sirve: el
+//         ambiente del mundo con la radio APAGADA. La v299 le dio voz al
+//         mundo mientras la Radio suena (setPulsoMundo); esta ronda le da
+//         ALIENTO cuando la radio descansa — la sala nunca vuelve a estar
+//         muerta. NUEVO src/lib/ambiente-mundo.ts (Web Audio, cero assets,
+//         cero copyright — la ley de la casa):
+// (1) LO QUE SUENA: un drone grave que sigue la tensión real del planeta
+//     (D2 + quinta con deriva lenta, el filtro se abre con getTension —
+//     hermano del pulso v299), un ALIENTO de ruido marrón filtrado que
+//     entra y sale lento (~14 s, el mundo inhalando/exhalando), un LATIDO
+//     distante cuya frecuencia crece con la tensión (siguienteLatido puro:
+//     calma ~30 s → mundo ardiendo ~10 s, deriva humana ±25%) y una SEÑAL
+//     lejana (campana FM en Re6 — la marca de un cable que llega,
+//     siguienteSenal: 45 s → 20 s). El carácter del mundo tiene lengua
+//     propia: dormido · respira · late · arde (caracterMundo puro).
+// (2) LAS LEYES DEL MOTOR: CANDADO DE GESTO (el AudioContext nace solo
+//     dentro del clic del botón MUNDO, o al primer gesto si el Dueño lo
+//     dejó querido — resumeAmbienteSiQuerido, la ley v217 del autoplay);
+//     CESIÓN A LA RADIO (si la obra suena, el mundo se aparta con fade y
+//     queda «en-espera»; cuando la radio descansa, el mundo vuelve si el
+//     Dueño lo dejó — el mundo JAMÁS pisa la obra); SIN RÁFAGAS (lección
+//     v299: el latido y la señal no acumulan deuda — el próximo golpe se
+//     cuenta desde AHORA, el mundo late tarde, nunca ametralla); estado
+//     honesto consultable (apagado · en-espera · vivo) con suscripción.
+// (3) LA PÍLDORA Y EL 4.º MODO: botón MUNDO (icono Waves, data-vg-mundo)
+//     en la fila de la radio — cyan cuando vive (el color de la familia
+//     ambiente de la casa), con parpadeo suave; y el 4.º modo EL MUNDO
+//     RESPIRA junto a CINE/ESCENA/SESIÓN en el panel expandido, con el
+//     estado honesto (· ON · · EN ESPERA) y toasts que dicen la verdad.
+//     Persistencia propia vg_ambiente_v302. La esquina respira sin pisar
+//     a nadie: los carriles de la v299 intactos.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ en la tabla) ·
+//     health v302.0 db up · pruebas 230/230 (+2 EL MUNDO RESPIRA:
+//     estática — el motor con sus helpers puros censados (caracterMundo,
+//     intensidadAmbiente, siguienteLatido, siguienteSenal), el candado de
+//     gesto (resumeAmbienteSiQuerido + persistencia vg_ambiente_v302), la
+//     cesión a la radio (isMusicPlaying + subscribeMusic), el sin-ráfagas
+//     de la lección v299, la píldora con su botón data-vg-mundo y el
+//     4.º modo; viva — el home canta EL MUNDO RESPIRA v302.0 y el health
+//     lo respira) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v301.0 LA BIBLIOTECA OSCURA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v302.0";
+export const APP_CODENAME = "EL MUNDO RESPIRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

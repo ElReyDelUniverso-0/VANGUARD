@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v301.0", async () => {
+  await verificar("servidor vivo y en v302.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v301"), `versión ${r.json?.version} ≠ v301`);
+    afirmar(String(r.json?.version).startsWith("v302"), `versión ${r.json?.version} ≠ v302`);
   });
 
   // censo por API
@@ -2689,16 +2689,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v301.0"'), "la fuente única de versión no es v301.0 (avanza con la biblioteca)");
+    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0 (avanza con el mundo que respira)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA BIBLIOTECA OSCURA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v301.0"), "la v301.0 no viaja en el home");
+    afirmar(r.texto.includes("EL MUNDO RESPIRA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v302.0"), "la v302.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v301"), "el health no canta v301");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v302"), "el health no canta v302");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2726,15 +2726,15 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v301.0"'), "la fuente única de versión no es v301.0");
+    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0");
   });
 
-  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v301 y el home guarda la crónica del oído (v300→v301)", async () => {
+  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v302 y el home guarda la crónica del oído (v300→v302)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v301.0"), "la v301.0 no viaja en el home");
+    afirmar(r.texto.includes("v302.0"), "la v302.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v301"), "el health no canta v301");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v302"), "el health no canta v302");
   });
 
   // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
@@ -2788,7 +2788,7 @@ async function parteB() {
     afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v301.0"'), "la fuente única de versión no es v301.0");
+    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0");
   });
 
   await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
@@ -2810,6 +2810,53 @@ async function parteB() {
     // el sitemap vivo anuncia la sala
     const rs = await pedir("/sitemap.xml");
     afirmar(rs.status === 200 && rs.texto.includes("/oscura"), "el sitemap vivo no anuncia la sala");
+  });
+
+  // ── v302.0 EL MUNDO RESPIRA: la cola viva del oído (v300) — el ambiente
+  // del mundo con la radio APAGADA. Drone, aliento, latido y señal, todo
+  // sintetizado; candado de gesto, cesión a la radio y sin ráfagas ──
+  await verificar("EL MUNDO RESPIRA estática: el motor del ambiente (helpers puros, candado de gesto, cesión a la radio, sin ráfagas) y el botón MUNDO en la píldora (v302)", () => {
+    const motor = readFileSync(join(RAIZ, "src/lib/ambiente-mundo.ts"), "utf8");
+    const pill = readFileSync(join(RAIZ, "src/components/vanguard/music-player.tsx"), "utf8");
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    // los helpers PUROS del planeta: carácter, intensidad, latido y señal
+    afirmar(motor.includes("export function caracterMundo"), "caracterMundo no es puro/exportado (el mundo sin lengua)");
+    for (const c of ["dormido", "respira", "late", "arde"]) {
+      afirmar(motor.includes(`"${c}"`), `el mundo no sabe estar ${c}`);
+    }
+    afirmar(motor.includes("export function intensidadAmbiente"), "intensidadAmbiente no existe (el mundo sin escala)");
+    afirmar(motor.includes("export function siguienteLatido"), "siguienteLatido no es puro/exportado (el corazón sin ritmo)");
+    afirmar(motor.includes("export function siguienteSenal"), "siguienteSenal no es puro/exportado (los cables sin marca)");
+    // el candado de gesto (ley v217) y la persistencia propia
+    afirmar(motor.includes("export function resumeAmbienteSiQuerido"), "el mundo no despierta al primer gesto (ley v217 rota)");
+    afirmar(motor.includes('LS_AMBIENTE = "vg_ambiente_v302"'), "el ambiente no tiene su persistencia propia");
+    afirmar(motor.includes("export function toggleAmbiente"), "el mundo no tiene botón (toggleAmbiente falta)");
+    // la cesión a la radio: el mundo jamás pisa la obra
+    afirmar(motor.includes('from "@/lib/conflict-music"'), "el motor no mira a la orquesta (cesión imposible)");
+    afirmar(motor.includes("isMusicPlaying()"), "el mundo no sabe cuándo suena la radio");
+    afirmar(motor.includes("subscribeMusic("), "el mundo no oye el vaivén de la radio (sin suscripción)");
+    afirmar(motor.includes('"en-espera"'), "el estado honesto no sabe esperar a la radio");
+    afirmar(motor.includes("export function estadoAmbiente") && motor.includes("export function subscribeAmbiente"), "el estado honesto no es consultable");
+    // sin ráfagas (lección v299 aplicada al planeta): el golpe se reprograma desde AHORA
+    afirmar(motor.includes("clearTimeout(timerLatido)"), "el latido acumula deuda (la lección v299 no llegó al planeta)");
+    afirmar(motor.includes("siguienteLatido(tensionActual, Math.random())"), "el latido no lleva deriva humana (robot)");
+    // la píldora: botón MUNDO con su marca y el 4.º modo honesto
+    afirmar(pill.includes('from "@/lib/ambiente-mundo"'), "la píldora no conoce al mundo");
+    afirmar(pill.includes("data-vg-mundo"), "el botón MUNDO no tiene su marca en la píldora");
+    afirmar(pill.includes("EL MUNDO RESPIRA"), "el 4.º modo no canta su nombre");
+    afirmar(pill.includes("resumeAmbienteSiQuerido"), "la píldora no despierta al mundo al primer gesto");
+    afirmar(pill.includes("toggleMundo"), "la píldora no puede mover el mundo (toggleMundo falta)");
+    // la versión camina con la casa
+    afirmar(version.includes('APP_VERSION = "v302.0"'), "la fuente única de versión no es v302.0");
+  });
+
+  await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("EL MUNDO RESPIRA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v302.0"), "la v302.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v302"), "el health no respira v302");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──
