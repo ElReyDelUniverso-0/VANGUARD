@@ -3440,6 +3440,42 @@
 // tabla) · health v286.0 db up · BD intocada (1877 cables · 9
 // hechos, un solo escritor) · cierre doble. Herencia v285.0 EL
 // TABLERO EN EL GLOBO y toda la crónica.
+// v288.0 EL PULSO DEL ARCHIVO POR AGENCIA — la tercera capa de
+//         /servicios (la «Queda» de la v282, en pie en la cola de la
+//         v287, se paga): los PULSO_KEYWORDS de la fuente (el pulso
+//         real por agencia, 18 llaves) cruzan el archivo real
+//         (títulos de los cables no-curados) con EL MISMO algoritmo
+//         del panel (minúsculas, includes en el título — el canon del
+//         consumidor, comunidad-panel v127). Medido contra la BD fría
+//         al abrir: 10 de 18 agencias citadas por 451 titulares (CIA
+//         307, DEA 38, NSA 39...). Lectura pura — la casa no escribe
+//         al servir (un solo escritor, leyes v245/v246); la sala pasa
+//         a force-dynamic (el camino del tablero, v284) para que el
+//         pulso entre al render, y los expedientes de arriba no
+//         dependen de la señal: BD fría → el pulso duerme honesto y
+//         se declara.
+// (1) EL CRUCE ES DEL CANON — el algoritmo es el del panel (el
+//     consumidor es la fuente del matching, no una variante nueva de
+//     la sala); el orden es el de la fuente y el vacío no se rellena:
+//     las agencias sin menciones no aparecen y la sección lo declara.
+// (2) LA LÍNEA DEL PULSO SE COMPONE COMPLETA EN JS (lección v256):
+//     «El pulso del archivo por agencia — 10 de 18 agencias citadas
+//     por 451 titulares del archivo» — pulso.length, COMUNIDAD.length
+//     y el reduce de menciones; cada tarjeta con su conteo derivado y
+//     su último titular como puerta viva a /noticia/[id].
+// (3) EL NOSCRITO CRECE — compuesto en JS: si el pulso duerme, la
+//     frase no viaja; si despierta, nombra el cruce con su conteo.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /servicios en pie) ·
+//     health v288.0 db up · pruebas 202/202 (+2 EL PULSO DEL ARCHIVO
+//     POR AGENCIA: estática — la fuente de keywords intacta (18), la
+//     lectura pura sin curated-, el algoritmo del canon, el orden de
+//     la fuente, la línea compuesta, la puerta /noticia y el vacío
+//     honesto; viva — el SSR sirve la línea derivada completa (10 de
+//     18 · 451), la tarjeta de CIA con sus 307 menciones, el titular
+//     vivo y las anclas v282 en pie) · BD intocada (1877 cables ·
+//     9 hechos, un solo escritor).
+// Herencia v287.0 EL PULSO DEL ARCHIVO POR ROSTRO y toda la crónica.
+// Guards v167 intactos.
 // v287.0 EL PULSO DEL ARCHIVO POR ROSTRO — la tercera capa de
 //         /rostros (la cola de la v286 se paga): los
 //         PULSO_KEYWORDS_ROSTROS de la fuente cruzan el archivo real
@@ -3475,6 +3511,6 @@
 //     anclas v286 en pie) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v286.0 LOS ROSTROS DEL PODER y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v287.0";
-export const APP_CODENAME = "EL PULSO DEL ARCHIVO POR ROSTRO";
+export const APP_VERSION = "v288.0";
+export const APP_CODENAME = "EL PULSO DEL ARCHIVO POR AGENCIA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

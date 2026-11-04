@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v288.0",
+    nombre: "EL PULSO DEL ARCHIVO POR AGENCIA — la tercera capa de /servicios (la «Queda» de la v282, en pie en la cola de la v287, se paga): los PULSO_KEYWORDS de la fuente cruzan el archivo real (títulos de los cables no-curados) con EL MISMO algoritmo del panel (minúsculas, includes en el título — el canon del consumidor); 10 de 18 agencias citadas por 451 titulares medidos contra la BD fría; lectura pura, force-dynamic y vacío honesto",
+    hitos: [
+      "EL CRUCE ES DEL CANON — el algoritmo es el del panel (comunidad-panel v127), no una variante de la sala; el orden es el de la fuente y el vacío no se rellena: las agencias sin menciones no aparecen y la sección lo declara («el pulso duerme honesto»)",
+      "LA LÍNEA DEL PULSO SE COMPONE COMPLETA EN JS (lección v256) — «El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo»; cada tarjeta con su conteo derivado y su último titular como puerta viva a /noticia/[id]",
+      "EL NOSCRITO CRECE — compuesto en JS: si el pulso duerme, la frase no viaja; si despierta, nombra el cruce con su conteo (10 de 18)",
+      "QA v288: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /servicios en pie), health v288.0 db up, pruebas 202/202 (+2), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v287.0",
     nombre: "EL PULSO DEL ARCHIVO POR ROSTRO — la tercera capa de /rostros (la cola de la v286 se paga): los PULSO_KEYWORDS_ROSTROS de la fuente cruzan el archivo real (títulos de los cables no-curados) con EL MISMO algoritmo del panel (minúsculas, includes en el título — el canon del consumidor); 28 de 34 rostros citados por 1792 titulares medidos contra la BD fría; lectura pura, force-dynamic y vacío honesto",
     hitos: [

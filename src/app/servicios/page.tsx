@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   AGENCIAS,
   CATEGORIA_META,
   ALIADAS,
   SENTIDOS,
   COLECCION,
+  PULSO_KEYWORDS,
 } from "@/lib/agencias-data";
 import { SERVICIOS, CATEGORIA_RED_META, BLOQUES } from "@/lib/agencias-mundo-data";
+import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
@@ -42,6 +45,20 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // cifras escritas a mano — el número de sentidos y de manos sale
 // de los .length reales y las cifras de COLECCION, ya derivada
 // en la fuente con Set + filter + reduce.
+//
+// v288.0 EL PULSO DEL ARCHIVO POR AGENCIA — la tercera capa de la
+//    sala (la «Queda» de la v282, en pie en la cola de la v287, se
+//    paga): los PULSO_KEYWORDS de la fuente (el pulso real por
+//    agencia, 18 llaves) cruzan el archivo real (títulos de los
+//    cables no-curados de la BD) con EL MISMO algoritmo del panel
+//    (comunidad-panel v127: minúsculas, includes en el título — el
+//    canon del consumidor). Una lectura pura de la BD (la casa no
+//    escribe al servir — un solo escritor, leyes v245/v246); la sala
+//    pasa a force-dynamic para que el pulso entre al render, el mismo
+//    camino del tablero (v284) y del pulso por rostro (v287). El
+//    vacío se declara honesto: sin menciones en el archivo, el pulso
+//    duerme y la sala lo dice — nunca un pulso fingido. En el ORDEN
+//    DE LA FUENTE, solo agencias con menciones.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -63,6 +80,8 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: "La sala de los servicios — Vanguard", description: "36 expedientes reales de inteligencia: la Comunidad de EE. UU. y la red del resto del planeta." },
 };
+
+export const dynamic = "force-dynamic";
 
 // ── TODO derivado de las fuentes, nada a mano ──
 const COMUNIDAD = AGENCIAS;
@@ -148,7 +167,41 @@ const ENLACES_NUCLEO: EnlaceContextual[] = [
 // el número de expediente compuesto desde el num real de la fuente
 const placa = (n: number): string => String(n).padStart(2, "0");
 
-export default function ServiciosPage() {
+export default async function ServiciosPage() {
+  // v288.0 — EL PULSO DEL ARCHIVO: una lectura pura de los títulos del
+  // archivo real (los curated- de respaldo quedan fuera, como en toda
+  // la casa); si la BD duerme, el pulso duerme con ella y la sala lo
+  // declara — los expedientes de arriba no dependen de la señal.
+  const archivo: { id: string; title: string }[] = [];
+  try {
+    const rows = await db.newsItem.findMany({
+      where: { externalId: { not: { startsWith: "curated-" } } },
+      orderBy: { publishedAt: "desc" },
+      select: { id: true, title: true },
+    });
+    archivo.push(...rows);
+  } catch (e) {
+    console.error("servicios page error", e);
+  }
+
+  // EL MISMO ALGORITMO DEL PANEL (comunidad-panel v127): keywords en
+  // minúsculas, includes en el título — el canon del consumidor; en
+  // el ORDEN DE LA FUENTE y solo agencias con menciones (el vacío no
+  // se rellena: se declara).
+  const pulso: { id: string; sigla: string; n: number; ultimo: { id: string; title: string } | null }[] = [];
+  for (const a of COMUNIDAD) {
+    const kws = (PULSO_KEYWORDS[a.id] ?? []).map((k) => k.toLowerCase());
+    if (kws.length === 0) continue;
+    const suyos = archivo.filter((c) => kws.some((k) => c.title.toLowerCase().includes(k)));
+    if (suyos.length > 0) {
+      pulso.push({ id: a.id, sigla: a.sigla, n: suyos.length, ultimo: suyos[0] });
+    }
+  }
+  const totalMenciones = pulso.reduce((acc, p) => acc + p.n, 0);
+  // LA LÍNEA DEL PULSO compuesta COMPLETA en JS (lección v256): si el
+  // archivo cambia, la línea cambia sola.
+  const lineaPulso = `El pulso del archivo por agencia — ${pulso.length} de ${COMUNIDAD.length} agencias citadas por ${totalMenciones} titulares del archivo`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -381,6 +434,41 @@ export default function ServiciosPage() {
           </div>
         </section>
 
+        {/* v288.0 — EL PULSO DEL ARCHIVO POR AGENCIA: los keywords de
+            la fuente cruzan el archivo real con el algoritmo del panel
+            (v127); lectura pura de la BD, en el orden de la fuente. */}
+        {pulso.length > 0 ? (
+          <section className="mt-12" aria-label={lineaPulso}>
+            <h2 className="text-lg font-bold text-zinc-100">EL PULSO DEL ARCHIVO POR AGENCIA</h2>
+            <p className="mt-1 text-sm text-zinc-400">{lineaPulso}</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {pulso.map((p) => (
+                <div
+                  key={p.id}
+                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3"
+                  aria-label={p.sigla}
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-amber">
+                    {p.sigla} · {p.n} {p.n === 1 ? "mención" : "menciones"}
+                  </p>
+                  {p.ultimo && (
+                    <Link
+                      href={`/noticia/${p.ultimo.id}`}
+                      className="mt-1 block text-xs leading-snug text-zinc-300 hover:text-amber"
+                    >
+                      {p.ultimo.title}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <p className="mt-12 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
+            el archivo no cita a ninguna agencia todavía — el pulso duerme honesto
+          </p>
+        )}
+
         {/* la puerta honesta al aparato (patrón v275/v276) */}
         <p className="mt-8 text-xs text-zinc-500 leading-relaxed">
           El salón interactivo de las dos salas — el pulso en vivo, los mapas del corredor y del mundo, los arcos de la alianza — vive en el aparato (la primera página de la casa). Los expedientes viven en las fuentes (agencias-data.ts, agencias-mundo-data.ts), no en esta sala.
@@ -393,7 +481,7 @@ export default function ServiciosPage() {
 
         <noscript>
           <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-            {`La sala funciona sin JavaScript: los ${COMUNIDAD.length + RED.length} expedientes —los ${COMUNIDAD.length} de la Comunidad de EE. UU. y los ${RED.length} de la red mundial, de ${NACIONES_RED} naciones— están arriba, servidos en el HTML, con su fundación, su sede, su lema, su misión y sus fichas; los ${SENTIDOS.length} sentidos del oficio y la sala anexa (${ALIADAS.map((a) => a.sigla).join(" · ")}) también viajan en el HTML. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
+            {`La sala funciona sin JavaScript: los ${COMUNIDAD.length + RED.length} expedientes —los ${COMUNIDAD.length} de la Comunidad de EE. UU. y los ${RED.length} de la red mundial, de ${NACIONES_RED} naciones— están arriba, servidos en el HTML, con su fundación, su sede, su lema, su misión y sus fichas; los ${SENTIDOS.length} sentidos del oficio y la sala anexa (${ALIADAS.map((a) => a.sigla).join(" · ")}) también viajan en el HTML${pulso.length > 0 ? `, con el pulso del archivo por agencia (${pulso.length} de ${COMUNIDAD.length} agencias citadas)` : ""}. Las salas en vivo (primera página, vértigo) piden JavaScript.`}
           </p>
         </noscript>
       </div>
