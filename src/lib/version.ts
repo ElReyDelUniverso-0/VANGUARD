@@ -1666,6 +1666,19 @@
 //  ③ motor (busqueda.ts): con filtro, cada fuente aporta hasta el
 //    límite completo y el recorte va DESPUÉS del tamiz — antes el chip
 //    solo enseñaba lo que sobró del top-24 sin filtrar (≤ 8 por fuente).
-export const APP_VERSION = "v226.0";
-export const APP_CODENAME = "EL TAMIZ";
+// v227.0 EL DESPLIEGUE — AGENT 2 tarea (b) MAPAS + directiva del Dueño
+//  («ve a cada módulo de vanguard y expandelo», TURNO 09:11):
+//  módulo expandido: /conflicto/[tag] — el teatro muestra SUS frentes.
+//  ① Sección «LOS FRENTES DEL TEATRO»: los puntos de la sala OSINT
+//    (v129, proyectados por v220, entidades desde v225) como chips
+//    server-rendered que llevan a la FICHA vg:punto en /nucleo (la
+//    ficha lleva al mapa — cadena intacta), con nota de cada punto en
+//    el title y el conteo real por teatro.
+//  ② Procedencia a la vista: «mapa OSINT · fuente: … · NO cartografía
+//    oficial» + enlace «el mapa del frente ▸» a /ver-guerra cuando la
+//    sala existe. CERO coordenadas en la página.
+//  ③ Teatro sin sala (korea): la ausencia se DECLARA («la casa no
+//    inventa puntos»), jamás fingida.
+export const APP_VERSION = "v227.0";
+export const APP_CODENAME = "EL DESPLIEGUE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

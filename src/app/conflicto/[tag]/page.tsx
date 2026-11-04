@@ -8,6 +8,9 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 // v218.0 EL NÚCLEO — enlaces contextuales calculados en el mismo render
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { enlacesDeRegion } from "@/lib/nucleo/relaciones";
+// v227.0 EL DESPLIEGUE — los frentes documentados del teatro
+import { geografiaDeTeatro } from "@/lib/nucleo/geografia";
+import { puntosDelNucleo, idPunto } from "@/lib/nucleo/puntos";
 
 // v206.0 MÁS PUERTAS — una página indexable POR TEATRO DE GUERRA.
 // Nadie busca «Vanguard»: la gente busca «guerra en Ucrania hoy»,
@@ -16,6 +19,11 @@ import { enlacesDeRegion } from "@/lib/nucleo/relaciones";
 // últimos cables (cada uno hacia su /noticia/[id]), JSON-LD CollectionPage
 // + ItemList y CTA hacia la app. Solo existen los teatros del mapa: una
 // URL desconocida es 404 limpio (nunca páginas vacías para Google).
+// v227.0 EL DESPLIEGUE — el teatro muestra SUS frentes documentados:
+// los puntos de la sala OSINT (v129/v220/v225) como chips que llevan a
+// su ficha vg:punto en /nucleo (la ficha lleva al mapa), con la fuente
+// citada y la precisión a la vista. El teatro sin sala (korea) declara
+// la ausencia — la casa no inventa puntos.
 
 export const dynamic = "force-dynamic";
 
@@ -127,6 +135,12 @@ export default async function ConflictoPage({
   // Sin cables vivos la puerta no se abre (nada vacío para Google)
   if (items.length === 0) notFound();
 
+  // v227.0 EL DESPLIEGUE — los frentes documentados del teatro (sala
+  // OSINT v129 proyectada por v220 como entidades v225). CERO
+  // coordenadas aquí: el catálogo solo proyecta la geografía de la casa.
+  const frentes = puntosDelNucleo().filter((p) => p.teatro === tag);
+  const geoTeatro = geografiaDeTeatro(tag);
+
   const ultimo = items[0];
   const jsonLd = {
     "@context": "https://schema.org",
@@ -215,6 +229,48 @@ export default async function ConflictoPage({
             </Link>
           </div>
         </div>
+
+        {/* v227.0 EL DESPLIEGUE — los frentes documentados del teatro */}
+        {frentes.length > 0 ? (
+          <section className="mt-8" aria-label="Frentes documentados del teatro">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-zinc-500 border-b border-zinc-800 pb-2">
+              Los frentes del teatro — {frentes.length} documentados
+            </h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {frentes.map((p) => (
+                <Link
+                  key={p.clave}
+                  href={`/nucleo?id=${encodeURIComponent(idPunto(p.clave))}`}
+                  title={p.nota || undefined}
+                  className="border border-zinc-800 hover:border-lime-400/50 rounded px-3 py-1.5 text-sm text-zinc-300 bg-zinc-900/40 transition-colors"
+                >
+                  {p.nombre}
+                  <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-wider"> · {p.estado}</span>
+                </Link>
+              ))}
+            </div>
+            <p className="mt-2 font-mono text-[9px] uppercase tracking-widest text-zinc-600">
+              mapa OSINT · fuente: {geoTeatro.fuenteDatos ?? "sala de guerra de la casa"} · NO cartografía oficial
+              {geoTeatro.salaGuerra && (
+                <>
+                  {" · "}
+                  <Link
+                    href="/ver-guerra"
+                    className="underline decoration-zinc-700 underline-offset-2 hover:text-amber-400"
+                  >
+                    el mapa del frente ▸
+                  </Link>
+                </>
+              )}
+            </p>
+          </section>
+        ) : (
+          <section className="mt-8" aria-label="Frentes del teatro">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-600">
+              Sin frentes documentados en este teatro — la casa no inventa puntos (se declara, no se finge).
+            </p>
+          </section>
+        )}
 
         {/* cables del teatro */}
         <section className="mt-8 flex flex-col gap-3">
