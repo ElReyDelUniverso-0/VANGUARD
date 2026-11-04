@@ -3034,6 +3034,40 @@
 //     de las Cruzadas, con el sitemap vivo anunciando /historia) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v273.0 EL TERCER CATÁLOGO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v274.0";
-export const APP_CODENAME = "EL ARCHIVO DE LA HISTORIA";
+// v275.0 LA TAQUILLA DEL ARCHIVO — la sala /historia (v274) crece por
+//         dentro: la cabeza de la cola de la v274 era WAR_BETS (medida al
+//         abrir la ronda: 8 conflictos con cuota — WB1 Punicas 1.4/3.2,
+//         WB2 Termopilas 5/1.15, WB3 Cruzadas 2/1.8, WB4 Cien Años
+//         1.5/2.5, WB5 Waterloo 1.6/2.3, WB6 WWII Europa 1.3/3.5, WB7
+//         Vietnam 1.7/2.1, WB8 Guerra Fria 1.2/5; ANTIGUA ×2 · MEDIEVAL
+//         ×2 · MODERNA ×1 · ACTUAL ×3) que solo vivía en el panel de
+//         apuestas client-side del aparato, invisible para el SSR y para
+//         Google.
+// (1) LA TAQUILLA SE SIRVE EN SERVER — nueva sección en /historia tras el
+//     archivo (patrón v270/v273): cada conflicto con SUS cuotas y SU
+//     probabilidad tal como la fuente los declara (nada de acentos ni
+//     cifras inventadas); censo por categoría derivado con Set + filter y
+//     línea compuesta COMPLETA en JS (lección v256): «La taquilla del
+//     archivo — 8 conflictos con cuota abierta en 4 categorías: el juicio
+//     retrospectivo de la casa sobre guerras que ya tienen veredicto en
+//     los libros» — si la fuente cambia, la línea cambia sola.
+// (2) EL VACÍO HONESTO POR DELANTE — la casa NO acepta apuestas: estas
+//     cuotas son su juicio retrospectivo y el veredicto real ya lo
+//     escribieron los libros de historia; el salón interactivo vive en el
+//     aparato (puerta honesta declarada). Procedencia declarada («La
+//     taquilla vive en la fuente», directiva v266).
+// (3) EL NOSCRIPT SE COMPONE DERIVADO — los censos compuestos
+//     (${GUERRAS.length} guerras · ${APUESTAS.length} cuotas) viajan al
+//     noscript, cero cifras nuevas a mano; guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /historia en la tabla) ·
+//     health v275.0 db up · pruebas 176/176 (+2 LA TAQUILLA DEL ARCHIVO:
+//     estática — la fuente de 8 cuotas intacta uno a uno (WB1–WB8), censo
+//     y línea derivados, la probabilidad compuesta desde la fuente, el
+//     vacío honesto y la procedencia; viva — la sala sirve la línea
+//     derivada, el censo por categoría (2/2/1/3), las Punicas con «cuotas:
+//     1.4 / 3.2» y «la casa da 65% a Roma», las anclas v274 en pie) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v274.0 EL ARCHIVO DE LA HISTORIA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v275.0";
+export const APP_CODENAME = "LA TAQUILLA DEL ARCHIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

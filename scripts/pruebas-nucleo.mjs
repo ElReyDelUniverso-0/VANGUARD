@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v274.0", async () => {
+  await verificar("servidor vivo y en v275.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v274"), `versión ${r.json?.version} ≠ v274`);
+    afirmar(String(r.json?.version).startsWith("v275"), `versión ${r.json?.version} ≠ v275`);
   });
 
   // censo por API
@@ -2010,6 +2010,53 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v275.0 LA TAQUILLA DEL ARCHIVO: las 8 cuotas de la fuente suben a la sala (/historia) ──
+  // La cabeza de la cola de la v274 (medida al abrir la ronda): WAR_BETS —
+  // 8 conflictos con cuota (WB1–WB8, ANTIGUA ×2 · MEDIEVAL ×2 · MODERNA ×1
+  // · ACTUAL ×3) solo vivía en el panel client-side del aparato; la
+  // taquilla la sirve en server con censo y líneas derivados.
+  await verificar("LA TAQUILLA DEL ARCHIVO estática: la fuente de 8 cuotas intacta y la sala la sirve derivada (v275)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/historia/page.tsx"), "utf8");
+    // la fuente intacta: los 8 conflictos uno a uno
+    afirmar(fuente.includes("export const WAR_BETS"), "la fuente de apuestas no existe");
+    const iniW = fuente.indexOf("export const WAR_BETS");
+    const finW = fuente.indexOf("];", iniW);
+    const bloqueW = fuente.slice(iniW, finW === -1 ? fuente.length : finW + 2);
+    afirmar(bloqueW.length > 1500 && bloqueW.length < 4000, `el slice de la taquilla midió mal (${bloqueW.length})`);
+    for (const id of ["WB1", "WB2", "WB3", "WB4", "WB5", "WB6", "WB7", "WB8"]) {
+      afirmar(bloqueW.includes(`id: "${id}"`), `falta el conflicto ${id} en la fuente`);
+    }
+    // la sala consume la fuente (directiva v266) y deriva TODO (cero cifras a mano)
+    afirmar(/import \{[^}]*\bWAR_BETS\b[^}]*\} from "@\/lib\/game-data"/.test(pag), "la sala no consume WAR_BETS de la fuente");
+    afirmar(pag.includes("[...new Set(APUESTAS.map((b) => b.category))]"), "el censo de categorías no se deriva (Set)");
+    afirmar(pag.includes(".filter((b) => b.category === e).length"), "el conteo por categoría no se deriva (filter)");
+    afirmar(pag.includes("const lineaTaquilla = `La taquilla del archivo — ${APUESTAS.length} conflictos con cuota abierta en ${TAQUILLA_ERAS.length} categorías"), "la línea de la taquilla no se compone COMPLETA en JS");
+    afirmar(pag.includes("Math.round(b.probabilityA * 100)"), "la probabilidad no se compone desde la fuente");
+    afirmar(pag.includes("La taquilla vive en la fuente"), "la sala no declara la procedencia de la taquilla");
+    afirmar(pag.includes("La casa no acepta apuestas"), "el vacío honesto de la taquilla no está declarado");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la sala escribe fechas a mano en la ronda v275!");
+  });
+
+  await verificar("LA TAQUILLA DEL ARCHIVO viva: la sala sirve las 8 cuotas con sus datos derivados (v275)", async () => {
+    const r = await pedir("/historia");
+    afirmar(r.status === 200, `/historia no 200 en v275 (${r.status})`);
+    afirmar(r.texto.includes("LA TAQUILLA DEL ARCHIVO"), "la cabeza de la taquilla no viaja en el SSR");
+    afirmar(r.texto.includes("La taquilla del archivo — 8 conflictos con cuota abierta en 4 categorías"), "la línea derivada de la taquilla no viaja (o las cifras no coinciden con la fuente)");
+    // el censo por categoría (derivado al abrir la ronda: 2/2/1/3)
+    afirmar(r.texto.includes("ANTIGUA ×2 · MEDIEVAL ×2 · MODERNA ×1 · ACTUAL ×3"), "el censo por categoría no viaja derivado");
+    // conflictos reales con sus datos de la fuente (números tal como la fuente los declara)
+    afirmar(r.texto.includes("Guerras Punicas"), "las Punicas no viajan a la taquilla");
+    afirmar(r.texto.includes("cuotas: 1.4 / 3.2"), "las cuotas de las Punicas no viajan derivadas");
+    afirmar(r.texto.includes("la casa da 65% a Roma"), "la probabilidad de Roma no se compone desde la fuente");
+    afirmar(r.texto.includes("la casa da 80% a EE.UU."), "la probabilidad de la Guerra Fria no viaja");
+    afirmar(r.texto.includes("Batalla de Termopilas"), "Termopilas no viaja a la taquilla");
+    // las anclas de la casa en pie (la v274 no cayó)
+    afirmar(r.texto.includes("La taquilla vive en la fuente"), "la procedencia de la taquilla no viaja");
+    afirmar(r.texto.includes("El archivo vive en la fuente"), "la procedencia del archivo cayó (v274)");
+    afirmar(r.texto.includes("El archivo de la historia — 10 guerras de Antigüedad a Contemporánea: de 264 a. C. a 1991, la memoria con la que la casa lee las de hoy"), "la línea del archivo cayó (v274)");
   });
 
   // ── v274.0 EL ARCHIVO DE LA HISTORIA: las 10 guerras reales de la fuente abren puerta propia (/historia) ──

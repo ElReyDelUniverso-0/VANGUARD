@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v275.0",
+    nombre: "LA TAQUILLA DEL ARCHIVO — /historia (v274) crece por dentro: WAR_BETS, los 8 conflictos históricos con cuota y probabilidad (Punicas, Termopilas, Cruzadas, Cien Años, Waterloo, WWII Europa, Vietnam, Guerra Fria), solo vivía en el panel de apuestas client-side del aparato; la taquilla los sirve en server con censo por categoría derivado, la probabilidad compuesta desde la fuente y el vacío honesto por delante (la casa no acepta apuestas — el veredicto ya lo escribieron los libros)",
+    hitos: [
+      "LA TAQUILLA SE SIRVE EN SERVER — cada conflicto con SUS cuotas y SU probabilidad tal como la fuente los declara; censo por categoría derivado con Set + filter (ANTIGUA ×2 · MEDIEVAL ×2 · MODERNA ×1 · ACTUAL ×3) y línea compuesta COMPLETA en JS (lección v256): «8 conflictos con cuota abierta en 4 categorías» (cero cifras a mano — herencia v235/v268/v270/v273)",
+      "EL VACÍO HONESTO POR DELANTE — la casa NO acepta apuestas: estas cuotas son su juicio retrospectivo, el veredicto real ya lo escribieron los libros de historia; el salón interactivo vive en el aparato (puerta honesta declarada); procedencia declarada («La taquilla vive en la fuente», directiva v266)",
+      "EL NOSCRIPT SE COMPONE DERIVADO — los censos compuestos (guerras y cuotas) viajan al noscript desde la fuente; cero fechas a mano, guardia v234 en pie",
+      "QA v275: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /historia en la tabla), health v275.0 db up, pruebas 176/176 (+2 LA TAQUILLA DEL ARCHIVO: estática — la fuente de 8 cuotas intacta uno a uno (WB1–WB8), censo y línea derivados, la probabilidad compuesta, el vacío honesto y la procedencia; viva — la línea derivada, el censo 2/2/1/3, las Punicas con «cuotas: 1.4 / 3.2» y «la casa da 65% a Roma», las anclas v274 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v274.0",
     nombre: "EL ARCHIVO DE LA HISTORIA — la expansión abre una puerta nueva (/historia): HISTORICAL_WARS, las 10 guerras reales de la Antigüedad a la Contemporánea con años, facciones, desenlace y coste, solo vivía en el panel client-side; la sala server las sirve con censo por era y arco de tiempo derivados, los años negativos compuestos como a. C. desde el número real y las puertas honestas a las guerras de hoy",
     hitos: [

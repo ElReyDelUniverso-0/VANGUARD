@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HISTORICAL_WARS } from "@/lib/game-data";
+import { HISTORICAL_WARS, WAR_BETS } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
@@ -19,6 +19,20 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // y en /mundo — puertas honestas al final). Directiva v266: el mapa vive
 // en la fuente (game-data.ts), no en esta sala. Cero fechas a mano,
 // guardia v234 en pie.
+
+// v275.0 LA TAQUILLA DEL ARCHIVO — la sala crece por dentro: la casa tiene
+// WAR_BETS (8 conflictos históricos con cuota y probabilidad — ANTIGUA ×2,
+// MEDIEVAL ×2, MODERNA ×1, ACTUAL ×3) que solo vivía en el panel de apuestas
+// client-side del aparato (la primera página), invisible para el SSR y para
+// Google. Esta sala la sirve en server (patrón v270/v273): cada conflicto
+// con SUS cuotas y SU probabilidad tal como la fuente los declara (nada de
+// acentos ni cifras inventadas), el censo por categoría derivado con Set +
+// filter (cero cifras a mano, herencia v235/v268/v270/v273) y la línea
+// compuesta COMPLETA en JS (lección v256). El vacío honesto por delante:
+// la casa NO acepta apuestas — estas cuotas son su juicio retrospectivo y
+// el veredicto real ya lo escribieron los libros de historia. Directiva
+// v266: el mapa vive en la fuente (game-data.ts), no en esta sala. Cero
+// fechas a mano, guardia v234 en pie.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -76,6 +90,16 @@ function ano(n: number): string {
 }
 
 const lineaArchivo = `El archivo de la historia — ${GUERRAS.length} guerras de ${ERA_NOMBRES[ERA_ORDEN[0]]} a ${ERA_NOMBRES[ERA_ORDEN[3]]}: de ${ano(ANO_INICIO)} a ${ano(ANO_FIN)}, la memoria con la que la casa lee las de hoy`;
+
+// ── v275.0 LA TAQUILLA DEL ARCHIVO — TODO derivado de WAR_BETS, nada a mano ──
+const APUESTAS = WAR_BETS;
+
+// las categorías de la taquilla en el orden de la fuente (el Set preserva
+// la inserción — ANTIGUA, MEDIEVAL, MODERNA, ACTUAL)
+const TAQUILLA_ERAS = [...new Set(APUESTAS.map((b) => b.category))];
+const censoTaquilla = TAQUILLA_ERAS.map((e) => `${e} ×${APUESTAS.filter((b) => b.category === e).length}`).join(" · ");
+
+const lineaTaquilla = `La taquilla del archivo — ${APUESTAS.length} conflictos con cuota abierta en ${TAQUILLA_ERAS.length} categorías: el juicio retrospectivo de la casa sobre guerras que ya tienen veredicto en los libros`;
 
 const ENLACES_NUCLEO: EnlaceContextual[] = [
   {
@@ -200,6 +224,39 @@ export default function HistoriaPage() {
           );
         })}
 
+        {/* v275.0 LA TAQUILLA DEL ARCHIVO — el censo de WAR_BETS servido en
+            server (patrón v270/v273): las cuotas de la fuente con su censo
+            derivado y el vacío honesto por delante */}
+        <section className="mt-12" aria-label="La taquilla del archivo">
+          <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
+            <span className="text-amber">LA TAQUILLA DEL ARCHIVO</span>
+            <span className="text-zinc-600">{` · ${APUESTAS.length} conflictos con cuota`}</span>
+          </h2>
+          <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaTaquilla}.`}</p>
+          <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-zinc-500">{censoTaquilla}</p>
+          <p className="mt-3 text-xs text-zinc-500 leading-relaxed">
+            La casa no acepta apuestas: estas cuotas son su juicio retrospectivo, servidas tal como la fuente las declara — el veredicto real ya lo escribieron los libros de historia. El salón interactivo de apuestas vive en el aparato (la primera página de la casa). La taquilla vive en la fuente (game-data.ts), no en esta sala.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {APUESTAS.map((b) => {
+              const lineaCuotas = `cuotas: ${b.oddsA} / ${b.oddsB}`;
+              const lineaProb = `la casa da ${Math.round(b.probabilityA * 100)}% a ${b.factionA}`;
+              return (
+                <article key={b.id} className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h3 className="text-sm font-bold leading-snug text-zinc-100">{b.warName}</h3>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">{b.category}</span>
+                  </div>
+                  <p className="mt-1 font-mono text-[10px] text-zinc-500">{`${b.factionA} vs ${b.factionB}`}</p>
+                  <div className="mt-2 font-mono text-[10px] text-cyan-hud">{lineaCuotas}</div>
+                  <div className="mt-1 font-mono text-[10px] text-amber">{lineaProb}</div>
+                  <p className="mt-2 text-xs text-zinc-400 leading-relaxed">{b.description}</p>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
         {/* CONECTA CON EL NÚCLEO (patrón v230/v233/v234) — puertas honestas */}
         <div className="mt-10">
           <EnlacesNucleo enlaces={ENLACES_NUCLEO} />
@@ -207,7 +264,7 @@ export default function HistoriaPage() {
 
         <noscript>
           <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-            El archivo funciona sin JavaScript: las 10 guerras, sus años, su desenlace y su coste están arriba, servidos en el HTML. Las salas en vivo (primera página, globo 3D, vértigo) piden JavaScript.
+            {`El archivo funciona sin JavaScript: las ${GUERRAS.length} guerras, sus años, su desenlace y su coste —y las ${APUESTAS.length} cuotas de la taquilla— están arriba, servidos en el HTML. Las salas en vivo (primera página, globo 3D, vértigo) piden JavaScript.`}
           </p>
         </noscript>
       </div>
