@@ -158,6 +158,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v284.0 EL TABLERO DE LOS CONFLICTOS — las 33 regiones de la
+      // fuente (CONFLICTS) servidas en server: nivel, intensidad y
+      // dossier real, con puertas a las salas de teatro vivas,
+      // indexable para las búsquedas de conflictos (Ucrania, Gaza,
+      // Sahel, Taiwán...)
+      url: `${SITE_URL}/conflictos`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
       // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
       url: `${SITE_URL}/audios`,
       lastModified: new Date(),

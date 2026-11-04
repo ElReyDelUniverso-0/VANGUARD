@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v283.0", async () => {
+  await verificar("servidor vivo y en v284.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v283"), `versión ${r.json?.version} ≠ v283`);
+    afirmar(String(r.json?.version).startsWith("v284"), `versión ${r.json?.version} ≠ v284`);
   });
 
   // censo por API
@@ -2112,6 +2112,69 @@ async function parteB() {
     afirmar(r.texto.includes("vive en el aparato"), "la puerta honesta no viaja");
     afirmar(r.texto.includes('href="/historia"'), "la puerta al archivo no viaja");
     afirmar(r.texto.includes("La sala funciona sin JavaScript"), "el noscript compuesto no viaja");
+  });
+
+  // ── v284.0 EL TABLERO DE LOS CONFLICTOS: las 33 regiones de la fuente ganan su índice server (/conflictos) ──
+  // La cabeza de la cola de la v283: CONFLICTS (dossier real por región)
+  // + el pulso de la BD (groupBy conflictTag) + las puertas honestas
+  // (solo teatros del mapa con cables — nunca puertas muertas, ley v206).
+  await verificar("EL TABLERO DE LOS CONFLICTOS estática: la fuente intacta, el censo derivado y las puertas honestas (v284)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/conflictos/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: 33 regiones (el borde del slice custodiado)
+    afirmar(fuente.includes("export const CONFLICTS"), "la fuente de conflictos no existe");
+    const iniC = fuente.indexOf("export const CONFLICTS");
+    const finC = fuente.indexOf("];", iniC);
+    const bloqueC = fuente.slice(iniC, finC === -1 ? fuente.length : finC + 2);
+    afirmar(bloqueC.length > 15000 && bloqueC.length < 25000, `el slice de conflictos midió mal (${bloqueC.length})`);
+    const nIds = (bloqueC.match(/id: "/g) ?? []).length;
+    afirmar(nIds === 33, `el censo de regiones midió mal (${nIds}/33)`);
+    for (const id of ["ukraine", "gaza", "sahel", "taiwan", "korea", "mexico", "favelas"]) {
+      afirmar(bloqueC.includes(`id: "${id}"`), `falta la región ${id} en la fuente`);
+    }
+    // la sala: pulso de lectura pura, censo derivado, puertas honestas
+    afirmar(sala.includes('by: ["conflictTag"]'), "el pulso no baja del archivo con groupBy");
+    afirmar(sala.includes('where: { externalId: { not: { startsWith: "curated-" } } }'), "el pulso cuenta las piezas curadas de respaldo (la sala nunca miente)");
+    afirmar(sala.includes("if (!niveles.includes(c.level)) niveles.push(c.level)"), "el orden del censo no se deriva de la primera aparición en la fuente");
+    afirmar(sala.includes("CONFLICTS.filter((c) => c.level === n).length"), "el conteo por nivel no se deriva");
+    afirmar(sala.includes("const intensidadMedia = Math.round(sumaIntensidad / CONFLICTS.length)"), "la intensidad media no se deriva con reduce");
+    afirmar(sala.includes("const conPulso = CONFLICTS.filter((c) => (vivo[c.id.toUpperCase()] ?? 0) > 0)"), "el pulso vivo no se deriva del groupBy");
+    afirmar(sala.includes("const sala = TEATROS[c.id]"), "las puertas no se guardan con el mapa de teatros (ley v206: URL desconocida es 404)");
+    afirmar(sala.includes("pulso dormido — sin sala de teatro todavía"), "el vacío de las regiones sin sala no se declara honesto");
+    afirmar(sala.includes("su sala de teatro aún no existe"), "el mundo de cables sin sala no se declara");
+    // la línea compuesta en JS (lección v256) — sin cifras escritas
+    afirmar(sala.includes("const lineaConflictos = `El tablero de los conflictos — ${CONFLICTS.length} regiones en seguimiento, ${conPulso.length} con pulso vivo en el archivo y ${CONFLICTS.length - conPulso.length} dormidas"), "la línea del tablero no se compone COMPLETA en JS");
+    afirmar(sala.includes("con una intensidad media de ${intensidadMedia}/100"), "la media no viaja compuesta");
+    afirmar(sala.includes("`" + "${nivel} ×${total}`"), "el chip del censo no compone nivel y conteo en un solo nodo (lección v274)");
+    afirmar(sala.includes("{c.summary}"), "el dossier no viaja verbatim");
+    // las puertas de la casa
+    afirmar(mapa.includes("/conflictos"), "el sitemap no anuncia el tablero");
+    afirmar(paleta.includes('key: "pg:conflictos"'), "la paleta Ctrl+K no lleva el tablero");
+    // guardias
+    afirmar(!/const linea\w+ = [^;]*\b19\d\d\b/.test(sala), "¡el tablero escribe años a mano en su línea!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/conflictos escribe fechas a mano en la ronda v284!");
+  });
+
+  await verificar("EL TABLERO DE LOS CONFLICTOS viva: el SSR sirve la línea derivada, los chips del censo y las puertas vivas (v284)", async () => {
+    const r = await pedir("/conflictos");
+    afirmar(r.status === 200, `/conflictos no 200 (${r.status})`);
+    afirmar(r.texto.includes("EL TABLERO DE LOS CONFLICTOS"), "el título del tablero no viaja");
+    // la línea compuesta COMPLETA (33 · 9 · 24 · 66 — derivados de la fuente y la BD fría)
+    afirmar(r.texto.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea derivada no viaja (o la fuente/BD cambió)");
+    // los chips del censo compuestos (orden de primera aparición en la fuente)
+    for (const chip of ["CRITICO ×9", "INESTABILIDAD ×14", "TENSION ×5", "VIGILANCIA ×5"]) {
+      afirmar(r.texto.includes(chip), `falta el chip del censo ${chip}`);
+    }
+    // el dossier verbatim + la puerta viva con el conteo real del archivo
+    afirmar(r.texto.includes("Frente Oriental — Ucrania"), "el dossier de Ucrania no viaja");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "la puerta de Ucrania no viaja");
+    afirmar(r.texto.includes("173 cables del archivo"), "el conteo vivo del archivo no viaja (¿cambió la BD?)");
+    afirmar(r.texto.includes("pulso dormido — sin sala de teatro todavía"), "el vacío honesto de las regiones sin sala no viaja");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/conflictos"), "el sitemap vivo no anuncia el tablero");
   });
 
   // ── v283.0 LA ARMERÍA DEL ARCHIVO: las 12 armas reales de la fuente ganan su sala server (/armeria) ──

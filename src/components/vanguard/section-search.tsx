@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -220,6 +220,13 @@ export function SectionSearch({
         icon: <Crosshair className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la armería de la casa", icon_color: "text-amber",
         kind: "page", href: "/armeria",
+      },
+      {
+        // v284.0 EL TABLERO DE LOS CONFLICTOS — las 33 regiones de la fuente, en server
+        key: "pg:conflictos", label: "EL TABLERO DE LOS CONFLICTOS — las 33 regiones en seguimiento: nivel, intensidad, dossier y puerta a sus cables", short: "conflictos regiones tablero nivel intensidad ucrania gaza sahel taiwan seguimiento",
+        icon: <Activity className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el tablero de la casa", icon_color: "text-amber",
+        kind: "page", href: "/conflictos",
       },
       {
         // v217.0 LA EMISORA — la guerra en voz alta + muro de audios

@@ -3355,6 +3355,47 @@
 //     sitemap vivo anunciando la sala) · BD intocada (1877 cables · 9
 //     hechos, un solo escritor).
 // Herencia v282.0 LOS SENTIDOS DE LA SALA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v283.0";
-export const APP_CODENAME = "LA ARMERÍA DEL ARCHIVO";
+// v284.0 EL TABLERO DE LOS CONFLICTOS — la cabeza de la cola de la
+//         v283 aterriza: CONFLICTS (game-data, 33 regiones con dossier
+//         real — nivel, intensidad, resumen, lat/lng, coste humano —
+//         medida esta ronda: CRITICO ×9 · INESTABILIDAD ×14 · TENSION
+//         ×5 · VIGILANCIA ×5) sube al server como /conflictos, el
+//         índice que conecta el catálogo de la casa con las salas de
+//         teatro vivas (/conflicto/[tag], v206) y el mapa (/mundo,
+//         v215). force-dynamic: el pulso de la BD entra al render.
+// (1) LA PUERTA SOLO SE ABRE DONDE EXISTE — cada región mira dos
+//     fuentes: el mapa de teatros (TEATROS, la ley v206: una URL
+//     desconocida es 404 limpio) y el pulso real de la BD (groupBy
+//     conflictTag, lectura pura). Teatro con cables → puerta con el
+//     conteo del archivo (ukraine 173 · gaza 146 · hormuz 60...);
+//     teatro sin cables → la sala existe y espera; región sin sala →
+//     «pulso dormido — sin sala de teatro todavía» (y si el archivo le
+//     da cables antes de que exista la sala, lo declara también).
+//     Nunca puertas muertas.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «El tablero de los conflictos — 33 regiones en
+//     seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con
+//     una intensidad media de 66/100» — length, filter y la media con
+//     reduce + Math.round; los chips del censo se derivan en el ORDEN
+//     DE LA FUENTE (primera aparición, reduce manual — nada de listas
+//     de niveles escritas a mano) y componen «CRITICO ×9» en un solo
+//     nodo (lección v274); el resumen de cada región viaja VERBATIM
+//     (directiva v266); cero años escritos, guardia v234.
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /conflictos (daily,
+//     0.7 — el pulso la mueve) y la paleta Ctrl+K la lleva
+//     (pg:conflictos, icono Activity); JSON-LD CollectionPage +
+//     ItemList con numberOfItems de la fuente; noscript honesto.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /conflictos en la
+//     tabla) · health v284.0 db up · pruebas 194/194 (+2 EL TABLERO:
+//     estática — la fuente intacta (33 ids + borde del slice), el
+//     censo derivado en el orden de la fuente, el groupBy de lectura
+//     pura, la guardia de puertas por TEATROS, la línea compuesta sin
+//     cifras escritas, las puertas (sitemap + paleta) y la guardia
+//     v234; viva — el SSR sirve la línea derivada completa, los chips
+//     del censo, el dossier de Ucrania verbatim con su puerta «173
+//     cables del archivo» y el sitemap vivo anunciando la sala) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v283.0 LA ARMERÍA DEL ARCHIVO y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v284.0";
+export const APP_CODENAME = "EL TABLERO DE LOS CONFLICTOS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

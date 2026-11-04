@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v284.0",
+    nombre: "EL TABLERO DE LOS CONFLICTOS — la cabeza de la cola de la v283 aterriza: CONFLICTS (33 regiones con dossier real: nivel, intensidad, resumen, lat/lng, coste humano) sube al server como /conflictos, el índice que conecta el catálogo de la casa con las salas de teatro vivas y el mapa; la puerta solo se abre donde existe (teatro del mapa con cables reales) — nunca puertas muertas",
+    hitos: [
+      "LA PUERTA SOLO SE ABRE DONDE EXISTE — dos fuentes por región: el mapa de teatros (TEATROS, ley v206: URL desconocida es 404 limpio) y el pulso real de la BD (groupBy conflictTag, lectura pura); teatro con cables → puerta con conteo (ukraine 173 · gaza 146 · hormuz 60), teatro sin cables → «la sala existe y espera», región sin sala → «pulso dormido» (y con cables antes de sala, también se declara)",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256): «El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100»; los chips del censo derivan su orden de la PRIMERA APARICIÓN en la fuente (nada de listas a mano) y componen «CRITICO ×9» en un solo nodo (lección v274); resumen verbatim (directiva v266); guardia v234",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /conflictos (daily, 0.7: el pulso la mueve), paleta Ctrl+K (pg:conflictos, Activity), JSON-LD ItemList con numberOfItems de la fuente, noscript honesto con la línea compuesta",
+      "QA v284: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /conflictos), health v284.0 db up, pruebas 194/194 (+2: estática — la fuente intacta, el censo en el orden de la fuente, el groupBy de lectura pura, la guardia de puertas, la línea compuesta, las puertas y la guardia v234; viva — la línea derivada, los chips, el dossier de Ucrania verbatim con su puerta «173 cables» y el sitemap vivo), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v283.0",
     nombre: "LA ARMERÍA DEL ARCHIVO — la cabeza de la cola de la v282 aterriza: la armería (arsenal-data, la fuente más grande sin vestir) gana su sala server /armeria con las 12 armas reales del archivo (AK-47, Shahed-136, Javelin, HIMARS...), su foto real, su despiece contado desde los pasos de la fuente y su impacto verbatim; el salón interactivo vive en el aparato y la puerta se declara honesta",
     hitos: [
