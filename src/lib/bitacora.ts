@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v258.0",
+    nombre: "EL VÉRTIGO QUE HABLA — la expansión llega al feed (/vertigo, fórmula TikTok de la casa): tenía corazón, teatro, país, compartir y reanudar, pero era el único módulo vivo MUDO — ahora el feed habla con la misma boca v252 (speechSynthesis del aparato) y la voz pertenece a la pieza: al deslizar, calla",
+    hitos: [
+      "LA CUARTA SEÑAL — botón 🔊/🔇 en la columna del feed (aria-label que alterna, Oír/Parar): la misma boca v252 lee título + resumen con la voz española que el aparato trate; ley v190: nada suena sin UN TOQUE",
+      "LA VOZ PERTENECE A LA PIEZA — una sola voz a la vez (vozId); al deslizar a otra pieza la voz calla (como el video de TikTok); toggle honesto: el mismo toque enciende y apaga; cancel() al desmontar — jamás una voz huérfana",
+      "LA DECLARACIÓN HONESTA — aparato sin voz: el feed lo declara una vez arriba («Tu aparato no tiene voz para leer — la casa no finge»), timer limpiado al desmontar",
+      "QA v258: tsc 0 TOTAL, eslint 0, build EXIT 0, health v258.0 db up, pruebas 142/142 (+2 EL VÉRTIGO QUE HABLA: estática — la cuarta señal, el toggle, la voz que calla al deslizar, el cancel y la declaración; viva — el SSR del feed sirve la cuarta señal con las anclas v211/v231/v250 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v257.0",
     nombre: "LA EDAD DEL FRENTE — la expansión llega al puente (/ver-guerra, v229): el mural decía CUÁNTO hay en cada frente documentado (conteo acumulado) pero jamás CUÁNDO sonó la última vez — misma cura que el espejo v256: el visitante lee la MISMA gramática «● última señal hace N» en las dos salas de guerra",
     hitos: [

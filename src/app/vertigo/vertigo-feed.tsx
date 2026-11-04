@@ -31,6 +31,13 @@ import { nombrePais } from "@/lib/impacto";
 // con su URL real de sala de lectura) y REANUDAR (continue-watching: la
 // marca del deslizamiento vive en tu aparato y al volver el feed te deja
 // donde te quedaste, dentro de lo ya cargado, sin recargas y sin preguntas).
+// v258.0 EL VÉRTIGO QUE HABLA — la CUARTA señal: el feed más vivo de la
+// casa era el único mudo (la sala de lectura habla desde v252). La boca es
+// la MISMA (speechSynthesis del aparato, gratis): lee título + resumen de
+// la pieza en la voz española que el aparato trate; una sola voz a la vez;
+// la voz PERTENECE A LA PIEZA — al deslizar, calla (como el video de
+// TikTok); cancel() al desmontar; y si el aparato es mudo, el feed lo
+// DECLARA una vez — jamás se finge. Ley v190: nada suena sin UN TOQUE.
 
 export type CableVertigo = {
   id: string;
@@ -111,6 +118,79 @@ export function VertigoFeed({
   const copiadoTimer = useRef(0);
   // ————— v250.0 REANUDAR: el aviso que se dice una vez —————
   const [reanudadoDe, setReanudadoDe] = useState(0);
+
+  // ————— v258.0 LA VOZ: la cuarta señal — el feed también habla —————
+  const [vozId, setVozId] = useState("");
+  const [vozAviso, setVozAviso] = useState("");
+  const vozAvisoTimer = useRef(0);
+
+  const pararVoz = useCallback(() => {
+    try {
+      window.speechSynthesis?.cancel();
+    } catch {
+      /* ya callada */
+    }
+    setVozId("");
+  }, []);
+
+  // el feed jamás deja una voz huérfana: al desmontar, silencio (v252)
+  useEffect(
+    () => () => {
+      window.clearTimeout(vozAvisoTimer.current);
+      try {
+        window.speechSynthesis?.cancel();
+      } catch {
+        /* sin voz no hay nada que callar */
+      }
+    },
+    []
+  );
+
+  // la voz PERTENECE A LA PIEZA: al deslizar, se queda atrás y calla
+  useEffect(() => {
+    const visible = cables[idx]?.id;
+    if (vozId && visible && visible !== vozId) pararVoz();
+  }, [idx, cables, vozId, pararVoz]);
+
+  const escucharPieza = useCallback(
+    (c: CableVertigo) => {
+      const sint = window.speechSynthesis;
+      const declarar = () => {
+        setVozAviso("Tu aparato no tiene voz para leer — la casa no finge");
+        window.clearTimeout(vozAvisoTimer.current);
+        vozAvisoTimer.current = window.setTimeout(() => setVozAviso(""), 3500);
+      };
+      if (!sint || typeof SpeechSynthesisUtterance === "undefined") {
+        declarar();
+        return;
+      }
+      // toggle honesto: el mismo toque que enciende, apaga
+      if (vozId === c.id) {
+        pararVoz();
+        return;
+      }
+      try {
+        const u = new SpeechSynthesisUtterance(`${c.t}. ${c.s || ""}`.trim());
+        u.lang = "es-ES";
+        try {
+          const vozEs = sint
+            .getVoices()
+            .find((v) => (v.lang || "").toLowerCase().startsWith("es"));
+          if (vozEs) u.voice = vozEs;
+        } catch {
+          /* sin catálogo de voces: la por defecto del aparato */
+        }
+        u.onend = () => setVozId((actual) => (actual === c.id ? "" : actual));
+        u.onerror = () => setVozId((actual) => (actual === c.id ? "" : actual));
+        sint.cancel();
+        sint.speak(u);
+        setVozId(c.id);
+      } catch {
+        declarar();
+      }
+    },
+    [vozId, pararVoz]
+  );
 
   useEffect(() => () => window.clearTimeout(copiadoTimer.current), []);
 
@@ -460,6 +540,23 @@ export function VertigoFeed({
                     {copiadoId === c.id ? "Copiado" : "Enviar"}
                   </span>
                 </button>
+                {/* v258.0 — LA VOZ: la cuarta señal — el feed también habla */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    escucharPieza(c);
+                  }}
+                  aria-label={vozId === c.id ? "Parar la voz de este cable" : "Escuchar este cable"}
+                  className="flex flex-col items-center gap-1 text-zinc-300 hover:text-sky-300 transition-colors"
+                >
+                  <span className="text-2xl">
+                    {vozId === c.id ? "🔇" : "🔊"}
+                  </span>
+                  <span className="font-mono text-[9px] uppercase tracking-wider">
+                    {vozId === c.id ? "Parar" : "Oír"}
+                  </span>
+                </button>
               </div>
 
               {/* la información — abajo, estilo pieza */}
@@ -571,6 +668,16 @@ export function VertigoFeed({
           className="absolute top-14 left-1/2 -translate-x-1/2 z-30 font-mono text-[10px] uppercase tracking-widest text-zinc-950 bg-amber-400 rounded-full px-4 py-1.5 pointer-events-none"
         >
           Reanudado donde lo dejaste
+        </p>
+      )}
+
+      {/* v258.0 — la declaración honesta del aparato mudo: una vez, arriba */}
+      {vozAviso && (
+        <p
+          aria-live="polite"
+          className="absolute top-24 left-1/2 -translate-x-1/2 z-30 font-mono text-[10px] uppercase tracking-widest text-zinc-950 bg-zinc-200 rounded-full px-4 py-1.5 pointer-events-none"
+        >
+          {vozAviso}
         </p>
       )}
 

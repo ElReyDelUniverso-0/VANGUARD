@@ -2516,6 +2516,32 @@
 //     puente sirve «última señal hace» con las anclas v229 en pie) ·
 //     BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v256.0 LA ÚLTIMA SEÑAL y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v257.0";
-export const APP_CODENAME = "LA EDAD DEL FRENTE";
+// v258.0 EL VÉRTIGO QUE HABLA — la expansión funcional módulo a módulo
+//         llega al feed: /vertigo (v211 + v231 + v250) — la fórmula TikTok
+//         de la casa — tenía corazón, teatro, país, compartir y reanudar,
+//         pero era el único módulo vivo MUDO: la sala de lectura habla
+//         desde v252 y el feed más vivo de la casa no decía palabra.
+// (1) LA CUARTA SEÑAL — botón 🔊/🔇 en la columna del feed con
+//     aria-label que alterna («Escuchar este cable» / «Parar la voz de
+//     este cable») y etiqueta Oír/Parar: la MISMA boca v252
+//     (speechSynthesis del aparato, gratis, sin API nueva) lee
+//     título + resumen con la voz española que el aparato trate.
+// (2) LA VOZ PERTENECE A LA PIEZA — una sola voz a la vez (estado vozId);
+//     al deslizar a otra pieza la voz se queda atrás y CALLA (como el
+//     video de TikTok); toggle honesto: el mismo toque que enciende,
+//     apaga; cancel() al desmontar — el feed jamás deja una voz huérfana.
+//     Ley v190: nada suena sin UN TOQUE del visitante.
+// (3) LA DECLARACIÓN HONESTA — aparato sin voz: el feed lo DECLARA una
+//     vez, arriba, sin ruido («Tu aparato no tiene voz para leer — la
+//     casa no finge»), con su timer limpiado al desmontar.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v258.0 db up ·
+//     pruebas 142/142 (+2 EL VÉRTIGO QUE HABLA: estática — la cuarta
+//     señal con su toggle y sus dos aria-labels, la voz que calla al
+//     deslizar, el cancel en desmontaje y la declaración del aparato
+//     mudo; viva — el SSR del feed sirve la cuarta señal con las anclas
+//     v211/v231/v250 en pie) · BD intocada (1877 cables · 9 hechos, un
+//     solo escritor).
+// Herencia v257.0 LA EDAD DEL FRENTE y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v258.0";
+export const APP_CODENAME = "EL VÉRTIGO QUE HABLA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

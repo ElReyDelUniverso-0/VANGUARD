@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v257.0", async () => {
+  await verificar("servidor vivo y en v258.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v257"), `versión ${r.json?.version} ≠ v257`);
+    afirmar(String(r.json?.version).startsWith("v258"), `versión ${r.json?.version} ≠ v258`);
   });
 
   // censo por API
@@ -2009,6 +2009,44 @@ async function parteB() {
     afirmar(r.texto.includes("Enviar"), "el SSR no sirve la etiqueta de compartir");
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
+    afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v258.0 EL VÉRTIGO QUE HABLA: la cuarta señal — el feed más vivo de
+  // la casa era el único mudo (la sala de lectura habla desde v252). La
+  // boca es la MISMA (speechSynthesis del aparato): una sola voz a la vez,
+  // la voz PERTENECE A LA PIEZA — al deslizar calla —, cancel() al
+  // desmontar, y el aparato mudo se DECLARA una vez. Ley v190: nada suena
+  // sin UN TOQUE.
+  await verificar("EL VÉRTIGO QUE HABLA: la cuarta señal con la voz que pertenece a la pieza (v258)", () => {
+    const feed = readFileSync(join(RAIZ, "src/app/vertigo/vertigo-feed.tsx"), "utf8");
+    // la misma boca v252 y su toggle honesto con los dos estados
+    afirmar(feed.includes("window.speechSynthesis"), "el feed no usa la voz del aparato");
+    afirmar(feed.includes("SpeechSynthesisUtterance"), "sin utterance no hay lectura");
+    afirmar(feed.includes('u.lang = "es-ES"'), "la voz del feed no es la española");
+    afirmar(feed.includes('vozId === c.id ? "🔇" : "🔊"'), "la cuarta señal no alterna su estado");
+    afirmar(feed.includes('vozId === c.id ? "Parar" : "Oír"'), "la etiqueta de la voz no alterna");
+    afirmar(feed.includes('aria-label={vozId === c.id ? "Parar la voz de este cable" : "Escuchar este cable"}'), "la cuarta señal sin su aria-label alternante");
+    // una sola voz a la vez y la voz que calla al deslizar
+    afirmar(feed.includes("const [vozId, setVozId] = useState(\"\")"), "sin el estado de la voz única");
+    afirmar(feed.includes("if (vozId && visible && visible !== vozId) pararVoz()"), "la voz se queda hablando de la pieza anterior al deslizar");
+    // el feed jamás deja una voz huérfana y el aparato mudo se declara
+    afirmar(feed.includes("window.speechSynthesis?.cancel()"), "el feed puede dejar una voz huérfana al desmontar");
+    afirmar(feed.includes("Tu aparato no tiene voz para leer"), "sin la declaración honesta del aparato mudo");
+    // la cuarta señal no dispara el doble toque de la pieza
+    afirmar(feed.includes("stopPropagation"), "la voz dispara el doble toque de la pieza");
+  });
+
+  await verificar("EL VÉRTIGO QUE HABLA vivo: el SSR del feed sirve la cuarta señal (v258)", async () => {
+    const r = await pedir("/vertigo");
+    afirmar(r.status === 200, `/vertigo no 200 en v258 (${r.status})`);
+    afirmar(r.texto.includes('aria-label="Escuchar este cable"'), "el SSR no sirve la cuarta señal");
+    afirmar(r.texto.includes("Oír"), "el SSR no sirve la etiqueta de la voz");
+    // la declaración honesta NO viaja en el SSR (nace con la voz callada, cero mismatch)
+    afirmar(!r.texto.includes("Tu aparato no tiene voz"), "la declaración del aparato mudo nace visible (mismatch)");
+    // las anclas viejas del feed siguen en pie
+    afirmar(r.texto.includes('aria-label="Compartir este cable"'), "la tercera señal desapareció");
+    afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
   });
 
