@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v231.0", async () => {
+  await verificar("servidor vivo y en v232.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v231"), `versión ${r.json?.version} ≠ v231`);
+    afirmar(String(r.json?.version).startsWith("v232"), `versión ${r.json?.version} ≠ v232`);
   });
 
   // censo por API
@@ -868,6 +868,20 @@ async function parteB() {
       const dest = await pedir(e.ruta);
       afirmar(dest.status === 200, `puerta de materia prima rota ${e.ruta} → ${dest.status}`);
     }
+  });
+
+  // ── v232.0 LA CENTRAL DE ALARMAS: la campana del HUD llama a la primicia ──
+  await verificar("v232 LA CENTRAL DE ALARMAS: /api/health sirve la versión y la ley de la alarma vive en el árbol", async () => {
+    const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
+    afirmar(String(r.json?.version).startsWith("v232"), "health sin v232");
+    const fs = await import("node:fs");
+    const alarma = fs.readFileSync("src/lib/alarma.ts", "utf8");
+    afirmar(alarma.includes("UMBRAL_ALARMA = TIERS.critico.min"), "la ley de la alarma no es el escalón CRÍTICO");
+    afirmar(alarma.includes("VENTANA_MIN = 120"), "la ventana EN VIVO no es 120 min");
+    const central = fs.readFileSync("src/components/vanguard/central-alarmas.tsx", "utf8");
+    afirmar(central.includes("ÚLTIMA HORA"), "el toast ÚLTIMA HORA no vive en la Central");
+    const centro = fs.readFileSync("src/components/vanguard/panels/centro-panel.tsx", "utf8");
+    afirmar(centro.includes("useAlarma.getState().limpiar()"), "el CENTRO no revisa la campana");
   });
 
   // ── v231.0 EL LATIDO: el vértigo conecta cada pieza con su país y su sala ──

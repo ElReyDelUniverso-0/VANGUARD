@@ -29,6 +29,8 @@ import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
 import { useColeccionFichas } from "@/lib/fichas-guerra-data";
 // v183.0: LA GLORIA (sellos dorados, títulos, vitrina, racha del cazador) entra a la fila
 import { useGloria } from "@/lib/gloria";
+// v232.0: la CENTRAL DE ALARMAS entra a la disciplina de rehidratación
+import { useAlarma } from "@/lib/alarma";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -91,6 +93,12 @@ export function Rehidratador() {
     rehidratar(useGloria)
       .then(() => marcarHidratado("vg183-gloria"))
       .catch(() => marcarHidratado("vg183-gloria"));
+    // v232.0 LA CENTRAL DE ALARMAS: la campana también respeta la fila —
+    // sin este registro su cerradura bloquearía la persistencia (mismo
+    // bug cazado en el QA de v171/v172/v176 — la lección ya es ley de la casa)
+    rehidratar(useAlarma)
+      .then(() => marcarHidratado("vg232-alarma"))
+      .catch(() => marcarHidratado("vg232-alarma"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

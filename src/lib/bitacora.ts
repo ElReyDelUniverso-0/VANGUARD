@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v232.0",
+    nombre: "LA CENTRAL DE ALARMAS (RENUMERADA dos veces: esta casa trabajó sobre el árbol local v173 sin ver las 103 rondas del remoto que consumieron v174-v231 — integrada sobre origin/main con el siguiente número libre)",
+    tipo: "nav",
+    hitos: [
+      "LA CAMPANA DEL HUD (nueva central-alarmas.tsx junto al selector de idioma) — «noticias EN VIVO» necesita sireno: mientras el visitante recorre la Casa, la Central barre la Agencia cada 60s (la misma dieta del CENTRO) y cuando nace un cable de alto impacto recién nacido, la campana del HUD cuenta con aro rojo latiente (v232-campana-viva en globals.css, el lenguaje del anillo de alarma de la SALA DEL MAPA MUNDIAL v173)",
+      "LA LEY DE LA ALARMA (src/lib/alarma.ts, determinista como el motor de impacto) — alarma = impacto ≥ CRÍTICO (64, el escalón de TIERS) Y nacido < 120 min (la misma ventana EN VIVO del mundo 3D); store vg232-alarma (storage blindado + registro en el rehidratador — la lección v171/v172/v176 ya es ley), FIFO de 240 vistos (nada alarma dos veces), techo de 9 pendientes por impacto (la campana no traga el archivo, el CENTRO lo sirve); la PRIMERA revisión de un visitante siembra silencio salvo un URGENTE humeando <15 min (una sola alarma honesta)",
+      "EL TOAST ÚLTIMA HORA — la primicia aterriza con el icono siren del color de su escalón y acción ABRIR que abre la SALA DE LECTURA v116 sin navegar; el panel de la campana lista las pendientes con escalón/impacto/país/edad — tocar una la abre y la marca leída; ABRIR EL CENTRO MUNDIAL vuela a la Agencia",
+      "LECTURA HONESTA 2D⇄3D — estar mirando el CENTRO ES revisar la campana: centro-panel llama limpiar() en cada carga de la Agencia; paridad (ley #25): el mundo 3D ya tiene su sireno — el anillo de alarma de la sala del mapa late en los cables <2h, la campana es la placa de la Casa",
+      "3 BUGS CAZADOS EN QA E2E REAL (agent-browser contra next start) y curados: ① carrera de rehidratación — la primera barrida corría antes del rehydrate y el rehidratador pisaba los vistos del barrido (badge 2 con un solo cable nuevo): la primera barrida espera estaHidratado(vg232-alarma) con red de seguridad 6s; ② re-alarma tras leer() — el cable leído volvía a saltar en cada barrido mientras viviera en la ventana: leer() pliega el id a vistos; ③ re-alarma tras limpiar() — abrir el CENTRO y volver re-armaba la campana: limpiar() pliega todos los ids de pendientes a vistos",
+      "QA v232: tsc 0, eslint 0 (6 archivos), build EXIT 0, camino real verificado en /clasico (campana → panel honesto → alarma simulada IMP 88 URGENTE sobre la API real + cable real IMP 72 CRÍTICO → toast+badge → READING ROOM v116 desde la fila → CENTRO la revisa → reload NO re-alarma), persistencia verificada (badge sobrevive recarga), móvil 390px sin overflow, consola sin errores; INFRA de la ronda: primer build exitoso del sandbox desde 10-28 (BUILD_ID restaurado — el fallo crónico era transitorio de red de next/font) y primer relevo en 8 días (rss 2554→~200 MB)",
+    ],
+  },
+  {
     version: "v193.1",
     nombre: "VIGO Y LA PUERTA",
     tipo: "nav",

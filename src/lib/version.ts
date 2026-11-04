@@ -1756,6 +1756,46 @@
 //  ③ noscript enriquecido: además de /guerra-hoy, la puerta /nucleo.
 //  ④ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 75/75 (+3 EL LATIDO) ·
 //    BD intocada (1877 · 9).
-export const APP_VERSION = "v231.0";
-export const APP_CODENAME = "EL LATIDO";
+
+// v232.0: LA CENTRAL DE ALARMAS (RENUMERADA dos veces: esta casa trabajó
+//         sobre el árbol local v173 sin ver las 103 rondas de AGENT 2 en el
+//         remoto — que consumieron v174-v231 —; integrada sobre origin/main
+//         con el siguiente número libre. Crónica exacta en worklog) —
+//         «noticias EN VIVO por importancia e impacto» necesitaba un
+//         SIRENO: el CENTRO (v173) ranquea, la CENTRAL AVISA. El visitante
+//         ya no tiene que estar mirando el rango para enterarse de la
+//         primicia: la Casa lo llama.
+// (1) LA CAMPANA DEL HUD (central-alarmas.tsx, junto al selector de
+//     idioma): la Central barre la Agencia cada 60s (la misma dieta del
+//     CENTRO) y cuando nace un cable de alto impacto recién nacido, la
+//     campana CUENTA con aro rojo latiendo (v232-campana-viva en
+//     globals.css, el lenguaje del anillo de alarma de la sala del mapa).
+// (2) LA LEY DE LA ALARMA (src/lib/alarma.ts — determinista como el
+//     motor de impacto): alarma = impacto ≥ CRÍTICO (64, el escalón de
+//     TIERS) Y nacido < 120 min (la misma ventana EN VIVO del mundo 3D).
+//     Store vg232-alarma con storage blindado y registro en el
+//     REHIDRATADOR (la lección v171/v172/v176 ya es ley de la casa),
+//     FIFO de 240 vistos — nada alarma dos veces — y techo de 9
+//     pendientes por impacto: la campana no traga el archivo, el CENTRO
+//     lo sirve. La PRIMERA revisión de un visitante siembra silencio
+//     (nada inunda), salvo que un URGENTE siga humeando <15 min: una
+//     sola alarma honesta.
+// (3) EL TOAST ÚLTIMA HORA — la primicia aterriza con el icono siren del
+//     color de su escalón y acción ABRIR que abre la SALA DE LECTURA
+//     (v116) sin navegar. El panel de la campana lista las pendientes
+//     con escalón/impacto/país/edad; tocar una la abre y la marca
+//     leída; ABRIR EL CENTRO MUNDIAL vuela a la Agencia.
+// (4) LECTURA HONESTA 2D⇄3D — estar mirando el CENTRO ES revisar la
+//     campana: centro-panel llama limpiar() en cada carga (quien ve el
+//     ranking ya leyó las alarmas). Paridad (ley #25): el mundo 3D ya
+//     tiene su sireno — el anillo de alarma de la SALA DEL MAPA
+//     MUNDIAL (v173) late en los cables <2h; la campana es la placa
+//     de la Casa.
+// (5) 3 BUGS CAZADOS EN QA E2E REAL y curados: ① carrera de rehidratación
+//     (la primera barrida espera estaHidratado — el rehidratador pisaba
+//     los vistos del primer barrido); ② re-alarma tras leer(); ③
+//     re-alarma tras limpiar() — leer/limpiar pliegan los ids a vistos.
+// Herencia v231.0 EL LATIDO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v232.0";
+export const APP_CODENAME = "LA CENTRAL DE ALARMAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

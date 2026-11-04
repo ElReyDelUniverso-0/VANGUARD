@@ -34,6 +34,8 @@ const LectorNoticia = dynamic(
   { ssr: false }
 );
 import { Radio, Bot } from "lucide-react";
+// v232.0 LA CENTRAL DE ALARMAS — la campana viva de la Agencia en el HUD
+import { CentralAlarmas } from "@/components/vanguard/central-alarmas";
 // v126.0 LA CASA · ATELIER — la serie grabada del visitante (Ley de la artesanía)
 // v133.0 EL ACABADO REAL — la placa luce el Nº de unidad de la EDICIÓN
 // LIMITADA vigente (Ley de la escasez): cada visitante sale del taller
@@ -336,6 +338,9 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             <LiveCounter />
             {/* v21: selector de idioma (7 idiomas) */}
             <LanguageSwitcher />
+            {/* v232.0 LA CENTRAL DE ALARMAS — la campana de la Agencia: cables
+                CRÍTICO+ recién nacidos avisan EN VIVO (toast + panel + lector) */}
+            <CentralAlarmas />
             {/* v134.0: el botón del MODO GUERRA (versión ligera) se retiró del HUD —
                 atrapaba visitantes en pantalla negra; la Casa ya no tiene modo oscuro */}
             {/* v105.0 EL NAVEGADOR: la brújula que responde "¿qué hago hoy?" — visible siempre */}

@@ -39,6 +39,8 @@ import {
 // (siempre suena) + pulso automático honesto cuando el permiso v201 vive
 import { narrarNoticiero, pararNoticiero } from "@/lib/noticiero";
 import { pararVoces } from "@/lib/voces-agentes";
+// v232.0 LA CENTRAL DE ALARMAS: estar mirando la Agencia ES revisar la campana
+import { useAlarma } from "@/lib/alarma";
 
 type Cable = NoticiaRanqueada;
 
@@ -100,6 +102,9 @@ export function CentroPanel() {
         }
       }
       setPulso((pulsoCentro() as typeof pulso) ?? null);
+      // v232.0 LA CENTRAL DE ALARMAS: quien mira el ranking de la Agencia
+      // ya revisó la campana — las alarmas pendientes se han leído aquí
+      try { useAlarma.getState().limpiar(); } catch { /* la revisión jamás tumba el panel */ }
     } catch {
       // la caché local sostiene la sala — la Agencia nunca calla
     } finally {
