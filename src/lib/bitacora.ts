@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v290.0",
+    nombre: "EL PULSO POR PALABRAS — la tercera capa del tablero (la cola de la v289 se paga y la clasificación pendiente se resuelve): las 6 GUERRAS de la fuente (v129, dossiers reales de las guerras del planeta) cruzan el archivo con SUS keywords y el algoritmo del canon; el pulso por conflictTag cuenta los etiquetados y este cuenta los que CITAN a cada guerra — incluidos los que nadie etiquetó; 6 de 6 guerras citadas por 398 titulares medidos contra la BD fría",
+    hitos: [
+      "LA CLASIFICACIÓN RESUELTA — GUERRAS (guerras-activas-data, v129) son dossiers reales de las guerras actuales (el simulador las consume, pero los nombres, las fechas y las keywords son las del mundo real); su pulso sube al server con el mismo canon que los rostros (v287), las agencias (v288) y la red mundial (v289)",
+      "EL PULSO COMPLEMENTARIO — el groupBy del tablero (v284) cuenta los cables ETIQUETADOS; el pulso por palabras cuenta los que citan a cada guerra (keywords del panel, el camino de la v263): los dos números conviven en la sala y ninguno inventa",
+      "LA LÍNEA SE COMPONE COMPLETA EN JS (lección v256) — «El pulso por palabras — 6 de 6 guerras citadas por 398 titulares del archivo»; cada tarjeta con SU nombre verbatim («UCRANIA — LA GUERRA MAYOR»), su conteo derivado y su último titular como puerta viva a /noticia/[id]; la lectura de títulos es independiente del groupBy (cada capa declara su propio vacío)",
+      "QA v290: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /conflictos en pie), health v290.0 db up, pruebas 206/206 (+2: estática — la fuente clasificada e intacta (6 guerras con keywords), el cruce en el orden de la fuente, la línea compuesta, el nombre verbatim, la puerta, el vacío y las guardias; viva — la línea derivada (6 de 6 · 398), las seis tarjetas (Oriente 190, Ucrania 119) y las anclas v284/v285 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v289.0",
     nombre: "EL PULSO DE LA RED MUNDIAL — la cuarta capa de /servicios (la cabeza de la cola de la v288 se paga): los PULSO_KEYWORDS_MUNDO de la fuente (el pulso real de los 18 servicios extranjeros, v128) cruzan el MISMO archivo con EL MISMO algoritmo del panel (red-mundial-panel); 2 de 18 servicios citados por 5 titulares medidos contra la BD fría — el pulso es el que el archivo dice, no el que la casa querría",
     hitos: [

@@ -3544,6 +3544,41 @@
 //     anclas v288/v282 en pie) · BD intocada (1877 cables · 9 hechos,
 //     un solo escritor).
 // Herencia v288.0 EL PULSO DEL ARCHIVO POR AGENCIA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v289.0";
-export const APP_CODENAME = "EL PULSO DE LA RED MUNDIAL";
+// v290.0 EL PULSO POR PALABRAS — la tercera capa del tablero (la cola
+//         de la v289 se paga y la clasificación pendiente se resuelve):
+//         las 6 GUERRAS de la fuente (guerras-activas-data, v129 —
+//         dossiers REALES de las guerras del planeta: UCRANIA · ORIENTE
+//         MEDIO · SUDÁN · SAHEL · MYANMAR · TAIWÁN — clasificadas esta
+//         ronda: el simulador las consume, pero los dossiers y sus
+//         keywords son los del mundo real) cruzan el archivo con SUS
+//         keywords y EL MISMO algoritmo del canon (minúsculas, includes
+//         en el título — el pulso-de-cables de la v263). El pulso por
+//         conflictTag cuenta los etiquetados; este cuenta los que CITAN
+//         a cada guerra — incluidos los que nadie etiquetó. Medido
+//         contra la BD fría al abrir: 6 de 6 guerras citadas por 398
+//         titulares (Oriente 190 · Ucrania 119 · Taiwán 61 · Sahel 16 ·
+//         Sudán 11 · Myanmar 1).
+// (1) EL CRUCE ES DEL CANON — el orden es el de la fuente (GUERRAS) y
+//     el vacío no se rellena; la línea se compone COMPLETA en JS
+//     (lección v256): «El pulso por palabras — 6 de 6 guerras citadas
+//     por 398 titulares del archivo»; cada tarjeta con SU nombre
+//     verbatim de la fuente, su conteo derivado y su último titular
+//     como puerta viva a /noticia/[id].
+// (2) LECTURA PURA E INDEPENDIENTE — la sala gana su propia lectura de
+//     títulos (select id/title, sin curated-) separada del groupBy del
+//     pulso por etiqueta: si una falla, la otra sigue y cada capa
+//     declara su propio vacío (la casa no escribe al servir — un solo
+//     escritor, leyes v245/v246).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /conflictos en pie) ·
+//     health v290.0 db up · pruebas 206/206 (+2 EL PULSO POR PALABRAS:
+//     estática — la fuente clasificada e intacta (6 guerras con sus
+//     keywords), el cruce en el orden de la fuente, la línea compuesta,
+//     el nombre verbatim, la puerta /noticia, el vacío honesto y las
+//     guardias; viva — el SSR sirve la línea derivada completa (6 de 6
+//     · 398), las seis tarjetas con sus conteos (Oriente 190, Ucrania
+//     119) y las anclas v284/v285 en pie) · BD intocada (1877 cables ·
+//     9 hechos, un solo escritor).
+// Herencia v289.0 EL PULSO DE LA RED MUNDIAL y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v290.0";
+export const APP_CODENAME = "EL PULSO POR PALABRAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

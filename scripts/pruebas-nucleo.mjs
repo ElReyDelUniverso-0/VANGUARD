@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v289.0", async () => {
+  await verificar("servidor vivo y en v290.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v289"), `versión ${r.json?.version} ≠ v289`);
+    afirmar(String(r.json?.version).startsWith("v290"), `versión ${r.json?.version} ≠ v290`);
   });
 
   // censo por API
@@ -2331,6 +2331,53 @@ async function parteB() {
     // las anclas v286 en pie
     afirmar(r.texto.includes("La galería de los rostros — 34 fichas reales del poder"), "la línea de la galería cayó (v286)");
     afirmar(r.texto.includes("LOS TRONOS ×12"), "el censo por categoría cayó (v286)");
+  });
+
+  // ── v290.0 EL PULSO POR PALABRAS: los keywords de las 6 guerras de la fuente cruzan el archivo (/conflictos) ──
+  // La clasificación pendiente resuelta: GUERRAS son dossiers reales (v129);
+  // el pulso por palabras cuenta los que CITAN a cada guerra — incluidos
+  // los que nadie etiquetó. Medido contra la BD fría: 6 de 6, 398 titulares.
+  await verificar("EL PULSO POR PALABRAS estática: la fuente clasificada, el cruce del canon y el vacío honesto (v290)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/guerras-activas-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/conflictos/page.tsx"), "utf8");
+    // la fuente clasificada e intacta: 6 guerras reales con sus keywords
+    afirmar(fuente.includes("export const GUERRAS"), "la fuente de guerras no existe");
+    afirmar(fuente.includes("export const PULSO_KEYWORDS_GUERRA"), "la fuente de keywords no existe");
+    const iniP = fuente.indexOf("export const PULSO_KEYWORDS_GUERRA");
+    const finP = fuente.indexOf(");", iniP);
+    const bloqueP = fuente.slice(iniP, finP === -1 ? fuente.length : finP + 2);
+    afirmar(bloqueP.includes("GUERRAS.map((g) => [g.id, g.keywords])"), "los keywords no se derivan de la fuente (algo los escribiría a mano)");
+    for (const id of ["ucrania", "oriente", "sudan", "sahel", "myanmar", "taiwan"]) {
+      afirmar(fuente.includes(`id: "${id}"`), `falta la guerra ${id} en la fuente`);
+    }
+    // la sala: el import, el cruce en el orden de la fuente, la línea compuesta
+    afirmar(sala.includes('import { GUERRAS, PULSO_KEYWORDS_GUERRA } from "@/lib/guerras-activas-data"'), "la sala no consume la fuente canónica");
+    afirmar(sala.includes("for (const g of GUERRAS) {"), "el cruce no recorre la fuente en su orden");
+    afirmar(sala.includes("c.title.toLowerCase().includes(k)"), "el matching no es el del canon");
+    afirmar(sala.includes("const lineaPalabras = `El pulso por palabras — ${pulsoPalabras.length} de ${GUERRAS.length} guerras citadas por ${totalPalabras} titulares del archivo`"), "la línea del pulso no se compone COMPLETA en JS");
+    afirmar(sala.includes("EL PULSO POR PALABRAS"), "la sección no viaja");
+    afirmar(sala.includes("{p.nombre} · {p.n}"), "el nombre verbatim y el conteo no viajan juntos en la tarjeta");
+    afirmar(sala.includes("el archivo no cita a ninguna guerra todavía — el pulso duerme honesto"), "el vacío del pulso no se declara honesto");
+    afirmar(sala.includes("conflictos page error (pulso por palabras)"), "la lectura de títulos no es independiente del groupBy");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/conflictos escribe fechas a mano en la ronda v290!");
+    afirmar(!/const linea\w+ = [^;]*\b19\d\d\b/.test(sala), "¡la sala escribe años a mano en su línea (v290)!");
+  });
+
+  await verificar("EL PULSO POR PALABRAS viva: la línea derivada y las seis guerras con sus conteos (v290)", async () => {
+    const r = await pedir("/conflictos");
+    afirmar(r.status === 200, `/conflictos no 200 en v290 (${r.status})`);
+    // la línea compuesta COMPLETA (6 de 6 · 398 — derivados de la fuente y la BD fría)
+    afirmar(r.texto.includes("El pulso por palabras — 6 de 6 guerras citadas por 398 titulares del archivo"), "la línea del pulso no viaja (o la fuente/BD cambió)");
+    // las tarjetas: nombres verbatim + conteos (los comentarios RSC se pelan)
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("UCRANIA — LA GUERRA MAYOR · 119 titulares"), "la tarjeta de Ucrania no viaja con su conteo");
+    afirmar(limpio.includes("ORIENTE MEDIO — EL EJE EN LLAMAS · 190 titulares"), "la tarjeta de Oriente no viaja con su conteo");
+    afirmar(limpio.includes("MYANMAR — EL PAÍS QUE PELEA EN SILENCIO · 1 titular"), "la tarjeta de Myanmar no viaja (el singular del canon)");
+    afirmar(/href="\/noticia\/[a-z0-9-]+"/.test(r.texto), "la puerta viva a /noticia no viaja");
+    // las anclas v284/v285 en pie
+    afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
+    afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
   });
 
   // ── v289.0 EL PULSO DE LA RED MUNDIAL: los keywords de los 18 servicios extranjeros cruzan el mismo archivo (/servicios) ──
