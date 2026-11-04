@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v292.0", async () => {
+  await verificar("servidor vivo y en v293.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v292"), `versión ${r.json?.version} ≠ v292`);
+    afirmar(String(r.json?.version).startsWith("v293"), `versión ${r.json?.version} ≠ v293`);
   });
 
   // censo por API
@@ -2378,6 +2378,65 @@ async function parteB() {
     // las anclas v284/v285 en pie
     afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
+  });
+
+  // ── v293.0 EL ARCHIVO MUNDIAL: archive-data (v12, REAL) gana su sala server (/archivo-mundial) ──
+  // El censo del almacén sigue pagándose: la fuente clasificada REAL de
+  // pies a cabeza (curiosidades, eras, contadores, crimen, carteles).
+  await verificar("EL ARCHIVO MUNDIAL estática: la fuente REAL intacta y todo derivado (v293)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/archive-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/archivo-mundial/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: los cuatro bloques con sus censos reales
+    afirmar(fuente.includes("export const CURIOSITIES"), "la fuente de curiosidades no existe");
+    const iniCu = fuente.indexOf("export const CURIOSITIES");
+    const finCu = fuente.indexOf("export const ERAS");
+    const bloqueCu = fuente.slice(iniCu, finCu);
+    const nCurios = (bloqueCu.match(/id: "c/g) ?? []).length;
+    afirmar(nCurios === 44, `el censo de curiosidades midió mal (${nCurios}/44)`);
+    for (const cat of ["GUERRA", "POLITICA", "RELIGION", "ANTIGUEDAD", "ECONOMIA", "ESPIONAJE"]) {
+      afirmar(bloqueCu.includes(`"${cat}"`), `falta la categoría ${cat} en la fuente`);
+    }
+    afirmar(fuente.includes("export const ERAS") && fuente.includes("export const WAR_DEATHS") && fuente.includes("export const CARTELS"), "faltan bloques del archivo mundial");
+    const iniCa = fuente.indexOf("export const CARTELS");
+    const finCa = fuente.indexOf("];", iniCa);
+    const bloqueCa = fuente.slice(iniCa, finCa);
+    const nCart = (bloqueCa.match(/id: "/g) ?? []).length;
+    afirmar(nCart === 8, `el censo de carteles midió mal (${nCart}/8)`);
+    // la sala: los imports, la línea compuesta, los chips, el formato
+    afirmar(sala.includes("CURIOSITIES,"), "la sala no consume las curiosidades");
+    afirmar(sala.includes("if (!CATS.includes(c.cat)) CATS.push(c.cat)"), "las categorías no se derivan en el orden de la fuente");
+    afirmar(sala.includes("const lineaArchivoMundial = `El archivo mundial — ${CURIOSITIES.length} curiosidades verídicas en ${CATS.length} categorías, ${ERAS.length} eras desde ${ERAS[0].name}"), "la línea no se compone COMPLETA en JS");
+    afirmar(sala.includes("`" + "${cat} ×${CURIOSITIES.filter((c) => c.cat === cat).length}`"), "el chip del censo no compone categoría y conteo en un nodo");
+    afirmar(sala.includes('w.total.toLocaleString("es-ES")'), "el total de guerra no se formatea desde el número real");
+    afirmar(sala.includes("{c.leader.name}:"), "el líder del cartel no viaja verbatim");
+    afirmar(sala.includes("esta sala es la memoria servida sin JavaScript"), "la puerta honesta al aparato no se declara");
+    // las puertas de la casa
+    afirmar(mapa.includes("/archivo-mundial"), "el sitemap no anuncia el archivo mundial");
+    afirmar(paleta.includes('key: "pg:archivo-mundial"'), "la paleta Ctrl+K no lleva el archivo mundial");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas a mano en la ronda v293!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v293)!");
+  });
+
+  await verificar("EL ARCHIVO MUNDIAL viva: la línea derivada, las eras, WW2 formateado y Medellín con Escobar (v293)", async () => {
+    const r = await pedir("/archivo-mundial");
+    afirmar(r.status === 200, `/archivo-mundial no 200 (${r.status})`);
+    afirmar(r.texto.includes("EL ARCHIVO MUNDIAL"), "el título no viaja");
+    // la línea compuesta COMPLETA (44 · 6 · 8 · 6 · 8 — derivados de la fuente)
+    afirmar(r.texto.includes("El archivo mundial — 44 curiosidades verídicas en 6 categorías, 8 eras desde Prehistoria, 6 contadores de guerra y 8 expedientes de cartel, con sus líderes reales"), "la línea derivada no viaja (o la fuente cambió)");
+    // los comentarios RSC se pelan antes de los asertos de nodos contiguos
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("GUERRA ×10"), "el chip GUERRA no viaja");
+    afirmar(limpio.includes("2,5 M a.C. – 3500 a.C."), "el periodo de la Prehistoria no viaja verbatim");
+    afirmar(limpio.includes("75.000.000"), "el total de WW2 no viaja formateado");
+    afirmar(limpio.includes("La batalla de Karansebes (1788)"), "la curiosidad de Karansebes no viaja");
+    afirmar(limpio.includes("Cartel de Medellín"), "el expediente de Medellín no viaja");
+    afirmar(limpio.includes("Pablo Escobar"), "el líder real no viaja");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/archivo-mundial"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v292.0 EL ARCHIVO DESCLASIFICADO: la capa REAL de expediente-data sube a /servicios ──

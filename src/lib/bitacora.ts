@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v293.0",
+    nombre: "EL ARCHIVO MUNDIAL — el censo del almacén sigue pagándose: archive-data (v12) clasificada REAL de pies a cabeza y sube como sala server /archivo-mundial — 44 curiosidades verídicas en 6 categorías, 8 eras desde la Prehistoria, 6 contadores de las grandes guerras, el crimen global y 8 expedientes de cartel con sus líderes reales; LIVE_RATES no sube como contador (la tasa es real, el reloj vive en el aparato)",
+    hitos: [
+      "LA CLASIFICACIÓN MANDA — los seis exports de archive-data son datos del mundo real sin capa SIM; la tasa demográfica queda en el aparato (el reloj es del navegador, la tasa es de la fuente)",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256); categorías en el ORDEN DE LA FUENTE con sus chips; los totales con toLocaleString sobre el número real de la fuente; los periodos viajan como dato (guardia v234)",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /archivo-mundial (monthly, 0.6), paleta Ctrl+K (pg:archivo-mundial, ScrollText), JSON-LD ItemList con eras y carteles, noscript honesto, puerta al aparato",
+      "QA v293: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /archivo-mundial), health v293.0 db up, pruebas 212/212 (+2: estática — la fuente REAL intacta, la línea compuesta, los chips, el toLocaleString, las puertas y las guardias; viva — la línea derivada, las 8 eras verbatim, WW2 75.000.000 formateado, Karansebes, Medellín con Escobar y el sitemap VIVO), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v292.0",
     nombre: "EL ARCHIVO DESCLASIFICADO — la sexta capa de /servicios (el censo del almacén de la v291, cabeza clasificada): la capa REAL de expediente-data (v95, la que la propia fuente declara como tal) sube al server — los 5 expedientes reales desclasificados con su FUENTE CITADA verbatim (MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO, ECHELON); la capa SIM (el Valle del Karsk, las naciones de Vanguard) NO sube: las salas server no indexan ficción como hecho",
     hitos: [

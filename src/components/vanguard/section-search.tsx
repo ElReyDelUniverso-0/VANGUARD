@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -227,6 +227,13 @@ export function SectionSearch({
         icon: <Activity className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · el tablero de la casa", icon_color: "text-amber",
         kind: "page", href: "/conflictos",
+      },
+      {
+        // v293.0 EL ARCHIVO MUNDIAL — la fuente archive-data (v12, REAL), en server
+        key: "pg:archivo-mundial", label: "EL ARCHIVO MUNDIAL — 44 curiosidades verídicas, 8 eras, los contadores de las grandes guerras y 8 expedientes de cartel", short: "archivo mundial curiosidades eras guerras contadores carteles crimen global historia veridica",
+        icon: <ScrollText className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el archivo de la casa", icon_color: "text-amber",
+        kind: "page", href: "/archivo-mundial",
       },
       {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server

@@ -3642,6 +3642,48 @@
 //     Church), ECHELON y las anclas v291/v288 en pie) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v291.0 EL PACTO QUE UNE LAS DOS SALAS y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v292.0";
-export const APP_CODENAME = "EL ARCHIVO DESCLASIFICADO";
+// v293.0 EL ARCHIVO MUNDIAL — el censo del almacén sigue pagándose:
+//         archive-data (v12) clasificada esta ronda — REAL de pies a
+//         cabeza — y sube como sala server /archivo-mundial, patrón
+//         /historia (v274) · /armeria (v283): prerenderizada ○, sin
+//         cliente, sin BD. El botín: 44 curiosidades verídicas de la
+//         historia en 6 categorías (GUERRA ×10 · POLÍTICA ×7 ·
+//         RELIGIÓN ×7 · ANTIGÜEDAD ×7 · ECONOMÍA ×7 · ESPIONAJE ×6),
+//         8 eras desde la Prehistoria con su periodo y su relato
+//         verbatim, 6 contadores de las grandes guerras con sus totales
+//         publicados (WW2 75M · WW1 17M...), el crimen global con sus
+//         cifras estimadas y 8 expedientes de cartel con sus líderes
+//         reales (Medellín, Escobar...). Solo vivía client-side
+//         (curiosidades-panel, counters-panel, carteles-panel).
+// (1) LA CLASIFICACIÓN MANDA — los seis exports de la fuente son datos
+//     del mundo real (sin capa SIM declarada); LIVE_RATES (la tasa
+//     demográfica) NO sube como contador: la tasa es real pero el reloj
+//     que la mueve vive en el aparato — la sala declara la puerta
+//     honesta y la fuente, no el reloj.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «El archivo mundial — 44 curiosidades verídicas
+//     en 6 categorías, 8 eras desde Prehistoria, 6 contadores de guerra
+//     y 8 expedientes de cartel, con sus líderes reales»; las
+//     categorías en el ORDEN DE LA FUENTE con sus chips «GUERRA ×10»;
+//     los totales de guerra con toLocaleString("es-ES") sobre el número
+//     real de la fuente; cero años escritos en líneas (la guardia del
+//     arco), los periodos viajan como dato de la fuente (guardia v234).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /archivo-mundial
+//     (monthly, 0.6) y la paleta Ctrl+K la lleva (pg:archivo-mundial,
+//     icono ScrollText); JSON-LD ItemList con eras y carteles; noscript
+//     honesto con la línea compuesta; puerta al aparato (los contadores
+//     vivos y los filtros, patrón v275/v276).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /archivo-mundial en la
+//     tabla) · health v293.0 db up · pruebas 212/212 (+2 EL ARCHIVO
+//     MUNDIAL: estática — la fuente REAL intacta (44/8/6/8 uno a uno
+//     por bloque), la línea compuesta sin cifras escritas, los chips
+//     por categoría en el orden de la fuente, el toLocaleString, las
+//     puertas (sitemap + paleta) y las guardias; viva — el SSR sirve la
+//     línea derivada completa, las 8 eras con su periodo verbatim, WW2
+//     con sus 75.000.000 formateados, la curiosidad de Karansebes y el
+//     expediente de Medellín con Escobar verbatim y el sitemap VIVO) ·
+//     BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v292.0 EL ARCHIVO DESCLASIFICADO y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v293.0";
+export const APP_CODENAME = "EL ARCHIVO MUNDIAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

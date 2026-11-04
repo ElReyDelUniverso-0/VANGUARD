@@ -169,6 +169,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v293.0 EL ARCHIVO MUNDIAL — la fuente archive-data (v12, REAL)
+      // servida en server: 44 curiosidades verídicas, 8 eras desde la
+      // Prehistoria, los contadores de las grandes guerras, el crimen
+      // global y 8 expedientes de cartel, indexable para las búsquedas
+      // de historia y crimen organizado
+      url: `${SITE_URL}/archivo-mundial`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
       // censo de poder de la fuente (ROSTROS) servidas en server:
       // los tronos, el dinero, el tribunal y los nuevos, indexables
