@@ -4209,6 +4209,50 @@
 //     viva — el home canta LA MANO DE LA FORTUNA v304.0 y el health la
 //     firma) · BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v303.0 LA PLANTILLA COMPLETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v304.0";
-export const APP_CODENAME = "LA MANO DE LA FORTUNA";
+// v305.0 LA AUDITORÍA DE ACERO — el mandato del Dueño: «Actúen como un
+//         equipo élite de ingenieros… auditen todo el proyecto, detecten
+//         errores, mejoren el rendimiento… NO eliminen funciones, NO
+//         destruyan código; si una mejora es arriesgada, documentenla sin
+//         aplicarla». La auditoría midió TODO el árbol (tsc strict, eslint
+//         completo — nunca antes corrido a fondo: solo los ficheros
+//         tocados de cada ronda —, fugas de memoria, SSR, XSS, refs en
+//         render, escapes de tipo) y pagó la primera tanda:
+// (1) ERRORES CORREGIDOS (5 ficheros, eslint errors 26 → 19):
+//     · signos-vitales: refs LEÍDAS Y ESCRITAS durante el render (pobl —
+//       el delta de nacimientos nace ahora en el reloj, render puro) y el
+//       reloj DOBLE absorbido en uno solo (el intervalo viejo seguía
+//       corriendo junto al nuevo: la casa crecía al doble de pulso).
+//     · experimental-panel: pose.current leído en el style del render —
+//       el cursor grabbing es STATE (onDown/onUp lo escriben).
+//     · centinela-panel: dos dependencias de useMemo con EXPRESIONES
+//       complejas (reloj < 60 ? 0 : 1, Math.floor(reloj / 300)) —
+//       precalculadas fuera, el compilador ya no renuncia.
+//     · duelo-pvp: interface vacía extendiendo su supertipo (type alias).
+//     · en-vivo-panel: el reloj de GRABACIÓN sobrevivía al desmontaje
+//       (navegación a mitad de directo = interval huérfano) — cleanup de
+//       desmontaje que respeta el stop del usuario.
+// (2) TIPOBLINDAJE — coerciones ciegas reales 11 → 9: la guardia de hudTheme en
+//     buyCosmetic (un id ajeno al catálogo ya no entra al persist forzado)
+//     y el tema de la tienda con su tipo exacto. Los 4 accesos forzados a
+//     las cookies del req en las rutas API (residuo de la migración Next 15,
+//     camino de auth) DOCUMENTADOS SIN TOCAR — riesgo medio en la sesión.
+// (3) LO QUE LA AUDITORÍA MEDICIÓN LIMPIO: CERO directivas de supresión de
+//     tipos (ignora/espera-error/sin-revisar) en TODO el árbol; los 10 dangerouslySetInnerHTML
+//     pasan TODOS por jsonLdSeguro() o CSS/script estático (sin XSS);
+//     addEventListener y setInterval/clearInterval emparejados en los 124
+//     ficheros client (los 7 sospechosos auditados uno a uno — todos
+//     falsos positivos: dobles clears en una línea, refs de grabación y
+//     el latido singleton deliberado de presence-ping).
+// (4) EL BLINDAJE — la suite censa los anti-patrones (escapes de tipo ≤
+//     9, cero ts-ignore) y los 5 ficheros reparados: la auditoría no es
+//     una ronda, es una LEY — ningún escritor paralelo puede volver a
+//     meter una coerción ciega o un ts-ignore sin que la suite lo grite.
+// QA: tsc 0 TOTAL · eslint 19 errores→barridos los reparables de la ronda
+//     (los 17 set-state-in-effect restantes y las 4 memorias del compilador
+//     DOCUMENTADOS SIN APLICAR — tocan rutas de hidratación/arranque) ·
+//     build EXIT 0 · health v305.0 db up · pruebas 236/236 (+2 LA
+//     AUDITORÍA) · BD intocada (1877 cables · 9 hechos).
+// Herencia v304.0 LA MANO DE LA FORTUNA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v305.0";
+export const APP_CODENAME = "LA AUDITORÍA DE ACERO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -55,10 +55,8 @@ export function SignosVitales({ online }: { online: number }) {
   const [tensionViva, setTensionViva] = useState(() => getTension());
 
   // población nace cada 600ms — visible, no frenética
-  useEffect(() => {
-    const iv = setInterval(() => setPobl(poblacionAhora()), 600);
-    return () => clearInterval(iv);
-  }, []);
+  // (v305 AUDITORÍA: un solo reloj — el intervalo original fue absorbido por
+  // el efecto de abajo, que además escribe el delta de nacimientos)
 
   // tensión respiratoria: la real de Vanguard ± microvariación cada 8s
   // + escucha el bus global "vanguard:tension" por si el mundo se agita
@@ -87,8 +85,19 @@ export function SignosVitales({ online }: { online: number }) {
   const criticos = useMemo(() => CONFLICTS.filter((c) => c.level === "CRITICO").length, []);
 
   const prevPobl = useRef(pobl);
-  const nacimientos = Math.round((pobl - prevPobl.current) * 10) / 10;
-  if (Math.abs(pobl - prevPobl.current) > 50) prevPobl.current = pobl;
+  const [nacimientos, setNacimientos] = useState(0);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      const n = poblacionAhora();
+      // v305 AUDITORÍA: el delta nace en el callback del reloj (ref leída/escrita
+      // FUERA del render — el render solo lee state, cero acceso a refs)
+      setNacimientos(Math.round((n - prevPobl.current) * 10) / 10);
+      prevPobl.current = n;
+      setPobl(n);
+    }, 600);
+    return () => clearInterval(iv);
+  }, []);
 
   const peligro = tensionViva >= 70 || criticos >= 3;
 

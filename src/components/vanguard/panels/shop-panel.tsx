@@ -108,8 +108,10 @@ export function ShopPanel() {
       }
     } else if (item.category === "COSMETIC") {
       if (ownedCosmetics.includes(item.id.replace("COSMETIC_", "").split("_")[0])) {
-        const t = item.id.includes("RED") ? "RED" : item.id.includes("CYAN") ? "CYAN" : "AMBER";
-        useGameStore.setState({ hudTheme: t as any });
+        // v305 AUDITORÍA: tipo exacto en vez de coerción ciega (un tema ajeno al
+        // catálogo ya no puede colarse en el persist)
+        const t: "RED" | "CYAN" | "AMBER" = item.id.includes("RED") ? "RED" : item.id.includes("CYAN") ? "CYAN" : "AMBER";
+        useGameStore.setState({ hudTheme: t });
         toast.success(`Tema HUD activo: ${t}`);
         return;
       }

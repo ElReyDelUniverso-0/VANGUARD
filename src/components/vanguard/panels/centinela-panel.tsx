@@ -218,20 +218,24 @@ export function CentinelaPanel() {
   const elevados = regiones.filter((r) => r.nivel === "ELEVADO").length;
 
   // ventana de riesgo: próxima "hora crítica" determinista
+  // v305 AUDITORÍA: la dependencia es una expresión simple (la regla del
+  // compilador exige `x` simple — el booleano precalculado fuera)
+  const franjaMinuto = reloj < 60 ? 0 : 1;
   const proximaVentana = useMemo(() => {
     const h = hash(`ventana:${Math.floor(Date.now() / 3600_000)}`);
     const minutos = 8 + (h % 52);
     const mm = String(minutos % 60).padStart(2, "0");
     const hh = String(Math.floor(minutos / 60)).padStart(2, "0");
     return `+${hh}:${mm}h`;
-  }, [reloj < 60 ? 0 : 1]); // refresca cada minuto
+  }, [franjaMinuto]); // refresca cada minuto
   void proximaVentana;
 
+  const periodoVigia = Math.floor(reloj / 300);
   const vigia = useMemo(() => {
     const dia = Math.floor(Date.now() / 86_400_000);
     const h = hash(`vigia:${dia}`);
     return [0, 1, 2, 3, 4].map((i) => VIGILANCIA[(h + i * 3) % VIGILANCIA.length]);
-  }, [Math.floor(reloj / 300)]);
+  }, [periodoVigia]);
 
   // sparkline del historial
   const spark = useMemo(() => {

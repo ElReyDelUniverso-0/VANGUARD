@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v305.0",
+    nombre: "LA AUDITORÍA DE ACERO — el mandato del Dueño (equipo élite: auditar TODO el proyecto, detectar errores, NO destruir, documentar lo arriesgado sin aplicarlo) medido por primera vez a fondo: eslint COMPLETO del árbol (nunca corrido — solo los ficheros tocados de cada ronda), fugas de memoria una a una, XSS, SSR y escapes de tipo; 5 ficheros reparados (26 → 19 errores), la guardia de tipos de hudTheme, el blindaje permanente en la suite y el informe honesto de lo DOCUMENTADO SIN APLICAR",
+    hitos: [
+      "ERRORES CORREGIDOS — signos-vitales: refs leídas Y escritas durante el render (el delta de nacimientos nace ahora en el reloj, render puro) y reloj DOBLE absorbido (el intervalo viejo seguía corriendo junto al nuevo: la población crecía al doble de pulso); experimental-panel: pose.current leído en el style del render (el cursor grabbing es STATE); centinela-panel: dos dependencias de useMemo con expresiones complejas precalculadas fuera; duelo-pvp: interface vacía; en-vivo-panel: el reloj de GRABACIÓN sobrevivía al desmontaje",
+      "TIPOBLINDAJE — la guardia de hudTheme en buyCosmetic (un id ajeno al catálogo ya no entra al persist forzado por una coerción ciega) y el tema de la tienda con su tipo exacto: coerciones ciegas reales 11 → 9; los 4 accesos forzados a las cookies del req en las rutas API (residuo Next 15, camino de auth) DOCUMENTADOS SIN TOCAR — riesgo medio en la sesión",
+      "LO MEDIDO LIMPIO — CERO directivas de supresión de tipos (ignora/espera-error/sin-revisar) en TODO el árbol; los 10 dangerouslySetInnerHTML pasan todos por jsonLdSeguro() o CSS/script estático (sin XSS); addEventListener y setInterval/clearInterval emparejados en los 124 ficheros client (los 7 sospechosos auditados uno a uno, todos falsos positivos: dobles clears en una línea, refs de grabación y el latido singleton deliberado)",
+      "EL BLINDAJE PERMANENTE — la suite censa los anti-patrones (escapes de tipo ≤ 9, cero ts-ignore) y los 5 ficheros reparados: la auditoría no es una ronda, es una LEY — ningún escritor paralelo puede volver a meter una coerción ciega o un ts-ignore sin que la suite lo grite; los 17 set-state-in-effect y 4 memorias del compilador restantes DOCUMENTADOS SIN APLICAR (tocan rutas de hidratación/arranque)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v304.0",
     nombre: "LA MANO DE LA FORTUNA — la expansión del módulo FORTUNA (la mina primera de la «Queda» v303; la medición la corrigió como con empleos: la mina es fortuna.ts, el motor de la v84 que paga TODOS los premios de la casa): LA HORA DORADA del día (determinista por fecha UTC — la casa entera comparte la misma hora de suerte, ×1.5 en todo pago elegible), LA LÁSTIMA DE LA CASA (pity: la racha seca calienta la ruleta — nadie queda frío para siempre) y EL LIBRO DE LA FORTUNA (la memoria persistente de la suerte, visible en la tienda)",
     hitos: [

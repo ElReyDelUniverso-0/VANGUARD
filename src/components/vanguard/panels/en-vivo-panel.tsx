@@ -865,6 +865,15 @@ function MiDirectoSection({ alias, level, cbAvatar, addCoins }: { alias: string;
   const fullRecRef = useRef<MediaRecorder | null>(null);
   const fullChunksRef = useRef<Blob[]>([]);
   const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // v305 AUDITORÍA: si el panel se desmonta GRABANDO (navegación a mitad de
+  // directo), el reloj del rec no puede sobrevivir al componente — el stop
+  // del usuario es una rama, el desmontaje es la ley.
+  useEffect(() => {
+    return () => {
+      if (recTimerRef.current) clearInterval(recTimerRef.current);
+      recTimerRef.current = null;
+    };
+  }, []);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const rafRef = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);

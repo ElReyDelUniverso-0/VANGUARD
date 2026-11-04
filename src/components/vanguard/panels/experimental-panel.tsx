@@ -78,6 +78,8 @@ function OrbitaPalabras({ palabras, acento }: { palabras: string[]; acento: stri
   const dragRef = useRef<HTMLDivElement>(null);
   const zonaRef = useRef<HTMLDivElement>(null);
   const pose = useRef({ rx: -8, ry: 0, activo: false, x: 0, y: 0 });
+  // v305 AUDITORÍA: el cursor grabbing es STATE (el render no lee refs)
+  const [agarrando, setAgarrando] = useState(false);
 
   // esfera fibonacci: reparte las palabras sin agruparse en los polos
   const nodos = palabras.map((palabra, i) => {
@@ -104,6 +106,7 @@ function OrbitaPalabras({ palabras, acento }: { palabras: string[]; acento: stri
     pose.current.activo = true;
     pose.current.x = e.clientX;
     pose.current.y = e.clientY;
+    setAgarrando(true);
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
   };
   const onMove = (e: React.PointerEvent) => {
@@ -115,13 +118,13 @@ function OrbitaPalabras({ palabras, acento }: { palabras: string[]; acento: stri
     pose.current.y = e.clientY;
     aplicaPose();
   };
-  const onUp = () => { pose.current.activo = false; };
+  const onUp = () => { pose.current.activo = false; setAgarrando(false); };
 
   return (
     <div
       ref={zonaRef}
       className="relative h-[340px] overflow-hidden rounded-md border bg-black/40"
-      style={{ borderColor: `${acento}47`, perspective: "820px", touchAction: "none", cursor: pose.current.activo ? "grabbing" : "grab" }}
+      style={{ borderColor: `${acento}47`, perspective: "820px", touchAction: "none", cursor: agarrando ? "grabbing" : "grab" }}
       onPointerDown={onDown}
       onPointerMove={onMove}
       onPointerUp={onUp}

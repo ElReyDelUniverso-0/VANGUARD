@@ -28,7 +28,7 @@ interface DueloActivo {
   ts?: number;
 }
 
-interface DueloAcabado extends DueloActivo {}
+type DueloAcabado = DueloActivo;
 
 const RECORD_KEY = "vg_duelos_record_v73";
 const COBRADOS_KEY = "vg_duelos_cobrados_v73";

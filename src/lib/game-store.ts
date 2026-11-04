@@ -1195,7 +1195,9 @@ export const useGameStore = create<GameState>()(
         const ok = get().spendGems(cost, `Cosmetico ${id}`);
         if (ok) {
           set((s) => ({ ownedCosmetics: [...s.ownedCosmetics, id] }));
-          if (type === "HUD") get().setHudTheme(id as any);
+          // v305 AUDITORÍA: guardia de tipo real (un id ajeno al catálogo de
+          // temas ya NO entra al persist forzado por una coerción ciega)
+          if (type === "HUD" && (id === "RED" || id === "CYAN" || id === "AMBER")) get().setHudTheme(id);
         }
         return ok;
       },
