@@ -16,6 +16,13 @@ import { db } from "@/lib/db";
 // EnlacesNucleo reutilizado): la emisora ya no es una isla — la
 // onda lleva al archivo, a las salas, al mapa y a la búsqueda.
 // El grabador y la emisión (v217) quedan INTACTOS.
+// v249.0 EL MURO DE PIEDRA — el muro de las voces deja de vivir
+// solo dentro del grabador (client-side): la página lo TALLA en
+// el servidor con las últimas voces REALES de la BD (SSR sin
+// JavaScript, audible con el reproductor nativo) y un vacío
+// honesto si nadie habló aún. El muro vivo del grabador sigue
+// siendo el espejo instantáneo; el grabador repinta este muro
+// con router.refresh() al mandar una voz.
 // ============================================================
 
 export const dynamic = "force-dynamic";
@@ -65,9 +72,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AudiosPage() {
-  const [teatros, totalAudios] = await Promise.all([
+  const [teatros, totalAudios, voces] = await Promise.all([
     teatrosDelParte().catch(() => []),
     db.audioComandante.count().catch(() => 0),
+    // v249.0 — las últimas voces reales para el muro de piedra (el techo
+    // del archivo visible en el SSR; la API /api/audios sigue sirviendo
+    // las 30 completas a quien las pida).
+    db.audioComandante
+      .findMany({ orderBy: { createdAt: "desc" }, take: 8 })
+      .catch(() => []),
   ]);
   const total24h = teatros.reduce((a, t) => a + t.cables, 0);
   const texto = componerParte(teatros, total24h).join(" ");
@@ -110,6 +123,40 @@ export default async function AudiosPage() {
           <GrabadorAudio />
         </section>
 
+        {/* v249.0 EL MURO DE PIEDRA — el archivo de las voces en el SSR:
+            servido desde la BD real, audible con el reproductor NATIVO
+            (funciona sin JavaScript) e indexable. Nada a mano: voces,
+            conteos y fechas salen de la BD. */}
+        <section className="mt-8 rounded-xl border border-white/10 bg-[#0a0a10] p-5">
+          <h2 className="text-lg font-bold tracking-wide">🗣 EL MURO DE LAS VOCES</h2>
+          <p className="mt-1 text-sm text-[#b9b4aa]">
+            Las últimas voces que los comandantes mandaron a la emisora — talladas en el servidor, audibles sin JavaScript
+            ({totalAudios} {totalAudios === 1 ? "voz guardada" : "voces guardadas"} en la casa).
+          </p>
+          {voces.length === 0 ? (
+            <p className="mt-3 text-xs text-[#6b665e]">
+              El muro está en pie y vacío: todavía nadie habló. El primer audio puede ser el tuyo — graba arriba.
+            </p>
+          ) : (
+            <ul className="mt-3 space-y-3">
+              {voces.map((v) => (
+                <li key={v.id} className="rounded-lg border border-white/10 bg-white/[.02] p-3">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="text-sm font-bold">{v.titulo}</span>
+                    <span className="text-[10px] tracking-widest text-[#ffd34d]">
+                      {v.autor} · {v.duracion} s ·{" "}
+                      {new Intl.DateTimeFormat("es", { day: "numeric", month: "short", year: "numeric" }).format(
+                        v.createdAt
+                      )}
+                    </span>
+                  </div>
+                  <audio controls preload="none" src={`/api/media/${v.mediaId}`} className="mt-2 h-9 w-full" />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         <section className="mt-8 rounded-xl border border-[#ffd34d]/25 bg-[#0a0a10] p-5">
           <h2 className="text-lg font-bold tracking-wide text-[#ffd34d]">🎖 TU CUENTA DE VERDAD</h2>
           <p className="mt-1 text-sm text-[#b9b4aa]">
@@ -149,7 +196,8 @@ export default async function AudiosPage() {
             <Link href="/conflicto/ukraine" className="text-[#ffd34d] underline">
               /conflicto/ukraine
             </Link>
-            .
+            . Y las voces de la casa suenan igual: EL MURO DE LAS VOCES se oye con el reproductor nativo, sin
+            JavaScript.
           </p>
         </noscript>
       </div>

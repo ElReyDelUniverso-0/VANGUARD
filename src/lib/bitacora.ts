@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v249.0",
+    nombre: "EL MURO DE PIEDRA — el muro de las voces se talla en el servidor: las voces reales de la BD se sirven en el SSR de /audios, audibles sin JavaScript, y la voz recién mandada entra sin recargar",
+    hitos: [
+      "LA BRECHA MEDIDA — la expansión funcional que la cola pedía llega a la emisora /audios: el muro existía como API (GET /api/audios, 30 con URLs /api/media/<id>) y como muro vivo dentro del grabador (fetch client-side), pero el SSR de la página no llevaba NI UNA voz — bots, lectores sin JavaScript y el primer paint no veían el archivo que la promesa v217 anunciaba",
+      "EL MURO EN EL SSR — la página consulta la BD real (audioComandante.findMany, últimas 8 por createdAt) y sirve «EL MURO DE LAS VOCES»: autor · duración · fecha (Intl, cero fechas a mano) y reproductor <audio controls preload=\"none\"> NATIVO que funciona sin JavaScript y no pide un byte hasta el click; vacío honesto si nadie habló aún («El muro está en pie y vacío…»); el muro vivo del grabador (v217) queda INTACTO como espejo instantáneo",
+      "LA VOZ ENTRA SIN RECARGAR — GrabadorAudio llama router.refresh() tras el envío: la voz recién mandada entra en el muro de piedra sin recargar la página (el catch de errores intacto); el noscript gana su puerta: «Sin JavaScript la emisora no puede sonar» sigue siendo verdad para el parte TTS, pero las voces del muro se oyen con el reproductor nativo",
+      "QA v249: tsc 0 TOTAL, eslint 0, build EXIT 0, health v249.0 db up, pruebas 124/124 (+2 EL MURO DE PIEDRA: estática — anclas del muro, BD real, media real, preload perezoso, vacío honesto, router.refresh; viva — el SSR lleva el muro y la voz más nueva se sirve audio/*, o el vacío honesto en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v248.0",
     nombre: "EL FOTOGRAMA LIGERO — la dieta llega a los paneles SPA: las tarjetas de la galería y las thumbs del feed social visten pieles 640×360 (−86%) y el visor conserva el negativo",
     hitos: [

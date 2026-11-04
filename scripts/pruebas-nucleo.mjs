@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v248.0", async () => {
+  await verificar("servidor vivo y en v249.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v248"), `versión ${r.json?.version} ≠ v248`);
+    afirmar(String(r.json?.version).startsWith("v249"), `versión ${r.json?.version} ≠ v249`);
   });
 
   // censo por API
@@ -1747,6 +1747,41 @@ async function parteB() {
     for (const ruta of ["/", "/en-vivo", "/vertigo", "/audios", "/modo", "/objetivos", "/mundo"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `ruta ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v249.0 EL MURO DE PIEDRA: el muro de las voces se talla en el SSR ──
+  await verificar("EL MURO DE PIEDRA: el muro de voces vive en el servidor, audible sin JavaScript (v249)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/audios/page.tsx"), "utf8");
+    afirmar(pag.includes("EL MURO DE LAS VOCES"), "la página no talla el muro de las voces");
+    // ancla tolerante a formato (lección v247a): la consulta puede viajar
+    // multilínea — la intención es que el muro se alimente de la BD real
+    afirmar(/audioComandante\s*\.findMany/.test(pag), "el muro no se alimenta de la BD real");
+    afirmar(pag.includes("/api/media/${v.mediaId}"), "el reproductor no apunta al media real");
+    afirmar(pag.includes('preload="none"'), "el reproductor no es perezoso (preload)");
+    afirmar(pag.includes("El muro está en pie y vacío"), "el estado vacío no es honesto");
+    afirmar(pag.includes("Intl.DateTimeFormat"), "las fechas del muro no salen formateadas de la BD");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡el muro escribe fechas a mano!");
+    const grab = readFileSync(join(RAIZ, "src/app/audios/grabador.tsx"), "utf8");
+    afirmar(grab.includes("router.refresh()"), "enviar una voz no repinta el muro de piedra");
+    afirmar(grab.includes("} catch (e) {"), "el catch de errores del envío desapareció");
+  });
+
+  await verificar("EL MURO DE PIEDRA viva: el SSR lleva las voces reales o el vacío honesto (v249)", async () => {
+    const api = await pedir("/api/audios");
+    afirmar(api.json?.ok === true, "la API del muro no responde");
+    const total = api.json?.total ?? 0;
+    const r = await pedir("/audios");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("EL MURO DE LAS VOCES"), "el SSR no lleva el muro");
+    if (total > 0) {
+      afirmar(r.texto.includes("/api/media/"), `hay ${total} voces en la BD y el SSR no sirve ninguna`);
+      const masNueva = api.json.audios[0];
+      const media = await pedir(masNueva.url);
+      afirmar(media.status === 200, "el audio más nuevo no se sirve");
+      afirmar(String(media.headers?.["content-type"] || "").startsWith("audio/"), "el media no sirve audio/*");
+    } else {
+      afirmar(r.texto.includes("El muro está en pie y vacío"), "muro vacío sin estado honesto");
     }
   });
 

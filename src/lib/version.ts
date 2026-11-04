@@ -2283,6 +2283,36 @@
 //     ligera y tanks-2.jpg sigue 200) · BD intocada (1877 cables · 9
 //     hechos, un solo escritor).
 // Herencia v247.0 LA CARGA JUSTA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v248.0";
-export const APP_CODENAME = "EL FOTOGRAMA LIGERO";
+// v249.0 EL MURO DE PIEDRA — la expansión funcional que la cola pedía («siguiente
+//     ronda: expansión funcional del siguiente módulo», directiva módulo a
+//     módulo del dueño) llega a la emisora /audios: el muro de las voces deja
+//     de vivir SOLO dentro del grabador (client-side, invisible sin JavaScript)
+//     y se TALLA en el servidor. La promesa v217 «aparecerá en el muro de la
+//     casa» ahora se cumple en el propio HTML.
+// (1) LA BRECHA MEDIDA — el muro existía como API (GET /api/audios devuelve
+//     las 30 con URLs /api/media/<id>) y como muro vivo dentro de GrabadorAudio
+//     (fetch client-side), pero el SSR de /audios no llevaba NI UNA voz: bots,
+//     lectores sin JavaScript y el primer paint no veían el archivo.
+// (2) EL MURO EN EL SSR — la página consulta la BD real
+//     (audioComandante.findMany, últimas 8 por createdAt) y sirve la sección
+//     «EL MURO DE LAS VOCES»: autor · duración · fecha (Intl, cero fechas a
+//     mano) y reproductor <audio controls preload="none"> NATIVO — funciona
+//     sin JavaScript, no pide un byte hasta el click. Vacío honesto si nadie
+//     habló («El muro está en pie y vacío…»). El muro vivo del grabador
+//     (v217) queda INTACTO como espejo instantáneo.
+// (3) LA VOZ ENTRA SIN RECARGAR — GrabadorAudio llama router.refresh() tras
+//     el envío: la voz recién mandada entra en el muro de piedra sin recargar
+//     la página; el catch de errores queda intacto.
+// (4) EL NOSCRIPT GANA SU PUERTA — «Sin JavaScript la emisora no puede sonar»
+//     sigue siendo verdad para el parte hablado (TTS), pero ya no para las
+//     voces: el noscript señala el muro (reproductor nativo, sin JS).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v249.0 db up ·
+//     pruebas 124/124 (+2 EL MURO DE PIEDRA: estática — anclas del muro,
+//     BD real, media real, preload perezoso, vacío honesto, router.refresh;
+//     viva — el SSR lleva el muro y, si la BD tiene voces, la más nueva se
+//     sirve audio/*; si no, el vacío honesto en pie) · BD intocada (1877
+//     cables · 9 hechos, un solo escritor).
+// Herencia v248.0 EL FOTOGRAMA LIGERO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v249.0";
+export const APP_CODENAME = "EL MURO DE PIEDRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

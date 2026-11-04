@@ -4,7 +4,11 @@
 // MediaRecorder ≤ 90 s, envío a /api/audios y muro vivo. Anti-traba propio:
 // si el permiso no llega en 12 s o el recorder se queda sin flujo, la máquina
 // se despierta sola y nunca se queda "grabando" eterna.
+// v249.0 EL MURO DE PIEDRA — al mandar una voz, además del muro vivo propio
+// (cargarMuro), el muro tallado en el servidor se repinta con router.refresh():
+// la voz entra en el archivo SSR sin recargar la página.
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Fila {
   id: string;
@@ -16,6 +20,7 @@ interface Fila {
 }
 
 export function GrabadorAudio() {
+  const router = useRouter();
   const [estado, setEstado] = useState<"quieto" | "pidiendo" | "grabando" | "enviando">("quieto");
   const [aviso, setAviso] = useState<string | null>(null);
   const [segundos, setSegundos] = useState(0);
@@ -126,6 +131,8 @@ export function GrabadorAudio() {
       setTitulo("");
       setSegundos(0);
       await cargarMuro();
+      // v249.0 — el muro de piedra (SSR) también recibe la voz recién mandada.
+      router.refresh();
     } catch (e) {
       setAviso(e instanceof Error ? e.message : "No pude enviar el audio.");
     } finally {
