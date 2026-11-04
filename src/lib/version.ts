@@ -1612,6 +1612,27 @@
 //    enlace verificable al original; /api/nucleo/entidad lo sirve por
 //    contrato (aditivo). fnt:indicadores en la frontera pública
 //    (patrón fnt:escuchas: fuente real sin proveedor de búsqueda).
-export const APP_VERSION = "v223.0";
-export const APP_CODENAME = "EL BARÓMETRO";
+// v224.0 EL ESTRATEGA — AGENT 2 tarea 6 (TURNO AUTOMÁTICO, cron 500735):
+//  mandato cola (f) «simulación pequeña verificable: datos/supuestos/
+//  variables/reglas/resultados SEPARADOS, nunca presentarla como
+//  predicción, sin ejecutar código arbitrario de usuarios».
+//  ① CINCO ARCHIVOS SEPARADOS (src/lib/nucleo/simulacion/): datos.ts
+//    (solo lo documentado: fechas históricas v219, cables reales de la
+//    BD, frentes OSINT v220, gasto militar del Banco Mundial v223 —
+//    cada uno con procedencia), supuestos.ts (5 supuestos con texto/
+//    justificación/límite), variables.ts (4 pesos 0–2 paso 0.1 con
+//    validación dura: clave desconocida/no numérica/fuera de rango →
+//    error declarado), reglas.ts (funciones PURAS sin reloj ni BD ni
+//    red: mismo input → mismo output; anclas editoriales visibles),
+//    index.ts (resultado ensamblado con las piezas separadas).
+//  ② API /api/nucleo/simulacion: GET catálogo + escenario por defecto,
+//    POST pesos validados (400 honesto con los errores) — muro 30/min.
+//  ③ /escenarios: página server + isla client con deslizadores (el
+//    aviso «ESCENARIO — NO ES PREDICCIÓN» viaja SIEMPRE con los
+//    resultados). mod:escenarios en el censo (SIMULACION, ficha
+//    vg:simulacion:escenarios gratis) + sitemap.
+//  ④ indicadores.ts aditivo: indicadoresNumericosDePais() — los valores
+//    crudos del mismo snapshot (cero peticiones extra).
+export const APP_VERSION = "v224.0";
+export const APP_CODENAME = "EL ESTRATEGA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

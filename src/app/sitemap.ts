@@ -108,6 +108,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v224.0 EL ESTRATEGA — escenarios con datos reales, nunca predicciones
+      url: `${SITE_URL}/escenarios`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v211.0 EL VÉRTIGO — el feed infinito: puerta para el público de
       // deslizamiento (la fórmula TikTok indexable por Google)
       url: `${SITE_URL}/vertigo`,

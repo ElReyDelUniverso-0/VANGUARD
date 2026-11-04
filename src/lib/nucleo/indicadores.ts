@@ -101,6 +101,15 @@ const ISO2_POR_ISO3: Record<string, string> = Object.fromEntries(
   Object.entries(ISO3_POR_ISO2).map(([iso2, iso3]) => [iso3, iso2])
 );
 
+/** El valor CRUDO de un indicador, tal como llega del Banco Mundial.
+ * v224 EL ESTRATEGA: la simulación necesita números, no textos —
+ * misma fuente, misma cache, cero peticiones extra. */
+export interface ValorNumericoIndicador {
+  codigo: string;
+  valor: number;
+  anio: number;
+}
+
 /** Un indicador ya medido para una nación (el valor SOLO nace aquí,
  * traído por la API — jamás escrito a mano). */
 export interface IndicadorPais {
@@ -153,6 +162,9 @@ interface Snapshot {
   t: number;
   redOk: boolean;
   porIso2: Map<string, IndicadorPais[]>;
+  /** v224: los mismos datos SIN formatear, para consumidores que
+   * necesiten el número (la simulación). Misma vida que porIso2. */
+  porIso2Crudo: Map<string, ValorNumericoIndicador[]>;
 }
 
 const TTL_LLENO = 6 * 60 * 60 * 1000; // 6 h con datos
@@ -203,6 +215,7 @@ async function snapshotBarometro(): Promise<Snapshot> {
     return snapshot;
   }
   const porIso2 = new Map<string, IndicadorPais[]>();
+  const porIso2Crudo = new Map<string, ValorNumericoIndicador[]>();
   const respuestas = await Promise.allSettled(INDICADORES.map((ind) => pedirIndicador(ind.codigo)));
   let redOk = false;
   INDICADORES.forEach((ind, i) => {
@@ -224,11 +237,27 @@ async function snapshotBarometro(): Promise<Snapshot> {
           enlaceOriginal: enlaceOriginalDe(ind.codigo),
         });
         porIso2.set(iso2, lista);
+        const cruda = porIso2Crudo.get(iso2) ?? [];
+        cruda.push({ codigo: ind.codigo, valor: fila.value, anio });
+        porIso2Crudo.set(iso2, cruda);
       }
     }
   });
-  snapshot = { t: Date.now(), redOk, porIso2 };
+  snapshot = { t: Date.now(), redOk, porIso2, porIso2Crudo };
   return snapshot;
+}
+
+/** v224 EL ESTRATEGA — los valores CRUDOS del barómetro para UN país
+ * (números de verdad, sin formatear; [] si el país no está en el
+ * eslabón o el Banco Mundial no respondió: ausencia honesta). */
+export async function indicadoresNumericosDePais(iso2: string): Promise<ValorNumericoIndicador[]> {
+  if (!ISO3_POR_ISO2[iso2]) return [];
+  try {
+    const snap = await snapshotBarometro();
+    return (snap.porIso2Crudo.get(iso2) ?? []).map((v) => ({ ...v }));
+  } catch {
+    return [];
+  }
 }
 
 /** Los indicadores de UN país del eslabón (o null si el país no

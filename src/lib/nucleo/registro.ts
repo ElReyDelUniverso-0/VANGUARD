@@ -225,6 +225,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: [],
     alias: "vanguard2 universo 3d volumen secciones",
   },
+  {
+    id: "mod:escenarios",
+    nombre: "EL ESTRATEGA",
+    lema: "Escenarios con datos reales, nunca predicciones",
+    descripcion:
+      "Simulación pequeña verificable: datos/supuestos/variables/reglas/resultados SEPARADOS — fechas históricas, cables reales, frentes OSINT y gasto militar del Banco Mundial combinados bajo 5 supuestos declarados y 4 pesos que ajusta el usuario (0–2). Determinista, con desglose y procedencia a la vista. No predice: mide el peso relativo de los factores.",
+    categoria: "SIMULACION",
+    ruta: "/escenarios",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:acontecimientos", "fnt:cables", "fnt:teatros", "fnt:indicadores"],
+    alias: "escenarios estratega simulacion presion teatro modelo pesos variables que pasa si analisis",
+    idEntidadComo: "vg:simulacion:escenarios",
+  },
   // ── COMUNIDAD ──────────────────────────────────────────────
   {
     id: "mod:audios",

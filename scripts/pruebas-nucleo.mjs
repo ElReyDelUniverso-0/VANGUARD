@@ -174,6 +174,39 @@ async function parteA() {
     // la frontera declara la fuente nueva
     afirmar(fuentes.includes("fnt:indicadores"), "fnt:indicadores no está en la frontera pública");
   });
+
+  await verificar("EL ESTRATEGA: la simulación vive SEPARADA (v224) — datos/supuestos/variables/reglas/resultado", () => {
+    const dir = join(RAIZ, "src/lib/nucleo/simulacion");
+    const leer = (f) => readFileSync(join(dir, f), "utf8");
+    // ① los cinco archivos separados EXISTEN
+    const piezas = ["datos.ts", "supuestos.ts", "variables.ts", "reglas.ts", "index.ts"];
+    for (const f of piezas) afirmar(existsSync(join(dir, f)), `falta la pieza separada ${f}`);
+    // ② las REGLAS son puras: sin BD, sin red, sin reloj, sin azar, sin eval
+    const reglas = leer("reglas.ts");
+    for (const prohibido of ["@/lib/db", "db.", "fetch(", "Date.now", "Math.random", "eval(", "Function("]) {
+      afirmar(!reglas.includes(prohibido), `¡las reglas contienen «${prohibido}» — el determinismo se rompe!`);
+    }
+    // ③ los SUPUESTOS declaran texto, justificación y límite (≥ 5)
+    const supuestos = leer("supuestos.ts");
+    const nSup = (supuestos.match(/id: "SUP-/g) ?? []).length;
+    afirmar(nSup >= 5, `solo ${nSup} supuestos declarados`);
+    for (const campo of ["justificacion:", "limite:", "NO ES UNA PREDICCIÓN"]) {
+      afirmar(supuestos.includes(campo), `los supuestos no declaran ${campo}`);
+    }
+    // ④ las VARIABLES son el único mando: rango fijo, defecto, validación dura
+    const variables = leer("variables.ts");
+    afirmar((variables.match(/id: "peso/g) ?? []).length === 4, "el escenario no tiene exactamente 4 pesos");
+    for (const trozo of ["normalizarVariables", "variable desconocida", "debe estar entre"]) {
+      afirmar(variables.includes(trozo), `la validación de variables no rechaza de verdad: falta «${trozo}»`);
+    }
+    // ⑤ el resultado JAMÁS se presenta como predicción
+    const indice = leer("index.ts");
+    afirmar(indice.includes("NO ES PREDICCIÓN"), "el resultado viaja sin el aviso anti-predicción");
+    // ⑥ los DATOS llevan procedencia y no llevan números escritos a mano
+    const datos = leer("datos.ts");
+    afirmar(datos.includes("fnt:acontecimientos") && datos.includes("fnt:indicadores"), "los datos no declaran su procedencia");
+    afirmar(!/cables:\s*\d{2,}/.test(datos), "los datos llevan cifras escritas a mano — invención");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -193,10 +226,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v223.0", async () => {
+  await verificar("servidor vivo y en v224.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v223"), `versión ${r.json?.version} ≠ v223`);
+    afirmar(String(r.json?.version).startsWith("v224"), `versión ${r.json?.version} ≠ v224`);
   });
 
   // censo por API
@@ -464,6 +497,106 @@ async function parteB() {
     afirmar(r.texto.includes("INDICADORES REALES"), "sin bloque de indicadores en el HTML");
     afirmar(r.texto.includes("CC BY 4.0"), "sin licencia visible en la ficha");
     afirmar(r.texto.includes("bancomundial.org"), "sin enlace al original en el HTML");
+  });
+
+  // ── v224.0 EL ESTRATEGA: la simulación pequeña verificable ──
+  await verificar("EL ESTRATEGA: GET /api/nucleo/simulacion — el escenario con sus piezas SEPARADAS", async () => {
+    const r = await pedir("/api/nucleo/simulacion");
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    afirmar(String(r.json.etiqueta).includes("NO ES PREDICCIÓN"), "la respuesta viaja sin el aviso anti-predicción");
+    afirmar(r.json.supuestos?.length >= 5, "supuestos incompletos");
+    afirmar(r.json.supuestos.every((s) => s.texto && s.justificacion && s.limite), "un supuesto sin texto/justificación/límite");
+    afirmar(r.json.variables?.catalogo?.length === 4, "el catálogo de pesos no tiene 4 variables");
+    afirmar(r.json.variables?.aplicadas && Object.keys(r.json.variables.aplicadas).length === 4, "los pesos aplicados no se declaran");
+    afirmar(Array.isArray(r.json.datos) && r.json.datos.length === 9, "los DATOS no son separados o no cubren 9 teatros");
+    afirmar(Array.isArray(r.json.resultados) && r.json.resultados.length === 9, "los RESULTADOS no son separados o no cubren 9 teatros");
+    const d0 = r.json.datos[0];
+    afirmar(Array.isArray(d0.procedencias) && d0.procedencias.some((p) => p.startsWith("fnt:")), "un dato sin procedencia declarada");
+    const conTotal = r.json.resultados.filter((x) => x.total !== null);
+    afirmar(conTotal.length >= 6, `solo ${conTotal.length} teatros con puntuación`);
+    for (let i = 1; i < conTotal.length; i++) {
+      afirmar(conTotal[i - 1].total >= conTotal[i].total, "el orden por presión no está ordenado");
+    }
+    const u = r.json.resultados.find((x) => x.slug === "ukraine");
+    afirmar(u?.factores?.tiempo?.ancla?.includes("días") && u?.factores?.cobertura?.ancla?.includes("cables"), "el desglose no muestra las anclas editoriales");
+  });
+
+  await verificar("EL ESTRATEGA: determinista — dos ejecuciones idénticas, mismo resultado", async () => {
+    const a = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: {} }),
+    });
+    const b = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: {} }),
+    });
+    afirmar(a.status === 200 && b.status === 200, "alguna ejecución no ok");
+    const ra = JSON.stringify(a.json.resultados);
+    const rb = JSON.stringify(b.json.resultados);
+    afirmar(ra === rb, "mismo input dio outputs distintos — el escenario NO es determinista");
+  });
+
+  await verificar("EL ESTRATEGA: los pesos mandan — solo frentes pone a Ucrania en 100 y deja a Corea sin puntuación", async () => {
+    const r = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: { pesoTiempo: 0, pesoCobertura: 0, pesoCapacidad: 0, pesoFrentes: 2 } }),
+    });
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const ukraine = r.json.resultados.find((x) => x.slug === "ukraine");
+    afirmar(ukraine?.total === 100, `el frente más documentado no satura su factor: ${ukraine?.total}`);
+    const korea = r.json.resultados.find((x) => x.slug === "korea");
+    afirmar(korea?.total === null, "Corea puntúa sin sala OSINT — algo se inventa");
+    afirmar(korea?.faltantes?.includes("frentes"), "la ausencia de sala de Corea no se declara");
+    afirmar(r.json.resultados[0]?.slug === "ukraine", "el teatro saturado no lidera el orden");
+  });
+
+  await verificar("EL ESTRATEGA: variables basura → 400 con los errores declarados (sin código de usuarios)", async () => {
+    const r1 = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: { pesoMagia: 1 } }),
+    });
+    afirmar(r1.status === 400, `clave desconocida → ${r1.status} ≠ 400`);
+    afirmar(String(r1.json?.errores?.[0] ?? "").includes("pesoTiempo"), "el 400 no lista las variables válidas");
+    const r2 = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: { pesoTiempo: 99 } }),
+    });
+    afirmar(r2.status === 400 && String(r2.json?.errores?.[0]).includes("entre 0 y 2"), `fuera de rango → ${r2.status}`);
+    const r3 = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: { pesoCobertura: "alto" } }),
+    });
+    afirmar(r3.status === 400, `no numérico → ${r3.status} ≠ 400`);
+  });
+
+  await verificar("EL ESTRATEGA: todo a cero — el escenario no puntúa nada y lo DECLARA", async () => {
+    const r = await pedir("/api/nucleo/simulacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variables: { pesoTiempo: 0, pesoCobertura: 0, pesoFrentes: 0, pesoCapacidad: 0 } }),
+    });
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    afirmar(r.json.resultados.every((x) => x.total === null), "con pesos 0 hay puntuaciones — algo se inventa");
+    afirmar(r.json.resultados.every((x) => Array.isArray(x.faltantes)), "sin la declaración de lo excluido");
+  });
+
+  await verificar("ficha vg:simulacion:escenarios — el módulo vive en el censo", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:escenarios")}`);
+    afirmar(r.status === 200 && r.json?.ok && r.json.modulo?.id === "mod:escenarios", "entidad del estratega rota");
+  });
+
+  await verificar("/escenarios renderiza el escenario con el aviso NO ES PREDICCIÓN y los supuestos", async () => {
+    const r = await pedir("/escenarios");
+    afirmar(r.status === 200, "no 200");
+    for (const trozo of ["EL ", "NO ES PREDICCIÓN", "LOS SUPUESTOS", "SUP-TIEMPO", "LOS LÍMITES"]) {
+      afirmar(r.texto.includes(trozo), `falta «${trozo}» en la página`);
+    }
   });
 
   await verificar("los chips contextuales viven en /conflicto/ukraine", async () => {

@@ -1,0 +1,191 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { APP_VERSION_LABEL } from "@/lib/version";
+import { ejecutarEscenario, catalogoSimulacion } from "@/lib/nucleo/simulacion";
+import { EscenarioControles } from "@/components/vanguard/escenario-controles";
+
+// ============================================================
+// v224.0 EL ESTRATEGA — LA PUERTA DEL ESCENARIO (/escenarios)
+// Tarea (f) del mandato: «simulación pequeña verificable:
+// datos/supuestos/variables/reglas/resultados SEPARADOS, nunca
+// presentarla como predicción, sin ejecutar código arbitrario».
+// La página server-rendered muestra el escenario por defecto con
+// TODAS sus piezas a la vista; la isla client solo mueve los 4
+// pesos. El aviso «NO ES PREDICCIÓN» viaja con los resultados
+// SIEMPRE — en la página, en la API y en la isla.
+// ============================================================
+
+export const dynamic = "force-dynamic";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+
+export const metadata: Metadata = {
+  title: "EL ESTRATEGA — escenarios de presión por teatro, nunca predicciones",
+  description:
+    "Una herramienta de razonamiento con datos reales documentados: fechas históricas, cables del archivo, frentes OSINT y gasto militar del Banco Mundial, combinados bajo supuestos declarados y pesos que tú ajustas. No es una predicción.",
+  alternates: { canonical: `${SITE_URL}/escenarios` },
+  openGraph: {
+    type: "website",
+    url: `${SITE_URL}/escenarios`,
+    title: "EL ESTRATEGA — escenarios, nunca predicciones",
+    description:
+      "Recombina datos reales documentados bajo supuestos declarados: determinista, con desglose, procedencia y límites a la vista.",
+    siteName: "VANGUARD — Conflictos Mundiales en Tiempo Real",
+    locale: "es_ES",
+    images: [{ url: `${SITE_URL}/api/og`, width: 1200, height: 630, alt: "EL ESTRATEGA de Vanguard" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EL ESTRATEGA — escenarios, nunca predicciones",
+    description: "Simulación pequeña verificable: datos, supuestos, variables, reglas y resultados separados.",
+  },
+};
+
+export default async function EscenariosPage() {
+  // El escenario por defecto se ejecuta en el propio proceso server
+  // (sin llamada HTTP a sí mismo) — con aviso, supuestos y límites.
+  const escenario = await ejecutarEscenario(undefined);
+  if (!escenario.ok) {
+    // inalcanzable con undefined (pesos por defecto siempre válidos),
+    // pero la casa no finge: si algún día lo fuera, mensaje honesto.
+    return (
+      <main className="min-h-screen bg-zinc-950 px-5 py-20 text-center text-zinc-300">
+        <h1 className="font-orbitron text-2xl font-black text-zinc-100">EL ESTRATEGA</h1>
+        <p className="mt-3 text-sm text-zinc-400">
+          El escenario no pudo ejecutarse — estado real, nada fingido:{" "}
+          {escenario.errores.join(" · ")}
+        </p>
+      </main>
+    );
+  }
+
+  const cat = catalogoSimulacion();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "EL ESTRATEGA — escenarios de presión por teatro",
+    description:
+      "Simulación verificable de Vanguard: datos, supuestos, variables, reglas y resultados separados. No es una predicción.",
+    url: `${SITE_URL}/escenarios`,
+    isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
+  };
+
+  return (
+    <main className="min-h-screen bg-zinc-950 text-zinc-200">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
+      />
+
+      <div className="border-b border-zinc-800 bg-zinc-900/60">
+        <div className="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
+          <Link
+            href="/"
+            className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+          >
+            ◉ VANGUARD
+          </Link>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-600 truncate">
+            {APP_VERSION_LABEL}
+          </span>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-5 py-10">
+        {/* HERO */}
+        <header className="text-center">
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-red-300">
+            Escenario — no predicción
+          </div>
+          <h1 className="mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
+            EL <span className="text-amber">ESTRATEGA</span>
+          </h1>
+          <p className="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+            {cat.escena.es}
+          </p>
+        </header>
+
+        {/* EL ESCENARIO + SUS MANDOS (isla client) */}
+        <EscenarioControles inicial={escenario} />
+
+        {/* CÓMO FUNCIONA — la cadena separada, a la vista */}
+        <section className="mt-12" aria-label="Cómo se calcula">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            CÓMO SE CALCULA — las piezas separadas
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                k: "① DATOS",
+                v: "Fechas históricas públicas (fnt:acontecimientos), cables reales del archivo (fnt:cables), frentes de las salas OSINT (fnt:teatros) y gasto militar del Banco Mundial (fnt:indicadores). Cada uno con su procedencia.",
+              },
+              {
+                k: "② SUPUESTOS",
+                v: "5 decisiones editoriales declaradas — qué asume el modelo, por qué y qué NO captura. Un supuesto no es un hecho.",
+              },
+              {
+                k: "③ VARIABLES",
+                v: "4 pesos (0–2, paso 0.1) — lo único que mueve el usuario. Nada de código: números validados en el servidor.",
+              },
+              {
+                k: "④ REGLAS → RESULTADO",
+                v: "Funciones puras y deterministas: mismo input, mismo output. Cada resultado trae su desglose factor a factor con el ancla usada.",
+              },
+            ].map((b) => (
+              <div key={b.k} className="rounded-md border border-zinc-800 bg-zinc-900/50 p-4">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-cyan-hud">{b.k}</p>
+                <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{b.v}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* LOS SUPUESTOS — uno a uno */}
+        <section className="mt-12" aria-label="Supuestos declarados">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            LOS SUPUESTOS — declarados, no escondidos
+          </p>
+          <div className="mt-3 space-y-3">
+            {cat.supuestos.map((s) => (
+              <article key={s.id} className="rounded-md border border-zinc-800 bg-zinc-900/50 p-4">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-amber/70">{s.id}</p>
+                <p className="mt-1 text-sm text-zinc-200 leading-relaxed">{s.texto}</p>
+                <p className="mt-2 text-xs text-zinc-400 leading-relaxed">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-cyan-hud/80">
+                    por qué:{" "}
+                  </span>
+                  {s.justificacion}
+                </p>
+                <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-red-hud/70">
+                    qué no captura:{" "}
+                  </span>
+                  {s.limite}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* LOS LÍMITES — la honestidad por escrito */}
+        <section className="mt-12 mb-4" aria-label="Límites del escenario">
+          <div className="rounded-md border border-red-hud/30 bg-red-hud/5 p-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-red-hud">
+              LOS LÍMITES — lo que esta herramienta NO es
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {cat.limites.map((l) => (
+                <li key={l} className="text-xs text-zinc-300 leading-relaxed">
+                  · {l}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
