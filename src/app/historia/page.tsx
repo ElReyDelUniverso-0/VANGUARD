@@ -31,8 +31,19 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // compuesta COMPLETA en JS (lección v256). El vacío honesto por delante:
 // la casa NO acepta apuestas — estas cuotas son su juicio retrospectivo y
 // el veredicto real ya lo escribieron los libros de historia. Directiva
-// v266: el mapa vive en la fuente (game-data.ts), no en esta sala. Cero
-// fechas a mano, guardia v234 en pie.
+// v266 en pie: el mapa vive en la fuente (game-data.ts), no en esta sala.
+// Cero fechas a mano, guardia v234 en pie.
+//
+// v277.0 EL JUICIO DE LOS LIBROS — la taquilla (v275) crece por dentro:
+// sus cuotas se cruzan con el desenlace real del archivo (v274). El cruce
+// es honesto por construcción: una cuota solo encuentra su veredicto si
+// su warName coincide EXACTAMENTE con el name de una guerra del archivo —
+// la casa no inventa el cruce que la fuente no declara. Medido al abrir:
+// 4 de 8 cuotas encuentran veredicto (Punicas, Cruzadas, Cien Años,
+// Guerra Fria) y 4 no (Termopilas, Waterloo, WWII Europa, Vietnam — el
+// archivo declara otros nombres, el vacío se declara tal cual). La línea
+// compuesta COMPLETA en JS (lección v256); el desenlace viaja verbatim;
+// cero fechas a mano, guardia v234 en pie.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -100,6 +111,20 @@ const TAQUILLA_ERAS = [...new Set(APUESTAS.map((b) => b.category))];
 const censoTaquilla = TAQUILLA_ERAS.map((e) => `${e} ×${APUESTAS.filter((b) => b.category === e).length}`).join(" · ");
 
 const lineaTaquilla = `La taquilla del archivo — ${APUESTAS.length} conflictos con cuota abierta en ${TAQUILLA_ERAS.length} categorías: el juicio retrospectivo de la casa sobre guerras que ya tienen veredicto en los libros`;
+
+// ── v277.0 EL JUICIO DE LOS LIBROS — TODO derivado del cruce WAR_BETS × HISTORICAL_WARS, nada a mano ──
+// Una cuota solo encuentra su veredicto si su warName coincide EXACTAMENTE
+// con el name de una guerra del archivo — la casa no inventa el cruce que
+// la fuente no declara. Si la fuente nombra la guerra mañana, el juicio
+// aparece solo; si la renombra, el vacío se declara solo.
+const VEREDICTOS = new Map(APUESTAS.map((b) => [b.id, GUERRAS.find((g) => g.name === b.warName)]));
+
+const CON_VEREDICTO = APUESTAS.filter((b) => VEREDICTOS.get(b.id) !== undefined);
+
+const SIN_VEREDICTO = APUESTAS.filter((b) => VEREDICTOS.get(b.id) === undefined);
+
+// La línea de la capa compuesta COMPLETA en JS (lección v256).
+const lineaJuicio = `El juicio de los libros — ${CON_VEREDICTO.length} de ${APUESTAS.length} cuotas encuentran su desenlace en el archivo: la casa dio su porcentaje y los libros escribieron quién ganó`;
 
 const ENLACES_NUCLEO: EnlaceContextual[] = [
   {
@@ -237,10 +262,16 @@ export default function HistoriaPage() {
           <p className="mt-3 text-xs text-zinc-500 leading-relaxed">
             La casa no acepta apuestas: estas cuotas son su juicio retrospectivo, servidas tal como la fuente las declara — el veredicto real ya lo escribieron los libros de historia. El salón interactivo de apuestas vive en el aparato (la primera página de la casa). La taquilla vive en la fuente (game-data.ts), no en esta sala.
           </p>
+          {/* v277.0 EL JUICIO DE LOS LIBROS — el cruce honesto cuota × desenlace */}
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+            {`${lineaJuicio}. ${SIN_VEREDICTO.length > 0 ? `Sin veredicto en el archivo: ${SIN_VEREDICTO.map((b) => b.warName).join(", ")} — la casa no inventa el cruce que la fuente no declara.` : "Todas las cuotas encuentran su guerra en el archivo."}`}
+          </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {APUESTAS.map((b) => {
               const lineaCuotas = `cuotas: ${b.oddsA} / ${b.oddsB}`;
               const lineaProb = `la casa da ${Math.round(b.probabilityA * 100)}% a ${b.factionA}`;
+              const libro = VEREDICTOS.get(b.id);
+              const lineaLibro = libro ? `los libros dicen: ${libro.outcome}` : null;
               return (
                 <article key={b.id} className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60">
                   <div className="flex items-baseline justify-between gap-2">
@@ -250,6 +281,9 @@ export default function HistoriaPage() {
                   <p className="mt-1 font-mono text-[10px] text-zinc-500">{`${b.factionA} vs ${b.factionB}`}</p>
                   <div className="mt-2 font-mono text-[10px] text-cyan-hud">{lineaCuotas}</div>
                   <div className="mt-1 font-mono text-[10px] text-amber">{lineaProb}</div>
+                  {lineaLibro && (
+                    <div className="mt-1 font-mono text-[10px] text-green-hud">{lineaLibro}</div>
+                  )}
                   <p className="mt-2 text-xs text-zinc-400 leading-relaxed">{b.description}</p>
                 </article>
               );
@@ -264,7 +298,7 @@ export default function HistoriaPage() {
 
         <noscript>
           <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-            {`El archivo funciona sin JavaScript: las ${GUERRAS.length} guerras, sus años, su desenlace y su coste —y las ${APUESTAS.length} cuotas de la taquilla— están arriba, servidos en el HTML. Las salas en vivo (primera página, globo 3D, vértigo) piden JavaScript.`}
+            {`El archivo funciona sin JavaScript: las ${GUERRAS.length} guerras, sus años, su desenlace y su coste —y las ${APUESTAS.length} cuotas de la taquilla, ${CON_VEREDICTO.length} con veredicto de los libros— están arriba, servidos en el HTML. Las salas en vivo (primera página, globo 3D, vértigo) piden JavaScript.`}
           </p>
         </noscript>
       </div>

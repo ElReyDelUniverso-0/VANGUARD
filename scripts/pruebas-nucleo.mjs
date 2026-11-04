@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v276.0", async () => {
+  await verificar("servidor vivo y en v277.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v276"), `versión ${r.json?.version} ≠ v276`);
+    afirmar(String(r.json?.version).startsWith("v277"), `versión ${r.json?.version} ≠ v277`);
   });
 
   // censo por API
@@ -2010,6 +2010,47 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v277.0 EL JUICIO DE LOS LIBROS: las cuotas de la taquilla se cruzan con el desenlace del archivo (/historia) ──
+  // La cabeza de la cola de la v276 (medida al abrir la ronda): la taquilla,
+  // segunda capa — WAR_BETS × HISTORICAL_WARS por nombre exacto. Medido con
+  // simulador contra la fuente: 4 de 8 cuotas encuentran veredicto (Punicas,
+  // Cruzadas, Cien Años, Guerra Fria); 4 no (la casa no inventa el cruce).
+  await verificar("EL JUICIO DE LOS LIBROS estática: el cruce honesto por nombre exacto declarado en la sala (v277)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/historia/page.tsx"), "utf8");
+    // las dos fuentes intactas
+    afirmar(fuente.includes("export const WAR_BETS"), "la fuente de cuotas no existe");
+    afirmar(fuente.includes("export const HISTORICAL_WARS"), "la fuente de guerras no existe");
+    // la sala cruza por nombre exacto (la casa no inventa el cruce)
+    afirmar(pag.includes("VEREDICTOS = new Map(APUESTAS.map((b) => [b.id, GUERRAS.find((g) => g.name === b.warName)]))"), "el cruce no es por nombre exacto de la fuente");
+    afirmar(pag.includes("const CON_VEREDICTO = APUESTAS.filter((b) => VEREDICTOS.get(b.id) !== undefined)"), "el censo con veredicto no se deriva (filter)");
+    afirmar(pag.includes("const SIN_VEREDICTO = APUESTAS.filter((b) => VEREDICTOS.get(b.id) === undefined)"), "el censo sin veredicto no se deriva (filter)");
+    afirmar(pag.includes("const lineaJuicio = `El juicio de los libros — ${CON_VEREDICTO.length} de ${APUESTAS.length} cuotas encuentran su desenlace en el archivo: la casa dio su porcentaje y los libros escribieron quién ganó`"), "la línea del juicio no se compone COMPLETA en JS");
+    afirmar(pag.includes("los libros dicen: ${libro.outcome}"), "el desenlace no viaja verbatim de la fuente");
+    afirmar(pag.includes("SIN_VEREDICTO.map((b) => b.warName).join(\", \")"), "los nombres del vacío no se componen derivados (join)");
+    afirmar(pag.includes("la casa no inventa el cruce que la fuente no declara"), "el vacío honesto del cruce no está declarado");
+    afirmar(pag.includes("${CON_VEREDICTO.length} con veredicto de los libros"), "el noscript no se compone derivado");
+    // el juicio no inventa fechas (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la sala escribe fechas a mano en la ronda v277!");
+  });
+
+  await verificar("EL JUICIO DE LOS LIBROS viva: el SSR sirve el cruce con los desenlaces reales (v277)", async () => {
+    const r = await pedir("/historia");
+    afirmar(r.status === 200, `/historia no 200 en v277 (${r.status})`);
+    afirmar(r.texto.includes("El juicio de los libros — 4 de 8 cuotas encuentran su desenlace en el archivo"), "la línea derivada del juicio no viaja (o las cifras no coinciden con la fuente)");
+    // los 4 desenlaces verbatim de la fuente, bajo las cuotas de la casa
+    afirmar(r.texto.includes("los libros dicen: Victoria romana · Cartago destruida en 146 a.C."), "el veredicto de las Punicas no viaja verbatim");
+    afirmar(r.texto.includes("los libros dicen: Fracaso final · Caida de Acre en 1291"), "el veredicto de las Cruzadas no viaja");
+    afirmar(r.texto.includes("los libros dicen: Victoria francesa · Inglaterra pierde territorios continentales"), "el veredicto de los Cien Años no viaja");
+    afirmar(r.texto.includes("los libros dicen: Colapso de la URSS en 1991"), "el veredicto de la Guerra Fria no viaja");
+    // el vacío honesto con los 4 nombres derivados
+    afirmar(r.texto.includes("Sin veredicto en el archivo: Batalla de Termopilas, Waterloo, WWII Europa, Vietnam — la casa no inventa el cruce que la fuente no declara."), "el vacío del cruce no viaja con los nombres derivados");
+    // las anclas de la casa en pie (v274/v275)
+    afirmar(r.texto.includes("LA TAQUILLA DEL ARCHIVO"), "la ancla v275 cayó");
+    afirmar(r.texto.includes("La taquilla del archivo — 8 conflictos con cuota abierta en 4 categorías"), "la línea de la taquilla cayó (v275)");
+    afirmar(r.texto.includes("El archivo vive en la fuente"), "la procedencia del archivo cayó (v274)");
   });
 
   // ── v276.0 LA ESCUADRA DE LA CASA: los 6 aliados de la fuente suben a la vitrina (/objetivos) ──

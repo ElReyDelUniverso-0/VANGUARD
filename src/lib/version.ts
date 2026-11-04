@@ -3107,6 +3107,43 @@
 //     anclas v235/v267/v268/v270/v273 en pie) · BD intocada (1877 cables ·
 //     9 hechos, un solo escritor).
 // Herencia v275.0 LA TAQUILLA DEL ARCHIVO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v276.0";
-export const APP_CODENAME = "LA ESCUADRA DE LA CASA";
+// v277.0 EL JUICIO DE LOS LIBROS — la taquilla de /historia (v275) crece
+//         por dentro: sus 8 cuotas se cruzan con el desenlace real del
+//         archivo (v274). El cruce es honesto por construcción: una cuota
+//         solo encuentra su veredicto si su warName coincide EXACTAMENTE
+//         con el name de una guerra del archivo — la casa no inventa el
+//         cruce que la fuente no declara. Medido al abrir con simulador
+//         contra la fuente real: 4 de 8 cuotas encuentran veredicto
+//         (WB1 Punicas, WB3 Cruzadas, WB4 Cien Años, WB8 Guerra Fria) y
+//         4 no (WB2 Termopilas, WB5 Waterloo, WB6 WWII Europa, WB7
+//         Vietnam — el archivo declara otros nombres; el vacío se
+//         declara tal cual, derivado con filter, nunca a mano).
+// (1) EL CRUCE SE SIRVE EN SERVER — dentro de la taquilla (la segunda
+//     capa de la cola v275/v276): línea compuesta COMPLETA en JS
+//     (lección v256): «El juicio de los libros — 4 de 8 cuotas encuentran
+//     su desenlace en el archivo: la casa dio su porcentaje y los libros
+//     escribieron quién ganó»; cada carta con veredicto compone en JS
+//     «los libros dicen: <outcome verbatim de la fuente>» bajo sus cuotas
+//     (la casa dijo X%, los libros escribieron Y).
+// (2) EL VACÍO HONESTO DEL CRUCE — las cuotas sin guerra en el archivo se
+//     declaran derivadas con filter + join («Sin veredicto en el archivo:
+//     Batalla de Termopilas, Waterloo, WWII Europa, Vietnam — la casa no
+//     inventa el cruce que la fuente no declara»); si la fuente nombra la
+//     guerra mañana, el juicio aparece solo; si la renombra, el vacío se
+//     declara solo. El ternario cubre ambos mundos.
+// (3) EL NOSCRIPT SE COMPONE DERIVADO — «8 cuotas de la taquilla, 4 con
+//     veredicto de los libros» viaja compuesto desde la fuente; cero
+//     cifras nuevas a mano, guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /historia en la tabla) ·
+//     health v277.0 db up · pruebas 180/180 (+2 EL JUICIO DE LOS LIBROS:
+//     estática — el cruce por nombre exacto declarado en la sala, el Map
+//     y los filters derivados, la línea compuesta en JS, el vacío del
+//     cruce con join derivado, la guardia v234; viva — la línea derivada,
+//     los 4 desenlaces verbatim (Roma 146 a.C., Acre 1291, Victoria
+//     francesa, URSS 1991), el vacío con los 4 nombres reales y las
+//     anclas v274/v275 en pie) · BD intocada (1877 cables · 9 hechos, un
+//     solo escritor).
+// Herencia v276.0 LA ESCUADRA DE LA CASA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v277.0";
+export const APP_CODENAME = "EL JUICIO DE LOS LIBROS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

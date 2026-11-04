@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v277.0",
+    nombre: "EL JUICIO DE LOS LIBROS — la taquilla de /historia (v275) crece por dentro: sus 8 cuotas se cruzan con el desenlace real del archivo (v274) por nombre exacto; 4 de 8 encuentran veredicto (Punicas, Cruzadas, Cien Años, Guerra Fria) y 4 no (Termopilas, Waterloo, WWII Europa, Vietnam — la casa no inventa el cruce que la fuente no declara); cada carta compone «los libros dicen: <outcome verbatim>» bajo sus cuotas — la casa dijo X%, los libros escribieron Y",
+    hitos: [
+      "EL CRUCE SE SIRVE EN SERVER — línea compuesta COMPLETA en JS (lección v256): «4 de 8 cuotas encuentran su desenlace en el archivo: la casa dio su porcentaje y los libros escribieron quién ganó»; el desenlace viaja verbatim de la fuente (cero cifras a mano — herencia v235/v268/v270/v273/v275/v276)",
+      "EL VACÍO HONESTO DEL CRUCE — las cuotas sin guerra en el archivo se declaran derivadas con filter + join: «Sin veredicto en el archivo: Batalla de Termopilas, Waterloo, WWII Europa, Vietnam»; el ternario cubre ambos mundos — si la fuente nombra la guerra mañana, el juicio aparece solo",
+      "EL NOSCRIPT SE COMPONE DERIVADO — «8 cuotas de la taquilla, 4 con veredicto de los libros» viaja compuesto desde la fuente; cero fechas a mano, guardia v234 en pie",
+      "QA v277: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /historia en la tabla), health v277.0 db up, pruebas 180/180 (+2 EL JUICIO DE LOS LIBROS: estática — el cruce por nombre exacto, el Map y los filters derivados, la línea compuesta en JS y la guardia v234; viva — la línea derivada, los 4 desenlaces verbatim (Roma 146 a.C., Acre 1291, Victoria francesa, URSS 1991), el vacío con los 4 nombres reales y las anclas v274/v275 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v276.0",
     nombre: "LA ESCUADRA DE LA CASA — la vitrina (/objetivos) viste su último catálogo client-side: FRIENDS, los 6 operadores de la alianza (WOLF_Tactico, FALCON_X, GHOST_Cmd, VIPER_K, RAVEN_Alpha, PHOENIX_R) con su rango del escalafón real de 9, su nivel y sus contadores de verdad, solo vivía en el panel de amigos client-side; la vitrina los sirve en server con censo, presencia y cima derivados de la fuente (la cola juraba 12 aliados: medido al abrir, la fuente declara 6 — canon = repo)",
     hitos: [
