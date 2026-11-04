@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v242.0", async () => {
+  await verificar("servidor vivo y en v243.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v242"), `versión ${r.json?.version} ≠ v242`);
+    afirmar(String(r.json?.version).startsWith("v243"), `versión ${r.json?.version} ≠ v243`);
   });
 
   // censo por API
@@ -1309,6 +1309,54 @@ async function parteB() {
     for (const ruta of ["/ver-guerra", "/mundo", "/guerra-hoy", "/nucleo", "/espia", "/modo", "/en-vivo"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `puerta del kit rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v243.0 LA POLÍTICA VIVA: la última sala del censo que ninguna ronda
+  // había expandido (v206→v242) viste el kit — y su sección 9 solo puede
+  // documentar lo que el ÁRBOL declara (la política miente si cita un
+  // almacén que fuentes.ts no declara, o se calla uno que sí existe).
+  await verificar("LA POLÍTICA VIVA: ficha, puertas y frontera en el server (v243)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/privacidad/page.tsx"), "utf8");
+    // la ficha WebPage (patrón v215) y el CONECTA (patrón v230)
+    afirmar(pag.includes("jsonLdSeguro") && pag.includes('"WebPage"'), "sin la ficha WebPage de la política");
+    afirmar(pag.includes("application/ld+json"), "el JSON-LD no viaja como ld+json");
+    afirmar(pag.includes("<EnlacesNucleo") && pag.includes("CONECTA CON EL NÚCLEO"), "sin CONECTA de la casa");
+    for (const ruta of ['"/nucleo"', '"/modo"', '"/"']) {
+      afirmar(pag.includes(`ruta: ${ruta}`), `la puerta ${ruta} no vive en las puertas de la política`);
+    }
+    // LA HONESTIDAD ESTRUCTURAL: los 4 almacenes privados citados por la
+    // sección 9 son EXACTAMENTE los que fuentes.ts declara — ni uno
+    // inventado por la política, ni uno real que la política se calla.
+    const fuentes = readFileSync(join(RAIZ, "src/lib/nucleo/fuentes.ts"), "utf8");
+    const bloquePrivadas = fuentes.slice(fuentes.indexOf("export const FUENTES_PRIVADAS"));
+    const idsPrivados = [...bloquePrivadas.matchAll(/id: "(fnt:[a-z]+)"/g)].map((m) => m[1]);
+    afirmar(idsPrivados.length === 4, `fuentes.ts declara ${idsPrivados.length} privadas, no 4`);
+    for (const id of idsPrivados) {
+      afirmar(pag.includes(id), `la política no documenta ${id}, que el árbol declara`);
+    }
+    afirmar(pag.includes("La frontera técnica"), "sin la sección 9 de la frontera");
+    // la política no promete vigilancia que no existe: la suite SÍ la ejecuta
+    afirmar(pag.includes("suite de pruebas del sistema"), "sin la referencia a la vigilancia real");
+    // SIN noscript a propósito: la página es 100% server — fingir carencia es mentir
+    afirmar(!pag.includes("<noscript"), "¡la política finge necesitar JavaScript que no necesita!");
+  });
+
+  await verificar("LA POLÍTICA VIVA viva: /privacidad sirve ficha, puertas y frontera en el SSR (v243)", async () => {
+    const r = await pedir("/privacidad");
+    afirmar(r.status === 200, `no 200 (${r.status})`);
+    afirmar(r.texto.includes("application/ld+json") && r.texto.includes("WebPage"), "el SSR no lleva la ficha de la política");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "CONECTA ausente del SSR");
+    afirmar(r.texto.includes("La frontera técnica, a la vista"), "la sección 9 no viaja en el SSR");
+    for (const puerta of ["/nucleo", "/modo"]) {
+      afirmar(r.texto.includes(`href="${puerta}"`), `la puerta ${puerta} no viaja en el HTML`);
+    }
+  });
+
+  await verificar("LA POLÍTICA VIVA: las puertas de la política responden 200 (v243)", async () => {
+    for (const ruta of ["/nucleo", "/modo", "/", "/privacidad"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta de la política rota ${ruta} → ${r.status}`);
     }
   });
 

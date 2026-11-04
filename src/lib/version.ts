@@ -2119,6 +2119,32 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v242.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v241.0 EL UNIVERSO ABIERTO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v242.0";
-export const APP_CODENAME = "EL KIT COMPLETO";
+// v243.0: LA POLÍTICA VIVA — el barrido módulo a módulo se completa: la
+//     única sala del censo que ninguna ronda había expandido desde su
+//     nacimiento (v206→v242, 36 rondas) viste el kit de la casa.
+// (1) LA FICHA DE LA POLÍTICA (patrón v215) — JSON-LD WebPage con
+//     jsonLdSeguro: la página que Google News Publisher Center exige para
+//     validar la publicación merece su ficha estructurada como las demás
+//     salas (name, url absoluta, isPartOf VANGUARD, inLanguage es).
+// (2) CONECTA CON EL NÚCLEO (patrón v230) — 3 puertas REALES del censo
+//     (/nucleo, /modo, /) con su motivo a la vista: la política no es una
+//     isla, el censo que declara la frontera queda a un chip.
+// (3) LA SECCIÓN 9 «LA FRONTERA TÉCNICA, A LA VISTA» — la política
+//     documenta lo que el ÁRBOL DECLARA: los 4 almacenes privados de
+//     fuentes.ts (fnt:cuentas, fnt:jugadores, fnt:telemetria,
+//     fnt:conversacion) con sus ids reales a la vista y la regla fija
+//     (jamás en búsqueda ni API pública), y la vigilancia real de la suite
+//     de pruebas. SIN noscript a propósito: la página es 100%
+//     server-rendered y funciona entera sin JavaScript — fingir una
+//     carencia sería mentir (la honestidad como técnica).
+// (4) PRUEBAS +3 (109/109): estática — la HONESTIDAD ESTRUCTURAL: los ids
+//     citados por la política son EXACTAMENTE los que fuentes.ts declara
+//     (ni uno inventado, ni uno real callado), ficha+puertas por regex, sin
+//     noscript fingido; viva — /privacidad 200 con ficha, CONECTA, sección
+//     9 y hrefs en el SSR; viva las puertas 200 una a una. Salud v242→v243.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v243.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v242.0 EL KIT COMPLETO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v243.0";
+export const APP_CODENAME = "LA POLÍTICA VIVA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

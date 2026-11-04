@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v243.0",
+    nombre: "LA POLÍTICA VIVA — la última sala del censo sin expandir viste el kit y documenta la frontera que el árbol declara (/privacidad)",
+    hitos: [
+      "EL BARRIDO SE COMPLETA — /privacidad nació en v206 (Publisher Center la exige) y 36 rondas después seguía sin ficha, sin CONECTA y sin contar lo que la arquitectura SÍ declara; esta ronda la viste y el censo del núcleo queda sin salas huérfanas",
+      "LA FICHA DE LA POLÍTICA (patrón v215) — JSON-LD WebPage con jsonLdSeguro: name, url absoluta, isPartOf VANGUARD, inLanguage es",
+      "CONECTA CON EL NÚCLEO (patrón v230) — 3 puertas REALES del censo (/nucleo, /modo, /): el censo que declara la frontera queda a un chip del lector de la política",
+      "LA SECCIÓN 9 «LA FRONTERA TÉCNICA, A LA VISTA» — la política documenta los 4 almacenes privados que fuentes.ts declara (fnt:cuentas, fnt:jugadores, fnt:telemetria, fnt:conversacion) con sus ids reales y la regla fija (jamás en búsqueda ni API pública), y la vigilancia real de la suite; SIN noscript a propósito — la página es 100% server y fingir carencia sería mentir",
+      "QA v243: tsc 0, eslint 0, build EXIT 0, health v243.0 db up, pruebas 109/109 (+3 LA POLÍTICA VIVA: estática — los ids citados son EXACTAMENTE los que fuentes.ts declara, ni uno inventado ni uno callado; viva — SSR con ficha, CONECTA y sección 9; viva las puertas 200), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v242.0",
     nombre: "EL KIT COMPLETO — CONECTA, noscript y JSON-LD llegan a las últimas tres salas señaladas (/espia, /en-vivo, /modo)",
     hitos: [

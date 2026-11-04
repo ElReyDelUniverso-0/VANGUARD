@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 
 // v206.0 MÁS PUERTAS — política de privacidad pública e indexable.
 // Publisher Center (Google News) exige una URL de política de privacidad
@@ -7,15 +10,52 @@ import Link from "next/link";
 // visitantes. Texto honesto sobre lo que la casa realmente maneja:
 // identidad local, cuentas con contraseña hasheada, cookie de sesión
 // técnica y terceros técnicos (fuentes de noticias, imágenes y mapas).
+// v243.0 LA POLÍTICA VIVA — la única sala del censo que ninguna ronda
+// había expandido desde su nacimiento (v206) viste el kit de la casa:
+// · JSON-LD WebPage (patrón v215): la ficha estructurada de la página que
+//   Publisher Center exige.
+// · CONECTA CON EL NÚCLEO (patrón v230): 3 puertas REALES del censo.
+// · Sección 9 «La frontera técnica, a la vista»: la política documenta lo
+//   que el árbol DECLARA — los 4 almacenes privados de src/lib/nucleo/
+//   fuentes.ts (fnt:cuentas, fnt:jugadores, fnt:telemetria,
+//   fnt:conversacion) que la búsqueda jamás consulta, vigilado por la
+//   suite de pruebas del núcleo. Sin noscript a propósito: esta página es
+//   100% server-rendered y funciona entera sin JavaScript — fingir una
+//   carencia sería mentir (ley de la casa: la honestidad como técnica).
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad | VANGUARD",
   description:
     "Cómo VANGUARD maneja tus datos: identidad local en tu aparato, cuentas con contraseña cifrada, cookie de sesión técnica y terceros técnicos. Sin venta de datos.",
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app"}/privacidad`,
+    canonical: `${SITE_URL}/privacidad`,
   },
 };
+
+// v243.0 — las puertas del lector de la política: rutas REALES del censo.
+const PUERTAS_DE_LA_POLITICA: EnlaceContextual[] = [
+  {
+    etiqueta: "EL CENSO DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "donde la casa declara sus fuentes públicas y sus 4 almacenes privados — la frontera que esta política describe, a la vista",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "TU MODO · TU CUENTA ▸",
+    ruta: "/modo",
+    motivo: "la puerta de la cuenta que esta política protege",
+    tipoRelacion: "pertenece_a",
+  },
+  {
+    etiqueta: "PRIMERA PÁGINA ▸",
+    ruta: "/",
+    motivo: "la Casa entera, de donde esta página es la letra pequeña",
+    tipoRelacion: "pertenece_a",
+  },
+];
 
 const SECCIONES: { titulo: string; parrafos: string[] }[] = [
   {
@@ -70,59 +110,91 @@ const SECCIONES: { titulo: string; parrafos: string[] }[] = [
       "Si la Casa cambia algo esencial de esta política, se actualizará esta página con su fecha. Seguir usando Vanguard después de un cambio implica conocer la versión vigente.",
     ],
   },
+  {
+    titulo: "9. La frontera técnica, a la vista",
+    parrafos: [
+      "Las promesas de esta política no son solo palabras: la arquitectura de la Casa las declara. El Núcleo (el censo público de módulos y fuentes de Vanguard) registra sus almacenes de datos con una frontera dura: las fuentes públicas alimentan la búsqueda global, y CUATRO almacenes privados —cuentas (fnt:cuentas), perfiles de juego (fnt:jugadores), telemetría (fnt:telemetria) y conversaciones en directo (fnt:conversacion)— están declarados con una regla fija: jamás se consultan por la búsqueda y jamás salen por una API pública. Los nombres son los reales del censo: no son jerga escondida, son los estantes que la Casa reconoce tener.",
+      "Esa frontera se vigila sola: la suite de pruebas del sistema —que corre en cada ronda de desarrollo— verifica que la búsqueda global no puede tocar los almacenes privados y que los campos sensibles (el hash de tu contraseña, tu progreso guardado, la fecha de tu último acceso) nunca aparecen en un resultado público. Si la frontera se rompiera, las pruebas se rompen con ella.",
+    ],
+  },
 ];
 
 export default function PrivacidadPage() {
+  // v243.0 — la ficha estructurada de la política para Google (patrón v215):
+  // la página que Publisher Center exige merece su ficha como las demás salas.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Política de Privacidad — VANGUARD",
+    description:
+      "Cómo VANGUARD maneja tus datos: identidad local en tu aparato, cuentas con contraseña cifrada, cookie de sesión técnica y terceros técnicos. Sin venta de datos.",
+    url: `${SITE_URL}/privacidad`,
+    isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
+    inLanguage: "es",
+  };
+
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-200">
-      <div className="border-b border-zinc-800 bg-zinc-900/60">
-        <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
-          <Link
-            href="/"
-            className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-          >
-            ◉ VANGUARD
-          </Link>
-          <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
-            Vigente desde el 31-10-2026
-          </span>
-        </div>
-      </div>
-
-      <article className="max-w-3xl mx-auto px-5 py-10">
-        <h1 className="text-3xl font-bold text-zinc-100">
-          Política de Privacidad
-        </h1>
-        <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
-          Resumen en una línea: tu identidad de juego vive en tu aparato, tu
-          contraseña vive cifrada y nadie vende nada de nadie.
-        </p>
-
-        <div className="mt-8 flex flex-col gap-8">
-          {SECCIONES.map((s) => (
-            <section key={s.titulo}>
-              <h2 className="text-lg font-bold text-amber-300">{s.titulo}</h2>
-              {s.parrafos.map((p, i) => (
-                <p key={i} className="mt-3 text-sm text-zinc-400 leading-relaxed">
-                  {p}
-                </p>
-              ))}
-            </section>
-          ))}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
+      />
+      <main className="min-h-screen bg-zinc-950 text-zinc-200">
+        <div className="border-b border-zinc-800 bg-zinc-900/60">
+          <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
+            <Link
+              href="/"
+              className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+            >
+              ◉ VANGUARD
+            </Link>
+            <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
+              Vigente desde el 31-10-2026
+            </span>
+          </div>
         </div>
 
-        <div className="mt-10 border border-amber-500/30 bg-amber-500/5 rounded-md p-4 text-sm text-zinc-400">
-          ¿Dudas sobre tus datos? Escríbele al equipo desde los canales
-          oficiales de la Casa. La guerra sigue en{" "}
-          <Link
-            href="/"
-            className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
-          >
-            vanguard-kq9r.vercel.app
-          </Link>
-          .
-        </div>
-      </article>
-    </main>
+        <article className="max-w-3xl mx-auto px-5 py-10">
+          <h1 className="text-3xl font-bold text-zinc-100">
+            Política de Privacidad
+          </h1>
+          <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
+            Resumen en una línea: tu identidad de juego vive en tu aparato, tu
+            contraseña vive cifrada y nadie vende nada de nadie.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-8">
+            {SECCIONES.map((s) => (
+              <section key={s.titulo}>
+                <h2 className="text-lg font-bold text-amber-300">{s.titulo}</h2>
+                {s.parrafos.map((p, i) => (
+                  <p key={i} className="mt-3 text-sm text-zinc-400 leading-relaxed">
+                    {p}
+                  </p>
+                ))}
+              </section>
+            ))}
+          </div>
+
+          <div className="mt-10 border border-amber-500/30 bg-amber-500/5 rounded-md p-4 text-sm text-zinc-400">
+            ¿Dudas sobre tus datos? Escríbele al equipo desde los canales
+            oficiales de la Casa. La guerra sigue en{" "}
+            <Link
+              href="/"
+              className="text-amber-400 hover:text-amber-300 underline underline-offset-2"
+            >
+              vanguard-kq9r.vercel.app
+            </Link>
+            .
+          </div>
+
+          {/* v243.0 CONECTA CON EL NÚCLEO (patrón v230) — la política no es
+              una isla: el censo que declara la frontera está a un chip. */}
+          <section className="mt-10 pb-10">
+            <EnlacesNucleo enlaces={PUERTAS_DE_LA_POLITICA} titulo="CONECTA CON EL NÚCLEO" />
+          </section>
+        </article>
+      </main>
+    </>
   );
 }
