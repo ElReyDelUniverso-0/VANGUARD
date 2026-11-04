@@ -9,7 +9,7 @@ import { espejoXpa } from "@/lib/analista";
 // v67.0 EL HANGAR — PROTOCOLO ROJO: multiplicador global de monedas
 import { protocoloMultiplier, trackProtocoloEarnings } from "@/lib/tension";
 // v84.0 FORTUNA DE GUERRA — golpe de fortuna ×2/×3/×5 + prima de guerra en TODO pago
-import { rollFortuna, emitirFortuna } from "@/lib/fortuna";
+import { rollFortuna, emitirFortuna, registrarFortuna, registrarPagoSeco } from "@/lib/fortuna";
 // v172.0 EL PULSO DE LA PARIDAD — la caja de la Casa cuenta las acciones 2D
 // (los gastos con motivo «desde el mundo 3D» los cuenta el raycast: no doble-contar)
 import { contarGastoCasa } from "@/lib/telemetria-paridad";
@@ -918,6 +918,13 @@ export const useGameStore = create<GameState>()(
             fortunaExtra = f.extra;
             fortunaMult = f.mult;
             fortunaMotivo = f.motivo;
+            // v304.0 LA MANO DE LA FORTUNA — el libro escribe: golpe apaga la
+            // racha y suma página; pago elegible y seco calienta la lástima
+            if (f.mult >= 2) {
+              registrarFortuna({ mult: f.mult, extra: f.extra, motivo: f.motivo, base: amount });
+            } else if (f.elegible) {
+              registrarPagoSeco();
+            }
           } catch {
             /* la fortuna jamás tumba el pago */
           }

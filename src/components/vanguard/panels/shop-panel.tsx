@@ -3,17 +3,36 @@
 import { SHOP_ITEMS } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { ShoppingBag, Coins, Gem, Check, Lock, Zap, Video } from "lucide-react";
+import { ShoppingBag, Coins, Gem, Check, Lock, Zap, Video, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { useEffect, useMemo } from "react";
+// v304.0 LA MANO DE LA FORTUNA — el libro de la suerte del operador
+import { horaDorada, probGolpe, loadFortuna, PROB_BASE, type FortunaEstado } from "@/lib/fortuna";
+import { useEffect, useMemo, useState } from "react";
 
 export function ShopPanel() {
   const { coins, gems, ownedAvatars, ownedCosmetics, activeAvatar, hudTheme, buyAvatar, buyCosmetic, buyBoost, unlockBriefing, readBriefings, spendCoins, addToInventory, activateElite, isElite } = useGameStore();
+
+  // v304.0 EL LIBRO DE LA FORTUNA — la memoria de la suerte (solo client, cero hidratación rara)
+  const [libro, setLibro] = useState<FortunaEstado | null>(null);
+  const [horaHoy, setHoraHoy] = useState<ReturnType<typeof horaDorada> | null>(null);
+  useEffect(() => {
+    const leer = () => {
+      try {
+        setLibro(loadFortuna());
+        setHoraHoy(horaDorada());
+      } catch {
+        /* el libro jamás tumba la tienda */
+      }
+    };
+    leer();
+    const id = window.setInterval(leer, 30_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const categories = ["CAMERA", "ELITE", "AVATAR", "BRIEFING", "BOOST", "CONSUMABLE", "COSMETIC"];
   const catLabel: Record<string, string> = {
@@ -192,6 +211,53 @@ export function ShopPanel() {
           </div>
         }
       />
+
+      {/* v304.0 EL LIBRO DE LA FORTUNA — la mano de la casa, visible y honesta */}
+      {libro && horaHoy && (
+        <div data-vg-libro-fortuna className="rounded-lg border border-amber-hud/30 bg-black/40 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold tracking-[0.18em] text-amber">
+              <Sparkles className="w-3.5 h-3.5" /> EL LIBRO DE LA FORTUNA
+            </div>
+            <div className={cn("font-mono text-[10px] px-2 py-0.5 rounded-full border", horaHoy.activa ? "border-amber-hud/60 text-amber bg-amber-hud/10" : "border-white/10 text-white/50")}>
+              {horaHoy.activa ? `HORA DORADA ACTIVA · ${horaHoy.minRestantes} MIN` : `HORA DORADA: ${horaHoy.hora}h UTC`}
+            </div>
+          </div>
+          <p className="mt-1 text-[11px] text-white/55">
+            Cada día la casa elige una hora de suerte (determinista: la misma para todo el mundo): todo pago elegible gana ×1.5 durante esa hora.
+          </p>
+          <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[10px]">
+            <div className="rounded border border-white/10 bg-black/40 px-2 py-1.5">
+              <div className="text-white/40">RACHA SECA</div>
+              <div className="text-white/90 text-[13px] font-bold">{libro.rachaSeca} pagos</div>
+            </div>
+            <div className="rounded border border-white/10 bg-black/40 px-2 py-1.5">
+              <div className="text-white/40">CALOR DE LA RULETA</div>
+              <div className={cn("text-[13px] font-bold", probGolpe(libro.rachaSeca) > PROB_BASE ? "text-amber" : "text-white/90")}>
+                {(probGolpe(libro.rachaSeca) * 100).toFixed(0)}%
+              </div>
+            </div>
+            <div className="rounded border border-white/10 bg-black/40 px-2 py-1.5">
+              <div className="text-white/40">GOLPES ×2 · ×3 · ×5</div>
+              <div className="text-white/90 text-[13px] font-bold">{libro.golpesX2} · {libro.golpesX3} · {libro.golpesX5}</div>
+            </div>
+            <div className="rounded border border-white/10 bg-black/40 px-2 py-1.5">
+              <div className="text-white/40">REGALADO POR LA FORTUNA</div>
+              <div className="text-amber text-[13px] font-bold">+{libro.extraTotal} ⓒ</div>
+            </div>
+          </div>
+          {libro.mayorGolpe && (
+            <p className="mt-1.5 font-mono text-[10px] text-white/45">
+              Mayor golpe: ×{libro.mayorGolpe.mult} (+{libro.mayorGolpe.extra} ⓒ) — {libro.mayorGolpe.motivo}
+            </p>
+          )}
+          {libro.rachaSeca >= 20 && (
+            <p className="mt-1 font-mono text-[10px] text-amber/80">
+              La lástima de la casa: la racha seca calienta la ruleta — nadie queda frío para siempre.
+            </p>
+          )}
+        </div>
+      )}
 
       {categories.map((cat) => {
         const items = SHOP_ITEMS.filter((i) => i.category === cat);

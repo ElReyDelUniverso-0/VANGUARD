@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v303.0", async () => {
+  await verificar("servidor vivo y en v304.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v303"), `versión ${r.json?.version} ≠ v303`);
+    afirmar(String(r.json?.version).startsWith("v304"), `versión ${r.json?.version} ≠ v304`);
   });
 
   // censo por API
@@ -2689,16 +2689,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
+    afirmar(version.includes('APP_VERSION = "v304.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PLANTILLA COMPLETA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA MANO DE LA FORTUNA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v304.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no canta v303");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v304"), "el health no canta v304");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2726,15 +2726,15 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v304.0"'), "la fuente única de versión no es v303.0");
   });
 
-  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v303 y el home guarda la crónica del oído (v300→v303)", async () => {
+  await verificar("LA GUARDIA DEL OÍDO viva: el health canta v304 y el home guarda la crónica del oído (v300→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("v304.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no canta v303");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v304"), "el health no canta v304");
   });
 
   // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
@@ -2788,7 +2788,7 @@ async function parteB() {
     afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v304.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
@@ -2847,16 +2847,16 @@ async function parteB() {
     afirmar(pill.includes("resumeAmbienteSiQuerido"), "la píldora no despierta al mundo al primer gesto");
     afirmar(pill.includes("toggleMundo"), "la píldora no puede mover el mundo (toggleMundo falta)");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v304.0"'), "la fuente única de versión no es v303.0");
   });
 
-  await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302→v303)", async () => {
+  await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PLANTILLA COMPLETA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA MANO DE LA FORTUNA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v304.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no respira v303");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v304"), "el health no respira v304");
   });
 
   // ── v303.0 LA PLANTILLA COMPLETA: la expansión del módulo EMPLEOS — 8
@@ -2923,16 +2923,66 @@ async function parteB() {
     afirmar(panel.includes("cobrar bono"), "la sala 3D no puede cobrar el bono");
     afirmar(panel.includes("ocho oficinas"), "la casa sigue contando cuatro oficinas");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v303.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v304.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA PLANTILLA COMPLETA viva: el home firma la ronda y el health la contrata (v303)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PLANTILLA COMPLETA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v303.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA MANO DE LA FORTUNA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v304.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v303"), "el health no contrata v303");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v304"), "el health no firma v304");
+  });
+
+  // ── v304.0 LA MANO DE LA FORTUNA: la expansión del módulo FORTUNA — la
+  // HORA DORADA determinista (la suerte compartida), la LÁSTIMA (pity) y
+  // EL LIBRO persistente con su tarjeta en la tienda ──
+  await verificar("LA MANO DE LA FORTUNA estática: la hora dorada determinista, la lástima con escalera y techo, el libro persistente, el gancho del game-store y la tarjeta de la tienda (v304)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/fortuna.ts"), "utf8");
+    const tienda = readFileSync(join(RAIZ, "src/components/vanguard/panels/shop-panel.tsx"), "utf8");
+    const store = readFileSync(join(RAIZ, "src/lib/game-store.ts"), "utf8");
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    // LA HORA DORADA: determinista con la fecha UTC, paga ×1.5
+    afirmar(fuente.includes("export function horaDorada"), "horaDorada no existe (la hora de suerte no es determinista)");
+    afirmar(fuente.includes("MULT_HORA_DORADA = 1.5"), "la hora dorada no paga ×1.5");
+    afirmar(fuente.includes("getUTCFullYear") && fuente.includes("getUTCHours"), "la hora dorada no vive en UTC (la casa desincronizada)");
+    // LA LÁSTIMA: escalera con umbral y techo
+    afirmar(fuente.includes("export function probGolpe"), "probGolpe no existe (la racha seca no calienta nada)");
+    afirmar(fuente.includes("RACHA_PITY = 35"), "la lástima no tiene su umbral (35 pagos)");
+    afirmar(fuente.includes("PROB_TECHO = 0.5"), "la lástima sin techo (0.5)");
+    afirmar(fuente.includes("Math.min(PROB_TECHO, PROB_BASE + (racha - RACHA_PITY + 1) * 0.01)"), "la escalera de la lástima no es la probada");
+    afirmar(fuente.includes("PROB_BASE = 0.14"), "la probabilidad histórica de la v84 no está declarada");
+    // EL LIBRO: persistencia propia y registro honesto
+    afirmar(fuente.includes('LS_FORTUNA = "vg_fortuna_v304"'), "el libro no tiene su persistencia propia");
+    afirmar(fuente.includes("export function registrarPagoSeco"), "el pago seco no se registra (la racha no crece)");
+    afirmar(fuente.includes("export function registrarFortuna"), "el golpe no se escribe en el libro");
+    afirmar(fuente.includes("e.rachaSeca = 0;"), "el golpe no apaga la racha");
+    afirmar(fuente.includes("mayorGolpe"), "el libro no guarda el mayor golpe");
+    // el resultado honesto: elegible + motivo compuesto
+    afirmar(fuente.includes("elegible: boolean"), "el resultado no distingue el pago elegible");
+    afirmar(fuente.includes('compuesto.join(" · ")'), "el motivo compuesto no existe (la verdad a medias)");
+    // el gancho del game-store escribe el libro
+    afirmar(store.includes('registrarFortuna, registrarPagoSeco } from "@/lib/fortuna"'), "el gancho no importa al libro");
+    afirmar(store.includes("registrarFortuna({ mult: f.mult, extra: f.extra, motivo: f.motivo, base: amount })"), "el gancho del addCoins no escribe el libro");
+    afirmar(store.includes("registrarPagoSeco()"), "el gancho del addCoins no calienta la lástima");
+    // la tarjeta de la tienda
+    afirmar(tienda.includes("data-vg-libro-fortuna"), "la tienda no muestra el libro");
+    afirmar(tienda.includes("EL LIBRO DE LA FORTUNA"), "el libro no canta su nombre en la tienda");
+    afirmar(tienda.includes("HORA DORADA ACTIVA"), "la tienda no muestra la hora dorada activa");
+    afirmar(tienda.includes("probGolpe(libro.rachaSeca)"), "el calor de la ruleta no es el helper probado");
+    afirmar(tienda.includes("lástima de la casa"), "la lástima no se le explica al operador");
+    // la versión camina con la casa
+    afirmar(version.includes('APP_VERSION = "v304.0"'), "la fuente única de versión no es v304.0");
+  });
+
+  await verificar("LA MANO DE LA FORTUNA viva: el home firma la ronda y el health la respalda (v304)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA MANO DE LA FORTUNA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v304.0"), "la v304.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v304"), "el health no respalda v304");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

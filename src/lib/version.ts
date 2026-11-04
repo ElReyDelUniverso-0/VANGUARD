@@ -4178,6 +4178,37 @@
 //     LA PLANTILLA COMPLETA v303.0 y el health la firma) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v302.0 EL MUNDO RESPIRA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v303.0";
-export const APP_CODENAME = "LA PLANTILLA COMPLETA";
+// v304.0 LA MANO DE LA FORTUNA — la expansión del módulo FORTUNA (la mina
+//         primera de la «Queda» v303; como con empleos, la medición la
+//         corrigió: no hay fortuna-data.ts, la mina es fortuna.ts, el motor
+//         de recompensas de la v84 que paga TODOS los premios de la casa).
+//         Esta ronda le pone LA MANO ENCIMA (todo aditivo, la v84 sigue
+//         girando igual cuando no hay mano):
+// (1) LA HORA DORADA — la hora de suerte del día, DETERMINISTA por fecha
+//     UTC (seed FNV-1a: la casa entera comparte la misma hora): durante
+//     ella todo pago elegible gana ×1.5 adicional; helpers puros probados
+//     (horaDorada acepta Date, MULT_HORA_DORADA).
+// (2) LA LÁSTIMA DE LA CASA (pity) — la racha de pagos secos calienta la
+//     ruleta: a partir de 35 pagos sin golpe la probabilidad sube +0.01
+//     por pago seco hasta el techo 0.5 (probGolpe puro: base 0.14, la
+//     histórica de la v84); las tres puertas ×2/×3/×5 escalan juntas.
+// (3) EL LIBRO DE LA FORTUNA — la memoria persistente de la suerte
+//     (vg_fortuna_v304, try/catch: el libro jamás tumba el pago): racha
+//     seca, golpes ×2/×3/×5, extra total regalado y el mayor golpe; el
+//     gancho de addCoins escribe (registrarFortuna / registrarPagoSeco)
+//     y la TIENDA lo muestra (tarjeta data-vg-libro-fortuna con la hora
+//     dorada de hoy, el calor de la ruleta y el botín histórico).
+// (4) EL RESULTADO HONESTO — FortunaResultado gana elegible (los
+//     consumidores viejos no lo leen): el game-store distingue el pago
+//     elegible seco del monto menor; el motivo compuesto cuenta la
+//     verdad completa («GOLPE DE FORTUNA ×3 · LA HORA DORADA ×1.5»).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v304.0 db up ·
+//     pruebas 234/234 (+2 LA MANO DE LA FORTUNA: estática — la hora
+//     dorada determinista, la lástima con su escalera y techo, el libro
+//     persistente, el gancho del game-store y la tarjeta de la tienda;
+//     viva — el home canta LA MANO DE LA FORTUNA v304.0 y el health la
+//     firma) · BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v303.0 LA PLANTILLA COMPLETA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v304.0";
+export const APP_CODENAME = "LA MANO DE LA FORTUNA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

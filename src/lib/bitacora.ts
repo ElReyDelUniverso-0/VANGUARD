@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v304.0",
+    nombre: "LA MANO DE LA FORTUNA — la expansión del módulo FORTUNA (la mina primera de la «Queda» v303; la medición la corrigió como con empleos: la mina es fortuna.ts, el motor de la v84 que paga TODOS los premios de la casa): LA HORA DORADA del día (determinista por fecha UTC — la casa entera comparte la misma hora de suerte, ×1.5 en todo pago elegible), LA LÁSTIMA DE LA CASA (pity: la racha seca calienta la ruleta — nadie queda frío para siempre) y EL LIBRO DE LA FORTUNA (la memoria persistente de la suerte, visible en la tienda)",
+    hitos: [
+      "LA HORA DORADA — cada día UTC la casa elige una hora de suerte con seed FNV-1a de la fecha (determinista: misma fecha, misma hora, para TODO el mundo); durante ella todo pago elegible gana ×1.5 adicional; helper puro horaDorada(d) probado (misma fecha → misma hora, activa cuando la hora coincide, cuenta atrás en minutos)",
+      "LA LÁSTIMA DE LA CASA (pity) — la probabilidad histórica de la v84 (0.14: 0.008 ×5 + 0.03 ×3 + 0.102 ×2) sube +0.01 por pago seco a partir de 35 pagos sin golpe, techo 0.5; probGolpe puro probado con su escalera y su techo; las tres puertas ×2/×3/×5 escalan juntas (el diseño de la v84 intacto cuando no hay racha)",
+      "EL LIBRO DE LA FORTUNA — persistencia vg_fortuna_v304 con try/catch (el libro jamás tumba el pago): racha seca, golpes ×2/×3/×5, monedas extra regaladas en total y el mayor golpe; el gancho de addCoins escribe (golpe apaga la racha y suma página, pago elegible seco la calienta) y la TIENDA lo muestra: tarjeta data-vg-libro-fortuna con la hora dorada de hoy y su cuenta atrás, el calor de la ruleta y el botín histórico",
+      "EL RESULTADO HONESTO — FortunaResultado gana elegible (campo aditivo, los consumidores viejos no lo leen) y el motivo compuesto cuenta la verdad completa: «GOLPE DE FORTUNA ×3 · LA HORA DORADA ×1.5»; la celebración de la v84 (la lluvia de monedas) sigue sonando con el motivo veraz",
+    ],
+    tipo: "reten",
+  },
+  {
     version: "v303.0",
     nombre: "LA PLANTILLA COMPLETA — la expansión del módulo EMPLEOS (la mina primera de la cola del almacén en cuatro «Queda»s seguidas): la sala de juego ya existía como pestaña del aparato desde la v85 y esta ronda la expande — cuatro oficinas nuevas (Logística, Transmisiones, Contrainteligencia y Prensa de Guerra: 8 departamentos, 48 tareas reales de doctrina), VACANTES de RRHH (la aptitud ganada abre el selector de TODAS sus oficinas: los nuevos ya son alcanzables), el CONTRATO DE LA SEMANA (encargo determinista por oficina y semana ISO con bono de 300-700ⓒ, tarjeta propia con progreso y cobro idempotente) y +2 rangos (SUBDIRECTOR · MARISCAL DE LA CASA)",
     hitos: [
