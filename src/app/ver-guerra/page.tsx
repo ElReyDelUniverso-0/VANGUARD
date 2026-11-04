@@ -3,6 +3,14 @@ import Link from "next/link";
 import FrenteTotalSim from "@/components/vanguard/frente-total-sim";
 import { FRENTES } from "@/lib/frentes-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+// v229.0 EL PUENTE — el mural conecta con el núcleo: teatros con cables
+// reales de la agencia, fichas del acontecimiento y puertas honestas.
+import { db } from "@/lib/db";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import {
+  slugAcontecimientoDeTeatro,
+  idAcontecimiento,
+} from "@/lib/nucleo/acontecimientos";
 
 // v53.0 FRENTE TOTAL — /ver-guerra. Lo que pidió el comando: VER GUERRA de
 // verdad. Nunca visto en una página de conflictos: un solo canvas donde los
@@ -12,6 +20,39 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // (adsb.lol) cruzando el cielo, director automático estilo canal de guerra
 // 24h y fuego propio del operador. Complementa a /zona-cero (la ciudad que
 // cae) con la escala planetaria.
+
+// v229.0 EL PUENTE — mapeo editorial EXPLÍCITO frente del mural → teatro
+// de la agencia (mismo método que TABLERO_ORIENTE en geografia.ts, v220):
+// solo los 5 frentes que la casa documenta con cables reales. Los otros 5
+// NO se fingen — la nota honesta al pie de la sección lo declara. Las
+// fechas históricas viven en el registro de acontecimientos (v219), nunca
+// escritas a mano aquí.
+const FRENTE_A_TEATRO: Record<string, string> = {
+  donbas: "ukraine",
+  gaza: "gaza",
+  marrojo: "redsea",
+  sudan: "sudan",
+  sahel: "sahel",
+};
+
+// El conteo REAL por teatro (una sola query groupBy). Sin BD la página
+// vive igual: sin chips, sin fingir conteos (ley de la casa).
+async function conteosPorTeatro(): Promise<Record<string, number> | null> {
+  try {
+    const filas = await db.newsItem.groupBy({
+      by: ["conflictTag"],
+      _count: { _all: true },
+      where: { conflictTag: { in: Object.values(FRENTE_A_TEATRO) } },
+    });
+    const mapa: Record<string, number> = {};
+    for (const f of filas) if (f.conflictTag) mapa[f.conflictTag] = f._count._all;
+    return mapa;
+  } catch {
+    return null;
+  }
+}
+
+export const dynamic = "force-dynamic";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -59,7 +100,11 @@ const faqs = [
   },
 ];
 
-export default function VerGuerraPage() {
+export default async function VerGuerraPage() {
+  const conteos = await conteosPorTeatro();
+  // v229.0 EL PUENTE — los frentes sin teatro en la agencia se DECLARAN
+  // (derivados del catálogo, nunca escritos a mano).
+  const sinPuerta = FRENTES.filter((f) => !FRENTE_A_TEATRO[f.id]).map((f) => f.name);
   return (
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
@@ -153,7 +198,13 @@ export default function VerGuerraPage() {
           Contexto real de cada franja del mural: beligerantes, intensidad pública estimada y qué está pasando.
         </p>
         <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {FRENTES.map((f) => (
+          {FRENTES.map((f) => {
+            // v229.0 EL PUENTE — el frente del mural hacia su teatro real:
+            // conteo de cables de la agencia + ficha del acontecimiento.
+            const tag = FRENTE_A_TEATRO[f.id];
+            const slug = tag ? slugAcontecimientoDeTeatro(tag) : null;
+            const n = tag ? conteos?.[tag] : undefined;
+            return (
             <article key={f.id} className="border border-zinc-800 rounded-md p-4 bg-zinc-900/40">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="font-orbitron text-sm font-black text-white">{f.name}</h3>
@@ -167,9 +218,37 @@ export default function VerGuerraPage() {
               </p>
               <p className="mt-1.5 text-[12px] text-zinc-400 leading-relaxed">{f.note}</p>
               <p className="mt-1.5 font-mono text-[9px] text-zinc-600">{f.casualties}</p>
+              {(typeof n === "number" || slug) && (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {typeof n === "number" && n > 0 && tag && (
+                    <Link
+                      href={`/conflicto/${tag}`}
+                      title={`${n} cables reales de este teatro en la agencia de Vanguard, con su fuente y su sello de exactitud`}
+                      className="font-mono text-[10px] uppercase tracking-widest border border-amber-500/40 text-amber-300 hover:bg-amber-500/10 rounded px-2 py-1 transition-colors"
+                    >
+                      {n} cables en la agencia ▸
+                    </Link>
+                  )}
+                  {slug && (
+                    <Link
+                      href={`/nucleo?id=${encodeURIComponent(idAcontecimiento(slug))}`}
+                      title="El hecho real que reúne los cables de este frente, con su fecha histórica pública y su cronología"
+                      className="font-mono text-[10px] uppercase tracking-widest border border-zinc-700 text-zinc-300 hover:border-sky-400/50 hover:text-sky-300 rounded px-2 py-1 transition-colors"
+                    >
+                      EL ACONTECIMIENTO ▸
+                    </Link>
+                  )}
+                </div>
+              )}
             </article>
-          ))}
+            );
+          })}
         </div>
+        {sinPuerta.length > 0 && (
+          <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-zinc-600 leading-relaxed">
+            Frentes sin puerta al archivo ({sinPuerta.length}): {sinPuerta.join(" · ")} — la casa no inventa puertas: sin teatro documentado con cables reales, sin chips.
+          </p>
+        )}
       </section>
 
       <section className="max-w-6xl mx-auto px-5 py-8">
@@ -192,6 +271,39 @@ export default function VerGuerraPage() {
           (ADS-B público). Cifras: estimaciones públicas de monitoreo. Si algo
           te incomoda, cierra la pestaña — esta página es voluntaria.
         </p>
+      </section>
+
+      {/* v229.0 EL PUENTE — la sala conecta explícitamente con el núcleo */}
+      <section className="max-w-6xl mx-auto px-5 pb-8">
+        <EnlacesNucleo
+          titulo="CONECTA CON EL NÚCLEO"
+          enlaces={[
+            {
+              etiqueta: "EL MUNDO 3D ▸",
+              ruta: "/mundo",
+              motivo: "El planeta girando con los teatros de guerra en vivo y su tensión del día",
+              tipoRelacion: "visible_en",
+            },
+            {
+              etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+              ruta: "/nucleo",
+              motivo: "Búsqueda global sobre las fuentes públicas de la casa, con filtros por tipo de entidad",
+              tipoRelacion: "pertenece_a",
+            },
+            {
+              etiqueta: "LOS ESCENARIOS ▸",
+              ruta: "/escenarios",
+              motivo: "El escenario del planeta con las piezas separadas — datos, supuestos, variables y reglas: nunca predicción",
+              tipoRelacion: "simulado_en",
+            },
+            {
+              etiqueta: "EL PARTE HABLADO ▸",
+              ruta: "/audios",
+              motivo: "La emisora explica los frentes con datos reales y voz propia",
+              tipoRelacion: "analizado_en",
+            },
+          ]}
+        />
       </section>
 
       <section className="max-w-6xl mx-auto px-5 pb-14">

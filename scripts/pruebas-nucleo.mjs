@@ -275,6 +275,16 @@ async function parteA() {
     // anti-invención: CERO nombres de frentes escritos a mano en las relaciones
     afirmar(!/Bajmut|Avdíivka|Kupiansk|Járkov|Donetsk/.test(rel), "¡relaciones.ts escribe nombres de frentes a mano!");
   });
+
+  await verificar("EL PUENTE: /ver-guerra mapea el mural al núcleo sin fingir ni fechas (v229)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/ver-guerra/page.tsx"), "utf8");
+    // el mapeo editorial es EXPLÍCITO (como TABLERO_ORIENTE) y los chips salen de la casa
+    for (const trozo of ["FRENTE_A_TEATRO", "slugAcontecimientoDeTeatro", "groupBy", "no inventa puertas"]) {
+      afirmar(pag.includes(trozo), `el puente del mural no declara «${trozo}»`);
+    }
+    // anti-invención: CERO fechas históricas escritas a mano (viven en la semilla v219)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página del mural escribe fechas históricas a mano!");
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -294,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v228.0", async () => {
+  await verificar("servidor vivo y en v229.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v228"), `versión ${r.json?.version} ≠ v228`);
+    afirmar(String(r.json?.version).startsWith("v229"), `versión ${r.json?.version} ≠ v229`);
   });
 
   // censo por API
@@ -798,6 +808,18 @@ async function parteB() {
     afirmar(r.texto.includes("Población"), "sin la ficha rica del atlas");
     afirmar(r.texto.includes("millones"), "sin el formato del atlas");
     afirmar(!r.texto.includes("FRENTE:"), "¡Brasil finge frentes sin teatro!");
+  });
+
+  // ── v229.0 EL PUENTE: el mural conecta con el núcleo ──
+  await verificar("EL PUENTE: /ver-guerra lista teatros con cables reales, acontecimiento y honestidad (v229)", async () => {
+    const r = await pedir("/ver-guerra");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("cables en la agencia"), "sin los chips de conteo real del puente");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "el frente DONBÁS no lleva a su teatro real");
+    afirmar(r.texto.includes("id=vg%3Aacontecimiento%3A"), "sin las fichas del acontecimiento en el puente");
+    afirmar(r.texto.includes("no inventa puertas"), "sin la declaración honesta de los frentes sin teatro");
+    afirmar(r.texto.includes("SOMALIA") && r.texto.includes("HAITÍ"), "la lista honesta no nombra los frentes del catálogo");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin el bloque de puertas al núcleo");
   });
 
   await verificar("los chips contextuales viven en /noticia/[id] con su ACONTECIMIENTO", async () => {

@@ -1695,6 +1695,22 @@
 //  ③ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 67/67 (+3 EL ATLAS:
 //    estática de proyección anti-invención; ua con población, moneda,
 //    frentes e ISW; br rica sin fingir frentes) · BD intocada.
-export const APP_VERSION = "v228.0";
-export const APP_CODENAME = "EL ATLAS";
+// v229.0 EL PUENTE — AGENT 2, TURNO AUTOMÁTICO (cron 500735), directiva
+//  del Dueño (módulo a módulo): módulo expandido: /ver-guerra — el mural
+//  FRENTE TOTAL (v53) conecta con el núcleo.
+//  ① Mapeo editorial EXPLÍCITO FRENTE_A_TEATRO (método TABLERO_ORIENTE
+//    v220): 5 frentes con teatro documentado (donbas→ukraine, gaza→gaza,
+//    marrojo→redsea, sudan→sudan, sahel→sahel); los otros 5 (Somalia,
+//    RDC Este, Myanmar, Cachemira, Haití) NO se fingen — nota honesta
+//    derivada del catálogo.
+//  ② Tarjetas de LOS DIEZ TEATROS con conteo REAL de cables por teatro
+//    (una query groupBy; sin BD la página vive sin chips) hacia
+//    /conflicto/[tag] + «EL ACONTECIMIENTO ▸» hacia su ficha vg:aconteci-
+//    miento (fechas históricas v219, jamás escritas a mano en la página).
+//  ③ Bloque CONECTA CON EL NÚCLEO: /mundo, /nucleo, /escenarios, /audios.
+//  ④ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 69/69 (+2 EL PUENTE:
+//    estática anti-fechas y mapeo; viva /ver-guerra con chips reales,
+//    acontecimiento y declaración honesta) · BD intocada (1877 · 9).
+export const APP_VERSION = "v229.0";
+export const APP_CODENAME = "EL PUENTE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
