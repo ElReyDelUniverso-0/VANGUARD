@@ -3606,6 +3606,42 @@
 //     119) y las anclas v284/v285 en pie) · BD intocada (1877 cables ·
 //     9 hechos, un solo escritor).
 // Herencia v289.0 EL PULSO DE LA RED MUNDIAL y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v291.0";
-export const APP_CODENAME = "EL PACTO QUE UNE LAS DOS SALAS";
+// v292.0 EL ARCHIVO DESCLASIFICADO — la sexta capa de /servicios
+//         (el censo del almacén de la v291, cabeza clasificada): la
+//         capa REAL de expediente-data (v95 — la que la propia fuente
+//         declara como tal, frente a la capa SIM del mundo Vanguard que
+//         NO sube a esta sala) sube al server: los 5 expedientes reales
+//         desclasificados con su FUENTE CITADA verbatim (MK-ULTRA con
+//         la CIA Reading Room y la Comisión Church, STARGATE, PAPERCLIP
+//         con NARA, COINTELPRO con el FBI Reading Room y el informe
+//         Church, ECHELON con el informe TEMP 168 del Parlamento
+//         Europeo y los archivos NSA desclasificados). 9,1 KB client-side.
+// (1) LA CLASIFICACIÓN MANDA — CRISIS_SEED (la Guerra del Valle del
+//     Karsk) y NACIONES_SEED son SIM explícito (capa: "SIM" en la
+//     fuente): se difieren con la lección del ciber (v285) y de PHOTOS
+//     (v287); ARCHIVO es la capa REAL y sube. El expediente entero no:
+//     solo la parte que la propia fuente marca como real.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «El archivo desclasificado — 5 expedientes reales
+//     de la capa REAL de la fuente, con 21 fases y su fuente citada: la
+//     historia que los propios archivos confiesan» — ARCHIVO.length y
+//     las fases con reduce; cada carta con su región y su resumen
+//     verbatim, su FUENTE CITADA en amber y sus fases con sus títulos
+//     verbatim (los años viajan como dato de la fuente, guardia v234 —
+//     la guardia del arco vigila que la LÍNEA no los escriba).
+// (3) EL VACÍO HONESTO — si la capa REAL llegara vacía, la sección lo
+//     declara; la puerta al aparato (donde vive la capa SIM con su
+//     declaración de simulación) queda intacta.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /servicios en pie) ·
+//     health v292.0 db up · pruebas 210/210 (+2 EL ARCHIVO
+//     DESCLASIFICADO: estática — la fuente intacta (5 ids uno a uno),
+//     la clasificación SIM/REAL declarada en la sala, la línea
+//     compuesta, la fuente citada, las fases con reduce y la guardia
+//     del arco; viva — el SSR sirve la línea derivada completa (5 · 21),
+//     MK-ULTRA con su fuente citada (CIA Reading Room · Comisión
+//     Church), ECHELON y las anclas v291/v288 en pie) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v291.0 EL PACTO QUE UNE LAS DOS SALAS y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v292.0";
+export const APP_CODENAME = "EL ARCHIVO DESCLASIFICADO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

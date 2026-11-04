@@ -9,6 +9,7 @@ import {
   PULSO_KEYWORDS,
 } from "@/lib/agencias-data";
 import { SERVICIOS, CATEGORIA_RED_META, BLOQUES, REDES, TERMINAL_PUENTE, COLECCION_MUNDO, PULSO_KEYWORDS_MUNDO } from "@/lib/agencias-mundo-data";
+import { ARCHIVO } from "@/lib/expediente-data";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -260,6 +261,14 @@ export default async function ServiciosPage() {
   }
   const totalMundo = pulsoMundo.reduce((acc, p) => acc + p.n, 0);
   const lineaPulsoMundo = `El pulso de la red mundial — ${pulsoMundo.length} de ${RED.length} servicios citados por ${totalMundo} titulares del archivo`;
+
+  // v292.0 — EL ARCHIVO DESCLASIFICADO (la sexta capa): la capa REAL de
+  // la fuente (expediente-data, v95 — la que la fuente declara como tal,
+  // frente a la capa SIM del mundo Vanguard que NO sube a esta sala):
+  // los 5 expedientes reales desclasificados con su FUENTE CITADA
+  // verbatim. Todo derivado: fases con reduce, la línea compuesta en JS.
+  const totalFases = ARCHIVO.reduce((acc, a) => acc + a.fases.length, 0);
+  const lineaArchivo = `El archivo desclasificado — ${ARCHIVO.length} expedientes reales de la capa REAL de la fuente, con ${totalFases} fases y su fuente citada: la historia que los propios archivos confiesan`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -592,6 +601,42 @@ export default async function ServiciosPage() {
         ) : (
           <p className="mt-10 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
             el archivo no cita a ningún servicio de la red todavía — el pulso duerme honesto
+          </p>
+        )}
+
+        {/* v292.0 — EL ARCHIVO DESCLASIFICADO: la capa REAL de
+            expediente-data (v95) — la que la propia fuente declara como
+            tal. La capa SIM (el mundo Vanguard) NO sube a esta sala:
+            las salas server no indexan ficción como hecho. */}
+        {ARCHIVO.length > 0 ? (
+          <section className="mt-10" aria-label={lineaArchivo}>
+            <h2 className="text-lg font-bold text-zinc-100">EL ARCHIVO DESCLASIFICADO</h2>
+            <p className="mt-1 text-sm text-zinc-400">{lineaArchivo}</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {ARCHIVO.map((a) => (
+                <article
+                  key={a.id}
+                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4"
+                  aria-label={a.nombre}
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                    {a.region}
+                  </p>
+                  <h3 className="mt-1 text-sm font-semibold text-zinc-100">{a.nombre}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{a.resumen}</p>
+                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-amber">
+                    fuente: {a.fuente}
+                  </p>
+                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+                    fases: {a.fases.length} — {a.fases.map((f) => f.titulo).join(" · ")}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <p className="mt-10 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
+            la capa REAL de la fuente llega vacía — el archivo duerme honesto
           </p>
         )}
 

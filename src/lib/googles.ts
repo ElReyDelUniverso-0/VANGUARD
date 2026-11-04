@@ -7,7 +7,7 @@
 
 import { fnvHash, mulberry32, evaluarNeuronal, type Veredicto } from "./neurona-core";
 import { LUGARES } from "./tierra-data";
-import { EXPEDIENTES } from "./expedientes";
+import { EXPEDIENTES } from "./expedientes-datos";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "./oscura-data";
 import { generarArticulo, WIKI_IDS } from "./wikiguerra-data";
 

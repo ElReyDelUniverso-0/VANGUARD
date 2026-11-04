@@ -10,7 +10,7 @@
 // capa SIM (mundo Vanguard) se declara simulación en la interfaz.
 
 import { LUGARES, type Lugar } from "./tierra-data";
-import { EXPEDIENTES, type Expediente } from "./expedientes";
+import { EXPEDIENTES, type Expediente } from "./expedientes-datos";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "./oscura-data";
 import { PAPERS } from "./googles";
 import { CANALES } from "./canales-data";

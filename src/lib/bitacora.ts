@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v292.0",
+    nombre: "EL ARCHIVO DESCLASIFICADO — la sexta capa de /servicios (el censo del almacén de la v291, cabeza clasificada): la capa REAL de expediente-data (v95, la que la propia fuente declara como tal) sube al server — los 5 expedientes reales desclasificados con su FUENTE CITADA verbatim (MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO, ECHELON); la capa SIM (el Valle del Karsk, las naciones de Vanguard) NO sube: las salas server no indexan ficción como hecho",
+    hitos: [
+      "LA CLASIFICACIÓN MANDA — CRISIS_SEED (Guerra del Valle del Karsk) y NACIONES_SEED son SIM explícito (capa: SIM en la fuente): se difieren con la lección del ciber (v285) y de PHOTOS (v287); ARCHIVO es la capa REAL y sube — el expediente entero no, solo la parte que la propia fuente marca como real",
+      "LA FUENTE CITADA ES EL HONOR — cada expediente con su fuente real verbatim (CIA Reading Room · Comisión Church, NARA RG 330, FBI Reading Room · Senate Church Committee, informe TEMP 168 del Parlamento Europeo · Archivos NSA): la historia que los propios archivos confiesan, servida en server",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256): «El archivo desclasificado — 5 expedientes reales de la capa REAL de la fuente, con 21 fases y su fuente citada»; fases con reduce, títulos verbatim, región y resumen verbatim; los años viajan como dato de la fuente (guardia v234)",
+      "QA v292: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /servicios en pie), health v292.0 db up, pruebas 210/210 (+2: estática — la fuente intacta (5 ids), la clasificación declarada, la línea compuesta, la fuente citada, las fases con reduce y la guardia del arco; viva — la línea derivada (5 · 21), MK-ULTRA con su fuente citada, ECHELON y las anclas v291/v288 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v291.0",
     nombre: "EL PACTO QUE UNE LAS DOS SALAS — la quinta capa de /servicios (los TRES exports hermanos que quedaban en agencias-mundo-data suben al server, el patrón de la v282): COLECCION_MUNDO (las cifras de la red servidas, nada a mano), REDES (los cinco arcos del pacto UKUSA desde el hub de Londres, verbatim) y TERMINAL_PUENTE (la coordenada de Washington, D.C., compuesta — el camino del globo, v285); la sala no escribe un número ni un año",
     hitos: [

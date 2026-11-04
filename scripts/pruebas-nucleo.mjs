@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v291.0", async () => {
+  await verificar("servidor vivo y en v292.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v291"), `versión ${r.json?.version} ≠ v291`);
+    afirmar(String(r.json?.version).startsWith("v292"), `versión ${r.json?.version} ≠ v292`);
   });
 
   // censo por API
@@ -2378,6 +2378,52 @@ async function parteB() {
     // las anclas v284/v285 en pie
     afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
+  });
+
+  // ── v292.0 EL ARCHIVO DESCLASIFICADO: la capa REAL de expediente-data sube a /servicios ──
+  // La cabeza del censo del almacén (v291) clasificada: ARCHIVO es la capa
+  // REAL (la fuente la declara así); CRISIS y NACIONES son SIM y no suben.
+  await verificar("EL ARCHIVO DESCLASIFICADO estática: la clasificación manda y todo se deriva (v292)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/expediente-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
+    // la fuente: la disciplina REAL/SIM declarada y los 5 expedientes reales intactos
+    afirmar(fuente.includes("REAL (archivo desclasificado + geografía real) va marcada como tal"), "la fuente no declara su disciplina REAL/SIM (el comentario parte la frase en dos líneas)");
+    afirmar(fuente.includes("const REAL_SEED: ArchivoReal[] = ["), "la capa REAL no existe en la fuente");
+    const iniR = fuente.indexOf("const REAL_SEED");
+    const finR = fuente.indexOf("];", iniR);
+    const bloqueR = fuente.slice(iniR, finR === -1 ? fuente.length : finR + 2);
+    for (const id of ["mkultra", "stargate", "paperclip", "cointelpro", "echelon"]) {
+      afirmar(bloqueR.includes(`id: "${id}"`), `falta el expediente ${id} en la capa REAL`);
+    }
+    afirmar(bloqueR.includes('fuente: "CIA Reading Room · colección MK-ULTRA · Comisión Church (1975)"'), "la fuente citada de MK-ULTRA no está");
+    // la sala: el import, la línea compuesta, la fuente citada, el vacío
+    afirmar(sala.includes('import { ARCHIVO } from "@/lib/expediente-data"'), "la sala no consume la capa REAL");
+    afirmar(sala.includes("const totalFases = ARCHIVO.reduce((acc, a) => acc + a.fases.length, 0)"), "las fases no se derivan con reduce");
+    afirmar(sala.includes("const lineaArchivo = `El archivo desclasificado — ${ARCHIVO.length} expedientes reales de la capa REAL de la fuente, con ${totalFases} fases y su fuente citada: la historia que los propios archivos confiesan`"), "la línea del archivo no se compone COMPLETA en JS");
+    afirmar(sala.includes("fuente: {a.fuente}"), "la fuente citada no viaja verbatim");
+    afirmar(sala.includes('{a.fases.map((f) => f.titulo).join(" · ")}'), "los títulos de las fases no viajan verbatim");
+    afirmar(sala.includes("la capa REAL de la fuente llega vacía — el archivo duerme honesto"), "el vacío de la capa REAL no se declara");
+    afirmar(sala.includes("La capa SIM (el mundo Vanguard) NO sube a esta sala"), "la clasificación SIM/REAL no se declara en la sala");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/servicios escribe fechas a mano en la ronda v292!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v292)!");
+  });
+
+  await verificar("EL ARCHIVO DESCLASIFICADO viva: la línea derivada, MK-ULTRA con su fuente citada y las anclas (v292)", async () => {
+    const r = await pedir("/servicios");
+    afirmar(r.status === 200, `/servicios no 200 en v292 (${r.status})`);
+    // la línea compuesta COMPLETA (5 · 21 — derivados de la fuente)
+    afirmar(r.texto.includes("El archivo desclasificado — 5 expedientes reales de la capa REAL de la fuente, con 21 fases y su fuente citada: la historia que los propios archivos confiesan"), "la línea del archivo no viaja (o la fuente cambió)");
+    // los comentarios RSC se pelan antes de los asertos de nodos contiguos
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("MK-ULTRA: el programa que la CIA quiso borrar"), "MK-ULTRA no viaja");
+    afirmar(limpio.includes("fuente: CIA Reading Room · colección MK-ULTRA · Comisión Church (1975)"), "la fuente citada de MK-ULTRA no viaja");
+    afirmar(limpio.includes("ECHELON: la red que escuchaba al planeta"), "ECHELON no viaja");
+    afirmar(limpio.includes("Informe TEMP 168 del Parlamento Europeo (2001)"), "la fuente de ECHELON no viaja");
+    afirmar(limpio.includes("fases: 5 — Aprobación"), "las fases no viajan con sus títulos verbatim (MK-ULTRA tiene 5, medido contra la fuente)");
+    // las anclas v291/v288 en pie
+    afirmar(limpio.includes("El pacto que une las dos salas — 5 arcos nacen del hub de Londres (MI6) y 1 cruza el Atlántico hasta Washington (38.8977°, -77.0365°), la terminal del puente con la Comunidad"), "la línea del pacto cayó (v291)");
+    afirmar(limpio.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "el pulso por agencia cayó (v288)");
   });
 
   // ── v291.0 EL PACTO QUE UNE LAS DOS SALAS: los tres exports hermanos restantes de agencias-mundo-data suben al server (/servicios, quinta capa) ──
