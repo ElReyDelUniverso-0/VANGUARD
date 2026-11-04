@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v287.0",
+    nombre: "EL PULSO DEL ARCHIVO POR ROSTRO — la tercera capa de /rostros (la cola de la v286 se paga): los PULSO_KEYWORDS_ROSTROS de la fuente cruzan el archivo real (títulos de los cables no-curados) con EL MISMO algoritmo del panel (minúsculas, includes en el título — el canon del consumidor); 28 de 34 rostros citados por 1792 titulares medidos contra la BD fría; lectura pura, force-dynamic y vacío honesto",
+    hitos: [
+      "EL CRUCE ES DEL CANON — el algoritmo es el del panel (rostros-panel v286), no una variante de la sala; el orden es el de la fuente y el vacío no se rellena: los rostros sin menciones no aparecen y la sección lo declara («el pulso duerme honesto»)",
+      "LA LÍNEA DEL PULSO SE COMPONE COMPLETA EN JS (lección v256) — «El pulso del archivo por rostro — 28 de 34 rostros citados por 1792 titulares del archivo»; cada tarjeta con su conteo derivado y su último titular como puerta viva a /noticia/[id]",
+      "PHOTOS, MEDIDA Y DIFERIDA — la otra cabeza de la cola es ficción OSINT del aparato (semillas de imagen sintética): las salas server no indexan ficción como hecho (precedente del ciber, v285); la sala nunca miente",
+      "QA v287: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /rostros en pie), health v287.0 db up, pruebas 200/200 (+2: estática — la fuente de keywords, la lectura pura sin curated-, el algoritmo del canon, la línea compuesta, la puerta /noticia y el vacío; viva — la línea derivada (28 de 34 · 1792), la tarjeta de Trump con sus 200 menciones, el titular vivo y las anclas v286 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v286.0",
     nombre: "LOS ROSTROS DEL PODER — la galería de los rostros sube a server: personas-data (ROSTROS, 34 fichas reales del censo de poder — TRONOS · DINERO · TRIBUNAL · NUEVOS) gana su sala /rostros, patrón /armeria (v283): expediente verbatim de la fuente (cargo, sede, ruta, frase, guardia, sucesión), agrupado por las cuatro categorías con su leyenda, y las cifras servidas de COLECCION_ROSTROS; nació v284 en vuelo y el número envejeció DOS VECES (la colisión doble con tablero y globo del paralelo) — el protocolo la renumeró dos veces sin perder una línea",
     hitos: [

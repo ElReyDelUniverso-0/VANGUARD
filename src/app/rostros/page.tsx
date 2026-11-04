@@ -4,7 +4,9 @@ import {
   ROSTROS,
   COLECCION_ROSTROS,
   CATEGORIAS_ROSTRO,
+  PULSO_KEYWORDS_ROSTROS,
 } from "@/lib/personas-data";
+import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
 // v286.0 LOS ROSTROS DEL PODER — la galería de los rostros sube a
@@ -23,6 +25,17 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // fuente con Set + filter + reduce — la sala no escribe una cifra,
 // herencia v282). Líneas compuestas COMPLETAS en JS (lección v256).
 // Cero años a mano (guardia v234 + la guardia del arco v282/v283).
+//
+// v287.0 EL PULSO DEL ARCHIVO POR ROSTRO — LA TERCERA CAPA (la cola de
+//    la v286 se paga): los PULSO_KEYWORDS_ROSTROS de la fuente cruzan
+//    el archivo real (títulos de los cables no-curados de la BD) con EL
+//    MISMO algoritmo del panel (minúsculas, includes en el título — el
+//    canon del consumidor, rostros-panel v286). Una lectura pura de la
+//    BD (la casa no escribe al servir — un solo escritor, leyes
+//    v245/v246); la sala pasa a force-dynamic para que el pulso entre
+//    al render, el mismo camino del tablero (v284). El vacío se declara
+//    honesto: sin menciones en el archivo, el pulso duerme y la sala lo
+//    dice — nunca un pulso fingido.
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -70,7 +83,42 @@ const lineaCifras = `La colección en cifras — ${COLECCION_ROSTROS.total} fich
 // el número de expediente compuesto desde el num real de la fuente
 const placa = (n: number): string => String(n).padStart(2, "0");
 
-export default function RostrosPage() {
+export const dynamic = "force-dynamic";
+
+export default async function RostrosPage() {
+  // v287.0 — EL PULSO DEL ARCHIVO: una lectura pura de los títulos del
+  // archivo real (los curated- de respaldo quedan fuera, como en toda
+  // la casa); si la BD duerme, el pulso duerme con ella y la sala lo
+  // declara — el expediente de arriba no depende de la señal.
+  const archivo: { id: string; title: string }[] = [];
+  try {
+    const rows = await db.newsItem.findMany({
+      where: { externalId: { not: { startsWith: "curated-" } } },
+      orderBy: { publishedAt: "desc" },
+      select: { id: true, title: true },
+    });
+    archivo.push(...rows);
+  } catch (e) {
+    console.error("rostros page error", e);
+  }
+
+  // EL MISMO ALGORITMO DEL PANEL (rostros-panel v286): keywords en
+  // minúsculas, includes en el título — el canon del consumidor; en el
+  // ORDEN DE LA FUENTE y solo rostros con menciones (el vacío no se
+  // rellena: se declara).
+  const pulso: { id: string; nombre: string; n: number; ultimo: { id: string; title: string } | null }[] = [];
+  for (const r of ROSTROS) {
+    const kws = (PULSO_KEYWORDS_ROSTROS[r.id] ?? []).map((k) => k.toLowerCase());
+    if (kws.length === 0) continue;
+    const suyos = archivo.filter((c) => kws.some((k) => c.title.toLowerCase().includes(k)));
+    if (suyos.length > 0) {
+      pulso.push({ id: r.id, nombre: r.nombre, n: suyos.length, ultimo: suyos[0] });
+    }
+  }
+  const totalMenciones = pulso.reduce((a, p) => a + p.n, 0);
+  // LA LÍNEA DEL PULSO compuesta COMPLETA en JS (lección v256): si el
+  // archivo cambia, la línea cambia sola.
+  const lineaPulso = `El pulso del archivo por rostro — ${pulso.length} de ${ROSTROS.length} rostros citados por ${totalMenciones} titulares del archivo`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -188,6 +236,41 @@ export default function RostrosPage() {
             </section>
           );
         })}
+
+        {/* v287.0 — EL PULSO DEL ARCHIVO POR ROSTRO: los keywords de la
+            fuente cruzan el archivo real con el algoritmo del panel
+            (v286); lectura pura de la BD, en el orden de la fuente. */}
+        {pulso.length > 0 ? (
+          <section className="mt-10" aria-label={lineaPulso}>
+            <h2 className="text-lg font-bold text-zinc-100">EL PULSO DEL ARCHIVO POR ROSTRO</h2>
+            <p className="mt-1 text-sm text-zinc-400">{lineaPulso}</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {pulso.map((p) => (
+                <div
+                  key={p.id}
+                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3"
+                  aria-label={p.nombre}
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-amber">
+                    {p.nombre} · {p.n} {p.n === 1 ? "mención" : "menciones"}
+                  </p>
+                  {p.ultimo && (
+                    <Link
+                      href={`/noticia/${p.ultimo.id}`}
+                      className="mt-1 block text-xs leading-snug text-zinc-300 hover:text-amber"
+                    >
+                      {p.ultimo.title}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <p className="mt-10 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
+            el archivo no cita a ningún rostro todavía — el pulso duerme honesto
+          </p>
+        )}
 
         {/* la puerta honesta al aparato (patrón v275/v276) */}
         <p className="mt-8 text-xs text-zinc-500 leading-relaxed">

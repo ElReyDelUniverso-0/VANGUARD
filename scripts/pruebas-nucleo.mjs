@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v286.0", async () => {
+  await verificar("servidor vivo y en v287.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v286"), `versión ${r.json?.version} ≠ v286`);
+    afirmar(String(r.json?.version).startsWith("v287"), `versión ${r.json?.version} ≠ v287`);
   });
 
   // censo por API
@@ -2285,6 +2285,52 @@ async function parteB() {
     afirmar(r.texto.includes("vive en el aparato"), "la puerta al aparato no viaja");
     const rs = await pedir("/sitemap.xml");
     afirmar(rs.status === 200 && rs.texto.includes("/armeria"), "el sitemap vivo no anuncia la armería");
+  });
+
+  // ── v287.0 EL PULSO DEL ARCHIVO POR ROSTRO: los keywords de la fuente cruzan el archivo real (/rostros) ──
+  // La cola de la v286 se paga: el mismo algoritmo del panel (canon del
+  // consumidor) contra los títulos de la BD, lectura pura, vacío honesto.
+  // Medido contra la BD fría al abrir: 28 de 34 rostros, 1792 menciones.
+  await verificar("EL PULSO DEL ARCHIVO POR ROSTRO estática: el cruce del canon, la lectura pura y el vacío honesto (v287)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/personas-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/rostros/page.tsx"), "utf8");
+    // la fuente de keywords intacta
+    afirmar(fuente.includes("export const PULSO_KEYWORDS_ROSTROS"), "la fuente de keywords no existe");
+    const iniK = fuente.indexOf("export const PULSO_KEYWORDS_ROSTROS");
+    const finK = fuente.indexOf("};", iniK);
+    const bloqueK = fuente.slice(iniK, finK === -1 ? fuente.length : finK + 2);
+    const nKws = (bloqueK.match(/^\s{2}[a-z_]+: \[/gm) ?? []).length;
+    afirmar(nKws === 34, `el censo de keywords midió mal (${nKws}/34)`);
+    // la sala: lectura pura, el algoritmo del canon, la línea compuesta
+    afirmar(sala.includes("PULSO_KEYWORDS_ROSTROS,"), "la sala no consume la fuente de keywords");
+    afirmar(sala.includes('where: { externalId: { not: { startsWith: "curated-" } } }'), "el pulso cuenta las piezas curadas de respaldo (la sala nunca miente)");
+    afirmar(sala.includes("select: { id: true, title: true }"), "el pulso no baja solo los campos que necesita");
+    afirmar(sala.includes("c.title.toLowerCase().includes(k)"), "el matching no es el del canon (el del panel: minúsculas, includes en el título)");
+    afirmar(sala.includes("for (const r of ROSTROS) {"), "el cruce no recorre la fuente en su orden");
+    afirmar(sala.includes("if (suyos.length > 0) {"), "el vacío de un rostro no se rellena");
+    afirmar(sala.includes("const lineaPulso = `El pulso del archivo por rostro — ${pulso.length} de ${ROSTROS.length} rostros citados por ${totalMenciones} titulares del archivo`"), "la línea del pulso no se compone COMPLETA en JS");
+    afirmar(sala.includes("href={`/noticia/${p.ultimo.id}`}"), "el último titular no abre su puerta viva a /noticia");
+    afirmar(sala.includes("el archivo no cita a ningún rostro todavía — el pulso duerme honesto"), "el vacío del pulso no se declara honesto");
+    afirmar(sala.includes('export const dynamic = "force-dynamic"'), "la sala no deja entrar el pulso al render");
+    afirmar(sala.includes("EL PULSO DEL ARCHIVO POR ROSTRO"), "la sección del pulso no viaja");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/rostros escribe fechas a mano en la ronda v287!");
+    afirmar(!/const linea\w+ = [^;]*\b19\d\d\b/.test(sala), "¡la sala escribe años a mano en su línea (v287)!");
+  });
+
+  await verificar("EL PULSO DEL ARCHIVO POR ROSTRO viva: la línea derivada, la tarjeta de Trump y las anclas v286 (v287)", async () => {
+    const r = await pedir("/rostros");
+    afirmar(r.status === 200, `/rostros no 200 en v287 (${r.status})`);
+    // la línea compuesta COMPLETA (28 de 34 · 1792 — derivados de la fuente y la BD fría)
+    afirmar(r.texto.includes("El pulso del archivo por rostro — 28 de 34 rostros citados por 1792 titulares del archivo"), "la línea del pulso no viaja (o la fuente/BD cambió)");
+    // la tarjeta de Trump: nombre + conteo derivado + titular vivo
+    // (los comentarios RSC separan los nodos — trampa v258: se pelan antes)
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("Donald J. Trump · 200"), "el conteo de Trump no viaja (¿cambió la BD?)");
+    afirmar(/href="\/noticia\/[a-z0-9-]+"/.test(r.texto), "la puerta viva a /noticia no viaja");
+    // las anclas v286 en pie
+    afirmar(r.texto.includes("La galería de los rostros — 34 fichas reales del poder"), "la línea de la galería cayó (v286)");
+    afirmar(r.texto.includes("LOS TRONOS ×12"), "el censo por categoría cayó (v286)");
   });
 
   // ── v286.0 LOS ROSTROS DEL PODER: la galería de los rostros sube a server (/rostros) ──

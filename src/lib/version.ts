@@ -3440,6 +3440,41 @@
 // tabla) · health v286.0 db up · BD intocada (1877 cables · 9
 // hechos, un solo escritor) · cierre doble. Herencia v285.0 EL
 // TABLERO EN EL GLOBO y toda la crónica.
-export const APP_VERSION = "v286.0";
-export const APP_CODENAME = "LOS ROSTROS DEL PODER";
+// v287.0 EL PULSO DEL ARCHIVO POR ROSTRO — la tercera capa de
+//         /rostros (la cola de la v286 se paga): los
+//         PULSO_KEYWORDS_ROSTROS de la fuente cruzan el archivo real
+//         (títulos de los cables no-curados) con EL MISMO algoritmo del
+//         panel (minúsculas, includes en el título — el canon del
+//         consumidor, rostros-panel v286). Medido contra la BD fría al
+//         abrir: 28 de 34 rostros citados por 1792 titulares (Trump
+//         200, Putin 75, Xi 41...). Lectura pura — la casa no escribe
+//         al servir (un solo escritor, leyes v245/v246); la sala pasa a
+//         force-dynamic (el camino del tablero, v284) para que el pulso
+//         entre al render, y el expediente de arriba no depende de la
+//         señal: BD fría → el pulso duerme honesto y se declara.
+// (1) EL CRUCE ES DEL CANON — el algoritmo es el del panel (el
+//     consumidor es la fuente del matching, no una variante nueva de la
+//     sala); el orden es el de la fuente y el vacío no se rellena: los
+//     rostros sin menciones no aparecen y la sección lo declara.
+// (2) LA LÍNEA DEL PULSO SE COMPONE COMPLETA EN JS (lección v256):
+//     «El pulso del archivo por rostro — 28 de 34 rostros citados por
+//     1792 titulares del archivo» — pulso.length, ROSTROS.length y el
+//     reduce de menciones; cada tarjeta con su conteo derivado y su
+//     último titular como puerta viva a /noticia/[id].
+// (3) PHOTOS, MEDIDA Y DIFERIDA — la otra cabeza de la cola es ficción
+//     OSINT del aparato (semillas de imagen sintética, campos de juego):
+//     las salas server no indexan ficción como hecho (el precedente del
+//     ciber, v285). La sala nunca miente.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /rostros en pie) ·
+//     health v287.0 db up · pruebas 200/200 (+2 EL PULSO DEL ARCHIVO
+//     POR ROSTRO: estática — la fuente de keywords intacta, la lectura
+//     pura sin curated-, el algoritmo del canon, el orden de la fuente,
+//     la línea compuesta, la puerta /noticia y el vacío honesto; viva —
+//     el SSR sirve la línea derivada completa (28 de 34 · 1792), la
+//     tarjeta de Trump con sus 200 menciones, el titular vivo y las
+//     anclas v286 en pie) · BD intocada (1877 cables · 9 hechos, un
+//     solo escritor).
+// Herencia v286.0 LOS ROSTROS DEL PODER y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v287.0";
+export const APP_CODENAME = "EL PULSO DEL ARCHIVO POR ROSTRO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
