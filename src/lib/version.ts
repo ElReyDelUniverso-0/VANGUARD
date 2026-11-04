@@ -2362,6 +2362,26 @@
 //     HTML del refugio y la portada sigue en pie) · BD intocada (1877
 //     cables · 9 hechos, un solo escritor).
 // Herencia v250.0 EL VÉRTIGO QUE RECUERDA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v251.0";
-export const APP_CODENAME = "EL REFUGIO CON MEMORIA";
+// ── v252.0 LA SALA QUE HABLA — la expansión funcional módulo a módulo
+//     llega a /noticia/[id] (la puerta de lectura, la sala por la que
+//     entra el visitante de Google): la sala deja de ser muda y sin salida.
+// (1) ESCUCHAR — speechSynthesis del APARATO (gratis, sin API nueva, la
+//     misma boca del asistente v117): lee título + resumen con la voz en
+//     español que el aparato trate; toggle honesto (▶ escuchar / ■ parar);
+//     cancel() en desmontaje — la sala nunca deja una voz huérfana; sin
+//     voz disponible, la sala lo DECLARA — jamás se finge. Ley v190: la
+//     voz solo arranca con UN TOQUE del visitante — nada suena solo.
+// (2) COMPARTIR — el patrón v250 exacto: hoja nativa Web Share →
+//     portapapeles + aviso «Enlace copiado» → última red honesta (prompt);
+//     el enlace es SIEMPRE el canónico /noticia/<id> que Google anuncia.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v252.0 db up ·
+//     pruebas 130/130 (+2 LA SALA QUE HABLA: estática — la isla con su
+//     voz cancelada en desmontaje, su es-ES, sus tres peldaños de
+//     compartir y sus aria-labels; la sala monta con titulo/resumen/url;
+//     viva — el SSR de un cable real sirve los dos botones y las pieles
+//     v247 siguen en pie) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v251.0 EL REFUGIO CON MEMORIA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v252.0";
+export const APP_CODENAME = "LA SALA QUE HABLA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

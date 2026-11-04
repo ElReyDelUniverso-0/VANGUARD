@@ -8,6 +8,8 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { SiguienteChip } from "@/components/noticia/siguiente-chip";
 // v215.0 MODO TRADUCTOR — el cable en los 8 idiomas de Vanguard
 import { TraductorChip } from "@/components/noticia/traductor-chip";
+// v252.0 LA SALA QUE HABLA — la voz y la salida de la puerta de lectura
+import { VozCable } from "./voz-cable";
 // v218.0 EL NÚCLEO — enlaces contextuales calculados en el mismo render
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { enlacesDeCable } from "@/lib/nucleo/relaciones";
@@ -387,6 +389,14 @@ export default async function NoticiaPage({
 
         {/* v215.0 MODO TRADUCTOR — el cable en los idiomas de Vanguard */}
         <TraductorChip titulo={it.title} resumen={it.summary ?? ""} />
+
+        {/* v252.0 LA SALA QUE HABLA — la boca y la salida de la puerta:
+            escuchar (voz del aparato, gratis) y compartir (patrón v250) */}
+        <VozCable
+          titulo={it.title}
+          resumen={it.summary ?? ""}
+          url={`${SITE_URL}/noticia/${it.id}`}
+        />
 
         {/* v247.0 LA CARGA JUSTA — el hero ES el LCP: fetchpriority high, la
             piel og WebP (1200×630 reales cuando la casa conoce la foto) y

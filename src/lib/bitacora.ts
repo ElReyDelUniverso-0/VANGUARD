@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v252.0",
+    nombre: "LA SALA QUE HABLA — la puerta de lectura /noticia/[id] gana la voz (speechSynthesis del aparato, gratis) y la salida (compartir con el patrón honesto v250): leer · escuchar · compartir",
+    hitos: [
+      "ESCUCHAR — la sala por la que entra el visitante de Google deja de ser muda (la casa tiene emisora v217 y asistente v117, pero la puerta SEO no hablaba): speechSynthesis del aparato lee título + resumen con la voz en español disponible; toggle honesto ▶/■, cancel() en desmontaje (jamás una voz huérfana) y declaración honesta si el aparato no tiene voz — nada suena solo (ley v190)",
+      "COMPARTIR — el patrón v250 exacto: hoja nativa Web Share → portapapeles + aviso «Enlace copiado» → última red honesta (prompt de copia manual); el enlace es SIEMPRE el canónico /noticia/<id>",
+      "QA v252: tsc 0 TOTAL, eslint 0, build EXIT 0, health v252.0 db up, pruebas 130/130 (+2 LA SALA QUE HABLA: estática — la isla con su voz cancelada en desmontaje, su es-ES, sus tres peldaños de compartir y sus aria-labels; la sala monta con titulo/resumen/url; viva — el SSR de un cable real sirve los dos botones y las pieles v247 siguen en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v251.0",
     nombre: "EL REFUGIO CON MEMORIA — /offline deja de ser una sala sin memoria: el centinela de /guerra-hoy deja la copia del último parte en el aparato y el refugio la talla en su muro, sin fingir que es vivo",
     hitos: [

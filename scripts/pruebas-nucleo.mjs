@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v251.0", async () => {
+  await verificar("servidor vivo y en v252.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v251"), `versión ${r.json?.version} ≠ v251`);
+    afirmar(String(r.json?.version).startsWith("v252"), `versión ${r.json?.version} ≠ v252`);
   });
 
   // censo por API
@@ -1839,6 +1839,41 @@ async function parteB() {
     const portada = await pedir("/guerra-hoy");
     afirmar(portada.status === 200, "la primera página no responde");
     afirmar(portada.texto.includes("GUERRA HOY"), "la portada perdió su cabeza");
+  });
+
+  // ── v252.0 LA SALA QUE HABLA: escuchar y compartir en la puerta de lectura ──
+  await verificar("LA SALA QUE HABLA: la isla trae la voz honesta y el patrón de compartir (v252)", () => {
+    const isla = readFileSync(join(RAIZ, "src/app/noticia/[id]/voz-cable.tsx"), "utf8");
+    // LA VOZ: speechSynthesis del aparato, es-ES, cancel en desmontaje,
+    // y la declaración honesta cuando el aparato es mudo
+    afirmar(isla.includes("speechSynthesis"), "la isla no usa la voz del aparato");
+    afirmar(isla.includes("SpeechSynthesisUtterance"), "sin utterance no hay lectura");
+    afirmar(isla.includes('lang = "es-ES"'), "la voz de la casa no es la española");
+    afirmar(isla.includes("speechSynthesis?.cancel()"), "la sala puede dejar una voz huérfana");
+    afirmar(isla.includes("no tiene voz para leer"), "sin la declaración honesta del aparato mudo");
+    afirmar(isla.includes('aria-label="Escuchar este cable"'), "sin la señal de escuchar");
+    // COMPARTIR: el patrón v250 exacto
+    afirmar(isla.includes("navigator.share"), "sin Web Share API");
+    afirmar(isla.includes("navigator.clipboard.writeText"), "sin portapapeles de respaldo");
+    afirmar(isla.includes("Enlace copiado"), "sin aviso de copia");
+    afirmar(isla.includes('aria-label="Compartir este cable"'), "sin la señal de compartir");
+    // LA SALA MONTA LA ISLA con el cable real
+    const sala = readFileSync(join(RAIZ, "src/app/noticia/[id]/page.tsx"), "utf8");
+    afirmar(sala.includes("VozCable"), "la puerta de lectura no monta la isla");
+    afirmar(sala.includes('url={`${SITE_URL}/noticia/${it.id}`}'), "la isla no viaja con el canónico real");
+  });
+
+  await verificar("LA SALA QUE HABLA viva: el SSR de un cable real sirve la voz y la salida (v252)", async () => {
+    const portada = await pedir("/guerra-hoy");
+    const m = portada.texto.match(/\/noticia\/[a-z0-9]+/i);
+    afirmar(Boolean(m), "la portada no expone ninguna puerta /noticia/<id>");
+    const r = await pedir(m[0]);
+    afirmar(r.status === 200, `la sala ${m[0]} no responde`);
+    afirmar(r.texto.includes('aria-label="Escuchar este cable"'), "el SSR no sirve la voz");
+    afirmar(r.texto.includes("▶ Escuchar"), "el SSR no sirve la etiqueta de la voz");
+    afirmar(r.texto.includes('aria-label="Compartir este cable"'), "el SSR no sirve la salida");
+    // las pieles v247 siguen en pie en la misma sala
+    afirmar(r.texto.includes("fetchPriority"), "el hero perdió su prioridad LCP");
   });
 
   // el muro al final: quema la cuota de esta IP
