@@ -2337,6 +2337,31 @@
 //     pieza y las estaciones v231 siguen en pie) · BD intocada (1877
 //     cables · 9 hechos, un solo escritor).
 // Herencia v249.0 EL MURO DE PIEDRA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v250.0";
-export const APP_CODENAME = "EL VÉRTIGO QUE RECUERDA";
+// ── v251.0 EL REFUGIO CON MEMORIA — la expansión funcional módulo a módulo
+//     llega a /offline (v210 EL REFUGIO): la sala de emergencia deja de ser
+//     una sala sin memoria.
+// (1) EL CENTINELA DEL PARTE — /guerra-hoy (la puerta más visitada) monta un
+//     componente silencioso que deja en el aparato (localStorage
+//     vg-ultimo-parte) la copia de las 8 piezas más nuevas con la hora del
+//     guardado; no pinta nada, no pide nada, no decide nada (ley v190).
+// (2) EL ÚLTIMO PARTE EN EL MURO — el refugio talla la copia: «EL ÚLTIMO
+//     PARTE QUE TU APARATO VIO» — título · fuente · tiempo transcurrido,
+//     hora del guardado y la confesión honesta: «es la memoria del aparato,
+//     no la red: puede estar desactualizado». Vacío honesto si no hay copia.
+// (3) LA DECISIÓN DE INGENIERÍA — el parte viaja en un SCRIPT INLINE del
+//     propio HTML (corre durante el parseo, sin esperar a React): los chunks
+//     JS de esta ruta quizá nunca se cachean (el refugio solo se sirve SIN
+//     red — un chunk pedido por primera vez sin red no llega), así que el
+//     script del HTML es la única memoria que funciona SIEMPRE, incluso en
+//     la primera visita sin red. El worker (v210) NO se toca: su contrato
+//     v125/v190 queda intacto.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v251.0 db up ·
+//     pruebas 128/128 (+2 EL REFUGIO CON MEMORIA: estática — el centinela
+//     escribe con su hora, el refugio lee inline con la confesión, la
+//     primera página deja la copia; viva — el script y el muro viajan en el
+//     HTML del refugio y la portada sigue en pie) · BD intocada (1877
+//     cables · 9 hechos, un solo escritor).
+// Herencia v250.0 EL VÉRTIGO QUE RECUERDA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v251.0";
+export const APP_CODENAME = "EL REFUGIO CON MEMORIA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

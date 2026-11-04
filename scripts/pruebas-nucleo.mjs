@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v250.0", async () => {
+  await verificar("servidor vivo y en v251.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v250"), `versión ${r.json?.version} ≠ v250`);
+    afirmar(String(r.json?.version).startsWith("v251"), `versión ${r.json?.version} ≠ v251`);
   });
 
   // censo por API
@@ -1811,6 +1811,34 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v251.0 EL REFUGIO CON MEMORIA: el último parte del aparato ──
+  await verificar("EL REFUGIO CON MEMORIA: el centinela deja la copia y el refugio la talla sin fingir que es vivo (v251)", () => {
+    const centinela = readFileSync(join(RAIZ, "src/components/vanguard/centinela-parte.tsx"), "utf8");
+    afirmar(centinela.includes("vg-ultimo-parte"), "el centinela no escribe la memoria del aparato");
+    afirmar(centinela.includes("guardado: Date.now()"), "la copia no viaja con su hora");
+    const portada = readFileSync(join(RAIZ, "src/app/guerra-hoy/page.tsx"), "utf8");
+    afirmar(portada.includes("CentinelaParte"), "la primera página no deja copia para el refugio");
+    const refugio = readFileSync(join(RAIZ, "src/app/offline/page.tsx"), "utf8");
+    afirmar(refugio.includes("vg-ultimo-parte"), "el refugio no lee la memoria del aparato");
+    afirmar(refugio.includes("vg-parte-guardado"), "sin muro para el último parte");
+    afirmar(refugio.includes("dangerouslySetInnerHTML"), "el parte no viaja inline (chunks que quizá nunca se cachean)");
+    afirmar(refugio.includes("Intl.DateTimeFormat"), "la hora del guardado no se formatea");
+    afirmar(refugio.includes("memoria del aparato, no la red"), "sin la confesión honesta");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(refugio), "¡el refugio escribe fechas a mano!");
+  });
+
+  await verificar("EL REFUGIO CON MEMORIA viva: el script y el muro viajan en el HTML del refugio (v251)", async () => {
+    const r = await pedir("/offline");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("No hay conexión"), "el refugio perdió su verdad");
+    afirmar(r.texto.includes("vg-ultimo-parte"), "el script del parte no viaja en el HTML");
+    afirmar(r.texto.includes("vg-parte-guardado"), "el muro del parte no está en el HTML");
+    afirmar(r.texto.includes("memoria del aparato, no la red"), "la confesión no viaja en el HTML");
+    const portada = await pedir("/guerra-hoy");
+    afirmar(portada.status === 200, "la primera página no responde");
+    afirmar(portada.texto.includes("GUERRA HOY"), "la portada perdió su cabeza");
   });
 
   // el muro al final: quema la cuota de esta IP

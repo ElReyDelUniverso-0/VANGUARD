@@ -10,6 +10,9 @@ import { getWorldPower, fmtUsd, fmtPersonas } from "@/lib/worldpower";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { getEonet, haceEonet, catColor } from "@/lib/eonet";
 import { getFx, fmtFx } from "@/lib/fx";
+// v251.0 EL REFUGIO CON MEMORIA — el centinela deja en el aparato la copia
+// del último parte que el REFUGIO (/offline) tallará si la red muere.
+import { CentinelaParte } from "@/components/vanguard/centinela-parte";
 // v63.0 PRIMERA PÁGINA — datos estáticos de la biblioteca (server-safe)
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 
@@ -142,6 +145,17 @@ export default async function GuerraHoyPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
+      />
+
+      {/* v251.0 — el centinela del parte: silencioso, escribe la copia del
+          último parte en el aparato para el refugio (no pinta nada) */}
+      <CentinelaParte
+        parte={items.slice(0, 8).map((it) => ({
+          id: it.id,
+          t: it.title,
+          f: it.source,
+          fecha: new Date(it.publishedAt).toISOString(),
+        }))}
       />
 
       <header className="border-b border-amber-500/30 bg-black/40 px-5 py-6 max-w-5xl mx-auto">

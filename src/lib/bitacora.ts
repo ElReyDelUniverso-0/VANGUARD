@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v251.0",
+    nombre: "EL REFUGIO CON MEMORIA — /offline deja de ser una sala sin memoria: el centinela de /guerra-hoy deja la copia del último parte en el aparato y el refugio la talla en su muro, sin fingir que es vivo",
+    hitos: [
+      "EL CENTINELA DEL PARTE — /guerra-hoy (la puerta más visitada) monta un componente silencioso que deja en el aparato (localStorage vg-ultimo-parte) la copia de las 8 piezas más nuevas con la hora del guardado; no pinta nada, no pide nada, no decide nada (ley v190)",
+      "EL ÚLTIMO PARTE EN EL MURO — el refugio talla la copia: «EL ÚLTIMO PARTE QUE TU APARATO VIO» — título · fuente · tiempo transcurrido, hora del guardado y la confesión honesta: «es la memoria del aparato, no la red: puede estar desactualizado»; vacío honesto si no hay copia",
+      "LA DECISIÓN DE INGENIERÍA — el parte viaja en un SCRIPT INLINE del propio HTML (corre durante el parseo, sin esperar a React): los chunks JS de la ruta quizá nunca se cachean (el refugio solo se sirve SIN red — un chunk pedido por primera vez sin red no llega), así que el script del HTML es la única memoria que funciona SIEMPRE; el worker v210 NO se toca — su contrato v125/v190 queda intacto",
+      "QA v251: tsc 0 TOTAL, eslint 0, build EXIT 0, health v251.0 db up, pruebas 128/128 (+2 EL REFUGIO CON MEMORIA: estática — el centinela escribe con su hora, el refugio lee inline con la confesión, la primera página deja la copia; viva — el script y el muro viajan en el HTML del refugio y la portada sigue en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v250.0",
     nombre: "EL VÉRTIGO QUE RECUERDA — la fórmula TikTok de /vertigo se completa: compartir (tercera señal de la columna, Web Share API con salida honesta) y reanudar donde lo dejaste (continue-watching sin recargas)",
     hitos: [
