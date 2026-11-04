@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v242.0",
+    nombre: "EL KIT COMPLETO — CONECTA, noscript y JSON-LD llegan a las últimas tres salas señaladas (/espia, /en-vivo, /modo)",
+    hitos: [
+      "LA COLA DE v241 SE CONSUME — las tres salas señaladas por la auditoría visten su patrón de la casa: /espia (CONECTA+noscript), /en-vivo (CONECTA), /modo (JSON-LD); el kit estructural de la casa no vuelve a tener deuda",
+      "/espia CONECTA + noscript HONESTO — EnlacesNucleo con 4 puertas REALES del censo (/ver-guerra, /mundo, /guerra-hoy, /nucleo); el noscript dice la verdad: el radar ES server-rendered y se lee entero sin JavaScript — solo el botón SONPEAR DE NUEVO necesita JS (v190), la casa lo dice en vez de fingir",
+      "/en-vivo CONECTA BAJO LA SALA — 4 puertas del pulso (/guerra-hoy, /espia, /mundo, /nucleo) server-rendered en la página, jamás dentro del componente client: el chrome no entra en la sala que nunca se recarga (ley v190)",
+      "/modo LA FICHA DE LA PUERTA (patrón v215) — JSON-LD WebPage con jsonLdSeguro: tipo honesto (página de la casa, no app suelta — vanguard2 sí llevó WebApplication porque ES un universo autocontenido), url absoluta, isPartOf VANGUARD, inLanguage es",
+      "QA v242: tsc 0, eslint 0, build EXIT 0, health v242.0 db up, pruebas 106/106 (+3 EL KIT COMPLETO: estática — las tres salas visten por regex, CONECTA fuera de la sala client, WebPage con jsonLdSeguro, anti-fechas; viva — las tres salas 200 con kit en el SSR; viva las 7 puertas 200 una a una), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v241.0",
     nombre: "EL UNIVERSO ABIERTO — VANGUARD-2 se conecta con la casa sin tocar su ley de lienzo (/vanguard2, módulo a módulo)",
     hitos: [

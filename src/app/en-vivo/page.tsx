@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { instantaneaPulso } from "@/lib/pulso";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { SalaEnVivo, type CableVivo, type StatsVivo } from "./sala-en-vivo";
 
 // v213.0 EL PULSO — LA SALA EN VIVO (la puerta del «EL PRIMERO»).
@@ -22,6 +24,35 @@ export const metadata: Metadata = {
 
 // revalidate 30: la sala vive — Google re-rastrea y ve el mundo moviéndose
 export const revalidate = 30;
+
+// v242.0 EL KIT COMPLETO — CONECTA server-rendered bajo la sala (patrón
+// v230/v236): rutas REALES del censo v218, verificadas por la prueba.
+const PUERTAS_DEL_PULSO: EnlaceContextual[] = [
+  {
+    etiqueta: "PRIMERA PÁGINA ▸",
+    ruta: "/guerra-hoy",
+    motivo: "la primera página escrita de la guerra, con el mismo cable real que entra aquí",
+    tipoRelacion: "pertenece_a",
+  },
+  {
+    etiqueta: "EL RADAR DE GOBIERNOS ▸",
+    ruta: "/espia",
+    motivo: "lo que los gobiernos PUBLICAN — el otro extremo del mismo hilo de escuchas",
+    tipoRelacion: "fuente_de",
+  },
+  {
+    etiqueta: "EL GLOBO 3D ▸",
+    ruta: "/mundo",
+    motivo: "cada cable de la sala en su sitio exacto del planeta",
+    tipoRelacion: "visible_en",
+  },
+  {
+    etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "todo el archivo real de la casa, buscable cuando la última hora ya pasó",
+    tipoRelacion: "modulo_de",
+  },
+];
 
 function aCableVivo(r: Awaited<ReturnType<typeof instantaneaPulso>>["items"][number]): CableVivo {
   return {
@@ -95,6 +126,14 @@ export default async function EnVivoPage() {
         </main>
       </noscript>
       <SalaEnVivo iniciales={iniciales} calientesIniciales={calientes} statsIniciales={stats} />
+      {/* v242.0 CONECTA CON EL NÚCLEO — server-rendered, vive bajo la sala:
+          la sala manda en pantalla (min-h-screen) y las puertas esperan
+          abajo, sin meter chrome dentro del componente client (ley v190). */}
+      <section className="border-t border-zinc-800 bg-zinc-950 px-4 sm:px-5 pb-14 -mt-1">
+        <div className="max-w-7xl mx-auto">
+          <EnlacesNucleo enlaces={PUERTAS_DEL_PULSO} titulo="CONECTA CON EL NÚCLEO" />
+        </div>
+      </section>
     </>
   );
 }

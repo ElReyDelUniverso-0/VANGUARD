@@ -2094,6 +2094,31 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v241.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v240.0 EL REPARTO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v241.0";
-export const APP_CODENAME = "EL UNIVERSO ABIERTO";
+// v242.0: EL KIT COMPLETO — la cola de v241 dejó tres salas señaladas y
+//     esta ronda las viste TODAS: el kit estructural de la casa (CONECTA /
+//     noscript / JSON-LD) llega a su última deuda.
+// (1) /espia — CONECTA CON EL NÚCLEO (EnlacesNucleo, 4 puertas REALES del
+//     censo: /ver-guerra, /mundo, /guerra-hoy, /nucleo) + noscript HONESTO:
+//     el radar ES server-rendered — el índice, las escuchas y los
+//     movimientos se leen enteros sin JavaScript; lo único que necesita JS
+//     es el botón SONPEAR DE NUEVO (v190). La casa lo dice en vez de fingir.
+// (2) /en-vivo — CONECTA server-rendered BAJO la sala (patrón v236): las
+//     4 puertas del pulso (/guerra-hoy, /espia, /mundo, /nucleo) viven en
+//     la página server, jamás dentro del componente client — el chrome no
+//     entra en la sala (ley v190: la sala nunca se recarga).
+// (3) /modo — la ficha WebPage con jsonLdSeguro (patrón v215): tipo honesto
+//     — es una página de la casa, no una app suelta (vanguard2 sí llevó
+//     WebApplication porque ES un universo autocontenido); name, url
+//     absoluta, isPartOf VANGUARD, inLanguage es.
+// (4) PRUEBAS +3 (106/106): estática — las tres salas visten por regex
+//     (espia: CONECTA+noscript+ficha intacta+4 puertas; en-vivo: CONECTA
+//     fuera de la sala client — la sala-en-vivo.tsx sin EnlacesNucleo;
+//     modo: WebPage con jsonLdSeguro), anti-fechas en las tres; viva —
+//     las tres salas 200 con su kit en el SSR (chips y href reales, ficha
+//     en modo); viva las 7 puertas del kit 200 una a una. Salud v241→v242.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v242.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v241.0 EL UNIVERSO ABIERTO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v242.0";
+export const APP_CODENAME = "EL KIT COMPLETO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

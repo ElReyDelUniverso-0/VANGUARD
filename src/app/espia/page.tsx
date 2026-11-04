@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
 import { TEATROS } from "@/lib/teatros";
 import { colorTension, haceDe } from "@/lib/mundo";
@@ -40,6 +42,35 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+// v242.0 EL KIT COMPLETO — las puertas del radar son rutas REALES del
+// censo v218 (verificadas por la prueba: cero invención).
+const PUERTAS_DEL_RADAR: EnlaceContextual[] = [
+  {
+    etiqueta: "EL MAPA DEL FRENTE ▸",
+    ruta: "/ver-guerra",
+    motivo: "los teatros cuyo índice de tensión mide este radar, documentados y en vivo",
+    tipoRelacion: "documenta",
+  },
+  {
+    etiqueta: "EL GLOBO 3D ▸",
+    ruta: "/mundo",
+    motivo: "cada capital y organización del radar en su sitio exacto del planeta",
+    tipoRelacion: "visible_en",
+  },
+  {
+    etiqueta: "GUERRA HOY ▸",
+    ruta: "/guerra-hoy",
+    motivo: "la primera página escrita con los mismos cables que el radar escucha",
+    tipoRelacion: "pertenece_a",
+  },
+  {
+    etiqueta: "LA BÚSQUEDA DEL NÚCLEO ▸",
+    ruta: "/nucleo",
+    motivo: "todo el archivo real de la casa, buscable por teatro, país y fuente",
+    tipoRelacion: "modulo_de",
+  },
+];
 
 const TAG_COLOR: Record<string, string> = {
   ALERTA: "text-red-300 border-red-400/40 bg-red-400/10",
@@ -254,6 +285,11 @@ export default async function EspiaPage() {
           </div>
         </section>
 
+        {/* v242.0 CONECTA CON EL NÚCLEO (patrón v230/v236) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-8">
+          <EnlacesNucleo enlaces={PUERTAS_DEL_RADAR} titulo="CONECTA CON EL NÚCLEO" />
+        </section>
+
         {/* pie: al globo */}
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-14">
           <Link
@@ -269,6 +305,34 @@ export default async function EspiaPage() {
             </p>
           </Link>
         </section>
+
+        {/* v242.0 noscript HONESTO — el radar ES server-rendered: el índice,
+            las escuchas y los movimientos se leen enteros sin JavaScript.
+            Lo único que necesita JS es el botón SONPEAR DE NUEVO (v190:
+            nada se refresca solo). La casa lo dice en vez de fingir. */}
+        <noscript>
+          <div className="border-t border-zinc-800 bg-zinc-900/80 px-5 py-8 text-center">
+            <p className="font-mono text-[11px] uppercase tracking-widest text-cyan-300">
+              ◉ VANGUARD · MODO ESPÍA
+            </p>
+            <p className="mt-2 text-sm text-zinc-400 max-w-md mx-auto">
+              Este radar se lee entero sin JavaScript — el índice, las escuchas
+              y los movimientos ya están aquí. Solo el botón «SONPEAR DE NUEVO»
+              lo necesita. Las puertas de la casa siguen abiertas:
+            </p>
+            <p className="mt-3 flex flex-wrap justify-center gap-3 text-sm">
+              <Link href="/guerra-hoy" className="text-cyan-300 underline">
+                PRIMERA PÁGINA
+              </Link>
+              <Link href="/ver-guerra" className="text-cyan-300 underline">
+                EL MAPA DEL FRENTE
+              </Link>
+              <Link href="/nucleo" className="text-cyan-300 underline">
+                LA BÚSQUEDA
+              </Link>
+            </p>
+          </div>
+        </noscript>
       </main>
     </>
   );

@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v241.0", async () => {
+  await verificar("servidor vivo y en v242.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v241"), `versión ${r.json?.version} ≠ v241`);
+    afirmar(String(r.json?.version).startsWith("v242"), `versión ${r.json?.version} ≠ v242`);
   });
 
   // censo por API
@@ -1254,6 +1254,61 @@ async function parteB() {
     for (const ruta of ["/", "/mundo", "/ver-guerra", "/espia", "/nucleo", "/guerra-hoy"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `puerta del universo rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v242.0 EL KIT COMPLETO: las tres salas que la cola de v241 dejó
+  // señaladas visten su patrón de la casa — /espia CONECTA+noscript,
+  // /en-vivo CONECTA, /modo JSON-LD — sin tocar las leyes de cada sala.
+  await verificar("EL KIT COMPLETO: las tres salas visten sus patrones en el server (v242)", () => {
+    const espia = readFileSync(join(RAIZ, "src/app/espia/page.tsx"), "utf8");
+    const envivo = readFileSync(join(RAIZ, "src/app/en-vivo/page.tsx"), "utf8");
+    const modo = readFileSync(join(RAIZ, "src/app/modo/page.tsx"), "utf8");
+    // /espia: CONECTA + noscript con el componente de la casa + su ficha intacta
+    afirmar(espia.includes("<noscript>") && espia.includes("EnlacesNucleo"), "espia sin CONECTA/noscript de la casa");
+    afirmar(espia.includes("application/ld+json"), "espia perdió su ficha JSON-LD");
+    afirmar(espia.includes("SONPEAR DE NUEVO"), "el noscript de espia no dice la verdad sobre el botón");
+    for (const ruta of ['"/ver-guerra"', '"/mundo"', '"/guerra-hoy"', '"/nucleo"']) {
+      afirmar(espia.includes(`ruta: ${ruta}`), `la puerta ${ruta} no vive en las puertas del radar`);
+    }
+    // /en-vivo: CONECTA server-rendered FUERA del componente client (ley v190)
+    afirmar(envivo.includes("EnlacesNucleo") && envivo.includes("CONECTA CON EL NÚCLEO"), "en-vivo sin CONECTA");
+    const sala = readFileSync(join(RAIZ, "src/app/en-vivo/sala-en-vivo.tsx"), "utf8");
+    afirmar(!sala.includes("EnlacesNucleo"), "¡el chrome entró dentro de la sala client!");
+    for (const ruta of ['"/guerra-hoy"', '"/espia"', '"/mundo"', '"/nucleo"']) {
+      afirmar(envivo.includes(`ruta: ${ruta}`), `la puerta ${ruta} no vive en las puertas del pulso`);
+    }
+    // /modo: la ficha WebPage con jsonLdSeguro (patrón v215)
+    afirmar(modo.includes("jsonLdSeguro") && modo.includes('"WebPage"'), "modo sin la ficha WebPage");
+    afirmar(modo.includes("application/ld+json"), "el JSON-LD de modo no viaja como ld+json");
+    for (const pag of [espia, envivo, modo]) {
+      afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡una sala del kit escribe fechas a mano!");
+    }
+  });
+
+  await verificar("EL KIT COMPLETO viva: las tres salas sirven su kit en el SSR (v242)", async () => {
+    const espia = await pedir("/espia");
+    afirmar(espia.status === 200, `espia no 200 (${espia.status})`);
+    afirmar(espia.texto.includes("CONECTA CON EL NÚCLEO"), "espia: CONECTA ausente del SSR");
+    afirmar(espia.texto.includes("<noscript"), "espia: noscript ausente del SSR");
+    for (const puerta of ["/ver-guerra", "/nucleo", "/guerra-hoy"]) {
+      afirmar(espia.texto.includes(`href="${puerta}"`), `espia: la puerta ${puerta} no viaja en el HTML`);
+    }
+    const envivo = await pedir("/en-vivo");
+    afirmar(envivo.status === 200, `en-vivo no 200 (${envivo.status})`);
+    afirmar(envivo.texto.includes("CONECTA CON EL NÚCLEO"), "en-vivo: CONECTA ausente del SSR");
+    for (const puerta of ["/espia", "/mundo"]) {
+      afirmar(envivo.texto.includes(`href="${puerta}"`), `en-vivo: la puerta ${puerta} no viaja en el HTML`);
+    }
+    const modo = await pedir("/modo");
+    afirmar(modo.status === 200, `modo no 200 (${modo.status})`);
+    afirmar(modo.texto.includes("application/ld+json") && modo.texto.includes("WebPage"), "modo: la ficha no viaja en el SSR");
+  });
+
+  await verificar("EL KIT COMPLETO: todas las puertas del kit responden 200 (v242)", async () => {
+    for (const ruta of ["/ver-guerra", "/mundo", "/guerra-hoy", "/nucleo", "/espia", "/modo", "/en-vivo"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `puerta del kit rota ${ruta} → ${r.status}`);
     }
   });
 
