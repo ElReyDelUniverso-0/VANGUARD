@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v297.0",
+    nombre: "EL PODER MUNDIAL — la directiva de la «Queda» de la v296 se cumple: worldpower (6,6 KB, «datos militares REALES del Banco Mundial», módulo vivo v44 con cache de 24 h) sube SOLO con captura declarada — nace poder-data (25,6 KB), los tres indicadores (MS.MIL.XPND.CD gasto, MS.MIL.TOTL.P1 personal, MS.MIL.XPND.GD.ZS % del PIB) capturados del 2026-11-05 con mrnev=1 y congelados en server; sala /poder con el ranking del dinero (167 países que suman 2,89 billones de US$, Estados Unidos 954 mil M y el 33%), la fuerza (India 3,1 M, China 2,5 M), el esfuerzo (Ucrania al 39,6%) y el archivo por las 7 regiones del Banco Mundial; la lectura en vivo se queda en la sala de guerra y el aparato",
+    hitos: [
+      "LA CLASIFICACIÓN MANDA — el módulo vivo se queda donde vive y la sala sirve la CAPTURA declarada con su fecha (el patrón v296, ahora con la directiva v296 cumplida); los agregados regionales de la fuente quedan fuera y las sumas se censan de los países con dato (lección v292)",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256): «El poder militar del planeta — 167 países... Estados Unidos lidera con US$ 954 mil M, el 33%»; las regiones EN EL ORDEN DE LA FUENTE con chips «Europa y Asia Central ×49» en un solo nodo (lección v274); los fmt del dinero, la gente y el % son reglas derivadas (es-ES); la fecha de la captura viaja como dato de la fuente (guardia v234), el ISO vive en el dataset y la prosa se deriva con el locale",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /poder (monthly, 0.6), paleta Ctrl+K (pg:poder, icono Crosshair ya importado), JSON-LD CollectionPage + ItemList con los 167 países, noscript honesto, puerta a la sala de guerra (la lectura en vivo con cache de 24 h)",
+      "PRUEBAS +2 — estática: la captura REAL intacta (167 filas censadas, las 7 regiones, cero gasto nulo, los tres indicadores citados), la sala derivada (línea, chips, los tres fmt, la barra contra el líder, la fecha derivada), sin cliente ni fetch ni flagcdn, las puertas y las guardias; viva: la línea derivada completa, «Europa y Asia Central ×49», «US$ 954 mil M», «3,1 M» de India, «39,6%» de Ucrania y el sitemap VIVO",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v296.0",
     nombre: "LAS DIVISAS DEL PLANETA — el almacén menor sigue pagando: el censo de la «Queda» de la v295 destapó la veta mayor que dormía desde la v20: world-data (46,7 KB, «DATASET MUNDIAL REAL», captura open.er-api.com del 9 de septiembre de 2026, regenerado por gen-world-data.mjs) sube como sala server /divisas — 247 países y territorios con su moneda oficial real (ISO 4217, símbolo y tasa por 1 USD), 154 monedas únicas censadas del dato y las monedas compartidas (el euro sirve a 37 países, el dólar a 16); la captura manda: la operativa en vivo (simulada) y las banderas reales viven en el aparato",
     hitos: [

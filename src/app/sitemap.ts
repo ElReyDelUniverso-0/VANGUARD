@@ -218,6 +218,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v297.0 EL PODER MUNDIAL — la captura REAL del Banco Mundial (v44)
+      // congelada en server: 167 países con su gasto militar (MS.MIL.XPND.CD),
+      // su personal (MS.MIL.TOTL.P1) y su esfuerzo % del PIB
+      // (MS.MIL.XPND.GD.ZS), captura del 2026-11-05 con mrnev=1; el ranking
+      // del dinero, la fuerza y el esfuerzo, indexable para las búsquedas
+      // de poder militar (gasto militar de Estados Unidos, ejército más
+      // grande, % del PIB militar...)
+      url: `${SITE_URL}/poder`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
       // censo de poder de la fuente (ROSTROS) servidas en server:
       // los tronos, el dinero, el tribunal y los nuevos, indexables

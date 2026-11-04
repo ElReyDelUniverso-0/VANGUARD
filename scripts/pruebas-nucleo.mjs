@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v296.0", async () => {
+  await verificar("servidor vivo y en v297.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v296"), `versión ${r.json?.version} ≠ v296`);
+    afirmar(String(r.json?.version).startsWith("v297"), `versión ${r.json?.version} ≠ v297`);
   });
 
   // censo por API
@@ -2475,6 +2475,94 @@ async function parteB() {
     // el sitemap vivo anuncia la sala
     const rs = await pedir("/sitemap.xml");
     afirmar(rs.status === 200 && rs.texto.includes("/divisas"), "el sitemap vivo no anuncia la sala");
+  });
+
+  // ── v297.0 EL PODER MUNDIAL: la captura REAL del Banco Mundial (v44) gana su sala server (/poder) ──
+  // La directiva de la «Queda» v296 era clara: sube SOLO con captura
+  // declarada — nace poder-data (gen-poder-data.mjs, mrnev=1, 2026-11-05).
+  await verificar("EL PODER MUNDIAL estática: la captura REAL intacta y todo derivado (v297)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/poder-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/poder/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la captura intacta: la fuente citada, los tres indicadores y la fecha declarada
+    afirmar(fuente.includes("api.worldbank.org"), "la fuente no cita el Banco Mundial");
+    for (const ind of ["MS.MIL.XPND.CD", "MS.MIL.TOTL.P1", "MS.MIL.XPND.GD.ZS"]) {
+      afirmar(fuente.includes(ind), `falta el indicador ${ind} en la fuente`);
+    }
+    afirmar(fuente.includes('fecha: "2026-11-05"'), "la fecha de la captura no está declarada");
+    afirmar(!/\{ iso3: "WLD"/.test(fuente), "la captura lleva el agregado WLD (regla de la propia fuente: fuera)");
+    // el censo: 167 filas, cero gasto nulo, las 7 regiones de la fuente
+    const nF = (fuente.match(/\{ iso3: "/g) ?? []).length;
+    afirmar(nF === 167, `el censo de filas midió mal (${nF}/167)`);
+    afirmar(!fuente.includes("gasto: null"), "hay países sin gasto en la captura");
+    for (const reg of ["Norteamérica", "Asia Oriental y Pacífico", "Europa y Asia Central", "Sur de Asia", "Oriente Medio, Norte de África, Afganistán y Pakistán", "América Latina y el Caribe", "África subsahariana"]) {
+      afirmar(fuente.includes(`region: "${reg}"`), `falta la región ${reg} en la captura`);
+    }
+    // la sala: los imports, la derivación, los fmt, los chips, la fecha del locale
+    afirmar(sala.includes('from "@/lib/poder-data"'), "la sala no consume la captura canónica");
+    afirmar(sala.includes("sort((a, b) => b.gasto - a.gasto)"), "el ranking no se deriva por gasto");
+    afirmar(
+      sala.includes("if (!REGIONES.includes(f.region)) REGIONES.push(f.region)"),
+      "las regiones no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("const lineaPoder = `El poder militar del planeta — ${RANKING.length} países"),
+      "la línea no se compone COMPLETA en JS",
+    );
+    afirmar(
+      sala.includes("`" + "${reg} ×${RANKING.filter((f) => f.region === reg).length}`"),
+      "el chip de región no compone región y conteo en un nodo",
+    );
+    afirmar(
+      sala.includes("(f.gasto / LIDER.gasto) * 100"),
+      "la barra del ranking no se deriva contra el líder",
+    );
+    afirmar(
+      sala.includes("new Date(`${PODER_CAPTURA.fecha}T00:00:00Z`)"),
+      "la fecha de la captura no se deriva del dataset (guardia v234)",
+    );
+    afirmar(sala.includes("api.worldbank.org"), "la sala no cita la fuente de la captura");
+    // la clasificación manda: la sala sirve la captura, no la lectura en
+    // vivo, no dibuja banderas, no trae cliente (el CÓDIGO real decide —
+    // los comentarios se pelan, lección v295)
+    const salaSinComentarios = sala.replace(/\/\/[^\n]*/g, "");
+    afirmar(!salaSinComentarios.includes("use client") && !salaSinComentarios.includes("useState"), "¡la sala no es server pura!");
+    afirmar(!salaSinComentarios.includes("fetch(") && !salaSinComentarios.includes("getWorldPower"), "¡la sala sirve la captura, no la lectura en vivo!");
+    afirmar(!salaSinComentarios.includes("flagcdn.com"), "¡las banderas no viajan en esta sala!");
+    // las puertas de la casa
+    afirmar(mapa.includes("/poder"), "el sitemap no anuncia el poder");
+    afirmar(paleta.includes('key: "pg:poder"'), "la paleta Ctrl+K no lleva el poder");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas ISO a mano en la ronda v297!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v297)!");
+  });
+
+  await verificar("EL PODER MUNDIAL viva: la línea derivada, los chips, el ranking y el esfuerzo (v297)", async () => {
+    const r = await pedir("/poder");
+    afirmar(r.status === 200, `/poder no 200 (${r.status})`);
+    afirmar(r.texto.includes("EL PODER MUNDIAL"), "el título no viaja");
+    // la línea compuesta COMPLETA (167 · 2,89 · 954 · 33 — derivados de la captura)
+    afirmar(
+      r.texto.includes("El poder militar del planeta — 167 países con gasto militar registrado que suman US$ 2,89 billones en el último año con dato; Estados Unidos lidera con US$ 954 mil M, el 33% del total de los países con dato"),
+      "la línea derivada no viaja (o la captura cambió)",
+    );
+    // el texto servido se pela de etiquetas (lección v258, crecida en la v294)
+    const texto = r.texto.replace(/<[^>]+>/g, "");
+    afirmar(texto.includes("Estados Unidos"), "el líder no viaja");
+    afirmar(texto.includes("US$ 954 mil M"), "el gasto del líder no viaja formateado");
+    afirmar(texto.includes("Asia Oriental y Pacífico ×20"), "el chip de Asia Oriental no viaja");
+    afirmar(texto.includes("Europa y Asia Central ×49"), "el chip de Europa no viaja");
+    afirmar(texto.includes("África subsahariana ×46"), "el chip de África no viaja");
+    afirmar(texto.includes("India"), "India no viaja");
+    afirmar(texto.includes("3,1 M"), "el personal de India no viaja formateado");
+    afirmar(texto.includes("2,5 M"), "el personal de China no viaja formateado");
+    afirmar(texto.includes("Ucrania"), "Ucrania no viaja");
+    afirmar(texto.includes("39,6%"), "el esfuerzo de Ucrania no viaja");
+    afirmar(texto.includes("5 de noviembre de 2026"), "la fecha de la captura no viaja en prosa");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/poder"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

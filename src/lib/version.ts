@@ -3863,6 +3863,64 @@
 //     sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v295.0 LA VERDAD CRUDA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v296.0";
-export const APP_CODENAME = "LAS DIVISAS DEL PLANETA";
+// v297.0 EL PODER MUNDIAL — la directiva de la «Queda» de la v296 se
+//         cumple al pie de la letra: worldpower (6,6 KB, «datos militares
+//         REALES del Banco Mundial», módulo vivo v44 con cache de 24 h)
+//         sube SOLO si la sala acepta servir una captura con la red fuera
+//         — y el patrón de la captura declarada (v296) ya lo tenía. Así
+//         nace poder-data (25,6 KB): los tres indicadores del Banco
+//         Mundial (MS.MIL.XPND.CD gasto militar en US$ corrientes,
+//         MS.MIL.TOTL.P1 personal de fuerzas armadas, MS.MIL.XPND.GD.ZS
+//         gasto militar % del PIB) capturados del 2026-11-05 con mrnev=1
+//         por scripts/gen-poder-data.mjs y congelados en server. La sala
+//         nueva /poder levanta el archivo, patrón /historia (v274) ·
+//         /armeria (v283) · /archivo-mundial (v293) · /atlas (v294) ·
+//         /verdad-cruda (v295) · /divisas (v296): prerenderizada ○, sin
+//         cliente, sin BD. El botín: 167 países con gasto militar
+//         registrado que suman 2,89 billones de US$ (el agregado WLD de
+//         la fuente dice 2,856 — las sumas se censan de los países con
+//         dato, lección v292); EL RANKING DEL DINERO (top 20 con barra
+//         derivada del líder: Estados Unidos 954 mil M, el 33% del total
+//         censado); LA FUERZA (top 15 por personal: India 3,1 M, China
+//         2,5 M, Corea del Norte 1,5 M); EL ESFUERZO (top 15 por % del
+//         PIB: Ucrania al 39,6%, Eritrea al 20,9%); y EL ARCHIVO POR
+//         REGIONES con las 7 regiones del Banco Mundial EN EL ORDEN DE
+//         LA FUENTE con chips «Europa y Asia Central ×49» en un solo
+//         nodo (lección v274).
+// (1) LA CLASIFICACIÓN MANDA — el módulo vivo se queda donde vive (la
+//     lectura en vivo con cache de 24 h de /guerra-hoy y el aparato) y
+//     la sala sirve la CAPTURA declarada con su fecha: puerta honesta
+//     (el eco del LIVE_RATES v293, del reloj IANA v294 y de la casa de
+//     cambio v296); los agregados regionales de la fuente quedan fuera,
+//     regla de la propia fuente.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «El poder militar del planeta — 167 países con
+//     gasto militar registrado que suman US$ 2,89 billones en el último
+//     año con dato; Estados Unidos lidera con US$ 954 mil M, el 33% del
+//     total de los países con dato»; las regiones en el ORDEN DE LA
+//     FUENTE con sus chips en un solo nodo (lección v274); los fmt del
+//     dinero, la gente y el % son reglas derivadas (es-ES); la fecha de
+//     la captura viaja como dato de la fuente (guardia v234): el ISO
+//     vive en el dataset y la prosa se deriva con el locale; cero años
+//     escritos en líneas (la guardia del arco).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /poder (monthly, 0.6)
+//     y la paleta Ctrl+K lo lleva (pg:poder, icono Crosshair — ya
+//     importado, cero cambios de import); JSON-LD CollectionPage +
+//     ItemList con los 167 países; noscript honesto con la línea
+//     compuesta; puerta a la sala de guerra (la lectura en vivo).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /poder en la tabla) ·
+//     health v297.0 db up · pruebas 220/220 (+2 EL PODER MUNDIAL:
+//     estática — la captura REAL intacta (167 filas censadas, las 7
+//     regiones presentes, cero gasto nulo, los tres indicadores
+//     citados), la sala derivada (línea compuesta, chips en un nodo,
+//     los tres fmt, la barra contra el líder, la fecha derivada del
+//     locale), sin cliente ni fetch ni flagcdn, las puertas (sitemap +
+//     paleta) y las guardias; viva — el SSR sirve la línea derivada
+//     completa, «Europa y Asia Central ×49», Estados Unidos con su
+//     «US$ 954 mil M», India con sus «3,1 M», Ucrania con su «39,6%» y
+//     el sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v296.0 LAS DIVISAS DEL PLANETA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v297.0";
+export const APP_CODENAME = "EL PODER MUNDIAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

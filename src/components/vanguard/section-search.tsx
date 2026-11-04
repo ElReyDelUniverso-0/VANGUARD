@@ -257,6 +257,12 @@ export function SectionSearch({
         kind: "page", href: "/divisas",
       },
       {
+        key: "pg:poder", label: "PODER — el ranking militar real del planeta con datos del Banco Mundial: 167 países con su gasto militar en dólares, su personal de fuerzas armadas y su esfuerzo (% del PIB), captura del 5 de noviembre de 2026", short: "poder militar ranking gasto ejercito personal fuerzas armadas banco mundial dolar pib esfuerzo division acorazada soldados tanques presupuesto defensa guerra",
+        icon: <Crosshair className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el poder y la fuerza", icon_color: "text-red-300",
+        kind: "page", href: "/poder",
+      },
+      {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server
         key: "pg:rostros", label: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder: tronos, dinero, tribunal y nuevos, con cargo, sede, ruta y frase", short: "rostros poder tronos presidentes banqueros tribunal silicio ia fichas galeria mandato",
         icon: <Users className="w-4 h-4" />, sectionKey: "global",
