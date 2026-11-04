@@ -2490,6 +2490,32 @@
 //     hace» y la señal más fresca con las anclas v230 en pie) ·
 //     BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v255.0 TU MISIÓN y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v256.0";
-export const APP_CODENAME = "LA ÚLTIMA SEÑAL";
+// v257.0 LA EDAD DEL FRENTE — la expansión funcional módulo a módulo llega
+//         al puente: /ver-guerra (v229 EL PUENTE) decía CUÁNTO hay en cada
+//         frente documentado (conteo acumulado de cables) pero jamás CUÁNDO
+//         sonó la última vez — la misma brecha que la ronda anterior midió
+//         en el espejo, con la misma cura: el visitante lee la MISMA
+//         gramática «● última señal hace N» en las dos salas de guerra.
+// (1) LA MISMA QUERY, DOS MEDIDAS — la groupBy del puente también trae
+//     `_max: { publishedAt: true }`: conteo + última señal en UNA consulta
+//     (cero roundtrips extra). Sin BD la página vive igual: sin chips, sin
+//     fingir edades (ley de la casa).
+// (2) LA EDAD EN CADA FICHA — «● última señal hace N h / hace N días»,
+//     derivada al vuelo de los milisegundos reales (force-dynamic); amber
+//     si < 48 h, zinc si no; title con la hora exacta formateada por Intl
+//     (patrón refugio v251 / espejo v256) — cero fechas a mano, la guardia
+//     v234 sigue pasando. Frente sin señal: la línea ni se pinta.
+// (3) LA SEÑAL MÁS FRESCA DE LOS FRENTES DOCUMENTADOS — sobre el grid:
+//     «la señal más fresca de los frentes documentados: [frente] — última
+//     señal hace X», con el nombre humano derivado del mapeo
+//     FRENTE_A_TEATRO → FRENTES (nunca a mano) y cero consultas extra.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v257.0 db up ·
+//     pruebas 140/140 (+2 LA EDAD DEL FRENTE: estática — el max en la
+//     misma query, la edad derivada de milisegundos, la señal más fresca
+//     con nombre derivado y las guardias de fechas; viva — el SSR del
+//     puente sirve «última señal hace» con las anclas v229 en pie) ·
+//     BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v256.0 LA ÚLTIMA SEÑAL y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v257.0";
+export const APP_CODENAME = "LA EDAD DEL FRENTE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

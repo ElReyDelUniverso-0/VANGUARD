@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v256.0", async () => {
+  await verificar("servidor vivo y en v257.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v256"), `versión ${r.json?.version} ≠ v256`);
+    afirmar(String(r.json?.version).startsWith("v257"), `versión ${r.json?.version} ≠ v257`);
   });
 
   // censo por API
@@ -1644,6 +1644,47 @@ async function parteB() {
     afirmar(r.texto.includes("cables en la agencia"), "los chips de conteo real desaparecieron");
     afirmar(r.texto.includes("cables verificados en"), "el total real del espejo desapareció");
     afirmar(r.texto.includes("/conflicto/ukraine"), "el teatro real perdió su sala");
+  });
+
+  // ── v257.0 LA EDAD DEL FRENTE: el puente deja de ser un número mudo —
+  // la misma cura que el espejo v256, con la MISMA gramática: cada frente
+  // documentado dice CUÁNDO sonó su último cable real (conteo y max en la
+  // MISMA query groupBy) y la señal más fresca de los frentes documentados
+  // se declara sobre el grid, con el nombre derivado del mapeo. Cero fechas
+  // escritas a mano (v234).
+  await verificar("LA EDAD DEL FRENTE estática: el puente mide la edad con la misma gramática que el espejo (v257)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/ver-guerra/page.tsx"), "utf8");
+    // dos medidas en la MISMA query groupBy del puente
+    afirmar(pag.includes("_max: { publishedAt: true }"), "la última señal no viaja en la misma query groupBy del puente");
+    afirmar(pag.includes("conteo: f._count._all"), "el conteo real del puente se perdió al añadir la señal");
+    afirmar(pag.includes("ultima: f._max.publishedAt"), "la señal del puente no sale del max real de la BD");
+    // la edad se deriva al vuelo de los milisegundos reales — cero fechas a mano
+    afirmar(pag.includes("Math.floor(ms / 60000)"), "la edad no se deriva de los milisegundos reales");
+    afirmar(pag.includes("Math.floor(horas / 24)"), "los días no se derivan de las horas");
+    afirmar(pag.includes("Intl.DateTimeFormat"), "la hora exacta no se formatea con el aparato (patrón v251/v256)");
+    afirmar(pag.includes("edad < 48 * 3_600_000"), "el umbral de frescura del puente desapareció");
+    // la línea honesta en la ficha y la señal más fresca declarada
+    afirmar(pag.includes("última señal"), "la ficha del frente no dice la edad de su teatro");
+    afirmar(pag.includes("la señal más fresca de los frentes documentados"), "la señal más fresca del puente no se declara");
+    // el nombre humano se deriva del mapeo — nunca a mano
+    afirmar(pag.includes("nombreDeTag"), "el nombre del frente fresco no se deriva del mapeo FRENTE_A_TEATRO");
+    // el vacío honesto: frente sin señal, línea sin pintar
+    afirmar(pag.includes("medicion?.ultima ?? null"), "el vacío honesto del puente ya no se protege");
+    // guardia v234 en pie tras la ronda
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡el puente escribe fechas a mano en la ronda v257!");
+  });
+
+  await verificar("LA EDAD DEL FRENTE viva: el SSR del puente sirve la edad real de cada frente (v257)", async () => {
+    const r = await pedir("/ver-guerra");
+    afirmar(r.status === 200, `/ver-guerra no 200 en v257 (${r.status})`);
+    afirmar(r.texto.includes("última señal hace"), "el SSR no sirve la edad de ninguna señal del puente");
+    afirmar(r.texto.includes("la señal más fresca de los frentes documentados"), "la señal más fresca del puente no viaja en el SSR");
+    // las anclas viejas del puente siguen en pie (v229)
+    afirmar(r.texto.includes("FRENTE"), "la cabeza del mural desapareció");
+    afirmar(r.texto.includes("cables en la agencia"), "los chips de conteo real del puente desaparecieron");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "el frente DONBÁS no lleva a su teatro real");
+    afirmar(r.texto.includes("no inventa puertas"), "la declaración honesta de los frentes sin teatro desapareció");
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin el bloque de puertas al núcleo");
   });
 
   // ── v246.0 EL ANDAMIAJE EN SILENCIO: las rutas API solo exportan

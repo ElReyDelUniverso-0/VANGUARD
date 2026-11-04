@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v257.0",
+    nombre: "LA EDAD DEL FRENTE — la expansión llega al puente (/ver-guerra, v229): el mural decía CUÁNTO hay en cada frente documentado (conteo acumulado) pero jamás CUÁNDO sonó la última vez — misma cura que el espejo v256: el visitante lee la MISMA gramática «● última señal hace N» en las dos salas de guerra",
+    hitos: [
+      "LA MISMA QUERY, DOS MEDIDAS — la groupBy del puente también trae _max.publishedAt: conteo + última señal en UNA consulta (cero roundtrips extra); sin BD la página vive igual: sin chips, sin fingir edades",
+      "LA EDAD EN CADA FICHA — «● última señal hace N h / hace N días» derivada al vuelo de los milisegundos reales (force-dynamic); amber si < 48 h, zinc si no; title con la hora exacta por Intl (patrón v251/v256) — cero fechas a mano (guardia v234); frente sin señal: la línea ni se pinta",
+      "LA SEÑAL MÁS FRESCA DE LOS FRENTES DOCUMENTADOS — sobre el grid: «la señal más fresca de los frentes documentados: [frente] — última señal hace X», con el nombre humano derivado del mapeo FRENTE_A_TEATRO → FRENTES (nunca a mano) y cero consultas extra",
+      "QA v257: tsc 0 TOTAL, eslint 0, build EXIT 0, health v257.0 db up, pruebas 140/140 (+2 LA EDAD DEL FRENTE: estática — el max en la misma query, la edad derivada, la señal más fresca con nombre derivado, guardias de fechas; viva — el SSR del puente sirve «última señal hace» con las anclas v229 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v256.0",
     nombre: "LA ÚLTIMA SEÑAL — la expansión llega al espejo (/zona-cero, v230): la sección LA GUERRA REAL DETRÁS DEL ESPEJO decía CUÁNTO hay en cada teatro (conteo acumulado) pero jamás CUÁNDO sonó la última vez — ahora cada tarjeta dice la edad real de su última señal y el espejo declara la señal más fresca del archivo",
     hitos: [

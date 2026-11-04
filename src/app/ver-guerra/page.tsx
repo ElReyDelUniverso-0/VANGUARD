@@ -37,19 +37,50 @@ const FRENTE_A_TEATRO: Record<string, string> = {
 
 // El conteo REAL por teatro (una sola query groupBy). Sin BD la página
 // vive igual: sin chips, sin fingir conteos (ley de la casa).
-async function conteosPorTeatro(): Promise<Record<string, number> | null> {
+// v257.0 LA EDAD DEL FRENTE — la MISMA query también trae el momento del
+// último cable de cada frente documentado (_max.publishedAt): el puente
+// deja de dar solo el número acumulado y dice CUÁNDO sonó la última vez
+// (mismo patrón que el espejo v256 — el visitante lee la misma gramática).
+interface MedicionTeatro {
+  conteo: number;
+  ultima: Date | null;
+}
+async function conteosPorTeatro(): Promise<Record<string, MedicionTeatro> | null> {
   try {
     const filas = await db.newsItem.groupBy({
       by: ["conflictTag"],
       _count: { _all: true },
+      _max: { publishedAt: true },
       where: { conflictTag: { in: Object.values(FRENTE_A_TEATRO) } },
     });
-    const mapa: Record<string, number> = {};
-    for (const f of filas) if (f.conflictTag) mapa[f.conflictTag] = f._count._all;
+    const mapa: Record<string, MedicionTeatro> = {};
+    for (const f of filas)
+      if (f.conflictTag)
+        mapa[f.conflictTag] = { conteo: f._count._all, ultima: f._max.publishedAt };
     return mapa;
   } catch {
     return null;
   }
+}
+
+// v257.0 LA EDAD DEL FRENTE — la edad del último cable, derivada al vuelo de
+// los milisegundos reales (force-dynamic: cada visita recalcula). Cero fechas
+// escritas a mano — la guardia v234 sigue pasando.
+function textoEdad(ms: number): string {
+  const minutos = Math.floor(ms / 60000);
+  if (minutos < 60) return "hace minutos";
+  const horas = Math.floor(minutos / 60);
+  if (horas < 48) return `hace ${horas} h`;
+  return `hace ${Math.floor(horas / 24)} días`;
+}
+
+// v257.0 — la hora exacta de la última señal, formateada con el aparato
+// (patrón refugio v251 / espejo v256): derivada del dato real, nunca a mano.
+function horaExacta(d: Date): string {
+  return new Intl.DateTimeFormat("es-ES", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(d);
 }
 
 export const dynamic = "force-dynamic";
@@ -102,6 +133,23 @@ const faqs = [
 
 export default async function VerGuerraPage() {
   const conteos = await conteosPorTeatro();
+  // v257.0 LA EDAD DEL FRENTE — la señal más fresca de los frentes
+  // documentados, derivada de las mediciones ya hechas: cero consultas extra.
+  const fresca = (() => {
+    if (!conteos) return null;
+    const ahora = Date.now();
+    let mejor: { tag: string; edad: number } | null = null;
+    for (const [tag, m] of Object.entries(conteos)) {
+      if (!m.ultima) continue;
+      const edad = ahora - m.ultima.getTime();
+      if (!mejor || edad < mejor.edad) mejor = { tag, edad };
+    }
+    return mejor;
+  })();
+  // el nombre humano del frente documentado, derivado del mapeo (nunca a mano)
+  const nombreDeTag = Object.fromEntries(
+    Object.entries(FRENTE_A_TEATRO).map(([id, t]) => [t, FRENTES.find((f) => f.id === id)?.name ?? id]),
+  );
   // v229.0 EL PUENTE — los frentes sin teatro en la agencia se DECLARAN
   // (derivados del catálogo, nunca escritos a mano).
   const sinPuerta = FRENTES.filter((f) => !FRENTE_A_TEATRO[f.id]).map((f) => f.name);
@@ -197,13 +245,26 @@ export default async function VerGuerraPage() {
         <p className="mt-1 text-sm text-zinc-500">
           Contexto real de cada franja del mural: beligerantes, intensidad pública estimada y qué está pasando.
         </p>
+        {fresca && (() => {
+          const linea = `la señal más fresca de los frentes documentados: ${nombreDeTag[fresca.tag] ?? fresca.tag} — última señal ${textoEdad(fresca.edad)}`;
+          return (
+            <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-zinc-400">
+              {linea}
+            </p>
+          );
+        })()}
         <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {FRENTES.map((f) => {
             // v229.0 EL PUENTE — el frente del mural hacia su teatro real:
             // conteo de cables de la agencia + ficha del acontecimiento.
+            // v257.0 LA EDAD DEL FRENTE — la edad del último cable, derivada
+            // al vuelo; frente sin señal no lleva línea (vacío honesto).
             const tag = FRENTE_A_TEATRO[f.id];
             const slug = tag ? slugAcontecimientoDeTeatro(tag) : null;
-            const n = tag ? conteos?.[tag] : undefined;
+            const medicion = tag ? conteos?.[tag] : undefined;
+            const n = medicion?.conteo;
+            const ultima = medicion?.ultima ?? null;
+            const edad = ultima ? Date.now() - ultima.getTime() : null;
             return (
             <article key={f.id} className="border border-zinc-800 rounded-md p-4 bg-zinc-900/40">
               <div className="flex items-center justify-between gap-2">
@@ -218,6 +279,17 @@ export default async function VerGuerraPage() {
               </p>
               <p className="mt-1.5 text-[12px] text-zinc-400 leading-relaxed">{f.note}</p>
               <p className="mt-1.5 font-mono text-[9px] text-zinc-600">{f.casualties}</p>
+              {ultima && edad !== null && (() => {
+                const linea = `● última señal ${textoEdad(edad)}`;
+                return (
+                  <p
+                    title={`Último cable de este frente: ${horaExacta(ultima)}`}
+                    className={`mt-2 font-mono text-[10px] uppercase tracking-widest ${edad < 48 * 3_600_000 ? "text-amber-300" : "text-zinc-500"}`}
+                  >
+                    {linea}
+                  </p>
+                );
+            })()}
               {(typeof n === "number" || slug) && (
                 <div className="mt-2.5 flex flex-wrap gap-1.5">
                   {typeof n === "number" && n > 0 && tag && (
