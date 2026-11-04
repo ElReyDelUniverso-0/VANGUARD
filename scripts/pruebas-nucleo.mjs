@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v254.0", async () => {
+  await verificar("servidor vivo y en v255.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v254"), `versión ${r.json?.version} ≠ v254`);
+    afirmar(String(r.json?.version).startsWith("v255"), `versión ${r.json?.version} ≠ v255`);
   });
 
   // censo por API
@@ -1569,6 +1569,44 @@ async function parteB() {
     afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la cabeza de la sala desapareció");
     afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "en-vivo: CONECTA ausente del SSR");
     afirmar(r.texto.includes("sondeado hace"), "el reloj del sondeo desapareció del SSR");
+  });
+
+  // ── v255.0 TU MISIÓN: la misión 100 medía el esfuerzo de TODA la casa
+  // pero el propio comandante nunca vio el suyo — su barra personal, sus
+  // plataformas cubiertas y el siguiente enlace sugerido, TODO derivado
+  // del aparato (localStorage del arsenal ya usado): cero servidores,
+  // cero invención; si aún no repartes nada, la barra lo dice sin pena.
+  await verificar("TU MISIÓN estática: barra personal, plataformas cubiertas y siguiente enlace sugerido (v255)", () => {
+    const m = readFileSync(join(RAIZ, "src/components/vanguard/mission-100.tsx"), "utf8");
+    // la barra personal existe y nace del aparato, no del servidor
+    afirmar(m.includes("const META_PERSONAL = 100"), "la meta personal no está declarada");
+    afirmar(m.includes("miPct") && m.includes("used.length / META_PERSONAL"), "la barra personal no se deriva del aparato");
+    afirmar(m.includes("aria-label=\"Tu progreso personal de enlaces repartidos\""), "la barra personal sin su aria-label");
+    // las plataformas cubiertas se derivan del PREFIJO del código (VGD-XXXnn)
+    afirmar(m.includes("c.slice(4, 7)"), "el prefijo de plataforma ya no se deriva del código");
+    afirmar(m.includes("plataformasMias") && m.includes("PLATFORMS.length"), "el conteo de plataformas cubiertas desapareció");
+    // el mando sugiere el siguiente enlace sin usar — derivado, nunca inventado
+    afirmar(m.includes("siguienteEnlace") && m.includes("links.find((l) => !used.includes(l.code))"), "el siguiente enlace sugerido no se deriva del arsenal");
+    // el vacío honesto y la meta cumplida declarada
+    afirmar(m.includes("Aún no repartes ninguno"), "el vacío personal ya no se declara sin pena");
+    afirmar(m.includes("TU MISIÓN CUMPLIDA"), "la meta personal cumplida no se celebra");
+    afirmar(m.includes("tu misión — vive en tu aparato"), "la casa ya no dice dónde vive el progreso personal");
+    // el código de guerra personal v41 depende del aparato (myCode nace null en SSR)
+    afirmar(m.includes("Tu código de guerra"), "el código de guerra personal desapareció del arsenal");
+  });
+
+  await verificar("TU MISIÓN viva: /mision SSR sirve la barra personal con su vacío honesto (v255)", async () => {
+    const r = await pedir("/mision");
+    afirmar(r.status === 200, `/mision no 200 en v255 (${r.status})`);
+    afirmar(r.texto.includes("enlaces tuyos"), "la barra personal no viaja en el SSR del mando");
+    // el SSR nace con el aparato vacío: el vacío honesto viaja (cero mismatch)
+    afirmar(r.texto.includes("Aún no repartes ninguno"), "el vacío honesto personal no viaja en el SSR");
+    afirmar(r.texto.includes("tu misión — vive en tu aparato"), "la declaración del aparato no viaja en el SSR");
+    // las anclas viejas del mando siguen en pie (SSR-safe: no dependen del aparato)
+    afirmar(r.texto.includes("Misión 100 — enlaces y jugadores"), "la cabeza de la misión desapareció");
+    afirmar(r.texto.includes("contador global en vivo"), "el contador global desapareció");
+    afirmar(r.texto.includes("Arsenal —"), "el arsenal desapareció del SSR");
+    afirmar(r.texto.includes("QR de reclutamiento"), "el QR de reclutamiento desapareció del SSR");
   });
 
   // ── v246.0 EL ANDAMIAJE EN SILENCIO: las rutas API solo exportan

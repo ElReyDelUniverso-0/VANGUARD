@@ -2439,6 +2439,32 @@
 //     EL PULSO/CONECTA/sondeado en pie) · BD intocada (1877 cables ·
 //     9 hechos, un solo escritor).
 // Herencia v253.0 LA FORMA DE LA SEMANA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v254.0";
-export const APP_CODENAME = "EL LATIDO QUE RESPETA";
+// v255.0 TU MISIÓN — la expansión funcional módulo a módulo llega al
+//         módulo más antiguo sin tocar: /mision (MISIÓN 100, del v37) —
+//         la misión medía el esfuerzo de TODA la casa (contador global
+//         /api/visits) pero el propio comandante nunca vio EL SUYO.
+// (1) LA BARRA PERSONAL — «N / 100 enlaces tuyos» junto a las barras
+//     globales: derivada 100% del aparato (readUsed, localStorage del
+//     arsenal ya copiado) — cero servidores, cero invención; con su
+//     role=progressbar + aria-label y su meta cumplida celebrada
+//     (TU MISIÓN CUMPLIDA). Si aún no repartes nada, lo dice sin pena:
+//     «Aún no repartes ninguno — el arsenal de abajo espera su primer
+//     golpe». Cero mismatch: el SSR nace con el aparato vacío y la
+//     primera pintura client también (setUsed diferido, ya v42).
+// (2) LAS PLATAFORMAS CUBIERTAS — cuántas de las 10 plataformas tocó el
+//     comandante, derivadas del PREFIJO del código (VGD-XXXnn →
+//     c.slice(4,7) contra PLATFORMS): nunca un número inventado.
+// (3) EL SIGUIENTE ENLACE SUGERIDO — el mando deriva el primer enlace
+//     sin usar del arsenal («el mando sugiere el siguiente: VGD-XXX
+//     (plataforma)») — el visitante nunca se queda sin el próximo golpe.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v255.0 db up ·
+//     pruebas 136/136 (+2 TU MISIÓN: estática — la meta personal, la
+//     barra derivada del aparato, el prefijo de plataforma, el siguiente
+//     enlace derivado, el vacío honesto y la meta celebrada; viva — el
+//     SSR de /mision sirve la barra personal con su vacío honesto y las
+//     anclas Misión 100/contador global/código de guerra en pie) ·
+//     BD intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v254.0 EL LATIDO QUE RESPETA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v255.0";
+export const APP_CODENAME = "TU MISIÓN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

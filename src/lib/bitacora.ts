@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v255.0",
+    nombre: "TU MISIÓN — el módulo más antiguo (/mision, MISIÓN 100 del v37) recibe su expansión: la misión medía el esfuerzo de TODA la casa, pero el propio comandante nunca vio el suyo — barra personal, plataformas cubiertas y siguiente enlace sugerido",
+    hitos: [
+      "LA BARRA PERSONAL — «N / 100 enlaces tuyos» junto a las globales: derivada 100% del aparato (localStorage del arsenal ya copiado), cero servidores, cero invención; vacío honesto («Aún no repartes ninguno») y meta cumplida celebrada (TU MISIÓN CUMPLIDA); cero mismatch (el SSR nace con el aparato vacío)",
+      "LAS PLATAFORMAS CUBIERTAS — cuántas de las 10 plataformas tocó el comandante, derivadas del PREFIJO del código (VGD-XXXnn → c.slice(4,7) contra PLATFORMS): nunca un número inventado",
+      "EL SIGUIENTE ENLACE SUGERIDO — el mando deriva el primer enlace sin usar del arsenal: el visitante nunca se queda sin el próximo golpe",
+      "QA v255: tsc 0 TOTAL, eslint 0, build EXIT 0, health v255.0 db up, pruebas 136/136 (+2 TU MISIÓN: estática — meta personal, barra del aparato, prefijo derivado, siguiente enlace, vacío honesto; viva — el SSR de /mision sirve la barra personal con su vacío y las anclas en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v254.0",
     nombre: "EL LATIDO QUE RESPETA — la sala en vivo /en-vivo gana la pausa del latido (el visitante congela y reanuda el sondeo con SU mano) y la pila de los cables que llegaron mientras leías, con la subida a UN toque",
     hitos: [

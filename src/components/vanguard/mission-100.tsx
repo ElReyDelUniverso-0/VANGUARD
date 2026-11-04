@@ -243,6 +243,26 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
   const maxTop = Math.max(1, ...data.topLinks.map((t) => t.visits));
   const qrWrapRef = useRef<HTMLDivElement>(null);
 
+  // v255.0 TU MISIÓN — el progreso del PROPIO comandante: la misión medía
+  // el esfuerzo de TODA la casa, pero el visitante nunca vio el suyo.
+  // Derivado 100% del aparato (readUsed, localStorage): nada se inventa,
+  // nada se manda; si no has repartido nada, la barra lo dice sin pena.
+  const META_PERSONAL = 100;
+  const miPct = Math.min(100, Math.round((used.length / META_PERSONAL) * 100));
+  const miMetaCumplida = used.length >= META_PERSONAL;
+  const plataformasMias = useMemo(() => {
+    const prefijos = new Set<string>();
+    for (const c of used) {
+      const p = c.slice(4, 7); // VGD-XXXnn → prefijo de plataforma
+      if (PLATFORMS.some((pl) => pl.prefix === p)) prefijos.add(p);
+    }
+    return prefijos.size;
+  }, [used]);
+  const siguienteEnlace = useMemo(
+    () => links.find((l) => !used.includes(l.code)) ?? null,
+    [links, used],
+  );
+
   const downloadQr = () => {
     const c = qrWrapRef.current?.querySelector("canvas") as HTMLCanvasElement | null;
     if (!c) return;
@@ -361,6 +381,51 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           </p>
         </div>
       )}
+
+      {/* ===== v255.0 TU MISIÓN — el progreso del propio comandante =====
+          La casa ya contaba el esfuerzo de TODOS; ahora cada comandante
+          ve el suyo: su barra, sus plataformas cubiertas y el siguiente
+          enlace sugerido. Vive en el APARATO (localStorage) — cero
+          servidores, cero invención; si aún no repartes nada, lo dice. */}
+      <div className="mt-4 border-t border-border pt-4">
+        <div className="flex items-end justify-between font-mono">
+          <div className="flex items-baseline gap-2">
+            <span className={`text-3xl font-bold tabular-nums ${miMetaCumplida ? "text-green-hud" : "text-amber"}`}>
+              {used.length}
+            </span>
+            <span className="text-sm text-muted-foreground">/ {META_PERSONAL} enlaces tuyos</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+            <UserPlus className="w-3 h-3 text-electric" /> tu misión — vive en tu aparato
+          </span>
+        </div>
+        <div
+          className="mt-2 h-4 rounded-full bg-border/40 overflow-hidden border border-border"
+          role="progressbar"
+          aria-valuenow={miPct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Tu progreso personal de enlaces repartidos"
+        >
+          <div
+            className={`h-full rounded-full transition-all duration-700 ${miMetaCumplida ? "bg-green-hud/80" : "bg-gradient-to-r from-electric via-amber-hud to-amber"}`}
+            style={{ width: `${Math.max(3, miPct)}%` }}
+          />
+        </div>
+        <p className="mt-2 font-mono text-[10px] text-muted-foreground leading-relaxed">
+          {used.length === 0
+            ? "Aún no repartes ninguno — el arsenal de abajo espera su primer golpe."
+            : `Has repartido ${used.length} de ${links.length} enlaces rastreados y cubres ${plataformasMias} de ${PLATFORMS.length} plataformas${siguienteEnlace ? ` — el mando sugiere el siguiente: ${siguienteEnlace.code} (${siguienteEnlace.platform.name})` : "."}`}
+        </p>
+        {miMetaCumplida && (
+          <div className="mt-3 border border-green-hud/50 bg-green-hud/10 rounded-md px-4 py-3 flex items-center gap-3">
+            <Trophy className="w-6 h-6 text-green-hud shrink-0" />
+            <p className="text-xs font-mono text-green-hud tracking-wide">
+              TU MISIÓN CUMPLIDA — 100 ENLACES TUYOS EN EL MUNDO. Cada golpe tuyo ya alimenta el contador global de la casa.
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* ===== v42.4 TU CÓDIGO DE GUERRA — enlace personal ===== */}
       {myCode && (
