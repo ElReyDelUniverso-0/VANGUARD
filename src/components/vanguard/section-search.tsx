@@ -236,6 +236,13 @@ export function SectionSearch({
         kind: "page", href: "/archivo-mundial",
       },
       {
+        // v294.0 EL ATLAS DEL PLANETA — la fuente atlas-data (v121, REAL), en server
+        key: "pg:atlas", label: "EL ATLAS DEL PLANETA — 66 naciones con capital, población, superficie, moneda, gobierno y líder real; 69 personas del poder con su sede real y 15 rutas del poder", short: "atlas planeta paises naciones capitales poblacion superficie moneda gobierno lider presidente personas poder rutas ejes geografia",
+        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el atlas de la casa", icon_color: "text-cyan-hud",
+        kind: "page", href: "/atlas",
+      },
+      {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server
         key: "pg:rostros", label: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder: tronos, dinero, tribunal y nuevos, con cargo, sede, ruta y frase", short: "rostros poder tronos presidentes banqueros tribunal silicio ia fichas galeria mandato",
         icon: <Users className="w-4 h-4" />, sectionKey: "global",

@@ -3684,6 +3684,66 @@
 //     expediente de Medellín con Escobar verbatim y el sitemap VIVO) ·
 //     BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v292.0 EL ARCHIVO DESCLASIFICADO y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v293.0";
-export const APP_CODENAME = "EL ARCHIVO MUNDIAL";
+// v294.0 EL ATLAS DEL PLANETA — el censo fuera de la cola: las cinco
+//         cabezas restantes del almacén (imperio-data, conquest-data,
+//         hooks-data, social-data, camera-data) cayeron TODAS en la
+//         clasificación de esta ronda — ficción y juego declarados en
+//         su propia fuente («continente ficticio», «mini-juego estilo
+//         Risk», «todo el contenido es ficticio», monedas y gemas) — y
+//         el censo sistemático (147 ficheros × server pages) destapó
+//         la veta que ninguna «Queda» nombró: atlas-data (v121), REAL
+//         de pies a cabeza («datos verificados hasta octubre 2025»),
+//         sin "use client", consumida en server SOLO como cifra en
+//         /nucleo (PAISES_ATLAS.length) mientras su plato completo
+//         viaja en un panel ssr:false de la portada. La sala nueva
+//         /atlas levanta el plato, patrón /historia (v274) · /armeria
+//         (v283) · /archivo-mundial (v293): prerenderizada ○, sin
+//         cliente, sin BD. El botín: 66 naciones con capital,
+//         población (fmtMillones), superficie (fmtKm2, toLocaleString
+//         es-ES), idiomas, moneda, gobierno y líder real, agrupadas
+//         por región EN EL ORDEN DE LA FUENTE con chips «América ×12»
+//         en un solo nodo (lección v274); 69 personas del poder con su
+//         sede real agrupadas por categoría (GOBIERNO 33 · ORGANISMOS
+//         6 · DINERO 14 · CIENCIA 8 · CULTURA 8 — el censo manda: la
+//         cabeza de la fuente dice 70, el dato dice 69, lección v292);
+//         15 rutas del poder resueltas contra las personas por id
+//         (personaPorId — si la fuente pierde un id, la ruta no se
+//         dibuja). La zona IANA es real pero el RELOJ vive en el
+//         aparato (el eco del LIVE_RATES de la v293): la sala declara
+//         la puerta honesta.
+// (1) LA CLASIFICACIÓN MANDA — cinco ficheros medidos y caídos en una
+//     ronda (imperio «continente ficticio», conquest «mini-juego
+//     estilo Risk», hooks ruleta/gemas de juego, social «todo el
+//     contenido es ficticio», camera cámaras compradas con monedas):
+//     las salas server no indexan ficción como hecho; el atlas es el
+//     dato del mundo real que sí sube.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «El atlas del planeta — 66 naciones con su
+//     capital y su líder real en 5 regiones, 69 personas del poder
+//     con su sede real y 15 rutas que unen los ejes del mundo»; las
+//     regiones y categorías en el ORDEN DE LA FUENTE con sus chips en
+//     un solo nodo; población y superficie con los fmt del canon de
+//     la propia fuente; cero años escritos en líneas (la guardia del
+//     arco), el desde de cada persona ni se renderiza.
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /atlas (monthly,
+//     0.6) y la paleta Ctrl+K la lleva (pg:atlas, icono Globe — ya
+//     importado, cero cambios de import); JSON-LD CollectionPage +
+//     ItemList con las 66 naciones; noscript honesto con la línea
+//     compuesta; puerta al aparato (el globo, los arcos de vuelo y el
+//     reloj vivo).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /atlas en la tabla) ·
+//     health v294.0 db up · pruebas 214/214 (+2 EL ATLAS DEL PLANETA:
+//     estática — la fuente REAL intacta (66/69/15 censados por
+//     bloque), las regiones y categorías derivadas en el orden de la
+//     fuente, la línea compuesta sin cifras escritas, los chips en un
+//     nodo, los fmt del canon, las rutas resueltas con personaPorId,
+//     las puertas (sitemap + paleta) y las guardias; viva — el SSR
+//     sirve la línea derivada completa, «América ×12», «GOBIERNO
+//     ×33», Estados Unidos con sus «9.833.517 km²», Xi Jinping con La
+//     Casa Blanca, la ruta «Donald Trump ↔ Xi Jinping — GRAN PARIDAD»
+//     y el sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un
+//     solo escritor).
+// Herencia v293.0 EL ARCHIVO MUNDIAL y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v294.0";
+export const APP_CODENAME = "EL ATLAS DEL PLANETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

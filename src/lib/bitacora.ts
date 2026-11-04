@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v294.0",
+    nombre: "EL ATLAS DEL PLANETA — el censo fuera de la cola: las cinco cabezas restantes del almacén (imperio, conquest, hooks, social, camera) caen TODAS en la clasificación — ficción y juego declarados en su propia fuente — y el censo sistemático destapa la veta que ninguna «Queda» nombró: atlas-data (v121, REAL, «datos verificados hasta octubre 2025») sube como sala server /atlas — 66 naciones con capital, población, superficie, moneda, gobierno y líder real; 69 personas del poder con su sede real (la fuente dice 70, el dato dice 69) y 15 rutas del poder resueltas por id; la zona IANA es real, el reloj vive en el aparato",
+    hitos: [
+      "LA CLASIFICACIÓN MANDA — cinco ficheros medidos y caídos en una ronda (imperio «continente ficticio», conquest «mini-juego estilo Risk», hooks ruleta/gemas, social «todo el contenido es ficticio», camera cámaras con monedas): las salas server no indexan ficción como hecho; el atlas es el dato del mundo real que sí sube",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256); regiones y categorías EN EL ORDEN DE LA FUENTE con chips «América ×12» / «GOBIERNO ×33» en un solo nodo (lección v274); población y superficie con los fmt del canon (fmtMillones · fmtKm2, toLocaleString es-ES); las rutas resueltas con personaPorId (si la fuente pierde un id, la ruta no se dibuja)",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /atlas (monthly, 0.6), paleta Ctrl+K (pg:atlas, Globe ya importado), JSON-LD CollectionPage + ItemList con las 66 naciones, noscript honesto, puerta al aparato (el globo, los arcos de vuelo y el reloj local vivo)",
+      "QA v294: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /atlas), health v294.0 db up, pruebas 214/214 (+2: estática — la fuente REAL intacta (66/69/15 censados por bloque), la línea compuesta, los chips, los fmt, las rutas, las puertas y las guardias; viva — la línea derivada, «América ×12», Estados Unidos con sus «9.833.517 km²», Xi Jinping con La Casa Blanca, «Donald Trump ↔ Xi Jinping — GRAN PARIDAD» y el sitemap VIVO), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v293.0",
     nombre: "EL ARCHIVO MUNDIAL — el censo del almacén sigue pagándose: archive-data (v12) clasificada REAL de pies a cabeza y sube como sala server /archivo-mundial — 44 curiosidades verídicas en 6 categorías, 8 eras desde la Prehistoria, 6 contadores de las grandes guerras, el crimen global y 8 expedientes de cartel con sus líderes reales; LIVE_RATES no sube como contador (la tasa es real, el reloj vive en el aparato)",
     hitos: [

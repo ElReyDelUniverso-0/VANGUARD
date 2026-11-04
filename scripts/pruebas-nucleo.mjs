@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v293.0", async () => {
+  await verificar("servidor vivo y en v294.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v293"), `versión ${r.json?.version} ≠ v293`);
+    afirmar(String(r.json?.version).startsWith("v294"), `versión ${r.json?.version} ≠ v294`);
   });
 
   // censo por API
@@ -2378,6 +2378,104 @@ async function parteB() {
     // las anclas v284/v285 en pie
     afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
+  });
+
+  // ── v294.0 EL ATLAS DEL PLANETA: atlas-data (v121, REAL) gana su sala server (/atlas) ──
+  // El censo fuera de la cola: cinco cabezas caídas en la clasificación
+  // (ficción/juego declarado en su propia fuente) y la veta real que sube.
+  await verificar("EL ATLAS DEL PLANETA estática: la fuente REAL intacta y todo derivado (v294)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/atlas-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/atlas/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: los tres bloques con sus censos reales (el dato
+    // manda: la cabeza de la fuente dice 70 personas, el dato dice 69)
+    afirmar(fuente.includes("export const PAISES_ATLAS"), "la fuente de países no existe");
+    const iniP = fuente.indexOf("export const PAISES_ATLAS");
+    const iniC = fuente.indexOf("export const PERSONAS_ATLAS");
+    const iniR = fuente.indexOf("export const RUTAS_PODER");
+    const bloqueP = fuente.slice(iniP, iniC);
+    const bloqueC = fuente.slice(iniC, iniR);
+    const nP = (bloqueP.match(/\n  \{ id: "/g) ?? []).length;
+    const nC = (bloqueC.match(/bio: "/g) ?? []).length;
+    afirmar(nP === 66, `el censo de países midió mal (${nP}/66)`);
+    afirmar(nC === 69, `el censo de personas midió mal (${nC}/69 — manda el dato)`);
+    const nR = (fuente.slice(iniR).match(/\{ de: "/g) ?? []).length;
+    afirmar(nR === 15, `el censo de rutas midió mal (${nR}/15)`);
+    for (const reg of ["América", "Asia", "Europa", "Oceanía", "África"]) {
+      afirmar(bloqueP.includes(`region: "${reg}"`), `falta la región ${reg} en la fuente`);
+    }
+    for (const cat of ["GOBIERNO", "ORGANISMOS", "DINERO", "CIENCIA", "CULTURA"]) {
+      afirmar(bloqueC.includes(`categoria: "${cat}"`), `falta la categoría ${cat} en la fuente`);
+    }
+    afirmar(
+      fuente.includes("export function personaPorId") &&
+        fuente.includes("export function fmtKm2") &&
+        fuente.includes("export function fmtMillones"),
+      "faltan los derivados del canon (personaPorId, fmtKm2, fmtMillones)",
+    );
+    // la sala: los imports, la línea compuesta, los chips, los fmt, las rutas
+    afirmar(sala.includes("PAISES_ATLAS,"), "la sala no consume las naciones");
+    afirmar(sala.includes("PERSONAS_ATLAS,"), "la sala no consume las personas");
+    afirmar(sala.includes("personaPorId,"), "la sala no consume el resolvedor de rutas");
+    afirmar(
+      sala.includes("for (const p of PAISES_ATLAS) if (!REGIONES.includes(p.region)) REGIONES.push(p.region)"),
+      "las regiones no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("if (!CATEGORIAS.includes(x.categoria)) CATEGORIAS.push(x.categoria)"),
+      "las categorías no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("const lineaAtlas = `El atlas del planeta — ${PAISES_ATLAS.length} naciones"),
+      "la línea no se compone COMPLETA en JS",
+    );
+    afirmar(
+      sala.includes("`" + "${reg} ×${PAISES_ATLAS.filter((p) => p.region === reg).length}`"),
+      "el chip de región no compone región y conteo en un nodo",
+    );
+    afirmar(
+      sala.includes("`" + "${cat} ×${PERSONAS_ATLAS.filter((x) => x.categoria === cat).length}`"),
+      "el chip de categoría no compone categoría y conteo en un nodo",
+    );
+    afirmar(sala.includes("fmtMillones(p.poblacion)"), "la población no se formatea con el fmt del canon");
+    afirmar(sala.includes("fmtKm2(p.superficie)"), "la superficie no se formatea con el fmt del canon");
+    afirmar(
+      sala.includes("RUTAS_PODER.filter(\n  (r) => personaPorId(r.de) && personaPorId(r.a),\n)"),
+      "las rutas no se resuelven contra las personas",
+    );
+    afirmar(sala.includes("el reloj que la mueve vive en el"), "la sala no declara que el reloj vive en el aparato (el eco del LIVE_RATES v293)");
+    afirmar(sala.includes("esta sala es la memoria servida sin JavaScript"), "la puerta honesta al aparato no se declara");
+    // las puertas de la casa
+    afirmar(mapa.includes("/atlas"), "el sitemap no anuncia el atlas");
+    afirmar(paleta.includes('key: "pg:atlas"'), "la paleta Ctrl+K no lleva el atlas");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas a mano en la ronda v294!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v294)!");
+  });
+
+  await verificar("EL ATLAS DEL PLANETA viva: la línea derivada, los chips, los fmt y las rutas del poder (v294)", async () => {
+    const r = await pedir("/atlas");
+    afirmar(r.status === 200, `/atlas no 200 (${r.status})`);
+    afirmar(r.texto.includes("EL ATLAS DEL PLANETA"), "el título no viaja");
+    // la línea compuesta COMPLETA (66 · 5 · 69 · 15 — derivados de la fuente)
+    afirmar(
+      r.texto.includes("El atlas del planeta — 66 naciones con su capital y su líder real en 5 regiones, 69 personas del poder con su sede real y 15 rutas que unen los ejes del mundo"),
+      "la línea derivada no viaja (o la fuente cambió)",
+    );
+    // los comentarios RSC y las etiquetas se pelan: los asertos miran el
+    // TEXTO servido (los nombres de las rutas cruzan nodos <span>)
+    const texto = r.texto.replace(/<[^>]+>/g, "");
+    afirmar(texto.includes("América ×12"), "el chip de América no viaja");
+    afirmar(texto.includes("GOBIERNO ×33"), "el chip de GOBIERNO no viaja");
+    afirmar(texto.includes("9.833.517 km²"), "la superficie de EE. UU. no viaja formateada");
+    afirmar(texto.includes("341 millones"), "la población de EE. UU. no viaja formateada");
+    afirmar(texto.includes("Xi Jinping"), "la persona no viaja");
+    afirmar(texto.includes("La Casa Blanca"), "la sede real no viaja");
+    afirmar(texto.includes("Donald Trump ↔ Xi Jinping — GRAN PARIDAD"), "la ruta del poder no viaja resuelta");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/atlas"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v293.0 EL ARCHIVO MUNDIAL: archive-data (v12, REAL) gana su sala server (/archivo-mundial) ──
