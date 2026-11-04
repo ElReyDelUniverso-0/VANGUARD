@@ -3807,6 +3807,62 @@
 //     «9.000+» con «ONU/OHCHR 2025» y el sitemap VIVO) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v294.0 EL ATLAS DEL PLANETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v295.0";
-export const APP_CODENAME = "LA VERDAD CRUDA";
+// v296.0 LAS DIVISAS DEL PLANETA — el almacén menor sigue pagando: el
+//         censo de la «Queda» de la v295 destapó la veta mayor que
+//         dormía desde la v20: world-data (46,7 KB), «DATASET MUNDIAL
+//         REAL: 251 países y territorios con nombre en español, bandera
+//         real (flagcdn) y moneda oficial con tasa de cambio (fuente:
+//         open.er-api.com, captura del 9 de septiembre de 2026)»,
+//         generado por gen-world-data.mjs, SIN "use client", consumido
+//         en server SOLO por una ruta API y como cifra (countryName)
+//         mientras su plato completo viaja en el panel divisas del
+//         aparato. La sala nueva /divisas levanta el archivo, patrón
+//         /historia (v274) · /armeria (v283) · /archivo-mundial (v293)
+//         · /atlas (v294) · /verdad-cruda (v295): prerenderizada ○,
+//         sin cliente, sin BD. El botín: 247 países y territorios con
+//         su moneda oficial real (código ISO 4217, nombre en español,
+//         símbolo y tasa por 1 USD), agrupados por región EN EL ORDEN
+//         DE LA FUENTE con chips «Asia ×50» en un solo nodo; 154
+//         monedas únicas censadas del dato (no del comentario); las
+//         monedas COMPARTIDAS derivadas del dato con su conteo (el
+//         euro sirve a 37 países, el dólar a 16) y la línea con la más
+//         compartida. La tasa es la CAPTURA que la propia fuente
+//         declara — la operativa en vivo (simulada, monedas VANGUARD)
+//         y las banderas reales de flagcdn viven en el aparato: puerta
+//         honesta declarada (el eco del LIVE_RATES v293 y del reloj
+//         IANA v294).
+// (1) LA CLASIFICACIÓN MANDA — world-data es REAL declarada («DATASET
+//     MUNDIAL REAL... no editar a mano: regenerar con scripts/gen-
+//     world-data.mjs»); la sala no convierte, no simula, no dibuja
+//     banderas: sirve el archivo y declara las puertas.
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «Las monedas del planeta — 247 países y
+//     territorios con su moneda oficial real en 6 regiones y 154
+//     monedas únicas; la más compartida: Euro, que sirve a 37 países»;
+//     las regiones en el ORDEN DE LA FUENTE con sus chips en un solo
+//     nodo (lección v274); el fmt de la tasa es regla derivada
+//     (es-ES, 2 decimales para las grandes, 4 para las pequeñas);
+//     cero años escritos en líneas (la guardia del arco), la captura
+//     se declara en prosa como dato de la fuente (precedente
+//     «octubre 2025» de la v294).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /divisas (monthly,
+//     0.6) y la paleta Ctrl+K la lleva (pg:divisas, icono Landmark —
+//     ya importado, cero cambios de import); JSON-LD CollectionPage +
+//     ItemList con los 247 países; noscript honesto con la línea
+//     compuesta; puerta al aparato (la casa de cambio, las banderas).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /divisas en la tabla) ·
+//     health v296.0 db up · pruebas 218/218 (+2 LAS DIVISAS DEL
+//     PLANETA: estática — la fuente REAL intacta (247/251 censados por
+//     bloque, las 6 regiones presentes, cero tasas nulas), la sala
+//     derivada (línea compuesta, chips en un nodo, fmt de tasa, las
+//     compartidas del dato), sin cliente ni simulación ni flagcdn, las
+//     puertas (sitemap + paleta) y las guardias; viva — el SSR sirve
+//     la línea derivada completa, «Asia ×50», Japón con su yen y su
+//     «153,82 por 1 USD», Afganistán con su afgani, «EUR — Euro · € ·
+//     37 países», «USD — Dólar estadounidense... 16 países» y el
+//     sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v295.0 LA VERDAD CRUDA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v296.0";
+export const APP_CODENAME = "LAS DIVISAS DEL PLANETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

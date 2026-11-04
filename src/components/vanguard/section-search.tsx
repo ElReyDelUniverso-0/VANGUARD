@@ -250,6 +250,13 @@ export function SectionSearch({
         kind: "page", href: "/verdad-cruda",
       },
       {
+        // v296.0 LAS DIVISAS DEL PLANETA — la fuente world-data (v20, REAL), en server
+        key: "pg:divisas", label: "DIVISAS — las 247 monedas oficiales del planeta con su moneda real (ISO 4217), símbolo y tasa por dólar; 154 monedas únicas y el euro que sirve a 37 países", short: "divisas monedas planeta tasa cambio dolar euro yen libra iso 4217 simbolo casa de cambio moneda oficial paises archivo divisas",
+        icon: <Landmark className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la casa de moneda", icon_color: "text-cyan-hud",
+        kind: "page", href: "/divisas",
+      },
+      {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server
         key: "pg:rostros", label: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder: tronos, dinero, tribunal y nuevos, con cargo, sede, ruta y frase", short: "rostros poder tronos presidentes banqueros tribunal silicio ia fichas galeria mandato",
         icon: <Users className="w-4 h-4" />, sectionKey: "global",

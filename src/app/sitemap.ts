@@ -206,6 +206,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v296.0 LAS DIVISAS DEL PLANETA — la fuente world-data (v20, REAL,
+      // «DATASET MUNDIAL REGENERADO — no editar a mano») servida en
+      // server: 247 países y territorios con su moneda oficial real
+      // (ISO 4217, símbolo y tasa por 1 USD — captura open.er-api.com),
+      // 154 monedas únicas y las monedas compartidas, indexable para
+      // las búsquedas de monedas (moneda de Japón, euro, yen, tasa...)
+      url: `${SITE_URL}/divisas`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
       // censo de poder de la fuente (ROSTROS) servidas en server:
       // los tronos, el dinero, el tribunal y los nuevos, indexables

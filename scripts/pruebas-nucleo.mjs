@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v295.0", async () => {
+  await verificar("servidor vivo y en v296.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v295"), `versión ${r.json?.version} ≠ v295`);
+    afirmar(String(r.json?.version).startsWith("v296"), `versión ${r.json?.version} ≠ v296`);
   });
 
   // censo por API
@@ -2378,6 +2378,103 @@ async function parteB() {
     // las anclas v284/v285 en pie
     afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
+  });
+
+  // ── v296.0 LAS DIVISAS DEL PLANETA: world-data (v20, REAL) gana su sala server (/divisas) ──
+  // El almacén menor sigue pagando: el dataset mundial generado (captura
+  // open.er-api.com) sale del aparato al server.
+  await verificar("LAS DIVISAS DEL PLANETA estática: la fuente REAL intacta y todo derivado (v296)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/world-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/divisas/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // la fuente intacta: los dos bloques con sus censos reales (el
+    // comentario dice 251 países; el dato de divisas mide 247 — manda el dato)
+    afirmar(fuente.includes("export const WORLD_FLAGS"), "la fuente de banderas no existe");
+    afirmar(fuente.includes("export const WORLD_CURRENCIES_FULL"), "la fuente de divisas no existe");
+    const iniF = fuente.indexOf("export const WORLD_FLAGS");
+    const iniC = fuente.indexOf("export const WORLD_CURRENCIES_FULL");
+    const finC = fuente.indexOf("export const WORLD_FLAG_MAP");
+    const nB = (fuente.slice(iniF, iniC).match(/\{ code: "/g) ?? []).length;
+    afirmar(nB === 251, `el censo de banderas midió mal (${nB}/251)`);
+    const bloqueC = fuente.slice(iniC, finC);
+    const nC = (bloqueC.match(/\{ code: "/g) ?? []).length;
+    afirmar(nC === 247, `el censo de divisas midió mal (${nC}/247)`);
+    for (const reg of ["Asia", "Europa", "África", "América", "Oceanía", "Antártida"]) {
+      afirmar(bloqueC.includes(`region: "${reg}"`), `falta la región ${reg} en la fuente`);
+    }
+    // la fuente completa: toda entrada con moneda y sin tasa nula
+    afirmar((bloqueC.match(/curCode: "/g) ?? []).length === 247, "hay países sin moneda oficial");
+    afirmar((bloqueC.match(/rate: 0(?:[,\s}])/g) ?? []).length === 0, "hay tasas nulas en la fuente");
+    // la sala: los imports, la línea compuesta, los chips, el fmt, las compartidas
+    afirmar(sala.includes('from "@/lib/world-data"'), "la sala no consume la fuente canónica");
+    afirmar(
+      sala.includes("if (!REGIONES.includes(c.region)) REGIONES.push(c.region)"),
+      "las regiones no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("new Set(WORLD_CURRENCIES_FULL.map((c) => c.curCode))"),
+      "las monedas únicas no se censan del dato",
+    );
+    afirmar(
+      sala.includes(".filter((m) => m.paises.length >= 2)"),
+      "las compartidas no se derivan del dato",
+    );
+    afirmar(
+      sala.includes('.sort((a, b) => b.paises.length - a.paises.length || a.code.localeCompare(b.code, "es"))'),
+      "las compartidas no tienen orden determinista",
+    );
+    afirmar(
+      sala.includes("const lineaDivisas = `Las monedas del planeta — ${WORLD_CURRENCIES_FULL.length} países"),
+      "la línea no se compone COMPLETA en JS",
+    );
+    afirmar(
+      sala.includes("`" + "${reg} ×${WORLD_CURRENCIES_FULL.filter((c) => c.region === reg).length}`"),
+      "el chip de región no compone región y conteo en un nodo",
+    );
+    afirmar(
+      sala.includes('r.toLocaleString("es-ES", { maximumFractionDigits: r >= 100 ? 2 : 4 })'),
+      "la tasa no se formatea con la regla derivada del canon",
+    );
+    afirmar(sala.includes("open.er-api.com"), "la sala no cita la fuente de la captura");
+    // la clasificación manda: la sala no convierte, no simula, no dibuja
+    // banderas (el CÓDIGO real decide — los comentarios que documentan la
+    // exclusión no cuentan, lección v295: se pelan antes del aserto)
+    const salaSinComentarios = sala.replace(/\/\/[^\n]*/g, "");
+    afirmar(!salaSinComentarios.includes("use client") && !salaSinComentarios.includes("useState"), "¡la sala no es server pura!");
+    afirmar(!salaSinComentarios.includes("flagcdn.com"), "¡las banderas viven en el aparato, no en la sala! (la URL real no viaja: la prosa que declara la puerta sí)");
+    // las puertas de la casa
+    afirmar(mapa.includes("/divisas"), "el sitemap no anuncia las divisas");
+    afirmar(paleta.includes('key: "pg:divisas"'), "la paleta Ctrl+K no lleva las divisas");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas ISO a mano en la ronda v296!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v296)!");
+  });
+
+  await verificar("LAS DIVISAS DEL PLANETA viva: la línea derivada, los chips, las tasas formateadas y las compartidas (v296)", async () => {
+    const r = await pedir("/divisas");
+    afirmar(r.status === 200, `/divisas no 200 (${r.status})`);
+    afirmar(r.texto.includes("LAS MONEDAS DEL PLANETA"), "el título no viaja");
+    // la línea compuesta COMPLETA (247 · 6 · 154 · Euro 37 — derivados de la fuente)
+    afirmar(
+      r.texto.includes("Las monedas del planeta — 247 países y territorios con su moneda oficial real en 6 regiones y 154 monedas únicas; la más compartida: Euro, que sirve a 37 países"),
+      "la línea derivada no viaja (o la fuente cambió)",
+    );
+    // los comentarios RSC y las etiquetas se pelan: los asertos miran el
+    // TEXTO servido (lección v258, crecida en la v294)
+    const texto = r.texto.replace(/<[^>]+>/g, "");
+    afirmar(texto.includes("Asia ×50"), "el chip de Asia no viaja");
+    afirmar(texto.includes("África ×59"), "el chip de África no viaja");
+    afirmar(texto.includes("Japón"), "Japón no viaja");
+    afirmar(texto.includes("JPY ¥ · Yen"), "la moneda de Japón no viaja completa");
+    afirmar(texto.includes("tasa: 153,82 por 1 USD"), "la tasa del yen no viaja formateada");
+    afirmar(texto.includes("AFN ؋ · Afgani"), "la moneda de Afganistán no viaja completa");
+    afirmar(texto.includes("tasa: 64,779 por 1 USD"), "la tasa del afgani no viaja formateada");
+    afirmar(texto.includes("EUR — Euro · € · 37 países"), "la fila del euro compartido no viaja");
+    afirmar(texto.includes("USD — Dólar estadounidense · $ · 16 países"), "la fila del dólar compartido no viaja");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/divisas"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v296.0",
+    nombre: "LAS DIVISAS DEL PLANETA — el almacén menor sigue pagando: el censo de la «Queda» de la v295 destapó la veta mayor que dormía desde la v20: world-data (46,7 KB, «DATASET MUNDIAL REAL», captura open.er-api.com del 9 de septiembre de 2026, regenerado por gen-world-data.mjs) sube como sala server /divisas — 247 países y territorios con su moneda oficial real (ISO 4217, símbolo y tasa por 1 USD), 154 monedas únicas censadas del dato y las monedas compartidas (el euro sirve a 37 países, el dólar a 16); la captura manda: la operativa en vivo (simulada) y las banderas reales viven en el aparato",
+    hitos: [
+      "LA CLASIFICACIÓN MANDA — world-data es REAL declarada en su propia cabeza («DATASET MUNDIAL REAL... no editar a mano: regenerar con scripts/gen-world-data.mjs»); la sala no convierte, no simula, no dibuja banderas: sirve el archivo y declara las puertas",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256); las regiones EN EL ORDEN DE LA FUENTE con chips «Asia ×50» en un solo nodo (lección v274); 154 monedas únicas censadas del dato; las compartidas derivadas con su conteo; el fmt de la tasa es regla derivada (es-ES)",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /divisas (monthly, 0.6), paleta Ctrl+K (pg:divisas, icono Landmark ya importado), JSON-LD CollectionPage + ItemList con los 247 países, noscript honesto, puerta al aparato (la casa de cambio, las banderas de flagcdn)",
+      "PRUEBAS +2 — estática: la fuente REAL intacta (247/251 censados por bloque, 6 regiones, cero tasas nulas), la sala derivada, sin cliente ni simulación, las puertas y las guardias; viva: la línea derivada completa, «Asia ×50», Japón con su «153,82 por 1 USD», «EUR — Euro · € · 37 países» y el sitemap VIVO",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v295.0",
     nombre: "LA VERDAD CRUDA — el almacén menor clasificado: el censo de la «Queda» de la v294 cayó casi entero en negativo (geoint, lados, monitor, enclaves, perdidas, sismo, mundial, tierra, cielos — ficción, simulación determinista o creación propia declarados en su propia cabeza) y destapó la veta documentada que dormía desde la v24: dark-data (49 KB, «todas las entradas citan fuentes públicas (ONU, CPJ, RSF, ACLED, HRW, OSCE)») sube como sala server /verdad-cruda — 12 abusos de guerra verificados con su fuente citada verbatim, el memorial de 10 periodistas caídos (CPJ · RSF · IPI), 14 incidentes documentados, 4 sistemas de dron con su anatomía y 4 cifras del coste; la mecánica de juego y el índice de metraje (sala roja, reclutamiento 3D, ciclo electoral) NO suben",
     hitos: [
