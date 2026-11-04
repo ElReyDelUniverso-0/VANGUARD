@@ -197,3 +197,39 @@ export async function indiceTension(slugs: string[], nombres: Record<string, str
     return { slug, nombre: nombres[slug] ?? slug, n24, media7: Math.round(media7 * 10) / 10, porcentaje, tendencia };
   });
 }
+
+// ---- v253.0 LA FORMA DE LA SEMANA — la semana REAL de cada teatro ----
+// El índice de tensión da el número; esto dibuja su forma: 7 barras por
+// teatro, cada una = un cubo RODANTE de 24 h (la más nueva es «hoy»,
+// la misma ventana que mide el índice — coherencia, no otro criterio).
+// Una sola consulta a la BD (7 días de cables etiquetados), cubos en
+// memoria: cero roundtrips extra, cero invención — si la BD no trae
+// cables, las barras son honestamente bajas.
+export async function formaDeLaSemana(
+  slugs: string[],
+): Promise<Record<string, number[]>> {
+  const forma: Record<string, number[]> = {};
+  for (const slug of slugs) forma[slug] = [0, 0, 0, 0, 0, 0, 0];
+  if (!slugs.length) return forma;
+
+  const desde = new Date(Date.now() - 7 * 24 * 3600_000);
+  const rows = await db.newsItem.findMany({
+    where: {
+      publishedAt: { gte: desde },
+      conflictTag: { in: slugs },
+      externalId: { not: { startsWith: "curated-" } },
+    },
+    select: { publishedAt: true, conflictTag: true },
+  });
+
+  const AHORA = Date.now();
+  for (const r of rows) {
+    const tag = r.conflictTag;
+    if (!tag || !forma[tag]) continue;
+    const horas = (AHORA - new Date(r.publishedAt).getTime()) / 3600_000;
+    if (horas < 0 || horas >= 168) continue;
+    const cubo = Math.min(6, Math.floor(horas / 24)); // 0 = últimas 24 h
+    forma[tag][6 - cubo] += 1; // izquierda = más vieja · derecha = hoy
+  }
+  return forma;
+}

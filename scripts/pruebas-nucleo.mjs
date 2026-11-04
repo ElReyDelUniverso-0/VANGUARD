@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v252.0", async () => {
+  await verificar("servidor vivo y en v253.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v252"), `versión ${r.json?.version} ≠ v252`);
+    afirmar(String(r.json?.version).startsWith("v253"), `versión ${r.json?.version} ≠ v253`);
   });
 
   // censo por API
@@ -1486,6 +1486,50 @@ async function parteB() {
     afirmar(r.texto.includes("OPCW"), "la OPCW no aparece en el SSR del radar");
     afirmar(r.texto.includes("DESARME"), "la etiqueta del desarme no viaja en el SSR");
     afirmar(r.texto.includes("señales oficiales abiertas"), "el contador de señales desapareció del header");
+  });
+
+  // ── v253.0 LA FORMA DE LA SEMANA: el radar deja de dar solo números —
+  // cada teatro del índice de tensión se dibuja con 7 barras REALES
+  // (cubo rodante de 24 h, la misma ventana del índice) y una tira
+  // nueva EL PULSO DEL PLANETA respira los cuatro números del instante,
+  // TODOS derivados de las medidas ya calculadas — cero consultas extra,
+  // cero invención. Y la sexta escucha honesta: 18+ candidatas medidas,
+  // ninguna verificó 200 con items — el radar se queda en 5 y lo declara
+  // (la regla v245 es inviolable: nada entra sin verificar).
+  await verificar("LA FORMA DE LA SEMANA estática: cubo rodante real y pulso derivado sin consultas extra (v253)", () => {
+    const lib = readFileSync(join(RAIZ, "src/lib/espia.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/espia/page.tsx"), "utf8");
+    // la función existe y su ventana es la RODANTE (cubo de 24 h, semana de 168 h)
+    afirmar(lib.includes("export async function formaDeLaSemana"), "formaDeLaSemana no vive en el módulo espía");
+    afirmar(lib.includes("Math.floor(horas / 24)"), "el cubo rodante de 24 h desapareció de la forma");
+    afirmar(lib.includes("horas >= 168"), "la semana de la forma ya no cierra en 168 h");
+    afirmar(lib.includes("forma[tag][6 - cubo] += 1"), "el cubo no llena las 7 barras en orden semana");
+    // el pulso se deriva de lo ya medido — cero consultas extra en la página
+    afirmar(pag.includes("EL PULSO DEL PLANETA"), "la tira del pulso no vive en el radar");
+    afirmar(pag.includes("formaDeLaSemana(Object.keys(TEATROS))"), "la forma no se mide sobre los teatros reales");
+    const llamadasForma = (pag.match(/formaDeLaSemana\(/g) || []).length;
+    afirmar(llamadasForma === 1, `la forma se mide ${llamadasForma} veces (debe ser UNA — cero consultas extra)`);
+    // la forma es decorativa y hoy va encendida: aria-hidden + la barra de hoy
+    afirmar(pag.includes("aria-hidden=\"true\"") && pag.includes("i === 6 ? color"), "la forma sin su aria-hidden o sin la barra de hoy encendida");
+    // la sexta escucha honesta: la red sigue en 5 y se DECLARA (regla v245)
+    const bloque = lib.slice(lib.indexOf("export const ESCUCHAS_FUENTES"), lib.indexOf("export interface ItemEscucha"));
+    const nFuentes = (bloque.match(/id: "/g) || []).length;
+    afirmar(nFuentes === 5, `la red del radar declara ${nFuentes} señales sin verificación — jamás`);
+  });
+
+  await verificar("LA FORMA DE LA SEMANA viva: el SSR del radar dibuja la semana y respira su pulso (v253)", async () => {
+    const r = await pedir("/espia");
+    afirmar(r.status === 200, `espia no 200 en v253 (${r.status})`);
+    afirmar(r.texto.includes("EL PULSO DEL PLANETA"), "el pulso del planeta no viaja en el SSR del radar");
+    afirmar(r.texto.includes("cada barra = un día de 24 h"), "la promesa de la barra no viaja en el SSR");
+    afirmar(r.texto.includes("cables escuchados hoy"), "el primer número del pulso no viaja en el SSR");
+    afirmar(r.texto.includes("cables en la semana completa"), "el número de la semana no viaja en el SSR");
+    // las viejas anclas del radar siguen en pie
+    afirmar(r.texto.includes("señales oficiales abiertas"), "el contador de señales desapareció del header");
+    afirmar(r.texto.includes("<noscript"), "el noscript honesto del radar desapareció");
+    // sin fechas escritas a mano en la tira (guardia v234)
+    const desde = r.texto.indexOf("EL PULSO");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(r.texto.slice(desde, desde + 4000)), "fechas escritas a mano en el pulso (guardia v234)");
   });
 
   // ── v246.0 EL ANDAMIAJE EN SILENCIO: las rutas API solo exportan

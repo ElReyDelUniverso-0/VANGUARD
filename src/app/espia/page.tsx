@@ -7,6 +7,7 @@ import { BarraMundo } from "@/components/vanguard/barra-mundo";
 import { TEATROS } from "@/lib/teatros";
 import { colorTension, haceDe } from "@/lib/mundo";
 import {
+  formaDeLaSemana,
   indiceTension,
   leerEscuchas,
   movimientosDeGobierno,
@@ -31,12 +32,12 @@ const SITE_URL =
 export const metadata: Metadata = {
   title: "MODO ESPÍA — radar de gobiernos en fuentes abiertas | VANGUARD",
   description:
-    "Espía lo que los gobiernos PUBLICAN: escuchas oficiales de la ONU Noticias, la Sala de Prensa de la ONU, ReliefWeb (OCHA), la OMS y la OPCW (armas químicas), índice de tensión por teatro de guerra y los movimientos de gobierno del día. Todo de fuentes abiertas (OSINT), gratis y en español.",
+    "Espía lo que los gobiernos PUBLICAN: escuchas oficiales de la ONU Noticias, la Sala de Prensa de la ONU, ReliefWeb (OCHA), la OMS y la OPCW (armas químicas), índice de tensión por teatro de guerra con su forma semanal, el pulso del planeta y los movimientos de gobierno del día. Todo de fuentes abiertas (OSINT), gratis y en español.",
   alternates: { canonical: `${SITE_URL}/espia` },
   openGraph: {
     title: "MODO ESPÍA — radar de gobiernos · VANGUARD",
     description:
-      "Escuchas oficiales en vivo, índice de tensión por región y movimientos de gobiernos. Espionaje a la vista: solo fuentes abiertas.",
+      "Escuchas oficiales en vivo, índice de tensión por región con su semana dibujada, el pulso del planeta y movimientos de gobiernos. Espionaje a la vista: solo fuentes abiertas.",
     url: `${SITE_URL}/espia`,
     siteName: "VANGUARD",
     type: "website",
@@ -91,6 +92,7 @@ export default async function EspiaPage() {
   let escuchas: EscuchaFuente[] = [];
   let movimientos: MovimientoGobierno[] = [];
   let tension: TensionTeatro[] = [];
+  let forma: Record<string, number[]> = {};
   let generado = new Date().toISOString();
 
   try {
@@ -108,8 +110,27 @@ export default async function EspiaPage() {
   } catch (e) {
     console.error("espia tension", e);
   }
+  try {
+    forma = await formaDeLaSemana(Object.keys(TEATROS));
+  } catch (e) {
+    console.error("espia forma", e);
+  }
 
   const fuentesVivas = escuchas.filter((f) => f.estado === "VIVA").length;
+
+  // v253.0 EL PULSO DEL PLANETA — números del planeta derivados SOLO de
+  // los datos ya medidos arriba (tensión + forma): cero consultas extra,
+  // cero invención; sin datos, la tira ni existe (vacío honesto).
+  const hoyTotal = tension.reduce((a, t) => a + t.n24, 0);
+  const encendidos = tension.filter((t) => t.n24 > 0).length;
+  const caliente = tension.reduce<TensionTeatro | null>(
+    (a, t) => (t.n24 > (a?.n24 ?? -1) ? t : a),
+    null,
+  );
+  const semanaTotal = Object.values(forma).reduce(
+    (a, arr) => a + arr.reduce((x, y) => x + y, 0),
+    0,
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -152,10 +173,39 @@ export default async function EspiaPage() {
           </div>
         </header>
 
+        {/* v253.0 EL PULSO DEL PLANETA — la tira que respira: los cuatro
+            números del día, todos derivados de las medidas reales de arriba.
+            Sin tensión que medir, la tira ni se pinta (vacío honesto). */}
+        {tension.length > 0 && (
+          <section aria-label="El pulso del planeta" className="max-w-7xl mx-auto px-4 sm:px-5 pb-8">
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-cyan-300">
+              ◉ EL PULSO DEL PLANETA — los números de este instante
+            </h2>
+            <div className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
+              <div className="border border-zinc-800 rounded-md bg-zinc-900/40 p-3">
+                <p className="font-display text-2xl font-black text-soft">{hoyTotal}</p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-zinc-500">cables escuchados hoy</p>
+              </div>
+              <div className="border border-zinc-800 rounded-md bg-zinc-900/40 p-3">
+                <p className="font-display text-2xl font-black text-soft">{encendidos}<span className="text-sm text-zinc-500">/{tension.length}</span></p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-zinc-500">teatros encendidos</p>
+              </div>
+              <div className="border border-zinc-800 rounded-md bg-zinc-900/40 p-3">
+                <p className="font-display text-2xl font-black text-soft truncate">{caliente?.nombre ?? "—"}</p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-zinc-500">el teatro más caliente · {caliente?.n24 ?? 0} cables hoy</p>
+              </div>
+              <div className="border border-zinc-800 rounded-md bg-zinc-900/40 p-3">
+                <p className="font-display text-2xl font-black text-soft">{semanaTotal}</p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-zinc-500">cables en la semana completa</p>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* ÍNDICE DE TENSIÓN */}
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-8">
           <h2 className="font-mono text-[11px] uppercase tracking-widest text-zinc-400">
-            01 · Índice de tensión por teatro — 24 h contra la media de 7 días
+            01 · Índice de tensión por teatro — 24 h contra la media de 7 días · cada barra = un día de 24 h
           </h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {tension.map((t) => {
@@ -176,6 +226,25 @@ export default async function EspiaPage() {
                   <div className="mt-2 h-1.5 w-full rounded bg-zinc-800 overflow-hidden">
                     <div className="h-full rounded" style={{ width: `${Math.max(3, t.porcentaje)}%`, background: color }} />
                   </div>
+                  {/* v253.0 LA FORMA DE LA SEMANA — 7 barras REALES (cubo
+                      rodante de 24 h, la misma ventana del índice); hoy va
+                      encendida con el color de tensión. Decorativa: los
+                      números ya se leen en la tarjeta (aria-hidden). */}
+                  {forma[t.slug] && (() => {
+                    const maxDia = Math.max(1, ...forma[t.slug]);
+                    return (
+                      <div className="mt-2 flex items-end gap-[3px] h-4" aria-hidden="true">
+                        {forma[t.slug].map((n, i) => (
+                          <div
+                            key={i}
+                            title={`${n} cable${n === 1 ? "" : "s"} · ${i === 6 ? "hoy (24 h)" : `${6 - i} día${6 - i === 1 ? "" : "s"} atrás`}`}
+                            className="w-full rounded-sm"
+                            style={{ height: `${Math.max(14, (n / maxDia) * 100)}%`, background: i === 6 ? color : "rgb(63 63 70)" }}
+                          />
+                        ))}
+                      </div>
+                    );
+                  })()}
                   <p className="mt-1.5 font-mono text-[10px] text-zinc-500">
                     {t.n24} cables hoy · media {t.media7}/día · tensión {t.porcentaje}/100
                   </p>

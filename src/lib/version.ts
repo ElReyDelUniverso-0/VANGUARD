@@ -2382,6 +2382,38 @@
 //     v247 siguen en pie) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v251.0 EL REFUGIO CON MEMORIA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v252.0";
-export const APP_CODENAME = "LA SALA QUE HABLA";
+// v253.0 LA FORMA DE LA SEMANA — la expansión funcional módulo a módulo
+//         vuelve al radar (/espia): el índice de tensión daba el NÚMERO
+//         pero no su FORMA — el agente sabía cuánto sube un teatro sin
+//         ver cómo llegó hasta ahí.
+// (1) LA FORMA — formaDeLaSemana() en el módulo espía: 7 barras REALES
+//     por teatro, cada una = un cubo RODANTE de 24 h (la más nueva es
+//     «hoy», la misma ventana que mide el índice — coherencia, no otro
+//     criterio); UNA sola consulta a la BD (7 días de cables etiquetados
+//     con conflictTag), cubos en memoria; si la BD no trae cables, las
+//     barras son honestamente bajas — jamás se dibuja una.
+// (2) EL PULSO DEL PLANETA — tira de 4 números del instante, TODOS
+//     derivados de las medidas ya calculadas (tensión + forma): cables
+//     escuchados hoy · teatros encendidos/total · el teatro más caliente
+//     con sus cables · la semana completa. Sin tensión que medir, la
+//     tira ni se pinta (vacío honesto). Cero consultas extra.
+// (3) EL SEXTA ESCUCHA HONESTA — la cola pedía «nuevas fuentes si otra
+//     verifica 200»: 18+ candidatas oficiales medidas una a una esta
+//     ronda (IAEA, ICRC, UNHCR, OSCE, EEAS, IOM, WFP, FAO, Europarl,
+//     Interpol, OCHA, CTBTO, IMF, World Bank, gov.uk, prensa ONU es,
+//     Consilium, State Dept) — todas 403/404/407 o HTML sin feed desde
+//     este cuartel. La regla de la casa (v245) es inviolable: nada entra
+//     sin verificar 200 con items reales — el radar se queda en 5
+//     señales y lo DECLARA; la sexta esperará su verificación.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v253.0 db up ·
+//     pruebas 132/132 (+2 LA FORMA DE LA SEMANA: estática — la función
+//     con su cubo rodante y su semana de 168 h, la tira del pulso
+//     derivada sin consultas extra, el aria-hidden de la forma; viva —
+//     el SSR del radar sirve EL PULSO DEL PLANETA y las barras con su
+//     «cada barra = un día de 24 h», las 5 escuchas y el noscript
+//     siguen en pie) · BD intocada (1877 cables · 9 hechos, un solo
+//     escritor).
+// Herencia v252.0 LA SALA QUE HABLA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v253.0";
+export const APP_CODENAME = "LA FORMA DE LA SEMANA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

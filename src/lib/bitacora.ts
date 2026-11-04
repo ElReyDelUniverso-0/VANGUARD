@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v253.0",
+    nombre: "LA FORMA DE LA SEMANA — el radar /espia deja de dar solo números: el índice de tensión de cada teatro se dibuja con 7 barras reales (cubo rodante de 24 h) y una tira nueva EL PULSO DEL PLANETA respira los cuatro números del instante",
+    hitos: [
+      "LA FORMA — formaDeLaSemana() en el módulo espía: 7 barras REALES por teatro, cada una = un cubo RODANTE de 24 h (la más nueva es «hoy», la misma ventana que mide el índice — coherencia, no otro criterio); UNA sola consulta a la BD (7 días de cables con conflictTag), cubos en memoria; si la BD no trae cables, las barras son honestamente bajas — jamás se dibuja una",
+      "EL PULSO DEL PLANETA — 4 números del instante, TODOS derivados de las medidas ya calculadas (tensión + forma, cero consultas extra): cables escuchados hoy · teatros encendidos/total · el teatro más caliente con sus cables · la semana completa; sin tensión que medir, la tira ni se pinta (vacío honesto)",
+      "LA SEXTA ESCUCHA HONESTA — la cola pedía «nuevas fuentes si otra verifica 200»: 18+ candidatas oficiales medidas una a una (IAEA, ICRC, UNHCR, OSCE, EEAS, IOM, WFP, FAO, Europarl, Interpol, OCHA, CTBTO, IMF, World Bank, gov.uk, prensa ONU es, Consilium, State Dept) — todas 403/404/407 o HTML sin feed desde este cuartel; la regla v245 es inviolable: nada entra sin verificar — el radar se queda en 5 señales y lo DECLARA",
+      "QA v253: tsc 0 TOTAL, eslint 0, build EXIT 0, health v253.0 db up, pruebas 132/132 (+2 LA FORMA DE LA SEMANA: estática — la función con su cubo rodante, la tira derivada sin consultas extra, el aria-hidden; viva — el SSR sirve EL PULSO DEL PLANETA y «cada barra = un día de 24 h» con las 5 escuchas y el noscript en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v252.0",
     nombre: "LA SALA QUE HABLA — la puerta de lectura /noticia/[id] gana la voz (speechSynthesis del aparato, gratis) y la salida (compartir con el patrón honesto v250): leer · escuchar · compartir",
     hitos: [
