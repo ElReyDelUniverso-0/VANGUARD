@@ -127,6 +127,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v274.0 EL ARCHIVO DE LA HISTORIA — las 10 guerras reales de la
+      // fuente (HISTORICAL_WARS) servidas en server: la memoria con la
+      // que la casa lee las de hoy, indexable para las búsquedas de
+      // historia (Guerras Púnicas, Cruzadas, Guerra Fría...)
+      url: `${SITE_URL}/historia`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v217.0 LA EMISORA — la guerra en voz alta + muro de audios
       url: `${SITE_URL}/audios`,
       lastModified: new Date(),

@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v274.0",
+    nombre: "EL ARCHIVO DE LA HISTORIA — la expansión abre una puerta nueva (/historia): HISTORICAL_WARS, las 10 guerras reales de la Antigüedad a la Contemporánea con años, facciones, desenlace y coste, solo vivía en el panel client-side; la sala server las sirve con censo por era y arco de tiempo derivados, los años negativos compuestos como a. C. desde el número real y las puertas honestas a las guerras de hoy",
+    hitos: [
+      "PUERTA NUEVA /historia — sala server pura (sin cliente, sin BD): cada guerra con SUS datos de la fuente, agrupada por las 4 eras del canon; censo y arco derivados con filter/reduce: 3+2+1+4 guerras, de 264 a. C. a 1991 (cero cifras a mano — herencia v235/v268/v270/v273)",
+      "LOS AÑOS SE COMPONEN HONESTOS — el negativo es antes de Cristo y se compone desde el número real (-264 → «264 a. C.»); la duración de cada guerra se deriva de sus años (las Cruzadas, la más larga: 195 años); JSON-LD ItemList con los 10 ítems (jsonLdSeguro v204)",
+      "LAS PUERTAS DE LA CASA — el sitemap anuncia /historia (monthly, 0.6) y la paleta Ctrl+K la lleva (pg:historia, Landmark); procedencia declarada («El archivo vive en la fuente», directiva v266); cero fechas a mano, guardia v234 en pie",
+      "QA v274: tsc 0 TOTAL, eslint 0, build EXIT 0 (○ /historia en la tabla), health v274.0 db up, pruebas 174/174 (+2 EL ARCHIVO DE LA HISTORIA: estática — la fuente de 10 guerras intacta, censo y arco derivados, el mapa y la paleta llevando la puerta; viva — la línea derivada, los censos de era 3/2/1/4, las Punicas con «264 a. C. – 146 a. C.», el coste real de la WW2 y los 195 años de las Cruzadas, con el sitemap vivo anunciando /historia), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v273.0",
     nombre: "EL TERCER CATÁLOGO (renumerada en vuelo: el turno paralelo 475802 tomó v272.0 EL QUIZ DEL PESO — protocolo canon-repo) — la expansión completa la trilogía de catálogos de la vitrina (/objetivos): TOURNAMENTS, los torneos de la casa (Copa Estratega, Operación Tritón, Maratón Operacional) con sus tablas de líderes y su botín en la cima, seguía client-side; su censo, su botín y su líder viajan ahora en server, derivados de la fuente, con la procedencia declarada",
     hitos: [

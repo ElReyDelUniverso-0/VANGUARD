@@ -2994,6 +2994,46 @@
 //     v235/v267/v268/v270 en pie) · BD intocada (1877 cables · 9
 //     hechos, un solo escritor).
 // Herencia v272.0 EL QUIZ DEL PESO (del turno paralelo, renumeración en vuelo) y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v273.0";
-export const APP_CODENAME = "EL TERCER CATÁLOGO";
+// v274.0 EL ARCHIVO DE LA HISTORIA — la expansión funcional módulo a módulo
+//         abre una puerta nueva: la casa tiene HISTORICAL_WARS (10 guerras
+//         reales de la Antigüedad a la Contemporánea con años, facciones,
+//         desenlace, coste y significado) que solo vivía en el panel
+//         client-side del aparato, invisible para el SSR y para Google.
+//         Medido antes de elegir: 10 guerras — ANTIGUA ×3 (Punicas -264→
+//         -146, Galia -58→-50, Germanicas -12→16), EDAD_MEDIA ×2
+//         (Cruzadas 1096→1291, Cien Años 1337→1453), MODERNA ×1
+//         (Napoleónicas 1803→1815), CONTEMPORANEA ×4 (WWI, WWII, Vietnam,
+//         Fría 1947→1991); arco real derivado 264 a. C. → 1991; la más
+//         larga, las Cruzadas, 195 años.
+// (1) PUERTA NUEVA /historia — sala server pura (sin cliente, sin BD):
+//     cada guerra con SUS datos de la fuente (los nombres viajan tal como
+//     la fuente los declara — nada de acentos inventados), agrupada por
+//     las 4 eras del canon de la casa; censo por era y arco de tiempo
+//     derivados con filter/reduce — cero cifras escritas a mano
+//     (herencia v235/v268/v270/v273): «El archivo de la historia — 10
+//     guerras de Antigüedad a Contemporánea: de 264 a. C. a 1991, la
+//     memoria con la que la casa lee las de hoy».
+// (2) LOS AÑOS SE COMPONEN HONESTOS — el negativo es antes de Cristo y
+//     se compone desde el número real (`-264` → «264 a. C.»); la
+//     duración de cada guerra se deriva de sus años (g.yearEnd -
+//     g.yearStart); las puertas internas son honestas (las guerras de
+//     HOY viven en /guerra-hoy y /mundo, no aquí) y noscript declara lo
+//     que funciona sin JavaScript. JSON-LD ItemList con los 10 ítems y
+//     numberOfItems de la fuente (jsonLdSeguro v204).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /historia (monthly,
+//     0.6) y la paleta Ctrl+K la lleva (pg:historia, icono Landmark);
+//     la procedencia declarada («El archivo vive en la fuente»,
+//     directiva v266); cero fechas a mano, guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /historia en la tabla) ·
+//     health v274.0 db up · pruebas 174/174 (+2 EL ARCHIVO DE LA
+//     HISTORIA: estática — la fuente de 10 guerras intacta, censo y
+//     arco derivados, los años negativos compuestos desde el número,
+//     el mapa y la paleta llevando la puerta; viva — la sala sirve la
+//     línea derivada, los censos de era (3/2/1/4), las Punicas con
+//     «264 a. C. – 146 a. C.», el coste real de la WW2 y los 195 años
+//     de las Cruzadas, con el sitemap vivo anunciando /historia) · BD
+//     intocada (1877 cables · 9 hechos, un solo escritor).
+// Herencia v273.0 EL TERCER CATÁLOGO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v274.0";
+export const APP_CODENAME = "EL ARCHIVO DE LA HISTORIA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

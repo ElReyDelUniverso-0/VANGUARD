@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -206,6 +206,13 @@ export function SectionSearch({
         icon: <Trophy className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la vitrina de la adicción", icon_color: "text-amber",
         kind: "page", href: "/objetivos",
+      },
+      {
+        // v274.0 EL ARCHIVO DE LA HISTORIA — las 10 guerras reales de la fuente, en server
+        key: "pg:historia", label: "EL ARCHIVO DE LA HISTORIA — de las Guerras Púnicas a la Guerra Fría: la memoria con la que se leen las de hoy", short: "historia guerras punicas cruzadas napoleonicas mundiales fria archivo eras",
+        icon: <Landmark className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la memoria de la casa", icon_color: "text-amber",
+        kind: "page", href: "/historia",
       },
       {
         // v217.0 LA EMISORA — la guerra en voz alta + muro de audios

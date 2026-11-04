@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v273.0", async () => {
+  await verificar("servidor vivo y en v274.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v273"), `versión ${r.json?.version} ≠ v273`);
+    afirmar(String(r.json?.version).startsWith("v274"), `versión ${r.json?.version} ≠ v274`);
   });
 
   // censo por API
@@ -2010,6 +2010,66 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v274.0 EL ARCHIVO DE LA HISTORIA: las 10 guerras reales de la fuente abren puerta propia (/historia) ──
+  // La cabeza de la cola (medida al abrir la ronda): HISTORICAL_WARS —
+  // 10 guerras con años, facciones, desenlace y coste — solo vivía en el
+  // panel client-side; la puerta nueva las sirve en server con censo y
+  // arco de tiempo derivados.
+  await verificar("EL ARCHIVO DE LA HISTORIA estática: la fuente de 10 guerras intacta y la sala la sirve derivada (v274)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/historia/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    // la fuente intacta: las 10 guerras con sus años reales
+    afirmar(fuente.includes("export const HISTORICAL_WARS"), "la fuente de guerras históricas no existe");
+    const iniH = fuente.indexOf("export const HISTORICAL_WARS");
+    const finH = fuente.indexOf("];", iniH);
+    const bloqueH = fuente.slice(iniH, finH === -1 ? fuente.length : finH + 2);
+    afirmar(bloqueH.length > 4000 && bloqueH.length < 9000, `el slice del archivo midió mal (${bloqueH.length})`);
+    for (const id of ["HW-PUNIC", "HW-CRUSADES", "HW-NAPOLONIC", "HW-WW2", "HW-COLD", "HW-GERMANIC"]) {
+      afirmar(bloqueH.includes(`id: "${id}"`), `falta la guerra ${id} en la fuente`);
+    }
+    // la sala consume la fuente (directiva v266) y deriva TODO (cero cifras a mano)
+    afirmar(/import \{[^}]*\bHISTORICAL_WARS\b[^}]*\} from "@\/lib\/game-data"/.test(pag), "la sala no consume HISTORICAL_WARS de la fuente");
+    afirmar(pag.includes("const CENSO_ERAS = ERA_ORDEN.map("), "el censo por era no se deriva de la fuente");
+    afirmar(pag.includes("const ANO_INICIO = GUERRAS.reduce("), "el arco de tiempo no se deriva (reduce)");
+    afirmar(pag.includes("g.yearEnd - g.yearStart"), "la duración de cada guerra no se deriva de sus años reales");
+    // los años negativos se componen como a. C. desde el número real (guardia v234)
+    afirmar(pag.includes("n < 0 ? `${-n} a. C.` : `${n}`"), "el año negativo no se compone honestamente desde la fuente");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la sala escribe fechas a mano en la ronda v274!");
+    // la línea compuesta COMPLETA en JS (lección v256)
+    afirmar(pag.includes("const lineaArchivo = `El archivo de la historia — ${GUERRAS.length} guerras de ${ERA_NOMBRES[ERA_ORDEN[0]]} a ${ERA_NOMBRES[ERA_ORDEN[3]]}: de ${ano(ANO_INICIO)} a ${ano(ANO_FIN)}, la memoria con la que la casa lee las de hoy`"), "la línea del archivo no se compone COMPLETA en JS");
+    afirmar(pag.includes("El archivo vive en la fuente"), "la sala no declara la procedencia del archivo");
+    afirmar(pag.includes("numberOfItems: GUERRAS.length"), "el JSON-LD no declara el censo real de la fuente");
+    // las puertas de la casa: el mapa anuncia la sala y la paleta la lleva
+    afirmar(mapa.includes("/historia"), "el sitemap no anuncia la puerta nueva");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    afirmar(paleta.includes('href: "/historia"') && paleta.includes("pg:historia"), "la paleta no lleva la puerta del archivo");
+  });
+
+  await verificar("EL ARCHIVO DE LA HISTORIA viva: la sala sirve las 10 guerras reales con sus años derivados (v274)", async () => {
+    const r = await pedir("/historia");
+    afirmar(r.status === 200, `/historia no 200 en v274 (${r.status})`);
+    afirmar(r.texto.includes("EL ARCHIVO DE LA HISTORIA"), "la cabeza del archivo no viaja en el SSR");
+    afirmar(r.texto.includes("El archivo de la historia — 10 guerras de Antigüedad a Contemporánea: de 264 a. C. a 1991, la memoria con la que la casa lee las de hoy"), "la línea derivada del archivo no viaja (o las cifras no coinciden con la fuente)");
+    // las eras derivadas (medidas al abrir la ronda: 3/2/1/4)
+    afirmar(r.texto.includes("Antigüedad ×3"), "el censo de la Antigüedad no viaja derivado");
+    afirmar(r.texto.includes("Edad Media ×2"), "el censo de la Edad Media no viaja derivado");
+    afirmar(r.texto.includes("Contemporánea ×4"), "el censo de la Contemporánea no viaja derivado");
+    // guerras reales con sus datos de la fuente (nombres tal como la fuente los declara)
+    afirmar(r.texto.includes("Guerras Punicas"), "las Guerras Punicas no viajan");
+    afirmar(r.texto.includes("264 a. C. – 146 a. C."), "los años negativos de las Punicas no se componen desde la fuente");
+    afirmar(r.texto.includes("Segunda Guerra Mundial"), "la Segunda Guerra Mundial no viaja");
+    afirmar(r.texto.includes("~70-85M muertos"), "el coste real de la WW2 no viaja");
+    afirmar(r.texto.includes("Guerra Fria"), "la Guerra Fria no viaja");
+    afirmar(r.texto.includes("Tierra Santa · 195 años"), "la duración derivada de la guerra más larga no viaja");
+    // las anclas de la casa en pie
+    afirmar(r.texto.includes("El archivo vive en la fuente"), "la procedencia del archivo no viaja");
+    afirmar(r.texto.includes("PRIMERA PÁGINA"), "las puertas honestas del núcleo cayeron");
+    // el mapa anuncia la puerta nueva en vivo
+    const mapa = await pedir("/sitemap.xml");
+    afirmar(mapa.status === 200 && mapa.texto.includes("/historia"), "el sitemap vivo no anuncia /historia");
   });
 
   // ── v273.0 EL TERCER CATÁLOGO: los 3 torneos del aparato viajan en SSR ──
