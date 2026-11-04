@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v298.0",
+    nombre: "LA FOTOTECA DEL PLANETA — la capa REAL del aparato (v98 ORO TOTAL) sale del juego al server: imagenes-data (14 KB, «IMÁGENES REALES... cada entrada es una FOTO REAL descargada y servida localmente») clasificada fina y verificada CONTRA EL DISCO (50 fotos existen en public/imagenes-reales/, 11,8 MB) sube como sala server /galeria — las 50 fotografías con su etiqueta, su nota editorial y su fuente declarada verbatim en 5 categorías en el orden de la fuente (armas, archivo, poder, lugares, civilizaciones); el visor interactivo con búsqueda se queda en el aparato",
+    hitos: [
+      "LA CLASIFICACIÓN CONTRA EL DISCO — por primera vez la guardia mira el sistema de ficheros: las 50 rutas del dataset verificadas con fs.existsSync (el claim REAL se mide, no se lee — lección v292 en su forma más dura); cero ficción: la capa SIM del juego usa otras ilustraciones, declara la propia fuente",
+      "TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS (lección v256): «La fototeca del planeta — 50 fotografías reales servidas localmente en 5 categorías, de «Arco compuesto» a «Cohete V-2»» (primera y última derivadas del orden de la fuente); chips «Lugares ×19» en un solo nodo (lección v274); fotos locales, cero hotlinking",
+      "LAS PUERTAS DE LA CASA — sitemap anuncia /galeria (monthly, 0.6), paleta Ctrl+K (pg:galeria, icono Camera — un token añadido al import de lucide), JSON-LD CollectionPage + ItemList de ImageObject (name + contentUrl + caption), noscript honesto, puerta al aparato (el visor con búsqueda y filtros)",
+      "PRUEBAS +2 — estática: el dataset intacto (50 entradas censadas, 5 categorías, cero src remota, las 50 fotos verificadas contra el disco), la sala derivada, sin cliente, las puertas y las guardias; viva: la línea derivada completa, «lugares ×19», «archivo ×10», «poder ×5», «Arco compuesto», «Cohete V-2», la foto local del arco en el HTML y el sitemap VIVO",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v297.0",
     nombre: "EL PODER MUNDIAL — la directiva de la «Queda» de la v296 se cumple: worldpower (6,6 KB, «datos militares REALES del Banco Mundial», módulo vivo v44 con cache de 24 h) sube SOLO con captura declarada — nace poder-data (25,6 KB), los tres indicadores (MS.MIL.XPND.CD gasto, MS.MIL.TOTL.P1 personal, MS.MIL.XPND.GD.ZS % del PIB) capturados del 2026-11-05 con mrnev=1 y congelados en server; sala /poder con el ranking del dinero (167 países que suman 2,89 billones de US$, Estados Unidos 954 mil M y el 33%), la fuerza (India 3,1 M, China 2,5 M), el esfuerzo (Ucrania al 39,6%) y el archivo por las 7 regiones del Banco Mundial; la lectura en vivo se queda en la sala de guerra y el aparato",
     hitos: [

@@ -15,7 +15,7 @@ import type { TabKey } from "./tab-nav";
 import { tabLabel, useT } from "@/lib/i18n";
 import { EXPEDIENTES } from "@/lib/expedientes";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura";
-import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText } from "lucide-react";
+import { Search, CornerDownLeft, Clock, X, Globe, FolderOpen, BookOpen, Dices, Newspaper, Eye, Languages, Trophy, Mic, Network, Landmark, Crosshair, Activity, Users, ScrollText, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LS_RECENT = "vanguard_recent_tabs_v1";
@@ -261,6 +261,13 @@ export function SectionSearch({
         icon: <Crosshair className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · el poder y la fuerza", icon_color: "text-red-300",
         kind: "page", href: "/poder",
+      },
+      {
+        // v298.0 LA FOTOTECA DEL PLANETA — la capa REAL del aparato (v98), en server
+        key: "pg:galeria", label: "GALERÍA — las 50 fotografías reales del planeta servidas localmente: lugares, archivo, poder, armas y civilizaciones, cada una con su nota editorial y su fuente declarada", short: "galeria fototeca fotos imagenes reales lugares archivo poder armas civilizaciones chernobil suez pentagono moais rapa nui petra angkor fotografia archivo fotografico",
+        icon: <Camera className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · la fototeca", icon_color: "text-cyan-hud",
+        kind: "page", href: "/galeria",
       },
       {
         // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del censo de poder, en server

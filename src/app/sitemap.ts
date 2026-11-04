@@ -231,6 +231,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v298.0 LA FOTOTECA DEL PLANETA — la capa REAL del aparato (v98
+      // ORO TOTAL) congelada en server: 50 fotografías reales servidas
+      // localmente (verificadas contra el disco, 11,8 MB) en 5 categorías
+      // con su nota editorial y su fuente declarada verbatim, indexable
+      // para las búsquedas de imágenes y lugares (foto de Chernóbil,
+      // canal de Suez, Pentágono, moáis de Rapa Nui...)
+      url: `${SITE_URL}/galeria`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       // v285.0 LOS ROSTROS DEL PODER — las 34 fichas reales del
       // censo de poder de la fuente (ROSTROS) servidas en server:
       // los tronos, el dinero, el tribunal y los nuevos, indexables

@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v297.0", async () => {
+  await verificar("servidor vivo y en v298.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v297"), `versión ${r.json?.version} ≠ v297`);
+    afirmar(String(r.json?.version).startsWith("v298"), `versión ${r.json?.version} ≠ v298`);
   });
 
   // censo por API
@@ -2563,6 +2563,86 @@ async function parteB() {
     // el sitemap vivo anuncia la sala
     const rs = await pedir("/sitemap.xml");
     afirmar(rs.status === 200 && rs.texto.includes("/poder"), "el sitemap vivo no anuncia la sala");
+  });
+
+  // ── v298.0 LA FOTOTECA DEL PLANETA: la capa REAL del aparato (v98) gana su sala server (/galeria) ──
+  // La «Queda» de la v297 pedía clasificación fina: la medición la pagó
+  // contra el DISCO — las 50 fotos existen de verdad.
+  await verificar("LA FOTOTECA DEL PLANETA estática: el dataset REAL verificado contra el disco y todo derivado (v298)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/imagenes-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/galeria/page.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const paleta = readFileSync(join(RAIZ, "src/components/vanguard/section-search.tsx"), "utf8");
+    // el dataset intacto: 50 entradas censadas por patrón, las 5 categorías
+    const nE = (fuente.match(/\{ id: "/g) ?? []).length;
+    afirmar(nE === 50, `el censo de fotos midió mal (${nE}/50)`);
+    for (const cat of ["armas", "archivo", "poder", "lugares", "civilizaciones"]) {
+      afirmar(fuente.includes(`cat: "${cat}"`), `falta la categoría ${cat} en la fuente`);
+    }
+    // el claim REAL se MIDE: cero src remota y las 50 fotos existen en public/
+    afirmar(!/src: "http/.test(fuente), "¡hay fotos remotas en la capa REAL!");
+    const rutas = [...fuente.matchAll(/src: "([^"]+)"/g)].map((m) => m[1]);
+    afirmar(rutas.length === 50, `las rutas midieron mal (${rutas.length}/50)`);
+    for (const r of rutas) {
+      afirmar(r.startsWith("/imagenes-reales/"), `ruta fuera de la fototeca local: ${r}`);
+      afirmar(existsSync(join(RAIZ, "public", r)), `¡la foto REAL no existe en el disco: ${r}!`);
+    }
+    // toda entrada con su nota editorial y su fuente declarada
+    const nNotas = (fuente.match(/nota: "/g) ?? []).length;
+    const nFuentes = (fuente.match(/fuente: "/g) ?? []).length;
+    afirmar(nNotas === 50, `faltan notas editoriales (${nNotas}/50)`);
+    afirmar(nFuentes === 50, `faltan fuentes declaradas (${nFuentes}/50)`);
+    // la sala: los imports, la derivación, los chips, la línea, la foto local
+    afirmar(sala.includes('from "@/lib/imagenes-data"'), "la sala no consume la fuente canónica");
+    afirmar(
+      sala.includes("if (!CATS.includes(im.cat)) CATS.push(im.cat)"),
+      "las categorías no se derivan en el orden de la fuente",
+    );
+    afirmar(
+      sala.includes("const lineaGaleria = `La fototeca del planeta — ${FOTOS.length} fotografías"),
+      "la línea no se compone COMPLETA en JS",
+    );
+    afirmar(
+      sala.includes("`" + "${cat} ×${FOTOS.filter((im) => im.cat === cat).length}`"),
+      "el chip de categoría no compone categoría y conteo en un nodo",
+    );
+    afirmar(sala.includes('loading="lazy"'), "las fotos no viajan con carga perezosa");
+    // la clasificación manda: la sala es server pura y sirve fotos LOCALES
+    // (el CÓDIGO real decide — los comentarios se pelan, lección v295)
+    const salaSinComentarios = sala.replace(/\/\/[^\n]*/g, "");
+    afirmar(!salaSinComentarios.includes("use client") && !salaSinComentarios.includes("useState"), "¡la sala no es server pura!");
+    afirmar(!salaSinComentarios.includes("fetch("), "¡la sala no necesita la red: el archivo vive en el disco!");
+    afirmar(!salaSinComentarios.includes("flagcdn.com") && !salaSinComentarios.includes('src="http'), "¡cero hotlinking: las fotos son locales!");
+    // las puertas de la casa
+    afirmar(mapa.includes("/galeria"), "el sitemap no anuncia la galería");
+    afirmar(paleta.includes('key: "pg:galeria"'), "la paleta Ctrl+K no lleva la galería");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡la sala escribe fechas ISO a mano en la ronda v298!");
+    afirmar(!/const linea\w+ = [^;]*\b(19|20)\d\d\b/.test(sala), "¡la sala escribe un año literal en su línea (v298)!");
+  });
+
+  await verificar("LA FOTOTECA DEL PLANETA viva: la línea derivada, los chips, las fotos locales y las categorías (v298)", async () => {
+    const r = await pedir("/galeria");
+    afirmar(r.status === 200, `/galeria no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA FOTOTECA DEL PLANETA"), "el título no viaja");
+    // la línea compuesta COMPLETA (50 · 5 · primera y última — derivados de la fuente)
+    afirmar(
+      r.texto.includes("La fototeca del planeta — 50 fotografías reales servidas localmente en 5 categorías, de «Arco compuesto» a «Cohete V-2»"),
+      "la línea derivada no viaja (o la fuente cambió)",
+    );
+    // el texto servido se pela de etiquetas (lección v258, crecida en la v294)
+    const texto = r.texto.replace(/<[^>]+>/g, "");
+    afirmar(texto.includes("lugares ×19"), "el chip de lugares no viaja");
+    afirmar(texto.includes("archivo ×10"), "el chip de archivo no viaja");
+    afirmar(texto.includes("poder ×5"), "el chip de poder no viaja");
+    afirmar(texto.includes("Arco compuesto"), "la primera foto de la fuente no viaja");
+    afirmar(texto.includes("Cohete V-2"), "la última foto de la fuente no viaja");
+    afirmar(texto.includes("fuente: Archivo fotográfico Vanguard"), "la fuente declarada no viaja");
+    // la foto LOCAL viaja en el HTML (cero hotlinking)
+    afirmar(r.texto.includes('src="/imagenes-reales/arco.jpg"'), "la foto local del arco no viaja en el HTML");
+    // el sitemap vivo anuncia la sala
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/galeria"), "el sitemap vivo no anuncia la sala");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

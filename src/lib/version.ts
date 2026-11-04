@@ -3921,6 +3921,55 @@
 //     el sitemap VIVO) · BD intocada (1877 cables · 9 hechos, un solo
 //     escritor).
 // Herencia v296.0 LAS DIVISAS DEL PLANETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v297.0";
-export const APP_CODENAME = "EL PODER MUNDIAL";
+// v298.0 LA FOTOTECA DEL PLANETA — la capa REAL del aparato sale del
+//         juego al server: la «Queda» de la v297 pedía clasificación
+//         fina para imagenes-data (14 KB, v98 ORO TOTAL, «IMÁGENES
+//         REALES (capa REAL del juego), generada automáticamente, cada
+//         entrada es una FOTO REAL descargada y servida localmente desde
+//         /imagenes-reales/») y la medición la pagó entera: 50 entradas
+//         con su etiqueta, su nota editorial y su fuente declarada
+//         verbatim (Archivo fotográfico Vanguard ×46 · Rick's Café Noir
+//         · Google Arts & Culture · Live Science · NASA Science), y la
+//         verificación CONTRA EL DISCO confirma que las 50 fotos existen
+//         en public/imagenes-reales/ (11,8 MB) — REAL de pies a cabeza,
+//         cero ficción (la capa SIM del juego usa otras ilustraciones,
+//         declara la propia fuente). Sala nueva /galeria, patrón
+//         /historia (v274) · /armeria (v283) · /archivo-mundial (v293) ·
+//         /atlas (v294) · /verdad-cruda (v295) · /divisas (v296) ·
+//         /poder (v297): prerenderizada ○, sin cliente, sin BD. Botín:
+//         las 5 categorías EN EL ORDEN DE LA FUENTE (primera aparición:
+//         armas, archivo, poder, lugares, civilizaciones) con chips
+//         «Lugares ×19» en un solo nodo (lección v274) y las 50 tarjetas
+//         con su foto local (lazy), su nota y su fuente.
+// (1) LA CLASIFICACIÓN CONTRA EL DISCO — por primera vez la guardia
+//     mira el SISTEMA DE FICHEROS: las 50 rutas del dataset existen en
+//     public/ (la prueba lo verifica con fs.existsSync); el claim REAL
+//     se mide, no se lee (lección v292 en su forma más dura).
+// (2) TODO DERIVADO, NADA A MANO — la línea compuesta COMPLETA en JS
+//     (lección v256): «La fototeca del planeta — 50 fotografías reales
+//     servidas localmente en 5 categorías, de «Arco compuesto» a
+//     «Cohete V-2»» — primera y última derivadas del orden de la
+//     fuente; las categorías y sus chips derivadas (lección v274);
+//     cero años escritos en líneas (guardia del arco); las fotos son
+//     locales (cero hotlinking, cero flagcdn).
+// (3) LAS PUERTAS DE LA CASA — el sitemap anuncia /galeria (monthly,
+//     0.6) y la paleta Ctrl+K la lleva (pg:galeria, icono Camera — un
+//     token añadido al import de lucide); JSON-LD CollectionPage +
+//     ItemList de ImageObject (name + contentUrl + caption); noscript
+//     honesto; puerta al aparato (el visor interactivo con búsqueda y
+//     filtros, imagenes-panel).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (○ /galeria en la tabla) ·
+//     health v298.0 db up · pruebas 222/222 (+2 LA FOTOTECA DEL
+//     PLANETA: estática — el dataset intacto (50 entradas censadas, 5
+//     categorías, cero src remota, las 50 fotos verificadas contra el
+//     disco), la sala derivada (línea compuesta con primera y última,
+//     chips en un nodo, img local lazy), sin cliente, las puertas
+//     (sitemap + paleta) y las guardias; viva — el SSR sirve la línea
+//     derivada completa, «lugares ×19», «archivo ×10», «poder ×5»,
+//     «Arco compuesto», «Cohete V-2», la foto local del arco viaja en
+//     el HTML y el sitemap VIVO) · BD intocada (1877 cables · 9 hechos,
+//     un solo escritor).
+// Herencia v297.0 EL PODER MUNDIAL y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v298.0";
+export const APP_CODENAME = "LA FOTOTECA DEL PLANETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
