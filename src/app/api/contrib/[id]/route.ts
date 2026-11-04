@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { CONTRIB_REWARDS, MOD_REWARD } from "@/lib/rewards";
 import { upsertProfile, notify } from "@/lib/contrib-server";
@@ -22,7 +22,7 @@ function claveValida(candidata: unknown): boolean {
 
 // PATCH /api/contrib/[id] — moderación: aprobar | rechazar | bonus
 // Puede: admin con clave, o Editor Senior (500+ aprobadas) como moderador.
-export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // MURO v204 — 10 acciones de moderación por IP y minuto
   // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
   const veredictoMuro = sesionDuenoReq(req)
@@ -39,7 +39,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   let isAdmin = claveValida(body?.adminKey);
   if (!isAdmin) {
     try {
-      const ses = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+      const ses = verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value ?? null);
       if (ses) {
         const cuenta = await db.account.findUnique({ where: { username: ses } });
         if (cuenta?.isOwner) isAdmin = true;

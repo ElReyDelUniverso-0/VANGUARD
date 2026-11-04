@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v305.0", async () => {
+  await verificar("servidor vivo y en v306.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v305"), `versión ${r.json?.version} ≠ v305`);
+    afirmar(String(r.json?.version).startsWith("v306"), `versión ${r.json?.version} ≠ v306`);
   });
 
   // censo por API
@@ -2689,16 +2689,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA AUDITORÍA DE ACERO"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v305.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("EL AIRE DEL PERMISO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v305"), "el health no canta v305");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no canta v306");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2726,15 +2726,15 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA GUARDIA DEL OÍDO viva: el health canta v304 y el home guarda la crónica del oído (v300→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v305.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v305"), "el health no canta v305");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no canta v306");
   });
 
   // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
@@ -2788,7 +2788,7 @@ async function parteB() {
     afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
@@ -2847,16 +2847,16 @@ async function parteB() {
     afirmar(pill.includes("resumeAmbienteSiQuerido"), "la píldora no despierta al mundo al primer gesto");
     afirmar(pill.includes("toggleMundo"), "la píldora no puede mover el mundo (toggleMundo falta)");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA AUDITORÍA DE ACERO"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v305.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("EL AIRE DEL PERMISO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v305"), "el health no respira v305");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no respira v306");
   });
 
   // ── v303.0 LA PLANTILLA COMPLETA: la expansión del módulo EMPLEOS — 8
@@ -2923,16 +2923,16 @@ async function parteB() {
     afirmar(panel.includes("cobrar bono"), "la sala 3D no puede cobrar el bono");
     afirmar(panel.includes("ocho oficinas"), "la casa sigue contando cuatro oficinas");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA PLANTILLA COMPLETA viva: el home firma la ronda y el health la contrata (v303)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA AUDITORÍA DE ACERO"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v305.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("EL AIRE DEL PERMISO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v305"), "el health no firma v305");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no firma v306");
   });
 
   // ── v304.0 LA MANO DE LA FORTUNA: la expansión del módulo FORTUNA — la
@@ -2973,16 +2973,16 @@ async function parteB() {
     afirmar(tienda.includes("probGolpe(libro.rachaSeca)"), "el calor de la ruleta no es el helper probado");
     afirmar(tienda.includes("lástima de la casa"), "la lástima no se le explica al operador");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v304.0");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v304.0");
   });
 
   await verificar("LA MANO DE LA FORTUNA viva: el home firma la ronda y el health la respalda (v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA AUDITORÍA DE ACERO"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v305.0"), "la v304.0 no viaja en el home");
+    afirmar(r.texto.includes("EL AIRE DEL PERMISO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v304.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v305"), "el health no respalda v305");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no respalda v306");
   });
 
   // ── v305.0 LA AUDITORÍA DE ACERO: el árbol medido a fondo (eslint
@@ -3006,8 +3006,11 @@ async function parteB() {
     };
     const nTsIgnore = censa(/@ts-ignore|@ts-expect-error|@ts-nocheck/g);
     afirmar(nTsIgnore === 0, `el árbol lleva ${nTsIgnore} ts-ignore/ts-expect/ts-nocheck (la ley del auditor: CERO)`);
+    // v306: la ley se APRIETA — de «no crecer» a CERO absoluto (la v306 pagó
+    // las últimas 9: cookies tipadas con NextRequest, extractJson ya tipado,
+    // el prefijo de Safari con unknown)
     const nAsAny = censa(/as any/g);
-    afirmar(nAsAny <= 9, `las coerciones ciegas crecieron: ${nAsAny} > 9 (la auditoría no retrocede)`);
+    afirmar(nAsAny === 0, `las coerciones ciegas volvieron: ${nAsAny} > 0 (la ley v306: CERO)`);
     // los 5 ficheros reparados llevan su cura declarada
     const signos = readFileSync(join(RAIZ, "src/components/vanguard/signos-vitales.tsx"), "utf8");
     afirmar(signos.includes("setNacimientos"), "el delta de nacimientos no vive en state (refs durante el render)");
@@ -3021,16 +3024,53 @@ async function parteB() {
     const store = readFileSync(join(RAIZ, "src/lib/game-store.ts"), "utf8");
     afirmar(store.includes('(id === "RED" || id === "CYAN" || id === "AMBER")'), "la guardia de hudTheme no existe");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v305.0"'), "la fuente única de versión no es v305.0");
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v305.0");
   });
 
   await verificar("LA AUDITORÍA DE ACERO viva: el home firma la ronda y el health respalda el censo (v305)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA AUDITORÍA DE ACERO"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v305.0"), "la v305.0 no viaja en el home");
+    afirmar(r.texto.includes("EL AIRE DEL PERMISO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v305.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v305"), "el health no respalda v305");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no respalda v306");
+  });
+
+  // ── v306.0 EL AIRE DEL PERMISO: la segunda cuchilla del mandato del Dueño —
+  // la CABECERA que ESTRANGULABA la voz de la casa (microphone=() de la
+  // v102 mataba el getUserMedia de la v299 ANTES del permiso del usuario)
+  // y las últimas 9 coerciones ciegas pagadas (CERO ley) ──
+  await verificar("LA POLÍTICA DEL AIRE estática: la cabecera deja hablar a la casa (microphone=(self)), las cookies de sesión tipadas con NextRequest en las 4 rutas y el censo de coerciones en CERO (v306)", () => {
+    const config = readFileSync(join(RAIZ, "next.config.ts"), "utf8");
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    // EL AIRE: la cabecera ya no estrangula la voz propia
+    afirmar(config.includes("microphone=(self)"), "la cabecera sigue prohibiendo el micrófono (microphone=() — la v299 muere antes de pedir permiso)");
+    afirmar(!config.includes("microphone=()"), "el veto absoluto al micrófono sigue vivo en la política");
+    afirmar(config.includes("geolocation=(self)"), "la geolocalización de la casa perdió su permiso");
+    afirmar(config.includes("X-Frame-Options") && config.includes("nosniff"), "la ciudadela v102 perdió sus cabeceras de acero");
+    // LAS COOKIES: las 4 rutas de sesión con su tipo real (NextRequest)
+    for (const ruta of ["src/app/api/agente/route.ts", "src/app/api/ugc/route.ts", "src/app/api/ugc/[id]/route.ts", "src/app/api/contrib/[id]/route.ts"]) {
+      const r = readFileSync(join(RAIZ, ruta), "utf8");
+      afirmar(r.includes("NextRequest"), `la ruta ${ruta} sigue con Request desnudo (cookies fuera del tipo)`);
+      afirmar(!r.includes("as any"), `la ruta ${ruta} mantiene una coerción ciega`);
+      afirmar(r.includes("req.cookies.get(SESSION_COOKIE)"), `la ruta ${ruta} no lee la cookie por el camino tipado`);
+    }
+    // CONSEJO y SONIDO: las coerciones restantes pagadas
+    const consejo = readFileSync(join(RAIZ, "src/app/api/consejo/route.ts"), "utf8");
+    afirmar(!consejo.includes("as any") && consejo.includes("extractJson(raw)"), "el consejo sigue forzando lo que ya estaba tipado");
+    const sonido = readFileSync(join(RAIZ, "src/lib/sound.ts"), "utf8");
+    afirmar(sonido.includes("webkitAudioContext?: typeof AudioContext"), "el prefijo de Safari sin su forma con unknown");
+    // la versión camina con la casa
+    afirmar(version.includes('APP_VERSION = "v306.0"'), "la fuente única de versión no es v306.0");
+  });
+
+  await verificar("LA POLÍTICA DEL AIRE viva: el home firma la ronda y el health respira con permiso (v306)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("EL AIRE DEL PERMISO"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v306.0"), "la v306.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v306"), "el health no respira v306");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──

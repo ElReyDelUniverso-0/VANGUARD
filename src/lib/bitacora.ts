@@ -22,6 +22,16 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v306.0",
+    nombre: "EL AIRE DEL PERMISO — la segunda cuchilla del mandato del Dueño (la v305 documentó, esta ronda aplica) y el hallazgo que nadie había visto: la cabecera Permissions-Policy de la ciudadela v102 (microphone=() — prohibir el micrófono A TODO EL MUNDO en la era sin voz) ESTRANGULABA la voz de la v299 — el navegador mataba el getUserMedia ANTES de mostrar el permiso al usuario; microphone=(self) devuelve el aire a la casa. Más las últimas 9 coerciones ciegas pagadas: CERO ley",
+    hitos: [
+      "EL P0 DEL AIRE — microphone=() (v102, era sin voz) contra la v299 LA VOZ DE VANGUARD: el permiso del orbe pedía algo que la casa misma negaba por cabecera (NotAllowedError en Chrome/Edge sin diálogo); la cura microphone=(self) confía en la propia sala y nadie externo habla con ella; las demás cabeceras de acero de la v102 intactas",
+      "LAS 9 COERCIONES FINALES — las 4 rutas de sesión (agente, ugc, ugc/[id], contrib/[id]) tipadas con NextRequest: req.cookies nace con la cookie y la coerción desaparece del camino de auth; el consejo usa la forma ya tipada de extractJson con la forma declarada del modelo deliberador (intervenciones/votos/decreto); el prefijo webkitAudioContext de Safari por la puerta con unknown — el censo de la suite se aprieta de «no crecer» a CERO",
+      "DOCUMENTADO SIN APLICAR (se mantiene del informe v305) — los 17 set-state-in-effect (verificado: growth-share es el patrón #418 DELIBERADO, la hidratación exige el setState en el efecto) y las 4 memorias del compilador: quirurgía una por ronda con QA visual propio",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v305.0",
     nombre: "LA AUDITORÍA DE ACERO — el mandato del Dueño (equipo élite: auditar TODO el proyecto, detectar errores, NO destruir, documentar lo arriesgado sin aplicarlo) medido por primera vez a fondo: eslint COMPLETO del árbol (nunca corrido — solo los ficheros tocados de cada ronda), fugas de memoria una a una, XSS, SSR y escapes de tipo; 5 ficheros reparados (26 → 19 errores), la guardia de tipos de hudTheme, el blindaje permanente en la suite y el informe honesto de lo DOCUMENTADO SIN APLICAR",
     hitos: [

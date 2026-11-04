@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
 import { muro, claveCliente } from "@/lib/fortaleza";
@@ -92,7 +92,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     // v102 MURO DE ACERO — 30 envíos por IP y hora (además del anti-spam por autor)
     // v207.0 INFINITO: la sesión del DUEÑO cruza los muros — su rey no tiene topes
@@ -112,7 +112,7 @@ export async function POST(req: Request) {
     // v102 PASAPORTE OBLIGATORIO para publicar JUEGOS: la sesión firma al autor
     let sesion: string | null = null;
     try {
-      sesion = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+      sesion = verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value ?? null);
     } catch {
       sesion = null;
     }

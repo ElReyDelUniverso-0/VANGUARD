@@ -21,7 +21,11 @@ function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!ctx) {
     try {
-      const Ctor = window.AudioContext || (window as any).webkitAudioContext;
+      // v306 AUDITORÍA: el Safari viejo con su prefijo — la forma con unknown
+      // en vez de coerción ciega (mismo comportamiento, camino tipado)
+      const Ctor =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       ctx = new Ctor();
     } catch {
       return null;

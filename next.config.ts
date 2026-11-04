@@ -90,7 +90,14 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" }, // anti-clickjacking
           { key: "X-Content-Type-Options", value: "nosniff" }, // anti-MIME-sniff
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "geolocation=(self), microphone=(), payment=()" },
+          // v306.0 EL AIRE DEL PERMISO — la cura del conflicto de la v102: la ciudadela
+          // prohibió el micrófono PARA TODOS (veto absoluto) en la era sin voz;
+          // la v299 (LA VOZ DE VANGUARD) le dio al operador la palabra y esta
+          // cabecera la ESTRANGULABA en el navegador (getUserMedia moría con
+          // NotAllowedError ANTES de tocar el permiso del usuario — la tarjeta
+          // PEDIR PERMISO pedía algo que la casa ya le había negado). (self):
+          // la casa confía en su propia sala; nadie externo habla con ella.
+          { key: "Permissions-Policy", value: "geolocation=(self), microphone=(self), payment=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
         ],
       },

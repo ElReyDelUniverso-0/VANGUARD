@@ -253,16 +253,20 @@ export async function POST(req: Request) {
       // la lección de producción: el JSON del consejo es grande y el rescate GET
       // de iaAlternativa heredaba el reloj a cero del primer intento
       const raw = await iaParalela(SYSTEM_DELIBERACION, user, 30_000);
-      let parsed = raw ? (extractJson(raw) as any) : null;
+      // v306 AUDITORÍA: extractJson YA devuelve Record<string, unknown> — la
+      // coerción ciega era un vestigio, la forma tipada hace lo mismo
+      let parsed = raw ? extractJson(raw) : null;
       if (!parsed?.intervenciones || !parsed?.decreto) {
         const raw2 = await iaAlternativa(SYSTEM_DELIBERACION, user, 22_000);
-        parsed = raw2 ? (extractJson(raw2) as any) : null;
+        parsed = raw2 ? extractJson(raw2) : null;
       }
       if (!parsed?.intervenciones || !parsed?.decreto) {
         return NextResponse.json({ ok: true, ...nucleoLocalDeliberacion(tema), ia: false });
       }
       const ids: ConsejeroId[] = ["estratega", "canciller", "general", "analista"];
-      const lista: any[] = Array.isArray(parsed.intervenciones) ? parsed.intervenciones : [];
+      // v306 AUDITORÍA: la forma del modelo tipada — el mapeo tolerante igual,
+      // pero sin any[] en el camino
+      const lista: { id?: string; texto?: string; intervencion?: string }[] = Array.isArray(parsed.intervenciones) ? parsed.intervenciones : [];
       // mapeo tolerante: primero por id exacto; si falta, por posición (el modelo
       // a veces renombra los consejeros — les asignamos nuestra voz canónica)
       const intervenciones = ids
@@ -276,8 +280,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true, ...nucleoLocalDeliberacion(tema), ia: false });
       }
       const votos = ids.map((id, i) => {
-        const vlista: any[] = Array.isArray(parsed.votos) ? parsed.votos : [];
-        const v = vlista.find((x: any) => x?.id === id) ?? vlista[i] ?? {};
+        const vlista: { id?: string; voto?: string; confianza?: number | string }[] = Array.isArray(parsed.votos) ? parsed.votos : [];
+        const v = vlista.find((x) => x?.id === id) ?? vlista[i] ?? {};
         const voto = clean(v.voto, 16).toUpperCase();
         return {
           id,
@@ -285,7 +289,7 @@ export async function POST(req: Request) {
           confianza: Math.max(10, Math.min(99, parseInt(String(v.confianza), 10) || 55)),
         };
       });
-      const d = parsed.decreto ?? {};
+      const d: Record<string, unknown> = (parsed.decreto ?? {}) as Record<string, unknown>;
       return NextResponse.json({
         ok: true,
         ia: true,
@@ -323,10 +327,10 @@ export async function POST(req: Request) {
       memoriaD ? `MEMORIA DEL COMANDANTE: ${memoriaD}\n` : ""
     }EL COMANDANTE TE CONTESTA: "${mensaje}". Responde solo el JSON.`;
     const raw = await iaParalela(systemDialogo(id), userD, 24_000);
-    let parsed = raw ? (extractJson(raw) as any) : null;
+    let parsed = raw ? extractJson(raw) : null;
     if (!parsed?.respuesta) {
       const raw2 = await iaAlternativa(systemDialogo(id), userD, 20_000);
-      parsed = raw2 ? (extractJson(raw2) as any) : null;
+      parsed = raw2 ? extractJson(raw2) : null;
     }
     const respuesta = clean(parsed?.respuesta, 420);
     if (!respuesta) {

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
 import { verifySessionToken, SESSION_COOKIE, firmaBorrado, sesionDuenoReq } from "@/lib/auth-server";
@@ -145,7 +145,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   }
 }
 
-export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     // MURO v204 — 10 intentos de borrado por IP y minuto
     // v207.0 INFINITO: la sesión del DUEÑO cruza los muros
@@ -167,7 +167,7 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }
     const tk = url.searchParams.get("tk") || "";
     let ses: string | null = null;
     try {
-      ses = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+      ses = verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value ?? null);
     } catch { ses = null; }
     const permitidoPorToken = tk.length === 32 && tk === firmaBorrado(item.id);
     const permitidoPorSesion = !!ses && (ses === item.author || ses === "DUENO");

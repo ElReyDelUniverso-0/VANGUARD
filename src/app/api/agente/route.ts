@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
 import { muro, claveCliente, sanitizar, sanitizarLinea } from "@/lib/fortaleza";
@@ -58,7 +58,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     // v103 MURO — 12 misiones por IP y hora (el agente no es gratis para abusar)
     const veredictoMuro = muro(`agente:${claveCliente(req)}`, 12, 3600_000);
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
     // sesión (pasaporte de la Ciudadela)
     let sesion: string | null = null;
     try {
-      sesion = verifySessionToken((req as any).cookies?.get?.(SESSION_COOKIE)?.value ?? null);
+      sesion = verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value ?? null);
     } catch {
       sesion = null;
     }

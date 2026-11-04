@@ -4253,6 +4253,37 @@
 //     build EXIT 0 · health v305.0 db up · pruebas 236/236 (+2 LA
 //     AUDITORÍA) · BD intocada (1877 cables · 9 hechos).
 // Herencia v304.0 LA MANO DE LA FORTUNA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v305.0";
-export const APP_CODENAME = "LA AUDITORÍA DE ACERO";
+// v306.0 EL AIRE DEL PERMISO — la SEGUNDA cuchilla del mandato del Dueño
+//         (auditar todo, detectar errores, documentar lo arriesgado sin
+//         aplicarlo): la auditoría v305 documentó pendientes; esta ronda los
+//         PAGA y caza un CONFLICTO P0 que nadie había visto:
+// (1) EL P0 — LA CABECERA QUE ESTRANGULABA LA VOZ: la ciudadela v102 puso
+//     «microphone=()» en Permissions-Policy (prohibir el micrófono A TODO EL
+//     MUNDO) en la era sin voz; la v299 LA VOZ DE VANGUARD le dio al
+//     operador la palabra y NADIE volvió a mirar la cabecera — el navegador
+//     (Chrome/Edge) mata el getUserMedia con NotAllowedError ANTES de
+//     mostrar el permiso: la tarjeta PEDIR PERMISO pedía algo que la casa
+//     ya le había negado por escrito. Cura: microphone=(self) — la casa
+//     confía en su propia sala y nadie externo habla con ella. Las demás
+//     cabeceras de la v102 intactas (X-Frame-Options, nosniff, Referrer,
+//     geolocation=(self), payment=()).
+// (2) LAS 9 COERCIONES FINALES — CERO ley (la v305 documentó, esta ronda
+//     aplica): las 4 rutas de sesión (agente, ugc, ugc/[id], contrib/[id])
+//     tipadas con NextRequest — req.cookies NACE con la cookie, la
+//     coerción ciega desaparece del camino de auth; el consejo usa la forma
+//     ya tipada de extractJson (Record<string, unknown>) y el modelo
+//     deliberador con su forma declarada (intervenciones/votos/decreto);
+//     el prefijo webkitAudioContext de Safari por la puerta con unknown.
+//     EL CENSO DE LA SUITE SE APRIETA: coerciones «≤ 9» → «CERO» — ninguna
+//     coerción ciega puede volver a nacer en el árbol.
+// (3) DOCUMENTADO SIN APLICAR (se mantiene del informe v305): los 17
+//     set-state-in-effect (quirurgía de hidratación, una por ronda —
+//     verificado: growth-share es el patrón #418 DELIBERADO) y las 4
+//     memorias del compilador.
+// QA: tsc 0 TOTAL · censo de coerciones 0 · eslint 0 errores en los 7
+//     tocados · build EXIT 0 · health v306.0 db up · pruebas 238/238 (+2 LA
+//     POLÍTICA DEL AIRE) · BD intocada (1877 cables · 9 hechos).
+// Herencia v305.0 LA AUDITORÍA DE ACERO y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v306.0";
+export const APP_CODENAME = "EL AIRE DEL PERMISO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
