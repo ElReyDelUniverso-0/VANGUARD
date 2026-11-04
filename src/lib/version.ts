@@ -2954,6 +2954,46 @@
 //     con la cifra real, los botones de apuesta y las anclas v213/v242
 //     en pie) · BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v271.0 EL CANAL CLASIFICADO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v272.0";
-export const APP_CODENAME = "EL QUIZ DEL PESO";
+// v273.0 EL TERCER CATÁLOGO — la expansión funcional módulo a módulo
+//         completa la trilogía de catálogos de la vitrina (/objetivos):
+//         la casa tiene TRES catálogos de competición y la vitrina
+//         servía dos — TOURNAMENTS, los torneos de la casa (Copa
+//         Estratega, Operación Tritón, Maratón Operacional) con sus
+//         tablas de líderes y su botín en la cima, seguía client-side
+//         en el panel del aparato, invisible para el SSR y para
+//         Google. Medido antes de elegir: 3 torneos, 21 posiciones de
+//         leaderboard, botín de la cima derivado 1900 mon · 19 gemas,
+//         premio mayor 800 mon (la cola decía «27 entradas»; el repo
+//         real manda — canon = repo).
+// (1) EL TERCER CATÁLOGO SE SIRVE EN SERVER — sección entre el segundo
+//     catálogo (v270) y los bloques: los 3 torneos con id, título,
+//     categoría, métrica real y reloj de la fuente; censo, botín y
+//     posiciones derivados con reduce — cero cifras escritas a mano
+//     (herencia v235/v268/v270): «El tercer catálogo de la casa — 3
+//     torneos en marcha con 1900 mon y 19 gemas de botín en la cima,
+//     21 posiciones en las tablas»; si el catálogo cambia, la línea
+//     cambia sola.
+// (2) EL LÍDER SE COMPONE DESDE LA TABLA REAL — cada tarjeta compone
+//     en JS «líder: AGUILEGEND-7 con 47 puntos» desde leaderboard[0]
+//     de la fuente (y «tabla sin líder todavía» como vacío honesto si
+//     un torneo futuro nace sin tabla); el botín de cada torneo se
+//     compone en JS: «botín: +500 mon · +5 gemas».
+// (3) LA PROCEDENCIA ES LA LEY — la vitrina declara dónde vive el
+//     catálogo («este catálogo también vive en la fuente (game-data.ts),
+//     no en esta vitrina», directiva v266) y la línea se compone
+//     COMPLETA en JS (lección v256). Cero fechas a mano, guardia v234
+//     en pie (el reloj «3d 14h» viaja como dato de la fuente, no como
+//     fecha escrita).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v273.0 db up ·
+//     pruebas 172/172 en el árbol fusionado (+2 EL TERCER CATÁLOGO: estática — la fuente
+//     TOURNAMENTS intacta con sus 3 torneos, botín y posiciones
+//     derivados con reduce, la línea compuesta en JS y la guardia
+//     v234; viva — el SSR sirve «EL TERCER CATÁLOGO» con «3 torneos
+//     en marcha con 1900 mon y 19 gemas», las 3 firmas reales, el
+//     botín compuesto y el líder real, con las anclas
+//     v235/v267/v268/v270 en pie) · BD intocada (1877 cables · 9
+//     hechos, un solo escritor).
+// Herencia v272.0 EL QUIZ DEL PESO (del turno paralelo, renumeración en vuelo) y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v273.0";
+export const APP_CODENAME = "EL TERCER CATÁLOGO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

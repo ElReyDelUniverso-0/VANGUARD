@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ACHIEVEMENTS, CABLEADO_BLOQUES, DAILY_CHALLENGES, MISSION_TEMPLATES } from "@/lib/game-data";
+import {
+  ACHIEVEMENTS,
+  CABLEADO_BLOQUES,
+  DAILY_CHALLENGES,
+  MISSION_TEMPLATES,
+  TOURNAMENTS,
+} from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VitrinaProgreso } from "@/components/vanguard/vitrina-progreso";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -52,6 +58,15 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // descripción y botín reales de la fuente, censo y meta mayor
 // derivados con reduce (cero cifras a mano) y la procedencia
 // declarada (directiva v266).
+//
+// v273.0 EL TERCER CATÁLOGO — la casa tiene TRES catálogos de competición
+// y la vitrina servía dos: TOURNAMENTS — los torneos de la casa (Copa
+// Estratega, Operación Tritón, Maratón Operacional) con sus tablas de
+// líderes y su botín en la cima — seguía client-side, invisible para
+// el SSR y para Google. EL TERCER CATÁLOGO lo sirve en server: id,
+// título, categoría, métrica real, reloj del torneo y líder compuesto
+// desde la tabla de la fuente; censo, botín y posiciones derivados
+// con reduce (cero cifras a mano) y la procedencia declarada.
 
 export const dynamic = "force-dynamic";
 
@@ -177,6 +192,23 @@ const META_MAYOR = RETOS.reduce((max, r) => (r.target > max ? r.target : max), 0
 
 // La línea de la sección compuesta COMPLETA en JS (lección v256).
 const lineaCatalogo = `El segundo catálogo de la casa — ${RETOS.length} retos diarios con ${cifra.format(BOTIN_RETOS.xp)} XP y ${cifra.format(BOTIN_RETOS.monedas)} mon de botín, metas de 1 a ${META_MAYOR}`;
+
+// ── v273.0 EL TERCER CATÁLOGO — TODO derivado de TOURNAMENTS, nada a mano ──
+// Los torneos son la competición de la casa: cada tabla se mide con el
+// contador real de su categoría. Botín de la cima, posiciones y premio
+// mayor salen de la fuente con reduce; si el catálogo cambia, el censo
+// cambia solo.
+const TORNEOS = TOURNAMENTS;
+
+const BOTIN_TORNEOS = TORNEOS.reduce(
+  (t, x) => ({ monedas: t.monedas + x.topPrize.coins, gemas: t.gemas + x.topPrize.gems }),
+  { monedas: 0, gemas: 0 },
+);
+
+const POSICIONES = TORNEOS.reduce((n, x) => n + x.leaderboard.length, 0);
+
+// La línea de la sección compuesta COMPLETA en JS (lección v256).
+const lineaTorneos = `El tercer catálogo de la casa — ${TORNEOS.length} torneos en marcha con ${cifra.format(BOTIN_TORNEOS.monedas)} mon y ${BOTIN_TORNEOS.gemas} gemas de botín en la cima, ${POSICIONES} posiciones en las tablas`;
 
 // ── v235.0 EL MAPA DE CAZA — solo rutas reales de la casa ──
 // La ley: los 100 objetivos se cazan en los paneles del aparato (la
@@ -510,6 +542,39 @@ export default function ObjetivosPage() {
                   <h3 className="text-sm font-bold leading-snug text-zinc-100">{`${r.id} · ${r.title}`}</h3>
                   <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{r.description}</p>
                   <div className="mt-2 font-mono text-[10px] text-amber">{lineaBotinReto}</div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* v273.0 EL TERCER CATÁLOGO — los torneos del aparato, en SSR */}
+        <section
+          aria-label="El tercer catálogo de la casa"
+          className="mt-8 border border-zinc-800 rounded-md p-5 bg-zinc-900/40"
+        >
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-fuchsia-400">
+            EL TERCER CATÁLOGO · los torneos en marcha
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+            {`${lineaTorneos}. El torneo es la competición de la casa: cada tabla se mide con el contador real de su categoría, el botín de la cima está a la vista — y este catálogo también vive en la fuente (game-data.ts), no en esta vitrina.`}
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {TORNEOS.map((t) => {
+              const lider = t.leaderboard[0];
+              const lineaBotinTorneo = `botín: +${t.topPrize.coins} mon · +${t.topPrize.gems} gemas`;
+              const lineaLider = lider
+                ? `líder: ${lider.alias} con ${cifra.format(lider.score)} puntos`
+                : "tabla sin líder todavía";
+              return (
+                <article
+                  key={t.id}
+                  className="border border-zinc-800 rounded-md p-3 bg-zinc-900/60"
+                >
+                  <h3 className="text-sm font-bold leading-snug text-zinc-100">{`${t.id} · ${t.title}`}</h3>
+                  <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{`${t.category} — ${t.metric}. Queda ${t.endsIn}.`}</p>
+                  <div className="mt-2 font-mono text-[10px] text-amber">{lineaBotinTorneo}</div>
+                  <div className="mt-1 font-mono text-[10px] text-cyan-hud">{lineaLider}</div>
                 </article>
               );
             })}

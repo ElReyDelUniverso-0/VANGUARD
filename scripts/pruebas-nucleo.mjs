@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v272.0", async () => {
+  await verificar("servidor vivo y en v273.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v272"), `versión ${r.json?.version} ≠ v272`);
+    afirmar(String(r.json?.version).startsWith("v273"), `versión ${r.json?.version} ≠ v273`);
   });
 
   // censo por API
@@ -2010,6 +2010,56 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v273.0 EL TERCER CATÁLOGO: los 3 torneos del aparato viajan en SSR ──
+  // La cabeza de la cola (medida al abrir la ronda): TOURNAMENTS — Copa
+  // Estratega, Operación Tritón, Maratón Operacional — solo vivía en el
+  // panel client-side; la vitrina sirve ahora su censo, su botín y su líder.
+  await verificar("EL TERCER CATÁLOGO estática: censo, botín y líder de los torneos derivados de la fuente (v273)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/objetivos/page.tsx"), "utf8");
+    // la fuente intacta: los 3 torneos con id, botín y tabla reales
+    afirmar(fuente.includes("export const TOURNAMENTS"), "la fuente de torneos no existe");
+    const iniT = fuente.indexOf("export const TOURNAMENTS");
+    const finT = fuente.indexOf("];", iniT);
+    const bloqueT = fuente.slice(iniT, finT === -1 ? fuente.length : finT + 2);
+    afirmar(bloqueT.length > 1500 && bloqueT.length < 4000, `el slice del catálogo midió mal (${bloqueT.length})`);
+    for (const id of ["T-QUIZ-WEEK", "T-MINIGAME-WEEK", "T-XP-WEEK"]) {
+      afirmar(bloqueT.includes(`id: "${id}"`), `falta el torneo ${id} en la fuente`);
+    }
+    // la vitrina consume la fuente y deriva TODO con reduce (cero cifras a mano)
+    afirmar(/import \{[^}]*\bTOURNAMENTS\b[^}]*\} from "@\/lib\/game-data"/.test(pag), "la vitrina no consume TOURNAMENTS de la fuente");
+    afirmar(pag.includes("const BOTIN_TORNEOS = TORNEOS.reduce("), "el botín de los torneos no se deriva (reduce)");
+    afirmar(pag.includes("t.monedas + x.topPrize.coins"), "el mon de los torneos no se suma del catálogo");
+    afirmar(pag.includes("t.gemas + x.topPrize.gems"), "las gemas de los torneos no se suman del catálogo");
+    afirmar(pag.includes("n + x.leaderboard.length"), "las posiciones de las tablas no se derivan del catálogo");
+    // la línea de la sección compuesta COMPLETA en JS (lección v256)
+    afirmar(pag.includes("const lineaTorneos = `El tercer catálogo de la casa — ${TORNEOS.length} torneos en marcha con ${cifra.format(BOTIN_TORNEOS.monedas)} mon y ${BOTIN_TORNEOS.gemas} gemas de botín en la cima, ${POSICIONES} posiciones en las tablas`"), "la línea de los torneos no se compone COMPLETA en JS");
+    afirmar(pag.includes("EL TERCER CATÁLOGO"), "la cabeza del tercer catálogo desapareció");
+    afirmar(pag.includes("botín: +${t.topPrize.coins} mon · +${t.topPrize.gems} gemas"), "el botín de cada torneo no se compone en JS");
+    afirmar(pag.includes("líder: ${lider.alias} con ${cifra.format(lider.score)} puntos"), "el líder no se compone en JS desde la tabla real");
+    afirmar(pag.includes("este catálogo también vive en la fuente"), "la vitrina no declara la procedencia del tercer catálogo");
+    // el tercer catálogo no inventa fechas (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la vitrina escribe fechas a mano en la ronda v273!");
+  });
+
+  await verificar("EL TERCER CATÁLOGO viva: el SSR sirve los 3 torneos con su botín derivado y las anclas en pie (v273)", async () => {
+    const r = await pedir("/objetivos");
+    afirmar(r.status === 200, `/objetivos no 200 en v273 (${r.status})`);
+    afirmar(r.texto.includes("EL TERCER CATÁLOGO"), "el tercer catálogo no viaja en el SSR");
+    afirmar(r.texto.includes("El tercer catálogo de la casa — 3 torneos en marcha con 1900 mon y 19 gemas de botín en la cima, 21 posiciones en las tablas"), "la línea derivada del tercer catálogo no viaja (o la cifra no coincide con la fuente)");
+    afirmar(r.texto.includes("T-QUIZ-WEEK · Copa Estratega"), "la firma del torneo quiz no viaja");
+    afirmar(r.texto.includes("T-MINIGAME-WEEK · Operacion Tritón"), "la firma del torneo mini-game no viaja");
+    afirmar(r.texto.includes("T-XP-WEEK · Maraton Operacional"), "la firma del torneo de progreso no viaja");
+    afirmar(r.texto.includes("botín: +500 mon · +5 gemas"), "el botín compuesto del torneo quiz no viaja");
+    afirmar(r.texto.includes("botín: +800 mon · +8 gemas"), "el botín compuesto del torneo mayor no viaja");
+    afirmar(r.texto.includes("líder: AGUILEGEND-7 con 47 puntos"), "el líder real de la tabla no viaja compuesto");
+    // las anclas de la casa en pie (v235/v267/v268/v270)
+    afirmar(r.texto.includes("LA JORNADA"), "la ancla v268 cayó");
+    afirmar(r.texto.includes("EL SEGUNDO CATÁLOGO"), "la ancla v270 cayó");
+    afirmar(r.texto.includes("EL CABLEADO DEL APARATO"), "la ancla v267 cayó");
+    afirmar(r.texto.includes("La balanza del botín"), "la ancla v235 cayó");
   });
 
   // ── v272.0 EL QUIZ DEL PESO: dos cables reales, una apuesta, el veredicto del motor ──

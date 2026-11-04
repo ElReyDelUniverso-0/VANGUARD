@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v273.0",
+    nombre: "EL TERCER CATÁLOGO (renumerada en vuelo: el turno paralelo 475802 tomó v272.0 EL QUIZ DEL PESO — protocolo canon-repo) — la expansión completa la trilogía de catálogos de la vitrina (/objetivos): TOURNAMENTS, los torneos de la casa (Copa Estratega, Operación Tritón, Maratón Operacional) con sus tablas de líderes y su botín en la cima, seguía client-side; su censo, su botín y su líder viajan ahora en server, derivados de la fuente, con la procedencia declarada",
+    hitos: [
+      "EL TERCER CATÁLOGO SE SIRVE EN SERVER — los 3 torneos con id, título, categoría, métrica real y reloj de la fuente; censo y botín derivados con reduce: 1900 mon · 19 gemas de botín en la cima, 21 posiciones en las tablas (cero cifras a mano — herencia v235/v268/v270)",
+      "EL LÍDER SE COMPONE DESDE LA TABLA REAL — «líder: AGUILEGEND-7 con 47 puntos» desde leaderboard[0] de la fuente, con «tabla sin líder todavía» como vacío honesto; el botín de cada torneo compuesto en JS",
+      "LA PROCEDENCIA ES LA LEY — «este catálogo también vive en la fuente (game-data.ts), no en esta vitrina» (directiva v266); línea compuesta COMPLETA en JS (lección v256); cero fechas a mano, guardia v234 en pie",
+      "QA v273: tsc 0 TOTAL, eslint 0, build EXIT 0, health v273.0 db up, pruebas 172/172 en el árbol fusionado (+2 EL TERCER CATÁLOGO: estática — la fuente TOURNAMENTS intacta con sus 3 torneos, botín y posiciones derivados, línea compuesta en JS; viva — «3 torneos en marcha con 1900 mon y 19 gemas», las 3 firmas reales, el líder real y las anclas v235/v267/v268/v270 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v272.0",
     nombre: "EL QUIZ DEL PESO — ¿qué cable pesa más? El legado del linaje perdido (v174–v176) llega al canon: el MOTOR DE IMPACTO (v172) ya medía cada cable y la CENTRAL DE ALARMAS (v232) ya avisaba lo urgente, pero nada conectaba el motor con el juicio del visitante — dos cables reales del archivo, una apuesta, el veredicto determinista del motor",
     hitos: [
