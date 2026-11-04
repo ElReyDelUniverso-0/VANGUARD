@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v263.0", async () => {
+  await verificar("servidor vivo y en v264.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v263"), `versión ${r.json?.version} ≠ v263`);
+    afirmar(String(r.json?.version).startsWith("v264"), `versión ${r.json?.version} ≠ v264`);
   });
 
   // censo por API
@@ -2010,6 +2010,49 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v264.0 EL ÍNDICE DEL PLANETA: los teatros del mapa con puerta ──
+  // /mundo (v215) sostenía la instantánea viva (peso 24 h, último titular y
+  // fuente por teatro) pero su capa server nunca sirvió las puertas: sin
+  // JS el planeta era un hueco y para Google los teatros eran un párrafo
+  // sin enlaces. El índice deriva TODO de la instantánea (cero consultas)
+  // y declara honesto el teatro sin señal en 24 h (BD medida: 96 h sin
+  // cable nuevo — las 9 salas quedan abiertas).
+  await verificar("EL ÍNDICE DEL PLANETA estática: derivado de la instantánea, cero consultas, compuesto en JS (v264)", () => {
+    const mundo = readFileSync(join(RAIZ, "src/app/mundo/page.tsx"), "utf8");
+    // cero roundtrips: el índice deriva de la instantánea que ya viajaba
+    afirmar(mundo.includes("inicial.teatros.map((t) => {"), "el índice no deriva de la instantánea del primer byte");
+    afirmar(!mundo.includes("db.newsItem"), "¡el índice consultó la BD de nuevo (roundtrips de más)!");
+    // las dos puertas por teatro: la sala y el titular
+    afirmar(mundo.includes("href={`/conflicto/${t.slug}`}"), "la puerta a la sala del teatro desapareció del índice");
+    afirmar(mundo.includes("href={`/noticia/${t.ultimo.id}`}"), "la puerta al último titular desapareció del índice");
+    // lección v256: peso y edad compuestos COMPLETOS en JS
+    afirmar(mundo.includes("const lineaIndice = `El índice del planeta — ${teatros} teatros vivos, ${hoy} cables en las últimas 24 h`"), "la línea del índice no se compone COMPLETA en JS");
+    afirmar(mundo.includes("const linea = t.ultimo"), "la línea de peso/edad del teatro no se compone en JS");
+    afirmar(mundo.includes("const firma = t.ultimo"), "la firma del titular no se compone en JS");
+    // vacío honesto: el teatro sin señal declara su ausencia y su sala abierta
+    afirmar(mundo.includes('"sin señal en 24 h — la sala queda abierta"'), "el teatro sin señal no declara su ausencia");
+    // sin BD la sección ni se pinta (vacío honesto, ley de la casa)
+    afirmar(mundo.includes("{inicial && ("), "la sección del índice no respeta el vacío de la instantánea");
+    // la edad con la gramática de la casa, cero fechas a mano
+    afirmar(mundo.includes("function hace(fecha: string): string {"), "sin la edad de la casa para la señal");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(mundo), "¡el mundo escribe fechas a mano en la ronda v264!");
+  });
+
+  await verificar("EL ÍNDICE DEL PLANETA viva: las 9 salas con puerta en el SSR y el silencio de 24 h declarado honesto (v264)", async () => {
+    const r = await pedir("/mundo");
+    afirmar(r.status === 200, `/mundo no 200 en v264 (${r.status})`);
+    // la línea compuesta y las puertas de las salas viajan en el HTML
+    afirmar(r.texto.includes("El índice del planeta"), "el índice del planeta no viaja en el SSR");
+    afirmar(r.texto.includes('href="/conflicto/ukraine"'), "la puerta a la sala de Ucrania desapareció del índice");
+    afirmar(r.texto.includes('href="/conflicto/gaza"'), "la puerta a la sala de Gaza desapareció del índice");
+    // BD medida en esta ronda: 96 h sin cable nuevo — el vacío es el estado
+    // honesto del planeta y el índice lo declara (con la sala abierta)
+    afirmar(r.texto.includes("sin señal en 24 h"), "el silencio de 24 h no se declara honesto en el SSR");
+    // las anclas del planeta (v215) siguen en pie
+    afirmar(r.texto.includes("EL MUNDO 3D"), "la cabeza del planeta desapareció");
+    afirmar(r.texto.includes("Espiar los gobiernos"), "la casa completa desapareció");
   });
 
   // ── v263.0 EL ARCHIVO QUE CRECE: los sin etiqueta citan su sala ──

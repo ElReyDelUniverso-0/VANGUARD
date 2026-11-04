@@ -11,6 +11,17 @@ import { Mundo3DVivo } from "./mundo-3d-vivo";
 // teatro) viaja con el primer byte; el client sondea /api/mundo cada
 // 60 s — la página JAMÁS se recarga (ley v190) y el globo respira.
 // JSON-LD CollectionPage para Google; noscript honesto (ley v210).
+//
+// v264.0 EL ÍNDICE DEL PLANETA — la instantánea ya viajaba viva (peso de
+// 24 h, último titular y fuente por teatro) pero su capa server nunca
+// sirvió las puertas: sin JavaScript el planeta era un hueco y para
+// Google los teatros eran un párrafo sin enlaces. El índice deriva TODO
+// de la instantánea que la página ya sostiene (cero consultas de más):
+// los 9 teatros con su peso real de 24 h, su último titular como puerta
+// a /noticia y su sala /conflicto a un toque. Teatro sin señal en 24 h
+// se declara honesto (medido en esta ronda: la BD lleva 96 h sin cable
+// nuevo — las 9 salas quedan abiertas y el índice lo declara): la puerta
+// no se apaga porque la señal pause.
 
 export const revalidate = 60;
 
@@ -31,6 +42,17 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+// v264.0 — la edad de la señal, la gramática de la casa (cero fechas
+// escritas a mano, guardia v234).
+function hace(fecha: string): string {
+  const min = Math.floor((Date.now() - new Date(fecha).getTime()) / 60000);
+  if (min < 1) return "ahora";
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `${h} h`;
+  return `${Math.floor(h / 24)} d`;
+}
 
 interface Props {
   searchParams: Promise<{ teatro?: string }>;
@@ -53,6 +75,8 @@ export default async function MundoPage({ searchParams }: Props) {
   } catch (e) {
     console.error("mundo page error", e);
   }
+
+  const lineaIndice = `El índice del planeta — ${teatros} teatros vivos, ${hoy} cables en las últimas 24 h`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -98,6 +122,65 @@ export default async function MundoPage({ searchParams }: Props) {
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-10">
           <Mundo3DVivo inicial={inicial} teatroInicial={teatroInicial} />
         </section>
+
+        {/* v264.0 EL ÍNDICE DEL PLANETA — los teatros del mapa con puerta:
+            derivado de la MISMA instantánea del primer byte (cero consultas
+            de más); sin BD la sección ni se pinta (vacío honesto). */}
+        {inicial && (
+          <section
+            className="max-w-7xl mx-auto px-4 sm:px-5 pb-12"
+            aria-label="El índice del planeta — los teatros del mapa con puerta"
+          >
+            <h2 className="font-mono text-[11px] uppercase tracking-widest text-amber-300/90 border-b border-zinc-800 pb-2">
+              {lineaIndice}
+            </h2>
+            <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {inicial.teatros.map((t) => {
+                // lección v256: peso y edad compuestos COMPLETOS en JS —
+                // el SSR pinta cada línea sin nodos partidos
+                const linea = t.ultimo
+                  ? `${t.n} cables en 24 h · última señal hace ${hace(t.ultimo.fecha)}`
+                  : "sin señal en 24 h — la sala queda abierta";
+                const firma = t.ultimo
+                  ? `${t.ultimo.f} · hace ${hace(t.ultimo.fecha)}`
+                  : null;
+                return (
+                  <article
+                    key={t.slug}
+                    className="border border-zinc-800 hover:border-amber-500/50 rounded-md p-3.5 bg-zinc-900/40 transition-colors"
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <h3 className="font-display font-bold text-soft">
+                        <Link
+                          href={`/conflicto/${t.slug}`}
+                          className="hover:text-amber-300 transition-colors"
+                        >
+                          {t.nombre}
+                        </Link>
+                      </h3>
+                      <span className="font-mono text-[9px] text-zinc-500 shrink-0">
+                        {linea}
+                      </span>
+                    </div>
+                    {t.ultimo && firma && (
+                      <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
+                        <Link
+                          href={`/noticia/${t.ultimo.id}`}
+                          className="hover:text-amber-300 transition-colors"
+                        >
+                          {t.ultimo.t}
+                        </Link>
+                        <span className="block mt-0.5 font-mono text-[10px] text-zinc-600">
+                          {firma}
+                        </span>
+                      </p>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* la casa completa — sin salir de Vanguard */}
         <section className="max-w-7xl mx-auto px-4 sm:px-5 pb-12 grid gap-3 sm:grid-cols-3">

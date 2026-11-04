@@ -2687,6 +2687,31 @@
 //     no la repite y las anclas v261 (página 1 de 5, Los frentes) en pie) ·
 //     BD intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v262.0 EL CANAL QUE PESA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v263.0";
-export const APP_CODENAME = "EL ARCHIVO QUE CRECE";
+// v264.0 EL ÍNDICE DEL PLANETA — la expansión funcional módulo a módulo
+//         llega al mapa: /mundo (v215, el globo 3D) sostenía la
+//         instantánea viva (peso de 24 h, último titular y fuente por
+//         teatro) pero su capa server nunca sirvió las puertas — sin
+//         JavaScript el planeta era un hueco y para Google los teatros
+//         eran un párrafo sin enlaces.
+// (1) EL ÍNDICE DERIVA DE LA INSTANTÁNEA — los 9 teatros con su peso real
+//     de 24 h, su último titular como puerta a /noticia y su sala
+//     /conflicto a un toque, TODO de la instantánea que la página ya
+//     sostenía (cero consultas de más; sin BD la sección ni se pinta).
+// (2) EL SILENCIO SE DECLARA — teatro sin señal en 24 h dice «sin señal
+//     en 24 h — la sala queda abierta»: la puerta no se apaga porque la
+//     señal pause (medido en esta ronda: la BD lleva 96 h sin cable
+//     nuevo — las 9 salas declaran su silencio y quedan abiertas).
+// (3) LA GRAMÁTICA DE LA CASA — peso y edad compuestos COMPLETOS en JS
+//     (lección v256), edad con hace() local, cero fechas escritas a mano
+//     (guardia v234).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v264.0 db up ·
+//     pruebas 154/154 (+2 EL ÍNDICE DEL PLANETA: estática — derivado de
+//     la instantánea sin db.newsItem, las dos puertas, la línea compuesta
+//     en JS, el vacío honesto y la guardia v234; viva — el índice viaja en
+//     el SSR con las puertas /conflicto/ukraine y /conflicto/gaza, el
+//     silencio de 24 h declarado y las anclas v215 en pie) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v263.0 EL ARCHIVO QUE CRECE y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v264.0";
+export const APP_CODENAME = "EL ÍNDICE DEL PLANETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

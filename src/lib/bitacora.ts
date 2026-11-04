@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v264.0",
+    nombre: "EL ÍNDICE DEL PLANETA — la expansión llega al mapa: /mundo (v215, el globo 3D) sostenía la instantánea viva (peso 24 h, último titular y fuente por teatro) pero su capa server nunca sirvió las puertas — sin JS el planeta era un hueco y para Google los teatros eran un párrafo sin enlaces. El índice deriva TODO de la instantánea (cero consultas) y declara honesto el teatro sin señal",
+    hitos: [
+      "EL ÍNDICE DERIVA DE LA INSTANTÁNEA — los 9 teatros con su peso real de 24 h, su último titular como puerta a /noticia y su sala /conflicto a un toque, TODO de la instantánea que la página ya sostenía (cero consultas de más; sin BD la sección ni se pinta)",
+      "EL SILENCIO SE DECLARA — teatro sin señal en 24 h dice «sin señal en 24 h — la sala queda abierta»: la puerta no se apaga porque la señal pause (BD medida: 96 h sin cable nuevo — las 9 salas declaran su silencio)",
+      "LA GRAMÁTICA DE LA CASA — peso y edad compuestos COMPLETOS en JS (lección v256), edad con hace() local, cero fechas escritas a mano (guardia v234)",
+      "QA v264: tsc 0 TOTAL, eslint 0, build EXIT 0, health v264.0 db up, pruebas 154/154 (+2 EL ÍNDICE DEL PLANETA: estática — derivado de la instantánea sin db.newsItem, las dos puertas, la línea compuesta en JS y el vacío honesto; viva — el índice viaja en el SSR con las puertas de las 9 salas, el silencio de 24 h declarado y las anclas v215 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v263.0",
     nombre: "EL ARCHIVO QUE CRECE — la expansión vuelve a la sala del teatro (/conflicto/[tag]) y abre el archivo que nadie veía: 1396 cables sin etiqueta (74 % del archivo) no tenían puerta a ninguna sala aunque sus propias palabras citaran el teatro (214 censados con claves reales de los 9). El catálogo canónico lleva sus claves y la sala cruza EN LECTURA, sin escribir en la BD",
     hitos: [
