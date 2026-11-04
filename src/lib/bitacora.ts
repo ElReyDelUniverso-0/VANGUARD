@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v244.0",
+    nombre: "LA FAMILIA REUNIDA — la deuda v240 se paga: la familia del motor 3D deja de viajar replicada y el instrumento de medición se corrige a sí mismo",
+    hitos: [
+      "EL DIAGNÓSTICO HONESTO — censo del build v243: el núcleo del motor viajaba en 4 chunks reales (~554 KB gzip): el del globo más una copia por cada raíz de import independiente (teatros de zona-cero, hangar, frente, motor de vanguard2); el empaquetador no los reunía",
+      "EL ARTEFACTO DESCUBIERTO — la «constante suelta del motor en el chunk global» documentada por v240 era el TEXTO de la propia bitácora v240 (que describe el marcador) viajando empaquetado: contaminaba el censo; con marcadores de clase limpios (×0 en bitácora y en maplibre, verificado) el chunk global nunca llevó código del motor — la casa corrigió su instrumento y su registro",
+      "LA REUNIÓN (next.config.ts) — grupo de caché familiaTres: TODA la familia (motor, globo, three-globe, render-objects, geometrías, tween) en UN chunk asíncrono único; la primera sala 3D lo baja y el navegador lo cachea para todas las demás; chunks async lo mantiene fuera del HTML crítico (ley v222) y las salas sin 3D no lo bajan",
+      "EL MOTOR QUE HONRA LA LEY — el build de producción pasa a --webpack (Turbopack no expone splitChunks, webpack sí; su tree-shaking además poda el motor por uso real); el dev sigue en Turbopack",
+      "QA v244: tsc 0, eslint 0, build EXIT 0, health v244.0 db up, pruebas 112/112 (+3 LA FAMILIA REUNIDA: estática — el grupo reunido con chunks async y el build declarando el motor que lo honra; viva — censo del build con marcadores limpios y HTML crítico de /, /mundo, /zona-cero y /privacidad examinado chunk a chunk sin motor, ley v222 en la casa entera), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v243.0",
     nombre: "LA POLÍTICA VIVA — la última sala del censo sin expandir viste el kit y documenta la frontera que el árbol declara (/privacidad)",
     hitos: [

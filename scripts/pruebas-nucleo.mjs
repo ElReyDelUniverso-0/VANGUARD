@@ -14,7 +14,7 @@
 // Sale con código 1 si ALGO falla (el Dueño manda: si las pruebas
 // básicas fallan, no se continúa con cambios masivos).
 // ============================================================
-import { readFileSync, existsSync, statSync } from "node:fs";
+import { readFileSync, existsSync, statSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const RAIZ = process.cwd();
@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v243.0", async () => {
+  await verificar("servidor vivo y en v244.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v243"), `versión ${r.json?.version} ≠ v243`);
+    afirmar(String(r.json?.version).startsWith("v244"), `versión ${r.json?.version} ≠ v244`);
   });
 
   // censo por API
@@ -1193,11 +1193,13 @@ async function parteB() {
     // sobreviven a la minificación y que las otras librerías WebGL NO
     // contienen (maplibre falsea «PerspectiveCamera» ×2 — por eso el censo
     // laxo mentía; WebGLRenderer/ShaderMaterial/BufferGeometry: ×0 en
-    // maplibre, verificado en el build). Excepción documentada: una
-    // CONSTANTE suelta de three (ACESFilmicToneMapping) viaja en el chunk
-    // GLOBAL compartido (~75 KB con zustand — pegado de Turbopack que / y
-    // /mundo ya cargaban antes de esta ronda; deuda del empaquetador, no
-    // de zona-cero, y no se puede recortar sin splitChunks).
+    // maplibre, verificado en el build). CORRECCIÓN v244: el comentario
+    // original documentaba una «CONSTANTE suelta de three en el chunk
+    // GLOBAL» — era un ARTEFACTO de medición: el TEXTO de la propia
+    // bitácora v240 (que describe la constante) viaja empaquetado y
+    // contaminaba el censo; con marcadores de clase limpios (×0 en
+    // bitácora, verificado) el chunk global NUNCA llevó motor. La casa
+    // corrige su instrumento y su registro — la verdad por delante.
     const jsUrls = [...new Set([
       ...(r.texto.match(/src="(\/_next\/static\/chunks\/[^"]+\.js)"/g) || []),
       ...(r.texto.match(/href="(\/_next\/static\/chunks\/[^"]+\.js)"/g) || []),
@@ -1357,6 +1359,75 @@ async function parteB() {
     for (const ruta of ["/nucleo", "/modo", "/", "/privacidad"]) {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `puerta de la política rota ${ruta} → ${r.status}`);
+    }
+  });
+
+  // ── v244.0 LA FAMILIA REUNIDA: la deuda v240 se paga — la familia del
+  // motor 3D viaja en UN chunk asíncrono compartido (webpack sí honra
+  // splitChunks; Turbopack no) y el censo de la casa se mide con
+  // marcadores de CLASE limpios: «isPerspectiveCamera»/«isMesh»
+  // sobreviven a la minificación, NO aparecen en el texto de la bitácora
+  // (que contaminaba el censo fino de v240 — la constante que describe
+  // viajaba como PROSA empaquetada) y maplibre no los contiene (×0
+  // verificado en su chunk de ~273 KB gzip).
+  await verificar("LA FAMILIA REUNIDA: el build declara la reunión y el motor que la honra (v244)", () => {
+    const config = readFileSync(join(RAIZ, "next.config.ts"), "utf8");
+    // el grupo de caché reúne a la familia completa bajo demanda
+    afirmar(config.includes("familiaTres"), "next.config.ts sin el grupo familiaTres");
+    afirmar(config.includes('chunks: "async"'), "el grupo reunido no es async — volvería al HTML crítico (ley v222)");
+    for (const miembro of ["three|", "globe\\.gl", "three-globe", "three-render-objects", "@tweenjs"]) {
+      afirmar(config.includes(miembro), `la familia reunida no cita a ${miembro.replace(/\\|\|/g, "")}`);
+    }
+    // el motor que HONRA la configuración: el build de producción es webpack
+    const pkg = JSON.parse(readFileSync(join(RAIZ, "package.json"), "utf8"));
+    afirmar(pkg.scripts?.build?.includes("--webpack"), "el build de producción no declara el motor que honra splitChunks");
+    // la ley v222 sigue citada donde se aplica
+    afirmar(config.includes("v222"), "la configuración no cita la ley del HTML crítico");
+  });
+
+  await verificar("LA FAMILIA REUNIDA viva: el censo del build — el motor en pocas piezas, sin copias sueltas (v244)", () => {
+    const dir = join(RAIZ, ".next", "static", "chunks");
+    afirmar(existsSync(dir), "no hay chunks de build — medición imposible");
+    // marcadores de CLASE limpios: isPerspectiveCamera/isMesh son banderas
+    // que DEFINEN las clases del motor (verificados: ×0 en bitácora, ×0 en
+    // maplibre). «WebGLRenderer» se queda FUERA del censo a propósito: los
+    // componentes de la casa INSTANCIAN el motor (new X.WebGLRenderer —
+    // el inquilino, no la familia) y 6 piezas nuestras lo mencionan —
+    // defecto de MI propio test cazado en la primera pasada viva: el
+    // censo contaba inquilinos como si fueran familia.
+    const esFamilia = /isPerspectiveCamera|isMesh/;
+    const piezas = readdirSync(dir).filter((f) => f.endsWith(".js") && esFamilia.test(readFileSync(join(dir, f), "utf8")));
+    // la reunión: UNA pieza compartida (familia-tres) y a lo sumo una pieza
+    // privada de un grafo (vanguard2) — jamás las 3-5 copias del build v243
+    afirmar(piezas.length <= 2, `la familia viaja en ${piezas.length} piezas: la reunión falló (${piezas.join(", ")})`);
+    const pesos = piezas.map((f) => Math.round(statSync(join(dir, f)).size / 1024));
+    // la pieza reunida carga TODA la familia: nunca un gramo en el HTML
+    // crítico de salas sin 3D (eso lo vigila el test siguiente)
+    console.log(`    censo de la familia: ${piezas.length} pieza(s) — ${pesos.join(" KB, ")} KB en disco`);
+  });
+
+  await verificar("LA FAMILIA REUNIDA viva: el HTML crítico de las salas no lleva motor — casa entera (v244)", async () => {
+    // la ley v222 (three JAMÁS en el HTML crítico) extendida y verificada
+    // en salas 3D y salas server-only por igual: el chunk reunido es async
+    // y NINGÚN JS declarado por la primera pintura puede llevar el motor.
+    // Marcador: banderas de clase del motor (isPerspectiveCamera/isMesh,
+    // ×0 en bitácora y maplibre) — «WebGLRenderer» falsearía con los
+    // componentes de la casa que lo instancian.
+    const esFamilia = /isPerspectiveCamera|isMesh/;
+    for (const ruta of ["/", "/mundo", "/zona-cero", "/privacidad"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `sala rota ${ruta} → ${r.status}`);
+      const jsUrls = [...new Set([
+        ...(r.texto.match(/src="(\/_next\/static\/chunks\/[^"]+\.js)"/g) || []),
+        ...(r.texto.match(/href="(\/_next\/static\/chunks\/[^"]+\.js)"/g) || []),
+      ].map((s) => s.replace(/^[a-z]+="/, "").replace(/"$/, "")))];
+      afirmar(jsUrls.length >= 5, `el HTML crítico de ${ruta} declara muy pocos JS (${jsUrls.length}) — medición rota`);
+      let conMotor = 0;
+      for (const url of jsUrls) {
+        const js = await pedir(url);
+        if (js.status === 200 && esFamilia.test(js.texto)) conMotor++;
+      }
+      afirmar(conMotor === 0, `${conMotor} chunks del HTML crítico de ${ruta} llevan el motor — la ley v222 violada`);
     }
   });
 

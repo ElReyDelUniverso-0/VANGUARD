@@ -47,8 +47,17 @@ function clasifica(url) {
 }
 
 // marcadores de CÓDIGO de three.js que sobreviven a la minificación —
-// jamás comentar ni texto (el texto de la bitácora dice «THREE.» y no es código)
-const ES_THREE = (s) => /WebGLRenderer|PerspectiveCamera/.test(s);
+// jamás comentar ni texto (el texto de la bitácora dice «THREE.» y no es código).
+// v244.0 LA FAMILIA REUNIDA — el instrumento se afina dos veces: ① el
+// marcador laxo (WebGLRenderer|PerspectiveCamera) cuenta a los INQUILINOS
+// (los componentes de la casa que instancian el motor: new X.WebGLRenderer)
+// y maplibre falsea «PerspectiveCamera» ×2; ② el marcador fino de v240
+// (ACESFilmicToneMapping) resultó contaminado por el PROPIO TEXTO de la
+// bitácora v240 (que describe la constante y viaja empaquetado). Los
+// marcadores honestos son las banderas de CLASE del motor:
+// isPerspectiveCamera/isMesh — definidas SOLO por three (×0 en bitácora,
+// ×0 en maplibre, ×0 en los componentes de la casa, verificado en build).
+const ES_THREE = (s) => /isPerspectiveCamera|isMesh/.test(s);
 
 const RAIZ = process.cwd();
 const dirChunksGlobal = join(RAIZ, ".next/static/chunks");
@@ -107,7 +116,7 @@ for (const ruta of RUTAS) {
       try {
         const nombres = execFileSync("bash", [
           "-c",
-          `for f in ${dirChunks}/*.js; do if rg -q "WebGLRenderer|PerspectiveCamera" "$f" 2>/dev/null; then echo "$f"; fi; done`,
+          `for f in ${dirChunks}/*.js; do if rg -q "isPerspectiveCamera|isMesh" "$f" 2>/dev/null; then echo "$f"; fi; done`,
         ], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
         for (const f of nombres) {
           const url = `/_next/static/chunks/${f.split("/").pop()}`;
@@ -146,7 +155,7 @@ if (dirChunksGlobal && existsSync(dirChunksGlobal)) {
   try {
     nombres = execFileSync("bash", [
       "-c",
-      `for f in ${dirChunksGlobal}/*.js; do if rg -q "WebGLRenderer|PerspectiveCamera" "$f" 2>/dev/null; then echo "$f"; fi; done`,
+      `for f in ${dirChunksGlobal}/*.js; do if rg -q "isPerspectiveCamera|isMesh" "$f" 2>/dev/null; then echo "$f"; fi; done`,
     ], { encoding: "utf8" }).trim().split("\n").filter(Boolean);
   } catch { nombres = []; }
   if (nombres.length) {

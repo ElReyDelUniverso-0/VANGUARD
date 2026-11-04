@@ -2145,6 +2145,37 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v243.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v242.0 EL KIT COMPLETO y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v243.0";
-export const APP_CODENAME = "LA POLÍTICA VIVA";
+// v244.0: LA FAMILIA REUNIDA — la deuda v240 se paga: la familia three deja
+//     de viajar replicada y el instrumento de la casa se corrige a sí mismo.
+// (1) EL DIAGNÓSTICO HONESTO (medir, no suponer) — censo del build v243:
+//     el núcleo del motor vivía en 4 chunks reales (~554 KB gzip): el del
+//     globo (373 KB con globo+adornos) más copias por cada raíz de import
+//     independiente (teatros, hangar, frente, motor de vanguard2) — el
+//     empaquetador no los reunía. Y un hallazgo mayor: la «constante suelta
+//     del motor en el chunk global» documentada por v240 era un ARTEFACTO
+//     DE MEDICIÓN — el texto de la propia bitácora v240 (que describe el
+//     marcador) viaja empaquetado y contaminaba el censo: con marcadores de
+//     CLASE limpios (verificados ×0 en bitácora y en maplibre) el chunk
+//     global NUNCA llevó código del motor. La casa corrigió su instrumento.
+// (2) LA REUNIÓN (next.config.ts) — grupo de caché familiaTres: TODA la
+//     familia (motor, globo, three-globe, render-objects, las 3 geometrías,
+//     tween) vive en UN chunk asíncrono único; la primera sala 3D lo baja y
+//     el navegador lo cachea para todas las demás; chunks:"async" lo mantiene
+//     FUERA del HTML crítico de cualquier sala (ley v222) y las salas sin 3D
+//     no lo bajan jamás.
+// (3) EL MOTOR QUE HONRA LA LEY — el build de producción pasa a --webpack:
+//     Turbopack no expone splitChunks y webpack sí; el tree-shaking de
+//     webpack además poda el motor por uso real (familia medida: 554 KB en
+//     4 copias → un solo chunk compartido). El dev sigue en Turbopack.
+// (4) PRUEBAS +3 y curación del comentario v240: estática — la configuración
+//     declara el grupo reunido con chunks async y el build declara el motor
+//     que lo honra; viva — el censo del build cuenta las piezas del motor
+//     con marcadores limpios y las salas /, /mundo, /zona-cero, /privacidad
+//     examinan su HTML crítico chunk a chunk sin encontrar el motor (ley
+//     v222 extendida a la casa entera). Salud v243→v244.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v244.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v243.0 LA POLÍTICA VIVA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v244.0";
+export const APP_CODENAME = "LA FAMILIA REUNIDA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

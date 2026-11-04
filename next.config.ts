@@ -2,6 +2,46 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  /* v244.0 LA FAMILIA REUNIDA — LA CURA DE LA DEUDA v240. Medido en el
+     build v243 (censo con marcadores de clase que sobreviven a la
+     minificación y que ninguna otra librería WebGL contiene): la familia
+     three viaja REPARTIDA en 3-5 trozos según el empaquetador — el motor
+     completo del globo, y copias del núcleo por cada raíz de import
+     independiente (los teatros de zona-cero, el hangar, el frente, el
+     motor de vanguard2…) — unos 550 KB gzip cuando lo justo sería UNA
+     copia compartida. Turbopack no expone splitChunks; webpack sí.
+     Esta grupo de caché reúne a TODA la familia (motor, globo y sus
+     adornos: geometrías cónicas, geojson, slippy-map, render-objects,
+     tween) en UN solo chunk asíncrono: la primera sala 3D que un
+     visitante abre lo baja una vez y el navegador lo cachea para todas
+     las demás. Con chunks:"async" jamás entra en el HTML crítico de
+     ninguna sala (ley v222 intacta) y las salas sin 3D no lo bajan.
+     El build de producción pasa a --webpack, el único motor que honra
+     esta configuración (documentado en worklog v244). */
+  webpack: (config, { isServer }) => {
+    if (!isServer && config.optimization?.splitChunks) {
+      /* v244.0 LA FAMILIA REUNIDA, segunda cura medida: ModuleConcatenation
+         (scope hoisting) pega el núcleo del motor a la RAÍZ de cada grafo
+         (globe.gl en unos, nuestros teatros en otros) y el grupo de caché
+         deja de reconocerlo — el build salió con DOS copias del núcleo
+         (376 KB minificado cada una, idénticas: medido módulo a módulo).
+         Con la concatenación apagada cada archivo vuelve a ser un módulo
+         con su propio path de node_modules, el test del grupo los casa
+         TODOS y la familia vive reunida en un solo chunk asíncrono. El
+         coste (algunos % de tamaño en el resto del bundle) es la prima
+         honesta de la reunión. */
+      config.optimization.concatenateModules = false;
+      config.optimization.splitChunks.cacheGroups.familiaTres = {
+        name: "familia-tres",
+        test: /[\\/]node_modules[\\/](three|globe\.gl|three-globe|three-render-objects|three-conic-polygon-geometry|three-geojson-geometry|three-slippy-map-globe|@tweenjs[\\/]tween\.js)[\\/]/,
+        chunks: "async",
+        priority: 40,
+        enforce: true,
+        reuseExistingChunk: true,
+      };
+    }
+    return config;
+  },
   // v184.0 CORTINA DE PIEDRA — LA BD VIAJA CON LA CASA: Vercel servía
   // «db: down» porque la SQLite (db/custom.db) no entraba en el bundle del
   // serverless (outputFileTracing no la ve: Prisma la abre por env var).
