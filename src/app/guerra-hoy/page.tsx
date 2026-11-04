@@ -24,13 +24,17 @@ export const dynamic = "force-dynamic";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
+// v239.0 EL FRENTE LIGERO — la lista entera cae en fallback (24 de las 24
+// últimas sin imageUrl en BD) y sus slots son de 220×140 px: las variantes
+// ligeras 480w de v238 (1,2 MB de JPG → ~154 KB de WebP) visten esta sala.
+// La metadata social de arriba usa /api/og — aquí no hay crawler que engañar.
 const FALLBACK_IMGS = [
-  "/assets/real/drone-1.jpg",
-  "/assets/real/city-1.jpg",
-  "/assets/real/ship-1.jpg",
-  "/assets/real/fire-1.jpg",
-  "/assets/real/jet-1.jpg",
-  "/assets/real/tanks-1.jpg",
+  "/assets/real/thumbs/drone-1.webp",
+  "/assets/real/thumbs/city-1.webp",
+  "/assets/real/thumbs/ship-1.webp",
+  "/assets/real/thumbs/fire-1.webp",
+  "/assets/real/thumbs/jet-1.webp",
+  "/assets/real/thumbs/tanks-1.webp",
 ];
 
 type NewsRow = {

@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v238.0", async () => {
+  await verificar("servidor vivo y en v239.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v238"), `versión ${r.json?.version} ≠ v238`);
+    afirmar(String(r.json?.version).startsWith("v239"), `versión ${r.json?.version} ≠ v239`);
   });
 
   // censo por API
@@ -1107,6 +1107,59 @@ async function parteB() {
       const r = await pedir(ruta);
       afirmar(r.status === 200, `sala medida rota ${ruta} → ${r.status}`);
     }
+  });
+
+  // ── v239.0 EL FRENTE LIGERO: la primera página entera cae en fallback y
+  // sus slots son pequeños (220×140 y 96×72) — las thumbs de v238 visten
+  // estas salas; la metadata social y el hero conservan el ORIGINAL
+  // (og/twitter declaran 1200×630: una thumb ahí es mentirle al crawler).
+  await verificar("EL FRENTE LIGERO: las dos pieles viven separadas y honestas (v239)", () => {
+    // /guerra-hoy: la lista entera en thumbs, cero fallback pesado a mano
+    const frente = readFileSync(join(RAIZ, "src/app/guerra-hoy/page.tsx"), "utf8");
+    afirmar(frente.includes("/assets/real/thumbs/"), "guerra-hoy no sirve las variantes ligeras");
+    afirmar(!frente.includes('"/assets/real/drone-1.jpg"'), "guerra-hoy todavía cita el fallback pesado a mano");
+    afirmar(frente.includes("/api/og"), "la metadata social de guerra-hoy dejó de usar /api/og");
+    // /noticia: DOS arrays — el original para metadata/hero, la thumb para relacionadas
+    const sala = readFileSync(join(RAIZ, "src/app/noticia/[id]/page.tsx"), "utf8");
+    afirmar(sala.includes("FALLBACK_THUMBS") && sala.includes("FALLBACK_IMGS"), "noticia no declara las dos pieles");
+    afirmar(sala.includes("thumbDe") && sala.includes("imgDe"), "noticia perdió uno de los dos vestidores");
+    // la metadata social (og/twitter/JSON-LD) se viste con el ORIGINAL —
+    // imgDe alimenta openGraph y el JSON-LD; thumbDe solo las relacionadas
+    afirmar(/images:\s*\[\{\s*url:\s*img/.test(sala), "el og:image de noticia no viste con el original");
+    afirmar(/image:\s*\[new URL\(img,\s*SITE_URL\)\.toString\(\)\]/.test(sala), "el JSON-LD de noticia no anuncia el original");
+    afirmar(/src=\{thumbDe\(r,\s*i \+ 1\)\}/.test(sala), "las relacionadas de noticia no visten con la thumb");
+    // el hero (w-full, og declara 1200×630) NO puede vestirse de thumb
+    afirmar(/src=\{img\}/.test(sala), "el hero de noticia dejó de citar al vestidor del original");
+    afirmar(!/src=\{img\b[^}]*\}[^>]*96/.test(sala), "un slot de 96 px viste el original — la dieta se coló donde no iba");
+  });
+
+  await verificar("EL FRENTE LIGERO viva: guerra-hoy en thumbs y la puerta del cable honesta (v239)", async () => {
+    // la primera página: el SSR entero en thumbs, cero JPG crudo del archivo
+    const frente = await pedir("/guerra-hoy");
+    afirmar(frente.status === 200, `no 200 (${frente.status})`);
+    afirmar(frente.texto.includes("/assets/real/thumbs/"), "el SSR de guerra-hoy no cita las thumbs");
+    const crudos = frente.texto.match(/\/assets\/real\/[a-z0-9-]+\.jpg/g) || [];
+    afirmar(crudos.length === 0, `guerra-hoy todavía sirve JPG crudo (${[...new Set(crudos)].join(", ")})`);
+    // la puerta del cable: relacionadas en thumbs Y hero/JSON-LD en original —
+    // el id sale del SSR de guerra-hoy (BD real, jamás escrito a mano)
+    const idCable = (frente.texto.match(/\/noticia\/(cm[a-z0-9]+)/) || [])[1];
+    afirmar(Boolean(idCable), "guerra-hoy no expone ninguna puerta /noticia/<id>");
+    const sala = await pedir(`/noticia/${idCable}`);
+    afirmar(sala.status === 200, `la sala del cable no 200 (${sala.status})`);
+    afirmar(sala.texto.includes("/assets/real/thumbs/"), "las relacionadas no visten thumbs en el SSR");
+    afirmar(sala.texto.includes("/assets/real/drone-1.jpg"), "el hero/JSON-LD dejó el original — la dieta se pasó de raya");
+    const crudosSala = sala.texto.match(/src="\/assets\/real\/[a-z0-9-]+\.jpg"/g) || [];
+    afirmar(crudosSala.length === 1, `el original debe aparecer UNA vez (hero), no ${crudosSala.length}`);
+  });
+
+  await verificar("EL FRENTE LIGERO: las salas vestidas siguen respondiendo 200 (v239)", async () => {
+    for (const ruta of ["/guerra-hoy", "/conflicto/ukraine", "/mundo"]) {
+      const r = await pedir(ruta);
+      afirmar(r.status === 200, `sala vestida rota ${ruta} → ${r.status}`);
+    }
+    const thumb = await pedir("/assets/real/thumbs/tanks-1.webp");
+    afirmar(thumb.status === 200, `thumb de la lista → ${thumb.status}`);
+    afirmar(String(thumb.headers?.["content-type"] || "").includes("image/webp"), "content-type de la thumb no es webp");
   });
 
   // ── v233.0 LA BALANZA: las variables explicadas y la cadena navegable ──

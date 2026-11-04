@@ -25,6 +25,12 @@ export const dynamic = "force-dynamic";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
+// v239.0 EL FRENTE LIGERO — DOS pieles para DOS deberes:
+// · FALLBACK_IMGS (JPG original) viste el hero (slot w-full) y la metadata
+//   social — og/twitter declaran 1200×630 y el JSON-LD la anuncia a Google:
+//   ahí una thumb de 480w sería mentirle al crawler y borrosa en pantalla.
+// · FALLBACK_THUMBS (WebP 480w de v238) viste SOLO las cards relacionadas
+//   (slots de 96×72 px) — el mismo patrón honesto de /conflicto y /guerra-hoy.
 const FALLBACK_IMGS = [
   "/assets/real/drone-1.jpg",
   "/assets/real/city-1.jpg",
@@ -32,6 +38,15 @@ const FALLBACK_IMGS = [
   "/assets/real/fire-1.jpg",
   "/assets/real/jet-1.jpg",
   "/assets/real/tanks-1.jpg",
+];
+
+const FALLBACK_THUMBS = [
+  "/assets/real/thumbs/drone-1.webp",
+  "/assets/real/thumbs/city-1.webp",
+  "/assets/real/thumbs/ship-1.webp",
+  "/assets/real/thumbs/fire-1.webp",
+  "/assets/real/thumbs/jet-1.webp",
+  "/assets/real/thumbs/tanks-1.webp",
 ];
 
 type NewsRow = {
@@ -84,6 +99,12 @@ async function getRelacionadas(id: string, tag: string | null, n = 5): Promise<N
 
 function imgDe(it: NewsRow | null, i = 0): string {
   return it?.imageUrl || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
+}
+
+// v239.0 EL FRENTE LIGERO — la piel ligera para los slots pequeños:
+// si el cable tiene foto externa viaja esa; si cae en fallback, la thumb.
+function thumbDe(it: NewsRow | null, i = 0): string {
+  return it?.imageUrl || FALLBACK_THUMBS[i % FALLBACK_THUMBS.length];
 }
 
 function hace(fecha: Date): string {
@@ -346,7 +367,7 @@ export default async function NoticiaPage({
                   className="group flex gap-3 items-start border border-zinc-800 hover:border-amber-500/50 rounded-md p-3 bg-zinc-900/40 transition-colors"
                 >
                   <img
-                    src={imgDe(r, i + 1)}
+                    src={thumbDe(r, i + 1)}
                     alt={r.title}
                     width={96}
                     height={72}

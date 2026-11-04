@@ -1987,6 +1987,37 @@
 // QA: tsc 0 · eslint 0 · build EXIT 0 · health v238.0 db up · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v237.0 EL RELIEVE y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v238.0";
-export const APP_CODENAME = "EL VELOCÍMETRO";
+// v239.0: EL FRENTE LIGERO — la dieta de v238 llega a las dos salas que
+//     quedaban sirviendo /assets/real/ crudo (la cola lo llevaba señalado):
+// (1) LA MEDIDA QUE MANDÓ — en la BD 1.857 de 1.877 cables viajan sin
+//     imageUrl: las últimas 24 (las que pinta /guerra-hoy) caen TODAS en
+//     fallback. Línea base v238 medida con el velocímetro: /guerra-hoy
+//     1.817 KB con 1.202 KB de imágenes (3G lenta: 10 s) y /noticia/<id>
+//     1.740 KB con las mismas 1.202 KB (3G: 10 s) — seis JPG de ~200 KB
+//     promedio vistiendo slots de 220×140 y 96×72 px.
+// (2) LA REPARTICIÓN HONESTA — cada imagen de la casa tiene DOS deberes y
+//     DOS pieles: /guerra-hoy viste su lista completa (24 cards, slot
+//     220×140) con las thumbs 480w de v238; /noticia/[id] separa los
+//     deberes — hero y metadata social (og/twitter/JSON-LD declaran
+//     1200×630) conservan el ORIGINAL (una thumb ahí es mentirle al
+//     crawler y borrosa en pantalla), y SOLO las cards relacionadas (slot
+//     96×72) visten la thumb. Los ORIGINALES no se borran jamás: siguen
+//     sirviendo a biblioteca, cine, juego y a los crawlers.
+// (3) MEDIDO TRAS EL CAMBIO (velocímetro contra health v239.0, visita
+//     fría, comprimido): /guerra-hoy 1.817→806 KB, imágenes 1.202→191 KB,
+//     3G lenta 10 s→4 s · /noticia/<id> 1.740→879 KB, imágenes
+//     1.202→341 KB, 3G 10 s→5 s.
+// (4) PRUEBAS +3 (97/97): estática — las dos pieles viven separadas
+//     (FALLBACK_IMGS vs FALLBACK_THUMBS, imgDe vs thumbDe) y cada una en
+//     su deber (og:image y JSON-LD visten original por regex; el slot de
+//     96 px jamás viste el original); viva — el SSR de /guerra-hoy no
+//     contiene NI UN src de JPG crudo del archivo, la sala del cable
+//     (id real sacado del SSR, jamás a mano) muestra las relacionadas en
+//     thumbs y el hero en original exactamente UNA vez; viva las salas
+//     vestidas 200 + thumb webp con content-type. Salud v238→v239.
+// QA: tsc 0 · eslint 0 · build EXIT 0 · health v239.0 db up · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v238.0 EL VELOCÍMETRO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v239.0";
+export const APP_CODENAME = "EL FRENTE LIGERO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

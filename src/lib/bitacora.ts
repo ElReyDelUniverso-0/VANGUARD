@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v239.0",
+    nombre: "EL FRENTE LIGERO — la dieta de v238 viste la primera página y las puertas de los cables (guerra-hoy + noticia, medido)",
+    hitos: [
+      "LA MEDIDA QUE MANDÓ — 1.857 de 1.877 cables viajan sin imageUrl: las últimas 24 de /guerra-hoy caen TODAS en fallback; línea base v238 medida con el velocímetro: /guerra-hoy 1.817 KB con 1.202 KB de imágenes (3G lenta: 10 s) y /noticia/<id> 1.740 KB con las mismas 1.202 KB — seis JPG de ~200 KB vistiendo slots de 220×140 y 96×72 px",
+      "LA REPARTICIÓN HONESTA — /guerra-hoy viste su lista completa con las thumbs 480w de v238; /noticia/[id] separa los deberes: hero y metadata social (og/twitter/JSON-LD declaran 1200×630) conservan el ORIGINAL — una thumb ahí es mentirle al crawler — y solo las relacionadas (96×72) visten la thumb; los originales siguen sirviendo a biblioteca, cine, juego y crawlers (la casa no borra)",
+      "MEDIDO TRAS EL CAMBIO (velocímetro contra health v239.0) — /guerra-hoy 1.817→806 KB, imágenes 1.202→191 KB, 3G lenta 10 s→4 s · /noticia/<id> 1.740→879 KB, imágenes 1.202→341 KB, 3G 10 s→5 s",
+      "QA v239: tsc 0, eslint 0, build EXIT 0, health v239.0 db up, pruebas 97/97 (+3 EL FRENTE LIGERO: las dos pieles separadas y en su deber por regex, SSR de guerra-hoy sin un solo JPG crudo, sala del cable con id real del SSR mostrando relacionadas en thumbs y hero original una sola vez), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v238.0",
     nombre: "EL VELOCÍMETRO — /mundo y /conflicto medidos en móvil y la primera dieta que los números mandaron (medir primero)",
     hitos: [
