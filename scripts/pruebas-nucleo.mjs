@@ -304,10 +304,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v230.0", async () => {
+  await verificar("servidor vivo y en v231.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v230"), `versión ${r.json?.version} ≠ v230`);
+    afirmar(String(r.json?.version).startsWith("v231"), `versión ${r.json?.version} ≠ v231`);
   });
 
   // censo por API
@@ -868,6 +868,40 @@ async function parteB() {
       const dest = await pedir(e.ruta);
       afirmar(dest.status === 200, `puerta de materia prima rota ${e.ruta} → ${dest.status}`);
     }
+  });
+
+  // ── v231.0 EL LATIDO: el vértigo conecta cada pieza con su país y su sala ──
+  await verificar("EL LATIDO: /vertigo proyecta país, salas reales y sin fechas a mano (v231)", () => {
+    const feed = readFileSync(join(RAIZ, "src/app/vertigo/vertigo-feed.tsx"), "utf8");
+    // el país de origen deja de ser dato muerto: chip hacia la ficha vg:pais
+    for (const trozo of ["nombrePais", "vg:pais:", "LA SALA DEL MUNDO", "salas"]) {
+      afirmar(feed.includes(trozo), `el feed no declara «${trozo}»`);
+    }
+    // los conteos de las salas llegan del server: CERO cifras escritas a mano
+    afirmar(!/\d+ cables/.test(feed), "¡el feed escribe conteos de cables a mano!");
+    // la página server mide el archivo con UNA groupBy del catálogo documentado
+    const pag = readFileSync(join(RAIZ, "src/app/vertigo/page.tsx"), "utf8");
+    for (const trozo of ["TEATROS", "groupBy", "salas={salas}"]) {
+      afirmar(pag.includes(trozo), `la página del vértigo no declara «${trozo}»`);
+    }
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la página del vértigo escribe fechas a mano!");
+  });
+
+  await verificar("EL LATIDO vivo: /vertigo con fichas de país, LA SALA DEL MUNDO y sus puertas (v231)", async () => {
+    const r = await pedir("/vertigo");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país no llegan al HTML server-rendered");
+    afirmar(r.texto.includes("LA SALA DEL MUNDO"), "sin la última estación del feed");
+    afirmar(r.texto.includes("/conflicto/ukraine"), "las salas reales no tienen sus puertas");
+    afirmar(r.texto.includes("cables ▸"), "sin los conteos reales en las salas");
+    afirmar(r.texto.includes("/nucleo"), "sin la puerta a la búsqueda del núcleo");
+  });
+
+  await verificar("EL LATIDO: la ficha vg:pais de un país del feed responde honesta (v231)", async () => {
+    // Israel tiene cables reales en el archivo (il) — la ficha nunca 404
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:pais:il")}`);
+    afirmar(r.status === 200 && r.json?.ok, "ficha vg:pais:il no ok");
+    afirmar(r.json.entidad?.id === "vg:pais:il", "id de ficha de país inestable");
   });
 
   await verificar("los chips contextuales viven en /noticia/[id] con su ACONTECIMIENTO", async () => {

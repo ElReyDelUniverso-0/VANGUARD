@@ -1738,6 +1738,24 @@
 //    db/custom.db.
 //  ⑥ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 72/72 (+3 EL ESPEJO) ·
 //    BD intocada (1877 · 9).
-export const APP_VERSION = "v230.0";
-export const APP_CODENAME = "EL ESPEJO";
+// v231.0 EL LATIDO — AGENT 2, TURNO AUTOMÁTICO (cron 500735), directiva
+//  del Dueño (módulo a módulo): módulo expandido: /vertigo — el feed
+//  infinito (v211) tenía el país de origen de cada cable como dato muerto
+//  (viajaba al client y nunca se renderizaba) y cero puertas al mapa real.
+//  ① EL PAÍS DEL CABLE (feed client): cada pieza gana el chip 🌐 con el
+//    nombre del país de origen (nombrePais, lib pura client-safe) hacia
+//    su FICHA vg:pais en /nucleo — la ficha es honesta para toda ISO con
+//    cables (atlas o meta ISO + cables reales), jamás 404. El API
+//    /api/vertigo ya entregaba pais — cero cambios de contrato.
+//  ② LA SALA DEL MUNDO (última estación del feed): la página server mide
+//    el archivo con UNA query groupBy (cables por los teatros del catálogo
+//    documentado TEATROS, ordenados por conteo) y entrega las salas al
+//    feed — slide snap-start con conteo REAL hacia /conflicto/[tag] +
+//    puertas LA BÚSQUEDA DEL NÚCLEO y GUERRA HOY. Sin BD la estación no
+//    se finge: el feed vive sin ella. Cero conteos ni fechas a mano.
+//  ③ noscript enriquecido: además de /guerra-hoy, la puerta /nucleo.
+//  ④ QA: tsc 0 · eslint 0 · build EXIT 0 · pruebas 75/75 (+3 EL LATIDO) ·
+//    BD intocada (1877 · 9).
+export const APP_VERSION = "v231.0";
+export const APP_CODENAME = "EL LATIDO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

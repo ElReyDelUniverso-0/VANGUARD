@@ -22,6 +22,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { haceDe } from "@/lib/pulsos-data";
 import { TEATROS } from "@/lib/teatros";
+// v231.0 EL LATIDO — el país de origen del cable deja de ser dato muerto:
+// cada pieza enlaza a SU FICHA vg:pais en el núcleo (ficha honesta para
+// toda ISO con cables — jamás 404) y el feed gana LA SALA DEL MUNDO.
+import { nombrePais } from "@/lib/impacto";
 
 export type CableVertigo = {
   id: string;
@@ -34,6 +38,10 @@ export type CableVertigo = {
   conflicto: string;
   pais: string;
 };
+
+// v231.0 EL LATIDO — las salas del archivo, con su conteo REAL de la BD,
+// llegan de la página server (una query groupBy): sin BD, sin slide.
+export type SalaVertigo = { tag: string; nombre: string; n: number };
 
 const LOTE_EXTRA = 24;
 
@@ -70,7 +78,13 @@ function latir(id: string): number {
   return n;
 }
 
-export function VertigoFeed({ iniciales }: { iniciales: CableVertigo[] }) {
+export function VertigoFeed({
+  iniciales,
+  salas,
+}: {
+  iniciales: CableVertigo[];
+  salas?: SalaVertigo[];
+}) {
   const router = useRouter();
   const [cables, setCables] = useState<CableVertigo[]>(iniciales);
   const [idx, setIdx] = useState(0);
@@ -332,6 +346,21 @@ export function VertigoFeed({ iniciales }: { iniciales: CableVertigo[] }) {
                     </span>
                   </Link>
                 )}
+                {/* v231.0 EL LATIDO — el país de origen hacia su ficha vg:pais:
+                    la ficha del núcleo es honesta para toda ISO con cables. */}
+                {c.pais && (
+                  <Link
+                    href={`/nucleo?id=${encodeURIComponent(`vg:pais:${c.pais}`)}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex flex-col items-center gap-1 text-zinc-300 hover:text-sky-300 transition-colors"
+                    aria-label={`País de origen ${nombrePais(c.pais)}`}
+                  >
+                    <span className="text-2xl">🌐</span>
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-center max-w-[64px] leading-tight">
+                      {nombrePais(c.pais)}
+                    </span>
+                  </Link>
+                )}
               </div>
 
               {/* la información — abajo, estilo pieza */}
@@ -373,6 +402,60 @@ export function VertigoFeed({ iniciales }: { iniciales: CableVertigo[] }) {
             </section>
           );
         })}
+
+        {/* v231.0 EL LATIDO — LA SALA DEL MUNDO: la última estación del feed
+            es el mapa real. Los teatros y sus conteos llegan del server (BD);
+            sin BD la estación no se finge. */}
+        {salas && salas.length > 0 && (
+          <section className="h-[100dvh] w-full snap-start relative overflow-hidden flex items-center justify-center bg-zinc-950">
+            <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 via-transparent to-black" />
+            <div className="relative z-10 max-w-lg mx-auto px-6 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-amber-400">
+                ◉ LA SALA DEL MUNDO
+              </p>
+              <h2 className="mt-3 font-orbitron text-2xl font-black tracking-wide text-zinc-50">
+                LAS SALAS DEL ARCHIVO
+              </h2>
+              <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed">
+                Cada pieza que deslizaste nace de un teatro real documentado
+                por la agencia. Entra a la sala de cualquiera y lee los cables
+                verificados, con su fuente y su sello de exactitud.
+              </p>
+              <div className="mt-5 flex flex-wrap justify-center gap-2">
+                {salas.map((s) => (
+                  <Link
+                    key={s.tag}
+                    href={`/conflicto/${s.tag}`}
+                    title={`${s.n} cables reales de ${s.nombre} en la agencia de Vanguard, con su fuente y su sello de exactitud`}
+                    className="font-mono text-[10px] uppercase tracking-widest border border-amber-500/40 text-amber-300 hover:bg-amber-500/10 rounded px-3 py-2 transition-colors"
+                  >
+                    {s.nombre} · {s.n} cables ▸
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap justify-center gap-2">
+                <Link
+                  href="/nucleo"
+                  title="La búsqueda de todo el núcleo: países, frentes, acontecimientos, cables y más"
+                  className="font-mono text-[10px] uppercase tracking-widest border border-zinc-700 text-zinc-300 hover:border-sky-400/50 hover:text-sky-300 rounded px-3 py-2 transition-colors"
+                >
+                  LA BÚSQUEDA DEL NÚCLEO ▸
+                </Link>
+                <Link
+                  href="/guerra-hoy"
+                  title="La primera página clásica de la agencia, sin deslizar"
+                  className="font-mono text-[10px] uppercase tracking-widest border border-zinc-700 text-zinc-300 hover:border-sky-400/50 hover:text-sky-300 rounded px-3 py-2 transition-colors"
+                >
+                  GUERRA HOY ▸
+                </Link>
+              </div>
+              <p className="mt-5 font-mono text-[9px] text-zinc-600 leading-relaxed">
+                Conteos en vivo del archivo de la agencia · los teatros son los
+                documentados por la casa — nada inventado.
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* centinela: cerca del final pide más (o recicla) — JAMÁS cartel de fin */}
         <div className="h-[100dvh] snap-start flex items-center justify-center">
