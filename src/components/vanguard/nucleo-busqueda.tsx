@@ -42,6 +42,7 @@ const COLOR_TIPO: Record<TipoEntidad, string> = {
   mapa: "text-sky-300 border-sky-400/40",
   analisis: "text-violet-400 border-violet-500/40",
   simulacion: "text-orange-300 border-orange-400/40",
+  punto: "text-lime-300 border-lime-400/40",
 };
 
 export function NucleoBusqueda({ consultaInicial = "" }: { consultaInicial?: string }) {

@@ -11,6 +11,7 @@ import { MODULOS_NUCLEO, modulosPorCategoria, moduloPorId } from "@/lib/nucleo/r
 import { FUENTES_PUBLICAS, FUENTES_PRIVADAS } from "@/lib/nucleo/fuentes";
 import { TIPOS_ENTIDAD, ETIQUETA_TIPO, idEntidad, type TipoEntidad } from "@/lib/nucleo/tipos";
 import { fichaEntidad, type FichaEntidad } from "@/lib/nucleo/relaciones";
+import { puntosDelNucleo } from "@/lib/nucleo/puntos";
 import { FUENTE_INDICADORES } from "@/lib/nucleo/indicadores";
 import { NucleoBusqueda } from "@/components/vanguard/nucleo-busqueda";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -346,6 +347,12 @@ export default async function NucleoPage({
               cifra={`${Object.keys(TEATROS).length}`}
               detalle="Teatros de guerra con página propia y cables en vivo"
               ejemplo={{ href: "/nucleo?id=vg:region:ukraine", etiqueta: "ficha del frente" }}
+            />
+            <TarjetaEntidad
+              tipo="punto"
+              cifra={`${puntosDelNucleo().length}`}
+              detalle="Frentes documentados de las salas OSINT de la casa (v129), cada uno con su ficha y su fuente citada"
+              ejemplo={{ href: "/nucleo?id=vg:punto:bajmut", etiqueta: "ficha de Bajmut" }}
             />
             <TarjetaEntidad
               tipo="acontecimiento"

@@ -1633,6 +1633,26 @@
 //    vg:simulacion:escenarios gratis) + sitemap.
 //  ④ indicadores.ts aditivo: indicadoresNumericosDePais() — los valores
 //    crudos del mismo snapshot (cero peticiones extra).
-export const APP_VERSION = "v224.0";
-export const APP_CODENAME = "EL ESTRATEGA";
+// v225.0 EL FRENTE — AGENT 2 tarea 7 (TURNO AUTOMÁTICO, cron 500735):
+//  mandato cola (b) eslabón MAPAS — el pendiente declarado desde
+//  v220/v221: los frentes documentados se vuelven ENTIDADES.
+//  ① 10.º tipo de entidad: vg:punto:<clave> (tipos.ts, aditivo;
+//    etiqueta PUNTO DEL FRENTE + relación punto_de). Clave estable =
+//    slug normalizado del nombre; desambiguación determinista si un
+//    día dos teatros comparten ciudad (hoy: cero colisiones reales).
+//  ② puntos.ts (puro, sin BD): puntosDelNucleo() — el catálogo de
+//    TODOS los frentes proyectando SOLO geografiaDeTeatro (salas
+//    OSINT v129 con fuente citada; cero literales lat/lng, la prueba
+//    anti-invención lo vigila) + puntoPorClave() con null honesto.
+//  ③ Ficha vg:punto (relaciones.ts): estado, teatro, coordenadas
+//    DOCUMENTADAS, sala, fuente OSINT, nota de la sala y precisión;
+//    enlaces al mapa /ver-guerra, al globo, a la ficha del teatro, al
+//    acontecimiento y a los países — la cadena completa
+//    mapa → frente → acontecimiento → país → indicadores → fuente.
+//  ④ Búsqueda: los frentes responden como entidad vg:punto y llevan
+//    a SU FICHA (la ficha lleva al mapa — antes iban directo a
+//    /ver-guerra sin ficha). Filtro &tipo=punto gratis por la
+//    whitelist. /nucleo: tarjeta PUNTO DEL FRENTE con conteo real.
+export const APP_VERSION = "v225.0";
+export const APP_CODENAME = "EL FRENTE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

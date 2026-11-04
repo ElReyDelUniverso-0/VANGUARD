@@ -98,9 +98,9 @@ async function parteA() {
     }
   });
 
-  await verificar("9 tipos de entidad con la fórmula vg:<tipo>:<clave>", () => {
+  await verificar("10 tipos de entidad con la fórmula vg:<tipo>:<clave>", () => {
     const tipos = readFileSync(join(RAIZ, "src/lib/nucleo/tipos.ts"), "utf8");
-    for (const t of ["pais", "region", "acontecimiento", "documento", "fuente", "mapa", "analisis", "simulacion", "noticia"]) {
+    for (const t of ["pais", "region", "acontecimiento", "documento", "fuente", "mapa", "analisis", "simulacion", "noticia", "punto"]) {
       afirmar(tipos.includes(`"${t}"`), `falta el tipo ${t}`);
     }
     afirmar(tipos.includes("vg:${tipo}"), "la fórmula de id estable no está en tipos.ts");
@@ -207,6 +207,23 @@ async function parteA() {
     afirmar(datos.includes("fnt:acontecimientos") && datos.includes("fnt:indicadores"), "los datos no declaran su procedencia");
     afirmar(!/cables:\s*\d{2,}/.test(datos), "los datos llevan cifras escritas a mano — invención");
   });
+
+  await verificar("EL FRENTE: los puntos son entidades SIN una coordenada inventada (v225)", () => {
+    const rutaPuntos = join(RAIZ, "src/lib/nucleo/puntos.ts");
+    afirmar(existsSync(rutaPuntos), "src/lib/nucleo/puntos.ts no existe");
+    const puntos = readFileSync(rutaPuntos, "utf8");
+    // el catálogo de puntos NO declara ni una coordenada: solo proyecta
+    // geografiaDeTeatro (las salas OSINT documentadas de la casa)
+    afirmar(!/lat:\s*-?\d/.test(puntos) && !/lng:\s*-?\d/.test(puntos), "¡puntos.ts declara coordenadas literales — está inventando puntos!");
+    for (const trozo of ["geografiaDeTeatro", "puntoPorClave", "puntosDelNucleo", "normalizar"]) {
+      afirmar(puntos.includes(trozo), `el catálogo de puntos no usa el contrato de la casa: falta «${trozo}»`);
+    }
+    // la ficha del punto en relaciones.ts cita la fuente y declara la precisión
+    const rel = readFileSync(join(RAIZ, "src/lib/nucleo/relaciones.ts"), "utf8");
+    for (const trozo of ["PUNTO DEL FRENTE", "Coordenadas documentadas", "Fuente del mapa", "NO cartografía oficial"]) {
+      afirmar(rel.includes(trozo), `la ficha vg:punto no declara «${trozo}»`);
+    }
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -226,10 +243,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v224.0", async () => {
+  await verificar("servidor vivo y en v225.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v224"), `versión ${r.json?.version} ≠ v224`);
+    afirmar(String(r.json?.version).startsWith("v225"), `versión ${r.json?.version} ≠ v225`);
   });
 
   // censo por API
@@ -316,13 +333,61 @@ async function parteB() {
     afirmar(Boolean(d), "el escaneo normalizado no encuentra títulos con tilde");
   });
 
-  await verificar("LA LUPA: «bajmut» lleva al MAPA DEL FRENTE con su fuente OSINT citada", async () => {
+  await verificar("LA LUPA: «bajmut» halla la ENTIDAD del frente con su fuente OSINT citada", async () => {
     const r = await pedir("/api/nucleo/busqueda?q=bajmut");
     afirmar(r.status === 200 && r.json?.ok === true, "no ok");
-    const f = (r.json.resultados ?? []).find((x) => x.titulo?.startsWith("Frente:") && x.ruta === "/ver-guerra");
+    const f = (r.json.resultados ?? []).find((x) => x.titulo?.startsWith("Frente:"));
     afirmar(Boolean(f), "la ciudad del frente (sala de guerra v129/v220) no es buscable");
+    afirmar(f.entidad?.tipo === "punto" && f.entidad?.id === "vg:punto:bajmut", `el frente no es una entidad vg:punto: ${f.entidad?.id}`);
     afirmar(f.origen === "fnt:teatros", "el frente no declara su fuente");
     afirmar(String(f.subtitulo).includes("OSINT"), "el frente no cita la procedencia del mapa");
+    afirmar(decodeURIComponent(String(f.ruta)).includes("id=vg:punto:"), "el frente no lleva a su ficha");
+  });
+
+  await verificar("EL FRENTE: la ficha vg:punto:bajmut — coordenadas documentadas y cadena completa", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:punto:bajmut")}`);
+    afirmar(r.status === 200 && r.json?.ok, `ficha del punto no ok (${r.status})`);
+    afirmar(r.json.entidad?.tipo === "punto" && r.json.entidad?.nombre === "Bajmut", "entidad del punto rota");
+    const meta = r.json.meta ?? [];
+    const coords = meta.find((m) => m.k === "Coordenadas documentadas");
+    afirmar(Boolean(coords) && /\d+\.\d+°, -?\d+\.\d+°/.test(coords.v), `sin coordenadas documentadas: ${coords?.v ?? "ausente"}`);
+    afirmar((meta.find((m) => m.k === "Fuente del mapa")?.v ?? "").includes("ISW"), "sin la fuente OSINT de la sala citada");
+    afirmar((meta.find((m) => m.k === "Precisión del mapa")?.v ?? "").includes("NO cartografía oficial"), "sin precisión declarada");
+    afirmar((meta.find((m) => m.k === "Estado")?.v ?? "").length > 0, "sin el estado del punto");
+    const enlaces = r.json.enlaces ?? [];
+    const rutasEnlaces = enlaces.map((e) => e.ruta);
+    afirmar(rutasEnlaces.includes("/ver-guerra"), "sin enlace al mapa del frente");
+    afirmar(rutasEnlaces.some((x) => x.startsWith("/conflicto/")), "sin enlace a la ficha del teatro");
+    afirmar(enlaces.some((e) => e.ruta.includes("id=vg:acontecimiento:")), "sin enlace al acontecimiento del frente");
+    afirmar(enlaces.some((e) => e.ruta.includes("id=vg:pais:")), "sin enlace a los países del frente");
+    const geo = r.json.puntoGeografia;
+    afirmar(typeof geo?.lat === "number" && typeof geo?.lng === "number" && geo.salaGuerra === "ucrania", "geografía estructurada del punto rota");
+    for (const e of enlaces.slice(0, 5)) {
+      const dest = await pedir(e.ruta);
+      afirmar(dest.status === 200, `enlace roto ${e.ruta} → ${dest.status}`);
+    }
+  });
+
+  await verificar("EL FRENTE: 404 honesto para una clave que no existe en la geografía", async () => {
+    const r = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:punto:atlantis")}`);
+    afirmar(r.status === 404, `status ${r.status} ≠ 404`);
+    afirmar(String(r.json?.error ?? "").includes("geografía documentada"), "el 404 no explica su criterio");
+  });
+
+  await verificar("EL FRENTE: filtro &tipo=punto en la búsqueda", async () => {
+    const r = await pedir(`/api/nucleo/busqueda?q=${encodeURIComponent("bajmut")}&tipo=punto`);
+    afirmar(r.status === 200 && r.json?.ok === true, "no ok");
+    const rdos = r.json.resultados ?? [];
+    afirmar(rdos.length >= 1, "el filtro se llevó todo");
+    afirmar(rdos.every((x) => x.entidad?.tipo === "punto"), "se coló un resultado de otro tipo");
+    afirmar(r.json.tipo === "punto", "el filtro aplicado no se declara");
+  });
+
+  await verificar("EL FRENTE: /nucleo muestra la tarjeta PUNTO DEL FRENTE con conteo real", async () => {
+    const r = await pedir("/nucleo");
+    afirmar(r.status === 200, "no 200");
+    afirmar(r.texto.includes("PUNTO DEL FRENTE"), "sin la tarjeta del nuevo tipo");
+    afirmar(r.texto.includes("ficha de Bajmut"), "sin el ejemplo de ficha del frente");
   });
 
   await verificar("LA LUPA: filtro &tipo=noticia honesto y 400 en tipo desconocido", async () => {

@@ -25,6 +25,7 @@ import {
   cronologiaDeAcontecimiento,
 } from "./acontecimientos";
 import { geografiaDeTeatro, metaGeografia, type GeografiaTeatro } from "./geografia";
+import { puntoPorClave } from "./puntos";
 import { indicadoresDePais, type FichaIndicadores } from "./indicadores";
 import {
   idEntidad,
@@ -261,6 +262,17 @@ export interface FichaEntidad {
   total?: number; // conteo real asociado (cables, etc.)
   geografia?: GeografiaTeatro; // mapa del frente con procedencia (v220 EL CARTÓGRAFO)
   indicadores?: FichaIndicadores; // barómetro real del Banco Mundial (v223 EL BARÓMETRO)
+  puntoGeografia?: {
+    // v225 EL FRENTE: el punto concreto con sus coordenadas DOCUMENTADAS
+    nombre: string;
+    lat: number;
+    lng: number;
+    estado: string;
+    nota: string | null;
+    salaGuerra: string | null;
+    fuenteDatos: string | null;
+    precision: string;
+  };
 }
 
 /** Cables reales recientes por filtros — helper interno con fallo honesto. */
@@ -619,6 +631,83 @@ export async function fichaEntidad(idRaw: string): Promise<FichaEntidad> {
     } catch {
       return { ok: false, error: "La verdad cruda no responde" };
     }
+  }
+
+  // ── PUNTO DEL FRENTE (v225 EL FRENTE: una ciudad de la sala OSINT) ──
+  // Coordenadas SOLO las documentadas en las salas de guerra de la
+  // casa (v129), proyectadas por el cartógrafo (v220) — jamás
+  // inventadas. La fuente OSINT se CITA, no se copia.
+  if (tipo === "punto") {
+    const p = puntoPorClave(clave);
+    if (!p) {
+      return { ok: false, error: "Punto del frente no encontrado en la geografía documentada de la casa" };
+    }
+    const geo = geografiaDeTeatro(p.teatro);
+    const enlaces: EnlaceContextual[] = [
+      {
+        etiqueta: "LA FICHA DEL TEATRO ▸",
+        ruta: `/conflicto/${p.teatro}`,
+        motivo: `El teatro ${p.teatroNombre} entero, con sus cables reales`,
+        tipoRelacion: "pertenece_a",
+      },
+    ];
+    if (p.salaGuerra) {
+      enlaces.push({
+        etiqueta: "EL MAPA DEL FRENTE ▸",
+        ruta: "/ver-guerra",
+        motivo: `La sala de guerra «${p.salaGuerra}» donde este punto vive en el mapa (estimación OSINT — NO cartografía oficial)`,
+        tipoRelacion: "visible_en",
+      });
+    }
+    enlaces.push({
+      etiqueta: "VER EN EL MUNDO 3D ▸",
+      ruta: `/mundo?teatro=${p.teatro}`,
+      motivo: "El teatro encendido en el planeta",
+      tipoRelacion: "visible_en",
+    });
+    const slugAcon = slugAcontecimientoDeTeatro(p.teatro);
+    if (slugAcon) {
+      enlaces.push({
+        etiqueta: "EL ACONTECIMIENTO ▸",
+        ruta: `/nucleo?id=${idAcontecimiento(slugAcon)}`,
+        motivo: "El hecho real que reúne los cables de este frente",
+        tipoRelacion: "pertenece_a",
+      });
+    }
+    for (const iso of paisesDeTeatro(p.teatro).slice(0, 3)) {
+      enlaces.push({
+        etiqueta: `FICHA DE ${nombrePais(iso).toUpperCase()} ▸`,
+        ruta: `/nucleo?id=${idEntidad("pais", iso)}`,
+        motivo: "País parte directa de este frente",
+        tipoRelacion: "implica_pais",
+      });
+    }
+    return {
+      ok: true,
+      entidad: { id: idEntidad("punto", p.clave), tipo, nombre: p.nombre },
+      descripcion: `Punto del frente del teatro ${p.teatroNombre}: «${p.nombre}» con estado «${p.estado}» según el corte editorial de la sala de guerra de la casa${p.nota ? ` — ${p.nota}` : ""}.`,
+      meta: [
+        { k: "Estado", v: p.estado.toUpperCase() },
+        { k: "Teatro", v: `${p.teatroNombre} (${p.teatro})` },
+        { k: "Coordenadas documentadas", v: `${p.lat.toFixed(2)}°, ${p.lng.toFixed(2)}°` },
+        ...(p.salaGuerra ? [{ k: "Sala de guerra", v: p.salaGuerra }] : []),
+        ...(p.fuenteDatos ? [{ k: "Fuente del mapa", v: p.fuenteDatos }] : []),
+        ...(p.nota ? [{ k: "Nota de la sala", v: p.nota }] : []),
+        { k: "Precisión del mapa", v: geo.precision },
+      ],
+      enlaces,
+      vive: "Salas de guerra de la casa (fnt:teatros · v129/v220)",
+      puntoGeografia: {
+        nombre: p.nombre,
+        lat: p.lat,
+        lng: p.lng,
+        estado: p.estado,
+        nota: p.nota,
+        salaGuerra: p.salaGuerra,
+        fuenteDatos: p.fuenteDatos,
+        precision: geo.precision,
+      },
+    };
   }
 
   // ── MAPA / SIMULACIÓN (la cara de un módulo) ──

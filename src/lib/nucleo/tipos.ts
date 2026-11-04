@@ -11,9 +11,11 @@
 // Lo leen el servidor (búsqueda, fichas, APIs) y las pruebas.
 // ============================================================
 
-/** Los 9 tipos de entidad compartida del ecosistema.
+/** Los 10 tipos de entidad compartida del ecosistema.
  * v219: se separa NOTICIA (el cable, fuente de información) de
- * ACONTECIMIENTO (el hecho real que reúne varias noticias). */
+ * ACONTECIMIENTO (el hecho real que reúne varias noticias).
+ * v225: PUNTO — un frente concreto (ciudad con estado) de la
+ * sala de guerra OSINT documentada (v129/v220), con ficha propia. */
 export const TIPOS_ENTIDAD = [
   "pais",
   "region",
@@ -24,6 +26,7 @@ export const TIPOS_ENTIDAD = [
   "analisis",
   "simulacion",
   "noticia",
+  "punto",
 ] as const;
 
 export type TipoEntidad = (typeof TIPOS_ENTIDAD)[number];
@@ -39,6 +42,7 @@ export const ETIQUETA_TIPO: Record<TipoEntidad, string> = {
   mapa: "MAPA",
   analisis: "ANÁLISIS",
   simulacion: "SIMULACIÓN",
+  punto: "PUNTO DEL FRENTE",
 };
 
 /** Tipos de relación explícita entre entidades. */
@@ -51,6 +55,7 @@ export const TIPOS_RELACION = [
   "analizado_en", // * → análisis (dónde se analiza)
   "simulado_en", // * → simulación (dónde se vive en juego)
   "modulo_de", // módulo → módulo (dependencia declarada)
+  "punto_de", // v225: punto del frente → región (la ciudad y su teatro)
 ] as const;
 
 export type TipoRelacion = (typeof TIPOS_RELACION)[number];

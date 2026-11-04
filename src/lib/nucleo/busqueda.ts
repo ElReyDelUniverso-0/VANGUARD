@@ -32,7 +32,7 @@ import { PAISES_ATLAS } from "@/lib/atlas-data";
 import { EXPEDIENTES } from "@/lib/expedientes-datos";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { MODULOS_NUCLEO } from "./registro";
-import { geografiaDeTeatro } from "./geografia";
+import { puntosDelNucleo } from "./puntos";
 import {
   FUENTES_PUBLICAS,
   esFuentePublica,
@@ -138,17 +138,22 @@ const PROVEEDORES: ProveedorBusqueda[] = [
           });
         }
         // frentes documentados del teatro (geografía v220: cero
-        // coordenadas inventadas — solo se proyecta la sala de la casa)
-        const geo = geografiaDeTeatro(slug);
-        for (const punto of geo.puntos) {
+        // coordenadas inventadas — solo se proyecta la sala de la casa).
+        // v225 EL FRENTE: cada punto es una ENTIDAD vg:punto con ficha
+        // propia — la búsqueda lleva a la FICHA, y la ficha al mapa.
+        for (const punto of puntosDelNucleo().filter((p) => p.teatro === slug)) {
           const p = puntua(`${punto.nombre} ${punto.estado}`, q, terminos);
           if (p > 0) {
             candidatos.push({
               cosa: {
-                entidad: { id: idEntidad("region", slug), tipo: "region" as const, nombre: t.nombre },
+                entidad: {
+                  id: idEntidad("punto", punto.clave),
+                  tipo: "punto" as const,
+                  nombre: punto.nombre,
+                },
                 titulo: `Frente: ${punto.nombre} — ${punto.estado}`,
-                subtitulo: `Mapa OSINT del teatro ${t.nombre} · fuente: ${geo.fuenteDatos ?? "sala de guerra de la casa"}`,
-                ruta: "/ver-guerra",
+                subtitulo: `Punto del frente del teatro ${t.nombre} · mapa OSINT · fuente: ${punto.fuenteDatos ?? "sala de guerra de la casa"}`,
+                ruta: `/nucleo?id=${encodeURIComponent(idEntidad("punto", punto.clave))}`,
                 origen: "fnt:teatros",
               },
               puntos: p,
