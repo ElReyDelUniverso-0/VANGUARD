@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v275.0", async () => {
+  await verificar("servidor vivo y en v276.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v275"), `versión ${r.json?.version} ≠ v275`);
+    afirmar(String(r.json?.version).startsWith("v276"), `versión ${r.json?.version} ≠ v276`);
   });
 
   // censo por API
@@ -2010,6 +2010,63 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v276.0 LA ESCUADRA DE LA CASA: los 6 aliados de la fuente suben a la vitrina (/objetivos) ──
+  // La cabeza de la cola de la v275 (medida al abrir la ronda): FRIENDS —
+  // el último catálogo client-side sin vestir. La cola juraba «12»: la
+  // fuente real declara 6 operadores (F1–F6) con el escalafón RANKS de 9 —
+  // canon = repo. La vitrina sirve su censo, presencia y cima derivados.
+  await verificar("LA ESCUADRA DE LA CASA estática: la fuente de 6 aliados intacta y la vitrina la sirve derivada (v276)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/game-data.ts"), "utf8");
+    const pag = readFileSync(join(RAIZ, "src/app/objetivos/page.tsx"), "utf8");
+    // la fuente intacta: los 6 aliados uno a uno
+    afirmar(fuente.includes("export const FRIENDS"), "la fuente de aliados no existe");
+    const iniF = fuente.indexOf("export const FRIENDS");
+    const finF = fuente.indexOf("];", iniF);
+    const bloqueF = fuente.slice(iniF, finF === -1 ? fuente.length : finF + 2);
+    afirmar(bloqueF.length > 700 && bloqueF.length < 3000, `el slice de la escuadra midió mal (${bloqueF.length})`);
+    for (const id of ["F1", "F2", "F3", "F4", "F5", "F6"]) {
+      afirmar(bloqueF.includes(`id: "${id}"`), `falta el aliado ${id} en la fuente`);
+    }
+    // el escalafón real de la casa: 9 rangos
+    const iniR = fuente.indexOf("export const RANKS");
+    const bloqueR = fuente.slice(iniR, fuente.indexOf("];", iniR) + 2);
+    afirmar((bloqueR.match(/name: "/g) || []).length === 9, "el escalafón no declara sus 9 rangos");
+    // la vitrina consume la fuente (directiva v266) y deriva TODO (cero cifras a mano)
+    afirmar(/import \{[^}]*\bFRIENDS\b[^}]*\} from "@\/lib\/game-data"/.test(pag), "la vitrina no consume FRIENDS de la fuente");
+    afirmar(/import \{[^}]*\bRANKS\b[^}]*\} from "@\/lib\/game-data"/.test(pag), "la vitrina no consume el escalafón RANKS");
+    afirmar(pag.includes("const EN_LINEA = ALIADOS.filter((a) => a.online).length"), "la presencia no se deriva (filter)");
+    afirmar(pag.includes("new Set(ALIADOS.map((a) => a.rank)).size"), "los rangos distintos no se derivan (Set)");
+    afirmar(pag.includes("ALIADOS.reduce((max, a) => (a.level > max.level ? a : max))"), "la cima no se deriva (reduce)");
+    afirmar(pag.includes("const lineaEscuadra = `La escuadra de la casa — ${ALIADOS.length} operadores aliados: ${EN_LINEA} en línea, ${RANGOS_DISTINTOS} rangos del escalafón de ${RANKS.length} y ${CIMA.alias} (nivel ${CIMA.level}) en la cima`"), "la línea de la escuadra no se compone COMPLETA en JS");
+    afirmar(pag.includes("La escuadra vive en la fuente"), "la vitrina no declara la procedencia de la escuadra");
+    afirmar(pag.includes("vive en el aparato, no en esta vitrina"), "la puerta honesta del salón interactivo no está declarada");
+    // la escuadra no inventa fechas (guardia v234)
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡la vitrina escribe fechas a mano en la ronda v276!");
+  });
+
+  await verificar("LA ESCUADRA DE LA CASA viva: el SSR sirve los 6 aliados con sus datos derivados (v276)", async () => {
+    const r = await pedir("/objetivos");
+    afirmar(r.status === 200, `/objetivos no 200 en v276 (${r.status})`);
+    afirmar(r.texto.includes("LA ESCUADRA DE LA CASA"), "la cabeza de la escuadra no viaja en el SSR");
+    afirmar(r.texto.includes("La escuadra de la casa — 6 operadores aliados: 3 en línea, 5 rangos del escalafón de 9 y FALCON_X (nivel 18) en la cima"), "la línea derivada de la escuadra no viaja (o las cifras no coinciden con la fuente)");
+    // los 6 aliados reales con sus rangos de la fuente
+    for (const alias of ["WOLF_Tactico", "FALCON_X", "GHOST_Cmd", "VIPER_K", "RAVEN_Alpha", "PHOENIX_R"]) {
+      afirmar(r.texto.includes(alias), `el aliado ${alias} no viaja a la vitrina`);
+    }
+    // el estado compuesto desde la fuente (booleano + lastActive tal como la fuente lo declara)
+    afirmar(r.texto.includes("nivel 18 · EN LÍNEA"), "la cima en línea no se compone desde el booleano real");
+    afirmar(r.texto.includes("nivel 8 · visto hace 1d"), "el estado offline no viaja tal como la fuente lo declara");
+    afirmar(r.texto.includes("quiz: 12 aciertos · racha: 12"), "los contadores reales de la cima no se componen en JS");
+    afirmar(r.texto.includes("misiones reclamadas: 14"), "las misiones reclamadas de la cima no viajan");
+    afirmar(r.texto.includes("La escuadra vive en la fuente"), "la procedencia de la escuadra no viaja");
+    // las anclas de la casa en pie (v235/v267/v268/v270/v273)
+    afirmar(r.texto.includes("EL TERCER CATÁLOGO"), "la ancla v273 cayó");
+    afirmar(r.texto.includes("LA JORNADA"), "la ancla v268 cayó");
+    afirmar(r.texto.includes("EL SEGUNDO CATÁLOGO"), "la ancla v270 cayó");
+    afirmar(r.texto.includes("EL CABLEADO DEL APARATO"), "la ancla v267 cayó");
+    afirmar(r.texto.includes("La balanza del botín"), "la ancla v235 cayó");
   });
 
   // ── v275.0 LA TAQUILLA DEL ARCHIVO: las 8 cuotas de la fuente suben a la sala (/historia) ──

@@ -4,7 +4,9 @@ import {
   ACHIEVEMENTS,
   CABLEADO_BLOQUES,
   DAILY_CHALLENGES,
+  FRIENDS,
   MISSION_TEMPLATES,
+  RANKS,
   TOURNAMENTS,
 } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
@@ -209,6 +211,24 @@ const POSICIONES = TORNEOS.reduce((n, x) => n + x.leaderboard.length, 0);
 
 // La línea de la sección compuesta COMPLETA en JS (lección v256).
 const lineaTorneos = `El tercer catálogo de la casa — ${TORNEOS.length} torneos en marcha con ${cifra.format(BOTIN_TORNEOS.monedas)} mon y ${BOTIN_TORNEOS.gemas} gemas de botín en la cima, ${POSICIONES} posiciones en las tablas`;
+
+// ── v276.0 LA ESCUADRA DE LA CASA — TODO derivado de FRIENDS + RANKS, nada a mano ──
+// La vitrina sirvió el botín (v235), el cableado (v267), la jornada (v268),
+// el segundo catálogo (v270) y el tercer catálogo (v273), pero la ALIANZA
+// del aparato — los operadores que juegan al lado del visitante, con su
+// escalafón real de 9 rangos — seguía client-side en el panel de amigos,
+// invisible para el SSR y para Google. Censo, presencia y cima salen de
+// la fuente con filter/Set/reduce; si la escuadra cambia, la línea cambia sola.
+const ALIADOS = FRIENDS;
+
+const EN_LINEA = ALIADOS.filter((a) => a.online).length;
+
+const RANGOS_DISTINTOS = new Set(ALIADOS.map((a) => a.rank)).size;
+
+const CIMA = ALIADOS.reduce((max, a) => (a.level > max.level ? a : max));
+
+// La línea de la sección compuesta COMPLETA en JS (lección v256).
+const lineaEscuadra = `La escuadra de la casa — ${ALIADOS.length} operadores aliados: ${EN_LINEA} en línea, ${RANGOS_DISTINTOS} rangos del escalafón de ${RANKS.length} y ${CIMA.alias} (nivel ${CIMA.level}) en la cima`;
 
 // ── v235.0 EL MAPA DE CAZA — solo rutas reales de la casa ──
 // La ley: los 100 objetivos se cazan en los paneles del aparato (la
@@ -575,6 +595,42 @@ export default function ObjetivosPage() {
                   <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{`${t.category} — ${t.metric}. Queda ${t.endsIn}.`}</p>
                   <div className="mt-2 font-mono text-[10px] text-amber">{lineaBotinTorneo}</div>
                   <div className="mt-1 font-mono text-[10px] text-cyan-hud">{lineaLider}</div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* v276.0 LA ESCUADRA DE LA CASA — la alianza del aparato, en SSR */}
+        <section
+          aria-label="La escuadra de la casa"
+          className="mt-8 border border-zinc-800 rounded-md p-5 bg-zinc-900/40"
+        >
+          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-green-hud">
+            LA ESCUADRA DE LA CASA · la alianza del aparato
+          </div>
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed">
+            {`${lineaEscuadra}. La escuadra no es decoración: cada operador lleva su rango del escalafón real de la casa y sus contadores de verdad — y la sala interactiva (buscar, comparar, retar) vive en el aparato, no en esta vitrina. La escuadra vive en la fuente (game-data.ts), no aquí.`}
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {ALIADOS.map((a) => {
+              const lineaEstado = `nivel ${a.level} · ${a.online ? "EN LÍNEA" : `visto ${a.lastActive}`}`;
+              const lineaQuiz = `quiz: ${a.stats.quizCorrect} aciertos · racha: ${a.stats.streak}`;
+              const lineaMisiones = `misiones reclamadas: ${a.stats.missionsClaimed}`;
+              return (
+                <article
+                  key={a.id}
+                  className="border border-zinc-800 rounded-md p-3 bg-zinc-900/60"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-bold leading-snug text-zinc-100">{a.alias}</h3>
+                    <span className="shrink-0 font-mono text-[9px] uppercase tracking-widest border border-zinc-700 rounded px-1.5 py-0.5 text-zinc-400">
+                      {a.rank}
+                    </span>
+                  </div>
+                  <p className="mt-1.5 text-xs text-zinc-400 leading-relaxed">{lineaEstado}</p>
+                  <div className="mt-2 font-mono text-[10px] text-amber">{lineaQuiz}</div>
+                  <div className="mt-1 font-mono text-[10px] text-cyan-hud">{lineaMisiones}</div>
                 </article>
               );
             })}

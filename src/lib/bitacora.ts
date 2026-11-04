@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v276.0",
+    nombre: "LA ESCUADRA DE LA CASA — la vitrina (/objetivos) viste su último catálogo client-side: FRIENDS, los 6 operadores de la alianza (WOLF_Tactico, FALCON_X, GHOST_Cmd, VIPER_K, RAVEN_Alpha, PHOENIX_R) con su rango del escalafón real de 9, su nivel y sus contadores de verdad, solo vivía en el panel de amigos client-side; la vitrina los sirve en server con censo, presencia y cima derivados de la fuente (la cola juraba 12 aliados: medido al abrir, la fuente declara 6 — canon = repo)",
+    hitos: [
+      "LA ESCUADRA SE SIRVE EN SERVER — cada operador con SU rango, SU nivel y SUS contadores tal como la fuente los declara; censo, presencia y cima derivados con filter/Set/reduce y línea compuesta COMPLETA en JS (lección v256): «6 operadores aliados: 3 en línea, 5 rangos del escalafón de 9 y FALCON_X (nivel 18) en la cima» (cero cifras a mano — herencia v235/v268/v270/v273)",
+      "EL ESTADO SE COMPONE HONESTO — «EN LÍNEA» es el booleano real de la fuente y «visto hace 2h» viaja tal como la fuente lo declara (dato lastActive, no fecha escrita a mano — guardia v234); el salón interactivo vive en el aparato (puerta honesta declarada); procedencia («La escuadra vive en la fuente», directiva v266)",
+      "LA GUARDIA — la fuente de 6 aliados intacta uno a uno (F1–F6), el escalafón de 9 rangos y la cima real de la tabla, custodiados por la suite",
+      "QA v276: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /objetivos en pie), health v276.0 db up, pruebas 178/178 (+2 LA ESCUADRA DE LA CASA: estática — la fuente de 6 aliados intacta, el escalafón de 9, las derivaciones y la procedencia; viva — la línea derivada, las 6 firmas reales, «nivel 18 · EN LÍNEA» y «nivel 8 · visto hace 1d», las anclas v235/v267/v268/v270/v273 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v275.0",
     nombre: "LA TAQUILLA DEL ARCHIVO — /historia (v274) crece por dentro: WAR_BETS, los 8 conflictos históricos con cuota y probabilidad (Punicas, Termopilas, Cruzadas, Cien Años, Waterloo, WWII Europa, Vietnam, Guerra Fria), solo vivía en el panel de apuestas client-side del aparato; la taquilla los sirve en server con censo por categoría derivado, la probabilidad compuesta desde la fuente y el vacío honesto por delante (la casa no acepta apuestas — el veredicto ya lo escribieron los libros)",
     hitos: [

@@ -3068,6 +3068,45 @@
 //     1.4 / 3.2» y «la casa da 65% a Roma», las anclas v274 en pie) · BD
 //     intocada (1877 cables · 9 hechos, un solo escritor).
 // Herencia v274.0 EL ARCHIVO DE LA HISTORIA y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v275.0";
-export const APP_CODENAME = "LA TAQUILLA DEL ARCHIVO";
+// v276.0 LA ESCUADRA DE LA CASA — la vitrina (/objetivos) viste su último
+//         catálogo client-side: la ALIANZA del aparato — FRIENDS, los 6
+//         operadores (F1 WOLF_Tactico CAPITAN 14, F2 FALCON_X MAYOR 18, F3
+//         GHOST_Cmd TENIENTE 9, F4 VIPER_K SARGENTO 8, F5 RAVEN_Alpha
+//         CAPITAN 11, F6 PHOENIX_R CABO 6) con sus contadores reales
+//         (quiz, racha, misiones) y el escalafón RANKS de 9 rangos — solo
+//         vivía en el panel de amigos client-side, invisible para el SSR
+//         y para Google. La cola del turno juraba «12 aliados»: medido al
+//         abrir, la fuente declara 6 (el 12 era la longitud del bloque) —
+//         canon = repo, la medición se hace ANTES de elegir.
+// (1) LA ESCUADRA SE SIRVE EN SERVER — nueva sección en /objetivos tras el
+//     tercer catálogo (patrón v270/v273/v275): cada operador con SU rango,
+//     SU nivel y SUS contadores tal como la fuente los declara (nada de
+//     acentos ni cifras inventadas); censo, presencia y cima derivados con
+//     filter/Set/reduce (herencia v235/v268/v270/v273) y línea compuesta
+//     COMPLETA en JS (lección v256): «La escuadra de la casa — 6
+//     operadores aliados: 3 en línea, 5 rangos del escalafón de 9 y
+//     FALCON_X (nivel 18) en la cima» — si la fuente cambia, la línea
+//     cambia sola.
+// (2) EL ESTADO SE COMPONE HONESTO — «EN LÍNEA» es el booleano real de la
+//     fuente y «visto hace 2h» viaja tal como la fuente lo declara (el
+//     dato lastActive, no una fecha escrita a mano — guardia v234); el
+//     salón interactivo (buscar, comparar, retar) vive en el aparato
+//     (puerta honesta declarada); procedencia («La escuadra vive en la
+//     fuente», directiva v266).
+// (3) LA GUARDIA — la suite custodia la fuente de 6 aliados intacta uno a
+//     uno (F1–F6), el escalafón de 9 rangos, las derivaciones (filter /
+//     Set / reduce), la línea compuesta en JS, la procedencia y la cima
+//     real de la tabla; cero fechas a mano.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /objetivos en pie) ·
+//     health v276.0 db up · pruebas 178/178 (+2 LA ESCUADRA DE LA CASA:
+//     estática — la fuente de 6 aliados intacta uno a uno (F1–F6), el
+//     escalafón de 9 rangos, censo/presencia/cima derivados, la línea
+//     compuesta en JS, la procedencia y la guardia v234; viva — el SSR
+//     sirve la línea derivada, las 6 firmas reales, «nivel 18 · EN LÍNEA»
+//     y «nivel 8 · visto hace 1d», el quiz compuesto de FALCON_X y las
+//     anclas v235/v267/v268/v270/v273 en pie) · BD intocada (1877 cables ·
+//     9 hechos, un solo escritor).
+// Herencia v275.0 LA TAQUILLA DEL ARCHIVO y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v276.0";
+export const APP_CODENAME = "LA ESCUADRA DE LA CASA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
