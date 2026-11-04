@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v265.0",
+    nombre: "EL PÓRTICO DE LAS SALAS — la expansión llega a la puerta que las salas nunca tuvieron: desde v206 cada teatro vive en /conflicto/[tag], pero la raíz /conflicto era un 404 — las 9 salas solo se alcanzaban por puertas laterales. El pórtico las sirve EN SERVER: cards del catálogo canónico, UNA groupBy con dos medidas, cero números a mano",
+    hitos: [
+      "LA PUERTA SE SIRVE EN SERVER — nuevo /conflicto: las cards salen del catálogo canónico TEATROS (la misma fuente única de las salas, el sitemap y los nombres humanos) y el peso se mide con UNA groupBy (_count + _max.publishedAt, el patrón v257/v262): el censo, no las filas; sin BD el pórtico sigue en pie (vacío honesto)",
+      "EL PESO SE DECLARA — cada sala compone su línea COMPLETA en JS (lección v256): «N cables en el archivo · última señal hace X»; el pórtico suma sus conteos y deriva la señal más fresca de las mediciones ya hechas (cero consultas extra, cero fechas a mano, guardia v234)",
+      "LA PUERTA SE ANUNCIA — el sitemap gana /conflicto (la raíz ya no es 404 para Google), JSON-LD CollectionPage + ItemList de las 9 salas, dos puertas por card (la sala y /mundo?teatro=) y las claves de v263 viajan («sus palabras:»)",
+      "QA v265: tsc 0 TOTAL, eslint 0, build EXIT 0, health v265.0 db up, pruebas 156/156 (+2 EL PÓRTICO DE LAS SALAS: estática — el catálogo canónico, la groupBy única con dos medidas, las líneas compuestas en JS, el vacío honesto, el sitemap y la guardia v234; viva — la raíz /conflicto 200 con las 9 puertas, peso real, «sus palabras:» y la señal fresca), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v264.0",
     nombre: "EL ÍNDICE DEL PLANETA — la expansión llega al mapa: /mundo (v215, el globo 3D) sostenía la instantánea viva (peso 24 h, último titular y fuente por teatro) pero su capa server nunca sirvió las puertas — sin JS el planeta era un hueco y para Google los teatros eran un párrafo sin enlaces. El índice deriva TODO de la instantánea (cero consultas) y declara honesto el teatro sin señal",
     hitos: [

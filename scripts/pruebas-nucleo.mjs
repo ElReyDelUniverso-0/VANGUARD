@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v264.0", async () => {
+  await verificar("servidor vivo y en v265.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v264"), `versión ${r.json?.version} ≠ v264`);
+    afirmar(String(r.json?.version).startsWith("v265"), `versión ${r.json?.version} ≠ v265`);
   });
 
   // censo por API
@@ -2010,6 +2010,70 @@ async function parteB() {
     afirmar(r.texto.includes("LA SALA DEL MUNDO"), "la última estación desapareció");
     afirmar(r.texto.includes("vg%3Apais%3A"), "los chips de país desaparecieron");
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
+  });
+
+  // ── v265.0 EL PÓRTICO DE LAS SALAS: la puerta que las 9 salas nunca tuvieron ──
+  // Desde v206 cada teatro vive en /conflicto/[tag], pero la raíz /conflicto
+  // era un 404: las salas solo se alcanzaban por puertas laterales (chips,
+  // mural, «Otros teatros», sitemap). El pórtico las sirve EN SERVER: cards
+  // del catálogo canónico, UNA groupBy (_count + _max, patrón v257/v262),
+  // cero findMany — y la puerta se anuncia en el sitemap.
+  await verificar("EL PÓRTICO DE LAS SALAS estática: catálogo canónico, una groupBy con dos medidas y líneas compuestas en JS (v265)", () => {
+    const portico = readFileSync(join(RAIZ, "src/app/conflicto/page.tsx"), "utf8");
+    const sm = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    // las cards salen del catálogo canónico (la misma fuente única)
+    afirmar(portico.includes("Object.entries(TEATROS).map"), "las salas del pórtico no salen del catálogo canónico");
+    // UNA consulta con dos medidas: el censo, no las filas
+    afirmar(portico.includes("by: [\"conflictTag\"]"), "la groupBy del pórtico no agrupa por etiqueta");
+    afirmar(portico.includes("_count: { _all: true }"), "la groupBy del pórtico no cuenta");
+    afirmar(portico.includes("_max: { publishedAt: true }"), "la groupBy del pórtico no mide la última señal");
+    afirmar(portico.includes("conflictTag: { in: Object.keys(TEATROS) }"), "la groupBy no se acota a los teatros del catálogo");
+    afirmar(!portico.includes("findMany"), "¡el pórtico consultó filas de más (el censo no necesita findMany)!");
+    // el peso del pórtico: suma real de los conteos, cero números a mano
+    afirmar(portico.includes("const totalPuerta = conteos"), "el peso del pórtico no se deriva de los conteos");
+    afirmar(portico.includes("const lineaPortico = totalPuerta"), "la línea del pórtico no se compone en JS");
+    afirmar(portico.includes("El pórtico de las salas — ${salas} salas, ${totalPuerta} cables con puerta en el archivo"), "la línea del pórtico no declara peso y salas compuestos en JS");
+    // lección v256: la línea de cada sala compuesta COMPLETA en JS
+    afirmar(portico.includes("${medicion.conteo} cables en el archivo · última señal hace ${hace(new Date(medicion.ultima))}"), "la línea de peso/edad de la sala no se compone COMPLETA en JS");
+    // vacío honesto: sin medición la línea ni se pinta (el pórtico sigue en pie)
+    afirmar(portico.includes("{lineaSala && ("), "la sala sin medición no respeta el vacío honesto");
+    // las dos puertas por sala: la sala y el planeta 3D
+    afirmar(portico.includes("href={`/conflicto/${k}`}"), "la puerta a la sala desapareció del pórtico");
+    afirmar(portico.includes("href={`/mundo?teatro=${k}`}"), "la puerta al planeta 3D desapareció del pórtico");
+    // las claves v263 viajan: el pórtico declara las palabras que abren la puerta
+    afirmar(portico.includes("sus palabras: ${t.claves.slice(0, 4).join(\" · \")}"), "el pórtico no declara las palabras de cada sala");
+    // la señal más fresca, derivada de las mediciones ya hechas
+    afirmar(portico.includes("la señal más fresca de las salas: ${fresca.nombre} — última señal hace ${hace(fresca.ultima)}"), "la línea de la señal fresca no se compone en JS");
+    // la puerta se anuncia a Google (la raíz ya no es 404)
+    afirmar(sm.includes("url: `${SITE_URL}/conflicto`,"), "el sitemap no anuncia el pórtico de las salas");
+    // JSON-LD CollectionPage + ItemList de las salas
+    afirmar(portico.includes('"@type": "CollectionPage"') && portico.includes('"@type": "ItemList"'), "el pórtico perdió su JSON-LD de colección");
+    // la edad de la casa, cero fechas a mano
+    afirmar(portico.includes("function hace(fecha: Date): string {"), "sin la edad de la casa para el pórtico");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(portico), "¡el pórtico escribe fechas a mano en la ronda v265!");
+  });
+
+  await verificar("EL PÓRTICO DE LAS SALAS viva: la raíz /conflicto sirve las 9 puertas con peso real y señal fresca (v265)", async () => {
+    const r = await pedir("/conflicto");
+    afirmar(r.status === 200, `/conflicto no 200 en v265 (${r.status}) — la raíz seguía siendo 404`);
+    // la línea compuesta y las puertas de las salas viajan en el HTML
+    afirmar(r.texto.includes("Las salas del conflicto"), "la cabeza del pórtico no viaja en el SSR");
+    afirmar(r.texto.includes("El pórtico de las salas"), "la línea del pórtico no viaja en el SSR");
+    afirmar(r.texto.includes("cables con puerta"), "el peso del pórtico no se declara");
+    // las 9 puertas deterministas (el catálogo es la fuente): primera, segunda y la más pequeña
+    afirmar(r.texto.includes('href="/conflicto/ukraine"'), "la puerta de Ucrania desapareció del pórtico");
+    afirmar(r.texto.includes('href="/conflicto/gaza"'), "la puerta de Gaza desapareció del pórtico");
+    afirmar(r.texto.includes('href="/conflicto/lebanon"'), "la puerta de Líbano desapareció del pórtico");
+    // BD medida en esta ronda: las 9 salas tienen señal (la más vieja, 3 cables)
+    afirmar(r.texto.includes("cables en el archivo"), "el peso de las salas no se declara en el SSR");
+    afirmar(r.texto.includes("última señal hace"), "la edad de las salas no se declara en el SSR");
+    // las claves canónicas viajan (deterministas: salen del catálogo)
+    afirmar(r.texto.includes("sus palabras: ucrania"), "las palabras de la sala de Ucrania no viajan");
+    // la señal más fresca: gaza (medida en la ronda: 2026-10-31, la más reciente)
+    afirmar(r.texto.includes("la señal más fresca de las salas"), "la señal fresca no se declara");
+    afirmar(r.texto.includes("Gaza e Israel"), "el nombre humano de la sala fresca no viaja");
+    // las anclas de la casa siguen en pie
+    afirmar(r.texto.includes("CONECTA CON EL NÚCLEO"), "sin el bloque de puertas al núcleo");
   });
 
   // ── v264.0 EL ÍNDICE DEL PLANETA: los teatros del mapa con puerta ──

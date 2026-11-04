@@ -108,6 +108,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v265.0 EL PÓRTICO DE LAS SALAS — la puerta de las salas anunciada
+      // a Google: el índice de los teatros (desde v206 solo vivían los
+      // /conflicto/[tag]; la raíz era un 404)
+      url: `${SITE_URL}/conflicto`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       // v224.0 EL ESTRATEGA — escenarios con datos reales, nunca predicciones
       url: `${SITE_URL}/escenarios`,
       lastModified: new Date(),

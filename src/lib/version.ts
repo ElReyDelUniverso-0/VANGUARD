@@ -2712,6 +2712,38 @@
 //     silencio de 24 h declarado y las anclas v215 en pie) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v263.0 EL ARCHIVO QUE CRECE y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v264.0";
-export const APP_CODENAME = "EL ÍNDICE DEL PLANETA";
+// v265.0 EL PÓRTICO DE LAS SALAS — la expansión funcional módulo a módulo
+//         llega a la puerta que las salas nunca tuvieron: desde v206 cada
+//         teatro vive en /conflicto/[tag], pero la RAÍZ /conflicto era un
+//         404 — las 9 salas solo se alcanzaban por puertas laterales
+//         (chips de la Primera página, cards del mural FRENTE TOTAL,
+//         «Otros teatros» al pie de cada sala, sitemap).
+// (1) LA PUERTA SE SIRVE EN SERVER — nuevo src/app/conflicto/page.tsx:
+//     las cards salen del catálogo canónico (TEATROS — la misma fuente
+//     única de las salas, el sitemap y los nombres humanos) y el peso se
+//     mide con UNA groupBy (_count + _max.publishedAt, el patrón del
+//     puente v257 y del mapa v262): el censo, no las filas. Sin BD el
+//     pórtico sigue en pie: cards con nombre, resumen y palabras; sin
+//     líneas de peso (vacío honesto).
+// (2) EL PESO SE DECLARA — cada sala compone su línea COMPLETA en JS
+//     (lección v256): «N cables en el archivo · última señal hace X»; el
+//     pórtico entero suma sus conteos («El pórtico de las salas — 9
+//     salas, 481 cables con puerta»); la señal más fresca se deriva de
+//     las mediciones ya hechas (cero consultas extra). Cero números
+//     escritos a mano, guardia v234 en pie.
+// (3) LA PUERTA SE ANUNCIA — el sitemap gana /conflicto (la raíz ya no
+//     es 404 para Google), JSON-LD CollectionPage + ItemList de las 9
+//     salas y dos puertas por card: la sala y el planeta 3D
+//     (/mundo?teatro=). Las claves de v263 viajan: el pórtico declara
+//     «sus palabras:» de cada sala.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 · health v265.0 db up ·
+//     pruebas 156/156 (+2 EL PÓRTICO DE LAS SALAS: estática — el
+//     catálogo canónico, la groupBy única con dos medidas, las líneas
+//     compuestas en JS, el vacío honesto, el sitemap y la guardia v234;
+//     viva — la raíz /conflicto 200 con las 9 puertas, peso real,
+//     «sus palabras:» y la señal fresca de Gaza) · BD intocada (1877
+//     cables · 9 hechos, un solo escritor).
+// Herencia v264.0 EL ÍNDICE DEL PLANETA y todo lo anterior. Guards v167 intactos.
+export const APP_VERSION = "v265.0";
+export const APP_CODENAME = "EL PÓRTICO DE LAS SALAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
