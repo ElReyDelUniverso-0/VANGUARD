@@ -24,6 +24,13 @@
 //    v245/v246: un solo escritor).
 //  · Cero red: la sala ya sirvió la comida — este componente no hace
 //    fetch ni consulta la casa por cable.
+//
+// v279.0 EL QUIZ DEL FRENTE — LA SEGUNDA CAPA (cola v272): el mismo
+//    quiz con un modo nuevo — parejas POR TEATRO: los dos cables más
+//    pesados de UNA sala (conflictTag, ya presente en el payload v213),
+//    derivados en el servidor de la MISMA instantánea. El frente habla
+//    en una línea compuesta en JS (lección v256); la sala huérfana (un
+//    solo cable) se declara sin par posible — vacío honesto derivado.
 // ══════════════════════════════════════════════════════════════════════
 
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -34,6 +41,12 @@ import type { CableVivo } from "./sala-en-vivo";
 export interface ParPeso {
   a: CableVivo;
   b: CableVivo;
+}
+
+// v279.0 — la pareja del frente: los dos cables más pesados de UNA sala
+export interface ParTeatro extends ParPeso {
+  teatro: string; // el conflictTag de la sala, en mayúsculas (lo puso el servidor)
+  total: number;  // cables de ESA sala en la instantánea (para la ficha del frente)
 }
 
 // la clave del botín en el navegador (cerradura v132 por clave)
@@ -111,9 +124,18 @@ const sinSuscripcion = () => () => {};
 const esCliente = () => true;
 const esServidor = () => false;
 
-export default function QuizPeso({ parejas }: { parejas: ParPeso[] }) {
+export default function QuizPeso({
+  parejas,
+  parejasTeatro = [],
+  salasSinPar = 0,
+}: {
+  parejas: ParPeso[];
+  parejasTeatro?: ParTeatro[];
+  salasSinPar?: number;
+}) {
   const [ronda, setRonda] = useState(0);
   const [apostada, setApostada] = useState<"a" | "b" | null>(null);
+  const [modo, setModo] = useState<"sala" | "teatro">("sala");
   // ley v176: el botín viene del store externo — cero setState en effects
   const botin = useSyncExternalStore(suscribir, leerBotin, () => BOTIN_LIMPIO);
   const montado = useSyncExternalStore(sinSuscripcion, esCliente, esServidor);
@@ -129,11 +151,20 @@ export default function QuizPeso({ parejas }: { parejas: ParPeso[] }) {
   // la casa no pinta un juego sin cables reales detrás.
   if (parejas.length < 2) return null;
 
-  const par = parejas[ronda % parejas.length];
+  // v279.0 — el modo manda: en teatro, las parejas del frente; en sala,
+  // las generales de la instantánea. La ronda se resetea al cambiar.
+  const pares: (ParPeso | ParTeatro)[] =
+    modo === "teatro" && parejasTeatro.length > 0 ? parejasTeatro : parejas;
+  const par = pares[ronda % pares.length];
 
   // LA LÍNEA DE LA CASA compuesta COMPLETA en JS (lección v256): si el
   // archivo cambia, la cifra cambia sola — cero cifras escritas a mano.
   const lineaQuiz = `EL QUIZ DEL PESO — ${parejas.length} parejas reales del archivo miden tu ojo`;
+
+  // v279.0 — LA LÍNEA DEL FRENTE, compuesta COMPLETA en JS: salas con
+  // par y salas huérfanas, ambas derivadas — el vacío se declara solo.
+  const nombresFrente = parejasTeatro.map((p) => p.teatro.toUpperCase()).join(" · ");
+  const lineaTeatro = `EL QUIZ POR TEATRO — ${parejasTeatro.length} ${parejasTeatro.length === 1 ? "sala" : "salas"} del frente con par en la instantánea: ${nombresFrente || "ninguna todavía"}${salasSinPar > 0 ? ` · ${salasSinPar} ${salasSinPar === 1 ? "sala" : "salas"} sin par posible` : ""}`;
 
   function apostar(lado: "a" | "b") {
     if (apostada) return; // la ronda ya está servida
@@ -152,7 +183,16 @@ export default function QuizPeso({ parejas }: { parejas: ParPeso[] }) {
 
   function siguiente() {
     setApostada(null);
-    setRonda((r) => (r + 1) % parejas.length);
+    setRonda((r) => (r + 1) % pares.length);
+  }
+
+  // v279.0 — el cambio de modo resetea la ronda (eventos del usuario:
+  // imposible antes de hidratar, cerradura v132 intacta)
+  function cambiarModo(nuevo: "sala" | "teatro") {
+    if (nuevo === modo) return;
+    setModo(nuevo);
+    setApostada(null);
+    setRonda(0);
   }
 
   // el veredicto: el peso real del motor decide, no la casa
@@ -184,6 +224,49 @@ export default function QuizPeso({ parejas }: { parejas: ParPeso[] }) {
           </p>
         )}
 
+        {/* v279.0 — LA LÍNEA DEL FRENTE: compuesta en JS desde la fuente,
+            viaja en el SSR los dos modos — si la BD cambia, cambia sola. */}
+        <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-500">
+          {lineaTeatro}
+        </p>
+
+        {/* v279.0 — EL TOGGLE DE LA CASA: sala general o frente. Solo con
+            al menos una sala con par — sin teatro real no hay teatro falso. */}
+        {parejasTeatro.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Modo del quiz del peso">
+            <button
+              type="button"
+              onClick={() => cambiarModo("sala")}
+              aria-pressed={modo === "sala"}
+              className={`rounded border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest ${
+                modo === "sala"
+                  ? "border-amber-hud bg-amber-hud/15 text-amber-400"
+                  : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-amber-hud/40 hover:text-amber-400"
+              }`}
+            >
+              SALA GENERAL ▸
+            </button>
+            <button
+              type="button"
+              onClick={() => cambiarModo("teatro")}
+              aria-pressed={modo === "teatro"}
+              className={`rounded border px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest ${
+                modo === "teatro"
+                  ? "border-violet-hud bg-violet-hud/15 text-violet-300"
+                  : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-violet-hud/40 hover:text-violet-300"
+              }`}
+            >
+              POR TEATRO ▸
+            </button>
+          </div>
+        )}
+
+        {modo === "teatro" && "teatro" in par && (
+          <p className="mt-6 font-mono text-[11px] uppercase tracking-widest text-violet-300">
+            FRENTE · {par.teatro.toUpperCase()} — {par.total} cables de esta sala en la instantánea
+          </p>
+        )}
+
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {(["a", "b"] as const).map((lado) => {
             const c = par[lado];
@@ -205,7 +288,11 @@ export default function QuizPeso({ parejas }: { parejas: ParPeso[] }) {
                 }`}
               >
                 <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-                  {c.conflicto ? `TEATRO · ${c.conflicto.toUpperCase()}` : `SEÑAL · ${c.tag}`}
+                  {modo === "teatro"
+                    ? `SEÑAL · ${c.tag}`
+                    : c.conflicto
+                      ? `TEATRO · ${c.conflicto.toUpperCase()}`
+                      : `SEÑAL · ${c.tag}`}
                 </p>
                 <h3 className="mt-2 text-sm font-semibold leading-snug text-zinc-100">{c.t}</h3>
                 <p className="mt-2 font-mono text-[11px] text-zinc-500">{c.f}</p>

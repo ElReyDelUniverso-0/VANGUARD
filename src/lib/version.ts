@@ -3188,6 +3188,43 @@
 //     puertas y las anclas v264/v274/v275/v277 en pie) · BD intocada
 //     (1877 cables · 9 hechos, un solo escritor).
 // Herencia v277.0 EL JUICIO DE LOS LIBROS y todo lo anterior. Guards v167 intactos.
-export const APP_VERSION = "v278.0";
-export const APP_CODENAME = "LA MEMORIA EN EL PLANETA";
+// v279.0 EL QUIZ DEL FRENTE — la segunda capa de la cola v272 aterriza:
+//         el quiz del peso (v272) con un modo nuevo — parejas POR TEATRO:
+//         los dos cables más pesados de UNA sala (conflictTag), derivados
+//         en el servidor de la MISMA instantánea del pulso (cero consultas
+//         de más, herencia v256/v262). Medido contra la BD al abrir: 25 de
+//         los 60 cables reales traen teatro — 4 salas, 3 con par (gaza 18,
+//         taiwan 3, hormuz 3) y 1 huérfana (ukraine, un solo cable — sin
+//         par posible: el vacío se declara derivado, la casa no lo inventa).
+// (1) LA DERIVACIÓN ES DEL SERVIDOR — /en-vivo agrupa la instantánea por
+//     conflictTag (Map), ordena cada sala por impacto y solo casa los dos
+//     primeros si sus pesos son DISTINTOS (la casa jamás pregunta lo que
+//     no tiene respuesta); orden determinista (total desc, nombre asc) y
+//     censo de salas huérfanas derivado (salasSinPar).
+// (2) EL COMPONENTE CRECE POR DENTRO — toggle SALA GENERAL ▸ / POR TEATRO
+//     ▸ (solo con al menos una sala con par: sin teatro real no hay teatro
+//     falso), la línea del frente compuesta COMPLETA en JS (lección v256):
+//     «EL QUIZ POR TEATRO — 3 salas del frente con par en la instantánea:
+//     GAZA · HORMUZ · TAIWAN · 1 sala sin par posible» — si la BD cambia,
+//     la línea cambia sola; ficha de cada pareja «FRENTE · GAZA — 18
+//     cables de esta sala en la instantánea» (total derivado del servidor);
+//     el cambio de modo resetea la ronda (eventos del usuario — cerradura
+//     v132 intacta) y el botín sigue en el mini-store v216, JAMÁS en la BD
+//     (un solo escritor, leyes v245/v246).
+// (3) NADA SE ROMPE — la sala general conserva sus 8 parejas y todas sus
+//     anclas; el peso lo sigue midiendo el motor de impacto (v172), el
+//     veredicto sigue siendo el motor y no la casa; cero fechas a mano,
+//     guardia v234 en pie.
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /en-vivo en pie) ·
+//     health v279.0 db up · pruebas 184/184 (+2 EL QUIZ DEL FRENTE:
+//     estática — la derivación por teatro en el servidor (Map por
+//     conflictTag, pesos distintos, orden determinista, salasSinPar),
+//     la línea del frente compuesta en JS, el toggle con sus dos modos,
+//     la ficha FRENTE y la guardia v234; viva — el SSR de /en-vivo sirve
+//     la línea derivada con las salas reales (GAZA · HORMUZ · TAIWAN),
+//     el toggle POR TEATRO ▸ y las anclas v272/v213 en pie) · BD intocada
+//     (1877 cables · 9 hechos, un solo escritor).
+// Herencia v278.0 LA MEMORIA EN EL PLANETA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v279.0";
+export const APP_CODENAME = "EL QUIZ DEL FRENTE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

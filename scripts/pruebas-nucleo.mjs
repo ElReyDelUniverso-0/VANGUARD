@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v278.0", async () => {
+  await verificar("servidor vivo y en v279.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v278"), `versión ${r.json?.version} ≠ v278`);
+    afirmar(String(r.json?.version).startsWith("v279"), `versión ${r.json?.version} ≠ v279`);
   });
 
   // censo por API
@@ -2012,6 +2012,56 @@ async function parteB() {
     afirmar(r.texto.includes("Leer completo"), "la puerta de lectura desapareció");
   });
 
+  // ── v279.0 EL QUIZ DEL FRENTE: la segunda capa del quiz del peso — parejas por teatro (/en-vivo) ──
+  // La cabeza de la cola v272: los dos cables más pesados de UNA sala,
+  // derivados de la MISMA instantánea (conflictTag ya viajaba en el
+  // payload v213). Medido contra la BD al abrir: 25/60 con teatro —
+  // gaza 18 · taiwan 3 · hormuz 3 · ukraine 1 (huérfana, sin par).
+  await verificar("EL QUIZ DEL FRENTE estática: la derivación por teatro declarada en el servidor y el modo nuevo en el quiz (v279)", () => {
+    const pag = readFileSync(join(RAIZ, "src/app/en-vivo/page.tsx"), "utf8");
+    const quiz = readFileSync(join(RAIZ, "src/app/en-vivo/quiz-peso.tsx"), "utf8");
+    // la derivación en el servidor: Map por conflictTag, pesos distintos, orden determinista
+    afirmar(pag.includes("const salas = new Map<string, CableVivo[]>()"), "el servidor no agrupa la instantánea por sala");
+    afirmar(pag.includes("c.conflicto.trim().toUpperCase()"), "el teatro no se normaliza desde el conflictTag real");
+    afirmar(pag.includes("orden[0].impacto !== orden[1].impacto"), "el frente casa parejas con pesos IGUALES — preguntaría lo que no tiene respuesta");
+    afirmar(pag.includes("y.total - x.total || x.teatro.localeCompare(y.teatro)"), "el orden de las salas no es determinista");
+    afirmar(pag.includes("const salasSinPar = salas.size - parejasTeatro.length"), "el censo de salas huérfanas no se deriva");
+    afirmar(pag.includes("parejasTeatro={parejasTeatro} salasSinPar={salasSinPar}"), "el quiz no recibe las parejas del frente");
+    // el componente: el tipo nuevo, la línea compuesta en JS, el toggle y la ficha del frente
+    afirmar(quiz.includes("export interface ParTeatro extends ParPeso"), "el tipo de la pareja del frente no viaja");
+    afirmar(quiz.includes("const lineaTeatro = `EL QUIZ POR TEATRO — ${parejasTeatro.length}"), "la línea del frente no se compone COMPLETA en JS");
+    afirmar(quiz.includes("del frente con par en la instantánea: ${nombresFrente ||"), "la línea del frente no nombra las salas derivadas");
+    afirmar(quiz.includes('"ninguna todavía"'), "el vacío del frente no se declara honesto");
+    afirmar(quiz.includes("${salasSinPar > 0 ?"), "la sala huérfana no viaja derivada");
+    afirmar(quiz.includes("sin par posible"), "la sala huérfana no se nombra");
+    afirmar(quiz.includes('aria-label="Modo del quiz del peso"'), "el toggle del modo no viaja");
+    afirmar(quiz.includes("POR TEATRO ▸"), "el botón del modo teatro no está");
+    afirmar(quiz.includes("SALA GENERAL ▸"), "el botón de la sala general no está");
+    afirmar(quiz.includes("FRENTE · {par.teatro.toUpperCase()} — {par.total} cables de esta sala en la instantánea"), "la ficha del frente no se compone desde el total derivado");
+    afirmar(quiz.includes('function cambiarModo(nuevo: "sala" | "teatro")'), "el cambio de modo no resetea la ronda");
+    afirmar(quiz.includes('modo === "teatro" && parejasTeatro.length > 0 ? parejasTeatro : parejas'), "el modo no decide qué parejas sirven");
+    // guardia v234
+    afirmar(!/20\d\d-\d\d-\d\d/.test(pag), "¡/en-vivo escribe fechas a mano en la ronda v279!");
+    afirmar(!/20\d\d-\d\d-\d\d/.test(quiz), "¡el quiz escribe fechas a mano en la ronda v279!");
+  });
+
+  await verificar("EL QUIZ DEL FRENTE viva: el SSR de /en-vivo sirve la línea del frente con las salas reales y el toggle (v279)", async () => {
+    const r = await pedir("/en-vivo");
+    afirmar(r.status === 200, `/en-vivo no 200 en v279 (${r.status})`);
+    // la línea del frente, compuesta en JS desde la BD fría (medida al abrir:
+    // gaza 18 · hormuz 3 · taiwan 3 con par · ukraine 1 huérfana; el orden
+    // es determinista: total desc y nombre asc — HORMUZ va antes que TAIWAN)
+    afirmar(/EL QUIZ POR TEATRO — \d+ sala[s]? del frente con par en la instantánea/.test(r.texto), "la línea del frente no viaja en el SSR");
+    afirmar(r.texto.includes("GAZA · HORMUZ · TAIWAN"), "las salas reales del frente no viajan en el orden determinista (¿cambió la BD?)");
+    afirmar(r.texto.includes("1 sala sin par posible"), "la sala huérfana no se declara en el SSR");
+    afirmar(r.texto.includes("POR TEATRO ▸"), "el toggle POR TEATRO no viaja en el SSR");
+    afirmar(r.texto.includes('aria-pressed="true"'), "el modo activo no se declara en el SSR");
+    // las anclas de la casa en pie (v272/v213)
+    afirmar(/EL QUIZ DEL PESO — \d+ parejas reales del archivo miden tu ojo/.test(r.texto), "la línea del quiz v272 cayó");
+    afirmar(r.texto.includes("¿Qué cable pesa más?"), "la pregunta del peso cayó (v272)");
+    afirmar(r.texto.includes("EL PULSO — ÚLTIMA HORA DEL MUNDO"), "la sala del pulso cayó (v213)");
+  });
+
   // ── v278.0 LA MEMORIA EN EL PLANETA: el archivo (lat/lng de la fuente) enciende el globo de /mundo ──
   // La cabeza de la cola de la v277 (la «evaluación aparte» pagada): el
   // archivo de la historia tiene lat/lng reales en la fuente y /mundo ya
@@ -2350,7 +2400,7 @@ async function parteB() {
     afirmar(pag.includes("const ordenadosPeso = [...iniciales].sort"), "las parejas no se derivan de la instantánea ya servida");
     afirmar(pag.includes("parejasPeso.length < 8"), "el quiz no pone cota a sus parejas");
     afirmar(pag.includes("a.impacto !== b.impacto"), "el quiz admite parejas sin veredicto (pesos iguales)");
-    afirmar(pag.includes("<QuizPeso parejas={parejasPeso} />"), "el quiz no viaja montado bajo la sala");
+    afirmar(pag.includes("<QuizPeso parejas={parejasPeso} parejasTeatro={parejasTeatro} salasSinPar={salasSinPar} />"), "el quiz no viaja montado bajo la sala (v279: creció con el modo teatro)");
     // el veredicto no es una opinión: es el motor canónico (directiva v266 — la fuente manda)
     afirmar(quiz.includes('import { TIERS, type TierImpacto } from "@/lib/impacto"'), "el quiz no consume el motor canónico (TIERS)");
     afirmar(quiz.includes("pesoApostado > pesoRival"), "el veredicto no compara el peso real del motor");

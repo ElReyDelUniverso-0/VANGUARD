@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v279.0",
+    nombre: "EL QUIZ DEL FRENTE — la segunda capa de la cola v272 aterriza: el quiz del peso (v272) con un modo nuevo — parejas POR TEATRO: los dos cables más pesados de UNA sala (conflictTag, ya presente en el payload v213), derivados en el servidor de la MISMA instantánea del pulso; la sala huérfana se declara sin par posible — vacío honesto derivado, la casa no lo inventa",
+    hitos: [
+      "LA DERIVACIÓN ES DEL SERVIDOR — /en-vivo agrupa la instantánea por conflictTag (Map), ordena cada sala por impacto y solo casa los dos primeros si sus pesos son DISTINTOS (la casa jamás pregunta lo que no tiene respuesta); orden determinista (total desc, nombre asc) y censo de salas huérfanas derivado (salasSinPar); medido contra la BD al abrir: 25 de 60 cables reales traen teatro — 3 salas con par (gaza 18, taiwan 3, hormuz 3) y 1 huérfana (ukraine)",
+      "EL COMPONENTE CRECE POR DENTRO — toggle SALA GENERAL ▸ / POR TEATRO ▸ (solo con al menos una sala con par), la línea del frente compuesta COMPLETA en JS (lección v256): «EL QUIZ POR TEATRO — 3 salas del frente con par en la instantánea: GAZA · HORMUZ · TAIWAN · 1 sala sin par posible»; ficha de cada pareja «FRENTE · GAZA — 18 cables de esta sala en la instantánea»; el cambio de modo resetea la ronda (cerradura v132 intacta) y el botín sigue en el mini-store v216, JAMÁS en la BD (un solo escritor, leyes v245/v246)",
+      "NADA SE ROMPE — la sala general conserva sus 8 parejas y todas sus anclas; el peso lo sigue midiendo el motor de impacto (v172) y el veredicto es el motor, no la casa; cero fechas a mano, guardia v234 en pie",
+      "QA v279: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /en-vivo en pie), health v279.0 db up, pruebas 184/184 (+2 EL QUIZ DEL FRENTE: estática — la derivación por teatro, la línea compuesta en JS, el toggle y la ficha FRENTE; viva — la línea derivada con las salas reales y el toggle en el SSR), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v278.0",
     nombre: "LA MEMORIA EN EL PLANETA — el archivo de la historia (v274, 10 guerras reales con lat/lng EN la fuente) enciende el globo de /mundo: la puerta ?guerra= nace del patrón propio ?teatro= (v264) y se valida contra la fuente real por id exacto; las 10 guerras viajan como marcas rosas con su periodo compuesto desde los años reales y su desenlace verbatim; /historia abre la puerta de vuelta desde cada carta — la memoria no late, permanece",
     hitos: [

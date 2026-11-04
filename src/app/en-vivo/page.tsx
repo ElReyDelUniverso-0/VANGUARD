@@ -5,7 +5,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { SalaEnVivo, type CableVivo, type StatsVivo } from "./sala-en-vivo";
-import QuizPeso, { type ParPeso } from "./quiz-peso";
+import QuizPeso, { type ParPeso, type ParTeatro } from "./quiz-peso";
 
 // v213.0 EL PULSO — LA SALA EN VIVO (la puerta del «EL PRIMERO»).
 // Página server: baja la instantánea (solo cables REALES enriquecidos
@@ -103,6 +103,31 @@ export default async function EnVivoPage() {
     if (a.impacto !== b.impacto) parejasPeso.push({ a, b });
   }
 
+  // v279.0 EL QUIZ DEL FRENTE — la segunda capa de la cola v272: parejas
+  // por teatro (los dos cables más pesados de UNA sala), derivadas de la
+  // MISMA instantánea (cero consultas de más, herencia v256/v262): el
+  // conflictTag ya viajaba en el payload de la sala (v213) y el quiz ya
+  // lo mostraba («TEATRO · X»); ahora el frente tiene su propio modo.
+  // Sala huérfana (un solo cable en la instantánea) = sin par posible:
+  // el vacío se declara derivado, la casa no lo inventa.
+  const salas = new Map<string, CableVivo[]>();
+  for (const c of iniciales) {
+    const teatro = c.conflicto.trim().toUpperCase();
+    if (!teatro) continue;
+    const sala = salas.get(teatro) ?? [];
+    sala.push(c);
+    salas.set(teatro, sala);
+  }
+  const parejasTeatro: ParTeatro[] = [];
+  for (const [teatro, sala] of salas) {
+    const orden = [...sala].sort((x, y) => y.impacto - x.impacto);
+    if (orden.length >= 2 && orden[0].impacto !== orden[1].impacto) {
+      parejasTeatro.push({ teatro, total: sala.length, a: orden[0], b: orden[1] });
+    }
+  }
+  parejasTeatro.sort((x, y) => y.total - x.total || x.teatro.localeCompare(y.teatro));
+  const salasSinPar = salas.size - parejasTeatro.length;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -143,7 +168,7 @@ export default async function EnVivoPage() {
       <SalaEnVivo iniciales={iniciales} calientesIniciales={calientes} statsIniciales={stats} />
       {/* v272.0 EL QUIZ DEL PESO — dos cables reales, una apuesta, el
           veredicto del motor; vive bajo la sala y sobre el CONECTA. */}
-      <QuizPeso parejas={parejasPeso} />
+      <QuizPeso parejas={parejasPeso} parejasTeatro={parejasTeatro} salasSinPar={salasSinPar} />
       {/* v242.0 CONECTA CON EL NÚCLEO — server-rendered, vive bajo la sala:
           la sala manda en pantalla (min-h-screen) y las puertas esperan
           abajo, sin meter chrome dentro del componente client (ley v190). */}
