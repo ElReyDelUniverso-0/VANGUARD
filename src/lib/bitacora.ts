@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v289.0",
+    nombre: "EL PULSO DE LA RED MUNDIAL — la cuarta capa de /servicios (la cabeza de la cola de la v288 se paga): los PULSO_KEYWORDS_MUNDO de la fuente (el pulso real de los 18 servicios extranjeros, v128) cruzan el MISMO archivo con EL MISMO algoritmo del panel (red-mundial-panel); 2 de 18 servicios citados por 5 titulares medidos contra la BD fría — el pulso es el que el archivo dice, no el que la casa querría",
+    hitos: [
+      "EL CRUCE ES DEL CANON — el algoritmo es el del panel (minúsculas, includes en el título), el orden el de la fuente (RED) y el vacío no se rellena; el bloque hermano del pulso por agencia (v288) comparte la ÚNICA lectura de la sala",
+      "LA LÍNEA SE COMPONE COMPLETA EN JS (lección v256) — «El pulso de la red mundial — 2 de 18 servicios citados por 5 titulares del archivo»; cada tarjeta con su conteo derivado y su último titular como puerta viva a /noticia/[id]",
+      "PULSO_KEYWORDS_GUERRA, MEDIDO Y CLASIFICADO — el otro hermano del linaje vive en el corazón del mega simulador de guerra (v129): queda en la cola con su clasificación pendiente (si es simulación, no sube como hecho — las lecciones del ciber v285 y de PHOTOS v287)",
+      "QA v289: tsc 0 TOTAL, eslint 0, build EXIT 0 (ƒ /servicios en pie), health v289.0 db up, pruebas 204/204 (+2: estática — la fuente intacta (18), la lectura compartida, el algoritmo del canon, la línea compuesta, la puerta, el vacío y las guardias; viva — la línea derivada (2 de 18 · 5), ASIS y CNI con sus menciones, el titular vivo y las anclas v288/v282 en pie), BD intocada (1877 cables · 9 hechos, un solo escritor)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v288.0",
     nombre: "EL PULSO DEL ARCHIVO POR AGENCIA — la tercera capa de /servicios (la «Queda» de la v282, en pie en la cola de la v287, se paga): los PULSO_KEYWORDS de la fuente cruzan el archivo real (títulos de los cables no-curados) con EL MISMO algoritmo del panel (minúsculas, includes en el título — el canon del consumidor); 10 de 18 agencias citadas por 451 titulares medidos contra la BD fría; lectura pura, force-dynamic y vacío honesto",
     hitos: [

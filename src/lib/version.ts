@@ -3511,6 +3511,39 @@
 //     anclas v286 en pie) · BD intocada (1877 cables · 9 hechos, un
 //     solo escritor).
 // Herencia v286.0 LOS ROSTROS DEL PODER y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v288.0";
-export const APP_CODENAME = "EL PULSO DEL ARCHIVO POR AGENCIA";
+// v289.0 EL PULSO DE LA RED MUNDIAL — la cuarta capa de /servicios
+//         (la cabeza de la cola de la v288 se paga): los
+//         PULSO_KEYWORDS_MUNDO de la fuente (el pulso real de los 18
+//         servicios extranjeros, v128 — MI6, Mossad, FSB, BND...)
+//         cruzan el MISMO archivo con EL MISMO algoritmo del panel
+//         (red-mundial-panel: minúsculas, includes en el título — el
+//         canon del consumidor). El bloque hermano del pulso por
+//         agencia (v288): misma lectura pura (la consulta es UNA para
+//         toda la sala), mismo orden de la fuente, mismo vacío
+//         honesto. Medido contra la BD fría al abrir: 2 de 18
+//         servicios citados por 5 titulares (ASIS 1 · CNI 4) — el
+//         pulso es el que el archivo dice, no el que la casa querría.
+// (1) EL CRUCE ES DEL CANON — el algoritmo es el del panel, el orden
+//     el de la fuente (RED) y el vacío no se rellena; la línea se
+//     compone COMPLETA en JS (lección v256): «El pulso de la red
+//     mundial — 2 de 18 servicios citados por 5 titulares del
+//     archivo»; cada tarjeta con su conteo derivado y su último
+//     titular como puerta viva a /noticia/[id].
+// (2) PULSO_KEYWORDS_GUERRA, MEDIDO Y CLASIFICADO — el otro hermano
+//     del linaje (guerras-activas-data) vive en el corazón del mega
+//     simulador de guerra (v129): el pulso de GUERRA queda en la cola
+//     con su clasificación pendiente (si es simulación, no sube como
+//     hecho — las lecciones del ciber v285 y de PHOTOS v287).
+// QA: tsc 0 TOTAL · eslint 0 · build EXIT 0 (ƒ /servicios en pie) ·
+//     health v289.0 db up · pruebas 204/204 (+2 EL PULSO DE LA RED
+//     MUNDIAL: estática — la fuente de keywords intacta (18), la
+//     lectura compartida, el algoritmo del canon, la línea compuesta,
+//     la puerta /noticia, el vacío honesto y las guardias; viva — el
+//     SSR sirve la línea derivada completa (2 de 18 · 5), las
+//     tarjetas ASIS y CNI con sus menciones, el titular vivo y las
+//     anclas v288/v282 en pie) · BD intocada (1877 cables · 9 hechos,
+//     un solo escritor).
+// Herencia v288.0 EL PULSO DEL ARCHIVO POR AGENCIA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v289.0";
+export const APP_CODENAME = "EL PULSO DE LA RED MUNDIAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

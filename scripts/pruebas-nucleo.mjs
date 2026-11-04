@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v288.0", async () => {
+  await verificar("servidor vivo y en v289.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v288"), `versión ${r.json?.version} ≠ v288`);
+    afirmar(String(r.json?.version).startsWith("v289"), `versión ${r.json?.version} ≠ v289`);
   });
 
   // censo por API
@@ -2331,6 +2331,47 @@ async function parteB() {
     // las anclas v286 en pie
     afirmar(r.texto.includes("La galería de los rostros — 34 fichas reales del poder"), "la línea de la galería cayó (v286)");
     afirmar(r.texto.includes("LOS TRONOS ×12"), "el censo por categoría cayó (v286)");
+  });
+
+  // ── v289.0 EL PULSO DE LA RED MUNDIAL: los keywords de los 18 servicios extranjeros cruzan el mismo archivo (/servicios) ──
+  // El bloque hermano del pulso por agencia (v288): el algoritmo del
+  // panel (red-mundial-panel), la única lectura de la sala, el orden de
+  // la fuente y el vacío honesto. Medido contra la BD fría al abrir:
+  // 2 de 18 servicios citados por 5 titulares (ASIS 1 · CNI 4).
+  await verificar("EL PULSO DE LA RED MUNDIAL estática: el cruce del canon y el vacío honesto (v289)", () => {
+    const fuente = readFileSync(join(RAIZ, "src/lib/agencias-mundo-data.ts"), "utf8");
+    const sala = readFileSync(join(RAIZ, "src/app/servicios/page.tsx"), "utf8");
+    // la fuente de keywords intacta (18 servicios extranjeros)
+    afirmar(fuente.includes("export const PULSO_KEYWORDS_MUNDO"), "la fuente de keywords no existe");
+    const iniM = fuente.indexOf("export const PULSO_KEYWORDS_MUNDO");
+    const finM = fuente.indexOf("};", iniM);
+    const bloqueM = fuente.slice(iniM, finM === -1 ? fuente.length : finM + 2);
+    const nKws = (bloqueM.match(/^\s{2}[a-z_0-9]+: \[/gm) ?? []).length;
+    afirmar(nKws === 18, `el censo de keywords midió mal (${nKws}/18)`);
+    // la sala: el import, el cruce compartido, la línea compuesta
+    afirmar(sala.includes("PULSO_KEYWORDS_MUNDO"), "la sala no consume la fuente de keywords de la red");
+    afirmar(sala.includes("for (const sv of RED) {"), "el cruce no recorre la fuente en su orden (RED = los 18 servicios extranjeros)");
+    afirmar(sala.includes("c.title.toLowerCase().includes(k)"), "el matching no es el del canon (red-mundial-panel)");
+    afirmar(sala.includes("const lineaPulsoMundo = `El pulso de la red mundial — ${pulsoMundo.length} de ${RED.length} servicios citados por ${totalMundo} titulares del archivo`"), "la línea del pulso de la red no se compone COMPLETA en JS");
+    afirmar(sala.includes("EL PULSO DE LA RED MUNDIAL"), "la sección de la red no viaja");
+    afirmar(sala.includes("el archivo no cita a ningún servicio de la red todavía — el pulso duerme honesto"), "el vacío de la red no se declara honesto");
+    // guardias
+    afirmar(!/20\d\d-\d\d-\d\d/.test(sala), "¡/servicios escribe fechas a mano en la ronda v289!");
+    afirmar(!/const linea\w+ = [^;]*\b19\d\d\b/.test(sala), "¡la sala escribe años a mano en su línea (v289)!");
+  });
+
+  await verificar("EL PULSO DE LA RED MUNDIAL viva: la línea derivada, ASIS y CNI con sus menciones (v289)", async () => {
+    const r = await pedir("/servicios");
+    afirmar(r.status === 200, `/servicios no 200 en v289 (${r.status})`);
+    // la línea compuesta COMPLETA (2 de 18 · 5 — derivados de la fuente y la BD fría)
+    afirmar(r.texto.includes("El pulso de la red mundial — 2 de 18 servicios citados por 5 titulares del archivo"), "la línea de la red no viaja (o la fuente/BD cambió)");
+    // las tarjetas: los comentarios RSC se pelan antes (trampa v258)
+    const limpio = r.texto.replace(/<!-- -->/g, "");
+    afirmar(limpio.includes("ASIS · 1 mención"), "la tarjeta de ASIS no viaja");
+    afirmar(limpio.includes("CNI · 4 menciones"), "la tarjeta de CNI no viaja");
+    // las anclas v288/v282 en pie
+    afirmar(limpio.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "el pulso por agencia cayó (v288)");
+    afirmar(limpio.includes("de 1882 a 2020"), "el arco de fundación cayó (v282)");
   });
 
   // ── v288.0 EL PULSO DEL ARCHIVO POR AGENCIA: los keywords de la fuente cruzan el archivo real (/servicios) ──

@@ -8,7 +8,7 @@ import {
   COLECCION,
   PULSO_KEYWORDS,
 } from "@/lib/agencias-data";
-import { SERVICIOS, CATEGORIA_RED_META, BLOQUES } from "@/lib/agencias-mundo-data";
+import { SERVICIOS, CATEGORIA_RED_META, BLOQUES, PULSO_KEYWORDS_MUNDO } from "@/lib/agencias-mundo-data";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -58,6 +58,17 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 //    camino del tablero (v284) y del pulso por rostro (v287). El
 //    vacío se declara honesto: sin menciones en el archivo, el pulso
 //    duerme y la sala lo dice — nunca un pulso fingido. En el ORDEN
+//
+// v289.0 EL PULSO DE LA RED MUNDIAL — LA CUARTA CAPA (la cabeza de la
+//    cola de la v288 se paga): los PULSO_KEYWORDS_MUNDO de la fuente
+//    (el pulso real de los 18 servicios extranjeros, v128) cruzan el
+//    MISMO archivo con EL MISMO algoritmo del panel (red-mundial-panel:
+//    minúsculas, includes en el título — el canon del consumidor).
+//    El bloque hermano del pulso de la Comunidad: misma lectura pura
+//    (la consulta es UNA para toda la sala), mismo orden de la fuente,
+//    mismo vacío honesto. Medido contra la BD fría al abrir: 2 de 18
+//    servicios citados por 5 titulares (ASIS 1 · CNI 4) — el pulso es
+//    el que el archivo dice, no el que la casa querría.
 //    DE LA FUENTE, solo agencias con menciones.
 
 const SITE_URL =
@@ -201,6 +212,21 @@ export default async function ServiciosPage() {
   // LA LÍNEA DEL PULSO compuesta COMPLETA en JS (lección v256): si el
   // archivo cambia, la línea cambia sola.
   const lineaPulso = `El pulso del archivo por agencia — ${pulso.length} de ${COMUNIDAD.length} agencias citadas por ${totalMenciones} titulares del archivo`;
+
+  // v289.0 — EL PULSO DE LA RED MUNDIAL: el mismo archivo, el mismo
+  // algoritmo (red-mundial-panel), el orden de la fuente (RED = los 18
+  // servicios extranjeros) y el mismo vacío honesto.
+  const pulsoMundo: { id: string; sigla: string; n: number; ultimo: { id: string; title: string } | null }[] = [];
+  for (const sv of RED) {
+    const kws = (PULSO_KEYWORDS_MUNDO[sv.id] ?? []).map((k) => k.toLowerCase());
+    if (kws.length === 0) continue;
+    const suyos = archivo.filter((c) => kws.some((k) => c.title.toLowerCase().includes(k)));
+    if (suyos.length > 0) {
+      pulsoMundo.push({ id: sv.id, sigla: sv.sigla, n: suyos.length, ultimo: suyos[0] });
+    }
+  }
+  const totalMundo = pulsoMundo.reduce((acc, p) => acc + p.n, 0);
+  const lineaPulsoMundo = `El pulso de la red mundial — ${pulsoMundo.length} de ${RED.length} servicios citados por ${totalMundo} titulares del archivo`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -466,6 +492,43 @@ export default async function ServiciosPage() {
         ) : (
           <p className="mt-12 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
             el archivo no cita a ninguna agencia todavía — el pulso duerme honesto
+          </p>
+        )}
+
+        {/* v289.0 — EL PULSO DE LA RED MUNDIAL: el bloque hermano del
+            pulso por agencia — los keywords de los 18 servicios
+            extranjeros (v128) cruzan el mismo archivo con el algoritmo
+            del panel (red-mundial-panel); lectura pura, orden de la
+            fuente, vacío honesto. */}
+        {pulsoMundo.length > 0 ? (
+          <section className="mt-10" aria-label={lineaPulsoMundo}>
+            <h2 className="text-lg font-bold text-zinc-100">EL PULSO DE LA RED MUNDIAL</h2>
+            <p className="mt-1 text-sm text-zinc-400">{lineaPulsoMundo}</p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {pulsoMundo.map((p) => (
+                <div
+                  key={p.id}
+                  className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-3"
+                  aria-label={p.sigla}
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-amber">
+                    {p.sigla} · {p.n} {p.n === 1 ? "mención" : "menciones"}
+                  </p>
+                  {p.ultimo && (
+                    <Link
+                      href={`/noticia/${p.ultimo.id}`}
+                      className="mt-1 block text-xs leading-snug text-zinc-300 hover:text-amber"
+                    >
+                      {p.ultimo.title}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <p className="mt-10 font-mono text-[11px] uppercase tracking-wider text-zinc-600">
+            el archivo no cita a ningún servicio de la red todavía — el pulso duerme honesto
           </p>
         )}
 
