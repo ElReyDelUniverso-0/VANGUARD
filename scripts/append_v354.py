@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+# Worklog v354.0 — EL SALÓN QUE PERMANECE (prosa de cierre de ronda)
+TEXTO = """\
+
+---
+
+## v354.0 — EL SALÓN QUE PERMANECE (2026-11-06 · expansión · ronda 37 del autociclo)
+
+**Ritmo**: v353 cirugía → **v354 expansión**. LA MESA VIVA etapa 10 — **el salón PERSISTE**, la leva que la cola expansiva dejó escrita al cerrar la v353: la elección del rival de hoy (v352, etapa 9) vivía en un `useState` local del panel — el refresco la borraba y el fantasma de la etapa 8 volvía a mandar sin pedir permiso. Hoy la elección deja el useState y vive en la **TIENDA** (game-store): persist auto con el throttle de la casa, y el refresco ya no puede borrarla. La misión de expansión (Job 500735, séptima entrega) llegó a esto: PERFECCIONAR la mesa, CONECTAR el salón con la memoria de la casa, EXPANDIR el duelo contra uno mismo más allá del refresco.
+
+**① LA TIENDA (game-store)**: `rivalSalon: string | null` + `elegirRivalSalon(wk)` — el campo entra al snapshot completo del persist (sin partialize que lo exhila) y el `merge` shallow de la casa recibe a las snapshots viejas sin migración: quien no tenía el campo, nace con el `null` del default («sin elección, manda el fantasma»). La escritura es la interacción de siempre (patrón v168: evento → callback → tienda), la persistencia es la tienda — `localStorage vanguard-game-state-v1` con su throttle de 1.2 s. `skipHydration: true` compatible por construcción: el rehidratador tras el montaje es el MISMO camino que `desafioHistorial` — el salón ya nació de esa ventana y lleva tres rondas respirando con ella.
+
+**② LA HONESTIDAD DE LA DEGRADACIÓN (el caso que nadie pedía y la casa no podía dejar sin ley)**: si la semana elegida sale del archivo (tope 12 de `desafioHistorial`), el `salon.find(...) ?? fantasma` degrada al fantasma del tablón — el chip canta lo que MANDA, no lo que quedó enterrado en la tienda; la llave muerta es inofensiva (la próxima elección la sobreescribe) y la casa no reescribe la historia para limpiarla. `elegirRivalSalon(null)` es el «volver al mejor»: la única forma de elegir deliberadamente el default.
+
+**③ CERO EFECTOS NUEVOS (ley de la escuela)**: la escuela respira con sus 5 `useEffect` de siempre (asertado en la suite); el `useState` de la v352 se jubila y el panel lee la tienda por selector — tres líneas, cero cascadas nuevas, cero escrituras en montaje.
+
+**EL EPÍLOGO DEL ESCRITOR FANTASMA (cuarta act — la lección más honda de la ronda)**: el testigo de aperturadetectó la desalineación EN VIVO (md5 38121cfc… → a6e93511… entre dos lecturas, NewsItem 1900 vs el 1877 del blob) — checkout y alineado. Pero tras el arnés el drift VOLVIÓ: checkout, md5 estable, Prisma cuenta 1900, y dos latidos después el md5 del archivo ya no era el blob (38121cfc → 6a7c265d) — **los dirty pages del servidor de QA dormían en el page cache y el writeback diferido los devolvió al disco DESPUÉS del checkout** (el mmap de bun/prisma como cómplice silencioso). La cura verdadera: **matar a todo escritor con el archivo mapeado PRIMERO, checkout DESPUÉS** — y entonces la doble lectura canta estable. La lección entra al canon junto a las de la v352 (md5 vs disco) y la v353 (pantalla vs bytes): **un checkout de restauración no es válido hasta que los escritores con el archivo mapeado están MUERTOS** — restaurar sin demoler es restaurar sobre arenas movedizas.
+
+**SUITE**: +2 pines (EL SALÓN QUE PERMANECE estático: campo y acción en la tienda con su contrato, la tienda nace sin elección, el panel respira por selector, el useState de la v352 jubilado, el fallback `?? fantasma` intacto, elegir y volver escriben en la tienda, los 5 efectos de la escuela contados, versión doble aserción — y vivo: home + health v354) + UN PIN VIEJO de la v352 actualizado a la semántica de la tienda (la elección es interacción — ahora con persistencia; el precedente v352: «un pin viejo se actualiza a la semántica generalizada») + rodillo (LA DISTANCIA HONESTA → EL SALÓN QUE PERMANECE y v353.0 → v354.0 en los VALORES de **208 asertos**; los nombres de pines, mensajes históricos y títulos intactos — ley v312; el pase de sed cubre los cuatro patrones por valores exactos, sin tocar la prosa histórica). **335/335 SUITE_EXIT=0 A LA PRIMERA** (333 + 2).
+
+**QA**: testigo ritual de apertura con doble lectura — **detectó la desalineación en vivo** y mandó el blob (la lección del escritor fantasma arriba) · tsc 0 repo · build: la primera pasada cayó **OOM (EXIT 137)** con 55/55 ya generados — rebuild tras `pkill processChild` con BD canon alineada: **EXIT 0, 55/55, cero prisma:error, NewsItem 1877** · suite 335/335 SUITE_EXIT=0 (health v354.0 en el boot del servidor de suite) · **arnés visual VERDE** (scripts/qa-visual-v354.sh, PORT 3554): home firma **v354.0 · EL SALÓN QUE PERMANECE** · salón DORMIDO con su vacío honesto (perfil limpio al boot) · **CORO DESPIERTO** (3 semanas sembradas 62/78/71 → honor con la cabeza 78, TU FANTASMA marcado, mesa vigente 80) · **RIVAL elegido por un bot del DOM** (chip «tu rival de hoy: 62/100 · semana 2026-W44» y `rivalSalon:"2026-W44"` VERIFICADO dentro del localStorage — TIENDA✓) · **EL RELOAD: LA ELECCIÓN PERMANECE** (chip vivo y botón volver tras refresco completo — el corazón de la etapa, screenshot qa354-persiste.png) · **VOLVER AL MEJOR + reload** → fantasma 78 de vuelta y TIENDA-LIMPIA (el null también persiste) · móvil 390 sin desbordes y con su salón · consola limpia · cero errores de página · BD canon restaurada TRAS matar a los mmaps (md5 38121cfc… = blob, doble lectura estable) · cero zombis.
+
+**Queda (informe de pendientes, se mantiene honesto)**: la cola exhaustive-deps en **139 hallazgos en 93 archivos** (multiplayer-panel 5, sala-vista/retention-layer/music-player 4 — la próxima leva natural) · las 3 cicatrices vivas DECLARADAS (ciudades-3d, growth-share, vanguard2-error) · DOCUMENTADOS SIN APLICAR: polyfills 110 KB (medición histórica), tick de 1 s (protocolo-rojo) · **Cola expansiva**: personas-data profundizada (78 fichas anotadas por la v328, hoy 34 — advertencia de invención: verificación una a una) · ambiente por sala · LA MESA VIVA etapa 11 (el duelo del salón en el tiempo: el rival de hoy con su propio historial de enfrentamientos — o la paridad 3D de la elección persistida) · la puerta 17 del anillo.
+
+**Próxima ronda (v355, por ritmo CIRUGÍA)**: la cola manda — multiplayer-panel (5 exhaustive-deps) es la leva natural de la v353; o por clases si el censo fresco señala otra cosa; si el disco señala otra cosa al abrir, el disco manda.
+
+**Leyes intactas**: v125 v176 v189 v190 v200 v201 v204 v211 v213 v214 v216 v244 v302 v312 v322 v324 v326 v328 v330 v332 v333 v334 v336 v339 v340 v341 v342 v343 v344 v345 v346 v347 v348 v349 v350 v351 v352 v353.
+
+**Canon al cierre de la ronda**: código (este commit) · worklog (este commit) · suite 335/335 · censo REAL 0+0 (la cola forzada: 139 en 93) · la elección PERMANECE (rivalSalon en la tienda) · BD canon md5 38121cfc… = blob de HEAD · ok · cero zombis.
+"""
+
+RUTA = "worklog.md"
+with open(RUTA, "a", encoding="utf-8") as f:
+    f.write(TEXTO)
+print("worklog v354.0 anexado:", len(TEXTO), "caracteres")
