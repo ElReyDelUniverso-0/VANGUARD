@@ -4818,6 +4818,59 @@
 //         cierre limpio, y la REAPERTURA sin placa (la memoria de sesión
 //         manda) · sin desbordes 1440/390 · canon repo restaurado · cero
 //         zombis.
-export const APP_VERSION = "v325.0";
-export const APP_CODENAME = "LA SEGUNDA CIRUGÍA";
+// v326.0 EL ARSENAL SE PUEDE GIRAR — novena ronda del autociclo y la ronda
+// EXPANSIVA del ritmo (v323 cirugía, v324 expansión, v325 cirugía → v326
+// expansión): la cola expansiva anotada por la v322/v324 juega su SEGUNDA
+// carta — arsenal-data, la fuente que la v283 vistió con 12 armas.
+// (1) EL CATÁLOGO CRECE: 12 → 21 armas con ficha completa (función, impacto
+//     con datos, ficha técnica y despiece de 6 piezas reales) — entran la
+//     DEFENSA AÉREA que faltaba (MIM-104 Patriot, Iron Dome, S-400 Triumf,
+//     FIM-92 Stinger) y la ARTILLERÍA DE COHETES (BM-21 Grad, ATACMS) junto
+//     a NLAW, MQ-9 Reaper y Kornet 9M133. Fotos REALES de Wikimedia Commons:
+//     títulos verificados contra la búsqueda de la API (list=search, títulos
+//     exactos) y servidas por el endpoint estable Special:FilePath — si el
+//     429/404 transitorio llega, el panel degrada a «foto en verificación»
+//     (mecanismo pending(), honestidad por diseño). Reclamaciones marcadas
+//     como tales («se reclama», «cifra del operador», «según reportes»).
+// (2) EL ANILLO DE LA ESCUELA LLEGA A LA ARMERÍA — SÉPTIMO consumidor:
+//     armaDelDia() gira por envoltura con girar() + diaDelAnillo() importadas
+//     de estrategia-data (el reloj CENTRAL único — cero copias, ley v324).
+//     Siete anillos: mando v313, instituto v318, red v320, canal v321,
+//     ciber v322, atlas v324, armería v326 — un solo reloj.
+// (3) EL CENSO POR CATEGORÍAS COMPUTADO: CATEGORIAS_ARSENAL (6 con color y
+//     emoji) + CAT_DE (los 21 ids mapeados) + censoArsenal() que FILTRA el
+//     catálogo real — si el arsenal crece, los chips se recalculan solos
+//     (ley v322 aplicada al arsenal: nada duro que se pudra).
+// (4) EL PANEL DICE LA VERDAD: franja ARMA DEL DÍA bajo la cabecera — el
+//     nombre y su origen clicables (abren la ficha), la crónica en dos
+//     líneas, los chips del censo con su color y la LEY DEL ANILLO en
+//     pantalla; chip de categoría en el overlay de cada foto; arma del día
+//     y censo viajan a la sala 3D con su acción propia «ver arma del día».
+//     CERO efectos nuevos (ley v302 por construcción): el anillo vive en
+//     useMemo puro, el clic es un handler.
+// (5) LA VERDAD VIVA ACTUALIZADA: el título de la sala /armeria deja de
+//     escribir «12» y lo lleva de la fuente (ARSENAL.length — la lección
+//     v324: un número duro en una cadena miente en silencio); paleta Ctrl+K
+//     y sitemap rodados a la verdad nueva; la sala server compone su línea
+//     derivada sola (21 armas · 133 piezas · 10 orígenes · AK-47 → Kornet)
+//     porque la v283 ya lo hizo derivado — el buen diseño anterior paga hoy.
+// SUITE: +2 pines (EL ARSENAL SE PUEDE GIRAR estático: las 9 armas nuevas
+//         con su id, 21 en el censo, fotos Special:FilePath, fichas completas,
+//         el anillo con el reloj central importado, CAT_DE cubriendo los 21,
+//         censoArsenal computado, franja en panel sin efectos, versión doble
+//         aserción — y vivo: home + health v326 + /armeria sirviendo Kornet
+//         y las 21) + rodillo a v326.0 (cuatro patrones, mensajes históricos
+//         intactos — ley v312) + rodillos de pines v283 (el slice custodiado
+//         se re-midió con la fuente real: 50.929 chars, borde < 70000; la
+//         línea derivada SSR a 21 · 133 · Kornet · 10).
+//     QA: tsc 0 TOTAL · eslint 0 en el tocado · censo canónico 6+4 (cero
+//     deuda nueva — la franja no escribió un solo efecto) · testigo ANTES
+//     del build (ley v316) · build EXIT 0 con el motor de la casa · doble
+//     testigo post-build íntegro en ambas copias · health v326.0 db up ·
+//     pruebas SUITE_EXIT=0 en UNA llamada (ley v302) · arnés visual
+//     (scripts/qa-visual-v326.sh): el anillo de la armería verificado en
+//     página — el día predice el arma y la franja lo cumple, el censo
+//     computado a la vista, el clic abre la ficha del arma del día.
+export const APP_VERSION = "v326.0";
+export const APP_CODENAME = "EL ARSENAL SE PUEDE GIRAR";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

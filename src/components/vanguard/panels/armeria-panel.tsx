@@ -15,7 +15,7 @@ import {
   Crosshair, Wrench, ChevronLeft, ChevronRight, Camera, ExternalLink, Ruler,
   Weight, Timer, Users, Globe2, Info, Upload,
 } from "lucide-react";
-import { ARSENAL, type ArsenalWeapon } from "@/lib/arsenal-data";
+import { ARSENAL, armaDelDia, censoArsenal, CAT_DE, CATEGORIAS_ARSENAL, type ArsenalWeapon } from "@/lib/arsenal-data";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -38,6 +38,14 @@ export function ArmeriaPanel() {
   const [w, setW] = useState<ArsenalWeapon | null>(ARSENAL[0] ?? null);
   const [imgFail, setImgFail] = useState<Record<string, boolean>>({});
 
+  // v326: el ANILLO DE LA ARMERÍA (séptimo consumidor) — un arma por día,
+  // giro por envoltura con el reloj central; el censo por categorías se
+  // COMPUTA del catálogo (ley v322: nada duro que se pudra). Ambos viven
+  // en useMemo puro — cero efectos, cero estado nuevo.
+  const armaDia = useMemo(() => armaDelDia(), []);
+  const censo = useMemo(() => censoArsenal(), []);
+  const catDeFoco = w ? CATEGORIAS_ARSENAL.find((c) => c.id === CAT_DE[w.id]) : undefined;
+
   const go = (d: number) => {
     const n = (idx + d + ARSENAL.length) % ARSENAL.length;
     setIdx(n);
@@ -57,6 +65,19 @@ export function ArmeriaPanel() {
         v: `${ARSENAL.length} FICHAS`,
         color: "#FF3B30",
         d: w ? `en foco: ${w.name} (${w.origin} · ${w.era}) — función, ficha técnica y armado pieza por pieza` : "fotos reales de las armas de los conflictos actuales — nada de polígonos",
+      },
+      // v326: el arma del día y el censo por categorías viajan a la sala 3D
+      {
+        t: `ARMA DEL DÍA: ${armaDia.short}`,
+        v: armaDia.origin.toUpperCase().slice(0, 14),
+        color: "#A78BFA",
+        d: `${armaDia.function}`.slice(0, 170),
+        a: "ver arma del día",
+      },
+      {
+        t: `CENSO · ${censo.map((c) => `${c.cat.nombre} ${c.n}`).join(" · ")}`,
+        color: "#7AB8FF",
+        d: `${censo.length} categorías y ${censo.reduce((acc, c) => acc + c.n, 0)} armas computadas del catálogo — el censo se recalcula solo si el arsenal crece`,
       },
     ];
     ARSENAL.slice(0, 8).forEach((a) => {
@@ -85,7 +106,7 @@ export function ArmeriaPanel() {
       a: "sube tu arma",
     });
     return filas;
-  }, [w]);
+  }, [w, armaDia, censo]);
   useSala3DContenido(
     "armeria",
     "ARMERÍA REAL",
@@ -93,6 +114,15 @@ export function ArmeriaPanel() {
     w ? `fotos reales, no polígonos · ${w.name} (${w.origin}) en foco` : `fotos reales de las armas de los conflictos · ${ARSENAL.length} fichas`,
     filas3D,
   );
+  // v326: abrir el arma del día desde la franja o desde la sala 3D — un
+  // handler, no un efecto (ley v302: el estado nace de un clic).
+  // Declarado ANTES del oyente 3D que lo usa (la lección del cirujano v323:
+  // leer todo el cuerpo antes de cortar — el eslint lo gritó a tiempo).
+  const abrirArmaDelDia = () => {
+    const i = ARSENAL.findIndex((a) => a.id === armaDia.id);
+    if (i >= 0) { setIdx(i); setW(ARSENAL[i]); sfx.click(); }
+  };
+
   // v168: oyente de acciones 3D — ver arma/subir usan los MISMOS handlers 2D
   useEffect(() => {
     const onAccion = (e: Event) => {
@@ -102,6 +132,8 @@ export function ArmeriaPanel() {
         const i = det.idx - 1;
         const a = ARSENAL[i];
         if (a) { setIdx(i); setW(a); sfx.click(); }
+      } else if (det.accion === "ver arma del día") {
+        abrirArmaDelDia();
       } else if (det.accion === "sube tu arma") {
         window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "creador" }));
         toast.success("Abre el ESTUDIO COMUNITARIO → tipo ARMA", { description: "Sube TU arma con fotos reales y su armado" });
@@ -120,6 +152,26 @@ export function ArmeriaPanel() {
         icon={<Crosshair className="w-5 h-5 text-red-hud" />}
         color="red"
       />
+
+      {/* ===== v326: ARMA DEL DÍA — el anillo de la escuela llega a la armería (séptimo consumidor) ===== */}
+      <div className="hud-panel px-3 py-2.5 relative overflow-hidden" aria-label="Arma del día">
+        <button onClick={abrirArmaDelDia} className="flex items-center gap-2 flex-wrap text-left w-full group" title="Abrir la ficha del arma del día">
+          <span className="text-[8px] font-mono uppercase tracking-widest text-violet-hud">★ arma del día</span>
+          <span className="text-xs font-bold font-mono uppercase text-foreground group-hover:text-violet-hud transition-colors">{armaDia.short}</span>
+          <span className="text-[9px] font-mono text-muted-foreground">{armaDia.origin} · {armaDia.era}</span>
+        </button>
+        <p className="text-[10px] text-muted-foreground leading-snug mt-1 line-clamp-2">{armaDia.function}</p>
+        <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+          {censo.map(({ cat, n }) => (
+            <span key={cat.id} className="text-[8px] font-mono uppercase px-1.5 py-0.5 border rounded-sm" style={{ borderColor: `${cat.color}55`, color: cat.color }} title={`${n} ${cat.nombre} en el catálogo`}>
+              {cat.emoji} {cat.nombre} {n}
+            </span>
+          ))}
+        </div>
+        <p className="text-[8px] font-mono uppercase text-muted-foreground/70 mt-1.5">
+          el anillo de la armería avanza un arma por día — {ARSENAL.length} armas en {censo.length} categorías del catálogo, dos días seguidos jamás repiten al invitado · atribución del censo: computada del catálogo
+        </p>
+      </div>
 
       {/* selector */}
       <div className="flex gap-1.5 flex-wrap items-center">
@@ -172,6 +224,11 @@ export function ArmeriaPanel() {
                   <div>
                     <div className="text-sm font-mono font-black uppercase text-white tracking-wide">{w.name}</div>
                     <div className="text-[9px] font-mono text-white/70 uppercase">{w.origin} · {w.era}</div>
+                    {catDeFoco && (
+                      <span className="mt-0.5 inline-block text-[8px] font-mono uppercase px-1.5 py-0.5 border rounded-sm" style={{ borderColor: `${catDeFoco.color}66`, color: catDeFoco.color }}>
+                        {catDeFoco.emoji} {catDeFoco.nombre}
+                      </span>
+                    )}
                   </div>
                   <div className="text-right">
                     <div className="text-[9px] font-mono text-white/50">{pending(w.photo) ? "FOTO EN VERIFICACIÓN" : "FOTO REAL · WIKIMEDIA"}</div>

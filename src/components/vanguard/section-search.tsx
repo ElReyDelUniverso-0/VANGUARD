@@ -215,8 +215,9 @@ export function SectionSearch({
         kind: "page", href: "/historia",
       },
       {
-        // v283.0 LA ARMERÍA DEL ARCHIVO — las 12 armas reales de la fuente, en server
-        key: "pg:armeria", label: "LA ARMERÍA DEL ARCHIVO — las 12 armas reales que explican los conflictos: ficha, foto, despiece e impacto", short: "armeria armas ak47 shahed javelin himars dron despiece tanque rifle impacto",
+        // v283.0 LA ARMERÍA DEL ARCHIVO — las armas reales de la fuente, en server
+        // (rodillo v326: 12 → 21 armas — el catálogo creció y la paleta lo canta)
+        key: "pg:armeria", label: "LA ARMERÍA DEL ARCHIVO — las 21 armas reales que explican los conflictos: ficha, foto, despiece e impacto", short: "armeria armas ak47 shahed javelin himars dron despiece tanque rifle impacto patriot stinger",
         icon: <Crosshair className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · la armería de la casa", icon_color: "text-amber",
         kind: "page", href: "/armeria",

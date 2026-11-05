@@ -5,17 +5,21 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 
 // v283.0 LA ARMERÍA DEL ARCHIVO — la cabeza de la cola de la v282: la
 // armería (arsenal-data) esperaba «su sala o su sección» y la ronda le
-// paga la sala: las 12 armas reales del archivo (AK-47, Shahed-136,
+// paga la sala: las armas reales del archivo (AK-47, Shahed-136,
 // Javelin, HIMARS...) con su foto, su origen, su era, su función y su
 // impacto VERBATIM de la fuente (directiva v266: la casa no inventa),
 // su despiece contado desde los pasos reales y la puerta honesta al
 // salón interactivo (el aparato, la primera página). Sala server pura
 // (sin cliente, sin BD — prerenderizada ○), patrón /historia (v274).
+// v326.0 EL ARSENAL SE PUEDE GIRAR: 12 → 21 armas y el título de la
+// sala deja de escribir la cifra — la lleva de la fuente (ARSENAL.length,
+// la lección v324: un número duro en una cadena es un número que miente
+// en silencio).
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "ARMERÍA — las 12 armas que explican los conflictos de hoy | VANGUARD",
+  title: `ARMERÍA — las ${ARSENAL.length} armas que explican los conflictos de hoy | VANGUARD`,
   description:
     "El archivo de armas de VANGUARD: cada arma real con su foto, su origen, su era, qué hace en los conflictos y por qué importa — con datos. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/armeria` },

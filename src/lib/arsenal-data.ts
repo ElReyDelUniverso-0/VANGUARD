@@ -4,11 +4,29 @@
 // impacto documentado y armado pieza por pieza — sin polígonos, como pidió
 // la comunidad. Los estudiantes de VANGUARD también pueden subir las suyas
 // desde el ESTUDIO COMUNITARIO.
+//
+// v326.0 EL ARSENAL SE PUEDE GIRAR: 12 → 21 armas (entran NLAW, Patriot,
+// Iron Dome, S-400, MQ-9 Reaper, BM-21 Grad, ATACMS, Stinger y Kornet —
+// la defensa aérea y la artillería de cohetes que faltaban en el mapa) y
+// el anillo de la escuela llega a la armería: SÉPTIMO consumidor de
+// girar() + diaDelAnillo() (armaDelDia) con el reloj CENTRAL único.
+// Censo por categorías computado (censoArsenal) — nada duro que se pudra.
+// Fotos de las 9 nuevas: títulos verificados contra la búsqueda de la API
+// de Wikimedia Commons (list=search, títulos exactos); servidas por el
+// endpoint estable Special:FilePath — si el 429/404 transitorio de
+// Wikimedia llega, el panel degrada a «foto en verificación» (mecanismo
+// pending(), honestidad por diseño). Reclamaciones marcadas como tales
+// («se reclama», «según su operador») donde la fuente es el operador.
 
 export interface AssemblyStep {
   pieza: string;
   desc: string;
 }
+
+// v326: el anillo de la escuela llega a la armería — la rotación por
+// envoltura y el reloj CENTRAL (única copia en estrategia-data, ley v324)
+// giran el arma del día junto a los otros seis anillos de la casa.
+import { girar, diaDelAnillo } from "./estrategia-data";
 
 export interface ArsenalWeapon {
   id: string;
@@ -375,4 +393,315 @@ export const ARSENAL: ArsenalWeapon[] = [
       { pieza: "Munición Excalibur", desc: "Proyectil guiado con aletas que se abren en vuelo: 1 disparo = 1 objetivo. La 'munición precisa' que cambió la artillería de área a cirugía." },
     ],
   },
+  {
+    id: "nlaw",
+    short: "NLAW",
+    name: "NLAW (Next-generation Light Anti-tank Weapon)",
+    origin: "Suecia/Reino Unido",
+    era: "2009 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/NLAW%20Training%20Aid%20MOD%2045149588.jpg?width=960",
+    function:
+      "Misil antitanque de corto alcance en tubo sellado: dispara y olvida. Su truco es el modo ATAQUE SUPERIOR — el misil vuela POR ENCIMA del blindado y golpea el techo, la parte menos blindada del tanque. Fue el arma de la defensa de Kyiv en 2022: ligero (12,5 kg), se puede disparar acostado, desde una ventana o desde una zanja, y no necesita saber usar un ordenador.",
+    impact:
+      "El Reino Unido entregó a Ucrania varios miles de NLAW (más de 4.000 según los anuncios de Downing Street 2022) y las columnas blindadas que entraron por el norte encontraron equipos de dos soldados a cada esquina. Junto al Javelin, cambió la aritmética de la guerra de tanques: el blindado urbano dejó de asumirse seguro.",
+    specs: {
+      origen: "Suecia/UK (Saab, 2009)",
+      calibre: "152 mm (ojiva en tándem)",
+      alcance: "20-600 m (ataque superior 400-600)",
+      peso: "12,5 kg lanzado",
+      guiado: "Predicción de trayectoria (dispara y olvida)",
+      usuarios: "UK, Ucrania, Finlandia, Suiza, +",
+    },
+    assembly: [
+      { pieza: "Tubo lanzador sellado", desc: "El arma llega lista para disparar: el misil vive dentro del tubo y sale con una sola orden. El tubo entero se desecha tras el disparo." },
+      { pieza: "Ojiva en tándem", desc: "Dos cargas huecas seguidas: la primera detona las defensas reactivas (los 'ladrillos' explosivos del blindado) y la segunda perfora el acero real." },
+      { pieza: "Cabeza de guía PTAAS", desc: "Mide el ritmo del objetivo antes del disparo: el soldado sigue al tanque 2-3 segundos y el misil calcula dónde estará — el guiado lo lleva el misil, no el tirador." },
+      { pieza: "Motor de eyección + cohete", desc: "Carga de eyección suave saca el misil del tubo (seguro para disparar desde dentro de un cuarto) y a unos metros enciende el cohete real." },
+      { pieza: "Bípode y mira", desc: "El arma se apoya en el suelo o en la pared: la mira de pasiva nocturna se acopla y el tirador sigue al objetivo con los dos ojos." },
+      { pieza: "Sistema de disparo", desc: "Botón con llave de seguridad y selector de modo: ATAQUE superior contra tanques, DIRECTO contra edificios, vehículos ligeros u obstáculos." },
+    ],
+  },
+  {
+    id: "patriot",
+    short: "Patriot",
+    name: "MIM-104 Patriot",
+    origin: "EE.UU.",
+    era: "1981 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/MIM-104%20Patriot%20surface-to-air%20missile%20system%20launcher.jpg?width=960",
+    function:
+      "El sistema de defensa antiaérea y antimisiles más pedido del planeta: radar de barrido electrónico, centro de mando y lanzadores que disparan interceptores contra aviones, cruceros y balísticos. En Ucrania protege Kyiv y las infraestructuras críticas desde 2023; cada batería vigila un sector entero y decide sola cuál interceptor sirve para cada amenaza.",
+    impact:
+      "Baterías donadas por EE.UU., Alemania, Países Bajos y Rumanía operan en Ucrania (la primera llegó en abril de 2023). En mayo de ese año Ucrania reclamó el derribo de un misil ruso Kinzhal con un Patriot — si confirmado, el primer derribo reclamado de un arma hipersónica. Un interceptor PAC-3 cuesta ~4 millones de dólares: defender es caro.",
+    specs: {
+      origen: "EE.UU. (Raytheon, 1981)",
+      misiles: "PAC-3 (16 por lanzador) / GEM-T (4)",
+      alcance: "160 km antiaéreo · ~35 km balístico (PAC-3)",
+      radar: "AN/MPQ-65, barrido electrónico",
+      usuarios: "EE.UU., Ucrania, Alemania, +18 países",
+    },
+    assembly: [
+      { pieza: "Radar AN/MPQ-65", desc: "La caja giratoria que vigila el cielo en un radio de más de 150 km: encuentra el objetivo, lo sigue y guía el interceptor por radar — el tirador no apunta, el radar sí." },
+      { pieza: "Centro de mando AN/MSQ-104", desc: "La caravana donde viven los operadores: cruza el radar con los radares de otros sectores y decide si la amenaza es real y qué interceptor la caza." },
+      { pieza: "Lanzador M901", desc: "Contenedor inclinado con 4 misiles PAC-3 o 16 GEM-T: cada tubo es el misil entero en su caja, listos para salir inclinados hacia el sector del blanco." },
+      { pieza: "Interceptor PAC-3", desc: "El misil que golpea cuerpo a cuerpo (hit-to-kill): no estalla cerca del objetivo, CHOCA contra él con 180 mini-impactadores que abren el camino." },
+      { pieza: "Generadores eléctricos", desc: "La batería vive lejos de la red: generadores diésel alimentan el radar y el mando, y los camiones mueven todo el sistema en menos de una hora." },
+      { pieza: "Mástil de comunicaciones", desc: "Antena que une la batería con la red de defensa del país: un Patriot nunca pelea solo, comparte su cielo con los demás sectores." },
+    ],
+  },
+  {
+    id: "iron_dome",
+    short: "Iron Dome",
+    name: "Cúpula de Hierro (Iron Dome)",
+    origin: "Israel",
+    era: "2011 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Iron%20Dome%20Battery%20Deployed%20Near%20Ashkelon.jpg?width=960",
+    function:
+      "Sistema de defensa antirroquetas de corto alcance: el radar ve el cohete saliente, el control calcula DÓNDE caerá y solo dispara un interceptor Tamir contra los que van a caer en zonas pobladas. La economía del sistema es su genio: ignorar los cohetes de un campo vacío y gastar un Tamir solo donde hay vidas.",
+    impact:
+      "Su operador reclama más de 5.000 intercepciones y una tasa de éxito cercana al 90% desde 2011 (cifra del operador, no verificada de forma independiente). Cada interceptor Tamir cuesta decenas de miles de dólares contra cohetes artesanales que valen centenares: la guerra de costes es su mayor debate, y la repuesta de sus defensores es simple: ¿cuánto vale una vida?",
+    specs: {
+      origen: "Israel (Rafael + IAI, 2011)",
+      interceptores: "Tamir (20 por lanzador)",
+      cobertura: "~150 km² por batería",
+      radar: "EL/M-2084 (multimisión)",
+      usuarios: "Israel (compra aprobada también en EE.UU.)",
+    },
+    assembly: [
+      { pieza: "Radar EL/M-2084", desc: "El radar multimisión que ve el lanzamiento del cohete casi al instante: mide trayectoria y calcula el punto de caída en segundos." },
+      { pieza: "Centro de control de batalla", desc: "El cerebro: decide si el cohete cae en campo abierto (no se dispara nada) o sobre una ciudad (sale el Tamir). La decisión tarda menos que un parpadeo." },
+      { pieza: "Lanzador vertical", desc: "Trailer con 20 celdas verticales de Tamir: el lanzamiento vertical cubre todos los azimutes — la batería defiende lo que esté alrededor, no solo de frente." },
+      { pieza: "Interceptor Tamir", desc: "Misil guiado con aletas de gas para giros brutales: corrige en vuelo contra el cohete que baja y estalla cerca para fragmentarlo en el aire." },
+      { pieza: "Unidades de energía y refrigeración", desc: "La batería opera aislada: generadores y sistemas de refrigeración mantienen radar y control encendidos 24/7 durante las oleadas." },
+      { pieza: "Tráilers y nivelación", desc: "Cada batería se repliega en horas y se nivela en terreno cualquiera: la movilidad es parte de la defensa — batería fija es batería cazada." },
+    ],
+  },
+  {
+    id: "s400",
+    short: "S-400",
+    name: "S-400 Triumf",
+    origin: "Rusia",
+    era: "2007 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/S-400%20Triumf%20launch%20vehicle.JPG?width=960",
+    function:
+      "Sistema de defensa antiaérea de largo alcance con MISILES EN CAPAS: cada batería lleva varios tipos de interceptor (del 48N6 de 250 km al 40N6 de 400 km) y elige el que sirve para cada altura y distancia. Su radar de vigilancia detecta a 600 km: la sola existencia del S-400 cambia las rutas de vuelo de los aviones que no lo llevan.",
+    impact:
+      "El sistema antimisiles más exportado de Rusia. Turquía lo compró a pesar de la OTAN y fue expulsada del programa F-35 (2019); India pagó ~5.400 millones de dólares por cinco regimientos. En Ucrania, sus zonas de cobertura obligan a los aviones ucranianos a volar bajo y lanzar armas desde lejos — la guerra de drones es también una guerra de QUIÉN manda en el cielo.",
+    specs: {
+      origen: "Rusia (Almaz-Antey, 2007)",
+      alcance: "Hasta 400 km (misil 40N6)",
+      altitud: "Hasta 30 km de techo",
+      radar: "91N6E vigilancia (600 km) + 92N6E fuego",
+      usuarios: "Rusia, Turquía, India, China, Bielorrusia, +",
+    },
+    assembly: [
+      { pieza: "Radar de vigilancia 91N6E", desc: "La antena plegable de gran tamaño: barrido largo alcance que abre el cielo completo — sin radar no hay defensa, solo un lanzador decorativo." },
+      { pieza: "Radar de engagement 92N6E", desc: "El radar de precisión que guía los interceptores en la fase final: iluminación y corrección hasta el impacto contra blancos que se mueven a Mach 10+." },
+      { pieza: "Lanzadores 5P85 (TEL)", desc: "Camiones con 4 tubos verticales cada uno: fríos (el misil sale eyectado por gas y enciende arriba), difíciles de cazar por satélite porque se mueven y se repliegan." },
+      { pieza: "Misiles en capas", desc: "48N6 (250 km, balísticos), 9M96 (media distancia, más ágil), 40N6 (400 km, techo enorme): la batería mezcla capas como un portero que saca la mano corta o larga según el tiro." },
+      { pieza: "Puesto de mando 55K6E", desc: "La caravana que une radares y lanzadores y decide qué interceptores salen: puede integrarse en redes A2/AD más grandes con otros sistemas." },
+      { pieza: "Logística y camuflaje", desc: "Generadores, camiones de recarga de misiles (grúas hidráulicas) y la disciplina de moverse tras disparar: la doctrina dice que un S-400 estático es un S-400 muerto." },
+    ],
+  },
+  {
+    id: "mq9",
+    short: "MQ-9",
+    name: "MQ-9 Reaper",
+    origin: "EE.UU.",
+    era: "2007 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/MQ-9%20Reaper%20UAV%20(cropped).jpg?width=960",
+    function:
+      "Dron de gran altitud y larga autonomía (MALE): vuela 27 horas seguidas a 15.000 metros con una bola de sensores que ve de día, de noche y a través de nubes, pilotado por satélite desde el otro lado del planeta. Lleva misiles Hellfire y bombas guiadas: es el dron de la vigilancia permanente y del golpe puntual — la 'sombra que espera' de la guerra actual.",
+    impact:
+      "El sistema de los asesinatos dirigidos: el general Qasem Soleimani murió en Bagdad (enero de 2020) por un ataque de MQ-9 con Hellfire. Su alcance político supera al militar: cada país que opera MQ-9 decide con ellos a quién mirar 24 horas y cuándo cerrar el ojo. En marzo de 2023 un Su-27 ruso lo derribó al Mar Negro vertiendo combustible: el primer choque físico directo aire-aire documentado entre las dos potencias desde la Guerra Fría.",
+    specs: {
+      origen: "EE.UU. (General Atomics, 2007)",
+      autonomía: "27 horas en estación",
+      techo: "15.000 m (50.000 ft)",
+      carga: "~1.400 kg (Hellfire + GBU-12/38)",
+      usuarios: "EE.UU., UK, Francia, Italia, Países Bajos, +",
+    },
+    assembly: [
+      { pieza: "Bola de sensores MTS-B", desc: "El ojo bajo el morro: cámara electroóptica, infrarrojo, designador láser y zoom brutal — desde 15 km de altura reconoce un rostro y guía el misil con su propio láser." },
+      { pieza: "Ala de gran envergadura", desc: "20 metros de envergadura en un fuselaje pequeño: el ala larga y delgada es la que paga las 27 horas de vuelo — el avión vuela lento (350 km/h) y por eso dura tanto." },
+      { pieza: "Motor turbopropulsado", desc: "Honeywell TPW910 de 900 CV: el motor que le permite subir a 15.000 m con armas colgadas — el Predator (su padre) no podía, y por eso el Reaper caza y no solo mira." },
+      { pieza: "Enlace satelital", desc: "La antena del morro y la cola hablan con satélites: el piloto está a 10.000 km — el retardo de satélite se paga con automatismos de aterrizaje y despegue." },
+      { pieza: "Pilones de armas", desc: "6 puntos de anclaje bajo las alas: Hellfire AGM-114 para puntos exactos, bombas GBU-12/38 guiadas por GPS/láser para blanco más duro." },
+      { pieza: "Tren retráctil", desc: "Tren triciclo que se guarda tras el despegue: el aterrizaje automatizado en pistas de guerra es parte del mismo sistema — los operadores rotan, el dron no duerme." },
+    ],
+  },
+  {
+    id: "grad",
+    short: "Grad",
+    name: "BM-21 Grad",
+    origin: "URSS",
+    era: "1964 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/UA%2036th%20brigade%20BM-21%20Grad%2001.jpg?width=960",
+    function:
+      "Lanzacohetes múltiple de 122 mm sobre camión: 40 tubos que vacían 40 cohetes en 20 segundos y borran una cuadrícula de 4 hectáreas de una salva. 'Grad' significa granizo, y el nombre dice el método: no precisión, cantidad — el terreno que recibe la salva deja de ser terreno. Es el MLRS (Multiple Launch Rocket System) más difundido del planeta.",
+    impact:
+      "Más de 50 países lo usan o lo han copiado (China Type 81, Irán HM-20, Corea del Norte...). Está en todas las trincheras del Sahel, Sudán, Myanmar, Congo y Ucrania por la misma razón: un Grad usado vale menos que un coche y su salva vale un batallón de artillería clásica. Su herencia también es la de los cohetes contra ciudades — el arma con más historia de 'salva sobre población' de las últimas décadas.",
+    specs: {
+      origen: "URSS (1964, NII-147)",
+      calibre: "122 mm",
+      salva: "40 cohetes en 20 s",
+      alcance: "12-40 km según cohete",
+      usuarios: "50+ países y copias (China, Irán, +)",
+    },
+    assembly: [
+      { pieza: "Chasis Ural-375/4320", desc: "Camión 6x6 todo terreno: disparar y moverse antes de que el contrafuego llegue — la regla de oro del artillero de cohetes ('shoot and scoot')." },
+      { pieza: "Módulo de 40 tubos", desc: "40 tubos en 6 hileras sobre el chasis: la salva completa sale en 20 segundos, un cohete cada medio segundo — el tubo es solo el raíl, no un arma cerrada." },
+      { pieza: "Sistema de puntería", desc: "Elevación y giro eléctricos desde la cabina: el artillero nunca sale del vehículo — apuntar es girar el módulo entero con mandos como una grúa." },
+      { pieza: "Cohete 9M22U", desc: "El cohete de 66 kg con ojiva de fragmentación: sin guiado, su precisión es de cientos de metros — por eso se dispara en salvas y no de uno en uno." },
+      { pieza: "Estabilizadores hidráulicos", desc: "Patas que clavan el camión al suelo antes de la salva: el retroceso de 40 cohetes haría bailar el vehículo y con él la precisión de los últimos tubos." },
+      { pieza: "Cubierta y transporte", desc: "Lona de camuflaje y cajas de cohetes rellenas: cada cohete viaja en su contenedor de madera — la logística del Grad es la logística de los camiones que nunca dejan de venir." },
+    ],
+  },
+  {
+    id: "atacms",
+    short: "ATACMS",
+    name: "ATACMS",
+    origin: "EE.UU.",
+    era: "1991 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Atacms%2003.jpg?width=960",
+    function:
+      "Misil balístico táctico que sale del mismo lanzador que el HIMARS (o el M270): se dispara como un cohete de artillería pero escala la atmósfera y baja a Mach 3 sobre el objetivo a 165-300 km. La defensa contra balísticos de este tipo es un problema de radar y de presupuesto: el blanco no puede 'esquivar' nada — la pregunta es si le llegó un interceptor a tiempo.",
+    impact:
+      "Ucrania los usa desde octubre de 2023: la primera noche, aeródromos rusos de Berdiansk y Luhansk amanecieron con helicópteros y depósitos golpeados a 150 km de la línea. El alcance de 300 km se negó en público durante meses y se entregó en secreto (según reportes de la prensa estadounidense de 2024) — el arma que el dueño dice que no vende es la que cambia la guerra. Cada misil cuesta ~1,5 millones de dólares.",
+    specs: {
+      origen: "EE.UU. (Lockheed Martin, 1991)",
+      calibre: "610 mm (guiado GPS/inercial)",
+      alcance: "165 km (Bloque 1) · 300 km (Bloque 1A)",
+      carga: "Unitaria ~230 kg o submuniciones",
+      usuarios: "EE.UU., Ucrania, Corea del Sur, Grecia, +",
+    },
+    assembly: [
+      { pieza: "Propulsor sólido", desc: "El motor de combustible sólido que quema en decenas de segundos: el misil sube en arco balístico como una bala de cañón con alerones — su trayectoria es una parábola calculada." },
+      { pieza: "Ojiva unitaria o submuniciones", desc: "Bloque 1: 950 submuniciones M74 que llueven sobre un aeródromo; bloques con carga unitaria: una sola explosión grande y precisa sobre el hangar — el diseño dice la moral del disparo." },
+      { pieza: "Guía inercial + GPS", desc: "El paquete de navegación que corrige la parábola en vuelo: el GPS militar lo trae al punto exacto aunque el lanzador haya disparado desde 200 km." },
+      { pieza: "Sección de control", desc: "Aletas en la cola que mueven el misil dentro de la atmósfera: pequeños ajustes que a Mach 3 valen cientos de metros de precisión." },
+      { pieza: "Integración con HIMARS/M270", desc: "El mismo camión que dispara cohetes GMLRS de 80 km carga un ATACMS en su lugar: para el radar enemigo el camión es el mismo — el misil que sale es la sorpresa." },
+      { pieza: "Contenedor y logística", desc: "Tubo sellado de fábrica que se carga con grúa: el misil vive años sin mantenimiento y se dispara cuando toca — la munición que se guarda como un libro y cae como un rayo." },
+    ],
+  },
+  {
+    id: "stinger",
+    short: "Stinger",
+    name: "FIM-92 Stinger",
+    origin: "EE.UU.",
+    era: "1981 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Launch%20of%20a%20FIM-92%20Stinger%20missile%2C%202012.jpg?width=960",
+    function:
+      "Misil portátil antiaéreo (MANPADS) guiado por infrarrojos: un soldado de dos personas apunta al cielo con el tubo al hombro, el buscador traba el calor del motor y el misil persigue al avión a Mach 2,2. No necesita radar ni permiso: el cielo bajo deja de ser gratis donde hay un Stinger en la espalda de un soldado.",
+    impact:
+      "Los Stinger que la CIA dio a la resistencia afgana (1986-89) se reclaman responsables de cientos de aeronaves soviéticas perdidas (la cifra exacta sigue en debate entre historiadores) y se volvieron el símbolo del fin del cielo seguro. Ucrania los usó en las primeras horas de 2022 contra helicópteros y aviones a baja altura; el programa de reemplazo (FIM-92X con contramedidas nuevas) sigue siendo una línea del presupuesto estadounidense treinta años después.",
+    specs: {
+      origen: "EE.UU. (General Dynamics, 1981)",
+      calibre: "70 mm",
+      alcance: "Hasta 4,8 km",
+      techo: "3.800 m",
+      peso: "15,2 kg (misil + lanzador)",
+      usuarios: "EE.UU. y 20+ países (Ucrania, +)",
+    },
+    assembly: [
+      { pieza: "Misil en tubo sellado", desc: "El misil vive años dentro del tubo sin mantenimiento: el tubo es el lanzador, la caja y el envase — se apunta por el mismo hueco por donde sale." },
+      { pieza: "Buscador infrarrojo", desc: "El ojo de calor que traba el motor del avión: versiones nuevas (BLOCK II) ven en dos bandas y distinguen las contramedidas que arrojan los aviones — bengalas que engañan al calor." },
+      { pieza: "Batería refrigerante (BGU)", desc: "La unidad de gas que enfría el buscador y le da corriente al insertarla: el Stinger 'despierta' al encajarla — hasta entonces el misil duerme sin gastar nada." },
+      { pieza: "Interrogador IFF", desc: "La antena que pregunta '¿amigo o enemigo?' al avión antes de disparar: el Stinger no distingue solo por calor — el error más caro de este arma es derribar al avión propio." },
+      { pieza: "Mango y gatillo", desc: "La empuñadura con el generador y el seguro: el tirador escucha el tono del buscador (trabado) y aprieta — el misil sale eyectado por gas y enciende su cohete a pocos metros." },
+      { pieza: "Mira de hierro", desc: "La mira frontal simple del tubo: sin electrónica de por medio el soldado trae el avión al aro, el buscador hace el resto — tecnología de 1981 que sigue en el cielo de 2026." },
+    ],
+  },
+  {
+    id: "kornet",
+    short: "Kornet",
+    name: "Kornet (9M133)",
+    origin: "Rusia",
+    era: "1998 · presente",
+    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Kornet%20anti-tank%20missile%20(2).jpg?width=960",
+    function:
+      "Misil antitanque guiado por haz láser con alcance de artillería: el operador mantiene la mira sobre el blanco y el misil 'cabalga' el haz láser hasta el impacto — 5,5 km (10 en la versión EM). Su ojiva en tándem perfora más de un metro de acero, y la versión EM añade el modo de ataque superior: el techo del tanque, otra vez el punto débil.",
+    impact:
+      "Hezbollah los usó en la guerra del Líbano de 2006 contra tanques Merkava israelíes (más de 40 tanques golpeados según los partes del conflicto, decenas con perforación). Ha sido uno de los ATGM más vistos en Siria, Gaza y Ucrania — ambos lados: Rusia los dispara y Ucrania ha capturado lanzadores. La lección del Kornet es la del Javelin invertida: guiar el misil con el ojo del tirador en vez de soltarlo y olvidarlo — más alcance, más trabajo, más barato.",
+    specs: {
+      origen: "Rusia (KBP Tula, 1998)",
+      calibre: "152 mm",
+      alcance: "100 m-5,5 km (EM: 10 km)",
+      penetración: ">1.000 mm RHA (tándem)",
+      usuarios: "Rusia, Siria, +10 países",
+    },
+    assembly: [
+      { pieza: "Contenedor lanzador", desc: "Tubo rectangular sellado con el misil dentro: se acopla al trípode o al vehículo y se dispara — el contenedor protege el misil años y sale con él hasta el blanco." },
+      { pieza: "Ojiva en tándem", desc: "Carga hueca doble contra blindaje reactivo: la primera limpia los ladrillos explosivos y la segunda abre el acero — más de 1.000 mm de penetración teórica." },
+      { pieza: "Motor de dos etapas", desc: "Carga de eyección que saca el misil del tubo sin llamas (seguro detrás) y cohete sustentador que lo lleva a 300 m/s hasta el límite de su alcance." },
+      { pieza: "Guía por haz láser", desc: "El sensor trasero del misil lee el haz que proyecta la mira: si el operador mantiene el punto sobre el tanque, el misil corre por el haz como un tren por su riel." },
+      { pieza: "Trípode 1P45 y visor", desc: "El trípode con el visor diurno/térmico: el operador sigue el blanco hasta el impacto — por eso se dispara desde posiciones cubiertas y se cambia de posición tras el disparo." },
+      { pieza: "Versión EM y top-attack", desc: "Kornet-EM con automatic tracker (la cámara sigue al blanco sola) y modo que sube el misil y lo baja sobre el techo: la respuesta rusa al Javelin, años después." },
+    ],
+  },
 ];
+
+// v326: EL CENSO POR CATEGORÍAS — la lección v322 aplicada al arsenal:
+// nada duro que se pudra. La categoría vive en un mapa (id → categoría),
+// el censo se COMPUTA con reduce sobre el catálogo real y los chips del
+// panel se recalculan solos si el arsenal crece.
+export interface CatArsenal {
+  id: string;
+  nombre: string;
+  color: string;
+  emoji: string;
+}
+
+export const CATEGORIAS_ARSENAL: CatArsenal[] = [
+  { id: "fusil", nombre: "Fusilería", color: "#F5C542", emoji: "🔫" },
+  { id: "dron", nombre: "Aérea no tripulada", color: "#7AB8FF", emoji: "🛩️" },
+  { id: "antitanque", nombre: "Antitanque", color: "#FF3B30", emoji: "🎯" },
+  { id: "artilleria", nombre: "Artillería y cohetes", color: "#FB923C", emoji: "💥" },
+  { id: "blindados", nombre: "Blindados", color: "#34D399", emoji: "🛡️" },
+  { id: "defensa", nombre: "Defensa aérea", color: "#A78BFA", emoji: "☁️" },
+];
+
+// id de arma → id de categoría (los 21 del catálogo)
+export const CAT_DE: Record<string, string> = {
+  ak47: "fusil",
+  m4: "fusil",
+  fpv: "dron",
+  shahed: "dron",
+  bayraktar: "dron",
+  lancet: "dron",
+  mq9: "dron",
+  javelin: "antitanque",
+  rpg7: "antitanque",
+  nlaw: "antitanque",
+  kornet: "antitanque",
+  himars: "artilleria",
+  m777: "artilleria",
+  grad: "artilleria",
+  atacms: "artilleria",
+  t90: "blindados",
+  leopard2: "blindados",
+  patriot: "defensa",
+  iron_dome: "defensa",
+  s400: "defensa",
+  stinger: "defensa",
+};
+
+export interface CensoArsenal {
+  cat: CatArsenal;
+  n: number;
+  armas: ArsenalWeapon[];
+}
+
+export function censoArsenal(): CensoArsenal[] {
+  return CATEGORIAS_ARSENAL.map((cat) => {
+    const armas = ARSENAL.filter((a) => CAT_DE[a.id] === cat.id);
+    return { cat, n: armas.length, armas };
+  }).filter((c) => c.n > 0);
+}
+
+// v326: EL ANILLO DE LA ARMERÍA — SÉPTIMO consumidor del anillo de la
+// escuela (mando v313, instituto v318, red v320, canal v321, ciber v322,
+// atlas v324): un arma por día, giro por envoltura con el reloj CENTRAL
+// compartido — dos días seguidos jamás repiten al invitado.
+export function armaDelDia(): ArsenalWeapon {
+  return girar(ARSENAL, 1, diaDelAnillo() % ARSENAL.length)[0];
+}
