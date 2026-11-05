@@ -5058,6 +5058,44 @@
 //     COMPILADOR; los nombres de pines y comentarios quedan como memoria —
 //     ley v312) + rodillo a v331.0 (cuatro patrones, mensajes históricos
 //     intactos — ley v312).
-export const APP_VERSION = "v331.0";
-export const APP_CODENAME = "LA MEMORIA DEL COMPILADOR";
+// v332.0 LA ENTRADA DEL DÍA — decimoquinta ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v331 cirugía → v332 expansión): la DÉCIMA puerta del
+// anillo de la escuela se abre en la enciclopedia mundial — el anillo ya
+// tenía nueve consumidores (mando v313, instituto v318, red v320, canal v321,
+// ciber v322, atlas v324, armería v326, comunidad v328, poder v330) y la
+// enciclopedia entra por la misma puerta (ley v324: un solo reloj, cero
+// copias).
+// ① LA ENTRADA DEL DÍA: wikiDelDia() en wiki-data — girar() + diaDelAnillo()
+//    importadas del reloj CENTRAL único; una ficha lleva la enciclopedia cada
+//    día, dos días seguidos jamás repiten (42 fichas, día 308 % 42 = 14 el
+//    día del estreno).
+// ② LA FRANJA DICE LA VERDAD: aria-label="Entrada del día" con estrella,
+//    título, subtítulo, fechas y región, el primer párrafo de la ficha, chip
+//    de categoría + 2 stats, el contador de lectura HONESTO EN SUS DOS
+//    ESTADOS («leída — está en tu historial» / «sin leer — +5 XP esperándote»,
+//    ley v322 — amarrado al readSet REAL del jugador), el botón «abrir
+//    entrada del día →» con openDetail (el handler de la casa, con su XP) y
+//    la LEY DEL ANILLO en pantalla: la rotación es el reloj de la escuela, no
+//    una preferencia de la casa.
+// ③ LA ESTRELLA EN LA REJILLA: la ficha del día lleva ★ delante de su
+//    categoría (comparación en render, cero estado).
+// ④ NADA DURO QUE SE PUDRA (ley v322): el subtitle del panel vivía escrito a
+//    mano — ahora abre con el total del catálogo.
+// ⑤ EL ANILLO VIAJA A LA SALA 3D: fila propia AL FINAL de las filas v164 con
+//    la acción «abrir entrada del día» en un oyente NUEVO declarado con
+//    honestidad (el panel pasaba de 1 efecto a 2: montaje readSet + oyente —
+//    un oyente de eventos con escritura ASÍNCRONA en el clic no es un
+//    efecto-escritor; el censo canónico 2+0 respira intacto).
+// ⑥ LA CICATRIZ LIMPIA: 3 directivas @next/next/no-img-element viejas
+//    (la regla ya no dispara) se retiran al pasar — lección v331.
+//     SUITE: +2 pines (LA ENTRADA DEL DÍA estático: wikiDelDia definido con
+//     el reloj central importado, franja con ley y contador honesto en dos
+//     estados, estrella en la rejilla, subtitle derivado, useEffect === 2,
+//     versión doble aserción — y vivo: home + health v332) + rodillos de
+//     codename en los asertos históricos (LA MEMORIA DEL COMPILADOR → LA
+//     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
+//     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
+//     históricos intactos — ley v312).
+export const APP_VERSION = "v332.0";
+export const APP_CODENAME = "LA ENTRADA DEL DÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
-import { WIKI_ENTRIES, WIKI_CATS, type WikiEntry, type WikiCat } from "@/lib/wiki-data";
+import { WIKI_ENTRIES, WIKI_CATS, wikiDelDia, type WikiEntry, type WikiCat } from "@/lib/wiki-data";
 // v164 TODO EN VOLUMEN — la enciclopedia alimenta su sala 3D con sus entradas
 import { useSala3DContenido } from "../use-sala3d-contenido";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -36,6 +36,11 @@ export function EncyclopediaPanel() {
 
   useEffect(() => { setReadSet(loadRead()); }, []);
 
+  // v332: LA ENTRADA DEL DÍA — el anillo de la escuela llega a la enciclopedia
+  // (DÉCIMO consumidor del patrón compartido). El anillo vive en useMemo puro;
+  // el contador de lectura es HONESTO EN SUS DOS ESTADOS (ley v322).
+  const delDia = useMemo(() => wikiDelDia(), []);
+
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
     return WIKI_ENTRIES.filter((e) =>
@@ -50,13 +55,23 @@ export function EncyclopediaPanel() {
     "Enciclopedia",
     "#7AB8FF",
     `${readSet.length}/${WIKI_ENTRIES.length} ENTRADAS LEÍDAS · +5 XP CADA UNA`,
-    filtered.slice(0, 6).map((e) => ({
-      t: e.title,
-      v: e.dates?.slice(0, 14) || "",
-      img: e.img || undefined,
-      p: Math.round((readSet.length / Math.max(1, WIKI_ENTRIES.length)) * 100),
-      color: readSet.includes(e.id) ? "#3DDC84" : "#7AB8FF",
-    })),
+    [
+      ...filtered.slice(0, 6).map((e) => ({
+        t: e.title,
+        v: e.dates?.slice(0, 14) || "",
+        img: e.img || undefined,
+        p: Math.round((readSet.length / Math.max(1, WIKI_ENTRIES.length)) * 100),
+        color: readSet.includes(e.id) ? "#3DDC84" : "#7AB8FF",
+      })),
+      {
+        t: `★ ENTRADA DEL DÍA: ${delDia.title.toUpperCase()}`,
+        v: delDia.dates?.slice(0, 14) || "",
+        p: Math.round((readSet.length / Math.max(1, WIKI_ENTRIES.length)) * 100),
+        color: "#F5C542",
+        d: `${delDia.subtitle} · ${delDia.region} · el anillo de la enciclopedia (ley v324)`,
+        a: "abrir entrada del día",
+      },
+    ],
   );
 
   const openDetail = (e: WikiEntry) => {
@@ -82,12 +97,61 @@ export function EncyclopediaPanel() {
     } finally { setLiveLoading(false); }
   };
 
+  // v332: la entrada del día viaja a la sala 3D — patrón v326/v328/v330; la
+  // fila va AL FINAL y el oyente solo atiende su acción (los idx de las filas
+  // v164 no llevan acciones — cero contratos que romper)
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "encyclopedia" || d.accion !== "abrir entrada del día") return;
+      openDetail(delDia);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, [delDia, readSet]);
+
   const catCount = (c: WikiCat) => WIKI_ENTRIES.filter((e) => e.cat === c).length;
 
   return (
     <div className="space-y-3">
       <HeroOro panel="enciclopedia" />
-      <PanelHeader title="ENCICLOPEDIA MUNDIAL" subtitle="Guerras · politica · lideres · partidos · religiones" icon={<BookOpen className="w-4 h-4" />} color="cyan" />
+      <PanelHeader title="ENCICLOPEDIA MUNDIAL" subtitle={`${WIKI_ENTRIES.length} fichas · guerras · politica · lideres · partidos · religiones`} icon={<BookOpen className="w-4 h-4" />} color="cyan" />
+
+      {/* v332: LA ENTRADA DEL DÍA — el anillo de la enciclopedia da la cara cada
+          día. La rotación es el reloj de la escuela (ley v324), no una preferencia:
+          el contador de lectura es honesto en sus DOS estados (ley v322). */}
+      <div className="hud-corner border bg-secondary/20 p-3 relative overflow-hidden" aria-label="Entrada del día">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[8px] font-mono uppercase tracking-widest text-amber">★ entrada del día</span>
+          <span className="text-xs font-bold font-mono uppercase text-foreground">{delDia.title}</span>
+          <span className="text-[9px] font-mono text-muted-foreground">{delDia.subtitle} · {delDia.dates} · {delDia.region}</span>
+        </div>
+        <p className="text-[10px] text-muted-foreground leading-snug mt-1 line-clamp-2">{delDia.desc.split("\n\n")[0]}</p>
+        <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+          <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-amber-hud/50 text-amber bg-background/80">
+            {delDia.cat}
+          </span>
+          {delDia.stats.slice(0, 2).map((s) => (
+            <span key={s.label} className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-border bg-background/80 text-muted-foreground">
+              {s.label}: {s.value}
+            </span>
+          ))}
+          <span className="ml-auto text-[9px] font-mono uppercase" style={{ color: readSet.includes(delDia.id) ? "#3DDC84" : undefined }}>
+            {readSet.includes(delDia.id)
+              ? "leída — está en tu historial"
+              : "sin leer — +5 XP esperándote"}
+          </span>
+          <button
+            onClick={() => openDetail(delDia)}
+            className="text-[8px] font-mono uppercase px-2 py-0.5 border border-amber-hud/60 text-amber transition-all hover:bg-amber-hud/10"
+          >
+            abrir entrada del día →
+          </button>
+        </div>
+        <p className="text-[8px] font-mono uppercase text-muted-foreground/70 mt-1.5">
+          el anillo de la enciclopedia avanza una entrada por día — {WIKI_ENTRIES.length} fichas en el catálogo, dos días seguidos jamás repiten la entrada del día · la rotación es el reloj de la escuela, no una preferencia de la casa
+        </p>
+      </div>
 
       {/* buscador + categorias */}
       <div className="relative">
@@ -121,13 +185,12 @@ export function EncyclopediaPanel() {
           >
             <div className="relative h-28 bg-secondary/40">
               {e.img ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={e.img} alt={e.title} className="w-full h-full object-cover" loading="lazy" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground/40"><Globe2 className="w-8 h-8" /></div>
               )}
               <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 text-[8px] font-mono font-bold uppercase tracking-widest bg-background/80 text-amber border border-amber-hud/50 rounded-sm">
-                {e.cat}
+                {e.id === delDia.id ? "★ " : ""}{e.cat}
               </span>
               {e.img && (
                 <span className="absolute bottom-1.5 right-1.5 px-1 py-0.5 text-[7px] font-mono bg-background/80 text-cyan-hud border border-cyan-hud/40 rounded-sm flex items-center gap-0.5">
@@ -159,7 +222,6 @@ export function EncyclopediaPanel() {
           >
             <div className="relative h-44 bg-secondary/40">
               {detail.img ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={detail.img} alt={detail.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground/40"><Globe2 className="w-10 h-10" /></div>
@@ -217,7 +279,6 @@ export function EncyclopediaPanel() {
                       )}
                     </div>
                     {live.thumbnail && (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={live.thumbnail} alt={live.title} className="w-20 h-20 object-cover float-right ml-2 mb-1 border border-cyan-hud/40" />
                     )}
                     <p className="text-[11px] text-foreground/85 leading-relaxed">{live.extract}</p>

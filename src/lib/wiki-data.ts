@@ -400,3 +400,18 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
 ];
 
+
+// v332: LA ENTRADA DEL DÍA — la enciclopedia respira con el anillo de la
+// escuela (DÉCIMO consumidor del patrón compartido: mando v313, instituto
+// v318, red v320, canal v321, ciber v322, atlas v324, armería v326, comunidad
+// v328, poder v330). girar() + diaDelAnillo() importadas del reloj CENTRAL
+// único (cero copias, ley v324): una ficha lleva la enciclopedia cada día; el
+// anillo avanza UNA muesca por fecha, de modo que dos días seguidos jamás
+// repiten la entrada del día — y al día 42 el catálogo entero ha pasado por
+// la pantalla. La rotación es el reloj de la escuela, no una preferencia de
+// la casa.
+import { girar, diaDelAnillo } from "./estrategia-data";
+
+export function wikiDelDia(): WikiEntry {
+  return girar(WIKI_ENTRIES, 1, diaDelAnillo() % WIKI_ENTRIES.length)[0];
+}
