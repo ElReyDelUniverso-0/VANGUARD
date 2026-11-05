@@ -7,11 +7,10 @@
 // v17 ESTABILIDAD: PanelErrorBoundary aísla fallos por panel — un módulo caído
 // ya NO tumba la app; tarjeta de recuperación con REINTENTAR por módulo.
 
-import { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from "react";
-import { createPortal } from "react-dom";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { HudHeader } from "@/components/vanguard/hud-header";
-import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, TABS, type TabKey } from "@/components/vanguard/tab-nav";
+import { sectionOfTab, accentOfSection, ALL_TABS, SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
 // v106.0 PESTAÑAS DE CROMO: la franja del navegador interno reemplaza a la
 // barra de secciones — pestañas que se abren, se eligen y se cierran.
 import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
@@ -19,7 +18,7 @@ import { ChromeTabs, MAX_PESTANAS } from "@/components/vanguard/chrome-tabs";
 // + recientes de La Cama + prefetch de módulos al hover (apertura instantánea)
 import { RielSeccion } from "@/components/vanguard/riel-seccion";
 import { toast } from "sonner";
-import { APP_VERSION_LABEL, APP_VERSION } from "@/lib/version";
+import { APP_VERSION_LABEL } from "@/lib/version";
 // v140.0 MUNDO WEBGL: el MOD de videojuego — el usuario vive dentro de un
 // mundo Three.js y la navegación es VUELO DE CÁMARA entre 5 zonas.
 // v110.0 MATRIZ 2100 — motor 3D global (ajustes → CSS vars + paralaje)

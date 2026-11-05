@@ -16,7 +16,6 @@ import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";
 import {
   getTension,
-  isProtocolo,
   activateProtocolo,
   protocoloState,
   trackProtocoloEarnings,

@@ -30,11 +30,11 @@ import { useGameStore } from "@/lib/game-store";
 import { useAnalista } from "@/lib/analista";
 import { toast } from "sonner";
 import { navigateTo } from "@/lib/nav";
-import { simular, escenarioPorId, PERTURBACIONES, NIVELES_ESCALADA, type ConfigLab, type ResultadoLab } from "@/lib/whatif";
+import { simular, escenarioPorId, PERTURBACIONES, type ConfigLab, type ResultadoLab } from "@/lib/whatif";
 import { GameRuntime } from "@/components/vanguard/game-runtime";
 import { Countryball } from "@/components/vanguard/countryball";
 import { useT } from "@/lib/i18n";
-import type { JuegoDef, MotorJuego } from "@/lib/juegos";
+import type { JuegoDef } from "@/lib/juegos";
 
 interface UgcRow {
   id: string;

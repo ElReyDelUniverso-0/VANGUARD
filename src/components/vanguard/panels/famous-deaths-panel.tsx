@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
-import { FAMOUS_FIGURES, type FamousFigure } from "@/lib/game-data";
+import { FAMOUS_FIGURES } from "@/lib/game-data";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skull, MapPin, Calendar, ChevronRight, ChevronDown, Crosshair } from "lucide-react";
 import { cn } from "@/lib/utils";

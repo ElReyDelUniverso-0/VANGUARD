@@ -8,7 +8,7 @@
 // ============================================================
 import { useEffect, useRef, useState } from "react";
 import { MotorV2 } from "./motor";
-import { constructorDe, construirHub, construirIndice } from "./mundos";
+import { constructorDe, construirHub } from "./mundos";
 import { mutarLedger } from "./progreso";
 
 // v185.0 EL SOCORRISTA — señal temprana en la ruta PESADA: dispara cuando

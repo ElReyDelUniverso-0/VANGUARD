@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import { getTension } from "@/lib/tension";
-import { loadEmpleos, acumularNomina, DEPARTAMENTOS, LS_EMPLEOS } from "@/lib/empleos";
+import { acumularNomina, DEPARTAMENTOS, LS_EMPLEOS } from "@/lib/empleos";
 
 interface TgStatus {
   configured: boolean;

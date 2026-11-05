@@ -5,11 +5,11 @@ import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { CONQUERABLE_COUNTRIES, realLoot, fmtBudget, type ConquerableCountry } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Globe2, Swords, Shield, Coins, Star, Check, Lock, Trophy, Zap } from "lucide-react";
+import { Globe2, Swords, Shield, Coins, Star, Check, Trophy, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 

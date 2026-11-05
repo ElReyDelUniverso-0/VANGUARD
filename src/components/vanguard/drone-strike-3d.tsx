@@ -8,7 +8,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import * as THREE from "three";
 import { RelojTres } from "@/lib/reloj-tres";
-import { Crosshair, Play, RotateCcw, Coins, Gem, Trophy, Timer, MousePointer2, Medal, ListOrdered, Crown } from "lucide-react";
+import { Crosshair, Play, RotateCcw, Coins, Gem, Trophy, MousePointer2, Medal, ListOrdered, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { useGameStore } from "@/lib/game-store";
@@ -864,7 +864,7 @@ function GameEngine({
       renderer.dispose();
       if (renderer.domElement.parentElement) renderer.domElement.parentElement.removeChild(renderer.domElement);
     };
-     
+
   }, []);
 
   // arranca/para con la fase

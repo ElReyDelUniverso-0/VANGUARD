@@ -10,7 +10,7 @@
 
 import { cn, q2 } from "@/lib/utils";
 import { accentOfSection, sectionOfTab, TABS, type TabKey } from "./tab-nav";
-import { tabLabel, TAB_SHORTS, useT } from "@/lib/i18n";
+import { tabLabel, useT } from "@/lib/i18n";
 // v116.0 MEGALÓPOLIS — la ciudad del inicio rota de región y vive el
 // ciclo día/noche REAL (sol, luna, estrellas y ventanas obedecen a TU hora)
 import { CiudadInicio } from "./megalopolis";

@@ -7,7 +7,7 @@ import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 // v164 TODO EN VOLUMEN — los briefings clasificados alimentan su sala 3D
 import { useSala3DContenido } from "../use-sala3d-contenido";
-import { FileText, Lock, CheckCircle2, Eye, Coins, Clock, ChevronRight, X, Search, Filter } from "lucide-react";
+import { FileText, Lock, CheckCircle2, Eye, Coins, Clock, ChevronRight, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -9,7 +9,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
-import { Gamepad2, Crosshair, Zap, Trophy, Clock, AlertTriangle, Play, RotateCw, Pause } from "lucide-react";
+import { Gamepad2, Crosshair, Trophy, Clock, AlertTriangle, Play, RotateCw, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

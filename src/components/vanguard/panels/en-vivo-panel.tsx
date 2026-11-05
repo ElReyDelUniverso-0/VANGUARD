@@ -15,7 +15,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 // v164 TODO EN VOLUMEN — los directos en vivo alimentan su sala 3D
 import { useSala3DContenido } from "../use-sala3d-contenido";
 import {
-  Radio, Eye, Coins, Users, Send, Share2, CalendarDays, History, Crown,
+  Radio, Eye, Coins, Send, CalendarDays, History, Crown,
   ArrowLeft, Video, VideoOff, Scissors, Copy, Gift, Target, TrendingUp,
   Globe2, BadgeCheck, ShieldAlert, Sparkles, Expand, X, CircleDot, Square,
 } from "lucide-react";
@@ -26,10 +26,10 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore } from "@/lib/game-store";
 import { useProfileStore } from "@/lib/profile-store";
-import { Countryball, STICKER_CODES } from "@/components/vanguard/countryball";
+import { Countryball } from "@/components/vanguard/countryball";
 import {
   NEWS_CHANNELS, LIVE_CATEGORIES, LIVE_RULES, VIEWER_REWARDS, REACTIONS,
-  MIN_LEVEL_LIVE, rankOf,
+  MIN_LEVEL_LIVE,
 } from "@/lib/rewards";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 

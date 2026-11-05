@@ -7,7 +7,7 @@
 // frentes, colocan HQ/batallas/flotas, etiquetan, guardan una
 // galería y EXPORTAN PNG o código de mapa compartible.
 // ============================================================
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";

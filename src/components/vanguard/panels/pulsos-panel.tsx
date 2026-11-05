@@ -10,7 +10,7 @@ import { Radio, Filter, Clock, MapPin, Zap } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { WorldMapSVG } from "@/components/vanguard/world-map-svg";
-import { PULSO_CATS, generarPulsos, catDe, horaCorta, haceDe, type PulsoIncidente } from "@/lib/pulsos-data";
+import { PULSO_CATS, generarPulsos, catDe, horaCorta, haceDe } from "@/lib/pulsos-data";
 import { getTension } from "@/lib/tension";
 import { cn } from "@/lib/utils";
 import type { ConflictRegion } from "@/lib/game-data";

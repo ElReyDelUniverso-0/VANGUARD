@@ -18,7 +18,7 @@ import { navigateTo } from "@/lib/nav";
 import { Countryball } from "@/components/vanguard/countryball";
 import { countryName } from "@/lib/world-data";
 import { toast } from "sonner";
-import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, Gem, Trophy, Swords, ShieldCheck, Scale, Check, Flag } from "lucide-react";
+import { Crown, LogIn, UserPlus, LogOut, Cloud, CloudUpload, Gift, Eye, EyeOff, Gem, Trophy, Swords, Scale, Check, Flag } from "lucide-react";
 
 type Mode = "LOGIN" | "REGISTER" | "PROFILE" | "ONBOARD";
 

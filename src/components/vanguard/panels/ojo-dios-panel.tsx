@@ -35,7 +35,7 @@ import { getRealtime, peekRealtime } from "@/lib/realtime";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 // v32 CIELO DE ACERO — globo 3D con unidades militares reales (aviones/tanques/infantería)
 import { buildMilitaryUnits, newMilUnitCache, UNIT_KIND_KEY, type MilUnit, type MilUnitCache, type UnitKind } from "@/lib/military-units";
-import type { Globe3DArc, Globe3DUnit, Globe3DMarker, GlobeFlyTo } from "@/components/vanguard/globe-map-3d";
+import type { Globe3DArc, Globe3DMarker, GlobeFlyTo } from "@/components/vanguard/globe-map-3d";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const GlobeMap3D = dynamic(

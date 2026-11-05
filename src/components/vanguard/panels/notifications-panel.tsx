@@ -5,7 +5,7 @@ import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { INITIAL_NOTIFICATIONS, type Notification } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Bell, BellRing, Check, CheckCheck, Trash2, Trophy, Gift, Users, AlertTriangle, Info, X } from "lucide-react";
+import { Bell, BellRing, Check, CheckCheck, Trash2, Trophy, Gift, Users, Info, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

@@ -17,7 +17,7 @@ import { useProfileStore } from "@/lib/profile-store";
 import { toast } from "sonner";
 import {
   Hammer, Play, Plus, Trash2, Eye, Rocket, Gamepad2, Heart, Users,
-  ChevronLeft, ChevronRight, ShieldCheck, Sparkles, Wrench, ListOrdered, HelpCircle, Scale,
+  ChevronLeft, ShieldCheck, Sparkles, Wrench, ListOrdered, HelpCircle, Scale,
 } from "lucide-react";
 import { MOTORES, validarJuego, type MotorJuego, type JuegoDef, type PreguntaQuiz } from "@/lib/juegos";
 import { GameRuntime } from "@/components/vanguard/game-runtime";

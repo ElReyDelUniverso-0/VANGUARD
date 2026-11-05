@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
-import { RECRUIT_SIDES, type RecruitSide } from "@/lib/dark-data";
+import { RECRUIT_SIDES } from "@/lib/dark-data";
 import { GlobeMap3D, type Globe3DMarker, type Globe3DArc } from "@/components/vanguard/globe-map-3d";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";

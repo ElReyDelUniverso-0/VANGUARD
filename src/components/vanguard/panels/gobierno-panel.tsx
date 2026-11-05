@@ -9,7 +9,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
-  Landmark, Crown, ScrollText, Users, ShieldHalf, Vote, Loader2, Megaphone, UserPlus, LogOut,
+  Landmark, Crown, ScrollText, Users, ShieldHalf, Vote, Megaphone, UserPlus, LogOut,
   Anchor, Plane, VenetianMask, Coins,
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";

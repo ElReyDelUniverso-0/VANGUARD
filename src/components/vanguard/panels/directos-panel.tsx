@@ -6,7 +6,7 @@
 // ranking de streamers y récords persistentes. Todo client-side, integrado al
 // sistema económico (addCoins/spendCoins/spendGems/addXp).
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 // v164 TODO EN VOLUMEN — los canales en directo alimentan su sala 3D
 import { useSala3DContenido } from "../use-sala3d-contenido";
@@ -22,7 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sound";
 import { useGameStore } from "@/lib/game-store";
 import { useProfileStore } from "@/lib/profile-store";
-import { Countryball, STICKER_CODES } from "@/components/vanguard/countryball";
+import { Countryball } from "@/components/vanguard/countryball";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // ============ DATOS ============

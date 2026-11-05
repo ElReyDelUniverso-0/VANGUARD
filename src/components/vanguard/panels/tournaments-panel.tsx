@@ -5,9 +5,8 @@ import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { TOURNAMENTS, type Tournament } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Trophy, Crown, Medal, Clock, Coins, Gem, Star, ChevronRight } from "lucide-react";
+import { Trophy, Crown, Medal, Clock, Coins, Gem, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v164 TODO EN VOLUMEN — el podio alimenta su sala 3D con la tabla real

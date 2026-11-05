@@ -9,14 +9,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Anchor, Crown, FlaskConical, Hammer, Landmark, Map as MapIcon, Minus, Move,
+  Crown, FlaskConical, Hammer, Landmark, Map as MapIcon, Minus, Move,
   Pause, Play, Plus, RotateCcw, Scroll, Shield, Swords, Target, Timer, Users,
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import {
-  COLS, COSTES, EFECTOS, FACciones, INVESTIGACIONES, MAPA_H, MAPA_W, META_DOMINIO, RELOJ_INICIAL,
-  cambiarModoFrente, celdasDe, construir, crearJuego, cuentaEdificio, dispararCañon, hexPoligono,
+  COSTES, EFECTOS, FACciones, INVESTIGACIONES, MAPA_H, MAPA_W, META_DOMINIO,
+  cambiarModoFrente, construir, crearJuego, dispararCañon, hexPoligono,
   lanzarAtaque, lanzarInvestigacion, puedeAtacarDesde, porcentajeMundo, reclutar, reforzar,
   tickJuego, tierraTotal, capReserva, capVivienda,
   type Celda, type EstadoJuego, type TipoEdificio,

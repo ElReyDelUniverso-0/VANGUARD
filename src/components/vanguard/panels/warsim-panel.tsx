@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Swords, Play, RotateCcw, Share2, Shuffle, Users, Plane, Ship, Rocket, Radiation, Banknote, ShieldHalf, Mountain, BrainCircuit, Dice5, FlaskConical } from "lucide-react";
+import { Swords, Play, RotateCcw, Share2, Shuffle, Users, Plane, Ship, Rocket, Banknote, ShieldHalf, Mountain, BrainCircuit, Dice5, FlaskConical } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { navigateTo } from "@/lib/nav";
 import { HeroOro } from "@/components/vanguard/hero-oro";

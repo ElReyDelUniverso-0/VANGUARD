@@ -3,7 +3,7 @@
 import { WEEKLY_REWARDS, RANKS, getRankForLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Trophy, Coins, Gem, Star, Check, Lock, Calendar, Gift, Flame, Package } from "lucide-react";
+import { Trophy, Coins, Gem, Star, Check, Lock, Gift, Flame, Package } from "lucide-react";
 // v164 TODO EN VOLUMEN — la vitrina de recompensas alimenta su sala 3D
 import { useSala3DContenido } from "../use-sala3d-contenido";
 import { cn } from "@/lib/utils";

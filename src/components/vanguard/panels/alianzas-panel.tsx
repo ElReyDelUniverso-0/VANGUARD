@@ -4,7 +4,7 @@
 // chat privado, guerras de alianzas (duelo de predicciones semanal entre
 // clanes, las monedas del perdedor van al ganador) y ranking global.
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

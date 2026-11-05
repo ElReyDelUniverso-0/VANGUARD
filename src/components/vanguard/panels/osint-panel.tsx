@@ -22,7 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Radar, X, Activity, Eye, LineChart, MessagesSquare, Swords, FileText, Radio, Satellite, TriangleAlert } from "lucide-react";
+import { Radar, X, Eye, LineChart, MessagesSquare, Swords, FileText, Radio, Satellite, TriangleAlert } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 // v14 — SALA OSINT EN 3D: el mapa plano SVG se sustituye por un globo real

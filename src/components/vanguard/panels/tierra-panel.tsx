@@ -15,9 +15,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Earth, Search, Plane, Ship, Satellite, Bug, Waves, Camera, Wind,
-  Crosshair, Plus, Minus, RotateCcw, Layers, BookOpen, Clapperboard,
-  Dices, X, Play, Pause, Trash2, Send, Eye, Video, Navigation, Sparkles,
+  Earth, Plane, Ship, Satellite, Bug, Waves, Camera, Wind,
+  Plus, Minus, RotateCcw, BookOpen, Clapperboard,
+  Dices, X, Play, Trash2, Send, Eye, Video, Navigation, Sparkles,
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
@@ -29,7 +29,7 @@ import {
 } from "@/lib/globe-assets"; // v237 EL RELIEVE: fuente única de las pieles
 import {
   LUGARES, lugarPorId, contactosEn, estelaDe, pasesSobre, cuentaAtras, veredictoDe,
-  SENSORES, MISIONES, CRONICAS, preguntar, buscarLugar, vientoEn, texturaPorHora,
+  SENSORES, MISIONES, CRONICAS, preguntar, vientoEn, texturaPorHora,
   distanciaKm, hhmmUTC, type Contacto, type RespuestaAnalista,
 } from "@/lib/tierra-data";
 import { solAhora, direccionSolGlobo } from "@/lib/sol"; // v114: la misma noche del mini-mapa

@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Swords, Shield, Zap, Heart, Skull, Crosshair, ChevronRight, RotateCw, Trophy, Coins, Star } from "lucide-react";
+import { Swords, Shield, Zap, Heart, Skull, Crosshair, RotateCw, Trophy, Coins } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

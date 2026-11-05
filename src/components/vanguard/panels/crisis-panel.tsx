@@ -5,7 +5,7 @@
 // ganadores se llevan +500 mon. Incluye modo ENTRENAMIENTO FLASH (90s) para
 // vivir el ciclo completo en cualquier momento.
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

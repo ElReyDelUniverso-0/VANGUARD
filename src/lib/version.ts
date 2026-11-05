@@ -5096,9 +5096,54 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v338.0";
-export const APP_CODENAME = "LA MESA EN EL TABLÓN";
+export const APP_VERSION = "v339.0";
+export const APP_CODENAME = "EL PESO MUERTO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v339.0 EL PESO MUERTO — vigésimo-segunda ronda del autociclo y CIRUGÍA del
+// ritmo (v338 expansión → v339 cirugía): la cola de cirugía clásica estaba
+// extinta (censo 2+0, la cola «los 95 hallazgos» curada completa en
+// v335+v337), así que el censo se AMPLIÓ por segunda vez en la historia —
+// esta vez al compilador de tipos: tsc --noUnusedLocals --noUnusedParameters.
+// ① EL CENSO AMPLIADO: 235 hallazgos — 231 TS6133 + 4 TS6196. Tres venas
+//    medidas y clasificadas: (A) exhaustive-deps encendida en memoria daría
+//    157 hallazgos en 96 archivos — DOCUMENTADO SIN APLICAR: curarla cambia
+//    CUÁNDO corren los efectos (conducta — la ley de la casa la prohíbe sin
+//    etapas propias); (B) 108 imports muertos — la especie curable con cero
+//    cambio de conducta; (C) 127 locales/params muertos — cola futura (con
+//    advertencia: un const con inicializador con efectos laterales NO se
+//    borra a ciegas).
+// ② LA LEVA DE LOS IMPORTS MUERTOS: 108 hallazgos curados en 67 archivos —
+//    94 cláusulas (nombres dentro de statements de import: incluyendo
+//    miembros de imports multi-línea, alias y type inline) + 14 statements
+//    enteros (imports de un solo miembro totalmente muertos — tsc los
+//    reporta en col=1, la posición del statement). Peso muerto puro: cero
+//    lecturas, cero efectos laterales, cero cambio de conducta.
+// ③ EL BISTURÍ (scripts/cirugia-v339.mjs): dos pases con validación doble
+//    antes de escribir (ley v333: un solo desajuste = ABORTO sin escribir).
+//    Las tres lecciones de su forja: (a) el flag --dry debe COMPUERTAR la
+//    escritura, no anunciarla después — el primer ensayo mutó el disco y el
+//    árbol se restauró con checkout; (b) la gramática de imports no necesita
+//    limpieza de comas — la coma final de una línea de miembro es
+//    OBLIGATORIA cuando sigue otra línea, y la coma final antes de `}` es
+//    legal: el único trasplante necesario es devolver la coma al miembro
+//    precedente cuando el muerto era el último de su línea intermedia; (c)
+//    tsc reporta los imports TOTALMENTE muertos en col=1 — una sub-especie
+//    con su propio pase. CADA corte verificado: tsc estándar 0 tras cada
+//    pase, censo estricto 235 → 127 exacto.
+// ④ LA CICATRIZ VIVA: de las 3 directivas eslint-disable que quedaban en
+//    src, la de ciudades-3d.tsx (set-state-in-effect en la ruta de error del
+//    WebGL — v205 «anunciar es lo honesto») se probó VIVA por experimento
+//    stash: retirada, el compilador acusa el hallazgo real. Se queda,
+//    declarada. Las 2 de version.ts son texto de crónica, no directivas.
+// ⑤ EL CENSO CANÓNICO respira intacto: 2 avisos (los intocables
+//    growth-share v306 + vanguard2/motor AL FINAL) — la leva no tocó un
+//    solo efecto-escritor ni un solo hallazgo del compilador react-hooks.
+// ⑥ SUITE: +2 pines (EL PESO MUERTO estático: los imports curados por
+//    muestreo con conteo, la cicatriz viva de ciudades-3d en su sitio, el
+//    censo de directivas residuales, versión doble aserción — y vivo: home
+//    + health v339) + rodillos de codename (LA MESA EN EL TABLÓN → EL PESO
+//    MUERTO; nombres de pines como memoria — ley v312) + rodillo a v339.0
+//    (cuatro patrones).
 // v338.0 LA MESA EN EL TABLÓN — vigésimo-primera ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v337 cirugía → v338 expansión): LA MESA VIVA etapa 5 —
 // el desafío de la semana y el CONTRATO AL TABLÓN, la cola viva más vieja del

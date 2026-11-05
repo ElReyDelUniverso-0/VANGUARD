@@ -14,7 +14,7 @@
 // apaga todo.
 
 import { motion, AnimatePresence, Reorder, useDragControls } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   X,

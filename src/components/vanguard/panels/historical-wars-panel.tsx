@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { HISTORICAL_WARS, type HistoricalWar } from "@/lib/game-data";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { ScrollText, MapPin, Calendar, Swords, ChevronRight, ChevronDown, Filter } from "lucide-react";
+import { ScrollText, MapPin, Calendar, Swords, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";

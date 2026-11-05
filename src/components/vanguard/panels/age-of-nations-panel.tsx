@@ -8,7 +8,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { Castle, Coins, Landmark, Swords, Shield, ScrollText, Flag, MoonStar, Crown, RotateCcw, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ import type { Globe3DMarker } from "@/components/vanguard/globe-map-3d";
 import {
   newGame, endTurn, attack, moveTroops, recruit, buildFort, sendMissionary,
   provIncome, religionOf, religionShare, nationsAlive, saveAoN, loadAoN, clearAoN,
-  AON_NATION_DEFS, AON_COSTS, AON_RELIGIONS,
+  AON_NATION_DEFS, AON_COSTS,
   type AoNMode, type AoNState,
 } from "@/lib/age-engine";
 import { HeroOro } from "@/components/vanguard/hero-oro";

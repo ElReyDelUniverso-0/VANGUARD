@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { communityVerdict, CONTRIB_REWARDS } from "@/lib/rewards";
-import { upsertProfile, notify, rewardApproval, punishFakeReport } from "@/lib/contrib-server";
+import { notify, rewardApproval, punishFakeReport } from "@/lib/contrib-server";
 
 // POST /api/contrib/[id]/vote — voto comunitario
 // verdict: confirmo | niego | like

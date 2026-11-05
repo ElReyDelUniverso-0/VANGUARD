@@ -7,7 +7,7 @@ import { PHOTOS, CONFLICTS, pielDeFoto, type AlertLevel } from "@/lib/game-data"
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
-  Images, X, MapPin, AlertTriangle, Crosshair, Search, Plus, Camera, Loader2, User, BadgeCheck,
+  Images, MapPin, AlertTriangle, Crosshair, Search, Plus, Camera, Loader2, User, BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FlagBadge } from "@/components/vanguard/flag-badge";

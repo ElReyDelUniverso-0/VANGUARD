@@ -14,7 +14,6 @@ import {
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
   Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass, Siren,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";

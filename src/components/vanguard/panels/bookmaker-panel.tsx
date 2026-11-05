@@ -8,7 +8,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
-import { Dice5, Coins, Radio, Clock, Ticket, TrendingUp, Ban, Flame, Zap, Gift, Star } from "lucide-react";
+import { Dice5, Coins, Radio, Clock, Ticket, Ban, Flame, Zap, Gift, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

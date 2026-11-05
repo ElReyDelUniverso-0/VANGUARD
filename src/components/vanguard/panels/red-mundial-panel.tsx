@@ -23,7 +23,7 @@ import { sfx } from "@/lib/sound";
 import { cn, q2 } from "@/lib/utils";
 import {
   SERVICIOS, BLOQUES, REDES, TERMINAL_PUENTE, PULSO_KEYWORDS_MUNDO, COLECCION_MUNDO,
-  CATEGORIA_RED_META, servicioDe, type ServicioExtranjero, type CategoriaRed,
+  CATEGORIA_RED_META, servicioDe, type ServicioExtranjero,
 } from "@/lib/agencias-mundo-data";
 import {
   Network, Map as MapIcon, Radio, Handshake, ChevronRight, Globe2, Fingerprint,

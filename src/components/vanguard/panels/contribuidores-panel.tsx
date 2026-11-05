@@ -12,8 +12,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import {
   Radio, FileText, Search, Languages, ShieldCheck, BarChart3, Target,
-  Trophy, Bell, Settings2, Send, Check, X, Coins, Medal, Crown, Users,
-  Flame, AlertTriangle, Plus, Inbox, Star, GraduationCap,
+  Bell, Settings2, Send, Check, X, Coins, Crown, Users,
+  AlertTriangle, Plus, Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGameStore } from "@/lib/game-store";
 import { useProfileStore } from "@/lib/profile-store";
-import { Countryball, STICKER_CODES } from "@/components/vanguard/countryball";
+import { Countryball } from "@/components/vanguard/countryball";
 import {
   CONTRIB_REWARDS, RANKS, rankOf, MOD_REWARD, VERIFY_REWARD, VERIFY_DUDA_REWARD, VERIFY_NOSE_REWARD,
 } from "@/lib/rewards";

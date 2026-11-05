@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { FlagBadge } from "@/components/vanguard/flag-badge";
 import type { Globe3DMarker, Globe3DArc } from "@/components/vanguard/globe-map-3d";
 import { useGameStore } from "@/lib/game-store";
 import {

@@ -2,9 +2,8 @@
 
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { ScrollText, Coins, Gem, Star, Trophy, Target, Flame, Award, Trash2, Filter } from "lucide-react";
+import { ScrollText, Coins, Gem, Star, Trophy, Target, Flame, Award, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";

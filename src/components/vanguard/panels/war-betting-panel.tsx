@@ -11,7 +11,7 @@ import { WAR_BETS, type WarBet } from "@/lib/game-data";
 import { useSala3DContenido } from "../use-sala3d-contenido";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Dice5, Coins, Trophy, TrendingUp, Swords, Check, X, Gift, Layers, Target } from "lucide-react";
+import { Dice5, Trophy, Swords, Check, X, Gift, Layers, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

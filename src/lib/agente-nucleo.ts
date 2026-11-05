@@ -19,10 +19,10 @@ import {
 } from "./whatif";
 // v103.0: los DATOS vienen del módulo PURO (sin "use client") — desde una ruta
 // API, los export de un módulo "use client" llegan como stubs, no como valores.
-import { EXPEDIENTES, type Expediente } from "./expedientes-datos";
+import { EXPEDIENTES } from "./expedientes-datos";
 import { areaOcupada } from "./frente-zonas-data";
 import {
-  evaluarNeuronal, predecir, fnvHash, mulberry32, bucketMinutos,
+  evaluarNeuronal, predecir, fnvHash, mulberry32,
 } from "./neurona-core";
 import { pensamientoMente, titularPulso, pulsoActual } from "./mente-data";
 import type { JuegoDef } from "./juegos";

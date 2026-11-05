@@ -20,7 +20,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Clapperboard, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { APP_VERSION_LABEL } from "@/lib/version";
 import { sfx, isMuted } from "@/lib/sound";
 import { hablarAgente, pararVoces, VOCES_ROSTER } from "@/lib/voces-agentes";

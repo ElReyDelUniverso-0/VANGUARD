@@ -13,13 +13,13 @@
 // ============================================================
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { Bot, Play, Pause, Zap, Gauge, Cpu, Hammer, Music4, ScrollText, Radar as RadarIcon, Building2, Wrench, Send, Terminal, Layers, Infinity as InfIcon, Download, Volume2, Square } from "lucide-react";
+import { Bot, Play, Pause, Zap, Gauge, Cpu, Hammer, Music4, ScrollText, Radar as RadarIcon, Building2, Send, Terminal, Layers, Infinity as InfIcon, Download, Volume2, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { sfx } from "@/lib/sound";
 import { TituloEpico } from "../titulo-epico";
 import { SelloVivo } from "../escenas-3d";
-import { useArquitecto, MODULOS_CATALOGO, VELOCIDADES_INFO, dominioEtiqueta, dominioColor, setEraGlobalArq, reanudarArquitecto, type DominioArq, type ModuloArq } from "@/lib/arquitecto";
+import { useArquitecto, MODULOS_CATALOGO, VELOCIDADES_INFO, dominioEtiqueta, dominioColor, setEraGlobalArq, reanudarArquitecto, type ModuloArq } from "@/lib/arquitecto";
 import { useEstilo3D } from "@/lib/estilo3d";
 import { useIsHydrated } from "@/lib/hidratacion";
 import { areaOcupada } from "@/lib/frente-zonas-data";

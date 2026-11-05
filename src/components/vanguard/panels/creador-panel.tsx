@@ -19,13 +19,12 @@ import { useAnalista } from "@/lib/analista";
 import { WORLD_FLAGS } from "@/lib/world-data";
 import { GAME_TEMPLATES } from "@/lib/game-templates";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Countryball } from "@/components/vanguard/countryball";
 import {
-  BrainCircuit, Send, Sparkles, Loader2, Play, X, Trash2, Inbox, Palette,
+  BrainCircuit, Send, Sparkles, Loader2, X, Trash2, Inbox, Palette,
 } from "lucide-react";
 import {
-  KIND_META, PhotoUploader, AssemblyEditor, PollEditor, UgcCard, StatusBadge, PartLibraryPicker,
-  parseJSON, timeAgo,
+  KIND_META, PhotoUploader, AssemblyEditor, PollEditor, UgcCard, PartLibraryPicker,
+  timeAgo,
   type UgcItem, type UgcPhoto, type AssemblyStep,
 } from "@/components/vanguard/creador-parts";
 import { HeroOro } from "@/components/vanguard/hero-oro";

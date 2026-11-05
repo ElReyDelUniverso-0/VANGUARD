@@ -13,7 +13,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  MapPin, ScanLine, Lock, TriangleAlert, Star, Clock3, Coins, Eye, Loader2, Compass,
+  MapPin, ScanLine, Lock, TriangleAlert, Star, Loader2, Compass,
 } from "lucide-react";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { useGameStore } from "@/lib/game-store";

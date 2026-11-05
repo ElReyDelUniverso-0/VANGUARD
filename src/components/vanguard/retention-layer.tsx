@@ -28,7 +28,7 @@ import { EXPEDIENTES, expedienteDelDia, useExpedientes } from "@/lib/expedientes
 // v59 ALEJANDRÍA OSCURA: la biblioteca geopolítica entra en los avisos
 import { OSCURA_TOTAL, entradaDelDia, useOscura } from "@/lib/oscura";
 import { DailyLoginModal } from "@/components/vanguard/daily-login-modal";
-import { Flame, Gift, Star, Timer, TrendingUp, Radar, Plane, MapPin, X } from "lucide-react";
+import { Flame, Gift, Star, TrendingUp, Radar, Plane, MapPin, X } from "lucide-react";
 // v105.0 LA REDACCIÓN: el contrato de silencio — mientras el operador lee o
 // escribe, ningún comercial interrumpe (los avisos siguen en su centro)
 import { calmaActiva } from "@/lib/calma";

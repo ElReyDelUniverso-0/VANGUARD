@@ -8,11 +8,10 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Target, CheckCircle2, Lock, Trophy, Coins, Gem, Star, Zap, Search, Filter } from "lucide-react";
+import { Target, CheckCircle2, Lock, Trophy, Coins, Gem, Star, Search } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { useSala3DContenido } from "../use-sala3d-contenido";
 
 const difficultyColor: Record<string, string> = {
   EASY: "text-green-hud border-green-hud",

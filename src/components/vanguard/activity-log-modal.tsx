@@ -4,7 +4,6 @@ import { useGameStore } from "@/lib/game-store";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollText, Coins, Gem, Award, Trophy, Target, Flame, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ActivityLogPanel } from "@/components/vanguard/panels/activity-log-panel";
 
 interface ActivityLogModalProps {
   open: boolean;

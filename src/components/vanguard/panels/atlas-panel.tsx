@@ -26,7 +26,7 @@ import { IlustracionViva } from "@/components/vanguard/ilustraciones-vivas";
 import { projectLatLng } from "@/components/vanguard/world-map-svg";
 import worldPaths from "@/lib/world-paths.json";
 import { cn } from "@/lib/utils";
-import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight, Route, Scale, Crown } from "lucide-react";
+import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight, Route, Scale } from "lucide-react";
 import {
   PAISES_ATLAS, PERSONAS_ATLAS, COLOR_CATEGORIA, RUTAS_PODER, personaPorId, compararPaises,
   buscarPaises, buscarPersonas, fmtKm2, fmtMillones, paisDelDia, figuraDelDia, recordsDelPlaneta,

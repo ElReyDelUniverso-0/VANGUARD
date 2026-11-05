@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Newspaper, Map, Brain, Layers, Zap, Users, Bell, Flame, ChevronRight, ChevronDown, Lightbulb, Rocket, Award, Video, Castle, TrendingUp, Bomb, MessageCircle, Crosshair, Fingerprint, Satellite } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { HelpCircle, BookOpen, Gamepad2, Trophy, Coins, Target, Map, Zap, Users, ChevronRight, ChevronDown, Lightbulb, Rocket, Award, Video, Castle, TrendingUp, Bomb, MessageCircle, Crosshair, Fingerprint, Satellite } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useT } from "@/lib/i18n";
 import { HeroOro } from "@/components/vanguard/hero-oro";

@@ -9,7 +9,6 @@
 import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
-import { Flag } from "@/lib/flags";
 import { WORLD_FLAGS, countryName } from "@/lib/world-data";
 import { Countryball } from "@/components/vanguard/countryball";
 import { useGameStore } from "@/lib/game-store";

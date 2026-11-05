@@ -8,7 +8,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Gamepad2, Play, RefreshCw, X, Trophy, Clock, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 interface UgcGame {
   id: string;

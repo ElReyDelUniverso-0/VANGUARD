@@ -31,7 +31,7 @@ import { ExpedienteDrawer } from "@/components/vanguard/expediente-drawer";
 // v119 CRONOTEATRO: la voz del parte (TTS de la casa, respeta el MUTE)
 import { narrarDespachos, callarVoz, vozDisponible, vozActiva } from "@/lib/despacho-voz";
 import {
-  CRISIS, ARCHIVO, nodoPorId, ARISTA_META,
+  CRISIS, ARCHIVO, nodoPorId,
   type CrisisVG, type ArchivoReal, type PinTeatro,
 } from "@/lib/expediente-data";
 import { useExpediente } from "@/lib/expediente-store";

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { moderateUgc } from "@/lib/ai-moderate";
-import { muro, claveCliente, sanitizar, sanitizarLinea } from "@/lib/fortaleza";
+import { muro, claveCliente, sanitizarLinea } from "@/lib/fortaleza";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/auth-server";
 import { validarJuego } from "@/lib/juegos";
 import { simular } from "@/lib/whatif";

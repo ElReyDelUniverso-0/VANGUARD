@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { VIcon } from "@/components/vanguard/vanguard-icon";
-import { FRIENDS, type Friend, RANKS } from "@/lib/game-data";
+import { FRIENDS, type Friend } from "@/lib/game-data";
 // v164 TODO EN VOLUMEN — la escuadra alimenta su sala 3D con operadores reales
 import { useSala3DContenido } from "../use-sala3d-contenido";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Users, Search, UserPlus, Crown, Star, Target, Flame, Brain, Gamepad2, TrendingUp, Award, ChevronRight, X } from "lucide-react";
+import { Users, Search, UserPlus, Crown, Target, Flame, Brain, Gamepad2, TrendingUp, Award, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

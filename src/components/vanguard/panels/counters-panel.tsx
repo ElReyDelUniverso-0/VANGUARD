@@ -7,7 +7,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skull, Activity, Baby, Globe2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { WAR_DEATHS, LIVE_RATES, GLOBAL_CRIME } from "@/lib/archive-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Countryball } from "@/components/vanguard/countryball";
-import { WORLD_FLAGS, countryName } from "@/lib/world-data";
+import { WORLD_FLAGS } from "@/lib/world-data";
 import { Flag } from "@/lib/flags";
 import { useGameStore } from "@/lib/game-store";
 import { sfx } from "@/lib/sound";

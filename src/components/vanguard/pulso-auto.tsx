@@ -13,7 +13,6 @@ import { navigateTo } from "@/lib/nav";
 import { calmaActiva } from "@/lib/calma";
 import {
   pulsoActual, proximoPulsoMs, eventosPulso, riesgoPulso,
-  TIPO_COLOR,
 } from "@/lib/mente-data";
 
 const LS_PULSO = "vg-pulso-v99";

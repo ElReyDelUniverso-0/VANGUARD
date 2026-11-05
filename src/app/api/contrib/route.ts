@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { ANTI_SPAM, looksDuplicate, communityVerdict, CONTRIB_REWARDS } from "@/lib/rewards";
-import { upsertProfile, notify, rewardApproval, punishFakeReport } from "@/lib/contrib-server";
+import { ANTI_SPAM, looksDuplicate, CONTRIB_REWARDS } from "@/lib/rewards";
+import { upsertProfile, notify } from "@/lib/contrib-server";
 
 // GET /api/contrib — lista de contribuciones
 // ?type=&status=&author=&sort=recent|likes&take=

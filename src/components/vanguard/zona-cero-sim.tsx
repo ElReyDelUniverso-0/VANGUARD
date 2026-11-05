@@ -15,7 +15,7 @@
 // - Muñecos en vivo: soldados que avanzan y caen, tanques, jets, helicópteros
 //   y drones peleando sin parar sobre una ciudad que se convierte en ruinas.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Volume2, VolumeX, Clapperboard, Crosshair, ZoomIn, ZoomOut, RotateCcw, Radio,
 } from "lucide-react";
