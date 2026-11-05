@@ -5096,9 +5096,45 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v344.0";
-export const APP_CODENAME = "EL TABLÓN DE LA MESA";
+export const APP_VERSION = "v345.0";
+export const APP_CODENAME = "LAS CONSTANTES MUDAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v345.0 LAS CONSTANTES MUDAS — vigésimo-octava ronda del autociclo y CIRUGÍA
+// del ritmo (v344 expansión → v345 cirugía): la tercera leva de la vena C —
+// LA COLA DE LOS 44 LOCALES que v341/v343 registraron y no tocaron. LA LEY
+// DE LA LEVA (v344 la dejó anotada): «cada inicializador se lee, no se
+// confía a ciegas en tsc — el await upsertProfile(...) corre aunque su
+// binding muera». 53 curas en 41 archivos (44 hallazgos + 2 de la caja de
+// costo-guerra + 6 cascadas leídas + 1 escritura de ancla renombrada), censo
+// estricto 44 → 0 de deuda REAL (los 14 restantes son los renombres «_»
+// silenciados por diseño — la ley del underscore, no son deuda). (1) LOS 14
+// RENOMBRES: la llamada vive, el binding calla — hooks (ocultar/useCallback,
+// crisis/useMemo y los 10 selectores useGameStore/useLuxe: el ORDEN respira),
+// awaits (modProfile/upsertProfile — el efecto corre), efectos reales
+// (capis/colocarCapitales consume el stream del rnd — borrarla cambiaría el
+// mundo generado; t/texto3D del motor; _padDriftLfo el ancla de GC renombrada
+// con su escritura). (2) LOS 36 BORRAS puros con la elegancia del salto:
+// literales, Records, lookups y flechas muertas enteras — el comentario
+// propio viaja con el muerto y la sangría de la línea viaja también
+// (lección del disparo v345: el rango nace en la COLUMNA 0 o la sangría
+// queda huérfana pegada a la vecina). (3) EL DECLARADOR: en la lista múltiple
+// de gloria (let linea, ly, ancho) solo cae «, ancho = 0» — borrar solo la
+// coma dejaba sintaxis rota (cazado en el dry). (4) LA CAJA DE LA CASCADA:
+// en costo-guerra el dt muerto ARRASTRA a last (su única lectura vivía
+// dentro) y al param now (solo leído por dt/last) — la caja completa: 3
+// líneas + _now. (5) LAS CASCADAS LEÍDAS: DONOR_NAMES (solo vivía en donor)
+// y los 4 iconos de lucide (Trophy/Gift/Users/Info — solo vivían en
+// typeIcon). (6) LOS TRES BUGS QUE EL DRY CAZÓ ANTES DEL DISPARO: la entrada
+// por columna caía en la blancura y subía al statement ajeno (el setInterval
+// de directos estuvo a un paso de morir entero — cura: identificador primero
+// + guardia de misma línea); la coma sola de gloria; la sangría huérfana —
+// la leva se RE-DERIVÓ desde canon dos veces (la salida no se remienda).
+//     SUITE: +2 pines (LAS CONSTANTES MUDAS estático: los renombres con su
+//    llamada viva, los borrados ausentes, el declarador exacto, la caja sin
+//    last/dt, la frontera _ del censo, versión doble aserción — y vivo: home
+//    + health v345) + rodillos de codename (EL TABLÓN DE LA MESA → LAS
+//    CONSTANTES MUDAS en los VALORES de los asertos; los mensajes históricos
+//    quedan como memoria — ley v312) + rodillo a v345.0 (cuatro patrones).
 // v344.0 EL TABLÓN DE LA MESA — vigésimo-séptima ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v343 cirugía → v344 expansión): LA MESA VIVA etapa 6 —
 // los rivales del desafío de la semana. (1) LA DATA (estrategia-data.ts):

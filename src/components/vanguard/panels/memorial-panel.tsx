@@ -88,7 +88,7 @@ function CandleBtn({ lit, onClick, disabled }: { lit: boolean; onClick: () => vo
 export function MemorialPanel() {
   const alias = useGameStore((s) => s.alias);
   const addXp = useGameStore((s) => s.addXp);
-  const addCoins = useGameStore((s) => s.addCoins);
+  const _addCoins = useGameStore((s) => s.addCoins);
   const [war, setWar] = useState<"UCRANIA" | "GAZA" | "OTROS">("UCRANIA");
   const [selected, setSelected] = useState<FallenJournalist | null>(null);
 

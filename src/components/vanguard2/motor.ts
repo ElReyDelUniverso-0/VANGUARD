@@ -348,7 +348,7 @@ export class MotorV2 {
     );
     marco.position.z = -0.008;
     g.add(marco);
-    const t = this.texto3D(g, texto, { tam: op.tam ?? h * 0.42, mat: op.matTexto ?? "texto", prof: (op.tam ?? h * 0.42) * 0.25 });
+    const _t = this.texto3D(g, texto, { tam: op.tam ?? h * 0.42, mat: op.matTexto ?? "texto", prof: (op.tam ?? h * 0.42) * 0.25 });
     g.userData.accion = accion;
     if (op.pos) g.position.copy(op.pos);
     padre.add(g);

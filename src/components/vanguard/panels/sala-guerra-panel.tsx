@@ -75,8 +75,6 @@ export function SalaGuerraPanel() {
   const [ciuSel, setCiuSel] = useState<CiudadGuerra | null>(null);
 
   const guerra: GuerraActiva = guerraDe(selId) ?? GUERRAS[0];
-  const meta = { color: guerra.activa ? "#FF4A3A" : "#7FE3FF" };
-
   // ── el pulso real: cables de la casa, frescos cada 5 minutos ──
   useEffect(() => {
     let vivo = true;

@@ -1804,7 +1804,6 @@ private updateMortars(dt: number) {
 
 private updateSnipers(dt: number) {
   for (const s of this.snipers) {
-    const f = this.fronts[s.front];
     s.cd -= dt;
     if (s.cd <= 0) {
       s.cd = R2(5.5, 12);

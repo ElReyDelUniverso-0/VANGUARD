@@ -108,8 +108,6 @@ function conDeadline<T>(p: Promise<T>, ms: number): Promise<T> {
     new Promise<T>((_, rej) => setTimeout(() => rej(new Error("deadline")), ms)),
   ]);
 }
-const DEADLINE_IA = 20_000;
-
 async function llmJSON(system: string, user: string, ms = 24_000): Promise<Record<string, unknown> | null> {
   // v105.0 CARRERA 1∥3: gateway privado y núcleo público a la vez; si ambos
   // colapsan (raro), el SDK lo intenta 8s. Nunca más 40s de cuelgues muertos.

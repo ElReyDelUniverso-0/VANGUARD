@@ -40,7 +40,7 @@ interface Candidate {
 export function EmbajadoresPanel() {
   const alias = useGameStore((s) => s.alias);
   const level = useGameStore((s) => s.level);
-  const addCoins = useGameStore((s) => s.addCoins);
+  const _addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
 
   const [myCountry, setMyCountry] = useState<string | null>(null);
@@ -168,7 +168,6 @@ export function EmbajadoresPanel() {
     return m;
   }, [candidates]);
 
-  const myCountryCandidates = myCountry ? byCountry[myCountry] ?? [] : [];
   const leaderOf = (list: Candidate[]) => [...list].sort((a, b) => b.votes - a.votes)[0];
 
   // v168: PARIDAD 2D→3D — el estado real de la elección sube a la sala: cuenta

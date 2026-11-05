@@ -518,8 +518,6 @@ export function DetectivePanel() {
   const log = [...(state?.log ?? [])].reverse();
   const phase = state?.phase ?? "LOBBY";
   const canAct = joined && (phase === "INVESTIGACION" || phase === "DELIBERACION") && me.actions > 0;
-  const canVote = joined && phase === "JUICIO" && !me.myVote;
-
   return (
     <div className="space-y-3">
       <PanelHeader

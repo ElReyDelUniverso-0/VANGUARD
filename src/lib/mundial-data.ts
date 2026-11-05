@@ -187,9 +187,6 @@ const SEMILLAS: Semilla[] = [
   },
 ];
 
-const GEO_TEMPL = [
-  "costa total", "punto más alto", "recursos clave", "clima dominante", "riesgo natural",
-];
 const CLIMAS = ["continental extremo", "mediterráneo seco", "monzónico", "árido de sierra", "oceánico frío"];
 const RECURSOS = ["crudo y gas", "tierras raras", "trigo cinturón negro", "litio de salares", "uranio profundo", "aguas fluviales"];
 const RIESGOS_NAT = ["sísmico alto", "sequía recurrente", "inundaciones de delta", "tormentas árticas", "incendios de estepa"];

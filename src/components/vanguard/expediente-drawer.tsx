@@ -64,7 +64,7 @@ export function ExpedienteDrawer() {
 
   const nodo = enfoque ? nodoPorId(enfoque) : undefined;
   const vecinos = useMemo(() => (enfoque ? vecinosDe(enfoque) : []), [enfoque]);
-  const crisis = useMemo(() => (enfoque ? crisisDeActores(enfoque) : []), [enfoque]);
+  const _crisis = useMemo(() => (enfoque ? crisisDeActores(enfoque) : []), [enfoque]);
   const veredicto = useMemo(
     () => (nodo ? evaluarNeuronal(`${nodo.nombre} ${nodo.resumen}`, Math.min(4, vecinos.length)) : null),
     [nodo, vecinos.length],

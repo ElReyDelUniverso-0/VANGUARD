@@ -315,7 +315,7 @@ function colocarCapitales(celdas: Celda[], rnd: () => number): Celda[] {
 export function crearJuego(seed: number, faccionId: string): EstadoJuego {
   const rnd = mulberry32(seed ^ 0x9e3779b9);
   const celdas = crearMapa(seed);
-  const capis = colocarCapitales(celdas, rnd);
+  const _capis = colocarCapitales(celdas, rnd);
 
   const jugador: Imperio = {
     id: "jugador",

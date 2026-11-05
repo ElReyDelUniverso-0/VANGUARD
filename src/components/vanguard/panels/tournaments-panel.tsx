@@ -12,12 +12,6 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 // v164 TODO EN VOLUMEN — el podio alimenta su sala 3D con la tabla real
 import { useSala3DContenido } from "../use-sala3d-contenido";
 
-const rankColor: Record<number, string> = {
-  1: "text-amber border-amber-hud bg-amber-hud/30",
-  2: "text-muted-foreground border-border bg-secondary",
-  3: "text-orange-400 border-orange-500/40 bg-orange-500/10",
-};
-
 export function TournamentsPanel() {
   const [activeId, setActiveId] = useState(TOURNAMENTS[0].id);
   const { alias, level, quizCorrect, minigameTotalScore, xp } = useGameStore();

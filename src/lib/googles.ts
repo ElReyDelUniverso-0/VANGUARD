@@ -121,8 +121,6 @@ const SEMILLA_TENDENCIAS: Array<[string, string]> = [
   ["Guerra de la fibra", "Ciberespacio"],
 ];
 
-const REGIONES = [...new Set(SEMILLA_TENDENCIAS.map(([, r]) => r))];
-
 function serieDeTermino(termino: string, dia: number): number[] {
   const rnd = mulberry32(fnvHash(termino) + dia * 7919);
   const base = 8 + rnd() * 90;

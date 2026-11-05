@@ -244,8 +244,6 @@ export function generarArticulo(id: string, dia = Math.floor(Date.now() / 86400_
   const seed = "wiki90:" + s.id + ":" + dia;
   const editores = 120 + Math.floor(r(seed, 1) * 890);
   const ediciones = 1400 + Math.floor(r(seed, 2) * 12000);
-  const mins = 3 + Math.floor(r(seed, 3) * 240);
-
   const secciones: WikiSeccion[] = SEC_TEMPL.map((t) => ({
     titulo: t.titulo,
     parrafos: t.generador(seed),

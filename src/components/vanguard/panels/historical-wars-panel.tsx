@@ -34,8 +34,6 @@ export function HistoricalWarsPanel() {
   const [eraFilter, setEraFilter] = useState<string>("ALL");
 
   const filtered = HISTORICAL_WARS.filter((w) => eraFilter === "ALL" || w.era === eraFilter);
-  const selectedWar = HISTORICAL_WARS.find((w) => w.id === selected);
-
   // v166 — LA CASA DE LA HISTORIA: el archivo completo vive en las
   // estanterías 3D (año de inicio → fin, volumen de duración, región,
   // desenlace y bajas como EL DETALLE que la proximidad revela)

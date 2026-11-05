@@ -143,13 +143,6 @@ export function RedMundialPanel() {
     sfx.campana(); // la campana de salón: cada expediente se abre con dignidad
   };
 
-  const irAlExpediente = (id: string) => {
-    elegir(id);
-    requestAnimationFrame(() => {
-      document.getElementById("v128-expediente")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
-
   // arcos UKUSA proyectados
   const arcos = useMemo(() => {
     const hub = xyDe(servicioDe("mi6") ?? SERVICIOS[0]);

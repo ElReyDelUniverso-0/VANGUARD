@@ -34,7 +34,6 @@ type ChatMsg = { role: "user" | "mente"; text: string; ia?: boolean; web?: boole
 function leerMente(): { recompensados: string[]; dia: string; n: number; chatDia: string; chatHecho: boolean } {
   try {
     const raw = JSON.parse(localStorage.getItem(LS_MENTE) || "{}");
-    const dia = new Date().toISOString().slice(0, 10);
     return {
       recompensados: Array.isArray(raw.recompensados) ? raw.recompensados : [],
       dia: typeof raw.dia === "string" ? raw.dia : "",

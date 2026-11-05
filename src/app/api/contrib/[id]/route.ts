@@ -73,7 +73,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
     await notify(item.author, `Tu ${CONTRIB_REWARDS[item.type]?.label.toLowerCase() ?? "contribución"} fue ${CONTRIB_REWARDS[item.type]?.past ?? "aprobada"} 🎉 +${total} monedas`, bonus > 0 ? `Incluye un bonus especial de +${bonus} del administrador.` : "Gracias por construir VANGUARD.", contribIcon(item.type));
     // paga al moderador
-    const modProfile = await upsertProfile(moderator);
+    const _modProfile = await upsertProfile(moderator);
     await db.contributorProfile.update({ where: { alias: moderator }, data: { coinsEarned: { increment: MOD_REWARD } } });
     await notify(moderator, `Moderaste un contenido ✅ +${MOD_REWARD} monedas`, `Revisaste "${item.title.slice(0, 60)}".`, "🛡️");
     return NextResponse.json({ item: await db.contribution.findUnique({ where: { id } }), rewarded: total });

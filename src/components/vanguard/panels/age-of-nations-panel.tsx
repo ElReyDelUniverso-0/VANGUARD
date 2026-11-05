@@ -37,7 +37,7 @@ const GlobeMap3D = dynamic(
 );
 
 export function AgeOfNationsPanel() {
-  const coins = useGameStore((s) => s.coins);
+  const _coins = useGameStore((s) => s.coins);
   const addCoins = useGameStore((s) => s.addCoins);
   const addGems = useGameStore((s) => s.addGems);
   const addXp = useGameStore((s) => s.addXp);
@@ -259,7 +259,6 @@ export function AgeOfNationsPanel() {
 
   const s = state;
   const myN = s.nations[s.playerNation];
-  const rel = religionOf(myN.religion);
   const selP = sel ? s.provs[sel] : null;
   const selT = sel ? TERRITORIES.find((t) => t.id === sel) : null;
   const share = religionShare(s);

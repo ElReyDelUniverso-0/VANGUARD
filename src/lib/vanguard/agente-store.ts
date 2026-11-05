@@ -12,8 +12,6 @@ import type { EstadoAgente, SenalSala } from "./tipos";
 import { estadoInicialMecanica } from "./mecanicas";
 
 const CLAVE = "vanguard.agente.v170";
-const CLAVE_VERSION = "v170.0";
-
 export function estadoInicial(): EstadoAgente {
   return {
     mon: 50,

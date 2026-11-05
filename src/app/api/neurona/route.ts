@@ -152,7 +152,6 @@ function normalizar(p: Partial<Expediente>): Expediente {
   let prob = p.probabilidades;
   let pr = prob ? { ...prob } : null;
   if (!pr || typeof pr !== "object") {
-    const r = Math.max(0, Math.min(100, Math.round(Number(p.riesgo) || 40)));
     pr = {
       escalada: sentimiento === "ESCALADA" ? 60 : sentimiento === "TENSIÓN" ? 30 : 10,
       tension: sentimiento === "TENSIÓN" ? 55 : 25,

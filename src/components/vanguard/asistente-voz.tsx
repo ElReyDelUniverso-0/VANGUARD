@@ -491,7 +491,7 @@ export function AsistenteVoz() {
     return () => window.removeEventListener("vg:asistente-anunciar", anuncia);
   }, []);
 
-  const ocultar = useCallback(() => {
+  const _ocultar = useCallback(() => {
     try { sessionStorage.setItem("vg179-asistente-oculto", "1"); } catch {}
     try { reconRef.current?.abort(); } catch {}
     try { window.speechSynthesis?.cancel(); } catch {}

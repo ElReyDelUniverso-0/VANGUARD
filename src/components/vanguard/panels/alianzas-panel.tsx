@@ -49,8 +49,6 @@ const CHAT_LINES = [
   "El termómetro subió 4 puntos hoy. A cargar monedas.",
   "Nuevo en el arcade: descifrar Morse a los 40s me costó la vida jajaja",
 ];
-const WAR_MESSAGES = ["Aliado caído en el flanco de predicciones", "Capturamos una cuota del pozo rival", "Refuerzo: +3 aciertos por miembros de reserva", "El rival contraataca en la categoría de simulaciones"];
-
 const LS_KEY = "vanguard-alianza-v13";
 interface Save { allianceId: string | null; ownName: string | null; tag: string | null; chat: { who: string; text: string; mine?: boolean }[]; warContribution: number; }
 

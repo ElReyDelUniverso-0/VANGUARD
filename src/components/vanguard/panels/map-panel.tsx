@@ -71,13 +71,6 @@ const levelColor: Record<AlertLevel, string> = {
   VIGILANCIA: "text-cyan-hud bg-cyan-hud border-cyan-hud",
 };
 
-const levelDot: Record<AlertLevel, string> = {
-  CRITICO: "bg-red-hud",
-  TENSION: "bg-amber",
-  INESTABILIDAD: "bg-violet-hud",
-  VIGILANCIA: "bg-cyan-hud",
-};
-
 // ====== MODOS DE MAPA (v6 → v81): 6 mapas de amenaza ======
 type MapMode = "GLOBAL" | "TERRORISMO" | "CARTELES" | "BANDAS" | "MARITIMO" | "NUCLEAR";
 

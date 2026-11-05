@@ -405,7 +405,6 @@ export function EmpleosPanel() {
   const finTurno = (aciertos: number) => {
     if (!depto) return;
     const dia = hoyKey();
-    const n = st.diaActual === dia ? st.shiftsHoy : 0;
     const pago = pagoTurno(depto, st.xpLaboral, aciertos, 3);
     // v303: el turno cuenta para el CONTRATO DE LA SEMANA — si la clave
     // cambió (nueva semana o nueva oficina), el progreso arranca en cero

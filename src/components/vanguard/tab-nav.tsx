@@ -524,14 +524,6 @@ export const NUEVA_SECTION: SectionDef = {
 export const ALL_TABS: TabKey[] = SECTIONS.flatMap((s) => s.tabs.map((t) => t.key));
 export const TOTAL_TABS = ALL_TABS.length;
 
-const SECTION_COLOR: Record<string, { active: string; dot: string }> = {
-  amber: { active: "text-amber bg-amber-hud border-amber-hud", dot: "bg-amber" },
-  cyan: { active: "text-cyan-hud bg-cyan-hud border-cyan-hud", dot: "bg-cyan-hud" },
-  red: { active: "text-red-hud bg-red-hud border-red-hud", dot: "bg-red-hud" },
-  green: { active: "text-green-hud bg-green-hud border-green-hud", dot: "bg-green-hud" },
-  violet: { active: "text-violet-hud bg-violet-hud border-violet-hud", dot: "bg-violet-hud" },
-};
-
 // v98.0 ORO TOTAL — COLOR ÚNICO POR SECCIÓN (mandato del comandante: Vanguard
 // dorado se queda como identidad y cada sección importante recibe su color
 // propio). 14 acentos distintos, todos compatibles con el cielo nocturno y el

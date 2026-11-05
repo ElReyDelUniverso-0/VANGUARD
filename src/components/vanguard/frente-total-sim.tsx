@@ -63,7 +63,6 @@ const PAL: Record<string, [string, string, string, string]> = {
   tropic: ["#1e2e2a", "#5a6a4a", "#34442e", "#18221a"],
 };
 
-const FIRE = "#ffb84a";
 const FLASH = "#ffd27a";
 const TRACER = ["#ffdd66", "#ff8866"];
 

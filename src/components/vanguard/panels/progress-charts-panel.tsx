@@ -14,7 +14,6 @@ export function ProgressChartsPanel() {
 
   // Build chart data: historical mock + current session
   const data = useMemo(() => {
-    const last = INITIAL_HISTORY[INITIAL_HISTORY.length - 1];
     const today = { ts: Date.now(), label: "Hoy", xp, coins };
     return [...INITIAL_HISTORY, today];
   }, [xp, coins]);

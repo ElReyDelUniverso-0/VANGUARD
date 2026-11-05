@@ -55,8 +55,6 @@ export type CableVertigo = {
 // llegan de la página server (una query groupBy): sin BD, sin slide.
 export type SalaVertigo = { tag: string; nombre: string; n: number };
 
-const LOTE_EXTRA = 24;
-
 const TAG_COLOR: Record<string, string> = {
   ALERTA: "border-red-500/60 text-red-300 bg-red-500/10",
   DIPLOMACIA: "border-cyan-500/60 text-cyan-300 bg-cyan-500/10",

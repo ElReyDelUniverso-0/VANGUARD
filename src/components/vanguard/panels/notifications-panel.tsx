@@ -5,7 +5,7 @@ import { VIcon } from "@/components/vanguard/vanguard-icon";
 import { INITIAL_NOTIFICATIONS, type Notification } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { PanelHeader } from "@/components/vanguard/panel-header";
-import { Bell, BellRing, Check, CheckCheck, Trash2, Trophy, Gift, Users, Info, X } from "lucide-react";
+import { Bell, BellRing, Check, CheckCheck, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,15 +21,6 @@ const typeColor: Record<string, string> = {
   TOURNAMENT: "text-cyan-hud border-cyan-hud bg-cyan-hud/30",
   SYSTEM: "text-muted-foreground border-border bg-secondary",
   FRIEND: "text-violet-hud border-violet-hud bg-violet-hud/30",
-};
-
-const typeIcon: Record<string, React.ReactNode> = {
-  ACHIEVEMENT: <Trophy className="w-3.5 h-3.5" />,
-  MISSION: <Check className="w-3.5 h-3.5" />,
-  WEEKLY: <Gift className="w-3.5 h-3.5" />,
-  TOURNAMENT: <Trophy className="w-3.5 h-3.5" />,
-  SYSTEM: <Info className="w-3.5 h-3.5" />,
-  FRIEND: <Users className="w-3.5 h-3.5" />,
 };
 
 // v208.0 LA LUPA — el tablón ya no se despiesta con F5: lo LEÍDO y lo

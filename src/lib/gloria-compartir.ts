@@ -99,7 +99,7 @@ export function pintarFicha(d: DatosPresumir): string {
   ctx.font = "700 21px sans-serif";
   const t1 = d.titular ?? "SIN SEÑAL FRESCA — LA GUERRA SIGUE, LA CARTA DUELE";
   const palabras = t1.split(" ");
-  let linea = "", ly = 282, ancho = 0;
+  let linea = "", ly = 282;
   for (const p of palabras) {
     const prueba = linea ? linea + " " + p : p;
     if (ctx.measureText(prueba).width > W - 76 && linea) {

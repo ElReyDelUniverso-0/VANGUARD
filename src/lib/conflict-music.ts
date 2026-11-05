@@ -890,7 +890,7 @@ let delayBus: GainNode | null = null;
 let delayL: DelayNode | null = null;
 let delayR: DelayNode | null = null;
 let padFilter: BiquadFilterNode | null = null;
-let padDriftLfo: OscillatorNode | null = null;
+let _padDriftLfo: OscillatorNode | null = null;
 let droneOsc: OscillatorNode | null = null;
 let droneOsc2: OscillatorNode | null = null;
 let droneAir: AudioBufferSourceNode | null = null;
@@ -1105,7 +1105,7 @@ function getCtx(): AudioContext | null {
       padFilter.connect(chL); chL.connect(chGL); chGL.connect(chPanL); chPanL.connect(master);
       padFilter.connect(chR); chR.connect(chGR); chGR.connect(chPanR); chPanR.connect(master);
       if (reverbBus) padFilter.connect(reverbBus);
-      padDriftLfo = lfo; // guardado para no recolectarlo
+      _padDriftLfo = lfo; // guardado para no recolectarlo
       lfo.start(); lfo2.start();
     } catch {
       return null;

@@ -80,7 +80,7 @@ export function EstrategiaGlobalPanel() {
   // tienda (desafioMejor) y el contrato al tablón lo pinta allá.
   const semanaMesa = useMemo(() => weekKeyOf(), []);
   const desafio = useMemo(() => desafioDeLaSemana(parseInt(semanaMesa.slice(6), 10) || 1), [semanaMesa]);
-  const recordDesafio = useGameStore((s) => s.recordDesafio);
+  const _recordDesafio = useGameStore((s) => s.recordDesafio);
   const desafioMejor = useGameStore((s) => s.desafioMejor);
   const mejorVigente = desafioMejor && desafioMejor.wk === semanaMesa ? desafioMejor.objetivo : null;
   const [mesaDesafio, setMesaDesafio] = useState(false);

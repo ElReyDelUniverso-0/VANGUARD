@@ -33,10 +33,7 @@ export function CostoGuerra() {
 
   useEffect(() => {
     const t0 = Date.now();
-    let last = performance.now();
-    const tick = (now: number) => {
-      const dt = Math.max(0, (now - last) / 1000);
-      last = now;
+    const tick = (_now: number) => {
       const elapsed = (Date.now() - t0) / 1000;
       setUsd(BASE_COST_USD + USD_PER_SEC * elapsed);
       setRefugees(BASE_REFUGEES + REF_PER_SEC * elapsed);

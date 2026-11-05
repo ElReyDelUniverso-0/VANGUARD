@@ -78,10 +78,6 @@ const CHAT_LINES = [
   "El radar no miente, mirad el norte",
 ];
 
-const DONOR_NAMES = [
-  "Anónimo", "MegaFan", "ElBarón", "Xx_Sombra_xX", "Capitán_Observable", "LaBall", "Generoso41",
-];
-
 // niveles de donación (espectador → canal)
 const TIERS = [
   { coins: 5, label: "CAFÉ", color: "text-cyan-hud border-cyan-hud" },
@@ -202,7 +198,6 @@ export function DirectosPanel() {
       setChat((prev) => [...prev.slice(-38), msg]);
       // en MI directo las donaciones del chat ME pagan
       if (isDonor && view === "mine") {
-        const donor = DONOR_NAMES[Math.floor(Math.random() * DONOR_NAMES.length)];
         const bonus = tier.coins >= 100 && Math.random() < 0.3 ? 1 : 0;
         addCoins(tier.coins, `Directo: donación de ${u.n}`);
         if (bonus > 0) addGems(bonus, "Directo: superchat 🚀".replace(" 🚀", ""));

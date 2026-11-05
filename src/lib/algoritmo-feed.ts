@@ -70,9 +70,6 @@ function guardarPerfil(p: PerfilFeed): void {
   try { localStorage.setItem(K_PERFIL, JSON.stringify(p)); } catch { /* noop */ }
 }
 
-const crecer = (n: number | undefined, delta: number, tope: number): number =>
-  Math.min(tope, Math.min(1, Math.max(0.2, n ?? 1)) + delta);
-
 /** El espectador MIRÓ una tarjeta (activa ≥60% en pantalla). */
 export function notaVista(tipo: TipoFeed, _autor: string): void {
   const p = leerPerfil();

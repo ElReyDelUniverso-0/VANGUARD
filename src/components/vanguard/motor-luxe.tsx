@@ -28,7 +28,7 @@ export function MotorLuxe() {
   const acabado = useLuxe((s) => s.acabado);
   const galeria = useLuxe((s) => s.galeria);
   const serie = useLuxe((s) => s.serie);
-  const forjar = useLuxe((s) => s.forjar);
+  const _forjar = useLuxe((s) => s.forjar);
 
   // v133: la serie se graba en la primera visita PERO solo tras la
   // rehidratación — así la cerradura del storage ya está abierta y

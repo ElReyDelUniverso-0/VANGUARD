@@ -109,7 +109,7 @@ const RANGOS = [
 
 // ————— componente principal —————
 export function AtlasSecreto() {
-  const coins = useGameStore((s) => s.coins);
+  const _coins = useGameStore((s) => s.coins);
   const addCoins = useGameStore((s) => s.addCoins);
   const spendCoins = useGameStore((s) => s.spendCoins);
   const addXp = useGameStore((s) => s.addXp);

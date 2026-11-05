@@ -145,7 +145,6 @@ export function FriendsPanel() {
       {/* Friends list */}
       <div className="grid sm:grid-cols-2 gap-2">
         {filtered.map((f, idx) => {
-          const totalStats = f.stats.quizCorrect + Math.round(f.stats.minigameBest / 100) + f.stats.missionsClaimed + f.stats.streak;
           return (
             <motion.button
               key={f.id}

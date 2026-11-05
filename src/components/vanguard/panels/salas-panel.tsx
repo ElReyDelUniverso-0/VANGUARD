@@ -26,14 +26,6 @@ interface ChatMsg {
   body: string; ts: number; bot?: boolean; sys?: boolean;
 }
 
-const ROOM_COLOR: Record<string, string> = {
-  amber: "text-amber border-amber-hud bg-amber-hud/20",
-  green: "text-green-hud border-green-hud bg-green-hud/20",
-  red: "text-red-hud border-red-hud bg-red-hud/20",
-  violet: "text-violet-hud border-violet-hud bg-violet-hud/20",
-  cyan: "text-cyan-hud border-cyan-hud bg-cyan-hud/20",
-};
-
 const CHAT_MSGS_KEY = "vanguard-chat-msgs";
 
 function countChatMsg(): number {

@@ -75,8 +75,8 @@ export function EnVivoPanel() {
   const alias = useGameStore((s) => s.alias);
   const level = useGameStore((s) => s.level);
   const addCoins = useGameStore((s) => s.addCoins);
-  const spendCoins = useGameStore((s) => s.spendCoins);
-  const addXp = useGameStore((s) => s.addXp);
+  const _spendCoins = useGameStore((s) => s.spendCoins);
+  const _addXp = useGameStore((s) => s.addXp);
   const cbAvatar = useProfileStore((s) => s.cbAvatar);
 
   const [section, setSection] = useState<"medios" | "comunidad" | "programacion" | "replays" | "midirecto" | "reglas">("medios");

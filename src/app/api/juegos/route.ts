@@ -45,7 +45,6 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const id = sanitizarLinea(body.id ?? "", 40);
     const aciertos = Math.max(0, Math.min(999, Number(body.aciertos) || 0));
-    const total = Math.max(1, Math.min(999, Number(body.total) || 1));
     const jugador = sanitizarLinea(body.jugador ?? "ANÓNIMO", 24) || "ANÓNIMO";
     if (!id) return NextResponse.json({ error: "Falta el juego" }, { status: 400 });
 
