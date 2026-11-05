@@ -237,7 +237,7 @@ export function SectionSearch({
       },
       {
         // v294.0 EL ATLAS DEL PLANETA — la fuente atlas-data (v121, REAL), en server
-        key: "pg:atlas", label: "EL ATLAS DEL PLANETA — 66 naciones con capital, población, superficie, moneda, gobierno y líder real; 69 personas del poder con su sede real y 15 rutas del poder", short: "atlas planeta paises naciones capitales poblacion superficie moneda gobierno lider presidente personas poder rutas ejes geografia",
+        key: "pg:atlas", label: "EL ATLAS DEL PLANETA — 84 naciones con capital, población, superficie, moneda, gobierno y líder real; 78 personas del poder con su sede real y 24 rutas del poder", short: "atlas planeta paises naciones capitales poblacion superficie moneda gobierno lider presidente personas poder rutas ejes geografia",
         icon: <Globe className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · el atlas de la casa", icon_color: "text-cyan-hud",
         kind: "page", href: "/atlas",

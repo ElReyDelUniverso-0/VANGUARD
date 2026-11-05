@@ -288,6 +288,18 @@ export function girar<T>(base: T[], cuantos: number, inicio: number): T[] {
   return Array.from({ length: cuantos }, (_, i) => base[(s + i) % n]);
 }
 
+// v324: el día del año en UTC — el reloj CENTRAL del anillo de la escuela.
+// Desde la v313 (mando) el anillo gira una muesca por fecha; hasta hoy cada
+// consumidor contaba sus propios días (canal v321, ciber v322). UNA función,
+// CERO copias: los seis anillos (mando, instituto, red, canal, ciber, atlas)
+// comparten este único reloj — contar días es la forma honesta de girar.
+export function diaDelAnillo(): number {
+  const f = new Date();
+  const inicio = Date.UTC(f.getUTCFullYear(), 0, 1);
+  const hoy = Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), f.getUTCDate(), 12);
+  return Math.max(0, Math.floor((hoy - inicio) / 86400000));
+}
+
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
   const rnd = mulberry32(fnvHash("estrategia-" + fecha));

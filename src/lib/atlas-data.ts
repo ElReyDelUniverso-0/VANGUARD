@@ -3,15 +3,27 @@
 // "Vanguard le falta un modo que esté toda la información de
 // cada país, cada persona importante en el mundo, donde están
 // las ubicaciones de cada persona importante en el mundo".
-//   · PAISES_ATLAS: 66 naciones con capital, ubicación (lat/lng),
+//   · PAISES_ATLAS: 84 naciones con capital, ubicación (lat/lng),
 //     población, superficie, idiomas, moneda, gobierno, líder y
 //     dato estratégico. Zona IANA para reloj EN VIVO.
-//   · PERSONAS_ATLAS: 70 figuras clave (gobierno, organismos,
+//   · PERSONAS_ATLAS: 78 figuras clave (gobierno, organismos,
 //     dinero, ciencia, cultura) con SU UBICACIÓN REAL — donde
 //     trabajan hoy — y hora local viva.
 // Edición Vanguard 2026 · datos verificados hasta octubre 2025.
 // Las banderas salen de flagcdn vía el código ISO-2.
+//
+// v324.0 EL ATLAS MIRA AL SUR: el censo por firma de la v322 cantó
+//   lo que el catálogo escondía — Oceanía 2, África 10. Esta ronda
+//   dobla la mirada hacia el sur: +18 naciones (África +7,
+//   Oceanía +2, América Central y Caribe +4, Asia meridional y
+//   central +3, Balcanes +2), +9 figuras con África y los
+//   organismos en el centro, +9 rutas de poder nuevas, el anillo
+//   de la escuela llega al atlas (SEXTO consumidor: paisDelDia y
+//   figuraDelDia) y los RÉCORDS DEL PLANETA — computados con
+//   reduce del catálogo, nunca copiados.
 // ============================================================
+
+import { girar, diaDelAnillo } from "./estrategia-data";
 
 export interface PaisAtlas {
   id: string;            // ISO-2 (bandera real flagcdn)
@@ -97,6 +109,27 @@ export const PAISES_ATLAS: PaisAtlas[] = [
   { id: "hu", nombre: "Hungría", capital: "Budapest", lat: 47.498, lng: 19.04, zona: "Europe/Budapest", region: "Europa", poblacion: 9.6, superficie: 93030, idiomas: "Húngaro", moneda: "Florín (HUF)", gobierno: "República parlamentaria", lider: "Viktor Orbán (Primer Ministro)", dato: "Su idioma no se parece a ninguno de su entorno: llegada de los magiares del este." },
   { id: "nz", nombre: "Nueva Zelanda", capital: "Wellington", lat: -41.286, lng: 174.776, zona: "Pacific/Auckland", region: "Oceanía", poblacion: 5.3, superficie: 268021, idiomas: "Inglés y maorí", moneda: "Dólar (NZD)", gobierno: "Monarquía parlamentaria", lider: "Christopher Luxon (Primer Ministro)", dato: "El primer país donde las mujeres votaron (1893) y la nación más pacífica del Índice Global." },
   { id: "ec", nombre: "Ecuador", capital: "Quito", lat: -0.18, lng: -78.468, zona: "America/Guayaquil", region: "América", poblacion: 18.1, superficie: 256370, idiomas: "Español (quichua cooficial)", moneda: "Dólar (USD)", gobierno: "República presidencial", lider: "Daniel Noboa (Presidente)", dato: "El país de la línea ecuatorial y las islas Galápagos, laboratorio de la evolución." },
+  // ===== v324 — EL SUR ENTRA EN EL MAPA (África +7) =====
+  { id: "gh", nombre: "Ghana", capital: "Acra", lat: 5.604, lng: -0.187, zona: "Africa/Accra", region: "África", poblacion: 34.4, superficie: 238533, idiomas: "Inglés", moneda: "Cedi (GHS)", gobierno: "República presidencial", lider: "John Mahama (Presidente)", dato: "Primera nación africana en independizarse (1957): oro, cacao y el referente democrático del Golfo de Guinea." },
+  { id: "ci", nombre: "Costa de Marfil", capital: "Yamusukro", lat: 6.827, lng: -5.29, zona: "Africa/Abidjan", region: "África", poblacion: 31.9, superficie: 322463, idiomas: "Francés", moneda: "Franco CFA (XOF)", gobierno: "República presidencial", lider: "Alassane Ouattara (Presidente)", dato: "El mayor productor de cacao del mundo (≈40% del total) y motor económico de África occidental francófona." },
+  { id: "sn", nombre: "Senegal", capital: "Dakar", lat: 14.716, lng: -17.467, zona: "Africa/Dakar", region: "África", poblacion: 18.5, superficie: 196722, idiomas: "Francés (wolof vehicular)", moneda: "Franco CFA (XOF)", gobierno: "República presidencial", lider: "Bassirou Diomaye Faye (Presidente)", dato: "El gas de Greater Tortue lo convierte en exportador energético; el único país del Sahel sin golpes de Estado." },
+  { id: "cm", nombre: "Camerún", capital: "Yaundé", lat: 3.848, lng: 11.502, zona: "Africa/Douala", region: "África", poblacion: 29.1, superficie: 475442, idiomas: "Francés e inglés", moneda: "Franco CFA (XAF)", gobierno: "República presidencial", lider: "Paul Biya (Presidente)", dato: "África en miniatura — selva, sabana y montaña; su presidente de 92 años ganó un octavo mandato en 2025." },
+  { id: "ao", nombre: "Angola", capital: "Luanda", lat: -8.839, lng: 13.289, zona: "Africa/Luanda", region: "África", poblacion: 37.9, superficie: 1246700, idiomas: "Portugués", moneda: "Kwanza (AOA)", gobierno: "República presidencial", lider: "João Lourenço (Presidente)", dato: "Segundo productor de petróleo del África subsahariana; Angola es una de las ciudades más caras del planeta para expatriados." },
+  { id: "tz", nombre: "Tanzania", capital: "Dodoma", lat: -6.163, lng: 35.752, zona: "Africa/Dar_es_Salaam", region: "África", poblacion: 67.4, superficie: 945087, idiomas: "Suajili e inglés", moneda: "Chelín tanzano (TZS)", gobierno: "República presidencial", lider: "Samia Suluhu Hassan (Presidenta)", dato: "El Serengueti y el Kilimanjaro financian el turismo; quinta población de África y una de las que más rápido crece." },
+  { id: "mz", nombre: "Mozambique", capital: "Maputo", lat: -25.966, lng: 32.583, zona: "Africa/Maputo", region: "África", poblacion: 34.6, superficie: 801590, idiomas: "Portugués", moneda: "Metical (MZN)", gobierno: "República presidencial", lider: "Daniel Chapo (Presidente)", dato: "El LNG de Cabo Delgado promete ser la mayor inversión privada de África; la insurgencia lo retrasa desde 2017." },
+  // ===== v324 — Oceanía +2, América Central y Caribe +4 =====
+  { id: "pg", nombre: "Papúa Nueva Guinea", capital: "Port Moresby", lat: -9.478, lng: 147.15, zona: "Pacific/Port_Moresby", region: "Oceanía", poblacion: 10.3, superficie: 462840, idiomas: "Tok pisin, inglés e hiri motu", moneda: "Kina (PGK)", gobierno: "Monarquía parlamentaria", lider: "James Marape (Primer Ministro)", dato: "Más de 800 lenguas vivas (récord mundial) y el segundo bosque tropical más grande; el LNG atrae a Pekín y Washington a la vez." },
+  { id: "fj", nombre: "Fiyi", capital: "Suva", lat: -18.141, lng: 178.442, zona: "Pacific/Fiji", region: "Oceanía", poblacion: 0.93, superficie: 18272, idiomas: "Fiyiano, inglés e hindi", moneda: "Dólar fiyiano (FJD)", gobierno: "República parlamentaria", lider: "Sitiveni Rabuka (Primer Ministro)", dato: "El cruce de caminos del Pacífico Sur: cumbres diplomáticas, cables submarinos y primer país en ratificar el Acuerdo de París." },
+  { id: "gt", nombre: "Guatemala", capital: "Ciudad de Guatemala", lat: 14.628, lng: -90.523, zona: "America/Guatemala", region: "América", poblacion: 18.0, superficie: 108889, idiomas: "Español (23 lenguas mayas)", moneda: "Quetzal (GTQ)", gobierno: "República presidencial", lider: "Bernardo Arévalo (Presidente)", dato: "El mayor país de Centroamérica y corredor migratorio decisivo hacia EE. UU.; corazón del mundo maya vivo." },
+  { id: "pa", nombre: "Panamá", capital: "Ciudad de Panamá", lat: 8.982, lng: -79.519, zona: "America/Panama", region: "América", poblacion: 4.5, superficie: 75417, idiomas: "Español", moneda: "Balboa y dólar (USD)", gobierno: "República presidencial", lider: "José Raúl Mulino (Presidente)", dato: "El canal mueve ~5% del comercio marítimo mundial; la sequía de 2023-24 encareció el paso y encendió la alerta global." },
+  { id: "do", nombre: "República Dominicana", capital: "Santo Domingo", lat: 18.486, lng: -69.931, zona: "America/Santo_Domingo", region: "América", poblacion: 11.4, superficie: 48671, idiomas: "Español", moneda: "Peso dominicano (DOP)", gobierno: "República presidencial", lider: "Luis Abinader (Presidente)", dato: "La economía que más crece de América Latina desde la pandemia; Santo Domingo fue la primera ciudad europea de América (1496)." },
+  { id: "bo", nombre: "Bolivia", capital: "La Paz (gobierno) · Sucre (constitucional)", lat: -16.5, lng: -68.15, zona: "America/La_Paz", region: "América", poblacion: 12.4, superficie: 1098581, idiomas: "Español y 36 lenguas nativas", moneda: "Boliviano (BOB)", gobierno: "República presidencial", lider: "Rodrigo Paz (Presidente)", dato: "La mayor reserva de litio del planeta bajo el salar de Uyuni; en 2025 el poder cambió de partido tras casi dos décadas de MAS." },
+  // ===== v324 — Asia meridional y central +3, Balcanes +2 =====
+  { id: "uz", nombre: "Uzbekistán", capital: "Taskent", lat: 41.299, lng: 69.24, zona: "Asia/Tashkent", region: "Asia", poblacion: 36.4, superficie: 447400, idiomas: "Uzbeko", moneda: "Som (UZS)", gobierno: "República presidencial", lider: "Shavkat Mirziyoyev (Presidente)", dato: "Uno de los solo dos países doblemente sin salida al mar (con Liechtenstein); mayor productor de oro de Asia Central." },
+  { id: "mm", nombre: "Myanmar", capital: "Naipyidó", lat: 19.763, lng: 96.078, zona: "Asia/Yangon", region: "Asia", poblacion: 54.5, superficie: 676578, idiomas: "Birmano", moneda: "Kyat (MMK)", gobierno: "Junta militar", lider: "Min Aung Hlaing (Jefe de la Junta)", dato: "Guerra civil abierta desde el golpe de 2021: la junta perdió cientos de puestos fronterizos ante las milicias étnicas." },
+  { id: "lk", nombre: "Sri Lanka", capital: "Sri Jayawardenepura Kotte", lat: 6.927, lng: 79.861, zona: "Asia/Colombo", region: "Asia", poblacion: 22.2, superficie: 65610, idiomas: "Cingalés y tamil", moneda: "Rupia (LKR)", gobierno: "República semipresidencial", lider: "Anura Kumara Dissanayake (Presidente)", dato: "Quebró en 2022 con la peor crisis desde la independencia; el puerto de Hambantota quedó 99 años en manos de China Meridional." },
+  { id: "rs", nombre: "Serbia", capital: "Belgrado", lat: 44.787, lng: 20.457, zona: "Europe/Belgrade", region: "Europa", poblacion: 6.6, superficie: 88361, idiomas: "Serbio", moneda: "Dinar (RSD)", gobierno: "República parlamentaria", lider: "Aleksandar Vučić (Presidente)", dato: "Equilibrista entre Bruselas y Moscú: candidato a la UE sin sancionar a Rusia; el litio de Jadar es el mayor yacimiento de Europa." },
+  { id: "hr", nombre: "Croacia", capital: "Zagreb", lat: 45.815, lng: 15.982, zona: "Europe/Zagreb", region: "Europa", poblacion: 3.9, superficie: 56594, idiomas: "Croata", moneda: "Euro (EUR)", gobierno: "República parlamentaria", lider: "Zoran Milanović (Presidente)", dato: "OTAN, UE y euro desde 2023: custodia 1.800 km de costa adriática y el puente Pelješac que rodea a Bosnia." },
 ];
 
 export type CategoriaPersona = "GOBIERNO" | "ORGANISMOS" | "DINERO" | "CIENCIA" | "CULTURA";
@@ -204,6 +237,16 @@ export const PERSONAS_ATLAS: PersonaAtlas[] = [
   { id: "lebron", nombre: "LeBron James", cargo: "Baloncestista (Lakers)", categoria: "CULTURA", pais: "us", sede: "Crypto.com Arena", ciudad: "Los Ángeles", lat: 34.052, lng: -118.244, zona: "America/Los_Angeles", desde: 2003, bio: "Máximo anotador de la historia de la NBA y primer milmillonario activo del baloncesto." },
   { id: "nadal", nombre: "Rafael Nadal", cargo: "Tenista (leyenda)", categoria: "CULTURA", pais: "es", sede: "Academia Rafa Nadal", ciudad: "Manacor", lat: 39.562, lng: 3.209, zona: "Europe/Madrid", desde: 2001, bio: "22 Grand Slams y 14 Roland Garros: el rey absoluto de la tierra y del deporte balear." },
   { id: "rihanna", nombre: "Rihanna", cargo: "Cantante y empresaria", categoria: "CULTURA", pais: "bb", sede: "Fenty HQ", ciudad: "Los Ángeles", lat: 34.052, lng: -118.244, zona: "America/Los_Angeles", desde: 2005, bio: "Barbados la nombró embajadora nacional: su Fenty Beauty la convirtió en la artista más rica del mundo." },
+  // ===== v324 — el sur y los organismos entran en la mesa de poder =====
+  { id: "faye", nombre: "Bassirou Diomaye Faye", cargo: "Presidente de Senegal", categoria: "GOBIERNO", pais: "sn", sede: "Palacio de la República", ciudad: "Dakar", lat: 14.671, lng: -17.438, zona: "Africa/Dakar", desde: 2024, bio: "De la celda al palacio en dos semanas: ganó la presidencia con 44 años, el más joven electo de la historia del país." },
+  { id: "samia", nombre: "Samia Suluhu Hassan", cargo: "Presidenta de Tanzania", categoria: "GOBIERNO", pais: "tz", sede: "State House", ciudad: "Dodoma", lat: -6.163, lng: 35.752, zona: "Africa/Dar_es_Salaam", desde: 2021, bio: "Primera mujer en la presidencia: llegó tras la muerte de Magufuli y ganó elección propia en 2025; abrió el país al capital extranjero." },
+  { id: "traore", nombre: "Ibrahim Traoré", cargo: "Presidente de Burkina Faso", categoria: "GOBIERNO", pais: "bf", sede: "Palacio Kosyam", ciudad: "Uagadugú", lat: 12.371, lng: -1.52, zona: "Africa/Ouagadougou", desde: 2022, bio: "Capitán que tomó el poder a los 34 años: nacionalizó las minas de oro, expulsó a los cascos franceses y lidera el eje del Sahel con Malí y Níger." },
+  { id: "arevalo", nombre: "Bernardo Arévalo", cargo: "Presidente de Guatemala", categoria: "GOBIERNO", pais: "gt", sede: "Casa Presidencial", ciudad: "Ciudad de Guatemala", lat: 14.609, lng: -90.525, zona: "America/Guatemala", desde: 2024, bio: "Hijo del presidente reformista Juan José Arévalo (1945): sociólogo y diplomático que ganó contra la corrupción y resiste el cerco del fiscal general." },
+  { id: "okonjo", nombre: "Ngozi Okonjo-Iweala", cargo: "Directora General de la OMC", categoria: "ORGANISMOS", pais: "ng", sede: "Centre William Rappard", ciudad: "Ginebra", lat: 46.228, lng: 6.147, zona: "Europe/Zurich", desde: 2021, bio: "Primera mujer y primera africana al frente de la OMC: 25 años en el Banco Mundial, dos veces ministra de Finanzas de Nigeria y reelegida sin oposición." },
+  { id: "urquiza", nombre: "Valdecy Urquiza", cargo: "Secretario General de Interpol", categoria: "ORGANISMOS", pais: "br", sede: "Sede de Interpol", ciudad: "Lyon", lat: 45.764, lng: 4.836, zona: "Europe/Paris", desde: 2025, bio: "Policía federal brasileño: el primer latinoamericano en dirigir Interpol en su siglo de historia." },
+  { id: "charpentier", nombre: "Emmanuelle Charpentier", cargo: "Cocreadora de CRISPR-Cas9", categoria: "CIENCIA", pais: "fr", sede: "Max Planck Unit for the Science of Pathogens", ciudad: "Berlín", lat: 52.489, lng: 13.426, zona: "Europe/Berlin", desde: 2018, bio: "Nobel de Química 2020 con Doudna por las tijeras genéticas: su terapia Casgevy (2023) fue la primera CRISPR aprobada en el mundo." },
+  { id: "adichie", nombre: "Chimamanda Ngozi Adichie", cargo: "Escritora (Americanah)", categoria: "CULTURA", pais: "ng", sede: "Estudio en Lagos", ciudad: "Lagos", lat: 6.524, lng: 3.379, zona: "Africa/Lagos", desde: 2012, bio: "La voz literaria de África: 'Americanah' y 'Todos deberíamos ser feministas' se enseñan en medio mundo; volvió a Nigeria por su patria creativa." },
+  { id: "bonmati", nombre: "Aitana Bonmatí", cargo: "Futbolista (FC Barcelona)", categoria: "CULTURA", pais: "es", sede: "Ciudad Deportiva Joan Gamper", ciudad: "San Juan Despí (Barcelona)", lat: 41.444, lng: 2.068, zona: "Europe/Madrid", desde: 2013, bio: "Tres Champions League y tres Balones de Oro consecutivos: la mejor jugadora de la era dorada del fútbol femenino." },
 ];
 
 /** Búsqueda insensible por nombre, cargo, país o ciudad. */
@@ -260,6 +303,16 @@ export const RUTAS_PODER: RutaPoder[] = [
   { de: "sanchez", a: "macron", etiqueta: "EJE LATINO EUROPEO" },
   { de: "lula", a: "xi", etiqueta: "SUR GLOBAL" },
   { de: "sheinbaum", a: "trump", etiqueta: "FRONTERA 3.000 KM" },
+  // v324 — el sur también conecta: nueve ejes nuevos
+  { de: "faye", a: "lula", etiqueta: "SUR ATLÁNTICO" },
+  { de: "traore", a: "putin", etiqueta: "SAHEL EN PIVOTE" },
+  { de: "samia", a: "ruto", etiqueta: "ÁFRICA ORIENTAL" },
+  { de: "okonjo", a: "georgieva", etiqueta: "COMERCIO Y DEUDA" },
+  { de: "urquiza", a: "arevalo", etiqueta: "MIGRACIÓN Y SEGURIDAD" },
+  { de: "arevalo", a: "trump", etiqueta: "CORREDOR MIGRATORIO" },
+  { de: "charpentier", a: "kariko", etiqueta: "REVOLUCIÓN DEL ARN" },
+  { de: "adichie", a: "harari", etiqueta: "RELATOS DEL SIGLO" },
+  { de: "bonmati", a: "messi", etiqueta: "BALÓN GLOBAL" },
 ];
 
 /** Busca una persona por id (para las rutas de poder). */
@@ -280,4 +333,54 @@ export function compararPaises(a: PaisAtlas, b: PaisAtlas) {
       return Math.abs(da - db) < 0.5 ? null : da > db ? "a" : "b";
     })(),
   };
+}
+
+// ============================================================
+// v324.0 EL ANILLO LLEGA AL ATLAS — el SEXTO consumidor del anillo
+// de la escuela (mando v313, instituto v318, red v320, canal v321,
+// ciber v322 y ahora el atlas): girar() y diaDelAnillo() importados
+// de estrategia-data — UN solo reloj, CERO copias. Un país y una
+// figura llevan la sala cada día; el anillo avanza UNA muesca por
+// fecha, de modo que dos días seguidos jamás repiten al invitado —
+// y al día 84 los 84 países han pasado por la pantalla.
+// ============================================================
+
+export function paisDelDia(): PaisAtlas {
+  return girar(PAISES_ATLAS, 1, diaDelAnillo() % PAISES_ATLAS.length)[0];
+}
+
+export function figuraDelDia(): PersonaAtlas {
+  return girar(PERSONAS_ATLAS, 1, diaDelAnillo() % PERSONAS_ATLAS.length)[0];
+}
+
+// ============================================================
+// v324.0 RÉCORDS DEL PLANETA — superlativos COMPUTADOS del
+// catálogo con reduce (nada duro en código: si el catálogo crece,
+// los récords se recalculan solos — la ley v322: los censos y los
+// récords se derivan, jamás se copian).
+// ============================================================
+
+export interface RecordPlaneta {
+  titulo: string;
+  valor: string;
+  pais: PaisAtlas;
+}
+
+export function recordsDelPlaneta(): RecordPlaneta[] {
+  if (PAISES_ATLAS.length === 0) return [];
+  const densidad = (p: PaisAtlas) => (p.poblacion * 1_000_000) / p.superficie;
+  const por = (sel: (p: PaisAtlas) => number, mejor: "mayor" | "menor") =>
+    PAISES_ATLAS.reduce((m, p) => (mejor === "mayor" ? sel(p) > sel(m) : sel(p) < sel(m)) ? p : m, PAISES_ATLAS[0]);
+  const masPoblado = por((p) => p.poblacion, "mayor");
+  const masGrande = por((p) => p.superficie, "mayor");
+  const masDenso = por(densidad, "mayor");
+  const masPequeno = por((p) => p.superficie, "menor");
+  const masVacio = por(densidad, "menor");
+  return [
+    { titulo: "más poblado", valor: fmtMillones(masPoblado.poblacion), pais: masPoblado },
+    { titulo: "más grande", valor: fmtKm2(masGrande.superficie), pais: masGrande },
+    { titulo: "más denso", valor: `${Math.round(densidad(masDenso)).toLocaleString("es-ES")} hab/km²`, pais: masDenso },
+    { titulo: "más pequeño", valor: fmtKm2(masPequeno.superficie), pais: masPequeno },
+    { titulo: "más vacío", valor: `${Math.round(densidad(masVacio) * 10) / 10} hab/km²`, pais: masVacio },
+  ];
 }

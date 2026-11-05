@@ -9,7 +9,7 @@
 // la pantalla destacada cada día, dos días seguidos jamás lo repiten.
 
 import { evaluarNeuronal, fechaISO, mulberry32, fnvHash } from "./neurona-core";
-import { girar } from "./estrategia-data";
+import { girar, diaDelAnillo } from "./estrategia-data";
 
 export type Capitulo = { seg: number; titulo: string };
 
@@ -165,11 +165,8 @@ function generarEpisodio(dia: number, idx: number): Episodio {
 
 // v321: el día del año — el reloj del anillo (el MISMO reloj que sirve a la
 // red desde la v320: contar días es la forma honesta de girar un anillo).
-function diaDelAnillo(): number {
-  const base = new Date(fechaISO(new Date()) + "T12:00:00Z");
-  const inicio = new Date(Date.UTC(base.getUTCFullYear(), 0, 1));
-  return Math.max(0, Math.floor((base.getTime() - inicio.getTime()) / 86400000));
-}
+// v324: la copia muere — diaDelAnillo vive en estrategia-data y los seis
+// anillos (mando, instituto, red, canal, ciber, atlas) comparten ese reloj.
 
 export function episodiosDeHoy(n = 6): Episodio[] {
   const dia = Math.floor(Date.now() / 86_400_000);

@@ -181,10 +181,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       // v294.0 EL ATLAS DEL PLANETA — la fuente atlas-data (v121, REAL,
-      // «datos verificados hasta octubre 2025») servida en server: 66
+      // «datos verificados hasta octubre 2025») servida en server: 84
       // naciones con capital, población, superficie, moneda, gobierno y
-      // líder real; 69 personas del poder con su sede real y las 15
-      // rutas del poder, indexable para las búsquedas de geografía y
+      // líder real; 78 personas del poder con su sede real y las 24
+      // rutas del poder (rodillo v324: el sur entró), indexable para las búsquedas de geografía y
       // poder (capital, presidente, gobierno, población...)
       url: `${SITE_URL}/atlas`,
       lastModified: new Date(),

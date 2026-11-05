@@ -21,7 +21,7 @@
 //     (día del año % 12, una muesca por fecha: dos días seguidos jamás
 //     repiten la campaña del día).
 
-import { girar } from "./estrategia-data";
+import { girar, diaDelAnillo } from "./estrategia-data";
 import { fnv89 } from "./pulsos-data";
 
 export interface NacionCiber {
@@ -196,13 +196,8 @@ export function nacionCiberDe(id: string): NacionCiber | undefined {
 
 // v322: el día del año — el reloj del anillo (el MISMO reloj que sirve a la
 // red desde la v320 y al canal desde la v321: contar días es la forma honesta
-// de girar un anillo).
-function diaDelAnillo(): number {
-  const f = new Date();
-  const inicio = Date.UTC(f.getUTCFullYear(), 0, 1);
-  const hoy = Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), f.getUTCDate(), 12);
-  return Math.max(0, Math.floor((hoy - inicio) / 86400000));
-}
+// de girar un anillo). v324: la copia muere — diaDelAnillo vive en
+// estrategia-data y los seis anillos comparten ese único reloj.
 
 // v322: EL ADVERSARIO DEL DÍA — el ciber respira con el anillo de la escuela
 // (girar, la rotación por envoltura exportada — el MISMO patrón que rota las

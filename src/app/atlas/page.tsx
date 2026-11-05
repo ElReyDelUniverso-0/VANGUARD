@@ -18,10 +18,10 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // cabeza («datos verificados hasta octubre 2025»), sin "use client",
 // consumida en server SOLO como cifra en /nucleo mientras su plato
 // completo viaja en un panel ssr:false de la portada. La sala levanta
-// el plato: 66 naciones con capital, población, superficie, idiomas,
-// moneda, gobierno y líder real; 69 personas del poder con su SEDE
-// REAL (el censo manda: la cabeza de la fuente dice 70, el dato dice
-// 69 — manda el dato, lección v292); 15 rutas del poder resueltas
+// el plato: 84 naciones con capital, población, superficie, idiomas,
+// moneda, gobierno y líder real; 78 personas del poder con su SEDE
+// REAL (el censo manda — v324: 66 → 84 y 69 → 78, el sur entró con
+// su censo por firma); 24 rutas del poder resueltas
 // contra las personas por id — nada escrito a mano. La zona IANA de
 // cada capital y de cada persona es real pero el RELOJ que la mueve
 // vive en el aparato (el eco del LIVE_RATES de la v293): la sala
@@ -32,9 +32,9 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "ATLAS — las 66 naciones y las personas que mueven el planeta | VANGUARD",
+  title: "ATLAS — las 84 naciones y las personas que mueven el planeta | VANGUARD",
   description:
-    "El atlas del planeta de VANGUARD: 66 naciones con su capital, población, superficie, moneda, gobierno y líder real; 69 personas del poder con su sede real y las 15 rutas que unen los ejes del mundo. Gratis, en español.",
+    "El atlas del planeta de VANGUARD: 84 naciones con su capital, población, superficie, moneda, gobierno y líder real; 78 personas del poder con su sede real y las 24 rutas que unen los ejes del mundo. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/atlas` },
 };
 
@@ -64,7 +64,7 @@ export default function AtlasPage() {
     "@type": "CollectionPage",
     name: "ATLAS — las naciones y las personas que mueven el planeta",
     description:
-      "66 naciones con su capital, población, superficie, moneda, gobierno y líder real; 69 personas del poder con su sede real; las rutas que unen los ejes del mundo.",
+      "84 naciones con su capital, población, superficie, moneda, gobierno y líder real; 78 personas del poder con su sede real; las rutas que unen los ejes del mundo.",
     url: `${SITE_URL}/atlas`,
     isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
     inLanguage: "es",

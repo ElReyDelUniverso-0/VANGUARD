@@ -7,10 +7,14 @@
 // importante en el mundo".
 //   · MAPA: el planeta entero con los pines de las personas
 //     importantes (color por categoría) y el país seleccionado.
-//   · PAÍSES: 66 naciones con capital, población, superficie,
+//   · PAÍSES: 84 naciones con capital, población, superficie,
 //     idiomas, moneda, gobierno, líder y dato estratégico.
-//   · PERSONAS: 70 figuras clave con SU UBICACIÓN REAL y la
+//   · PERSONAS: 78 figuras clave con SU UBICACIÓN REAL y la
 //     hora local EN VIVO de donde están ahora mismo.
+// v324.0 EL ATLAS MIRA AL SUR: el anillo de la escuela llega al atlas
+//   (SEXTO consumidor) — franja PAÍS DEL DÍA con su figura invitada y
+//   hora local viva; los RÉCORDS DEL PLANETA se computan del catálogo
+//   (reduce, nunca copia). El sur entra en el mapa.
 // Los relojes viven (1 Hz). El mapa es el SVG real de Vanguard
 // (Natural Earth) — cero imágenes externas.
 // ============================================================
@@ -25,7 +29,7 @@ import { cn } from "@/lib/utils";
 import { Search, MapPin, Clock3, Users, Globe2, Crosshair, X, Landmark, Coins, FlaskConical, Clapperboard, Building2, ChevronRight, Route, Scale, Crown } from "lucide-react";
 import {
   PAISES_ATLAS, PERSONAS_ATLAS, COLOR_CATEGORIA, RUTAS_PODER, personaPorId, compararPaises,
-  buscarPaises, buscarPersonas, fmtKm2, fmtMillones,
+  buscarPaises, buscarPersonas, fmtKm2, fmtMillones, paisDelDia, figuraDelDia, recordsDelPlaneta,
   type PaisAtlas, type PersonaAtlas, type CategoriaPersona,
 } from "@/lib/atlas-data";
 
@@ -71,6 +75,12 @@ export function AtlasPanel() {
   const [rutasOn, setRutasOn] = useState(true);
   const [cmpA, setCmpA] = useState<string>("us");
   const [cmpB, setCmpB] = useState<string>("cn");
+
+  // v324: el anillo del atlas — un país y una figura llevan la sala cada día
+  // (sexto consumidor del anillo de la escuela; una muesca por fecha).
+  const paisDia = useMemo(() => paisDelDia(), []);
+  const figuraDia = useMemo(() => figuraDelDia(), []);
+  const records = useMemo(() => recordsDelPlaneta(), []);
 
   // RELOJ VIVO del planeta (1 Hz — un solo intervalo para toda la sala)
   useEffect(() => {
@@ -147,7 +157,25 @@ export function AtlasPanel() {
         }
       />
 
-      {/* SUB-NAVEGACIÓN interna de la sala */}
+      {/* ===== v324: PAÍS DEL DÍA — el anillo de la escuela llega al atlas ===== */}
+      <div className="hud-panel px-3 py-2.5 relative overflow-hidden" aria-label="País del día">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[8px] font-mono uppercase tracking-widest text-cyan-hud">★ país del día</span>
+          <Flag code={paisDia.id} size={16} />
+          <span className="text-xs font-bold font-mono uppercase text-foreground">{paisDia.nombre}</span>
+          <span className="text-[9px] font-mono text-muted-foreground">{paisDia.capital} · {paisDia.region} · {fmtMillones(paisDia.poblacion)}</span>
+          <span className="ml-auto text-[9px] font-mono text-cyan-hud tabular-nums">{horaEn(paisDia.zona, now)} hora local</span>
+        </div>
+        <p className="text-[10px] text-muted-foreground leading-snug mt-1">{paisDia.dato}</p>
+        <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+          <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-amber-hud/50 bg-background/80 text-amber-hud">
+            figura del día: {figuraDia.nombre} — {figuraDia.cargo} · {figuraDia.sede} ({horaEn(figuraDia.zona, now)})
+          </span>
+        </div>
+        <p className="text-[8px] font-mono uppercase text-muted-foreground/70 mt-1.5">
+          el anillo del atlas avanza un país y una figura por día — {PAISES_ATLAS.length} países y {PERSONAS_ATLAS.length} personas en el catálogo, dos días seguidos jamás repiten al invitado
+        </p>
+      </div>
       <div className="flex items-center gap-1.5 flex-wrap">
         {([["mapa", "MAPA", <MapPin key="m" className="w-3.5 h-3.5" />], ["paises", "PAÍSES", <Globe2 key="p" className="w-3.5 h-3.5" />], ["personas", "PERSONAS", <Users key="u" className="w-3.5 h-3.5" />], ["comparar", "COMPARAR", <Scale key="c" className="w-3.5 h-3.5" />]] as [Vista, string, React.ReactNode][]).map(([v, label, icon]) => (
           <button
@@ -303,6 +331,20 @@ export function AtlasPanel() {
       {/* ===== VISTA PAÍSES ===== */}
       {vista === "paises" && (
         <div className="space-y-3">
+          {/* v324: RÉCORDS DEL PLANETA — computados del catálogo, el clic lleva a la ficha */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2" aria-label="Récords del planeta">
+            {records.map((rec) => (
+              <button
+                key={rec.titulo}
+                onClick={() => setSelPais(rec.pais)}
+                className="hud-panel p-2 text-left hover:border-cyan-hud/50 transition-colors min-w-0"
+              >
+                <p className="text-[8px] font-mono uppercase tracking-wider text-muted-foreground truncate">{rec.titulo}</p>
+                <p className="font-mono text-[10px] font-bold text-cyan-hud truncate">{rec.valor}</p>
+                <p className="text-[9px] text-foreground truncate flex items-center gap-1"><Flag code={rec.pais.id} size={11} /> {rec.pais.nombre}</p>
+              </button>
+            ))}
+          </div>
           <div className="flex items-center gap-1 flex-wrap">
             {["TODAS", "América", "Europa", "Asia", "África", "Oceanía"].map((r) => (
               <button

@@ -4739,6 +4739,48 @@
 //         vota en vivo — click → toast → expediente actualizado por la
 //         tienda (el roundtrip evento→re-render verificado ante el ojo) ·
 //         canon repo restaurado · cero zombis.
-export const APP_VERSION = "v323.0";
-export const APP_CODENAME = "LA CIRUGÍA DEL TRIBUNAL";
+//
+// v324.0 EL ATLAS MIRA AL SUR — octava ronda del autociclo y QUINTA expansión
+//         jugada por el patrón del anillo (v322 fue la sexta en datos: esta
+//         dobla al ATLAS, la sala que pedía el dueño en la v121). (1) EL
+//         CENSO POR FIRMA CANTÓ: Oceanía 2, África 10 — el atlas miraba al
+//         norte. (2) EL SUR ENTRA EN EL MAPA: PAISES_ATLAS 66 → 84 (Ghana,
+//         Costa de Marfil, Senegal, Camerún, Angola, Tanzania y Mozambique —
+//         África +7; Papúa Nueva Guinea y Fiyi — Oceanía +2; Guatemala,
+//         Panamá, República Dominicana y Bolivia — Centroamérica, Caribe y
+//         los Andes +4; Uzbekistán, Myanmar y Sri Lanka — Asia meridional y
+//         central +3; Serbia y Croacia — Balcanes +2), cada uno con capital,
+//         zona IANA, moneda, gobierno, líder y su verdad estratégica.
+//         PERSONAS_ATLAS 69 → 78: Faye, Samia, Traoré y Arévalo (el Sahel,
+//         África oriental y el istmo entran en la mesa), Okonjo-Iweala y
+//         Urquiza (OMC e Interpol: los organismos dejan de ser solo
+//         occidentales), Charpentier (CRISPR), Adichie y Bonmatí (relatos y
+//         balón). RUTAS_PODER 15 → 24: SUR ATLÁNTICO, SAHEL EN PIVOTE,
+//         ÁFRICA ORIENTAL, COMERCIO Y DEUDA, MIGRACIÓN Y SEGURIDAD,
+//         CORREDOR MIGRATORIO, REVOLUCIÓN DEL ARN, RELATOS DEL SIGLO,
+//         BALÓN GLOBAL. (3) EL ANILLO LLEGA AL ATLAS — SEXTO consumidor:
+//         paisDelDia() y figuraDelDia() con girar() + diaDelAnillo(); el
+//         reloj del anillo se CENTRALIZA en estrategia-data y mueren las dos
+//         copias privadas (canalbrief v321, ciber v322 — un solo reloj,
+//         cero copias). (4) RÉCORDS DEL PLANETA: cinco superlativos
+//         COMPUTADOS con reduce del catálogo (más poblado, más grande, más
+//         denso, más pequeño, más vacío) — si el catálogo crece, los
+//         récords se recalculan solos; nada duro, nada que se pudra.
+//         (5) EL PANEL DICE LA VERDAD: franja PAÍS DEL DÍA con bandera,
+//         hora local viva (el tick 1 Hz de la sala), dato estratégico y la
+//         figura invitada; ley del anillo en pantalla; franja de récords
+//         clicable a la ficha del país. El núcleo (búsqueda y relaciones)
+//         hereda los 84 países sin tocar una línea. SUITE: +2 pines (EL
+//         ATLAS MIRA AL SUR estático: censos 84/78/24 por firma, girar
+//         importada, paisDelDia + figuraDelDia en el anillo, recordsDelPlaneta
+//         computado, franja + ley + récords en panel — y vivo: home + health
+//         v324) + rodillo a v324.0 (valores, mensajes históricos intactos —
+//         ley v312). QA: tsc 0 · eslint 0 (tocados) · censo ESTABLE 8+4 ·
+//         testigo antes del build · build EXIT 0 · pruebas 275/275 · arnés
+//         visual (qa-visual-v324): ANILLO VERIFICADO en página — el país del
+//         día predicho por la fórmula aparece en la franja con su hora local,
+//         los récords del planeta en la vista PAÍSES, sin desbordes 1440/390
+//         · canon repo restaurado · cero zombis.
+export const APP_VERSION = "v324.0";
+export const APP_CODENAME = "EL ATLAS MIRA AL SUR";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

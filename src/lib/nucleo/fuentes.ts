@@ -48,7 +48,7 @@ export const FUENTES_PUBLICAS: FuenteNucleo[] = [
     id: "fnt:atlas",
     nombre: "Atlas de naciones",
     descripcion:
-      "PAISES_ATLAS: 66 países con capital, líder, gobierno y dato estratégico verificado.",
+      "PAISES_ATLAS: 84 países con capital, líder, gobierno y dato estratégico verificado.",
     publica_tipo: "pais",
   },
   {
