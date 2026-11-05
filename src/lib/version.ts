@@ -4714,6 +4714,31 @@
 //     con nombre real y ley del anillo en página, chip de atribución en el
 //     feed, sin desbordes 1440/390 · consola limpia · canon repo restaurado
 //     · cero zombis.
-export const APP_VERSION = "v322.0";
-export const APP_CODENAME = "EL ADVERSARIO CON NOMBRE";
+//
+// v323.0 LA CIRUGÍA DEL TRIBUNAL — séptima ronda del autociclo y PRIMERA
+//         cirugía de la cola de deuda (el censo llevaba ESTABLE 9+4 desde
+//         la v306: el expediente del Juicio Histórico era un efecto-escritor
+//         — useState + useEffect(setSave(loadSave()))). (1) LA CIRUGÍA: el
+//         expediente deja de ser estado de React nacido en un efecto y pasa
+//         a ser TIENDA EXTERNA — useSyncExternalStore con suscriptor propio
+//         (el patrón de la casa: music-player, quiz-peso, bitácora), evento
+//         vg-tribunal-v13 para notificar el voto, guardarVoto() como única
+//         puerta de escritura y getServerSnapshot que sirve el expediente
+//         vacío en SSR e hidratación (sin mismatch: React re-rende después,
+//         por diseño). (2) EL CENSO BAJA: 9+4 → 8+4 — la primera deuda que
+//         el autociclo PAGA de verdad. (3) LA VERDAD EN PANTALLA: el voto
+//         sigue cobrando mon/xp por la misma puerta (addCoins/addXp en el
+//         handler del clic, ley v302) y el expediente revive en cada
+//         recarga sin un solo efecto. SUITE: +2 pines (LA CIRUGÍA DEL
+//         TRIBUNAL estático: useSyncExternalStore + suscriptor + evento +
+//         guardarVoto + getServerSnapshot + CERO setSave en efecto — y vivo:
+//         home + health v323) + rodillo a v323.0 (valores, mensajes
+//         históricos intactos — ley v312). QA: tsc 0 · eslint 0 (tocados) ·
+//         censo 8+4 (la deuda BAJÓ) · testigo antes del build · build EXIT 0
+//         · pruebas 273/273 · arnés visual (qa-visual-v323): el tribunal
+//         vota en vivo — click → toast → expediente actualizado por la
+//         tienda (el roundtrip evento→re-render verificado ante el ojo) ·
+//         canon repo restaurado · cero zombis.
+export const APP_VERSION = "v323.0";
+export const APP_CODENAME = "LA CIRUGÍA DEL TRIBUNAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

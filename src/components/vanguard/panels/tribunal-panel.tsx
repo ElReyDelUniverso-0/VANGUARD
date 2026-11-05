@@ -3,8 +3,16 @@
 // v13 — JUICIO HISTORICO: eventos presentados como causas legales.
 // Evidencias con fuentes reales, la comunidad vota CULPABLE/INOCENTE y se
 // analiza por que gano cada veredicto. Nuevo caso destacado cada semana.
+//
+// v323.0 LA CIRUGÍA DEL TRIBUNAL: el expediente deja de ser un
+// efecto-escritor — useState + useEffect(setSave(loadSave())) muere y
+// nace useSyncExternalStore (el patrón de la casa: music-player, quiz-peso,
+// bitácora): el aparato es la TIENDA, el evento propio notifica el voto, y
+// la hidratación es segura por diseño (getServerSnapshot sirve el expediente
+// vacío; React re-rende tras hidratar sin deshidratación). Censo de deuda:
+// 9+4 → 8+4.
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -109,15 +117,33 @@ const CASES: Case[] = [
 
 const LS_KEY = "vanguard-tribunal-v13";
 interface Save { votes: Record<string, "CULPABLE" | "INOCENTE">; }
-function loadSave(): Save { try { return JSON.parse(localStorage.getItem(LS_KEY) ?? "") as Save; } catch { return { votes: {} }; } }
+
+// v323: el expediente como tienda externa — leer localStorage NO es estado
+// de React ni efecto: es una tienda que el aparato posee (ley v302: cero
+// escrituras de estado en efectos). El voto despacha el evento propio y el
+// suscriptor avisa a React; getServerSnapshot sirve el expediente vacío en
+// SSR y en la hidratación (sin mismatch, re-render honesto después).
+const EVENTO_TRIBUNAL = "vg-tribunal-v13";
+function suscribirTribunal(cb: () => void): () => void {
+  window.addEventListener(EVENTO_TRIBUNAL, cb);
+  return () => window.removeEventListener(EVENTO_TRIBUNAL, cb);
+}
+const rawTribunal = () => localStorage.getItem(LS_KEY) ?? "";
+const rawTribunalServidor = () => "";
+function parseSave(raw: string): Save {
+  try { return JSON.parse(raw) as Save; } catch { return { votes: {} }; }
+}
+function guardarVoto(ns: Save) {
+  localStorage.setItem(LS_KEY, JSON.stringify(ns));
+  window.dispatchEvent(new Event(EVENTO_TRIBUNAL));
+}
 
 export function TribunalPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
-  const [save, setSave] = useState<Save>({ votes: {} });
+  const raw = useSyncExternalStore(suscribirTribunal, rawTribunal, rawTribunalServidor);
+  const save = useMemo<Save>(() => parseSave(raw), [raw]);
   const [openCase, setOpenCase] = useState<string | null>(null);
-
-  useEffect(() => { setSave(loadSave()); }, []);
 
   const featured = useMemo(() => {
     const d = new Date();
@@ -128,8 +154,7 @@ export function TribunalPanel() {
   const vote = (c: Case, v: "CULPABLE" | "INOCENTE") => {
     if (save.votes[c.id]) return;
     const ns = { votes: { ...save.votes, [c.id]: v } };
-    setSave(ns);
-    localStorage.setItem(LS_KEY, JSON.stringify(ns));
+    guardarVoto(ns); // v323: la tienda del aparato notifica — sin setState
     addCoins(10, "TRIBUNAL: veredicto emitido");
     addXp(10);
     // ¿coincide con la mayoria comunitaria (base + ruido)?
