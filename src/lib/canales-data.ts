@@ -5,6 +5,8 @@
 // v116.0 MEGALÓPOLIS: 4 NOTICIEROS nuevos de la casa — el ecosistema crece.
 
 import { generarPulsos, fnv89, horaCorta, type PulsoIncidente } from "./pulsos-data";
+import { girar } from "./estrategia-data";
+import { fechaISO } from "./neurona-core";
 
 export interface CanalOSINT {
   id: string;
@@ -25,7 +27,7 @@ export const CANALES: CanalOSINT[] = [
   { id: "gaviota", nombre: "La Gaviota OSINT", handle: "@gaviota_osint", emoji: "🕊️", color: "#FF6BC1", subs: 121050, verificado: false, tipo: "INDEPENDIENTE" },
   { id: "frontline", nombre: "FRENTE·CERO", handle: "@frontecero", emoji: "⚡", color: "#FF8A3D", subs: 98800, verificado: false, tipo: "SIN VERIFICAR" },
   { id: "sismografo", nombre: "Sismógrafo", handle: "@sismografo_g", emoji: "📊", color: "#4DFFC4", subs: 76200, verificado: true, tipo: "INSTITUCIONAL" },
-  { id: "laberinto", nombre: "Laberinto Gris", handle: "@laberintogris", emoji: "🌀", color: "#FF4D6D", subs: 54300, verificado: false, tipo: "SIN VERIFICAR" },
+  { id: "laberinto", nombre: "Laberinto Gris", handle: "@laberintogris", emoji: "🌀", color: "#9AA5CE", subs: 54300, verificado: false, tipo: "SIN VERIFICAR" }, // v320: la identidad arreglada — un canal GRIS no puede vestir el rojo de Mesa Roja (el pin de la ronda desnudó el doble color de la v116)
   // ── v116.0 MEGALÓPOLIS: los 4 NOTICIEROS nuevos de la casa ──
   { id: "vg2100", nombre: "VANGUARD·2100 INFORMATIVO", handle: "@vg2100", emoji: "📺", color: "#FFC94D", subs: 512800, verificado: true, tipo: "INSTITUCIONAL" },
   { id: "alertaroja", nombre: "ALERTA ROJA 24H", handle: "@alertaroja24", emoji: "🚨", color: "#FF3B30", subs: 341500, verificado: true, tipo: "INDEPENDIENTE" },
@@ -34,8 +36,14 @@ export const CANALES: CanalOSINT[] = [
   // ── v120.0 GRAN SALTO 3D: 4 NOTICIEROS más — la red llega a 20 ──
   { id: "horizonte7", nombre: "HORIZONTE 7", handle: "@horizontesiete", emoji: "🌅", color: "#FF9A5A", subs: 264100, verificado: true, tipo: "INDEPENDIENTE" },
   { id: "mesaroja", nombre: "Mesa Roja de Redacción", handle: "@mesaroja.vg", emoji: "🗞️", color: "#FF4D6D", subs: 158900, verificado: true, tipo: "INSTITUCIONAL" },
-  { id: "sextoconstelada", nombre: "Sexto Constelada", handle: "@sextoconstelada", emoji: "🛰️", color: "#B48CFF", subs: 87600, verificado: false, tipo: "SIN VERIFICAR" },
+  { id: "sextoconstelada", nombre: "Sexto Constelada", handle: "@sextoconstelada", emoji: "🛰️", color: "#C4B5FD", subs: 87600, verificado: false, tipo: "SIN VERIFICAR" }, // v320: identidad arreglada — el satélite no copia el violeta de Z-ARCHIVO (segundo doble color que el pin desnudó)
   { id: "vientosnorte", nombre: "Vientos del Norte", handle: "@vientosdelnorte", emoji: "🌬️", color: "#7FE3FF", subs: 64200, verificado: false, tipo: "INDEPENDIENTE" },
+  // ── v320.0 LA RED COMPLETA: los 4 que la promesa de la v120 debió —
+  // la red llega a 20 de VERDAD (personalidad propia, color e id únicos) ──
+  { id: "columna", nombre: "Columna Norte", handle: "@columnanorte", emoji: "🧭", color: "#A3E635", subs: 143800, verificado: true, tipo: "INDEPENDIENTE" },
+  { id: "faromar", nombre: "Faro del Mar", handle: "@farodelmar", emoji: "🗼", color: "#67E8F9", subs: 112600, verificado: true, tipo: "INSTITUCIONAL" },
+  { id: "geofono", nombre: "Geófono", handle: "@geofono", emoji: "🎛️", color: "#F472B6", subs: 68900, verificado: false, tipo: "INDEPENDIENTE" },
+  { id: "tiniebla", nombre: "Boletín Tiniebla", handle: "@boletintiniebla", emoji: "🌑", color: "#94A3B8", subs: 32100, verificado: false, tipo: "SIN VERIFICAR" },
 ];
 
 export interface MensajeCanal {
@@ -126,6 +134,19 @@ export function generarMensajes(ventanaMs: number, ahora = Date.now()): MensajeC
 
 export function canalDe(id: string): CanalOSINT {
   return CANALES.find((c) => c.id === id) ?? CANALES[0];
+}
+
+// v320: EL DESTACADO DEL DÍA — la red respira con el anillo de la escuela
+// (girar, la rotación por envoltura exportada — el MISMO patrón que rota
+// las clases del mando y el foco del instituto): un canal lleva la señal
+// destacada cada día; el anillo avanza UNA muesca por fecha, de modo que
+// dos días consecutivos jamás repiten el destacado.
+export function canalDestacadoDeHoy(fechaISOstr?: string): CanalOSINT {
+  const fecha = fechaISOstr ?? fechaISO(new Date());
+  const base = new Date(fecha + "T12:00:00Z");
+  const inicio = new Date(Date.UTC(base.getUTCFullYear(), 0, 1));
+  const dia = Math.max(0, Math.floor((base.getTime() - inicio.getTime()) / 86400000));
+  return girar(CANALES, 1, dia % CANALES.length)[0];
 }
 
 export { horaCorta };

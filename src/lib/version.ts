@@ -4662,6 +4662,6 @@
 //     la escuela (misma partida, mismo objetivo) · Escape cierra · consola
 //     limpia · sin desbordes 1440/390 · cero zombis.
 // Herencia v316.0 LA ESCUELA DE INSIGNIAS y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v319.0";
-export const APP_CODENAME = "LA COLECCIÓN QUE CRECE";
+export const APP_VERSION = "v320.0";
+export const APP_CODENAME = "LA RED COMPLETA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

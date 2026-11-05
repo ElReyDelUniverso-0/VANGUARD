@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Rss, Eye, Forward, BadgeCheck, ShieldAlert, Search, Users } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { CANALES, canalDe, generarMensajes, horaCorta, type MensajeCanal } from "@/lib/canales-data";
+import { CANALES, canalDe, canalDestacadoDeHoy, generarMensajes, horaCorta, type MensajeCanal } from "@/lib/canales-data";
 import { cn } from "@/lib/utils";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
@@ -53,6 +53,11 @@ export function CanalesPanel() {
     const c = canalDe(id);
     return c;
   };
+
+  // v320: EL DESTACADO DEL DÍA — el anillo de la red avanza un canal por
+  // fecha (la ley del instituto); destocar lo deja ver, filtrar lo abre
+  const destacado = useMemo(() => canalDestacadoDeHoy(), []);
+  const esDestacado = (id: string) => destacado.id === id;
 
   const verificados = visibles.filter((m) => m.coincideCable).length;
 
@@ -122,6 +127,22 @@ export function CanalesPanel() {
       />
       <HeroOro panel="canales" />
 
+      {/* v320: EL DESTACADO DEL DÍA — la rotación del anillo se declara */}
+      <button
+        onClick={() => { setCanalFiltro(destacado.id); marcarLeidos(destacado.id); }}
+        className="hud-panel w-full flex items-center gap-2.5 px-3 py-2 text-left transition-all hover:border-amber-hud/50 active:scale-[0.995]"
+        aria-label={`Abrir el canal destacado de hoy: ${destacado.nombre}`}
+      >
+        <span className="w-8 h-8 rounded-full flex items-center justify-center text-[14px] shrink-0" style={{ background: `${destacado.color}22`, border: `1px solid ${destacado.color}66` }}>
+          {destacado.emoji}
+        </span>
+        <span className="flex-1 min-w-0">
+          <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-amber">Destacado del día · {destacado.nombre}</span>
+          <span className="block text-[9px] font-mono text-muted-foreground truncate">el anillo de la red avanza un canal por día — {CANALES.length} canales en la escucha, dos días seguidos jamás repiten el destacado</span>
+        </span>
+        <span className="text-[9px] font-mono text-muted-foreground shrink-0 hidden sm:block">{destacado.tipo.toLowerCase()}</span>
+      </button>
+
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-3">
         {/* CANALES */}
         <div className="hud-panel p-2 space-y-1 max-h-[600px] overflow-y-auto thin-scroll">
@@ -161,6 +182,9 @@ export function CanalesPanel() {
                   </span>
                   <span className="flex items-center gap-1 text-[9px] font-mono text-muted-foreground">
                     <Users className="w-2.5 h-2.5" /> {(c.subs / 1000).toFixed(0)}K · {c.tipo.toLowerCase()}
+                    {esDestacado(c.id) && (
+                      <span className="ml-1 text-[8px] uppercase px-1 py-0.5 border border-amber-hud/60 text-amber bg-amber-hud/10 shrink-0">destacado hoy</span>
+                    )}
                   </span>
                 </span>
                 {nl > 0 && (
