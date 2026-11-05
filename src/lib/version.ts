@@ -4685,7 +4685,35 @@
 //     lección v320): franja del destacado con nombre y ley del anillo en
 //     página, serie nueva en pantalla, sin desbordes 1440/390 · consola
 //     limpia · canon repo restaurado · cero zombis.
-// Herencia v320.0 LA RED COMPLETA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v321.0";
-export const APP_CODENAME = "LA PANTALLA EN EL ANILLO";
+// Herencia v321.0 LA PANTALLA EN EL ANILLO y toda la crónica. Guards v167 intactos.
+//
+// v322.0 EL ADVERSARIO CON NOMBRE — sexta expansión del autociclo: el ciber
+//         (v90, el mapa que no hace ruido) se dobla y respira con el anillo
+//         de la escuela. (1) EL DOBLEZ: NACIONES 13→24 (Sudamérica, el
+//         Caribe, África austral, Asia Central, Sudeste Asiático, Oceanía,
+//         la Liga Hanseática y la Estación Ártica Aurora — que saluda al
+//         sexto teatro del instituto v318), TIPOS 6→10 (cadena de suministro,
+//         secuestro DNS, desvío BGP, wiper) y SECTORES 7→14 (telecom,
+//         defensa, aviación, satélites, agua, industria OT, cripto).
+//         (2) EL ADVERSARIO CON NOMBRE: CAMPANAS — doce operaciones con
+//         nombre, alias, firma técnica y crónica propia; cada arco vivo nace
+//         atribuido a una campaña y la UI declara la atribución como
+//         ESTIMACIÓN (ley de distinguir hechos de estimaciones).
+//         (3) EL ANILLO LLEGA AL CIBER: campanaDelDia() — girar() importada
+//         desde estrategia-data, su QUINTO consumidor (mando v313, instituto
+//         v318, red v320, canal v321, ciber v322): día del año % 12, una
+//         muesca por fecha, dos días seguidos jamás repiten la campaña del
+//         día. (4) EL PANEL DICE LA VERDAD: franja CAMPAÑA DEL DÍA con
+//         crónica y sectores, contador honesto («en sombra» cuando no hay
+//         arcos suyos), chip de atribución en el feed y fila propia en la
+//         sala 3D.
+// QA: tsc 0 TOTAL · eslint 0 (tocados) · censo ESTABLE 9+4 · build EXIT 0 ·
+//     health v322.0 db up · pruebas 271/271 (+2 EL ADVERSARIO CON NOMBRE;
+//     rodillo a v322.0) · arnés visual propio (qa-visual-v322, compacto —
+//     lección v321: DOM preciso y retornos acotados): franja de la campaña
+//     con nombre real y ley del anillo en página, chip de atribución en el
+//     feed, sin desbordes 1440/390 · consola limpia · canon repo restaurado
+//     · cero zombis.
+export const APP_VERSION = "v322.0";
+export const APP_CODENAME = "EL ADVERSARIO CON NOMBRE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
