@@ -5096,9 +5096,48 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v336.0";
-export const APP_CODENAME = "EL DOCUMENTO DEL DÍA";
+export const APP_VERSION = "v337.0";
+export const APP_CODENAME = "LA ÚLTIMA COMPUERTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v337.0 LA ÚLTIMA COMPUERTA — vigésima ronda del autociclo y CIRUGÍA del
+// ritmo (v336 expansión → v337 cirugía): la SEGUNDA leva de la cola «los 95
+// hallazgos detrás de la compuerta» (v333) cae ENTERA — imperio, la última
+// compuerta viva del árbol, se cura y se retira.
+// ① EL DIAGNÓSTICO HONESTO: abrir la compuerta de imperio en memoria (el
+//    experimento stash de la v333) confirmó los 90 hallazgos EXACTOS — todos
+//    «react-hooks/refs: Cannot access refs during render», todos naciendo de
+//    UNA línea: `const e = juegoRef.current` en el cuerpo del render. El
+//    panel RTS pintaba leyendo el motor mutable directamente; el repaint
+//    forzado vivía en el contador `ver` (setVer tras cada mutación).
+// ② LA CURA (orden, no conducta) — LA INSTANTÁNEA PUBLICADA: el motor
+//    mutable (juegoRef) sigue vivo y sigue mutándose in place FUERA del
+//    render (zona legal del ref: handlers, efectos); el render ahora pinta
+//    `const e = juego` — un ESTADO instantánea. `publicar()` es el puente:
+//    `setJuego({ ...motor })` + `setVer(v => v+1)` en la misma llamada, y
+//    los 16 escritores del motor (fundar, tick, alClick ×3, oyente 3D ×3,
+//    reclutar, construir, frentes ×3, investigar, abandonar ×2) lo llaman
+//    justo donde antes hacían setVer. Los 6 handlers inline toman el motor
+//    del ref con guarda (`const motor = juegoRef.current; if (!motor)
+//    return;`) — la mutación JAMÁS cae sobre la instantánea.
+// ③ CERO CAMBIOS DE CONDUCTA: el tick sigue latiendo 1 s; `ver` sigue
+//    respirando (CeldaSvg y los memos conservan sus deps); el render sin
+//    publish ve la MISMA instantánea que antes veía el ref; los memos
+//    recalculan con la MISMA cadencia (publish = viejo setVer, batched en
+//    el mismo commit). El juego pinta idéntico: mismo reloj, mismos
+//    frentes, mismo overlay.
+// ④ LA ÚLTIMA COMPUERTA MUERE: las 3 directivas de imperio (muertas desde
+//    que exhaustive-deps se apagó — v335) se retiran y el árbol queda
+//    5 → 2 avisos: SOLO los 2 intocables (growth-share v306 +
+//    vanguard2/motor AL FINAL). La cola «los 95 hallazgos» está CURADA
+//    COMPLETA: 14 de la primera leva (v335) + 90 de esta = 104 hallazgos
+//    sanados desde que la compuerta destapó la mina.
+//     SUITE: +2 pines (LA ÚLTIMA COMPUERTA estático: el render pinta la
+//    instantánea, los 16 escritores publican, los 6 motores con guarda, la
+//    compuerta muerta, ver === 1 uso, versión doble aserción — y vivo:
+//    home + health v337) + pines v333/v335 actualizados con honestidad (la
+//    compuerta de imperio ya no existe) + rodillos de codename (EL DOCUMENTO
+//    DEL DÍA → LA ÚLTIMA COMPUERTA; nombres de pines como memoria — ley
+//    v312) + rodillo a v337.0 (cuatro patrones).
 // v336.0 EL DOCUMENTO DEL DÍA — decimonovena ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v335 cirugía → v336 expansión): la DÉCIMO-SEGUNDA
 // puerta del anillo de la escuela se abre en la Biblioteca Secreta — los 10

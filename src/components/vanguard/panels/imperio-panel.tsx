@@ -356,7 +356,8 @@ export function ImperioPanel() {
   const [faccion, setFaccion] = useState("legion");
   const [record, setRecord] = useState<RecordImperio>(() => leerRecord());
 
-  const juegoRef = useRef<EstadoJuego | null>(null);
+  const juegoRef = useRef<EstadoJuego | null>(null); // el MOTOR mutable: vive fuera del render
+  const [juego, setJuego] = useState<EstadoJuego | null>(null); // la INSTANTÁNEA que el render pinta
   const [ver, setVer] = useState(0);
   const [pausa, setPausa] = useState(false);
   const [vel, setVel] = useState(1);
@@ -367,6 +368,15 @@ export function ImperioPanel() {
 
   useEffect(() => { pausaRef.current = pausa; }, [pausa]);
   useEffect(() => { velRef.current = vel; }, [vel]);
+
+  // v337 LA ÚLTIMA COMPUERTA: cada escritor del motor publica una INSTANTÁNEA
+  // al estado y el render lee ESTADO, jamás el ref — la cura honesta de los 90
+  // hallazgos «refs during render» (el motor sigue mutable: la pintura no).
+  const publicar = () => {
+    const j = juegoRef.current;
+    setJuego(j ? { ...j } : null);
+    setVer((v) => v + 1); // el contador ver respira igual que siempre
+  };
 
   // interacción
   const [modo, setModo] = useState<"ordenes" | "atacar" | "mover" | "cañon">("ordenes");
@@ -400,7 +410,7 @@ export function ImperioPanel() {
       }
       if (pausaRef.current) return;
       for (let i = 0; i < velRef.current; i++) tickJuego(e);
-      setVer((v) => v + 1);
+      publicar();
     }, 1000);
     return () => clearInterval(t);
   }, []);
@@ -424,7 +434,8 @@ export function ImperioPanel() {
     return () => svg.removeEventListener("wheel", onWheel);
   }, [fase]);
 
-  const e = juegoRef.current;
+  // el render pinta la INSTANTÁNEA publicada — el ref jamás se lee aquí (v337)
+  const e = juego;
   const jugador = e?.imperios.find((i) => i.esJugador) ?? null;
 
   // objetivos válidos en modo atacar (mapa celda -> naval)
@@ -436,7 +447,6 @@ export function ImperioPanel() {
       if (r.ok) m.set(c.id, r.naval);
     }
     return m;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [e, ver, modo, jugador]);
 
   // alcance del cañón
@@ -453,12 +463,12 @@ export function ImperioPanel() {
       if (d <= 6) s.add(c.id);
     }
     return s;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [e, ver, modo, cañonSel]);
 
   function fundar() {
     juegoRef.current = crearJuego((Date.now() & 0x7fffffff) >>> 0, faccion);
     recordadoRef.current = false;
+    publicar(); // la instantánea nace publicada
     setOverlayCerrado(false);
     setFase("juego");
     setSel(null);
@@ -482,7 +492,7 @@ export function ImperioPanel() {
       }
       const err = lanzarAtaque(st, jug, c, pct, r.naval);
       if (err) mostrarError(err);
-      setVer((v) => v + 1);
+      publicar();
       return;
     }
     if (modo === "mover") {
@@ -501,7 +511,7 @@ export function ImperioPanel() {
         setSel(null);
         setModo("ordenes");
       }
-      setVer((v) => v + 1);
+      publicar();
       return;
     }
     if (modo === "cañon") {
@@ -511,7 +521,7 @@ export function ImperioPanel() {
       }
       const err = dispararCañon(st, jug, cañonSel, c.id);
       if (err) mostrarError(err);
-      setVer((v) => v + 1);
+      publicar();
       return;
     }
     setSel(c.id);
@@ -593,7 +603,6 @@ export function ImperioPanel() {
       });
     }
     return filas;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fase, ver, faccion, record]);
   useSala3DContenido(
     "imperio",
@@ -620,7 +629,7 @@ export function ImperioPanel() {
       if (d.accion === "reclutar") {
         const err = reclutar(st, jug);
         if (err) mostrarError(err);
-        setVer((v) => v + 1);
+        publicar();
         return;
       }
       if (d.accion === "contraatacar") {
@@ -630,7 +639,7 @@ export function ImperioPanel() {
         if (f) {
           const err = cambiarModoFrente(st, jug, f.id, "contraatacar");
           if (err) mostrarError(err);
-          setVer((v) => v + 1);
+          publicar();
         }
         return;
       }
@@ -644,7 +653,7 @@ export function ImperioPanel() {
         if (inv) {
           const err = lanzarInvestigacion(st, jug, inv.id);
           if (err) mostrarError(err);
-          setVer((v) => v + 1);
+          publicar();
         }
       }
     };
@@ -697,7 +706,7 @@ export function ImperioPanel() {
                 ×{v}
               </button>
             ))}
-            <button onClick={() => { setFase("fundar"); juegoRef.current = null; }} className="px-2 py-1 border border-red-hud/50 text-red-hud bg-red-hud/10 font-mono text-[9px]">
+            <button onClick={() => { setFase("fundar"); juegoRef.current = null; publicar(); }} className="px-2 py-1 border border-red-hud/50 text-red-hud bg-red-hud/10 font-mono text-[9px]">
               ABANDONAR
             </button>
           </div>
@@ -810,9 +819,11 @@ export function ImperioPanel() {
               ))}
               <button
                 onClick={() => {
-                  const err = reclutar(e, jugador);
+                  const motor = juegoRef.current;
+                  if (!motor) return;
+                  const err = reclutar(motor, jugador);
                   if (err) mostrarError(err);
-                  setVer((v) => v + 1);
+                  publicar();
                 }}
                 className="px-2.5 py-1.5 border font-mono text-[10px] flex items-center gap-1.5 border-emerald-hud/60 text-emerald-hud bg-emerald-hud/10 hover:bg-emerald-hud/20 transition-all"
               >
@@ -875,9 +886,11 @@ export function ImperioPanel() {
                           key={t}
                           disabled={bloqueado || caro || !!celdaSel.edificio}
                           onClick={() => {
-                            const err = construir(e, jugador, celdaSel.id, t);
+                            const motor = juegoRef.current;
+                            if (!motor) return;
+                            const err = construir(motor, jugador, celdaSel.id, t);
                             if (err) mostrarError(err);
-                            setVer((v) => v + 1);
+                            publicar();
                           }}
                           className={cn(
                             "p-2 border text-left transition-all",
@@ -928,13 +941,13 @@ export function ImperioPanel() {
                       </span>
                     </div>
                     <div className="flex gap-1">
-                      <button onClick={() => { const err = cambiarModoFrente(e, jugador, f.id, "mantener"); if (err) mostrarError(err); setVer((v) => v + 1); }} className={cn("flex-1 py-1 text-[9px] font-mono border", f.modo === "mantener" ? "border-amber-hud bg-amber-hud/20 text-amber-hud" : "border-border/60 text-muted-foreground")}>
+                      <button onClick={() => { const motor = juegoRef.current; if (!motor) return; const err = cambiarModoFrente(motor, jugador, f.id, "mantener"); if (err) mostrarError(err); publicar(); }} className={cn("flex-1 py-1 text-[9px] font-mono border", f.modo === "mantener" ? "border-amber-hud bg-amber-hud/20 text-amber-hud" : "border-border/60 text-muted-foreground")}>
                         MANTENER
                       </button>
-                      <button onClick={() => { const err = cambiarModoFrente(e, jugador, f.id, "avanzar"); if (err) mostrarError(err); setVer((v) => v + 1); }} className={cn("flex-1 py-1 text-[9px] font-mono border", f.modo === "avanzar" ? "border-red-hud bg-red-hud/20 text-red-hud" : "border-border/60 text-muted-foreground")}>
+                      <button onClick={() => { const motor = juegoRef.current; if (!motor) return; const err = cambiarModoFrente(motor, jugador, f.id, "avanzar"); if (err) mostrarError(err); publicar(); }} className={cn("flex-1 py-1 text-[9px] font-mono border", f.modo === "avanzar" ? "border-red-hud bg-red-hud/20 text-red-hud" : "border-border/60 text-muted-foreground")}>
                         AVANZAR
                       </button>
-                      <button onClick={() => { const err = cambiarModoFrente(e, jugador, f.id, "contraatacar"); if (err) mostrarError(err); setVer((v) => v + 1); }} className="flex-1 py-1 text-[9px] font-mono border border-emerald-hud/60 text-emerald-hud hover:bg-emerald-hud/10">
+                      <button onClick={() => { const motor = juegoRef.current; if (!motor) return; const err = cambiarModoFrente(motor, jugador, f.id, "contraatacar"); if (err) mostrarError(err); publicar(); }} className="flex-1 py-1 text-[9px] font-mono border border-emerald-hud/60 text-emerald-hud hover:bg-emerald-hud/10">
                         CONTRAATACAR
                       </button>
                     </div>
@@ -968,7 +981,7 @@ export function ImperioPanel() {
                   <button
                     key={inv.id}
                     disabled={!puede}
-                    onClick={() => { const err = lanzarInvestigacion(e, jugador, inv.id); if (err) mostrarError(err); setVer((v) => v + 1); }}
+                    onClick={() => { const motor = juegoRef.current; if (!motor) return; const err = lanzarInvestigacion(motor, jugador, inv.id); if (err) mostrarError(err); publicar(); }}
                     className={cn(
                       "p-2 border text-left transition-all",
                       hecha ? "border-emerald-hud/60 bg-emerald-hud/10" : puede ? "border-violet-400/60 hover:bg-violet-400/10" : "border-border/40 opacity-50"
@@ -1057,7 +1070,7 @@ export function ImperioPanel() {
                 vencedor: {e.terminado.ganador} · tu dominio final: {(cuota * 100).toFixed(1)}%
               </p>
               <div className="grid grid-cols-2 gap-2 pt-1">
-                <button onClick={() => { setFase("fundar"); juegoRef.current = null; }} className="py-2.5 bg-amber-hud text-black font-bold font-mono text-[11px] tracking-wider">
+                <button onClick={() => { setFase("fundar"); juegoRef.current = null; publicar(); }} className="py-2.5 bg-amber-hud text-black font-bold font-mono text-[11px] tracking-wider">
                   OTRA CAMPAÑA
                 </button>
                 <button onClick={() => setOverlayCerrado(true)} className="py-2.5 border border-border/60 text-muted-foreground font-mono text-[11px]">
