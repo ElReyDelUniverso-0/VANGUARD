@@ -3,6 +3,11 @@
 // reglas, ciclo OODA animado, lecciones tácticas y ranking de generales.
 // Todo ficticio; los "generales" mezclan leyendas del mundo Vanguard con el
 // jugador (TU). Determinista por día.
+// v313.0 LA ESCUELA QUE RESPIRA — el currículo se dobla (8 doctrinas en dos
+// ciclos de contra-doctrina, 10 wargames, 10 lecciones, 10 leyendas) y la
+// escuela respira: cada día el giro determinista trae una CLASE DISTINTA
+// (6 de 10 wargames, 4 de 10 lecciones) — rotación por envoltura, nunca
+// repetida dos días seguidos del mismo plato entero.
 
 import { fechaISO, mulberry32, fnvHash } from "./neurona-core";
 
@@ -86,6 +91,53 @@ const DOCTRINAS_BASE: Omit<Doctrina, "id">[] = [
     contra: "Mano de Sombras",
     rama: "MOVIMIENTO",
   },
+  // v313: el SEGUNDO CICLO de contra-doctrina — la escuela ya no tiene dos
+  // ciclos cerrados sino un currículo que se muerde la cola: ola nueva contra
+  // coraza, velocidad contra silencio.
+  {
+    nombre: "Diente de Sierra",
+    principio: "No un golpe sino una sierra: olas escalonadas que muerden el frente metros por metros, turno tras turno, sin darle al defensor ni una noche de reposo.",
+    nodos: [
+      { nombre: "Ola escalonada", efecto: "cada asalto fallido deja −5 % defensa en la celda", coste: 2 },
+      { nombre: "Relevo de líneas", efecto: "las tropas descansadas atacan +10 % en la tercera ola", coste: 3 },
+      { nombre: "Artillería rodante", efecto: "el supresión dura 1 tick más tras cada asalto", coste: 2 },
+    ],
+    contra: "Coraza de Sal",
+    rama: "ATAQUE",
+  },
+  {
+    nombre: "Coraza de Sal",
+    principio: "La defensa que no cede ni vende: fortificar hasta que el atacante gaste su sierra contra el granito y su propia reserva.",
+    nodos: [
+      { nombre: "Bastión de granito", efecto: "las celdas fortificadas restauran 5 % defensa por noche", coste: 3 },
+      { nombre: "Campos de sal", efecto: "el atacante paga +1 reserva por cada celda tomada", coste: 2 },
+      { nombre: "Ojos del faro", efecto: "las olas enemigas se ven 1 tick antes de llegar", coste: 2 },
+    ],
+    contra: "Diente de Sierra",
+    rama: "DEFENSA",
+  },
+  {
+    nombre: "Jinete Fantasma",
+    principio: "No estar donde el enemigo golpea, estar donde acaba de mirar: columnas ligeras que cruzan el mapa más rápido de lo que los informes llegan.",
+    nodos: [
+      { nombre: "Columna ligera", efecto: "+25 % movimiento, −20 % carga de asalto", coste: 2 },
+      { nombre: "Sombra de polvo", efecto: "el rival ve tu posición con 1 tick de retraso", coste: 3 },
+      { nombre: "Golpe y vuelo", efecto: "retirada gratuita tras cada saqueo exitoso", coste: 2 },
+    ],
+    contra: "Cámara Lenta",
+    rama: "MOVIMIENTO",
+  },
+  {
+    nombre: "Cámara Lenta",
+    principio: "Ganar el tiempo que el rival cree poseer: negar informes, envenenar mapas y dejar que el jinete corra hacia una trampa que ya está tendida.",
+    nodos: [
+      { nombre: "Niebla firmada", efecto: "los informes enemigos llegan con 1 tick de mentira", coste: 3 },
+      { nombre: "Emboscada anunciada", efecto: "+30 % primera emboscada contra tropas en movimiento", coste: 2 },
+      { nombre: "Archivo cruzado", efecto: "cada sensor propio sobrevivido revela 1 nodo rival", coste: 2 },
+    ],
+    contra: "Jinete Fantasma",
+    rama: "INFORMACIÓN",
+  },
 ];
 
 const ESCENARIOS_BASE: Omit<EscenarioWargame, "id">[] = [
@@ -134,6 +186,53 @@ const ESCENARIOS_BASE: Omit<EscenarioWargame, "id">[] = [
     dificultad: 1,
     turns: 6,
   },
+  // v313: la mesa se dobla — cinco escenarios nuevos para que el giro diario
+  // traiga una clase distinta cada día (6 de 10 en el tablero).
+  {
+    titulo: "Los puentes de Novy Sad en invierno",
+    fuerzas: { azul: "Grupo de ingenieros + ala de cazas", rojo: "Regimiento antiaéreo de Volgaria" },
+    objetivoAzul: "Botar 3 puentes de pontones antes del turno 10",
+    objetivoRojo: "Denegar el río: 40 impactos de artillería acumulados",
+    reglaEspecial: "El hielo aguanta 1 cruce; el segundo lo rompe",
+    dificultad: 4,
+    turns: 10,
+  },
+  {
+    titulo: "La ballena de hierro",
+    fuerzas: { azul: "Submarino S-9 «Ballena» (torpedos 6)", rojo: "Convoy mercante + 2 destructores de escolta" },
+    objetivoAzul: "Hundir 4 de 7 mercantes sin ser detectado 2 ticks seguidos",
+    objetivoRojo: "Entregar el convoy a puerto con 5 mercantes",
+    reglaEspecial: "Cada torpedo fallado revela la posición del S-9",
+    dificultad: 5,
+    turns: 12,
+  },
+  {
+    titulo: "Órbita Kestrel-7",
+    fuerzas: { azul: "Red de 4 satélites de observación", rojo: "Batería antisatélite del Frente de Unificación" },
+    objetivoAzul: "Mantener 3 satélites en órbita hasta el turno 8",
+    objetivoRojo: "Cegar la red: derribar 2 satélites en 24 h",
+    reglaEspecial: "Cada satélite perdido degrada la puntería azul 15 %",
+    dificultad: 3,
+    turns: 8,
+  },
+  {
+    titulo: "La ciudad que cierra",
+    fuerzas: { azul: "Batallón mecanizado (orden de asalto limitado)", rojo: "Milicia urbana + 200.000 civiles" },
+    objetivoAzul: "Tomar el ayuntamiento con menos de 5 bajas civiles",
+    objetivoRojo: "Que la ciudad resista hasta el turno 12",
+    reglaEspecial: "Cada bloque bombardeado suma 1 baja civil y resta 2 de moral azul",
+    dificultad: 4,
+    turns: 12,
+  },
+  {
+    titulo: "El silo de granito",
+    fuerzas: { azul: "Guardia de silo (2 escuadrones, sensores fijos)", rojo: "Comando de sabotaje «Aguja» (infiltración)" },
+    objetivoAzul: "Cero brechas en el perímetro durante 9 turnos",
+    objetivoRojo: "Alcanzar la tapa del silo 1 vez",
+    reglaEspecial: "La patrulla que descubre una brecha gana el turno inmediato",
+    dificultad: 5,
+    turns: 9,
+  },
 ];
 
 const LECCIONES_BASE: Leccion[] = [
@@ -142,6 +241,12 @@ const LECCIONES_BASE: Leccion[] = [
   { titulo: "La información es munición renovable", cuerpo: "Cada sensor que sobrevive un tick vale más que un cañón sin blanco. Escucha primero, dispara después: el que ve primero dispara dos veces." },
   { titulo: "Los frentes son respiración, no línea", cuerpo: "Mantener es inspirar; contraatacar es exhalar. Un frente que solo mantiene se muere de asfixia lenta, aunque no pierda metros." },
   { titulo: "El reloj es el único aliado neutral", cuerpo: "Toda victoria por puntos se juega contra el tiempo, no contra el rival. Cuando el reloj corre a tu favor, defender ES atacar." },
+  // v313: cinco lecciones nuevas — la aula también respira con el giro diario
+  { titulo: "La logística es la estrategia vestida de números", cuerpo: "Un plan sin columnas de suministro es un poema, no una orden. Cuenta camiones antes que batallones: el ejército que come primero pelea segundo y gana tercero." },
+  { titulo: "El clima es el tercer ejército", cuerpo: "Lluvia, barro y nieve no toman partido, pero cobran peaje al que se mueve. El que planifica contra el almanaque pelea con un aliado que nunca falla ni traiciona." },
+  { titulo: "Decepciona al que espía, no al que mira", cuerpo: "El sensor enemigo copia lo que le muestras. El espía interpreta lo que le dejas encontrar. Construye la primera mentira para el cristal y la segunda para el que lo lee." },
+  { titulo: "La ciudad se gana calle a calle y se pierde de un bombardeo", cuerpo: "En lo urbano, cada esquina es una fortaleza y cada vecino un testigo. La fuerza que arrasa el bloque donde luchaba, pierde la guerra que estaba ganando." },
+  { titulo: "El silencio también es una posición", cuerpo: "Hay noches en las que la mejor orden es no dar ninguna. El frente que calla obliga al rival a gastar sensores adivinando — y cada ping suyo es un mapa que tú ya tienes." },
 ];
 
 const LEYENDAS = [
@@ -150,9 +255,23 @@ const LEYENDAS = [
   { nombre: "Almirante Suvi Okonkwo", victorias: 187, doctrinaFav: "Mano de Sombras" },
   { nombre: "Coronel Bastian Grau", victorias: 176, doctrinaFav: "Puño de Acero" },
   { nombre: "General Nadia Ferro", victorias: 152, doctrinaFav: "Marea Corta" },
+  { nombre: "Comodoro Halia Voss", victorias: 143, doctrinaFav: "Coraza de Sal" },
   { nombre: "Capitán Lorin Vex", victorias: 131, doctrinaFav: "Mano de Sombras" },
   { nombre: "Comandante Petra Suárez", victorias: 118, doctrinaFav: "Muro Elástico" },
+  { nombre: "Brigadier Tor Mendoza", victorias: 109, doctrinaFav: "Diente de Sierra" },
+  { nombre: "Tiniente Orel Mora", victorias: 97, doctrinaFav: "Jinete Fantasma" },
 ];
+
+// v313: LA ROTACIÓN POR ENVOLTURA — la escuela respira: del currículo
+// completo, cada día toca una clase distinta (6 de 10 wargames, 4 de 10
+// lecciones), determinista por fecha: el giro parte del hash del día y
+// recorre el anillo sin cortar el orden de los originales.
+function girar<T>(base: T[], cuantos: number, inicio: number): T[] {
+  if (base.length <= cuantos) return base.slice();
+  const n = base.length;
+  const s = ((inicio % n) + n) % n;
+  return Array.from({ length: cuantos }, (_, i) => base[(s + i) % n]);
+}
 
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
@@ -160,13 +279,14 @@ export function estrategiaDeHoy(): EstrategiaHoy {
 
   const doctrinas: Doctrina[] = DOCTRINAS_BASE.map((d, i) => ({ ...d, id: `D${i + 1}` }));
 
-  const escenarios: EscenarioWargame[] = ESCENARIOS_BASE.map((e, i) => ({
+  const inicioWargames = Math.floor(rnd() * ESCENARIOS_BASE.length);
+  const escenarios: EscenarioWargame[] = girar(ESCENARIOS_BASE, 6, inicioWargames).map((e, i) => ({
     ...e,
-    id: `W${i + 1}`,
+    id: `W${ESCENARIOS_BASE.indexOf(e) + 1}`,
     dificultad: (1 + Math.floor(rnd() * e.dificultad)) as EscenarioWargame["dificultad"],
   }));
 
-  const lecciones = LECCIONES_BASE.slice(0, 3 + Math.floor(rnd() * 3));
+  const lecciones = girar(LECCIONES_BASE, 4, Math.floor(rnd() * LECCIONES_BASE.length));
 
   const generales: General[] = LEYENDAS.map((g) => ({ ...g }));
 

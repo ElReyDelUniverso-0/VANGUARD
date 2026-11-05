@@ -4510,6 +4510,33 @@
 //     arrastre (día 1 tras un final en 090), Escape honesto, consola limpia,
 //     sin desbordes 1440/390, cero zombis.
 // Herencia v311.0 LA TERCERA QUIRURGÍA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v312.0";
-export const APP_CODENAME = "LA CUARTA QUIRURGÍA";
+// v313.0 LA ESCUELA QUE RESPIRA — la primera ronda de EXPANSIÓN del autociclo
+//         (el mandato del Dueño: CREAR · EXPANDIR · PERFECCIONAR · INNOVAR ·
+//         CONECTAR) y el pago de la cola expansiva documentada desde la v285:
+//         estrategia-data, la escuela del mando. (1) EL CURRÍCULO SE DOBLA:
+//         8 doctrinas en DOS ciclos cerrados de contra-doctrina (el segundo
+//         ciclo nuevo: Diente de Sierra ↔ Coraza de Sal, Jinete Fantasma ↔
+//         Cámara Lenta), 10 wargames con regla especial (invierno, submarino,
+//         órbita, urbano, silo), 10 lecciones del aula, 10 leyendas. (2) LA
+//         ESCUELA RESPIRA: rotación por envoltura determinista por fecha —
+//         cada día tocan 6 de 10 wargames y 4 de 10 lecciones; una clase
+//         distinta cada día sin tocar el orden de los originales. (3) EL FIN
+//         DEL CARTEL (la ley v216 dentro de la propia casa): la fila «TU ·
+//         operador de Vanguard» del ranking — antes un «¿?» decorativo con
+//         «gana wargames y sube a la tabla» — sube a la tabla con las
+//         victorias REALES de conquista del operador (conquestWins del
+//         game-store, selector canónico) y el PUESTO que esas victorias le
+//         dan entre las leyendas, con su sello «real»; el campo eres?: true,
+//         declarado desde la v92 y jamás usado, por fin trabaja.
+// QA: tsc 0 TOTAL (tras regenerar el cliente Prisma del sandbox reciclado,
+//     la herida v216) · eslint 0 (tocados) · build EXIT 0 · health v313.0 db
+//     up · pruebas 253/253 (+2 LA ESCUELA QUE RESPIRA) · arnés visual propio
+//     sobre el BUILD NUEVO: escuela monta con 8 doctrinas, 6 de 10 wargames
+//     en mesa, 4 de 10 lecciones, TU honesto con 0 V de novato; el mismo
+//     arnés siembra conquestWins=215 en el persist y TU CORONA la tabla con
+//     215 V y puesto 1 — el cableado real, demostrado en vivo; consola
+//     limpia, sin desbordes 1440/390, cero zombis.
+// Herencia v312.0 LA CUARTA QUIRURGÍA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v313.0";
+export const APP_CODENAME = "LA ESCUELA QUE RESPIRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

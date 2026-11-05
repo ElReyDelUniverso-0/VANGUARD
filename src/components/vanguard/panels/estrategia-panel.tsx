@@ -10,7 +10,8 @@ import { motion } from "framer-motion";
 import { GraduationCap, Swords, BrainCircuit, Medal, Repeat } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { estrategiaDeHoy } from "@/lib/estrategia-data";
+import { estrategiaDeHoy, type General } from "@/lib/estrategia-data";
+import { useGameStore } from "@/lib/game-store";
 import { cn } from "@/lib/utils";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
@@ -26,6 +27,15 @@ export function EstrategiaGlobalPanel() {
   const [docSel, setDocSel] = useState(0);
   const [escSel, setEscSel] = useState(0);
   const [oodaFase, setOodaFase] = useState(0);
+  // v313 LA ESCUELA QUE RESPIRA — EL FIN DEL CARTEL: la fila «TU» ya no es
+  // un «¿?» decorativo; sube a la tabla con las victorias REALES de conquista
+  // del operador (game-store) y el puesto que esas victorias le dan entre las
+  // leyendas. Progreso de verdad, no carteles (la ley de la v216).
+  const victoriasTu = useGameStore((s) => s.conquestWins);
+  const generalesOrdenados = useMemo<General[]>(() => {
+    const tu: General = { nombre: "TU · operador de Vanguard", victorias: victoriasTu, doctrinaFav: "conquista en vivo", eres: true };
+    return [...hoy.generales, tu].sort((a, b) => b.victorias - a.victorias || (a.eres ? 1 : -1));
+  }, [hoy, victoriasTu]);
 
   // ciclo OODA en marcha perpetua
   useEffect(() => {
@@ -57,15 +67,15 @@ export function EstrategiaGlobalPanel() {
         color: RAMA_COLOR[doctrina.rama] ?? "#A855F7",
         d: `${doctrina.principio} · contra-doctrina histórica: ${doctrina.contra}`,
       },
-      ...hoy.generales.slice(0, 3).map((g, i): FilaContenido3D => ({
+      ...generalesOrdenados.slice(0, 3).map((g, i): FilaContenido3D => ({
         t: `${i + 1}. ${g.nombre}`,
         v: `${g.victorias} V`,
-        color: "#F5C542",
-        d: `doctrina favorita: ${g.doctrinaFav}`,
+        color: g.eres ? "#7AB8FF" : "#F5C542",
+        d: g.eres ? "tus victorias REALES de conquista — el puesto lo das tú, no el cartel" : `doctrina favorita: ${g.doctrinaFav}`,
       })),
     ];
     return filas;
-  }, [hoy, doctrina, escSel]);
+  }, [hoy, doctrina, escSel, generalesOrdenados]);
   useSala3DContenido(
     "estrategia",
     "ESTRATEGIA GLOBAL",
@@ -179,7 +189,7 @@ export function EstrategiaGlobalPanel() {
         <div className="hud-panel border-violet-hud/40 overflow-hidden">
           <div className="px-3 py-2 border-b border-border/60 bg-violet-hud/5 flex items-center gap-1.5">
             <Swords className="w-3.5 h-3.5 text-violet" />
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground">Mesa de wargames</h4>
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground">Mesa de wargames <span className="text-[9px] font-mono text-muted-foreground font-normal">· hoy tocan {hoy.escenarios.length} de 10</span></h4>
           </div>
           <div className="divide-y divide-border/40">
             {hoy.escenarios.map((e, i) => (
@@ -228,7 +238,7 @@ export function EstrategiaGlobalPanel() {
         {/* LECCIONES */}
         <div className="hud-panel border-border/60 overflow-hidden">
           <div className="px-3 py-2 border-b border-border/60">
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground/80">Lecciones del aula</h4>
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground/80">Lecciones del aula <span className="text-[9px] font-mono text-muted-foreground font-normal">· {hoy.lecciones.length} de 10 cada día</span></h4>
           </div>
           <div className="divide-y divide-border/40">
             {hoy.lecciones.map((l, i) => (
@@ -247,33 +257,16 @@ export function EstrategiaGlobalPanel() {
             <h4 className="text-[11px] font-bold uppercase tracking-wider text-foreground">Tabla de generales</h4>
           </div>
           <div className="divide-y divide-border/40">
-            {hoy.generales.slice(0, 3).map((g, i) => (
-              <div key={g.nombre} className="px-3 py-2 flex items-center gap-2.5">
-                <span className="text-[13px] font-black w-6 text-center text-amber">{i + 1}</span>
+            {generalesOrdenados.map((g, i) => (
+              <div key={g.nombre} className={cn("px-3 py-2 flex items-center gap-2.5", g.eres ? "bg-amber-hud/10 border-t-2 border-amber" : i >= 3 && "opacity-80")}>
+                <span className={cn("font-black w-6 text-center", g.eres || i < 3 ? "text-[13px] text-amber" : "text-[12px] text-muted-foreground")}>{i + 1}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[12px] font-semibold text-foreground truncate">{g.nombre}</p>
+                  <p className={cn("truncate", g.eres ? "text-[12px] font-bold text-amber" : i < 3 ? "text-[12px] font-semibold text-foreground" : "text-[11.5px] font-semibold text-foreground/85")}>
+                    {g.nombre}{g.eres && <span className="ml-1.5 text-[8px] font-mono px-1 py-0.5 border border-amber/50 text-amber uppercase">real</span>}
+                  </p>
                   <p className="text-[9px] font-mono text-muted-foreground">{g.doctrinaFav}</p>
                 </div>
-                <span className="text-[12px] font-mono text-foreground/80">{g.victorias} V</span>
-              </div>
-            ))}
-            {/* TU — posicion del jugador, insertada por mérito */}
-            <div className="px-3 py-2.5 flex items-center gap-2.5 bg-amber-hud/10 border-t-2 border-amber">
-              <span className="text-[13px] font-black w-6 text-center text-amber">—</span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-bold text-amber">TU · operador de Vanguard</p>
-                <p className="text-[9px] font-mono text-muted-foreground">gana wargames y sube a la tabla</p>
-              </div>
-              <span className="text-[12px] font-mono text-amber">¿?</span>
-            </div>
-            {hoy.generales.slice(3).map((g, i) => (
-              <div key={g.nombre} className="px-3 py-2 flex items-center gap-2.5 opacity-80">
-                <span className="text-[12px] font-bold w-6 text-center text-muted-foreground">{i + 4}</span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[11.5px] font-semibold text-foreground/85 truncate">{g.nombre}</p>
-                  <p className="text-[9px] font-mono text-muted-foreground">{g.doctrinaFav}</p>
-                </div>
-                <span className="text-[11px] font-mono text-foreground/70">{g.victorias} V</span>
+                <span className={cn("font-mono", g.eres || i < 3 ? "text-[12px] text-foreground/90" : "text-[11px] text-foreground/70")}>{g.victorias} V</span>
               </div>
             ))}
           </div>
