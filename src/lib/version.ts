@@ -5096,9 +5096,35 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v356.0";
-export const APP_CODENAME = "EL RIVAL ANUNCIADO";
+export const APP_VERSION = "v357.0";
+export const APP_CODENAME = "EL PULSO FIRME";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v357.0 EL PULSO FIRME — cuadragésima ronda del autociclo y CIRUGÍA del
+// ritmo (v356 expansión → v357 cirugía): LA CUARTA LEVA DE LA COLA
+// EXHAUSTIVE-DEPS cae en los tres mayores que quedaban — music-player,
+// retention-layer y sala-vista (4 hallazgos cada uno; el censo forzado al
+// abrir midió exacto 12/12 de lo que el canon decía). Sale con los tres
+// archivos en CERO y la cola 122 en 89. (1) LOS OYENTES FIRMES
+// (music-player): `persist` y `avanzarSesion` suben a useCallback con sus
+// deps verdaderas — el intervalo de la SESIÓN CONTINUA, el del CAMBIO DE
+// ERA y el del MODO CINE respiran con callbacks estables en vez de
+// re-montarse; el EQ de sala toma sus bandas guardadas como deps (nacen
+// una vez, nunca mutan: mismo pulso, deps honestas). (2) LAS LECTURAS
+// FRESCAS (retention-layer): el goteo de XP, la visita, los avisos de 90 s
+// y el cofre leen la tienda por `getState()` — el patrón que el propio
+// archivo ya usaba para expedientes y alejandría (v58/v59) — porque
+// `nudgesMuted` y los niveles vivían RANCIOS en el cierre del oyente:
+// el silencio mandado ahora manda de verdad. (3) LA ESTANCIA HONESTA
+// (sala-vista): la entrada se COPIA al montar (la ref viva en el cleanup
+// mentía), las manos estables del agenteApi se descomponen (el objeto es
+// nuevo en cada render, sus manos no) y `ejecutarAccion` sube ARRIBA del
+// tick que la llama — el TDZ no es deps. Cero directivas (ley v335),
+// cero efectos nuevos, cero cicatrices.    SUITE: +2 pines (EL PULSO
+// FIRME estático: los oyentes firmes, las lecturas frescas, la estancia
+// honesta, cero directivas, versión doble aserción — y vivo: home +
+// health v357) + rodillo (EL RIVAL ANUNCIADO → EL PULSO FIRME y v356.0 →
+// v357.0 en los VALORES de los asertos; mensajes históricos y nombres de
+// pines intactos — ley v312).
 // v356.0 EL RIVAL ANUNCIADO — trigésima-novena ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v355 cirugía → v356 expansión): LA MESA VIVA etapa 11
 // — la sala 3D CANTA AL RIVAL. La elección del rival de hoy vive en la

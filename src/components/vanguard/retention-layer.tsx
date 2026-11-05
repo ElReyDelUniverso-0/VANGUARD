@@ -124,7 +124,9 @@ export function RetentionLayer() {
 
       // goteo de XP de temporada cada 60s activos (escala con combo)
       if (Math.floor(activeSec.current / 60) > Math.floor(prev / 60)) {
-        ret.addSeasonXp(Math.round(3 * combo));
+        // v357 EL PULSO FIRME: lectura fresca (getState) — el goteo manda al
+        // estado real de la tienda aunque el oyente del tick sea estable
+        useRetention.getState().addSeasonXp(Math.round(3 * combo));
       }
 
       // cofre listo cada CHEST_INTERVAL_S de actividad real
@@ -149,7 +151,7 @@ export function RetentionLayer() {
   // ---------- visita / informe de ausencia ----------
   useEffect(() => {
     if (!mounted) return;
-    const r = ret.touchVisit();
+    const r = useRetention.getState().touchVisit();
     if (r.returned) {
       fetch("/api/pulso")
         .then((x) => x.json())
@@ -177,23 +179,26 @@ export function RetentionLayer() {
   useEffect(() => {
     if (!mounted) return;
     const iv = setInterval(() => {
-      if (document.hidden || ret.nudgesMuted) return;
+      // v357 EL PULSO FIRME: una lectura fresca por latido (getState) —
+      // nudgesMuted y los niveles vivían rancios en el cierre del oyente
+      const st = useRetention.getState();
+      if (document.hidden || st.nudgesMuted) return;
       // v105.0 MODO CALMA: leyendo o escribiendo, cero avisos cada 90s
       if (calmaActiva()) return;
       const t = Date.now();
       if (t - lastNudge.current < 90000) return;
-      const tier = ret.tierOf();
+      const tier = st.tierOf();
       const pending = Array.from({ length: MAX_TIER }, (_, i) => i + 1).filter(
-        (n) => !ret.claimedTiers.includes(n) && n <= tier
+        (n) => !st.claimedTiers.includes(n) && n <= tier
       );
       if (pending.length > 0) {
         lastNudge.current = t;
         toast(`⬆️ ${pending.length} nivel(es) de TEMPORADA listos`, { description: "Recompensas esperando. Ábrelos antes de que acabe el día." });
         return;
       }
-      if (ret.seasonDaysLeft() <= 3) {
+      if (st.seasonDaysLeft() <= 3) {
         lastNudge.current = t;
-        toast(`⏳ Solo quedan ${ret.seasonDaysLeft()} días de TEMPORADA CERO`, { description: "Última oportunidad para subir de nivel." });
+        toast(`⏳ Solo quedan ${st.seasonDaysLeft()} días de TEMPORADA CERO`, { description: "Última oportunidad para subir de nivel." });
       } else {
         // v58/v59: rotación de ganchos — ARCHIVO / TABLÓN / XP GLOBAL / ALEJANDRÍA
         lastNudge.current = t;
@@ -256,12 +261,12 @@ export function RetentionLayer() {
     }, 110);
     setTimeout(() => {
       clearInterval(spin);
-      const rw = ret.openChest();
+      const rw = useRetention.getState().openChest();
       const combo = comboOf();
       const xp = Math.round(rw.seasonXp * combo);
-      if (rw.coins > 0) game.addCoins(rw.coins, `Cofre ${rw.rarity}`);
-      if (rw.gems > 0) game.addGems(rw.gems, `Cofre ${rw.rarity}`);
-      if (xp > 0) ret.addSeasonXp(xp);
+      if (rw.coins > 0) useGameStore.getState().addCoins(rw.coins, `Cofre ${rw.rarity}`);
+      if (rw.gems > 0) useGameStore.getState().addGems(rw.gems, `Cofre ${rw.rarity}`);
+      if (xp > 0) useRetention.getState().addSeasonXp(xp);
       setLastReward({ ...rw, seasonXp: xp });
       setRolling(false);
       setChestReady(false);

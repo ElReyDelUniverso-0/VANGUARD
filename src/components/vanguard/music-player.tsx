@@ -12,7 +12,7 @@
 //         la sesión inteligente funde 7 s en vez de 0.8 s — el anochecer
 //         se OYE llegar (ambiente→guerra sin costura)
 
-import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore, useCallback } from "react";
 import {
   Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Radio, ChevronUp, ChevronDown, Clapperboard, Orbit, ListMusic, X, Repeat, SlidersHorizontal, Quote, Waves,
 } from "lucide-react";
@@ -180,11 +180,13 @@ export function MusicPlayer() {
   const [mundo, setMundo] = useState<EstadoAmbiente>(() => estadoAmbiente());
   useEffect(() => subscribeAmbiente(() => setMundo(estadoAmbiente())), []);
 
-  const persist = (on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
+  // v357 EL PULSO FIRME: persist es un oyente estable (useCallback) — la
+  // honestidad de deps sin re-crear la función en cada render
+  const persist = useCallback((on: boolean, v: number, track: string, autoFlag = auto, escenaFlag = escena, contFlag = cont, eqVal = eq) => {
     try {
       localStorage.setItem(LS_MUSIC, JSON.stringify({ on, vol: v, track, auto: autoFlag, escena: escenaFlag, cont: contFlag, eq: eqVal }));
     } catch { /* noop */ }
-  };
+  }, [auto, escena, cont, eq]);
 
   // v111: aplica el EQ guardado al encender la sala (los nodos toman el valor
   // aunque el AudioContext nazca después — setEqBand lo guarda en el motor)
@@ -192,7 +194,9 @@ export function MusicPlayer() {
     setEqBand("bajo", saved.eq.bajo);
     setEqBand("medio", saved.eq.medio);
     setEqBand("alto", saved.eq.alto);
-  }, []);
+    // v357: saved nace una vez (useState inicial) y no muta — las bandas son
+    // deps honestas que nunca cambian (mismo pulso, deps verdaderas)
+  }, [saved.eq.bajo, saved.eq.medio, saved.eq.alto]);
 
   // v302: si el Dueño dejó el MUNDO encendido, respira al primer gesto
   // (mismo candado de autoplay que la radio — ley v217)
@@ -284,7 +288,9 @@ export function MusicPlayer() {
   // madrugada→ambiente) y entra con el fundido cruzado del motor. Si la
   // familia actual no tiene más obras, cae a la obra siguiente global —
   // la radio nunca se queda muda.
-  const avanzarSesion = (familiaForzada?: TrackCat) => {
+  // v357 EL PULSO FIRME: avanzarSesion es un oyente estable — los intervalos
+  // de la sesión y del cambio de era respiran con él sin descolgarse
+  const avanzarSesion = useCallback((familiaForzada?: TrackCat) => {
     const idActual = currentTrackId() || selTrack;
     const idxActual = MUSIC_TRACKS.findIndex((x) => x.id === idActual);
     const actual = MUSIC_TRACKS[idxActual] ?? MUSIC_TRACKS[0];
@@ -308,7 +314,7 @@ export function MusicPlayer() {
     if (playing || wantOn) startMusic(nxt.id, cambioFamilia ? 7 : undefined);
     persist(playing || wantOn, vol, nxt.id);
     setFranjaViva(franja);
-  };
+  }, [selTrack, vol, playing, wantOn, persist]);
 
   // v111: mientras SESIÓN CONTINUA esté activa y suene música, cada ~3.5 min
   // pasa a la obra siguiente de la familia de la hora (la generativa respira
@@ -318,7 +324,7 @@ export function MusicPlayer() {
     const iv = setInterval(avanzarSesion, 210_000);
     const ivFranja = setInterval(() => setFranjaViva(franjaMusical().franja), 60_000);
     return () => { clearInterval(iv); clearInterval(ivFranja); };
-  }, [cont, playing, selTrack, vol]);
+  }, [cont, playing, selTrack, vol, avanzarSesion]);
 
   // v115.0 SINGULARIDAD: el CAMBIO DE ERA manda en la música — al viajar de
   // época (1950 CRT → 2100 HOLO) la sesión inteligente funde 7 s hacia la
@@ -335,7 +341,7 @@ export function MusicPlayer() {
     // sale del hilo con setTimeout(0) (la regla react-hooks/set-state-in-effect)
     const t = setTimeout(() => avanzarSesion(familiaEra[era3d]), 0);
     return () => clearTimeout(t);
-  }, [era3d, cont]);
+  }, [era3d, cont, avanzarSesion]);
 
   const toggleCont = () => {
     const nxt = !cont;
@@ -469,7 +475,7 @@ export function MusicPlayer() {
       });
     }, 30000);
     return () => clearInterval(iv);
-  }, [auto, playing]);
+  }, [auto, playing, persist, vol]);
 
   // AUDITORIO: Esc sale (como el modo inmersión)
   useEffect(() => {

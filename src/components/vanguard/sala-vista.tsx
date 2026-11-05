@@ -22,7 +22,11 @@ interface PropsSala {
 }
 
 export function SalaVista({ sala, agenteApi, onVolver, onAviso }: PropsSala) {
-  const { agente } = agenteApi;
+  // v357 EL PULSO FIRME: las funciones de la API del agente son estables
+  // (useCallback en la casa) — se descomponen para que los oyentes respiren
+  // con ellas sin re-montarse en cada render (el objeto agenteApi es nuevo
+  // en cada render, sus manos no)
+  const { agente, registrarTiempo, actualizarMecanica, recompensar, contarPartida } = agenteApi;
   const [datos, setDatos] = useState<DatosApi>({});
   const [cargando, setCargando] = useState(sala.fuente === "api");
   const [flash, _setFlash] = useState<string | null>(null);
@@ -66,10 +70,12 @@ export function SalaVista({ sala, agenteApi, onVolver, onAviso }: PropsSala) {
 
   // registro de tiempo de estancia (señal de dwell para el algoritmo)
   useEffect(() => {
+    // v357: la entrada se COPIA al montar (la ref viva en el cleanup miente)
+    const entrada = inicioSala.current;
     return () => {
-      agenteApi.registrarTiempo(sala.id, Date.now() - inicioSala.current);
+      registrarTiempo(sala.id, Date.now() - entrada);
     };
-  }, [sala.id]);
+  }, [sala.id, registrarTiempo]);
 
   // Escape para volver
   useEffect(() => {
@@ -112,18 +118,6 @@ export function SalaVista({ sala, agenteApi, onVolver, onAviso }: PropsSala) {
 
   const filas = useMemo(() => filasDeSala(sala, datos, ctxFilas), [sala, datos, ctxFilas]);
 
-  // tick del imperio + resolución automática de betnación
-  useEffect(() => {
-    const t = setInterval(() => {
-      if (sala.id === "imperio" && agente.mecanicas[sala.id]?.fundado) ejecutarAccion("tick");
-      if (sala.id === "betnacion") {
-        const apuesta = agente.mecanicas[sala.id]?.apuesta as { ts: number } | undefined;
-        if (apuesta && Date.now() - apuesta.ts > 60_500) ejecutarAccion("resolver");
-      }
-    }, 4000);
-    return () => clearInterval(t);
-    }, [sala.id, agente]);
-
   const ejecutarAccion = useCallback(
     (accion: string) => {
       if (accion === "sin_op") return;
@@ -136,18 +130,31 @@ export function SalaVista({ sala, agenteApi, onVolver, onAviso }: PropsSala) {
           mon: agente.mon,
         }
       );
-      agenteApi.actualizarMecanica(sala.id, resultado.estado);
+      actualizarMecanica(sala.id, resultado.estado);
       if (resultado.deltaMon !== 0 || resultado.deltaXp !== 0) {
-        agenteApi.recompensar(resultado.deltaMon, resultado.deltaXp, `${sala.id}:${accion.slice(0, 12)}`);
+        recompensar(resultado.deltaMon, resultado.deltaXp, `${sala.id}:${accion.slice(0, 12)}`);
       }
-      if (resultado.partidaJugada) agenteApi.contarPartida();
+      if (resultado.partidaJugada) contarPartida();
       if (resultado.mensaje) onAviso(resultado.mensaje);
       if (resultado.sonido === "exito") sfxExito();
       else if (resultado.sonido === "fallo") sfxFallo();
       else if (resultado.sonido === "click" && agente.sonido) sfxClick();
     },
-      [sala.id, agente.mecanicas, agente.mon, ctxMecanica, agente.sonido]
+      [sala.id, agente.mecanicas, agente.mon, ctxMecanica, agente.sonido, actualizarMecanica, recompensar, contarPartida, onAviso]
   );
+
+  // tick del imperio + resolución automática de betnación
+  // v357: la acción vive ARRIBA del tick que la llama (el TDZ no es deps)
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (sala.id === "imperio" && agente.mecanicas[sala.id]?.fundado) ejecutarAccion("tick");
+      if (sala.id === "betnacion") {
+        const apuesta = agente.mecanicas[sala.id]?.apuesta as { ts: number } | undefined;
+        if (apuesta && Date.now() - apuesta.ts > 60_500) ejecutarAccion("resolver");
+      }
+    }, 4000);
+    return () => clearInterval(t);
+    }, [sala.id, agente, ejecutarAccion]);
 
   return (
     <div className="absolute inset-0 z-40 flex flex-col bg-[#05060a]">
