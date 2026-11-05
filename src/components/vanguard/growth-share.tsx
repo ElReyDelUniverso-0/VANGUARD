@@ -41,6 +41,12 @@ export function GrowthShare() {
   useEffect(() => {
     try {
       const n = parseInt(localStorage.getItem("vanguard_shares") || "0", 10);
+      // v347.0 EL CENSO EN CERO — cicatriz viva DECLARADA (patrón de
+      // ciudades-3d): el setState en el efecto ES la cura deliberada del
+      // #418 (leer localStorage en el inicializador desajustaba el texto
+      // del contador entre servidor y visitante recurrente — lección
+      // v132, sentencia v306). La casa la declara, no la cura.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (Number.isFinite(n) && n > 0) setInvited(n);
     } catch { /* sin storage: 0 */ }
   }, []);

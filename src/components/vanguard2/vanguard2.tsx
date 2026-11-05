@@ -22,7 +22,6 @@ if (typeof window !== "undefined") {
 export default function Vanguard2() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [visitas, setVisitas] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -43,9 +42,16 @@ export default function Vanguard2() {
         // v155.0 LA CORTINA: el motor V2 nació y ya pinta — señal de vida
         (window as unknown as { __vgvivo?: boolean }).__vgvivo = true;
       }
-      setVisitas(true);
+      // v347.0 EL CENSO EN CERO: la señal de nacimiento viaja por el DOM
+      // (escritura imperativa) en vez de un estado que re-renderiza el lienzo
+      // — el mismo atributo, cero cascada de render sobre el corazón 3D.
+      canvas.setAttribute("data-vanguard2", "1");
     } catch (e) {
       console.error("[v2] el motor no pudo nacer", e);
+      // v347.0 EL CENSO EN CERO — cicatriz viva DECLARADA (patrón de
+      // ciudades-3d, ley v205: en la ruta de error del arranque del motor,
+      // anunciar es lo honesto). El setState ES el anuncio del fallback.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError(e instanceof Error ? e.message : "fallo del motor");
     }
     return () => {
@@ -81,7 +87,7 @@ export default function Vanguard2() {
         touchAction: "none",
         cursor: "grab",
       }}
-      data-vanguard2={visitas ? "1" : "0"}
+      data-vanguard2="0"
     />
   );
 }

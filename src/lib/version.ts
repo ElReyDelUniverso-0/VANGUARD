@@ -5096,9 +5096,39 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v346.0";
-export const APP_CODENAME = "EL CENTINELA DEL ANILLO";
+export const APP_VERSION = "v347.0";
+export const APP_CODENAME = "EL CENSO EN CERO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v347.0 EL CENSO EN CERO — trigésima ronda del autociclo y CIRUGÍA del ritmo
+// (v346 expansión → v347 cirugía): LA GUERRA DE LOS EFECTO-ESCRITOR TERMINA —
+// el censo REAL de react-hooks en src cae de 2+0 a 0+0 POR PRIMERA VEZ en la
+// historia de la casa (17 hallazgos en la v305, la cola más vieja del
+// proyecto; 40 rondas de quirurgía una por ronda la fueron vaciando).
+// (1) LA CURA HONESTA (AL FINAL llega): vanguard2.tsx pierde el estado
+//    visitas — su única lectura era el atributo QA data-vanguard2 del lienzo;
+//    la señal de nacimiento del motor viaja ahora por el DOM (escritura
+//    imperativa canvas.setAttribute en el propio efecto) — el mismo atributo,
+//    cero cascada de render sobre el corazón 3D. La ruta de error del
+//    arranque (setError en el catch) se DECLARA con la ley v205: anunciar es
+//    lo honesto — el setState ES el anuncio del fallback (la especie de
+//    ciudades-3d, sentencia v339).
+// (2) LA CICATRIZ DECLARADA (v306 honrada): growth-share.tsx — el setState en
+//    el efecto ES la cura deliberada del #418 (leer localStorage en el
+//    inicializador desajustaba el contador entre servidor y visitante
+//    recurrente — lección v132); la casa la declara con disable + justificación
+//    (el patrón de ciudades-3d), no la cura: INTOCABLE deja de ser deuda y
+//    pasa a ser ley escrita en el código.
+// (3) EL RESULTADO: censo eslint src 0 hallazgos — las TRES cicatrices vivas
+//    declaradas (ciudades-3d:192, growth-share:49, vanguard2:54) llevan cada
+//    uno su POR QUÉ; deuda REAL cero, memoria del compilador cero,
+//    compuertas cero. La vena C y la vena del censo cierran juntas.
+//    SUITE: +2 pines (EL CENSO EN CERO estático: el atributo nace en el JSX
+//    y despierta por escritura imperativa, cero setVisitas, la ruta de error
+//    con su cicatriz declarada, el patrón #418 de growth-share con su ley, la
+//    cicatriz de ciudades-3d en su sitio, versión doble aserción — y vivo:
+//    home + health v347) + rodillos de codename (EL CENTINELA DEL ANILLO →
+//    EL CENSO EN CERO en los VALORES de los asertos; los mensajes históricos
+//    quedan como memoria — ley v312) + rodillo a v347.0 (cuatro patrones).
 // v346.0 EL CENTINELA DEL ANILLO — vigésimo-novena ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v345 cirugía → v346 expansión): LA PUERTA 16 DEL ANILLO
 // cae — mente-panel respira por fin con el reloj CENTRAL de la escuela (cero
