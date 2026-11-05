@@ -308,7 +308,7 @@ export function SensitiveMedia({
   className?: string;
 }) {
   const [revealed, setRevealed] = useState(false);
-  const [strict, setStrictState] = useState(isStrict18());
+  const [strict, _setStrictState] = useState(isStrict18());
 
   if (!sensitive) {
     return (

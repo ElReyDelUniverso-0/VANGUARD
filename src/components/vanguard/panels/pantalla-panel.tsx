@@ -386,7 +386,7 @@ function MiniPase({ pase, onAbrir }: { pase: PaseTV; onAbrir: () => void }) {
 }
 
 // ── SALA DE PROYECCIÓN (vista watch) ──
-function SalaProyeccion({ pase, onVolver, onAbrirPase }: { pase: PaseTV; onVolver: () => void; onAbrirPase: (p: PaseTV) => void }) {
+function SalaProyeccion({ pase, onVolver: _onVolver, onAbrirPase }: { pase: PaseTV; onVolver: () => void; onAbrirPase: (p: PaseTV) => void }) {
   const { t } = useT();
   const recompensaTV = useRecompensaTV();
   const liked = usePantalla((s) => s.liked.includes(pase.id));

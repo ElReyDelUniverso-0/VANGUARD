@@ -35,7 +35,7 @@ Un creador publicó una obra y pides que la evalúes. Devuelve UN JSON con:
 - "veredicto": "OBRA DESTACADA" (brilla, la comunidad debería verla) | "OBRA SÓLIDA" (bien hecha, con recorrido) | "OBRA PROMETEDORA" (buena idea, necesita pulir).
 Nunca inventes datos que no estén en la obra. Devuelve EXACTAMENTE: {"texto":"...","veredicto":"..."}`;
 
-function heuristica(kind: string, titulo: string, resumen: string, likes: number, plays: number): { texto: string; veredicto: string } {
+function heuristica(kind: string, titulo: string, _resumen: string, likes: number, plays: number): { texto: string; veredicto: string } {
   const senales = likes + plays;
   const fuerza: Record<string, string> = {
     juego: `El diseño de "${titulo}" entra rápido: se entiende cómo se juega en segundos, y eso es oro en el arcade.`,

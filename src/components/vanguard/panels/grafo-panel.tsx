@@ -543,7 +543,7 @@ export function GrafoPanel() {
 
           {/* impulsos en las aristas principales */}
           <g>
-            {aristasVisibles.slice(0, 14).map((e, i) => (
+            {aristasVisibles.slice(0, 14).map((_e, i) => (
               <circle key={"p" + i} ref={(el) => { pulseRefs.current[i] = el; }} r="2.2" fill="#FFD166" opacity="0.9" />
             ))}
           </g>

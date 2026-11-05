@@ -765,7 +765,7 @@ function edicionVanguard(): NoticiaItem[] {
 
 const TAGS_NEWS = ["TODAS", "ALERTA", "DIPLOMACIA", "ECONOMIA", "HUMANITARIO", "ANALISIS"];
 
-function VistaNoticias({ onBuscar }: { onBuscar: (q: string) => void }) {
+function VistaNoticias({ onBuscar: _onBuscar }: { onBuscar: (q: string) => void }) {
   const [items, setItems] = useState<NoticiaItem[] | null>(null);
   const [fuente, setFuente] = useState("");
   const [tag, setTag] = useState("TODAS");

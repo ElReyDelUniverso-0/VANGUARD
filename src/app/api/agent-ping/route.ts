@@ -35,7 +35,7 @@ async function ping(channel: string, url: string, init?: RequestInit): Promise<P
 }
 
 async function runPings(): Promise<PingResult[]> {
-  const post = (url: string, body: string, ct: string): RequestInit => ({
+  const post = (_url: string, body: string, ct: string): RequestInit => ({
     method: "POST",
     headers: { "Content-Type": ct },
     body,

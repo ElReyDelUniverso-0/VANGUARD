@@ -422,7 +422,7 @@ export function CentroPanel() {
           </div>
         ) : (
           <ol className="space-y-2">
-            {filtrados.map((n, i) => (
+            {filtrados.map((n, _i) => (
               <li key={n.id}>
                 <button
                   onClick={() => setLectura(aCable(n))}

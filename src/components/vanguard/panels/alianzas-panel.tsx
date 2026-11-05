@@ -59,7 +59,7 @@ function loadSave(): Save {
 }
 
 function makeMembers(n: number): Member[] {
-  return Array.from({ length: n }, (_, i) => ({
+  return Array.from({ length: n }, (_, _i) => ({
     name: `${BOT_FIRST[Math.floor(Math.random() * BOT_FIRST.length)]}${BOT_LAST[Math.floor(Math.random() * BOT_LAST.length)]}`,
     level: 2 + Math.floor(Math.random() * 24),
     coins: 200 + Math.floor(Math.random() * 9000),

@@ -662,7 +662,7 @@ function SimboloUmbral({ p, idp }: { p: PaletaFicha; idp: string }) {
   );
 }
 
-function SimboloPrisma({ p, idp }: { p: PaletaFicha; idp: string }) {
+function SimboloPrisma({ p, idp: _idp }: { p: PaletaFicha; idp: string }) {
   return (
     <g>
       <line x1="6" y1="122" x2="66" y2="122" stroke="#ffffff" strokeWidth="2.6" opacity="0.85" />

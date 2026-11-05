@@ -192,23 +192,23 @@ function nucleoLocalDeliberacion(tema: string) {
 const NUCLEO_REPLICA: Record<ConsejeroId, ((m: string) => string)[]> = {
   estratega: [
     (m) => `Interesante contraargumento. Ajusto el plan: lo que propones sobre "${m.slice(0, 60)}" solo funciona con suministros asegurados. ¿Tienes las rutas?`,
-    (m) => `Anoto tu punto. Pero el terreno no perdona la improvisación: sin mapa fresco de la zona, tu opción cuesta el doble y rinde la mitad.`,
-    (m) => `Hablemos de sequencias: primero posiciones, después señales, y solo al final tu medida. Saltarte pasos es regalar la iniciativa.`,
+    (_m) => `Anoto tu punto. Pero el terreno no perdona la improvisación: sin mapa fresco de la zona, tu opción cuesta el doble y rinde la mitad.`,
+    (_m) => `Hablemos de sequencias: primero posiciones, después señales, y solo al final tu medida. Saltarte pasos es regalar la iniciativa.`,
   ],
   canciller: [
-    (m) => `Tu propuesta tiene una puerta diplomática: si la presentas como respuesta y no como amenaza, el coste político cae a la mitad.`,
-    (m) => `Creo en tu instinto, pero los aliados necesitan una excusa presentable. Déjame construirles el relatorio antes de mover ficha.`,
-    (m) => `Detrás de cada posición dura hay una audiencia interna. Habla a esa audiencia y la posición se suaviza sola.`,
+    (_m) => `Tu propuesta tiene una puerta diplomática: si la presentas como respuesta y no como amenaza, el coste político cae a la mitad.`,
+    (_m) => `Creo en tu instinto, pero los aliados necesitan una excusa presentable. Déjame construirles el relatorio antes de mover ficha.`,
+    (_m) => `Detrás de cada posición dura hay una audiencia interna. Habla a esa audiencia y la posición se suaviza sola.`,
   ],
   general: [
     (m) => `Respuesta seca: la duda no detiene tanques. Si vas a hacer "${m.slice(0, 60)}", hazlo rápido, corto y con salida preparada.`,
-    (m) => `Estoy dispuesto a escuchar. Pero cada día de vacío lo llena el adversario, y su relleno nunca nos favorece.`,
-    (m) => `Tu plan tiene una debilidad logística y una ventana. Resuelve la primera y te doy la segunda.`,
+    (_m) => `Estoy dispuesto a escuchar. Pero cada día de vacío lo llena el adversario, y su relleno nunca nos favorece.`,
+    (_m) => `Tu plan tiene una debilidad logística y una ventana. Resuelve la primera y te doy la segunda.`,
   ],
   analista: [
-    (m) => `Cuantifico tu idea: probabilidad de éxito estimada ${rnd(35, 75)}%, con un margen de error del ${rnd(8, 20)}%. Necesito dos datos más para afinar.`,
-    (m) => `Tu razonamiento coincide con el base rate en casos parecidos, pero la muestra es pequeña. Vigilaría las señales que ya te dije.`,
-    (m) => `Dato que cambia el debate: los indicadores llevan días de retraso. Tu medida, aplicada hoy, se evaluaría con datos de la semana pasada.`,
+    (_m) => `Cuantifico tu idea: probabilidad de éxito estimada ${rnd(35, 75)}%, con un margen de error del ${rnd(8, 20)}%. Necesito dos datos más para afinar.`,
+    (_m) => `Tu razonamiento coincide con el base rate en casos parecidos, pero la muestra es pequeña. Vigilaría las señales que ya te dije.`,
+    (_m) => `Dato que cambia el debate: los indicadores llevan días de retraso. Tu medida, aplicada hoy, se evaluaría con datos de la semana pasada.`,
   ],
 };
 

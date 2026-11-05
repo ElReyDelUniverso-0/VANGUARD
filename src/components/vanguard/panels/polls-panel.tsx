@@ -23,10 +23,6 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 // v87.0 EL DESPERTAR: el corazón compartido de SOCIAL — latido en vivo
 import { LatidoSocial } from "@/components/vanguard/latido-social";
 
-interface UserPollWithVotes extends UserPoll {
-  votes: number[];
-  totalVotes: number;
-}
 
 // votos simulados de la comunidad: deterministas por (id, opcion, slot de 12s)
 function hash01(s: string): number {

@@ -61,7 +61,7 @@ export function RitualEntrada() {
   const [portalReady, setPortalReady] = useState(false);
   const [abierto, setAbierto] = useState(false);
   const [paso, setPaso] = useState<Paso>(0);
-  const [permiso, setPermiso] = useState<PermisoHablar>("sin-responder");
+  const [_permiso, setPermiso] = useState<PermisoHablar>("sin-responder");
   const [cuenta, setCuenta] = useState<CuentaPublica | null>(null);
   const [modoElegido, setModoElegido] = useState<string>("");
   const [tabCuenta, setTabCuenta] = useState<"crear" | "entrar">("crear");

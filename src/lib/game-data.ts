@@ -1628,7 +1628,7 @@ export interface StreakDay {
 }
 
 // Generate last 30 days for streak visualization
-export function generateStreakHistory(currentStreak: number, lastLogin: string | null): StreakDay[] {
+export function generateStreakHistory(currentStreak: number, _lastLogin: string | null): StreakDay[] {
   const days: StreakDay[] = [];
   const today = new Date();
   for (let i = 29; i >= 0; i--) {

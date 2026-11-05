@@ -171,7 +171,7 @@ interface Letra3DProps {
 
 const PROF_CAPA_PX = 2.1; // grosor de cada capa de extrusión en px
 
-export function Letra3D({ char, acento, material, profundidad, idx, tick, quieto, className }: Letra3DProps) {
+export function Letra3D({ char, acento, material, profundidad, idx, tick, quieto: _quieto, className }: Letra3DProps) {
   const pal = PALETAS[material];
   const n = Math.max(1, Math.min(10, profundidad));
   const esEspacio = char === " " || char === "\u00A0";

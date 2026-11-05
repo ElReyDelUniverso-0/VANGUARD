@@ -156,7 +156,7 @@ const FRENTES_GUERRA = [
 
 export function generateEvents(now = Date.now(), tension = 62): BkEvent[] {
   const events: BkEvent[] = [];
-  const mkFutbol = (tA: BkTeam, tB: BkTeam, comp: string, startAt: number, liveAt: number): BkEvent => {
+  const mkFutbol = (tA: BkTeam, tB: BkTeam, comp: string, startAt: number, _liveAt: number): BkEvent => {
     const homeAdv = 0.32;
     const xh = Math.max(0.35, Math.pow(10, (tA.str + homeAdv - tB.str) / 10) * 0.9);
     const xa = Math.max(0.3, Math.pow(10, (tB.str - tA.str - homeAdv) / 10) * 0.9);

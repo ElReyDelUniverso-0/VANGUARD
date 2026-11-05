@@ -408,7 +408,7 @@ export function capVivienda(e: EstadoJuego, imp: Imperio): number {
   return 12 + cuentaEdificio(e, imp.id, "ciudad") * 9;
 }
 
-function multAtaque(e: EstadoJuego, imp: Imperio): number {
+function multAtaque(_e: EstadoJuego, imp: Imperio): number {
   const f = FACciones[imp.faccion] ?? FACciones[0];
   let m = f.asalto;
   if (imp.completadas.includes("polvora")) m *= 1.25;

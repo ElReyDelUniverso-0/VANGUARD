@@ -977,7 +977,7 @@ export function HangarPanel() {
     const raycaster = new THREE.Raycaster();
     const clickPoint = new THREE.Vector2();
     let downAt = 0;
-    const onDown = (e: PointerEvent) => { downAt = Date.now(); };
+    const onDown = (_e: PointerEvent) => { downAt = Date.now(); };
     const onUp = (e: PointerEvent) => {
       if (Date.now() - downAt > 350) return; // fue arrastre
       const rect = renderer.domElement.getBoundingClientRect();

@@ -136,11 +136,6 @@ export interface Contadores {
 
 export type AccionAnalista = "expediente" | "oscura" | "lab" | "mente" | "creacion" | "escenario" | "quiz_ok" | "quiz_ko";
 
-interface WeeklyState {
-  weekKey: string;
-  progreso: Record<RetoTipo, number>;
-  claimed: string[]; // ids de retos reclamados
-}
 
 interface AnalistaState extends Contadores {
   weekKey: string;

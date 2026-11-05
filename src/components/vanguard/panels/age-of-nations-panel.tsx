@@ -51,7 +51,7 @@ export function AgeOfNationsPanel() {
   const [sel, setSel] = useState<string | null>(null);
   const [moving, setMoving] = useState<string | null>(null); // provincia origen en modo mover
   const [rewarded, setRewarded] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [_busy, _setBusy] = useState(false);
   const stateRef = useRef<AoNState | null>(null);
   useEffect(() => { stateRef.current = state; }, [state]);
 

@@ -11,7 +11,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 export function StreakCalendarPanel() {
-  const { streak, lastLoginDate, coins, addCoins, addXp } = useGameStore();
+  const { streak, lastLoginDate, coins, addCoins: _addCoins, addXp: _addXp } = useGameStore();
   const [month, setMonth] = useState(new Date());
 
   const today = new Date().toISOString().slice(0, 10);

@@ -410,7 +410,7 @@ function randomCasualties(w: World, dt: number) {
 // ----------------------------------------------------------------- dibujo ----
 interface Cam { x: number; z: number; tx: number; tz: number }
 
-function drawSoldierU(ctx: CanvasRenderingContext2D, u: Unit, col: string, z: number) {
+function drawSoldierU(ctx: CanvasRenderingContext2D, u: Unit, col: string, _z: number) {
   if (u.st === 2) {
     // cayendo / en el suelo
     ctx.globalAlpha = Math.max(0.25, u.respawn / 18);
@@ -533,7 +533,7 @@ function drawSectorBg(
 
 function drawEffects(
   ctx: CanvasRenderingContext2D, w: World, fi: number,
-  x0: number, x1: number, z: number, t: number,
+  x0: number, x1: number, _z: number, t: number,
 ) {
   const inView = (x: number) => x >= x0 - 60 && x <= x1 + 60;
   // decals

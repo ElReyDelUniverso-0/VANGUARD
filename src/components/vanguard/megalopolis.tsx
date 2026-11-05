@@ -643,7 +643,7 @@ export function CiudadInicio({ acc = "#FFC94D", className, mostrarChips = true }
         {FAROLES_V123.map((x, i) => (
           <span key={i} className="absolute rounded-full" style={{ left: `${x}%`, top: 1, width: 3, height: 3, background: "#FFD98A", boxShadow: "0 0 6px 1px rgba(255,217,138,0.8)", opacity: pal.ventanas, transition: "opacity 1.2s" }} />
         ))}
-        {PISOS_V123.map((x, i) => (
+        {PISOS_V123.map((_x, i) => (
           <span key={i} className={i === 0 ? "v123-coche-a absolute" : "v123-coche-b absolute"} style={{ bottom: i === 0 ? 4 : 10, background: i === 0
             ? "linear-gradient(90deg, transparent, rgba(255,235,190,0.9), rgba(255,255,255,0.98))"
             : "linear-gradient(270deg, transparent, rgba(255,80,70,0.85), rgba(255,140,120,0.95))", animationDelay: `${i * -13}s` }} />

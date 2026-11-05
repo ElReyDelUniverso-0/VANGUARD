@@ -27,7 +27,7 @@ function currentWeekKey(d = new Date()) {
 }
 
 export function RewardsPanel() {
-  const { claimedWeeklyDays, streak, level, rank, claimWeeklyDay, coins, gems, xp, fusionCount, quizCorrect } = useGameStore();
+  const { claimedWeeklyDays, streak, level, rank, claimWeeklyDay, coins, gems, xp, fusionCount, quizCorrect: _quizCorrect } = useGameStore();
   const today = currentDayIndex();
   const weekKey = currentWeekKey();
   // Reset claimed days if week changed (simple approach: store week with claimed)

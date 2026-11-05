@@ -115,7 +115,7 @@ export function CrisisPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
   const [crisis, setCrisis] = useState<Crisis>(CRISES[0]);
-  const [target, setTarget] = useState(nextSunday20());
+  const [target, _setTarget] = useState(nextSunday20());
   const [remaining, setRemaining] = useState("");
   const [votes, setVotes] = useState<number[]>([]);
   const [myVote, setMyVote] = useState<number | null>(null);

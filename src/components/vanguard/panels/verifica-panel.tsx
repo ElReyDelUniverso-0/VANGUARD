@@ -67,7 +67,7 @@ interface Verificacion {
 
 const AGENCIAS = ["MESA OSINT-1", "CELULA DE CONTRASTE", "SALA VERITAS", "ESCUADRÓN ESPEJO", "MESA-2 GEODATOS"];
 
-function verificar(titulo: string, source: string, fuentePais: string | null): Verificacion {
+function verificar(titulo: string, source: string, _fuentePais: string | null): Verificacion {
   const h = hash(`${titulo}|${source}`);
   const h2 = hash(`${source}|${titulo}`);
   // las agencias primarias (Reuters/AP/AFP/BBC) entran con ventaja real

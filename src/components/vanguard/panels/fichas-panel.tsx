@@ -550,7 +550,7 @@ function DetalleFicha({
   const [presumiendo, setPresumiendo] = useState(false);
   if (!guia) return null;
 
-  const { ficha, rareza, top, pulso, intensidad, frescuraMin, cables } = guia;
+  const { ficha, rareza, top, pulso, intensidad, frescuraMin: _frescuraMin, cables } = guia;
   const hex = RAREZAS[rareza].hex;
   const silencio = rareza === "silencio";
 

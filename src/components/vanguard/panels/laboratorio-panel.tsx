@@ -57,7 +57,7 @@ function lineaFrente(frentePct: number, dia: number): [number, number][] {
   const ys = base.map((p) => p[1]);
   const yMin = Math.min(...ys);
   const yMax = Math.max(...ys);
-  return base.map(([bx, by], i) => {
+  return base.map(([bx, by], _i) => {
     const off = (bx - 348) * 0.55; // desvío propio del frente real del Espejo
     const ond = Math.sin((by / 90) + dia * 0.045) * 9;
     const x = Math.max(30, Math.min(TEATRO_W - 30, xMedio + off + ond));

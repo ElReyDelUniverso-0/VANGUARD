@@ -50,7 +50,7 @@ const ENEMY_NAMES = [
 ];
 
 export function CombatSimulatorPanel() {
-  const { inventory, coins, addCoins, addXp, consumeFromInventory, spendCoins } = useGameStore();
+  const { inventory, coins: _coins, addCoins, addXp, consumeFromInventory, spendCoins: _spendCoins } = useGameStore();
   const [phase, setPhase] = useState<"idle" | "fighting" | "victory" | "defeat">("idle");
   const [playerHp, setPlayerHp] = useState(100);
   const [maxPlayerHp, setMaxPlayerHp] = useState(100);

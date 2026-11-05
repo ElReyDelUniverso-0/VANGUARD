@@ -5096,9 +5096,47 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v340.0";
-export const APP_CODENAME = "EL ARCHIVO DEL DÍA";
+export const APP_VERSION = "v341.0";
+export const APP_CODENAME = "LOS PARÁMETROS MUDOS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v341.0 LOS PARÁMETROS MUDOS — vigésimo-cuarta ronda del autociclo y CIRUGÍA
+// del ritmo (v340 expansión → v341 cirugía): la primera leva de la vena C —
+// los locales/params muertos que el censo estricto registró la v339 (127
+// hallazgos). La especie curada hoy: LOS PARÁMETROS — 73 curas en 53 archivos
+// con el AST del compilador como bisturí (cero columnas a ciegas).
+// ① EL BISTURÍ DEL COMPILADOR (scripts/cirugia-v341.mjs): el censo corre con
+//    el propio tsc (--noUnusedLocals --noUnusedParameters) y CADA hallazgo se
+//    cura leyendo su NODO en el AST — Parameter, BindingElement, ImportSpecifier,
+//    InterfaceDeclaration — no la línea del error. Tres descubrimientos de
+//    especie: TS marca la LLAVE `{` de un destructure de UNA sola propiedad
+//    ({ onBuscar }, { tickKey3 }) y el KEYWORD `import` de un import entero
+//    muerto — dos trampas que la columna del error no delata.
+// ② LA CURA (orden, no conducta): 40 params posicionales renombrados a
+//    _nombre (los callers pasan por posición — el nombre es invisible), 14
+//    shorthand de destructure a `name: _name` (la prop sigue llegando), 13
+//    elementos de binding de array a _nombre, 2 destructures de una prop
+//    `{ X }` → `{ X: _X }`, 1 import entero fuera (FichaGuerra en
+//    gloria-compartir, getStart y no getFullStart — la trivia ajena no se
+//    toca), 1 cláusula de import con la coma trasplantada (gramática v339),
+//    2 interfaces muertas fuera (UserPollWithVotes, WeeklyState). El hook
+//    JAMÁS se borra: `const [busy, setBusy] = useState()` con ambos muertos
+//    se cura como `const [_busy, _setBusy]` — el orden de hooks respira.
+// ③ LA LEY DEL UNDERSCORE: los params empiezan con _ y el propio tsc los
+//    perdona (la convención de la casa: `(_, i)` ya vivía en alianzas).
+// ④ CERO CAMBIOS DE CONDUCTA, verificado: tsc estándar 0; censo estricto
+//    127 → 54 EXACTO (los 54 restantes = los 54 registrados en el plan, uno
+//    a uno — CERO cascada); eslint 0 en los 53 archivos operados. La cola
+//    que queda registrada para la próxima leva: 44 local-const (hooks,
+//    awaits, literales — cada inicializador se lee, no se confía a ciegas),
+//    4 propiedades privadas escritas-jamás-leídas (pueden borrar su escritura),
+//    5 funciones muertas enteras (lerp, sumarRazonado, reservarSerial,
+//    Skyline, uid), 1 binding con default.
+//     SUITE: +2 pines (LOS PARÁMETROS MUDOS estático: los renombrados por
+//    muestreo con hermanos vivos, el destructure-una-prop, el import entero
+//    fuera, las interfaces fuera, el censo 54, versión doble aserción — y
+//    vivo: home + health v341) + rodillos de codename (EL ARCHIVO DEL DÍA →
+//    LOS PARÁMETROS MUDOS; nombres de pines como memoria — ley v312) +
+//    rodillo a v341.0 (cuatro patrones).
 // v340.0 EL ARCHIVO DEL DÍA — vigésimo-tercera ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v339 cirugía → v340 expansión): la DÉCIMO-TERCERA
 // puerta del anillo de la escuela se abre en la máquina del tiempo — las 5

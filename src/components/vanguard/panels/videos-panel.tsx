@@ -52,7 +52,7 @@ const MY_CHANNEL: TvChannel = {
 };
 
 // convierte un video del jugador al formato del feed (+vistas vivas)
-function userVideoToTv(v: UserVideo, alias: string): TvVideo {
+function userVideoToTv(v: UserVideo, _alias: string): TvVideo {
   const elapsedMin = Math.max(0, (Date.now() - v.ts) / 60000);
   const views = 12 + Math.floor(elapsedMin * 9);
   return {

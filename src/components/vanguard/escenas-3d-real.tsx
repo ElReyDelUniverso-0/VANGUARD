@@ -102,7 +102,7 @@ function EscenaOrbita({ acento, rnd }: { acento: string; rnd: () => number }) {
 }
 
 function EscenaNoticias({ acento, rnd }: { acento: string; rnd: () => number }) {
-  const barras = Array.from({ length: 26 }, (_, i) => ({ h: q2(8 + rnd() * 30), d: q2(rnd() * 2) }));
+  const barras = Array.from({ length: 26 }, (_, _i) => ({ h: q2(8 + rnd() * 30), d: q2(rnd() * 2) }));
   return (
     <div className="absolute inset-0" aria-hidden>
       <svg viewBox="0 0 400 220" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">

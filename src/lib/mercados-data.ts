@@ -55,7 +55,7 @@ function driftDe(tipo: Contrato["tipo"], tension: number): number {
   }
 }
 
-export function fmtPrecio(c: Contrato, p: number): string {
+export function fmtPrecio(_c: Contrato, p: number): string {
   if (p >= 10000) return p.toLocaleString("es-ES", { maximumFractionDigits: 0 });
   if (p >= 1000) return p.toLocaleString("es-ES", { maximumFractionDigits: 1 });
   return p.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -82,7 +82,7 @@ export function generarMercados(ahora = Date.now()): { cots: Cotizacion[]; miedo
   const tension = getTension();
   const min = Math.floor(ahora / 60_000);
   const dia = Math.floor(ahora / 86400_000);
-  const cots: Cotizacion[] = CONTRATOS.map((c, ci) => {
+  const cots: Cotizacion[] = CONTRATOS.map((c, _ci) => {
     const drift = driftDe(c.tipo, tension);
     // serie: paseo determinista por minuto con reversion al drift
     const serie: number[] = [];

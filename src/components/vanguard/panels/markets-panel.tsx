@@ -439,7 +439,7 @@ export function MarketsPanel() {
 }
 
 // =================== cinta de cotizaciones (5s) ===================
-const TickerTape = memo(function TickerTape({ tickKey5, onSelect }: { tickKey5: number; onSelect: (id: string) => void }) {
+const TickerTape = memo(function TickerTape({ tickKey5: _tickKey5, onSelect }: { tickKey5: number; onSelect: (id: string) => void }) {
   const market = marketSim.getState();
   return (
     <div className="hud-corner overflow-hidden bg-secondary/40" aria-hidden={false}>
@@ -792,7 +792,7 @@ function TradingChart({
 }
 
 // =================== mini estadisticas (2s) ===================
-const MiniStats = memo(function MiniStats({ assetId, tickKey2 }: { assetId: string; tickKey2: number }) {
+const MiniStats = memo(function MiniStats({ assetId, tickKey2: _tickKey2 }: { assetId: string; tickKey2: number }) {
   const st = marketSim.getState().assets[assetId];
   return (
     <div className="grid grid-cols-4 gap-2 mt-2">
@@ -851,7 +851,7 @@ const OrderBook = memo(function OrderBook({ assetId, tickKey1 }: { assetId: stri
 });
 
 // =================== operaciones en vivo (1s) ===================
-const LiveTrades = memo(function LiveTrades({ assetId, tickKey1 }: { assetId: string; tickKey1: number }) {
+const LiveTrades = memo(function LiveTrades({ assetId, tickKey1: _tickKey1 }: { assetId: string; tickKey1: number }) {
   const feed = marketSim.getState().tradeFeed[assetId] ?? [];
   return (
     <div className="hud-corner bg-secondary/40">
@@ -1029,7 +1029,7 @@ function QuickInvest({
 
 // =================== trade avanzado (mercado/limite) ===================
 function AdvancedTrade({
-  selId, coins, holding, price, onBuy, onSell, onLimit,
+  selId: _selId, coins, holding, price, onBuy, onSell, onLimit,
 }: {
   selId: string;
   coins: number;
@@ -1396,7 +1396,7 @@ const BasketCompare = memo(function BasketCompare({ basket, tickKey2 }: { basket
 
 // =================== ordenes pendientes (1s) ===================
 const PendingOrders = memo(function PendingOrders({
-  orders, tickKey1, onCancel,
+  orders, tickKey1: _tickKey1, onCancel,
 }: {
   orders: { id: string; assetId: string; side: "BUY" | "SELL"; qty: number; limitPrice: number }[];
   tickKey1: number;
@@ -1515,7 +1515,7 @@ const Portfolio = memo(function Portfolio({
 });
 
 // =================== eventos de mercado (3s) ===================
-const EventsFeed = memo(function EventsFeed({ tickKey3 }: { tickKey3: number }) {
+const EventsFeed = memo(function EventsFeed({ tickKey3: _tickKey3 }: { tickKey3: number }) {
   const events = marketSim.getState().events;
   return (
     <div className="hud-corner bg-secondary/40">

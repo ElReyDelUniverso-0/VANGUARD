@@ -313,7 +313,7 @@ export function ForYouPanel() {
     } catch { /* noop */ }
   };
 
-  const share = async (p: TarjetaPuntuada) => {
+  const share = async (_p: TarjetaPuntuada) => {
     const url = `${window.location.origin}/?tab=foryou`;
     try {
       if (navigator.share) await navigator.share({ title: "VANGUARD · Para Ti", url });

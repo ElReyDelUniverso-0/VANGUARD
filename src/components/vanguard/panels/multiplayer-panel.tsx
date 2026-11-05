@@ -595,7 +595,7 @@ function GuerraMode({ alias }: { alias: string }) {
 
   const playerList = Object.values(state.players);
   const countsByOwner: Record<string, { n: number; troops: number }> = {};
-  for (const [tid, t] of Object.entries(state.territories)) {
+  for (const [_tid, t] of Object.entries(state.territories)) {
     if (!t.owner) continue;
     countsByOwner[t.owner] = countsByOwner[t.owner] ?? { n: 0, troops: 0 };
     countsByOwner[t.owner].n += 1;

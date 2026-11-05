@@ -25,7 +25,7 @@ import {
   ENTREVISTA, DEPARTAMENTOS, APTITUD_META, rangoDe, sueldoPorMin,
   loadEmpleos, saveEmpleos, acumularNomina, tareasDelTurno, pagoTurno,
   hoyKey, COOLDOWN_TURNO_MS, RANGOS, weekKeyOf, contratoDeSemana, claveContrato,
-  type EmpleosState, type Aptitud, type Departamento, type TareaTurno, type ContratoSemanal,
+  type EmpleosState, type Aptitud, type Departamento, type TareaTurno,
 } from "@/lib/empleos";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 

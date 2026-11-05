@@ -826,7 +826,7 @@ export const useGameStore = create<GameState>()(
         } catch {
           /* noop */
         }
-        set((s) => ({
+        set((_s) => ({
           account: null,
           cloudSaveAt: null,
           alias: defaultAlias(),

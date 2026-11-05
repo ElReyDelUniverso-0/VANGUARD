@@ -27,7 +27,7 @@ export default function SocketDemo() {
   const [isUsernameSet, setIsUsernameSet] = useState(false);
   const [socket, setSocket] = useState<any>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
+  const [_users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     // Connect to websocket server

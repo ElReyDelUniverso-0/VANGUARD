@@ -25,7 +25,7 @@ export function SalaVista({ sala, agenteApi, onVolver, onAviso }: PropsSala) {
   const { agente } = agenteApi;
   const [datos, setDatos] = useState<DatosApi>({});
   const [cargando, setCargando] = useState(sala.fuente === "api");
-  const [flash, setFlash] = useState<string | null>(null);
+  const [flash, _setFlash] = useState<string | null>(null);
   const inicioSala = useRef(Date.now());
   const cat = CATEGORIAS[sala.categoria];
 

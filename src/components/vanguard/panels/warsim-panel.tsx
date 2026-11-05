@@ -119,7 +119,7 @@ export function WarsimPanel() {
   const [wildcards, setWildcards] = useState(true);
   const [speed, setSpeed] = useState<number>(5);
   const [sim, setSim] = useState<SimState | null>(null);
-  const [randomSeed, setRandomSeed] = useState(0);
+  const [_randomSeed, setRandomSeed] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const filtered = useMemo(() => {

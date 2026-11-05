@@ -684,7 +684,7 @@ export function ImperioPanel() {
   const capR = capReserva(e, jugador);
   const capV = capVivienda(e, jugador);
 
-  const entrarLayout = (dx: number, dy: number) => {
+  const entrarLayout = (dx: number, _dy: number) => {
     setVb((v) => {
       const f = dx < 0 ? 0.9 : 1.1;
       const w = Math.max(MAPA_W * 0.32, Math.min(MAPA_W * 1.35, v.w * f));

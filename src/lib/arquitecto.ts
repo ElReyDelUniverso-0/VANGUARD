@@ -241,7 +241,7 @@ function siguientePrompt(s: { obra: CicloArq[]; contadores: { ciclos: number }; 
 // Con IA real encima cuando el gateway responde.
 // ============================================================
 
-function moduloMejoraLinea(id: string, ver: number, rng: () => number): string {
+function moduloMejoraLinea(id: string, _ver: number, rng: () => number): string {
   const mejoras: Record<string, string[]> = {
     sismografo: ["resolución de tinta ×2", "calibración de amplitud frente al pulso", "alfabeto ampliado con dígitos"],
     telemetro: ["muestreo del pulso más reciente", "umbral de alarma afinado", "histórico de lecturas adjunto"],

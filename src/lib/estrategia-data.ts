@@ -328,7 +328,7 @@ export function estrategiaDeHoy(): EstrategiaHoy {
   const doctrinas: Doctrina[] = DOCTRINAS_BASE.map((d, i) => ({ ...d, id: `D${i + 1}` }));
 
   const inicioWargames = Math.floor(rnd() * ESCENARIOS_BASE.length);
-  const escenarios: EscenarioWargame[] = girar(ESCENARIOS_BASE, 6, inicioWargames).map((e, i) => ({
+  const escenarios: EscenarioWargame[] = girar(ESCENARIOS_BASE, 6, inicioWargames).map((e, _i) => ({
     ...e,
     id: `W${ESCENARIOS_BASE.indexOf(e) + 1}`,
     dificultad: (1 + Math.floor(rnd() * e.dificultad)) as EscenarioWargame["dificultad"],

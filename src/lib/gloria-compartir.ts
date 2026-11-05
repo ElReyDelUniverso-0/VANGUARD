@@ -7,7 +7,6 @@
 // archivos, DESCARGA directa. Honesto: solo datos reales de la ficha.
 // ══════════════════════════════════════════════════════════════════════
 
-import type { FichaGuerra } from "@/lib/fichas-guerra-data";
 import type { SelloDorado } from "@/lib/gloria";
 
 export interface DatosPresumir {

@@ -607,7 +607,7 @@ function VsDuel({
 // ===== v41 DESAFÍO GEO — quiz rápido generado con los datos reales del panel =====
 type QuizQ = { q: string; tag: string; options: { label: string; iso: string }[]; correctIso: string };
 
-function generateQuiz(data: GeoData, countryMap: Map<string, CountryRow>): QuizQ[] {
+function generateQuiz(data: GeoData, _countryMap: Map<string, CountryRow>): QuizQ[] {
   const qs: QuizQ[] = [];
   const pick4 = (rows: RankRow[]): RankRow[] | null => {
     if (!rows || rows.length < 4) return null;

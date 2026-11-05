@@ -19,7 +19,7 @@ export function CanalesPanel() {
   const [mensajes, setMensajes] = useState<MensajeCanal[]>([]);
   const [canalFiltro, setCanalFiltro] = useState<string | null>(null);
   const [q, setQ] = useState("");
-  const [ahora, setAhora] = useState(() => Date.now());
+  const [_ahora, setAhora] = useState(() => Date.now());
   const [leidos, setLeidos] = useState<Set<string>>(new Set());
 
   // refresco en vivo cada 30 s (nuevos mensajes entran deslizándose)

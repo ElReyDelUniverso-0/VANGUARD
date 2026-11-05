@@ -182,7 +182,7 @@ export function TierraPanel() {
   const [sel, setSel] = useState<Contacto | null>(null);
   const [cockpit, setCockpit] = useState(false);
   const [autoGiro, setAutoGiro] = useState(true);
-  const [textura, setTextura] = useState<"auto" | "satelite" | "noche" | "tactico">("auto");
+  const [textura, _setTextura] = useState<"auto" | "satelite" | "noche" | "tactico">("auto");
   const [centro, setCentro] = useState({ lat: 22, lng: 12, alt: 2.5 });
   const [rosterOn, setRosterOn] = useState(true);
   const [q, setQ] = useState("");

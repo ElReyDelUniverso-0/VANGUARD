@@ -116,7 +116,7 @@ export const MEME_TEMPLATES: MemeTemplate[] = [
   },
   {
     id: "sanciones", label: "Sanciones", title: "SANCIONES APROBADAS", accent: "#FF3B30",
-    caption: (a, b) => `el consejo vota: sanciones para ${b}`,
+    caption: (_a, b) => `el consejo vota: sanciones para ${b}`,
     layers: [
       B("B", 62, 44, 140), E("🚫", 30, 44, 110),
       T("SANCIONES APROBADAS", 50, 11, 40, "#FF3B30"),

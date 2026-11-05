@@ -218,7 +218,7 @@ export function paqueteRelampago(ahora = new Date()): OfertaRelampago | null {
 }
 
 // ── TICKER DE LA RED — ambencia de FOMO noble ────────────────
-export function mensajeTicker(estado: EstadoFichas, tick: number): string {
+export function mensajeTicker(_estado: EstadoFichas, tick: number): string {
   const dia = diaIso();
   const rng = rngDesde(hashSemilla(`ticker:${dia}:${tick}`));
   const nombre = `${NOMBRES_RIVAL[Math.floor(rng() * NOMBRES_RIVAL.length)]} ${10 + Math.floor(rng() * 90)}`;

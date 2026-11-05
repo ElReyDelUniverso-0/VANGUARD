@@ -74,7 +74,7 @@ const crecer = (n: number | undefined, delta: number, tope: number): number =>
   Math.min(tope, Math.min(1, Math.max(0.2, n ?? 1)) + delta);
 
 /** El espectador MIRÓ una tarjeta (activa ≥60% en pantalla). */
-export function notaVista(tipo: TipoFeed, autor: string): void {
+export function notaVista(tipo: TipoFeed, _autor: string): void {
   const p = leerPerfil();
   p.vistas += 1;
   p.pesoTipo[tipo] = Math.min(3, (p.pesoTipo[tipo] ?? 1) + 0.05);

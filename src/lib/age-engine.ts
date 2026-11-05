@@ -208,7 +208,7 @@ export function endTurn(s: AoNState): AoNState {
     let acts = 1 + (Math.random() < 0.4 * aggro ? 1 : 0) + (n.ai === "AGRESIVO" && s.turn > 3 ? 1 : 0);
     // fortalecer frontera
     if (n.ai === "DEFENSIVO" && s.aiGold[n.id] >= AON_COSTS.fort && Math.random() < 0.5) {
-      const [pid, p] = mine[Math.floor(Math.random() * mine.length)];
+      const [_pid, p] = mine[Math.floor(Math.random() * mine.length)];
       if (p.fort < 3) { p.fort++; s.aiGold[n.id] -= AON_COSTS.fort; }
     }
     while (acts-- > 0) {
@@ -243,7 +243,7 @@ export function endTurn(s: AoNState): AoNState {
         }
       } else if (s.aiGold[n.id] >= AON_COSTS.reclutar) {
         // reforzar provincia fronteriza
-        const frontier = mine.filter(([pid, p]) => TERRITORIES.find((x) => x.id === pid)!.adj.some((a) => s.provs[a] && s.provs[a].owner !== n.id));
+        const frontier = mine.filter(([pid, _p]) => TERRITORIES.find((x) => x.id === pid)!.adj.some((a) => s.provs[a] && s.provs[a].owner !== n.id));
         const tgt = frontier.length ? frontier[Math.floor(Math.random() * frontier.length)] : mine[Math.floor(Math.random() * mine.length)];
         if (tgt && tgt[1].troops < tgt[1].pop * 3) { tgt[1].troops += 4; s.aiGold[n.id] -= AON_COSTS.reclutar; }
       }

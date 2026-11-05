@@ -24,7 +24,7 @@ const TAG_A_ESCENA: Record<string, { v: VarianteEscena; acc: string }> = {
   INFO: { v: "noticias", acc: "#FF8A2A" },
 };
 
-export function escenaDeNoticia(tag: string | null | undefined, id: string): { v: VarianteEscena; acc: string } {
+export function escenaDeNoticia(tag: string | null | undefined, _id: string): { v: VarianteEscena; acc: string } {
   const t = (tag || "").toUpperCase();
   return TAG_A_ESCENA[t] ?? { v: "noticias", acc: "#FF8A2A" };
 }

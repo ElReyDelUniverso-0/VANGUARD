@@ -120,7 +120,7 @@ function lerp(a: number, b: number, t: number): number {
 }
 
 // órbita de patrulla: circula alrededor del objetivo en elipse
-function orbita(base: BaseVuelo, obj: ObjetivoVuelo, fase: number, wobble: number): { lat: number; lng: number; rumbo: number } {
+function orbita(_base: BaseVuelo, obj: ObjetivoVuelo, fase: number, wobble: number): { lat: number; lng: number; rumbo: number } {
   const a = 1.6 + wobble * 1.4; // semieje lat
   const b = 2.2 + wobble * 1.8; // semieje lng
   const ang = fase * Math.PI * 2;

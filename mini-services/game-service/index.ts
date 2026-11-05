@@ -416,7 +416,7 @@ const mpPlayersBySocket = new Map<string, { id: string }>();
 
 // v30 PASO PRO: servidor HTTP propio para exponer /health (Render y VPS
 // comprueban salud con un GET); engine.io atiende /socket.io y delega el resto.
-const httpServer = createServer((req, res) => {
+const httpServer = createServer((_req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
   res.end("VANGUARD game-service OK");
 });
