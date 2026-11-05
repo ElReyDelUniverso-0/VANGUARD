@@ -5096,9 +5096,34 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v355.0";
-export const APP_CODENAME = "LA SALA QUE ESCUCHA";
+export const APP_VERSION = "v356.0";
+export const APP_CODENAME = "EL RIVAL ANUNCIADO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v356.0 EL RIVAL ANUNCIADO — trigésima-novena ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v355 cirugía → v356 expansión): LA MESA VIVA etapa 11
+// — la sala 3D CANTA AL RIVAL. La elección del rival de hoy vive en la
+// tienda desde la etapa 10 (persiste al refresco), pero la fila EL SALÓN
+// DEL FANTASMA de la sala 3D seguía cantando solo a la cabeza del honor:
+// el duelo que el operador eligió era invisible en volumen. (1) EL ELEGIDO
+// VIVO (estrategia-panel): `rivalElegido` — la llave de la tienda solo manda
+// si el fantasma sigue en el salón (`salon.find(...) ?? null`); si la semana
+// salió del archivo (tope 12), la degradación es honesta y `rivalHoy` cae al
+// fantasma de la etapa 8 (`rivalElegido ?? fantasma`) — la casa no reescribe
+// la historia. (2) LA FILA ANUNCIADA: la fila 3D respira con la elección —
+// elegido vivo → «tu rival de hoy: X/100 (semana Y) — RIVAL VENCIDO / te
+// espera con su número fijo»; sin elección → la cabeza del honor de siempre.
+// Solo cambia la palabra (d): `v` sigue siendo del CORO (N FANTASMAS) y `p`
+// el objetivo del honor — la elección anuncia el duelo, no reordena la
+// escuela. Deps honestas [salon, rivalElegido, rivalHoy, rivalVencido] —
+// cero cierres rancios, cero efectos nuevos (5 asertados).    SUITE: +2
+// pines (EL RIVAL ANUNCIADO estático: el elegido vivo con su guard de
+// llave muerta, la fila con su duelo anunciado y el coro intacto, las deps
+// exactas, versión doble aserción — y vivo: home + health v356) + DOS PINES
+// VIEJOS actualizados a la semántica dividida (v352/v354: el find ?? null +
+// el elegido ?? fantasma — la elección ya no es una sola expresión) +
+// rodillo (LA SALA QUE ESCUCHA → EL RIVAL ANUNCIADO y v355.0 → v356.0 en
+// los VALORES de los asertos; mensajes históricos y nombres de pines
+// intactos — ley v312) + rodillo a v356.0 (cuatro patrones).
 // v355.0 LA SALA QUE ESCUCHA — trigésima-octava ronda del autociclo y
 // CIRUGÍA del ritmo (v354 expansión → v355 cirugía): LA TERCERA LEVA DE LA
 // COLA EXHAUSTIVE-DEPS cae en multiplayer-panel, 5 hallazgos de los 139 en

@@ -141,11 +141,19 @@ export function EstrategiaGlobalPanel() {
   const salon = useMemo(() => salonDeLaMesa(archivoDesafio), [archivoDesafio]);
   const rivalSalon = useGameStore((s) => s.rivalSalon);
   const elegirRivalSalon = useGameStore((s) => s.elegirRivalSalon);
+  // el elegido VIVO (v356 etapa 11): la llave de la tienda solo manda si el
+  // fantasma sigue en el salón — si la semana salió del archivo (tope 12),
+  // la degradación es honesta: manda el fantasma y la fila 3D lo canta tal
+  // cual (la casa no reescribe la historia).
+  const rivalElegido = useMemo(
+    () => (rivalSalon ? salon.find((f) => f.wk === rivalSalon) ?? null : null),
+    [salon, rivalSalon],
+  );
   // el rival de HOY: el elegido en el salón; sin elección, el fantasma de la
   // etapa 8 (el tablón no cambia — la casa manda y el default es el mejor).
   const rivalHoy = useMemo(
-    () => salon.find((f) => f.wk === rivalSalon) ?? fantasma,
-    [salon, rivalSalon, fantasma],
+    () => rivalElegido ?? fantasma,
+    [rivalElegido, fantasma],
   );
   const rivalVencido = rivalHoy !== null && mejorVigente !== null && mejorVigente > rivalHoy.objetivo;
   const abrirDesafio = () => { setMesa({ ...desafio }); setMesaDesafio(true); };
@@ -223,19 +231,27 @@ export function EstrategiaGlobalPanel() {
       },
       {
         // v352 EL SALÓN DEL FANTASMA — etapa 9 en la sala 3D: el coro entero
-        // con la cabeza del honor; la acción reutiliza la rama del desafío
+        // con la cabeza del honor; la acción reutiliza la rama del desafío.
+        // v356 EL RIVAL ANUNCIADO — etapa 11: la sala 3D ya sabe a quién
+        // ELEGISTE (la elección persiste en la tienda desde la etapa 10):
+        // si el rival de hoy está vivo en el salón, la fila lo canta con su
+        // número fijo y su duelo (VENCIDO incluido); sin elección, la cabeza
+        // del honor manda como siempre. Solo cambia la palabra (d): v y p
+        // siguen siendo del CORO, la elección no reordena el honor.
         t: "EL SALÓN DEL FANTASMA",
         v: salon.length > 0 ? `${salon.length} FANTASMAS` : "VACÍO",
         p: salon.length > 0 ? salon[0].objetivo : 0,
         color: "#A855F7",
         d: salon.length > 0
-          ? `el más duro espera con su ${salon[0].objetivo}/100 fijo (${salon[0].wk}) · toca uno en la mesa y se vuelve tu rival de hoy — tu pasado NO se recalibra`
+          ? rivalElegido && rivalHoy
+            ? `tu rival de hoy: ${rivalHoy.objetivo}/100 (semana ${rivalHoy.wk})${rivalVencido ? " — RIVAL VENCIDO" : " te espera con su número fijo"} · toca otro fantasma en la mesa para cambiar de duelo`
+            : `el más duro espera con su ${salon[0].objetivo}/100 fijo (${salon[0].wk}) · toca uno en la mesa y se vuelve tu rival de hoy — tu pasado NO se recalibra`
           : "tu primera mesa cerrada despierta el salón: cada semana que dejes atrás se sienta aquí con su número fijo",
         a: "abrir desafío",
       },
     ];
     return filas;
-  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente, tablonMesa, puestoTu, salon]);
+  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente, tablonMesa, puestoTu, salon, rivalElegido, rivalHoy, rivalVencido]);
   useSala3DContenido(
     "estrategia",
     "ESTRATEGIA GLOBAL",
