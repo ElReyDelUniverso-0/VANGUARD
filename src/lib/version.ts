@@ -4396,6 +4396,47 @@
 //     QUIRURGÍA ×2 + LA VALLA DEL ARCHIVO) · BD intocada (1877 cables ·
 //     9 hechos, testigo ANTES/DESPUÉS con la valla viva).
 // Herencia v308.0 EL ESPEJO DEL NAVEGADOR y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v309.0";
-export const APP_CODENAME = "LA PRIMERA QUIRURGÍA";
+// v310.0 LA SEGUNDA QUIRURGÍA — la deuda sigue pagándose (13 → 12): el
+//         paciente es la puerta de rehidratación del BONO DIARIO (v135, la
+//         cura de la carrera #418): su espera del REHIDRATADOR v132 vivía en
+//         un efecto que escribía estado — ahora vive en la TIENDA EXTERNA
+//         que siempre fue: useSyncExternalStore lee la bandera de hidratación
+//         del persist (booleano primitivo, estable) y se suscribe al aviso
+//         de fin de hidratación — el patrón que los propios docs de zustand
+//         piden. La tabla de decisiones de la v135 queda EXACTA (calco
+//         verificado por hexdump): sin persist, ya hidratado o fallo →
+//         hidratado (el bono no queda encerrado jamás); si falta, el aviso
+//         del REHIDRATADOR despierta el snapshot; server snapshot falso — el
+//         SSR jamás abre el bono. LECCIÓN DE LA RONDA: el trap del substring
+//         (v307) volvió a morder a tres lectores seguidos sobre la MISMA
+//         línea (`const [h…` sin el corchete) — el hexdump volvió a ser la
+//         única verdad: la casa estaba sana. Y el QA VISUAL cazó DOS
+//         trampas del propio arnés antes de dar veredicto: la semilla del
+//         store llevaba una versión vieja (el persist la descarta y miente)
+//         y el detector de diálogo cazaba a la INTRO DEL CINE en vez del
+//         bono — el detector ahora busca el título del bono por su nombre.
+//         QA VISUAL: SSR mudo (cero diálogos) · operador que YA reclamó hoy
+//         → el bono NO reaparece (la cura v135 preservada) · operador nuevo
+//         → el bono ABRE tras la rehidratación y el aterrizaje (medido a los
+//         15 s) · consola limpia sin errores de hidratación.
+// v310.0 (2) LAS CIFRAS VIVAS — la segunda herida de la ronda, destapada
+//         por el propio QA: con la red abierta, la casa ingesta cables en
+//         cada refresco (+23 medidos en una ronda) y los conteos del archivo
+//         RESPIRAN — pero 6 pruebas vivas de la suite congelaban cifras de
+//         un momento de la BD (una tarjeta medía 307, un chip 173, una
+//         paginación 5 páginas): pasaron durante semanas SOLO porque la red
+//         del sandbox estaba bloqueada y el archivo no respiraba. LA LEY
+//         VIVA: las cifras del archivo se LEEN del servidor vivo y se
+//         verifica su SANIDAD Y SU DERIVACIÓN — cada citado aportó ≥ 1
+//         titular, la paginación obedece a la count real (techo peso/40),
+//         el noscript discrepa jamás de su línea, y las dos salas (el chip
+//         del canal y la sala del teatro) miden el MISMO archivo y se ponen
+//         de acuerdo. Los umbrales congelados (≥ 1800 puertas del sitemap,
+//         piso 1900 de la valla) quedan: son LEYES de la casa, no alientos.
+// QA: tsc 0 TOTAL · eslint 0 errores (tocados) · censo 13 → 12 · build
+//     EXIT 0 · health v310.0 db up · pruebas 247/247 (+2 LA SEGUNDA
+//     QUIRURGÍA) · BD intocada (1877 cables · 9 hechos, valla viva).
+// Herencia v309.0 LA PRIMERA QUIRURGÍA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v310.0";
+export const APP_CODENAME = "LA SEGUNDA QUIRURGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

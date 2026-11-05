@@ -4,7 +4,7 @@
 // se compra en la TIENDA por 120ⓒ (CONSUMABLE_SHIELD) y se consume GRATIS
 // aquí cuando la racha está en peligro. Uno guardado = una racha salvada.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useGameStore } from "@/lib/game-store";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,29 @@ import { calmaActiva } from "@/lib/calma";
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
 }
+
+// v310.0 LA TIENDA EXTERNA DE LA HIDRATACIÓN — el calco EXACTO de la tabla
+// de decisiones que la v135 vivía en su efecto (hexdump verificado):
+// sin persist, ya hidratado o error → hidratado; si falta, la suscripción
+// avisa cuando el REHIDRATADOR (v132) termine de recordar la casa.
+function leerHidratacion(): boolean {
+  try {
+    const p = useGameStore.persist;
+    if (!p || p.hasHydrated()) return true;
+    return false;
+  } catch { return true; }
+}
+
+function suscribirHidratacion(cb: () => void): () => void {
+  try {
+    const p = useGameStore.persist;
+    if (!p) return () => {};
+    const d = p.onFinishHydration(cb);
+    return () => { d(); };
+  } catch { return () => {}; }
+}
+
+const noHidratado = () => false;
 
 export function DailyLoginModal() {
   const [open, setOpen] = useState(false);
@@ -28,15 +51,18 @@ export function DailyLoginModal() {
   // del primer render (skipHydration + REHIDRATADOR v132) — si el bono consultaba
   // antes, lastLoginDate parecía vacío y la modal REAPARECÍA aunque ya se
   // hubiera reclamado hoy. Ahora la consulta espera a la rehidratación.
-  const [hidratado, setHidratado] = useState(false);
-  useEffect(() => {
-    try {
-      const p = useGameStore.persist;
-      if (!p || p.hasHydrated()) { setHidratado(true); return; }
-      const d = p.onFinishHydration(() => setHidratado(true));
-      return () => { d(); };
-    } catch { setHidratado(true); }
-  }, []);
+  // v310.0 LA SEGUNDA QUIRURGÍA — la puerta de rehidratación vive en la
+  // TIENDA EXTERNA que siempre fue: useSyncExternalStore lee hasHydrated()
+  // (booleano primitivo, estable — cero cache que inventar) y se suscribe a
+  // onFinishHydration; el patrón que los propios docs de zustand piden. El
+  // setState-en-efecto de la v135 muere y la tabla de decisiones queda
+  // EXACTA (leerHidratacion es su calco):
+  //   · sin persist o ya hidratado o fallo → hidratado (el bono no queda
+  //     encerrado jamás)
+  //   · si falta, el onFinishHydration del REHIDRATADOR v132 avisa y React
+  //     re-renderea con el snapshot fresco
+  //   · server snapshot: falso — el SSR jamás abre el bono
+  const hidratado = useSyncExternalStore(suscribirHidratacion, leerHidratacion, noHidratado);
   // v62.0: escudos guardados en inventario (comprados en la tienda por 120ⓒ)
   const shieldsOwned = inventory
     .filter((i) => i.id === "consumable_shield")

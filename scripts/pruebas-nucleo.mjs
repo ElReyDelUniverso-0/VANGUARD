@@ -305,10 +305,10 @@ async function parteB() {
   } catch { /* sin conexión: las pruebas de abajo lo dirán */ }
 
   // salud
-  await verificar("servidor vivo y en v309.0", async () => {
+  await verificar("servidor vivo y en v310.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v309"), `versión ${r.json?.version} ≠ v309`);
+    afirmar(String(r.json?.version).startsWith("v310"), `versión ${r.json?.version} ≠ v310`);
   });
 
   // censo por API
@@ -2137,25 +2137,26 @@ async function parteB() {
   await verificar("EL TABLERO EN EL GLOBO viva: las 9 puertas al globo y la coordenada de Ucrania en el SSR (v285)", async () => {
     const r = await pedir("/conflictos");
     afirmar(r.status === 200, `/conflictos no 200 en v285 (${r.status})`);
-    // las 9 regiones vivas abren el globo (el pulso que la puerta pide
-    // es el que el tablero ya midió — la BD fría es determinista)
-    afirmar(r.texto.includes("/mundo?teatro=ukraine"), "la puerta al globo de Ucrania no viaja");
-    afirmar(r.texto.includes("/mundo?teatro=gaza"), "la puerta al globo de Gaza no viaja");
-    afirmar(r.texto.includes("/mundo?teatro=lebanon"), "la puerta al globo del Líbano no viaja");
-    // el conteo crudo cuenta DOS veces (markup + payload RSC del HTML):
-    // el aserto se hace sobre los ids ÚNICOS de las puertas — las 9 exactas
+    // LAS CIFRAS VIVAS (v310): las puertas al globo solo se abren donde el
+    // archivo tiene pulso (ley v285) y el archivo RESPIRA (la rotación de la
+    // valla siembra y cosecha) — la ley verifica que TODA puerta pertenece a
+    // las 9 regiones de la fuente (jamás una puerta ajena) y que el pulso
+    // vivo abre al menos una; los teatros mayores de la casa siguen vivos.
     const idsPuerta = new Set([...r.texto.matchAll(/\/mundo\?teatro=([a-z_]+)/g)].map((m) => m[1]));
-    afirmar(idsPuerta.size === 9, `las puertas al globo no son las 9 regiones vivas (${idsPuerta.size}/9)`);
-    for (const id of ["ukraine", "gaza", "hormuz", "taiwan", "korea", "redsea", "sahel", "sudan", "lebanon"]) {
-      afirmar(idsPuerta.has(id), `falta la puerta al globo de ${id}`);
+    const NUEVE = ["ukraine", "gaza", "hormuz", "taiwan", "korea", "redsea", "sahel", "sudan", "lebanon"];
+    afirmar(idsPuerta.size >= 1, `el globo sin puertas vivas (${idsPuerta.size})`);
+    for (const id of idsPuerta) {
+      afirmar(NUEVE.includes(id), `puerta ajena a las 9 regiones: ${id}`);
     }
     // la coordenada compuesta de Ucrania (48.5, 37.5 — nodos distintos,
     // trampa v258: se pelan los comentarios RSC antes del aserto)
     const limpio = r.texto.replace(/<!-- -->/g, "");
-    afirmar(limpio.includes("48.5°, 37.5°"), "la coordenada de Ucrania no viaja compuesta");
-    afirmar(limpio.includes("CRITICO ×9"), "el chip del censo cayó (v284)");
-    afirmar(limpio.includes("173 cables del archivo"), "la puerta a la sala cayó (v284)");
-    afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
+    if (idsPuerta.has("ukraine")) {
+      afirmar(limpio.includes("48.5°, 37.5°"), "la coordenada de Ucrania no viaja compuesta");
+      afirmar(/\d+ cables del archivo/.test(limpio), "la puerta a la sala no declara su peso vivo (v284)");
+    }
+    afirmar(/CRITICO ×\d+/.test(limpio), "el chip del censo cayó (v284 — censo de fuente, estable)");
+    afirmar(/El tablero de los conflictos — 33 regiones en seguimiento, (\d+) con pulso vivo en el archivo y (\d+) dormidas, con una intensidad media de 66\/100/.test(limpio), "la línea del tablero cayó (v284)");
   });
 
   // ── v284.0 EL TABLERO DE LOS CONFLICTOS: las 33 regiones de la fuente ganan su índice server (/conflictos) ──
@@ -2205,16 +2206,24 @@ async function parteB() {
     const r = await pedir("/conflictos");
     afirmar(r.status === 200, `/conflictos no 200 (${r.status})`);
     afirmar(r.texto.includes("EL TABLERO DE LOS CONFLICTOS"), "el título del tablero no viaja");
-    // la línea compuesta COMPLETA (33 · 9 · 24 · 66 — derivados de la fuente y la BD fría)
-    afirmar(r.texto.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea derivada no viaja (o la fuente/BD cambió)");
-    // los chips del censo compuestos (orden de primera aparición en la fuente)
+    // LAS CIFRAS VIVAS (v310): la línea se deriva de la fuente (33 regiones,
+    // 66/100 de intensidad — estables) y de la BD (el pulso vivo respira):
+    // la ley exige la forma completa y su SANIDAD (vivas + dormidas = 33)
+    const lineaTablero = r.texto.match(/El tablero de los conflictos — 33 regiones en seguimiento, (\d+) con pulso vivo en el archivo y (\d+) dormidas, con una intensidad media de 66\/100/);
+    afirmar(lineaTablero !== null, "la línea derivada no viaja (o la fuente/BD cambió)");
+    if (lineaTablero) {
+      const vivas = Number(lineaTablero[1]);
+      afirmar(vivas >= 1 && vivas + Number(lineaTablero[2]) === 33, `el censo del pulso mintió: ${vivas} vivas + ${lineaTablero[2]} dormidas ≠ 33`);
+    }
+    // los chips del censo compuestos (orden de primera aparición en la
+    // fuente) — censo de la FUENTE (estable, ley v284)
     for (const chip of ["CRITICO ×9", "INESTABILIDAD ×14", "TENSION ×5", "VIGILANCIA ×5"]) {
       afirmar(r.texto.includes(chip), `falta el chip del censo ${chip}`);
     }
     // el dossier verbatim + la puerta viva con el conteo real del archivo
     afirmar(r.texto.includes("Frente Oriental — Ucrania"), "el dossier de Ucrania no viaja");
     afirmar(r.texto.includes("/conflicto/ukraine"), "la puerta de Ucrania no viaja");
-    afirmar(r.texto.includes("173 cables del archivo"), "el conteo vivo del archivo no viaja (¿cambió la BD?)");
+    afirmar(/\d+ cables del archivo/.test(r.texto), "el conteo vivo del archivo no viaja (¿cambió la BD?)");
     afirmar(r.texto.includes("pulso dormido — sin sala de teatro todavía"), "el vacío honesto de las regiones sin sala no viaja");
     // el sitemap vivo anuncia la sala
     const rs = await pedir("/sitemap.xml");
@@ -2321,12 +2330,20 @@ async function parteB() {
   await verificar("EL PULSO DEL ARCHIVO POR ROSTRO viva: la línea derivada, la tarjeta de Trump y las anclas v286 (v287)", async () => {
     const r = await pedir("/rostros");
     afirmar(r.status === 200, `/rostros no 200 en v287 (${r.status})`);
-    // la línea compuesta COMPLETA (28 de 34 · 1792 — derivados de la fuente y la BD fría)
-    afirmar(r.texto.includes("El pulso del archivo por rostro — 28 de 34 rostros citados por 1792 titulares del archivo"), "la línea del pulso no viaja (o la fuente/BD cambió)");
-    // la tarjeta de Trump: nombre + conteo derivado + titular vivo
+    // LAS CIFRAS VIVAS (v310): la línea derivada con su sanidad (los
+    // titulares citados cubren a los rostros citados) — el aliento no se congela
+    const lineaRostro = r.texto.match(/El pulso del archivo por rostro — (\d+) de 34 rostros citados por (\d+) titulares del archivo/);
+    afirmar(lineaRostro !== null, "la línea del pulso no viaja (o la fuente/BD cambió)");
+    if (lineaRostro) {
+      const nRostros = Number(lineaRostro[1]);
+      const nTit = Number(lineaRostro[2]);
+      afirmar(nRostros >= 1 && nRostros <= 34, `el pulso cita ${nRostros} rostros (fuera de rango)`);
+      afirmar(nTit >= nRostros, `los ${nTit} titulares no cubren a los ${nRostros} rostros`);
+    }
+    // la tarjeta de Trump: nombre + conteo derivado VIVO + titular vivo
     // (los comentarios RSC separan los nodos — trampa v258: se pelan antes)
     const limpio = r.texto.replace(/<!-- -->/g, "");
-    afirmar(limpio.includes("Donald J. Trump · 200"), "el conteo de Trump no viaja (¿cambió la BD?)");
+    afirmar(/Donald J\. Trump · \d+/.test(limpio), "el conteo de Trump no viaja (¿cambió la BD?)");
     afirmar(/href="\/noticia\/[a-z0-9-]+"/.test(r.texto), "la puerta viva a /noticia no viaja");
     // las anclas v286 en pie
     afirmar(r.texto.includes("La galería de los rostros — 34 fichas reales del poder"), "la línea de la galería cayó (v286)");
@@ -2367,16 +2384,33 @@ async function parteB() {
   await verificar("EL PULSO POR PALABRAS viva: la línea derivada y las seis guerras con sus conteos (v290)", async () => {
     const r = await pedir("/conflictos");
     afirmar(r.status === 200, `/conflictos no 200 en v290 (${r.status})`);
-    // la línea compuesta COMPLETA (6 de 6 · 398 — derivados de la fuente y la BD fría)
-    afirmar(r.texto.includes("El pulso por palabras — 6 de 6 guerras citadas por 398 titulares del archivo"), "la línea del pulso no viaja (o la fuente/BD cambió)");
-    // las tarjetas: nombres verbatim + conteos (los comentarios RSC se pelan)
+    // LAS CIFRAS VIVAS (v310): la línea derivada con su sanidad — el aliento
+    // de la BD no se congela (398 nació en la v290 y hoy camina)
+    const lineaPalabras = r.texto.match(/El pulso por palabras — (\d+) de (\d+) guerras citadas por (\d+) titulares del archivo/);
+    afirmar(lineaPalabras !== null, "la línea del pulso no viaja (o la fuente/BD cambió)");
+    if (lineaPalabras) {
+      const citadas = Number(lineaPalabras[1]);
+      const totalG = Number(lineaPalabras[2]);
+      const nTit = Number(lineaPalabras[3]);
+      afirmar(citadas >= 1 && citadas <= totalG && totalG === 6, `el pulso cita ${citadas} de ${totalG} guerras (fuera del canon de la fuente)`);
+      afirmar(nTit >= citadas, `los ${nTit} titulares no cubren a las ${citadas} guerras citadas`);
+    }
+    // las tarjetas: nombres verbatim + conteo VIVO (los comentarios RSC se pelan)
     const limpio = r.texto.replace(/<!-- -->/g, "");
-    afirmar(limpio.includes("UCRANIA — LA GUERRA MAYOR · 119 titulares"), "la tarjeta de Ucrania no viaja con su conteo");
-    afirmar(limpio.includes("ORIENTE MEDIO — EL EJE EN LLAMAS · 190 titulares"), "la tarjeta de Oriente no viaja con su conteo");
-    afirmar(limpio.includes("MYANMAR — EL PAÍS QUE PELEA EN SILENCIO · 1 titular"), "la tarjeta de Myanmar no viaja (el singular del canon)");
+    afirmar(/UCRANIA — LA GUERRA MAYOR · \d+ titulares?/.test(limpio), "la tarjeta de Ucrania no viaja con su conteo");
+    afirmar(/ORIENTE MEDIO — EL EJE EN LLAMAS · \d+ titulares?/.test(limpio), "la tarjeta de Oriente no viaja con su conteo");
+    // las guerras menores viven o duermen con el pulso vivo (la rotación de
+    // la valla cosechó el único titular de Myanmar que la v290 congeló — el
+    // vacío honesto de la sala lo cubre): las tarjetas que aparecen llevan
+    // su nombre verbatim y su conteo vivo
+    const tarjetasGuerra = [...limpio.matchAll(/([A-ZÁÉÍÓÚÑ]+[^·]{0,60}) · (\d+) titulares?/g)].map((m) => m[1].trim());
+    afirmar(tarjetasGuerra.length >= 2, `las tarjetas del pulso midieron ${tarjetasGuerra.length} (< 2)`);
+    for (const nombre of tarjetasGuerra) {
+      afirmar(nombre === nombre.toUpperCase(), `una tarjeta del pulso viaja sin su nombre verbatim: «${nombre}»`);
+    }
     afirmar(/href="\/noticia\/[a-z0-9-]+"/.test(r.texto), "la puerta viva a /noticia no viaja");
-    // las anclas v284/v285 en pie
-    afirmar(limpio.includes("El tablero de los conflictos — 33 regiones en seguimiento, 9 con pulso vivo en el archivo y 24 dormidas, con una intensidad media de 66/100"), "la línea del tablero cayó (v284)");
+    // las anclas v284/v285 en pie (cifras vivas — la ley de la v310)
+    afirmar(/El tablero de los conflictos — 33 regiones en seguimiento, \d+ con pulso vivo en el archivo y \d+ dormidas, con una intensidad media de 66\/100/.test(limpio), "la línea del tablero cayó (v284)");
     afirmar(limpio.includes("Encenderla en el globo ▸"), "la puerta al globo cayó (v285)");
   });
 
@@ -2689,16 +2723,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no canta v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no canta v307");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2726,15 +2760,15 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA GUARDIA DEL OÍDO viva: el health canta v304 y el home guarda la crónica del oído (v300→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v309.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no canta v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no canta v307");
   });
 
   // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
@@ -2788,7 +2822,7 @@ async function parteB() {
     afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
@@ -2847,16 +2881,16 @@ async function parteB() {
     afirmar(pill.includes("resumeAmbienteSiQuerido"), "la píldora no despierta al mundo al primer gesto");
     afirmar(pill.includes("toggleMundo"), "la píldora no puede mover el mundo (toggleMundo falta)");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no respira v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no respira v307");
   });
 
   // ── v303.0 LA PLANTILLA COMPLETA: la expansión del módulo EMPLEOS — 8
@@ -2923,16 +2957,16 @@ async function parteB() {
     afirmar(panel.includes("cobrar bono"), "la sala 3D no puede cobrar el bono");
     afirmar(panel.includes("ocho oficinas"), "la casa sigue contando cuatro oficinas");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA PLANTILLA COMPLETA viva: el home firma la ronda y el health la contrata (v303)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no firma v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no firma v307");
   });
 
   // ── v304.0 LA MANO DE LA FORTUNA: la expansión del módulo FORTUNA — la
@@ -2973,16 +3007,16 @@ async function parteB() {
     afirmar(tienda.includes("probGolpe(libro.rachaSeca)"), "el calor de la ruleta no es el helper probado");
     afirmar(tienda.includes("lástima de la casa"), "la lástima no se le explica al operador");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v304.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v304.0");
   });
 
   await verificar("LA MANO DE LA FORTUNA viva: el home firma la ronda y el health la respalda (v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v304.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v304.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no respalda v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no respalda v307");
   });
 
   // ── v305.0 LA AUDITORÍA DE ACERO: el árbol medido a fondo (eslint
@@ -3024,16 +3058,16 @@ async function parteB() {
     const store = readFileSync(join(RAIZ, "src/lib/game-store.ts"), "utf8");
     afirmar(store.includes('(id === "RED" || id === "CYAN" || id === "AMBER")'), "la guardia de hudTheme no existe");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v305.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v305.0");
   });
 
   await verificar("LA AUDITORÍA DE ACERO viva: el home firma la ronda y el health respalda el censo (v305)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v305.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v305.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no respalda v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no respalda v307");
   });
 
   // ── v306.0 EL AIRE DEL PERMISO: la segunda cuchilla del mandato del Dueño —
@@ -3061,16 +3095,16 @@ async function parteB() {
     const sonido = readFileSync(join(RAIZ, "src/lib/sound.ts"), "utf8");
     afirmar(sonido.includes("webkitAudioContext?: typeof AudioContext"), "el prefijo de Safari sin su forma con unknown");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v307.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v307.0");
   });
 
   await verificar("LA POLÍTICA DEL AIRE viva: el home firma la ronda y el health respira con permiso (v306)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v307.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v307.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no respira v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no respira v307");
   });
 
   // ── v307.0 LA LEY DE LA VELOCIDAD: la TERCERA cuchilla del mandato del
@@ -3098,7 +3132,7 @@ async function parteB() {
     afirmar(isla.includes("ssr: false"), "la isla no es perezosa de verdad (sin ssr:false el motor vuelve al HTML inicial)");
     afirmar(isla.includes("#02040a"), "el placeholder de la isla no viste el tono del universo (destello blanco al nacer)");
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v307.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v307.0");
   });
 
   await verificar("LA LEY DE LA VELOCIDAD: censo del BUILD — UNA sola copia del motor, la familia reunida (v307)", () => {
@@ -3180,7 +3214,7 @@ async function parteB() {
     afirmar((espejo.match(/auditar "/g) || []).length >= 6, "el espejo mira menos de 6 salas (escritorio + móvil)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v308.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v308.0");
   });
 
   await verificar("EL ESPEJO DEL NAVEGADOR: censo del BUILD — la marca del núcleo de three viaja en EXACTAMENTE UNA familia (v308)", () => {
@@ -3232,7 +3266,7 @@ async function parteB() {
     afirmar(pagina.includes("<RielSeccion"), "la casa dejó de montar el riel de sección");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v309.0"'), "la fuente única de versión no es v309.0");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v309.0");
   });
 
   await verificar("LA PRIMERA QUIRURGÍA viva: el home sirve el riel desplegado en el SSR (el server snapshot no miente) y firma la ronda (v309)", async () => {
@@ -3240,10 +3274,10 @@ async function parteB() {
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
     afirmar(r.texto.includes('data-vg-riel="1"'), "el SSR no sirve el riel");
     afirmar(r.texto.includes('data-vg-riel-plegado="0"'), "el SSR no nace desplegado (el server snapshot miente)");
-    afirmar(r.texto.includes("LA PRIMERA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v309.0"), "la v309.0 no viaja en el home");
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v309.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v309"), "el health no firma v309");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no firma v309");
   });
 
   // ── v309.0 LA VALLA DEL ARCHIVO: la herida P0 de la ronda, cazada con
@@ -3268,6 +3302,44 @@ async function parteB() {
     afirmar(ruta.includes("deleteMany({ where: { id: { in:"), "la cosecha no va por ids exactos (borra ciego otra vez)");
     // la crónica de la herida: la casa recuerda el porqué
     afirmar(ruta.includes("LA VALLA DEL ARCHIVO"), "la valla no dejó su crónica (el porqué se pierde)");
+  });
+
+  // ── v310.0 LA SEGUNDA QUIRURGÍA: la deuda sigue pagándose (13 → 12) — el
+  // paciente: la puerta de rehidratación del BONO DIARIO (v135, la cura de
+  // la carrera #418). Su espera del REHIDRATADOR v132 vivía en un efecto que
+  // escribía estado; ahora vive en la TIENDA EXTERNA canónica
+  // (useSyncExternalStore + onFinishHydration — el patrón de los docs de
+  // zustand), con la tabla de decisiones de la v135 calcada: sin persist,
+  // ya hidratado o fallo → hidratado; server snapshot falso (el SSR jamás
+  // abre el bono). QA visual propio: SSR mudo · la casa recuerda (bono
+  // reclamado hoy NO reaparece) · operador nuevo → el bono abre tras la
+  // rehidratación y el aterrizaje. ──
+  await verificar("LA SEGUNDA QUIRURGÍA estática: la puerta del bono vive en la tienda externa canónica con la tabla de la v135 calcada (v310)", () => {
+    const bono = readFileSync(join(RAIZ, "src/components/vanguard/daily-login-modal.tsx"), "utf8");
+    // EL EFECTO MUERTO: cero escrituras de estado de hidratación
+    afirmar(!bono.includes("setHidratado"), "el bono sigue escribiendo su hidratación desde un efecto (la quirurgía no se aplicó)");
+    // LA TIENDA CANÓNICA: lectura por snapshot + suscripción al fin de hidratación
+    afirmar((bono.match(/useSyncExternalStore\(/g) || []).length === 1, "el bono no vive en la tienda externa canónica");
+    afirmar(bono.includes("leerHidratacion") && bono.includes("hasHydrated()"), "el snapshot no lee la bandera real del persist");
+    afirmar(bono.includes("onFinishHydration"), "la suscripción no espera al REHIDRATADOR (el bono se abriría a ciegas)");
+    // LA TABLA DE LA v135 CALCADA: sin persist, ya hidratado o fallo → hidratado
+    afirmar(bono.includes("if (!p || p.hasHydrated()) return true;"), "la tabla de la v135 no está calcada (el bono puede quedar encerrado)");
+    afirmar(bono.includes("catch { return true; }"), "el fallo del persist no libera al bono (quedaría encerrado)");
+    afirmar(bono.includes("noHidratado"), "el server snapshot no existe (el SSR abriría el bono)");
+    // el consumidor: la puerta del bono sigue velando la rehidratación antes de preguntar
+    afirmar(bono.includes("if (!hidratado) return;"), "la puerta de la v135 desapareció (el bono preguntaría antes de recordar)");
+    // la versión camina con la casa
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    afirmar(version.includes('APP_VERSION = "v310.0"'), "la fuente única de versión no es v310.0");
+  });
+
+  await verificar("LA SEGUNDA QUIRURGÍA viva: el home firma la ronda y el health respalda la deuda pagada (v310)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA SEGUNDA QUIRURGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v310.0"), "la v310.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v310"), "el health no firma v310");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──
@@ -3585,7 +3657,7 @@ async function parteB() {
     afirmar(limpio.includes("fases: 5 — Aprobación"), "las fases no viajan con sus títulos verbatim (MK-ULTRA tiene 5, medido contra la fuente)");
     // las anclas v291/v288 en pie
     afirmar(limpio.includes("El pacto que une las dos salas — 5 arcos nacen del hub de Londres (MI6) y 1 cruza el Atlántico hasta Washington (38.8977°, -77.0365°), la terminal del puente con la Comunidad"), "la línea del pacto cayó (v291)");
-    afirmar(limpio.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "el pulso por agencia cayó (v288)");
+    afirmar(/El pulso del archivo por agencia — \d+ de 18 agencias citadas por \d+ titulares del archivo/.test(r.texto), "el pulso por agencia cayó (v288)");
   });
 
   // ── v291.0 EL PACTO QUE UNE LAS DOS SALAS: los tres exports hermanos restantes de agencias-mundo-data suben al server (/servicios, quinta capa) ──
@@ -3634,9 +3706,9 @@ async function parteB() {
     afirmar(limpio.includes("el puente atlántico — la terminal vive en LA COMUNIDAD"), "el puente atlántico no se declara");
     // el noscript crecido
     afirmar(limpio.includes("y los 5 arcos del pacto UKUSA"), "el noscript no creció con el pacto");
-    // las anclas v288/v289 en pie
-    afirmar(r.texto.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "el pulso por agencia cayó (v288)");
-    afirmar(r.texto.includes("El pulso de la red mundial — 2 de 18 servicios citados por 5 titulares del archivo"), "el pulso de la red cayó (v289)");
+    // las anclas v288/v289 en pie (cifras vivas — la ley de la v310)
+    afirmar(/El pulso del archivo por agencia — \d+ de 18 agencias citadas por \d+ titulares del archivo/.test(r.texto), "el pulso por agencia cayó (v288)");
+    afirmar(/El pulso de la red mundial — \d+ de 18 servicios citados por \d+ titulares del archivo/.test(r.texto), "el pulso de la red cayó (v289)");
   });
 
   // ── v289.0 EL PULSO DE LA RED MUNDIAL: los keywords de los 18 servicios extranjeros cruzan el mismo archivo (/servicios) ──
@@ -3669,14 +3741,25 @@ async function parteB() {
   await verificar("EL PULSO DE LA RED MUNDIAL viva: la línea derivada, ASIS y CNI con sus menciones (v289)", async () => {
     const r = await pedir("/servicios");
     afirmar(r.status === 200, `/servicios no 200 en v289 (${r.status})`);
-    // la línea compuesta COMPLETA (2 de 18 · 5 — derivados de la fuente y la BD fría)
-    afirmar(r.texto.includes("El pulso de la red mundial — 2 de 18 servicios citados por 5 titulares del archivo"), "la línea de la red no viaja (o la fuente/BD cambió)");
-    // las tarjetas: los comentarios RSC se pelan antes (trampa v258)
+    // LAS CIFRAS VIVAS (v310): la línea derivada con su sanidad (los titulares
+    // citados cubren a los servicios citados) — el aliento de la BD no se congela
+    const lineaRed = r.texto.match(/El pulso de la red mundial — (\d+) de 18 servicios citados por (\d+) titulares del archivo/);
+    afirmar(lineaRed !== null, "la línea de la red no viaja (o la fuente/BD cambió)");
+    if (lineaRed) {
+      const nServ = Number(lineaRed[1]);
+      const nTit = Number(lineaRed[2]);
+      afirmar(nServ >= 1 && nServ <= 18, `el pulso cita ${nServ} servicios (fuera de rango)`);
+      afirmar(nTit >= nServ, `los ${nTit} titulares no cubren a los ${nServ} servicios`);
+    }
+    // las tarjetas: los comentarios RSC se pelan antes (trampa v258) — el
+    // conjunto citado es el que la BD dice HOY (la rotación de la valla sacó
+    // a CNI del conjunto medido en la v289: las tarjetas viven con el pulso)
     const limpio = r.texto.replace(/<!-- -->/g, "");
-    afirmar(limpio.includes("ASIS · 1 mención"), "la tarjeta de ASIS no viaja");
-    afirmar(limpio.includes("CNI · 4 menciones"), "la tarjeta de CNI no viaja");
-    // las anclas v288/v282 en pie
-    afirmar(limpio.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "el pulso por agencia cayó (v288)");
+    if (lineaRed && Number(lineaRed[1]) >= 1) {
+      afirmar(/· \d+ mención/.test(limpio), "las tarjetas del pulso no viajan con su conteo vivo");
+    }
+    // las anclas v288/v282 en pie (cifras vivas — la ley de la v310)
+    afirmar(/El pulso del archivo por agencia — \d+ de 18 agencias citadas por \d+ titulares del archivo/.test(r.texto), "el pulso por agencia cayó (v288)");
     afirmar(limpio.includes("de 1882 a 2020"), "el arco de fundación cayó (v282)");
   });
 
@@ -3715,15 +3798,27 @@ async function parteB() {
   await verificar("EL PULSO DEL ARCHIVO POR AGENCIA viva: la línea derivada, la tarjeta de CIA y las anclas v282 (v288)", async () => {
     const r = await pedir("/servicios");
     afirmar(r.status === 200, `/servicios no 200 en v288 (${r.status})`);
-    // la línea compuesta COMPLETA (10 de 18 · 451 — derivados de la fuente y la BD fría)
-    afirmar(r.texto.includes("El pulso del archivo por agencia — 10 de 18 agencias citadas por 451 titulares del archivo"), "la línea del pulso no viaja (o la fuente/BD cambió)");
-    // la tarjeta de CIA: sigla + conteo derivado + titular vivo
+    // LAS CIFRAS VIVAS (v310): el archivo RESPIRA — la casa ingesta cables en
+    // cada refresco (medido: la poda v84 dormaba porque la red estaba bloqueada;
+    // hoy respira y los conteos caminan). La ley verifica la FORMA derivada y
+    // su SANIDAD (cada agencia citada aportó ≥ 1 titular), jamás un congelamiento.
+    const lineaPulso = r.texto.match(/El pulso del archivo por agencia — (\d+) de 18 agencias citadas por (\d+) titulares del archivo/);
+    afirmar(lineaPulso !== null, "la línea del pulso no viaja (o la fuente/BD cambió)");
+    if (lineaPulso) {
+      const nAgencias = Number(lineaPulso[1]);
+      const nTitulares = Number(lineaPulso[2]);
+      afirmar(nAgencias >= 1 && nAgencias <= 18, `el pulso cita ${nAgencias} agencias (fuera de rango)`);
+      afirmar(nTitulares >= nAgencias, `los ${nTitulares} titulares no cubren a las ${nAgencias} agencias (el conteo derivado mintió)`);
+    }
+    // la tarjeta de CIA: sigla + conteo derivado VIVO + titular vivo
     // (los comentarios RSC separan los nodos — trampa v258: se pelan antes)
     const limpio = r.texto.replace(/<!-- -->/g, "");
-    afirmar(limpio.includes("CIA · 307"), "el conteo de CIA no viaja (¿cambió la BD?)");
+    afirmar(/CIA · \d+/.test(limpio), "el conteo de CIA no viaja (¿cambió la BD?)");
     afirmar(/href="\/noticia\/[a-z0-9-]+"/.test(r.texto), "la puerta viva a /noticia no viaja");
-    // el noscript crecido (compuesto en JS)
-    afirmar(r.texto.includes("con el pulso del archivo por agencia (10 de 18 agencias citadas)"), "el noscript no creció con el pulso");
+    // el noscript crecido (compuesto en JS) — con la MISMA cifra viva que la línea
+    if (lineaPulso) {
+      afirmar(r.texto.includes(`con el pulso del archivo por agencia (${lineaPulso[1]} de 18 agencias citadas)`), "el noscript no creció con el pulso (o discrepa de la línea)");
+    }
     // las anclas v282 en pie
     afirmar(r.texto.includes("La sala de los servicios — 36 expedientes reales de inteligencia"), "la línea de la sala cayó (v282)");
     afirmar(r.texto.includes("LOS SENTIDOS DE LA INTELIGENCIA"), "la sección de los sentidos cayó (v282)");
@@ -4707,8 +4802,14 @@ async function parteB() {
   await verificar("EL CANAL QUE PESA viva: los chips del SSR declaran peso y edad, y el canal declara su señal más fresca (v262)", async () => {
     const r = await pedir("/guerra-hoy");
     afirmar(r.status === 200, `/guerra-hoy no 200 en v262 (${r.status})`);
-    // el chip con peso real de la BD (medido: ukraine 173) y su edad
-    afirmar(r.texto.includes("Ucrania · 173"), "el chip de Ucrania no declara su peso real");
+    // el chip con peso real de la BD y su edad — CIFRA VIVA (v310): la casa
+    // ingesta en cada refresco, el peso del teatro respira (ucrania nació 173
+    // en la v262 y hoy camina); la ley exige que el chip lo DECLARE
+    const chipUcrania = r.texto.match(/Ucrania · (\d+)/);
+    afirmar(chipUcrania !== null, "el chip de Ucrania no declara su peso real");
+    if (chipUcrania) {
+      afirmar(Number(chipUcrania[1]) >= 1, `el peso del teatro midió ${chipUcrania[1]} (un teatro vivo pesa ≥ 1)`);
+    }
     afirmar(/última señal hace/.test(r.texto), "la edad de los teatros no viaja en el SSR");
     afirmar(r.texto.includes("Teatros en vivo"), "la fila de chips v206 desapareció");
     afirmar(r.texto.includes('href="/conflicto/ukraine"'), "la puerta a la sala del teatro desapareció");
@@ -4756,28 +4857,48 @@ async function parteB() {
   await verificar("LA SALA COMPLETA viva: ukraine pagina su archivo real, la 2 sirve otros cables y la cortina no sirve sala (v261)", async () => {
     const p1 = await pedir("/conflicto/ukraine");
     afirmar(p1.status === 200, `/conflicto/ukraine no 200 (${p1.status})`);
-    // 173 cables reales / 40 por página = 5 páginas (medido en la BD de esta ronda)
-    afirmar(p1.texto.includes("página 1 de 5"), "la sala no declara su paginación real");
-    afirmar(p1.texto.includes("173 cables en el archivo del teatro"), "el nav no declara el peso real del archivo");
-    afirmar(p1.texto.includes('href="/conflicto/ukraine?page=2"'), "sin puerta a la página 2");
-    afirmar(p1.texto.includes("siguiente ▶"), "sin la señal de la página siguiente");
-    // la página 2: otros cables, con su anterior y su lugar declarado
-    const p2 = await pedir("/conflicto/ukraine?page=2");
-    afirmar(p2.status === 200, `página 2 → ${p2.status} (el archivo tiene 5 páginas)`);
-    afirmar(p2.texto.includes("página 2 de 5"), "la segunda página no declara su lugar");
-    afirmar(p2.texto.includes("◀ anterior"), "sin la puerta de vuelta");
-    afirmar(p2.texto.includes('href="/conflicto/ukraine"'), "el anterior no vuelve al limpio");
-    afirmar(p2.texto.includes('href="/conflicto/ukraine?page=3"'), "sin puerta a la página 3");
+    // LAS CIFRAS VIVAS (v310): el archivo respira (la casa ingesta cada
+    // refresco; ucrania nació 173 en la v261 y hoy camina). La ley verifica
+    // la DERIVACIÓN (páginas = techo(peso / 40 — la count real manda)) y el
+    // ACUERDO DE SALAS (el chip del canal y la sala miden el MISMO archivo),
+    // jamás un congelamiento del aliento de la BD.
+    const pesoSala = p1.texto.match(/(\d+) cables en el archivo del teatro/);
+    afirmar(pesoSala !== null, "el nav no declara el peso real del archivo");
+    const paginasDeclaradas = p1.texto.match(/página 1 de (\d+)/);
+    afirmar(paginasDeclaradas !== null, "la sala no declara su paginación real");
+    if (pesoSala && paginasDeclaradas) {
+      const nPeso = Number(pesoSala[1]);
+      const nPag = Number(paginasDeclaradas[1]);
+      afirmar(nPeso >= 1, `el peso del teatro midió ${nPeso} (un teatro con sala vive) `);
+      afirmar(nPag === Math.ceil(nPeso / 40), `la paginación mintió: ${nPag} páginas para ${nPeso} cables (la count real manda)`);
+      // EL ACUERDO DE SALAS: el chip del canal y la sala ven el mismo archivo
+      const canal = await pedir("/guerra-hoy");
+      const chipCanal = canal.texto.match(/Ucrania · (\d+)/);
+      afirmar(chipCanal !== null && Number(chipCanal[1]) === nPeso, `el chip del canal (${chipCanal ? chipCanal[1] : "?"}) y la sala (${nPeso}) no se ponen de acuerdo`);
+    }
+    // la puerta a la página 2 existe si y solo si hay más de una página
+    const hayMas = paginasDeclaradas && Number(paginasDeclaradas[1]) >= 2;
+    afirmar(hayMas === p1.texto.includes('href="/conflicto/ukraine?page=2"'), "la puerta a la página 2 no obedece a la paginación real");
+    if (hayMas) {
+      afirmar(p1.texto.includes("siguiente ▶"), "sin la señal de la página siguiente");
+      // la página 2: otros cables, con su anterior y su lugar declarado
+      const p2 = await pedir("/conflicto/ukraine?page=2");
+      afirmar(p2.status === 200, `página 2 → ${p2.status} (la paginación declaró ${paginasDeclaradas[1]} páginas)`);
+      afirmar(p2.texto.includes(`página 2 de ${paginasDeclaradas[1]}`), "la segunda página no declara su lugar");
+      afirmar(p2.texto.includes("◀ anterior"), "sin la puerta de vuelta");
+      afirmar(p2.texto.includes('href="/conflicto/ukraine"'), "el anterior no vuelve al limpio");
+      afirmar(p2.texto.includes('href="/conflicto/ukraine?page=3"') === (Number(paginasDeclaradas[1]) >= 3), "la puerta a la página 3 no obedece a la paginación real");
+    }
     // fuera de rango: la cortina de la casa, sin sala — NADA de contenido
     // indexable (Next 16 sirve el notFound en streaming con 200 en TODA la
     // casa: un tag desconocido de v206 y una /noticia inexistente se
     // comportan igual, medido en esta ronda — lo que importa es que la sala
     // vacía jamás viaja: ni paginación, ni cables, ni nav)
     const fuera = await pedir("/conflicto/ukraine?page=99");
-    afirmar(!fuera.texto.includes("página 1 de 5") && !fuera.texto.includes("cables en el archivo"), "¡la página 99 sirve una sala vacía!");
+    afirmar(!/página 1 de \d+/.test(fuera.texto) && !fuera.texto.includes("cables en el archivo"), "¡la página 99 sirve una sala vacía!");
     afirmar(!fuera.texto.includes("Los frentes del teatro"), "¡la página 99 sirve el despliegue de una sala que no existe!");
     const mala = await pedir("/conflicto/ukraine?page=abc");
-    afirmar(!mala.texto.includes("página 1 de 5") && !mala.texto.includes("cables en el archivo"), "¡la página abc sirve una sala vacía!");
+    afirmar(!/página 1 de \d+/.test(mala.texto) && !mala.texto.includes("cables en el archivo"), "¡la página abc sirve una sala vacía!");
     // las anclas de la sala siguen en pie
     afirmar(p1.texto.includes("Los frentes del teatro"), "el despliegue v227 desapareció");
     afirmar(p1.texto.includes("CONECTA CON EL NÚCLEO"), "el núcleo v218 desapareció");
