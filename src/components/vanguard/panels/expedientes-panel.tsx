@@ -119,7 +119,7 @@ export function ExpedientesPanel() {
     <div className="space-y-4">
       <PanelHeader
         title="Archivo Secreto"
-        subtitle="Expedientes desclasificados · FBI · CIA · NARA · NSArchive · Black Vault"
+        subtitle={`${total} expedientes reales · FBI · CIA · NARA · NSArchive · Black Vault`}
         icon={<FolderOpen className="w-4 h-4" />}
         color="violet"
       />
@@ -174,9 +174,12 @@ export function ExpedientesPanel() {
         </div>
       </div>
 
-      {/* ===== EXPEDIENTE DEL DÍA ===== */}
+      {/* ===== EXPEDIENTE DEL DÍA — EL ANILLO DEL ARCHIVO (v334) =====
+           la sala gira con el reloj CENTRAL de la escuela (ley v324); la
+           rotación se declara EN PANTALLA: es el reloj, no un veredicto */}
       <button
         onClick={() => abrirExpediente(daily.id, daily.url)}
+        aria-label="Expediente del día"
         className={cn(
           "w-full text-left rounded-sm border p-3 sm:p-4 bg-gradient-to-br from-amber-500/10 to-black/70 hover:from-amber-500/20 transition-colors",
           readSet.has(daily.id) ? "border-amber-hud/30" : "border-amber-hud/80 shadow-[0_0_18px_rgba(245,158,11,0.15)] animate-pulse"
@@ -191,6 +194,9 @@ export function ExpedientesPanel() {
         <div className="mt-1 text-xs text-muted-foreground line-clamp-2">{daily.desc}</div>
         <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] text-amber-300">
           <ExternalLink className="w-3 h-3" /> abrir dossier original {readSet.has(daily.id) ? "(relectura libre)" : "(+recompensa)"}
+        </div>
+        <div className="mt-1.5 font-mono text-[9px] sm:text-[10px] text-muted-foreground">
+          el anillo del archivo avanza un expediente por día — la rotación es el reloj de la escuela, no un veredicto de la casa
         </div>
       </button>
 

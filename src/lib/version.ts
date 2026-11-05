@@ -5096,9 +5096,47 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v333.0";
-export const APP_CODENAME = "LA CICATRIZ QUE NO DUELE";
+export const APP_VERSION = "v334.0";
+export const APP_CODENAME = "EL ANILLO DEL ARCHIVO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v334.0 EL ANILLO DEL ARCHIVO — decimoséptima ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v333 cirugía → v334 expansión): la DÉCIMO-PRIMERA
+// puerta del anillo de la escuela se abre en la sala de lectura — y la ronda
+// destapa un caso clandestino: el archivo llevaba un RELOJ PRIVADO.
+// ① EL RELOJ CLANDESTINO: expedienteDelDia() giraba con
+//    Math.floor(Date.now()/86400000) — una rueda distinta a la del anillo
+//    central (ley v324: un solo reloj, cero copias). Dos relojes en el mismo
+//    edificio: el de la escuela decía MONARQUIA en la enciclopedia y el del
+//    archivo cantaba otro número. La sala de lectura fue la undécima puerta
+//    y la migración es la llave: girar(EXPEDIENTES, 1, diaDelAnillo() %
+//    EXPEDIENTES.length)[0] — la MISMA fórmula de las diez puertas abiertas
+//    (mando v313, instituto v318, red v320, canal v321, ciber v322, atlas
+//    v324, armería v326, comunidad v328, poder v330, enciclopedia v332).
+// ② LA FRANJA DECLARA LA LEY: aria-label="Expediente del día" + la línea en
+//    pantalla «el anillo del archivo avanza un expediente por día — la
+//    rotación es el reloj de la escuela, no un veredicto de la casa». La
+//    honestidad que ya vivía (el contador dual «(relectura libre)» /
+//    «(+recompensa)» amarrado al readSet REAL, ley v322) queda intacta — no
+//    se destruye nada: se declara lo que ya era verdad.
+// ③ NADA DURO QUE SE PUDRA (ley v322): el subtitle del panel abre con el
+//    total del catálogo (${EXPEDIENTES.length} expedientes reales · FBI · CIA…).
+// ④ LA ESTRELLA YA VIVÍA: la rejilla marca el del día con ⭐ DÍA desde la
+//    v57 (isExpedienteDelDia en render, cero estado) — la puerta conserva su
+//    insignia y la sala 3D ya pintaba el dorado (#FFC94D) para el del día.
+// ⑤ CERO EFECTOS: el panel vive en useMemo puro (useEffect === 0) — el censo
+//    canónico 2+0 respira intacto; regreso.ts y retention-layer heredan el
+//    reloj central sin tocar una línea.
+// ⑥ EL ESTRENO: día 309 (0-indexado 308) % 23 = 9 → «Historia militar
+//    desclasificada de EE.UU.» (nara-military, NARA) — el primer expediente
+//    que el anillo central entrega a la escuela.
+//     SUITE: +2 pines (EL ANILLO DEL ARCHIVO estático: el reloj central en
+//    expedientes.ts y el privado muerto, franja con ley y contador dual
+//    honesto, subtitle derivado, ⭐ DÍA en rejilla, useEffect === 0, versión
+//    doble aserción — y vivo: home + health v334) + rodillos de codename en
+//    los asertos históricos (LA CICATRIZ QUE NO DUELE → EL ANILLO DEL
+//    ARCHIVO; los nombres de pines y etiquetas de sección quedan como
+//    memoria — ley v312) + rodillo a v334.0 (cuatro patrones, mensajes
+//    históricos intactos — ley v312).
 // v333.0 LA CICATRIZ QUE NO DUELE — decimosexta ronda del autociclo y CIRUGÍA
 // del ritmo (v332 expansión → v333 cirugía): la cola de cirugía clásica estaba
 // extinta (censo 2+0 — solo quedan los dos efecto-escritor intocables), así

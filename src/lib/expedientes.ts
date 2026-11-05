@@ -9,6 +9,9 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+// v334.0 EL ANILLO DEL ARCHIVO: la sala de lectura entra en el reloj CENTRAL
+// de la escuela (ley v324: un solo reloj, cero copias).
+import { girar, diaDelAnillo } from "./estrategia-data";
 
 // v103.0: los DATOS PUROS (tipos + EXPEDIENTES) viven en expedientes-datos.ts
 // (sin "use client") para que el servidor — la API del MODO AGENTE — pueda
@@ -56,10 +59,15 @@ export function nextRankAt(reads: number): { rank: string; at: number } | null {
   return null;
 }
 
-// ===== EXPEDIENTE DEL DÍA (doble recompensa, seed por fecha UTC) =====
+// ===== EXPEDIENTE DEL DÍA — EL ANILLO DEL ARCHIVO (v334) =====
+// Hasta la v333 la sala llevaba un reloj PRIVADO (Math.floor(Date.now() /
+// 86400000)) que giraba con una rueda distinta a la de la escuela: dos relojes
+// en el mismo edificio, uno mentía. La ley v324 manda: el anillo CENTRAL
+// (diaDelAnillo, la misma muesca de las diez puertas abiertas — mando v313,
+// instituto v318, red v320, canal v321, ciber v322, atlas v324, armería
+// v326, comunidad v328, poder v330, enciclopedia v332) toma el archivo.
 export function expedienteDelDia(): Expediente {
-  const day = Math.floor(Date.now() / 86400000);
-  return EXPEDIENTES[day % EXPEDIENTES.length];
+  return girar(EXPEDIENTES, 1, diaDelAnillo() % EXPEDIENTES.length)[0];
 }
 
 export function isExpedienteDelDia(id: string): boolean {
