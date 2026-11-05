@@ -4284,6 +4284,34 @@
 //     tocados · build EXIT 0 · health v306.0 db up · pruebas 238/238 (+2 LA
 //     POLÍTICA DEL AIRE) · BD intocada (1877 cables · 9 hechos).
 // Herencia v305.0 LA AUDITORÍA DE ACERO y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v306.0";
-export const APP_CODENAME = "EL AIRE DEL PERMISO";
+// v307.0 LA LEY DE LA VELOCIDAD — la TERCERA cuchilla del mandato del Dueño
+//         («mejoren el rendimiento… No se limiten a corregir: innoven»): la
+//         casa tenía velocímetro (v238) y familia reunida (v244) pero NADIE
+//         velaba la reunión — y la medición lo probó:
+// (1) EL HALLAZGO MEDIDO: la ruta /vanguard2 importaba su motor de forma
+//     ESTÁTICA — three.js viajaba en el grafo INICIAL de la ruta (chunk
+//     ~720 KB con el núcleo completo, fuera del alcance del cacheGroup
+//     «familia-tres» chunks:"async" de la v244): la casa pagaba DOS copias
+//     del motor (la familia reunida 1.6 MB + esta suelta ~720 KB crudos).
+//     Cura LA ISLA DEL UNIVERSO (mismo patrón de mundo-3d-vivo): grafo
+//     asíncrono, el motor reúne con su familia, la copia duplicada muere.
+// (2) EL PRIMER CENSO DE VELOCIDAD de la casa: portada 2.05 MB crudos de JS
+//     inicial en 28 ficheros (react+router ~380 · catálogo de pestañas 471 ·
+//     pila framer ~430 · i18n/editorial ~273 · polyfills 110 · catálogos de
+//     juego 63 · pegamento de la app el resto) · 422 chunks perezosos
+//     (12.1 MB totales, code-split sano) · sondeo en vivo honesto (presence
+//     30 s · tensión 12 s · notis 180 s · cables 7 s · pulso 1 s VISIBLE).
+// (3) LA LEY (el blindaje permanente): la suite censa el BUILD — los chunks
+//     > 300 KB que llevan CÓDIGO del motor (marcador honesto
+//     isPerspectiveCamera|isMesh) deben ser EXACTAMENTE UNO y llamarse
+//     familia-tres: ninguna segunda copia del motor puede volver a nacer
+//     sin que la suite lo grite. El ritual del lint COMPLETO (v305 pedía
+//     «cada N rondas») corre en la apertura de la ronda: 19 errores, los
+//     mismos documentados — CERO errores nuevos en el árbol.
+// QA: tsc 0 TOTAL · eslint 0 errores (tocados) · build EXIT 0 · health
+//     v307.0 db up · pruebas 240/240 (+2 LA LEY DE LA VELOCIDAD) · BD
+//     intocada (1877 cables · 9 hechos).
+// Herencia v306.0 EL AIRE DEL PERMISO y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v307.0";
+export const APP_CODENAME = "LA LEY DE LA VELOCIDAD";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -1,5 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import Vanguard2 from "@/components/vanguard2/vanguard2";
+// v307.0 LA ISLA DEL UNIVERSO — la cura medida por EL CENSO DE VELOCIDAD
+// (tercera cuchilla del mandato del Dueño): el import ESTÁTICO de Vanguard2
+// metía three.js en el grafo INICIAL de la ruta (copia suelta del motor,
+// ~720 KB crudos en un chunk aparte) donde el grupo de caché «familia-tres»
+// de la v244 (chunks:"async") no podía reunirla. La isla (mismo patrón de
+// mundo-3d-vivo) vuelve el grafo asíncrono: el cacheGroup reúne al motor
+// con su familia y la copia duplicada muere. Ver universo-isla.tsx.
+import { UniversoIsla } from "./universo-isla";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
@@ -98,7 +105,7 @@ export default function PageVanguard2() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      <Vanguard2 />
+      <UniversoIsla />
       <noscript>
         <div className="p-5 text-xs leading-relaxed text-zinc-300">
           <p className="rounded-lg border border-white/10 bg-white/[.03] p-4">
