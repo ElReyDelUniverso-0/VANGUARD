@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Network, Pause, Play, Layers, MousePointer2, Info, Bell, BellRing } from "lucide-react";
+import { Search, Network, Pause, Play, Layers, MousePointer2, Info, Bell, BellRing, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { ExpedienteDrawer } from "@/components/vanguard/expediente-drawer";
@@ -20,6 +20,9 @@ import {
   type TipoNodo, type NodoExp, type AristaExp,
 } from "@/lib/expediente-data";
 import { useExpediente } from "@/lib/expediente-store";
+// v342: PUERTA 15 DEL ANILLO — el grafo gira con el reloj CENTRAL de la
+// escuela (ley v324: una copia es una grieta); useMemo puro, cero efectos.
+import { girar, diaDelAnillo } from "@/lib/estrategia-data";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido"; // v168: paridad 2D→3D
 
 const W = 1200;
@@ -44,6 +47,35 @@ const CENTROS: Record<string, { x: number; y: number }> = {
   documento: { x: 135, y: 395 },
   paper: { x: 1060, y: 430 },
 };
+
+// v342: LA RUTA DEL DÍA — función PURA de la puerta 15 (nivel módulo, como
+// layoutInicial): del día del anillo nace la semilla (solo nodos con grado
+// ≥ 2 — la ruta exige un camino), un paso a un vecino REAL y de ahí un
+// segundo paso que no vuelva sobre sus propias pisadas; las hojas se saltan
+// para no entrar en callejones. Determinista: mismo día, misma ruta.
+function rutaDelDiaDe(
+  nodos: NodoExp[],
+  grados: Map<string, number>,
+  dia: number,
+): { nodo: NodoExp; via: AristaExp | null }[] {
+  const conectados = nodos.filter((n) => (grados.get(n.id) ?? 0) >= 2);
+  if (conectados.length === 0) return [];
+  const a = girar(conectados, 1, dia % conectados.length)[0];
+  const vA = vecinosDe(a.id);
+  if (vA.length === 0) return [{ nodo: a, via: null }];
+  for (let i = 0; i < vA.length; i++) {
+    const p1 = vA[(dia + i) % vA.length];
+    const vB = vecinosDe(p1.nodo.id).filter((x) => x.nodo.id !== a.id);
+    if (vB.length === 0) continue; // hoja: la ruta no entra en un callejón
+    const p2 = vB[dia % vB.length];
+    return [
+      { nodo: a, via: null },
+      { nodo: p1.nodo, via: p1.arista },
+      { nodo: p2.nodo, via: p2.arista },
+    ];
+  }
+  return [{ nodo: a, via: null }, { nodo: vA[0].nodo, via: vA[0].arista }];
+}
 
 function layoutInicial(ids: string[]): Map<string, P> {
   const contadores: Record<string, number> = {};
@@ -311,6 +343,17 @@ export function GrafoPanel() {
     [gradosMap],
   );
 
+  // ===== v342: LA RUTA DEL DÍA — la puerta 15 del anillo =====
+  // del reloj del día nace la semilla (solo nodos conectados, la ruta exige
+  // un camino) y de ahí dos pasos por aristas REALES del grafo — la ruta
+  // gira una muesca por día con el reloj CENTRAL (ley v324). La cuenta vive
+  // en una función PURA a nivel de módulo: el compilador preserva un useMemo
+  // de una llamada simple; el bucle no respira dentro del componente.
+  const rutaDelDia = useMemo(
+    () => rutaDelDiaDe(NODOS_EXPEDIENTE, gradosMap, diaDelAnillo()),
+    [gradosMap],
+  );
+
   const radioDe = (n: NodoExp) => {
     const d = gradosMap.get(n.id) ?? 0;
     const base = n.tipo === "crisis" ? 9 : n.tipo === "nacion" ? 7.5 : n.tipo === "medio" ? 6 : 4.5;
@@ -361,6 +404,18 @@ export function GrafoPanel() {
         d: `física ${fisicaOn ? "activa a 60 fps" : "pausada"} · ${(Object.keys(TIPO_META) as TipoNodo[]).map((tk) => `${TIPO_META[tk].tag.toLowerCase()} ${est.porTipo[tk] ?? 0}`).join(" · ")}`,
       },
     ];
+    // v342: LA PUERTA DEL ANILLO — la fila viaja ANTES de las filas de
+    // «enfocar»: su contrato se cuenta DESDE LA COLA (filas3D.length - n),
+    // y la puerta al final lo rompería — lección de especie de la ronda
+    // (en la máquina v340 el contrato era de CABEZA con offset 2; aquí el
+    // contrato de la cola manda, no la estética del cierre).
+    filas.push({
+      t: "RUTA DEL DÍA",
+      v: `${rutaDelDia.length} NODOS`,
+      color: "#FFD166",
+      d: `${rutaDelDia.map((p) => p.nodo.nombre).join(" → ")} · la ruta gira con el reloj de la escuela, no una preferencia de la casa`,
+      a: "recorrer ruta del día",
+    });
     for (const { n, d } of topConectados.slice(0, 8)) {
       filas.push({
         t: n.nombre,
@@ -371,7 +426,7 @@ export function GrafoPanel() {
       });
     }
     return filas;
-  }, [est, enfoque, visitados.length, vigilados, soloNucleo, nodosVisibles, fisicaOn, topConectados]);
+  }, [est, enfoque, visitados.length, vigilados, soloNucleo, nodosVisibles, fisicaOn, topConectados, rutaDelDia]);
   useSala3DContenido(
     "grafo",
     "GRAFO MUNDIAL",
@@ -383,7 +438,15 @@ export function GrafoPanel() {
   useEffect(() => {
     const onAccion = (e: Event) => {
       const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
-      if (det?.tab !== "grafo" || det.accion !== "enfocar") return;
+      if (det?.tab !== "grafo") return;
+      // v342: la puerta 15 viaja en el MISMO oyente — SU rama antes del
+      // contrato de índices (patrón v326/v328/v330/v332/v334/v336/v340)
+      if (det.accion === "recorrer ruta del día") {
+        const primero = rutaDelDia[0];
+        if (primero) irANodo(primero.nodo);
+        return;
+      }
+      if (det.accion !== "enfocar") return;
       const n = Math.min(8, topConectados.length);
       const start = filas3D.length - n;
       const hit = topConectados[det.idx - start];
@@ -391,7 +454,7 @@ export function GrafoPanel() {
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, [filas3D, topConectados, setEnfoque]);
+  }, [filas3D, topConectados, setEnfoque, irANodo, rutaDelDia]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">
@@ -412,6 +475,42 @@ export function GrafoPanel() {
           <MousePointer2 className="h-3 w-3" /> arrastra un nodo · toca para abrir su expediente
         </span>
       </motion.div>
+
+      {/* ===== LA RUTA DEL DÍA — EL ANILLO DEL GRAFO (v342) =====
+           puerta 15: la ruta nace del reloj CENTRAL de la escuela (ley v324)
+           y camina por aristas REALES del grafo; cada nodo lleva al foco */}
+      <div
+        aria-label="Ruta del día"
+        className="mt-3 rounded-2xl border border-amber-400/70 bg-gradient-to-br from-amber-400/10 to-black/60 p-3.5 shadow-[0_0_18px_rgba(255,201,78,0.14)]"
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+          <Star className="h-3.5 w-3.5 text-amber-300" />
+          <span className="font-bold text-amber-300">LA RUTA DEL DÍA · ruta de 3 nodos destacada</span>
+          {enfoque && rutaDelDia.some((p) => p.nodo.id === enfoque) && <span className="text-white/40">· enfocada en el grafo</span>}
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {rutaDelDia.map((p, i) => (
+            <span key={p.nodo.id} className="flex items-center gap-1.5">
+              {i > 0 && p.via && (
+                <span className="font-mono text-[9px] font-bold uppercase tracking-wider" style={{ color: ARISTA_META[p.via.tipo].color }}>
+                  — {ARISTA_META[p.via.tipo].label} →
+                </span>
+              )}
+              <button
+                onClick={() => irANodo(p.nodo)}
+                className="rounded-xl border border-white/15 bg-white/[0.04] px-3 py-1.5 text-left transition hover:border-amber-400/50 active:scale-95"
+                style={{ borderColor: `${p.nodo.acento}55` }}
+              >
+                <span className="block text-[12px] font-black" style={{ color: p.nodo.acento }}>{p.nodo.nombre}</span>
+                <span className="block font-mono text-[9px] text-white/40">{TIPO_META[p.nodo.tipo].tag.toLowerCase()}</span>
+              </button>
+            </span>
+          ))}
+        </div>
+        <div className="mt-2 font-mono text-[9px] text-white/35">
+          {NODOS_EXPEDIENTE.length} entidades en el grafo · la ruta avanza una muesca por día — la rotación es el reloj de la escuela, no una preferencia de la casa
+        </div>
+      </div>
 
       {/* buscador + controles */}
       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">

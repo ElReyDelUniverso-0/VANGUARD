@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FlipHorizontal2, CheckCircle2, EyeOff, HelpCircle, ChevronDown, Hourglass,
-  ShieldCheck, Bell, BellRing, Newspaper, FlaskConical, Radio,
+  ShieldCheck, Bell, BellRing, Newspaper, FlaskConical, Radio, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -23,6 +23,9 @@ import { CRISIS, convergenciaDe, medioPorId, type CrisisVG } from "@/lib/expedie
 import { useExpediente } from "@/lib/expediente-store";
 import { evaluarNeuronal, fnvHash, predecir, bucketMinutos } from "@/lib/neurona-core";
 import { dayKeyUtc } from "@/lib/googles";
+// v342: PUERTA 14 DEL ANILLO — el espejo gira con el reloj CENTRAL de la
+// escuela (ley v324: una copia es una grieta); useMemo puro, cero efectos.
+import { girar, diaDelAnillo } from "@/lib/estrategia-data";
 // v122 SEÑALES REALES: los cables de la casa junto al espejo SIM (separación honesta)
 import { LectorNoticia, type CableLectura } from "@/components/vanguard/lector-noticia";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
@@ -178,6 +181,11 @@ export function EspejoPanel() {
   );
   const [abierto, setAbierto] = useState<string | null>(crisis.perspectivas[0]?.medio ?? null);
 
+  // ===== v342: LA CRISIS EN EL ESPEJO HOY — la puerta 14 del anillo =====
+  // la fórmula de las puertas (girar + diaDelAnillo del reloj CENTRAL);
+  // useMemo puro: la puerta vive sin efectos (el censo 2+0 respira).
+  const crisisDelDia = useMemo(() => girar(CRISIS, 1, diaDelAnillo() % CRISIS.length)[0], []);
+
   // ===== v122 SEÑALES REALES DE AHORA (bloque honesto: SIM ≠ REAL) =====
   // El espejo cuenta el mundo Vanguard (SIM); debajo, los cables REALES
   // que la casa recibe ahora mismo, leídos en la SALA DE LECTURA interna.
@@ -238,6 +246,18 @@ export function EspejoPanel() {
       color: "#B48CFF",
       d: `${veredicto.sentimiento} · tensión ${Math.round(veredicto.tension)} · confianza ${Math.round(veredicto.confianza)} · proyección: ${proyeccion.escenarios[0]?.nombre ?? "—"} ${proyeccion.escenarios[0]?.probabilidad ?? 0}%`,
     });
+    // v342: LA PUERTA DEL ANILLO — la fila viaja ANTES de las filas de cable:
+    // el contrato de «leer cable» se cuenta DESDE LA COLA (filas3D.length - n),
+    // y la puerta al final lo rompería — la lección de especie de la ronda
+    // (en la máquina v340 el contrato era de CABEZA con offset 2 y la puerta
+    // viajó al final; aquí el contrato manda, no la estética del cierre).
+    filas.push({
+      t: "CRISIS DEL DÍA",
+      v: `TENSIÓN ${tensionActual(crisisDelDia)}`,
+      color: "#FBBF24",
+      d: `SIM · ${crisisDelDia.nombre} · el anillo del espejo avanza una crisis por día — la rotación es el reloj de la escuela`,
+      a: "abrir crisis del día",
+    });
     for (const cab of cablesReales.slice(0, 2)) {
       filas.push({
         t: cab.title,
@@ -248,13 +268,16 @@ export function EspejoPanel() {
       });
     }
     return filas;
-  }, [crisis, convergencia, veredicto, proyeccion, cablesReales]);
+  }, [crisis, convergencia, veredicto, proyeccion, cablesReales, crisisDelDia]);
   // v168: el raycast 3D despliega la MISMA sala de medio que el botón 2D y
   // abre el MISMO lector de cables (las filas de cable van al final del array)
   useEffect(() => {
     const onAccion = (e: Event) => {
       const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
       if (det?.tab !== "espejo") return;
+      // v342: la puerta 14 viaja en el MISMO oyente — SU rama antes del
+      // contrato de índices (patrón v326/v328/v330/v332/v334/v336/v340)
+      if (det.accion === "abrir crisis del día") { setCrisis(crisisDelDia.id); return; }
       if (det.accion === "desplegar sala") {
         const p = crisis.perspectivas[det.idx];
         if (p) setAbierto((v) => (v === p.medio ? null : p.medio));
@@ -266,7 +289,7 @@ export function EspejoPanel() {
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, [crisis, cablesReales, filas3D]);
+  }, [crisis, cablesReales, filas3D, crisisDelDia, setCrisis]);
   useSala3DContenido(
     "espejo",
     "EL ESPEJO DE VANGUARD",
@@ -280,6 +303,35 @@ export function EspejoPanel() {
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">
       <HeroOro panel="espejo" />
+
+      {/* ===== LA CRISIS EN EL ESPEJO HOY — EL ANILLO DEL ESPEJO (v342) =====
+           puerta 14: el espejo gira con el reloj CENTRAL de la escuela
+           (ley v324); el contenido es SIM del mundo Vanguard y se DECLARA;
+           la rotación se declara EN PANTALLA: es el reloj, no una preferencia */}
+      <button
+        onClick={() => { setCrisis(crisisDelDia.id); setAbierto(null); }}
+        aria-label="Crisis del día"
+        className={cn(
+          "mt-3 w-full text-left rounded-2xl border p-3.5 bg-gradient-to-br from-amber-400/10 to-black/60 transition-colors hover:from-amber-400/20",
+          crisis.id === crisisDelDia.id ? "border-amber-400/40" : "border-amber-400/70 shadow-[0_0_18px_rgba(251,191,36,0.14)] animate-pulse",
+        )}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+          <Star className="h-3.5 w-3.5 text-amber-300" />
+          <span className="font-bold text-amber-300">LA CRISIS EN EL ESPEJO HOY · crisis SIM destacada</span>
+          {crisis.id === crisisDelDia.id && <span className="text-white/40">· abierta en el espejo</span>}
+        </div>
+        <div className="mt-1.5 text-sm font-black text-amber-100">{crisisDelDia.nombre}</div>
+        <p className="mt-1 text-xs leading-relaxed text-white/60 line-clamp-2">{crisisDelDia.resumen}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
+          <span className="rounded-full border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-amber-300">SIM · MUNDO VANGUARD</span>
+          <span className="text-white/40">{crisisDelDia.region}</span>
+          <span className="text-amber-200/80">{crisisDelDia.perspectivas.length} salas la miran</span>
+        </div>
+        <div className="mt-1.5 font-mono text-[9px] text-white/35">
+          {CRISIS.length} crisis en el catálogo del espejo — el anillo avanza una crisis por día — la rotación es el reloj de la escuela, no una preferencia de la casa
+        </div>
+      </button>
 
       {/* selector de crisis */}
       <div className="vg-chips mt-3 flex gap-2 overflow-x-auto pb-1">
@@ -297,7 +349,11 @@ export function EspejoPanel() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
             >
-              <div className="text-[12px] font-black text-white/90">{c.nombre}</div>
+              <div className="flex items-center gap-1.5 text-[12px] font-black text-white/90">
+                {c.id === crisisDelDia.id && <Star className="h-3 w-3 fill-amber-300 text-amber-300" aria-hidden="true" />}
+                {c.nombre}
+                {c.id === crisisDelDia.id && <span className="font-mono text-[8px] font-bold text-amber-300">DÍA</span>}
+              </div>
               <div className="text-[9px] font-semibold text-white/40">{c.region}</div>
             </motion.button>
           );

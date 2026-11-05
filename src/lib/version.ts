@@ -5096,9 +5096,46 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v341.0";
-export const APP_CODENAME = "LOS PARÁMETROS MUDOS";
+export const APP_VERSION = "v342.0";
+export const APP_CODENAME = "LAS PUERTAS GEMELAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v342.0 LAS PUERTAS GEMELAS — vigésimo-quinta ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v341 cirugía → v342 expansión): por primera vez, DOS
+// puertas del anillo de la escuela se abren en una sola ronda — la 14 y la
+// 15, gemelas de nacimiento.
+// ① PUERTA 14 — EL ESPEJO: «LA CRISIS EN EL ESPEJO HOY». crisisDelDia en
+//    espejo-panel con girar() + diaDelAnillo() del reloj CENTRAL (ley v324)
+//    sobre las 9 crisis SIM del catálogo; la franja declara su naturaleza
+//    (chip SIM · MUNDO VANGUARD — el espejo no vende SIM por REAL, ley de la
+//    v95), su región, cuántas salas la miran (derivado — nada duro, ley
+//    v322) y la LEY DEL ANILLO en pantalla. El clic abre la crisis con el
+//    MISMO setCrisis de los chips 2D; ★ + DÍA en su chip (comparación en
+//    render, cero estado); fila 3D con SU rama del oyente ya existente.
+// ② PUERTA 15 — EL GRAFO: «LA RUTA DEL DÍA». rutaDelDia en grafo-panel: la
+//    semilla nace del reloj (solo nodos con grado ≥ 2 — la ruta exige un
+//    camino) y camina DOS pasos por aristas REALES del grafo (vecinosDe),
+//    saltando las hojas para no entrar en callejones; la franja pinta la
+//    cadena A —[tipo]→ B —[tipo]→ C con el color de ARISTA_META y cada nodo
+//    lleva al foco con el MISMO irANodo del buscador. Fila 3D con SU rama.
+// ③ LA LECCIÓN DE ESPECIE DE LA RONDA — EL CONTRATO MANDA: en la máquina
+//    (v340) la puerta viajó AL FINAL porque el contrato de «abrir linea» se
+//    cuenta desde la CABEZA (offset 2). En espejo y grafo los contratos
+//    («leer cable», «enfocar») se cuentan DESDE LA COLA (filas3D.length -
+//    n): la puerta al FINAL los rompería — ambas filas viajaron ANTES de las
+//    filas de acción, y el contrato respira intacto sin tocar una línea.
+// ④ CERO EFECTOS NUEVOS: las dos puertas viven en useMemo puro (espejo
+//    useEffect === 2, grafo === 4, asertado en la suite) — el censo canónico
+//    2+0 respira intacto. Catorce precedentes de puerta y ninguna copia del
+//    reloj (ley v324): QUINCE puertas — mando v313, instituto v318, red v320,
+//    canal v321, ciber v322, atlas v324, armería v326, comunidad v328, poder
+//    v330, enciclopedia v332, archivo v334, biblioteca v336, máquina v340,
+//    espejo v342, grafo v342.
+//     SUITE: +2 pines (LAS PUERTAS GEMELAS estático: el reloj central
+//    importado en ambos paneles, las leyes en pantalla, la fila ANTES del
+//    contrato de cola, useEffect 2/4, versión doble aserción — y vivo: home
+//    + health v342) + rodillos de codename (LOS PARÁMETROS MUDOS → LAS
+//    PUERTAS GEMELAS; títulos de pines como memoria — ley v312) + rodillo a
+//    v342.0 (cuatro patrones).
 // v341.0 LOS PARÁMETROS MUDOS — vigésimo-cuarta ronda del autociclo y CIRUGÍA
 // del ritmo (v340 expansión → v341 cirugía): la primera leva de la vena C —
 // los locales/params muertos que el censo estricto registró la v339 (127
