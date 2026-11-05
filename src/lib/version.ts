@@ -5096,9 +5096,37 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v350.0";
-export const APP_CODENAME = "EL FANTASMA DE LA MESA";
+export const APP_VERSION = "v351.0";
+export const APP_CODENAME = "LA FIEBRE QUE DESPIERTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v351.0 LA FIEBRE QUE DESPIERTA — trigésima-cuarta ronda del autociclo y
+// CIRUGÍA del ritmo (v350 expansión → v351 cirugía): LA PRIMERA LEVA DE LA
+// COLA EXHAUSTIVE-DEPS cae en su archivo mayor. La cola documentada (157
+// hallazgos en 95 archivos, la regla vive OFF por config) mide 148 en 94 al
+// abrir la ronda: arcade-panel, el mayor con 9. (1) LA CURA HONESTA: deps
+// reales en los 6 efectos de fin de partida (memoria, trivia, código,
+// negociador, banderas, antimisil) + el pago del radar — sin una sola
+// directiva nueva (la casa v335: el arcade queda sin cicatrices); las
+// funciones que entran en deps ganan identidad estable con useCallback
+// (registrarRec, reward, advanceTrivia, nextFlag, advanceFlag — 5) y el
+// oyente 3D llama por el ref fresco startGameRef (patrón gamesRef: suscripción
+// única, llamada viva). (2) EL DOBLE DESBLOQUEO DE LA TRIVIA se muda de
+// efecto: vivía en el timer y un cambio de tvQ con tvLeft en 0 re-armaba el
+// camino del tiempo agotado antes del setTvLeft(8) — ahora duerme atado a
+// tvLeft > 0 dentro del propio efecto del tiempo (análisis render a render
+// escrito en su comentario). (3) LA PRESA QUE EL CENSO DESTAPÓ: el hallazgo
+// L870 (rfFever ausente en deps) NO era deuda muerta — el closure del
+// intervalo de 100 ms congelaba rfFever a 0 desde el arranque: el boost de
+// spawn de la FIEBRE (chance 0.09, hasta 5 drones) dormía desde la v26; el
+// ref fresco rfFeverRef (patrón gamesRef, cero tick nuevo) lo despierta —
+// el FIEBRE x3 por fin spawnea como fue diseñado. CERO EFECTOS NUEVOS Y
+// CERO ELIMINADOS: el arcade conserva sus hooks; solo cambian deps,
+// identidades y un ref.    SUITE: +2 pines (LA FIEBRE QUE DESPIERTA
+// estático: los 5 useCallback, las 7 arrays de deps exactas, el ref fresco
+// de la FIEBRE, el oyente por ref, cero directivas, versión doble aserción —
+// y vivo: home + health v351) + rodillo (EL FANTASMA DE LA MESA → LA FIEBRE
+// QUE DESPIERTA en los VALORES de 239 asertos; mensajes históricos intactos
+// — ley v312) + rodillo a v351.0 (cuatro patrones).
 // v350.0 EL FANTASMA DE LA MESA — trigésima-tercera ronda del autociclo y
 // ronda EXPANSIVA del ritmo (v349 cirugía → v350 expansión): LA MESA VIVA
 // etapa 8 — la mesa contra el histórico propio. Tu mejor semana CERRADA

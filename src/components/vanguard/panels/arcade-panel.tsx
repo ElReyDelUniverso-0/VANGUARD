@@ -9,7 +9,7 @@
 // v83: 11) CONVOY BAJO FUEGO (canvas 60fps, luna llena, drones en picado)
 // 12) CIFRADO SIMON (secuencia con tonos) + JUEGO DEL DÍA con recompensa DOBLE.
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { CommunityGames } from "@/components/vanguard/community-games";
 import { Gamepad2, RotateCcw, Clock, Brain, Flag, Hourglass, Camera, Zap, KeyRound, Handshake, Lightbulb, Rocket, Swords, Shield, Crosshair, Truck, AudioLines } from "lucide-react";
@@ -286,7 +286,10 @@ export function ArcadePanel() {
   const currentGameRef = useRef<Exclude<GameId, null> | null>(null);
   const dobleToastRef = useRef(false);
 
-  const registrarRec = (id: GameRec, score: number) => {
+  // v351 LA FIEBRE QUE DESPIERTA: useCallback — la función entra en los deps
+  // honestos de los efectos de fin de partida (el censo exhaustive-deps la
+  // señalaba sin identidad estable); addCoins es acción de zustand (constante)
+  const registrarRec = useCallback((id: GameRec, score: number) => {
     if (submitRecord(id, score)) {
       setNewRec(id);
       setRecords(getRecords());
@@ -294,9 +297,11 @@ export function ArcadePanel() {
       sfx.achievement();
       toast.success("¡RÉCORD NUEVO!", { description: `+30 mon por superar tu marca de ${REC_LABEL[id]}` });
     }
-  };
+  }, [addCoins]);
 
-  const reward = (coins: number, xp: number, label: string) => {
+  // v351: useCallback — estable para los deps honestos; juegoHoy nace de un
+  // inicializador (constante de la sesión) y los refs no se rastrean
+  const reward = useCallback((coins: number, xp: number, label: string) => {
     // v83 JUEGO DEL DÍA: recompensa doble en el minijuego destacado
     const doble = currentGameRef.current === juegoHoy && coins > 0;
     if (coins > 0) addCoins(doble ? coins * 2 : coins, doble ? `${label} · JUEGO DEL DÍA x2` : label);
@@ -308,7 +313,7 @@ export function ArcadePanel() {
     // FIX B1: el arcade NO toca recordMinigameStats — esa metrica (score/hits reales)
     // es de Threat Assessment y Dron Strike; antes contaminaba el reto DC-2, el logro
     // "Centurion" y el ranking con monedas/XP que no son puntos de juego.
-  };
+  }, [addCoins, addXp, juegoHoy]);
 
   // ============ 1. MEMORIA DE BANDERAS ============
   const [memCards, setMemCards] = useState<{ code: string; flipped: boolean; done: boolean }[]>([]);
@@ -362,7 +367,9 @@ export function ArcadePanel() {
       toast.success(`Memoria completada en ${memMoves} jugadas`, { description: `+${prize} mon · +30 xp` });
       setGame(null);
     }
-  }, [memCards]);
+    // v351: deps honestos — el guard game === "memoria" + setGame(null) impiden
+    // el doble pago; reward/registrarRec estables por useCallback
+  }, [game, memCards, memMoves, registrarRec, reward]);
 
   // ============ 2. ORDENA LA HISTORIA ============
   const [tlEvents, setTlEvents] = useState<TimelineQ[]>([]);
@@ -446,7 +453,6 @@ export function ArcadePanel() {
   const startTrivia = () => { tvBusy.current = false; setTvScore(0); setTvN(0); setTvQ(shuffle(TRIVIA_POOL)[0]); setTvLeft(8); setGame("trivia"); };
   useEffect(() => {
     if (game !== "trivia" || !tvQ) return;
-    tvBusy.current = false; // FIX B4: nueva pregunta desbloquea
     if (tvTimer.current) clearInterval(tvTimer.current);
     setTvLeft(8);
     // FIX B5: el timer solo decrementa — los efectos secundarios (avance, toasts)
@@ -457,22 +463,29 @@ export function ArcadePanel() {
     }, 1000);
     return () => { if (tvTimer.current) clearInterval(tvTimer.current); };
   }, [tvQ, game]);
-  const advanceTrivia = (ok: boolean) => {
+  // v351: useCallback — el efecto del tiempo la lista en deps honestos
+  const advanceTrivia = useCallback((ok: boolean) => {
     if (ok) { setTvScore((s) => s + 1); }
     if (tvN + 1 >= 8) {
       const prize = (tvScore + (ok ? 1 : 0)) * 25 + 20;
       setTvQ(null); // FIX B3: cierra la pregunta YA — sin ventana donde re-clic duplica la recompensa
       setTimeout(() => { const fin = tvScore + (ok ? 1 : 0); reward(prize, 40, "ARCADE: trivia relampago"); registrarRec("trivia", fin); toast.success(`Trivia: ${fin}/8 aciertos`, { description: `+${prize} mon` }); setGame(null); }, 500);
     } else { setTvN((n) => n + 1); setTvQ(shuffle(TRIVIA_POOL.filter((x) => x !== tvQ))[0]); }
-  };
+  }, [registrarRec, reward, tvN, tvQ, tvScore]);
   // FIX B5: deteccion de tiempo agotado FUERA del updater
+  // v351: deps honestos (advanceTrivia/game/tvQ entran) y el desbloqueo de
+  // FIX B4 se MUDA aquí — vive atado a tvLeft > 0 (una cuenta atrás viva arma
+  // el camino del tiempo agotado). Si siguiera en el efecto del timer, un
+  // cambio de tvQ con tvLeft en 0 re-armaba el camino ANTES del setTvLeft(8)
+  // y la pregunta se avanzaba dos veces.
   useEffect(() => {
-    if (game !== "trivia" || !tvQ || tvLeft > 0) return;
+    if (game !== "trivia" || !tvQ) return;
+    if (tvLeft > 0) { tvBusy.current = false; return; } // FIX B4 (v351: mudado aquí)
     if (tvBusy.current) return;
     tvBusy.current = true;
     sfx.error(); toast.error("Tiempo agotado");
     advanceTrivia(false);
-  }, [tvLeft]);
+  }, [advanceTrivia, game, tvLeft, tvQ]);
   const answerTv = (i: number) => {
     if (!tvQ || game !== "trivia" || tvBusy.current) return; // FIX B4: lock
     tvBusy.current = true;
@@ -515,7 +528,9 @@ export function ArcadePanel() {
         toast.success(`Máquina descifrada: ${cpScore} aciertos`, { description: `+${prize} mon · +45 xp` });
       }, 100);
     }
-  }, [cpDone]);
+    // v351: deps honestos — cpScore se congela con cpDone (answerCodigo lo
+    // bloquea) y el pago no puede repetirse
+  }, [cpDone, cpScore, game, registrarRec, reward]);
   const answerCodigo = (i: number) => {
     if (!cpQ || cpDone) return;
     if (i === cpQ.a) { sfx.coin(); toast.success("Código roto +40"); setCpScore((s) => s + 1); }
@@ -568,7 +583,8 @@ export function ArcadePanel() {
       if (ok) { sfx.success(); toast.success(`PROPUESTA APROBADA (${ngApproval}%) · +${prize} mon`, { description: "La comunidad apoya tu salida diplomática" }); }
       else { toast(`Propuesta rechazada (${ngApproval}%) · +${prize} mon por intentarlo`, { description: "Se necesita 70% de aprobación" }); }
     }, 100);
-  }, [ngPhase, game]);
+    // v351: deps honestos — el guard ngRewarded.current ya impedía el doble pago
+  }, [ngApproval, ngPhase, ngPick, ngQ, game, registrarRec, reward]);
   const pickNegociador = (i: number) => {
     if (ngPhase !== "pick" || !ngQ) return;
     setNgPick(i);
@@ -592,14 +608,15 @@ export function ArcadePanel() {
     setFbN(0); setFbScore(0); setGame("banderas"); nextFlag();
   };
   useEffect(() => () => { if (fbTimerQ.current) clearTimeout(fbTimerQ.current); }, []);
-  const nextFlag = () => {
+  // v351: useCallback — solo módulo, setters y refs: identidad estable
+  const nextFlag = useCallback(() => {
     const t = FLAG_POOL[Math.floor(Math.random() * FLAG_POOL.length)];
     const wrong = shuffle(FLAG_POOL.filter((x) => x.code !== t.code)).slice(0, 3).map((x) => x.name);
     setFbTarget(t);
     setFbOptions(shuffle([t.name, ...wrong]));
     setFbLeft(5);
     fbBusy.current = false;
-  };
+  }, []);
   useEffect(() => {
     if (game !== "banderas" || !fbTarget) return;
     if (fbTimer.current) clearInterval(fbTimer.current);
@@ -609,14 +626,15 @@ export function ArcadePanel() {
     }, 1000);
     return () => { if (fbTimer.current) clearInterval(fbTimer.current); };
   }, [fbTarget, game]);
-  const advanceFlag = (ok: boolean) => {
+  // v351: useCallback — el efecto del tiempo la lista en deps honestos
+  const advanceFlag = useCallback((ok: boolean) => {
     if (ok) setFbScore((s) => s + 1);
     if (fbN + 1 >= 10) {
       const prize = (fbScore + (ok ? 1 : 0)) * 22 + 15;
       setFbTarget(null); // FIX B3: cierra la pregunta YA (sin re-clics que dupliquen recompensa)
       setTimeout(() => { const fin = fbScore + (ok ? 1 : 0); reward(prize, 35, "ARCADE: quiz de banderas"); registrarRec("banderas", fin); toast.success(`Banderas: ${fin}/10`, { description: `+${prize} mon` }); setGame(null); }, 500);
     } else { setFbN((n) => n + 1); fbTimerQ.current = setTimeout(nextFlag, 450); }
-  };
+  }, [fbN, fbScore, nextFlag, registrarRec, reward]);
   // FIX B5: timeout detectado fuera del updater
   useEffect(() => {
     if (game !== "banderas" || !fbTarget || fbLeft > 0) return;
@@ -625,7 +643,9 @@ export function ArcadePanel() {
     sfx.error();
     toast.error("¡Tiempo!");
     advanceFlag(false);
-  }, [fbLeft]);
+    // v351: deps honestos — nextFlag repone fbLeft=5 en el MISMO lote que el
+    // nuevo fbTarget, así el re-render no re-arma el camino del tiempo agotado
+  }, [advanceFlag, fbLeft, fbTarget, game]);
   const answerFlag = (name: string) => {
     if (!fbTarget || game !== "banderas" || fbBusy.current) return; // FIX B4: lock
     fbBusy.current = true;
@@ -714,7 +734,9 @@ export function ArcadePanel() {
         toast.success(`Defensa terminada · ${amScore} pts`, { description: amLives <= 0 ? "Base destruida — resistencia heroica" : `Base intacta x${Math.max(0, amLives)} · +${prize} mon · +25 xp` });
       }, 150);
     }
-  }, [amLeft, amLives, amOver, game]);
+    // v351: deps honestos — amScore se congela con stopAm() y el guard amOver
+    // bloquea toda segunda pasada
+  }, [amLeft, amLives, amOver, amScore, game, registrarRec, reward]);
 
   // ============ 9. DUELO RELAMPAGO (v22) ============
   const [dPhase, setDPhase] = useState<"idle" | "wait" | "go" | "round" | "over">("idle");
@@ -800,6 +822,12 @@ export function ArcadePanel() {
   const rfHitsRef = useRef(0);
   const rfTickRef = useRef(0);
   const rfTimeRef = useRef(45);
+  // v351 LA FIEBRE QUE DESPIERTA: el intervalo leía rfFever del CLOSURE (deps
+  // [game, rfOver]) — congelada a 0 desde el arranque de la partida: el boost
+  // de spawn de la FIEBRE (0.09 · hasta 5 drones) dormía desde la v26. El ref
+  // fresco lo despierta sin reiniciar el tick de 100 ms (patrón gamesRef).
+  const rfFeverRef = useRef(0);
+  rfFeverRef.current = rfFever;
 
   const startRadar = () => {
     rfRewarded.current = false;
@@ -852,7 +880,8 @@ export function ArcadePanel() {
         });
         // spawn: frecuencia sube con el tiempo y en FIEBRE
         // (probabilidad POR TICK de 100ms — 0.02 ≈ 1 dron cada 5s al inicio)
-        const feverOn = rfFever > 0;
+        // v351: feverOn lee el ref fresco — el closure la tenía congelada a 0
+        const feverOn = rfFeverRef.current > 0;
         const elapsed = 45 - rfTimeRef.current;
         const chance = feverOn ? 0.09 : Math.min(0.055, 0.018 + elapsed * 0.0009);
         if (alive.length < (feverOn ? 5 : 3) && Math.random() < chance) {
@@ -881,7 +910,8 @@ export function ArcadePanel() {
     registrarRec("radar", rfBest);
     sfx.droneEnd();
     if (rfFeverBestRef.current >= 8) toast.success("MODO FIEBRE dominado", { description: `Racha máxima: ${rfBest}` });
-  }, [game, rfOver]);
+    // v351: deps honestos — el guard rfRewarded.current impide el doble pago
+  }, [game, rfBest, rfOver, registrarRec, reward]);
 
   const rfHit = (id: number, cell: number, hostile: boolean) => {
     if (rfOver) return;
@@ -981,6 +1011,11 @@ export function ArcadePanel() {
     else if (id === "convoy") setGame("convoy");
     else if (id === "simon") setGame("simon");
   };
+  // v351: el oyente 3D se suscribe UNA vez (deps []) y llama por el ref fresco
+  // (patrón gamesRef) — envolver startGame en useCallback arrastraría los 12
+  // starters a la cascada por una suscripción que no debe re-nacer
+  const startGameRef = useRef(startGame);
+  startGameRef.current = startGame;
 
   // JUGAR desde el 3D — el cartucho tocado enciende su minijuego real
   useEffect(() => {
@@ -988,7 +1023,7 @@ export function ArcadePanel() {
       const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
       if (d?.tab !== "arcade" || d.accion !== "jugar") return;
       const g = gamesRef.current[d.idx];
-      if (g) startGame(g.id);
+      if (g) startGameRef.current(g.id);
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
