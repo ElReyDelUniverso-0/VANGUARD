@@ -17,7 +17,8 @@
 //   · LA RACHA DEL CAZADOR — abrir ≥1 ficha al día sostiene la racha
 //     (el bucle Duolingo de la casa, aplicado a la colección viva).
 //
-//   · LOS 12 TÍTULOS GLORIA — hitos reales sobre la colección: solo se
+//   · LOS 13 TÍTULOS GLORIA — hitos reales sobre la colección: solo se
+//     (v319: 12 → 13 — EL COLECCIONISTA pide el álbum completo de 11)
 //     visten los GANADOS; el próximo siempre muestra su progreso (el
 //     casi-alcanzado que muerde). El último, LEYENDA DE LA CASA, exige
 //     el álbum completo + oro + constancia.
@@ -42,7 +43,7 @@ export interface SelloDorado {
   intensidad: number; // el impacto del cable al capturarla
 }
 
-// ── LOS 12 TÍTULOS GLORIA — solo se visten los ganados ─────────────
+// ── LOS 13 TÍTULOS GLORIA — solo se visten los ganados ─────────────
 export interface CtxGloria {
   descubiertas: number;   // fichas descubiertas (0–9)
   sellosDorados: number;
@@ -64,14 +65,17 @@ export const TITULOS_GLORIA: TituloGloria[] = [
   { id: "cazador",   nombre: "CAZADOR DE FRENTES",    nota: "Descubre 3 fichas",                                color: "#7AB8FF", gana: (c) => c.descubiertas >= 3 },
   { id: "ojo",       nombre: "OJO DEL CENTRO",        nota: "Descubre 5 fichas",                                color: "#7AB8FF", gana: (c) => c.descubiertas >= 5 },
   { id: "cartografo",nombre: "CARTÓGRAFO DEL FUEGO",  nota: "Descubre 7 fichas",                                color: "#5EA0FF", gana: (c) => c.descubiertas >= 7 },
-  { id: "maestro",   nombre: "MAESTRO DEL ÁLBUM",     nota: "Completa las 9 fichas",                            color: "#B48CFF", gana: (c) => c.descubiertas >= 9 },
+  { id: "maestro",   nombre: "MAESTRO DEL ÁLBUM",     nota: "Descubre 9 fichas",                                color: "#B48CFF", gana: (c) => c.descubiertas >= 9 },
   { id: "mano-oro",  nombre: "MANO DE ORO",           nota: "Captura tu primer SELLO DORADO",                   color: "#F5C542", gana: (c) => c.sellosDorados >= 1 },
   { id: "cosecha",   nombre: "COSECHA DE ORO",        nota: "Captura 3 sellos dorados",                         color: "#F5C542", gana: (c) => c.sellosDorados >= 3 },
   { id: "hora-dorada",nombre: "HORA DORADA",          nota: "Captura un sello con intensidad ≥ 90",             color: "#FFB800", gana: (c) => c.mejorSello >= 90 },
   { id: "ferro",     nombre: "RACHA DE FERRO",        nota: "Sostén la racha del cazador 3 días",               color: "#FF8A3D", gana: (c) => c.racha >= 3 },
   { id: "centinela", nombre: "CENTINELA ETERNO",      nota: "Sostén la racha del cazador 7 días",               color: "#FF8A3D", gana: (c) => c.racha >= 7 },
   { id: "acero",     nombre: "PULSO DE ACERO",        nota: "Abre fichas 50 veces",                             color: "#3DDC97", gana: (c) => c.aperturas >= 50 },
-  { id: "leyenda",   nombre: "LEYENDA DE LA CASA",    nota: "Álbum completo + 3 sellos dorados + racha de 7",   color: "#FF3B30", gana: (c) => c.descubiertas >= 9 && c.sellosDorados >= 3 && c.racha >= 7 },
+  { id: "leyenda",   nombre: "LEYENDA DE LA CASA",    nota: "9 fichas + 3 sellos dorados + racha de 7",         color: "#FF3B30", gana: (c) => c.descubiertas >= 9 && c.sellosDorados >= 3 && c.racha >= 7 },
+  // v319: LA COLECCIÓN QUE CRECE — la cima crece con el álbum: el
+  // COLECCIONISTA pide las 11 fichas (Congo y Myanmar entraron al catálogo)
+  { id: "coleccionista", nombre: "EL COLECCIONISTA",   nota: "Completa las 11 fichas del álbum",                   color: "#F0E68C", gana: (c) => c.descubiertas >= 11 },
 ];
 
 // evalúa los títulos ganados para un contexto (orden del catálogo)

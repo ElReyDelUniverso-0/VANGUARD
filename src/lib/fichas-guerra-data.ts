@@ -8,9 +8,11 @@
 // SU carta coleccionable con rareza VIVA (la mide el motor de impacto
 // con los cables de HOY) y su noticia única.
 //
-//   · EL CATÁLOGO — las 9 guerras del mapa conflictTag de /api/news
+//   · EL CATÁLOGO — las 11 guerras del mapa conflictTag de /api/news
 //     (ukraine, gaza, lebanon, sudan, redsea, korea, taiwan, hormuz,
-//     sahel): bandos, teatro, coordenadas, inicio histórico, contexto.
+//     sahel, congo, myanmar — v319 dobló el álbum con las dos guerras
+//     mayores que faltaban, cada carta con llave REAL del escáner):
+//     bandos, teatro, coordenadas, inicio histórico, contexto.
 //     Honestidad: los datos históricos son fijos y citables; lo que
 //     respira (rareza, intensidad, pulso, frescura) lo pone el feed
 //     real — sin cables hoy, la carta duerme en SILENCIO, no se inventa.
@@ -185,6 +187,36 @@ export const FICHAS_GUERRA: FichaGuerra[] = [
     duracionTxt: "EL FRENTE MÁS LETAL DEL MUNDO (y el menos filmado)",
     contexto: "La epidemia de golpes de Estado y la yihad que avanza hacia el golfo de Guinea: hoy concentra más muertes por combate que Ucrania y Gaza.",
     color: "#D9A05B",
+  },
+  // v319: LA COLECCIÓN QUE CRECE — dos guerras mayores que el álbum
+  // ignoraba, con llave REAL del escáner (el mapa conflictTag de la API
+  // creció con ellas): hechos históricos fijos y citables; la rareza
+  // sigue viva — si el feed no trae cables, la carta duerme en SILENCIO.
+  {
+    key: "congo",
+    serie: "VG-10",
+    nombre: "EL KIVU — M23",
+    bandos: [{ bandera: "🇷🇼", nombre: "M23 · RUANDA" }, { bandera: "🇨🇩", nombre: "EJÉRCITO RDC" }],
+    teatro: "KIVU DEL NORTE · GOMA · RUTSHURU",
+    lat: -1.68, lng: 29.23,
+    inicioIso: "2022-03-28",
+    inicioTxt: "MAR 2022 · EL M23 RENACE",
+    duracionTxt: "LA GUERRA DE LOS MINERALES (el coltán y el oro financian el frente)",
+    contexto: "La mayor guerra de África que nadie filma: el M23, con apoyo ruandés documentado por la ONU, tomó Goma a comienzos de 2025; millones de desplazados y los minerales estratégicos del Kivu en el centro de la mesa.",
+    color: "#4ECDC4",
+  },
+  {
+    key: "myanmar",
+    serie: "VG-11",
+    nombre: "MYANMAR — LA JUNTA",
+    bandos: [{ bandera: "🇲🇲", nombre: "TATMADAW" }, { bandera: "⚔️", nombre: "PDF · EAO" }],
+    teatro: "SAGAING · RAKHINE · FRONTERA NORTE",
+    lat: 19.76, lng: 96.08,
+    inicioIso: "2021-02-01",
+    inicioTxt: "1 FEB 2021 · EL GOLPE",
+    duracionTxt: "DEL GOLPE A LA GUERRA CIVIL TOTAL",
+    contexto: "La guerra civil más silenciosa del planeta: la resistencia armada y las milicias étnicas le arrancaron al ejército grandes franjas del país; la Operación 1027 (2023) fue su mayor derrota en décadas.",
+    color: "#9C6BD6",
   },
 ];
 

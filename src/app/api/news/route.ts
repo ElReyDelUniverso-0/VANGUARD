@@ -113,6 +113,11 @@ function conflictTag(title: string): string | null {
     taiwan: ["taiwan", "china", "beijing", "pekin", "strait"],
     hormuz: ["hormuz", "iran", "irán"],
     sahel: ["sahel", "mali", "malí", "niger", "burkina", "jnim"],
+    // v319: LA COLECCIÓN QUE CRECE — dos guerras mayores que el mapa del
+    // feed ignoraba: cada carta de la colección es una llave REAL del
+    // escáner (una guerra del feed = una carta, sincronía pinneada).
+    congo: ["congo", "m23", "goma", "kinshasa", "rwanda", "ruanda", "kivu"],
+    myanmar: ["myanmar", "birmania", "rangún", "rangoon", "yangon", "naypyidaw", "tatmadaw"],
   };
   for (const [tag, keys] of Object.entries(map)) {
     if (keys.some((k) => lower.includes(k))) return tag;

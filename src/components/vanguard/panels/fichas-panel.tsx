@@ -13,7 +13,7 @@
 //   · LA NOTICIA ÚNICA — cada ficha porta el cable de mayor
 //     impacto de SU guerra: foto + pie + POR QUÉ IMPORTA + lector.
 //   · EL ÁLBUM — abrir una ficha la DESCUBRE (sello con fecha,
-//     progreso X/9). Persistencia vg176-fichas con el escudo de la
+//     progreso X/11 — v319). Persistencia vg176-fichas con el escudo de la
 //     casa + rehidratador (lección v171/v172).
 //   · LA PLACA DE CONFLICTO — la tercera tarjeta GTA al abrir una
 //     ficha nueva en la sesión: los dos bandos frente a frente.
@@ -306,7 +306,7 @@ export function FichasPanel() {
             <p className="mt-1 text-[8.5px] tracking-[0.16em] text-muted-foreground">SELLOS DORADOS 1/1</p>
           </div>
           <div>
-            <p className="font-mono text-lg font-bold leading-none text-violet-300">{gloria.titulos.length}/12</p>
+            <p className="font-mono text-lg font-bold leading-none text-violet-300">{gloria.titulos.length}/13</p>
             <p className="mt-1 text-[8.5px] tracking-[0.16em] text-muted-foreground">TÍTULOS GLORIA</p>
           </div>
         </div>
@@ -324,7 +324,7 @@ export function FichasPanel() {
         )}
         {!proximo && (
           <p className="mt-2 border-t border-border/50 pt-2 text-center font-mono text-[8.5px] uppercase tracking-[0.18em] text-amber-hud">
-            LOS 12 TÍTULOS SON TUYOS — LEYENDA DE LA CASA, LA GLORIA ESTÁ COMPLETA
+            LOS 13 TÍTULOS SON TUYOS — LEYENDA DE LA CASA, LA GLORIA ESTÁ COMPLETA
           </p>
         )}
       </div>
