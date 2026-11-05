@@ -603,7 +603,11 @@ export function ImperioPanel() {
       });
     }
     return filas;
-  }, [fase, ver, faccion, record]);
+    // v338: deps COMPLETAS — desde la instantánea de la v337, e y jugador son
+    // valores reactivos de verdad (el identificador del publish cambia en cada
+    // latido: `ver` era el gatillo viejo y ya no hace falta); el compilador
+    // puede PRESERVAR la memoización (el censo miente si se mide a medias)
+  }, [fase, e, jugador, faccion, record]);
   useSala3DContenido(
     "imperio",
     "IMPERIO · AUGE Y CAÍDA",

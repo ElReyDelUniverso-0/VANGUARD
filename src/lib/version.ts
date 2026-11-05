@@ -5096,9 +5096,54 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v337.0";
-export const APP_CODENAME = "LA ÚLTIMA COMPUERTA";
+export const APP_VERSION = "v338.0";
+export const APP_CODENAME = "LA MESA EN EL TABLÓN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v338.0 LA MESA EN EL TABLÓN — vigésimo-primera ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v337 cirugía → v338 expansión): LA MESA VIVA etapa 5 —
+// el desafío de la semana y el CONTRATO AL TABLÓN, la cola viva más vieja del
+// autociclo (anotada desde la v300) se paga entera.
+// ① EL DESAFÍO DE LA SEMANA (estrategia-data): `desafioDeLaSemana(semana)` —
+//    UNA mesa + UNA dificultad FIJA (la base del escenario, no la re-tirada
+//    diaria de la v313) para toda la escuela durante la semana. La semana NO
+//    estrena reloj: es la MISMA llave weekKey del TABLÓN (la que cierra el
+//    podio cierra el desafío) y el giro usa girar() del anillo de la casa
+//    (ley v324, cero copias). La misma mesa para todos: comparación honesta.
+// ② EL PAR DE LA CASA: parDesafio(d) = 40 + d×10 — estimación DECLARADA en
+//    pantalla («estimación de la escuela»), la ley de distinguir hechos de
+//    estimaciones viaja con el número.
+// ③ LA ESCUELA (estrategia-panel): franja aria-label="Desafío de la semana"
+//    con título, fuerzas, dificultad fija (★), par y TU mejor mesa vigente
+//    («la mesa te espera» si aún no jugaste) + la LEY en pantalla («la misma
+//    mesa para toda la escuela — la comparación es honesta»). La mesa del
+//    desafío abre con SU bandera (mesaDesafio) y el veredicto anota el
+//    objetivo en la jugada final: `if (desafioSemana) recordDesafio(...)`.
+// ④ LA TIENDA (game-store): desafioMejor { wk, objetivo, fecha } +
+//    recordDesafio — la ley de contadores honestos: Math.max DENTRO de la
+//    semana, se renueva con la semana nueva, JAMÁS cruza conquestWins.
+// ⑤ EL TABLÓN (ranking-panel): DesafioBoard — el contrato firmado. La MISMA
+//    llave de semana, el par, tu mejor mesa, «CIERRA EN N DÍAS» alineado con
+//    el podio y el botón que navega con el contrato de la casa
+//    (vanguard:navigate → "estrategia", el mismo que el hangar 3D).
+// ⑥ LA SALA 3D: fila del desafío AL FINAL de filas3D con acción «abrir
+//    desafío» en SU rama del oyente — sale ANTES del contrato de índices de
+//    «elegir» (d.idx - 4 intacto — patrón v326/v328/v330/v336).
+// ⑦ EL CENSO DE LA V337 PAGADO: la deuda honesta — el censo «2» de la v337
+//    se midió en el estado intermedio roto (antes de la línea del estado
+//    juego); con la línea puesta el compilador analizó filas3D y gritó 18 ×
+//    preserve-manual-memoization (deps [fase, ver, faccion, record] sin e ni
+//    jugador — reactivos de verdad desde la instantánea). Cura: deps
+//    completas [fase, e, jugador, faccion, record] (el identificador del
+//    publish cambia en cada latido: `ver` era el gatillo viejo). Censo REAL
+//    2 — medido DESPUÉS de la cura y re-medido al cierre de la ronda.
+//     SUITE: +2 pines (LA MESA EN EL TABLÓN estático: el desafío con el
+//    anillo de la casa y la llave del tablón, la tienda con Math.max
+//    honesto, la franja con la ley y el par declarado estimación, la rama
+//    3D antes del contrato de índices, el DesafioBoard con la misma llave y
+//    la navegación de la casa, las deps de imperio completas, versión doble
+//    aserción — y vivo: home + health v338) + rodillos de codename (LA
+//    ÚLTIMA COMPUERTA → LA MESA EN EL TABLÓN; nombres de pines como memoria
+//    — ley v312) + rodillo a v338.0 (cuatro patrones).
 // v337.0 LA ÚLTIMA COMPUERTA — vigésima ronda del autociclo y CIRUGÍA del
 // ritmo (v336 expansión → v337 cirugía): la SEGUNDA leva de la cola «los 95
 // hallazgos detrás de la compuerta» (v333) cae ENTERA — imperio, la última

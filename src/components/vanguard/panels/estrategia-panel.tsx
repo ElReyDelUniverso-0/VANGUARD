@@ -11,8 +11,11 @@ import { motion } from "framer-motion";
 import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play, History, RotateCcw } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { estrategiaDeHoy, escenarioPorId, type General, type EscenarioWargame } from "@/lib/estrategia-data";
+import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
+// v338 LA MESA EN EL TABLÓN — la llave de semana del TABLÓN (la misma que
+// cierra el podio semanal cierra el desafío: una sola llave, cero copias)
+import { weekKeyOf } from "@/lib/retention";
 import { ACHIEVEMENTS } from "@/lib/game-data";
 import {
   jugadasDeTurno,
@@ -68,6 +71,17 @@ export function EstrategiaGlobalPanel() {
   const insigniasCazadas = useMemo(() => unlocked.filter((id) => id.startsWith("ACH-WGM-")).length, [unlocked]);
   const [replay, setReplay] = useState<PartidaMesa | null>(null);
   const [mesa, setMesa] = useState<EscenarioWargame | null>(null);
+  // v338 LA MESA EN EL TABLÓN — el desafío de la semana: UNA mesa + UNA
+  // dificultad FIJA para toda la escuela (la llave de semana es la del
+  // tablón — una sola llave, cero copias); el récord propio vive en la
+  // tienda (desafioMejor) y el contrato al tablón lo pinta allá.
+  const semanaMesa = useMemo(() => weekKeyOf(), []);
+  const desafio = useMemo(() => desafioDeLaSemana(parseInt(semanaMesa.slice(6), 10) || 1), [semanaMesa]);
+  const recordDesafio = useGameStore((s) => s.recordDesafio);
+  const desafioMejor = useGameStore((s) => s.desafioMejor);
+  const mejorVigente = desafioMejor && desafioMejor.wk === semanaMesa ? desafioMejor.objetivo : null;
+  const [mesaDesafio, setMesaDesafio] = useState(false);
+  const abrirDesafio = () => { setMesa({ ...desafio }); setMesaDesafio(true); };
   const mejoresPartidas = useMemo(() => [...historial].sort((a, b) => b.objetivoAzul - a.objetivoAzul || b.fecha - a.fecha).slice(0, 3), [historial]);
   const generalesOrdenados = useMemo<General[]>(() => {
     const tu: General = { nombre: "TU · operador de Vanguard", victorias: victoriasTu, doctrinaFav: "conquista en vivo", eres: true };
@@ -119,9 +133,18 @@ export function EstrategiaGlobalPanel() {
         color: g.eres ? "#7AB8FF" : "#F5C542",
         d: g.eres ? "tus victorias REALES de conquista — el puesto lo das tú, no el cartel" : `doctrina favorita: ${g.doctrinaFav}`,
       })),
+      {
+        // v338 LA MESA EN EL TABLÓN — el desafío de la semana en la sala 3D
+        t: `DESAFÍO DE LA SEMANA · ${desafio.titulo}`,
+        v: `PAR ${parDesafio(desafio.dificultad)}`,
+        p: parDesafio(desafio.dificultad),
+        color: "#4D9DFF",
+        d: `dificultad FIJA ${desafio.dificultad}/5 · ${mejorVigente !== null ? `tu mejor mesa: ${mejorVigente}/100` : "la mesa te espera"} — la misma mesa para toda la escuela`,
+        a: "abrir desafío",
+      },
     ];
     return filas;
-  }, [hoy, doctrina, escSel, generalesOrdenados, memoria]);
+  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente]);
   useSala3DContenido(
     "estrategia",
     "ESTRATEGIA GLOBAL",
@@ -134,13 +157,17 @@ export function EstrategiaGlobalPanel() {
   useEffect(() => {
     const onAccion = (e: Event) => {
       const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
-      if (d?.tab !== "estrategia" || d.accion !== "elegir") return;
+      if (d?.tab !== "estrategia") return;
+      // v338: la rama del desafío sale PRIMERO y retorna — el contrato de
+      // índices de «elegir» (d.idx - 4) queda intacto (patrón v326/v328/v330)
+      if (d.accion === "abrir desafío") { abrirDesafio(); return; }
+      if (d.accion !== "elegir") return;
       const item = hoy.escenarios[d.idx - 4];
       if (item) setEscSel(hoy.escenarios.indexOf(item));
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, [hoy]);
+  }, [hoy, desafio]);
 
   // v317 LA MESA EN LA PORTADA — el feed del home ordena el revivir: la
   // tarjeta LA MESA despacha vg:mesa-revivir con la LLAVE (fecha) y la mesa
@@ -171,6 +198,41 @@ export function EstrategiaGlobalPanel() {
         right={<span className="text-[9px] font-mono uppercase px-2 py-1 border border-violet-hud/60 text-violet bg-violet-hud/10">CLASE DE HOY</span>}
       />
       <HeroOro panel="estrategia" />
+
+      {/* ══════ v338 LA MESA EN EL TABLÓN — EL DESAFÍO DE LA SEMANA ══════
+        LA MESA VIVA etapa 5: la misma mesa + la misma dificultad FIJA para
+        toda la escuela durante la semana del tablón. La comparación es
+        honesta porque la mesa es UNA; el récord es propio (contadores
+        honestos) y el tablón lo pinta (el contrato al tablón, pagado). */}
+      <div
+        className="hud-panel border-blue-400/50 p-3 space-y-2"
+        aria-label="Desafío de la semana"
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <Swords className="w-4 h-4 text-blue-400" />
+          <span className="text-[11px] font-caviar font-bold uppercase tracking-widest text-blue-400">Desafío de la semana</span>
+          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-blue-400/15 text-blue-400 rounded">{semanaMesa}</span>
+          <span className="text-[9px] font-mono px-1.5 py-0.5 border border-amber/40 text-amber rounded">dificultad FIJA {"★".repeat(desafio.dificultad)}{"☆".repeat(5 - desafio.dificultad)}</span>
+          <span className="ml-auto text-[9px] font-mono text-muted-foreground">
+            {mejorVigente !== null ? `tu mejor mesa: ${mejorVigente}/100` : "la mesa te espera"}
+          </span>
+        </div>
+        <p className="text-[13px] font-bold font-mono text-foreground">{desafio.titulo}</p>
+        <p className="text-[10px] font-mono text-muted-foreground leading-snug">
+          {desafio.fuerzas.azul} contra {desafio.fuerzas.rojo} · regla especial: {desafio.reglaEspecial} · par de la casa: {parDesafio(desafio.dificultad)}/100 (estimación de la escuela)
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={abrirDesafio}
+            className="px-3 py-1.5 bg-blue-400 text-black text-[10px] font-mono font-bold uppercase tracking-wider hover:bg-blue-300 transition-colors"
+          >
+            <Play className="w-3 h-3 inline mr-1" /> abrir la mesa del desafío
+          </button>
+          <span className="text-[9px] font-mono text-muted-foreground/80">
+            la misma mesa para toda la escuela — la comparación es honesta · el tablón la anota
+          </span>
+        </div>
+      </div>
 
       {/* CICLO OODA */}
       <div className="hud-panel border-violet-hud/40 overflow-hidden">
@@ -297,7 +359,7 @@ export function EstrategiaGlobalPanel() {
             </p>
             {/* v314 LA MESA VIVA: el escenario deja de ser ficha — se juega */}
             <button
-              onClick={() => setMesa(escenario)}
+              onClick={() => { setMesa(escenario); setMesaDesafio(false); }}
               className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-violet-hud bg-violet-hud/20 text-violet hover:bg-violet-hud/40 transition-colors text-[11px] font-mono uppercase tracking-wider"
             >
               <Play className="w-3.5 h-3.5" /> jugar esta mesa · {escenario.turns} turnos
@@ -398,7 +460,7 @@ export function EstrategiaGlobalPanel() {
       </div>
       {/* v314: la mesa viva — el portal libra la mesa del wrapper de transición
           (la misma cura del ancla robada que la cámara de la v135) */}
-      {mesa && <MesaWargame esc={mesa} onCerrar={() => setMesa(null)} />}
+      {mesa && <MesaWargame esc={mesa} onCerrar={() => setMesa(null)} desafioSemana={mesaDesafio ? semanaMesa : null} />}
       {/* v315: el revivir — replay determinista de una partida guardada */}
       {replay && <ReplayMesa partida={replay} onCerrar={() => setReplay(null)} />}
     </div>
@@ -410,13 +472,18 @@ export function EstrategiaGlobalPanel() {
 // Math.random) mueve el frente y narra. Recompensa honesta por la tienda
 // del juego (addCoins/addXp) SOLO en el handler de la jugada final — cero
 // escrituras de estado en efectos (la ley del censo).
-function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () => void }) {
+function MesaWargame({ esc, onCerrar, desafioSemana }: { esc: EscenarioWargame; onCerrar: () => void; desafioSemana?: string | null }) {
   const [estado, setEstado] = useState<EstadoWargame>(() => estadoInicial(esc));
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
   // v315 LA MESA CON MEMORIA: la partida se guarda al cerrar — en el MISMO
   // handler de la jugada final (cero escrituras de estado en efectos).
   const recordWargame = useGameStore((s) => s.recordWargame);
+  // v338 LA MESA EN EL TABLÓN — si esta mesa ES el desafío de la semana, el
+  // objetivo final queda anotado en el récord de la semana del tablón
+  const recordDesafio = useGameStore((s) => s.recordDesafio);
+  const desafioMejor = useGameStore((s) => s.desafioMejor);
+  const mejorDesafio = desafioSemana && desafioMejor?.wk === desafioSemana ? desafioMejor.objetivo : null;
   const stats = useGameStore((s) => s.wargameStats);
   const [ruta, setRuta] = useState<string[]>([]);
 
@@ -456,6 +523,9 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
         botinCoins: v.botinCoins,
         botinXp: v.botinXp,
       });
+      // v338: el contrato al tablón — el mejor objetivo del desafío de la
+      // semana se anota (Math.max dentro de la semana, contadores honestos)
+      if (desafioSemana) recordDesafio(desafioSemana, siguiente.objetivoAzul);
     }
   };
 
@@ -474,7 +544,7 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="font-caviar text-sm sm:text-base font-bold tracking-[0.14em] uppercase text-violet truncate">{esc.titulo}</h2>
-            <p className="text-[9px] font-mono text-muted-foreground uppercase truncate">mesa viva · {esc.fuerzas.azul} contra {esc.fuerzas.rojo}</p>
+            <p className="text-[9px] font-mono text-muted-foreground uppercase truncate">{desafioSemana ? "desafío de la semana · la misma mesa para toda la escuela" : `mesa viva · ${esc.fuerzas.azul} contra ${esc.fuerzas.rojo}`}</p>
           </div>
           <button onClick={onCerrar} title="Cerrar (Esc)" className="w-7 h-7 hud-corner flex items-center justify-center border-violet-hud text-violet hover:bg-violet-hud transition-colors flex-shrink-0">
             <X className="w-3.5 h-3.5" />
@@ -520,6 +590,11 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
               {estado.cerrada && (
                 <p className="text-[9.5px] font-mono text-violet border border-violet-hud/40 px-2 py-1 bg-violet-hud/5">
                   memoria de la mesa: <span className="font-bold">{stats.jugadas}</span> partidas · <span className="font-bold text-blue-400">{stats.ganadas}</span> ganadas · racha <span className="font-bold">{stats.racha}</span> (mejor {stats.mejorRacha}) — la partida quedó guardada para revivir
+                </p>
+              )}
+              {desafioSemana && (
+                <p className="text-[9.5px] font-mono text-blue-400 border border-blue-400/40 px-2 py-1 bg-blue-400/5">
+                  desafío de la semana: {mejorDesafio !== null ? `tu mejor mesa: ${mejorDesafio}/100 — el tablón de la escuela la anota` : "el tablón de la escuela la anota"}
                 </p>
               )}
             </div>

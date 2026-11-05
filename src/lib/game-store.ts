@@ -283,6 +283,10 @@ export interface GameState {
   // Contadores PROPIOS de la mesa de la escuela — JAMÁS cruzar conquestWins
   // (la ley de contadores honestos: cada contador cuenta lo suyo).
   wargameStats: { jugadas: number; ganadas: number; racha: number; mejorRacha: number; mejorObjetivo: number };
+  // v338 LA MESA EN EL TABLÓN — el mejor objetivo del DESAFÍO DE LA SEMANA:
+  // la llave de semana es la del TABLÓN (weekKey) — la misma mesa para toda
+  // la escuela; el récord es propio y honesto (Math.max, jamás se baja).
+  desafioMejor: { wk: string; objetivo: number; fecha: number } | null;
   // Historial de las últimas partidas jugadas con las jugadas EXACTAS
   // (ids por turno): el determinismo del motor las hace revivibles.
   wargameHistorial: {
@@ -398,6 +402,8 @@ export interface GameState {
   // v315 LA MESA CON MEMORIA: la mesa recuerda — se llama SOLO desde el
   // handler de la jugada final (cero escrituras de estado en efectos).
   recordWargame: (partida: { escId: string; titulo: string; dificultad: number; jugadas: string[]; objetivoAzul: number; objetivoRojo: number; ganaAzul: boolean; botinCoins: number; botinXp: number }) => void;
+  // v338: el mejor objetivo del desafío de la semana (la llave wk es la del tablón)
+  recordDesafio: (wk: string, objetivo: number) => void;
   buyAsset: (assetId: string, qty: number, price: number, fee?: number) => boolean;
   sellAsset: (assetId: string, qty: number, price: number, fee?: number) => number; // devuelve P/L
   toggleFavorite: (assetId: string) => void;
@@ -669,6 +675,7 @@ export const useGameStore = create<GameState>()(
 
       // v315 LA MESA CON MEMORIA
       wargameStats: { jugadas: 0, ganadas: 0, racha: 0, mejorRacha: 0, mejorObjetivo: 0 },
+      desafioMejor: null,
       wargameHistorial: [],
       marketHoldings: {},
       marketTrades: [],
@@ -1516,6 +1523,18 @@ export const useGameStore = create<GameState>()(
         // v316 LA ESCUELA DE INSIGNIAS — la memoria alimenta al checker canónico:
         // jugar la mesa puede desbloquear las insignias de la escuela.
         get().checkAchievements();
+      },
+
+      // v338 LA MESA EN EL TABLÓN — el mejor objetivo del DESAFÍO DE LA SEMANA:
+      // la llave wk es la del tablón; el récord es la ley de contadores
+      // honestos (Math.max dentro de la semana, se renueva con la semana).
+      recordDesafio: (wk, objetivo) => {
+        set((st) => {
+          const prev = st.desafioMejor;
+          if (!prev || prev.wk !== wk) return { desafioMejor: { wk, objetivo, fecha: Date.now() } };
+          if (objetivo > prev.objetivo) return { desafioMejor: { wk, objetivo, fecha: Date.now() } };
+          return {};
+        });
       },
 
       // ====== CENTRO DE GANANCIAS v8 ======

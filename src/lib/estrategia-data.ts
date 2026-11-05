@@ -300,6 +300,27 @@ export function diaDelAnillo(): number {
   return Math.max(0, Math.floor((hoy - inicio) / 86400000));
 }
 
+// v338: EL DESAFÍO DE LA SEMANA — LA MESA VIVA etapa 5. La escuela escoge
+// UNA mesa y UNA dificultad FIJA para toda la semana: la misma mesa para
+// toda la escuela, la comparación honesta. La semana NO estrena reloj — es
+// un ENGRANAJE de los que ya giran: el número de semana lo dicta el TABLÓN
+// (la llave weekKey de retención: la misma semana que cierra el podio cierra
+// el desafío) y el giro usa girar() del anillo de la casa (ley v324, cero
+// copias). La dificultad es la BASE del escenario (la rotación diaria de la
+// v313 re-tira dificultad por día; el desafío la clava por semana).
+export function desafioDeLaSemana(semana: number): EscenarioWargame {
+  const total = ESCENARIOS_BASE.length;
+  const base = girar(ESCENARIOS_BASE, 1, semana % total)[0];
+  return { ...base, id: `W${ESCENARIOS_BASE.indexOf(base) + 1}`, dificultad: base.dificultad };
+}
+
+// el PAR DE LA CASA: el objetivo que la escuela estima jugable para una mesa
+// de dificultad d (estimación declarada de la casa, no un hecho medido — la
+// ley de distinguir hechos de estimaciones viaja en pantalla con él).
+export function parDesafio(dificultad: number): number {
+  return 40 + dificultad * 10;
+}
+
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
   const rnd = mulberry32(fnvHash("estrategia-" + fecha));

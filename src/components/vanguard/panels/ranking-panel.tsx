@@ -16,6 +16,9 @@ import { rivalScores, RANK_RIVALS, type RivalScore } from "@/lib/hooks-data";
 import { useRetention, weekKeyOf, weekDaysLeft, WEEK_TOP3_REWARD } from "@/lib/retention";
 import { useOscura, OSCURA_TOTAL } from "@/lib/oscura";
 import { useExpedientes, EXPEDIENTES } from "@/lib/expedientes";
+// v338 LA MESA EN EL TABLÓN — el contrato de la escuela con el podio: la
+// MISMA llave de semana, el MISMO giro del anillo (cero relojes nuevos)
+import { desafioDeLaSemana, parDesafio } from "@/lib/estrategia-data";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 
 type Discipline = "XP" | "CONQ" | "TRADER";
@@ -179,6 +182,58 @@ function medalClass(pos: number): string {
   return "text-muted-foreground";
 }
 
+// ════════════════════════════════════════════════════════════
+// v338 LA MESA EN EL TABLÓN — EL DESAFÍO DE LA ESCUELA: el contrato de la
+// mesa viva con el podio se firma aquí. La semana es la MISMA llave del
+// tablón (weekKey — la que cierra el podio cierra el desafío), la mesa es
+// UNA para toda la escuela y la dificultad es FIJA (el giro del anillo de
+// la casa, cero relojes nuevos — ley v324). Tu mejor objetivo vive en la
+// tienda (recordDesafio desde la escuela); el par es estimación declarada.
+// ════════════════════════════════════════════════════════════
+function DesafioBoard() {
+  const desafioMejor = useGameStore((s) => s.desafioMejor);
+  const wk = weekKeyOf();
+  const desafio = useMemo(() => desafioDeLaSemana(parseInt(wk.slice(6), 10) || 1), [wk]);
+  const vigente = desafioMejor && desafioMejor.wk === wk ? desafioMejor.objetivo : null;
+  const par = parDesafio(desafio.dificultad);
+  const daysLeft = weekDaysLeft();
+
+  return (
+    <div className="hud-corner bg-gradient-to-br from-blue-400/12 via-secondary/40 to-violet-hud/10 border border-blue-400/40">
+      <div className="p-3 border-b border-blue-400/30 flex items-center gap-2 flex-wrap">
+        <Swords className="w-4 h-4 text-blue-400" />
+        <div className="text-xs font-mono font-bold uppercase text-foreground">DESAFÍO DE LA ESCUELA</div>
+        <span className="text-[9px] font-mono px-1.5 py-0.5 bg-blue-400/15 text-blue-400 rounded">{wk}</span>
+        <span className="ml-auto text-[9px] font-mono text-red-hud font-bold animate-pulse">
+          CIERRA EN {daysLeft} {daysLeft === 1 ? "DÍA" : "DÍAS"}
+        </span>
+      </div>
+      <div className="p-3 grid md:grid-cols-[1fr_220px] gap-3">
+        <div className="space-y-1.5 min-w-0">
+          <p className="text-[13px] font-bold font-mono text-foreground">{desafio.titulo}</p>
+          <p className="text-[10px] font-mono text-muted-foreground leading-snug">
+            dificultad FIJA {desafio.dificultad}/5 · par de la casa: {par}/100 (estimación de la escuela)
+          </p>
+          <p className="text-[10px] font-mono">
+            {vigente !== null ? (
+              <span className="text-blue-400 font-bold">tu mejor mesa: {vigente}/100 — anotada mientras la semana viva</span>
+            ) : (
+              <span className="text-muted-foreground">la mesa te espera — tu objetivo quedará anotado aquí</span>
+            )}
+          </p>
+          <p className="text-[9px] font-mono text-muted-foreground/70">la misma mesa para toda la escuela — la comparación es honesta</p>
+        </div>
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: "estrategia" }))}
+          className="text-[10px] font-mono font-bold py-2 px-2 border border-blue-400/60 text-blue-400 hover:bg-blue-400/15 transition-colors h-fit"
+        >
+          <Swords className="w-3 h-3 inline mr-1" /> JUGAR EL DESAFÍO EN LA ESCUELA
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // v61.0 ERUDITOS DEL ABISMO — TABLÓN DE ERUDITOS: la gloria de los que leen.
 // Puntuación = biblioteca absorbida (25/entrada) + ARCHIVO SECRETO (30/expediente)
 // + aciertos históricos del examen (10) + racha del examen (15/día).
@@ -313,6 +368,9 @@ export function RankingPanel() {
 
       {/* v61.0 ERUDITOS DEL ABISMO — TABLÓN DE ERUDITOS (gloria de los que leen) */}
       <ScholarsBoard />
+
+      {/* v338 LA MESA EN EL TABLÓN — EL DESAFÍO DE LA ESCUELA (el contrato al tablón) */}
+      <DesafioBoard />
 
       <div className="grid lg:grid-cols-3 gap-3">
         <Board
