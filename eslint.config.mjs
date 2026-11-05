@@ -44,7 +44,12 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "no-useless-escape": "off",
   },
 }, {
-  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "mini-services/**/dist/**", "scripts/**", "db/**"]
+  // v311: tmp/** es scratch de QA (gitignored, artefactos minificados que
+  // ahogaban la medición: 4350 avisos de ruido) y nexo-src/** es el ARCHIVO
+  // CONGELADO del legado v69 (nada lo importa; su lint es ruido, no señal).
+  // Ninguna función eliminada: solo se acota el alcance del linter al código
+  // vivo para que el baseline del árbol sea honesto y comparable.
+  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "mini-services/**/dist/**", "scripts/**", "db/**", "tmp/**", "nexo-src/**"]
 }];
 
 export default eslintConfig;

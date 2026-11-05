@@ -4437,6 +4437,50 @@
 //     EXIT 0 · health v310.0 db up · pruebas 247/247 (+2 LA SEGUNDA
 //     QUIRURGÍA) · BD intocada (1877 cables · 9 hechos, valla viva).
 // Herencia v309.0 LA PRIMERA QUIRURGÍA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v310.0";
-export const APP_CODENAME = "LA SEGUNDA QUIRURGÍA";
+// v311.0 LA TERCERA QUIRURGÍA — la deuda sigue pagándose (12 → 11): el
+//         paciente es el corte de la VOZ DEL PARTE en el CRONOATLAS
+//         (v118/v119, el panel de la máquina del tiempo): al cambiar de día
+//         el parte se calla y el aviso del botón vuelve a «Escuchar» — esa
+//         cura vivía en un efecto que escribía estado. HOY LA PUREZA SE
+//         DIVIDE, la forma canónica que react.dev prescribe cuando un valor
+//         cambia y el estado debe volver a cero («quizá no necesitas un
+//         efecto»): el corte del AUDIO es un efecto secundario legítimo y
+//         permanece en un efecto que ya NO escribe estado; el reset del
+//         AVISO se ajusta DURANTE EL RENDER — el componente guarda el día
+//         previo que ya vio y, si el día cambió, corrige su propio estado
+//         en el render en curso: React descarta ese render y re-renderea
+//         una vez antes de pintar, sin cascada y sin efecto escritor. El
+//         contrato de la lib de voz («cambiar de día la corta») queda
+//         EXACTO, y el reproductor con sus seis focos de cambio de día
+//         queda intocado (la centralización del corte en las transiciones
+//         se DESCARTÓ tras el análisis de dependencias: seis focos, dos de
+//         ellos dentro del latido del autoplay — un corte descentralizado
+//         era una cura con seis puntos de fallo). SEGUNDA HERRAMIENTA DE
+//         LA CASA: las dos cirugías anteriores (el riel de sección en la
+//         v309, el bono diario en la v310) usaron la TIENDA EXTERNA
+//         canónica porque eran puertas de hidratación; esta tercera estrena
+//         el AJUSTE DURANTE EL RENDER para los reseteos de estado que no lo
+//         son — cada paciente recibe la forma que su enfermedad pide, no la
+//         única que la casa sabe.
+// v311.0 (2) LA MEDICIÓN HONESTA — la higiene del linter: el censo del
+//         árbol completo arrojaba 4385 problemas (35 errores) y ahogaba la
+//         señal: dos territorios SIN ignorar contaminaban la medida — el
+//         scratch de QA (artefactos minificados que un arnés dejó en la
+//         casa, fuera del git, 4350 avisos de ruido) y el ARCHIVO CONGELADO
+//         del legado v69 (código histórico que NADIE importa; su lint es
+//         arqueología, no señal). Ambos entran en la lista de ignorados del
+//         linter con su crónica: NINGUNA función eliminada, NINGÚN código
+//         vivo tocado — solo se acota el alcance para que el baseline del
+//         árbol vuelva a ser comparable entre rondas. Baseline honesto
+//         nuevo: 15 errores (11 de efecto-escritor + 4 memorias) y los
+//         avisos del código vivo.
+// QA: tsc 0 TOTAL · eslint 0 errores (tocados) · censo 12 → 11 · build
+//     EXIT 0 · health v311.0 db up · pruebas 249/249 (+2 LA TERCERA
+//     QUIRURGÍA) · BD intocada (1877 cables · 9 hechos, testigo
+//     ANTES/DESPUÉS) · QA visual propio: el CRONOATLAS navega días con la
+//     consola limpia y sin bucles de render (el riesgo propio del ajuste
+//     durante el render, medido y despejado).
+// Herencia v310.0 LA SEGUNDA QUIRURGÍA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v311.0";
+export const APP_CODENAME = "LA TERCERA QUIRURGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

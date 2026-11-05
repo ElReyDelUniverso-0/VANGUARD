@@ -166,9 +166,22 @@ function TeatroKarsk({
     const id = setInterval(() => { if (!vozActiva()) setVozOn(false); }, 1000);
     return () => clearInterval(id);
   }, [vozOn]);
+  // v311 LA TERCERA QUIRURGÍA (la deuda 12 → 11): el corte del día dividido
+  // por PUREZA, la forma canónica de react.dev («quizá no necesitas un
+  // efecto»). El corte del AUDIO es un efecto secundario legítimo y queda en
+  // un efecto que ya no escribe estado; el reset del AVISO del botón se
+  // AJUSTA DURANTE EL RENDER: comparar con el día previo y corregir en el
+  // propio render (React descarta el render en curso y re-renderea una vez
+  // antes de pintar). Comportamiento idéntico: cambiar de día corta la voz y
+  // el botón vuelve a «Escuchar el parte» al instante; contrato de la lib de
+  // voz («cambiar de día la corta») intacto.
+  const [diaVoz, setDiaVoz] = useState(dia);
+  if (diaVoz !== dia) {
+    setDiaVoz(dia);
+    setVozOn(false);
+  }
   useEffect(() => {
     callarVoz();
-    setVozOn(false);
   }, [dia]);
   useEffect(() => () => callarVoz(), []);
   const ClimaIcon = CLIMA_META[clima.tipo].icon;
