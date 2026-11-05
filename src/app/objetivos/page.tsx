@@ -19,7 +19,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // morbo, adictivos». El catálogo vive en game-data.ts (ACHIEVEMENTS — progreso
 // REAL del store, no carteles); esta página es su vitrina pública y
 // indexable: 100 tarjetas agrupadas por bloque, recompensas a la vista y el
-// rey de la casa al final: EL 1% (solo cae con los otros 99).
+// rey de la casa al final: EL 1% (solo cae con todos los demás, compuesto de la fuente).
 //
 // v235.0 EL BOTÍN — la vitrina cuenta lo que vale la caza y muestra el
 // camino. La página nunca dijo cuánto vale EL BOTÍN ENTERO ni dónde se
@@ -36,7 +36,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // se cazan aquí» pero nunca declaró QUÉ alimenta cada bloque: el mapa
 // bloque→señal vivía escondido dentro de las funciones check/progress
 // del catálogo. La directiva v266 manda: el mapa se declara EN LA
-// FUENTE (CABLEADO_BLOQUES, game-data.ts — 9 bloques, 35 señales del
+// FUENTE (CABLEADO_BLOQUES, game-data.ts — 10 bloques, 39 señales del
 // estado, verificadas una a una contra los logros reales) y esta
 // vitrina lo sirve: cada bloque declara «se alimenta de:» con los
 // contadores reales del aparato. Cero campos inventados.
@@ -238,8 +238,8 @@ const TERRENOS: { ruta: string; nombre: string; verdad: string }[] = [
   {
     ruta: "/",
     nombre: "EL APARATO",
-    verdad:
-      "Los 100 se cazan aquí: niveles, rachas, informes, galería, mercado, cámaras y conquista viven en sus paneles — cada acción registra progreso de verdad.",
+    // compuesto de la fuente (lección v256): el número camina con el catálogo
+    verdad: `Los ${ACHIEVEMENTS.length} se cazan aquí: niveles, rachas, informes, galería, mercado, cámaras y conquista viven en sus paneles — cada acción registra progreso de verdad.`,
   },
   {
     ruta: "/vertigo",
@@ -294,9 +294,8 @@ export default function ObjetivosPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Los 100 Objetivos de Vanguard",
-    description:
-      "100 objetivos con recompensas reales: monedas, gemas y XP. El 1% es el objetivo supremo: solo se desbloquea con los otros 99.",
+    name: `Los ${ACHIEVEMENTS.length} Objetivos de Vanguard`,
+    description: `${ACHIEVEMENTS.length} objetivos con recompensas reales: monedas, gemas y XP. El 1% es el objetivo supremo: solo se desbloquea con los otros ${ACHIEVEMENTS.length - 1}.`,
     numberOfItems: ACHIEVEMENTS.length,
     itemListElement: ACHIEVEMENTS.slice(0, 20).map((a, i) => ({
       "@type": "ListItem",
@@ -337,14 +336,14 @@ export default function ObjetivosPage() {
             La vitrina que casi nadie termina
           </div>
           <h1 className="mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
-            LOS <span className="text-amber">100</span> OBJETIVOS
+            LOS <span className="text-amber">{ACHIEVEMENTS.length}</span> OBJETIVOS
           </h1>
           <p className="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto">
-            100 objetivos. Recompensas reales: monedas, gemas y XP que viven en tu
+            {ACHIEVEMENTS.length} objetivos. Recompensas reales: monedas, gemas y XP que viven en tu
             cuenta. No hay suerte aquí: cada objetivo se arranca con esfuerzo, y
             hay uno —{" "}
             <strong className="text-amber">EL 1%</strong> — que solo se desbloquea
-            cuando los otros 99 ya son tuyos. La pregunta es simple:{" "}
+            cuando los otros {ACHIEVEMENTS.length - 1} ya son tuyos. La pregunta es simple:{" "}
             <strong className="text-zinc-200">¿de qué lado quedarás?</strong>
           </p>
         </header>

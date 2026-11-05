@@ -1513,6 +1513,9 @@ export const useGameStore = create<GameState>()(
             ].slice(0, 50),
           };
         });
+        // v316 LA ESCUELA DE INSIGNIAS — la memoria alimenta al checker canónico:
+        // jugar la mesa puede desbloquear las insignias de la escuela.
+        get().checkAchievements();
       },
 
       // ====== CENTRO DE GANANCIAS v8 ======
@@ -2110,6 +2113,11 @@ export const useGameStore = create<GameState>()(
           betsWon: s.betStats.won,
           passTierReached: passTierFor(s.passXp),
           conquestCapturesTotal: s.conquestCapturesTotal,
+          // v316 LA ESCUELA DE INSIGNIAS — las señales de la memoria de la mesa
+          wargameJugadas: s.wargameStats.jugadas,
+          wargameGanadas: s.wargameStats.ganadas,
+          wargameMejorRacha: s.wargameStats.mejorRacha,
+          wargameMejorObjetivo: s.wargameStats.mejorObjetivo,
         };
         const newly: string[] = [];
         for (const a of ACHIEVEMENTS) {

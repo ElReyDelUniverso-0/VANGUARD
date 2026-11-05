@@ -182,7 +182,8 @@ export function AchievementsPanel() {
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
   }, [proximos]);
 
-  const cats = ["PROGRESO", "GUERRA", "MERCADO", "GANANCIAS", "VIGILANCIA", "COMBATE", "INTEL", "SOCIAL", "ESPECIAL"];
+  // v316: la escuela del mando entra en la vitrina de logros con su propio bloque
+  const cats = ["PROGRESO", "GUERRA", "MERCADO", "GANANCIAS", "VIGILANCIA", "COMBATE", "INTEL", "SOCIAL", "ESCUELA", "ESPECIAL"];
 
   return (
     <div className="space-y-3">

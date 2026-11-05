@@ -4597,6 +4597,37 @@
 //     (objetivo idéntico, sello replay EXACTO), consola limpia, sin
 //     desbordes 1440/390, cero zombis.
 // Herencia v314.0 LA MESA VIVA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v315.0";
-export const APP_CODENAME = "LA MESA CON MEMORIA";
+// v316.0 LA ESCUELA DE INSIGNIAS — etapa 3 de LA MESA VIVA (la idea anotada
+//         en la v315): la memoria de la mesa alimenta al CHECKER CANÓNICO de
+//         logros — jugar la escuela ahora caza insignias.
+//         (1) LAS 4 SEÑALES: wargameJugadas, wargameGanadas, wargameMejorRacha
+//         y wargameMejorObjetivo entran al AchievementState y al snapshot del
+//         checker (checkAchievements) desde wargameStats de la tienda.
+//         (2) LAS 6 INSIGNIAS (categoría ESCUELA nueva en el catálogo):
+//         ACH-WGM-1 (alumno de la mesa, jugar 1), ACH-WGM-WIN-1 (primera
+//         victoria), ACH-WGM-OBJ-80 (objetivo dominante 80+), ACH-WGM-STREAK-3
+//         (racha de la escuela), ACH-WGM-WIN-5 (mando de la escuela) y
+//         ACH-WGM-OBJ-100 (LA MESA PERFECTA, 100/100, legendaria).
+//         (3) EL BLOQUE ESCUELA en CABLEADO_BLOQUES (la ley v267: el mapa vive
+//         en la fuente, con cruce honesto — cada pareja campo→insignia real)
+//         y el panel de logros sirve la nueva categoría.
+//         (4) EL CORONA COMPUESTO: ACH-LOGROS-100 «EL 1%» ya no escribe el 99
+//         a mano — check/progress/descripción derivan de ACHIEVEMENTS.length
+//         (el objetivo supremo vuelve a ser exacto: «todos los demás»), y la
+//         vitrina /objetivos compone sus 100 (H1, cuerpo, JSON-LD y el mapa
+//         de caza) de la fuente — cero números a mano que envejecen.
+//         (5) LA CONEXIÓN: recordWargame llama a checkAchievements() al
+//         cerrar la partida (la misma ley de recordConquestWin) — cero
+//         escrituras de estado en efectos, censo estable; y la escuela
+//         muestra su caza: «insignias de la escuela: X de 6» compuesto de la
+//         fuente en la ficha.
+// QA: tsc 0 TOTAL · eslint 0 (tocados) · censo estable · build EXIT 0 ·
+//     health v316.0 db up · pruebas 259/259 (+2 LAS INSIGNIAS DE LA ESCUELA;
+//     rodillo: 60 aserciones a v316.0 + el corona compuesto + la vitrina sin
+//     «100» a mano) · arnés visual propio sobre el BUILD NUEVO: partida
+//     completa → insignias cazadas en el persist (unlockedAchievements con
+//     ACH-WGM-*) · consola limpia · sin desbordes 1440/390 · cero zombis.
+// Herencia v315.0 LA MESA CON MEMORIA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v316.0";
+export const APP_CODENAME = "LA ESCUELA DE INSIGNIAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

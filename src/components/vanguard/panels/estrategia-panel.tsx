@@ -13,6 +13,7 @@ import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { estrategiaDeHoy, escenarioPorId, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
+import { ACHIEVEMENTS } from "@/lib/game-data";
 import {
   jugadasDeTurno,
   estadoInicial,
@@ -60,6 +61,11 @@ export function EstrategiaGlobalPanel() {
   // últimas partidas revivibles; el revivir abre la mesa en modo replay.
   const memoria = useGameStore((s) => s.wargameStats);
   const historial = useGameStore((s) => s.wargameHistorial);
+  // v316 LAS INSIGNIAS DE LA ESCUELA — la caza se compone de la fuente canónica
+  // (cero números a mano) y se lee del estado real del operador
+  const totalInsignias = useMemo(() => ACHIEVEMENTS.filter((a) => a.category === "ESCUELA").length, []);
+  const unlocked = useGameStore((s) => s.unlockedAchievements);
+  const insigniasCazadas = useMemo(() => unlocked.filter((id) => id.startsWith("ACH-WGM-")).length, [unlocked]);
   const [replay, setReplay] = useState<PartidaMesa | null>(null);
   const [mesa, setMesa] = useState<EscenarioWargame | null>(null);
   const mejoresPartidas = useMemo(() => [...historial].sort((a, b) => b.objetivoAzul - a.objetivoAzul || b.fecha - a.fecha).slice(0, 3), [historial]);
@@ -302,6 +308,9 @@ export function EstrategiaGlobalPanel() {
                   <p className="text-[7.5px] font-mono uppercase text-muted-foreground">mejor objetivo</p>
                 </div>
               </div>
+              <p className="text-[9px] font-mono text-muted-foreground">
+                insignias de la escuela: <span className="text-amber font-bold">{insigniasCazadas}</span> de {totalInsignias} — se cazan jugando la mesa
+              </p>
               {mejoresPartidas.length > 0 && (
                 <div className="space-y-1.5">
                   <p className="text-[8px] font-mono uppercase text-muted-foreground">mejores partidas · revivibles (el motor determinista las re-juega al exacto)</p>

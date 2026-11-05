@@ -1232,7 +1232,7 @@ export interface Achievement {
   id: string;
   title: string;
   description: string;
-  category: "PROGRESO" | "COMBATE" | "INTEL" | "SOCIAL" | "ESPECIAL" | "VIGILANCIA" | "GUERRA" | "MERCADO" | "GANANCIAS";
+  category: "PROGRESO" | "COMBATE" | "INTEL" | "SOCIAL" | "ESPECIAL" | "VIGILANCIA" | "GUERRA" | "MERCADO" | "GANANCIAS" | "ESCUELA";
   icon: string; // icon key (rendered via VIcon)
   rarity: "COMUN" | "RARO" | "EPICO" | "LEGENDARIO";
   xpReward: number;
@@ -1280,6 +1280,12 @@ export interface AchievementState {
   betsWon?: number;
   passTierReached?: number;
   conquestCapturesTotal?: number;
+  // v316 — LA ESCUELA DE INSIGNIAS: la memoria de la mesa (wargameStats)
+  // alimenta al checker canónico — cada insignia se caza JUGANDO la escuela.
+  wargameJugadas?: number;
+  wargameGanadas?: number;
+  wargameMejorRacha?: number;
+  wargameMejorObjetivo?: number;
 }
 
 export const ACHIEVEMENTS: Achievement[] = [
@@ -1414,7 +1420,15 @@ export const ACHIEVEMENTS: Achievement[] = [
   // LA LEYENDA
   { id: "ACH-LOGROS-25", title: "Los primeros 25", description: "Desbloquea 25 logros: la Casa ya te respeta.", category: "ESPECIAL", icon: "medal", rarity: "EPICO", xpReward: 320, coinReward: 280, gemReward: 3, check: (s) => s.logrosUnlocked >= 25, progress: (s) => ({ current: Math.min(s.logrosUnlocked, 25), target: 25 }) },
   { id: "ACH-LOGROS-50", title: "La mitad del camino", description: "50 logros: quedan pocos que puedan verte a los ojos.", category: "ESPECIAL", icon: "trophy", rarity: "LEGENDARIO", xpReward: 600, coinReward: 520, gemReward: 5, check: (s) => s.logrosUnlocked >= 50, progress: (s) => ({ current: Math.min(s.logrosUnlocked, 50), target: 50 }) },
-  { id: "ACH-LOGROS-100", title: "EL 1%", description: "Desbloquea los otros 99 objetivos. Quien lo consigue ya no compite: preside.", category: "ESPECIAL", icon: "crown", rarity: "LEGENDARIO", xpReward: 1000, coinReward: 1000, gemReward: 10, check: (s) => s.logrosUnlocked >= 99, progress: (s) => ({ current: Math.min(s.logrosUnlocked, 99), target: 99 }) },
+  { id: "ACH-LOGROS-100", title: "EL 1%", description: "Desbloquea TODOS los demás objetivos. Quien lo consigue ya no compite: preside.", category: "ESPECIAL", icon: "crown", rarity: "LEGENDARIO", xpReward: 1000, coinReward: 1000, gemReward: 10, check: (s) => s.logrosUnlocked >= ACHIEVEMENTS.length - 1, progress: (s) => ({ current: Math.min(s.logrosUnlocked, ACHIEVEMENTS.length - 1), target: ACHIEVEMENTS.length - 1 }) },
+
+  // ====== v316: LA ESCUELA DE INSIGNIAS — la memoria de la mesa alimenta al checker ======
+  { id: "ACH-WGM-1", title: "Alumno de la mesa", description: "Juega tu primera partida en la mesa de la escuela del mando.", category: "ESCUELA", icon: "crosshair", rarity: "COMUN", xpReward: 40, coinReward: 30, gemReward: 0, check: (s) => (s.wargameJugadas ?? 0) >= 1, progress: (s) => ({ current: Math.min(s.wargameJugadas ?? 0, 1), target: 1 }) },
+  { id: "ACH-WGM-WIN-1", title: "Primera victoria de la escuela", description: "Cumple el objetivo azul en una mesa por primera vez.", category: "ESCUELA", icon: "medal", rarity: "RARO", xpReward: 120, coinReward: 100, gemReward: 1, check: (s) => (s.wargameGanadas ?? 0) >= 1, progress: (s) => ({ current: Math.min(s.wargameGanadas ?? 0, 1), target: 1 }) },
+  { id: "ACH-WGM-OBJ-80", title: "Objetivo dominante", description: "Cierra una mesa con 80 o más de objetivo azul.", category: "ESCUELA", icon: "target", rarity: "RARO", xpReward: 140, coinReward: 120, gemReward: 1, check: (s) => (s.wargameMejorObjetivo ?? 0) >= 80, progress: (s) => ({ current: Math.min(s.wargameMejorObjetivo ?? 0, 80), target: 80 }) },
+  { id: "ACH-WGM-STREAK-3", title: "Racha de la escuela", description: "Encadena 3 victorias seguidas en las mesas: la escuela ya habla de ti.", category: "ESCUELA", icon: "flame", rarity: "EPICO", xpReward: 250, coinReward: 200, gemReward: 2, check: (s) => (s.wargameMejorRacha ?? 0) >= 3, progress: (s) => ({ current: Math.min(s.wargameMejorRacha ?? 0, 3), target: 3 }) },
+  { id: "ACH-WGM-WIN-5", title: "Mando de la escuela", description: "Gana 5 mesas de wargame: las leyendas te miran distinto.", category: "ESCUELA", icon: "swords", rarity: "EPICO", xpReward: 280, coinReward: 240, gemReward: 3, check: (s) => (s.wargameGanadas ?? 0) >= 5, progress: (s) => ({ current: Math.min(s.wargameGanadas ?? 0, 5), target: 5 }) },
+  { id: "ACH-WGM-OBJ-100", title: "La mesa perfecta", description: "Cierra una mesa con el objetivo azul a 100/100: la mesa no pidió más.", category: "ESCUELA", icon: "crown", rarity: "LEGENDARIO", xpReward: 500, coinReward: 420, gemReward: 5, check: (s) => (s.wargameMejorObjetivo ?? 0) >= 100, progress: (s) => ({ current: Math.min(s.wargameMejorObjetivo ?? 0, 100), target: 100 }) },
 ];
 
 // ── v267.0 EL CABLEADO DEL APARATO — qué señal del estado alimenta cada bloque ──
@@ -1439,6 +1453,7 @@ export const CABLEADO_BLOQUES: CableadoBloque[] = [
   { bloque: "GANANCIAS", alimento: [{ campo: "wheelSpins", nombre: "giros de la ruleta" }, { campo: "crateOpens", nombre: "cajones abiertos" }, { campo: "betsWon", nombre: "apuestas ganadas" }, { campo: "passTierReached", nombre: "nivel del pase" }] },
   { bloque: "VIGILANCIA", alimento: [{ campo: "camerasPlaced", nombre: "cámaras operando" }, { campo: "cameraEvents", nombre: "eventos captados" }] },
   { bloque: "SOCIAL", alimento: [{ campo: "openedMaps", nombre: "frentes abiertos" }, { campo: "claimedMissions", nombre: "misiones reclamadas" }, { campo: "myVideos", nombre: "vídeos publicados" }, { campo: "myPolls", nombre: "encuestas publicadas" }, { campo: "myPhotos", nombre: "fotos publicadas" }] },
+  { bloque: "ESCUELA", alimento: [{ campo: "wargameJugadas", nombre: "partidas de la mesa" }, { campo: "wargameGanadas", nombre: "victorias de la mesa" }, { campo: "wargameMejorRacha", nombre: "mejor racha de la mesa" }, { campo: "wargameMejorObjetivo", nombre: "mejor objetivo de la mesa" }] },
   { bloque: "ESPECIAL", alimento: [{ campo: "coins", nombre: "monedas acumuladas" }, { campo: "gems", nombre: "gemas acumuladas" }, { campo: "unlockedBriefings", nombre: "briefings desbloqueados" }, { campo: "logrosUnlocked", nombre: "objetivos cazados" }, { campo: "cameraIncome", nombre: "ingresos de la red de cámaras" }] },
 ];
 
