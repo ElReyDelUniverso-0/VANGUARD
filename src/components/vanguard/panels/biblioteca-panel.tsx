@@ -3,6 +3,13 @@
 // v13 — BIBLIOTECA SECRETA: documentos desclasificados por nivel de acceso.
 // PÚBLICO (libre) · RESTRINGIDO (1.000) · CONFIDENCIAL (5.000) · SECRETO
 // (15.000) · ULTRA SECRETO (solo élite: nivel 8+). Desbloqueo permanente.
+// v336 — EL DOCUMENTO DEL DÍA: la DÉCIMO-SEGUNDA puerta del anillo de la
+// escuela llega a la biblioteca — girar() + diaDelAnillo() del reloj CENTRAL
+// único (ley v324: cero copias), franja con contador honesto amarrado al
+// historial REAL (ley v322), estrella en la rejilla y fila 3D AL FINAL (el
+// contrato de índices de «desclasificar»/«leer expediente» no se toca).
+// Cero efectos nuevos: la puerta vive en useMemo puro — el censo canónico 2+0
+// respira intacto.
 
 import { useState, useEffect, useMemo } from "react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -10,10 +17,15 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookLock, Lock, LockOpen, ShieldAlert, FileKey2, Crown } from "lucide-react";
+import { BookLock, Lock, LockOpen, ShieldAlert, FileKey2, Crown, Star } from "lucide-react";
 import { useGameStore } from "@/lib/game-store";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
+// v336: el reloj CENTRAL del anillo de la escuela (ley v324 — un solo reloj,
+// cero copias; duodécima puerta: mando v313, instituto v318, red v320, canal
+// v321, ciber v322, atlas v324, armería v326, comunidad v328, poder v330,
+// enciclopedia v332, archivo v334, biblioteca v336).
+import { girar, diaDelAnillo } from "@/lib/estrategia-data";
 
 type Level = "PUBLICO" | "RESTRINGIDO" | "CONFIDENCIAL" | "SECRETO" | "ULTRA";
 
@@ -140,6 +152,19 @@ export function SecretLibraryPanel() {
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [open, setOpen] = useState<Doc | null>(null);
 
+  // v336: EL DOCUMENTO DEL DÍA — la fórmula de las doce puertas, con el reloj
+  // CENTRAL de la escuela (ley v324). useMemo puro: cero efectos.
+  const docDelDia = useMemo(() => girar(DOCS, 1, diaDelAnillo() % DOCS.length)[0], []);
+  // contador honesto (ley v322): los TRES estados reales del historial, sin
+  // promesas que la casa no pueda cumplir (ULTRA sellado por nivel incluido)
+  const estadoDia = unlocked.includes(docDelDia.id)
+    ? "desclasificado — está en tu historial"
+    : docDelDia.level === "ULTRA" && level < 8
+      ? "sellado — ULTRA SECRETO: solo operadores de nivel 8+"
+      : docDelDia.cost > 0
+        ? `sellado — desclasificar cuesta ${docDelDia.cost.toLocaleString("es-ES")} mon`
+        : "sellado — apertura libre · +50 XP esperándote";
+
   useEffect(() => {
     const t = setTimeout(() => {
       try {
@@ -192,20 +217,35 @@ export function SecretLibraryPanel() {
         a: isUnlocked ? "leer expediente" : "desclasificar",
       });
     }
+    // v336: LA PUERTA DEL ANILLO — fila propia AL FINAL (los offsets de
+    // «desclasificar» y «leer expediente» quedan intactos — el contrato de
+    // índices no se toca; patrón v326/v328/v330/v332/v334)
+    filas.push({
+      t: "DOCUMENTO DEL DÍA",
+      v: docDelDia.title,
+      img: docDelDia.image,
+      color: "#F5C542",
+      d: `${LEVEL_META[docDelDia.level].label} · ${docDelDia.year} · el anillo de la biblioteca avanza uno por día — la rotación es el reloj de la escuela`,
+      a: "abrir documento del día",
+    });
     return filas;
-  }, [unlocked]);
+  }, [unlocked, docDelDia]);
   // v168: el raycast 3D ejecuta el MISMO unlock que el botón 2D
   // (offset 1: la fila 0 es la cabecera, los expedientes empiezan en idx 1)
+  // v336: la puerta del anillo viaja en el MISMO oyente — «abrir documento
+  // del día» sale por SU rama antes del contrato de índices (patrón v334)
   useEffect(() => {
     const onAccion = (e: Event) => {
       const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
-      if (det?.tab !== "biblioteca" || (det.accion !== "desclasificar" && det.accion !== "leer expediente")) return;
+      if (det?.tab !== "biblioteca") return;
+      if (det.accion === "abrir documento del día") { unlock(docDelDia); return; }
+      if (det.accion !== "desclasificar" && det.accion !== "leer expediente") return;
       const d = DOCS[det.idx - 1];
       if (d) unlock(d);
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, [unlocked, level, spendCoins, addXp]);
+  }, [unlocked, level, spendCoins, addXp, docDelDia]);
   useSala3DContenido(
     "biblioteca",
     "BIBLIOTECA SECRETA",
@@ -229,6 +269,34 @@ export function SecretLibraryPanel() {
         }
       />
 
+      {/* ===== DOCUMENTO DEL DÍA — EL ANILLO DE LA BIBLIOTECA (v336) =====
+           la sala gira con el reloj CENTRAL de la escuela (ley v324); la
+           rotación se declara EN PANTALLA: es el reloj, no una preferencia */}
+      <button
+        onClick={() => unlock(docDelDia)}
+        aria-label="Documento del día"
+        className={cn(
+          "w-full text-left rounded-sm border p-3 bg-gradient-to-br from-amber-500/10 to-black/70 hover:from-amber-500/20 transition-colors",
+          unlocked.includes(docDelDia.id) ? "border-amber-hud/30" : "border-amber-hud/80 shadow-[0_0_18px_rgba(245,158,11,0.15)] animate-pulse"
+        )}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+          <Star className="w-3.5 h-3.5 text-amber" />
+          <span className="text-amber font-bold">DOCUMENTO DEL DÍA · desclasificación destacada</span>
+          {unlocked.includes(docDelDia.id) && <span className="text-muted-foreground">· ya en tu historial</span>}
+        </div>
+        <div className="mt-1.5 font-bold text-sm text-foreground">{docDelDia.title}</div>
+        <div className="mt-1 text-xs text-muted-foreground line-clamp-2">{docDelDia.excerpt}</div>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
+          <span className={cn("px-1 py-0.5 border font-bold tracking-widest", LEVEL_META[docDelDia.level].chip)}>{LEVEL_META[docDelDia.level].label}</span>
+          <span className="text-muted-foreground">{docDelDia.year}</span>
+          <span className="text-amber-300">{estadoDia}</span>
+        </div>
+        <div className="mt-1.5 font-mono text-[9px] text-muted-foreground">
+          {DOCS.length} documentos en el catálogo · el anillo de la biblioteca avanza uno por día — la rotación es el reloj de la escuela, no una preferencia de la casa
+        </div>
+      </button>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {DOCS.map((d) => {
           const meta = LEVEL_META[d.level];
@@ -251,8 +319,10 @@ export function SecretLibraryPanel() {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 mb-1">
+                  {d.id === docDelDia.id && <Star className="w-3 h-3 text-amber fill-amber" aria-hidden="true" />}
                   <span className={cn("px-1 py-0.5 border font-mono text-[8px] font-bold tracking-widest", meta.chip)}>{meta.label}</span>
                   <span className="font-mono text-[8px] text-muted-foreground">{d.year}</span>
+                  {d.id === docDelDia.id && <span className="font-mono text-[8px] text-amber font-bold">DÍA</span>}
                 </div>
                 <div className="font-tech text-sm font-bold leading-tight mb-1">{d.title}</div>
                 <p className={cn("text-[10px] text-muted-foreground leading-snug line-clamp-2", !isUnlocked && "blur-[2px] select-none")}>

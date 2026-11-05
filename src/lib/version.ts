@@ -5096,9 +5096,47 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v335.0";
-export const APP_CODENAME = "LA COMPUERTA CURADA";
+export const APP_VERSION = "v336.0";
+export const APP_CODENAME = "EL DOCUMENTO DEL DÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v336.0 EL DOCUMENTO DEL DÍA — decimonovena ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v335 cirugía → v336 expansión): la DÉCIMO-SEGUNDA
+// puerta del anillo de la escuela se abre en la Biblioteca Secreta — los 10
+// documentos desclasificados por nivel de acceso (v13) giran ahora con el
+// reloj CENTRAL de la escuela.
+// ① EL ANILLO LLEGA A LA BIBLIOTECA: docDelDia en el panel — girar() +
+//    diaDelAnillo() importadas del reloj CENTRAL único (cero copias, ley
+//    v324). Doce puertas: mando v313, instituto v318, red v320, canal v321,
+//    ciber v322, atlas v324, armería v326, comunidad v328, poder v330,
+//    enciclopedia v332, archivo v334, biblioteca v336. El día del estreno:
+//    308 % 10 = 8 → «Dossier CROSSROADS: lo que hay bajo el permafrost».
+// ② LA FRANJA DICE LA VERDAD: aria-label="Documento del día" — estrella,
+//    título, año, chip de nivel, excerpt, y el contador HONESTO EN SUS TRES
+//    ESTADOS amarrado al historial REAL del jugador (ley v322):
+//    «desclasificado — está en tu historial» / «sellado — desclasificar
+//    cuesta N mon» / «sellado — apertura libre · +50 XP esperándote» — y el
+//    cuarto estado que la honestidad exige: ULTRA sellado por nivel («solo
+//    operadores de nivel 8+»). El clic llama a unlock() (el handler de la
+//    casa — misma moneda, mismo +50 XP, mismas reglas de nivel que abrir a
+//    mano). La LEY DEL ANILLO viaja en pantalla: la rotación es el reloj de
+//    la escuela, no una preferencia de la casa.
+// ③ LA ESTRELLA EN LA REJILLA: el documento del día lleva ★ + DÍA delante
+//    de su chip de nivel (comparación en render, d.id === docDelDia.id, cero
+//    estado). NADA DURO QUE SE PUDRA (ley v322): la franja abre con el total
+//    del catálogo derivado («10 documentos en el catálogo»).
+// ④ EL ANILLO VIAJA A LA SALA 3D: fila propia AL FINAL de filas3D (los
+//    offsets de «desclasificar» y «leer expediente» quedan intactos — el
+//    contrato de índices no se toca) con la acción «abrir documento del día»
+//    en SU rama del oyente vg:sala3d-accion ya existente (patrón
+//    v326/v328/v330/v332/v334). CERO efectos nuevos: la puerta vive en
+//    useMemo puro (useEffect === 2) — el censo canónico 2+0 respira intacto.
+//     SUITE: +2 pines (EL DOCUMENTO DEL DÍA estático: la fórmula de las doce
+//    puertas en el panel con el reloj central importado, franja con ley y
+//    contador honesto, estrella en rejilla, fila 3D con SU rama antes del
+//    contrato de índices, useEffect === 2, versión doble aserción — y vivo:
+//    home + health v336) + rodillos de codename (LA COMPUERTA CURADA → EL
+//    DOCUMENTO DEL DÍA; nombres de pines como memoria — ley v312) + rodillo
+//    a v336.0 (cuatro patrones).
 // v335.0 LA COMPUERTA CURADA — decimoctava ronda del autociclo y CIRUGÍA del
 // ritmo (v334 expansión → v335 cirugía): la primera leva de la cola «los 95
 // hallazgos detrás de la compuerta» (v333) cae ENTERA — 5 archivos se curan,
