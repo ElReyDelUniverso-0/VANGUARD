@@ -430,6 +430,54 @@ export function fantasmaDeLaMesa(
   );
 }
 
+// v352: EL SALÓN DEL FANTASMA — LA MESA VIVA etapa 9. La mesa contra TODO
+// el histórico propio: cada semana CERRADA del archivo revive en el salón
+// como un fantasma ELEGIBLE — ya no solo el mejor (etapa 8) sentado al
+// tablón, sino el coro completo: elijo a cuál de mis pasados reto hoy. El
+// título y la dificultad de cada fantasma se RECOMPUTAN del anillo
+// (desafioDeLaSemana con el número de semana que la llave trae — el mismo
+// giro de entonces, la misma receta del archivo de la etapa 7, cero relojes
+// nuevos, ley v324) y el puesto frente a la escuela de la fórmula
+// determinista calibrada al dato REAL de aquella semana (puestoDeLaMesa —
+// SIM recomputada, se declara en pantalla). El orden del salón es el
+// HONOR: objetivo descendente (el fantasma más duro manda); a igualdad,
+// la semana más reciente por indiceSemanal — la MISMA elección del fantasma
+// de la etapa 8, sin relojes. esMejor marca cuál es el fantasma del
+// tablón (fantasmaDeLaMesa) para que el salón y el tablón cuenten la
+// misma historia — un solo método, cero copias. Sin archivo el salón
+// duerme: la primera mesa cerrada lo despierta, no el historial vacío.
+export interface FantasmaSalon {
+  wk: string;
+  objetivo: number;
+  titulo: string;
+  dificultad: EscenarioWargame["dificultad"];
+  puesto: number;
+  esMejor: boolean;
+}
+export function salonDeLaMesa(
+  historial: { wk: string; objetivo: number }[],
+): FantasmaSalon[] {
+  const mejor = fantasmaDeLaMesa(historial);
+  return historial
+    .map((e) => {
+      const num = parseInt(e.wk.slice(6), 10) || 1;
+      const mesa = desafioDeLaSemana(num);
+      return {
+        wk: e.wk,
+        objetivo: e.objetivo,
+        titulo: mesa.titulo,
+        dificultad: mesa.dificultad,
+        puesto: puestoDeLaMesa(num, e.objetivo),
+        esMejor: mejor !== null && mejor.wk === e.wk,
+      };
+    })
+    .sort(
+      (a, b) =>
+        b.objetivo - a.objetivo ||
+        indiceSemanal(b.wk) - indiceSemanal(a.wk),
+    );
+}
+
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
   const rnd = mulberry32(fnvHash("estrategia-" + fecha));

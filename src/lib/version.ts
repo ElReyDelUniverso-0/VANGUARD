@@ -5096,9 +5096,43 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v351.0";
-export const APP_CODENAME = "LA FIEBRE QUE DESPIERTA";
+export const APP_VERSION = "v352.0";
+export const APP_CODENAME = "EL CORO DE LOS FANTASMAS";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v352.0 EL CORO DE LOS FANTASMAS — trigésima-quinta ronda del autociclo y
+// ronda EXPANSIVA del ritmo (v351 cirugía → v352 expansión): LA MESA VIVA
+// etapa 9 — el salón del fantasma. La mesa ya jugaba contra tu mejor semana
+// cerrada (etapa 8, un solo fantasma en el tablón); hoy el ARCHIVO COMPLETO
+// revive: cada semana cerrada del desafío (desafioHistorial, tope 12) se
+// sienta en el SALÓN DEL FANTASMA como un rival ELEGIBLE con su número fijo
+// — elijo a cuál de mis pasados reto hoy: al más duro (la cabeza del honor)
+// o a cualquiera de los otros, porque vencer al débil también es historia.
+// (1) LA DATA (estrategia-data): salonDeLaMesa — cada entrada del archivo
+// gana titulo/dificultad RECOMPUTADOS del anillo (desafioDeLaSemana con el
+// número de la llave — la misma receta del archivo de la etapa 7) y puesto
+// frente a la escuela (puestoDeLaMesa — SIM recomputada, se declara); el
+// orden es el HONOR: objetivo descendente, a igualdad la semana más
+// reciente (indiceSemanal — la MISMA elección de la etapa 8, cero relojes
+// nuevos, ley v324); esMejor marca al fantasma del tablón
+// (fantasmaDeLaMesa) para que salón y tablón cuenten la misma historia —
+// un solo método, cero copias. (2) LA MESA (estrategia-panel): el bloque
+// SALÓN DEL FANTASMA bajo el archivo — cada fantasma una tarjeta tocable
+// (semana, título, estrellas, puesto de aquella escuela, su objetivo/100,
+// VENCIDO cuando tu semana vigente ya lo supera); tocar es ELEGIR: el chip
+// del desafío canta al RIVAL DE HOY («tu rival de hoy: X/100 · semana Y» →
+// «RIVAL VENCIDO») con el botón volver al mejor; sin elección manda el
+// fantasma de la etapa 8 — el tablón NO cambia, la casa no se reescribe.
+// CERO EFECTOS NUEVOS: el salón respira en un useMemo y la elección es
+// interacción (useState con la llave de semana, patrón legal v168 — el
+// censo de la casa estable). (3) LA SALA 3D (paridad v168): la fila EL
+// SALÓN DEL FANTASMA con la cabeza del honor y su número fijo; la acción
+// reutiliza la rama del desafío — el contrato de índices de «elegir»
+// (offset 4) intacto. SUITE: +2 pines (EL CORO DE LOS FANTASMAS estático:
+// el salón vacío duerme, el salón con archivo ordena por honor y marca un
+// solo esMejor alineado con fantasmaDeLaMesa, títulos del anillo — y vivo:
+// home + health v352) + rodillo (LA FIEBRE QUE DESPIERTA → EL CORO DE LOS
+// FANTASMAS en los VALORES de los asertos; mensajes históricos intactos —
+// ley v312) + rodillo a v352.0 (cuatro patrones).
 // v351.0 LA FIEBRE QUE DESPIERTA — trigésima-cuarta ronda del autociclo y
 // CIRUGÍA del ritmo (v350 expansión → v351 cirugía): LA PRIMERA LEVA DE LA
 // COLA EXHAUSTIVE-DEPS cae en su archivo mayor. La cola documentada (157

@@ -16,7 +16,9 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 // tablón, cero copias de la fórmula fuera del módulo)
 // v348 EL ARCHIVO DE LA MESA — etapa 7: las semanas cerradas cuentan su
 // historia (racha por jueves ISO, puesto frente a la escuela recomputado)
-import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, rachaDeLaMesa, puestoDeLaMesa, fantasmaDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
+// v352 EL SALÓN DEL FANTASMA — etapa 9: el archivo completo revive como coro
+// de fantasmas ELEGIBLES — elijo a cuál de mis pasados reto hoy
+import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, rachaDeLaMesa, puestoDeLaMesa, fantasmaDeLaMesa, salonDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
 // v338 LA MESA EN EL TABLÓN — la llave de semana del TABLÓN (la misma que
 // cierra el podio semanal cierra el desafío: una sola llave, cero copias)
@@ -93,7 +95,6 @@ export function EstrategiaGlobalPanel() {
   // los cadetes, el fantasma NO se recalibra: es tu pasado con su número
   // fijo. Cero efectos nuevos: el fantasma respira en un useMemo.
   const fantasma = useMemo(() => fantasmaDeLaMesa(archivoDesafio), [archivoDesafio]);
-  const fantasmaVencido = fantasma !== null && mejorVigente !== null && mejorVigente > fantasma.objetivo;
   // v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los cadetes de la
   // escuela giran con la MISMA semana del tablón y se calibran a la escala
   // del operador (su mejor mesa REAL; si aún no jugó, el par de la casa —
@@ -129,6 +130,19 @@ export function EstrategiaGlobalPanel() {
     const mejor = todas.reduce<{ wk: string; objetivo: number } | null>((m, e) => (!m || e.objetivo > m.objetivo ? e : m), null);
     return { semanasCerradas: todas.length, racha, filas, mejor };
   }, [archivoDesafio, mejorVigente, semanaMesa]);
+  // v352 EL SALÓN DEL FANTASMA — LA MESA VIVA etapa 9: el archivo COMPLETO
+  // revive como coro de fantasmas elegibles. Cero efectos nuevos: el salón
+  // respira en un useMemo; la ELECCIÓN es interacción (useState con la llave
+  // de la semana del fantasma), no un efecto — el patrón legal v168.
+  const salon = useMemo(() => salonDeLaMesa(archivoDesafio), [archivoDesafio]);
+  const [rivalSalon, setRivalSalon] = useState<string | null>(null);
+  // el rival de HOY: el elegido en el salón; sin elección, el fantasma de la
+  // etapa 8 (el tablón no cambia — la casa manda y el default es el mejor).
+  const rivalHoy = useMemo(
+    () => salon.find((f) => f.wk === rivalSalon) ?? fantasma,
+    [salon, rivalSalon, fantasma],
+  );
+  const rivalVencido = rivalHoy !== null && mejorVigente !== null && mejorVigente > rivalHoy.objetivo;
   const abrirDesafio = () => { setMesa({ ...desafio }); setMesaDesafio(true); };
   const mejoresPartidas = useMemo(() => [...historial].sort((a, b) => b.objetivoAzul - a.objetivoAzul || b.fecha - a.fecha).slice(0, 3), [historial]);
   const generalesOrdenados = useMemo<General[]>(() => {
@@ -202,9 +216,21 @@ export function EstrategiaGlobalPanel() {
         d: `${mejorVigente !== null ? `tu mejor mesa ${mejorVigente}/100` : "sin mesa tuya esta semana"} · rivales SIM de la escuela, deterministas por semana — tu fila es la única REAL`,
         a: "abrir desafío",
       },
+      {
+        // v352 EL SALÓN DEL FANTASMA — etapa 9 en la sala 3D: el coro entero
+        // con la cabeza del honor; la acción reutiliza la rama del desafío
+        t: "EL SALÓN DEL FANTASMA",
+        v: salon.length > 0 ? `${salon.length} FANTASMAS` : "VACÍO",
+        p: salon.length > 0 ? salon[0].objetivo : 0,
+        color: "#A855F7",
+        d: salon.length > 0
+          ? `el más duro espera con su ${salon[0].objetivo}/100 fijo (${salon[0].wk}) · toca uno en la mesa y se vuelve tu rival de hoy — tu pasado NO se recalibra`
+          : "tu primera mesa cerrada despierta el salón: cada semana que dejes atrás se sienta aquí con su número fijo",
+        a: "abrir desafío",
+      },
     ];
     return filas;
-  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente, tablonMesa, puestoTu]);
+  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente, tablonMesa, puestoTu, salon]);
   useSala3DContenido(
     "estrategia",
     "ESTRATEGIA GLOBAL",
@@ -277,19 +303,33 @@ export function EstrategiaGlobalPanel() {
             {mejorVigente !== null ? `tu mejor mesa: ${mejorVigente}/100` : "la mesa te espera"}
           </span>
         </div>
-        {/* v350 EL FANTASMA DE LA MESA — el chip del rival que no se recalibra */}
-        {fantasma && (
+        {/* v350 EL FANTASMA DE LA MESA — el chip del rival que no se recalibra.
+            v352 etapa 9: el chip canta al RIVAL DE HOY — el fantasma elegido en
+            el salón; sin elección sigue siendo el mejor cerrado (etapa 8). */}
+        {rivalHoy && (
           <div className="flex items-center gap-2 flex-wrap">
-            <Ghost className={cn("w-3.5 h-3.5", fantasmaVencido ? "text-emerald-400" : "text-violet-hud")} />
+            <Ghost className={cn("w-3.5 h-3.5", rivalVencido ? "text-emerald-400" : "text-violet-hud")} />
             <span className={cn(
               "text-[9px] font-mono px-1.5 py-0.5 rounded",
-              fantasmaVencido ? "bg-emerald-500/10 text-emerald-300" : "bg-violet-hud/15 text-violet",
+              rivalVencido ? "bg-emerald-500/10 text-emerald-300" : "bg-violet-hud/15 text-violet",
             )}>
-              {fantasmaVencido
-                ? `FANTASMA VENCIDO — superaste tu ${fantasma.objetivo}/100 de la semana ${fantasma.wk}`
-                : `tu fantasma te espera: ${fantasma.objetivo}/100 · semana ${fantasma.wk}`}
+              {rivalSalon
+                ? (rivalVencido
+                  ? `RIVAL VENCIDO — superaste su ${rivalHoy.objetivo}/100 de la semana ${rivalHoy.wk}`
+                  : `tu rival de hoy: ${rivalHoy.objetivo}/100 · semana ${rivalHoy.wk}`)
+                : (rivalVencido
+                  ? `FANTASMA VENCIDO — superaste tu ${rivalHoy.objetivo}/100 de la semana ${rivalHoy.wk}`
+                  : `tu fantasma te espera: ${rivalHoy.objetivo}/100 · semana ${rivalHoy.wk}`)}
             </span>
-            <span className="text-[9px] font-mono text-muted-foreground/70">los cadetes se calibran a tu escala — el fantasma NO se mueve: es tu mejor semana cerrada</span>
+            {rivalSalon && (
+              <button
+                onClick={() => setRivalSalon(null)}
+                className="text-[9px] font-mono px-1.5 py-0.5 rounded border border-violet-hud/40 text-violet/80 hover:bg-violet-hud/10 transition-colors"
+              >
+                volver al mejor
+              </button>
+            )}
+            <span className="text-[9px] font-mono text-muted-foreground/70">los cadetes se calibran a tu escala — el fantasma NO se mueve: es tu semana cerrada con su número fijo</span>
           </div>
         )}
         <p className="text-[13px] font-bold font-mono text-foreground">{desafio.titulo}</p>
@@ -390,6 +430,70 @@ export function EstrategiaGlobalPanel() {
           <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
             archivo: tus filas son REALES (contadores propios — cada semana guarda su mejor mesa, tope 12); el título de cada mesa se recomputa del anillo y el puesto de la escuela es SIM recomputada con la escala real de aquella semana.
           </p>
+        </div>
+
+        {/* v352 EL SALÓN DEL FANTASMA — LA MESA VIVA etapa 9: cada semana
+            cerrada del archivo revive como un fantasma ELEGIBLE — el coro
+            completo de tus pasados. Toca uno y se vuelve tu RIVAL DE HOY (el
+            chip del desafío canta su número fijo). Las filas son REALES
+            (contadores propios); título/puesto recomputados del anillo (SIM
+            recomputada, se declara). Sin archivo el salón duerme. */}
+        <div className="border-t border-border/40 pt-2 space-y-1" aria-label="Salón del fantasma">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Ghost className="w-3.5 h-3.5 text-violet-hud" />
+            <span className="text-[10px] font-caviar font-bold uppercase tracking-widest text-violet">Salón del fantasma</span>
+            <span className="text-[9px] font-mono px-1.5 py-0.5 bg-white/5 text-muted-foreground rounded">
+              {salon.length === 1 ? "1 fantasma" : `${salon.length} fantasmas`}
+            </span>
+            {rivalSalon && (
+              <span className="text-[9px] font-mono px-1.5 py-0.5 bg-violet-hud/15 text-violet rounded">rival de hoy: semana {rivalSalon}</span>
+            )}
+            <span className="ml-auto text-[9px] font-mono text-muted-foreground">
+              {salon.length > 0 ? `el más duro: ${salon[0].objetivo}/100` : "el salón duerme"}
+            </span>
+          </div>
+          {salon.length === 0 ? (
+            <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
+              sin semanas cerradas aún — tu primera mesa cerrada despierta el salón y cada semana que dejes atrás se sienta aquí como un rival con su número fijo
+            </p>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                {salon.map((f) => {
+                  const vencido = mejorVigente !== null && mejorVigente > f.objetivo;
+                  const elegido = rivalSalon === f.wk;
+                  return (
+                    <button
+                      key={f.wk}
+                      onClick={() => setRivalSalon(elegido ? null : f.wk)}
+                      aria-pressed={elegido}
+                      className={cn(
+                        "text-left px-2 py-1.5 rounded-sm text-[10px] font-mono transition-colors border",
+                        elegido
+                          ? "bg-violet-hud/15 border-violet-hud/60"
+                          : "bg-white/[0.03] border-transparent hover:border-violet-hud/30",
+                      )}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span className={cn("font-bold", elegido ? "text-violet" : "text-foreground/70")}>
+                          {f.esMejor ? "TU FANTASMA" : "tu fantasma"}
+                        </span>
+                        <span className="text-muted-foreground/50 hidden sm:inline">{f.wk}</span>
+                        {vencido && <span className="text-[8px] px-1 rounded bg-emerald-500/15 text-emerald-300">VENCIDO</span>}
+                        <span className="ml-auto text-blue-300 font-bold">{f.objetivo}/100</span>
+                      </span>
+                      <span className="block truncate text-[9px] text-muted-foreground/70 mt-0.5">
+                        {f.titulo} <span className="text-amber/50">{"★".repeat(f.dificultad)}</span> · {f.puesto}º de la escuela esa semana
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
+                toca un fantasma y se vuelve tu rival de hoy: su número es REAL (contadores propios) y NO se recalibra — el título y el puesto de la escuela se recomputan del anillo (SIM recomputada, se declara). el tablón sigue cantando al mejor: tu fantasma de la etapa 8.
+              </p>
+            </>
+          )}
         </div>
       </div>
 
