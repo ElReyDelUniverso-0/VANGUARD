@@ -4353,6 +4353,49 @@
 //     v308.0 db up · pruebas 242/242 (+2 EL ESPEJO DEL NAVEGADOR) · espejo
 //     vivo: 6 salas limpias · BD intocada (1877 cables · 9 hechos).
 // Herencia v307.0 LA LEY DE LA VELOCIDAD y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v308.0";
-export const APP_CODENAME = "EL ESPEJO DEL NAVEGADOR";
+// v309.0 LA PRIMERA QUIRURGÍA — el pago de la deuda documentada: de los 15
+//         setState-en-efecto censados (v305/v307), la casa opera el PRIMERO
+//         con QA visual propio — el riel de sección (v170): su puerta de
+//         hidratación y su plegado persistente viven ahora en TIENDAS
+//         EXTERNAS CANÓNICAS (useSyncExternalStore con server snapshot, la
+//         forma que el propio lint y react.dev piden) en vez de efectos que
+//         escriben estado: el HTML del server no miente (riel desplegado en
+//         el SSR), React re-compara el snapshot al montar y re-renderea una
+//         vez, y el plegado se lee por snapshot con suscripción. REGALO DE
+//         LA QUIRURGÍA: el plegado ahora SYNCHRONIZA ENTRE PESTAÑAS (evento
+//         storage de las otras + evento propio para la misma). La deuda baja
+//         15 → 13. QA VISUAL PROPIO (la regla de la casa): SSR desplegado,
+//         plegar→memoria→recarga→sobrevive→desplegar, fila cero de
+//         favoritos con la basura filtrada (llave inválida ignorada),
+//         consola limpia sin errores de hidratación, cero zombis.
+//         growth-share queda INTOCABLE (patrón deliberado, lección v306).
+// v309.0 (2) LA VALLA DEL ARCHIVO — la herida P0 de la ronda, cazada con
+//         medición: la PODA v84 (ventana de 6 días, «la BD queda pequeña y
+//         siempre reciente») cosechó 1600 cables en UN refresco (1877→422,
+//         medido con testigo) cuando el refresco logró salir a red tras
+//         semanas de candado/ bloqueo — y el archivo que las salas v261
+//         (paginación) v262 (canal) v263 (creciente) v288/v289 (pulso) y el
+//         sitemap v269 (piso 1800 puertas, «el archivo entero») declararon
+//         PROFUNDO quedó hueco: la suite lo gritó (6 pruebas vivas caídas).
+//         RECONSTRUCCIÓN con histogramas: el canon tenía 1800 cables con
+//         fecha INTEGER (época) y 77 con fecha TEXT (SQL crudo) — en SQLite
+//         TEXT es siempre mayor que INTEGER, así que la poda JAMÁS pudo
+//         comerse los 77: eran inmortales; los 1600 cosechados eran los
+//         INTEGER viejos. La contradicción era de ERAS: la poda v84 (archivo
+//         pequeño) contra el archivo profundo de las salas v261+. CURA
+//         ADITIVA (ninguna función eliminada): LA VALLA — la poda sigue
+//         podando (ventana y exclusión de curadas intactas) pero NUNCA baja
+//         del piso del archivo (PISO 1900 > 1800, la ley v269 con margen):
+//         mide el excedente y cosecha SOLO ese excedente, los más viejos
+//         primero, por ids exactos. Archivo sano: reciente Y profundo. El
+//         archivo cosechado se RESTAURÓ del canon (git, 1877 · integridad
+//         ok) — la cosecha había sido un efecto de las visitas del QA, no
+//         del tráfico real.
+// QA: tsc 0 TOTAL · eslint 0 errores (tocados) · censo 15 → 13 · build
+//     EXIT 0 · health v309.0 db up · pruebas 245/245 (+3 LA PRIMERA
+//     QUIRURGÍA ×2 + LA VALLA DEL ARCHIVO) · BD intocada (1877 cables ·
+//     9 hechos, testigo ANTES/DESPUÉS con la valla viva).
+// Herencia v308.0 EL ESPEJO DEL NAVEGADOR y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v309.0";
+export const APP_CODENAME = "LA PRIMERA QUIRURGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

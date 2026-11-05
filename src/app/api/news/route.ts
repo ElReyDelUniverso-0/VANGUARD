@@ -583,11 +583,39 @@ async function refreshGdeltInBackground() {
 
   // v84.0: PODA — la noticia de más de 6 días sale del archivo (salvo curadas,
   // que son el respaldo evergreen). La BD queda pequeña y siempre reciente.
+  // v309.0 LA VALLA DEL ARCHIVO — las dos eras de la casa reconciliadas con
+  // medición: la poda v84 quiere un archivo pequeño, pero las salas del
+  // archivo (v261 paginación · v262 canal · v263 creciente · v288/v289
+  // pulso) y el sitemap (v269, «el archivo entero», piso 1800 puertas)
+  // declararon el archivo PROFUNDO — y el 2026-11-05 la poda cosechó 1600
+  // cables en un solo refresco (1877→422, medido) cuando la red abrió tras
+  // semanas de candado: las salas quedaron huecas y la suite lo gritó.
+  // LA VALLA: la poda sigue podando (su función v84 intacta) pero NUNCA
+  // deja el archivo debajo del piso que la propia suite declara — recorta
+  // solo el EXCEDENTE sobre el piso, los más viejos primero. Archivo sano:
+  // reciente Y profundo.
   try {
+    const PISO_ARCHIVO = 1900; // la valla: >= 1800 (ley v269) con margen para la respiración
     const limite = new Date(Date.now() - 6 * 24 * 3600_000);
-    await db.newsItem.deleteMany({
-      where: { publishedAt: { lt: limite }, externalId: { not: { startsWith: "curated-" } } },
-    });
+    const dondeVieja = { publishedAt: { lt: limite }, externalId: { not: { startsWith: "curated-" } } };
+    const [total, enVentana] = await Promise.all([
+      db.newsItem.count(),
+      db.newsItem.count({ where: dondeVieja }),
+    ]);
+    const excedente = Math.max(0, total - PISO_ARCHIVO);
+    if (excedente > 0 && enVentana > 0) {
+      // solo el excedente, los más viejos primero (los TEXT inmortales por
+      // orden de tipos de SQLite quedan al final y sobreviven: son 77, medidos)
+      const cosechables = await db.newsItem.findMany({
+        where: dondeVieja,
+        orderBy: { publishedAt: "asc" },
+        take: Math.min(excedente, enVentana),
+        select: { id: true },
+      });
+      if (cosechables.length > 0) {
+        await db.newsItem.deleteMany({ where: { id: { in: cosechables.map((x) => x.id) } } });
+      }
+    }
   } catch {
     /* la poda es best-effort */
   }

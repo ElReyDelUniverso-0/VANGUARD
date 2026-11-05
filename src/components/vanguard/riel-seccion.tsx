@@ -18,7 +18,7 @@
 // un toque, sin menú y sin búsqueda.
 // ══════════════════════════════════════════════════════════════════════
 
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useCallback, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import { ChevronsDownUp, ChevronsUpDown, History, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,44 @@ import { useFavoritos } from "@/lib/favoritos-store";
 // el prefetch es UNA VEZ por módulo y por sesión (los chunks se quedan)
 const prefetchados = new Set<string>();
 
+// ══════════════════════════════════════════════════════════════════════
+// v309.0 LA PRIMERA QUIRURGÍA — LA TIENDA EXTERNA DEL RIEL.
+// Los dos setState-en-efecto que la v170 dejó documentados mueren con la
+// forma CANÓNICA que el propio lint pide (react.dev/learn/you-might-not-
+// need-an-effect): useSyncExternalStore con server snapshot.
+//   · montado: falso en el server snapshot (el HTML no miente) y verdadero
+//     en el cliente tras la hidratación — React re-compara el snapshot al
+//     montar y re-renderea solo: la puerta de hidratación sin efecto.
+//   · plegado: el localStorage es la tienda externa que siempre fue — ahora
+//     se lee por snapshot y se vela por SUSCRIPCIÓN: el evento `storage`
+//     (otras pestañas) y el evento propio (misma pestaña, que escribe sin
+//     disparar `storage`). REGALO DE LA QUIRURGÍA: el riel plegado ahora
+//     SYNCHRONIZA ENTRE PESTAÑAS — pliegas en una, se pliega en todas.
+// El atributo data-vg-riel-plegado y la llave vg170-riel quedan IDÉNTICOS
+// (el CSS y la memoria de la v170 no se enteran).
+// ══════════════════════════════════════════════════════════════════════
+const LLAVE_RIEL = "vg170-riel";
+const EVENTO_RIEL = "vg170-riel-cambio";
+
+function suscribirPlegado(cb: () => void): () => void {
+  window.addEventListener("storage", cb);
+  window.addEventListener(EVENTO_RIEL, cb);
+  return () => {
+    window.removeEventListener("storage", cb);
+    window.removeEventListener(EVENTO_RIEL, cb);
+  };
+}
+
+function leerPlegado(): boolean {
+  try { return localStorage.getItem(LLAVE_RIEL) === "1"; } catch { return false; }
+}
+
+// la puerta de hidratación: la tienda que nunca cambia — React compara el
+// snapshot del cliente contra el del server AL MONTAR y re-renderea una vez
+const suscribirMontado = (_cb: () => void): (() => void) => () => {};
+const siMontado = () => true;
+const noMontado = () => false;
+
 export function RielSeccion({
   tab,
   onChange,
@@ -47,22 +85,15 @@ export function RielSeccion({
   const recientes = useCama((s) => s.recientes);
   const favoritos = useFavoritos((s) => s.favoritos);
   const toggleFav = useFavoritos((s) => s.toggleFav);
-  const [montado, setMontado] = useState(false);
-  const [plegado, setPlegado] = useState(false);
-
-  useEffect(() => setMontado(true), []);
-  useEffect(() => {
-    try {
-      setPlegado(localStorage.getItem("vg170-riel") === "1");
-    } catch {}
-  }, []);
+  // v309 LA QUIRURGÍA: cero setState-en-efecto — las dos tiendas externas
+  // (la hidratación y el plegado persistente) viven en useSyncExternalStore
+  const montado = useSyncExternalStore(suscribirMontado, siMontado, noMontado);
+  const plegado = useSyncExternalStore(suscribirPlegado, leerPlegado, noMontado);
 
   const alternarPlegado = useCallback(() => {
-    setPlegado((v) => {
-      const n = !v;
-      try { localStorage.setItem("vg170-riel", n ? "1" : "0"); } catch {}
-      return n;
-    });
+    const n = !leerPlegado();
+    try { localStorage.setItem(LLAVE_RIEL, n ? "1" : "0"); } catch {}
+    window.dispatchEvent(new Event(EVENTO_RIEL));
   }, []);
 
   const seccion = sectionOfTab(tab);
