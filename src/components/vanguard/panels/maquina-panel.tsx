@@ -21,7 +21,7 @@ import {
   Hourglass, Play, Pause, ChevronLeft, ChevronRight, FileText, Landmark,
   Anchor, Crosshair, Radiation, CalendarDays, Skull, Bomb, Plane, Truck,
   CloudRain, CloudSnow, CloudFog, Wind, Sun, CloudLightning, Gauge, Radio,
-  Volume2, SquareX, Download, X, Snowflake,
+  Volume2, SquareX, Download, X, Snowflake, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigateTo } from "@/lib/nav";
@@ -47,6 +47,11 @@ import {
   type ClimaInfo, type HistoriaLoc,
 } from "@/lib/frente-zonas-data";
 import { fnv89 } from "@/lib/pulsos-data";
+// v340: LA DÉCIMO-TERCERA PUERTA del anillo de la escuela llega a la máquina
+// del tiempo — girar() + diaDelAnillo() del reloj CENTRAL único (ley v324:
+// cero copias); el archivo REAL que la máquina desclasifica cada día lo
+// escoge el reloj de la escuela, no una preferencia de la casa.
+import { girar, diaDelAnillo } from "@/lib/estrategia-data";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
 const PIN_META: Record<PinTeatro["tipo"], { color: string; icon: typeof Landmark }> = {
@@ -1093,6 +1098,10 @@ export function MaquinaPanel() {
   );
   const sel = opciones.find((o) => o.id === crisisSel) ?? opciones[0];
 
+  // v340: EL ARCHIVO DEL DÍA — la fórmula de las trece puertas, con el reloj
+  // CENTRAL de la escuela (ley v324). useMemo puro: cero efectos.
+  const archivoDelDia = useMemo(() => girar(ARCHIVO, 1, diaDelAnillo() % ARCHIVO.length)[0], []);
+
   // ════════════════════════════════════════════════════════════
   // v168: PARIDAD 2D→3D — LA MÁQUINA DEL TIEMPO en volumen: la
   // línea temporal activa (SIM o REAL), su modo y todas las
@@ -1133,8 +1142,18 @@ export function MaquinaPanel() {
         d: `Hecho real de la crisis · ${Math.max(0, sel.c.hechos.length - 1)} más en el panel 2D`,
       });
     }
+    // v340: LA PUERTA DEL ANILLO — fila propia AL FINAL (el contrato de
+    // índices de «abrir linea» queda intacto — offset 2; patrón
+    // v326/v328/v330/v332/v334/v336)
+    filas.push({
+      t: "ARCHIVO DEL DÍA",
+      v: archivoDelDia.rango,
+      color: "#3DDCFF",
+      d: `REAL · ${archivoDelDia.nombre} · el anillo de la máquina avanza un archivo por día — la rotación es el reloj de la escuela`,
+      a: "abrir archivo del día",
+    });
     return filas;
-  }, [opciones, sel]);
+  }, [opciones, sel, archivoDelDia]);
   useSala3DContenido(
     "maquina",
     "MÁQUINA DEL TIEMPO",
@@ -1146,10 +1165,13 @@ export function MaquinaPanel() {
   );
 
   // v168: oyente de acciones del mundo 3D — mismo setCrisis que los chips 2D
+  // v340: la puerta del anillo viaja en el MISMO oyente — «abrir archivo del
+  // día» sale por SU rama antes del contrato de índices (patrón v334/v336)
   useEffect(() => {
     const onAccion = (e: Event) => {
       const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
       if (det?.tab !== "maquina") return;
+      if (det.accion === "abrir archivo del día") { setCrisis(`arc-${archivoDelDia.id}`); return; }
       if (det.accion === "abrir linea") {
         // offset 2: la línea activa y su modo preceden a las opciones
         const o = opciones[det.idx - 2];
@@ -1158,11 +1180,39 @@ export function MaquinaPanel() {
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, [opciones, setCrisis]);
+  }, [opciones, setCrisis, archivoDelDia]);
 
   return (
     <div className="mx-auto max-w-6xl px-3 pb-24 pt-2 sm:px-4">
       <HeroOro panel="maquina" />
+
+      {/* ===== ARCHIVO DEL DÍA — EL ANILLO DE LA MÁQUINA (v340) =====
+           la máquina gira con el reloj CENTRAL de la escuela (ley v324); la
+           rotación se declara EN PANTALLA: es el reloj, no una preferencia */}
+      <button
+        onClick={() => setCrisis(`arc-${archivoDelDia.id}`)}
+        aria-label="Archivo del día"
+        className={cn(
+          "mt-3 w-full text-left rounded-2xl border p-3.5 bg-gradient-to-br from-cyan-400/10 to-black/60 transition-colors hover:from-cyan-400/20",
+          sel.id === `arc-${archivoDelDia.id}` ? "border-cyan-400/40" : "border-cyan-400/70 shadow-[0_0_18px_rgba(61,220,255,0.14)] animate-pulse",
+        )}
+      >
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider">
+          <Star className="h-3.5 w-3.5 text-cyan-300" />
+          <span className="font-bold text-cyan-300">ARCHIVO DEL DÍA · cronología real destacada</span>
+          {sel.id === `arc-${archivoDelDia.id}` && <span className="text-white/40">· abierta en la máquina</span>}
+        </div>
+        <div className="mt-1.5 text-sm font-black text-amber-100">{archivoDelDia.nombre}</div>
+        <p className="mt-1 text-xs leading-relaxed text-white/60 line-clamp-2">{archivoDelDia.resumen}</p>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
+          <span className="rounded-full border border-cyan-400/50 bg-cyan-400/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-cyan-300">REAL · VERIFICABLE</span>
+          <span className="text-white/40">{archivoDelDia.rango}</span>
+          <span className="text-cyan-200/80">fuente: {archivoDelDia.fuente}</span>
+        </div>
+        <div className="mt-1.5 font-mono text-[9px] text-white/35">
+          {ARCHIVO.length} cronologías reales en el catálogo · el anillo de la máquina avanza un archivo por día — la rotación es el reloj de la escuela, no una preferencia de la casa
+        </div>
+      </button>
 
       {/* selector de líneas temporales */}
       <div className="vg-chips mt-3 flex gap-2 overflow-x-auto pb-1">
@@ -1185,7 +1235,9 @@ export function MaquinaPanel() {
             >
               <div className="flex items-center gap-1.5 text-[12px] font-black text-white/90">
                 {real && <CalendarDays className="h-3 w-3 text-cyan-300" />}
+                {o.kind === "real" && o.a.id === archivoDelDia.id && <Star className="h-3 w-3 fill-cyan-300 text-cyan-300" aria-hidden="true" />}
                 {o.kind === "sim" ? o.c.nombre : o.a.nombre}
+                {o.kind === "real" && o.a.id === archivoDelDia.id && <span className="font-mono text-[8px] font-bold text-cyan-300">DÍA</span>}
               </div>
               <div className="text-[9px] font-semibold text-white/40">
                 {real ? o.a.rango : o.c.region}

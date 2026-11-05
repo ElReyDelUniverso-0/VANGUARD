@@ -5096,9 +5096,45 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v339.0";
-export const APP_CODENAME = "EL PESO MUERTO";
+export const APP_VERSION = "v340.0";
+export const APP_CODENAME = "EL ARCHIVO DEL DÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v340.0 EL ARCHIVO DEL DÍA — vigésimo-tercera ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v339 cirugía → v340 expansión): la DÉCIMO-TERCERA
+// puerta del anillo de la escuela se abre en la máquina del tiempo — las 5
+// cronologías REALES del ARCHIVO (MK-ULTRA, STARGATE, PAPERCLIP, COINTELPRO,
+// ECHELON — documentos desclasificados con fuente nombrada) giran ahora con
+// el reloj CENTRAL de la escuela.
+// ① EL ANILLO LLEGA A LA MÁQUINA: archivoDelDia en el panel — girar() +
+//    diaDelAnillo() importadas del reloj CENTRAL único (cero copias, ley
+//    v324). Trece puertas: mando v313, instituto v318, red v320, canal v321,
+//    ciber v322, atlas v324, armería v326, comunidad v328, poder v330,
+//    enciclopedia v332, archivo v334, biblioteca v336, máquina v340. El día
+//    del estreno: 308 % 5 = 3 → «COINTELPRO: el FBI contra sus propios
+//    ciudadanos».
+// ② LA FRANJA DICE LA VERDAD: aria-label="Archivo del día" — estrella, título,
+//    rango, chip REAL · VERIFICABLE y la FUENTE nombrada en pantalla (la ley
+//    de distinguir hechos de estimaciones viaja con ella); la franja abre la
+//    cronología con el MISMO setCrisis de los chips 2D. La LEY DEL ANILLO
+//    viaja en pantalla: la rotación es el reloj de la escuela, no una
+//    preferencia de la casa.
+// ③ LA ESTRELLA EN LOS CHIPS: el archivo del día lleva ★ + DÍA delante de su
+//    nombre (comparación en render, o.a.id === archivoDelDia.id, cero estado).
+//    NADA DURO QUE SE PUDRA (ley v322): la franja abre con el total del
+//    catálogo derivado («5 cronologías reales en el catálogo»).
+// ④ EL ANILLO VIAJA A LA SALA 3D: fila propia AL FINAL de filas3D (el
+//    contrato de índices de «abrir linea» queda intacto — offset 2) con la
+//    acción «abrir archivo del día» en SU rama del oyente vg:sala3d-accion ya
+//    existente (patrón v326/v328/v330/v332/v334/v336). CERO efectos nuevos:
+//    la puerta vive en useMemo puro (useEffect === 5) — el censo canónico 2+0
+//    respira intacto.
+//     SUITE: +2 pines (EL ARCHIVO DEL DÍA estático: la fórmula de las trece
+//    puertas en el panel con el reloj central importado, franja con ley y
+//    fuente nombrada, estrella en chips, fila 3D con SU rama antes del
+//    contrato de índices, useEffect === 5, versión doble aserción — y vivo:
+//    home + health v340) + rodillos de codename (EL PESO MUERTO → EL ARCHIVO
+//    DEL DÍA; nombres de pines como memoria — ley v312) + rodillo a v340.0
+//    (cuatro patrones).
 // v339.0 EL PESO MUERTO — vigésimo-segunda ronda del autociclo y CIRUGÍA del
 // ritmo (v338 expansión → v339 cirugía): la cola de cirugía clásica estaba
 // extinta (censo 2+0, la cola «los 95 hallazgos» curada completa en
