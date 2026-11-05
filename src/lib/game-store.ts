@@ -292,6 +292,13 @@ export interface GameState {
   // la llave gira y el operador vuelve a la mesa). Filas REALES del operador
   // (contadores propios), la más nueva arriba, tope 12 semanas.
   desafioHistorial: { wk: string; objetivo: number; fecha: number }[];
+  // v354 EL SALÓN QUE PERMANECE — LA MESA VIVA etapa 10: la elección del
+  // rival de hoy (la llave de semana del fantasma del salón) SOBREVIVE al
+  // refresco: vive en la tienda (persist auto, merge shallow con las
+  // snapshots viejas — null es «sin elección, manda el fantasma de la
+  // etapa 8»). Si la semana elegida sale del archivo (tope 12), el panel
+  // degrada con honestidad al fantasma: la casa no reescribe la historia.
+  rivalSalon: string | null;
   // Historial de las últimas partidas jugadas con las jugadas EXACTAS
   // (ids por turno): el determinismo del motor las hace revivibles.
   wargameHistorial: {
@@ -409,6 +416,8 @@ export interface GameState {
   recordWargame: (partida: { escId: string; titulo: string; dificultad: number; jugadas: string[]; objetivoAzul: number; objetivoRojo: number; ganaAzul: boolean; botinCoins: number; botinXp: number }) => void;
   // v338: el mejor objetivo del desafío de la semana (la llave wk es la del tablón)
   recordDesafio: (wk: string, objetivo: number) => void;
+  // v354: elegir/dejar al rival de hoy en el salón (null = volver al mejor)
+  elegirRivalSalon: (wk: string | null) => void;
   buyAsset: (assetId: string, qty: number, price: number, fee?: number) => boolean;
   sellAsset: (assetId: string, qty: number, price: number, fee?: number) => number; // devuelve P/L
   toggleFavorite: (assetId: string) => void;
@@ -682,6 +691,8 @@ export const useGameStore = create<GameState>()(
       wargameStats: { jugadas: 0, ganadas: 0, racha: 0, mejorRacha: 0, mejorObjetivo: 0 },
       desafioMejor: null,
       desafioHistorial: [],
+      // v354 etapa 10: sin elección al nacer — el fantasma de la etapa 8 manda
+      rivalSalon: null,
       wargameHistorial: [],
       marketHoldings: {},
       marketTrades: [],
@@ -1552,6 +1563,11 @@ export const useGameStore = create<GameState>()(
           return {};
         });
       },
+
+      // v354 EL SALÓN QUE PERMANECE — la elección es interacción (patrón v168:
+      // evento → setState en el callback, cero escrituras en montaje); la
+      // tienda la hace permanente (persist con el throttle de la casa).
+      elegirRivalSalon: (wk) => set({ rivalSalon: wk }),
 
       // ====== CENTRO DE GANANCIAS v8 ======
       spinWheel: () => {

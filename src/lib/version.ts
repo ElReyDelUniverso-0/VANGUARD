@@ -5096,9 +5096,35 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v353.0";
-export const APP_CODENAME = "LA DISTANCIA HONESTA";
+export const APP_VERSION = "v354.0";
+export const APP_CODENAME = "EL SALÓN QUE PERMANECE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v354.0 EL SALÓN QUE PERMANECE — trigésima-septima ronda del autociclo y
+// ronda EXPANSIVA del ritmo (v353 cirugía → v354 expansión): LA MESA VIVA
+// etapa 10 — el salón PERSISTE. La elección del rival de hoy (v352, etapa 9)
+// vivía en un useState local del panel: el refresco la borraba y el fantasma
+// de la etapa 8 volvía a mandar. Hoy la elección deja el useState y vive en
+// la TIENDA (game-store): `rivalSalon` + `elegirRivalSalon` — persist auto
+// con el throttle de la casa (localStorage vanguard-game-state-v1, sin
+// partialize: el campo entra al snapshot completo; merge shallow — las
+// snapshots viejas sin el campo reciben el null del default, cero
+// migración). (1) LA HONESTIDAD DE LA DEGRADACIÓN: si la semana elegida
+// sale del archivo (tope 12), `salon.find(...) ?? fantasma` degrada al
+// fantasma del tablón — la casa no reescribe la historia, el chip canta lo
+// que manda. (2) CERO EFECTOS NUEVOS: la escuela respira con sus efectos de
+// siempre; la elección sigue siendo interacción (patrón v168) — el callback
+// escribe en la tienda, la tienda persiste. (3) SKIP-HYDRATION COMPATIBLE:
+// `skipHydration: true` del persist manda el rehidratador tras el montaje —
+// el mismo camino que desafioHistorial (el salón ya nació de esa ventana y
+// lleva tres rondas respirando con ella).    SUITE: +2 pines (EL SALÓN QUE
+// PERMANECE estático: rivalSalon y elegirRivalSalon en la tienda con su
+// comentario, el useState de la v352 fuera, el fallback `?? fantasma`
+// intacto, el chip y el volver al mejor por la tienda, versión doble
+// aserción — y vivo: home + health v354) + rodillo (LA DISTANCIA HONESTA →
+// EL SALÓN QUE PERMANECE en los VALORES de los asertos; mensajes históricos
+// y nombres de pines intactos — ley v312) + rodillo a v354.0 (cuatro
+// patrones). Un pin viejo de la v352 se actualiza a la semántica de la
+// tienda (la elección es interacción — ahora con persistencia).
 // v353.0 LA DISTANCIA HONESTA — trigésima-sexta ronda del autociclo y
 // CIRUGÍA del ritmo (v352 expansión → v353 cirugía): LA SEGUNDA LEVA DE LA
 // COLA EXHAUSTIVE-DEPS cae en su archivo mayor vivo — tierra-panel, 9

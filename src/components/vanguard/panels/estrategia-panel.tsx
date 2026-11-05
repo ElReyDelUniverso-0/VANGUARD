@@ -132,10 +132,15 @@ export function EstrategiaGlobalPanel() {
   }, [archivoDesafio, mejorVigente, semanaMesa]);
   // v352 EL SALÓN DEL FANTASMA — LA MESA VIVA etapa 9: el archivo COMPLETO
   // revive como coro de fantasmas elegibles. Cero efectos nuevos: el salón
-  // respira en un useMemo; la ELECCIÓN es interacción (useState con la llave
-  // de la semana del fantasma), no un efecto — el patrón legal v168.
+  // respira en un useMemo; la ELECCIÓN es interacción (patrón legal v168).
+  // v354 EL SALÓN QUE PERMANECE — LA MESA VIVA etapa 10: la elección deja el
+  // useState local y vive en la TIENDA (elegirRivalSalon): persist auto con
+  // el throttle de la casa — el rival de hoy SOBREVIVE al refresco. Sin
+  // elección (o si la semana elegida salió del archivo, tope 12), el fantasma
+  // de la etapa 8 manda: la degradación es honesta, la casa no reescribe.
   const salon = useMemo(() => salonDeLaMesa(archivoDesafio), [archivoDesafio]);
-  const [rivalSalon, setRivalSalon] = useState<string | null>(null);
+  const rivalSalon = useGameStore((s) => s.rivalSalon);
+  const elegirRivalSalon = useGameStore((s) => s.elegirRivalSalon);
   // el rival de HOY: el elegido en el salón; sin elección, el fantasma de la
   // etapa 8 (el tablón no cambia — la casa manda y el default es el mejor).
   const rivalHoy = useMemo(
@@ -323,7 +328,7 @@ export function EstrategiaGlobalPanel() {
             </span>
             {rivalSalon && (
               <button
-                onClick={() => setRivalSalon(null)}
+                onClick={() => elegirRivalSalon(null)}
                 className="text-[9px] font-mono px-1.5 py-0.5 rounded border border-violet-hud/40 text-violet/80 hover:bg-violet-hud/10 transition-colors"
               >
                 volver al mejor
@@ -465,7 +470,7 @@ export function EstrategiaGlobalPanel() {
                   return (
                     <button
                       key={f.wk}
-                      onClick={() => setRivalSalon(elegido ? null : f.wk)}
+                      onClick={() => elegirRivalSalon(elegido ? null : f.wk)}
                       aria-pressed={elegido}
                       className={cn(
                         "text-left px-2 py-1.5 rounded-sm text-[10px] font-mono transition-colors border",
