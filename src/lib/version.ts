@@ -5026,6 +5026,38 @@
 //     CIRUGÍA → EL PODER DEL DÍA; los nombres de pines y comentarios
 //     quedan como memoria — ley v312) + rodillo a v330.0 (cuatro
 //     patrones, mensajes históricos intactos — ley v312).
-export const APP_VERSION = "v330.0";
-export const APP_CODENAME = "EL PODER DEL DÍA";
+// v331.0 LA MEMORIA DEL COMPILADOR — decimocuarta ronda del autociclo y
+// CIRUGÍA del ritmo (v330 expansión → v331 cirugía): la cola de las memorias
+// del compilador muere ENTERA — las 4 advertencias preserve-manual-memoization
+// (imagenes-panel ×2, pulsos-panel ×2) caen en una sola ronda y el censo
+// canónico baja 2+4 → 2+0: solo quedan los dos efecto-escritor intocables
+// (growth-share v306, vanguard2/motor AL FINAL del ciclo).
+// ① EL DIAGNÓSTICO (la misma especie en los dos archivos): el memo de filas3D
+//    llamaba a un helper del ámbito del componente (contar en pulsos,
+//    catLabel en imagenes) y el compilador lo INFERÍA como dependencia que
+//    los deps escritos a mano no declaraban — la memoria manual solo es
+//    preservable cuando declara TODO lo que referencia.
+// ② LA CURA (useCallback + dep, el patrón mínimo): contar depende solo de
+//    incidentes → useCallback([incidentes]) y entra en los deps del memo;
+//    catLabel depende solo de t → useCallback([t]) y entra en los deps del
+//    memo. Los dos helpers siguen sirviendo a la UI 2D con la MISMA definición
+//    — cero duplicación, cero efectos nuevos.
+// ③ EL BUG QUE EL COMPILADOR CAZÓ (honestidad de la casa): el memo de
+//    imagenes guardaba las etiquetas del idioma VIEJO tras un cambio de
+//    lengua — t no estaba en sus deps y el compilador lo detectó como
+//    dependencia omitida. La cirugía lo arregla de paso: la sala 3D ahora
+//    traduce cuando la casa traduce.
+// ④ LA CICATRIZ LIMPIA: el eslint-disable react-hooks/exhaustive-deps del
+//    teclado del lightbox (imagenes:125) quedó VIEJO — la regla ya no dispara
+//    ahí y la directiva se retira (una cicatriz que ya no duele no se viste).
+//     SUITE: +2 pines (LA MEMORIA DEL COMPILADOR estático: contar y catLabel
+//     estabilizados con useCallback y sus deps verdaderas, los deps del memo
+//     con el helper dentro, la directiva vieja retirada, useEffect intactos,
+//     versión doble aserción — y vivo: home + health v331) + rodillos de
+//     codename en los asertos históricos (EL PODER DEL DÍA → LA MEMORIA DEL
+//     COMPILADOR; los nombres de pines y comentarios quedan como memoria —
+//     ley v312) + rodillo a v331.0 (cuatro patrones, mensajes históricos
+//     intactos — ley v312).
+export const APP_VERSION = "v331.0";
+export const APP_CODENAME = "LA MEMORIA DEL COMPILADOR";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -122,15 +122,20 @@ export function ImagenesPanel() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [sel, lista]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sel, lista]);
 
-  const catLabel = (c: string) => {
+  // v331: la memoria del compilador — catLabel se estabiliza con useCallback
+  // (su única dependencia real es t) y entra en los deps del memo: la memoria
+  // manual preservable declara TODO lo que referencia. Bono honesto: hasta
+  // hoy el memo guardaba las etiquetas del idioma viejo tras un cambio de
+  // lengua — el compilador cazó laBug de frescura que el ojo no veía.
+  const catLabel = useCallback((c: string) => {
     const map: Record<string, string> = {
       lugares: t("img.catLugares"), poder: t("img.catPoder"), archivo: t("img.catArchivo"),
       armas: t("img.catArmas"), civilizaciones: t("img.catCivil"),
     };
     return map[c] || c;
-  };
+  }, [t]);
 
   // v168: PARIDAD 2D→3D — la sala IMÁGENES emite las fotos reales que el panel
   // ya muestra (con su miniatura); cada fila abre el MISMO lightbox que el 2D.
@@ -160,7 +165,7 @@ export function ImagenesPanel() {
       });
     }
     return filas;
-  }, [lista, q, cat, cobradas]);
+  }, [lista, q, cat, cobradas, catLabel]);
   // v168: el raycast 3D abre el MISMO lightbox que el botón 2D
   // (offset 2: cabecera + recompensa preceden a las fotos)
   useEffect(() => {

@@ -4,7 +4,7 @@
 // columna de categorías a la izquierda, mapa con pines en el centro, feed
 // cronológico a la derecha, rango temporal arriba y banner de ÚLTIMA HORA).
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Radio, Filter, Clock, MapPin, Zap } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -66,7 +66,13 @@ export function PulsosPanel() {
     return m;
   }, [visibles]);
 
-  const contar = (catId: string) => incidentes.filter((i) => i.categoria === catId).length;
+  // v331: la memoria del compilador — contar se estabiliza con useCallback
+  // (su única dependencia real es incidentes) y entra en los deps del memo:
+  // la memoria manual preservable es la que declara TODO lo que referencia.
+  const contar = useCallback(
+    (catId: string) => incidentes.filter((i) => i.categoria === catId).length,
+    [incidentes]
+  );
   const ultimo = incidentes[0];
   const seleccionado = visibles.find((i) => i.id === sel) ?? null;
 
@@ -111,7 +117,7 @@ export function PulsosPanel() {
       })),
     ];
     return filas;
-  }, [incidentes, catsOff, tension, visibles, ahora]);
+  }, [incidentes, catsOff, tension, visibles, ahora, contar]);
   useSala3DContenido(
     "pulsos",
     "MAPA DE PULSOS EN VIVO",
