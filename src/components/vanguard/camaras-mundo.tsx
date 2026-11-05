@@ -81,31 +81,47 @@ const SENALES_ISS: { url: string; nombre: string }[] = [
 export function CamarasMundo() {
   const [pais, setPais] = useState<string | null>(null);
   const [clima, setClima] = useState<Clima | null>(null);
-  const [cargandoClima, setCargandoClima] = useState(false);
+  // v329 LA CUARTA CIRUGÍA: el fallo de red es estado (escritura ASÍNCRONA viva
+  // del fetch, permitida); el «cargando» se DERIVA — país elegido + clima en
+  // blanco + sin fallo = en vuelo. Ante el ojo: spinner mientras vuela, datos
+  // al llegar, «—» al fallar — EXACTO igual que servía el efecto-escritor.
+  const [falloClima, setFalloClima] = useState(false);
   const [hora, setHora] = useState(() => new Date());
   // v87.0: null = señal apagada · 0..2 = índice de la señal activa (rotación manual)
   const [senalISS, setSenalISS] = useState<number | null>(null);
+
+  // v329 — el ajuste en RENDER (patrón documentado por React: «Adjusting state
+  // when a prop changes», el mismo bisturí del lector v325): el clima se RESETEA
+  // cuando cambia el país, con setState condicional — React re-renderiza al
+  // instante por diseño, sin cometer el DOM ni escribir en un efecto.
+  const [paisPrev, setPaisPrev] = useState<string | null>(null);
+  if (paisPrev !== pais) {
+    setPaisPrev(pais);
+    setClima(null);
+    setFalloClima(false);
+  }
+  const cargandoClima = pais !== null && clima === null && !falloClima;
 
   useEffect(() => {
     const t = setInterval(() => setHora(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
+  // v329: el efecto queda SOLO con la sincronización externa legítima (el
+  // fetch del mundo exterior) — cero escrituras síncronas en el cuerpo.
   useEffect(() => {
-    if (!pais) { setClima(null); return; }
-    const cap = CAPITALES[pais];
+    const cap = pais ? CAPITALES[pais] : null;
     if (!cap) return;
-    setCargandoClima(true);
-    setClima(null);
     fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cap.lat}&longitude=${cap.lng}&current=temperature_2m,wind_speed_10m,weather_code`)
       .then((r) => r.json())
       .then((d) => {
         if (d?.current) {
           setClima({ temp: d.current.temperature_2m, viento: d.current.wind_speed_10m, codigo: d.current.weather_code });
+        } else {
+          setFalloClima(true);
         }
       })
-      .catch(() => {})
-      .finally(() => setCargandoClima(false));
+      .catch(() => setFalloClima(true));
   }, [pais]);
 
   const cap = pais ? CAPITALES[pais] : null;

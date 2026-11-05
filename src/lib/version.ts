@@ -4953,6 +4953,41 @@
 //     la cifra vieja: «5 disciplinas» → 10 derivada, el noscript con las
 //     siete manos) + rodillo a v328.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v328.0";
-export const APP_CODENAME = "LA COMUNIDAD GIRA";
+// v329.0 LA CUARTA CIRUGÍA — duodécima ronda del autociclo y CIRUGÍA del ritmo
+// (v328 expansión → v329 cirugía): el doble golpe ENTRE ARCHIVOS — DOS
+// víctimas de la cola mueren de una vez y el censo baja 4+4 → 2+4. Las dos
+// reciben el mismo bisturí que ya está en lib/hidratacion y en el lector
+// v325: el patrón DOCUMENTADO por React «Adjusting state when a prop changes»
+// (setState condicional en render — React re-renderiza al instante por
+// diseño, sin cometer el DOM ni escribir en un efecto).
+// ① LA VÍCTIMA 1 — el clima de camaras-mundo (v82, la intel de país): el
+//    efecto escribía síncronamente setClima(null) + setCargandoClima(true) en
+//    el cuerpo cada vez que cambiaba el país. La cura: el reset vive EN RENDER
+//    (paisPrev, comparación por identidad — el clima se resetea cuando el país
+//    cambia, sin efecto-escritor) y el «cargando» se DERIVA (país elegido +
+//    clima en blanco + sin fallo = en vuelo). El fallo de red es estado nuevo
+//    (falloClima) con escritura ASÍNCRONA viva del fetch — permitida: sin él
+//    la deriva quedaría cargando eterno en fallos de red (el finally del
+//    efecto viejo era su tapón). Ante el ojo: spinner mientras vuela, datos al
+//    llegar, «—» al fallar — EXACTO igual que servía.
+// ② LA VÍCTIMA 2 — el revelado del enjambre (v135, la transcripción letra a
+//    letra): el efecto escribía síncronamente setRevelado(0) en el cuerpo con
+//    cada cambio de ojo activo. La cura: el ajuste en RENDER con comparación
+//    POR ID (la identidad del objeto vive en los padres — lección v325) +
+//    reducedPrev; el interval queda como sincronización externa legítima (el
+//    reloj que revela — escritura asíncrona, la misma lista de invitados que
+//    los intervals del mosaico y del reloj de la casa).
+// ③ EL CENSO 4+4 → 2+4: quedan growth-share (INTOCABLE v306) y vanguard2/
+//    motor (AL FINAL del ciclo) + las 4 memorias del compilador — la cola de
+//    efecto-escritores queda casi extinta con el bisturí compartido tallando
+//    el camino para las últimas.
+//     SUITE: +2 pines (LA CUARTA CIRUGÍA estático: clima con ajuste en render
+//     por paisPrev y cargando derivado, fallo asíncrono sin escritura
+//     síncrona, revelado por ID con reducedPrev, efectos solo con fetch e
+//     interval, version doble aserción — y vivo: home + health v329) +
+//     rodillos de codename en los asertos históricos (LA COMUNIDAD GIRA →
+//     LA CUARTA CIRUGÍA) + rodillo a v329.0 (cuatro patrones, mensajes
+//     históricos intactos — ley v312).
+export const APP_VERSION = "v329.0";
+export const APP_CODENAME = "LA CUARTA CIRUGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

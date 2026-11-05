@@ -88,11 +88,24 @@ export function EnjambreOjos({ transmisiones }: { transmisiones: TransmisionOjo[
   }, [transmisiones]);
 
   // la transcripción se descifra: revelado letra a letra (contador pequeño)
+  // v329 LA CUARTA CIRUGÍA — el ajuste en RENDER (patrón documentado por React:
+  // «Adjusting state when a prop changes», el mismo bisturí del lector v325 y
+  // del clima de camaras-mundo esta misma ronda): el cambio de ojo activo (por
+  // ID — la identidad del objeto vive en los padres) y de reduced RESETEA el
+  // contador con setState condicional, sin efecto-escritor. El interval queda
+  // como sincronización externa legítima (el reloj que revela, escritura
+  // asíncrona) — la misma lista de invitados que los intervals del mosaico.
   const [revelado, setRevelado] = useState(0);
+  const ojoKey = activa ? activa.id : null;
+  const [ojoPrev, setOjoPrev] = useState<string | null>(null);
+  const [reducedPrev, setReducedPrev] = useState(reduced);
+  if (ojoPrev !== ojoKey || reducedPrev !== reduced) {
+    setOjoPrev(ojoKey);
+    setReducedPrev(reduced);
+    setRevelado(activa && reduced ? activa.cuerpo.length : 0);
+  }
   useEffect(() => {
-    if (!activa) { setRevelado(0); return; }
-    setRevelado(0);
-    if (reduced) { setRevelado(activa.cuerpo.length); return; }
+    if (!activa || reduced) return;
     const iv = window.setInterval(() => {
       setRevelado((r) => {
         if (r >= activa.cuerpo.length) { window.clearInterval(iv); return r; }
