@@ -26,20 +26,22 @@ export function EvaluacionPanel() {
   const ev = useMemo(() => generarEvaluacion(fecha), [fecha]);
 
   // v168: PARIDAD 2D→3D — el informe diario en volumen: hallazgos, teatros y archivo reales
+  // v318: la paridad sigue la ley del giro — los teatros EN PROFUNDIDAD son los que viajan al volumen
   const filas3D = useMemo<FilaContenido3D[]>(() => {
+    const focos = ev.teatros.filter((t) => t.profundidad);
     const filas: FilaContenido3D[] = [
       {
         t: `INFORME N.º ${ev.numero}`,
         v: fecha,
         color: "#F5C542",
-        d: `${fechaLarga(fecha)} · informe diario de operaciones con fuentes abiertas`,
+        d: `${fechaLarga(fecha)} · informe diario de operaciones con fuentes abiertas · foco del día: ${focos.map((f) => f.nombre).join(" · ")}`,
       },
       ...ev.hallazgos.slice(0, 4).map((h): FilaContenido3D => ({
         t: h.titulo,
         color: "#7AB8FF",
         d: h.cuerpo,
       })),
-      ...ev.teatros.slice(0, 4).map((teatro): FilaContenido3D => ({
+      ...focos.map((teatro): FilaContenido3D => ({
         t: teatro.nombre,
         color: "#38BDF8",
         d: `Evaluación del terreno controlado: ${teatro.terreno}`,
@@ -98,6 +100,16 @@ export function EvaluacionPanel() {
           </p>
         </div>
 
+        {/* EL GIRO DEL DÍA (v318): 3 teatros en profundidad, el resto en corto */}
+        <div className="px-4 sm:px-6 pt-3 pb-1 flex flex-wrap items-center gap-1.5">
+          <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-amber shrink-0">Foco del día:</span>
+          {ev.teatros.filter((t) => t.profundidad).map((t) => (
+            <span key={t.nombre} className="text-[9px] font-mono uppercase px-1.5 py-0.5 border border-amber-hud/50 bg-amber-hud/10 text-foreground/80">
+              {t.nombre}
+            </span>
+          ))}
+        </div>
+
         {/* HALLAZGOS CLAVE */}
         <div className="px-4 sm:px-6 py-4">
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber mb-3">Hallazgos clave del día</p>
@@ -122,9 +134,9 @@ export function EvaluacionPanel() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_260px] gap-3">
-        {/* TEATROS */}
+        {/* TEATROS EN PROFUNDIDAD */}
         <div className="space-y-3">
-          {ev.teatros.map((t, ti) => (
+          {ev.teatros.filter((t) => t.profundidad).map((t, ti) => (
             <motion.div
               key={fecha + t.nombre}
               initial={{ opacity: 0, y: 12 }}
@@ -149,6 +161,24 @@ export function EvaluacionPanel() {
               </p>
             </motion.div>
           ))}
+
+          {/* EN CORTO (v318): los teatros fuera del giro del día, una línea honesta cada uno */}
+          <div className="hud-panel p-4">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Landmark className="w-3.5 h-3.5 text-muted-foreground" />
+              <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">En corto · el resto del mundo</h4>
+            </div>
+            <ul className="space-y-2">
+              {ev.teatros.filter((t) => !t.profundidad).map((t) => (
+                <li key={t.nombre} className="text-[12px] leading-relaxed text-foreground/70 flex gap-2">
+                  <span className="font-mono text-[10px] uppercase text-cyan-hud/80 shrink-0 max-w-[140px] sm:max-w-[200px]">{t.nombre}</span>
+                  <span className="text-muted-foreground shrink-0">—</span>
+                  {t.lineas[0]}
+                </li>
+              ))}
+            </ul>
+            <p className="text-[10px] italic text-muted-foreground mt-2.5">{ev.notaGiro}</p>
+          </div>
         </div>
 
         {/* ARCHIVO + MÉTODO */}

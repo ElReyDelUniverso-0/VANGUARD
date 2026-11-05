@@ -278,7 +278,10 @@ export function escenarioPorId(id: string, dificultad?: EscenarioWargame["dificu
 // completo, cada día toca una clase distinta (6 de 10 wargames, 4 de 10
 // lecciones), determinista por fecha: el giro parte del hash del día y
 // recorre el anillo sin cortar el orden de los originales.
-function girar<T>(base: T[], cuantos: number, inicio: number): T[] {
+// v318: la rotación deja de ser doméstica — se EXPORTA y sirve al instituto
+// de evaluación (el informe respira con la misma ley del anillo): un solo
+// patrón del ecosistema, cero copias.
+export function girar<T>(base: T[], cuantos: number, inicio: number): T[] {
   if (base.length <= cuantos) return base.slice();
   const n = base.length;
   const s = ((inicio % n) + n) % n;
