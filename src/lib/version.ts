@@ -4871,6 +4871,43 @@
 //     (scripts/qa-visual-v326.sh): el anillo de la armería verificado en
 //     página — el día predice el arma y la franja lo cumple, el censo
 //     computado a la vista, el clic abre la ficha del arma del día.
-export const APP_VERSION = "v326.0";
-export const APP_CODENAME = "EL ARSENAL SE PUEDE GIRAR";
+// v327.0 LA TERCERA CIRUGÍA — décima ronda del autociclo y TERCERA cirugía
+// de la cola de deuda: DOS víctimas del MISMO archivo mueren de una vez
+// (arquitecto-panel, la sala del taller) y el censo baja 6+4 → 4+4.
+// (1) LA VÍCTIMA 1 — el telemetro neuronal: useState(null) + useEffect que
+//     escribía setLectura al montar con un snapshot del pulso. La cura es el
+//     bisturí v325 (la hidratación se ESCUCHA): useSyncExternalStore con
+//     suscriptor que nada escucha, getServerSnapshot null («sondeando el
+//     núcleo…» en SSR e hidratación, igual que servía) y getSnapshot
+//     CACHEADO POR BUCKET del pulso (lecturaDelPulso: identidad estable
+//     dentro del minuto — Object.is sin bucles de re-render). Mismo timing
+//     ante el ojo, cero comportamiento nuevo.
+// (2) LA VÍCTIMA 2 — el gate de widgets de la sala: useState(false) +
+//     setVisto(true) en el efecto [era]. La cura es el patrón useIsHydrated
+//     EXACTO: const visto = useIsHydrated() — el efecto queda SOLO con la
+//     sincronización externa legítima (setEraGlobalArq + reanudarArquitecto,
+//     el mundo exterior, no un estado local — la lección v323 del bus 3D).
+// (3) EL BISTURÍ SE CENTRALIZA: useIsHydrated deja de ser local del lector
+//     (v325) y vive UNA vez en lib/hidratacion (suscribirNada + SI_CLIENTE +
+//     SI_SERVIDOR, identidad a nivel de módulo) — ley v324 (el patrón
+//     compartido comparte hasta el reloj): el lector consume el compartido
+//     y su copia local muere; las próximas víctimas (camaras-mundo,
+//     enjambre-ojos) ya tienen la herramienta a mano.
+//     SUITE: el pin v325 rodó con la verdad nueva (el lector CONSUME el
+//     bisturí compartido, la copia local muerta, el módulo con los tres
+//     nombres del patrón documentado) + +2 pines (LA TERCERA CIRUGÍA
+//     estático: telemetro escuchado con cache por bucket, gate por
+//     hidratación, cero setLectura/setVisto, sincronización externa
+//     intacta, canvas y oyente 3D intactos, versión doble aserción — y
+//     vivo: home + health v327) + rodillo a v327.0 (cuatro patrones,
+//     mensajes históricos intactos — ley v312).
+//     QA: tsc 0 TOTAL · eslint 0 en el tocado · censo canónico 4+4 (la
+//     deuda VOLVIÓ a bajar) · testigo ANTES del build (ley v316) · build
+//     EXIT 0 con el motor de la casa · doble testigo post-build íntegro
+//     en ambas copias · health v327.0 db up · pruebas SUITE_EXIT=0 en UNA
+//     llamada (ley v302) · arnés visual (scripts/qa-visual-v327.sh): la
+//     sala del arquitecto ante el ojo — telemetro lleno sin «sondeando»
+//     eterno, widgets montados por hidratación escuchada, era sincronizada.
+export const APP_VERSION = "v327.0";
+export const APP_CODENAME = "LA TERCERA CIRUGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -308,7 +308,7 @@ async function parteB() {
   await verificar("servidor vivo y en v316.0", async () => {
     const r = await pedir(`/api/health?qa=${Math.floor(Math.random() * 1e9)}`);
     afirmar(r.json?.ok === true, "health no responde ok");
-    afirmar(String(r.json?.version).startsWith("v326"), `versión ${r.json?.version} ≠ v314`);
+    afirmar(String(r.json?.version).startsWith("v327"), `versión ${r.json?.version} ≠ v314`);
   });
 
   // censo por API
@@ -2728,16 +2728,16 @@ async function parteB() {
     afirmar(orbe.includes('vg:pide-permiso-mic"')); // el orbe llama a la tarjeta al topar not-allowed
     afirmar(sfx.includes("himno: () => {"), "sfx.himno no existe (la casa sin llamada)");
     afirmar(sfx.includes("(Math.random() - 0.5) * 0.008"), "la humanización viva no está en playTone (sonidos idénticos)");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v303.0 (avanza con la plantilla)");
   });
 
   await verificar("LA VOZ DE VANGUARD viva: el home sirve la versión del oído y la Radio con su letra (v299)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no canta v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no canta v307");
   });
 
   // ── v300.0 LA GUARDIA DEL OÍDO: la orden del Dueño queda BLINDADA — el
@@ -2765,15 +2765,15 @@ async function parteB() {
     // dos puertas, un oído: la tarjeta (v299) y la fila (v300) coexisten
     afirmar(oido.includes("getUserMedia"), "la tarjeta del oído desapareció");
     afirmar(orbe.includes("vg:pide-permiso-mic"), "el orbe ya no llama a la tarjeta del oído");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA GUARDIA DEL OÍDO viva: el health canta v304 y el home guarda la crónica del oído (v300→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("v326.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no canta v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no canta v307");
   });
 
   // ── v301.0 LA BIBLIOTECA OSCURA: oscura-data (v63, REAL: «cada teoría
@@ -2827,7 +2827,7 @@ async function parteB() {
     afirmar(paleta.includes("<EyeOff className="), "el token EyeOff no vive en la paleta");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA BIBLIOTECA OSCURA viva: el SSR sirve la línea derivada, los censos y las fuentes reales (v301)", async () => {
@@ -2886,16 +2886,16 @@ async function parteB() {
     afirmar(pill.includes("resumeAmbienteSiQuerido"), "la píldora no despierta al mundo al primer gesto");
     afirmar(pill.includes("toggleMundo"), "la píldora no puede mover el mundo (toggleMundo falta)");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("EL MUNDO RESPIRA viva: el home canta la ronda y el health la respira (v302→v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no respira v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no respira v307");
   });
 
   // ── v303.0 LA PLANTILLA COMPLETA: la expansión del módulo EMPLEOS — 8
@@ -2962,16 +2962,16 @@ async function parteB() {
     afirmar(panel.includes("cobrar bono"), "la sala 3D no puede cobrar el bono");
     afirmar(panel.includes("ocho oficinas"), "la casa sigue contando cuatro oficinas");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v303.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v303.0");
   });
 
   await verificar("LA PLANTILLA COMPLETA viva: el home firma la ronda y el health la contrata (v303)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v303.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v303.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v307");
   });
 
   // ── v304.0 LA MANO DE LA FORTUNA: la expansión del módulo FORTUNA — la
@@ -3012,16 +3012,16 @@ async function parteB() {
     afirmar(tienda.includes("probGolpe(libro.rachaSeca)"), "el calor de la ruleta no es el helper probado");
     afirmar(tienda.includes("lástima de la casa"), "la lástima no se le explica al operador");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v304.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v304.0");
   });
 
   await verificar("LA MANO DE LA FORTUNA viva: el home firma la ronda y el health la respalda (v304)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v304.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v304.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no respalda v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no respalda v307");
   });
 
   // ── v305.0 LA AUDITORÍA DE ACERO: el árbol medido a fondo (eslint
@@ -3063,16 +3063,16 @@ async function parteB() {
     const store = readFileSync(join(RAIZ, "src/lib/game-store.ts"), "utf8");
     afirmar(store.includes('(id === "RED" || id === "CYAN" || id === "AMBER")'), "la guardia de hudTheme no existe");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v305.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v305.0");
   });
 
   await verificar("LA AUDITORÍA DE ACERO viva: el home firma la ronda y el health respalda el censo (v305)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v305.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v305.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no respalda v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no respalda v307");
   });
 
   // ── v306.0 EL AIRE DEL PERMISO: la segunda cuchilla del mandato del Dueño —
@@ -3100,16 +3100,16 @@ async function parteB() {
     const sonido = readFileSync(join(RAIZ, "src/lib/sound.ts"), "utf8");
     afirmar(sonido.includes("webkitAudioContext?: typeof AudioContext"), "el prefijo de Safari sin su forma con unknown");
     // la versión camina con la casa
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v307.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v307.0");
   });
 
   await verificar("LA POLÍTICA DEL AIRE viva: el home firma la ronda y el health respira con permiso (v306)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v307.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v307.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no respira v307");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no respira v307");
   });
 
   // ── v307.0 LA LEY DE LA VELOCIDAD: la TERCERA cuchilla del mandato del
@@ -3137,7 +3137,7 @@ async function parteB() {
     afirmar(isla.includes("ssr: false"), "la isla no es perezosa de verdad (sin ssr:false el motor vuelve al HTML inicial)");
     afirmar(isla.includes("#02040a"), "el placeholder de la isla no viste el tono del universo (destello blanco al nacer)");
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v307.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v307.0");
   });
 
   await verificar("LA LEY DE LA VELOCIDAD: censo del BUILD — UNA sola copia del motor, la familia reunida (v307)", () => {
@@ -3219,7 +3219,7 @@ async function parteB() {
     afirmar((espejo.match(/auditar "/g) || []).length >= 6, "el espejo mira menos de 6 salas (escritorio + móvil)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v308.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v308.0");
   });
 
   await verificar("EL ESPEJO DEL NAVEGADOR: censo del BUILD — la marca del núcleo de three viaja en EXACTAMENTE UNA familia (v308)", () => {
@@ -3271,7 +3271,7 @@ async function parteB() {
     afirmar(pagina.includes("<RielSeccion"), "la casa dejó de montar el riel de sección");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v309.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v309.0");
   });
 
   await verificar("LA PRIMERA QUIRURGÍA viva: el home sirve el riel desplegado en el SSR (el server snapshot no miente) y firma la ronda (v309)", async () => {
@@ -3279,10 +3279,10 @@ async function parteB() {
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
     afirmar(r.texto.includes('data-vg-riel="1"'), "el SSR no sirve el riel");
     afirmar(r.texto.includes('data-vg-riel-plegado="0"'), "el SSR no nace desplegado (el server snapshot miente)");
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v309.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v309.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v309");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v309");
   });
 
   // ── v309.0 LA VALLA DEL ARCHIVO: la herida P0 de la ronda, cazada con
@@ -3335,16 +3335,16 @@ async function parteB() {
     afirmar(bono.includes("if (!hidratado) return;"), "la puerta de la v135 desapareció (el bono preguntaría antes de recordar)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v310.0");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v310.0");
   });
 
   await verificar("LA SEGUNDA QUIRURGÍA viva: el home firma la ronda y el health respalda la deuda pagada (v310)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v310.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v310.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v310");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v310");
   });
 
   // ── v311.0 LA TERCERA QUIRURGÍA: la deuda sigue pagándose (12 → 11) — el
@@ -3385,17 +3385,17 @@ async function parteB() {
     afirmar(pagina.includes('tab === "maquina" && <MaquinaPanel />'), "la casa dejó de montar el panel de la máquina");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v311.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v311.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA TERCERA QUIRURGÍA viva: el home firma la ronda y el health respalda la deuda pagada (v311)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v311.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v311.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v311");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v311");
   });
 
   // ── v312.0 LA CUARTA QUIRURGÍA: la deuda sigue pagándose (11 → 9) — dos
@@ -3434,17 +3434,17 @@ async function parteB() {
     afirmar(noticias.includes("<CamaraConsecuencias cable={cableSim} onCerrar={() => setCableSim(null)} />"), "la casa dejó de montar la cámara de consecuencias");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v312.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v312.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA CUARTA QUIRURGÍA viva: el home firma la ronda y el health respalda la deuda pagada (v312)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v312.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v312.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v312");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v312");
   });
 
   // ── v313.0 LA ESCUELA QUE RESPIRA: la primera expansión del autociclo — la
@@ -3477,17 +3477,17 @@ async function parteB() {
     afirmar(panel.includes("generalesOrdenados"), "la tabla ya no ordena por mérito");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v313.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v313.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA ESCUELA QUE RESPIRA viva: el home firma la ronda y el health respalda la expansión (v313)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v313.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v313.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v313");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v313");
   });
 
   // ── v314.0 LA MESA VIVA: etapa 1 de la idea anotada — los wargames dejan
@@ -3517,17 +3517,17 @@ async function parteB() {
     afirmar(panel.includes('if (e.key === "Escape") onCerrar();'), "el Escape honesto de la mesa desapareció");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v314.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v314.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA MESA VIVA viva: el home firma la ronda y el health respalda la mesa (v314)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v314.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v314.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v314");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v314");
   });
 
   // ── v315.0 LA MESA CON MEMORIA: etapa 2 de LA MESA VIVA — la mesa recuerda:
@@ -3563,17 +3563,17 @@ async function parteB() {
     afirmar(data.includes("export function escenarioPorId"), "el helper de mesas por id no existe (la memoria queda huérfana)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v315.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v315.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA MESA CON MEMORIA viva: el home firma la ronda y el health respalda la memoria (v315)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v315.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v315.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v315");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v315");
   });
 
   // ── v316.0 LAS INSIGNIAS DE LA ESCUELA: etapa 3 de LA MESA VIVA — la
@@ -3624,17 +3624,17 @@ async function parteB() {
     afirmar(!objetivos.includes('verdad:\n      "Los 100 se cazan aquí'), "el mapa de caza volvió a escribir el 100 a mano");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v316.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v316.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LAS INSIGNIAS DE LA ESCUELA viva: el home firma la ronda y el health respalda las insignias (v316)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v316.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v316.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v316");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v316");
   });
 
   // ── v317.0 LA MESA EN LA PORTADA: etapa 4 de LA MESA VIVA — la escuela
@@ -3690,17 +3690,17 @@ async function parteB() {
     // no escritura en montaje — el censo canónico lo verifica en el QA.
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v317.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v317.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA MESA EN LA PORTADA viva: el home firma la ronda y el health respalda la portada (v317)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v317.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v317.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v317");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v317");
   });
 
   // ── v318.0 EL INFORME QUE RESPIRA: la segunda expansión del autociclo — el
@@ -3739,17 +3739,17 @@ async function parteB() {
     afirmar(!panel.includes("ev.teatros.slice(0, 4)"), "el slice antiguo de teatros sigue en la paridad 3D (la 3D ignora el giro)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v318.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v318.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("EL INFORME QUE RESPIRA viva: el home firma la ronda y el health respalda el instituto (v318)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v318.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v318.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v318");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v318");
   });
 
   // ── v319.0 LA COLECCIÓN QUE CRECE: tercera expansión del autociclo — el
@@ -3789,17 +3789,17 @@ async function parteB() {
     afirmar(panel.includes("/13") && panel.includes("LOS 13 TÍTULOS SON TUYOS"), "el panel de la colección no canta los 13 títulos");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v319.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v319.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA COLECCIÓN QUE CRECE viva: el home firma la ronda y el health respalda el álbum (v319)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v319.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v319.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v319");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v319");
   });
 
   // ── v320.0 LA RED COMPLETA: cuarta expansión del autociclo — la red de
@@ -3833,17 +3833,17 @@ async function parteB() {
     afirmar(panel.includes("canalDestacadoDeHoy"), "el panel no consume el destacado (estaba muerto al llegar)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v320.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v320.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA RED COMPLETA viva: el home firma la ronda y el health respalda la escucha (v320)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v320.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v320.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v320");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v320");
   });
 
   // ── v321.0 LA PANTALLA EN EL ANILLO: quinta expansión del autociclo — el
@@ -3880,17 +3880,17 @@ async function parteB() {
     afirmar(panel.includes("{sel.serie.toUpperCase()}"), "la pantalla no sabe quién habla (la serie no viaja al reproductor)");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v321.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v321.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA PANTALLA EN EL ANILLO viva: el home firma la ronda y el health respalda la pantalla (v321)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v321.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v321.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v321");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v321");
   });
 
   // ── v322.0 EL ADVERSARIO CON NOMBRE: sexta expansión del autociclo — el
@@ -3939,17 +3939,17 @@ async function parteB() {
     afirmar(panel.includes("en sombra"), "el contador de la campaña no es honesto cuando no hay arcos suyos");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v322.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v322.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("EL ADVERSARIO CON NOMBRE vivo: el home firma la ronda y el health respalda el mapa (v322)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v322.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v322.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v322");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v322");
   });
 
   // ── v323.0 LA CIRUGÍA DEL TRIBUNAL: primera cirugía de la cola de deuda —
@@ -3972,17 +3972,17 @@ async function parteB() {
     afirmar(t.includes("addXp(10);"), "la xp del veredicto desapareció");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v323.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v323.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA CIRUGÍA DEL TRIBUNAL vivo: el home firma la ronda y el health respalda la cirugía (v323)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v323.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v323.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v323");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v323");
   });
 
   // ── v324.0 EL ATLAS MIRA AL SUR: el censo por firma cantó Oceanía 2 y
@@ -4031,17 +4031,17 @@ async function parteB() {
     afirmar(panel.includes('aria-label="Récords del planeta"') && panel.includes("records.map((rec)"), "los récords del planeta no llegan al panel");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v324.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v324.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("EL ATLAS MIRA AL SUR vivo: el home firma la ronda y el health respalda al sur (v324)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v324.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v324.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v324");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v324");
   });
 
   // ── v325.0 LA SEGUNDA CIRUGÍA: DOS víctimas del mismo archivo (lector-noticia)
@@ -4049,12 +4049,20 @@ async function parteB() {
   // ESCUCHADA (useSyncExternalStore, patrón useIsHydrated documentado) y la
   // decisión del intro GTA (v174) se ajusta EN RENDER («Adjusting state when
   // a prop changes», comparación por ID). El censo baja 8+4 → 6+4. ──
+  // (rodillo v327: el bisturí useIsHydrated deja de ser local del lector y
+  // vive UNA vez en lib/hidratacion — ley v324, cero copias; el pin rota con
+  // la verdad nueva: el lector CONSUME el bisturí compartido y el módulo
+  // lleva los tres nombres del patrón documentado) ──
   await verificar("LA SEGUNDA CIRUGÍA estática: el lector sin estado que nazca escribiendo (v325)", () => {
     const l = readFileSync(join(RAIZ, "src/components/vanguard/lector-noticia.tsx"), "utf8");
-    // LA VÍCTIMA 1: el montaje se ESCUCHA, no se escribe
-    afirmar(l.includes("useSyncExternalStore(suscribirMontaje, siCliente, siServidor)"), "el montaje del portal no es hidratación escuchada (el efecto-escritor sigue vivo)");
-    afirmar(l.includes("const suscribirMontaje = () => () => {};"), "sin el suscriptor que nada escucha");
-    afirmar(l.includes("const siCliente = () => true;") && l.includes("const siServidor = () => false;"), "sin los dos snapshots del patrón useIsHydrated");
+    const h = readFileSync(join(RAIZ, "src/lib/hidratacion.ts"), "utf8");
+    // LA VÍCTIMA 1: el montaje se ESCUCHA, no se escribe — por el bisturí COMPARTIDO
+    afirmar(l.includes("const montado = useIsHydrated();"), "el montaje del portal no consume el bisturí compartido (la hidratación dejó de escucharse)");
+    afirmar(l.includes('from "@/lib/hidratacion"'), "el lector no importa el bisturí compartido v327");
+    afirmar(!l.includes("const suscribirMontaje"), "la copia local del suscriptor sigue viva en el lector (ley v324: cero copias)");
+    afirmar(h.includes("export function suscribirNada") && h.includes("export const SI_CLIENTE = () => true;") && h.includes("export const SI_SERVIDOR = () => false;"), "el bisturí compartido perdió los tres nombres del patrón documentado");
+    afirmar(h.includes("export function useIsHydrated"), "el hook compartido no existe");
+    afirmar(h.includes("useSyncExternalStore(suscribirNada, SI_CLIENTE, SI_SERVIDOR)"), "el bisturí compartido no usa el patrón documentado por React");
     afirmar(!/useEffect\(\(\) => setMontado\(true\)/.test(l), "¡el efecto-escritor del montaje sigue en el cuerpo!");
     afirmar(!l.includes("setMontado"), "quedó un setMontado vivo en el cuerpo");
     // LA VÍCTIMA 2: la decisión del intro se ajusta EN RENDER, por ID
@@ -4072,17 +4080,17 @@ async function parteB() {
     afirmar(l.includes("createPortal(") && l.includes('aria-modal="true"'), "el portal v116 perdió su forma");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v325.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v325.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("LA SEGUNDA CIRUGÍA vivo: el home firma la ronda y el health respalda la cirugía (v325)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v325.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v325.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no firma v325");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no firma v325");
   });
 
   // ── v295.0 LA VERDAD CRUDA: dark-data (v24, documentada) gana su sala server (/verdad-cruda) ──
@@ -5882,21 +5890,64 @@ async function parteB() {
     afirmar(panel.includes("abrirArmaDelDia"), "el clic del arma del día no es un handler");
     afirmar(!panel.includes("useEffect(() => armaDelDia") && !panel.includes("useEffect(() => censoArsenal"), "la franja escribió un efecto (ley v302)");
     // la versión camina con la casa (doble aserción)
-    afirmar(version.includes('APP_VERSION = "v326.0"'), "la fuente única de versión no es v326.0");
-    afirmar(version.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no está en la fuente única");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v326.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
   });
 
   await verificar("EL ARSENAL SE PUEDE GIRAR vivo: el home firma la ronda, el health respalda y /armeria sirve las 21 (v326)", async () => {
     const r = await pedir("/");
     afirmar(r.status === 200, `/ no 200 (${r.status})`);
-    afirmar(r.texto.includes("EL ARSENAL SE PUEDE GIRAR"), "el nombre de la ronda no viaja en el home");
-    afirmar(r.texto.includes("v326.0"), "la v326.0 no viaja en el home");
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v326.0 no viaja en el home");
     const salud = await pedir("/api/health");
-    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v326"), "el health no respalda v326");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no respalda v326");
     const sala = await pedir("/armeria");
     afirmar(sala.status === 200, `/armeria no 200 (${sala.status})`);
     afirmar(sala.texto.includes("Kornet (9M133)"), "la novena arma nueva no viaja en el SSR");
     afirmar(sala.texto.includes("21 armas reales"), "la línea derivada no canta las 21");
+  });
+
+  // ── v327.0 LA TERCERA CIRUGÍA: DOS víctimas del arquitecto mueren de una
+  // vez (el telemetro neuronal y el gate de widgets) y el bisturí useIsHydrated
+  // se CENTRALIZA en lib/hidratacion (ley v324: cero copias) — el lector v325
+  // lo consume y la copia local muere. El censo baja 6+4 → 4+4. ──
+  await verificar("LA TERCERA CIRUGÍA estática: el arquitecto sin estado que nazca escribiendo, el telemetro escuchado con snapshot cacheado y el gate por hidratación (v327)", () => {
+    const a = readFileSync(join(RAIZ, "src/components/vanguard/panels/arquitecto-panel.tsx"), "utf8");
+    const h = readFileSync(join(RAIZ, "src/lib/hidratacion.ts"), "utf8");
+    // LA VÍCTIMA 1: el telemetro se ESCUCHA, no se escribe — snapshot cacheado por bucket
+    afirmar(a.includes("useSyncExternalStore(suscribirPulso, lecturaDelPulso, () => LECTURA_SERVIDOR)"), "el telemetro neuronal sigue naciendo de un efecto (la víctima 1 respira)");
+    afirmar(a.includes("function lecturaDelPulso()"), "sin la función de snapshot del pulso");
+    afirmar(a.includes("if (b !== bucketCache)") && a.includes("return lecturaCache;"), "el snapshot no está cacheado por bucket (Object.is daría bucles)");
+    afirmar(a.includes("const suscribirPulso = () => () => {};"), "sin el suscriptor que nada escucha (cero comportamiento nuevo)");
+    afirmar(a.includes("const LECTURA_SERVIDOR: LecturaTelemetro | null = null;"), "sin el snapshot del servidor honesto («sondeando el núcleo…»)");
+    afirmar(!a.includes("setLectura"), "¡quedó un setLectura vivo en el cuerpo!");
+    afirmar(!/useEffect\(\(\) => \{\s*const bucket = pulsoActual/.test(a), "¡el efecto-escritor del telemetro sigue vivo!");
+    // LA VÍCTIMA 2: el gate de widgets es la hidratación escuchada
+    afirmar(a.includes("const visto = useIsHydrated();"), "el gate de widgets sigue siendo estado nacido escribiendo (la víctima 2 respira)");
+    afirmar(!a.includes("setVisto(true)"), "¡la escritura de setVisto en el efecto sigue viva!");
+    afirmar(!/setVisto\(/.test(a), "quedó una llamada setVisto viva en el cuerpo (los comentarios documentales no escriben)");
+    // el efecto de la sala queda SOLO con la sincronización externa (legítima)
+    afirmar(a.includes("setEraGlobalArq(era);") && a.includes("reanudarArquitecto();"), "la sincronización externa de la era se perdió");
+    // el bisturí compartido consume a los DOS (v324: cero copias)
+    afirmar(a.includes('from "@/lib/hidratacion"'), "el arquitecto no importa el bisturí compartido");
+    afirmar(h.includes("export function useIsHydrated"), "el bisturí compartido no existe");
+    // los demás efectos INTACTOS: canvas una vez, oyente 3D, cleanup del audio
+    afirmar(a.includes('ctx.fillText(ch, x, y);') && a.includes('ctx.fillRect(col * cw + 1, row * ch + 1, cw - 2, ch - 2);'), "los canvas del sismógrafo/cartógrafo se tocaron (no estaban en el censo)");
+    afirmar(a.includes("window.addEventListener(\"vg:sala3d-accion\", onAccion)"), "el oyente del bus 3D se tocó (no estaba en el censo)");
+    afirmar(a.includes("useEffect(() => () => { if (obraSonando) stopPreview(); }, [obraSonando]);"), "el cleanup del audio se tocó (no estaba en el censo)");
+    // la versión camina con la casa (doble aserción)
+    const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
+    afirmar(version.includes('APP_VERSION = "v327.0"'), "la fuente única de versión no es v327.0");
+    afirmar(version.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no está en la fuente única");
+  });
+
+  await verificar("LA TERCERA CIRUGÍA vivo: el home firma la ronda y el health respalda la cirugía (v327)", async () => {
+    const r = await pedir("/");
+    afirmar(r.status === 200, `/ no 200 (${r.status})`);
+    afirmar(r.texto.includes("LA TERCERA CIRUGÍA"), "el nombre de la ronda no viaja en el home");
+    afirmar(r.texto.includes("v327.0"), "la v327.0 no viaja en el home");
+    const salud = await pedir("/api/health");
+    afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v327"), "el health no respalda v327");
   });
 
   // el muro al final: quema la cuota de esta IP

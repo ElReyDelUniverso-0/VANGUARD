@@ -16,13 +16,14 @@
 //     (solo texto, sin enlace): se informa, no se manda.
 // ============================================================
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShieldAlert, Clock, Copy, Check, Newspaper, Compass, BrainCircuit } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { useCalma } from "@/lib/calma";
+import { useIsHydrated } from "@/lib/hidratacion";
 import { Flag } from "@/lib/flags";
 import { navigateTo } from "@/lib/nav";
 import type { TabKey } from "./tab-nav";
@@ -121,13 +122,10 @@ function colorNivel(n: number): string {
 //     que siempre, en el instante de jugar la placa.
 // El comportamiento queda idéntico ante el ojo: portal tras hidratar,
 // placa una vez por cable por sesión, tap = seguir leyendo.
+// v327.0 EL ARQUITECTO SIN RELOJ INTERNO: el bisturí useIsHydrated deja
+// de ser local — vive UNA vez en lib/hidratacion y el lector lo consume
+// (ley v324: el patrón compartido comparte hasta el reloj — cero copias).
 // ============================================================
-
-// Nada que escuchar: la hidratación ES el evento. Los snapshots viven fuera
-// del componente para que su identidad sea estable (cero re-suscripciones).
-const suscribirMontaje = () => () => {};
-const siCliente = () => true;
-const siServidor = () => false;
 
 /** La decisión del intro GTA: una vez por cable por sesión, reduced-motion no hay cine. */
 function calcularIntro(c: CableLectura | null): boolean {
@@ -179,8 +177,8 @@ export function LectorNoticia({
   // modal cae a 9000 px de profundidad (cazado en móvil 390×844). Portal al
   // body: el modal flota SIEMPRE sobre la pantalla, en cualquier sala.
   // v325: el montaje ya no es estado nacido en un efecto — es la hidratación
-  // escuchada (useSyncExternalStore, patrón useIsHydrated documentado).
-  const montado = useSyncExternalStore(suscribirMontaje, siCliente, siServidor);
+  // escuchada (useIsHydrated de lib/hidratacion, el bisturí compartido v327).
+  const montado = useIsHydrated();
 
   // mientras se lee, la sala queda en calma (nada interrumpe la lectura)
   useEffect(() => {

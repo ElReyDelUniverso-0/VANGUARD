@@ -12,7 +12,7 @@
 // estático) y todo lo demás es texto, store y CSS.
 // ============================================================
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Bot, Play, Pause, Zap, Gauge, Cpu, Hammer, Music4, ScrollText, Radar as RadarIcon, Building2, Wrench, Send, Terminal, Layers, Infinity as InfIcon, Download, Volume2, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
@@ -21,6 +21,7 @@ import { TituloEpico } from "../titulo-epico";
 import { SelloVivo } from "../escenas-3d";
 import { useArquitecto, MODULOS_CATALOGO, VELOCIDADES_INFO, dominioEtiqueta, dominioColor, setEraGlobalArq, reanudarArquitecto, type DominioArq, type ModuloArq } from "@/lib/arquitecto";
 import { useEstilo3D } from "@/lib/estilo3d";
+import { useIsHydrated } from "@/lib/hidratacion";
 import { areaOcupada } from "@/lib/frente-zonas-data";
 import { pulsoActual, titularPulso, pensamientoMente } from "@/lib/mente-data";
 import { extraerRasgos, evaluarNeuronal, fnvHash } from "@/lib/neurona-core";
@@ -98,16 +99,36 @@ function SismografoLetras() {
 
 /** 2. TELEMETRO NEURONAL — las 8 neuronas del núcleo v4 en vivo */
 const NEURONAS = ["militar", "diplomacia", "economia", "ciber", "humanitario", "nuclear", "espacio", "social"] as const;
-function TelemetroNeuronal() {
-  const [lectura, setLectura] = useState<{ rasgos: Record<string, number>; veredicto: { riesgo: number; tension: number; confianza: number; sentimiento: string; neuronasActivas: string[] } } | null>(null);
-  useEffect(() => {
-    const bucket = pulsoActual();
-    const titular = titularPulso(bucket);
-    const pensamiento = pensamientoMente(bucket);
+
+// v327: la lectura deja de nacer en un efecto — la hidratación se ESCUCHA
+// (useSyncExternalStore, el mismo bisturí documentado que la v325 usó en el
+// lector) con el snapshot CACHEADO por bucket del pulso: la identidad es
+// estable dentro del minuto (Object.is sin bucles) y el servidor sirve
+// null («sondeando el núcleo…») igual que servía — mismo timing ante el ojo,
+// cero estado que nazca escribiendo. Nada que escuchar: como en la v325, la
+// lectura se toma al hidratar y no más (cero comportamiento nuevo).
+interface LecturaTelemetro {
+  rasgos: Record<string, number>;
+  veredicto: { riesgo: number; tension: number; confianza: number; sentimiento: string; neuronasActivas: string[] };
+}
+const suscribirPulso = () => () => {};
+const LECTURA_SERVIDOR: LecturaTelemetro | null = null;
+let bucketCache = -1;
+let lecturaCache: LecturaTelemetro | null = null;
+function lecturaDelPulso(): LecturaTelemetro | null {
+  const b = pulsoActual();
+  if (b !== bucketCache) {
+    bucketCache = b;
+    const titular = titularPulso(b);
+    const pensamiento = pensamientoMente(b);
     const texto = `${titular ? `${titular.titulo} ${titular.lugar ?? ""}` : ""} ${pensamiento}`.slice(0, 300);
     const rasgos = extraerRasgos(texto) as unknown as Record<string, number>;
-    setLectura({ rasgos, veredicto: evaluarNeuronal(texto) });
-  }, []);
+    lecturaCache = { rasgos, veredicto: evaluarNeuronal(texto) };
+  }
+  return lecturaCache;
+}
+function TelemetroNeuronal() {
+  const lectura = useSyncExternalStore(suscribirPulso, lecturaDelPulso, () => LECTURA_SERVIDOR);
   if (!lectura) return <p className="text-[9px] font-mono text-muted-foreground">sondeando el núcleo…</p>;
   const v = lectura.veredicto;
   return (
@@ -252,16 +273,21 @@ export function ArquitectoPanel() {
   const arq = useArquitecto();
   const era = useEstilo3D((s) => s.era);
   const [orden, setOrden] = useState("");
-  const [visto, setVisto] = useState(false);
+  // v327: el gate de widgets deja de ser estado que nace escribiendo en un
+  // efecto — es la HIDRATACIÓN ESCUCHADA (useIsHydrated de lib/hidratacion,
+  // el bisturí compartido v327): los widgets montan cuando la hidratación
+  // es evento, por diseño — mismo timing ante el ojo, cero setVisto.
+  const visto = useIsHydrated();
   // v117: obra sonando en la sala + archivo exportado/copiado
   const [obraSonando, setObraSonando] = useState<string | null>(null);
   const [archivoOk, setArchivoOk] = useState(false);
 
   // la sala anuncia la era global al motor del agente + reanuda el perpetuo
+  // (sincronización con el mundo EXTERIOR — legítima en efecto, como el
+  // oyente del bus 3D: no escribe un solo estado local, lección v323)
   useEffect(() => {
     setEraGlobalArq(era);
     reanudarArquitecto();
-    setVisto(true);
   }, [era]);
   // al desmontar la sala, la obra se detiene (el estudio sigue de su lado)
   useEffect(() => () => { if (obraSonando) stopPreview(); }, [obraSonando]);
