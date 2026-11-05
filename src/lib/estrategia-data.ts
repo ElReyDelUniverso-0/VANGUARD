@@ -321,6 +321,38 @@ export function parDesafio(dificultad: number): number {
   return 40 + dificultad * 10;
 }
 
+// v344: EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6. Los rivales del desafío
+// de la semana: cadetes de la escuela deterministas POR SEMANA (la misma
+// fórmula familiar del tablón semanal v58 — semilla, 12.9898, 78.233,
+// 43758.5453 — girada por el número de semana del tablón: la misma semana
+// que cierra el desafío cierra el tablón, cero relojes nuevos, ley v324).
+// La escala es el RÉCORD REAL del operador (mejorVigente); si aún no jugó,
+// el par de la casa (estimación declarada) hace de escala jugable. Los
+// rivales son SIM de la escuela y se DECLARAN en pantalla; la fila del
+// operador es su único dato REAL.
+export interface RivalMesa {
+  nombre: string;
+  tag: string;
+  score: number;
+}
+const CADETES_MESA: { nombre: string; tag: string; semilla: number }[] = [
+  { nombre: "Alférez Damaris Oteiza", tag: "OTE", semilla: 41 },
+  { nombre: "Sargento Ruy Salcedo", tag: "SAL", semilla: 87 },
+  { nombre: "Cadete Vera Ansaldo", tag: "ANS", semilla: 133 },
+  { nombre: "Teniente Bruno Cea", tag: "CEA", semilla: 179 },
+  { nombre: "Cadete Ildara Prat", tag: "PRA", semilla: 227 },
+  { nombre: "Sargento Mar Toledano", tag: "TOL", semilla: 263 },
+];
+export function rivalesDeLaMesa(semana: number, escala: number): RivalMesa[] {
+  return CADETES_MESA.map((c) => {
+    const h = Math.abs(Math.sin(c.semilla * 12.9898 + semana * 78.233)) * 43758.5453;
+    const rnd = h - Math.floor(h); // 0..1 determinista por (cadete, semana)
+    const factor = 0.55 + rnd * 0.6; // 0.55..1.15 de la escala: siempre alguien a un puesto
+    const score = Math.max(5, Math.min(100, Math.round(escala * factor)));
+    return { nombre: c.nombre, tag: c.tag, score };
+  });
+}
+
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
   const rnd = mulberry32(fnvHash("estrategia-" + fecha));

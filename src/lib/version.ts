@@ -5096,9 +5096,35 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v343.0";
-export const APP_CODENAME = "LA ESPECIE LIMPIA";
+export const APP_VERSION = "v344.0";
+export const APP_CODENAME = "EL TABLÓN DE LA MESA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v344.0 EL TABLÓN DE LA MESA — vigésimo-séptima ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v343 cirugía → v344 expansión): LA MESA VIVA etapa 6 —
+// los rivales del desafío de la semana. (1) LA DATA (estrategia-data.ts):
+// rivalesDeLaMesa(semana, escala) — seis cadetes de la escuela con la MISMA
+// fórmula familiar del tablón semanal v58 (semilla × 12.9898 + semana ×
+// 78.233, 43758.5453), deterministas por semana, calibrados a la escala del
+// operador (su mejor mesa REAL; si aún no jugó, el par de la casa — la
+// estimación declarada). La fórmula vive JUNTO al reloj (ley v324: una
+// copia es una grieta) y la misma semana del tablón que cierra el desafío
+// cierra el tablón — cero relojes nuevos. (2) LA FRONTERA EN PANTALLA: los
+// rivales son SIM de la escuela y se DECLARAN (chip «SIM determinista ·
+// semana …» + pie con la fuente de la escala); la fila del operador es la
+// única REAL (contadores propios — su mejorVigente de la tienda, o «—» y
+// última plaza si aún no jugó). (3) LA SALA 3D: la fila TABLÓN DE LA MESA
+// viaja AL FINAL (el contrato de «elegir» se cuenta desde la CABEZA con
+// offset 4 — cola nueva no lo rompe; lección v342: el contrato manda) y
+// reutiliza la rama del desafío (abrir la MISMA mesa). (4) EL HOOK DEL
+// TABLÓN: 0.55..1.15 de la escala — siempre alguien a un puesto, la fórmula
+// v58 aplicada al dominio 0-100 de la mesa con compuerta 5..100.
+//     SUITE: +2 pines (EL TABLÓN DE LA MESA estático: la fórmula y su
+//    familia, el roster de cadetes, la compuerta, la frontera SIM/REAL en
+//    pantalla, la fila al final con su rama, versión doble aserción — y
+//    vivo: home + health v344) + rodillos de codename (LA ESPECIE LIMPIA →
+//    EL TABLÓN DE LA MESA en los VALORES de los asertos; los mensajes
+//    históricos quedan como memoria — ley v312) + rodillo a v344.0 (cuatro
+//    patrones).
 // v343.0 LA ESPECIE LIMPIA — vigésimo-sexta ronda del autociclo y CIRUGÍA del
 // ritmo (v342 expansión → v343 cirugía): la segunda leva de la vena C — las
 // especies que la v341 registró y no tocó. 11 curas en 9 archivos (10

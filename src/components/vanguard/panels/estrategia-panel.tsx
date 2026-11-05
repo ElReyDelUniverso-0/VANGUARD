@@ -8,10 +8,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play, History, RotateCcw } from "lucide-react";
+import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play, History, RotateCcw, Trophy } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, type General, type EscenarioWargame } from "@/lib/estrategia-data";
+// v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los rivales del desafío
+// nacen de la MISMA data de la escuela (girados por la misma semana del
+// tablón, cero copias de la fórmula fuera del módulo)
+import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
 // v338 LA MESA EN EL TABLÓN — la llave de semana del TABLÓN (la misma que
 // cierra el podio semanal cierra el desafío: una sola llave, cero copias)
@@ -81,6 +84,19 @@ export function EstrategiaGlobalPanel() {
   const desafioMejor = useGameStore((s) => s.desafioMejor);
   const mejorVigente = desafioMejor && desafioMejor.wk === semanaMesa ? desafioMejor.objetivo : null;
   const [mesaDesafio, setMesaDesafio] = useState(false);
+  // v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los cadetes de la
+  // escuela giran con la MISMA semana del tablón y se calibran a la escala
+  // del operador (su mejor mesa REAL; si aún no jugó, el par de la casa —
+  // estimación declarada). La fila del operador es su único dato REAL.
+  const alias = useGameStore((s) => s.alias);
+  const tablonMesa = useMemo(() => {
+    const rivales = rivalesDeLaMesa(parseInt(semanaMesa.slice(6), 10) || 1, mejorVigente ?? parDesafio(desafio.dificultad));
+    return [
+      ...rivales.map((r) => ({ nombre: r.nombre, tag: r.tag, score: r.score, propio: false })),
+      { nombre: alias || "TU", tag: "AG", score: mejorVigente ?? -1, propio: true },
+    ].sort((a, b) => b.score - a.score);
+  }, [semanaMesa, mejorVigente, desafio, alias]);
+  const puestoTu = tablonMesa.findIndex((f) => f.propio) + 1;
   const abrirDesafio = () => { setMesa({ ...desafio }); setMesaDesafio(true); };
   const mejoresPartidas = useMemo(() => [...historial].sort((a, b) => b.objetivoAzul - a.objetivoAzul || b.fecha - a.fecha).slice(0, 3), [historial]);
   const generalesOrdenados = useMemo<General[]>(() => {
@@ -142,9 +158,21 @@ export function EstrategiaGlobalPanel() {
         d: `dificultad FIJA ${desafio.dificultad}/5 · ${mejorVigente !== null ? `tu mejor mesa: ${mejorVigente}/100` : "la mesa te espera"} — la misma mesa para toda la escuela`,
         a: "abrir desafío",
       },
+      {
+        // v344 EL TABLÓN DE LA MESA — la fila viaja AL FINAL: el contrato de
+        // «elegir» se cuenta DESDE LA CABEZA (offset 4) y no se rompe con
+        // cola nueva (lección v342: el contrato manda, no la estética); la
+        // acción reutiliza la rama del desafío (abrir la MISMA mesa)
+        t: "TABLÓN DE LA MESA",
+        v: `${puestoTu}º DE ${tablonMesa.length}`,
+        p: Math.round((Math.max(0, tablonMesa.find((f) => f.propio)?.score ?? 0))),
+        color: "#C9A85C",
+        d: `${mejorVigente !== null ? `tu mejor mesa ${mejorVigente}/100` : "sin mesa tuya esta semana"} · rivales SIM de la escuela, deterministas por semana — tu fila es la única REAL`,
+        a: "abrir desafío",
+      },
     ];
     return filas;
-  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente]);
+  }, [hoy, doctrina, escSel, generalesOrdenados, memoria, desafio, mejorVigente, tablonMesa, puestoTu]);
   useSala3DContenido(
     "estrategia",
     "ESTRATEGIA GLOBAL",
@@ -231,6 +259,43 @@ export function EstrategiaGlobalPanel() {
           <span className="text-[9px] font-mono text-muted-foreground/80">
             la misma mesa para toda la escuela — la comparación es honesta · el tablón la anota
           </span>
+        </div>
+
+        {/* v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los cadetes de la
+            escuela (SIM determinista por semana, calibrados a la escala del
+            operador) alrededor de la única fila REAL — la mejor mesa propia.
+            La frontera SIM/REAL viaja en pantalla (la ley de distinguir
+            hechos de estimaciones). */}
+        <div className="border-t border-border/40 pt-2 space-y-1" aria-label="Tablón de la mesa">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Trophy className="w-3.5 h-3.5 text-amber" />
+            <span className="text-[10px] font-caviar font-bold uppercase tracking-widest text-amber">Tablón de la mesa</span>
+            <span className="text-[9px] font-mono px-1.5 py-0.5 bg-white/5 text-muted-foreground rounded">SIM determinista · semana {semanaMesa}</span>
+            <span className="ml-auto text-[9px] font-mono text-muted-foreground">
+              {mejorVigente !== null ? `tu fila: REAL · ${mejorVigente}/100` : "tu fila: REAL · sin mesa aún"}
+            </span>
+          </div>
+          <div className="grid gap-0.5">
+            {tablonMesa.map((f, i) => (
+              <div
+                key={`${f.tag}-${i}`}
+                className={cn(
+                  "flex items-center gap-2 px-2 py-1 rounded-sm text-[10px] font-mono",
+                  f.propio ? "bg-blue-400/15 border border-blue-400/40" : "bg-white/[0.03]",
+                )}
+              >
+                <span className={cn("w-5 text-right", f.propio ? "text-blue-300 font-bold" : "text-muted-foreground")}>{i + 1}º</span>
+                <span className={cn("truncate flex-1", f.propio ? "text-blue-100 font-bold" : "text-foreground/60")}>{f.nombre}</span>
+                <span className="text-muted-foreground/50 hidden sm:inline">{f.tag}</span>
+                <span className={cn("w-10 text-right", f.propio ? "text-blue-300 font-bold" : "text-foreground/50")}>
+                  {f.propio && f.score < 0 ? "—" : `${f.score}`}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
+            rivales: cadetes SIM de la escuela — deterministas por semana, calibrados a tu escala ({mejorVigente !== null ? `tu mejor mesa` : "el par de la casa, estimación declarada"}). tu fila es la única REAL (contadores propios).
+          </p>
         </div>
       </div>
 
