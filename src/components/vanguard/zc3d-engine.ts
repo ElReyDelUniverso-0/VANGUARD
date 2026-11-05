@@ -8,6 +8,7 @@
 // Lambert, pools de sprites y pixelRatio adaptativo.
 
 import * as THREE from "three";
+import { RelojTres } from "@/lib/reloj-tres";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 // ---------------------------------------------------------------- tipos ----
@@ -361,7 +362,7 @@ export class ZC3DEngine {
   private scene!: THREE.Scene;
   private cam!: THREE.PerspectiveCamera;
   private controls!: OrbitControls;
-  private clock = new THREE.Clock();
+  private clock = new RelojTres();
   private raf = 0;
   private disposed = false;
 

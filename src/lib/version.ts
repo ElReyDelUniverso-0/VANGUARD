@@ -4312,6 +4312,47 @@
 //     v307.0 db up · pruebas 240/240 (+2 LA LEY DE LA VELOCIDAD) · BD
 //     intocada (1877 cables · 9 hechos).
 // Herencia v306.0 EL AIRE DEL PERMISO y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v307.0";
-export const APP_CODENAME = "LA LEY DE LA VELOCIDAD";
+// v308.0 EL ESPEJO DEL NAVEGADOR — la CUARTA cuchilla del mandato del Dueño
+//         (auditar todo, innovar, perfeccionar cada detalle): las tres cuchillas
+//         anteriores midieron el CÓDIGO (acero/aire/velocidad) — esta mide lo que
+//         el usuario vive: EL RENDER VIVO. Nadie había puesto la casa delante de
+//         un espejo.
+// (1) EL INSTRUMENTO NUEVO: scripts/auditoria-render-v308.sh — arranca la casa
+//     de verdad (standalone, puerto 3496), la recorre con un navegador real
+//     (6 salas: inicio y universo en escritorio, mercado, empleos, inicio y
+//     vértigo en móvil 390×844) y censura por sala: errores de página, consola
+//     y desborde horizontal (scrollWidth vs clientWidth). Cierre por PID
+//     (ley v302: arranque+auditoría+cierre en UNA llamada). Instrumento
+//     REPETIBLE: el espejo puede mirar a la casa cada N rondas.
+// (2) EL VEREDICTO HONESTO: la casa viva está LIMPIA — cero errores de página
+//     en las 6 salas, cero desbordes (1440 y 390 px), y UNA herida en la
+//     consola del universo: THREE.Clock DEPRECADA («Please use THREE.Timer
+//     instead») — 6 motores 3D (teatro-global, teatro-guerra, drone-strike,
+//     hangar, zc3d y el motor del universo) usaban una API que three 0.185
+//     marca muerta: cuando la quite, la casa entera en 3D se queda sin tiempo.
+// (3) LA CURA — EL RELOJ PROPIO (src/lib/reloj-tres.ts): RelojTres, reloj
+//     interno con la SEMÁNTICA EXACTA de THREE.Clock (primer getDelta = 0,
+//     acumulación en elapsedTime, performance.now, nada recortado — el techo
+//     0.05 lo sigue poniendo cada motor): los 6 motores dejan de depender de
+//     una API muerta sin cambiar ni una línea de su comportamiento. La
+//     advertencia muere en la consola del universo.
+// (4) LA LEY (el blindaje permanente): la suite vela que la casa no construye
+//     APIs deprecadas del motor — censo de CONSTRUCCIONES del reloj deprecado
+//     EXACTAMENTE CERO en todo el árbol (el censo cuenta construcciones, no
+//     menciones — esta crónica misma fue la QUINTA víctima del trap: la frase
+//     que declaraba la ley llevaba el constructor literal y el censo la contó;
+//     lección v306 elevada a ley de prosa: los informes no escriben código)
+//     — y en el BUILD, la marca del reloj deprecado («use THREE.
+//     Timer instead», string único del núcleo de three que sobrevive a la
+//     minificación — MEDIDO: tree-shaking no la quita, three viaja entero en
+//     su barrel) viaja en EXACTAMENTE UN chunk, la familia reunida v244: si
+//     la casa volviera a pagar una segunda copia del motor, la marca aparecería
+//     en DOS chunks y la suite lo gritaría. Segundo marcador independiente
+//     del censo v307 (isPerspectiveCamera|isMesh).
+// QA: tsc 0 TOTAL · eslint 0 errores (tocados) · build EXIT 0 · health
+//     v308.0 db up · pruebas 242/242 (+2 EL ESPEJO DEL NAVEGADOR) · espejo
+//     vivo: 6 salas limpias · BD intocada (1877 cables · 9 hechos).
+// Herencia v307.0 LA LEY DE LA VELOCIDAD y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v308.0";
+export const APP_CODENAME = "EL ESPEJO DEL NAVEGADOR";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

@@ -19,6 +19,7 @@
 //    duerme, cero basura por frame.
 // ============================================================
 import * as THREE from "three";
+import { RelojTres } from "@/lib/reloj-tres";
 import { FontLoader, type Font } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 // v151: la typeface VIVE EN EL BUNDLE — cero red, cero fetch, cero SW.
@@ -108,7 +109,7 @@ export class MotorV2 {
   dprCap: number;
   dpr: number;
 
-  private reloj = new THREE.Clock();
+  private reloj = new RelojTres();
   private raf = 0;
   private activo = true;
   private canvas: HTMLCanvasElement;

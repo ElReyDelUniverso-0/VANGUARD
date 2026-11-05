@@ -11,6 +11,7 @@
 // ============================================================
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { RelojTres } from "@/lib/reloj-tres";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Play, Pause, Moon, Sun, Maximize2 } from "lucide-react";
 import type { GuerraActiva } from "@/lib/guerras-activas-data";
@@ -398,7 +399,7 @@ export function TeatroGuerra3D({ guerra, alto = 430 }: { guerra: GuerraActiva; a
 
     // ── bucle ──
     const raf = { id: 0 };
-    const reloj = new THREE.Clock();
+    const reloj = new RelojTres();
     const estado = { flashT: 0, flashI: 0, misilT: -1, misilA: new THREE.Vector3(), misilB: new THREE.Vector3(), t: 0 };
     const puntosFrente = guerra.frentes.flatMap((f) => f.puntos);
     const ciudadesLlamas = guerra.ciudades.filter((c) => c.estado === "frente" || c.estado === "sitio" || c.estado === "contendida");

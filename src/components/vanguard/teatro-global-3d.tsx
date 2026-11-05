@@ -13,6 +13,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { RelojTres } from "@/lib/reloj-tres";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Globe2, Radio, Plane, Activity, Volume2, VolumeX } from "lucide-react";
 
@@ -216,7 +217,7 @@ class TeatroGlobalEngine {
   private scene!: THREE.Scene;
   private cam!: THREE.PerspectiveCamera;
   private controls!: OrbitControls;
-  private clockT = new THREE.Clock();
+  private clockT = new RelojTres();
   private raf = 0;
   private disposed = false;
   private t = 0;

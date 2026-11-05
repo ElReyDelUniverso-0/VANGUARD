@@ -15,6 +15,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
+import { RelojTres } from "@/lib/reloj-tres";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -1038,7 +1039,7 @@ export function HangarPanel() {
     }
 
     // ---- bucle ----
-    const clock = new THREE.Clock();
+    const clock = new RelojTres();
     let islandHintShown = false;
     let raf = 0;
     const camTarget = new THREE.Vector3();

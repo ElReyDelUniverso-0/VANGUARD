@@ -7,6 +7,7 @@
 // Optimizado: pooling de objetos, sin sombras, pixelRatio acotado, dispose total.
 import { useState, useEffect, useRef, useCallback } from "react";
 import * as THREE from "three";
+import { RelojTres } from "@/lib/reloj-tres";
 import { Crosshair, Play, RotateCcw, Coins, Gem, Trophy, Timer, MousePointer2, Medal, ListOrdered, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PanelHeader } from "@/components/vanguard/panel-header";
@@ -722,7 +723,7 @@ function GameEngine({
     ro.observe(container);
 
     // ---- loop ----
-    const clock = new THREE.Clock();
+    const clock = new RelojTres();
     let raf = 0;
     let hudAcc = 0;
     const tick = () => {
