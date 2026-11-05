@@ -12,7 +12,7 @@
 // suave, gobernada por la MISMA matemática solar del mini-mapa (lib/sol.ts).
 // El uniforme se repasa cada 60 s (el sol anda 0.25°/min) — cero rAF nuestro.
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Earth, Plane, Ship, Satellite, Bug, Waves, Camera, Wind,
@@ -184,6 +184,13 @@ export function TierraPanel() {
   const [autoGiro, setAutoGiro] = useState(true);
   const [textura, _setTextura] = useState<"auto" | "satelite" | "noche" | "tactico">("auto");
   const [centro, setCentro] = useState({ lat: 22, lng: 12, alt: 2.5 });
+  // v353: los grados ENTEROS del centro — extraidos del deps complejo (la
+  // regla exhaustiva-deps pide expresiones simples para poder verificarlas
+  // estaticamente; el redondeo sigue siendo el gatillo: el roster y los
+  // pases respiran cuando el centro cruza un grado, no con cada movimiento
+  // de decimales — la misma ley de siempre, ahora visible)
+  const latG = Math.round(centro.lat);
+  const lngG = Math.round(centro.lng);
   const [rosterOn, setRosterOn] = useState(true);
   const [q, setQ] = useState("");
   const [resp, setResp] = useState<RespuestaAnalista | null>(null);
@@ -222,9 +229,9 @@ export function TierraPanel() {
       }
     } catch { /* noop */ }
   }, []);
-  const guardar = (h: string[], e: typeof escenas) => {
+  const guardar = useCallback((h: string[], e: typeof escenas) => {
     try { localStorage.setItem(LS_KEY, JSON.stringify({ hechas: h, escenas: e })); } catch { /* noop */ }
-  };
+  }, []);
 
   const contactos = useMemo(() => contactosEn(t), [t]);
   const visibles = useMemo(() => contactos.filter((c) => capas[c.tipo === "avion" ? "aviones" : c.tipo === "buque" ? "buques" : c.tipo === "satelite" ? "satelites" : c.tipo === "dron" ? "drones" : c.tipo === "sismo" ? "sismos" : "camaras"]), [contactos, capas]);
@@ -234,22 +241,27 @@ export function TierraPanel() {
   }, [contactos]);
   const trackedC = useMemo(() => contactos.find((c) => c.id === tracked) ?? null, [contactos, tracked]);
   const roster = useMemo(() => {
-    const { lat, lng } = centroRef.current;
+    // v353: el centro VIVO del render (antes leia centroRef.current — el ref
+    // se sincroniza en un efecto, una vida detrás: el roster medía distancias
+    // al centro ANTERIOR; deps honestos = centro actual, cero cierre rancio)
     return visibles
       .filter((c) => c.tipo !== "sismo")
-      .map((c) => ({ c, d: distanciaKm(lat, lng, c.lat, c.lng) }))
+      .map((c) => ({ c, d: distanciaKm(centro.lat, centro.lng, c.lat, c.lng) }))
       .sort((a, b) => a.d - b.d)
       .slice(0, 30);
-  }, [visibles, Math.round(centro.lat), Math.round(centro.lng)]);
+  }, [visibles, centro.lat, centro.lng]);
 
   const sensor = SENSORES.find((s) => s.id === sensorId) ?? SENSORES[0];
   const texturaURL = textura === "auto" ? TEXTURAS[texturaPorHora(t)] : TEXTURAS[textura];
 
   // ---------- vuelo cinematográfico ----------
-  const vuelaA = (lat: number, lng: number, alt: number, ms = 1500) => {
+  // v353: identidad estable (useCallback) — entra en los deps de los
+  // efectos del 3D, la crónica y los atajos; los setters y el ref son
+  // estables, cero dependencias vivas
+  const vuelaA = useCallback((lat: number, lng: number, alt: number, ms = 1500) => {
     setCentro({ lat, lng, alt });
     gRef.current?.pointOfView({ lat, lng, altitude: alt }, ms);
-  };
+  }, []);
 
   const autoGiroRef = useRef(autoGiro);
   useEffect(() => {
@@ -521,16 +533,22 @@ export function TierraPanel() {
 
   // ---------- pases satelitales sobre la vista seleccionada ----------
   const [pases, setPases] = useState<ReturnType<typeof pasesSobre>>([]);
+  // v353: deps honestos — latG/lngG (los grados enteros, extraidos arriba)
+  // mandan el redespertar y el ref fresco del centro alimenta los pases (el
+  // centroRef se sincroniza en el efecto de arriba: cuando este efecto corre
+  // por latG/lngG nuevos, el ref YA vive en el presente — cero semantica
+  // nueva, la misma ventana de gatillo de siempre)
   useEffect(() => {
-    setPases(pasesSobre(centro.lat, centro.lng, Date.now(), 3));
-  }, [sel, Math.round(centro.lat), Math.round(centro.lng)]);
+    setPases(pasesSobre(centroRef.current.lat, centroRef.current.lng, Date.now(), 3));
+  }, [sel, latG, lngG]);
 
   // ---------- acciones del operador ----------
-  const resetGlobo = (silencio = false) => {
+  // v353: identidad estable — el efecto de atajos la lista en deps honestos
+  const resetGlobo = useCallback((silencio = false) => {
     setTracked(null); setSel(null); setCockpit(false); setCronica(null);
     vuelaA(22, 12, 2.5, 1400);
     if (!silencio) toast.success("PLANETA COMPLETO", { description: "Vista global restaurada. Sin rastros, sin ruido." });
-  };
+  }, [vuelaA]);
 
   const zoom = (dir: 1 | -1) => {
     const g = gRef.current;
@@ -539,11 +557,12 @@ export function TierraPanel() {
     g.pointOfView({ altitude: Math.min(4, Math.max(0.22, alt * (dir > 0 ? 0.55 : 1.8))) }, 420);
   };
 
-  const rastrear = (c: Contacto | null) => {
+  // v353: identidad estable — el oyente del 3D la lista en deps honestos
+  const rastrear = useCallback((c: Contacto | null) => {
     setTracked(c ? c.id : null);
     setCockpit(false);
     if (c) toast.success(`RASTREANDO ${c.callsign}`, { description: "La cámara lo sigue. Tecla C para modo cockpit · Esc para soltar." });
-  };
+  }, []);
 
   const analistaPregunta = (texto?: string) => {
     const pregunta = (texto ?? q).trim();
@@ -558,7 +577,8 @@ export function TierraPanel() {
     setQ("");
   };
 
-  const lanzarMision = (m: typeof MISIONES[number]) => {
+  // v353: identidad estable — deps honestos: guardar/hechas/escenas/vuelaA
+  const lanzarMision = useCallback((m: typeof MISIONES[number]) => {
     setCapas((prev) => ({ ...prev, ...m.capas }));
     setVientos(false);
     setSensorId(m.sensor);
@@ -568,9 +588,10 @@ export function TierraPanel() {
       setHechas(h); guardar(h, escenas);
     }
     toast.success(`MISIÓN · ${m.titulo}`, { description: m.desc.slice(0, 110) + "…" });
-  };
+  }, [guardar, hechas, escenas, vuelaA]);
 
-  const jugarCronica = (id: string, idx = 0) => {
+  // v353: identidad estable — el efecto de la crónica la lista en deps honestos
+  const jugarCronica = useCallback((id: string, idx = 0) => {
     const cr = CRONICAS.find((c) => c.id === id);
     if (!cr) return;
     if (idx >= cr.paradas.length) {
@@ -582,12 +603,12 @@ export function TierraPanel() {
     const lugar = lugarPorId(parada.lugarId);
     setCronica({ id, idx });
     if (lugar) vuelaA(lugar.lat, lugar.lng, lugar.alt, 2200);
-  };
+  }, [vuelaA]);
   useEffect(() => {
     if (!cronica) return;
     const iv = setTimeout(() => jugarCronica(cronica.id, cronica.idx + 1), 7200);
     return () => clearTimeout(iv);
-  }, [cronica]);
+  }, [cronica, jugarCronica]);
 
   const anadirEscena = () => {
     const e = { lat: Number(centro.lat.toFixed(2)), lng: Number(centro.lng.toFixed(2)), alt: Number(centro.alt.toFixed(2)), sensor: sensorId };
@@ -630,7 +651,11 @@ export function TierraPanel() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [escenas, hechas]);
+    // v353: deps honestos — resetGlobo y vuelaA (ambos estables por
+    // useCallback) son las dependencias vivas; [escenas, hechas] eran deps
+    // MUERTAS (el onKey no las lee: las teclas viven de setters, refs y
+    // módulos) y re-montaban el oyente en cada misión hecha/escena guardada
+  }, [resetGlobo, vuelaA]);
 
   // v168: PARIDAD 2D→3D — VANGUARD EARTH emite sus filas reales a la sala de contenido
   const tierra3D = useMemo(

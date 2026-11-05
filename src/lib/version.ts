@@ -5096,9 +5096,37 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v352.0";
-export const APP_CODENAME = "EL CORO DE LOS FANTASMAS";
+export const APP_VERSION = "v353.0";
+export const APP_CODENAME = "LA DISTANCIA HONESTA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v353.0 LA DISTANCIA HONESTA — trigésima-sexta ronda del autociclo y
+// CIRUGÍA del ritmo (v352 expansión → v353 cirugía): LA SEGUNDA LEVA DE LA
+// COLA EXHAUSTIVE-DEPS cae en su archivo mayor vivo — tierra-panel, 9
+// hallazgos de los 148 en 94 archivos (la regla vive OFF por config; el
+// censo forzado al abrir midió 148/94, igual que el canon). (1) LA
+// IDENTIDAD ESTABLE ×6: guardar, vuelaA, resetGlobo, rastrear, lanzarMision
+// y jugarCronica ganan useCallback — el oyente 3D [tierra3D, rastrear,
+// lanzarMision], el efecto de la crónica y el de atajos dejan de re-montar
+// en cada render. (2) LA EXPRESIÓN EXTRAÍDA: los grados enteros latG/lngG
+// salen del deps complejo (la regla pide expresiones verificables
+// estáticamente) y mandan el redespertar de los pases satelitales [sel,
+// latG, lngG] — el ref fresco centroRef alimenta pasesSobre (la misma
+// ventana de gatillo, cero semántica nueva). (3) LA PRESA DEL RONDO: el
+// roster medía distancias al centro ANTERIOR (leía centroRef.current, que
+// el efecto sincroniza una vida después del render — cierre rancio) —
+// ahora respira con el centro VIVO del render [visibles, centro.lat,
+// centro.lng]: la distancia del roster es HONESTA (el setCentro del
+// rastreo cinemático corre cada 950 ms; 30 haversines son gratis). (4) LOS
+// DEPS MUERTOS: el oyente de atajos cargaba [escenas, hechas] que el onKey
+// jamás lee (re-montaba en cada misión hecha/escena guardada sin razón) —
+// deps honestos [resetGlobo, vuelaA]. CERO DIRECTIVAS (ley v335): tierra
+// queda sin cicatrices, la cola 148→139.    SUITE: +2 pines (LA DISTANCIA
+// HONESTA estático: los 6 useCallback, las arrays de deps exactas — roster
+// vivo, pases por grados con ref fresco, crónica, atajos sin muertos, 3D
+// por identidad estable, cero directivas, versión doble aserción — y vivo:
+// home + health v353) + rodillo (EL CORO DE LOS FANTASMAS → LA DISTANCIA
+// HONESTA en los VALORES de los asertos; mensajes históricos y nombres de
+// pines intactos — ley v312) + rodillo a v353.0 (cuatro patrones).
 // v352.0 EL CORO DE LOS FANTASMAS — trigésima-quinta ronda del autociclo y
 // ronda EXPANSIVA del ritmo (v351 cirugía → v352 expansión): LA MESA VIVA
 // etapa 9 — el salón del fantasma. La mesa ya jugaba contra tu mejor semana
