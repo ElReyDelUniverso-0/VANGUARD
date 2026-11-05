@@ -1,5 +1,14 @@
 // ============================================================
 // v127.0 LA COMUNIDAD — LOS 18 OJOS DE LA CASA
+// v328.0 LA COMUNIDAD GIRA — la tercera carta de la cola expansiva
+// (v322: ciber · v324: atlas · v326: arsenal · v328: comunidad):
+// los SENTIDOS del oficio crecen 5 → 10 (los cinco nuevos: MASINT,
+// IMINT, TECHINT, CYBINT, FELINT), la sala anexa de las manos crece
+// 1 → 7 (USMS 1789 — la mano más vieja de la federación, USSS, DSS,
+// CBP, FAMS, IRS-CI), el ANILLO DE LA ESCUELA llega a la comunidad
+// (OCTAVO consumidor: agenciaDelDia + sentidoDelDia con el reloj
+// CENTRAL único de estrategia-data, ley v324) y el censo por
+// categoría se COMPUTA del catálogo real (patrón censoArsenal v326).
 // La Comunidad de Inteligencia de los Estados Unidos: 18 agencias
 // oficiales bajo la supervisión de la ODNI, convertidas en expedientes
 // finos de la Casa. Contenido narrado según la doctrina del lujo:
@@ -8,8 +17,14 @@
 // Fuentes: la orden del Dueño (el dossier enviado a la Casa) y el
 // registro público de la propia Comunidad (intel.gov). Nada aquí es
 // secreto ni ficticio: es conocimiento abierto, presentado como
-// una colección de colección.
+// una colección de colección. Los sentidos nuevos son disciplinas
+// documentadas del oficio (doctrina de inteligencia pública); las
+// cifras del censo se derivan, nunca se escriben.
 // ============================================================
+
+// v328: el anillo necesita girar() + diaDelAnillo() del reloj CENTRAL
+// (única copia en estrategia-data, ley v324).
+import { girar, diaDelAnillo } from "./estrategia-data";
 
 export type CategoriaAgencia =
   | "coordinacion"   // la corona
@@ -438,7 +453,7 @@ export const AGENCIAS: Agencia[] = [
   },
 ];
 
-// ─────────── SALA ANEXA: las aliadas que el Dueño pidió por nombre ───────────
+// ─────────── SALA ANEXA: las manos que actúan (v328: 1 → 7 expedientes) ───────────
 export interface Aliada {
   id: string;
   sigla: string;
@@ -457,9 +472,73 @@ export const ALIADAS: Aliada[] = [
       "dónde enviar ayuda, rescatistas y recursos en minutos. No es uno de los 18 ojos: es la mano " +
       "que actúa cuando los ojos ya vieron el desastre.",
   },
+  // ── las seis manos que entraron con la v328 LA COMUNIDAD GIRA ──
+  // Agencias federales reales fuera del censo de 18 (la sala anexa no es
+  // de la Comunidad: es de las manos). La más vieja de todas nació antes
+  // que el ojo más antiguo de la colección — la anexa supera a la sala.
+  {
+    id: "usms",
+    sigla: "USMS",
+    nombre: "United States Marshals Service",
+    nota:
+      "La mano más vieja de la federación: nació con la Judiciary Act de 1789 — 93 años antes " +
+      "que el ojo más antiguo de esta colección (ONI, 1882). Hoy caza fugitivos en todo el país " +
+      "y custodia a los testigos federales con identidades nuevas. No es uno de los 18 ojos: es " +
+      "la mano que se abre camino cuando el expediente ya está escrito.",
+  },
+  {
+    id: "usss",
+    sigla: "USSS",
+    nombre: "United States Secret Service",
+    nota:
+      "Nació en 1865 persiguiendo falsificadores — el crimen financiero fue su primer expediente, " +
+      "no la protección. Tras el asesinato de McKinley (1901) el cuidado del presidente pasó a ser " +
+      "su oficio visible. Desde 2003 vive dentro del DHS. No es uno de los 18 ojos: es la mano " +
+      "que se pone delante del cuerpo cuando el ojo vio tarde.",
+  },
+  {
+    id: "dss",
+    sigla: "DSS",
+    nombre: "Diplomatic Security Service",
+    nota:
+      "La mano del Departamento de Estado en su forma moderna desde 1985: custodia embajadas, " +
+      "diplomáticos y pasaportes en más de cien países — su corredor es el mapa entero. No es uno " +
+      "de los 18 ojos: es la mano que sostiene la puerta de la diplomacia para que el diálogo " +
+      "pueda cruzarla.",
+  },
+  {
+    id: "cbp",
+    sigla: "CBP",
+    nombre: "Customs and Border Protection",
+    nota:
+      "La mayor fuerza de seguridad federal del país: aduanas, frontera y la primera línea del " +
+      "escudo interno, nacida en la reorganización post 11-S (2003) con la maleta del DHS. No es " +
+      "uno de los 18 ojos: es la mano que palma la puerta por donde todo entra y sale.",
+  },
+  {
+    id: "fams",
+    sigla: "FAMS",
+    nombre: "Federal Air Marshal Service",
+    nota:
+      "Los marshals del cielo: agentes armados de incógnito en vuelos comerciales, nacidos en los " +
+      "años sesenta y crecidos tras el 11-S dentro de la TSA. No es uno de los 18 ojos: es la mano " +
+      "que actúa a diez mil pies cuando el expediente viaja en el asiento 14C.",
+  },
+  {
+    id: "irsci",
+    sigla: "IRS-CI",
+    nombre: "Criminal Investigation (IRS)",
+    nota:
+      "Los investigadores especiales del fisco, nacidos en 1919 para seguir el rastro del " +
+      "contrabando: Al Capone no cayó por tiros, cayó por impuestos. La FININT con distintivo " +
+      "fiscal. No es uno de los 18 ojos: es la mano que cobra la confesión escrita que el dinero " +
+      "deja en cada transferencia.",
+  },
 ];
 
-// ─────────── LOS CINCO SENTIDOS DE LA INTELIGENCIA ───────────
+// ─────────── LOS DIEZ SENTIDOS DE LA INTELIGENCIA (v328: 5 → 10) ───────────
+// Los cinco nuevos son disciplinas reales y documentadas del oficio
+// (doctrina pública de inteligencia), narradas con la misma voz de la casa.
 export interface Sentido {
   id: string;
   sigla: string;
@@ -488,6 +567,27 @@ export const SENTIDOS: Sentido[] = [
     id: "finint", sigla: "FININT", nombre: "Inteligencia financiera",
     texto: "El dinero siempre deja rastro. El Tesoro (OIA) y la DEA lo persiguen: cada transferencia es una confesión escrita por alguien que cree que nadie mira.",
   },
+  // ── los cinco sentidos que entraron con la v328 LA COMUNIDAD GIRA ──
+  {
+    id: "masint", sigla: "MASINT", nombre: "Inteligencia de medición y firmas",
+    texto: "La ciencia de las firmas: el calor que deja el motor de un tanque al pasar, la estela espectral de un químico en el aire, la vibración de un lanzamiento. No lee la foto ni la llamada: lee lo que el mundo deja al existir.",
+  },
+  {
+    id: "imint", sigla: "IMINT", nombre: "Inteligencia de imágenes",
+    texto: "La más vieja de las miradas nuevas: la fotografía aérea nació con los globos del ejército de la Unión en 1861 y creció hasta el U-2 y los satélites de la Corona. La imagen bruta es su oficio; el GEOINT la funde después con el mapa.",
+  },
+  {
+    id: "techint", sigla: "TECHINT", nombre: "Inteligencia técnica",
+    texto: "Diseccionar el arma capturada para entender al enemigo. El MiG-15 que un desertor aterrizó en Kimpo en 1953 valió más que un mes de escuchas: cada pieza nueva del arsenal ajeno es un expediente que se abre con destornillador.",
+  },
+  {
+    id: "cybint", sigla: "CYBINT", nombre: "Inteligencia cibernética",
+    texto: "El sentido nacido del cable: redes, malware y huellas digitales para atribuir un ataque y preparar la defensa. El espionaje moderno también habla en paquetes — y cada paquete deja bitácora.",
+  },
+  {
+    id: "felint", sigla: "FELINT", nombre: "Inteligencia de señales de instrumentación",
+    texto: "Escuchar la telemetría del misil del otro: las señas de sus sensores durante una prueba revelan alcance, empuje y puntería. Un lanzamiento ensayado es una confesión radiada al cielo.",
+  },
 ];
 
 // ─────────── PULSO REAL: palabras clave por agencia (cables de /api/news) ───────────
@@ -511,6 +611,31 @@ export const PULSO_KEYWORDS: Record<string, string[]> = {
   oia: ["sanction", "sanciones", "treasury", "tesoro", "money laundering", "lavado de dinero"],
   oici: ["nuclear", "reactor", "reactor nuclear", "iaea", "atomic", "enriched uranium"],
 };
+
+// ─────────── v328: EL ANILLO DE LA ESCUELA LLEGA A LA COMUNIDAD ───────────
+// OCTAVO consumidor del anillo: mando v313 · instituto v318 · red v320 ·
+// canal v321 · ciber v322 · atlas v324 · armería v326 · comunidad v328 —
+// un solo reloj (diaDelAnillo, ley v324) y una sola envoltura (girar),
+// CERO copias. El ojo del día gira una muesca por fecha; dos días seguidos
+// jamás repiten al invitado.
+export function agenciaDelDia(): Agencia {
+  return girar(AGENCIAS, 1, diaDelAnillo() % AGENCIAS.length)[0];
+}
+
+export function sentidoDelDia(): Sentido {
+  return girar(SENTIDOS, 1, diaDelAnillo() % SENTIDOS.length)[0];
+}
+
+// v328: censo por categoría COMPUTADO del catálogo real (patrón censoArsenal
+// v326 — ley v322: nada duro que se pudra). Si una agencia cambia de
+// categoría o el catálogo crece, el censo se recalcula solo.
+export function censoComunidad() {
+  return (Object.keys(CATEGORIA_META) as CategoriaAgencia[]).map((cat) => ({
+    cat,
+    meta: CATEGORIA_META[cat],
+    n: AGENCIAS.filter((a) => a.categoria === cat).length,
+  }));
+}
 
 // ─────────── cifras de la colección ───────────
 export const COLECCION = {

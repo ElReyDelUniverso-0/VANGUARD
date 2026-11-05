@@ -4908,6 +4908,51 @@
 //     llamada (ley v302) · arnés visual (scripts/qa-visual-v327.sh): la
 //     sala del arquitecto ante el ojo — telemetro lleno sin «sondeando»
 //     eterno, widgets montados por hidratación escuchada, era sincronizada.
-export const APP_VERSION = "v327.0";
-export const APP_CODENAME = "LA TERCERA CIRUGÍA";
+// v328.0 LA COMUNIDAD GIRA — undécima ronda del autociclo y la EXPANSIVA del
+// ritmo (v324 expansión → v325 cirugía → v326 expansión → v327 cirugía →
+// v328 expansión): la TERCERA carta de la cola expansiva anotada por la
+// v322/v324 juega en agencias-data, la fuente que la v127 vistió con 18
+// expedientes y la v282 con sus tres hermanos (SENTIDOS 5 · ALIADAS 1 ·
+// COLECCION derivada).
+// ① LOS SENTIDOS 5 → 10: entran MASINT (medición y firmas — lo que el mundo
+//    deja al existir), IMINT (la fotografía desde los globos de la Unión,
+//    1861), TECHINT (el MiG-15 desertado en Kimpo, 1953), CYBINT (el sentido
+//    nacido del cable) y FELINT (la telemetría del misil del otro) — cinco
+//    disciplinas reales y documentadas del oficio, narradas con la voz de
+//    la casa y marcadas como tales.
+// ② LA SALA ANEXA 1 → 7: FEMA ya no está sola — entran USMS (1789, la mano
+//    más vieja de la federación: 93 años antes que el ojo más antiguo de la
+//    colección — la anexa supera a la sala), USSS (1865, del falsificador al
+//    guardaespaldas tras McKinley), DSS (1985, la mano del Departamento de
+//    Estado), CBP (2003, la mayor fuerza federal), FAMS (los marshals del
+//    cielo) e IRS-CI (1919 — Capone no cayó por tiros, cayó por impuestos).
+//    Las líneas derivadas de /servicios (lineaManos, noscript) se
+//    recalculan solas: la expansión honesta es la que no escribe cifras.
+// ③ EL ANILLO DE LA ESCUELA LLEGA A LA COMUNIDAD — OCTAVO consumidor:
+//    agenciaDelDia() + sentidoDelDia() con girar() + diaDelAnillo()
+//    importadas del reloj CENTRAL único (cero copias, ley v324). Ocho
+//    anillos: mando v313, instituto v318, red v320, canal v321, ciber
+//    v322, atlas v324, armería v326, comunidad v328.
+// ④ EL CENSO POR CATEGORÍA COMPUTADO: censoComunidad() filtra el catálogo
+//    real por las 6 categorías de CATEGORIA_META — si un ojo cambia de
+//    categoría o el catálogo crece, los chips se recalculan solos (ley
+//    v322: nada duro que se pudra).
+// ⑤ EL PANEL DICE LA VERDAD: franja EXPEDIENTE DEL DÍA con sigla, nombre,
+//    categoría y fundación clicable (irAlExpediente, el handler de la
+//    casa), especialidad, chips del censo y la LEY DEL ANILLO en pantalla;
+//    el sentido del día lleva estrella en la sección de los diez; el
+//    expediente del día viaja a la sala 3D con su acción propia (patrón
+//    v326). CERO efectos nuevos — el anillo vive en useMemo puro (ley v302
+//    por construcción): el censo canónico 4+4 respira.
+//     SUITE: +2 pines (LA COMUNIDAD GIRA estático: los diez sentidos con
+//     sus cinco siglas nuevas, las siete manos con las fundaciones reales,
+//     girar importada del reloj central, agenciaDelDia + sentidoDelDia +
+//     censoComunidad definidos, franja con ley y censo, sentido del día
+//     marcado, cero useEffect nuevos, versión doble aserción — y vivo:
+//     home + health v328) + rodillos de pines v282 (los que codificaban
+//     la cifra vieja: «5 disciplinas» → 10 derivada, el noscript con las
+//     siete manos) + rodillo a v328.0 (cuatro patrones, mensajes
+//     históricos intactos — ley v312).
+export const APP_VERSION = "v328.0";
+export const APP_CODENAME = "LA COMUNIDAD GIRA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

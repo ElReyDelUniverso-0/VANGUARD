@@ -8,8 +8,9 @@
 //   · EL CORREDOR — el mapa real de sedes: Washington · Virginia · Maryland
 //   · EL EXPEDIENTE — misión, lema, fichas y dominio de cada agencia
 //   · EL PULSO REAL — los cables que la Casa recibe AHORA sobre cada ojo
-//   · LOS CINCO SENTIDOS — HUMINT · SIGINT · GEOINT · OSINT · FININT
-//   · SALA ANEXA — DHS, FEMA y las manos que actúan tras los ojos
+//   · EL EXPEDIENTE DEL DÍA — el anillo de la escuela llega a la comunidad (v328, octavo consumidor)
+//   · LOS SENTIDOS — diez disciplinas del oficio, con el sentido del día marcado (v328)
+//   · SALA ANEXA — siete manos que actúan tras los ojos (v328: FEMA + 6)
 // Doctrina de la Casa: espacio negativo, placa numerada, narrativa.
 // ============================================================
 import { useEffect, useMemo, useState } from "react";
@@ -24,7 +25,8 @@ import { sfx } from "@/lib/sound";
 import { cn, q2 } from "@/lib/utils";
 import {
   AGENCIAS, ALIADAS, SENTIDOS, CATEGORIA_META, PULSO_KEYWORDS, COLECCION,
-  agenciaDe, type Agencia, type CategoriaAgencia,
+  agenciaDe, agenciaDelDia, sentidoDelDia, censoComunidad,
+  type Agencia, type CategoriaAgencia,
 } from "@/lib/agencias-data";
 import {
   Crown, Eye, Signal, Crosshair, Map as MapIcon, Satellite, Landmark, Ship, Swords,
@@ -78,6 +80,12 @@ export function ComunidadPanel() {
   const [cableSel, setCableSel] = useState<CableLectura | null>(null);
 
   const sel: Agencia = agenciaDe(selId) ?? AGENCIAS[0];
+  // v328: el anillo de la escuela — el expediente y el sentido del día se
+  // COMPUTAN del reloj central en render (useMemo puro, cero efectos: ley
+  // v302 por construcción; dos días seguidos jamás repiten al invitado)
+  const agenciaDia = useMemo(() => agenciaDelDia(), []);
+  const sentidoDia = useMemo(() => sentidoDelDia(), []);
+  const censo = useMemo(() => censoComunidad(), []);
   const meta = CATEGORIA_META[sel.categoria];
 
   // v164 SALA EN VOLUMEN: los cables de la agencia en filas de cristal 3D
@@ -85,12 +93,22 @@ export function ComunidadPanel() {
     "comunidad",
     "Comunidad OSINT",
     "#3FD6FF",
-    `${cables.length} CABLES DE LA CASA · ${AGENCIAS.length} AGENCIAS AL DIA`,
-    cables.slice(0, 6).map((c) => ({
-      t: c.title || "CABLE",
-      v: (c.tacticalTag || "INFO").toUpperCase().slice(0, 10),
-      color: "#3FD6FF",
-    })),
+    `${cables.length} CABLES DE LA CASA · ${AGENCIAS.length} AGENCIAS AL DIA · ANILLO: ${agenciaDia.sigla}`,
+    [
+      // v328: el expediente del día viaja a la sala 3D con su acción propia
+      {
+        t: `EXPEDIENTE DEL DÍA: ${agenciaDia.sigla}`,
+        v: CATEGORIA_META[agenciaDia.categoria].etiqueta.slice(0, 14),
+        color: CATEGORIA_META[agenciaDia.categoria].color,
+        d: `${agenciaDia.especialidad}`.slice(0, 160),
+        a: "ver expediente del día",
+      },
+      ...cables.slice(0, 6).map((c) => ({
+        t: c.title || "CABLE",
+        v: (c.tacticalTag || "INFO").toUpperCase().slice(0, 10),
+        color: "#3FD6FF",
+      })),
+    ],
   );
 
   // ── pulso real: cables de la casa, frescos cada 5 minutos ──
@@ -168,6 +186,26 @@ export function ComunidadPanel() {
         <span>fundada <span className="text-foreground font-bold">{COLECCION.masAntigua.fundacion}</span> ({COLECCION.masAntigua.sigla}) — última <span className="text-foreground font-bold">{COLECCION.masJoven.fundacion}</span> ({COLECCION.masJoven.sigla})</span>
         <span><span className="text-foreground font-bold">{COLECCION.creadasPost11S}</span> nacidas tras el 11-S</span>
         {totalSenales > 0 && <span className="text-foreground"><Radio className="inline w-3 h-3 -mt-0.5" /> {totalSenales} señales vivas ahora</span>}
+      </div>
+
+      {/* ===== v328: EXPEDIENTE DEL DÍA — el anillo de la escuela llega a la comunidad (octavo consumidor) ===== */}
+      <div className="hud-panel px-3 py-2.5 relative overflow-hidden" aria-label="Expediente del día">
+        <button onClick={() => irAlExpediente(agenciaDia.id)} className="flex items-center gap-2 flex-wrap text-left w-full group" title="Abrir el expediente de la agencia del día">
+          <span className="text-[8px] font-mono uppercase tracking-widest text-violet-hud">★ expediente del día</span>
+          <span className="text-xs font-bold font-mono uppercase text-foreground group-hover:text-violet-hud transition-colors">{agenciaDia.sigla}</span>
+          <span className="text-[9px] font-mono text-muted-foreground">{agenciaDia.nombreEs} · {CATEGORIA_META[agenciaDia.categoria].etiqueta} · desde {agenciaDia.fundacion}</span>
+        </button>
+        <p className="text-[10px] text-muted-foreground leading-snug mt-1 line-clamp-2">{agenciaDia.especialidad}</p>
+        <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+          {censo.map(({ cat, meta, n }) => (
+            <span key={cat} className="text-[8px] font-mono uppercase px-1.5 py-0.5 border rounded-sm" style={{ borderColor: `${meta.color}55`, color: meta.color }} title={`${n} expedientes de ${meta.etiqueta} en la colección`}>
+              {meta.etiqueta} {n}
+            </span>
+          ))}
+        </div>
+        <p className="text-[8px] font-mono uppercase text-muted-foreground/70 mt-1.5">
+          el anillo de la comunidad avanza un ojo por día — {AGENCIAS.length} expedientes y {SENTIDOS.length} sentidos en el catálogo, dos días seguidos jamás repiten al invitado · atribución del anillo: computada del reloj central
+        </p>
       </div>
 
       {/* ── LA PIRÁMIDE ── */}
@@ -422,13 +460,13 @@ export function ComunidadPanel() {
         )}
       </div>
 
-      {/* ── LOS CINCO SENTIDOS ── */}
+      {/* ── LOS SENTIDOS (v328: diez disciplinas, el del día marcado) ── */}
       <div className="hud-panel p-4">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-foreground flex items-center gap-2">
-          <Radar className="w-3.5 h-3.5 text-cyan-hud" /> LOS CINCO SENTIDOS DE LA INTELIGENCIA
+          <Radar className="w-3.5 h-3.5 text-cyan-hud" /> LOS SENTIDOS DE LA INTELIGENCIA
         </p>
         <p className="text-[10px] text-muted-foreground leading-relaxed mt-1 mb-3">
-          Cada agencia destaca en un sentido distinto. Estos son los oficios que se reparten el mundo.
+          Cada agencia destaca en un sentido distinto. Estos son los {SENTIDOS.length} oficios que se reparten el mundo — el de hoy lleva estrella.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
           {SENTIDOS.map((s, i) => (
@@ -438,8 +476,11 @@ export function ComunidadPanel() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ delay: q2(i * 0.05), duration: 0.35 }}
-              className="rounded border border-border p-3"
+              className={cn("rounded border p-3", s.id === sentidoDia.id ? "border-violet-hud bg-violet-hud/10" : "border-border")}
             >
+              {s.id === sentidoDia.id && (
+                <p className="text-[8px] font-mono uppercase tracking-widest text-violet-hud mb-1">★ sentido del día</p>
+              )}
               <p className="font-mono text-[11px] font-bold tracking-widest text-foreground">{s.sigla}</p>
               <p className="text-[9px] uppercase tracking-wider text-muted-foreground mt-0.5">{s.nombre}</p>
               <p className="text-[9px] text-muted-foreground leading-relaxed mt-1.5">{s.texto}</p>
@@ -454,8 +495,7 @@ export function ComunidadPanel() {
           <Handshake className="w-3.5 h-3.5" style={{ color: "#3DDC97" }} /> SALA ANEXA — LAS MANOS QUE ACTÚAN
         </p>
         <p className="text-[10px] text-muted-foreground leading-relaxed mt-1 mb-3">
-          No están entre los 18 ojos, pero sin ellas la visión no se vuelve acción: el ministerio que
-          unifica y la agencia que corre cuando el desastre ya es visible.
+          No están entre los 18 ojos, pero sin ellas la visión no se vuelve acción: {ALIADAS.length} manos — desde la más vieja de la federación (USMS, 1789) hasta las que palman frontera y cielo.
         </p>
         <div className="grid sm:grid-cols-2 gap-2.5">
           {ALIADAS.map((a) => (
