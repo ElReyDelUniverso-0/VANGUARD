@@ -62,25 +62,44 @@ export function CamaraConsecuencias({ cable, onCerrar }: { cable: CableSim | nul
   const [horizonte, setHorizonte] = useState<ConfigLab["horizonte"]>(180);
   const [paso, setPaso] = useState(0);
 
-  // al abrir un cable nuevo: el tag decide el arranque
-  useEffect(() => {
-    if (!cable) return;
-    const d = defaultsDeTag(cable.tag);
-    setEscId(d.escId);
-    setPert(d.pert);
-    setDosis(3);
-    setHorizonte(180);
-  }, [cable]);
+  // v312 LA CUARTA QUIRURGÍA (la deuda 11 → 10): el reset de los controles
+  // al abrir un cable AJUSTADO DURANTE EL RENDER (react.dev, «quizá no
+  // necesitas un efecto»): comparar el cable ya visto con el entrante y
+  // corregir en el render en curso — React descarta ese render y re-renderea
+  // una vez antes de pintar. Comportamiento EXACTO al del efecto que era:
+  // el tag del cable decide el arranque (escenario + primera perturbación +
+  // dosis 3 + horizonte 180) y cerrar sin abrir otro no toca los controles.
+  const [cableVisto, setCableVisto] = useState(cable);
+  if (cableVisto !== cable) {
+    setCableVisto(cable);
+    if (cable) {
+      const d = defaultsDeTag(cable.tag);
+      setEscId(d.escId);
+      setPert(d.pert);
+      setDosis(3);
+      setHorizonte(180);
+    }
+  }
 
   const cfg: ConfigLab = useMemo(() => ({ crisisId: escId, perturbacion: pert, dosis, horizonte }), [escId, pert, dosis, horizonte]);
   const resultado = useMemo(() => (cable ? simular(cfg) : null), [cfg, cable]);
 
+  // v312: el REINICIO de la proyección también se AJUSTA DURANTE EL RENDER —
+  // cuando cambia la simulación (escenario, «y si», dosis, horizonte) o el
+  // gusto de movimiento reducido, el paso vuelve a día 0 (o salta al final
+  // si `reduced`), la misma cura canónica. El RELOJ que avanza el paso es un
+  // efecto secundario legítimo y queda en un efecto que ya no escribe estado
+  // sincrónicamente (la regla calla): solo programa el intervalo.
+  const [reinicioVisto, setReinicioVisto] = useState({ r: resultado, red: reduced });
+  if (reinicioVisto.r !== resultado || reinicioVisto.red !== reduced) {
+    setReinicioVisto({ r: resultado, red: reduced });
+    setPaso(resultado ? (reduced ? resultado.serie.length - 1 : 0) : 0);
+  }
+
   // la proyección corre día a día (el paso avanza con un reloj pequeño)
   useEffect(() => {
-    if (!resultado) return;
+    if (!resultado || reduced) return;
     const fin = resultado.serie.length - 1;
-    if (reduced) { setPaso(fin); return; }
-    setPaso(0);
     const iv = window.setInterval(() => {
       setPaso((p) => {
         if (p >= fin) { window.clearInterval(iv); return p; }

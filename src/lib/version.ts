@@ -4481,6 +4481,35 @@
 //     consola limpia y sin bucles de render (el riesgo propio del ajuste
 //     durante el render, medido y despejado).
 // Herencia v310.0 LA SEGUNDA QUIRURGÍA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v311.0";
-export const APP_CODENAME = "LA TERCERA QUIRURGÍA";
+// v312.0 LA CUARTA QUIRURGÍA — la deuda sigue pagándose (11 → 9): esta vez
+//         DOS heridas en UN solo paciente, la CÁMARA DE CONSECUENCIAS
+//         (v135 NEXUS-HYPNOS, el efecto mariposa junto a cada cable). La
+//         primera: el reset de los CONTROLES al abrir un cable (el tag
+//         táctico decide escenario, primera perturbación, dosis 3 y
+//         horizonte 180) vivía en un efecto que escribía estado. La
+//         segunda: el REINICIO de la proyección (paso a día 0, o salto al
+//         final con movimiento reducido) también se escribía sincrónicamente
+//         dentro de su efecto. Ambas curadas con la SEGUNDA HERRAMIENTA de
+//         la casa (el ajuste durante el render, la forma canónica de
+//         react.dev): el cable ya visto se guarda y, si cambia, corrige sus
+//         controles en el render en curso — React descarta ese render y
+//         re-renderea una vez antes de pintar; igual el reinicio, que
+//         compara el resultado y el gusto de movimiento reducido ya vistos.
+//         El RELOJ que avanza la proyección día a día es un efecto
+//         secundario legítimo y queda en un efecto que ya no escribe estado
+//         sincrónicamente: solo programa el intervalo. Comportamiento
+//         EXACTO medido en vivo: abrir un cable arranca limpio por el tag,
+//         tocar dosis u horizonte reinicia la proyección ante los ojos, el
+//         veredicto y su Monte Carlo llegan al final, Escape cierra,
+//         reabrir OTRO cable no arrastra el paso anterior.
+// QA: tsc 0 TOTAL · eslint 0 (paciente) · censo 11 → 9 (dos en una ronda)
+//     · build EXIT 0 · health v312.0 db up · pruebas 251/251 (+2 LA CUARTA
+//     QUIRURGÍA) · arnés visual propio sobre el BUILD NUEVO: reloj vivo
+//     (26 → 56), reinicio medido al instante tras la dosis (día 1 venía de
+//     crecer hacia 50+), veredicto pintado con Monte Carlo, reapertura sin
+//     arrastre (día 1 tras un final en 090), Escape honesto, consola limpia,
+//     sin desbordes 1440/390, cero zombis.
+// Herencia v311.0 LA TERCERA QUIRURGÍA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v312.0";
+export const APP_CODENAME = "LA CUARTA QUIRURGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
