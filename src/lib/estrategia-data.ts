@@ -262,6 +262,18 @@ const LEYENDAS = [
   { nombre: "Tiniente Orel Mora", victorias: 97, doctrinaFav: "Jinete Fantasma" },
 ];
 
+// v315.0 LA MESA CON MEMORIA — resolver un id «W#» del catálogo base fuera
+// de la rotación diaria: el revivir de la memoria necesita la mesa ORIGINAL
+// aunque hoy no toque en clase, y la dificultad GUARDADA de la partida (la
+// v313 re-tira la dificultad cada día; sin ella el replay no sería exacto).
+export function escenarioPorId(id: string, dificultad?: EscenarioWargame["dificultad"]): EscenarioWargame | null {
+  if (!id.startsWith("W")) return null;
+  const i = Number(id.slice(1)) - 1;
+  const base = ESCENARIOS_BASE[i];
+  if (!base) return null;
+  return { ...base, id, dificultad: dificultad ?? base.dificultad };
+}
+
 // v313: LA ROTACIÓN POR ENVOLTURA — la escuela respira: del currículo
 // completo, cada día toca una clase distinta (6 de 10 wargames, 4 de 10
 // lecciones), determinista por fecha: el giro parte del hash del día y

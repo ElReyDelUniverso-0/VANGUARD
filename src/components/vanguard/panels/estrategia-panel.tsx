@@ -8,10 +8,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play } from "lucide-react";
+import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play, History, RotateCcw } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { estrategiaDeHoy, type General, type EscenarioWargame } from "@/lib/estrategia-data";
+import { estrategiaDeHoy, escenarioPorId, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
 import {
   jugadasDeTurno,
@@ -22,6 +22,22 @@ import {
 } from "@/lib/wargame-motor";
 import { cn } from "@/lib/utils";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
+
+// v315 LA MESA CON MEMORIA — una partida guardada: contadores propios del
+// wargame (JAMÁS cruzar conquestWins — la ley de contadores honestos) y las
+// jugadas exactas por turno que el motor determinista sabe revivir.
+type PartidaMesa = {
+  escId: string;
+  titulo: string;
+  dificultad: number;
+  fecha: number;
+  jugadas: string[];
+  objetivoAzul: number;
+  objetivoRojo: number;
+  ganaAzul: boolean;
+  botinCoins: number;
+  botinXp: number;
+};
 
 const RAMA_COLOR: Record<string, string> = {
   ATAQUE: "#FF6B4D",
@@ -40,7 +56,13 @@ export function EstrategiaGlobalPanel() {
   // del operador (game-store) y el puesto que esas victorias le dan entre las
   // leyendas. Progreso de verdad, no carteles (la ley de la v216).
   const victoriasTu = useGameStore((s) => s.conquestWins);
+  // v315 LA MESA CON MEMORIA — la mesa recuerda: contadores propios y las
+  // últimas partidas revivibles; el revivir abre la mesa en modo replay.
+  const memoria = useGameStore((s) => s.wargameStats);
+  const historial = useGameStore((s) => s.wargameHistorial);
+  const [replay, setReplay] = useState<PartidaMesa | null>(null);
   const [mesa, setMesa] = useState<EscenarioWargame | null>(null);
+  const mejoresPartidas = useMemo(() => [...historial].sort((a, b) => b.objetivoAzul - a.objetivoAzul || b.fecha - a.fecha).slice(0, 3), [historial]);
   const generalesOrdenados = useMemo<General[]>(() => {
     const tu: General = { nombre: "TU · operador de Vanguard", victorias: victoriasTu, doctrinaFav: "conquista en vivo", eres: true };
     return [...hoy.generales, tu].sort((a, b) => b.victorias - a.victorias || (a.eres ? 1 : -1));
@@ -72,6 +94,15 @@ export function EstrategiaGlobalPanel() {
         a: "elegir",
       })),
       {
+        // v315 LA MESA CON MEMORIA — la sala 3D también refleja tu récord real
+        t: "TU MEMORIA DE LA MESA",
+        v: memoria.jugadas > 0 ? `${memoria.ganadas}/${memoria.jugadas} V` : "SIN PARTIDAS",
+        color: memoria.jugadas > 0 ? "#4D9DFF" : "#A855F7",
+        d: memoria.jugadas > 0
+          ? `mejor racha ${memoria.mejorRacha} · mejor objetivo ${memoria.mejorObjetivo}/100 — contadores propios de la escuela`
+          : "juega una mesa y la escuela guardará tu partida: contadores propios, revivibles",
+      },
+      {
         t: `DOCTRINA EN CLASE · ${doctrina.nombre}`,
         color: RAMA_COLOR[doctrina.rama] ?? "#A855F7",
         d: `${doctrina.principio} · contra-doctrina histórica: ${doctrina.contra}`,
@@ -84,7 +115,7 @@ export function EstrategiaGlobalPanel() {
       })),
     ];
     return filas;
-  }, [hoy, doctrina, escSel, generalesOrdenados]);
+  }, [hoy, doctrina, escSel, generalesOrdenados, memoria]);
   useSala3DContenido(
     "estrategia",
     "ESTRATEGIA GLOBAL",
@@ -246,6 +277,55 @@ export function EstrategiaGlobalPanel() {
             >
               <Play className="w-3.5 h-3.5" /> jugar esta mesa · {escenario.turns} turnos
             </button>
+            {/* v315 LA MESA CON MEMORIA: el récord real del operador en esta
+                escuela — contadores propios (jamás conquestWins) y el tablero
+                de las mejores partidas con su revivir determinista */}
+            <div className="border-t border-dashed border-border/40 pt-2 space-y-2">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-violet flex items-center gap-1.5">
+                <History className="w-3 h-3" /> memoria del operador
+              </p>
+              <div className="grid grid-cols-4 gap-1.5 text-center">
+                <div className="border border-border/50 px-1 py-1.5 bg-black/30">
+                  <p className="text-[13px] font-bold text-foreground tabular-nums">{memoria.jugadas}</p>
+                  <p className="text-[7.5px] font-mono uppercase text-muted-foreground">partidas</p>
+                </div>
+                <div className="border border-border/50 px-1 py-1.5 bg-black/30">
+                  <p className="text-[13px] font-bold text-blue-400 tabular-nums">{memoria.ganadas}</p>
+                  <p className="text-[7.5px] font-mono uppercase text-muted-foreground">ganadas</p>
+                </div>
+                <div className="border border-border/50 px-1 py-1.5 bg-black/30">
+                  <p className="text-[13px] font-bold text-amber tabular-nums">{memoria.mejorRacha}</p>
+                  <p className="text-[7.5px] font-mono uppercase text-muted-foreground">mejor racha</p>
+                </div>
+                <div className="border border-border/50 px-1 py-1.5 bg-black/30">
+                  <p className="text-[13px] font-bold text-violet tabular-nums">{memoria.mejorObjetivo}</p>
+                  <p className="text-[7.5px] font-mono uppercase text-muted-foreground">mejor objetivo</p>
+                </div>
+              </div>
+              {mejoresPartidas.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-[8px] font-mono uppercase text-muted-foreground">mejores partidas · revivibles (el motor determinista las re-juega al exacto)</p>
+                  {mejoresPartidas.map((p, i) => (
+                    <div key={`${p.escId}-${p.fecha}`} className="flex items-center gap-2 border border-border/50 px-2 py-1.5 bg-black/30">
+                      <span className="text-[9px] font-mono text-amber w-4 text-center">{i + 1}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-semibold text-foreground truncate">{p.titulo}</p>
+                        <p className="text-[8.5px] font-mono text-muted-foreground">
+                          {p.objetivoAzul}/100 · {p.ganaAzul ? "victoria azul" : "sin victoria"} · {new Date(p.fecha).toLocaleDateString("es", { day: "2-digit", month: "short" })}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setReplay(p)}
+                        title="Revivir la partida (replay determinista, sin botín)"
+                        className="flex items-center gap-1 text-[9px] font-mono uppercase px-1.5 py-1 border border-violet-hud/60 text-violet hover:bg-violet-hud/20 transition-colors flex-shrink-0"
+                      >
+                        <RotateCcw className="w-3 h-3" /> revivir
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
@@ -291,6 +371,8 @@ export function EstrategiaGlobalPanel() {
       {/* v314: la mesa viva — el portal libra la mesa del wrapper de transición
           (la misma cura del ancla robada que la cámara de la v135) */}
       {mesa && <MesaWargame esc={mesa} onCerrar={() => setMesa(null)} />}
+      {/* v315: el revivir — replay determinista de una partida guardada */}
+      {replay && <ReplayMesa partida={replay} onCerrar={() => setReplay(null)} />}
     </div>
   );
 }
@@ -304,6 +386,11 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
   const [estado, setEstado] = useState<EstadoWargame>(() => estadoInicial(esc));
   const addCoins = useGameStore((s) => s.addCoins);
   const addXp = useGameStore((s) => s.addXp);
+  // v315 LA MESA CON MEMORIA: la partida se guarda al cerrar — en el MISMO
+  // handler de la jugada final (cero escrituras de estado en efectos).
+  const recordWargame = useGameStore((s) => s.recordWargame);
+  const stats = useGameStore((s) => s.wargameStats);
+  const [ruta, setRuta] = useState<string[]>([]);
 
   // Escape honesto + el fondo deja de desplazar mientras la mesa está abierta
   // (efecto PURO: ninguna escritura de estado — la ley del censo)
@@ -322,10 +409,25 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
     const jugada = jugadasDeTurno(esc, estado.turno)[idx];
     const siguiente = resolverJugada(esc, estado, jugada);
     setEstado(siguiente);
+    const rutaCompleta = [...ruta, jugada.id];
+    setRuta(rutaCompleta);
     if (siguiente.cerrada) {
       const v = veredictoDe(esc, siguiente);
       addCoins(v.botinCoins, `wargame ${esc.id} — veredicto de la mesa`);
       addXp(v.botinXp);
+      // v315: la memoria de la mesa — la partida con sus jugadas exactas
+      // queda guardada (revivible por el motor determinista)
+      recordWargame({
+        escId: esc.id,
+        titulo: esc.titulo,
+        dificultad: esc.dificultad,
+        jugadas: rutaCompleta,
+        objetivoAzul: siguiente.objetivoAzul,
+        objetivoRojo: siguiente.objetivoRojo,
+        ganaAzul: v.ganaAzul,
+        botinCoins: v.botinCoins,
+        botinXp: v.botinXp,
+      });
     }
   };
 
@@ -387,6 +489,11 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
                 botín de la mesa: <span className="text-amber font-bold">+{veredicto.botinCoins} monedas</span> · <span className="text-violet font-bold">+{veredicto.botinXp} XP</span> — cobrado en tu cuenta de Vanguard
               </p>
               <p className="text-[9px] font-mono text-muted-foreground/70 border border-border/60 px-1.5 py-0.5 inline-block">partida determinista · las mismas jugadas reproducen la misma mesa · ficción de la escuela</p>
+              {estado.cerrada && (
+                <p className="text-[9.5px] font-mono text-violet border border-violet-hud/40 px-2 py-1 bg-violet-hud/5">
+                  memoria de la mesa: <span className="font-bold">{stats.jugadas}</span> partidas · <span className="font-bold text-blue-400">{stats.ganadas}</span> ganadas · racha <span className="font-bold">{stats.racha}</span> (mejor {stats.mejorRacha}) — la partida quedó guardada para revivir
+                </p>
+              )}
             </div>
           ) : (
             <div className="space-y-2">
@@ -401,6 +508,115 @@ function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () =>
                 </button>
               ))}
             </div>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+// v315.0 LA MESA CON MEMORIA — EL REVIVIR: el determinismo del motor hace el
+// replay gratis — la partida guardada trae sus jugadas exactas y la mesa
+// original (escenarioPorId con la dificultad GUARDADA: la v313 re-tira la
+// dificultad cada día y sin ella el replay no sería exacto). El replay es
+// CINE, no economía: CERO addCoins/addXp — la mesa solo se paga una vez.
+function ReplayMesa({ partida, onCerrar }: { partida: PartidaMesa; onCerrar: () => void }) {
+  const esc = useMemo(() => escenarioPorId(partida.escId, partida.dificultad as EscenarioWargame["dificultad"]), [partida.escId, partida.dificultad]);
+  // el curso completo: re-jugar la ruta guardada turno a turno (puro, memo)
+  const curso = useMemo(() => {
+    if (!esc) return null;
+    let st = estadoInicial(esc);
+    for (let t = 1; t <= esc.turns; t++) {
+      const elegida = jugadasDeTurno(esc, t).find((j) => j.id === partida.jugadas[t - 1]);
+      if (!elegida) return null; // la escuela cambió el arsenal: fallo honesto
+      st = resolverJugada(esc, st, elegida);
+    }
+    return st;
+  }, [esc, partida.jugadas]);
+  const veredicto = esc && curso ? veredictoDe(esc, curso) : null;
+
+  // Escape honesto (la misma ley de la mesa viva) — efecto PURO
+  useEffect(() => {
+    const alTeclear = (e: KeyboardEvent) => { if (e.key === "Escape") onCerrar(); };
+    window.addEventListener("keydown", alTeclear);
+    const previo = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", alTeclear);
+      document.body.style.overflow = previo;
+    };
+  }, [onCerrar]);
+
+  const exacto = !!veredicto && veredicto.ganaAzul === partida.ganaAzul && curso?.objetivoAzul === partida.objetivoAzul;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[96] flex items-center justify-center p-2 sm:p-6" role="dialog" aria-label={`Replay de la mesa: ${partida.titulo}`}>
+      <button aria-label="Cerrar replay" onClick={onCerrar} className="absolute inset-0 bg-black/85 backdrop-blur-md cursor-default" />
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto hud-panel border-violet-hud shadow-[0_30px_120px_-20px_rgba(0,0,0,0.95)]">
+        {/* cabecera */}
+        <div className="sticky top-0 z-10 flex items-center gap-2 px-3 sm:px-4 py-2.5 border-b border-violet-hud/60 bg-[#0B0B12]/95 backdrop-blur-sm">
+          <div className="w-8 h-8 hud-corner flex items-center justify-center border-violet-hud text-violet flex-shrink-0">
+            <History className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-caviar text-sm sm:text-base font-bold tracking-[0.14em] uppercase text-violet truncate">revivir · {partida.titulo}</h2>
+            <p className="text-[9px] font-mono text-muted-foreground uppercase truncate">
+              replay determinista · {new Date(partida.fecha).toLocaleDateString("es", { day: "2-digit", month: "short", year: "numeric" })} · dificultad {partida.dificultad}/5
+            </p>
+          </div>
+          <button onClick={onCerrar} title="Cerrar (Esc)" className="w-7 h-7 hud-corner flex items-center justify-center border-violet-hud text-violet hover:bg-violet-hud transition-colors flex-shrink-0">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="p-3 sm:p-4 space-y-3">
+          {!esc || !curso || !veredicto ? (
+            <p className="text-[11px] font-mono text-amber border border-amber/40 px-2.5 py-2 bg-amber-hud/5">
+              esta partida ya no puede revivirse: la escuela cambió su currículo desde entonces — la memoria guarda la lección, no el estreno
+            </p>
+          ) : (
+            <>
+              {/* el frente final: el mismo curso, las mismas decisiones */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="hud-corner p-2 space-y-1.5">
+                  <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>moral azul</span><span className="text-blue-400 font-bold tabular-nums">{curso.moralAzul}</span></p>
+                  <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full" style={{ width: `${curso.moralAzul}%`, background: "#4D9DFF" }} /></div>
+                  <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>objetivo azul</span><span className="text-blue-400 font-bold tabular-nums">{curso.objetivoAzul}/100</span></p>
+                  <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full" style={{ width: `${curso.objetivoAzul}%`, background: "#4D9DFF" }} /></div>
+                </div>
+                <div className="hud-corner p-2 space-y-1.5">
+                  <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>moral roja</span><span className="text-red font-bold tabular-nums">{curso.moralRojo}</span></p>
+                  <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full" style={{ width: `${curso.moralRojo}%`, background: "#FF3B30" }} /></div>
+                  <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>objetivo rojo</span><span className="text-red font-bold tabular-nums">{curso.objetivoRojo}/100</span></p>
+                  <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full" style={{ width: `${curso.objetivoRojo}%`, background: "#FF3B30" }} /></div>
+                </div>
+              </div>
+
+              {/* la bitácora completa del curso revivido */}
+              <div className="hud-corner p-2 max-h-56 overflow-y-auto space-y-1">
+                {curso.bitacora.map((l, i) => (
+                  <p key={i} className={cn("text-[10.5px] font-mono leading-snug", l.tono === "azul" ? "text-blue-400" : l.tono === "rojo" ? "text-red" : "text-amber/90")}>
+                    <span className="text-muted-foreground">T{String(l.turno).padStart(2, "0")} ·</span> {l.texto}
+                  </p>
+                ))}
+              </div>
+
+              {/* el veredicto revivido: EXACTO al original o se confiesa */}
+              <div className="hud-corner p-3 space-y-2">
+                <p className={cn("text-sm font-caviar font-bold uppercase tracking-wide", veredicto.ganaAzul ? "text-blue-400" : veredicto.ganaRojo ? "text-red" : "text-amber")}>
+                  {veredicto.ganaAzul ? "objetivo azul cumplido" : veredicto.ganaRojo ? "el rojo impone su objetivo" : "la mesa cierra en empate"}
+                </p>
+                <p className="text-[10px] font-mono text-muted-foreground">
+                  {exacto
+                    ? `replay EXACTO: ${curso.objetivoAzul}/100 como la partida original — las mismas jugadas, la misma mesa`
+                    : "replay desviado del original: el currículo cambió desde entonces — la mesa es honesta incluso con su pasado"}
+                </p>
+                <p className="text-[9px] font-mono text-muted-foreground/70 border border-border/60 px-1.5 py-0.5 inline-block">
+                  replay determinista · sin botín — la mesa solo se paga una vez · ficción de la escuela
+                </p>
+              </div>
+            </>
           )}
         </div>
       </div>

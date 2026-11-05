@@ -4564,6 +4564,39 @@
 //     botín cobrado en el persist (coins verificado ANTES/DESPUÉS), Escape
 //     cierra, consola limpia, sin desbordes 1440/390, cero zombis.
 // Herencia v313.0 LA ESCUELA QUE RESPIRA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v314.0";
-export const APP_CODENAME = "LA MESA VIVA";
+// v315.0 LA MESA CON MEMORIA — etapa 2 de LA MESA VIVA (la idea anotada por
+//         el arnés en la v314): la mesa de la escuela ahora RECUERDA.
+//         (1) CONTADORES PROPIOS (la ley de contadores honestos: jamás cruzar
+//         conquestWins): wargameStats en la tienda canónica — partidas,
+//         ganadas, racha actual, mejor racha y mejor objetivo (0-100); la
+//         derrota corta la racha y enseña, la victoria la alarga.
+//         (2) HISTORIAL REVIVIBLE: las últimas 8 partidas guardan sus
+//         jugadas EXACTAS por turno (ids) y la dificultad GUARDADA — la
+//         v313 re-tira la dificultad cada día y sin ella el replay no sería
+//         exacto; escenarioPorId(id, dificultad) resuelve la mesa original
+//         aunque hoy no toque en clase (la rotación por envoltura v313).
+//         (3) EL REVIVIR (ReplayMesa, portal z-96): el determinismo del
+//         motor hace el replay gratis — el curso se re-juega turno a turno
+//         con las mismas decisiones y el veredicto se compara contra el
+//         original («replay EXACTO» o confesión honesta de desvío si el
+//         currículo cambió; fallo honesto si el arsenal cambió). EL REPLAY
+//         ES CINE, NO ECONOMÍA: cero addCoins/addXp — la mesa solo se paga
+//         una vez, sello visible.
+//         (4) TABLERO DE MEJORES PARTIDAS (top 3 por objetivo azul) con su
+//         botón revivir en la ficha del wargame + MEMORIA DEL OPERADOR
+//         (4 contadores) + la fila «TU MEMORIA DE LA MESA» en la sala 3D —
+//         la escuela entera refleja tu récord real, cero carteles.
+//         (5) LA MEMORIA VIVE EN LA TIENDA CANÓNICA: persiste, viaja con
+//         exportProgress y se graba SOLO en el handler de la jugada final
+//         (cero escrituras de estado en efectos — censo estable).
+// QA: tsc 0 TOTAL · eslint 0 (tocados) · censo estable · build EXIT 0 ·
+//     health v315.0 db up · pruebas 257/257 (+2 LA MESA CON MEMORIA) ·
+//     arnés visual propio sobre el BUILD NUEVO: memoria en ceros como
+//     novato, partida completa jugada → memoria 1/1 con racha 1, tablero
+//     con la partida y REVIVIR que re-juega el curso al exacto
+//     (objetivo idéntico, sello replay EXACTO), consola limpia, sin
+//     desbordes 1440/390, cero zombis.
+// Herencia v314.0 LA MESA VIVA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v315.0";
+export const APP_CODENAME = "LA MESA CON MEMORIA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

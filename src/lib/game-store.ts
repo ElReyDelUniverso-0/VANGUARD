@@ -279,6 +279,25 @@ export interface GameState {
   conquestSave: ConquestSnapshot | null;
   conquestWins: number;
 
+  // ====== v315 LA MESA CON MEMORIA (wargames por decisiones) ======
+  // Contadores PROPIOS de la mesa de la escuela — JAMÁS cruzar conquestWins
+  // (la ley de contadores honestos: cada contador cuenta lo suyo).
+  wargameStats: { jugadas: number; ganadas: number; racha: number; mejorRacha: number; mejorObjetivo: number };
+  // Historial de las últimas partidas jugadas con las jugadas EXACTAS
+  // (ids por turno): el determinismo del motor las hace revivibles.
+  wargameHistorial: {
+    escId: string;
+    titulo: string;
+    dificultad: number;
+    fecha: number;
+    jugadas: string[];
+    objetivoAzul: number;
+    objetivoRojo: number;
+    ganaAzul: boolean;
+    botinCoins: number;
+    botinXp: number;
+  }[];
+
   // Mercado geopolitico v6
   marketHoldings: Record<string, MarketHolding>;
   marketTrades: MarketTrade[];
@@ -376,6 +395,9 @@ export interface GameState {
   // Conquista + Mercado v6
   setConquestSave: (snap: ConquestSnapshot | null) => void;
   recordConquestWin: () => void;
+  // v315 LA MESA CON MEMORIA: la mesa recuerda — se llama SOLO desde el
+  // handler de la jugada final (cero escrituras de estado en efectos).
+  recordWargame: (partida: { escId: string; titulo: string; dificultad: number; jugadas: string[]; objetivoAzul: number; objetivoRojo: number; ganaAzul: boolean; botinCoins: number; botinXp: number }) => void;
   buyAsset: (assetId: string, qty: number, price: number, fee?: number) => boolean;
   sellAsset: (assetId: string, qty: number, price: number, fee?: number) => number; // devuelve P/L
   toggleFavorite: (assetId: string) => void;
@@ -644,6 +666,10 @@ export const useGameStore = create<GameState>()(
 
       conquestSave: null,
       conquestWins: 0,
+
+      // v315 LA MESA CON MEMORIA
+      wargameStats: { jugadas: 0, ganadas: 0, racha: 0, mejorRacha: 0, mejorObjetivo: 0 },
+      wargameHistorial: [],
       marketHoldings: {},
       marketTrades: [],
       marketRealized: 0,
@@ -1458,6 +1484,35 @@ export const useGameStore = create<GameState>()(
         get().grantCrate("LEGENDARIA", 1);
         get().addPassXp(150);
         get().checkAchievements();
+      },
+
+      // v315 LA MESA CON MEMORIA — la partida queda contada y guardada con sus
+      // jugadas exactas: contadores propios (jugadas/ganadas/racha) y las 8
+      // últimas partidas revivibles. El cobro del botín vive en el panel; aquí
+      // SOLO la memoria.
+      recordWargame: (partida) => {
+        set((st) => {
+          const racha = partida.ganaAzul ? st.wargameStats.racha + 1 : 0;
+          return {
+            wargameStats: {
+              jugadas: st.wargameStats.jugadas + 1,
+              ganadas: st.wargameStats.ganadas + (partida.ganaAzul ? 1 : 0),
+              racha,
+              mejorRacha: Math.max(st.wargameStats.mejorRacha, racha),
+              mejorObjetivo: Math.max(st.wargameStats.mejorObjetivo, partida.objetivoAzul),
+            },
+            wargameHistorial: [{ ...partida, fecha: Date.now() }, ...st.wargameHistorial].slice(0, 8),
+            log: [
+              {
+                ts: Date.now(),
+                msg: partida.ganaAzul
+                  ? `La mesa ${partida.titulo}: objetivo cumplido (${partida.objetivoAzul}/100) — partida guardada en tu memoria`
+                  : `La mesa ${partida.titulo}: la mesa cierra sin victoria (${partida.objetivoAzul}/100) — la lección queda guardada`,
+              },
+              ...st.log,
+            ].slice(0, 50),
+          };
+        });
       },
 
       // ====== CENTRO DE GANANCIAS v8 ======
