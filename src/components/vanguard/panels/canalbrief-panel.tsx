@@ -3,15 +3,18 @@
 // v92.0 OJO DEL MUNDO — CANAL BRIEF (espejo del canal de análisis en vídeo):
 // player simulado con osciloscopio, línea de tiempo con capítulos clicables,
 // transcripción sincronizada, comentarios del cinturón y fila de "siguiente".
+// v321.0 LA PANTALLA EN EL ANILLO — el EPISODIO DEL DÍA sube a la portada
+// con la ley del anillo declarada al lector (girar compartida, cero copias)
+// y la serie en pantalla: la voz que habla lleva su nombre.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { MonitorPlay, Play, Pause, ListVideo, MessageSquare, Eye, Clock } from "lucide-react";
+import { MonitorPlay, Play, Pause, ListVideo, MessageSquare, Eye, Clock, Star } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v164 TODO EN VOLUMEN — el canal brief alimenta su sala 3D con sus episodios
 import { useSala3DContenido } from "../use-sala3d-contenido";
-import { episodiosDeHoy, episodiosSiguientes, type Episodio } from "@/lib/canalbrief-data";
+import { episodiosDeHoy, episodiosSiguientes, episodioDestacadoDeHoy, type Episodio } from "@/lib/canalbrief-data";
 import { cn } from "@/lib/utils";
 
 function fmt(seg: number): string {
@@ -37,6 +40,8 @@ export function CanalBriefPanel() {
   const episodios = useMemo(() => episodiosDeHoy(6), []);
   const [sel, setSel] = useState<Episodio>(episodios[0]);
   const siguientes = useMemo(() => episodiosSiguientes(sel.id, 3), [sel.id]);
+  // v321 EL EPISODIO DEL DÍA: el anillo del canal elige — la ley se declara abajo
+  const destacado = useMemo(() => episodioDestacadoDeHoy(), []);
 
   // v164 SALA EN VOLUMEN: los episodios del canal como filas de cristal 3D
   useSala3DContenido(
@@ -116,11 +121,26 @@ export function CanalBriefPanel() {
         color="red"
         right={
           <span className="text-[9px] font-mono uppercase px-2 py-1 border border-red-hud/60 text-red bg-red-hud/10">
-            MESA DE ANÁLISIS VANGUARD
+            {sel.serie.toUpperCase()}
           </span>
         }
       />
       <HeroOro panel="canalbrief" />
+
+      {/* v321 EL EPISODIO DEL DÍA: el anillo avanza una muesca por fecha —
+          dos días seguidos jamás repiten el destacado; tocable, no decorativo */}
+      <button
+        onClick={() => { setSel(destacado); setT(0); setPlay(false); }}
+        className="w-full text-left hud-panel px-3 py-2.5 border-amber/50 bg-amber-hud/5 hover:bg-amber-hud/10 transition-colors flex items-start gap-2.5"
+        aria-label="Abrir el episodio destacado de hoy"
+      >
+        <Star className="w-3.5 h-3.5 text-amber shrink-0 mt-0.5" />
+        <span className="min-w-0">
+          <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-amber">Episodio del día · {destacado.serie}</span>
+          <span className="block text-[11px] font-semibold text-foreground leading-snug truncate">{destacado.titulo}</span>
+          <span className="block text-[9px] font-mono text-muted-foreground">el anillo del canal avanza un episodio por día — 6 en pantalla, dos días seguidos jamás repiten el destacado</span>
+        </span>
+      </button>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-3">
         {/* REPRODUCTOR */}
@@ -171,8 +191,14 @@ export function CanalBriefPanel() {
 
             {/* info del episodio */}
             <div className="px-4 py-3">
-              <h3 className="text-[15px] font-bold text-foreground leading-snug">{sel.titulo}</h3>
+              <h3 className="text-[15px] font-bold text-foreground leading-snug">
+                {sel.titulo}{" "}
+                {sel.destacado && (
+                  <span className="align-middle inline-flex items-center gap-1 text-[8px] font-mono uppercase px-1.5 py-0.5 border border-amber/60 text-amber bg-amber-hud/10">episodio del día</span>
+                )}
+              </h3>
               <div className="flex flex-wrap items-center gap-3 mt-1.5 text-[10px] font-mono text-muted-foreground">
+                <span className="text-red">{sel.serie}</span>
                 <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{sel.vistas.toLocaleString("es")} vistas</span>
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" />hace {sel.haceH} h</span>
                 <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3" />{sel.comentarios.length} comentarios</span>
@@ -258,6 +284,7 @@ export function CanalBriefPanel() {
             >
               <Miniatura hue={e.hue} duracion={e.duracionSeg} />
               <div className="p-2">
+                <p className="text-[9px] font-mono text-red uppercase tracking-wider">{e.serie}</p>
                 <p className="text-[11px] font-semibold text-foreground leading-snug line-clamp-2">{e.titulo}</p>
                 <p className="text-[9px] font-mono text-muted-foreground mt-1">{e.vistas.toLocaleString("es")} vistas · hace {e.haceH} h</p>
               </div>

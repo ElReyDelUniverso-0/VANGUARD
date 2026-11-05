@@ -4662,6 +4662,30 @@
 //     la escuela (misma partida, mismo objetivo) · Escape cierra · consola
 //     limpia · sin desbordes 1440/390 · cero zombis.
 // Herencia v316.0 LA ESCUELA DE INSIGNIAS y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v320.0";
-export const APP_CODENAME = "LA RED COMPLETA";
+// v321.0 LA PANTALLA EN EL ANILLO — quinta expansión del autociclo: el canal
+//         brief (canalbrief-data, v92 — la última pieza de la cola expansiva
+//         documentada) se dobla y respira con el anillo de la escuela.
+//         (1) EL DOBLEZ: 4 series (entran OJO DEL MUNDO, institucional, y
+//         SALA DE MÁQUINAS, técnica — el canal ya no son dos voces), 12 temas
+//         (drones, guerra naval, contratistas, economía de guerra, HUMINT y
+//         el terreno — las seis clases que el briefing en vídeo debía),
+//         16 voces del cinturón y 14 réplicas nuevas.
+//         (2) EL ANILLO LLEGA AL CANAL: EL EPISODIO DEL DÍA — girar() — la
+//         rotación por envoltura exportada — sirve a su CUARTO consumidor
+//         (mando v313, instituto v318, red v320, canal v321): un episodio
+//         lleva la pantalla cada día (día del año % 6), dos días seguidos
+//         jamás repiten el destacado y al duodécimo día los doce temas han
+//         pasado por la portada. Cero copias del patrón: se importa.
+//         (3) EL PANEL DICE LA VERDAD: franja destacada tocable (abre el
+//         episodio del anillo), la ley declarada al lector, la serie en el
+//         reproductor y en las miniaturas — la pantalla sabe quién habla.
+// QA: tsc 0 TOTAL · eslint 0 (tocados) · censo ESTABLE 9+4 · build EXIT 0 ·
+//     health v321.0 db up · pruebas 269/269 (+2 LA PANTALLA EN EL ANILLO;
+//     rodillo a v321.0) · arnés visual propio (qa-visual-v321, compacto —
+//     lección v320): franja del destacado con nombre y ley del anillo en
+//     página, serie nueva en pantalla, sin desbordes 1440/390 · consola
+//     limpia · canon repo restaurado · cero zombis.
+// Herencia v320.0 LA RED COMPLETA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v321.0";
+export const APP_CODENAME = "LA PANTALLA EN EL ANILLO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
