@@ -4781,6 +4781,43 @@
 //         día predicho por la fórmula aparece en la franja con su hora local,
 //         los récords del planeta en la vista PAÍSES, sin desbordes 1440/390
 //         · canon repo restaurado · cero zombis.
-export const APP_VERSION = "v324.0";
-export const APP_CODENAME = "EL ATLAS MIRA AL SUR";
+//
+// v325.0 LA SEGUNDA CIRUGÍA — novena ronda del autociclo y SEGUNDA cirugía
+//         de la cola de deuda, la más profunda posible con la plantilla v323:
+//         DOS víctimas del MISMO archivo mueren de una vez (lector-noticia,
+//         el lector que la casa abre en todas las salas) — el censo baja
+//         8+4 → 6+4, la mayor caída de una ronda. (1) EL MONTAJE DEL PORTAL
+//         (v116, la lección de los ancestros con transform) deja de ser
+//         estado nacido en un efecto (useState + useEffect(setMontado(true)))
+//         y pasa a ser la hidratación ESCUCHADA: useSyncExternalStore con el
+//         patrón useIsHydrated DOCUMENTADO por React — suscriptor que nada
+//         escucha (la hidratación ES el evento), snapshot del cliente
+//         verdadero, snapshot del servidor falso; React re-rende tras
+//         hidratar, por diseño — los snapshots viven fuera del componente
+//         para que su identidad sea estable. (2) LA DECISIÓN DEL INTRO GTA
+//         (v174, la placa una vez por cable por sesión) deja de escribir
+//         setState síncrono en el efecto y pasa a ajustarse EN RENDER con el
+//         patrón documentado «Adjusting state when a prop changes»:
+//         comparación POR ID (la identidad del objeto vive en los padres),
+//         setState condicional, re-render inmediato por diseño; la memoria
+//         de sesión (vg174-gta-ultimo) se marca igual que siempre, en el
+//         instante de jugar la placa — y el único apagado sigue siendo
+//         onFin, un handler (ley v302 por construcción). (3) CERO
+//         comportamiento nuevo: portal tras hidratar, placa una vez por
+//         sesión, tap = seguir leyendo — la misma sala ante el ojo, sin
+//         estado que nazca escribiendo. SUITE: +2 pines (LA SEGUNDA CIRUGÍA
+//         estático: cero setMontado en efecto, useSyncExternalStore con los
+//         tres nombres, calcularIntro pura con la memoria de sesión, ajuste
+//         en render por ID, onFin como única puerta de apagado, calma y
+//         Escape intactos — y vivo: home + health v325) + rodillo a v325.0
+//         (valores, mensajes históricos intactos — ley v312). QA: tsc 0 ·
+//         eslint 0 en el tocado · censo 6+4 (la deuda VOLVIÓ a bajar) ·
+//         testigo antes del build · build EXIT 0 · pruebas 277/277 · arnés
+//         visual (qa-visual-v325): el lector abre en el espejo ante el ojo —
+//         placa GTA una vez (memoria marcada), lector vivo tras ella,
+//         cierre limpio, y la REAPERTURA sin placa (la memoria de sesión
+//         manda) · sin desbordes 1440/390 · canon repo restaurado · cero
+//         zombis.
+export const APP_VERSION = "v325.0";
+export const APP_CODENAME = "LA SEGUNDA CIRUGÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

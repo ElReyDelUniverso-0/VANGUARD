@@ -16,7 +16,7 @@
 //     (solo texto, sin enlace): se informa, no se manda.
 // ============================================================
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShieldAlert, Clock, Copy, Check, Newspaper, Compass, BrainCircuit } from "lucide-react";
@@ -108,6 +108,47 @@ function colorNivel(n: number): string {
   return n >= 70 ? "#FF6B5E" : n >= 40 ? "#FFC94D" : "#34C759";
 }
 
+// ============================================================
+// v325.0 LA SEGUNDA CIRUGÍA — el lector deja de nacer escribiendo en
+// efectos (dos víctimas del censo: el montaje del portal y la decisión
+// del intro GTA). Dos bisturíes DOCUMENTADOS por React, ninguno inventado:
+//   · el montaje se ESCUCHA, no se escribe — useSyncExternalStore con el
+//     patrón useIsHydrated: snapshot del servidor falso, snapshot del
+//     cliente verdadero; React re-rende tras hidratar, por diseño.
+//   · la decisión del intro se ajusta EN RENDER — el patrón «Adjusting
+//     state when a prop changes» (comparación por ID, setState condicional,
+//     re-render inmediato por diseño): la memoria de sesión se marca igual
+//     que siempre, en el instante de jugar la placa.
+// El comportamiento queda idéntico ante el ojo: portal tras hidratar,
+// placa una vez por cable por sesión, tap = seguir leyendo.
+// ============================================================
+
+// Nada que escuchar: la hidratación ES el evento. Los snapshots viven fuera
+// del componente para que su identidad sea estable (cero re-suscripciones).
+const suscribirMontaje = () => () => {};
+const siCliente = () => true;
+const siServidor = () => false;
+
+/** La decisión del intro GTA: una vez por cable por sesión, reduced-motion no hay cine. */
+function calcularIntro(c: CableLectura | null): boolean {
+  if (!c) return false;
+  let visto = false;
+  let reducido = false;
+  try {
+    visto = sessionStorage.getItem("vg174-gta-ultimo") === c.id;
+    reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    /* sin sesión: la placa suena, no se rompe */
+  }
+  if (visto || reducido) return false;
+  try {
+    sessionStorage.setItem("vg174-gta-ultimo", c.id);
+  } catch {
+    /* noop */
+  }
+  return true;
+}
+
 // barra de nivel de la NEURONA (ancho via width, sin re-render en vivo)
 function BarraNeurona({ etiqueta, valor }: { etiqueta: string; valor: number }) {
   const c = colorNivel(valor);
@@ -137,8 +178,9 @@ export function LectorNoticia({
   // lleva transform (framer-motion), position:fixed deja de ser viewport y el
   // modal cae a 9000 px de profundidad (cazado en móvil 390×844). Portal al
   // body: el modal flota SIEMPRE sobre la pantalla, en cualquier sala.
-  const [montado, setMontado] = useState(false);
-  useEffect(() => setMontado(true), []);
+  // v325: el montaje ya no es estado nacido en un efecto — es la hidratación
+  // escuchada (useSyncExternalStore, patrón useIsHydrated documentado).
+  const montado = useSyncExternalStore(suscribirMontaje, siCliente, siServidor);
 
   // mientras se lee, la sala queda en calma (nada interrumpe la lectura)
   useEffect(() => {
@@ -150,28 +192,15 @@ export function LectorNoticia({
   // v174 LAS INTROS GTA: la placa de misión al abrir un cable —
   // una vez por cable por sesión (quien ya la vio entra directo),
   // tap = seguir leyendo, reduced-motion = no hay cine.
+  // v325: la decisión se ajusta EN RENDER (patrón documentado «Adjusting
+  // state when a prop changes») — comparación por ID porque la identidad
+  // del objeto vive en los padres; el único apagado es onFin (handler).
   const [introViva, setIntroViva] = useState(false);
-  useEffect(() => {
-    if (!cable) {
-      setIntroViva(false);
-      return;
-    }
-    let visto = false;
-    let reducido = false;
-    try {
-      visto = sessionStorage.getItem("vg174-gta-ultimo") === cable.id;
-      reducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    } catch {
-      /* sin sesión: la placa suena, no se rompe */
-    }
-    if (visto || reducido) return;
-    try {
-      sessionStorage.setItem("vg174-gta-ultimo", cable.id);
-    } catch {
-      /* noop */
-    }
-    setIntroViva(true);
-  }, [cable]);
+  const [introDe, setIntroDe] = useState<string | null>(null);
+  if ((introDe ?? null) !== (cable?.id ?? null)) {
+    setIntroDe(cable?.id ?? null);
+    setIntroViva(calcularIntro(cable));
+  }
 
   useEffect(() => {
     if (!cable) return;
