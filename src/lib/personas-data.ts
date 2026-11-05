@@ -5,7 +5,10 @@
 // poder de la Casa, ruta al poder, rasgos de mando, guardia
 // y sucesión. Doctrina: conocimiento abierto presentado como
 // joya — los rostros no posan: se vigilan.
+// v330: el anillo de la escuela llega al poder (NOVENO consumidor
+// del reloj CENTRAL — ley v324, cero copias).
 // ============================================================
+import { girar, diaDelAnillo } from "./estrategia-data";
 
 export type CategoriaRostro = "tronos" | "dinero" | "tribunal" | "nuevos";
 
@@ -892,6 +895,18 @@ export const COLECCION_ROSTROS = {
 
 export function rostroDe(id: string): Rostro | undefined {
   return ROSTROS.find((r) => r.id === id);
+}
+
+// v330: EL ROSTRO DEL DÍA — el poder respira con el anillo de la escuela
+// (NOVENO consumidor del patrón compartido: mando v313, instituto v318, red
+// v320, canal v321, ciber v322, atlas v324, armería v326, comunidad v328).
+// girar() + diaDelAnillo() importadas del reloj CENTRAL único (cero copias,
+// ley v324): un rostro lleva el dossier cada día; el anillo avanza UNA muesca
+// por fecha, de modo que dos días seguidos jamás repiten el rostro del día —
+// y al día 34 la colección entera ha pasado por la pantalla. La rotación es
+// el reloj de la escuela, no un veredicto de la casa.
+export function rostroDelDia(): Rostro {
+  return girar(ROSTROS, 1, diaDelAnillo() % ROSTROS.length)[0];
 }
 
 // ====== EL PULSO REAL: keywords por rostro (cables auténticos de la Casa) ======

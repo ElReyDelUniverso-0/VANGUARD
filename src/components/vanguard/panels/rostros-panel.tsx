@@ -24,7 +24,7 @@ import { sfx } from "@/lib/sound";
 import { cn, q2 } from "@/lib/utils";
 import {
   ROSTROS, COLECCION_ROSTROS, CATEGORIAS_ROSTRO, PULSO_KEYWORDS_ROSTROS,
-  rostroDe, type Rostro, type CategoriaRostro,
+  rostroDe, rostroDelDia, type Rostro, type CategoriaRostro,
 } from "@/lib/personas-data";
 import {
   Crown, Map as MapIcon, Radio, ChevronRight, Fingerprint, Users, Shield, TrendingUp,
@@ -62,6 +62,13 @@ export function RostrosPanel() {
 
   const sel: Rostro = rostroDe(selId) ?? ROSTROS[0];
   const cm = CATEGORIAS_ROSTRO[sel.categoria];
+
+  // v330: EL ROSTRO DEL DÍA — el anillo del poder (NOVENO consumidor del
+  // patrón compartido: mando v313, instituto v318, red v320, canal v321,
+  // ciber v322, atlas v324, armería v326, comunidad v328). El anillo vive
+  // en useMemo puro — cero efectos, ley v302 por construcción.
+  const delDia = useMemo(() => rostroDelDia(), []);
+  const metaDia = CATEGORIAS_ROSTRO[delDia.categoria];
 
   // ── pulso real: cables de la casa, frescos cada 5 minutos ──
   useEffect(() => {
@@ -184,8 +191,18 @@ export function RostrosPanel() {
         d: "Ningún cable de su dominio en la franja actual · el pulso se renueva cada cinco minutos",
       });
     }
+    // v330: el rostro del día viaja a la sala 3D — patrón v326/v328, la fila
+    // se añade AL FINAL (los offsets de las acciones existentes quedan intactos)
+    filas.push({
+      t: `★ ROSTRO DEL DÍA: ${delDia.nombre.toUpperCase()}`,
+      v: `${delDia.poder}/100`,
+      p: delDia.poder,
+      color: CATEGORIAS_ROSTRO[delDia.categoria].color,
+      d: `${delDia.cargo} · ${delDia.bandera} ${delDia.pais} · el anillo del poder (ley v324)`,
+      a: "abrir rostro del día",
+    });
     return filas;
-  }, [sel, cm, visibles, filtro, totalSenales, jerarquia, cablesSel]);
+  }, [sel, cm, visibles, filtro, totalSenales, jerarquia, cablesSel, delDia]);
   useSala3DContenido(
     "rostros",
     "LOS ROSTROS DEL PODER",
@@ -211,22 +228,63 @@ export function RostrosPanel() {
           setCableSel(c);
           sfx.campana();
         }
+      } else if (det.accion === "abrir rostro del día") {
+        // v330: la fila del anillo vive AL FINAL — los offsets existentes intactos
+        irAlExpediente(delDia.id);
       }
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, [jerarquia, cablesSel]);
+  }, [jerarquia, cablesSel, delDia]);
 
   return (
     <div className="space-y-5">
       <PanelHeader
         title="LOS ROSTROS DEL PODER"
-        subtitle="Las 34 personas que mueven el planeta: dónde viven, cómo llegaron y quién las espera en la sombra"
+        subtitle={`${COLECCION_ROSTROS.total} personas que mueven el planeta: dónde viven, cómo llegaron y quién las espera en la sombra`}
         icon={<Users className="w-4 h-4" />}
         color="amber"
       />
 
       <HeroOro panel="rostros" />
+
+      {/* v330: EL ROSTRO DEL DÍA — el anillo del poder da la cara cada día.
+          La rotación es el reloj de la escuela (ley v324), no un veredicto:
+          el contador de señales es honesto en sus DOS estados (ley v322). */}
+      <div className="hud-panel px-3 py-2.5 relative overflow-hidden" aria-label="Rostro del día">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[8px] font-mono uppercase tracking-widest" style={{ color: metaDia.color }}>★ rostro del día</span>
+          <span className="text-xs font-bold font-mono uppercase" style={{ color: metaDia.color }}>{delDia.bandera} {delDia.nombre}</span>
+          <span className="text-[9px] font-mono text-muted-foreground">{delDia.cargo} · {delDia.organizacion}</span>
+        </div>
+        <p className="text-[10px] text-muted-foreground leading-snug mt-1 italic">«{delDia.frase}»</p>
+        <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
+          <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 border bg-background/80" style={{ color: metaDia.color, borderColor: `${metaDia.color}55` }}>
+            {metaDia.icono} {metaDia.etiqueta}
+          </span>
+          <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-border bg-background/80 text-muted-foreground">
+            sede: {delDia.sede} · {delDia.ciudad}
+          </span>
+          <span className="text-[8px] font-mono uppercase px-1.5 py-0.5 border border-border bg-background/80 text-muted-foreground">
+            poder {delDia.poder}/100
+          </span>
+          <span className="ml-auto text-[9px] font-mono uppercase" style={{ color: (senalesPor[delDia.id] ?? 0) > 0 ? metaDia.color : undefined }}>
+            {(senalesPor[delDia.id] ?? 0) > 0
+              ? `${senalesPor[delDia.id]} señales suyas vivas ahora`
+              : "en silencio ahora — el pulso sigue cada cinco minutos"}
+          </span>
+          <button
+            onClick={() => irAlExpediente(delDia.id)}
+            className="text-[8px] font-mono uppercase px-2 py-0.5 border transition-all hover:bg-foreground/10"
+            style={{ color: metaDia.color, borderColor: `${metaDia.color}66` }}
+          >
+            abrir expediente del día →
+          </button>
+        </div>
+        <p className="text-[8px] font-mono uppercase text-muted-foreground/70 mt-1.5">
+          el anillo del poder avanza un rostro por día — {COLECCION_ROSTROS.total} rostros en el catálogo, dos días seguidos jamás repiten el rostro del día · la rotación es el reloj de la escuela, no un veredicto de la casa
+        </p>
+      </div>
 
       {/* ── CIFRAS DE LA COLECCIÓN ── */}
       <div className="flex flex-wrap gap-x-6 gap-y-1.5 justify-center font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -281,7 +339,7 @@ export function RostrosPanel() {
             El tamaño del punto es su índice de poder — el anillo dorado marca el expediente abierto.
             Toca un punto para abrirlo.
           </p>
-          <svg viewBox="0 0 1000 500" className="w-full h-auto select-none rounded border border-border/60 bg-[#060a0f]" role="img" aria-label="Mapa mundial con las 34 ubicaciones reales de los rostros del poder">
+          <svg viewBox="0 0 1000 500" className="w-full h-auto select-none rounded border border-border/60 bg-[#060a0f]" role="img" aria-label={`Mapa mundial con las ${COLECCION_ROSTROS.total} ubicaciones reales de los rostros del poder`}>
             <path d={worldPaths.graticulePath} fill="none" stroke="#1a2a3a" strokeWidth="0.5" />
             <path d={worldPaths.landPath} fill="#0e1a24" stroke="#2a4a5a" strokeWidth="0.6" />
             <path d={worldPaths.borderPath} fill="none" stroke="#1e3446" strokeWidth="0.5" />
@@ -291,6 +349,7 @@ export function RostrosPanel() {
               const meta = CATEGORIAS_ROSTRO[r.categoria];
               const activo = r.id === selId;
               const sen = senalesPor[r.id] ?? 0;
+              const esDelDia = r.id === delDia.id; // v330: la estrella del anillo
               const radio = 2.4 + (r.poder / 100) * 4.2; // el poder manda en el tamaño
               return (
                 <g key={r.id} onClick={() => elegir(r.id)} className="cursor-pointer" role="button" aria-label={`${r.nombre} — ${r.sede}`}>
@@ -299,6 +358,9 @@ export function RostrosPanel() {
                     <circle cx={x} cy={y} r={radio + 5} fill="none" stroke="#D4AF37" strokeWidth={1.4} className="v130-anillo" />
                   )}
                   <circle cx={x} cy={y} r={radio} fill={activo ? "#D4AF37" : meta.color} fillOpacity={activo ? 1 : 0.85} />
+                  {esDelDia && (
+                    <text x={x} y={y - radio - 4} fontSize="11" fill={meta.color} textAnchor="middle" fontWeight="bold" style={{ pointerEvents: "none" }}>★</text>
+                  )}
                   {sen > 0 && (
                     <circle cx={x + radio + 3} cy={y - radio - 3} r={2.2} fill="#D4AF37" />
                   )}
@@ -360,7 +422,7 @@ export function RostrosPanel() {
                           <span className="font-mono text-[9px] opacity-60 shrink-0">{String(r.num).padStart(2, "0")}</span>
                           <span className="text-[11px] leading-none shrink-0">{r.bandera}</span>
                           <span className={cn("text-[10px] leading-none truncate flex-1", activo ? "text-foreground font-bold" : "text-muted-foreground")}>
-                            {r.nombre}
+                            {r.id === delDia.id && <span title="rostro del día" style={{ color: CATEGORIAS_ROSTRO[r.categoria].color }}>★ </span>}{r.nombre}
                           </span>
                           {sen > 0 && (
                             <span className="font-mono text-[8px] flex items-center gap-0.5 shrink-0" style={{ color: "#D4AF37" }}>

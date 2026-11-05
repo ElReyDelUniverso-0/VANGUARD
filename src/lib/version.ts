@@ -4988,6 +4988,44 @@
 //     rodillos de codename en los asertos históricos (LA COMUNIDAD GIRA →
 //     LA CUARTA CIRUGÍA) + rodillo a v329.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v329.0";
-export const APP_CODENAME = "LA CUARTA CIRUGÍA";
+// v330.0 EL PODER DEL DÍA — decimotercera ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v329 cirugía → v330 expansión): la NOVENA puerta del
+// anillo de la escuela se abre en el dossier del poder — el anillo ya tenía
+// ocho consumidores (mando v313, instituto v318, red v320, canal v321, ciber
+// v322, atlas v324, armería v326, comunidad v328) y rostros entra por la
+// misma puerta (ley v324: un solo reloj, cero copias).
+// ① EL ROSTRO DEL DÍA: rostroDelDia() en personas-data — girar() +
+//    diaDelAnillo() importadas del reloj CENTRAL único; un rostro lleva el
+//    dossier cada día, dos días seguidos jamás repiten (34 rostros, día 308
+//    % 34 = 2 el día del estreno).
+// ② LA FRANJA DICE LA VERDAD: aria-label="Rostro del día" con estrella,
+//    bandera, nombre, cargo y organización, la frase que manda en cursiva,
+//    chips de corte/sede/poder, el contador de señales HONESTO EN SUS DOS
+//    ESTADOS («N señales suyas vivas ahora» / «en silencio ahora — el pulso
+//    sigue cada cinco minutos», ley v322), el botón «abrir expediente del
+//    día →» con irAlExpediente (el handler de la casa) y la LEY DEL ANILLO
+//    en pantalla con la declaración honesta: la rotación es el reloj de la
+//    escuela, no un veredicto de la casa.
+// ③ LA ESTRELLA EN LAS DOS LISTAS: el mapa del poder marca el sillón del
+//    día con ★ (comparación en render, cero estado) y el índice de
+//    expedientes lleva la estrella en su fila — visible en los cuatro
+//    cortes.
+// ④ NADA DURO QUE SE PUDRA (ley v322): el subtitle «Las 34 personas...» y
+//    el aria-label del mapa vivían escritos a mano — ahora se derivan de
+//    COLECCION_ROSTROS.total; si el dossier crece, la casa no miente.
+// ⑤ EL ANILLO VIAJA A LA SALA 3D: fila propia AL FINAL de filas3D (los
+//    offsets de las acciones existentes quedan intactos) con la acción
+//    «abrir rostro del día» en el oyente vg:sala3d-accion (patrón
+//    v326/v328). CERO efectos nuevos — el anillo vive en useMemo puro
+//    (ley v302 por construcción): el censo canónico 2+4 respira.
+//     SUITE: +2 pines (EL PODER DEL DÍA estático: rostroDelDia definido
+//     con el reloj central importado, franja con ley y contador honesto,
+//     estrella en mapa e índice, subtitle derivado sin cifra dura,
+//     useEffect === 2, versión doble aserción — y vivo: home + health
+//     v330) + rodillos de codename en los asertos históricos (LA CUARTA
+//     CIRUGÍA → EL PODER DEL DÍA; los nombres de pines y comentarios
+//     quedan como memoria — ley v312) + rodillo a v330.0 (cuatro
+//     patrones, mensajes históricos intactos — ley v312).
+export const APP_VERSION = "v330.0";
+export const APP_CODENAME = "EL PODER DEL DÍA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
