@@ -142,6 +142,25 @@ export function EstrategiaGlobalPanel() {
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
   }, [hoy]);
 
+  // v317 LA MESA EN LA PORTADA — el feed del home ordena el revivir: la
+  // tarjeta LA MESA despacha vg:mesa-revivir con la LLAVE (fecha) y la mesa
+  // busca la partida en SU fuente canónica (wargameHistorial de la tienda —
+  // cero payload de fe en el evento). El evento puede llegar antes del
+  // montaje perezoso (el feed navega y reintentar); el contrato es
+  // idempotente y este oyente solo existe mientras la escuela está viva.
+  // Patrón legal v168: evento→setState en el callback — cero escrituras de
+  // estado en montaje (censo estable 9+4).
+  useEffect(() => {
+    const onRevivir = (e: Event) => {
+      const d = (e as CustomEvent<{ fecha?: number }>).detail;
+      if (!d || typeof d.fecha !== "number") return;
+      const p = historial.find((x) => x.fecha === d.fecha);
+      if (p) setReplay(p);
+    };
+    window.addEventListener("vg:mesa-revivir", onRevivir);
+    return () => window.removeEventListener("vg:mesa-revivir", onRevivir);
+  }, [historial]);
+
   return (
     <div className="space-y-4">
       <PanelHeader

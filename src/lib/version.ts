@@ -4628,6 +4628,40 @@
 //     completa → insignias cazadas en el persist (unlockedAchievements con
 //     ACH-WGM-*) · consola limpia · sin desbordes 1440/390 · cero zombis.
 // Herencia v315.0 LA MESA CON MEMORIA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v316.0";
-export const APP_CODENAME = "LA ESCUELA DE INSIGNIAS";
+// v317.0 LA MESA EN LA PORTADA — etapa 4 de LA MESA VIVA (la idea anotada
+//         en la v316): la escuela entra al FEED del home — la última partida
+//         vive en la portada del aparato y ordena su propio revivir.
+//         (1) LA TARJETA «LA MESA»: la última partida de wargameHistorial
+//         (fuente canónica, la tienda) entra al algoritmo PARA TI como un
+//         tipo propio ("mesa") — título, veredicto con barras del frente,
+//         botín cobrado, racha viva y fecha. Una sola tarjeta (la ÚLTIMA):
+//         el feed jamás será una granja de replays; el tablero completo
+//         vive en la escuela.
+//         (2) EL REVIVIR DESDE LA PORTADA: el botón REVIVIR LA MESA
+//         navega a la escuela (vanguard:navigate) y despacha
+//         vg:mesa-revivir con la llave (fecha) — reintentos por el montaje
+//         perezoso del panel; la mesa busca la partida en SU fuente
+//         (historial por fecha, cero payload de fe en el evento) y abre el
+//         replay determinista existente (v315). Contrato por eventos: los
+//         módulos se hablan por llaves, la tienda manda la verdad.
+//         (3) EL ALGORITMO APRENDE: tipo "mesa" en TipoFeed con base de
+//         productor (1.2, la clase de los pulsos — es contenido que
+//         VANGUARD produjo con tu partida) y su razón honesta «TU ÚLTIMA
+//         PARTIDA EN LA ESCUELA»; etiqueta LA MESA en el algoritmo y el
+//         chip del feed; la fila «LA MESA» en la paridad 3D del foryou con
+//         su acción «revivir la mesa» (el mismo contrato).
+//         (4) EL LISTENER EN LA ESCUELA: estrategia-panel escucha
+//         vg:mesa-revivir (el patrón legal v168 — evento→setState, cero
+//         escrituras en montaje, censo estable 9+4) y abre el ReplayMesa
+//         v315 si la partida existe en la tienda.
+// QA: tsc 0 TOTAL · eslint 0 (tocados) · censo estable 9+4 · build EXIT 0 ·
+//     health v317.0 db up · pruebas 261/261 (+2 LA MESA EN LA PORTADA;
+//     rodillo a v317.0) · arnés visual propio sobre el BUILD NUEVO:
+//     partida real jugada → la tarjeta LA MESA en PARA TI con su veredicto
+//     → REVIVIR LA MESA desde la portada → el replay determinista abre en
+//     la escuela (misma partida, mismo objetivo) · Escape cierra · consola
+//     limpia · sin desbordes 1440/390 · cero zombis.
+// Herencia v316.0 LA ESCUELA DE INSIGNIAS y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v317.0";
+export const APP_CODENAME = "LA MESA EN LA PORTADA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;

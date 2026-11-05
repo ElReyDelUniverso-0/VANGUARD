@@ -29,7 +29,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Heart, MessageSquare, Share2, Coins, ChevronUp, ChevronDown, Flame,
   Radio, ExternalLink, Clapperboard, Music, Image as ImageIcon, Play,
-  Sparkles, Laugh, MonitorPlay, Clock, Zap, MousePointerClick,
+  Sparkles, Laugh, MonitorPlay, Clock, Zap, MousePointerClick, GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -77,11 +77,18 @@ function timeAgo(ts: string): string {
 const KIND_LABEL: Record<string, string> = {
   video: "VIDEO", musica: "MÚSICA", sticker: "STICKER", post: "POST",
   meme: "MEME", tv: "TV VANGUARD", pulso: "PULSO", vivo: "EN VIVO",
+  mesa: "LA MESA",
 };
 
 export function ForYouPanel() {
   const addCoins = useGameStore((s) => s.addCoins);
   const alias = useGameStore((s) => s.alias);
+  // v317 LA MESA EN LA PORTADA — la escuela produce contenido con tu partida:
+  // la ÚLTIMA partida (wargameHistorial[0], fuente canónica) entra al algoritmo
+  // como tarjeta tipo "mesa"; los contadores vivos (racha, mejor objetivo)
+  // acompañan al veredicto. Cero sistemas nuevos: la tienda manda la verdad.
+  const wargameHistorial = useGameStore((s) => s.wargameHistorial);
+  const wargameStats = useGameStore((s) => s.wargameStats);
   const [vista, setVista] = useState<Vista>("algoritmo");
   const [ugcSlides, setUgcSlides] = useState<FeedSlide[]>([]);
   const [memes, setMemes] = useState<TarjetaFeed[]>([]);
@@ -173,6 +180,25 @@ export function ForYouPanel() {
     []
   );
 
+  // v317 LA MESA EN LA PORTADA — UNA sola tarjeta: la ÚLTIMA partida (no el
+  // historial entero — el feed jamás será una granja de replays; el tablero
+  // completo y el revivir por lote viven en la escuela). Id por fecha: cada
+  // partida nueva nace fresca para el algoritmo, la vista anterior no la
+  // penaliza.
+  const mesaTarjetas = useMemo<TarjetaFeed[]>(() => {
+    const p = wargameHistorial[0];
+    if (!p) return [];
+    return [{
+      id: `mesa-${p.fecha}`,
+      tipo: "mesa",
+      titulo: `${p.titulo} — ${p.ganaAzul ? "VICTORIA AZUL" : "VICTORIA ROJA"}`,
+      autor: "LA ESCUELA DEL MANDO",
+      ts: p.fecha,
+      likes: 0,
+      datos: { partida: p },
+    }];
+  }, [wargameHistorial]);
+
   // ---------- el ALGORITMO ordena ----------
   const lista = useMemo<TarjetaPuntuada[]>(() => {
     const ugc: TarjetaFeed[] = ugcSlides.map((s) => ({
@@ -185,10 +211,10 @@ export function ForYouPanel() {
       bola: s.item.authorBall,
       datos: { slide: s },
     }));
-    const todas = [...ugc, ...memes, ...tvTarjetas, ...pulsos];
+    const todas = [...ugc, ...mesaTarjetas, ...memes, ...tvTarjetas, ...pulsos];
     const ahora = Date.now();
     return vista === "reciente" ? ordenarReciente(todas) : ordenarAlgoritmo(todas, perfilRef.current, ahora);
-  }, [ugcSlides, memes, tvTarjetas, pulsos, vista]);
+  }, [ugcSlides, mesaTarjetas, memes, tvTarjetas, pulsos, vista]);
 
   listRef.current = lista;
 
@@ -300,11 +326,39 @@ export function ForYouPanel() {
     window.dispatchEvent(new CustomEvent("vanguard:navigate", { detail: tab }));
   }, []);
 
+  // v317 EL REVIVIR DESDE LA PORTADA: la tarjeta despacha la llave (fecha) y
+  // navega a la escuela. La mesa vive fuera del feed: navegar("estrategia")
+  // desmonta ESTE panel, así que los reintentos son timers de window (sobreviven
+  // al desmonte) que salvan el montaje perezoso del panel destino. El contrato
+  // es idempotente: la escuela busca la partida en SU fuente y el mismo
+  // setReplay con el mismo objeto hace bail out en React. Cero fe en el
+  // evento: solo la llave — la tienda manda la verdad.
+  const revivirDesdeElFeed = useCallback((fecha: number) => {
+    navegar("estrategia");
+    const disparar = () => window.dispatchEvent(new CustomEvent("vg:mesa-revivir", { detail: { fecha } }));
+    disparar();
+    window.setTimeout(disparar, 700);
+    window.setTimeout(disparar, 1800);
+  }, [navegar]);
+
   // v168: PARIDAD 3D — filas desde EL ALGORITMO (las mismas que pinta el 2D)
   const filas3D = useMemo<FilaContenido3D[]>(() => {
     const filas: FilaContenido3D[] = [
       { t: "EN VIVO AHORA — EL MUNDO", v: "LIVE", color: "#FF4D5E", d: `canales oficiales 24/7 · ${NEWS_CHANNELS.slice(0, 3).map((ch) => ch.name).join(" · ")}`, a: "ir a en vivo" },
     ];
+    // v317 LA MESA EN LA PORTADA — la fila de la escuela en la paridad 3D:
+    // la última partida con su veredicto real y su acción de revivir (el
+    // mismo contrato vg:mesa-revivir que el 2D — la escuela entera conectada).
+    const ultima = wargameHistorial[0];
+    if (ultima) {
+      filas.push({
+        t: `LA MESA · ${ultima.titulo}`,
+        v: `${ultima.objetivoAzul} vs ${ultima.objetivoRojo}`,
+        color: ultima.ganaAzul ? "#7AB8FF" : "#FF4D5E",
+        d: `tu última partida en la escuela · racha ${wargameStats.racha} · mejor objetivo ${wargameStats.mejorObjetivo}/100 — revivir determinista desde la portada`,
+        a: "revivir la mesa",
+      });
+    }
     if (loading) {
       filas.push({ t: "EL ALGORITMO ESTUDIANDO TU GUSTO…", color: "#7AB8FF", d: "enganno + frescura + afinidad — el productor ya está fabricando pulsos" });
       return filas;
@@ -319,7 +373,7 @@ export function ForYouPanel() {
       });
     }
     return filas;
-  }, [lista, liked, likeCount, loading]);
+  }, [lista, liked, likeCount, loading, wargameHistorial, wargameStats]);
   useSala3DContenido("foryou", "PARA TI", "#FF3B30", `EL ALGORITMO · ${lista.length} tarjetas · el productor fabrica pulsos cada pocos minutos`, filas3D);
 
   useEffect(() => {
@@ -327,6 +381,12 @@ export function ForYouPanel() {
       const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
       if (d?.tab !== "foryou") return;
       if (d.accion === "ir a en vivo") { navegar("envivo"); return; }
+      // v317: la fila LA MESA de la paridad 3D revivir con el mismo contrato
+      if (d.accion === "revivir la mesa") {
+        const ultima = wargameHistorial[0];
+        if (ultima) revivirDesdeElFeed(ultima.fecha);
+        return;
+      }
       if (d.accion === "like") {
         const p = lista.slice(0, 10)[d.idx - 1];
         if (p) void toggleLike(p);
@@ -456,6 +516,53 @@ export function ForYouPanel() {
           <Laugh className="w-12 h-12 text-violet-300 opacity-90" />
           <p className="text-[13px] font-bold text-white/90 text-center leading-snug line-clamp-4">{t.titulo}</p>
           <span className="text-[10px] font-mono uppercase text-violet-300 border border-violet-400/40 px-2 py-1 rounded-sm">Abrir galería de memes</span>
+        </div>
+      );
+    }
+    // v317 LA MESA — la última partida de la escuela, con su veredicto real:
+    // barras del frente (azul vs rojo), botín cobrado, racha viva y el
+    // REVIVIR determinista que despacha el contrato vg:mesa-revivir.
+    if (t.tipo === "mesa") {
+      const p = t.datos?.partida as (typeof wargameHistorial)[number] | undefined;
+      if (!p) return null;
+      return (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 p-5 bg-gradient-to-b from-violet-950/70 to-black/85 text-center cursor-pointer"
+          onClick={() => navegar("estrategia")}
+        >
+          <span className="text-[9px] font-mono uppercase tracking-[.3em] text-violet-300 border border-violet-400/40 px-2.5 py-1 rounded-sm flex items-center gap-1.5 bg-black/30">
+            <GraduationCap className="w-3 h-3" /> La escuela del mando
+          </span>
+          <p className="text-[14px] font-bold text-white/95 leading-snug">{p.titulo}</p>
+          <div className="w-full max-w-[250px] space-y-1.5 mt-0.5">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[8px] font-mono w-9 text-left text-blue-300 uppercase">azul</span>
+              <div className="flex-1 h-1.5 bg-white/10 rounded-sm overflow-hidden">
+                <div className="h-full bg-blue-400" style={{ width: `${p.objetivoAzul}%` }} />
+              </div>
+              <span className="text-[9px] font-mono w-6 text-blue-300 text-right">{p.objetivoAzul}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[8px] font-mono w-9 text-left text-red-300 uppercase">rojo</span>
+              <div className="flex-1 h-1.5 bg-white/10 rounded-sm overflow-hidden">
+                <div className="h-full bg-red-400" style={{ width: `${p.objetivoRojo}%` }} />
+              </div>
+              <span className="text-[9px] font-mono w-6 text-red-300 text-right">{p.objetivoRojo}</span>
+            </div>
+          </div>
+          <p className={cn("text-[11px] font-mono font-bold uppercase tracking-wider", p.ganaAzul ? "text-blue-300" : "text-red-300")}>
+            {p.ganaAzul ? "victoria azul" : "victoria roja"} · botín +{p.botinCoins} ⊕ +{p.botinXp} xp
+          </p>
+          <p className="text-[9px] font-mono text-white/55">
+            racha {wargameStats.racha} · mejor objetivo {wargameStats.mejorObjetivo}/100 · {timeAgo(new Date(p.fecha).toISOString())}
+          </p>
+          <button
+            onClick={(e) => { e.stopPropagation(); revivirDesdeElFeed(p.fecha); }}
+            className="mt-0.5 px-3.5 py-1.5 bg-violet-500/25 hover:bg-violet-500/40 border border-violet-400/50 rounded-sm text-[10px] font-mono uppercase tracking-widest text-violet-200 flex items-center gap-1.5 transition-colors"
+          >
+            <GraduationCap className="w-3.5 h-3.5" /> Revivir la mesa →
+          </button>
+          <span className="text-[8px] font-mono uppercase text-white/40">replay determinista · sin botín</span>
         </div>
       );
     }
@@ -707,6 +814,7 @@ function tIcon(tipo: string): React.ReactNode {
   if (tipo === "meme") return <Laugh className="w-4 h-4 text-violet-300" />;
   if (tipo === "tv") return <MonitorPlay className="w-4 h-4 text-amber-hud" />;
   if (tipo === "pulso") return <Zap className="w-4 h-4 text-amber-hud" />;
+  if (tipo === "mesa") return <GraduationCap className="w-4 h-4 text-violet-300" />;
   if (tipo === "video") return <Clapperboard className="w-4 h-4 text-cyan-hud" />;
   if (tipo === "musica") return <Music className="w-4 h-4 text-cyan-hud" />;
   if (tipo === "foto") return <ImageIcon className="w-4 h-4 text-cyan-hud" />;

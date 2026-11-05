@@ -24,7 +24,9 @@
 // Todo local (localStorage), cero servidor, cero datos personales.
 // ============================================================
 
-export type TipoFeed = "video" | "musica" | "foto" | "meme" | "tv" | "pulso" | "vivo";
+// v317 LA MESA EN LA PORTADA: la escuela produce contenido con tus partidas —
+// el tipo "mesa" es la última partida de la escuela entrando al algoritmo.
+export type TipoFeed = "video" | "musica" | "foto" | "meme" | "tv" | "pulso" | "vivo" | "mesa";
 
 export interface TarjetaFeed {
   id: string;
@@ -133,9 +135,10 @@ export function puntuar(t: TarjetaFeed, perfil: PerfilFeed, ahora: number): Tarj
   const afinAutor = Math.min(1.5, (perfil.pesoAutor[t.autor] ?? 0.5) * 0.75);
   const visto = vistoHace(t.id, ahora);
   const penalVisto = visto !== null && visto < 8 * 3_600_000 ? -1.8 : 0;
-  // los PULSOS del Productor y los canales VIVO llevan base propia para
-  // mezclarse con dignidad aunque no tengan likes todavía
-  const base = t.tipo === "pulso" ? 1.2 : t.tipo === "vivo" ? 1.6 : 0;
+  // los PULSOS del Productor, los canales VIVO y LA MESA (v317 — contenido
+  // que VANGUARD produjo con tu partida) llevan base propia para mezclarse
+  // con dignidad aunque no tengan likes todavía
+  const base = t.tipo === "pulso" || t.tipo === "mesa" ? 1.2 : t.tipo === "vivo" ? 1.6 : 0;
 
   const score = base + engano + frescura + afinTipo + afinAutor + penalVisto;
 
@@ -143,6 +146,7 @@ export function puntuar(t: TarjetaFeed, perfil: PerfilFeed, ahora: number): Tarj
   let porQue: string;
   if (t.tipo === "vivo") porQue = "EN VIVO AHORA MISMO";
   else if (t.tipo === "pulso") porQue = "VANGUARD LO PRODUJO PARA TI";
+  else if (t.tipo === "mesa") porQue = "TU ÚLTIMA PARTIDA EN LA ESCUELA";
   else if (visto !== null && visto < 8 * 3_600_000) porQue = "LO VISTE HACE POCO";
   else if ((perfil.pesoAutor[t.autor] ?? 0) > 0.9) porQue = `PORQUE TE GUSTA @${t.autor.toUpperCase()}`;
   else if (afinTipo >= 1.45) porQue = `PORQUE MIRAS ${etiquetaTipo(t.tipo)}`;
@@ -162,6 +166,7 @@ function etiquetaTipo(tipo: TipoFeed): string {
     case "tv": return "TV";
     case "pulso": return "PULSOS";
     case "vivo": return "EN VIVO";
+    case "mesa": return "LA MESA";
   }
 }
 
