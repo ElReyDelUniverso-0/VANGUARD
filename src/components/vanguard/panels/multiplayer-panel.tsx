@@ -461,17 +461,21 @@ function GuerraMode({ alias }: { alias: string }) {
     return t.adj.filter((a) => state.territories[a] && state.territories[a].owner !== myId);
   }, [state, selected, myId]);
 
-  const emit = (event: string, payload: unknown, cb?: (r: { ok: boolean; reason?: string }) => void) => {
+  // v355 LA SALA QUE ESCUCHA — identidad estable: emit solo respira con
+  // getRealtime (módulo), así que nace UNA vez y los handlers que lo usan
+  // dejan de re-montar el oyente del 3D en cada render (ley v335: cero
+  // directivas — la cura es deps honestas).
+  const emit = useCallback((event: string, payload: unknown, cb?: (r: { ok: boolean; reason?: string }) => void) => {
     const socket = getRealtime();
     socket.emit(event, payload, cb);
-  };
+  }, []);
 
-  const claim = (terrId: string) => {
+  const claim = useCallback((terrId: string) => {
     emit("mp:claim", { terrId }, (r) => {
       if (r?.ok) { participatedRef.current = true; toast.success(`Base establecida. La partida arranca en segundos`); sfx.unlock(); }
       else toast.error(r?.reason ?? "No se pudo reclamar");
     });
-  };
+  }, [emit]);
 
   // v17: PARTIDA RAPIDA — reclama un territorio libre al azar
   const quickMatch = () => {
@@ -481,12 +485,12 @@ function GuerraMode({ alias }: { alias: string }) {
     claim(free[Math.floor(Math.random() * free.length)].id);
   };
 
-  const deploy = (terrId: string, qty = 1) => {
+  const deploy = useCallback((terrId: string, qty = 1) => {
     emit("mp:deploy", { terrId, qty }, (r) => {
       if (!r?.ok) toast.error(r?.reason ?? "Despliegue rechazado");
       else { participatedRef.current = true; sfx.click(); }
     });
-  };
+  }, [emit]);
 
   const deployAll = () => {
     emit("mp:deployAll", {}, (r) => {
@@ -495,13 +499,13 @@ function GuerraMode({ alias }: { alias: string }) {
     });
   };
 
-  const attack = (from: string, to: string) => {
+  const attack = useCallback((from: string, to: string) => {
     emit("mp:attack", { from, to }, (r) => {
       if (!r?.ok) toast.error(r?.reason ?? "Ataque invalido");
       else participatedRef.current = true;
     });
     setSelected(null);
-  };
+  }, [emit]);
 
   const sendChat = () => {
     const body = chatDraft.trim();
@@ -512,12 +516,12 @@ function GuerraMode({ alias }: { alias: string }) {
     });
   };
 
-  const requestRematch = () => {
+  const requestRematch = useCallback(() => {
     emit("mp:rematch", {}, (r) => {
       if (!r?.ok) toast.error(r?.reason ?? "No disponible");
       else sfx.click();
     });
-  };
+  }, [emit]);
 
   // v23: elige tu personaje-país y sincronízalo con la partida en vivo
   const pickCharacter = (code: string) => {
@@ -1036,12 +1040,12 @@ function DueloMode({ alias }: { alias: string }) {
     setSearching(false);
   };
 
-  const answer = (idx: number) => {
+  const answer = useCallback((idx: number) => {
     if (!duel || duel.phase !== "QUESTION" || duel.me.answered) return;
     setChosen({ q: duel.qIdx, idx });
     sfx.click();
     getRealtime()?.emit("duel:answer", { idx });
-  };
+  }, [duel]);
 
   // v168: PARIDAD 2D→3D — filas reales del modo DUELO para la sala de contenido
   const filas3D = useMemo<FilaContenido3D[]>(() => {

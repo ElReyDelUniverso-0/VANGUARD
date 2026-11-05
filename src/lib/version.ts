@@ -5096,9 +5096,30 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v354.0";
-export const APP_CODENAME = "EL SALÓN QUE PERMANECE";
+export const APP_VERSION = "v355.0";
+export const APP_CODENAME = "LA SALA QUE ESCUCHA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v355.0 LA SALA QUE ESCUCHA — trigésima-octava ronda del autociclo y
+// CIRUGÍA del ritmo (v354 expansión → v355 cirugía): LA TERCERA LEVA DE LA
+// COLA EXHAUSTIVE-DEPS cae en multiplayer-panel, 5 hallazgos de los 139 en
+// 93 (el censo forzado al abrir midió exacto lo que el canon decía). (1) LA
+// IDENTIDAD ESTABLE ×6: emit (deps [] — solo respira con getRealtime,
+// módulo), claim, deploy, attack y requestRematch ([emit] los cuatro — los
+// handlers de GUERRA cuelgan del emisor y de nada más) y answer ([duel] —
+// el vivo del duelo) ganan useCallback: el oyente del 3D de GUERRA
+// [guerra3D, claim, deploy, attack, requestRematch] y el de DUELO [duel,
+// answer, queue] dejan de re-montar en cada render — la SALA ESCUCHA sin
+// descolgarse (el queue de la v168 ya era useCallback: la casa tenía el
+// patrón en el propio archivo). (2) CERO DIRECTIVAS (ley v335): multiplayer
+// queda sin cicatrices; el censo forzado mide 5→0 en el archivo y la cola
+// 139→134 en 93→92 archivos (multiplayer sale entera del censo).    SUITE:
+// +2 pines (LA SALA QUE ESCUCHA estático: los 7 useCallback contados — 6
+// nuevos + el queue de la casa —, las arrays de deps exactas una a una,
+// los dos oyentes 3D con su contrato v168 intacto, cero directivas,
+// versión doble aserción — y vivo: home + health v355) + rodillo (EL SALÓN
+// QUE PERMANECE → LA SALA QUE ESCUCHA y v354.0 → v355.0 en los VALORES de
+// los asertos; mensajes históricos y nombres de pines intactos — ley v312)
+// + rodillo a v355.0 (cuatro patrones).
 // v354.0 EL SALÓN QUE PERMANECE — trigésima-septima ronda del autociclo y
 // ronda EXPANSIVA del ritmo (v353 cirugía → v354 expansión): LA MESA VIVA
 // etapa 10 — el salón PERSISTE. La elección del rival de hoy (v352, etapa 9)
