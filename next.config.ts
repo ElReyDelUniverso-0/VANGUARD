@@ -55,6 +55,28 @@ const nextConfig: NextConfig = {
   },
   /* v70.0 CLASICO PURO: la portada "/" vuelve a ser la app clasica completa.
      La experiencia nexo (v68/v69) fue eliminada por decision del comandante. */
+  /* v349.0 LA LEY SIN EXCEPCIÓN — EL BUILD VUELVE A LEER LA LEY DE TIPOS
+     (en DOS capas, medidas una a una). La compuerta typescript.
+     ignoreBuildErrors nació en la v29.0 (el primer lanzamiento, b20e968) y
+     llevó 320 versiones siendo la cesión callando: NADA verificaba los
+     tipos — ni el build, ni nadie si el agente no corría tsc a mano.
+     // LA CURA, MEDIDA: esta caja de build tiene 4 GB sin swap y vecinos
+     // vivos (el next-server del vecino: 426 MB; next dev: 59 MB; la
+     // infra del sandbox: 125 MB). El chequeo interno de Next corre en un
+     // jest-worker junto al padre post-compilación: MEDIDO, el padre
+     // retiene ~2 495 MB de RSS y el worker muere por OOM del kernel
+     // (exit 137) en "Running TypeScript ..." — probado con
+     // max-old-space-size 1536 y 1280 y MALLOC_ARENA_MAX=1: el padre es
+     // quien no afloja. La ley se muda entonces a DONDE SE CUMPLE SIN
+     // MORIR: el script "build" de package.json ahora abre con
+     // `tsc --noEmit` — proceso SOLO, pico medido ~1 722 MB — y CUALQUIER
+     // error de tipos mata el build ANTES de compilar (fail-fast, en esta
+     // caja y en Vercel, que corre el mismo script). Este flag solo salta
+     // la re-verificación DUPLICADA de Next (la que OOM-mata la caja);
+     // ya no es una compuerta porque el mismo `bun run build` / `npm run
+     // build` grita antes. Si alguien borra el tsc del script SIN quitar
+     // este flag, vuelve la era del silencio — por eso la suite lo
+     // aserta: la ley vive en el build, no en el recuerdo de nadie. */
   typescript: {
     ignoreBuildErrors: true,
   },

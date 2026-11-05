@@ -5096,9 +5096,44 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v348.0";
-export const APP_CODENAME = "EL ARCHIVO DE LA MESA";
+export const APP_VERSION = "v349.0";
+export const APP_CODENAME = "LA LEY SIN EXCEPCIÓN";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v349.0 LA LEY SIN EXCEPCIÓN — trigésima-segunda ronda del autociclo y
+// CIRUGÍA del ritmo (v348 expansión → v349 cirugía): EL BUILD VUELVE A LEER
+// LA LEY DE TIPOS, en DOS capas medidas una a una. La compuerta
+// typescript.ignoreBuildErrors nació en la v29.0 (el primer lanzamiento,
+// b20e968) y llevó 320 versiones siendo la cesión callando: NADA verificaba
+// los tipos — ni el build, ni nadie si el agente no corría tsc a mano.
+// (1) LA MEDICIÓN QUE FUNDÓ LA CURA: la caja de build tiene 4 GB sin swap y
+//    vecinos vivos (el next-server del vecino 426 MB, next dev 59 MB, la
+//    infra del sandbox 125 MB). El chequeo interno de Next corre en un
+//    jest-worker junto al padre post-compilación: MEDIDO con muestreo por
+//    segundo, el padre retiene ~2 495 MB de RSS y el worker muere por OOM
+//    del kernel (exit 137) en «Running TypeScript ...» — probado con
+//    max-old-space-size 1536 y 1280 y MALLOC_ARENA_MAX=1: el padre es quien
+//    no afloja. El flag NO podía retirarse sin matar el build de la casa.
+// (2) LA CURA DONDE SE CUMPLE SIN MORIR: el script «build» de package.json
+//    abre ahora con `tsc --noEmit` (proceso SOLO, pico medido ~1 722 MB) —
+//    cualquier error de tipos mata el build ANTES de compilar, fail-fast en
+//    esta caja y en Vercel (que corre el mismo script). El flag queda pero
+//    declarado por lo que AHORA es: el salto de la re-verificación
+//    DUPLICADA de Next (la que OOM-mata), con su POR QUÉ escrito en
+//    next.config.ts — ya no es una compuerta porque el mismo
+//    `bun run build` grita antes; y la suite aserta que el tsc vive en el
+//    build, para que nadie lo borre sin quitar el flag (la era del
+//    silencio no regresa).
+// (3) LA DEUDA QUE LA MEDICIÓN DESTAPÓ: el tsc de apertura gritó 33 errores
+//    sobre el sandbox reciclado — 17 eran TS2339 de PrismaClient
+//    (audioComandante, acontecimiento, noticiaAcontecimiento): la lección
+//    v216 otra vez, el client del sandbox no conocía los modelos de la
+//    nube; `prisma generate` y el censo cayó a CERO deuda real.
+//    SUITE: +2 pines (LA LEY SIN EXCEPCIÓN estático: el tsc abre el build
+//    ANTES de next build, el flag vive con su POR QUÉ escrito junto a la
+//    herida, versión doble aserción — y vivo: home + health v349) +
+//    rodillos de codename (EL ARCHIVO DE LA MESA → LA LEY SIN EXCEPCIÓN en
+//    los VALORES de los asertos; los mensajes históricos quedan como
+//    memoria — ley v312) + rodillo a v349.0 (cuatro patrones).
 // v348.0 EL ARCHIVO DE LA MESA — trigésima-primera ronda del autociclo y
 // ronda EXPANSIVA del ritmo (v347 cirugía → v348 expansión): LA MESA VIVA
 // etapa 7 — las semanas cerradas del desafío de la escuela cuentan su
