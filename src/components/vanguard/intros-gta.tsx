@@ -103,7 +103,10 @@ export function IntroGtaPersonaje({
   useEffect(() => { onFinRef.current = onFin; }); // el ref se actualiza FUERA del render (react-hooks/refs)
   const saliendoRef = useRef(false);
 
-  useEffect(() => setMontado(true), []);
+  useEffect(() => {
+    const t = setTimeout(() => setMontado(true), 0);
+    return () => clearTimeout(t);
+  }, []);
 
   const cerrar = () => {
     if (saliendoRef.current) return;
@@ -120,7 +123,6 @@ export function IntroGtaPersonaje({
     }
     const t = setTimeout(cerrar, DURACION_PERSONAJE);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [montado]);
 
   const color = CATEGORIAS_ROSTRO[rostro.categoria].color;
@@ -484,7 +486,10 @@ export function IntroGtaNoticia({ cable, onFin }: { cable: EntradaImpacto; onFin
   useEffect(() => { onFinRef.current = onFin; }); // el ref se actualiza FUERA del render (react-hooks/refs)
   const saliendoRef = useRef(false);
 
-  useEffect(() => setMontado(true), []);
+  useEffect(() => {
+    const t = setTimeout(() => setMontado(true), 0);
+    return () => clearTimeout(t);
+  }, []);
 
   const cerrar = () => {
     if (saliendoRef.current) return;
@@ -501,7 +506,6 @@ export function IntroGtaNoticia({ cable, onFin }: { cable: EntradaImpacto; onFin
     }
     const t = setTimeout(cerrar, DURACION_NOTICIA);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [montado]);
 
   // el veredicto de la Agencia — determinista, la misma verdad del ranking

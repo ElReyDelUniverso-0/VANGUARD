@@ -555,8 +555,17 @@ function Interrogatorio() {
   const [answered, setAnswered] = useState(0);
   const [cur, setCur] = useState<QuizQuestion | null>(null);
   const [picked, setPicked] = useState<number | null>(null);
+  // v335: el progreso visible vive en ESTADO (el render no lee refs — react-hooks/refs)
+  const [qIdx, setQIdx] = useState(0);
+  const [qLen, setQLen] = useState(0);
   const queueRef = useRef<QuizQuestion[]>([]);
   const qIdxRef = useRef(0);
+
+  const finishRun = () => {
+    setPhase("done");
+    setCur(null);
+    setPicked(null);
+  };
 
   // reloj de la sesión: 1 tick por segundo, a 0 → fin y récord
   useEffect(() => {
@@ -572,7 +581,6 @@ function Interrogatorio() {
       });
     }, 1000);
     return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   const startRun = () => {
@@ -584,6 +592,8 @@ function Interrogatorio() {
     }
     queueRef.current = pool;
     qIdxRef.current = 0;
+    setQIdx(0);
+    setQLen(pool.length);
     setHits(0);
     setAnswered(0);
     setTimeLeft(INTERRO_SECONDS);
@@ -592,19 +602,12 @@ function Interrogatorio() {
     setPhase("run");
   };
 
-  const finishRun = () => {
-    setPhase("done");
-    setCur(null);
-    setPicked(null);
-  };
-
   // al terminar: si hay récord, se persiste y se anuncia
   useEffect(() => {
     if (phase !== "done") return;
     if (setBest(hits)) {
       setTimeout(() => toast.success(`👑 RÉCORD PERSONAL: ${hits} aciertos en ${INTERRO_SECONDS}s`, { description: "El archivo te vigila… y se impresiona." }), 250);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   const answer = (optIdx: number) => {
@@ -620,13 +623,14 @@ function Interrogatorio() {
     // siguiente pregunta tras mostrar el color de la respuesta
     setTimeout(() => {
       qIdxRef.current += 1;
+      setQIdx(qIdxRef.current);
       const next = queueRef.current[qIdxRef.current % queueRef.current.length];
       if (next) setCur(next);
       setPicked(null);
     }, ok ? 550 : 900); // el fallo se marca un poco más: el archivo quiere que lo recuerdes
   };
 
-  const nextIn = queueRef.current.length ? `${(qIdxRef.current % queueRef.current.length) + 1}/${QUIZ_BANK.length}` : "—";
+  const nextIn = qLen ? `${(qIdx % qLen) + 1}/${QUIZ_BANK.length}` : "—";
 
   return (
     <div className="hud-corner bg-gradient-to-br from-red-hud/10 via-secondary/40 to-secondary/40 border border-red-hud/40 p-3 space-y-2.5">

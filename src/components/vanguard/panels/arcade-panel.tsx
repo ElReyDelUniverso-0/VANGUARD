@@ -515,7 +515,6 @@ export function ArcadePanel() {
         toast.success(`Máquina descifrada: ${cpScore} aciertos`, { description: `+${prize} mon · +45 xp` });
       }, 100);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cpDone]);
   const answerCodigo = (i: number) => {
     if (!cpQ || cpDone) return;
@@ -569,7 +568,6 @@ export function ArcadePanel() {
       if (ok) { sfx.success(); toast.success(`PROPUESTA APROBADA (${ngApproval}%) · +${prize} mon`, { description: "La comunidad apoya tu salida diplomática" }); }
       else { toast(`Propuesta rechazada (${ngApproval}%) · +${prize} mon por intentarlo`, { description: "Se necesita 70% de aprobación" }); }
     }, 100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ngPhase, game]);
   const pickNegociador = (i: number) => {
     if (ngPhase !== "pick" || !ngQ) return;
@@ -610,7 +608,6 @@ export function ArcadePanel() {
       setFbLeft((l) => (l <= 1 ? 0 : l - 1));
     }, 1000);
     return () => { if (fbTimer.current) clearInterval(fbTimer.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fbTarget, game]);
   const advanceFlag = (ok: boolean) => {
     if (ok) setFbScore((s) => s + 1);
@@ -628,7 +625,6 @@ export function ArcadePanel() {
     sfx.error();
     toast.error("¡Tiempo!");
     advanceFlag(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fbLeft]);
   const answerFlag = (name: string) => {
     if (!fbTarget || game !== "banderas" || fbBusy.current) return; // FIX B4: lock
@@ -718,7 +714,6 @@ export function ArcadePanel() {
         toast.success(`Defensa terminada · ${amScore} pts`, { description: amLives <= 0 ? "Base destruida — resistencia heroica" : `Base intacta x${Math.max(0, amLives)} · +${prize} mon · +25 xp` });
       }, 150);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amLeft, amLives, amOver, game]);
 
   // ============ 9. DUELO RELAMPAGO (v22) ============
@@ -872,9 +867,9 @@ export function ArcadePanel() {
       });
     }, 100);
     return () => clearInterval(tick);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, rfOver]);
 
+  const rfFeverBestRef = useRef(0);
   // recompensas al terminar la ronda
   useEffect(() => {
     if (game !== "radar" || !rfOver || rfRewarded.current) return;
@@ -886,9 +881,7 @@ export function ArcadePanel() {
     registrarRec("radar", rfBest);
     sfx.droneEnd();
     if (rfFeverBestRef.current >= 8) toast.success("MODO FIEBRE dominado", { description: `Racha máxima: ${rfBest}` });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, rfOver]);
-  const rfFeverBestRef = useRef(0);
 
   const rfHit = (id: number, cell: number, hostile: boolean) => {
     if (rfOver) return;
@@ -971,18 +964,6 @@ export function ArcadePanel() {
     return () => window.clearInterval(id);
   }, [juegoHoy]);
 
-  // JUGAR desde el 3D — el cartucho tocado enciende su minijuego real
-  useEffect(() => {
-    const onAccion = (e: Event) => {
-      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
-      if (d?.tab !== "arcade" || d.accion !== "jugar") return;
-      const g = gamesRef.current[d.idx];
-      if (g) startGame(g.id);
-    };
-    window.addEventListener("vg:sala3d-accion", onAccion);
-    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-  }, []);
-
   const startGame = (id: Exclude<GameId, null>) => {
     sfx.levelUp();
     currentGameRef.current = id; // v83: marca el juego activo para el doble del día
@@ -1000,6 +981,19 @@ export function ArcadePanel() {
     else if (id === "convoy") setGame("convoy");
     else if (id === "simon") setGame("simon");
   };
+
+  // JUGAR desde el 3D — el cartucho tocado enciende su minijuego real
+  useEffect(() => {
+    const onAccion = (e: Event) => {
+      const d = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
+      if (d?.tab !== "arcade" || d.accion !== "jugar") return;
+      const g = gamesRef.current[d.idx];
+      if (g) startGame(g.id);
+    };
+    window.addEventListener("vg:sala3d-accion", onAccion);
+    return () => window.removeEventListener("vg:sala3d-accion", onAccion);
+  }, []);
+
 
   return (
     <div className="space-y-3">
@@ -1180,7 +1174,6 @@ export function ArcadePanel() {
               <Button size="sm" variant="ghost" onClick={() => setGame(null)} className="h-6 text-[10px] font-mono"><RotateCcw className="w-3 h-3 mr-1" /> SALIR</Button>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qfTarget.img} alt="lider misterioso" className="w-full sm:w-44 h-52 object-cover border border-amber-hud/50" />
               <div className="flex-1 space-y-1.5">
                 {qfOptions.map((o) => (

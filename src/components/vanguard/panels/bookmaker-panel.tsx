@@ -97,32 +97,6 @@ export function BookmakerPanel() {
     setStats(loadStats());
   }, [addCoins]);
 
-  // ====== MOTOR EN VIVO (1s) ======
-  useEffect(() => {
-    const iv = setInterval(() => {
-      tick.current++;
-      const evs = eventsRef.current;
-      if (!evs.length) return;
-      const next = evs.map((e) => {
-        const c = { ...e, corners: [...e.corners] as [number, number], cards: [...e.cards] as [number, number], xg: [...e.xg] as [number, number] };
-        const before = c.status;
-        const goalsBefore = c.hs + c.as;
-        advanceEvent(c, 1);
-        if (c.status === "EN_VIVO" && tick.current % 2 === 0) refreshOdds(c);
-        if (before !== "FINALIZADO" && c.status === "FINALIZADO" && c.kind !== "FUTBOL") settleWinnerEvent(c);
-        if (c.status === "EN_VIVO" && c.hs + c.as > goalsBefore) setFlash(c.id);
-        return c;
-      });
-      eventsRef.current = next;
-      setEvents(next);
-      if (tick.current % 3 === 0) saveEvents(next);
-      settleOpenTickets(next);
-      if (flash) setTimeout(() => setFlash(null), 2500);
-    }, 1000);
-    return () => clearInterval(iv);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // ====== LIQUIDACION AUTOMATICA (pura: efectos fuera del updater) ======
   const settleOpenTickets = useCallback((evs: BkEvent[]) => {
     const map: Record<string, BkEvent> = {};
@@ -171,6 +145,32 @@ export function BookmakerPanel() {
       setStats((s) => { const ns = { ...s, payout: s.payout + payoutDelta, wins: s.wins + winsDelta }; localStorage.setItem("vanguard-bk-stats", JSON.stringify(ns)); return ns; });
     }
   }, [addCoins, addXp, recordBet]);
+
+  // ====== MOTOR EN VIVO (1s) ======
+  useEffect(() => {
+    const iv = setInterval(() => {
+      tick.current++;
+      const evs = eventsRef.current;
+      if (!evs.length) return;
+      const next = evs.map((e) => {
+        const c = { ...e, corners: [...e.corners] as [number, number], cards: [...e.cards] as [number, number], xg: [...e.xg] as [number, number] };
+        const before = c.status;
+        const goalsBefore = c.hs + c.as;
+        advanceEvent(c, 1);
+        if (c.status === "EN_VIVO" && tick.current % 2 === 0) refreshOdds(c);
+        if (before !== "FINALIZADO" && c.status === "FINALIZADO" && c.kind !== "FUTBOL") settleWinnerEvent(c);
+        if (c.status === "EN_VIVO" && c.hs + c.as > goalsBefore) setFlash(c.id);
+        return c;
+      });
+      eventsRef.current = next;
+      setEvents(next);
+      if (tick.current % 3 === 0) saveEvents(next);
+      settleOpenTickets(next);
+      if (flash) setTimeout(() => setFlash(null), 2500);
+    }, 1000);
+    return () => clearInterval(iv);
+  }, []);
+
 
   // ====== BOLETA ======
   const addLeg = (e: BkEvent, mKey: string, mLabel: string, cKey: string, cLabel: string, odd: number) => {

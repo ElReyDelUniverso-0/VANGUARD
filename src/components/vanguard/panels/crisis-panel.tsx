@@ -168,6 +168,30 @@ export function CrisisPanel() {
     if (s.voted && s.choice >= 0) setVotes((v) => v.map((n, i) => (i === s.choice ? n + 12 : n)));
   }, []);
 
+  // liquidacion del flash FUERA de updaters (evita setState-en-render)
+  const flashRef = useRef(flash);
+  useEffect(() => { flashRef.current = flash; }, [flash]);
+
+  const resolveFlash = useCallback(() => {
+    const f = flashRef.current;
+    if (!f || f.resolved) return;
+    const winner = f.votes.indexOf(Math.max(...f.votes));
+    const won = f.voted === winner;
+    setFlash({ ...f, resolved: true });
+    if (f.voted !== null && f.voted >= 0) {
+      if (won) {
+        addCoins(500, "CRISIS MUNDIAL FLASH: resolución ganadora");
+        addXp(80);
+        toast.success("CRISIS RESUELTA · tu opción ganó · +500 mon · +80 xp");
+      } else {
+        toast.error(`CRISIS RESUELTA · ganó "${f.crisis.options[winner].label}"`);
+      }
+      const ns = { ...save, flashResolved: save.flashResolved + 1, flashWon: save.flashWon + (won ? 1 : 0), history: [{ title: f.crisis.title, option: f.crisis.options[f.voted].label, won }, ...save.history].slice(0, 8) };
+      setSave(ns);
+      localStorage.setItem(LS_KEY, JSON.stringify(ns));
+    }
+  }, [save, addCoins, addXp]);
+
   // tick global: cuenta atras + votos de la comunidad + flash 90s
   useEffect(() => {
     const iv = setInterval(() => {
@@ -186,7 +210,6 @@ export function CrisisPanel() {
       }
     }, 1000);
     return () => clearInterval(iv);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, flash?.endsAt, flash?.resolved]);
 
   const totalVotes = votes.reduce((a, b) => a + b, 0);
@@ -236,29 +259,6 @@ export function CrisisPanel() {
     setFlash({ crisis: c, votes: c.options.map(() => 10 + Math.floor(Math.random() * 30)), endsAt: Date.now() + 90_000, voted: null, resolved: false });
   };
 
-  // liquidacion del flash FUERA de updaters (evita setState-en-render)
-  const flashRef = useRef(flash);
-  useEffect(() => { flashRef.current = flash; }, [flash]);
-
-  const resolveFlash = useCallback(() => {
-    const f = flashRef.current;
-    if (!f || f.resolved) return;
-    const winner = f.votes.indexOf(Math.max(...f.votes));
-    const won = f.voted === winner;
-    setFlash({ ...f, resolved: true });
-    if (f.voted !== null && f.voted >= 0) {
-      if (won) {
-        addCoins(500, "CRISIS MUNDIAL FLASH: resolución ganadora");
-        addXp(80);
-        toast.success("CRISIS RESUELTA · tu opción ganó · +500 mon · +80 xp");
-      } else {
-        toast.error(`CRISIS RESUELTA · ganó "${f.crisis.options[winner].label}"`);
-      }
-      const ns = { ...save, flashResolved: save.flashResolved + 1, flashWon: save.flashWon + (won ? 1 : 0), history: [{ title: f.crisis.title, option: f.crisis.options[f.voted].label, won }, ...save.history].slice(0, 8) };
-      setSave(ns);
-      localStorage.setItem(LS_KEY, JSON.stringify(ns));
-    }
-  }, [save, addCoins, addXp]);
 
   const flashTotal = flash ? flash.votes.reduce((a, b) => a + b, 0) : 0;
 

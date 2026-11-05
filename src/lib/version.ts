@@ -5096,9 +5096,48 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v334.0";
-export const APP_CODENAME = "EL ANILLO DEL ARCHIVO";
+export const APP_VERSION = "v335.0";
+export const APP_CODENAME = "LA COMPUERTA CURADA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v335.0 LA COMPUERTA CURADA — decimoctava ronda del autociclo y CIRUGÍA del
+// ritmo (v334 expansión → v335 cirugía): la primera leva de la cola «los 95
+// hallazgos detrás de la compuerta» (v333) cae ENTERA — 5 archivos se curan,
+// sus 14 cicatrices-compuerta se retiran y el árbol baja 19 → 5 avisos.
+// ① EL DIAGNÓSTICO (la compuerta contada): al retirar las directivas de los
+//    5 archivos menores (bookmaker, crisis, oscura, arcade, intros-gta) el
+//    compilador habló: 4 × «Cannot access variable before it is declared»
+//    (un efecto de intervalo u oyente llama a una función declarada DESPUÉS
+//    — settleOpenTickets, resolveFlash, finishRun, startGame), 1 × «This
+//    value cannot be modified» (rfFeverBestRef declarado DESPUÉS del efecto
+//    que lo lee), y 2 × «set-state-in-effect» (el flag de montaje de los
+//    intros escrito SINCRÓNICamente en el efecto).
+// ② LA CURA (orden, no conducta): las 4 funciones se mueven ANTES del efecto
+//    que las llama (settleOpenTickets arriba del motor de 1 s; resolveFlash +
+//    flashRef arriba del tick; finishRun arriba del reloj; el oyente 3D de
+//    arcade se mueve DEBAJO de startGame — mover el efecto, no la función,
+//    cuando la función tiene diez hermanos); rfFeverBestRef sube a su
+//    efecto; los flags de montaje pasan a escritura ASÍNCRONA (setTimeout 0
+//    + clear — la casa ya declaró que la escritura async no es un
+//    efecto-escritor). Cero cambios de comportamiento.
+// ③ LA CAPA PROFUNDA (la compuerta por capas): curada la primera, oscura
+//    destapó 3 × «refs during render» — nextIn se derivaba de
+//    queueRef.current EN EL RENDER. La cura: el progreso visible vive en
+//    ESTADO (qIdx/qLen espejados en los dos sitios que escribían el ref);
+//    el render ya no lee refs.
+// ④ EL MISTERIO DE LAS 26 CICATRICES RESUELTO: eslint.config.mjs línea 20 —
+//    «react-hooks/exhaustive-deps: off» — la regla está APAGADA globalmente:
+//    por eso sus directivas eran papel muerto y el bisturí de v333 las
+//    encontró inertes.
+// ⑤ EL RESULTADO: eslint src 19 → 5 avisos (2 del censo intocable + 3
+//    compuertas de imperio — la cola de los refs ×90 queda declarada),
+//    tsc 0, censo canónico 2+0 respira intacto; arcade queda sin NINGUNA
+//    directiva (9 retiradas: 8 exhaustive-deps muertas + 1 no-img).
+//     SUITE: +2 pines (LA COMPUERTA CURADA estático: las 5 funciones/refs en
+//    su sitio por índice, el oyente después de startGame, los flags async,
+//    los 5 archivos SIN directivas e imperio con SUS 3, versión doble
+//    aserción — y vivo: home + health v335) + rodillos de codename (EL
+//    ANILLO DEL ARCHIVO → LA COMPUERTA CURADA; nombres de pines como
+//    memoria — ley v312) + rodillo a v335.0 (cuatro patrones).
 // v334.0 EL ANILLO DEL ARCHIVO — decimoséptima ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v333 cirugía → v334 expansión): la DÉCIMO-PRIMERA
 // puerta del anillo de la escuela se abre en la sala de lectura — y la ronda
