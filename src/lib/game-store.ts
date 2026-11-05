@@ -287,6 +287,11 @@ export interface GameState {
   // la llave de semana es la del TABLÓN (weekKey) — la misma mesa para toda
   // la escuela; el récord es propio y honesto (Math.max, jamás se baja).
   desafioMejor: { wk: string; objetivo: number; fecha: number } | null;
+  // v348 EL ARCHIVO DE LA MESA — LA MESA VIVA etapa 7: las semanas CERRADAS
+  // del desafío (la mejor mesa de la semana anterior entra al archivo cuando
+  // la llave gira y el operador vuelve a la mesa). Filas REALES del operador
+  // (contadores propios), la más nueva arriba, tope 12 semanas.
+  desafioHistorial: { wk: string; objetivo: number; fecha: number }[];
   // Historial de las últimas partidas jugadas con las jugadas EXACTAS
   // (ids por turno): el determinismo del motor las hace revivibles.
   wargameHistorial: {
@@ -676,6 +681,7 @@ export const useGameStore = create<GameState>()(
       // v315 LA MESA CON MEMORIA
       wargameStats: { jugadas: 0, ganadas: 0, racha: 0, mejorRacha: 0, mejorObjetivo: 0 },
       desafioMejor: null,
+      desafioHistorial: [],
       wargameHistorial: [],
       marketHoldings: {},
       marketTrades: [],
@@ -1528,10 +1534,20 @@ export const useGameStore = create<GameState>()(
       // v338 LA MESA EN EL TABLÓN — el mejor objetivo del DESAFÍO DE LA SEMANA:
       // la llave wk es la del tablón; el récord es la ley de contadores
       // honestos (Math.max dentro de la semana, se renueva con la semana).
+      // v348 EL ARCHIVO DE LA MESA — etapa 7: cuando la llave gira y el
+      // operador vuelve a la mesa, la semana CERRADA entra al archivo con SU
+      // mejor mesa (el Math.max no cruza semanas — cada semana guarda lo
+      // suyo); tope 12, la más nueva arriba. Sin semana previa no hay
+      // archivo: la primera mesa despierta el contrato, no el historial.
       recordDesafio: (wk, objetivo) => {
         set((st) => {
           const prev = st.desafioMejor;
-          if (!prev || prev.wk !== wk) return { desafioMejor: { wk, objetivo, fecha: Date.now() } };
+          if (!prev || prev.wk !== wk) {
+            const archivo = prev
+              ? [{ wk: prev.wk, objetivo: prev.objetivo, fecha: prev.fecha }, ...st.desafioHistorial].slice(0, 12)
+              : st.desafioHistorial;
+            return { desafioMejor: { wk, objetivo, fecha: Date.now() }, desafioHistorial: archivo };
+          }
           if (objetivo > prev.objetivo) return { desafioMejor: { wk, objetivo, fecha: Date.now() } };
           return {};
         });

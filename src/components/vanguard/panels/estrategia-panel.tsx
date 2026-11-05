@@ -14,7 +14,9 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 // v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los rivales del desafío
 // nacen de la MISMA data de la escuela (girados por la misma semana del
 // tablón, cero copias de la fórmula fuera del módulo)
-import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
+// v348 EL ARCHIVO DE LA MESA — etapa 7: las semanas cerradas cuentan su
+// historia (racha por jueves ISO, puesto frente a la escuela recomputado)
+import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, rachaDeLaMesa, puestoDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
 // v338 LA MESA EN EL TABLÓN — la llave de semana del TABLÓN (la misma que
 // cierra el podio semanal cierra el desafío: una sola llave, cero copias)
@@ -97,6 +99,26 @@ export function EstrategiaGlobalPanel() {
     ].sort((a, b) => b.score - a.score);
   }, [semanaMesa, mejorVigente, desafio, alias]);
   const puestoTu = tablonMesa.findIndex((f) => f.propio) + 1;
+  // v348 EL ARCHIVO DE LA MESA — LA MESA VIVA etapa 7: las semanas cerradas
+  // del desafío. El título de cada mesa se RECOMPUTA del anillo
+  // (desafioDeLaSemana con el número de la llave: el mismo giro de
+  // entonces — cero relojes nuevos) y el puesto frente a la escuela de la
+  // fórmula determinista calibrada al dato REAL de aquella semana (SIM
+  // recomputada, se declara). La fila del operador es la única REAL.
+  // Cero efectos nuevos: el archivo respira en un useMemo.
+  const archivoDesafio = useGameStore((s) => s.desafioHistorial);
+  const archivoMesa = useMemo(() => {
+    const semanas = [...archivoDesafio.map((a) => a.wk), ...(mejorVigente !== null ? [semanaMesa] : [])];
+    const racha = rachaDeLaMesa(semanas, semanaMesa);
+    const filas = archivoDesafio.slice(0, 6).map((a) => {
+      const num = parseInt(a.wk.slice(6), 10) || 1;
+      const mesa = desafioDeLaSemana(num);
+      return { wk: a.wk, titulo: mesa.titulo, dificultad: mesa.dificultad, objetivo: a.objetivo, puesto: puestoDeLaMesa(num, a.objetivo) };
+    });
+    const todas = [...archivoDesafio.map((a) => ({ wk: a.wk, objetivo: a.objetivo })), ...(mejorVigente !== null ? [{ wk: semanaMesa, objetivo: mejorVigente }] : [])];
+    const mejor = todas.reduce<{ wk: string; objetivo: number } | null>((m, e) => (!m || e.objetivo > m.objetivo ? e : m), null);
+    return { semanasCerradas: todas.length, racha, filas, mejor };
+  }, [archivoDesafio, mejorVigente, semanaMesa]);
   const abrirDesafio = () => { setMesa({ ...desafio }); setMesaDesafio(true); };
   const mejoresPartidas = useMemo(() => [...historial].sort((a, b) => b.objetivoAzul - a.objetivoAzul || b.fecha - a.fecha).slice(0, 3), [historial]);
   const generalesOrdenados = useMemo<General[]>(() => {
@@ -295,6 +317,53 @@ export function EstrategiaGlobalPanel() {
           </div>
           <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
             rivales: cadetes SIM de la escuela — deterministas por semana, calibrados a tu escala ({mejorVigente !== null ? `tu mejor mesa` : "el par de la casa, estimación declarada"}). tu fila es la única REAL (contadores propios).
+          </p>
+        </div>
+
+        {/* v348 EL ARCHIVO DE LA MESA — LA MESA VIVA etapa 7: las semanas
+            cerradas del desafío cuentan su historia. La fila del operador es
+            REAL (contadores propios); el título de cada mesa se recomputa del
+            anillo y el puesto frente a la escuela de la fórmula determinista
+            (SIM recomputada, se declara — la ley de distinguir hechos de
+            estimaciones). */}
+        <div className="border-t border-border/40 pt-2 space-y-1" aria-label="Archivo de la mesa">
+          <div className="flex items-center gap-2 flex-wrap">
+            <History className="w-3.5 h-3.5 text-blue-400" />
+            <span className="text-[10px] font-caviar font-bold uppercase tracking-widest text-blue-400">Archivo de la mesa</span>
+            <span className="text-[9px] font-mono px-1.5 py-0.5 bg-white/5 text-muted-foreground rounded">
+              {archivoMesa.semanasCerradas === 1 ? "1 semana cerrada" : `${archivoMesa.semanasCerradas} semanas cerradas`}
+            </span>
+            {archivoMesa.racha.racha > 1 && (
+              <span className={cn("text-[9px] font-mono px-1.5 py-0.5 rounded", archivoMesa.racha.rota ? "bg-red-500/10 text-red-300/80" : "bg-emerald-500/10 text-emerald-300")}>
+                racha {archivoMesa.racha.racha} sem · {archivoMesa.racha.rota ? "rota" : "vigente"}
+              </span>
+            )}
+            <span className="ml-auto text-[9px] font-mono text-muted-foreground">
+              {archivoMesa.mejor ? `mejor mesa: ${archivoMesa.mejor.objetivo}/100 · ${archivoMesa.mejor.wk}` : "el archivo espera"}
+            </span>
+          </div>
+          {archivoMesa.filas.length === 0 ? (
+            <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
+              {mejorVigente !== null
+                ? "tu semana vigente aún no cierra: cuando la llave gire y vuelvas a la mesa, entrará al archivo"
+                : "sin semanas cerradas aún — juega el desafío y, cuando la semana gire, tu mesa entra aquí"}
+            </p>
+          ) : (
+            <div className="grid gap-0.5">
+              {archivoMesa.filas.map((f) => (
+                <div key={f.wk} className="flex items-center gap-2 px-2 py-1 rounded-sm text-[10px] font-mono bg-white/[0.03]">
+                  <span className="w-14 text-muted-foreground/60 hidden sm:inline">{f.wk}</span>
+                  <span className="truncate flex-1 text-foreground/70">
+                    {f.titulo} <span className="text-amber/50">{"★".repeat(f.dificultad)}</span>
+                  </span>
+                  <span className="text-amber/80 whitespace-nowrap">{f.puesto}º de la escuela</span>
+                  <span className="w-10 text-right text-blue-300 font-bold">{f.objetivo}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
+            archivo: tus filas son REALES (contadores propios — cada semana guarda su mejor mesa, tope 12); el título de cada mesa se recomputa del anillo y el puesto de la escuela es SIM recomputada con la escala real de aquella semana.
           </p>
         </div>
       </div>

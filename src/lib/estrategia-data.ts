@@ -353,6 +353,60 @@ export function rivalesDeLaMesa(semana: number, escala: number): RivalMesa[] {
   });
 }
 
+// v348: EL ARCHIVO DE LA MESA — LA MESA VIVA etapa 7. Las semanas CERRADAS
+// del desafío cuentan su historia: cuando la llave de semana gira y el
+// operador vuelve a la mesa, su mejor mesa de la semana anterior entra al
+// archivo (contadores propios — la fila del operador es la única REAL).
+// El título de cada mesa se RECOMPUTA del anillo (desafioDeLaSemana con el
+// número de semana que la llave trae — el mismo giro de entonces, cero
+// relojes nuevos) y el puesto frente a la escuela se recomputa de la fórmula
+// determinista calibrada al dato REAL de aquella semana (SIM recomputada, se
+// declara en pantalla — la ley de distinguir hechos de estimaciones).
+
+// la ARITMÉTICA de semanas del tablón: el jueves ISO de la llave dividido
+// por 7 días. La misma matemática interna de weekKeyOf (la llave del tablón,
+// retención v58) pero SIN «ahora»: no llama a Date() con el presente, solo
+// convierte una llave EXISTENTE en número — saber si dos semanas son vecinas
+// es aritmética entre jueves, no un reloj nuevo (la frontera de año
+// 2025-W52 → 2026-W01 es vecina porque sus jueves distan exactamente 7 días).
+export function indiceSemanal(wk: string): number {
+  const año = parseInt(wk.slice(0, 4), 10);
+  const semana = parseInt(wk.slice(6), 10) || 1;
+  if (!año) return 0;
+  const cuatroEne = Date.UTC(año, 0, 4); // el 4 de enero SIEMPRE vive en la semana ISO 1
+  const diaNum = new Date(cuatroEne).getUTCDay() || 7; // lunes=1..domingo=7 (la misma convención de weekKeyOf)
+  const jueves = cuatroEne + (4 - diaNum) * 86400000 + (semana - 1) * 7 * 86400000;
+  return Math.floor(jueves / (7 * 86400000));
+}
+
+// la racha de la mesa: semanas cerradas CONSECUTIVAS del archivo (vecinas
+// por jueves — indiceSemanal). La racha vive mientras la semana corriente
+// sea la última jugada o su vecina; si pasó una semana sin sentarse a la
+// mesa, la racha se declara ROTA (el archivo no premia la ausencia).
+export function rachaDeLaMesa(
+  semanas: string[],
+  semanaActual: string,
+): { racha: number; desde: string | null; rota: boolean } {
+  const ordenadas = Array.from(new Set(semanas)).sort((a, b) => indiceSemanal(b) - indiceSemanal(a));
+  if (ordenadas.length === 0) return { racha: 0, desde: null, rota: false };
+  let racha = 1;
+  for (let i = 1; i < ordenadas.length; i++) {
+    if (indiceSemanal(ordenadas[i - 1]) - indiceSemanal(ordenadas[i]) === 1) racha++;
+    else break;
+  }
+  const rota = indiceSemanal(semanaActual) - indiceSemanal(ordenadas[0]) > 1;
+  return { racha, desde: ordenadas[0], rota };
+}
+
+// el puesto del operador en una semana PASADA: los rivales se RECOMPUTAN de
+// la misma rivalesDeLaMesa de la etapa 6 (girada por el número de semana que
+// la entrada del archivo trae) y la escala es el mejor objetivo REAL de
+// aquella semana — el mismo método del tablón, cero copias de la fórmula.
+export function puestoDeLaMesa(semana: number, objetivo: number): number {
+  const rivales = rivalesDeLaMesa(semana, objetivo);
+  return rivales.filter((r) => r.score > objetivo).length + 1;
+}
+
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
   const rnd = mulberry32(fnvHash("estrategia-" + fecha));

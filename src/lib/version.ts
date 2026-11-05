@@ -5096,9 +5096,40 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v347.0";
-export const APP_CODENAME = "EL CENSO EN CERO";
+export const APP_VERSION = "v348.0";
+export const APP_CODENAME = "EL ARCHIVO DE LA MESA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v348.0 EL ARCHIVO DE LA MESA — trigésima-primera ronda del autociclo y
+// ronda EXPANSIVA del ritmo (v347 cirugía → v348 expansión): LA MESA VIVA
+// etapa 7 — las semanas cerradas del desafío de la escuela cuentan su
+// historia (el desafío v338 y el tablón v344 solo vivían la semana
+// CORRIENTE: la llave giraba y la mesa del operador se perdía).
+// (1) LA MEMORIA DEL DESAFÍO (game-store): desafioHistorial — cuando la
+//    llave gira y el operador vuelve a la mesa, la semana CERRADA entra al
+//    archivo con SU mejor mesa (el Math.max no cruza semanas — cada semana
+//    guarda lo suyo, ley de contadores honestos); tope 12, la más nueva
+//    arriba. Sin semana previa no hay archivo: la primera mesa despierta el
+//    contrato, no el historial.
+// (2) LA ARITMÉTICA SIN RELOJES (estrategia-data): indiceSemanal convierte
+//    una llave EXISTENTE en número (el jueves ISO dividido por 7 días — la
+//    misma matemática interna de weekKeyOf, sin llamar a Date() con el
+//    presente); rachaDeLaMesa cuenta semanas vecinas y declara la racha
+//    ROTA si pasó una sin sentarse a la mesa; puestoDeLaMesa recomputa el
+//    puesto con la MISMA rivalesDeLaMesa de la etapa 6, calibrada al dato
+//    REAL de aquella semana. Cero relojes nuevos, cero copias de fórmula.
+// (3) LA FRONTERA EN PANTALLA (estrategia-panel): el archivo declara lo suyo
+//    — «tus filas son REALES (contadores propios — cada semana guarda su
+//    mejor mesa, tope 12); el título de cada mesa se recomputa del anillo y
+//    el puesto de la escuela es SIM recomputada con la escala real de
+//    aquella semana». Estado vacío honesto (el archivo espera). CERO EFECTOS
+//    NUEVOS: la escuela respira con sus 5 useEffect de siempre (asertado).
+//    SUITE: +2 pines (EL ARCHIVO DE LA MESA estático: el estado y su
+//    archivo en recordDesafio, la aritmética sin relojes, la sección con su
+//    frontera y su vacío honesto, useEffect === 5, versión doble aserción —
+//    y vivo: home + health v348) + rodillos de codename (EL CENSO EN CERO →
+//    EL ARCHIVO DE LA MESA en los VALORES de los asertos; los mensajes
+//    históricos quedan como memoria — ley v312) + rodillo a v348.0 (cuatro
+//    patrones).
 // v347.0 EL CENSO EN CERO — trigésima ronda del autociclo y CIRUGÍA del ritmo
 // (v346 expansión → v347 cirugía): LA GUERRA DE LOS EFECTO-ESCRITOR TERMINA —
 // el censo REAL de react-hooks en src cae de 2+0 a 0+0 POR PRIMERA VEZ en la
