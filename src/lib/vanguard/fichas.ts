@@ -265,17 +265,6 @@ function elegirRaridad(piso?: RarezaFicha): RarezaFicha {
   return lista[0];
 }
 
-// reserva un número de serie no usado dentro de la tirada mundial
-function reservarSerial(usados: number[], acunacion: number): number {
-  const techo = Math.min(acunacion, 300);
-  if (usados.length >= techo) return 1 + azar(acunacion); // tirada agotada: re-emisión
-  for (let i = 0; i < 12; i++) {
-    const s = 1 + azar(acunacion);
-    if (!usados.includes(s)) return s;
-  }
-  return 1 + azar(acunacion);
-}
-
 export function tirarSobre(sobre: Sobre, forzarPiso?: RarezaFicha): DefFicha[] {
   const salida: DefFicha[] = [];
   for (let i = 0; i < sobre.fichas; i++) {

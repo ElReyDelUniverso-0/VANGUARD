@@ -130,12 +130,6 @@ export function razonado(): number {
   }
 }
 
-function sumarRazonado(n: number) {
-  try {
-    localStorage.setItem("vanguard:nucleo-razonado", String(razonado() + n));
-  } catch {}
-}
-
 export async function generarNucleo(
   messages: { role: string; content: string }[],
   maxTokens = 90,

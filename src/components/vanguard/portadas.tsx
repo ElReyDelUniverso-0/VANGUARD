@@ -81,29 +81,6 @@ function Ventanas({ n, acc, top, h, flicker = true }: { n: number; acc: string; 
   );
 }
 
-// silueta de ciudad con ventanas encendidas (la ciudad que respira)
-function Skyline({ acc, alto = "38%" }: { acc: string; alto?: string }) {
-  const EDS = [26, 44, 34, 60, 40, 74, 50, 64, 36, 56, 30, 46];
-  return (
-    <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-[3px] px-2" style={{ height: alto }} aria-hidden>
-      {EDS.map((h, i) => (
-        <div
-          key={i}
-          className="relative flex-1 max-w-[34px]"
-          style={{
-            height: `${h}%`,
-            background: `linear-gradient(180deg, ${acc}26, rgba(7,7,12,0.96) 70%)`,
-            borderTop: `1px solid ${acc}55`,
-            boxShadow: `0 -6px 18px -10px ${acc}66`,
-          }}
-        >
-          <Ventanas n={Math.max(3, Math.round(h / 6))} acc={acc} top="4px" h={999} flicker={i % 2 === 0} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // ---------- LAS 15 ESCENAS (una por mundo) ----------
 
 function EscenaInicio({ acc }: { acc: string }) {

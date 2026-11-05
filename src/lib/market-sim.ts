@@ -219,9 +219,7 @@ class MarketSim {
   private started = false;
   private tickCloses: Record<string, { t: number; p: number; v: number }[]> = {};
   private candleCache = new Map<string, Candle[]>();
-  private lastBucket: Record<string, number> = {}; // assetId -> bucket abierto actual por tf? no: manejamos por cierre
-
-  constructor() {
+    constructor() {
     this.state = { assets: {}, events: [], tradeFeed: {}, lastTick: Date.now(), tickCount: 0 };
   }
 

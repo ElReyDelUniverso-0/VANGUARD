@@ -141,9 +141,7 @@ export class MotorV2 {
   // reconstrucción del mundo actual cuando la typeface llegue tarde
   private ctorActual: ConstructorMundo | null = null;
   private keyActual = "inicio";
-  private fuenteAlConstruir = false;
-  private fuenteReconstruida = false;
-  /** Navegación central: la cablea el montaje React con constructorDe. */
+      /** Navegación central: la cablea el montaje React con constructorDe. */
   navegar?: (key: string) => void;
 
   // gobernador
@@ -436,8 +434,7 @@ export class MotorV2 {
     if (this.mundo) this.despiezar(this.mundo);
     this.ctorActual = ctor;
     this.keyActual = key;
-    this.fuenteAlConstruir = !!this.font;
-    this.nuevoPickables(); // los botones del mundo nacen aquí dentro
+        this.nuevoPickables(); // los botones del mundo nacen aquí dentro
     const m = ctor(this);
     m.key = key;
     m.pickables = this.pickablesObjetivo;

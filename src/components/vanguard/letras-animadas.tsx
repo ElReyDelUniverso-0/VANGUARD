@@ -23,7 +23,7 @@ interface LetrasAnimadasProps {
   letraClass?: string;
 }
 
-export function LetrasAnimadas({ text, className, delay = 0, step = 0.026, brasa = false, letraClass }: LetrasAnimadasProps) {
+export function LetrasAnimadas({ text, className, delay = 0, step = 0.026, brasa: _brasa = false, letraClass }: LetrasAnimadasProps) {
   const reduced = useReducedMotion();
   const letras = useMemo(() => Array.from(text), [text]);
 

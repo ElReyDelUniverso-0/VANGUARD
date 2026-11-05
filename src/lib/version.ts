@@ -5096,9 +5096,45 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v342.0";
-export const APP_CODENAME = "LAS PUERTAS GEMELAS";
+export const APP_VERSION = "v343.0";
+export const APP_CODENAME = "LA ESPECIE LIMPIA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v343.0 LA ESPECIE LIMPIA — vigésimo-sexta ronda del autociclo y CIRUGÍA del
+// ritmo (v342 expansión → v343 cirugía): la segunda leva de la vena C — las
+// especies que la v341 registró y no tocó. 11 curas en 9 archivos (10
+// hallazgos + 1 escritura arrancada con su propiedad), censo 54 → 44 EXACTO
+// (los 44 = la cola de local-const registrada, uno a uno — CERO cascada).
+// ① LAS 5 FUNCIONES MUERTAS ENTERAS (la especie más limpia de la cola): uid
+//    (meme-studio, newLayerId vivo), Skyline (portadas, Ventanas vivo), lerp
+//    (cielos-data, pura), sumarRazonado (nucleo-navegador, razonado() vivo —
+//    exportado, jamás en riesgo) y reservarSerial (fichas, azar vivo). El
+//    comentario propio que SOLO describía al muerto viaja con él (la casa no
+//    deja comentarios huérfanos) — y la ELEGANCIA DEL SALTO: la leva se come
+//    las líneas vacías de la cola del muerto (la blancura previa ya da el
+//    único salto — el doble salto de la v341 no se repite; costó dos
+//    ensayos: el bisturí se corrige y la leva se RE-DERIVA desde canon, no
+//    se remienda la salida).
+// ② LAS 4 PROPIEDADES PRIVADAS escritas-jamás-leídas: stats (zc3d-engine,
+//    jamás escrita ni leída — ZC3DStats y getStats respiran),
+//    fuenteReconstruida y lastBucket (declaradas y olvidadas), y
+//    fuenteAlConstruir (motor de vanguard2) con SU ESCRITURA
+//    `this.fuenteAlConstruir = !!this.font;` cazada por el AST (ExpressionStatement
+//    con izquierda this.<nombre>) y arrancada en la MISMA leva — borrar la
+//    declaración sin la escritura habría fabricado un TS2339 nuevo.
+// ③ EL BINDING CON DEFAULT: { brasa = false } → { brasa: _brasa = false } en
+//    letras-animadas — la prop sigue llegando (la interfaz brasa?: boolean
+//    queda en pie para sus callers), el binding se calla, LetrasBrasa
+//    (la variante que sí vive) intacta.
+// ④ EL BISTURÍ (scripts/cirugia-v343.mjs): la misma lente de la v341 (tsc
+//    estricto + AST del compilador, solape = ABORTO, --dry compuerta) con TRES
+//    especies nuevas de cura: FunctionDeclaration entera, PropertyDeclaration
+//    con fin-de-línea y caza de escrituras, binding-con-default.
+//     SUITE: +2 pines (LA ESPECIE LIMPIA estático: los 5 muertos FUERA con
+//    sus hermanos vivos verificados uno a uno, las 4 privadas fuera, la
+//    escritura fuera, el binding mudo, versión doble aserción — y vivo: home
+//    + health v343) + rodillos de codename (LAS PUERTAS GEMELAS → LA ESPECIE
+//    LIMPIA; títulos de pines como memoria — ley v312) + rodillo a v343.0
+//    (cuatro patrones).
 // v342.0 LAS PUERTAS GEMELAS — vigésimo-quinta ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v341 cirugía → v342 expansión): por primera vez, DOS
 // puertas del anillo de la escuela se abren en una sola ronda — la 14 y la

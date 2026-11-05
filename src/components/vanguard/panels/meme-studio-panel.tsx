@@ -58,10 +58,6 @@ function useStageScale() {
   return { wrapRef, scale };
 }
 
-function uid() {
-  return newLayerId();
-}
-
 /** Recompensa con enfriamiento local de 60s (anti-granja). */
 function recompensarCd(key: string, coins: number, motivo: string, addCoins: (n: number, r: string) => void): boolean {
   const last = parseInt(localStorage.getItem(key) || "0", 10);

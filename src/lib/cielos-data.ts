@@ -115,10 +115,6 @@ function r(seed: string, salt: number): number {
   return (h % 100000) / 100000;
 }
 
-function lerp(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
-}
-
 // órbita de patrulla: circula alrededor del objetivo en elipse
 function orbita(_base: BaseVuelo, obj: ObjetivoVuelo, fase: number, wobble: number): { lat: number; lng: number; rumbo: number } {
   const a = 1.6 + wobble * 1.4; // semieje lat

@@ -411,10 +411,7 @@ export class ZC3DEngine {
   private t = 0;
   private casualties = 0;
   private opsReal = 0;
-  private stats: ZC3DStats = {
-    fronts: [], casualties: 0, bldgsDown: 0, craters: 0, opsReal: 0, airDown: 0, clock: 0, fps: 30,
-  };
-  private tickAcc = 0;
+    private tickAcc = 0;
   private fpsRoll: number[] = [];
   private lowQuality = false;
   private pixelRatio = 1.5;
