@@ -20,7 +20,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 import {
   pulsoActual, proximoPulsoMs, eventosPulso, pensamientoMente, riesgoPulso,
-  TIPO_COLOR, type EventoPulso, type TipoPulso,
+  TIPO_COLOR, centinelaDelDia, type EventoPulso, type TipoPulso,
 } from "@/lib/mente-data";
 
 type Sala = "pulso" | "charla" | "analisis";
@@ -191,6 +191,9 @@ export function MentePanel() {
   const eventos = useMemo(() => eventosPulso(bucket), [bucket]);
   const pensamiento = useMemo(() => pensamientoMente(bucket), [bucket]);
   const riesgoMedio = useMemo(() => riesgoPulso(bucket), [bucket]);
+  // v346: PUERTA 16 — el centinela del día gira con el reloj CENTRAL del anillo
+  // (girar + diaDelAnillo): cuatro turnos de 6 h UTC, una muesca por jornada.
+  const centinela = useMemo(() => centinelaDelDia(), []);
   const historia = useMemo(
     () => [bucket - 1, bucket - 2, bucket - 3].flatMap((b) => eventosPulso(b).map((e) => ({ ...e, ev: b }))),
     [bucket]
@@ -247,8 +250,8 @@ export function MentePanel() {
     }
   }
 
-  async function analizar() {
-    const t = texto.trim();
+  async function analizar(textoArg?: string) {
+    const t = (textoArg ?? texto).trim();
     if (t.length < 10 || cargando) return;
     setCargando(true);
     setExp(null);
@@ -301,6 +304,16 @@ export function MentePanel() {
           p: riesgoMedio,
           color: riesgoMedio >= 70 ? "#FF3B30" : riesgoMedio >= 45 ? "#FFA030" : "#3DDC84",
           d: `“${pensamiento}” · el mundo se actualiza solo cada 5 minutos, eventos nuevos garantizados`,
+        },
+        // v346: LA PUERTA 16 DEL ANILLO — el turno de vigilancia que el reloj
+        // central eligió HOY; el clic firma el pulso en el expediente neuronal
+        {
+          t: `CENTINELA DEL DÍA · TURNO ${centinela.turno}`,
+          v: centinela.evento.tipo,
+          p: centinela.evento.riesgo,
+          color: TIPO_COLOR[centinela.evento.tipo],
+          d: `“${centinela.evento.titulo}” · la memoria del anillo (día ${centinela.dia}) · SIM determinista — el clic firma el expediente`,
+          a: "firmar centinela",
         },
       ];
       for (const ev of eventos.slice(0, 5)) {
@@ -382,11 +395,20 @@ export function MentePanel() {
     return filas;
   }, [sala, bucket, eventos, pensamiento, riesgoMedio, chat, investigarModo, exp, cargando, pred]);
   // v168: el raycast 3D activa/desactiva la MISMA investigación en vivo del 2D
+  // v346: PUERTA 16 — la rama del centinela firma el pulso en el expediente
   useEffect(() => {
     const onAccion = (e: Event) => {
       const det = (e as CustomEvent<{ tab: string; accion: string; idx: number }>).detail;
-      if (det?.tab !== "mente" || det.accion !== "alternar investigacion") return;
-      setInvestigarModo((v) => !v);
+      if (det?.tab !== "mente") return;
+      if (det.accion === "alternar investigacion") {
+        setInvestigarModo((v) => !v);
+      } else if (det.accion === "firmar centinela") {
+        // CONECTAR: el titular del centinela aterriza en el expediente neuronal
+        const titulo = centinela.evento.titulo;
+        setTexto(titulo);
+        setSala("analisis");
+        void analizar(titulo);
+      }
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
@@ -486,6 +508,35 @@ export function MentePanel() {
             <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-2">lo que veo ahora · {eventos.length} señales en el pulso</p>
             <div className="grid sm:grid-cols-2 gap-2">
               {eventos.map((ev, i) => <EventoCard key={ev.id} ev={ev} i={i} />)}
+            </div>
+          </div>
+
+          {/* v346: PUERTA 16 DEL ANILLO — el centinela del día, la frontera en pantalla */}
+          <div className="rounded-xl border p-3.5" style={{ borderColor: `${TIPO_COLOR[centinela.evento.tipo]}44`, background: `${TIPO_COLOR[centinela.evento.tipo]}0d` }}>
+            <div className="flex items-center gap-2 flex-wrap mb-2">
+              <p className="font-mono text-[9px] uppercase tracking-widest flex items-center gap-1.5" style={{ color: TIPO_COLOR[centinela.evento.tipo] }}>
+                <Timer className="w-3 h-3" /> CENTINELA DEL DÍA · TURNO {centinela.turno}
+              </p>
+              <span className="px-1.5 py-0.5 rounded font-mono text-[9px] font-bold shrink-0" style={{ color: TIPO_COLOR[centinela.evento.tipo], background: `${TIPO_COLOR[centinela.evento.tipo]}1f`, border: `1px solid ${TIPO_COLOR[centinela.evento.tipo]}44` }}>
+                SIM determinista · anillo día {centinela.dia}
+              </span>
+            </div>
+            <p className="text-[13px] leading-snug text-foreground/90">{centinela.evento.titulo}</p>
+            <div className="flex items-center gap-2 mt-2">
+              <RiesgoBar riesgo={centinela.evento.riesgo} color={TIPO_COLOR[centinela.evento.tipo]} />
+              <span className="font-mono text-[9px] text-muted-foreground shrink-0">{centinela.evento.hora} · riesgo {centinela.evento.riesgo}</span>
+            </div>
+            <div className="flex items-center justify-between gap-2 mt-2.5 flex-wrap">
+              <p className="font-mono text-[9px] text-muted-foreground leading-relaxed">
+                el anillo de la escuela gira una muesca por día (reloj central v313) — el turno del centinela es el mismo para toda la jornada
+              </p>
+              <button
+                onClick={() => { setTexto(centinela.evento.titulo); setSala("analisis"); void analizar(centinela.evento.titulo); }}
+                className="px-2.5 py-1 rounded font-mono text-[10px] font-bold tracking-wide shrink-0 transition-opacity hover:opacity-80"
+                style={{ color: MENTE_ACC, border: `1px solid ${MENTE_ACC}55`, background: `${MENTE_ACC}14` }}
+              >
+                FIRMAR EN EL EXPEDIENTE
+              </button>
             </div>
           </div>
 
@@ -618,7 +669,7 @@ export function MentePanel() {
               className="w-full bg-black/50 border border-white/15 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-amber/50 resize-none"
             />
             <button
-              onClick={analizar}
+              onClick={() => void analizar()}
               disabled={cargando || texto.trim().length < 10}
               className="w-full rounded-lg py-2.5 font-mono text-[12px] font-bold tracking-widest text-black transition-transform active:scale-[0.98] disabled:opacity-40 flex items-center justify-center gap-2"
               style={{ background: MENTE_ACC }}

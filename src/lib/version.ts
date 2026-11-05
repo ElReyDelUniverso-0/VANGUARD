@@ -5096,9 +5096,37 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v345.0";
-export const APP_CODENAME = "LAS CONSTANTES MUDAS";
+export const APP_VERSION = "v346.0";
+export const APP_CODENAME = "EL CENTINELA DEL ANILLO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v346.0 EL CENTINELA DEL ANILLO — vigésimo-novena ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v345 cirugía → v346 expansión): LA PUERTA 16 DEL ANILLO
+// cae — mente-panel respira por fin con el reloj CENTRAL de la escuela (cero
+// anillo ayer, verificado en disco; el consumidor nº 16). (1) LA DATA JUNTO AL
+// PULSO (ley v324: una copia es una grieta): centinelaDelDia(dia) en
+// mente-data.ts — el anillo (girar + diaDelAnillo, el reloj central v324)
+// elige HOY el turno de vigilancia de la jornada entre los cuatro de 6 h UTC
+// (00/06/12/18 — una muesca por día, el MISMO para toda la jornada); el
+// titular más pesado del turno es SIM determinista (la misma receta FNV-1a +
+// mulberry32 del pulso, titularPulso del bucket del arranque del turno — cero
+// relojes nuevos, cero copias de la fórmula). (2) LA FRONTERA EN PANTALLA: la
+// franja del pulso se DECLARA dos veces (chip «SIM determinista · anillo día
+// N» + pie con la ley del anillo: «el anillo de la escuela gira una muesca
+// por día (reloj central v313) — el turno del centinela es el mismo para toda
+// la jornada»). (3) CONECTAR — LA FIRMA: el botón 2D «FIRMAR EN EL
+// EXPEDIENTE» y la fila 3D con SU rama del oyente (a: "firmar centinela",
+// contrato por NOMBRE — posición segura) hacen lo mismo: el titular del
+// centinela aterriza en la sala de análisis y se firma el expediente neuronal
+// (setTexto + setSala + analizar(titulo) — la firma acepta texto explícito
+// para no leer estado viejo; los callers del 2D intactos). CERO EFECTOS
+// NUEVOS: la mente respira con sus 5 useEffect de siempre (asertado).
+//     SUITE: +2 pines (EL CENTINELA DEL ANILLO estático: la función exportada
+//    junto al pulso, el reloj central importado, la frontera SIM en pantalla,
+//    la ley en el pie, la fila con su acción, la rama del oyente, useEffect
+//    === 5, versión doble aserción — y vivo: home + health v346) + rodillos
+//    de codename (LAS CONSTANTES MUDAS → EL CENTINELA DEL ANILLO en los
+//    VALORES de 214 asertos; los mensajes históricos quedan como memoria —
+//    ley v312) + rodillo a v346.0 (cuatro patrones).
 // v345.0 LAS CONSTANTES MUDAS — vigésimo-octava ronda del autociclo y CIRUGÍA
 // del ritmo (v344 expansión → v345 cirugía): la tercera leva de la vena C —
 // LA COLA DE LOS 44 LOCALES que v341/v343 registraron y no tocaron. LA LEY

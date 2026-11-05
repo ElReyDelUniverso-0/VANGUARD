@@ -8,6 +8,9 @@
 // modo creador (reto del día + co-creador IA con respaldo determinista).
 
 import { fnvHash, mulberry32, evaluarNeuronal, predecir, bucketMinutos, type Prediccion } from "./neurona-core";
+// v346: PUERTA 16 — el reloj CENTRAL del anillo de la escuela (ley v324:
+// una copia es una grieta — cero relojes nuevos en la mente)
+import { diaDelAnillo, girar } from "./estrategia-data";
 
 export const PULSO_MIN = 5;
 
@@ -175,6 +178,32 @@ export function pensamientoMente(bucket: number): string {
 export function titularPulso(bucket: number): EventoPulso {
   const evs = [...eventosPulso(bucket)].sort((a, b) => b.riesgo - a.riesgo);
   return evs[0];
+}
+
+// ---------- v346: PUERTA 16 DEL ANILLO — EL CENTINELA DEL DÍA ----------
+// LA MENTE vigila el mundo cada 5 minutos; el ANILLO de la escuela (girar +
+// diaDelAnillo, el reloj CENTRAL v324 — ley v324: una copia es una grieta)
+// elige HOY el turno de vigilancia que la memoria destaca: cuatro turnos de
+// 6 h UTC, una muesca por día, el MISMO para toda la jornada. El titular
+// más pesado del turno es SIM determinista (la misma receta FNV-1a +
+// mulberry32 del pulso) y se DECLARA en pantalla — la ley de distinguir.
+export type Centinela = {
+  dia: number;          // el día del anillo que lo eligió
+  slot: number;         // 0..3 — el turno de vigilancia
+  turno: string;        // "06:00–12:00 UTC"
+  bucket: number;       // el bucket del ARRANQUE del turno
+  evento: EventoPulso;  // el titular más pesado del turno de vigilancia
+};
+
+const TURNOS_CENTINELA = ["00:00–06:00", "06:00–12:00", "12:00–18:00", "18:00–00:00"];
+
+export function centinelaDelDia(dia = diaDelAnillo()): Centinela {
+  const slot = girar([0, 1, 2, 3], 1, dia)[0];
+  const f = new Date();
+  const base = Math.floor(Date.UTC(f.getUTCFullYear(), f.getUTCMonth(), f.getUTCDate()) / (PULSO_MIN * 60_000));
+  const bucket = base + slot * 72; // 72 pulsos de 5 min por turno de 6 h
+  const evento = titularPulso(bucket);
+  return { dia, slot, turno: `${TURNOS_CENTINELA[slot]} UTC`, bucket, evento };
 }
 
 /** Proyección de la MENTE sobre un texto (expuesta para el panel y la API). */
