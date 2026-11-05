@@ -6,12 +6,20 @@
 // generales donde el jugador compite (TU).
 
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { GraduationCap, Swords, BrainCircuit, Medal, Repeat } from "lucide-react";
+import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
-import { estrategiaDeHoy, type General } from "@/lib/estrategia-data";
+import { estrategiaDeHoy, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
+import {
+  jugadasDeTurno,
+  estadoInicial,
+  resolverJugada,
+  veredictoDe,
+  type EstadoWargame,
+} from "@/lib/wargame-motor";
 import { cn } from "@/lib/utils";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
 
@@ -32,6 +40,7 @@ export function EstrategiaGlobalPanel() {
   // del operador (game-store) y el puesto que esas victorias le dan entre las
   // leyendas. Progreso de verdad, no carteles (la ley de la v216).
   const victoriasTu = useGameStore((s) => s.conquestWins);
+  const [mesa, setMesa] = useState<EscenarioWargame | null>(null);
   const generalesOrdenados = useMemo<General[]>(() => {
     const tu: General = { nombre: "TU · operador de Vanguard", victorias: victoriasTu, doctrinaFav: "conquista en vivo", eres: true };
     return [...hoy.generales, tu].sort((a, b) => b.victorias - a.victorias || (a.eres ? 1 : -1));
@@ -230,6 +239,13 @@ export function EstrategiaGlobalPanel() {
             <p className="text-[10px] font-mono text-amber border border-amber/40 px-2 py-1.5 bg-amber-hud/5">
               regla especial: {escenario.reglaEspecial}
             </p>
+            {/* v314 LA MESA VIVA: el escenario deja de ser ficha — se juega */}
+            <button
+              onClick={() => setMesa(escenario)}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-violet-hud bg-violet-hud/20 text-violet hover:bg-violet-hud/40 transition-colors text-[11px] font-mono uppercase tracking-wider"
+            >
+              <Play className="w-3.5 h-3.5" /> jugar esta mesa · {escenario.turns} turnos
+            </button>
           </motion.div>
         </div>
       </div>
@@ -272,6 +288,123 @@ export function EstrategiaGlobalPanel() {
           </div>
         </div>
       </div>
+      {/* v314: la mesa viva — el portal libra la mesa del wrapper de transición
+          (la misma cura del ancla robada que la cámara de la v135) */}
+      {mesa && <MesaWargame esc={mesa} onCerrar={() => setMesa(null)} />}
     </div>
+  );
+}
+
+// v314.0 LA MESA VIVA — el wargame por decisiones: el operador elige la
+// jugada de cada turno y el motor determinista (wargame-motor, cero
+// Math.random) mueve el frente y narra. Recompensa honesta por la tienda
+// del juego (addCoins/addXp) SOLO en el handler de la jugada final — cero
+// escrituras de estado en efectos (la ley del censo).
+function MesaWargame({ esc, onCerrar }: { esc: EscenarioWargame; onCerrar: () => void }) {
+  const [estado, setEstado] = useState<EstadoWargame>(() => estadoInicial(esc));
+  const addCoins = useGameStore((s) => s.addCoins);
+  const addXp = useGameStore((s) => s.addXp);
+
+  // Escape honesto + el fondo deja de desplazar mientras la mesa está abierta
+  // (efecto PURO: ninguna escritura de estado — la ley del censo)
+  useEffect(() => {
+    const alTeclear = (e: KeyboardEvent) => { if (e.key === "Escape") onCerrar(); };
+    window.addEventListener("keydown", alTeclear);
+    const previo = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", alTeclear);
+      document.body.style.overflow = previo;
+    };
+  }, [onCerrar]);
+
+  const jugar = (idx: number) => {
+    const jugada = jugadasDeTurno(esc, estado.turno)[idx];
+    const siguiente = resolverJugada(esc, estado, jugada);
+    setEstado(siguiente);
+    if (siguiente.cerrada) {
+      const v = veredictoDe(esc, siguiente);
+      addCoins(v.botinCoins, `wargame ${esc.id} — veredicto de la mesa`);
+      addXp(v.botinXp);
+    }
+  };
+
+  const veredicto = estado.cerrada ? veredictoDe(esc, estado) : null;
+  const jugadas = estado.cerrada ? [] : jugadasDeTurno(esc, estado.turno);
+  const RIESGO_COLOR: Record<string, string> = { bajo: "#34C759", medio: "#FFC94D", alto: "#FF3B30" };
+
+  return createPortal(
+    <div className="fixed inset-0 z-[95] flex items-center justify-center p-2 sm:p-6" role="dialog" aria-label={`Mesa de wargame: ${esc.titulo}`}>
+      <button aria-label="Cerrar mesa" onClick={onCerrar} className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-default" />
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto hud-panel border-violet-hud shadow-[0_30px_120px_-20px_rgba(0,0,0,0.95)]">
+        {/* cabecera */}
+        <div className="sticky top-0 z-10 flex items-center gap-2 px-3 sm:px-4 py-2.5 border-b border-violet-hud/60 bg-[#0B0B12]/95 backdrop-blur-sm">
+          <div className="w-8 h-8 hud-corner flex items-center justify-center border-violet-hud text-violet flex-shrink-0">
+            <Swords className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-caviar text-sm sm:text-base font-bold tracking-[0.14em] uppercase text-violet truncate">{esc.titulo}</h2>
+            <p className="text-[9px] font-mono text-muted-foreground uppercase truncate">mesa viva · {esc.fuerzas.azul} contra {esc.fuerzas.rojo}</p>
+          </div>
+          <button onClick={onCerrar} title="Cerrar (Esc)" className="w-7 h-7 hud-corner flex items-center justify-center border-violet-hud text-violet hover:bg-violet-hud transition-colors flex-shrink-0">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="p-3 sm:p-4 space-y-3">
+          {/* el frente: moral, reserva y objetivos con barras vivas */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="hud-corner p-2 space-y-1.5">
+              <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>moral azul</span><span className="text-blue-400 font-bold tabular-nums">{estado.moralAzul}</span></p>
+              <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full transition-all duration-500" style={{ width: `${estado.moralAzul}%`, background: "#4D9DFF" }} /></div>
+              <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>objetivo azul</span><span className="text-blue-400 font-bold tabular-nums">{estado.objetivoAzul}/100</span></p>
+              <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full transition-all duration-500" style={{ width: `${estado.objetivoAzul}%`, background: "#4D9DFF" }} /></div>
+            </div>
+            <div className="hud-corner p-2 space-y-1.5">
+              <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>moral roja</span><span className="text-red font-bold tabular-nums">{estado.moralRojo}</span></p>
+              <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full transition-all duration-500" style={{ width: `${estado.moralRojo}%`, background: "#FF3B30" }} /></div>
+              <p className="text-[8px] font-mono uppercase text-muted-foreground flex justify-between"><span>reserva</span><span className="text-amber font-bold tabular-nums">{estado.reserva}</span></p>
+              <div className="h-1.5 bg-secondary overflow-hidden"><div className="h-full transition-all duration-500" style={{ width: `${estado.reserva}%`, background: "#FFC94D" }} /></div>
+            </div>
+          </div>
+
+          {/* la bitácora de la mesa */}
+          <div className="hud-corner p-2 max-h-44 overflow-y-auto space-y-1">
+            {estado.bitacora.slice(-8).map((l, i) => (
+              <p key={`${l.turno}-${i}`} className={cn("text-[10.5px] font-mono leading-snug", l.tono === "azul" ? "text-blue-400" : l.tono === "rojo" ? "text-red" : "text-amber/90")}>
+                <span className="text-muted-foreground">T{String(l.turno).padStart(2, "0")} ·</span> {l.texto}
+              </p>
+            ))}
+          </div>
+
+          {/* las jugadas de la mesa (o el veredicto) */}
+          {estado.cerrada && veredicto ? (
+            <div className={cn("hud-corner p-3 space-y-2", veredicto.ganaAzul ? "v135-veredicto" : "")}>
+              <p className={cn("text-sm font-caviar font-bold uppercase tracking-wide", veredicto.ganaAzul ? "text-blue-400" : veredicto.ganaRojo ? "text-red" : "text-amber")}>
+                {veredicto.ganaAzul ? "objetivo azul cumplido" : veredicto.ganaRojo ? "el rojo impone su objetivo" : "la mesa cierra en empate"}
+              </p>
+              <p className="text-[10px] font-mono text-muted-foreground">
+                botín de la mesa: <span className="text-amber font-bold">+{veredicto.botinCoins} monedas</span> · <span className="text-violet font-bold">+{veredicto.botinXp} XP</span> — cobrado en tu cuenta de Vanguard
+              </p>
+              <p className="text-[9px] font-mono text-muted-foreground/70 border border-border/60 px-1.5 py-0.5 inline-block">partida determinista · las mismas jugadas reproducen la misma mesa · ficción de la escuela</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-[9px] font-mono uppercase tracking-widest text-violet">turno {estado.turno} de {estado.total} — elige la jugada</p>
+              {jugadas.map((j, i) => (
+                <button key={j.id} onClick={() => jugar(i)} className="w-full text-left flex items-center gap-2.5 border border-border/60 px-2.5 py-2 hover:bg-violet-hud/10 transition-colors">
+                  <span className="w-14 text-center text-[8px] font-mono uppercase px-1 py-0.5 border flex-shrink-0" style={{ color: RIESGO_COLOR[j.riesgo], borderColor: RIESGO_COLOR[j.riesgo] + "66" }}>{j.riesgo}</span>
+                  <span className="min-w-0">
+                    <span className="block text-[12px] font-semibold text-foreground">{j.nombre}</span>
+                    <span className="block text-[10px] text-muted-foreground leading-snug">{j.descripcion}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }

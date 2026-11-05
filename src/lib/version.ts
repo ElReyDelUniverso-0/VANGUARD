@@ -4537,6 +4537,33 @@
 //     215 V y puesto 1 — el cableado real, demostrado en vivo; consola
 //     limpia, sin desbordes 1440/390, cero zombis.
 // Herencia v312.0 LA CUARTA QUIRURGÍA y toda la crónica. Guards v167 intactos.
-export const APP_VERSION = "v313.0";
-export const APP_CODENAME = "LA ESCUELA QUE RESPIRA";
+// v314.0 LA MESA VIVA — etapa 1 de la idea anotada por el arnés de la v313:
+//         los wargames de la escuela eran FICHAS, no juegos. Hoy la mesa
+//         responde: el botón «jugar esta mesa» abre el wargame POR
+//         DECISIONES — el operador elige la jugada de cada turno entre tres
+//         (asalto frontal, flanqueo, presión de artillería, reagrupar,
+//         señuelo — el arsenal del mando) y el MOTOR DETERMINISTA
+//         (wargame-motor.ts, cero Math.random: la misma partida con las
+//         mismas jugadas reproduce el mismo curso — demostrado con
+//         partidas gemelas) mueve moral, reserva y objetivos, narra la
+//         bitácora turno a turno y deja que la REGLA ESPECIAL de la mesa
+//         dispare (1 de cada 4 turnos tuerce el curso, narrado con el texto
+//         real de la regla). Al cierre: veredicto frente a los objetivos y
+//         BOTÍN HONESTO por la tienda del juego (addCoins/addXp — solo en el
+//         handler de la jugada final, cero escrituras de estado en efectos,
+//         censo estable); el asalto a destajo pierde, el mando mixto gana
+//         (medido: 80/100 objetivo con estrategia mixta, botín 50 mon◉/30 XP;
+//         siempre-asalto = derrota con botín de consuelo). Diálogo portal
+//         (la cura del ancla robada de la v135), Escape honesto, móvil ok.
+// QA: tsc 0 TOTAL · eslint 0 (tocados) · determinismo probado por tsx
+//     (gemelas idénticas, estrategias distintas → cursos distintos, mesa
+//     ganable con mando mixto) · build EXIT 0 · health v314.0 db up ·
+//     pruebas 255/255 (+2 LA MESA VIVA) · arnés visual propio sobre el BUILD
+//     NUEVO: mesa abre con 3 jugadas y 8 turnos, jugada responde (bitácora
+//     crece, turno avanza), partida completa jugada hasta el veredicto con
+//     botín cobrado en el persist (coins verificado ANTES/DESPUÉS), Escape
+//     cierra, consola limpia, sin desbordes 1440/390, cero zombis.
+// Herencia v313.0 LA ESCUELA QUE RESPIRA y toda la crónica. Guards v167 intactos.
+export const APP_VERSION = "v314.0";
+export const APP_CODENAME = "LA MESA VIVA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
