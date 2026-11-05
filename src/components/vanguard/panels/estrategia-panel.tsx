@@ -8,7 +8,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
-import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play, History, RotateCcw, Trophy } from "lucide-react";
+import { GraduationCap, Swords, BrainCircuit, Medal, Repeat, X, Play, History, RotateCcw, Trophy, Ghost } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 // v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los rivales del desafío
@@ -16,7 +16,7 @@ import { HeroOro } from "@/components/vanguard/hero-oro";
 // tablón, cero copias de la fórmula fuera del módulo)
 // v348 EL ARCHIVO DE LA MESA — etapa 7: las semanas cerradas cuentan su
 // historia (racha por jueves ISO, puesto frente a la escuela recomputado)
-import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, rachaDeLaMesa, puestoDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
+import { estrategiaDeHoy, escenarioPorId, desafioDeLaSemana, parDesafio, rivalesDeLaMesa, rachaDeLaMesa, puestoDeLaMesa, fantasmaDeLaMesa, type General, type EscenarioWargame } from "@/lib/estrategia-data";
 import { useGameStore } from "@/lib/game-store";
 // v338 LA MESA EN EL TABLÓN — la llave de semana del TABLÓN (la misma que
 // cierra el podio semanal cierra el desafío: una sola llave, cero copias)
@@ -86,18 +86,29 @@ export function EstrategiaGlobalPanel() {
   const desafioMejor = useGameStore((s) => s.desafioMejor);
   const mejorVigente = desafioMejor && desafioMejor.wk === semanaMesa ? desafioMejor.objetivo : null;
   const [mesaDesafio, setMesaDesafio] = useState(false);
+  const archivoDesafio = useGameStore((s) => s.desafioHistorial);
+  // v350 EL FANTASMA DE LA MESA — LA MESA VIVA etapa 8: tu mejor semana
+  // cerrada vuelve al tablón como un rival REAL (tu propio dato, contadores
+  // propios — la fila que no es SIM ni es TU fila de hoy). A diferencia de
+  // los cadetes, el fantasma NO se recalibra: es tu pasado con su número
+  // fijo. Cero efectos nuevos: el fantasma respira en un useMemo.
+  const fantasma = useMemo(() => fantasmaDeLaMesa(archivoDesafio), [archivoDesafio]);
+  const fantasmaVencido = fantasma !== null && mejorVigente !== null && mejorVigente > fantasma.objetivo;
   // v344 EL TABLÓN DE LA MESA — LA MESA VIVA etapa 6: los cadetes de la
   // escuela giran con la MISMA semana del tablón y se calibran a la escala
   // del operador (su mejor mesa REAL; si aún no jugó, el par de la casa —
   // estimación declarada). La fila del operador es su único dato REAL.
+  // v350 etapa 8: y el FANTASMA — tu mejor semana cerrada, REAL y fija,
+  // sentado a la mesa de hoy para que la compares contigo de ahora.
   const alias = useGameStore((s) => s.alias);
   const tablonMesa = useMemo(() => {
     const rivales = rivalesDeLaMesa(parseInt(semanaMesa.slice(6), 10) || 1, mejorVigente ?? parDesafio(desafio.dificultad));
     return [
-      ...rivales.map((r) => ({ nombre: r.nombre, tag: r.tag, score: r.score, propio: false })),
-      { nombre: alias || "TU", tag: "AG", score: mejorVigente ?? -1, propio: true },
+      ...rivales.map((r) => ({ nombre: r.nombre, tag: r.tag, score: r.score, propio: false, fantasma: false })),
+      ...(fantasma ? [{ nombre: "TU FANTASMA", tag: fantasma.wk, score: fantasma.objetivo, propio: false, fantasma: true }] : []),
+      { nombre: alias || "TU", tag: "AG", score: mejorVigente ?? -1, propio: true, fantasma: false },
     ].sort((a, b) => b.score - a.score);
-  }, [semanaMesa, mejorVigente, desafio, alias]);
+  }, [semanaMesa, mejorVigente, desafio, alias, fantasma]);
   const puestoTu = tablonMesa.findIndex((f) => f.propio) + 1;
   // v348 EL ARCHIVO DE LA MESA — LA MESA VIVA etapa 7: las semanas cerradas
   // del desafío. El título de cada mesa se RECOMPUTA del anillo
@@ -106,7 +117,6 @@ export function EstrategiaGlobalPanel() {
   // fórmula determinista calibrada al dato REAL de aquella semana (SIM
   // recomputada, se declara). La fila del operador es la única REAL.
   // Cero efectos nuevos: el archivo respira en un useMemo.
-  const archivoDesafio = useGameStore((s) => s.desafioHistorial);
   const archivoMesa = useMemo(() => {
     const semanas = [...archivoDesafio.map((a) => a.wk), ...(mejorVigente !== null ? [semanaMesa] : [])];
     const racha = rachaDeLaMesa(semanas, semanaMesa);
@@ -267,6 +277,21 @@ export function EstrategiaGlobalPanel() {
             {mejorVigente !== null ? `tu mejor mesa: ${mejorVigente}/100` : "la mesa te espera"}
           </span>
         </div>
+        {/* v350 EL FANTASMA DE LA MESA — el chip del rival que no se recalibra */}
+        {fantasma && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <Ghost className={cn("w-3.5 h-3.5", fantasmaVencido ? "text-emerald-400" : "text-violet-hud")} />
+            <span className={cn(
+              "text-[9px] font-mono px-1.5 py-0.5 rounded",
+              fantasmaVencido ? "bg-emerald-500/10 text-emerald-300" : "bg-violet-hud/15 text-violet",
+            )}>
+              {fantasmaVencido
+                ? `FANTASMA VENCIDO — superaste tu ${fantasma.objetivo}/100 de la semana ${fantasma.wk}`
+                : `tu fantasma te espera: ${fantasma.objetivo}/100 · semana ${fantasma.wk}`}
+            </span>
+            <span className="text-[9px] font-mono text-muted-foreground/70">los cadetes se calibran a tu escala — el fantasma NO se mueve: es tu mejor semana cerrada</span>
+          </div>
+        )}
         <p className="text-[13px] font-bold font-mono text-foreground">{desafio.titulo}</p>
         <p className="text-[10px] font-mono text-muted-foreground leading-snug">
           {desafio.fuerzas.azul} contra {desafio.fuerzas.rojo} · regla especial: {desafio.reglaEspecial} · par de la casa: {parDesafio(desafio.dificultad)}/100 (estimación de la escuela)
@@ -303,20 +328,20 @@ export function EstrategiaGlobalPanel() {
                 key={`${f.tag}-${i}`}
                 className={cn(
                   "flex items-center gap-2 px-2 py-1 rounded-sm text-[10px] font-mono",
-                  f.propio ? "bg-blue-400/15 border border-blue-400/40" : "bg-white/[0.03]",
+                  f.propio ? "bg-blue-400/15 border border-blue-400/40" : f.fantasma ? "bg-violet-hud/10 border border-violet-hud/40" : "bg-white/[0.03]",
                 )}
               >
-                <span className={cn("w-5 text-right", f.propio ? "text-blue-300 font-bold" : "text-muted-foreground")}>{i + 1}º</span>
-                <span className={cn("truncate flex-1", f.propio ? "text-blue-100 font-bold" : "text-foreground/60")}>{f.nombre}</span>
+                <span className={cn("w-5 text-right", f.propio ? "text-blue-300 font-bold" : f.fantasma ? "text-violet font-bold" : "text-muted-foreground")}>{i + 1}º</span>
+                <span className={cn("truncate flex-1", f.propio ? "text-blue-100 font-bold" : f.fantasma ? "text-violet font-bold" : "text-foreground/60")}>{f.nombre}</span>
                 <span className="text-muted-foreground/50 hidden sm:inline">{f.tag}</span>
-                <span className={cn("w-10 text-right", f.propio ? "text-blue-300 font-bold" : "text-foreground/50")}>
+                <span className={cn("w-10 text-right", f.propio ? "text-blue-300 font-bold" : f.fantasma ? "text-violet font-bold" : "text-foreground/50")}>
                   {f.propio && f.score < 0 ? "—" : `${f.score}`}
                 </span>
               </div>
             ))}
           </div>
           <p className="text-[9px] font-mono text-muted-foreground/70 leading-snug">
-            rivales: cadetes SIM de la escuela — deterministas por semana, calibrados a tu escala ({mejorVigente !== null ? `tu mejor mesa` : "el par de la casa, estimación declarada"}). tu fila es la única REAL (contadores propios).
+            rivales: cadetes SIM de la escuela — deterministas por semana, calibrados a tu escala ({mejorVigente !== null ? `tu mejor mesa` : "el par de la casa, estimación declarada"}). tu fila es la única REAL (contadores propios).{fantasma ? " TU FANTASMA también es REAL — tu mejor semana cerrada con su número fijo: no se recalibra cuando mejoras." : ""}
           </p>
         </div>
 

@@ -407,6 +407,29 @@ export function puestoDeLaMesa(semana: number, objetivo: number): number {
   return rivales.filter((r) => r.score > objetivo).length + 1;
 }
 
+// v350: EL FANTASMA DE LA MESA — LA MESA VIVA etapa 8. La mesa contra el
+// histórico propio: la mejor semana CERRADA del operador vuelve al tablón
+// de la semana vigente como un FANTASMA REAL (contadores propios — no es
+// SIM: es el dato de la casa) y la mesa de hoy se juega contra él. A
+// diferencia de los cadetes (que se recalibran a tu escala vigente), el
+// fantasma NO se mueve: es tu pasado con su número fijo — vencerlo es la
+// única victoria que la semana no te puede recalibrar. La elección es
+// determinista y sin relojes: el mayor objetivo del archivo gana; a
+// igualdad, la semana más reciente (indiceSemanal — la misma aritmética de
+// jueves de la etapa 7, cero relojes nuevos, ley v324). Sin archivo no hay
+// fantasma: la primera mesa cerrada lo despierta, no el historial vacío.
+export function fantasmaDeLaMesa(
+  historial: { wk: string; objetivo: number }[],
+): { wk: string; objetivo: number } | null {
+  if (historial.length === 0) return null;
+  return historial.reduce((m, e) =>
+    e.objetivo > m.objetivo ||
+    (e.objetivo === m.objetivo && indiceSemanal(e.wk) > indiceSemanal(m.wk))
+      ? e
+      : m,
+  );
+}
+
 export function estrategiaDeHoy(): EstrategiaHoy {
   const fecha = fechaISO(new Date());
   const rnd = mulberry32(fnvHash("estrategia-" + fecha));

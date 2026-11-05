@@ -5096,9 +5096,35 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v349.0";
-export const APP_CODENAME = "LA LEY SIN EXCEPCIÓN";
+export const APP_VERSION = "v350.0";
+export const APP_CODENAME = "EL FANTASMA DE LA MESA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v350.0 EL FANTASMA DE LA MESA — trigésima-tercera ronda del autociclo y
+// ronda EXPANSIVA del ritmo (v349 cirugía → v350 expansión): LA MESA VIVA
+// etapa 8 — la mesa contra el histórico propio. Tu mejor semana CERRADA
+// (desafioHistorial, la etapa 7) vuelve al tablón de la semana vigente como
+// un FANTASMA REAL: contadores propios, no es SIM — y a diferencia de los
+// cadetes (que se recalibran a tu escala vigente), el fantasma NO se mueve:
+// es tu pasado con su número fijo, la única victoria que la semana no te
+// puede recalibrar. (1) LA ELECCIÓN SIN RELOJES (estrategia-data):
+// fantasmaDeLaMesa — el mayor objetivo del archivo gana; a igualdad, la
+// semana más reciente por indiceSemanal (la aritmética de jueves de la
+// etapa 7, cero relojes nuevos, ley v324). Sin archivo no hay fantasma: la
+// primera mesa cerrada lo despierta, no el historial vacío. (2) EL TABLÓN
+// (estrategia-panel): la fila TU FANTASMA (tag = su semana, violeta) entra
+// al ranking entre los cadetes y tu fila — puede robarte el puesto; el pie
+// declara la frontera: «TU FANTASMA también es REAL — tu mejor semana
+// cerrada con su número fijo: no se recalibra cuando mejoras». (3) EL CHIP
+// DEL DUELO: bajo el encabezado del desafío, «tu fantasma te espera:
+// X/100 · semana Y» — y cuando la mesa vigente lo supera, «FANTASMA
+// VENCIDO» en verde (la única medalla que se gana contra uno mismo).
+// CERO EFECTOS NUEVOS: la escuela sigue con sus 5 useEffect (asertado).
+//    SUITE: +2 pines (EL FANTASMA DE LA MESA estático: la función sin
+//    relojes, el tag con su semana, la fila violeta, el vencido, useEffect
+//    === 5, versión doble aserción — y vivo: home + health v350) +
+//    rodillos de codename (LA LEY SIN EXCEPCIÓN → EL FANTASMA DE LA MESA en
+//    los VALORES de los asertos; los mensajes históricos quedan como
+//    memoria — ley v312) + rodillo a v350.0 (cuatro patrones).
 // v349.0 LA LEY SIN EXCEPCIÓN — trigésima-segunda ronda del autociclo y
 // CIRUGÍA del ritmo (v348 expansión → v349 cirugía): EL BUILD VUELVE A LEER
 // LA LEY DE TIPOS, en DOS capas medidas una a una. La compuerta
