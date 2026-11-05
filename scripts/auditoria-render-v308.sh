@@ -49,7 +49,9 @@ auditar "/empleos" 8 empleos-desk 1440 900
 auditar "/" 9 inicio-movil 390 844
 auditar "/vertigo" 8 vertigo-movil 390 844
 
-# 3) CIERRE POR PID
+# 3) CIERRE POR PID — del servidor Y del navegador (lección v308: el Chromium
+#    del espejo abierto tumbó un build por OOM; el espejo cierra SU casa)
+agent-browser close >/dev/null 2>&1
 kill "$SRVPID" 2>/dev/null
 sleep 1
 kill -9 "$SRVPID" 2>/dev/null
