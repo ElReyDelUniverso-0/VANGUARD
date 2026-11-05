@@ -381,16 +381,16 @@ export function AgeOfNationsPanel() {
                   <>
                     {actionBtn("RECLUTAR +5 (30)", <Shield className="w-3 h-3" />, () => {
                       const r = recruit(s, sel!);
-                      r.ok ? toast.success(r.msg) : toast.error(r.msg); sfx.beep(); persist(s);
+                      if (r.ok) toast.success(r.msg); else toast.error(r.msg); sfx.beep(); persist(s);
                     }, s.gold < AON_COSTS.reclutar)}
                     {actionBtn("FORTIFICAR (45)", <Landmark className="w-3 h-3" />, () => {
                       const r = buildFort(s, sel!);
-                      r.ok ? toast.success(r.msg) : toast.error(r.msg); sfx.beep(); persist(s);
+                      if (r.ok) toast.success(r.msg); else toast.error(r.msg); sfx.beep(); persist(s);
                     }, s.gold < AON_COSTS.fort)}
                     {s.mode === "CRUZADA" && selP.religion !== myN.religion &&
                       actionBtn("MISIONERO (60)", <MoonStar className="w-3 h-3" />, () => {
                         const r = sendMissionary(s, sel!);
-                        r.ok ? toast.success(r.msg) : toast.error(r.msg); sfx.beep(); persist(s);
+                        if (r.ok) toast.success(r.msg); else toast.error(r.msg); sfx.beep(); persist(s);
                       }, s.gold < AON_COSTS.misionero)}
                     {actionBtn(moving === sel ? "CANCELAR MOVIMIENTO" : "MOVER MITAD", <ChevronRight className="w-3 h-3" />, () => {
                       setMoving(moving === sel ? null : sel); sfx.hover();

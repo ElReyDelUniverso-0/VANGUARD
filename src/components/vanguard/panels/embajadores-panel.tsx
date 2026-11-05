@@ -79,7 +79,6 @@ export function EmbajadoresPanel() {
 
   useEffect(() => {
     loadCandidates();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cyc.cycle]);
 
   const filteredCountries = useMemo(() => {

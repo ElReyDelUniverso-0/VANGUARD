@@ -115,7 +115,6 @@ export function CartelesPanel() {
               <div className="border border-border/50 bg-secondary/20 p-2.5">
                 <div className="text-[9px] font-mono uppercase tracking-widest text-amber mb-1.5">Lider / cara visible</div>
                 {sel.leader.img ? (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={sel.leader.img} alt={sel.leader.name} className="w-full h-40 object-cover border border-border/60 mb-1.5" />
                 ) : (
                   <div className="w-full h-20 border border-dashed border-border/60 flex items-center justify-center text-muted-foreground/40 mb-1.5">

@@ -51,12 +51,10 @@ async function fetchUSGS(): Promise<Quake[] | null> {
   return null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseGeoJson(data: any): Quake[] {
   const feats = Array.isArray(data?.features) ? data.features : [];
   return feats
     .slice(0, 60)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((f: any) => ({
       mag: f?.properties?.mag ?? 0,
       place: f?.properties?.place ?? "Desconocido",

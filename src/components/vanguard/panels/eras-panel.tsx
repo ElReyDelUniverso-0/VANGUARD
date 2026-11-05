@@ -132,7 +132,6 @@ export function ErasPanel() {
               className={cn("w-full hud-corner border p-3 text-left transition-colors flex gap-3 items-center",
                 sel?.id === e.id ? "border-amber-hud bg-amber-hud/15" : "border-border/60 bg-secondary/20 hover:border-amber-hud/50")}>
               {e.img ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={e.img} alt={e.name} className="w-16 h-16 object-cover border border-border/60 rounded-sm hidden sm:block" loading="lazy" />
               ) : (
                 <div className="w-16 h-16 border border-border/60 rounded-sm hidden sm:flex items-center justify-center text-muted-foreground/40"><Hourglass className="w-6 h-6" /></div>

@@ -139,7 +139,6 @@ export function InfinitaPanel() {
     const t = setInterval(sondear, 90_000);
     return () => clearInterval(t);
     // nuevosIds leído una vez: se muta dentro de setItems via closure — OK
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // expira el badge NUEVO a los 3 minutos

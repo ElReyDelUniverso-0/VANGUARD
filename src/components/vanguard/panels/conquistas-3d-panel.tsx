@@ -150,7 +150,6 @@ export function Conquistas3DPanel() {
       (globeRef.current as { __paint?: () => void }).__paint = paint;
     }
     return () => { disposed = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [camp.id]);
 
   // repintar al cambiar de paso

@@ -165,7 +165,6 @@ export function ShopPanel() {
       else if (it.category === "BRIEFING") activo = readBriefings.includes("B-TW-01");
       return { item: it, titulo: it.title, costo: it.cost, moneda: (it.currency === "GEMS" ? "GEMS" : "COINS") as "GEMS" | "COINS", activo, d: it.description, cat: catLabel[it.category] || it.category };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ownedAvatars, readBriefings, isElite]);
 
   useEffect(() => {

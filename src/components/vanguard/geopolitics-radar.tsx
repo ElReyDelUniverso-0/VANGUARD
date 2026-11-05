@@ -148,7 +148,6 @@ export function GeopoliticsRadar() {
       void load();
     }, 0);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

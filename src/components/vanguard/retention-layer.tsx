@@ -144,7 +144,6 @@ export function RetentionLayer() {
       window.removeEventListener("touchstart", bump);
       window.removeEventListener("scroll", bump);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chestReady]);
 
   // ---------- visita / informe de ausencia ----------
@@ -172,7 +171,6 @@ export function RetentionLayer() {
           setAbsenceOpen(true);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted]);
 
   // ---------- avisos inteligentes cada 90s ----------
@@ -235,7 +233,6 @@ export function RetentionLayer() {
       }
     }, 90000);
     return () => clearInterval(iv);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted]);
 
   const comboOf = () =>
@@ -273,7 +270,6 @@ export function RetentionLayer() {
         description: rw.rarity === "LEGENDARIO" ? "¡JACKPOT! Eres de los elegidos." : "Vuelve en 8 min de acción por otro cofre.",
       });
     }, 1600);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rolling, chestReady]);
 
   const claimN = (n: number) => {

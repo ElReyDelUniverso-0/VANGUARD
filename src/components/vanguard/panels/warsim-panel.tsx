@@ -201,7 +201,6 @@ export function WarsimPanel() {
       });
     }, tickMs);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simRunning, probA, speed, warType, wildcards, addCoins, addXp]);
 
   // recompensa al terminar (FUERA del updater para no hacer setState en render)

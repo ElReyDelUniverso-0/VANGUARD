@@ -394,7 +394,6 @@ export function ForYouPanel() {
     };
     window.addEventListener("vg:sala3d-accion", onAccion);
     return () => window.removeEventListener("vg:sala3d-accion", onAccion);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lista, liked, navegar]);
 
   // ---------- slide EN VIVO (pinned, mejorada) ----------
@@ -501,7 +500,6 @@ export function ForYouPanel() {
       }
       return (
         <div className="absolute inset-0" onClick={() => navegar("videos")}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={v.thumb} alt={v.title} className="absolute inset-0 w-full h-full object-cover opacity-70" />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/40">
             <MonitorPlay className="w-10 h-10 text-amber-hud opacity-80" />

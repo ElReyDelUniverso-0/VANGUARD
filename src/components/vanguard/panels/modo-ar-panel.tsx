@@ -230,7 +230,6 @@ export function ModoArPanel() {
       });
     }
     return filas;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estadoCam, escaneando, filtro, yaw, pitch]);
   useSala3DContenido(
     "armodo",

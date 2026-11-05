@@ -276,7 +276,7 @@ export function ArcadeConvoy({
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [running]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [running]);
 
   // ====== disparo ======
   const shoot = (e: React.PointerEvent<HTMLCanvasElement>) => {

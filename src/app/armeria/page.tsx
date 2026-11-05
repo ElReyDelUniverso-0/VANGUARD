@@ -85,7 +85,6 @@ export default function ArmeriaPage() {
                 aria-label={w.name}
               >
                 {/* la foto real de la fuente (Wikimedia) — la casa no inventa imágenes */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={w.photo}
                   alt={w.name}

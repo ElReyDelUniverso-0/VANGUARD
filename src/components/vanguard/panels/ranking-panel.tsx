@@ -202,7 +202,6 @@ function ScholarsBoard() {
       return { name: r.name, tag: r.tag, score: Math.max(120, Math.round(scale * factor)), isPlayer: false };
     });
     return [...rivals, { name: alias || "TU", tag: "AG", score, isPlayer: true }].sort((a, b) => b.score - a.score);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alias, score, weekNum]);
   const pos = rows.findIndex((r) => r.isPlayer) + 1;
 

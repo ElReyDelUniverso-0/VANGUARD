@@ -484,7 +484,6 @@ export function VerificaPanel() {
                           {/* imagen con velo de sensibilidad */}
                           {n.imageUrl && (
                             <div className="relative h-44 overflow-hidden rounded-sm border border-white/10 bg-gradient-to-br from-[#1a1206] via-[#0c0c12] to-[#241005]">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
                                 src={n.imageUrl.startsWith("http") ? n.imageUrl : n.imageUrl}
                                 alt=""

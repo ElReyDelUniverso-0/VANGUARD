@@ -476,7 +476,7 @@ export function ArcadePanel() {
   const answerTv = (i: number) => {
     if (!tvQ || game !== "trivia" || tvBusy.current) return; // FIX B4: lock
     tvBusy.current = true;
-    tvTimer.current && clearInterval(tvTimer.current);
+    if (tvTimer.current) clearInterval(tvTimer.current);
     if (i === tvQ.a) { sfx.coin(); toast.success("+25 en juego"); } else sfx.error();
     advanceTrivia(i === tvQ.a);
   };
@@ -492,7 +492,7 @@ export function ArcadePanel() {
   const startCodigo = () => { setCpScore(0); setCpN(0); setCpTime(60); setCpHint(false); setCpDone(false); setCpQ(shuffle(CIPHER_POOL)[0]); setGame("codigo"); };
   useEffect(() => {
     if (game !== "codigo" || cpDone) return;
-    cpTimer.current && clearInterval(cpTimer.current);
+    if (cpTimer.current) clearInterval(cpTimer.current);
     cpTimer.current = setInterval(() => {
       setCpTime((t) => {
         if (t <= 1) {
@@ -604,7 +604,7 @@ export function ArcadePanel() {
   };
   useEffect(() => {
     if (game !== "banderas" || !fbTarget) return;
-    fbTimer.current && clearInterval(fbTimer.current);
+    if (fbTimer.current) clearInterval(fbTimer.current);
     // FIX B5: timer puro + deteccion de timeout en efecto aparte
     fbTimer.current = setInterval(() => {
       setFbLeft((l) => (l <= 1 ? 0 : l - 1));
@@ -633,7 +633,7 @@ export function ArcadePanel() {
   const answerFlag = (name: string) => {
     if (!fbTarget || game !== "banderas" || fbBusy.current) return; // FIX B4: lock
     fbBusy.current = true;
-    fbTimer.current && clearInterval(fbTimer.current);
+    if (fbTimer.current) clearInterval(fbTimer.current);
     if (name === fbTarget.name) { sfx.coin(); } else sfx.error();
     advanceFlag(name === fbTarget.name);
   };

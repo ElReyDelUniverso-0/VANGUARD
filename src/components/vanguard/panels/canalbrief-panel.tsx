@@ -87,7 +87,7 @@ export function CanalBriefPanel() {
       for (let x = 0; x <= w; x += 6) {
         const amp = play ? (18 + 26 * Math.abs(Math.sin((x + t * 90 + seed) / 60))) * Math.sin(x / w * Math.PI) : 6;
         const y = h / 2 + Math.sin((x / 30 + t * 3)) * amp * 0.35 + (play ? 0 : Math.sin(x / 12) * 2);
-        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.stroke();
       raf = requestAnimationFrame(draw);

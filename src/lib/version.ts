@@ -5096,6 +5096,50 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v332.0";
-export const APP_CODENAME = "LA ENTRADA DEL DÍA";
+export const APP_VERSION = "v333.0";
+export const APP_CODENAME = "LA CICATRIZ QUE NO DUELE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v333.0 LA CICATRIZ QUE NO DUELE — decimosexta ronda del autociclo y CIRUGÍA
+// del ritmo (v332 expansión → v333 cirugía): la cola de cirugía clásica estaba
+// extinta (censo 2+0 — solo quedan los dos efecto-escritor intocables), así
+// que el censo se amplió a TODO eslint y la búsqueda dio una vena nueva: 51
+// avisos en el árbol, 41 de ellos «Unused eslint-disable directive» —
+// cicatrices que la casa dejó y cuya regla ya no dispara.
+// ① LA CICATRIZ MUERTA: 41 directivas retiradas en 24 archivos (26
+//    exhaustive-deps, 8 no-img-element, 2 no-explicit-any... y todas en
+//    posiciones inertes: después de un return, junto a un elemento que ya no
+//    existe) — lección v331 generalizada: «una cicatriz que ya no duele no se
+//    viste».
+// ② EL DESCUBRIMIENTO (la lección mayor de la ronda): 6 archivos devolvieron
+//    95 hallazgos NUEVOS del compilador (refs ×90 en imperio, immutability
+//    ×5, set-state-in-effect ×2 en intros-gta) al retirar sus cicatrices — la
+//    directiva muerta era un INTERRUPTOR ACCIDENTAL: el análisis del
+//    compilador de react-hooks se salta el componente cuando contiene una
+//    directiva react-hooks, aunque esté muerta. La cicatriz no dolía — pero
+//    SOSTENÍA una compuerta.
+// ③ LA DECISIÓN HONESTA (trabajo por etapas): 24 cicatrices retiradas y
+//    conservadas en los 18 archivos limpios (cero hallazgos nuevos, verificado
+//    con experimento stash: HEAD 17 avisos vs cirugía 94 en los mismos 3
+//    archivos); las 17 cicatrices de los 6 archivos con compuerta se
+//    RESTAURAN y quedan declaradas como el mecanismo de supresión que son —
+//    la cola nueva queda registrada: «los 95 hallazgos detrás de la
+//    compuerta» para rondas futuras.
+// ④ LA EXPRESIÓN VACÍA: los 8 @typescript-eslint/no-unused-expressions caen
+//    (age-of-nations ×3: el ternario r.ok ? toast : toast como sentencia →
+//    if/else; arcade ×4: timer.current && clearInterval → if; canalbrief ×1:
+//    x === 0 ? moveTo : lineTo → if/else) — cero cambio de comportamiento,
+//    cero avisos.
+// ⑤ LA LIMPIEZA FINA: los { } vacíos que dejaba el bisturí en JSX (4) se
+//    retiran a mano y el espacio final de arcade-convoy se poda — el diff
+//    queda sin ruido.
+// ⑥ EL RESULTADO: eslint src baja 51 → 19 avisos (2 del censo intocable +
+//    17 cicatrices-compuerta declaradas), tsc 0, el censo canónico 2+0
+//    respira intacto.
+//     SUITE: +2 pines (LA CICATRIZ QUE NO DUELE estático: las 4 expresiones
+//    vacías curadas con if/else, la directiva-compuerta de arcade intacta en
+//    su línea, los 6 archivos de compuerta restaurados con sus cicatrices,
+//    useEffect === 2/3/4 intactos, versión doble aserción — y vivo: home +
+//    health v333) + rodillos de codename en los asertos históricos (LA
+//    ENTRADA DEL DÍA → LA CICATRIZ QUE NO DUELE; los nombres de pines y
+//    comentarios quedan como memoria — ley v312) + rodillo a v333.0 (cuatro
+//    patrones, mensajes históricos intactos — ley v312).

@@ -262,7 +262,6 @@ export function ArmeriaPanel() {
                 <Wrench className="w-3 h-3" /> Cómo se arma — {w.assembly.length} piezas reales
               </div>
               {w.assemblyPhoto && !pending(w.assemblyPhoto) && (
-                /* eslint-disable-next-line @next/next/no-img-element */
                 <img src={w.assemblyPhoto} alt={`${w.name} despiece`} className="w-full h-44 sm:h-56 object-contain bg-black/30 border border-amber-hud/30 rounded-sm mb-2" />
               )}
               <ol className="grid sm:grid-cols-2 gap-1.5">

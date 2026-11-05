@@ -312,7 +312,6 @@ export function SensitiveMedia({
 
   if (!sensitive) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
       <img src={src} alt={alt} className={className} loading="lazy" />
     );
   }
@@ -348,7 +347,6 @@ export function SensitiveMedia({
   }
   return (
     <button type="button" onClick={() => setRevealed(false)} className={cn("relative", className)} aria-label="Ocultar contenido sensible">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt} className="w-full h-full object-cover" loading="lazy" />
       <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-red-hud/80 text-white text-[8px] font-mono uppercase">18+</span>
     </button>
