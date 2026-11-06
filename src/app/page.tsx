@@ -305,6 +305,9 @@ const PulsoTeatral = dynamic(() => import("@/components/vanguard/pulso-teatral")
 // v97.0 PANTALLA TOTAL: la plataforma de video de Vanguard (feed vertical + sala de proyección)
 const PantallaPanel = dynamic(() => import("@/components/vanguard/panels/pantalla-panel").then((m) => m.PantallaPanel), { ssr: false, loading: PanelSkeleton });
 // v24 VERDAD CRUDA — el lado oscuro de los conflictos
+// v359.0 VANGUARD ID — LA FIRMA VIVA: el carnet del agente (KNOWLEDGE LEVEL,
+// privacidad, bloqueos, huella) con metodología pública y cero datos inventados
+const IdentidadPanel = dynamic(() => import("@/components/vanguard/panels/identidad-panel").then((m) => m.IdentidadPanel), { ssr: false, loading: PanelSkeleton });
 const AbusosPanel = dynamic(() => import("@/components/vanguard/panels/abusos-panel").then((m) => m.AbusosPanel), { ssr: false, loading: PanelSkeleton });
 const IncidentesPanel = dynamic(() => import("@/components/vanguard/panels/incidentes-panel").then((m) => m.IncidentesPanel), { ssr: false, loading: PanelSkeleton });
 const MemorialPanel = dynamic(() => import("@/components/vanguard/panels/memorial-panel").then((m) => m.MemorialPanel), { ssr: false, loading: PanelSkeleton });
@@ -633,6 +636,8 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "envivo" && <EnVivoPanel />}
         {tab === "contribuidores" && <ContribuidoresPanel />}
         {tab === "perfil" && <PerfilPanel />}
+        {/* v359 — VANGUARD ID: la firma viva del agente */}
+        {tab === "identidad" && <IdentidadPanel />}
         {/* v24 — VERDAD CRUDA: el lado oscuro de los conflictos */}
         {tab === "abusos" && <AbusosPanel />}
         {tab === "incidentes" && <IncidentesPanel />}

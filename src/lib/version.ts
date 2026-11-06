@@ -5096,9 +5096,42 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v358.0";
-export const APP_CODENAME = "WORLD PULSE";
+export const APP_VERSION = "v359.0";
+export const APP_CODENAME = "LA FIRMA VIVA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v359.0 VANGUARD ID — cuadragésima-segunda ronda del autociclo, mandato
+// directo del Dueño («Desarrolla VANGUARD ID como un sistema de identidad,
+// personalización y participación comunitaria… No conviertas la reputación
+// en una medida de popularidad basada únicamente en cantidad de
+// publicaciones»). LA FIRMA VIVA vive en tres piezas: (1) EL MOTOR PUERO
+// (src/lib/vanguard-id.ts): el KNOWLEDGE LEVEL con PESOS PUBLICADOS que
+// suman 100 exacto (Educación 35 · Contribución 30 · Participación
+// constructiva 20 · Retos completados 15), cada dimensión normalizada
+// contra su TECHO real (80 briefings, 30 misiones, 25 logros…) — jamás
+// contra otros agentes: aquí no hay ranking de personas; la publicación
+// NO da puntos por volumen (5 superficies con techo por superficie: el
+// hilo #50 no suma más que el #5), precisión de quiz con muestra mínima
+// (10 respuestas), 13 insignias derivadas del estado real con progreso y
+// detalle, metodología y limitaciones DECLARADAS en la fuente. (2) LA
+// TIENDA (game-store): slice persistido auto (merge shallow, patrón
+// v354) con idPrivacidad (mínima exposición por defecto: actividad y
+// favoritos OFF), idBloqueados (bloqueo local silencioso), idNotif por
+// categoría, idHuella (FNV-1a, nace una vez, no se regenera jamás) e
+// idAliasHistorial (la suplantación deja rastro); cero efectos nuevos.
+// (3) EL CARNET (identidad-panel, tab SOCIAL): CARNET (avatar countryball
+// + banner de la FORJA + nivel KL + huella + insignias + compartir como
+// PNG con canvas nativo y texto como fallback), NIVEL (4 dimensiones con
+// desglose, escalafón de 10 umbrales públicos, metodología en details),
+// ACTIVIDAD (el log REAL de la tienda), GUARDADOS (briefings, favoritos,
+// suscripciones, likes, semanas WORLD CHALLENGE), PRIVACIDAD (visibilidad
+// PÚBLICO/COMUNIDAD/PRIVADO + 6 campos conmutables) y SEGURIDAD (huella,
+// firmar nuevo alias con validación anti-suplantación y historia,
+// bloqueos, notificaciones). Integración: tab en SOCIAL, censo del NÚCLEO
+// (mod:identidad → mod:portada + mod:cuenta), foros/encuestas/WORLD
+// CHALLENGE/wargames/mercado alimentan el nivel desde sus datos reales.
+// QA: tsc 0 · build EXIT 0 · suite con 2 pines nuevos + rodillo v358.0 →
+// v359.0 y WORLD PULSE → LA FIRMA VIVA (cuatro patrones, ley v312) ·
+// arnés visual móvil 390 · canon estable a la doble lectura.
 // v358.0 WORLD PULSE — cuadragésima-primera ronda del autociclo y ronda
 // EXPANSIVA del ritmo (v357 cirugía → v358 expansión): EL CENTRO DE
 // INTELIGENCIA MUNDIAL, mandato directo del Dueño («un centro de

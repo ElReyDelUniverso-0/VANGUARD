@@ -33,6 +33,16 @@ import {
   type CameraModel,
 } from "@/lib/camera-data";
 import type { ConquestSnapshot } from "@/lib/conquest-data";
+// v359 VANGUARD ID — la identidad, la privacidad y la firma del agente.
+// Solo TIPOS y CONSTANTES (cero lógica aquí: el motor vive en vanguard-id.ts).
+import {
+  PRIVACIDAD_DEFECTO,
+  NOTIF_DEFECTO,
+  huellaDe,
+  type PrivacidadId,
+  type PrefsNotifId,
+  type ClaveNotifId,
+} from "@/lib/vanguard-id";
 import {
   pickWheelPrize,
   rollCrate,
@@ -418,6 +428,20 @@ export interface GameState {
   recordDesafio: (wk: string, objetivo: number) => void;
   // v354: elegir/dejar al rival de hoy en el salón (null = volver al mejor)
   elegirRivalSalon: (wk: string | null) => void;
+  // ── v359 VANGUARD ID — la firma viva (persist auto, merge shallow) ──
+  idPrivacidad: PrivacidadId;
+  idBloqueados: string[];
+  idNotif: PrefsNotifId;
+  idHuella: string;
+  idAliasHistorial: { alias: string; fecha: number }[];
+  setIdPrivacidad: (p: Partial<PrivacidadId>) => void;
+  bloquearAlias: (a: string) => void;
+  desbloquearAlias: (a: string) => void;
+  toggleNotifId: (k: ClaveNotifId) => void;
+  // crea la huella UNA vez (se llama desde el montaje del panel, cero efectos globales)
+  asegurarHuella: () => void;
+  // registra el alias anterior antes de firmar uno nuevo (historia anti-suplantación)
+  registrarAliasCambio: (nuevoAlias: string) => void;
   buyAsset: (assetId: string, qty: number, price: number, fee?: number) => boolean;
   sellAsset: (assetId: string, qty: number, price: number, fee?: number) => number; // devuelve P/L
   toggleFavorite: (assetId: string) => void;
@@ -693,6 +717,12 @@ export const useGameStore = create<GameState>()(
       desafioHistorial: [],
       // v354 etapa 10: sin elección al nacer — el fantasma de la etapa 8 manda
       rivalSalon: null,
+      // v359 VANGUARD ID — mínima exposición por defecto (actividad y favoritos OFF)
+      idPrivacidad: PRIVACIDAD_DEFECTO,
+      idBloqueados: [],
+      idNotif: NOTIF_DEFECTO,
+      idHuella: "",
+      idAliasHistorial: [],
       wargameHistorial: [],
       marketHoldings: {},
       marketTrades: [],
@@ -1568,6 +1598,34 @@ export const useGameStore = create<GameState>()(
       // evento → setState en el callback, cero escrituras en montaje); la
       // tienda la hace permanente (persist con el throttle de la casa).
       elegirRivalSalon: (wk) => set({ rivalSalon: wk }),
+      // v359 VANGUARD ID — acciones puras de identidad (cero efectos)
+      setIdPrivacidad: (p) => set((s) => ({ idPrivacidad: { ...s.idPrivacidad, ...p } })),
+      bloquearAlias: (a) => set((s) => {
+        const limpio = a.trim();
+        if (!limpio || limpio === s.alias) return s;
+        if (s.idBloqueados.includes(limpio)) return s;
+        return { idBloqueados: [...s.idBloqueados, limpio] };
+      }),
+      desbloquearAlias: (a) => set((s) => ({ idBloqueados: s.idBloqueados.filter((b) => b !== a) })),
+      toggleNotifId: (k) => set((s) => ({ idNotif: { ...s.idNotif, [k]: !s.idNotif[k] } })),
+      asegurarHuella: () => set((s) => {
+        if (s.idHuella) return s;
+        // semilla local de una sola vida: la firma el navegador del agente
+        let semilla = "";
+        if (typeof crypto !== "undefined" && "getRandomValues" in crypto) {
+          const buf = new Uint8Array(12);
+          crypto.getRandomValues(buf);
+          semilla = Array.from(buf, (b) => b.toString(16).padStart(2, "0")).join("");
+        } else {
+          semilla = `${Date.now()}-${Math.random()}`;
+        }
+        return { idHuella: huellaDe(semilla) };
+      }),
+      registrarAliasCambio: (nuevoAlias) => set((s) => {
+        const anterior = s.alias;
+        if (anterior === nuevoAlias) return s;
+        return { idAliasHistorial: [...s.idAliasHistorial.slice(-11), { alias: anterior, fecha: Date.now() }], alias: nuevoAlias };
+      }),
 
       // ====== CENTRO DE GANANCIAS v8 ======
       spinWheel: () => {

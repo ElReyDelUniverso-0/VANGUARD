@@ -58,6 +58,8 @@ export type TabKey =
   | "biblioteca" | "tribunal" | "alianzas" | "agente" | "agenteia"
   // v19 mundo expandido: frentes en vivo, estudio de video, divisas, perfil
   | "frente" | "estudio" | "divisas" | "perfil"
+  // v359 VANGUARD ID: la firma viva — identidad, KNOWLEDGE LEVEL y privacidad
+  | "identidad"
   // v22 directos en vivo con donaciones
   | "directos"
   // v23 en vivo mundial (streaming real) + comunidad de contribuidores
@@ -249,6 +251,8 @@ export const TABS: Record<TabKey, TabDef> = {
   oscura:        { key: "oscura",        label: "Alejandría Oscura (teorías, armas y civilizaciones)", short: "OSCURA", icon: <Skull className="w-3.5 h-3.5" />, color: "red" },
   divisas:       { key: "divisas",       label: "Divisas del Mundo", short: "DIVISAS", icon: <Banknote className="w-3.5 h-3.5" />, color: "green" },
   perfil:        { key: "perfil",        label: "Personalizar Perfil", short: "PERFIL", icon: <UserCog className="w-3.5 h-3.5" />, color: "violet" },
+  // v359 VANGUARD ID — el carnet del agente
+  identidad:     { key: "identidad",     label: "VANGUARD ID (carnet, KNOWLEDGE LEVEL y privacidad)", short: "ID", icon: <Fingerprint className="w-3.5 h-3.5" />, color: "amber" },
   radar:         { key: "radar",         label: "Radar Desinfo + Conexiones", short: "RADAR", icon: <ShieldAlert className="w-3.5 h-3.5" />, color: "green" },
   operaciones:   { key: "operaciones",   label: "Sala de Operaciones",        short: "OPERACIONES", icon: <Crosshair className="w-3.5 h-3.5" />, color: "amber" },
   // v85.0 EL MUNDO DENTRO
@@ -472,8 +476,8 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "social", label: "SOCIAL", short: "SOCIAL", icon: <MessagesSquare className="w-4 h-4" />, color: "violet",
-    desc: "Empleos con sueldos reales, crisis mundial, embajadores, salas, encuestas del mundo, redes oficiales y comunidad",
-    tabs: [TABS.empleos, TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.redes, TABS.amigos, TABS.torneos, TABS.perfil],
+    desc: "Empleos con sueldos reales, crisis mundial, embajadores, salas, encuestas del mundo, redes oficiales y comunidad — con VANGUARD ID (el carnet del agente con KNOWLEDGE LEVEL, insignias y privacidad)",
+    tabs: [TABS.empleos, TABS.consejoia, TABS.crisis, TABS.contribuidores, TABS.gobierno, TABS.embajadores, TABS.alianzas, TABS.salas, TABS.foros, TABS.encuestas, TABS.redes, TABS.amigos, TABS.torneos, TABS.perfil, TABS.identidad],
   },
   {
     key: "sistema", label: "SISTEMA", short: "SISTEMA", icon: <Shield className="w-4 h-4" />, color: "cyan",

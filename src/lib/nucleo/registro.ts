@@ -282,6 +282,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: [],
     alias: "cuenta registro login entrar aliaste crear cuenta nube guardar",
   },
+  {
+    id: "mod:identidad",
+    nombre: "VANGUARD ID",
+    lema: "La firma viva del agente",
+    descripcion:
+      "El carnet de identidad: perfil con avatar y bio, KNOWLEDGE LEVEL (4 dimensiones con pesos publicados que suman 100 — Educación 35, Contribución 30, Constructiva 20, Retos 15 —, medido contra techos reales, jamás popularidad por volumen de publicaciones), insignias derivadas del estado real, estadísticas, historial de actividad (el log de la tienda), contenido guardado, privacidad por campo (actividad y favoritos OFF por defecto), notificaciones por categoría, bloqueos locales silenciosos, nombres reservados anti-suplantación y huella de identidad estable.",
+    categoria: "COMUNIDAD",
+    ruta: "/",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:portada", "mod:cuenta"],
+    alias: "identidad carnet id perfil knowledge level nivel conocimiento insignias logros privacidad bloquear huella firma avatar bio notificaciones anti suplantacion",
+  },
   // ── SISTEMA ────────────────────────────────────────────────
   {
     id: "mod:modo",
