@@ -5168,8 +5168,47 @@
 //     launcher ilustrado con .app-tile vivo — y vivo: home firma v363,
 //     health respalda) + rodillo v362.0 → v363.0 en los VALORES (ley v312:
 //     los nombres de pines quedan como memoria).
-export const APP_VERSION = "v363.0";
-export const APP_CODENAME = "EL ÁLBUM ILUSTRADO";
+export const APP_VERSION = "v364.0";
+export const APP_CODENAME = "LA BIBLIOTECA DEL MUNDO";
+// v364.0 LA BIBLIOTECA DEL MUNDO — cuadragesima-séptima ronda del autociclo y
+// el mandato del Dueño: «agrega ya la biblioteca a Vanguard: que funcione
+// como un libro de política — las constituciones de cada país y las cosas
+// importantes para el mundo geopolítico, que uno puede seleccionar, buscar;
+// y una ficha elegante como la del módulo del gobierno, con misiones diarias
+// que le hablen a la persona según su nivel y su regularidad, marcadas al
+// lado — hay que cumplirlas como en la escuela: saber más da puntos». (1)
+// LAS ESTANTERÍAS REALES (biblioteca-data.ts, nuevo): la estantería
+// CONSTITUCIONES (99 cartas magnas vigentes con ficha real: carta, año,
+// forma de gobierno, mandato y 3 rasgos; donde el suelo se mueve — Haití,
+// Myanmar, Siria, Afganistán — la ficha lleva su NOTA HONESTA) y la
+// estantería GEOPOLÍTICA (30 piezas: 18 tratados de Westfalia 1648 al
+// Acuerdo de París 2015, 4 doctrinas y 8 conceptos, cada una con su «por
+// qué importa»). (2) LA GRAN BIBLIOTECA (biblioteca-gran-panel.tsx, nuevo;
+// montado en la pestaña biblioteca de ARCHIVO MUNDIAL): tres salas bajo un
+// techo — CONSTITUCIONES, GEOPOLÍTICA y la SALA SECRETA montada TAL CUAL
+// (biblioteca-panel.tsx intacto: sus 2 efectos y su anillo v336 sin tocar,
+// el pin de la casa lo vigila) — con buscador por país/carta/rasgo y
+// filtros por región y tipo, FICHA ELEGANTE de cada pieza con portal de
+// lectura, y la honestidad a pie: «síntesis de consulta — la letra pequeña
+// siempre en el texto original». (3) LA CÁTEDRA (la ficha escolar): misiones
+// diarias con el reloj CENTRAL de la escuela (diaDelAnillo, ley v324 — cero
+// relojes nuevos), el SALUDO que le habla a la persona según su nivel de la
+// casa (rango de game-store) y su REGULARIDAD (racha de días de estudio
+// real), el progreso MARCADO AL LADO de cada misión (n/meta + barra +
+// botín) con RECLAMAR que paga en la economía verdadera (addXp/addCoins) y
+// el EXAMEN DEL DÍA: 5 preguntas deterministas (mulberry32 con el día del
+// anillo) derivadas 100% de las dos estanterías — cero datos inventados,
+// con pista de dónde estudiarla y nota final «como en la escuela». (4) LA
+// REGLA DE PUNTOS PUBLICADA: ficha nueva leída +15 XP · acierto del examen
+// +5 XP · cada misión del día trae su botín; niveles del lector (LIBRO
+// VIRGEN → CATEDRÁTICO) con umbral a la vista; persistencia vg364-biblioteca
+// con storageBlindado + registro en rehidratador.tsx (ley v171/v172/v176) y
+// CERO efectos en el panel nuevo: cada gesto firma el día (ley v335).
+// SUITE: +2 pines (LA BIBLIOTECA DEL MUNDO estático — estanterías reales
+// con sanity, sala secreta intacta, examen determinista del reloj, cátedra
+// con progreso al lado, persistencia blindada y rehidratada — y vivo: home
+// firma v364, health respalda) + rodillo v363.0 → v364.0 en los VALORES
+// (ley v312: los nombres de pines quedan como memoria).
 // LA RONDA DEL ESCUDO DE BOLSILLO (EL CENTINELA DE BOLSILLO) — ronda temática
 // del blindaje SIN ROLLER, patrón escudo-web b3cb10d: viaja DENTRO de v363.0
 // sin arrebatarle el número a nadie. Lo que llegó en esta ronda:

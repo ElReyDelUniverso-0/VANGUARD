@@ -349,7 +349,10 @@ const MiPaisPanel = dynamic(() => import("@/components/vanguard/panels/mi-pais-p
 const ExpedientesPanel = dynamic(() => import("@/components/vanguard/panels/expedientes-panel").then((m) => m.ExpedientesPanel), { ssr: false, loading: PanelSkeleton });
 // v59 ALEJANDRÍA OSCURA: biblioteca geopolítica del miedo
 const OscuraPanel = dynamic(() => import("@/components/vanguard/panels/oscura-panel").then((m) => m.OscuraPanel), { ssr: false, loading: PanelSkeleton });
-const BibliotecaPanel = dynamic(() => import("@/components/vanguard/panels/biblioteca-panel").then((m) => m.SecretLibraryPanel), { ssr: false, loading: PanelSkeleton });
+// v364.0 LA GRAN BIBLIOTECA: tres salas bajo un techo — CONSTITUCIONES
+// (cartas magnas reales), GEOPOLÍTICA (tratados/doctrinas/conceptos) y la
+// SALA SECRETA montada TAL CUAL (biblioteca-panel intacto, pin v336)
+const BibliotecaPanel = dynamic(() => import("@/components/vanguard/panels/biblioteca-gran-panel").then((m) => m.GranBibliotecaPanel), { ssr: false, loading: PanelSkeleton });
 const TribunalPanel = dynamic(() => import("@/components/vanguard/panels/tribunal-panel").then((m) => m.TribunalPanel), { ssr: false, loading: PanelSkeleton });
 const AlianzasPanel = dynamic(() => import("@/components/vanguard/panels/alianzas-panel").then((m) => m.AlianzasPanel), { ssr: false, loading: PanelSkeleton });
 const AgentePanel = dynamic(() => import("@/components/vanguard/panels/agente-panel").then((m) => m.AgentePanel), { ssr: false, loading: PanelSkeleton });

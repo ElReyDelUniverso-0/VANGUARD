@@ -30,6 +30,8 @@ import { useColeccionFichas } from "@/lib/fichas-guerra-data";
 // v363.0: el álbum ILUSTRADO (líderes + historia) entra a la fila — sin este
 // registro su cerradura bloquearía la persistencia (mismo patrón v171/v172/v176)
 import { useColeccionVanguard } from "@/lib/fichas-coleccion-data";
+// v364.0: el estudio de LA GRAN BIBLIOTECA (fichas, examen, cátedra) entra a la fila
+import { useEstudioBiblioteca } from "@/lib/biblioteca-data";
 // v183.0: LA GLORIA (sellos dorados, títulos, vitrina, racha del cazador) entra a la fila
 import { useGloria } from "@/lib/gloria";
 // v232.0: la CENTRAL DE ALARMAS entra a la disciplina de rehidratación
@@ -96,6 +98,11 @@ export function Rehidratador() {
     rehidratar(useColeccionVanguard)
       .then(() => marcarHidratado("vg363-coleccion"))
       .catch(() => marcarHidratado("vg363-coleccion"));
+    // v364.0 LA GRAN BIBLIOTECA: sin este registro la cerradura bloquearía
+    // el expediente del estudio (mismo patrón v171/v172/v176/v363)
+    rehidratar(useEstudioBiblioteca)
+      .then(() => marcarHidratado("vg364-biblioteca"))
+      .catch(() => marcarHidratado("vg364-biblioteca"));
     // v183.0 LA GLORIA: sin este registro la cerradura del escudo bloquearía
     // los sellos dorados, los títulos y la vitrina (mismo patrón v171/v172/v176)
     rehidratar(useGloria)

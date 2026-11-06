@@ -5648,3 +5648,87 @@ Work Log:
 
 Stage Summary:
 - tsc 0 repo (el build abre con tsc --noEmit, ley v349) · eslint 0 tocados · build EXIT 0 (○ /escudo/detector en el manifiesto) · escudo tras la ronda: 881 archivos, 1 hallazgo (la reserva declarada) + 3 permitidos — el espejo del bolsillo NO sangra por sus ejemplos falsos · --catalogo: 12 familias con patrones · smoke de producción: /escudo/detector 200 y pinta las 12 familias horneadas, /.well-known/security.txt 200, /escudo 200 con la puerta nueva, /estado 200, /api/health ok:true db:up v363.0 · cero librería nueva (Node puro + crypto del navegador) · leyes intactas · cero zombis.
+
+v364.0 LA BIBLIOTECA DEL MUNDO (sobre v363.0, intacta): cuadragesima-séptima
+ronda del autociclo y el mandato del Dueño («agrega ya la biblioteca a
+Vanguard: que funcione como un libro de política — las constituciones de cada
+país y las cosas importantes para el mundo geopolítico, que uno puede
+seleccionar, buscar; y una ficha elegante como la del módulo del gobierno,
+con misiones diarias que le hablen a la persona según su nivel y su
+regularidad, marcadas al lado — hay que cumplirlas como en la escuela: saber
+más da puntos»). La ronda heredó el canon adelantado: v363.0 EL ÁLBUM
+ILUSTRADO (cartas+menú) ya estaba en el canon (7479cbc) y encima llegó la
+ronda temática escudo-bolsillo (e2dbb73) — fast-forward y a lo nuestro.
+(1) LAS ESTANTERÍAS REALES (biblioteca-data.ts, nuevo): la estantería
+CONSTITUCIONES con 99 cartas magnas vigentes — país, carta, año, forma de
+gobierno, mandato y tres rasgos reales de cada texto, los cinco continentes
+cubiertos; donde el suelo se mueve, la ficha lleva su NOTA HONESTA (Haití sin
+parlamento operativo, Myanmar bajo la junta con el texto de 2008, Siria en
+transición tras diciembre de 2024, Afganistán con la carta de 2004
+suspendida) — y la estantería GEOPOLÍTICA con 30 piezas: 18 tratados y
+documentos (de la Paz de Westfalia 1648 al Acuerdo de París 2015: Viena,
+Monroe, Versalles, Carta del Atlántico, ONU, DD. HH., Ginebra, OEA, Espacio,
+TNP, Helsinki, Camp David, Oslo, Montego Bay, Maastricht, Lisboa, Estatuto de
+Roma), 4 doctrinas (Contención, Truman, Brezhnev + Monroe en su silla) y 8
+conceptos (soberanía, equilibrio, disuasión MAD, Heartland de Mackinder,
+poder marítimo de Mahan, soft power de Nye, efecto dominó, geoeconomía) —
+cada una con su «por qué importa». La fuente se vigila a sí misma: sanity en
+el import (año fuera de rango, fichas sin 3 rasgos → error). (2) LA GRAN
+BIBLIOTECA (biblioteca-gran-panel.tsx, nuevo; montado en la pestaña
+biblioteca de ARCHIVO MUNDIAL): TRES salas bajo un techo — CONSTITUCIONES,
+GEOPOLÍTICA y la SALA SECRETA montada TAL CUAL (biblioteca-panel.tsx cero
+toques: sus 2 efectos y su anillo v336 intactos, el pin de la casa los
+vigila) — con buscador normalizado sin diacríticos (país, carta, rasgo,
+resumen), filtros por región y por tipo, conteo honesto a la vista, FICHA
+ELEGANTE en portal de lectura (modal con campos: año, región, forma de
+gobierno, mandato, rasgos, nota) y el pie de honestidad: «síntesis de
+consulta — la letra pequeña siempre en el texto original». (3) LA CÁTEDRA
+(la ficha escolar): misiones diarias con el reloj CENTRAL de la escuela
+(diaDelAnillo, ley v324 — cero relojes nuevos; metas 2-4 fichas, 2-3
+aciertos, 1-3 búsquedas que giran con el día), el SALUDO que le habla a la
+persona según su nivel de la casa (rango de game-store) y su REGULARIDAD
+(racha de días de estudio REAL — la firma del día es un gesto: leer, buscar
+o examinar; mirar no firma), el progreso MARCADO AL LADO de cada misión
+(n/meta + barra + botín XP/monedas) con RECLAMAR que paga en la economía
+verdadera (addXp/addCoins de la casa) y el EXAMEN DEL DÍA: 5 preguntas
+deterministas (mulberry32 con el día del anillo — el mismo examen para toda
+la escuela) derivadas 100% de las dos estanterías (año de carta, carta que
+rige, forma de gobierno, año del tratado, pista geopolítica), cada respuesta
+con veredicto y PISTA de dónde estudiarla, nota final escolar al cerrar.
+Regla de puntos PUBLICADA: ficha nueva leída +15 XP · acierto del examen +5
+XP · misión del día con su botín (30-40/40-30/20-20); niveles del lector
+LIBRO VIRGEN → APRENDIZ DE LECTOR → LECTOR SERIO → ESTUDIOSO → ERUDITO →
+CATEDRÁTICO con umbral a la vista; persistencia vg364-biblioteca con
+storageBlindado + registro en rehidratador.tsx (ley v171/v172/v176) y CERO
+efectos en el panel nuevo (ley v335). (4) EL CATÁLOGO DE IDIOMAS coherente:
+tab-nav (label largo) + i18n-tabs en 8 idiomas (es/pt/it «BIBLIOTECA», de
+«BIBLIOTHEK», ru «БИБЛИОТЕКА», zh «图书馆», fr conserva su BIBLIO) — la
+píldora del riel y la pestaña de cromo cantan la casa nueva. ROLLER (ley
+v312): 301 aserciones rodadas v363.0 → v364.0 y EL ÁLBUM ILUSTRADO → LA
+BIBLIOTECA DEL MUNDO SOLO en valores (script rodillo-v364.py; nombres de
+pines y mensajes históricos intactos — los mensajes que dicen v303/v361
+siguen diciendo lo suyo). SUITE: +2 pines (LA BIBLIOTECA DEL MUNDO estático:
+estanterías reales con sanity, regla de puntos publicada, cátedra con
+progreso al lado, examen del reloj central, sala secreta con sus 2 efectos,
+persistencia blindada y rehidratada — y vivo: home firma v364, health
+respalda) · 355/355 contra el build de producción. QA: testigo alineado
+(38121cfc = blob, doble lectura ESTABLE) · tsc 0 repo · eslint 0 tocados ·
+build EXIT 0 (la ley v244 trabajó dos veces: el chrome del arnés queda vivo
+de una corrida a otra y se come la RAM — pkill chrome-156 antes de construir;
+y NODE_OPTIONS max-old-space-size=1900 para que el worker de páginas
+estáticas vuele) · arnés VERDE (scripts/qa-visual-v364.sh, PORT 3630, muerte
+por puerto, git add -f): firma v364.0 ✓ · ruta launcher→ARCHIVO→píldora
+BIBLIOTECA ✓ · biblioteca PANEL✓|SALAS-3✓|CARTAS-99✓|GEO-30✓|CATEDRA✓ ·
+cátedra PUNTOS✓|SALUDO✓|HABLA✓|MISIONES-3✓|AL-LADO✓|REGISTRO✓|EXAMEN-ZONA✓ ·
+buscar «España» RESULTADO-1✓|CONTEO✓ · ficha MODAL✓|GOBIERNO✓|MANDATO✓|
+RASGOS✓|XP-TOAST✓ · geopolítica PIEZAS-30✓|PIE-HONESTA✓|PORQUE✓|TIPO✓ ·
+examen PREGUNTAS-5✓|OPCIONES-20✓|PISTA✓|VEREDICTO✓ · sala secreta
+SECRETA✓|ANILLO✓ · móvil 390 SIN-DESBORDE✓|CATEDRA✓ · consola limpia · cero
+zombis · canon 38121cfc ESTABLE. La lección del arnés (del test, no de la
+casa): el XP de primera lectura dormía en una función que nadie llamaba — la
+corrida lo cazó (XP-TOAST✗), la fuente se curó (leerFicha en las dos salas,
+rebuild) y la segunda corrida cantó XP-TOAST✓ con el toast «+15 XP · FICHA
+NUEVA EN TU EXPEDIENTE» ante la cámara. Próxima ronda: la cola sigue intacta
+(LA MESA VIVA etapa 12, exhaustive-deps, las 3 cicatrices declaradas,
+VANGUARD ID) y las estanterías crecen por tandas cuando el Dueño pida más
+países o más piezas — la casa no inventa fichas.
