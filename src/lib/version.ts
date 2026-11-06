@@ -5096,9 +5096,55 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v357.0";
-export const APP_CODENAME = "EL PULSO FIRME";
+export const APP_VERSION = "v358.0";
+export const APP_CODENAME = "WORLD PULSE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v358.0 WORLD PULSE — cuadragésima-primera ronda del autociclo y ronda
+// EXPANSIVA del ritmo (v357 cirugía → v358 expansión): EL CENTRO DE
+// INTELIGENCIA MUNDIAL, mandato directo del Dueño («un centro de
+// inteligencia mundial que reúna acontecimientos, tendencias, indicadores y
+// estadísticas internacionales… no inventes estadísticas ni tendencias;
+// muestra fechas de actualización, procedencia y limitaciones de los
+// datos»). Sobre los cimientos del BARÓMETRO (v223): (1) LA INSTANTÁNEA
+// REAL — scripts/hornear-pulso-mundial.mjs hornea 11 indicadores
+// VERIFICADOS uno a uno contra la API v2 (los 10 vivos del catálogo + el
+// CO2 nuevo EN.GHG.CO2.PC.CE.AR5, porque el clásico fue archivado por el
+// Banco Mundial y la hornada lo detectó en vivo) × 47 naciones + el
+// agregado mundial × serie 2012–2025: 6.383 datos REALES con fecha de
+// extracción, licencia CC BY 4.0, enlace al original por indicador y 7
+// limitaciones declaradas; la hornada aborta si menos de 8 indicadores
+// responden — la casa no hornea mitades mudas. (2) LA PUERTA
+// /pulso-mundial (familia MUNDO, hermana de /mundo /espia /traductor):
+// página server con la instantánea en el primer byte (fs, cero fetch del
+// cliente — ley v190), JSON-LD CollectionPage + Dataset, noscript
+// honesto, bloque FUENTES Y LÍMITES server-rendered con el último año
+// mundial por indicador. (3) LA ISLA VIVA: cuatro vistas (ACTIVIDAD con
+// KPIs y destacados por categoría real — DIPLOMACIA/ECONOMIA/HUMANITARIO/
+// ALERTA; CRONOLOGÍA agrupada por día; INDICADORES con ficha completa,
+// serie SVG escalable y COMPARAR PERÍODOS con deltas reales — un año sin
+// dato se declara, jamás interpolado; ÍNDICE WPI con ranking, ficha por
+// país y metodología en details). CERO effects, CERO fetch, CERO API
+// nueva (ley v176 por construcción): filtros por continente, país,
+// categoría y período derivados en el render. (4) EL WORLD PULSE INDEX:
+// percentiles reales por indicador-año entre las naciones con dato
+// (dirección invertida en inflación/desempleo/CO2), media ponderada con
+// PESOS PUBLICADOS (Economía 45 · Sociedad 30 · Ambiente 25) y cobertura
+// mínima 5/8 — por debajo, el índice se declara ausente, no se estima;
+// el año vivo del ranking se detecta del disco (cero años a mano, guardia
+// v234). (5) LA CRONOLOGÍA es de la CASA: 240 cables REALES de la BD
+// (tacticalTag) con BD muda DECLARADA (SIN SEÑAL honesto). (6)
+// INTEGRACIÓN: cuarta puerta en barra-mundo (WORLD PULSE ◉ esmeralda),
+// mod:pulsomundial en el censo del NÚCLEO (dependencias fnt:indicadores +
+// fnt:cables), pg:pulsomundial en la paleta Ctrl+K, sitemap daily 0.8.
+// PUERTAS ABIERTAS: la cola de LA MESA VIVA etapa 12 queda apuntada — el
+// mandato directo mandó esta ronda y el disco lo registra.    SUITE: +2
+// pines (WORLD PULSE estático: instantánea horneada con 11 códigos
+// reales, 47+1 economías, pesos WPI publicados que suman 1.0, cobertura
+// mínima 5, dirección invertida, cero directivas en los tres archivos
+// nuevos, versión doble aserción — y vivo: home + health + /pulso-mundial
+// v358) + rodillo (EL PULSO FIRME → WORLD PULSE y v357.0 → v358.0 en los
+// VALORES de los asertos; mensajes históricos y nombres de pines intactos
+// — ley v312).
 // v357.0 EL PULSO FIRME — cuadragésima ronda del autociclo y CIRUGÍA del
 // ritmo (v356 expansión → v357 cirugía): LA CUARTA LEVA DE LA COLA
 // EXHAUSTIVE-DEPS cae en los tres mayores que quedaban — music-player,

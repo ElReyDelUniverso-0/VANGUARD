@@ -327,6 +327,13 @@ export function SectionSearch({
         sectionLabel: "PÁGINA GLOBAL · 8 idiomas, cero barreras", icon_color: "text-amber",
         kind: "page", href: "/traductor",
       },
+      {
+        // v358.0 WORLD PULSE — el centro de inteligencia mundial entra al índice total
+        key: "pg:pulsomundial", label: "WORLD PULSE — centro de inteligencia mundial: indicadores, cronología y el índice WPI", short: "world pulse centro inteligencia mundial indicadores banco mundial estadisticas economia sociedad ambiente indice wpi cronologia tendencias",
+        icon: <Activity className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el pulso del planeta con la fuente a la vista", icon_color: "text-amber",
+        kind: "page", href: "/pulso-mundial",
+      },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({
       key: `exp:${e.id}`,

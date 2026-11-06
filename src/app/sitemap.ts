@@ -327,6 +327,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v358.0 WORLD PULSE — el centro de inteligencia mundial: indicadores
+      // reales del Banco Mundial, cronología de cables y el índice WPI
+      url: `${SITE_URL}/pulso-mundial`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       // v214.0 LA PUERTA — el selector de modo + cuenta: la puerta de
       // entrada elegible (VÉRTIGO / EN VIVO / GUERRA HOY / ZONA CERO…)
       url: `${SITE_URL}/modo`,

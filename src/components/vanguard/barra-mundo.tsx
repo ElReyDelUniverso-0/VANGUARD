@@ -5,7 +5,7 @@ import Link from "next/link";
 // y /traductor (los idiomas de Vanguard). Server-safe: solo enlaces,
 // el salto SIEMPRE es un toque del usuario (ley v190).
 
-type Puerta = "mundo" | "espia" | "traductor";
+type Puerta = "mundo" | "espia" | "traductor" | "pulso";
 
 const PUERTAS: Array<{ id: Puerta; href: string; texto: string; clase: string; activa: string }> = [
   {
@@ -28,6 +28,13 @@ const PUERTAS: Array<{ id: Puerta; href: string; texto: string; clase: string; a
     texto: "TRADUCTOR ⇄",
     clase: "text-sky-400/90 hover:text-sky-300",
     activa: "text-sky-300 border-b border-sky-400",
+  },
+  {
+    id: "pulso",
+    href: "/pulso-mundial",
+    texto: "WORLD PULSE ◉",
+    clase: "text-emerald-400/90 hover:text-emerald-300",
+    activa: "text-emerald-300 border-b border-emerald-400",
   },
 ];
 

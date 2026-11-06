@@ -157,6 +157,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:escuchas", "fnt:cables", "fnt:teatros"],
     alias: "espia gobierno radar escuchas osint inteligencia onu oms opcw desarme",
   },
+  {
+    id: "mod:pulsomundial",
+    nombre: "WORLD PULSE",
+    lema: "El centro de inteligencia mundial",
+    descripcion:
+      "El pulso del planeta con la fuente a la vista: 11 indicadores reales del Banco Mundial (CC BY 4.0, serie 2012–2025) para 47 naciones y el agregado mundial, cronología de cables reales por categoría y el WORLD PULSE INDEX — percentiles ponderados con pesos publicados y metodología transparente. Filtros por continente, país, categoría y período. Cero estadísticas inventadas: fecha de actualización, procedencia y limitaciones en cada dato.",
+    categoria: "MUNDO",
+    ruta: "/pulso-mundial",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:indicadores", "fnt:cables"],
+    alias: "world pulse centro inteligencia mundial indicadores estadisticas banco mundial economia diplomacia sociedad ambiente indice wpi tendencias cronologia",
+  },
   // ── SIMULACIÓN ─────────────────────────────────────────────
   {
     id: "mod:ver-guerra",
