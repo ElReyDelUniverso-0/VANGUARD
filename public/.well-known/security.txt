@@ -1,0 +1,12 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# VANGUARD — security.txt (RFC 9116) · ronda EL CENTINELA DE BOLSILLO
+# La puerta oficial de seguridad de la casa — el estándar web que llevan
+# los grandes (github.com, google.com, microsoft.com) para que quien encuentre
+# una vulnerabilidad sepa DÓNDE y CÓMO confesarla.
+# Documento hermano: SECURITY.md (política completa y protocolo de cura).
+# ═══════════════════════════════════════════════════════════════════════════
+Contact: https://github.com/ElReyDelUniverso-0/VANGUARD/security/advisories/new
+Expires: 2027-11-07T00:00:00.000Z
+Preferred-Languages: es, en
+Canonical: https://vanguard-kq9r.vercel.app/.well-known/security.txt
+Policy: https://github.com/ElReyDelUniverso-0/VANGUARD/blob/main/SECURITY.md

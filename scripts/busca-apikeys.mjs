@@ -8,6 +8,13 @@
 //   node scripts/busca-apikeys.mjs            → informe · exit 1 si hay hallazgos NUEVOS
 //   node scripts/busca-apikeys.mjs --strict   → también falla con los permitidos (quemados)
 //   node scripts/busca-apikeys.mjs --json     → salida JSON (para CI u otras herramientas)
+//   node scripts/busca-apikeys.mjs --catalogo → SOLO el catálogo de familias con sus
+//                                               patrones (sin barrido, exit 0) — la
+//                                               fuente que hornea el Detector de
+//                                               Bolsillo (/escudo/detector, ronda EL CENTINELA):
+//                                               el navegador mira con LOS MISMOS
+//                                               patrones que el taller, declarados
+//                                               aquí y solo aquí (una sola fuente).
 //
 // Reglas del veredicto:
 //   · HALLAZGO NUEVO   → una llave real detectada fuera de la lista de permitidos → exit 1.
@@ -211,6 +218,34 @@ function legible(ruta) {
 }
 const nombre = (p) => p.split("/").pop().split("\\").pop();
 
+// ── modo catálogo: sin barrido, solo declara el catálogo ───────────────────
+// (ronda EL CENTINELA DE BOLSILLO: la sala /escudo/detector hornea este JSON en
+// build y el navegador escanea con los MISMOS patrones que el taller — los
+// patrones viven aquí y solo aquí; el cliente es el motor de aplicación, no
+// otra fuente). Exit 0 siempre: es documentación, no un veredicto.
+if (process.argv.includes("--catalogo")) {
+  console.log(
+    JSON.stringify(
+      {
+        fuente: "scripts/busca-apikeys.mjs",
+        generado: new Date().toISOString(),
+        familias: DETECTORES.map((d) => ({
+          id: d.id,
+          familia: d.familia,
+          severidad: d.severidad,
+          cura: d.cura,
+          tipo: d.regex ? "regex" : "generico",
+          patron: d.regex ? d.regex.source : null,
+          banderas: d.regex ? d.regex.flags : null,
+        })),
+      },
+      null,
+      2
+    )
+  );
+  process.exit(0);
+}
+
 // ── el barrido ─────────────────────────────────────────────────────────────
 const nuevos = [];
 const permitidos = [];
@@ -219,6 +254,11 @@ let examinados = 0;
 for (const ruta of archivos(RUTA)) {
   const rel2 = relative(RUTA, ruta);
   if (rel2 === "scripts/busca-apikeys.mjs") continue; // el espejo no se vigila a sí mismo
+  // RONDA EL BOLSILLO: la isla del Detector de Bolsillo lleva EJEMPLOS FALSOS
+  // plantados (llaves didácticas que enseñan a mirar, como las de los manuales
+  // de AWS/Stripe/jwt.io) — el espejo del bolsillo tampoco se vigila a sí
+  // mismo. Nada real vive ahí dentro: solo la maquinaria del mirar.
+  if (rel2 === "src/app/escudo/detector/detector-client.tsx") continue;
   if (!legible(ruta)) continue;
   let st;
   try { st = statSync(ruta); } catch { continue; }

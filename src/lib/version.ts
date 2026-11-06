@@ -5170,6 +5170,42 @@
 //     los nombres de pines quedan como memoria).
 export const APP_VERSION = "v363.0";
 export const APP_CODENAME = "EL ÁLBUM ILUSTRADO";
+// LA RONDA DEL ESCUDO DE BOLSILLO (EL CENTINELA DE BOLSILLO) — ronda temática
+// del blindaje SIN ROLLER, patrón escudo-web b3cb10d: viaja DENTRO de v363.0
+// sin arrebatarle el número a nadie. Lo que llegó en esta ronda:
+// (1) EL DETECTOR DE BOLSILLO (/escudo/detector, nueva sala estática): pega un
+//     texto y mira si lleva API keys o secretos expuestos ANTES de enviarlo a
+//     un chat, un correo o un commit — el mirar pasa ÍNTEGRO en el navegador
+//     (cero fetch, cero red: el texto jamás sale de la sala). Isla sin
+//     effects ni intervalos (ley v335): tres gestos — MIRAR, FORJAR, MEDIR.
+// (2) UNA SOLA FUENTE DE VERDAD: el script del Buscador gana el modo
+//     --catalogo (decla las 10 familias + 2 genéricos CON sus patrones y
+//     cura, exit 0) y la sala lo HORNEA en build (execFileSync → props): el
+//     navegador aplica los MISMOS patrones que el taller — ningún patrón
+//     vive escrito dos veces. El genérico es el puerto honesto de
+//     aplicaGenerico() (env + const/let con nombre que huele + placeholders).
+// (3) LA FORJA DE LLAVES: crypto.getRandomValues del navegador, tres formatos
+//     honestos — 32 bytes hex (256 bits), alfanumérica de 40 signos con
+//     rechazo sin sesgo de módulo (≈238 bits) y frase memorable de 8 palabras
+//     de un diccionario EXACTO de 256 (8 bits por palabra = 64 bits honestos,
+//     declarados como tales).
+// (4) EL MEDIDOR: entropía estimada por alfabeto con veredicto (DÉBIL /
+//     ADMISIBLE / FUERTE / DE ACERO) y aviso cuando la candidata casa con una
+//     familia CONOCIDA del escudo (es una llave filtrada, no una invención).
+// (5) LAS PUERTAS DE LA CASA: security.txt (RFC 9116) en /.well-known/ — el
+//     estándar de github.com/google.com/microsoft.com para confesar
+//     vulnerabilidades (Contact → advisories, Expires 2027, Policy →
+//     SECURITY.md); puerta desde /escudo al bolsillo; /escudo/detector
+//     anunciada en el sitemap; SECURITY.md cuenta las tres piezas.
+// (6) HONESTIDAD DEL ESPEJO: el Buscador no vigila detector-client.tsx (lleva
+//     ejemplos FALSOS de manual plantados para enseñar a mirar — como las
+//     llaves de los manuales de AWS/Stripe/jwt.io); nada real vive ahí.
+// QA de la ronda: tsc 0 repo · eslint 0 tocados · build EXIT 0 (○
+// /escudo/detector en el manifiesto) · escudo: 880 archivos, 1 hallazgo (la
+// reserva declarada) + 3 permitidos — el espejo del bolsillo no sangra ·
+// smoke producción: /escudo/detector 200 con catálogo horneado ·
+// /.well-known/security.txt 200 · /estado 200 · /api/health ok:true ·
+// sitemap con el bolsillo · cero librería nueva.
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
 // v361.0 EL MAPA QUE EXPLICA — cuadragesima-cuarta ronda del autociclo, FASE 2
 // del mandato del Dueño: «también haz mapas como animados explicando conflictos

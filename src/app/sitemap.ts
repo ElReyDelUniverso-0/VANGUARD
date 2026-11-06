@@ -377,6 +377,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.5,
     },
+    {
+      // RONDA EL CENTINELA DE BOLSILLO — el detector de llaves en el
+      // navegador del visitante (patrones horneados del Buscador, cero red)
+      url: `${SITE_URL}/escudo/detector`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
     ...teatros,
     ...noticias,
   ];

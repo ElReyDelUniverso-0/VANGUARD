@@ -2,13 +2,23 @@
 
 Política de seguridad, deudas declaradas y protocolo de cura de VANGUARD.
 Complementa a `AUDITORIA-SEGURIDAD.md` (la auditoría v204 línea a línea), al
-Buscador de Llaves (`npm run escudo`) y a la sala pública **[/escudo](https://vanguard-kq9r.vercel.app/escudo)**.
+Buscador de Llaves (`npm run escudo`) y a las salas públicas
+**[/escudo](https://vanguard-kq9r.vercel.app/escudo)** y
+**[/escudo/detector](https://vanguard-kq9r.vercel.app/escudo/detector)**
+(v363 EL CENTINELA DE BOLSILLO: el mirar del Buscador en el navegador del
+visitante — cero red, el texto pegado jamás sale de la sala).
+
+Las puertas oficiales del blindaje: esta política y el estándar web
+**security.txt (RFC 9116)** servido en
+[/.well-known/security.txt](https://vanguard-kq9r.vercel.app/.well-known/security.txt)
+(el mismo canal que github.com, google.com y microsoft.com publican para
+quien encuentre una vulnerabilidad).
 
 ## Versiones con soporte
 
 | Rama | Estado |
 |------|--------|
-| `main` (v362.0+) | con soporte — todo parche nace aquí y viaja a producción por deploy automático |
+| `main` (v363.0+) | con soporte — todo parche nace aquí y viaja a producción por deploy automático |
 
 ## Cómo reportar una vulnerabilidad
 

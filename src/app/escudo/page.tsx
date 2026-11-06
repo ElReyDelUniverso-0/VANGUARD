@@ -170,6 +170,26 @@ export default function EscudoPage() {
               </p>
               <EscudoEscaner />
             </section>
+
+            <section>
+              <h2 className="text-lg font-bold text-amber-300">
+                El bolsillo del escudo
+              </h2>
+              <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
+                La misma guardia, de viaje:{" "}
+                <Link
+                  href="/escudo/detector"
+                  className="font-mono text-[12px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+                >
+                  /escudo/detector ▸
+                </Link>{" "}
+                — el Detector de Bolsillo mira el texto que pegues con las
+                MISMAS familias (patrones horneados de la fuente única: este
+                script), íntegramente en el navegador del visitante — cero red:
+                el texto jamás sale de la sala. Con forja de llaves fuertes y
+                medidor de entropía.
+              </p>
+            </section>
           </div>
 
           <div className="mt-10 border border-amber-500/30 bg-amber-500/5 rounded-md p-4 text-sm text-zinc-400">
