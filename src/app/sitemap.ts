@@ -363,6 +363,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "yearly",
       priority: 0.3,
     },
+    {
+      // LA SALA DEL ESCUDO — el buscador de API keys de la casa (ley v204)
+      url: `${SITE_URL}/escudo`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
+      // EL ESTADO DE LA CASA — el latido público del server (health v27/v84)
+      url: `${SITE_URL}/estado`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
     ...teatros,
     ...noticias,
   ];

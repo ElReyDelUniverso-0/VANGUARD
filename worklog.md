@@ -5593,3 +5593,19 @@ La ronda cuadragésima-quinta del autociclo despertó con un LEGADO: la sesión 
 **Leyes intactas**: v125 v176 v189 v190 v200 v201 v204 v211 v213 v214 v216 v244 v302 v312 v322 v324 v326 v328 v330 v332 v333 v334 v335 v336 v339 v340 v341 v342 v343 v344 v345 v346 v347 v348 v349 v350 v351 v352 v353 v354 v355 v356 v357 v358 v359 v360 v361.
 
 **Canon al cierre de la ronda**: código (este commit) · worklog (este commit) · suite 351/351 · BD canon md5 38121cfc… = blob de HEAD (doble lectura ESTABLE) · ok · cero zombis por puerto.
+
+---
+Task ID: escudo-blindaje-1
+Agent: Z.ai (GLM) — el Juez del universo
+Task: «Busca 10 apikes y copia otros sitio web y agregalo a vanguard y copia codigo y demas cosas importantes» — el Buscador de Llaves corre de nuevo (874 archivos, 3 hallazgos reales) y la casa recibe los módulos que le faltaban del género de los mejores sitios: fuente única del secreto, muro en la mirada caro, página de estado pública, cocinas fuera del rastreo y el blindaje documentado.
+
+Work Log:
+- Corrida del escudo antes de operar: 874 archivos, 10 familias, 3 hallazgos reales (el JWT de Z.ai ×3: neurona/route.ts:198 · ia-gateway.ts:17 · zai-server.ts:15) + 3 permitidos (deudas declaradas).
+- LA FUENTE ÚNICA DEL TOKEN: `src/lib/zai-token.ts` (nuevo) — el JWT se lee PRIMERO del entorno (`ZAI_TOKEN`) y la reserva quemada queda SOLO ahí, una vez; los tres archivos importan la fuente. El escudo pasa de 3 hallazgos a 1 (la reserva declarada) y `escudo-env` deja la guía exacta de la rotación: AUTH_SECRET · OWNER_PASSWORD · ZAI_TOKEN.
+- EL MURO DE LA MIRADA: `GET /api/escudo` vive tras el muro de la fortaleza (`muro()`+`claveCliente()` de lib/fortaleza.ts — los mismos muros de denuncias/memes/ambassadors/live, cero librería nueva): 6 miradas por IP y minuto, porque la mirada ejecuta un proceso que recorre el árbol completo.
+- EL ESTADO DE LA CASA: `/estado` (nueva, server-rendered, patrón /escudo) — el latido público: un clic consulta `GET /api/health` (v27/v84) y pinta proceso, BD up·slow·down, latencia del eco, memoria, versión y tiempo de vida; isla `estado-latido.tsx` sin effects ni intervalos (ley v335), el watchdog de la casa ya hace la guardia automática.
+- LAS PUERTAS: `public/robots.txt` gana `Disallow: /api/` (las cocinas fuera del rastreo) y `sitemap.ts` anuncia `/escudo` y `/estado`. Lección honesta del smoke: el primer borrador escribió un `src/app/robots.ts` nuevo y la prueba de humo cazó que la casa YA tenía robots propio (con per-bot y Sitemap desde v34) que lo tapaba — el duplicado murió antes de viajar y la regla se le añadió al archivo real.
+- EL BLINDAJE DOCUMENTADO: `SECURITY.md` (nuevo, patrón GitHub) — política de reporte, las deudas declaradas a la vista, el protocolo de cura del Buscador y el paso a paso de la rotación `ZAI_TOKEN`; `.env.example` documenta `ZAI_TOKEN` y `ESCUDO_WEB`; el README cuenta el workflow de CI HONESTO (el empujador no tiene scope workflow: se activa a mano desde la web de GitHub).
+
+Stage Summary:
+- tsc 0 repo · eslint 0 tocados · build EXIT 0 (○ /estado · ○ /escudo · ○ /robots.txt · ƒ /api/escudo en el manifiesto) · escudo: 879 archivos, 1 hallazgo (la reserva declarada — antes 3) + 3 permitidos · escudo-env: 3 reservas = la guía de la rotación · smoke de producción: /estado 200 y pinta · /escudo 200 · /api/health ok:true db:up v362.0 · /sitemap.xml lleva las dos puertas nuevas · /api/escudo 403 honesto sin llave · muro VERDE ante la cámara (6×200 → la 7ª 429) · sin roller de versión (ronda temática del blindaje, patrón escudo-web b3cb10d) · leyes intactas · cero zombis por puerto.

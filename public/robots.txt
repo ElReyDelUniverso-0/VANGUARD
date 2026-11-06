@@ -19,6 +19,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+# v204 EL ESCUDO — las cocinas no se rastrean: las rutas /api/ no son páginas
+# públicas y algunas ejecutan trabajo caro (la mirada del escudo, el núcleo).
+Disallow: /api/
 
 # Mapa del sitio para rastreo diario de la portada en vivo
 # v34: apunta al dominio real (vanguard.world aún sin DNS)

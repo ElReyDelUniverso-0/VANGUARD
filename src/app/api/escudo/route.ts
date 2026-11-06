@@ -3,6 +3,7 @@ import { execFile } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { muro, claveCliente } from "@/lib/fortaleza";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // EL ESCUDO EN LA WEB — /api/escudo (complemento de la ley v204 EL ESCUDO).
@@ -16,6 +17,8 @@ import { promisify } from "node:util";
 //     ahí el escudo de verdad corre en el taller y en CI.
 //   · Además del informe, entrega el catálogo VIVO de familias que el propio
 //     script declara en su --json (una sola fuente de verdad: el script).
+//   · La mirada vive tras el MURO de la fortaleza (6 por IP y minuto): el
+//     proceso que recorre el árbol es caro y la puerta abierta no es un DoS.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const dynamic = "force-dynamic";
@@ -49,7 +52,7 @@ type InformeEscudo = {
   exito: boolean;
 };
 
-export async function GET() {
+export async function GET(req: Request) {
   const enDesarrollo = process.env.NODE_ENV !== "production";
   if (!enDesarrollo && process.env.ESCUDO_WEB !== "1") {
     return NextResponse.json(
@@ -59,6 +62,17 @@ export async function GET() {
           "El escudo solo mira desde dentro: disponible en desarrollo o con ESCUDO_WEB=1 definido en el entorno.",
       },
       { status: 403 }
+    );
+  }
+
+  // EL MURO DE LA MIRADA (ley v204): la mirada ejecuta un proceso que recorre
+  // el árbol completo (caro) — 6 miradas por IP y minuto bastan. Los mismos
+  // muros de la casa (denuncias, memes, ambassadors, live): cero librería nueva.
+  const veredictoMuro = muro(`escudo-mirada:${claveCliente(req)}`, 6, 60_000);
+  if (!veredictoMuro.permitido) {
+    return NextResponse.json(
+      { ok: false, motivo: "Demasiadas miradas seguidas — espera un momento" },
+      { status: 429 }
     );
   }
 

@@ -5,6 +5,8 @@
 // NEURONA, el CONSEJO y LA MENTE compartan una sola vía fiable.
 // SOLO importar desde rutas API / componentes de servidor.
 
+import { ZAI_TOKEN } from "@/lib/zai-token";
+
 const GATEWAY = "https://internal-api.z.ai/v1/chat/completions";
 
 const GATEWAY_HEADERS: Record<string, string> = {
@@ -13,8 +15,8 @@ const GATEWAY_HEADERS: Record<string, string> = {
   "X-Z-AI-From": "Z",
   "X-Chat-Id": "chat-5935f975-d405-4770-a7b3-a5fccd315d6a",
   "X-User-Id": "a77d6405-6649-4dc4-ba56-08dfd765627e",
-  "X-Token":
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTc3ZDY0MDUtNjY0OS00ZGM0LWJhNTYtMDhkZmQ3NjU2MjdlIiwiY2hhdF9pZCI6ImNoYXQtNTkzNWY5NzUtZDQwNS00NzcwLWE3YjMtYTVmY2NkMzE1ZDZhIiwicGxhdGZvcm0iOiJ6YWkifQ.b57YZe6sGj-HZsCcRx1WV_vtDtekbsK6teHkbof462U",
+  // v204: el token viaja desde la fuente única (lib/zai-token.ts) — entorno primero.
+  "X-Token": ZAI_TOKEN,
 };
 
 export type Msg = { role: "assistant" | "user"; content: string };

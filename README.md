@@ -33,7 +33,7 @@ npm run escudo -- --strict   # también falla con los permitidos (quemados)
 npm run escudo -- --json     # salida JSON para CI
 ```
 
-Vigila **10 familias** (OpenAI/Anthropic · Google · AWS · GitHub · Telegram · Stripe · Slack · llaves privadas/Firebase · credenciales en URLs de conexión · JWT firmados) más 2 genéricos de reserva (asignaciones de secretos y literales hex de alta entropía). Corre automáticamente en cada push vía GitHub Actions (`.github/workflows/escudo-apikeys.yml`). Los secretos ya públicos y documentados viajan en la lista `PERMITIDOS` del script con su motivo — vaciarla es parte del P0 de la auditoría.
+Vigila **10 familias** (OpenAI/Anthropic · Google · AWS · GitHub · Telegram · Stripe · Slack · llaves privadas/Firebase · credenciales en URLs de conexión · JWT firmados) más 2 genéricos de reserva (asignaciones de secretos y literales hex de alta entropía). El workflow de CI (`.github/workflows/escudo-apikeys.yml`) está listo para copiar: GitHub exige crear el archivo desde la web o un token con scope `workflow` — el empujador habitual no lo tiene, así que la casa lo activa a mano. Los secretos ya públicos y documentados viajan en la lista `PERMITIDOS` del script con su motivo — vaciarla cierra el P0 de la auditoría.
 
 ### La sala del escudo en la web
 
@@ -49,7 +49,23 @@ npm run escudo-env -- --strict   # también falla con variables usadas sin decla
 npm run escudo-env -- --json     # salida JSON para CI
 ```
 
-Tres miradas: **(A)** variables usadas sin declarar en ningún `.env*` (guía de la rotación pendiente); **(B)** declaradas sin uso (config muerta); **(C)** reservas hardcodeadas `process.env.X ?? "literal"` donde X huele a secreto (delito siempre — hoy caza las 2 de `src/lib/auth-server.ts`). Valores enmascarados, Node puro, cero dependencias.
+Tres miradas: **(A)** variables usadas sin declarar en ningún `.env*` (guía de la rotación pendiente); **(B)** declaradas sin uso (config muerta); **(C)** reservas hardcodeadas `process.env.X ?? "literal"` donde X huele a secreto (delito siempre — hoy caza las 2 de `src/lib/auth-server.ts` y la reserva única del token Z.ai). Valores enmascarados, Node puro, cero dependencias.
+
+### La fuente única del token (`src/lib/zai-token.ts`)
+
+El JWT de la gateway Z.ai vivía hardcodeado en tres sitios a la vez (neurona, ia-gateway, zai-server). Ahora los tres importan `ZAI_TOKEN` de la fuente única, que lee PRIMERO la variable de entorno `ZAI_TOKEN` y conserva el literal quemado como último recurso mientras la rotación cierra la deuda. El paso a paso completo — y el protocolo de cura de toda llave — vive en [`SECURITY.md`](SECURITY.md).
+
+### El estado de la casa (`/estado`)
+
+**[/estado](https://vanguard-kq9r.vercel.app/estado)** — el latido público, el patrón de página de estado de toda casa seria viviendo DENTRO de Vanguard: un clic consulta `GET /api/health` (v27/v84) y pinta proceso, base de datos (`up`/`slow`/`down`), latencia del eco, memoria, versión y tiempo de vida. Sin intervalos ni sondeos automáticos (ley v335) — el watchdog de la casa ya hace la guardia.
+
+### El mapa y las puertas (`robots.txt`)
+
+El `robots.txt` de la casa (`public/robots.txt`, con sus bloques por bot y el `Sitemap:` desde la v34) gana una regla: las cocinas (`/api/`) quedan fuera del rastreo — no son páginas públicas y algunas ejecutan trabajo caro. El `sitemap.ts` anuncia ahora también `/escudo` y `/estado`.
+
+### El muro de la mirada
+
+`GET /api/escudo` corre detrás del muro de la fortaleza (`muro()` de `src/lib/fortaleza.ts`, los mismos muros anti-flood de denuncias, memes, ambassadors y live): **6 miradas por IP y minuto** — el proceso que recorre el árbol completo es caro y la puerta abierta no puede ser un DoS andando.
 
 ## Reclutamiento
 
