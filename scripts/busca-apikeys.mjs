@@ -268,7 +268,20 @@ const estricto = process.argv.includes("--strict");
 const comoJson = process.argv.includes("--json");
 
 if (comoJson) {
-  console.log(JSON.stringify({ examinados, nuevos, permitidos, exito: nuevos.length === 0 && (!estricto || permitidos.length === 0) }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        examinados,
+        // catálogo VIVO de familias (fuente de verdad) — la sala /escudo lo pinta
+        familias: DETECTORES.map((d) => ({ id: d.id, familia: d.familia, severidad: d.severidad, cura: d.cura })),
+        nuevos,
+        permitidos,
+        exito: nuevos.length === 0 && (!estricto || permitidos.length === 0),
+      },
+      null,
+      2
+    )
+  );
 } else {
   const linea = "════════════════════════════════════════════════════════════";
   console.log(linea);
