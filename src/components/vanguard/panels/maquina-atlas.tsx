@@ -17,8 +17,12 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Hourglass, ScrollText } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { HISTORICAL_WARS, type HistoricalWar } from "@/lib/game-data";
+// v363.0 LA CASA DESCUBRE — abrir la ficha de una guerra del archivo
+// revela su carta en el álbum ilustrado (el sello conserva la primera fecha)
+import { useColeccionVanguard } from "@/lib/fichas-coleccion-data";
 
 const COLOR_ERA: Record<HistoricalWar["era"], string> = {
   ANTIGUA: "#F5C542",
@@ -42,6 +46,21 @@ const W_FRANJA = 960;
 
 export function MaquinaAtlas() {
   const [sel, setSel] = useState<number | null>(null);
+
+  // ── v363.0 EL ATLAS DESCUBRE — abrir la ficha de una guerra revela su
+  // carta en el álbum (VG-H-…); el álbum jamás bloquea el atlas
+  const elegir = (i: number) => {
+    const nuevaSel = i === sel ? null : i;
+    setSel(nuevaSel);
+    if (nuevaSel != null) {
+      try {
+        const w = HISTORICAL_WARS[nuevaSel];
+        if (useColeccionVanguard.getState().descubrir(`hist:${w.id}`, "atlas")) {
+          toast.success(`CARTA VG-H-${String(nuevaSel + 1).padStart(2, "0")} DESCUBIERTA — ${w.name.toUpperCase()}`);
+        }
+      } catch { /* el álbum jamás bloquea el atlas */ }
+    }
+  };
 
   // la escala del tiempo se deriva de la FUENTE (guardia v234: cero años a mano)
   const { min, max } = useMemo(() => {
@@ -98,7 +117,7 @@ export function MaquinaAtlas() {
               <button
                 key={w.id}
                 data-testid={`maquina-atlas-barra-${i}`}
-                onClick={() => setSel(i === sel ? null : i)}
+                onClick={() => elegir(i)}
                 aria-label={`${w.name} (${anioTxt(w.yearStart)} – ${anioTxt(w.yearEnd)})`}
                 className={cn(
                   "group relative flex h-5 items-center rounded transition-transform active:scale-[0.99]",

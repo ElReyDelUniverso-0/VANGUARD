@@ -32,9 +32,13 @@ import {
   Plane, AlertTriangle, Coins, Landmark, MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import type { GuerraActiva } from "@/lib/guerras-activas-data";
 import { COLOR_ESTADO } from "@/lib/guerras-activas-data";
 import { ROSTROS, type Rostro } from "@/lib/personas-data";
+// v363.0 LA CASA DESCUBRE — visitar la mesa de un teatro revela a sus
+// líderes en el álbum ilustrado (el sello conserva la primera fecha)
+import { useColeccionVanguard } from "@/lib/fichas-coleccion-data";
 
 // v362: el escenario 3D viaja en SU PROPIO CHUNK (ley v193) — three.js no
 // pesa en la primera pintura de la máquina; la sala de guerra ya lo usa así
@@ -130,6 +134,25 @@ export function MaquinaMundo({ guerra }: { guerra: GuerraActiva }) {
   const lideres = useMemo(() => lideresDeGuerra(guerra), [guerra]);
   const hitoActual = guerra.hitos[Math.min(hito, totalHitos - 1)] ?? guerra.hitos[0];
   const ciudadSel = ciudad != null ? guerra.ciudades[ciudad] : null;
+
+  // ── v363.0 LA MESA DEL TEATRO DESCUBRE — entrar al teatro revela a los
+  // rostros del poder publicados en su mesa; el álbum jamás bloquea la máquina
+  const mesaAnunciada = useRef("");
+  useEffect(() => {
+    try {
+      const nuevas: string[] = [];
+      for (const l of lideres) {
+        if (useColeccionVanguard.getState().descubrir(`lider:${l.id}`, "mesa")) nuevas.push(l.nombre);
+      }
+      if (nuevas.length && mesaAnunciada.current !== guerra.id) {
+        mesaAnunciada.current = guerra.id;
+        toast.success(`MESA DEL TEATRO · ${nuevas.length} EXPEDIENTE${nuevas.length > 1 ? "S" : ""} ENTRAN AL ÁLBUM`, {
+          description: nuevas.join(" · "),
+          duration: 5000,
+        });
+      }
+    } catch { /* el álbum jamás bloquea la máquina del tiempo */ }
+  }, [lideres, guerra.id]);
 
   return (
     <div className="space-y-3" data-testid="maquina-mundo">

@@ -22,7 +22,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Camera, Layers, Satellite, Stamp, X } from "lucide-react";
+import { Camera, Layers, Satellite, Stamp, X, User, Hourglass, ScanLine } from "lucide-react";
 import { pedirNoticias } from "@/lib/noticias-cache";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,6 +42,22 @@ import {
   type FichaGuerra,
   type RarezaFicha,
 } from "@/lib/fichas-guerra-data";
+// v363.0 EL ÁLBUM ILUSTRADO — las familias nuevas del álbum: los LÍDERES
+// (catálogo del poder v130) y la HISTORIA (archivo v166), derivadas de sus
+// fuentes reales — cero catálogos duplicados, la rareza es una regla publicada
+import {
+  FICHAS_LIDERES,
+  FICHAS_HISTORIA,
+  RAREZA_ALBUM,
+  ERA_HEX,
+  ETIQUETA_ERA,
+  ESCANES_DIA,
+  useColeccionVanguard,
+  selloAlbumFecha,
+  type FichaLider,
+  type FichaHistoria,
+  type FamiliaAlbum,
+} from "@/lib/fichas-coleccion-data";
 // v183.0 LA GLORIA — presumir, exclusivo, emocionante, adicto
 import { Sparkles, Share2 } from "lucide-react";
 import { useGloria, ctxDe, proximoTitulo, TITULOS_GLORIA, type SelloDorado } from "@/lib/gloria";
@@ -86,6 +102,12 @@ export function FichasPanel() {
   const [lectura, setLectura] = useState<CableLectura | null>(null);
   const [placa, setPlaca] = useState<GuiaFicha | null>(null); // la placa GTA al descubrir en la sesión
   const coleccion = useColeccionFichas();
+  // v363.0 EL ÁLBUM ILUSTRADO — TRES familias viajan en el álbum: los
+  // conflictos vivos (v176), los LÍDERES del poder y la HISTORIA del archivo
+  const [familia, setFamilia] = useState<FamiliaAlbum>("conflictos");
+  const coleccionV = useColeccionVanguard();
+  const [detalleLider, setDetalleLider] = useState<FichaLider | null>(null);
+  const [detalleHistoria, setDetalleHistoria] = useState<FichaHistoria | null>(null);
   const guiasRef = useRef<GuiaFicha[]>([]);
   const placaVistaRef = useRef<Set<string>>(new Set());
 
@@ -150,6 +172,62 @@ export function FichasPanel() {
     () => guias.filter((g) => g.rareza === "leyenda").length,
     [guias],
   );
+
+  // ── v363.0 los contadores de las familias nuevas ──
+  const nLideres = useMemo(
+    () => FICHAS_LIDERES.filter((f) => !!coleccionV.descubiertas[f.key]).length,
+    [coleccionV.descubiertas],
+  );
+  const nHistoria = useMemo(
+    () => FICHAS_HISTORIA.filter((f) => !!coleccionV.descubiertas[f.key]).length,
+    [coleccionV.descubiertas],
+  );
+  const nLideresLeyenda = useMemo(() => FICHAS_LIDERES.filter((f) => f.rareza === "leyenda").length, []);
+  const nHistoriaLeyenda = useMemo(() => FICHAS_HISTORIA.filter((f) => f.rareza === "leyenda").length, []);
+
+  // ── v363.0 EL ESCÁNER DE FAMILIA — tres turnos al día por familia, la pila real ──
+  const escanearFamilia = (f: "lideres" | "historia") => {
+    try { sfx.click(); } catch { /* el silencio no bloquea */ }
+    const etiqueta = f === "lideres" ? "DE PODER" : "DEL ARCHIVO";
+    const usados = coleccionV.escaneosHoy(f);
+    if (usados >= ESCANES_DIA) {
+      toast.error(`EL ESCÁNER ${etiqueta} AGOTÓ SUS ${ESCANES_DIA} TURNOS DE HOY — VUELVE MAÑANA`);
+      return;
+    }
+    const r = coleccionV.escanear(f);
+    if (!r) {
+      toast.success(f === "lideres"
+        ? `EL DOSSIER DEL PODER ESTÁ COMPLETO — ${FICHAS_LIDERES.length}/${FICHAS_LIDERES.length}`
+        : `EL ARCHIVO DE LA HISTORIA ESTÁ COMPLETO — ${FICHAS_HISTORIA.length}/${FICHAS_HISTORIA.length}`);
+      return;
+    }
+    if (r.nueva) {
+      try { sfx.reward(); } catch { /* coleccionar suena si el aparato deja */ }
+      toast.success(`CARTA ${r.ficha.serie} DESCUBIERTA — ${r.ficha.nombre.toUpperCase()}`);
+    }
+    if (f === "lideres") setDetalleLider(r.ficha as FichaLider);
+    else setDetalleHistoria(r.ficha as FichaHistoria);
+  };
+
+  // ── ABRIR UNA FICHA DE LÍDER — descubierta se abre; sellada confiesa ──
+  const abrirLider = (f: FichaLider) => {
+    try { sfx.click(); } catch { /* el silencio no bloquea */ }
+    if (!coleccionV.descubiertas[f.key]) {
+      toast.error(`EXPEDIENTE ${f.serie} SELLADO — USA EL ESCÁNER DE PODER O VISITA LA MESA DE UN TEATRO`);
+      return;
+    }
+    setDetalleLider(f);
+  };
+
+  // ── ABRIR UNA FICHA DE HISTORIA — descubierta se abre; sellada confiesa ──
+  const abrirHistoria = (f: FichaHistoria) => {
+    try { sfx.click(); } catch { /* el silencio no bloquea */ }
+    if (!coleccionV.descubiertas[f.key]) {
+      toast.error(`CARTA ${f.serie} SELLADA — USA EL ESCÁNER DEL ARCHIVO O EL ATLAS DE LA MÁQUINA DEL TIEMPO`);
+      return;
+    }
+    setDetalleHistoria(f);
+  };
 
   // ── ABRIR UNA FICHA — descubrir, sonar, la placa de conflicto ──
   const abrir = (g: GuiaFicha) => {
@@ -264,6 +342,45 @@ export function FichasPanel() {
         color="violet"
       />
 
+      {/* ══════ v363.0 LAS TRES FAMILIAS DEL ÁLBUM ══════ */}
+      <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Familias del álbum" data-testid="album-familias">
+        <button
+          onClick={() => { try { sfx.click(); } catch { /* el silencio no bloquea */ } setFamilia("conflictos"); }}
+          aria-pressed={familia === "conflictos"}
+          data-testid="album-familia-conflictos"
+          className={cn(
+            "flex items-center gap-1.5 border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-colors",
+            familia === "conflictos" ? "border-red-400/60 bg-red-400/15 text-red-200" : "border-border/50 text-muted-foreground hover:border-amber-hud/50",
+          )}
+        >
+          <Layers className="h-3 w-3" /> CONFLICTOS · {FICHAS_GUERRA.length}
+        </button>
+        <button
+          onClick={() => { try { sfx.click(); } catch { /* el silencio no bloquea */ } setFamilia("lideres"); }}
+          aria-pressed={familia === "lideres"}
+          data-testid="album-familia-lideres"
+          className={cn(
+            "flex items-center gap-1.5 border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-colors",
+            familia === "lideres" ? "border-violet-400/60 bg-violet-400/15 text-violet-200" : "border-border/50 text-muted-foreground hover:border-amber-hud/50",
+          )}
+        >
+          <User className="h-3 w-3" /> LÍDERES · {FICHAS_LIDERES.length}
+        </button>
+        <button
+          onClick={() => { try { sfx.click(); } catch { /* el silencio no bloquea */ } setFamilia("historia"); }}
+          aria-pressed={familia === "historia"}
+          data-testid="album-familia-historia"
+          className={cn(
+            "flex items-center gap-1.5 border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-colors",
+            familia === "historia" ? "border-amber-hud/60 bg-amber-hud/15 text-amber" : "border-border/50 text-muted-foreground hover:border-amber-hud/50",
+          )}
+        >
+          <Hourglass className="h-3 w-3" /> HISTORIA · {FICHAS_HISTORIA.length}
+        </button>
+      </div>
+
+      {familia === "conflictos" && (
+      <>
       {/* ══════ EL ÁLBUM — progreso de la colección ══════ */}
       <div className="grid grid-cols-3 gap-2">
         <div className="border border-violet-400/40 bg-card p-2 text-center hud-panel">
@@ -348,6 +465,80 @@ export function FichasPanel() {
           ))}
         </div>
       )}
+      </>
+      )}
+
+      {/* ══════ v363.0 LÍDERES — el dossier del poder (catálogo v130) ══════ */}
+      {familia === "lideres" && (
+        <>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="border border-violet-400/40 bg-card p-2 text-center hud-panel">
+              <p className="text-lg font-bold font-mono leading-none text-violet-300" data-testid="album-lideres-progreso">{nLideres}/{FICHAS_LIDERES.length}</p>
+              <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">EXPEDIENTES</p>
+            </div>
+            <div className="border border-amber-hud/40 bg-card p-2 text-center hud-panel">
+              <p className="text-lg font-bold font-mono leading-none text-amber">{nLideresLeyenda}</p>
+              <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">LEYENDAS · PODER ≥95</p>
+            </div>
+            <div className="border border-border/60 bg-card p-2 text-center hud-panel">
+              <p className="text-lg font-bold font-mono leading-none text-cyan-hud">{coleccionV.escaneosHoy("lideres")}/{ESCANES_DIA}</p>
+              <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">ESCANEOS HOY</p>
+            </div>
+          </div>
+          <button
+            onClick={() => escanearFamilia("lideres")}
+            data-testid="escaner-lideres"
+            className="flex w-full items-center justify-center gap-2 border border-violet-400/50 bg-violet-400/10 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-violet-200 transition-colors hover:bg-violet-400/20 active:scale-[0.99]"
+          >
+            <ScanLine className="h-4 w-4" /> ESCÁNER DE PODER — REVELA UN EXPEDIENTE
+          </button>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            LA REGLA DE LA CASA: la rareza la pone el PODER publicado del catálogo del poder — ≥95 LEYENDA · ≥88 ÉPICA · ≥80 RARA.
+            Y la casa también descubre: visita la mesa de un teatro en LA MÁQUINA DEL TIEMPO y sus rostros entran al álbum.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="album-lideres">
+            {FICHAS_LIDERES.map((f) => (
+              <TarjetaLider key={f.key} ficha={f} sello={coleccionV.descubiertas[f.key] ?? null} onAbrir={() => abrirLider(f)} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* ══════ v363.0 HISTORIA — el archivo en cartas (v166) ══════ */}
+      {familia === "historia" && (
+        <>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="border border-amber-hud/40 bg-card p-2 text-center hud-panel">
+              <p className="text-lg font-bold font-mono leading-none text-amber" data-testid="album-historia-progreso">{nHistoria}/{FICHAS_HISTORIA.length}</p>
+              <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">CONFLICTOS</p>
+            </div>
+            <div className="border border-amber-hud/40 bg-card p-2 text-center hud-panel">
+              <p className="text-lg font-bold font-mono leading-none text-amber">{nHistoriaLeyenda}</p>
+              <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">LEYENDAS · ≥100 AÑOS</p>
+            </div>
+            <div className="border border-border/60 bg-card p-2 text-center hud-panel">
+              <p className="text-lg font-bold font-mono leading-none text-cyan-hud">{coleccionV.escaneosHoy("historia")}/{ESCANES_DIA}</p>
+              <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">ESCANEOS HOY</p>
+            </div>
+          </div>
+          <button
+            onClick={() => escanearFamilia("historia")}
+            data-testid="escaner-historia"
+            className="flex w-full items-center justify-center gap-2 border border-amber-hud/50 bg-amber-hud/10 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-amber transition-colors hover:bg-amber-hud/20 active:scale-[0.99]"
+          >
+            <ScanLine className="h-4 w-4" /> ESCÁNER DEL ARCHIVO — REVELA UNA GUERRA
+          </button>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            LA REGLA DE LA CASA: la rareza la pone la DURACIÓN publicada del conflicto — ≥100 años LEYENDA · ≥20 ÉPICA · ≥8 RARA.
+            Y el atlas de la MÁQUINA DEL TIEMPO también descubre: abre la ficha de una guerra del archivo y su carta entra al álbum.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="album-historia">
+            {FICHAS_HISTORIA.map((f) => (
+              <TarjetaHistoria key={f.key} ficha={f} sello={coleccionV.descubiertas[f.key] ?? null} onAbrir={() => abrirHistoria(f)} />
+            ))}
+          </div>
+        </>
+      )}
 
       {/* ══════ EL DETALLE — la carta grande (portal al body, lección v116) ══════ */}
       <DetalleFicha
@@ -376,6 +567,18 @@ export function FichasPanel() {
           onFin={() => setPlaca(null)}
         />
       )}
+
+      {/* ══════ v363.0 LOS DETALLES DE LAS FAMILIAS NUEVAS ══════ */}
+      <DetalleLider
+        ficha={detalleLider}
+        sello={detalleLider ? (coleccionV.descubiertas[detalleLider.key] ?? null) : null}
+        onCerrar={() => setDetalleLider(null)}
+      />
+      <DetalleHistoria
+        ficha={detalleHistoria}
+        sello={detalleHistoria ? (coleccionV.descubiertas[detalleHistoria.key] ?? null) : null}
+        onCerrar={() => setDetalleHistoria(null)}
+      />
 
       {/* LA SALA DE LECTURA — el lector de la casa (v116) */}
       <LectorNoticia cable={lectura} onCerrar={() => setLectura(null)} />
@@ -732,6 +935,299 @@ function DetalleFicha({
         {/* la nota honesta de la colección */}
         <p className="px-2 pt-2 pb-6 text-center font-mono text-[8.5px] tracking-[0.16em] text-white/35">
           LA RAREZA DE ESTA FICHA SE RECALCULA CADA 60S CON LOS CABLES REALES DE /api/news — SIN SEÑALES, LA CARTA DUERME EN SILENCIO
+        </p>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// v363.0 LAS FAMILIAS NUEVAS — LÍDERES (el poder, v130) e HISTORIA
+// (el archivo, v166). Tarjetas selladas que el escáner, la mesa del
+// teatro o el atlas revelan — cero invención: todo sale de la fuente.
+// ════════════════════════════════════════════════════════════════
+
+function TarjetaLider({
+  ficha,
+  sello,
+  onAbrir,
+}: {
+  ficha: FichaLider;
+  sello: { ts: number; via: string } | null;
+  onAbrir: () => void;
+}) {
+  const hex = RAREZA_ALBUM[ficha.rareza].hex;
+  const selloTs = sello?.ts ?? null;
+  const selloVia = sello?.via ?? "";
+  const descubierta = selloTs != null;
+  return (
+    <button
+      onClick={onAbrir}
+      data-testid={`ficha-lider-${ficha.serie}`}
+      aria-label={descubierta ? `Expediente ${ficha.serie}: ${ficha.nombre}` : `Expediente sellado ${ficha.serie}`}
+      className={cn(
+        "group flex flex-col border bg-card text-left transition-transform active:scale-[0.99]",
+        descubierta ? "border-border/60" : "border-dashed border-border/40",
+      )}
+      style={descubierta ? { boxShadow: `0 0 26px -14px ${hex}55` } : undefined}
+    >
+      <div className="h-[3px] w-full" style={{ background: descubierta ? hex : "transparent", boxShadow: descubierta ? `0 0 10px ${hex}55` : "none" }} aria-hidden />
+      <div className="flex items-center gap-2 px-3 pt-2">
+        <span className="text-xl leading-none" aria-hidden>{descubierta ? ficha.bandera : "▯"}</span>
+        <div className="min-w-0 flex-1">
+          {descubierta ? (
+            <>
+              <p className="truncate text-[13px] font-black leading-tight text-foreground">{ficha.nombre}</p>
+              <p className="truncate font-mono text-[9px] text-muted-foreground">{ficha.cargo}</p>
+            </>
+          ) : (
+            <>
+              <p className="truncate text-[13px] font-black leading-tight text-muted-foreground">EXPEDIENTE SELLADO</p>
+              <p className="truncate font-mono text-[9px] text-muted-foreground/70">EL PODER ESPERA EN EL ARCHIVO</p>
+            </>
+          )}
+        </div>
+        <span className="shrink-0 font-mono text-[9px] tracking-[0.18em] text-muted-foreground">{ficha.serie}</span>
+      </div>
+      {descubierta && selloTs != null ? (
+        <>
+          <div className="relative mt-2 space-y-1.5 px-3">
+            <BarraFicha etiqueta="PODER" valor={ficha.poder / 100} valorTxt={`${ficha.poder}/100`} hex={hex} />
+          </div>
+          <div className="relative mt-2 px-3">
+            <p className="font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted-foreground">{ficha.mandato}</p>
+            <p className="mt-0.5 truncate text-[10px] text-foreground/80">{ficha.sede} · {ficha.ciudad}</p>
+          </div>
+          {ficha.frase && (
+            <p className="relative mx-3 mt-2 border-l-2 pl-2 text-[10.5px] italic leading-snug text-foreground/70" style={{ borderColor: `${hex}88` }}>
+              «{ficha.frase}»
+            </p>
+          )}
+          <div className="relative mt-2.5 flex items-center justify-between gap-2 border-t border-border/50 px-3 py-2">
+            <span className="flex shrink-0 items-center gap-1 border px-1.5 py-0.5 font-mono text-[8.5px] font-bold uppercase tracking-[0.14em]" style={{ color: hex, borderColor: `${hex}55`, background: `${hex}10` }}>
+              <Stamp className="h-2.5 w-2.5" /> {selloAlbumFecha(selloTs)}
+            </span>
+            <span className="truncate font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">VÍA {selloVia.toUpperCase()}</span>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-1 flex-col items-center justify-center gap-1.5 py-6">
+          <User className="h-7 w-7 text-muted-foreground/40" aria-hidden />
+          <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground/60">SELLADO</span>
+          <span className="px-2 text-center font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground/40">EL ESCÁNER O LA MESA DEL TEATRO LO REVELA</span>
+        </div>
+      )}
+    </button>
+  );
+}
+
+function TarjetaHistoria({
+  ficha,
+  sello,
+  onAbrir,
+}: {
+  ficha: FichaHistoria;
+  sello: { ts: number; via: string } | null;
+  onAbrir: () => void;
+}) {
+  const hexEra = ERA_HEX[ficha.era];
+  const hexRareza = RAREZA_ALBUM[ficha.rareza].hex;
+  const selloTs = sello?.ts ?? null;
+  const selloVia = sello?.via ?? "";
+  const descubierta = selloTs != null;
+  return (
+    <button
+      onClick={onAbrir}
+      data-testid={`ficha-historia-${ficha.serie}`}
+      aria-label={descubierta ? `Conflicto histórico ${ficha.serie}: ${ficha.nombre}` : `Conflicto histórico sellado ${ficha.serie}`}
+      className={cn(
+        "group flex flex-col border bg-card text-left transition-transform active:scale-[0.99]",
+        descubierta ? "border-border/60" : "border-dashed border-border/40",
+      )}
+      style={descubierta ? { boxShadow: `0 0 26px -14px ${hexEra}55` } : undefined}
+    >
+      <div className="h-[3px] w-full" style={{ background: descubierta ? hexEra : "transparent", boxShadow: descubierta ? `0 0 10px ${hexEra}55` : "none" }} aria-hidden />
+      <div className="flex items-center gap-2 px-3 pt-2">
+        <div className="min-w-0 flex-1">
+          {descubierta ? (
+            <p className="truncate text-[13px] font-black leading-tight text-foreground">{ficha.nombre.toUpperCase()}</p>
+          ) : (
+            <p className="truncate text-[13px] font-black leading-tight text-muted-foreground">SIGLO SELLADO</p>
+          )}
+          <p className="truncate font-mono text-[9px] text-muted-foreground">
+            {descubierta ? `${ficha.aniosTxt} · ${ficha.region}` : "EL ARCHIVO GUARDA LA GUERRA"}
+          </p>
+        </div>
+        <span className="shrink-0 font-mono text-[9px] tracking-[0.18em] text-muted-foreground">{ficha.serie}</span>
+      </div>
+      {descubierta && selloTs != null ? (
+        <>
+          <div className="relative mt-2 flex flex-wrap gap-1 px-3">
+            <span className="border px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.14em]" style={{ color: hexEra, borderColor: `${hexEra}55`, background: `${hexEra}12` }}>
+              {ETIQUETA_ERA[ficha.era]}
+            </span>
+            <span className="border px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.14em]" style={{ color: hexRareza, borderColor: `${hexRareza}55`, background: `${hexRareza}12` }}>
+              {RAREZA_ALBUM[ficha.rareza].label}
+            </span>
+            <span className="border border-border/60 px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] text-muted-foreground">
+              {ficha.duracionAnios} AÑOS
+            </span>
+          </div>
+          <p className="relative mt-2 line-clamp-3 px-3 text-[11px] leading-snug text-foreground/85">{ficha.resumen}</p>
+          <p className="relative mt-1.5 truncate px-3 font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted-foreground">
+            {ficha.bandos.join("  vs  ")}
+          </p>
+          <div className="relative mt-2.5 flex items-center justify-between gap-2 border-t border-border/50 px-3 py-2">
+            <span className="flex shrink-0 items-center gap-1 border px-1.5 py-0.5 font-mono text-[8.5px] font-bold uppercase tracking-[0.14em]" style={{ color: hexEra, borderColor: `${hexEra}55`, background: `${hexEra}10` }}>
+              <Stamp className="h-2.5 w-2.5" /> {selloAlbumFecha(selloTs)}
+            </span>
+            <span className="truncate font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground">VÍA {selloVia.toUpperCase()}</span>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-1 flex-col items-center justify-center gap-1.5 py-6">
+          <Hourglass className="h-7 w-7 text-muted-foreground/40" aria-hidden />
+          <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground/60">SELLADA</span>
+          <span className="px-2 text-center font-mono text-[8px] uppercase tracking-[0.16em] text-muted-foreground/40">EL ESCÁNER O EL ATLAS DE LA MÁQUINA LA REVELA</span>
+        </div>
+      )}
+    </button>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════
+// v363.0 LOS DETALLES — la carta grande de las familias nuevas
+// (portal al body, misma lección v116 del detalle de conflictos)
+// ════════════════════════════════════════════════════════════════
+
+function DetalleLider({
+  ficha,
+  sello,
+  onCerrar,
+}: {
+  ficha: FichaLider | null;
+  sello: { ts: number; via: string } | null;
+  onCerrar: () => void;
+}) {
+  if (!ficha) return null;
+  const hex = RAREZA_ALBUM[ficha.rareza].hex;
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[240] overflow-y-auto select-none"
+      style={{ background: "rgba(2,2,4,0.9)", backdropFilter: "blur(6px)" }}
+      role="dialog"
+      aria-label={`Expediente ${ficha.serie}: ${ficha.nombre}`}
+    >
+      <div className="mx-auto min-h-full w-full max-w-2xl px-3 py-4">
+        <div className="overflow-hidden border bg-card" style={{ borderColor: `${hex}66`, boxShadow: `0 0 40px -10px ${hex}44` }}>
+          <div className="relative flex items-center justify-between gap-2 px-3 py-2" style={{ background: `linear-gradient(90deg, ${hex}18 0%, transparent 70%)` }}>
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="font-mono text-[10px] tracking-[0.24em] text-muted-foreground">{ficha.serie}</span>
+              <span className="border px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.18em]" style={{ color: hex, borderColor: `${hex}55`, background: `${hex}12` }}>
+                {RAREZA_ALBUM[ficha.rareza].label} · {RAREZA_ALBUM[ficha.rareza].nota}
+              </span>
+            </div>
+            <button onClick={onCerrar} className="flex h-9 w-9 shrink-0 items-center justify-center border border-border/60 text-muted-foreground hover:text-foreground" aria-label="Cerrar expediente">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="px-3 pt-1">
+            <div className="flex items-center gap-3">
+              <span className="text-5xl leading-none" aria-hidden>{ficha.bandera}</span>
+              <div className="min-w-0">
+                <h3 className="font-sans text-2xl font-black uppercase leading-[0.94] tracking-tight sm:text-3xl">{ficha.nombre}</h3>
+                <p className="mt-1 text-[11px] font-semibold text-foreground/80">{ficha.cargo}</p>
+                <p className="truncate font-mono text-[9px] text-muted-foreground">{ficha.organizacion}</p>
+              </div>
+            </div>
+            <div className="mt-3 h-[4px] w-[46%] rounded-sm" style={{ background: hex, boxShadow: `0 0 14px ${hex}77` }} aria-hidden />
+          </div>
+          <div className="relative mt-3 space-y-1.5 px-3">
+            <BarraFicha etiqueta="PODER" valor={ficha.poder / 100} valorTxt={`${ficha.poder}/100`} hex={hex} />
+          </div>
+          <div className="m-3 border border-border/60 bg-secondary/30 p-3">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground">EL EXPEDIENTE DEL PODER</p>
+            <dl className="mt-1.5 space-y-1 text-[11px]">
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">MANDATO</dt><dd className="text-foreground/90">{ficha.mandato}</dd></div>
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">SEDE</dt><dd className="text-foreground/90">{ficha.sede} · {ficha.ciudad}</dd></div>
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">PAÍS</dt><dd className="text-foreground/90">{ficha.pais}</dd></div>
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-violet-300">FRASE</dt><dd className="italic text-foreground/90">«{ficha.frase}»</dd></div>
+              {sello && (
+                <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-violet-300">SELLO</dt><dd className="font-mono text-[10px] text-violet-300">EN TU COLECCIÓN DESDE EL {selloAlbumFecha(sello.ts).toUpperCase()} · VÍA {sello.via.toUpperCase()}</dd></div>
+              )}
+            </dl>
+          </div>
+        </div>
+        <p className="px-2 pt-2 pb-6 text-center font-mono text-[8.5px] tracking-[0.16em] text-white/35">
+          EL EXPEDIENTE SALE DEL CATÁLOGO DEL PODER DE LA CASA (v130) — LA REGLA DE RAREZA ES PÚBLICA: PODER ≥95 LEYENDA · ≥88 ÉPICA · ≥80 RARA
+        </p>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+function DetalleHistoria({
+  ficha,
+  sello,
+  onCerrar,
+}: {
+  ficha: FichaHistoria | null;
+  sello: { ts: number; via: string } | null;
+  onCerrar: () => void;
+}) {
+  if (!ficha) return null;
+  const hexEra = ERA_HEX[ficha.era];
+  const hexRareza = RAREZA_ALBUM[ficha.rareza].hex;
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[240] overflow-y-auto select-none"
+      style={{ background: "rgba(2,2,4,0.9)", backdropFilter: "blur(6px)" }}
+      role="dialog"
+      aria-label={`Conflicto histórico ${ficha.serie}: ${ficha.nombre}`}
+    >
+      <div className="mx-auto min-h-full w-full max-w-2xl px-3 py-4">
+        <div className="overflow-hidden border bg-card" style={{ borderColor: `${hexEra}66`, boxShadow: `0 0 40px -10px ${hexEra}44` }}>
+          <div className="relative flex items-center justify-between gap-2 px-3 py-2" style={{ background: `linear-gradient(90deg, ${hexEra}18 0%, transparent 70%)` }}>
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="font-mono text-[10px] tracking-[0.24em] text-muted-foreground">{ficha.serie}</span>
+              <span className="border px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.18em]" style={{ color: hexEra, borderColor: `${hexEra}55`, background: `${hexEra}12` }}>
+                {ETIQUETA_ERA[ficha.era]}
+              </span>
+              <span className="border px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.18em]" style={{ color: hexRareza, borderColor: `${hexRareza}55`, background: `${hexRareza}12` }}>
+                {RAREZA_ALBUM[ficha.rareza].label}
+              </span>
+            </div>
+            <button onClick={onCerrar} className="flex h-9 w-9 shrink-0 items-center justify-center border border-border/60 text-muted-foreground hover:text-foreground" aria-label="Cerrar conflicto histórico">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="px-3 pt-1">
+            <h3 className="font-sans text-2xl font-black uppercase leading-[0.94] tracking-tight sm:text-3xl">{ficha.nombre}</h3>
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              {ficha.aniosTxt} · {ficha.duracionAnios} AÑOS · {ficha.region}
+            </p>
+            <div className="mt-2 h-[4px] w-[46%] rounded-sm" style={{ background: hexEra, boxShadow: `0 0 14px ${hexEra}77` }} aria-hidden />
+          </div>
+          <div className="px-3 pt-3">
+            <p className="text-[12px] leading-relaxed text-foreground/90">{ficha.resumen}</p>
+          </div>
+          <div className="m-3 border border-border/60 bg-secondary/30 p-3">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground">LA FICHA DEL CONFLICTO</p>
+            <dl className="mt-1.5 space-y-1 text-[11px]">
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">BANDOS</dt><dd className="text-foreground/90">{ficha.bandos.join("  vs  ")}</dd></div>
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">DESENLACE</dt><dd className="text-foreground/90">{ficha.desenlace}</dd></div>
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-red-300">BAJAS</dt><dd className="text-foreground/90">{ficha.bajas}</dd></div>
+              <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-amber">POR QUÉ IMPORTA</dt><dd className="leading-relaxed text-foreground/90">{ficha.significado}</dd></div>
+              {sello && (
+                <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-violet-300">SELLO</dt><dd className="font-mono text-[10px] text-violet-300">EN TU COLECCIÓN DESDE EL {selloAlbumFecha(sello.ts).toUpperCase()} · VÍA {sello.via.toUpperCase()}</dd></div>
+              )}
+            </dl>
+          </div>
+        </div>
+        <p className="px-2 pt-2 pb-6 text-center font-mono text-[8.5px] tracking-[0.16em] text-white/35">
+          LA GUERRA SALE DEL ARCHIVO HISTÓRICO DE LA CASA (v166) — LA REGLA DE RAREZA ES PÚBLICA: DURACIÓN ≥100 AÑOS LEYENDA · ≥20 ÉPICA · ≥8 RARA
         </p>
       </div>
     </div>,

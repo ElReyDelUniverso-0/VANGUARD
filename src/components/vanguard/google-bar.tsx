@@ -63,6 +63,50 @@ const APP_HEX: Record<string, string> = {
   violet: "#B48CFF",
 };
 
+// v363.0 EL MENÚ ILUSTRADO — cada tile del lanzador lleva una pieza de la
+// biblioteca propia de la casa (public/ilustraciones, 107 piezas — la misma
+// medicina de las cabeceras v360): un div con backgroundImage — sin <img>,
+// sin layout shift, aria-hidden, con velo de legibilidad para que el nombre
+// siempre se lea. La pieza de cada sección es SU lugar de la casa.
+const ILU_DE_SECCION: Record<string, string> = {
+  hangar: "hangar.jpg",
+  inteligencia: "espionaje.jpg",
+  inicio: "noticias.jpg",
+  juego: "arcade.jpg",
+  mercado: "mercados.jpg",
+  archivo: "historia.jpg",
+  comando: "gobierno.jpg",
+  observatorio: "cielos.jpg",
+  estrategia: "mapa.jpg",
+  emisora: "canales.jpg",
+  oscsuro: "verdades.jpg",
+  creadores: "creador.jpg",
+  social: "foros.jpg",
+  sistema: "centinela.jpg",
+  experimental: "simulador.jpg",
+  arquitecto: "constructor.jpg",
+};
+const ILU_INV = "expedientes.jpg";   // INVESTIGAR — el dossier de la agencia
+const ILU_CINE = "salas.jpg";         // MENÚ DE CINE — la ciudad viva de salas
+
+/** el fondo ilustrado del tile: la pieza de la casa + el velo que la hace legible */
+function FondoIlustrado({ pieza }: { pieza: string }) {
+  return (
+    <>
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ backgroundImage: `url(/ilustraciones/${pieza})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.38 }}
+      />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "linear-gradient(180deg, rgba(4,5,9,0.62) 0%, rgba(4,5,9,0.22) 42%, rgba(4,5,9,0.86) 100%)" }}
+      />
+    </>
+  );
+}
+
 export function GoogleBar({
   active,
   onChange,
@@ -347,22 +391,25 @@ export function GoogleBar({
               </button>
             </div>
             <div className="grid grid-cols-3 gap-1.5 p-3 pt-1 max-h-[62vh] overflow-y-auto thin-scroll">
-              {/* INVESTIGAR como primera aplicación del lanzador */}
+              {/* INVESTIGAR como primera aplicación del lanzador — ilustrada (v363) */}
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.02 }}
                 onClick={() => { sfx.tab(); setLauncher(false); onChange("expedientes"); }}
-                className="app-tile flex flex-col items-center gap-1.5 rounded-xl border border-amber-hud/60 bg-amber-hud/15 hover:bg-amber-hud/30 transition-colors py-3.5 px-1"
+                className="app-tile relative flex flex-col items-center justify-end gap-1.5 overflow-hidden rounded-xl border border-amber-hud/60 hover:bg-amber-hud/30 transition-colors py-3.5 px-1"
+                style={{ background: "rgba(10,12,18,0.6)" }}
               >
-                <span className="w-9 h-9 rounded-lg flex items-center justify-center text-amber" style={{ background: "linear-gradient(150deg, #FFC94D33, rgba(6,6,10,0.9))", boxShadow: "0 0 18px #FFC94D44" }}>
+                <FondoIlustrado pieza={ILU_INV} />
+                <span className="relative z-10 w-9 h-9 rounded-lg flex items-center justify-center text-amber" style={{ background: "linear-gradient(150deg, #FFC94D44, rgba(6,6,10,0.9))", boxShadow: "0 0 18px #FFC94D44" }}>
                   <Fingerprint className="w-4.5 h-4.5" />
                 </span>
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-amber text-center leading-tight">{t("gbar.inv")}</span>
+                <span className="relative z-10 text-[9px] font-mono font-bold uppercase tracking-wider text-amber text-center leading-tight" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>{t("gbar.inv")}</span>
               </motion.button>
 
               {SECTIONS.map((s, i) => {
                 const hex = APP_HEX[s.color] ?? "#FFC94D";
+                const ilu = ILU_DE_SECCION[s.key] ?? null;
                 return (
                   <motion.button
                     key={s.key}
@@ -371,34 +418,37 @@ export function GoogleBar({
                     transition={{ delay: 0.03 + i * 0.025 }}
                     onClick={() => { sfx.tab(); setLauncher(false); onChange(s.tabs[0].key); }}
                     title={s.desc}
-                    className="app-tile flex flex-col items-center gap-1.5 rounded-xl border border-border/50 hover:border-amber-hud/50 transition-colors py-3.5 px-1"
+                    className="app-tile relative flex flex-col items-center justify-end gap-1.5 overflow-hidden rounded-xl border border-border/50 hover:border-amber-hud/50 transition-colors py-3.5 px-1"
                     style={{ background: "rgba(10,12,18,0.6)" }}
                   >
+                    {ilu && <FondoIlustrado pieza={ilu} />}
                     <span
-                      className="w-9 h-9 rounded-lg flex items-center justify-center"
-                      style={{ color: hex, background: `linear-gradient(150deg, ${hex}2E, rgba(6,6,10,0.9))`, boxShadow: `0 0 16px ${hex}33` }}
+                      className="relative z-10 w-9 h-9 rounded-lg flex items-center justify-center"
+                      style={{ color: hex, background: `linear-gradient(150deg, ${hex}40, rgba(6,6,10,0.9))`, boxShadow: `0 0 16px ${hex}44` }}
                     >
                       {s.icon}
                     </span>
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight" style={{ color: `${hex}CC` }}>
+                    <span className="relative z-10 text-[9px] font-mono font-bold uppercase tracking-wider text-muted-foreground text-center leading-tight" style={{ color: `${hex}DD`, textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>
                       {t(`sec.${s.key}`)}
                     </span>
                   </motion.button>
                 );
               })}
 
-              {/* MENÚ DE CINE — el mega-menú cinematográfico de v78 sigue vivo */}
+              {/* MENÚ DE CINE — el mega-menú cinematográfico de v78 sigue vivo, ilustrado (v363) */}
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.03 + SECTIONS.length * 0.025 }}
                 onClick={() => { sfx.tab(); setLauncher(false); onOpenMenu(); }}
-                className="app-tile flex flex-col items-center gap-1.5 rounded-xl border border-electric-hud/50 bg-electric-hud/10 hover:bg-electric-hud/25 transition-colors py-3.5 px-1"
+                className="app-tile relative flex flex-col items-center justify-end gap-1.5 overflow-hidden rounded-xl border border-electric-hud/50 hover:bg-electric-hud/25 transition-colors py-3.5 px-1"
+                style={{ background: "rgba(10,12,18,0.6)" }}
               >
-                <span className="w-9 h-9 rounded-lg flex items-center justify-center text-electric" style={{ background: "linear-gradient(150deg, #38BDF82E, rgba(6,6,10,0.9))", boxShadow: "0 0 16px #38BDF833" }}>
+                <FondoIlustrado pieza={ILU_CINE} />
+                <span className="relative z-10 w-9 h-9 rounded-lg flex items-center justify-center text-electric" style={{ background: "linear-gradient(150deg, #38BDF844, rgba(6,6,10,0.9))", boxShadow: "0 0 16px #38BDF844" }}>
                   <Clapperboard className="w-4.5 h-4.5" />
                 </span>
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-electric text-center leading-tight">{t("gbar.cine")}</span>
+                <span className="relative z-10 text-[9px] font-mono font-bold uppercase tracking-wider text-electric text-center leading-tight" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}>{t("gbar.cine")}</span>
               </motion.button>
             </div>
             <div className="px-4 py-2 border-t border-border/40 text-[8px] font-mono uppercase tracking-[0.25em] text-muted-foreground/60 text-center">

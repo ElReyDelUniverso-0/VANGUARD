@@ -5134,8 +5134,42 @@
 //     health y la puerta del conflicto sirviendo) + rodillos de versión y
 //     codename en los VALORES de los asertos históricos (ley v312: los
 //     nombres de pines quedan como memoria).
-export const APP_VERSION = "v362.0";
-export const APP_CODENAME = "EL TIEMPO REAL";
+// v363.0 EL ÁLBUM ILUSTRADO — cuadragesima-sexta ronda del autociclo, el
+// nuevo mandato del Dueño: «que agregues las cartas, más únicas y más
+// variedad; también el menú de Vanguard, feo y aburrido». DOS frentes:
+// (1) EL ÁLBUM CRECE DE UNA FAMILIA A TRES (fichas-coleccion-data.ts,
+//     nuevo; fichas-panel.tsx con selector de familia): los 11 CONFLICTOS
+//     vivos de v176 + LOS LÍDERES (34 expedientes derivados del catálogo
+//     del poder v130 — ROSTROS.map, cero nombres copiados) + LA HISTORIA
+//     (las 10 guerras del archivo v166 — HISTORICAL_WARS.map). La rareza
+//     es una REGLA PUBLICADA, no una suposición: líder → PODER del
+//     catálogo (≥95 LEYENDA · ≥88 ÉPICA · ≥80 RARA); historia → DURACIÓN
+//     publicada del conflicto (≥100 años LEYENDA · ≥20 ÉPICA · ≥8 RARA).
+//     EL ESCÁNER DE FAMILIA (3 turnos/día por familia) revela fichas
+//     selladas de la pila real — y LA CASA DESCUBRE: visitar la mesa de
+//     un teatro en la máquina del tiempo revela a sus líderes (maquina-
+//     mundo.tsx), abrir la ficha de una guerra del atlas revela su carta
+//     (maquina-atlas.tsx). Persistencia vg363-coleccion con el escudo +
+//     registro en rehidratador.tsx (ley v171/v172/v176). El cuarteto
+//     pinneado de v319 queda intacto (las 11 VG, gloria 13 títulos,
+//     api/news, y los textos /13 y LOS 13 TÍTULOS SON TUYOS).
+// (2) EL MENÚ ILUSTRADO (google-bar.tsx): los 18 tiles del lanzador
+//     (INVESTIGAR + 16 secciones + MENÚ DE CINE) visten las piezas de la
+//     biblioteca propia (public/ilustraciones, 107 piezas — hangar,
+//     espionaje, noticias, arcade, mercados, historia, gobierno, cielos,
+//     mapa, canales, verdades, creador, foros, centinela, simulador,
+//     constructor, expedientes, salas): backgroundImage puro — sin <img>,
+//     sin layout shift, aria-hidden, velo de legibilidad para que el
+//     nombre siempre se lea. Clase .app-tile, aria-labels y la ruta QA
+//     del arnés (launcher→tile→píldora) intactas.
+// SUITE: +2 pines (EL ÁLBUM ILUSTRADO estático: familias derivadas de sus
+//     fuentes sin duplicar catálogos, reglas de rareza publicadas, escáner
+//     con turno diario, rehidratador registrado, cuarteto v319 intacto,
+//     launcher ilustrado con .app-tile vivo — y vivo: home firma v363,
+//     health respalda) + rodillo v362.0 → v363.0 en los VALORES (ley v312:
+//     los nombres de pines quedan como memoria).
+export const APP_VERSION = "v363.0";
+export const APP_CODENAME = "EL ÁLBUM ILUSTRADO";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
 // v361.0 EL MAPA QUE EXPLICA — cuadragesima-cuarta ronda del autociclo, FASE 2
 // del mandato del Dueño: «también haz mapas como animados explicando conflictos

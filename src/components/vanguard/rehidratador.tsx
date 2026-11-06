@@ -27,6 +27,9 @@ import { useFavoritos } from "@/lib/favoritos-store";
 import { useTelemetriaParidad } from "@/lib/telemetria-paridad";
 // v176.0: el álbum de LAS FICHAS DE GUERRA entra a la disciplina de rehidratación
 import { useColeccionFichas } from "@/lib/fichas-guerra-data";
+// v363.0: el álbum ILUSTRADO (líderes + historia) entra a la fila — sin este
+// registro su cerradura bloquearía la persistencia (mismo patrón v171/v172/v176)
+import { useColeccionVanguard } from "@/lib/fichas-coleccion-data";
 // v183.0: LA GLORIA (sellos dorados, títulos, vitrina, racha del cazador) entra a la fila
 import { useGloria } from "@/lib/gloria";
 // v232.0: la CENTRAL DE ALARMAS entra a la disciplina de rehidratación
@@ -88,6 +91,11 @@ export function Rehidratador() {
     rehidratar(useColeccionFichas)
       .then(() => marcarHidratado("vg176-fichas"))
       .catch(() => marcarHidratado("vg176-fichas"));
+    // v363.0 EL ÁLBUM ILUSTRADO: sin este registro la cerradura del escudo
+    // bloquearía la persistencia de líderes e historia (mismo patrón v171/v172/v176)
+    rehidratar(useColeccionVanguard)
+      .then(() => marcarHidratado("vg363-coleccion"))
+      .catch(() => marcarHidratado("vg363-coleccion"));
     // v183.0 LA GLORIA: sin este registro la cerradura del escudo bloquearía
     // los sellos dorados, los títulos y la vitrina (mismo patrón v171/v172/v176)
     rehidratar(useGloria)
