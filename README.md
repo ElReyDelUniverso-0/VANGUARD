@@ -23,6 +23,18 @@ Plataforma global de conflictos **100% gratis, en español, sin registro**. Entr
 
 Next.js 16 · TypeScript · Tailwind 4 · Prisma (PostgreSQL/Supabase) · Socket.io (Render) · globe.gl · Zustand · Vercel.
 
+## Escudo — buscador de API keys
+
+VANGUARD revisa su propio árbol de trabajo buscando llaves y secretos filtrados (complemento de la ley v204 EL ESCUDO):
+
+```bash
+npm run escudo            # informe · exit 1 si hay hallazgos NUEVOS
+npm run escudo -- --strict   # también falla con los permitidos (quemados)
+npm run escudo -- --json     # salida JSON para CI
+```
+
+Vigila **10 familias** (OpenAI/Anthropic · Google · AWS · GitHub · Telegram · Stripe · Slack · llaves privadas/Firebase · credenciales en URLs de conexión · JWT firmados) más 2 genéricos de reserva (asignaciones de secretos y literales hex de alta entropía). Corre automáticamente en cada push vía GitHub Actions (`.github/workflows/escudo-apikeys.yml`). Los secretos ya públicos y documentados viajan en la lista `PERMITIDOS` del script con su motivo — vaciarla es parte del P0 de la auditoría.
+
 ## Reclutamiento
 
 Cada agente tiene un código VGD-XXXXXX: compartir el enlace trae +50 monedas de bienvenida al invitado y +100 monedas al reclutador por cada 3 invitaciones. La misión de campaña es **100 enlaces y 100 jugadores** — progreso en vivo en [/mision](https://vanguard-kq9r.vercel.app/mision).
