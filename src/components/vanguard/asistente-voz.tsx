@@ -24,6 +24,7 @@ import {
   restablecerAjustes,
   puedeHablarSolo,
   vocesLista,
+  aparatoSinEspanol, // v360 LA VOZ QUE ENTIENDE — el panel confiesa el aparato sin español
   type AjustesVoz,
   type VozLista,
 } from "@/lib/voces-agentes";
@@ -184,6 +185,18 @@ const TXT = {
     ru: "Устройство ещё не дало голоса — повторите позже.",
     zh: "设备尚未列出语音 — 请稍后重试。",
   } as Record<string, string>,
+  // v360 LA VOZ QUE ENTIENDE — el aparato tiene voces pero NINGUNA en español:
+  // la casa no presta boca de otro idioma y lo confiesa con instrucción real.
+  vSinEspanol: {
+    es: "Tu aparato no tiene voces en español: Vanguard no leerá español con boca extranjera. Instala una voz en español en tu sistema o elige una aquí arriba.",
+    en: "Your device has no Spanish voices: Vanguard won't read Spanish with a foreign mouth. Install a Spanish voice in your system or pick one above.",
+    pt: "O aparelho não tem vozes em espanhol: o Vanguard não lerá espanhol com voz estrangeira. Instale uma voz em espanhol ou escolha uma acima.",
+    fr: "Votre appareil n'a pas de voix espagnoles : Vanguard ne lira pas l'espagnol avec une voix étrangère. Installez une voix espagnole ou choisissez-en une ci-dessus.",
+    de: "Dein Gerät hat keine spanischen Stimmen: Vanguard liest Spanisch nicht mit fremder Stimme. Installiere eine spanische Stimme oder wähle oben eine.",
+    it: "Il dispositivo non ha voci spagnole: Vanguard non leggerà lo spagnolo con voce straniera. Installa una voce spagnola o scegline una sopra.",
+    ru: "На устройстве нет испанских голосов: Vanguard не будет читать по-испански чужим голосом. Установите испанский голос или выберите выше.",
+    zh: "设备没有西班牙语语音：Vanguard 不会用外语口音朗读西班牙语。请在系统中安装西班牙语语音或在上方选择。",
+  } as Record<string, string>,
   vFrase: {
     es: "Así suena tu ayudante ahora. Voz clara, suave y a tu servicio, comandante.",
     en: "This is how your assistant sounds now. Clear, soft, at your service, commander.",
@@ -245,6 +258,9 @@ export function AsistenteVoz() {
   const [panelVoz, setPanelVoz] = useState(false);
   const [ajustes, setAjustes] = useState<AjustesVoz>(AJUSTES_INICIALES);
   const [voces, setVoces] = useState<VozLista[]>([]);
+  // v360 LA VOZ QUE ENTIENDE — el catálogo llegó y NINGUNA voz es española:
+  // se deriva del estado `voces` (fresco tras cada sondeo del panel)
+  const sinEspanol = voces.length > 0 && aparatoSinEspanol();
 
   const reconRef = useRef<Reconocedor | null>(null);
   const estadoRef = useRef<Estado>("dormido");
@@ -629,6 +645,13 @@ export function AsistenteVoz() {
                 </select>
                 {voces.length === 0 && (
                   <p className="mt-1 text-[10px] leading-snug text-muted-foreground">{TXT.vSinVoces[lang] || TXT.vSinVoces.es}</p>
+                )}
+                {/* v360 LA VOZ QUE ENTIENDE — aparato con voces pero sin español:
+                    la casa lo confiesa en vez de prestar boca extranjera */}
+                {voces.length > 0 && sinEspanol && (
+                  <p className="mt-1.5 rounded-lg border border-amber-hud/35 bg-amber-hud/10 px-2 py-1.5 text-[10px] leading-snug text-amber" data-testid="voz-sin-espanol">
+                    {TXT.vSinEspanol[lang] || TXT.vSinEspanol.es}
+                  </p>
                 )}
               </div>
               <div className="grid grid-cols-[70px_1fr_44px] items-center gap-2">

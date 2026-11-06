@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
+import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v211.0 EL VÉRTIGO — el up next (fórmula YouTube) en la sala de lectura
 import { SiguienteChip } from "@/components/noticia/siguiente-chip";
@@ -378,7 +379,9 @@ export default async function NoticiaPage({
         </div>
       </div>
 
-      <article className="max-w-3xl mx-auto px-5 py-8">
+      {/* v360 LA CASA ILUSTRADA — la noticia se lee con luz, no con negro plano */}
+      <article className="relative overflow-hidden max-w-3xl mx-auto px-5 py-8">
+        <IlustracionCabecera src="/ilustraciones/noticias.jpg" />
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`font-mono text-[10px] uppercase tracking-widest border rounded px-1.5 py-0.5 ${TAG_COLOR[tag] || TAG_COLOR.INFO}`}

@@ -31,6 +31,20 @@
 // (hablarAgente / pararVoces / probarVoces / VOCES_ROSTER) para
 // que cinemática, puerta de Vigo, portadas, briefing y despacho
 // sigan hablando sin tocar una línea.
+//
+// v360.0 LA VOZ QUE ENTIENDE — la queja del Dueño: «cada vez que habla
+// lee cosas sin sentido o lee en otro idioma». Dos causas reales, dos
+// curas en el PUNTO ÚNICO (aquí pasa toda la voz de la casa):
+//  ① SINSENTIDO — cables crudos con URLs, markdown, emojis, hashtags y
+//    tokens-código (EN.GHG.CO2.PC.CE.AR5, mod:identidad) llegaban AL
+//    MOTOR TAL CUAL: el aparato los deletrea letra a letra. CURA:
+//    sanearParaVoz() limpia todo texto ANTES de trocearlo — los diez
+//    llamadores heredan la cura sin tocar una línea.
+//  ② OTRO IDIOMA — en aparatos sin voces españolas, vozDeAgente()
+//    entregaba cacheVoces[0] (¡cualquier idioma!) y el español se leía
+//    con boca extranjera. CURA: sin español NO hay voz prestada — la
+//    emisión viaja sin voice y con lang es-… (el motor elige su mejor
+//    boca) y el panel lo CONFIESA honesto (aparatoSinEspanol()).
 // ============================================================
 
 import { isMuted } from "./sound";
@@ -351,8 +365,11 @@ export function vozDeAgente(id: VozAgenteId): SpeechSynthesisVoice | null {
   }
   const pool = vocesEspanol();
   if (pool.length === 0) {
-    // sin español: cualquier voz del aparato (pitch/rate siguen separando)
-    return cacheVoces[0] || null;
+    // v360 LA VOZ QUE ENTIENDE: sin voces españolas NO se presta una boca
+    // de otro idioma (leer español con voz inglesa = el «lee en otro
+    // idioma» del Dueño). La emisión viaja SIN voice y con lang es-… — el
+    // motor elige su mejor boca — y el panel lo confiesa (aparatoSinEspanol).
+    return null;
   }
   const perfil = VOCES_ROSTER[id];
   const puntua = (v: SpeechSynthesisVoice): number => {
@@ -363,6 +380,51 @@ export function vozDeAgente(id: VozAgenteId): SpeechSynthesisVoice | null {
   const orden = [...pool].sort((a, b) => puntua(b) - puntua(a));
   // REPARTO: si hay ≥2 voces, cada agente toma una DIFERENTE de forma estable
   return orden[perfil.offset % orden.length] || null;
+}
+
+// ── v360 EL SANADOR — lo que NO se lee jamás ──
+// El motor lee LITERAL: una URL la deletrea («hache tee tee pee…»), un
+// token-código lo espelluja, el markdown lo confiesa en voz alta. Todo
+// texto que entra a la boca de la casa pasa por aquí una sola vez.
+
+const RE_URL = /\b(?:https?:\/\/|www\.)\S+/gi;
+const RE_ENLACE_MD = /\[([^\]]+)\]\([^)]*\)/g;
+const RE_MARKDOWN = /[#*`_~|]{1,}/g;
+const RE_EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}\u{20E3}]/gu;
+const RE_HASHTAG = /#(\p{L}[\p{L}\p{N}_]*)/gu;
+const RE_TOKEN_CODIGO = /\b[\p{L}\p{N}-]*(?:[._][\p{L}\p{N}-]+){2,}\b/gu;   // EN.GHG.CO2.PC · a_b_c
+const RE_CLAVE_DOS_PUNTOS = /\b\p{L}{2,}:\p{L}{2,}\b/gu;                    // mod:identidad
+const RE_BALAS = /[\u{2022}\u{25AA}\u{25AB}\u{25CF}\u{25CB}\u{00A6}\u{25B6}\u{25B8}\u{25C0}\u{25C2}\u{2713}\u{2714}\u{2715}\u{2716}\u{00D7}\u{26A0}\u{2500}-\u{257F}]+/gu; // •▪►▸✓✕⚠─
+const RE_SIGNO_REPETIDO = /([!¡?¿.;,])\1{1,}/g;
+
+/**
+ * v360: deja SOLO lo que una boca humana diría. Los diez llamadores
+ * (asistente, briefing, cinemática, despacho, bitácora, noticiero,
+ * emisora, lector de cables…) heredan la cura sin tocar una línea.
+ */
+export function sanearParaVoz(texto: string): string {
+  let t = texto || "";
+  if (!t) return "";
+  t = t.replace(RE_URL, " ");
+  t = t.replace(RE_ENLACE_MD, "$1");
+  t = t.replace(RE_HASHTAG, "$1");
+  t = t.replace(RE_MARKDOWN, " ");
+  t = t.replace(RE_EMOJI, " ");
+  t = t.replace(RE_BALAS, " ");
+  t = t.replace(RE_TOKEN_CODIGO, " ");
+  t = t.replace(RE_CLAVE_DOS_PUNTOS, " ");
+  t = t.replace(RE_SIGNO_REPETIDO, "$1");
+  return t.replace(/\s+/g, " ").replace(/\s+([,.!?;:])/g, "$1").trim();
+}
+
+/**
+ * v360: ¿este aparato NO tiene ninguna voz en español? El panel lo
+ * confiesa honesto en vez de prestar una boca de otro idioma.
+ */
+export function aparatoSinEspanol(): boolean {
+  ponerListener();
+  if (cacheVoces.length === 0) return false; // sin catálogo aún: no acusar sin prueba
+  return vocesEspanol().length === 0;
 }
 
 // ── TROCEO — la cura del «se traba»: Chrome corta emisiones largas ──
@@ -411,7 +473,8 @@ function acortar(frase: string): string[] {
 }
 
 export function trocearTexto(texto: string): string[] {
-  const limpio = (texto || "").replace(/\s+/g, " ").trim();
+  // v360: PRIMERO el sanador — sinsentido y códigos no llegan a la boca
+  const limpio = sanearParaVoz(texto);
   if (!limpio) return [];
   const trozos: string[] = [];
   for (const f of partirFrases(limpio)) trozos.push(...acortar(f));

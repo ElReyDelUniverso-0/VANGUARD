@@ -4,6 +4,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
+import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import { TEATROS } from "@/lib/teatros";
 import { colorTension, haceDe } from "@/lib/mundo";
 import {
@@ -152,7 +153,9 @@ export default async function EspiaPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="espia" />
 
-        <header className="max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
+        {/* v360 LA CASA ILUSTRADA — el espionaje entra como baño de luz lateral */}
+        <header className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
+          <IlustracionCabecera src="/ilustraciones/espionaje.jpg" />
           <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="font-display text-2xl sm:text-3xl font-black tracking-wide text-soft">
               MODO ESPÍA <span className="text-cyan-300">◈</span>

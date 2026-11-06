@@ -5,6 +5,7 @@ import path from "node:path";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
+import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import {
   type InstantaneaPulso,
   rankingWpi,
@@ -143,8 +144,9 @@ export default async function PulsoMundialPage() {
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="pulso" />
 
-        {/* ── cabecera del centro ── */}
-        <header className="max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
+        {/* ── cabecera del centro — v360 LA CASA ILUSTRADA: baño de luz lateral ── */}
+        <header className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
+          <IlustracionCabecera src="/ilustraciones/pulso.jpg" />
           <div className="flex items-center gap-2.5 flex-wrap">
             <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-emerald-300 border border-emerald-500/50 bg-emerald-500/10 rounded px-2 py-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />

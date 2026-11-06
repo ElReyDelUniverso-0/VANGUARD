@@ -5096,9 +5096,43 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v359.0";
-export const APP_CODENAME = "LA FIRMA VIVA";
+export const APP_VERSION = "v360.0";
+export const APP_CODENAME = "LA VOZ QUE ENTIENDE";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v360.0 LA VOZ QUE ENTIENDE — cuadragésima-tercera ronda del autociclo,
+// mandato directo del Dueño: «Mejora la máquina de tiempo; también la voz
+// de Vanguard, cada vez que habla lee cosas sin sentido o lee en otro
+// idioma; también haz mapas animados explicando conflictos diversos
+// dinámicos en el inicio; y decora Vanguard con ilustraciones y el fondo
+// negro aburrido sin vida». FASE 1 (esta ronda): LA VOZ + EL AIRE. (1) LA
+// VOZ QUE ENTIENDE (voces-agentes.ts, el PUNTO ÚNICO por donde pasa toda
+// la voz de la casa): ① sanearParaVoz() — el motor leía LITERAL y
+// deletreaba URLs, markdown, emojis, hashtags y tokens-código
+// (EN.GHG.CO2.PC.CE.AR5, mod:identidad) = «cosas sin sentido»; ahora TODO
+// texto se sanea ANTES de trocearse (los diez llamadores heredan la cura
+// sin tocar una línea); ② guardia de idioma — en aparatos sin voces
+// españolas vozDeAgente() entregaba cacheVoces[0] (¡cualquier idioma!) =
+// «lee en otro idioma»; ahora sin español NO hay boca prestada: la
+// emisión viaja sin voice y con lang es-… y el panel lo CONFIESA honesto
+// (aparatoSinEspanol() + chip con instrucción real en 8 idiomas).
+// (2) LA CASA QUE RESPIRA: la aurora v16 solo vivía en la portada — las
+// páginas server (noticias, EN VIVO, GUERRA HOY, MUNDO, ESPÍA, WORLD
+// PULSE…) respiraban en negro plano; la capa .casa-aire nace ahora en el
+// LAYOUT (orbes + horizonte + polvo, HTML/CSS puro, cero JS, reduced-motion
+// y modo cama respetados) y se retira sola en la portada (body:has(#vg-casa))
+// donde manda la aurora del acento v170 — cero doble pintura.
+// (3) LA CASA ILUSTRADA: IlustracionCabecera lleva la biblioteca propia
+// (public/ilustraciones, 100+ piezas) como baño de luz lateral con máscara
+// a las cabeceras server de GUERRA HOY (frente.jpg), MODO ESPÍA
+// (espionaje.jpg), EL MUNDO (planeta.jpg), WORLD PULSE (pulso.jpg) y el
+// lector de noticias (noticias.jpg) — sin <img>, sin layout shift.
+// FASES REGISTRADAS (el resto del mandato, por la ley de fases): fase 2 —
+// mapas animados de conflictos en el inicio (v361); fase 3 — mejora de la
+// máquina del tiempo (v362); con ellas, expansión de ilustraciones a
+// menús y estados vacíos.
+// QA: tsc 0 · build EXIT 0 · suite con pines nuevos + rodillo v359.0 →
+// v360.0 y LA FIRMA VIVA → LA VOZ QUE ENTIENDE (cuatro patrones, ley v312) ·
+// arnés visual móvil 390 · canon estable a la doble lectura.
 // v359.0 VANGUARD ID — cuadragésima-segunda ronda del autociclo, mandato
 // directo del Dueño («Desarrolla VANGUARD ID como un sistema de identidad,
 // personalización y participación comunitaria… No conviertas la reputación

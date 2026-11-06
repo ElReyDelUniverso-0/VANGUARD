@@ -258,7 +258,74 @@
   background: radial-gradient(ellipse at 50% 42%, transparent 46%, rgba(0, 0, 0, 0.6) 100%);
 }
 @media (prefers-reduced-motion: reduce) {
-  .aurora-orb, .boot-globe::before, .boot-globe::after, .particles-layer { animation: none !important; }
+  .aurora-orb, .boot-globe::before, .boot-globe::after, .particles-layer, .casa-aire-orbe { animation: none !important; }
+}
+
+/* ============================================================
+   v360.0 LA CASA QUE RESPIRA — el aire para TODA la casa.
+   La aurora v16 solo vivía en la portada SPA: las páginas server
+   (noticias, EN VIVO, GUERRA HOY, MUNDO, ESPÍA, WORLD PULSE…)
+   respiraban en negro plano — «el fondo negro aburrido sin vida».
+   Esta capa vive en el LAYOUT: nace con cada página, no pide JS,
+   respeta prefers-reduced-motion y el modo cama. En la portada se
+   retira (la casa SPA ya tiene su aurora del acento v170) — cero
+   doble pintura.
+   ============================================================ */
+.casa-aire {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.casa-aire-orbe { position: absolute; border-radius: 50%; filter: blur(80px); will-change: transform; }
+.casa-aire-orbe-1 {
+  width: 52vw; height: 52vw; left: -10%; top: -14%;
+  background: radial-gradient(circle, rgba(255, 110, 40, 0.12) 0%, transparent 66%);
+  animation: auroraA 36s ease-in-out infinite alternate;
+}
+.casa-aire-orbe-2 {
+  width: 44vw; height: 44vw; right: -12%; top: 30%;
+  background: radial-gradient(circle, rgba(150, 70, 200, 0.11) 0%, transparent 66%);
+  animation: auroraB 42s ease-in-out infinite alternate;
+}
+.casa-aire-orbe-3 {
+  width: 48vw; height: 48vw; left: 18%; bottom: -20%;
+  background: radial-gradient(circle, rgba(255, 180, 60, 0.10) 0%, transparent 66%);
+  animation: auroraC 48s ease-in-out infinite alternate;
+}
+.casa-aire-horizonte {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34vh;
+  background: linear-gradient(to top, rgba(255, 140, 40, 0.07), transparent);
+}
+.casa-aire-polvo {
+  position: absolute; inset: 0; opacity: 0.4;
+  background-image:
+    radial-gradient(1.2px 1.2px at 18% 24%, rgba(212, 175, 55, 0.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 74% 38%, rgba(61, 220, 151, 0.34) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 88% 72%, rgba(212, 175, 55, 0.3) 50%, transparent 51%),
+    radial-gradient(1px 1px at 8% 68%, rgba(240, 240, 240, 0.26) 50%, transparent 51%),
+    radial-gradient(1.1px 1.1px at 42% 84%, rgba(212, 175, 55, 0.32) 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 10%, rgba(255, 59, 48, 0.28) 50%, transparent 51%);
+}
+/* portada SPA: su aurora del acento manda — cero doble pintura */
+body:has(#vg-casa) .casa-aire { display: none; }
+
+/* v360 LA CASA ILUSTRADA — baño de luz lateral en cabeceras server:
+   la biblioteca de la casa (public/ilustraciones) entra sin <img>,
+   sin layout shift, sin JS, y jamás estorba la lectura */
+.ilu-cabecera {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: min(46%, 430px);
+  background-size: cover;
+  background-position: center right;
+  opacity: 0.17;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to left, black 26%, transparent 96%);
+  mask-image: linear-gradient(to left, black 26%, transparent 96%);
+}
+@media (max-width: 640px) {
+  .ilu-cabecera { width: 58%; opacity: 0.12; }
 }
 
 /* ===== Vanguard utility classes ===== */
@@ -2973,7 +3040,9 @@ html.auto-cama-activa::after {
     linear-gradient(180deg, rgba(20, 8, 40, 0.16), rgba(255, 120, 40, 0.05) 60%, rgba(10, 6, 2, 0.22));
 }
 html.modo-cama .particles-layer,
-html.auto-cama-activa .particles-layer { opacity: 0.35; }
+html.auto-cama-activa .particles-layer,
+html.modo-cama .casa-aire,
+html.auto-cama-activa .casa-aire { opacity: 0.35; }
 
 /* ── TRANSICIÓN MAESTRA: 5 formas de viajar entre salas ── */
 .transicion-maestra { position: fixed; inset: 0; z-index: 90; pointer-events: none; overflow: hidden; }

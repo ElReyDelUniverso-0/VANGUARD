@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { TEATROS } from "@/lib/teatros";
+import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import { PlayerPing } from "@/components/vanguard/player-ping";
 import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/presence-ping";
 import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
@@ -176,7 +177,9 @@ export default async function GuerraHoyPage() {
         }))}
       />
 
-      <header className="border-b border-amber-500/30 bg-black/40 px-5 py-6 max-w-5xl mx-auto">
+      {/* v360 LA CASA ILUSTRADA — el frente entra como baño de luz lateral */}
+      <header className="relative overflow-hidden border-b border-amber-500/30 bg-black/40 px-5 py-6 max-w-5xl mx-auto">
+        <IlustracionCabecera src="/ilustraciones/frente.jpg" />
         <p className="font-mono text-[11px] tracking-[0.3em] text-amber-400 uppercase">
           VANGUARD · Canal abierto de inteligencia
         </p>

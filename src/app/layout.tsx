@@ -268,6 +268,23 @@ export default function RootLayout({
         className={`${orbitron.variable} antialiased bg-background text-foreground min-h-screen`}
       >
         {/* ════════════════════════════════════════════════════════════
+            v360.0 LA CASA QUE RESPIRA — el aire vive en TODA la casa.
+            La aurora v16 solo existía en la portada SPA; las páginas
+            server (noticias, EN VIVO, GUERRA HOY, MUNDO, ESPÍA, WORLD
+            PULSE…) respiraban en negro plano. Esta capa es HTML/CSS
+            puro de servidor: nace con cada página, no pide JS, no
+            interfiere (pointer-events none), respeta reduced-motion y
+            el modo cama, y se retira sola en la portada (body:has
+            (#vg-casa)) donde manda la aurora del acento v170.
+            ════════════════════════════════════════════════════════════ */}
+        <div className="casa-aire" aria-hidden>
+          <div className="casa-aire-orbe casa-aire-orbe-1" />
+          <div className="casa-aire-orbe casa-aire-orbe-2" />
+          <div className="casa-aire-orbe casa-aire-orbe-3" />
+          <div className="casa-aire-horizonte" />
+          <div className="casa-aire-polvo" />
+        </div>
+        {/* ════════════════════════════════════════════════════════════
             v155.0 LA CORTINA DE ARRANQUE — la ley contra la pantalla muerta.
             El Dueño (móvil) pasó 3 días viendo NADA: el servidor dev moría
             de OOM y su teléfono se quedaba en negro sin decir nada. Esta
