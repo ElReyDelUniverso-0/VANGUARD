@@ -5096,8 +5096,46 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v361.0";
-export const APP_CODENAME = "EL MAPA QUE EXPLICA";
+// v362.0 EL TIEMPO REAL — cuadragesima-quinta ronda del autociclo, FASE 3
+// (la última) del mandato del Dueño: «la máquina del tiempo debe tener todos
+// los conflictos, mapas y escenarios 3D interactivos, líderes y demás datos».
+// (1) EL MUNDO EN LA MÁQUINA (maquina-mundo.tsx, nuevo): los SEIS TEATROS
+//     REALES de la Sala de Guerra (guerras-activas-data, v129) entran como
+//     LÍNEAS de la máquina (chips rojos MUNDO) con: ① LA LÍNEA REAL — el
+//     reproductor de hitos (40 hitos verificables de los 6 teatros) con
+//     latido honesto (UN intervalo, pausa por interacción 12 s y reduced-
+//     motion por useSyncExternalStore — ley v335, patrón v361); ② EL MAPA
+//     DEL TEATRO — proyección equirectangular del bbox publicado con zonas
+//     de control, frentes y ciudades con su COLOR_ESTADO del mapa maestro,
+//     ciudad tocada = ficha con su nota (cero datos inventados: todo sale
+//     de la fuente); ③ EL ESCENARIO 3D — el TeatroGuerra3D de la Sala de
+//     Guerra embebido EN SU PROPIO CHUNK ssr:false (ley v193, cero
+//     duplicación del motor v129); ④ LOS LÍDERES — los rostros del catálogo
+//     del poder (v130) que están EN LA MESA del teatro: coincidencia por
+//     país/organización publicada en bandos, apoyos y actores (con alias
+//     EE. UU./UE) — si nadie coincide, se confiesa; ⑤ LOS DEMÁS DATOS —
+//     fuerzas por bando, bajas con nota honesta, desplazados, actores,
+//     riesgo global, cuotas de la casa y FUENTE a la vista.
+// (2) EL ATLAS DE LA HISTORIA (maquina-atlas.tsx, nuevo, al pie de la
+//     máquina): las 10 guerras del archivo (HISTORICAL_WARS, v166) en UNA
+//     franja temporal — cada barra posicionada por sus años publicados y
+//     ancha por su DURACIÓN, escala derivada de la fuente (cero años a
+//     mano, guardia v234), cuatro eras con colores de la casa, clic =
+//     ficha completa (bandos, desenlace, bajas, significado).
+// (3) LA MÁQUINA crece de 9 a 15 líneas temporales: 4 SIM + 6 MUNDO +
+//     5 REAL — TODOS los conflictos: pasado (10 en el atlas), presente (MUNDO),
+//     simulación (SIM) y archivo desclasificado (REAL) — y su paridad 3D
+//     (filas v168) lista las tres familias con el contrato de índices
+//     intacto (offset 2, tope 9→12, patrón v326-v336).
+// SUITE: +2 pines (EL TIEMPO REAL estático: la máquina bebe de las tres
+//     fuentes reales, reproductor con latido honesto, mapa con COLOR_ESTADO
+//     y proyección del bbox, 3D en chunk propio, líderes por coincidencia
+//     publicada, atlas con escala derivada — y vivo: home firma v362,
+//     health y la puerta del conflicto sirviendo) + rodillos de versión y
+//     codename en los VALORES de los asertos históricos (ley v312: los
+//     nombres de pines quedan como memoria).
+export const APP_VERSION = "v362.0";
+export const APP_CODENAME = "EL TIEMPO REAL";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
 // v361.0 EL MAPA QUE EXPLICA — cuadragesima-cuarta ronda del autociclo, FASE 2
 // del mandato del Dueño: «también haz mapas como animados explicando conflictos

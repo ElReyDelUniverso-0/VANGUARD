@@ -21,7 +21,7 @@ import {
   Hourglass, Play, Pause, ChevronLeft, ChevronRight, FileText, Landmark,
   Anchor, Crosshair, Radiation, CalendarDays, Skull, Bomb, Plane, Truck,
   CloudRain, CloudSnow, CloudFog, Wind, Sun, CloudLightning, Gauge, Radio,
-  Volume2, SquareX, Download, X, Snowflake, Star,
+  Volume2, SquareX, Download, X, Snowflake, Star, Globe2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { navigateTo } from "@/lib/nav";
@@ -53,6 +53,13 @@ import { fnv89 } from "@/lib/pulsos-data";
 // escoge el reloj de la escuela, no una preferencia de la casa.
 import { girar, diaDelAnillo } from "@/lib/estrategia-data";
 import { useSala3DContenido, type FilaContenido3D } from "@/components/vanguard/use-sala3d-contenido";
+// v362 EL TIEMPO REAL — fase 3 del mandato del Dueño: la máquina abre sus
+// puertas al MUNDO REAL (los seis teatros de la Sala de Guerra con reproductor
+// de hitos, mapa del teatro, escenario 3D y líderes) y al ATLAS de la
+// historia (las 10 guerras del archivo en una franja temporal).
+import { GUERRAS, type GuerraActiva } from "@/lib/guerras-activas-data";
+import { MaquinaMundo } from "@/components/vanguard/panels/maquina-mundo";
+import { MaquinaAtlas } from "@/components/vanguard/panels/maquina-atlas";
 
 const PIN_META: Record<PinTeatro["tipo"], { color: string; icon: typeof Landmark }> = {
   capital: { color: "#FFC94D", icon: Landmark },
@@ -1089,9 +1096,13 @@ export function MaquinaPanel() {
   const crisisSel = useExpediente((s) => s.crisisSel);
   const setCrisis = useExpediente((s) => s.setCrisis);
 
+  // v362: TRES familias viajan en la máquina — las crisis SIM del mundo
+  // Vanguard, los SEIS TEATROS REALES del planeta (mundo-) y los archivos
+  // REAL desclasificados — más el ATLAS de la historia al pie.
   const opciones = useMemo(
     () => [
       ...CRISIS.map((c) => ({ id: c.id, kind: "sim" as const, c })),
+      ...GUERRAS.map((g) => ({ id: `mundo-${g.id}`, kind: "mundo" as const, g })),
       ...ARCHIVO.map((a) => ({ id: `arc-${a.id}`, kind: "real" as const, a })),
     ],
     [],
@@ -1104,34 +1115,43 @@ export function MaquinaPanel() {
 
   // ════════════════════════════════════════════════════════════
   // v168: PARIDAD 2D→3D — LA MÁQUINA DEL TIEMPO en volumen: la
-  // línea temporal activa (SIM o REAL), su modo y todas las
-  // crisis/archivos reales, seleccionables desde el mundo
+  // línea temporal activa (SIM, MUNDO o REAL), su modo y todas las
+  // crisis/teatros/archivos reales, seleccionables desde el mundo
   // ════════════════════════════════════════════════════════════
   const filas3D = useMemo<FilaContenido3D[]>(() => {
     const filas: FilaContenido3D[] = [
       {
-        t: `MÁQUINA DEL TIEMPO: ${sel.kind === "sim" ? sel.c.nombre.toUpperCase() : sel.a.nombre.toUpperCase()}`,
-        v: sel.kind === "sim" ? "SIM · VANGUARD" : "REAL · ARCHIVO",
-        color: sel.kind === "sim" ? "#FFC94D" : "#3DDCFF",
-        d: sel.kind === "sim" ? sel.c.resumen : sel.a.resumen,
+        t: `MÁQUINA DEL TIEMPO: ${sel.kind === "sim" ? sel.c.nombre.toUpperCase() : sel.kind === "mundo" ? sel.g.nombre.toUpperCase() : sel.a.nombre.toUpperCase()}`,
+        v: sel.kind === "sim" ? "SIM · VANGUARD" : sel.kind === "mundo" ? "MUNDO · TEATRO REAL" : "REAL · ARCHIVO",
+        color: sel.kind === "sim" ? "#FFC94D" : sel.kind === "mundo" ? "#FF4A3A" : "#3DDCFF",
+        d: sel.kind === "sim" ? sel.c.resumen : sel.kind === "mundo" ? sel.g.resumen : sel.a.resumen,
       },
       {
-        t: sel.kind === "real" ? "CRONOLOGÍA VERIFICABLE" : sel.c.modo === "karsk-vivo" ? "TEATRO KARSK VIVO · 21 DÍAS" : "CRISIS EN FASES",
-        color: "#7AB8FF",
-        d: sel.kind === "real"
-          ? "Documentos desclasificados con fuente nombrada · fechas y hechos verificables"
-          : sel.c.modo === "karsk-vivo"
-            ? "Reproductor día a día con clima, ejes de presión, estadísticas y despachos del frente"
-            : "Capítulos con curva de tensión y teatro esquemático",
+        t: sel.kind === "mundo"
+          ? "TEATRO REAL · LÍNEA + MAPA + ESCENARIO 3D + LÍDERES"
+          : sel.kind === "real"
+            ? "CRONOLOGÍA VERIFICABLE"
+            : sel.c.modo === "karsk-vivo"
+              ? "TEATRO KARSK VIVO · 21 DÍAS"
+              : "CRISIS EN FASES",
+        color: sel.kind === "mundo" ? "#FF6B6B" : "#7AB8FF",
+        d: sel.kind === "mundo"
+          ? `Reproductor de ${sel.g.hitos.length} hitos verificables, mapa del teatro con ciudades y frentes, escenario 3D y los rostros en la mesa`
+          : sel.kind === "real"
+            ? "Documentos desclasificados con fuente nombrada · fechas y hechos verificables"
+            : sel.c.modo === "karsk-vivo"
+              ? "Reproductor día a día con clima, ejes de presión, estadísticas y despachos del frente"
+              : "Capítulos con curva de tensión y teatro esquemático",
       },
     ];
     // offset 2: la línea activa y su modo preceden al resto de opciones
-    for (const o of opciones.slice(0, 9)) {
+    // (v362: el catálogo creció a TRES familias — el tope sube con ellas)
+    for (const o of opciones.slice(0, 12)) {
       filas.push({
-        t: (o.kind === "sim" ? o.c.nombre : o.a.nombre).toUpperCase(),
-        v: o.kind === "real" ? o.a.rango : o.c.region,
-        color: o.kind === "real" ? "#3DDCFF" : "#FFC94D",
-        d: `${o.id === sel.id ? "LÍNEA ACTIVA · " : ""}${o.kind === "sim" ? o.c.resumen : o.a.resumen}`,
+        t: (o.kind === "sim" ? o.c.nombre : o.kind === "mundo" ? o.g.nombre.split(" — ")[0] : o.a.nombre).toUpperCase(),
+        v: o.kind === "real" ? o.a.rango : o.kind === "mundo" ? o.g.nombre.split(" — ")[1] ?? o.g.desde : o.c.region,
+        color: o.kind === "real" ? "#3DDCFF" : o.kind === "mundo" ? "#FF4A3A" : "#FFC94D",
+        d: `${o.id === sel.id ? "LÍNEA ACTIVA · " : ""}${o.kind === "sim" ? o.c.resumen : o.kind === "mundo" ? `${o.g.subtitulo} · desde ${o.g.desde}` : o.a.resumen}`,
         a: "abrir linea",
       });
     }
@@ -1159,8 +1179,10 @@ export function MaquinaPanel() {
     "MÁQUINA DEL TIEMPO",
     "#FFC94D",
     sel.kind === "sim"
-      ? `${sel.c.nombre} · ${sel.c.modo === "karsk-vivo" ? "teatro vivo de 21 días" : "crisis en fases"} · ${CRISIS.length} crisis SIM + ${ARCHIVO.length} archivos REALES`
-      : `${sel.a.nombre} · ${sel.a.rango} · archivo real desclasificado`,
+      ? `${sel.c.nombre} · ${sel.c.modo === "karsk-vivo" ? "teatro vivo de 21 días" : "crisis en fases"} · ${CRISIS.length} crisis SIM + ${GUERRAS.length} teatros MUNDO + ${ARCHIVO.length} archivos REALES`
+      : sel.kind === "mundo"
+        ? `${sel.g.nombre} · teatro real · ${sel.g.hitos.length} hitos, mapa, escenario 3D y líderes`
+        : `${sel.a.nombre} · ${sel.a.rango} · archivo real desclasificado`,
     filas3D,
   );
 
@@ -1219,14 +1241,18 @@ export function MaquinaPanel() {
         {opciones.map((o, i) => {
           const activa = o.id === sel.id;
           const real = o.kind === "real";
+          const mundo = o.kind === "mundo";
           return (
             <motion.button
               key={o.id}
               onClick={() => setCrisis(o.id)}
+              data-testid={mundo ? `maquina-chip-mundo-${o.g.id}` : undefined}
               className={cn(
                 "shrink-0 rounded-xl border px-3 py-2 text-left transition active:scale-95",
                 activa
-                  ? real ? "border-cyan-400/60 bg-cyan-400/10" : "border-amber-400/60 bg-amber-400/10"
+                  ? mundo
+                    ? "border-red-400/60 bg-red-400/10"
+                    : real ? "border-cyan-400/60 bg-cyan-400/10" : "border-amber-400/60 bg-amber-400/10"
                   : "border-white/12 bg-white/5 hover:border-white/25",
               )}
               initial={{ opacity: 0, y: 10 }}
@@ -1235,12 +1261,13 @@ export function MaquinaPanel() {
             >
               <div className="flex items-center gap-1.5 text-[12px] font-black text-white/90">
                 {real && <CalendarDays className="h-3 w-3 text-cyan-300" />}
+                {mundo && <Globe2 className="h-3 w-3 text-red-300" />}
                 {o.kind === "real" && o.a.id === archivoDelDia.id && <Star className="h-3 w-3 fill-cyan-300 text-cyan-300" aria-hidden="true" />}
-                {o.kind === "sim" ? o.c.nombre : o.a.nombre}
+                {o.kind === "sim" ? o.c.nombre : o.kind === "mundo" ? o.g.nombre.split(" — ")[0] : o.a.nombre}
                 {o.kind === "real" && o.a.id === archivoDelDia.id && <span className="font-mono text-[8px] font-bold text-cyan-300">DÍA</span>}
               </div>
               <div className="text-[9px] font-semibold text-white/40">
-                {real ? o.a.rango : o.c.region}
+                {real ? o.a.rango : mundo ? o.g.nombre.split(" — ")[1] ?? o.g.desde : o.c.region}
               </div>
             </motion.button>
           );
@@ -1261,6 +1288,10 @@ export function MaquinaPanel() {
             <span className="rounded-full border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-amber-300">
               SIM · mundo Vanguard
             </span>
+          ) : sel.kind === "mundo" ? (
+            <span className="rounded-full border border-red-400/50 bg-red-400/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-red-300">
+              MUNDO · teatro real
+            </span>
           ) : (
             <span className="rounded-full border border-cyan-400/50 bg-cyan-400/10 px-2 py-0.5 text-[9px] font-black tracking-wider text-cyan-300">
               REAL · archivo
@@ -1268,16 +1299,18 @@ export function MaquinaPanel() {
           )}
         </div>
         <h3 className="mt-1 text-xl font-black text-amber-100">
-          {sel.kind === "sim" ? sel.c.nombre : sel.a.nombre}
+          {sel.kind === "sim" ? sel.c.nombre : sel.kind === "mundo" ? sel.g.nombre : sel.a.nombre}
         </h3>
         <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-white/70">
-          {sel.kind === "sim" ? sel.c.resumen : sel.a.resumen}
+          {sel.kind === "sim" ? sel.c.resumen : sel.kind === "mundo" ? sel.g.resumen : sel.a.resumen}
         </p>
       </motion.div>
 
       {/* cuerpo */}
       <div className="mt-3">
-        {sel.kind === "real" ? (
+        {sel.kind === "mundo" ? (
+          <MaquinaMundo key={sel.id} guerra={sel.g} />
+        ) : sel.kind === "real" ? (
           <VistaReal archivo={sel.a} />
         ) : sel.c.modo === "karsk-vivo" ? (
           <KarskPlayer key={sel.id} />
@@ -1303,9 +1336,18 @@ export function MaquinaPanel() {
         </div>
       )}
 
+      {/* ===== EL ATLAS DE LA HISTORIA (v362): TODOS los conflictos del
+           archivo en una franja temporal — el pasado entero que la máquina
+           también dueña; los vivos de hoy viajan en los teatros MUNDO ===== */}
+      <div className="mt-4">
+        <MaquinaAtlas />
+      </div>
+
       <p className="mt-3 text-center text-[10px] font-semibold text-white/25">
-        Las crisis SIM son del mundo Vanguard (simulación jugable). Las cronologías marcadas REAL resumen documentos
-        públicos desclasificados con su fuente nombrada — fechas y hechos verificables, redacción propia de Vanguard.
+        Las crisis SIM son del mundo Vanguard (simulación jugable). Los teatros MUNDO resumen estimaciones OSINT de
+        la casa (ISW · ACLED · OCHA · ACNUR · ONU) — Vanguard no predice: presenta. Las cronologías marcadas REAL
+        resumen documentos públicos desclasificados con su fuente nombrada — fechas y hechos verificables, redacción
+        propia de Vanguard.
       </p>
 
       <ExpedienteDrawer />
