@@ -46,6 +46,14 @@ const PortadasInicio = dynamic(
   () => import("@/components/vanguard/portadas-inicio").then((m) => m.PortadasInicio),
   { ssr: false, loading: () => <BloqueEsqueleto h="h-44 sm:h-60" /> }
 );
+// v361.0 EL MAPA QUE EXPLICA — FASE 2 del mandato: el mapa mundial REAL con
+// los seis teatros de la Sala de Guerra explicados uno a uno, en rotación.
+// El chunk pesado (continentes + d3-geo) viaja aparte (ley v193) y comparte
+// chunk con el creador de misiones.
+const MapaConflictosInicio = dynamic(
+  () => import("@/components/vanguard/mapa-conflictos-inicio").then((m) => m.MapaConflictosInicio),
+  { ssr: false, loading: () => <BloqueEsqueleto h="h-72 sm:h-96" testid="mapa-inicio-casilla" /> }
+);
 // v193.0 LA CASA LIGERA — la cinemática viaja en su propio chunk: baja solo
 // cuando se va a estrenar (jamás durante la carga, ley v192 intacta)
 const CinematicaVanguard = dynamic(() => import("@/components/vanguard/cinematica-vanguard").then((m) => m.CinematicaVanguard), { ssr: false });
@@ -66,10 +74,12 @@ const LaunchCountdown = dynamic(
   { ssr: false, loading: () => <BloqueEsqueleto h="h-16" /> }
 );
 
-/** v198: esqueleto holo genérico — misma familia visual, altura configurable */
-function BloqueEsqueleto({ h }: { h: string }) {
+/** v198: esqueleto holo genérico — misma familia visual, altura configurable.
+ *  v361: acepta data-testid opcional — la casilla reservada del mapa del inicio
+ *  viaja en el HTML del servidor y la suite puede afirmar que el sitio existe. */
+function BloqueEsqueleto({ h, testid }: { h: string; testid?: string }) {
   return (
-    <div aria-hidden className={`${h} w-full rounded-md border border-amber-hud/20 bg-gradient-to-br from-amber-hud/5 via-transparent to-transparent animate-pulse`} />
+    <div aria-hidden data-testid={testid} className={`${h} w-full rounded-md border border-amber-hud/20 bg-gradient-to-br from-amber-hud/5 via-transparent to-transparent animate-pulse`} />
   );
 }
 // v196.0 EL POZO ÚNICO — la portada es el MAESTRO del pozo de noticias
@@ -489,6 +499,12 @@ export function HomePanel() {
         alias={alias || ""}
         onVerCinematica={() => setCine(true)}
       />
+
+      {/* ====== v361.0 EL MAPA QUE EXPLICA — FASE 2 del mandato del Dueño:
+          el planeta entero con sus conflictos reales marcados y vivos, y la
+          tarjeta que explica uno a uno qué pasa en cada teatro (rotación
+          dinámica, pausa al tocar, honestidad OSINT al pie). ====== */}
+      <MapaConflictosInicio />
 
       {/* ====== v193.1 LA PUERTA DE VIGO — la entrada que dirige: el centinela
           pregunta qué te importa (guerra hoy / para ti / TV / mapa 3D / memes),

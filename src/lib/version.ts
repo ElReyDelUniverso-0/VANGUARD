@@ -5096,9 +5096,35 @@
 //     ENTRADA DEL DÍA; los nombres de pines y comentarios quedan como
 //     memoria — ley v312) + rodillo a v332.0 (cuatro patrones, mensajes
 //     históricos intactos — ley v312).
-export const APP_VERSION = "v360.0";
-export const APP_CODENAME = "LA VOZ QUE ENTIENDE";
+export const APP_VERSION = "v361.0";
+export const APP_CODENAME = "EL MAPA QUE EXPLICA";
 export const APP_VERSION_LABEL = `${APP_VERSION} · ${APP_CODENAME}`;
+// v361.0 EL MAPA QUE EXPLICA — cuadragesima-cuarta ronda del autociclo, FASE 2
+// del mandato del Dueño: «también haz mapas como animados explicando conflictos
+// diversos, dinámicos, en el inicio». (1) EL COMPONENTE (mapa-conflictos-inicio.tsx,
+// cargado en diferido ssr:false, chunk compartido con el creador): el mapa mundial
+// REAL (WorldMapSVG — continentes Natural Earth, d3-geo) con los SEIS TEATROS
+// REALES de la Sala de Guerra (guerras-activas-data: Ucrania, Oriente Medio,
+// Sudán, Sahel, Myanmar y Taiwán observado) vivos sobre él — marcadores con
+// pings de sonar, onda de choque en CRÍTICO y corona de designación sobre el
+// teatro enfocado (animaciones nativas SVG heredadas, cero duplicación).
+// (2) LA EXPLICACIÓN QUE ROTA: la tarjeta que gira el foco de teatro cada 7s —
+// bandera y estado (EN FUEGO/OBSERVADO), desde cuándo, nivel por escalada
+// publicada (5→CRÍTICO, 3-4→TENSIÓN, 2→INESTABILIDAD), intensidad con barra,
+// el resumen real de la casa, el ÚLTIMO HITO de la cronología, bajas y
+// desplazados con su nota honesta, actores en mesa y FUENTE a la vista
+// (ISW · ACLED · OCHA · ACNUR · ONU). (3) LA ROTACIÓN HONESTA: UN intervalo
+// (pozo único v196) que se salta el avance si el aparato pidió
+// prefers-reduced-motion (suscripción limpia por useSyncExternalStore, cero
+// setState en effects — ley v335) o si el agente interactuó hace menos de 15s;
+// puntos de progreso clicables y clic en el mapa = elegir teatro a mano.
+// (4) LA HONESTIDAD AL PIE: «esquema OSINT aproximado — Vanguard no predice:
+// presenta» + botones a GUERRA HOY y a la Sala de Guerra por navigateTo
+// (ley v190, jamás recarga). EN EL CORAZÓN DEL INICIO: entre las Portadas
+// Vivas y la Puerta de Vigo. ROLLER (ley v312): v360.0 → v361.0 y LA VOZ QUE
+// ENTIENDE → EL MAPA QUE EXPLICA en los VALORES de la suite. QA: tsc 0 ·
+// eslint 0 · build EXIT 0 · suite con +2 pines · arnés visual móvil 390 ·
+// canon estable a la doble lectura.
 // v360.0 LA VOZ QUE ENTIENDE — cuadragésima-tercera ronda del autociclo,
 // mandato directo del Dueño: «Mejora la máquina de tiempo; también la voz
 // de Vanguard, cada vez que habla lee cosas sin sentido o lee en otro
