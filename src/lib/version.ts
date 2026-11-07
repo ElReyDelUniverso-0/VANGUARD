@@ -5168,8 +5168,33 @@
 //     launcher ilustrado con .app-tile vivo — y vivo: home firma v363,
 //     health respalda) + rodillo v362.0 → v363.0 en los VALORES (ley v312:
 //     los nombres de pines quedan como memoria).
-export const APP_VERSION = "v365.0";
-export const APP_CODENAME = "LA ARMERÍA DEL MUNDO";
+export const APP_VERSION = "v366.0";
+export const APP_CODENAME = "EL IMÁN";
+// v366.0 EL IMÁN (sobre v365.0, intacta): cuadragesima-novena ronda del
+// autociclo y el mandato del Dueño — la ciencia de retención de las
+// plataformas top (Amazon, AliExpress, TikTok Shop) aplicada a la escuela
+// con la honestidad de la casa: flujo, recompensa variable, aversión a la
+// pérdida, urgencia real y madriguera. ① LA MADRIGUERA DE LA BIBLIOTECA
+// (biblioteca-data.ts + panel): cada ficha abre la siguiente — «DE AQUÍ
+// SALTA A» con 2-3 saltos derivados SIEMPRE de los datos reales de las
+// tres estanterías (misma época, misma región, misma familia; el empate
+// se resuelve por id: misma respuesta siempre), un toque abre la ficha
+// destino de CUALQUIER sala y la cuenta como lectura (+15 XP). ② EL BONO
+// SORPRESA DEL ARCHIVO (recompensa variable honesta): cada día el archivo
+// sortea UN bono con el PRNG del examen + reloj central (ley v324) — el
+// MISMO para toda la escuela, el monto YA decidido (15-60 mon; 1 de cada
+// 8 días DORADO 60-120, regla publicada REGLA_BONO), el toque lo cobra
+// UNA vez (reclamarBono, persistido en vg364-biblioteca; firma el día).
+// ③ EL ESCALÓN SIGUIENTE (aversión a la pérdida con datos reales): en EL
+// REGISTRO, «SOLO TE FALTAN N XP PARA EL NIVEL X» con barra real
+// (xp/xpForLevel) + rango del escalón (getRankForLevel) y «N fichas para
+// que la cátedra te llame {titulo}» (nivelLectorSiguiente). ④ EL EXAMEN
+// ES DE TODOS (prueba social honesta + urgencia real): «EL MISMO EXAMEN
+// PARA TODA LA ESCUELA — a medianoche caduca y nace otro» (determinista
+// por día; cero relojes nuevos, ley v324). ⑤ NUEVA EN LA ESTANTERÍA
+// (anticipación): las fichas sin leer lucen chip «nueva» — es verdad que
+// no la leíste. Cero efectos nuevos en el panel (ley v335): todo gesto y
+// función pura. QA: suite +2 pines, arnés visual v366 (PORT 3650).
 // v365.0 LA ARMERÍA DEL MUNDO (sobre v364.0, intacta): cuadragesima-octava
 // ronda del autociclo y el mandato del Dueño («sigue y no solo armas
 // nucleares, si no todas las armas posibles; y la carta así que

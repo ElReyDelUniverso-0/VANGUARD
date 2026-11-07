@@ -31,7 +31,8 @@ import { storageBlindado } from "@/lib/storage-blindado";
 import { diaDelAnillo } from "@/lib/estrategia-data";
 // v365: la estantería ARSENAL alimenta el examen del día (pregunta 6) —
 // la fuente vive en su propio archivo (biblioteca-armas-data.ts).
-import { ARSENAL } from "@/lib/biblioteca-armas-data";
+// v366: la madriguera también salta al ARSENAL (type PiezaArma para los saltos).
+import { ARSENAL, type PiezaArma } from "@/lib/biblioteca-armas-data";
 
 // ── LAS REGLAS DE PUNTOS (publicadas — la ficha las confiesa) ─────
 export const XP_POR_FICHA_NUEVA = 15;
@@ -703,6 +704,118 @@ export function nivelLector(fichasLeidas: number): { titulo: string; umbral: num
   return { titulo: "LIBRO VIRGEN", umbral: 0 };
 }
 
+// ── EL ESCALÓN SIGUIENTE (v366 EL IMÁN): aversión a la pérdida honesta ──
+// «solo te faltan N» — el umbral REAL del título siguiente del lector.
+export function nivelLectorSiguiente(fichasLeidas: number): { titulo: string; faltan: number } | null {
+  const escalones: Array<{ titulo: string; umbral: number }> = [
+    { titulo: "APRENDIZ DE LECTOR", umbral: 1 },
+    { titulo: "LECTOR SERIO", umbral: 8 },
+    { titulo: "ESTUDIOSO", umbral: 20 },
+    { titulo: "ERUDITO", umbral: 35 },
+    { titulo: "CATEDRÁTICO", umbral: 60 },
+  ];
+  const siguiente = escalones.find((e) => fichasLeidas < e.umbral);
+  return siguiente ? { titulo: siguiente.titulo, faltan: siguiente.umbral - fichasLeidas } : null;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// v366.0 EL IMÁN — la madriguera de la biblioteca: cada ficha abre la
+// siguiente. La técnica de las plataformas top («cada producto te lleva a
+// otro») vuelta escuela: los SALTOS se derivan SIEMPRE de los datos reales
+// de las tres estanterías (misma época, misma región, misma familia) —
+// cero sugerencias inventadas, cero efectos (ley v335): es una función pura.
+// ══════════════════════════════════════════════════════════════════════
+
+export interface Salto {
+  kind: "const" | "geo" | "arma";
+  id: string;
+  nombre: string;
+  año: number;
+  porQue: string;   // el porqué REAL del salto (época, región, familia)
+}
+
+function saltoMasCercano(
+  piezas: Array<{ id: string; nombre: string; año: number }>,
+  año: number,
+  excluirId: string,
+  kind: Salto["kind"],
+  porQue: string,
+): Salto | null {
+  let mejor: Salto | null = null;
+  let mejorD = Number.POSITIVE_INFINITY;
+  for (const p of piezas) {
+    if (p.id === excluirId) continue;
+    const d = Math.abs(p.año - año);
+    // el empate se resuelve por id: orden determinista, misma respuesta siempre
+    if (d < mejorD || (d === mejorD && mejor !== null && p.id < mejor.id)) {
+      mejorD = d;
+      mejor = { kind, id: p.id, nombre: p.nombre, año: p.año, porQue };
+    }
+  }
+  return mejor;
+}
+
+export function saltosDesdeConstitucion(c: Constitucion): Salto[] {
+  const saltos: Salto[] = [];
+  const geo = saltoMasCercano(GEOPOLITICA, c.año, "", "geo", "el tablero del mundo de su época");
+  if (geo) saltos.push(geo);
+  const mismaRegion = CONSTITUCIONES.filter((x) => x.region === c.region);
+  const hermana = saltoMasCercano(mismaRegion, c.año, c.id, "const", `la carta hermana de ${c.region}`);
+  if (hermana) saltos.push(hermana);
+  const arma = saltoMasCercano(ARSENAL, c.año, "", "arma", "el arsenal de su época");
+  if (arma) saltos.push(arma);
+  return saltos;
+}
+
+export function saltosDesdeGeo(g: PiezaGeo): Salto[] {
+  const saltos: Salto[] = [];
+  const carta = saltoMasCercano(CONSTITUCIONES, g.año, "", "const", "la carta vigente de su época");
+  if (carta) saltos.push(carta);
+  const resto = GEOPOLITICA.filter((x) => x.id !== g.id);
+  const vecina = saltoMasCercano(resto, g.año, "", "geo", "el tablero de su década");
+  if (vecina) saltos.push(vecina);
+  const arma = saltoMasCercano(ARSENAL, g.año, "", "arma", "el arsenal de su época");
+  if (arma) saltos.push(arma);
+  return saltos;
+}
+
+export function saltosDesdeArma(a: PiezaArma): Salto[] {
+  const saltos: Salto[] = [];
+  const familia = ARSENAL.filter((x) => x.familia === a.familia && x.id !== a.id);
+  const hermana = saltoMasCercano(familia, a.año, "", "arma", `la misma familia ${a.familia}`);
+  if (hermana) saltos.push(hermana);
+  const geo = saltoMasCercano(GEOPOLITICA, a.año, "", "geo", "las reglas del tablero de su época");
+  if (geo) saltos.push(geo);
+  const carta = saltoMasCercano(CONSTITUCIONES, a.año, "", "const", "el mundo civil de su época");
+  if (carta) saltos.push(carta);
+  return saltos;
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// EL BONO SORPRESA DEL DÍA (v366 EL IMÁN) — recompensa VARIABLE con la
+// honestidad de la casa: cada día el archivo sortea UN bono con el mismo
+// PRNG del examen (mulberry32 + diaDelAnillo, ley v324) — el mismo bono
+// para toda la escuela, el monto YA está decidido, el toque lo cobra.
+// REGLA PUBLICADA: entre 15 y 60 mon; 1 de cada 8 días el sorteo es
+// DORADO y paga el doble (60-120). El rango está a la vista: la sorpresa
+// es el monto, jamás la regla.
+// ══════════════════════════════════════════════════════════════════════
+
+export const BONO_MIN = 15;
+export const BONO_MAX = 60;
+export const BONO_DORADO_CADA = 8;
+
+export function bonoDelDia(dia: number): { monto: number; dorado: boolean } {
+  const rnd = mulberry32((dia * 1013904223 + 77) >>> 0 || 13);
+  const dorado = rnd() < 1 / BONO_DORADO_CADA;
+  const monto = dorado
+    ? BONO_MAX + Math.floor(rnd() * (BONO_MAX + 1))     // 60..120
+    : BONO_MIN + Math.floor(rnd() * (BONO_MAX - BONO_MIN + 1)); // 15..60
+  return { monto, dorado };
+}
+
+export const REGLA_BONO = `cada día el archivo sortea UN bono entre ${BONO_MIN} y ${BONO_MAX} mon — 1 de cada ${BONO_DORADO_CADA} días el sorteo es DORADO y paga el doble (60-120). El monto ya está decidido: tu toque lo cobra.`;
+
 // ── EL ESTADO DEL ESTUDIO — persistencia vg364-biblioteca ──
 interface MisionesDia { dia: string; progreso: Record<string, number>; reclamadas: string[] }
 interface EstudioDia { ultimoDia: string; racha: number; diasTotales: number; busquedasHoy: number }
@@ -712,6 +825,7 @@ interface EstudioBibliotecaState {
   examen: { aciertos: number; errores: number; puntadas: Record<string, true> };
   estudio: EstudioDia;
   misiones: MisionesDia;
+  bono: { dia: string; reclamado: boolean };     // EL BONO SORPRESA DEL DÍA (v366)
   // acciones — el día se firma con un gesto real (cero efectos: la racha
   // cuenta días de estudio, no días de mirar)
   leer: (id: string) => boolean;                 // true si era la primera vez
@@ -719,6 +833,7 @@ interface EstudioBibliotecaState {
   acierto: (preguntaId: string) => boolean;      // true si puntúa (primera por pregunta)
   fallo: (preguntaId: string) => void;
   reclamar: (codigo: string) => MisionCatedra | null; // devuelve el botín si procede
+  reclamarBono: () => { monto: number; dorado: boolean } | null; // v366: el toque que cobra el sorteo del día
   reiniciar: () => void;
 }
 
@@ -746,6 +861,7 @@ export const useEstudioBiblioteca = create<EstudioBibliotecaState>()(
         examen: { aciertos: 0, errores: 0, puntadas: {} },
         estudio: { ultimoDia: "", racha: 0, diasTotales: 0, busquedasHoy: 0 },
         misiones: { dia: "", progreso: {}, reclamadas: [] },
+        bono: { dia: "", reclamado: false },
 
         leer: (id) => {
           try {
@@ -831,11 +947,29 @@ export const useEstudioBiblioteca = create<EstudioBibliotecaState>()(
           } catch { return null; }
         },
 
+        // v366 EL IMÁN — el bono del archivo: el sorteo del día ya está
+        // decidido (bonoDelDia con el reloj central); el toque lo cobra UNA
+        // vez. Devuelve el bono cobrado o null si ya se cobró hoy.
+        reclamarBono: () => {
+          try {
+            const hoy = diaDeHoy();
+            const b = get().bono;
+            if (b.dia === hoy && b.reclamado) return null;
+            const bono = bonoDelDia(diaDelAnillo());
+            set((st) => {
+              const firmado = firmar();
+              return { ...firmado, bono: { dia: hoy, reclamado: true } };
+            });
+            return bono;
+          } catch { return null; }
+        },
+
         reiniciar: () => set({
           leidas: {},
           examen: { aciertos: 0, errores: 0, puntadas: {} },
           estudio: { ultimoDia: "", racha: 0, diasTotales: 0, busquedasHoy: 0 },
           misiones: { dia: "", progreso: {}, reclamadas: [] },
+          bono: { dia: "", reclamado: false },
         }),
       };
     },

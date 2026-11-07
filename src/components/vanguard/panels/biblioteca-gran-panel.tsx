@@ -27,6 +27,19 @@
 //   toque explícito, y si te fuiste incompleto vuelve vestida de rojo con
 //   su sello INCOMPLETO estampado. El deber hecho la viste verde.
 //
+//   v366.0 EL IMÁN — la ciencia de retención de las plataformas top,
+//   aplicada a la escuela con la honestidad de la casa:
+//   ⑤ LA MADRIGUERA — «DE AQUÍ SALTA A»: cada ficha abre la siguiente
+//     (misma época, misma región, misma familia — datos reales, un toque).
+//   ⑥ EL BONO SORPRESA DEL ARCHIVO — recompensa variable honesta: el
+//     sorteo del día ya está decidido (15-60 mon, 1 de 8 dorado), el toque
+//     lo cobra; la regla está a la vista, la sorpresa es el monto.
+//   ⑦ EL ESCALÓN SIGUIENTE — «SOLO TE FALTAN N XP» con barra real y el
+//     siguiente título del lector.
+//   ⑧ EL EXAMEN ES DE TODOS — el mismo examen para toda la escuela,
+//     caduca a medianoche (urgencia real, cero relojes nuevos).
+//   ⑨ NUEVA — las fichas sin leer lucen su chip: es verdad que no la leíste.
+//
 //   CERO efectos: cada gesto firma el día (leer, buscar, examinar) — la
 //   racha cuenta días de estudio real, no días de mirar (ley v335).
 //   El saludo es useMemo puro; el examen gira con diaDelAnillo().
@@ -38,7 +51,7 @@ import { toast } from "sonner";
 import {
   BookMarked, Globe2, BookLock, Search, GraduationCap, Flame, Library,
   ScrollText, X, Trophy, CheckCircle2, Circle, Coins, Star, Landmark,
-  Bomb, AlertTriangle, ClipboardList,
+  Bomb, AlertTriangle, ClipboardList, Gift, Sparkles, ChevronRight,
 } from "lucide-react";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Countryball } from "@/components/vanguard/countryball";
@@ -49,10 +62,13 @@ import { diaDelAnillo } from "@/lib/estrategia-data";
 import {
   CONSTITUCIONES, GEOPOLITICA, REGIONES, TIPOS_GEO,
   XP_POR_FICHA_NUEVA, XP_POR_ACIERTO,
-  misionesDeHoy, examenDelDia, saludoCatedra, nivelLector,
+  misionesDeHoy, examenDelDia, saludoCatedra, nivelLector, nivelLectorSiguiente,
+  bonoDelDia, REGLA_BONO,
+  saltosDesdeConstitucion, saltosDesdeGeo, saltosDesdeArma,
   useEstudioBiblioteca, selloLectura,
-  type Constitucion, type PiezaGeo, type Region, type TipoGeo,
+  type Constitucion, type PiezaGeo, type Region, type TipoGeo, type Salto,
 } from "@/lib/biblioteca-data";
+import { xpForLevel, getRankForLevel } from "@/lib/game-data";
 import {
   ARSENAL, FAMILIAS_ARMAS, CLASES_ARMAS,
   type PiezaArma, type FamiliaArma, type ClaseArma,
@@ -299,6 +315,7 @@ function Catedra() {
   const alias = useGameStore((s) => s.alias);
   const nivel = useGameStore((s) => s.level);
   const rango = useGameStore((s) => s.rank);
+  const xp = useGameStore((s) => s.xp);
   const addXp = useGameStore((s) => s.addXp);
   const addCoins = useGameStore((s) => s.addCoins);
   const estudio = useEstudioBiblioteca();
@@ -307,6 +324,11 @@ function Catedra() {
   const hoy = useMemo(() => firmaDeHoy(), []);
   const misiones = useMemo(() => misionesDeHoy(dia), [dia]);
   const preguntas = useMemo(() => examenDelDia(dia), [dia]);
+  // v366 EL IMÁN — el sorteo del día es el MISMO para toda la escuela
+  // (mulberry32 + reloj central, ley v324): el monto ya está decidido,
+  // el toque lo cobra.
+  const bonoRevelado = useMemo(() => bonoDelDia(dia), [dia]);
+  const bonoReclamado = estudio.bono.dia === hoy && estudio.bono.reclamado;
 
   // si el día guardado no es hoy, la cátedra pinta el día limpio (sin
   // mutar: el primer gesto real lo firma en el store)
@@ -316,6 +338,11 @@ function Catedra() {
 
   const fichasLeidas = Object.keys(estudio.leidas).length;
   const lector = nivelLector(fichasLeidas);
+  // v366 — EL ESCALÓN SIGUIENTE: aversión a la pérdida con datos REALES
+  const escalon = nivelLectorSiguiente(fichasLeidas);
+  const xpNecesario = xpForLevel(nivel);
+  const faltanXp = Math.max(xpNecesario - xp, 0);
+  const rangoSiguiente = getRankForLevel(nivel + 1).name;
   const saludo = useMemo(
     () => saludoCatedra(alias, nivel, estudio.estudio.racha, fichasLeidas),
     [alias, nivel, estudio.estudio.racha, fichasLeidas],
@@ -337,6 +364,18 @@ function Catedra() {
     addCoins(mision.coins, `BIBLIOTECA: ${mision.titulo}`);
     toast.success(`MISIÓN CUMPLIDA · +${mision.xp} XP +${mision.coins} mon`, {
       description: mision.titulo,
+    });
+  };
+
+  // v366 — ABRIR EL BONO DEL DÍA: el toque que cobra el sorteo (una vez)
+  const abrirBono = () => {
+    const b = estudio.reclamarBono();
+    if (!b) return;
+    addCoins(b.monto, "BIBLIOTECA: BONO SORPRESA DEL ARCHIVO");
+    toast.success(`+${b.monto} mon · BONO DEL ARCHIVO${b.dorado ? " DORADO" : ""}`, {
+      description: b.dorado
+        ? "El sorteo de hoy cayó DORADO — doble pago. Mañana hay otro."
+        : "El sorteo del día, cobrado. Mañana el archivo sortea otro.",
     });
   };
 
@@ -394,6 +433,41 @@ function Catedra() {
       <p data-testid="biblio-saludo" className="text-[11px] text-foreground/90 leading-snug border-l-2 border-amber-hud/60 pl-2">
         {saludo} <span className="text-muted-foreground">Rango de la casa: {rango} · nivel {nivel}.</span>
       </p>
+
+      {/* v366 EL IMÁN — EL BONO SORPRESA DEL ARCHIVO: recompensa variable con
+          la regla a la vista (la sorpresa es el monto, jamás la regla) */}
+      <div
+        data-testid="catedra-bono"
+        className={cn(
+          "rounded-sm p-2 border space-y-1",
+          bonoReclamado ? "border-border/60 bg-secondary/30" : bonoRevelado.dorado ? "border-amber-hud bg-amber-hud/20" : "border-amber-hud/50 bg-amber-hud/10",
+        )}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-amber">
+            <Gift className="w-3.5 h-3.5" /> El bono sorpresa del archivo
+          </span>
+          {!bonoReclamado && bonoRevelado.dorado && (
+            <span className="text-[8px] font-mono font-black tracking-widest text-amber animate-pulse">HOY ES DORADO</span>
+          )}
+        </div>
+        {bonoReclamado ? (
+          <div data-testid="catedra-bono-monto" className="text-[10px] font-mono text-foreground leading-snug">
+            Cobrado hoy: +{bonoRevelado.monto} mon{bonoRevelado.dorado ? " · sorteo DORADO" : ""} — vuelve mañana, el archivo sortea otro.
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <p className="text-[9px] font-mono text-muted-foreground leading-snug flex-1 min-w-[170px]">{REGLA_BONO}</p>
+            <button
+              data-testid="catedra-bono-abrir"
+              onClick={abrirBono}
+              className="px-2.5 py-1 border border-amber-hud text-amber bg-amber-hud/30 hover:bg-amber-hud/50 rounded-sm text-[10px] font-mono uppercase font-black tracking-widest transition-colors"
+            >
+              Abrir el bono del día
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="grid lg:grid-cols-[1fr_240px] gap-3">
         {/* LAS MISIONES DEL DÍA — el progreso marcado AL LADO */}
@@ -459,13 +533,34 @@ function Catedra() {
             <span className="text-muted-foreground flex items-center gap-1"><Trophy className="w-3 h-3" /> Aciertos del examen</span>
             <span className="text-foreground font-bold tabular-nums">{estudio.examen.aciertos} · {estudio.examen.errores} fallos</span>
           </div>
+          {/* v366 — EL ESCALÓN SIGUIENTE: «solo te faltan N» con datos reales */}
+          <div data-testid="catedra-escalon" className="space-y-1 pt-1.5 border-t border-amber-hud/20">
+            <div className="flex items-center justify-between text-[10px] font-mono">
+              <span className="text-muted-foreground">Nivel {nivel} → {nivel + 1}</span>
+              <span className="text-amber font-bold tabular-nums">-{faltanXp} XP</span>
+            </div>
+            <div className="h-1 bg-background rounded-full overflow-hidden">
+              <div className="h-full bg-cyan-hud transition-all" style={{ width: `${Math.min(100, (xp / Math.max(xpNecesario, 1)) * 100)}%` }} />
+            </div>
+            <div className="text-[9px] font-mono text-muted-foreground leading-snug">
+              SOLO TE FALTAN {faltanXp} XP PARA EL NIVEL {nivel + 1} — el escalón siguiente viste el rango {rangoSiguiente}.
+            </div>
+            {escalon && (
+              <div data-testid="catedra-escalon-lector" className="text-[9px] font-mono text-amber leading-snug">
+                Y {escalon.faltan} ficha{escalon.faltan === 1 ? "" : "s"} para que la cátedra te llame {escalon.titulo}.
+              </div>
+            )}
+          </div>
           <div className="pt-1.5 border-t border-amber-hud/20 text-[9px] font-mono text-muted-foreground leading-snug">
             La racha cuenta días de estudio REAL: leer, buscar o examinar firma tu día.
           </div>
         </aside>
       </div>
 
-      {/* EL EXAMEN DEL DÍA — 5 preguntas giradas por el reloj de la escuela */}
+      {/* EL EXAMEN DEL DÍA — 6 preguntas giradas por el reloj de la escuela.
+          v366: EL EXAMEN ES DE TODOS — prueba social honesta (el mismo para
+          toda la escuela, determinista por día) + urgencia real (caduca a
+          medianoche con el reloj central: cero relojes nuevos, ley v324). */}
       <div data-testid="biblio-examen-zona" className="border-t border-amber-hud/20 pt-2 space-y-2">
         <div className="flex items-center justify-between flex-wrap gap-1.5">
           <span className="text-[10px] font-mono uppercase tracking-widest text-amber">
@@ -480,6 +575,9 @@ function Catedra() {
             {examenAbierto ? "Cerrar el examen" : examenCompleto ? "Revisar el examen" : "Sentar el examen"}
           </button>
         </div>
+        <p data-testid="biblio-examen-comun" className="text-[9px] font-mono text-muted-foreground leading-snug">
+          EL MISMO EXAMEN PARA TODA LA ESCUELA — hoy lo sientan todos a la vez; a medianoche caduca y nace otro.
+        </p>
 
         <AnimatePresence>
           {examenAbierto && (
@@ -558,6 +656,10 @@ function SalaConstituciones() {
   const [q, setQ] = useState("");
   const [region, setRegion] = useState<Region | "TODAS">("TODAS");
   const [abierta, setAbierta] = useState<Constitucion | null>(null);
+  // v366 EL IMÁN — la madriguera salta entre las TRES estanterías: la sala
+  // sostiene la ficha abierta de cualquier familia
+  const [abiertaGeo, setAbiertaGeo] = useState<PiezaGeo | null>(null);
+  const [abiertaArma, setAbiertaArma] = useState<PiezaArma | null>(null);
 
   // leer una ficha: la primera vez paga XP publicado (la regla de la cátedra)
   const leerFicha = (id: string) => {
@@ -566,6 +668,23 @@ function SalaConstituciones() {
       toast.success(`+${XP_POR_FICHA_NUEVA} XP · FICHA NUEVA EN TU EXPEDIENTE`, {
         description: "Saber más da puntos, como en la escuela.",
       });
+    }
+  };
+
+  // EL SALTO: un toque abre la ficha siguiente (y la cuenta como lectura)
+  const saltar = (s: Salto) => {
+    if (s.kind === "const") {
+      const c = CONSTITUCIONES.find((x) => x.id === s.id);
+      if (!c) return;
+      setAbierta(c); setAbiertaGeo(null); setAbiertaArma(null); leerFicha(c.id);
+    } else if (s.kind === "geo") {
+      const g = GEOPOLITICA.find((x) => x.id === s.id);
+      if (!g) return;
+      setAbierta(null); setAbiertaGeo(g); setAbiertaArma(null); leerFicha(g.id);
+    } else {
+      const a = ARSENAL.find((x) => x.id === s.id);
+      if (!a) return;
+      setAbierta(null); setAbiertaGeo(null); setAbiertaArma(a); leerFicha(a.id);
     }
   };
 
@@ -643,7 +762,9 @@ function SalaConstituciones() {
                   <div className="mt-1.5 text-[9px] font-mono text-muted-foreground leading-snug line-clamp-1">{c.tipo}</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-[8px] font-mono uppercase tracking-widest text-muted-foreground/70">{c.region}</span>
-                    {leida && <span className="text-[8px] font-mono text-green-400 flex items-center gap-0.5"><CheckCircle2 className="w-2.5 h-2.5" /> leída</span>}
+                    {leida
+                      ? <span className="text-[8px] font-mono text-green-400 flex items-center gap-0.5"><CheckCircle2 className="w-2.5 h-2.5" /> leída</span>
+                      : <span data-testid="biblio-nueva" className="text-[8px] font-mono text-amber flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" /> nueva</span>}
                   </div>
                 </button>
               );
@@ -652,19 +773,21 @@ function SalaConstituciones() {
         )}
       </div>
 
-      {/* LA FICHA ELEGANTE — como la del módulo del gobierno: campos claros */}
+      {/* LA FICHA ELEGANTE — como la del módulo del gobierno: campos claros.
+          v366: la madriguera sostiene fichas de las TRES salas a la vez. */}
       <AnimatePresence>
-        {abierta && (
-          <FichaConstitucion c={abierta} onClose={() => setAbierta(null)} />
-        )}
+        {abierta && <FichaConstitucion c={abierta} onClose={() => setAbierta(null)} onSalta={saltar} />}
+        {abiertaGeo && <FichaGeo g={abiertaGeo} onClose={() => setAbiertaGeo(null)} onSalta={saltar} />}
+        {abiertaArma && <FichaArma a={abiertaArma} onClose={() => setAbiertaArma(null)} onSalta={saltar} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function FichaConstitucion({ c, onClose }: { c: Constitucion; onClose: () => void }) {
+function FichaConstitucion({ c, onClose, onSalta }: { c: Constitucion; onClose: () => void; onSalta: (s: Salto) => void }) {
   const estudio = useEstudioBiblioteca();
   const leida = !!estudio.leidas[c.id];
+  const saltos = useMemo(() => saltosDesdeConstitucion(c), [c]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -731,6 +854,31 @@ function FichaConstitucion({ c, onClose }: { c: Constitucion; onClose: () => voi
             </div>
           )}
 
+          {/* v366 EL IMÁN — LA MADRIGUERA: cada ficha abre la siguiente.
+              Saltos derivados SIEMPRE de los datos reales de las estanterías. */}
+          {saltos.length > 0 && (
+            <div data-testid="ficha-saltos" className="space-y-1">
+              <div className="text-[8px] font-mono uppercase tracking-[0.2em] text-cyan-hud">De aquí salta a — la madriguera de la biblioteca</div>
+              {saltos.map((s) => (
+                <button
+                  key={s.id}
+                  data-testid="ficha-salto"
+                  onClick={() => onSalta(s)}
+                  className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm border border-cyan-hud/30 bg-secondary/40 hover:border-cyan-hud hover:bg-cyan-hud/10 transition-colors text-left"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="text-[10px] font-mono font-bold text-foreground truncate block">{s.nombre} · {s.año}</span>
+                    <span className="text-[8px] font-mono text-muted-foreground block">{s.porQue}</span>
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-cyan-hud shrink-0" />
+                </button>
+              ))}
+              <div className="text-[8px] font-mono text-muted-foreground/70 leading-snug">
+                cada salto abre otra ficha y suma a tu expediente — la madriguera de la escuela no tiene fondo
+              </div>
+            </div>
+          )}
+
           <div className="pt-2 border-t border-border flex items-center justify-between flex-wrap gap-1.5">
             <span className="font-mono text-[9px] text-muted-foreground">
               {leida ? `En tu expediente desde ${selloLectura(estudio.leidas[c.id])}` : `Leer por primera vez: +${XP_POR_FICHA_NUEVA} XP`}
@@ -754,6 +902,9 @@ function SalaGeopolitica() {
   const [q, setQ] = useState("");
   const [tipo, setTipo] = useState<TipoGeo | "TODOS">("TODOS");
   const [abierta, setAbierta] = useState<PiezaGeo | null>(null);
+  // v366 — la madriguera sostiene fichas de las TRES salas
+  const [abiertaConst, setAbiertaConst] = useState<Constitucion | null>(null);
+  const [abiertaArma, setAbiertaArma] = useState<PiezaArma | null>(null);
 
   const leerFicha = (id: string) => {
     if (estudio.leer(id)) {
@@ -761,6 +912,22 @@ function SalaGeopolitica() {
       toast.success(`+${XP_POR_FICHA_NUEVA} XP · FICHA NUEVA EN TU EXPEDIENTE`, {
         description: "Saber más da puntos, como en la escuela.",
       });
+    }
+  };
+
+  const saltar = (s: Salto) => {
+    if (s.kind === "const") {
+      const c = CONSTITUCIONES.find((x) => x.id === s.id);
+      if (!c) return;
+      setAbierta(null); setAbiertaConst(c); setAbiertaArma(null); leerFicha(c.id);
+    } else if (s.kind === "geo") {
+      const g = GEOPOLITICA.find((x) => x.id === s.id);
+      if (!g) return;
+      setAbierta(g); setAbiertaConst(null); setAbiertaArma(null); leerFicha(g.id);
+    } else {
+      const a = ARSENAL.find((x) => x.id === s.id);
+      if (!a) return;
+      setAbierta(null); setAbiertaConst(null); setAbiertaArma(a); leerFicha(a.id);
     }
   };
 
@@ -834,7 +1001,9 @@ function SalaGeopolitica() {
                   <div className="mt-1 text-[9px] font-mono text-muted-foreground leading-snug line-clamp-2">{g.resumen}</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="px-1 py-0.5 border border-cyan-hud/40 text-cyan-hud font-mono text-[8px] font-bold tracking-widest">{g.tipo}</span>
-                    {leida && <span className="text-[8px] font-mono text-green-400 flex items-center gap-0.5"><CheckCircle2 className="w-2.5 h-2.5" /> leída</span>}
+                    {leida
+                      ? <span className="text-[8px] font-mono text-green-400 flex items-center gap-0.5"><CheckCircle2 className="w-2.5 h-2.5" /> leída</span>
+                      : <span data-testid="biblio-nueva" className="text-[8px] font-mono text-amber flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" /> nueva</span>}
                   </div>
                 </button>
               );
@@ -844,15 +1013,18 @@ function SalaGeopolitica() {
       </div>
 
       <AnimatePresence>
-        {abierta && <FichaGeo g={abierta} onClose={() => setAbierta(null)} />}
+        {abierta && <FichaGeo g={abierta} onClose={() => setAbierta(null)} onSalta={saltar} />}
+        {abiertaConst && <FichaConstitucion c={abiertaConst} onClose={() => setAbiertaConst(null)} onSalta={saltar} />}
+        {abiertaArma && <FichaArma a={abiertaArma} onClose={() => setAbiertaArma(null)} onSalta={saltar} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function FichaGeo({ g, onClose }: { g: PiezaGeo; onClose: () => void }) {
+function FichaGeo({ g, onClose, onSalta }: { g: PiezaGeo; onClose: () => void; onSalta: (s: Salto) => void }) {
   const estudio = useEstudioBiblioteca();
   const leida = !!estudio.leidas[g.id];
+  const saltos = useMemo(() => saltosDesdeGeo(g), [g]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -890,6 +1062,30 @@ function FichaGeo({ g, onClose }: { g: PiezaGeo; onClose: () => void }) {
             <p className="text-[11px] text-foreground/90 leading-relaxed">{g.porQueImporta}</p>
           </div>
 
+          {/* v366 EL IMÁN — LA MADRIGUERA: cada ficha abre la siguiente */}
+          {saltos.length > 0 && (
+            <div data-testid="ficha-saltos" className="space-y-1">
+              <div className="text-[8px] font-mono uppercase tracking-[0.2em] text-cyan-hud">De aquí salta a — la madriguera de la biblioteca</div>
+              {saltos.map((s) => (
+                <button
+                  key={s.id}
+                  data-testid="ficha-salto"
+                  onClick={() => onSalta(s)}
+                  className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm border border-cyan-hud/30 bg-secondary/40 hover:border-cyan-hud hover:bg-cyan-hud/10 transition-colors text-left"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="text-[10px] font-mono font-bold text-foreground truncate block">{s.nombre} · {s.año}</span>
+                    <span className="text-[8px] font-mono text-muted-foreground block">{s.porQue}</span>
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-cyan-hud shrink-0" />
+                </button>
+              ))}
+              <div className="text-[8px] font-mono text-muted-foreground/70 leading-snug">
+                cada salto abre otra ficha y suma a tu expediente — la madriguera de la escuela no tiene fondo
+              </div>
+            </div>
+          )}
+
           <div className="pt-2 border-t border-border flex items-center justify-between flex-wrap gap-1.5">
             <span className="font-mono text-[9px] text-muted-foreground">
               {leida ? `En tu expediente desde ${selloLectura(estudio.leidas[g.id])}` : `Leer por primera vez: +${XP_POR_FICHA_NUEVA} XP`}
@@ -916,6 +1112,9 @@ function SalaArsenal() {
   const [familia, setFamilia] = useState<FamiliaArma | "TODAS">("TODAS");
   const [clase, setClase] = useState<ClaseArma | "TODAS">("TODAS");
   const [abierta, setAbierta] = useState<PiezaArma | null>(null);
+  // v366 — la madriguera sostiene fichas de las TRES salas
+  const [abiertaConst, setAbiertaConst] = useState<Constitucion | null>(null);
+  const [abiertaGeo, setAbiertaGeo] = useState<PiezaGeo | null>(null);
 
   const leerFicha = (id: string) => {
     if (estudio.leer(id)) {
@@ -923,6 +1122,22 @@ function SalaArsenal() {
       toast.success(`+${XP_POR_FICHA_NUEVA} XP · FICHA NUEVA EN TU EXPEDIENTE`, {
         description: "Saber más da puntos, como en la escuela.",
       });
+    }
+  };
+
+  const saltar = (s: Salto) => {
+    if (s.kind === "const") {
+      const c = CONSTITUCIONES.find((x) => x.id === s.id);
+      if (!c) return;
+      setAbierta(null); setAbiertaConst(c); setAbiertaGeo(null); leerFicha(c.id);
+    } else if (s.kind === "geo") {
+      const g = GEOPOLITICA.find((x) => x.id === s.id);
+      if (!g) return;
+      setAbierta(null); setAbiertaConst(null); setAbiertaGeo(g); leerFicha(g.id);
+    } else {
+      const a = ARSENAL.find((x) => x.id === s.id);
+      if (!a) return;
+      setAbierta(a); setAbiertaConst(null); setAbiertaGeo(null); leerFicha(a.id);
     }
   };
 
@@ -1012,7 +1227,9 @@ function SalaArsenal() {
                   <div className="mt-1 flex items-center justify-between gap-1">
                     <span className="px-1 py-0.5 border border-red-hud/40 text-red-hud/90 font-mono text-[8px] font-bold tracking-widest">{a.familia}</span>
                     <span className="px-1 py-0.5 border border-cyan-hud/40 text-cyan-hud font-mono text-[8px] font-bold tracking-widest">{a.clase}</span>
-                    {leida && <span className="text-[8px] font-mono text-green-400 flex items-center gap-0.5"><CheckCircle2 className="w-2.5 h-2.5" /> leída</span>}
+                    {leida
+                      ? <span className="text-[8px] font-mono text-green-400 flex items-center gap-0.5"><CheckCircle2 className="w-2.5 h-2.5" /> leída</span>
+                      : <span data-testid="biblio-nueva" className="text-[8px] font-mono text-amber flex items-center gap-0.5"><Sparkles className="w-2.5 h-2.5" /> nueva</span>}
                   </div>
                 </button>
               );
@@ -1022,15 +1239,18 @@ function SalaArsenal() {
       </div>
 
       <AnimatePresence>
-        {abierta && <FichaArma a={abierta} onClose={() => setAbierta(null)} />}
+        {abierta && <FichaArma a={abierta} onClose={() => setAbierta(null)} onSalta={saltar} />}
+        {abiertaConst && <FichaConstitucion c={abiertaConst} onClose={() => setAbiertaConst(null)} onSalta={saltar} />}
+        {abiertaGeo && <FichaGeo g={abiertaGeo} onClose={() => setAbiertaGeo(null)} onSalta={saltar} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function FichaArma({ a, onClose }: { a: PiezaArma; onClose: () => void }) {
+function FichaArma({ a, onClose, onSalta }: { a: PiezaArma; onClose: () => void; onSalta: (s: Salto) => void }) {
   const estudio = useEstudioBiblioteca();
   const leida = !!estudio.leidas[a.id];
+  const saltos = useMemo(() => saltosDesdeArma(a), [a]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1079,6 +1299,30 @@ function FichaArma({ a, onClose }: { a: PiezaArma; onClose: () => void }) {
           {a.nota && (
             <div className="border border-amber-hud/50 bg-amber-hud/10 rounded-sm p-2 text-[10px] font-mono text-amber leading-snug">
               NOTA HONESTA · {a.nota}
+            </div>
+          )}
+
+          {/* v366 EL IMÁN — LA MADRIGUERA: cada ficha abre la siguiente */}
+          {saltos.length > 0 && (
+            <div data-testid="ficha-saltos" className="space-y-1">
+              <div className="text-[8px] font-mono uppercase tracking-[0.2em] text-cyan-hud">De aquí salta a — la madriguera de la biblioteca</div>
+              {saltos.map((s) => (
+                <button
+                  key={s.id}
+                  data-testid="ficha-salto"
+                  onClick={() => onSalta(s)}
+                  className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm border border-cyan-hud/30 bg-secondary/40 hover:border-cyan-hud hover:bg-cyan-hud/10 transition-colors text-left"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="text-[10px] font-mono font-bold text-foreground truncate block">{s.nombre} · {s.año}</span>
+                    <span className="text-[8px] font-mono text-muted-foreground block">{s.porQue}</span>
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-cyan-hud shrink-0" />
+                </button>
+              ))}
+              <div className="text-[8px] font-mono text-muted-foreground/70 leading-snug">
+                cada salto abre otra ficha y suma a tu expediente — la madriguera de la escuela no tiene fondo
+              </div>
             </div>
           )}
 
