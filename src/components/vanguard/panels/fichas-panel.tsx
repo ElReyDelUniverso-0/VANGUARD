@@ -22,7 +22,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Camera, Layers, Satellite, Stamp, X, User, Hourglass, ScanLine } from "lucide-react";
+import { Camera, Layers, Satellite, Stamp, X, User, Hourglass, ScanLine, ChevronRight } from "lucide-react";
 import { pedirNoticias } from "@/lib/noticias-cache";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,6 +58,15 @@ import {
   type FichaHistoria,
   type FamiliaAlbum,
 } from "@/lib/fichas-coleccion-data";
+// v367.0 EL IMÁN GLOBAL — la madriguera del álbum: saltos a la biblioteca
+// derivados de datos reales + el puente (canal de UI de un disparo) para
+// que la biblioteca despierte CON la ficha destino abierta
+import { navigateTo } from "@/lib/nav";
+import {
+  dejarPuente, recogerPuente,
+  saltosDesdeLider, saltosDesdeHistoria,
+  type Salto,
+} from "@/lib/madriguera-album";
 // v183.0 LA GLORIA — presumir, exclusivo, emocionante, adicto
 import { Sparkles, Share2 } from "lucide-react";
 import { useGloria, ctxDe, proximoTitulo, TITULOS_GLORIA, type SelloDorado } from "@/lib/gloria";
@@ -89,6 +98,42 @@ function frescuraVal(min: number): number {
   return Math.max(0.04, 1 - Math.min(min / 1440, 1));
 }
 
+// ════════════════════════════════════════════════════════════════
+// v367.0 EL IMÁN GLOBAL — LA MADRIGUERA DEL ÁLBUM: cada carta abre una
+// ficha de la biblioteca (la constitución de SU país, el arma y el
+// tablero de SU época — derivados de datos reales, cero invenciones).
+// Un toque deja el destino en el puente y camina: la biblioteca despierta
+// CON la ficha abierta y el salto cuenta como lectura (+15 XP).
+// ════════════════════════════════════════════════════════════════
+function ZonaSaltoBiblioteca({ saltos }: { saltos: Salto[] }) {
+  if (saltos.length === 0) return null;
+  return (
+    <div data-testid="carta-saltos" className="mt-3 border-t border-border/50 pt-2.5 space-y-1">
+      <div className="text-[8px] font-mono uppercase tracking-[0.2em] text-cyan-hud">De aquí salta a — la madriguera del álbum</div>
+      {saltos.map((s) => (
+        <button
+          key={`${s.kind}:${s.id}`}
+          data-testid="carta-salto"
+          onClick={() => {
+            dejarPuente({ tipo: "ficha", kind: s.kind, id: s.id });
+            navigateTo("biblioteca");
+          }}
+          className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm border border-cyan-hud/30 bg-secondary/40 hover:border-cyan-hud hover:bg-cyan-hud/10 transition-colors text-left"
+        >
+          <span className="min-w-0 flex-1">
+            <span className="text-[10px] font-mono font-bold text-foreground truncate block">{s.nombre} · {s.año}</span>
+            <span className="text-[8px] font-mono text-muted-foreground block">{s.porQue}</span>
+          </span>
+          <ChevronRight className="w-3.5 h-3.5 text-cyan-hud shrink-0" />
+        </button>
+      ))}
+      <div className="text-[8px] font-mono text-muted-foreground/70 leading-snug">
+        un toque y la biblioteca abre la ficha por ti — el salto también suma a tu expediente
+      </div>
+    </div>
+  );
+}
+
 export function FichasPanel() {
   const [items, setItems] = useState<Cable[]>(() => {
     if (typeof window === "undefined") return [];
@@ -104,7 +149,15 @@ export function FichasPanel() {
   const coleccion = useColeccionFichas();
   // v363.0 EL ÁLBUM ILUSTRADO — TRES familias viajan en el álbum: los
   // conflictos vivos (v176), los LÍDERES del poder y la HISTORIA del archivo
-  const [familia, setFamilia] = useState<FamiliaAlbum>("conflictos");
+  // v367.0 EL IMÁN GLOBAL — si la madriguera de la biblioteca dejó destino,
+  // el álbum despierta EN su familia (initializer puro, cero efectos)
+  const [familia, setFamilia] = useState<FamiliaAlbum>(() => {
+    try {
+      const p = recogerPuente();
+      if (p && p.tipo === "album") return p.familia;
+    } catch { /* sin puente: el álbum abre en casa */ }
+    return "conflictos";
+  });
   const coleccionV = useColeccionVanguard();
   const [detalleLider, setDetalleLider] = useState<FichaLider | null>(null);
   const [detalleHistoria, setDetalleHistoria] = useState<FichaHistoria | null>(null);
@@ -396,6 +449,16 @@ export function FichasPanel() {
           <p className="text-[9px] tracking-[0.18em] text-muted-foreground mt-1">APERTURAS</p>
         </div>
       </div>
+      {/* v367 EL IMÁN GLOBAL — aversión a la pérdida con datos reales */}
+      <div data-testid="album-conflictos-barra">
+        <div className="flex items-center justify-between font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span>EL MUNDO COMPLETO</span>
+          <span className="text-violet-300">SOLO TE FALTAN {total - nDescubiertas} FICHAS</span>
+        </div>
+        <div className="mt-1 h-[4px] overflow-hidden rounded-sm bg-white/10" aria-hidden>
+          <div className="h-full rounded-sm bg-gradient-to-r from-violet-600 to-violet-300 transition-all duration-500" style={{ width: `${Math.max(3, Math.round((nDescubiertas / Math.max(1, total)) * 100))}%`, boxShadow: "0 0 8px #A78BFA55" }} />
+        </div>
+      </div>
       <p className="text-[10px] text-muted-foreground leading-relaxed">
         TOCA UNA FICHA PARA DESCUBRIRLA — EL SELLO CONSERVA LA PRIMERA FECHA Y LA INTENSIDAD DE ESE DÍA.
         LA RAREZA RESPIRA CON LAS NOTICIAS: HOY LEYENDA, MAÑANA QUIZÁ SILENCIO.
@@ -496,6 +559,17 @@ export function FichasPanel() {
             LA REGLA DE LA CASA: la rareza la pone el PODER publicado del catálogo del poder — ≥95 LEYENDA · ≥88 ÉPICA · ≥80 RARA.
             Y la casa también descubre: visita la mesa de un teatro en LA MÁQUINA DEL TIEMPO y sus rostros entran al álbum.
           </p>
+          {/* v367 EL IMÁN GLOBAL — aversión a la pérdida con datos reales */}
+          <div data-testid="album-lideres-barra">
+            <div className="flex items-center justify-between font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted-foreground">
+              <span>EL PODER COMPLETO</span>
+              <span className="text-violet-300">SOLO TE FALTAN {FICHAS_LIDERES.length - nLideres} EXPEDIENTES</span>
+            </div>
+            <div className="mt-1 h-[4px] overflow-hidden rounded-sm bg-white/10" aria-hidden>
+              <div className="h-full rounded-sm bg-gradient-to-r from-violet-600 to-violet-300 transition-all duration-500" style={{ width: `${Math.max(3, Math.round((nLideres / Math.max(1, FICHAS_LIDERES.length)) * 100))}%`, boxShadow: "0 0 8px #A78BFA55" }} />
+            </div>
+            <p className="mt-1 text-[8.5px] text-muted-foreground">el escáner tiene {coleccionV.escaneosHoy("lideres")}/{ESCANES_DIA} turnos hoy — la máquina del tiempo también descubre</p>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="album-lideres">
             {FICHAS_LIDERES.map((f) => (
               <TarjetaLider key={f.key} ficha={f} sello={coleccionV.descubiertas[f.key] ?? null} onAbrir={() => abrirLider(f)} />
@@ -532,6 +606,17 @@ export function FichasPanel() {
             LA REGLA DE LA CASA: la rareza la pone la DURACIÓN publicada del conflicto — ≥100 años LEYENDA · ≥20 ÉPICA · ≥8 RARA.
             Y el atlas de la MÁQUINA DEL TIEMPO también descubre: abre la ficha de una guerra del archivo y su carta entra al álbum.
           </p>
+          {/* v367 EL IMÁN GLOBAL — aversión a la pérdida con datos reales */}
+          <div data-testid="album-historia-barra">
+            <div className="flex items-center justify-between font-mono text-[8.5px] uppercase tracking-[0.14em] text-muted-foreground">
+              <span>EL ARCHIVO COMPLETO</span>
+              <span className="text-amber">SOLO TE FALTAN {FICHAS_HISTORIA.length - nHistoria} GUERRAS</span>
+            </div>
+            <div className="mt-1 h-[4px] overflow-hidden rounded-sm bg-white/10" aria-hidden>
+              <div className="h-full rounded-sm bg-gradient-to-r from-amber-600 to-amber-300 transition-all duration-500" style={{ width: `${Math.max(3, Math.round((nHistoria / Math.max(1, FICHAS_HISTORIA.length)) * 100))}%`, boxShadow: "0 0 8px #F5C54255" }} />
+            </div>
+            <p className="mt-1 text-[8.5px] text-muted-foreground">el escáner tiene {coleccionV.escaneosHoy("historia")}/{ESCANES_DIA} turnos hoy — el atlas también descubre</p>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3" data-testid="album-historia">
             {FICHAS_HISTORIA.map((f) => (
               <TarjetaHistoria key={f.key} ficha={f} sello={coleccionV.descubiertas[f.key] ?? null} onAbrir={() => abrirHistoria(f)} />
@@ -1112,6 +1197,8 @@ function DetalleLider({
 }) {
   if (!ficha) return null;
   const hex = RAREZA_ALBUM[ficha.rareza].hex;
+  // v367 EL IMÁN GLOBAL — la madriguera del álbum: su país en la biblioteca
+  const saltos = saltosDesdeLider(ficha);
   return createPortal(
     <div
       className="fixed inset-0 z-[240] overflow-y-auto select-none"
@@ -1158,6 +1245,10 @@ function DetalleLider({
               )}
             </dl>
           </div>
+          {/* v367 EL IMÁN GLOBAL — la madriguera del álbum: la biblioteca a un toque */}
+          <div className="px-3 pb-1">
+            <ZonaSaltoBiblioteca saltos={saltos} />
+          </div>
         </div>
         <p className="px-2 pt-2 pb-6 text-center font-mono text-[8.5px] tracking-[0.16em] text-white/35">
           EL EXPEDIENTE SALE DEL CATÁLOGO DEL PODER DE LA CASA (v130) — LA REGLA DE RAREZA ES PÚBLICA: PODER ≥95 LEYENDA · ≥88 ÉPICA · ≥80 RARA
@@ -1180,6 +1271,8 @@ function DetalleHistoria({
   if (!ficha) return null;
   const hexEra = ERA_HEX[ficha.era];
   const hexRareza = RAREZA_ALBUM[ficha.rareza].hex;
+  // v367 EL IMÁN GLOBAL — la madriguera del álbum: su época en la biblioteca
+  const saltos = saltosDesdeHistoria(ficha);
   return createPortal(
     <div
       className="fixed inset-0 z-[240] overflow-y-auto select-none"
@@ -1224,6 +1317,10 @@ function DetalleHistoria({
                 <div className="flex gap-2"><dt className="w-[92px] shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-violet-300">SELLO</dt><dd className="font-mono text-[10px] text-violet-300">EN TU COLECCIÓN DESDE EL {selloAlbumFecha(sello.ts).toUpperCase()} · VÍA {sello.via.toUpperCase()}</dd></div>
               )}
             </dl>
+          </div>
+          {/* v367 EL IMÁN GLOBAL — la madriguera del álbum: la biblioteca a un toque */}
+          <div className="px-3 pb-1">
+            <ZonaSaltoBiblioteca saltos={saltos} />
           </div>
         </div>
         <p className="px-2 pt-2 pb-6 text-center font-mono text-[8.5px] tracking-[0.16em] text-white/35">

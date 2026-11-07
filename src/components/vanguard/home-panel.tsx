@@ -17,8 +17,20 @@ import {
 import Link from "next/link";
 import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";
-import { CONFLICTS } from "@/lib/game-data";
+import { CONFLICTS, xpForLevel, getRankForLevel } from "@/lib/game-data";
 import { navigateTo, openMainMenu } from "@/lib/nav";
+// v367.0 EL IMÁN GLOBAL — la franja del imán en la portada: deber, escalón,
+// colección y el bono del archivo cobrable EN UN TOQUE (fricción cero)
+import { toast } from "sonner";
+import { Magnet } from "lucide-react";
+import {
+  useEstudioBiblioteca, misionesDeHoy, bonoDelDia, diaDeHoy,
+} from "@/lib/biblioteca-data";
+import { diaDelAnillo } from "@/lib/estrategia-data";
+import { useColeccionFichas, FICHAS_GUERRA } from "@/lib/fichas-guerra-data";
+import {
+  useColeccionVanguard, FICHAS_LIDERES, FICHAS_HISTORIA,
+} from "@/lib/fichas-coleccion-data";
 // v198.0 LA CASA LIGERA: el manifiesto tiene casa propia — este import ya NO
 // arrastra el panel de empleos completo al arranque de la portada
 import { ManifiestoMundo } from "@/components/vanguard/manifiesto-mundo";
@@ -203,6 +215,147 @@ function nextCrisisDate(): Date {
   return d;
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// v367.0 EL IMÁN GLOBAL — LA FRANJA DEL IMÁN EN LA PORTADA. Mandato del
+// Dueño: «agrega estos tipos de navegación en TODO Vanguard, funcióanlo
+// todo y haz Vanguard hermosamente adictivo». La técnica de las tiendas
+// top (aversión a la pérdida, urgencia real, fricción cero) dicha en la
+// moneda de la casa: números REALES de los stores de tu aparato, cero
+// invención. Tres puertas funcionales (la escuela, el álbum) y el BONO
+// DEL ARCHIVO cobrable EN UN TOQUE desde la portada — el monto sigue
+// siendo la sorpresa (la regla es la pública; el DORADO sí se anuncia,
+// como en la cátedra desde v366).
+// ══════════════════════════════════════════════════════════════════════
+function ImanDeLaCasa({ deberIn }: { deberIn: string }) {
+  const nivel = useGameStore((s) => s.level);
+  const xp = useGameStore((s) => s.xp);
+  const estudio = useEstudioBiblioteca();
+  const coleccion = useColeccionFichas();
+  const coleccionV = useColeccionVanguard();
+
+  const hoy = diaDeHoy();
+  // EL DEBER DE HOY — misiones reales del reloj central de la escuela (ley v324)
+  const misiones = misionesDeHoy(diaDelAnillo());
+  const prog = estudio.misiones.dia === hoy ? estudio.misiones.progreso : {};
+  const cumplidas = misiones.filter((m) => (prog[m.codigo] ?? 0) >= m.meta).length;
+
+  // EL ESCALÓN — la barra real de la economía de la casa (misma fórmula v366)
+  const xpNecesario = xpForLevel(nivel);
+  const faltanXp = Math.max(xpNecesario - xp, 0);
+  const rango = getRankForLevel(nivel + 1).name;
+
+  // LA COLECCIÓN — las TRES familias del álbum contadas de tus sellos reales
+  const totalCartas = FICHAS_GUERRA.length + FICHAS_LIDERES.length + FICHAS_HISTORIA.length;
+  const cartasTuyas =
+    Object.keys(coleccion.descubiertas).length + Object.keys(coleccionV.descubiertas).length;
+
+  // EL BONO — el sorteo del día ya decidido (PRNG del examen + reloj central);
+  // el DORADO se anuncia (público, como en la cátedra), el MONTO no: es la sorpresa
+  const bono = bonoDelDia(diaDelAnillo());
+  const bonoCobrado = estudio.bono.dia === hoy && estudio.bono.reclamado;
+
+  // fricción cero: el bono se cobra DESDE la portada, sin entrar a la escuela
+  const cobrarBono = () => {
+    const b = useEstudioBiblioteca.getState().reclamarBono();
+    if (!b) return;
+    useGameStore.getState().addCoins(b.monto, "PORTADA: BONO SORPRESA DEL ARCHIVO");
+    toast.success(`+${b.monto} mon · BONO DEL ARCHIVO${b.dorado ? " DORADO" : ""}`, {
+      description: b.dorado
+        ? "El sorteo de hoy cayó DORADO — doble pago. Mañana hay otro."
+        : "El sorteo del día, cobrado. Mañana el archivo sortea otro.",
+    });
+  };
+
+  return (
+    <div data-testid="iman-casa" className="hud-panel p-3">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <p className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-amber">
+          <Magnet className="w-3.5 h-3.5" /> EL IMÁN DE LA CASA — lo que te queda por cazar
+        </p>
+        <span className="font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
+          números reales de tu aparato · cero humo
+        </span>
+      </div>
+      <div className="mt-2.5 grid gap-2 sm:grid-cols-3">
+        {/* EL DEBER — urgencia real: la medianoche del reloj de la escuela */}
+        <button
+          data-testid="iman-deber"
+          onClick={() => navigateTo("biblioteca")}
+          className="text-left border border-amber-hud/30 bg-secondary/40 rounded-sm p-2.5 hover:border-amber-hud transition-colors"
+        >
+          <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-muted-foreground">EL DEBER DE HOY</p>
+          <p className="mt-0.5 font-mono text-lg font-black leading-none text-amber">
+            {cumplidas}<span className="text-muted-foreground text-sm">/{misiones.length} misiones</span>
+          </p>
+          <div className="mt-1.5 h-1 bg-background rounded-full overflow-hidden">
+            <div className="h-full bg-amber-hud transition-all" style={{ width: `${(cumplidas / Math.max(1, misiones.length)) * 100}%` }} />
+          </div>
+          <p className="mt-1 font-mono text-[8.5px] text-muted-foreground leading-snug">
+            caducan en {deberIn || "…"} — la medianoche gira el deber y el examen
+          </p>
+        </button>
+        {/* EL ESCALÓN — aversión a la pérdida con la economía verdadera */}
+        <button
+          data-testid="iman-escalon"
+          onClick={() => navigateTo("biblioteca")}
+          className="text-left border border-cyan-hud/30 bg-secondary/40 rounded-sm p-2.5 hover:border-cyan-hud transition-colors"
+        >
+          <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-muted-foreground">
+            NIVEL {nivel} → {nivel + 1} · {rango}
+          </p>
+          <p className="mt-0.5 font-mono text-lg font-black leading-none text-cyan-hud">
+            -{faltanXp}<span className="text-muted-foreground text-sm"> XP</span>
+          </p>
+          <div className="mt-1.5 h-1 bg-background rounded-full overflow-hidden">
+            <div className="h-full bg-cyan-hud transition-all" style={{ width: `${Math.min(100, (xp / Math.max(xpNecesario, 1)) * 100)}%` }} />
+          </div>
+          <p className="mt-1 font-mono text-[8.5px] text-muted-foreground leading-snug">
+            SOLO TE FALTAN {faltanXp} XP — la escuela paga: +15 por ficha, +5 por acierto
+          </p>
+        </button>
+        {/* LA COLECCIÓN — las cartas que el Dueño manda ver, contadas de verdad */}
+        <button
+          data-testid="iman-coleccion"
+          onClick={() => navigateTo("fichas")}
+          className="text-left border border-violet-400/30 bg-secondary/40 rounded-sm p-2.5 hover:border-violet-400 transition-colors"
+        >
+          <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-muted-foreground">TU COLECCIÓN DE GUERRA</p>
+          <p className="mt-0.5 font-mono text-lg font-black leading-none text-violet-300">
+            {cartasTuyas}<span className="text-muted-foreground text-sm">/{totalCartas} cartas</span>
+          </p>
+          <div className="mt-1.5 h-1 bg-background rounded-full overflow-hidden">
+            <div className="h-full bg-violet-400 transition-all" style={{ width: `${Math.min(100, (cartasTuyas / Math.max(1, totalCartas)) * 100)}%` }} />
+          </div>
+          <p className="mt-1 font-mono text-[8.5px] text-muted-foreground leading-snug">
+            {totalCartas - cartasTuyas} selladas te esperan — el álbum te las enseña
+          </p>
+        </button>
+      </div>
+      {/* EL BONO EN UN TOQUE — fricción cero: se cobra DESDE la portada */}
+      {!bonoCobrado ? (
+        <button
+          data-testid="iman-bono"
+          onClick={cobrarBono}
+          className={`mt-2 w-full flex items-center justify-center gap-2 border py-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] transition-colors ${
+            bono.dorado
+              ? "border-amber-300 bg-amber-300/20 text-amber animate-pulse"
+              : "border-amber-hud bg-amber-hud/10 text-amber hover:bg-amber-hud/20"
+          }`}
+        >
+          <Gift className="w-3.5 h-3.5" />
+          {bono.dorado
+            ? "HOY ES DORADO — EL BONO PAGA EL DOBLE · COBRAR EN UN TOQUE"
+            : "EL BONO DEL ARCHIVO ESPERA · COBRAR EN UN TOQUE"}
+        </button>
+      ) : (
+        <div data-testid="iman-bono-hecho" className="mt-2 text-center font-mono text-[9px] uppercase tracking-[0.18em] text-green-400 border border-green-500/30 bg-green-500/10 py-2">
+          BONO DEL ARCHIVO COBRADO HOY ✓ — mañana el archivo sortea otro
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function HomePanel() {
   const alias = useGameStore((s) => s.alias);
   const coins = useGameStore((s) => s.coins);
@@ -302,6 +455,9 @@ export function HomePanel() {
   // repintaba la portada entera cada segundo (2 renders/s de regalo). Ahora
   // un único latido actualiza los dos estados en el mismo tick — misma
   // hora en pantalla, la mitad de trabajo para el aparato.
+  // v367.0: la caducidad REAL del deber de la escuela viaja en EL MISMO
+  // latido (la medianoche local que gira diaDeHoy) — cero relojes nuevos.
+  const [deberIn, setDeberIn] = useState("");
   useEffect(() => {
     const target = nextCrisisDate();
     const tick = () => {
@@ -315,6 +471,11 @@ export function HomePanel() {
       const m = Math.floor((ms % 3_600_000) / 60_000);
       const s = Math.floor((ms % 60_000) / 1000);
       setCrisisIn(`${h}h ${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`);
+      // la caducidad del deber: la MISMA medianoche local que gira la escuela
+      const fin = new Date();
+      fin.setHours(24, 0, 0, 0);
+      const msD = Math.max(0, fin.getTime() - d.getTime());
+      setDeberIn(`${Math.floor(msD / 3_600_000)}h ${String(Math.floor((msD % 3_600_000) / 60_000)).padStart(2, "0")}m`);
     };
     tick();
     const t = setInterval(tick, 1000);
@@ -456,6 +617,10 @@ export function HomePanel() {
 
       {/* v214.0 LA PUERTA — la franja TU MODO: tu puerta de cada día (o la oferta de elegir) */}
       <ModoActivo />
+
+      {/* v367.0 EL IMÁN GLOBAL — la franja del imán: lo que te queda por cazar,
+          con números REALES de tu aparato y tres puertas funcionales */}
+      <ImanDeLaCasa deberIn={deberIn} />
 
       {/* v211.0 EL VÉRTIGO — la fórmula TikTok de la Casa: el feed infinito */}
       <Link

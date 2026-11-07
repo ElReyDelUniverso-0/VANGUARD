@@ -5168,8 +5168,37 @@
 //     launcher ilustrado con .app-tile vivo — y vivo: home firma v363,
 //     health respalda) + rodillo v362.0 → v363.0 en los VALORES (ley v312:
 //     los nombres de pines quedan como memoria).
-export const APP_VERSION = "v366.0";
-export const APP_CODENAME = "EL IMÁN";
+export const APP_VERSION = "v367.0";
+export const APP_CODENAME = "EL IMÁN GLOBAL";
+// v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
+// autociclo y el mandato del Dueño («agrega estos tipos de navegación en
+// TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —
+// con el dossier de retención de las plataformas top y las cartas que aún
+// no había visto). El imán sale de la biblioteca y cruza toda la casa.
+// ① LA FRANJA DEL IMÁN EN LA PORTADA (home-panel): «EL IMÁN DE LA CASA —
+//    lo que te queda por cazar» con números REALES de los stores — EL
+//    DEBER DE HOY (misiones del reloj central + caducidad REAL en el
+//    mismo latido de 1s, cero relojes nuevos: ley v196/v324), EL ESCALÓN
+//    (nivel→nivel+1 con la barra real xpForLevel + rango getRankForLevel)
+//    y TU COLECCIÓN DE GUERRA (X/55 cartas de las TRES familias con sellos
+//    reales — las cartas del mandato v363 VISIBLES desde la portada).
+// ② EL BONO EN UN TOQUE (fricción cero): el sorteo del día se cobra desde
+//    la PORTADA (reclamarBono + addCoins con su concepto) — el monto
+//    sigue siendo la sorpresa; el DORADO se anuncia como en la cátedra.
+// ③ LA MADRIGUERA CRUZA LA CASA (madriguera-album.ts, nuevo): EL PUENTE —
+//    canal de UI de UN disparo (no persistido, initializer puro, ley
+//    v335): el álbum deja destino y la biblioteca despierta CON la ficha
+//    abierta (cuenta como lectura, +15 XP); la biblioteca deja destino y
+//    el álbum despierta EN su familia (jamás auto-abre cartas selladas).
+//    Los saltos se derivan SIEMPRE de datos reales: la constitución del
+//    MISMO país (líder→carta magna), el arma y el tablero de SU ÉPOCA
+//    (año del mando del catálogo v130 / centro real de la guerra v166),
+//    el líder del mismo país y la guerra de la época al volver — empate
+//    por id: determinista, como la madriguera v366.
+// ④ LA MADRIGUERA DEL ÁLBUM (fichas-panel): «DE AQUÍ SALTA A» en los
+//    detalles de LÍDERES e HISTORIA + barras de aversión a la pérdida en
+//    las TRES familias («SOLO TE FALTAN N PARA COMPLETAR» con turnos de
+//    escáner reales). QA: suite +2 pines, arnés visual v367 (PORT 3660).
 // v366.0 EL IMÁN (sobre v365.0, intacta): cuadragesima-novena ronda del
 // autociclo y el mandato del Dueño — la ciencia de retención de las
 // plataformas top (Amazon, AliExpress, TikTok Shop) aplicada a la escuela

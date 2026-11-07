@@ -77,6 +77,14 @@ import {
   useCartaDeber, useCartaAbierta, debeAbrirLaCarta, estadoDeberDeHoy,
   misionesPendientesDeHoy, montarCanalCarta,
 } from "@/lib/biblioteca-carta-data";
+// v367.0 EL IMÁN GLOBAL — la madriguera cruza la casa: el puente (canal de
+// UI de un disparo) y los saltos al álbum, derivados de datos reales
+import { navigateTo } from "@/lib/nav";
+import {
+  dejarPuente, recogerPuente, verPuente,
+  saltoAlAlbumDesdeConstitucion, saltoAlAlbumPorEpoca,
+  type SaltoAlbum,
+} from "@/lib/madriguera-album";
 
 // el canal de UI de la carta vive listo desde el módulo (patrón del store
 // de la casa: creadores inyectados fuera de la fábrica)
@@ -89,12 +97,70 @@ function firmaDeHoy(): string {
   } catch { return ""; }
 }
 
+// v367.0 EL IMÁN GLOBAL — el ATERRIZAJE del puente: la sala que monta
+// recoge el destino dejado por el álbum y abre SU ficha con un toque ya
+// hecho (el salto cuenta como lectura: paga +15 XP la primera vez, como
+// la madriguera v366). Initializer puro — cero efectos (ley v335); las
+// escrituras van por getState() imperativo, patrón de la carta (v365).
+function fichaDelPuente<T>(kind: Salto["kind"], buscar: (id: string) => T | null): T | null {
+  try {
+    const p = recogerPuente();
+    if (!p || p.tipo !== "ficha" || p.kind !== kind) return null;
+    const f = buscar(p.id);
+    if (f && useEstudioBiblioteca.getState().leer(p.id)) {
+      useGameStore.getState().addXp(XP_POR_FICHA_NUEVA);
+    }
+    return f;
+  } catch { return null; }
+}
+
+// el salto AL ÁLBUM desde una ficha de la biblioteca (dato real: líder del
+// mismo país o guerra de la época) — un toque deja el destino y camina
+function saltarAlAlbum(a: SaltoAlbum) {
+  dejarPuente({ tipo: "album", familia: a.familia });
+  navigateTo("fichas");
+}
+
 const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+
+// v367 — LA ZONA DEL ÁLBUM en las fichas de la biblioteca: la madriguera
+// cruza la casa — un toque y estás en el álbum, con el destino derivado de
+// datos REALES (el líder del mismo país / la guerra de la misma época).
+function ZonaAlbum({ alAlbum }: { alAlbum: SaltoAlbum | null }) {
+  if (!alAlbum) return null;
+  return (
+    <div data-testid="ficha-album-zona" className="space-y-1">
+      <div className="text-[8px] font-mono uppercase tracking-[0.2em] text-violet-300">Y en el álbum — la madriguera cruza la casa</div>
+      <button
+        data-testid="ficha-salto-album"
+        onClick={() => saltarAlAlbum(alAlbum)}
+        className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm border border-violet-400/30 bg-secondary/40 hover:border-violet-400 hover:bg-violet-400/10 transition-colors text-left"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="text-[10px] font-mono font-bold text-foreground truncate block">{alAlbum.etiqueta}</span>
+          <span className="text-[8px] font-mono text-muted-foreground block">{alAlbum.porQue}</span>
+        </span>
+        <ChevronRight className="w-3.5 h-3.5 text-violet-300 shrink-0" />
+      </button>
+      <div className="text-[8px] font-mono text-muted-foreground/70 leading-snug">
+        un toque y estás en el álbum de la casa — las cartas también son de la escuela
+      </div>
+    </div>
+  );
+}
 
 type Sala = "constituciones" | "geopolitica" | "arsenal" | "secreta";
 
 export function GranBibliotecaPanel() {
-  const [sala, setSala] = useState<Sala>("constituciones");
+  // v367.0 EL IMÁN GLOBAL — el PUENTE: si la madriguera del álbum dejó un
+  // destino, la biblioteca despierta EN su sala (initializer puro, ley v335)
+  const [sala, setSala] = useState<Sala>(() => {
+    const p = verPuente();
+    if (!p) return "constituciones";
+    return p.tipo === "ficha"
+      ? p.kind === "const" ? "constituciones" : p.kind === "geo" ? "geopolitica" : "arsenal"
+      : "constituciones";
+  });
 
   // LA CARTA OBLIGATORIA: se juzga UNA vez, en el estado inicial del panel
   // (cero efectos, ley v335: el initializer corre en el primer render de
@@ -655,7 +721,7 @@ function SalaConstituciones() {
   const addXp = useGameStore((s) => s.addXp);
   const [q, setQ] = useState("");
   const [region, setRegion] = useState<Region | "TODAS">("TODAS");
-  const [abierta, setAbierta] = useState<Constitucion | null>(null);
+  const [abierta, setAbierta] = useState<Constitucion | null>(() => fichaDelPuente<Constitucion>("const", (id) => CONSTITUCIONES.find((x) => x.id === id) ?? null));
   // v366 EL IMÁN — la madriguera salta entre las TRES estanterías: la sala
   // sostiene la ficha abierta de cualquier familia
   const [abiertaGeo, setAbiertaGeo] = useState<PiezaGeo | null>(null);
@@ -788,6 +854,8 @@ function FichaConstitucion({ c, onClose, onSalta }: { c: Constitucion; onClose: 
   const estudio = useEstudioBiblioteca();
   const leida = !!estudio.leidas[c.id];
   const saltos = useMemo(() => saltosDesdeConstitucion(c), [c]);
+  // v367 — el salto AL ÁLBUM: el poder de HOY de este país (dato real, o nada)
+  const alAlbum = useMemo(() => saltoAlAlbumDesdeConstitucion(c.pais), [c.pais]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -879,6 +947,9 @@ function FichaConstitucion({ c, onClose, onSalta }: { c: Constitucion; onClose: 
             </div>
           )}
 
+          {/* v367 EL IMÁN GLOBAL — la madriguera cruza la casa: salto AL ÁLBUM */}
+          <ZonaAlbum alAlbum={alAlbum} />
+
           <div className="pt-2 border-t border-border flex items-center justify-between flex-wrap gap-1.5">
             <span className="font-mono text-[9px] text-muted-foreground">
               {leida ? `En tu expediente desde ${selloLectura(estudio.leidas[c.id])}` : `Leer por primera vez: +${XP_POR_FICHA_NUEVA} XP`}
@@ -901,7 +972,7 @@ function SalaGeopolitica() {
   const addXp = useGameStore((s) => s.addXp);
   const [q, setQ] = useState("");
   const [tipo, setTipo] = useState<TipoGeo | "TODOS">("TODOS");
-  const [abierta, setAbierta] = useState<PiezaGeo | null>(null);
+  const [abierta, setAbierta] = useState<PiezaGeo | null>(() => fichaDelPuente<PiezaGeo>("geo", (id) => GEOPOLITICA.find((x) => x.id === id) ?? null));
   // v366 — la madriguera sostiene fichas de las TRES salas
   const [abiertaConst, setAbiertaConst] = useState<Constitucion | null>(null);
   const [abiertaArma, setAbiertaArma] = useState<PiezaArma | null>(null);
@@ -1025,6 +1096,8 @@ function FichaGeo({ g, onClose, onSalta }: { g: PiezaGeo; onClose: () => void; o
   const estudio = useEstudioBiblioteca();
   const leida = !!estudio.leidas[g.id];
   const saltos = useMemo(() => saltosDesdeGeo(g), [g]);
+  // v367 — el salto AL ÁLBUM: la guerra de su época (dato real, o nada)
+  const alAlbum = useMemo(() => saltoAlAlbumPorEpoca(g.año), [g.año]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1086,6 +1159,9 @@ function FichaGeo({ g, onClose, onSalta }: { g: PiezaGeo; onClose: () => void; o
             </div>
           )}
 
+          {/* v367 EL IMÁN GLOBAL — la madriguera cruza la casa: salto AL ÁLBUM */}
+          <ZonaAlbum alAlbum={alAlbum} />
+
           <div className="pt-2 border-t border-border flex items-center justify-between flex-wrap gap-1.5">
             <span className="font-mono text-[9px] text-muted-foreground">
               {leida ? `En tu expediente desde ${selloLectura(estudio.leidas[g.id])}` : `Leer por primera vez: +${XP_POR_FICHA_NUEVA} XP`}
@@ -1111,7 +1187,7 @@ function SalaArsenal() {
   const [q, setQ] = useState("");
   const [familia, setFamilia] = useState<FamiliaArma | "TODAS">("TODAS");
   const [clase, setClase] = useState<ClaseArma | "TODAS">("TODAS");
-  const [abierta, setAbierta] = useState<PiezaArma | null>(null);
+  const [abierta, setAbierta] = useState<PiezaArma | null>(() => fichaDelPuente<PiezaArma>("arma", (id) => ARSENAL.find((x) => x.id === id) ?? null));
   // v366 — la madriguera sostiene fichas de las TRES salas
   const [abiertaConst, setAbiertaConst] = useState<Constitucion | null>(null);
   const [abiertaGeo, setAbiertaGeo] = useState<PiezaGeo | null>(null);
@@ -1251,6 +1327,8 @@ function FichaArma({ a, onClose, onSalta }: { a: PiezaArma; onClose: () => void;
   const estudio = useEstudioBiblioteca();
   const leida = !!estudio.leidas[a.id];
   const saltos = useMemo(() => saltosDesdeArma(a), [a]);
+  // v367 — el salto AL ÁLBUM: la guerra de su época (dato real, o nada)
+  const alAlbum = useMemo(() => saltoAlAlbumPorEpoca(a.año), [a.año]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1325,6 +1403,9 @@ function FichaArma({ a, onClose, onSalta }: { a: PiezaArma; onClose: () => void;
               </div>
             </div>
           )}
+
+          {/* v367 EL IMÁN GLOBAL — la madriguera cruza la casa: salto AL ÁLBUM */}
+          <ZonaAlbum alAlbum={alAlbum} />
 
           <div className="pt-2 border-t border-border flex items-center justify-between flex-wrap gap-1.5">
             <span className="font-mono text-[9px] text-muted-foreground">
