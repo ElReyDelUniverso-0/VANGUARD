@@ -29,12 +29,15 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { storageBlindado } from "@/lib/storage-blindado";
 import { diaDelAnillo } from "@/lib/estrategia-data";
+// v365: la estantería ARSENAL alimenta el examen del día (pregunta 6) —
+// la fuente vive en su propio archivo (biblioteca-armas-data.ts).
+import { ARSENAL } from "@/lib/biblioteca-armas-data";
 
 // ── LAS REGLAS DE PUNTOS (publicadas — la ficha las confiesa) ─────
 export const XP_POR_FICHA_NUEVA = 15;
 export const XP_POR_ACIERTO = 5;
 export const MISIONES_AL_DIA = 3;
-export const PREGUNTAS_EXAMEN = 5;
+export const PREGUNTAS_EXAMEN = 6; // v365: la 6ª pregunta gira con el ARSENAL
 
 export type Region = "AMÉRICA" | "EUROPA" | "ASIA" | "ÁFRICA" | "OCEANÍA";
 export const REGIONES: Region[] = ["AMÉRICA", "EUROPA", "ASIA", "ÁFRICA", "OCEANÍA"];
@@ -518,7 +521,7 @@ for (const g of GEOPOLITICA) {
 export const TOTAL_GEOPOLITICA = GEOPOLITICA.length;
 
 // ── EL RELÓ DE LA ESCUELA: día con firma es-ES (el mismo de la casa v363) ──
-function diaDeHoy(offsetDias = 0): string {
+export function diaDeHoy(offsetDias = 0): string {
   try {
     const d = new Date(Date.now() + offsetDias * 86400000);
     return d.toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
@@ -540,9 +543,9 @@ export function misionesDeHoy(dia: number): MisionCatedra[] {
   const m = 2 + (dia % 2);      // 2..3 aciertos de examen hoy
   const s = 1 + (dia % 3);      // 1..3 búsquedas hoy
   return [
-    { codigo: "LECTOR", titulo: `LEE ${n} FICHAS DEL MUNDO`, desc: "Abre fichas de CONSTITUCIONES o GEOPOLÍTICA — cada ficha nueva cuenta para tu expediente.", meta: n, xp: 30, coins: 40 },
+    { codigo: "LECTOR", titulo: `LEE ${n} FICHAS DEL MUNDO`, desc: "Abre fichas de CONSTITUCIONES, GEOPOLÍTICA o ARSENAL — cada ficha nueva cuenta para tu expediente.", meta: n, xp: 30, coins: 40 },
     { codigo: "EXAMEN", titulo: `APUNTA AL EXAMEN: ${m} ACIERTOS`, desc: "Sienta el examen del día en la cátedra y acierta al menos " + m + " preguntas.", meta: m, xp: 40, coins: 30 },
-    { codigo: "INVESTIGADOR", titulo: `INVESTIGA ${s} VECES EN EL ÍNDICE`, desc: "Busca países, cartas o tratados en el índice de la biblioteca (Enter cuenta).", meta: s, xp: 20, coins: 20 },
+    { codigo: "INVESTIGADOR", titulo: `INVESTIGA ${s} VECES EN EL ÍNDICE`, desc: "Busca países, cartas, tratados o armas en el índice de la biblioteca (Enter cuenta).", meta: s, xp: 20, coins: 20 },
   ];
 }
 
@@ -566,10 +569,10 @@ export function saludoCatedra(alias: string, nivel: number, racha: number, ficha
 }
 
 // ── EL EXAMEN DEL DÍA — determinista con el reloj de la escuela ──
-// preguntas 100% derivadas de las dos estanterías: cero datos inventados.
+// preguntas 100% derivadas de las tres estanterías: cero datos inventados.
 export interface PreguntaExamen {
   id: string;
-  tipo: "CONSTITUCION" | "GEO";
+  tipo: "CONSTITUCION" | "GEO" | "ARSENAL";
   enunciado: string;
   opciones: string[];
   correcta: number;
@@ -671,6 +674,20 @@ export function examenDelDia(dia: number): PreguntaExamen[] {
       opciones,
       correcta: opciones.indexOf(g.nombre),
       pista: `GEOPOLÍTICA › ${g.tipo}`,
+    });
+  }
+  // [6] ¿a qué familia pertenece esta pieza del ARSENAL? (v365)
+  {
+    const a = barajar(ARSENAL, rnd)[0];
+    const otras = ARSENAL.filter((x) => x.id !== a.id && x.familia !== a.familia).map((x) => x.familia);
+    const opciones = barajar([a.familia, ...barajar([...new Set(otras)], rnd).slice(0, 3)], rnd);
+    preguntas.push({
+      id: "ex:ars-familia",
+      tipo: "ARSENAL",
+      enunciado: `¿A qué familia del arsenal pertenece ${a.nombre}?`,
+      opciones,
+      correcta: opciones.indexOf(a.familia),
+      pista: `ARSENAL › ${a.familia} › ${a.nombre}`,
     });
   }
   return preguntas;

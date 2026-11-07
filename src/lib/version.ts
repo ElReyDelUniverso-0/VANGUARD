@@ -5168,8 +5168,54 @@
 //     launcher ilustrado con .app-tile vivo — y vivo: home firma v363,
 //     health respalda) + rodillo v362.0 → v363.0 en los VALORES (ley v312:
 //     los nombres de pines quedan como memoria).
-export const APP_VERSION = "v364.0";
-export const APP_CODENAME = "LA BIBLIOTECA DEL MUNDO";
+export const APP_VERSION = "v365.0";
+export const APP_CODENAME = "LA ARMERÍA DEL MUNDO";
+// v365.0 LA ARMERÍA DEL MUNDO (sobre v364.0, intacta): cuadragesima-octava
+// ronda del autociclo y el mandato del Dueño («sigue y no solo armas
+// nucleares, si no todas las armas posibles; y la carta así que
+// obligatoriamente se vea, y que se vea feo si uno se va incompleto»). (1)
+// LA ARMERÍA DEL MUNDO (biblioteca-armas-data.ts, nuevo): la estantería
+// ARSENAL con 44 dossiers escolares en NUEVE familias — NUCLEAR (Manhattan,
+// Little Boy/Fat Man, RDS-1, Tsar Bomba, 596, Dimona, Pokhran/Chagai, Corea
+// del Norte), QUÍMICA (Ypres, sarín/Novichok, Agente Naranja, CWC),
+// BIOLÓGICA (Unidad 731, viruela colonial, ántrax, BWC), BLINDADA (T-34,
+// Tiger, Abrams, Leopard 2, RPG-7), AÉREA (Spitfire, B-29, F-16, F-35,
+// Su-27), NAVAL (Yamato, superportaaviones, submarinos balísticos, Fujian),
+// MISILES (V-2, ICBM, Tomahawk, HIMARS, Patriot/S-400, hipersónicos),
+// DRONES (Reaper, Bayraktar, Shahed-136, FPV) y CIBERNÉTICA (Stuxnet,
+// NotPetya, ASAT, guerra electrónica) — cada dossier con clase (PROGRAMA/
+// SISTEMA/ARMA/REGLA/DEFENSA), año, «por qué cambió el mundo», dato para el
+// examen y NOTA HONESTA donde la fuente se mueve; la REGLA DE LA SALA está
+// publicada y la ficha la confiesa: «archivo escolar — enseña
+// consecuencias, no recetas» (cero manuales de fabricación: eso no es
+// historia). Sanity en la propia fuente (resumen vacío, año fuera de rango,
+// id duplicado → error). (2) LA CUARTA SALA (biblioteca-gran-panel.tsx): el
+// chip ARSENAL (44) con buscador sin diacríticos, filtros por FAMILIA y
+// CLASE, ficha en modal y el registro escolar que ya cuenta las TRES
+// estanterías (99 cartas + 30 piezas + 44 dossiers). (3) LA CARTA DEL
+// DEBER (biblioteca-carta-data.ts, nuevo): la carta OBLIGATORIA de la
+// escuela — al entrar a la biblioteca, si el deber del día está incompleto
+// y la carta aún no se firmó, SE ABRE SOLA (estado inicial del panel, cero
+// efectos — ley v335) y SOLO cierra con el toque explícito «A ESTUDIAR»
+// (sin X, sin cerrar por el fondo); cerrarla con misiones a medias estampa
+// el sello INCOMPLETO del día (persistido): la próxima vez la carta viste
+// rojo con el sello girado 12º, el estado «Te fuiste a medias — la cátedra
+// no olvida» y el botón rojo; el deber hecho la viste verde («CUMPLIDA»).
+// El sello feo también vive FUERA de la carta: chip pulsante «A MEDIAS» en
+// la cabecera de la cátedra; botón «LA CARTA» para reabrirla siempre.
+// Persistencia vg365-carta con storageBlindado + registro en
+// rehidratador.tsx (ley v171/v172/v176); el canal de UI (abierta) NO se
+// persiste — la carta se juzga cada vez que la casa se enciende. (4) LA
+// ESCUELA GIRÁ CON LA ARMERÍA: la misión LECTOR y la de INVESTIGADOR
+// cuentan fichas y búsquedas del arsenal, el REGISTRO suma las tres
+// estanterías y el EXAMEN DEL DÍA crece a 6 preguntas (PREGUNTAS_EXAMEN=6):
+// la [6] se deriva del ARSENAL («¿a qué familia pertenece...?») con el
+// mismo mulberry32 del día del anillo — cero datos inventados.
+// SUITE: +2 pines (LA ARMERÍA DEL MUNDO estático — arsenal de 9 familias
+// con sanity, regla publicada, cuarta sala, carta obligatoria con sello,
+// examen de 6 preguntas, persistencia blindada y rehidratada — y vivo:
+// home firma v365, health respalda) + rodillo v364.0 → v365.0 en los
+// VALORES (ley v312: los nombres de pines quedan como memoria).
 // v364.0 LA BIBLIOTECA DEL MUNDO — cuadragesima-séptima ronda del autociclo y
 // el mandato del Dueño: «agrega ya la biblioteca a Vanguard: que funcione
 // como un libro de política — las constituciones de cada país y las cosas

@@ -32,6 +32,8 @@ import { useColeccionFichas } from "@/lib/fichas-guerra-data";
 import { useColeccionVanguard } from "@/lib/fichas-coleccion-data";
 // v364.0: el estudio de LA GRAN BIBLIOTECA (fichas, examen, cátedra) entra a la fila
 import { useEstudioBiblioteca } from "@/lib/biblioteca-data";
+// v365: la carta del deber entra a la fila de rehidratación (ley v171/v172)
+import { useCartaDeber } from "@/lib/biblioteca-carta-data";
 // v183.0: LA GLORIA (sellos dorados, títulos, vitrina, racha del cazador) entra a la fila
 import { useGloria } from "@/lib/gloria";
 // v232.0: la CENTRAL DE ALARMAS entra a la disciplina de rehidratación
@@ -103,6 +105,11 @@ export function Rehidratador() {
     rehidratar(useEstudioBiblioteca)
       .then(() => marcarHidratado("vg364-biblioteca"))
       .catch(() => marcarHidratado("vg364-biblioteca"));
+    // v365.0 LA ARMERÍA DEL MUNDO: la carta del deber también respeta la
+    // fila — sin registro, su cerradura bloquearía el sello INCOMPLETO
+    rehidratar(useCartaDeber)
+      .then(() => marcarHidratado("vg365-carta"))
+      .catch(() => marcarHidratado("vg365-carta"));
     // v183.0 LA GLORIA: sin este registro la cerradura del escudo bloquearía
     // los sellos dorados, los títulos y la vitrina (mismo patrón v171/v172/v176)
     rehidratar(useGloria)
