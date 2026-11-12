@@ -440,6 +440,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:cables", "fnt:fuentes", "mod:cronica"],
     alias: "centinela seguir vigilancia alertas teatro medio suscripcion avisos",
   },
+  {
+    id: "mod:musica",
+    nombre: "LA MÚSICA CON FORMA",
+    lema: "El himno, las piezas y la radio de la casa",
+    descripcion:
+      "La música de Vanguard con composición de verdad: sello de cuatro notas, forma A-B-A y tiempo absoluto (ancla + paso × duración) para que una pieza larga no se deforme nunca. Incluye el himno de la casa, tributos de pulso con melodía original, marchas militares, la radio de conflicto con emisoras reales comprobadas (fecha y código HTTP a la vista) y la radio de la casa — ambiente sintetizado y boletín leído del archivo real, que no depende de nadie. Todo el audio se fabrica con osciladores del aparato: cero archivos, cero licencias, cero copia.",
+    categoria: "SISTEMA",
+    ruta: "/musica",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables", "mod:cronica", "mod:voz"],
+    alias:
+      "musica himno piezas radio conflicto emisora militar marcha sonido audio sello forma bpm sintetizador tambor sirena morse",
+  },
 ];
 
 /** ── Consultas del censo (puras, sin BD) ─────────────────── */

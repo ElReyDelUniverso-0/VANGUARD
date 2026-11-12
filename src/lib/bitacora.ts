@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.3",
+    nombre: "LA MÚSICA CON FORMA",
+    hitos: [
+      "EL ARQUITECTO DE LA FORMA (lib/musica/forma.ts) — la causa real del «se deforma con el tiempo» no era el reloj sino la composición: toda pieza de la casa tiene ahora sello de CUATRO NOTAS, forma A-B-A, compás fijo y tiempo ABSOLUTO (ancla + paso × duración, nunca sumando retardos). Puro, determinista y probable",
+      "EL HIMNO «LA CASA EN PIE» (84 bpm, 1 min 26 s) — el himno de Vanguard con el sello en las tres secciones: intro, A, B, A2 y final de platillo. Se presenta, se contrasta y se vuelve: eso es lo que hace que se recuerde",
+      "TRIBUTOS DE PULSO Y MARCHAS MILITARES (lib/musica/piezas.ts) — piezas que toman el RITMO y la forma (que no son de nadie) con melodía, armonía y bajo originales, cada una con su nota de honestidad, más dos marchas militares sintetizadas en la casa",
+      "EL RELOJ DE HIERRO (lib/musica/motor.ts) — mirada adelantada de 1,2 s cada 90 ms, resync al compás limpio cuando el aparato duerme, y síntesis completa (pads, bajo, arpa, metales, coro, timbal, bombo, caja, charles, platillo) con osciladores del propio aparato: cero samples y cero archivos",
+      "EL DIAL DE LA RADIO (lib/musica/radios.ts + sala /musica) — emisoras reales de zonas en conflicto con la fecha de comprobación y su código HTTP a la vista (5 comprobadas, las dudosas marcadas SIN VERIFICAR) y LA RADIO DE LA CASA para los nueve teatros: ambiente sintetizado y boletín leído con la voz de la casa sobre los cables reales. Si la emisora real no abre en 6 s, la sala lo dice y ofrece la suya",
+      "LOS SONIDOS DE GUERRA (lib/musica/efectos.ts) — sirena, morse «VG», estática, explosión, radar, helicóptero y tambor, más el ambiente continuo de la radio de la casa. Ni un archivo de audio viaja con la casa: todo son osciladores",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v367.2",
     nombre: "LA VOZ MAESTRA",
     hitos: [

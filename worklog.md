@@ -5877,3 +5877,26 @@ Work Log:
 
 Stage Summary:
 - La voz queda con la boca y con el criterio: dice bien las fechas, no afirma lo que no puede sostener y navega sin cortarse.
+Task ID: ia3-v367.3-la-musica-con-forma
+Agent: ia3 (Arena)
+Task: «Vanguard necesita dos cosas: su música única, inolvidable, siempre reconocible. La música larga se fea y no tiene forma, se deforma con el tiempo; necesita música viral sin copia, himnos como un himno nacional de Vanguard; agrega también radios de lugares de conflictos, música militar y la radio de Vanguard — todo lo que tenga que ver con sonidos o algo de guerra».
+
+Work Log:
+- Diagnóstico antes de tocar nada: la música NO se deformaba por el reloj (el motor viejo ya tenía mirada adelantada y `debeResync`). Se deformaba por la COMPOSICIÓN: sin secciones fijas ni motivo que vuelva, una pieza larga se convierte en niebla a los dos minutos. Se arregla escribiendo forma, no subiendo el volumen.
+- Cinco módulos, una sola idea (la música de la casa se compone, no se improvisa):
+  ① `src/lib/musica/forma.ts` — EL ARQUITECTO: cuatro leyes (sello de CUATRO NOTAS en todas las piezas · forma A-B-A · tiempo ABSOLUTO `ancla + paso × duración`, jamás sumando retardos · compás fijo de 16 pasos con swing medido). Puro, determinista y probable: `armarForma`, `instanteDePaso`, `duracionPieza`, `selloEn16`, `ACORDES`, `golpes`.
+  ② `src/lib/musica/piezas.ts` — LAS PIEZAS: EL HIMNO «LA CASA EN PIE» (84 bpm, 30 compases = 1 min 26 s, intro-A-B-A2-final, sello con metales en A y A2); tres TRIBUTOS DE PULSO (PULSO TERRANOVA 122 bpm, MI CIENCIA TU LOCURA 100 bpm con swing 16 %, NOCTURNO DE FRONTERA 76 bpm) que toman RITMO Y FORMA —lo que no es de nadie— con melodía, armonía y bajo ORIGINALES, y cada uno lo dice en su nota; y dos MARCHAS MILITARES (PASO DE GUERRA 96 bpm, TAMBORES DEL ESTE 108 bpm).
+  ③ `src/lib/musica/motor.ts` — EL RELOJ DE HIERRO: planificador con mirada adelantada de 1,2 s cada 90 ms, resync al compás limpio si el aparato duerme (`debeResync` propio: 6 pasos de retraso), y síntesis completa con osciladores del aparato — pad, bajo, arpa, metal, coro, timbal, bombo, caja, charles, platillo — más una reverb de 1,6 s generada con ruido. Cero samples, cero archivos, cero licencias: por eso no hay copia posible.
+  ④ `src/lib/musica/radios.ts` — EL DIAL: cinco emisoras REALES comprobadas por la casa el 2026-11-12 con su código HTTP a la vista (BBC World Service 200, Monte Carlo Doualiya 200, RFI Monde 200, France Info 200, France Inter 200) más cinco que respondieron 302 a un nodo interno y van marcadas SIN VERIFICAR sin disfraz; y LA RADIO DE LA CASA para los nueve teatros, con dial, ambiente y presentación propios.
+  ⑤ `src/lib/musica/efectos.ts` — LOS SONIDOS DE GUERRA: sirena, morse «VG», estática, explosión, radar, helicóptero y tambor, más `arrancarAmbiente` para el ambiente continuo de la radio de la casa.
+- La sala `src/app/musica/page.tsx` + `src/components/vanguard/musica-sala.tsx`: el himno con su forma A LA VISTA (una barra por compás, la sección encendida en tiempo real), las seis piezas con familia y duración, el dial de conflicto por teatro (emisora real + RADIO DE LA CASA), los siete sonidos y el volumen. Si una emisora real no abre en 6 segundos, la sala lo dice con esas palabras y ofrece la de la casa: la casa nunca se queda muda.
+- LA RADIO DE LA CASA no tiene guion escrito: enciende el ambiente sintetizado y lee con la VOZ MAESTRA (persona cronista) el boletín sacado del archivo real de `/api/cronica` — cuántos cables en la ventana y el último titular con su medio. Si el archivo no trae señal, lo dice: «hoy esta frecuencia está en silencio».
+- Registro y protocolo: `mod:musica` en el censo del núcleo (dependencias reales: fnt:cables, mod:cronica, mod:voz), `version.ts` → v367.3 LA MÚSICA CON FORMA (conservando íntegra la entrada v367.2 de la casa hermana), entrada escrita a mano en `bitacora.ts`, /musica al sitemap y `/api/health` sirviéndola sola.
+- QA EJECUTADO: `npm i` + `prisma generate` → **tsc --noEmit = 0 en todo el árbol** (único ruido: el JSON de tipografía que no está en este clon sparse, no es código) · **prueba del motor puro** compilado a CJS: himno dentro de 60-90 s (1 min 26 s), forma A-B-A2-final presente, `armarForma` determinista a la doble llamada, sello con metales en la sección A, todos los patrones de 16 pasos o colchón vacío, y **cero deriva: error máximo 0 tras 20 minutos de pasos** (la prueba que responde a «se deforma con el tiempo») · **next dev real**: `/musica` 200, `/` 200, `/api/health` → `version:"v367.3"`.
+- Decisiones del Dueño respetadas al pie de la letra: radios «ambas» (reales + de la casa), tributos «solo el ritmo y la estructura» (melodía y armonía nuevas), himno «60-90 s» (1 min 26 s, con sello y A-B-A).
+- NO se hizo: `next build` completo ni captura móvil 390 (1,98 GB de RAM aquí, sin navegador); la música vieja NO se toca ni se borra (regla #1) — esta ronda agrega la sala nueva y su motor.
+
+Stage Summary:
+- La queja queda respondida con la prueba delante: no hay deriva (error 0 en 20 minutos), hay forma (A-B-A), hay identidad (sello de cuatro notas) y hay relevancia (himno + piezas + radio de guerra + sonidos del frente).
+- Ningún archivo de audio viaja con la casa y ninguna canción ajena se copia: se toma el pulso, que no es de nadie.
+- El v368.0 sigue libre para la fusión de ia2.
