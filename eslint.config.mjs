@@ -49,7 +49,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   // CONGELADO del legado v69 (nada lo importa; su lint es ruido, no señal).
   // Ninguna función eliminada: solo se acota el alcance del linter al código
   // vivo para que el baseline del árbol sea honesto y comparable.
-  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "mini-services/**/dist/**", "scripts/**", "db/**", "tmp/**", "nexo-src/**", "public/vendor/**"]
+  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "examples/**", "skills", "mini-services/**/dist/**", "scripts/**", "db/**", "tmp/**", "nexo-src/**", "public/vendor/**", "public/assets/vendor/**"]
 }];
 
 export default eslintConfig;

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { APP_VERSION, APP_CODENAME } from "@/lib/version";
 import { Teatro3DCliente } from "./teatro-3d-cliente";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "VANGUARD 3D · Simulador Mundial 2D/3D, Frentes, Uniformes, Escuadrones y Armas",
   description:

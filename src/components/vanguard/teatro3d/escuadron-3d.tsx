@@ -1,23 +1,29 @@
 "use client";
 
 // ============================================================================
-// VISOR 3D INTERACTIVO DE ESCUADRONES Y FORMACIONES (Three.js + OrbitControls)
-// Muestra la formación exacta de vehículos, soldados, drones y radares con
-// baliza luminosa bajo el miembro seleccionado y clic directo en 3D.
+// VISOR 3D REAL DE ESCUADRONES Y FORMACIONES (MODELOS .GLB + HDRI + BLOOM)
+// Cada integrante carga su modelo .glb real (Soldier, Tank, F-15, Drone,
+// Scout-Drone, Atlas-V, Breach-Spider, CubeSat, Ship) con animaciones
+// en vivo, sombras suaves reales sobre plataforma táctica y clic directo 3D.
 // ============================================================================
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { Escuadron3D } from "@/lib/teatro-total-data";
-import { construirUnidadMini3D } from "./fabricas-3d";
+import {
+  aplicarEntornoPBR,
+  crearPipelinePBR,
+  instanciarUnidadGLB,
+  type InstanciaUnidadGLB,
+} from "./glb-engine";
 
 export function EscuadronInteractivo3D({
   escuadron,
   miembroActivoId,
   autoGiro,
   onSelectMiembro,
-  altura = 380,
+  altura = 390,
 }: {
   escuadron: Escuadron3D;
   miembroActivoId: string;
@@ -51,9 +57,10 @@ export function EscuadronInteractivo3D({
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x060912);
+    scene.fog = new THREE.FogExp2(0x060912, 0.025);
 
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 80);
-    camera.position.set(0, 5.2, 7.2);
+    camera.position.set(0, 5.2, 8.2);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -61,78 +68,101 @@ export function EscuadronInteractivo3D({
     el.innerHTML = "";
     el.appendChild(renderer.domElement);
 
+    const disposeEnv = aplicarEntornoPBR(renderer, scene, "studio");
+    const pipeline = crearPipelinePBR(renderer, scene, camera, width, height, {
+      strength: 0.22,
+      radius: 0.22,
+      threshold: 1.15,
+    });
+
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.maxPolarAngle = Math.PI * 0.46;
-    controls.minDistance = 3.5;
-    controls.maxDistance = 14;
-    controls.target.set(0, 0.35, 0);
-
-    scene.add(new THREE.AmbientLight(0xd0e2ff, 0.9));
-    const dir = new THREE.DirectionalLight(0xfff1dc, 1.3);
-    dir.position.set(6, 10, 5);
-    scene.add(dir);
+    controls.minDistance = 4.0;
+    controls.maxDistance = 15.5;
+    controls.target.set(0, 0.45, 0);
 
     const acento = escuadron.esVanguard ? 0xffc94d : 0x38bdf8;
     const baseColor = escuadron.esVanguard ? 0x26344a : 0x22405c;
 
-    // Plataforma táctica octogonal + rejilla
+    scene.add(new THREE.HemisphereLight(0xd0e2ff, 0x0b0f18, 0.75));
+    const dir = new THREE.DirectionalLight(0xfff1dc, 2.1);
+    dir.position.set(7, 12, 6);
+    dir.castShadow = true;
+    dir.shadow.mapSize.set(1024, 1024);
+    dir.shadow.camera.left = -6;
+    dir.shadow.camera.right = 6;
+    dir.shadow.camera.top = 6;
+    dir.shadow.camera.bottom = -6;
+    scene.add(dir);
+
     const stage = new THREE.Group();
     scene.add(stage);
 
+    // Plataforma táctica PBR octogonal con reflejos metálicos
     const pad = new THREE.Mesh(
-      new THREE.CylinderGeometry(4.6, 4.9, 0.22, 16),
-      new THREE.MeshStandardMaterial({ color: 0x0d1320, roughness: 0.55, metalness: 0.5 })
+      new THREE.CylinderGeometry(4.9, 5.2, 0.24, 24),
+      new THREE.MeshStandardMaterial({ color: 0x0c1220, roughness: 0.35, metalness: 0.72 })
     );
-    pad.position.y = -0.11;
+    pad.position.y = -0.12;
+    pad.receiveShadow = true;
     stage.add(pad);
 
-    const grid = new THREE.GridHelper(8.4, 12, acento, 0x334155);
-    grid.position.y = 0.01;
+    const grid = new THREE.GridHelper(8.6, 12, acento, 0x334155);
+    grid.position.y = 0.015;
+    const gridMats = Array.isArray(grid.material) ? grid.material : [grid.material];
+    for (const gm of gridMats) {
+      gm.transparent = true;
+      gm.opacity = 0.28;
+    }
     stage.add(grid);
 
     const anilloExt = new THREE.Mesh(
-      new THREE.RingGeometry(4.35, 4.5, 48),
-      new THREE.MeshBasicMaterial({ color: acento, side: THREE.DoubleSide })
+      new THREE.RingGeometry(4.65, 4.82, 56),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(acento).multiplyScalar(1.4),
+        side: THREE.DoubleSide,
+      })
     );
     anilloExt.rotation.x = -Math.PI / 2;
-    anilloExt.position.y = 0.02;
+    anilloExt.position.y = 0.025;
     stage.add(anilloExt);
 
-    // Miembros del escuadrón
+    // Instanciar cada miembro con su modelo .glb real
     const nodos: {
       id: string;
-      grp: THREE.Group;
+      inst: InstanciaUnidadGLB;
       ring: THREE.Mesh;
       baseY: number;
       tipo: string;
     }[] = [];
 
     for (const m of escuadron.miembros) {
-      const unitGrp = construirUnidadMini3D(m.tipo, baseColor, acento);
-      const baseY = m.tipo === "drone" ? 1.1 : m.tipo === "jet" ? 1.65 : 0.02;
-      unitGrp.position.set(m.offset[0], baseY, m.offset[1]);
-      unitGrp.rotation.y = Math.PI / 2; // mirando al frente (-Z)
-      stage.add(unitGrp);
+      const escala = m.tipo === "soldier" ? 0.95 : m.tipo === "tank" ? 0.92 : 0.85;
+      const inst = instanciarUnidadGLB(m.tipo, baseColor, acento, escala);
+      const baseY = m.tipo === "drone" ? 1.45 : m.tipo === "jet" ? 2.15 : 0.02;
+      inst.root.position.set(m.offset[0], baseY, m.offset[1]);
+      inst.root.rotation.y = Math.PI / 2;
+      stage.add(inst.root);
 
       const ring = new THREE.Mesh(
-        new THREE.RingGeometry(0.45, 0.58, 20),
+        new THREE.RingGeometry(0.55, 0.72, 24),
         new THREE.MeshBasicMaterial({
           color: acento,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.35,
+          opacity: 0.38,
         })
       );
       ring.rotation.x = -Math.PI / 2;
-      ring.position.set(m.offset[0], 0.04, m.offset[1]);
+      ring.position.set(m.offset[0], 0.035, m.offset[1]);
       stage.add(ring);
 
-      nodos.push({ id: m.id, grp: unitGrp, ring, baseY, tipo: m.tipo });
+      nodos.push({ id: m.id, inst, ring, baseY, tipo: m.tipo });
     }
 
-    // Raycast click para elegir integrante
+    // Raycast click para seleccionar miembro del escuadrón
     const ray = new THREE.Raycaster();
     const ptr = new THREE.Vector2();
     let downPt: { x: number; y: number } | null = null;
@@ -152,7 +182,7 @@ export function EscuadronInteractivo3D({
       if (hits.length > 0) {
         let obj: THREE.Object3D | null = hits[0].object;
         while (obj) {
-          const hit = nodos.find((n) => n.grp === obj);
+          const hit = nodos.find((n) => n.inst.root === obj);
           if (hit) {
             cbRef.current(hit.id);
             return;
@@ -164,32 +194,38 @@ export function EscuadronInteractivo3D({
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
 
+    let lastNow = performance.now();
     let raf = 0;
-    const animate = (t: number) => {
+    const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - lastNow) * 0.001);
+      lastNow = now;
+
       if (giroRef.current) {
-        stage.rotation.y += 0.0045;
+        stage.rotation.y += dt * 0.25;
       }
 
       for (const n of nodos) {
         const esSel = n.id === activoRef.current;
         const rMat = n.ring.material as THREE.MeshBasicMaterial;
         rMat.color.setHex(esSel ? 0xffc94d : acento);
-        rMat.opacity = esSel ? 0.95 : 0.25;
-        n.ring.scale.setScalar(esSel ? 1.25 + Math.sin(t * 0.006) * 0.14 : 0.95);
+        rMat.opacity = esSel ? 0.95 : 0.24;
+        n.ring.scale.setScalar(esSel ? 1.18 + Math.sin(now * 0.006) * 0.12 : 0.92);
 
         if (n.tipo === "drone" || n.tipo === "jet") {
-          n.grp.position.y = n.baseY + Math.sin(t * 0.004 + n.grp.position.x) * 0.12;
+          n.inst.root.position.y = n.baseY + Math.sin(now * 0.0035 + n.inst.root.position.x) * 0.14;
         }
-        n.grp.traverse((child) => {
-          if (child.name === "rotor") child.rotation.y += 0.36;
-          if (child.name === "radarDish") child.rotation.y += 0.04;
-          if (child.name === "turret") child.rotation.y = Math.sin(t * 0.0012) * 0.28;
-        });
+        n.inst.mixer?.update(dt);
+        if (n.inst.turretNode) {
+          n.inst.turretNode.rotation.y = Math.sin(now * 0.0011 + n.inst.root.position.x) * 0.3;
+        }
+        for (const r of n.inst.rotorNodes) {
+          r.rotation.y += dt * 18;
+        }
       }
 
       controls.update();
-      renderer.render(scene, camera);
+      pipeline.render();
     };
     raf = requestAnimationFrame(animate);
 
@@ -198,7 +234,7 @@ export function EscuadronInteractivo3D({
       const w = el.clientWidth || width;
       camera.aspect = w / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, height);
+      pipeline.resize(w, height);
     });
     ro.observe(el);
 
@@ -207,6 +243,9 @@ export function EscuadronInteractivo3D({
       ro.disconnect();
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
+      for (const n of nodos) n.inst.dispose();
+      disposeEnv();
+      pipeline.dispose();
       controls.dispose();
       renderer.dispose();
     };
@@ -214,10 +253,14 @@ export function EscuadronInteractivo3D({
 
   return (
     <div
-      ref={hostRef}
-      className="w-full rounded-lg overflow-hidden border border-cyan-hud/30 bg-black cursor-grab active:cursor-grabbing"
+      className="relative w-full rounded-lg overflow-hidden border border-cyan-hud/35 bg-black"
       style={{ height: altura }}
       aria-label={`Formación 3D del escuadrón ${escuadron.nombre}`}
-    />
+    >
+      <div ref={hostRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+      <div className="absolute bottom-2 left-2.5 z-10 pointer-events-none px-2 py-0.5 rounded bg-black/75 border border-white/10 font-mono text-[9.5px] text-slate-300">
+        Formación .GLB Real (Soldier · Tank · F-15 · Drone · Scout · Vessel) · Clic para inspeccionar
+      </div>
+    </div>
   );
 }

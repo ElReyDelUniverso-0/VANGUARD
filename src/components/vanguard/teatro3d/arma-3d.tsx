@@ -1,268 +1,141 @@
 "use client";
 
 // ============================================================================
-// ARMERÍA TÁCTICA 3D INTERACTIVA CON DESPIECE CAD (Three.js + OrbitControls)
-// Cada arma tiene 5 subgrupos articulados (cañón, cajón, óptica, cargador,
-// culata/plataforma) que se separan suavemente en vista explotada (0..100%),
-// modo Rayos-X wireframe, resaltado de pieza y rotación 360°.
+// ARMERÍA TÁCTICA 3D REAL CON DESPIECE DE SUBMALLAS .GLB, ANIMACIONES Y RAYOS-X
+// Cada una de las 10 armas de ARMAS_3D carga un modelo .glb real de alta
+// definición, clasifica automáticamente sus submallas en las 5 piezas CAD
+// (cañón/rotor, cajón/torreta, óptica/blindaje, cargador/barcaza, culata/orugas),
+// permite despiece suave 0..100%, Rayos-X wireframe PBR y accionar mecanismos.
 // ============================================================================
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import type { Arma3D } from "@/lib/teatro-total-data";
+import type { Arma3D, TipoArma3D } from "@/lib/teatro-total-data";
+import {
+  aplicarEntornoPBR,
+  crearPipelinePBR,
+  loadGLBCached,
+  normalizarModeloGLB,
+} from "./glb-engine";
 
-interface ParteNode {
-  id: string;
-  grp: THREE.Group;
-  offset: THREE.Vector3;
-  mats: THREE.MeshStandardMaterial[];
+interface ArmaModelSpec {
+  url: string;
+  label: string;
+  rotateY: number;
+  rotateZ?: number;
+  vanguardFinish?: boolean;
 }
 
-function construirModeloArma(arma: Arma3D): { root: THREE.Group; partes: ParteNode[] } {
-  const root = new THREE.Group();
-  const partes: ParteNode[] = [];
-  const acento = arma.esVanguard ? 0xffc94d : 0x38bdf8;
-  const darkMetal = new THREE.MeshStandardMaterial({ color: 0x262c38, roughness: 0.4, metalness: 0.65 });
-  const gunMetal = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.35, metalness: 0.72 });
-  const accentMat = new THREE.MeshStandardMaterial({
-    color: acento,
-    emissive: acento,
-    emissiveIntensity: 0.2,
-    roughness: 0.35,
-    metalness: 0.55,
-  });
-  const opticMat = new THREE.MeshStandardMaterial({
-    color: 0x0ea5e9,
-    emissive: 0x38bdf8,
-    emissiveIntensity: 0.45,
-    roughness: 0.2,
-    metalness: 0.8,
-  });
-  const woodMat = new THREE.MeshStandardMaterial({ color: 0x8a4b24, roughness: 0.7, metalness: 0.1 });
-  const oliveMat = new THREE.MeshStandardMaterial({ color: 0x4b5d34, roughness: 0.62, metalness: 0.25 });
-  const warheadMat = new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.42, metalness: 0.45 });
+const ARMA_GLB_MAP: Record<TipoArma3D, ArmaModelSpec> = {
+  vanguard_rifle: {
+    url: "/assets/models/ak47.glb",
+    label: "VANGUARD X-1 · Plataforma Táctica PBR (.GLB)",
+    rotateY: Math.PI / 2,
+    vanguardFinish: true,
+  },
+  rifle_nato: {
+    url: "/assets/models/m590a1.glb",
+    label: "Mossberg / Plataforma Riel Picatinny (.GLB)",
+    rotateY: Math.PI / 2,
+  },
+  rifle_ak: {
+    url: "/assets/models/ak47.glb",
+    label: "AK-47 / AKM Kalashnikov Real · 79 Piezas (.GLB)",
+    rotateY: Math.PI / 2,
+  },
+  sniper: {
+    url: "/assets/models/awp-sniper.glb",
+    label: "Rifle Francotirador AWP (.GLB)",
+    rotateY: Math.PI / 2,
+  },
+  atgm: {
+    url: "/assets/models/atlas-v.glb",
+    label: "Sistema Balístico / Misil Multi-Etapa (.GLB)",
+    rotateY: 0,
+    rotateZ: -Math.PI / 2.2,
+  },
+  fpv: {
+    url: "/assets/models/drone.glb",
+    label: "Cuadricóptero Táctico S9 FPV (.GLB)",
+    rotateY: Math.PI / 4,
+  },
+  mlrs: {
+    url: "/assets/models/scout-drone.glb",
+    label: "Plataforma Móvil Táctica 4×4 · 54 Piezas (.GLB)",
+    rotateY: Math.PI / 2,
+  },
+  mbt: {
+    url: "/assets/models/tank.glb",
+    label: "Carro de Combate MBT 120mm · 41 Piezas (.GLB)",
+    rotateY: Math.PI / 3,
+  },
+  sam: {
+    url: "/assets/models/breach-spider.glb",
+    label: "Plataforma Robótica Defensiva · 189 Piezas (.GLB)",
+    rotateY: Math.PI / 3,
+  },
+  cruise: {
+    url: "/assets/models/f15.glb",
+    label: "Vector Aéreo / F-15 Eagle (.GLB)",
+    rotateY: Math.PI / 3,
+  },
+};
 
-  const makePart = (idx: number, meshes: THREE.Mesh[]) => {
-    const grp = new THREE.Group();
-    const mats: THREE.MeshStandardMaterial[] = [];
-    for (const m of meshes) {
-      const cloned = (m.material as THREE.MeshStandardMaterial).clone();
-      m.material = cloned;
-      mats.push(cloned);
-      grp.add(m);
-    }
-    const pDef = arma.piezas[idx];
-    const off = pDef ? new THREE.Vector3(...pDef.offset) : new THREE.Vector3();
-    root.add(grp);
-    partes.push({ id: pDef?.id ?? `part-${idx}`, grp, offset: off, mats });
-  };
+function clasificarIndicePieza(meshName: string, tipo: TipoArma3D, idxFallback: number): number {
+  const n = meshName.toLowerCase();
 
-  const t = arma.modelo3D;
-
-  if (t === "vanguard_rifle" || t === "rifle_nato" || t === "rifle_ak" || t === "sniper") {
-    const largo = t === "sniper" ? 1.95 : 1.35;
-    const isAK = t === "rifle_ak";
-    const bodyMat = arma.esVanguard ? accentMat : isAK ? darkMetal : gunMetal;
-    const stockMat = isAK ? woodMat : darkMetal;
-
-    // 0: Cañón + freno / supresor
-    const barrel = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.042, 0.048, largo, 14),
-      gunMetal
-    );
-    barrel.rotation.z = Math.PI / 2;
-    barrel.position.set(0.85, 0.08, 0);
-    const muzzle = new THREE.Mesh(
-      t === "sniper"
-        ? new THREE.BoxGeometry(0.24, 0.14, 0.16)
-        : new THREE.CylinderGeometry(0.075, 0.075, 0.42, 14),
-      arma.esVanguard ? accentMat : darkMetal
-    );
-    if (t !== "sniper") muzzle.rotation.z = Math.PI / 2;
-    muzzle.position.set(0.85 + largo / 2 + 0.15, 0.08, 0);
-    const handguard = new THREE.Mesh(
-      new THREE.BoxGeometry(largo * 0.62, 0.16, 0.15),
-      isAK ? woodMat : darkMetal
-    );
-    handguard.position.set(0.55, 0.06, 0);
-    makePart(0, [barrel, muzzle, handguard]);
-
-    // 1: Receptor / Cajón de mecanismos + empuñadura
-    const upper = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.22, 0.17), bodyMat);
-    upper.position.set(-0.08, 0.06, 0);
-    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.34, 0.12), darkMetal);
-    grip.position.set(-0.28, -0.2, 0);
-    grip.rotation.z = 0.25;
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.04, 0.12), gunMetal);
-    rail.position.set(0.02, 0.19, 0);
-    makePart(1, [upper, grip, rail]);
-
-    // 2: Óptica / Mira
-    const scopeTube = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.075, 0.065, t === "sniper" ? 0.72 : 0.42, 14),
-      t === "sniper" ? darkMetal : opticMat
-    );
-    scopeTube.rotation.z = Math.PI / 2;
-    scopeTube.position.set(-0.02, 0.31, 0);
-    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.072, 0.05, 14), opticMat);
-    lens.rotation.z = Math.PI / 2;
-    lens.position.set(t === "sniper" ? 0.35 : 0.2, 0.31, 0);
-    makePart(2, [scopeTube, lens]);
-
-    // 3: Cargador
-    const mag = new THREE.Mesh(
-      new THREE.BoxGeometry(isAK ? 0.17 : 0.18, isAK ? 0.56 : 0.48, 0.11),
-      arma.esVanguard ? accentMat : darkMetal
-    );
-    mag.position.set(0.08, -0.28, 0);
-    mag.rotation.z = isAK ? -0.26 : -0.1;
-    makePart(3, [mag]);
-
-    // 4: Culata
-    const stock = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.24, 0.13), stockMat);
-    stock.position.set(-0.88, 0.01, 0);
-    const butt = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.32, 0.15), darkMetal);
-    butt.position.set(-1.26, -0.02, 0);
-    makePart(4, [stock, butt]);
-  } else if (t === "atgm") {
-    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 2.2, 16), oliveMat);
-    tube.rotation.z = Math.PI / 2;
-    makePart(0, [tube]);
-
-    const clu = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.35, 0.32), darkMetal);
-    clu.position.set(-0.35, 0.12, 0.36);
-    makePart(1, [clu]);
-
-    const seeker = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12), opticMat);
-    seeker.position.set(1.22, 0, 0);
-    makePart(2, [seeker]);
-
-    const warhead = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.72, 12), warheadMat);
-    warhead.rotation.z = Math.PI / 2;
-    warhead.position.set(0.75, 0, 0);
-    makePart(3, [warhead]);
-
-    const booster = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.9, 12), gunMetal);
-    booster.rotation.z = Math.PI / 2;
-    booster.position.set(-0.25, 0, 0);
-    makePart(4, [booster]);
-  } else if (t === "fpv") {
-    // 4 hélices y motores
-    const rotorMeshes: THREE.Mesh[] = [];
-    for (const [mx, mz] of [
-      [0.65, 0.65],
-      [0.65, -0.65],
-      [-0.65, 0.65],
-      [-0.65, -0.65],
-    ]) {
-      const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.14, 12), gunMetal);
-      motor.position.set(mx, 0.12, mz);
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.025, 0.08), opticMat);
-      blade.position.set(mx, 0.21, mz);
-      blade.name = "fpvRotor";
-      rotorMeshes.push(motor, blade);
-    }
-    makePart(0, rotorMeshes);
-
-    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.52), darkMetal);
-    const arm1 = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.05, 0.1), darkMetal);
-    arm1.rotation.y = Math.PI / 4;
-    const arm2 = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.05, 0.1), darkMetal);
-    arm2.rotation.y = -Math.PI / 4;
-    makePart(1, [plate, arm1, arm2]);
-
-    const cam = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.18), accentMat);
-    cam.position.set(0.42, 0.08, 0);
-    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.1, 12), opticMat);
-    lens.rotation.z = Math.PI / 2;
-    lens.position.set(0.54, 0.08, 0);
-    makePart(2, [cam, lens]);
-
-    const batt = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.22, 0.34), oliveMat);
-    batt.position.set(-0.08, 0.18, 0);
-    makePart(3, [batt]);
-
-    const rpg = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.85, 12), warheadMat);
-    rpg.rotation.z = -Math.PI / 2;
-    rpg.position.set(0.2, -0.26, 0);
-    makePart(4, [rpg]);
-  } else if (t === "mlrs" || t === "sam") {
-    const podColor = t === "sam" ? gunMetal : oliveMat;
-    const tubes: THREE.Mesh[] = [];
-    for (let r = 0; r < 2; r++) {
-      for (let c = 0; c < 3; c++) {
-        const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.35, 10), podColor);
-        tub.rotation.z = Math.PI / 2;
-        tub.position.set(-0.25, 0.45 + r * 0.22, -0.22 + c * 0.22);
-        tubes.push(tub);
-      }
-    }
-    makePart(0, tubes);
-
-    const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.34, 0.96), darkMetal);
-    chassis.position.set(0, -0.18, 0);
-    makePart(1, [chassis]);
-
-    const cab = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.56, 0.92), podColor);
-    cab.position.set(0.75, 0.24, 0);
-    makePart(2, [cab]);
-
-    const rocket = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 10), warheadMat);
-    rocket.rotation.z = Math.PI / 2;
-    rocket.position.set(0.45, 0.62, 0);
-    makePart(3, [rocket]);
-
-    const baseHyd = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.24, 0.72), accentMat);
-    baseHyd.position.set(-0.35, 0.12, 0);
-    makePart(4, [baseHyd]);
-  } else if (t === "mbt") {
-    const canon = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.075, 1.85, 14), gunMetal);
-    canon.rotation.z = Math.PI / 2;
-    canon.position.set(1.05, 0.38, 0);
-    makePart(0, [canon]);
-
-    const turret = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.42, 0.92), oliveMat);
-    turret.position.set(-0.08, 0.42, 0);
-    makePart(1, [turret]);
-
-    const era = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.28, 1.05), accentMat);
-    era.position.set(0.65, 0.1, 0);
-    makePart(2, [era]);
-
-    const hull = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.45, 1.12), oliveMat);
-    hull.position.set(0, -0.05, 0);
-    makePart(3, [hull]);
-
-    const tracks = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.34, 1.28), darkMetal);
-    tracks.position.set(0, -0.32, 0);
-    makePart(4, [tracks]);
-  } else {
-    // cruise missile
-    const nose = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.7, 12), accentMat);
-    nose.rotation.z = -Math.PI / 2;
-    nose.position.set(1.35, 0, 0);
-    makePart(0, [nose]);
-
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 2.0, 14), gunMetal);
-    body.rotation.z = Math.PI / 2;
-    makePart(1, [body]);
-
-    const wings = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.05, 2.1), opticMat);
-    wings.position.set(0.05, 0.04, 0);
-    makePart(2, [wings]);
-
-    const war = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.72, 12), warheadMat);
-    war.rotation.z = Math.PI / 2;
-    war.position.set(0.55, 0, 0);
-    makePart(3, [war]);
-
-    const tail = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.58, 0.58), darkMetal);
-    tail.position.set(-1.12, 0, 0);
-    makePart(4, [tail]);
+  if (tipo === "mbt") {
+    if (/barrel|cannon|muzzle|gun/.test(n)) return 0; // cañón
+    if (/turret|gear_24|gear_turret|glass_turret/.test(n)) return 1; // torreta
+    if (/applique/.test(n)) return 2; // bloques ERA
+    if (/hull|skirt|gear_hull|glass_hull/.test(n)) return 3; // barcaza
+    if (/track|wheel|hub/.test(n)) return 4; // orugas
   }
 
-  return { root, partes };
+  if (tipo === "vanguard_rifle" || tipo === "rifle_ak" || tipo === "rifle_nato") {
+    if (/barrel|handguard|forend|muzzle|gas_|front_sight|cleaning|bayonet|action_bars/.test(n)) return 0;
+    if (/receiver|bolt|trigger|selector|pistol_grip|trunnion|rivet|chamber|elevator|safety/.test(n)) return 1;
+    if (/sight|rail|dust_cover|recoil_spring/.test(n)) return 2;
+    if (/magazine|shell|top_round/.test(n)) return 3;
+    if (/stock|buttplate|recoil_pad|sling/.test(n)) return 4;
+  }
+
+  if (tipo === "atgm") {
+    if (/fairing/.test(n)) return 0;
+    if (/adapter/.test(n)) return 1;
+    if (/centaur|_nd_/.test(n)) return 2;
+    if (/cube/.test(n)) return 3;
+    return 4;
+  }
+
+  if (tipo === "mlrs") {
+    if (/wheel|tyre|rim|hub|disc|arm_/.test(n)) return 1;
+    if (/nose|lens|ir|shutter/.test(n)) return 2;
+    if (/antenna|thumper/.test(n)) return 4;
+    if (/deck|skirt|screw|led/.test(n)) return 3;
+    return 0;
+  }
+
+  if (tipo === "sam") {
+    if (/turret|barrel|laser|fx_/.test(n)) return 0;
+    if (/leg_/.test(n)) return 1;
+    if (/head|eye|lens/.test(n)) return 2;
+    if (/abdomen|charge|thorax|body|hip/.test(n)) return 3;
+    return 4;
+  }
+
+  return idxFallback % 5;
+}
+
+interface SubMallaPart {
+  pieceIdx: number;
+  pieceId: string;
+  mesh: THREE.Mesh;
+  basePos: THREE.Vector3;
+  explodeVec: THREE.Vector3;
+  origMat: THREE.Material | THREE.Material[];
+  xrayMat: THREE.MeshBasicMaterial;
 }
 
 export function ArmaInteractiva3D({
@@ -272,22 +145,30 @@ export function ArmaInteractiva3D({
   rayosX,
   autoGiro,
   onSelectPieza,
-  altura = 380,
+  altura = 390,
 }: {
   arma: Arma3D;
   piezaActivaId: string;
-  despiece: number; // 0 .. 1
+  despiece: number;
   rayosX: boolean;
   autoGiro: boolean;
   onSelectPieza?: (id: string) => void;
   altura?: number;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const [tieneAnim, setTieneAnim] = useState(false);
+  const [animNombre, setAnimNombre] = useState("");
+  const triggerAnimRef = useRef<(() => void) | null>(null);
+
+  const piezaRef = useRef(piezaActivaId);
   const despieceRef = useRef(despiece);
   const rayosRef = useRef(rayosX);
   const giroRef = useRef(autoGiro);
-  const piezaRef = useRef(piezaActivaId);
   const cbRef = useRef(onSelectPieza);
+
+  useEffect(() => {
+    piezaRef.current = piezaActivaId;
+  }, [piezaActivaId]);
 
   useEffect(() => {
     despieceRef.current = despiece;
@@ -302,10 +183,6 @@ export function ArmaInteractiva3D({
   }, [autoGiro]);
 
   useEffect(() => {
-    piezaRef.current = piezaActivaId;
-  }, [piezaActivaId]);
-
-  useEffect(() => {
     cbRef.current = onSelectPieza;
   }, [onSelectPieza]);
 
@@ -317,10 +194,11 @@ export function ArmaInteractiva3D({
     const height = altura;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x060810);
+    scene.background = new THREE.Color(0x060a14);
+    scene.fog = new THREE.FogExp2(0x060a14, 0.035);
 
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
-    camera.position.set(2.3, 1.35, 3.3);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.05, 80);
+    camera.position.set(0.4, 1.35, 3.6);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -328,29 +206,160 @@ export function ArmaInteractiva3D({
     el.innerHTML = "";
     el.appendChild(renderer.domElement);
 
+    const disposeEnv = aplicarEntornoPBR(renderer, scene, "studio");
+    const pipeline = crearPipelinePBR(renderer, scene, camera, width, height, {
+      strength: 0.22,
+      radius: 0.22,
+      threshold: 1.15,
+    });
+
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.minDistance = 1.8;
-    controls.maxDistance = 7.5;
-    controls.target.set(0, 0.1, 0);
+    controls.target.set(0, 0.55, 0);
+    controls.minDistance = 1.6;
+    controls.maxDistance = 7.8;
 
-    scene.add(new THREE.AmbientLight(0xd6e6ff, 0.95));
-    const key = new THREE.DirectionalLight(0xfff1d6, 1.35);
-    key.position.set(4, 5, 4);
+    scene.add(new THREE.HemisphereLight(0xdbeafe, 0x0b0f18, 0.75));
+    const key = new THREE.DirectionalLight(0xfff4e0, 2.3);
+    key.position.set(4, 6, 5);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
     scene.add(key);
-    const rim = new THREE.DirectionalLight(arma.esVanguard ? 0xffc94d : 0x38bdf8, 0.85);
-    rim.position.set(-4, -2, -3);
+
+    const rim = new THREE.DirectionalLight(arma.esVanguard ? 0xffc94d : 0x38bdf8, 1.3);
+    rim.position.set(-4, -2, -4);
     scene.add(rim);
 
-    // Rejilla CAD de fondo bajo el arma
-    const grid = new THREE.GridHelper(6, 14, arma.esVanguard ? 0xffc94d : 0x38bdf8, 0x1e293b);
-    grid.position.y = -1.15;
+    // Mesa armería PBR
+    const mesa = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.15, 2.35, 0.14, 48),
+      new THREE.MeshStandardMaterial({ color: 0x0b111d, roughness: 0.35, metalness: 0.75 })
+    );
+    mesa.position.y = -0.58;
+    mesa.receiveShadow = true;
+    scene.add(mesa);
+
+    const grid = new THREE.GridHelper(3.8, 14, arma.esVanguard ? 0xffc94d : 0x38bdf8, 0x1e293b);
+    grid.position.y = -0.5;
     scene.add(grid);
 
-    const { root, partes } = construirModeloArma(arma);
-    scene.add(root);
+    const holder = new THREE.Group();
+    holder.position.y = 0.5;
+    scene.add(holder);
 
+    const spec = ARMA_GLB_MAP[arma.modelo3D];
+    const parts: SubMallaPart[] = [];
+    let mixer: THREE.AnimationMixer | null = null;
+    let alive = true;
+    setTieneAnim(false);
+    setAnimNombre("");
+    triggerAnimRef.current = null;
+
+    loadGLBCached(spec.url)
+      .then(({ scene: glbRoot, animations }) => {
+        if (!alive) return;
+
+        if (spec.rotateZ) glbRoot.rotation.z += spec.rotateZ;
+        const norm = normalizarModeloGLB(glbRoot, {
+          targetSize: 2.55,
+          fitBy: "max",
+          baseY: -0.55,
+          rotateY: spec.rotateY,
+        });
+
+        let fallbackIdx = 0;
+        const vanguardDark = new THREE.Color(0x1f2532);
+        const vanguardGold = new THREE.Color(0xffc94d);
+        const vanguardCyan = new THREE.Color(0x38bdf8);
+
+        norm.traverse((obj) => {
+          if (!(obj instanceof THREE.Mesh)) return;
+          const mesh = obj;
+          const idx = clasificarIndicePieza(mesh.name, arma.modelo3D, fallbackIdx++);
+          const pDef = arma.piezas[idx] ?? arma.piezas[0];
+          const explodeVec = pDef
+            ? new THREE.Vector3(pDef.offset[0] * 0.45, pDef.offset[1] * 0.45, pDef.offset[2] * 0.45)
+            : new THREE.Vector3();
+
+          // Acabado especial VANGUARD Grafito-Oro PBR para el modelo X-1
+          if (spec.vanguardFinish) {
+            const ms = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            const custom = ms.map((m) => {
+              if (!m) return m;
+              const c = m.clone();
+              if (c instanceof THREE.MeshStandardMaterial) {
+                if (idx === 2) {
+                  c.color.copy(vanguardCyan);
+                  c.emissive.copy(vanguardCyan);
+                  c.emissiveIntensity = 1.1;
+                } else if (idx === 3 || /trigger|selector|bolt/.test(mesh.name.toLowerCase())) {
+                  c.color.copy(vanguardGold);
+                  c.metalness = 0.8;
+                  c.roughness = 0.25;
+                } else {
+                  c.color.lerp(vanguardDark, 0.72);
+                  c.metalness = 0.65;
+                  c.roughness = 0.32;
+                }
+              }
+              return c;
+            });
+            mesh.material = Array.isArray(mesh.material) ? custom : custom[0];
+          }
+
+          // Clonamos materiales propios por submalla para iluminar sin afectar otras
+          if (Array.isArray(mesh.material)) {
+            mesh.material = mesh.material.map((m) => m.clone());
+          } else if (mesh.material) {
+            mesh.material = mesh.material.clone();
+          }
+
+          const xrayMat = new THREE.MeshBasicMaterial({
+            color: pDef?.id === piezaRef.current ? 0xffc94d : 0x38bdf8,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.55,
+          });
+
+          parts.push({
+            pieceIdx: idx,
+            pieceId: pDef?.id ?? `part-${idx}`,
+            mesh,
+            basePos: mesh.position.clone(),
+            explodeVec,
+            origMat: mesh.material,
+            xrayMat,
+          });
+        });
+
+        holder.add(norm);
+
+        if (animations.length > 0) {
+          mixer = new THREE.AnimationMixer(glbRoot);
+          const clip = animations[0];
+          setTieneAnim(true);
+          setAnimNombre(clip.name || "Ciclo");
+
+          if (arma.modelo3D === "fpv") {
+            const act = mixer.clipAction(clip);
+            act.play();
+          }
+
+          triggerAnimRef.current = () => {
+            if (!mixer || animations.length === 0) return;
+            const c = animations[0];
+            const act = mixer.clipAction(c);
+            act.reset();
+            act.setLoop(THREE.LoopOnce, 1);
+            act.clampWhenFinished = false;
+            act.play();
+          };
+        }
+      })
+      .catch(() => undefined);
+
+    // Raycast click directo sobre cualquier pieza del .glb
     const ray = new THREE.Raycaster();
     const ptr = new THREE.Vector2();
     let downPt: { x: number; y: number } | null = null;
@@ -366,50 +375,62 @@ export function ArmaInteractiva3D({
       ptr.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       ptr.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       ray.setFromCamera(ptr, camera);
-      const hits = ray.intersectObject(root, true);
+      const hits = ray.intersectObject(holder, true);
       if (hits.length > 0) {
-        let obj: THREE.Object3D | null = hits[0].object;
-        while (obj) {
-          const found = partes.find((p) => p.grp === obj);
-          if (found) {
-            cbRef.current(found.id);
-            return;
-          }
-          obj = obj.parent;
-        }
+        const hitMesh = hits[0].object;
+        const found = parts.find((p) => p.mesh === hitMesh);
+        if (found) cbRef.current(found.pieceId);
       }
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
 
+    let suavizadoDespiece = despieceRef.current;
+    let lastNow = performance.now();
     let raf = 0;
-    let curExplode = 0;
-    const selCol = new THREE.Color(arma.esVanguard ? 0xffc94d : 0x38bdf8);
 
-    const animate = (t: number) => {
+    const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
-      curExplode += (despieceRef.current - curExplode) * 0.12;
+      const dt = Math.min(0.05, (now - lastNow) * 0.001);
+      lastNow = now;
 
       if (giroRef.current) {
-        root.rotation.y += 0.007;
+        holder.rotation.y += dt * 0.38;
       }
 
-      for (const p of partes) {
-        p.grp.position.copy(p.offset).multiplyScalar(curExplode * 0.8);
-        const esSel = p.id === piezaRef.current;
-        for (const m of p.mats) {
-          m.wireframe = rayosRef.current;
-          m.emissive.copy(esSel ? selCol : new THREE.Color(0x000000));
-          m.emissiveIntensity = esSel ? 0.42 + Math.sin(t * 0.006) * 0.14 : 0;
+      mixer?.update(dt);
+
+      suavizadoDespiece += (despieceRef.current - suavizadoDespiece) * 0.14;
+      const isXray = rayosRef.current;
+      const activeId = piezaRef.current;
+
+      for (const p of parts) {
+        p.mesh.position.copy(p.basePos).addScaledVector(p.explodeVec, suavizadoDespiece);
+        const esAct = p.pieceId === activeId;
+
+        if (isXray) {
+          p.mesh.material = p.xrayMat;
+          p.xrayMat.color.setHex(esAct ? 0xffc94d : 0x38bdf8);
+          p.xrayMat.opacity = esAct ? 0.95 : 0.35;
+        } else {
+          p.mesh.material = p.origMat;
+          const mats = Array.isArray(p.origMat) ? p.origMat : [p.origMat];
+          for (const m of mats) {
+            if (m instanceof THREE.MeshStandardMaterial) {
+              if (esAct) {
+                m.emissive.setHex(0xffc94d);
+                m.emissiveIntensity = 0.42 + Math.sin(now * 0.007) * 0.18;
+              } else if (!(spec.vanguardFinish && p.pieceIdx === 2)) {
+                m.emissive.setHex(0x000000);
+                m.emissiveIntensity = 0;
+              }
+            }
+          }
         }
       }
 
-      root.traverse((obj) => {
-        if (obj.name === "fpvRotor") obj.rotation.y += 0.3;
-      });
-
       controls.update();
-      renderer.render(scene, camera);
+      pipeline.render();
     };
     raf = requestAnimationFrame(animate);
 
@@ -418,26 +439,49 @@ export function ArmaInteractiva3D({
       const w = el.clientWidth || width;
       camera.aspect = w / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, height);
+      pipeline.resize(w, height);
     });
     ro.observe(el);
 
     return () => {
+      alive = false;
       cancelAnimationFrame(raf);
       ro.disconnect();
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
+      mixer?.stopAllAction();
+      disposeEnv();
+      pipeline.dispose();
       controls.dispose();
       renderer.dispose();
     };
   }, [arma, altura]);
 
+  const specInfo = ARMA_GLB_MAP[arma.modelo3D];
+
   return (
     <div
-      ref={hostRef}
-      className="w-full rounded-lg overflow-hidden border border-amber-hud/30 bg-black cursor-grab active:cursor-grabbing"
+      className="relative w-full rounded-lg overflow-hidden border border-amber-hud/35 bg-black"
       style={{ height: altura }}
       aria-label={`Modelo 3D interactivo de ${arma.nombre}`}
-    />
+    >
+      <div ref={hostRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+
+      {tieneAnim && (
+        <div className="absolute top-2.5 left-2.5 z-10 pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => triggerAnimRef.current?.()}
+            className="px-2.5 py-1 rounded bg-[#FFC94D] text-black font-mono text-[10px] font-black shadow hover:bg-[#ffd86b]"
+          >
+            ACCIONAR MECANISMO ({animNombre.toUpperCase()})
+          </button>
+        </div>
+      )}
+
+      <div className="absolute bottom-2 left-2.5 z-10 pointer-events-none px-2 py-0.5 rounded bg-black/75 border border-white/10 font-mono text-[9.5px] text-slate-300">
+        {specInfo.label} · HDRI + Rayos-X + Despiece Real
+      </div>
+    </div>
   );
 }

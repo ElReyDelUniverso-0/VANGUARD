@@ -1,101 +1,76 @@
 "use client";
 
 // ============================================================================
-// GLOBO 3D EN VIVO DE FRENTES ACTUALES (Three.js + world-paths.json procedural)
-// Dibuja todos los continentes reales sin imágenes externas y muestra los
-// frentes activos ahora mismo con balizas pulsantes, arcos y vuelo de cámara.
+// GLOBO 3D REAL DE FRENTES EN VIVO (Globe.gl + NASA Blue/Black Marble + DEM)
+// Motor WebGL real de globe.gl con texturas satelitales locales de la NASA,
+// mapa de relieve topográfico real, fronteras vectoriales, balizas 3D,
+// ondas tácticas, trazado de frentes reales, arcos VANGUARD y vuelo suave.
 // ============================================================================
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import Globe, { type GlobeInstance } from "globe.gl";
 import worldPaths from "@/lib/world-paths.json";
 import type { FrenteVivo3D } from "@/lib/teatro-total-data";
 
-const R_GLOBO = 4.2;
+type CapaGlobo = "satelite" | "nocturno" | "topografico";
 
-function latLngAVec3(lat: number, lng: number, r: number): THREE.Vector3 {
-  const phi = (90 - lat) * (Math.PI / 180);
-  const theta = (lng + 180) * (Math.PI / 180);
-  return new THREE.Vector3(
-    -r * Math.sin(phi) * Math.cos(theta),
-    r * Math.cos(phi),
-    r * Math.sin(phi) * Math.sin(theta)
-  );
+interface FrontPoint {
+  id: string;
+  nombre: string;
+  lat: number;
+  lng: number;
+  intensidad: number;
+  esSel: boolean;
+  color: string;
+  altitud: number;
+  radio: number;
 }
 
-// Dibuja un mapa equirectangular real desde world-paths.json (Natural Earth)
-// para evitar dependencias de texturas remotas y garantizar nitidez offline.
-function crearTexturaTierra(): THREE.CanvasTexture {
-  const W = 2048;
-  const H = 1024;
-  const canvas = document.createElement("canvas");
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext("2d");
+interface FrontPath {
+  id: string;
+  frenteId: string;
+  coords: [number, number][];
+  color: string;
+}
 
-  if (ctx) {
-    const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, "#071022");
-    grad.addColorStop(0.5, "#050b18");
-    grad.addColorStop(1, "#071022");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
+interface FrontArc {
+  startLat: number;
+  startLng: number;
+  endLat: number;
+  endLng: number;
+  color: [string, string];
+  nombre: string;
+}
 
-    // Cuadrícula lat/lng sutil
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.14)";
-    ctx.lineWidth = 1;
-    for (let lon = -150; lon <= 180; lon += 30) {
-      const x = ((lon + 180) / 360) * W;
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, H);
-      ctx.stroke();
-    }
-    for (let lat = -60; lat <= 60; lat += 30) {
-      const y = ((90 - lat) / 180) * H;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(W, y);
-      ctx.stroke();
-    }
+interface GeoCountryFeature {
+  type: "Feature";
+  properties: { name: string };
+  geometry: {
+    type: "MultiPolygon";
+    coordinates: [number, number][][][];
+  };
+}
 
-    // Continentes desde GeoJSON simplificado de Natural Earth
-    const countries = (worldPaths as {
-      countries?: { name: string; polygons: [number, number][][] }[];
-    }).countries ?? [];
-
-    ctx.fillStyle = "#1a2538";
-    ctx.strokeStyle = "rgba(255, 201, 77, 0.42)";
-    ctx.lineWidth = 1.4;
-
-    for (const c of countries) {
-      for (const poly of c.polygons) {
-        if (poly.length < 3) continue;
-        ctx.beginPath();
-        poly.forEach(([lng, lat], idx) => {
-          const x = ((lng + 180) / 360) * W;
-          const y = ((90 - lat) / 180) * H;
-          if (idx === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        });
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      }
-    }
-  }
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.anisotropy = 4;
-  return tex;
+function buildCountryFeatures(): GeoCountryFeature[] {
+  const countries =
+    (worldPaths as { countries?: { name: string; polygons: [number, number][][] }[] })
+      .countries ?? [];
+  return countries.map((c) => ({
+    type: "Feature",
+    properties: { name: c.name },
+    geometry: {
+      type: "MultiPolygon",
+      coordinates: c.polygons.map((poly) => [poly]),
+    },
+  }));
 }
 
 export function FrentesGlobo3D({
   frentes,
   activoId,
   onSelectFrente,
-  altura = 380,
+  altura = 390,
 }: {
   frentes: FrenteVivo3D[];
   activoId: string;
@@ -103,204 +78,286 @@ export function FrentesGlobo3D({
   altura?: number;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
+  const globeRef = useRef<GlobeInstance | null>(null);
   const selectCbRef = useRef(onSelectFrente);
-  const targetCamRef = useRef<THREE.Vector3 | null>(null);
+  const [capa, setCapa] = useState<CapaGlobo>("satelite");
+  const [autoRotate, setAutoRotate] = useState(false);
+
+  const features = useMemo(() => buildCountryFeatures(), []);
 
   useEffect(() => {
     selectCbRef.current = onSelectFrente;
   }, [onSelectFrente]);
 
-  useEffect(() => {
-    const f = frentes.find((x) => x.id === activoId);
-    if (f) {
-      targetCamRef.current = latLngAVec3(f.lat, f.lng, R_GLOBO * 2.55);
-    }
-  }, [activoId, frentes]);
-
+  // Montaje único del motor Globe.gl real
   useEffect(() => {
     const el = hostRef.current;
     if (!el) return;
 
-    const width = el.clientWidth || 640;
-    const height = altura;
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x04070f);
-
-    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 120);
-    const inicial = frentes.find((x) => x.id === activoId) ?? frentes[0];
-    const camInit = inicial
-      ? latLngAVec3(inicial.lat, inicial.lng, R_GLOBO * 2.55)
-      : new THREE.Vector3(0, 2, R_GLOBO * 2.55);
-    camera.position.copy(camInit);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(width, height);
+    const width = el.clientWidth || 680;
     el.innerHTML = "";
-    el.appendChild(renderer.domElement);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+    const globe = new Globe(el, {
+      rendererConfig: { antialias: true, powerPreference: "high-performance", alpha: false },
+      waitForGlobeReady: true,
+      animateIn: true,
+    });
+    globeRef.current = globe;
+
+    globe
+      .width(width)
+      .height(altura)
+      .backgroundColor("#04070f")
+      .globeImageUrl("/assets/env/earth-blue-marble.jpg")
+      .bumpImageUrl("/assets/env/earth-topology.png")
+      .showAtmosphere(true)
+      .atmosphereColor("#38bdf8")
+      .atmosphereAltitude(0.18)
+      .showGraticules(true);
+
+    // Material Phong realista con máscara de océanos para brillo solar real
+    const loader = new THREE.TextureLoader();
+    loader.load("/assets/env/earth-water.png", (waterTex) => {
+      const mat = globe.globeMaterial() as THREE.MeshPhongMaterial;
+      if (mat && "specularMap" in mat) {
+        mat.specularMap = waterTex;
+        mat.specular = new THREE.Color("#2b6cb0");
+        mat.shininess = 18;
+        mat.bumpScale = 6;
+        mat.needsUpdate = true;
+      }
+    });
+
+    // Fronteras geopolíticas vectoriales sutiles sobre el globo satelital
+    globe
+      .polygonsData(features)
+      .polygonCapColor(() => "rgba(12, 24, 42, 0.08)")
+      .polygonSideColor(() => "rgba(56, 189, 248, 0.04)")
+      .polygonStrokeColor(() => "rgba(255, 201, 77, 0.32)")
+      .polygonAltitude(0.004);
+
+    // Configuración de cámara y controles
+    const controls = globe.controls();
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.minDistance = R_GLOBO * 1.45;
-    controls.maxDistance = R_GLOBO * 4.2;
-    controls.enablePan = false;
+    controls.minDistance = 140;
+    controls.maxDistance = 420;
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 0.45;
 
-    scene.add(new THREE.AmbientLight(0xbcd2ff, 1.05));
-    const dir = new THREE.DirectionalLight(0xfff1d6, 1.15);
-    dir.position.set(10, 8, 10);
-    scene.add(dir);
+    // Luz cálida adicional
+    const scene = globe.scene();
+    const key = new THREE.DirectionalLight(0xfff4df, 1.35);
+    key.position.set(180, 120, 180);
+    scene.add(key);
 
-    const earthTex = crearTexturaTierra();
-    const earthGeo = new THREE.SphereGeometry(R_GLOBO, 48, 32);
-    const earthMat = new THREE.MeshStandardMaterial({
-      map: earthTex,
-      roughness: 0.72,
-      metalness: 0.12,
-    });
-    const earth = new THREE.Mesh(earthGeo, earthMat);
-    scene.add(earth);
-
-    // Atmósfera exterior sutil
-    const atmoGeo = new THREE.SphereGeometry(R_GLOBO * 1.045, 36, 24);
-    const atmoMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.08,
-      side: THREE.BackSide,
-    });
-    scene.add(new THREE.Mesh(atmoGeo, atmoMat));
-
-    // Balizas de frentes en vivo + líneas de frente reales
-    const pickables: { mesh: THREE.Mesh; id: string }[] = [];
-    const pulses: { mesh: THREE.Mesh; fase: number; base: number }[] = [];
-
-    frentes.forEach((f, idx) => {
-      const esSel = f.id === activoId;
-      const color = esSel ? 0xffc94d : f.intensidad >= 80 ? 0xff3b30 : 0xff9500;
-      const pos = latLngAVec3(f.lat, f.lng, R_GLOBO * 1.015);
-      const normal = pos.clone().normalize();
-
-      const colH = 0.28 + (f.intensidad / 100) * 0.75;
-      const col = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.03, 0.06, colH, 8),
-        new THREE.MeshBasicMaterial({ color })
-      );
-      col.position.copy(pos).addScaledVector(normal, colH / 2);
-      col.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal);
-      scene.add(col);
-
-      const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(esSel ? 0.14 : 0.1, 12, 10),
-        new THREE.MeshBasicMaterial({ color })
-      );
-      sphere.position.copy(pos).addScaledVector(normal, colH);
-      scene.add(sphere);
-      pickables.push({ mesh: sphere, id: f.id });
-
-      const ring = new THREE.Mesh(
-        new THREE.RingGeometry(0.14, 0.24, 18),
-        new THREE.MeshBasicMaterial({
-          color,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.75,
-        })
-      );
-      ring.position.copy(pos);
-      ring.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
-      scene.add(ring);
-      pulses.push({ mesh: ring, fase: idx * 0.8, base: esSel ? 1.4 : 1.0 });
-
-      // Trazado del frente real sobre la esfera
-      for (const fl of f.frentes) {
-        if (fl.puntos.length < 2) continue;
-        const pts = fl.puntos.map(([lat, lng]) => latLngAVec3(lat, lng, R_GLOBO * 1.018));
-        const lGeo = new THREE.BufferGeometry().setFromPoints(pts);
-        const lMat = new THREE.LineBasicMaterial({ color: esSel ? 0xffc94d : 0xff3b30 });
-        scene.add(new THREE.Line(lGeo, lMat));
-      }
-    });
-
-    // Raycaster para elegir frente al hacer clic
-    const ray = new THREE.Raycaster();
-    const ptr = new THREE.Vector2();
-    let downPt: { x: number; y: number } | null = null;
-    const onDown = (e: PointerEvent) => {
-      downPt = { x: e.clientX, y: e.clientY };
-      targetCamRef.current = null; // el usuario tomó control manual
-    };
-    const onUp = (e: PointerEvent) => {
-      if (!downPt) return;
-      const dist = Math.hypot(e.clientX - downPt.x, e.clientY - downPt.y);
-      downPt = null;
-      if (dist > 6) return;
-      const rect = renderer.domElement.getBoundingClientRect();
-      ptr.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      ptr.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      ray.setFromCamera(ptr, camera);
-      const hits = ray.intersectObjects(
-        pickables.map((p) => p.mesh),
-        false
-      );
-      if (hits.length > 0) {
-        const hitObj = hits[0].object;
-        const found = pickables.find((p) => p.mesh === hitObj);
-        if (found) selectCbRef.current(found.id);
-      }
-    };
-    renderer.domElement.addEventListener("pointerdown", onDown);
-    renderer.domElement.addEventListener("pointerup", onUp);
-
-    let raf = 0;
-    const animate = (t: number) => {
-      raf = requestAnimationFrame(animate);
-      if (targetCamRef.current) {
-        camera.position.lerp(targetCamRef.current, 0.06);
-        if (camera.position.distanceTo(targetCamRef.current) < 0.08) {
-          targetCamRef.current = null;
-        }
-      }
-      for (const p of pulses) {
-        const s = p.base * (1 + ((Math.sin(t * 0.004 + p.fase) + 1) * 0.5) * 0.65);
-        p.mesh.scale.setScalar(s);
-      }
-      controls.update();
-      renderer.render(scene, camera);
-    };
-    raf = requestAnimationFrame(animate);
+    // Vuelo inicial al frente seleccionado
+    const inicial = frentes.find((f) => f.id === activoId) ?? frentes[0];
+    if (inicial) {
+      globe.pointOfView({ lat: inicial.lat, lng: inicial.lng, altitude: 1.75 }, 0);
+    }
 
     const ro = new ResizeObserver(() => {
-      if (!el) return;
+      if (!el || !globeRef.current) return;
       const w = el.clientWidth || width;
-      camera.aspect = w / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, height);
+      globeRef.current.width(w).height(altura);
     });
     ro.observe(el);
 
     return () => {
-      cancelAnimationFrame(raf);
       ro.disconnect();
-      renderer.domElement.removeEventListener("pointerdown", onDown);
-      renderer.domElement.removeEventListener("pointerup", onUp);
-      controls.dispose();
-      earthGeo.dispose();
-      earthMat.dispose();
-      earthTex.dispose();
-      atmoGeo.dispose();
-      atmoMat.dispose();
-      renderer.dispose();
+      try {
+        globe._destructor();
+      } catch {
+        // limpieza defensiva
+      }
+      globeRef.current = null;
     };
-  }, [frentes, activoId, altura]);
+  }, [altura, features]);
+
+  // Cambio de textura NASA (Día Blue Marble / Noche Black Marble / Topografía)
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    if (capa === "satelite") {
+      globe
+        .globeImageUrl("/assets/env/earth-blue-marble.jpg")
+        .atmosphereColor("#38bdf8")
+        .polygonStrokeColor(() => "rgba(255, 201, 77, 0.32)");
+    } else if (capa === "nocturno") {
+      globe
+        .globeImageUrl("/assets/env/earth-night.jpg")
+        .atmosphereColor("#22c55e")
+        .polygonStrokeColor(() => "rgba(61, 220, 151, 0.35)");
+    } else {
+      globe
+        .globeImageUrl("/assets/env/earth-topology.png")
+        .atmosphereColor("#ffc94d")
+        .polygonStrokeColor(() => "rgba(56, 189, 248, 0.45)");
+    }
+  }, [capa]);
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+    globe.controls().autoRotate = autoRotate;
+  }, [autoRotate]);
+
+  // Actualización reactiva de frentes, anillos, líneas de frente y arcos VANGUARD
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+
+    const points: FrontPoint[] = frentes.map((f) => {
+      const esSel = f.id === activoId;
+      return {
+        id: f.id,
+        nombre: f.nombre,
+        lat: f.lat,
+        lng: f.lng,
+        intensidad: f.intensidad,
+        esSel,
+        color: esSel ? "#FFC94D" : f.intensidad >= 80 ? "#FF3B30" : "#FF9500",
+        altitud: 0.04 + (f.intensidad / 100) * 0.14 + (esSel ? 0.04 : 0),
+        radio: esSel ? 0.52 : 0.36,
+      };
+    });
+
+    const paths: FrontPath[] = [];
+    for (const f of frentes) {
+      const esSel = f.id === activoId;
+      for (let i = 0; i < f.frentes.length; i++) {
+        const fl = f.frentes[i];
+        if (fl.puntos.length < 2) continue;
+        paths.push({
+          id: `${f.id}-${i}`,
+          frenteId: f.id,
+          coords: fl.puntos,
+          color: esSel ? "#FFC94D" : "#FF3B30",
+        });
+      }
+    }
+
+    // Arcos estratégicos desde Sede VANGUARD #1 (18.42, -70.03) hacia el teatro activo
+    const activo = frentes.find((f) => f.id === activoId) ?? frentes[0];
+    const arcs: FrontArc[] = activo
+      ? [
+          {
+            startLat: 18.42,
+            startLng: -70.03,
+            endLat: activo.lat,
+            endLng: activo.lng,
+            color: ["#FFC94D", "#38BDF8"],
+            nombre: `Enlace VANGUARD #1 → ${activo.nombre}`,
+          },
+        ]
+      : [];
+
+    globe
+      .pointsData(points)
+      .pointLat((d) => (d as FrontPoint).lat)
+      .pointLng((d) => (d as FrontPoint).lng)
+      .pointColor((d) => (d as FrontPoint).color)
+      .pointAltitude((d) => (d as FrontPoint).altitud)
+      .pointRadius((d) => (d as FrontPoint).radio)
+      .pointLabel(
+        (d) =>
+          `<div style="background:rgba(7,10,18,0.92);border:1px solid #FFC94D;padding:6px 8px;border-radius:6px;font-family:monospace;font-size:11px;color:#F3EEE2">
+            <strong style="color:#FFC94D">${(d as FrontPoint).nombre}</strong><br/>
+            Intensidad: ${(d as FrontPoint).intensidad}/100 · Clic para enfocar
+          </div>`
+      )
+      .onPointClick((d) => {
+        const pt = d as FrontPoint;
+        if (pt?.id) selectCbRef.current(pt.id);
+      })
+      .ringsData(points)
+      .ringLat((d) => (d as FrontPoint).lat)
+      .ringLng((d) => (d as FrontPoint).lng)
+      .ringColor((d) => (t: number) => {
+        const c = (d as FrontPoint).esSel ? "255,201,77" : "255,59,48";
+        return `rgba(${c}, ${Math.max(0, 1 - t)})`;
+      })
+      .ringMaxRadius((d) => ((d as FrontPoint).esSel ? 5.2 : 3.2))
+      .ringPropagationSpeed(2.2)
+      .ringRepeatPeriod((d) => ((d as FrontPoint).esSel ? 950 : 1500))
+      .pathsData(paths)
+      .pathPoints((d) => (d as FrontPath).coords)
+      .pathPointLat((p) => (p as [number, number])[0])
+      .pathPointLng((p) => (p as [number, number])[1])
+      .pathColor((d) => (d as FrontPath).color)
+      .pathStroke(2.2)
+      .pathPointAlt(0.015)
+      .arcsData(arcs)
+      .arcColor((d) => (d as FrontArc).color)
+      .arcDashLength(0.45)
+      .arcDashGap(0.25)
+      .arcDashAnimateTime(1800)
+      .arcStroke(0.6)
+      .labelsData(points)
+      .labelLat((d) => (d as FrontPoint).lat)
+      .labelLng((d) => (d as FrontPoint).lng)
+      .labelText((d) => (d as FrontPoint).nombre.split("·")[0].trim())
+      .labelSize((d) => ((d as FrontPoint).esSel ? 1.15 : 0.78))
+      .labelColor((d) => ((d as FrontPoint).esSel ? "#FFC94D" : "#E2E8F0"))
+      .labelDotRadius((d) => ((d as FrontPoint).esSel ? 0.35 : 0.2))
+      .labelAltitude(0.025)
+      .onLabelClick((d) => {
+        const pt = d as FrontPoint;
+        if (pt?.id) selectCbRef.current(pt.id);
+      });
+
+    if (activo) {
+      globe.pointOfView({ lat: activo.lat, lng: activo.lng, altitude: 1.68 }, 900);
+    }
+  }, [frentes, activoId]);
 
   return (
-    <div
-      ref={hostRef}
-      className="w-full rounded-lg overflow-hidden border border-red-hud/30 bg-black cursor-grab active:cursor-grabbing"
-      style={{ height: altura }}
-      aria-label="Globo 3D de frentes activos en vivo"
-    />
+    <div className="relative w-full rounded-lg overflow-hidden border border-red-hud/35 bg-[#04070f]" style={{ height: altura }}>
+      <div
+        ref={hostRef}
+        className="w-full h-full cursor-grab active:cursor-grabbing"
+        aria-label="Globo 3D NASA de frentes activos en vivo"
+      />
+
+      {/* Selector de capas satelitales reales NASA */}
+      <div className="absolute top-2.5 left-2.5 z-10 flex flex-wrap gap-1 pointer-events-auto">
+        {(
+          [
+            { id: "satelite" as CapaGlobo, label: "NASA SATÉLITE" },
+            { id: "nocturno" as CapaGlobo, label: "TIERRA NOCTURNA" },
+            { id: "topografico" as CapaGlobo, label: "RELIEVE DEM" },
+          ] as const
+        ).map((op) => (
+          <button
+            key={op.id}
+            type="button"
+            onClick={() => setCapa(op.id)}
+            className={`px-2 py-1 rounded font-mono text-[10px] font-bold border transition-colors ${
+              capa === op.id
+                ? "bg-[#FFC94D] text-black border-[#FFC94D]"
+                : "bg-black/75 text-slate-200 border-white/20 hover:border-white/40"
+            }`}
+          >
+            {op.label}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setAutoRotate((r) => !r)}
+          className={`px-2 py-1 rounded font-mono text-[10px] font-bold border transition-colors ${
+            autoRotate
+              ? "bg-[#38BDF8] text-black border-[#38BDF8]"
+              : "bg-black/75 text-slate-300 border-white/20 hover:border-white/40"
+          }`}
+        >
+          {autoRotate ? "ÓRBITA ON" : "ÓRBITA OFF"}
+        </button>
+      </div>
+
+      <div className="absolute bottom-2 left-2.5 z-10 pointer-events-none px-2 py-0.5 rounded bg-black/70 border border-white/10 font-mono text-[9.5px] text-slate-300">
+        Motor: Globe.gl + NASA Blue/Black Marble &amp; Relieve Topográfico
+      </div>
+    </div>
   );
 }

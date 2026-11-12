@@ -7763,6 +7763,7 @@ async function parteB() {
     for (const rel of [
       "src/lib/teatro-total-data.ts",
       "src/lib/teatro-sim-engine.ts",
+      "src/components/vanguard/teatro3d/glb-engine.ts",
       "src/components/vanguard/teatro3d/fabricas-3d.ts",
       "src/components/vanguard/teatro3d/terreno-guerra-3d.tsx",
       "src/components/vanguard/teatro3d/frentes-globo-3d.tsx",
@@ -7775,20 +7776,36 @@ async function parteB() {
       const src = readFileSync(join(RAIZ, rel), "utf8");
       afirmar(!src.includes("eslint-disable"), `${rel} contiene eslint-disable (ley v335)`);
     }
+    // Motores reales open-source + modelos .glb reales + texturas NASA/HDRI
+    const glbEng = readFileSync(join(RAIZ, "src/components/vanguard/teatro3d/glb-engine.ts"), "utf8");
+    const terrSrc = readFileSync(join(RAIZ, "src/components/vanguard/teatro3d/terreno-guerra-3d.tsx"), "utf8");
+    const globSrc = readFileSync(join(RAIZ, "src/components/vanguard/teatro3d/frentes-globo-3d.tsx"), "utf8");
+    afirmar(glbEng.includes("GLTFLoader") && glbEng.includes("UnrealBloomPass") && glbEng.includes("RGBELoader"), "glb-engine no integra GLTFLoader + HDRI + Bloom");
+    afirmar(terrSrc.includes("maplibre-gl") && terrSrc.includes("terrarium") && terrSrc.includes("Sky") && terrSrc.includes("Water"), "terreno-guerra-3d no integra MapLibre DEM + Sky + Water");
+    afirmar(globSrc.includes('from "globe.gl"') && globSrc.includes("earth-blue-marble.jpg"), "frentes-globo-3d no integra Globe.gl + NASA Blue Marble");
+    for (const asset of [
+      "public/assets/models/soldier.glb",
+      "public/assets/models/tank.glb",
+      "public/assets/models/ak47.glb",
+      "public/assets/models/m590a1.glb",
+      "public/assets/models/damaged-helmet.glb",
+      "public/assets/models/f15.glb",
+      "public/assets/models/drone.glb",
+      "public/assets/models/scout-drone.glb",
+      "public/assets/models/naval-vessel.glb",
+      "public/assets/env/earth-blue-marble.jpg",
+      "public/assets/env/earth-topology.png",
+      "public/assets/env/studio.hdr",
+    ]) {
+      afirmar(existsSync(join(RAIZ, asset)), `falta asset 3D real: ${asset}`);
+    }
   });
 
-  await verificar("VANGUARD 3D TEATRO TOTAL vivo: /teatro-3d, ficha del núcleo y sitemap", async () => {
+  await verificar("VANGUARD 3D TEATRO TOTAL vivo: /teatro-3d, assets .glb 200, ficha del núcleo y sitemap", async () => {
     const p = await pedir("/teatro-3d");
     afirmar(p.status === 200 && p.texto.includes("VANGUARD"), `/teatro-3d no 200 (${p.status})`);
-    const ent = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:teatro-3d")}`);
-    afirmar(ent.status === 200 && ent.json?.ok === true, "ficha vg:simulacion:teatro-3d no responde ok");
-    const rs = await pedir("/sitemap.xml");
-    afirmar(rs.status === 200 && rs.texto.includes("/teatro-3d"), "el sitemap vivo no anuncia /teatro-3d");
-  });
-
-  await verificar("VANGUARD 3D TEATRO TOTAL vivo: /teatro-3d, ficha del núcleo y sitemap", async () => {
-    const p = await pedir("/teatro-3d");
-    afirmar(p.status === 200 && p.texto.includes("VANGUARD"), `/teatro-3d no 200 (${p.status})`);
+    const glbResp = await fetch(`${BASE}/assets/models/tank.glb`);
+    afirmar(glbResp.status === 200, `/assets/models/tank.glb no 200 (${glbResp.status})`);
     const ent = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:teatro-3d")}`);
     afirmar(ent.status === 200 && ent.json?.ok === true, "ficha vg:simulacion:teatro-3d no responde ok");
     const rs = await pedir("/sitemap.xml");

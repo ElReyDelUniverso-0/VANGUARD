@@ -72,6 +72,7 @@ import {
   PlanoEscuadron2D,
   PlanoUniforme2D,
 } from "@/components/vanguard/teatro3d/vistas-2d";
+import { precargarModelosPrincipales } from "@/components/vanguard/teatro3d/glb-engine";
 
 function CargandoVisor() {
   return (
@@ -186,13 +187,28 @@ export function TeatroTotalPanel({
   );
 
   // ── Estado del simulador mundial y lugar del planeta ──
+  const tieneCoordInicial =
+    typeof initialLat === "number" &&
+    typeof initialLng === "number" &&
+    Number.isFinite(initialLat) &&
+    Number.isFinite(initialLng);
   const lugarInicial = LUGARES_MUNDO[0]; // VANGUARD #1 primero
   const [teatro, setTeatro] = useState<TeatroMundial>(() =>
-    generarTeatroDesdeCoord(lugarInicial.lat, lugarInicial.lng, lugarInicial.nombre, lugarInicial.bioma)
+    tieneCoordInicial
+      ? generarTeatroDesdeCoord(
+          initialLat,
+          initialLng,
+          initialNombre?.trim() || `Sector ${initialLat.toFixed(2)}°, ${initialLng.toFixed(2)}°`
+        )
+      : generarTeatroDesdeCoord(lugarInicial.lat, lugarInicial.lng, lugarInicial.nombre, lugarInicial.bioma)
   );
   const [busquedaLugar, setBusquedaLugar] = useState("");
-  const [coordLat, setCoordLat] = useState(String(lugarInicial.lat));
-  const [coordLng, setCoordLng] = useState(String(lugarInicial.lng));
+  const [coordLat, setCoordLat] = useState(
+    tieneCoordInicial ? initialLat.toFixed(2) : String(lugarInicial.lat)
+  );
+  const [coordLng, setCoordLng] = useState(
+    tieneCoordInicial ? initialLng.toFixed(2) : String(lugarInicial.lng)
+  );
   const [nombreCustom, setNombreCustom] = useState("");
   const [biomaSelector, setBiomaSelector] = useState<"auto" | BiomaTeatro>("auto");
   const [sensor, setSensor] = useState<ModoSensor>("tactico");
@@ -264,6 +280,14 @@ export function TeatroTotalPanel({
   );
 
   const [cables, setCables] = useState<CableNoticia[]>([]);
+  useEffect(() => {
+    const w = window as unknown as { __vgvivo?: boolean; __vgcasa?: boolean };
+    w.__vgcasa = true;
+    w.__vgvivo = true;
+    const t = window.setTimeout(() => precargarModelosPrincipales(), 3500);
+    return () => window.clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     const ctrl = new AbortController();
     fetch("/api/news?limit=60", { signal: ctrl.signal })
@@ -1657,6 +1681,21 @@ export function TeatroTotalPanel({
           </div>
         </div>
       )}
+
+      {/* Pie técnico de motores abiertos y atribución glTF / NASA / MapLibre */}
+      <footer className="border-t border-white/10 pt-2.5 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-muted-foreground">
+        <span>
+          MOTORES 3D ABIERTOS: MapLibre GL JS (DEM AWS Terrarium + ESRI/Carto) · Globe.gl (NASA Blue Marble) · Three.js PBR + glTF (.glb)
+        </span>
+        <a
+          href="/assets/models/ATRIBUCION.md"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-cyan-hud hover:underline"
+        >
+          Ver licencias y atribuciones 3D (CC0 / MIT / CC-BY / NASA) ↗
+        </a>
+      </footer>
     </div>
   );
 }
