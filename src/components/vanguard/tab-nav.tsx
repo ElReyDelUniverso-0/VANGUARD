@@ -161,7 +161,13 @@ export type TabKey =
   | "centro"
   // v176.0 LAS FICHAS DE GUERRA: la colección coleccionable de conflictos
   // mundiales — una carta por frente vivo, rareza según su impacto de hoy
-  | "fichas";
+  | "fichas"
+  // MOTOR TÁCTICO MUNDIAL 2D/3D UNIFICADO (#1 primero)
+  | "teatro3d"
+  // MENÚ LO NUEVO + EXPANSIÓN 10X (10 funciones nuevas con links directos)
+  | "novedades"
+  // THE DAILY UNIVERSE (Credits, 8 Colecciones 3D, Marketplace Ético, Base Personal)
+  | "universo";
 interface TabDef {
   key: TabKey;
   label: string;
@@ -387,6 +393,9 @@ export const TABS: Record<TabKey, TabDef> = {
   rostros:       { key: "rostros",       label: "LOS ROSTROS DEL PODER (el dossier de las personas que mueven el mundo: presidentes, banqueros centrales, jueces y nuevos poderes — mapa de ubicaciones reales, expedientes finos y pulso real)", short: "ROSTROS", icon: <Users className="w-3.5 h-3.5" />, color: "amber" },
   // v131.0 EL GOBIERNO LIBRE: la credencial exclusiva y el cuerpo de pulido
   agentes:       { key: "agentes",       label: "EL GOBIERNO LIBRE (tu credencial exclusiva y los agentes autónomos que pulen Vanguard cada cierto tiempo — como un gobierno, pero libre)", short: "AGENTES", icon: <Landmark className="w-3.5 h-3.5" />, color: "green" },
+  teatro3d:      { key: "teatro3d",      label: "VANGUARD 3D (Cualquier lugar del planeta en 3D y 2D + frentes activos en vivo + uniformes, escuadrones y armas interactivas)", short: "VANGUARD 3D", icon: <Crown className="w-3.5 h-3.5" />, color: "amber" },
+  novedades:     { key: "novedades",     label: "LO NUEVO · EXPANSIÓN 10X (Registro de todo lo recién añadido a VANGUARD con links directos + 10 funciones nuevas en vivo)", short: "LO NUEVO 10X", icon: <Sparkles className="w-3.5 h-3.5" />, color: "cyan" },
+  universo:      { key: "universo",      label: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Colecciones con Cartas 3D mejorables, Marketplace Ético 7 categorías y Base Personal)", short: "DAILY UNIVERSE", icon: <Gem className="w-3.5 h-3.5" />, color: "amber" },
   dron:          { key: "dron",          label: "Dron Strike 3D",   short: "DRON",     icon: <Rocket className="w-3.5 h-3.5" />, color: "red" },
   ayuda:         { key: "ayuda",         label: "Ayuda",             short: "AYUDA", icon: <HelpCircle className="w-3.5 h-3.5" />, color: "amber" },
 };
@@ -399,7 +408,25 @@ export const TABS: Record<TabKey, TabDef> = {
 // inteligencia; CRISIS y ALIANZAS encabezan social; AGENTE abre sistema.
 export const SECTIONS: SectionDef[] = [
   {
-    // v67.0 EL HANGAR: la base 3D del agente es la primera sección del nav
+    // #1 VANGUARD 3D: posición primera en el índice — Motor Táctico Global 2D/3D
+    key: "teatro3d", label: "VANGUARD 3D", short: "VANGUARD 3D", icon: <Crown className="w-4 h-4" />, color: "amber",
+    desc: "#1 VANGUARD 3D: convierte cualquier lugar del planeta en teatro 3D/2D de guerra, vigila frentes en vivo e inspecciona uniformes, escuadrones y armas interactivas",
+    tabs: [TABS.teatro3d],
+  },
+  {
+    // #2 LO NUEVO · EXPANSIÓN 10X: todo lo agregado + links directos + 10 funciones nuevas
+    key: "novedades", label: "LO NUEVO 10X", short: "LO NUEVO 10X", icon: <Sparkles className="w-4 h-4" />, color: "cyan",
+    desc: "Panel Lo Nuevo con enlaces directos a cada novedad y las 10 funciones interactivas de expansión en vivo",
+    tabs: [TABS.novedades],
+  },
+  {
+    // #3 THE DAILY UNIVERSE: economía diaria VC, 8 colecciones 3D, marketplace ético y base personal
+    key: "universo", label: "DAILY UNIVERSE", short: "DAILY UNIVERSE", icon: <Gem className="w-4 h-4" />, color: "amber",
+    desc: "Vanguard Credits (VC), VANGUARD Collections (8 álbumes con cartas 3D mejorables), Marketplace Ético y Base Personal",
+    tabs: [TABS.universo],
+  },
+  {
+    // v67.0 EL HANGAR: la base 3D del agente
     key: "hangar", label: "HANGAR", short: "HANGAR", icon: <Warehouse className="w-4 h-4" />, color: "cyan",
     desc: "Tu base 3D: camina entre puertas holográficas, tarot, detector de propaganda y diario",
     tabs: [TABS.hangar],
@@ -536,6 +563,9 @@ export const TOTAL_TABS = ALL_TABS.length;
 // --vg-acc (page.tsx) para teñir la barra Google, la transición de cine y el
 // buscador con el color del mundo donde estás.
 export const SECTION_ACCENT: Record<string, string> = {
+  teatro3d:      "#FFC94D", // oro — #1 VANGUARD 3D (motor global 2D/3D)
+  novedades:     "#38BDF8", // cian vivo — Panel Lo Nuevo + 10 Funciones Nuevas
+  universo:      "#A855F7", // amatista cósmica — THE DAILY UNIVERSE & Collections
   nueva:         "#FFC94D", // oro — la identidad de Vanguard en la nueva pestaña
   hangar:        "#52D5E0", // turquesa metálico — tu base 3D
   inicio:        "#FFC94D", // ORO — la identidad dorada de Vanguard

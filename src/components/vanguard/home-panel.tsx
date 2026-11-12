@@ -12,7 +12,7 @@ import {
   SignalHigh,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass, Siren,
+  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass, Siren, Sparkles, Gem,
 } from "lucide-react";
 import Link from "next/link";
 import { useGameStore } from "@/lib/game-store";
@@ -127,6 +127,12 @@ interface WorldTile {
 
 // ====== MENÚ LLAMATIVO: los mundos principales ======
 const WORLD_TILES: WorldTile[] = [
+  // #1 VANGUARD 3D — el motor táctico 2D/3D global abre en posición #1
+  { tab: "teatro3d", title: "#1 VANGUARD 3D · MUNDO, FRENTES Y ARSENAL", desc: "Convierte cualquier ciudad o coordenada en teatro 3D/2D de guerra + frentes en vivo + uniformes, escuadrones y armas interactivas en 3D y 2D", icon: <Crown className="w-6 h-6" />, hex: "#FFC94D" },
+  // #2 LO NUEVO 10X — Registro de todo lo agregado con links directos + 10 funciones nuevas
+  { tab: "novedades", title: "#2 LO NUEVO · EXPANSIÓN 10 FUNCIONES", desc: "Menú de novedades con links directos a cada cambio recién agregado + 10 funciones nuevas en vivo: Comparador 1v1, Termómetro Regional, Riesgo de Viaje, Suministros, Radar Diplomático, Verificador OSINT, Duelo, Vigía, Briefing y Atlas 32→3D", icon: <Sparkles className="w-6 h-6" />, hex: "#38BDF8" },
+  // #3 THE DAILY UNIVERSE — Vanguard Credits, 8 Colecciones 3D, Marketplace Ético y Base Personal
+  { tab: "universo", title: "#3 THE DAILY UNIVERSE · CREDITS & COLLECTIONS", desc: "Economía diaria sin penalizaciones: Vanguard Credits (VC), Cartas Mejoradas 3D Holo-Foil (Países, Civilizaciones, Monumentos, Espacio, Ciencia...), Marketplace ético de 7 categorías y Base Personal", icon: <Gem className="w-6 h-6" />, hex: "#A855F7" },
   // v172.0 LA AGENCIA CENTRAL — el CENTRO MUNDIAL abre el muro: la missión
   // del Dueño (el mayor centro de noticias, en vivo por impacto + mapa 3D)
   { tab: "centro", title: "CENTRO MUNDIAL DE NOTICIAS", desc: "El mayor centro de noticias del mundo: en vivo POR IMPORTANCIA E IMPACTO, cada cable con su pie de foto e información, y EL MAPA MUNDIAL 3D en primera persona con gráficos de guerra", icon: <Siren className="w-6 h-6" />, hex: "#FF3B30" },
@@ -540,6 +546,75 @@ export function HomePanel() {
     <div className="space-y-5">
       {/* v85.0 EL MUNDO DENTRO — manifiesto de identidad */}
       <ManifiestoMundo />
+
+      {/* #1 VANGUARD 3D · TEATRO TOTAL 2D/3D — la puerta maestra #1 de la casa */}
+      <Link
+        href="/teatro-3d"
+        className="group block border border-[#FFC94D]/55 bg-gradient-to-r from-[#FFC94D]/15 via-zinc-950/60 to-cyan-950/30 rounded-md p-4 hover:border-[#FFC94D] transition-colors shadow-[0_0_24px_rgba(255,201,77,0.12)]"
+      >
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-black font-black bg-[#FFC94D] rounded px-2 py-0.5">
+            <Crown className="w-3 h-3" /> #1 VANGUARD · 3D / 2D
+          </span>
+          <span className="font-display text-lg sm:text-xl font-black tracking-wide text-amber group-hover:text-foreground transition-colors">
+            TEATRO TOTAL 3D / 2D — cualquier lugar, frentes, uniformes, escuadrones y armas
+          </span>
+        </div>
+        <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
+          Convierte cualquier ciudad o coordenada (lat, lng) del planeta en teatro de guerra 3D y mapa 2D sincronizados con despliegue por clic; vigila los frentes reales en el globo 3D e inspecciona uniformes por capas, escuadrones y armas con despiece CAD y rayos X.
+        </p>
+        <p className="mt-1.5 font-mono text-[10px] text-amber uppercase tracking-widest font-bold">
+          Abrir #1 VANGUARD 3D (/teatro-3d) →
+        </p>
+      </Link>
+
+      {/* LO NUEVO 10X — Panel de novedades con links directos + 10 funciones nuevas */}
+      <div className="border border-cyan-hud/45 bg-gradient-to-r from-cyan-950/35 via-zinc-950/60 to-[#FFC94D]/10 rounded-md p-4 hover:border-cyan-hud transition-colors flex flex-wrap items-center justify-between gap-3">
+        <Link href="/novedades" className="group flex-1 min-w-[240px]">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-black font-black bg-[#38BDF8] rounded px-2 py-0.5">
+              <Sparkles className="w-3 h-3" /> LO NUEVO · +10 FUNCIONES
+            </span>
+            <span className="font-display text-base sm:text-lg font-black tracking-wide text-cyan-hud group-hover:text-foreground transition-colors">
+              MENÚ LO NUEVO + LINKS DIRECTOS + EXPANSIÓN 10X
+            </span>
+          </div>
+          <p className="mt-1 text-[12px] text-muted-foreground leading-relaxed">
+            Inspecciona todo lo recién agregado a VANGUARD con su link directo y usa las 10 funciones nuevas en vivo: Comparador 1v1, Termómetro Regional, Riesgo de Viaje, Suministros, Radar Diplomático, Verificador OSINT, Duelo Relámpago, Vigía Planetario, Generador de Briefings y Atlas 32→3D.
+          </p>
+          <p className="mt-1 font-mono text-[10px] text-cyan-hud uppercase tracking-widest font-bold">
+            Abrir Panel Lo Nuevo (/novedades) →
+          </p>
+        </Link>
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent("vanguard:menu-novedades"))}
+          className="px-3.5 py-2 rounded bg-[#FFC94D] text-black font-mono text-xs font-black hover:bg-[#ffd66b] flex items-center gap-1.5 shrink-0"
+        >
+          <Sparkles className="w-3.5 h-3.5" /> ABRIR MENÚ RÁPIDO
+        </button>
+      </div>
+
+      {/* THE DAILY UNIVERSE — Economía diaria, Cartas 3D mejorables y 8 Colecciones */}
+      <Link
+        href="/universo"
+        className="group block border border-violet-400/50 bg-gradient-to-r from-violet-950/40 via-zinc-950/60 to-[#FFC94D]/10 rounded-md p-4 hover:border-violet-300 transition-colors"
+      >
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-black font-black bg-[#E879F9] rounded px-2 py-0.5">
+            <Gem className="w-3 h-3" /> THE DAILY UNIVERSE
+          </span>
+          <span className="font-display text-base sm:text-lg font-black tracking-wide text-violet-300 group-hover:text-foreground transition-colors">
+            VANGUARD CREDITS · CARTAS 3D MEJORADAS · 8 COLECCIONES · MARKETPLACE ÉTICO
+          </span>
+        </div>
+        <p className="mt-1 text-[12px] text-muted-foreground leading-relaxed">
+          Consigue Vanguard Credits (VC) completando desafíos y estudios diarios sin miedo a perder recompensas; colecciona y mejora 40 cartas 3D Holo-Foil (Países, Civilizaciones, Monumentos, Espacio, Fenómenos, Ciencia, Personajes y Acontecimientos), personaliza tu Base Personal y equipa temas, música y avatares en un Marketplace 100% ético.
+        </p>
+        <p className="mt-1 font-mono text-[10px] text-violet-300 uppercase tracking-widest font-bold">
+          Entrar a The Daily Universe (/universo) →
+        </p>
+      </Link>
 
       {/* v213.0 EL PULSO — la sala de ÚLTIMA HORA: el primero en dar noticias */}
       <Link

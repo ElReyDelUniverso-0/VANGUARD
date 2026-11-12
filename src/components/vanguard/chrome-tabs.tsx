@@ -29,6 +29,7 @@ import {
   Copy,
   Maximize2,
   Type,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -1389,8 +1390,17 @@ export function ChromeTabs({
               <Plus className="w-4 h-4" />
             </motion.button>
 
-            {/* buscar + pantalla completa + menú: los acompañantes fijos de la franja */}
+            {/* buscar + lo nuevo + pantalla completa + menú: los acompañantes fijos de la franja */}
             <div className="shrink-0 ml-auto flex items-center gap-1 mb-0.5 pl-3 pr-1">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("vanguard:menu-novedades"))}
+                title="Menú VANGUARD: Lo Nuevo + Links Directos + 10 Funciones Nuevas"
+                aria-label="Abrir Menú VANGUARD Lo Nuevo"
+                className="nexus-btn3d flex items-center gap-1 px-2 py-1 rounded-md font-mono text-[9px] sm:text-[10px] font-black uppercase tracking-widest bg-[#FFC94D] text-black hover:bg-[#ffd66b] transition-colors"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span className="hidden sm:inline">LO NUEVO 10X</span>
+              </button>
               {onOpenSearch && (
                 <button
                   onClick={onOpenSearch}

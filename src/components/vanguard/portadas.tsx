@@ -16,7 +16,7 @@ import { tabLabel, useT } from "@/lib/i18n";
 import { CiudadInicio } from "./megalopolis";
 
 export type MundoKey =
-  | "nueva" | "inicio" | "hangar" | "inteligencia" | "juego" | "mercado"
+  | "teatro3d" | "novedades" | "universo" | "nueva" | "inicio" | "hangar" | "inteligencia" | "juego" | "mercado"
   | "archivo" | "comando" | "observatorio" | "estrategia" | "emisora"
   | "oscsuro" | "creadores" | "social" | "sistema";
 
@@ -603,6 +603,9 @@ function EscenaNueva({ acc }: { acc: string }) {
 }
 
 const ESCENAS: Record<string, (p: { acc: string }) => React.ReactNode> = {
+  teatro3d: EscenaEstrategia,
+  novedades: EscenaNueva,
+  universo: EscenaJuego,
   inicio: EscenaInicio,
   nueva: EscenaNueva,
   hangar: EscenaHangar,

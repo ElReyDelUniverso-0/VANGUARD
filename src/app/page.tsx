@@ -50,6 +50,12 @@ const ComunidadPanel = dynamic(() => import("@/components/vanguard/panels/comuni
 const RedMundialPanel = dynamic(() => import("@/components/vanguard/panels/red-mundial-panel").then((m) => m.RedMundialPanel), { ssr: false, loading: PanelSkeleton });
 // v129.0 LA SALA DE GUERRA — el mega simulador del mando supremo
 const SalaGuerraPanel = dynamic(() => import("@/components/vanguard/panels/sala-guerra-panel").then((m) => m.SalaGuerraPanel), { ssr: false, loading: PanelSkeleton });
+// #1 VANGUARD 3D — Motor Táctico Global 2D/3D (Mundo, Frentes, Uniformes, Escuadrones, Armas)
+const TeatroTotalPanel = dynamic(() => import("@/components/vanguard/panels/teatro-total-panel").then((m) => m.TeatroTotalPanel), { ssr: false, loading: PanelSkeleton });
+// #2 LO NUEVO 10X — Panel de novedades con links directos + 10 funciones nuevas en vivo
+const NovedadesPanel = dynamic(() => import("@/components/vanguard/panels/novedades-panel").then((m) => m.NovedadesPanel), { ssr: false, loading: PanelSkeleton });
+// #3 THE DAILY UNIVERSE — Vanguard Credits, 8 Colecciones 3D, Marketplace Ético y Base Personal
+const UniversoDiarioPanel = dynamic(() => import("@/components/vanguard/panels/universo-diario-panel").then((m) => m.UniversoDiarioPanel), { ssr: false, loading: PanelSkeleton });
 // v130.0 LOS ROSTROS DEL PODER — el dossier de las personas que mueven el mundo
 const RostrosPanel = dynamic(() => import("@/components/vanguard/panels/rostros-panel").then((m) => m.RostrosPanel), { ssr: false, loading: PanelSkeleton });
 // v131.0 EL GOBIERNO LIBRE — la credencial exclusiva y los agentes autónomos
@@ -174,6 +180,12 @@ const ZONAS_WGL: Record<string, number> = { inicio: 1, crisis: 2, arcade: 3, per
 // Mapa curado: las salas de mayor tráfico de cada sección.
 // ══════════════════════════════════════════════════════════
 const PREFETCH_MODULOS: Partial<Record<TabKey, () => Promise<unknown>>> = {
+  // #1 VANGUARD 3D
+  teatro3d: () => import("@/components/vanguard/panels/teatro-total-panel"),
+  // #2 LO NUEVO 10X
+  novedades: () => import("@/components/vanguard/panels/novedades-panel"),
+  // #3 THE DAILY UNIVERSE
+  universo: () => import("@/components/vanguard/panels/universo-diario-panel"),
   // INICIO
   redaccion: () => import("@/components/vanguard/panels/redaccion-panel"),
   fichas: () => import("@/components/vanguard/panels/fichas-panel"),
@@ -499,6 +511,12 @@ function Salas({ tab }: { tab: TabKey }) {
         {tab === "atelier" && <AtelierPanel />}
         {tab === "comunidad" && <ComunidadPanel />}
         {tab === "redmundial" && <RedMundialPanel />}
+        {/* #1 VANGUARD 3D — Motor Táctico Mundial 2D/3D + Frentes + Uniformes + Escuadrones + Armas */}
+        {tab === "teatro3d" && <TeatroTotalPanel />}
+        {/* #2 LO NUEVO 10X — Menú de Novedades + Links Directos + 10 Funciones Nuevas */}
+        {tab === "novedades" && <NovedadesPanel />}
+        {/* #3 THE DAILY UNIVERSE — Credits VC, 8 Colecciones 3D, Marketplace Ético y Base Personal */}
+        {tab === "universo" && <UniversoDiarioPanel />}
         {/* v129.0 LA SALA DE GUERRA — el mando supremo: teatros en vivo, teatro 3D y bolsa de guerra */}
         {tab === "salaguerra" && <SalaGuerraPanel />}
         {tab === "rostros" && <RostrosPanel />}

@@ -1081,6 +1081,34 @@ export const REGLA_ORO = {
       "Seis teatros del planeta (cinco en fuego y uno observado) dentro de una sola sala de mando: entras a la representación 3D de una guerra real — terreno, ciudades en llamas, frentes encendidos, artillería, drones y misiles en arco — y de ahí bajas al mapa maestro con sus zonas de control y sus frentes marchando, a las fuerzas enfrentadas con barras comparadas, al balance humano con sus bajas honestas, al pulso real de los cables que la Casa recibe ahora mismo del teatro, y a la bolsa de guerra: las cuotas de la casa por escenario. Con fuentes abiertas y sin maquillaje: Vanguard no predice — presenta.",
     acento: "#FF4A3A",
   },
+  // #1 VANGUARD 3D — Motor Táctico Global 2D/3D (Cualquier lugar, Frentes vivos, Uniformes, Escuadrones y Armas)
+  teatro3d: {
+    titulo: "#1 VANGUARD 3D · TEATRO TOTAL",
+    volanta: "Cualquier lugar del planeta en 3D y 2D · frentes vivos · uniformes, escuadrones y armas interactivas",
+    imagen: "/ilustraciones/simulador.jpg",
+    texto:
+      "Cinco sistemas tácticos completos en una sola sala con conmutador global 3D, 2D y doble vista 2D+3D: ① convierte cualquier ciudad o coordenada (lat, lng) del planeta en terreno 3D desplazado para simular batallas en vivo con despliegue por clic; ② orbita el globo 3D y vigila los frentes reales en directo conectados a los cables; ③ inspecciona 8 uniformes tácticos por capas y despiece; ④ comanda 8 escuadrones en formación 3D y despliégalos en el teatro; ⑤ analiza 10 sistemas de armas con despiece CAD y rayos X. Con VANGUARD siempre en la posición #1.",
+    acento: "#FFC94D",
+    altura: 170,
+  },
+  novedades: {
+    titulo: "MENÚ VANGUARD · LO NUEVO 10X",
+    volanta: "Todo lo recién agregado con links directos + 10 funciones nuevas en vivo",
+    imagen: "/ilustraciones/simulador.jpg",
+    texto:
+      "Panel unificado de novedades de VANGUARD: explora el historial completo de módulos nuevos con su link directo (/teatro-3d, /novedades, /universo, /mundo, /en-vivo, /vertigo, /nucleo) y utiliza en directo las 10 funciones nuevas conectadas a la plataforma (Comparador 1v1, Termómetro Regional, Riesgo de Viaje, Suministros, Radar Diplomático, Verificador OSINT, Duelo Relámpago, Vigía Planetario, Generador de Briefings y Atlas 32→3D).",
+    acento: "#38BDF8",
+    altura: 170,
+  },
+  universo: {
+    titulo: "THE DAILY UNIVERSE",
+    volanta: "Vanguard Credits (VC) · 8 Colecciones con Cartas 3D mejorables · Marketplace Ético · Base Personal",
+    imagen: "/ilustraciones/simulador.jpg",
+    texto:
+      "Economía diaria y semanal sin miedo a perder recompensas: gana Vanguard Credits completando retos diarios e investigaciones educativas; desbloquea y mejora de Bronce a Prismática (Nv. 1→5) 40 cartas 3D Holo-Foil en 8 álbumes mundiales (Países, Civilizaciones, Monumentos, Espacio, Fenómenos, Ciencia, Personajes y Acontecimientos), equipa temas, música y avatares en el Marketplace ético y exhibe tu colección en tu Base Personal.",
+    acento: "#A855F7",
+    altura: 170,
+  },
   // v130.0 LOS ROSTROS DEL PODER — el dossier de las personas que mueven el mundo
   rostros: {
     titulo: "LOS ROSTROS DEL PODER",

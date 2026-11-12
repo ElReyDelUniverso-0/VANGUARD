@@ -14,8 +14,9 @@
 // Hereda: Explorador de mundos (v48), Sorpréndeme, badges de no visitadas.
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Home, Dices, ChevronDown, Search } from "lucide-react";
+import { X, Home, Dices, ChevronDown, Search, Sparkles, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SECTIONS, TOTAL_TABS, accentOfSection, type TabKey } from "@/components/vanguard/tab-nav";
 import { PortadaMundo, VitrinaSala } from "@/components/vanguard/portadas";
@@ -26,6 +27,9 @@ import { useGameStore } from "@/lib/game-store";
 
 // v111: mundo → escena holográfica (semilla por clave para variedades)
 const SECCION_ESCENA: Record<string, VarianteEscena> = {
+  teatro3d: "guerra",
+  novedades: "prisma",
+  universo: "diana",
   hangar: "hangar",
   inteligencia: "radar",
   inicio: "ciudad",
@@ -156,6 +160,51 @@ export function MegaMenu({
                 <div className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
                   {visited.length} descubiertas · {sinDescubrir} por conquistar
                 </div>
+              </div>
+            </div>
+
+            {/* MENÚ RÁPIDO LO NUEVO + LINKS DIRECTOS + 10 FUNCIONES NUEVAS */}
+            <div className="hud-panel p-4 mb-4 border-[#FFC94D]/60 bg-gradient-to-r from-[#FFC94D]/15 via-black/75 to-cyan-950/30 flex flex-wrap items-center justify-between gap-3">
+              <div className="space-y-0.5 min-w-0">
+                <div className="text-[10px] font-mono uppercase tracking-[0.28em] text-amber font-black flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" /> LO NUEVO EN VANGUARD · EXPANSIÓN 10X
+                </div>
+                <div className="text-xs sm:text-sm font-bold text-foreground">
+                  Accede con link directo a todo lo nuevo agregado y a las 10 funciones interactivas recién instaladas
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 font-mono text-[11px]">
+                <button
+                  onClick={() => {
+                    sfx.tab();
+                    onClose();
+                    window.dispatchEvent(new CustomEvent("vanguard:menu-novedades"));
+                  }}
+                  className="px-3 py-2 rounded bg-[#FFC94D] text-black font-black hover:bg-[#ffd66b] flex items-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5" /> ABRIR MENÚ LO NUEVO
+                </button>
+                <Link
+                  href="/novedades"
+                  onClick={onClose}
+                  className="px-3 py-2 rounded bg-[#38BDF8] text-black font-black hover:opacity-90"
+                >
+                  /novedades (Links + 10X)
+                </Link>
+                <Link
+                  href="/universo"
+                  onClick={onClose}
+                  className="px-3 py-2 rounded bg-[#E879F9] text-black font-black hover:opacity-90"
+                >
+                  /universo (Daily Universe)
+                </Link>
+                <Link
+                  href="/teatro-3d"
+                  onClick={onClose}
+                  className="px-3 py-2 rounded border border-amber-hud/60 text-amber font-bold hover:bg-amber-hud/15 flex items-center gap-1"
+                >
+                  <Crown className="w-3.5 h-3.5" /> #1 /teatro-3d
+                </Link>
               </div>
             </div>
 

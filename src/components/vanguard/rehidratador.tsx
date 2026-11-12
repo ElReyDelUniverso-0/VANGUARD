@@ -38,6 +38,7 @@ import { useCartaDeber } from "@/lib/biblioteca-carta-data";
 import { useGloria } from "@/lib/gloria";
 // v232.0: la CENTRAL DE ALARMAS entra a la disciplina de rehidratación
 import { useAlarma } from "@/lib/alarma";
+import { useUniversoStore, aplicarTemaEnDocumento } from "@/lib/universo-store";
 import { marcarHidratado } from "@/lib/storage-blindado";
 
 /** rehydrate() devuelve void | Promise<void> — lo normalizamos a promesa */
@@ -121,6 +122,12 @@ export function Rehidratador() {
     rehidratar(useAlarma)
       .then(() => marcarHidratado("vg232-alarma"))
       .catch(() => marcarHidratado("vg232-alarma"));
+    rehidratar(useUniversoStore)
+      .then(() => {
+        marcarHidratado("vg-daily-universe-v1");
+        aplicarTemaEnDocumento(useUniversoStore.getState().equipado.temaCss);
+      })
+      .catch(() => marcarHidratado("vg-daily-universe-v1"));
     rehidratar(useLangStore)
       .then(() => marcarHidratado("vanguard-lang-v1"))
       .then(() => {

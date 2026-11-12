@@ -98,6 +98,7 @@ const nextConfig: NextConfig = {
     "*.space-z.ai",
     "*.chatglm.cn",
     "*.z.ai",
+    "*.e2b.app",
     "localhost",
     "127.0.0.1",
     "*.preview.chatglm.cn",

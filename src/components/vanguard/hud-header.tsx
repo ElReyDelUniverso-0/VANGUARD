@@ -7,7 +7,7 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass, AudioLines } from "lucide-react";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass, AudioLines, Sparkles } from "lucide-react";
 // v135.0 NEXUS-HYPNOS: el SONIDO DEL BÚNKER — atmósfera generativa que respira
 // con el pulso del planeta (drone + estática de satélite + estación numérica)
 import { iniciarBunker, pararBunker, bunkerActivo, setNivelBunker } from "@/lib/audio-bunker";
@@ -318,6 +318,16 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             <CentralAlarmas />
             {/* v134.0: el botón del MODO GUERRA (versión ligera) se retiró del HUD —
                 atrapaba visitantes en pantalla negra; la Casa ya no tiene modo oscuro */}
+            {/* Menú VANGUARD de Lo Nuevo + Links Directos + 10 Funciones Nuevas */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("vanguard:menu-novedades"))}
+              title="Menú VANGUARD: Lo Nuevo, links directos y 10 funciones nuevas"
+              aria-label="Menú VANGUARD Lo Nuevo"
+              className="h-6 sm:h-8 px-1.5 sm:px-2.5 hud-corner flex-shrink-0 flex items-center gap-1 bg-[#FFC94D] text-black hover:bg-[#ffd66b] transition-colors font-mono text-[9px] sm:text-[10px] font-black tracking-wider"
+            >
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span className="hidden xs:inline sm:inline">LO NUEVO</span>
+            </button>
             {/* v105.0 EL NAVEGADOR: la brújula que responde "¿qué hago hoy?" — visible siempre */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("vanguard:navegador"))}

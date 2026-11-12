@@ -7742,6 +7742,150 @@ async function parteB() {
     afirmar(salud.json?.ok === true && String(salud.json?.version).startsWith("v367"), "el health no respalda v367");
   });
 
+  await verificar("VANGUARD 3D TEATRO TOTAL estático: #1 primero en todos los catálogos, 5 módulos 3D/2D y cero cicatrices", () => {
+    const data = readFileSync(join(RAIZ, "src/lib/teatro-total-data.ts"), "utf8");
+    const sim = readFileSync(join(RAIZ, "src/lib/teatro-sim-engine.ts"), "utf8");
+    const panel = readFileSync(join(RAIZ, "src/components/vanguard/panels/teatro-total-panel.tsx"), "utf8");
+    const tabNav = readFileSync(join(RAIZ, "src/components/vanguard/tab-nav.tsx"), "utf8");
+    const home = readFileSync(join(RAIZ, "src/components/vanguard/home-panel.tsx"), "utf8");
+    const mapa = readFileSync(join(RAIZ, "src/app/sitemap.ts"), "utf8");
+    const vistas2d = readFileSync(join(RAIZ, "src/components/vanguard/teatro3d/vistas-2d.tsx"), "utf8");
+    // VANGUARD #1 siempre al índice 0 en rankings, uniformes, escuadrones, armas, lugares, secciones y world tiles
+    afirmar(data.indexOf("VANGUARD") >= 0 && data.indexOf("VANGUARD") < data.indexOf("OTAN"), "VANGUARD no abre en posición #1 en RANKING_DOCTRINAS");
+    afirmar(data.includes('id: "vanguard-apex"') && data.includes('id: "escuadron-vanguard"') && data.includes('id: "vanguard-x1"'), "faltan activos VANGUARD #1 en catálogos");
+    const secIdx = tabNav.indexOf("export const SECTIONS");
+    afirmar(tabNav.includes('key: "teatro3d"') && tabNav.indexOf('key: "teatro3d"', secIdx) < tabNav.indexOf('key: "hangar"', secIdx), "teatro3d no abre la lista SECTIONS como #1");
+    afirmar(home.indexOf('tab: "teatro3d"') >= 0 && home.indexOf('tab: "teatro3d"') < home.indexOf('tab: "centro"'), "teatro3d no abre WORLD_TILES como #1");
+    afirmar(sim.includes("elevacionEn") && sim.includes("avanzarSimulacion"), "motor determinista de simulación incompleto");
+    afirmar(vistas2d.includes("MapaSimulador2D") && vistas2d.includes("PlanoArma2D") && vistas2d.includes("PlanoUniforme2D"), "faltan vistas 2D sincronizadas");
+    afirmar(panel.includes("TerrenoGuerra3D") && panel.includes("FrentesGlobo3D") && panel.includes("UniformeInteractivo3D") && panel.includes("EscuadronInteractivo3D") && panel.includes("ArmaInteractiva3D"), "faltan visores 3D en TeatroTotalPanel");
+    afirmar(mapa.includes("/teatro-3d"), "el sitemap no anuncia /teatro-3d");
+    for (const rel of [
+      "src/lib/teatro-total-data.ts",
+      "src/lib/teatro-sim-engine.ts",
+      "src/components/vanguard/teatro3d/fabricas-3d.ts",
+      "src/components/vanguard/teatro3d/terreno-guerra-3d.tsx",
+      "src/components/vanguard/teatro3d/frentes-globo-3d.tsx",
+      "src/components/vanguard/teatro3d/uniforme-3d.tsx",
+      "src/components/vanguard/teatro3d/escuadron-3d.tsx",
+      "src/components/vanguard/teatro3d/arma-3d.tsx",
+      "src/components/vanguard/teatro3d/vistas-2d.tsx",
+      "src/components/vanguard/panels/teatro-total-panel.tsx",
+    ]) {
+      const src = readFileSync(join(RAIZ, rel), "utf8");
+      afirmar(!src.includes("eslint-disable"), `${rel} contiene eslint-disable (ley v335)`);
+    }
+  });
+
+  await verificar("VANGUARD 3D TEATRO TOTAL vivo: /teatro-3d, ficha del núcleo y sitemap", async () => {
+    const p = await pedir("/teatro-3d");
+    afirmar(p.status === 200 && p.texto.includes("VANGUARD"), `/teatro-3d no 200 (${p.status})`);
+    const ent = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:teatro-3d")}`);
+    afirmar(ent.status === 200 && ent.json?.ok === true, "ficha vg:simulacion:teatro-3d no responde ok");
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/teatro-3d"), "el sitemap vivo no anuncia /teatro-3d");
+  });
+
+  await verificar("VANGUARD 3D TEATRO TOTAL vivo: /teatro-3d, ficha del núcleo y sitemap", async () => {
+    const p = await pedir("/teatro-3d");
+    afirmar(p.status === 200 && p.texto.includes("VANGUARD"), `/teatro-3d no 200 (${p.status})`);
+    const ent = await pedir(`/api/nucleo/entidad?id=${encodeURIComponent("vg:simulacion:teatro-3d")}`);
+    afirmar(ent.status === 200 && ent.json?.ok === true, "ficha vg:simulacion:teatro-3d no responde ok");
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/teatro-3d"), "el sitemap vivo no anuncia /teatro-3d");
+  });
+
+  await verificar("MENÚ LO NUEVO · EXPANSIÓN 10X estático: 10 funciones, menú rápido, links directos y cero eslint-disable", () => {
+    const expData = readFileSync(join(RAIZ, "src/lib/vanguard-expansion-data.ts"), "utf8");
+    const expUI = readFileSync(join(RAIZ, "src/components/vanguard/novedades/funciones-expansion.tsx"), "utf8");
+    const menuNov = readFileSync(join(RAIZ, "src/components/vanguard/menu-vanguard-novedades.tsx"), "utf8");
+    const novPanel = readFileSync(join(RAIZ, "src/components/vanguard/panels/novedades-panel.tsx"), "utf8");
+    const novPage = readFileSync(join(RAIZ, "src/app/novedades/page.tsx"), "utf8");
+    const hud = readFileSync(join(RAIZ, "src/components/vanguard/hud-header.tsx"), "utf8");
+    const chrome = readFileSync(join(RAIZ, "src/components/vanguard/chrome-tabs.tsx"), "utf8");
+    const mega = readFileSync(join(RAIZ, "src/components/vanguard/mega-menu.tsx"), "utf8");
+    const reg = readFileSync(join(RAIZ, "src/lib/nucleo/registro.ts"), "utf8");
+    for (const id of [
+      "comparador-fuerzas",
+      "termometro-regiones",
+      "riesgo-viajero",
+      "impacto-suministros",
+      "radar-diplomatico",
+      "verificador-osint",
+      "duelo-relampago",
+      "vigia-planetario",
+      "generador-briefing",
+      "atlas-estrategico",
+    ]) {
+      afirmar(expData.includes(`id: "${id}"`), `falta la función nueva ${id} en vanguard-expansion-data.ts`);
+      afirmar(expUI.includes(`"${id}"`) || expUI.includes(id), `falta la UI interactiva de ${id} en funciones-expansion.tsx`);
+    }
+    afirmar(hud.includes("vanguard:menu-novedades") && chrome.includes("vanguard:menu-novedades") && mega.includes("vanguard:menu-novedades"), "el disparador del Menú VANGUARD Lo Nuevo no está en los 3 puntos globales");
+    afirmar(menuNov.includes("/novedades") && novPanel.includes("RenderFuncionExpansion") && novPage.includes("NovedadesCliente"), "faltan componentes de /novedades");
+    afirmar(reg.includes('id: "mod:novedades"'), "falta mod:novedades en el registro del Núcleo");
+    for (const rel of [
+      "src/lib/vanguard-expansion-data.ts",
+      "src/components/vanguard/novedades/funciones-expansion.tsx",
+      "src/components/vanguard/menu-vanguard-novedades.tsx",
+      "src/components/vanguard/menu-vanguard-mount.tsx",
+      "src/components/vanguard/panels/novedades-panel.tsx",
+      "src/app/novedades/page.tsx",
+      "src/app/novedades/novedades-cliente.tsx",
+    ]) {
+      const src = readFileSync(join(RAIZ, rel), "utf8");
+      afirmar(!src.includes("eslint-disable"), `${rel} contiene eslint-disable`);
+    }
+  });
+
+  await verificar("MENÚ LO NUEVO · EXPANSIÓN 10X vivo: /novedades, ?funcion=... y /teatro-3d?lat=&lng=", async () => {
+    const r = await pedir("/novedades");
+    afirmar(r.status === 200 && r.texto.includes("LO NUEVO") && r.texto.includes("EXPANSIÓN 10X"), `/novedades no 200 o sin contenido (${r.status})`);
+    const r2 = await pedir("/novedades?funcion=verificador-osint");
+    afirmar(r2.status === 200, `/novedades?funcion=verificador-osint no 200 (${r2.status})`);
+    const r3 = await pedir("/teatro-3d?lat=35.68&lng=139.76&nombre=Tokio");
+    afirmar(r3.status === 200, `/teatro-3d con lat/lng no 200 (${r3.status})`);
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/novedades"), "el sitemap vivo no anuncia /novedades");
+  });
+
+  await verificar("THE DAILY UNIVERSE + CARTAS MEJORADAS 3D estático: 8 colecciones, 7 categorías Marketplace, sistema diario y Rehidratador", () => {
+    const uData = readFileSync(join(RAIZ, "src/lib/universo-diario-data.ts"), "utf8");
+    const uStore = readFileSync(join(RAIZ, "src/lib/universo-store.ts"), "utf8");
+    const uPanel = readFileSync(join(RAIZ, "src/components/vanguard/panels/universo-diario-panel.tsx"), "utf8");
+    const carta3d = readFileSync(join(RAIZ, "src/components/vanguard/cartas/carta-vanguard-3d.tsx"), "utf8");
+    const fichas = readFileSync(join(RAIZ, "src/components/vanguard/panels/fichas-panel.tsx"), "utf8");
+    const rehid = readFileSync(join(RAIZ, "src/components/vanguard/rehidratador.tsx"), "utf8");
+    const reg = readFileSync(join(RAIZ, "src/lib/nucleo/registro.ts"), "utf8");
+    for (const cat of ["paises", "civilizaciones", "monumentos", "espacio", "fenomenos", "ciencia", "personajes", "acontecimientos"]) {
+      afirmar(uData.includes(`id: "${cat}"`), `falta colección ${cat} en universo-diario-data.ts`);
+    }
+    for (const mCat of ["avatares", "insignias", "temas", "mundos", "musica", "base", "suscripcion"]) {
+      afirmar(uData.includes(`id: "${mCat}"`), `falta categoría de marketplace ${mCat}`);
+    }
+    afirmar(uStore.includes("vg-daily-universe-v1") && rehid.includes("vg-daily-universe-v1"), "vg-daily-universe-v1 no registrado en Rehidratador (ley v171)");
+    afirmar(carta3d.includes("PRISMÁTICA") && fichas.includes("MejorarCartaClasicaBtn"), "faltan cartas mejoradas 3D Nv.1→5 en fichas-panel");
+    afirmar(uPanel.includes("COMPROMISO MARKETPLACE ÉTICO VANGUARD"), "falta compromiso anti-P2W en Marketplace");
+    afirmar(reg.includes('id: "mod:universo-diario"'), "falta mod:universo-diario en el Núcleo");
+    for (const rel of [
+      "src/lib/universo-diario-data.ts",
+      "src/lib/universo-store.ts",
+      "src/components/vanguard/cartas/carta-vanguard-3d.tsx",
+      "src/components/vanguard/panels/universo-diario-panel.tsx",
+      "src/app/universo/page.tsx",
+      "src/app/universo/universo-cliente.tsx",
+    ]) {
+      const src = readFileSync(join(RAIZ, rel), "utf8");
+      afirmar(!src.includes("eslint-disable"), `${rel} contiene eslint-disable`);
+    }
+  });
+
+  await verificar("THE DAILY UNIVERSE vivo: /universo y sitemap", async () => {
+    const u = await pedir("/universo");
+    afirmar(u.status === 200 && u.texto.includes("THE DAILY UNIVERSE"), `/universo no 200 o sin contenido (${u.status})`);
+    const rs = await pedir("/sitemap.xml");
+    afirmar(rs.status === 200 && rs.texto.includes("/universo"), "el sitemap vivo no anuncia /universo");
+  });
+
   // el muro al final: quema la cuota de esta IP
   await verificar("muro v211: la ráfaga recibe 429", async () => {
     let vio429 = false;

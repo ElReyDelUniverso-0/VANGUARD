@@ -30,6 +30,7 @@ import { CapasGlobales } from "@/components/vanguard/capas-globales";
 // ninguna capa DOM de la Casa monta encima (mandato: cero 2D en el nuevo Vanguard)
 import { SoloCasa } from "@/components/vanguard2/solo-casa";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
+import { MenuVanguardMount } from "@/components/vanguard/menu-vanguard-mount";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
@@ -932,6 +933,7 @@ try{
         <SoloCasa>
           <CapasGlobales />
         </SoloCasa>
+        <MenuVanguardMount />
         <Toaster />
         <Sonner />
       </body>

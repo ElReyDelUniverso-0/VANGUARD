@@ -172,6 +172,46 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
   },
   // ── SIMULACIÓN ─────────────────────────────────────────────
   {
+    id: "mod:teatro-3d",
+    nombre: "VANGUARD 3D · TEATRO TOTAL",
+    lema: "Cualquier lugar del mundo en 3D/2D, frentes en vivo y arsenal interactivo",
+    descripcion:
+      "Motor táctico 2D/3D unificado con VANGUARD #1 primero: genera terrenos 3D y mapas 2D para cualquier coordenada o ciudad del planeta, vigila frentes en directo ligados a los cables, inspecciona uniformes por capas, comanda escuadrones 3D y despieza armas en CAD y rayos X.",
+    categoria: "SIMULACION",
+    ruta: "/teatro-3d",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:teatros", "fnt:cables"],
+    alias: "vanguard 3d 2d simulador mundial terreno frentes uniformes escuadrones armas despiece",
+    idEntidadComo: "vg:simulacion:teatro-3d",
+  },
+  {
+    id: "mod:novedades",
+    nombre: "LO NUEVO · EXPANSIÓN 10X",
+    lema: "Registro de novedades con enlaces directos y 10 funciones interactivas nuevas",
+    descripcion:
+      "Menú y panel completo de novedades de VANGUARD con links directos (/teatro-3d, /novedades, /mundo, /en-vivo, /vertigo, /nucleo) más 10 herramientas nuevas en vivo conectadas a las APIs y datasets reales de la plataforma.",
+    categoria: "SISTEMA",
+    ruta: "/novedades",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables", "fnt:teatros"],
+    alias: "lo nuevo novedades links directos 10 funciones expansion comparador termometro riesgo suministros radar osint duelo vigia briefing atlas",
+  },
+  {
+    id: "mod:universo-diario",
+    nombre: "THE DAILY UNIVERSE",
+    lema: "Vanguard Credits, 8 colecciones con cartas 3D mejorables, Marketplace ético y Base Personal",
+    descripcion:
+      "Economía diaria y semanal sin miedo a perder recompensas: gana Vanguard Credits (VC) completando retos, quizzes e investigaciones educativas; desbloquea y mejora 40 cartas 3D Holo-Foil en 8 álbumes mundiales y personaliza tu experiencia en el Marketplace ético.",
+    categoria: "COMUNIDAD",
+    ruta: "/universo",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables"],
+    alias: "daily universe vanguard credits vc colecciones cartas 3d paises civilizaciones monumentos espacio fenomenos ciencia personajes acontecimientos marketplace base personal",
+  },
+  {
     id: "mod:ver-guerra",
     nombre: "VER GUERRA 3D",
     lema: "El frente en vivo, en volumen",

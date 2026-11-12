@@ -22,7 +22,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Camera, Layers, Satellite, Stamp, X, User, Hourglass, ScanLine, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { Camera, Layers, Satellite, Stamp, X, User, Hourglass, ScanLine, ChevronRight, TrendingUp } from "lucide-react";
 import { pedirNoticias } from "@/lib/noticias-cache";
 import { PanelHeader } from "@/components/vanguard/panel-header";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -72,6 +73,8 @@ import { Sparkles, Share2 } from "lucide-react";
 import { useGloria, ctxDe, proximoTitulo, TITULOS_GLORIA, type SelloDorado } from "@/lib/gloria";
 import { pintarFicha, compartirImagen, type DatosPresumir } from "@/lib/gloria-compartir";
 import { APP_VERSION_LABEL } from "@/lib/version";
+import { useUniversoStore, asegurarUniversoHidratado } from "@/lib/universo-store";
+import { RANGO_NIVEL } from "@/components/vanguard/cartas/carta-vanguard-3d";
 
 type Cable = NoticiaRanqueada;
 
@@ -161,6 +164,10 @@ export function FichasPanel() {
   const coleccionV = useColeccionVanguard();
   const [detalleLider, setDetalleLider] = useState<FichaLider | null>(null);
   const [detalleHistoria, setDetalleHistoria] = useState<FichaHistoria | null>(null);
+
+  useEffect(() => {
+    asegurarUniversoHidratado();
+  }, []);
   const guiasRef = useRef<GuiaFicha[]>([]);
   const placaVistaRef = useRef<Set<string>>(new Set());
 
@@ -394,6 +401,33 @@ export function FichasPanel() {
         icon={<Layers className="w-4 h-4" />}
         color="violet"
       />
+
+      {/* VANGUARD COLLECTIONS + CARTAS MEJORADAS 3D */}
+      <div className="hud-panel border-[#FFC94D]/45 bg-gradient-to-r from-[#FFC94D]/12 via-black/65 to-violet-950/35 p-3 flex flex-wrap items-center justify-between gap-2.5">
+        <div className="space-y-0.5 min-w-[220px]">
+          <div className="font-mono text-[10px] font-black uppercase tracking-widest text-amber flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" /> CARTAS MEJORADAS 3D HOLO-FOIL + VANGUARD COLLECTIONS
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Inclina cualquier carta para ver su brillo 3D, súbela de Bronce a Prismática (Nv. 1→5) al abrirla y descubre las 8 nuevas colecciones (Países, Civilizaciones, Monumentos, Espacio, Ciencia y más).
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 font-mono text-[10px] shrink-0">
+          <Link
+            href="/universo?vista=colecciones"
+            className="px-3 py-1.5 rounded bg-[#FFC94D] text-black font-black hover:bg-[#ffd66b]"
+          >
+            ABRIR 8 COLECCIONES (/universo) →
+          </Link>
+          <button
+            type="button"
+            onClick={() => navigateTo("universo")}
+            className="px-2.5 py-1.5 rounded border border-cyan-hud/45 text-cyan-hud font-bold hover:bg-cyan-hud/15"
+          >
+            THE DAILY UNIVERSE
+          </button>
+        </div>
+      </div>
 
       {/* ══════ v363.0 LAS TRES FAMILIAS DEL ÁLBUM ══════ */}
       <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Familias del álbum" data-testid="album-familias">
@@ -705,23 +739,54 @@ function TarjetaFicha({
   const hex = RAREZAS[rareza].hex;
   const silencio = rareza === "silencio";
   const fresTxt = frescuraMin > 9000 ? "SIN SEÑAL" : edadTxt(frescuraMin);
+  const nivel = useUniversoStore((s) => s.nivelesAlbumClasico[ficha.key] ?? 1);
+  const rango = RANGO_NIVEL[Math.max(1, Math.min(5, nivel))] ?? RANGO_NIVEL[1];
+  const cardRef = useRef<HTMLButtonElement | null>(null);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0, mx: 50, my: 30, hover: false });
+
+  const onMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / Math.max(1, r.width);
+    const y = (e.clientY - r.top) / Math.max(1, r.height);
+    setTilt({ rx: (0.5 - y) * 9, ry: (x - 0.5) * 11, mx: Math.round(x * 100), my: Math.round(y * 100), hover: true });
+  };
 
   return (
     <button
+      ref={cardRef}
       onClick={onAbrir}
-      className="v176ficha group relative overflow-hidden border bg-card text-left transition-transform active:scale-[0.985] hover:scale-[1.008]"
+      onMouseMove={onMove}
+      onMouseLeave={() => setTilt({ rx: 0, ry: 0, mx: 50, my: 30, hover: false })}
+      className="v176ficha vg-carta-3d group relative overflow-hidden rounded-lg border bg-card text-left active:scale-[0.985]"
       style={{
-        borderColor: `${hex}59`,
-        boxShadow: descubiertaTs ? `0 0 0 1px ${hex}22, 0 8px 28px -18px ${hex}55` : `0 0 0 1px ${hex}44, 0 0 26px -6px ${hex}40`,
+        borderColor: nivel > 1 ? rango.borde : `${hex}66`,
+        boxShadow: tilt.hover
+          ? `0 14px 30px -10px ${rango.brillo}, 0 0 0 1px ${hex}66`
+          : descubiertaTs ? `0 0 0 1px ${hex}22, 0 8px 28px -18px ${hex}55` : `0 0 0 1px ${hex}44, 0 0 26px -6px ${hex}40`,
+        transform: tilt.hover ? `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) translateY(-2px)` : "none",
       }}
       aria-label={`Abrir ficha ${ficha.serie} de ${ficha.nombre}`}
     >
+      {/* brillo holo-foil interactivo */}
+      <div
+        aria-hidden
+        className="vg-carta-foil pointer-events-none absolute inset-0"
+        style={{ "--mx": `${tilt.mx}%`, "--my": `${tilt.my}%` } as React.CSSProperties}
+      />
       {/* el tinte de la rareza */}
       <div className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(90% 60% at 20% 0%, ${hex}12 0%, transparent 58%)` }} aria-hidden />
 
-      {/* cabecera: serie + sello de rareza */}
-      <div className="relative flex items-center justify-between px-3 pt-2.5">
-        <span className="font-mono text-[9px] tracking-[0.24em] text-muted-foreground">{ficha.serie}</span>
+      {/* cabecera: serie + nivel de carta + sello de rareza */}
+      <div className="relative flex items-center justify-between gap-1 px-3 pt-2.5">
+        <span className="font-mono text-[9px] tracking-[0.22em] text-muted-foreground">{ficha.serie}</span>
+        <span
+          className="px-1.5 py-0.5 rounded font-mono text-[8px] font-black text-white"
+          style={{ background: rango.badgeBg }}
+        >
+          NV.{nivel} · {rango.nombre}
+        </span>
         <span
           className={cn("border px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.18em]", silencio && "opacity-80")}
           style={{ color: hex, borderColor: `${hex}55`, background: `${hex}12` }}
@@ -815,6 +880,37 @@ function BarraFicha({ etiqueta, valor, valorTxt, hex }: { etiqueta: string; valo
       </div>
       <span className="w-[64px] shrink-0 text-right font-mono text-[8px] uppercase tracking-[0.1em] text-white/70">{valorTxt}</span>
     </div>
+  );
+}
+
+function MejorarCartaClasicaBtn({ fichaKey, titulo }: { fichaKey: string; titulo: string }) {
+  const nivel = useUniversoStore((s) => s.nivelesAlbumClasico[fichaKey] ?? 1);
+  const mejorar = useUniversoStore((s) => s.mejorarCartaClasica);
+  const rango = RANGO_NIVEL[Math.max(1, Math.min(5, nivel))] ?? RANGO_NIVEL[1];
+  const costo = nivel * 40;
+  return (
+    <button
+      type="button"
+      disabled={nivel >= 5}
+      onClick={() => {
+        const res = mejorar(fichaKey, titulo);
+        if (res.ok) {
+          try { sfx.levelUp(); } catch { /* noop */ }
+          toast.success(res.msg);
+        } else {
+          toast.error(res.msg);
+        }
+      }}
+      className="flex items-center gap-1.5 border px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.16em] transition-transform active:scale-[0.97] disabled:opacity-65"
+      style={{
+        color: "#38BDF8",
+        borderColor: "rgba(56,189,248,0.55)",
+        background: "rgba(56,189,248,0.12)",
+      }}
+    >
+      <TrendingUp className="h-3 w-3" />
+      {nivel >= 5 ? `NV.5 PRISMÁTICA (MÁX)` : `MEJORAR ${rango.nombre} → NV.${nivel + 1} (${costo} VC)`}
+    </button>
   );
 }
 
@@ -994,7 +1090,7 @@ function DetalleFicha({
             </dl>
           </div>
 
-          {/* el estado del álbum + LA GLORIA: presumir */}
+          {/* el estado del álbum + MEJORAR CARTA + LA GLORIA: presumir */}
           <div className={cn("flex flex-wrap items-center justify-center gap-2 border-t px-3 py-2.5", silencio ? "border-border/40" : "border-border/60")} style={{ background: `${hex}08` }}>
             {selloTs ? (
               <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-violet-300">
@@ -1005,6 +1101,7 @@ function DetalleFicha({
                 CARTA EN VISTA — TOCA OTRA PARA SEGUIR COLECCIONANDO
               </span>
             )}
+            <MejorarCartaClasicaBtn fichaKey={ficha.key} titulo={ficha.nombre} />
             <button
               onClick={presumir}
               disabled={presumiendo}

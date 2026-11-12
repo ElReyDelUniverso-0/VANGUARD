@@ -694,3 +694,90 @@ Object.assign(TAB_LABELS.zh, {
   rostros: "权力之面（掌动世界的人物档案：总统、央行行长、法官与新势力——真实定位地图、精细档案与实时脉搏）",
   agentes: "自由政府（你的专属通行证与定时打磨 Vanguard 的自治代理——像政府，但自由）",
 });
+
+// ====== #1 VANGUARD 3D — MOTOR TÁCTICO GLOBAL 2D/3D (8 idiomas) ======
+Object.assign(TAB_LABELS.es, {
+  teatro3d: "VANGUARD 3D (Cualquier lugar del planeta en 3D y 2D + frentes activos en vivo + uniformes, escuadrones y armas interactivas)",
+});
+Object.assign(TAB_LABELS.en, {
+  teatro3d: "VANGUARD 3D (Any place on Earth in 3D and 2D + live active frontlines + interactive uniforms, squads and weapons)",
+});
+Object.assign(TAB_LABELS.pt, {
+  teatro3d: "VANGUARD 3D (Qualquer lugar do planeta em 3D e 2D + frentes ativas ao vivo + uniformes, esquadrões e armas interativas)",
+});
+Object.assign(TAB_LABELS.fr, {
+  teatro3d: "VANGUARD 3D (N'importe quel lieu sur Terre en 3D et 2D + fronts actifs en direct + uniformes, escouades et armes interactives)",
+});
+Object.assign(TAB_LABELS.de, {
+  teatro3d: "VANGUARD 3D (Jeder Ort der Welt in 3D und 2D + aktive Fronten live + interaktive Uniformen, Trupps und Waffen)",
+});
+Object.assign(TAB_LABELS.it, {
+  teatro3d: "VANGUARD 3D (Qualsiasi luogo sulla Terra in 3D e 2D + fronti attivi in diretta + uniformi, squadre e armi interattive)",
+});
+Object.assign(TAB_LABELS.ru, {
+  teatro3d: "VANGUARD 3D (Любая точка мира в 3D и 2D + активные фронты в реальном времени + интерактивная форма, отряды и оружие)",
+});
+Object.assign(TAB_LABELS.zh, {
+  teatro3d: "VANGUARD 3D（全球任意地点 3D/2D 战争模拟 + 实时战线 + 交互式军装、小队与武器系统）",
+});
+
+Object.assign(TAB_SHORTS.es, { teatro3d: "VANGUARD 3D", novedades: "LO NUEVO 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.en, { teatro3d: "VANGUARD 3D", novedades: "WHAT'S NEW 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.pt, { teatro3d: "VANGUARD 3D", novedades: "NOVIDADES 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.fr, { teatro3d: "VANGUARD 3D", novedades: "NOUVEAUTÉS 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.de, { teatro3d: "VANGUARD 3D", novedades: "NEUHEITEN 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.it, { teatro3d: "VANGUARD 3D", novedades: "NOVITÀ 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.ru, { teatro3d: "VANGUARD 3D", novedades: "НОВОЕ 10X", universo: "DAILY UNIVERSE" });
+Object.assign(TAB_SHORTS.zh, { teatro3d: "VANGUARD 3D", novedades: "最新 10X", universo: "DAILY UNIVERSE" });
+
+// ====== THE DAILY UNIVERSE (8 idiomas) ======
+Object.assign(TAB_LABELS.es, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Colecciones con Cartas 3D mejorables, Marketplace Ético 7 categorías y Base Personal)",
+});
+Object.assign(TAB_LABELS.en, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Collections with upgradeable 3D Cards, 7-Category Ethical Marketplace & Personal Base)",
+});
+Object.assign(TAB_LABELS.pt, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Coleções com Cartas 3D aprimoráveis, Marketplace Ético 7 categorias e Base Pessoal)",
+});
+Object.assign(TAB_LABELS.fr, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Collections à cartes 3D évolutives, Marketplace Éthique 7 catégories et Base Personnelle)",
+});
+Object.assign(TAB_LABELS.de, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Sammlungen mit aufrüstbaren 3D-Karten, Ethischer Marktplatz 7 Kategorien & Persönliche Basis)",
+});
+Object.assign(TAB_LABELS.it, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 Collezioni con Carte 3D potenziabili, Marketplace Etico 7 categorie e Base Personale)",
+});
+Object.assign(TAB_LABELS.ru, {
+  universo: "THE DAILY UNIVERSE (Vanguard Credits VC, 8 коллекций с улучшаемыми 3D-картами, Этичный Маркетплейс и Личная База)",
+});
+Object.assign(TAB_LABELS.zh, {
+  universo: "THE DAILY UNIVERSE（Vanguard Credits VC、可升级 3D 集换卡牌 8 大合集、7 类道德商店与个人基地）",
+});
+
+// ====== MENÚ LO NUEVO · EXPANSIÓN 10X (8 idiomas) ======
+Object.assign(TAB_LABELS.es, {
+  novedades: "LO NUEVO · EXPANSIÓN 10X (Registro de todo lo recién añadido a VANGUARD con links directos + 10 funciones nuevas en vivo)",
+});
+Object.assign(TAB_LABELS.en, {
+  novedades: "WHAT'S NEW · 10X EXPANSION (Changelog of everything newly added to VANGUARD with direct links + 10 new live tools)",
+});
+Object.assign(TAB_LABELS.pt, {
+  novedades: "NOVIDADES · EXPANSÃO 10X (Registro de tudo recém-adicionado ao VANGUARD com links diretos + 10 novas funções ao vivo)",
+});
+Object.assign(TAB_LABELS.fr, {
+  novedades: "NOUVEAUTÉS · EXPANSION 10X (Registre des ajouts VANGUARD avec liens directs + 10 nouvelles fonctions en direct)",
+});
+Object.assign(TAB_LABELS.de, {
+  novedades: "NEUHEITEN · 10X-EXPANSION (Alle neuen VANGUARD-Module mit Direktlinks + 10 neue Live-Funktionen)",
+});
+Object.assign(TAB_LABELS.it, {
+  novedades: "NOVITÀ · ESPANSIONE 10X (Registro delle novità VANGUARD con link diretti + 10 nuove funzioni dal vivo)",
+});
+Object.assign(TAB_LABELS.ru, {
+  novedades: "НОВОЕ · РАСШИРЕНИЕ 10X (Журнал новинок VANGUARD с прямыми ссылками + 10 новых живых инструментов)",
+});
+Object.assign(TAB_LABELS.zh, {
+  novedades: "最新动态 · 10X 扩展（VANGUARD 最新功能与直达链接总览 + 10 项全新实时交互功能）",
+});

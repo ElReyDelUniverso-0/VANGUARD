@@ -98,6 +98,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
+      url: `${SITE_URL}/teatro-3d`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${SITE_URL}/novedades`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.92,
+    },
+    {
+      url: `${SITE_URL}/universo`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.93,
+    },
+    {
       // v35: página SEO server-rendered con noticias en vivo — imán de Google
       url: `${SITE_URL}/guerra-hoy`,
       lastModified: new Date(),

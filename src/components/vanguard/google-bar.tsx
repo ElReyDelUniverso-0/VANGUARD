@@ -73,6 +73,9 @@ const APP_HEX: Record<string, string> = {
 // sin layout shift, aria-hidden, con velo de legibilidad para que el nombre
 // siempre se lea. La pieza de cada sección es SU lugar de la casa.
 const ILU_DE_SECCION: Record<string, string> = {
+  teatro3d: "simulador.jpg",
+  novedades: "noticias.jpg",
+  universo: "arcade.jpg",
   hangar: "hangar.jpg",
   inteligencia: "espionaje.jpg",
   inicio: "noticias.jpg",

@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Newspaper, Brain, Search, Castle, Palette, Target, Radar, LayoutGrid, X, Compass,
+  Newspaper, Brain, Search, Castle, Palette, Target, Radar, LayoutGrid, X, Compass, Globe2,
 } from "lucide-react";
 // v105.0: abrir la brújula también es momento protegido — nada la cubre
 import { useCalma } from "@/lib/calma";
@@ -16,6 +16,7 @@ import { useCalma } from "@/lib/calma";
 const ACC = "#FFC94D";
 
 const INTENCIONES: { tab: string; titulo: string; desc: string; icon: React.ReactNode; hex: string }[] = [
+  { tab: "teatro3d", titulo: "#1 SIMULAR EN 3D / 2D", desc: "Convierte cualquier lugar del planeta en teatro de guerra 3D/2D + frentes en vivo + uniformes, escuadrones y armas interactivas", icon: <Globe2 className="w-5 h-5" />, hex: "#FFC94D" },
   { tab: "redaccion", titulo: "LEER EL MUNDO", desc: "La Redacción: noticias reales con contexto y porqués, en modo lectura sin interrupciones", icon: <Newspaper className="w-5 h-5" />, hex: "#FFC94D" },
   { tab: "mente", titulo: "INVESTIGAR", desc: "Pregúntale a LA MENTE — responde de verdad y puede investigar la red en vivo por ti", icon: <Brain className="w-5 h-5" />, hex: "#BEF264" },
   { tab: "googles", titulo: "EXPLORAR EL MUNDO", desc: "El buscador de los problemas geopolíticos: tendencias, traductor y el saber de Vanguard", icon: <Search className="w-5 h-5" />, hex: "#3DDCFF" },

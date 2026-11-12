@@ -28,6 +28,8 @@ const SALAS_NOTICIAS = new Set<string>([
   "redaccion",    // la redacción de la casa
   "fichas",       // fichas de guerra (beben del balde CENTRO)
   "salaguerra",   // sala de guerra: teatros y cables en vivo
+  "teatro3d",     // VANGUARD 3D: frentes activos conectados a cables en vivo
+  "novedades",    // LO NUEVO 10X: verificador OSINT y briefing en vivo
   "guerra-hoy",   // GUERRA HOY (balde centro)
   "camaras",      // cámaras del mundo con cables laterales
 ]);
