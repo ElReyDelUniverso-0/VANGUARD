@@ -5861,3 +5861,19 @@ Stage Summary:
 - La voz deja de ser un portero: cuatro personas, boca que respira, texto que se puede decir y un maestro que explica geopolítica con el archivo real en la mano.
 - Todo aditivo: ninguna sala, ruta ni función eliminada; `/api/asistente` sigue sirviendo; cero cambios de esquema; la BD no se tocó.
 - PENDIENTE de ia1 (esta máquina no puede): `bun run build` completo y `BASE_URL=… node agent-ctx/pruebas-voz.mjs` contra el despliegue, más la captura móvil 390. La suite nueva existe justo para que esa verificación sea de un comando.
+
+Task ID: ia3-v367.2-pulido-de-la-voz
+Agent: ia3 (Arena)
+Task: ronda de pulido sobre la v367.2 ya publicada — lo que el QA del cerebro encontró después de la primera entrega, más lo mejor que trajo el QA de la casa hermana (norm() tolerante a signos, unidades cortas, viñetas).
+
+Work Log:
+- El maestro habla ahora con la boca, no con el panel: las fechas salen dichas («12 de noviembre, a las 09:44 UTC») en vez de «2026-11-12 09:44Z» — un sintetizador lee esa cadena como un número raro; las listas de vigilancia empiezan en mayúscula; y «de el mar Rojo» pasa a «del mar Rojo» con un ayudante conDe().
+- Dos frases afirmaban una equivalencia falsa («los corredores de ayuda: eso es la disuasión en la práctica»). Reescritas: la casa da el DATO y el CRITERIO y la conclusión se la deja al piloto. En su lugar entra SENALES_CONCEPTO (saber.ts): quince definiciones de «cómo se reconoce cuando lo tienes delante», que es lo que convierte un concepto en herramienta.
+- «El siguiente en notarlo es los hutíes» → «El primero en notarlo: los hutíes»; y se quitó una cita atribuida a Stalin que no se podía sostener con fuente: la casa no cita de memoria.
+- Sala /voz: navegar ya no corta la voz. Antes se navegaba a los 1,4 s y el desmontaje de la sala mataba la frase a mitad; ahora, cuando el piloto dice «llévame a…», la casa TERMINA de decirlo (onFin) y luego navega; y cuando el maestro propone una ruta en una explicación, aparece el botón «IR A LA SALA» en vez de arrastrar al lector.
+- Se conserva lo que el QA de la casa hermana aportó y era mejor: norm() que quita signos («¿y por qué?» ya cae en la misma puerta), viñetas/almohadillas y «24 h» → «24 horas» en el limpiador de boca.
+- QA: tsc --noEmit = 0 en todo el árbol (max-old-space-size=1500) y el cerebro probado fuera de línea con datos sintéticos en seis casos — panorama, seguimiento con «¿y por qué?», ejemplo de concepto, navegación, teatro sin señal (dice «no hay señal» en vez de inventar) y «no lo sé» ante un chiste.
+- NO se toca la BD, ni las 3D, ni una sola sala existente. El v368.0 sigue libre para la fusión de ia2.
+
+Stage Summary:
+- La voz queda con la boca y con el criterio: dice bien las fechas, no afirma lo que no puede sostener y navega sin cortarse.

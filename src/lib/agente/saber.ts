@@ -342,3 +342,41 @@ export const CONCEPTOS_SABER: ConceptoSaber[] = [
       "La ayuda militar sostenida durante años exige votos sostenidos durante años: por eso los teatros con más cobertura mediática reciben más recursos que los de más víctimas.",
   },
 ];
+
+// ── CÓMO SE RECONOCE (la prueba de campo) ──────────────────────
+// Un concepto que solo se define sirve para un examen; uno que se
+// reconoce sirve para leer el mundo. Cada línea es un criterio que el
+// lector puede aplicar él mismo a los cables del día, sin que la casa
+// le diga qué concluir. Cero cifras, cero predicciones.
+export const SENALES_CONCEPTO: Record<string, string> = {
+  disuasion:
+    "se reconoce cuando el rival tiene la capacidad de atacar y no ataca; si deja de atacar porque no puede, eso no es disuasión, es debilidad",
+  escalada:
+    "se reconoce cuando cada respuesta es un escalón por encima de la anterior y ninguno de los dos quiere el choque total",
+  "zona-gris":
+    "se reconoce cuando hay daño real, autor atribuible con esfuerzo y ninguna declaración de guerra: si el ataque se firma, deja de ser zona gris",
+  chokepoint:
+    "se reconoce cuando basta con amenazar el paso — sin cerrarlo — para que cambien los seguros, los plazos y los precios",
+  sanciones:
+    "se reconoce cuando el castigo no está en el campo de batalla sino en los bancos, los puertos y las aduanas; y fracasa cuando hay quien compre igual",
+  desgaste:
+    "se reconoce cuando el mapa se mueve poco y, en cambio, se habla sin parar de munición, reparaciones y reemplazos",
+  "derecho-humanitario":
+    "se reconoce cuando la discusión deja de ser militar y pasa a ser jurídica: proporcionalidad, distinción y responsabilidad de mando",
+  otanos:
+    "se reconoce en la duda: cuando un miembro es atacado, la primera pregunta es si el ataque cruza el umbral, no cuántos soldados hay",
+  osint:
+    "se reconoce porque la prueba es pública y verificable: una sombra, una señal de tráfico, un registro de vuelo que cualquiera puede repetir",
+  "aire-bloqueo":
+    "se reconoce en la obligación que crea: quien cierra un espacio tiene que estar dispuesto a disparar contra quien lo cruce",
+  delegacion:
+    "se reconoce porque el que paga y el que muere no son el mismo país",
+  energia:
+    "se reconoce cuando el contrato es comercial pero la decisión es política: cambiar de proveedor cuesta años, no facturas",
+  "gran-ajedrez":
+    "se reconoce porque cada movimiento tiene varios destinatarios a la vez: el que está enfrente y el que mira desde lejos",
+  dependencia:
+    "se reconoce cuando un solo proveedor, o un solo paso marítimo, puede parar una industria entera",
+  opinion:
+    "se reconoce cuando el dinero y las armas siguen a la cobertura mediática más que a las víctimas: el relato también es logística",
+};

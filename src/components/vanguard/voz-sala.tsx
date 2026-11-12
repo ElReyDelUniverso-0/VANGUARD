@@ -99,6 +99,7 @@ export function VozSala() {
   const [escuchando, setEscuchando] = useState(false);
   const [boca, setBoca] = useState<"quieta" | "hablando" | "pausada">("quieta");
   const [sinVoz, setSinVoz] = useState(false);
+  const [rutaDestino, setRutaDestino] = useState<string>("");
   const srRef = useRef<Reconocedor | null>(null);
   const historialRef = useRef<Turno[]>([]);
 
@@ -164,13 +165,17 @@ export function VozSala() {
         setFuentes(j.fuentes ?? []);
         setSeguir(j.seguir ?? []);
         setModo(j.modo ?? "");
-        const dicho = decir(respuesta, { persona, gustos: { ...gustos, persona } });
+        const ruta = j.accion?.ruta && j.accion.ruta.startsWith("/") ? j.accion.ruta : "";
+        setRutaDestino(ruta);
+        // MANOS: si el piloto pidió «llévame a…», la casa obedece — pero
+        // primero TERMINA de decirlo. Navegar a mitad de frase cortaba la
+        // voz por el desmontaje de la sala: eso era un fallo, no una prisa.
+        const dicho = decir(respuesta, {
+          persona,
+          gustos: { ...gustos, persona },
+          onFin: ruta && j.modo === "navegar" ? () => router.push(ruta) : undefined,
+        });
         if (!dicho) setSinVoz(true);
-        // MANOS: si el maestro trae una ruta real de la casa, la casa obedece
-        const ruta = j.accion?.ruta;
-        if (ruta && ruta.startsWith("/")) {
-          window.setTimeout(() => router.push(ruta), 1400);
-        }
       } catch {
         setHistorial([
           ...nuevoHistorial,
@@ -513,6 +518,21 @@ export function VozSala() {
                 {s} <ChevronRight size={10} />
               </button>
             ))}
+          </div>
+        ) : null}
+
+        {rutaDestino ? (
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={() => {
+                pararBoca();
+                router.push(rutaDestino);
+              }}
+              className="inline-flex items-center gap-1 rounded-sm border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 font-mono text-[9px] uppercase tracking-widest text-amber-300 hover:bg-amber-500/20"
+            >
+              IR A LA SALA {rutaDestino} <ChevronRight size={10} />
+            </button>
           </div>
         ) : null}
 
