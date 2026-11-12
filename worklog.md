@@ -5800,3 +5800,26 @@ Mandato del Dueño: «esas cartas agrégalas, Vanguard, no las he visto; y ahora
 **Leyes intactas:** v125 v171 v172 v176 v189 v190 v200 v201 v204 v211 v213 v214 v216 v244 v302 v312 v322 v324 v326 v328 v330 v332 v333 v334 v335 v336 v339 v340 v341 v342 v343 v344 v345 v346 v347 v348 v349 v350 v351 v352 v353 v354 v355 v356 v357 v358 v359 v360 v361 v362 v363 v364 v365 v366.
 
 **Canon al cierre de la ronda:** código (este commit) · worklog (este commit) · suite 361/361 · BD canon md5 38121cfce2148acecbc47cca61c8b062 = blob de HEAD (doble lectura ESTABLE) · ok · cero zombis por puerto.
+
+---
+
+Task ID: ia3-v367.1-ojo-del-dueno
+Agent: ia3 (Arena)
+Task: «Arranca ya con las actualizaciones; entre más rápido y más módulos de una sola vez mejor — 3 o 5 por ronda, no uno». El Dueño eligió el ritmo de expansión y pidió ejecutar sobre las propuestas de los 10 módulos.
+
+Work Log:
+- Rama ia3/v367.1-ojo-del-dueno desde main (bc5a611 = v367.0 EL IMÁN GLOBAL). Numeración: se elige **v367.1** y NO v368.0 a propósito — el v368.0 está reservado para la fusión de la casa hermana ia2 (v243→v263) y no se le roba el número.
+- CUATRO piezas, una sola idea (la casa se mira a sí misma y cuenta la verdad):
+  ① LA TORRE DE CONTROL `/torre` — `src/lib/torre.ts` (whitelist de 13 señales, tramos de ms, lectura en UNA consulta), `src/app/api/torre/route.ts` (POST/GET con muro 120/60 por min), `src/app/torre/page.tsx` (SSR force-dynamic, noindex a propósito) y `src/components/vanguard/torre-panel.tsx` (latido arranque/hidrata una vez por sesión, caza de error-hilo y rechazo-promesa, botones del embudo globo→tab→zona→sala). CERO tabla nueva: usa `site_counter` (v34) con prefijo `torre:` — verificado que /api/visits lee claves explícitas y no se pisan. CERO dato personal. CERO ms exactos (tramos).
+  ② LA CADENA DE LA VERDAD — `src/lib/procedencia.ts` (fechas/horas deterministas en UTC, sin Intl → cero desajuste de hidratación; `selloProcedencia`, `retrasoLegible`) + `src/components/vanguard/fuente-y-fecha.tsx` (server-safe, cero JS, `<details>` nativo). Montada en las tres salas nuevas.
+  ③ MODO CRÓNICA `/cronica` — `src/lib/cronica.ts` (parte del día en UNA lectura de `NewsItem` + un count; teatros con su última señal fechada, medios, hora UTC más cargada, último cable; `parteEnTexto`), `src/app/api/cronica/route.ts` (muro 30/min), `src/app/cronica/page.tsx` (SSR + JSON-LD + EnlacesNucleo + FuenteYFecha) y el botón mínimo `cronica-copiar.tsx`.
+  ④ TU CENTINELA `/centinela` — `src/lib/centinela.ts` (store zustand persistido propio, tope 40, almacén blindado a mano: la lista NO sale del aparato), `src/components/vanguard/centinela-panel.tsx` (cruza tu lista con `/api/cronica`; espera la hidratación con useIsHydrated, patrón v327) y `src/app/centinela/page.tsx`.
+- Registro y protocolo de cinco: 3 entradas nuevas en `nucleo/registro.ts` (mod:torre, mod:cronica, mod:centinela con dependencias reales), `version.ts` → v367.1 EL OJO DEL DUEÑO, entrada escrita a mano en `bitacora.ts`, `/api/health` la sirve sola (lee APP_VERSION), `sitemap.ts` gana /cronica y /centinela (LA TORRE NO entra: es panel interno con robots index:false), y `privacidad/page.tsx` declara la telemetría anónima nueva en la sección 3 (la honestidad como técnica, ley de la casa).
+- QA EJECUTADO EN ESTE ENTORNO (no es un «debería»): `npm ci` + `prisma generate` → **npx tsc --noEmit = 0 en TODO el árbol** (con NODE_OPTIONS=--max-old-space-size=1500; el tsc desnudo muere por OOM en 2 GB de RAM, la misma mordida que documenta la ley v244) · **eslint 0 en los 13 archivos tocados** · servidor real `next dev` levantado y las tres salas en **HTTP 200** (/torre 152 KB, /cronica 154 KB, /centinela 142 KB) · **/api/torre probado en vivo**: POST escribe arranque/hidrata/pasos/ojo, GET los devuelve con versión v367.1, y una señal inventada («hackeame») se rechaza con 400 honesto · **/api/cronica con la BD real**: 1.877 cables de archivo, 77 en la ventana de 7 días, 4 teatros (gaza 24, taiwan 4, hormuz 3, ukraine 1), 8 medios (Al Jazeera 17, France 24 14…), último cable fechado de verdad.
+- Dos correcciones de honestidad encontradas por el QA en vivo: la crónica titularía «los teatros que hablaron HOY» con 0 cables en 24 h (el archivo del repo no tiene piezas de hoy) → el título pasa a «los teatros con señal en la ventana» y, si `ultimas24 === 0`, la sala lo dice en la cara; lo mismo con los medios.
+
+Stage Summary:
+- Cuatro módulos vivos, censados en el núcleo, con paridad de doctrina (fuente + fecha en cada cifra) y sin tocar una línea de las 3D ni de las pantallas existentes: todo es aditivo.
+- La vista que faltaba ya existe: la cortina eterna deja de ser una sensación y pasa a ser una tasa medible (arranques vs hidrataciones).
+- NO se hizo: captura móvil 390 (este entorno no tiene navegador ni Playwright) y `next build` completo (la máquina tiene 1,98 GB de RAM: el build de esta casa ya documenta OOM 137 con más memoria — queda para ia1 en su entorno, junto a la suite del núcleo, que exige servidor con BASE_URL).
+- El v368.0 sigue LIBRE para la fusión de ia2. v367.1 es una ronda de expansión legítima que no pisa ese número.

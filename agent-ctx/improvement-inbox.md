@@ -521,3 +521,14 @@ Salud: home=200 | health v184.0 | tsc 0 | lint 0 | build EXIT 0 (pendiente push)
 3. FICHA DEL ROSTRO EN LA VITRINA (viva del #29/#30) — los ROSTROS DEL PODER como segunda colección gemela sobre el motor gloria · Esfuerzo: M
 4. LA HORA DORADA EN EL RADAR (viva del #30) — el centinela avisa por voz cuando una guerra cruza ≥80 · Esfuerzo: S
 5. SW PWA DE REANUDACIÓN — un service worker mínimo que, al reabrir la PWA tras discard del renderer, fuerce navigation preload y HTML fresco (reduce los fotogramas congelados en el aparato del Dueño) · Esfuerzo: M
+
+## MENSAJE #33 · 2026-11-12 · v367.1 EL OJO DEL DUEÑO · ia3 (Arena)
+Notas: el Dueño ordenó «arranca ya con las actualizaciones — 3 o 5 módulos por ronda, no uno». Ronda de CUATRO piezas sobre v367.0 (intacta), numerada **v367.1** para no robarle el v368.0 a la fusión de ia2: ① LA TORRE DE CONTROL (/torre) — la telemetría de rescate que llevaba treinta mensajes viva aquí, ahora mide la SUPERVIVENCIA del arranque (arranca/hidrata), los tramos de carga y el embudo globo→tab→zona→sala, sin tabla nueva (site_counter) y sin un solo dato personal; ② LA CADENA DE LA VERDAD (procedencia.ts + FuenteYFecha) — el útil para que cualquier sala declare fuente y fecha en una línea, determinista en UTC; ③ MODO CRÓNICA (/cronica) — el parte del día en UNA lectura del archivo; ④ TU CENTINELA (/centinela) — vigilancia personal que vive en el aparato del visitante y no viaja a ningún servidor. Tres entradas nuevas en el censo del núcleo, bitácora escrita a mano, sitemap y privacidad actualizados.
+Salud: tsc **0 en todo el árbol** (exit 0, NODE_OPTIONS max-old-space-size=1500) | eslint 0 en los 13 archivos tocados | next dev real: /torre 200, /cronica 200, /centinela 200 | /api/torre escribe+lee y rechaza señales inventadas (400) | /api/cronica con la BD real: 1.877 cables de archivo, 77 en ventana, 4 teatros, 8 medios | health sirve v367.1 sola | build EXIT 0 y móvil 390 PENDIENTES de ia1 (esta máquina: 1,98 GB de RAM, sin navegador)
+
+📡 PRÓXIMAS PROPUESTAS:
+1. **CONECTAR LOS CINCO SALVAVIDAS A LA TORRE** (⭐ la pieza que cierra el círculo) — `anotarSenal("ojo"|"vigia"|"meta"|"cortina"|"watchdog")` es una línea en cada salvavidas de `mundo-webgl.tsx` / la cortina; hoy la Torre los cuenta a cero porque nadie los llama todavía. Una ronda corta y la cortina eterna queda medida de punta a punta. Esfuerzo: S
+2. TABLERO DE MANDO (módulo #4 de la lista ia3) — widgets reales elegidos por el visitante y persistidos, con espejo 2D/3D (ley #24). Esfuerzo: M
+3. SALAS CON ALMA, tanda 1 de 10 (módulo #2) — las genéricas de `salas-3d.ts` con contenido completo y acción real por raycast (ley #25). Esfuerzo: M por tanda
+4. LA MESA VIVA · etapa 12 — el historial de duelos, la deuda que lleva ocho rondas cediendo el turno. Esfuerzo: M
+5. PESO PLUMA (módulo #9) — polyfills de 110 KB documentados sin aplicar, tick de 1 s, cola exhaustive-deps: menos KB es menos cortina en el móvil del Dueño. Esfuerzo: S/M
