@@ -22,6 +22,28 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.2",
+    nombre: "LA VOZ MAESTRA",
+    hitos: [
+      "LA BOCA QUE RESPIRA (lib/voz/limpiar.ts) — el texto de panel deja de leerse tal cual: fuera markdown, URLs deletreadas, emojis y claves internas mod:/vg:, «%» pasa a «por ciento», EEUU a «Estados Unidos» y las cifras pequeñas a palabras; el discurso se trocea por frases y párrafos con silencios REALES de 260 y 700 ms. Era la mitad del «lee sin sentido» y del «sin pausa»",
+      "LAS CUATRO PERSONAS (lib/voz/decir.ts) — locutora, analista, general y cronista con velocidad, tono y voz propia; censo de las voces del aparato puntuado de 0 a 100 (neuronal arriba, eSpeak/compact abajo) para que el navegador no elija la primera del sistema; gustos en el aparato (vg3672-voz-maestra) y confesión honesta cuando la mejor voz disponible es robótica por culpa del aparato",
+      "EL MAESTRO EXPERTO EN GEOPOLÍTICA (lib/agente/maestro.ts + saber.ts) — nueve teatros y quince conceptos escritos a mano (terreno, actores, por qué importa, qué vigilar, error común), respuestas con estructura de analista en vez de 220 caracteres, doce turnos de memoria conversacional, navegación a las rutas reales de la casa y CERO cifras propias: todo número sale del archivo real con fuente y fecha",
+      "LA SALA DE LA VOZ (/voz) Y SU CEREBRO (/api/maestro) — la voz se ve, se lee y se oye en una página; el orbe de siempre pasa al cerebro nuevo sin cambiar su interfaz, y el micrófono nunca es obligatorio: si el aparato no sabe hablar, la casa escribe",
+    ],
+    tipo: "ia",
+  },
+  {
+    version: "v367.1",
+    nombre: "EL OJO DEL DUEÑO",
+    hitos: [
+      "LA TORRE DE CONTROL (/torre) — la telemetría de rescate que llevaba treinta mensajes viva en el inbox: supervivencia del arranque (arranca/hidrata), tramos de carga medidos en el aparato, embudo real globo→tab→zona→sala y las cuentas honestas de los cinco salvavidas v178→v184. Cero tabla nueva (site_counter, v34), cero dato personal (fnt:telemetria, privada desde v218), cero milisegundos exactos (tramos)",
+      "LA CADENA DE LA VERDAD (procedencia.ts + FuenteYFecha) — el útil compartido para que cualquier sala declare fuente y fecha en una línea, con formato determinista en UTC (sin Intl: cero desajuste de hidratación) y el «SIN SEÑAL» como respuesta legítima",
+      "MODO CRÓNICA (/cronica) — el parte del día en UNA sola lectura del archivo (patrón v262): teatros que hablaron con su última señal fechada, medios que firmaron, hora UTC más cargada y último cable. La ventana medida se declara en la cara del lector; cero cifras escritas a mano",
+      "TU CENTINELA (/centinela) — vigilancia personal de teatros y medios, cruzada con el parte real. La lista vive en el aparato del visitante (vg367-centinela) y no viaja a ningún servidor: sin permisos de notificaciones y sin un solo aviso inventado",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v306.0",
     nombre: "EL AIRE DEL PERMISO — la segunda cuchilla del mandato del Dueño (la v305 documentó, esta ronda aplica) y el hallazgo que nadie había visto: la cabecera Permissions-Policy de la ciudadela v102 (microphone=() — prohibir el micrófono A TODO EL MUNDO en la era sin voz) ESTRANGULABA la voz de la v299 — el navegador mataba el getUserMedia ANTES de mostrar el permiso al usuario; microphone=(self) devuelve el aire a la casa. Más las últimas 9 coerciones ciegas pagadas: CERO ley",
     hitos: [

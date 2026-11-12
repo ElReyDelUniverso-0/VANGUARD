@@ -3,7 +3,10 @@
 // v179.0 VG-ASSIST — EL AGENTE DE VOZ DE VANGUARD (el Siri de la Casa).
 // Un orbe que vive en toda la app: pulsa y HABLA, Vanguard obedece.
 //  · OÍDO: Web Speech API del navegador (gratis, en el aparato) — es-ES y los 8 idiomas
-//  · CEREBRO: /api/asistente (LLM con whitelist real de salas + red determinista)
+//  · CEREBRO: /api/maestro (v367.2 LA VOZ MAESTRA — 9 teatros y 15 conceptos
+//    con estructura de analista, memoria de 12 turnos, navegación real y cero
+//    cifras propias; mismo contrato {hablar, accion, briefing} que el viejo
+//    /api/asistente, que sigue vivo por compatibilidad)
 //  · MANOS: CustomEvent «vg:asistente-accion» → page.tsx navega / abre paleta / menú
 //  · BOCA: speechSynthesis del aparato (voz del idioma del piloto, rápida)
 // Honestidad de acero: sin micrófono o sin permiso → modo TEXTO con aviso real.
@@ -386,7 +389,7 @@ export function AsistenteVoz() {
     estadoRef.current = "pensando";
     setEstado("pensando");
     try {
-      const r = await fetch("/api/asistente", {
+      const r = await fetch("/api/maestro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ texto: limpio, lang, tab: tabRef.current }),

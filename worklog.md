@@ -5800,3 +5800,64 @@ Mandato del Dueño: «esas cartas agrégalas, Vanguard, no las he visto; y ahora
 **Leyes intactas:** v125 v171 v172 v176 v189 v190 v200 v201 v204 v211 v213 v214 v216 v244 v302 v312 v322 v324 v326 v328 v330 v332 v333 v334 v335 v336 v339 v340 v341 v342 v343 v344 v345 v346 v347 v348 v349 v350 v351 v352 v353 v354 v355 v356 v357 v358 v359 v360 v361 v362 v363 v364 v365 v366.
 
 **Canon al cierre de la ronda:** código (este commit) · worklog (este commit) · suite 361/361 · BD canon md5 38121cfce2148acecbc47cca61c8b062 = blob de HEAD (doble lectura ESTABLE) · ok · cero zombis por puerto.
+
+---
+
+Task ID: ia3-fusion-nucleo-docs
+Agent: ia3 (Arena)
+Task: El Dueño pidió «entra vanguard (token) … agrega esto a vanguard» con el paquete de fusión de la IA hermana ia2 (v243.0 → v263.0) entre las manos: dejar la casa preparada para absorber esas 21 versiones en la línea de main.
+
+Work Log:
+- Entrada verificada con la API de GitHub: token del Dueño válido, repo `ElReyDelUniverso-0/VANGUARD` (público, default `main`, permiso admin). Clon superficial + cono disperso (solo .md/.txt/agent-ctx/version.ts/bitacora.ts) para no arrastrar los 571 MB del árbol.
+- Retrato de main: HEAD = bc5a611 (2026-11-12 03:40Z, `chore(audit): Polaris + Twin-Wing emblem, security/SQL/API hardening…`) sobre 8645761f = v367.0 EL IMÁN GLOBAL. `src/lib/version.ts` → APP_VERSION "v367.0", APP_CODENAME "EL IMÁN GLOBAL". Ramas remotas: main, gh-pages, ia2/v168.0, ia2/v172.0, ia2/v174.0. v368.0 libre.
+- Los 6 archivos entregados por el Dueño comparados contra main: `AGENTS.md`, `COLABORACION-IA.md` y `HANDOFF-VANGUARD.md` YA existían y son idénticos byte a byte (diff vacío) → no se reescribieron (REGLA #1). `INSTRUCCIONES-DE-FUSION.md`, `MENSAJE-PARA-LA-OTRA-IA.txt` y `LEEME-PARA-EL-DUEÑO.md` son NUEVOS → copiados tal cual a la raíz, sin editar una coma (es la voz de ia2).
+- NUEVO `FUSION-NUCLEO-v263-ESTADO.md`: hoja de control (qué llegó / qué falta / retrato de main / reparto propuesto / reglas respetadas / QA / siguiente paso exacto).
+- `COLABORACION-IA.md`: fila de ia3 en el reparto + «Mensaje #20 — v368.0 PENDIENTE».
+- `agent-ctx/improvement-inbox.md`: «MENSAJE #32 · 2026-11-12 · ia3 (Arena)» con salud honesta y 5 propuestas.
+- NO se tocó `src/lib/version.ts` ni `src/lib/bitacora.ts` (el v368.0 lo numera quien fusione), ni `db/`, ni `prisma/`, ni una línea de código. Nada desplegado.
+- Rama `ia3/fusion-nucleo` empujada al remoto en lugar de escribir en main (regla 2 de la casa: nunca push directo a main sin revisión cruzada); entrega por Pull Request para que ia1 revise y mergee.
+
+Stage Summary:
+- La casa ya guarda el paquete documental de la fusión y sabe exactamente qué falta: el `paquete-fusion-nucleo.zip` (src/ + scripts/ + media/ + prisma/ + MANIFIESTO-DELTA.md), que no vino adjunto en esta sesión.
+- Sin manifiesto y sin árbol de origen NO se reescriben 21 versiones de memoria: no se inventó código. Cero riesgo para la web viva.
+- QA: al ser solo .md/.txt, `npx tsc --noEmit` y `build` quedan intactos por construcción; el QA completo (tsc 0, build EXIT 0, móvil 390, reduced-motion, /api/health v368.0) pertenece al commit de fusión.
+- Pendiente inmediato del Dueño: subir el zip al chat de la IA que fusiona y pegar `MENSAJE-PARA-LA-OTRA-IA.txt`. Pendiente de la casa: rotar el token de GitHub (3.ª vez que viaja por chat).
+Task ID: ia3-v367.1-ojo-del-dueno
+Agent: ia3 (Arena)
+Task: «Arranca ya con las actualizaciones; entre más rápido y más módulos de una sola vez mejor — 3 o 5 por ronda, no uno». El Dueño eligió el ritmo de expansión y pidió ejecutar sobre las propuestas de los 10 módulos.
+
+Work Log:
+- Rama ia3/v367.1-ojo-del-dueno desde main (bc5a611 = v367.0 EL IMÁN GLOBAL). Numeración: se elige **v367.1** y NO v368.0 a propósito — el v368.0 está reservado para la fusión de la casa hermana ia2 (v243→v263) y no se le roba el número.
+- CUATRO piezas, una sola idea (la casa se mira a sí misma y cuenta la verdad):
+  ① LA TORRE DE CONTROL `/torre` — `src/lib/torre.ts` (whitelist de 13 señales, tramos de ms, lectura en UNA consulta), `src/app/api/torre/route.ts` (POST/GET con muro 120/60 por min), `src/app/torre/page.tsx` (SSR force-dynamic, noindex a propósito) y `src/components/vanguard/torre-panel.tsx` (latido arranque/hidrata una vez por sesión, caza de error-hilo y rechazo-promesa, botones del embudo globo→tab→zona→sala). CERO tabla nueva: usa `site_counter` (v34) con prefijo `torre:` — verificado que /api/visits lee claves explícitas y no se pisan. CERO dato personal. CERO ms exactos (tramos).
+  ② LA CADENA DE LA VERDAD — `src/lib/procedencia.ts` (fechas/horas deterministas en UTC, sin Intl → cero desajuste de hidratación; `selloProcedencia`, `retrasoLegible`) + `src/components/vanguard/fuente-y-fecha.tsx` (server-safe, cero JS, `<details>` nativo). Montada en las tres salas nuevas.
+  ③ MODO CRÓNICA `/cronica` — `src/lib/cronica.ts` (parte del día en UNA lectura de `NewsItem` + un count; teatros con su última señal fechada, medios, hora UTC más cargada, último cable; `parteEnTexto`), `src/app/api/cronica/route.ts` (muro 30/min), `src/app/cronica/page.tsx` (SSR + JSON-LD + EnlacesNucleo + FuenteYFecha) y el botón mínimo `cronica-copiar.tsx`.
+  ④ TU CENTINELA `/centinela` — `src/lib/centinela.ts` (store zustand persistido propio, tope 40, almacén blindado a mano: la lista NO sale del aparato), `src/components/vanguard/centinela-panel.tsx` (cruza tu lista con `/api/cronica`; espera la hidratación con useIsHydrated, patrón v327) y `src/app/centinela/page.tsx`.
+- Registro y protocolo de cinco: 3 entradas nuevas en `nucleo/registro.ts` (mod:torre, mod:cronica, mod:centinela con dependencias reales), `version.ts` → v367.1 EL OJO DEL DUEÑO, entrada escrita a mano en `bitacora.ts`, `/api/health` la sirve sola (lee APP_VERSION), `sitemap.ts` gana /cronica y /centinela (LA TORRE NO entra: es panel interno con robots index:false), y `privacidad/page.tsx` declara la telemetría anónima nueva en la sección 3 (la honestidad como técnica, ley de la casa).
+- QA EJECUTADO EN ESTE ENTORNO (no es un «debería»): `npm ci` + `prisma generate` → **npx tsc --noEmit = 0 en TODO el árbol** (con NODE_OPTIONS=--max-old-space-size=1500; el tsc desnudo muere por OOM en 2 GB de RAM, la misma mordida que documenta la ley v244) · **eslint 0 en los 13 archivos tocados** · servidor real `next dev` levantado y las tres salas en **HTTP 200** (/torre 152 KB, /cronica 154 KB, /centinela 142 KB) · **/api/torre probado en vivo**: POST escribe arranque/hidrata/pasos/ojo, GET los devuelve con versión v367.1, y una señal inventada («hackeame») se rechaza con 400 honesto · **/api/cronica con la BD real**: 1.877 cables de archivo, 77 en la ventana de 7 días, 4 teatros (gaza 24, taiwan 4, hormuz 3, ukraine 1), 8 medios (Al Jazeera 17, France 24 14…), último cable fechado de verdad.
+- Dos correcciones de honestidad encontradas por el QA en vivo: la crónica titularía «los teatros que hablaron HOY» con 0 cables en 24 h (el archivo del repo no tiene piezas de hoy) → el título pasa a «los teatros con señal en la ventana» y, si `ultimas24 === 0`, la sala lo dice en la cara; lo mismo con los medios.
+
+Stage Summary:
+- Cuatro módulos vivos, censados en el núcleo, con paridad de doctrina (fuente + fecha en cada cifra) y sin tocar una línea de las 3D ni de las pantallas existentes: todo es aditivo.
+- La vista que faltaba ya existe: la cortina eterna deja de ser una sensación y pasa a ser una tasa medible (arranques vs hidrataciones).
+- NO se hizo: captura móvil 390 (este entorno no tiene navegador ni Playwright) y `next build` completo (la máquina tiene 1,98 GB de RAM: el build de esta casa ya documenta OOM 137 con más memoria — queda para ia1 en su entorno, junto a la suite del núcleo, que exige servidor con BASE_URL).
+- El v368.0 sigue LIBRE para la fusión de ia2. v367.1 es una ronda de expansión legítima que no pisa ese número.
+
+---
+
+Task: «su voz… tiene una voz robótica, no tiene diferentes voces, una voz sin pausa, una voz molesta y lee sin sentido; tampoco explica las noticias, no navega, no te ayuda, no puede tener una conversación larga; necesito que sea experta en geopolítica, que explique navegando y dando ejemplos». Ronda v367.2 LA VOZ MAESTRA — CUATRO piezas sobre v367.1 (intacta), todo aditivo.
+
+Work Log:
+- Diagnóstico primero, promesas después: lo que el Dueño llama «lee sin sentido» no era el modelo — era el MOTOR. `speechSynthesis` recibía texto de pantalla (markdown, URLs que deletrea, claves `mod:`/`vg:`, `%`, viñetas) y lo soltaba de un tirón. El sistema anterior solo clasificaba intención en ≤220 caracteres: un portero, no un maestro. Cambiar el tono no arreglaba nada de eso.
+- ① LA BOCA QUE RESPIRA — `src/lib/voz/limpiar.ts`: `textoDeBoca()` (fuera URLs/markdown/emojis/claves internas, «%» → «por ciento», EEUU → «Estados Unidos», cifras pequeñas a palabras, viñetas y almohadillas fuera, «24 h» → «24 horas») y `trocearParaBoca()` (bloques ≤170 caracteres con PAUSA REAL: 260 ms frase, 700 ms párrafo, 420 ms título).
+- ② LAS CUATRO PERSONAS — `src/lib/voz/decir.ts`: locutora, analista, general y cronista con rate/pitch/voz propia; `escanearVoces()` puntúa 0–100 las voces del aparato (neuronal arriba, eSpeak/compact abajo) para que el navegador no elija la primera del sistema; `avisosDelAparato()` confiesa cuando la mejor voz disponible es robótica POR CULPA DEL APARATO; motor `decir/pararBoca/pausarBoca/reanudarBoca/alCambiarBoca` con gustos en LS `vg3672-voz-maestra`.
+- ③ EL MAESTRO EXPERTO — `src/lib/agente/saber.ts` (9 teatros y 15 conceptos escritos a mano: terreno, actores, por qué importa, qué vigilar, error común; CERO datos volátiles para que no envejezca) + `src/lib/agente/maestro.ts` (detección de intención sin acentos ni signos, respuestas con estructura de analista, navegación a las rutas reales, memoria de 12 turnos, y tres leyes: cero cifras inventadas, cero acción prometida que no exista, cero mentira ante el vacío).
+- ④ EL CEREBRO Y LA SALA — `src/app/api/maestro/route.ts` (mismo contrato que `/api/asistente` → el orbe cambia de cerebro sin tocar su interfaz; una sola lectura del archivo vía `parteDelDia()`; muro 30/min) + `/voz` (`src/app/voz/page.tsx` + `src/components/vanguard/voz-sala.tsx`: orbe, micrófono opcional, cuatro personas, transcriptor con memoria, fuentes fechadas, botones de seguimiento y explicación honesta de por qué antes sonaba mal).
+- Protocolo de siempre: `version.ts` → v367.2 LA VOZ MAESTRA, entrada escrita a mano en `bitacora.ts`, `mod:voz` en el censo del núcleo, `/voz` en el sitemap, orbe de la casa apuntado a `/api/maestro` (el viejo `/api/asistente` sigue vivo, no se toca), `agent-ctx/pruebas-voz.mjs` como puerta del contrato.
+- QA EJECUTADO AQUÍ (no es un «debería»): `tsc --noEmit --strict` sobre los 4 módulos nuevos = **0 errores** · esbuild sin errores de sintaxis en los 3 archivos de Next (route/page/componente) · verificador de importaciones `@/` → todos los nombres resuelven a exports reales · **prueba de lógica del maestro con archivo simulado: 11/11 rutas de intención correctas, cero cifras fuera del archivo, BD caída sin inventar, y una conversación de 6 turnos que no pierde el hilo** · **prueba de la boca: sin URLs/markdown/emojis/claves, cifras intactas, «%» dicho, pausa de frase y de párrafo presentes, ningún bloque >170 caracteres**.
+- Dos fallos REALES que encontró el QA y se corrigieron en esta misma ronda (por eso se prueba): (a) «¿y por qué?» caía en «no lo sé» porque el «¿» rompía el reconocimiento del seguimiento → `norm()` ahora quita signos y el seguimiento se busca en cualquier posición; (b) «24 h» se leía «veinticuatro hache» y las viñetas «- » y las almohadillas «#» llegaban al motor → tres reglas nuevas en `limpiar.ts`.
+
+Stage Summary:
+- La voz deja de ser un portero: cuatro personas, boca que respira, texto que se puede decir y un maestro que explica geopolítica con el archivo real en la mano.
+- Todo aditivo: ninguna sala, ruta ni función eliminada; `/api/asistente` sigue sirviendo; cero cambios de esquema; la BD no se tocó.
+- PENDIENTE de ia1 (esta máquina no puede): `bun run build` completo y `BASE_URL=… node agent-ctx/pruebas-voz.mjs` contra el despliegue, más la captura móvil 390. La suite nueva existe justo para que esa verificación sea de un comando.

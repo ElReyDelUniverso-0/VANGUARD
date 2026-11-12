@@ -388,6 +388,58 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: [],
     alias: "privacidad terminos datos reglas legal",
   },
+  {
+    id: "mod:torre",
+    nombre: "LA TORRE DE CONTROL",
+    lema: "La casa, mirada desde dentro",
+    descripcion:
+      "Salud real del arranque: cuántos aparatos montan la casa, cuántos llegan vivos al final del montaje (la cortina eterna medida por primera vez), los tramos de carga y el embudo del camino real (globo → tab → zona → sala). Cuentas honestas de los cinco salvavidas v178→v184. Sin IP, sin user-agent, sin alias: cuenta sucesos, no personas. Su fuente es fnt:telemetria, privada por diseño.",
+    categoria: "SISTEMA",
+    ruta: "/torre",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:telemetria"],
+    alias: "torre control salud telemetria rescate cortina arranque supervivencia diagnostico latido",
+  },
+  {
+    id: "mod:voz",
+    nombre: "LA VOZ MAESTRA",
+    lema: "La casa que explica, no solo la que obedece",
+    descripcion:
+      "Asistente de voz con cuatro personas (locutora, analista, general, cronista), boca que respira con pausas reales y texto limpiado para decir en vez de leer. Su cerebro es el maestro: nueve teatros y quince conceptos de geopolítica explicados con terreno, actores, por qué importa y qué vigilar, sobre el archivo real con fuente y fecha, con navegación a las salas de la casa y memoria de doce turnos. El audio nunca sale del aparato y el micrófono es opcional: si el aparato no tiene voz, la respuesta se escribe.",
+    categoria: "IA",
+    ruta: "/voz",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables", "fnt:fuentes"],
+    alias: "voz maestra maestro asistente orbe hablar audio locutora analista general cronista pausas persona explicar clases geopolítica microfono",
+  },
+  {
+    id: "mod:cronica",
+    nombre: "LA CRÓNICA DEL DÍA",
+    lema: "Qué pasó de verdad, en un parte",
+    descripcion:
+      "El parte diario derivado del archivo real: cables de las últimas 24 h, teatros que hablaron con su última señal fechada, medios que firmaron, la hora UTC más cargada y el último cable que entró. La ventana medida se declara en la cara del lector y cada cifra viaja con su CADENA DE LA VERDAD. Sin datos, SIN SEÑAL honesto.",
+    categoria: "REDACCION",
+    ruta: "/cronica",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables", "fnt:fuentes"],
+    alias: "cronica parte diario resumen hoy crónica retencion dia teatros medios",
+  },
+  {
+    id: "mod:centinela",
+    nombre: "TU CENTINELA",
+    lema: "Lo que te importa, vigilado por ti",
+    descripcion:
+      "Vigilancia personal: el visitante pone bajo seguimiento teatros y medios reales y la casa le cuenta cuánto han hablado y cuándo fue su última señal. La lista vive SOLO en su aparato (localStorage, clave vg367-centinela) y no se envía a ningún servidor. Sin permisos de notificaciones ni avisos inventados.",
+    categoria: "COMUNIDAD",
+    ruta: "/centinela",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cables", "fnt:fuentes", "mod:cronica"],
+    alias: "centinela seguir vigilancia alertas teatro medio suscripcion avisos",
+  },
 ];
 
 /** ── Consultas del censo (puras, sin BD) ─────────────────── */

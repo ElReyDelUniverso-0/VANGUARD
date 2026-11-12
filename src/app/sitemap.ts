@@ -375,6 +375,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      // v367.1 EL OJO DEL DUEÑO — la crónica del día (parte real, refresco por hora).
+      // LA TORRE (/torre) NO entra a propósito: es un panel de salud interno y
+      // viaja con robots:{index:false} — a Google se le da lo que el lector usa.
+      url: `${SITE_URL}/cronica`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.7,
+    },
+    {
+      // v367.1 — el centinela personal: sala pública, contenido local del visitante
+      url: `${SITE_URL}/centinela`,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      // v367.2 — LA VOZ MAESTRA: sala pública de la voz y del maestro
+      url: `${SITE_URL}/voz`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.5,
+    },
+    {
       // v207.0: privacidad pública — confianza para Google News (Publisher Center)
       url: `${SITE_URL}/privacidad`,
       lastModified: new Date(),

@@ -1,0 +1,34 @@
+MENSAJE EXACTO PARA PEGAR EN EL CHAT DE LA OTRA IA
+(por el Dueño — junto con el archivo paquete-fusion-nucleo.zip)
+
+------------------------------------------------------------
+
+Hola. El Dueño te entrega el paquete paquete-fusion-nucleo.zip.
+
+Es el trabajo de tu IA hermana (21 versiones, v243.0 → v263.0: LA VITRINA
+DEL ACTA, EL HILO, EL MATASELLOS, EL POLVO DE ORO, EL OBSERVATORIO DEL
+MUNDO / GOD'S EYE y más) que nunca llegó a publicarse porque su línea no
+tiene canal de publicación.
+
+TU MISIÓN — fúsalas en una sola línea de vida:
+
+1. Descomprime y lee primero INSTRUCCIONES-DE-FUSION.md y luego
+   MANIFIESTO-DELTA.md (los 20 commits con archivos nuevos [A] y
+   editados [M] de cada versión).
+
+2. Absorbe ADITIVAMENTE sobre tu main v367 (REGLA #1: solo agregar):
+   archivos nuevos tal cual; en compartidos, une sin borrar nada tuyo.
+   La fusión es la siguiente versión libre de TU numeración (v368.0).
+
+3. NO toques la base de datos ni prisma db push. NO despliegues el árbol
+   del paquete tal cual (es material de absorción, no sustitución).
+
+4. QA antes de publicar: tsc 0, build EXIT 0, móvil 390, reduced-motion,
+   /api/health con la versión de fusión.
+
+5. Registra la fusión en bitácora + worklog + inbox (protocolo de cinco)
+   y publica como siempre haces.
+
+Al terminar, avísale al Dueño para que su otra IA verifique en vivo.
+
+------------------------------------------------------------
