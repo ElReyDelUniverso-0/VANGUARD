@@ -5800,3 +5800,25 @@ Mandato del Dueño: «esas cartas agrégalas, Vanguard, no las he visto; y ahora
 **Leyes intactas:** v125 v171 v172 v176 v189 v190 v200 v201 v204 v211 v213 v214 v216 v244 v302 v312 v322 v324 v326 v328 v330 v332 v333 v334 v335 v336 v339 v340 v341 v342 v343 v344 v345 v346 v347 v348 v349 v350 v351 v352 v353 v354 v355 v356 v357 v358 v359 v360 v361 v362 v363 v364 v365 v366.
 
 **Canon al cierre de la ronda:** código (este commit) · worklog (este commit) · suite 361/361 · BD canon md5 38121cfce2148acecbc47cca61c8b062 = blob de HEAD (doble lectura ESTABLE) · ok · cero zombis por puerto.
+
+---
+
+Task ID: ia3-fusion-nucleo-docs
+Agent: ia3 (Arena)
+Task: El Dueño pidió «entra vanguard (token) … agrega esto a vanguard» con el paquete de fusión de la IA hermana ia2 (v243.0 → v263.0) entre las manos: dejar la casa preparada para absorber esas 21 versiones en la línea de main.
+
+Work Log:
+- Entrada verificada con la API de GitHub: token del Dueño válido, repo `ElReyDelUniverso-0/VANGUARD` (público, default `main`, permiso admin). Clon superficial + cono disperso (solo .md/.txt/agent-ctx/version.ts/bitacora.ts) para no arrastrar los 571 MB del árbol.
+- Retrato de main: HEAD = bc5a611 (2026-11-12 03:40Z, `chore(audit): Polaris + Twin-Wing emblem, security/SQL/API hardening…`) sobre 8645761f = v367.0 EL IMÁN GLOBAL. `src/lib/version.ts` → APP_VERSION "v367.0", APP_CODENAME "EL IMÁN GLOBAL". Ramas remotas: main, gh-pages, ia2/v168.0, ia2/v172.0, ia2/v174.0. v368.0 libre.
+- Los 6 archivos entregados por el Dueño comparados contra main: `AGENTS.md`, `COLABORACION-IA.md` y `HANDOFF-VANGUARD.md` YA existían y son idénticos byte a byte (diff vacío) → no se reescribieron (REGLA #1). `INSTRUCCIONES-DE-FUSION.md`, `MENSAJE-PARA-LA-OTRA-IA.txt` y `LEEME-PARA-EL-DUEÑO.md` son NUEVOS → copiados tal cual a la raíz, sin editar una coma (es la voz de ia2).
+- NUEVO `FUSION-NUCLEO-v263-ESTADO.md`: hoja de control (qué llegó / qué falta / retrato de main / reparto propuesto / reglas respetadas / QA / siguiente paso exacto).
+- `COLABORACION-IA.md`: fila de ia3 en el reparto + «Mensaje #20 — v368.0 PENDIENTE».
+- `agent-ctx/improvement-inbox.md`: «MENSAJE #32 · 2026-11-12 · ia3 (Arena)» con salud honesta y 5 propuestas.
+- NO se tocó `src/lib/version.ts` ni `src/lib/bitacora.ts` (el v368.0 lo numera quien fusione), ni `db/`, ni `prisma/`, ni una línea de código. Nada desplegado.
+- Rama `ia3/fusion-nucleo` empujada al remoto en lugar de escribir en main (regla 2 de la casa: nunca push directo a main sin revisión cruzada); entrega por Pull Request para que ia1 revise y mergee.
+
+Stage Summary:
+- La casa ya guarda el paquete documental de la fusión y sabe exactamente qué falta: el `paquete-fusion-nucleo.zip` (src/ + scripts/ + media/ + prisma/ + MANIFIESTO-DELTA.md), que no vino adjunto en esta sesión.
+- Sin manifiesto y sin árbol de origen NO se reescriben 21 versiones de memoria: no se inventó código. Cero riesgo para la web viva.
+- QA: al ser solo .md/.txt, `npx tsc --noEmit` y `build` quedan intactos por construcción; el QA completo (tsc 0, build EXIT 0, móvil 390, reduced-motion, /api/health v368.0) pertenece al commit de fusión.
+- Pendiente inmediato del Dueño: subir el zip al chat de la IA que fusiona y pegar `MENSAJE-PARA-LA-OTRA-IA.txt`. Pendiente de la casa: rotar el token de GitHub (3.ª vez que viaja por chat).

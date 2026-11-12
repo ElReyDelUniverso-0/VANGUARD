@@ -521,3 +521,14 @@ Salud: home=200 | health v184.0 | tsc 0 | lint 0 | build EXIT 0 (pendiente push)
 3. FICHA DEL ROSTRO EN LA VITRINA (viva del #29/#30) — los ROSTROS DEL PODER como segunda colección gemela sobre el motor gloria · Esfuerzo: M
 4. LA HORA DORADA EN EL RADAR (viva del #30) — el centinela avisa por voz cuando una guerra cruza ≥80 · Esfuerzo: S
 5. SW PWA DE REANUDACIÓN — un service worker mínimo que, al reabrir la PWA tras discard del renderer, fuerce navigation preload y HTML fresco (reduce los fotogramas congelados en el aparato del Dueño) · Esfuerzo: M
+
+## MENSAJE #32 · 2026-11-12 · ia3 (Arena) — EL PAQUETE DE LA CASA HERMANA
+Notas: el Dueño dio el token y ordenó «entra vanguard … agrega esto a vanguard», con el paquete de fusión de ia2 (v243.0 → v263.0) en la mano. Llegaron SOLO los documentos (`INSTRUCCIONES-DE-FUSION.md`, `MENSAJE-PARA-LA-OTRA-IA.txt`, `LEEME-PARA-EL-DUEÑO.md`); el `paquete-fusion-nucleo.zip` con `src/` + `MANIFIESTO-DELTA.md` NO vino adjunto, así que NO se inventó código: rama `ia3/fusion-nucleo` con los tres documentos tal cual, la hoja de control `FUSION-NUCLEO-v263-ESTADO.md`, la fila de ia3 en `COLABORACION-IA.md`, y este mensaje. `AGENTS.md` / `HANDOFF-VANGUARD.md` / `COLABORACION-IA.md` verificados idénticos byte a byte a lo entregado (no se reescribió nada); `version.ts` y `bitacora.ts` INTACTOS — el v368.0 lo numera quien fusione.
+Salud: rama solo-documentación (cero imports, cero tipos, cero rutas → tsc/build intactos por construcción) | main sigue v367.0 EL IMÁN GLOBAL (APP_VERSION leído de `src/lib/version.ts`) | v368.0 LIBRE | no se levantó el servidor en esta sesión (no aplica a un commit de .md/.txt)
+
+📡 PRÓXIMAS PROPUESTAS:
+1. **PEDIR EL ZIP** (⭐ bloqueante, #1 real): sin `paquete-fusion-nucleo.zip` no hay absorción — el Dueño lo sube al chat de la IA que fusiona y pega `MENSAJE-PARA-LA-OTRA-IA.txt`. Esfuerzo: S (del Dueño)
+2. OBSERVATORIO GOD'S EYE (⭐ la joya del paquete v263) — 9 capas públicas (GDELT, NASA EONET, USGS, GDACS, Open-Meteo/CAMS, EEI) con ventana de FUENTE ORIGINAL y FECHA REAL + plano 2D + filtros, montado desde el panel ojo-dios. Entra con la fusión; probarlo en vivo es la primera verificación cruzada de ia3. Esfuerzo: L
+3. UNIÓN DE DEPENDENCIAS en `package.json` — la línea de ia2 añadió `jsdom` + `@types/jsdom` en devDependencies (suites QA). Detectado leyendo `INSTRUCCIONES-DE-FUSION.md` §2.3; al fusionar, unir, no reemplazar. Esfuerzo: S
+4. BITÁCORA DE DOS HISTORIAS — al fusionar, `src/lib/bitacora.ts` recibe las 21 entradas v243.0→v263.0 DESPUÉS de las de main, texto íntegro: las dos historias son verdad. Esfuerzo: S
+5. ROTACIÓN DEL TOKEN (⭐ deuda declarada viva) — el token de GitHub volvió a viajar por el chat (3.ª vez: Mensaje #31 ya lo anotó). Regenerarlo al cerrar la ronda y actualizar el secreto del CI del escudo, que nace ROJO a propósito hasta esa rotación. Esfuerzo: S
