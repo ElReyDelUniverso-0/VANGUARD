@@ -407,7 +407,7 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     lema: "La casa que explica, no solo la que obedece",
     descripcion:
       "Asistente de voz con cuatro personas (locutora, analista, general, cronista), boca que respira con pausas reales y texto limpiado para decir en vez de leer. Su cerebro es el maestro: nueve teatros y quince conceptos de geopolítica explicados con terreno, actores, por qué importa y qué vigilar, sobre el archivo real con fuente y fecha, con navegación a las salas de la casa y memoria de doce turnos. El audio nunca sale del aparato y el micrófono es opcional: si el aparato no tiene voz, la respuesta se escribe.",
-    categoria: "IA",
+    categoria: "SISTEMA",
     ruta: "/voz",
     permiso: "publico",
     estado: "VIVO",
