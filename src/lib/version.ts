@@ -5276,8 +5276,31 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.4";
-export const APP_CODENAME = "MÚSICA DE VERDAD Y EL CATÁLOGO";
+export const APP_VERSION = "v367.5";
+export const APP_CODENAME = "LA RADIO REAL EN EL VANGUARD PÚBLICO";
+// v367.5 LA RADIO REAL EN EL VANGUARD PÚBLICO (sobre v367.4, intacta) —
+// mandato del Dueño, textual: «que la música esté ya toda en el Vanguard
+// público y se pongan aleatoriamente en el Vanguard» y, en la misma tanda,
+// «sigue agregando las 100 ideas Vanguard, cópialas».
+// ① EL MOTOR ALEATORIO (src/lib/musica/radio-real.ts): las trece pistas
+//    REALES del catálogo se barajan (Fisher-Yates) y se ponen solas, una tras
+//    otra, en todo el sitio público — no dentro de una sala, sino en el
+//    reproductor global que vive en la portada y no se desmonta al navegar.
+//    Si una pista termina, entra la siguiente; si un enlace falla, se salta
+//    y lo dice; a los tres fallos seguidos se para en vez de fingir que suena.
+// ② LEY DE UNA SOLA VOZ: la radio real apaga el motor sintetizado al
+//    encenderse y el motor sintetizado apaga la radio real al arrancar. Nunca
+//    dos músicas a la vez en la misma casa.
+// ③ CERO AUTOPLAY ENGAÑOSO: ningún navegador deja sonar sin un gesto, así que
+//    la radio se arma para el PRIMER gesto del piloto (toque, tecla o rueda) y
+//    arranca ahí mismo. Si la paró a mano, su decisión manda y no se enciende.
+// ④ EL CHIP EN LA PÍLDORA (src/components/vanguard/radio-real-chip.tsx): se
+//    ve en la portada, siempre a la vista, con la pista, su licencia y su
+//    fuente (archive.org), el botón de encender/parar y el salto al azar.
+// ⑤ EL CATÁLOGO SIGUE CRECIENDO (/catalogo): de 100 a 140 piezas reales —
+//    20 puntos de datos, 12 motores y 8 paneles más, todos archivos que ya
+//    existían en el árbol. La cifra del título se calcula desde TOTAL_REAL.
+export const APP_VERSION_ANTERIOR = "v367.4";
 // v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
 // autociclo y el mandato del Dueño («agrega estos tipos de navegación en
 // TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —

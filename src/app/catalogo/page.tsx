@@ -14,18 +14,23 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // cosas que YA ESTÁN CREADAS y Vanguard las necesita, y cópialas
 // exactamente».
 //
-// Esto no es una idea: es un ÍNDICE. Cien piezas que ya estaban construidas
+// Esto no es una idea: es un ÍNDICE. Las piezas que ya estaban construidas
 // en la casa, generadas leyendo el árbol real del repositorio — cada una con
 // su ruta navegable o su archivo de origen como prueba. No se inventó nada:
 // el que quiera comprobarlo abre el archivo y ahí está.
+//
+// v367.5: el Dueño mandó «sigue agregando las 100 ideas, cópialas» — la lista
+// pasó de 100 a 140 piezas, todas archivos que ya existían (20 puntos de
+// datos más, 12 motores más, 8 paneles más). El número del título se calcula
+// solo desde TOTAL_REAL: aquí no se escribe una cifra a mano.
 // ============================================================
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "El catálogo de lo que ya existe — 100 piezas de VANGUARD",
+  title: `El catálogo de lo que ya existe — ${TOTAL_REAL} piezas de VANGUARD`,
   description:
-    "Índice real de cien piezas que ya están construidas en VANGUARD: salas navegables, paneles, motores y puntos de datos, cada una con su ruta o su archivo de origen.",
+    `Índice real de ${TOTAL_REAL} piezas que ya están construidas en VANGUARD: salas navegables, paneles, motores y puntos de datos, cada una con su ruta o su archivo de origen.`,
   alternates: { canonical: `${SITE_URL}/catalogo` },
 };
 
@@ -106,7 +111,8 @@ export default function CatalogoPage() {
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
             {TOTAL_REAL} piezas que ya estaban construidas en Vanguard, con su puerta o su archivo. No
             hay una sola idea nueva en esta lista: se generó leyendo el árbol del repositorio, y cada
-            entrada lleva la prueba de dónde vive.
+            entrada lleva la prueba de dónde vive. La lista sigue creciendo por orden del Dueño
+            («sigue agregando las 100 ideas, cópialas»): lo que entra ya existía.
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-widest text-zinc-400">

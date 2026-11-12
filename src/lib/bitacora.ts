@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.5",
+    nombre: "LA RADIO REAL EN EL VANGUARD PÚBLICO",
+    hitos: [
+      "LA MÚSICA REAL, YA AHÍ Y EN ALEATORIO (lib/musica/radio-real.ts) — orden del Dueño, textual: «que la música esté ya toda en el Vanguard público y se pongan aleatoriamente». Las trece pistas reales de dominio público y CC0 se barajan (Fisher-Yates) y se ponen solas, una tras otra, en el reproductor global que vive en la portada: la música suena en todo el sitio mientras se navega, no dentro de una sala aparte",
+      "CERO AUTOPLAY ENGAÑOSO — ningún navegador deja sonar audio antes de un gesto, así que la radio se arma para el PRIMER gesto del piloto (toque, tecla o rueda) y arranca en ese instante, barajada. Si la paró a mano la vez anterior, su decisión manda y no se enciende; queda recordado en el aparato",
+      "LEY DE UNA SOLA VOZ — la radio real apaga el motor sintetizado al encenderse y el motor sintetizado apaga la radio real al arrancar: nunca dos músicas a la vez en la misma casa. El taller de la casa sigue entero, pero deja de pisar",
+      "EL CHIP EN LA PÍLDORA (components/vanguard/radio-real-chip.tsx) — se ve en la portada sin abrir nada: la pista que suena, su autor, su licencia y su fuente (archive.org), botón de encender/parar y salto al azar. Si tres enlaces seguidos no abren, la radio se para y lo confiesa en el mismo chip",
+      "EL CATÁLOGO SIGUE CRECIENDO (/catalogo) — segunda orden de la tanda, «sigue agregando las 100 ideas, cópialas»: de 100 a 140 piezas reales, con 20 puntos de datos, 12 motores y 8 paneles más, todos archivos que ya existían en el árbol del repositorio. La cifra del título se calcula desde TOTAL_REAL, no se escribe a mano",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v367.4",
     nombre: "MÚSICA DE VERDAD Y EL CATÁLOGO",
     hitos: [
