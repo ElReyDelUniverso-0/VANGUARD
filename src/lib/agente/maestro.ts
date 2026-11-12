@@ -26,7 +26,13 @@
 // redacción, nunca como fuente de datos.
 // ============================================================
 
-import { CONCEPTOS_SABER, TEATROS_SABER, type ConceptoSaber, type TeatroSaber } from "./saber";
+import {
+  CONCEPTOS_SABER,
+  SENALES_CONCEPTO,
+  TEATROS_SABER,
+  type ConceptoSaber,
+  type TeatroSaber,
+} from "./saber";
 
 export interface DatoTeatro {
   tag: string;
@@ -163,6 +169,32 @@ function buscaConcepto(t: string): ConceptoSaber | null {
 }
 
 // ── Piezas habladas (con estructura de analista) ──
+const MESES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+
+/** «2026-11-12 09:44Z» → «12 de noviembre, a las 09:44 UTC» (para la boca). */
+function fechaHablada(entrada: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/.exec(entrada || "");
+  if (!m) return entrada || "sin fecha";
+  const mes = MESES[Number(m[2]) - 1];
+  if (!mes) return entrada;
+  return `${Number(m[3])} de ${mes}, a las ${m[4]}:${m[5]} UTC`;
+}
+
+/** «de el mar Rojo» no existe: el nombre con preposición, dicho bien. */
+function conDe(sujeto: string): string {
+  return /^(el|la|los|las) /i.test(sujeto)
+    ? `del ${sujeto.replace(/^(el|la|los|las) /i, "")}`
+    : `de ${sujeto}`;
+}
+
+/** Primera letra en mayúscula (una lista hablada no empieza en minúscula). */
+function conMayuscula(t: string): string {
+  return t.length === 0 ? t : t[0].toUpperCase() + t.slice(1);
+}
+
 const TITULO: Record<string, string> = {
   ukraine: "Ucrania",
   gaza: "Gaza",
@@ -185,7 +217,9 @@ function estadoReal(datos: DatosMaestro, tag: string): string {
     `En la ventana medida, el archivo de la casa registra ${d.n7} cables de este teatro y ${d.n24} de las últimas veinticuatro horas.`,
   );
   if (d.ultimo) {
-    partes.push(`El último entró a las ${d.ultimo.fecha} y lo firma ${d.ultimo.fuente}: «${d.ultimo.titulo}».`);
+    partes.push(
+      `El último entró el ${fechaHablada(d.ultimo.fecha)} y lo firma ${d.ultimo.fuente}: «${d.ultimo.titulo}».`,
+    );
   }
   return partes.join(" ");
 }
@@ -198,7 +232,7 @@ function hablarTeatro(clave: string, saber: TeatroSaber, datos: DatosMaestro): R
   lineas.push(
     `Ahora, el por qué importa. ${saber.porqueImporta} Los actores que cuentan aquí son ${saber.actores.join(", ")}.`,
   );
-  lineas.push(`Qué hay que vigilar, en concreto: ${saber.queVigilar.join(". ")}.`);
+  lineas.push(`Qué hay que vigilar, en concreto: ${saber.queVigilar.map(conMayuscula).join(". ")}.`);
   lineas.push(`Y un aviso de analista: ${saber.errorComun}`);
   lineas.push(
     `Si quieres, dime «dame un ejemplo sobre ${titulo}» y te lo bajo al último cable, con nombre y fecha.`,
@@ -244,8 +278,8 @@ function hablarPanorama(datos: DatosMaestro): RespuestaMaestro {
     );
   } else {
     L.push(
-      `Los teatros que más han hablado son ${vivos
-        .map((t) => `${TITULO[t.tag] ?? t.nombre}, con ${t.n7} cables`)
+      `Los teatros con más cables en la ventana de siete días son ${vivos
+        .map((t) => `${TITULO[t.tag] ?? t.nombre}, con ${t.n7}`)
         .join("; ")}.`,
     );
     const primero = vivos[0];
@@ -295,16 +329,17 @@ function hablarClase(c: ConceptoSaber, datos: DatosMaestro): RespuestaMaestro {
   const L: string[] = [];
   L.push(`Vamos a clase: ${c.nombre}. ${c.definicion}`);
   L.push(`Un ejemplo real para que se entienda: ${c.ejemplo}`);
-  // ancla con el archivo real: el teatro más activo es el aula de hoy
+  const senal = SENALES_CONCEPTO[c.id];
+  if (senal) L.push(`Y la prueba de campo: ${senal}.`);
+  // ancla con el archivo real — pero la casa NO dice qué significa:
+  // da el dato y el criterio, y deja que el piloto aplique el concepto.
   const vivo = datos.teatros.filter((t) => t.n7 > 0)[0];
-  if (vivo && TEATROS_SABER[vivo.tag]) {
+  if (vivo) {
     L.push(
-      `Y aplícamelo al teatro que hoy tiene más señal, ${TITULO[vivo.tag] ?? vivo.nombre}: ${TEATROS_SABER[vivo.tag].queVigilar[0]}. Eso es ${c.nombre} en la práctica.`,
+      `Aplica el criterio tú mismo con el dato de hoy: ${TITULO[vivo.tag] ?? vivo.nombre} lleva ${vivo.n24} cables en las últimas veinticuatro horas y ${vivo.n7} en la ventana de siete días. Te doy el número y el criterio; la conclusión es tuya, que para eso eres el analista.`,
     );
   }
-  L.push(
-    "Si quieres, te doy el siguiente escalón: dime «dame otro ejemplo» y lo bajo a un caso concreto del archivo.",
-  );
+  L.push("Y si quieres un segundo caso, dime «dame otro ejemplo».");
   return {
     hablar: L.join("\n\n"),
     modo: "clase",
@@ -385,15 +420,16 @@ function hablarEjemplo(temaPrevio: string | undefined, datos: DatosMaestro): Res
     const vivo = datos.teatros.filter((t) => t.n7 > 0)[0];
     const teatro = vivo ? TEATROS_SABER[vivo.tag] : undefined;
     const L: string[] = [];
-    if (c) L.push(`Otro ejemplo de ${c.nombre}, este sacado del archivo de la casa.`);
+    if (c) L.push(`Otro ejemplo de ${c.nombre}, y esta vez como se usa en la vida real.`);
+    if (c && SENALES_CONCEPTO[c.id]) {
+      L.push(`La prueba de campo: ${SENALES_CONCEPTO[c.id]}.`);
+    }
+    if (c) L.push(`Y el caso de manual, en una frase: ${c.ejemplo}`);
     if (teatro && vivo) {
       L.push(
-        `Mira ${TITULO[vivo.tag] ?? vivo.nombre}: ${teatro.queVigilar[0]}. Un analista no lee ahí un titular, lee una señal de ${c ? c.nombre : "poder"}: quién gana si eso cambia.`,
+        `Para ejercitarlo con el archivo de hoy: en ${TITULO[vivo.tag] ?? vivo.nombre}, lo primero que se mira: ${teatro.queVigilar[0]}. Con eso y el criterio de arriba, ya puedes leerlo tú.`,
       );
-      L.push(
-        `Y el dato duro de hoy: ${vivo.n7} cables en la ventana, ${vivo.n24} en las últimas veinticuatro horas. El número no explica la guerra, pero te dice dónde poner los ojos.`,
-      );
-    } else {
+    } else if (L.length < 3) {
       L.push(
         "Hoy no tengo un teatro con señal suficiente para aterrizar el ejemplo con datos reales. Cuando el archivo reciba cables, el ejemplo se pone solo.",
       );
@@ -411,12 +447,12 @@ function hablarEjemplo(temaPrevio: string | undefined, datos: DatosMaestro): Res
   if (temaPrevio && TEATROS_SABER[temaPrevio]) {
     const saber = TEATROS_SABER[temaPrevio];
     const d = datos.teatros.find((t) => t.tag === temaPrevio);
-    const L: string[] = [`Un ejemplo concreto de ${saber.nombre}.`];
+    const L: string[] = [`Un ejemplo concreto ${conDe(TITULO[temaPrevio] ?? saber.nombre)}.`];
     if (d?.ultimo) {
       L.push(
-        `Toma el último cable: «${d.ultimo.titulo}», firmado por ${d.ultimo.fuente} el ${d.ultimo.fecha}. Lo importante no es el titular, es lo que mueve: ${saber.queVigilar[0]}.`,
+        `Toma el último cable: «${d.ultimo.titulo}», firmado por ${d.ultimo.fuente} el ${fechaHablada(d.ultimo.fecha)}. Lo importante no es el titular, es lo que mueve: ${saber.queVigilar[0]}.`,
       );
-      L.push(`Si eso cambia, el siguiente en notarlo es ${saber.actores[0]}. Ahí está la cadena.`);
+      L.push(`El primero en notarlo, si eso cambia: ${saber.actores[0]}. Ahí está la cadena.`);
     } else {
       L.push(
         "No tengo un cable reciente de ese teatro en la ventana medida. Te doy el ejemplo de manual: " +

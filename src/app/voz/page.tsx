@@ -140,7 +140,6 @@ export default function VozPage() {
 
           <FuenteYFecha
             fuente="el archivo de cables de la casa (tabla NewsItem) · Web Speech del aparato"
-            consultado={new Date()}
             nota="Cada cifra que la voz pronuncia sale de una lectura real del archivo. El saber de fondo (teatros y conceptos) está escrito a mano y no contiene datos volátiles: no envejece ni se inventa. El audio nunca sale de tu aparato."
           />
 
