@@ -564,3 +564,14 @@ Salud: tsc 0 en todo el árbol (prisma generate previo) | prueba del motor puro:
 3. LA RADIO DE LA CASA COMO PODCAST — el boletín ya se lee del archivo con la voz de la casa: grabar la edición de cada franja y servirla en la EMISORA de la v217. Esfuerzo: M
 4. EL SELLO EN LAS PIEZAS VIEJAS — insertar el motivo de cuatro notas en las pistas de conflict-music.ts sin reescribirlas: identidad inmediata en toda la casa. Esfuerzo: M
 5. CONECTAR LOS CINCO SALVAVIDAS A LA TORRE y añadir el diagnóstico del motor musical (diagnosticoMotor): resyncs a la vista. Esfuerzo: S
+
+## MENSAJE #36 · 2026-11-12 · v367.4 MÚSICA DE VERDAD Y EL CATÁLOGO · ia3 (Arena)
+Notas: orden del Dueño: «no crees nada nuevo ni desde cero; solo copia; la música que agregaste es horrible, busca música, agrégala; agrega 100 cosas que ya están creadas y Vanguard las necesita». Se obedeció con dos módulos que NO inventan nada: (1) `lib/musica/catalogo.ts` + sala `/musica` reordenada — 13 pistas REALES de dominio público o CC0 (7 marchas y bandas militares, 5 de orquesta y voz de principios del siglo XX del catálogo de la Biblioteca del Congreso, 1 grabación de campo CC0), con licencia y fuente a la vista y enlace comprobado el 2026-11-12 (13/13, HTTP 206 audio/mpeg); el audio se sirve desde archive.org y la casa no aloja ni un byte ajeno; el motor sintetizado de la v367.3 baja a un «TALLER» plegado y no se borra; (2) `lib/catalogo-real.ts` + sala `/catalogo` — 100 piezas ya existentes (43 salas con su ruta, 37 paneles, 15 motores, 5 puntos de datos) GENERADAS leyendo el árbol del repositorio, cada una con su archivo de origen como prueba.
+Salud: tsc **0 en todo el árbol** | 13/13 pistas reales comprobadas (HTTP 206, audio/mpeg) | next dev: `/musica` 200, `/catalogo` 200 con **100 entradas** contadas en el HTML, health **v367.4** | build completo y móvil 390 PENDIENTES de ia1 (1,98 GB de RAM, sin navegador)
+
+📡 PRÓXIMAS PROPUESTAS (todas de copiar, nada nuevo):
+1. **MÁS MÚSICA REAL, MISMA RECETA** (⭐ lo que el Dueño quiere) — el catálogo ya tiene la receta: buscar en archive.org por licencia libre, comprobar con petición parcial y escribir la ficha. Se pueden sumar 30-50 pistas de otros géneros (jazz de 78 rpm, bandas sonoras de dominio público, himnos nacionales) sin inventar una sola nota. Esfuerzo: S por tanda
+2. **EL CATÁLOGO CRECIENDO SOLO** — hoy se genera con un script manual: convertirlo en `GET /api/catalogo` que lea el árbol en cada despliegue y sirva las 100+ piezas actualizadas. Esfuerzo: S
+3. **LAS 100 EN LAS SALAS** — cada panel del catálogo puede enlazarse desde su sala correspondiente: cero código nuevo, solo puertas. Esfuerzo: M
+4. HIMNOS NACIONALES DE DOMINIO PÚBLICO para la radio de conflicto (música militar de cada teatro). Esfuerzo: S
+5. CONECTAR LOS CINCO SALVAVIDAS A LA TORRE (sigue pendiente desde el Mensaje #33). Esfuerzo: S

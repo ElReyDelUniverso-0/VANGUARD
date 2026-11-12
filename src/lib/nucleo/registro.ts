@@ -454,6 +454,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     alias:
       "musica himno piezas radio conflicto emisora militar marcha sonido audio sello forma bpm sintetizador tambor sirena morse",
   },
+  {
+    id: "mod:catalogo",
+    nombre: "EL CATÁLOGO DE LO QUE YA EXISTE",
+    lema: "Cien piezas reales con su puerta",
+    descripcion:
+      "Índice generado del árbol del repositorio: 43 salas con su ruta navegable, 37 paneles ya construidos, 15 motores y 5 puntos de datos, cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
+    categoria: "SISTEMA",
+    ruta: "/catalogo",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:modulos"],
+    alias:
+      "catalogo indice inventario cien salas paneles motores api mapa de la casa lo que existe",
+  },
 ];
 
 /** ── Consultas del censo (puras, sin BD) ─────────────────── */

@@ -1,41 +1,42 @@
 "use client";
 
 // ============================================================
-// v367.3 LA MÚSICA CON FORMA — LA SALA (/musica)
+// v367.4 LA SALA DE MÚSICA — AHORA CON MÚSICA DE VERDAD (/musica)
 //
-// Todo lo que el Dueño pidió en una sola mesa:
-//  · EL HIMNO de la casa (60-90 s, sello de 4 notas, forma A-B-A).
-//  · LAS PIEZAS con forma de verdad (tributos de PULSO — ritmo prestado,
-//    melodía original — y música militar sintetizada aquí).
-//  · LA RADIO DE CONFLICTO: emisoras reales comprobadas + LA RADIO DE LA
-//    CASA (ambiente sintetizado y boletín leído del archivo real). Si la
-//    emisora real no abre en 6 segundos, la casa lo dice y ofrece su radio.
-//  · LOS SONIDOS DE GUERRA: sirena, morse, estática, explosión, radar,
-//    helicóptero y tambor — sintetizados, cero archivos.
+// Orden del Dueño, textual: «copia la música que agregaste, es horrible;
+// busca música, agrégala… no crees nada nuevo».
 //
-// El audio nunca sale del aparato y nada se descarga: se fabrica con
-// osciladores. Por eso no hay copia posible ni factura de licencias.
+// Pues eso. El orden de la sala cambia y la música sintetizada baja al
+// sótano, donde debe estar:
+//
+//  ① MÚSICA REAL — trece pistas de verdad (bandas militares, orquestas de
+//     1910, un tenor de los treinta, una grabación de campo), todas de
+//     dominio público o CC0, con su licencia y su fuente a la vista y su
+//     enlace comprobado el 2026-11-12. Se sirven desde archive.org: la casa
+//     no aloja ni un byte de audio ajeno.
+//  ② LA RADIO DE CONFLICTO — emisoras reales comprobadas + la radio de la
+//     casa (ambiente sintetizado y boletín leído del archivo real).
+//  ③ LOS SONIDOS DE GUERRA — sirena, morse, estática, explosión, radar,
+//     helicóptero y tambor.
+//  ④ EL TALLER DE LA CASA — el motor de composición de la v367.3, plegado y
+//     declarado como lo que es: un taller de experimentos. No se borra (regla
+//     de la casa), pero deja de ser lo primero que suena.
 // ============================================================
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Square, Radio, Volume2, VolumeX, Music2, ShieldAlert } from "lucide-react";
+import { Play, Square, Radio, Volume2, VolumeX } from "lucide-react";
 import {
-  SELLO,
-  armarForma,
-  duracionLegible,
-  duracionPieza,
-  type Pieza,
-} from "@/lib/musica/forma";
+  ETIQUETA_CATEGORIA,
+  MUSICA_REAL,
+  cuentaMusicaReal,
+  minutos,
+  type CategoriaMusica,
+  type PistaReal,
+} from "@/lib/musica/catalogo";
+import { SELLO, armarForma, duracionLegible, duracionPieza, type Pieza } from "@/lib/musica/forma";
 import { HIMNO, MUSICA_CASA } from "@/lib/musica/piezas";
+import { alCambiarMotor, pararMusica, setVolumen, tocar, type EstadoMotor } from "@/lib/musica/motor";
 import {
-  alCambiarMotor,
-  pararMusica,
-  setVolumen,
-  tocar,
-  type EstadoMotor,
-} from "@/lib/musica/motor";
-import {
-  EMISORAS,
   NOMBRE_TEATRO,
   RADIOS_CASA,
   cuentaVerificadas,
@@ -50,14 +51,12 @@ interface Cable {
   titulo: string;
   fuente: string;
 }
-
 interface TeatroCronica {
   tag: string;
   hoy: number;
   semana: number;
   ultimo: Cable | null;
 }
-
 interface ParteCronica {
   ok: boolean;
   teatros: TeatroCronica[];
@@ -75,25 +74,29 @@ const SONIDOS: { id: Efecto; nombre: string; nota: string }[] = [
   { id: "tambor", nombre: "TAMBOR", nota: "marcha, un golpe" },
 ];
 
-const FAMILIA: Record<Pieza["familia"], { etiqueta: string; clase: string }> = {
-  himno: { etiqueta: "HIMNO", clase: "border-amber-500/60 text-amber-300" },
-  tributo: { etiqueta: "TRIBUTO DE PULSO", clase: "border-sky-500/40 text-sky-300" },
-  militar: { etiqueta: "MILITAR", clase: "border-red-500/40 text-red-300" },
-  casa: { etiqueta: "DE LA CASA", clase: "border-zinc-600 text-zinc-300" },
-};
+const ORDEN: CategoriaMusica[] = ["marcha", "orquesta", "voz", "ambiente"];
 
 export function MusicaSala() {
-  const [motor, setMotor] = useState<EstadoMotor>({ sonando: null, compas: 0, seccion: "—", vuelta: 0 });
-  const [vol, setVol] = useState(0.42);
-  const [mudo, setMudo] = useState(false);
+  // ── música real ──
+  const [pista, setPista] = useState<PistaReal | null>(null);
+  const [sonandoReal, setSonandoReal] = useState(false);
+  const [avisoPista, setAvisoPista] = useState("");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // ── radio ──
   const [teatro, setTeatro] = useState("ukraine");
   const [emisora, setEmisora] = useState<Emisora | null>(null);
   const [radioCasa, setRadioCasa] = useState(false);
   const [boletin, setBoletin] = useState("");
   const [aviso, setAviso] = useState("");
   const [parte, setParte] = useState<ParteCronica | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRadio = useRef<HTMLAudioElement | null>(null);
   const relojRef = useRef<number | null>(null);
+
+  // ── taller (motor sintetizado, plegado) ──
+  const [motor, setMotor] = useState<EstadoMotor>({ sonando: null, compas: 0, seccion: "—", vuelta: 0 });
+  const [vol, setVol] = useState(0.42);
+  const [mudo, setMudo] = useState(false);
 
   useEffect(() => alCambiarMotor(setMotor), []);
 
@@ -112,246 +115,261 @@ export function MusicaSala() {
       pararMusica(false);
       pararAmbiente();
       pararBoca();
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
+      if (audioRef.current) audioRef.current.pause();
+      if (audioRadio.current) audioRadio.current.pause();
       if (relojRef.current) window.clearInterval(relojRef.current);
     };
   }, []);
 
-  const cuadroHimno = useMemo(() => armarForma(HIMNO), []);
-  const seccionActual = motor.sonando === HIMNO.id ? motor.seccion : "—";
-
-  const alternarPieza = useCallback(
-    (p: Pieza) => {
-      cerrarRadio();
-      if (motor.sonando === p.id) {
-        pararMusica();
-        return;
-      }
-      const ok = tocar(p.id, { volumen: mudo ? 0 : vol });
-      if (!ok) setAviso("Este aparato no deja crear sonido (o el navegador lo bloquea). No se finge música.");
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [motor.sonando, mudo, vol],
-  );
-
-  const cerrarRadio = useCallback(() => {
+  const apagarTodo = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = "";
       audioRef.current = null;
     }
+    if (audioRadio.current) {
+      audioRadio.current.pause();
+      audioRadio.current.src = "";
+      audioRadio.current = null;
+    }
     pararAmbiente();
     pararBoca();
+    pararMusica();
     if (relojRef.current) {
       window.clearInterval(relojRef.current);
       relojRef.current = null;
     }
+    setSonandoReal(false);
     setEmisora(null);
     setRadioCasa(false);
   }, []);
 
-  const encenderEmisora = useCallback((e: Emisora) => {
-    pararMusica();
-    pararAmbiente();
-    pararBoca();
-    setRadioCasa(false);
-    setAviso("");
-    setEmisora(e);
-    const a = new Audio(e.url);
-    a.volume = 0.65;
-    audioRef.current = a;
-    const vigilante = window.setTimeout(() => {
-      if (a.readyState === 0 && audioRef.current === a) {
-        setAviso(
-          `«${e.nombre}» no ha abierto en 6 segundos desde tu aparato (puede estar caída o bloqueada). Enciende la RADIO DE LA CASA: siempre suena.`,
+  const ponerPista = useCallback(
+    (p: PistaReal) => {
+      apagarTodo();
+      setAvisoPista("");
+      setPista(p);
+      const a = new Audio(p.url);
+      a.volume = 0.7;
+      audioRef.current = a;
+      a.addEventListener("playing", () => setSonandoReal(true));
+      a.addEventListener("ended", () => setSonandoReal(false));
+      a.addEventListener("error", () => {
+        setSonandoReal(false);
+        setAvisoPista(
+          `«${p.nombre}» no ha abierto desde tu aparato. La ficha sigue ahí (${p.fuente}) para escucharla en el navegador. Puede que archive.org esté saturado: prueba otra pista o la radio de la casa.`,
         );
-      }
-    }, 6000);
-    a.addEventListener("playing", () => {
-      window.clearTimeout(vigilante);
-      setAviso("");
-    });
-    a.addEventListener("error", () => {
-      window.clearTimeout(vigilante);
-      setAviso(`«${e.nombre}» no responde desde tu aparato. Abajo está la RADIO DE LA CASA, que no depende de nadie.`);
-    });
-    void a.play().catch(() => {
-      setAviso(
-        `El navegador ha bloqueado el audio de «${e.nombre}». Pulsa otra vez el botón (los navegadores exigen un toque).`,
+      });
+      void a.play().catch(() =>
+        setAvisoPista("El navegador ha bloqueado el sonido: vuelve a pulsar la pista (exigen un toque)."),
       );
-    });
-  }, []);
+    },
+    [apagarTodo],
+  );
 
-  /** LA RADIO DE LA CASA: ambiente sintetizado + boletín leído del archivo real. */
-  const encenderRadioCasa = useCallback(() => {
-    pararMusica();
+  const pararPista = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
+      audioRef.current.src = "";
       audioRef.current = null;
-      setEmisora(null);
     }
+    setSonandoReal(false);
+  }, []);
+
+  // ── radio ──
+  const encenderEmisora = useCallback(
+    (e: Emisora) => {
+      apagarTodo();
+      setAviso("");
+      setEmisora(e);
+      const a = new Audio(e.url);
+      a.volume = 0.65;
+      audioRadio.current = a;
+      const vigilante = window.setTimeout(() => {
+        if (a.readyState === 0 && audioRadio.current === a) {
+          setAviso(
+            `«${e.nombre}» no ha abierto en 6 segundos desde tu aparato. Enciende la RADIO DE LA CASA: siempre suena.`,
+          );
+        }
+      }, 6000);
+      a.addEventListener("playing", () => {
+        window.clearTimeout(vigilante);
+        setAviso("");
+      });
+      a.addEventListener("error", () => {
+        window.clearTimeout(vigilante);
+        setAviso(`«${e.nombre}» no responde desde tu aparato. Abajo está la RADIO DE LA CASA.`);
+      });
+      void a.play().catch(() => setAviso("El navegador ha bloqueado la radio: vuelve a pulsar (exigen un toque)."));
+    },
+    [apagarTodo],
+  );
+
+  const encenderRadioCasa = useCallback(() => {
+    apagarTodo();
     const cfg = radioCasaDe(teatro);
     if (!cfg) return;
     arrancarAmbiente(cfg.ambiente);
     setRadioCasa(true);
-    setAviso("");
-
     const t = parte?.teatros.find((x) => x.tag === teatro);
     const nombre = NOMBRE_TEATRO[teatro] ?? teatro;
     let texto: string;
     if (!parte) {
-      texto = `Radio de la casa. No he podido leer el archivo ahora mismo, así que solo te doy el ambiente: no te invento un boletín.`;
+      texto = "Radio de la casa. No he podido leer el archivo ahora mismo, así que solo te doy el ambiente: no te invento un boletín.";
     } else if (!t || (t.semana === 0 && !t.ultimo)) {
       texto = `Radio de la casa, boletín de ${nombre}. El archivo no registra cables de este teatro en la ventana medida. Te lo digo tal cual: hoy esta frecuencia está en silencio.`;
     } else {
-      const ultimo = t.ultimo
-        ? ` Último cable, firmado por ${t.ultimo.fuente}: ${t.ultimo.titulo}.`
-        : "";
+      const ultimo = t.ultimo ? ` Último cable, firmado por ${t.ultimo.fuente}: ${t.ultimo.titulo}.` : "";
       texto = `Radio de la casa, boletín de ${nombre}. El archivo registra ${t.semana} cables en la ventana de siete días y ${t.hoy} en las últimas veinticuatro horas.${ultimo} Esto es lo que hay, ni más ni menos.`;
     }
     setBoletin(texto);
     decir(texto, { persona: "cronista" as PersonaId });
-    if (relojRef.current) window.clearInterval(relojRef.current);
-    // repite el boletín cada 45 s (radio de verdad: el parte vuelve)
-    relojRef.current = window.setInterval(() => {
-      decir(texto, { persona: "cronista" as PersonaId });
-    }, 45000);
-  }, [teatro, parte]);
+    relojRef.current = window.setInterval(() => decir(texto, { persona: "cronista" as PersonaId }), 45000);
+  }, [teatro, parte, apagarTodo]);
 
-  const cambiarVolumen = useCallback(
-    (v: number) => {
-      setVol(v);
-      setMudo(v === 0);
-      setVolumen(v);
-      if (audioRef.current) audioRef.current.volume = Math.min(1, v * 1.5);
+  const alternarPieza = useCallback(
+    (p: Pieza) => {
+      apagarTodo();
+      if (motor.sonando === p.id) return;
+      const ok = tocar(p.id, { volumen: mudo ? 0 : vol });
+      if (!ok) setAvisoPista("Este aparato no deja crear sonido (o el navegador lo bloquea).");
     },
-    [],
+    [motor.sonando, mudo, vol, apagarTodo],
   );
 
+  const cuadroHimno = useMemo(() => armarForma(HIMNO), []);
   const verificadas = cuentaVerificadas();
+  const musica = cuentaMusicaReal();
   const listaEmisoras = emisorasDeTeatro(teatro);
   const cfgCasa = radioCasaDe(teatro);
 
   return (
     <div className="flex flex-col gap-5">
-      {/* ── EL HIMNO ── */}
+      {/* ══════════ ① MÚSICA REAL ══════════ */}
       <section className="rounded-md border border-amber-500/40 bg-amber-500/5 p-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-400">
-              EL HIMNO DE VANGUARD
+              MÚSICA REAL · {musica.total} PISTAS · DOMINIO PÚBLICO Y CC0
             </p>
-            <h2 className="mt-1 text-xl font-bold text-zinc-100">{HIMNO.nombre}</h2>
-            <p className="mt-1 text-sm text-zinc-400">{HIMNO.lema}</p>
+            <h2 className="mt-1 text-xl font-bold text-zinc-100">Lo que suena de verdad</h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Bandas militares, orquestas de 1910, un tenor de los años treinta y una grabación de
+              campo. Música hecha por otros, copiada exactamente, con su licencia a la vista.
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={() => alternarPieza(HIMNO)}
-            className="inline-flex items-center gap-2 rounded-sm border border-amber-500/60 bg-amber-500/15 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-amber-200 hover:bg-amber-500/25"
-          >
-            {motor.sonando === HIMNO.id ? <Square size={13} /> : <Play size={13} />}
-            {motor.sonando === HIMNO.id ? "silencio" : "tocar el himno"}
-          </button>
-        </div>
-
-        <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[9px] uppercase tracking-[0.14em] text-zinc-500">
-          <span>{HIMNO.bpm} bpm</span>
-          <span>·</span>
-          <span>{duracionLegible(duracionPieza(HIMNO))}</span>
-          <span>·</span>
-          <span>sección: <b className="text-amber-300">{seccionActual}</b></span>
-          <span>·</span>
-          <span>vuelta {motor.vuelta + 1}</span>
-        </div>
-
-        {/* la forma, a la vista: esto es lo que impide que la pieza se deforme */}
-        <div className="mt-3 flex gap-1">
-          {cuadroHimno.map((c) => (
-            <div
-              key={c.idx}
-              title={`compás ${c.idx + 1} · sección ${c.nombre}`}
-              className={`h-2 flex-1 rounded-sm ${
-                motor.sonando === HIMNO.id && motor.compas === c.idx
-                  ? "bg-amber-400"
-                  : c.nombre === "A" || c.nombre === "A2"
-                    ? "bg-amber-500/40"
-                    : c.nombre === "B"
-                      ? "bg-sky-500/40"
-                      : "bg-zinc-700"
-              }`}
-            />
-          ))}
-        </div>
-
-        <p className="mt-2 font-mono text-[9px] leading-relaxed text-zinc-500">
-          SELLO DE LA CASA: {SELLO.join(" · ")} — las cuatro notas que se repiten en cada sección.
-          Forma A-B-A: presenta, contrasta y vuelve. Por eso se recuerda.
-        </p>
-        <p className="mt-1 font-mono text-[9px] leading-relaxed text-zinc-600">{HIMNO.nota}</p>
-      </section>
-
-      {/* ── LAS PIEZAS ── */}
-      <section className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
-            LAS PIEZAS DE LA CASA · con forma y sin deriva
-          </p>
-          <label className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-zinc-400">
-            {mudo ? <VolumeX size={12} /> : <Volume2 size={12} />}
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.02}
-              value={vol}
-              onChange={(e) => cambiarVolumen(Number(e.target.value))}
-              className="w-24 accent-amber-400"
-            />
-          </label>
-        </div>
-
-        <div className="mt-3 grid gap-2">
-          {MUSICA_CASA.filter((p) => p.familia !== "himno").map((p) => {
-            const fam = FAMILIA[p.familia];
-            const sonando = motor.sonando === p.id;
-            return (
-              <div
-                key={p.id}
-                className={`rounded-sm border px-3 py-2 ${sonando ? "border-amber-500/50 bg-amber-500/10" : "border-zinc-800 bg-zinc-950/40"}`}
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest text-zinc-400">
+              {mudo ? <VolumeX size={12} /> : <Volume2 size={12} />}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.02}
+                value={vol}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  setVol(v);
+                  setMudo(v === 0);
+                  setVolumen(v);
+                  if (audioRef.current) audioRef.current.volume = v;
+                  if (audioRadio.current) audioRadio.current.volume = v;
+                }}
+                className="w-20 accent-amber-400"
+              />
+            </label>
+            {sonandoReal || emisora || radioCasa ? (
+              <button
+                type="button"
+                onClick={apagarTodo}
+                className="inline-flex items-center gap-1 rounded-sm border border-red-500/40 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-red-300"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-mono text-[11px] uppercase tracking-widest text-zinc-100">
-                      {p.nombre}{" "}
-                      <span className={`ml-1 rounded-sm border px-1 py-0.5 text-[8px] ${fam.clase}`}>
-                        {fam.etiqueta}
-                      </span>
-                    </p>
-                    <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-500">
-                      {p.lema} · {p.bpm} bpm · {duracionLegible(duracionPieza(p))}
-                      {p.tributoA ? ` · pulso de ${p.tributoA}` : ""}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => alternarPieza(p)}
-                    className="inline-flex items-center gap-1 rounded-sm border border-zinc-700 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-zinc-300 hover:border-amber-hud hover:text-amber"
-                  >
-                    {sonando ? <Square size={11} /> : <Play size={11} />}
-                    {sonando ? "parar" : "tocar"}
-                  </button>
+                <Square size={11} /> silencio
+              </button>
+            ) : null}
+          </div>
+        </div>
+
+        {pista && sonandoReal ? (
+          <p className="mt-3 rounded-sm border border-amber-500/30 bg-zinc-950/60 px-2 py-1 font-mono text-[10px] text-amber-200">
+            ▸ SUENA: {pista.nombre} — {pista.autor} · {pista.licencia}
+          </p>
+        ) : null}
+
+        {avisoPista ? (
+          <p className="mt-2 rounded-sm border border-amber-500/30 bg-zinc-950/60 px-2 py-1 font-mono text-[9px] leading-relaxed text-amber-200">
+            ⚠ {avisoPista}
+          </p>
+        ) : null}
+
+        <div className="mt-4 flex flex-col gap-4">
+          {ORDEN.map((cat) => {
+            const lista = MUSICA_REAL.filter((p) => p.categoria === cat);
+            if (lista.length === 0) return null;
+            return (
+              <div key={cat}>
+                <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-zinc-500">
+                  {ETIQUETA_CATEGORIA[cat]} · {lista.length}
+                </p>
+                <div className="mt-2 grid gap-2">
+                  {lista.map((p) => {
+                    const activa = pista?.id === p.id && sonandoReal;
+                    return (
+                      <div
+                        key={p.id}
+                        className={`rounded-sm border px-3 py-2 ${activa ? "border-amber-500/60 bg-amber-500/10" : "border-zinc-800 bg-zinc-950/40"}`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="font-mono text-[11px] uppercase tracking-widest text-zinc-100">
+                              {p.nombre} <span className="text-zinc-500">· {minutos(p.duracionSeg)}</span>
+                            </p>
+                            <p className="font-mono text-[9px] uppercase tracking-[0.1em] text-zinc-500">
+                              {p.autor} · {p.licencia}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => (activa ? pararPista() : ponerPista(p))}
+                              className="inline-flex items-center gap-1 rounded-sm border border-zinc-700 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-zinc-200 hover:border-amber-hud hover:text-amber"
+                            >
+                              {activa ? <Square size={11} /> : <Play size={11} />}
+                              {activa ? "parar" : "escuchar"}
+                            </button>
+                            <a
+                              href={p.fuente}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded-sm border border-zinc-800 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300"
+                              title="Ficha original en archive.org (fuente y licencia)"
+                            >
+                              fuente
+                            </a>
+                          </div>
+                        </div>
+                        <p className="mt-1 font-mono text-[9px] leading-relaxed text-zinc-600">{p.descripcion}</p>
+                        <p className="font-mono text-[8px] uppercase tracking-[0.1em] text-zinc-700">
+                          enlace comprobado {p.comprobada} · HTTP {p.http} · audio/mpeg
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
-                <p className="mt-1 font-mono text-[9px] leading-relaxed text-zinc-600">{p.nota}</p>
               </div>
             );
           })}
         </div>
+
+        <p className="mt-3 font-mono text-[9px] leading-relaxed text-zinc-600">
+          Todas son de dominio público o CC0: se pueden escuchar sin permiso de nadie y la licencia
+          está escrita en cada ficha. El audio se sirve desde archive.org — la casa no aloja ni un
+          byte de música ajena. Las canciones modernas con derechos (Terranova, «Tu locura es mi
+          ciencia») NO se pueden enlazar ni copiar, y aquí no se finge que sí.
+        </p>
       </section>
 
-      {/* ── LA RADIO ── */}
+      {/* ══════════ ② LA RADIO ══════════ */}
       <section className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
           RADIO DE CONFLICTO · {verificadas.verificadas} emisoras reales comprobadas de {verificadas.total}
@@ -388,9 +406,7 @@ export function MusicaSala() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-100">
-                      {e.nombre}
-                    </p>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-100">{e.nombre}</p>
                     <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-500">
                       {e.pais} · {e.idioma} ·{" "}
                       <span className={e.verificada === "SIN VERIFICAR" ? "text-red-300" : "text-emerald-300"}>
@@ -432,36 +448,19 @@ export function MusicaSala() {
               </button>
             </div>
             {radioCasa && boletin ? (
-              <p className="mt-2 whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-zinc-300">
-                {boletin}
-              </p>
+              <p className="mt-2 whitespace-pre-wrap font-mono text-[10px] leading-relaxed text-zinc-300">{boletin}</p>
             ) : null}
           </div>
         ) : null}
-
-        {(emisora || radioCasa || ambienteSonando()) && (
-          <button
-            type="button"
-            onClick={cerrarRadio}
-            className="mt-3 inline-flex items-center gap-1 rounded-sm border border-red-500/40 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-red-300"
-          >
-            <Square size={11} /> apagar la radio
-          </button>
-        )}
 
         {aviso ? (
           <p className="mt-2 rounded-sm border border-amber-500/30 bg-amber-500/5 px-2 py-1 font-mono text-[9px] leading-relaxed text-amber-200">
             ⚠ {aviso}
           </p>
         ) : null}
-
-        <p className="mt-2 font-mono text-[9px] leading-relaxed text-zinc-600">
-          Las emisoras reales son enlaces externos: si caen, la casa lo dice y ofrece la suya. La radio
-          de la casa NO enlaza a nadie y no puede caerse: se fabrica en tu aparato.
-        </p>
       </section>
 
-      {/* ── SONIDOS DE GUERRA ── */}
+      {/* ══════════ ③ SONIDOS DE GUERRA ══════════ */}
       <section className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
           SONIDOS DE GUERRA · sintetizados aquí
@@ -479,22 +478,85 @@ export function MusicaSala() {
             </button>
           ))}
         </div>
-        <p className="mt-2 font-mono text-[9px] leading-relaxed text-zinc-600">
-          Ni un archivo de audio viaja con la casa: todo son osciladores y ruido del propio aparato.
-          Por eso no hay licencias, ni copia, ni factura.
-        </p>
       </section>
 
-      <p className="flex items-start gap-2 font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-zinc-600">
-        <ShieldAlert size={12} className="mt-0.5 shrink-0" />
-        La música de Vanguard es original: mismos pulsos, melodías nuevas. El sello de cuatro notas y la
-        forma A-B-A son lo que la hace reconocible — no la repetición de una canción ajena.
+      {/* ══════════ ④ EL TALLER (plegado) ══════════ */}
+      <details className="rounded-md border border-zinc-800 bg-zinc-900/40 p-4">
+        <summary className="cursor-pointer font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400">
+          EL TALLER DE LA CASA · composición sintetizada (v367.3) — plegado
+        </summary>
+        <p className="mt-2 font-mono text-[9px] leading-relaxed text-zinc-600">
+          Aquí está el motor de composición que se hizo en la ronda anterior: himno, tributos de pulso
+          y marchas fabricadas con osciladores. Se queda como taller de experimentos y NO se borra
+          (regla de la casa), pero ya no es lo primero que suena: arriba está la música de verdad.
+        </p>
+
+        <div className="mt-3 rounded-sm border border-amber-500/30 bg-amber-500/5 px-3 py-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-amber-300">
+                HIMNO DEL TALLER · {HIMNO.nombre}
+              </p>
+              <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-zinc-500">
+                {HIMNO.bpm} bpm · {duracionLegible(duracionPieza(HIMNO))} · sección{" "}
+                <b className="text-amber-300">{motor.sonando === HIMNO.id ? motor.seccion : "—"}</b> · sello{" "}
+                {SELLO.join("·")}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => alternarPieza(HIMNO)}
+              className="inline-flex items-center gap-1 rounded-sm border border-amber-500/50 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-amber-200"
+            >
+              {motor.sonando === HIMNO.id ? <Square size={11} /> : <Play size={11} />}
+              {motor.sonando === HIMNO.id ? "silencio" : "tocar"}
+            </button>
+          </div>
+          <div className="mt-2 flex gap-1">
+            {cuadroHimno.map((c) => (
+              <div
+                key={c.idx}
+                className={`h-1.5 flex-1 rounded-sm ${
+                  motor.sonando === HIMNO.id && motor.compas === c.idx
+                    ? "bg-amber-400"
+                    : c.nombre === "A" || c.nombre === "A2"
+                      ? "bg-amber-500/40"
+                      : c.nombre === "B"
+                        ? "bg-sky-500/40"
+                        : "bg-zinc-700"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-2 grid gap-1.5">
+          {MUSICA_CASA.filter((p) => p.familia !== "himno").map((p) => (
+            <div
+              key={p.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-zinc-800 bg-zinc-950/40 px-2 py-1.5"
+            >
+              <p className="font-mono text-[9px] uppercase tracking-widest text-zinc-400">
+                {p.nombre} · {p.bpm} bpm · {p.familia}
+              </p>
+              <button
+                type="button"
+                onClick={() => alternarPieza(p)}
+                className="rounded-sm border border-zinc-700 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-zinc-400 hover:text-amber"
+              >
+                {motor.sonando === p.id ? "parar" : "tocar"}
+              </button>
+            </div>
+          ))}
+        </div>
+      </details>
+
+      <p className="font-mono text-[9px] uppercase leading-relaxed tracking-[0.12em] text-zinc-600">
+        Arriba, música real con licencia libre. Abajo, el taller de la casa. Ninguna canción con
+        derechos se copia aquí.
       </p>
     </div>
   );
 }
 
 export default MusicaSala;
-
-// (marca de la casa: el icono de música se usa en la cabecera de la sala)
-export const ICONO_SALA = Music2;

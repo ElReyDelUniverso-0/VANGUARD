@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.4",
+    nombre: "MÚSICA DE VERDAD Y EL CATÁLOGO",
+    hitos: [
+      "MÚSICA REAL (lib/musica/catalogo.ts) — trece pistas de verdad: bandas militares (Colonel Bogey, American Patrol, Radetzky, Washington Post, Liberty Bell, National Emblem, Jolly Coppersmith), orquestas de 1910 del catálogo de la Biblioteca del Congreso, un tenor de los años treinta y una grabación de campo CC0. Todas de dominio público o CC0, con licencia y fuente a la vista y enlace comprobado (HTTP 206) el 2026-11-12. La casa no aloja ni un byte de audio ajeno ni copia una sola canción con derechos",
+      "EL TALLER PLEGADO (/musica) — el motor sintetizado de la v367.3 no se borra (regla de la casa) pero baja al sótano: deja de ser lo primero que suena y queda declarado como taller de experimentos. Arriba manda la música real, con su autor, su licencia y su fuente",
+      "EL CATÁLOGO DE LO QUE YA EXISTE (/catalogo, lib/catalogo-real.ts) — cien piezas reales de la casa: 43 salas con su ruta navegable, 37 paneles ya construidos, 15 motores y 5 puntos de datos. Generadas leyendo el árbol del repositorio, no escritas a mano; cada entrada lleva su archivo de origen como prueba y las salas se abren con un clic",
+      "LA HONESTIDAD DEL CATÁLOGO — las pistas reales se declaran con fecha de comprobación y código HTTP; lo que no se pudo comprobar no entra. Y las canciones modernas con derechos (Terranova, «Tu locura es mi ciencia») no se enlazan ni se copian: la sala lo dice con esas palabras en vez de disfrazarlo",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v367.3",
     nombre: "LA MÚSICA CON FORMA",
     hitos: [
