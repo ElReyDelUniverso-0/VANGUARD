@@ -33,6 +33,14 @@ export function GrabadorAudio() {
   const relojRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const vigiaRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vivoRef = useRef(true);
+  const cargarMuro = useCallback(async () => {
+    try {
+      const r = await fetch("/api/audios", { cache: "no-store" });
+      const j = await r.json();
+      if (j?.ok && vivoRef.current) setMuro(j.audios ?? []);
+    } catch {}
+  }, []);
+
   useEffect(() => {
     vivoRef.current = true;
     cargarMuro();
@@ -40,7 +48,7 @@ export function GrabadorAudio() {
       vivoRef.current = false;
       cortarFlujos();
     };
-  }, []);
+  }, [cargarMuro]);
 
   const cortarFlujos = () => {
     if (relojRef.current) clearInterval(relojRef.current);
@@ -51,14 +59,6 @@ export function GrabadorAudio() {
       recRef.current?.stream.getTracks().forEach((t) => t.stop());
     } catch {}
   };
-
-  const cargarMuro = useCallback(async () => {
-    try {
-      const r = await fetch("/api/audios", { cache: "no-store" });
-      const j = await r.json();
-      if (j?.ok && vivoRef.current) setMuro(j.audios ?? []);
-    } catch {}
-  }, []);
 
   const parar = useCallback(() => {
     try {

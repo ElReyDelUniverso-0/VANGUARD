@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { VanguardEmblem } from "@/components/vanguard/vanguard-logo";
 import { getRankForLevel, xpForLevel } from "@/lib/game-data";
 import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
@@ -191,35 +192,9 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
           <div className="flex items-center gap-1.5 sm:gap-2 mr-auto min-w-0">
             <div
               className="w-7 h-7 sm:w-10 sm:h-10 hud-corner flex-shrink-0 flex items-center justify-center v101-logo"
-              style={{ background: "radial-gradient(circle at 50% 40%, #241a04 0%, #120c03 55%, #050508 100%)" }}
               title="VANGUARD · El Mundo, la Inteligencia y el Tiempo"
             >
-              {/* v101.0 EL REGRESO: emblema total — el mundo con el ojo integrado,
-                  la órbita del satélite (el tiempo) y la estrella de la vanguardia */}
-              <svg viewBox="0 0 64 64" className="w-full h-full" aria-label="Emblema de Vanguard" role="img">
-                <defs>
-                  <linearGradient id="hud-oro" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ffe08a" />
-                    <stop offset="45%" stopColor="#f5c542" />
-                    <stop offset="100%" stopColor="#c98a10" />
-                  </linearGradient>
-                  <radialGradient id="hud-iris" cx="50%" cy="44%" r="58%">
-                    <stop offset="0%" stopColor="#fff3c4" />
-                    <stop offset="55%" stopColor="#f0b428" />
-                    <stop offset="100%" stopColor="#8a5c06" />
-                  </radialGradient>
-                </defs>
-                <ellipse cx="32" cy="33" rx="27" ry="11.5" fill="none" stroke="#8a6410" strokeWidth="1.6" opacity="0.7" transform="rotate(-24 32 33)" />
-                <circle cx="54.2" cy="26.4" r="2.4" fill="#ffe08a" />
-                <circle cx="32" cy="33" r="17.5" fill="#0e0a04" stroke="url(#hud-oro)" strokeWidth="2" />
-                <ellipse cx="32" cy="33" rx="8.2" ry="17.5" fill="none" stroke="url(#hud-oro)" strokeWidth="1.4" opacity="0.8" />
-                <path d="M14.5 33 H49.5" stroke="url(#hud-oro)" strokeWidth="1.4" opacity="0.8" />
-                <path d="M20.5 33 Q32 24.5 43.5 33 Q32 41.5 20.5 33 Z" fill="#0d0304" stroke="#f5c542" strokeWidth="1.8" />
-                <circle cx="32" cy="33" r="6.2" fill="url(#hud-iris)" />
-                <circle cx="32" cy="33" r="2.6" fill="#050001" />
-                <circle cx="29.9" cy="30.9" r="1.2" fill="#fff6e0" opacity="0.95" />
-                <path d="M32 2.6 L33.4 7.8 L38.4 6.2 L35.2 10.3 L38.4 14.4 L33.4 12.8 L32 18 L30.6 12.8 L25.6 14.4 L28.8 10.3 L25.6 6.2 L30.6 7.8 Z" fill="url(#hud-oro)" />
-              </svg>
+              <VanguardEmblem size={40} idPrefix="hud-mark" className="w-full h-full" />
             </div>
             <div className="leading-tight min-w-0">
               {/* v139 3D BRUTAL: el wordmark ya no es texto — es un HOLOGRAMA

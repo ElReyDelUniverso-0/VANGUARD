@@ -15,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Dices, Fingerprint, X, Clapperboard, CornerDownLeft, Images, Globe2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { SECTIONS, type TabKey } from "@/components/vanguard/tab-nav";
 import { sugerenciasGoogles } from "@/lib/googles";
 import { buscarImagenes } from "@/lib/imagenes-data";
@@ -31,25 +32,28 @@ export function LetrasVivas({ compact = false, onClick }: { compact?: boolean; o
   return (
     <button
       onClick={onClick}
-      className="gbar-logo flex items-end select-none shrink-0"
+      className="gbar-logo flex items-center gap-1.5 select-none shrink-0"
       aria-label="VANGUARD — ir al inicio"
       title="VANGUARD · The World Intelligence Platform"
     >
-      {letras.map((l, i) => (
-        <span
-          key={i}
-          className={cn("lv-letra font-display font-black", compact ? "text-[15px] sm:text-lg" : "text-lg sm:text-2xl")}
-          style={
-            {
-              "--i": i,
-              color: LETRA_HEX[i % LETRA_HEX.length],
-              textShadow: `0 0 ${10 + (i % 3) * 4}px ${LETRA_HEX[i % LETRA_HEX.length]}66`,
-            } as React.CSSProperties
-          }
-        >
-          {l}
-        </span>
-      ))}
+      <VanguardMarkSvg size={compact ? 22 : 28} idPrefix={compact ? "gbar-c" : "gbar-m"} className="shrink-0" />
+      <span className="inline-flex items-end">
+        {letras.map((l, i) => (
+          <span
+            key={i}
+            className={cn("lv-letra font-display font-black", compact ? "text-[15px] sm:text-lg" : "text-lg sm:text-2xl")}
+            style={
+              {
+                "--i": i,
+                color: LETRA_HEX[i % LETRA_HEX.length],
+                textShadow: `0 0 ${10 + (i % 3) * 4}px ${LETRA_HEX[i % LETRA_HEX.length]}66`,
+              } as React.CSSProperties
+            }
+          >
+            {l}
+          </span>
+        ))}
+      </span>
     </button>
   );
 }

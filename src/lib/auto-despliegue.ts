@@ -19,7 +19,6 @@
 // Economía: la mirada al repo se hace COMO MÁXIMO 1 vez cada 5 minutos por
 // instancia (guard en memoria) — da igual cuántos clientes pregunten.
 
-import { execFile } from "child_process";
 import { APP_VERSION } from "@/lib/version";
 
 const REPO_RAW =
@@ -43,21 +42,21 @@ export function compararVersiones(a: string, b: string): number {
   return 0;
 }
 
-/** Descarga el version.ts del repo y extrae APP_VERSION (curl-first: la huella
- *  TLS de node a veces la bloquean — mismo patrón probado de /api/pulso). */
-function leerVersionRemota(): Promise<string | null> {
-  return new Promise((resolve) => {
-    execFile(
-      "curl",
-      ["-sg", "--max-time", "9", "-H", "Accept: text/plain", REPO_RAW],
-      { timeout: 11_000 },
-      (err, stdout) => {
-        if (err || !stdout) return resolve(null);
-        const m = String(stdout).match(/APP_VERSION\s*=\s*"([^"]+)"/);
-        resolve(m ? m[1] : null);
-      }
-    );
-  });
+/** Descarga el version.ts del repo con fetch nativo y extrae APP_VERSION. */
+async function leerVersionRemota(): Promise<string | null> {
+  try {
+    const res = await fetch(REPO_RAW, {
+      headers: { Accept: "text/plain" },
+      signal: AbortSignal.timeout(9_000),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const stdout = await res.text();
+    const m = stdout.match(/APP_VERSION\s*=\s*"([^"]+)"/);
+    return m ? m[1] : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface EstadoDespliegue {

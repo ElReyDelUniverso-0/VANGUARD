@@ -73,9 +73,9 @@ async function cacheLeer(k: string, ttlMs: number): Promise<Record<string, unkno
       "redaccion_cache",
       "CREATE TABLE IF NOT EXISTS redaccion_cache (k TEXT PRIMARY KEY, v TEXT NOT NULL, ts BIGINT NOT NULL)"
     );
-    const rows = await db.$queryRawUnsafe<{ v: string; ts: bigint }[]>(
-      `SELECT v, ts FROM redaccion_cache WHERE k = '${k.replace(/'/g, "''")}' LIMIT 1`
-    );
+    const rows = await db.$queryRaw<{ v: string; ts: bigint }[]>`
+      SELECT v, ts FROM redaccion_cache WHERE k = ${k} LIMIT 1
+    `;
     if (rows.length === 0) return null;
     const ts = Number(rows[0].ts);
     if (Date.now() - ts > ttlMs) return null;
@@ -91,11 +91,12 @@ async function cacheGuardar(k: string, valor: unknown): Promise<void> {
       "redaccion_cache",
       "CREATE TABLE IF NOT EXISTS redaccion_cache (k TEXT PRIMARY KEY, v TEXT NOT NULL, ts BIGINT NOT NULL)"
     );
-    const v = JSON.stringify(valor).replace(/'/g, "''");
-    await db.$executeRawUnsafe(
-      `INSERT INTO redaccion_cache (k, v, ts) VALUES ('${k.replace(/'/g, "''")}', '${v}', ${Date.now()})
-       ON CONFLICT (k) DO UPDATE SET v = '${v}', ts = ${Date.now()}`
-    );
+    const v = JSON.stringify(valor);
+    const ahora = Date.now();
+    await db.$executeRaw`
+      INSERT INTO redaccion_cache (k, v, ts) VALUES (${k}, ${v}, ${ahora})
+      ON CONFLICT (k) DO UPDATE SET v = excluded.v, ts = excluded.ts
+    `;
   } catch {
     /* la caché jamás tumba la respuesta */
   }

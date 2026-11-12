@@ -4,6 +4,7 @@ import { HISTORICAL_WARS } from "@/lib/game-data";
 import { buildInstantaneaMundo, type InstantaneaMundo } from "@/lib/mundo-datos";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import { Mundo3DVivo } from "./mundo-3d-vivo";
 
@@ -359,8 +360,8 @@ export default async function MundoPage({ searchParams }: Props) {
       </main>
       <noscript>
         <div className="max-w-7xl mx-auto px-5 pb-12">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-            ◉ VANGUARD · EL MUNDO
+          <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+            <VanguardMarkSvg size={14} idPrefix="mundo-ns" /> VANGUARD · EL MUNDO
           </p>
           <p className="mt-2 text-sm text-zinc-400 max-w-md">
             El globo 3D necesita JavaScript. Lee las guerras de hoy en{" "}

@@ -112,6 +112,7 @@ const COLOR_CATEGORIA: Record<string, string> = {
 export default async function PulsoMundialPage() {
   const snap = leerInstantanea();
   const { cables, error: bdError } = await leerCronologia();
+  const ahoraServidor = Date.now();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -199,7 +200,7 @@ export default async function PulsoMundialPage() {
                   El archivo de cables está vacío o mudo — cronología SIN SEÑAL, declarado honesto.
                 </p>
               )}
-              <WorldPulseVivo snap={snap} cables={cables} anioWpi={anioWpiVivo(snap)} />
+              <WorldPulseVivo snap={snap} cables={cables} anioWpi={anioWpiVivo(snap)} ahoraServidor={ahoraServidor} />
             </>
           )}
         </section>

@@ -20,6 +20,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { haceDe } from "@/lib/pulsos-data";
 import { TEATROS } from "@/lib/teatros";
 // v231.0 EL LATIDO — el país de origen del cable deja de ser dato muerto:
@@ -385,8 +386,8 @@ export function VertigoFeed({
     return (
       <main className="h-[100dvh] bg-zinc-950 text-zinc-200 flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-            ◉ VANGUARD · EL VÉRTIGO
+          <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+            <VanguardMarkSvg size={14} idPrefix="vert-empty" /> VANGUARD · EL VÉRTIGO
           </p>
           <h1 className="mt-3 text-xl font-bold text-zinc-100">
             El archivo está callado ahora
@@ -412,9 +413,10 @@ export function VertigoFeed({
       <div className="absolute top-0 inset-x-0 z-30 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
         <Link
           href="/"
-          className="pointer-events-auto font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+          className="pointer-events-auto inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
         >
-          ◉ VANGUARD
+          <VanguardMarkSvg size={18} idPrefix="vert-mark" />
+          <span>VANGUARD</span>
         </Link>
         <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-zinc-300">
           EL VÉRTIGO · {idx + 1}/{cables.length}

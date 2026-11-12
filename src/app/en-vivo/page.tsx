@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { instantaneaPulso } from "@/lib/pulso";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { SalaEnVivo, type CableVivo, type StatsVivo } from "./sala-en-vivo";
@@ -151,8 +152,8 @@ export default async function EnVivoPage() {
       <noscript>
         <main className="min-h-screen bg-zinc-950 text-zinc-200 flex items-center justify-center px-6">
           <div className="text-center max-w-md">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-              ◉ VANGUARD · EL PULSO
+            <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+              <VanguardMarkSvg size={14} idPrefix="pulso-ns" /> VANGUARD · EL PULSO
             </p>
             <h1 className="mt-3 text-xl font-bold text-zinc-100">
               La sala EN VIVO necesita JavaScript

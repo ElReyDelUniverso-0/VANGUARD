@@ -104,13 +104,11 @@ export function Vigo({ size = 120, burbuja, acento = "#F5C542", className }: Vig
           <circle className="vg193-luz-roja" cx="33" cy="78.5" r="2.2" fill="#FF3B30" />
           <circle className="vg193-baliza" cx="87" cy="78.5" r="2.2" fill="#3DDC97" />
 
-          {/* cuerpo con la V de Vanguard grabada */}
+          {/* cuerpo con el emblema Polaris + alas de Vanguard grabado */}
           <path d="M38 83 L82 83 L74 118 L60 124 L46 118 Z" fill="url(#vg193-cuerpo)" stroke="#8A6410" strokeWidth="1.6" />
-          <path
-            d="M50 90 L60 110 L70 90 L65 90 L60 101 L55 90 Z"
-            fill={acento}
-            opacity="0.95"
-          />
+          <path d="M48 93 L53 93 L60 107 L60 113 Z" fill="#FFF0BA" opacity="0.92" />
+          <path d="M72 93 L67 93 L60 107 L60 113 Z" fill={acento} opacity="0.92" />
+          <path d="M60 86.5 L61 89.5 L64 90.5 L61 91.5 L60 94.5 L59 91.5 L56 90.5 L59 89.5 Z" fill="#FFF7D6" />
           {/* remaches */}
           <circle cx="43" cy="86" r="1.3" fill="#FFE08A" opacity="0.7" />
           <circle cx="77" cy="86" r="1.3" fill="#FFE08A" opacity="0.7" />

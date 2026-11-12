@@ -42,6 +42,9 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     }
 
     if (action === "status") {
+      if (!sesionDuenoReq(req)) {
+        return NextResponse.json({ error: "Solo el administrador puede cambiar el estado" }, { status: 403 });
+      }
       const status = String(body.status ?? "");
       if (!["RECIBIDA", "INVESTIGACION", "VERIFICADA", "DESCARTADA"].includes(status)) {
         return NextResponse.json({ error: "Estado inválido" }, { status: 400 });

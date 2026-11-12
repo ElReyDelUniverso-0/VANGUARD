@@ -75,6 +75,7 @@ agent-ctx/
 worklog.md
 qa-v96-*.png
 download/
+*.pid
 .srv.pid
 
 # v204 EL ESCUDO — los backups de la SQLite NUNCA viajan al repo

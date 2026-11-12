@@ -121,7 +121,6 @@ export function AtlasSecreto() {
 
   useEffect(() => { setEstado(cargarAtlas()); }, []);
 
-  const dia = Math.floor(Date.now() / 86_400_000);
   const reconocidos = estado.reconIds.length;
   const rango = [...RANGOS].reverse().find((r) => reconocidos >= r.min) ?? RANGOS[0];
   const filtrados = useMemo(
@@ -143,6 +142,7 @@ export function AtlasSecreto() {
       return;
     }
     setSel(lugar); setInforme(null); setEscaneando(true); sfx.coin();
+    const dia = Math.floor(Date.now() / 86_400_000);
     window.setTimeout(() => {
       const inf = informeDe(lugar, dia);
       setInforme(inf); setEscaneando(false); sfx.reward();

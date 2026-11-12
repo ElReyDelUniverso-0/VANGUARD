@@ -1082,6 +1082,10 @@ export default function Home() {
   // evita la trampa cazada en QA: la persistencia corriendo ANTES de la
   // hidratación sobreescribía el archivo con ["inicio"] y se perdía la sesión.
   const hidratado = useRef(false);
+  const handleTabChangeRef = useRef(handleTabChange);
+  useEffect(() => {
+    handleTabChangeRef.current = handleTabChange;
+  }, [handleTabChange]);
   useEffect(() => {
     const id = setTimeout(() => {
       try {
@@ -1128,7 +1132,7 @@ export default function Home() {
         const guardadaActiva = localStorage.getItem("vg-cromo-activa-v106");
         if (cama.abrirFavorito && cama.favorito && ALL_TABS.includes(cama.favorito) && !guardadaActiva) {
           forceDirRef.current = 1;
-          handleTabChange(cama.favorito);
+          handleTabChangeRef.current(cama.favorito);
         }
       } catch { /* la casa abre en INICIO igual */ }
       hidratado.current = true;

@@ -131,7 +131,7 @@ export function Mundo3DVivo({ inicial, teatroInicial, guerras, guerraInicialId }
     }
   });
 
-  const sondear = async () => {
+  const sondear = useCallback(async () => {
     if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
     try {
       const res = await fetch("/api/mundo", { cache: "no-store" });
@@ -141,15 +141,16 @@ export function Mundo3DVivo({ inicial, teatroInicial, guerras, guerraInicialId }
     } catch {
       /* el próximo latido vuelve a intentarlo */
     }
-  };
+  }, []);
 
   // latido del planeta: sondeo cada 60 s; si la server no pudo entregar la
   // instantánea (BD fría), el primer latido sale diferido — sin cascadas
+  const tieneInicial = Boolean(inicial);
   useEffect(() => {
     const t = setInterval(() => {
       void sondear();
     }, 60_000);
-    if (!inicial) {
+    if (!tieneInicial) {
       const primero = setTimeout(() => {
         void sondear();
       }, 350);
@@ -161,7 +162,7 @@ export function Mundo3DVivo({ inicial, teatroInicial, guerras, guerraInicialId }
     return () => {
       clearInterval(t);
     };
-  }, []);
+  }, [sondear, tieneInicial]);
 
   // v222.0 LA PLUMA — el planeta dejo de re-digerir en cada toque: los
   // datos derivados del globo (marcadores, arcos, territorios) viven en

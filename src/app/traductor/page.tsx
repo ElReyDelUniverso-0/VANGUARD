@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { IDIOMAS_VANGUARD } from "@/lib/idiomas";
 import { paresGlosario } from "@/lib/glosario-tactico";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -189,8 +190,8 @@ export default function TraductorPage() {
         {/* v236.0 noscript — las puertas esenciales sin JS */}
         <noscript>
           <div className="border-t border-zinc-800 bg-zinc-900/80 px-5 py-8 text-center">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-sky-300">
-              ◉ VANGUARD · MODO TRADUCTOR
+            <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-sky-300">
+              <VanguardMarkSvg size={14} idPrefix="trad-ns" /> VANGUARD · MODO TRADUCTOR
             </p>
             <p className="mt-2 text-sm text-zinc-400 max-w-md mx-auto">
               El estudio de traducción necesita JavaScript. Las puertas de la

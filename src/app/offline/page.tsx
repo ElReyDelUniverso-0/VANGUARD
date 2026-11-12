@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BotonReintentar } from "./boton-reintentar";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 
 // v210.0 EL REFUGIO — la sala de emergencia. Vive en el service worker:
 // si el visitante pierde la conexión (señal lenta, avión, corte del barrio),
@@ -35,8 +36,9 @@ export default function FueraDeLinea() {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-200 flex items-center justify-center px-5">
       <div className="max-w-md w-full text-center">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-          ◉ VANGUARD · REFUGIO
+        <p className="inline-flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+          <VanguardMarkSvg size={18} idPrefix="off-mark" />
+          <span>VANGUARD · REFUGIO</span>
         </p>
         <h1 className="mt-4 text-2xl font-bold text-zinc-100">
           No hay conexión

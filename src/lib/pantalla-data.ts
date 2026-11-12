@@ -48,8 +48,8 @@ export function diaUtc(d = new Date()): string {
 
 // ilustraciones del mundo Vanguard por ambiente (todas originales del juego)
 const IMG = {
-  guerra: ["/ilustraciones/camaras.jpg", "/ilustraciones/frente.jpg", "/ilustraciones/warsim.jpg", "/ilustraciones/combate.jpg", "/ilustraciones/dron.jpg", "/ilustraciones/sirenas.jpg"],
-  analisis: ["/ilustraciones/osint.jpg", "/ilustraciones/centinela.jpg", "/ilustraciones/radar.jpg", "/ilustraciones/mapa.jpg", "/ilustraciones/geoint.jpg", "/ilustraciones/planeta.jpg"],
+  guerra: ["/ilustraciones/camaras.jpg", "/ilustraciones/frente.jpg", "/ilustraciones/warsim.jpg", "/ilustraciones/combate.jpg", "/ilustraciones/dronguerra.jpg", "/ilustraciones/crisis.jpg"],
+  analisis: ["/ilustraciones/osint.jpg", "/ilustraciones/centinela.jpg", "/ilustraciones/radar.jpg", "/ilustraciones/mapa.jpg", "/ilustraciones/ojo-dios.jpg", "/ilustraciones/planeta.jpg"],
   archivo: ["/ilustraciones/biblioteca.jpg", "/ilustraciones/historia.jpg", "/ilustraciones/epocas.jpg", "/ilustraciones/muertes.jpg", "/ilustraciones/tribunal.jpg", "/ilustraciones/oscura.jpg"],
   mundo: ["/ilustraciones/cielos.jpg", "/ilustraciones/sismo.jpg", "/ilustraciones/planeta.jpg", "/ilustraciones/mundial.jpg", "/ilustraciones/canales.jpg", "/ilustraciones/estudio.jpg"],
 };

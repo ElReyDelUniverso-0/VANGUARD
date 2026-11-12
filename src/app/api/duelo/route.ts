@@ -19,7 +19,7 @@ async function ensureTables() {
   await asegurarTabla(
     "site_duelos",
     `    CREATE TABLE IF NOT EXISTS site_duelos (
-      id BIGSERIAL PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       from_uid TEXT NOT NULL,
       from_alias TEXT NOT NULL DEFAULT '',
       to_uid TEXT NOT NULL,
@@ -85,12 +85,13 @@ export async function GET(req: Request) {
     if (!uid) return NextResponse.json({ ok: true, activas: [], acabadas: [] });
 
     // caducar duelos abandonados: paseo para quien respondió; bote nulo si nadie
-    await db.$executeRawUnsafe(`
+    const cutoff = Date.now() - VIDA_MS;
+    await db.$executeRaw`
       UPDATE site_duelos SET estado = 'acabada', ganador = CASE
         WHEN from_resp IS NOT NULL THEN from_uid
         WHEN to_resp IS NOT NULL THEN to_uid
         ELSE NULL END
-      WHERE estado = 'activa' AND ts < ${Date.now() - VIDA_MS}`).catch(() => {});
+      WHERE estado = 'activa' AND ts < ${cutoff}`.catch(() => {});
 
     const rows = await db.$queryRaw<{
       id: bigint | number; from_uid: string; from_alias: string; to_uid: string; to_alias: string;
@@ -168,10 +169,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, error: "Ya retaste a ese guerrero hace un momento — espera su respuesta" });
       }
       const q = BANCO[Math.floor(Math.random() * BANCO.length)];
+      const ahora = Date.now();
       await db.$executeRaw`
         INSERT INTO site_duelos (from_uid, from_alias, to_uid, to_alias, pregunta, opciones, correcta, apuesta, ts)
-        VALUES (${uid}, ${alias}, ${online[0].uid}, ${aliasRival}, ${q.p}, ${JSON.stringify(q.o)}, ${q.c}, ${apuesta}, ${Date.now()})`;
-      await db.$executeRawUnsafe(`DELETE FROM site_duelos WHERE ts < ${Date.now() - 40 * 60_000}`).catch(() => {});
+        VALUES (${uid}, ${alias}, ${online[0].uid}, ${aliasRival}, ${q.p}, ${JSON.stringify(q.o)}, ${q.c}, ${apuesta}, ${ahora})`;
+      await db.$executeRaw`DELETE FROM site_duelos WHERE ts < ${ahora - 40 * 60_000}`.catch(() => {});
       return NextResponse.json({ ok: true, rival: aliasRival });
     }
 
@@ -189,11 +191,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, error: "Ese duelo ya no está activo" });
       }
       const soyFrom = d.from_uid === uid;
-      await db.$executeRawUnsafe(
-        soyFrom
-          ? `UPDATE site_duelos SET from_resp = ${resp}, from_ms = ${ms} WHERE id = ${id}`
-          : `UPDATE site_duelos SET to_resp = ${resp}, to_ms = ${ms} WHERE id = ${id}`
-      );
+      if (soyFrom) {
+        await db.$executeRaw`UPDATE site_duelos SET from_resp = ${resp}, from_ms = ${ms} WHERE id = ${id}`;
+      } else {
+        await db.$executeRaw`UPDATE site_duelos SET to_resp = ${resp}, to_ms = ${ms} WHERE id = ${id}`;
+      }
       // ¿ya respondieron los dos? → resolver
       const after = await db.$queryRaw<{ from_resp: number | null; to_resp: number | null; correcta: number; from_uid: string; to_uid: string; from_ms: number | null; to_ms: number | null }[]>`
         SELECT from_resp, to_resp, correcta, from_uid, to_uid, from_ms, to_ms FROM site_duelos WHERE id = ${id} LIMIT 1`;

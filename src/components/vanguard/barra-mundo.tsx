@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 
 // v215.0 EL MUNDO — la barra superior compartida por las tres puertas
 // nuevas del planeta: /mundo (globo 3D), /espia (radar de gobiernos)
@@ -44,9 +45,10 @@ export function BarraMundo({ activa }: { activa: Puerta }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
         <Link
           href="/"
-          className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+          className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
         >
-          ◉ VANGUARD
+          <VanguardMarkSvg size={20} idPrefix="bmundo" />
+          <span>VANGUARD</span>
         </Link>
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           {PUERTAS.map((p) => (

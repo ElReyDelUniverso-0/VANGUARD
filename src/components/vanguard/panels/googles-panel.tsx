@@ -819,7 +819,7 @@ function VistaNoticias({ onBuscar: _onBuscar }: { onBuscar: (q: string) => void 
           <p className="text-[10px] text-white/35 tracking-wide">EDICIÓN DE HOY · {fuente} · {lista.length} titulares</p>
           {lista[0] && (
             <motion.button
-              onClick={() => lista[0].url && window.open(lista[0].url, "_blank")}
+              onClick={() => lista[0].url && window.open(lista[0].url, "_blank", "noopener,noreferrer")}
               className="w-full text-left border border-[#FF8A5C]/35 bg-gradient-to-br from-[#170d08]/90 to-[#0a0a0f]/95 rounded-2xl p-4 hover:border-[#FF8A5C]/70 transition-colors"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             >
@@ -834,7 +834,7 @@ function VistaNoticias({ onBuscar: _onBuscar }: { onBuscar: (q: string) => void 
                 key={n.id}
                 className="border border-white/10 hover:border-[#FFC94D]/40 bg-white/[0.03] hover:bg-[#FFC94D]/[0.05] rounded-xl p-3 transition-colors cursor-pointer"
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3) }}
-                onClick={() => n.url && window.open(n.url, "_blank")}
+                onClick={() => n.url && window.open(n.url, "_blank", "noopener,noreferrer")}
               >
                 <span className="text-[8px] font-black tracking-widest" style={{ color: TAG_HEX[n.tacticalTag?.toUpperCase() ?? "ANALISIS"] ?? "#9A9AA5" }}>
                   {n.tacticalTag?.toUpperCase() || "MUNDO"}

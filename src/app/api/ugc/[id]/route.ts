@@ -42,7 +42,8 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
         });
         if (existing) {
           await db.ugcVote.delete({ where: { id: existing.id } });
-          const updated = await db.ugcItem.update({ where: { id }, data: { likes: { decrement: 1 } } });
+          const nextLikes = Math.max(0, item.likes - 1);
+          const updated = await db.ugcItem.update({ where: { id }, data: { likes: nextLikes } });
           return NextResponse.json({ liked: false, likes: updated.likes });
         }
         await db.ugcVote.create({ data: { itemId: id, voter, kind: "like" } });

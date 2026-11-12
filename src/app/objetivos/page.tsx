@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import {
   ACHIEVEMENTS,
   CABLEADO_BLOQUES,
@@ -316,9 +317,10 @@ export default function ObjetivosPage() {
         <div className="max-w-4xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
           >
-            ◉ VANGUARD
+            <VanguardMarkSvg size={18} idPrefix="obj-mark" />
+            <span>VANGUARD</span>
           </Link>
           <Link
             href="/guerra-hoy"
@@ -701,8 +703,8 @@ export default function ObjetivosPage() {
       {/* v235.0 noscript — la vitrina honesta sin JS: las puertas esenciales */}
       <noscript>
         <div className="border-t border-zinc-800 bg-zinc-900/80 px-5 py-8 text-center">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-            ◉ VANGUARD · LOS 100 OBJETIVOS
+          <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+            <VanguardMarkSvg size={14} idPrefix="obj-ns" /> VANGUARD · LOS 100 OBJETIVOS
           </p>
           <p className="mt-2 text-sm text-zinc-400 max-w-md mx-auto">
             Tu progreso real vive en el aparato y necesita JavaScript. Las

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
@@ -79,9 +80,10 @@ export default function EscudoPage() {
           <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
             <Link
               href="/"
-              className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
             >
-              ◉ VANGUARD
+              <VanguardMarkSvg size={18} idPrefix="esc-mark" />
+              <span>VANGUARD</span>
             </Link>
             <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
               ley v204 · el escudo

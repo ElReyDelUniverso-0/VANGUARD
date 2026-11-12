@@ -4,6 +4,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import { TEATROS } from "@/lib/teatros";
 import { colorTension, haceDe } from "@/lib/mundo";
@@ -390,8 +391,8 @@ export default async function EspiaPage() {
             nada se refresca solo). La casa lo dice en vez de fingir. */}
         <noscript>
           <div className="border-t border-zinc-800 bg-zinc-900/80 px-5 py-8 text-center">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-cyan-300">
-              ◉ VANGUARD · MODO ESPÍA
+            <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-cyan-300">
+              <VanguardMarkSvg size={14} idPrefix="espia-ns" /> VANGUARD · MODO ESPÍA
             </p>
             <p className="mt-2 text-sm text-zinc-400 max-w-md mx-auto">
               Este radar se lee entero sin JavaScript — el índice, las escuchas

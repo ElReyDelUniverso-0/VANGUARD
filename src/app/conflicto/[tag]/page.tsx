@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
@@ -294,9 +295,10 @@ export default async function ConflictoPage({
         <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
           >
-            ◉ VANGUARD
+            <VanguardMarkSvg size={18} idPrefix="ctag-mark" />
+            <span>VANGUARD</span>
           </Link>
           <Link
             href="/guerra-hoy"

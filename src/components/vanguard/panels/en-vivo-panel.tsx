@@ -595,9 +595,9 @@ function WatchCommunity({ stream, alias, cbAvatar, onBack }: { stream: LiveStrea
   const share = (net: "x" | "wa" | "tg" | "copy") => {
     const txt = `🔴 ${live.streamerName} está en vivo en VANGUARD: "${live.title}"`;
     const url = typeof window !== "undefined" ? window.location.href : "";
-    if (net === "x") window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(url)}`, "_blank");
-    if (net === "wa") window.open(`https://wa.me/?text=${encodeURIComponent(`${txt} ${url}`)}`, "_blank");
-    if (net === "tg") window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(txt)}`, "_blank");
+    if (net === "x") window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(txt)}&url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer");
+    if (net === "wa") window.open(`https://wa.me/?text=${encodeURIComponent(`${txt} ${url}`)}`, "_blank", "noopener,noreferrer");
+    if (net === "tg") window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(txt)}`, "_blank", "noopener,noreferrer");
     if (net === "copy") { navigator.clipboard?.writeText(`${txt} ${url}`).then(() => toast.success("Enlace copiado")); }
   };
 

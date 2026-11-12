@@ -11,6 +11,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 // v259.0 EL TEATRO CON NOMBRE — el catálogo canónico de la casa (la misma
 // fuente única que viste /conflicto/[tag] y el sitemap): los teatros de la
 // sala dejan de ser tags crudos y hablan humano. Fallback honesto: si un
@@ -202,8 +203,9 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
       {/* ===== cabecera de la sala ===== */}
       <div className="border-b border-zinc-800 bg-zinc-950/95 sticky top-0 z-20">
         <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
-          <Link href="/" className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300">
-            ◉ VANGUARD
+          <Link href="/" className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300">
+            <VanguardMarkSvg size={18} idPrefix="vivo-mark" />
+            <span>VANGUARD</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/vertigo" className="font-mono text-[10px] uppercase tracking-widest text-amber-500/90 hover:text-amber-300">

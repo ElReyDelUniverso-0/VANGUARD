@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 
 // v202.0 PUERTAS ABIERTAS — si un cable salió del aire (se retiró del pozo),
 // el visitante de Google no se pierde: se le ofrece el mundo en vivo.
@@ -7,8 +8,9 @@ export default function NoticiaNotFound() {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-200 flex items-center justify-center px-5">
       <div className="max-w-md text-center py-16">
-        <div className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-          ◉ VANGUARD
+        <div className="inline-flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+          <VanguardMarkSvg size={18} idPrefix="notnf-mark" />
+          <span>VANGUARD</span>
         </div>
         <h1 className="mt-4 text-2xl font-bold text-zinc-100">
           Este cable salió del aire

@@ -89,6 +89,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   }
 
   if (action === "badge") {
+    if (!isAdmin) return NextResponse.json({ error: "Solo el administrador puede otorgar badges" }, { status: 403 });
     // badge especial manual (ej. "Reportero Verificado")
     const badge = String(body?.badge || "").slice(0, 30);
     if (!badge) return NextResponse.json({ error: "Falta badge" }, { status: 400 });

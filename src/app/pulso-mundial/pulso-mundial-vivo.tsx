@@ -66,8 +66,8 @@ const PERIODOS: { dias: number | null; texto: string }[] = [
   { dias: null, texto: "todo el archivo" },
 ];
 
-function hace(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime();
+function hace(iso: string, ahora: number): string {
+  const ms = ahora - new Date(iso).getTime();
   if (!Number.isFinite(ms) || ms < 0) return "ahora";
   const min = Math.floor(ms / 60000);
   if (min < 60) return `hace ${min} min`;
@@ -152,15 +152,17 @@ interface Props {
   snap: InstantaneaPulso;
   cables: CableCronologia[];
   anioWpi: number;
+  ahoraServidor: number;
 }
 
-export function WorldPulseVivo({ snap, cables, anioWpi }: Props) {
+export function WorldPulseVivo({ snap, cables, anioWpi, ahoraServidor }: Props) {
   const [vista, setVista] = useState<Vista>("actividad");
   // filtros compartidos de ACTIVIDAD y CRONOLOGÍA
   const [continente, setContinente] = useState<string>("");
   const [iso3, setIso3] = useState<string>("");
   const [categoria, setCategoria] = useState<string>("");
   const [periodo, setPeriodo] = useState<number | null>(null);
+  const [ahoraRef, setAhoraRef] = useState<number>(ahoraServidor);
   // INDICADORES
   const [iso3Ind, setIso3Ind] = useState<string>("WLD");
   const [indCat, setIndCat] = useState<CategoriaPulso>("ECONOMIA");
@@ -319,7 +321,10 @@ export function WorldPulseVivo({ snap, cables, anioWpi }: Props) {
           </select>
           <select
             value={periodo === null ? "" : String(periodo)}
-            onChange={(e) => setPeriodo(e.target.value === "" ? null : Number(e.target.value))}
+            onChange={(e) => {
+              setAhoraRef(Date.now());
+              setPeriodo(e.target.value === "" ? null : Number(e.target.value));
+            }}
             className="bg-zinc-900 border border-zinc-700 rounded px-2 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-amber-500"
             aria-label="Período histórico"
           >
@@ -347,7 +352,7 @@ export function WorldPulseVivo({ snap, cables, anioWpi }: Props) {
             <div className="border border-zinc-800 rounded-lg p-3 bg-zinc-900/40">
               <p className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">Última señal</p>
               <p className="text-sm font-bold text-zinc-200 pt-1.5">
-                {cablesFiltrados.length > 0 ? hace(cablesFiltrados[0].fecha) : "SIN SEÑAL en el filtro"}
+                {cablesFiltrados.length > 0 ? hace(cablesFiltrados[0].fecha, ahoraRef) : "SIN SEÑAL en el filtro"}
               </p>
             </div>
             <div className="border border-zinc-800 rounded-lg p-3 bg-zinc-900/40">
@@ -381,7 +386,7 @@ export function WorldPulseVivo({ snap, cables, anioWpi }: Props) {
                       </span>
                     )}
                     <FlagBadge code={c.pais ?? undefined} />
-                    <span className="font-mono text-[9px] text-zinc-500">{hace(c.fecha)}</span>
+                    <span className="font-mono text-[9px] text-zinc-500">{hace(c.fecha, ahoraRef)}</span>
                   </div>
                   <Link
                     href={`/noticia/${c.id}`}

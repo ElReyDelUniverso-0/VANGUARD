@@ -82,7 +82,7 @@ const DOCS: Doc[] = [
   },
   {
     id: "doc-eco", title: "Manual de guerra económica: sanciones que sí funcionan", level: "RESTRINGIDO", cost: 1000, year: "2014-2024",
-    image: "/assets/wiki/leader-putin.jpg",
+    image: "/assets/real/ship-1.jpg",
     excerpt: "Diez años de datos sobre qué sanciones cambiaron conductas y cuáles solo cambiaron rutas.",
     body: [
       "Efectividad medida: las sanciones sectoriales reducen PIB objetivo 0.8-2.4% anual, pero desvían comercio hacia terceros países en 9-18 meses. Las sanciones a individuos casi nunca alteran políticas.",

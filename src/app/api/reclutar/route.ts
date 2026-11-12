@@ -19,7 +19,7 @@ async function ensureTables() {
   await asegurarTabla(
     "site_invites",
     `    CREATE TABLE IF NOT EXISTS site_invites (
-      id BIGSERIAL PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       from_uid TEXT NOT NULL,
       from_nacion TEXT NOT NULL DEFAULT '',
       from_union TEXT NOT NULL DEFAULT '',
@@ -85,10 +85,11 @@ export async function POST(req: Request) {
       if (dup[0]) {
         return NextResponse.json({ ok: false, error: "Ya le enviaste invitación a ese guerrero hace un momento" });
       }
+      const ahora = Date.now();
       await db.$executeRaw`
         INSERT INTO site_invites (from_uid, from_nacion, from_union, to_uid, ts)
-        VALUES (${uid}, ${mia[0].nombre}, ${mia[0].union_name || ""}, ${online[0].uid}, ${Date.now()})`;
-      await db.$executeRawUnsafe(`DELETE FROM site_invites WHERE ts < ${Date.now() - VIDA_MS}`).catch(() => {});
+        VALUES (${uid}, ${mia[0].nombre}, ${mia[0].union_name || ""}, ${online[0].uid}, ${ahora})`;
+      await db.$executeRaw`DELETE FROM site_invites WHERE ts < ${ahora - VIDA_MS}`.catch(() => {});
       return NextResponse.json({ ok: true, objetivo: online[0].uid });
     }
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { TEATROS } from "@/lib/teatros";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 
 // v210.0 EL REFUGIO — la puerta que faltaba. Next.js servía su 404 de
 // fábrica: una página blanca, sin marca, sin salida, que rompía la sala
@@ -25,9 +26,10 @@ export default function NoEncontrado() {
         <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
           >
-            ◉ VANGUARD
+            <VanguardMarkSvg size={18} idPrefix="nf-mark" />
+            <span>VANGUARD</span>
           </Link>
           <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
             Error 404 · Sala inexistente

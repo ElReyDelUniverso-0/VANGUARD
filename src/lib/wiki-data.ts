@@ -273,7 +273,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   // ================= PARTIDOS =================
   {
     id: "democratas", cat: "PARTIDOS", title: "Partido Demócrata (EEUU)", subtitle: "El burro azul", dates: "Fundado en 1828", region: "Estados Unidos",
-    img: "/assets/wiki/party-dem.jpg",
     stats: [{ label: "Antigüedad", value: "El partido activo mas antiguo del mundo" }, { label: "Sello", value: "Centro-izquierda, estado social, derechos civiles" }, { label: "Presidentes clave", value: "FDR, Kennedy, Clinton, Obama, Biden" }, { label: "Base", value: "Ciudades, minorias, jovenes, costa" }],
     desc: "El Partido Demócrata nacio con Andrew Jackson y evoluciono del partido agrario y esclavista del sur al partido del New Deal y de los derechos civiles de la era Kennedy-Johnson. Hoy defiende Estado de bienestar, regulacion ambiental, aborto legal y control de armas.\n\nSu base electoral son las grandes ciudades, las minorias etnicas, mujeres jovenes y profesionales urbanos. El burro, popularizado por caricaturas de 1828 con burla, se convirtio en emblema orgulloso del partido.",
     facts: ["Es el partido politico activo mas antiguo del planeta.", "El color azul como identificador se solidificó en TV (2000).", "FDR gano 4 elecciones con la coalicion New Deal.", "El 'Super Tuesday' puede definir su nominacion en una noche."],
@@ -282,7 +281,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
   {
     id: "republicanos", cat: "PARTIDOS", title: "Partido Republicano (EEUU)", subtitle: "El partido de Lincoln", dates: "Fundado en 1854", region: "Estados Unidos",
-    img: "/assets/wiki/party-rep.jpg",
     stats: [{ label: "Origen", value: "Antiesclavista del norte (1854)" }, { label: "Sello", value: "Conservadurismo fiscal y social, libre mercado" }, { label: "Presidentes clave", value: "Lincoln, Eisenhower, Reagan, Trump" }, { label: "Base", value: "Rural, suburbios blancos, evangélicos, sur" }],
     desc: "Nacido como plataforma antiesclavista, el GOP llevo a Lincoln a la presidencia y a la guerra civil que abolió la esclavitud. Durante un siglo fue el partido de los negocios y el norte; la 'estrategia sur' desde los 60 lo convirtio en dominante en el sur conservador.\n\nHoy defiende bajas tasas, desregulación, armas, valores tradicionales y fronteras firmes. El elefante, de las caricaturas de Nast (1874), es su simbolo; el rojo su color televisivo moderno.",
     facts: ["Lincoln fue su primer presidente ganador (1860).", "GOP = 'Grand Old Party', su apodo desde los 1880.", "Reagan redefinio su coalicion con evangélicos y neoliberalismo.", "El vicepresidente presenta los votos del Colegio Electoral que el mismo podria disputar."],
@@ -291,7 +289,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
   {
     id: "laborista", cat: "PARTIDOS", title: "Partido Laborista (UK)", subtitle: "Nacido del sindicalismo", dates: "Fundado en 1900", region: "Reino Unido",
-    img: "/assets/wiki/party-lab.jpg",
     stats: [{ label: "Origen", value: "Comite de Representacion Obrera (1900)" }, { label: "Sello", value: "Socialdemocracia, NHS, derechos laborales" }, { label: "Lideres clave", value: "Attlee, Wilson, Blair, Corbyn, Starmer" }, { label: "Hito", value: "Estado de bienestar 1945-51" }],
     desc: "El Partido Laborista nacio de los sindicatos para dar representacion parlamentaria a la clase obrera. Bajo Attlee (1945) construyo el NHS, nacionalizo energias y ferrocarriles y desmantelo el imperio con independencia de India.\n\nTras el 'laborismo nuevo' de Blair (1997), que gano tres elecciones con centro reformado, volvio a la izquierda con Corbyn y al centro con Starmer, que arraso en 2024. El partido esta afiliado estructuralmente a los grandes sindicatos britanicos.",
     facts: ["El NHS (1948) es su obra mas amada: sanidad gratuita universal.", "Clause IV (1918) pedía propiedad colectiva; Blair la reescribió.", "Gano 419 escaños en 1997: la mayor marea del siglo.", "El 'rojo laborista' viene del cartismo y el movimiento obrero."],
@@ -300,7 +297,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
   {
     id: "conservador", cat: "PARTIDOS", title: "Partido Conservador (UK)", subtitle: "Los tories", dates: "Origen en 1834 (tradición tory s. XVII)", region: "Reino Unido",
-    img: "/assets/wiki/party-con.jpg",
     stats: [{ label: "Apodo", value: "Tories (del gaélico: forajidos irlandeses)" }, { label: "Sello", value: "Conservadurismo, corona, mercado" }, { label: "Lideres clave", value: "Churchill, Thatcher, Johnson" }, { label: "Hito", value: "Lidero Brexit (2016-2020)" }],
     desc: "El partido Conservador es la maquina electoral mas longeva de Occidente: de los tories jacobitas al partido de la Union y el imperio. Churchill lo lidero en la guerra; Thatcher redefinio el capitalismo britanico en los 80 con privatizaciones y victoria sobre los sindicatos.\n\nEl Brexit (2016) lo devolvio al poder bajo Johnson con mayoria arrolladora en 2019, antes de desplomarse en 2024 tras 14 anos de gobierno. Su pragmatismo camaleonico —'el partido del Estado'— lo ha mantenido vivo 190 anos.",
     facts: ["'Tory' era un insulto irlandés que asumieron con orgullo.", "Thatcher gano 3 elecciones seguidas (1979, 83, 87).", "En 1990 reemplazó a Thatcher por votación interna en solo días.", "Churchill fue conservador y liberal y conservador otra vez."],
@@ -309,7 +305,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
   {
     id: "cdu", cat: "PARTIDOS", title: "CDU (Alemania)", subtitle: "La fuerza de la posguerra", dates: "Fundada en 1945", region: "Alemania",
-    img: "/assets/wiki/party-cdu.jpg",
     stats: [{ label: "Fundacion", value: "1945, interconfesional (protestantes y católicos)" }, { label: "Sello", value: "Democracia cristiana, economia social de mercado" }, { label: "Lideres", value: "Adenauer, Kohl, Merkel" }, { label: "Record", value: "Merkel: 16 anos de cancilleria" }],
     desc: "La Union Cristianodemocrata unifico católicos y protestantes conservadores en la Alemania de posguerra. Konrad Adenauer la llevo a la fundacion de la Republica Federal, la OTAN y el 'milagro economico' con la economia social de mercado de Erhard.\n\nHelmut Kohl ejecuto la reunificacion de 1990 y Angela Merkel gobernó 16 anos convirtiendo a la CDU en maquina electoral centrista de referencia europea. Su red de asociaciones (juventud, mujeres, empresarios) sostiene su capilaridad territorial.",
     facts: ["Fue el primer gran partido alemán interconfesional (católicos+protestantes).", "Merkel fue la primera mujer canciller y la primera de la RDA.", "Kohl firmo el tratado de reunificacion en menos de un ano.", "Su 'villa' de reflexion, la Konrad-Adenauer-Stiftung, forma elites globales."],
@@ -318,7 +313,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
   {
     id: "pcc", cat: "PARTIDOS", title: "Partido Comunista Chino", subtitle: "90 millones de miembros", dates: "Fundado en 1921", region: "China",
-    img: "/assets/wiki/party-pcc.jpg",
     stats: [{ label: "Miembros", value: "~98 millones (el mayor del mundo)" }, { label: "En el poder", value: "Desde 1949 (partido unico)" }, { label: "Giro economico", value: "1978: reformas de mercado de Deng" }, { label: "Estructura", value: "Politburo y comite permanente de 7" }],
     desc: "El PCC es la organizacion politica mas grande del planeta y gobierna China sin oposicion desde 1949. Mao gano la guerra civil con la campesinado; Deng Xiaoping reorientó el partido hacia el capitalismo de Estado desde 1978, multiplicando el PIB por mas de 80.\n\nBajo Xi Jinping el partido centralizo poder, controla internet, ejercito y empresas, y promueve 'nacionalismo de rejuvenecimiento'. Sus 98 millones de miembros pasan por escuelas de partido y rendicion de cuentas internas; el acceso a cargos publicos pasa por sus filas.",
     facts: ["Nacio en Shanghai con solo 12 delegados (1921).", "Su 'comite permanente' de 7 hombres decide todo en China.", "Los miembros renuevan compromiso con ceremonia y puño alzado.", "Xi Jinping elimino el limite de dos mandatos en 2018."],
@@ -327,7 +321,6 @@ export const WIKI_ENTRIES: WikiEntry[] = [
   },
   {
     id: "cni", cat: "PARTIDOS", title: "Congreso Nacional Indio", subtitle: "El partido de Gandhi y Nehru", dates: "Fundado en 1885", region: "India",
-    img: "/assets/wiki/party-cni.jpg",
     stats: [{ label: "Fundacion", value: "1885 (partido mas viejo de Asia)" }, { label: "Lideres", value: "Gandhi (moral), Nehru, Indira, Rajiv, Sonia, Rahul" }, { label: "Sello", value: "Secularismo, no alineacion, reformas sociales" }, { label: "Hoy", value: "Principal oposicion frente al BJP" }],
     desc: "El Congreso Nacional Indio nacio como movimiento de elite educada y se convirtio, con Gandhi, en la maquina de masas de la independencia: satyagraha, boicots y la marcha de la sal. Goberno India casi sin interrupciones de 1947 a 1989 con Nehru, Indira Gandhi y Rajiv.\n\nSu legado: constitucion secular, no alineacion en la Guerra Fria, verde revolucion y reforma agraria parcial. En decadas recientes cayo frente al BJP nacionalista; la dinastia Nehru-Gandhi (sin parentesco con Mahatma) sigue marcando su vida interna.",
     facts: ["Indira Gandhi fue asesinada por sus propios guardias sij (1984).", "Su hijo Rajiv, ex-piloto, fue asesinado por un suicida tamil (1991).", "Nehru pronuncio el 'Tryst with destiny' al nacer la India libre.", "El simbolo del partido es la mano abierta."],

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { TEATROS } from "@/lib/teatros";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { VertigoFeed, type SalaVertigo, type CableVertigo } from "./vertigo-feed";
 
 // v211.0 EL VÉRTIGO — la puerta del feed infinito (fórmula TikTok para
@@ -103,8 +104,8 @@ export default async function VertigoPage() {
       <noscript>
         <main className="min-h-screen bg-zinc-950 text-zinc-200 flex items-center justify-center px-6">
           <div className="text-center max-w-md">
-            <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
-              ◉ VANGUARD · EL VÉRTIGO
+            <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
+              <VanguardMarkSvg size={14} idPrefix="vert-ns" /> VANGUARD · EL VÉRTIGO
             </p>
             <h1 className="mt-3 text-xl font-bold text-zinc-100">
               El feed infinito necesita JavaScript
