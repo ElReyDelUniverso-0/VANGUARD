@@ -1,4 +1,27 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v367.2 LA VOZ MAESTRA — petición del Dueño, textual: «su voz… tiene una voz
+//         robótica, no tiene diferentes voces, una voz sin pausa, una voz
+//         molesta y lee sin sentido; tampoco explica las noticias, no navega,
+//         no te ayuda, no puede tener una conversación larga; necesito que sea
+//         experta en geopolítica, que explique navegando y dando ejemplos».
+// ① BOCA QUE RESPIRA (src/lib/voz/limpiar.ts): el texto de pantalla se vuelve
+//    texto hablado — fuera markdown, URLs, emojis y claves internas (mod:/vg:),
+//    «%» → «por ciento», EEUU → «Estados Unidos», cifras pequeñas a palabras —
+//    y el discurso se trocea en bloques con PAUSA REAL (260 ms frase, 700 ms
+//    párrafo). El motor leía de un tirón: ese era el «sin pausa».
+// ② CUATRO PERSONAS (src/lib/voz/decir.ts): locutora, analista, general y
+//    cronista, cada una con velocidad, tono y voz preferida propias; censo de
+//    las voces del aparato puntuado 0-100 (neuronal arriba, eSpeak abajo), y
+//    confesión honesta cuando la mejor voz disponible es robótica por culpa
+//    del aparato, no de la casa. Gustos en LS vg3672-voz-maestra.
+// ③ EL MAESTRO (src/lib/agente/maestro.ts + saber.ts): cerebro determinista
+//    experto — 9 teatros y 15 conceptos escritos a mano (terreno, actores, por
+//    qué importa, qué vigilar, error común) — que responde con estructura de
+//    analista, cita el archivo REAL con fuente y fecha, navega a las rutas
+//    reales de la casa y sostiene 12 turnos de memoria. Cero cifras propias.
+// ④ /api/maestro + /voz: el cerebro nuevo por HTTP (mismo contrato que
+//    /api/asistente, muro 30/min) y la sala donde se ve, se lee y se oye. El
+//    orbe de siempre pasa a este cerebro sin cambiar su interfaz.
 // v218.0 EL NÚCLEO — mandato del Dueño: «diseña e implementa gradualmente el
 //         NÚCLEO CENTRAL de Vanguard… cada nueva función pueda conectarse al
 //         resto del ecosistema sin crear una página aislada».
@@ -5199,8 +5222,8 @@
 // el número v368.0 queda LIBRE para la fusión de la casa hermana ia2.
 // ============================================================
 
-export const APP_VERSION = "v367.1";
-export const APP_CODENAME = "EL OJO DEL DUEÑO";
+export const APP_VERSION = "v367.2";
+export const APP_CODENAME = "LA VOZ MAESTRA";
 // v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
 // autociclo y el mandato del Dueño («agrega estos tipos de navegación en
 // TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —

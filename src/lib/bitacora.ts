@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.2",
+    nombre: "LA VOZ MAESTRA",
+    hitos: [
+      "LA BOCA QUE RESPIRA (lib/voz/limpiar.ts) — el texto de panel deja de leerse tal cual: fuera markdown, URLs deletreadas, emojis y claves internas mod:/vg:, «%» pasa a «por ciento», EEUU a «Estados Unidos» y las cifras pequeñas a palabras; el discurso se trocea por frases y párrafos con silencios REALES de 260 y 700 ms. Era la mitad del «lee sin sentido» y del «sin pausa»",
+      "LAS CUATRO PERSONAS (lib/voz/decir.ts) — locutora, analista, general y cronista con velocidad, tono y voz propia; censo de las voces del aparato puntuado de 0 a 100 (neuronal arriba, eSpeak/compact abajo) para que el navegador no elija la primera del sistema; gustos en el aparato (vg3672-voz-maestra) y confesión honesta cuando la mejor voz disponible es robótica por culpa del aparato",
+      "EL MAESTRO EXPERTO EN GEOPOLÍTICA (lib/agente/maestro.ts + saber.ts) — nueve teatros y quince conceptos escritos a mano (terreno, actores, por qué importa, qué vigilar, error común), respuestas con estructura de analista en vez de 220 caracteres, doce turnos de memoria conversacional, navegación a las rutas reales de la casa y CERO cifras propias: todo número sale del archivo real con fuente y fecha",
+      "LA SALA DE LA VOZ (/voz) Y SU CEREBRO (/api/maestro) — la voz se ve, se lee y se oye en una página; el orbe de siempre pasa al cerebro nuevo sin cambiar su interfaz, y el micrófono nunca es obligatorio: si el aparato no sabe hablar, la casa escribe",
+    ],
+    tipo: "ia",
+  },
+  {
     version: "v367.1",
     nombre: "EL OJO DEL DUEÑO",
     hitos: [

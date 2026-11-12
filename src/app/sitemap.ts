@@ -368,6 +368,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       // v367.1 — el centinela personal: sala pública, contenido local del visitante
       url: `${SITE_URL}/centinela`,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      // v367.2 — LA VOZ MAESTRA: sala pública de la voz y del maestro
+      url: `${SITE_URL}/voz`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.5,
