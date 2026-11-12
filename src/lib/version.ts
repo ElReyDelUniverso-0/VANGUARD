@@ -5168,8 +5168,39 @@
 //     launcher ilustrado con .app-tile vivo — y vivo: home firma v363,
 //     health respalda) + rodillo v362.0 → v363.0 en los VALORES (ley v312:
 //     los nombres de pines quedan como memoria).
-export const APP_VERSION = "v367.0";
-export const APP_CODENAME = "EL IMÁN GLOBAL";
+// ============================================================
+// v367.1 EL OJO DEL DUEÑO — sobre v367.0 EL IMÁN GLOBAL, intacta
+//
+// El Dueño ordenó «arranca ya con las actualizaciones» y eligió el reparto
+// (tres o cinco módulos por ronda, no uno). Esta ronda entrega CUATRO piezas
+// que comparten una sola idea: LA CASA SE MIRA A SÍ MISMA Y CUENTA LA VERDAD.
+//
+// ① LA TORRE DE CONTROL (/torre): la telemetría de rescate que llevaba
+//    treinta mensajes viva en el inbox. Mide lo único que ninguna ronda
+//    anterior pudo ver — la SUPERVIVENCIA del arranque (arranca/hidrata) y
+//    el embudo real del camino (globo → tab → zona → sala) — más los cinco
+//    salvavidas. Cero tabla nueva (usa site_counter desde v34), cero dato
+//    personal (fnt:telemetria ya era privada desde v218), cero ms exactos
+//    (tramos).
+// ② LA CADENA DE LA VERDAD (src/lib/procedencia.ts + FuenteYFecha): el útil
+//    compartido para que cualquier sala diga en una línea de dónde sale su
+//    dato y de cuándo es — formato determinista en UTC, sin Intl, sin
+//    desajuste de hidratación.
+// ③ MODO CRÓNICA (/cronica): el parte del día derivado del archivo real en
+//    UNA sola lectura (patrón v262): teatros que hablaron, medios que
+//    firmaron, hora más cargada y último cable, todo con su fecha real.
+// ④ TU CENTINELA (/centinela): la lista de vigilancia del visitante — teatros
+//    y medios que él elige — cruzada con el parte real. Vive en su aparato y
+//    no viaja a ningún servidor: nadie sabe a quién sigue.
+//
+// Las cuatro viven en el censo del núcleo (mod:torre, mod:cronica,
+// mod:centinela) y respetan las leyes: 3D intacto, cero enlaces externos,
+// cero imágenes, fail-soft honesto (SIN SEÑAL antes que un cero fingido) y
+// el número v368.0 queda LIBRE para la fusión de la casa hermana ia2.
+// ============================================================
+
+export const APP_VERSION = "v367.1";
+export const APP_CODENAME = "EL OJO DEL DUEÑO";
 // v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
 // autociclo y el mandato del Dueño («agrega estos tipos de navegación en
 // TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —

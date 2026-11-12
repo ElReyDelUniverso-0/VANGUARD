@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.1",
+    nombre: "EL OJO DEL DUEÑO",
+    hitos: [
+      "LA TORRE DE CONTROL (/torre) — la telemetría de rescate que llevaba treinta mensajes viva en el inbox: supervivencia del arranque (arranca/hidrata), tramos de carga medidos en el aparato, embudo real globo→tab→zona→sala y las cuentas honestas de los cinco salvavidas v178→v184. Cero tabla nueva (site_counter, v34), cero dato personal (fnt:telemetria, privada desde v218), cero milisegundos exactos (tramos)",
+      "LA CADENA DE LA VERDAD (procedencia.ts + FuenteYFecha) — el útil compartido para que cualquier sala declare fuente y fecha en una línea, con formato determinista en UTC (sin Intl: cero desajuste de hidratación) y el «SIN SEÑAL» como respuesta legítima",
+      "MODO CRÓNICA (/cronica) — el parte del día en UNA sola lectura del archivo (patrón v262): teatros que hablaron con su última señal fechada, medios que firmaron, hora UTC más cargada y último cable. La ventana medida se declara en la cara del lector; cero cifras escritas a mano",
+      "TU CENTINELA (/centinela) — vigilancia personal de teatros y medios, cruzada con el parte real. La lista vive en el aparato del visitante (vg367-centinela) y no viaja a ningún servidor: sin permisos de notificaciones y sin un solo aviso inventado",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v306.0",
     nombre: "EL AIRE DEL PERMISO — la segunda cuchilla del mandato del Dueño (la v305 documentó, esta ronda aplica) y el hallazgo que nadie había visto: la cabecera Permissions-Policy de la ciudadela v102 (microphone=() — prohibir el micrófono A TODO EL MUNDO en la era sin voz) ESTRANGULABA la voz de la v299 — el navegador mataba el getUserMedia ANTES de mostrar el permiso al usuario; microphone=(self) devuelve el aire a la casa. Más las últimas 9 coerciones ciegas pagadas: CERO ley",
     hitos: [
