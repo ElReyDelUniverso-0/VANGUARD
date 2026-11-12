@@ -457,9 +457,9 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
   {
     id: "mod:catalogo",
     nombre: "EL CATÁLOGO DE LO QUE YA EXISTE",
-    lema: "Cien piezas reales con su puerta",
+    lema: "140 piezas reales con su puerta",
     descripcion:
-      "Índice generado del árbol del repositorio: 43 salas con su ruta navegable, 37 paneles ya construidos, 15 motores y 5 puntos de datos, cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
+      "Índice generado del árbol del repositorio: 43 salas con su ruta navegable, 45 paneles ya construidos, 27 motores y 25 puntos de datos (140 en total, v367.5), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
     categoria: "SISTEMA",
     ruta: "/catalogo",
     permiso: "publico",
@@ -467,6 +467,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:modulos"],
     alias:
       "catalogo indice inventario cien salas paneles motores api mapa de la casa lo que existe",
+  },
+  {
+    id: "mod:radio-real",
+    nombre: "LA RADIO REAL EN EL VANGUARD PÚBLICO",
+    lema: "Las trece pistas reales, barajadas, en toda la casa",
+    descripcion:
+      "Motor aleatorio de la música real: baraja las trece pistas de dominio público y CC0 del catálogo y las pone solas, una tras otra, en el reproductor global de la portada, de modo que suenan en todo el sitio público mientras se navega. Arranca al primer gesto del piloto (cero autoplay), apaga el motor sintetizado al encenderse y se para a los tres fallos seguidos diciéndolo. Cada pista declara autor, licencia y fuente.",
+    categoria: "SISTEMA",
+    ruta: "/",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:audios"],
+    alias:
+      "radio real aleatorio shuffle musica publica dominio publico cc0 archive pista barajar encender parar chip v367.5",
   },
 ];
 

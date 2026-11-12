@@ -33,6 +33,8 @@ import { sfx } from "@/lib/sound";
 import { getTension } from "@/lib/tension";
 // v302 EL MUNDO RESPIRA: el ambiente del mundo cuando la radio descansa
 import { estadoAmbiente, toggleAmbiente, resumeAmbienteSiQuerido, subscribeAmbiente, type EstadoAmbiente } from "@/lib/ambiente-mundo";
+import { RadioRealChip } from "@/components/vanguard/radio-real-chip";
+import { pararRadioReal, estadoRadioReal } from "@/lib/musica/radio-real";
 import { useT } from "@/lib/i18n";
 // v115.0 SINGULARIDAD: la radio SIENTE el cambio de era (1950↔2100) — la
 // sesión inteligente funde 7 s hacia la familia que pide la nueva época
@@ -209,6 +211,13 @@ export function MusicPlayer() {
       window.removeEventListener("keydown", despierta);
     };
   }, []);
+
+  // v367.5 LEY DE UNA SOLA VOZ (el otro lado): si el piloto enciende la
+  // Orquesta de Oro, la radio real se calla; y al revés lo hace el motor.
+  // Nunca suenan dos músicas a la vez en la misma casa.
+  useEffect(() => {
+    if (playing && estadoRadioReal().activa) pararRadioReal();
+  }, [playing]);
 
   // v299 EL MUNDO ESCUCHA: mientras la Radio suena, la Casa mide la tensión
   // real del mundo cada 5 s — el drone se abre y late el corazón de la sala
@@ -575,6 +584,13 @@ export function MusicPlayer() {
           <div className="hud-panel border-amber-hud/60 rounded-sm px-4 py-3">
             <Spectrum bars={32} big />
           </div>
+
+          {/* v367.5 LA MÚSICA REAL EN LA CASA — orden del Dueño: «que la música
+              esté toda en el Vanguard público y se ponga aleatoriamente». El
+              chip enciende el catálogo real (dominio público y CC0) barajado y
+              sigue sonando mientras se navega, porque este reproductor vive en
+              la portada y no se desmonta. */}
+          <RadioRealChip />
 
           {/* v299 LA LETRA DE LA OBRA — el cancionero en vivo: la parte que
               suena se ilumina (karaoke de la casa); letra propia, cero assets */}
@@ -959,6 +975,11 @@ export function MusicPlayer() {
             {expanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
           </button>
         </div>
+
+        {/* v367.5 LA MÚSICA REAL, SIEMPRE A LA VISTA — en la píldora de la
+            portada, no escondida en el Auditorio: un toque y las trece pistas
+            reales del catálogo empiezan a sonar barajadas por toda la casa. */}
+        <RadioRealChip compacto />
 
         {/* v299 LA LETRA: la línea que la obra canta ahora — karaoke en la píldora */}
         {playing && letra.texto && (
