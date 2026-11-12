@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
+  Box,
   Copy,
   Crown,
   ExternalLink,
@@ -123,9 +124,16 @@ export function MenuVanguardNovedades({
           <Link
             href="/teatro-3d"
             onClick={onClose}
-            className="px-3 py-1.5 rounded border border-[#FFC94D]/60 text-amber font-mono text-xs font-bold hover:bg-amber-hud/15 flex items-center gap-1"
+            className="px-3 py-1.5 rounded bg-[#FFC94D] text-black font-mono text-xs font-black hover:bg-[#ffd66b] flex items-center gap-1"
           >
-            <Crown className="w-3.5 h-3.5" /> #1 TEATRO 3D/2D
+            <Crown className="w-3.5 h-3.5" /> #1 TEATRO 3D (EDIFICIOS + MODO LIBRE)
+          </Link>
+          <Link
+            href="/teatro-3d?modo=libre"
+            onClick={onClose}
+            className="px-3 py-1.5 rounded border border-red-hud/60 text-red-hud font-mono text-xs font-black hover:bg-red-hud/15 flex items-center gap-1"
+          >
+            <Box className="w-3.5 h-3.5" /> MODO LIBRE 3D + NUCLEAR
           </Link>
           <Link
             href="/universo"

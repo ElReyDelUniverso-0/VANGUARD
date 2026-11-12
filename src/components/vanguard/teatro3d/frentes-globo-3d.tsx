@@ -12,6 +12,7 @@ import * as THREE from "three";
 import Globe, { type GlobeInstance } from "globe.gl";
 import worldPaths from "@/lib/world-paths.json";
 import type { FrenteVivo3D } from "@/lib/teatro-total-data";
+import { esDispositivoMovilOLigero } from "./glb-engine";
 
 type CapaGlobo = "satelite" | "nocturno" | "topografico";
 
@@ -97,12 +98,22 @@ export function FrentesGlobo3D({
     const width = el.clientWidth || 680;
     el.innerHTML = "";
 
+    const movil = esDispositivoMovilOLigero();
     const globe = new Globe(el, {
-      rendererConfig: { antialias: true, powerPreference: "high-performance", alpha: false },
+      rendererConfig: {
+        antialias: !movil,
+        powerPreference: movil ? "default" : "high-performance",
+        alpha: false,
+      },
       waitForGlobeReady: true,
-      animateIn: true,
+      animateIn: !movil,
     });
     globeRef.current = globe;
+    try {
+      globe.renderer().setPixelRatio(movil ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
+    } catch {
+      // ignora si renderer aún no inicializó
+    }
 
     globe
       .width(width)

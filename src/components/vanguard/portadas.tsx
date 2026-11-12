@@ -602,8 +602,71 @@ function EscenaNueva({ acc }: { acc: string }) {
   );
 }
 
+function EscenaTeatro3D({ acc }: { acc: string }) {
+  const torres = [
+    { x: "8%", w: "7%", h: "42%", c: "#FFC94D" },
+    { x: "17%", w: "9%", h: "60%", c: "#38BDF8" },
+    { x: "28%", w: "6%", h: "36%", c: acc },
+    { x: "37%", w: "10%", h: "66%", c: "#FFC94D" },
+    { x: "50%", w: "8%", h: "52%", c: "#38BDF8" },
+    { x: "61%", w: "11%", h: "68%", c: "#FFC94D" },
+    { x: "75%", w: "7%", h: "46%", c: "#FF3B30" },
+    { x: "84%", w: "9%", h: "58%", c: "#38BDF8" },
+  ];
+  return (
+    <>
+      <Cielo acc={acc} lunaX={78} lunaY={14} lunaR={12} />
+      {/* plano 3D de suelo con rejilla táctica en perspectiva */}
+      <div
+        className="absolute inset-x-[-10%] bottom-0 h-[55%] opacity-55"
+        style={{
+          background:
+            "repeating-linear-gradient(180deg, rgba(56,189,248,0.38) 0 1px, transparent 1px 14px), repeating-linear-gradient(90deg, rgba(255,201,77,0.32) 0 1px, transparent 1px 22px)",
+          transform: "perspective(240px) rotateX(62deg)",
+          transformOrigin: "bottom",
+        }}
+        aria-hidden
+      />
+      {/* edificios 3D iluminados estilo mapa urbano OSM */}
+      <div className="absolute inset-x-0 bottom-[10%] h-[58%]" aria-hidden>
+        {torres.map((t, i) => (
+          <div
+            key={i}
+            className="absolute bottom-0 rounded-t-[2px]"
+            style={{
+              left: t.x,
+              width: t.w,
+              height: t.h,
+              background: `linear-gradient(180deg, ${t.c}55 0%, rgba(10,16,28,0.95) 85%)`,
+              borderTop: `2px solid ${t.c}`,
+              borderRight: `2px solid ${t.c}66`,
+              boxShadow: `0 0 14px -3px ${t.c}66`,
+            }}
+          />
+        ))}
+      </div>
+      {/* retícula central y balizas de escuadrón */}
+      <div
+        className="absolute left-1/2 top-[44%] -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border border-dashed border-[#38BDF8]/65"
+        style={{ boxShadow: "inset 0 0 22px rgba(56,189,248,0.22)" }}
+        aria-hidden
+      />
+      <span
+        className="v108-latido absolute left-[38%] top-[54%] w-2.5 h-2.5 rounded-full bg-[#FFC94D]"
+        style={{ boxShadow: "0 0 12px #FFC94D" }}
+        aria-hidden
+      />
+      <span
+        className="v108-latido absolute left-[64%] top-[48%] w-2.5 h-2.5 rounded-full bg-[#FF3B30]"
+        style={{ boxShadow: "0 0 12px #FF3B30", animationDelay: "0.7s" }}
+        aria-hidden
+      />
+    </>
+  );
+}
+
 const ESCENAS: Record<string, (p: { acc: string }) => React.ReactNode> = {
-  teatro3d: EscenaEstrategia,
+  teatro3d: EscenaTeatro3D,
   novedades: EscenaNueva,
   universo: EscenaJuego,
   inicio: EscenaInicio,

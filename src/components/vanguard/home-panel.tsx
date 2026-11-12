@@ -12,9 +12,10 @@ import {
   SignalHigh,
   Radio, Users, Scale, Flame, Laugh, Palette, Crosshair, MonitorPlay,
   Wand2, Landmark, FolderOpen, Skull, Earth, Search, Network, History, Images,
-  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass, Siren, Sparkles, Gem,
+  Brain, FlaskConical, RefreshCw, GraduationCap, Share2, Hammer, Bot, Crown, Compass, Siren, Sparkles, Gem, Box, Atom,
 } from "lucide-react";
 import Link from "next/link";
+import { PortadaMundo } from "@/components/vanguard/portadas";
 import { useGameStore } from "@/lib/game-store";
 import { getRealtime } from "@/lib/realtime";
 import { CONFLICTS, xpForLevel, getRankForLevel } from "@/lib/game-data";
@@ -547,26 +548,54 @@ export function HomePanel() {
       {/* v85.0 EL MUNDO DENTRO — manifiesto de identidad */}
       <ManifiestoMundo />
 
-      {/* #1 VANGUARD 3D · TEATRO TOTAL 2D/3D — la puerta maestra #1 de la casa */}
-      <Link
-        href="/teatro-3d"
-        className="group block border border-[#FFC94D]/55 bg-gradient-to-r from-[#FFC94D]/15 via-zinc-950/60 to-cyan-950/30 rounded-md p-4 hover:border-[#FFC94D] transition-colors shadow-[0_0_24px_rgba(255,201,77,0.12)]"
-      >
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-black font-black bg-[#FFC94D] rounded px-2 py-0.5">
-            <Crown className="w-3 h-3" /> #1 VANGUARD · 3D / 2D
-          </span>
-          <span className="font-display text-lg sm:text-xl font-black tracking-wide text-amber group-hover:text-foreground transition-colors">
-            TEATRO TOTAL 3D / 2D — cualquier lugar, frentes, uniformes, escuadrones y armas
-          </span>
+      {/* #1 VANGUARD 3D · PORTADA PRINCIPAL + TEATRO TOTAL 3D / 2D */}
+      <div className="relative overflow-hidden border border-[#FFC94D]/65 bg-black/85 rounded-md shadow-[0_0_30px_rgba(255,201,77,0.16)]">
+        <PortadaMundo mundo="teatro3d" className="h-32 sm:h-36 w-full" />
+        <div className="relative z-10 p-4 -mt-10 bg-gradient-to-t from-black via-black/95 to-transparent space-y-3">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-black font-black bg-[#FFC94D] rounded px-2 py-0.5">
+              <Crown className="w-3 h-3" /> #1 VANGUARD · MODO 3D GLOBAL
+            </span>
+            <span className="flex items-center gap-1 font-mono text-[9px] tracking-widest uppercase text-[#38BDF8] border border-[#38BDF8]/50 bg-[#38BDF8]/10 rounded px-2 py-0.5 font-bold">
+              <Box className="w-3 h-3" /> EDIFICIOS 3D · MODO ECO MÓVIL
+            </span>
+          </div>
+          <Link href="/teatro-3d" className="group block">
+            <div className="font-display text-lg sm:text-xl font-black tracking-wide text-amber group-hover:text-foreground transition-colors">
+              TEATRO TOTAL 3D — MUNDO, ESCUADRONES REALES, MODO LIBRE Y MÁQUINA DEL TIEMPO
+            </div>
+            <p className="mt-1 text-[12px] text-muted-foreground leading-relaxed">
+              Navega en vista aérea u oblicua estilo Google Maps 3D con edificios y casas reales de OpenStreetMap; despliega escuadrones tácticos en cuña/línea/columna, cruza guerras activas con comandantes reales, o entra al Modo Libre con países personalizados y armas nucleares.
+            </p>
+          </Link>
+          <div className="flex flex-wrap gap-2 font-mono text-[10px]">
+            <Link
+              href="/teatro-3d"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#FFC94D] text-black font-black hover:bg-[#ffd66b]"
+            >
+              <Box className="w-3.5 h-3.5" /> ABRIR TEATRO 3D (/teatro-3d) →
+            </Link>
+            <Link
+              href="/teatro-3d?modo=libre"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#FF3B30] text-white font-black hover:opacity-90"
+            >
+              <Atom className="w-3.5 h-3.5" /> MODO LIBRE · PAÍSES + NUCLEAR →
+            </Link>
+            <Link
+              href="/teatro-3d?modo=tiempo"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-[#38BDF8]/60 text-[#38BDF8] font-bold hover:bg-[#38BDF8]/15"
+            >
+              <History className="w-3.5 h-3.5" /> MÁQUINA DEL TIEMPO 3D →
+            </Link>
+            <Link
+              href="/teatro-3d?modulo=escuadrones"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-white/25 text-foreground font-bold hover:bg-white/10"
+            >
+              <Users className="w-3.5 h-3.5" /> ESCUADRONES, UNIFORMES Y ARMAS 3D →
+            </Link>
+          </div>
         </div>
-        <p className="mt-1.5 text-[12px] text-muted-foreground leading-relaxed">
-          Convierte cualquier ciudad o coordenada (lat, lng) del planeta en teatro de guerra 3D y mapa 2D sincronizados con despliegue por clic; vigila los frentes reales en el globo 3D e inspecciona uniformes por capas, escuadrones y armas con despiece CAD y rayos X.
-        </p>
-        <p className="mt-1.5 font-mono text-[10px] text-amber uppercase tracking-widest font-bold">
-          Abrir #1 VANGUARD 3D (/teatro-3d) →
-        </p>
-      </Link>
+      </div>
 
       {/* LO NUEVO 10X — Panel de novedades con links directos + 10 funciones nuevas */}
       <div className="border border-cyan-hud/45 bg-gradient-to-r from-cyan-950/35 via-zinc-950/60 to-[#FFC94D]/10 rounded-md p-4 hover:border-cyan-hud transition-colors flex flex-wrap items-center justify-between gap-3">

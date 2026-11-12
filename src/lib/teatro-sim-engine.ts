@@ -5,6 +5,9 @@
 // ============================================================================
 
 import type { TeatroMundial, TipoUnidad3D, Escuadron3D } from "./teatro-total-data";
+import { anillos } from "./detonacion-data";
+
+export type FormacionTactica = "cuna" | "linea" | "columna";
 
 export interface SimUnidad {
   id: string;
@@ -23,12 +26,15 @@ export interface SimUnidad {
   rot: number; // orientación en radianes
   antiAereo: boolean;
   antiBlindaje: number; // multiplicador
+  escuadronId?: string;
+  rolEscuadron?: "lider" | "fusilero" | "apoyo" | "antitanque" | "dron";
+  moral?: number; // 0..100
 }
 
 export interface SimProyectil {
   id: string;
   bando: "A" | "B";
-  estilo: "artilleria" | "misil" | "sam" | "trazadora" | "bomba";
+  estilo: "artilleria" | "misil" | "sam" | "trazadora" | "bomba" | "nuclear";
   x0: number;
   y0: number;
   z0: number;
@@ -40,6 +46,8 @@ export interface SimProyectil {
   dano: number;
   radio: number;
   objetivoId?: string;
+  kt?: number;
+  nombreOjiva?: string;
 }
 
 export interface SimExplosion {
@@ -51,12 +59,27 @@ export interface SimExplosion {
   edad: number;
   maxEdad: number;
   color: string;
+  tipo?: "convencional" | "nuclear";
+  anilloPsi5?: number;
+  anilloPsi1?: number;
+}
+
+export interface OndaNuclearActiva {
+  id: string;
+  x: number;
+  z: number;
+  kt: number;
+  radioNorm: number; // radio visual normalizado en el teatro
+  edad: number;
+  maxEdad: number;
+  bando: "A" | "B";
 }
 
 export interface SimCrater {
   x: number;
   z: number;
   radio: number;
+  nuclear?: boolean;
 }
 
 export interface SimEvento {
@@ -69,6 +92,7 @@ export interface SimEstado {
   unidades: SimUnidad[];
   proyectiles: SimProyectil[];
   explosiones: SimExplosion[];
+  ondasNucleares: OndaNuclearActiva[];
   crateres: SimCrater[];
   frenteLinea: number[]; // 9 puntos en X para Z = -0.85..+0.85
   bitacora: SimEvento[];
@@ -77,6 +101,7 @@ export interface SimEstado {
   bajasB: number;
   disparosA: number;
   disparosB: number;
+  detonacionesNucleares: number;
   seq: number;
 }
 
@@ -258,7 +283,9 @@ export function crearUnidadSim(
   z: number,
   bonoBlindaje = 1,
   bonoFuego = 1,
-  etiquetaCustom?: string
+  etiquetaCustom?: string,
+  escuadronId?: string,
+  rolEscuadron?: SimUnidad["rolEscuadron"]
 ): SimUnidad {
   const p = PERFIL_UNIDAD[tipo];
   const hpMax = Math.round(p.hp * (bando === "A" ? bonoBlindaje : 1));
@@ -279,6 +306,9 @@ export function crearUnidadSim(
     rot: bando === "A" ? 0 : Math.PI,
     antiAereo: p.antiAereo,
     antiBlindaje: p.antiBlindaje,
+    escuadronId,
+    rolEscuadron,
+    moral: 100,
   };
 }
 
@@ -310,6 +340,74 @@ function posAguaCercana(x: number, z: number, teatro: TeatroMundial): [number, n
   return [x, z];
 }
 
+const OFFSETS_FORMACION: Record<
+  FormacionTactica,
+  { dx: number; dz: number; tipo: TipoUnidad3D; rol: NonNullable<SimUnidad["rolEscuadron"]>; label: string }[]
+> = {
+  cuna: [
+    { dx: 0.04, dz: 0.0, tipo: "soldier", rol: "lider", label: "Líder de Escuadra" },
+    { dx: -0.03, dz: -0.06, tipo: "soldier", rol: "fusilero", label: "Fusilero Flanco N" },
+    { dx: -0.03, dz: 0.06, tipo: "soldier", rol: "fusilero", label: "Fusilero Flanco S" },
+    { dx: -0.09, dz: -0.11, tipo: "soldier", rol: "apoyo", label: "Ametrallador Apoyo" },
+    { dx: -0.09, dz: 0.11, tipo: "soldier", rol: "antitanque", label: "Especialista Antitanque" },
+    { dx: 0.01, dz: 0.0, tipo: "drone", rol: "dron", label: "Dron Recon Escuadra" },
+  ],
+  linea: [
+    { dx: 0.0, dz: 0.0, tipo: "soldier", rol: "lider", label: "Comandante Línea" },
+    { dx: 0.0, dz: -0.07, tipo: "soldier", rol: "fusilero", label: "Fusilero Asalto 1" },
+    { dx: 0.0, dz: 0.07, tipo: "soldier", rol: "fusilero", label: "Fusilero Asalto 2" },
+    { dx: 0.0, dz: -0.14, tipo: "soldier", rol: "apoyo", label: "Fuego Supresión" },
+    { dx: 0.0, dz: 0.14, tipo: "soldier", rol: "antitanque", label: "Operador ATGM" },
+    { dx: -0.02, dz: 0.02, tipo: "drone", rol: "dron", label: "Ojo Aéreo FPV" },
+  ],
+  columna: [
+    { dx: 0.06, dz: 0.0, tipo: "ifv", rol: "lider", label: "Blindado Punta" },
+    { dx: 0.0, dz: -0.04, tipo: "soldier", rol: "fusilero", label: "Infantería Escolta N" },
+    { dx: 0.0, dz: 0.04, tipo: "soldier", rol: "fusilero", label: "Infantería Escolta S" },
+    { dx: -0.07, dz: -0.04, tipo: "soldier", rol: "apoyo", label: "Escuadra Apoyo" },
+    { dx: -0.07, dz: 0.04, tipo: "soldier", rol: "antitanque", label: "Equipo Manpads/AT" },
+    { dx: 0.03, dz: 0.0, tipo: "drone", rol: "dron", label: "Dron Vanguardia" },
+  ],
+};
+
+function generarEscuadraInterna(
+  seqStart: number,
+  bando: "A" | "B",
+  formacion: FormacionTactica,
+  cx: number,
+  cz: number,
+  teatro: TeatroMundial,
+  escuadronId: string,
+  prefijo: string,
+  bonoBlindaje: number,
+  bonoFuego: number
+): { units: SimUnidad[]; nextSeq: number } {
+  const dir = bando === "A" ? 1 : -1;
+  let seq = seqStart;
+  const units: SimUnidad[] = [];
+  for (const slot of OFFSETS_FORMACION[formacion]) {
+    const rawX = cx + slot.dx * dir;
+    const rawZ = cz + slot.dz;
+    const [ux, uz] =
+      slot.tipo === "drone" ? [rawX, rawZ] : posSecaCercana(rawX, rawZ, teatro);
+    units.push(
+      crearUnidadSim(
+        seq++,
+        bando,
+        slot.tipo,
+        ux,
+        uz,
+        bonoBlindaje,
+        bonoFuego,
+        `${prefijo} · ${slot.label}`,
+        escuadronId,
+        slot.rol
+      )
+    );
+  }
+  return { units, nextSeq: seq };
+}
+
 export function crearEscenarioInicial(
   teatro: TeatroMundial,
   opts: OpcionesEscenario = {}
@@ -319,52 +417,57 @@ export function crearEscenarioInicial(
   let seq = 1;
   const unidades: SimUnidad[] = [];
 
-  const plantillasA: [TipoUnidad3D, number, number][] = [
-    ["tank", -0.46, -0.35],
-    ["tank", -0.44, 0.25],
-    ["ifv", -0.52, -0.05],
-    ["soldier", -0.34, -0.52],
-    ["soldier", -0.32, 0.02],
-    ["soldier", -0.36, 0.48],
+  // Escuadrones de infantería reales cohesionados en formación táctica (Cuña + Línea)
+  const sqA1 = generarEscuadraInterna(seq, "A", "cuna", -0.36, -0.34, teatro, "sq-a-alfa", "Escuadra Alfa", bA, fA);
+  unidades.push(...sqA1.units);
+  seq = sqA1.nextSeq;
+
+  const sqA2 = generarEscuadraInterna(seq, "A", "columna", -0.44, 0.28, teatro, "sq-a-bravo", "Escuadra Mecanizada", bA, fA);
+  unidades.push(...sqA2.units);
+  seq = sqA2.nextSeq;
+
+  const sqB1 = generarEscuadraInterna(seq, "B", "linea", 0.36, -0.28, teatro, "sq-b-uno", "Pelotón OPFOR Norte", 1, 1);
+  unidades.push(...sqB1.units);
+  seq = sqB1.nextSeq;
+
+  const sqB2 = generarEscuadraInterna(seq, "B", "columna", 0.44, 0.32, teatro, "sq-b-dos", "Pelotón OPFOR Sur", 1, 1);
+  unidades.push(...sqB2.units);
+  seq = sqB2.nextSeq;
+
+  const apoyoA: [TipoUnidad3D, number, number][] = [
+    ["tank", -0.52, -0.08],
     ["artillery", -0.78, -0.42],
     ["sam", -0.74, 0.36],
-    ["drone", -0.28, -0.18],
     ["jet", -0.68, 0.0],
   ];
 
-  const plantillasB: [TipoUnidad3D, number, number][] = [
-    ["tank", 0.46, -0.28],
-    ["tank", 0.45, 0.34],
-    ["ifv", 0.54, 0.05],
-    ["soldier", 0.35, -0.46],
-    ["soldier", 0.33, 0.08],
-    ["soldier", 0.37, 0.52],
+  const apoyoB: [TipoUnidad3D, number, number][] = [
+    ["tank", 0.52, 0.08],
     ["artillery", 0.78, 0.38],
     ["sam", 0.74, -0.35],
-    ["drone", 0.28, 0.22],
     ["jet", 0.68, -0.08],
   ];
 
   if (teatro.bioma === "costa" && teatro.agua) {
-    plantillasA.push(["ship", -0.18, -0.62]);
-    plantillasB.push(["ship", 0.24, 0.58]);
+    apoyoA.push(["ship", -0.18, -0.62]);
+    apoyoB.push(["ship", 0.24, 0.58]);
   }
 
-  for (const [tipo, rx, rz] of plantillasA) {
+  for (const [tipo, rx, rz] of apoyoA) {
     const [ux, uz] =
       tipo === "ship"
         ? posAguaCercana(rx, rz, teatro)
-        : tipo === "jet" || tipo === "drone"
+        : tipo === "jet"
         ? [rx, rz]
         : posSecaCercana(rx, rz, teatro);
     unidades.push(crearUnidadSim(seq++, "A", tipo, ux, uz, bA, fA));
   }
 
-  for (const [tipo, rx, rz] of plantillasB) {
+  for (const [tipo, rx, rz] of apoyoB) {
     const [ux, uz] =
       tipo === "ship"
         ? posAguaCercana(rx, rz, teatro)
-        : tipo === "jet" || tipo === "drone"
+        : tipo === "jet"
         ? [rx, rz]
         : posSecaCercana(rx, rz, teatro);
     unidades.push(crearUnidadSim(seq++, "B", tipo, ux, uz, 1, 1));
@@ -374,6 +477,7 @@ export function crearEscenarioInicial(
     unidades,
     proyectiles: [],
     explosiones: [],
+    ondasNucleares: [],
     crateres: [],
     frenteLinea: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     bitacora: [
@@ -385,7 +489,7 @@ export function crearEscenarioInicial(
       {
         t: 0,
         bando: "A",
-        texto: `${opts.bandoANombre ?? teatro.bandoA} desplegado al oeste (${plantillasA.length} unidades).`,
+        texto: `${opts.bandoANombre ?? teatro.bandoA}: 2 escuadrones reales + apoyo desplegados (${unidades.filter((u) => u.bando === "A").length} efectivos).`,
       },
     ],
     tiempo: 0,
@@ -393,7 +497,47 @@ export function crearEscenarioInicial(
     bajasB: 0,
     disparosA: 0,
     disparosB: 0,
+    detonacionesNucleares: 0,
     seq,
+  };
+}
+
+export function desplegarFormacionTactica(
+  estado: SimEstado,
+  bando: "A" | "B",
+  formacion: FormacionTactica,
+  x: number,
+  z: number,
+  teatro: TeatroMundial,
+  nombreEscuadron = "Escuadra Táctica",
+  bonoBlindaje = 1,
+  bonoFuego = 1
+): SimEstado {
+  const eqId = `sq-${bando.toLowerCase()}-${estado.seq}`;
+  const { units, nextSeq } = generarEscuadraInterna(
+    estado.seq,
+    bando,
+    formacion,
+    x,
+    z,
+    teatro,
+    eqId,
+    nombreEscuadron,
+    bonoBlindaje,
+    bonoFuego
+  );
+  return {
+    ...estado,
+    seq: nextSeq,
+    unidades: [...estado.unidades, ...units],
+    bitacora: [
+      {
+        t: Number(estado.tiempo.toFixed(1)),
+        bando,
+        texto: `${nombreEscuadron} desplegada en formación ${formacion.toUpperCase()} (${units.length} efectivos reales).`,
+      },
+      ...estado.bitacora,
+    ].slice(0, 28),
   };
 }
 
@@ -408,8 +552,10 @@ export function desplegarEscuadronEnSim(
   bonoFuego = 1
 ): SimEstado {
   let seq = estado.seq;
+  const eqId = `sq-custom-${bando.toLowerCase()}-${seq}`;
   const nuevas: SimUnidad[] = [];
-  for (const m of escuadron.miembros.slice(0, 5)) {
+  for (let i = 0; i < escuadron.miembros.slice(0, 6).length; i++) {
+    const m = escuadron.miembros[i];
     const ox = x + m.offset[0] * 0.04;
     const oz = z + m.offset[1] * 0.04;
     const [ux, uz] =
@@ -418,7 +564,20 @@ export function desplegarEscuadronEnSim(
         : m.tipo === "jet" || m.tipo === "drone"
         ? [ox, oz]
         : posSecaCercana(ox, oz, teatro);
-    nuevas.push(crearUnidadSim(seq++, bando, m.tipo, ux, uz, bonoBlindaje, bonoFuego, m.rol));
+    nuevas.push(
+      crearUnidadSim(
+        seq++,
+        bando,
+        m.tipo,
+        ux,
+        uz,
+        bonoBlindaje,
+        bonoFuego,
+        m.rol,
+        eqId,
+        i === 0 ? "lider" : m.tipo === "drone" ? "dron" : "fusilero"
+      )
+    );
   }
   return {
     ...estado,
@@ -428,7 +587,58 @@ export function desplegarEscuadronEnSim(
       {
         t: Number(estado.tiempo.toFixed(1)),
         bando,
-        texto: `Desplegado ${escuadron.nombre} (${nuevas.length} elementos) en (${x.toFixed(2)}, ${z.toFixed(2)}).`,
+        texto: `Desplegado ${escuadron.nombre} en formación cohesionada (${nuevas.length} elementos).`,
+      },
+      ...estado.bitacora,
+    ].slice(0, 28),
+  };
+}
+
+export function lanzarAtaqueNuclear(
+  estado: SimEstado,
+  bando: "A" | "B",
+  tx: number,
+  tz: number,
+  kt: number,
+  nombreOjiva: string,
+  teatro: TeatroMundial
+): SimEstado {
+  const origenX = bando === "A" ? -0.94 : 0.94;
+  const origenZ = tz * 0.5;
+  const y0 = Math.max(0.15, elevacionEn(origenX, origenZ, teatro)) + 0.25;
+  const y1 = Math.max(0, elevacionEn(tx, tz, teatro));
+  const rings = anillos(kt, true);
+  // Mapeo físico cúbico real a escala del teatro (~20 km de ancho = 2 unidades)
+  const radioNorm = Math.max(0.16, Math.min(0.95, rings.psi5 / 6.5));
+  const nextSeq = estado.seq + 1;
+  return {
+    ...estado,
+    seq: nextSeq,
+    proyectiles: [
+      ...estado.proyectiles,
+      {
+        id: `nuke-${estado.seq}`,
+        bando,
+        estilo: "nuclear",
+        x0: origenX,
+        y0,
+        z0: origenZ,
+        x1: tx,
+        y1,
+        z1: tz,
+        p: 0,
+        velocidad: 0.34,
+        dano: Math.round(650 + Math.cbrt(kt) * 280),
+        radio: radioNorm,
+        kt,
+        nombreOjiva,
+      },
+    ],
+    bitacora: [
+      {
+        t: Number(estado.tiempo.toFixed(1)),
+        bando,
+        texto: `⚠ ALERTA DEFCON-1 · ICBM ${nombreOjiva} (${kt} kt) lanzado hacia (${tx.toFixed(2)}, ${tz.toFixed(2)}). Radio 5psi real: ${rings.psi5.toFixed(2)} km.`,
       },
       ...estado.bitacora,
     ].slice(0, 28),
@@ -513,8 +723,22 @@ export function avanzarSimulacion(
   const explosiones: SimExplosion[] = estado.explosiones
     .map((e) => ({ ...e, edad: e.edad + step }))
     .filter((e) => e.edad < e.maxEdad);
+  const ondasNucleares: OndaNuclearActiva[] = (estado.ondasNucleares ?? [])
+    .map((o) => ({ ...o, edad: o.edad + step }))
+    .filter((o) => o.edad < o.maxEdad);
   const crateres = [...estado.crateres];
   const eventos = [...estado.bitacora];
+  let detonacionesNucleares = estado.detonacionesNucleares ?? 0;
+
+  // Mapa de líderes vivos por escuadrón para cohesión táctica realista
+  const liderPorEscuadron = new Map<string, SimUnidad>();
+  for (const u of unidades) {
+    if (u.hp <= 0 || !u.escuadronId) continue;
+    const actual = liderPorEscuadron.get(u.escuadronId);
+    if (!actual || u.rolEscuadron === "lider") {
+      liderPorEscuadron.set(u.escuadronId, u);
+    }
+  }
 
   const registrarEvento = (bando: "A" | "B" | "SYS", texto: string) => {
     eventos.unshift({ t: Number(tiempo.toFixed(1)), bando, texto });
@@ -545,6 +769,32 @@ export function avanzarSimulacion(
     if (!blanco) {
       blanco = enemigos[0];
       mejorDist = Math.hypot(blanco.x - u.x, blanco.z - u.z);
+    }
+
+    // Cohesión táctica de escuadrón real + separación entre compañeros
+    let cohX = 0;
+    let cohZ = 0;
+    if (u.escuadronId) {
+      const lider = liderPorEscuadron.get(u.escuadronId);
+      if (lider && lider.id !== u.id) {
+        const dlx = lider.x - u.x;
+        const dlz = lider.z - u.z;
+        const distLider = Math.hypot(dlx, dlz) || 1;
+        if (distLider > 0.14) {
+          cohX += (dlx / distLider) * 0.65;
+          cohZ += (dlz / distLider) * 0.65;
+        }
+      }
+      for (const ally of unidades) {
+        if (ally.id === u.id || ally.hp <= 0 || ally.escuadronId !== u.escuadronId) continue;
+        const sdx = u.x - ally.x;
+        const sdz = u.z - ally.z;
+        const sd = Math.hypot(sdx, sdz);
+        if (sd > 0.001 && sd < 0.055) {
+          cohX += (sdx / sd) * 0.85;
+          cohZ += (sdz / sd) * 0.85;
+        }
+      }
     }
 
     const dx = blanco.x - u.x;
@@ -585,15 +835,21 @@ export function avanzarSimulacion(
     } else {
       u.rot = ang;
       const distanciaOptima = u.alcance * 0.68;
+      let moveX = cohX;
+      let moveZ = cohZ;
       if (mejorDist > distanciaOptima) {
-        const nx = u.x + (dx / (mejorDist || 1)) * u.velocidad * step;
-        const nz = u.z + (dz / (mejorDist || 1)) * u.velocidad * step;
+        moveX += dx / (mejorDist || 1);
+        moveZ += dz / (mejorDist || 1);
+      }
+      const mLen = Math.hypot(moveX, moveZ);
+      if (mLen > 0.05) {
+        const nx = u.x + (moveX / mLen) * u.velocidad * step;
+        const nz = u.z + (moveZ / mLen) * u.velocidad * step;
         const el = elevacionEn(nx, nz, teatro);
         if (esAereo || !teatro.agua || el > 0.0) {
           u.x = Math.max(-0.92, Math.min(0.92, nx));
           u.z = Math.max(-0.88, Math.min(0.88, nz));
         } else {
-          // Rodea el río/costa suavemente
           const perpX = -dz / (mejorDist || 1);
           const perpZ = dx / (mejorDist || 1);
           const rx = Math.max(-0.92, Math.min(0.92, u.x + perpX * u.velocidad * step));
@@ -655,10 +911,12 @@ export function avanzarSimulacion(
       continue;
     }
 
-    // Impacto en destino
+    // Impacto en destino (las armas nucleares dañan ambos bandos en su radio térmico/choque)
     let huboImpactoFuerte = pr.estilo !== "trazadora";
+    const esNuclear = pr.estilo === "nuclear";
     for (const u of unidades) {
-      if (u.hp <= 0 || u.bando === pr.bando) continue;
+      if (u.hp <= 0) continue;
+      if (!esNuclear && u.bando === pr.bando) continue;
       const dist = Math.hypot(u.x - pr.x1, u.z - pr.z1);
       if (u.id === pr.objetivoId || dist <= pr.radio) {
         const atenuacion = dist <= pr.radio ? Math.max(0.45, 1 - dist / (pr.radio * 1.4)) : 1;
@@ -670,12 +928,45 @@ export function avanzarSimulacion(
           huboImpactoFuerte = true;
           if (u.bando === "A") bajasA++;
           else bajasB++;
-          registrarEvento(pr.bando, `${u.nombre} (${u.bando === "A" ? "Vanguard" : "OPFOR"}) neutralizado.`);
+          registrarEvento(pr.bando, `${u.nombre} (${u.bando === "A" ? "Bando A" : "Bando B"}) neutralizado.`);
         }
       }
     }
 
-    if (huboImpactoFuerte) {
+    if (esNuclear) {
+      const kt = pr.kt ?? 100;
+      const rings = anillos(kt, true);
+      detonacionesNucleares++;
+      explosiones.push({
+        id: `ex-nuke-${seq++}`,
+        x: pr.x1,
+        y: pr.y1,
+        z: pr.z1,
+        radio: Math.max(2.6, pr.radio * 7.5),
+        edad: 0,
+        maxEdad: 4.5,
+        color: "#ff9f1c",
+        tipo: "nuclear",
+        anilloPsi5: rings.psi5,
+        anilloPsi1: rings.psi1,
+      });
+      ondasNucleares.push({
+        id: `onda-${seq++}`,
+        x: pr.x1,
+        z: pr.z1,
+        kt,
+        radioNorm: pr.radio,
+        edad: 0,
+        maxEdad: 9.0,
+        bando: pr.bando,
+      });
+      crateres.push({ x: pr.x1, z: pr.z1, radio: Math.max(0.08, pr.radio * 0.35), nuclear: true });
+      if (crateres.length > 36) crateres.shift();
+      registrarEvento(
+        "SYS",
+        `☢ DETONACIÓN ${pr.nombreOjiva ?? `${kt} kt`} · Bola fuego ${rings.bolaFuego.toFixed(2)} km · Colapso edificios ${rings.psi5.toFixed(2)} km · Radiación ${rings.radiacion.toFixed(2)} km.`
+      );
+    } else if (huboImpactoFuerte) {
       explosiones.push({
         id: `ex-${seq++}`,
         x: pr.x1,
@@ -685,6 +976,7 @@ export function avanzarSimulacion(
         edad: 0,
         maxEdad: 0.75,
         color: pr.bando === "A" ? "#FFC94D" : "#FF4D4D",
+        tipo: "convencional",
       });
       if (pr.estilo === "artilleria" || pr.estilo === "misil" || pr.estilo === "bomba") {
         crateres.push({ x: pr.x1, z: pr.z1, radio: 0.038 });
@@ -723,6 +1015,7 @@ export function avanzarSimulacion(
     unidades: vivas,
     proyectiles,
     explosiones: explosiones.slice(-24),
+    ondasNucleares: ondasNucleares.slice(-8),
     crateres,
     frenteLinea,
     bitacora: eventos.slice(0, 28),
@@ -731,6 +1024,7 @@ export function avanzarSimulacion(
     bajasB,
     disparosA,
     disparosB,
+    detonacionesNucleares,
     seq,
   };
 }

@@ -111,9 +111,23 @@ export function aplicarEntornoPBR(
   };
 }
 
+export function esDispositivoMovilOLigero(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const ancho = window.innerWidth || 1024;
+    const tactil = (navigator.maxTouchPoints ?? 0) > 0 || window.matchMedia?.("(pointer: coarse)")?.matches;
+    const nucleos = navigator.hardwareConcurrency ?? 8;
+    const ahorro = (navigator as unknown as { connection?: { saveData?: boolean } })?.connection?.saveData;
+    return ancho < 820 || (Boolean(tactil) && ancho < 1024) || nucleos <= 4 || Boolean(ahorro);
+  } catch {
+    return false;
+  }
+}
+
 export interface PipelinePBR {
-  composer: EffectComposer;
-  bloomPass: UnrealBloomPass;
+  composer: EffectComposer | null;
+  bloomPass: UnrealBloomPass | null;
+  eco: boolean;
   render: () => void;
   resize: (w: number, h: number) => void;
   dispose: () => void;
@@ -125,13 +139,33 @@ export function crearPipelinePBR(
   camera: THREE.Camera,
   width: number,
   height: number,
-  bloom: { strength?: number; radius?: number; threshold?: number } = {}
+  bloom: { strength?: number; radius?: number; threshold?: number; ecoMode?: boolean } = {}
 ): PipelinePBR {
+  const eco = bloom.ecoMode ?? esDispositivoMovilOLigero();
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = !eco;
+  if (!eco) {
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  }
+
+  if (eco) {
+    return {
+      composer: null,
+      bloomPass: null,
+      eco: true,
+      render: () => {
+        renderer.render(scene, camera);
+      },
+      resize: (w: number, h: number) => {
+        renderer.setSize(w, h);
+      },
+      dispose: () => {
+        // Sin EffectComposer que liberar en modo eco
+      },
+    };
+  }
 
   const composer = new EffectComposer(renderer);
   const renderPass = new RenderPass(scene, camera);
@@ -151,6 +185,7 @@ export function crearPipelinePBR(
   return {
     composer,
     bloomPass,
+    eco: false,
     render: () => {
       composer.render();
     },

@@ -24,6 +24,7 @@ import {
 import {
   aplicarEntornoPBR,
   crearPipelinePBR,
+  esDispositivoMovilOLigero,
   instanciarUnidadGLB,
   type InstanciaUnidadGLB,
 } from "./glb-engine";
@@ -32,8 +33,23 @@ type MotorTerreno = "satelite-dem" | "arena-glb";
 
 const MUNDO_SIZE = 36;
 const HALF = MUNDO_SIZE / 2;
-const SEGS = 112;
 const SPAN_DEG_Z = 0.085; // ±~9.5 km alrededor del centro del teatro
+
+/** Construye un polígono GeoJSON circular aproximado (para radios nucleares reales). */
+function circuloGeoJSON(
+  cx: number,
+  cz: number,
+  radioNorm: number,
+  teatro: TeatroMundial,
+  pasos = 36
+): [number, number][] {
+  const coords: [number, number][] = [];
+  for (let i = 0; i <= pasos; i++) {
+    const a = (i / pasos) * Math.PI * 2;
+    coords.push(normToLngLat(cx + Math.cos(a) * radioNorm, cz + Math.sin(a) * radioNorm, teatro));
+  }
+  return coords;
+}
 
 interface CiudadPin {
   nombre: string;
@@ -225,12 +241,30 @@ export function TerrenoGuerra3D({
 }) {
   const [motor, setMotor] = useState<MotorTerreno>("satelite-dem");
   const [demActivo, setDemActivo] = useState(true);
+  const [edificios3d, setEdificios3d] = useState(true);
   const [orbitandoMap, setOrbitandoMap] = useState(false);
+  const [modoEco, setModoEco] = useState<boolean>(() => esDispositivoMovilOLigero());
 
   const mapHostRef = useRef<HTMLDivElement>(null);
+  const mapInstRef = useRef<maplibregl.Map | null>(null);
   const glHostRef = useRef<HTMLDivElement>(null);
   const sensorRef = useRef<ModoSensor>(sensor);
   const clickCbRef = useRef(onTerrenoClick);
+
+  const moverCamaraMapa = (pitch: number, zoom?: number, bearingDelta = 0) => {
+    const m = mapInstRef.current;
+    if (!m) return;
+    try {
+      m.easeTo({
+        pitch,
+        zoom: zoom ?? m.getZoom(),
+        bearing: m.getBearing() + bearingDelta,
+        duration: modoEco ? 350 : 650,
+      });
+    } catch {
+      // mapa cerrado
+    }
+  };
 
   useEffect(() => {
     sensorRef.current = sensor;
@@ -264,10 +298,12 @@ export function TerrenoGuerra3D({
     const map = new maplibregl.Map({
       container,
       center: [teatro.lng, teatro.lat],
-      zoom: 11.4,
-      pitch: 60,
+      zoom: edificios3d ? 13.4 : 11.6,
+      pitch: 62,
       bearing: -16,
       maxPitch: 85,
+      pixelRatio: modoEco ? 1 : Math.min(window.devicePixelRatio || 1, 1.5),
+      fadeDuration: modoEco ? 0 : 120,
       attributionControl: false,
       style: {
         version: 8,
@@ -284,6 +320,10 @@ export function TerrenoGuerra3D({
             encoding: "terrarium",
             tileSize: 256,
             maxzoom: 15,
+          },
+          "osm-openmap": {
+            type: "vector",
+            url: "https://tiles.openfreemap.org/planet",
           },
         },
         layers: [
@@ -306,9 +346,51 @@ export function TerrenoGuerra3D({
               "raster-saturation": sensor === "nocturno" ? 0.45 : sensor === "tactico" ? -0.1 : 0.08,
             },
           },
+          {
+            id: "vias-osm",
+            type: "line",
+            source: "osm-openmap",
+            "source-layer": "transportation",
+            minzoom: 12,
+            layout: {
+              visibility: edificios3d ? "visible" : "none",
+            },
+            paint: {
+              "line-color":
+                sensor === "nocturno"
+                  ? "rgba(56, 255, 130, 0.25)"
+                  : sensor === "termico"
+                  ? "rgba(255, 183, 3, 0.28)"
+                  : "rgba(255, 224, 130, 0.24)",
+              "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.5, 16, 2.2],
+            },
+          },
+          {
+            id: "edificios-3d",
+            type: "fill-extrusion",
+            source: "osm-openmap",
+            "source-layer": "building",
+            minzoom: 12.2,
+            filter: ["!=", ["get", "hide_3d"], true],
+            layout: {
+              visibility: edificios3d ? "visible" : "none",
+            },
+            paint: {
+              "fill-extrusion-color":
+                sensor === "nocturno"
+                  ? "#0f5132"
+                  : sensor === "termico"
+                  ? ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 10], 5, "#1e3a8a", 30, "#ea580c", 90, "#fde047"]
+                  : ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 10], 4, "#334155", 22, "#475569", 70, "#94a3b8"],
+              "fill-extrusion-height": ["coalesce", ["get", "render_height"], 9],
+              "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
+              "fill-extrusion-opacity": modoEco ? 0.72 : 0.84,
+            },
+          },
         ],
       },
     });
+    mapInstRef.current = map;
 
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
 
@@ -414,10 +496,50 @@ export function TerrenoGuerra3D({
         type: "circle",
         source: "sim-craters",
         paint: {
-          "circle-radius": 5,
-          "circle-color": "rgba(15, 18, 28, 0.78)",
-          "circle-stroke-width": 1,
-          "circle-stroke-color": "rgba(255, 140, 0, 0.5)",
+          "circle-radius": ["get", "r"],
+          "circle-color": ["get", "fill"],
+          "circle-stroke-width": 1.4,
+          "circle-stroke-color": ["get", "stroke"],
+        },
+      });
+
+      map.addSource("sim-nuke-waves", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+      map.addLayer({
+        id: "sim-nuke-fill",
+        type: "fill",
+        source: "sim-nuke-waves",
+        paint: {
+          "fill-color": "#ff6d00",
+          "fill-opacity": ["get", "alpha"],
+        },
+      });
+      map.addLayer({
+        id: "sim-nuke-ring",
+        type: "line",
+        source: "sim-nuke-waves",
+        paint: {
+          "line-color": "#fde047",
+          "line-width": 2.6,
+          "line-opacity": 0.9,
+        },
+      });
+
+      map.addSource("sim-squad-links", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+      map.addLayer({
+        id: "sim-squad-links-layer",
+        type: "line",
+        source: "sim-squad-links",
+        paint: {
+          "line-color": ["get", "color"],
+          "line-width": 1.4,
+          "line-dasharray": [2, 2],
+          "line-opacity": 0.65,
         },
       });
 
@@ -554,17 +676,80 @@ export function TerrenoGuerra3D({
           type: "FeatureCollection",
           features: st.crateres.map((cr) => ({
             type: "Feature",
-            properties: {},
+            properties: {
+              r: cr.nuclear ? 14 : 5,
+              fill: cr.nuclear ? "rgba(220, 38, 38, 0.42)" : "rgba(15, 18, 28, 0.78)",
+              stroke: cr.nuclear ? "#fde047" : "rgba(255, 140, 0, 0.5)",
+            },
             geometry: {
               type: "Point",
               coordinates: normToLngLat(cr.x, cr.z, teatro),
             },
           })),
         });
+
+        // Enlaces tácticos entre líderes e integrantes de cada escuadrón real
+        const lideres = new Map<string, { x: number; z: number; bando: "A" | "B" }>();
+        for (const u of st.unidades) {
+          if (!u.escuadronId) continue;
+          if (!lideres.has(u.escuadronId) || u.rolEscuadron === "lider") {
+            lideres.set(u.escuadronId, { x: u.x, z: u.z, bando: u.bando });
+          }
+        }
+        const squadLines: GeoJSON.Feature<GeoJSON.LineString>[] = [];
+        for (const u of st.unidades) {
+          if (!u.escuadronId) continue;
+          const lid = lideres.get(u.escuadronId);
+          if (!lid || (lid.x === u.x && lid.z === u.z)) continue;
+          squadLines.push({
+            type: "Feature",
+            properties: { color: u.bando === "A" ? "#38BDF8" : "#FF6B6B" },
+            geometry: {
+              type: "LineString",
+              coordinates: [normToLngLat(lid.x, lid.z, teatro), normToLngLat(u.x, u.z, teatro)],
+            },
+          });
+        }
+        (map.getSource("sim-squad-links") as maplibregl.GeoJSONSource | undefined)?.setData({
+          type: "FeatureCollection",
+          features: squadLines,
+        });
+
+        // Ondas de choque nucleares sobre edificios y territorio real
+        const ondas = st.ondasNucleares ?? [];
+        (map.getSource("sim-nuke-waves") as maplibregl.GeoJSONSource | undefined)?.setData({
+          type: "FeatureCollection",
+          features: ondas.map((on) => {
+            const prog = Math.min(1, on.edad / Math.max(0.1, on.maxEdad));
+            const rAct = on.radioNorm * (0.28 + Math.min(1, prog * 2.4) * 0.72);
+            return {
+              type: "Feature",
+              properties: { alpha: Math.max(0.06, 0.42 * (1 - prog * 0.85)) },
+              geometry: {
+                type: "Polygon",
+                coordinates: [circuloGeoJSON(on.x, on.z, rAct, teatro)],
+              },
+            };
+          }),
+        });
       };
 
+      let visibleEnPantalla = true;
+      const io = new IntersectionObserver(
+        (entries) => {
+          visibleEnPantalla = entries[0]?.isIntersecting ?? true;
+        },
+        { threshold: 0.05 }
+      );
+      io.observe(container);
+
+      const syncChecked = () => {
+        if (!visibleEnPantalla || document.hidden) return;
+        syncSimToMap();
+      };
       syncSimToMap();
-      timerSync = window.setInterval(syncSimToMap, 70);
+      timerSync = window.setInterval(syncChecked, modoEco ? 140 : 75);
+      map.once("remove", () => io.disconnect());
     });
 
     map.on("click", (e) => {
@@ -596,9 +781,10 @@ export function TerrenoGuerra3D({
       if (timerSync !== null) window.clearInterval(timerSync);
       if (rafOrbit) cancelAnimationFrame(rafOrbit);
       ro.disconnect();
+      if (mapInstRef.current === map) mapInstRef.current = null;
       map.remove();
     };
-  }, [motor, teatro, sensor, demActivo, orbitandoMap, simRef, ciudades]);
+  }, [motor, teatro, sensor, demActivo, edificios3d, modoEco, orbitandoMap, simRef, ciudades]);
 
   // ══════════════════════════════════════════════════════════════════════════
   // MOTOR B: ARENA TÁCTICA PBR THREE.JS (SKY + WATER.JS + MODELOS .GLB + BLOOM)
@@ -624,24 +810,28 @@ export function TerrenoGuerra3D({
     const camera = new THREE.PerspectiveCamera(44, width / height, 0.2, 400);
     camera.position.set(0, 20, 26);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !modoEco,
+      powerPreference: modoEco ? "default" : "high-performance",
+    });
+    renderer.setPixelRatio(modoEco ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setSize(width, height);
     el.innerHTML = "";
     el.appendChild(renderer.domElement);
 
     const disposeEnv = aplicarEntornoPBR(renderer, scene, "outdoor");
     const pipeline = crearPipelinePBR(renderer, scene, camera, width, height, {
-      strength: 0.26,
-      radius: 0.24,
+      strength: 0.24,
+      radius: 0.22,
       threshold: 1.15,
+      ecoMode: modoEco,
     });
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.maxPolarAngle = Math.PI * 0.46;
-    controls.minDistance = 10;
+    controls.maxPolarAngle = Math.PI * 0.48;
+    controls.minDistance = 8;
     controls.maxDistance = 54;
     controls.target.set(0, 0.8, 0);
 
@@ -678,16 +868,19 @@ export function TerrenoGuerra3D({
       sensor === "satelite" ? 2.6 : 1.9
     );
     sun.position.set(22, 32, 16);
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(1024, 1024);
-    sun.shadow.camera.left = -22;
-    sun.shadow.camera.right = 22;
-    sun.shadow.camera.top = 22;
-    sun.shadow.camera.bottom = -22;
+    if (!modoEco) {
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(1024, 1024);
+      sun.shadow.camera.left = -22;
+      sun.shadow.camera.right = 22;
+      sun.shadow.camera.top = 22;
+      sun.shadow.camera.bottom = -22;
+    }
     scene.add(sun);
 
     // Malla topográfica HD con textura PBR real
-    const terrainGeo = new THREE.PlaneGeometry(MUNDO_SIZE, MUNDO_SIZE, SEGS, SEGS);
+    const segs = modoEco ? 64 : 112;
+    const terrainGeo = new THREE.PlaneGeometry(MUNDO_SIZE, MUNDO_SIZE, segs, segs);
     terrainGeo.rotateX(-Math.PI / 2);
     const posAttr = terrainGeo.attributes.position as THREE.BufferAttribute;
     for (let i = 0; i < posAttr.count; i++) {
@@ -833,9 +1026,21 @@ export function TerrenoGuerra3D({
     let lastCraterCount = -1;
     let lastNow = performance.now();
     let raf = 0;
+    let visibleGL = true;
+    const ioGL = new IntersectionObserver(
+      (entries) => {
+        visibleGL = entries[0]?.isIntersecting ?? true;
+      },
+      { threshold: 0.05 }
+    );
+    ioGL.observe(el);
 
     const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
+      if (!visibleGL || document.hidden) {
+        lastNow = now;
+        return;
+      }
       const dt = Math.min(0.05, (now - lastNow) * 0.001);
       lastNow = now;
       const st = simRef.current;
@@ -919,16 +1124,22 @@ export function TerrenoGuerra3D({
         const px = (pr.x0 + (pr.x1 - pr.x0) * pr.p) * HALF;
         const pz = (pr.z0 + (pr.z1 - pr.z0) * pr.p) * HALF;
         const arco =
-          pr.estilo === "artilleria" || pr.estilo === "misil"
+          pr.estilo === "nuclear"
+            ? Math.sin(pr.p * Math.PI) * 14.5
+            : pr.estilo === "artilleria" || pr.estilo === "misil"
             ? Math.sin(pr.p * Math.PI) * 5.2
             : pr.estilo === "sam"
             ? Math.sin(pr.p * Math.PI) * 2.8
             : Math.sin(pr.p * Math.PI) * 0.6;
         const py =
           (pr.y0 + (pr.y1 - pr.y0) * pr.p) * teatro.relieveAmplitud + arco + 0.3;
-        const col = pr.bando === "A" ? 0xffc94d : 0xff3b30;
+        const col = pr.estilo === "nuclear" ? 0xfde047 : pr.bando === "A" ? 0xffc94d : 0xff3b30;
         const orb = new THREE.Mesh(
-          new THREE.SphereGeometry(pr.estilo === "trazadora" ? 0.11 : 0.22, 8, 8),
+          new THREE.SphereGeometry(
+            pr.estilo === "nuclear" ? 0.42 : pr.estilo === "trazadora" ? 0.11 : 0.22,
+            8,
+            8
+          ),
           new THREE.MeshBasicMaterial({ color: new THREE.Color(col).multiplyScalar(1.8) })
         );
         orb.position.set(px, py, pz);
@@ -938,18 +1149,66 @@ export function TerrenoGuerra3D({
       explLayer.clear();
       for (const ex of st.explosiones) {
         const k = ex.edad / ex.maxEdad;
-        const r = (0.28 + k * 1.55) * ex.radio;
         const ey = Math.max(0.05, ex.y * teatro.relieveAmplitud) + 0.25;
-        const bola = new THREE.Mesh(
-          new THREE.SphereGeometry(r * 0.55, 10, 8),
+        if (ex.tipo === "nuclear") {
+          const sx = ex.x * HALF;
+          const sz = ex.z * HALF;
+          const altoHongo = 1.6 + k * 7.8;
+          // Columna del hongo nuclear
+          const tallo = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.45 + k * 0.45, 0.85, altoHongo, 10),
+            new THREE.MeshBasicMaterial({
+              color: k < 0.25 ? 0xfffbeb : 0xf97316,
+              transparent: true,
+              opacity: Math.max(0, 0.86 * (1 - k * 0.7)),
+            })
+          );
+          tallo.position.set(sx, ey + altoHongo * 0.5, sz);
+          explLayer.add(tallo);
+          // Sombrero toroidal/esférico superior
+          const copa = new THREE.Mesh(
+            new THREE.SphereGeometry(1.1 + k * 2.8, 14, 10),
+            new THREE.MeshBasicMaterial({
+              color: k < 0.2 ? 0xffffff : 0xff6d00,
+              transparent: true,
+              opacity: Math.max(0, 0.92 * (1 - k * 0.65)),
+            })
+          );
+          copa.scale.y = 0.58;
+          copa.position.set(sx, ey + altoHongo, sz);
+          explLayer.add(copa);
+        } else {
+          const r = (0.28 + k * 1.55) * ex.radio;
+          const bola = new THREE.Mesh(
+            new THREE.SphereGeometry(r * 0.55, 10, 8),
+            new THREE.MeshBasicMaterial({
+              color: k < 0.35 ? 0xffe082 : 0xff5722,
+              transparent: true,
+              opacity: Math.max(0, 0.9 * (1 - k)),
+            })
+          );
+          bola.position.set(ex.x * HALF, ey, ex.z * HALF);
+          explLayer.add(bola);
+        }
+      }
+
+      // Ondas de choque nucleares expansivas sobre el terreno PBR
+      for (const on of st.ondasNucleares ?? []) {
+        const prog = Math.min(1, on.edad / Math.max(0.1, on.maxEdad));
+        const rWorld = Math.max(0.5, on.radioNorm * HALF * (0.28 + Math.min(1, prog * 2.4) * 0.72));
+        const oy = Math.max(0.08, elevacionEn(on.x, on.z, teatro) * teatro.relieveAmplitud) + 0.14;
+        const onda = new THREE.Mesh(
+          new THREE.RingGeometry(Math.max(0.1, rWorld - 0.35), rWorld, 32),
           new THREE.MeshBasicMaterial({
-            color: k < 0.35 ? 0xffe082 : 0xff5722,
+            color: 0xfde047,
+            side: THREE.DoubleSide,
             transparent: true,
-            opacity: Math.max(0, 0.9 * (1 - k)),
+            opacity: Math.max(0.08, 0.85 * (1 - prog * 0.85)),
           })
         );
-        bola.position.set(ex.x * HALF, ey, ex.z * HALF);
-        explLayer.add(bola);
+        onda.rotation.x = -Math.PI / 2;
+        onda.position.set(on.x * HALF, oy, on.z * HALF);
+        explLayer.add(onda);
       }
 
       if (st.crateres.length !== lastCraterCount) {
@@ -984,6 +1243,7 @@ export function TerrenoGuerra3D({
 
     return () => {
       cancelAnimationFrame(raf);
+      ioGL.disconnect();
       ro.disconnect();
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
@@ -998,7 +1258,7 @@ export function TerrenoGuerra3D({
       waterTex?.dispose();
       renderer.dispose();
     };
-  }, [motor, teatro, sensor, altura, simRef, ciudades]);
+  }, [motor, teatro, sensor, modoEco, altura, simRef, ciudades]);
 
   return (
     <div
@@ -1012,32 +1272,43 @@ export function TerrenoGuerra3D({
         <div ref={glHostRef} className="w-full h-full cursor-crosshair" />
       )}
 
-      {/* Selector de motor real del visor */}
-      <div className="absolute top-2.5 left-2.5 z-10 flex flex-wrap items-center gap-1 pointer-events-auto">
+      {/* Selector de motor real del visor + controles Google Maps 3D + Eco Móvil */}
+      <div className="absolute top-2.5 left-2.5 right-12 z-10 flex flex-wrap items-center gap-1 pointer-events-auto">
         <button
           type="button"
           onClick={() => setMotor("satelite-dem")}
-          className={`px-2.5 py-1 rounded font-mono text-[10px] font-bold border transition-colors ${
+          className={`px-2 py-1 rounded font-mono text-[10px] font-bold border transition-colors ${
             motor === "satelite-dem"
               ? "bg-[#FFC94D] text-black border-[#FFC94D]"
               : "bg-black/80 text-slate-200 border-white/20 hover:border-white/40"
           }`}
         >
-          SATÉLITE DEM 3D (MAPLIBRE)
+          SATÉLITE + EDIFICIOS 3D
         </button>
         <button
           type="button"
           onClick={() => setMotor("arena-glb")}
-          className={`px-2.5 py-1 rounded font-mono text-[10px] font-bold border transition-colors ${
+          className={`px-2 py-1 rounded font-mono text-[10px] font-bold border transition-colors ${
             motor === "arena-glb"
               ? "bg-[#38BDF8] text-black border-[#38BDF8]"
               : "bg-black/80 text-slate-200 border-white/20 hover:border-white/40"
           }`}
         >
-          ARENA PBR + MODELOS .GLB
+          ARENA PBR + .GLB
         </button>
         {motor === "satelite-dem" && (
           <>
+            <button
+              type="button"
+              onClick={() => setEdificios3d((e) => !e)}
+              className={`px-2 py-1 rounded font-mono text-[10px] font-bold border ${
+                edificios3d
+                  ? "bg-cyan-400/25 text-cyan-200 border-cyan-400/60"
+                  : "bg-black/75 text-slate-300 border-white/20"
+              }`}
+            >
+              {edificios3d ? "EDIFICIOS 3D ON" : "EDIFICIOS 3D OFF"}
+            </button>
             <button
               type="button"
               onClick={() => setDemActivo((d) => !d)}
@@ -1047,7 +1318,47 @@ export function TerrenoGuerra3D({
                   : "bg-black/75 text-slate-300 border-white/20"
               }`}
             >
-              {demActivo ? "RELIEVE DEM ON" : "RELIEVE DEM OFF"}
+              {demActivo ? "DEM ON" : "DEM OFF"}
+            </button>
+            <button
+              type="button"
+              onClick={() => moverCamaraMapa(0, 12.6)}
+              title="Vista aérea superior 0°"
+              className="px-1.5 py-1 rounded font-mono text-[10px] font-bold border bg-black/75 text-slate-200 border-white/20 hover:border-amber-hud"
+            >
+              0°
+            </button>
+            <button
+              type="button"
+              onClick={() => moverCamaraMapa(58, 13.6)}
+              title="Vista 3D inclinada tipo Google Earth"
+              className="px-1.5 py-1 rounded font-mono text-[10px] font-bold border bg-black/75 text-slate-200 border-white/20 hover:border-amber-hud"
+            >
+              58° 3D
+            </button>
+            <button
+              type="button"
+              onClick={() => moverCamaraMapa(78, 16.2)}
+              title="Vista rasante entre edificios y casas 3D"
+              className="px-1.5 py-1 rounded font-mono text-[10px] font-bold border bg-black/75 text-amber-200 border-amber-400/40 hover:bg-amber-400/20"
+            >
+              CALLE 78°
+            </button>
+            <button
+              type="button"
+              onClick={() => moverCamaraMapa(mapInstRef.current?.getPitch() ?? 60, undefined, -45)}
+              title="Rotar 45° izquierda"
+              className="px-1.5 py-1 rounded font-mono text-[10px] font-bold border bg-black/75 text-slate-200 border-white/20"
+            >
+              ↺
+            </button>
+            <button
+              type="button"
+              onClick={() => moverCamaraMapa(mapInstRef.current?.getPitch() ?? 60, undefined, 45)}
+              title="Rotar 45° derecha"
+              className="px-1.5 py-1 rounded font-mono text-[10px] font-bold border bg-black/75 text-slate-200 border-white/20"
+            >
+              ↻
             </button>
             <button
               type="button"
@@ -1062,12 +1373,24 @@ export function TerrenoGuerra3D({
             </button>
           </>
         )}
+        <button
+          type="button"
+          onClick={() => setModoEco((m) => !m)}
+          title="Modo ligero sin lag para teléfonos móviles"
+          className={`px-2 py-1 rounded font-mono text-[10px] font-bold border ${
+            modoEco
+              ? "bg-emerald-500/25 text-emerald-200 border-emerald-400/60"
+              : "bg-black/75 text-slate-300 border-white/20"
+          }`}
+        >
+          {modoEco ? "ECO MÓVIL ON" : "ULTRA GPU"}
+        </button>
       </div>
 
       <div className="absolute bottom-2 left-2.5 z-10 pointer-events-none px-2 py-0.5 rounded bg-black/75 border border-white/10 font-mono text-[9.5px] text-slate-300">
         {motor === "satelite-dem"
-          ? "MapLibre GL 3D · Satélite ESRI/Carto + Elevación Terrarium DEM"
-          : "Three.js PBR · Modelos .GLB + HDRI + Sky + Water Shader"}
+          ? "MapLibre 3D · Satélite ESRI + Relieve DEM + Edificios/Casas 3D OSM (OpenFreeMap)"
+          : "Three.js PBR · Modelos .GLB + Escuadrones + HDRI + Ondas Nucleares"}
       </div>
     </div>
   );

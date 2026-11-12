@@ -13,6 +13,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import {
   Globe2,
   Flame,
@@ -37,11 +38,20 @@ import {
   Search,
   Zap,
   SlidersHorizontal,
+  Atom,
+  History,
+  Flag,
+  Plus,
+  AlertTriangle,
+  UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { WorldMapSVG } from "@/components/vanguard/world-map-svg";
+import { PAISES_ATLAS } from "@/lib/atlas-data";
+import { CABEZAS } from "@/lib/detonacion-data";
+import { HISTORICAL_WARS } from "@/lib/game-data";
 import {
   ARMAS_3D,
   ESCUADRONES_3D,
@@ -49,9 +59,14 @@ import {
   RANKING_DOCTRINAS,
   UNIFORMES_3D,
   generarTeatroDesdeCoord,
+  obtenerContextoTeatro,
   obtenerFrentesVivos,
+  teatroDesdeFaccionCustom,
+  teatroDesdeGuerraHistorica,
+  teatroDesdePaisReal,
   type BiomaTeatro,
   type CapaUniforme,
+  type FaccionCustom,
   type FrenteVivo3D,
   type ModoSensor,
   type TeatroMundial,
@@ -62,7 +77,10 @@ import {
   crearEscenarioInicial,
   crearUnidadSim,
   desplegarEscuadronEnSim,
+  desplegarFormacionTactica,
+  lanzarAtaqueNuclear,
   lanzarAtaqueQuirurgico,
+  type FormacionTactica,
   type SimEstado,
 } from "@/lib/teatro-sim-engine";
 import {
@@ -106,7 +124,8 @@ const ArmaInteractiva3D = dynamic(
 
 type SubModulo = "mundial" | "frentes" | "uniformes" | "escuadrones" | "armas";
 type ModoVista = "3d" | "2d" | "mixto";
-type AccionClic = "unidad" | "escuadron" | "ataque";
+type AccionClic = "unidad" | "escuadron" | "formacion" | "ataque" | "nuclear";
+type ModoSimulacionTeatro = "real" | "libre" | "tiempo";
 
 interface CableNoticia {
   id: string;
@@ -143,12 +162,20 @@ export function TeatroTotalPanel({
   initialLat,
   initialLng,
   initialNombre,
+  initialModoSim,
+  initialWarId,
+  initialPaisA,
+  initialPaisB,
 }: {
   initialModulo?: SubModulo;
   initialFrente?: string;
   initialLat?: number;
   initialLng?: number;
   initialNombre?: string;
+  initialModoSim?: ModoSimulacionTeatro;
+  initialWarId?: string;
+  initialPaisA?: string;
+  initialPaisB?: string;
 } = {}) {
   const frentesVivos = useMemo(() => obtenerFrentesVivos(), []);
 
@@ -193,15 +220,43 @@ export function TeatroTotalPanel({
     Number.isFinite(initialLat) &&
     Number.isFinite(initialLng);
   const lugarInicial = LUGARES_MUNDO[0]; // VANGUARD #1 primero
-  const [teatro, setTeatro] = useState<TeatroMundial>(() =>
-    tieneCoordInicial
+
+  const [modoSim, setModoSim] = useState<ModoSimulacionTeatro>(() => {
+    if (initialModoSim) return initialModoSim;
+    if (initialWarId) return "tiempo";
+    if (initialPaisA || initialPaisB) return "libre";
+    return "real";
+  });
+  const [paisAId, setPaisAId] = useState<string>(() => initialPaisA || PAISES_ATLAS[0]?.id || "us");
+  const [paisBId, setPaisBId] = useState<string>(
+    () => initialPaisB || PAISES_ATLAS.find((p) => p.id !== (initialPaisA || PAISES_ATLAS[0]?.id))?.id || "cn"
+  );
+  const [campoPais, setCampoPais] = useState<"A" | "B" | "frontera">("frontera");
+  const [customPaisNombre, setCustomPaisNombre] = useState("República Soberana del Caribe");
+  const [customPaisSigla, setCustomPaisSigla] = useState("RSC");
+  const [customPaisCapital, setCustomPaisCapital] = useState("Puerto Nueva Aurora");
+  const [customPaisDoctrina, setCustomPaisDoctrina] = useState("Fuerza combinada naval y drones de defensa");
+  const [customBandoDestino, setCustomBandoDestino] = useState<"A" | "B">("A");
+  const [warHistId, setWarHistId] = useState<string>(() => initialWarId || HISTORICAL_WARS[0]?.id || "");
+  const [formacionClic, setFormacionClic] = useState<FormacionTactica>("cuna");
+  const [cabezaId, setCabezaId] = useState<string>(() => CABEZAS[2]?.id || CABEZAS[0].id);
+
+  const [teatro, setTeatro] = useState<TeatroMundial>(() => {
+    if (initialWarId) {
+      const h = teatroDesdeGuerraHistorica(initialWarId);
+      if (h) return h;
+    }
+    if (initialPaisA && initialPaisB) {
+      return teatroDesdePaisReal(initialPaisA, initialPaisB, "frontera");
+    }
+    return tieneCoordInicial
       ? generarTeatroDesdeCoord(
           initialLat,
           initialLng,
           initialNombre?.trim() || `Sector ${initialLat.toFixed(2)}°, ${initialLng.toFixed(2)}°`
         )
-      : generarTeatroDesdeCoord(lugarInicial.lat, lugarInicial.lng, lugarInicial.nombre, lugarInicial.bioma)
-  );
+      : generarTeatroDesdeCoord(lugarInicial.lat, lugarInicial.lng, lugarInicial.nombre, lugarInicial.bioma);
+  });
   const [busquedaLugar, setBusquedaLugar] = useState("");
   const [coordLat, setCoordLat] = useState(
     tieneCoordInicial ? initialLat.toFixed(2) : String(lugarInicial.lat)
@@ -327,11 +382,53 @@ export function TeatroTotalPanel({
     );
   }, [busquedaLugar]);
 
+  const cabezaSel = useMemo(
+    () => CABEZAS.find((c) => c.id === cabezaId) ?? CABEZAS[0],
+    [cabezaId]
+  );
+
+  const contextoTeatro = useMemo(() => obtenerContextoTeatro(teatro), [teatro]);
+
+  const cablesContexto = useMemo(() => {
+    if (cables.length === 0) return [];
+    const kws = contextoTeatro.keywordsOSINT.map((k) => k.toLowerCase());
+    const filtrados = cables.filter((c) => {
+      const tl = c.title.toLowerCase();
+      return kws.some((k) => k.length > 2 && tl.includes(k));
+    });
+    return (filtrados.length > 0 ? filtrados : cables).slice(0, 6);
+  }, [cables, contextoTeatro.keywordsOSINT]);
+
   // Manejador unificado de clic sobre el terreno (3D o 2D)
   const manejarClicTerreno = useCallback(
     (nx: number, nz: number) => {
-      if (accionClic === "ataque") {
+      if (accionClic === "nuclear") {
+        simRef.current = lanzarAtaqueNuclear(
+          simRef.current,
+          bandoClic,
+          nx,
+          nz,
+          cabezaSel.kt,
+          cabezaSel.nombre,
+          teatro
+        );
+        toast.warning(`Impacto simulado ${cabezaSel.nombre} (${cabezaSel.kt} kt)`, {
+          description: "Simulación táctica/estratégica ficticia en visor 3D",
+        });
+      } else if (accionClic === "ataque") {
         simRef.current = lanzarAtaqueQuirurgico(simRef.current, bandoClic, nx, nz, teatro);
+      } else if (accionClic === "formacion") {
+        simRef.current = desplegarFormacionTactica(
+          simRef.current,
+          bandoClic,
+          formacionClic,
+          nx,
+          nz,
+          teatro,
+          `${escuadronSel.nombre} (${formacionClic.toUpperCase()})`,
+          uniformeSel.bonoBlindajeSim,
+          armaSel.simStats.dano / 75
+        );
       } else if (accionClic === "escuadron") {
         simRef.current = desplegarEscuadronEnSim(
           simRef.current,
@@ -370,8 +467,85 @@ export function TeatroTotalPanel({
       }
       setSimVista(simRef.current);
     },
-    [accionClic, bandoClic, teatro, escuadronSel, tipoUnidadClic, uniformeSel.bonoBlindajeSim, armaSel.simStats.dano]
+    [
+      accionClic,
+      bandoClic,
+      teatro,
+      cabezaSel,
+      formacionClic,
+      escuadronSel,
+      tipoUnidadClic,
+      uniformeSel.bonoBlindajeSim,
+      armaSel.simStats.dano,
+    ]
   );
+
+  const lanzarDueloPaisesReales = () => {
+    const t = teatroDesdePaisReal(paisAId, paisBId, campoPais);
+    if (!t) {
+      toast.error("Selecciona dos países válidos de la lista");
+      return;
+    }
+    reiniciarTeatro(t, { a: t.bandoA, b: t.bandoB });
+    toast.success(`Simulación Ficción 3D: ${t.bandoA} vs ${t.bandoB}`, {
+      description: `Teatro: ${t.nombre} (${t.bioma.toUpperCase()}) · Solo simulación`,
+    });
+  };
+
+  const crearYDesplegarPaisCustom = () => {
+    const la = Number.parseFloat(coordLat);
+    const ln = Number.parseFloat(coordLng);
+    const faccionUser: FaccionCustom = {
+      id: `custom-${Date.now()}`,
+      nombre: customPaisNombre.trim() || "País Soberano",
+      sigla: (customPaisSigla.trim() || "CST").toUpperCase().slice(0, 4),
+      color: customBandoDestino === "A" ? "#FFC94D" : "#FF3B30",
+      capital: customPaisCapital.trim() || "Ciudad Central",
+      doctrina: customPaisDoctrina.trim() || "Fuerza combinada",
+      bonoBlindaje: 1.05,
+      bonoFuego: 1.05,
+    };
+    const faccionRival: FaccionCustom = {
+      id: "rival-opfor",
+      nombre: customBandoDestino === "A" ? teatro.bandoB : teatro.bandoA,
+      sigla: "OPF",
+      color: customBandoDestino === "A" ? "#FF3B30" : "#FFC94D",
+      capital: teatro.nombre,
+      doctrina: "Fuerza combinada regional",
+      bonoBlindaje: 1.0,
+      bonoFuego: 1.0,
+    };
+    const t =
+      customBandoDestino === "A"
+        ? teatroDesdeFaccionCustom(
+            faccionUser,
+            faccionRival,
+            Number.isFinite(la) ? la : teatro.lat,
+            Number.isFinite(ln) ? ln : teatro.lng,
+            customPaisCapital.trim() || teatro.nombre
+          )
+        : teatroDesdeFaccionCustom(
+            faccionRival,
+            faccionUser,
+            Number.isFinite(la) ? la : teatro.lat,
+            Number.isFinite(ln) ? ln : teatro.lng,
+            customPaisCapital.trim() || teatro.nombre
+          );
+    reiniciarTeatro(t, { a: t.bandoA, b: t.bandoB });
+    toast.success(`País custom "${faccionUser.nombre}" (${faccionUser.sigla}) creado en Bando ${customBandoDestino}`, {
+      description: `Capital táctica: ${faccionUser.capital} · Terreno 3D activo`,
+    });
+  };
+
+  const cargarGuerraHistorica3D = (warId: string) => {
+    const t = teatroDesdeGuerraHistorica(warId);
+    if (!t) return;
+    setWarHistId(warId);
+    reiniciarTeatro(t, { a: t.bandoA, b: t.bandoB });
+    toast.success(`Máquina del Tiempo 3D: ${t.nombre}`, {
+      description: `${t.bandoA} vs ${t.bandoB}`,
+    });
+  };
 
   const cargarFrenteEnSimulador = (f: FrenteVivo3D) => {
     const nuevo = generarTeatroDesdeCoord(f.lat, f.lng, f.nombre, f.bioma);
@@ -546,6 +720,249 @@ export function TeatroTotalPanel({
       {/* ════════════════════════════════════════════════════════════════════ */}
       {modulo === "mundial" && (
         <div className="space-y-4">
+          {/* Selector de Modo Operacional del Teatro 3D */}
+          <div className="hud-panel p-2.5 border-amber-hud/30 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {(
+                [
+                  { id: "real", label: "🌐 TIEMPO REAL + CONTEXTO", icon: Radio },
+                  { id: "libre", label: "☢ MODO LIBRE · PAÍSES + NUCLEAR", icon: Atom },
+                  { id: "tiempo", label: "⏳ MÁQUINA DEL TIEMPO 3D", icon: History },
+                ] as const
+              ).map((tab) => {
+                const Icono = tab.icon;
+                const active = modoSim === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setModoSim(tab.id)}
+                    className={cn(
+                      "px-3 py-1.5 rounded border font-mono text-[11px] font-bold flex items-center gap-1.5 transition-colors",
+                      active
+                        ? tab.id === "libre"
+                          ? "bg-[#FF3B30] text-white border-[#FF3B30]"
+                          : tab.id === "tiempo"
+                          ? "bg-[#38BDF8] text-black border-[#38BDF8]"
+                          : "bg-[#FFC94D] text-black border-[#FFC94D]"
+                        : "bg-black/45 border-white/15 text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Icono className="w-3.5 h-3.5" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono">
+              {modoSim === "libre" && (
+                <span className="px-2 py-1 rounded bg-red-hud/15 border border-red-hud/45 text-red-hud font-bold flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> SIMULACIÓN FICCIÓN · SANDBOX — NO ES PREDICCIÓN
+                </span>
+              )}
+              <Link
+                href="/maquina-del-tiempo"
+                className="px-2.5 py-1 rounded border border-cyan-hud/35 text-cyan-hud hover:bg-cyan-hud/15 font-bold"
+              >
+                SIMULADOR HISTÓRICO COMPLETO →
+              </Link>
+              <Link
+                href="/detonacion"
+                className="px-2.5 py-1 rounded border border-amber-hud/35 text-amber hover:bg-amber-hud/15 font-bold"
+              >
+                CALCULADORA NUCLEAR →
+              </Link>
+            </div>
+          </div>
+
+          {/* PANEL MODO LIBRE: GUERRAS FICTICIAS ENTRE PAÍSES REALES + PAÍS CUSTOM + NUCLEAR */}
+          {modoSim === "libre" && (
+            <div className="hud-panel p-3 sm:p-4 border-red-hud/35 space-y-3 bg-gradient-to-b from-red-hud/10 to-black/60">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                {/* 1. Guerra ficticia entre cualquier par de países reales */}
+                <div className="rounded-lg border border-white/15 bg-black/55 p-3 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-amber flex items-center gap-1.5">
+                      <Flag className="w-3.5 h-3.5" /> GUERRA FICTICIA ENTRE PAÍSES REALES ({PAISES_ATLAS.length})
+                    </span>
+                    <span className="font-mono text-[10px] text-muted-foreground">SANDBOX 3D</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div>
+                      <label className="block font-mono text-[10px] text-amber mb-1">BANDO A (PAÍS REAL)</label>
+                      <select
+                        value={paisAId}
+                        onChange={(e) => setPaisAId(e.target.value)}
+                        className="w-full px-2 py-1.5 rounded bg-black/80 border border-amber-hud/40 font-mono text-xs text-foreground"
+                      >
+                        {PAISES_ATLAS.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.id.toUpperCase()} · {p.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-mono text-[10px] text-red-hud mb-1">BANDO B (PAÍS REAL)</label>
+                      <select
+                        value={paisBId}
+                        onChange={(e) => setPaisBId(e.target.value)}
+                        className="w-full px-2 py-1.5 rounded bg-black/80 border border-red-hud/40 font-mono text-xs text-foreground"
+                      >
+                        {PAISES_ATLAS.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.id.toUpperCase()} · {p.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-mono text-[10px] text-cyan-hud mb-1">CAMPO DE BATALLA</label>
+                      <select
+                        value={campoPais}
+                        onChange={(e) => setCampoPais(e.target.value as "A" | "B" | "frontera")}
+                        className="w-full px-2 py-1.5 rounded bg-black/80 border border-cyan-hud/40 font-mono text-xs text-foreground"
+                      >
+                        <option value="frontera">Punto medio entre ambos</option>
+                        <option value="A">Capital Bando A</option>
+                        <option value="B">Capital Bando B</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={lanzarDueloPaisesReales}
+                      className="px-3 py-1.5 rounded bg-[#FFC94D] text-black font-mono text-xs font-black hover:bg-[#ffd66b]"
+                    >
+                      ⚔ LANZAR GUERRA FICTICIA EN 3D/2D
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAccionClic("nuclear")}
+                      className={cn(
+                        "px-3 py-1.5 rounded border font-mono text-xs font-bold flex items-center gap-1.5",
+                        accionClic === "nuclear"
+                          ? "bg-[#FF3B30] text-white border-[#FF3B30]"
+                          : "border-red-hud/50 text-red-hud hover:bg-red-hud/15"
+                      )}
+                    >
+                      <Atom className="w-3.5 h-3.5" /> ACTIVAR MODO NUCLEAR EN CLIC ({cabezaSel.kt} kt)
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Creador de País / Facción Personalizada */}
+                <div className="rounded-lg border border-white/15 bg-black/55 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-cyan-hud flex items-center gap-1.5">
+                      <Plus className="w-3.5 h-3.5" /> CREAR PAÍS O FACCIÓN PERSONALIZADA
+                    </span>
+                    <span className="font-mono text-[10px] text-muted-foreground">USA COORDENADAS ACTUALES</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                    <input
+                      value={customPaisNombre}
+                      onChange={(e) => setCustomPaisNombre(e.target.value)}
+                      placeholder="Nombre del país"
+                      className="sm:col-span-2 px-2 py-1.5 rounded bg-black/70 border border-white/15 font-mono text-xs text-foreground"
+                    />
+                    <input
+                      value={customPaisSigla}
+                      onChange={(e) => setCustomPaisSigla(e.target.value)}
+                      placeholder="Sigla (ej. RSC)"
+                      className="px-2 py-1.5 rounded bg-black/70 border border-white/15 font-mono text-xs text-foreground"
+                    />
+                    <select
+                      value={customBandoDestino}
+                      onChange={(e) => setCustomBandoDestino(e.target.value as "A" | "B")}
+                      className="px-2 py-1.5 rounded bg-black/80 border border-white/15 font-mono text-xs text-foreground"
+                    >
+                      <option value="A">En Bando A</option>
+                      <option value="B">En Bando B</option>
+                    </select>
+                    <input
+                      value={customPaisCapital}
+                      onChange={(e) => setCustomPaisCapital(e.target.value)}
+                      placeholder="Capital táctica"
+                      className="sm:col-span-2 px-2 py-1.5 rounded bg-black/70 border border-white/15 font-mono text-xs text-foreground"
+                    />
+                    <input
+                      value={customPaisDoctrina}
+                      onChange={(e) => setCustomPaisDoctrina(e.target.value)}
+                      placeholder="Doctrina militar"
+                      className="sm:col-span-2 px-2 py-1.5 rounded bg-black/70 border border-white/15 font-mono text-xs text-foreground"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={crearYDesplegarPaisCustom}
+                      className="px-3 py-1.5 rounded bg-[#38BDF8] text-black font-mono text-xs font-black hover:bg-[#5ccbfd]"
+                    >
+                      + CREAR PAÍS Y DESPLEGAR EN 3D
+                    </button>
+                    <div className="flex items-center gap-1.5 font-mono text-[10px]">
+                      <span className="text-red-hud font-bold">OJIVA NUCLEAR:</span>
+                      <select
+                        value={cabezaId}
+                        onChange={(e) => setCabezaId(e.target.value)}
+                        className="px-2 py-1 rounded bg-black/85 border border-red-hud/45 text-foreground"
+                      >
+                        {CABEZAS.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.nombre} ({c.kt} kt)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PANEL MÁQUINA DEL TIEMPO 3D (HISTORIA MILITAR) */}
+          {modoSim === "tiempo" && (
+            <div className="hud-panel p-3 sm:p-4 border-cyan-hud/35 space-y-2.5 bg-gradient-to-b from-cyan-hud/10 to-black/60">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-mono text-xs font-bold text-cyan-hud flex items-center gap-1.5">
+                  <History className="w-4 h-4" /> MÁQUINA DEL TIEMPO · GUERRAS HISTÓRICAS EN TERRENO 3D ({HISTORICAL_WARS.length})
+                </span>
+                <Link
+                  href="/historia"
+                  className="font-mono text-[11px] text-amber hover:underline"
+                >
+                  ABRIR ATLAS HISTÓRICO COMPLETO →
+                </Link>
+              </div>
+              <div className="flex gap-1.5 overflow-x-auto thin-scroll pb-1">
+                {HISTORICAL_WARS.map((w) => {
+                  const act = warHistId === w.id;
+                  return (
+                    <button
+                      key={w.id}
+                      type="button"
+                      onClick={() => cargarGuerraHistorica3D(w.id)}
+                      className={cn(
+                        "px-2.5 py-1.5 rounded border font-mono text-[11px] whitespace-nowrap transition-colors text-left",
+                        act
+                          ? "bg-cyan-hud/25 border-cyan-hud text-foreground font-bold"
+                          : "bg-black/45 border-white/15 text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <div>{w.name}</div>
+                      <div className="text-[9px] opacity-75">
+                        {w.yearStart < 0 ? `${Math.abs(w.yearStart)} a.C.` : w.yearStart} –{" "}
+                        {w.yearEnd < 0 ? `${Math.abs(w.yearEnd)} a.C.` : w.yearEnd} · {w.era}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Selector Universal de Cualquier Lugar del Mundo */}
           <div className="hud-panel p-3 sm:p-4 border-cyan-hud/30 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -803,9 +1220,11 @@ export function TeatroTotalPanel({
 
             {(
               [
-                { id: "unidad", label: "Desplegar Unidad" },
-                { id: "escuadron", label: `Desplegar ${escuadronSel.simboloOTAN}` },
-                { id: "ataque", label: "Ataque Misil" },
+                { id: "unidad", label: "Unidad 3D" },
+                { id: "formacion", label: "Escuadra Real (6)" },
+                { id: "escuadron", label: `Escuadrón ${escuadronSel.simboloOTAN}` },
+                { id: "ataque", label: "Misil Táctico" },
+                { id: "nuclear", label: `☢ Nuclear ${cabezaSel.kt}kt` },
               ] as { id: AccionClic; label: string }[]
             ).map((ac) => (
               <button
@@ -815,7 +1234,11 @@ export function TeatroTotalPanel({
                 className={cn(
                   "px-2.5 py-1 rounded border",
                   accionClic === ac.id
-                    ? "bg-cyan-hud/20 border-cyan-hud text-cyan-hud font-bold"
+                    ? ac.id === "nuclear"
+                      ? "bg-[#FF3B30] border-[#FF3B30] text-white font-bold"
+                      : "bg-cyan-hud/20 border-cyan-hud text-cyan-hud font-bold"
+                    : ac.id === "nuclear"
+                    ? "border-red-hud/45 text-red-hud"
                     : "border-white/15 text-muted-foreground"
                 )}
               >
@@ -832,6 +1255,32 @@ export function TeatroTotalPanel({
                 {UNIDADES_DESPLIEGUE.map((u) => (
                   <option key={u.tipo} value={u.tipo}>
                     {u.label}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {accionClic === "formacion" && (
+              <select
+                value={formacionClic}
+                onChange={(e) => setFormacionClic(e.target.value as FormacionTactica)}
+                className="px-2 py-1 rounded bg-black/80 border border-cyan-hud/40 text-cyan-hud font-bold"
+              >
+                <option value="cuna">Formación Cuña (Wedge)</option>
+                <option value="linea">Línea de Asalto</option>
+                <option value="columna">Columna Mecanizada</option>
+              </select>
+            )}
+
+            {accionClic === "nuclear" && (
+              <select
+                value={cabezaId}
+                onChange={(e) => setCabezaId(e.target.value)}
+                className="px-2 py-1 rounded bg-black/80 border border-red-hud/45 text-red-hud font-bold"
+              >
+                {CABEZAS.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nombre} · {c.kt} kt
                   </option>
                 ))}
               </select>
@@ -980,6 +1429,119 @@ export function TeatroTotalPanel({
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* CONTEXTO EN TIEMPO REAL · COMANDANTES REALES · GUERRA ACTIVA · CABLES OSINT */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            {/* Comandantes y Líderes reales del teatro (ROSTROS) */}
+            <div className="hud-panel p-3 border-cyan-hud/30 space-y-2">
+              <div className="flex items-center justify-between font-mono text-xs font-bold text-cyan-hud">
+                <span className="flex items-center gap-1.5">
+                  <UserCheck className="w-4 h-4" /> COMANDANTES Y LÍDERES DEL SECTOR
+                </span>
+                <span className="text-[10px] text-muted-foreground">{contextoTeatro.comandantes.length}</span>
+              </div>
+              <div className="space-y-1.5">
+                {contextoTeatro.comandantes.map((cmd) => (
+                  <div
+                    key={cmd.id}
+                    className="p-2 rounded bg-black/45 border border-white/10 flex items-center justify-between gap-2 text-[11px] font-mono"
+                  >
+                    <div className="min-w-0">
+                      <div className="font-bold text-foreground truncate">{cmd.nombre}</div>
+                      <div className="text-[10px] text-muted-foreground truncate">
+                        {cmd.cargo} · {cmd.sede} ({cmd.poder}/100)
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        reiniciarTeatro(
+                          generarTeatroDesdeCoord(cmd.lat, cmd.lng, `${cmd.sede} (${cmd.pais})`, "urbano")
+                        )
+                      }
+                      className="px-2 py-1 rounded border border-cyan-hud/45 text-cyan-hud hover:bg-cyan-hud/15 text-[10px] font-bold shrink-0"
+                    >
+                      HQ 3D →
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Datos reales del conflicto activo o marco sectorial */}
+            <div className="hud-panel p-3 border-red-hud/30 space-y-2">
+              <div className="flex items-center justify-between font-mono text-xs font-bold text-red-hud">
+                <span>
+                  {contextoTeatro.guerraRelacionada
+                    ? `GUERRA ACTIVA · ${contextoTeatro.guerraRelacionada.nombre}`
+                    : "ORDEN DE BATALLA Y PAÍSES DEL SECTOR"}
+                </span>
+                {contextoTeatro.guerraRelacionada && (
+                  <span className="px-1.5 py-0.5 rounded bg-red-hud/20 text-[10px]">
+                    ESCALADA {contextoTeatro.guerraRelacionada.escalada}/5
+                  </span>
+                )}
+              </div>
+              {contextoTeatro.guerraRelacionada ? (
+                <div className="space-y-1.5 text-[11px] font-mono">
+                  <p className="text-muted-foreground leading-snug">
+                    {contextoTeatro.guerraRelacionada.resumen}
+                  </p>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[contextoTeatro.guerraRelacionada.bandoA, contextoTeatro.guerraRelacionada.bandoB].map((fz, i) => (
+                      <div key={i} className="p-1.5 rounded bg-black/50 border border-white/10">
+                        <div className="font-bold text-amber truncate">{fz.nombre}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          Efectivos: {fz.efectivos}k · Tanques: {fz.tanques}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-[10px] text-cyan-hud">
+                    Desplazados: {contextoTeatro.guerraRelacionada.desplazados} · {contextoTeatro.guerraRelacionada.bajas.texto}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1.5 text-[11px] font-mono">
+                  <p className="text-muted-foreground leading-snug">{contextoTeatro.fuenteNota}</p>
+                  {contextoTeatro.paisesCercanos[0] && (
+                    <div className="p-2 rounded bg-black/45 border border-white/10">
+                      <div className="text-amber font-bold">
+                        País en zona: {contextoTeatro.paisesCercanos[0].nombre} ({contextoTeatro.paisesCercanos[0].capital})
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        Gobernante: {contextoTeatro.paisesCercanos[0].lider} · {contextoTeatro.paisesCercanos[0].region}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Cables reales OSINT en vivo relacionados al teatro */}
+            <div className="hud-panel p-3 border-amber-hud/30 space-y-2">
+              <div className="flex items-center justify-between font-mono text-xs font-bold text-amber">
+                <span className="flex items-center gap-1.5">
+                  <Radio className="w-3.5 h-3.5 animate-pulse" /> CABLES EN TIEMPO REAL
+                </span>
+                <span className="text-[10px] text-muted-foreground">{cablesContexto.length}</span>
+              </div>
+              {cablesContexto.length > 0 ? (
+                <div className="space-y-1.5 max-h-[175px] overflow-y-auto thin-scroll pr-1">
+                  {cablesContexto.map((c, idx) => (
+                    <div key={idx} className="p-1.5 rounded bg-black/50 border border-white/10 text-[11px] font-mono">
+                      <div className="text-foreground leading-snug">{c.title}</div>
+                      <div className="text-[9px] text-cyan-hud mt-0.5">{c.source}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[11px] font-mono text-muted-foreground leading-snug">
+                  Sincronizado con base táctica offline/OSINT para {teatro.nombre}. Pulsa cualquier frente vivo o país para cruzar despachos en directo.
+                </p>
+              )}
             </div>
           </div>
         </div>

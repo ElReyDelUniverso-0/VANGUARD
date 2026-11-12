@@ -15,8 +15,9 @@
 // ============================================================
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Hourglass, ScrollText } from "lucide-react";
+import { Box, Hourglass, ScrollText } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { HISTORICAL_WARS, type HistoricalWar } from "@/lib/game-data";
@@ -184,6 +185,20 @@ export function MaquinaAtlas() {
             <ScrollText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" />
             {seleccionada.significance}
           </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Link
+              href={`/teatro-3d?war=${encodeURIComponent(seleccionada.id)}&modo=tiempo`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/50 bg-cyan-400/15 px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider text-cyan-200 hover:bg-cyan-400/25"
+            >
+              <Box className="h-3.5 w-3.5" /> SIMULAR ESTA GUERRA EN EL MOTOR 3D →
+            </Link>
+            <Link
+              href="/teatro-3d?modo=libre"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-wider text-amber-200 hover:bg-amber-400/20"
+            >
+              MODO LIBRE / PAÍSES 3D →
+            </Link>
+          </div>
         </motion.div>
       )}
 

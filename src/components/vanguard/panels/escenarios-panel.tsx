@@ -8,9 +8,10 @@
 // versión mejorada). Etiqueta SIEMPRE: SIMULACIÓN · NO ES PREDICCIÓN.
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Share2, Play, MessageSquare, GitBranch, Heart, Flame, Clock, Trophy, ChevronDown, Send, FlaskConical,
+  Share2, Play, MessageSquare, GitBranch, Heart, Flame, Clock, Trophy, ChevronDown, Send, FlaskConical, Box,
 } from "lucide-react";
 import { HeroOro } from "@/components/vanguard/hero-oro";
 import { useGameStore } from "@/lib/game-store";
@@ -244,6 +245,12 @@ export function EscenariosPanel() {
         <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2.5 py-1 text-[9px] font-black tracking-wider text-amber-300">
           SIMULACIÓN · NO ES PREDICCIÓN
         </span>
+        <Link
+          href="/teatro-3d?modo=libre"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#FFC94D] px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-black hover:bg-[#ffd66b]"
+        >
+          <Box className="h-3 w-3" /> SIMULAR EN MOTOR 3D LIBRE →
+        </Link>
       </motion.div>
 
       {/* estado vacío */}

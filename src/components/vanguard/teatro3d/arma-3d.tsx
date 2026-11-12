@@ -15,6 +15,7 @@ import type { Arma3D, TipoArma3D } from "@/lib/teatro-total-data";
 import {
   aplicarEntornoPBR,
   crearPipelinePBR,
+  esDispositivoMovilOLigero,
   loadGLBCached,
   normalizarModeloGLB,
 } from "./glb-engine";
@@ -200,8 +201,12 @@ export function ArmaInteractiva3D({
     const camera = new THREE.PerspectiveCamera(38, width / height, 0.05, 80);
     camera.position.set(0.4, 1.35, 3.6);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const movil = esDispositivoMovilOLigero();
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !movil,
+      powerPreference: movil ? "default" : "high-performance",
+    });
+    renderer.setPixelRatio(movil ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setSize(width, height);
     el.innerHTML = "";
     el.appendChild(renderer.domElement);
@@ -391,6 +396,10 @@ export function ArmaInteractiva3D({
 
     const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
+      if (document.hidden) {
+        lastNow = now;
+        return;
+      }
       const dt = Math.min(0.05, (now - lastNow) * 0.001);
       lastNow = now;
 

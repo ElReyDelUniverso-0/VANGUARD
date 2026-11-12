@@ -20,12 +20,20 @@ export function Teatro3DCliente({
   initialLat,
   initialLng,
   initialNombre,
+  initialModoSim,
+  initialWarId,
+  initialPaisA,
+  initialPaisB,
 }: {
   initialModulo?: "mundial" | "frentes" | "uniformes" | "escuadrones" | "armas";
   initialFrente?: string;
   initialLat?: number;
   initialLng?: number;
   initialNombre?: string;
+  initialModoSim?: "real" | "libre" | "tiempo";
+  initialWarId?: string;
+  initialPaisA?: string;
+  initialPaisB?: string;
 }) {
   return (
     <TeatroTotalPanel
@@ -34,6 +42,10 @@ export function Teatro3DCliente({
       initialLat={initialLat}
       initialLng={initialLng}
       initialNombre={initialNombre}
+      initialModoSim={initialModoSim}
+      initialWarId={initialWarId}
+      initialPaisA={initialPaisA}
+      initialPaisB={initialPaisB}
     />
   );
 }

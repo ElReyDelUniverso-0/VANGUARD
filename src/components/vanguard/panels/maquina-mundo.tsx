@@ -26,10 +26,11 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Play, Pause, ChevronLeft, ChevronRight, Globe2, Users, Crosshair, Skull,
-  Plane, AlertTriangle, Coins, Landmark, MapPin,
+  Plane, AlertTriangle, Coins, Landmark, MapPin, Box, Atom,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -336,7 +337,26 @@ export function MaquinaMundo({ guerra }: { guerra: GuerraActiva }) {
       </div>
 
       {/* ── ③ EL ESCENARIO 3D: el motor de la Sala de Guerra, en su chunk ── */}
-      <div data-testid="maquina-mundo-3d">
+      <div data-testid="maquina-mundo-3d" className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-400/35 bg-amber-400/10 px-3 py-2">
+          <span className="font-mono text-[10px] font-black uppercase tracking-wider text-amber-200">
+            VANGUARD MOTOR 3D CON EDIFICIOS OSM + ESCUADRONES REALES
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            <Link
+              href={`/teatro-3d?modulo=mundial&lat=${guerra.lat}&lng=${guerra.lng}&nombre=${encodeURIComponent(guerra.nombre)}`}
+              className="inline-flex items-center gap-1 rounded-lg bg-[#FFC94D] px-2.5 py-1 font-mono text-[10px] font-black text-black hover:bg-[#ffd66b]"
+            >
+              <Box className="h-3 w-3" /> ABRIR EN SIMULADOR 3D COMPLETO →
+            </Link>
+            <Link
+              href="/teatro-3d?modo=libre"
+              className="inline-flex items-center gap-1 rounded-lg border border-red-400/45 bg-red-400/15 px-2.5 py-1 font-mono text-[10px] font-black text-red-200 hover:bg-red-400/25"
+            >
+              <Atom className="h-3 w-3" /> MODO LIBRE + NUCLEAR →
+            </Link>
+          </div>
+        </div>
         <TeatroGuerra3D key={guerra.id} guerra={guerra} alto={430} />
       </div>
 

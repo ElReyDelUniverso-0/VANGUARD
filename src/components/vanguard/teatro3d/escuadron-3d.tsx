@@ -14,6 +14,7 @@ import type { Escuadron3D } from "@/lib/teatro-total-data";
 import {
   aplicarEntornoPBR,
   crearPipelinePBR,
+  esDispositivoMovilOLigero,
   instanciarUnidadGLB,
   type InstanciaUnidadGLB,
 } from "./glb-engine";
@@ -62,8 +63,12 @@ export function EscuadronInteractivo3D({
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 80);
     camera.position.set(0, 5.2, 8.2);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const movil = esDispositivoMovilOLigero();
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !movil,
+      powerPreference: movil ? "default" : "high-performance",
+    });
+    renderer.setPixelRatio(movil ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setSize(width, height);
     el.innerHTML = "";
     el.appendChild(renderer.domElement);
@@ -198,6 +203,10 @@ export function EscuadronInteractivo3D({
     let raf = 0;
     const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
+      if (document.hidden) {
+        lastNow = now;
+        return;
+      }
       const dt = Math.min(0.05, (now - lastNow) * 0.001);
       lastNow = now;
 

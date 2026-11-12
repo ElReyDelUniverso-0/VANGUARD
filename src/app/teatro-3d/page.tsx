@@ -15,7 +15,17 @@ export const metadata: Metadata = {
 export default async function Teatro3DPage({
   searchParams,
 }: {
-  searchParams: Promise<{ modulo?: string; frente?: string; lat?: string; lng?: string; nombre?: string }>;
+  searchParams: Promise<{
+    modulo?: string;
+    frente?: string;
+    lat?: string;
+    lng?: string;
+    nombre?: string;
+    modo?: string;
+    war?: string;
+    paisA?: string;
+    paisB?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const modValido =
@@ -30,6 +40,8 @@ export default async function Teatro3DPage({
   const parsedLng = sp.lng !== undefined ? Number(sp.lng) : undefined;
   const initialLat = parsedLat !== undefined && Number.isFinite(parsedLat) ? Math.max(-85, Math.min(85, parsedLat)) : undefined;
   const initialLng = parsedLng !== undefined && Number.isFinite(parsedLng) ? Math.max(-180, Math.min(180, parsedLng)) : undefined;
+  const initialModoSim =
+    sp.modo === "libre" || sp.modo === "tiempo" || sp.modo === "real" ? sp.modo : undefined;
 
   return (
     <main className="min-h-screen bg-[#05060b] text-foreground px-3 sm:px-6 py-4 max-w-[1440px] mx-auto space-y-4">
@@ -85,6 +97,10 @@ export default async function Teatro3DPage({
         initialLat={initialLat}
         initialLng={initialLng}
         initialNombre={sp.nombre}
+        initialModoSim={initialModoSim}
+        initialWarId={sp.war}
+        initialPaisA={sp.paisA}
+        initialPaisB={sp.paisB}
       />
     </main>
   );

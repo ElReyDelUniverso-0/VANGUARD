@@ -7,6 +7,9 @@
 
 import { GUERRAS, type GuerraActiva, type CiudadGuerra } from "./guerras-activas-data";
 import { FRENTES, type FrenteDef } from "./frentes-data";
+import { PAISES_ATLAS, type PaisAtlas } from "./atlas-data";
+import { ROSTROS, type Rostro } from "./personas-data";
+import { HISTORICAL_WARS, type HistoricalWar } from "./game-data";
 
 export type BiomaTeatro =
   | "urbano"
@@ -636,6 +639,150 @@ export function generarTeatroDesdeCoord(
       presetCercano?.nota ??
       `Relieve generado de forma determinista para (${latClamped.toFixed(2)}°, ${lngClamped.toFixed(2)}°) en bioma ${bioma}. Haz clic sobre el terreno 3D o 2D para desplegar escuadrones y probar tácticas.`,
     fuenteGeo: presetCercano ? "Catálogo táctico + coordenadas reales" : "Conversor universal de coordenadas VANGUARD",
+  };
+}
+
+// ── MODO LIBRE · PAÍSES REALES, FACCIONES FICTICIAS Y MÁQUINA DEL TIEMPO ──
+export { PAISES_ATLAS, ROSTROS, HISTORICAL_WARS };
+
+export interface FaccionCustom {
+  id: string;
+  nombre: string;
+  sigla: string;
+  color: string;
+  doctrina: string;
+  capital: string;
+  bonoBlindaje: number;
+  bonoFuego: number;
+}
+
+export interface ContextoTeatroEnVivo {
+  guerraRelacionada: GuerraActiva | null;
+  comandantes: Rostro[];
+  paisesCercanos: PaisAtlas[];
+  keywordsOSINT: string[];
+  fuenteNota: string;
+}
+
+export function teatroDesdePaisReal(
+  paisAId: string,
+  paisBId: string,
+  sede?: "A" | "B" | "frontera"
+): TeatroMundial {
+  const a = PAISES_ATLAS.find((p) => p.id === paisAId) ?? PAISES_ATLAS[0];
+  const b = PAISES_ATLAS.find((p) => p.id === paisBId) ?? PAISES_ATLAS[7];
+  const lat =
+    sede === "A"
+      ? a.lat
+      : sede === "B"
+      ? b.lat
+      : Number(((a.lat + b.lat) / 2).toFixed(3));
+  const lng =
+    sede === "A"
+      ? a.lng
+      : sede === "B"
+      ? b.lng
+      : Number(((a.lng + b.lng) / 2).toFixed(3));
+  const lugarLabel =
+    sede === "A" ? `${a.capital} (${a.nombre})` : sede === "B" ? `${b.capital} (${b.nombre})` : `Corredor ${a.nombre} vs ${b.nombre}`;
+  const base = generarTeatroDesdeCoord(lat, lng, lugarLabel);
+  return {
+    ...base,
+    id: `libre-${a.id}-vs-${b.id}`,
+    subtitulo: `MODO LIBRE FICCIÓN · ${a.nombre} (${a.lider.split(" (")[0]}) vs ${b.nombre} (${b.lider.split(" (")[0]})`,
+    bandoA: `${a.nombre} [${a.id.toUpperCase()}]`,
+    bandoB: `${b.nombre} [${b.id.toUpperCase()}]`,
+    nota: `Simulación ficticia Sandbox en ${lugarLabel}. Mandato de ${a.nombre}: ${a.lider}. Mandato de ${b.nombre}: ${b.lider}. Cero predicción real.`,
+    fuenteGeo: "Atlas Mundial VANGUARD + Simulación Ficción",
+  };
+}
+
+export function teatroDesdeFaccionCustom(
+  faccionA: FaccionCustom,
+  faccionB: FaccionCustom,
+  lat: number,
+  lng: number,
+  nombreSector?: string
+): TeatroMundial {
+  const base = generarTeatroDesdeCoord(lat, lng, nombreSector || `${faccionA.sigla} vs ${faccionB.sigla}`);
+  return {
+    ...base,
+    id: `custom-${faccionA.id}-${faccionB.id}`,
+    subtitulo: `PAÍS / FACCIÓN PERSONALIZADA · ${faccionA.doctrina}`,
+    bandoA: `${faccionA.nombre} (${faccionA.sigla})`,
+    bandoB: `${faccionB.nombre} (${faccionB.sigla})`,
+    nota: `Escenario creado por el usuario: ${faccionA.nombre} (${faccionA.capital}) frente a ${faccionB.nombre} (${faccionB.capital}). Simulación libre 3D/2D.`,
+    fuenteGeo: "Creador de Países / Facciones VANGUARD",
+  };
+}
+
+export function teatroDesdeGuerraHistorica(warId: string): TeatroMundial {
+  const w = HISTORICAL_WARS.find((x) => x.id === warId) ?? HISTORICAL_WARS[0];
+  const base = generarTeatroDesdeCoord(w.lat, w.lng, `${w.name} (${w.yearStart < 0 ? `${Math.abs(w.yearStart)} a.C.` : w.yearStart})`);
+  return {
+    ...base,
+    id: `hist-${w.id}`,
+    subtitulo: `MÁQUINA DEL TIEMPO · ${w.era} · ${w.region}`,
+    bandoA: w.factions[0] ?? "Fuerza Histórica A",
+    bandoB: w.factions[1] ?? "Fuerza Histórica B",
+    nota: `${w.summary} Desenlace histórico: ${w.outcome} (${w.casualties}).`,
+    fuenteGeo: "Archivo Histórico VANGUARD (Máquina del Tiempo)",
+  };
+}
+
+export function obtenerContextoTeatro(teatro: TeatroMundial): ContextoTeatroEnVivo {
+  // 1) Buscar guerra activa más cercana o coincidente por nombre/coordenada
+  let mejorGuerra: GuerraActiva | null = null;
+  let distMin = Infinity;
+  const txt = `${teatro.nombre} ${teatro.subtitulo} ${teatro.bandoA} ${teatro.bandoB}`.toLowerCase();
+  for (const g of GUERRAS) {
+    const d = Math.hypot(g.lat - teatro.lat, g.lng - teatro.lng);
+    const matchKw = g.keywords.some((k) => txt.includes(k.toLowerCase())) || txt.includes(g.nombre.toLowerCase());
+    const score = matchKw ? d * 0.15 : d;
+    if (score < distMin) {
+      distMin = score;
+      mejorGuerra = g;
+    }
+  }
+  const guerraCercana = distMin < 14 ? mejorGuerra : null;
+
+  // 2) Buscar comandantes/líderes reales (ROSTROS) relacionados con los bandos o cercanía geográfica
+  const rostroMatches = ROSTROS.filter((r) => {
+    const rp = r.pais.toLowerCase();
+    const rc = r.ciudad.toLowerCase();
+    if (txt.includes(rp) || txt.includes(rc)) return true;
+    if (guerraCercana) {
+      const gTxt = `${guerraCercana.nombre} ${guerraCercana.bandoA.nombre} ${guerraCercana.bandoB.nombre} ${guerraCercana.bandoA.apoyos} ${guerraCercana.bandoB.apoyos}`.toLowerCase();
+      if (gTxt.includes(rp)) return true;
+    }
+    return Math.hypot(r.lat - teatro.lat, r.lng - teatro.lng) < 9.5;
+  })
+    .sort((a, b) => b.poder - a.poder)
+    .slice(0, 6);
+
+  // Si no hay coincidencia local directa, mostrar los 4 mandos estratégicos globales
+  const comandantes =
+    rostroMatches.length > 0
+      ? rostroMatches
+      : [...ROSTROS].sort((a, b) => b.poder - a.poder).slice(0, 4);
+
+  // 3) Países reales del Atlas más cercanos al teatro
+  const paisesCercanos = [...PAISES_ATLAS]
+    .sort((a, b) => Math.hypot(a.lat - teatro.lat, a.lng - teatro.lng) - Math.hypot(b.lat - teatro.lat, b.lng - teatro.lng))
+    .slice(0, 4);
+
+  const keywordsOSINT = guerraCercana
+    ? guerraCercana.keywords
+    : [teatro.nombre.split("·")[0].trim(), ...paisesCercanos.slice(0, 2).map((p) => p.nombre)];
+
+  return {
+    guerraRelacionada: guerraCercana,
+    comandantes,
+    paisesCercanos,
+    keywordsOSINT,
+    fuenteNota: guerraCercana
+      ? `${guerraCercana.fuente} · Estimaciones OSINT abiertas (Vanguard no predice: presenta)`
+      : "Atlas Mundial + Rostros del Poder VANGUARD (coordenadas y mandos reales)",
   };
 }
 

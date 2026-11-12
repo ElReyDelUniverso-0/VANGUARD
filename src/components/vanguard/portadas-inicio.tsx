@@ -18,9 +18,10 @@
 // ============================================================
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   ChevronLeft, ChevronRight, Clapperboard, Volume2, VolumeX,
-  Radar, Building2, Siren, Satellite, ShieldAlert,
+  Radar, Building2, Siren, Satellite, ShieldAlert, Box, Atom,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { APP_VERSION_LABEL } from "@/lib/version";
@@ -217,8 +218,20 @@ export function PortadasInicio({ tension, tensionColor, conflictos, clock, level
             <span className="inline-flex items-center gap-1.5 glass rounded-sm px-2 py-1 text-foreground">Agente {alias || "sin registrar"}</span>
           </div>
 
-          {/* acciones: cinemática + voces */}
+          {/* acciones: MODO 3D + cinemática + voces */}
           <div className="mt-3 flex flex-wrap items-center gap-2">
+            <Link
+              href="/teatro-3d"
+              className="inline-flex items-center gap-2 min-h-[40px] px-4 rounded-md font-mono text-[11px] font-black uppercase tracking-widest bg-[#38BDF8] text-black hover:bg-[#5ccbfd] transition-colors shadow-[0_0_20px_rgba(56,189,248,0.4)]"
+            >
+              <Box className="w-4 h-4" /> Entrar a Modo 3D
+            </Link>
+            <Link
+              href="/teatro-3d?modo=libre"
+              className="inline-flex items-center gap-2 min-h-[40px] px-3.5 rounded-md font-mono text-[11px] font-black uppercase tracking-widest border border-red-hud/70 bg-red-hud/20 text-red-200 hover:bg-red-hud/35 transition-colors"
+            >
+              <Atom className="w-4 h-4" /> Modo Libre + Nuclear
+            </Link>
             <button
               onClick={onVerCinematica}
               className="inline-flex items-center gap-2 min-h-[40px] px-4 rounded-md font-mono text-[11px] font-bold uppercase tracking-widest border transition-colors"

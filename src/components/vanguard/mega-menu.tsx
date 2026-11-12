@@ -16,7 +16,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Home, Dices, ChevronDown, Search, Sparkles, Crown } from "lucide-react";
+import { X, Home, Dices, ChevronDown, Search, Sparkles, Crown, Box, Atom, History, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SECTIONS, TOTAL_TABS, accentOfSection, type TabKey } from "@/components/vanguard/tab-nav";
 import { PortadaMundo, VitrinaSala } from "@/components/vanguard/portadas";
@@ -159,6 +159,56 @@ export function MegaMenu({
                 </div>
                 <div className="font-mono text-[8px] sm:text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
                   {visited.length} descubiertas · {sinDescubrir} por conquistar
+                </div>
+              </div>
+            </div>
+
+            {/* PORTADA DEDICADA MODO 3D · ACCESO PRINCIPAL */}
+            <div className="relative overflow-hidden rounded-md border border-[#38BDF8]/70 bg-black/85 mb-4 shadow-[0_0_32px_rgba(56,189,248,0.18)]">
+              <PortadaMundo mundo="teatro3d" className="h-28 sm:h-32 w-full" />
+              <div className="relative z-10 p-4 -mt-12 bg-gradient-to-t from-black via-black/90 to-transparent flex flex-wrap items-end justify-between gap-3">
+                <div className="space-y-1 max-w-2xl">
+                  <div className="flex items-center gap-2 flex-wrap font-mono text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-[#38BDF8] text-black font-black flex items-center gap-1">
+                      <Box className="w-3 h-3" /> MODO 3D · MOTOR PRINCIPAL
+                    </span>
+                    <span className="text-amber font-bold">
+                      EDIFICIOS 3D · ESCUADRONES REALES · MODO LIBRE + NUCLEAR · HISTORIA 3D
+                    </span>
+                  </div>
+                  <h3 className="font-display text-lg sm:text-xl font-black tracking-wide text-foreground">
+                    TEATRO TOTAL 3D — SIMULA EL PLANETA EN TIEMPO REAL O MODO LIBRE
+                  </h3>
+                </div>
+                <div className="flex flex-wrap gap-1.5 font-mono text-[11px]">
+                  <Link
+                    href="/teatro-3d"
+                    onClick={onClose}
+                    className="px-3 py-2 rounded bg-[#FFC94D] text-black font-black hover:bg-[#ffd66b] flex items-center gap-1"
+                  >
+                    <Crown className="w-3.5 h-3.5" /> ABRIR TEATRO 3D
+                  </Link>
+                  <Link
+                    href="/teatro-3d?modo=libre"
+                    onClick={onClose}
+                    className="px-3 py-2 rounded bg-[#FF3B30] text-white font-black hover:opacity-90 flex items-center gap-1"
+                  >
+                    <Atom className="w-3.5 h-3.5" /> MODO LIBRE + NUCLEAR
+                  </Link>
+                  <Link
+                    href="/teatro-3d?modo=tiempo"
+                    onClick={onClose}
+                    className="px-3 py-2 rounded border border-cyan-hud/60 text-cyan-hud font-bold hover:bg-cyan-hud/15 flex items-center gap-1"
+                  >
+                    <History className="w-3.5 h-3.5" /> MÁQUINA DEL TIEMPO 3D
+                  </Link>
+                  <Link
+                    href="/teatro-3d?modulo=escuadrones"
+                    onClick={onClose}
+                    className="px-3 py-2 rounded border border-white/25 text-foreground font-bold hover:bg-white/10 flex items-center gap-1"
+                  >
+                    <Users className="w-3.5 h-3.5" /> ESCUADRONES / ARMAS 3D
+                  </Link>
                 </div>
               </div>
             </div>

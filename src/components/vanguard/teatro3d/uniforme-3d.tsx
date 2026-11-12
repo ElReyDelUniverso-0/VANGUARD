@@ -17,6 +17,7 @@ import { crearTexturaCamo } from "./fabricas-3d";
 import {
   aplicarEntornoPBR,
   crearPipelinePBR,
+  esDispositivoMovilOLigero,
   loadGLBCached,
   normalizarModeloGLB,
 } from "./glb-engine";
@@ -98,8 +99,12 @@ export function UniformeInteractivo3D({
     const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 60);
     camera.position.set(1.5, modo === "casco-pbr" ? 1.1 : 1.55, modo === "casco-pbr" ? 2.65 : 3.45);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    const movil = esDispositivoMovilOLigero();
+    const renderer = new THREE.WebGLRenderer({
+      antialias: !movil,
+      powerPreference: movil ? "default" : "high-performance",
+    });
+    renderer.setPixelRatio(movil ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.setSize(width, height);
     el.innerHTML = "";
     el.appendChild(renderer.domElement);
@@ -385,6 +390,10 @@ export function UniformeInteractivo3D({
 
     const animate = (now: number) => {
       raf = requestAnimationFrame(animate);
+      if (document.hidden) {
+        lastNow = now;
+        return;
+      }
       const dt = Math.min(0.05, (now - lastNow) * 0.001);
       lastNow = now;
 

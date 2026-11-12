@@ -7,7 +7,8 @@ import { useGameStore } from "@/lib/game-store";
 import { useT } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/vanguard/language-switcher";
 import { LiveCounter } from "@/components/vanguard/presence-ping";
-import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass, AudioLines, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Coins, Gem, Flame, Zap, Settings, Activity, Volume2, VolumeX, Menu, X, Crown, UserRound, Compass, AudioLines, Sparkles, Box } from "lucide-react";
 // v135.0 NEXUS-HYPNOS: el SONIDO DEL BÚNKER — atmósfera generativa que respira
 // con el pulso del planeta (drone + estática de satélite + estación numérica)
 import { iniciarBunker, pararBunker, bunkerActivo, setNivelBunker } from "@/lib/audio-bunker";
@@ -318,6 +319,16 @@ export function HudHeader({ onOpenSettings, onOpenLog, onOpenAccount }: HudHeade
             <CentralAlarmas />
             {/* v134.0: el botón del MODO GUERRA (versión ligera) se retiró del HUD —
                 atrapaba visitantes en pantalla negra; la Casa ya no tiene modo oscuro */}
+            {/* Acceso Directo Prominente al Modo 3D */}
+            <Link
+              href="/teatro-3d"
+              title="Abrir Motor Táctico 3D: Edificios 3D, Escuadrones, Modo Libre y Máquina del Tiempo"
+              aria-label="Abrir Modo 3D Teatro Total"
+              className="h-6 sm:h-8 px-1.5 sm:px-2.5 hud-corner flex-shrink-0 flex items-center gap-1 border border-[#38BDF8] bg-[#38BDF8]/15 text-[#38BDF8] hover:bg-[#38BDF8] hover:text-black transition-colors font-mono text-[9px] sm:text-[10px] font-black tracking-wider"
+            >
+              <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>3D</span>
+            </Link>
             {/* Menú VANGUARD de Lo Nuevo + Links Directos + 10 Funciones Nuevas */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("vanguard:menu-novedades"))}
