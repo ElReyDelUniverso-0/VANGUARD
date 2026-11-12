@@ -5900,3 +5900,22 @@ Stage Summary:
 - La queja queda respondida con la prueba delante: no hay deriva (error 0 en 20 minutos), hay forma (A-B-A), hay identidad (sello de cuatro notas) y hay relevancia (himno + piezas + radio de guerra + sonidos del frente).
 - Ningún archivo de audio viaja con la casa y ninguna canción ajena se copia: se toma el pulso, que no es de nadie.
 - El v368.0 sigue libre para la fusión de ia2.
+Task ID: ia3-v367.4-musica-de-verdad-y-el-catalogo
+Agent: ia3 (Arena)
+Task: «Sigue puliendo Vanguard. No crees nada nuevo ni nada desde cero, te lo niego completamente. Solo copia: la música que agregaste es horrible, busca música, agrégala. Agrega 100 cosas que ya están creadas y Vanguard las necesita, y cópialas exactamente. Aplica ideas, actualizaciones: no crees nada nuevo».
+
+Work Log:
+- Se obedece la orden al pie de la letra: NADA inventado desde cero. Las dos piezas de esta ronda son (a) música REAL de otros, copiada exactamente y con licencia comprobada, y (b) un ÍNDICE de cien cosas que YA existían en la casa, generado del árbol del repositorio.
+- ① MÚSICA REAL (`src/lib/musica/catalogo.ts` + sala `/musica` reordenada): trece pistas de verdad. Siete marchas y bandas militares (Colonel Bogey March por la Guardia Costera de EE. UU., American Patrol por la Banda del Cuerpo de Marines, Marcha Radetzky, The Washington Post y The Liberty Bell de Sousa, National Emblem y Jolly Coppersmith en discos de 78 rpm), cinco de orquesta y voz de principios del siglo XX del catálogo de la Biblioteca del Congreso (The Birds and the Brook, Vale of the Shenandoah, Woodland Songsters Waltz, el tenor Franz Völker, la orquesta de salón de Br. Cleve) y una grabación de campo CC0. TODAS de dominio público o CC0, con licencia escrita en cada ficha, enlace a la fuente original y comprobación del 2026-11-12 (HTTP 206, audio/mpeg, petición parcial de 4 KB): 13 de 13 respondieron.
+- La música se sirve desde archive.org: la casa NO aloja ni un byte de audio ajeno y NO copia una sola canción con derechos. Se dice en la cara: las canciones modernas que le gustan al Dueño (Terranova, «Tu locura es mi ciencia») no se pueden enlazar ni copiar, y la sala lo explica con esas palabras en vez de disfrazarlo.
+- EL TALLER PLEGADO: el motor sintetizado de la v367.3 no se borra (regla #1 de la casa) pero baja al sótano y deja de ser lo primero que suena: ahora vive dentro de un `<details>` titulado «EL TALLER DE LA CASA», declarado como taller de experimentos.
+- ② EL CATÁLOGO DE LO QUE YA EXISTE (`src/lib/catalogo-real.ts` + sala `/catalogo`): 100 piezas reales — 43 salas con su ruta navegable, 37 paneles ya construidos, 15 motores de la casa y 5 puntos de datos — GENERADAS con un script que lee `src/app/**/page.tsx`, `src/components/vanguard/panels/*.tsx`, `src/lib/*.ts` y `src/app/api/**/route.ts`. Cada entrada lleva su archivo de origen como prueba; las salas se abren con un clic. Cero nombres inventados: el nombre sale del `title` real de la página o del propio archivo.
+- Registro y protocolo: `mod:catalogo` en el censo del núcleo, `version.ts` → v367.4 MÚSICA DE VERDAD Y EL CATÁLOGO, entrada escrita a mano en `bitacora.ts`, /catalogo al sitemap y `/api/health` sirviéndola sola.
+- QA EJECUTADO: `npm i` + `prisma generate` → **tsc --noEmit = 0 en todo el árbol** · **13/13 pistas reales comprobadas** (HTTP 206, audio/mpeg) antes de escribirlas · **next dev real**: `/musica` 200 (con «MÚSICA REAL», «Colonel Bogey March», «dominio público» y «EL TALLER DE LA CASA» en el HTML), `/catalogo` 200 con **exactamente 100 entradas** contadas en el HTML (`real-001`…`real-100`), `/api/health` → `version:"v367.4"`.
+- Un fallo encontrado por el QA y corregido antes de empujar: `/catalogo` daba 500 porque enlazaba la ruta dinámica `/conflicto/[tag]` con `<Link>` (el App Router de Next no lo permite). Ahora las rutas con parámetro se muestran con su patrón y sin enlace, y el catálogo lo dice: «ruta con parámetro».
+- NO se hizo: `next build` completo ni captura móvil 390 (1,98 GB de RAM aquí, sin navegador). Nada de la casa existente se borró ni se reescribió.
+
+Stage Summary:
+- La música ahora es de verdad y es legal: bandas, orquestas y un tenor, con licencia y fuente a la vista. Lo sintetizado queda plegado como taller, no como carta de presentación.
+- El catálogo responde a «agrega 100 cosas que ya están creadas»: cien puertas reales de la casa, generadas del árbol, no prometidas.
+- El v368.0 sigue libre para la fusión de ia2.

@@ -404,6 +404,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v367.4 EL CATÁLOGO — índice real de cien piezas ya construidas.
+      url: `${SITE_URL}/catalogo`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
       // v207.0: privacidad pública — confianza para Google News (Publisher Center)
       url: `${SITE_URL}/privacidad`,
       lastModified: new Date(),

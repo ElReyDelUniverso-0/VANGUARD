@@ -28,9 +28,9 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La Música con Forma — el himno y la radio de VANGUARD",
+  title: "La Música de VANGUARD — música real, radio de conflicto y el taller",
   description:
-    "El himno de VANGUARD (sello de cuatro notas, forma A-B-A), piezas originales de pulso prestado, música militar sintetizada, radio de conflicto con emisoras reales comprobadas y la radio de la casa leída del archivo real.",
+    "Música real de dominio público y CC0 (bandas militares, orquestas de 1910, un tenor de los años treinta), radio de conflicto con emisoras comprobadas, la radio de la casa leída del archivo real y los sonidos de guerra. Cada pista con su licencia y su fuente.",
   alternates: { canonical: `${SITE_URL}/musica` },
 };
 
@@ -95,10 +95,11 @@ export default function MusicaPage() {
         <article className="mx-auto max-w-3xl px-5 py-10">
           <h1 className="text-3xl font-bold text-zinc-100">La Música con Forma</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-            El problema no era el volumen ni el efecto: era la <strong className="text-zinc-300">forma</strong>.
-            Una música sin secciones fijas ni motivo que vuelva se deshace a los dos minutos. Aquí está
-            el arreglo, a la vista: un sello de cuatro notas, forma A-B-A y un reloj que calcula cada
-            nota desde un ancla — nunca sumando retardos.
+            Aquí está la <strong className="text-zinc-300">música de verdad</strong>: trece pistas de
+            dominio público y CC0 — bandas militares, orquestas de 1910, un tenor de los años treinta y
+            una grabación de campo — cada una con su licencia y su fuente a la vista. Debajo, la radio de
+            conflicto y los sonidos de guerra. Y al final, plegado, el taller de composición de la casa:
+            se queda como experimento, no como lo primero que suena.
           </p>
 
           <div className="mt-8">
@@ -106,7 +107,15 @@ export default function MusicaPage() {
           </div>
 
           <section className="mt-8">
-            <h2 className="text-lg font-bold text-amber-300">Por qué ya no se deforma</h2>
+            <h2 className="text-lg font-bold text-amber-300">Qué hay aquí y de quién es</h2>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+              Las trece pistas de arriba no son de la casa: las tocaron bandas y orquestas reales y son
+              de dominio público o CC0, así que se pueden escuchar sin pedir permiso a nadie. La casa
+              no aloja ni un byte de audio ajeno: se sirve desde archive.org, con la ficha original
+              enlazada en cada una. Lo que sí es de la casa es el taller de composición (plegado abajo),
+              la radio de la casa y los sonidos sintetizados.
+            </p>
+            <h2 className="mt-6 text-lg font-bold text-amber-300">Por qué el taller no se deforma</h2>
             <ul className="mt-3 flex flex-col gap-2 text-sm leading-relaxed text-zinc-400">
               <li>
                 <strong className="text-zinc-200">Tiempo absoluto.</strong> Cada golpe se agenda en
@@ -129,7 +138,7 @@ export default function MusicaPage() {
           </section>
 
           <FuenteYFecha
-            fuente="composición y síntesis propias (osciladores del aparato) · emisoras comprobadas el 2026-11-12"
+            fuente="música real de dominio público y CC0 servida desde archive.org · emisoras comprobadas el 2026-11-12"
             nota="Las emisoras reales son enlaces externos y se declaran con la fecha de comprobación y su código HTTP; las que no se pudieron comprobar van marcadas SIN VERIFICAR. La radio de la casa no enlaza a nadie: su ambiente se sintetiza y su boletín se lee del archivo real. Ningún archivo de audio viaja con la casa."
           />
 

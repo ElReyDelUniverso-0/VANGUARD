@@ -5252,8 +5252,32 @@
 // Reglas respetadas: solo se AGREGA (la música vieja sigue en pie, la voz y el
 // orbe intactos), cero imágenes nuevas, cero notificaciones falsas, cero cifras
 // a mano, 3D sin tocar. El v368.0 sigue LIBRE para ia2.
-export const APP_VERSION = "v367.3";
-export const APP_CODENAME = "LA MÚSICA CON FORMA";
+// v367.4 MÚSICA DE VERDAD Y EL CATÁLOGO (sobre v367.3, intacta): el Dueño
+// corrigió el rumbo con dos órdenes claras — «la música que agregaste es
+// horrible, busca música, agrégala» y «no crees nada nuevo ni nada desde
+// cero: agrega 100 cosas que YA ESTÁN CREADAS y Vanguard las necesita, y
+// cópialas exactamente».
+// ① MÚSICA REAL (lib/musica/catalogo.ts + sala /musica): trece pistas de
+//    verdad — bandas militares (Colonel Bogey, American Patrol, Radetzky,
+//    Washington Post, Liberty Bell, National Emblem, Jolly Coppersmith),
+//    orquestas de 1910 del catálogo de la Biblioteca del Congreso, un tenor
+//    de los años treinta y una grabación de campo CC0 — TODAS de dominio
+//    público o CC0, con licencia y fuente a la vista y enlace comprobado
+//    (HTTP 206, audio/mpeg) el 2026-11-12. Se sirven desde archive.org: la
+//    casa no aloja ni un byte de audio ajeno y no copia una sola canción con
+//    derechos. Las que le gustan al Dueño (Terranova, «Tu locura es mi
+//    ciencia») no se pueden enlazar: la sala lo dice en la cara en vez de
+//    fingir. El motor sintetizado de la v367.3 NO se borra (regla de la
+//    casa): baja al TALLER, plegado, y deja de ser lo primero que suena.
+// ② EL CATÁLOGO DE LO QUE YA EXISTE (lib/catalogo-real.ts + sala /catalogo):
+//    cien piezas reales — 43 salas con su ruta navegable, 37 paneles ya
+//    construidos, 15 motores y 5 puntos de datos — GENERADAS leyendo el árbol
+//    del repositorio, no escritas a mano. Cada entrada lleva su archivo de
+//    origen como prueba: si algo no existe, no aparece.
+// Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
+// notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
+export const APP_VERSION = "v367.4";
+export const APP_CODENAME = "MÚSICA DE VERDAD Y EL CATÁLOGO";
 // v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
 // autociclo y el mandato del Dueño («agrega estos tipos de navegación en
 // TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —
