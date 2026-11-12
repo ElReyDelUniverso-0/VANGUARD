@@ -397,6 +397,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
+      // v367.3 LA MÚSICA CON FORMA — el himno, las piezas y la radio de la casa.
+      url: `${SITE_URL}/musica`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v207.0: privacidad pública — confianza para Google News (Publisher Center)
       url: `${SITE_URL}/privacidad`,
       lastModified: new Date(),

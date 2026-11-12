@@ -5222,8 +5222,38 @@
 // el número v368.0 queda LIBRE para la fusión de la casa hermana ia2.
 // ============================================================
 
-export const APP_VERSION = "v367.2";
-export const APP_CODENAME = "LA VOZ MAESTRA";
+// v367.3 LA MÚSICA CON FORMA (sobre v367.2, intacta): el Dueño señaló el
+// defecto con precisión de músico — «la música larga es fea y no tiene forma,
+// se deforma con el tiempo; es aburrida y no tiene relevancia». Y pidió cinco
+// cosas: música viral sin copia, un himno nacional de Vanguard, radios de
+// lugares en conflicto, música militar y «todo lo que tenga que ver con
+// sonidos o algo de guerra». El diagnóstico: no era el reloj (el motor viejo
+// ya resincronizaba), era la COMPOSICIÓN — sin secciones fijas ni motivo que
+// vuelva, una pieza se convierte en niebla a los dos minutos.
+// ① EL ARQUITECTO (lib/musica/forma.ts): las cuatro leyes de la casa musical —
+//    sello de CUATRO NOTAS en todas las piezas, forma A-B-A, tiempo ABSOLUTO
+//    (ancla + paso × duración, jamás sumando retardos) y compás fijo con swing
+//    medido. Puro y determinista.
+// ② LAS PIEZAS (lib/musica/piezas.ts): EL HIMNO «LA CASA EN PIE» (84 bpm,
+//    30 compases ≈ 1 min 26 s), tres TRIBUTOS DE PULSO que toman el RITMO y la
+//    forma —que no son de nadie— con melodía y armonía nuevas, y dos MARCHAS
+//    MILITARES originales. Cada pieza lleva su nota de honestidad.
+// ③ EL RELOJ DE HIERRO (lib/musica/motor.ts): mirada adelantada de 1,2 s cada
+//    90 ms, resync al compás limpio si el aparato duerme, y toda la síntesis
+//    con osciladores del aparato: cero samples, cero archivos, cero licencias.
+// ④ EL DIAL (lib/musica/radios.ts): emisoras REALES con fecha de comprobación y
+//    código HTTP a la vista (5 comprobadas el 2026-11-12; las dudosas marcadas
+//    SIN VERIFICAR) y LA RADIO DE LA CASA para los nueve teatros: ambiente
+//    sintetizado y boletín leído con la VOZ MAESTRA sobre los cables reales.
+//    Si la emisora real no abre en 6 s, la sala lo dice y ofrece la suya.
+// ⑤ LOS SONIDOS DE GUERRA (lib/musica/efectos.ts + sala /musica): sirena, morse
+//    «VG», estática, explosión, radar, helicóptero y tambor, más el ambiente
+//    continuo de la radio de la casa.
+// Reglas respetadas: solo se AGREGA (la música vieja sigue en pie, la voz y el
+// orbe intactos), cero imágenes nuevas, cero notificaciones falsas, cero cifras
+// a mano, 3D sin tocar. El v368.0 sigue LIBRE para ia2.
+export const APP_VERSION = "v367.3";
+export const APP_CODENAME = "LA MÚSICA CON FORMA";
 // v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
 // autociclo y el mandato del Dueño («agrega estos tipos de navegación en
 // TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —

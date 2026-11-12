@@ -553,3 +553,14 @@ Salud: tsc --strict 0 en los 4 módulos nuevos | esbuild sin errores en route/pa
 3. CONECTAR LOS CINCO SALVAVIDAS A LA TORRE (sigue de #33, sigue a cero). Esfuerzo: S
 4. TABLERO DE MANDO (módulo #4 de la lista ia3). Esfuerzo: M
 5. ROTACIÓN DEL TOKEN (deuda viva, 4.ª vez que viaja por chat): el Dueño ya tiene la explicación; falta que la ejecute y actualizar el secreto del escudo. Esfuerzo: S
+
+## MENSAJE #35 · 2026-11-12 · v367.3 LA MÚSICA CON FORMA · ia3 (Arena)
+Notas: el Dueño describió el defecto con oído: «la música larga es fea, no tiene forma, se deforma con el tiempo, es aburrida y no tiene relevancia». Diagnóstico: no era el reloj (el motor viejo ya resincronizaba), era la COMPOSICIÓN. Cinco módulos nuevos: (1) lib/musica/forma.ts — cuatro leyes (sello de CUATRO NOTAS, forma A-B-A, tiempo absoluto ancla + paso × duración, compás fijo con swing medido), puro y probable; (2) lib/musica/piezas.ts — EL HIMNO LA CASA EN PIE (84 bpm, 1 min 26 s, intro-A-B-A2-final) + tres TRIBUTOS DE PULSO con melodía original + dos marchas militares; (3) lib/musica/motor.ts — planificador con mirada adelantada de 1,2 s, resync al compás y síntesis completa con osciladores (cero samples); (4) lib/musica/radios.ts — 5 emisoras reales comprobadas con su código HTTP + 5 marcadas SIN VERIFICAR, y LA RADIO DE LA CASA para los nueve teatros; (5) lib/musica/efectos.ts — sirena, morse, estática, explosión, radar, helicóptero, tambor. Sala nueva /musica.
+Salud: tsc 0 en todo el árbol (prisma generate previo) | prueba del motor puro: cero deriva, error máximo 0 tras 20 minutos de pasos, himno dentro de 60-90 s, forma A-B-A2-final, armarForma determinista | next dev real: /musica 200, / 200, health v367.3 | build completo y móvil 390 PENDIENTES de ia1 (1,98 GB de RAM, sin navegador)
+
+📡 PRÓXIMAS PROPUESTAS:
+1. EL MOTOR NUEVO TOCANDO LA CASA ENTERA (⭐ el paso que falta) — motor.ts ya es una pieza suelta: montarlo en el reproductor global de la portada para que la música ambiental de Vanguard use forma y no improvisación. Es la ronda que jubila el «se deforma» en toda la casa, no solo en la sala. Esfuerzo: M
+2. MÁS EMISORAS REALES CON COMPROBACIÓN AUTOMÁTICA — un GET /api/radios que compruebe los enlaces cada mañana y marque las caídas: el catálogo crece sin probar a mano. Esfuerzo: S
+3. LA RADIO DE LA CASA COMO PODCAST — el boletín ya se lee del archivo con la voz de la casa: grabar la edición de cada franja y servirla en la EMISORA de la v217. Esfuerzo: M
+4. EL SELLO EN LAS PIEZAS VIEJAS — insertar el motivo de cuatro notas en las pistas de conflict-music.ts sin reescribirlas: identidad inmediata en toda la casa. Esfuerzo: M
+5. CONECTAR LOS CINCO SALVAVIDAS A LA TORRE y añadir el diagnóstico del motor musical (diagnosticoMotor): resyncs a la vista. Esfuerzo: S
