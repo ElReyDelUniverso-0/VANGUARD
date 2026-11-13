@@ -5276,8 +5276,34 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.5";
-export const APP_CODENAME = "LA RADIO REAL EN EL VANGUARD PÚBLICO";
+export const APP_VERSION = "v367.6";
+export const APP_CODENAME = "EL PERFIL DEL JUGADOR";
+// v367.6 EL PERFIL DEL JUGADOR (sobre v367.5, intacta) — orden del Dueño:
+// «haz un perfil que cada jugador debe tener, acceder bien a Vanguard, los
+// permisos, código y un perfil con agregar una foto y una personalización
+// amplia»; y en la misma tanda, «sigue agregando copiando y agregando».
+// ① EL CARNET DE SEIS PIEZAS (src/lib/perfil-jugador.ts): alias, foto, bio,
+//    cuenta, modo elegido y código guardado. Cada jugador ve de un golpe lo que
+//    le falta, con la puerta real para completarlo. Nada escrito a mano: el
+//    carnet se calcula del estado vivo.
+// ② EL CÓDIGO DEL JUGADOR: `VG-XXXX-YYYY` derivado de `huellaDe()` del carnet
+//    v359 (misma persona → mismo código), para que dos jugadores comprueben que
+//    hablan con el mismo. Se dice claro que NO es una contraseña.
+// ③ LOS PERMISOS LEÍDOS DEL CENSO: la tabla sale del campo `permiso` de los
+//    módulos de `nucleo/registro.ts`; el nivel (invitado / jugador /
+//    jugador verificado / dueño) se deriva de la sesión real de /api/auth/me,
+//    y se listan las puertas que aún no abre. Cero cuenta fingida.
+// ④ LA FOTO, EN EL APARATO: se reduce con el canvas del navegador a 320 px y
+//    JPEG 0.82, con tope de 300 KB medido; se guarda en el mismo store del
+//    perfil. No viaja a ningún servidor y la sala lo dice con esas palabras.
+// ⑤ PERSONALIZACIÓN AMPLIA: las nueve piezas de la casa en una pantalla — foto,
+//    countryball, banner, marco, bio, país favorito, facción, firma 3D y alias —
+//    cada una con el archivo real que la guarda a la vista.
+// ⑥ /perfil: la sala server (metadata, JSON-LD ProfilePage, procedencia y
+//    puertas al núcleo) con el panel cliente, y su registro `mod:perfil-jugador`
+//    en el censo (permiso público: el carnet se puede ver sin cuenta).
+// ⑦ EL CATÁLOGO SIGUE: de 140 a 160 piezas reales, con la sala nueva incluida.
+export const APP_VERSION_ANTERIOR = "v367.5";
 // v367.5 LA RADIO REAL EN EL VANGUARD PÚBLICO (sobre v367.4, intacta) —
 // mandato del Dueño, textual: «que la música esté ya toda en el Vanguard
 // público y se pongan aleatoriamente en el Vanguard» y, en la misma tanda,
@@ -5300,7 +5326,7 @@ export const APP_CODENAME = "LA RADIO REAL EN EL VANGUARD PÚBLICO";
 // ⑤ EL CATÁLOGO SIGUE CRECIENDO (/catalogo): de 100 a 140 piezas reales —
 //    20 puntos de datos, 12 motores y 8 paneles más, todos archivos que ya
 //    existían en el árbol. La cifra del título se calcula desde TOTAL_REAL.
-export const APP_VERSION_ANTERIOR = "v367.4";
+// (v367.4 fue la versión anterior antes de la v367.5: la cadena sigue abajo)
 // v367.0 EL IMÁN GLOBAL (sobre v366.0, intacta): quincuagésima ronda del
 // autociclo y el mandato del Dueño («agrega estos tipos de navegación en
 // TODO Vanguard, funcióanlo todo y haz Vanguard hermosamente adictivo» —
