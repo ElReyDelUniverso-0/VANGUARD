@@ -404,6 +404,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v367.6 EL PERFIL DEL JUGADOR — el carnet, el código y los permisos.
+      url: `${SITE_URL}/perfil`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v367.4 EL CATÁLOGO — índice real de cien piezas ya construidas.
       url: `${SITE_URL}/catalogo`,
       lastModified: new Date(),

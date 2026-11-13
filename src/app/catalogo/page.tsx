@@ -20,9 +20,11 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // el que quiera comprobarlo abre el archivo y ahí está.
 //
 // v367.5: el Dueño mandó «sigue agregando las 100 ideas, cópialas» — la lista
-// pasó de 100 a 140 piezas, todas archivos que ya existían (20 puntos de
-// datos más, 12 motores más, 8 paneles más). El número del título se calcula
-// solo desde TOTAL_REAL: aquí no se escribe una cifra a mano.
+// pasó de 100 a 140 piezas (20 puntos de datos, 12 motores y 8 paneles más).
+// v367.6: «sigue agregando copiando y agregando» — de 140 a 160 (10 puntos de
+// datos, 6 motores, 3 paneles y la sala nueva /perfil). El número del título y
+// del JSON-LD se calcula solo desde TOTAL_REAL: aquí no se escribe una cifra
+// a mano.
 // ============================================================
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";

@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.6",
+    nombre: "EL PERFIL DEL JUGADOR",
+    hitos: [
+      "EL CARNET DE SEIS PIEZAS (/perfil, lib/perfil-jugador.ts) — orden del Dueño: «un perfil que cada jugador debe tener». Seis piezas contadas y comprobadas: alias firmado, foto, bio, cuenta, modo elegido y código guardado. El carnet no aconseja: dice qué falta y abre la puerta real para completarlo",
+      "EL CÓDIGO DEL JUGADOR — `VG-XXXX-YYYY` derivado de la misma huella anti-suplantación del carnet v359: misma persona, mismo código. Se dice en la cara que no es una contraseña ni sirve para entrar, sino para que dos jugadores comprueben que hablan con el mismo",
+      "LOS PERMISOS, LEÍDOS DEL CENSO — la pantalla de permisos no tiene una lista propia: sale del campo `permiso` de cada módulo de nucleo/registro.ts (público · con cuenta · dueño). El nivel del jugador (invitado, jugador, jugador verificado, dueño) se deriva de la sesión real de /api/auth/me, y se listan las puertas que aún no abre. Cero cuenta fingida: si no hay sesión, lo dice",
+      "LA FOTO SE QUEDA EN TU APARATO — se reduce con el canvas del navegador a 320 px y JPEG 0.82, con tope de 300 KB medido, y se guarda en el mismo store del perfil. No se sube a ningún servidor ni viaja en el save de la nube; si borras los datos del navegador, desaparece",
+      "PERSONALIZACIÓN AMPLIA EN UNA PANTALLA — las nueve piezas de la casa juntas: foto, countryball, banner, marco, bio, país favorito (con su bandera real), facción, firma 3D y alias, cada una con el archivo real que la guarda a la vista para que se pueda comprobar",
+      "EL CATÁLOGO SIGUE CRECIENDO (/catalogo) — segunda orden de la tanda, «sigue agregando copiando y agregando»: de 140 a 160 piezas reales, incluida la sala nueva /perfil. Todo lo que entra ya existía en el árbol (salvo la sala de esta ronda, que ya existe al registrarse)",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v367.5",
     nombre: "LA RADIO REAL EN EL VANGUARD PÚBLICO",
     hitos: [

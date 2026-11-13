@@ -457,9 +457,9 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
   {
     id: "mod:catalogo",
     nombre: "EL CATÁLOGO DE LO QUE YA EXISTE",
-    lema: "140 piezas reales con su puerta",
+    lema: "160 piezas reales con su puerta",
     descripcion:
-      "Índice generado del árbol del repositorio: 43 salas con su ruta navegable, 45 paneles ya construidos, 27 motores y 25 puntos de datos (140 en total, v367.5), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
+      "Índice generado del árbol del repositorio: 44 salas con su ruta navegable, 48 paneles ya construidos, 33 motores y 35 puntos de datos (160 en total, v367.6), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
     categoria: "SISTEMA",
     ruta: "/catalogo",
     permiso: "publico",
@@ -481,6 +481,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:audios"],
     alias:
       "radio real aleatorio shuffle musica publica dominio publico cc0 archive pista barajar encender parar chip v367.5",
+  },
+  {
+    id: "mod:perfil-jugador",
+    nombre: "EL PERFIL DEL JUGADOR",
+    lema: "Carnet de seis piezas, código estable y permisos reales",
+    descripcion:
+      "La puerta única del perfil: reúne lo que la casa ya tenía (store del perfil con banner, marco, bio, país, facción, avatar y firma 3D; alias del game-store; modal de cuenta; censo de permisos del núcleo; huella anti-suplantación del carnet) y le suma la foto y el código del jugador. El carnet dice qué le falta a cada jugador en seis piezas; los permisos se leen del censo, no se escriben a mano; la foto se reduce en el aparato (320 px, JPEG 0.82) y no se sube a ningún servidor.",
+    categoria: "SISTEMA",
+    ruta: "/perfil",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:cuentas"],
+    alias:
+      "perfil jugador carnet codigo jugador permisos foto avatar banner marco bio faccion personalizacion cuenta sesion acceso v367.6",
   },
 ];
 

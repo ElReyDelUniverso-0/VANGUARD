@@ -29,6 +29,9 @@ export interface ProfileState {
   favCountry: string;        // país favorito (code)
   favFaction: string;        // facción declarada
   firma: Firma3D | null;     // v114: firma 3D de la FORJA
+  // v367.6 LA FOTO DEL JUGADOR — data URL ya reducido en el aparato (320 px,
+  // JPEG 0.82). Vive en este store y NO viaja a ningún servidor. null = sin foto.
+  foto: string | null;
   setCbAvatar: (c: string) => void;
   setBanner: (b: BannerStyle) => void;
   setFrame: (f: FrameStyle) => void;
@@ -36,6 +39,7 @@ export interface ProfileState {
   setFavCountry: (c: string) => void;
   setFavFaction: (f: string) => void;
   setFirma: (f: Firma3D | null) => void;
+  setFoto: (f: string | null) => void;      // v367.6
 }
 
 export const BANNERS: Record<BannerStyle, { label: string; css: string }> = {
@@ -71,6 +75,7 @@ export const useProfileStore = create<ProfileState>()(
       favCountry: "us",
       favFaction: "Observador OSINT",
       firma: null,
+      foto: null,
       setCbAvatar: (cbAvatar) => set({ cbAvatar }),
       setBanner: (banner) => set({ banner }),
       setFrame: (frame) => set({ frame }),
@@ -78,6 +83,7 @@ export const useProfileStore = create<ProfileState>()(
       setFavCountry: (favCountry) => set({ favCountry }),
       setFavFaction: (favFaction) => set({ favFaction }),
       setFirma: (firma) => set({ firma }),
+      setFoto: (foto) => set({ foto }),
     }),
     // v132.0: skipHydration + storage blindado — la firma/avatar llegan tras el
     // montaje y la cerradura protege lo guardado (sin #418, sin pisadas)
