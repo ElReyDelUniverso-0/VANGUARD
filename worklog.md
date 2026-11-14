@@ -6093,3 +6093,22 @@ Work Log:
 Stage Summary:
 - La casa ya tiene dos visualizaciones propias y honestas: un eje de tiempo proporcional y un gráfico de barras proporcional. Ninguna de las dos inventa una escala.
 - /archivo-mundial y /guerra-hoy, dos de las salas más densas, abren con portada y con una lectura visual antes del texto.
+
+Task ID: ia3-v402.2-el-latido-en-una-linea
+Agent: ia3 (Arena)
+Task: pilar 2, quinta tanda — el hermano del gráfico de barras: la serie temporal (cables por día) dibujada como línea.
+
+Work Log:
+- ① src/components/vanguard/grafico-lineas.tsx — GRÁFICO DE LÍNEAS: componente de SERVIDOR, cero JavaScript, cero hidratación. El SVG se calcula en el render (viewBox 720×220) y viaja ya dibujado. El eje se escala contra el PICO REAL de la serie y cada punto se coloca por su VALOR, no por su posición en la lista: si un día baja a cero, el punto cae a la base. Rejilla de tres líneas (base, mitad, techo del pico), área tenue bajo la curva para dar cuerpo sin tapar la rejilla, y la cifra escrita en el pico, en el mínimo y en el último punto. `role="img"` con aria-label que declara máximo, fecha del pico, mínimo y total.
+- ② src/lib/pulso.ts gana `serieCablesPorDia(dias = 14)`: la serie nace AL LADO de la instantánea y con su misma regla de exactitud — SOLO cables reales, las piezas «curated-» de respaldo quedan fuera, igual que en la sala. La ventana se calcula (inicio del día de hace N-1 días, cubo por día UTC), no se escribe. Una sola consulta que trae solo `publishedAt` y agrupa en memoria.
+- ③ /en-vivo gana EL LATIDO DEL ARCHIVO bajo la sala: la sala dice qué pasa AHORA, la línea dice cómo ha latido el tramo. La serie se pide aparte, en su propio try/catch: si la fuente no responde, la línea NO se pinta.
+- ④ LA SALA NUNCA SE CAE POR UN GRÁFICO — comprobado de verdad: en local, sin DATABASE_URL, /en-vivo respondió 200 con los dos errores cazados por separado («en-vivo page error» y «en-vivo serie error») y CERO gráficos en el HTML. Ningún gráfico es mejor que un gráfico mintiendo.
+- ⑤ EL COMPONENTE SE PROBÓ AISLADO antes de conectarlo: página temporal (ya borrada) con 14 puntos sintéticos → 200, `polyline` con geometría real (el cero cae a la base, y=198; el pico a y=54) y `aria-label` correcto («Serie de 14 puntos: máximo 61 cables el 12 nov, mínimo 0 cables, total 333 cables»).
+- ⑥ LO QUE NO SE HIZO, Y SE DECLARA: la serie es de DÍAS, no de horas, porque la base de la casa solo tiene cables reales de hoy (112 en las últimas 24 h, todos del mismo día). Dibujar 24 cubos horarios con un solo día de dato habría sido una curva inventada sobre vacío. Cuando la base acumule días, el mismo componente los dibuja sin tocar una línea de código.
+- ⑦ De paso se corrigió un comentario: grafico-barras.tsx decía v401.3 y se publicó dentro de v402.1 (la cabecera ahora dice la verdad).
+- QA EJECUTADO: `tsc` acotado (componente + pulso + /en-vivo + versión + bitácora + catálogo) → LIMPIO; `next dev` real → /zz-grafico-prueba 200 con SVG correcto (borrada después); /en-vivo 200 sin base de datos y sin gráfico falso.
+- Registro: version.ts → v402.2 EL LATIDO EN UNA LÍNEA (sobre v402.1) · entrada en bitacora.ts · catálogo: 171 piezas (+1, el gráfico de líneas).
+
+Stage Summary:
+- La casa ya tiene el par completo: barras para comparar magnitudes, línea para ver cómo cambia algo con el tiempo. Ninguna de las dos inventa una escala, y las dos son de servidor: cero JavaScript.
+- La línea se alimenta de la MISMA base que la sala de última hora, con la misma regla de exactitud. La exactitud no se duplica: se hereda.

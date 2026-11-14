@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.2",
+    nombre: "EL LATIDO EN UNA LÍNEA",
+    hitos: [
+      "PILAR 2, QUINTA TANDA — el hermano del gráfico de barras: las barras comparan magnitudes, la LÍNEA muestra cómo cambia algo con el tiempo. El Dueño lo pidió como «series temporales (cables por día)» y eso es lo que se dibuja",
+      "components/vanguard/grafico-lineas.tsx — componente de SERVIDOR, cero JavaScript: el SVG se calcula en el render y viaja ya dibujado. El eje se escala contra el PICO REAL de la serie y cada punto se coloca por su valor, no por su sitio en la lista",
+      "serieCablesPorDia() en src/lib/pulso.ts — la serie nace al lado de la instantánea con la misma regla de exactitud: SOLO cables reales, las piezas «curated-» de respaldo quedan fuera. Ventana calculada (14 días), un cubo por día, y un día sin cables se declara con 0 a la vista en vez de taparse",
+      "/en-vivo gana EL LATIDO DEL ARCHIVO bajo la sala: la sala dice qué pasa AHORA, la línea dice cómo ha latido el tramo. La cifra se escribe en el pico y en el último punto; el aria-label confiesa el máximo, el mínimo y el total de la serie",
+      "LA SALA NUNCA SE CAE POR UN GRÁFICO — la serie se pide aparte y, si la fuente no responde, llega vacía y la línea NO se pinta. Comprobado en local sin base de datos: /en-vivo respondió 200 con el error cazado y sin un solo gráfico falso en el HTML",
+      "LO QUE NO SE HIZO, Y POR QUÉ: la serie es de días, no de horas, porque la base de la casa solo tiene cables reales de hoy — dibujar 24 barras horarias con dos horas de dato habría sido una curva inventada sobre vacío",
+    ],
+    tipo: "luxe",
+  },
+  {
     version: "v402.1",
     nombre: "EL COSTE EN UNA ESCALA",
     hitos: [

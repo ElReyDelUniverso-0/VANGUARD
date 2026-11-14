@@ -5366,6 +5366,26 @@
 // lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
 // paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
 // intro de cine, sin manual automático, sin pulso teatral).
+// v402.2 EL LATIDO EN UNA LÍNEA — pilar 2, quinta tanda. Faltaba el hermano
+// del gráfico de barras: las barras comparan magnitudes, la LÍNEA muestra cómo
+// cambia algo con el tiempo. El Dueño lo pidió como «series temporales (cables
+// por día)», y eso es exactamente lo que se dibuja — el latido real del
+// archivo, no una tendencia decorativa.
+// ① `components/vanguard/grafico-lineas.tsx`: componente de SERVIDOR, cero
+//    JavaScript. Recibe los puntos tal como los declara la fuente y calcula el
+//    SVG en el render: el eje se escala contra el PICO REAL de la serie, y el
+//    punto se coloca por su valor, no por su posición en la lista.
+// ② `serieCablesPorDia()` en src/lib/pulso.ts: la serie nace al lado de la
+//    instantánea y con su misma regla de exactitud — SOLO cables reales (las
+//    piezas «curated-» de respaldo quedan fuera, igual que en la sala). La
+//    ventana se calcula (14 días por defecto), un cubo por día; un día sin
+//    cables reales se declara con 0, a la vista, en vez de taparse.
+// ③ /en-vivo gana EL LATIDO DEL ARCHIVO bajo la sala: la sala dice qué pasa
+//    AHORA, la línea dice cómo ha latido el tramo. Cifras escritas en el pico
+//    y en el último punto; el resto de días, en los puntos y en el aria-label.
+// ④ LA SALA NUNCA SE CAE POR UN GRÁFICO: la serie se pide aparte y, si la
+//    fuente no responde, llega vacía y la línea NO se pinta. Ningún gráfico es
+//    mejor que un gráfico mintiendo.
 // v402.1 EL COSTE EN UNA ESCALA — pilar 2, cuarta tanda. El Dueño pidió
 // «gráficos»: aquí está el primero de barras de la casa, y no miente.
 // ① `components/vanguard/grafico-barras.tsx`: componente de SERVIDOR, cero
@@ -5403,8 +5423,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.1";
-export const APP_CODENAME = "EL COSTE EN UNA ESCALA";
+export const APP_VERSION = "v402.2";
+export const APP_CODENAME = "EL LATIDO EN UNA LÍNEA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5464,7 +5484,7 @@ export const APP_CODENAME = "EL COSTE EN UNA ESCALA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.0";
+export const APP_VERSION_ANTERIOR = "v402.1";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

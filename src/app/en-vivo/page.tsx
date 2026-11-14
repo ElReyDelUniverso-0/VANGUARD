@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { instantaneaPulso, aCableVivo } from "@/lib/pulso";
+import { instantaneaPulso, serieCablesPorDia, type SerieDias } from "@/lib/pulso";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -8,6 +8,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { SalaEnVivo, type CableVivo, type StatsVivo } from "./sala-en-vivo";
 import QuizPeso, { type ParPeso, type ParTeatro } from "./quiz-peso";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { GraficoLineas } from "@/components/vanguard/grafico-lineas";
 
 // v213.0 EL PULSO — LA SALA EN VIVO (la puerta del «EL PRIMERO»).
 // Página server: baja la instantánea (solo cables REALES enriquecidos
@@ -57,6 +58,23 @@ const PUERTAS_DEL_PULSO: EnlaceContextual[] = [
   },
 ];
 
+function aCableVivo(r: Awaited<ReturnType<typeof instantaneaPulso>>["items"][number]): CableVivo {
+  return {
+    id: r.id,
+    t: r.title,
+    f: r.source,
+    u: r.url ?? "",
+    fecha: typeof r.publishedAt === "string" ? r.publishedAt : new Date(r.publishedAt).toISOString(),
+    impacto: r.impacto,
+    tier: r.tier,
+    cred: r.cred,
+    tag: (r.tacticalTag || "INFO").toUpperCase(),
+    conflicto: r.conflictTag || "",
+    pais: r.sourceCountry || "",
+    paisNombre: r.paisNombre || "",
+    s: r.resumen || "",
+  };
+}
 
 export default async function EnVivoPage() {
   let iniciales: CableVivo[] = [];
@@ -72,6 +90,17 @@ export default async function EnVivoPage() {
     stats = { ...snap.stats, generado: snap.stats.generado };
   } catch (e) {
     console.error("en-vivo page error", e);
+  }
+
+  // v402.2 EL LATIDO DEL ARCHIVO — la serie de cables reales por día que el
+  // gráfico de líneas dibuja. Se pide aparte y NUNCA puede tumbar la sala:
+  // si la fuente no responde, la serie llega vacía y el gráfico no se pinta
+  // (mejor ningún gráfico que un gráfico mintiendo).
+  let serie: SerieDias = { dias: [], total: 0, pico: 0, picoFecha: "", desde: "" };
+  try {
+    serie = await serieCablesPorDia();
+  } catch (e) {
+    console.error("en-vivo serie error", e);
   }
 
   // v272.0 EL QUIZ DEL PESO — las parejas nacen de la MISMA instantánea
@@ -142,10 +171,10 @@ export default async function EnVivoPage() {
         acento="#22d3ee"
         sumario="La última hora del planeta: cables reales con hora, fuente y sello de exactitud, sondeados cada treinta segundos."
         cifras={[
-          { valor: stats.hoy, etiqueta: "cables hoy", nota: "medios verificados" },
+          { valor: stats.hoy, etiqueta: "cables", nota: "hoy" },
           { valor: stats.urgente, etiqueta: "urgentes", nota: "ahora mismo" },
-          { valor: stats.teatros, etiqueta: "teatros vivos", nota: "con cables hoy" },
-          { valor: stats.ultimaHora, etiqueta: "última hora", nota: "cables en 60 min" }
+          { valor: salas.size, etiqueta: "teatros", nota: "en la sala" },
+          { valor: iniciales.length, etiqueta: "cables", nota: "en el pulso" }
         ]}
         puntos={[
           { titulo: "SIN OPINIÓN", texto:
@@ -178,6 +207,33 @@ export default async function EnVivoPage() {
         </main>
       </noscript>
       <SalaEnVivo iniciales={iniciales} calientesIniciales={calientes} statsIniciales={stats} />
+      {/* v402.2 EL LATIDO DEL ARCHIVO — server-rendered, cero JavaScript:
+          la sala dice qué pasa AHORA; la línea dice cómo ha latido el día. */}
+      {serie.dias.length > 0 && (
+        <div className="border-t border-zinc-800 bg-zinc-950">
+          <GraficoLineas
+            volanta="EL PULSO · EL LATIDO DEL ARCHIVO"
+            titulo="CABLES REALES, DÍA POR DÍA"
+            nota={
+              serie.total > 0
+                ? `Los últimos ${serie.dias.length} días de la casa, un punto por día: cada cable real que entró y pasó el filtro de la sala. Los días sin registro se quedan en cero, a la vista.`
+                : "La fuente todavía no tiene cables reales en este tramo: la línea espera el primer día con dato."
+            }
+            unidad="cables"
+            acento="#22d3ee"
+            puntos={serie.dias.map((d, i) => ({
+              etiqueta: d.etiqueta,
+              valor: d.valor,
+              nota:
+                d.fecha === serie.picoFecha
+                  ? `${d.valor.toLocaleString("es")} cables · el día más alto de los últimos ${serie.dias.length}`
+                  : i === serie.dias.length - 1
+                    ? `${d.valor.toLocaleString("es")} cables · hoy, con el día en marcha`
+                    : undefined,
+            }))}
+          />
+        </div>
+      )}
       {/* v272.0 EL QUIZ DEL PESO — dos cables reales, una apuesta, el
           veredicto del motor; vive bajo la sala y sobre el CONECTA. */}
       <QuizPeso parejas={parejasPeso} parejasTeatro={parejasTeatro} salasSinPar={salasSinPar} />
