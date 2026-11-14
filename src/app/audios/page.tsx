@@ -7,6 +7,7 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { EmisoraCliente } from "./emisora-cliente";
 import { GrabadorAudio } from "./grabador";
 import { db } from "@/lib/db";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
 // v217.0 LA EMISORA — la página del parte hablado.
@@ -96,16 +97,27 @@ export default async function AudiosPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#040407] text-[#f5f3ee] px-4 py-10 sm:py-14">
+    <main className="min-h-screen bg-[#040407] text-[#f5f3ee]">
+      {/* v402.2 — portada de sala: cifras del parte (cables vivos) y del muro de voces */}
+      <PortadaSala
+        imagen="/ilustraciones/directos.jpg"
+        alt="Estudio de radio en penumbra con el letrero ON AIR encendido"
+        volanta="Conflictos · Radio de guerra"
+        titulo="La guerra, en voz alta"
+        sumario="El Comandante narra el parte con los cables reales de las últimas 24 horas y explica por qué importa cada frente. Tú eliges la voz, y también puedes mandar la tuya."
+        cifras={[
+          { valor: teatros.length, etiqueta: "Frentes en el parte", nota: "últimas 24 h" },
+          { valor: total24h, etiqueta: "Cables", nota: "que narra el parte" },
+          { valor: totalAudios, etiqueta: "Voces", nota: "en el muro de la casa" },
+        ]}
+        acento="#ff2a3c"
+      />
+      <div className="px-4 py-10 sm:py-14">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <div className="mx-auto max-w-3xl">
-        <p className="text-[11px] tracking-[0.35em] text-[#ff2a3c] font-bold">◉ EMISORA DE GUERRA · EN VIVO</p>
-        <h1 className="mt-2 text-3xl sm:text-4xl font-black tracking-wide">
-          LA GUERRA, <span className="text-[#ff2a3c]">EN VOZ ALTA</span>
-        </h1>
         <p className="mt-3 text-sm text-[#b9b4aa] leading-relaxed">
           Aquí Vanguard habla de verdad: el Comandante narra el parte completo con los cables reales de las últimas 24
           horas y te explica qué es cada frente y por qué importa. Tú eliges la voz. Y tú también puedes hablar: graba
@@ -200,6 +212,7 @@ export default async function AudiosPage() {
             JavaScript.
           </p>
         </noscript>
+      </div>
       </div>
     </main>
   );

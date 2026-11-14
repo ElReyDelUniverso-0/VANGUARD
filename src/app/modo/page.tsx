@@ -9,6 +9,8 @@
 import type { Metadata } from "next";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { SelectorModo } from "./selector-modo";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { MODOS } from "@/lib/modos";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
@@ -42,13 +44,19 @@ export default function ModoPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <main className="min-h-screen bg-[#070604] text-foreground">
+        {/* v402.2 — portada de sala (módulo Juego · Modo y cuenta) */}
+        <PortadaSala
+          imagen="/ilustraciones/consejo.jpg"
+          alt="Mesa holográfica con un globo terráqueo rodeado de figuras de mando"
+          volanta="Juego · Modo y cuenta"
+          titulo="¿Qué quieres hacer en Vanguard?"
+          sumario="Elige tu puerta y Vanguard te recibe cada día justo ahí. Crea tu cuenta o entra con tu alias sin salir de esta página."
+          cifras={[{ valor: MODOS.length, etiqueta: "Modos", nota: "puertas reales de la casa" }]}
+          acento="#e8c56a"
+        />
         <div className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
           <header>
-            <p className="font-mono text-[10px] tracking-[0.3em] text-amber uppercase">v214.0 · la puerta</p>
-            <h1 className="mt-2 font-display text-3xl sm:text-4xl font-black tracking-tight">
-              ¿QUÉ QUIERES HACER EN VANGUARD?
-            </h1>
-            <p className="mt-3 text-[13.5px] sm:text-[15px] leading-relaxed text-muted-foreground">
+            <p className="text-[13.5px] sm:text-[15px] leading-relaxed text-muted-foreground">
               Seis modos, seis puertas reales de la casa. Elige el tuyo y Vanguard te recibe cada día
               directo donde tú quieras: deslizar el mundo, la última hora en directo, el frente, la
               ciudad que cae, tus misiones o la portada total.

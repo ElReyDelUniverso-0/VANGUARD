@@ -152,7 +152,6 @@ export default async function RostrosPage() {
         alt="Retrato en penumbra de un rostro iluminado de lado"
         volanta="LA CASA · ROSTROS"
         titulo="LAS CARAS DEL MANDO"
-        nivel="p"
         acento="#38bdf8"
         sumario="Quién decide, quién ejecuta y quién responde: los rostros del poder con su cargo real, su país y su rastro en el archivo de la casa."
         cifras={[
@@ -181,9 +180,9 @@ export default async function RostrosPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
             LOS ROSTROS DEL PODER · el censo de la casa
           </div>
-          <h1 className="mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
+          <h2 className="vx-h-sala mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
             Los rostros que mueven el mundo
-          </h1>
+          </h2>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
             {`${lineaRostros}.`}
           </p>

@@ -93,7 +93,6 @@ export default function OscuraPage() {
         alt="Pasillo de archivo en penumbra con estanterías que se pierden en la oscuridad"
         volanta="LA CASA · ARCHIVO OSCURO"
         titulo="LO OSCURO, EN 60 SEGUNDOS"
-        nivel="p"
         acento="#ef4444"
         sumario="Teorías, armas y civilizaciones perdidas con su documento original al lado: lo que se sospecha, separado de lo que está probado."
         cifras={[
@@ -123,7 +122,7 @@ export default function OscuraPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-red-400">
             ◈ VANGUARD · LA BIBLIOTECA OSCURA
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">LA BIBLIOTECA OSCURA</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">LA BIBLIOTECA OSCURA</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaOscura}</p>
           <p className="mt-1 text-xs text-zinc-500">
             El veredicto es la etiqueta editorial de la casa sobre cada teoría; el juez

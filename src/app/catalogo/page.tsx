@@ -99,7 +99,6 @@ export default function CatalogoPage() {
         alt="Galería de salas de una casa antigua con puertas numeradas"
         volanta="LA CASA · EL CATÁLOGO"
         titulo="TODO LO QUE YA EXISTE"
-        nivel="p"
         acento="#94a3b8"
         sumario="Cada sala, panel, motor y punto de datos construido en Vanguard, con el archivo del que sale como prueba: el índice de lo que hay, no de lo que se promete."
         cifras={[
@@ -136,7 +135,7 @@ export default function CatalogoPage() {
         </div>
 
         <article className="mx-auto max-w-4xl px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">El catálogo de lo que ya existe</h1>
+          <h2 className="vx-h-sala text-3xl font-bold text-zinc-100">El catálogo de lo que ya existe</h2>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
             {TOTAL_REAL} piezas que ya estaban construidas en Vanguard, con su puerta o su archivo. No
             hay una sola idea nueva en esta lista: se generó leyendo el árbol del repositorio, y cada

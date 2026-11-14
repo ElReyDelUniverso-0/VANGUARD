@@ -121,7 +121,6 @@ export default function PoderPage() {
         alt="Sillón de despacho vacío junto a una ventana con luz fría"
         volanta="LA CASA · PODER MILITAR"
         titulo="QUIÉN MANDA DE VERDAD"
-        nivel="p"
         acento="#f59e0b"
         sumario="El gasto militar del planeta, país por país, con el último año con dato: la tabla que explica qué se puede sostener y qué no."
         cifras={[
@@ -151,7 +150,7 @@ export default function PoderPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · EL PODER MUNDIAL
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">EL PODER MUNDIAL</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">EL PODER MUNDIAL</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaPoder}</p>
           <p className="mt-1 text-xs text-zinc-500">
             Datos militares reales del Banco Mundial (indicadores{" "}

@@ -22,8 +22,44 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.2",
+    nombre: "UNA PORTADA POR SALA",
+    hitos: [
+      "CATORCE SALAS QUE ERAN SOLO TEXTO ESTRENAN PORTADA: Radio de guerra, Centinela, La voz, Música, Traductor, Modo espía, Pulso mundial, Mi perfil, El Escudo, Modo y cuenta, Novedades, Privacidad, El universo diario y Arsenal 3D. Ilustración noir de la casa y cifras sacadas de cada sala, ninguna escrita a mano",
+      "UN SOLO TÍTULO POR SALA: dieciséis salas enseñaban dos títulos grandes, el de la portada y el viejo. La portada manda; el viejo queda como rótulo de sección, sin perder su texto",
+      "ADIÓS A LO REPETIDO: Universo y Teatro 3D tenían cabecera propia en inglés y una barra de botones que repetía la navegación; ahora usan las pestañas del módulo y sus anclas abren directamente cada vista. Teatro 3D se llama Arsenal 3D, como su pestaña, para no confundirse con Zona Cero",
+      "MÁS NOTICIAS VIVAS: el parte hablado de la Radio de guerra y la cronología del Pulso mundial salen de los medios vivos, no de la base congelada",
+      "RESTAURADO: el vestíbulo de Conflictos y el arreglo de En vivo que un merge había pisado",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v402.1",
     nombre: "EL COSTE EN UNA ESCALA",
+    hitos: [
+      "PILAR 2, TERCERA TANDA — orden del Dueño: «mapas, gráficos, líneas de tiempo, resúmenes visuales». /historia contaba diez guerras con párrafos; ahora además se ven en un eje",
+      "components/vanguard/linea-de-tiempo.tsx — componente de SERVIDOR, cero JavaScript: cada guerra se dibuja en proporción a su tiempo REAL (un conflicto de 118 años ocupa lo que debe frente a uno de 6), con la escala derivada del arco de los datos y los dos extremos del eje siempre pintados",
+      "LEYENDA, COLOR Y DESTINO — cada era tiene su color (el mismo canon de la casa), y cada barra enlaza a la ficha completa de su guerra. El eje no sustituye al archivo: lo señala",
+      "/historia gana PORTADA con cifras derivadas de HISTORICAL_WARS (guerras, eras, año de inicio, año de fin) y el EJE de las diez guerras. Ni un año escrito a mano: los años salen del yearStart/yearEnd de la fuente (guardia v234)",
+      "EL TEXTO NO SE TOCÓ — las diez fichas, la taquilla del archivo y el juicio de los libros siguen enteros debajo: la línea del tiempo es la puerta, no el reemplazo",
+    ],
+    tipo: "luxe",
+  },
+  {
+    version: "v402.0",
+    nombre: "LOS CINCO MÓDULOS",
+    hitos: [
+      "CINCO MÓDULOS EN VEZ DE CUARENTA PUERTAS: Portada, Mapa 3D, Conflictos, Inteligencia y Juego, cada uno con su barra de pestañas (patrón de las secciones de BBC y Reuters); las salas internas (calidad, torre, catálogo, núcleo, novedades, escudo) se reúnen en «Estado de Vanguard». /clasico y /modo, duplicados del Cuartel, redirigen a /cuartel sin perder nada",
+      "LA BASE CONGELADA, CAZADA: en Vercel la base viaja de solo lectura y el refresco escribía en una copia efímera. /api/news, la sala En vivo y la Crónica servían cables de hace dos semanas bajo un letrero de EN VIVO. Ahora mandan los medios vivos de la portada y la base queda de respaldo",
+      "EN VIVO DE VERDAD: a los 30 segundos el sondeo devolvía filas crudas y los titulares se quedaban en blanco. Una sola forma de cable para la página y para la API, y la foto del medio en cada cable, como los directos del Guardian",
+      "CONFLICTOS ESTRENA VESTÍBULO (/guerra-hoy): portada con cifras calculadas, tablero de frentes con briefing, lo último con foto y todas las salas del módulo; fuera el enlace dentro de enlace que provocaba el error #418. La Crónica del día se rehízo al estilo The Morning y Axios: cinco claves con foto, frente por frente y quién firmó",
+      "HONESTIDAD ANTES QUE CEROS: la Torre de Control y la Misión 100 dicen claramente que el recuento global no tiene memoria en este despliegue, en vez de enseñar tableros de 0 y «—»",
+    ],
+    tipo: "nav",
+  },
+  {
+    version: "v401.2",
+    nombre: "LA LÍNEA DEL TIEMPO",
     hitos: [
       "PILAR 2, TERCERA TANDA — orden del Dueño: «mapas, gráficos, líneas de tiempo, resúmenes visuales». /historia contaba diez guerras con párrafos; ahora además se ven en un eje",
       "components/vanguard/linea-de-tiempo.tsx — componente de SERVIDOR, cero JavaScript: cada guerra se dibuja en proporción a su tiempo REAL (un conflicto de 118 años ocupa lo que debe frente a uno de 6), con la escala derivada del arco de los datos y los dos extremos del eje siempre pintados",

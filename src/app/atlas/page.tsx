@@ -91,7 +91,6 @@ export default function AtlasPage() {
         alt="Mapa antiguo desplegado sobre una mesa con una lámpara encendida"
         volanta="LA CASA · GEOGRAFÍA"
         titulo="EL ATLAS DEL PLANETA"
-        nivel="p"
         acento="#22d3ee"
         sumario="Países, capitales, poblaciones y rutas de poder: la geografía real que hay detrás de cada conflicto, servida en fichas y no en párrafos."
         cifras={[
@@ -120,7 +119,7 @@ export default function AtlasPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · EL ATLAS
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">EL ATLAS DEL PLANETA</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">EL ATLAS DEL PLANETA</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaAtlas}</p>
           <p className="mt-1 text-xs text-zinc-500">
             El mapa interactivo — con el globo, las rutas dibujadas como arcos

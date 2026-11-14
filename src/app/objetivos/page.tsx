@@ -314,7 +314,6 @@ export default function ObjetivosPage() {
       alt="Pizarra de operaciones con objetivos marcados y chinchetas de colores"
       volanta="LA CASA · LA JORNADA"
       titulo="LO QUE HAY QUE HACER HOY"
-      nivel="p"
       acento="#22c55e"
       sumario="Misiones, retos diarios, torneos y los logros que se cazan jugando: el sistema completo de objetivos de Vanguard, con sus cifras y su botín real."
       cifras={[
@@ -364,9 +363,9 @@ export default function ObjetivosPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-red-300">
             La vitrina que casi nadie termina
           </div>
-          <h1 className="mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
+          <h2 className="vx-h-sala mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
             LOS <span className="text-amber">{ACHIEVEMENTS.length}</span> OBJETIVOS
-          </h1>
+          </h2>
           <p className="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto">
             {ACHIEVEMENTS.length} objetivos. Recompensas reales: monedas, gemas y XP que viven en tu
             cuenta. No hay suerte aquí: cada objetivo se arranca con esfuerzo, y

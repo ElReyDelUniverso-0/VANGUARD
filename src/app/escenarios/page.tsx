@@ -99,7 +99,7 @@ export default async function EscenariosPage() {
     // pero la casa no finge: si algún día lo fuera, mensaje honesto.
     return (
       <main className="min-h-screen bg-zinc-950 px-5 py-20 text-center text-zinc-300">
-        <h1 className="font-orbitron text-2xl font-black text-zinc-100">EL ESTRATEGA</h1>
+        <h2 className="vx-h-sala font-orbitron text-2xl font-black text-zinc-100">EL ESTRATEGA</h2>
         <p className="mt-3 text-sm text-zinc-400">
           El escenario no pudo ejecutarse — estado real, nada fingido:{" "}
           {escenario.errores.join(" · ")}
@@ -127,7 +127,6 @@ export default async function EscenariosPage() {
       alt="Sala de simulación con pantallas que muestran escenarios y variables"
       volanta="LA CASA · EL ESTRATEGA"
       titulo="QUÉ PASARÍA SI…"
-      nivel="p"
       acento="#a855f7"
       sumario="Escenarios de presión por teatro con sus datos, supuestos, variables, reglas y resultados separados: una simulación que se puede auditar, no una predicción."
       cifras={[
@@ -174,9 +173,9 @@ export default async function EscenariosPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-red-300">
             Escenario — no predicción
           </div>
-          <h1 className="mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
+          <h2 className="vx-h-sala mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
             EL <span className="text-amber">ESTRATEGA</span>
-          </h1>
+          </h2>
           <p className="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto">
             {cat.escena.es}
           </p>

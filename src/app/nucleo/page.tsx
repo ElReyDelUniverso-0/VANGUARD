@@ -292,7 +292,6 @@ export default async function NucleoPage({
       alt="Paneles de datos iluminados en una sala de control en penumbra"
       volanta="LA CASA · EL NÚCLEO"
       titulo="EL CENSO DE LA CASA"
-      nivel="p"
       acento="#38bdf8"
       sumario="Módulos vivos, entidades compartidas y búsqueda: el índice que dice qué existe en Vanguard y por dónde se llega a ello."
       cifras={[
@@ -339,9 +338,9 @@ export default async function NucleoPage({
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-red-300">
             Todo conectado — nada aislado
           </div>
-          <h1 className="mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
+          <h2 className="vx-h-sala mt-3 font-orbitron text-3xl sm:text-5xl font-black tracking-wide text-zinc-100">
             EL <span className="text-amber">NÚCLEO</span>
-          </h1>
+          </h2>
           <p className="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-2xl mx-auto">
             El salón central de la casa: {MODULOS_NUCLEO.length} módulos registrados,
             {" "}{TIPOS_ENTIDAD.length} tipos de entidad con identificadores estables y una

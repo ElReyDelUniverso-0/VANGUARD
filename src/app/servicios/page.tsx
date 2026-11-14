@@ -306,7 +306,6 @@ export default async function ServiciosPage() {
         alt="Dos manos sobre un mapa de operaciones iluminado por una lámpara de escritorio"
         volanta="LA CASA · SERVICIOS"
         titulo="EL MAPA DE LOS SERVICIOS"
-        nivel="p"
         acento="#f59e0b"
         sumario="Las agencias y los servicios de inteligencia del mundo, expediente a expediente: su país, su lema, su misión y su sede tal como la fuente los declara."
         cifras={[
@@ -336,9 +335,9 @@ export default async function ServiciosPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
             LA SALA DE LOS SERVICIOS · los expedientes de la casa
           </div>
-          <h1 className="mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
+          <h2 className="vx-h-sala mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
             Los ojos que miran el mundo
-          </h1>
+          </h2>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
             {`${lineaSala}.`}
           </p>

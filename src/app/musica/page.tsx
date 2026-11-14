@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { MusicaSala } from "@/components/vanguard/musica-sala";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { cuentaMusicaReal } from "@/lib/musica/catalogo";
+import { cuentaVerificadas } from "@/lib/musica/radios";
 
 // ============================================================
 // v367.3 LA MÚSICA CON FORMA — /musica
@@ -73,27 +74,29 @@ export default function MusicaPage() {
     inLanguage: "es",
   };
 
+  // v402.2 — cifras de portada, calculadas de los catálogos de la sala
+  const musica = cuentaMusicaReal();
+  const radios = cuentaVerificadas();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="musica-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-              AUDIO FABRICADO EN TU APARATO
-            </span>
-          </div>
-        </div>
+        {/* v402.2 — portada de sala: cifras del catálogo real y de las radios */}
+        <PortadaSala
+          imagen="/ilustraciones/studios.jpg"
+          alt="Sala de instrumentos con guitarras alineadas bajo la luna llena"
+          volanta="Inteligencia · Música y radio"
+          titulo="La Música con Forma"
+          sumario="Música de verdad, de dominio público y CC0, cada pista con su licencia y su fuente. Debajo, las radios de los frentes y los sonidos de guerra."
+          cifras={[
+            { valor: musica.total, etiqueta: "Pistas reales", nota: "dominio público y CC0" },
+            { valor: musica.categorias, etiqueta: "Categorías", nota: "marchas, orquesta, voz…" },
+            { valor: radios.verificadas, etiqueta: "Emisoras", nota: `comprobadas de ${radios.total}` },
+          ]}
+          acento="#e8c56a"
+        />
 
         <article className="mx-auto max-w-3xl px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">La Música con Forma</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
             Aquí está la <strong className="text-zinc-300">música de verdad</strong>: trece pistas de
             dominio público y CC0 — bandas militares, orquestas de 1910, un tenor de los años treinta y

@@ -141,7 +141,6 @@ export default async function ConflictosPage() {
         alt="Manos sobre un mapa de operaciones con líneas de frente dibujadas a lápiz"
         volanta="LA CASA · EL TABLERO"
         titulo="DÓNDE SE ROMPE EL MUNDO"
-        nivel="p"
         acento="#f59e0b"
         sumario="Cada conflicto abierto, su intensidad medida, su pulso real en el archivo de la casa y las guerras que la fuente documenta."
         cifras={[
@@ -166,7 +165,7 @@ export default async function ConflictosPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · EL TABLERO
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">EL TABLERO DE LOS CONFLICTOS</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">EL TABLERO DE LOS CONFLICTOS</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaConflictos}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {porNivel.map(({ nivel, total }) => (

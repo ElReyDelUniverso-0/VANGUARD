@@ -211,7 +211,6 @@ export default function HistoriaPage() {
         alt="Libros y mapas antiguos apilados bajo una lámpara de latón"
         volanta="LA CASA · LA MEMORIA"
         titulo="LO QUE YA PASÓ, PARA LEER LO DE HOY"
-        nivel="p"
         acento="#f59e0b"
         sumario="Guerras reales de la Antigüedad a la Contemporánea, con sus años, sus facciones, su desenlace y su coste: la memoria con la que la casa lee las guerras de hoy."
         cifras={[
@@ -246,9 +245,9 @@ export default function HistoriaPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
             EL ARCHIVO DE LA HISTORIA · la memoria de la casa
           </div>
-          <h1 className="mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
+          <h2 className="vx-h-sala mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
             Las guerras que enseñaron a leer las de hoy
-          </h1>
+          </h2>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
             {`${lineaArchivo}.`}
           </p>

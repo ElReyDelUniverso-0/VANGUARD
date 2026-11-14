@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v206.0 MÁS PUERTAS — política de privacidad pública e indexable.
 // Publisher Center (Google News) exige una URL de política de privacidad
@@ -142,25 +142,17 @@ export default function PrivacidadPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="priv-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
-              Vigente desde el 31-10-2026
-            </span>
-          </div>
-        </div>
+        {/* v402.2 — portada de sala (Estado de Vanguard) */}
+        <PortadaSala
+          imagen="/ilustraciones/osint.jpg"
+          alt="Cúpula de radar blanca bajo la luna llena al atardecer"
+          volanta="Estado de Vanguard · Privacidad"
+          titulo="Tu privacidad"
+          sumario="Qué guarda Vanguard, dónde lo guarda y cómo lo borras. Escrito para leerlo, no para esconderlo."
+          acento="#3ddc97"
+        />
 
         <article className="max-w-3xl mx-auto px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">
-            Política de Privacidad
-          </h1>
           <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
             Resumen en una línea: tu identidad de juego vive en tu aparato, tu
             contraseña vive cifrada y nadie vende nada de nadie.

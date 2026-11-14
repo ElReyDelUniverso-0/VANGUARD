@@ -8,6 +8,7 @@ import { paresGlosario } from "@/lib/glosario-tactico";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { TraductorEstudio } from "./traductor-estudio";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v215.0 MODO TRADUCTOR — «un modo traductor en los idiomas de Vanguard».
 // La puerta de los 8 idiomas de la casa: traduce cualquier texto con el
@@ -96,22 +97,23 @@ export default function TraductorPage() {
       />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="traductor" />
+        {/* v402.2 — portada de sala: cifras de los idiomas y del glosario */}
+        <PortadaSala
+          imagen="/ilustraciones/ciber.jpg"
+          alt="Mapa del mundo con rutas de datos iluminadas sobre servidores en la noche"
+          volanta="Inteligencia · Traductor"
+          titulo="Modo traductor"
+          sumario="Un despacho en ruso, un comunicado en chino, un titular en inglés: tradúcelo con los términos militares y diplomáticos correctos, o baja los últimos cables reales en tu idioma."
+          cifras={[
+            { valor: IDIOMAS_VANGUARD.length, etiqueta: "Idiomas", nota: "de ida y vuelta" },
+            { valor: paresGlosario().length, etiqueta: "Términos", nota: "en el glosario táctico" },
+          ]}
+          acento="#38bdf8"
+        />
 
         <header className="max-w-4xl mx-auto px-4 sm:px-5 pt-6 pb-4">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="font-display text-2xl sm:text-3xl font-black tracking-wide text-soft">
-              MODO TRADUCTOR <span className="text-sky-300">⇄</span>
-            </h1>
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-sky-300 border border-sky-500/50 bg-sky-500/10 rounded px-2 py-0.5">
-              Los idiomas de Vanguard
-            </span>
-          </div>
-          <p className="mt-2 max-w-3xl text-[13px] text-muted-foreground leading-relaxed">
-            Un despacho en ruso, un comunicado en chino, un titular en inglés:
-            nada se le escapa a un agente de Vanguard. Traduce cualquier texto
-            con precisión de agencia — términos militares, diplomáticos y
-            energéticos correctos — y baja los últimos cables reales del planeta
-            para leerlos en tu lengua. {IDIOMAS_VANGUARD.map((i) => i.nombre).join(" · ")}.
+          <p className="max-w-3xl font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            Idiomas: {IDIOMAS_VANGUARD.map((i) => i.nombre).join(" · ")}
           </p>
         </header>
 

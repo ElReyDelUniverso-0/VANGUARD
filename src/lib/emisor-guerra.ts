@@ -26,6 +26,7 @@
 
 import { db } from "@/lib/db";
 import { hablarAgente, type VozAgenteId } from "./voces-agentes";
+import { filasVivas } from "@/lib/pulso";
 
 export interface TeatroDelParte {
   tag: string;
@@ -75,6 +76,28 @@ const NOMBRE: Record<string, string> = {
 /** Lee la BD real: cables de 24 h por teatro + último titular de cada uno. */
 export async function teatrosDelParte(): Promise<TeatroDelParte[]> {
   const desde = new Date(Date.now() - 24 * 3600_000);
+  // v402.2 — el parte hablado sale de los medios VIVOS (la base de producción
+  // viaja congelada); la base queda de respaldo si la red cae.
+  const vivas = (await filasVivas().catch(() => [])).filter(
+    (f) => f.conflictTag && NOMBRE[f.conflictTag] && f.publishedAt >= desde
+  );
+  if (vivas.length) {
+    const porTag = new Map<string, typeof vivas>();
+    for (const f of vivas) porTag.set(f.conflictTag!, [...(porTag.get(f.conflictTag!) ?? []), f]);
+    return [...porTag.entries()]
+      .sort((a, b) => b[1].length - a[1].length)
+      .map(([tag, filas]) => {
+        const ultimo = [...filas].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())[0];
+        return {
+          tag,
+          nombre: NOMBRE[tag],
+          cables: filas.length,
+          ultimoTitular: ultimo?.title ?? null,
+          ultimoId: ultimo?.id ?? null,
+          dossier: DOSSIER[tag] ?? "",
+        };
+      });
+  }
   const grupos = await db.newsItem.groupBy({
     by: ["conflictTag"],
     where: { conflictTag: { not: null }, publishedAt: { gte: desde } },

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { CentinelaPanel } from "@/components/vanguard/centinela-panel";
 import { parteDelDia } from "@/lib/cronica";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
 // v367.1 EL OJO DEL DUEÑO — TU CENTINELA (/centinela)
@@ -72,23 +71,22 @@ export default async function CentinelaPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="centinela-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-              {parte.version} · {parte.codename}
-            </span>
-          </div>
-        </div>
+        {/* v402.2 — portada de sala: cifras del parte del día (cables vivos) */}
+        <PortadaSala
+          imagen="/ilustraciones/centinela.jpg"
+          alt="Sala de vigilancia con un gran indicador circular sobre el mapa del mundo"
+          volanta="Inteligencia · Centinela"
+          titulo="Tu Centinela"
+          sumario="Pon bajo vigilancia los frentes y los medios que te importan. Cada vez que entras te dice cuánto han hablado de verdad y cuándo fue su última señal."
+          cifras={[
+            { valor: parte.censo.teatros24, etiqueta: "Frentes con señal", nota: "últimas 24 h" },
+            { valor: parte.censo.medios24, etiqueta: "Medios vigilables", nota: "firmaron en 24 h" },
+            { valor: parte.censo.ultimas24, etiqueta: "Cables", nota: "últimas 24 h" },
+          ]}
+          acento="#38bdf8"
+        />
 
         <article className="mx-auto max-w-3xl px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">Tu Centinela</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
             La casa tiene un vigía desde v181, pero vigilaba la casa. Este es el tuyo: pones bajo
             vigilancia los teatros y los medios que te importan y, cada vez que entras, te dice

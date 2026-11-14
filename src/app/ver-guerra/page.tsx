@@ -220,7 +220,6 @@ export default async function VerGuerraPage() {
       alt="Columna de vehículos blindados envuelta en polvo al atardecer"
       volanta="LA CASA · EL FRENTE"
       titulo="EL FRENTE, EN DIRECTO"
-      nivel="p"
       acento="#f43f5e"
       sumario="El mural de los teatros, los despachos reales del cable de la casa y el parque militar 3D con sus modelos CC0."
       cifras={[
@@ -264,9 +263,9 @@ export default async function VerGuerraPage() {
         <p className="font-mono text-[11px] tracking-[0.3em] text-red-400 uppercase">
           VANGUARD · Canal de guerra 24 horas
         </p>
-        <h1 className="font-orbitron text-3xl sm:text-5xl font-black mt-2 tracking-wide">
+        <h2 className="vx-h-sala font-orbitron text-3xl sm:text-5xl font-black mt-2 tracking-wide">
           FRENTE <span className="text-red-500">TOTAL</span>
-        </h1>
+        </h2>
         <p className="mt-3 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl">
           El planeta entero en guerra en una sola pantalla. Diez frentes reales
           ardiendo al mismo tiempo — la estepa del Donbás, Gaza, el Mar Rojo,

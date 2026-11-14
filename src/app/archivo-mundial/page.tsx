@@ -90,7 +90,6 @@ export default function ArchivoMundialPage() {
         alt="Cajas de archivo numeradas en un depósito con luz cenital"
         volanta="LA CASA · ARCHIVO"
         titulo="EL ARCHIVO DEL PLANETA"
-        nivel="p"
         acento="#94a3b8"
         sumario="Errores de cálculo, curiosidades verificadas, muertes por guerra y crimen global: el archivo que pone número a lo que suele contarse de memoria."
         cifras={[
@@ -130,7 +129,7 @@ export default function ArchivoMundialPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · EL ARCHIVO MUNDIAL
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">EL ARCHIVO MUNDIAL</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">EL ARCHIVO MUNDIAL</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaArchivoMundial}</p>
 
           {/* LAS ERAS — verbatim de la fuente */}

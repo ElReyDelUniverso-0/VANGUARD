@@ -97,7 +97,6 @@ export default function VerdadCrudaPage() {
         alt="Documentos apilados bajo una luz dura sobre una mesa metálica"
         volanta="LA CASA · VERDAD CRUDA"
         titulo="LO QUE NO SE DICE"
-        nivel="p"
         acento="#ef4444"
         sumario="Abusos documentados, incidentes, drones y memoria de los caídos: el registro incómodo, con su fuente y su año."
         cifras={[
@@ -127,7 +126,7 @@ export default function VerdadCrudaPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · LA VERDAD CRUDA
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">LA VERDAD CRUDA DE LAS GUERRAS</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">LA VERDAD CRUDA DE LAS GUERRAS</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaVerdad}</p>
           <p className="mt-1 text-xs text-zinc-500">
             Registro documental: cada entrada cita su fuente pública (ONU/OHCHR,

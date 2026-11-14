@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { VozSala } from "@/components/vanguard/voz-sala";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { PERSONAS } from "@/lib/voz/decir";
+import { TEATROS_SABER, CONCEPTOS_SABER } from "@/lib/agente/saber";
+import { NAVEGACION } from "@/lib/agente/maestro";
 
 // ============================================================
 // v367.2 LA VOZ MAESTRA — /voz
@@ -77,23 +79,23 @@ export default function VozPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="voz-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-              AUDIO 100 % EN TU APARATO
-            </span>
-          </div>
-        </div>
+        {/* v402.2 — portada de sala: cifras del cerebro del Maestro */}
+        <PortadaSala
+          imagen="/ilustraciones/canales.jpg"
+          alt="Operador con auriculares frente a pantallas de transmisión en la noche"
+          volanta="Inteligencia · La voz"
+          titulo="La Voz Maestra"
+          sumario="Elige con quién hablas y pídele que te explique un frente, un concepto o el parte del día. Sigue hablando: se acuerda de lo último que te explicó."
+          cifras={[
+            { valor: Object.keys(PERSONAS).length, etiqueta: "Voces", nota: "con tono y ritmo propios" },
+            { valor: Object.keys(TEATROS_SABER).length, etiqueta: "Frentes", nota: "explicados a fondo" },
+            { valor: CONCEPTOS_SABER.length, etiqueta: "Conceptos", nota: "con su clase" },
+            { valor: NAVEGACION.length, etiqueta: "Salas", nota: "a las que te lleva" },
+          ]}
+          acento="#38bdf8"
+        />
 
         <article className="mx-auto max-w-3xl px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">La Voz Maestra</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
             La voz de la casa ya no es un portero de órdenes cortas. Elige con quién hablas — la
             locutora, el analista, el general o el cronista — y pídele que te explique un teatro,

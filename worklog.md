@@ -6093,3 +6093,16 @@ Work Log:
 Stage Summary:
 - La casa ya tiene dos visualizaciones propias y honestas: un eje de tiempo proporcional y un gráfico de barras proporcional. Ninguna de las dos inventa una escala.
 - /archivo-mundial y /guerra-hoy, dos de las salas más densas, abren con portada y con una lectura visual antes del texto.
+
+---
+Task ID: ia-v402.2-una-portada-por-sala
+Agent: IA de diseño (Arena)
+Task: «Sigue» — segunda tanda del mandato «cada módulo mira sus errores… agrégales imágenes, texto bien estructurado».
+
+Work Log:
+- ① RESTAURACIÓN: el merge de v402.1 (PR #57) se basó en un /guerra-hoy anterior a v402.0 y lo pisó entero (volvieron la cabecera vieja, el enlace dentro de enlace del #418, la base congelada y LiveCounter) y deshizo los suppressHydrationWarning de /en-vivo (a92aac5). También desaparecieron de la bitácora las entradas v402.0 y v401.2. Restaurado todo desde a92aac5; los tres «puntos» de la portada de ia3 pasan a la portada del vestíbulo para que no se pierda su texto.
+- ② 14 PORTADAS NUEVAS con PortadaSala + ilustración existente: audios (directos), centinela, voz (canales), música (studios), traductor (ciber), espía (espionaje), pulso-mundial (pulsos), perfil, escudo (espectro), modo (consejo), novedades (notificaciones), privacidad (osint), universo (recompensas), teatro-3d (simulador). Cifras de sus fuentes: parte.censo, PERSONAS/TEATROS_SABER/CONCEPTOS_SABER/NAVEGACION, cuentaMusicaReal/cuentaVerificadas, IDIOMAS_VANGUARD/paresGlosario, escuchas/movimientos/TEATROS, snap.meta/indicadores/cables, PIEZAS_CARNET_TOTAL/PERSONALIZACION_TOTAL, COMANDOS, MODOS, FUNCIONES_EXPANSION_10, VISTAS. Herramienta: /home/user/herr/portadas.py (quita la barra vieja con VanguardMarkSvg y el h1 suelto; el párrafo se queda).
+- ③ UN SOLO TÍTULO: 16 salas con nivel="p" + h1 viejo → la portada vuelve a h1 y el viejo pasa a <h2 class="vx-h-sala"> (piel.css lo baja a rótulo Orbitron dorado). Zona Cero: fuera el segundo título. Teatro 3D → «Arsenal 3D» (su pestaña); universo con título en español.
+- ④ BASE CONGELADA: emisor-guerra.teatrosDelParte y la cronología de /pulso-mundial usan filasVivas() primero.
+- ⑤ /calidad: el rótulo «auditoría v367.9» escrito a mano → «auditoría · {fecha}».
+- QA: tsc acotado (45 archivos) LIMPIO; next dev: las 16 salas 200; capturas de 9 portadas revisadas, 0 errores de consola.

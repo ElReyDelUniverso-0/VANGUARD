@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { PERSONALIZACION_TOTAL, PIEZAS_CARNET_TOTAL } from "@/lib/perfil-jugador";
-import { APP_VERSION_LABEL } from "@/lib/version";
 import { PerfilJugadorCarga } from "@/components/vanguard/perfil-jugador-carga";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
 // v367.6 EL PERFIL DEL JUGADOR — /perfil
@@ -81,23 +79,21 @@ export default function PerfilPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-5 py-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="perfil-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-              EL PERFIL QUE TODO JUGADOR DEBE TENER · {APP_VERSION_LABEL}
-            </span>
-          </div>
-        </div>
+        {/* v402.2 — portada de sala: cifras del carnet (lib/perfil-jugador) */}
+        <PortadaSala
+          imagen="/ilustraciones/perfil.jpg"
+          alt="Taquilla abierta con un uniforme colgado en un vestuario en penumbra"
+          volanta="Juego · Mi perfil"
+          titulo="El perfil del jugador"
+          sumario="Tu carnet de agente: alias, foto, código de jugador estable y los permisos reales de la casa. La foto se reduce en tu aparato y no sale de ahí."
+          cifras={[
+            { valor: PIEZAS_CARNET_TOTAL, etiqueta: "Piezas del carnet", nota: "las que todo jugador debe tener" },
+            { valor: PERSONALIZACION_TOTAL, etiqueta: "Personalización", nota: "piezas para hacerlo tuyo" },
+          ]}
+          acento="#e8c56a"
+        />
 
         <article className="mx-auto max-w-4xl px-5 pt-8">
-          <h1 className="text-3xl font-bold text-zinc-100">El perfil del jugador</h1>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-500">
             Un carnet, no un formulario: {PIEZAS_CARNET_TOTAL} piezas que cada jugador debe tener —alias, foto, bio,
             cuenta, modo elegido y el código guardado—, tu código de jugador estable, los permisos reales del censo de

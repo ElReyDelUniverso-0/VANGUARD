@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { EscudoEscaner } from "./escudo-escaner";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // LA SALA DEL ESCUDO — /escudo (complemento de la ley v204 EL ESCUDO).
@@ -76,25 +76,20 @@ export default function EscudoPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="esc-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] text-zinc-600 uppercase tracking-wider">
-              ley v204 · el escudo
-            </span>
-          </div>
-        </div>
+        {/* v402.2 — portada de sala (Estado de Vanguard) */}
+        <PortadaSala
+          imagen="/ilustraciones/espectro.jpg"
+          alt="Radar circular verde frente al mar nocturno con antenas de escucha"
+          volanta="Estado de Vanguard · El Escudo"
+          titulo="El Buscador de Llaves"
+          sumario="La guardia de secretos de la casa: revisa todo el código buscando claves y secretos filtrados antes de que viajen al repositorio o al público."
+          cifras={[
+            { valor: COMANDOS.length, etiqueta: "Órdenes", nota: "para pasar el escudo" },
+          ]}
+          acento="#3ddc97"
+        />
 
         <article className="max-w-3xl mx-auto px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">
-            El Escudo · El Buscador de Llaves
-          </h1>
           <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
             La guardia de secretos de la casa: una herramienta de Node puro (cero
             dependencias nuevas) que revisa el árbol de trabajo completo buscando

@@ -138,7 +138,6 @@ export default async function EnVivoPage() {
         alt="Estudio de directo con pantallas encendidas y mesa de control"
         volanta="LA CASA · EL PULSO"
         titulo="EL MUNDO, MINUTO A MINUTO"
-        nivel="p"
         acento="#22d3ee"
         sumario="La última hora del planeta: cables reales con hora, fuente y sello de exactitud, sondeados cada treinta segundos."
         cifras={[
@@ -163,9 +162,9 @@ export default async function EnVivoPage() {
             <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
               <VanguardMarkSvg size={14} idPrefix="pulso-ns" /> VANGUARD · EL PULSO
             </p>
-            <h1 className="mt-3 text-xl font-bold text-zinc-100">
+            <h2 className="vx-h-sala mt-3 text-xl font-bold text-zinc-100">
               La sala EN VIVO necesita JavaScript
-            </h1>
+            </h2>
             <p className="mt-2 text-sm text-zinc-500">
               Actívalo para ver la última hora latir — o entra a la primera
               página clásica en{" "}

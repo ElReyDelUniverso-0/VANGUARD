@@ -98,7 +98,6 @@ export default function DivisasPage() {
         alt="Billetes y monedas de varios países extendidos sobre una mesa oscura"
         volanta="LA CASA · DINERO"
         titulo="EL DINERO DEL MUNDO"
-        nivel="p"
         acento="#22c55e"
         sumario="La moneda oficial real de cada país y territorio, cuántas comparten la misma y cuál sirve a más naciones: la economía como mapa."
         cifras={[
@@ -127,7 +126,7 @@ export default function DivisasPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · LAS DIVISAS
           </p>
-          <h1 className="mt-2 text-2xl font-bold text-zinc-100">LAS MONEDAS DEL PLANETA</h1>
+          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">LAS MONEDAS DEL PLANETA</h2>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaDivisas}</p>
           <p className="mt-1 text-xs text-zinc-500">
             Cada tasa son unidades de moneda por 1 dólar estadounidense, tal

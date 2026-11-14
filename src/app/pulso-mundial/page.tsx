@@ -5,7 +5,6 @@ import path from "node:path";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
-import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import {
   type InstantaneaPulso,
   rankingWpi,
@@ -14,6 +13,8 @@ import {
   ultimoDato,
 } from "@/lib/pulso-mundial";
 import { WorldPulseVivo, type CableCronologia } from "./pulso-mundial-vivo";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { filasVivas } from "@/lib/pulso";
 
 // v358.0 WORLD PULSE — EL CENTRO DE INTELIGENCIA MUNDIAL (mandato del Dueño:
 // «un centro de inteligencia mundial que reúna acontecimientos, tendencias,
@@ -74,9 +75,17 @@ async function leerCronologia(): Promise<{ cables: CableCronologia[]; error: boo
         conflictTag: true,
         sourceCountry: true,
       },
-    });
+    }).catch(() => []);
+    // v402.2 — la cronología respira con los medios VIVOS (la base de producción
+    // viaja congelada): primero los cables vivos, luego el archivo sin repetir.
+    const vivas = await filasVivas().catch(() => []);
+    const vistos = new Set(vivas.map((v) => v.title.slice(0, 60).toLowerCase()));
+    const archivo = filas.filter((f) => !vistos.has(f.title.slice(0, 60).toLowerCase()));
+    const todas = [...vivas, ...archivo]
+      .sort((x, y) => y.publishedAt.getTime() - x.publishedAt.getTime())
+      .slice(0, 240);
     return {
-      cables: filas.map((f) => ({
+      cables: todas.map((f) => ({
         id: f.id,
         titulo: f.title,
         fuente: f.source,
@@ -86,7 +95,7 @@ async function leerCronologia(): Promise<{ cables: CableCronologia[]; error: boo
         // la bandera de la casa respira con ISO-2 MAYÚSCULA (REGION_HUE)
         pais: f.sourceCountry ? f.sourceCountry.toUpperCase() : null,
       })),
-      error: false,
+      error: todas.length === 0,
     };
   } catch {
     return { cables: [], error: true }; // BD muda: SIN SEÑAL declarado abajo
@@ -144,23 +153,26 @@ export default async function PulsoMundialPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="pulso" />
+        {/* v402.2 — portada de sala: cifras de la instantánea del Banco Mundial y de la cronología */}
+        <PortadaSala
+          imagen="/ilustraciones/pulsos.jpg"
+          alt="Analistas señalan rutas sobre un gran mapa del mundo iluminado"
+          volanta="Inteligencia · Pulso mundial"
+          titulo="El pulso del planeta"
+          sumario="Indicadores del Banco Mundial, la cronología de los cables y el índice World Pulse. Cada dato con su fecha, su procedencia y sus límites; lo que falta, se declara."
+          cifras={[
+            ...(snap ? [
+              { valor: snap.meta.paisesCubiertos, etiqueta: "Economías", nota: `serie ${snap.meta.anios}` },
+              { valor: snap.indicadores.length, etiqueta: "Indicadores", nota: "del Banco Mundial" },
+            ] : []),
+            { valor: cables.length, etiqueta: "Cables", nota: "en la cronología" },
+          ]}
+          acento="#3ddc97"
+        />
 
         {/* ── cabecera del centro — v360 LA CASA ILUSTRADA: baño de luz lateral ── */}
         <header className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
-          <IlustracionCabecera src="/ilustraciones/pulso.jpg" />
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.25em] uppercase text-emerald-300 border border-emerald-500/50 bg-emerald-500/10 rounded px-2 py-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-              WORLD PULSE
-            </span>
-            <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
-              centro de inteligencia mundial
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-4xl font-black text-zinc-100 mt-3">
-            EL PULSO DEL PLANETA, <span className="text-emerald-400">CON LA FUENTE A LA VISTA</span>
-          </h1>
-          <p className="text-sm text-zinc-400 mt-2 max-w-3xl">
+          <p className="text-sm text-zinc-400 max-w-3xl">
             Indicadores económicos, sociales y ambientales del Banco Mundial, cronología de
             acontecimientos y el WORLD PULSE INDEX. Aquí no se inventa nada: cada dato lleva su
             fecha de actualización, su procedencia y sus limitaciones — y lo que no hay, se declara.

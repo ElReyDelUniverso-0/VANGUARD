@@ -245,7 +245,7 @@ export default function CalidadPage() {
         <div className="relative mx-auto max-w-5xl">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-emerald-300">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            auditoría v367.9 · {INFORME.fecha}
+            auditoría · {INFORME.fecha}
           </div>
           <h1 className="font-mono text-4xl font-black uppercase leading-none tracking-tight text-white sm:text-6xl">
             La Sala de la Calidad

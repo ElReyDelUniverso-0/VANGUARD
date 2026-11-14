@@ -137,7 +137,6 @@ export default async function ZonaCeroPage() {
       alt="Sala de crisis con mapas colgados y mesas de operaciones"
       volanta="LA CASA · ZONA CERO"
       titulo="EL TEATRO GLOBAL"
-      nivel="p"
       acento="#ef4444"
       sumario="El simulador de guerra en directo: los teatros reales, los cables verificados de cada uno y las unidades del asedio en 3D."
       cifras={[
@@ -163,13 +162,8 @@ export default async function ZonaCeroPage() {
       />
 
       <header className="border-b border-red-500/30 bg-black/50 px-5 pt-7 pb-5 max-w-6xl mx-auto">
-        <p className="font-mono text-[11px] tracking-[0.3em] text-red-400 uppercase">
-          VANGUARD · Simulador de guerra en directo
-        </p>
-        <h1 className="font-orbitron text-3xl sm:text-5xl font-black mt-2 tracking-wide">
-          TEATRO <span className="text-red-500">GLOBAL</span> <span className="text-amber-300">3D</span>
-        </h1>
-        <p className="mt-3 text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl">
+        {/* v402.2 — un solo título por sala: el de la portada (antes había dos) */}
+        <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl">
           El simulador completo de países en guerra: una mesa de operaciones
           mundial en 3D donde ves TODOS los frentes del planeta a la vez —
           Europa del Este, Medio Oriente, África, Asia-Pacífico y América

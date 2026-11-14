@@ -5,7 +5,6 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { BarraMundo } from "@/components/vanguard/barra-mundo";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
-import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
 import { TEATROS } from "@/lib/teatros";
 import { colorTension, haceDe } from "@/lib/mundo";
 import {
@@ -18,6 +17,7 @@ import {
   type TensionTeatro,
 } from "@/lib/espia";
 import { SondeoEspia } from "./sondeo-espia";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v215.0 MODO ESPÍA — «un modo de espiar el gobierno».
 // LA HONESTIDAD COMO TÉCNICA: Vanguard espía SOLO lo que los gobiernos
@@ -153,19 +153,24 @@ export default async function EspiaPage() {
       />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <BarraMundo activa="espia" />
+        {/* v402.2 — portada de sala: cifras del radar (escuchas, movimientos, teatros) */}
+        <PortadaSala
+          imagen="/ilustraciones/espionaje.jpg"
+          alt="Figura con gabardina y maletín bajo una farola, con la ciudad en llamas al fondo"
+          volanta="Inteligencia · Modo espía"
+          titulo="El radar de los gobiernos"
+          sumario="Lo que gobiernos y organizaciones publican — boletines, declaraciones, decretos — escuchado en fuentes abiertas. Nada se invade, nada se hackea: si lo emiten, aquí se oye."
+          cifras={[
+            { valor: fuentesVivas, etiqueta: "Escuchas abiertas", nota: `de ${escuchas.length} señales oficiales` },
+            { valor: movimientos.length, etiqueta: "Movimientos", nota: "de gobierno detectados" },
+            { valor: Object.keys(TEATROS).length, etiqueta: "Teatros", nota: "bajo el índice de tensión" },
+          ]}
+          acento="#38bdf8"
+        />
 
         {/* v360 LA CASA ILUSTRADA — el espionaje entra como baño de luz lateral */}
         <header className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-5 pt-6 pb-4">
-          <IlustracionCabecera src="/ilustraciones/espionaje.jpg" />
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="font-display text-2xl sm:text-3xl font-black tracking-wide text-soft">
-              MODO ESPÍA <span className="text-cyan-300">◈</span>
-            </h1>
-            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-cyan-300 border border-cyan-500/50 bg-cyan-500/10 rounded px-2 py-0.5">
-              Radar de gobiernos
-            </span>
-          </div>
-          <p className="mt-2 max-w-3xl text-[13px] text-muted-foreground leading-relaxed">
+          <p className="max-w-3xl text-[13px] text-muted-foreground leading-relaxed">
             Espionaje a la vista, sin máscaras: Vanguard escucha{" "}
             <strong className="text-zinc-300">lo que los gobiernos y las organizaciones PUBLICAN</strong> —
             sus boletines oficiales, sus declaraciones, sus decretos. Nada se
