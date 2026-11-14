@@ -2,15 +2,10 @@
   "fecha": "2026-11-14",
   "humo": {
     "base": "https://vanguard-u6b9.vercel.app",
-    "fecha": "2026-11-14T16:20:58",
+    "fecha": "2026-11-14T16:29:13",
     "total": 44,
-    "ok": 43,
-    "fallos": [
-      {
-        "ruta": "/calidad",
-        "codigo": 404
-      }
-    ]
+    "ok": 44,
+    "fallos": []
   },
   "agentes": {
     "rutas": {
