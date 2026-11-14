@@ -3,6 +3,8 @@ import Link from "next/link";
 import { HISTORICAL_WARS, WAR_BETS } from "@/lib/game-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { LineaDeTiempo } from "@/components/vanguard/linea-de-tiempo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 
 // v274.0 EL ARCHIVO DE LA HISTORIA — la expansión funcional módulo a
@@ -106,6 +108,28 @@ function ano(n: number): string {
   return n < 0 ? `${-n} a. C.` : `${n}`;
 }
 
+
+// v401.2 LA LÍNEA DEL TIEMPO — los mismos datos de HISTORICAL_WARS, puestos en
+// un eje. Ni un año escrito a mano: `desde`/`hasta` son los `yearStart` y
+// `yearEnd` de la fuente, y la escala se deriva de ellos.
+const TRAMOS_TIEMPO = GUERRAS.map((g) => ({
+  id: g.id,
+  nombre: g.name,
+  desde: g.yearStart,
+  hasta: g.yearEnd,
+  era: g.era,
+  nota: g.outcome,
+}));
+
+// el color por era: la misma familia del canon de la casa (ERA_NOMBRES/ERA_CLASES),
+// pero en hex porque el eje se pinta con estilos en línea (componente de servidor).
+const PALETA_ERAS: Record<string, string> = {
+  ANTIGUA: "#f59e0b",
+  EDAD_MEDIA: "#a78bfa",
+  MODERNA: "#22d3ee",
+  CONTEMPORANEA: "#ef4444",
+};
+
 const lineaArchivo = `El archivo de la historia — ${GUERRAS.length} guerras de ${ERA_NOMBRES[ERA_ORDEN[0]]} a ${ERA_NOMBRES[ERA_ORDEN[3]]}: de ${ano(ANO_INICIO)} a ${ano(ANO_FIN)}, la memoria con la que la casa lee las de hoy`;
 
 // ── v275.0 LA TAQUILLA DEL ARCHIVO — TODO derivado de WAR_BETS, nada a mano ──
@@ -180,6 +204,41 @@ export default function HistoriaPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
+      />
+
+      <PortadaSala
+        imagen="/ilustraciones/historia.jpg"
+        alt="Libros y mapas antiguos apilados bajo una lámpara de latón"
+        volanta="LA CASA · LA MEMORIA"
+        titulo="LO QUE YA PASÓ, PARA LEER LO DE HOY"
+        nivel="p"
+        acento="#f59e0b"
+        sumario="Guerras reales de la Antigüedad a la Contemporánea, con sus años, sus facciones, su desenlace y su coste: la memoria con la que la casa lee las guerras de hoy."
+        cifras={[
+          { valor: GUERRAS.length, etiqueta: "guerras", nota: "en el archivo" },
+          { valor: CENSO_ERAS.length, etiqueta: "eras", nota: "cubiertas" },
+          { valor: ano(ANO_INICIO), etiqueta: "empieza", nota: "el arco" },
+          { valor: ano(ANO_FIN), etiqueta: "termina", nota: "el arco" }
+        ]}
+        puntos={[
+          { titulo: "DEL AÑO AL MAPA", texto:
+              "Cada guerra trae su región y sus coordenadas reales: la misma cifra sirve para leer un libro y para pintar un mapa." },
+          { titulo: "DESENLACE Y COSTE", texto:
+              "No hay «aproximadamente»: cada ficha declara quién ganó, qué se firmó y cuántos murieron, con la fuente a la vista." },
+          { titulo: "PARA QUÉ SIRVE HOY", texto:
+              "El juicio retrospectivo de la casa: las cuotas abiertas sobre guerras que ya tienen veredicto en los libros, para calibrar lo que hoy se juega." }
+        ]}
+        nota="Portada servida desde la propia casa: la ilustración viaja en el repositorio y cada cifra sale de HISTORICAL_WARS, calculada en el render. Cero años escritos a mano."
+      />
+
+      <LineaDeTiempo
+        tramos={TRAMOS_TIEMPO}
+        paleta={PALETA_ERAS}
+        nombres={ERA_NOMBRES}
+        volanta="LA MEMORIA · EJE DE TIEMPO"
+        titulo="LAS GUERRAS QUE ENSEÑARON A LEER LAS DE HOY"
+        nota={`Cada barra es una guerra de la fuente, dibujada en proporción a sus años reales: ${GUERRAS.length} conflictos repartidos en ${CENSO_ERAS.length} eras. La escala del eje se calcula con el arco completo (${ano(ANO_INICIO)} → ${ano(ANO_FIN)}).`}
+        acento="#f59e0b"
       />
 
       <div className="border-b border-zinc-800 bg-zinc-900/60">

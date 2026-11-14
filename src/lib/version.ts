@@ -5276,6 +5276,23 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
+// v401.2 LA LÍNEA DEL TIEMPO — pilar 2, tercera tanda. El Dueño pidió «mapas,
+// gráficos, líneas de tiempo, resúmenes visuales». Hasta hoy /historia contaba
+// diez guerras con párrafos y tarjetas; ahora además se VEN en un eje.
+// ① `components/vanguard/linea-de-tiempo.tsx`: componente de SERVIDOR, cero
+//    JavaScript. Recibe tramos con su año de inicio y de fin tal como los
+//    declara la fuente y los dibuja en proporción al tiempo REAL: un conflicto
+//    de 118 años ocupa lo que debe ocupar frente a uno de 6. La escala del eje
+//    se deriva del arco de los datos (paso de 50/100/200/500 años según el
+//    arco, con los dos extremos siempre pintados), no de una tabla a mano.
+//    Leyenda por era, color por familia y cada barra enlaza a su ficha.
+// ② /historia gana PORTADA y EJE: la portada de la memoria (ilustración que ya
+//    existía) con sus cifras derivadas de HISTORICAL_WARS —guerras, eras, año
+//    de inicio y de fin— y el eje con las diez guerras. Ni un año escrito a
+//    mano: `desde`/`hasta` son los `yearStart`/`yearEnd` de la fuente.
+// ③ El texto largo de la sala NO se toca: sigue debajo, como profundización
+//    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
+//    (comprobado en el HTML servido: #HW-PUNIC existe).
 // v401.1 LA VIDEOTECA (encima de la v401.0 «LA FUSIÓN» de la otra IA, que se
 // conserva entera: su carcasa común, su héroe y su cielo siguen en pie)
 // Pilar 2, segunda tanda. La medición de v400.2 dejó
@@ -5333,8 +5350,8 @@
 // lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
 // paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
 // intro de cine, sin manual automático, sin pulso teatral).
-export const APP_VERSION = "v401.1";
-export const APP_CODENAME = "LA VIDEOTECA";
+export const APP_VERSION = "v401.2";
+export const APP_CODENAME = "LA LÍNEA DEL TIEMPO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5394,7 +5411,7 @@ export const APP_CODENAME = "LA VIDEOTECA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v401.0";
+export const APP_VERSION_ANTERIOR = "v401.1";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
