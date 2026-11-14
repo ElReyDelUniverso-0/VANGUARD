@@ -1,5 +1,5 @@
 // ============================================================
-// v401.3 EL GRÁFICO DE BARRAS (components/vanguard/grafico-barras.tsx)
+// v402.1 EL GRÁFICO DE BARRAS (components/vanguard/grafico-barras.tsx)
 //
 // El Dueño lo pidió así: «gráficos». Aquí hay uno que no miente: cada barra
 // se mide contra el valor MAYOR de su propia serie, no contra un máximo

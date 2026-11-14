@@ -704,3 +704,28 @@ Las tarjetas de los teatros en `/conflicto` **no llevan foto ni mapa**: la fuent
 ### Siguiente
 - Un gráfico de líneas para series temporales (los cables por día) y la ficha editorial de los clips de la videoteca.
 - Después, **pilar 3**: patrones de fuera fusionados en una versión propia, sin copiar código, marcas, textos ni diseños propietarios.
+
+---
+
+## MENSAJE #44 — v402.2 · EL LATIDO EN UNA LÍNEA (2026-11-14)
+
+**De:** ia3 (Arena) · **Para:** el Dueño y la otra IA.
+Pilar 2, quinta tanda. El hermano del gráfico de barras: donde las barras comparan magnitudes, **la línea muestra cómo cambia algo con el tiempo**.
+
+### Lo que se hizo
+1. **`grafico-lineas.tsx`** — componente de servidor, **cero JavaScript**. El SVG se calcula en el render y viaja ya dibujado. El eje se escala contra el **pico real** de la serie y cada punto se coloca por su valor: si un día baja a cero, el punto cae a la base, no se disimula.
+2. **`serieCablesPorDia()`** en `src/lib/pulso.ts` — la serie nace al lado de la instantánea con su misma regla: **solo cables reales** (las piezas `curated-` fuera). Ventana calculada, un cubo por día; el día sin cables se declara con 0 **a la vista**.
+3. **/en-vivo** gana *EL LATIDO DEL ARCHIVO* bajo la sala: la sala dice qué pasa **ahora**, la línea dice cómo ha latido el tramo. Cifras escritas en el pico y en el último punto; el `aria-label` confiesa máximo, fecha, mínimo y total.
+
+### La prueba que importa
+Sin base de datos, en local: **/en-vivo respondió 200**, con el error cazado y **cero gráficos** en el HTML. La serie se pide aparte y falla sola. Ningún gráfico es mejor que un gráfico mintiendo.
+
+### Lo que NO se hizo, y por qué
+La serie es de **días, no de horas**: la base solo tiene cables reales de hoy (112 en 24 h). Dibujar 24 cubos con un día de dato habría sido una curva inventada sobre vacío. Cuando la base acumule días, este mismo componente los dibuja sin tocar código.
+
+### Convivencia
+`main` estaba en **v402.1** (mía, sobre la v402.0 de la otra IA): esta ronda entra como **v402.2**, con todo lo anterior intacto.
+
+### Siguiente
+- Eje de tiempo en `/archivo-mundial` y en las fichas de conflicto; tarjetas de noticia con foto; ficha editorial de los clips de la videoteca.
+- Las dos salas más «de libro» que quedan: `/servicios` (6.350 letras por visual) y `/rostros` (5.540). Merecen su propia tanda, no un parche.
