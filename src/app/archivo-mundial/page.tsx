@@ -9,6 +9,7 @@ import {
 } from "@/lib/archive-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 
 // v293.0 EL ARCHIVO MUNDIAL — la cabeza del censo del almacén de la
 // v291/v292 clasificada y pagada: archive-data (v12) es REAL de pies a
@@ -39,6 +40,20 @@ for (const c of CURIOSITIES) if (!CATS.includes(c.cat)) CATS.push(c.cat);
 
 const TOTAL_FASES_GUERRA = WAR_DEATHS.length;
 const lineaArchivoMundial = `El archivo mundial — ${CURIOSITIES.length} curiosidades verídicas en ${CATS.length} categorías, ${ERAS.length} eras desde ${ERAS[0].name}, ${TOTAL_FASES_GUERRA} contadores de guerra y ${CARTELS.length} expedientes de cartel, con sus líderes reales`;
+
+
+// v401.3 EL COSTE EN UNA ESCALA — las mismas cifras de WAR_DEATHS, dibujadas.
+// La barra más larga es la mayor de la serie (la Segunda Guerra Mundial); el
+// resto se mide contra ella. Cero números escritos a mano: `valor` es el
+// `total` de la fuente y el texto se formatea en el render.
+const BARRAS_MUERTES = WAR_DEATHS.map((w) => ({
+  etiqueta: w.name,
+  valor: w.total,
+  texto: `${(w.total / 1_000_000).toLocaleString("es", { maximumFractionDigits: 1 })} M`,
+  nota: `${w.years} · ${w.perDay.toLocaleString("es")} muertes por día según la fuente`,
+  color: w.color,
+  href: "#guerras",
+}));
 
 export default function ArchivoMundialPage() {
   const jsonLd = {
@@ -98,6 +113,16 @@ export default function ArchivoMundialPage() {
           { etiqueta: "las guerras", href: "#guerras" }
         ]}
         nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
+      <GraficoBarras
+        barras={BARRAS_MUERTES}
+        unidad="muertes"
+        volanta="EL ARCHIVO · EL COSTE HUMANO"
+        titulo="LAS GRANDES GUERRAS, EN UNA SOLA ESCALA"
+        nota={`Las ${WAR_DEATHS.length} guerras del archivo con su coste humano total, medido contra la mayor de la serie. La cifra de cada barra sale de la fuente, con su ritmo de muertes por día declarado al lado.`}
+        acento="#ef4444"
+        etiquetaMaximo="el mayor coste de la serie"
       />
 
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">

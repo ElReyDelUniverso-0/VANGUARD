@@ -191,6 +191,7 @@ export const COSAS_REALES: CosaReal[] = [
   { id: "real-160", tipo: "panel", nombre: "BUSCADOR", archivo: "src/components/vanguard/buscador.tsx", lema: "VANGUARD v170.0 — BUSCADOR UNIVERSAL (fórmula Google)" },
   { id: "real-161", tipo: "motor", nombre: "ACTIVOS MILITARES", archivo: "src/lib/3d/activos-militares.ts", lema: "(src/lib/3d/activos-militares.ts)" },
   { id: "real-162", tipo: "panel", nombre: "UNIFORMES 3D", archivo: "src/components/vanguard/uniformes-3d.tsx", lema: "Orden del Dueño: «mejora los uniformes, personajes, vehículos militares; no" },
+  { id: "real-170", tipo: "panel", nombre: "GRÁFICO DE BARRAS", archivo: "src/components/vanguard/grafico-barras.tsx", lema: "Barras proporcionales a la mayor de su serie, con la cifra siempre escrita al lado: componente de servidor, cero JavaScript" },
   { id: "real-169", tipo: "panel", nombre: "LÍNEA DEL TIEMPO", archivo: "src/components/vanguard/linea-de-tiempo.tsx", lema: "Eje proporcional al tiempo real de la fuente: componente de servidor, cero JavaScript, cada barra enlaza a su ficha" },
   { id: "real-168", tipo: "panel", nombre: "VIDEOTECA", archivo: "src/components/vanguard/videoteca.tsx", lema: "Los 24 clips de public/videos con sala: preload=\"none\", miniatura real y controles del navegador (cero JS propio)" },
   { id: "real-167", tipo: "panel", nombre: "PORTADA DE SALA", archivo: "src/components/vanguard/portada-sala.tsx", lema: "Componente de servidor (cero JS): portada grande, sumario, cifras en tarjetas e índice de anclas — el texto largo queda debajo, intacto" },
