@@ -14,6 +14,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VitrinaProgreso } from "@/components/vanguard/vitrina-progreso";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v216.0 LOS 100 — LA VITRINA DE OBJETIVOS. Mandato del Dueño: «una lista de
 // los 100 objetivos de Vanguard, fuertes, abusivos, super llamativos, con
@@ -307,6 +308,32 @@ export default function ObjetivosPage() {
   };
 
   return (
+    <>
+    <PortadaSala
+      imagen="/ilustraciones/misiones.jpg"
+      alt="Pizarra de operaciones con objetivos marcados y chinchetas de colores"
+      volanta="LA CASA · LA JORNADA"
+      titulo="LO QUE HAY QUE HACER HOY"
+      nivel="p"
+      acento="#22c55e"
+      sumario="Misiones, retos diarios, torneos y los logros que se cazan jugando: el sistema completo de objetivos de Vanguard, con sus cifras y su botín real."
+      cifras={[
+          { valor: MISIONES.length, etiqueta: "misiones", nota: "vivas" },
+          { valor: RETOS.length, etiqueta: "retos", nota: "diarios" },
+          { valor: TORNEOS.length, etiqueta: "torneos", nota: "en marcha" },
+          { valor: ACHIEVEMENTS.length, etiqueta: "logros", nota: "que cazar" }
+      ]}
+      puntos={[
+          { titulo: "TRES CATÁLOGOS", texto:
+              "La jornada (misiones por ritmo), los retos diarios con su botín y los torneos con sus tablas: cada uno derivado de su fuente, con las metas a la vista." },
+          { titulo: "EL BOTÍN ES REAL", texto:
+              "XP, monedas y gemas salen del propio catálogo del juego; nada de cifras prometidas que luego no se pagan." },
+          { titulo: "EL PROGRESO SE GUARDA", texto:
+              "Lo que se caza se registra en el aparato: esta sala enseña el catálogo, la vitrina de progreso vive en la primera página." }
+      ]}
+      nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+    />
+
     <main className="min-h-screen bg-zinc-950 text-zinc-200">
       <script
         type="application/ld+json"
@@ -724,5 +751,6 @@ export default function ObjetivosPage() {
         </div>
       </noscript>
     </main>
+    </>
   );
 }

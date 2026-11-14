@@ -5276,6 +5276,30 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
+// v400.3 LA VIDEOTECA — pilar 2, segunda tanda. La medición de v400.2 dejó
+// ocho salas más en la lista de «libro», y la auditoría de recursos encontró
+// algo peor: **24 clips de vídeo** en `public/videos/` (V-001 … V-024, mp4
+// servidos por la casa, `accept-ranges` y `video/mp4` comprobados) con **cero
+// referencias en todo `src`**. Vídeo real, dormido, sin sala. Esto lo arregla.
+// ① SEIS PORTADAS MÁS (mismo componente de servidor, cero JavaScript) en las
+//    salas que la medición señaló: /conflictos, /objetivos, /núcleo,
+//    /escenarios, /ver-guerra, /zona-cero, más /catálogo y /en-vivo. Ocho
+//    puertas nuevas con ilustración real, sumario de dos líneas y cifras
+//    DERIVADAS de la fuente de cada sala (CONFLICTS.length, intensidadMedia,
+//    MISIONES.length, MODULOS_NUCLEO.length, cat.variables.length,
+//    FRENTES.length, despachos.length, TOTAL_REAL, stats.hoy…). Ni un número
+//    escrito a mano: los uniformes salen de FACCCIONES_ORDEN.length y los
+//    documentos del núcleo de la suma de EXPEDIENTES+TEORIAS+ARMAS+… .
+// ② LA VIDEOTECA (components/vanguard/videoteca.tsx): los 24 clips ganan sala
+//    en /galeria. `preload="none"` —ni un byte hasta pulsar play—, miniatura
+//    de una ilustración que ya existía y controles del navegador. La casa aún
+//    no tiene ficha editorial de cada clip: cada tarjeta se llama por su
+//    archivo real, sin inventarle título (honestidad antes que escaparate).
+// ③ DOS ERRORES DE TIPO CAZADOS ANTES DE PUBLICAR, por el chequeo acotado:
+//    `TEATROS.length` sobre un Record devolvía el valor de la firma de índice
+//    (se cambió por Object.keys(TEATROS).length) y `totalReal` podía ser null
+//    (ahora `totalReal ?? 0`). Cinco salas necesitaron además un fragmento
+//    porque su `return` tenía un solo hijo y la portada añade el segundo.
 // v400.2 LAS PORTADAS (encima del rediseño v400.1 de la otra IA, sin tocar su portada)
 // Pilar 2 del orden del Dueño: «no debe sentirse como un
 // libro, sino como un centro interactivo de información mundial», «más imágenes
@@ -5307,16 +5331,8 @@
 // lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
 // paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
 // intro de cine, sin manual automático, sin pulso teatral).
-// v401.0 LA FUSIÓN — mandato del Dueño: «cada módulo de Vanguard hacerlo como la
-//   portada principal… parece un sitio web genérico de noticias, parece Instagram…
-//   fusiona la portada con el Vanguard que se conoce». Sistema .vx fusionado:
-//   noir + oro, Orbitron en marca/etiquetas, rejilla táctica, esquinas de mira,
-//   rombos en vez de puntos, TELETIPO de cables bajo la cabecera, reloj UTC/SDQ,
-//   sellos de cable en héroe y tarjetas, radar en el mapa; las «historias» estilo
-//   Instagram pasan a ser FRENTES ACTIVOS (tablero con barra de severidad) y un
-//   VISOR de briefing. La misma carcasa se aplica a todos los módulos.
-export const APP_VERSION = "v401.0";
-export const APP_CODENAME = "LA FUSIÓN";
+export const APP_VERSION = "v400.3";
+export const APP_CODENAME = "LA VIDEOTECA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,

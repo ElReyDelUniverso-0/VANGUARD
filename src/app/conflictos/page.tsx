@@ -6,6 +6,7 @@ import { GUERRAS, PULSO_KEYWORDS_GUERRA } from "@/lib/guerras-activas-data";
 import { TEATROS } from "@/lib/teatros";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v284.0 EL TABLERO DE LOS CONFLICTOS — la cabeza de la cola de la v283:
 // CONFLICTS (game-data, 33 regiones con dossier real: nivel, intensidad,
@@ -135,6 +136,31 @@ export default async function ConflictosPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/frentes.jpg"
+        alt="Manos sobre un mapa de operaciones con líneas de frente dibujadas a lápiz"
+        volanta="LA CASA · EL TABLERO"
+        titulo="DÓNDE SE ROMPE EL MUNDO"
+        nivel="p"
+        acento="#f59e0b"
+        sumario="Cada conflicto abierto, su intensidad medida, su pulso real en el archivo de la casa y las guerras que la fuente documenta."
+        cifras={[
+          { valor: CONFLICTS.length, etiqueta: "regiones", nota: "en seguimiento" },
+          { valor: conPulso.length, etiqueta: "con pulso vivo", nota: "en el archivo" },
+          { valor: GUERRAS.length, etiqueta: "guerras", nota: "documentadas" },
+          { valor: `${intensidadMedia}/100`, etiqueta: "intensidad media", nota: "del tablero" }
+        ]}
+        puntos={[
+          { titulo: "LO QUE SE MIDE", texto:
+              "Cada región lleva su intensidad —derivada de las señales de la fuente, no de una opinión— y el número de titulares que la citan en las últimas horas." },
+          { titulo: "LO QUE SE VE", texto:
+              "El pulso por palabras cruza las guerras documentadas con los titulares reales: si una guerra no aparece, se dice, no se rellena." },
+          { titulo: "PARA QUÉ", texto:
+              "Para saber dónde mirar primero sin leer veinte cables: primero el mapa, después la noticia." }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-7xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">

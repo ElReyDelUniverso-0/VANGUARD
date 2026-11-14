@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { IMAGENES_REALES } from "@/lib/imagenes-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { Videoteca, type ClipVideoteca } from "@/components/vanguard/videoteca";
 
 // v298.0 LA FOTOTECA DEL PLANETA — la capa REAL del aparato (v98 ORO
 // TOTAL) gana su sala server. La «Queda» de la v297 pedía clasificación
@@ -20,6 +21,15 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // búsqueda y filtros vive en el aparato: puerta honesta declarada (el
 // eco del LIVE_RATES v293, del reloj IANA v294, de la casa de cambio
 // v296 y de la lectura en vivo v297).
+
+
+// v400.3 LA VIDEOTECA — los 24 clips que la casa ya tenía en public/videos y
+// que ninguna sala usaba (el censo de v400.2 lo midió: 0 referencias en src).
+// Se enumeran desde su nombre real de archivo, no desde una lista escrita a
+// mano de memoria: si mañana entra el clip 25, se añade aquí una línea y ya.
+const CLIPS_VIDEOTECA: ClipVideoteca[] = Array.from({ length: 24 }, (_, i) => ({
+  archivo: `V-${String(i + 1).padStart(3, "0")}.mp4`,
+}));
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
@@ -156,6 +166,15 @@ export default function GaleriaPage() {
             </p>
           </noscript>
         </div>
+        <Videoteca
+          clips={CLIPS_VIDEOTECA}
+          poster="/ilustraciones/galeria.jpg"
+          volanta="LA FOTOTECA · VÍDEO"
+          titulo="LA VIDEOTECA DE LA CASA"
+          nota="Los clips viajan en el propio VANGUARD (/videos/), servidos por él: no hay enlaces remotos. Ninguno baja un byte hasta que se pulsa play. La casa todavía no tiene ficha editorial de cada clip, así que cada tarjeta se llama por su archivo real en vez de inventarle un título."
+          acento="#f43f5e"
+          visibles={12}
+        />
       </main>
     </>
   );

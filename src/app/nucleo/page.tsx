@@ -16,6 +16,7 @@ import { puntosDelNucleo } from "@/lib/nucleo/puntos";
 import { FUENTE_INDICADORES } from "@/lib/nucleo/indicadores";
 import { NucleoBusqueda } from "@/components/vanguard/nucleo-busqueda";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
 // v218.0 EL NÚCLEO — EL SALÓN CENTRAL DE VANGUARD (/nucleo)
@@ -285,6 +286,32 @@ export default async function NucleoPage({
   };
 
   return (
+    <>
+    <PortadaSala
+      imagen="/ilustraciones/estadisticas.jpg"
+      alt="Paneles de datos iluminados en una sala de control en penumbra"
+      volanta="LA CASA · EL NÚCLEO"
+      titulo="EL CENSO DE LA CASA"
+      nivel="p"
+      acento="#38bdf8"
+      sumario="Módulos vivos, entidades compartidas y búsqueda: el índice que dice qué existe en Vanguard y por dónde se llega a ello."
+      cifras={[
+          { valor: MODULOS_NUCLEO.length, etiqueta: "módulos", nota: "registrados" },
+          { valor: Object.keys(TEATROS).length, etiqueta: "teatros", nota: "del mundo" },
+          { valor: PAISES_ATLAS.length, etiqueta: "países", nota: "en el atlas" },
+          { valor: docsCatalogo, etiqueta: "documentos", nota: "de los archivos" }
+      ]}
+      puntos={[
+          { titulo: "NADIE ENTRA SIN CENSO", texto:
+              "Si una función no está en el registro, no existe para el Núcleo: no aparece aquí ni en la búsqueda de módulos. Es la regla que impide los callejones sin salida." },
+          { titulo: "ENTIDADES CON ID ESTABLE", texto:
+              "Cada país, teatro, documento o simulación tiene su identificador `vg:<tipo>:<clave>`: la misma entidad es la misma en todas las salas." },
+          { titulo: "BÚSQUEDA CON FRONTERA", texto:
+              "Ocho proveedores en paralelo y una frontera de datos: lo público se busca; lo privado (cuentas, telemetría, chat) jamás sale de aquí." }
+      ]}
+      nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+    />
+
     <main className="min-h-screen bg-zinc-950 text-zinc-200">
       <script
         type="application/ld+json"
@@ -548,5 +575,6 @@ export default async function NucleoPage({
         </section>
       </div>
     </main>
+    </>
   );
 }
