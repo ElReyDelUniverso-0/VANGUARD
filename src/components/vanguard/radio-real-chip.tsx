@@ -18,7 +18,6 @@ import Link from "next/link";
 import { Play, Square, SkipForward, Music4 } from "lucide-react";
 import {
   alCambiarRadioReal,
-  armarRadioReal,
   encenderRadioReal,
   estadoRadioReal,
   pararRadioReal,
@@ -38,12 +37,9 @@ export function RadioRealChip({ compacto = false }: { compacto?: boolean } = {})
 
   useEffect(() => alCambiarRadioReal(setE), []);
 
-  // v367.5 «que la música esté ya ahí»: se arma para el primer gesto del
-  // piloto (los navegadores no dejan sonar antes). Si la paró a mano, manda
-  // su decisión y no se enciende.
-  useEffect(() => {
-    armarRadioReal();
-  }, []);
+  // v367.7 LA MÚSICA NO SE ENCIENDE SOLA — orden del Dueño: «no la pongas
+  // automática». Aquí hubo un arranque al primer gesto (v367.5); ya no hay
+  // nada que arme la radio: solo el botón de este chip la enciende.
 
   const pista = e.pista;
 
@@ -54,12 +50,12 @@ export function RadioRealChip({ compacto = false }: { compacto?: boolean } = {})
       <div
         className="flex items-center gap-1 px-2 py-1 border-t border-amber-hud/20"
         data-vg-radio-real
-        title="Música real de dominio público y CC0 (archive.org), en orden aleatorio"
+        title="Música real de dominio público y CC0 (archive.org), en orden aleatorio. No se enciende sola."
       >
         <Music4 size={10} className={e.activa ? "text-amber blink-soft shrink-0" : "text-muted-foreground shrink-0"} />
         <span className="text-[7.5px] font-mono uppercase tracking-[0.18em] text-amber/80 shrink-0">real</span>
         <span className="min-w-0 flex-1 text-[8.5px] font-mono text-foreground/75 truncate">
-          {e.activa && pista ? `${pista.nombre} · ${pista.licencia}` : `${e.total || 13} pistas libres · al azar`}
+          {e.activa && pista ? `${pista.nombre} · ${pista.licencia}` : `${e.total || 13} pistas libres · no se enciende sola`}
         </span>
         <button
           type="button"
@@ -100,7 +96,7 @@ export function RadioRealChip({ compacto = false }: { compacto?: boolean } = {})
             <p className="text-[10px] font-mono text-foreground/80 truncate">
               {e.activa && pista
                 ? `▸ ${pista.nombre} — ${pista.autor}`
-                : "Dominio público y CC0. Un toque y suena en toda la casa."}
+                : "Dominio público y CC0. Se enciende solo si tú lo enciendes."}
             </p>
             {e.activa && pista ? (
               <p className="text-[8px] font-mono uppercase tracking-[0.12em] text-muted-foreground/70 truncate">

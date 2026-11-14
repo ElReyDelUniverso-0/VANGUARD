@@ -575,3 +575,14 @@ Tropiezo anotado para la casa: `next/dynamic({ssr:false})` NO se permite dentro 
 3. **EL CÓDIGO COMO PUERTA DE VERIFICACIÓN ENTRE JUGADORES** — el código ya es estable y copiable; falta el gesto real de comprobación (pegar el código de otro y que la casa diga si coincide con un alias del historial) para lo que el carnet v359 promete de anti-suplantación. Esfuerzo: M
 4. **CONECTAR LOS CINCO SALVAVIDAS A LA TORRE** (viva desde el Mensaje #33) — `anotarSenal(...)` sigue sin llamarse: la cortina eterna aún no se mide de punta a punta. Esfuerzo: S
 5. **ROTACIÓN DEL TOKEN** (deuda que sigue viva) — viajó por el chat otra vez. Rotarlo en GitHub → Settings → Developer settings → Personal access tokens. Esfuerzo: S
+
+## MENSAJE #37 · 2026-11-12 · v367.7 LA MÚSICA NO SE ENCIENDE SOLA · ia3 (Arena)
+Notas: orden corta y clara del Dueño: «no la pongas automática». Se encontraron DOS arranques automáticos: el mío de la v367.5 (`armarRadioReal()`: la radio real real arrancaba con el primer toque en cualquier parte del sitio) y el viejo de la casa (`resumeMusicIfWanted()`: la Orquesta de Oro se reanudaba en el primer clic si el piloto la había dejado encendida). Los dos apagados. `armarRadioReal()` sigue exportada pero vacía; `resumeMusicIfWanted()` devuelve `false` y su cuerpo anterior queda guardado sin uso (regla #1). El chip lo dice en la cara: «Se enciende solo si tú lo enciendes» / «no se enciende sola». Nada más se tocó: trece pistas, orden aleatorio, ley de una sola voz y parada a los tres fallos siguen igual.
+Salud: tsc **0 en todo el árbol** (EXIT=0) | next dev real: `/api/health` sirve **v367.7**, `/perfil` 200, `/musica` 200, `/catalogo` 200 | el chip es de cliente (`ssr:false`): los textos se comprueban en navegador | build completo y móvil 390 PENDIENTES de ia1
+
+📡 PRÓXIMAS PROPUESTAS:
+1. **PREGUNTAR ANTES DE TOCAR EL VOLUMEN** (⭐ lo que quedó en el aire) — «la música está un poco» puede ser volumen o repertorio, no solo automatismo. El motor real suena a 0.55 fijo: un control de volumen propio del chip (0–100, guardado en el aparato) resuelve la mitad del asunto sin tocar las pistas. Esfuerzo: S
+2. **MÁS PISTAS REALES** (viva desde el Mensaje #35) — trece pistas dan para ~50 minutos; ampliar con más dominio público y CC0 del mismo filtro (licencia + HTTP comprobado) es lo único que puede hacer que la radio no se repita. Esfuerzo: M
+3. **LA FOTO EN EL CARNET DE IDENTIDAD** (viva desde el Mensaje #36) — `profile-store` ya guarda la foto; montarla en `identidad-panel.tsx` une el carnet de la portada con el de `/perfil`. Esfuerzo: S
+4. **CONECTAR LOS CINCO SALVAVIDAS A LA TORRE** (viva desde el Mensaje #33) — `anotarSenal(...)` sigue sin llamarse. Esfuerzo: S
+5. **ROTACIÓN DEL TOKEN** (deuda viva) — viajó por el chat otra vez. Esfuerzo: S

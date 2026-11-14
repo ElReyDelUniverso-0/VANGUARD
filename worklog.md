@@ -5940,3 +5940,26 @@ Stage Summary:
 - El Dueño pidió «un perfil que cada jugador debe tener». Lo que hay ahora es un carnet honesto: seis piezas contadas, un código estable que sirve para reconocerse (y se dice que no es contraseña), permisos que salen del censo en vez de una lista escrita a mano, y una foto que se queda en el aparato del jugador.
 - Lo único nuevo es lo que faltaba de verdad (la foto y el código dentro del carnet); todo lo demás se copió de piezas que ya estaban en la casa, con el archivo que las guarda a la vista para que se pueda comprobar.
 - El catálogo sigue creciendo por orden expresa: 160 piezas reales, ninguna inventada. El v368.0 sigue LIBRE para ia2.
+
+Task ID: ia3-v367.7-la-musica-no-se-enciende-sola
+Agent: ia3 (Arena)
+Task: «Ahora la música de Vanguard está un poco; no la pongas automática».
+
+Work Log:
+- Diagnóstico de los DOS arranques automáticos que tenía la música de la casa:
+  ① el mío de la v367.5 — `armarRadioReal()` dejaba un oyente de un solo gesto (toque, tecla o rueda) y la radio real de trece pistas arrancaba ahí mismo;
+  ② el viejo de la casa — `resumeMusicIfWanted()` (llamada desde `initSound()` en el primer clic) reanudaba la Orquesta de Oro si el piloto la había dejado encendida la vez anterior.
+  Los dos son «ponerla automática». Los dos quedaron apagados.
+- ① `src/lib/musica/radio-real.ts`: `armarRadioReal()` ya no enciende nada — se conserva exportada (para no romper importaciones) y vacía, con el motivo escrito al lado. El comentario de cabecera del motor cambia: de «cero autoplay engañoso» a «cero autoplay, ni siquiera con gesto».
+- ② `src/components/vanguard/radio-real-chip.tsx`: se retira la llamada al arranque y se dice en la cara — panel: «Dominio público y CC0. Se enciende solo si tú lo enciendes»; píldora: «13 pistas libres · no se enciende sola»; y el `title` de los dos botones lo repite.
+- ③ `src/lib/conflict-music.ts`: `resumeMusicIfWanted()` devuelve `false` y no arranca nada; el cuerpo anterior queda guardado como `__resumeMusicIfWantedAntiguo()` sin uso (regla #1: no se borra nada). Su único llamador (`initSound`) puede seguir llamándola sin efecto.
+- ④ `src/lib/nucleo/registro.ts`: la ficha de `mod:radio-real` decía «arranca al primer gesto del piloto (cero autoplay)» — ahora dice la verdad nueva.
+- ⑤ Registro de versión: `version.ts` → v367.7 LA MÚSICA NO SE ENCIENDE SOLA · entrada a mano en `bitacora.ts`.
+- LO QUE NO SE TOCÓ: las trece pistas reales, el orden aleatorio, la ley de una sola voz (radio real ↔ Orquesta), la parada a los tres fallos, el chip y la sala `/musica`.
+- QA EJECUTADO: `npm i` + `prisma generate` → **tsc --noEmit EXIT=0** · **next dev real** (`:3700`): `/api/health` → `version:"v367.7"`, `/perfil` 200, `/musica` 200, `/catalogo` 200.
+- Nota honesta: el chip y la píldora son de cliente (el reproductor se monta con `ssr:false`), así que el cambio de textos y la ausencia de arranque se comprueban en el navegador del Dueño, no por `curl`.
+- Sin espacio para dudas: si «está un poco» quería decir VOLUMEN o CALIDAD (no solo el automatismo), el siguiente ajuste es una línea — bajar el 0.55 del motor real o cambiar de pistas. Se pregunta antes de tocar.
+
+Stage Summary:
+- La música de Vanguard ya no suena sin que alguien la encienda: ni la radio real por el primer gesto, ni la Orquesta por recordar que ayer estaba encendida.
+- El recuerdo de lo que el piloto eligió sigue vivo, pero solo pinta el chip: no es un botón de arranque escondido.

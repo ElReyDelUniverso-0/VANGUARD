@@ -1922,9 +1922,19 @@ export function subscribeMusic(cb: () => void): () => void {
   return () => subscribers.delete(cb);
 }
 
-// AUTOPLAY: si el usuario dejó la radio encendida, arranca en el primer gesto
-// (los navegadores bloquean el audio sin interacción).
+// v367.7 LA MÚSICA NO SE ENCIENDE SOLA — orden del Dueño: «no la pongas
+// automática». Esta función reanudaba la Orquesta de Oro en el primer gesto si
+// el piloto la había dejado encendida la vez anterior. Ese reanudar era,
+// exactamente, ponerla automática: ya no lo hace. Se conserva con su nombre y
+// su firma para no romper a quien la llame (hoy solo `initSound`), y devuelve
+// siempre `false` porque no arranca nada. La música de la casa suena solo con
+// el botón de su reproductor o del chip de la radio real.
 export function resumeMusicIfWanted(): boolean {
+  return false;
+}
+
+/** El cuerpo anterior, conservado tal cual pero SIN uso (queda declarado). */
+function __resumeMusicIfWantedAntiguo(): boolean {
   if (typeof window === "undefined" || isMusicPlaying()) return false;
   try {
     const raw = localStorage.getItem("vanguard_music");

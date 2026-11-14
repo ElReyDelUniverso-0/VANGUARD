@@ -473,7 +473,7 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     nombre: "LA RADIO REAL EN EL VANGUARD PÚBLICO",
     lema: "Las trece pistas reales, barajadas, en toda la casa",
     descripcion:
-      "Motor aleatorio de la música real: baraja las trece pistas de dominio público y CC0 del catálogo y las pone solas, una tras otra, en el reproductor global de la portada, de modo que suenan en todo el sitio público mientras se navega. Arranca al primer gesto del piloto (cero autoplay), apaga el motor sintetizado al encenderse y se para a los tres fallos seguidos diciéndolo. Cada pista declara autor, licencia y fuente.",
+      "Motor aleatorio de la música real: baraja las trece pistas de dominio público y CC0 del catálogo y las pone solas, una tras otra, en el reproductor global de la portada, de modo que suenan en todo el sitio público mientras se navega. Se enciende SOLO cuando el piloto pulsa su botón (v367.7: ni siquiera con el primer gesto — orden del Dueño «no la pongas automática»), apaga el motor sintetizado al encenderse y se para a los tres fallos seguidos diciéndolo. Cada pista declara autor, licencia y fuente.",
     categoria: "SISTEMA",
     ruta: "/",
     permiso: "publico",
