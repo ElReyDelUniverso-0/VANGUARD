@@ -457,9 +457,9 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
   {
     id: "mod:catalogo",
     nombre: "EL CATÁLOGO DE LO QUE YA EXISTE",
-    lema: "160 piezas reales con su puerta",
+    lema: "163 piezas reales con su puerta",
     descripcion:
-      "Índice generado del árbol del repositorio: 44 salas con su ruta navegable, 48 paneles ya construidos, 33 motores y 35 puntos de datos (160 en total, v367.6), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
+      "Índice generado del árbol del repositorio: 44 salas con su ruta navegable, 50 paneles ya construidos, 34 motores y 35 puntos de datos (163 en total, v367.8), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
     categoria: "SISTEMA",
     ruta: "/catalogo",
     permiso: "publico",
@@ -495,6 +495,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:cuentas"],
     alias:
       "perfil jugador carnet codigo jugador permisos foto avatar banner marco bio faccion personalizacion cuenta sesion acceso v367.6",
+  },
+  {
+    id: "mod:parque-militar",
+    nombre: "EL PARQUE MILITAR",
+    lema: "Personajes, carros y mech reales, copiados con su licencia",
+    descripcion:
+      "Los seis modelos 3D que ya existían (Quaternius, CC0 1.0) copiados a la casa sin retocar la malla: infantería de asalto, operario de campaña, tres carros de combate con su animación de avance y un mech con 18 clips. Vanguard solo añade el tinte del uniforme por bando (seis uniformes, aplicados únicamente a los materiales de tela). Montado en /ver-guerra, /escenarios y /zona-cero. Si un archivo no abre, la escena lo confiesa y su puesto lo ocupa la figura procedural de la casa.",
+    categoria: "SIMULACION",
+    ruta: "/ver-guerra",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:teatros"],
+    alias:
+      "parque militar uniformes personajes soldados tanques carros mech vehiculos 3d glb gltf cc0 quaternius simulador guerra v367.8",
   },
 ];
 

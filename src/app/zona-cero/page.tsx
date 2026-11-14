@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ZonaCeroTabs } from "@/components/vanguard/zona-cero-tabs";
+// v367.8 EL PARQUE MILITAR — las unidades reales (CC0) que asedian la ciudad
+import { ParqueMilitarCarga } from "@/components/vanguard/parque-militar-carga";
 import { ZonaCeroGeo } from "@/components/vanguard/zona-cero-geo";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v230.0 EL ESPEJO — la ficción muestra la guerra real que la alimenta:
@@ -163,6 +165,22 @@ export default async function ZonaCeroPage() {
           Los teatros salen del catálogo documentado (TEATROS, cero nombres a
           mano), el conteo es REAL de la BD y las fechas históricas viven en el
           registro de acontecimientos (v219) — nunca escritas a mano aquí. */}
+      {/* v367.8 LAS UNIDADES DEL ASEDIO — los modelos 3D que ya existían
+          (Quaternius, CC0 1.0), copiados a la casa sin retocar la malla, con el
+          uniforme del bando encima. Orden del Dueño: «no crees nada nuevo, solo
+          copia los mejores que ya existen 3D y pégalos a Vanguard». */}
+      <section className="max-w-6xl mx-auto px-5 py-8" aria-label="Las unidades del asedio">
+        <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">LAS UNIDADES DEL ASEDIO</h2>
+        <p className="mt-2 max-w-3xl text-[13px] text-zinc-400 leading-relaxed">
+          Esto no está modelado por Vanguard: son piezas 3D que ya existían,
+          publicadas como CC0 1.0 (dominio público) y copiadas tal cual. Lo único
+          que cambia la casa es el color del uniforme de cada bando.
+        </p>
+        <div className="mt-3">
+          <ParqueMilitarCarga alto={380} compacto />
+        </div>
+      </section>
+
       <section className="max-w-6xl mx-auto px-5 py-8">
         <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">
           LA GUERRA REAL DETRÁS DEL ESPEJO

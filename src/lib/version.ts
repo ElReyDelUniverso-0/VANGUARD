@@ -5276,8 +5276,33 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.7";
-export const APP_CODENAME = "LA MÚSICA NO SE ENCIENDE SOLA";
+export const APP_VERSION = "v367.8";
+export const APP_CODENAME = "EL PARQUE MILITAR";
+// v367.8 EL PARQUE MILITAR (sobre v367.7, intacta) — orden del Dueño, textual:
+// «mejora los uniformes, personajes, vehículos militares; no crees nada nuevo,
+// solo copia los mejores que ya existen 3D con todo y pégalos a Vanguard, así
+// con el simulador de guerra, así con todo lo que hay en Vanguard».
+// ① SEIS MODELOS CC0 COPIADOS: infantería de asalto (Swat), operario de campaña
+//    (Worker), tres carros de combate (Tank, Tank2, Tank3) y un mech de apoyo
+//    (Leela), todos de Quaternius, licencia CC0 1.0, copiados SIN retocar la
+//    malla desde github.com/trebeljahr/quaternius-showcase y servidos por la
+//    casa en /assets/3d/militar (6,4 MB, 6 archivos .glb, cabecera «glTF»
+//    comprobada el 2026-11-12).
+// ② LOS UNIFORMES SON LO QUE SE MEJORA: el modelo no cambia; cambia el COLOR de
+//    sus materiales de TELA, con seis uniformes reales (OTAN verde oliva, bloque
+//    oriental caqui, desierto arena, urbano gris, irregular marrón, casco azul).
+//    Se tiñe solo lo que la ficha declara tela: jamás la piel ni el visor.
+// ③ LAS ANIMACIONES SON DEL PROPIO MODELO: los carros traen Tank_Forward y las
+//    cuatro marchas; el mech trae 18 clips (Idle, Walk, Run, Shoot…). La casa no
+//    inventó ni el movimiento.
+// ④ PEGADO EN TRES SALAS DEL SIMULADOR: /ver-guerra (EL PARQUE MILITAR),
+//    /escenarios (las piezas reales del escenario) y /zona-cero (las unidades
+//    del asedio). Mismo componente, misma verdad.
+// ⑤ SI UN MODELO NO ABRE, LA ESCENA NO SE QUEDA MUDA: su puesto lo ocupa la
+//    figura procedural de la casa y el HUD confiesa el archivo que falló.
+// ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
+//    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
+export const APP_VERSION_ANTERIOR = "v367.7";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
@@ -5294,7 +5319,7 @@ export const APP_CODENAME = "LA MÚSICA NO SE ENCIENDE SOLA";
 //    siempre por un toque explícito en su botón.
 // ④ El chip lo dice en la cara: «Se enciende solo si tú lo enciendes» y
 //    «no se enciende sola» en la píldora de la portada.
-export const APP_VERSION_ANTERIOR = "v367.6";
+// (la cadena de versiones anteriores sigue abajo)
 // v367.6 EL PERFIL DEL JUGADOR (sobre v367.5, intacta) — orden del Dueño:
 // «haz un perfil que cada jugador debe tener, acceder bien a Vanguard, los
 // permisos, código y un perfil con agregar una foto y una personalización

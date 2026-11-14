@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FrenteTotalSim from "@/components/vanguard/frente-total-sim";
+// v367.8 EL PARQUE MILITAR — los modelos 3D reales (CC0) copiados a la casa
+import { ParqueMilitarCarga } from "@/components/vanguard/parque-militar-carga";
+import { ACTIVOS_MILITARES, LICENCIA_MODELOS, AUTOR_MODELOS, ORIGEN_MODELOS } from "@/lib/3d/activos-militares";
 import { FRENTES } from "@/lib/frentes-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v229.0 EL PUENTE — el mural conecta con el núcleo: teatros con cables
@@ -422,6 +425,34 @@ export default async function VerGuerraPage() {
           </ul>
         </section>
       )}
+
+      {/* v367.8 EL PARQUE MILITAR — orden del Dueño: «mejora los uniformes,
+          personajes y vehículos militares; no crees nada nuevo, copia los
+          mejores que ya existen 3D y pégalos a Vanguard, así con el simulador
+          de guerra». Seis modelos CC0 de Quaternius, copiados sin retocar la
+          malla y servidos por la casa, con el uniforme del bando encima. */}
+      <section className="max-w-6xl mx-auto px-5 pb-8" aria-label="El parque militar">
+        <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">
+          EL PARQUE MILITAR
+        </h2>
+        <p className="mt-2 max-w-3xl text-[13px] text-zinc-400 leading-relaxed">
+          La infantería, los carros de combate y el mech que ves aquí no los ha
+          dibujado Vanguard: son {ACTIVOS_MILITARES.length} modelos 3D que ya
+          existían, hechos por {AUTOR_MODELOS} y publicados como{" "}
+          <span className="text-zinc-200">{LICENCIA_MODELOS}</span>. Se copiaron
+          tal cual y se sirven desde esta casa. Lo único que pone Vanguard es el
+          color del uniforme de cada bando.
+        </p>
+        <div className="mt-4">
+          <ParqueMilitarCarga alto={460} />
+        </div>
+        <p className="mt-2 font-mono text-[8.5px] leading-relaxed text-zinc-600">
+          Copiados de {ORIGEN_MODELOS}. Los carros traen su propia animación de
+          avance y el mech su propia animación de caminar: no se inventó ni el
+          movimiento. Si un archivo no abre, la escena lo dice y su puesto lo
+          ocupa la figura procedural de la casa.
+        </p>
+      </section>
 
       <section className="max-w-6xl mx-auto px-5 py-8">
         <h2 className="font-orbitron text-xl sm:text-2xl font-black tracking-wide">

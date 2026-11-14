@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.8",
+    nombre: "EL PARQUE MILITAR",
+    hitos: [
+      "SEIS MODELOS 3D QUE YA EXISTÍAN, COPIADOS TAL CUAL (/assets/3d/militar) — orden del Dueño: «no crees nada nuevo, solo copia los mejores que ya existen 3D con todo y pégalos a Vanguard». Infantería de asalto, operario de campaña, tres carros de combate y un mech, todos de Quaternius con licencia CC0 1.0 (dominio público), copiados sin retocar la malla y servidos por la casa: 6 archivos .glb, 6,4 MB, cabecera «glTF» y HTTP 200 comprobados el 2026-11-12",
+      "LOS UNIFORMES, QUE ERA LO QUE HABÍA QUE MEJORAR — el modelo no se toca: se tiñe el COLOR de sus materiales de tela con seis uniformes reales (OTAN verde oliva, bloque oriental caqui, desierto arena, urbano gris, irregular marrón, casco azul). Solo se tiñe lo que la ficha declara tela; la piel y el visor quedan intactos",
+      "EL MOVIMIENTO TAMBIÉN VIENE COPIADO — los carros traen su propia animación (Tank_Forward, Tank_Backwards, giros) y el mech sus 18 clips (Idle, Walk, Run, Shoot, Punch…). La casa no inventó ni un fotograma: solo los instancia con su mezclador",
+      "PEGADO AL SIMULADOR, NO A UN RINCÓN — el mismo componente vive en /ver-guerra (El Parque Militar), en /escenarios (las piezas reales del escenario) y en /zona-cero (las unidades del asedio): quien simula ve las unidades de verdad",
+      "SI UN MODELO NO ABRE, SE DICE — su puesto lo ocupa la figura procedural de la casa y el HUD confiesa el nombre del archivo que falló. La escena nunca queda vacía ni finge",
+      "EL APARATO DEL DUEÑO, CUIDADO — tope de densidad de píxeles, pausa del bucle cuando la escena sale de pantalla (IntersectionObserver), respeto de «reducir movimiento» y limpieza completa de geometrías, materiales, mezcladores y renderer al desmontar",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v367.7",
     nombre: "LA MÚSICA NO SE ENCIENDE SOLA",
     hitos: [
