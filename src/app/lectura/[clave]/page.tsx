@@ -82,7 +82,7 @@ export default async function Lectura({ params }: Props) {
             </div>
 
             <section className="vx-esencial" aria-label="Lo esencial">
-              <h2>⚡ Lo esencial en 30 segundos</h2>
+              <h2>◆ Lo esencial en 30 segundos</h2>
               <ul>
                 <li>
                   <b>Qué pasó:</b> {quePaso}

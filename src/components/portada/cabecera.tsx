@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LogoVanguard } from "./logo";
+import { Reloj } from "./reloj";
 import { IcoBuscar, IcoInicio, IcoJuego, IcoMapa, IcoPerfil, IcoVivo } from "./iconos";
 
 export const NAV = [
@@ -59,6 +60,7 @@ export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
           ))}
         </nav>
         <div className="vx-cab-der">
+          <Reloj />
           <Link href="/guerra-hoy" className="vx-ico" aria-label="Buscar noticias">
             <IcoBuscar />
           </Link>

@@ -12,7 +12,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./portada.css";
 import { obtenerNotas, relevancia, type Nota } from "@/lib/portada/notas";
-import { CONFLICTOS, REGIONES, horaCorta, type Region } from "@/lib/portada/clasificar";
+import { CONFLICTOS, REGIONES, conflictoPorKey, horaCorta, type Region } from "@/lib/portada/clasificar";
 import { Cabecera, BarraMovil } from "@/components/portada/cabecera";
 import { Tarjeta, Etiqueta } from "@/components/portada/tarjeta";
 import { Foto } from "@/components/portada/foto";
@@ -22,6 +22,8 @@ import { MapaPortada } from "@/components/portada/mapa-portada";
 import { AvisoNuevas } from "@/components/portada/aviso-nuevas";
 import { Pie } from "@/components/portada/pie";
 import { inter } from "@/components/portada/fuente";
+import { Teletipo } from "@/components/portada/teletipo";
+import { TituloSeccion } from "@/components/portada/titulo-seccion";
 
 
 export const revalidate = 300;
@@ -67,14 +69,18 @@ function gruposHistorias(notas: Nota[]): GrupoHistoria[] {
   const mapear = (n: Nota) => ({ id: n.id, titulo: n.titulo, resumen: n.resumen, imagen: n.imagen, fuente: n.fuente, fecha: n.fecha });
   const grupos: GrupoHistoria[] = [];
   const hoy = notas.filter((n) => n.imagen).slice(0, 6);
-  if (hoy.length) grupos.push({ key: "hoy", nombre: "Hoy", color: "#f5b935", notas: hoy.map(mapear) });
+  if (hoy.length) grupos.push({ key: "hoy", nombre: "Hoy", color: "#e8c56a", notas: hoy.map(mapear) });
   CONFLICTOS.map((c) => ({ c, ns: notas.filter((n) => n.conflicto === c.key) }))
     .filter((x) => x.ns.length > 0)
     .sort((a, b) => b.ns.length - a.ns.length)
     .forEach(({ c, ns }) =>
-      grupos.push({ key: c.key, nombre: c.nombre, color: REGIONES[c.region].color, notas: ns.slice(0, 6).map(mapear) })
+      grupos.push({ key: c.key, nombre: c.nombre, color: REGIONES[c.region].color, notas: ns.slice(0, 6).map(mapear), total: ns.length })
     );
   return grupos;
+}
+
+function coordsTexto(lat: number, lng: number) {
+  return `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lng).toFixed(1)}°${lng >= 0 ? "E" : "O"}`;
 }
 
 const SALAS = [
@@ -104,6 +110,7 @@ export default async function Portada() {
   return (
     <div className={`vx ${inter.variable}`}>
       <Cabecera ruta="/" />
+      <Teletipo notas={notas} />
       <AvisoNuevas primera={notas[0]?.id ?? null} />
 
       <main className="vx-wrap">
@@ -113,8 +120,16 @@ export default async function Portada() {
 
         {heroe ? (
           <section className="vx-top" aria-label="Lo más importante ahora">
-            <Link href={`/lectura/${heroe.id}`} className="vx-heroe vx-entra">
+            <Link href={`/lectura/${heroe.id}`} className="vx-heroe vx-mira vx-entra">
               <Foto src={heroe.imagen} alt={heroe.titulo} region={heroe.region} prioridad />
+              <div className="vx-heroe-sellos" aria-hidden>
+                <span>
+                  <b>◆ PRIORIDAD ALFA</b> · CABLE 0001
+                </span>
+                {conflictoPorKey(heroe.conflicto) && (
+                  <span>{coordsTexto(conflictoPorKey(heroe.conflicto)!.coords[0], conflictoPorKey(heroe.conflicto)!.coords[1])}</span>
+                )}
+              </div>
               <div className="vx-heroe-txt">
                 <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                   <Etiqueta nota={heroe} />
@@ -128,9 +143,12 @@ export default async function Portada() {
             </Link>
 
             <aside className="vx-ult vx-entra-2" aria-label="Última hora">
-              <h2>
-                <span className="vx-punto" /> Última hora
-              </h2>
+              <div className="vx-ult-h">
+                <h2>
+                  <span className="vx-punto" /> Última hora
+                </h2>
+                <span className="vx-meta">{notas.length} cables</span>
+              </div>
               <ol>
                 {ultima.map((n) => (
                   <li key={n.id}>
@@ -158,42 +176,23 @@ export default async function Portada() {
 
         {destacadas.length > 0 && (
           <section className="vx-sec" aria-label="Destacadas">
-            <div className="vx-sec-h">
-              <div>
-                <h2>Lo que tienes que saber</h2>
-                <p>Las historias que más pesan hoy en el mundo.</p>
-              </div>
-            </div>
+            <TituloSeccion sello="Sección 01 · Inteligencia" titulo="Lo que tienes que saber" sub="Las historias que más pesan hoy en el mundo." />
             <div className="vx-bento vx-entra-3">
               {destacadas.map((n, i) => (
-                <Tarjeta key={n.id} nota={n} grande={i === 0} />
+                <Tarjeta key={n.id} nota={n} grande={i === 0} cable={i + 2} />
               ))}
             </div>
           </section>
         )}
 
         <section className="vx-sec" aria-label="Mapa de conflictos">
-          <div className="vx-sec-h">
-            <div>
-              <h2>El mapa vivo</h2>
-              <p>Dónde se mueve el mundo ahora mismo.</p>
-            </div>
-            <Link href="/mundo">Mapa completo →</Link>
-          </div>
+          <TituloSeccion sello="Sección 02 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
           <MapaPortada notas={notas} />
         </section>
 
         {regiones.map(({ r, lista }) => (
           <section key={r} className="vx-sec" aria-label={REGIONES[r].nombre}>
-            <div className="vx-sec-h">
-              <div>
-                <h2 style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: 3, background: REGIONES[r].color, display: "inline-block" }} />
-                  {REGIONES[r].nombre}
-                </h2>
-              </div>
-              <Link href="/guerra-hoy">Ver más →</Link>
-            </div>
+            <TituloSeccion sello={`Teatro · ${REGIONES[r].nombre}`} color={REGIONES[r].color} titulo={REGIONES[r].nombre} enlace="/guerra-hoy" textoEnlace="Ver más" />
             <div className="vx-carr">
               {lista.map((n) => (
                 <Tarjeta key={n.id} nota={n} />
@@ -203,17 +202,12 @@ export default async function Portada() {
         ))}
 
         <section className="vx-sec" aria-label="Explora Vanguard">
-          <div className="vx-sec-h">
-            <div>
-              <h2>Explora Vanguard</h2>
-              <p>Más que noticias: vive el mundo en 3D, en directo y jugando.</p>
-            </div>
-          </div>
+          <TituloSeccion sello="Sección 03 · Las salas" titulo="Explora Vanguard" sub="Más que noticias: vive el mundo en 3D, en directo y jugando." />
           <div className="vx-salas">
             {SALAS.map((s) => (
-              <Link key={s.href} href={s.href} className="vx-sala">
+              <Link key={s.href} href={s.href} className="vx-sala vx-mira">
                 <div className="vx-sala-bg" style={{ backgroundImage: `url(${s.img})` }} />
-                <span className="vx-tag" style={{ color: "#f5b935" }}>{s.tag}</span>
+                <span className="vx-sello">{s.tag}</span>
                 <h3>{s.titulo}</h3>
                 <p>{s.txt}</p>
               </Link>

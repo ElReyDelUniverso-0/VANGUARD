@@ -16,11 +16,12 @@ export function Etiqueta({ nota }: { nota: Nota }) {
   );
 }
 
-export function Tarjeta({ nota, grande = false, prioridad = false }: { nota: Nota; grande?: boolean; prioridad?: boolean }) {
+export function Tarjeta({ nota, grande = false, prioridad = false, cable }: { nota: Nota; grande?: boolean; prioridad?: boolean; cable?: number }) {
   return (
-    <Link href={`/lectura/${nota.id}`} className="vx-tarj" data-grande={grande ? "1" : "0"}>
+    <Link href={`/lectura/${nota.id}`} className="vx-tarj vx-mira" data-grande={grande ? "1" : "0"}>
       <div className="vx-tarj-img">
         <Foto src={nota.imagen} alt={nota.titulo} region={nota.region} prioridad={prioridad} />
+        {cable !== undefined && <span className="vx-tarj-cable">CABLE {String(cable).padStart(4, "0")}</span>}
       </div>
       <div className="vx-tarj-b">
         <Etiqueta nota={nota} />

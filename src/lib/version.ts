@@ -5307,8 +5307,16 @@
 // lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
 // paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
 // intro de cine, sin manual automático, sin pulso teatral).
-export const APP_VERSION = "v400.2";
-export const APP_CODENAME = "LAS PORTADAS";
+// v401.0 LA FUSIÓN — mandato del Dueño: «cada módulo de Vanguard hacerlo como la
+//   portada principal… parece un sitio web genérico de noticias, parece Instagram…
+//   fusiona la portada con el Vanguard que se conoce». Sistema .vx fusionado:
+//   noir + oro, Orbitron en marca/etiquetas, rejilla táctica, esquinas de mira,
+//   rombos en vez de puntos, TELETIPO de cables bajo la cabecera, reloj UTC/SDQ,
+//   sellos de cable en héroe y tarjetas, radar en el mapa; las «historias» estilo
+//   Instagram pasan a ser FRENTES ACTIVOS (tablero con barra de severidad) y un
+//   VISOR de briefing. La misma carcasa se aplica a todos los módulos.
+export const APP_VERSION = "v401.0";
+export const APP_CODENAME = "LA FUSIÓN";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5368,7 +5376,7 @@ export const APP_CODENAME = "LAS PORTADAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v400.1";
+export const APP_VERSION_ANTERIOR = "v400.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

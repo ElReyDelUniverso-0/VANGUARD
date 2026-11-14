@@ -27,7 +27,7 @@ export function MapaPortada({ notas }: { notas: Nota[] }) {
     .sort((a, b) => b.n - a.n);
 
   return (
-    <div className="vx-mapa">
+    <div className="vx-mapa vx-mira">
       <div className="vx-mapa-lista">
         <h3>Conflictos activos</h3>
         <span className="vx-meta">Según las noticias de las últimas 72 h</span>
@@ -45,10 +45,11 @@ export function MapaPortada({ notas }: { notas: Nota[] }) {
         </ul>
       </div>
       <div className="vx-mapa-svg">
+        <div className="vx-radar" aria-hidden />
         <svg viewBox={`0 40 ${W} ${H - 70}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa de conflictos activos">
           <defs>
             <pattern id="vx-puntos" width="6" height="6" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="0.7" fill="rgba(255,255,255,0.05)" />
+              <circle cx="1" cy="1" r="0.7" fill="rgba(232,197,106,0.07)" />
             </pattern>
           </defs>
           <rect x="0" y="0" width={W} height={H} fill="url(#vx-puntos)" />
@@ -63,7 +64,7 @@ export function MapaPortada({ notas }: { notas: Nota[] }) {
                 <circle className="vx-onda" cx={p[0]} cy={p[1]} r={r} fill={col} opacity="0.6" />
                 <circle cx={p[0]} cy={p[1]} r={r} fill={col} opacity="0.95" />
                 <circle cx={p[0]} cy={p[1]} r={r * 0.4} fill="#fff" />
-                <text x={p[0] + r + 5} y={p[1] + 4} fill="#dfe5ee" fontSize="12" fontWeight="600" fontFamily="Inter, system-ui, sans-serif">
+                <text x={p[0] + r + 5} y={p[1] + 4} fill="#f3eee2" fontSize="10" fontWeight="700" fontFamily="Orbitron, system-ui, sans-serif" letterSpacing="1.2">
                   {c.nombre}
                 </text>
               </g>

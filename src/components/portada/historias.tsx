@@ -9,7 +9,15 @@ import { haceTexto } from "@/lib/portada/clasificar";
 import { IcoCerrar, IcoFlecha } from "./iconos";
 
 export type HistoriaNota = { id: string; titulo: string; resumen: string; imagen: string | null; fuente: string; fecha: string };
-export type GrupoHistoria = { key: string; nombre: string; color: string; notas: HistoriaNota[] };
+export type GrupoHistoria = { key: string; nombre: string; color: string; notas: HistoriaNota[]; total?: number };
+
+function severidad(n: number): { nivel: number; color: string } {
+  if (n >= 12) return { nivel: 5, color: "#ff3b30" };
+  if (n >= 7) return { nivel: 4, color: "#ff6a3d" };
+  if (n >= 4) return { nivel: 3, color: "#f59e0b" };
+  if (n >= 2) return { nivel: 2, color: "#e8c56a" };
+  return { nivel: 1, color: "#38bdf8" };
+}
 
 const CLAVE = "vx400-historias-vistas";
 
@@ -89,29 +97,37 @@ export function Historias({ grupos }: { grupos: GrupoHistoria[] }) {
 
   return (
     <>
-      <div className="vx-hist" role="list" aria-label="Historias por conflicto">
+      <div className="vx-frentes" role="list" aria-label="Frentes activos">
         {grupos.map((gr, i) => {
           const visto = vistas[gr.key] && vistas[gr.key] === gr.notas[0]?.id;
-          const foto = gr.notas.find((x) => x.imagen)?.imagen;
+          const total = gr.total ?? gr.notas.length;
+          const sev = gr.key === "hoy" ? { nivel: 5, color: "#e8c56a" } : severidad(total);
           return (
             <button
               key={gr.key}
               role="listitem"
-              className="vx-hist-b"
+              className="vx-frente vx-mira"
               data-visto={visto ? "1" : "0"}
+              style={{ ["--vx-sev" as string]: sev.color }}
               onClick={() => {
                 marcar(gr);
                 setAbierto(i);
                 setPaso(0);
               }}
-              aria-label={`Historias de ${gr.nombre}: ${gr.notas.length} novedades`}
+              aria-label={`Briefing de ${gr.nombre}: ${total} cables`}
             >
-              <span className="vx-hist-c">
-                <span style={foto ? { backgroundImage: `url("${foto}")` } : { background: gr.color }}>
-                  {!foto && gr.nombre.slice(0, 1)}
-                </span>
+              <span className="vx-frente-top">
+                <span className="vx-frente-n">{gr.nombre}</span>
+                <span className="vx-punto" style={{ background: sev.color }} />
               </span>
-              <span className="vx-hist-n">{gr.nombre}</span>
+              <span className="vx-frente-c">
+                {gr.key === "hoy" ? "BRIEFING DEL DÍA" : `${total} ${total === 1 ? "CABLE" : "CABLES"} · 72 H`}
+              </span>
+              <span className="vx-frente-barra" aria-hidden>
+                {[1, 2, 3, 4, 5].map((k) => (
+                  <i key={k} data-on={k <= sev.nivel ? "1" : "0"} />
+                ))}
+              </span>
             </button>
           );
         })}
@@ -119,7 +135,7 @@ export function Historias({ grupos }: { grupos: GrupoHistoria[] }) {
 
       {g && n && (
         <div className="vx-visor" role="dialog" aria-modal="true" aria-label={`Historias: ${g.nombre}`} onClick={cerrar}>
-          <div className="vx-visor-c" onClick={(e) => e.stopPropagation()}>
+          <div className="vx-visor-c vx-mira" onClick={(e) => e.stopPropagation()}>
             <div
               key={n.id}
               className="vx-visor-img vx-entra"
@@ -138,7 +154,7 @@ export function Historias({ grupos }: { grupos: GrupoHistoria[] }) {
             </div>
             <div className="vx-visor-top">
               <span className="vx-tag" style={{ color: "#fff" }}>
-                <i style={{ background: g.color }} /> {g.nombre} · {paso + 1}/{g.notas.length}
+                <i style={{ background: g.color }} /> {g.nombre} · CABLE {paso + 1}/{g.notas.length}
               </span>
               <button className="vx-ico" onClick={cerrar} aria-label="Cerrar historias">
                 <IcoCerrar />
