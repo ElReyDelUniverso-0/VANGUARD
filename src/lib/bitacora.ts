@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v401.2",
+    nombre: "LA LÍNEA DEL TIEMPO",
+    hitos: [
+      "PILAR 2, TERCERA TANDA — orden del Dueño: «mapas, gráficos, líneas de tiempo, resúmenes visuales». /historia contaba diez guerras con párrafos; ahora además se ven en un eje",
+      "components/vanguard/linea-de-tiempo.tsx — componente de SERVIDOR, cero JavaScript: cada guerra se dibuja en proporción a su tiempo REAL (un conflicto de 118 años ocupa lo que debe frente a uno de 6), con la escala derivada del arco de los datos y los dos extremos del eje siempre pintados",
+      "LEYENDA, COLOR Y DESTINO — cada era tiene su color (el mismo canon de la casa), y cada barra enlaza a la ficha completa de su guerra. El eje no sustituye al archivo: lo señala",
+      "/historia gana PORTADA con cifras derivadas de HISTORICAL_WARS (guerras, eras, año de inicio, año de fin) y el EJE de las diez guerras. Ni un año escrito a mano: los años salen del yearStart/yearEnd de la fuente (guardia v234)",
+      "EL TEXTO NO SE TOCÓ — las diez fichas, la taquilla del archivo y el juicio de los libros siguen enteros debajo: la línea del tiempo es la puerta, no el reemplazo",
+    ],
+    tipo: "luxe",
+  },
+  {
     version: "v401.1",
     nombre: "LA VIDEOTECA",
     hitos: [

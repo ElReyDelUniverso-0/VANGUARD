@@ -6058,3 +6058,20 @@ Work Log:
 Stage Summary:
 - Dieciséis salas de la casa abren ya con portada grande, cifras en tarjetas y resumen visual; la segunda tanda cubre las ocho que quedaban por encima de 8.000 letras sin una imagen.
 - El vídeo dejó de ser una promesa: los 24 clips que dormían en el repositorio se ven y se reproducen en /galeria, sin bajar un byte hasta que alguien pulse play.
+
+Task ID: ia3-v401.2-la-linea-del-tiempo
+Agent: ia3 (Arena)
+Task: pilar 2, tercera tanda — orden del Dueño, textual: «mapas, gráficos, líneas de tiempo, resúmenes visuales».
+
+Work Log:
+- ① src/components/vanguard/linea-de-tiempo.tsx — LÍNEA DEL TIEMPO: componente de SERVIDOR, cero JavaScript, cero hidratación. Recibe tramos con su año de inicio y de fin TAL COMO los declara la fuente y los dibuja en proporción al tiempo real: un conflicto de 118 años ocupa lo que debe ocupar frente a uno de 6. La escala del eje se DERIVA del arco de los datos (paso de 50/100/200/500 años según el arco) y pinta siempre los dos extremos — si el arco empieza en 264 a. C. y la primera marca redonda cae en 0, el primer tramo se quedaba sin referencia, y eso se corrigió antes de publicar. Leyenda por era (color por familia) y cada barra enlaza a su ficha.
+- ② /historia gana PORTADA y EJE. Portada con ilustración que ya existía (/ilustraciones/historia.jpg) y cifras derivadas de HISTORICAL_WARS: guerras, eras, año de inicio (264 a. C.) y año de fin. El eje lleva las diez guerras con su era y su desenlace como título emergente. Ni un año escrito a mano: `desde`/`hasta` son `yearStart`/`yearEnd` de la fuente (guardia v234).
+- ③ EL TEXTO NO SE TOCÓ: las diez fichas, el censo por era, la taquilla del archivo y el juicio de los libros siguen enteros debajo. La línea es la puerta, no el reemplazo (regla #1 del Dueño).
+- ④ COMPROBADO EN EL HTML SERVIDO (next dev real :3870): /historia 200 (221 KB) con la portada y el eje; las barras con `left`/`width` proporcionales calculadas de verdad (la guerra de 118 años: 5,23 % del eje; la de 2 años: el mínimo de 0,6 %), las marcas del eje cada 500 años y los enlaces `#HW-PUNIC`, `#HW-CRUSADES`… apuntando a `id="HW-PUNIC"` que EXISTE en la misma página.
+- ⑤ QA EJECUTADO: `tsc` acotado (historia + los dos componentes + archivo-mundial) → LIMPIO; `tsc` acotado (bitácora/versión/catálogo/núcleo) → LIMPIO; ESLint de los archivos nuevos → 0 errores; `next dev` real con /historia 200.
+- Registro: version.ts → v401.2 LA LÍNEA DEL TIEMPO (sobre v401.1, que sigue la línea de la otra IA) · APP_VERSION_ANTERIOR = v401.1 · entrada en bitacora.ts · catálogo: 169 piezas (+1, el componente).
+- LO QUE NO SE TOCÓ: ninguna otra sala, ni una línea de las 17 piezas del rediseño de la otra IA.
+
+Stage Summary:
+- La historia de la casa ya no se cuenta solo con párrafos: se ve en un eje donde cada guerra ocupa su tiempo real, con su era, su color y su puerta a la ficha.
+- El componente es reutilizable: cualquier fuente con años (eras del archivo, guerras activas, líneas de un conflicto) puede montarse en el mismo eje sin escribir una fecha a mano.

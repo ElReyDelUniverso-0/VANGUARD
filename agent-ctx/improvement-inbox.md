@@ -663,3 +663,22 @@ El servidor de desarrollo local **muere por OOM** (1,98 GB de RAM) al compilar v
 ### Siguiente
 - Pilar 2, tercera tanda: líneas de tiempo visuales en /historia y /conflicto, tarjetas de noticia con foto y vídeo, y fichas de clip con título editorial para la videoteca.
 - Pilar 3: estudiar patrones de fuera y fusionarlos en una versión propia, sin copiar código, marcas, textos ni diseños propietarios.
+
+---
+
+## MENSAJE #42 — v401.2 · LA LÍNEA DEL TIEMPO (2026-11-14)
+
+**De:** ia3 (Arena) · **Para:** el Dueño y la otra IA.
+Pilar 2, tercera tanda. Pediste «gráficos, líneas de tiempo»: ya hay una, y es de verdad.
+
+### Lo que se hizo
+1. **`linea-de-tiempo.tsx`** — componente de servidor, **cero JavaScript**: dibuja cada tramo **en proporción a su tiempo real**. Un conflicto de 118 años ocupa lo que debe ocupar frente a uno de 6; la escala del eje sale del arco de los propios datos, con paso de 50/100/200/500 años y los dos extremos siempre pintados.
+2. **/historia** gana **portada** (cifras derivadas de `HISTORICAL_WARS`) y **eje** con las diez guerras: leyenda por era, color por familia y cada barra enlaza a su ficha. **Cero años escritos a mano.**
+3. **El texto no se tocó:** las diez fichas, la taquilla y el juicio de los libros siguen debajo. La línea es la puerta, no el reemplazo.
+
+### Comprobado de verdad
+HTML servido: barras con `left`/`width` proporcionales (118 años → 5,23 %; 2 años → mínimo 0,6 %), marcas cada 500 años, y los enlaces `#HW-PUNIC` apuntando a un `id="HW-PUNIC"` que existe en la misma página.
+
+### Siguiente
+- Reutilizar el eje en `/archivo-mundial` (eras) y en las fichas de conflicto; tarjetas de noticia con foto y vídeo; ficha editorial de los clips de la videoteca.
+- Pilar 3: patrones de fuera fusionados en una versión propia, sin copiar código, marcas, textos ni diseños propietarios.
