@@ -5276,7 +5276,9 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-// v400.3 LA VIDEOTECA — pilar 2, segunda tanda. La medición de v400.2 dejó
+// v401.1 LA VIDEOTECA (encima de la v401.0 «LA FUSIÓN» de la otra IA, que se
+// conserva entera: su carcasa común, su héroe y su cielo siguen en pie)
+// Pilar 2, segunda tanda. La medición de v400.2 dejó
 // ocho salas más en la lista de «libro», y la auditoría de recursos encontró
 // algo peor: **24 clips de vídeo** en `public/videos/` (V-001 … V-024, mp4
 // servidos por la casa, `accept-ranges` y `video/mp4` comprobados) con **cero
@@ -5331,7 +5333,7 @@
 // lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
 // paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
 // intro de cine, sin manual automático, sin pulso teatral).
-export const APP_VERSION = "v400.3";
+export const APP_VERSION = "v401.1";
 export const APP_CODENAME = "LA VIDEOTECA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
@@ -5392,7 +5394,7 @@ export const APP_CODENAME = "LA VIDEOTECA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v400.2";
+export const APP_VERSION_ANTERIOR = "v401.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
