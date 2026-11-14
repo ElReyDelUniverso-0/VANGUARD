@@ -1,5 +1,5 @@
 import { NextResponse, after } from "next/server";
-import { instantaneaPulso } from "@/lib/pulso";
+import { instantaneaPulso, aCableVivo } from "@/lib/pulso";
 import { muro, claveCliente } from "@/lib/fortaleza";
 
 // v213.0 EL PULSO — el latido JSON de la sala EN VIVO.
@@ -38,7 +38,10 @@ export async function GET(req: Request) {
       });
     }
     return NextResponse.json(
-      { ok: true, ...snap },
+      // v402.0 — la sala En vivo pide su forma (t/f/u…); el resto de paneles, la cruda
+      new URL(req.url).searchParams.get("forma") === "sala"
+        ? { ok: true, items: snap.items.map(aCableVivo), calientes: snap.calientes.map(aCableVivo), stats: snap.stats }
+        : { ok: true, ...snap },
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (e) {

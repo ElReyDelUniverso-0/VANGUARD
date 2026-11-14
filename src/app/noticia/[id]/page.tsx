@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
@@ -292,7 +292,11 @@ export default async function NoticiaPage({
 }) {
   const { id } = await params;
   const it = await getCable(id);
-  if (!it) notFound();
+  // v402.0 — los cables vivos (no están en la base) se leen en /lectura
+  if (!it) {
+    if (/^[A-Za-z0-9_-]{16,}$/.test(id)) redirect(`/lectura/${id}`);
+    notFound();
+  }
 
   const [relacionadas, conteoTeatro] = await Promise.all([
     getRelacionadas(id, it.conflictTag ?? null),

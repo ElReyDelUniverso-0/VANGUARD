@@ -32,6 +32,7 @@ export interface CableVivo {
   pais: string;       // código ISO
   paisNombre: string;
   s: string;          // resumen real o redactado por la Agencia
+  img?: string;       // v402: foto del medio (si la trae)
 }
 
 export interface StatsVivo {
@@ -131,7 +132,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
         return;
       }
       try {
-        const r = await fetch("/api/pulso", { cache: "no-store" });
+        const r = await fetch("/api/pulso?forma=sala", { cache: "no-store" });
         if (r.ok) {
           const j = (await r.json()) as { ok?: boolean; items?: CableVivo[]; calientes?: CableVivo[]; stats?: StatsVivo };
           if (j.ok && Array.isArray(j.items) && vivo) {
@@ -228,15 +229,10 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
             </span>
             <span className="font-mono text-sm text-zinc-400 tabular-nums" suppressHydrationWarning>{reloj}</span>
           </div>
-          <h1 className="mt-3 font-display text-3xl sm:text-4xl font-black tracking-tight text-zinc-100">
-            EL PULSO — ÚLTIMA HORA DEL MUNDO
-          </h1>
-          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed">
-            La redacción de Vanguard abierta las 24 horas: cada cable real del
-            planeta entra aquí SOLO, con su hora, su fuente y su sello de
-            exactitud. Sondeo cada 30 segundos — esta sala nunca se recarga,
-            nunca te deja con la noticia vieja.
-          </p>
+          {/* v402.0 — el título grande ya lo da la portada de la sala: aquí, el rótulo del directo */}
+          <h2 className="mt-3 font-display text-lg sm:text-xl font-black tracking-[0.12em] uppercase text-zinc-100">
+            Cables entrando
+          </h2>
         </header>
 
         {/* ===== ÚLTIMA HORA (rompe si el cable más nuevo tiene ≤ 15 min) ===== */}
@@ -424,7 +420,19 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
                     {edadViva(c.fecha)}
                   </span>
                 </div>
-                <Link href={`/noticia/${c.id}`} className="block mt-2">
+                <Link href={`/noticia/${c.id}`} className="mt-2 flex gap-3 items-start">
+                  {c.img ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={c.img}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { e.currentTarget.style.display = "none"; }}
+                      className="vx-vivo-foto shrink-0 w-24 h-16 sm:w-32 sm:h-20 object-cover rounded border border-zinc-800"
+                    />
+                  ) : null}
                   <h3 className="font-display text-[15px] font-bold leading-snug text-zinc-100 hover:text-amber-200 transition-colors">
                     {c.t}
                   </h3>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { instantaneaPulso } from "@/lib/pulso";
+import { instantaneaPulso, aCableVivo } from "@/lib/pulso";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
@@ -57,23 +57,6 @@ const PUERTAS_DEL_PULSO: EnlaceContextual[] = [
   },
 ];
 
-function aCableVivo(r: Awaited<ReturnType<typeof instantaneaPulso>>["items"][number]): CableVivo {
-  return {
-    id: r.id,
-    t: r.title,
-    f: r.source,
-    u: r.url ?? "",
-    fecha: typeof r.publishedAt === "string" ? r.publishedAt : new Date(r.publishedAt).toISOString(),
-    impacto: r.impacto,
-    tier: r.tier,
-    cred: r.cred,
-    tag: (r.tacticalTag || "INFO").toUpperCase(),
-    conflicto: r.conflictTag || "",
-    pais: r.sourceCountry || "",
-    paisNombre: r.paisNombre || "",
-    s: r.resumen || "",
-  };
-}
 
 export default async function EnVivoPage() {
   let iniciales: CableVivo[] = [];
@@ -159,10 +142,10 @@ export default async function EnVivoPage() {
         acento="#22d3ee"
         sumario="La última hora del planeta: cables reales con hora, fuente y sello de exactitud, sondeados cada treinta segundos."
         cifras={[
-          { valor: stats.hoy, etiqueta: "cables", nota: "hoy" },
+          { valor: stats.hoy, etiqueta: "cables hoy", nota: "medios verificados" },
           { valor: stats.urgente, etiqueta: "urgentes", nota: "ahora mismo" },
-          { valor: salas.size, etiqueta: "teatros", nota: "en la sala" },
-          { valor: iniciales.length, etiqueta: "cables", nota: "en el pulso" }
+          { valor: stats.teatros, etiqueta: "teatros vivos", nota: "con cables hoy" },
+          { valor: stats.ultimaHora, etiqueta: "última hora", nota: "cables en 60 min" }
         ]}
         puntos={[
           { titulo: "SIN OPINIÓN", texto:

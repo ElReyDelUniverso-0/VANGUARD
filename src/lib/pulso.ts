@@ -19,6 +19,39 @@
 
 import { db } from "@/lib/db";
 import { enriquecerLista, type NoticiaRanqueada } from "@/lib/impacto";
+import { obtenerNotas } from "@/lib/portada/notas";
+import { conflictoPorKey } from "@/lib/portada/clasificar";
+
+// v402.0 — EL PULSO DE VERDAD: la sala «En vivo» leía la base, que en producción
+// viaja de solo lectura (congelada en el último build: cables de hace dos
+// semanas bajo un letrero de «EN VIVO»). Ahora manda la red viva — los mismos
+// medios de la portada — y la base queda de respaldo si la red cae.
+const PAIS_MEDIO: Record<string, string> = {
+  "BBC Mundo": "gb", "France 24": "fr", "El Mundo": "es", "El País": "es", "ABC": "es",
+  "La Vanguardia": "es", "Europa Press": "es", "20minutos": "es", DW: "de", "ONU Noticias": "un",
+};
+
+type FilaPulso = {
+  id: string; title: string; url: string; source: string; imageUrl: string | null;
+  publishedAt: Date; tacticalTag: string | null; conflictTag: string | null;
+  sourceCountry: string | null; summary: string | null;
+};
+
+async function filasVivas(): Promise<FilaPulso[]> {
+  const notas = await obtenerNotas().catch(() => []);
+  return notas.map((n) => ({
+    id: n.id,
+    title: n.titulo,
+    url: n.url,
+    source: n.fuente,
+    imageUrl: n.imagen,
+    publishedAt: new Date(n.fecha),
+    tacticalTag: null,
+    conflictTag: conflictoPorKey(n.conflicto)?.teatro ?? null,
+    sourceCountry: PAIS_MEDIO[n.fuente] ?? null,
+    summary: n.resumen || null,
+  }));
+}
 
 // el sello de la fuente — la credibilidad que ya usa la casa (v172)
 export function nivelFuente(cred: number): string {
@@ -49,11 +82,16 @@ export async function instantaneaPulso(): Promise<InstantaneaPulso> {
   // LA EXACTITUD EMPIEZA AQUÍ: solo cables con origen real.
   // Las «curadas» de respaldo (externalId curated-*) jamás pasan por
   // la sala de última hora — ahí no hay relleno, hay noticia.
-  const rows = await db.newsItem.findMany({
-    where: { externalId: { not: { startsWith: "curated-" } } },
-    orderBy: { publishedAt: "desc" },
-    take: 60,
-  });
+  const vivas = (await filasVivas()).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+  const rows: FilaPulso[] = vivas.length
+    ? vivas.slice(0, 60)
+    : await db.newsItem
+        .findMany({
+          where: { externalId: { not: { startsWith: "curated-" } } },
+          orderBy: { publishedAt: "desc" },
+          take: 60,
+        })
+        .catch(() => []);
 
   const ricos = enriquecerLista(
     rows.map((r) => ({
@@ -75,22 +113,14 @@ export async function instantaneaPulso(): Promise<InstantaneaPulso> {
     .sort((a, b) => b.impacto - a.impacto || a.edadMin - b.edadMin)
     .slice(0, 8);
 
-  // contadores del medidor (2 counts + 1 groupBy — baratos con índice v209)
-  const desde24h = new Date(Date.now() - 24 * 3600_000);
-  const desde1h = new Date(Date.now() - 3600_000);
-  const [hoy, ultimaHora, porTeatro] = await Promise.all([
-    db.newsItem.count({
-      where: { publishedAt: { gte: desde24h }, externalId: { not: { startsWith: "curated-" } } },
-    }),
-    db.newsItem.count({
-      where: { publishedAt: { gte: desde1h }, externalId: { not: { startsWith: "curated-" } } },
-    }),
-    db.newsItem.groupBy({
-      by: ["conflictTag"],
-      where: { publishedAt: { gte: desde24h }, conflictTag: { not: null } },
-      _count: { conflictTag: true },
-    }),
-  ]);
+  // contadores del medidor: se cuentan sobre la MISMA fuente que se muestra
+  const ahora = Date.now();
+  const base = vivas.length ? vivas : rows;
+  const hoy = base.filter((r) => ahora - r.publishedAt.getTime() <= 24 * 3600_000).length;
+  const ultimaHora = base.filter((r) => ahora - r.publishedAt.getTime() <= 3600_000).length;
+  const porTeatro = new Set(
+    base.filter((r) => r.conflictTag && ahora - r.publishedAt.getTime() <= 24 * 3600_000).map((r) => r.conflictTag)
+  );
 
   const paises = new Set<string>();
   let urgente = 0;
@@ -106,10 +136,32 @@ export async function instantaneaPulso(): Promise<InstantaneaPulso> {
       hoy,
       ultimaHora,
       urgente,
-      teatros: porTeatro.length,
+      teatros: porTeatro.size,
       paises: paises.size,
       frescoMin: ricos.length ? ricos[0].edadMin : null,
       generado: new Date().toISOString(),
     },
+  };
+}
+
+// v402.0 — UNA sola forma de cable para la página y para /api/pulso: antes el
+// sondeo devolvía filas crudas (title/source) y la sala leía t/f → a los 30 s
+// los titulares se quedaban en blanco.
+export function aCableVivo(r: NoticiaRanqueada) {
+  return {
+    id: r.id,
+    t: r.title,
+    f: r.source,
+    u: r.url ?? "",
+    fecha: typeof r.publishedAt === "string" ? r.publishedAt : new Date(r.publishedAt).toISOString(),
+    impacto: r.impacto,
+    tier: r.tier,
+    cred: r.cred,
+    tag: (r.tacticalTag || "INFO").toUpperCase(),
+    conflicto: r.conflictTag || "",
+    pais: r.sourceCountry || "",
+    paisNombre: r.paisNombre || "",
+    s: r.resumen || "",
+    img: r.imageUrl && /^https?:\/\//.test(r.imageUrl) ? r.imageUrl : "",
   };
 }
