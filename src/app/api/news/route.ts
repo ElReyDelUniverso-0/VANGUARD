@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { db } from "@/lib/db";
+import { filasVivas } from "@/lib/pulso";
 import { asegurarTabla } from "@/lib/db-ddl";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
 // v172.0 LA AGENCIA CENTRAL — el motor de impacto tiñe TODA respuesta:
@@ -293,6 +294,19 @@ export async function GET(req: Request) {
       });
     } catch (e) {
       console.error("news cache read failed (db down), falling to GDELT/curated", e);
+    }
+    // v402.0 — LA BASE CONGELADA: en Vercel la base viaja de solo lectura (la del
+    // build), así que «la caché» eran cables de hace semanas y el refresco en
+    // segundo plano solo escribía en una copia efímera de /tmp. Si el cable más
+    // nuevo pasa de 6 h, mandan los medios vivos (los de la portada).
+    if (!cached[0] || Date.now() - cached[0].publishedAt.getTime() > 6 * 3600_000) {
+      const vivas = await filasVivas().catch(() => []);
+      if (vivas.length >= 5) {
+        cached = vivas
+          .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+          .slice(0, 48)
+          .map((v) => ({ ...v, externalId: `vivo-${v.id}`, language: "es", createdAt: new Date() }));
+      }
     }
     const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
     const hasFresh = cached.length > 0 && cached[0].createdAt > thirtyMinAgo;

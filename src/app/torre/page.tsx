@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { TorrePanel } from "@/components/vanguard/torre-panel";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { SALVAVIDAS, TRAMOS_MS, leerTorre, type ResumenTorre } from "@/lib/torre";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 
@@ -76,23 +76,26 @@ export default async function TorrePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="torre-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-              {resumen.version} · {resumen.codename}
-            </span>
-          </div>
-        </div>
-
+        {/* v402.0 — portada de sala (Estado de Vanguard). Sin cifras inventadas:
+            todas salen del parte de la Torre. */}
+        <PortadaSala
+          imagen="/ilustraciones/operaciones.jpg"
+          alt="Sala de operaciones con pantallas de control en la penumbra"
+          volanta="Estado de Vanguard · Torre de control"
+          titulo="La Torre de Control"
+          sumario="Qué aparatos arrancan, cuántos llegan vivos al final del montaje y si algún salvavidas tuvo que actuar. Cuenta sucesos, no personas."
+          cifras={[
+            { valor: resumen.supervivencia.arranques, etiqueta: "Arranques", nota: "anotados en esta instancia" },
+            { valor: resumen.salvavidas.length, etiqueta: "Salvavidas", nota: "vigilados" },
+            { valor: resumen.version, etiqueta: "Versión", nota: resumen.codename },
+          ]}
+          anclas={[
+            { etiqueta: "Estado de Vanguard", href: "/estado" },
+            { etiqueta: "Calidad", href: "/calidad" },
+          ]}
+          acento="#38bdf8"
+        />
         <article className="mx-auto max-w-3xl px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">La Torre de Control</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
             La casa se cayó tres veces en la puerta y se curó a ciegas. Esto es la vista que
             faltaba: qué aparatos arrancan, cuántos llegan vivos al final del montaje, en qué
@@ -101,9 +104,20 @@ export default async function TorrePage() {
             personas.
           </p>
 
-          <div className="mt-8">
-            <TorrePanel inicial={resumen} />
-          </div>
+          {resumen.supervivencia.arranques === 0 ? (
+            // v402.0 — antes: paneles enteros de «0» y «—». La verdad, dicha claro:
+            <div className="vx-aviso mt-8">
+              <strong>Torre en reposo.</strong> En este despliegue la base de Vanguard viaja de solo
+              lectura: cada servidor anota en una copia temporal que se borra al apagarse, así que la
+              Torre no puede acumular una noche entera de arranques. Antes de mostrar un tablero de
+              ceros, lo dice. El estado verificable de la casa — versión, salas y comprobaciones — está
+              en <Link href="/estado">Estado de Vanguard</Link>.
+            </div>
+          ) : (
+            <div className="mt-8">
+              <TorrePanel inicial={resumen} />
+            </div>
+          )}
 
           <section className="mt-8">
             <h2 className="text-lg font-bold text-amber-300">Cómo se mide (sin adornos)</h2>

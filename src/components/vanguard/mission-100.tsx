@@ -88,6 +88,8 @@ function readUsed(): string[] {
 
 export function Mission100({ standalone = false }: { standalone?: boolean }) {
   const [data, setData] = useState<MissionData>(EMPTY);
+  // v402.0 — el marcador común respondió, pero vacío: sin memoria global
+  const [sinMemoria, setSinMemoria] = useState(false);
   const [used, setUsed] = useState<string[]>([]);
   const [open, setOpen] = useState<string | null>("wa-grupos");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -137,6 +139,7 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
           playerGoal: json.playerGoal || 100,
           topLinks: Array.isArray(json.topLinks) ? json.topLinks : [],
         });
+        setSinMemoria(!json.mission && !json.shares && !json.external && !(Array.isArray(json.topLinks) && json.topLinks.length));
       }
     } catch {
       /* red parpadea: el contador se recupera solo */
@@ -306,9 +309,19 @@ export function Mission100({ standalone = false }: { standalone?: boolean }) {
             <span className="text-sm text-muted-foreground">/ {data.goal} enlaces</span>
           </div>
           <div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
-            <Radio className="w-3 h-3 text-electric animate-pulse" /> contador global en vivo
+            <Radio className={`w-3 h-3 ${sinMemoria ? "text-muted-foreground" : "text-electric animate-pulse"}`} />{" "}
+            {sinMemoria ? "contador global en reposo" : "contador global en vivo"}
           </div>
         </div>
+        {/* v402.0 — «0/100 en vivo» era mentira por omisión: en este despliegue la base
+            es de solo lectura y cada servidor cuenta en una copia que se borra. Se dice. */}
+        {sinMemoria && (
+          <p className="vx-aviso mt-3">
+            <strong>Sin memoria global.</strong> Los servidores de Vanguard no conservan este recuento
+            entre visitas, así que el marcador común no puede sumar. Tu misión sí: cada enlace que
+            repartes queda guardado en tu aparato, más abajo.
+          </p>
+        )}
         <div className="mt-2 h-4 rounded-full bg-border/40 overflow-hidden border border-border" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
           <div
             className={`h-full rounded-full transition-all duration-700 ${done ? "bg-green-hud/80" : "bg-gradient-to-r from-amber-hud via-amber to-electric"}`}

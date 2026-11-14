@@ -37,7 +37,7 @@ type FilaPulso = {
   sourceCountry: string | null; summary: string | null;
 };
 
-async function filasVivas(): Promise<FilaPulso[]> {
+export async function filasVivas(): Promise<FilaPulso[]> {
   const notas = await obtenerNotas().catch(() => []);
   return notas.map((n) => ({
     id: n.id,

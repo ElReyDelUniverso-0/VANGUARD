@@ -328,3 +328,8 @@ body:has(.vx-carcasa) main > div:first-child:has(> div > div > a[href="/"] > svg
 .vx-cron-copiar { margin-top: 10px; }
 body:has(.vx-carcasa) [class^="fixed bottom-2 left-1/2"],
 body:has(.vx-carcasa) [class^="fixed bottom-3 left-3"] { display: none !important; }
+
+/* v402.0 — aviso honesto de sala (sin datos ≠ tablero de ceros) */
+.vx-aviso { position: relative; border: 1px solid rgba(56,189,248,.28); border-left: 3px solid #38bdf8; background: linear-gradient(90deg, rgba(56,189,248,.07), rgba(6,8,12,0)); border-radius: 6px; padding: 16px 18px; font-size: 14px; line-height: 1.6; color: #cbc5b6; }
+.vx-aviso strong { font-family: Orbitron, ui-sans-serif, sans-serif; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; color: #38bdf8; margin-right: 6px; }
+.vx-aviso a { color: #e8c56a; text-decoration: underline; text-underline-offset: 3px; }
