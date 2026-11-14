@@ -14,6 +14,12 @@
 // Para AÑADIR un módulo: src/lib/nucleo/README.md (4 pasos).
 // ============================================================
 
+import { TOTAL_REAL, cuentaPorTipo } from "@/lib/catalogo-real";
+
+// v367.9 — el censo del catálogo se CALCULA, no se escribe (guardia v234). La
+// sala /calidad recordó por qué: las cifras a mano envejecen en silencio.
+const CENSO_CATALOGO = cuentaPorTipo();
+
 /** Categorías del censo — la navegación de /nucleo las agrupa. */
 export const CATEGORIAS_MODULO = [
   "REDACCION", // leer la guerra: cables, teatros, última hora
@@ -457,9 +463,8 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
   {
     id: "mod:catalogo",
     nombre: "EL CATÁLOGO DE LO QUE YA EXISTE",
-    lema: "163 piezas reales con su puerta",
-    descripcion:
-      "Índice generado del árbol del repositorio: 44 salas con su ruta navegable, 50 paneles ya construidos, 34 motores y 35 puntos de datos (163 en total, v367.8), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.",
+    lema: `${TOTAL_REAL} piezas reales con su puerta`,
+    descripcion: `Índice generado del árbol del repositorio: ${CENSO_CATALOGO.sala} salas con su ruta navegable, ${CENSO_CATALOGO.panel} paneles ya construidos, ${CENSO_CATALOGO.motor} motores y ${CENSO_CATALOGO.api} puntos de datos (${TOTAL_REAL} en total, v367.9), cada uno con el archivo del que sale como prueba. No es una idea ni una promesa: es la lista de lo que ya estaba hecho, para que se pueda encontrar y usar.`,
     categoria: "SISTEMA",
     ruta: "/catalogo",
     permiso: "publico",
@@ -495,6 +500,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:cuentas"],
     alias:
       "perfil jugador carnet codigo jugador permisos foto avatar banner marco bio faccion personalizacion cuenta sesion acceso v367.6",
+  },
+  {
+    id: "mod:calidad",
+    nombre: "LA SALA DE LA CALIDAD",
+    lema: "Seis agentes auditan la casa y publican su informe con fecha",
+    descripcion:
+      "El equipo de auditoría de la casa (scripts/auditoria.mjs, cero dependencias): RUTAS, ENLACES, IDIOMA, RECURSOS, BOTONES y EN VIVO. Cada agente tiene un solo deber y se le mide por su número; el sexto pide de verdad cada ruta al despliegue y anota el código HTTP, porque que un archivo exista no es lo mismo que una sección funcione. El informe se publica en /calidad leyendo la instantánea que escribe el propio auditor (src/lib/auditoria.json), sin una sola cifra escrita a mano. Nació de la orden del Dueño de 2026-11-14: menos acumulación y más calidad.",
+    categoria: "SISTEMA",
+    ruta: "/calidad",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:catalogo"],
+    alias:
+      "auditoria calidad agentes errores bugs enlaces rotos recursos idioma botones salud smoke rutas defectos reparar auditar v367.9",
   },
   {
     id: "mod:parque-militar",

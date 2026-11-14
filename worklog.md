@@ -5984,3 +5984,37 @@ Work Log:
 Stage Summary:
 - El Dueño pidió «los mejores que ya existen 3D, con todo»: son seis modelos CC0 de Quaternius, con su autor y su licencia a la vista, copiados a la casa y servidos por ella. Vanguard solo puso el color del uniforme y las puertas donde se ven.
 - Lo que ahora se ve en el simulador: infantería con uniforme de seis bandos, tres carros de combate moviéndose con su animación original y un mech caminando. Antes eran cajas procedurales; ahora son modelos de verdad, y no hubo que modelar nada.
+
+Task ID: ia3-v367.9-la-sala-de-la-calidad
+Agent: ia3 (Arena)
+Task: «VANGUARD necesita menos acumulación y más calidad» — nuevo orden de trabajo: **1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual, 3) investigar y fusionar las mejores soluciones**. Método pedido: «un grupo de 5 personas, cada uno un multiagente experto en programación, buscando errores y resolución de problemas al instante».
+
+Work Log:
+- PILAR 1 EN PIE, NO PROMETIDO. Se construyó el equipo: `scripts/auditoria.mjs`, **cero dependencias** (solo Node), seis agentes con un solo deber cada uno. `node scripts/auditoria.mjs` imprime el informe legible, `--json` escribe `agent-ctx/auditoria.json`, `--smoke <url>` añade la prueba en vivo contra un despliegue.
+  - AGENTE 1 · RUTAS: censo de `src/app` (46 páginas, 92 endpoints, 2 dinámicas en esta versión).
+  - AGENTE 2 · ENLACES: todo `href`/`<Link>`/`router.push` del árbol, contra las rutas reales (133 revisados).
+  - AGENTE 3 · IDIOMA: claves `t("…")` usadas contra el diccionario ES (402 vs 593).
+  - AGENTE 4 · RECURSOS: cada `/assets/...` que pide el código, contra el **manifiesto real de `public/`** (106 pedidos).
+  - AGENTE 5 · BOTONES: `onClick` vacíos, `href="#"`, pendientes marcados.
+  - AGENTE 6 · EN VIVO: pide **cada ruta de verdad** al despliegue y anota el código HTTP.
+- LA AUDITORÍA APRENDIÓ A NO ACUSAR EN FALSO (esta es la parte importante). Su primera pasada gritó **2 enlaces rotos, 8 claves de idioma, 107 imágenes ausentes y 208 pendientes**. Leídos uno a uno, **todos eran falsos**:
+  - los «enlaces rotos» eran descargas a `/posters/*.png`, que **sí existen** — el auditor no miraba `public/`;
+  - las «claves faltantes» salían de `src/lib/social-data.ts`, que define su **propio** `const t = (p) => \`/assets/tv/${p}.png\`` (miniaturas de TV): el regex lo confundía con el traductor de la casa;
+  - las «107 imágenes» existen en el repositorio pero **no en este clon de trabajo** (que no trae binarios): se auditaba el disco en vez del árbol real;
+  - los «208 pendientes» eran la **palabra española «TODO»** en mayúsculas dentro de los comentarios («TODO derivado del catálogo», «COBRAR TODO», «el mapa de TODO: un globo»).
+  - Curas aplicadas: el auditor compara contra `agent-ctx/public-manifest.json` (417 archivos de `public/`, sacados del árbol de `main`), ignora los archivos con traductor propio, exige que el marcador **abra** el comentario y mantiene una **lista de aceptados leída a mano** (`agent-ctx/auditoria-aceptados.json`, anclada al TEXTO de la línea y no al número, porque las líneas se mueven al versionar).
+- DOS DEFECTOS REALES REPARADOS, sin quitar una sola función:
+  - `experimental-panel.tsx` pedía `imagen="/img/cover-lab.jpg"` — la carpeta `/img/` **no existe en toda la casa**: la portada del taller salía como un hueco. Ahora usa `/ilustraciones/estudio.jpg`, que viaja en el repositorio desde siempre (comprobado en el manifiesto).
+  - `retention-layer.tsx` tenía `onClick={() => {}}` en el velo de la animación del cofre: su intención era **bloquear el clic** para que no se colara al fondo, y ahora lo bloquea de verdad (`stopPropagation`), con `role="presentation"`.
+- LA SALA `/calidad` — el pilar 1 puesto donde el Dueño puede verlo: los seis agentes con su número, los defectos abiertos, lo reparado en esta pasada, la doctrina (AUDITAR → MEJORAR → FUSIONAR → PERFECCIONAR), la lista de rutas que no responden (si alguna) y el comando exacto para repetir la medición. **Cero cifras a mano**: lee `src/lib/auditoria.json`, la instantánea que escribe el propio auditor (guardia v234). Si la instantánea faltara, la sala mostraría ceros y lo diría, en vez de fingir.
+- EL PROPIO AUDITOR CAZÓ DOS PUERTAS MIENTRAS SE CONSTRUÍA LA SALA: un `/bitacora` inventado por mí (esa sala **no existe**: la bitácora vive en la pestaña CAMBIOS del aparato, sin puerta propia — la sala lo dice así ahora) y un `href="#"` que había escrito dentro de un texto. Ambas reparadas antes de publicar. La herramienta ya se paga sola.
+- DEUDA DE HONESTIDAD SALDADA: el censo de `mod:catalogo` tenía las cifras **escritas a mano** («163 piezas», «44 salas »…) — envejecían en silencio. Ahora se calculan con `TOTAL_REAL` y `cuentaPorTipo()` importados de la fuente.
+- Registro: `version.ts` → **v367.9 LA SALA DE LA CALIDAD** · `APP_VERSION_ANTERIOR` = v367.8 (solo una declaración, no se duplica) · entrada a mano en `bitacora.ts` · `mod:calidad` en el censo del núcleo (SISTEMA, público, depende de `mod:catalogo`) · `/calidad` en el sitemap · catálogo de lo que existe: **166 piezas** (+3: el auditor, la sala y su instantánea).
+- QA EJECUTADO: `npm i` + `prisma generate` → **tsc --noEmit EXIT=0** · **next dev real** (`:3830`): `/calidad` **200** con la sala completa y las cifras reales leídas de la instantánea, `/api/health` → `version:"v367.9"`.
+- VEREDICTO MEDIDO (lo que la casa ya tiene, no lo que se promete): **46 salas · 92 endpoints · 133 enlaces (0 rotos) · 402 claves de idioma (0 sin resolver) · 106 recursos (0 ausentes) · 0 botones sin acción · 0 pendientes marcados**. En vivo contra `vanguard-u6b9.vercel.app`: **43/44** (la única caída es `/calidad`, que aún no está desplegada al medir; se refresca tras publicar).
+- LO QUE NO SE TOCÓ: ningún componente, panel, motor ni sala existente. Las dos reparaciones son quirúrgicas y la auditoría no borra: solo señala.
+- SIGUIENTE (orden del Dueño, sin adelantarse): pilar 2 — revolución visual y multimedia (más imágenes y menos bloques de texto: portadas, tarjetas, mapas, líneas de tiempo, vídeo con profundización opcional). Y el pilar 3 investigará patrones de fuera **sin copiar código, marcas ni diseños propietarios**.
+
+Stage Summary:
+- La casa ya se audita sola: seis agentes, un comando, un informe con fecha y fuente publicado en `/calidad`. Lo que antes se descubría por casualidad (una portada hueca, un botón que no hacía nada) ahora sale en la primera pasada.
+- Lo más valioso de la ronda no fue encontrar defectos, sino aprender a **no inventarlos**: la primera auditoría acusó 325 problemas y 325 eran falsos. Un auditor que grita en falso se ignora; este ya distingue.

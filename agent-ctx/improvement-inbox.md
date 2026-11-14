@@ -598,3 +598,27 @@ Nota de la casa: los binarios .glb viajan en el repo (6,4 MB). Si el repo se pon
 3. **MÁS PIEZAS CC0 CON EL MISMO FILTRO** — el visor de Quaternius tiene 32 packs (hélices, barcos, artillería, aldeas). Añadir helicóptero y artillería con la misma ficha (autor, licencia, bytes, animaciones) multiplica el parque sin modelar nada. Esfuerzo: M
 4. **CONECTAR LOS CINCO SALVAVIDAS A LA TORRE** (viva desde el Mensaje #33) — `anotarSenal(...)` sigue sin llamarse. Esfuerzo: S
 5. **ROTACIÓN DEL TOKEN** (deuda viva) — viajó por el chat otra vez. Esfuerzo: S
+
+---
+
+## MENSAJE #39 — v367.9 · LA SALA DE LA CALIDAD (2026-11-14)
+
+**De:** ia3 (Arena) · **Para:** el Dueño y la otra IA.
+**Orden atendida, textual:** «VANGUARD necesita menos acumulación y más calidad» → 1) auditar y reparar, 2) experiencia visual, 3) investigar y fusionar.
+
+### Qué se hizo
+1. **El equipo de seis agentes** vive en `scripts/auditoria.mjs` (cero dependencias):
+   `node scripts/auditoria.mjs` · `--json` · `--smoke https://…` (pide cada ruta al despliegue y anota el HTTP).
+2. **La sala `/calidad`**: el informe dentro de la casa — agentes, defectos abiertos, lo reparado, la doctrina y el comando para repetir la medición. Cero cifras a mano: lee la instantánea del auditor.
+3. **Dos defectos reales reparados** sin quitar nada: la portada del taller apuntaba a `/img/cover-lab.jpg` (carpeta inexistente) → ahora `/ilustraciones/estudio.jpg`; el velo del cofre tenía `onClick` vacío → ahora bloquea el clic de verdad.
+4. **Deuda saldada:** el censo del catálogo tenía cifras escritas a mano; ahora se calculan (`TOTAL_REAL`, `cuentaPorTipo()`). Catálogo: **166 piezas**.
+
+### Veredicto medido
+46 salas · 92 endpoints · 133 enlaces (**0 rotos**) · 402 claves de idioma (**0 sin resolver**) · 106 recursos (**0 ausentes**) · **0 botones sin acción** · **0 pendientes**. En vivo: **43/44** (la única caída es `/calidad` porque se midió antes de desplegarla; se refresca después).
+
+### La lección que hay que heredar (importante para la otra IA)
+La primera pasada acusó **325 problemas y los 325 eran falsos**: descargas a archivos que existen, un ayudante local llamado `t()`, binarios que están en el repo pero no en el clon de trabajo, y la palabra española «TODO» en mayúsculas. **Un auditor que grita en falso se ignora.** Si vas a auditar: compara contra el árbol real de `public/` (manifiesto), no contra el disco de un clon incompleto; y guarda a mano los casos aceptados (`agent-ctx/auditoria-aceptados.json`, anclados al TEXTO, no al número de línea).
+
+### Lo que sigue (orden fijado, no se adelanta)
+- **Pilar 2 · revolución visual:** portadas grandes, tarjetas que se tocan, mapas, líneas de tiempo, vídeo, resúmenes visuales; profundización opcional. «Más imágenes y menos bloques interminables de texto».
+- **Pilar 3 · fusionar:** estudiar los mejores patrones de fuera (prensa, mapas, visualización, buscadores) y combinarlos en una versión propia. **Sin copiar código privado, marcas, textos ni diseños propietarios.**

@@ -464,7 +464,15 @@ export function RetentionLayer() {
 
       {/* ---------- ANIMACIÓN DE APERTURA DE COFRE ---------- */}
       {(rolling || lastReward) && rolling && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => {}}>
+        /* v367.9 AUDITORÍA — este velo tenía un onClick vacío: la intención real
+           era BLOQUEAR el clic para que no se colara al fondo mientras se abre
+           el cofre. Ahora lo bloquea de verdad (stopPropagation) en vez de
+           declarar un manejador que no hacía nada. */
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={(e) => e.stopPropagation()}
+          role="presentation"
+        >
           <div className={`rounded-xl border-2 bg-black/95 px-8 py-6 text-center font-mono ${RARITY_STYLE[rollRarity]?.cls || ""} ${RARITY_STYLE[rollRarity]?.glow || ""}`}>
             <Gift className="w-10 h-10 mx-auto animate-bounce" />
             <div className="mt-2 text-xl font-bold tracking-widest">{rollRarity}</div>

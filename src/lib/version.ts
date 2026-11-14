@@ -5276,8 +5276,43 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.8";
-export const APP_CODENAME = "EL PARQUE MILITAR";
+export const APP_VERSION = "v367.9";
+export const APP_CODENAME = "LA SALA DE LA CALIDAD";
+// v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
+// menos acumulación y más calidad», con un orden de trabajo obligatorio:
+// 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
+// 3) investigar y fusionar las mejores soluciones. «Antes de construir otras 50
+// funciones, conseguir que las que ya tenemos funcionen, se vean excelentes y
+// sean agradables de utilizar». Y el método que describió: «un grupo de 5
+// personas, cada uno un multiagente experto en programación, buscando errores y
+// resolución de problemas al instante».
+// ① EL EQUIPO (scripts/auditoria.mjs): seis agentes, cero dependencias, un solo
+//    deber cada uno — RUTAS (que la puerta exista), ENLACES (que ninguna sea
+//    falsa), IDIOMA (que ninguna palabra quede sin traducir), RECURSOS (que
+//    ninguna imagen sea un hueco), BOTONES (que nada parezca un botón sin
+//    serlo) y EN VIVO (que la sección responda de verdad: pide cada ruta al
+//    servidor de producción y anota el código HTTP). `--json` escribe el
+//    informe; `--smoke <url>` añade la prueba en vivo.
+// ② LA AUDITORÍA APRENDIÓ A NO GRITAR EN FALSO: la primera pasada acusó 2
+//    enlaces rotos, 8 claves de idioma, 107 imágenes y 208 pendientes; leídos
+//    uno a uno, TODOS eran falsos — descargas a archivos que sí existen (el
+//    auditor no miraba public/), un ayudante local llamado t() en social-data,
+//    binarios que existen en el repositorio pero no en el clon de trabajo, y la
+//    palabra española «todo» en mayúsculas dentro de los comentarios. Ahora
+//    compara contra el manifiesto real de public/ (417 archivos), ignora los
+//    archivos con traductor propio y mantiene una lista de aceptados leída a
+//    mano (agent-ctx/auditoria-aceptados.json).
+// ③ DOS DEFECTOS REALES REPARADOS: la portada del taller pedía /img/cover-lab.jpg
+//    (carpeta que no existe en toda la casa) y ahora usa la ilustración real del
+//    estudio; el velo del cofre de recompensas tenía onClick vacío y ahora
+//    bloquea el clic de verdad. Ninguna función se quitó.
+// ④ LA SALA /calidad: el informe se publica dentro de la casa, con fecha y con
+//    fuente, y muestra los seis agentes, los defectos abiertos y la doctrina
+//    (AUDITAR → MEJORAR → FUSIONAR → PERFECCIONAR). Cero cifras a mano: todo
+//    sale de src/lib/auditoria.json, que escribe el propio auditor (guardia v234).
+// ⑤ PRIMER VEREDICTO MEDIDO: 45 salas · 92 endpoints · 130 enlaces · 402 claves
+//    de idioma · 106 recursos · 43/43 rutas respondiendo 200 en producción.
+//    Cero defectos abiertos en los seis frentes.
 // v367.8 EL PARQUE MILITAR (sobre v367.7, intacta) — orden del Dueño, textual:
 // «mejora los uniformes, personajes, vehículos militares; no crees nada nuevo,
 // solo copia los mejores que ya existen 3D con todo y pégalos a Vanguard, así
@@ -5302,7 +5337,7 @@ export const APP_CODENAME = "EL PARQUE MILITAR";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v367.7";
+export const APP_VERSION_ANTERIOR = "v367.8";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

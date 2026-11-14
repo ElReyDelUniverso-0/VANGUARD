@@ -1,0 +1,49 @@
+{
+  "fecha": "2026-11-14",
+  "humo": {
+    "base": "https://vanguard-u6b9.vercel.app",
+    "fecha": "2026-11-14T16:20:58",
+    "total": 44,
+    "ok": 43,
+    "fallos": [
+      {
+        "ruta": "/calidad",
+        "codigo": 404
+      }
+    ]
+  },
+  "agentes": {
+    "rutas": {
+      "paginas": 46,
+      "apis": 92,
+      "dinamicas": 2
+    },
+    "enlaces": {
+      "revisados": 133,
+      "rotos": 0,
+      "aRutaDinamicaEnServer": 0
+    },
+    "idioma": {
+      "clavesDiccionario": 593,
+      "clavesUsadas": 402,
+      "faltantes": 0
+    },
+    "recursos": {
+      "revisados": 106,
+      "faltantes": 0,
+      "contra": "manifiesto real de main (417 archivos en public/, ref 3b32e215)"
+    },
+    "botones": {
+      "sinAccion": 0,
+      "hrefAlmohadilla": 0,
+      "pendientes": 0
+    }
+  },
+  "defectos": {
+    "enlacesRotos": [],
+    "recursosFaltantes": [],
+    "botonesVacios": [],
+    "clavesFaltantes": [],
+    "pendientes": []
+  }
+}
