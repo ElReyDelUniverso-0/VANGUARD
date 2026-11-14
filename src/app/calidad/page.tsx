@@ -40,9 +40,28 @@ export const metadata: Metadata = {
   alternates: { canonical: "/calidad" },
 };
 
+type Densidad = {
+  ruta: string;
+  kb: number;
+  letras: number;
+  imagenes: number;
+  videos: number;
+  lienzos: number;
+  svgs: number;
+  visuales: number;
+  ratio: number;
+};
+
 type Instantanea = {
   fecha: string;
-  humo: { base: string; fecha: string; total: number; ok: number; fallos: { ruta: string; codigo: number }[] } | null;
+  humo: {
+    base: string;
+    fecha: string;
+    total: number;
+    ok: number;
+    fallos: { ruta: string; codigo: number }[];
+    densidad?: Densidad[];
+  } | null;
   agentes: {
     rutas: { paginas: number; apis: number; dinamicas: number };
     enlaces: { revisados: number; rotos: number; aRutaDinamicaEnServer: number };
@@ -354,6 +373,75 @@ export default function CalidadPage() {
           </div>
         </section>
       )}
+
+      {/* ── LA DENSIDAD: el pilar 2 medido, no prometido ── */}
+      {INFORME.humo?.densidad && INFORME.humo.densidad.length > 0 && (() => {
+        const salas = [...INFORME.humo.densidad].sort((a, b) => b.ratio - a.ratio);
+        const letras = salas.reduce((a, x) => a + x.letras, 0);
+        const visuales = salas.reduce((a, x) => a + x.visuales, 0);
+        const mediana = [...salas].map((x) => x.ratio).sort((a, b) => a - b)[Math.floor(salas.length / 2)];
+        return (
+          <section className="border-y border-slate-800 bg-slate-900/30">
+            <div className="mx-auto max-w-5xl px-5 py-12">
+              <h2 className="mb-1 font-mono text-xs uppercase tracking-[0.25em] text-slate-500">densidad visual · pilar 2</h2>
+              <p className="mb-6 max-w-2xl text-sm text-slate-400">
+                «Más imágenes y menos bloques interminables de texto». El agente 7 cuenta, en cada sala servida, las
+                imágenes, vídeos, lienzos y gráficos contra las letras que quedan al quitar etiquetas. Se mide después
+                de cada cambio: lo que mejora se ve, lo que no se mide no se sabe.
+              </p>
+              <div className="mb-6 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-slate-500">letras servidas</div>
+                  <div className="font-mono text-2xl font-black text-slate-200">{letras.toLocaleString("es")}</div>
+                  <div className="mt-1 text-[11px] text-slate-500">en {salas.length} salas medidas</div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-slate-500">elementos visuales</div>
+                  <div className="font-mono text-2xl font-black text-emerald-400">{visuales.toLocaleString("es")}</div>
+                  <div className="mt-1 text-[11px] text-slate-500">imágenes, vídeos, lienzos y SVG</div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-slate-500">letras por visual</div>
+                  <div className="font-mono text-2xl font-black text-sky-400">{mediana.toLocaleString("es")}</div>
+                  <div className="mt-1 text-[11px] text-slate-500">la mediana: cuanto más bajo, menos libro</div>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse font-mono text-[11px]">
+                  <thead>
+                    <tr className="border-b border-slate-700 text-left text-slate-500">
+                      <th className="py-2 pr-3 font-normal uppercase tracking-widest">sala</th>
+                      <th className="py-2 pr-3 text-right font-normal uppercase tracking-widest">letras</th>
+                      <th className="py-2 pr-3 text-right font-normal uppercase tracking-widest">img</th>
+                      <th className="py-2 pr-3 text-right font-normal uppercase tracking-widest">vídeo</th>
+                      <th className="py-2 pr-3 text-right font-normal uppercase tracking-widest">svg</th>
+                      <th className="py-2 text-right font-normal uppercase tracking-widest">letras/visual</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {salas.slice(0, 12).map((x) => (
+                      <tr key={x.ruta} className="border-b border-slate-800/60 text-slate-300">
+                        <td className="py-1.5 pr-3 text-sky-300">{x.ruta}</td>
+                        <td className="py-1.5 pr-3 text-right">{x.letras.toLocaleString("es")}</td>
+                        <td className="py-1.5 pr-3 text-right">{x.imagenes}</td>
+                        <td className="py-1.5 pr-3 text-right">{x.videos}</td>
+                        <td className="py-1.5 pr-3 text-right">{x.svgs}</td>
+                        <td className={`py-1.5 text-right ${x.ratio > 4000 ? "text-rose-400" : x.ratio > 1500 ? "text-amber-400" : "text-emerald-400"}`}>
+                          {x.ratio.toLocaleString("es")}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
+                Las doce salas más densas de la última medición. En rojo, las que todavía se leen como un libro; en
+                verde, las que ya respiran. La portada de sala (v367.10) se aplicó a ocho de ellas.
+              </p>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ── LA DOCTRINA ── */}
       <section className="border-y border-slate-800 bg-slate-900/40">

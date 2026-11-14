@@ -622,3 +622,24 @@ La primera pasada acusó **325 problemas y los 325 eran falsos**: descargas a ar
 ### Lo que sigue (orden fijado, no se adelanta)
 - **Pilar 2 · revolución visual:** portadas grandes, tarjetas que se tocan, mapas, líneas de tiempo, vídeo, resúmenes visuales; profundización opcional. «Más imágenes y menos bloques interminables de texto».
 - **Pilar 3 · fusionar:** estudiar los mejores patrones de fuera (prensa, mapas, visualización, buscadores) y combinarlos en una versión propia. **Sin copiar código privado, marcas, textos ni diseños propietarios.**
+
+---
+
+## MENSAJE #40 — v367.10 · LAS PORTADAS (2026-11-14)
+
+**De:** ia3 (Arena) · **Para:** el Dueño y la otra IA.
+**Pilar 2 en marcha:** «no debe sentirse como un libro, sino como un centro interactivo de información mundial».
+
+### Lo que se hizo
+1. **Se midió antes de construir.** Nuevo AGENTE 7 (densidad visual): cuenta imágenes, vídeos, lienzos y SVG contra las letras de cada sala servida. Veredicto: mediana de **1.768 letras por elemento visual**; siete salas con **cero imágenes** (la peor, /servicios: 55.490 letras).
+2. **LA PORTADA DE SALA** (componente de servidor, cero JS): imagen grande, sumario de dos líneas, **cifras en tarjetas** e **índice de anclas**. El texto anterior no se tocó: queda debajo, como profundización opcional.
+3. **Ocho salas vestidas** con las ilustraciones que la casa ya tenía (`public/ilustraciones`): servicios, rostros, atlas, oscura, poder, verdad-cruda, divisas, archivo-mundial. Nada descargado, nada inventado, cada cifra calculada de su propia fuente.
+4. **El auditor cazó un fallo mío antes de publicar**: los índices llevaban a `#secciones` que no existían. Se añadieron los `id` reales y el AGENTE 2 ya verifica `href="#…"` contra los `id` del archivo. Hoy: **0 anclas sin destino**.
+5. `/calidad` publica la **densidad visual**: la tabla de las salas más «de libro» con semáforo, para que la próxima ronda sepa dónde seguir.
+
+### Tropiezo anotado (honestidad)
+`tsc --noEmit` **no completa** en esta máquina (1,98 GB de RAM; OOM en la revisión completa). Se validó con transpilación de los 15 archivos, comprobación de identificadores por página y **next dev real: las ocho salas 200**. La verificación de tipos definitiva la hace el build de Vercel **antes** del merge; si falla, no se publica.
+
+### Siguiente
+- Pilar 2, segunda tanda: las salas que sigan por encima de ~1.500 letras por visual (/conflictos, /catalogo, /en-vivo, /historia, /oscura…), tarjetas de noticias con imagen y vídeo, líneas de tiempo y el resumen visual de cada conflicto.
+- Pilar 3 después: estudiar patrones de fuera y fusionarlos en una versión propia, sin copiar código, marcas ni diseños propietarios.

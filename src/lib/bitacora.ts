@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.10",
+    nombre: "LAS PORTADAS",
+    hitos: [
+      "PILAR 2 EN MARCHA — orden del Dueño: «no debe sentirse como un libro, sino como un centro interactivo de información mundial», «más imágenes y menos bloques interminables de texto». Y antes de construir: medir",
+      "EL AGENTE 7 MIDE LA DENSIDAD DE CADA SALA servida — imágenes, vídeos, lienzos y gráficos SVG contra las letras que quedan al quitar etiquetas. El veredicto: la mediana de la casa era de 1.768 letras por elemento visual, y siete salas no tenían una sola imagen (/servicios con 55.490 letras, /rostros con 48.303, /atlas con 31.029, /oscura con 22.792, /poder con 19.540, /verdad-cruda con 18.986, /divisas con 16.428)",
+      "LA PORTADA DE SALA (components/vanguard/portada-sala.tsx) — componente de servidor, cero JavaScript: portada grande con sus dimensiones reales declaradas, título, sumario de dos líneas, cifras de la sala en tarjetas e índice de anclas. El texto largo que ya existía queda debajo, intacto: profundización opcional",
+      "OCHO SALAS VESTIDAS con las 120 ilustraciones que la casa ya tenía en /public/ilustraciones — servicios, rostros, atlas, oscura, poder, verdad-cruda, divisas y archivo-mundial. Ninguna imagen nueva, ninguna descarga: se usó lo que estaba en el repositorio desde versiones atrás",
+      "CERO CIFRAS A MANO EN LAS PORTADAS — cada número sale de la fuente de su propia sala y se calcula en el render (guardia v234): los países del atlas, las agencias de servicios, los rostros del poder, las monedas del mundo, el gasto militar sumado…",
+      "LA MEJORÍA SE COMPRUEBA, NO SE PROMETE — el mismo agente 7 vuelve a medir después del cambio y /calidad publica las salas más «de libro» con su número, para que la próxima ronda sepa dónde seguir",
+    ],
+    tipo: "diseno",
+  },
+  {
     version: "v367.9",
     nombre: "LA SALA DE LA CALIDAD",
     hitos: [

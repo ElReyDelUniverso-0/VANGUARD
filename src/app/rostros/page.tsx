@@ -8,6 +8,7 @@ import {
 } from "@/lib/personas-data";
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v286.0 LOS ROSTROS DEL PODER — la galería de los rostros sube a
 // server (patrón /historia v274 · /servicios v281 · /armeria v283):
@@ -146,6 +147,35 @@ export default async function RostrosPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
+      <PortadaSala
+        imagen="/ilustraciones/perfil.jpg"
+        alt="Retrato en penumbra de un rostro iluminado de lado"
+        volanta="LA CASA · ROSTROS"
+        titulo="LAS CARAS DEL MANDO"
+        nivel="p"
+        acento="#38bdf8"
+        sumario="Quién decide, quién ejecuta y quién responde: los rostros del poder con su cargo real, su país y su rastro en el archivo de la casa."
+        cifras={[
+          { valor: ROSTROS.length, etiqueta: "rostros", nota: "con ficha" },
+          { valor: censoRostros.length, etiqueta: "categorías", nota: "de poder" },
+          { valor: pulso.length, etiqueta: "citados", nota: "en el archivo" },
+          { valor: totalMenciones, etiqueta: "titulares", nota: "reales" }
+        ]}
+        puntos={[
+          { titulo: "QUIÉN ES QUIÉN", texto:
+              "Un censo de las personas que ocupan el mando —jefes de Estado, ministros, mandos militares y responsables de inteligencia—, con su cargo verificado y su país." },
+          { titulo: "EL RASTRO", texto:
+              "Cada rostro se cruza con el archivo real de titulares: si aparece en las noticias que la casa guarda, se cuenta y se cita el último titular que lo nombra." },
+          { titulo: "PARA QUÉ SIRVE", texto:
+              "Poner cara a las decisiones: cuando una noticia dice «el gobierno», esta sala dice quién." }
+        ]}
+        anclas={[
+          ...censoRostros.map((c) => ({ etiqueta: c.etiqueta.toLowerCase(), href: `#rostro-${c.cat}` })),
+          { etiqueta: "el pulso", href: "#pulso" },
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <div className="border-b border-zinc-800 bg-zinc-900/60">
         <div className="mx-auto max-w-5xl px-4 py-10">
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
@@ -184,7 +214,7 @@ export default async function RostrosPage() {
           const items = ROSTROS.filter((r) => r.categoria === c.cat);
           if (items.length === 0) return null;
           return (
-            <section key={c.cat} className="mt-10" aria-label={c.etiqueta}>
+            <section key={c.cat} id={`rostro-${c.cat}`} className="mt-10" aria-label={c.etiqueta}>
               <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
                 <span style={{ color: c.color }}>{`${c.icono} ${c.etiqueta}`}</span>
                 <span className="text-zinc-600">{` · ${items.length} ${items.length === 1 ? "ficha" : "fichas"}`}</span>
@@ -241,7 +271,7 @@ export default async function RostrosPage() {
             fuente cruzan el archivo real con el algoritmo del panel
             (v286); lectura pura de la BD, en el orden de la fuente. */}
         {pulso.length > 0 ? (
-          <section className="mt-10" aria-label={lineaPulso}>
+          <section id="pulso" className="mt-10" aria-label={lineaPulso}>
             <h2 className="text-lg font-bold text-zinc-100">EL PULSO DEL ARCHIVO POR ROSTRO</h2>
             <p className="mt-1 text-sm text-zinc-400">{lineaPulso}</p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">

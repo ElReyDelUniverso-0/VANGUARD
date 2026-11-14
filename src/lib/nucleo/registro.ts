@@ -502,6 +502,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
       "perfil jugador carnet codigo jugador permisos foto avatar banner marco bio faccion personalizacion cuenta sesion acceso v367.6",
   },
   {
+    id: "mod:portadas",
+    nombre: "LAS PORTADAS DE SALA",
+    lema: "Cada sala abre con una imagen grande y sus cifras, no con un muro de texto",
+    descripcion:
+      "El componente de servidor que viste las salas densas: portada grande con dimensiones reales declaradas, título, sumario de dos líneas, cifras de la sala en tarjetas e índice de anclas. Cero JavaScript y cero hidratación — la portada viaja en el HTML. Nació de la medición del Agente 7, que encontró siete salas con más de 15.000 letras y ninguna imagen. Las ilustraciones son las que la casa ya tenía en /public/ilustraciones y cada cifra se calcula en el render: nada se inventó ni se escribió a mano. En pie en /servicios, /rostros, /atlas, /oscura, /poder, /verdad-cruda, /divisas y /archivo-mundial.",
+    categoria: "SISTEMA",
+    ruta: "/calidad",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:calidad"],
+    alias:
+      "portada portadas imagen imagenes visual densidad libro texto tarjetas cifras kpi hero cabecera ilustraciones pilar 2 v367.10",
+  },
+  {
     id: "mod:calidad",
     nombre: "LA SALA DE LA CALIDAD",
     lema: "Seis agentes auditan la casa y publican su informe con fecha",

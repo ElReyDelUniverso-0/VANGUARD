@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PODER_FILAS, PODER_CAPTURA } from "@/lib/poder-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v297.0 EL PODER MUNDIAL — la captura del Banco Mundial (v44) gana su
 // sala server. La directiva de la «Queda» de la v296 era clara: worldpower
@@ -115,6 +116,36 @@ export default function PoderPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/gobierno.jpg"
+        alt="Sillón de despacho vacío junto a una ventana con luz fría"
+        volanta="LA CASA · PODER MILITAR"
+        titulo="QUIÉN MANDA DE VERDAD"
+        nivel="p"
+        acento="#f59e0b"
+        sumario="El gasto militar del planeta, país por país, con el último año con dato: la tabla que explica qué se puede sostener y qué no."
+        cifras={[
+          { valor: RANKING.length, etiqueta: "países", nota: "con gasto registrado" },
+          { valor: fmtUsd(TOTAL_GASTO), etiqueta: "gasto sumado", nota: "último año con dato" },
+          { valor: `${CUOTA_LIDER}%`, etiqueta: "cuota del líder", nota: "del total medido" },
+          { valor: REGIONES.length, etiqueta: "regiones", nota: "cubiertas" }
+        ]}
+        puntos={[
+          { titulo: "LA TABLA", texto:
+              "Cada país con su gasto, su personal y su esfuerzo relativo, ordenado y comparable. La fuente y la fecha de captura van a la vista." },
+          { titulo: "EL LÍDER", texto:
+              "Quien más gasta no siempre es quien más puede: la sala separa gasto absoluto, personal y esfuerzo sobre el PIB." },
+          { titulo: "LO QUE NO DICE", texto:
+              "Una cifra de gasto no es una capacidad: la sala lo declara para que nadie lea la tabla como un pronóstico de guerra." }
+        ]}
+        anclas={[
+          { etiqueta: "el ranking", href: "#ranking" },
+          { etiqueta: "el esfuerzo", href: "#esfuerzo" },
+          { etiqueta: "las regiones", href: "#regiones" }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -134,7 +165,7 @@ export default function PoderPage() {
           </p>
 
           {/* EL RANKING DEL DINERO — top 20 con barra derivada del líder */}
-          <section className="mt-10" aria-label="El ranking del dinero">
+          <section id="ranking" className="mt-10" aria-label="El ranking del dinero">
             <h2 className="text-lg font-bold text-zinc-100">EL RANKING DEL DINERO</h2>
             <p className="mt-1 text-xs text-zinc-500">
               Los 20 primeros presupuestos militares del planeta en dólares
@@ -177,7 +208,7 @@ export default function PoderPage() {
           </section>
 
           {/* LA FUERZA — el personal, derivado del dato */}
-          <section className="mt-10" aria-label="La fuerza">
+          <section id="fuerza" className="mt-10" aria-label="La fuerza">
             <h2 className="text-lg font-bold text-zinc-100">LA FUERZA</h2>
             <p className="mt-1 text-xs text-zinc-500">
               Los 15 ejércitos más grandes del planeta por personal en servicio,
@@ -204,7 +235,7 @@ export default function PoderPage() {
           </section>
 
           {/* EL ESFUERZO — el % del PIB, derivado del dato */}
-          <section className="mt-10" aria-label="El esfuerzo">
+          <section id="esfuerzo" className="mt-10" aria-label="El esfuerzo">
             <h2 className="text-lg font-bold text-zinc-100">EL ESFUERZO</h2>
             <p className="mt-1 text-xs text-zinc-500">
               Los 15 países que más de su economía dedican al gasto militar,
@@ -231,7 +262,7 @@ export default function PoderPage() {
           </section>
 
           {/* EL ARCHIVO POR REGIONES — en el orden de la fuente */}
-          <section className="mt-10" aria-label="El archivo por regiones">
+          <section id="regiones" className="mt-10" aria-label="El archivo por regiones">
             <h2 className="text-lg font-bold text-zinc-100">EL ARCHIVO POR REGIONES</h2>
             <p className="mt-1 text-xs text-zinc-500">
               Los {RANKING.length} países con gasto registrado, agrupados por las

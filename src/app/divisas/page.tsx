@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WORLD_CURRENCIES_FULL } from "@/lib/world-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v296.0 LAS DIVISAS DEL PLANETA — el almacén menor sigue pagando: el
 // censo de la «Queda» de la v295 destapó la veta mayor que dormía desde
@@ -92,6 +93,35 @@ export default function DivisasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/divisas.jpg"
+        alt="Billetes y monedas de varios países extendidos sobre una mesa oscura"
+        volanta="LA CASA · DINERO"
+        titulo="EL DINERO DEL MUNDO"
+        nivel="p"
+        acento="#22c55e"
+        sumario="La moneda oficial real de cada país y territorio, cuántas comparten la misma y cuál sirve a más naciones: la economía como mapa."
+        cifras={[
+          { valor: WORLD_CURRENCIES_FULL.length, etiqueta: "países y territorios", nota: "con moneda" },
+          { valor: REGIONES.length, etiqueta: "regiones", nota: "cubiertas" },
+          { valor: MONEDAS_UNICAS.size, etiqueta: "monedas", nota: "distintas" },
+          { valor: MAS_COMPARTIDA.paises.length, etiqueta: "países", nota: "con la moneda más compartida" }
+        ]}
+        puntos={[
+          { titulo: "LA MONEDA DE CADA UNO", texto:
+              "Cada país con su código ISO, su símbolo y su nombre oficial, tal como lo declara la fuente." },
+          { titulo: "LAS COMPARTIDAS", texto:
+              "¿Cuántos países usan el mismo billete? La sala lo cuenta y nombra la moneda más compartida del planeta." },
+          { titulo: "POR QUÉ IMPORTA", texto:
+              "Una moneda es una frontera económica: sanciones, inflación y comercio se leen mejor con el mapa delante." }
+        ]}
+        anclas={[
+          { etiqueta: "las monedas", href: "#monedas" },
+          { etiqueta: "las regiones", href: "#regiones" }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -111,7 +141,7 @@ export default function DivisasPage() {
           </p>
 
           {/* LAS MONEDAS COMPARTIDAS — derivadas del dato, por países servidos */}
-          <section className="mt-10" aria-label="Las monedas compartidas">
+          <section id="monedas" className="mt-10" aria-label="Las monedas compartidas">
             <h2 className="text-lg font-bold text-zinc-100">LAS MONEDAS COMPARTIDAS</h2>
             <p className="mt-1 text-xs text-zinc-500">
               Monedas oficiales de 2 o más países y territorios, contadas del
@@ -132,7 +162,7 @@ export default function DivisasPage() {
           </section>
 
           {/* EL ARCHIVO POR REGIONES — en el orden de la fuente */}
-          <section className="mt-10" aria-label="El archivo por regiones">
+          <section id="regiones" className="mt-10" aria-label="El archivo por regiones">
             <h2 className="text-lg font-bold text-zinc-100">EL ARCHIVO POR REGIONES</h2>
             {REGIONES.map((reg) => (
               <div key={reg} className="mt-5">

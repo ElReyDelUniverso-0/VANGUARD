@@ -83,6 +83,10 @@ try {
 const manifiestoDeEnlaces = new Set((manifiestoPrevio?.rutas ?? []).map((p) => p.replace(/^public/, "")));
 
 // ── AGENTE 2 · ENLACES ───────────────────────────────────────
+// v367.10 — ANCLAS INTERNAS: un href="#seccion" tiene que tener su id en el
+// mismo archivo. La casa acaba de estrenar índices de portada, y un índice que
+// no lleva a ninguna parte es un botón muerto más silencioso que un 404.
+const anclasRotas = [];
 const enlacesRotos = [];
 const enlacesRutaDinamicaEnServer = [];
 const totalEnlaces = { n: 0 };
@@ -219,7 +223,7 @@ const iSmoke = process.argv.indexOf("--smoke");
 if (iSmoke > -1 && process.argv[iSmoke + 1]) {
   const base = process.argv[iSmoke + 1].replace(/\/$/, "");
   const rutas = [...paginas].filter((r) => !r.includes("[")).sort();
-  humo = { base, fecha: new Date().toISOString().slice(0, 19), total: rutas.length, ok: 0, fallos: [] };
+  humo = { base, fecha: new Date().toISOString().slice(0, 19), total: rutas.length, ok: 0, fallos: [], densidad: [] };
   const cola = [...rutas];
   const trabajador = async () => {
     while (cola.length) {
@@ -228,6 +232,35 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
         const res = await fetch(base + r, { redirect: "manual" });
         if (res.status >= 200 && res.status < 400) humo.ok++;
         else humo.fallos.push({ ruta: r, codigo: res.status });
+        // v367.10 — AGENTE 7 · DENSIDAD VISUAL: la misma respuesta sirve para
+        // medir el pilar 2 («no debe sentirse como un libro»). Se cuenta lo que
+        // el navegador recibe de verdad: imágenes, vídeos, lienzos, gráficos SVG
+        // y las letras que quedan al quitar etiquetas, scripts y estilos.
+        if (res.ok) {
+          const html = await res.text();
+          const sinCodigo = html
+            .replace(/<script[\s\S]*?<\/script>/gi, " ")
+            .replace(/<style[\s\S]*?<\/style>/gi, " ")
+            .replace(/<head[\s\S]*?<\/head>/gi, " ");
+          const visible = sinCodigo.replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ").trim();
+          const imagenes = (sinCodigo.match(/<img\b/gi) || []).length;
+          const videos = (sinCodigo.match(/<video\b/gi) || []).length;
+          const lienzos = (sinCodigo.match(/<canvas\b/gi) || []).length;
+          const svgs = (sinCodigo.match(/<svg\b/gi) || []).length;
+          const visuales = imagenes + videos + lienzos + svgs;
+          humo.densidad.push({
+            ruta: r,
+            kb: Math.round(html.length / 1024),
+            letras: visible.length,
+            imagenes,
+            videos,
+            lienzos,
+            svgs,
+            visuales,
+            // letras de lectura por CADA elemento visual: alto = página de libro
+            ratio: visuales ? Math.round(visible.length / visuales) : visible.length,
+          });
+        }
       } catch (e) {
         humo.fallos.push({ ruta: r, codigo: 0, error: String(e).slice(0, 80) });
       }
@@ -241,7 +274,12 @@ const informe = {
   fecha: new Date().toISOString().slice(0, 10),
   agentes: {
     rutas: { paginas: paginas.size, apis: apis.size, dinamicas: dinamicas.length },
-    enlaces: { revisados: totalEnlaces.n, rotos: enlacesRotos.length, aRutaDinamicaEnServer: enlacesRutaDinamicaEnServer.length },
+    enlaces: {
+      revisados: totalEnlaces.n,
+      rotos: enlacesRotos.length,
+      anclasRotas: anclasRotas.length,
+      aRutaDinamicaEnServer: enlacesRutaDinamicaEnServer.length,
+    },
     idioma: { clavesDiccionario: dic.size, clavesUsadas: clavesUsadas.size, faltantes: clavesFaltantes.length },
     recursos: {
       revisados: recursosVistos.size,
@@ -251,7 +289,7 @@ const informe = {
     botones: { sinAccion: botonesVacios.length, hrefAlmohadilla: hrefAlmohadilla.length, pendientes: pendientes.length },
   },
   humo,
-  detalle: { enlacesRotos, enlacesRutaDinamicaEnServer, clavesFaltantes, recursosFaltantes, botonesVacios, hrefAlmohadilla, pendientes },
+  detalle: { enlacesRotos, anclasRotas, enlacesRutaDinamicaEnServer, clavesFaltantes, recursosFaltantes, botonesVacios, hrefAlmohadilla, pendientes },
 };
 
 if (process.argv.includes("--json")) {
@@ -276,19 +314,40 @@ if (process.argv.includes("--json")) {
 const A = informe.agentes;
 console.log(`\n═══ AUDITORÍA VANGUARD · ${informe.fecha} ═══\n`);
 console.log(`AGENTE 1 · RUTAS      ${A.rutas.paginas} páginas · ${A.rutas.apis} endpoints · ${A.rutas.dinamicas} dinámicas`);
-console.log(`AGENTE 2 · ENLACES    ${A.enlaces.n = A.enlaces.revisados} revisados → ${A.enlaces.rotos} ROTOS · ${A.enlaces.aRutaDinamicaEnServer} sospechosos en servidor`);
+console.log(`AGENTE 2 · ENLACES    ${A.enlaces.revisados} revisados → ${A.enlaces.rotos} ROTOS · ${A.enlaces.anclasRotas} anclas sin destino${A.enlaces.aRutaDinamicaEnServer ? ` · ${A.enlaces.aRutaDinamicaEnServer} sospechosos en servidor` : ""}`);
 console.log(`AGENTE 3 · IDIOMA     ${A.idioma.clavesUsadas} claves usadas contra ${A.idioma.clavesDiccionario} del diccionario → ${A.idioma.faltantes} FALTAN`);
 console.log(`AGENTE 4 · RECURSOS   ${A.recursos.revisados} pedidos → ${A.recursos.faltantes} FALTAN   [contra: ${A.recursos.contra}]`);
 console.log(`AGENTE 5 · BOTONES    ${A.botones.sinAccion} sin acción · ${A.botones.hrefAlmohadilla} href="#" · ${A.botones.pendientes} TODO/FIXME`);
 if (humo) {
   console.log(`AGENTE 6 · EN VIVO    ${humo.ok}/${humo.total} rutas responden contra ${humo.base}${humo.fallos.length ? ` → ${humo.fallos.length} FALLAN` : " → todas sanas"}`);
   for (const f of humo.fallos) console.log(`  ${f.codigo} ${f.ruta}`);
+  if (humo.densidad.length) {
+    const orden = [...humo.densidad].sort((a, b) => b.ratio - a.ratio);
+    const sumaLetras = orden.reduce((a, x) => a + x.letras, 0);
+    const sumaVis = orden.reduce((a, x) => a + x.visuales, 0);
+    const mediana = orden.map((x) => x.ratio).sort((a, b) => a - b)[Math.floor(orden.length / 2)];
+    console.log(
+      `AGENTE 7 · DENSIDAD   ${sumaLetras.toLocaleString("es")} letras · ${sumaVis} elementos visuales (img/vídeo/lienzo/svg) · mediana ${mediana} letras por visual`,
+    );
+    console.log("── LAS SALAS MÁS «DE LIBRO» (letras por elemento visual) ──");
+    for (const x of orden.slice(0, 12))
+      console.log(
+        `  ${String(x.ratio).padStart(6)} · ${String(x.letras).padStart(6)} letras · ${String(x.imagenes).padStart(2)} img · ${String(x.videos).padStart(2)} vídeo · ${String(x.svgs).padStart(2)} svg · ${x.ruta}`,
+      );
+    console.log("── LAS MÁS VISUALES ──");
+    for (const x of orden.slice(-5).reverse())
+      console.log(`  ${String(x.ratio).padStart(6)} letras/visual · ${String(x.visuales).padStart(3)} visuales · ${x.ruta}`);
+  }
 }
 console.log("");
 if (enlacesRotos.length) {
   console.log("── ENLACES ROTOS ──");
   for (const e of enlacesRotos.slice(0, 40)) console.log(`  ${e.archivo}:${e.linea} → ${e.destino}`);
   if (enlacesRotos.length > 40) console.log(`  … y ${enlacesRotos.length - 40} más`);
+}
+if (anclasRotas.length) {
+  console.log("── ANCLAS SIN DESTINO (href=\"#…\" sin id) ──");
+  for (const a of anclasRotas.slice(0, 30)) console.log(`  ${a.archivo} → ${a.destino}`);
 }
 if (enlacesRutaDinamicaEnServer.length) {
   console.log("── LINK A RUTA CON PARÁMETRO DESDE SERVIDOR (rompe el App Router) ──");

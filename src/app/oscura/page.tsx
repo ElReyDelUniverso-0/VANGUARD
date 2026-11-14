@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { TEORIAS, ARMAS, CIVILIZACIONES, DOCS } from "@/lib/oscura-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v301.0 LA BIBLIOTECA OSCURA — la mina que la «Queda» de la v300 señaló
 // (oscura-data, ya servida en /guerra-hoy, pendiente solo de sala propia)
@@ -87,6 +88,36 @@ export default function OscuraPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/oscura.jpg"
+        alt="Pasillo de archivo en penumbra con estanterías que se pierden en la oscuridad"
+        volanta="LA CASA · ARCHIVO OSCURO"
+        titulo="LO OSCURO, EN 60 SEGUNDOS"
+        nivel="p"
+        acento="#ef4444"
+        sumario="Teorías, armas y civilizaciones perdidas con su documento original al lado: lo que se sospecha, separado de lo que está probado."
+        cifras={[
+          { valor: TEORIAS.length, etiqueta: "teorías", nota: "con veredicto" },
+          { valor: ARMAS.length, etiqueta: "armas", nota: "documentadas" },
+          { valor: CIVILIZACIONES.length, etiqueta: "civilizaciones", nota: "perdidas" },
+          { valor: DOCS.length, etiqueta: "documentos", nota: "de origen" }
+        ]}
+        puntos={[
+          { titulo: "CON VEREDICTO", texto:
+              "Cada teoría lleva la etiqueta editorial de la casa: lo que está probado, lo que es plausible y lo que es leyenda. El juez final es el documento." },
+          { titulo: "CON DOCUMENTO", texto:
+              "Cada entrada abre el original que la sostiene o la desmiente: CIA Reading Room, National Archives, NSA, FBI Vault, World History Encyclopedia." },
+          { titulo: "SIN MORBO", texto:
+              "El archivo oscuro no es un gabinete de curiosidades: es el lugar donde una sospecha se convierte en fuente o se cae." }
+        ]}
+        anclas={[
+          { etiqueta: "las teorías", href: "#teorias" },
+          { etiqueta: "las armas", href: "#armas" },
+          { etiqueta: "las civilizaciones", href: "#civilizaciones" }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-red-400">
@@ -135,7 +166,7 @@ export default function OscuraPage() {
           </section>
 
           {/* LAS TEORÍAS — en el orden de la fuente */}
-          <section className="mt-10" aria-label="Las teorías con veredicto">
+          <section id="teorias" className="mt-10" aria-label="Las teorías con veredicto">
             <h2 className="text-lg font-bold text-zinc-100">
               {`LAS TEORÍAS CON VEREDICTO ×${TEORIAS.length}`}
             </h2>
@@ -183,7 +214,7 @@ export default function OscuraPage() {
           </section>
 
           {/* LAS ARMAS-IDEA — en el orden de la fuente */}
-          <section className="mt-10" aria-label="Las armas-idea">
+          <section id="armas" className="mt-10" aria-label="Las armas-idea">
             <h2 className="text-lg font-bold text-zinc-100">
               {`LAS ARMAS-IDEA ×${ARMAS.length}`}
             </h2>
@@ -220,7 +251,7 @@ export default function OscuraPage() {
           </section>
 
           {/* LAS CIVILIZACIONES — en el orden de la fuente */}
-          <section className="mt-10" aria-label="Las civilizaciones que desaparecieron">
+          <section id="civilizaciones" className="mt-10" aria-label="Las civilizaciones que desaparecieron">
             <h2 className="text-lg font-bold text-zinc-100">
               {`LAS CIVILIZACIONES QUE DESAPARECIERON ×${CIVILIZACIONES.length}`}
             </h2>
@@ -257,7 +288,7 @@ export default function OscuraPage() {
           </section>
 
           {/* LOS DOCUMENTOS DESCLASIFICADOS — en el orden de la fuente */}
-          <section className="mt-10" aria-label="Los documentos desclasificados">
+          <section id="documentos" className="mt-10" aria-label="Los documentos desclasificados">
             <h2 className="text-lg font-bold text-zinc-100">
               {`LOS DOCUMENTOS DESCLASIFICADOS ×${DOCS.length}`}
             </h2>

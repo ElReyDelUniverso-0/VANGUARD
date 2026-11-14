@@ -8,6 +8,7 @@ import {
   CARTELS,
 } from "@/lib/archive-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v293.0 EL ARCHIVO MUNDIAL — la cabeza del censo del almacén de la
 // v291/v292 clasificada y pagada: archive-data (v12) es REAL de pies a
@@ -69,6 +70,36 @@ export default function ArchivoMundialPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/expedientes.jpg"
+        alt="Cajas de archivo numeradas en un depósito con luz cenital"
+        volanta="LA CASA · ARCHIVO"
+        titulo="EL ARCHIVO DEL PLANETA"
+        nivel="p"
+        acento="#94a3b8"
+        sumario="Errores de cálculo, curiosidades verificadas, muertes por guerra y crimen global: el archivo que pone número a lo que suele contarse de memoria."
+        cifras={[
+          { valor: CURIOSITIES.length, etiqueta: "curiosidades", nota: "verificadas" },
+          { valor: ERAS.length, etiqueta: "épocas", nota: "cubiertas" },
+          { valor: WAR_DEATHS.length, etiqueta: "registros", nota: "de muertes por guerra" },
+          { valor: CARTELS.length, etiqueta: "cárteles", nota: "documentados" }
+        ]}
+        puntos={[
+          { titulo: "LO QUE SE CUENTA MAL", texto:
+              "Cada curiosidad viene con el dato real y su fuente; lo que se repite de memoria suele estar mal." },
+          { titulo: "EL COSTE HUMANO", texto:
+              "Las muertes por guerra, época por época, en una sola escala comparable." },
+          { titulo: "EL CRIMEN", texto:
+              "El crimen global y los cárteles documentados, con su cifra y su año." }
+        ]}
+        anclas={[
+          { etiqueta: "las curiosidades", href: "#curiosidades" },
+          { etiqueta: "las eras", href: "#epocas" },
+          { etiqueta: "las guerras", href: "#guerras" }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -78,7 +109,7 @@ export default function ArchivoMundialPage() {
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaArchivoMundial}</p>
 
           {/* LAS ERAS — verbatim de la fuente */}
-          <section className="mt-10" aria-label="Las eras de la historia">
+          <section id="epocas" className="mt-10" aria-label="Las eras de la historia">
             <h2 className="text-lg font-bold text-zinc-100">LAS ERAS DE LA HISTORIA</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {ERAS.map((e) => (
@@ -100,7 +131,7 @@ export default function ArchivoMundialPage() {
           </section>
 
           {/* LOS CONTADORES DE GUERRA — los totales publicados de la fuente */}
-          <section className="mt-10" aria-label="Los contadores de las grandes guerras">
+          <section id="guerras" className="mt-10" aria-label="Los contadores de las grandes guerras">
             <h2 className="text-lg font-bold text-zinc-100">LOS CONTADORES DE LAS GRANDES GUERRAS</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {WAR_DEATHS.map((w) => (
@@ -123,7 +154,7 @@ export default function ArchivoMundialPage() {
           </section>
 
           {/* LA CURIOSIDADES — agrupadas por categoría en el orden de la fuente */}
-          <section className="mt-10" aria-label="Las curiosidades verídicas del archivo">
+          <section id="curiosidades" className="mt-10" aria-label="Las curiosidades verídicas del archivo">
             <h2 className="text-lg font-bold text-zinc-100">LAS CURIOSIDADES VERÍDICAS</h2>
             {CATS.map((cat) => (
               <div key={cat} className="mt-5">
@@ -159,7 +190,7 @@ export default function ArchivoMundialPage() {
           </section>
 
           {/* LOS CARTELES — expedientes verbatim con sus líderes reales */}
-          <section className="mt-10" aria-label="Los expedientes de cartel">
+          <section id="carteles" className="mt-10" aria-label="Los expedientes de cartel">
             <h2 className="text-lg font-bold text-zinc-100">LOS EXPEDIENTES DE CARTEL</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {CARTELS.map((c) => (

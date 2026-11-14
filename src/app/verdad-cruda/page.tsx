@@ -11,6 +11,7 @@ import {
   ABUSE_TYPES,
 } from "@/lib/dark-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v295.0 LA VERDAD CRUDA — el almacén menor clasificado: el censo de la
 // «Queda» de la v294 (dark-data, oscura-data, geoint, lados, monitor,
@@ -91,6 +92,36 @@ export default function VerdadCrudaPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/verdades.jpg"
+        alt="Documentos apilados bajo una luz dura sobre una mesa metálica"
+        volanta="LA CASA · VERDAD CRUDA"
+        titulo="LO QUE NO SE DICE"
+        nivel="p"
+        acento="#ef4444"
+        sumario="Abusos documentados, incidentes, drones y memoria de los caídos: el registro incómodo, con su fuente y su año."
+        cifras={[
+          { valor: WAR_ABUSES.length, etiqueta: "abusos", nota: "documentados" },
+          { valor: INCIDENTS.length, etiqueta: "incidentes", nota: "con fuente" },
+          { valor: DRONE_MODELS.length, etiqueta: "modelos", nota: "de dron" },
+          { valor: MEMORIAL_FALLEN.length, etiqueta: "caídos", nota: "en el memorial" }
+        ]}
+        puntos={[
+          { titulo: "EL REGISTRO", texto:
+              "Cada abuso y cada incidente viaja con su tipo, su año y su fuente. Sin adjetivos: el dato y el documento." },
+          { titulo: "LOS DRONES", texto:
+              "Los modelos reales, con lo que se sabe de su uso y de sus consecuencias documentadas." },
+          { titulo: "EL MEMORIAL", texto:
+              "Los caídos, con nombre y guerra: la parte que ninguna tabla de gasto recoge." }
+        ]}
+        anclas={[
+          { etiqueta: "los abusos", href: "#abusos" },
+          { etiqueta: "los incidentes", href: "#incidentes" },
+          { etiqueta: "el memorial", href: "#memorial" },
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -110,7 +141,7 @@ export default function VerdadCrudaPage() {
           </p>
 
           {/* LOS ABUSOS — agrupados por guerra en el orden de la fuente */}
-          <section className="mt-10" aria-label="Los abusos documentados">
+          <section id="abusos" className="mt-10" aria-label="Los abusos documentados">
             <h2 className="text-lg font-bold text-zinc-100">LOS ABUSOS DOCUMENTADOS</h2>
             {GUERRAS.map((guerra) => (
               <div key={guerra} className="mt-5">
@@ -146,7 +177,7 @@ export default function VerdadCrudaPage() {
           </section>
 
           {/* EL MEMORIAL — las guerras en el orden que la fuente declara */}
-          <section className="mt-10" aria-label="El memorial de prensa">
+          <section id="memorial" className="mt-10" aria-label="El memorial de prensa">
             <h2 className="text-lg font-bold text-zinc-100">EL MEMORIAL DE PRENSA</h2>
             {GUERRAS_MEMORIAL.map((w) => (
               <div key={w} className="mt-5">
@@ -182,7 +213,7 @@ export default function VerdadCrudaPage() {
           </section>
 
           {/* LOS INCIDENTES — agrupados por tipo en el orden de la fuente */}
-          <section className="mt-10" aria-label="Los incidentes documentados">
+          <section id="incidentes" className="mt-10" aria-label="Los incidentes documentados">
             <h2 className="text-lg font-bold text-zinc-100">LOS INCIDENTES DOCUMENTADOS</h2>
             {TIPOS.map((t) => (
               <div key={t} className="mt-5">
@@ -213,7 +244,7 @@ export default function VerdadCrudaPage() {
           </section>
 
           {/* LOS SISTEMAS DEL CIELO — la anatomía de la guerra de drones */}
-          <section className="mt-10" aria-label="Los sistemas de dron">
+          <section id="drones" className="mt-10" aria-label="Los sistemas de dron">
             <h2 className="text-lg font-bold text-zinc-100">LOS SISTEMAS DEL CIELO</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {DRONE_MODELS.map((d) => (
