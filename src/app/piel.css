@@ -219,3 +219,16 @@ body .vx-ps .vx-ps-punto h2, body:has(.vx-carcasa) main .vx-ps-punto h2 { margin
 .vx-enl-chip::after { content: "→"; color: #e8c56a; transition: transform 0.2s ease; }
 .vx-enl-chip:hover { background: #e8c56a; border-color: #e8c56a; color: #06080c; }
 .vx-enl-chip:hover::after { color: #06080c; transform: translateX(3px); }
+
+/* ── el cielo viejo (luna fija + resplandor) no compite con la retícula ── */
+html:has(.vx-carcasa)::before, html:has(.vx-carcasa)::after,
+body:has(.vx-carcasa)::before, body:has(.vx-carcasa)::after,
+html:has(.vx)::before, html:has(.vx)::after { display: none !important; }
+
+/* ── capas flotantes: regla «máximo una cosa flotante» en el móvil ── */
+@media (max-width: 979px) {
+  body:has(.vx-carcasa) .fixed.bottom-2.left-2 { display: none !important; }
+  body:has(.vx-carcasa) .fixed.bottom-2.right-2 { bottom: 78px !important; }
+}
+body:has(.vx-carcasa) .fixed.bottom-2.left-2 button,
+body:has(.vx-carcasa) .fixed.bottom-2.right-2 { border-radius: 4px !important; background-color: rgba(6, 8, 12, 0.9) !important; }

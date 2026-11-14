@@ -67,6 +67,9 @@ body:has(.vx) { background: #06080c; }
 .vx-mira::before { top: -1px; left: -1px; border-top-width: 2px; border-left-width: 2px; }
 .vx-mira::after { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
 .vx-mira:hover::before, .vx-mira:hover::after { width: 22px; height: 22px; opacity: 1; }
+/* esquinas sueltas para piezas que ya usan sus ::before/::after (héroe, salas) */
+.vx-esq { position: absolute !important; inset: 0; z-index: 3; pointer-events: none; }
+:hover > .vx-esq::before, :hover > .vx-esq::after { width: 22px; height: 22px; opacity: 1; }
 
 /* sello de cable / kicker */
 .vx-sello {
@@ -206,7 +209,7 @@ body:has(.vx) { background: #06080c; }
   content: ""; position: absolute; inset: 0; z-index: -1;
   background:
     repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 1px, transparent 1px 3px),
-    linear-gradient(180deg, rgba(6,8,12,.35) 0%, rgba(6,8,12,.1) 25%, rgba(6,8,12,.55) 55%, rgba(6,8,12,.97) 100%);
+    linear-gradient(180deg, rgba(6,8,12,.45) 0%, rgba(6,8,12,.15) 22%, rgba(6,8,12,.72) 52%, rgba(6,8,12,.98) 88%);
 }
 .vx-heroe-sellos { position: absolute; top: 18px; left: 20px; right: 20px; display: flex; justify-content: space-between; gap: 10px; z-index: 2; }
 .vx-heroe-sellos span { font-family: var(--vx-dato); font-size: 11px; letter-spacing: .14em; color: rgba(243,238,226,.8); background: rgba(6,8,12,.55); border: 1px solid var(--vx-line); padding: 5px 9px; text-transform: uppercase; }
@@ -394,4 +397,12 @@ body:has(.vx) { background: #06080c; }
 
 @media (prefers-reduced-motion: reduce) {
   .vx *, .vx *::before, .vx *::after { animation: none !important; transition: none !important; }
+}
+
+/* v401 — ajustes de móvil */
+.vx-vivo { white-space: nowrap; }
+@media (max-width: 560px) {
+  .vx-logo-t small { display: none; }
+  .vx-heroe-sellos span:last-child { display: none; }
+  .vx-heroe-sellos span { font-size: 10px; }
 }
