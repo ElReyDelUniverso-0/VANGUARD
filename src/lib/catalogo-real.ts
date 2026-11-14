@@ -189,6 +189,9 @@ export const COSAS_REALES: CosaReal[] = [
   { id: "real-158", tipo: "panel", nombre: "BARRA MUNDO", archivo: "src/components/vanguard/barra-mundo.tsx", lema: "v215.0 EL MUNDO — la barra superior compartida por las tres puertas" },
   { id: "real-159", tipo: "panel", nombre: "BOOT SCREEN", archivo: "src/components/vanguard/boot-screen.tsx", lema: "v13 — PANTALLA DE CARGA MILITAR: globo 3D girando (CSS), barra de progreso" },
   { id: "real-160", tipo: "panel", nombre: "BUSCADOR", archivo: "src/components/vanguard/buscador.tsx", lema: "VANGUARD v170.0 — BUSCADOR UNIVERSAL (fórmula Google)" },
+  { id: "real-161", tipo: "motor", nombre: "ACTIVOS MILITARES", archivo: "src/lib/3d/activos-militares.ts", lema: "(src/lib/3d/activos-militares.ts)" },
+  { id: "real-162", tipo: "panel", nombre: "UNIFORMES 3D", archivo: "src/components/vanguard/uniformes-3d.tsx", lema: "Orden del Dueño: «mejora los uniformes, personajes, vehículos militares; no" },
+  { id: "real-163", tipo: "panel", nombre: "PARQUE MILITAR CARGA", archivo: "src/components/vanguard/parque-militar-carga.tsx", lema: "`next/dynamic({ ssr: false })` no se permite dentro de un Server Component en" },
 ];
 
 export const TOTAL_REAL = COSAS_REALES.length;

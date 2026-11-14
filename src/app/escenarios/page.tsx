@@ -7,6 +7,8 @@ import { ejecutarEscenario, catalogoSimulacion } from "@/lib/nucleo/simulacion";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { EscenarioControles } from "@/components/vanguard/escenario-controles";
+// v367.8 EL PARQUE MILITAR — las piezas reales (CC0) del simulador
+import { ParqueMilitarCarga } from "@/components/vanguard/parque-militar-carga";
 
 // ============================================================
 // v224.0 EL ESTRATEGA — LA PUERTA DEL ESCENARIO (/escenarios)
@@ -155,6 +157,23 @@ export default async function EscenariosPage() {
 
         {/* EL ESCENARIO + SUS MANDOS (isla client) */}
         <EscenarioControles inicial={escenario} />
+
+        {/* v367.8 EL PARQUE MILITAR — el escenario se puede VER con las piezas
+            reales que ya existían (modelos CC0 de Quaternius, copiados sin
+            retocar). El uniforme cambia con el bando elegido en la escena. */}
+        <section className="mt-10" aria-label="El parque militar del escenario">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+            LAS PIEZAS REALES DEL ESCENARIO — personajes, carros y mech
+          </p>
+          <p className="mt-2 max-w-3xl text-[13px] text-zinc-400 leading-relaxed">
+            Un ejercicio sin unidades a la vista es una tabla. Estas son las
+            unidades: modelos 3D que ya existían (Quaternius, CC0 1.0),
+            copiados a la casa tal cual, con el uniforme del bando encima.
+          </p>
+          <div className="mt-3">
+            <ParqueMilitarCarga alto={400} compacto />
+          </div>
+        </section>
 
         {/* CÓMO FUNCIONA — la cadena separada, a la vista */}
         <section className="mt-12" aria-label="Cómo se calcula">

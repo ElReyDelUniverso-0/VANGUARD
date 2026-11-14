@@ -22,9 +22,10 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // v367.5: el Dueño mandó «sigue agregando las 100 ideas, cópialas» — la lista
 // pasó de 100 a 140 piezas (20 puntos de datos, 12 motores y 8 paneles más).
 // v367.6: «sigue agregando copiando y agregando» — de 140 a 160 (10 puntos de
-// datos, 6 motores, 3 paneles y la sala nueva /perfil). El número del título y
-// del JSON-LD se calcula solo desde TOTAL_REAL: aquí no se escribe una cifra
-// a mano.
+// datos, 6 motores, 3 paneles y la sala nueva /perfil).
+// v367.8: +3 piezas del parque militar (el motor de activos y sus dos paneles).
+// El número del título y del JSON-LD se calcula solo desde TOTAL_REAL: aquí no
+// se escribe una cifra a mano.
 // ============================================================
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
