@@ -245,7 +245,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
               <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-red-300 border border-red-500/60 bg-red-500/15 rounded px-2 py-0.5">
                 ● ÚLTIMA HORA
               </span>
-              <span className="font-mono text-[10px] uppercase text-red-400/90">{edadViva(rompiendo.fecha)}</span>
+              <span className="font-mono text-[10px] uppercase text-red-400/90" suppressHydrationWarning>{edadViva(rompiendo.fecha)}</span>
             </div>
             <p className="mt-2 font-display text-lg font-bold leading-snug text-zinc-100">
               {rompiendo.t}
@@ -335,7 +335,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
                       {c.t}
                     </p>
                     <p className="mt-1.5 font-mono text-[8px] uppercase tracking-widest text-zinc-500 truncate">
-                      {c.f} · {edadViva(c.fecha)}
+                      {c.f} · <span suppressHydrationWarning>{edadViva(c.fecha)}</span>
                     </p>
                   </Link>
                 );
@@ -416,7 +416,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
                       ● NUEVO
                     </span>
                   )}
-                  <span className="ml-auto font-mono text-[9px] uppercase text-zinc-500 tabular-nums">
+                  <span className="ml-auto font-mono text-[9px] uppercase text-zinc-500 tabular-nums" suppressHydrationWarning>
                     {edadViva(c.fecha)}
                   </span>
                 </div>
