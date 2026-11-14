@@ -68,8 +68,8 @@ body:has(.vx) { background: #06080c; }
 .vx-mira::after { bottom: -1px; right: -1px; border-bottom-width: 2px; border-right-width: 2px; }
 .vx-mira:hover::before, .vx-mira:hover::after { width: 22px; height: 22px; opacity: 1; }
 /* esquinas sueltas para piezas que ya usan sus ::before/::after (héroe, salas) */
-.vx-esq { position: absolute !important; inset: 0; z-index: 3; pointer-events: none; }
-:hover > .vx-esq::before, :hover > .vx-esq::after { width: 22px; height: 22px; opacity: 1; }
+.vx-esquinas { position: absolute !important; inset: 0; z-index: 3; pointer-events: none; }
+:hover > .vx-esquinas::before, :hover > .vx-esquinas::after { width: 22px; height: 22px; opacity: 1; }
 
 /* sello de cable / kicker */
 .vx-sello {

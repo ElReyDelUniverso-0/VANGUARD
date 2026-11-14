@@ -232,3 +232,5 @@ html:has(.vx)::before, html:has(.vx)::after { display: none !important; }
 }
 body:has(.vx-carcasa) .fixed.bottom-2.left-2 button,
 body:has(.vx-carcasa) .fixed.bottom-2.right-2 { border-radius: 4px !important; background-color: rgba(6, 8, 12, 0.9) !important; }
+.vx-ps-sellos em { font-style: normal; }
+@media (max-width: 640px) { .vx-ps-sellos em { display: none; } }

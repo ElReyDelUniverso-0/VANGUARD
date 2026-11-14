@@ -121,7 +121,7 @@ export default async function Portada() {
         {heroe ? (
           <section className="vx-top" aria-label="Lo más importante ahora">
             <Link href={`/lectura/${heroe.id}`} className="vx-heroe vx-entra">
-              <span className="vx-mira vx-esq" aria-hidden />
+              <span className="vx-mira vx-esquinas" aria-hidden />
               <Foto src={heroe.imagen} alt={heroe.titulo} region={heroe.region} prioridad />
               <div className="vx-heroe-sellos" aria-hidden>
                 <span>
@@ -207,7 +207,7 @@ export default async function Portada() {
           <div className="vx-salas">
             {SALAS.map((s) => (
               <Link key={s.href} href={s.href} className="vx-sala">
-                <span className="vx-mira vx-esq" aria-hidden />
+                <span className="vx-mira vx-esquinas" aria-hidden />
                 <div className="vx-sala-bg" style={{ backgroundImage: `url(${s.img})` }} />
                 <span className="vx-sello">{s.tag}</span>
                 <h3>{s.titulo}</h3>

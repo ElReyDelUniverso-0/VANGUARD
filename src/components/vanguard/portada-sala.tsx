@@ -111,7 +111,8 @@ export function PortadaSala({
         <div className="vx-ps-velo" aria-hidden />
         <div className="vx-ps-sellos" aria-hidden>
           <span>
-            <b>◆ EXPEDIENTE {exp}</b> · CLASIFICACIÓN ABIERTA
+            <b>◆ EXPEDIENTE {exp}</b>
+            <em> · CLASIFICACIÓN ABIERTA</em>
           </span>
           <span>VANGUARD · SALA</span>
         </div>
