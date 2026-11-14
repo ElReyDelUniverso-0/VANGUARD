@@ -8,29 +8,23 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LogoVanguard } from "./logo";
 import { Reloj } from "./reloj";
+import { moduloDe } from "./modulos";
 import { IcoBuscar, IcoInicio, IcoJuego, IcoMapa, IcoPerfil, IcoVivo } from "./iconos";
 
 export const NAV = [
   { href: "/", label: "Portada" },
   { href: "/mundo", label: "Mapa" },
   { href: "/guerra-hoy", label: "Conflictos" },
-  { href: "/pulso-mundial", label: "Análisis" },
+  { href: "/pulso-mundial", label: "Inteligencia" },
   { href: "/cuartel", label: "Juego" },
 ];
 
-// v401 — cada sala de la casa cuelga de una de las cinco secciones
-const FAMILIAS: Record<string, string[]> = {
-  "/": ["/lectura", "/novedades", "/galeria", "/audios", "/musica"],
-  "/mundo": ["/atlas", "/archivo-mundial", "/escenarios", "/poder", "/divisas"],
-  "/guerra-hoy": ["/conflictos", "/conflicto", "/en-vivo", "/zona-cero", "/ver-guerra", "/cronica", "/verdad-cruda"],
-  "/pulso-mundial": ["/espia", "/servicios", "/rostros", "/centinela", "/torre", "/oscura", "/historia", "/calidad", "/voz", "/traductor", "/nucleo", "/catalogo"],
-  "/cuartel": ["/armeria", "/mision", "/objetivos", "/escudo", "/modo"],
-};
-
+// v402 — cada sala cuelga de uno de los cinco módulos (fuente única: modulos.ts)
 function activo(ruta: string, href: string) {
-  const dentro = (r: string) => ruta === r || ruta.startsWith(r + "/");
-  if (href === "/") return ruta === "/" || (FAMILIAS["/"] ?? []).some(dentro);
-  return dentro(href) || (FAMILIAS[href] ?? []).some(dentro);
+  const m = moduloDe(ruta);
+  if (href === "/") return !m && (ruta === "/" || ruta.startsWith("/lectura"));
+  if (m) return m.nav === href;
+  return ruta === href || ruta.startsWith(href + "/");
 }
 
 export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {

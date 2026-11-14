@@ -12,10 +12,11 @@
 // ============================================================
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Cabecera, BarraMovil } from "./cabecera";
+import { moduloDe } from "./modulos";
 
-const SIN_CARCASA = ["/lectura", "/cuartel", "/clasico", "/vanguard2", "/vertigo", "/teatro-3d", "/universo", "/offline", "/api"];
+const SIN_CARCASA = ["/lectura", "/cuartel", "/clasico", "/vanguard2", "/vertigo", "/offline", "/api"];
 
 export function conCarcasa(ruta: string | null): boolean {
   if (!ruta || ruta === "/" || ruta === "/index") return false;
@@ -76,12 +77,54 @@ function TeletipoVivo() {
   );
 }
 
+// v402 LOS CINCO MÓDULOS — la barra de pestañas del módulo: cada sala es una
+// pestaña de su módulo, con el nombre del módulo a la izquierda (sello de oro).
+function Pestanas({ ruta }: { ruta: string }) {
+  const m = moduloDe(ruta);
+  const refActiva = useRef<HTMLAnchorElement | null>(null);
+  useEffect(() => {
+    // centra la pestaña activa dentro de su carril (sin mover la página)
+    const el = refActiva.current;
+    const carril = el?.parentElement;
+    if (el && carril) carril.scrollLeft = el.offsetLeft - carril.clientWidth / 2 + el.clientWidth / 2;
+  }, [ruta]);
+  if (!m) return null;
+  const activa = (h: string) => ruta === h || ruta.startsWith(h + "/");
+  return (
+    <nav className="vx-pest" aria-label={`Módulo ${m.nombre}`}>
+      <div className="vx-wrap vx-pest-in">
+        <Link href={m.nav} className="vx-pest-mod">
+          <i aria-hidden /> {m.nombre}
+        </Link>
+        <div className="vx-pest-lista">
+          {m.pestanas.map((p) => {
+            const on = activa(p.href) || (p.href === "/conflictos" && ruta.startsWith("/conflicto/"));
+            return (
+              <Link
+                key={p.href}
+                href={p.href}
+                ref={on ? refActiva : undefined}
+                data-on={on ? "1" : "0"}
+                aria-current={on ? "page" : undefined}
+              >
+                {p.vivo && <span className="vx-punto" />}
+                {p.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
+  );
+}
+
 export function Carcasa() {
   const ruta = usePathname();
   if (!conCarcasa(ruta)) return null;
   return (
     <div className="vx vx-carcasa">
       <Cabecera />
+      <Pestanas ruta={ruta ?? ""} />
       <TeletipoVivo />
       <BarraMovil />
     </div>

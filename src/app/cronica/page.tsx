@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
@@ -70,179 +70,190 @@ export default async function CronicaPage() {
     isPartOf: { "@type": "WebSite", name: "VANGUARD", url: SITE_URL },
     inLanguage: "es",
     dateModified: parte.consultadoEn,
+    image: parte.claves.find((c) => c.imagen)?.imagen ?? undefined,
   };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
-        <div className="border-b border-zinc-800 bg-zinc-900/60">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-            >
-              <VanguardMarkSvg size={18} idPrefix="cronica-mark" />
-              <span>VANGUARD</span>
-            </Link>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-              CORTE · {fechaHora(parte.consultadoEn)}
-            </span>
-          </div>
-        </div>
+        {/* v402.0 LA CRÓNICA, PERFECCIONADA — modelo «The Morning» (NYT) y Axios
+            Smart Brevity: cinco claves con foto, luego teatro por teatro, luego
+            quién firmó. Alimentada por los cables VIVOS (antes salía en cero). */}
+        <PortadaSala
+          imagen="/ilustraciones/briefing.jpg"
+          alt="Mesa de briefing nocturna con carpetas, mapa y lámpara encendida"
+          volanta={`Conflictos · Crónica del ${fechaCorta(parte.consultadoEn)}`}
+          titulo="Qué pasó hoy, de verdad"
+          sumario="El parte del día armado solo con cables reales: las cinco claves, cada frente con su última señal y los medios que firmaron. Si una fuente calla, aquí no se rellena el hueco."
+          cifras={[
+            { valor: parte.censo.ultimas24, etiqueta: "Cables en 24 h", nota: "con su hora de publicación" },
+            { valor: parte.censo.teatros24, etiqueta: "Frentes con señal", nota: "en las últimas 24 h" },
+            { valor: parte.censo.medios24, etiqueta: "Medios que firmaron", nota: "en las últimas 24 h" },
+            {
+              valor: parte.horaCargada ? `${String(parte.horaCargada.hora).padStart(2, "0")}:00` : "—",
+              etiqueta: "Hora más cargada",
+              nota: parte.horaCargada ? `UTC · ${parte.horaCargada.n} cables` : "sin datos",
+            },
+          ]}
+          anclas={[
+            { etiqueta: "Las 5 claves", href: "#claves" },
+            { etiqueta: "Frente por frente", href: "#frentes" },
+            { etiqueta: "Quién firmó", href: "#medios" },
+          ]}
+        />
 
-        <article className="mx-auto max-w-3xl px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">La Crónica del Día</h1>
-          <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-            No es un resumen de lo que creemos que pasó: es el parte de lo que el archivo de la
-            casa registró, con la fecha de publicación de cada pieza. Si una fuente no respondió,
-            esta crónica no rellena el hueco.
-          </p>
-
+        <div className="vx-cron">
           {!parte.ok ? (
-            <div className="mt-8 rounded-md border border-red-500/30 bg-red-500/5 p-4">
-              <p className="font-mono text-[11px] uppercase tracking-widest text-red-300">
-                SIN SEÑAL
-              </p>
-              <p className="mt-2 text-sm text-zinc-400">{parte.nota}</p>
+            <div className="vx-cron-vacio">
+              <b>SIN SEÑAL</b>
+              <p>{parte.nota}</p>
             </div>
           ) : (
             <>
-              {/* ── EL CENSO DEL DÍA ── */}
-              <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <Cifra etiqueta="EN 24 H" valor={parte.censo.ultimas24} destacada />
-                <Cifra etiqueta="HOY" valor={parte.censo.hoy} />
-                <Cifra etiqueta="TEATROS 24 H" valor={parte.censo.teatros24} />
-                <Cifra etiqueta="MEDIOS 24 H" valor={parte.censo.medios24} />
+              {/* ── ① LAS CINCO CLAVES ── */}
+              <section id="claves" className="vx-cron-sec" aria-labelledby="t-claves">
+                <span className="vx-cron-sello">◆ Sección 01 · Lo esencial</span>
+                <h2 id="t-claves">Las cinco claves del día</h2>
+                {parte.claves.length === 0 ? (
+                  <p className="vx-cron-nota">Los medios no han enviado cables frescos en las últimas 36 horas.</p>
+                ) : (
+                  <ol className="vx-cron-claves">
+                    {parte.claves.map((c, i) => (
+                      <li key={c.id}>
+                        <Link href={c.enlace ?? "#"} className="vx-cron-clave">
+                          <span className="vx-cron-num">{String(i + 1).padStart(2, "0")}</span>
+                          <span className="vx-cron-foto" style={{ background: c.color ?? "#1b2230" }}>
+                            {c.imagen ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={c.imagen} alt="" loading={i < 2 ? "eager" : "lazy"} referrerPolicy="no-referrer" />
+                            ) : null}
+                          </span>
+                          <span className="vx-cron-txt">
+                            {c.nombreTeatro && (
+                              <span className="vx-cron-tag" style={{ color: c.color ?? undefined }}>
+                                <i style={{ background: c.color ?? undefined }} /> {c.nombreTeatro}
+                              </span>
+                            )}
+                            <b>{c.titulo}</b>
+                            {c.resumen && <span className="vx-cron-res">{c.resumen}</span>}
+                            <small>
+                              {c.fuente} · {horaLocal(c.publicado)}
+                            </small>
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ol>
+                )}
               </section>
 
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.12em] text-zinc-600">
-                VENTANA MEDIDA · los {parte.ventana.cables} cables más recientes de{" "}
-                {parte.ventana.dias} días (tope {VENTANA_CABLES}) · archivo total {parte.censo.archivo}{" "}
-                cables
-              </p>
-
-              {/* ── EL PULSO DEL PLANETA ── */}
-              <section className="mt-8 rounded-md border border-amber-500/30 bg-amber-500/5 p-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-400">
-                  EL PULSO DE LAS ÚLTIMAS 24 H
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-300">
+              {/* ── ② FRENTE POR FRENTE ── */}
+              <section id="frentes" className="vx-cron-sec" aria-labelledby="t-frentes">
+                <span className="vx-cron-sello">◆ Sección 02 · El tablero</span>
+                <h2 id="t-frentes">Frente por frente</h2>
+                <p className="vx-cron-nota">
                   {parte.horaCargada
-                    ? `La hora más cargada del planeta fue las ${parte.horaCargada.hora}:00 UTC, con ${parte.horaCargada.n} cables entrando a la vez.`
-                    : "Sin cables suficientes en 24 h para dibujar el pulso."}{" "}
+                    ? `La hora más cargada fue las ${parte.horaCargada.hora}:00 UTC, con ${parte.horaCargada.n} cables a la vez. `
+                    : ""}
                   {parte.masReciente
-                    ? `El último cable que entró es de ${parte.masReciente.fuente}, a las ${fechaHora(parte.masReciente.publicado)}.`
+                    ? `El último cable entró de ${parte.masReciente.fuente} a las ${fechaHora(parte.masReciente.publicado)}.`
                     : ""}
                 </p>
-              </section>
-
-              {/* ── LOS TEATROS QUE HABLARON ── */}
-              <section className="mt-8">
-                <h2 className="text-lg font-bold text-amber-300">
-                  Los teatros con señal en la ventana
-                </h2>
-                {parte.censo.ultimas24 === 0 ? (
-                  <p className="mt-2 rounded-sm border border-zinc-800 bg-zinc-900/40 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.12em] text-zinc-500">
-                    El archivo no registró cables nuevos en las últimas 24 h — estos teatros son
-                    los de los últimos 7 días. Se dice, no se disimula.
-                  </p>
-                ) : null}
                 {parte.teatros.length === 0 ? (
-                  <p className="mt-2 text-sm text-zinc-500">
-                    Ningún teatro con señal en la ventana. Sin datos no hay titular.
-                  </p>
+                  <p className="vx-cron-nota">Ningún frente con señal en la ventana. Sin datos no hay titular.</p>
                 ) : (
-                  <ul className="mt-3 flex flex-col gap-2">
+                  <div className="vx-cron-frentes">
                     {parte.teatros.map((t) => (
-                      <li
+                      <Link
                         key={t.tag}
-                        className="rounded-sm border border-zinc-800 bg-zinc-900/40 px-3 py-2"
+                        href={`/conflicto/${t.tag}`}
+                        className="vx-cron-frente"
+                        style={{ ["--fc" as string]: t.ultimo?.color ?? "#e8c56a" }}
                       >
-                        <div className="flex items-baseline justify-between gap-3">
-                          <Link
-                            href={`/conflicto/${t.tag}`}
-                            className="font-mono text-[11px] uppercase tracking-widest text-amber-400 hover:text-amber-300"
-                          >
-                            {t.tag} ▸
-                          </Link>
-                          <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
-                            {t.hoy} hoy · {t.semana} en 7 d
-                          </span>
-                        </div>
-                        {t.ultimo ? (
-                          <p className="mt-1 text-sm leading-snug text-zinc-400">
-                            {t.ultimo.titulo}{" "}
-                            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
-                              — {t.ultimo.fuente} · {fechaHora(t.ultimo.publicado)}
+                        <span className="vx-cron-frente-top">
+                          <b>{t.ultimo?.nombreTeatro ?? t.tag}</b>
+                          <small>
+                            {t.hoy} hoy · {t.semana} en {VENTANA_DIAS} d
+                          </small>
+                        </span>
+                        {t.ultimo && (
+                          <span className="vx-cron-frente-ult">
+                            {t.ultimo.imagen ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={t.ultimo.imagen} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                            ) : null}
+                            <span>
+                              {t.ultimo.titulo}
+                              <small>
+                                {t.ultimo.fuente} · {horaLocal(t.ultimo.publicado)}
+                              </small>
                             </span>
-                          </p>
-                        ) : null}
-                      </li>
+                          </span>
+                        )}
+                      </Link>
                     ))}
-                  </ul>
+                  </div>
                 )}
               </section>
 
-              {/* ── LOS MEDIOS QUE FIRMARON ── */}
-              <section className="mt-8">
-                <h2 className="text-lg font-bold text-amber-300">
-                  Los medios en la ventana
-                </h2>
+              {/* ── ③ QUIÉN FIRMÓ ── */}
+              <section id="medios" className="vx-cron-sec" aria-labelledby="t-medios">
+                <span className="vx-cron-sello">◆ Sección 03 · Las fuentes</span>
+                <h2 id="t-medios">Quién firmó</h2>
                 {parte.medios.length === 0 ? (
-                  <p className="mt-2 text-sm text-zinc-500">Ningún medio en la ventana.</p>
+                  <p className="vx-cron-nota">Ningún medio en la ventana.</p>
                 ) : (
-                  <ul className="mt-3 flex flex-wrap gap-2">
+                  <ul className="vx-cron-medios">
                     {parte.medios.map((m) => (
-                      <li
-                        key={m.medio}
-                        className="rounded-sm border border-zinc-700 bg-zinc-900/70 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-zinc-300"
-                        title={`último: ${m.ultimo ? fechaHora(m.ultimo) : "sin fecha"}`}
-                      >
-                        {m.medio}{" "}
-                        <span className="text-amber">{m.hoy}</span>
-                        <span className="text-zinc-600">/{m.enVentana}</span>
+                      <li key={m.medio} title={`último: ${m.ultimo ? fechaHora(m.ultimo) : "sin fecha"}`}>
+                        <b>{m.medio}</b>
+                        <span>
+                          {m.hoy} hoy <i>/ {m.enVentana} en la ventana</i>
+                        </span>
                       </li>
                     ))}
                   </ul>
                 )}
+                <p className="vx-cron-nota">
+                  Ventana medida: los {parte.ventana.cables} cables más recientes de {parte.ventana.dias} días (tope{" "}
+                  {VENTANA_CABLES}).
+                </p>
+                <div className="vx-cron-copiar">
+                  <CronicaCopiar texto={texto} />
+                </div>
               </section>
-
-              <div className="mt-6">
-                <CronicaCopiar texto={texto} />
-              </div>
             </>
           )}
 
           <FuenteYFecha
-            fuente="el archivo de cables de la casa (tabla NewsItem)"
+            fuente="los cables vivos de los medios (BBC Mundo, France 24, El País, Europa Press…) y, de respaldo, el archivo de la casa"
             consultado={parte.consultadoEn}
             publicado={parte.masReciente?.publicado ?? null}
             nota={`Corte hecho a las ${fechaHora(parte.consultadoEn)}. La fecha de cada cable es la de su publicación real, nunca la de esta consulta.`}
           />
 
-          <section className="mt-10 pb-10">
-            <EnlacesNucleo enlaces={PUERTAS_DE_LA_CRONICA} titulo="CONECTA CON EL NÚCLEO" />
+          <section className="vx-cron-sec">
+            <EnlacesNucleo enlaces={PUERTAS_DE_LA_CRONICA} titulo="Sigue en Vanguard" />
           </section>
-        </article>
+        </div>
       </main>
     </>
   );
 }
 
-function Cifra({
-  etiqueta,
-  valor,
-  destacada = false,
-}: {
-  etiqueta: string;
-  valor: number;
-  destacada?: boolean;
-}) {
-  return (
-    <div className="rounded-md border border-zinc-800 bg-zinc-900/40 px-3 py-3">
-      <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-zinc-500">{etiqueta}</p>
-      <p className={`font-mono text-2xl ${destacada ? "text-amber" : "text-zinc-100"}`}>{valor}</p>
-    </div>
-  );
+function horaLocal(iso: string): string {
+  try {
+    return new Date(iso).toLocaleTimeString("es", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "America/Santo_Domingo" });
+  } catch {
+    return "";
+  }
+}
+
+function fechaCorta(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("es", { day: "numeric", month: "long", timeZone: "America/Santo_Domingo" });
+  } catch {
+    return "día";
+  }
 }

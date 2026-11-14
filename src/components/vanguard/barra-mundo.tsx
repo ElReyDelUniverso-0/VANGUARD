@@ -41,7 +41,7 @@ const PUERTAS: Array<{ id: Puerta; href: string; texto: string; clase: string; a
 
 export function BarraMundo({ activa }: { activa: Puerta }) {
   return (
-    <div className="border-b border-zinc-800 bg-zinc-900/60">
+    <div className="vx-sub-viejo border-b border-zinc-800 bg-zinc-900/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-5 py-3 flex items-center justify-between gap-3 flex-wrap">
         <Link
           href="/"

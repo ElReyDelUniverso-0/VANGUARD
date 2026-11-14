@@ -25,6 +25,8 @@
 import { db } from "@/lib/db";
 import { APP_VERSION, APP_CODENAME } from "@/lib/version";
 import { fechaHora } from "@/lib/procedencia";
+import { obtenerNotas, relevancia, type Nota } from "@/lib/portada/notas";
+import { CONFLICTOS, REGIONES, conflictoPorKey } from "@/lib/portada/clasificar";
 
 /** Cuántos cables entran en la ventana de cálculo (se declara en la sala). */
 export const VENTANA_CABLES = 800;
@@ -37,6 +39,12 @@ export interface CableBreve {
   fuente: string;
   publicado: string;
   teatro: string | null;
+  /** v402: foto real del cable (si el medio la sirve) y adónde lleva leerlo */
+  imagen?: string | null;
+  resumen?: string;
+  enlace?: string;
+  nombreTeatro?: string | null;
+  color?: string | null;
 }
 
 export interface SenalTeatro {
@@ -78,6 +86,8 @@ export interface ParteCronica {
   horaCargada: { hora: number; n: number } | null;
   masReciente: CableBreve | null;
   masAntiguo: CableBreve | null;
+  /** v402: las cinco claves del día (frescas, con foto, de un frente activo) */
+  claves: CableBreve[];
   nota: string;
 }
 
@@ -101,6 +111,7 @@ function parteVacia(nota: string): ParteCronica {
     horaCargada: null,
     masReciente: null,
     masAntiguo: null,
+    claves: [],
     nota,
   };
 }
@@ -116,7 +127,8 @@ export async function parteDelDia(): Promise<ParteCronica> {
     const desde24 = new Date(ahora.getTime() - 86_400_000);
     const claveHoy = aIso(ahora).slice(0, 10);
 
-    const filas = await db.newsItem.findMany({
+    const filasBD = await db.newsItem
+      .findMany({
       where: { publishedAt: { gte: desde7d } },
       orderBy: { publishedAt: "desc" },
       take: VENTANA_CABLES,
@@ -127,7 +139,41 @@ export async function parteDelDia(): Promise<ParteCronica> {
         publishedAt: true,
         conflictTag: true,
       },
-    });
+      })
+      .catch(() => [] as never[]);
+
+    // v402.0 — LA CRÓNICA VUELVE A RESPIRAR: en producción la base SQLite viaja
+    // congelada con el despliegue (solo lectura), así que el parte salía en
+    // CERO. Ahora el parte se alimenta PRIMERO de los cables vivos de los medios
+    // (los mismos de la portada, ≤72 h, con foto) y la base queda de respaldo.
+    type Fila = (typeof filasBD)[number] & { imagen?: string | null; resumen?: string; enlace?: string };
+    let vivas: Fila[] = [];
+    let notasVivas: Nota[] = [];
+    try {
+      notasVivas = await obtenerNotas();
+      vivas = notasVivas.map((n) => {
+        const c = conflictoPorKey(n.conflicto);
+        return {
+          id: n.id,
+          title: n.titulo,
+          source: n.fuente,
+          publishedAt: new Date(n.fecha),
+          conflictTag: c?.teatro ?? null,
+          imagen: n.imagen,
+          resumen: n.resumen,
+          enlace: `/lectura/${n.id}`,
+        };
+      });
+    } catch {
+      vivas = []; // sin medios vivos: queda el archivo
+    }
+    const vistos = new Set(vivas.map((v) => v.title.toLowerCase().slice(0, 60)));
+    const filas: Fila[] = [
+      ...vivas,
+      ...filasBD.filter((r) => r.publishedAt >= desde7d && !vistos.has(r.title.toLowerCase().slice(0, 60))),
+    ]
+      .sort((x, y) => +y.publishedAt - +x.publishedAt)
+      .slice(0, VENTANA_CABLES);
 
     let archivo = 0;
     try {
@@ -136,13 +182,21 @@ export async function parteDelDia(): Promise<ParteCronica> {
       archivo = 0; // el total es un adorno honesto: si falla, no tumba el parte
     }
 
-    const breve = (r: (typeof filas)[number]): CableBreve => ({
-      id: r.id,
-      titulo: r.title,
-      fuente: r.source,
-      publicado: aIso(r.publishedAt),
-      teatro: r.conflictTag ?? null,
-    });
+    const breve = (r: Fila): CableBreve => {
+      const c = r.conflictTag ? CONFLICTOS.find((x) => x.teatro === r.conflictTag) : undefined;
+      return {
+        id: r.id,
+        titulo: r.title,
+        fuente: r.source,
+        publicado: aIso(r.publishedAt),
+        teatro: r.conflictTag ?? null,
+        imagen: r.imagen ?? null,
+        resumen: r.resumen,
+        enlace: r.enlace ?? `/noticia/${r.id}`,
+        nombreTeatro: c?.nombre ?? null,
+        color: c ? REGIONES[c.region].color : null,
+      };
+    };
 
     const en24 = filas.filter((r) => r.publishedAt >= desde24);
 
@@ -196,6 +250,23 @@ export async function parteDelDia(): Promise<ParteCronica> {
       .size;
     const medios24 = new Set(en24.map((r) => r.source)).size;
 
+    // ── v402: las cinco claves del día (estilo «The Morning» / Axios): frescas,
+    //    con foto y de frentes distintos; si no hay foto, igual entra el titular ──
+    const ahoraMs = ahora.getTime();
+    const candidatas = notasVivas
+      .filter((n) => ahoraMs - new Date(n.fecha).getTime() < 36 * 3600_000)
+      .sort((x, y) => relevancia(y, ahoraMs) - relevancia(x, ahoraMs));
+    const frentesUsados = new Set<string>();
+    const claves: CableBreve[] = [];
+    for (const n of candidatas) {
+      const k = n.conflicto ?? n.region;
+      if (frentesUsados.has(k)) continue;
+      frentesUsados.add(k);
+      const fila = vivas.find((v) => v.id === n.id);
+      if (fila) claves.push(breve(fila));
+      if (claves.length === 5) break;
+    }
+
     return {
       ok: true,
       version: APP_VERSION,
@@ -218,6 +289,7 @@ export async function parteDelDia(): Promise<ParteCronica> {
       medios,
       horaCargada,
       masReciente: filas.length > 0 ? breve(filas[0]) : null,
+      claves,
       masAntiguo: filas.length > 0 ? breve(filas[filas.length - 1]) : null,
       nota:
         filas.length === 0

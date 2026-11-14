@@ -20,7 +20,7 @@ export function Pie() {
               <li><Link href="/">Portada</Link></li>
               <li><Link href="/en-vivo">En vivo</Link></li>
               <li><Link href="/guerra-hoy">Conflictos</Link></li>
-              <li><Link href="/pulso-mundial">Análisis</Link></li>
+              <li><Link href="/pulso-mundial">Inteligencia</Link></li>
             </ul>
           </div>
           <div>

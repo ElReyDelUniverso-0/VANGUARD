@@ -1,3 +1,4 @@
+import { SALAS_INTERNAS } from "@/components/portada/modulos";
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
@@ -90,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* sin teatros dinámicos ante fallo de BD */
   }
 
-  return [
+  const todo: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
       lastModified: new Date(),
@@ -456,4 +457,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...teatros,
     ...noticias,
   ];
+  // v402.0 LOS CINCO MÓDULOS: fuera del sitemap las salas internas y las redirigidas
+  const FUERA = new Set(["/clasico", "/modo", ...SALAS_INTERNAS]);
+  return todo.filter((e) => {
+    const ruta = e.url.replace(SITE_URL, "").split("?")[0] || "/";
+    return !FUERA.has(ruta) && ![...FUERA].some((f) => ruta.startsWith(f + "/"));
+  });
 }

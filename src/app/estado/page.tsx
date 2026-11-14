@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { HubModulo } from "@/components/portada/hub-modulo";
+import { MODULOS } from "@/components/portada/modulos";
+
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { EstadoLatido } from "./estado-latido";
+
+const MODULO_ESTADO = MODULOS.find((m) => m.id === "estado")?.pestanas ?? [];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // EL ESTADO DE LA CASA — /estado (el latido público, patrón /escudo).
@@ -83,10 +89,27 @@ export default function EstadoPage() {
           </div>
         </div>
 
+        {/* v402.0 LOS CINCO MÓDULOS: el Estado reúne las seis salas internas
+            (latido, novedades, calidad, torre, catálogo, núcleo, escudo) */}
+        <PortadaSala
+          imagen="/ilustraciones/radar.jpg"
+          alt="Sala de radar en penumbra con pantallas verdes encendidas"
+          volanta="Módulo · Estado de Vanguard"
+          titulo="La casa por dentro"
+          sumario="Todo lo que antes vivía en salas sueltas, en un solo módulo: el latido del servidor, lo nuevo, la auditoría de calidad, la torre de control, el catálogo, el núcleo y el escudo."
+          cifras={[
+            { valor: MODULO_ESTADO.length, etiqueta: "Salas internas", nota: "en un solo módulo" },
+            { valor: "200", etiqueta: "Latido", nota: "/api/health responde siempre" },
+            { valor: "3,5 s", etiqueta: "Reloj de la base", nota: "tope de la consulta" },
+          ]}
+          acento="#3ddc97"
+        />
+        <HubModulo modulo="estado" actual="/estado" titulo="Las salas de la casa por dentro" />
+
         <article className="max-w-3xl mx-auto px-5 py-10">
-          <h1 className="text-3xl font-bold text-zinc-100">
-            El Estado de la Casa · El Latido Público
-          </h1>
+          <h2 className="text-3xl font-bold text-zinc-100">
+            El latido público
+          </h2>
           <p className="mt-3 text-sm text-zinc-500 leading-relaxed">
             La sala donde cualquiera toma el pulso del server: si el proceso
             vive, cómo respira la base de datos, cuánta memoria sostiene la
