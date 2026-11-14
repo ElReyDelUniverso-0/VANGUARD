@@ -23,6 +23,7 @@ import { AvisoNuevas } from "@/components/portada/aviso-nuevas";
 import { Pie } from "@/components/portada/pie";
 import { inter } from "@/components/portada/fuente";
 import { Teletipo } from "@/components/portada/teletipo";
+import { gruposHistorias } from "@/lib/portada/frentes";
 import { TituloSeccion } from "@/components/portada/titulo-seccion";
 
 
@@ -65,19 +66,6 @@ function elegirPortada(notas: Nota[]) {
   return { heroe, ultima, destacadas, usadas };
 }
 
-function gruposHistorias(notas: Nota[]): GrupoHistoria[] {
-  const mapear = (n: Nota) => ({ id: n.id, titulo: n.titulo, resumen: n.resumen, imagen: n.imagen, fuente: n.fuente, fecha: n.fecha });
-  const grupos: GrupoHistoria[] = [];
-  const hoy = notas.filter((n) => n.imagen).slice(0, 6);
-  if (hoy.length) grupos.push({ key: "hoy", nombre: "Hoy", color: "#e8c56a", notas: hoy.map(mapear) });
-  CONFLICTOS.map((c) => ({ c, ns: notas.filter((n) => n.conflicto === c.key) }))
-    .filter((x) => x.ns.length > 0)
-    .sort((a, b) => b.ns.length - a.ns.length)
-    .forEach(({ c, ns }) =>
-      grupos.push({ key: c.key, nombre: c.nombre, color: REGIONES[c.region].color, notas: ns.slice(0, 6).map(mapear), total: ns.length })
-    );
-  return grupos;
-}
 
 function coordsTexto(lat: number, lng: number) {
   return `${Math.abs(lat).toFixed(1)}°${lat >= 0 ? "N" : "S"} ${Math.abs(lng).toFixed(1)}°${lng >= 0 ? "E" : "O"}`;

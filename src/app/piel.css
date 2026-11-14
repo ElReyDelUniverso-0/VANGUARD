@@ -326,3 +326,5 @@ body:has(.vx-carcasa) main > div:first-child:has(> div > div > a[href="/"] > svg
 .vx-cron-medios span { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #e8c56a; }
 .vx-cron-medios i { font-style: normal; color: #8f8a7c; }
 .vx-cron-copiar { margin-top: 10px; }
+body:has(.vx-carcasa) [class^="fixed bottom-2 left-1/2"],
+body:has(.vx-carcasa) [class^="fixed bottom-3 left-3"] { display: none !important; }

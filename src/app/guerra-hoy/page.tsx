@@ -2,9 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { TEATROS } from "@/lib/teatros";
-import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
+import { PortadaSala } from "@/components/vanguard/portada-sala";
+import { HubModulo } from "@/components/portada/hub-modulo";
+import { TituloSeccion } from "@/components/portada/titulo-seccion";
+import { Tarjeta } from "@/components/portada/tarjeta";
+import { Historias } from "@/components/portada/historias";
+import { obtenerNotas, relevancia, type Nota } from "@/lib/portada/notas";
+import { gruposHistorias } from "@/lib/portada/frentes";
 import { PlayerPing } from "@/components/vanguard/player-ping";
-import { PresencePing, LiveCounter, LiveTitle } from "@/components/vanguard/presence-ping";
+import { PresencePing, LiveTitle } from "@/components/vanguard/presence-ping";
 import { GeopoliticsRadar } from "@/components/vanguard/geopolitics-radar";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { getWorldPower, fmtUsd, fmtPersonas } from "@/lib/worldpower";
@@ -101,41 +107,41 @@ const TAG_COLOR: Record<string, string> = {
 };
 
 export default async function GuerraHoyPage() {
-  const { items, agents } = await getNews();
+  const { items: itemsBD, agents } = await getNews();
+  // v402.0 — los cables vivos (los mismos de la portada) mandan; la base queda de respaldo
+  const notas = await obtenerNotas().catch(() => [] as Nota[]);
+  const notasFrente = notas.filter((n) => n.conflicto);
+  const frentes = gruposHistorias(notas);
+  const mediosVivos = new Set(notas.map((n) => n.fuente)).size;
+  const ahoraMs = Date.now();
+  const porRelevancia = (lista: Nota[]) => [...lista].sort((a, b) => relevancia(b, ahoraMs) - relevancia(a, ahoraMs));
+  // solo cables de guerra; si no llegan a cinco, se completa con el resto del mundo
+  const ultimas = [
+    ...porRelevancia(notasFrente.filter((n) => n.imagen)),
+    ...porRelevancia(notas.filter((n) => !n.conflicto && n.imagen)),
+  ].slice(0, 5);
+  const items: NewsRow[] = notas.length
+    ? notas.slice(0, 24).map((n) => ({
+        id: n.id,
+        title: n.titulo,
+        url: n.url,
+        source: n.fuente,
+        imageUrl: n.imagen,
+        publishedAt: new Date(n.fecha),
+        tacticalTag: null,
+        summary: n.resumen,
+      }))
+    : itemsBD;
   // v262.0 EL CANAL QUE PESA — la señal más fresca del canal, derivada de la
   // cabeza de la muestra (los 24 más nuevos primero): cero consultas, la
   // misma gramática de la sala /en-vivo (v259) y del espejo (v256).
-  const masFresca = items[0] ?? null;
   // v206.0 MÁS PUERTAS — teatros con cables vivos para los chips de puerta
   // v262.0 — la MISMA groupBy, DOS medidas (el patrón del espejo v256 y el
   // puente v257): cuántos cables pesa cada teatro y CUÁNDO sonó por última
   // vez — cero roundtrips de más. Antes los chips solo decían el nombre:
   // un teatro con 173 cables y señal de hoy se veía igual que uno muerto
   // desde hace semanas.
-  let teatrosVivos: { key: string; nombre: string; n: number; ultima: Date | null }[] = [];
-  try {
-    const conVida = await db.newsItem.groupBy({
-      by: ["conflictTag"],
-      where: { conflictTag: { not: null } },
-      _count: { conflictTag: true },
-      _max: { publishedAt: true },
-    });
-    teatrosVivos = Object.entries(TEATROS)
-      .filter(([k]) =>
-        conVida.some((g) => g.conflictTag === k && g._count.conflictTag >= 5)
-      )
-      .map(([k, t]) => {
-        const g = conVida.find((x) => x.conflictTag === k);
-        return {
-          key: k,
-          nombre: t.nombre,
-          n: g?._count.conflictTag ?? 0,
-          ultima: g?._max.publishedAt ? new Date(g._max.publishedAt) : null,
-        };
-      });
-  } catch {
-    /* sin chips ante fallo de BD */
-  }
+  // v402: los chips de teatros (consulta a la base congelada) los sustituye el tablero de frentes
   // v208.0 LA LUPA — los tres servicios externos bajan EN PARALELO (antes
   // en serie: con cada uno a 9s de deadline, el peor caso regalaba 27s de
   // TTFB muerto ante Google; en paralelo el límite es el más lento, no la suma)
@@ -177,234 +183,68 @@ export default async function GuerraHoyPage() {
         }))}
       />
 
-      {/* v360 LA CASA ILUSTRADA — el frente entra como baño de luz lateral */}
-      <header className="relative overflow-hidden border-b border-amber-500/30 bg-black/40 px-5 py-6 max-w-5xl mx-auto">
-        <IlustracionCabecera src="/ilustraciones/frente.jpg" />
-        <p className="font-mono text-[11px] tracking-[0.3em] text-amber-400 uppercase">
-          VANGUARD · Canal abierto de inteligencia
-        </p>
-        <h1 className="font-orbitron text-3xl sm:text-4xl font-black mt-2 tracking-wide">
-          GUERRA HOY <span className="text-red-400">· EN VIVO</span>
-        </h1>
-        <p className="mt-3 text-sm text-zinc-400 leading-relaxed max-w-2xl">
-          Todos los conflictos del planeta, actualizados sin parar: frentes, ataques,
-          diplomacia y análisis. Si el mundo hace ruido, aquí se escucha primero.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-3 text-[11px] font-mono">
-          {/* v42: guerreros conectados AHORA (presencia real, no visitas) */}
-          <LiveCounter />
-          <span className="border border-emerald-400/40 bg-emerald-400/10 text-emerald-300 rounded px-2.5 py-1">
-            {agents > 0 ? `${agents.toLocaleString("es")} agentes ya dentro` : "Comunidad activa"}
-          </span>
-          <span className="border border-sky-300/40 bg-sky-300/10 text-sky-300 rounded px-2.5 py-1">
-            {items.length} historias en seguimiento
-          </span>
-          <span className="border border-amber-400/40 bg-amber-400/10 text-amber-300 rounded px-2.5 py-1">
-            100% gratis · sin registro
-          </span>
+      {/* ════════════════════════════════════════════════════════════════
+          v402.0 EL VESTÍBULO DE CONFLICTOS — modelo de las páginas de cobertura
+          de guerra de Reuters / Al Jazeera / BBC: portada con cifras, tablero de
+          frentes con briefing, lo último CON FOTO y las salas del módulo.
+          Arreglos: ① los cables salen de los medios VIVOS (la base viajaba
+          congelada: «hace 14 días»); ② se acabó el <a> dentro de <Link>
+          (enlace dentro de enlace = error #418 de hidratación).
+          ════════════════════════════════════════════════════════════════ */}
+      <PortadaSala
+        imagen="/ilustraciones/frentes.jpg"
+        alt="Mesa de mando con un mapa de frentes iluminado en la penumbra"
+        volanta="Módulo · Conflictos"
+        titulo="Las guerras del planeta, hoy"
+        sumario="Cada frente abierto con sus últimos cables, su foto y su fuente. Toca un frente para ver el briefing; toca una noticia para leer lo esencial en treinta segundos."
+        cifras={[
+          { valor: notasFrente.length, etiqueta: "Cables de guerra", nota: "últimas 72 h" },
+          { valor: frentes.filter((g) => g.key !== "hoy").length, etiqueta: "Frentes con señal", nota: "con cables propios" },
+          { valor: mediosVivos, etiqueta: "Medios", nota: "firmando ahora" },
+          { valor: notas[0] ? hace(new Date(notas[0].fecha)) : "—", etiqueta: "Último cable", nota: notas[0]?.fuente ?? "sin señal" },
+        ]}
+        anclas={[
+          { etiqueta: "Frentes", href: "#frentes" },
+          { etiqueta: "Lo último", href: "#ultimo" },
+          { etiqueta: "Las salas", href: "#salas" },
+          { etiqueta: "Datos del planeta", href: "#datos" },
+        ]}
+        acento="#ff3b30"
+      />
+
+      <div className="vx vx-hub" id="frentes">
+        <div className="vx-wrap">
+          <TituloSeccion sello="Sección 01 · Tablero" titulo="Frentes activos" sub="La barra mide cuántos cables pesa cada frente en las últimas 72 horas." />
+          <Historias grupos={frentes} />
         </div>
-      </header>
+      </div>
 
-      {/* v52.0 ZONA CERO — el espectáculo: la ciudad que cae en vivo */}
-      <section className="max-w-5xl mx-auto px-5 pt-6 grid gap-4">
-        {/* v213.0 EL PULSO — la sala de ÚLTIMA HORA en la puerta de Google:
-            quien busca «guerra hoy» quiere AHORA, y aquí está AHORA */}
-        <Link
-          href="/en-vivo"
-          className="group block border border-red-500/50 bg-gradient-to-r from-red-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-red-400 transition-colors"
-        >
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-red-300 border border-red-500/50 bg-red-500/10 rounded px-2 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-              En vivo · directo
-            </span>
-            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-red-200 transition-colors">
-              EL PULSO — última hora, minuto a minuto
-            </span>
-          </div>
-          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
-            La redacción de Vanguard abierta 24 horas: cables reales entrando
-            solos con su hora, su fuente y su sello de exactitud. Lo más
-            caliente por impacto, el medidor del planeta y ÚLTIMA HORA cuando
-            el mundo se mueve — sondeo cada 30 s, la página jamás se recarga.
-          </p>
-          <p className="mt-2 font-mono text-[11px] text-red-300 uppercase tracking-widest">
-            Abrir la sala en vivo →
-          </p>
-        </Link>
-        {/* v215.0 EL MUNDO — el planeta 3D en vivo en la puerta de Google */}
-        <Link
-          href="/mundo"
-          className="group block border border-amber-500/50 bg-gradient-to-r from-amber-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-amber-400 transition-colors"
-        >
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />
-              En vivo · 3D
-            </span>
-            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-amber-200 transition-colors">
-              EL MUNDO 3D — el planeta, girando en vivo
-            </span>
-          </div>
-          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
-            Todas las guerras del mundo encendidas en un globo 3D: teatros con
-            sus cables de 24 h, gobiernos, ONU, OTAN y las gargantas
-            estratégicas del planeta. Arrastra para rotar, toca cualquier marca
-            — o espía a los gobiernos en el MODO ESPÍA.
-          </p>
-          <p className="mt-2 font-mono text-[11px] text-amber-300 uppercase tracking-widest">
-            Abrir el mundo →
-          </p>
-        </Link>
-        {/* v211.0 EL VÉRTIGO — la fórmula TikTok: el feed infinito en la puerta
-            de Google (el visitante de «guerra hoy» es puro deslizamiento) */}
-        <Link
-          href="/vertigo"
-          className="group block border border-amber-500/50 bg-gradient-to-r from-amber-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-amber-400 transition-colors"
-        >
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-amber-300 border border-amber-500/50 bg-amber-500/10 rounded px-2 py-1">
-              ▸▸ Infinito
-            </span>
-            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-amber-200 transition-colors">
-              EL VÉRTIGO — el mundo en deslizamientos
-            </span>
-          </div>
-          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
-            Cada cable a pantalla completa, uno por deslizamiento, sin fin:
-            doble toque para latir ❤️, un toque para leer el cable completo.
-            El archivo entero convertido en feed que nunca se acaba.
-          </p>
-          <p className="mt-2 font-mono text-[11px] text-amber-300 uppercase tracking-widest">
-            Entrar al vértigo →
-          </p>
-        </Link>
-        <Link
-          href="/zona-cero"
-          className="group block border border-red-500/50 bg-gradient-to-r from-red-950/60 via-zinc-950 to-zinc-950 rounded-md p-5 hover:border-red-400 transition-colors"
-        >
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-red-300 border border-red-500/50 bg-red-500/10 rounded px-2 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
-              En vivo
-            </span>
-            <span className="font-orbitron text-xl sm:text-2xl font-black tracking-wide text-zinc-100 group-hover:text-red-200 transition-colors">
-              ZONA CERO — la ciudad que cae
-            </span>
-          </div>
-          <p className="mt-2 text-[13px] text-zinc-400 leading-relaxed max-w-2xl">
-            Soldados, tanques, jets y drones peleando sin parar sobre una ciudad
-            que se destruye de verdad, piso a piso, y recuerda tu última visita.
-            Las noticias reales de guerra disparan las operaciones. Con sonido.
-          </p>
-          <p className="mt-2 font-mono text-[11px] text-amber-300 uppercase tracking-widest">
-            Entrar al teatro de guerra →
-          </p>
-        </Link>
-      </section>
+      <div className="vx vx-hub" id="ultimo">
+        <div className="vx-wrap">
+          <TituloSeccion
+            sello="Sección 02 · Lo último"
+            titulo="Lo último de los frentes"
+            sub="Solo cables de medios verificados, con su hora real."
+            enlace="/en-vivo"
+            textoEnlace="Minuto a minuto"
+          />
+          {ultimas.length === 0 ? (
+            <p className="vx-cron-nota">Los medios no responden ahora mismo. Sin cables no hay titular: vuelve en unos minutos.</p>
+          ) : (
+            <div className="vx-bento">
+              {ultimas.map((n, i) => (
+                <Tarjeta key={n.id} nota={n} grande={i === 0} prioridad={i < 2} cable={i + 1} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
-      <section className="max-w-5xl mx-auto px-5 py-8 grid gap-4">
-        {/* v262.0 EL CANAL QUE PESA — la declaración de frescura del canal:
-            compuesta COMPLETA en JS antes del JSX (lección v256) */}
-        {masFresca && (() => {
-          const lineaFresca = `la señal más fresca del canal: ${masFresca.source} — última señal ${hace(new Date(masFresca.publishedAt))}`;
-          return (
-            <p
-              title={`El cable más nuevo del canal: ${masFresca.title} · ${new Date(masFresca.publishedAt).toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })}`}
-              className="font-mono text-[10px] uppercase tracking-widest text-zinc-500"
-            >
-              {lineaFresca}
-            </p>
-          );
-        })()}
-        {/* v206.0 MÁS PUERTAS — teatros de guerra: una página por conflicto */}
-        {teatrosVivos.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
-              Teatros en vivo:
-            </span>
-            {teatrosVivos.map((t) => {
-              // v262.0 — cada chip declara SU peso (la count real que la BD
-              // ya tenía) y SU edad (la MISMA regla de frescura del espejo
-              // v256 y el puente v257: amber < 48 h, zinc si no); las líneas
-              // se componen COMPLETAS en JS — cero <!-- --> del SSR
-              const edadMin = t.ultima
-                ? Math.round((Date.now() - t.ultima.getTime()) / 60000)
-                : null;
-              const fresca = edadMin !== null && edadMin < 48 * 60;
-              const chip = `${t.nombre} · ${t.n}`;
-              const edad = t.ultima ? `● última señal ${hace(t.ultima)}` : null;
-              return (
-                <Link
-                  key={t.key}
-                  href={`/conflicto/${t.key}`}
-                  title={t.ultima ? `Última señal del teatro: ${t.ultima.toLocaleString("es-ES", { dateStyle: "medium", timeStyle: "short" })}` : undefined}
-                  className="border border-zinc-800 hover:border-amber-500/50 hover:text-amber-300 rounded px-2.5 py-1 text-[12px] text-zinc-300 bg-zinc-900/40 transition-colors"
-                >
-                  {chip}
-                  {edad && (
-                    <span className={`ml-1.5 font-mono text-[9px] uppercase tracking-wider ${fresca ? "text-amber-300" : "text-zinc-500"}`}>
-                      {edad}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        )}
-        {items.length === 0 && (
-          <div className="border border-border rounded-md p-8 text-center text-sm text-zinc-400">
-            El canal se está sincronizando con los frentes del mundo. Entra al mando
-            mientras tanto — el mapa 3D ya está operativo.
-          </div>
-        )}
-        {items.map((it, i) => {
-          const img = it.imageUrl || FALLBACK_IMGS[i % FALLBACK_IMGS.length];
-          const tag = (it.tacticalTag || "INFO").toUpperCase();
-          const inner = (
-            <article className="flex gap-4 border border-zinc-800 hover:border-amber-500/50 rounded-md overflow-hidden bg-zinc-900/40 transition-colors">
-              {/* imagen directa (next/image no aporta aquí: dominios externos variables) */}
-              <img
-                src={img}
-                alt={it.title}
-                width={220}
-                height={140}
-                className="hidden sm:block object-cover w-[220px] h-[140px] shrink-0"
-              />
-              <div className="p-4 flex flex-col gap-1.5 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`font-mono text-[10px] uppercase tracking-widest border rounded px-1.5 py-0.5 ${TAG_COLOR[tag] || TAG_COLOR.INFO}`}>
-                    {tag}
-                  </span>
-                  <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
-                    {it.source} · {hace(new Date(it.publishedAt))}
-                  </span>
-                  {it.url && it.url !== "#" && (
-                    <a href={it.url} target="_blank" rel="noopener noreferrer nofollow" className="ml-auto font-mono text-[10px] text-amber-500/70 hover:text-amber-400 uppercase tracking-wider shrink-0">
-                      Fuente ↗
-                    </a>
-                  )}
-                </div>
-                <h2 className="text-sm sm:text-base font-bold leading-snug">{it.title}</h2>
-                {it.summary && (
-                  <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">{it.summary}</p>
-                )}
-              </div>
-            </article>
-          );
-          // v202.0 PUERTAS ABIERTAS: el titular abre la puerta de la noticia
-          // (/noticia/[id], indexable con su propia metadata) — antes el click
-          // entero se regalaba a la fuente externa con nofollow y Google no
-          // encontraba ninguna página de Vanguard. La fuente sigue disponible
-          // con el enlace pequeño «FUENTE ↗».
-          return (
-            <Link key={it.id} href={`/noticia/${it.id}`} className="block">
-              {inner}
-            </Link>
-          );
-        })}
-      </section>
+      <div id="salas">
+        <HubModulo modulo="conflictos" actual="/guerra-hoy" titulo="Todas las salas de Conflictos" />
+      </div>
 
+      <div id="datos" />
       {/* v44.0 PODER MUNDIAL — datos reales del Banco Mundial (server-rendered) */}
       {power && power.rows.length > 0 && (
         <section className="max-w-5xl mx-auto px-5 pb-6">

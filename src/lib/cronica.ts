@@ -258,7 +258,9 @@ export async function parteDelDia(): Promise<ParteCronica> {
       .sort((x, y) => relevancia(y, ahoraMs) - relevancia(x, ahoraMs));
     const frentesUsados = new Set<string>();
     const claves: CableBreve[] = [];
-    for (const n of candidatas) {
+    // primero los frentes de guerra (es el módulo Conflictos); luego, si faltan, el resto del mundo
+    const ordenadas = [...candidatas.filter((n) => n.conflicto), ...candidatas.filter((n) => !n.conflicto)];
+    for (const n of ordenadas) {
       const k = n.conflicto ?? n.region;
       if (frentesUsados.has(k)) continue;
       frentesUsados.add(k);
