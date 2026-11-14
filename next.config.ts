@@ -106,11 +106,10 @@ const nextConfig: NextConfig = {
   // v402.0 LOS CINCO MÓDULOS — las salas duplicadas de verdad redirigen a su
   // original (permanente: los enlaces viejos y Google aprenden la nueva casa).
   //   /clasico → /cuartel (importaba el mismo componente: era la misma sala)
-  //   /modo    → /cuartel (la «puerta» de modos repetía la navegación común)
+  //   (/modo NO: es el selector de modo + la cuenta; vive como pestaña de Juego)
   async redirects() {
     return [
       { source: "/clasico", destination: "/cuartel", permanent: true },
-      { source: "/modo", destination: "/cuartel", permanent: true },
     ];
   },
   // v102.0 LA CIUDADELA — CABECERAS DE ACERO: el muro invisible que rodea

@@ -6075,3 +6075,21 @@ Work Log:
 Stage Summary:
 - La historia de la casa ya no se cuenta solo con párrafos: se ve en un eje donde cada guerra ocupa su tiempo real, con su era, su color y su puerta a la ficha.
 - El componente es reutilizable: cualquier fuente con años (eras del archivo, guerras activas, líneas de un conflicto) puede montarse en el mismo eje sin escribir una fecha a mano.
+---
+Task ID: ia-v402.0-los-cinco-modulos
+Agent: IA de diseño (Arena)
+Task: mandato del Dueño — «cada módulo mira sus errores, los que no sirven o son muy similares, corrígelos, funciónalos y agrégales imágenes… no crees nada nuevo, solo copia de los mejores… hasta cinco módulos perfectos». Elegido por el Dueño: fusionar en 5 módulos y luego perfeccionar; las salas internas, una sola «Estado de Vanguard»; imágenes: foto real para noticias, ilustración noir para portadas de sala.
+
+Work Log:
+- ① CINCO MÓDULOS (components/portada/modulos.ts): Portada · Mapa 3D · Conflictos · Inteligencia · Juego + Estado de Vanguard. Barra de pestañas por módulo en la carcasa (patrón de secciones BBC/Reuters) y hub de salas (components/portada/hub-modulo.tsx). /clasico (importaba el mismo componente que /cuartel) redirige a /cuartel. /modo NO se redirige: es el selector de modo + la cuenta → pestaña «Modo y cuenta» de Juego. Internas con noindex y fuera del sitemap.
+- ② HALLAZGO MAYOR — LA BASE CONGELADA: en Vercel la SQLite viaja de solo lectura (la del build) y el refresco en segundo plano escribe en una copia efímera de /tmp por instancia. Resultado: /api/news (pozo de TODOS los paneles), /api/pulso (sala En vivo) y /cronica servían cables del 31 de octubre bajo «EN VIVO» y «hace 14 d». Arreglo: lib/pulso.ts filasVivas() desde lib/portada/notas.ts (los medios vivos de la portada); /api/news usa los vivos si el cable más nuevo de la caché pasa de 6 h; la base queda de respaldo.
+- ③ EN VIVO: el sondeo de 30 s devolvía filas crudas (title/source) y la sala leía t/f → los titulares quedaban EN BLANCO a los 30 s. Forma única aCableVivo (lib/pulso.ts), servida con /api/pulso?forma=sala (los otros 6 paneles siguen recibiendo la forma cruda). Foto del medio en cada cable (patrón directos Guardian/Reuters), onError la esconde. Cifras de portada con clave única (había dos «cables» → aviso de React).
+- ④ /noticia/[id]: un cable vivo (no está en la base) redirige a /lectura/[id] en vez de 404.
+- ⑤ /guerra-hoy = VESTÍBULO DE CONFLICTOS: PortadaSala con cifras calculadas, «Frentes activos» (lib/portada/frentes.ts, la misma regla que la portada), «Lo último» con foto (vx-bento + Tarjeta), hub de salas. Fuera el <a> dentro de <Link> (enlace anidado = #418).
+- ⑥ /cronica rediseñada (NYT The Morning + Axios): 5 claves con foto (conflictos primero), frente por frente, quién firmó. Cables vivos + base, sin ceros.
+- ⑦ HONESTIDAD: /torre y la Misión 100 ya no enseñan tableros de 0 y «—»: dicen que el recuento global no tiene memoria en este despliegue (clase .vx-aviso). Nadie emitía señales a /api/torre (el faro ya no existe) y aunque lo hiciera se perderían en /tmp. Portadas de sala para /torre y /mision.
+- QA: tsc acotado (tsconfig.sub.json, 20+ archivos) → LIMPIO. next dev real: /cronica, /guerra-hoy, /en-vivo, /torre, /mision 200 con datos vivos; sala En vivo comprobada en Playwright: titulares intactos tras el sondeo de 36 s, 55 fotos, 0 errores de consola.
+
+Stage Summary:
+- Las noticias de toda la casa dejan de ser de hace dos semanas. El directo es directo de verdad.
+- Pendiente para la siguiente tanda: portadas para las salas de solo texto (audios, centinela, escudo, perfil, voz, música, historia, traductor, espía, pulso-mundial, calidad); universo y teatro-3d al español y sin cabeceras propias.

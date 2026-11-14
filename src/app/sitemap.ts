@@ -458,7 +458,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...noticias,
   ];
   // v402.0 LOS CINCO MÓDULOS: fuera del sitemap las salas internas y las redirigidas
-  const FUERA = new Set(["/clasico", "/modo", ...SALAS_INTERNAS]);
+  const FUERA = new Set(["/clasico", ...SALAS_INTERNAS]);
   return todo.filter((e) => {
     const ruta = e.url.replace(SITE_URL, "").split("?")[0] || "/";
     return !FUERA.has(ruta) && ![...FUERA].some((f) => ruta.startsWith(f + "/"));

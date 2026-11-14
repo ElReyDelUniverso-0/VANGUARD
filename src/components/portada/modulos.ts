@@ -4,7 +4,7 @@
 // CINCO módulos (más el Estado de la casa, que reúne las salas internas).
 // Cada sala pasa a ser una PESTAÑA de su módulo: la carcasa pinta la barra de
 // pestañas debajo de la cabecera. Las salas duplicadas de verdad (clásico =
-// cuartel, la «puerta» de modos) redirigen a su original (next.config.ts).
+// cuartel) redirige a su original (next.config.ts). /modo (selector + cuenta) es pestaña de Juego.
 // FUENTE ÚNICA: la cabecera, la carcasa y el sitemap leen de aquí.
 // ============================================================
 
@@ -76,6 +76,7 @@ export const MODULOS: Modulo[] = [
       { href: "/universo", label: "Colecciones", img: "/ilustraciones/recompensas.jpg", txt: "Créditos, colecciones y tu base personal." },
       { href: "/mision", label: "Misión 100", img: "/ilustraciones/recluta.jpg", txt: "Reparte Vanguard y suma reclutas." },
       { href: "/perfil", label: "Mi perfil", img: "/ilustraciones/perfil.jpg", txt: "Tu carnet de agente, tu código y tus permisos." },
+      { href: "/modo", label: "Modo y cuenta", img: "/ilustraciones/registro.jpg", txt: "Elige cómo juegas y entra con tu alias." },
     ],
   },
   {

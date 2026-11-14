@@ -1,4 +1,20 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.0 LOS CINCO MÓDULOS — mandato del Dueño: «cada módulo mira sus errores,
+//         los que no sirven o son muy similares, corrígelos, funciónalos…
+//         no crees nada nuevo, solo copia de los mejores… hasta cinco módulos».
+// ① CINCO MÓDULOS (components/portada/modulos.ts): Portada · Mapa 3D ·
+//    Conflictos · Inteligencia · Juego, más «Estado de Vanguard» para las salas
+//    internas. Barra de pestañas por módulo en la carcasa; /clasico y /modo
+//    (duplicados del Cuartel) redirigen a /cuartel; internas con noindex.
+// ② LA BASE CONGELADA, CAZADA: en Vercel la SQLite viaja de solo lectura y el
+//    refresco escribía en una copia efímera de /tmp. /api/news, /api/pulso
+//    (sala En vivo) y /cronica servían cables de hace 2 semanas bajo «EN VIVO».
+//    Ahora mandan los medios vivos (lib/portada/notas.ts) y la base es respaldo.
+// ③ EN VIVO: el sondeo de 30 s devolvía filas crudas (title/source) y la sala
+//    leía t/f → titulares en blanco. Forma única aCableVivo + foto por cable.
+// ④ /guerra-hoy = vestíbulo de Conflictos (portada, tablero de frentes, lo
+//    último con foto, salas); /cronica rediseñada (5 claves, frente por frente).
+// ⑤ HONESTIDAD: Torre y Misión 100 dicen «sin memoria global» en vez de ceros.
 // v367.2 LA VOZ MAESTRA — petición del Dueño, textual: «su voz… tiene una voz
 //         robótica, no tiene diferentes voces, una voz sin pausa, una voz
 //         molesta y lee sin sentido; tampoco explica las noticias, no navega,
@@ -5350,8 +5366,8 @@
 // lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
 // paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
 // intro de cine, sin manual automático, sin pulso teatral).
-export const APP_VERSION = "v401.2";
-export const APP_CODENAME = "LA LÍNEA DEL TIEMPO";
+export const APP_VERSION = "v402.0";
+export const APP_CODENAME = "LOS CINCO MÓDULOS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5411,7 +5427,7 @@ export const APP_CODENAME = "LA LÍNEA DEL TIEMPO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v401.1";
+export const APP_VERSION_ANTERIOR = "v401.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
