@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.7",
+    nombre: "LA MÚSICA NO SE ENCIENDE SOLA",
+    hitos: [
+      "ORDEN DEL DUEÑO, TEXTUAL: «no la pongas automática» — la radio real ya no se arma para el primer gesto del piloto. En la v367.5 un toque en cualquier sitio del sitio público la encendía; eso se acabó. Suena solo al pulsar su botón",
+      "LA ORQUESTA DE ORO TAMPOCO REANUDA — `resumeMusicIfWanted()` reanudaba la música sintetizada en el primer clic si el piloto la había dejado encendida la vez anterior. Eso era ponerla automática sin decirlo: ahora devuelve `false` y no arranca nada, con su cuerpo anterior guardado sin uso (no se borra nada)",
+      "EL APARATO RECUERDA, NO ENCIENDE — lo que el piloto eligió sigue guardado y sirve para pintar el chip, pero ese recuerdo ya no es un botón de arranque. La música de Vanguard empieza siempre por un toque explícito",
+      "EL CHIP LO DICE EN LA CARA — «Se enciende solo si tú lo enciendes» en el panel y «no se enciende sola» en la píldora de la portada. Cero sorpresa sonora, cero volumen que aparece sin pedirlo",
+      "LO QUE NO SE TOCÓ — las trece pistas reales, el orden aleatorio, la ley de una sola voz con el motor sintetizado, la parada a los tres fallos y la sala /musica siguen enteras. Lo único que se apagó fue el arranque por su cuenta",
+    ],
+    tipo: "musica",
+  },
+  {
     version: "v367.6",
     nombre: "EL PERFIL DEL JUGADOR",
     hitos: [

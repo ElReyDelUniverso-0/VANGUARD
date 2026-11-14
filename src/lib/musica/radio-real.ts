@@ -15,9 +15,11 @@
 // Tres leyes que respeta:
 //  ① CERO MÚSICA SIN DERECHOS. Solo entran las pistas de MUSICA_REAL, con su
 //     licencia escrita en `catalogo.ts`.
-//  ② CERO AUTOPLAY ENGAÑOSO. Los navegadores exigen un toque: el motor no
-//     arranca solo, arranca cuando el piloto lo enciende, y recuerda que lo
-//     encendió para la próxima visita.
+//  ② CERO AUTOPLAY, NI SIQUIERA CON GESTO (v367.7). Antes el motor se armaba
+//     para el primer toque del piloto y arrancaba solo. El Dueño ordenó «no la
+//     pongas automática»: ahora la radio suena ÚNICAMENTE cuando se pulsa su
+//     botón. El aparato sigue recordando si estaba encendida, pero ese recuerdo
+//     no enciende nada — solo se usa para pintar el chip.
 //  ③ CERO SILENCIO DISFRAZADO. Si fallan tres enlaces seguidos, se para y
 //     avisa con el motivo.
 // ============================================================
@@ -181,40 +183,20 @@ export function saltarPistaReal() {
 }
 
 /**
- * ARMA LA RADIO PARA EL PRIMER TOQUE.
+ * v367.7 LA MÚSICA NO SE ENCIENDE SOLA — orden del Dueño, textual: «no la
+ * pongas automática».
  *
- * El Dueño pidió que la música «esté ya ahí» al abrir el Vanguard público.
- * Ningún navegador deja sonar audio antes de un gesto del piloto, así que se
- * hace lo único honesto: se arma un oyente de UN SOLO gesto (toque, tecla o
- * rueda) y en ese instante la radio real arranca barajada. Si el piloto la
- * había parado a mano la vez anterior, NO se arranca — su decisión manda.
+ * Esta función EXISTÍA para armar la radio en el primer gesto del piloto (un
+ * toque en cualquier sitio la encendía). Eso ya no pasa: ahora no enciende
+ * nada y lo dice con su nombre. Se conserva exportada para no romper a quien
+ * la importe y porque el gesto explícito sigue siendo el único camino: la
+ * radio real suena SOLO si el piloto pulsa el botón del chip.
+ *
+ * No se borró ni una pista ni una función de la radio: lo único que se apagó
+ * es el arranque por su cuenta.
  */
-let armada = false;
-
 export function armarRadioReal(): void {
-  if (typeof window === "undefined" || armada) return;
-  armada = true;
-  const arranca = (ev?: Event) => {
-    // Un toque DENTRO del chip es una decisión suya sobre la radio (encender o
-    // parar): no se consume como «primer gesto» ni se adelanta al botón.
-    const t = ev?.target as HTMLElement | null;
-    if (t && typeof t.closest === "function" && t.closest("[data-vg-radio-real]")) return;
-    window.removeEventListener("pointerdown", arranca);
-    window.removeEventListener("keydown", arranca as EventListener);
-    window.removeEventListener("wheel", arranca as EventListener);
-    if (activa) return;
-    let previo: string | null = null;
-    try {
-      previo = window.localStorage.getItem(LS);
-    } catch {
-      /* modo privado */
-    }
-    if (previo === "0") return; // lo paró a propósito: se respeta
-    encenderRadioReal();
-  };
-  window.addEventListener("pointerdown", arranca as EventListener, { passive: true });
-  window.addEventListener("keydown", arranca as EventListener);
-  window.addEventListener("wheel", arranca as EventListener, { passive: true });
+  // A propósito vacío. Ver el comentario de arriba: cero arranque automático.
 }
 
 /** ¿El piloto la había encendido la última vez? (para pintar el chip) */

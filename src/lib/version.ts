@@ -5276,8 +5276,25 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.6";
-export const APP_CODENAME = "EL PERFIL DEL JUGADOR";
+export const APP_VERSION = "v367.7";
+export const APP_CODENAME = "LA MÚSICA NO SE ENCIENDE SOLA";
+// v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
+// Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
+// ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
+//    (un toque en cualquier sitio la encendía). Él no quiere eso: ahora suena
+//    únicamente al pulsar el botón de su chip. `armarRadioReal()` sigue
+//    exportada —para no romper importaciones— pero está vacía y lo declara.
+// ② LA ORQUESTA DE ORO TAMPOCO REANUDA: `resumeMusicIfWanted()` reanudaba la
+//    música sintetizada en el primer clic si el piloto la había dejado
+//    encendida la vez anterior. Eso era, exactamente, ponerla automática:
+//    ahora devuelve `false` y no arranca nada (el cuerpo viejo queda guardado
+//    sin uso, no se borra).
+// ③ EL APARATO SIGUE RECORDANDO lo que el piloto eligió, pero ese recuerdo ya
+//    no enciende nada: solo pinta el chip. La música de Vanguard empieza
+//    siempre por un toque explícito en su botón.
+// ④ El chip lo dice en la cara: «Se enciende solo si tú lo enciendes» y
+//    «no se enciende sola» en la píldora de la portada.
+export const APP_VERSION_ANTERIOR = "v367.6";
 // v367.6 EL PERFIL DEL JUGADOR (sobre v367.5, intacta) — orden del Dueño:
 // «haz un perfil que cada jugador debe tener, acceder bien a Vanguard, los
 // permisos, código y un perfil con agregar una foto y una personalización
@@ -5303,7 +5320,7 @@ export const APP_CODENAME = "EL PERFIL DEL JUGADOR";
 //    puertas al núcleo) con el panel cliente, y su registro `mod:perfil-jugador`
 //    en el censo (permiso público: el carnet se puede ver sin cuenta).
 // ⑦ EL CATÁLOGO SIGUE: de 140 a 160 piezas reales, con la sala nueva incluida.
-export const APP_VERSION_ANTERIOR = "v367.5";
+// (la cadena de versiones anteriores sigue abajo)
 // v367.5 LA RADIO REAL EN EL VANGUARD PÚBLICO (sobre v367.4, intacta) —
 // mandato del Dueño, textual: «que la música esté ya toda en el Vanguard
 // público y se pongan aleatoriamente en el Vanguard» y, en la misma tanda,
