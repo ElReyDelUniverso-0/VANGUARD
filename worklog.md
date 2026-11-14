@@ -6075,21 +6075,21 @@ Work Log:
 Stage Summary:
 - La historia de la casa ya no se cuenta solo con párrafos: se ve en un eje donde cada guerra ocupa su tiempo real, con su era, su color y su puerta a la ficha.
 - El componente es reutilizable: cualquier fuente con años (eras del archivo, guerras activas, líneas de un conflicto) puede montarse en el mismo eje sin escribir una fecha a mano.
----
-Task ID: ia-v402.0-los-cinco-modulos
-Agent: IA de diseño (Arena)
-Task: mandato del Dueño — «cada módulo mira sus errores, los que no sirven o son muy similares, corrígelos, funciónalos y agrégales imágenes… no crees nada nuevo, solo copia de los mejores… hasta cinco módulos perfectos». Elegido por el Dueño: fusionar en 5 módulos y luego perfeccionar; las salas internas, una sola «Estado de Vanguard»; imágenes: foto real para noticias, ilustración noir para portadas de sala.
+
+Task ID: ia3-v402.1-el-coste-en-una-escala
+Agent: ia3 (Arena)
+Task: pilar 2, cuarta tanda — orden del Dueño: «gráficos». Y la portada del parte diario.
 
 Work Log:
-- ① CINCO MÓDULOS (components/portada/modulos.ts): Portada · Mapa 3D · Conflictos · Inteligencia · Juego + Estado de Vanguard. Barra de pestañas por módulo en la carcasa (patrón de secciones BBC/Reuters) y hub de salas (components/portada/hub-modulo.tsx). /clasico (importaba el mismo componente que /cuartel) redirige a /cuartel. /modo NO se redirige: es el selector de modo + la cuenta → pestaña «Modo y cuenta» de Juego. Internas con noindex y fuera del sitemap.
-- ② HALLAZGO MAYOR — LA BASE CONGELADA: en Vercel la SQLite viaja de solo lectura (la del build) y el refresco en segundo plano escribe en una copia efímera de /tmp por instancia. Resultado: /api/news (pozo de TODOS los paneles), /api/pulso (sala En vivo) y /cronica servían cables del 31 de octubre bajo «EN VIVO» y «hace 14 d». Arreglo: lib/pulso.ts filasVivas() desde lib/portada/notas.ts (los medios vivos de la portada); /api/news usa los vivos si el cable más nuevo de la caché pasa de 6 h; la base queda de respaldo.
-- ③ EN VIVO: el sondeo de 30 s devolvía filas crudas (title/source) y la sala leía t/f → los titulares quedaban EN BLANCO a los 30 s. Forma única aCableVivo (lib/pulso.ts), servida con /api/pulso?forma=sala (los otros 6 paneles siguen recibiendo la forma cruda). Foto del medio en cada cable (patrón directos Guardian/Reuters), onError la esconde. Cifras de portada con clave única (había dos «cables» → aviso de React).
-- ④ /noticia/[id]: un cable vivo (no está en la base) redirige a /lectura/[id] en vez de 404.
-- ⑤ /guerra-hoy = VESTÍBULO DE CONFLICTOS: PortadaSala con cifras calculadas, «Frentes activos» (lib/portada/frentes.ts, la misma regla que la portada), «Lo último» con foto (vx-bento + Tarjeta), hub de salas. Fuera el <a> dentro de <Link> (enlace anidado = #418).
-- ⑥ /cronica rediseñada (NYT The Morning + Axios): 5 claves con foto (conflictos primero), frente por frente, quién firmó. Cables vivos + base, sin ceros.
-- ⑦ HONESTIDAD: /torre y la Misión 100 ya no enseñan tableros de 0 y «—»: dicen que el recuento global no tiene memoria en este despliegue (clase .vx-aviso). Nadie emitía señales a /api/torre (el faro ya no existe) y aunque lo hiciera se perderían en /tmp. Portadas de sala para /torre y /mision.
-- QA: tsc acotado (tsconfig.sub.json, 20+ archivos) → LIMPIO. next dev real: /cronica, /guerra-hoy, /en-vivo, /torre, /mision 200 con datos vivos; sala En vivo comprobada en Playwright: titulares intactos tras el sondeo de 36 s, 55 fotos, 0 errores de consola.
+- ① src/components/vanguard/grafico-barras.tsx — GRÁFICO DE BARRAS: componente de SERVIDOR, cero JavaScript, cero hidratación. Cada barra se mide contra el valor MAYOR de su propia serie, no contra un techo inventado: si el mayor son 75.000.000 de muertes, ese es el 100 % del ancho y 2.500.000 se dibuja en 3,3 % porque es pequeño de verdad. La cifra va SIEMPRE escrita al lado de la barra (una barra sin número es una opinión dibujada), con `role="img"` y `aria-label` que declara la proporción.
+- ② /archivo-mundial gana EL COSTE HUMANO EN UNA ESCALA: las seis guerras de WAR_DEATHS dibujadas con su color de la fuente, su ritmo de muertes por día y su enlace a la sección de los contadores. Comprobado en el HTML servido: 100 % / 53,3 % / 22,7 % / 3,3 % — proporciones reales de 75 M / 40 M / 17 M / 2,5 M. Ni una cifra a mano.
+- ③ /guerra-hoy gana PORTADA — la sala más pesada de la casa sin portada (28.964 letras). Cifras derivadas del parte: historias en seguimiento, agentes, fuentes distintas y cuántas traen foto propia del cable. Necesitó fragmento (su return tenía un solo hijo).
+- ④ EL ANCLA DEL GRÁFICO SE ARREGLÓ ANTES DE PUBLICAR: las barras apuntaban a `#coste`, un id que no existía; ahora llevan a `#guerras`, que sí existe. El AGENTE 2 del auditor (comprobación de `href="#…"` contra `id`) da 0 anclas sin destino en toda la casa.
+- ⑤ LO QUE NO SE HIZO, Y SE DECLARA: las tarjetas de los teatros en /conflicto no llevan foto ni mapa porque `TEATROS` no tiene coordenadas ni imagen en la fuente. Inventarlas habría sido bonito y falso; poner una foto de archivo bajo el nombre de un teatro concreto habría insinuado que es de ese teatro. Se deja escrito para que no parezca un olvido.
+- ⑥ NUMERACIÓN: main estaba en v402.0 «LOS CINCO MÓDULOS» (la otra IA). Esta ronda se ancla SOBRE su archivo y entra como v402.1, con su bloque y su trabajo intactos. No se repite el error de v400.3 (que retrocedió su línea y se corrigió en el acto).
+- QA EJECUTADO: `tsc` acotado del gráfico + archivo-mundial + galería → LIMPIO; `tsc` acotado de guerra-hoy + portada → LIMPIO; `tsc` de bitácora/versión/catálogo → LIMPIO; auditoría completa → 0 enlaces rotos, 0 anclas sin destino, 0 recursos ausentes, 0 botones muertos; `next dev` real: /archivo-mundial 200 con el gráfico y sus barras proporcionales. /guerra-hoy no se pudo pedir en local (necesita DATABASE_URL, que esta máquina no tiene): el error del servidor es `Environment variable not found: DATABASE_URL`, no código — lo valida el build de Vercel.
+- Registro: version.ts → v402.1 EL COSTE EN UNA ESCALA (sobre v402.0) · entrada en bitacora.ts · catálogo: 170 piezas (+1, el gráfico).
 
 Stage Summary:
-- Las noticias de toda la casa dejan de ser de hace dos semanas. El directo es directo de verdad.
-- Pendiente para la siguiente tanda: portadas para las salas de solo texto (audios, centinela, escudo, perfil, voz, música, historia, traductor, espía, pulso-mundial, calidad); universo y teatro-3d al español y sin cabeceras propias.
+- La casa ya tiene dos visualizaciones propias y honestas: un eje de tiempo proporcional y un gráfico de barras proporcional. Ninguna de las dos inventa una escala.
+- /archivo-mundial y /guerra-hoy, dos de las salas más densas, abren con portada y con una lectura visual antes del texto.
