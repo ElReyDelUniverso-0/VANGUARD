@@ -22,7 +22,7 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
-    version: "v367.10",
+    version: "v400.2",
     nombre: "LAS PORTADAS",
     hitos: [
       "PILAR 2 EN MARCHA — orden del Dueño: «no debe sentirse como un libro, sino como un centro interactivo de información mundial», «más imágenes y menos bloques interminables de texto». Y antes de construir: medir",
@@ -32,7 +32,7 @@ export const BITACORA: EntradaBitacora[] = [
       "CERO CIFRAS A MANO EN LAS PORTADAS — cada número sale de la fuente de su propia sala y se calcula en el render (guardia v234): los países del atlas, las agencias de servicios, los rostros del poder, las monedas del mundo, el gasto militar sumado…",
       "LA MEJORÍA SE COMPRUEBA, NO SE PROMETE — el mismo agente 7 vuelve a medir después del cambio y /calidad publica las salas más «de libro» con su número, para que la próxima ronda sepa dónde seguir",
     ],
-    tipo: "diseno",
+    tipo: "luxe",
   },
   {
     version: "v367.9",

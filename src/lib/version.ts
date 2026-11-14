@@ -5276,9 +5276,8 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.10";
-export const APP_CODENAME = "LAS PORTADAS";
-// v367.10 LAS PORTADAS — pilar 2 del orden del Dueño: «no debe sentirse como un
+// v400.2 LAS PORTADAS (encima del rediseño v400.1 de la otra IA, sin tocar su portada)
+// Pilar 2 del orden del Dueño: «no debe sentirse como un
 // libro, sino como un centro interactivo de información mundial», «más imágenes
 // y menos bloques interminables de texto, profundización opcional».
 // ① PRIMERO SE MIDIÓ, NO SE OPINÓ (AGENTE 7 de scripts/auditoria.mjs): en cada
@@ -5301,6 +5300,15 @@ export const APP_CODENAME = "LAS PORTADAS";
 // ④ /calidad gana la medición de densidad: las salas más «de libro» con su
 //    número, para que la próxima ronda sepa dónde seguir y para que la mejoría
 //    se pueda comprobar en vez de prometerse.
+// v400.0 EL REDISEÑO — mandato del Dueño 2026-11-14 («UN SUPER SÍ» a las 10
+// soluciones): portada nueva tipo revista en "/" (cabecera única, noticia
+// grande, última hora, historias por conflicto, mapa vivo, regiones, salas),
+// notas frescas directo de 10 medios en español con su foto real, página de
+// lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
+// paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
+// intro de cine, sin manual automático, sin pulso teatral).
+export const APP_VERSION = "v400.2";
+export const APP_CODENAME = "LAS PORTADAS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5360,7 +5368,7 @@ export const APP_CODENAME = "LAS PORTADAS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v367.9";
+export const APP_VERSION_ANTERIOR = "v400.1";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
