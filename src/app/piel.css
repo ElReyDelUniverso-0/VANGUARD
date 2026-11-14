@@ -1,0 +1,221 @@
+/* ═══════════════════════════════════════════════════════════════════
+   v401.0 LA FUSIÓN — LA PIEL DE LA CASA
+   Se enciende sola en toda sala que monta la carcasa (body:has(.vx-carcasa)).
+   No reescribe las salas: las VISTE. Noir caviar + retícula táctica de oro,
+   Orbitron para los títulos de sala y las etiquetas, Inter para leer,
+   esquinas cuadradas de instrumento, líneas de oro en lugar de gris.
+   Los colores con significado (rojo en vivo, verde verificado, cian dato)
+   se respetan: solo se recolorean los neutros (zinc/slate/neutral/gray).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── la carcasa no ocupa caja: la cabecera queda pegada al body (sticky) ── */
+.vx.vx-carcasa { display: contents; }
+.vx-tele-espera { padding: 0 18px; font-family: var(--vx-dato); font-size: 12px; color: var(--vx-mut); white-space: nowrap; }
+.vx-tele-pista[data-vacia="1"] { animation: none !important; }
+
+body:has(.vx-carcasa) {
+  --pl-oro: #e8c56a;
+  --pl-linea: rgba(232, 197, 106, 0.14);
+  --pl-linea2: rgba(232, 197, 106, 0.3);
+  --pl-card: rgba(13, 17, 24, 0.86);
+  --pl-marca: var(--font-orbitron), "Orbitron", system-ui, sans-serif;
+  --pl-lee: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background:
+    radial-gradient(110% 55% at 50% -12%, rgba(232, 197, 106, 0.07), transparent 62%),
+    linear-gradient(rgba(232, 197, 106, 0.026) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(232, 197, 106, 0.026) 1px, transparent 1px) 0 0 / 48px 48px,
+    #06080c !important;
+  background-attachment: fixed !important;
+  color: #f3eee2;
+  font-family: var(--pl-lee);
+}
+body:has(.vx-carcasa) #vg-cortina { display: none !important; }
+@media (max-width: 979px) { body:has(.vx-carcasa) { padding-bottom: 72px; } }
+
+/* el fondo de página de cada sala deja ver la retícula */
+body:has(.vx-carcasa) > main,
+body:has(.vx-carcasa) > div > main,
+body:has(.vx-carcasa) main[class*="min-h-screen"],
+body:has(.vx-carcasa) > div[class*="min-h-screen"] { background-color: transparent !important; }
+
+/* ── TIPOGRAFÍA: la marca titula, Inter lee ── */
+body:has(.vx-carcasa) main h1:not(.vx-ps-titulo) {
+  font-family: var(--pl-marca) !important;
+  font-weight: 800;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase;
+  line-height: 1.08;
+}
+body:has(.vx-carcasa) main h2,
+body:has(.vx-carcasa) main h3 {
+  font-family: var(--pl-lee) !important;
+  letter-spacing: -0.01em !important;
+}
+body:has(.vx-carcasa) main p,
+body:has(.vx-carcasa) main li,
+body:has(.vx-carcasa) main dd,
+body:has(.vx-carcasa) main blockquote {
+  font-family: var(--pl-lee);
+}
+/* los rótulos pequeños espaciados (kickers, etiquetas) pasan a Orbitron */
+body:has(.vx-carcasa) main [class*="tracking-[0.2"],
+body:has(.vx-carcasa) main [class*="tracking-[0.3"],
+body:has(.vx-carcasa) main [class*="tracking-[0.4"],
+body:has(.vx-carcasa) main [class*="tracking-widest"] {
+  font-family: var(--pl-marca) !important;
+  font-weight: 700;
+}
+/* las cifras siguen en monoespaciado tabular */
+body:has(.vx-carcasa) main [class*="tabular-nums"] { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+/* ── FORMA: esquinas de instrumento, no burbujas ── */
+body:has(.vx-carcasa) main [class*="rounded-lg"],
+body:has(.vx-carcasa) main [class*="rounded-xl"],
+body:has(.vx-carcasa) main [class*="rounded-2xl"],
+body:has(.vx-carcasa) main [class*="rounded-3xl"] { border-radius: 6px !important; }
+
+/* ── LÍNEAS: el gris se vuelve hilo de oro ── */
+body:has(.vx-carcasa) main [class*="border-zinc-"],
+body:has(.vx-carcasa) main [class*="border-slate-"],
+body:has(.vx-carcasa) main [class*="border-neutral-"],
+body:has(.vx-carcasa) main [class*="border-gray-"],
+body:has(.vx-carcasa) main [class*="border-white/"] { border-color: var(--pl-linea) !important; }
+body:has(.vx-carcasa) main a[class*="border-zinc-"]:hover,
+body:has(.vx-carcasa) main a[class*="border-slate-"]:hover,
+body:has(.vx-carcasa) main a[class*="border-white/"]:hover { border-color: var(--pl-linea2) !important; }
+body:has(.vx-carcasa) main [class*="divide-zinc-"] > *,
+body:has(.vx-carcasa) main [class*="divide-slate-"] > *,
+body:has(.vx-carcasa) main [class*="divide-white/"] > * { border-color: var(--pl-linea) !important; }
+
+/* ── SUPERFICIES: tarjetas de la casa (los neutros) ── */
+body:has(.vx-carcasa) main [class*="bg-zinc-9"],
+body:has(.vx-carcasa) main [class*="bg-slate-9"],
+body:has(.vx-carcasa) main [class*="bg-neutral-9"],
+body:has(.vx-carcasa) main [class*="bg-gray-9"] { background-color: var(--pl-card) !important; }
+
+/* tarjetas planas con borde → esquinas de mira dibujadas con el fondo */
+body:has(.vx-carcasa) main :is(article, section, div, a)[class*="border"][class*="rounded-"]:not([class*="bg-gradient"]):not([style*="background"]):not([class*="rounded-full"]):not(.vx-ps-punto) {
+  background-image:
+    linear-gradient(var(--pl-oro), var(--pl-oro)), linear-gradient(var(--pl-oro), var(--pl-oro)),
+    linear-gradient(var(--pl-oro), var(--pl-oro)), linear-gradient(var(--pl-oro), var(--pl-oro));
+  background-size: 12px 1.5px, 1.5px 12px, 12px 1.5px, 1.5px 12px;
+  background-position: top left, top left, bottom right, bottom right;
+  background-repeat: no-repeat;
+}
+
+/* ── ACENTO: el ámbar de antes es el oro de la casa ── */
+body:has(.vx-carcasa) main [class*="text-amber-3"],
+body:has(.vx-carcasa) main [class*="text-amber-4"],
+body:has(.vx-carcasa) main [class*="text-yellow-4"] { color: var(--pl-oro) !important; }
+body:has(.vx-carcasa) main ::selection { background: rgba(232, 197, 106, 0.35); color: #fff; }
+
+/* ═══════════════ PORTADA DE SALA (components/vanguard/portada-sala.tsx) ═══════════════ */
+.vx-ps {
+  --ps-acc: #e8c56a;
+  position: relative;
+  color: #f3eee2;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  border-bottom: 1px solid rgba(232, 197, 106, 0.14);
+}
+.vx-ps-heroe {
+  position: relative;
+  width: min(1280px, calc(100% - 36px));
+  margin: 22px auto 0;
+  height: clamp(300px, 46vw, 460px);
+  overflow: hidden;
+  border: 1px solid rgba(232, 197, 106, 0.28);
+  border-radius: 6px;
+  background: #0a0d13;
+}
+.vx-ps-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) contrast(1.05); transform: scale(1.02); transition: transform 1.2s ease; }
+.vx-ps-heroe:hover .vx-ps-img { transform: scale(1.05); }
+.vx-ps-velo {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 90% at 12% 100%, color-mix(in srgb, var(--ps-acc) 30%, transparent) 0%, transparent 55%),
+    linear-gradient(0deg, rgba(6, 8, 12, 0.97) 6%, rgba(6, 8, 12, 0.55) 48%, rgba(6, 8, 12, 0.12) 100%);
+}
+.vx-ps-sellos {
+  position: absolute; top: 14px; left: 16px; right: 16px; z-index: 3;
+  display: flex; justify-content: space-between; gap: 10px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(243, 238, 226, 0.7);
+}
+.vx-ps-sellos span { padding: 4px 8px; background: rgba(6, 8, 12, 0.66); border: 1px solid rgba(232, 197, 106, 0.22); backdrop-filter: blur(4px); }
+.vx-ps-sellos b { color: #e8c56a; font-weight: 600; }
+@media (max-width: 640px) { .vx-ps-sellos span:last-child { display: none; } }
+.vx-ps-txt { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 0 22px 26px; max-width: 900px; }
+@media (min-width: 1024px) { .vx-ps-txt { padding: 0 40px 36px; } }
+.vx-ps-volanta {
+  display: inline-flex; align-items: center; gap: 9px; margin-bottom: 12px;
+  font-family: var(--font-orbitron), "Orbitron", system-ui, sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ps-acc);
+}
+.vx-ps-volanta i { width: 8px; height: 8px; transform: rotate(45deg); background: var(--ps-acc); box-shadow: 0 0 10px var(--ps-acc); }
+.vx-ps-titulo {
+  margin: 0;
+  font-family: var(--font-orbitron), "Orbitron", system-ui, sans-serif; font-weight: 900; text-transform: uppercase;
+  font-size: clamp(26px, 4.6vw, 52px); line-height: 1.02; letter-spacing: 0.03em;
+  background: linear-gradient(180deg, #fff6dc 0%, #e8c56a 58%, #b8902f 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.85));
+}
+.vx-ps-sumario { margin: 12px 0 0; max-width: 680px; font-size: clamp(14px, 1.5vw, 16.5px); line-height: 1.55; color: #cbc5b6; }
+
+.vx-ps-cifras {
+  width: min(1280px, calc(100% - 36px)); margin: 14px auto 0;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+}
+@media (min-width: 760px) { .vx-ps-cifras { grid-template-columns: repeat(4, 1fr); } }
+.vx-ps-cifra {
+  position: relative; padding: 14px 16px 13px 26px;
+  background: rgba(13, 17, 24, 0.86); border: 1px solid rgba(232, 197, 106, 0.14); border-radius: 6px;
+}
+.vx-ps-cifra::before { content: ""; position: absolute; left: 11px; top: 21px; width: 7px; height: 7px; transform: rotate(45deg); background: var(--ps-acc); }
+.vx-ps-cifra b { display: block; font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: 24px; font-weight: 800; line-height: 1; color: #f3eee2; font-variant-numeric: tabular-nums; }
+.vx-ps-cifra span { display: block; margin-top: 7px; font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #e8c56a; }
+.vx-ps-cifra small { display: block; margin-top: 3px; font-size: 11.5px; color: #8f8a7c; }
+
+.vx-ps-anclas {
+  width: min(1280px, calc(100% - 36px)); margin: 14px auto 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+}
+.vx-ps-anclas > span { font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: 9.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #8f8a7c; margin-right: 4px; }
+.vx-ps-anclas a {
+  padding: 7px 12px; border: 1px solid rgba(232, 197, 106, 0.28); background: rgba(232, 197, 106, 0.05);
+  font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: #f3eee2; transition: all 0.2s ease; text-decoration: none;
+}
+.vx-ps-anclas a:hover { background: #e8c56a; color: #06080c; border-color: #e8c56a; }
+
+.vx-ps-puntos {
+  width: min(1280px, calc(100% - 36px)); margin: 16px auto 0; padding-bottom: 22px;
+  display: grid; gap: 12px;
+}
+@media (min-width: 700px) { .vx-ps-puntos { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .vx-ps-puntos { grid-template-columns: repeat(3, 1fr); } }
+.vx-ps-punto { padding: 18px 18px 16px; background: rgba(13, 17, 24, 0.86); border: 1px solid rgba(232, 197, 106, 0.14); border-radius: 6px; }
+.vx-ps-punto > div { display: flex; align-items: baseline; gap: 10px; }
+.vx-ps-punto b { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ps-acc); }
+body .vx-ps .vx-ps-punto h2, body:has(.vx-carcasa) main .vx-ps-punto h2 { margin: 0; font-family: var(--font-orbitron), "Orbitron", sans-serif !important; font-size: 11px; font-weight: 700; letter-spacing: 0.18em !important; text-transform: uppercase; color: #f3eee2; }
+.vx-ps-punto p { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: #cbc5b6; }
+.vx-ps-nota { width: min(1280px, calc(100% - 36px)); margin: 0 auto; padding: 0 0 16px; font-size: 11.5px; color: #8f8a7c; }
+.vx-ps .vx-mira::before, .vx-ps .vx-mira::after { border-color: #e8c56a; }
+
+/* ═══════════════ RELACIONADO EN VANGUARD (enlaces-nucleo.tsx) ═══════════════ */
+.vx-enl-t {
+  display: flex; align-items: center; gap: 9px; margin: 0;
+  font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #e8c56a;
+}
+.vx-enl-t::before { content: ""; width: 7px; height: 7px; transform: rotate(45deg); background: #e8c56a; }
+.vx-enl-lista { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.vx-enl-chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 13px;
+  border: 1px solid rgba(232, 197, 106, 0.28); background: rgba(13, 17, 24, 0.86);
+  font-family: var(--font-orbitron), "Orbitron", sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #f3eee2; transition: all 0.2s ease;
+}
+.vx-enl-chip::after { content: "→"; color: #e8c56a; transition: transform 0.2s ease; }
+.vx-enl-chip:hover { background: #e8c56a; border-color: #e8c56a; color: #06080c; }
+.vx-enl-chip:hover::after { color: #06080c; transform: translateX(3px); }

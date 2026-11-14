@@ -18,17 +18,17 @@ export function EnlacesNucleo({
 }) {
   if (enlaces.length === 0) return null;
   return (
-    <section aria-label={titulo} className="mt-6">
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber/70">
+    <section aria-label={titulo} className="vx-enl mt-6">
+      <p className="vx-enl-t">
         {titulo}
       </p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="vx-enl-lista">
         {enlaces.map((e) => (
           <Link
             key={`${e.tipoRelacion}-${e.ruta}`}
             href={e.ruta}
             title={e.motivo}
-            className="inline-flex items-center rounded-sm border border-zinc-700 bg-zinc-900/70 px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-widest text-zinc-300 transition-colors hover:border-amber-hud hover:text-amber"
+            className="vx-enl-chip"
           >
             {e.etiqueta}
           </Link>

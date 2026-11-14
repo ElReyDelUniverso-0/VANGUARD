@@ -63,8 +63,18 @@ export interface PortadaSalaProps {
   nivel?: "h1" | "p";
 }
 
-const TITULO_CLASE =
-  "font-mono text-3xl font-black uppercase leading-[0.95] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] sm:text-5xl";
+// v401.0 LA FUSIÓN — la portada de sala viste el mismo uniforme que la portada
+// principal: héroe con esquinas de mira, líneas de barrido y sellos de cable;
+// título en Orbitron de oro; cifras como instrumentos con rombo; índice en
+// chips tácticos; resumen en tarjetas de frente. Clases .vx-ps-* en piel.css.
+// La API (props) no cambia: todas las salas que ya la usan se visten solas.
+
+function coordsDe(texto: string): string {
+  // un número de expediente estable por sala (no es un dato: es una firma)
+  let h = 0;
+  for (let i = 0; i < texto.length; i++) h = (h * 31 + texto.charCodeAt(i)) >>> 0;
+  return String(h % 10000).padStart(4, "0");
+}
 
 export function PortadaSala({
   imagen,
@@ -75,19 +85,19 @@ export function PortadaSala({
   cifras = [],
   puntos = [],
   anclas = [],
-  acento = "#38bdf8",
+  acento = "#e8c56a",
   nota,
   ancho = 1408,
   alto = 704,
   prioritaria = true,
   nivel = "h1",
 }: PortadaSalaProps) {
-  const acc = /^#[0-9a-fA-F]{6}$/.test(acento) ? acento : "#38bdf8";
+  const acc = /^#[0-9a-fA-F]{6}$/.test(acento) ? acento : "#e8c56a";
+  const exp = coordsDe(titulo);
 
   return (
-    <section className="relative border-b border-slate-800 bg-slate-950" aria-labelledby="portada-sala-titulo">
-      {/* ── ① LA PORTADA: la imagen manda, el velo la hace legible ── */}
-      <div className="relative h-[300px] w-full overflow-hidden sm:h-[380px] lg:h-[440px]">
+    <section className="vx-ps" aria-labelledby="portada-sala-titulo" style={{ ["--ps-acc" as string]: acc }}>
+      <div className="vx-ps-heroe vx-mira">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imagen}
@@ -96,99 +106,70 @@ export function PortadaSala({
           height={alto}
           {...(prioritaria ? { fetchPriority: "high" as const } : { loading: "lazy" as const })}
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="vx-ps-img"
         />
-        {/* dos velos: uno vertical para el texto y uno de color de la sala */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/10" />
-        <div
-          className="absolute inset-0 opacity-40 mix-blend-soft-light"
-          style={{ background: `radial-gradient(120% 90% at 15% 100%, ${acc}66 0%, transparent 60%)` }}
-        />
-
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-end px-5 pb-8">
-          <div
-            className="mb-3 inline-flex w-fit items-center gap-2 self-start rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em]"
-            style={{ borderColor: `${acc}66`, color: acc, backgroundColor: `${acc}14` }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: acc }} />
-            {volanta}
-          </div>
-
+        <div className="vx-ps-velo" aria-hidden />
+        <div className="vx-ps-sellos" aria-hidden>
+          <span>
+            <b>◆ EXPEDIENTE {exp}</b> · CLASIFICACIÓN ABIERTA
+          </span>
+          <span>VANGUARD · SALA</span>
+        </div>
+        <div className="vx-ps-txt">
+          <span className="vx-ps-volanta">
+            <i aria-hidden /> {volanta}
+          </span>
           {nivel === "h1" ? (
-            <h1 id="portada-sala-titulo" className={TITULO_CLASE}>
+            <h1 id="portada-sala-titulo" className="vx-ps-titulo">
               {titulo}
             </h1>
           ) : (
-            <p id="portada-sala-titulo" className={TITULO_CLASE}>
+            <p id="portada-sala-titulo" className="vx-ps-titulo">
               {titulo}
             </p>
           )}
-
-          <p className="mt-3 max-w-2xl text-[13px] leading-relaxed text-slate-300 sm:text-[15px]">{sumario}</p>
+          <p className="vx-ps-sumario">{sumario}</p>
         </div>
       </div>
 
-      {/* ── ③ LAS CIFRAS: el resumen visual sustituye al párrafo de cifras ── */}
       {cifras.length > 0 && (
-        <div className="border-t border-slate-800/70 bg-slate-900/60">
-          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px bg-slate-800/60 px-0 sm:grid-cols-4">
-            {cifras.slice(0, 4).map((c) => (
-              <div key={c.etiqueta} className="bg-slate-950/70 px-4 py-3">
-                <div className="font-mono text-2xl font-black leading-none" style={{ color: acc }}>
-                  {c.valor}
-                </div>
-                <div className="mt-1 font-mono text-[10px] uppercase leading-tight tracking-[0.15em] text-slate-400">
-                  {c.etiqueta}
-                </div>
-                {c.nota && <div className="mt-0.5 text-[10px] leading-tight text-slate-600">{c.nota}</div>}
-              </div>
-            ))}
-          </div>
+        <div className="vx-ps-cifras">
+          {cifras.slice(0, 4).map((c) => (
+            <div key={c.etiqueta} className="vx-ps-cifra">
+              <b>{c.valor}</b>
+              <span>{c.etiqueta}</span>
+              {c.nota && <small>{c.nota}</small>}
+            </div>
+          ))}
         </div>
       )}
 
-      {/* ── ④ EL ÍNDICE RÁPIDO: brincar a lo que se quiera, sin leerlo todo ── */}
       {anclas.length > 0 && (
-        <nav aria-label="Índice de la sala" className="border-t border-slate-800/70 bg-slate-950">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2 px-5 py-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">ir a</span>
-            {anclas.map((a) => (
-              <Link
-                key={a.href}
-                href={a.href}
-                className="rounded-md border border-slate-800 bg-slate-900/80 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-slate-400 transition hover:border-slate-600 hover:text-slate-200"
-              >
-                {a.etiqueta}
-              </Link>
-            ))}
-          </div>
+        <nav aria-label="Índice de la sala" className="vx-ps-anclas">
+          <span>Ir a</span>
+          {anclas.map((a) => (
+            <Link key={a.href} href={a.href}>
+              {a.etiqueta}
+            </Link>
+          ))}
         </nav>
       )}
 
-      {/* ── ② EL RESUMEN: tres tarjetas cortas en vez de tres párrafos ── */}
       {puntos.length > 0 && (
-        <div className="border-t border-slate-800/70 bg-slate-950">
-          <div className="mx-auto grid max-w-6xl gap-3 px-5 py-5 sm:grid-cols-2 lg:grid-cols-3">
-            {puntos.slice(0, 4).map((p, i) => (
-              <article key={p.titulo} className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-mono text-[11px] font-black" style={{ color: acc }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h2 className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-200">{p.titulo}</h2>
-                </div>
-                <p className="mt-2 text-[12.5px] leading-relaxed text-slate-400">{p.texto}</p>
-              </article>
-            ))}
-          </div>
+        <div className="vx-ps-puntos">
+          {puntos.slice(0, 4).map((p, i) => (
+            <article key={p.titulo} className="vx-ps-punto vx-mira">
+              <div>
+                <b>{String(i + 1).padStart(2, "0")}</b>
+                <h2>{p.titulo}</h2>
+              </div>
+              <p>{p.texto}</p>
+            </article>
+          ))}
         </div>
       )}
 
-      {nota && (
-        <div className="border-t border-slate-800/70 bg-slate-950 px-5 py-2">
-          <p className="mx-auto max-w-6xl text-[10.5px] leading-relaxed text-slate-600">{nota}</p>
-        </div>
-      )}
+      {nota && <p className="vx-ps-nota">{nota}</p>}
     </section>
   );
 }

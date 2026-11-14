@@ -16,6 +16,11 @@ const SITE_NAME = "VANGUARD — Conflictos Mundiales en Tiempo Real";
 const SITE_DESC =
   "La plataforma de conflictos mundiales #1: noticias de guerra en vivo, mapa OSINT 3D con 15 capas de inteligencia, guerra global multijugador, duelos 1v1 con ranking ELO, simulador de guerras, detective por país, apuestas y economía de gemas. Gratis, en español.";
 import "./globals.css";
+// v401.0 LA FUSIÓN — el sistema visual de la casa y su piel, para todas las salas
+import "./portada.css";
+import "./piel.css";
+import { inter } from "@/components/portada/fuente";
+import { Carcasa } from "@/components/portada/carcasa";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 // v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
@@ -267,7 +272,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className="dark">
       <body
-        className={`${orbitron.variable} antialiased bg-background text-foreground min-h-screen`}
+        className={`${orbitron.variable} ${inter.variable} antialiased bg-background text-foreground min-h-screen`}
       >
         {/* ════════════════════════════════════════════════════════════
             v360.0 LA CASA QUE RESPIRA — el aire vive en TODA la casa.
@@ -358,7 +363,7 @@ export default function RootLayout({
             que llegó; ⑤ __vgcasa por fin NACE (nadie la seteaba desde
             v185): cuando el último _next termina, la casa lo anuncia.
             ════════════════════════════════════════════════════════════ */}
-        <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
+        <div id="vg-cortina" role="status" aria-label="Vanguard cargando" suppressHydrationWarning>
           {/* v182.0 EL ÚLTIMO RESCATE: el meta http-equiv=refresh NO vive aquí
               en el JSX — React 19 ELEVA los <meta> al <head> en la hidratación
               (QA lo cazó vivo: una recarga fantasma cada 70s en una casa
@@ -920,6 +925,8 @@ try{
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
         />
+        {/* v401.0 LA FUSIÓN: la misma cabecera, teletipo y barra móvil en cada sala */}
+        <Carcasa />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}
         {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados

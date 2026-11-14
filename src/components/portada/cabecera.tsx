@@ -18,9 +18,19 @@ export const NAV = [
   { href: "/cuartel", label: "Juego" },
 ];
 
+// v401 — cada sala de la casa cuelga de una de las cinco secciones
+const FAMILIAS: Record<string, string[]> = {
+  "/": ["/lectura", "/novedades", "/galeria", "/audios", "/musica"],
+  "/mundo": ["/atlas", "/archivo-mundial", "/escenarios", "/poder", "/divisas"],
+  "/guerra-hoy": ["/conflictos", "/conflicto", "/en-vivo", "/zona-cero", "/ver-guerra", "/cronica", "/verdad-cruda"],
+  "/pulso-mundial": ["/espia", "/servicios", "/rostros", "/centinela", "/torre", "/oscura", "/historia", "/calidad", "/voz", "/traductor", "/nucleo", "/catalogo"],
+  "/cuartel": ["/armeria", "/mision", "/objetivos", "/escudo", "/modo"],
+};
+
 function activo(ruta: string, href: string) {
-  if (href === "/") return ruta === "/";
-  return ruta === href || ruta.startsWith(href + "/");
+  const dentro = (r: string) => ruta === r || ruta.startsWith(r + "/");
+  if (href === "/") return ruta === "/" || (FAMILIAS["/"] ?? []).some(dentro);
+  return dentro(href) || (FAMILIAS[href] ?? []).some(dentro);
 }
 
 export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
