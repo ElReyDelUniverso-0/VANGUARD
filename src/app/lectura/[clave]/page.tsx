@@ -57,7 +57,7 @@ export default async function Lectura({ params }: Props) {
 
   return (
     <div className={`vx ${inter.variable}`}>
-      <Cabecera />
+      <Cabecera ruta="/lectura" />
       <main className="vx-wrap">
         <div className="vx-lec">
           <article className="vx-entra">
@@ -149,7 +149,7 @@ export default async function Lectura({ params }: Props) {
         )}
       </main>
       <Pie />
-      <BarraMovil />
+      <BarraMovil ruta="/lectura" />
     </div>
   );
 }

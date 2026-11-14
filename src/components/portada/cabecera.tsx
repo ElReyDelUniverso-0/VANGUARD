@@ -22,8 +22,9 @@ function activo(ruta: string, href: string) {
   return ruta === href || ruta.startsWith(href + "/");
 }
 
-export function Cabecera() {
-  const ruta = usePathname() || "/";
+export function Cabecera({ ruta: rutaFija }: { ruta?: string } = {}) {
+  const actual = usePathname();
+  const ruta = rutaFija ?? (actual === "/index" ? "/" : actual) ?? "/";
   const [oculta, setOculta] = useState(false);
   const ultimo = useRef(0);
 
@@ -79,8 +80,9 @@ const TABS = [
 ];
 
 /** Barra inferior tipo app (solo móvil) */
-export function BarraMovil() {
-  const ruta = usePathname() || "/";
+export function BarraMovil({ ruta: rutaFija }: { ruta?: string } = {}) {
+  const actual = usePathname();
+  const ruta = rutaFija ?? (actual === "/index" ? "/" : actual) ?? "/";
   return (
     <nav className="vx-tabbar" aria-label="Navegación principal">
       {TABS.map(({ href, label, Ico, vivo }) => (

@@ -126,7 +126,9 @@ async function leerMedio(m: Medio): Promise<Nota[]> {
       const fechaRaw = tag(raw, "pubDate") || tag(raw, "dc:date") || tag(raw, "updated");
       const fecha = fechaRaw ? new Date(desescapar(fechaRaw)) : new Date();
       if (Number.isNaN(fecha.getTime())) continue;
-      const resumen = textoPlano(tag(raw, "description")).slice(0, 420);
+      const resumen = textoPlano(tag(raw, "description"))
+        .replace(/\s*(Leer m[aá]s|Leer|Seguir leyendo|Ver m[aá]s)\.?\s*$/i, "")
+        .slice(0, 420);
       const texto = `${titulo} ${resumen}`;
       out.push({
         id: claveDeUrl(url),

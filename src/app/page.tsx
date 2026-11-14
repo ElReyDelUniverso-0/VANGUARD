@@ -103,7 +103,7 @@ export default async function Portada() {
 
   return (
     <div className={`vx ${inter.variable}`}>
-      <Cabecera />
+      <Cabecera ruta="/" />
       <AvisoNuevas primera={notas[0]?.id ?? null} />
 
       <main className="vx-wrap">
@@ -223,7 +223,7 @@ export default async function Portada() {
       </main>
 
       <Pie />
-      <BarraMovil />
+      <BarraMovil ruta="/" />
     </div>
   );
 }
