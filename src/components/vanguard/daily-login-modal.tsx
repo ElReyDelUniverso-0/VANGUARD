@@ -78,7 +78,7 @@ export function DailyLoginModal() {
       // ESPERA a que termine (8.3s de intro + margen) — primero la intro, luego el premio.
       // v105.0 MODO CALMA: si el operador está leyendo (Redacción) o escribiendo
       // (charla con LA MENTE), el bono ESPERA en silencio — nada cubre la lectura.
-      let delay = 400;
+      let delay = 6000; // v401: primero se ve el cuartel, luego el premio
       try {
         // v159: con intro cinematográfica el bono espera al ATERRIZAJE COMPLETO
         // (ceremonia ~8.3s + vuelo a la ciudad) — jamás tapa la metrópolis
@@ -92,6 +92,9 @@ export function DailyLoginModal() {
         if (document.documentElement.hasAttribute("data-vg-ciudad")) return;
         if (document.documentElement.getAttribute("data-wgl-entrada") === "1") return;
         if (calmaActiva()) return;
+        // v401.0 LA FUSIÓN: el bono diario es cosa del JUEGO — en las salas de
+        // lectura no tapa nada; espera a que el operador entre al cuartel.
+        if (!/^\/(cuartel|clasico)(\/|$)/.test(window.location.pathname)) return;
         clearInterval(iv);
         setOpen(true);
       }, 1500);

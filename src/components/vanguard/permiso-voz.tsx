@@ -104,7 +104,7 @@ export function PermisoVoz() {
       const p = leerPermisoHablar();
       setPermiso(p);
       if (p === "sin-responder") setVisible(true);
-    }, 5000);
+    }, 60000); // v401.0: la pregunta de la voz ya no asalta al entrar (antes 5 s); una alerta urgente la adelanta
     return () => clearTimeout(t);
   }, []);
 

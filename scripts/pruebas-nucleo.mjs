@@ -3267,7 +3267,7 @@ async function parteB() {
     afirmar(riel.includes("data-vg-riel-plegado"), "el riel perdió su atributo para el CSS");
     afirmar(riel.includes('getItem') && riel.includes('setItem'), "el riel ya no lee ni escribe su memoria");
     // EL CONSUMIDOR: la casa sigue montando el riel
-    const pagina = readFileSync(join(RAIZ, "src/app/page.tsx"), "utf8");
+    const pagina = readFileSync(join(RAIZ, "src/app/cuartel/page.tsx"), "utf8");
     afirmar(pagina.includes("<RielSeccion"), "la casa dejó de montar el riel de sección");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
@@ -3381,7 +3381,7 @@ async function parteB() {
     const censoDia = (m.match(/setDia\(/g) || []).length;
     afirmar(censoDia === 6, `los focos de cambio de día midieron ${censoDia} ≠ 6 (el reproductor fue tocado)`);
     // EL CONSUMIDOR: la casa sigue montando el CRONOATLAS
-    const pagina = readFileSync(join(RAIZ, "src/app/page.tsx"), "utf8");
+    const pagina = readFileSync(join(RAIZ, "src/app/cuartel/page.tsx"), "utf8");
     afirmar(pagina.includes('tab === "maquina" && <MaquinaPanel />'), "la casa dejó de montar el panel de la máquina");
     // la versión camina con la casa
     const version = readFileSync(join(RAIZ, "src/lib/version.ts"), "utf8");
@@ -6436,7 +6436,7 @@ async function parteB() {
   // cambia CUÁNDO corren los efectos). Y la cicatriz viva de ciudades-3d se
   // prueba viva por experimento stash: se queda, declarada.
   await verificar("EL PESO MUERTO estático: la leva de imports muertos verificada por muestreo con hermanos vivos y la cicatriz viva en su sitio (v339)", () => {
-    const page = readFileSync(join(RAIZ, "src/app/page.tsx"), "utf8");
+    const page = readFileSync(join(RAIZ, "src/app/cuartel/page.tsx"), "utf8");
     const agente = readFileSync(join(RAIZ, "src/app/api/agente/route.ts"), "utf8");
     const aon = readFileSync(join(RAIZ, "src/components/vanguard/panels/age-of-nations-panel.tsx"), "utf8");
     const imperio = readFileSync(join(RAIZ, "src/components/vanguard/panels/imperio-panel.tsx"), "utf8");

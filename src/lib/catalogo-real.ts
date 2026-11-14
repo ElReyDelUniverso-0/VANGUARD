@@ -58,7 +58,7 @@ export const COSAS_REALES: CosaReal[] = [
   { id: "real-027", tipo: "sala", nombre: "Los 100 Objetivos de Vanguard", ruta: "/objetivos", archivo: "src/app/objetivos/page.tsx" },
   { id: "real-028", tipo: "sala", nombre: "Sin conexión", ruta: "/offline", archivo: "src/app/offline/page.tsx" },
   { id: "real-029", tipo: "sala", nombre: "BIBLIOTECA OSCURA", ruta: "/oscura", archivo: "src/app/oscura/page.tsx", lema: "PÁGINA, pura de servidor) declara en su propia cabeza: «contenido" },
-  { id: "real-030", tipo: "sala", nombre: "PORTADA", ruta: "/", archivo: "src/app/page.tsx", lema: "VANGUARD v17 — MULTIJUGADOR TERMINADO + MOTOR DE CARGA RAPIDA." },
+  { id: "real-030", tipo: "sala", nombre: "PORTADA", ruta: "/", archivo: "src/app/page.tsx", lema: "La portada fusionada (v401): teletipo de cables, frentes activos, héroe con sellos y mapa radar." },
   { id: "real-031", tipo: "sala", nombre: "PODER", ruta: "/poder", archivo: "src/app/poder/page.tsx", lema: "MS.MIL.TOTL.P1 personal, MS.MIL.XPND.GD.ZS % del PIB) capturados el" },
   { id: "real-032", tipo: "sala", nombre: "Política de Privacidad", ruta: "/privacidad", archivo: "src/app/privacidad/page.tsx", lema: "Publisher Center (Google News) exige una URL de política de privacidad" },
   { id: "real-033", tipo: "sala", nombre: "WORLD PULSE", ruta: "/pulso-mundial", archivo: "src/app/pulso-mundial/page.tsx" },
