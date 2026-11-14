@@ -9,6 +9,7 @@ import {
   fmtMillones,
 } from "@/lib/atlas-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v294.0 EL ATLAS DEL PLANETA — el censo fuera de la cola: las cinco
 // cabezas restantes del almacén (imperio, conquest, hooks, social,
@@ -85,6 +86,35 @@ export default function AtlasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
+      <PortadaSala
+        imagen="/ilustraciones/mapa.jpg"
+        alt="Mapa antiguo desplegado sobre una mesa con una lámpara encendida"
+        volanta="LA CASA · GEOGRAFÍA"
+        titulo="EL ATLAS DEL PLANETA"
+        nivel="p"
+        acento="#22d3ee"
+        sumario="Países, capitales, poblaciones y rutas de poder: la geografía real que hay detrás de cada conflicto, servida en fichas y no en párrafos."
+        cifras={[
+          { valor: PAISES_ATLAS.length, etiqueta: "países", nota: "con ficha" },
+          { valor: PERSONAS_ATLAS.length, etiqueta: "personas", nota: "del mapa" },
+          { valor: RUTAS_PODER.length, etiqueta: "rutas", nota: "de poder" }
+        ]}
+        puntos={[
+          { titulo: "LA FICHA DEL PAÍS", texto:
+              "Superficie, población, capital, región y sus datos de la fuente, con formato legible y sin cifras inventadas." },
+          { titulo: "LAS RUTAS DEL PODER", texto:
+              "Los corredores que unen Estados, personas y recursos: por dónde se mueve de verdad la influencia." },
+          { titulo: "EL MAPA VIVO", texto:
+              "El globo con las rutas dibujadas como arcos de vuelo y el reloj local de cada capital vive en el aparato; aquí queda el archivo que lo alimenta." }
+        ]}
+        anclas={[
+          { etiqueta: "las naciones", href: "#paises" },
+          { etiqueta: "las personas", href: "#personas" },
+          { etiqueta: "las rutas", href: "#rutas" }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -103,7 +133,7 @@ export default function AtlasPage() {
           </p>
 
           {/* LAS NACIONES — agrupadas por región en el orden de la fuente */}
-          <section className="mt-10" aria-label="Las naciones del planeta">
+          <section id="paises" className="mt-10" aria-label="Las naciones del planeta">
             <h2 className="text-lg font-bold text-zinc-100">LAS NACIONES DEL PLANETA</h2>
             {REGIONES.map((reg) => (
               <div key={reg} className="mt-5">
@@ -145,7 +175,7 @@ export default function AtlasPage() {
           </section>
 
           {/* LAS PERSONAS — agrupadas por categoría en el orden de la fuente */}
-          <section className="mt-10" aria-label="Las personas del poder">
+          <section id="personas" className="mt-10" aria-label="Las personas del poder">
             <h2 className="text-lg font-bold text-zinc-100">LAS PERSONAS DEL PODER</h2>
             {CATEGORIAS.map((cat) => (
               <div key={cat} className="mt-5">
@@ -175,7 +205,7 @@ export default function AtlasPage() {
           </section>
 
           {/* LAS RUTAS — resueltas contra las personas, nada escrito a mano */}
-          <section className="mt-10" aria-label="Las rutas del poder">
+          <section id="rutas" className="mt-10" aria-label="Las rutas del poder">
             <h2 className="text-lg font-bold text-zinc-100">LAS RUTAS DEL PODER</h2>
             <ul className="mt-4 space-y-2">
               {RUTAS_RESUELTAS.map((r) => {

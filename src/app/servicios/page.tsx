@@ -14,6 +14,7 @@ import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v281.0 LA SALA DE LOS SERVICIOS — la expansión funcional módulo a
 // módulo abre una puerta nueva: la casa tiene DOS catálogos de
@@ -300,6 +301,36 @@ export default async function ServiciosPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
 
+      <PortadaSala
+        imagen="/ilustraciones/espionaje.jpg"
+        alt="Dos manos sobre un mapa de operaciones iluminado por una lámpara de escritorio"
+        volanta="LA CASA · SERVICIOS"
+        titulo="EL MAPA DE LOS SERVICIOS"
+        nivel="p"
+        acento="#f59e0b"
+        sumario="Las agencias y los servicios de inteligencia del mundo, expediente a expediente: su país, su lema, su misión y su sede tal como la fuente los declara."
+        cifras={[
+          { valor: COMUNIDAD.length, etiqueta: "agencias de EE. UU.", nota: "bajo la ODNI" },
+          { valor: RED.length, etiqueta: "servicios extranjeros", nota: "red mundial" },
+          { valor: NACIONES_RED, etiqueta: "naciones", nota: "con expediente" },
+          { valor: ARCHIVO.length, etiqueta: "expedientes", nota: "desclasificados" }
+        ]}
+        puntos={[
+          { titulo: "QUÉ ES ESTA SALA", texto:
+              "El censo abierto de la comunidad de inteligencia de los Estados Unidos y de la red mundial de servicios extranjeros: dos catálogos que antes solo vivían dentro del aparato y ahora se sirven en el HTML." },
+          { titulo: "CÓMO SE LEE", texto:
+              "Cada expediente viaja con sus datos de la fuente —nombres, lemas, misiones y fichas tal como la fuente los declara—. Nada aquí es secreto ni inventado: es conocimiento abierto, presentado como colección." },
+          { titulo: "QUÉ PUEDES HACER", texto:
+              "Brincar por categoría, seguir el arco de fundación, ver el pulso del archivo por agencia y abrir el salón interactivo con el mapa de la comunidad y de la red." }
+        ]}
+        anclas={[
+          { etiqueta: "la comunidad", href: "#comunidad" },
+          { etiqueta: "la red mundial", href: "#red" },
+          { etiqueta: "los sentidos", href: "#sentidos" }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <div className="border-b border-zinc-800 bg-zinc-900/60">
         <div className="mx-auto max-w-5xl px-4 py-10">
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
@@ -339,7 +370,7 @@ export default async function ServiciosPage() {
         </p>
 
         {/* ── LA COMUNIDAD (v127) — los 18 ojos de los Estados Unidos ── */}
-        <section className="mt-10" aria-label="La Comunidad">
+        <section id="comunidad" className="mt-10" aria-label="La Comunidad">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
             <span style={{ color: CATEGORIA_META.coordinacion.color }}>LA COMUNIDAD</span>
             <span className="text-zinc-600">{` · ${COMUNIDAD.length} agencias de EE. UU.`}</span>
@@ -397,7 +428,7 @@ export default async function ServiciosPage() {
         </section>
 
         {/* ── LA RED MUNDIAL (v128) — los 18 servicios del resto del planeta ── */}
-        <section className="mt-12" aria-label="La Red Mundial">
+        <section id="red" className="mt-12" aria-label="La Red Mundial">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
             <span style={{ color: CATEGORIA_RED_META.cincoOjos.color }}>LA RED MUNDIAL</span>
             <span className="text-zinc-600">{` · ${RED.length} servicios de ${NACIONES_RED} naciones`}</span>
@@ -490,7 +521,7 @@ export default async function ServiciosPage() {
         </section>
 
         {/* ── LOS SENTIDOS DEL OFICIO (v282) — el censo conceptual de la fuente ── */}
-        <section className="mt-12" aria-label="Los sentidos de la inteligencia">
+        <section id="sentidos" className="mt-12" aria-label="Los sentidos de la inteligencia">
           <h2 className="font-mono text-[11px] uppercase tracking-[0.3em] text-zinc-400">
             <span className="text-cyan-hud">LOS SENTIDOS DE LA INTELIGENCIA</span>
             <span className="text-zinc-600">{` · ${SENTIDOS.length} disciplinas del oficio`}</span>
