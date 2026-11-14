@@ -191,6 +191,9 @@ export const COSAS_REALES: CosaReal[] = [
   { id: "real-160", tipo: "panel", nombre: "BUSCADOR", archivo: "src/components/vanguard/buscador.tsx", lema: "VANGUARD v170.0 — BUSCADOR UNIVERSAL (fórmula Google)" },
   { id: "real-161", tipo: "motor", nombre: "ACTIVOS MILITARES", archivo: "src/lib/3d/activos-militares.ts", lema: "(src/lib/3d/activos-militares.ts)" },
   { id: "real-162", tipo: "panel", nombre: "UNIFORMES 3D", archivo: "src/components/vanguard/uniformes-3d.tsx", lema: "Orden del Dueño: «mejora los uniformes, personajes, vehículos militares; no" },
+  { id: "real-164", tipo: "motor", nombre: "AUDITORÍA DE LA CASA", archivo: "scripts/auditoria.mjs", lema: "Seis agentes, cero dependencias: rutas, enlaces, idioma, recursos, botones y salud en vivo. Se ejecuta con `node scripts/auditoria.mjs --smoke <url> --json`" },
+  { id: "real-165", tipo: "sala", nombre: "LA SALA DE LA CALIDAD", archivo: "src/app/calidad/page.tsx", lema: "El informe de los seis agentes, publicado con fecha y fuente; cero cifras escritas a mano" },
+  { id: "real-166", tipo: "motor", nombre: "INSTANTÁNEA DE CALIDAD", archivo: "src/lib/auditoria.json", lema: "La foto de la última auditoría, escrita por el propio auditor (nunca a mano)" },
   { id: "real-163", tipo: "panel", nombre: "PARQUE MILITAR CARGA", archivo: "src/components/vanguard/parque-militar-carga.tsx", lema: "`next/dynamic({ ssr: false })` no se permite dentro de un Server Component en" },
 ];
 

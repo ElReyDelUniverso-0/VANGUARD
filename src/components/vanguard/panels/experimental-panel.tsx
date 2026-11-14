@@ -450,7 +450,7 @@ export function ExperimentalPanel() {
         titulo={t("exp113.hero.titulo")}
         volanta={t("exp113.hero.volanta")}
         texto={t("exp113.hero.texto")}
-        imagen="/img/cover-lab.jpg"
+        imagen="/ilustraciones/estudio.jpg"
         escena="prisma"
         semilla={13}
         altura={210}

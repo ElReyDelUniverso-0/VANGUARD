@@ -22,6 +22,19 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v367.9",
+    nombre: "LA SALA DE LA CALIDAD",
+    hitos: [
+      "ORDEN DEL DUEÑO, TEXTUAL: «VANGUARD necesita menos acumulación y más calidad», con su orden de trabajo: primero reparar y auditar todo, después la experiencia visual, después investigar y fusionar. Y su método: «un grupo de 5 personas, cada uno un multiagente experto en programación, buscando errores y resolución de problemas al instante»",
+      "EL EQUIPO DE SEIS AGENTES (scripts/auditoria.mjs) — cero dependencias, solo Node: RUTAS (45 salas, 92 endpoints, 2 dinámicas), ENLACES (130 revisados), IDIOMA (402 claves usadas contra 593 del diccionario), RECURSOS (106 archivos pedidos por el código), BOTONES (onClick vacíos, href=\"#\", pendientes marcados) y EN VIVO (pide cada ruta al despliegue y anota el código HTTP). Se ejecuta con `node scripts/auditoria.mjs --smoke <url> --json`",
+      "LA AUDITORÍA APRENDIÓ A NO ACUSAR EN FALSO — su primera pasada gritó 2 enlaces rotos, 8 claves de idioma, 107 imágenes ausentes y 208 pendientes; leídos uno a uno, todos eran falsos: descargas a archivos que sí existen (no miraba public/), un ayudante local llamado t() que parecía el traductor de la casa, binarios que están en el repositorio pero no en el clon de trabajo (que no trae imágenes), y la palabra española «todo» escrita en mayúsculas. Ahora compara contra el manifiesto real de public/ (417 archivos), ignora archivos con traductor propio y guarda a mano los casos aceptados",
+      "DOS DEFECTOS REALES REPARADOS, SIN QUITAR NADA — la portada del taller pedía /img/cover-lab.jpg, una carpeta que no existe en toda la casa: ahora viste con la ilustración real del estudio que viaja en el repositorio desde siempre. Y el velo de la animación de recompensas tenía un manejador vacío: su intención era bloquear el clic para no dejar pasar al fondo, y ahora lo bloquea de verdad",
+      "LA SALA /calidad — el informe se publica dentro de la casa con fecha, fuente y los números tal como salieron, no como quisiéramos: los seis agentes, los defectos abiertos (hoy cero) y la doctrina AUDITAR → MEJORAR → FUSIONAR → PERFECCIONAR. Cero cifras escritas a mano: la sala lee la instantánea que escribe el propio auditor",
+      "PRIMER VEREDICTO MEDIDO — 45 salas · 92 endpoints · 130 enlaces (0 rotos) · 402 claves de idioma (0 sin resolver) · 106 recursos (0 ausentes) · 0 botones sin acción · 43 de 43 rutas respondiendo 200 en producción, pedidas una por una contra vanguard-u6b9.vercel.app",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v367.8",
     nombre: "EL PARQUE MILITAR",
     hitos: [

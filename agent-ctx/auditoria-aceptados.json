@@ -1,0 +1,40 @@
+{
+  "nota": "v367.9 — candidatos a TODO/FIXME YA LEÍDOS A MANO y aceptados: en esta casa la palabra «todo» se escribe en mayúsculas dentro de los comentarios («TODO derivado del catálogo», «el mapa de TODO: un globo»). No son pendientes. Lo que NO esté en esta lista se cuenta como pendiente en la auditoría. Los aceptados se anclan al TEXTO de la línea (no al número): las líneas se mueven cada vez que se versiona, y una lista atada al número caduca sola.",
+  "aceptados": [
+    {
+      "archivo": "src/app/armeria/page.tsx",
+      "contiene": "TODO derivado de la fuente",
+      "motivo": "español: «TODO derivado de la fuente»"
+    },
+    {
+      "archivo": "src/app/conflictos/page.tsx",
+      "contiene": "TODO derivado de la fuente",
+      "motivo": "español: «TODO derivado de la fuente»"
+    },
+    {
+      "archivo": "src/components/vanguard2/progreso.ts",
+      "contiene": "TODO vive en localStorage",
+      "motivo": "español: «TODO vive en localStorage»"
+    },
+    {
+      "archivo": "src/lib/nucleo/relaciones.ts",
+      "contiene": "TODO enlace apunta a una ruta",
+      "motivo": "español: «TODO enlace apunta a una ruta que EXISTE»"
+    },
+    {
+      "archivo": "src/lib/version.ts",
+      "contiene": "TODO/URGENTE/teatro",
+      "motivo": "español: «TODO/URGENTE/teatro»"
+    },
+    {
+      "archivo": "src/lib/version.ts",
+      "contiene": "agrega estos tipos",
+      "motivo": "español: «agrega estos tipos… en TODO Vanguard»"
+    },
+    {
+      "archivo": "src/lib/version.ts",
+      "contiene": "funcióanlo todo",
+      "motivo": "español: cita textual del Dueño dentro de un comentario"
+    }
+  ]
+}

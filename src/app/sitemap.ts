@@ -411,6 +411,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v367.9 LA SALA DE LA CALIDAD — el informe de los seis agentes.
+      url: `${SITE_URL}/calidad`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       // v367.4 EL CATÁLOGO — índice real de cien piezas ya construidas.
       url: `${SITE_URL}/catalogo`,
       lastModified: new Date(),
