@@ -29,6 +29,7 @@ import { CapasGlobales } from "@/components/vanguard/capas-globales";
 // v151.0 VANGUARD-2: guardia de ruta — /vanguard2 es un universo 3D puro,
 // ninguna capa DOM de la Casa monta encima (mandato: cero 2D en el nuevo Vanguard)
 import { SoloCasa } from "@/components/vanguard2/solo-casa";
+import { FueraDePortada } from "@/components/portada/fuera-de-portada";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
 import { MenuVanguardMount } from "@/components/vanguard/menu-vanguard-mount";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
@@ -691,7 +692,7 @@ try{
       // si la cortina ya se fundió, la casa respira — hidrate o no el bundle.
       // El vigía solo juzga a quien lo necesita de verdad: la Casa SPA ("/")
       // y el universo /vanguard2, donde sin hidratación la pantalla es vacío.
-      var esSPA=(location.pathname==='/'||location.pathname.indexOf('/vanguard2')===0);
+      var esSPA=(location.pathname==='/cuartel'||location.pathname.indexOf('/vanguard2')===0); // v400: la SPA vive en /cuartel
       if(!esSPA){
         var cL=document.getElementById('vg-cortina');
         if(!cL||cL.getAttribute('data-off')==='1') return;
@@ -930,9 +931,11 @@ try{
         <SoloCasa>
           <Rehidratador />
         </SoloCasa>
-        <SoloCasa>
-          <CapasGlobales />
-        </SoloCasa>
+        <FueraDePortada>
+          <SoloCasa>
+            <CapasGlobales />
+          </SoloCasa>
+        </FueraDePortada>
         <MenuVanguardMount />
         <Toaster />
         <Sonner />

@@ -5276,8 +5276,15 @@
 //    origen como prueba: si algo no existe, no aparece.
 // Reglas respetadas: solo se AGREGA, cero imágenes nuevas, cero
 // notificaciones, cero cifras a mano, 3D y voz intactos. v368.0 libre para ia2.
-export const APP_VERSION = "v367.9";
-export const APP_CODENAME = "LA SALA DE LA CALIDAD";
+// v400.0 EL REDISEÑO — mandato del Dueño 2026-11-14 («UN SUPER SÍ» a las 10
+// soluciones): portada nueva tipo revista en "/" (cabecera única, noticia
+// grande, última hora, historias por conflicto, mapa vivo, regiones, salas),
+// notas frescas directo de 10 medios en español con su foto real, página de
+// lectura «lo esencial en 30 segundos» (/lectura/[clave]), letra Inter y
+// paleta azul noche. El cuartel de siempre vive intacto en /cuartel (sin
+// intro de cine, sin manual automático, sin pulso teatral).
+export const APP_VERSION = "v400.0";
+export const APP_CODENAME = "EL REDISEÑO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
