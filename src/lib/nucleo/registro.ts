@@ -502,6 +502,20 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
       "perfil jugador carnet codigo jugador permisos foto avatar banner marco bio faccion personalizacion cuenta sesion acceso v367.6",
   },
   {
+    id: "mod:videoteca",
+    nombre: "LA VIDEOTECA",
+    lema: "Los 24 clips de la casa, por fin con sala y sin bajar un byte hasta pulsar play",
+    descripcion:
+      "Los veinticuatro clips que viajaban en public/videos (V-001 … V-024) y que ninguna sala usaba —el censo de v400.2 midió cero referencias en todo el código— ganan casa en /galeria. preload=\"none\": ninguna tarjeta descarga nada hasta que alguien pulsa play. Miniatura tomada de una ilustración que ya existía y controles del navegador, así que el componente no añade JavaScript propio. La casa todavía no tiene ficha editorial de cada clip: cada tarjeta se llama por su archivo real, sin inventarle un título.",
+    categoria: "REDACCION",
+    ruta: "/galeria",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["mod:calidad"],
+    alias:
+      "videoteca video videos clips mp4 multimedia galeria reproduccion preload poster v400.3",
+  },
+  {
     id: "mod:portadas",
     nombre: "LAS PORTADAS DE SALA",
     lema: "Cada sala abre con una imagen grande y sus cifras, no con un muro de texto",

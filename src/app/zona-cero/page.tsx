@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ZonaCeroTabs } from "@/components/vanguard/zona-cero-tabs";
 // v367.8 EL PARQUE MILITAR — las unidades reales (CC0) que asedian la ciudad
 import { ParqueMilitarCarga } from "@/components/vanguard/parque-militar-carga";
+import { FACCCIONES_ORDEN } from "@/lib/3d/activos-militares";
 import { ZonaCeroGeo } from "@/components/vanguard/zona-cero-geo";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v230.0 EL ESPEJO — la ficción muestra la guerra real que la alimenta:
@@ -15,6 +16,7 @@ import {
   slugAcontecimientoDeTeatro,
   idAcontecimiento,
 } from "@/lib/nucleo/acontecimientos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v230.0 EL ESPEJO — el conteo REAL por teatro (una sola query groupBy).
 // v256.0 LA ÚLTIMA SEÑAL — la MISMA query también trae el momento del último
@@ -129,6 +131,31 @@ export default async function ZonaCeroPage() {
     return mejor;
   })();
   return (
+    <>
+    <PortadaSala
+      imagen="/ilustraciones/crisis.jpg"
+      alt="Sala de crisis con mapas colgados y mesas de operaciones"
+      volanta="LA CASA · ZONA CERO"
+      titulo="EL TEATRO GLOBAL"
+      nivel="p"
+      acento="#ef4444"
+      sumario="El simulador de guerra en directo: los teatros reales, los cables verificados de cada uno y las unidades del asedio en 3D."
+      cifras={[
+          { valor: Object.keys(TEATROS).length, etiqueta: "teatros", nota: "documentados" },
+          { valor: totalReal ?? 0, etiqueta: "cables", nota: "verificados" },
+          { valor: FACCCIONES_ORDEN.length, etiqueta: "uniformes", nota: "militares" }
+      ]}
+      puntos={[
+          { titulo: "UN TEATRO, UN CABLE", texto:
+              "Cada teatro se alimenta de los cables reales del archivo: la simulación no inventa el parte de guerra, lo recibe." },
+          { titulo: "EL MAPA Y LAS UNIDADES", texto:
+              "El teatro 3D, los modelos militares y el geovisor: la misma verdad desde tres alturas." },
+          { titulo: "SI FALTA UN DATO", texto:
+              "Se declara el hueco en vez de rellenarlo. Un teatro sin cables no se decora: se dice que está a oscuras." }
+      ]}
+      nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+    />
+
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
         type="application/ld+json"
@@ -435,5 +462,6 @@ export default async function ZonaCeroPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

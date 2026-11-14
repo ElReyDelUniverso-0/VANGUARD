@@ -7,6 +7,7 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { SalaEnVivo, type CableVivo, type StatsVivo } from "./sala-en-vivo";
 import QuizPeso, { type ParPeso, type ParTeatro } from "./quiz-peso";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v213.0 EL PULSO — LA SALA EN VIVO (la puerta del «EL PRIMERO»).
 // Página server: baja la instantánea (solo cables REALES enriquecidos
@@ -148,6 +149,30 @@ export default async function EnVivoPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
+      />
+      <PortadaSala
+        imagen="/ilustraciones/envivo.jpg"
+        alt="Estudio de directo con pantallas encendidas y mesa de control"
+        volanta="LA CASA · EL PULSO"
+        titulo="EL MUNDO, MINUTO A MINUTO"
+        nivel="p"
+        acento="#22d3ee"
+        sumario="La última hora del planeta: cables reales con hora, fuente y sello de exactitud, sondeados cada treinta segundos."
+        cifras={[
+          { valor: stats.hoy, etiqueta: "cables", nota: "hoy" },
+          { valor: stats.urgente, etiqueta: "urgentes", nota: "ahora mismo" },
+          { valor: salas.size, etiqueta: "teatros", nota: "en la sala" },
+          { valor: iniciales.length, etiqueta: "cables", nota: "en el pulso" }
+        ]}
+        puntos={[
+          { titulo: "SIN OPINIÓN", texto:
+              "No hay análisis aquí: hay cables con su fuente, su hora y su sello. La interpretación vive en las otras salas." },
+          { titulo: "SONDEO CONTINUO", texto:
+              "La sala vuelve a pedir el pulso cada treinta segundos; si no hay nada nuevo, lo dice en vez de repetir." },
+          { titulo: "DE LA NOTICIA AL MAPA", texto:
+              "Cada cable enlaza a su conflicto y a su teatro: de la última hora al mapa en un toque." }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
       />
       <noscript>
         <main className="min-h-screen bg-zinc-950 text-zinc-200 flex items-center justify-center px-6">

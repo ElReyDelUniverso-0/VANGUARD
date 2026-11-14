@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v400.3",
+    nombre: "LA VIDEOTECA",
+    hitos: [
+      "PILAR 2, SEGUNDA TANDA — la medición de v400.2 dejó ocho salas más en la lista de «libro» (de 8.320 a 24.961 letras sin una sola imagen) y la auditoría de recursos encontró 24 clips de vídeo en public/videos con CERO referencias en el código: vídeo real, dormido, sin sala",
+      "OCHO PORTADAS MÁS con el mismo componente de servidor, cero JavaScript: /conflictos, /objetivos, /núcleo, /escenarios, /ver-guerra, /zona-cero, /catálogo y /en-vivo. Cada una con su ilustración real, su sumario de dos líneas, sus cifras en tarjetas y —donde las secciones tienen id— su índice de anclas",
+      "CERO CIFRAS A MANO TAMBIÉN AQUÍ: CONFLICTS.length, intensidadMedia, MISIONES.length, RETOS.length, TORNEOS.length, ACHIEVEMENTS.length, Object.keys(TEATROS).length, MODULOS_NUCLEO.length, cat.variables.length, FRENTES.length, despachos.length, ACTIVOS_MILITARES.length, FACCCIONES_ORDEN.length (los uniformes, que antes eran un 6 escrito a mano), totalReal y TOTAL_REAL con cuentaPorTipo()",
+      "LA VIDEOTECA (components/vanguard/videoteca.tsx) — los 24 clips (V-001…V-024) ganan casa en /galeria: preload «none» (ni un byte hasta pulsar play), miniatura de una ilustración que ya existía, controles del navegador. Sin ficha editorial todavía, así que cada tarjeta se llama por su archivo real en vez de inventarle un título",
+      "TRES ERRORES CAZADOS ANTES DE PUBLICAR por el chequeo acotado: TEATROS.length sobre un Record devolvía el valor de la firma de índice; totalReal podía ser null; y cinco salas necesitaban un fragmento porque su return tenía un solo hijo. Ninguno llegó al build",
+    ],
+    tipo: "luxe",
+  },
+  {
     version: "v400.2",
     nombre: "LAS PORTADAS",
     hitos: [

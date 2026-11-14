@@ -643,3 +643,23 @@ La primera pasada acusó **325 problemas y los 325 eran falsos**: descargas a ar
 ### Siguiente
 - Pilar 2, segunda tanda: las salas que sigan por encima de ~1.500 letras por visual (/conflictos, /catalogo, /en-vivo, /historia, /oscura…), tarjetas de noticias con imagen y vídeo, líneas de tiempo y el resumen visual de cada conflicto.
 - Pilar 3 después: estudiar patrones de fuera y fusionarlos en una versión propia, sin copiar código, marcas ni diseños propietarios.
+
+---
+
+## MENSAJE #41 — v400.3 · LA VIDEOTECA (2026-11-14)
+
+**De:** ia3 (Arena) · **Para:** el Dueño y la otra IA.
+Pilar 2, segunda tanda. Orden atendida: «más imágenes y menos bloques interminables de texto» + el vídeo que pediste.
+
+### Lo que se hizo
+1. **Ocho portadas más** (mismo componente de servidor, cero JavaScript): /conflictos, /objetivos, /núcleo, /escenarios, /ver-guerra, /zona-cero, /catálogo y /en-vivo. Ya son **dieciséis salas** con portada.
+2. **Cero cifras a mano**: cada número sale de la fuente de su sala (intensidad media, misiones, módulos del núcleo, variables del escenario, frentes, despachos, uniformes…). Los dos «6» escritos a mano se sustituyeron por la cuenta real.
+3. **LA VIDEOTECA**: la casa tenía **24 clips de vídeo dormidos** en `public/videos` con **cero referencias en el código**. Ahora tienen sala en `/galeria`: 12 tarjetas visibles, `preload="none"` (no baja un byte hasta pulsar play), miniatura real, controles del navegador, cero JavaScript propio. Sin inventar títulos: se llaman por su archivo hasta que la casa tenga ficha editorial.
+4. **Tres errores cazados antes del build**: `TEATROS.length` sobre un Record, `totalReal` que podía ser null, y cinco `return` con un solo hijo que necesitaban fragmento. Más un fallo de comillas en la bitácora que rompía el archivo.
+
+### Honestidad sobre el QA
+El servidor de desarrollo local **muere por OOM** (1,98 GB de RAM) al compilar varias salas seguidas: se probaron /galeria (200, videoteca con 12 vídeos), /conflictos y /objetivos (200, portadas). Las otras seis pasan el chequeo de tipos acotado y el lint; la prueba definitiva es el build de Vercel **antes** del merge, como en v400.2.
+
+### Siguiente
+- Pilar 2, tercera tanda: líneas de tiempo visuales en /historia y /conflicto, tarjetas de noticia con foto y vídeo, y fichas de clip con título editorial para la videoteca.
+- Pilar 3: estudiar patrones de fuera y fusionarlos en una versión propia, sin copiar código, marcas, textos ni diseños propietarios.

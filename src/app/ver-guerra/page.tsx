@@ -3,7 +3,7 @@ import Link from "next/link";
 import FrenteTotalSim from "@/components/vanguard/frente-total-sim";
 // v367.8 EL PARQUE MILITAR — los modelos 3D reales (CC0) copiados a la casa
 import { ParqueMilitarCarga } from "@/components/vanguard/parque-militar-carga";
-import { ACTIVOS_MILITARES, LICENCIA_MODELOS, AUTOR_MODELOS, ORIGEN_MODELOS } from "@/lib/3d/activos-militares";
+import { ACTIVOS_MILITARES, LICENCIA_MODELOS, AUTOR_MODELOS, ORIGEN_MODELOS, FACCCIONES_ORDEN } from "@/lib/3d/activos-militares";
 import { FRENTES } from "@/lib/frentes-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 // v229.0 EL PUENTE — el mural conecta con el núcleo: teatros con cables
@@ -14,6 +14,7 @@ import {
   slugAcontecimientoDeTeatro,
   idAcontecimiento,
 } from "@/lib/nucleo/acontecimientos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // v53.0 FRENTE TOTAL — /ver-guerra. Lo que pidió el comando: VER GUERRA de
 // verdad. Nunca visto en una página de conflictos: un solo canvas donde los
@@ -213,6 +214,32 @@ export default async function VerGuerraPage() {
   // (derivados del catálogo, nunca escritos a mano).
   const sinPuerta = FRENTES.filter((f) => !FRENTE_A_TEATRO[f.id]).map((f) => f.name);
   return (
+    <>
+    <PortadaSala
+      imagen="/ilustraciones/combate.jpg"
+      alt="Columna de vehículos blindados envuelta en polvo al atardecer"
+      volanta="LA CASA · EL FRENTE"
+      titulo="EL FRENTE, EN DIRECTO"
+      nivel="p"
+      acento="#f43f5e"
+      sumario="El mural de los teatros, los despachos reales del cable de la casa y el parque militar 3D con sus modelos CC0."
+      cifras={[
+          { valor: FRENTES.length, etiqueta: "frentes", nota: "documentados" },
+          { valor: despachos.length, etiqueta: "despachos", nota: "reales" },
+          { valor: ACTIVOS_MILITARES.length, etiqueta: "modelos 3D", nota: "con licencia" },
+          { valor: FACCCIONES_ORDEN.length, etiqueta: "uniformes", nota: "por bando" }
+      ]}
+      puntos={[
+          { titulo: "DESPACHOS DE VERDAD", texto:
+              "El teletipo no se inventa: son los cables más frescos de la casa, con su fuente y su hora." },
+          { titulo: "EL PARQUE MILITAR", texto:
+              "Seis modelos 3D que ya existían (Quaternius, CC0) copiados sin retocar la malla; Vanguard solo pone el color del uniforme." },
+          { titulo: "NADA DE HUMO", texto:
+              "Si un modelo no abre, la escena lo confiesa y su puesto lo ocupa la figura procedural de la casa." }
+      ]}
+      nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+    />
+
     <main className="min-h-screen bg-[#0A0A0F] text-zinc-100">
       <script
         type="application/ld+json"
@@ -537,5 +564,6 @@ export default async function VerGuerraPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

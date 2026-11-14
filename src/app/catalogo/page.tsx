@@ -6,6 +6,7 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { FuenteYFecha } from "@/components/vanguard/fuente-y-fecha";
 import { COSAS_REALES, TOTAL_REAL, cuentaPorTipo, cosasPorTipo, type TipoCosa } from "@/lib/catalogo-real";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
 // v367.4 EL CATÁLOGO DE LO QUE YA EXISTE — /catalogo
@@ -93,6 +94,31 @@ export default function CatalogoPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }} />
+      <PortadaSala
+        imagen="/ilustraciones/salas.jpg"
+        alt="Galería de salas de una casa antigua con puertas numeradas"
+        volanta="LA CASA · EL CATÁLOGO"
+        titulo="TODO LO QUE YA EXISTE"
+        nivel="p"
+        acento="#94a3b8"
+        sumario="Cada sala, panel, motor y punto de datos construido en Vanguard, con el archivo del que sale como prueba: el índice de lo que hay, no de lo que se promete."
+        cifras={[
+          { valor: TOTAL_REAL, etiqueta: "piezas", nota: "reales" },
+          { valor: cuentaPorTipo().sala, etiqueta: "salas", nota: "con su puerta" },
+          { valor: cuentaPorTipo().panel, etiqueta: "paneles", nota: "construidos" },
+          { valor: cuentaPorTipo().api, etiqueta: "puntos de datos", nota: "en pie" }
+        ]}
+        puntos={[
+          { titulo: "CON PRUEBA", texto:
+              "Cada pieza viaja con su archivo de origen: si el archivo no existe, la pieza no está en la lista." },
+          { titulo: "SIN INVENTO", texto:
+              "No es una hoja de ruta: es el inventario de lo que ya está construido y funcionando." },
+          { titulo: "PARA QUÉ", texto:
+              "Para encontrar lo que ya existe antes de construir otra cosa igual. El Dueño lo pidió así: «no crees nada nuevo, agrega lo que ya está creado»." }
+        ]}
+        nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
       <main className="min-h-screen bg-zinc-950 text-zinc-200">
         <div className="border-b border-zinc-800 bg-zinc-900/60">
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-5 py-3">

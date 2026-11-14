@@ -9,6 +9,7 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { EscenarioControles } from "@/components/vanguard/escenario-controles";
 // v367.8 EL PARQUE MILITAR — las piezas reales (CC0) del simulador
 import { ParqueMilitarCarga } from "@/components/vanguard/parque-militar-carga";
+import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 // ============================================================
 // v224.0 EL ESTRATEGA — LA PUERTA DEL ESCENARIO (/escenarios)
@@ -120,6 +121,32 @@ export default async function EscenariosPage() {
   };
 
   return (
+    <>
+    <PortadaSala
+      imagen="/ilustraciones/simulador.jpg"
+      alt="Sala de simulación con pantallas que muestran escenarios y variables"
+      volanta="LA CASA · EL ESTRATEGA"
+      titulo="QUÉ PASARÍA SI…"
+      nivel="p"
+      acento="#a855f7"
+      sumario="Escenarios de presión por teatro con sus datos, supuestos, variables, reglas y resultados separados: una simulación que se puede auditar, no una predicción."
+      cifras={[
+          { valor: cat.variables.length, etiqueta: "variables", nota: "declaradas" },
+          { valor: cat.supuestos.length, etiqueta: "supuestos", nota: "a la vista" },
+          { valor: cat.anclas.length, etiqueta: "anclas", nota: "de datos" },
+          { valor: cat.limites.length, etiqueta: "límites", nota: "confesados" }
+      ]}
+      puntos={[
+          { titulo: "SEPARADO, NO MEZCLADO", texto:
+              "Datos, supuestos, variables, reglas y resultados van cada uno en su bloque: quien lee puede discutir el supuesto sin tener que creerse el resultado." },
+          { titulo: "NO ES UNA PREDICCIÓN", texto:
+              "La sala lo dice en la cara. Es un ejercicio de presión con reglas explícitas y límites escritos." },
+          { titulo: "SE PUEDE REPETIR", texto:
+              "El mismo escenario, con las mismas reglas, da el mismo resultado: la simulación se ejecuta, no se narra." }
+      ]}
+      nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+    />
+
     <main className="min-h-screen bg-zinc-950 text-zinc-200">
       <script
         type="application/ld+json"
@@ -319,5 +346,6 @@ export default async function EscenariosPage() {
         />
       </div>
     </main>
+    </>
   );
 }
