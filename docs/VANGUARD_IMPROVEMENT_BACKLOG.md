@@ -32,6 +32,8 @@
 | B-23 | Ticker cripto de `/cuartel` a 15 px | pendiente previo |
 | B-24 | Actualizar `AGENTS.md` (dice v127 y reglas que ya no aplican) o apuntarlo a `docs/` | ARCHITECTURE |
 | B-25 | `/espia` necesita 7 días de datos; contador de Misión 100 necesita almacenamiento KV | pendiente previo |
+| B-27 | Medir en producción cuántos eligen cada mundo (sin datos personales) y si la Puerta sube la permanencia | v403.1 |
+| B-28 | `next dev` congela el sandbox (2 GB) al compilar el layout raíz: probar `next build` local o un arnés por componente | v403.1 |
 | B-26 | El País bloquea lectores automáticos (403): sus notas fuera del cable caen en la página digna | v402.7 |
 
 ## Hecho

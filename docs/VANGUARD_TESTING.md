@@ -67,3 +67,11 @@ Un build fallido NO tumba producción (Vercel sirve el último bueno), pero deja
 | Nota fuera del cable de un medio que responde (BBC, El Mundo…) | 200 con título/fecha/foto del propio medio |
 | Nota fuera del cable de un medio que bloquea (El País, 403) | 200 «Esta nota ya salió del cable vivo», `noindex` |
 | Clave de un dominio ajeno a la casa | 404 |
+
+## Componentes de cliente sin `next dev` (v403.1)
+Cuando `next dev` no cabe en memoria: empaquetar el componente REAL con esbuild (alias `@/*` → `src/*`,
+`next/navigation` → simulacro con `history.pushState`) y servirlo con un servidor estático; probar con Playwright.
+La Puerta no sale a navegadores automatizados: en la prueba, `navigator.webdriver=false` y un user-agent sin «Headless».
+Casos de la Puerta: primera visita abre; elegir Juego → `/cuartel`; el Cruce aparece al cambiar de mundo y se va;
+mismo mundo sin Cruce; segunda visita no abre; botón la reabre; Esc salta intro y luego cierra; Tab+Enter elige;
+robot no la ve; movimiento reducido = fase «eleccion» directa; `/entrar` sin botón de saltar.

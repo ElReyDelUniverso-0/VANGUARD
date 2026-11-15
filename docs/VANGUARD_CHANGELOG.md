@@ -3,6 +3,19 @@
 > Resumen técnico por versión. El detalle para el público vive en `src/lib/bitacora.ts` (sala Novedades).
 > Dos IAs publican en `main`: la IA de diseño y ia3. Cada entrada dice quién.
 
+## v403.1 · LOS DOS MUNDOS — 2026-11-15 (IA de diseño)
+- Orden del Dueño: «Vanguard tiene dos mundos (juego y noticias): intro épica para entrar».
+- `src/components/mundos/mundos.ts`: fuente única de qué ruta es de qué mundo (`mundoDe`) y ficha de cada mundo;
+  cuentas de salas y módulos calculadas de `modulos.ts` (Noticias 31 salas · 7 módulos, Juego 6 salas).
+- `puerta-mundos.tsx` + `puerta.css`: **la Puerta** (primera visita a `/`, tras la cortina de carga; línea de oro →
+  emblema → VANGUARD → «Dos mundos · una sola casa» → dos puertas → warp + golpe Web Audio tras el toque) y **el Cruce**
+  (barrido de 1,5 s al pasar de un mundo al otro). Saltar/Esc, nunca a robots/headless, `prefers-reduced-motion` estático,
+  foco en el diálogo, solo transform/opacity. `?sinintro` la omite.
+- `/entrar` (página propia, sin Carcasa, con respaldo sin JS), botón «Elegir mundo» en pie, portada y `/modulos`.
+- Pie: «Inteligencia» (módulo que ya no existe desde v402.6) → Conocimiento y Datos vivos.
+- Pruebas: arnés esbuild + Playwright (`herr/puerta-prueba.py`) en 390×844 y 1440×900: 0 errores; dev de Next
+  congeló el sandbox por memoria esta sesión (ver TESTING).
+
 ## v402.7 · LA NOTA QUE NO SE PIERDE — 2026-11-15 (IA de diseño)
 - `/lectura/<clave>` ya no da 404 cuando la nota sale del cable vivo: `buscarNota` lee la ficha OpenGraph del propio
   medio (lista cerrada de 11 dominios, https, redirecciones verificadas, charset respetado, coletilla del medio fuera).

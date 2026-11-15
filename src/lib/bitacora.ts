@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.1",
+    nombre: "LOS DOS MUNDOS",
+    hitos: [
+      "VANGUARD TIENE DOS MUNDOS: el mundo de NOTICIAS (lo que pasa en el planeta, ahora) y el mundo de JUEGO (misiones, rango y gloria). Cada uno con su color: celeste de cable y oro de la casa",
+      "LA PUERTA: la primera vez que entras se abre una secuencia de cine. Una línea de oro parte la noche, aparece el emblema, VANGUARD se ensambla letra a letra y la pantalla se divide en dos puertas. Eliges, y tu mundo se traga la pantalla con un golpe de sonido",
+      "EL CRUCE: cada vez que pasas de las noticias al juego (o al revés), un barrido de luz te dice en qué mundo estás",
+      "SIEMPRE A MANO: botón «Elegir mundo» en el pie, en la portada y en Módulos, y la dirección /entrar para compartir la Puerta",
+      "SIN ESTORBAR: se puede saltar con un toque o con Esc, solo sale una vez, no se muestra a buscadores y, si tu equipo pide menos movimiento, aparece quieta",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v403.0",
     nombre: "EL PESO DEL MUNDO",
     hitos: [

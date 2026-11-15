@@ -1,4 +1,14 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v403.1 LOS DOS MUNDOS — orden del Dueño: «Vanguard tiene dos mundos, el de los
+// juegos y el de noticias: crear intro para entrar a esos mundos de manera épica».
+// ① LA PUERTA (components/mundos/puerta-mundos.tsx): primera visita a la portada →
+//    línea de oro, emblema, VANGUARD, «Dos mundos · una sola casa», y la pantalla
+//    se parte en dos puertas: NOTICIAS (celeste, noticias.jpg) y JUEGO (oro,
+//    ranking.jpg). Al elegir, el mundo se traga la pantalla con golpe sonoro
+//    sintetizado (Web Audio, solo tras el toque). Saltar/Esc siempre; nunca a
+//    robots; movimiento reducido = estático. /entrar la sirve como página propia.
+// ② EL CRUCE: al pasar de un mundo al otro, barrido de 1,5 s con su nombre.
+// ③ Botón «Elegir mundo» en el pie, la portada y /modulos. Cuentas de modulos.ts.
 // v403.0 EL PESO DEL MUNDO — el pilar 2 entra en la sala que más lo necesitaba.
 // /atlas servía 32.340 letras con UN solo elemento visual (3.593 letras por
 // visual): la cuarta sala más «de libro» de la casa. No se ha borrado una línea
@@ -5539,8 +5549,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.0";
-export const APP_CODENAME = "EL PESO DEL MUNDO";
+export const APP_VERSION = "v403.1";
+export const APP_CODENAME = "LOS DOS MUNDOS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5600,7 +5610,7 @@ export const APP_CODENAME = "EL PESO DEL MUNDO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.9";
+export const APP_VERSION_ANTERIOR = "v403.0";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
