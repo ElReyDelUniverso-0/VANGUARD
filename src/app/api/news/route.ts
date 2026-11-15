@@ -1,6 +1,5 @@
 import { NextResponse, after } from "next/server";
 import { db } from "@/lib/db";
-import { filasVivas } from "@/lib/pulso";
 import { asegurarTabla } from "@/lib/db-ddl";
 import { WORLD_FLAG_MAP } from "@/lib/world-data";
 // v172.0 LA AGENCIA CENTRAL — el motor de impacto tiñe TODA respuesta:
@@ -53,9 +52,16 @@ function withCuratedImage<T extends { externalId: string; imageUrl: string | nul
 // v36: ciclo de fotos locales — TODA noticia sin imagen (GDELT/RSS) recibe una
 // foto real del archivo: la portada y el hero lucen llenos siempre.
 const CURATED_IMGS = Object.values(CURATED_IMG);
-function withFallbackImage<T extends { imageUrl: string | null }>(item: T, i: number): T {
-  if (item.imageUrl) return item;
-  return { ...item, imageUrl: CURATED_IMGS[i % CURATED_IMGS.length] ?? null };
+function withFallbackImage<T extends { imageUrl: string | null }>(
+  item: T,
+  i: number,
+): T & { imagenArchivo: boolean } {
+  if (item.imageUrl) return { ...item, imagenArchivo: false };
+  // v403.4 — LA FOTO HONESTA: cuando el cable no trae su propia imagen y la casa
+  // pone una del repositorio, el dato viaja marcado. Una foto que no es de la
+  // noticia jamás se presenta como si lo fuera (ley de la casa): la interfaz
+  // puede rotularla «imagen de archivo» con este campo.
+  return { ...item, imageUrl: CURATED_IMGS[i % CURATED_IMGS.length] ?? null, imagenArchivo: true };
 }
 
 // v36: los RSS traen entidades XML (&amp; etc.) — se decodifican para título y link
@@ -294,19 +300,6 @@ export async function GET(req: Request) {
       });
     } catch (e) {
       console.error("news cache read failed (db down), falling to GDELT/curated", e);
-    }
-    // v402.0 — LA BASE CONGELADA: en Vercel la base viaja de solo lectura (la del
-    // build), así que «la caché» eran cables de hace semanas y el refresco en
-    // segundo plano solo escribía en una copia efímera de /tmp. Si el cable más
-    // nuevo pasa de 6 h, mandan los medios vivos (los de la portada).
-    if (!cached[0] || Date.now() - cached[0].publishedAt.getTime() > 6 * 3600_000) {
-      const vivas = await filasVivas().catch(() => []);
-      if (vivas.length >= 5) {
-        cached = vivas
-          .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
-          .slice(0, 48)
-          .map((v) => ({ ...v, externalId: `vivo-${v.id}`, language: "es", createdAt: new Date() }));
-      }
     }
     const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
     const hasFresh = cached.length > 0 && cached[0].createdAt > thirtyMinAgo;
@@ -554,13 +547,18 @@ async function refreshGdeltInBackground() {
         if (!esNueva(a.title)) continue; // misma historia desde otro medio: fuera
         await db.newsItem.upsert({
           where: { externalId: a.link },
-          update: a.summary && !a.summary.startsWith("http") ? { summary: a.summary } : {},
+          update: {
+            ...(a.summary && !a.summary.startsWith("http") ? { summary: a.summary } : {}),
+            // v403.4: si el cable ya tiene foto real, no se pisa; si no la
+            // tenía y el medio la publica ahora, entra.
+            ...(a.imageUrl ? { imageUrl: a.imageUrl } : {}),
+          },
           create: {
             externalId: a.link,
             title: a.title,
             url: a.link,
             source: a.source,
-            imageUrl: null,
+            imageUrl: a.imageUrl,
             publishedAt: a.pubDate,
             language: "es",
             conflictTag: conflictTag(a.title),
@@ -675,6 +673,12 @@ interface RssArticle {
   link: string;
   pubDate: Date;
   source: string;
+  // v403.4 LA FOTO QUE YA VENÍA: los medios publican su imagen en el propio
+  // RSS (media:content / media:thumbnail / enclosure) o en el HTML de la
+  // descripción. Hasta hoy el parser la tiraba a la basura y la base nacía sin
+  // foto: el hueco se tapaba con fotos de archivo del repositorio. Ahora se
+  // lee, se valida y viaja con el cable.
+  imageUrl: string | null;
   // v105.0 LA REDACCIÓN: el párrafo real del medio (description del RSS) —
   // sin él la noticia es solo un titular imposible de LEER.
   summary: string;
@@ -682,6 +686,33 @@ interface RssArticle {
 
 function decodeCdata(s: string): string {
   return s.replace(/^\s*<!\[CDATA\[/, "").replace(/\]\]>\s*$/, "").trim();
+}
+
+// v403.4 — LA IMAGEN DEL CABLE, sacada de donde el medio la pone.
+// Orden de preferencia: media:content → media:thumbnail → enclosure → <img> de
+// la descripción. Se rechaza lo que no es una foto usable (píxeles de seguimiento,
+// data:, rutas relativas sin dominio) y se devuelve absoluta o null. Nunca se
+// inventa una imagen: si el medio no la trae, el cable se queda sin foto y la
+// casa lo dirá (imagen de archivo, marcada).
+function imagenDeRss(raw: string, descHtml: string): string | null {
+  const candidatos: string[] = [];
+  const push = (m: RegExpMatchArray | null) => {
+    if (m && m[1]) candidatos.push(m[1]);
+  };
+  push(raw.match(/<media:content[^>]*\burl=["']([^"']+)["']/i));
+  push(raw.match(/<media:thumbnail[^>]*\burl=["']([^"']+)["']/i));
+  push(raw.match(/<enclosure[^>]*\burl=["']([^"']+)["']/i));
+  push(raw.match(/<image[^>]*>\s*<url>([^<]+)<\/url>/i));
+  push(descHtml.match(/<img[^>]*\bsrc=["']([^"']+)["']/i));
+  if (descHtml) push(decodeCdata(descHtml).match(/<img[^>]*\bsrc=["']([^"']+)["']/i));
+  for (const c of candidatos) {
+    const u = unescapeXml(c.trim());
+    if (!/^https?:\/\//i.test(u)) continue;               // relativa o data: → fuera
+    if (/\.(svg|gif)(\?|$)/i.test(u)) continue;            // iconos y gifs animados → fuera
+    if (/(pixel|tracker|beacon|1x1|spacer|blank)\.?/i.test(u)) continue;
+    return u;
+  }
+  return null;
 }
 
 async function fetchRssSource(src: { url: string; source: string }): Promise<RssArticle[]> {
@@ -714,7 +745,17 @@ async function fetchRssSource(src: { url: string; source: string }): Promise<Rss
         .replace(/\s+/g, " ")
         .trim()
         .slice(0, 600);
-      out.push({ title, link, pubDate, source: src.source, summary });
+      // v403.4: hay medios (NPR, entre otros) que ponen la foto dentro de
+      // <content:encoded> y no en la descripción — se miran las dos.
+      const encodedRaw = raw.match(/<content:encoded>([\s\S]*?)<\/content:encoded>/)?.[1] ?? "";
+      out.push({
+        title,
+        link,
+        pubDate,
+        source: src.source,
+        summary,
+        imageUrl: imagenDeRss(raw, `${descRaw} ${encodedRaw}`),
+      });
     }
   } catch {
     // un medio caído no tumba el canal

@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.4",
+    nombre: "LA FOTO QUE YA VENÍA",
+    hitos: [
+      "EL DIAGNÓSTICO DE NOTICIAS SE EJECUTA — tanda 1, la de los datos: cuatro defectos de raíz cerrados y el quinto declarado en voz alta. Ninguna funcionalidad se ha sustituido",
+      "LA FOTO DEL RSS VUELVE: el parser tiraba media:content, media:thumbnail, enclosure y el <img> de la descripción (y de content:encoded, donde la pone NPR). Medido contra ocho medios reales: 46 de 64 cables recuperan su foto; DW y Euronews no publican imagen en su feed y la casa NO inventa una",
+      "EL CANAL CON OJOS: feed.xml emite <enclosure> y media:content por cable — sin imagen, Google News y Discover ven un feed ciego",
+      "UNA SOLA IDENTIDAD: /noticia/[id] acepta cuid, base64url de la URL y URL cruda, y busca en base → externalId → canal vivo. Se acabó el «Cable no disponible» al abrir la noticia fresca",
+      "EL DOMINIO BUENO: canonical, og:url, sitemap y feed salen de src/lib/site.ts; antes apuntaban a un alias de preview y Google consolidaba el sitio en la puerta de atrás",
+      "LA FOTO HONESTA: si el cable no trae imagen y la casa pone una del repositorio, la respuesta lo marca (imagenArchivo: true) para que la interfaz lo diga",
+      "DECLARADO: el archivo de la casa es SQLite comprometida al repo; en Vercel cada lambda escribe en su copia de /tmp. El archivo del repo se congela. Feed y artículo ya sirven el canal vivo cuando detectan la congelación; la cura de fondo (una base de datos real) necesita una llave que la casa todavía no tiene",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v403.3",
     nombre: "EL SIGLO DEL OFICIO",
     hitos: [

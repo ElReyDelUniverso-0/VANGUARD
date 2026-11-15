@@ -12,6 +12,30 @@
 // ③ Anclas nuevas en las dos portadas («las escalas», «los que más pesan»).
 // ④ Cero cifras a mano: sort + slice + filter en el render.
 // Se rebasa sobre la v403.2 de la otra IA sin tocar una línea de su trabajo.
+// v403.4 LA FOTO QUE YA VENÍA — TANDA 1 DEL DIAGNÓSTICO DE NOTICIAS (datos).
+// El análisis dejó cinco defectos de raíz; esta versión cierra cuatro y deja el
+// quinto declarado. Ningún archivo de la sección se ha sustituido: se repara la
+// tubería por la que la noticia llega.
+// ① D5 · LA FOTO DEL RSS: el parser solo leía título, enlace, fecha y
+//    descripción — tiraba media:content, media:thumbnail, enclosure y el <img>
+//    de la descripción (y de content:encoded, donde la pone NPR). Medido contra
+//    ocho medios reales: 46 de 64 cables recuperan ahora su foto (BBC 8/8,
+//    France 24 8/8, ABC 8/8, El Mundo 8/8, Guardian 8/8, NPR 6/8; DW y Euronews
+//    no publican imagen en su feed — cero honesto, no se inventa nada).
+// ② D1 · EL ARCHIVO CONGELADO, declarado: la base de la casa es SQLite
+//    comprometida al repo; en Vercel el lambda escribe en su copia de /tmp y el
+//    archivo del repo se queda en la fecha del último commit (medido: 15 días).
+//    El feed y la página de noticia ya no dependen de eso: si el archivo está
+//    viejo, sirven el canal vivo.
+// ③ D2 · UNA SOLA IDENTIDAD: /noticia/[id] acepta cuid, base64url de la URL y
+//    URL cruda, y busca en base → externalId → canal vivo. Se acabó el «Cable
+//    no disponible» al abrir la noticia fresca.
+// ④ D3 · EL DOMINIO BUENO: canonical, og:url, sitemap y feed salen de
+//    `src/lib/site.ts`. Antes apuntaban a vanguard-kq9r (alias de preview).
+// ⑤ D4 · EL CANAL CON OJOS: feed.xml con <enclosure> y media:content por cable.
+// ⑥ D6 · LA FOTO HONESTA: cuando el cable no trae imagen y la casa pone una del
+//    repositorio, la respuesta lo marca (`imagenArchivo: true`). Una foto que no
+//    es de la noticia no se presenta jamás como si lo fuera.
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5573,8 +5597,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.3";
-export const APP_CODENAME = "EL SIGLO DEL OFICIO";
+export const APP_VERSION = "v403.4";
+export const APP_CODENAME = "LA FOTO QUE YA VENÍA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5634,7 +5658,7 @@ export const APP_CODENAME = "EL SIGLO DEL OFICIO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.2";
+export const APP_VERSION_ANTERIOR = "v403.3";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

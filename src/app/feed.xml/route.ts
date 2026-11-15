@@ -16,8 +16,8 @@ import { TEATROS } from "@/lib/teatros";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+// v403.4: el dominio vive en @/lib/site (antes: alias de preview)
+import { SITE_URL } from "@/lib/site";
 
 function esc(s: string): string {
   return s
@@ -28,19 +28,73 @@ function esc(s: string): string {
     .replace(/'/g, "&apos;");
 }
 
-export async function GET() {
-  let items: { id: string; title: string; url: string; source: string; summary: string | null; conflictTag: string | null; publishedAt: Date }[] = [];
+type ItemFeed = {
+  id: string;
+  title: string;
+  url: string;
+  source: string;
+  summary: string | null;
+  conflictTag: string | null;
+  publishedAt: Date;
+  imageUrl?: string | null;
+};
+
+// v403.4 EL CANAL VIVO — la base SQLite de la casa viaja en el repo: en Vercel
+// cada lambda escribe en su copia de /tmp y el archivo comprometido se queda en
+// la fecha del último commit. El canal se quedaba congelado (medido: 15 días) y
+// sin una sola imagen. Si el archivo está viejo, el feed se sirve del canal vivo
+// —el que el mundo está viendo—; la base sigue siendo la primera fuente.
+const VIDA_MAX_MS = 3 * 60 * 60 * 1000;
+
+async function itemsVivos(): Promise<ItemFeed[]> {
   try {
-    items = await db.newsItem.findMany({
+    const res = await fetch(`${SITE_URL}/api/news`, { cache: "no-store" });
+    if (!res.ok) return [];
+    const data = (await res.json()) as { items?: Record<string, unknown>[] };
+    return (Array.isArray(data.items) ? data.items : []).slice(0, 30).map((x) => ({
+      id: String(x.id ?? ""),
+      title: String(x.title ?? ""),
+      url: String(x.url ?? "#"),
+      source: String(x.source ?? ""),
+      summary: (x.summary as string | null) ?? null,
+      conflictTag: (x.conflictTag as string | null) ?? null,
+      publishedAt: new Date(String(x.publishedAt ?? Date.now())),
+      imageUrl: (x.imageUrl as string | null) ?? null,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export async function GET() {
+  let items: ItemFeed[] = [];
+  try {
+    items = (await db.newsItem.findMany({
       orderBy: { publishedAt: "desc" },
       take: 30,
-    });
+    })) as ItemFeed[];
   } catch {
     /* feed vacío ante fallo de BD */
+  }
+  const edad = items.length ? Date.now() - items[0].publishedAt.getTime() : Infinity;
+  if (edad > VIDA_MAX_MS) {
+    const vivos = await itemsVivos();
+    if (vivos.length) items = vivos;
   }
 
   const entries = items
     .map((it) => {
+      // v403.4 LA FOTO EN EL CANAL: sin <enclosure> ni media:content, Google
+      // News y Discover ven un feed ciego. La imagen va absoluta (del medio si
+      // el cable trae la suya; del dominio de la casa si es de archivo).
+      const foto = it.imageUrl
+        ? /^https?:\/\//i.test(it.imageUrl)
+          ? it.imageUrl
+          : `${SITE_URL}${it.imageUrl}`
+        : null;
+      const media = foto
+        ? `\n      <enclosure url="${esc(foto)}" type="image/jpeg" />\n      <media:content url="${esc(foto)}" medium="image" />`
+        : "";
       // v202.0: puerta propia por cable (antes: todas a /guerra-hoy)
       const link = `${SITE_URL}/noticia/${it.id}`;
       // v271.0 EL CANAL CLASIFICADO: el teatro del cable viaja en <category>
@@ -54,13 +108,13 @@ export async function GET() {
       <guid isPermaLink="false">vanguard-news-${esc(it.id)}</guid>
       <source>${esc(it.source)}</source>
       <pubDate>${new Date(it.publishedAt).toUTCString()}</pubDate>
-      ${it.summary ? `<description>${esc(it.summary)}</description>` : ""}${categorias}
+      ${it.summary ? `<description>${esc(it.summary)}</description>` : ""}${categorias}${media}
     </item>`;
     })
     .join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>VANGUARD — Conflictos Mundiales en Vivo</title>
     <link>${SITE_URL}/guerra-hoy</link>

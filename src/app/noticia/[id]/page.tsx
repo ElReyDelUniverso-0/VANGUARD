@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { FlagBadge } from "@/components/vanguard/flag-badge";
 import { IlustracionCabecera } from "@/components/vanguard/ilustracion-cabecera"; // v360 LA CASA ILUSTRADA
@@ -29,8 +29,8 @@ import { TEATROS } from "@/lib/teatros";
 
 export const dynamic = "force-dynamic";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
+// v403.4: el dominio vive en @/lib/site (antes: alias de preview)
+import { SITE_URL } from "@/lib/site";
 
 // v239.0 EL FRENTE LIGERO — DOS pieles para DOS deberes:
 // · FALLBACK_IMGS (JPG original) viste el hero (slot w-full) y la metadata
@@ -156,13 +156,80 @@ type NewsRow = {
   summary: string | null;
 };
 
-async function getCable(id: string): Promise<NewsRow | null> {
+// ============================================================
+// v403.4 LA PUERTA QUE ABRE — UNA SOLA IDENTIDAD PARA EL CABLE
+//
+// Defecto D2 del diagnóstico: `/api/news` entrega cables con id = base64url de
+// su URL y esta ruta solo sabía buscar un `id` (cuid) de la base. Resultado
+// medido en producción: abrir la noticia más fresca daba «Cable no disponible».
+//
+// Ahora la puerta acepta las TRES formas en que un cable puede llegar —cuid,
+// base64url de la URL, URL cruda— y, si el archivo de la casa no lo tiene
+// (la base SQLite del repo se congela: en Vercel cada lambda escribe en su
+// copia de /tmp), lo busca en la respuesta viva del canal. Una noticia que el
+// mundo está viendo no puede ser un 404 dentro de casa.
+// ============================================================
+
+function urlDesdeId(id: string): string | null {
+  if (/^https?:\/\//i.test(id)) return decodeURIComponent(id);
   try {
-    const row = await db.newsItem.findUnique({ where: { id } });
-    return (row as NewsRow) || null;
+    const b64 = id.replace(/-/g, "+").replace(/_/g, "/");
+    const dec = Buffer.from(b64, "base64").toString("utf-8");
+    return /^https?:\/\//i.test(dec) ? dec : null;
   } catch {
     return null;
   }
+}
+
+async function getCableVivo(id: string): Promise<NewsRow | null> {
+  try {
+    const { SITE_URL } = await import("@/lib/site");
+    const res = await fetch(`${SITE_URL}/api/news`, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { items?: Record<string, unknown>[] };
+    const lista = Array.isArray(data.items) ? data.items : [];
+    const url = urlDesdeId(id);
+    const hit = lista.find(
+      (x) => String(x.id) === id || (url && String(x.url) === url),
+    );
+    if (!hit) return null;
+    return {
+      id: String(hit.id),
+      title: String(hit.title ?? ""),
+      url: String(hit.url ?? "#"),
+      source: String(hit.source ?? ""),
+      imageUrl: (hit.imageUrl as string | null) ?? null,
+      publishedAt: new Date(String(hit.publishedAt ?? Date.now())),
+      tacticalTag: (hit.tacticalTag as string | null) ?? null,
+      conflictTag: (hit.conflictTag as string | null) ?? null,
+      sourceCountry: (hit.sourceCountry as string | null) ?? null,
+      summary: (hit.summary as string | null) ?? null,
+    } as NewsRow;
+  } catch {
+    return null;
+  }
+}
+
+async function getCable(id: string): Promise<NewsRow | null> {
+  // ① la base de la casa, por id
+  try {
+    const row = await db.newsItem.findUnique({ where: { id } });
+    if (row) return row as NewsRow;
+  } catch {
+    /* sin base: se sigue */
+  }
+  // ② la URL que viaja dentro del id (base64url o cruda), por externalId
+  const url = urlDesdeId(id);
+  if (url) {
+    try {
+      const row = await db.newsItem.findFirst({ where: { externalId: url } });
+      if (row) return row as NewsRow;
+    } catch {
+      /* sin base: se sigue */
+    }
+  }
+  // ③ el canal vivo (lo que el mundo está viendo ahora mismo)
+  return getCableVivo(id);
 }
 
 // v208.0 LA LUPA — «relacionadas» ahora significa RELACIONADAS: primero
@@ -292,11 +359,7 @@ export default async function NoticiaPage({
 }) {
   const { id } = await params;
   const it = await getCable(id);
-  // v402.0 — los cables vivos (no están en la base) se leen en /lectura
-  if (!it) {
-    if (/^[A-Za-z0-9_-]{16,}$/.test(id)) redirect(`/lectura/${id}`);
-    notFound();
-  }
+  if (!it) notFound();
 
   const [relacionadas, conteoTeatro] = await Promise.all([
     getRelacionadas(id, it.conflictTag ?? null),
