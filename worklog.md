@@ -6196,3 +6196,14 @@ Work Log:
 - DEFECTO EN PRODUCCIÓN: en la v402.8 la tarjeta de país sacaba el nombre de un mapa por id (`new Map(...)`) y el sismo de un segundo `find` sobre la lista. Podían ser dos temblores distintos: la tarjeta mostró «528 km» junto a un sismo situado a 236 km de casa. Verificado en el HTML servido de /cruce.
 - ARREGLO: `paisesDelDia` pasa a ser una lista de pares {pais, sismo} construida en un solo recorrido (se queda con el evento de MENOR kmCapital por país) y ordenada por cercanía a la capital. El render usa el sismo emparejado, sin buscar de nuevo. Una sola fuente por tarjeta.
 - QA: tsc acotado LIMPIO. Comprobación en producción tras el despliegue: en cada tarjeta, los km a la capital deben corresponder al sismo que se cita debajo.
+
+## Task ia3-v403.0 · EL PESO DEL MUNDO (el pilar 2 en /atlas, la cuarta sala más «de libro»)
+
+- DIAGNÓSTICO: /atlas servía 32.340 letras con 1 imagen y 8 svg (3.593 letras por visual). Es la cuarta peor de la casa en el indicador del AGENTE 7.
+- SIN BORRAR NADA: se añaden a la sala las dos escalas que la fuente ya tenía (PAISES_ATLAS: poblacion, superficie) mediante el componente GraficoBarras de la v402.1, con `id` propio (v402.3) para que dos gráficos convivan sin pisarse el aria-labelledby.
+- `TOP_POBLACION` y `TOP_SUPERFICIE` se derivan con sort + slice(0,10): cero cifras escritas a mano; el texto de cada barra se formatea en el render (millones y millones de km²).
+- Ancla nueva en la portada («las escalas» → #grafico-poblacion); el h2 del gráfico lleva ese id, así que el AGENTE 2 lo resuelve.
+- /cruce: el texto de las alertas ahora declara explícitamente que el país es el que escribe GDACS (la fila ya lo pintaba desde la v402.6).
+- Registro: version.ts v403.0 «EL PESO DEL MUNDO» (anterior v402.9), bitacora v403.0, catalogo-real real-175 (175 piezas).
+- QA local (next dev :3886): /atlas 200 con los dos gráficos (barras 100 % India 1.441 M / 97,85 % China 1.410 M / 23,66 % EE. UU. 341 M …) y el ancla resuelta. tsc acotado LIMPIO.
+- SUSTO Y ARREGLO: al bajar el worklog por la API de contenidos (base64) llegó un resto de 1.278 bytes — GitHub no devuelve `content` para archivos de más de 1 MB. El primer commit de esta rama habría borrado 1,7 MB de historia. Se detectó ANTES del merge y se rehízo el archivo por la API `raw`. Lección: los archivos grandes del repo se bajan SIEMPRE con `Accept: application/vnd.github.raw`.

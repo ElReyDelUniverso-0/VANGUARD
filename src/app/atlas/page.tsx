@@ -10,6 +10,9 @@ import {
 } from "@/lib/atlas-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v403.0 — EL PESO DEL MUNDO: las naciones del atlas, medidas en una escala.
+// La sala tenía 32.340 letras y un solo visual; el pilar 2 pide ver, no leer.
+import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 
 // v294.0 EL ATLAS DEL PLANETA — el censo fuera de la cola: las cinco
 // cabezas restantes del almacén (imperio, conquest, hooks, social,
@@ -33,7 +36,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "ATLAS — las 84 naciones y las personas que mueven el planeta",
+  title: "ATLAS — las 84 naciones y las personas que mueven el planeta | VANGUARD",
   description:
     "El atlas del planeta de VANGUARD: 84 naciones con su capital, población, superficie, moneda, gobierno y líder real; 78 personas del poder con su sede real y las 24 rutas que unen los ejes del mundo. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/atlas` },
@@ -57,6 +60,30 @@ const RUTAS_RESUELTAS = RUTAS_PODER.filter(
 
 // LA LÍNEA DE LA CASA compuesta COMPLETA en JS (lección v256): si la
 // fuente cambia, la línea cambia sola.
+// v403.0 — las dos escalas de la sala: población y superficie, derivadas de la
+// fuente (PAISES_ATLAS). Ninguna cifra escrita aquí: se ordena y se corta.
+const TOP_POBLACION = [...PAISES_ATLAS]
+  .sort((a, b) => b.poblacion - a.poblacion)
+  .slice(0, 10)
+  .map((p) => ({
+    etiqueta: p.nombre,
+    valor: p.poblacion,
+    texto: `${p.poblacion.toLocaleString("es-ES", { maximumFractionDigits: 1 })} M`,
+    nota: p.capital,
+    href: "#paises",
+  }));
+
+const TOP_SUPERFICIE = [...PAISES_ATLAS]
+  .sort((a, b) => b.superficie - a.superficie)
+  .slice(0, 10)
+  .map((p) => ({
+    etiqueta: p.nombre,
+    valor: p.superficie,
+    texto: `${(p.superficie / 1000000).toLocaleString("es-ES", { maximumFractionDigits: 2 })} M km²`,
+    nota: p.capital,
+    href: "#paises",
+  }));
+
 const lineaAtlas = `El atlas del planeta — ${PAISES_ATLAS.length} naciones con su capital y su líder real en ${REGIONES.length} regiones, ${PERSONAS_ATLAS.length} personas del poder con su sede real y ${RUTAS_RESUELTAS.length} rutas que unen los ejes del mundo`;
 
 export default function AtlasPage() {
@@ -91,6 +118,7 @@ export default function AtlasPage() {
         alt="Mapa antiguo desplegado sobre una mesa con una lámpara encendida"
         volanta="LA CASA · GEOGRAFÍA"
         titulo="EL ATLAS DEL PLANETA"
+        nivel="p"
         acento="#22d3ee"
         sumario="Países, capitales, poblaciones y rutas de poder: la geografía real que hay detrás de cada conflicto, servida en fichas y no en párrafos."
         cifras={[
@@ -107,6 +135,7 @@ export default function AtlasPage() {
               "El globo con las rutas dibujadas como arcos de vuelo y el reloj local de cada capital vive en el aparato; aquí queda el archivo que lo alimenta." }
         ]}
         anclas={[
+          { etiqueta: "las escalas", href: "#grafico-poblacion" },
           { etiqueta: "las naciones", href: "#paises" },
           { etiqueta: "las personas", href: "#personas" },
           { etiqueta: "las rutas", href: "#rutas" }
@@ -114,12 +143,34 @@ export default function AtlasPage() {
         nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
       />
 
+      <GraficoBarras
+        id="grafico-poblacion"
+        volanta="EL ATLAS · EL PESO HUMANO"
+        titulo="LAS DIEZ NACIONES QUE MÁS PESAN"
+        nota={`Las diez naciones con más población de las ${PAISES_ATLAS.length} del atlas, medidas contra la mayor de la serie. La cifra va en millones, con su capital al lado.`}
+        unidad="millones de habitantes"
+        acento="#f59e0b"
+        etiquetaMaximo="la nación más poblada del atlas"
+        barras={TOP_POBLACION}
+      />
+
+      <GraficoBarras
+        id="grafico-superficie"
+        volanta="EL ATLAS · EL PESO DE LA TIERRA"
+        titulo="LAS DIEZ NACIONES MÁS EXTENSAS"
+        nota="La misma casa, la otra escala: kilómetros cuadrados contra la nación más extensa del atlas. Población y tierra no coinciden, y ahí empieza la geopolítica."
+        unidad="kilómetros cuadrados"
+        acento="#22c55e"
+        etiquetaMaximo="la nación más extensa del atlas"
+        barras={TOP_SUPERFICIE}
+      />
+
       <main className="min-h-screen bg-zinc-950 px-4 sm:px-5 py-10 text-zinc-200">
         <div className="mx-auto max-w-5xl">
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · EL ATLAS
           </p>
-          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">EL ATLAS DEL PLANETA</h2>
+          <h1 className="mt-2 text-2xl font-bold text-zinc-100">EL ATLAS DEL PLANETA</h1>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaAtlas}</p>
           <p className="mt-1 text-xs text-zinc-500">
             El mapa interactivo — con el globo, las rutas dibujadas como arcos

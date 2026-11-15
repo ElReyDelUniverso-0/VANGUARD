@@ -670,6 +670,7 @@ export async function alertasCercanas(limite = 6): Promise<EventoCercano[]> {
     const titulo = /<title>\s*([^<]+)<\/title>/.exec(it)?.[1]?.trim() ?? "alerta sin título";
     lista.push({
       titulo: `${tipo} · ${titulo.slice(0, 54)}`,
+      // v403.0: el país tal como lo declara GDACS (no se traduce ni se corrige)
       lugar: pais,
       medida: nivel,
       km: Math.round(distanciaKm(CASA.lat, CASA.lon, lat, lon)),

@@ -1,4 +1,17 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v403.0 EL PESO DEL MUNDO — el pilar 2 entra en la sala que más lo necesitaba.
+// /atlas servía 32.340 letras con UN solo elemento visual (3.593 letras por
+// visual): la cuarta sala más «de libro» de la casa. No se ha borrado una línea
+// de texto: se han añadido las dos escalas que la fuente ya tenía.
+// ① LAS DIEZ NACIONES QUE MÁS PESAN — población de las 84 del atlas, ordenada
+//    y medida contra la mayor de la serie (India 1.441 M). Cero cifras a mano:
+//    sale de PAISES_ATLAS en el render.
+// ② LAS DIEZ NACIONES MÁS EXTENSAS — la otra escala, la de la tierra, con el
+//    mismo componente. Población y superficie no coinciden, y ahí empieza la
+//    geopolítica que la sala ya contaba con párrafos.
+// ③ Un ancla nueva en la portada («las escalas») lleva al primer gráfico: la
+//    profundización sigue debajo, intacta.
+// ④ /cruce: las alertas de GDACS declaran el país tal como lo escribe la fuente.
 // v402.9 EL CRUCE CUADRA — la v402.8 trajo un dato incoherente y se arregla hoy.
 // ① En la v402.8 la tarjeta de país sacaba el NOMBRE de un mapa por id y el
 //    SISMO de un segundo `find`: podían ser dos temblores distintos, y la
@@ -5526,8 +5539,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.9";
-export const APP_CODENAME = "EL CRUCE CUADRA";
+export const APP_VERSION = "v403.0";
+export const APP_CODENAME = "EL PESO DEL MUNDO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5587,7 +5600,7 @@ export const APP_CODENAME = "EL CRUCE CUADRA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.8";
+export const APP_VERSION_ANTERIOR = "v402.9";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

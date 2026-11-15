@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.0",
+    nombre: "EL PESO DEL MUNDO",
+    hitos: [
+      "EL PILAR 2 ENTRA DONDE MÁS DOLÍA: /atlas servía 32.340 letras con UN solo elemento visual (3.593 letras por visual), la cuarta sala más «de libro» de la casa. No se ha borrado ni una línea de texto: se han añadido las dos escalas que la fuente YA tenía",
+      "LAS DIEZ NACIONES QUE MÁS PESAN: la población de las 84 naciones del atlas, ordenada y medida contra la mayor de la serie (India, 1.441 M). La cifra va escrita al lado de cada barra, con su capital. Cero cifras a mano",
+      "LAS DIEZ NACIONES MÁS EXTENSAS: la misma fuente, la otra escala —kilómetros cuadrados—. Población y tierra no coinciden, y ahí empieza la geopolítica que la sala contaba con párrafos",
+      "UN ANCLA NUEVA en la portada («las escalas») lleva al primer gráfico; la profundización sigue debajo, intacta, en su sitio",
+      "En /cruce las alertas de GDACS declaran el país tal como lo escribe la fuente: no se traduce ni se corrige lo que otro organismo publica",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v402.9",
     nombre: "EL CRUCE CUADRA",
     hitos: [

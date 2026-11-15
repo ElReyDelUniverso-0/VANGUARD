@@ -269,7 +269,7 @@ export default async function CrucePage() {
           </h2>
           <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-slate-400">
             {alertasCerca.length > 0
-              ? `Las ${alertasCerca.length} alertas más próximas del sistema GDACS (Comisión Europea y OCHA), con el nivel que ellos declaran —verde, naranja o rojo— y su distancia calculada.`
+              ? `Las ${alertasCerca.length} alertas más próximas del sistema GDACS (Comisión Europea y OCHA), con el nivel que ellos declaran —verde, naranja o rojo—, el país tal como lo escribe la fuente y su distancia calculada.`
               : "El sistema de alertas no contestó: el bloque lo dice en vez de fingir cero alertas."}
           </p>
           {alertasCerca.length > 0 ? (
