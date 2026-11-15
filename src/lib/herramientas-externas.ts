@@ -22,6 +22,8 @@
 // Es un módulo de SERVIDOR: solo lo importa el server component de /herramientas.
 // ============================================================
 
+import { PAISES_ATLAS } from "@/lib/atlas-data";
+
 export type Herramienta = {
   id: string;
   /** nombre corto en la voz de la casa */
@@ -688,4 +690,56 @@ export async function loMasCercaDeCasa(): Promise<{
     alertasCercanas(6).catch(() => []),
   ]);
   return { sismos, alertas };
+}
+
+
+// ============================================================
+// v402.6 DÓNDE TIEMBLA Y QUIÉN LO CUENTA (añadido al mismo módulo)
+//
+// El cruce que faltaba: un sismo no dice de qué país es —dice «14 km W of
+// X»—, pero sí trae coordenada. La casa tiene las capitales REALES de 84
+// naciones en atlas-data (PAISES_ATLAS, con lat/lng). Con las dos cosas se
+// puede decir a qué país del atlas quedó más cerca cada temblor, sin
+// inventar fronteras: se mide a la CAPITAL, y se dice que se mide a la capital.
+//
+// Después, ese país (ISO-2) se cruza con el archivo de la casa: cuántos
+// cables tiene la base de ese país (NewsItem.sourceCountry). Si la base no
+// contesta, se declara «sin archivo» — nunca un cero fingido.
+// ============================================================
+
+export type PaisCercano = {
+  /** ISO-2 tal como lo usa la casa en sourceCountry */
+  id: string;
+  nombre: string;
+  capital: string;
+  /** kilómetros del evento a la capital de ese país */
+  kmCapital: number;
+};
+
+/** La capital del atlas más cercana a una coordenada (kilómetros reales). */
+export function capitalMasCercana(lat: number, lon: number): PaisCercano | null {
+  let mejor: PaisCercano | null = null;
+  for (const p of PAISES_ATLAS) {
+    if (typeof p.lat !== "number" || typeof p.lng !== "number") continue;
+    const km = distanciaKm(lat, lon, p.lat, p.lng);
+    if (!mejor || km < mejor.kmCapital) {
+      mejor = { id: p.id, nombre: p.nombre, capital: p.capital, kmCapital: Math.round(km) };
+    }
+  }
+  return mejor;
+}
+
+/** Los eventos más cercanos, cada uno ya emparejado con su país del atlas. */
+export async function cruceConPaises(limite = 4): Promise<{
+  sismos: (EventoCercano & { pais: PaisCercano | null })[];
+  alertas: (EventoCercano & { pais: PaisCercano | null })[];
+}> {
+  const [sismos, alertas] = await Promise.all([
+    sismosCercanos(limite).catch(() => []),
+    alertasCercanas(limite).catch(() => []),
+  ]);
+  return {
+    sismos: sismos.map((e) => ({ ...e, pais: capitalMasCercana(e.lat, e.lon) })),
+    alertas: alertas.map((e) => ({ ...e, pais: capitalMasCercana(e.lat, e.lon) })),
+  };
 }

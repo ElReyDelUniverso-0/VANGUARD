@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.8",
+    nombre: "DÓNDE TIEMBLA Y QUIÉN LO CUENTA",
+    hitos: [
+      "EL CRUCE QUE FALTABA: un sismo no declara país —declara «14 km W of X» y una coordenada—. La casa tiene las capitales REALES de 84 naciones en atlas-data, así que cada temblor se empareja con la capital más cercana. Y se dice que se mide a la CAPITAL: no se dibujan fronteras que la casa no tiene",
+      "EL ARCHIVO ENTRA AL CRUCE: ese país (ISO-2) se cruza con los cables propios (NewsItem.sourceCountry) y se muestra cuántos tiene la casa. Si la base no contesta, el bloque lo declara con la misma letra — «el archivo no contestó» — y no finge un cero",
+      "SIN CIFRAS A MANO: los kilómetros a la capital se calculan con la fórmula de la esfera de la v402.4 y los cables se cuentan en la consulta. Lo único escrito es que se mide a la capital, que es una decisión, no un dato",
+      "Un defecto cazado en el chequeo: el conteo podía venir indefinido y reventaba el formateo; se normaliza y la ficha cae en «sin cifra» en vez de romper la sala",
+      "La sala /cruce queda como el parte más completo de la casa: distancia a esta casa, distancia a la capital, país y cables de ese país, alertas de la ONU y los hechos de un día como hoy",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v402.7",
     nombre: "LA NOTA QUE NO SE PIERDE",
     hitos: [
