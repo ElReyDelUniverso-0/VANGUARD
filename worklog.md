@@ -6179,3 +6179,14 @@ Work Log:
 - Auditoría producción (scripts/qa/auditoria-movil.py): 61/61 rutas 200, 0 errores consola, 0 imágenes rotas, 0 desbordes, 1/239 enlaces rotos (/lectura de nota fuera del cable).
 - v402.7: notaDesdeFuente() en lib/portada/notas.ts (OpenGraph del medio, lista cerrada MEDIOS_ARTICULO, charset, coletilla fuera) + FueraDelCable en lectura/[clave]. Probado: BBC 200 con título real, El Mundo 200 (Latin-1 correcto), El País (403) página digna noindex, dominio ajeno 404.
 - 6 títulos sin VANGUARD doble. docs/ (6 documentos) y scripts/qa/.
+
+## Task ia3-v402.8 · DÓNDE TIEMBLA Y QUIÉN LO CUENTA (el cruce con el archivo propio)
+
+- NUMERACIÓN: al abrir el trabajo el `main` ya iba por **v402.7 «LA NOTA QUE NO SE PIERDE»** (la otra IA), así que esta entrega es **v402.8** sobre su bloque intacto. Lección repetida: leer `main/src/lib/version.ts` por raw justo antes de numerar.
+- lib/herramientas-externas.ts: nuevas `capitalMasCercana(lat, lon)` (usa PAISES_ATLAS de atlas-data: 84 naciones con lat/lng REALES) y `cruceConPaises(n)` (sismos y alertas ya emparejados con su capital). Se reutiliza `distanciaKm` de la v402.4: una sola fórmula en toda la casa.
+- /cruce gana la sección `#quien-cuenta`: por cada país distinto (hasta 4), tarjeta con país · capital, km a la capital, el sismo que lo produjo (magnitud y lugar) y los CABLES de ese país en el archivo (`db.newsItem.count` sobre `sourceCountry`, probando el código en minúscula y mayúscula).
+- Honestidad declarada en la propia sala: se mide a la CAPITAL y, si el temblor cae en un territorio que no está en el atlas (Puerto Rico, por ejemplo), gana la capital más próxima de las 84 que sí están. Se dice en el texto, no se esconde.
+- Sin señal se dice: si la base no contesta, la tarjeta muestra «el archivo no contestó · sin cifra de cables»; nunca un cero.
+- Defecto cazado en el chequeo: el conteo podía llegar indefinido y reventaba el formateo (TS2769) → normalizado.
+- Registro: version.ts v402.8 (anterior v402.7), bitacora v402.8, catalogo-real real-174 (174 piezas).
+- QA: tsc acotado LIMPIO (13 archivos, incluido bitacora.ts desde el fallo de la v402.5). Lógica de emparejamiento verificada contra USGS en vivo: el sismo de 236 km cae en «República Dominicana · Santo Domingo» a 235 km de la capital; el de Costa Rica cae en «Panamá · Ciudad de Panamá». /cruce en local da 500 SOLO por `Cannot find module '.prisma/client/default'` (falta `prisma generate` en este entorno, no hay DATABASE_URL): lo valida el build de Vercel.

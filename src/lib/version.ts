@@ -1,4 +1,16 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.8 DÓNDE TIEMBLA Y QUIÉN LO CUENTA — el cruce que faltaba desde la v402.4.
+// ① Un sismo no dice de qué país es: dice «14 km W of X» y trae coordenada. La
+//    casa tiene las capitales REALES de 84 naciones (atlas-data, PAISES_ATLAS
+//    con lat/lng), así que cada temblor se empareja con la capital más cercana.
+//    Y SE DICE que se mide a la capital: no se dibujan fronteras que no hay.
+// ② Ese país (ISO-2) se cruza con el archivo propio: cuántos cables tiene la
+//    base de ese país (NewsItem.sourceCountry). Si la base no contesta, el
+//    bloque lo declara — «el archivo no contestó» — y no finge un cero.
+// ③ Vive en /cruce, donde ya estaba el kilómetro a esta casa: ahora también el
+//    kilómetro a la capital y el parte que la casa tiene de ese país.
+// ④ Cero cifras a mano: kilómetros calculados con la fórmula de la esfera de la
+//    v402.4, cables contados en la consulta.
 // v402.7 LA NOTA QUE NO SE PIERDE — primera vuelta del motor de evolución autónoma.
 // ① La auditoría de producción (61 rutas, 239 enlaces) halló UN enlace roto: el
 //    héroe de la portada apuntaba a /lectura/<clave> de una nota de BBC que ya
@@ -5504,8 +5516,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.7";
-export const APP_CODENAME = "LA NOTA QUE NO SE PIERDE";
+export const APP_VERSION = "v402.8";
+export const APP_CODENAME = "DÓNDE TIEMBLA Y QUIÉN LO CUENTA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5565,7 +5577,7 @@ export const APP_CODENAME = "LA NOTA QUE NO SE PIERDE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.6";
+export const APP_VERSION_ANTERIOR = "v402.7";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

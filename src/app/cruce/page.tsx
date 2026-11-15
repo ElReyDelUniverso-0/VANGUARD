@@ -25,12 +25,14 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 // v402.5 — los hechos del día, en su eje (no en diez párrafos)
 import { EjeDelDia } from "@/components/vanguard/eje-del-dia";
+import { db } from "@/lib/db";
 import {
   CASA,
   alertasCercanas,
   efemeridesDelDia,
   efemeridesEnLista,
   eventosNaturales,
+  cruceConPaises,
   loMasCercaDeCasa,
   sismosCercanos,
   sismosDelDia,
@@ -42,7 +44,7 @@ export const revalidate = 900;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "EL CRUCE — a qué distancia de casa pasó lo de hoy",
+  title: "EL CRUCE — a qué distancia de casa pasó lo de hoy | VANGUARD",
   description:
     "El cruce que nadie más hace: los sismos del día (USGS) y las alertas humanitarias (GDACS) ordenados por la distancia real, en kilómetros calculados, hasta esta casa. Más el parte del planeta (NASA EONET) y lo que ocurrió un día como hoy (Wikimedia). Cero cifras inventadas.",
   alternates: { canonical: `${SITE_URL}/cruce` },
@@ -99,6 +101,38 @@ export default async function CrucePage() {
   ]);
 
   const { sismos: sismosCerca, alertas: alertasCerca } = cerca;
+
+  // v402.6 — DÓNDE TIEMBLA Y QUIÉN LO CUENTA: cada sismo se empareja con la
+  // capital real más cercana (atlas-data) y ese país se cruza con el archivo
+  // de la casa. Si la base no contesta, el bloque lo declara: nunca un cero.
+  const conPais = await cruceConPaises(12).catch(() => ({ sismos: [], alertas: [] }));
+  // un país por tarjeta, con el sismo MÁS CERCANO de ese país
+  const paisesDelDia = [
+    ...new Map(
+      conPais.sismos
+        .filter((e) => e.pais)
+        .map((e) => [e.pais!.id, e.pais!] as const)
+    ).values(),
+  ].slice(0, 4);
+
+  const cablesPorPais = new Map<string, number | null>();
+  for (const p of paisesDelDia) {
+    try {
+      cablesPorPais.set(
+        p.id,
+        await db.newsItem.count({
+          where: {
+            OR: [
+              { sourceCountry: p.id },
+              { sourceCountry: p.id.toUpperCase() },
+            ],
+          },
+        })
+      );
+    } catch {
+      cablesPorPais.set(p.id, null); // sin archivo: se declara
+    }
+  }
 
   // Cifras de la portada: derivadas de lo que se acaba de calcular.
   const sismoMasCerca = sismosCerca[0];
@@ -242,6 +276,57 @@ export default async function CrucePage() {
               ))}
             </ul>
           ) : null}
+        </section>
+
+        {/* v402.6 · DÓNDE TIEMBLA Y QUIÉN LO CUENTA */}
+        <section className="pt-10" aria-labelledby="quien-cuenta">
+          <h2
+            id="quien-cuenta"
+            className="font-mono text-xl font-black uppercase tracking-tight text-white"
+          >
+            DÓNDE TIEMBLA, QUIÉN LO CUENTA
+          </h2>
+          <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-slate-400">
+            {paisesDelDia.length > 0
+              ? "Cada temblor, emparejado con la capital real más cercana del atlas de la casa (84 naciones con latitud y longitud) y con los cables que el archivo tiene de ese país. Ojo, y se dice: se mide a la CAPITAL, y si el temblor cae en un territorio que no está en el atlas —Puerto Rico, por ejemplo— gana la capital más próxima de las que sí están."
+              : "Sin sismos con coordenada en este render: no hay país que emparejar. No se rellena con nada."}
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {paisesDelDia.map((p) => {
+              const cables = cablesPorPais.get(p.id) ?? null;
+              const sismo = conPais.sismos.find((e) => e.pais?.id === p.id);
+              return (
+                <article
+                  key={p.id}
+                  className="rounded-lg border border-slate-800 bg-slate-950/60 p-3"
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="min-w-0 truncate font-mono text-[12px] font-bold text-white">
+                      {p.nombre} · {p.capital}
+                    </p>
+                    <p className="shrink-0 font-mono text-[11px] tabular-nums text-rose-300">
+                      {nf.format(p.kmCapital)} km
+                    </p>
+                  </div>
+                  <p className="mt-1 truncate font-mono text-[10.5px] text-slate-500">
+                    {sismo ? `${sismo.medida} · ${sismo.lugar}` : "sismo sin lugar declarado"}
+                  </p>
+                  <p className="mt-2 border-t border-slate-800/80 pt-2 font-mono text-[11px] text-slate-300">
+                    {cables === null ? (
+                      <span className="text-slate-500">
+                        el archivo no contestó · sin cifra de cables
+                      </span>
+                    ) : (
+                      <>
+                        <span className="font-bold text-white">{nf.format(cables)}</span> cables de
+                        este país en el archivo
+                      </>
+                    )}
+                  </p>
+                </article>
+              );
+            })}
+          </div>
         </section>
 
         <div id="grafos" className="pt-2">
