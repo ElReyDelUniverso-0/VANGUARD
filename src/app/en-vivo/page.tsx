@@ -19,7 +19,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "EN VIVO — Última hora del mundo, minuto a minuto",
+  title: "EN VIVO — Última hora del mundo, minuto a minuto | VANGUARD",
   description:
     "La sala de última hora de VANGUARD: cada cable real del planeta entra solo, con su hora, su fuente y su sello de exactitud. Sondeo cada 30 segundos, página que nunca se recarga. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/en-vivo` },

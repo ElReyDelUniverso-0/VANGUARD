@@ -27,7 +27,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La Crónica del Día — qué pasó de verdad",
+  title: "La Crónica del Día — qué pasó de verdad | VANGUARD",
   description:
     "El parte diario de VANGUARD derivado del archivo real: teatros que hablaron en 24 horas, medios que firmaron, la hora más cargada del planeta y el último cable que entró. Sin cifras inventadas.",
   alternates: { canonical: `${SITE_URL}/cronica` },
@@ -145,20 +145,6 @@ export default async function CronicaPage() {
                       </li>
                     ))}
                   </ol>
-                )}
-                {parte.claves.length > 0 && (
-                  <a
-                    className="vx-cron-wa"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://wa.me/?text=${encodeURIComponent(
-                      `Las ${parte.claves.length} claves del día según VANGUARD:\n\n` +
-                        parte.claves.map((c, i) => `${i + 1}. ${c.titulo}`).join("\n") +
-                        `\n\nLa crónica completa 👉 ${SITE_URL}/cronica?origen=whatsapp`,
-                    )}`}
-                  >
-                    Enviar las claves por WhatsApp
-                  </a>
                 )}
               </section>
 

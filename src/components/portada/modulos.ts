@@ -9,142 +9,67 @@
 // ============================================================
 
 export type Pestana = { href: string; label: string; vivo?: boolean; img?: string; txt?: string };
-export type Modulo = {
-  id: string;
-  nombre: string;
-  /** etiqueta corta para la cabecera */
-  corto: string;
-  lema: string;
-  /** la sala que abre el módulo (la portada del módulo vive en /modulo/[id]) */
-  nav: string;
-  /** portada del módulo: ilustración de la casa y su frase de entrada */
-  img: string;
-  gancho: string;
-  pestanas: Pestana[];
-};
+export type Modulo = { id: string; nombre: string; lema: string; nav: string; pestanas: Pestana[] };
 
-// v402.6 LOS NUEVE MÓDULOS — mandato del Dueño: «Vanguard tiene mucho más que
-// mostrar que solo noticias». Inteligencia escondía 16 salas detrás de una sola
-// puerta y dos salas (El Cruce, Las diez llaves) no colgaban de ningún módulo.
-// Nada nuevo: las MISMAS salas, repartidas en módulos con nombre propio,
-// cada uno con su portada (/modulo/[id]) y su barra de pestañas.
 export const MODULOS: Modulo[] = [
   {
     id: "conflictos",
     nombre: "Conflictos",
-    corto: "Conflictos",
     lema: "Las guerras del planeta, minuto a minuto",
     nav: "/guerra-hoy",
-    img: "/ilustraciones/frentes.jpg",
-    gancho: "Todos los frentes abiertos, con la hora y la fuente de cada cable.",
     pestanas: [
       { href: "/guerra-hoy", label: "Hoy", img: "/ilustraciones/frentes.jpg", txt: "El resumen de todos los frentes abiertos hoy." },
       { href: "/en-vivo", label: "En vivo", vivo: true, img: "/ilustraciones/envivo.jpg", txt: "Cables reales entrando minuto a minuto, con hora y fuente." },
       { href: "/conflictos", label: "Tablero", img: "/ilustraciones/crisis.jpg", txt: "Las regiones en seguimiento con su intensidad medida." },
       { href: "/cronica", label: "Crónica del día", img: "/ilustraciones/briefing.jpg", txt: "Qué pasó de verdad en las últimas 24 horas, teatro por teatro." },
       { href: "/vertigo", label: "Vértigo", img: "/ilustraciones/foryou.jpg", txt: "El archivo en vivo, una pieza por deslizamiento." },
+      { href: "/escenarios", label: "Escenarios", img: "/ilustraciones/predicciones.jpg", txt: "Escenarios de presión con supuestos a la vista; nunca predicciones." },
       { href: "/verdad-cruda", label: "Lo que no se dice", img: "/ilustraciones/verdades.jpg", txt: "Abusos documentados de las guerras, con su fuente." },
+      { href: "/audios", label: "Radio de guerra", img: "/ilustraciones/canales.jpg", txt: "La guerra explicada en voz alta: el parte hablado." },
     ],
   },
   {
     id: "mapa",
     nombre: "Mapa 3D",
-    corto: "Mapa",
     lema: "El planeta en volumen",
     nav: "/mundo",
-    img: "/ilustraciones/mundo.jpg",
-    gancho: "Gira el globo, entra al frente y recorre la casa en tres dimensiones.",
     pestanas: [
       { href: "/mundo", label: "Globo vivo", img: "/ilustraciones/mundo.jpg", txt: "El globo 3D con los teatros encendidos y sus cables." },
       { href: "/ver-guerra", label: "Frente en directo", img: "/ilustraciones/frente.jpg", txt: "El frente en directo: despachos reales y el parque militar." },
       { href: "/zona-cero", label: "Teatro global", img: "/ilustraciones/warsim.jpg", txt: "La mesa de guerra mundial con teatros y unidades." },
+      { href: "/teatro-3d", label: "Arsenal 3D", img: "/ilustraciones/simulador.jpg", txt: "Uniformes, escuadrones y armas en 2D y 3D." },
       { href: "/vanguard2", label: "Universo 3D", img: "/ilustraciones/conquistas3d.jpg", txt: "Cada sección de la casa en su propio mundo 3D." },
     ],
   },
   {
-    id: "conocimiento",
-    nombre: "Conocimiento",
-    corto: "Conocimiento",
-    lema: "El mundo explicado: naciones, personas y dinero",
-    nav: "/atlas",
-    img: "/ilustraciones/planeta.jpg",
-    gancho: "Las fichas que explican quién es quién, cuánto pesa cada país y de dónde viene todo.",
+    id: "analisis",
+    nombre: "Inteligencia",
+    lema: "El archivo que explica el mundo",
+    nav: "/pulso-mundial",
     pestanas: [
+      { href: "/pulso-mundial", label: "Pulso mundial", img: "/ilustraciones/pulso.jpg", txt: "Indicadores del Banco Mundial y la cronología del planeta." },
+      { href: "/espia", label: "Modo espía", img: "/ilustraciones/espionaje.jpg", txt: "Lo que gobiernos y organizaciones publican, en un radar." },
       { href: "/atlas", label: "Atlas", img: "/ilustraciones/planeta.jpg", txt: "Las naciones, las personas y las rutas del poder." },
       { href: "/rostros", label: "Rostros del poder", img: "/ilustraciones/gobierno.jpg", txt: "Quién decide y quién ejecuta: las fichas del poder." },
+      { href: "/servicios", label: "Servicios secretos", img: "/ilustraciones/agente.jpg", txt: "Las agencias de inteligencia del mundo, expediente a expediente." },
+      { href: "/poder", label: "Poder militar", img: "/ilustraciones/estadisticas.jpg", txt: "El gasto militar real del planeta, país por país." },
+      { href: "/armeria", label: "Armería", img: "/ilustraciones/armeria.jpg", txt: "Las armas que explican los conflictos de hoy." },
       { href: "/divisas", label: "Dinero", img: "/ilustraciones/divisas.jpg", txt: "Las monedas oficiales del planeta y quién las comparte." },
       { href: "/historia", label: "Historia", img: "/ilustraciones/historia.jpg", txt: "Las guerras que enseñaron a leer las de hoy." },
       { href: "/archivo-mundial", label: "Archivo", img: "/ilustraciones/curiosidades.jpg", txt: "Curiosidades verídicas, eras y los contadores de las guerras." },
-      { href: "/traductor", label: "Traductor", img: "/ilustraciones/osint.jpg", txt: "Las noticias del mundo en tu idioma." },
-    ],
-  },
-  {
-    id: "secretos",
-    nombre: "Secretos",
-    corto: "Secretos",
-    lema: "Espías, agencias y expedientes con su documento",
-    nav: "/espia",
-    img: "/ilustraciones/espionaje.jpg",
-    gancho: "Lo que publican los gobiernos, las agencias que vigilan y los expedientes con veredicto.",
-    pestanas: [
-      { href: "/espia", label: "Modo espía", img: "/ilustraciones/espionaje.jpg", txt: "Lo que gobiernos y organizaciones publican, en un radar." },
-      { href: "/servicios", label: "Servicios secretos", img: "/ilustraciones/agente.jpg", txt: "Las agencias de inteligencia del mundo, expediente a expediente." },
       { href: "/oscura", label: "Biblioteca oscura", img: "/ilustraciones/oscura.jpg", txt: "Teorías y secretos con su veredicto y su documento." },
-    ],
-  },
-  {
-    id: "arsenal",
-    nombre: "Arsenal",
-    corto: "Arsenal",
-    lema: "Las armas y la fuerza que mueven los conflictos",
-    nav: "/armeria",
-    img: "/ilustraciones/armeria.jpg",
-    gancho: "Cada arma explicada, el gasto militar real y los modelos 3D para verlos de cerca.",
-    pestanas: [
-      { href: "/armeria", label: "Armería", img: "/ilustraciones/armeria.jpg", txt: "Las armas que explican los conflictos de hoy." },
-      { href: "/poder", label: "Poder militar", img: "/ilustraciones/estadisticas.jpg", txt: "El gasto militar real del planeta, país por país." },
-      { href: "/teatro-3d", label: "Arsenal 3D", img: "/ilustraciones/simulador.jpg", txt: "Uniformes, escuadrones y armas en 2D y 3D." },
-      { href: "/escenarios", label: "Escenarios", img: "/ilustraciones/predicciones.jpg", txt: "Escenarios de presión con supuestos a la vista; nunca predicciones." },
-    ],
-  },
-  {
-    id: "datos",
-    nombre: "Datos vivos",
-    corto: "Datos",
-    lema: "El planeta medido en tiempo real",
-    nav: "/pulso-mundial",
-    img: "/ilustraciones/pulso.jpg",
-    gancho: "Sismos, alertas e indicadores oficiales, medidos desde tu casa y avisándote a ti.",
-    pestanas: [
-      { href: "/pulso-mundial", label: "Pulso mundial", img: "/ilustraciones/pulso.jpg", txt: "Indicadores del Banco Mundial y la cronología del planeta." },
-      { href: "/cruce", label: "El Cruce", vivo: true, img: "/ilustraciones/sismo.jpg", txt: "Lo que pasó hoy, medido a distancia de tu casa." },
-      { href: "/herramientas", label: "Las diez llaves", img: "/ilustraciones/radar.jpg", txt: "Herramientas externas de vigilancia, abiertas dentro de la casa." },
-      { href: "/centinela", label: "Mi centinela", img: "/ilustraciones/centinela.jpg", txt: "Elige qué vigilar y la casa te avisa." },
-    ],
-  },
-  {
-    id: "medios",
-    nombre: "Medios",
-    corto: "Medios",
-    lema: "Escucha y mira el mundo",
-    nav: "/galeria",
-    img: "/ilustraciones/galeria.jpg",
-    gancho: "Fotos reales, el parte hablado, la música de dominio público y la voz de la casa.",
-    pestanas: [
       { href: "/galeria", label: "Fototeca", img: "/ilustraciones/galeria.jpg", txt: "Fotografías reales del planeta y la videoteca." },
-      { href: "/audios", label: "Radio de guerra", img: "/ilustraciones/canales.jpg", txt: "La guerra explicada en voz alta: el parte hablado." },
-      { href: "/musica", label: "Música", img: "/ilustraciones/studios.jpg", txt: "Música real de dominio público y la radio del conflicto." },
+      { href: "/traductor", label: "Traductor", img: "/ilustraciones/osint.jpg", txt: "Las noticias del mundo en tu idioma." },
+      { href: "/centinela", label: "Mi centinela", img: "/ilustraciones/centinela.jpg", txt: "Elige qué vigilar y la casa te avisa." },
       { href: "/voz", label: "La voz", img: "/ilustraciones/briefings.jpg", txt: "La voz que explica Vanguard y responde preguntas." },
+      { href: "/musica", label: "Música", img: "/ilustraciones/studios.jpg", txt: "Música real de dominio público y la radio del conflicto." },
     ],
   },
   {
     id: "juego",
     nombre: "Juego",
-    corto: "Juego",
     lema: "Misiones, logros y tu carnet",
     nav: "/cuartel",
-    img: "/ilustraciones/salas.jpg",
-    gancho: "Misiones diarias, retos, torneos y un carnet de agente que sube de rango contigo.",
     pestanas: [
       { href: "/cuartel", label: "Cuartel", img: "/ilustraciones/salas.jpg", txt: "El centro de mando del juego." },
       { href: "/objetivos", label: "Objetivos", img: "/ilustraciones/logros.jpg", txt: "Misiones, retos y torneos: lo que hay que hacer hoy." },
@@ -157,11 +82,8 @@ export const MODULOS: Modulo[] = [
   {
     id: "estado",
     nombre: "Estado de Vanguard",
-    corto: "Estado",
     lema: "La casa por dentro, auditada",
     nav: "/estado",
-    img: "/ilustraciones/radar.jpg",
-    gancho: "El latido público, la auditoría y todo lo nuevo, con sus defectos abiertos.",
     pestanas: [
       { href: "/estado", label: "Latido", img: "/ilustraciones/radar.jpg", txt: "El latido público: la casa responde en vivo." },
       { href: "/novedades", label: "Novedades", img: "/ilustraciones/notificaciones.jpg", txt: "Todo lo nuevo, con enlace directo." },
@@ -182,7 +104,6 @@ function dentro(ruta: string, href: string) {
 /** el módulo al que pertenece una ruta (o null para la portada y /lectura) */
 export function moduloDe(ruta: string | null): Modulo | null {
   if (!ruta) return null;
-  if (ruta.startsWith("/modulo/")) return MODULOS.find((m) => ruta === `/modulo/${m.id}`) ?? null;
   if (dentro(ruta, "/conflicto")) return MODULOS[0]; // fichas /conflicto/[tag]
   if (dentro(ruta, "/noticia")) return MODULOS[0];
   for (const m of MODULOS) if (m.pestanas.some((p) => dentro(ruta, p.href))) return m;
@@ -191,14 +112,3 @@ export function moduloDe(ruta: string | null): Modulo | null {
 
 /** salas internas: fuera del buscador y del sitemap */
 export const SALAS_INTERNAS = ["/calidad", "/torre", "/catalogo", "/nucleo", "/escudo", "/novedades", "/mision"];
-
-/** la portada propia de cada módulo */
-export const portadaDe = (m: Modulo) => `/modulo/${m.id}`;
-
-/** a dónde lleva la cabecera: los módulos con sala-vestíbulo propia entran
- *  directo a ella; los nuevos entran por su portada */
-const CON_VESTIBULO = ["conflictos", "mapa", "juego"];
-export const entradaDe = (m: Modulo) => (CON_VESTIBULO.includes(m.id) ? m.nav : portadaDe(m));
-
-/** los módulos que se enseñan al público (el Estado vive aparte, al pie) */
-export const MODULOS_PUBLICOS = MODULOS.filter((m) => m.id !== "estado");

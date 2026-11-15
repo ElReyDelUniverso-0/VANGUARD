@@ -33,7 +33,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.verc
 export const metadata: Metadata = {
   title: "El perfil del jugador — carnet, código, permisos y foto",
   description:
-    `El carnet de jugador de VANGUARD: alias, foto, bio y tu código estable. La foto se reduce en tu aparato y no se sube a ningún servidor.`,
+    `El carnet que todo jugador de VANGUARD debe tener: ${PIEZAS_CARNET_TOTAL} piezas (alias, foto, bio, cuenta, modo y código guardado), tu código de jugador estable, los permisos reales del censo y ${PERSONALIZACION_TOTAL} piezas de personalización. La foto se reduce y se queda en tu aparato.`,
   alternates: { canonical: `${SITE_URL}/perfil` },
 };
 

@@ -27,7 +27,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "PODER — el ranking militar real del planeta, datos del Banco Mundial",
+  title: "PODER — el ranking militar real del planeta, datos del Banco Mundial | VANGUARD",
   description:
     "El archivo del poder militar de VANGUARD: 167 países con su gasto militar real en dólares, su personal de fuerzas armadas y su esfuerzo (% del PIB), captura del Banco Mundial del 5 de noviembre de 2026. El ranking del dinero, de la fuerza y del esfuerzo, gratis y en español.",
   alternates: { canonical: `${SITE_URL}/poder` },

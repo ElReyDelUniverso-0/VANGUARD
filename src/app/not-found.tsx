@@ -13,7 +13,7 @@ import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 // JavaScript: un server component puro que responde rápido ante Google.
 
 export const metadata: Metadata = {
-  title: "Página no encontrada",
+  title: "Página no encontrada | VANGUARD",
   robots: { index: false, follow: true },
 };
 

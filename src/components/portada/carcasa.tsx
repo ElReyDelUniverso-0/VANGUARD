@@ -14,7 +14,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Cabecera, BarraMovil } from "./cabecera";
-import { moduloDe, portadaDe } from "./modulos";
+import { moduloDe } from "./modulos";
 
 const SIN_CARCASA = ["/lectura", "/cuartel", "/clasico", "/vanguard2", "/vertigo", "/offline", "/api"];
 
@@ -93,10 +93,8 @@ function Pestanas({ ruta }: { ruta: string }) {
   return (
     <nav className="vx-pest" aria-label={`Módulo ${m.nombre}`}>
       <div className="vx-wrap vx-pest-in">
-        <Link href={portadaDe(m)} className="vx-pest-mod" data-on={ruta === portadaDe(m) ? "1" : "0"} aria-label={`Portada del módulo ${m.nombre}`}>
-          <i aria-hidden />
-          <span className="vx-pest-largo">{m.nombre}</span>
-          <span className="vx-pest-corto">{m.corto}</span>
+        <Link href={m.nav} className="vx-pest-mod">
+          <i aria-hidden /> {m.nombre}
         </Link>
         <div className="vx-pest-lista">
           {m.pestanas.map((p) => {

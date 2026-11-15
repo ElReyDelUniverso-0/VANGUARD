@@ -97,9 +97,6 @@ export default async function VertigoPage() {
 
   return (
     <>
-      {/* v402.4 — el feed pinta sus piezas en el cliente; este h1 nombra la
-          sala desde el servidor (el de <noscript> solo existe sin JS). */}
-      <h1 className="sr-only">El Vértigo — el mundo en vivo, una pieza por deslizamiento</h1>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}

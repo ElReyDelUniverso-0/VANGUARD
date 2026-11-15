@@ -42,9 +42,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder mundial",
+  title: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder mundial | VANGUARD",
   description:
-    "Quién manda en el mundo: 34 fichas reales en 18 naciones — jefes de Estado, banqueros, organismos y gigantes de la IA — con su cargo y su ruta al poder.",
+    "El censo de poder de VANGUARD: 34 fichas reales en 18 naciones — los tronos (jefes de Estado), el dinero (banqueros centrales y magnates), el tribunal (organismos multilaterales) y los nuevos (silicio e IA) — con su cargo, su sede, su ruta al poder y su frase. Conocimiento abierto servido en server. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/rostros` },
   openGraph: {
     type: "website",

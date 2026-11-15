@@ -22,35 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
-    version: "v402.6",
-    nombre: "LOS NUEVE MÓDULOS",
-    hitos: [
-      "ORDEN DEL DUEÑO: «sigue agregando más módulos, Vanguard tiene mucho más por mostrar que solo noticias». La decisión fue sacar a la luz lo que ya existe: ninguna sala nueva y ningún dato nuevo, solo las salas de siempre donde se puedan ver",
-      "INTELIGENCIA ESCONDÍA DIECISÉIS SALAS detrás de una sola puerta. Se reparten en módulos con nombre propio: CONOCIMIENTO (Atlas, Rostros del poder, Dinero, Historia, Archivo, Traductor), SECRETOS (Modo espía, Servicios secretos, Biblioteca oscura), ARSENAL (Armería, Poder militar, Arsenal 3D, Escenarios), DATOS VIVOS (Pulso mundial, El Cruce, Las diez llaves, Mi centinela) y MEDIOS (Fototeca, Radio de guerra, Música, La voz)",
-      "DOS SALAS HUÉRFANAS: El Cruce y Las diez llaves no colgaban de ningún módulo, así que no tenían pestañas ni camino desde el menú. Ahora viven en Datos vivos",
-      "CADA MÓDULO TIENE SU PORTADA (/modulo/conocimiento, /modulo/secretos…): la ilustración de la casa, su frase de entrada, sus salas como tarjetas y la puerta a los demás módulos. El sello dorado de la barra de pestañas lleva a ella, y en el móvil ahora dice el nombre del módulo",
-      "MUCHO MÁS QUE NOTICIAS: la portada principal estrena una sección con los ocho módulos, y /modulos es el índice completo de la casa con las salas de cada uno",
-      "NAVEGACIÓN: la cabecera de escritorio lista los ocho módulos (comprobado sin desbordarse de 1024 a 1920 px) y la barra del móvil cambia Perfil por Módulos (el perfil sigue en Juego). Todas las cuentas salen de la lista de módulos: cero cifras a mano",
-    ],
-  },
-  {
     version: "v402.5",
-    nombre: "TREINTA AJUSTES",
+    nombre: "EL EJE DEL DÍA",
     hitos: [
-      "ORDEN DEL DUEÑO: «sigue mejorando aún más Vanguard, 30 que agregarías o mejorarías, y agrégalo ahora mismo». Antes de tocar nada se auditaron en producción las 50 rutas en un móvil de 390×844: errores, imágenes rotas, peso, títulos, textos diminutos, botones pequeños y enlaces internos",
-      "LA ARMERÍA PESABA 11 MEGAS EN EL MÓVIL: las fotos de Wikimedia viajaban en su tamaño original (una de 2,6 MB). Ahora llegan en miniatura de 960 px desde la propia Wikimedia: 2,8 MB para las 21 armas, todas comprobadas una a una",
-      "LA GALERÍA, IGUAL: 50 fotos de hasta 2.400 px para tarjetas de 176 px de alto. Ahora la tarjeta carga una miniatura de 720 px y tocarla abre el original: de 11,4 MB a unos 3 MB",
-      "EL MECH DE LOS ESCENARIOS: 2,4 MB por una textura PNG de 2048. Textura a 1024 en JPEG, modelo validado sin errores y con sus animaciones: 665 KB",
-      "ENLACES QUE LLEVABAN A LA NADA: el Teatro Total mandaba a /maquina-del-tiempo y /detonacion (404). El Cuartel aprende a abrir una sala desde la dirección (/cuartel?sala=maquina) y los enlaces viejos redirigen a su pestaña. /lectura lleva a la Crónica. El catálogo deja de enlazar puntos de API que solo aceptan envíos (tres errores rojos en consola)",
-      "VEINTINUEVE TÍTULOS DECÍAN VANGUARD DOS VECES («… | VANGUARD · VANGUARD») en la pestaña y en Google. Limpios. Cinco descripciones de hasta 360 letras, que Google corta a 160, reescritas para que el mensaje se lea entero",
-      "TÍTULO PRINCIPAL donde faltaba (El Vértigo y Vanguard-2) y el Cuartel entra al mapa del sitio",
-      "LECTURA EN EL MÓVIL: unas 830 etiquetas medían entre 6 y 8,5 px. En pantallas pequeñas suben a 8,5–9,5 px; en escritorio no cambia nada. Salto al contenido para teclado y lector de pantalla, hoja de impresión limpia, y el teletipo y «VER FUENTE» ganan zona tocable",
-      "EL SPOT EN LA PORTADA: «Vanguard en 30 segundos», el vídeo vertical con voz y pantallas reales de la casa. No pesa nada hasta que alguien pulsa reproducir, y lleva dos botones: enviarlo por WhatsApp y descargarlo para los estados",
-      "LA CRÓNICA VIAJA: las cinco claves del día se envían por WhatsApp con un toque, escritas con los titulares reales del parte",
-      "ATAJOS DE LA APP INSTALADA (En vivo, Mapa 3D, Crónica, Cuartel) y la barra del navegador con el negro de la casa",
-      "PENDIENTES CERRADOS: «FUENTE C» pasa a «MEDIO C» (en línea con MEDIO A y B) y «DESARROLLO» a «EN DESARROLLO»; Verdad Cruda y El Estratega estrenan franjas ilustradas por sección, marcadas como ilustración para no fingir que son fotos del hecho",
+      "EL DEFECTO DE LA v402.4, ARREGLADO POR SU CAUSA: las efemérides entraron como diez párrafos y /historia pasó de 1.117 a 1.305 letras por elemento visual. El pilar 2 pide «más imágenes y menos bloques interminables de texto», así que los mismos diez hechos ahora se DIBUJAN en su año",
+      "components/vanguard/eje-del-dia.tsx — un eje de tiempo de verdad: cada hecho en su año exacto entre el más antiguo de la fuente (hoy, 565) y este año, con escala derivada del arco real y marcas redondas calculadas. Componente de SERVIDOR: cero JavaScript, cero hidratación",
+      "LA PROFUNDIZACIÓN SIGUE AHÍ: bajo el eje queda el texto de cada hecho, recortado, y cada punto lleva su aria-label completo para quien no ve el dibujo. Nada de lo que había se ha borrado",
+      "/historia abre el bloque con ilustración de la casa (wikiguerra.jpg, dimensiones declaradas 1408×704): la memoria también se ve, no solo se lee",
+      "/cruce usa el mismo eje en lugar de su lista: una sola pieza sirve a dos salas, cero código duplicado",
+      "Se declara lo que NO se hizo: las efemérides llegan de una sola fecha y todavía no se pueden filtrar por siglo desde la casa",
     ],
-    tipo: "tecno",
+    tipo: "mundo",
   },
   {
     version: "v402.4",

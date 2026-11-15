@@ -153,7 +153,7 @@ body:has(.vx) { background: #06080c; }
 }
 .vx-tele-pista { display: flex; align-items: center; gap: 40px; white-space: nowrap; animation: vxTele 90s linear infinite; padding-left: 24px; }
 .vx-tele:hover .vx-tele-pista { animation-play-state: paused; }
-.vx-tele-pista a { font-size: 13.5px; color: var(--vx-tx2); display: inline-flex; gap: 10px; align-items: center; min-height: 34px; } /* v402.4: toda la franja es tocable */
+.vx-tele-pista a { font-size: 13.5px; color: var(--vx-tx2); display: inline-flex; gap: 10px; align-items: center; }
 .vx-tele-pista a:hover { color: var(--vx-gold); }
 .vx-tele-pista time { font-family: var(--vx-dato); font-size: 11.5px; color: var(--vx-gold); }
 @keyframes vxTele { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -406,69 +406,3 @@ body:has(.vx) { background: #06080c; }
   .vx-heroe-sellos span:last-child { display: none; }
   .vx-heroe-sellos span { font-size: 10px; }
 }
-
-/* v402.4 — VANGUARD EN 30 SEGUNDOS: el spot vertical en la portada */
-.vx-spot { display: grid; gap: 22px; align-items: center; grid-template-columns: 1fr; }
-@media (min-width: 760px) { .vx-spot { grid-template-columns: minmax(240px, 340px) 1fr; gap: 36px; } }
-.vx-spot-video { position: relative; justify-self: center; width: min(78vw, 340px); aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden; border: 1px solid rgba(232,197,106,.45); box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 18px 50px rgba(0,0,0,.55), 0 0 30px rgba(232,197,106,.12); background: #000; }
-.vx-spot-video video { display: block; width: 100%; height: 100%; object-fit: cover; background: #000; }
-.vx-spot-video .vx-mira { pointer-events: none; z-index: 1; }
-.vx-spot-lema { margin: 10px 0 14px; font-size: clamp(22px, 2.6vw, 32px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
-.vx-spot-txt ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
-.vx-spot-txt li { position: relative; padding-left: 20px; font-size: 16px; line-height: 1.45; color: var(--vx-mut); }
-.vx-spot-txt li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 8px; height: 8px; transform: rotate(45deg); background: var(--vx-gold); box-shadow: 0 0 8px rgba(232,197,106,.7); }
-.vx-spot-txt li b { color: var(--vx-ink, #f3eee2); font-weight: 700; }
-.vx-spot-acc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.vx-spot-acc a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; border-radius: 8px; font-family: var(--vx-marca); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.vx-spot-wa { background: #25d366; color: #04140a; box-shadow: 0 6px 20px rgba(37,211,102,.25); }
-.vx-spot-wa:hover { filter: brightness(1.08); }
-.vx-spot-dl { border: 1px solid rgba(232,197,106,.55); color: var(--vx-gold); }
-.vx-spot-dl:hover { background: rgba(232,197,106,.1); }
-
-/* ─────────────── v402.6 LOS NUEVE MÓDULOS ─────────────── */
-.vx-mods { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 640px) { .vx-mods { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1100px) { .vx-mods { grid-template-columns: repeat(4, 1fr); } }
-.vx-mod { position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 320px; padding: 18px; isolation: isolate; overflow: hidden; border: 1px solid var(--vx-line); border-radius: 4px; transition: transform .25s, box-shadow .25s, border-color .25s; }
-.vx-mod:hover { transform: translateY(-4px); border-color: var(--vx-line2); box-shadow: 0 18px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(232,197,106,.15); }
-.vx-mod-bg { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: center; transition: transform .8s ease; }
-.vx-mod:hover .vx-mod-bg { transform: scale(1.07); }
-.vx-mod-pie::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(6,8,12,.15) 0%, rgba(6,8,12,.35) 35%, rgba(6,8,12,.96) 78%); }
-.vx-mod-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.vx-mod-num { font-family: var(--vx-marca); font-size: 28px; font-weight: 700; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(232,197,106,.85); text-shadow: 0 0 18px rgba(232,197,106,.25); }
-.vx-mod-vivo { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 99px; background: rgba(255,59,48,.16); border: 1px solid rgba(255,59,48,.45); font-family: var(--vx-dato); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #ffb3ad; }
-.vx-mod h3 { margin: 0 0 6px; font-family: var(--vx-marca); font-size: 19px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--vx-gold); text-shadow: 0 2px 14px rgba(0,0,0,.7); }
-.vx-mod p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.45; color: var(--vx-tx2); }
-.vx-mod-salas { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
-.vx-mod-salas li { padding: 4px 8px; border: 1px solid rgba(232,197,106,.28); border-radius: 3px; background: rgba(6,8,12,.55); font-family: var(--vx-dato); font-size: 11px; letter-spacing: .04em; color: var(--vx-tx); }
-.vx-mod-ir { display: inline-flex; align-items: center; gap: 8px; font-family: var(--vx-marca); font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--vx-gold); }
-.vx-mod:hover .vx-mod-ir span { transform: translateX(4px); }
-.vx-mod-ir span { transition: transform .2s; }
-/* compacta (portada y «otros módulos»): dos columnas en móvil, sin chips */
-.vx-mods[data-compacta="1"] { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-@media (min-width: 900px) { .vx-mods[data-compacta="1"] { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
-.vx-mods[data-compacta="1"] .vx-mod { min-height: 200px; padding: 13px; }
-.vx-mods[data-compacta="1"] .vx-mod-salas { display: none; }
-.vx-mods[data-compacta="1"] .vx-mod-num { font-size: 22px; }
-.vx-mods[data-compacta="1"] .vx-mod h3 { font-size: 14px; letter-spacing: .1em; }
-.vx-mods[data-compacta="1"] .vx-mod p { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-@media (min-width: 900px) { .vx-mods[data-compacta="1"] .vx-mod { min-height: 260px; padding: 16px; } .vx-mods[data-compacta="1"] .vx-mod h3 { font-size: 16px; } }
-.vx-modulo-cta { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 18px; }
-.vx-modulos-cab { padding-top: 34px; }
-.vx-modulos-cab h1 { margin: 10px 0 8px; font-family: var(--vx-marca); font-size: clamp(26px, 5vw, 48px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: linear-gradient(180deg, #fff3c4, #e8c56a 55%, #b8862b); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.vx-modulos-cab p { margin: 0; max-width: 60ch; font-size: 16px; color: var(--vx-tx2); }
-.vx-modulos-pie { margin: 22px 0 0; font-size: 14px; color: var(--vx-mut); }
-.vx-modulos-pie a { color: var(--vx-gold); text-decoration: underline; text-underline-offset: 3px; }
-/* cabecera con nueve módulos: más ceñida y desplazable si no cabe */
-@media (min-width: 980px) {
-  .vx-nav { overflow-x: auto; scrollbar-width: none; min-width: 0; }
-  .vx-nav::-webkit-scrollbar { display: none; }
-  .vx-nav a { flex: none; padding: 9px 9px; font-size: 10.5px; letter-spacing: .12em; }
-  .vx-nav a[data-on="1"]::after { left: 9px; right: 9px; bottom: 2px; }
-}
-@media (min-width: 1440px) and (max-width: 1599px) { .vx-nav a { padding: 9px 11px; } }
-@media (min-width: 980px) and (max-width: 1599px) { .vx-reloj { display: none; } }
-@media (min-width: 980px) and (max-width: 1239px) { .vx-nav { gap: 0; } .vx-nav a { padding: 9px 5px; font-size: 9.5px; letter-spacing: .05em; } .vx-nav a[data-on="1"]::after { left: 5px; right: 5px; } .vx-logo-t small { display: none; } }
-@media (min-width: 980px) and (max-width: 1099px) { .vx-nav a { padding: 9px 4px; font-size: 9px; letter-spacing: .04em; } }
-/* v402.6: en móvil el título de sección usa todo el ancho y el enlace baja */
-@media (max-width: 640px) { .vx-sec-h { flex-wrap: wrap; align-items: flex-start; } .vx-sec-h > div { flex: 1 1 100%; } }

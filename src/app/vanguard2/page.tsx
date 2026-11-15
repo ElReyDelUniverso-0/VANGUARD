@@ -105,9 +105,6 @@ export default function PageVanguard2() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
       />
-      {/* v402.4 — el lienzo 3D no tiene título legible: este h1 lo nombra
-          para lectores de pantalla y buscadores sin tocar la escena. */}
-      <h1 className="sr-only">VANGUARD-2 · El universo 3D total</h1>
       <UniversoIsla />
       <noscript>
         <div className="p-5 text-xs leading-relaxed text-zinc-300">

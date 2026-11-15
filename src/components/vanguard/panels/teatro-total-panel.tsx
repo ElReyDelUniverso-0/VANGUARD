@@ -761,13 +761,13 @@ export function TeatroTotalPanel({
                 </span>
               )}
               <Link
-                href="/cuartel?sala=maquina"
+                href="/maquina-del-tiempo"
                 className="px-2.5 py-1 rounded border border-cyan-hud/35 text-cyan-hud hover:bg-cyan-hud/15 font-bold"
               >
                 SIMULADOR HISTÓRICO COMPLETO →
               </Link>
               <Link
-                href="/cuartel?sala=simulador"
+                href="/detonacion"
                 className="px-2.5 py-1 rounded border border-amber-hud/35 text-amber hover:bg-amber-hud/15 font-bold"
               >
                 CALCULADORA NUCLEAR →

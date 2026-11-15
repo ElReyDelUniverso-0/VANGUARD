@@ -33,7 +33,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "ATLAS — las 84 naciones y las personas que mueven el planeta",
+  title: "ATLAS — las 84 naciones y las personas que mueven el planeta | VANGUARD",
   description:
     "El atlas del planeta de VANGUARD: 84 naciones con su capital, población, superficie, moneda, gobierno y líder real; 78 personas del poder con su sede real y las 24 rutas que unen los ejes del mundo. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/atlas` },

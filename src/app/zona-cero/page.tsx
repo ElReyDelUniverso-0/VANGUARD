@@ -87,9 +87,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "TEATRO GLOBAL 3D — mesa de guerra mundial con países, frentes y trincheras",
+  title: "TEATRO GLOBAL 3D — mesa de guerra mundial con países, frentes y trincheras | VANGUARD",
   description:
-    "Simulador de guerra en 3D: los 5 teatros reales de conflicto, aeronaves militares en vuelo, arcos de misiles y el frente táctico. Gratis, en español.",
+    "El simulador de guerra completo: mesa 3D del mundo con los 5 teatros reales de conflicto y la hora de su última señal real, aeronaves militares reales en vuelo, marcadores de países y arcos de misiles; más el frente táctico 3D con trincheras, morteros, francotiradores, convoyes, paracaidistas y derribos antiaéreos. Gratis, en español, sin instalar nada.",
   alternates: { canonical: "/zona-cero" },
   openGraph: {
     title: "TEATRO GLOBAL 3D — la mesa de guerra mundial · VANGUARD",
