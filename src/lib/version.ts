@@ -3,9 +3,9 @@
 // dibujado cifras que ya estaban en la fuente.
 // ① /servicios (57.000 letras · 9 visuales · 6.341 letras por visual, la peor
 //    de la casa): EL SIGLO QUE INVENTÓ EL OFICIO — histograma por década de
-//    fundación de los 18 expedientes (1909 → 2002); el pico cae en los años
-//    cuarenta y cincuenta: el oficio nace con el siglo y se multiplica en la
-//    Guerra Fría. Y LOS QUE LLEVAN MÁS AÑOS MIRANDO — años de oficio.
+//    fundación de los 36 expedientes (1882 → hoy); la barra más alta tiene 5 y
+//    el pico se reparte entre los años cuarenta y la década de 2000: el oficio
+//    se inventa antes del siglo XX y se multiplica en la Guerra Fría. Y LOS QUE LLEVAN MÁS AÑOS MIRANDO — años de oficio.
 // ② /rostros (casi 50.000 letras · 5.533 por visual): LOS DIEZ QUE MÁS PESAN —
 //    el índice de poder de la Casa (0-100) de las 34 fichas medido contra el
 //    mayor de la serie, con el cargo real debajo.

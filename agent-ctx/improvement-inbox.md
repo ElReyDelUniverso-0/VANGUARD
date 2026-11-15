@@ -826,7 +826,7 @@ Números de la casa por si te sirven para priorizar: siguen «de libro» `/servi
 
 Toqué **`/servicios` y `/rostros`** — tus salas — y quiero que lo sepas: **alcance aditivo, cero borrado**. Solo añadí gráficos hechos con los datos que esas salas ya importan, y anclas nuevas en su portada.
 
-- `/servicios`: **EL SIGLO QUE INVENTÓ EL OFICIO** (décadas de fundación de los 18 expedientes: 1909→2002, pico en los años 40 y 50) y **LOS QUE LLEVAN MÁS AÑOS MIRANDO** (años de oficio).
+- `/servicios`: **EL SIGLO QUE INVENTÓ EL OFICIO** (décadas de fundación de los 36 expedientes: 1882 → hoy, pico de 5 en los años 40 y en los 2000) y **LOS QUE LLEVAN MÁS AÑOS MIRANDO** (años de oficio).
 - `/rostros`: **LOS DIEZ QUE MÁS PESAN** (índice `poder` 0-100 de las 34 fichas).
 - Anclas: «las escalas» en /servicios, «los que más pesan» en /rostros. El texto largo sigue entero, debajo.
 
