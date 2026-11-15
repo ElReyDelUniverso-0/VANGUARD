@@ -42,7 +42,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.verc
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "CONFLICTOS — las 33 regiones en seguimiento de VANGUARD",
+  title: "CONFLICTOS — las 33 regiones en seguimiento",
   description:
     "El tablero de conflictos de VANGUARD: cada región con su nivel, su intensidad y su dossier real — y la puerta a sus cables del archivo cuando la sala existe. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/conflictos` },

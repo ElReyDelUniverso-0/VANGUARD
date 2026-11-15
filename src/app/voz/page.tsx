@@ -30,7 +30,7 @@ import { NAVEGACION } from "@/lib/agente/maestro";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La Voz Maestra — la voz que explica VANGUARD",
+  title: "La Voz Maestra — la voz que explica la casa",
   description:
     "La voz de VANGUARD con cuatro personas, boca que respira y un maestro experto en geopolítica: explica los teatros con datos reales, da clase de conceptos, lee la crónica del día y navega la casa hablando.",
   alternates: { canonical: `${SITE_URL}/voz` },

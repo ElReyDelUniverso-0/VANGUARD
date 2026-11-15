@@ -1,0 +1,69 @@
+# VANGUARD — PRUEBAS
+
+> Lo mínimo antes de publicar en `main` (que despliega a producción). Si algo falla: investigar, arreglar,
+> repetir; si no se puede arreglar con seguridad, revertir.
+
+## 1. Tipos (tsc)
+
+El build de Vercel corre `prisma generate && tsc --noEmit && next build --webpack`.
+Un `tsc` completo necesita más de 2 GB de RAM; en entornos pequeños usa un **tsc acotado**:
+
+```bash
+# archivos cambiados desde el último commit publicado + quienes los importan
+python3 - <<'EOF'
+import json,subprocess,os,re
+base="origin/main"
+ch=subprocess.check_output(f"git diff --name-only --diff-filter=AM {base} | grep -E '\\.(ts|tsx)$'",shell=True,text=True).split()
+mods={'@/'+re.sub(r'\.(ts|tsx)$','',f[4:]) for f in ch if f.startswith('src/')}
+dep={os.path.join(r,x) for r,_,fs in os.walk('src') for x in fs if x.endswith(('.ts','.tsx'))
+     and any(f'"{m}"' in open(os.path.join(r,x),errors='ignore').read() for m in mods)}
+todo=sorted(set(ch)|dep|{"src/lib/bitacora.ts","src/lib/version.ts"})   # ¡siempre estos dos!
+json.dump({"extends":"./tsconfig.json","compilerOptions":{"noEmit":True,"incremental":False},
+           "include":["next-env.d.ts"]+todo},open("tsconfig.sub.json","w"))
+EOF
+NODE_OPTIONS=--max-old-space-size=1600 npx tsc -p tsconfig.sub.json
+```
+`tsconfig.sub.json` **no se versiona**.
+
+## 2. Lint
+
+```bash
+npx eslint <archivos cambiados>
+```
+Hay 3 errores previos conocidos (`set-state-in-effect` en hace.tsx, historias.tsx, reloj.tsx; backlog B-02).
+No añadir nuevos.
+
+## 3. Servidor local
+
+```bash
+NODE_OPTIONS=--max-old-space-size=1300 npx next dev -H 0.0.0.0 -p 3000
+```
+Comprobar con `curl` el código HTTP de las rutas tocadas. `/cuartel` es demasiado pesado para compilar con 2 GB:
+pruébalo en producción.
+
+## 4. Visual móvil
+
+Capturas Playwright a 390×844 (`device_scale_factor=2, is_mobile=True`) de cada pantalla tocada, y escritorio
+a 1440×900. Para la cabecera: medir `scrollWidth` vs `clientWidth` de `.vx-nav` a 1024/1280/1440/1920.
+**No borres `#vg-cortina` del DOM antes de hidratar**: provoca un falso error de hidratación.
+
+## 5. Tras publicar
+
+```bash
+# estado del despliegue en Vercel (vía GitHub)
+curl -s -H "Authorization: token $TOKEN" https://api.github.com/repos/ElReyDelUniverso-0/VANGUARD/commits/<sha>/status
+# versión servida
+curl -s https://vanguard-kq9r.vercel.app/api/health | grep -o '"version":"[^"]*"'
+# auditoría completa de producción
+python scripts/qa/auditoria-movil.py https://vanguard-kq9r.vercel.app auditoria.json
+```
+Un build fallido NO tumba producción (Vercel sirve el último bueno), pero deja los cambios sin publicar: revisar siempre.
+
+## 6. Casos de prueba de `/lectura` (v402.7)
+
+| Caso | Esperado |
+|---|---|
+| Nota en el cable vivo | 200 con lo esencial, foto, línea de tiempo |
+| Nota fuera del cable de un medio que responde (BBC, El Mundo…) | 200 con título/fecha/foto del propio medio |
+| Nota fuera del cable de un medio que bloquea (El País, 403) | 200 «Esta nota ya salió del cable vivo», `noindex` |
+| Clave de un dominio ajeno a la casa | 404 |

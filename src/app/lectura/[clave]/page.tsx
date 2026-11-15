@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import "../../portada.css";
-import { buscarNota, obtenerNotas, type Nota } from "@/lib/portada/notas";
+import { buscarNota, medioDeUrl, obtenerNotas, urlDeClave, type Nota } from "@/lib/portada/notas";
 import { REGIONES, conflictoPorKey, horaCorta, minutosLectura } from "@/lib/portada/clasificar";
 import { TEATROS } from "@/lib/teatros";
 import { Cabecera, BarraMovil } from "@/components/portada/cabecera";
@@ -26,7 +26,11 @@ type Props = { params: Promise<{ clave: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { clave } = await params;
   const n = await buscarNota(clave);
-  if (!n) return { title: "Nota no encontrada", robots: { index: false } };
+  if (!n) {
+    const url = urlDeClave(clave);
+    const medio = url ? medioDeUrl(url) : null;
+    return { title: medio ? `Nota de ${medio} fuera del cable` : "Nota no encontrada", robots: { index: false } };
+  }
   return {
     title: n.titulo,
     description: n.resumen.slice(0, 160) || n.titulo,
@@ -42,7 +46,13 @@ function frases(t: string): string[] {
 export default async function Lectura({ params }: Props) {
   const { clave } = await params;
   const [nota, todas] = await Promise.all([buscarNota(clave), obtenerNotas()]);
-  if (!nota) notFound();
+  if (!nota) {
+    // v402.7: la nota salió del cable y su medio no respondió — salida digna, no un 404
+    const url = urlDeClave(clave);
+    const medio = url ? medioDeUrl(url) : null;
+    if (!url || !medio) notFound();
+    return <FueraDelCable url={url} medio={medio} ultimas={todas.slice(0, 6)} />;
+  }
 
   const c = conflictoPorKey(nota.conflicto);
   const reg = REGIONES[nota.region] ?? REGIONES.mundo;
@@ -142,6 +152,46 @@ export default async function Lectura({ params }: Props) {
             </div>
             <div className="vx-bento" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
               {relacionadas.map((x) => (
+                <Tarjeta key={x.id} nota={x} />
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+      <Pie />
+      <BarraMovil ruta="/lectura" />
+    </div>
+  );
+}
+
+function FueraDelCable({ url, medio, ultimas }: { url: string; medio: string; ultimas: Nota[] }) {
+  return (
+    <div className={`vx ${inter.variable}`}>
+      <Cabecera ruta="/lectura" />
+      <main className="vx-wrap">
+        <article className="vx-lec-fuera vx-entra">
+          <span className="vx-sello">Archivo · {medio}</span>
+          <h1>Esta nota ya salió del cable vivo</h1>
+          <p>
+            Vanguard muestra las notas de las últimas 72 horas. Esta ya no está en el cable y {medio} no respondió
+            ahora mismo, así que no te enseñamos un resumen que no podemos comprobar. La nota original sigue en su medio.
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", margin: "22px 0 0" }}>
+            <a href={url} target="_blank" rel="noopener noreferrer" className="vx-btn">
+              Leer la nota en {medio} <IcoExterno className="" />
+            </a>
+            <Link href="/" className="vx-btn vx-btn-sec">
+              ← Volver a la portada
+            </Link>
+          </div>
+        </article>
+        {ultimas.length > 0 && (
+          <section className="vx-sec" aria-label="Lo último">
+            <div className="vx-sec-h">
+              <h2>Lo último en el cable</h2>
+            </div>
+            <div className="vx-bento" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+              {ultimas.map((x) => (
                 <Tarjeta key={x.id} nota={x} />
               ))}
             </div>

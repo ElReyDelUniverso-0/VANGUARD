@@ -32,7 +32,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: `El catálogo de lo que ya existe — ${TOTAL_REAL} piezas de VANGUARD`,
+  title: `El catálogo de lo que ya existe — ${TOTAL_REAL} piezas`,
   description:
     `Índice real de ${TOTAL_REAL} piezas que ya están construidas en VANGUARD: salas navegables, paneles, motores y puntos de datos, cada una con su ruta o su archivo de origen.`,
   alternates: { canonical: `${SITE_URL}/catalogo` },

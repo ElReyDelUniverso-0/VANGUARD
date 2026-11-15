@@ -29,7 +29,7 @@ import { cuentaVerificadas } from "@/lib/musica/radios";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La Música de VANGUARD — música real, radio de conflicto y el taller",
+  title: "La Música — música real, radio de conflicto y el taller",
   description:
     "Música real de dominio público y CC0 (bandas militares, orquestas de 1910, un tenor de los años treinta), radio de conflicto con emisoras comprobadas, la radio de la casa leída del archivo real y los sonidos de guerra. Cada pista con su licencia y su fuente.",
   alternates: { canonical: `${SITE_URL}/musica` },

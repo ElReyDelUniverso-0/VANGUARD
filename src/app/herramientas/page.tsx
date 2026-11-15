@@ -37,7 +37,7 @@ export const revalidate = 900;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "LAS DIEZ LLAVES — herramientas externas dentro de VANGUARD",
+  title: "LAS DIEZ LLAVES — herramientas externas dentro de la casa",
   description:
     "Diez fuentes de datos abiertas que VANGUARD consulta en vivo: sismos del USGS, eventos naturales de la NASA, alertas de GDACS, pobreza del Banco Mundial, desplazamiento de ACNUR, efemérides de Wikimedia, clima y aire de Open-Meteo, el cambio del BCE y el precio de bitcoin. Con organismo, licencia y fecha en cada cifra, y las seis fuentes que esperan llave declaradas aparte.",
   alternates: { canonical: `${SITE_URL}/herramientas` },

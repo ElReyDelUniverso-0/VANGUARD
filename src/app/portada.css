@@ -472,3 +472,8 @@ body:has(.vx) { background: #06080c; }
 @media (min-width: 980px) and (max-width: 1099px) { .vx-nav a { padding: 9px 4px; font-size: 9px; letter-spacing: .04em; } }
 /* v402.6: en móvil el título de sección usa todo el ancho y el enlace baja */
 @media (max-width: 640px) { .vx-sec-h { flex-wrap: wrap; align-items: flex-start; } .vx-sec-h > div { flex: 1 1 100%; } }
+
+/* v402.7 LA NOTA QUE NO SE PIERDE — salida digna cuando la nota salió del cable */
+.vx-lec-fuera { max-width: 720px; padding: 48px 0 8px; }
+.vx-lec-fuera h1 { margin: 10px 0 12px; font-size: clamp(26px, 4.4vw, 40px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.12; }
+.vx-lec-fuera p { margin: 0; font-size: 17px; line-height: 1.6; color: var(--vx-tx2); }

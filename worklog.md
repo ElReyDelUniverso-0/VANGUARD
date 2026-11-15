@@ -6167,3 +6167,15 @@ Work Log:
 - Portada: sección «Mucho más que noticias» (Sección 02). Cabecera: NAV derivada de MODULOS_PUBLICOS, sin «Portada» (logo). Barra móvil: Perfil → Módulos. Carcasa: el sello del módulo enlaza a su portada y muestra el nombre corto en móvil.
 - Sitemap: /modulos y /modulo/* (menos estado). CSS en portada.css (.vx-mods, cabecera ceñida) y piel.css (.vx-pest-corto).
 - QA: tsc acotado LIMPIO, eslint sin errores nuevos, next dev: 10 rutas nuevas 200, /modulo/nada 404, 0 errores de consola; cabecera sin desborde a 1024/1280/1440/1920; capturas móvil 390×844 y escritorio 1440.
+
+---
+Task ID: v402.7
+Agent: IA de diseño
+Task: «VANGUARD AUTONOMOUS EVOLUTION ENGINE» — primera vuelta: publicar, auditar, arreglar, documentar
+Work Log:
+- Publicado v402.5+v402.6 → build de Vercel FALLÓ (TS2741: entrada v402.6 de bitácora sin `tipo`). Arreglado.
+- Detectado: a52189e (ia3) dejó main = v402.4 + Eje del Día y borró v402.5/v402.6 (130 archivos). Restaurado con cherry-pick encima de 1d22187; mi v402.5 pasa a v402.5.1 (clave única en bitácora). Diff verificado: unión exacta.
+- Despliegue 7756b2c: vanguard, u6b9 y kq9r en verde; /api/health v402.6.
+- Auditoría producción (scripts/qa/auditoria-movil.py): 61/61 rutas 200, 0 errores consola, 0 imágenes rotas, 0 desbordes, 1/239 enlaces rotos (/lectura de nota fuera del cable).
+- v402.7: notaDesdeFuente() en lib/portada/notas.ts (OpenGraph del medio, lista cerrada MEDIOS_ARTICULO, charset, coletilla fuera) + FueraDelCable en lectura/[clave]. Probado: BBC 200 con título real, El Mundo 200 (Latin-1 correcto), El País (403) página digna noindex, dominio ajeno 404.
+- 6 títulos sin VANGUARD doble. docs/ (6 documentos) y scripts/qa/.

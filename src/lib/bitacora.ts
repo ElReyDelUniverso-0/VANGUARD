@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.7",
+    nombre: "LA NOTA QUE NO SE PIERDE",
+    hitos: [
+      "AUDITORÍA DE PRODUCCIÓN COMPLETA: 61 rutas en un móvil y 239 enlaces internos. Todas las salas responden, sin errores en consola, sin imágenes rotas y sin desbordes. Un solo enlace roto, y era el más importante: la noticia principal de la portada",
+      "LAS NOTAS YA NO MUEREN A LAS 72 HORAS: cuando una nota salía del cable vivo, su enlace daba error. Fallaban la portada guardada en caché, los enlaces compartidos por WhatsApp y los resultados de Google. Ahora Vanguard lee la ficha que publica el propio medio (título, foto, resumen y fecha) y la muestra con el mismo formato de lectura",
+      "NADA INVENTADO: si el medio no declara título y fecha, o no responde, aparece una página honesta («Esta nota ya salió del cable vivo») con el enlace al original y lo último del cable. Solo se consultan los once medios de la casa",
+      "SEIS TÍTULOS decían VANGUARD dos veces en la pestaña del navegador: Conflictos, Universo 3D, La Voz, La Música, Catálogo y Las diez llaves",
+      "LA CASA TIENE MEMORIA ESCRITA: plan maestro, arquitectura, auditoría, lista de mejoras priorizada, historial de cambios y guía de pruebas en docs/, más el guion de auditoría para repetirla en cada sesión",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v402.6",
     nombre: "LOS NUEVE MÓDULOS",
     hitos: [
