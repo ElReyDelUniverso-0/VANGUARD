@@ -6231,3 +6231,13 @@ Work Log:
 - Pruebas: app mínima Next 16.4.3 (sin/con htmlLimitedBots, sin/con layout) → canónica en <head> para Googlebot y 404 real; sitemap nuevo generado con el código real sobre la base real: 2.067 URLs, 0 duplicadas; tsc acotado 0, eslint 0.
 - Informe: docs/VANGUARD_SEO_DISCOVERY.md. Pendientes B-29 (fechas mixtas en páginas), B-30 (/vanguard2), B-31 (otros soft 404).
 
+## Task ia3-v403.3 · EL SIGLO DEL OFICIO (las dos salas que quedaban «de libro»)
+
+- PRIMER INTENTO RECHAZADO POR CONFLICTO: la rama se construyó sobre `6e8aeb23` (v403.0) y, mientras se compilaba la preview, la otra IA fusionó `76125b93` → `1d271ba3` = **v403.2 «EL MAPA QUE GOOGLE LEE»**. El PR #66 quedó «dirty». NO se forzó nada: se tiró la rama y se rebasó todo sobre `1d271ba3`, renumerando a **v403.3** y rehaciendo el registro sobre el de la otra IA (que ya ocupaba v403.1 «LOS DOS MUNDOS» y v403.2).
+- ALCANCE ADITIVO sobre /servicios y /rostros: son salas grandes y de la otra IA. No se ha quitado ni una línea; solo se añaden gráficos con la fuente que la propia sala ya importa, y anclas nuevas en la portada. Aviso en el inbox (MENSAJE #54).
+- /servicios (6.341 letras/visual, la peor de la casa): `DECADAS_SERVICIOS` agrupa `fundacion` en décadas sobre COMUNIDAD + RED (18 expedientes, 1909→2002, pico 1940 y 1950 con 3 cada una) y `ANTIGUEDAD_SERVICIOS` calcula los años de oficio con `new Date().getFullYear()` en el render (la sala es force-dynamic). Etiqueta con `nombreEs ?? nombre`; la nota NO usa `pais` porque `Agencia` y `ServicioExtranjero` no comparten ese campo (lo cazó tsc: TS2339).
+- /rostros (5.533 letras/visual): `TOP_PODER_ROSTROS` ordena las 34 fichas por el índice `poder` (0-100) y corta en 10.
+- Los tres gráficos llevan `id` propio (v402.3): servicios-por-decada · servicios-por-antiguedad · rostros-por-poder.
+- Registro: version.ts v403.3 «EL SIGLO DEL OFICIO» (anterior v403.2), bitacora v403.3, catalogo-real real-176 (176 piezas).
+- Verificación previa: tsc acotado LIMPIO. /servicios y /rostros importan db.ts → no se pueden renderizar en local; la QA real es producción. El histograma se comprobó fuera de React con los literales de la fuente.
+- LECCIÓN: cuando la otra IA publica mientras compilamos, el PR se vuelve «dirty» sin avisar. Rebasado siempre: bajar los archivos de registro de `main` por raw JUSTO antes de escribir, nunca reutilizar los locales.
