@@ -106,17 +106,27 @@ export default async function CrucePage() {
   // capital real más cercana (atlas-data) y ese país se cruza con el archivo
   // de la casa. Si la base no contesta, el bloque lo declara: nunca un cero.
   const conPais = await cruceConPaises(12).catch(() => ({ sismos: [], alertas: [] }));
-  // un país por tarjeta, con el sismo MÁS CERCANO de ese país
-  const paisesDelDia = [
-    ...new Map(
-      conPais.sismos
-        .filter((e) => e.pais)
-        .map((e) => [e.pais!.id, e.pais!] as const)
-    ).values(),
-  ].slice(0, 4);
+  // v402.9 — EL CRUCE CUADRA: país y sismo salen JUNTOS de la misma fila.
+  // (En la v402.8 el país salía de un mapa por id y el sismo de un segundo
+  //  `find`, y podían acabar siendo dos temblores distintos: la tarjeta decía
+  //  528 km al lado de un sismo que estaba a 236. Un dato incoherente es peor
+  //  que ninguno.) Ahora se elige el evento con la capital más cercana por
+  //  país y se pinta ESE MISMO evento con ESE MISMO kilómetro.
+  const paisesDelDia: { pais: NonNullable<(typeof conPais.sismos)[number]["pais"]>; sismo: (typeof conPais.sismos)[number] }[] = [];
+  for (const e of conPais.sismos) {
+    if (!e.pais) continue;
+    const ya = paisesDelDia.find((x) => x.pais.id === e.pais!.id);
+    if (!ya) paisesDelDia.push({ pais: e.pais, sismo: e });
+    else if (e.pais.kmCapital < ya.pais.kmCapital) {
+      ya.pais = e.pais;
+      ya.sismo = e;
+    }
+  }
+  paisesDelDia.sort((a, b) => a.pais.kmCapital - b.pais.kmCapital);
+  paisesDelDia.length = Math.min(paisesDelDia.length, 4);
 
   const cablesPorPais = new Map<string, number | null>();
-  for (const p of paisesDelDia) {
+  for (const { pais: p } of paisesDelDia) {
     try {
       cablesPorPais.set(
         p.id,
@@ -292,9 +302,8 @@ export default async function CrucePage() {
               : "Sin sismos con coordenada en este render: no hay país que emparejar. No se rellena con nada."}
           </p>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            {paisesDelDia.map((p) => {
+            {paisesDelDia.map(({ pais: p, sismo }) => {
               const cables = cablesPorPais.get(p.id) ?? null;
-              const sismo = conPais.sismos.find((e) => e.pais?.id === p.id);
               return (
                 <article
                   key={p.id}

@@ -6190,3 +6190,9 @@ Work Log:
 - Defecto cazado en el chequeo: el conteo podía llegar indefinido y reventaba el formateo (TS2769) → normalizado.
 - Registro: version.ts v402.8 (anterior v402.7), bitacora v402.8, catalogo-real real-174 (174 piezas).
 - QA: tsc acotado LIMPIO (13 archivos, incluido bitacora.ts desde el fallo de la v402.5). Lógica de emparejamiento verificada contra USGS en vivo: el sismo de 236 km cae en «República Dominicana · Santo Domingo» a 235 km de la capital; el de Costa Rica cae en «Panamá · Ciudad de Panamá». /cruce en local da 500 SOLO por `Cannot find module '.prisma/client/default'` (falta `prisma generate` en este entorno, no hay DATABASE_URL): lo valida el build de Vercel.
+
+## Task ia3-v402.9 · EL CRUCE CUADRA (incoherencia de la v402.8, arreglada el mismo día)
+
+- DEFECTO EN PRODUCCIÓN: en la v402.8 la tarjeta de país sacaba el nombre de un mapa por id (`new Map(...)`) y el sismo de un segundo `find` sobre la lista. Podían ser dos temblores distintos: la tarjeta mostró «528 km» junto a un sismo situado a 236 km de casa. Verificado en el HTML servido de /cruce.
+- ARREGLO: `paisesDelDia` pasa a ser una lista de pares {pais, sismo} construida en un solo recorrido (se queda con el evento de MENOR kmCapital por país) y ordenada por cercanía a la capital. El render usa el sismo emparejado, sin buscar de nuevo. Una sola fuente por tarjeta.
+- QA: tsc acotado LIMPIO. Comprobación en producción tras el despliegue: en cada tarjeta, los km a la capital deben corresponder al sismo que se cita debajo.

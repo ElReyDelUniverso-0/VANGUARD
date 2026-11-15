@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.9",
+    nombre: "EL CRUCE CUADRA",
+    hitos: [
+      "UN DATO INCOHERENTE, ARREGLADO EN EL DÍA: la v402.8 sacaba el nombre del país de un mapa por id y el sismo de un segundo `find`, así que podían ser dos temblores distintos. En producción la tarjeta decía «528 km» junto a un sismo que estaba a 236. Un dato incoherente es peor que ningún dato",
+      "AHORA PAÍS Y SISMO SALEN JUNTOS de la misma fila: se elige el evento con la capital más cercana de cada país y se pinta ESE evento con ESE kilómetro. Una sola fuente por tarjeta, cero cruces de dedos",
+      "LA LISTA SE ORDENA por cercanía a la capital y se corta en cuatro: la tarjeta más cercana siempre arriba",
+      "Sin cambios en lo demás: la distancia a esta casa, las alertas de la ONU, el eje del día y las cifras vivas siguen igual",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v402.8",
     nombre: "DÓNDE TIEMBLA Y QUIÉN LO CUENTA",
     hitos: [
