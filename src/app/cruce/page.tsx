@@ -40,7 +40,7 @@ export const revalidate = 900;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "EL CRUCE — a qué distancia de casa pasó lo de hoy | VANGUARD",
+  title: "EL CRUCE — a qué distancia de casa pasó lo de hoy",
   description:
     "El cruce que nadie más hace: los sismos del día (USGS) y las alertas humanitarias (GDACS) ordenados por la distancia real, en kilómetros calculados, hasta esta casa. Más el parte del planeta (NASA EONET) y lo que ocurrió un día como hoy (Wikimedia). Cero cifras inventadas.",
   alternates: { canonical: `${SITE_URL}/cruce` },

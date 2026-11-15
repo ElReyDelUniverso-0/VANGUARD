@@ -49,7 +49,7 @@ function hornearCatalogo(): FamiliaCatalogo[] | null {
 const CATALOGO = hornearCatalogo();
 
 export const metadata: Metadata = {
-  title: "El Detector de Bolsillo — mira tus llaves en el navegador | VANGUARD",
+  title: "El Detector de Bolsillo — mira tus llaves en el navegador",
   description:
     "Pega un texto y mira si lleva API keys o secretos expuestos antes de enviarlo: las 10 familias del Escudo de VANGUARD más 2 genéricos, mirando íntegramente en tu navegador — el texto jamás sale de la sala. Con forja de llaves fuertes y medidor de entropía.",
   alternates: {

@@ -6535,3 +6535,40 @@ html[data-vg-theme="carmesi"] {
   .vg-carta-3d { transition: none !important; transform: none !important; }
 }
 
+
+
+/* ════════════════════════════════════════════════════════════════════
+   v402.4 — LECTURA Y ACCESO
+   1) Salto al contenido: invisible hasta que el teclado lo enfoca.
+   2) Piso de lectura en móvil: las etiquetas de 6–8,5 px (≈830 en la casa,
+      medidas en la auditoría de producción) suben a 8,5–9,5 px. Solo bajo
+      640 px: las variantes sm: siguen mandando en pantallas grandes.
+   3) Imprimir una crónica o una noticia da papel limpio: sin cabecera,
+      sin teletipo, sin fondo negro ni capas decorativas.
+   ════════════════════════════════════════════════════════════════════ */
+.vx-saltar {
+  position: fixed; left: 12px; top: -60px; z-index: 10000;
+  padding: 10px 16px; border-radius: 6px;
+  background: #e8c56a; color: #06080c;
+  font: 700 13px/1 var(--font-orbitron, system-ui); letter-spacing: .08em; text-transform: uppercase;
+  transition: top .15s ease;
+}
+.vx-saltar:focus, .vx-saltar:focus-visible { top: 12px; outline: 2px solid #06080c; outline-offset: 2px; }
+.vx-ancla-contenido { display: block; height: 0; width: 0; overflow: hidden; scroll-margin-top: 72px; }
+.vx-ancla-contenido:focus { outline: none; }
+
+@media (max-width: 639px) {
+  .text-\[6px\], .text-\[7px\], .text-\[7\.5px\] { font-size: 8.5px; }
+  .text-\[8px\], .text-\[8\.5px\] { font-size: 9.5px; }
+}
+
+@media print {
+  html, body { background: #fff !important; color: #111 !important; }
+  .casa-aire, header, nav, footer, [role="banner"], [role="navigation"], .vx-saltar,
+  [data-teletipo], [aria-hidden="true"], video, canvas, button { display: none !important; }
+  main, article, section { background: #fff !important; color: #111 !important; box-shadow: none !important; }
+  a { color: #111 !important; text-decoration: underline; }
+  h1, h2, h3, p, li, span, time { color: #111 !important; text-shadow: none !important; }
+  img { max-width: 100% !important; break-inside: avoid; }
+  article, section { break-inside: avoid-page; }
+}

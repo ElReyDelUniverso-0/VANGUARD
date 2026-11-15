@@ -27,7 +27,7 @@ import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "ARCHIVO MUNDIAL — curiosidades verídicas, eras, guerras y carteles | VANGUARD",
+  title: "ARCHIVO MUNDIAL — curiosidades verídicas, eras, guerras y carteles",
   description:
     "El archivo mundial de VANGUARD: 44 curiosidades verídicas de la historia, las 8 eras desde la Prehistoria, los contadores de las grandes guerras, el crimen global y 8 expedientes de cartel con sus líderes. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/archivo-mundial` },

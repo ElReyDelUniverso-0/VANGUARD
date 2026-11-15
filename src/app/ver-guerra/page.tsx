@@ -143,7 +143,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "FRENTE TOTAL — el planeta en guerra en directo | VANGUARD",
+  title: "FRENTE TOTAL — el planeta en guerra en directo",
   description:
     "Mira los 10 frentes de guerra del planeta arder a la vez en un solo mapa en vivo: soldados, tanques y aviones peleando en directo, teletipo de noticias reales y aeronaves militares reales en el aire. Gratis, en español, sin instalar nada.",
   alternates: { canonical: "/ver-guerra" },

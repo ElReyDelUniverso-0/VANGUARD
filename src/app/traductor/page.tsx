@@ -31,7 +31,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "MODO TRADUCTOR — las noticias del mundo en tu idioma | VANGUARD",
+  title: "MODO TRADUCTOR — las noticias del mundo en tu idioma",
   description:
     "El traductor de Vanguard: traduce cualquier texto o los últimos cables del planeta a los 8 idiomas de la casa — español, inglés, portugués, francés, alemán, italiano, chino y ruso. Gratis, al instante.",
   alternates: { canonical: `${SITE_URL}/traductor` },

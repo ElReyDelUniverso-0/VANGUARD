@@ -389,9 +389,9 @@ export function VertigoFeed({
           <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-amber-400">
             <VanguardMarkSvg size={14} idPrefix="vert-empty" /> VANGUARD · EL VÉRTIGO
           </p>
-          <h1 className="mt-3 text-xl font-bold text-zinc-100">
+          <h2 className="mt-3 text-xl font-bold text-zinc-100">
             El archivo está callado ahora
-          </h1>
+          </h2>
           <p className="mt-2 text-sm text-zinc-500 leading-relaxed">
             No hay cables en la redacción en este momento. Cuando el mundo
             vuelva a moverse, el vértigo regresa.

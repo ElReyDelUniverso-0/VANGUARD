@@ -9,7 +9,7 @@ import { PresencePing, LiveTitle } from "@/components/vanguard/presence-ping";
 // Página utilitaria: no se indexa (el SEO vive en / y /guerra-hoy).
 
 export const metadata: Metadata = {
-  title: "MISIÓN 100 ENLACES — Centro de mando de reclutamiento | VANGUARD",
+  title: "MISIÓN 100 ENLACES — Centro de mando de reclutamiento",
   description:
     "Arsenal de 100 enlaces rastreados para repartir VANGUARD por WhatsApp, Facebook, X, Telegram, Discord, Reddit y más. Contador global en vivo y ranking de enlaces.",
   robots: { index: false, follow: false },

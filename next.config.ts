@@ -110,6 +110,12 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/clasico", destination: "/cuartel", permanent: true },
+      // v402.4 — salas que vivieron sueltas y hoy son pestañas del Cuartel:
+      // el enlace viejo (y el botón del Teatro Total) aterriza en su sala.
+      { source: "/maquina-del-tiempo", destination: "/cuartel?sala=maquina", permanent: true },
+      { source: "/detonacion", destination: "/cuartel?sala=simulador", permanent: true },
+      // /lectura solo existe como /lectura/<clave>: la raíz lleva a la Crónica.
+      { source: "/lectura", destination: "/cronica", permanent: false },
     ];
   },
   // v102.0 LA CIUDADELA — CABECERAS DE ACERO: el muro invisible que rodea
@@ -153,7 +159,7 @@ const nextConfig: NextConfig = {
       {
         source: "/:carpeta(videos|imagenes-reales|ilustraciones|posters|uploads|assets|vendor)/:path*",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+          { key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=2592000" },
         ],
       },
       {

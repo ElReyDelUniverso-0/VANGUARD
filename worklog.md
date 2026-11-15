@@ -6133,3 +6133,16 @@ Orden recibida: «sigue agregando todo eso y hazlo más único».
 - lib: nueva `efemeridesEnLista(n)` (año + texto ordenados del más antiguo).
 - Registro: v402.4 «LA DISTANCIA DE CASA» sobre el main real v402.3 (bloque de la otra IA intacto), bitacora entrada v402.4, catalogo-real real-172 (172 piezas), nucleo mod:cruce, section-search, sitemap.
 - QA local (next dev :3883): /cruce 200 (sismos a 236 / 275 / 303 / 316 / 334 km; alertas a 1.311 / 1.951 / 3.044 km; barras 7,75 % / 9,03 % / 9,95 % / 10,38 % / 10,97 % y 47,76 %), /historia 200 con 10 efemérides (565 → 1777), /divisas 200 con 0,9048 EUR/USD. 0 «sin señal». tsc acotado LIMPIO.
+
+---
+Task ID: v402.5
+Agent: IA de diseño
+Task: «30 que agregarías o mejorarías, agrégalo ahora mismo» — TREINTA AJUSTES
+Work Log:
+- Auditoría Playwright de producción: 50 rutas móvil, 230 enlaces internos (herr/auditoria30.py).
+- Peso: armería 11,1→2,8 MB, galería 11,4→~3 MB, mech-leela.glb 2,4 MB→665 KB, caché estáticos 7 días.
+- Enlaces: /cuartel?sala=, redirecciones /maquina-del-tiempo /detonacion /lectura, catálogo sin Link a /api.
+- SEO: 29 títulos con VANGUARD doble, 5 descripciones ≤160, h1 en /vertigo y /vanguard2, /cuartel en sitemap.
+- Acceso: salto al contenido, piso de lectura móvil, impresión, zonas tocables.
+- Enganche: spot 30 s en portada + WhatsApp + descarga; claves de la crónica por WhatsApp; atajos PWA.
+- Pendientes: MEDIO C, EN DESARROLLO, franjas ilustradas en /verdad-cruda y /escenarios.

@@ -35,7 +35,7 @@ export const TIERS: Record<TierImpacto, { label: string; min: number; hex: strin
   urgente:    { label: "URGENTE",   min: 80, hex: "#FF3B30", clase: "text-red-hud border-red-hud/60 bg-red-hud/20",      claseBarra: "bg-red-hud" },
   critico:    { label: "CRÍTICO",   min: 64, hex: "#FF8A3D", clase: "text-orange-400 border-orange-400/60 bg-orange-400/15", claseBarra: "bg-orange-400" },
   alto:       { label: "ALTO",      min: 48, hex: "#F5C542", clase: "text-amber border-amber-hud/60 bg-amber-hud/20",    claseBarra: "bg-amber-hud" },
-  desarrollo: { label: "DESARROLLO", min: 32, hex: "#7AB8FF", clase: "text-cyan-hud border-cyan-hud/60 bg-cyan-hud/15",  claseBarra: "bg-cyan-hud" },
+  desarrollo: { label: "EN DESARROLLO", min: 32, hex: "#7AB8FF", clase: "text-cyan-hud border-cyan-hud/60 bg-cyan-hud/15",  claseBarra: "bg-cyan-hud" },
   contexto:   { label: "CONTEXTO",  min: 0,  hex: "#8B98AD", clase: "text-muted-foreground border-border bg-secondary",  claseBarra: "bg-muted-foreground" },
 };
 

@@ -338,3 +338,16 @@ body:has(.vx-carcasa) [class^="fixed bottom-3 left-3"] { display: none !importan
    sala baja a rótulo de sección (mismo texto, sin gritar dos veces) */
 .vx-carcasa h2.vx-h-sala { font-family: Orbitron, ui-sans-serif, sans-serif !important; font-size: clamp(15px, 1.6vw, 19px) !important; line-height: 1.3 !important; letter-spacing: .12em !important; text-transform: uppercase; color: #e8c56a !important; font-weight: 700 !important; margin-top: .5rem !important; }
 .vx-carcasa h2.vx-h-sala span { color: inherit !important; }
+
+/* v402.4 — franja ilustrada de sección (BannerIlustracion) */
+.vx-banner-ilus { position: relative; margin: 12px 0 14px; aspect-ratio: 16 / 5; overflow: hidden; border-radius: 10px; border: 1px solid rgba(232,197,106,.32); background: #0b0d12; }
+.vx-banner-ilus img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; display: block; filter: saturate(.85) contrast(1.05); }
+.vx-banner-ilus::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6,8,12,0) 35%, rgba(6,8,12,.88) 100%); pointer-events: none; }
+.vx-banner-ilus figcaption { position: absolute; left: 14px; right: 12px; bottom: 10px; z-index: 1; display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; }
+.vx-banner-sello { font-family: var(--font-orbitron, system-ui); font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #e8c56a; text-shadow: 0 1px 8px rgba(0,0,0,.8); }
+.vx-banner-marca { font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(243,238,226,.6); }
+@media (max-width: 639px) { .vx-banner-ilus { aspect-ratio: 16 / 7; } }
+
+/* v402.4 — la crónica viaja por WhatsApp */
+.vx-cron-wa { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 16px; padding: 0 18px; border-radius: 8px; background: #25d366; color: #04140a; font-family: var(--font-orbitron, system-ui); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 6px 20px rgba(37,211,102,.22); }
+.vx-cron-wa:hover { filter: brightness(1.08); }

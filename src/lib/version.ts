@@ -1,4 +1,24 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.5 TREINTA AJUSTES (sobre v402.4 de ia3, intacta) — orden del Dueño: «sigue mejorando aún más Vanguard,
+// 30 que agregarías o mejorarías, y agrégalo ahora mismo». Nada inventado: cada
+// ajuste sale de una auditoría de producción (50 rutas en móvil 390×844).
+// ① PESO: /armeria 11,1 MB → 2,8 MB (miniaturas 960 px de Wikimedia), /galeria
+//    11,4 MB → ~3 MB (miniaturas 720 px, el original al tocar), mech-leela.glb
+//    2,4 MB → 665 KB (textura 1024 JPEG, validado), caché de estáticos a 7 días.
+// ② ENLACES: /cuartel?sala=<clave> abre la sala pedida; los botones muertos del
+//    Teatro Total (/maquina-del-tiempo, /detonacion → 404) y sus URL viejas
+//    llegan a su pestaña; /lectura → /cronica; el catálogo deja de enlazar APIs
+//    (3 errores 405/403 en consola).
+// ③ TÍTULOS: 29 salas decían «… | VANGUARD · VANGUARD»; 5 descripciones de
+//    290–360 letras bajan a ≤160; h1 en /vertigo y /vanguard2; /cuartel en el
+//    mapa del sitio.
+// ④ LECTURA Y ACCESO: salto al contenido, piso de lectura móvil (6–8,5 px →
+//    8,5–9,5 px), hoja de impresión limpia, teletipo y «VER FUENTE» tocables.
+// ⑤ ENGANCHE: el spot de 30 s en la portada (preload none) con «Enviar por
+//    WhatsApp» y «Descargar para tus estados»; las cinco claves de la crónica
+//    viajan por WhatsApp; atajos de la app instalada; color de barra #06080c.
+// ⑥ PENDIENTES CERRADOS: «FUENTE C» → «MEDIO C», «DESARROLLO» → «EN
+//    DESARROLLO»; franjas ilustradas en /verdad-cruda y /escenarios.
 // v402.4 LA DISTANCIA DE CASA — lo más único que la casa puede presumir sin
 // inventar un número: el cruce que ninguna de las fuentes hace sola.
 // ① SALA NUEVA /cruce: los sismos del día (USGS) y las alertas de GDACS se
@@ -5450,8 +5470,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.4";
-export const APP_CODENAME = "LA DISTANCIA DE CASA";
+export const APP_VERSION = "v402.5";
+export const APP_CODENAME = "TREINTA AJUSTES";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5511,7 +5531,7 @@ export const APP_CODENAME = "LA DISTANCIA DE CASA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.3";
+export const APP_VERSION_ANTERIOR = "v402.4";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
