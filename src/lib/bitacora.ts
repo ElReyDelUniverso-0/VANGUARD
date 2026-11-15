@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.3",
+    nombre: "LAS DIEZ LLAVES",
+    hitos: [
+      "PILAR 3 EN ACCIÓN — orden del Dueño: «extraer herramientas que existen en el internet a una lista de 10 herramientas API que cambiarían Vanguard para siempre y agregarlas ahora mismo». Se estudiaron más de veinte; entraron las diez que contestan sin pedir permiso y son de fiar",
+      "LAS DIEZ QUE YA ESTÁN DENTRO, CON DATO VIVO: sismos del último día (USGS), eventos naturales abiertos (NASA EONET), alertas de desastres (GDACS, ONU y Comisión Europea), pobreza mundial (Banco Mundial), desplazamiento forzado (ACNUR), efemérides del día (Wikimedia), el cielo de ahora y el aire que se respira (Open-Meteo), el cambio del Banco Central Europeo (Frankfurter) y el precio que no duerme (CoinGecko). Nueve peticiones en paralelo, timeout duro de ocho segundos, caché de quince minutos",
+      "SE COPIA EL DATO, NO EL DISEÑO: no ha entrado ni una línea de código ajeno, ni un color, ni una marca. El número entra y se sirve con la tipografía, la escala y la honestidad de esta casa",
+      "SIN SEÑAL SE DICE: si una fuente no contesta, su ficha lo declara con la misma letra con la que daría la cifra. Un cero falso con formato de dato sería peor que un hueco",
+      "LAS SEIS QUE ESPERAN LLAVE quedan declaradas con su variable de entorno: UCDP (Uppsala), ReliefWeb (OCHA), ACLED, NASA FIRMS, Cloudflare Radar y OpenSky. Apagadas en el dato, encendidas en la lista: no se simula lo que no se tiene",
+      "SALA NUEVA /herramientas: portada de la casa, las diez fichas con su cifra viva, dos gráficos de barras (las categorías de EONET y los cinco temblores mayores del día) y la regla con la que entran. Componente de SERVIDOR: cero JavaScript enviado al navegador",
+      "UN DEFECTO CAZADO EN EL CAMINO: la primera consulta a EONET traía 6,7 MB de histórico «abierto» — más de lo que la caché de datos de Next acepta (2 MB) y una respuesta que además mentía sobre el presente. Se acotó a los últimos veinte días: 89 KB y 27 eventos que sí están pasando",
+      "grafico-barras.tsx gana un `id` opcional para que dos gráficos convivan en la misma página sin pisarse el aria-labelledby: se mejora el componente de la v402.1 sin romper lo que ya lo usaba",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v402.2",
     nombre: "UNA PORTADA POR SALA",
     hitos: [

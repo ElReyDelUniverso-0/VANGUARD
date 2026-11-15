@@ -163,24 +163,6 @@ export function SectionSearch({
   const totalIndex: Item[] = useMemo(() => {
     const pages: Item[] = [
       {
-        key: "pg:teatro-3d", label: "#1 VANGUARD 3D — mundo 3D/2D, frentes en vivo, uniformes, escuadrones y armas", short: "teatro 3d 2d simulador uniformes escuadrones armas vanguard",
-        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
-        sectionLabel: "PÁGINA GLOBAL · #1 Motor Táctico 2D/3D", icon_color: "text-amber",
-        kind: "page", href: "/teatro-3d",
-      },
-      {
-        key: "pg:novedades", label: "LO NUEVO · EXPANSIÓN 10X — registro de novedades con links directos y 10 funciones nuevas", short: "lo nuevo novedades 10 funciones expansion comparador termometro riesgo suministros radar osint duelo vigia briefing atlas",
-        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
-        sectionLabel: "PÁGINA GLOBAL · Menú Lo Nuevo & 10X", icon_color: "text-cyan-hud",
-        kind: "page", href: "/novedades",
-      },
-      {
-        key: "pg:universo", label: "THE DAILY UNIVERSE — Vanguard Credits, 8 Colecciones (Cartas 3D mejorables), Marketplace Ético y Base Personal", short: "daily universe vanguard credits vc colecciones paises civilizaciones monumentos espacio fenomenos ciencia personajes acontecimientos marketplace base personal cartas",
-        icon: <Globe className="w-4 h-4" />, sectionKey: "global",
-        sectionLabel: "PÁGINA GLOBAL · The Daily Universe & Collections", icon_color: "text-violet-300",
-        kind: "page", href: "/universo",
-      },
-      {
         key: "pg:ver-guerra", label: "VER GUERRA — frente en vivo 3D", short: "guerra 3d",
         icon: <Globe className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · simulador 3D", icon_color: "text-red-hud",
@@ -351,6 +333,13 @@ export function SectionSearch({
         icon: <Activity className="w-4 h-4" />, sectionKey: "global",
         sectionLabel: "PÁGINA GLOBAL · el pulso del planeta con la fuente a la vista", icon_color: "text-amber",
         kind: "page", href: "/pulso-mundial",
+      },
+      {
+        // v402.3 LAS DIEZ LLAVES — el taller de fuentes externas entra al índice
+        key: "pg:llaves", label: "LAS DIEZ LLAVES — las fuentes abiertas que VANGUARD consulta en vivo", short: "herramientas fuentes api llaves datos abiertos sismos nasa gdacs banco mundial acnur wikimedia clima aire divisas bitcoin",
+        icon: <Activity className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · el mundo medido por otros, servido por esta casa", icon_color: "text-amber",
+        kind: "page", href: "/herramientas",
       },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({

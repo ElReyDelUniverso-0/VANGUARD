@@ -176,6 +176,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:indicadores", "fnt:cables"],
     alias: "world pulse centro inteligencia mundial indicadores estadisticas banco mundial economia diplomacia sociedad ambiente indice wpi tendencias cronologia",
   },
+  {
+    id: "mod:llaves",
+    nombre: "LAS DIEZ LLAVES",
+    lema: "Diez fuentes abiertas del mundo, con el dato vivo y la fuente a la vista",
+    descripcion:
+      "El taller de fuentes externas de la casa: diez herramientas abiertas que la casa consulta en el servidor (sismos del USGS, eventos naturales de la NASA, alertas de GDACS, pobreza del Banco Mundial, desplazamiento de ACNUR, efemérides de Wikimedia, clima y aire de Open-Meteo, el cambio del Banco Central Europeo y el precio de bitcoin) con organismo, licencia y fecha en cada cifra, más seis fuentes que esperan llave declaradas con su variable de entorno. Si una fuente no contesta, la ficha lo dice: no se simula un cero.",
+    categoria: "MUNDO",
+    ruta: "/herramientas",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:fuentes", "fnt:indicadores"],
+    alias: "herramientas fuentes api llaves datos abiertos usgs sismos nasa eonet gdacs banco mundial acnur refugiados wikimedia efemerides open-meteo clima aire cambio divisas bitcoin coingecko",
+  },
   // ── SIMULACIÓN ─────────────────────────────────────────────
   {
     id: "mod:teatro-3d",

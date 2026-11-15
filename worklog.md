@@ -6106,3 +6106,18 @@ Work Log:
 - ④ BASE CONGELADA: emisor-guerra.teatrosDelParte y la cronología de /pulso-mundial usan filasVivas() primero.
 - ⑤ /calidad: el rótulo «auditoría v367.9» escrito a mano → «auditoría · {fecha}».
 - QA: tsc acotado (45 archivos) LIMPIO; next dev: las 16 salas 200; capturas de 9 portadas revisadas, 0 errores de consola.
+
+## Task ia3-v402.3 · LAS DIEZ LLAVES (pilar 3: herramientas externas dentro)
+
+Orden recibida: «Vanguard necesita copiar o extraer herramientas que existen en el internet a una lista de 10 herramientas API que cambiarían Vanguard para siempre y agregarlas a Vanguard ahora mismo».
+
+- Cómo se cumplió sin romper el pilar 3 («fusionar patrones de fuera en algo propio, sin copiar código, marcas ni diseños»): se estudiaron más de veinte APIs públicas y se probaron una por una desde el servidor antes de escribir una línea. Entraron las diez que contestan sin llave y son de fiar; NO se copió código, ni interfaz, ni color, ni marca de ninguna: se extrae el número y se pinta en la voz de la casa.
+- lib/herramientas-externas.ts: registro tipado con organismo, endpoint real, licencia, llave (null = abierta) y una línea de «qué cambia». Nueve peticiones en paralelo (Promise.all + catch por fuente), timeout duro de 8 s (AbortSignal.timeout), caché de 15 min (revalidate), User-Agent identificado.
+- Las diez dentro: USGS (sismos últimas 24 h), NASA EONET (eventos abiertos), GDACS (alertas RSS, se cuentan y se clasifican rojas/naranjas), Banco Mundial (SI.POV.DDAY, último dato), ACNUR (refugiados + solicitantes + desplazados internos), Wikimedia (efemérides del día en español), Open-Meteo (temperatura y viento en Santo Domingo), Open-Meteo Air Quality (PM2,5), Frankfurter (EUR/USD del BCE) y CoinGecko (bitcoin/USD).
+- Las seis que esperan llave, declaradas con su variable de entorno y sin cifra simulada: UCDP_ACCESS_TOKEN, RELIEFWEB_APPNAME (ReliefWeb v1 devuelve 410 y v2 pide appname aprobado: comprobado), ACLED_KEY, NASA_FIRMS_MAP_KEY, CLOUDFLARE_RADAR_TOKEN, OPENSKY_CLIENT_SECRET.
+- Sala /herramientas: PortadaSala (ilustración radar.jpg del repositorio, cifras derivadas de las señales), diez fichas con cifra viva, dos GraficoBarras (categorías de EONET y los cinco temblores mayores del día, con su hora UTC), bloque de las seis que esperan llave, la regla con la que entran y los endpoints a la vista.
+- Defecto cazado: EONET sin acotar devolvía 6,7 MB (7.244 eventos históricos «open») → Next rechaza cachear >2 MB y la cifra mentía sobre el presente. Se acotó a days=20: 89 KB, 27 eventos reales.
+- grafico-barras.tsx: nueva prop opcional `id` (por defecto «grafico-titulo») para que dos gráficos convivan sin pisarse el aria-labelledby — se mejora sin romper a /archivo-mundial.
+- Ancla cazada antes de publicar: las anclas de portada apuntaban a #diez y la sección no tenía id → añadido id="diez".
+- Registro: version.ts reconstruido desde el main real (v402.2 de la otra IA, su bloque intacto) → v402.3 «LAS DIEZ LLAVES»; bitacora.ts con entrada v402.3; catalogo-real.ts real-171 (171 piezas); nucleo/registro.ts mod:llaves; section-search; sitemap.ts.
+- QA: tsc acotado LIMPIO; next dev :3882 → /herramientas 200, las diez contestaron (193 sismos · 27 eventos · 243 alertas · 10,1 % · 107.442.623 desplazados · 91 efemérides · 27,1 °C · 11,4 µg/m³ · 0,9048 EUR/USD · 64.620 USD/BTC), 0 «sin señal», anchas #diez/#escalas/#llaves/#regla todas presentes, barras proporcionales (100 / 56,25 / 12,5 y 100 / 94,5 / 94,5 / 89,1 / 89,1).

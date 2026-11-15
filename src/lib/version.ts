@@ -1,4 +1,24 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.3 LAS DIEZ LLAVES — pilar 3 del Dueño, aplicado al pie de la letra:
+// «estudiar patrones de fuera y fusionarlos en algo propio, sin copiar código,
+// marcas ni diseños». Orden recibida: «extraer herramientas que existen en el
+// internet a una lista de 10 herramientas API que cambiarían Vanguard para
+// siempre y agregarlas ahora mismo».
+// ① DIEZ FUENTES ABIERTAS DENTRO, CON DATO VIVO: USGS (sismos del día), NASA
+//    EONET (eventos naturales abiertos), GDACS (alertas ONU/CE), Banco Mundial
+//    (pobreza), ACNUR (desplazamiento), Wikimedia (efemérides), Open-Meteo
+//    (clima y aire), BCE vía Frankfurter (cambio) y CoinGecko (bitcoin). Nueve
+//    peticiones en paralelo, timeout duro de 8 s, caché de 15 min.
+// ② SE COPIA EL DATO, NO EL DISEÑO: ni una línea, ni un color, ni una marca
+//    ajena. El número entra y se pinta con la tipografía y la escala de la casa.
+// ③ SEIS FUENTES QUE PIDEN LLAVE quedan DECLARADAS con su variable de entorno
+//    (UCDP, ReliefWeb, ACLED, FIRMS, Cloudflare Radar, OpenSky) — apagadas en el
+//    dato y encendidas en la lista: sin llave no se simula un cero.
+// ④ SALA NUEVA /herramientas: portada, diez fichas con cifra viva, dos
+//    gráficos de barras (categorías de EONET y los cinco temblores mayores del
+//    día) y la regla con la que entran. Componente de SERVIDOR, cero JS.
+// ⑤ grafico-barras.tsx gana `id` opcional: dos gráficos en la misma página sin
+//    pisarse el aria-labelledby.
 // v402.2 UNA PORTADA POR SALA — segunda tanda de «LOS CINCO MÓDULOS».
 // ① Catorce salas que eran solo texto ganan portada de la casa (ilustración noir
 //    del repositorio + cifras calculadas): audios, centinela, voz, música,
@@ -5414,8 +5434,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.2";
-export const APP_CODENAME = "UNA PORTADA POR SALA";
+export const APP_VERSION = "v402.3";
+export const APP_CODENAME = "LAS DIEZ LLAVES";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5475,7 +5495,7 @@ export const APP_CODENAME = "UNA PORTADA POR SALA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.1";
+export const APP_VERSION_ANTERIOR = "v402.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
