@@ -22,6 +22,18 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.3",
+    nombre: "EL SIGLO DEL OFICIO",
+    hitos: [
+      "LAS DOS SALAS QUE QUEDABAN «DE LIBRO» reciben sus propias escalas, sin borrar una línea de texto: /servicios (57.000 letras y NUEVE visuales: 6.341 letras por visual, la peor de la casa) y /rostros (casi 50.000 letras, 5.533)",
+      "EL SIGLO QUE INVENTÓ EL OFICIO (/servicios): histograma por década de fundación de los 18 expedientes, de 1909 a 2002. Las barras más altas caen en los años cuarenta y cincuenta — el oficio nace con el siglo y se multiplica en la Guerra Fría",
+      "LOS QUE LLEVAN MÁS AÑOS MIRANDO (/servicios): años de oficio calculados desde la fundación de cada expediente hasta hoy, ordenados de mayor a menor",
+      "LOS DIEZ QUE MÁS PESAN (/rostros): el índice de poder de la Casa (0-100) de las 34 fichas, medido contra el mayor de la serie, con el cargo real debajo de cada nombre",
+      "Anclas nuevas en las dos portadas: «las escalas» y «los que más pesan». La profundización sigue debajo, entera",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v403.2",
     nombre: "EL MAPA QUE GOOGLE LEE",
     hitos: [

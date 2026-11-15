@@ -1,3 +1,17 @@
+// v403.3 EL SIGLO DEL OFICIO — las dos salas que quedaban «de libro» reciben
+// sus propias escalas. No se ha borrado una línea de texto: solo se han
+// dibujado cifras que ya estaban en la fuente.
+// ① /servicios (57.000 letras · 9 visuales · 6.341 letras por visual, la peor
+//    de la casa): EL SIGLO QUE INVENTÓ EL OFICIO — histograma por década de
+//    fundación de los 18 expedientes (1909 → 2002); el pico cae en los años
+//    cuarenta y cincuenta: el oficio nace con el siglo y se multiplica en la
+//    Guerra Fría. Y LOS QUE LLEVAN MÁS AÑOS MIRANDO — años de oficio.
+// ② /rostros (casi 50.000 letras · 5.533 por visual): LOS DIEZ QUE MÁS PESAN —
+//    el índice de poder de la Casa (0-100) de las 34 fichas medido contra el
+//    mayor de la serie, con el cargo real debajo.
+// ③ Anclas nuevas en las dos portadas («las escalas», «los que más pesan»).
+// ④ Cero cifras a mano: sort + slice + filter en el render.
+// Se rebasa sobre la v403.2 de la otra IA sin tocar una línea de su trabajo.
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5559,8 +5573,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.2";
-export const APP_CODENAME = "EL MAPA QUE GOOGLE LEE";
+export const APP_VERSION = "v403.3";
+export const APP_CODENAME = "EL SIGLO DEL OFICIO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5620,7 +5634,7 @@ export const APP_CODENAME = "EL MAPA QUE GOOGLE LEE";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.1";
+export const APP_VERSION_ANTERIOR = "v403.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

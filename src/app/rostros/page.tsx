@@ -9,6 +9,9 @@ import {
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v403.3 — el pilar 2 entra en la segunda sala más «de libro»: casi 50.000 letras
+// y nueve visuales. Se añaden sus propias cifras dibujadas, sin tocar el texto.
+import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 
 // v286.0 LOS ROSTROS DEL PODER — la galería de los rostros sube a
 // server (patrón /historia v274 · /servicios v281 · /armeria v283):
@@ -62,6 +65,20 @@ export const metadata: Metadata = {
 // el censo por categoría en el ORDEN DE LA FUENTE (el Set preserva la
 // inserción: tronos · dinero · tribunal · nuevos)
 const CATS_ROSTROS = [...new Set(ROSTROS.map((r) => r.categoria))];
+
+// v403.3 — EL ÍNDICE DE PODER EN UNA ESCALA: los diez rostros que más pesan,
+// ordenados por el campo `poder` de la ficha (0-100, mezcla de mando,
+// presupuesto y alcance según la fuente). Se ordena y se corta; ni una cifra a mano.
+const TOP_PODER_ROSTROS = [...ROSTROS]
+  .sort((a, b) => b.poder - a.poder)
+  .slice(0, 10)
+  .map((x) => ({
+    etiqueta: x.nombre,
+    valor: x.poder,
+    texto: `${x.poder}`,
+    nota: x.cargo,
+    href: "#rostros",
+  }));
 
 const censoRostros = CATS_ROSTROS.map((c) => ({
   cat: c,
@@ -169,13 +186,26 @@ export default async function RostrosPage() {
               "Poner cara a las decisiones: cuando una noticia dice «el gobierno», esta sala dice quién." }
         ]}
         anclas={[
+          { etiqueta: "los que más pesan", href: "#rostros-por-poder" },
           ...censoRostros.map((c) => ({ etiqueta: c.etiqueta.toLowerCase(), href: `#rostro-${c.cat}` })),
           { etiqueta: "el pulso", href: "#pulso" },
         ]}
         nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
       />
 
-      <div className="border-b border-zinc-800 bg-zinc-900/60">
+{/* v403.3 — EL PODER EN UNA ESCALA (pilar 2: ver, no leer) */}
+      <GraficoBarras
+        id="rostros-por-poder"
+        volanta="LOS ROSTROS · EL PESO"
+        titulo="LOS DIEZ QUE MÁS PESAN"
+        nota={`El índice de poder de la Casa (0-100: mando, presupuesto y alcance) aplicado a las ${ROSTROS.length} fichas, medido contra el mayor de la serie. Debajo de cada nombre, su cargo real.`}
+        unidad="índice de poder (0-100)"
+        acento="#38bdf8"
+        etiquetaMaximo="el rostro con más poder de la serie"
+        barras={TOP_PODER_ROSTROS}
+      />
+
+            <div className="border-b border-zinc-800 bg-zinc-900/60">
         <div className="mx-auto max-w-5xl px-4 py-10">
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
             LOS ROSTROS DEL PODER · el censo de la casa

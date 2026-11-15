@@ -15,6 +15,9 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v403.3 — el pilar 2 entra en la sala que más pesaba: 57.000 letras y NUEVE
+// visuales. Se añaden sus propias cifras dibujadas, sin tocar una línea de texto.
+import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 
 // v281.0 LA SALA DE LOS SERVICIOS — la expansión funcional módulo a
 // módulo abre una puerta nueva: la casa tiene DOS catálogos de
@@ -126,6 +129,41 @@ const censoComunidad = CATS_COMUNIDAD.map((c) => ({
   etiqueta: CATEGORIA_META[c].etiqueta,
   color: CATEGORIA_META[c].color,
 }));
+
+// v403.3 — CUÁNDO NACIÓ CADA SERVICIO: el histograma de fundación, derivado
+// del campo `fundacion` de la fuente. Ninguna fecha escrita a mano: se agrupa
+// en décadas y se cuentan. Dice con una imagen lo que la sala contaba con
+// párrafos —que el oficio nace con el siglo XX y se multiplica en la Guerra Fría—.
+const TODO_EL_CENSO = [...COMUNIDAD, ...RED];
+const DECADAS_SERVICIOS = (() => {
+  const cuenta = new Map<number, number>();
+  for (const x of TODO_EL_CENSO) {
+    const d = Math.floor(x.fundacion / 10) * 10; // 1909 → 1900
+    cuenta.set(d, (cuenta.get(d) ?? 0) + 1);
+  }
+  return [...cuenta.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([d, n]) => ({
+      etiqueta: `${d}`,
+      valor: n,
+      texto: n === 1 ? "1 servicio" : `${n} servicios`,
+      nota: `de ${d} a ${d + 9}`,
+    }));
+})();
+
+// v403.3 — LOS AÑOS DE OFICIO: hoy menos el año de fundación de la fuente.
+const ANTIGUEDAD_SERVICIOS = (() => {
+  const hoy = new Date().getFullYear();
+  return TODO_EL_CENSO.map((x) => ({
+    etiqueta: x.nombreEs ?? x.nombre,
+    valor: hoy - x.fundacion,
+    texto: `${hoy - x.fundacion} años`,
+    // sin país: los dos tipos de expediente de la fuente no comparten ese campo
+    nota: `en servicio desde ${x.fundacion}`,
+  }))
+    .sort((a, b) => b.valor - a.valor)
+    .slice(0, 10);
+})();
 
 const censoRed = CATS_RED.map((c) => ({
   cat: c,
@@ -323,11 +361,35 @@ export default async function ServiciosPage() {
               "Brincar por categoría, seguir el arco de fundación, ver el pulso del archivo por agencia y abrir el salón interactivo con el mapa de la comunidad y de la red." }
         ]}
         anclas={[
+          { etiqueta: "las escalas", href: "#servicios-por-decada" },
           { etiqueta: "la comunidad", href: "#comunidad" },
           { etiqueta: "la red mundial", href: "#red" },
           { etiqueta: "los sentidos", href: "#sentidos" }
         ]}
         nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
+      {/* v403.3 — LAS DOS ESCALAS DE LA SALA (pilar 2: ver, no leer) */}
+      <GraficoBarras
+        id="servicios-por-decada"
+        volanta="LOS SERVICIOS · CUÁNDO NACIERON"
+        titulo="EL SIGLO QUE INVENTÓ EL OFICIO"
+        nota={`Cada barra es una década y cuenta los servicios fundados en ella, sumando los ${COMUNIDAD.length} ojos de la Comunidad y los ${RED.length} del resto del planeta. La fecha sale del campo «fundacion» de cada expediente: ${FUNDACION_MIN} es el más antiguo de la sala.`}
+        unidad="servicios fundados en esa década"
+        acento="#f59e0b"
+        etiquetaMaximo="la década más fecunda"
+        barras={DECADAS_SERVICIOS}
+      />
+
+      <GraficoBarras
+        id="servicios-por-antiguedad"
+        volanta="LA RED · EL PESO DE LA HISTORIA"
+        titulo="LOS QUE LLEVAN MÁS AÑOS MIRANDO"
+        nota="Los años de oficio de cada expediente, medidos desde su fundación hasta hoy y ordenados de mayor a menor. La antigüedad no es prestigio: es memoria acumulada — quién lleva más tiempo equivocándose y corrigiendo."
+        unidad="años de servicio"
+        acento="#22c55e"
+        etiquetaMaximo="el servicio con más años de oficio"
+        barras={ANTIGUEDAD_SERVICIOS}
       />
 
       <div className="border-b border-zinc-800 bg-zinc-900/60">
