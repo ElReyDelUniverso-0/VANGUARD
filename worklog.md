@@ -6219,3 +6219,15 @@ Work Log:
 - tsc acotado (con bitacora.ts y version.ts) 0 errores; eslint 0.
 - next dev congeló el sandbox 2 veces (memoria) → arnés esbuild con el componente real + Playwright: 20 comprobaciones × 2 tamaños, 0 errores.
 - Arreglos tras capturas: altura igual de puertas en móvil, warp sin franja, hover por flex-basis, background-clip roto por filter, foco al diálogo (no favorece Noticias).
+
+---
+Task ID: v403.2
+Agent: IA de diseño
+Task: «VANGUARD — SITEMAP AND DISCOVERY AUDIT»: Search Console dice «Google doesn't recognize this URL» en 8 fichas /conflicto/*
+Work Log:
+- Producción (7b54176): sitemap 200, XML válido, 2.072 URLs, las 8 fichas dentro; robots.txt correcto; 8× 200, canónica propia, index, 1.089–3.455 palabras, enlazadas con <a>. No huérfanas.
+- Fallos: metadatos en <body> para Googlebot (Next 16 streaming), soft 404 en /conflicto/<inexistente>, 6 URLs noindex en el sitemap, Líbano fuera (cota ≥5), 54 lastmod = hora del build, lastmod de 4 teatros con 2–3 semanas de retraso (fechas mixtas texto/ms en NewsItem).
+- Arreglos: htmlLimitedBots, layout guardián en conflicto/[tag], sitemap con reglas derivadas (TEATROS, SALAS_INTERNAS), /entrar noindex.
+- Pruebas: app mínima Next 16.4.3 (sin/con htmlLimitedBots, sin/con layout) → canónica en <head> para Googlebot y 404 real; sitemap nuevo generado con el código real sobre la base real: 2.067 URLs, 0 duplicadas; tsc acotado 0, eslint 0.
+- Informe: docs/VANGUARD_SEO_DISCOVERY.md. Pendientes B-29 (fechas mixtas en páginas), B-30 (/vanguard2), B-31 (otros soft 404).
+

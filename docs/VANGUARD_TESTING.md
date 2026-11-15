@@ -75,3 +75,18 @@ La Puerta no sale a navegadores automatizados: en la prueba, `navigator.webdrive
 Casos de la Puerta: primera visita abre; elegir Juego → `/cuartel`; el Cruce aparece al cambiar de mundo y se va;
 mismo mundo sin Cruce; segunda visita no abre; botón la reabre; Esc salta intro y luego cierra; Tab+Enter elige;
 robot no la ve; movimiento reducido = fase «eleccion» directa; `/entrar` sin botón de saltar.
+
+## SEO y descubrimiento (v403.2)
+- `python3 scripts/qa/seo-sitemap.py [URL-del-sitemap]`: recorre todas las URLs del sitemap (menos /noticia) y 25 noticias al
+  azar con UA Google-InspectionTool. Marca estado ≠ 200, redirecciones, canónica ausente/múltiple/ajena, `noindex`
+  (meta o `X-Robots-Tag`) y canónica fuera del `<head>`. Objetivo: `con_problema: 0`.
+- `scripts/qa/seo-conflictos.py <carpeta>`: lee `p_<tag>.html` descargados con UA Googlebot y da title, h1, canónica,
+  robots, palabras visibles y enlaces `<a>` a otras fichas.
+- Posición de los metadatos para Googlebot: `curl -A "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"`
+  y comprobar que `rel="canonical"` está antes de `</head>`.
+- Soft 404: `/conflicto/atlantida` debe dar **404**.
+- Comportamiento de Next (streaming, htmlLimitedBots, 404 tras loading.tsx): reproducible en una app mínima que use los
+  `node_modules` del repo (`next build --webpack && next start`, ~20 s y < 900 MB), sin el `next dev` completo.
+- Sitemap sin desplegar: empaquetar `src/app/sitemap.ts` con esbuild y serializar con
+  `next/dist/build/webpack/loaders/metadata/resolve-route-data` → `resolveSitemap`. Ojo: abrir la base la marca como
+  modificada; hacer `git checkout -- db/custom.db` después.

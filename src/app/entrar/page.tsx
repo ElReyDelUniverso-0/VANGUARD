@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "Elige tu mundo — Noticias o Juego",
   description: "Dos mundos, una sola casa: entra al mundo de Noticias, el planeta en tiempo real y en español, o al mundo de Juego, con misiones, retos y rango.",
   alternates: { canonical: "/entrar" },
+  // v402.11: puerta de paso (casi sin texto propio): se sigue, no se indexa, y no va al sitemap
+  robots: { index: false, follow: true },
   openGraph: { title: "VANGUARD · Elige tu mundo", description: "Noticias en tiempo real o el Cuartel de juego. Tú eliges.", images: ["/ilustraciones/noticias.jpg"] },
 };
 

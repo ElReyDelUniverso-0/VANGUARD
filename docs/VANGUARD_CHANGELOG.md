@@ -3,6 +3,15 @@
 > Resumen técnico por versión. El detalle para el público vive en `src/lib/bitacora.ts` (sala Novedades).
 > Dos IAs publican en `main`: la IA de diseño y ia3. Cada entrada dice quién.
 
+## v403.2 · EL MAPA QUE GOOGLE LEE — 2026-11-15 (IA de diseño)
+- Auditoría de descubrimiento de `/conflicto/*` → informe completo en `docs/VANGUARD_SEO_DISCOVERY.md`.
+- `next.config.ts`: `htmlLimitedBots` = lista de fábrica de Next 16.4 + rastreadores de buscadores (Googlebot, bingbot…):
+  metadatos en el `<head>` para ellos (antes, en el `<body>` para Googlebot).
+- `conflicto/[tag]/layout.tsx`: 404 real para teatros inexistentes (antes 200 + noindex por `loading.tsx`).
+- `sitemap.ts`: misma regla que la página (≥ 1 cable → entra Líbano), sin `SALAS_INTERNAS` (noindex), lastmod real
+  o ninguno, última señal por teatro calculada fecha a fecha (fechas mixtas en la base), sin duplicados.
+- `/entrar` → `noindex, follow`. Guiones `scripts/qa/seo-sitemap.py` y `scripts/qa/seo-conflictos.py`.
+
 ## v403.1 · LOS DOS MUNDOS — 2026-11-15 (IA de diseño)
 - Orden del Dueño: «Vanguard tiene dos mundos (juego y noticias): intro épica para entrar».
 - `src/components/mundos/mundos.ts`: fuente única de qué ruta es de qué mundo (`mundoDe`) y ficha de cada mundo;

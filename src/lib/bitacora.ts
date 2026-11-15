@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.2",
+    nombre: "EL MAPA QUE GOOGLE LEE",
+    hitos: [
+      "AUDITORÍA DE DESCUBRIMIENTO: las ocho fichas de conflicto (Gaza, Ormuz, Coreas, Mar Rojo, Sahel, Sudán, Taiwán y Ucrania) estaban en el mapa del sitio, respondían bien, tenían dirección canónica propia, se podían indexar y estaban enlazadas. El fallo no era que faltaran",
+      "LOS BUSCADORES LEEN LA FICHA DONDE DEBEN: el título, el resumen y la dirección canónica de cada página llegaban a Google en el cuerpo de la página y no en la cabecera. Ahora los buscadores reciben la página completa con su ficha en la cabecera",
+      "UNA DIRECCIÓN QUE NO EXISTE YA NO FINGE EXISTIR: /conflicto/cualquier-cosa respondía «todo bien» con una página vacía. Ahora responde «no encontrada», como debe",
+      "UN MAPA DEL SITIO HONESTO: entra Líbano, que era una página pública y enlazada que el mapa dejaba fuera; salen seis salas internas que pedían no ser indexadas; y las fechas de cambio ya no se inventan en cada publicación. Un conflicto nuevo entra solo en el mapa en cuanto tiene noticias",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v403.1",
     nombre: "LOS DOS MUNDOS",
     hitos: [

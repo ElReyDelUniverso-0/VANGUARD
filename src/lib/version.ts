@@ -1,4 +1,14 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
+// (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
+// Medido en producción: las 8 están en el sitemap, responden 200, canónica propia,
+// index/follow, 1.000–3.400 palabras servidas y enlazadas con <a href>. Fallos reales:
+// ① para Googlebot el title/description/canonical/robots salían en el <body> (Next 16
+//    transmite metadatos a todo UA fuera de su lista) → next.config htmlLimitedBots;
+// ② /conflicto/<inexistente> daba 200 + noindex (soft 404, por loading.tsx) → layout
+//    guardián con 404 real; ③ sitemap: 6 URLs noindex dentro, Líbano (público,
+//    enlazado) fuera por la cota ≥ 5, y 54 lastmod con la hora del build → reglas
+//    derivadas de TEATROS / SALAS_INTERNAS y lastmod real o ninguno; /entrar noindex.
 // v403.1 LOS DOS MUNDOS — orden del Dueño: «Vanguard tiene dos mundos, el de los
 // juegos y el de noticias: crear intro para entrar a esos mundos de manera épica».
 // ① LA PUERTA (components/mundos/puerta-mundos.tsx): primera visita a la portada →
@@ -5549,8 +5559,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.1";
-export const APP_CODENAME = "LOS DOS MUNDOS";
+export const APP_VERSION = "v403.2";
+export const APP_CODENAME = "EL MAPA QUE GOOGLE LEE";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5610,7 +5620,7 @@ export const APP_CODENAME = "LOS DOS MUNDOS";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.0";
+export const APP_VERSION_ANTERIOR = "v403.1";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
