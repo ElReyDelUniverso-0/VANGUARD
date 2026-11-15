@@ -171,7 +171,7 @@ export default function CatalogoPage() {
                     >
                       <div className="flex items-baseline justify-between gap-2">
                         <p className="min-w-0 truncate font-mono text-[10px] uppercase tracking-widest text-zinc-200">
-                          {c.ruta && !c.ruta.includes("[") ? (
+                          {c.ruta && !c.ruta.includes("[") && !c.ruta.startsWith("/api/") ? (
                             <Link href={c.ruta} className="hover:text-amber">
                               {c.nombre}
                             </Link>

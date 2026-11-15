@@ -168,7 +168,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A0A0F",
+  themeColor: "#06080c",
   width: "device-width",
   initialScale: 1,
 };
@@ -926,7 +926,11 @@ try{
           dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
         />
         {/* v401.0 LA FUSIÓN: la misma cabecera, teletipo y barra móvil en cada sala */}
+        {/* v402.4 SALTO AL CONTENIDO — quien navega con teclado o lector de
+            pantalla salta la cabecera y el teletipo de una vez (WCAG 2.4.1). */}
+        <a href="#vg-contenido" className="vx-saltar">Saltar al contenido</a>
         <Carcasa />
+        <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}
         {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados

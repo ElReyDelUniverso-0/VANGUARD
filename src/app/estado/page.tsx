@@ -24,7 +24,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "El Estado de la Casa — Latido Público | VANGUARD",
+  title: "El Estado de la Casa — Latido Público",
   description:
     "El latido público de VANGUARD: proceso, base de datos, memoria y tiempo de vida del server, servidos por la API de salud de la casa. Un clic, un latido, sin sondeos automáticos.",
   alternates: {

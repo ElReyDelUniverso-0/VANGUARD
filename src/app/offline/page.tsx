@@ -21,7 +21,7 @@ import { VanguardMarkSvg } from "@/components/vanguard/vanguard-mark-svg";
 // SIEMPRE, incluso en la primera visita sin red y sin React hidratado.
 
 export const metadata: Metadata = {
-  title: "Sin conexión | VANGUARD",
+  title: "Sin conexión",
   robots: { index: false, follow: false },
 };
 

@@ -33,7 +33,7 @@ import { tipoDeCambio } from "@/lib/herramientas-externas";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "DIVISAS — las 247 monedas oficiales del planeta con su tasa real | VANGUARD",
+  title: "DIVISAS — las 247 monedas oficiales del planeta con su tasa real",
   description:
     "El archivo de las divisas de VANGUARD: 247 países y territorios con su moneda oficial real (código ISO 4217, nombre en español, símbolo y tasa por 1 dólar), 154 monedas únicas y las monedas compartidas — el euro sirve a 37 países. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/divisas` },

@@ -5,7 +5,7 @@ import { NovedadesCliente } from "./novedades-cliente";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 
 export const metadata: Metadata = {
-  title: "VANGUARD · Lo Nuevo y Expansión 10X (10 Funciones Nuevas con Links Directos)",
+  title: "Lo Nuevo — las últimas funciones, con enlace directo",
   description:
     "Explora todo lo agregado recientemente a VANGUARD con enlaces directos y usa las 10 funciones nuevas en vivo: Comparador 1v1, Termómetro Regional, Riesgo de Viaje, Impacto en Suministros, Radar Diplomático, Verificador OSINT, Duelo Relámpago, Vigía Sísmico/NASA, Generador de Briefings y Atlas 32→3D.",
   alternates: { canonical: "/novedades" },

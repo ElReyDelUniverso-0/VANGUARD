@@ -187,6 +187,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 0.7,
     },
+    // v402.4 — el Cuartel (módulo Juego) faltaba en el mapa del sitio
+    {
+      url: `${SITE_URL}/cuartel`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
     {
       // v402.4 EL CRUCE — los sismos del día y las alertas de la ONU
       // ordenados por la distancia real a esta casa, en kilómetros

@@ -22,6 +22,25 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.5.1",
+    nombre: "TREINTA AJUSTES",
+    hitos: [
+      "ORDEN DEL DUEÑO: «sigue mejorando aún más Vanguard, 30 que agregarías o mejorarías, y agrégalo ahora mismo». Antes de tocar nada se auditaron en producción las 50 rutas en un móvil de 390×844: errores, imágenes rotas, peso, títulos, textos diminutos, botones pequeños y enlaces internos",
+      "LA ARMERÍA PESABA 11 MEGAS EN EL MÓVIL: las fotos de Wikimedia viajaban en su tamaño original (una de 2,6 MB). Ahora llegan en miniatura de 960 px desde la propia Wikimedia: 2,8 MB para las 21 armas, todas comprobadas una a una",
+      "LA GALERÍA, IGUAL: 50 fotos de hasta 2.400 px para tarjetas de 176 px de alto. Ahora la tarjeta carga una miniatura de 720 px y tocarla abre el original: de 11,4 MB a unos 3 MB",
+      "EL MECH DE LOS ESCENARIOS: 2,4 MB por una textura PNG de 2048. Textura a 1024 en JPEG, modelo validado sin errores y con sus animaciones: 665 KB",
+      "ENLACES QUE LLEVABAN A LA NADA: el Teatro Total mandaba a /maquina-del-tiempo y /detonacion (404). El Cuartel aprende a abrir una sala desde la dirección (/cuartel?sala=maquina) y los enlaces viejos redirigen a su pestaña. /lectura lleva a la Crónica. El catálogo deja de enlazar puntos de API que solo aceptan envíos (tres errores rojos en consola)",
+      "VEINTINUEVE TÍTULOS DECÍAN VANGUARD DOS VECES («… | VANGUARD · VANGUARD») en la pestaña y en Google. Limpios. Cinco descripciones de hasta 360 letras, que Google corta a 160, reescritas para que el mensaje se lea entero",
+      "TÍTULO PRINCIPAL donde faltaba (El Vértigo y Vanguard-2) y el Cuartel entra al mapa del sitio",
+      "LECTURA EN EL MÓVIL: unas 830 etiquetas medían entre 6 y 8,5 px. En pantallas pequeñas suben a 8,5–9,5 px; en escritorio no cambia nada. Salto al contenido para teclado y lector de pantalla, hoja de impresión limpia, y el teletipo y «VER FUENTE» ganan zona tocable",
+      "EL SPOT EN LA PORTADA: «Vanguard en 30 segundos», el vídeo vertical con voz y pantallas reales de la casa. No pesa nada hasta que alguien pulsa reproducir, y lleva dos botones: enviarlo por WhatsApp y descargarlo para los estados",
+      "LA CRÓNICA VIAJA: las cinco claves del día se envían por WhatsApp con un toque, escritas con los titulares reales del parte",
+      "ATAJOS DE LA APP INSTALADA (En vivo, Mapa 3D, Crónica, Cuartel) y la barra del navegador con el negro de la casa",
+      "PENDIENTES CERRADOS: «FUENTE C» pasa a «MEDIO C» (en línea con MEDIO A y B) y «DESARROLLO» a «EN DESARROLLO»; Verdad Cruda y El Estratega estrenan franjas ilustradas por sección, marcadas como ilustración para no fingir que son fotos del hecho",
+    ],
+    tipo: "tecno",
+  },
+  {
     version: "v402.5",
     nombre: "EL EJE DEL DÍA",
     hitos: [

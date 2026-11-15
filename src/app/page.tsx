@@ -25,6 +25,7 @@ import { inter } from "@/components/portada/fuente";
 import { Teletipo } from "@/components/portada/teletipo";
 import { gruposHistorias } from "@/lib/portada/frentes";
 import { TituloSeccion } from "@/components/portada/titulo-seccion";
+import { SpotPortada } from "@/components/portada/spot-portada";
 
 
 export const revalidate = 300;
@@ -173,6 +174,11 @@ export default async function Portada() {
             </div>
           </section>
         )}
+
+        <section className="vx-sec" aria-label="Vanguard en 30 segundos">
+          <TituloSeccion sello="Sección · El spot" titulo="Vanguard en 30 segundos" sub="Lo que es esta casa, contado con sus propias pantallas." />
+          <SpotPortada />
+        </section>
 
         <section className="vx-sec" aria-label="Mapa de conflictos">
           <TituloSeccion sello="Sección 02 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />

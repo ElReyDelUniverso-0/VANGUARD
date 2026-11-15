@@ -19,7 +19,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "El Escudo — Buscador de Llaves | VANGUARD",
+  title: "El Escudo — Buscador de Llaves",
   description:
     "El buscador de API keys de la casa: 10 familias de secretos vigiladas más 2 genéricos de reserva, informe enmascarado y deudas declaradas. Complemento de la ley v204 EL ESCUDO.",
   alternates: {

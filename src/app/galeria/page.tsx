@@ -34,7 +34,7 @@ const CLIPS_VIDEOTECA: ClipVideoteca[] = Array.from({ length: 24 }, (_, i) => ({
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "GALERÍA — las 50 fotografías reales del planeta | VANGUARD",
+  title: "GALERÍA — las 50 fotografías reales del planeta",
   description:
     "La fototeca real de VANGUARD: 50 fotografías servidas localmente en 5 categorías — lugares, archivo, poder, armas y civilizaciones — cada una con su nota editorial y su fuente declarada. De la falange griega al satélite de reconocimiento, gratis y en español.",
   alternates: { canonical: `${SITE_URL}/galeria` },
@@ -129,12 +129,20 @@ export default function GaleriaPage() {
                       className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/40"
                       aria-label={im.label}
                     >
-                      <img
-                        src={im.src}
-                        alt={im.label}
-                        loading="lazy"
-                        className="h-44 w-full object-cover"
-                      />
+                      {/* v402.4 — la tarjeta mide 176 px de alto: viaja la
+                          miniatura de 720 px (≈64 KB) y no el original de
+                          hasta 2.400 px (≈500 KB). Tocar abre el original. */}
+                      <a href={im.src} target="_blank" rel="noopener" aria-label={`Ver ${im.label} a tamaño completo`}>
+                        <img
+                          src={im.src.replace("/imagenes-reales/", "/imagenes-reales/mini/")}
+                          alt={im.label}
+                          loading="lazy"
+                          decoding="async"
+                          width={720}
+                          height={480}
+                          className="h-44 w-full object-cover"
+                        />
+                      </a>
                       <div className="p-3">
                         <h3 className="text-sm font-semibold text-zinc-100">{im.label}</h3>
                         <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">

@@ -6143,3 +6143,15 @@ Orden recibida: «sigue agregando todo eso y hazlo más único».
 - Registro: v402.5 «EL EJE DEL DÍA» sobre el main real v402.4 (bloque de la otra IA intacto); bitacora entrada v402.5; catalogo-real real-173 (173 piezas). Sin sala nueva: ni sitemap ni núcleo cambian.
 - QA local (next dev :3884): /historia 200 (eje con 10 puntos, 2 imágenes), /cruce 200 (eje + distancias 236/275/316/528 km). tsc acotado LIMPIO (11 archivos).
 - DEFECTO CAZADO POR EL BUILD DE VERCEL (dos previews en rojo, 853c0e43 y d301243e): al insertar la entrada v402.5 en bitacora.ts, el reemplazo del encabezado se llevó la línea `{ version: "v402.4",` y el archivo quedó con un objeto sin abrir → TS1005 en cadena. Los chequeos acotados anteriores no lo vieron porque NO incluían bitacora.ts en el `include`. Arreglado (se restauró la entrada v402.4) y el chequeo acotado ahora sí lo incluye. Lección: cuando se reescribe el encabezado de BITACORA, comprobar SIEMPRE que la entrada anterior conserva su `version:` y que el tsc acotado incluye bitacora.ts.
+---
+Task ID: v402.5
+Agent: IA de diseño
+Task: «30 que agregarías o mejorarías, agrégalo ahora mismo» — TREINTA AJUSTES
+Work Log:
+- Auditoría Playwright de producción: 50 rutas móvil, 230 enlaces internos (herr/auditoria30.py).
+- Peso: armería 11,1→2,8 MB, galería 11,4→~3 MB, mech-leela.glb 2,4 MB→665 KB, caché estáticos 7 días.
+- Enlaces: /cuartel?sala=, redirecciones /maquina-del-tiempo /detonacion /lectura, catálogo sin Link a /api.
+- SEO: 29 títulos con VANGUARD doble, 5 descripciones ≤160, h1 en /vertigo y /vanguard2, /cuartel en sitemap.
+- Acceso: salto al contenido, piso de lectura móvil, impresión, zonas tocables.
+- Enganche: spot 30 s en portada + WhatsApp + descarga; claves de la crónica por WhatsApp; atajos PWA.
+- Pendientes: MEDIO C, EN DESARROLLO, franjas ilustradas en /verdad-cruda y /escenarios.

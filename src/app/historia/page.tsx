@@ -65,7 +65,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "El archivo de la historia — las guerras que enseñaron a leer las de hoy | Vanguard",
+  title: "El archivo de la historia — las guerras que enseñaron a leer las de hoy",
   description:
     "10 guerras reales de la Antigüedad a la Contemporánea: Guerras Púnicas, Cruzadas, Guerras Napoleónicas, las dos Guerras Mundiales, la Guerra Fría... años, facciones, desenlace y coste real. La memoria con la que Vanguard lee las guerras de hoy. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/historia` },

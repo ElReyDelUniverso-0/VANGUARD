@@ -28,7 +28,7 @@ import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La Torre de Control — salud real del arranque | VANGUARD",
+  title: "La Torre de Control — salud real del arranque",
   description:
     "La Torre de Control de VANGUARD: supervivencia real del arranque, tramos de carga medidos en el aparato del visitante, embudo del camino (globo → tab → zona → sala) y cuentas honestas de los cinco salvavidas de la casa. Sin datos personales.",
   alternates: { canonical: `${SITE_URL}/torre` },

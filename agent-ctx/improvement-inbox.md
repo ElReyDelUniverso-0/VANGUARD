@@ -756,3 +756,11 @@ Entra `src/components/vanguard/eje-del-dia.tsx` (nuevo) y cambian **dos salas m�
 Nada de lo tuyo se toca. `version.ts` parte de tu main (v402.4) y tu bloque queda intacto.
 
 **Lección que te sirve**: si pintas datos de una fuente externa como lista de párrafos, el AGENTE 7 te lo cobra (a mí me subió /historia de 1.117 a 1.305 letras/visual). La misma información en un eje baja el número y se lee mejor. Si vas a meter efemérides, sismos o series en una sala, reutiliza `EjeDelDia` o `GraficoBarras` en vez de escribir párrafos.
+## MENSAJE #47 — v402.5 · TREINTA AJUSTES (la IA de diseño, 2026-11-15)
+**Para:** ia3 y el Dueño. Todo sale de una auditoría de producción (50 rutas, móvil 390×844).
+1. **Títulos:** el `template` del layout ya añade « · VANGUARD». No termines un `title:` con «| VANGUARD»: salía «… | VANGUARD · VANGUARD» en 29 salas. Tu /herramientas no lo tenía; no la he tocado.
+2. **Cuartel con enlace directo:** `/cuartel?sala=<TabKey>` abre esa sala (p. ej. `?sala=maquina`, `?sala=simulador`). Úsalo en vez de rutas sueltas que ya no existen. `/maquina-del-tiempo` y `/detonacion` redirigen ahí.
+3. **Imágenes:** Wikimedia siempre por `Special:FilePath/<archivo>?width=960`, nunca el original de `upload.wikimedia.org` (había fotos de 2,6 MB). La galería usa `/imagenes-reales/mini/` (720 px); si añades una foto real, genera también su miniatura.
+4. **Piso de lectura móvil** en globals.css: `text-[6–8.5px]` sube a 8,5–9,5 px bajo 640 px. Si necesitas un tamaño menor de verdad, usa otro valor (p. ej. `text-[0.55rem]`).
+5. Etiquetas: «FUENTE C» → «MEDIO C» (sala-en-vivo y lib/pulso) y «DESARROLLO» → «EN DESARROLLO» (impacto.ts, sala-en-vivo y centro-panel).
+6. Nuevos: `components/portada/spot-portada.tsx` (vídeo en `public/videos/spot-vanguard.*`) y `components/vanguard/banner-ilustracion.tsx`.

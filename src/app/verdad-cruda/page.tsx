@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BannerIlustracion } from "@/components/vanguard/banner-ilustracion";
 import Link from "next/link";
 import {
   WAR_ABUSES,
@@ -40,7 +41,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "VERDAD CRUDA — los abusos documentados de las guerras, con su fuente | VANGUARD",
+  title: "VERDAD CRUDA — los abusos documentados de las guerras, con su fuente",
   description:
     "El registro documental de VANGUARD: 12 abusos de guerra verificados con su fuente citada (ONU/OHCHR, AP, OSCE, OMS, ACLED), el memorial de 10 periodistas caídos documentados por CPJ y RSF, 14 incidentes documentados, 4 sistemas de dron con su anatomía y las cifras del coste. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/verdad-cruda` },
@@ -142,6 +143,7 @@ export default function VerdadCrudaPage() {
           {/* LOS ABUSOS — agrupados por guerra en el orden de la fuente */}
           <section id="abusos" className="mt-10" aria-label="Los abusos documentados">
             <h2 className="text-lg font-bold text-zinc-100">LOS ABUSOS DOCUMENTADOS</h2>
+            <BannerIlustracion src="/ilustraciones/abusos.jpg" sello="Expedientes con fuente citada" />
             {GUERRAS.map((guerra) => (
               <div key={guerra} className="mt-5">
                 <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -178,6 +180,7 @@ export default function VerdadCrudaPage() {
           {/* EL MEMORIAL — las guerras en el orden que la fuente declara */}
           <section id="memorial" className="mt-10" aria-label="El memorial de prensa">
             <h2 className="text-lg font-bold text-zinc-100">EL MEMORIAL DE PRENSA</h2>
+            <BannerIlustracion src="/ilustraciones/memorial.jpg" sello="Los que murieron contándolo" />
             {GUERRAS_MEMORIAL.map((w) => (
               <div key={w} className="mt-5">
                 <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -214,6 +217,7 @@ export default function VerdadCrudaPage() {
           {/* LOS INCIDENTES — agrupados por tipo en el orden de la fuente */}
           <section id="incidentes" className="mt-10" aria-label="Los incidentes documentados">
             <h2 className="text-lg font-bold text-zinc-100">LOS INCIDENTES DOCUMENTADOS</h2>
+            <BannerIlustracion src="/ilustraciones/incidentes.jpg" sello="Cada incidente, en su lugar" />
             {TIPOS.map((t) => (
               <div key={t} className="mt-5">
                 <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
@@ -245,6 +249,7 @@ export default function VerdadCrudaPage() {
           {/* LOS SISTEMAS DEL CIELO — la anatomía de la guerra de drones */}
           <section id="drones" className="mt-10" aria-label="Los sistemas de dron">
             <h2 className="text-lg font-bold text-zinc-100">LOS SISTEMAS DEL CIELO</h2>
+            <BannerIlustracion src="/ilustraciones/dronguerra.jpg" sello="La guerra que viene del aire" />
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {DRONE_MODELS.map((d) => (
                 <article

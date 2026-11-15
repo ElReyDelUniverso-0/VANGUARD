@@ -49,7 +49,7 @@ const ESCALONES: { key: TierImpacto | "todos"; label: string; clase: string }[] 
   { key: "urgente", label: "URGENTE", clase: TIERS.urgente.clase },
   { key: "critico", label: "CRÍTICO", clase: TIERS.critico.clase },
   { key: "alto", label: "ALTO", clase: TIERS.alto.clase },
-  { key: "desarrollo", label: "DESARROLLO", clase: TIERS.desarrollo.clase },
+  { key: "desarrollo", label: "EN DESARROLLO", clase: TIERS.desarrollo.clase },
   { key: "contexto", label: "CONTEXTO", clase: TIERS.contexto.clase },
 ];
 
