@@ -9,6 +9,9 @@ import {
 import { db } from "@/lib/db";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v403.1 — el pilar 2 entra en la segunda sala más «de libro»: 49.799 letras y
+// nueve visuales. Se añaden sus propias cifras dibujadas, sin tocar el texto.
+import { GraficoBarras } from "@/components/vanguard/grafico-barras";
 
 // v286.0 LOS ROSTROS DEL PODER — la galería de los rostros sube a
 // server (patrón /historia v274 · /servicios v281 · /armeria v283):
@@ -42,9 +45,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder mundial",
+  title: "LOS ROSTROS DEL PODER — las 34 fichas reales del poder mundial | VANGUARD",
   description:
-    "Quién manda en el mundo: 34 fichas reales en 18 naciones — jefes de Estado, banqueros, organismos y gigantes de la IA — con su cargo y su ruta al poder.",
+    "El censo de poder de VANGUARD: 34 fichas reales en 18 naciones — los tronos (jefes de Estado), el dinero (banqueros centrales y magnates), el tribunal (organismos multilaterales) y los nuevos (silicio e IA) — con su cargo, su sede, su ruta al poder y su frase. Conocimiento abierto servido en server. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/rostros` },
   openGraph: {
     type: "website",
@@ -62,6 +65,21 @@ export const metadata: Metadata = {
 // el censo por categoría en el ORDEN DE LA FUENTE (el Set preserva la
 // inserción: tronos · dinero · tribunal · nuevos)
 const CATS_ROSTROS = [...new Set(ROSTROS.map((r) => r.categoria))];
+
+// v403.1 — EL ÍNDICE DE PODER EN UNA ESCALA: los diez rostros que más pesan,
+// ordenados por el campo `poder` de la ficha (0-100, mezcla de mando,
+// presupuesto y alcance según la fuente). Se ordena y se corta; no se escribe
+// ni una cifra a mano.
+const TOP_PODER_ROSTROS = [...ROSTROS]
+  .sort((a, b) => b.poder - a.poder)
+  .slice(0, 10)
+  .map((x) => ({
+    etiqueta: x.nombre,
+    valor: x.poder,
+    texto: `${x.poder}`,
+    nota: x.cargo,
+    href: "#rostros",
+  }));
 
 const censoRostros = CATS_ROSTROS.map((c) => ({
   cat: c,
@@ -152,6 +170,7 @@ export default async function RostrosPage() {
         alt="Retrato en penumbra de un rostro iluminado de lado"
         volanta="LA CASA · ROSTROS"
         titulo="LAS CARAS DEL MANDO"
+        nivel="p"
         acento="#38bdf8"
         sumario="Quién decide, quién ejecuta y quién responde: los rostros del poder con su cargo real, su país y su rastro en el archivo de la casa."
         cifras={[
@@ -169,10 +188,23 @@ export default async function RostrosPage() {
               "Poner cara a las decisiones: cuando una noticia dice «el gobierno», esta sala dice quién." }
         ]}
         anclas={[
+          { etiqueta: "los que más pesan", href: "#rostros-por-poder" },
           ...censoRostros.map((c) => ({ etiqueta: c.etiqueta.toLowerCase(), href: `#rostro-${c.cat}` })),
           { etiqueta: "el pulso", href: "#pulso" },
         ]}
         nota="Portada y cifras servidas desde la propia casa: la ilustración viaja en el repositorio y cada número sale de la fuente de esta sala, calculado en el render. Cero cifras escritas a mano."
+      />
+
+      {/* v403.1 — EL PODER EN UNA ESCALA (pilar 2: ver, no leer) */}
+      <GraficoBarras
+        id="rostros-por-poder"
+        volanta="LOS ROSTROS · EL PESO"
+        titulo="LOS DIEZ QUE MÁS PESAN"
+        nota={`El índice de poder de la Casa (0-100: mando, presupuesto y alcance) aplicado a las ${ROSTROS.length} fichas, medido contra el mayor de la serie. Debajo de cada nombre, su cargo real.`}
+        unidad="índice de poder (0-100)"
+        acento="#38bdf8"
+        etiquetaMaximo="el rostro con más poder de la serie"
+        barras={TOP_PODER_ROSTROS}
       />
 
       <div className="border-b border-zinc-800 bg-zinc-900/60">
@@ -180,9 +212,9 @@ export default async function RostrosPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
             LOS ROSTROS DEL PODER · el censo de la casa
           </div>
-          <h2 className="vx-h-sala mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
+          <h1 className="mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
             Los rostros que mueven el mundo
-          </h2>
+          </h1>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
             {`${lineaRostros}.`}
           </p>
