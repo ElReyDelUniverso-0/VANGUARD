@@ -3,6 +3,11 @@ import Link from "next/link";
 import { WORLD_CURRENCIES_FULL } from "@/lib/world-data";
 import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v402.4 — EL CAMBIO DE HOY: la sala deja de depender solo de la captura de la
+// fuente y trae el tipo de referencia que el Banco Central Europeo publica hoy
+// (vía Frankfurter). Si la fuente no contesta, el bloque lo declara: la tasa
+// capturada de abajo sigue intacta.
+import { tipoDeCambio } from "@/lib/herramientas-externas";
 
 // v296.0 LAS DIVISAS DEL PLANETA — el almacén menor sigue pagando: el
 // censo de la «Queda» de la v295 destapó la veta mayor que dormía desde
@@ -66,7 +71,11 @@ function fmtTasa(r: number): string {
 // fuente cambia, la línea cambia sola.
 const lineaDivisas = `Las monedas del planeta — ${WORLD_CURRENCIES_FULL.length} países y territorios con su moneda oficial real en ${REGIONES.length} regiones y ${MONEDAS_UNICAS.size} monedas únicas; la más compartida: ${MAS_COMPARTIDA.name}, que sirve a ${MAS_COMPARTIDA.paises.length} países`;
 
-export default function DivisasPage() {
+// v402.4: con una cifra viva dentro, la sala se refresca cada 15 minutos.
+export const revalidate = 900;
+
+export default async function DivisasPage() {
+  const cambio = await tipoDeCambio().catch(() => null);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -98,6 +107,7 @@ export default function DivisasPage() {
         alt="Billetes y monedas de varios países extendidos sobre una mesa oscura"
         volanta="LA CASA · DINERO"
         titulo="EL DINERO DEL MUNDO"
+        nivel="p"
         acento="#22c55e"
         sumario="La moneda oficial real de cada país y territorio, cuántas comparten la misma y cuál sirve a más naciones: la economía como mapa."
         cifras={[
@@ -126,7 +136,7 @@ export default function DivisasPage() {
           <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400">
             ◈ VANGUARD · LAS DIVISAS
           </p>
-          <h2 className="vx-h-sala mt-2 text-2xl font-bold text-zinc-100">LAS MONEDAS DEL PLANETA</h2>
+          <h1 className="mt-2 text-2xl font-bold text-zinc-100">LAS MONEDAS DEL PLANETA</h1>
           <p className="mt-2 max-w-3xl text-sm text-zinc-400">{lineaDivisas}</p>
           <p className="mt-1 text-xs text-zinc-500">
             Cada tasa son unidades de moneda por 1 dólar estadounidense, tal
@@ -138,6 +148,38 @@ export default function DivisasPage() {
             </Link>
             ; esta sala es el archivo completo, servido sin JavaScript.
           </p>
+
+          {/* v402.4 · EL CAMBIO DE HOY — cifra viva del Banco Central Europeo */}
+          <section id="cambio" className="mt-8 rounded-xl border border-emerald-900/60 bg-emerald-950/20 p-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-emerald-400">
+              el cambio de hoy · banco central europeo
+            </p>
+            {cambio ? (
+              <>
+                <p className="mt-2 flex flex-wrap items-baseline gap-2">
+                  <span className="font-mono text-3xl font-black tabular-nums text-emerald-300">
+                    {cambio.valor}
+                  </span>
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">
+                    {cambio.unidad}
+                  </span>
+                </p>
+                <p className="mt-1 text-[12.5px] leading-relaxed text-slate-300">{cambio.detalle}</p>
+              </>
+            ) : (
+              <p className="mt-2 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+                sin señal · el banco central no contestó · la tasa capturada de abajo sigue en pie
+              </p>
+            )}
+            <p className="mt-2 text-[11.5px] leading-relaxed text-slate-500">
+              Esta cifra se consulta en el servidor cada quince minutos; la tabla de abajo es la
+              captura que la fuente declara. Las diez fuentes con su licencia viven en{" "}
+              <Link href="/herramientas" className="text-emerald-300 underline underline-offset-2">
+                LAS DIEZ LLAVES
+              </Link>
+              .
+            </p>
+          </section>
 
           {/* LAS MONEDAS COMPARTIDAS — derivadas del dato, por países servidos */}
           <section id="monedas" className="mt-10" aria-label="Las monedas compartidas">

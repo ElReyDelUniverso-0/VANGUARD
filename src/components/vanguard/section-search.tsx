@@ -341,6 +341,13 @@ export function SectionSearch({
         sectionLabel: "PÁGINA GLOBAL · el mundo medido por otros, servido por esta casa", icon_color: "text-amber",
         kind: "page", href: "/herramientas",
       },
+      {
+        // v402.4 EL CRUCE — la distancia de lo de hoy a esta casa
+        key: "pg:cruce", label: "EL CRUCE — a qué distancia de casa pasó lo de hoy", short: "cruce distancia km sismos terremotos alertas gdacs cercania efemerides",
+        icon: <Activity className="w-4 h-4" />, sectionKey: "global",
+        sectionLabel: "PÁGINA GLOBAL · lo de hoy medido en kilómetros desde casa", icon_color: "text-amber",
+        kind: "page", href: "/cruce",
+      },
     ];
     const exps: Item[] = EXPEDIENTES.map((e) => ({
       key: `exp:${e.id}`,

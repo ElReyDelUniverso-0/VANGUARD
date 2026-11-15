@@ -6,6 +6,11 @@ import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { LineaDeTiempo } from "@/components/vanguard/linea-de-tiempo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
+// v402.4 — LA MEMORIA QUE SE CUMPLE HOY: las efemérides del día entran a la
+// sala desde la fuente abierta de Wikimedia (CC BY-SA 4.0). La línea del
+// tiempo cuenta las guerras de la casa; este bloque cuenta lo que pasó un día
+// como hoy, y lo declara cuando la fuente no contesta.
+import { efemeridesDelDia, efemeridesEnLista } from "@/lib/herramientas-externas";
 
 // v274.0 EL ARCHIVO DE LA HISTORIA — la expansión funcional módulo a
 // módulo abre una puerta nueva: la casa tiene HISTORICAL_WARS (10 guerras
@@ -183,7 +188,16 @@ const ENLACES_NUCLEO: EnlaceContextual[] = [
   },
 ];
 
-export default function HistoriaPage() {
+// v402.4: la sala consulta una fuente externa — se refresca cada hora.
+export const revalidate = 3600;
+
+export default async function HistoriaPage() {
+  // Las efemérides del día, en paralelo y sin poder tumbar la sala.
+  const [efemerides, listaEfemerides] = await Promise.all([
+    efemeridesDelDia().catch(() => null),
+    efemeridesEnLista(10).catch(() => []),
+  ]);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -211,6 +225,7 @@ export default function HistoriaPage() {
         alt="Libros y mapas antiguos apilados bajo una lámpara de latón"
         volanta="LA CASA · LA MEMORIA"
         titulo="LO QUE YA PASÓ, PARA LEER LO DE HOY"
+        nivel="p"
         acento="#f59e0b"
         sumario="Guerras reales de la Antigüedad a la Contemporánea, con sus años, sus facciones, su desenlace y su coste: la memoria con la que la casa lee las guerras de hoy."
         cifras={[
@@ -245,9 +260,9 @@ export default function HistoriaPage() {
           <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber">
             EL ARCHIVO DE LA HISTORIA · la memoria de la casa
           </div>
-          <h2 className="vx-h-sala mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
+          <h1 className="mt-3 text-2xl font-bold text-zinc-100 sm:text-3xl">
             Las guerras que enseñaron a leer las de hoy
-          </h2>
+          </h1>
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
             {`${lineaArchivo}.`}
           </p>
@@ -374,6 +389,41 @@ export default function HistoriaPage() {
           </p>
         </noscript>
       </div>
+
+        {/* v402.4 · UN DÍA COMO HOY — la memoria que se cumple */}
+        <div className="mx-auto max-w-5xl px-5 pb-16" id="hoy">
+          <h2 className="font-mono text-xl font-black uppercase tracking-tight text-white">
+            UN DÍA COMO HOY
+          </h2>
+          <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-slate-400">
+            {efemerides
+              ? `${efemerides.valor} hechos ocurrieron en esta misma fecha, según el archivo abierto de Wikipedia en español. Los más antiguos, aquí: la memoria que se cumple mientras el mundo sigue moviéndose.`
+              : "La enciclopedia no contestó en este render: la casa no rellena la memoria con invenciones."}
+          </p>
+          {listaEfemerides.length > 0 ? (
+            <ol className="mt-4 grid gap-2 sm:grid-cols-2">
+              {listaEfemerides.map((e, i) => (
+                <li
+                  key={`${e.year ?? "s"}-${i}`}
+                  className="flex gap-3 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2"
+                >
+                  <span className="shrink-0 font-mono text-[12px] font-black tabular-nums text-amber-300">
+                    {e.year ?? "—"}
+                  </span>
+                  <span className="text-[12.5px] leading-relaxed text-slate-300">{e.texto}</span>
+                </li>
+              ))}
+            </ol>
+          ) : null}
+          <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
+            Fuente: Wikimedia (Wikipedia en español, CC BY-SA 4.0), consultada en el servidor con
+            caché de una hora. La distancia de lo que pasó hoy a esta casa se mide en{" "}
+            <Link href="/cruce" className="text-rose-300 underline underline-offset-2">
+              EL CRUCE
+            </Link>
+            .
+          </p>
+        </div>
     </main>
   );
 }

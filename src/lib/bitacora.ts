@@ -22,6 +22,21 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.4",
+    nombre: "LA DISTANCIA DE CASA",
+    hitos: [
+      "LO MÁS ÚNICO DE LA CASA, SIN INVENTAR UN NÚMERO — orden del Dueño: «sigue agregando todo eso y hazlo más único». Ninguna fuente del mundo dice, por sí sola, a qué distancia de esta casa ocurrió lo de hoy; entre USGS (coordenada de cada sismo) y GDACS (coordenada y nivel de cada alerta) SÍ se puede calcular",
+      "SALA NUEVA /cruce: los sismos del día y las alertas de la ONU ordenados por cercanía real, con la fórmula de la esfera (haversine, radio medio de 6.371 km) y el punto de mira declarado — Santo Domingo, la casa del Dueño. El día del alta: el sismo más cercano a 236 km y la alerta más cercana a 1.311",
+      "LAS BARRAS DE /cruce SE MIDEN AL REVÉS Y SE EXPLICA: van contra lo más LEJANO de la lista, así que una barra corta significa «al lado», no «poco». La nota del gráfico lo dice con todas las letras para que nadie lea al revés",
+      "/historia GANA «UN DÍA COMO HOY»: las efemérides del día de Wikipedia en español (Wikimedia, CC BY-SA 4.0) entran a la sala de la memoria con su año y su texto, diez de las más antiguas; si la enciclopedia calla, el bloque lo declara. La línea del tiempo de la v401.2 sigue intacta debajo",
+      "/divisas GANA «EL CAMBIO DE HOY»: el tipo de referencia del Banco Central Europeo (vía Frankfurter) vivo, al lado de la tabla capturada que ya existía — se suma, no se sustituye",
+      "CERO CIFRAS A MANO: los kilómetros no están escritos en ningún sitio; se calculan en el render desde las coordenadas de las fuentes. Lo único que pone la casa es el punto desde el que mira, y lo declara con sus coordenadas",
+      "SIN SEÑAL SE DICE: si USGS, GDACS o Wikimedia no contestan, su bloque lo dice en vez de fingir un cero. Las tres consultas van en paralelo y con catch propio: una caída no tumba a las demás",
+      "Registro: catalogo-real 172 piezas, módulo mod:cruce en el Núcleo, entrada en la búsqueda y en el sitemap",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v402.3",
     nombre: "LAS DIEZ LLAVES",
     hitos: [

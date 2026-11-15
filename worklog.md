@@ -6121,3 +6121,15 @@ Orden recibida: «Vanguard necesita copiar o extraer herramientas que existen en
 - Ancla cazada antes de publicar: las anclas de portada apuntaban a #diez y la sección no tenía id → añadido id="diez".
 - Registro: version.ts reconstruido desde el main real (v402.2 de la otra IA, su bloque intacto) → v402.3 «LAS DIEZ LLAVES»; bitacora.ts con entrada v402.3; catalogo-real.ts real-171 (171 piezas); nucleo/registro.ts mod:llaves; section-search; sitemap.ts.
 - QA: tsc acotado LIMPIO; next dev :3882 → /herramientas 200, las diez contestaron (193 sismos · 27 eventos · 243 alertas · 10,1 % · 107.442.623 desplazados · 91 efemérides · 27,1 °C · 11,4 µg/m³ · 0,9048 EUR/USD · 64.620 USD/BTC), 0 «sin señal», anchas #diez/#escalas/#llaves/#regla todas presentes, barras proporcionales (100 / 56,25 / 12,5 y 100 / 94,5 / 94,5 / 89,1 / 89,1).
+
+## Task ia3-v402.4 · LA DISTANCIA DE CASA (el cruce que ninguna fuente hace sola)
+
+Orden recibida: «sigue agregando todo eso y hazlo más único».
+
+- lib/herramientas-externas.ts crece con el bloque «la distancia de casa»: `CASA` (Santo Domingo, 18.4661 / -69.9312, declarada), `distanciaKm` (haversine, radio medio 6.371 km), `sismosCercanos` (USGS con geometry.coordinates), `alertasCercanas` (GDACS RSS con geo:Point + alertlevel) y `loMasCercaDeCasa`. Cero kilómetros escritos: todos se calculan.
+- Sala nueva /cruce: portada con la cifra del sismo y de la alerta más cercanos, lista de los 6 sismos y 6 alertas por cercanía, DOS GraficoBarras (sismos y alertas) medidos contra lo más LEJANO de la lista (nota explica que barra corta = «al lado»), y bloque UN DÍA COMO HOY.
+- /historia: bloque «UN DÍA COMO HOY» con 10 efemérides reales de Wikimedia (año + texto), `revalidate = 3600`, componente pasa a async. La línea del tiempo de v401.2 intacta.
+- /divisas: bloque «EL CAMBIO DE HOY» con el tipo del BCE (Frankfurter) vivo, junto a la tabla capturada; `revalidate = 900`, componente async. La tabla no se toca.
+- lib: nueva `efemeridesEnLista(n)` (año + texto ordenados del más antiguo).
+- Registro: v402.4 «LA DISTANCIA DE CASA» sobre el main real v402.3 (bloque de la otra IA intacto), bitacora entrada v402.4, catalogo-real real-172 (172 piezas), nucleo mod:cruce, section-search, sitemap.
+- QA local (next dev :3883): /cruce 200 (sismos a 236 / 275 / 303 / 316 / 334 km; alertas a 1.311 / 1.951 / 3.044 km; barras 7,75 % / 9,03 % / 9,95 % / 10,38 % / 10,97 % y 47,76 %), /historia 200 con 10 efemérides (565 → 1777), /divisas 200 con 0,9048 EUR/USD. 0 «sin señal». tsc acotado LIMPIO.
