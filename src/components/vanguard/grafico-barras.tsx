@@ -36,6 +36,8 @@ export interface GraficoBarrasProps {
   acento?: string;
   /** etiqueta del máximo de la serie (por defecto, «= la mayor de la serie») */
   etiquetaMaximo?: string;
+  /** id del título: permite DOS gráficos en la misma página sin pisarse (v402.3) */
+  id?: string;
 }
 
 export function GraficoBarras({
@@ -46,18 +48,19 @@ export function GraficoBarras({
   unidad,
   acento = "#ef4444",
   etiquetaMaximo = "la mayor de la serie",
+  id = "grafico-titulo",
 }: GraficoBarrasProps) {
   if (barras.length === 0) return null;
   const maximo = Math.max(...barras.map((b) => b.valor));
   const acc = /^#[0-9a-fA-F]{6}$/.test(acento) ? acento : "#ef4444";
 
   return (
-    <section className="mx-auto max-w-5xl px-5 py-10" aria-labelledby="grafico-titulo">
+    <section className="mx-auto max-w-5xl px-5 py-10" aria-labelledby={id}>
       <div>
         <p className="font-mono text-[10px] uppercase tracking-[0.3em]" style={{ color: acc }}>
           {volanta}
         </p>
-        <h2 id="grafico-titulo" className="mt-1 font-mono text-xl font-black uppercase tracking-tight text-white">
+        <h2 id={id} className="mt-1 font-mono text-xl font-black uppercase tracking-tight text-white">
           {titulo}
         </h2>
         {nota && <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-slate-400">{nota}</p>}

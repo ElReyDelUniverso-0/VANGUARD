@@ -1,4 +1,3 @@
-import { SALAS_INTERNAS } from "@/components/portada/modulos";
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
@@ -91,7 +90,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* sin teatros dinámicos ante fallo de BD */
   }
 
-  const todo: MetadataRoute.Sitemap = [
+  return [
     {
       url: SITE_URL,
       lastModified: new Date(),
@@ -184,6 +183,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // indexable para las búsquedas de conflictos (Ucrania, Gaza,
       // Sahel, Taiwán...)
       url: `${SITE_URL}/conflictos`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.7,
+    },
+    {
+      // v402.3 LAS DIEZ LLAVES — las diez fuentes abiertas que la casa
+      // consulta en vivo (sismos, eventos naturales, alertas ONU/CE,
+      // pobreza, desplazamiento, efemérides, clima, aire, cambio, bitcoin),
+      // indexables para quien busque de dónde sale cada cifra
+      url: `${SITE_URL}/herramientas`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.7,
@@ -457,10 +466,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...teatros,
     ...noticias,
   ];
-  // v402.0 LOS CINCO MÓDULOS: fuera del sitemap las salas internas y las redirigidas
-  const FUERA = new Set(["/clasico", ...SALAS_INTERNAS]);
-  return todo.filter((e) => {
-    const ruta = e.url.replace(SITE_URL, "").split("?")[0] || "/";
-    return !FUERA.has(ruta) && ![...FUERA].some((f) => ruta.startsWith(f + "/"));
-  });
 }
