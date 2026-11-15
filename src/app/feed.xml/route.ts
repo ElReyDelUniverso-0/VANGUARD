@@ -1,5 +1,10 @@
 import { db } from "@/lib/db";
 import { TEATROS } from "@/lib/teatros";
+// v403.6 EL CANAL CON OJOS: si el archivo del repo está congelado (en Vercel la
+// SQLite viaja de solo lectura), el feed se sirve de los MEDIOS VIVOS — la misma
+// instantánea que ya alimenta /en-vivo y la portada (lib/pulso filasVivas).
+// Nada nuevo: se usa lo que la casa ya tenía, en vez de repetir un mes atrás.
+import { filasVivas } from "@/lib/pulso";
 
 // v35 — RSS /feed.xml: lectores de noticias y agregadores pueden suscribirse
 // al canal de conflictos de VANGUARD. Cada ítem enlaza a la página SEO
@@ -16,8 +21,7 @@ import { TEATROS } from "@/lib/teatros";
 
 export const dynamic = "force-dynamic";
 
-// v403.4: el dominio vive en @/lib/site (antes: alias de preview)
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL } from "@/lib/site"; // v403.6: una sola puerta
 
 function esc(s: string): string {
   return s
@@ -29,64 +33,41 @@ function esc(s: string): string {
 }
 
 type ItemFeed = {
-  id: string;
-  title: string;
-  url: string;
-  source: string;
-  summary: string | null;
-  conflictTag: string | null;
-  publishedAt: Date;
+  id: string; title: string; url: string; source: string;
+  summary: string | null; conflictTag: string | null; publishedAt: Date;
   imageUrl?: string | null;
 };
-
-// v403.4 EL CANAL VIVO — la base SQLite de la casa viaja en el repo: en Vercel
-// cada lambda escribe en su copia de /tmp y el archivo comprometido se queda en
-// la fecha del último commit. El canal se quedaba congelado (medido: 15 días) y
-// sin una sola imagen. Si el archivo está viejo, el feed se sirve del canal vivo
-// —el que el mundo está viendo—; la base sigue siendo la primera fuente.
-const VIDA_MAX_MS = 3 * 60 * 60 * 1000;
-
-async function itemsVivos(): Promise<ItemFeed[]> {
-  try {
-    const res = await fetch(`${SITE_URL}/api/news`, { cache: "no-store" });
-    if (!res.ok) return [];
-    const data = (await res.json()) as { items?: Record<string, unknown>[] };
-    return (Array.isArray(data.items) ? data.items : []).slice(0, 30).map((x) => ({
-      id: String(x.id ?? ""),
-      title: String(x.title ?? ""),
-      url: String(x.url ?? "#"),
-      source: String(x.source ?? ""),
-      summary: (x.summary as string | null) ?? null,
-      conflictTag: (x.conflictTag as string | null) ?? null,
-      publishedAt: new Date(String(x.publishedAt ?? Date.now())),
-      imageUrl: (x.imageUrl as string | null) ?? null,
-    }));
-  } catch {
-    return [];
-  }
-}
+const VIDA_ARCHIVO_MS = 3 * 60 * 60 * 1000;
 
 export async function GET() {
   let items: ItemFeed[] = [];
   try {
-    items = (await db.newsItem.findMany({
+    items = await db.newsItem.findMany({
       orderBy: { publishedAt: "desc" },
       take: 30,
-    })) as ItemFeed[];
+    });
   } catch {
     /* feed vacío ante fallo de BD */
   }
+  // v403.6: archivo congelado → medios vivos (la misma instantánea de la casa)
   const edad = items.length ? Date.now() - items[0].publishedAt.getTime() : Infinity;
-  if (edad > VIDA_MAX_MS) {
-    const vivos = await itemsVivos();
-    if (vivos.length) items = vivos;
+  if (edad > VIDA_ARCHIVO_MS) {
+    const vivas = await filasVivas().catch(() => []);
+    if (vivas.length) items = vivas.slice(0, 30) as unknown as ItemFeed[];
   }
 
   const entries = items
     .map((it) => {
-      // v403.4 LA FOTO EN EL CANAL: sin <enclosure> ni media:content, Google
-      // News y Discover ven un feed ciego. La imagen va absoluta (del medio si
-      // el cable trae la suya; del dominio de la casa si es de archivo).
+      // v202.0: puerta propia por cable (antes: todas a /guerra-hoy)
+      const link = `${SITE_URL}/noticia/${it.id}`;
+      // v271.0 EL CANAL CLASIFICADO: el teatro del cable viaja en <category>
+      // (crudo + nombre humano de la fuente); sin teatro, sin categoría
+      const categorias = it.conflictTag
+        ? `\n      <category>${esc(it.conflictTag)}</category>\n      <category>${esc(TEATROS[it.conflictTag]?.nombre ?? it.conflictTag)}</category>`
+        : "";
+      // v403.6 LA FOTO EN EL CANAL: sin <enclosure> ni media:content, Google
+      // News y Discover ven un feed ciego. La imagen va absoluta y es la del
+      // medio cuando el cable la trae (nunca una inventada).
       const foto = it.imageUrl
         ? /^https?:\/\//i.test(it.imageUrl)
           ? it.imageUrl
@@ -94,13 +75,6 @@ export async function GET() {
         : null;
       const media = foto
         ? `\n      <enclosure url="${esc(foto)}" type="image/jpeg" />\n      <media:content url="${esc(foto)}" medium="image" />`
-        : "";
-      // v202.0: puerta propia por cable (antes: todas a /guerra-hoy)
-      const link = `${SITE_URL}/noticia/${it.id}`;
-      // v271.0 EL CANAL CLASIFICADO: el teatro del cable viaja en <category>
-      // (crudo + nombre humano de la fuente); sin teatro, sin categoría
-      const categorias = it.conflictTag
-        ? `\n      <category>${esc(it.conflictTag)}</category>\n      <category>${esc(TEATROS[it.conflictTag]?.nombre ?? it.conflictTag)}</category>`
         : "";
       return `    <item>
       <title>${esc(it.title)}</title>

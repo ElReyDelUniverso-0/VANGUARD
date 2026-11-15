@@ -6262,3 +6262,12 @@ Work Log:
 - `layout.tsx`: el canonical del sitio deja de ser el alias `vanguard-kq9r` y pasa a `vanguard-u6b9` (pendiente de mover a `@/lib/site` cuando se barra el literal en los 64 archivos restantes).
 - Registro: version.ts v403.5 «EL CANAL VIVO» (anterior v403.4), bitacora v403.5, catalogo-real real-178 (178 piezas).
 - tsc acotado LIMPIO (solo ruido conocido).
+
+## Task ia3-v403.6 · LA REPARACIÓN (deshacer un daño propio)
+
+- QUÉ ROMPÍ: las v403.4 y v403.5 se comprometieron sobre copias LOCALES VIEJAS de `layout.tsx`, `sitemap.ts`, `noticia/[id]/page.tsx`, `feed.xml/route.ts` y `api/news/route.ts`. Eso borró de `main`: los imports de la fusión v401.0 (portada.css, piel.css, inter, Carcasa, PuertaMundos, FueraDePortada, MenuVanguardMount), 83 líneas del sitemap v402.11, el camino `filasVivas()` de la v402.0 (que YA curaba la base congelada), el redirect de `/noticia/[id]` a `/lectura/[id]` (v402.0) y el parser de imágenes que ya vivía en `lib/portada/notas.ts`.
+- CÓMO SE DETECTÓ: la auditoría bajó de 848 a 560 elementos visuales y la mediana subió de 520 a 1011. Un diff de `layout.tsx` entre 219e0611 y main enseñó 28 líneas borradas ajenas. Señal inequívoca: **cuando un número de la casa empeora de golpe, hay un archivo pisado**.
+- CÓMO SE CURÓ: se restauran los cinco archivos desde `219e0611` (v403.3, última versión íntegra de la otra IA) y se reaplica SOLO lo aditivo: `src/lib/site.ts` (dominio único), `<enclosure>`/`media:content` + `filasVivas()` en el feed, `imagenArchivo` en `withFallbackImage`.
+- QUÉ SE RETIRÓ DE LO MÍO: `canalVivo()` (duplicaba `filasVivas`), `getCableVivo()`/`urlDesdeId()` (duplicaban el redirect a `/lectura`), `imagenDeRss()` (duplicaba `imagenDe` de notas.ts).
+- Registro: version.ts v403.6 «LA REPARACIÓN» (anterior v403.5), bitacora v403.6, catalogo-real real-179 (179 piezas).
+- LECCIÓN: **ningún archivo se compromete sin bajarlo de `main` justo antes**. Las copias locales del workspace son fotografías viejas del repositorio. Es el mismo error de la entrada 415 (worklog) con otra ropa.

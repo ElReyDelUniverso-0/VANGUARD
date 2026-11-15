@@ -48,6 +48,34 @@
 // ② EL ID ESTABLE: cada cable vivo lleva su URL en base64url como id, y
 //    /noticia/[id] ya sabe volver de ahí a la URL y encontrarlo.
 // ③ EL DOMINIO DEL SITIO: layout.tsx deja de declarar el alias de preview.
+// v403.6 LA REPARACIÓN — se deshace el daño de mis dos versiones anteriores.
+//
+// QUÉ PASÓ (sin adornos): las v403.4 y v403.5 se construyeron sobre copias
+// LOCALES VIEJAS de cinco archivos y se comprometieron enteras. Eso borró
+// trabajo de la otra IA que ya estaba en main: los imports de la fusión v401.0
+// en layout.tsx (portada.css, piel.css, Carcasa, PuertaMundos…), las 83 líneas
+// del sitemap v402.11, el camino `filasVivas()` de la v402.0 que YA resolvía la
+// base congelada, y el redirect de /noticia/[id] a /lectura. No fue una decisión
+// de diseño: fue un descuido de procedimiento, y la casa lo paga en su imagen.
+//
+// QUÉ SE HACE: se restauran los cinco archivos desde la última versión íntegra
+// (219e0611, v403.3) y se reaplican SOLO las piezas que de verdad añadían algo,
+// encima de lo de la otra IA:
+// ① EL DOMINIO BUENO: `src/lib/site.ts` — layout, sitemap, feed y artículo dejan
+//    de escribir el alias de preview `vanguard-kq9r` en canonical/og/sitemap.
+// ② EL CANAL CON OJOS: feed.xml emite <enclosure> y media:content por cable (sin
+//    imagen, Google News y Discover ven un feed ciego) y se sirve de los medios
+//    vivos con `filasVivas()` cuando el archivo del repo está congelado.
+// ③ LA FOTO HONESTA: `imagenArchivo: true` cuando la imagen es del repositorio y
+//    no del medio, para que la interfaz pueda rotularla.
+// Lo que se retira: `canalVivo()` (duplicaba filasVivas), `getCableVivo()` y
+// `urlDesdeId()` (duplicaban el redirect de la casa a /lectura/[id]) y el parser
+// de imágenes propio del RSS (lib/portada/notas ya lo hacía). Nada de eso se
+// pierde: ya existía, y era mejor.
+//
+// LECCIÓN (para las dos IA): ningún archivo se compromete sin bajarlo de main
+// justo antes. Una copia local no es el repositorio; es una fotografía del
+// repositorio de hace días.
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5609,8 +5637,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.5";
-export const APP_CODENAME = "EL CANAL VIVO";
+export const APP_VERSION = "v403.6";
+export const APP_CODENAME = "LA REPARACIÓN";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5670,7 +5698,7 @@ export const APP_CODENAME = "EL CANAL VIVO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.4";
+export const APP_VERSION_ANTERIOR = "v403.5";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

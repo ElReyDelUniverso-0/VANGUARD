@@ -10,12 +10,17 @@ import { Orbitron } from "next/font/google";
 // indexar y las vistas previas de WhatsApp/X saldrían sin imagen. Orden:
 // 1) NEXT_PUBLIC_SITE_URL si está definida  2) URL de producción actual.
 // NOTA: cuando se conecte vanguard.world, añadir la env en Vercel y prioriza esa.
-// v403.5: el dominio vive en @/lib/site (antes: alias de preview)
-const SITE_URL = "https://vanguard-u6b9.vercel.app";
+import { SITE_URL } from "@/lib/site"; // v403.6: una sola puerta
 const SITE_NAME = "VANGUARD — Conflictos Mundiales en Tiempo Real";
 const SITE_DESC =
   "La plataforma de conflictos mundiales #1: noticias de guerra en vivo, mapa OSINT 3D con 15 capas de inteligencia, guerra global multijugador, duelos 1v1 con ranking ELO, simulador de guerras, detective por país, apuestas y economía de gemas. Gratis, en español.";
 import "./globals.css";
+// v401.0 LA FUSIÓN — el sistema visual de la casa y su piel, para todas las salas
+import "./portada.css";
+import "./piel.css";
+import { inter } from "@/components/portada/fuente";
+import { Carcasa } from "@/components/portada/carcasa";
+import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 // v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
@@ -29,7 +34,9 @@ import { CapasGlobales } from "@/components/vanguard/capas-globales";
 // v151.0 VANGUARD-2: guardia de ruta — /vanguard2 es un universo 3D puro,
 // ninguna capa DOM de la Casa monta encima (mandato: cero 2D en el nuevo Vanguard)
 import { SoloCasa } from "@/components/vanguard2/solo-casa";
+import { FueraDePortada } from "@/components/portada/fuera-de-portada";
 import { Rehidratador } from "@/components/vanguard/rehidratador";
+import { MenuVanguardMount } from "@/components/vanguard/menu-vanguard-mount";
 // v133.0 EL ACABADO REAL: el cuerpo de agentes late en TODAS las salas
 
 // v134.0 EL ESTRENO: el tráiler de carga — una proyección por sesión
@@ -161,7 +168,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A0A0F",
+  themeColor: "#06080c",
   width: "device-width",
   initialScale: 1,
 };
@@ -265,7 +272,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className="dark">
       <body
-        className={`${orbitron.variable} antialiased bg-background text-foreground min-h-screen`}
+        className={`${orbitron.variable} ${inter.variable} antialiased bg-background text-foreground min-h-screen`}
       >
         {/* ════════════════════════════════════════════════════════════
             v360.0 LA CASA QUE RESPIRA — el aire vive en TODA la casa.
@@ -356,7 +363,7 @@ export default function RootLayout({
             que llegó; ⑤ __vgcasa por fin NACE (nadie la seteaba desde
             v185): cuando el último _next termina, la casa lo anuncia.
             ════════════════════════════════════════════════════════════ */}
-        <div id="vg-cortina" role="status" aria-label="Vanguard cargando">
+        <div id="vg-cortina" role="status" aria-label="Vanguard cargando" suppressHydrationWarning>
           {/* v182.0 EL ÚLTIMO RESCATE: el meta http-equiv=refresh NO vive aquí
               en el JSX — React 19 ELEVA los <meta> al <head> en la hidratación
               (QA lo cazó vivo: una recarga fantasma cada 70s en una casa
@@ -690,7 +697,7 @@ try{
       // si la cortina ya se fundió, la casa respira — hidrate o no el bundle.
       // El vigía solo juzga a quien lo necesita de verdad: la Casa SPA ("/")
       // y el universo /vanguard2, donde sin hidratación la pantalla es vacío.
-      var esSPA=(location.pathname==='/'||location.pathname.indexOf('/vanguard2')===0);
+      var esSPA=(location.pathname==='/cuartel'||location.pathname.indexOf('/vanguard2')===0); // v400: la SPA vive en /cuartel
       if(!esSPA){
         var cL=document.getElementById('vg-cortina');
         if(!cL||cL.getAttribute('data-off')==='1') return;
@@ -918,6 +925,14 @@ try{
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLdSeguro(jsonLd) }}
         />
+        {/* v401.0 LA FUSIÓN: la misma cabecera, teletipo y barra móvil en cada sala */}
+        {/* v402.4 SALTO AL CONTENIDO — quien navega con teclado o lector de
+            pantalla salta la cabecera y el teletipo de una vez (WCAG 2.4.1). */}
+        <a href="#vg-contenido" className="vx-saltar">Saltar al contenido</a>
+        <Carcasa />
+        {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
+        <PuertaMundos />
+        <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}
         {/* v132.0 LA GRAN AUDITORÍA: el REHIDRATADOR — los valores guardados
@@ -929,9 +944,12 @@ try{
         <SoloCasa>
           <Rehidratador />
         </SoloCasa>
-        <SoloCasa>
-          <CapasGlobales />
-        </SoloCasa>
+        <FueraDePortada>
+          <SoloCasa>
+            <CapasGlobales />
+          </SoloCasa>
+        </FueraDePortada>
+        <MenuVanguardMount />
         <Toaster />
         <Sonner />
       </body>
