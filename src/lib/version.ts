@@ -1,37 +1,16 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
-// v402.6 LOS NUEVE MÓDULOS (sobre v402.5) — orden del Dueño: «sigue agregando más
-// módulos, Vanguard tiene mucho más por mostrar que solo noticias». Elegido por el
-// Dueño: sacar a la luz lo que YA existe, sin contenido nuevo.
-// ① Inteligencia escondía 16 salas tras una sola puerta y El Cruce y Las diez
-//    llaves no colgaban de ningún módulo. Ahora hay 8 módulos públicos (más el
-//    Estado): Conflictos · Mapa 3D · Conocimiento · Secretos · Arsenal · Datos
-//    vivos · Medios · Juego. Fuente única: components/portada/modulos.ts.
-// ② Cada módulo tiene PORTADA PROPIA en /modulo/[id] (PortadaSala + sus salas +
-//    «otros módulos») y su barra de pestañas; el sello del módulo lleva a ella.
-// ③ /modulos: el índice de la casa. La portada principal estrena «Mucho más que
-//    noticias» (Sección 02) con los 8 módulos; la barra móvil cambia Perfil por
-//    Módulos (Perfil sigue en Juego) y la cabecera de escritorio lista los 8.
-// ④ Cuentas (salas, módulos, en vivo) calculadas de modulos.ts: cero cifras a mano.
-// v402.5 TREINTA AJUSTES (sobre v402.4 de ia3, intacta) — orden del Dueño: «sigue mejorando aún más Vanguard,
-// 30 que agregarías o mejorarías, y agrégalo ahora mismo». Nada inventado: cada
-// ajuste sale de una auditoría de producción (50 rutas en móvil 390×844).
-// ① PESO: /armeria 11,1 MB → 2,8 MB (miniaturas 960 px de Wikimedia), /galeria
-//    11,4 MB → ~3 MB (miniaturas 720 px, el original al tocar), mech-leela.glb
-//    2,4 MB → 665 KB (textura 1024 JPEG, validado), caché de estáticos a 7 días.
-// ② ENLACES: /cuartel?sala=<clave> abre la sala pedida; los botones muertos del
-//    Teatro Total (/maquina-del-tiempo, /detonacion → 404) y sus URL viejas
-//    llegan a su pestaña; /lectura → /cronica; el catálogo deja de enlazar APIs
-//    (3 errores 405/403 en consola).
-// ③ TÍTULOS: 29 salas decían «… | VANGUARD · VANGUARD»; 5 descripciones de
-//    290–360 letras bajan a ≤160; h1 en /vertigo y /vanguard2; /cuartel en el
-//    mapa del sitio.
-// ④ LECTURA Y ACCESO: salto al contenido, piso de lectura móvil (6–8,5 px →
-//    8,5–9,5 px), hoja de impresión limpia, teletipo y «VER FUENTE» tocables.
-// ⑤ ENGANCHE: el spot de 30 s en la portada (preload none) con «Enviar por
-//    WhatsApp» y «Descargar para tus estados»; las cinco claves de la crónica
-//    viajan por WhatsApp; atajos de la app instalada; color de barra #06080c.
-// ⑥ PENDIENTES CERRADOS: «FUENTE C» → «MEDIO C», «DESARROLLO» → «EN
-//    DESARROLLO»; franjas ilustradas en /verdad-cruda y /escenarios.
+// v402.5 EL EJE DEL DÍA — la v402.4 metió las efemérides en /historia como
+// diez párrafos y el indicador lo cobró: la sala pasó de 1.117 a 1.305 letras
+// por elemento visual. Esta versión arregla la causa, no el síntoma.
+// ① components/vanguard/eje-del-dia.tsx — los hechos del día, dibujados en su
+//    AÑO sobre un eje cuya escala sale del arco real de la fuente (565 → hoy),
+//    con el texto corto debajo (profundización opcional) y aria-label completo
+//    en cada punto. Componente de SERVIDOR: cero JavaScript.
+// ② /historia: la lista de párrafos pasa a eje; el bloque abre con ilustración
+//    de la casa (wikiguerra.jpg, 1408×704 declarados) para que la memoria se VE.
+// ③ /cruce: el mismo eje en lugar de su lista — una sola pieza, dos salas.
+// ④ Se declara en la bitácora lo que sigue pendiente: las efemérides llegan de
+//    una sola fecha y no se pueden filtrar todavía por siglo desde la casa.
 // v402.4 LA DISTANCIA DE CASA — lo más único que la casa puede presumir sin
 // inventar un número: el cruce que ninguna de las fuentes hace sola.
 // ① SALA NUEVA /cruce: los sismos del día (USGS) y las alertas de GDACS se
@@ -5483,8 +5462,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.6";
-export const APP_CODENAME = "LOS NUEVE MÓDULOS";
+export const APP_VERSION = "v402.5";
+export const APP_CODENAME = "EL EJE DEL DÍA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,

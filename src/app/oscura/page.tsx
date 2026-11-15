@@ -25,7 +25,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "BIBLIOTECA OSCURA — 43 secretos con veredicto y documentos desclasificados",
+  title: "BIBLIOTECA OSCURA — 43 secretos con veredicto y documentos desclasificados | VANGUARD",
   description:
     "La biblioteca oscura de VANGUARD: 14 teorías con veredicto REAL/MITO/PARCIAL, 11 armas-idea que cambiaron la guerra, 10 civilizaciones que aterraron al mundo y 8 documentos desclasificados — cada entrada abierta a su fuente original (CIA, National Archives, NSA, FBI Vault). Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/oscura` },

@@ -5,6 +5,9 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { LineaDeTiempo } from "@/components/vanguard/linea-de-tiempo";
+// v402.5 — el eje del día: los diez hechos de la fecha, dibujados en su año
+// en vez de contados como diez párrafos (el indicador de densidad lo pedía).
+import { EjeDelDia } from "@/components/vanguard/eje-del-dia";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 // v402.4 — LA MEMORIA QUE SE CUMPLE HOY: las efemérides del día entran a la
 // sala desde la fuente abierta de Wikimedia (CC BY-SA 4.0). La línea del
@@ -62,7 +65,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "El archivo de la historia — las guerras que enseñaron a leer las de hoy",
+  title: "El archivo de la historia — las guerras que enseñaron a leer las de hoy | Vanguard",
   description:
     "10 guerras reales de la Antigüedad a la Contemporánea: Guerras Púnicas, Cruzadas, Guerras Napoleónicas, las dos Guerras Mundiales, la Guerra Fría... años, facciones, desenlace y coste real. La memoria con la que Vanguard lee las guerras de hoy. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/historia` },
@@ -392,6 +395,20 @@ export default async function HistoriaPage() {
 
         {/* v402.4 · UN DÍA COMO HOY — la memoria que se cumple */}
         <div className="mx-auto max-w-5xl px-5 pb-16" id="hoy">
+          {/* v402.5 — la memoria también se VE: la ilustración de la casa abre
+              el bloque (imagen del repositorio, dimensiones declaradas) */}
+          <div className="mb-5 overflow-hidden rounded-xl border border-slate-800">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/ilustraciones/wikiguerra.jpg"
+              alt="Una biblioteca antigua con volúmenes abiertos y un mapamundi: la memoria escrita del mundo"
+              width={1408}
+              height={704}
+              loading="lazy"
+              decoding="async"
+              className="h-44 w-full object-cover sm:h-56"
+            />
+          </div>
           <h2 className="font-mono text-xl font-black uppercase tracking-tight text-white">
             UN DÍA COMO HOY
           </h2>
@@ -401,19 +418,14 @@ export default async function HistoriaPage() {
               : "La enciclopedia no contestó en este render: la casa no rellena la memoria con invenciones."}
           </p>
           {listaEfemerides.length > 0 ? (
-            <ol className="mt-4 grid gap-2 sm:grid-cols-2">
-              {listaEfemerides.map((e, i) => (
-                <li
-                  key={`${e.year ?? "s"}-${i}`}
-                  className="flex gap-3 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2"
-                >
-                  <span className="shrink-0 font-mono text-[12px] font-black tabular-nums text-amber-300">
-                    {e.year ?? "—"}
-                  </span>
-                  <span className="text-[12.5px] leading-relaxed text-slate-300">{e.texto}</span>
-                </li>
-              ))}
-            </ol>
+            <EjeDelDia
+              id="eje-dia-historia"
+              eventos={listaEfemerides}
+              volanta="LA MEMORIA · EL EJE DEL DÍA"
+              titulo="LOS AÑOS QUE SE CUMPLEN HOY"
+              nota={`Cada punto es un hecho publicado por Wikimedia para esta misma fecha, colocado en su año real entre ${listaEfemerides[0]?.year ?? "—"} y hoy. El eje no se dibuja a mano: su escala sale del arco de la fuente.`}
+              acento="#f59e0b"
+            />
           ) : null}
           <p className="mt-4 text-[12px] leading-relaxed text-slate-500">
             Fuente: Wikimedia (Wikipedia en español, CC BY-SA 4.0), consultada en el servidor con

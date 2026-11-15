@@ -50,7 +50,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "AK-47 (Kalashnikov)",
     origin: "URSS",
     era: "1947 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/AK-47_type_II_noBG.png?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/6/65/AK-47_type_II_noBG.png",
     assemblyPhoto: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/AK-47_Disassembled.JPG/960px-AK-47_Disassembled.JPG",
     function:
       "Rifle de asalto automático de 7,62×39 mm: el fusil de infantería básico de decenas de ejércitos y grupos irregulares. Dispara 600 balas por minuto en automático, funciona metido en barro, arena o agua gracias a tolerancias holgadas entre piezas, y por eso domina las trincheras del Sahel, Afganistán y el Congo tanto como los ejércitos regulares.",
@@ -81,7 +81,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "M4 Carbine",
     origin: "EE.UU.",
     era: "1994 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/PEO_M4_Carbine_RAS_M68_CCO.png?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/6/68/PEO_M4_Carbine_RAS_M68_CCO.png",
     assemblyPhoto: "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/U.S._Air_Force_Staff_Sgt._Julius_Taylor%2C_a_combat_arms_training_and_maintenance_instructor_with_the_628th_Security_Forces_Squadron%2C_disassembles_an_M4_carbine_July_30%2C_2013%2C_at_Joint_Base_Charleston%2C_S.C_130730-F-LR006-010.jpg/960px-thumbnail.jpg",
     function:
       "Carabina estándar de la OTAN en 5,56×45 mm: la del soldado occidental moderno. Es la versión corta del M16 con riel superior PICATINNY que acepta mira telescópica, láser, linterna y lanzagranadas M203. Modular: cada unidad se adapta a la misión en minutos.",
@@ -112,7 +112,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "Dron FPV Kamikaze",
     origin: "Global (bricolaje)",
     era: "2022 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/REN_6515.jpg?width=960",
+    photo: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/REN_6515.jpg/3840px-REN_6515.jpg",
     assemblyPhoto: "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Remote_Control_FPV_drone_FPV_Goggles.jpg/960px-Remote_Control_FPV_drone_FPV_Goggles.jpg",
     function:
       "Cuadricóptero de carreras de 200-800 dólares con 1-3 kg de explosivo: el arma que redefinió Ucrania. Un piloto con gafas VR lo vuela a 120-160 km/h entre árboles y edificios hasta embestir tanques, búnkeres o motos. Funciona como munición guiada artesanal cuesta 1/10.000 del misil equivalente.",
@@ -143,7 +143,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "Shahed-136 (Geran-2)",
     origin: "Irán",
     era: "2021 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/2023_IRGC_Aerospace_Force_achievements_Exhibition_in_Qom_(33).jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/3/37/2023_IRGC_Aerospace_Force_achievements_Exhibition_in_Qom_%2833%29.jpg",
     function:
       "Dron kamikaze de largo alcance con motor pulsorreactor (ese zumbido de motocicleta que se oye en Kiev). Vuela hacia coordenadas fijas cargadas antes del despegue y se estrella con 40-50 kg de explosivo. Rusia los lanza en enjambres de 10-80 para saturar las defensas antiaéreas, junto a misiles de crucero reales.",
     impact:
@@ -171,7 +171,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "Bayraktar TB2",
     origin: "Turquía",
     era: "2014 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Bayraktar_TB2_Runway.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Bayraktar_TB2_Runway.jpg",
     assemblyPhoto: "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Bayraktar_TB2_Runway.jpg/960px-Bayraktar_TB2_Runway.jpg",
     function:
       "Dron de vigilancia y ataque que vuela a 8.000 m durante 27 horas: ojos y garra de ejércitos que no pueden pagar cazas. Detecta artillería y convoyes con su cámara térmica y los destruye con 4 misiles MAM guiados por láser. Famoso por Nagorno-Karabaj 2020 (destruyó 100+ blindados armenios) y la defensa de Ucrania 2022.",
@@ -200,7 +200,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "FGM-148 Javelin",
     origin: "EE.UU.",
     era: "1996 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Javelin_with_checkout_equipment.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/7/76/Javelin_with_checkout_equipment.jpg",
     function:
       "Misil antitanque 'dispara y olvida': el tirador marca el objetivo, lanza, y el misil SOLO sube 150 m y cae sobre la torre del tanque — el blindaje más débil. El CLU (mira térmica) también funciona como binocular de vigilancia nocturna. Se lanza desde el hombro agachado o desde edificios.",
     impact:
@@ -229,7 +229,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "M142 HIMARS",
     origin: "EE.UU.",
     era: "2005 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/HIMARS_-_missile_launched.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/8/83/HIMARS_-_missile_launched.jpg",
     assemblyPhoto: "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/180614-A-IY962-102_-_M142_High_Mobility_Artillery_Rocket_System_%28HIMARS%29_firing_during_Saber_Strike_18_%28Image_4_of_7%29.jpg/960px-180614-A-IY962-102_-_M142_High_Mobility_Artillery_Rocket_System_%28HIMARS%29_firing_during_Saber_Strike_18_%28Image_4_of_7%29.jpg",
     function:
       "Lanzacohetes sobre camión táctico: 6 cohetes GMLRS de 227 mm con precisión de 2-5 m a 80 km, o 1 misil ATACMS hasta 300 km. Dispara en 40 segundos y cambia de posición antes de que el radar enemigo calcule su origen ('shoot and scoot'). En Ucrania destruyó depósitos de municiones y puentes a 60-80 km del frente.",
@@ -258,7 +258,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "ZALA Lancet-3",
     origin: "Rusia",
     era: "2020 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/ZALA_Lancet_1.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/8/8f/ZALA_Lancet_1.jpg",
     function:
       "Munición de patrullaje (loitering munition): vuela en círculos sobre el frente durante 40 minutos buscando artillería, radars y cañones con su cámara TV/IR, y se lanza en picada sobre el objetivo. Es la respuesta rusa al HIMARS: el 'cazador de cañones' que obliga a la artillería ucraniana a moverse cada 2 minutos.",
     impact:
@@ -286,7 +286,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "T-90M Proryv",
     origin: "Rusia",
     era: "1992 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/T-90M.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/d/d9/T-90M.jpg",
     assemblyPhoto: "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/T-90_firing.jpg/960px-T-90_firing.jpg",
     function:
       "Carro de combate principal ruso: 46 toneladas, cañón liso de 125 mm que también lanza misiles guiados, y blindaje compuesto Kontakt-5 en ladrillos explosivos. El sistema Shtora 'parpadea' infrarrojos para confundir los misiles enemigos. La versión M (2019) añade pantalla térmica nueva y celosía anti-dron trasera.",
@@ -315,7 +315,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "Leopard 2 A6",
     origin: "Alemania",
     era: "1979 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/Leopard_2_A7V_313_Bad_Frankenhausen_2024.JPG?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/a/a7/Leopard_2_A7V_313_Bad_Frankenhausen_2024.JPG",
     function:
       "El tanque estándar de la OTAN europea: 62 toneladas, cañón liso Rheinmetall L55 de 120 mm (el mejor de su generación) y motor diésel de 1.500 CV que lo empuja a 68 km/h. Tripulación de 4 con cargador humano (más fiable que el autocargador soviético). España, Polonia, Finlandia, Grecia y 15 países más lo operan.",
     impact:
@@ -343,7 +343,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "RPG-7",
     origin: "URSS",
     era: "1961 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/RPG-7_detached.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/3/33/RPG-7_detached.jpg",
     function:
       "El lanzagranadas más usado del planeta: tubo de 40 mm recargable que dispara granadas autopropulsadas de carga hueca contra tanques, búnkeres, helicópteros (Afghanistán, Somalia) y hoy DRONES: las jaulas 'cope cage' de los tanques rusos existen SOLO por el RPG. Un combatiente entrenado dispara 4-6 por minuto.",
     impact:
@@ -371,7 +371,7 @@ export const ARSENAL: ArsenalWeapon[] = [
     name: "Obús M777",
     origin: "EE.UU./Reino Unido",
     era: "2005 · presente",
-    photo: "https://commons.wikimedia.org/wiki/Special:FilePath/M777_howitzer_rear.jpg?width=960",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/M777_howitzer_rear.jpg",
     function:
       "Obús remolcado de 155 mm con estructura de TITANIO: pesa 4,2 toneladas (la mitad que su predecesor M198) y un helicóptero CH-47 lo traslada completo. Dispara 40 km con munición base-bleed y 70 km con Excalibur GPS: la artillería 'ligera pero letal' de Ucrania, donde reemplazó a la artillería soviética del ejército ucraniano.",
     impact:

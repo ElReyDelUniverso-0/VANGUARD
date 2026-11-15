@@ -1149,16 +1149,6 @@ export default function Home() {
           handleTabChangeRef.current(cama.favorito);
         }
       } catch { /* la casa abre en INICIO igual */ }
-      // v402.4 ENLACE DIRECTO: /cuartel?sala=<clave> abre esa sala sin
-      // rodeos (los botones de otras salas y los enlaces compartidos llegan
-      // a su sitio, no al vestíbulo). Una clave desconocida se ignora.
-      try {
-        const pedida = new URLSearchParams(window.location.search).get("sala");
-        if (pedida && ALL_TABS.includes(pedida as TabKey)) {
-          forceDirRef.current = 1;
-          handleTabChangeRef.current(pedida as TabKey);
-        }
-      } catch { /* sin URL legible, el vestíbulo */ }
       hidratado.current = true;
     }, 0);
     return () => clearTimeout(id);

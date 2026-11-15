@@ -59,7 +59,7 @@ export function nivelFuente(cred: number): string {
   if (cred >= 8) return "AGENCIA A+";
   if (cred >= 6) return "MEDIO A";
   if (cred >= 5) return "MEDIO B";
-  return "MEDIO C";
+  return "FUENTE C";
 }
 
 export interface StatsPulso {

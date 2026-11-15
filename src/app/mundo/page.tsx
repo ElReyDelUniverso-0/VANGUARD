@@ -43,7 +43,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "EL MUNDO 3D — las guerras del planeta en vivo",
+  title: "EL MUNDO 3D — las guerras del planeta en vivo | VANGUARD",
   description:
     "El planeta entero en un globo 3D: guerras en vivo de todo el mundo con sus cables reales de las últimas 24 horas, gobiernos, organizaciones y gargantas estratégicas del planeta como marcas 3D. Rota, acércate y toca cualquier teatro de guerra. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/mundo` },

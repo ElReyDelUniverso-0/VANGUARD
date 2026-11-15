@@ -16,7 +16,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "TU MODO · TU CUENTA",
+  title: "TU MODO · TU CUENTA — Vanguard",
   description:
     "Elige tu modo en Vanguard: EL VÉRTIGO, EN VIVO, GUERRA HOY, ZONA CERO, MISIONES o la portada total. Aliádate con tu cuenta y entra directo a tu puerta cada día.",
   alternates: { canonical: "/modo" },

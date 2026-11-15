@@ -19,7 +19,7 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: `ARMERÍA — las ${ARSENAL.length} armas que explican los conflictos de hoy`,
+  title: `ARMERÍA — las ${ARSENAL.length} armas que explican los conflictos de hoy | VANGUARD`,
   description:
     "El archivo de armas de VANGUARD: cada arma real con su foto, su origen, su era, qué hace en los conflictos y por qué importa — con datos. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/armeria` },

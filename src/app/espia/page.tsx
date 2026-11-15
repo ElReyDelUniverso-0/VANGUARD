@@ -32,9 +32,9 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "MODO ESPÍA — radar de gobiernos en fuentes abiertas",
+  title: "MODO ESPÍA — radar de gobiernos en fuentes abiertas | VANGUARD",
   description:
-    "Lo que los gobiernos publican, en un solo lugar: ONU, OCHA, OMS y OPCW, con el índice de tensión de cada guerra. Fuentes oficiales, sin filtro.",
+    "Espía lo que los gobiernos PUBLICAN: escuchas oficiales de la ONU Noticias, la Sala de Prensa de la ONU, ReliefWeb (OCHA), la OMS y la OPCW (armas químicas), índice de tensión por teatro de guerra con su forma semanal, el pulso del planeta y los movimientos de gobierno del día. Todo de fuentes abiertas (OSINT), gratis y en español.",
   alternates: { canonical: `${SITE_URL}/espia` },
   openGraph: {
     title: "MODO ESPÍA — radar de gobiernos · VANGUARD",

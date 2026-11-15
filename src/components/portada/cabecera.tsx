@@ -8,22 +8,22 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LogoVanguard } from "./logo";
 import { Reloj } from "./reloj";
-import { MODULOS_PUBLICOS, entradaDe, moduloDe } from "./modulos";
-import { IcoBuscar, IcoInicio, IcoJuego, IcoMapa, IcoModulos, IcoVivo } from "./iconos";
+import { moduloDe } from "./modulos";
+import { IcoBuscar, IcoInicio, IcoJuego, IcoMapa, IcoPerfil, IcoVivo } from "./iconos";
 
-// v402.6 LOS NUEVE MÓDULOS — la cabecera lee los módulos de modulos.ts
-// (la portada está en el logo: ocho módulos caben en una sola fila)
 export const NAV = [
-  ...MODULOS_PUBLICOS.map((m) => ({ href: entradaDe(m), label: m.corto })),
+  { href: "/", label: "Portada" },
+  { href: "/mundo", label: "Mapa" },
+  { href: "/guerra-hoy", label: "Conflictos" },
+  { href: "/pulso-mundial", label: "Inteligencia" },
+  { href: "/cuartel", label: "Juego" },
 ];
 
 // v402 — cada sala cuelga de uno de los cinco módulos (fuente única: modulos.ts)
 function activo(ruta: string, href: string) {
   const m = moduloDe(ruta);
   if (href === "/") return !m && (ruta === "/" || ruta.startsWith("/lectura"));
-  // la pestaña Módulos se enciende en /modulos y en los módulos nuevos (sin botón propio)
-  if (href === "/modulos") return ruta === "/modulos" || (!!m && entradaDe(m).startsWith("/modulo/"));
-  if (m) return entradaDe(m) === href;
+  if (m) return m.nav === href;
   return ruta === href || ruta.startsWith(href + "/");
 }
 
@@ -81,8 +81,8 @@ const TABS = [
   { href: "/", label: "Inicio", Ico: IcoInicio },
   { href: "/mundo", label: "Mapa", Ico: IcoMapa },
   { href: "/en-vivo", label: "En vivo", Ico: IcoVivo, vivo: true },
-  { href: "/modulos", label: "Módulos", Ico: IcoModulos },
   { href: "/cuartel", label: "Juego", Ico: IcoJuego },
+  { href: "/perfil", label: "Perfil", Ico: IcoPerfil },
 ];
 
 /** Barra inferior tipo app (solo móvil) */

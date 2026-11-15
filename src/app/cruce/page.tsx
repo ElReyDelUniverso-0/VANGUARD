@@ -23,6 +23,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
 import { GraficoBarras } from "@/components/vanguard/grafico-barras";
+// v402.5 — los hechos del día, en su eje (no en diez párrafos)
+import { EjeDelDia } from "@/components/vanguard/eje-del-dia";
 import {
   CASA,
   alertasCercanas,
@@ -40,7 +42,7 @@ export const revalidate = 900;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "EL CRUCE — a qué distancia de casa pasó lo de hoy",
+  title: "EL CRUCE — a qué distancia de casa pasó lo de hoy | VANGUARD",
   description:
     "El cruce que nadie más hace: los sismos del día (USGS) y las alertas humanitarias (GDACS) ordenados por la distancia real, en kilómetros calculados, hasta esta casa. Más el parte del planeta (NASA EONET) y lo que ocurrió un día como hoy (Wikimedia). Cero cifras inventadas.",
   alternates: { canonical: `${SITE_URL}/cruce` },
@@ -283,21 +285,14 @@ export default async function CrucePage() {
               : "La enciclopedia no contestó: la casa no rellena la memoria con invenciones."}
           </p>
           {listaEfemerides.length > 0 ? (
-            <ol className="mt-4 space-y-2">
-              {listaEfemerides.map((e, i) => (
-                <li
-                  key={`${e.year ?? "s"}-${i}`}
-                  className="flex gap-3 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2"
-                >
-                  <span className="shrink-0 font-mono text-[12px] font-black tabular-nums text-amber-300">
-                    {e.year ?? "—"}
-                  </span>
-                  <span className="text-[12.5px] leading-relaxed text-slate-300">
-                    {e.texto}
-                  </span>
-                </li>
-              ))}
-            </ol>
+            <EjeDelDia
+              id="eje-dia-cruce"
+              eventos={listaEfemerides}
+              volanta="EL CRUCE · EL PASADO QUE SE CUMPLE HOY"
+              titulo="UN DÍA COMO HOY, EN UN EJE"
+              nota="Los hechos de esta misma fecha, en su año, para leerlos junto al mundo que acaba de moverse arriba."
+              acento="#f59e0b"
+            />
           ) : (
             <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-slate-500">

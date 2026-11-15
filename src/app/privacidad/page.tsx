@@ -28,7 +28,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Política de Privacidad",
+  title: "Política de Privacidad | VANGUARD",
   description:
     "Cómo VANGUARD maneja tus datos: identidad local en tu aparato, cuentas con contraseña cifrada, cookie de sesión técnica y terceros técnicos. Sin venta de datos.",
   alternates: {

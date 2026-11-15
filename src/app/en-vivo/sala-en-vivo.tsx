@@ -49,7 +49,7 @@ const TIER_ESTILO: Record<CableVivo["tier"], { label: string; chip: string; punt
   urgente:    { label: "URGENTE",    chip: "border-red-500/60 bg-red-500/15 text-red-300",           punto: "bg-red-500",    barra: "bg-red-500" },
   critico:    { label: "CRÍTICO",    chip: "border-orange-400/60 bg-orange-400/15 text-orange-300",  punto: "bg-orange-400", barra: "bg-orange-400" },
   alto:       { label: "ALTO",       chip: "border-amber-500/60 bg-amber-500/15 text-amber-300",     punto: "bg-amber-500",  barra: "bg-amber-500" },
-  desarrollo: { label: "EN DESARROLLO", chip: "border-cyan-400/60 bg-cyan-400/15 text-cyan-300",        punto: "bg-cyan-400",   barra: "bg-cyan-400" },
+  desarrollo: { label: "DESARROLLO", chip: "border-cyan-400/60 bg-cyan-400/15 text-cyan-300",        punto: "bg-cyan-400",   barra: "bg-cyan-400" },
   contexto:   { label: "CONTEXTO",   chip: "border-zinc-600 bg-zinc-700/30 text-zinc-300",           punto: "bg-zinc-500",   barra: "bg-zinc-500" },
 };
 
@@ -69,7 +69,7 @@ function nivelDe(cred: number): string {
   if (cred >= 8) return "AGENCIA A+";
   if (cred >= 6) return "MEDIO A";
   if (cred >= 5) return "MEDIO B";
-  return "MEDIO C";
+  return "FUENTE C";
 }
 
 interface PropsSala {
@@ -455,7 +455,7 @@ export function SalaEnVivo({ iniciales, calientesIniciales, statsIniciales }: Pr
                       href={c.u}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="ml-auto -my-2 inline-flex min-h-[32px] items-center px-2 -mr-2 text-zinc-400 hover:text-zinc-200"
+                      className="ml-auto text-zinc-500 hover:text-zinc-300"
                     >
                       VER FUENTE ↗
                     </a>

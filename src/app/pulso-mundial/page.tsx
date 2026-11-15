@@ -35,9 +35,9 @@ export const revalidate = 1800;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "WORLD PULSE — centro de inteligencia mundial",
+  title: "WORLD PULSE — centro de inteligencia mundial | VANGUARD",
   description:
-    "El pulso del planeta con datos reales del Banco Mundial: economía, sociedad y clima por país, con el WORLD PULSE INDEX y su metodología a la vista.",
+    "El pulso del planeta con datos reales y verificables: indicadores económicos, sociales y ambientales del Banco Mundial (CC BY 4.0), cronología de acontecimientos, WORLD PULSE INDEX con metodología transparente y filtros por continente, país, categoría y período. Sin estadísticas inventadas: fecha de actualización, procedencia y limitaciones en cada dato.",
   alternates: { canonical: `${SITE_URL}/pulso-mundial` },
   openGraph: {
     title: "WORLD PULSE — el centro de inteligencia mundial · VANGUARD",

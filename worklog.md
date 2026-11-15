@@ -6134,27 +6134,12 @@ Orden recibida: «sigue agregando todo eso y hazlo más único».
 - Registro: v402.4 «LA DISTANCIA DE CASA» sobre el main real v402.3 (bloque de la otra IA intacto), bitacora entrada v402.4, catalogo-real real-172 (172 piezas), nucleo mod:cruce, section-search, sitemap.
 - QA local (next dev :3883): /cruce 200 (sismos a 236 / 275 / 303 / 316 / 334 km; alertas a 1.311 / 1.951 / 3.044 km; barras 7,75 % / 9,03 % / 9,95 % / 10,38 % / 10,97 % y 47,76 %), /historia 200 con 10 efemérides (565 → 1777), /divisas 200 con 0,9048 EUR/USD. 0 «sin señal». tsc acotado LIMPIO.
 
----
-Task ID: v402.5
-Agent: IA de diseño
-Task: «30 que agregarías o mejorarías, agrégalo ahora mismo» — TREINTA AJUSTES
-Work Log:
-- Auditoría Playwright de producción: 50 rutas móvil, 230 enlaces internos (herr/auditoria30.py).
-- Peso: armería 11,1→2,8 MB, galería 11,4→~3 MB, mech-leela.glb 2,4 MB→665 KB, caché estáticos 7 días.
-- Enlaces: /cuartel?sala=, redirecciones /maquina-del-tiempo /detonacion /lectura, catálogo sin Link a /api.
-- SEO: 29 títulos con VANGUARD doble, 5 descripciones ≤160, h1 en /vertigo y /vanguard2, /cuartel en sitemap.
-- Acceso: salto al contenido, piso de lectura móvil, impresión, zonas tocables.
-- Enganche: spot 30 s en portada + WhatsApp + descarga; claves de la crónica por WhatsApp; atajos PWA.
-- Pendientes: MEDIO C, EN DESARROLLO, franjas ilustradas en /verdad-cruda y /escenarios.
+## Task ia3-v402.5 · EL EJE DEL DÍA (arreglar la densidad de la v402.4 en su causa)
 
----
-Task ID: v402.6
-Agent: IA de diseño
-Task: «sigue agregando más módulos, Vanguard tiene mucho más por mostrar que solo noticias» — LOS NUEVE MÓDULOS (opción del Dueño: reordenar lo que ya existe)
-Work Log:
-- modulos.ts: Inteligencia (16 salas) → Conocimiento, Secretos, Arsenal, Datos vivos, Medios. /teatro-3d sale de Mapa y /escenarios y /audios de Conflictos (cada sala en un solo módulo: moduloDe es de primera coincidencia). /cruce y /herramientas entran en Datos vivos.
-- Campos nuevos: corto, img, gancho; helpers portadaDe, entradaDe, MODULOS_PUBLICOS.
-- Nuevo: app/modulo/[id] (generateStaticParams, dynamicParams=false, 404 si no existe), app/modulos, components/portada/modulos-rejilla.tsx.
-- Portada: sección «Mucho más que noticias» (Sección 02). Cabecera: NAV derivada de MODULOS_PUBLICOS, sin «Portada» (logo). Barra móvil: Perfil → Módulos. Carcasa: el sello del módulo enlaza a su portada y muestra el nombre corto en móvil.
-- Sitemap: /modulos y /modulo/* (menos estado). CSS en portada.css (.vx-mods, cabecera ceñida) y piel.css (.vx-pest-corto).
-- QA: tsc acotado LIMPIO, eslint sin errores nuevos, next dev: 10 rutas nuevas 200, /modulo/nada 404, 0 errores de consola; cabecera sin desborde a 1024/1280/1440/1920; capturas móvil 390×844 y escritorio 1440.
+- El defecto que se arregla, con su número: la v402.4 metió las efemérides del día en /historia como diez párrafos y el AGENTE 7 lo cobró (1.117 → 1.305 letras por visual). Se arregla la causa, no el síntoma.
+- components/vanguard/eje-del-dia.tsx NUEVO: eje horizontal con un punto por hecho en su año exacto (565 → este año), marcas redondas derivadas del arco, texto corto debajo (recorte 92), aria-label completo por punto, `id` configurable. Server component, cero JS.
+- /historia: sustituida la lista por el eje (id="eje-dia-historia") + ilustración wikiguerra.jpg (1408×704 declarados, lazy) abriendo el bloque → la sala gana un visual sin perder contenido.
+- /cruce: mismo eje (id="eje-dia-cruce") en lugar de su lista. Una pieza, dos salas.
+- Registro: v402.5 «EL EJE DEL DÍA» sobre el main real v402.4 (bloque de la otra IA intacto); bitacora entrada v402.5; catalogo-real real-173 (173 piezas). Sin sala nueva: ni sitemap ni núcleo cambian.
+- QA local (next dev :3884): /historia 200 (eje con 10 puntos, 2 imágenes), /cruce 200 (eje + distancias 236/275/316/528 km). tsc acotado LIMPIO (11 archivos).
+- DEFECTO CAZADO POR EL BUILD DE VERCEL (dos previews en rojo, 853c0e43 y d301243e): al insertar la entrada v402.5 en bitacora.ts, el reemplazo del encabezado se llevó la línea `{ version: "v402.4",` y el archivo quedó con un objeto sin abrir → TS1005 en cadena. Los chequeos acotados anteriores no lo vieron porque NO incluían bitacora.ts en el `include`. Arreglado (se restauró la entrada v402.4) y el chequeo acotado ahora sí lo incluye. Lección: cuando se reescribe el encabezado de BITACORA, comprobar SIEMPRE que la entrada anterior conserva su `version:` y que el tsc acotado incluye bitacora.ts.

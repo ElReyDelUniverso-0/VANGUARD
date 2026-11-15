@@ -91,7 +91,7 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "La sala de los servicios — los 36 expedientes de la inteligencia mundial",
+  title: "La sala de los servicios — los 36 expedientes de la inteligencia mundial | Vanguard",
   description:
     "Los 18 ojos de la Comunidad de Intelligence de los Estados Unidos (ODNI, CIA, NSA, FBI, DIA...) y los 18 servicios extranjeros del resto del planeta (MI6, Mossad, FSB, MSS...): fundación, sede, lema, misión y expediente. Conocimiento abierto presentado como colección. Gratis, en español.",
   alternates: { canonical: `${SITE_URL}/servicios` },

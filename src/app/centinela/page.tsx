@@ -24,7 +24,7 @@ import { PortadaSala } from "@/components/vanguard/portada-sala";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Tu Centinela — sigue lo que te importa",
+  title: "Tu Centinela — sigue lo que te importa | VANGUARD",
   description:
     "Pon bajo vigilancia teatros y medios reales: VANGUARD te cuenta cuánto han hablado en 24 horas y cuándo fue su última señal. Sin notificaciones falsas y sin salir de la casa.",
   alternates: { canonical: `${SITE_URL}/centinela` },
