@@ -6241,3 +6241,15 @@ Work Log:
 - Registro: version.ts v403.3 «EL SIGLO DEL OFICIO» (anterior v403.2), bitacora v403.3, catalogo-real real-176 (176 piezas).
 - Verificación previa: tsc acotado LIMPIO. /servicios y /rostros importan db.ts → no se pueden renderizar en local; la QA real es producción. El histograma se comprobó primero con los literales de la fuente y después EN PRODUCCIÓN: 36 expedientes, la más antigua de 1882, décadas de 1880 a 2020 y pico de 5 en los cuarenta y en los 2000.
 - LECCIÓN: cuando la otra IA publica mientras compilamos, el PR se vuelve «dirty» sin avisar. Rebasado siempre: bajar los archivos de registro de `main` por raw JUSTO antes de escribir, nunca reutilizar los locales.
+
+## Task ia3-v403.4 · LA FOTO QUE YA VENÍA (tanda 1 del diagnóstico de noticias: DATOS)
+
+- Antes de escribir una línea de diseño se cerraron los defectos de raíz del informe `vanguard-noticias-diagnostico.md`.
+- D5 · PARSER CON OJOS: `fetchRssSource` solo leía title/link/pubDate/description. Ahora `imagenDeRss()` busca en media:content, media:thumbnail, enclosure, <image><url>, y el <img> de la descripción MÁS content:encoded (NPR). Rechaza data:, relativas, svg/gif y píxeles de seguimiento. Medido con 8 medios reales: BBC 8/8 · France 24 8/8 · ABC 8/8 · El Mundo 8/8 · Guardian 8/8 · NPR 6/8 · DW 0/8 y Euronews 0/8 (no publican imagen en su feed: cero honesto).
+- D1 · EL ARCHIVO CONGELADO (causa raíz medida): `src/lib/db.ts` usa SQLite comprometida al repo (`db/custom.db`) y en Vercel la copia a /tmp por instancia → cada lambda escribe en su copia efímera y el archivo del repo no avanza (último cable guardado: 31-oct, medido). No se puede curar sin base de datos real (llave pendiente): se DECLARA y se rodea — feed y artículo sirven el canal vivo cuando el archivo está viejo (>3 h).
+- D2 · IDENTIDAD ÚNICA: `/noticia/[id]` resolvía solo `findUnique({id})`. Ahora: ① cuid en base, ② `urlDesdeId()` (base64url o URL cruda) → `findFirst({externalId})`, ③ `getCableVivo()` contra `/api/news`. Verificado en producción el 15-nov: la noticia fresca abría «Cable no disponible».
+- D3 · DOMINIO: nuevo `src/lib/site.ts` (SITE_URL + urlAbsoluta). feed.xml, noticia/[id] y sitemap.ts dejan de escribir `vanguard-kq9r.vercel.app` (alias de preview) y leen de la fuente única. Quedan otros archivos con el literal (64 en total) para una barrida aparte, sin tocarlos aquí.
+- D4 · FEED CON IMAGEN: `<enclosure>` + `<media:content>` por cable y `xmlns:media` en el canal.
+- D6 · FOTO HONESTA: `withFallbackImage()` devuelve `imagenArchivo: true` cuando la imagen es del repositorio y no del medio, para que la interfaz pueda rotularla.
+- Registro: version.ts v403.4 «LA FOTO QUE YA VENÍA» (anterior v403.3), bitacora v403.4, catalogo-real real-177 (177 piezas).
+- tsc acotado LIMPIO (solo el ruido conocido de db.ts/PrismaClient sin generate).
