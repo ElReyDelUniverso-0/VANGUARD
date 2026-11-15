@@ -1,4 +1,14 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.9 EL CRUCE CUADRA — la v402.8 trajo un dato incoherente y se arregla hoy.
+// ① En la v402.8 la tarjeta de país sacaba el NOMBRE de un mapa por id y el
+//    SISMO de un segundo `find`: podían ser dos temblores distintos, y la
+//    tarjeta llegó a producción diciendo «528 km» junto a un sismo que estaba
+//    a 236. Un dato incoherente es peor que ningún dato.
+// ② Ahora país y sismo salen JUNTOS de la misma fila: se elige el evento con
+//    la capital más cercana de cada país y se pinta ESE evento con ESE
+//    kilómetro. Una sola fuente por tarjeta, cero cruces de dedos.
+// ③ La lista se ordena por cercanía a la capital y se corta en cuatro: la
+//    tarjeta más cercana arriba, siempre.
 // v402.8 DÓNDE TIEMBLA Y QUIÉN LO CUENTA — el cruce que faltaba desde la v402.4.
 // ① Un sismo no dice de qué país es: dice «14 km W of X» y trae coordenada. La
 //    casa tiene las capitales REALES de 84 naciones (atlas-data, PAISES_ATLAS
@@ -5516,8 +5526,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.8";
-export const APP_CODENAME = "DÓNDE TIEMBLA Y QUIÉN LO CUENTA";
+export const APP_VERSION = "v402.9";
+export const APP_CODENAME = "EL CRUCE CUADRA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5577,7 +5587,7 @@ export const APP_CODENAME = "DÓNDE TIEMBLA Y QUIÉN LO CUENTA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.7";
+export const APP_VERSION_ANTERIOR = "v402.8";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
