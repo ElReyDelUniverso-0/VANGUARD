@@ -189,6 +189,19 @@ export const MODULOS_NUCLEO: ModuloNucleo[] = [
     dependencias: ["fnt:fuentes", "fnt:indicadores"],
     alias: "herramientas fuentes api llaves datos abiertos usgs sismos nasa eonet gdacs banco mundial acnur refugiados wikimedia efemerides open-meteo clima aire cambio divisas bitcoin coingecko",
   },
+  {
+    id: "mod:cruce",
+    nombre: "EL CRUCE",
+    lema: "Lo que pasó hoy, medido en kilómetros desde esta casa",
+    descripcion:
+      "El cruce que ninguna fuente hace sola: los sismos del día (USGS) y las alertas humanitarias (GDACS) ordenados por la distancia real a esta casa, calculada en el render con la fórmula de la esfera sobre las coordenadas que publica cada organismo. Las barras se miden contra lo más lejano y se explica. Incluye las efemérides del día y el parte del planeta (NASA EONET). Sin señal se dice: no se rellena con ceros.",
+    categoria: "MUNDO",
+    ruta: "/cruce",
+    permiso: "publico",
+    estado: "VIVO",
+    dependencias: ["fnt:fuentes", "fnt:teatros"],
+    alias: "cruce distancia casa km sismos terremotos alertas gdacs usgs cercania efemerides planeta onu",
+  },
   // ── SIMULACIÓN ─────────────────────────────────────────────
   {
     id: "mod:teatro-3d",

@@ -448,6 +448,24 @@ export async function efemeridesDelDia(): Promise<Senal | null> {
   };
 }
 
+/** Las efemérides del día como lista corta (año + texto), para pintarlas. */
+export async function efemeridesEnLista(
+  limite = 8
+): Promise<{ year: number | null; texto: string }[]> {
+  const hoy = new Date();
+  const mm = String(hoy.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(hoy.getUTCDate()).padStart(2, "0");
+  const d = await jsonDe<Wikimedia>(
+    `https://api.wikimedia.org/feed/v1/wikipedia/es/onthisday/events/${mm}/${dd}`
+  );
+  if (!d || !Array.isArray(d.events)) return [];
+  return d.events
+    .slice()
+    .sort((a, b) => (a.year ?? 0) - (b.year ?? 0))
+    .slice(0, limite)
+    .map((e) => ({ year: e.year ?? null, texto: e.text }));
+}
+
 // ── 7 · Open-Meteo: el cielo de ahora (Santo Domingo) ────────────────────
 type Clima = {
   current: { temperature_2m: number; wind_speed_10m: number; time: string };
@@ -550,4 +568,124 @@ export async function todasLasSenales(): Promise<{
     bitcoin,
   ].filter((s): s is Senal => s !== null);
   return { senales, barrasSismos: sismos.barras, barrasEventos: eventos.barras };
+}
+
+// ============================================================
+// v402.4 LA DISTANCIA DE CASA (añadido al mismo módulo)
+//
+// Lo que ninguna de las diez fuentes da y sí se puede CALCULAR con ellas:
+// a qué distancia de esta casa ocurrió lo que pasó hoy en el planeta.
+//
+// No se inventa nada: USGS entrega la coordenada de cada sismo y GDACS la de
+// cada alerta (con su nivel declarado). Lo único que pone la casa es el punto
+// desde el que mira —Santo Domingo, donde vive el Dueño— y la fórmula de la
+// distancia sobre la esfera (haversine, tierra media de 6.371 km).
+//
+// Esto es el cruce que la casa puede presumir: nadie más junta «qué tembló»,
+// «qué alertó la ONU» y «cuánto lejos me quedó» en la misma pantalla.
+// ============================================================
+
+/** El punto desde el que esta casa mira el mundo (coordenada real, no cifra). */
+export const CASA = { nombre: "Santo Domingo", lat: 18.4661, lon: -69.9312 } as const;
+
+const RADIO_TIERRA_KM = 6371;
+
+/** Distancia sobre la esfera entre dos coordenadas, en kilómetros. */
+export function distanciaKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const rad = Math.PI / 180;
+  const dLat = (lat2 - lat1) * rad;
+  const dLon = (lon2 - lon1) * rad;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLon / 2) ** 2;
+  return 2 * RADIO_TIERRA_KM * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+export type EventoCercano = {
+  /** qué fue, en corto */
+  titulo: string;
+  /** dónde lo pone la fuente */
+  lugar: string;
+  /** magnitud o nivel de alerta, tal como lo declara la fuente */
+  medida: string;
+  /** kilómetros desde esta casa, calculados aquí */
+  km: number;
+  lat: number;
+  lon: number;
+};
+
+type UsgsConCoords = {
+  properties: { mag: number | null; place: string | null; time: number };
+  geometry: { coordinates: [number, number, number] } | null;
+};
+
+/** Los sismos de hoy, ordenados por cercanía a esta casa (kilómetros reales). */
+export async function sismosCercanos(limite = 6): Promise<EventoCercano[]> {
+  const d = await jsonDe<{ features: UsgsConCoords[] }>(
+    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+  );
+  if (!d || !Array.isArray(d.features)) return [];
+  const conPunto = d.features.filter(
+    (f) => f.geometry && Array.isArray(f.geometry.coordinates)
+  );
+  return conPunto
+    .map((f) => {
+      const [lon, lat] = f.geometry!.coordinates;
+      return {
+        titulo: "sismo",
+        lugar: (f.properties.place ?? "sin lugar declarado").slice(0, 60),
+        medida:
+          typeof f.properties.mag === "number" ? `${f.properties.mag.toFixed(1)} M` : "sin magnitud",
+        km: Math.round(distanciaKm(CASA.lat, CASA.lon, lat, lon)),
+        lat,
+        lon,
+      };
+    })
+    .sort((a, b) => a.km - b.km)
+    .slice(0, limite);
+}
+
+/** Las alertas de GDACS, ordenadas por cercanía a esta casa. */
+export async function alertasCercanas(limite = 6): Promise<EventoCercano[]> {
+  const xml = await textoDe("https://www.gdacs.org/xml/rss.xml");
+  if (!xml) return [];
+  const items = xml.split("<item>").slice(1);
+  const lista: EventoCercano[] = [];
+  for (const it of items) {
+    const punto = /<geo:Point>\s*<geo:lat>([-\d.]+)<\/geo:lat>\s*<geo:long>([-\d.]+)<\/geo:long>/.exec(it);
+    if (!punto) continue;
+    const lat = Number(punto[1]);
+    const lon = Number(punto[2]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+    const nivel = /<gdacs:alertlevel>\s*([A-Za-z]+)\s*<\/gdacs:alertlevel>/.exec(it)?.[1] ?? "sin nivel";
+    const pais = /<gdacs:country>\s*([^<]+)<\/gdacs:country>/.exec(it)?.[1]?.trim() ?? "sin país declarado";
+    const tipo = /<gdacs:eventtype>\s*([A-Za-z]+)\s*<\/gdacs:eventtype>/.exec(it)?.[1] ?? "evento";
+    const titulo = /<title>\s*([^<]+)<\/title>/.exec(it)?.[1]?.trim() ?? "alerta sin título";
+    lista.push({
+      titulo: `${tipo} · ${titulo.slice(0, 54)}`,
+      lugar: pais,
+      medida: nivel,
+      km: Math.round(distanciaKm(CASA.lat, CASA.lon, lat, lon)),
+      lat,
+      lon,
+    });
+  }
+  return lista.sort((a, b) => a.km - b.km).slice(0, limite);
+}
+
+/** Las dos miradas juntas: lo que tembló y lo que alertó, por cercanía. */
+export async function loMasCercaDeCasa(): Promise<{
+  sismos: EventoCercano[];
+  alertas: EventoCercano[];
+}> {
+  const [sismos, alertas] = await Promise.all([
+    sismosCercanos(6).catch(() => []),
+    alertasCercanas(6).catch(() => []),
+  ]);
+  return { sismos, alertas };
 }

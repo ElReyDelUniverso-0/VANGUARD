@@ -188,6 +188,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      // v402.4 EL CRUCE — los sismos del día y las alertas de la ONU
+      // ordenados por la distancia real a esta casa, en kilómetros
+      // calculados con las coordenadas de USGS y GDACS
+      url: `${SITE_URL}/cruce`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       // v402.3 LAS DIEZ LLAVES — las diez fuentes abiertas que la casa
       // consulta en vivo (sismos, eventos naturales, alertas ONU/CE,
       // pobreza, desplazamiento, efemérides, clima, aire, cambio, bitcoin),

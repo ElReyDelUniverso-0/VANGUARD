@@ -1,4 +1,20 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.4 LA DISTANCIA DE CASA — lo más único que la casa puede presumir sin
+// inventar un número: el cruce que ninguna de las fuentes hace sola.
+// ① SALA NUEVA /cruce: los sismos del día (USGS) y las alertas de GDACS se
+//    ordenan por la distancia REAL a esta casa, calculada en el render con la
+//    fórmula de la esfera (haversine, radio medio 6.371 km) sobre las
+//    coordenadas que cada organismo publica. Nadie más pone «qué tembló»,
+//    «qué alertó la ONU» y «cuánto me quedó lejos» en la misma pantalla.
+// ② /historia gana UN DÍA COMO HOY: las efemérides del día de Wikimedia
+//    (CC BY-SA 4.0) entran a la sala de la memoria, con año y texto, y se
+//    declaran si la fuente calla. La línea de tiempo de v401.2 sigue intacta.
+// ③ /divisas gana EL CAMBIO DE HOY: el tipo de referencia del Banco Central
+//    Europeo, vivo, junto a la tabla capturada — sin destruir la tabla.
+// ④ Las barras de /cruce se miden contra lo más LEJANO de la lista y se
+//    explica en la nota: en esa sala, barra corta significa «al lado».
+// ⑤ El punto de mira es explícito y declarado: Santo Domingo. La distancia la
+//    pone la fórmula; los datos, USGS y GDACS. Cero cifras a mano.
 // v402.3 LAS DIEZ LLAVES — pilar 3 del Dueño, aplicado al pie de la letra:
 // «estudiar patrones de fuera y fusionarlos en algo propio, sin copiar código,
 // marcas ni diseños». Orden recibida: «extraer herramientas que existen en el
@@ -5434,8 +5450,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.3";
-export const APP_CODENAME = "LAS DIEZ LLAVES";
+export const APP_VERSION = "v402.4";
+export const APP_CODENAME = "LA DISTANCIA DE CASA";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5495,7 +5511,7 @@ export const APP_CODENAME = "LAS DIEZ LLAVES";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.2";
+export const APP_VERSION_ANTERIOR = "v402.3";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
