@@ -247,7 +247,16 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
           const videos = (sinCodigo.match(/<video\b/gi) || []).length;
           const lienzos = (sinCodigo.match(/<canvas\b/gi) || []).length;
           const svgs = (sinCodigo.match(/<svg\b/gi) || []).length;
-          const visuales = imagenes + videos + lienzos + svgs;
+          // v403.0 — EL INDICADOR APRENDE A VER LOS GRÁFICOS: las barras que la
+          // casa pinta con <div role="img" aria-label="…"> son elementos
+          // visuales de verdad (cada una lleva su cifra y su descripción), pero
+          // el contador solo miraba <svg>. Eso castigaba justo lo que el pilar 2
+          // premia: /atlas ganó dos gráficos y su número EMPEORÓ. Se cuentan los
+          // gráficos descargados (role="img") que no estén ya dentro de un <svg>.
+          // Solo suma donde hay dibujo con descripción: no hay forma de inflarlo
+          // con texto.
+          const graficos = (sinCodigo.match(/role="img"/gi) || []).length;
+          const visuales = imagenes + videos + lienzos + svgs + graficos;
           humo.densidad.push({
             ruta: r,
             kb: Math.round(html.length / 1024),
@@ -256,6 +265,7 @@ if (iSmoke > -1 && process.argv[iSmoke + 1]) {
             videos,
             lienzos,
             svgs,
+            graficos,
             visuales,
             // letras de lectura por CADA elemento visual: alto = página de libro
             ratio: visuales ? Math.round(visible.length / visuales) : visible.length,
@@ -327,7 +337,7 @@ if (humo) {
     const sumaVis = orden.reduce((a, x) => a + x.visuales, 0);
     const mediana = orden.map((x) => x.ratio).sort((a, b) => a - b)[Math.floor(orden.length / 2)];
     console.log(
-      `AGENTE 7 · DENSIDAD   ${sumaLetras.toLocaleString("es")} letras · ${sumaVis} elementos visuales (img/vídeo/lienzo/svg) · mediana ${mediana} letras por visual`,
+      `AGENTE 7 · DENSIDAD   ${sumaLetras.toLocaleString("es")} letras · ${sumaVis} elementos visuales (img/vídeo/lienzo/svg/gráfico) · mediana ${mediana} letras por visual`,
     );
     console.log("── LAS SALAS MÁS «DE LIBRO» (letras por elemento visual) ──");
     for (const x of orden.slice(0, 12))
