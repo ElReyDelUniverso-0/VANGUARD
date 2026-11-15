@@ -253,7 +253,10 @@ body:has(.vx-carcasa) .fixed.bottom-2.right-2 { border-radius: 4px !important; b
 .vx-pest-lista a:hover { color: var(--vx-tx); background: rgba(232,197,106,.05); }
 .vx-pest-lista a[data-on="1"] { color: var(--vx-gold); }
 .vx-pest-lista a[data-on="1"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 0; height: 2px; background: var(--vx-gold); box-shadow: 0 0 10px rgba(232,197,106,.7); }
-@media (max-width: 640px) { .vx-pest-mod { font-size: 0; gap: 0; padding-right: 12px; } .vx-pest-mod i { width: 10px; height: 10px; } }
+@media (max-width: 640px) { .vx-pest-mod { font-size: 9.5px; gap: 7px; padding-right: 10px; letter-spacing: .12em; } .vx-pest-mod i { width: 8px; height: 8px; } .vx-pest-in { gap: 8px; } }
+/* v402.6: el módulo dice su nombre también en móvil (corto) */
+.vx-pest-corto { display: none; }
+@media (max-width: 640px) { .vx-pest-largo { display: none; } .vx-pest-corto { display: inline; } }
 
 /* el submenú viejo de cada sala ya lo hace la barra de pestañas */
 body:has(.vx-carcasa) .vx-sub-viejo { display: none !important; }

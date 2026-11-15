@@ -26,6 +26,8 @@ import { Teletipo } from "@/components/portada/teletipo";
 import { gruposHistorias } from "@/lib/portada/frentes";
 import { TituloSeccion } from "@/components/portada/titulo-seccion";
 import { SpotPortada } from "@/components/portada/spot-portada";
+import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
+import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 
 
 export const revalidate = 300;
@@ -175,13 +177,19 @@ export default async function Portada() {
           </section>
         )}
 
+        {/* v402.6 LOS NUEVE MÓDULOS — lo que la casa tiene además de noticias, a la vista */}
+        <section className="vx-sec" aria-label="Los módulos de Vanguard">
+          <TituloSeccion sello={`Sección 02 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
+          <ModulosRejilla compacta />
+        </section>
+
         <section className="vx-sec" aria-label="Vanguard en 30 segundos">
           <TituloSeccion sello="Sección · El spot" titulo="Vanguard en 30 segundos" sub="Lo que es esta casa, contado con sus propias pantallas." />
           <SpotPortada />
         </section>
 
         <section className="vx-sec" aria-label="Mapa de conflictos">
-          <TituloSeccion sello="Sección 02 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
+          <TituloSeccion sello="Sección 03 · Radar" titulo="El mapa vivo" sub="Dónde se mueve el mundo ahora mismo." enlace="/mundo" textoEnlace="Mapa 3D" />
           <MapaPortada notas={notas} />
         </section>
 
@@ -197,7 +205,7 @@ export default async function Portada() {
         ))}
 
         <section className="vx-sec" aria-label="Explora Vanguard">
-          <TituloSeccion sello="Sección 03 · Las salas" titulo="Explora Vanguard" sub="Más que noticias: vive el mundo en 3D, en directo y jugando." />
+          <TituloSeccion sello="Sección 04 · Las salas" titulo="Explora Vanguard" sub="Las salas favoritas de la casa: en 3D, en directo y jugando." />
           <div className="vx-salas">
             {SALAS.map((s) => (
               <Link key={s.href} href={s.href} className="vx-sala">

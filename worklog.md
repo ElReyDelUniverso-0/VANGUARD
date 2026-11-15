@@ -6146,3 +6146,15 @@ Work Log:
 - Acceso: salto al contenido, piso de lectura móvil, impresión, zonas tocables.
 - Enganche: spot 30 s en portada + WhatsApp + descarga; claves de la crónica por WhatsApp; atajos PWA.
 - Pendientes: MEDIO C, EN DESARROLLO, franjas ilustradas en /verdad-cruda y /escenarios.
+
+---
+Task ID: v402.6
+Agent: IA de diseño
+Task: «sigue agregando más módulos, Vanguard tiene mucho más por mostrar que solo noticias» — LOS NUEVE MÓDULOS (opción del Dueño: reordenar lo que ya existe)
+Work Log:
+- modulos.ts: Inteligencia (16 salas) → Conocimiento, Secretos, Arsenal, Datos vivos, Medios. /teatro-3d sale de Mapa y /escenarios y /audios de Conflictos (cada sala en un solo módulo: moduloDe es de primera coincidencia). /cruce y /herramientas entran en Datos vivos.
+- Campos nuevos: corto, img, gancho; helpers portadaDe, entradaDe, MODULOS_PUBLICOS.
+- Nuevo: app/modulo/[id] (generateStaticParams, dynamicParams=false, 404 si no existe), app/modulos, components/portada/modulos-rejilla.tsx.
+- Portada: sección «Mucho más que noticias» (Sección 02). Cabecera: NAV derivada de MODULOS_PUBLICOS, sin «Portada» (logo). Barra móvil: Perfil → Módulos. Carcasa: el sello del módulo enlaza a su portada y muestra el nombre corto en móvil.
+- Sitemap: /modulos y /modulo/* (menos estado). CSS en portada.css (.vx-mods, cabecera ceñida) y piel.css (.vx-pest-corto).
+- QA: tsc acotado LIMPIO, eslint sin errores nuevos, next dev: 10 rutas nuevas 200, /modulo/nada 404, 0 errores de consola; cabecera sin desborde a 1024/1280/1440/1920; capturas móvil 390×844 y escritorio 1440.

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
+import { MODULOS } from "@/components/portada/modulos";
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -479,6 +480,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.5,
     },
+    // v402.6 LOS NUEVE MÓDULOS: el índice y la portada de cada módulo
+    {
+      url: `${SITE_URL}/modulos`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    ...MODULOS.filter((m) => m.id !== "estado").map((m) => ({
+      url: `${SITE_URL}/modulo/${m.id}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
     ...teatros,
     ...noticias,
   ];
