@@ -6207,3 +6207,13 @@ Work Log:
 - Registro: version.ts v403.0 «EL PESO DEL MUNDO» (anterior v402.9), bitacora v403.0, catalogo-real real-175 (175 piezas).
 - QA local (next dev :3886): /atlas 200 con los dos gráficos (barras 100 % India 1.441 M / 97,85 % China 1.410 M / 23,66 % EE. UU. 341 M …) y el ancla resuelta. tsc acotado LIMPIO.
 - SUSTO Y ARREGLO: al bajar el worklog por la API de contenidos (base64) llegó un resto de 1.278 bytes — GitHub no devuelve `content` para archivos de más de 1 MB. El primer commit de esta rama habría borrado 1,7 MB de historia. Se detectó ANTES del merge y se rehízo el archivo por la API `raw`. Lección: los archivos grandes del repo se bajan SIEMPRE con `Accept: application/vnd.github.raw`.
+
+## Task ia3-v403.1 · EL SIGLO DEL OFICIO (las dos salas que quedaban «de libro»)
+
+- ALCANCE ADITIVO: /servicios y /rostros son salas grandes y de la otra IA. No se ha quitado ni una línea: solo se añaden gráficos con la fuente que la propia sala ya importa, y anclas nuevas en su portada. Aviso dejado en el inbox (MENSAJE #53).
+- /servicios (57.068 letras · 9 visuales · 6.341 letras/visual): `DECADAS_SERVICIOS` agrupa `fundacion` en décadas sobre COMUNIDAD + RED (18 expedientes, 1909→2002, máximo 1940/1950 con 3 cada una) y `ANTIGUEDAD_SERVICIOS` calcula los años de oficio con `new Date().getFullYear()` en el render (la página es force-dynamic). Etiqueta con `nombreEs ?? nombre`; la nota NO usa `pais` porque Agencia y ServicioExtranjero no comparten ese campo (lo cazó tsc: TS2339).
+- /rostros (49.799 letras · 5.533 letras/visual): `TOP_PODER_ROSTROS` ordena las 34 fichas por el índice `poder` (0-100) y corta en 10.
+- Los tres gráficos llevan `id` propio (v402.3): servicios-por-decada · servicios-por-antiguedad · rostros-por-poder.
+- Registro: version.ts v403.1 «EL SIGLO DEL OFICIO» (anterior v403.0), bitacora v403.1, catalogo-real real-176 (176 piezas).
+- Verificación previa: tsc acotado LIMPIO (servicios, rostros, atlas, gráfico, version, bitacora, catálogo). /servicios y /rostros importan db.ts, así que no se pueden renderizar en local: la QA real es producción.
+- El histograma se comprobó fuera de React con los literales de la fuente (18 fundaciones: 1900×2 · 1910×2 · 1940×3 · 1950×3 · 1960×1 · 1970×1 · 1980×3 · 1990×2 · 2000×1).
