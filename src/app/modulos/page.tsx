@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
+import { BotonMundos } from "@/components/mundos/puerta-mundos";
 import { MODULOS, MODULOS_PUBLICOS } from "@/components/portada/modulos";
 
 const SALAS = MODULOS_PUBLICOS.reduce((t, m) => t + m.pestanas.length, 0);
@@ -26,6 +27,9 @@ export default function Modulos() {
           <p>
             {MODULOS_PUBLICOS.length} módulos y {SALAS} salas para entender el mundo: elige por dónde entrar.
           </p>
+          <div style={{ marginTop: 16 }}>
+            <BotonMundos />
+          </div>
         </div>
       </section>
       <section className="vx-sec" aria-label="Módulos">

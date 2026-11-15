@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { TEATROS, PAGE_SIZE_ARCHIVO } from "@/lib/teatros";
-import { MODULOS } from "@/components/portada/modulos";
+import { MODULOS, SALAS_INTERNAS } from "@/components/portada/modulos";
 
 // v18 SEO: sitemap con la portada a máxima prioridad y refresco diario
 // (la portada muestra noticias en vivo, Google la re-rastrea a menudo).
@@ -12,6 +12,24 @@ import { MODULOS } from "@/components/portada/modulos";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://vanguard-kq9r.vercel.app";
 
+// v402.11 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento (Search Console:
+// «Google no reconoce esta URL» en /conflicto/*). Tres reglas nuevas, todas
+// derivadas de fuentes únicas (nada a mano, nada inventado):
+// ① MISMA REGLA QUE LA PÁGINA: /conflicto/[tag] responde 200 en cuanto el
+//    teatro existe en TEATROS y tiene ≥ 1 cable (si no, 404). El mapa exigía
+//    ≥ 5 y dejaba fuera páginas públicas, enlazadas e indexables (Líbano).
+//    Un teatro nuevo en TEATROS con cables entra solo, sin tocar este archivo.
+// ② NADA «noindex» EN EL MAPA: las SALAS_INTERNAS llevan X-Robots-Tag noindex
+//    (next.config) y aun así viajaban aquí → Search Console las marca como
+//    «Enviada pero con noindex». Se filtran con la misma lista.
+// ③ LASTMOD VERDADERO: las rutas fijas declaraban la hora del build (cada
+//    despliegue «modificaba» 54 URLs) y Google aprende a ignorar un lastmod
+//    que siempre cambia. Las salas que viven del archivo declaran la última
+//    noticia real; el resto, ninguna fecha (permitido por el protocolo).
+// + sin URLs duplicadas (la primera aparición manda).
+const MIN_CABLES_TEATRO = 1; // = regla de la página (items.length === 0 → 404)
+const SALAS_DEL_ARCHIVO = ["", "/guerra-hoy", "/en-vivo", "/conflicto", "/conflictos", "/modulo/conflictos"];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // v202.0: puertas por noticia — cada cable vivo es una URL indexable
   // v269.0 EL MAPA DEL ARCHIVO: la cota de v207 (500) se quedó corta — el
@@ -21,12 +39,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // crece tranquilo). Si la BD falla, las puertas estáticas quedan intactas.
   const PUERTAS_NOTICIA = 2000;
   let noticias: MetadataRoute.Sitemap = [];
+  let ultimaNoticia: Date | undefined;
   try {
     const rows = await db.newsItem.findMany({
       orderBy: { publishedAt: "desc" },
       take: PUERTAS_NOTICIA,
       select: { id: true, publishedAt: true },
     });
+    // el máximo real (en la base conviven fechas en texto y en milisegundos:
+    // el orden de SQLite no garantiza que la primera fila sea la más nueva)
+    for (const r of rows) {
+      const d = new Date(r.publishedAt);
+      if (!ultimaNoticia || d > ultimaNoticia) ultimaNoticia = d;
+    }
     noticias = rows.map((r) => ({
       url: `${SITE_URL}/noticia/${r.id}`,
       lastModified: new Date(r.publishedAt),
@@ -51,9 +76,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // mapa declara la última señal, no una fecha fingida (guardia v234).
       _max: { publishedAt: true },
     });
+    // v403.2: el MAX de SQL no sirve aquí — publishedAt guarda unas filas en
+    // texto y otras en milisegundos y SQLite ordena el texto por encima de los
+    // números (Gaza declaraba 31-oct teniendo cables del 14-nov). La última
+    // señal real de cada teatro se calcula aquí, fecha a fecha.
+    const senales = await db.newsItem.findMany({
+      where: { conflictTag: { not: null } },
+      select: { conflictTag: true, publishedAt: true },
+    });
+    const ultimaDe = new Map<string, Date>();
+    for (const r of senales) {
+      if (!r.conflictTag) continue;
+      const d = new Date(r.publishedAt);
+      const prev = ultimaDe.get(r.conflictTag);
+      if (!prev || d > prev) ultimaDe.set(r.conflictTag, d);
+    }
     const vivas = new Set(
       conVida
-        .filter((g) => g._count.conflictTag >= 5 && g.conflictTag && TEATROS[g.conflictTag])
+        .filter((g) => g._count.conflictTag >= MIN_CABLES_TEATRO && g.conflictTag && TEATROS[g.conflictTag])
         .map((g) => g.conflictTag as string)
     );
     teatros = Object.keys(TEATROS)
@@ -68,11 +108,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const paginas = g
           ? Math.max(1, Math.ceil(g._count.conflictTag / PAGE_SIZE_ARCHIVO))
           : 1;
-        const ultima = g?._max.publishedAt;
+        const ultima = ultimaDe.get(k) ?? g?._max.publishedAt;
         const urls: MetadataRoute.Sitemap = [
           {
             url: `${SITE_URL}/conflicto/${k}`,
-            lastModified: ultima ? new Date(ultima) : new Date(),
+            lastModified: ultima ? new Date(ultima) : undefined,
             changeFrequency: "hourly" as const,
             priority: 0.8,
           },
@@ -80,7 +120,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (let p = 2; p <= paginas; p++) {
           urls.push({
             url: `${SITE_URL}/conflicto/${k}?page=${p}`,
-            lastModified: ultima ? new Date(ultima) : new Date(),
+            lastModified: ultima ? new Date(ultima) : undefined,
             changeFrequency: "daily" as const,
             priority: 0.6,
           });
@@ -91,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* sin teatros dinámicos ante fallo de BD */
   }
 
-  return [
+  const estaticas: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
       lastModified: new Date(),
@@ -493,7 +533,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
-    ...teatros,
-    ...noticias,
   ];
+
+  // ② y ③: fuera las salas noindex; lastmod real o ninguno
+  const internas = new Set(SALAS_INTERNAS.map((r) => `${SITE_URL}${r}`));
+  const delArchivo = new Set(SALAS_DEL_ARCHIVO.map((r) => `${SITE_URL}${r}`));
+  const fijas = estaticas
+    .filter((e) => !internas.has(e.url))
+    .map((e) => ({ ...e, lastModified: delArchivo.has(e.url) ? ultimaNoticia : undefined }));
+
+  // + sin duplicados
+  const vistas = new Set<string>();
+  return [...fijas, ...teatros, ...noticias].filter((e) => {
+    if (vistas.has(e.url)) return false;
+    vistas.add(e.url);
+    return true;
+  });
 }

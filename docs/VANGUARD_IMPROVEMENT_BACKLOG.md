@@ -32,6 +32,11 @@
 | B-23 | Ticker cripto de `/cuartel` a 15 px | pendiente previo |
 | B-24 | Actualizar `AGENTS.md` (dice v127 y reglas que ya no aplican) o apuntarlo a `docs/` | ARCHITECTURE |
 | B-25 | `/espia` necesita 7 días de datos; contador de Misión 100 necesita almacenamiento KV | pendiente previo |
+| B-27 | Medir en producción cuántos eligen cada mundo (sin datos personales) y si la Puerta sube la permanencia | v403.1 |
+| B-28 | `next dev` congela el sandbox (2 GB) al compilar el layout raíz: probar `next build` local o un arnés por componente | v403.1 |
+| B-29 | `NewsItem.publishedAt` mezcla texto (77) y milisegundos (1.935): `ORDER BY`/`MAX` ponen octubre por delante de noviembre en `/conflicto/*` | v403.2 P6 | Normalizar las 77 filas (sin pérdida) o comparar como fecha — coordinar con ia3, que escribe la base |
+| B-30 | `/vanguard2`: canónica heredada a la portada y 33 palabras servidas | v403.2 P8 | Canónica propia + texto servido, o `noindex` |
+| B-31 | Soft 404 en `/noticia/<inexistente>` y `/conflicto/<tag>?page=fuera-de-rango` (200 + noindex por `loading.tsx`) | v403.2 P9 | Comprobar existencia antes de la frontera de carga |
 | B-26 | El País bloquea lectores automáticos (403): sus notas fuera del cable caen en la página digna | v402.7 |
 
 ## Hecho

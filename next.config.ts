@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 
+// v402.11 EL MAPA QUE GOOGLE LEE — METADATOS EN EL <head> PARA LOS BUSCADORES.
+// Next 16 «transmite» los metadatos (title, description, canonical, robots) y los
+// deja en el <body> del HTML inicial para todo agente que no esté en su lista de
+// bots limitados — y Googlebot NO está (medido en producción: canónica en el
+// <body> para Googlebot, en el <head> solo para Google-InspectionTool). Google
+// ignora la rel=canonical que aparece en el <body> del HTML descargado y solo la
+// recupera al renderizar. Lista = la de fábrica de Next 16.4 (html-bots.js) + los
+// rastreadores de buscadores; a ellos se les sirve el render completo con los
+// metadatos en el <head>. Los visitantes siguen recibiendo la transmisión.
+const BOTS_DE_FABRICA =
+  "[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight";
+const BUSCADORES = "Googlebot|GoogleOther|Storebot|bingbot|msnbot|YandexBot|PetalBot|SeznamBot|Qwantify|Mojeek|Amazonbot";
+
 const nextConfig: NextConfig = {
   output: "standalone",
+  htmlLimitedBots: new RegExp(`${BOTS_DE_FABRICA}|${BUSCADORES}`, "i"),
   /* v244.0 LA FAMILIA REUNIDA — LA CURA DE LA DEUDA v240. Medido en el
      build v243 (censo con marcadores de clase que sobreviven a la
      minificación y que ninguna otra librería WebGL contiene): la familia

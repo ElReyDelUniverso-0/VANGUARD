@@ -1,6 +1,7 @@
 // v400.0 — el pie de la casa nueva
 import Link from "next/link";
 import { LogoVanguard } from "./logo";
+import { BotonMundos } from "@/components/mundos/puerta-mundos";
 
 export function Pie() {
   return (
@@ -10,9 +11,12 @@ export function Pie() {
           <div>
             <LogoVanguard />
             <p style={{ margin: "12px 0 0", maxWidth: 360 }}>
-              El mundo en tiempo real, en español. Noticias de medios verificados, mapa vivo y el cuartel de juego.
+              Dos mundos, una sola casa: el mundo de Noticias, en tiempo real y en español, y el mundo de Juego.
               Gratis y sin registro.
             </p>
+            <div style={{ marginTop: 14 }}>
+              <BotonMundos />
+            </div>
           </div>
           <div>
             <h4>Noticias</h4>
@@ -20,7 +24,8 @@ export function Pie() {
               <li><Link href="/">Portada</Link></li>
               <li><Link href="/en-vivo">En vivo</Link></li>
               <li><Link href="/guerra-hoy">Conflictos</Link></li>
-              <li><Link href="/pulso-mundial">Inteligencia</Link></li>
+              <li><Link href="/modulo/conocimiento">Conocimiento</Link></li>
+              <li><Link href="/modulo/datos">Datos vivos</Link></li>
             </ul>
           </div>
           <div>

@@ -2,6 +2,10 @@
 
 > Auditorías reales, con método reproducible. Nada aquí es una estimación.
 
+## Auditoría 2026-11-15 · sitemap y descubrimiento
+
+Ver `docs/VANGUARD_SEO_DISCOVERY.md` (P1–P10, producción 7b54176).
+
 ## Auditoría 2026-11-15 · producción v402.6 (vanguard-kq9r.vercel.app)
 
 **Método:** `scripts/qa/auditoria-movil.py` — Playwright, móvil 390×844 (iPhone UA), 61 rutas (todas las salas de

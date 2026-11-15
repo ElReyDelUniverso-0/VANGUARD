@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { Cabecera, BarraMovil } from "./cabecera";
 import { moduloDe, portadaDe } from "./modulos";
 
-const SIN_CARCASA = ["/lectura", "/cuartel", "/clasico", "/vanguard2", "/vertigo", "/offline", "/api"];
+const SIN_CARCASA = ["/entrar", "/lectura", "/cuartel", "/clasico", "/vanguard2", "/vertigo", "/offline", "/api"];
 
 export function conCarcasa(ruta: string | null): boolean {
   if (!ruta || ruta === "/" || ruta === "/index") return false;

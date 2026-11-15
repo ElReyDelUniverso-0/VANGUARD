@@ -22,6 +22,29 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.2",
+    nombre: "EL MAPA QUE GOOGLE LEE",
+    hitos: [
+      "AUDITORÍA DE DESCUBRIMIENTO: las ocho fichas de conflicto (Gaza, Ormuz, Coreas, Mar Rojo, Sahel, Sudán, Taiwán y Ucrania) estaban en el mapa del sitio, respondían bien, tenían dirección canónica propia, se podían indexar y estaban enlazadas. El fallo no era que faltaran",
+      "LOS BUSCADORES LEEN LA FICHA DONDE DEBEN: el título, el resumen y la dirección canónica de cada página llegaban a Google en el cuerpo de la página y no en la cabecera. Ahora los buscadores reciben la página completa con su ficha en la cabecera",
+      "UNA DIRECCIÓN QUE NO EXISTE YA NO FINGE EXISTIR: /conflicto/cualquier-cosa respondía «todo bien» con una página vacía. Ahora responde «no encontrada», como debe",
+      "UN MAPA DEL SITIO HONESTO: entra Líbano, que era una página pública y enlazada que el mapa dejaba fuera; salen seis salas internas que pedían no ser indexadas; y las fechas de cambio ya no se inventan en cada publicación. Un conflicto nuevo entra solo en el mapa en cuanto tiene noticias",
+    ],
+    tipo: "tecno",
+  },
+  {
+    version: "v403.1",
+    nombre: "LOS DOS MUNDOS",
+    hitos: [
+      "VANGUARD TIENE DOS MUNDOS: el mundo de NOTICIAS (lo que pasa en el planeta, ahora) y el mundo de JUEGO (misiones, rango y gloria). Cada uno con su color: celeste de cable y oro de la casa",
+      "LA PUERTA: la primera vez que entras se abre una secuencia de cine. Una línea de oro parte la noche, aparece el emblema, VANGUARD se ensambla letra a letra y la pantalla se divide en dos puertas. Eliges, y tu mundo se traga la pantalla con un golpe de sonido",
+      "EL CRUCE: cada vez que pasas de las noticias al juego (o al revés), un barrido de luz te dice en qué mundo estás",
+      "SIEMPRE A MANO: botón «Elegir mundo» en el pie, en la portada y en Módulos, y la dirección /entrar para compartir la Puerta",
+      "SIN ESTORBAR: se puede saltar con un toque o con Esc, solo sale una vez, no se muestra a buscadores y, si tu equipo pide menos movimiento, aparece quieta",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v403.0",
     nombre: "EL PESO DEL MUNDO",
     hitos: [

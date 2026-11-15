@@ -21,6 +21,7 @@ import "./portada.css";
 import "./piel.css";
 import { inter } from "@/components/portada/fuente";
 import { Carcasa } from "@/components/portada/carcasa";
+import { PuertaMundos } from "@/components/mundos/puerta-mundos";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 // v186.0 EL SALVAVIDAS: la versión viaja dentro del script inline (placa de
@@ -930,6 +931,8 @@ try{
             pantalla salta la cabecera y el teletipo de una vez (WCAG 2.4.1). */}
         <a href="#vg-contenido" className="vx-saltar">Saltar al contenido</a>
         <Carcasa />
+        {/* v403.1 LOS DOS MUNDOS: la Puerta (primera visita) y el Cruce entre mundos */}
+        <PuertaMundos />
         <span id="vg-contenido" tabIndex={-1} className="vx-ancla-contenido" aria-hidden />
         {children}
         {/* v151.0: en /vanguard2 NINGUNA capa DOM de la Casa monta encima del canvas 3D */}

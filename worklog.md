@@ -6207,3 +6207,27 @@ Work Log:
 - Registro: version.ts v403.0 «EL PESO DEL MUNDO» (anterior v402.9), bitacora v403.0, catalogo-real real-175 (175 piezas).
 - QA local (next dev :3886): /atlas 200 con los dos gráficos (barras 100 % India 1.441 M / 97,85 % China 1.410 M / 23,66 % EE. UU. 341 M …) y el ancla resuelta. tsc acotado LIMPIO.
 - SUSTO Y ARREGLO: al bajar el worklog por la API de contenidos (base64) llegó un resto de 1.278 bytes — GitHub no devuelve `content` para archivos de más de 1 MB. El primer commit de esta rama habría borrado 1,7 MB de historia. Se detectó ANTES del merge y se rehízo el archivo por la API `raw`. Lección: los archivos grandes del repo se bajan SIEMPRE con `Accept: application/vnd.github.raw`.
+
+---
+Task ID: v403.1
+Agent: IA de diseño
+Task: «Vanguard tiene dos mundos, el de los juegos y el de noticias: crear intro para entrar a esos mundos de manera épica»
+Work Log:
+- mundos.ts (mundoDe + FICHA_MUNDOS con cuentas de modulos.ts), puerta-mundos.tsx (Puerta, Cruce, PuertaPagina, BotonMundos), puerta.css.
+- Montado en layout.tsx tras <Carcasa />; /entrar (sin Carcasa); botón en pie, portada y /modulos; pie sin el módulo fantasma «Inteligencia».
+- Ilustraciones de la casa: noticias.jpg (Noticias), ranking.jpg (Juego), planeta.jpg (fondo). Cero cifras a mano.
+- tsc acotado (con bitacora.ts y version.ts) 0 errores; eslint 0.
+- next dev congeló el sandbox 2 veces (memoria) → arnés esbuild con el componente real + Playwright: 20 comprobaciones × 2 tamaños, 0 errores.
+- Arreglos tras capturas: altura igual de puertas en móvil, warp sin franja, hover por flex-basis, background-clip roto por filter, foco al diálogo (no favorece Noticias).
+
+---
+Task ID: v403.2
+Agent: IA de diseño
+Task: «VANGUARD — SITEMAP AND DISCOVERY AUDIT»: Search Console dice «Google doesn't recognize this URL» en 8 fichas /conflicto/*
+Work Log:
+- Producción (7b54176): sitemap 200, XML válido, 2.072 URLs, las 8 fichas dentro; robots.txt correcto; 8× 200, canónica propia, index, 1.089–3.455 palabras, enlazadas con <a>. No huérfanas.
+- Fallos: metadatos en <body> para Googlebot (Next 16 streaming), soft 404 en /conflicto/<inexistente>, 6 URLs noindex en el sitemap, Líbano fuera (cota ≥5), 54 lastmod = hora del build, lastmod de 4 teatros con 2–3 semanas de retraso (fechas mixtas texto/ms en NewsItem).
+- Arreglos: htmlLimitedBots, layout guardián en conflicto/[tag], sitemap con reglas derivadas (TEATROS, SALAS_INTERNAS), /entrar noindex.
+- Pruebas: app mínima Next 16.4.3 (sin/con htmlLimitedBots, sin/con layout) → canónica en <head> para Googlebot y 404 real; sitemap nuevo generado con el código real sobre la base real: 2.067 URLs, 0 duplicadas; tsc acotado 0, eslint 0.
+- Informe: docs/VANGUARD_SEO_DISCOVERY.md. Pendientes B-29 (fechas mixtas en páginas), B-30 (/vanguard2), B-31 (otros soft 404).
+

@@ -27,6 +27,7 @@ import { gruposHistorias } from "@/lib/portada/frentes";
 import { TituloSeccion } from "@/components/portada/titulo-seccion";
 import { SpotPortada } from "@/components/portada/spot-portada";
 import { ModulosRejilla } from "@/components/portada/modulos-rejilla";
+import { BotonMundos } from "@/components/mundos/puerta-mundos";
 import { MODULOS_PUBLICOS } from "@/components/portada/modulos";
 
 
@@ -181,6 +182,9 @@ export default async function Portada() {
         <section className="vx-sec" aria-label="Los módulos de Vanguard">
           <TituloSeccion sello={`Sección 02 · ${MODULOS_PUBLICOS.length} módulos`} titulo="Mucho más que noticias" sub="Conocimiento, secretos, arsenal, datos vivos, medios y juego: elige por dónde entrar." enlace="/modulos" textoEnlace="Todos los módulos" />
           <ModulosRejilla compacta />
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 18 }}>
+            <BotonMundos />
+          </div>
         </section>
 
         <section className="vx-sec" aria-label="Vanguard en 30 segundos">
