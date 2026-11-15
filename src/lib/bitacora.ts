@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.5",
+    nombre: "EL CANAL VIVO",
+    hitos: [
+      "LA CONGELACIÓN, MEDIDA Y RODEADA: la base de la casa es SQLite comprometida al repo y en Vercel cada lambda escribe en su copia de /tmp. El archivo no avanza — el último cable guardado tenía 29 días. Cambiar de base exige una llave que la casa no tiene; servir un periódico de hace un mes, en cambio, se puede dejar de hacer hoy",
+      "EL CANAL VIVO: cuando el archivo tiene más de tres horas, la portada se sirve de los 18 medios RSS en vivo, con su foto real, el mismo formato y el mismo motor de impacto. 90 segundos de memoria por instancia y una sola petición simultánea; si la red no responde, se cae con honor al archivo",
+      "EL ID ESTABLE: cada cable vivo lleva su URL en base64url como id, y la puerta del artículo sabe volver de ahí a la URL y encontrarlo",
+      "EL DOMINIO DEL SITIO: layout.tsx deja de declarar el alias de preview; el dominio vive en src/lib/site.ts",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v403.4",
     nombre: "LA FOTO QUE YA VENÍA",
     hitos: [

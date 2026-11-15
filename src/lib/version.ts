@@ -36,6 +36,18 @@
 // ⑥ D6 · LA FOTO HONESTA: cuando el cable no trae imagen y la casa pone una del
 //    repositorio, la respuesta lo marca (`imagenArchivo: true`). Una foto que no
 //    es de la noticia no se presenta jamás como si lo fuera.
+// v403.5 EL CANAL VIVO — la congelación del archivo, curada donde se puede.
+// Medido: la base es SQLite comprometida al repo; en Vercel cada lambda la copia
+// a /tmp, escribe ahí y muere → el archivo del repo no avanza (último cable:
+// 31-oct, 29 días). La casa no puede cambiar de base sin llave, pero SÍ puede
+// dejar de servir un periódico de hace un mes.
+// ① EL CANAL VIVO: cuando el archivo tiene más de 3 h, /api/news se sirve de los
+//    18 medios RSS EN VIVO, con su foto real, en el mismo formato y con el mismo
+//    motor de impacto. Memoria por instancia: 90 s de TTL + una sola petición
+//    simultánea. Si la red no responde, se cae con honor al archivo.
+// ② EL ID ESTABLE: cada cable vivo lleva su URL en base64url como id, y
+//    /noticia/[id] ya sabe volver de ahí a la URL y encontrarlo.
+// ③ EL DOMINIO DEL SITIO: layout.tsx deja de declarar el alias de preview.
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5597,8 +5609,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v403.4";
-export const APP_CODENAME = "LA FOTO QUE YA VENÍA";
+export const APP_VERSION = "v403.5";
+export const APP_CODENAME = "EL CANAL VIVO";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5658,7 +5670,7 @@ export const APP_CODENAME = "LA FOTO QUE YA VENÍA";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v403.3";
+export const APP_VERSION_ANTERIOR = "v403.4";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
