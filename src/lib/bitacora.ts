@@ -22,6 +22,17 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v403.6",
+    nombre: "LA REPARACIÓN",
+    hitos: [
+      "SE DESHACE UN DAÑO PROPIO: las v403.4 y v403.5 se comprometieron sobre copias locales viejas y borraron trabajo de la otra IA — los imports de la fusión v401.0, las 83 líneas del sitemap v402.11, el camino filasVivas de la v402.0 que ya curaba la base congelada y el redirect de /noticia/[id] a /lectura",
+      "LOS CINCO ARCHIVOS VUELVEN a la última versión íntegra (219e0611) y encima se reaplica solo lo que añadía algo de verdad: el dominio de casa en canonical y sitemap, el feed con <enclosure> y media:content, y el sello de imagen de archivo",
+      "SE RETIRA LO DUPLICADO: canalVivo() repetía filasVivas; getCableVivo y urlDesdeId repetían el redirect de la casa; el parser de imágenes del RSS ya vivía en lib/portada/notas. Nada se pierde: ya existía y era mejor",
+      "LECCIÓN ESCRITA EN LA CASA: ningún archivo se compromete sin bajarlo de main justo antes. Una copia local no es el repositorio, es una fotografía de hace días",
+    ],
+    tipo: "mundo",
+  },
+  {
     version: "v403.5",
     nombre: "EL CANAL VIVO",
     hitos: [
