@@ -1,4 +1,17 @@
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
+// v402.6 LOS NUEVE MÓDULOS (sobre v402.5) — orden del Dueño: «sigue agregando más
+// módulos, Vanguard tiene mucho más por mostrar que solo noticias». Elegido por el
+// Dueño: sacar a la luz lo que YA existe, sin contenido nuevo.
+// ① Inteligencia escondía 16 salas tras una sola puerta y El Cruce y Las diez
+//    llaves no colgaban de ningún módulo. Ahora hay 8 módulos públicos (más el
+//    Estado): Conflictos · Mapa 3D · Conocimiento · Secretos · Arsenal · Datos
+//    vivos · Medios · Juego. Fuente única: components/portada/modulos.ts.
+// ② Cada módulo tiene PORTADA PROPIA en /modulo/[id] (PortadaSala + sus salas +
+//    «otros módulos») y su barra de pestañas; el sello del módulo lleva a ella.
+// ③ /modulos: el índice de la casa. La portada principal estrena «Mucho más que
+//    noticias» (Sección 02) con los 8 módulos; la barra móvil cambia Perfil por
+//    Módulos (Perfil sigue en Juego) y la cabecera de escritorio lista los 8.
+// ④ Cuentas (salas, módulos, en vivo) calculadas de modulos.ts: cero cifras a mano.
 // v402.5 EL EJE DEL DÍA — la v402.4 metió las efemérides en /historia como
 // diez párrafos y el indicador lo cobró: la sala pasó de 1.117 a 1.305 letras
 // por elemento visual. Esta versión arregla la causa, no el síntoma.
@@ -5482,8 +5495,8 @@
 //    opcional. Las anclas del eje apuntan a los `id` reales de cada ficha
 //    (comprobado en el HTML servido: #HW-PUNIC existe).
 
-export const APP_VERSION = "v402.5.1";
-export const APP_CODENAME = "TREINTA AJUSTES";
+export const APP_VERSION = "v402.6";
+export const APP_CODENAME = "LOS NUEVE MÓDULOS";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5543,7 +5556,7 @@ export const APP_CODENAME = "TREINTA AJUSTES";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v402.4";
+export const APP_VERSION_ANTERIOR = "v402.5.1";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto

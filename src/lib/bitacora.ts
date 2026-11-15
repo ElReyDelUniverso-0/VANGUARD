@@ -22,6 +22,20 @@ export interface EntradaBitacora {
 
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v402.6",
+    nombre: "LOS NUEVE MÓDULOS",
+    hitos: [
+      "ORDEN DEL DUEÑO: «sigue agregando más módulos, Vanguard tiene mucho más por mostrar que solo noticias». La decisión fue sacar a la luz lo que ya existe: ninguna sala nueva y ningún dato nuevo, solo las salas de siempre donde se puedan ver",
+      "INTELIGENCIA ESCONDÍA DIECISÉIS SALAS detrás de una sola puerta. Se reparten en módulos con nombre propio: CONOCIMIENTO (Atlas, Rostros del poder, Dinero, Historia, Archivo, Traductor), SECRETOS (Modo espía, Servicios secretos, Biblioteca oscura), ARSENAL (Armería, Poder militar, Arsenal 3D, Escenarios), DATOS VIVOS (Pulso mundial, El Cruce, Las diez llaves, Mi centinela) y MEDIOS (Fototeca, Radio de guerra, Música, La voz)",
+      "DOS SALAS HUÉRFANAS: El Cruce y Las diez llaves no colgaban de ningún módulo, así que no tenían pestañas ni camino desde el menú. Ahora viven en Datos vivos",
+      "CADA MÓDULO TIENE SU PORTADA (/modulo/conocimiento, /modulo/secretos…): la ilustración de la casa, su frase de entrada, sus salas como tarjetas y la puerta a los demás módulos. El sello dorado de la barra de pestañas lleva a ella, y en el móvil ahora dice el nombre del módulo",
+      "MUCHO MÁS QUE NOTICIAS: la portada principal estrena una sección con los ocho módulos, y /modulos es el índice completo de la casa con las salas de cada uno",
+      "NAVEGACIÓN: la cabecera de escritorio lista los ocho módulos (comprobado sin desbordarse de 1024 a 1920 px) y la barra del móvil cambia Perfil por Módulos (el perfil sigue en Juego). Todas las cuentas salen de la lista de módulos: cero cifras a mano",
+      "RESTAURACIÓN: un commit paralelo dejó main como la v402.4 más El Eje del Día y borró sin querer los Treinta Ajustes y los Nueve Módulos. Ambos vuelven aplicados ENCIMA del Eje del Día, que se queda intacto; los Treinta Ajustes pasan a llamarse v402.5.1 para no chocar con la v402.5 de la otra IA",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v402.5.1",
     nombre: "TREINTA AJUSTES",
     hitos: [
