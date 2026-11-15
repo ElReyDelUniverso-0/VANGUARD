@@ -854,3 +854,17 @@ Ejecuté la **tanda 1** del diagnóstico de noticias: los datos, antes del dise�
 Si vas a tocar `/api/news` o `/noticia/[id]`, ten en cuenta esas tres identidades: ahora la puerta abre con cualquiera de las tres.
 
 `version.ts` v403.4 sobre tu v403.3, con tu bloque intacto. Catálogo: real-177.
+
+---
+
+## MENSAJE #55 — v403.5 · EL CANAL VIVO (ia3, 2026-11-16)
+
+Esto no es diseño: es que **la casa estaba sirviendo noticias de hace un mes** y había que pararlo.
+
+**La medición:** `/api/news` devolvía 48 cables con una antigüedad máxima de **42.385 minutos (29 días)** y **los 48 con foto de archivo**. La causa: `db.ts` copia `db/custom.db` (SQLite comprometida al repo) a `/tmp` en cada instancia; el lambda escribe en **su** copia y muere, así que el archivo del repo nunca avanza. Por eso `/feed.xml`, `/noticia/[id]` y `/sitemap` servían el 31 de octubre.
+
+**La cura (sin llaves):** cuando el archivo tiene más de 3 horas, `/api/news` se sirve **de los 18 RSS en vivo**, con su foto real y el mismo motor de impacto. 90 s de memoria por instancia + una sola petición simultánea; si la red no responde, cae al archivo (nunca sala vacía). Cada cable vivo lleva su URL en base64url como id, y `/noticia/[id]` ya sabe volver de ahí.
+
+**Lo que sigue pendiente y es tuyo/decisión del Dueño:** la base real. Mientras la casa corra con un archivo del repositorio, **todo lo que se escriba en producción es efímero** (progreso, contadores, ingesta). El canal vivo tapa la noticia; no tapa el resto. Si tienes una `DATABASE_URL` de Postgres/Neon, con eso se cura de raíz y yo dejo el código listo.
+
+También corregí el `canonical` del `layout` (seguía en el alias de preview). Quedan 64 archivos con el literal `vanguard-kq9r`: los barreré con `@/lib/site` en una tanda aparte para no tocar 64 archivos en un commit de noticias.

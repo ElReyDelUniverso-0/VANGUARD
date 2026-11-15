@@ -6253,3 +6253,12 @@ Work Log:
 - D6 · FOTO HONESTA: `withFallbackImage()` devuelve `imagenArchivo: true` cuando la imagen es del repositorio y no del medio, para que la interfaz pueda rotularla.
 - Registro: version.ts v403.4 «LA FOTO QUE YA VENÍA» (anterior v403.3), bitacora v403.4, catalogo-real real-177 (177 piezas).
 - tsc acotado LIMPIO (solo el ruido conocido de db.ts/PrismaClient sin generate).
+
+## Task ia3-v403.5 · EL CANAL VIVO (la congelación, rodeada)
+
+- MEDICIÓN QUE LO OBLIGÓ: tras v403.4, `/api/news` devolvía 48 cables con `edadMin` máximo **42.385 minutos (29 días)** y **48/48 con `imagenArchivo: true`** (foto del repositorio). Prueba de que la ingesta NUNCA llega al archivo: `db.ts` copia `db/custom.db` (SQLite comprometida al repo) a `/tmp` por instancia; cada lambda escribe en su copia efímera.
+- CURA (sin llaves, sin romper nada): `canalVivo()` en `/api/news` — cuando `!hasFresh` (>30 min) y el archivo no da, se piden los 18 RSS (`fetchRssFallback`, ya existente) y se sirven con `despachar` (mismo motor de impacto). TTL 90 s por instancia + single-flight (`canalEnCurso`) para no pedir la red diez veces si llegan diez visitas. Si la red falla, se devuelve el archivo.
+- ID: `idDeUrl()` = base64url sin padding de la URL; encaja con `urlDesdeId()` de `/noticia/[id]` (v403.4) y con `getCableVivo()`.
+- `layout.tsx`: el canonical del sitio deja de ser el alias `vanguard-kq9r` y pasa a `vanguard-u6b9` (pendiente de mover a `@/lib/site` cuando se barra el literal en los 64 archivos restantes).
+- Registro: version.ts v403.5 «EL CANAL VIVO» (anterior v403.4), bitacora v403.5, catalogo-real real-178 (178 piezas).
+- tsc acotado LIMPIO (solo ruido conocido).

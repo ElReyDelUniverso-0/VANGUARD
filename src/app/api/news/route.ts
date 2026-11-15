@@ -262,6 +262,77 @@ function despachar(modo: string, items: Record<string, unknown>[], extra: Record
   });
 }
 
+// ============================================================
+// v403.5 EL CANAL VIVO — LA CURA DE LA CONGELACIÓN
+//
+// Medido: la base de la casa es SQLite comprometida al repo; en Vercel el lambda
+// la copia a /tmp, escribe ahí y muere. El archivo del repo no avanza (último
+// cable: 31-oct, 29 días). Servir solo de ahí es servir un periódico de hace un
+// mes — con fotos de archivo.
+//
+// La casa no puede cambiar de base sin una llave (base de datos real), pero SÍ
+// puede dejar de mentir: cuando el archivo tiene más de tres horas, el canal se
+// sirve VIVO desde los 18 medios RSS, con su foto real, en el mismo formato.
+// La base sigue siendo la primera fuente: si está fresca, manda ella.
+//
+// Memoria por instancia: TTL de 90 s + una sola petición simultánea (si diez
+// visitas llegan a la vez, la red se pide una vez).
+// ============================================================
+const VIDA_ARCHIVO_MS = 3 * 60 * 60 * 1000;
+const VIDA_CANAL_MS = 90 * 1000;
+
+type CableVivo = Record<string, unknown> & { publishedAt: Date; createdAt: Date };
+
+let canalCache: { ts: number; items: CableVivo[] } | null = null;
+let canalEnCurso: Promise<CableVivo[]> | null = null;
+
+function idDeUrl(url: string): string {
+  // el id del cable vivo es su URL en base64url: estable, sin padding y
+  // compatible con /noticia/[id] (que ya sabe volver de ahí a la URL).
+  return Buffer.from(url, "utf-8").toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function canalVivo(): Promise<CableVivo[]> {
+  const ahora = Date.now();
+  if (canalCache && ahora - canalCache.ts < VIDA_CANAL_MS) return canalCache.items;
+  if (canalEnCurso) return canalEnCurso;
+  canalEnCurso = (async () => {
+    try {
+      const rss = await fetchRssFallback();
+      const vistos = new Set<string>();
+      const items: CableVivo[] = [];
+      for (const a of rss) {
+        if (!a.link.startsWith("http") || vistos.has(a.link)) continue;
+        vistos.add(a.link);
+        items.push({
+          id: idDeUrl(a.link),
+          externalId: a.link,
+          title: a.title,
+          url: a.link,
+          source: a.source,
+          imageUrl: a.imageUrl ?? null,
+          publishedAt: a.pubDate,
+          createdAt: a.pubDate,
+          language: "es",
+          conflictTag: conflictTag(a.title),
+          tacticalTag: classifyTag(a.title),
+          sourceCountry: guessCountry(a.title, ""),
+          summary: a.summary || null,
+          imagenArchivo: false,
+        });
+      }
+      items.sort((x, y) => y.publishedAt.getTime() - x.publishedAt.getTime());
+      canalCache = { ts: Date.now(), items };
+      return items;
+    } catch {
+      return canalCache?.items ?? [];
+    } finally {
+      canalEnCurso = null;
+    }
+  })();
+  return canalEnCurso;
+}
+
 export async function GET(req: Request) {
   // v56.0 OJO DE DIOS TOTAL: paginación del archivo histórico para el MURO
   // INFINITO. ?page=1,2,3... sirve el archivo completo de la BD por lotes;
@@ -304,15 +375,24 @@ export async function GET(req: Request) {
     const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
     const hasFresh = cached.length > 0 && cached[0].createdAt > thirtyMinAgo;
 
+    // v403.5 EL CANAL VIVO: si el archivo del repo está congelado (más de tres
+    // horas sin un cable nuevo), la portada se sirve de los medios RSS EN VIVO
+    // —con su foto real— en vez de repetir el archivo viejo con foto de casa.
+    // Si la red no responde, se cae con honor al archivo (nunca una sala vacía).
+    if (cached.length > 0 && !hasFresh) {
+      after(() => refreshGdeltInBackground());
+      const vivos = await canalVivo();
+      if (vivos.length > 0) {
+        return despachar(
+          modo,
+          vivos.slice(0, 48) as unknown as Record<string, unknown>[],
+          { source: "VIVO" },
+        );
+      }
+    }
+
     // Fast path: if we have ANY cache, return it immediately (don't block on GDELT)
     if (cached.length > 0) {
-      // Refresh in background if stale (best-effort, don't await)
-      if (!hasFresh) {
-        // v35 FIX: after() garantiza que el refresco corra COMPLETO después de la
-        // respuesta. El fire-and-forget anterior moría congelado con el lambda de
-        // Vercel → las noticias llevaban días sin actualizarse.
-        after(() => refreshGdeltInBackground());
-      }
       return despachar(modo, cached.slice(0, 48).map((it, i) =>
         withFallbackImage(
           {
