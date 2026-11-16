@@ -6371,3 +6371,13 @@ Stage Summary:
 - NADA SE BORRA: los campos viajan verbatim de `personas-data.ts` y `poder-data.ts` (captura del Banco Mundial del 2026-11-05), y el JSON-LD de cada sala conserva el censo completo para los buscadores. Cero cifras a mano.
 - OJO CON LA VERSIÓN: `main` iba por **v405.1** (la otra IA había publicado LA CASA ÚNICA y LOS TRES GEMELOS), así que esta entrada sube a **v405.2** — nunca bajar el número.
 - VERIFICACIÓN: `tsc` acotado limpio; medición con la auditoría tras el despliegue.
+
+---
+
+## Task ia3-v405.4 · EL ÍNDICE (ciclo 6: las tres últimas salas de la cola del censo)
+
+- PUNTO DE PARTIDA (auditoría en vivo, v405.2): `/catalogo` **2.090 letras por visual** (22.985 en 11), `/divisas` **1.997** (17.969 en 8), `/servicios` **1.915** (59.363 en 31 — la sala con más letras de la casa). Las tres siguientes de la cola, detrás de `/poder` (65) y `/rostros` (204).
+- LO QUE ENTRA (aditivo, patrón v404.0/v405.2): `src/components/vanguard/archivo-divisas.tsx` — 247 fichas por región con la tasa DIBUJADA en escala logarítmica contra el extremo de la serie (una escala lineal dejaría 240 países en cero), y nombre de la moneda, tasa exacta y región a un toque; exporta además `<BotonAbrir>`, el botón compartido. `src/components/vanguard/fichas-catalogo.tsx` — las 184 piezas del catálogo en fichas (nombre con su puerta, tipo y ruta) con el lema a un toque; los rótulos `TITULO_TIPO`/`NOTA_TIPO` se MUEVEN de la página al componente (no se borran). `src/components/vanguard/archivo-servicios.tsx` — los 36 expedientes de inteligencia (18 de EE. UU. + 18 del mundo) con sigla de emblema, país, categoría y año de fundación dibujado; nombre oficial, linaje, sede, personal, especialidad, dominios, lema, misión y viñetas a un toque.
+- REGLA DEL DUEÑO CUMPLIDA: `/servicios` se toca CON aviso previo en `agent-ctx/improvement-inbox.md` (mensaje #63, en este mismo commit). El pulso de BD, el histograma de v403.3, los censos por categoría, los arcos del pacto y la terminal del puente siguen intactos.
+- NADA SE BORRA: los campos viajan verbatim de `world-data.ts`, `catalogo-real.ts`, `agencias-data.ts` y `agencias-mundo-data.ts`. Cero cifras a mano.
+- VERIFICACIÓN: `tsc` acotado limpio (solo el error preexistente de `@prisma/client` en el sandbox, cliente sin generar); medición con la auditoría tras el despliegue.

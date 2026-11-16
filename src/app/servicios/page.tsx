@@ -15,6 +15,8 @@ import { jsonLdSeguro } from "@/lib/jsonld-seguro";
 import { EnlacesNucleo } from "@/components/vanguard/enlaces-nucleo";
 import type { EnlaceContextual } from "@/lib/nucleo/tipos";
 import { PortadaSala } from "@/components/vanguard/portada-sala";
+// v405.4 — los 36 expedientes de inteligencia, en fichas.
+import { FichasComunidad, FichasRed } from "@/components/vanguard/archivo-servicios";
 // v403.3 — el pilar 2 entra en la sala que más pesaba: 57.000 letras y NUEVE
 // visuales. Se añaden sus propias cifras dibujadas, sin tocar una línea de texto.
 import { GraficoBarras } from "@/components/vanguard/grafico-barras";
@@ -439,53 +441,12 @@ export default async function ServiciosPage() {
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaComunidad}.`}</p>
           {/* la colección en cifras (v282) — COLECCION ya vive derivada en la fuente */}
           <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">{`${lineaCifras}.`}</p>
-          {censoComunidad.map((c) => {
-            const items = COMUNIDAD.filter((a) => a.categoria === c.cat);
-            if (items.length === 0) return null;
-            return (
-              <div key={c.cat} className="mt-6">
-                <h3 className="font-mono text-[10px] uppercase tracking-[0.25em]">
-                  <span style={{ color: c.color }}>{c.etiqueta}</span>
-                  <span className="text-zinc-600">{` · ${items.length} ${items.length === 1 ? "expediente" : "expedientes"}`}</span>
-                </h3>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  {items.map((a) => (
-                    <article
-                      key={a.id}
-                      id={a.id}
-                      className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60 scroll-mt-20"
-                    >
-                      <div className="flex items-baseline justify-between gap-2">
-                        <h4 className="text-sm font-bold leading-snug text-zinc-100">
-                          <span className="font-mono text-[10px] text-zinc-500">{`${placa(a.num)} · `}</span>
-                          {a.sigla}
-                        </h4>
-                        <span className="font-mono text-[10px] text-zinc-500 whitespace-nowrap">{`fundada: ${a.fundacion}`}</span>
-                      </div>
-                      <p className="mt-1 text-xs text-zinc-300">{a.nombreEs}</p>
-                      <p className="mt-0.5 font-mono text-[10px] text-zinc-500">{a.nombre}</p>
-                      <p className="mt-1.5 font-mono text-[10px] text-zinc-500">
-                        {`${a.sede} · ${a.personal}`}
-                      </p>
-                      <p className="mt-1 text-xs text-zinc-400">{`especialidad: ${a.especialidad}`}</p>
-                      <p className="mt-1 font-mono text-[10px] text-zinc-500">
-                        {`dominio: ${a.dominio.join(" · ")}`}
-                      </p>
-                      <div className="mt-2 font-mono text-[10px] text-cyan-hud">{a.lema}</div>
-                      <p className="mt-2 text-xs text-zinc-400 leading-relaxed">{a.mision}</p>
-                      <ul className="mt-2 space-y-1">
-                        {a.fichas.map((f, i) => (
-                          <li key={i} className="text-xs text-zinc-500 leading-relaxed">
-                            {`— ${f}`}
-                          </li>
-                        ))}
-                      </ul>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+          {/* v405.4 — LOS EXPEDIENTES, EN FICHAS (pilar 2): sigla, país y el año
+              de fundación dibujado; la misión, el lema y las viñetas a un toque.
+              Esta sala era la más pesada de la casa: 59.363 letras en 31
+              visuales, 1.915 por visual. Nada se borra: cada campo sigue en el
+              HTML servido, detrás del botón que lo abre. */}
+          <FichasComunidad />
         </section>
 
         {/* ── LA RED MUNDIAL (v128) — los 18 servicios del resto del planeta ── */}
@@ -497,60 +458,7 @@ export default async function ServiciosPage() {
           <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{`${lineaRed}.`}</p>
           {/* la red mundial en cifras (v291) — COLECCION_MUNDO ya vive derivada en la fuente */}
           <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">{`${lineaCifrasRed}.`}</p>
-          {censoRed.map((c) => {
-            const items = RED.filter((s) => s.categoria === c.cat);
-            if (items.length === 0) return null;
-            const leyenda = leyendaDe(c.cat);
-            return (
-              <div key={c.cat} className="mt-6">
-                <h3 className="font-mono text-[10px] uppercase tracking-[0.25em]">
-                  <span style={{ color: c.color }}>{c.etiqueta}</span>
-                  <span className="text-zinc-600">{` · ${items.length} ${items.length === 1 ? "expediente" : "expedientes"}`}</span>
-                </h3>
-                {leyenda && (
-                  <p className="mt-1 text-xs text-zinc-500 leading-relaxed">{leyenda}</p>
-                )}
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  {items.map((s) => (
-                    <article
-                      key={s.id}
-                      id={s.id}
-                      className="border border-zinc-800 rounded-md p-4 bg-zinc-900/60 scroll-mt-20"
-                    >
-                      <div className="flex items-baseline justify-between gap-2">
-                        <h4 className="text-sm font-bold leading-snug text-zinc-100">
-                          <span className="font-mono text-[10px] text-zinc-500">{`${placa(s.num)} · `}</span>
-                          {s.sigla}
-                        </h4>
-                        <span className="font-mono text-[10px] text-zinc-500 whitespace-nowrap">{`fundado: ${s.fundacion}`}</span>
-                      </div>
-                      <p className="mt-1 text-xs text-zinc-300">{s.nombreEs}</p>
-                      <p className="mt-0.5 font-mono text-[10px] text-zinc-500">{s.nombre}</p>
-                      <p className="mt-1.5 font-mono text-[10px] text-zinc-500">
-                        {`${s.bandera} ${s.pais} · ${s.sede} · ${s.personal}`}
-                      </p>
-                      {s.linaje && (
-                        <p className="mt-1 font-mono text-[10px] text-violet-hud">{`linaje: ${s.linaje}`}</p>
-                      )}
-                      <p className="mt-1 text-xs text-zinc-400">{`especialidad: ${s.especialidad}`}</p>
-                      <p className="mt-1 font-mono text-[10px] text-zinc-500">
-                        {`dominio: ${s.dominio.join(" · ")}`}
-                      </p>
-                      <div className="mt-2 font-mono text-[10px] text-cyan-hud">{s.lema}</div>
-                      <p className="mt-2 text-xs text-zinc-400 leading-relaxed">{s.mision}</p>
-                      <ul className="mt-2 space-y-1">
-                        {s.fichas.map((f, i) => (
-                          <li key={i} className="text-xs text-zinc-500 leading-relaxed">
-                            {`— ${f}`}
-                          </li>
-                        ))}
-                      </ul>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+          <FichasRed />
         </section>
 
         {/* v291.0 — EL PACTO QUE UNE LAS DOS SALAS: los arcos de la

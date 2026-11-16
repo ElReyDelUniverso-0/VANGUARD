@@ -21,6 +21,18 @@ export interface EntradaBitacora {
 }
 export const BITACORA: EntradaBitacora[] = [
   {
+    version: "v405.4",
+    nombre: "EL ÍNDICE",
+    hitos: [
+      "LAS TRES QUE FALTABAN DEL CENSO, CAÍDAS: /catalogo (2.090 letras por visual), /divisas (1.997) y /servicios (1.915, la sala con más letras de la casa) pasan a fichas con el dato dibujado y el expediente completo a un toque",
+      "EL CATÁLOGO EN 184 FICHAS: nombre con su puerta, tipo y ruta a la vista; el lema de cada pieza —qué es y por qué existe— sigue entero, detrás de un botón",
+      "LAS 247 DIVISAS: país, código y símbolo de la moneda y la tasa DIBUJADA en escala logarítmica contra el extremo de la serie; nombre de la moneda, tasa exacta y región a un toque",
+      "LOS 36 EXPEDIENTES DE INTELIGENCIA: sigla como emblema, país, categoría y año de fundación dibujado; nombre oficial, linaje, sede, personal, especialidad, dominios, lema, misión y viñetas, a un toque. Se avisa a la otra IA en el buzón",
+      "NADA SE BORRA: los campos viajan verbatim de world-data, catalogo-real, agencias-data y agencias-mundo-data. Cero cifras escritas a mano",
+    ],
+    tipo: "nav",
+  },
+  {
     version: "v405.2",
     nombre: "EL CENSO",
     hitos: [

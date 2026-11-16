@@ -179,6 +179,32 @@
 // poder-data del Banco Mundial) y el JSON-LD de cada sala conserva el censo
 // completo para los buscadores. Cero cifras a mano.
 
+// v405.4 EL ÍNDICE — las tres salas que quedaban en la cola del censo, en fichas.
+//
+// EL NÚMERO QUE MANDA (auditoría en vivo, v405.2), letras por elemento visual:
+//   /catalogo 2.090 (22.985 letras en 11 visuales) · /divisas 1.997 (17.969 en 8)
+//   · /servicios 1.915 (59.363 en 31 — la sala con más letras de la casa).
+// Eran las tres siguientes, justo detrás de /poder (65) y /rostros (204).
+//
+// LO QUE ENTRA, con el patrón de v404.0/v405.2:
+//   · /catalogo — 184 fichas: nombre (con su puerta si la tiene), tipo y ruta.
+//     El lema de cada pieza sigue entero, a un toque.
+//   · /divisas — 247 fichas por región: país, código y símbolo de su moneda y
+//     LA TASA DIBUJADA en escala logarítmica (lineal dejaría 240 países a cero).
+//     Nombre de la moneda, tasa exacta y región, a un toque.
+//   · /servicios — los 36 expedientes de inteligencia en fichas: sigla como
+//     emblema, país, categoría y año de fundación dibujado. Nombre oficial,
+//     linaje, sede, personal, especialidad, dominios, lema, misión y viñetas,
+//     a un toque. SE AVISA EN agent-ctx/improvement-inbox.md (regla del Dueño).
+//
+// NADA SE BORRA: los campos viajan verbatim de world-data, catalogo-real,
+// agencias-data y agencias-mundo-data. Cero cifras escritas a mano.
+
+//
+// NOTA DE NUMERACIÓN: la otra IA publicó el commit #78 (LA LLAVE DE LOS
+// BUSCADORES) etiquetado «v405.3» sin mover version.ts, que seguía en v405.2.
+// Para que ninguna cifra de la casa signifique dos cosas, esta tanda entra
+// como v405.4 y deja el v405.3 en la bitácora de esa otra mano.
 // FUENTE ÚNICA DE LA VERSIÓN DE VANGUARD (se muestra en HUD, health y feed)
 // v403.2 EL MAPA QUE GOOGLE LEE — auditoría de descubrimiento pedida por el Dueño
 // (Search Console: «Google no reconoce esta URL» en las 8 fichas /conflicto/*).
@@ -5783,8 +5809,8 @@
 //    pero son TRES proyectos Vercel: el proyecto `vanguard` (chi-puce y su alias
 //    de equipo) también servía la casa entera con otra base de datos. Entran en
 //    PUERTAS_GEMELAS → 301 a la casa. Y IndexNow avisa a Bing/Yandex al publicar.
-export const APP_VERSION = "v405.2";
-export const APP_CODENAME = "EL CENSO";
+export const APP_VERSION = "v405.4";
+export const APP_CODENAME = "EL ÍNDICE";
 // v367.9 LA SALA DE LA CALIDAD — orden del Dueño, textual: «VANGUARD necesita
 // menos acumulación y más calidad», con un orden de trabajo obligatorio:
 // 1) reparar y auditar todo VANGUARD, 2) transformar la experiencia visual,
@@ -5844,7 +5870,7 @@ export const APP_CODENAME = "EL CENSO";
 //    figura procedural de la casa y el HUD confiesa el archivo que falló.
 // ⑥ APARATO DEL DUEÑO CUIDADO: DPR topado, pausa por IntersectionObserver,
 //    respeto de «reducir movimiento» y limpieza total de memorias y renderer.
-export const APP_VERSION_ANTERIOR = "v405.1";
+export const APP_VERSION_ANTERIOR = "v405.2";
 // v367.7 LA MÚSICA NO SE ENCIENDE SOLA (sobre v367.6, intacta) — orden del
 // Dueño, textual: «la música de Vanguard está un poco; no la pongas automática».
 // ① LA RADIO REAL YA NO SE ARMA: en la v367.5 se armaba para el PRIMER gesto
